@@ -627,8 +627,14 @@ MainLoop:
 					alert(s.term, "Can't authenticate without a secure conversation established")
 					break
 				}
-				msgs, err := conversation.StartAuthenticate(cmd.Question, []byte(cmd.Secret))
-				//TODO: we need to inject eventhandler for waitingForSecret here
+				var ret []otr.ValidMessage
+				if s.eh[to].waitingForSecret {
+					s.eh[to].waitingForSecret = false
+					ret, err = conversation.ProvideAuthenticationSecret([]byte(cmd.Secret))
+				} else {
+					ret, err = conversation.StartAuthenticate(cmd.Question, []byte(cmd.Secret))
+				}
+				msgs := otr.Bytes(ret)
 				if err != nil {
 					alert(s.term, "Error while starting authentication with "+to+": "+err.Error())
 				}

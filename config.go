@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/agl/xmpp-client/xmpp"
-	"golang.org/x/crypto/otr"
+	otr "github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/net/proxy"
 )
@@ -178,7 +178,7 @@ func enroll(config *Config, term *terminal.Terminal) bool {
 			break
 		}
 	}
-	config.PrivateKey = priv.Serialize(nil)
+	config.PrivateKey = priv.Serialize()
 
 	config.OTRAutoAppendTag = true
 	config.OTRAutoStartSession = true

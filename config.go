@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/agl/xmpp-client/xmpp"
+	"github.com/twstrike/coyim/xmpp"
 	otr "github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/net/proxy"

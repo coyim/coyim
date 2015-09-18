@@ -1,5 +1,8 @@
 default: deps lint test
 
+build:
+	go build -o bin/coyim
+
 lint:
 	golint ./...
 
@@ -18,3 +21,4 @@ deps:
 cover:
 	go test . -coverprofile=coverage.out
 	go tool cover -html=coverage.out
+

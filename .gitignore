@@ -30,3 +30,6 @@ coverage.out
 # direnv related files
 .envrc
 .gopkgs
+
+# project executable
+bin/

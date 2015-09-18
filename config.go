@@ -8,6 +8,8 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -15,6 +17,10 @@ import (
 	otr "github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/net/proxy"
+)
+
+var (
+	errHomeDirNotSet = errors.New("$HOME not set. Please either export $HOME or use the -config-file option.\n")
 )
 
 type MultiAccountConfig struct {
@@ -51,6 +57,21 @@ type KnownFingerprint struct {
 	fingerprint    []byte `json:"-"`
 }
 
+func findConfigFile(homeDir string) (*string, error) {
+	if len(homeDir) == 0 {
+		return nil, errHomeDirNotSet
+	}
+
+	persistentDir := filepath.Join(homeDir, "Persistent")
+	if stat, err := os.Lstat(persistentDir); err == nil && stat.IsDir() {
+		// Looks like Tails.
+		homeDir = persistentDir
+	}
+
+	configFile := filepath.Join(homeDir, ".xmpp-client")
+	return &configFile, nil
+}
+
 func ParseMultiConfig(filename string) (*MultiAccountConfig, error) {
 	contents, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -68,7 +89,6 @@ func ParseMultiConfig(filename string) (*MultiAccountConfig, error) {
 }
 
 func parseMultiConfig(conf []byte) (m *MultiAccountConfig, err error) {
-
 	m = &MultiAccountConfig{}
 	if err = json.Unmarshal(conf, &m); err != nil {
 		return

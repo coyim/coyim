@@ -124,3 +124,18 @@ func TestParseMultiAccountConfig(t *testing.T) {
 		t.Errorf("multi account conf does not match %#v", c)
 	}
 }
+
+func TestFindConfigFile(t *testing.T) {
+	if _, err := findConfigFile(""); err != errHomeDirNotSet {
+		t.Errorf("unexpected error %s", err)
+	}
+
+	c, err := findConfigFile("/foo")
+	if err != nil {
+		t.Errorf("unexpected error %s", err)
+	}
+
+	if *c != "/foo/.xmpp-client" {
+		t.Errorf("wrong config file path %s", *c)
+	}
+}

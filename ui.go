@@ -210,17 +210,10 @@ func main() {
 	signal.Notify(resizeChan, syscall.SIGWINCH)
 
 	if len(*configFile) == 0 {
-		homeDir := os.Getenv("HOME")
-		if len(homeDir) == 0 {
-			alert(term, "$HOME not set. Please either export $HOME or use the -config-file option.\n")
+		if configFile, err = findConfigFile(os.Getenv("HOME")); err != nil {
+			alert(term, err.Error())
 			return
 		}
-		persistentDir := filepath.Join(homeDir, "Persistent")
-		if stat, err := os.Lstat(persistentDir); err == nil && stat.IsDir() {
-			// Looks like Tails.
-			homeDir = persistentDir
-		}
-		*configFile = filepath.Join(homeDir, ".xmpp-client")
 	}
 
 	config, err := ParseConfig(*configFile)

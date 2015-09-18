@@ -17,6 +17,11 @@ import (
 	"golang.org/x/net/proxy"
 )
 
+type MultiAccountConfig struct {
+	filename string `json:"-"`
+	Accounts []Config
+}
+
 type Config struct {
 	filename                      string `json:"-"`
 	Account                       string
@@ -46,28 +51,83 @@ type KnownFingerprint struct {
 	fingerprint    []byte `json:"-"`
 }
 
-func ParseConfig(filename string) (c *Config, err error) {
+func ParseMultiConfig(filename string) (*MultiAccountConfig, error) {
 	contents, err := ioutil.ReadFile(filename)
 	if err != nil {
+		return nil, err
+	}
+
+	c, err := parseMultiConfig(contents)
+	if err != nil {
+		return nil, err
+	}
+
+	c.filename = filename
+
+	return c, nil
+}
+
+func parseMultiConfig(conf []byte) (m *MultiAccountConfig, err error) {
+
+	m = &MultiAccountConfig{}
+	if err = json.Unmarshal(conf, &m); err != nil {
 		return
 	}
 
+	if m.Accounts == nil {
+		return fallbackToSingleAccountConfig(conf)
+	}
+
+	return
+}
+
+func fallbackToSingleAccountConfig(conf []byte) (*MultiAccountConfig, error) {
+	c, err := parseConfig(conf)
+	if err != nil {
+		return nil, err
+	}
+
+	//TODO: Convert from single to multi account format
+
+	return &MultiAccountConfig{
+		Accounts: []Config{*c},
+	}, nil
+}
+
+func ParseConfig(filename string) (*Config, error) {
+	m, err := ParseMultiConfig(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(m.Accounts) == 0 {
+		return nil, errors.New("account config is missing")
+	}
+
+	c := &m.Accounts[0]
+	c.filename = filename
+	return c, parseFingerprints(c)
+}
+
+func parseConfig(contents []byte) (c *Config, err error) {
 	c = new(Config)
 	if err = json.Unmarshal(contents, &c); err != nil {
 		return
 	}
 
-	c.filename = filename
+	return
+}
 
+func parseFingerprints(c *Config) error {
+	var err error
 	for i, known := range c.KnownFingerprints {
 		c.KnownFingerprints[i].fingerprint, err = hex.DecodeString(known.FingerprintHex)
 		if err != nil {
-			err = errors.New("xmpp: failed to parse hex fingerprint for " + known.UserId + ": " + err.Error())
-			return
+			return errors.New("xmpp: failed to parse hex fingerprint for " + known.UserId + ": " + err.Error())
 		}
 	}
 
-	return
+	return nil
 }
 
 func (c *Config) Save() error {

@@ -6,7 +6,10 @@ lint:
 test:
 	go test -v ./... -cover
 
-ci: default
+ci: get default
+
+get:
+	go get -t ./...
 
 deps:
 	go get github.com/golang/lint/golint

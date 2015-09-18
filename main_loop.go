@@ -13,8 +13,6 @@ import (
 
 func mainLoop(term *terminal.Terminal, s *Session, config *Config, tick <-chan time.Time, stanzaChan, rosterReply <-chan xmpp.Stanza, commandChan <-chan interface{}) {
 	var err error
-MainLoop:
-
 	for {
 		select {
 		case now := <-tick:
@@ -68,7 +66,7 @@ MainLoop:
 		case cmd, ok := <-commandChan:
 			if !ok {
 				warn(term, "Exiting because command channel closed")
-				break MainLoop
+				return
 			}
 			s.lastActionTime = time.Now()
 			switch cmd := cmd.(type) {
@@ -83,7 +81,7 @@ MainLoop:
 						s.conn.Send(to, string(msg))
 					}
 				}
-				break MainLoop
+				return
 			case versionCommand:
 				replyChan, cookie, err := s.conn.SendIQ(cmd.User, "get", xmpp.VersionQuery{})
 				if err != nil {
@@ -263,7 +261,7 @@ MainLoop:
 		case rawStanza, ok := <-stanzaChan:
 			if !ok {
 				warn(term, "Exiting because channel to server closed")
-				break MainLoop
+				return
 			}
 			switch stanza := rawStanza.Value.(type) {
 			case *xmpp.ClientMessage:
@@ -292,7 +290,7 @@ MainLoop:
 					text = fmt.Sprintf("%s", stanza.Any)
 				}
 				alert(term, "Exiting in response to fatal error from server: "+text)
-				break MainLoop
+				return
 			default:
 				info(term, fmt.Sprintf("%s %s", rawStanza.Name, rawStanza.Value))
 			}

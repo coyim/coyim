@@ -11,62 +11,16 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func mainLoop(term *terminal.Terminal, s *Session, config *Config, tick <-chan time.Time, stanzaChan, rosterReply <-chan xmpp.Stanza, commandChan <-chan interface{}) {
+func commandLoop(term *terminal.Terminal, s *Session, config *Config, commandChan <-chan interface{}, done chan<- bool) {
 	var err error
+
+CommandLoop:
 	for {
 		select {
-		case now := <-tick:
-			haveExpired := false
-			for _, expiry := range s.timeouts {
-				if now.After(expiry) {
-					haveExpired = true
-					break
-				}
-			}
-			if !haveExpired {
-				continue
-			}
-
-			newTimeouts := make(map[xmpp.Cookie]time.Time)
-			for cookie, expiry := range s.timeouts {
-				if now.After(expiry) {
-					s.conn.Cancel(cookie)
-				} else {
-					newTimeouts[cookie] = expiry
-				}
-			}
-			s.timeouts = newTimeouts
-
-		case edit := <-s.pendingRosterChan:
-			if !edit.isComplete {
-				info(s.term, "Please edit "+edit.fileName+" and run /rostereditdone when complete")
-				s.pendingRosterEdit = edit
-				continue
-			}
-			if s.processEditedRoster(edit) {
-				s.pendingRosterEdit = nil
-			} else {
-				alert(s.term, "Please reedit file and run /rostereditdone again")
-			}
-
-		case rosterStanza, ok := <-rosterReply:
-			if !ok {
-				alert(s.term, "Failed to read roster: "+err.Error())
-				return
-			}
-			if s.roster, err = xmpp.ParseRoster(rosterStanza); err != nil {
-				alert(s.term, "Failed to parse roster: "+err.Error())
-				return
-			}
-			for _, entry := range s.roster {
-				s.input.AddUser(entry.Jid)
-			}
-			info(s.term, "Roster received")
-
 		case cmd, ok := <-commandChan:
 			if !ok {
 				warn(term, "Exiting because command channel closed")
-				return
+				break CommandLoop
 			}
 			s.lastActionTime = time.Now()
 			switch cmd := cmd.(type) {
@@ -81,7 +35,7 @@ func mainLoop(term *terminal.Terminal, s *Session, config *Config, tick <-chan t
 						s.conn.Send(to, string(msg))
 					}
 				}
-				return
+				break CommandLoop
 			case versionCommand:
 				replyChan, cookie, err := s.conn.SendIQ(cmd.User, "get", xmpp.VersionQuery{})
 				if err != nil {
@@ -258,12 +212,31 @@ func mainLoop(term *terminal.Terminal, s *Session, config *Config, tick <-chan t
 			case onlineCommand:
 				s.conn.SignalPresence("")
 			}
+		}
+	}
+
+	done <- true
+}
+
+func stanzaLoop(term *terminal.Terminal, s *Session, stanzaChan <-chan xmpp.Stanza, done chan<- bool) {
+StanzaLoop:
+	for {
+		select {
 		case rawStanza, ok := <-stanzaChan:
 			if !ok {
 				warn(term, "Exiting because channel to server closed")
-				return
+				break StanzaLoop
 			}
 			switch stanza := rawStanza.Value.(type) {
+			case *xmpp.StreamError:
+				var text string
+				if len(stanza.Text) > 0 {
+					text = stanza.Text
+				} else {
+					text = fmt.Sprintf("%s", stanza.Any)
+				}
+				alert(term, "Exiting in response to fatal error from server: "+text)
+				break StanzaLoop
 			case *xmpp.ClientMessage:
 				s.processClientMessage(stanza)
 			case *xmpp.ClientPresence:
@@ -282,18 +255,78 @@ func mainLoop(term *terminal.Terminal, s *Session, config *Config, tick <-chan t
 				if err := s.conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
 					alert(term, "Failed to send IQ message: "+err.Error())
 				}
-			case *xmpp.StreamError:
-				var text string
-				if len(stanza.Text) > 0 {
-					text = stanza.Text
-				} else {
-					text = fmt.Sprintf("%s", stanza.Any)
-				}
-				alert(term, "Exiting in response to fatal error from server: "+text)
-				return
 			default:
 				info(term, fmt.Sprintf("%s %s", rawStanza.Name, rawStanza.Value))
 			}
 		}
+	}
+
+	done <- true
+}
+
+func rosterLoop(term *terminal.Terminal, s *Session, rosterReply <-chan xmpp.Stanza, done chan<- bool) {
+RosterLoop:
+	for {
+		var err error
+
+		select {
+		case rosterStanza, ok := <-rosterReply:
+			if !ok {
+				//TODO was this error supposed to print the latest error regardless of where it came from?
+				alert(s.term, "Failed to read roster: "+err.Error())
+				break RosterLoop
+			}
+			if s.roster, err = xmpp.ParseRoster(rosterStanza); err != nil {
+				alert(s.term, "Failed to parse roster: "+err.Error())
+				break RosterLoop
+			}
+
+			for _, entry := range s.roster {
+				s.input.AddUser(entry.Jid)
+			}
+
+			info(s.term, "Roster received")
+
+		case edit := <-s.pendingRosterChan:
+			if !edit.isComplete {
+				info(s.term, "Please edit "+edit.fileName+" and run /rostereditdone when complete")
+				s.pendingRosterEdit = edit
+				continue
+			}
+			if s.processEditedRoster(edit) {
+				s.pendingRosterEdit = nil
+			} else {
+				alert(s.term, "Please reedit file and run /rostereditdone again")
+			}
+
+		}
+	}
+
+	done <- true
+}
+
+func timeoutLoop(s *Session, tick <-chan time.Time) {
+	for now := range tick {
+		haveExpired := false
+		for _, expiry := range s.timeouts {
+			if now.After(expiry) {
+				haveExpired = true
+				break
+			}
+		}
+		if !haveExpired {
+			continue
+		}
+
+		newTimeouts := make(map[xmpp.Cookie]time.Time)
+		for cookie, expiry := range s.timeouts {
+			if now.After(expiry) {
+				s.conn.Cancel(cookie)
+			} else {
+				newTimeouts[cookie] = expiry
+			}
+		}
+
+		s.timeouts = newTimeouts
 	}
 }

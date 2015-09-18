@@ -413,14 +413,16 @@ func main() {
 	info(term, fmt.Sprintf("Your fingerprint is %x", s.privateKey.DefaultFingerprint()))
 
 	ticker := time.NewTicker(1 * time.Second)
+	quit := make(chan bool)
 
-	mainLoop(term, &s, config,
-		ticker.C,
-		stanzaChan,
-		rosterReply,
-		commandChan,
-	)
+	// commandLoop would not be necessary on a GUI client
+	go commandLoop(term, &s, config, commandChan, quit)
 
+	go stanzaLoop(term, &s, stanzaChan, quit)
+	go rosterLoop(term, &s, rosterReply, quit)
+	go timeoutLoop(&s, ticker.C)
+
+	<-quit // wait
 	os.Stdout.Write([]byte("\n"))
 }
 

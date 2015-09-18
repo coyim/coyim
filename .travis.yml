@@ -1,0 +1,10 @@
+language: go
+
+go:
+  - tip
+  - 1.5
+  - 1.4.2
+
+install: make deps
+script: make ci
+

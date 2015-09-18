@@ -115,6 +115,15 @@ func (c *Config) ShouldEncryptTo(uid string) bool {
 	return false
 }
 
+func parseYes(input string) bool {
+	switch strings.ToLower(input) {
+	case "y", "yes":
+		return true
+	}
+
+	return false
+}
+
 func enroll(config *Config, term *terminal.Terminal) bool {
 	var err error
 	warn(term, "Enrolling new config file")
@@ -136,7 +145,7 @@ func enroll(config *Config, term *terminal.Terminal) bool {
 	}
 
 	term.SetPrompt("Enable debug logging to /tmp/xmpp-client-debug.log? ")
-	if debugLog, err := term.ReadLine(); err != nil || debugLog != "yes" {
+	if debugLog, err := term.ReadLine(); err != nil || !parseYes(debugLog) {
 		info(term, "Not enabling debug logging...")
 	} else {
 		info(term, "Debug logging enabled...")
@@ -144,7 +153,7 @@ func enroll(config *Config, term *terminal.Terminal) bool {
 	}
 
 	term.SetPrompt("Use Tor?: ")
-	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || useTorQuery[0] != 'y' && useTorQuery[0] != 'Y' {
+	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || !parseYes(useTorQuery) {
 		info(term, "Not using Tor...")
 		config.UseTor = false
 	} else {

@@ -39,46 +39,16 @@ func NewGTK() UI {
 	ui := &gtkUI{
 		window: gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
 	}
-
-	scrolledwin := gtk.NewScrolledWindow(nil, nil)
-	scrolledwin.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-
-	//Add a list widget
-	rosterList := gtk.NewTreeView()
-	rosterList.SetHeadersVisible(false)
-
-	rosterList.AppendColumn(
-		gtk.NewTreeViewColumnWithAttributes("user",
-			gtk.NewCellRendererText(), "text", 0),
-	)
-
-	rosterModel := gtk.NewListStore(
-		gtk.TYPE_STRING, // user
-		gtk.TYPE_INT,    // id
-	)
-
-	iter := &gtk.TreeIter{}
-	rosterModel.Append(iter)
-	rosterModel.Set(iter,
-		0, "alice@riseup.net",
-		1, 111,
-	)
-
-	rosterModel.Append(iter)
-	rosterModel.Set(iter,
-		0, "bob@riseup.net",
-		1, 222,
-	)
-
-	rosterList.SetModel(rosterModel)
-
-	scrolledwin.Add(rosterList)
-	ui.window.Add(scrolledwin)
+	menubar := initMenuBar()
+	roster := initRoster()
+	vbox := gtk.NewVBox(false, 1)
+	vbox.PackStart(menubar, false, false, 0)
+	vbox.Add(roster)
+	ui.window.Add(vbox)
 
 	ui.window.SetTitle("Coy")
 	ui.window.Connect("destroy", gtk.MainQuit)
 	ui.window.SetSizeRequest(200, 600)
-	initMenuBar(ui.window)
 	return ui
 }
 
@@ -179,10 +149,8 @@ func accountDialog() {
 	dialog.ShowAll()
 }
 
-func initMenuBar(window *gtk.Window) {
+func initMenuBar() *gtk.MenuBar {
 	menubar := gtk.NewMenuBar()
-	vbox := gtk.NewVBox(false, 1)
-	vbox.PackStart(menubar, false, false, 0)
 
 	//Config -> Account
 	cascademenu := gtk.NewMenuItemWithMnemonic("_Preference")
@@ -201,7 +169,44 @@ func initMenuBar(window *gtk.Window) {
 	menuitem = gtk.NewMenuItemWithMnemonic("_About")
 	menuitem.Connect("activate", aboutDialog)
 	submenu.Append(menuitem)
-	window.Add(vbox)
+	return menubar
+}
+
+func initRoster() *gtk.ScrolledWindow {
+	scrolledwin := gtk.NewScrolledWindow(nil, nil)
+	scrolledwin.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+
+	//Add a list widget
+	rosterList := gtk.NewTreeView()
+	rosterList.SetHeadersVisible(false)
+
+	rosterList.AppendColumn(
+		gtk.NewTreeViewColumnWithAttributes("user",
+			gtk.NewCellRendererText(), "text", 0),
+	)
+
+	rosterModel := gtk.NewListStore(
+		gtk.TYPE_STRING, // user
+		gtk.TYPE_INT,    // id
+	)
+
+	iter := &gtk.TreeIter{}
+	rosterModel.Append(iter)
+	rosterModel.Set(iter,
+		0, "alice@riseup.net",
+		1, 111,
+	)
+
+	rosterModel.Append(iter)
+	rosterModel.Set(iter,
+		0, "bob@riseup.net",
+		1, 222,
+	)
+
+	rosterList.SetModel(rosterModel)
+
+	scrolledwin.Add(rosterList)
+	return scrolledwin
 }
 
 func main() {

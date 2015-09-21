@@ -1,6 +1,11 @@
 default: deps lint test
 
-build:
+build: build-cli build-gui
+
+build-gui:
+	go build -tags nocli  -o bin/coyim-gui
+
+build-cli:
 	go build -o bin/coyim
 
 lint:

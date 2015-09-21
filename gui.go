@@ -145,8 +145,6 @@ func accountDialog() {
 	vbox.Add(button)
 
 	dialog.ShowAll()
-	dialog.Add(vbox)
-	dialog.ShowAll()
 }
 
 func initMenuBar() *gtk.MenuBar {

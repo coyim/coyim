@@ -16,6 +16,7 @@ import (
 	"syscall"
 	"time"
 
+	. "github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
@@ -751,7 +752,7 @@ CommandLoop:
 					alert(ui.term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, existing))
 					break
 				}
-				s.config.KnownFingerprints = append(s.config.KnownFingerprints, KnownFingerprint{fingerprint: fpr, UserId: cmd.User})
+				s.config.KnownFingerprints = append(s.config.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserId: cmd.User})
 				s.config.Save()
 				info(ui.term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:

@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -7,27 +7,27 @@ import (
 )
 
 func TestParseYes(t *testing.T) {
-	if ok := parseYes("Y"); !ok {
+	if ok := ParseYes("Y"); !ok {
 		t.Errorf("parsed Y as %v", ok)
 	}
 
-	if ok := parseYes("y"); !ok {
+	if ok := ParseYes("y"); !ok {
 		t.Errorf("parsed y as %v", ok)
 	}
 
-	if ok := parseYes("YES"); !ok {
+	if ok := ParseYes("YES"); !ok {
 		t.Errorf("parsed YES as %v", ok)
 	}
 
-	if ok := parseYes("yes"); !ok {
+	if ok := ParseYes("yes"); !ok {
 		t.Errorf("parsed yes as %v", ok)
 	}
 
-	if ok := parseYes("Yes"); !ok {
+	if ok := ParseYes("Yes"); !ok {
 		t.Errorf("parsed yes as %v", ok)
 	}
 
-	if ok := parseYes("anything"); ok {
+	if ok := ParseYes("anything"); ok {
 		t.Errorf("parsed something else as %v", ok)
 	}
 }
@@ -126,11 +126,11 @@ func TestParseMultiAccountConfig(t *testing.T) {
 }
 
 func TestFindConfigFile(t *testing.T) {
-	if _, err := findConfigFile(""); err != errHomeDirNotSet {
+	if _, err := FindConfigFile(""); err != errHomeDirNotSet {
 		t.Errorf("unexpected error %s", err)
 	}
 
-	c, err := findConfigFile("/foo")
+	c, err := FindConfigFile("/foo")
 	if err != nil {
 		t.Errorf("unexpected error %s", err)
 	}

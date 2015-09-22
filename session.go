@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"time"
 
+	. "github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 )
@@ -261,7 +262,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
 		if len(s.config.UserIdForFingerprint(fpr)) == 0 {
-			s.config.KnownFingerprints = append(s.config.KnownFingerprints, KnownFingerprint{fingerprint: fpr, UserId: from})
+			s.config.KnownFingerprints = append(s.config.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserId: from})
 		}
 		s.config.Save()
 	case SMPFailed:

@@ -1,212 +1,25 @@
 package main
 
 import (
-	"bytes"
 	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/url"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
+	. "github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
 	otr "github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/net/proxy"
 )
-
-var (
-	errHomeDirNotSet = errors.New("$HOME not set. Please either export $HOME or use the -config-file option.\n")
-)
-
-type MultiAccountConfig struct {
-	filename string `json:"-"`
-	Accounts []Config
-}
-
-type Config struct {
-	filename                      string `json:"-"`
-	Account                       string
-	Server                        string   `json:",omitempty"`
-	Proxies                       []string `json:",omitempty"`
-	Password                      string   `json:",omitempty"`
-	Port                          int      `json:",omitempty"`
-	PrivateKey                    []byte
-	KnownFingerprints             []KnownFingerprint
-	RawLogFile                    string   `json:",omitempty"`
-	NotifyCommand                 []string `json:",omitempty"`
-	IdleSecondsBeforeNotification int      `json:",omitempty"`
-	Bell                          bool
-	HideStatusUpdates             bool
-	UseTor                        bool
-	OTRAutoTearDown               bool
-	OTRAutoAppendTag              bool
-	OTRAutoStartSession           bool
-	ServerCertificateSHA256       string   `json:",omitempty"`
-	AlwaysEncrypt                 bool     `json:",omitempty"`
-	AlwaysEncryptWith             []string `json:",omitempty"`
-}
-
-type KnownFingerprint struct {
-	UserId         string
-	FingerprintHex string
-	fingerprint    []byte `json:"-"`
-}
-
-func findConfigFile(homeDir string) (*string, error) {
-	if len(homeDir) == 0 {
-		return nil, errHomeDirNotSet
-	}
-
-	persistentDir := filepath.Join(homeDir, "Persistent")
-	if stat, err := os.Lstat(persistentDir); err == nil && stat.IsDir() {
-		// Looks like Tails.
-		homeDir = persistentDir
-	}
-
-	configFile := filepath.Join(homeDir, ".xmpp-client")
-	return &configFile, nil
-}
-
-func ParseMultiConfig(filename string) (*MultiAccountConfig, error) {
-	contents, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	c, err := parseMultiConfig(contents)
-	if err != nil {
-		return nil, err
-	}
-
-	c.filename = filename
-
-	return c, nil
-}
-
-func parseMultiConfig(conf []byte) (m *MultiAccountConfig, err error) {
-	m = &MultiAccountConfig{}
-	if err = json.Unmarshal(conf, &m); err != nil {
-		return
-	}
-
-	if m.Accounts == nil {
-		return fallbackToSingleAccountConfig(conf)
-	}
-
-	return
-}
-
-func fallbackToSingleAccountConfig(conf []byte) (*MultiAccountConfig, error) {
-	c, err := parseConfig(conf)
-	if err != nil {
-		return nil, err
-	}
-
-	//TODO: Convert from single to multi account format
-
-	return &MultiAccountConfig{
-		Accounts: []Config{*c},
-	}, nil
-}
-
-func ParseConfig(filename string) (*Config, error) {
-	m, err := ParseMultiConfig(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(m.Accounts) == 0 {
-		return nil, errors.New("account config is missing")
-	}
-
-	c := &m.Accounts[0]
-	c.filename = filename
-	return c, parseFingerprints(c)
-}
-
-func parseConfig(contents []byte) (c *Config, err error) {
-	c = new(Config)
-	if err = json.Unmarshal(contents, &c); err != nil {
-		return
-	}
-
-	return
-}
-
-func parseFingerprints(c *Config) error {
-	var err error
-	for i, known := range c.KnownFingerprints {
-		c.KnownFingerprints[i].fingerprint, err = hex.DecodeString(known.FingerprintHex)
-		if err != nil {
-			return errors.New("xmpp: failed to parse hex fingerprint for " + known.UserId + ": " + err.Error())
-		}
-	}
-
-	return nil
-}
-
-func (c *Config) Save() error {
-	for i, known := range c.KnownFingerprints {
-		c.KnownFingerprints[i].FingerprintHex = hex.EncodeToString(known.fingerprint)
-	}
-
-	contents, err := json.MarshalIndent(c, "", "\t")
-	if err != nil {
-		return err
-	}
-	return ioutil.WriteFile(c.filename, contents, 0600)
-}
-
-func (c *Config) UserIdForFingerprint(fpr []byte) string {
-	for _, known := range c.KnownFingerprints {
-		if bytes.Equal(fpr, known.fingerprint) {
-			return known.UserId
-		}
-	}
-
-	return ""
-}
-
-func (c *Config) HasFingerprint(uid string) bool {
-	for _, known := range c.KnownFingerprints {
-		if uid == known.UserId {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (c *Config) ShouldEncryptTo(uid string) bool {
-	if c.AlwaysEncrypt {
-		return true
-	}
-
-	for _, contact := range c.AlwaysEncryptWith {
-		if contact == uid {
-			return true
-		}
-	}
-	return false
-}
-
-func parseYes(input string) bool {
-	switch strings.ToLower(input) {
-	case "y", "yes":
-		return true
-	}
-
-	return false
-}
 
 func enroll(config *Config, term *terminal.Terminal) bool {
 	var err error
@@ -229,7 +42,7 @@ func enroll(config *Config, term *terminal.Terminal) bool {
 	}
 
 	term.SetPrompt("Enable debug logging to /tmp/xmpp-client-debug.log? ")
-	if debugLog, err := term.ReadLine(); err != nil || !parseYes(debugLog) {
+	if debugLog, err := term.ReadLine(); err != nil || !ParseYes(debugLog) {
 		info(term, "Not enabling debug logging...")
 	} else {
 		info(term, "Debug logging enabled...")
@@ -237,7 +50,7 @@ func enroll(config *Config, term *terminal.Terminal) bool {
 	}
 
 	term.SetPrompt("Use Tor?: ")
-	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || !parseYes(useTorQuery) {
+	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || !ParseYes(useTorQuery) {
 		info(term, "Not using Tor...")
 		config.UseTor = false
 	} else {
@@ -372,7 +185,7 @@ func loadConfig(ui UI) (*Config, string, error) {
 	var err error
 
 	if len(*configFile) == 0 {
-		if configFile, err = findConfigFile(os.Getenv("HOME")); err != nil {
+		if configFile, err = FindConfigFile(os.Getenv("HOME")); err != nil {
 			ui.Alert(err.Error())
 			return nil, "", err
 		}
@@ -386,7 +199,7 @@ func loadConfig(ui UI) (*Config, string, error) {
 			return config, "", errors.New("Failed to create config")
 		}
 
-		config.filename = *configFile
+		config.Filename = *configFile
 		config.Save()
 	}
 

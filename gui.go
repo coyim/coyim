@@ -20,6 +20,7 @@ import (
 	"time"
 	"unsafe"
 
+	. "github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/gtk"

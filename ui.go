@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	. "github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"

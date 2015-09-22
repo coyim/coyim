@@ -42,6 +42,8 @@ func newRoster() *roster {
 	r.window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
 	r.view.SetHeadersVisible(false)
+	r.view.GetSelection().SetMode(gtk.SELECTION_NONE)
+
 	r.view.AppendColumn(
 		gtk.NewTreeViewColumnWithAttributes("user",
 			gtk.NewCellRendererText(), "text", 0),
@@ -55,9 +57,62 @@ func newRoster() *roster {
 	)
 
 	r.view.SetModel(r.model)
+	r.view.Connect("row-activated", r.onActivateBuddy)
+
 	r.window.Add(r.view)
 
 	return r
+}
+
+func (r *roster) onActivateBuddy(ctx *glib.CallbackContext) {
+	//TODO: Only open if it's not already open
+	win := gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
+	win.SetPosition(gtk.WIN_POS_CENTER)
+	win.SetDefaultSize(300, 300)
+	win.SetDestroyWithParent(true)
+
+	textview := gtk.NewTextView()
+	textview.SetEditable(false)
+	textview.SetCursorVisible(false)
+	buffer := textview.GetBuffer()
+	//TODO: Load recent messages
+	buffer.InsertAtCursor("** History here **")
+
+	vbox := gtk.NewVBox(false, 1)
+	vbox.SetHomogeneous(false)
+	vbox.SetSpacing(5)
+	vbox.SetBorderWidth(5)
+
+	text := gtk.NewTextView()
+	text.Connect("key_press_event", func(ctx *glib.CallbackContext) {
+		arg := ctx.Args(0)
+		evKey := *(**gdk.EventKey)(unsafe.Pointer(&arg))
+
+		if evKey.Keyval == 0xff0d {
+			fmt.Println("SEND MESSAGE")
+			//target := ctx.Target()
+			//if t, ok := target.(*gtk.TextView); ok {
+			//	t.GetBuffer().SetText("")
+			//}
+		}
+	})
+
+	scroll := gtk.NewScrolledWindow(nil, nil)
+	scroll.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+	scroll.Add(text)
+
+	vbox.PackStart(textview, true, true, 0)
+	vbox.PackStart(scroll, true, true, 0)
+
+	//vbox.Add(textview)
+	//vbox.Add(gtk.NewHSeparator())
+	//vbox.Add(text)
+	win.Add(vbox)
+	win.ShowAll()
+
+	//r.window.Add(win)
+	//fmt.Println("OPEN MESSAGE")
+	//fmt.Printf("-> %#v", ctx.Target())
 }
 
 func (r *roster) update(entries []xmpp.RosterEntry) {
@@ -356,7 +411,7 @@ func (ui *gtkUI) Connect() error {
 		conn, err := NewXMPPConn(ui, config, password, ui.RegisterCallback(), logger)
 		if err != nil {
 			ui.Alert(err.Error())
-			gtk.MainQuit()
+			//gtk.MainQuit()
 			return
 		}
 

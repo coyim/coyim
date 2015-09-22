@@ -245,6 +245,7 @@ func main() {
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
 	}
+	ui.session.sessionHandler = &cliSessionHandler{ui: ui}
 
 	ui.session.privateKey.Parse(config.PrivateKey)
 	ui.session.timeouts = make(map[xmpp.Cookie]time.Time)
@@ -770,4 +771,20 @@ CommandLoop:
 	}
 
 	done <- true
+}
+
+type cliSessionHandler struct {
+	ui UI
+}
+
+func (c *cliSessionHandler) info(m string) {
+	c.ui.Info(m)
+}
+
+func (c *cliSessionHandler) warn(m string) {
+	c.ui.Warn(m)
+}
+
+func (c *cliSessionHandler) alert(m string) {
+	c.ui.Alert(m)
 }

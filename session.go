@@ -54,19 +54,25 @@ type Session struct {
 	// lastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	lastActionTime time.Time
+	sessionHandler sessionHandler
 }
 
-//TODO: They could all be replaced by a logger
+type sessionHandler interface {
+	info(string)
+	warn(string)
+	alert(string)
+}
+
 func (c *Session) info(m string) {
-	c.ui.Info(m)
+	c.sessionHandler.info(m)
 }
 
 func (c *Session) warn(m string) {
-	c.ui.Warn(m)
+	c.sessionHandler.warn(m)
 }
 
 func (c *Session) alert(m string) {
-	c.ui.Alert(m)
+	c.sessionHandler.alert(m)
 }
 
 func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {

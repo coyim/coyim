@@ -109,6 +109,10 @@ func (*gtkUI) RegisterCallback() xmpp.FormCallback {
 	return nil
 }
 
+func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
+	u.Info("TODO: message received")
+}
+
 func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
 	u.Info(fmt.Sprintf("TODO: notify new keys from %s", uid))
 }
@@ -325,7 +329,7 @@ func main() {
 	//signal.Notify(resizeChan, syscall.SIGWINCH)
 
 	ui := NewGTK()
-	if err := ui.Connect(term); err != nil {
+	if err := ui.Connect(); err != nil {
 		//failed to fetch config and enroll new config
 		return
 	}
@@ -344,8 +348,7 @@ func main() {
 	os.Stdout.Write([]byte("\n"))
 }
 
-//TODO: Get rid of this term
-func (ui *gtkUI) Connect(term *terminal.Terminal) error {
+func (ui *gtkUI) Connect() error {
 	config, password, err := loadConfig(ui)
 	if err != nil {
 		return err
@@ -356,7 +359,6 @@ func (ui *gtkUI) Connect(term *terminal.Terminal) error {
 		ui: ui,
 
 		account:           config.Account,
-		term:              term,
 		conversations:     make(map[string]*otr3.Conversation),
 		eh:                make(map[string]*eventHandler),
 		knownStates:       make(map[string]string),
@@ -432,14 +434,14 @@ RosterLoop:
 
 		case edit := <-s.pendingRosterChan:
 			if !edit.isComplete {
-				info(s.term, "Please edit "+edit.fileName+" and run /rostereditdone when complete")
+				ui.Info("Please edit " + edit.fileName + " and run /rostereditdone when complete")
 				s.pendingRosterEdit = edit
 				continue
 			}
 			if s.processEditedRoster(edit) {
 				s.pendingRosterEdit = nil
 			} else {
-				alert(s.term, "Please reedit file and run /rostereditdone again")
+				ui.Alert("Please reedit file and run /rostereditdone again")
 			}
 		}
 	}

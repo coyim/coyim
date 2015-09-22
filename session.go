@@ -14,7 +14,6 @@ import (
 
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 //TODO: this is confusing
@@ -24,11 +23,12 @@ import (
 type Session struct {
 	ui UI
 
+	input Input
+
 	account string
 	conn    *xmpp.Conn
-	term    *terminal.Terminal
 	roster  []xmpp.RosterEntry
-	input   Input
+
 	// conversations maps from a JID (without the resource) to an OTR
 	// conversation. (Note that unencrypted conversations also pass through
 	// OTR.)
@@ -211,6 +211,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	for _, msg := range toSend {
 		s.conn.Send(stanza.From, string(msg))
 	}
+
 	switch change {
 	case NewKeys:
 		s.input.SetPromptForTarget(from, true)
@@ -289,14 +290,6 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		s.info(fmt.Sprintf("%s appears to support OTRv%d. You should encourage them to upgrade their OTR client!", from, detectedOTRVersion))
 	}
 
-	//TODO: extract this
-	var line []byte
-	if encrypted {
-		line = append(line, s.term.Escape.Green...)
-	} else {
-		line = append(line, s.term.Escape.Red...)
-	}
-
 	var timestamp string
 	var messageTime time.Time
 	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {
@@ -316,15 +309,11 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		timestamp = messageTime.Format(time.Stamp)
 	}
 
-	t := fmt.Sprintf("(%s) %s: ", timestamp, from)
-	line = append(line, []byte(t)...)
-	line = append(line, s.term.Escape.Reset...)
-	line = appendTerminalEscaped(line, stripHTML(out))
-	line = append(line, '\n')
-	if s.config.Bell {
-		line = append(line, '\a')
-	}
-	s.term.Write(line)
+	s.messageReceived(from, timestamp, encrypted, out)
+}
+
+func (s *Session) messageReceived(from, timestamp string, encrypted bool, message []byte) {
+	s.ui.MessageReceived(from, timestamp, encrypted, message)
 	s.maybeNotify()
 }
 

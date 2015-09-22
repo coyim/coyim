@@ -223,7 +223,6 @@ func main() {
 
 		account:           config.Account,
 		conn:              conn,
-		term:              ui.term,
 		conversations:     make(map[string]*otr3.Conversation),
 		eh:                make(map[string]*eventHandler),
 		knownStates:       make(map[string]string),
@@ -242,6 +241,27 @@ func main() {
 	ui.Loop()
 
 	os.Stdout.Write([]byte("\n"))
+}
+
+func (c *cliUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
+
+	var line []byte
+	if encrypted {
+		line = append(line, c.term.Escape.Green...)
+	} else {
+		line = append(line, c.term.Escape.Red...)
+	}
+
+	t := fmt.Sprintf("(%s) %s: ", timestamp, from)
+	line = append(line, []byte(t)...)
+	line = append(line, c.term.Escape.Reset...)
+	line = appendTerminalEscaped(line, stripHTML(message))
+	line = append(line, '\n')
+	if c.session.config.Bell {
+		line = append(line, '\a')
+	}
+
+	c.term.Write(line)
 }
 
 func (c *cliUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {

@@ -20,8 +20,6 @@ import (
 	"time"
 	"unsafe"
 
-	"golang.org/x/crypto/ssh/terminal"
-
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/gtk"
@@ -319,30 +317,10 @@ func (ui *gtkUI) RosterReceived(roster []xmpp.RosterEntry) {
 func main() {
 	flag.Parse()
 
-	//TODO: Remove this terminal
-	oldState, err := terminal.MakeRaw(0)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer terminal.Restore(0, oldState)
-
-	term := terminal.NewTerminal(os.Stdin, "")
-	updateTerminalSize(term)
-	term.SetBracketedPasteMode(true)
-	defer term.SetBracketedPasteMode(false)
-
-	//TODO: This crashes GTK :S
-	//resizeChan := make(chan os.Signal)
-	//go func() {
-	//	for _ = range resizeChan {
-	//		updateTerminalSize(term)
-	//	}
-	//}()
-	//signal.Notify(resizeChan, syscall.SIGWINCH)
-
 	ui := NewGTK()
+
 	if err := ui.Connect(); err != nil {
-		//failed to fetch config and enroll new config
+		//TODO: Handle error?
 		return
 	}
 
@@ -375,8 +353,8 @@ func (ui *gtkUI) Connect() error {
 		lastActionTime:    time.Now(),
 	}
 
-	//TODO: If we dont to this in a Go routine, GTK main loop freezes
-	//and I have no idea why
+	// TODO: GTK main loop freezes unless this is run on a Go routine
+	// and I have no idea why
 	go func() {
 		logger := bytes.NewBuffer(nil)
 		conn, err := NewXMPPConn(ui, config, password, ui.RegisterCallback(), logger)

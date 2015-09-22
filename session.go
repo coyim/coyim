@@ -37,9 +37,7 @@ type Session struct {
 	knownStates map[string]string
 	privateKey  *otr3.PrivateKey
 	config      *Config
-	// lastMessageFrom is the JID (without the resource) of the contact
-	// that we last received a message from.
-	lastMessageFrom string
+
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
 	timeouts map[xmpp.Cookie]time.Time

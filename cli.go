@@ -27,6 +27,7 @@ type cliUI struct {
 	password string
 	oldState *terminal.State
 	term     *terminal.Terminal
+	input    *Input
 }
 
 func newCLI() *cliUI {
@@ -55,6 +56,11 @@ func newCLI() *cliUI {
 func (c *cliUI) Loop() {
 	quit := make(chan bool)
 
+	c.input = &Input{
+		term:        c.term,
+		uidComplete: new(priorityList),
+	}
+
 	//This should be done by any client
 	info(c.term, "Fetching roster")
 	rosterReply, _, err := c.session.conn.RequestRoster()
@@ -64,16 +70,12 @@ func (c *cliUI) Loop() {
 	}
 
 	c.session.conn.SignalPresence("")
-	c.session.input = Input{
-		term:        c.term,
-		uidComplete: new(priorityList),
-	}
 
 	ticker := time.NewTicker(1 * time.Second)
 	go timeoutLoop(c.session, ticker.C)
 
 	commandChan := make(chan interface{})
-	go c.session.input.ProcessCommands(commandChan)
+	go c.input.ProcessCommands(commandChan)
 
 	stanzaChan := make(chan xmpp.Stanza)
 	go c.session.readMessages(stanzaChan)
@@ -142,7 +144,7 @@ func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence) {
 		jid := xmpp.RemoveResourceFromJid(stanza.From)
 		info(c.term, jid+" wishes to see when you're online. Use '/confirm "+jid+"' to confirm (or likewise with /deny to decline)")
 		s.pendingSubscribes[jid] = stanza.Id
-		s.input.AddUser(jid)
+		c.input.AddUser(jid)
 		return
 	case "unavailable":
 		gone = true
@@ -192,6 +194,16 @@ func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence) {
 		line = append(line, []byte(stanza.Status)...)
 		line = append(line, '\n')
 		c.term.Write(line)
+	}
+}
+
+func (c *cliUI) IQReceived(uid string) {
+	c.input.AddUser(uid)
+}
+
+func (c *cliUI) RosterReceived(roster []xmpp.RosterEntry) {
+	for _, entry := range roster {
+		c.input.AddUser(entry.Jid)
 	}
 }
 
@@ -265,7 +277,12 @@ func (c *cliUI) MessageReceived(from, timestamp string, encrypted bool, message 
 }
 
 func (c *cliUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
+	c.input.SetPromptForTarget(uid, true)
 	c.printConversationInfo(uid, conversation)
+}
+
+func (c *cliUI) OTREnded(uid string) {
+	c.input.SetPromptForTarget(uid, false)
 }
 
 func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversation) {
@@ -700,7 +717,7 @@ CommandLoop:
 				for _, msg := range msgs {
 					s.conn.Send(to, string(msg))
 				}
-				s.input.SetPromptForTarget(cmd.User, false)
+				ui.input.SetPromptForTarget(cmd.User, false)
 				warn(ui.term, "OTR conversation ended with "+cmd.User)
 			case authQACommand:
 				to := string(cmd.User)

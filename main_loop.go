@@ -73,10 +73,7 @@ RosterLoop:
 				break RosterLoop
 			}
 
-			for _, entry := range s.roster {
-				s.input.AddUser(entry.Jid)
-			}
-
+			s.rosterReceived()
 			info(term, "Roster received")
 
 		case edit := <-s.pendingRosterChan:

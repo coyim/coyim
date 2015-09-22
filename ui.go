@@ -39,7 +39,10 @@ type UI interface {
 	// callbacks
 	RegisterCallback() xmpp.FormCallback
 	NewOTRKeys(from string, conversation *otr3.Conversation)
+	OTREnded(string)
 	MessageReceived(from, timestamp string, encrypted bool, message []byte)
+	IQReceived(string)
+	RosterReceived(roster []xmpp.RosterEntry)
 
 	ProcessPresence(*xmpp.ClientPresence)
 

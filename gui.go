@@ -117,6 +117,10 @@ func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
 	u.Info(fmt.Sprintf("TODO: notify new keys from %s", uid))
 }
 
+func (u *gtkUI) OTREnded(uid string) {
+	//TODO: conversation ended
+}
+
 func (u *gtkUI) Info(m string) {
 	fmt.Println(">>> INFO", m)
 }
@@ -304,6 +308,14 @@ func (ui *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence) {
 	fmt.Println(jid, "is", state)
 }
 
+func (ui *gtkUI) IQReceived(string) {
+	//TODO
+}
+
+func (ui *gtkUI) RosterReceived(roster []xmpp.RosterEntry) {
+	//TODO
+}
+
 func main() {
 	flag.Parse()
 
@@ -332,12 +344,6 @@ func main() {
 	if err := ui.Connect(); err != nil {
 		//failed to fetch config and enroll new config
 		return
-	}
-
-	//TODO: What is this used for?
-	ui.session.input = Input{
-		term:        term,
-		uidComplete: new(priorityList),
 	}
 
 	//ticker := time.NewTicker(1 * time.Second)
@@ -398,6 +404,7 @@ func (ui *gtkUI) onConnect() {
 	go ui.handleStanzaEvents()
 }
 
+//TODO: use the rosterLoop() from main_loop.go
 func (ui *gtkUI) handleRosterEvents() {
 	s := ui.session
 
@@ -420,12 +427,6 @@ RosterLoop:
 			if s.roster, err = xmpp.ParseRoster(rosterStanza); err != nil {
 				ui.Alert("Failed to parse roster: " + err.Error())
 				break RosterLoop
-			}
-
-			for _, entry := range s.roster {
-				//TODO: Remove
-				//I guess this adds the user to the autocomplete list
-				s.input.AddUser(entry.Jid)
 			}
 
 			ui.updateRoster(s.roster)

@@ -16,14 +16,11 @@ import (
 	"github.com/twstrike/otr3"
 )
 
-//TODO: this is confusing
-//term is a *terminal.Terminal
-//input also has a *terminal.Terminal
-//TODO: remove Session dependence on terminal
 type Session struct {
+	//TODO: This feels bad.
+	//it only needs a reference to UI callbacks
+	//maybe use the event handler?
 	ui UI
-
-	input Input
 
 	account string
 	conn    *xmpp.Conn
@@ -86,6 +83,14 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 	}
 }
 
+func (s *Session) rosterReceived() {
+	s.ui.RosterReceived(s.roster)
+}
+
+func (s *Session) iqReceived(uid string) {
+	s.ui.IQReceived(uid)
+}
+
 func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 	buf := bytes.NewBuffer(stanza.Query)
 	parser := xml.NewDecoder(buf)
@@ -144,10 +149,12 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 				break
 			}
 		}
+
 		if !found {
 			s.roster = append(s.roster, entry)
-			s.input.AddUser(entry.Jid)
+			s.iqReceived(entry.Jid)
 		}
+
 		return xmpp.EmptyReply{}
 	default:
 		s.info("Unknown IQ: " + startElem.Name.Space + " " + startElem.Name.Local)
@@ -174,6 +181,10 @@ func (s *Session) handleConfirmOrDeny(jid string, isConfirm bool) {
 
 func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
 	s.ui.NewOTRKeys(from, conversation)
+}
+
+func (s *Session) otrEnded(uid string) {
+	s.ui.OTREnded(uid)
 }
 
 func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
@@ -214,11 +225,11 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 
 	switch change {
 	case NewKeys:
-		s.input.SetPromptForTarget(from, true)
 		s.info(fmt.Sprintf("New OTR session with %s established", from))
 		s.newOTRKeys(from, conversation)
 	case ConversationEnded:
-		s.input.SetPromptForTarget(from, false)
+		s.otrEnded(from)
+
 		// This is probably unsafe without a policy that _forces_ crypto to
 		// _everyone_ by default and refuses plaintext. Users might not notice
 		// their buddy has ended a session, which they have also ended, and they

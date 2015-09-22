@@ -2,12 +2,6 @@
 
 package main
 
-/*
-#cgo pkg-config: gdk-2.0 gthread-2.0
-#include <gdk/gdk.h>
-*/
-import "C"
-
 import (
 	"bytes"
 	"flag"
@@ -23,6 +17,7 @@ import (
 	. "github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/gdk"
+	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
 	"github.com/twstrike/otr3"
 )
@@ -66,10 +61,10 @@ func newRoster() *roster {
 }
 
 func (r *roster) update(entries []xmpp.RosterEntry) {
-	gdk.ThreadsEnter()
-	gobj := (C.gpointer)(unsafe.Pointer(r.model.GListStore))
+	gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
 
-	C.g_object_ref(gobj)
+	gdk.ThreadsEnter()
+	gobj.Ref()
 	r.view.SetModel(nil)
 
 	r.model.Clear()
@@ -86,7 +81,7 @@ func (r *roster) update(entries []xmpp.RosterEntry) {
 	}
 
 	r.view.SetModel(r.model)
-	C.g_object_unref(gobj)
+	gobj.Unref()
 	gdk.ThreadsLeave()
 }
 

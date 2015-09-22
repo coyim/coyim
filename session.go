@@ -60,13 +60,26 @@ type Session struct {
 	lastActionTime time.Time
 }
 
+//TODO: They could all be replaced by a logger
+func (c *Session) info(m string) {
+	c.ui.Info(m)
+}
+
+func (c *Session) warn(m string) {
+	c.ui.Warn(m)
+}
+
+func (c *Session) alert(m string) {
+	c.ui.Alert(m)
+}
+
 func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 	defer close(stanzaChan)
 
 	for {
 		stanza, err := s.conn.Next()
 		if err != nil {
-			s.ui.Alert(err.Error())
+			s.alert(err.Error())
 			return
 		}
 		stanzaChan <- stanza
@@ -103,12 +116,12 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 		}
 	case "jabber:iq:roster query":
 		if len(stanza.From) > 0 && stanza.From != s.account {
-			warn(s.term, "Ignoring roster IQ from bad address: "+stanza.From)
+			s.warn("Ignoring roster IQ from bad address: " + stanza.From)
 			return nil
 		}
 		var roster xmpp.Roster
 		if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&roster); err != nil || len(roster.Item) == 0 {
-			warn(s.term, "Failed to parse roster push IQ")
+			s.warn("Failed to parse roster push IQ")
 			return nil
 		}
 		entry := roster.Item[0]
@@ -137,7 +150,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 		}
 		return xmpp.EmptyReply{}
 	default:
-		info(s.term, "Unknown IQ: "+startElem.Name.Space+" "+startElem.Name.Local)
+		s.info("Unknown IQ: " + startElem.Name.Space + " " + startElem.Name.Local)
 	}
 
 	return nil
@@ -146,7 +159,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 func (s *Session) handleConfirmOrDeny(jid string, isConfirm bool) {
 	id, ok := s.pendingSubscribes[jid]
 	if !ok {
-		warn(s.term, "No pending subscription from "+jid)
+		s.warn("No pending subscription from " + jid)
 		return
 	}
 	delete(s.pendingSubscribes, id)
@@ -155,15 +168,19 @@ func (s *Session) handleConfirmOrDeny(jid string, isConfirm bool) {
 		typ = "subscribed"
 	}
 	if err := s.conn.SendPresence(jid, typ, id); err != nil {
-		alert(s.term, "Error sending presence stanza: "+err.Error())
+		s.warn("Error sending presence stanza: " + err.Error())
 	}
+}
+
+func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
+	s.ui.NewOTRKeys(from, conversation)
 }
 
 func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	from := xmpp.RemoveResourceFromJid(stanza.From)
 
 	if stanza.Type == "error" {
-		alert(s.term, "Error reported from "+from+": "+stanza.Body)
+		s.alert("Error reported from " + from + ": " + stanza.Body)
 		return
 	}
 
@@ -188,7 +205,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	encrypted := conversation.IsEncrypted()
 	change := eh.consumeSecurityChange()
 	if err != nil {
-		alert(s.term, "While processing message from "+from+": "+err.Error())
+		s.alert("While processing message from " + from + ": " + err.Error())
 		s.conn.Send(stanza.From, ErrorPrefix+"Error processing message")
 	}
 	for _, msg := range toSend {
@@ -197,8 +214,8 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	switch change {
 	case NewKeys:
 		s.input.SetPromptForTarget(from, true)
-		info(s.term, fmt.Sprintf("New OTR session with %s established", from))
-		printConversationInfo(s, from, conversation)
+		s.info(fmt.Sprintf("New OTR session with %s established", from))
+		s.newOTRKeys(from, conversation)
 	case ConversationEnded:
 		s.input.SetPromptForTarget(from, false)
 		// This is probably unsafe without a policy that _forces_ crypto to
@@ -208,10 +225,10 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		// feature and have set it as an explicit preference.
 		if s.config.OTRAutoTearDown {
 			if s.conversations[from] == nil {
-				alert(s.term, fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
+				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
 				break
 			} else {
-				info(s.term, fmt.Sprintf("%s has ended the secure conversation.", from))
+				s.info(fmt.Sprintf("%s has ended the secure conversation.", from))
 				msgs, err := conversation.End()
 				if err != nil {
 					//TODO: error handle
@@ -220,25 +237,25 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 				for _, msg := range msgs {
 					s.conn.Send(from, string(msg))
 				}
-				info(s.term, fmt.Sprintf("Secure session with %s has been automatically ended. Messages will be sent in the clear until another OTR session is established.", from))
+				s.info(fmt.Sprintf("Secure session with %s has been automatically ended. Messages will be sent in the clear until another OTR session is established.", from))
 			}
 		} else {
-			info(s.term, fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", from, from))
+			s.info(fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", from, from))
 		}
 	case SMPSecretNeeded:
-		info(s.term, fmt.Sprintf("%s is attempting to authenticate. Please supply mutual shared secret with /otr-auth user secret", from))
+		s.info(fmt.Sprintf("%s is attempting to authenticate. Please supply mutual shared secret with /otr-auth user secret", from))
 		if question := eh.smpQuestion; len(question) > 0 {
-			info(s.term, fmt.Sprintf("%s asks: %s", from, question))
+			s.info(fmt.Sprintf("%s asks: %s", from, question))
 		}
 	case SMPComplete:
-		info(s.term, fmt.Sprintf("Authentication with %s successful", from))
+		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
 		if len(s.config.UserIdForFingerprint(fpr)) == 0 {
 			s.config.KnownFingerprints = append(s.config.KnownFingerprints, KnownFingerprint{fingerprint: fpr, UserId: from})
 		}
 		s.config.Save()
 	case SMPFailed:
-		alert(s.term, fmt.Sprintf("Authentication with %s failed", from))
+		s.alert(fmt.Sprintf("Authentication with %s failed", from))
 	}
 
 	if len(out) == 0 {
@@ -253,7 +270,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		whitespaceTag := out[len(out)-whitespaceTagLength:]
 		if bytes.Equal(whitespaceTag[:len(OTRWhitespaceTagStart)], OTRWhitespaceTagStart) {
 			if bytes.HasSuffix(whitespaceTag, OTRWhiteSpaceTagV1) {
-				info(s.term, fmt.Sprintf("%s appears to support OTRv1. You should encourage them to upgrade their OTR client!", from))
+				s.info(fmt.Sprintf("%s appears to support OTRv1. You should encourage them to upgrade their OTR client!", from))
 				detectedOTRVersion = 1
 			}
 			if bytes.HasSuffix(whitespaceTag, OTRWhiteSpaceTagV2) {
@@ -266,12 +283,13 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	}
 
 	if s.config.OTRAutoStartSession && detectedOTRVersion >= 2 {
-		info(s.term, fmt.Sprintf("%s appears to support OTRv%d. We are attempting to start an OTR session with them.", from, detectedOTRVersion))
+		s.info(fmt.Sprintf("%s appears to support OTRv%d. We are attempting to start an OTR session with them.", from, detectedOTRVersion))
 		s.conn.Send(from, QueryMessage)
 	} else if s.config.OTRAutoStartSession && detectedOTRVersion == 1 {
-		info(s.term, fmt.Sprintf("%s appears to support OTRv%d. You should encourage them to upgrade their OTR client!", from, detectedOTRVersion))
+		s.info(fmt.Sprintf("%s appears to support OTRv%d. You should encourage them to upgrade their OTR client!", from, detectedOTRVersion))
 	}
 
+	//TODO: extract this
 	var line []byte
 	if encrypted {
 		line = append(line, s.term.Escape.Green...)
@@ -288,7 +306,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		// sent, rather than time.Now().
 		messageTime, err = time.Parse(time.RFC3339, stanza.Delay.Stamp)
 		if err != nil {
-			alert(s.term, "Can not parse Delayed Delivery timestamp, using quoted string instead.")
+			s.alert("Can not parse Delayed Delivery timestamp, using quoted string instead.")
 			timestamp = fmt.Sprintf("%q", stanza.Delay.Stamp)
 		}
 	} else {
@@ -329,7 +347,7 @@ func (s *Session) maybeNotify() {
 	cmd := exec.Command(s.config.NotifyCommand[0], s.config.NotifyCommand[1:]...)
 	go func() {
 		if err := cmd.Run(); err != nil {
-			alert(s.term, "Failed to run notify command: "+err.Error())
+			s.alert("Failed to run notify command: " + err.Error())
 		}
 	}()
 }
@@ -377,31 +395,31 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) (gone bool) {
 func (s *Session) awaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	stanza, ok := <-ch
 	if !ok {
-		warn(s.term, "Version request to "+user+" timed out")
+		s.warn("Version request to " + user + " timed out")
 		return
 	}
 	reply, ok := stanza.Value.(*xmpp.ClientIQ)
 	if !ok {
-		warn(s.term, "Version request to "+user+" resulted in bad reply type")
+		s.warn("Version request to " + user + " resulted in bad reply type")
 		return
 	}
 
 	if reply.Type == "error" {
-		warn(s.term, "Version request to "+user+" resulted in XMPP error")
+		s.warn("Version request to " + user + " resulted in XMPP error")
 		return
 	} else if reply.Type != "result" {
-		warn(s.term, "Version request to "+user+" resulted in response with unknown type: "+reply.Type)
+		s.warn("Version request to " + user + " resulted in response with unknown type: " + reply.Type)
 		return
 	}
 
 	buf := bytes.NewBuffer(reply.Query)
 	var versionReply xmpp.VersionReply
 	if err := xml.NewDecoder(buf).Decode(&versionReply); err != nil {
-		warn(s.term, "Failed to parse version reply from "+user+": "+err.Error())
+		s.warn("Failed to parse version reply from " + user + ": " + err.Error())
 		return
 	}
 
-	info(s.term, fmt.Sprintf("Version reply from %s: %#v", user, versionReply))
+	s.info(fmt.Sprintf("Version reply from %s: %#v", user, versionReply))
 }
 
 // editRoster runs in a goroutine and writes the roster to a file that the user
@@ -411,7 +429,7 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 	// directory.
 	dir, err := ioutil.TempDir("" /* system default temp dir */, "xmpp-client")
 	if err != nil {
-		alert(s.term, "Failed to create temp dir to edit roster: "+err.Error())
+		s.alert("Failed to create temp dir to edit roster: " + err.Error())
 		return
 	}
 
@@ -423,7 +441,7 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 	fileName := filepath.Join(dir, "roster")
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
-		alert(s.term, "Failed to create temp file: "+err.Error())
+		s.alert("Failed to create temp file: " + err.Error())
 		return
 	}
 
@@ -490,7 +508,7 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 func (s *Session) loadEditedRoster(edit rosterEdit) {
 	contents, err := ioutil.ReadFile(edit.fileName)
 	if err != nil {
-		alert(s.term, "Failed to load edited roster: "+err.Error())
+		s.alert("Failed to load edited roster: " + err.Error())
 		return
 	}
 	os.Remove(edit.fileName)
@@ -517,7 +535,7 @@ func (s *Session) processEditedRoster(edit *rosterEdit) bool {
 		var err error
 
 		if entry.Jid, err = unescapeNonASCII(string(string(parts[0]))); err != nil {
-			alert(s.term, fmt.Sprintf("Failed to parse JID on line %d: %s", i+1, err))
+			s.alert(fmt.Sprintf("Failed to parse JID on line %d: %s", i+1, err))
 			return false
 		}
 		for _, part := range parts[1:] {
@@ -527,21 +545,21 @@ func (s *Session) processEditedRoster(edit *rosterEdit) bool {
 
 			pos := bytes.IndexByte(part, ':')
 			if pos == -1 {
-				alert(s.term, fmt.Sprintf("Failed to find colon in item on line %d", i+1))
+				s.alert(fmt.Sprintf("Failed to find colon in item on line %d", i+1))
 				return false
 			}
 
 			typ := string(part[:pos])
 			value, err := unescapeNonASCII(string(part[pos+1:]))
 			if err != nil {
-				alert(s.term, fmt.Sprintf("Failed to unescape item on line %d: %s", i+1, err))
+				s.alert(fmt.Sprintf("Failed to unescape item on line %d: %s", i+1, err))
 				return false
 			}
 
 			switch typ {
 			case "name":
 				if len(entry.Name) > 0 {
-					alert(s.term, fmt.Sprintf("Multiple names given for contact on line %d", i+1))
+					s.alert(fmt.Sprintf("Multiple names given for contact on line %d", i+1))
 					return false
 				}
 				entry.Name = value
@@ -550,7 +568,7 @@ func (s *Session) processEditedRoster(edit *rosterEdit) bool {
 					entry.Group = append(entry.Group, value)
 				}
 			default:
-				alert(s.term, fmt.Sprintf("Unknown item tag '%s' on line %d", typ, i+1))
+				s.alert(fmt.Sprintf("Unknown item tag '%s' on line %d", typ, i+1))
 				return false
 			}
 		}
@@ -585,7 +603,7 @@ NextAdd:
 	}
 
 	for _, jid := range toDelete {
-		info(s.term, "Deleting roster entry for "+jid)
+		s.info("Deleting roster entry for " + jid)
 		_, _, err := s.conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 			Item: xmpp.RosterRequestItem{
 				Jid:          jid,
@@ -593,7 +611,7 @@ NextAdd:
 			},
 		})
 		if err != nil {
-			alert(s.term, "Failed to remove roster entry: "+err.Error())
+			s.alert("Failed to remove roster entry: " + err.Error())
 		}
 
 		// Filter out any known fingerprints.
@@ -609,7 +627,7 @@ NextAdd:
 	}
 
 	for _, entry := range toEdit {
-		info(s.term, "Updating roster entry for "+entry.Jid)
+		s.info("Updating roster entry for " + entry.Jid)
 		_, _, err := s.conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 			Item: xmpp.RosterRequestItem{
 				Jid:   entry.Jid,
@@ -618,12 +636,12 @@ NextAdd:
 			},
 		})
 		if err != nil {
-			alert(s.term, "Failed to update roster entry: "+err.Error())
+			s.alert("Failed to update roster entry: " + err.Error())
 		}
 	}
 
 	for _, entry := range toAdd {
-		info(s.term, "Adding roster entry for "+entry.Jid)
+		s.info("Adding roster entry for " + entry.Jid)
 		_, _, err := s.conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 			Item: xmpp.RosterRequestItem{
 				Jid:   entry.Jid,
@@ -632,7 +650,7 @@ NextAdd:
 			},
 		})
 		if err != nil {
-			alert(s.term, "Failed to add roster entry: "+err.Error())
+			s.alert("Failed to add roster entry: " + err.Error())
 		}
 	}
 

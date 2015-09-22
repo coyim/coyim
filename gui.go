@@ -109,8 +109,20 @@ func (*gtkUI) RegisterCallback() xmpp.FormCallback {
 	return nil
 }
 
+func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
+	u.Info(fmt.Sprintf("TODO: notify new keys from %s", uid))
+}
+
+func (u *gtkUI) Info(m string) {
+	fmt.Println(">>> INFO", m)
+}
+
+func (u *gtkUI) Warn(m string) {
+	fmt.Println(">>> WARN", m)
+}
+
 func (u *gtkUI) Alert(m string) {
-	fmt.Println(">>>", m)
+	fmt.Println(">>> ALERT", m)
 }
 
 func (u *gtkUI) Loop() {

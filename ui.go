@@ -37,6 +37,16 @@ var OTRWhiteSpaceTagV3 = []byte("\x20\x20\x09\x09\x20\x20\x09\x09")
 
 var OTRWhitespaceTag = append(OTRWhitespaceTagStart, OTRWhiteSpaceTagV2...)
 
+type UI interface {
+	RegisterCallback() xmpp.FormCallback
+	Alert(string)
+	Loop()
+	Enroll(*Config) bool
+	AskForPassword(*Config) (string, error)
+
+	ProcessPresence(*xmpp.ClientPresence)
+}
+
 // appendTerminalEscaped acts like append(), but breaks terminal escape
 // sequences that may be in msg.
 
@@ -107,7 +117,13 @@ func critical(term *terminal.Terminal, msg string) {
 	terminalMessage(term, term.Escape.Red, msg, true)
 }
 
+//TODO: this is confusing
+//term is a *terminal.Terminal
+//input also has a *terminal.Terminal
+//TODO: remove Session dependence on terminal
 type Session struct {
+	ui UI
+
 	account string
 	conn    *xmpp.Conn
 	term    *terminal.Terminal
@@ -166,7 +182,7 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 	for {
 		stanza, err := s.conn.Next()
 		if err != nil {
-			alert(s.term, err.Error())
+			s.ui.Alert(err.Error())
 			return
 		}
 		stanzaChan <- stanza
@@ -450,16 +466,13 @@ func isAwayStatus(status string) bool {
 	return false
 }
 
-func (s *Session) processPresence(stanza *xmpp.ClientPresence) {
-	gone := false
-
+func (s *Session) processPresence(stanza *xmpp.ClientPresence) (gone bool) {
 	switch stanza.Type {
 	case "subscribe":
 		// This is a subscription request
 		jid := xmpp.RemoveResourceFromJid(stanza.From)
-		info(s.term, jid+" wishes to see when you're online. Use '/confirm "+jid+"' to confirm (or likewise with /deny to decline)")
 		s.pendingSubscribes[jid] = stanza.Id
-		s.input.AddUser(jid)
+		//TODO notify the UI about the subscription request
 		return
 	case "unavailable":
 		gone = true
@@ -490,26 +503,7 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) {
 		s.knownStates[from] = stanza.Show
 	}
 
-	if !s.config.HideStatusUpdates {
-		var line []byte
-		line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
-		line = append(line, s.term.Escape.Magenta...)
-		line = append(line, []byte(from)...)
-		line = append(line, ':')
-		line = append(line, s.term.Escape.Reset...)
-		line = append(line, ' ')
-		if gone {
-			line = append(line, []byte("offline")...)
-		} else if len(stanza.Show) > 0 {
-			line = append(line, []byte(stanza.Show)...)
-		} else {
-			line = append(line, []byte("online")...)
-		}
-		line = append(line, ' ')
-		line = append(line, []byte(stanza.Status)...)
-		line = append(line, '\n')
-		s.term.Write(line)
-	}
+	return
 }
 
 func (s *Session) awaitVersionReply(ch <-chan xmpp.Stanza, user string) {

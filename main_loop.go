@@ -218,7 +218,7 @@ CommandLoop:
 	done <- true
 }
 
-func stanzaLoop(term *terminal.Terminal, s *Session, stanzaChan <-chan xmpp.Stanza, done chan<- bool) {
+func stanzaLoop(ui UI, term *terminal.Terminal, s *Session, stanzaChan <-chan xmpp.Stanza, done chan<- bool) {
 StanzaLoop:
 	for {
 		select {
@@ -240,7 +240,7 @@ StanzaLoop:
 			case *xmpp.ClientMessage:
 				s.processClientMessage(stanza)
 			case *xmpp.ClientPresence:
-				s.processPresence(stanza)
+				ui.ProcessPresence(stanza)
 			case *xmpp.ClientIQ:
 				if stanza.Type != "get" && stanza.Type != "set" {
 					continue

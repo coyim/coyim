@@ -3,214 +3,213 @@
 package main
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"encoding/hex"
 	"flag"
 	"fmt"
-	"net/url"
 	"os"
 	"os/signal"
-	"strings"
-	"sync"
 	"syscall"
 	"time"
 
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
-	"golang.org/x/net/proxy"
 )
 
-func main() {
-	flag.Parse()
+type cliUI struct {
+	session *Session
 
-	oldState, err := terminal.MakeRaw(0)
-	if err != nil {
+	password string
+	oldState *terminal.State
+	term     *terminal.Terminal
+}
+
+func newCLI() *cliUI {
+	var err error
+	c := &cliUI{}
+
+	if c.oldState, err = terminal.MakeRaw(0); err != nil {
 		panic(err.Error())
 	}
-	defer terminal.Restore(0, oldState)
-	term := terminal.NewTerminal(os.Stdin, "")
-	updateTerminalSize(term)
-	term.SetBracketedPasteMode(true)
-	defer term.SetBracketedPasteMode(false)
+
+	c.term = terminal.NewTerminal(os.Stdin, "")
+	updateTerminalSize(c.term)
+	c.term.SetBracketedPasteMode(true)
 
 	resizeChan := make(chan os.Signal)
 	go func() {
 		for _ = range resizeChan {
-			updateTerminalSize(term)
+			updateTerminalSize(c.term)
 		}
 	}()
 	signal.Notify(resizeChan, syscall.SIGWINCH)
 
-	if len(*configFile) == 0 {
-		if configFile, err = findConfigFile(os.Getenv("HOME")); err != nil {
-			alert(term, err.Error())
-			return
-		}
-	}
+	return c
+}
 
-	config, err := ParseConfig(*configFile)
+func (c *cliUI) Loop() {
+	quit := make(chan bool)
+
+	//This should be done by any client
+	info(c.term, "Fetching roster")
+	rosterReply, _, err := c.session.conn.RequestRoster()
 	if err != nil {
-		alert(term, "Failed to parse config file: "+err.Error())
-		config = new(Config)
-		if !enroll(config, term) {
-			return
-		}
-		config.filename = *configFile
-		config.Save()
-	}
-
-	password := config.Password
-	if len(password) == 0 {
-		if password, err = term.ReadPassword(fmt.Sprintf("Password for %s (will not be saved to disk): ", config.Account)); err != nil {
-			alert(term, "Failed to read password: "+err.Error())
-			return
-		}
-	}
-	term.SetPrompt("> ")
-
-	parts := strings.SplitN(config.Account, "@", 2)
-	if len(parts) != 2 {
-		alert(term, "invalid username (want user@domain): "+config.Account)
+		c.Alert("Failed to request roster: " + err.Error())
 		return
 	}
-	user := parts[0]
-	domain := parts[1]
 
-	var addr string
-	addrTrusted := false
-
-	if len(config.Server) > 0 && config.Port > 0 {
-		addr = fmt.Sprintf("%s:%d", config.Server, config.Port)
-		addrTrusted = true
-	} else {
-		if len(config.Proxies) > 0 {
-			alert(term, "Cannot connect via a proxy without Server and Port being set in the config file as an SRV lookup would leak information.")
-			return
-		}
-		host, port, err := xmpp.Resolve(domain)
-		if err != nil {
-			alert(term, "Failed to resolve XMPP server: "+err.Error())
-			return
-		}
-		addr = fmt.Sprintf("%s:%d", host, port)
+	c.session.conn.SignalPresence("")
+	c.session.input = Input{
+		term:        c.term,
+		uidComplete: new(priorityList),
 	}
 
-	var dialer proxy.Dialer
-	for i := len(config.Proxies) - 1; i >= 0; i-- {
-		u, err := url.Parse(config.Proxies[i])
-		if err != nil {
-			alert(term, "Failed to parse "+config.Proxies[i]+" as a URL: "+err.Error())
-			return
-		}
-		if dialer == nil {
-			dialer = proxy.Direct
-		}
-		if dialer, err = proxy.FromURL(u, dialer); err != nil {
-			alert(term, "Failed to parse "+config.Proxies[i]+" as a proxy: "+err.Error())
-			return
-		}
+	ticker := time.NewTicker(1 * time.Second)
+	go timeoutLoop(c.session, ticker.C)
+
+	commandChan := make(chan interface{})
+	go c.session.input.ProcessCommands(commandChan)
+
+	stanzaChan := make(chan xmpp.Stanza)
+	go c.session.readMessages(stanzaChan)
+
+	go commandLoop(c.term, c.session, c.session.config, commandChan, quit)
+	go stanzaLoop(c, c.term, c.session, stanzaChan, quit)
+	go rosterLoop(c.term, c.session, rosterReply, quit)
+
+	c.term.SetPrompt("> ")
+	<-quit // wait
+}
+
+func (c *cliUI) Close() {
+	if c.oldState != nil {
+		terminal.Restore(0, c.oldState)
 	}
 
-	var certSHA256 []byte
-	if len(config.ServerCertificateSHA256) > 0 {
-		certSHA256, err = hex.DecodeString(config.ServerCertificateSHA256)
-		if err != nil {
-			alert(term, "Failed to parse ServerCertificateSHA256 (should be hex string): "+err.Error())
-			return
-		}
-		if len(certSHA256) != 32 {
-			alert(term, "ServerCertificateSHA256 is not 32 bytes long")
-			return
-		}
+	if c.term != nil {
+		c.term.SetBracketedPasteMode(false)
 	}
+}
 
-	var createCallback xmpp.FormCallback
+func (c *cliUI) Alert(m string) {
+	alert(c.term, m)
+}
+
+func (c *cliUI) Enroll(config *Config) bool {
+	return enroll(config, c.term)
+}
+
+func (c *cliUI) AskForPassword(config *Config) (string, error) {
+	var err error
+	c.password, err = c.term.ReadPassword(fmt.Sprintf("Password for %s (will not be saved to disk): ", config.Account))
+
+	return c.password, err
+}
+
+func (c *cliUI) RegisterCallback() xmpp.FormCallback {
 	if *createAccount {
-		createCallback = func(title, instructions string, fields []interface{}) error {
-			return promptForForm(term, user, password, title, instructions, fields)
+		return func(title, instructions string, fields []interface{}) error {
+			//TODO: why does this function needs the
+			//TODO: get user from Config
+			user := "xxxxxx"
+			return promptForForm(c.term, user, c.password, title, instructions, fields)
 		}
 	}
 
-	xmppConfig := &xmpp.Config{
-		Log:                     &lineLogger{term, nil},
-		CreateCallback:          createCallback,
-		TrustedAddress:          addrTrusted,
-		Archive:                 false,
-		ServerCertificateSHA256: certSHA256,
-		TLSConfig: &tls.Config{
-			MinVersion: tls.VersionTLS10,
-			CipherSuites: []uint16{tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-				tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-				tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-			},
-		},
+	return nil
+}
+
+func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence) {
+	s := c.session
+	gone := false
+
+	switch stanza.Type {
+	case "subscribe":
+		// This is a subscription request
+		jid := xmpp.RemoveResourceFromJid(stanza.From)
+		info(s.term, jid+" wishes to see when you're online. Use '/confirm "+jid+"' to confirm (or likewise with /deny to decline)")
+		s.pendingSubscribes[jid] = stanza.Id
+		s.input.AddUser(jid)
+		return
+	case "unavailable":
+		gone = true
+	case "":
+		break
+	default:
+		return
 	}
 
-	if domain == "jabber.ccc.de" {
-		// jabber.ccc.de uses CACert but distros are removing that root
-		// certificate.
-		roots := x509.NewCertPool()
-		caCertRoot, err := x509.ParseCertificate(caCertRootDER)
-		if err == nil {
-			alert(term, "Temporarily trusting only CACert root for CCC Jabber server")
-			roots.AddCert(caCertRoot)
-			xmppConfig.TLSConfig.RootCAs = roots
+	from := xmpp.RemoveResourceFromJid(stanza.From)
+
+	if gone {
+		if _, ok := s.knownStates[from]; !ok {
+			// They've gone, but we never knew they were online.
+			return
+		}
+		delete(s.knownStates, from)
+	} else {
+		if _, ok := s.knownStates[from]; !ok && isAwayStatus(stanza.Show) {
+			// Skip people who are initially away.
+			return
+		}
+
+		if lastState, ok := s.knownStates[from]; ok && lastState == stanza.Show {
+			// No change. Ignore.
+			return
+		}
+		s.knownStates[from] = stanza.Show
+	}
+
+	if !s.config.HideStatusUpdates {
+		var line []byte
+		line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
+		line = append(line, s.term.Escape.Magenta...)
+		line = append(line, []byte(from)...)
+		line = append(line, ':')
+		line = append(line, s.term.Escape.Reset...)
+		line = append(line, ' ')
+		if gone {
+			line = append(line, []byte("offline")...)
+		} else if len(stanza.Show) > 0 {
+			line = append(line, []byte(stanza.Show)...)
 		} else {
-			alert(term, "Tried to add CACert root for jabber.ccc.de but failed: "+err.Error())
+			line = append(line, []byte("online")...)
 		}
+		line = append(line, ' ')
+		line = append(line, []byte(stanza.Status)...)
+		line = append(line, '\n')
+		s.term.Write(line)
 	}
+}
 
-	if len(config.RawLogFile) > 0 {
-		rawLog, err := os.OpenFile(config.RawLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
-		if err != nil {
-			alert(term, "Failed to open raw log file: "+err.Error())
-			return
-		}
+func main() {
+	flag.Parse()
 
-		lock := new(sync.Mutex)
-		in := rawLogger{
-			out:    rawLog,
-			prefix: []byte("<- "),
-			lock:   lock,
-		}
-		out := rawLogger{
-			out:    rawLog,
-			prefix: []byte("-> "),
-			lock:   lock,
-		}
-		in.other, out.other = &out, &in
+	ui := newCLI()
+	defer ui.Close()
 
-		xmppConfig.InLog = &in
-		xmppConfig.OutLog = &out
-
-		defer in.flush()
-		defer out.flush()
-	}
-
-	if dialer != nil {
-		info(term, "Making connection to "+addr+" via proxy")
-		if xmppConfig.Conn, err = dialer.Dial("tcp", addr); err != nil {
-			alert(term, "Failed to connect via proxy: "+err.Error())
-			return
-		}
-	}
-
-	conn, err := xmpp.Dial(addr, user, domain, password, xmppConfig)
+	//Terminal is necessary to print error messages and
+	//to ask for password
+	config, password, err := loadConfig(ui)
 	if err != nil {
-		alert(term, "Failed to connect to XMPP server: "+err.Error())
+		return
+	}
+
+	logger := &lineLogger{ui.term, nil}
+
+	// Act on configuration
+	conn, err := NewXMPPConn(ui, config, password, ui.RegisterCallback(), logger)
+	if err != nil {
+		ui.Alert(err.Error())
 		return
 	}
 
 	//TODO support one session per account
-	s := Session{
+	ui.session = &Session{
+		ui: ui,
+
 		account:           config.Account,
 		conn:              conn,
-		term:              term,
+		term:              ui.term,
 		conversations:     make(map[string]*otr3.Conversation),
 		eh:                make(map[string]*eventHandler),
 		knownStates:       make(map[string]string),
@@ -220,42 +219,13 @@ func main() {
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
 	}
-	info(term, "Fetching roster")
 
-	//var rosterReply chan xmpp.Stanza
-	rosterReply, _, err := s.conn.RequestRoster()
-	if err != nil {
-		alert(term, "Failed to request roster: "+err.Error())
-		return
-	}
+	ui.session.privateKey.Parse(config.PrivateKey)
+	ui.session.timeouts = make(map[xmpp.Cookie]time.Time)
 
-	conn.SignalPresence("")
+	info(ui.term, fmt.Sprintf("Your fingerprint is %x", ui.session.privateKey.DefaultFingerprint()))
 
-	s.input = Input{
-		term:        term,
-		uidComplete: new(priorityList),
-	}
-	commandChan := make(chan interface{})
-	go s.input.ProcessCommands(commandChan)
+	ui.Loop()
 
-	stanzaChan := make(chan xmpp.Stanza)
-	go s.readMessages(stanzaChan)
-
-	s.privateKey.Parse(config.PrivateKey)
-	s.timeouts = make(map[xmpp.Cookie]time.Time)
-
-	info(term, fmt.Sprintf("Your fingerprint is %x", s.privateKey.DefaultFingerprint()))
-
-	ticker := time.NewTicker(1 * time.Second)
-	quit := make(chan bool)
-
-	// commandLoop would not be necessary on a GUI client
-	go commandLoop(term, &s, config, commandChan, quit)
-
-	go stanzaLoop(term, &s, stanzaChan, quit)
-	go rosterLoop(term, &s, rosterReply, quit)
-	go timeoutLoop(&s, ticker.C)
-
-	<-quit // wait
 	os.Stdout.Write([]byte("\n"))
 }

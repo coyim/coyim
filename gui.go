@@ -14,8 +14,8 @@ import (
 	"time"
 	"unsafe"
 
-	. "github.com/twstrike/coyim/config"
-	. "github.com/twstrike/coyim/ui"
+	coyconf "github.com/twstrike/coyim/config"
+	coyui "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
@@ -325,12 +325,12 @@ func (ui *gtkUI) sendMessage(to, message string) {
 	}
 }
 
-func (*gtkUI) AskForPassword(*Config) (string, error) {
+func (*gtkUI) AskForPassword(*coyconf.Config) (string, error) {
 	//TODO
 	return "", nil
 }
 
-func (*gtkUI) Enroll(*Config) bool {
+func (*gtkUI) Enroll(*coyconf.Config) bool {
 	//TODO
 	return false
 }
@@ -412,7 +412,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 
 func accountDialog() {
 	//TODO It should not load config here
-	config := &Config{}
+	config := &coyconf.Config{}
 	dialog := gtk.NewDialog()
 	dialog.SetTitle("Account Details")
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
@@ -512,7 +512,7 @@ func (ui *gtkUI) Connect() error {
 		knownStates:       make(map[string]string),
 		privateKey:        new(otr3.PrivateKey),
 		config:            config,
-		pendingRosterChan: make(chan *RosterEdit),
+		pendingRosterChan: make(chan *coyui.RosterEdit),
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
 		sessionHandler:    ui,

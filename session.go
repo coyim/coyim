@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"time"
 
-	. "github.com/twstrike/coyim/config"
-	. "github.com/twstrike/coyim/ui"
+	coyconf "github.com/twstrike/coyim/config"
+	coyui "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 )
@@ -22,7 +22,7 @@ type Session struct {
 	//TODO: This feels bad.
 	//it only needs a reference to UI callbacks
 	//maybe use the event handler?
-	ui UI
+	ui coyui.UI
 
 	account string
 	conn    *xmpp.Conn
@@ -38,17 +38,17 @@ type Session struct {
 	// notifications.
 	knownStates map[string]string
 	privateKey  *otr3.PrivateKey
-	config      *Config
+	config      *coyconf.Config
 
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
 	timeouts map[xmpp.Cookie]time.Time
 	// pendingRosterEdit, if non-nil, contains information about a pending
 	// roster edit operation.
-	pendingRosterEdit *RosterEdit
+	pendingRosterEdit *coyui.RosterEdit
 	// pendingRosterChan is the channel over which roster edit information
 	// is received.
-	pendingRosterChan chan *RosterEdit
+	pendingRosterChan chan *coyui.RosterEdit
 	// pendingSubscribes maps JID with pending subscription requests to the
 	// ID if the iq for the reply.
 	pendingSubscribes map[string]string
@@ -269,7 +269,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
 		if len(s.config.UserIdForFingerprint(fpr)) == 0 {
-			s.config.KnownFingerprints = append(s.config.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserId: from})
+			s.config.KnownFingerprints = append(s.config.KnownFingerprints, coyconf.KnownFingerprint{Fingerprint: fpr, UserId: from})
 		}
 		s.config.Save()
 	case SMPFailed:
@@ -283,18 +283,18 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	detectedOTRVersion := 0
 	// We don't need to alert about tags encoded inside of messages that are
 	// already encrypted with OTR
-	whitespaceTagLength := len(OTRWhitespaceTagStart) + len(OTRWhiteSpaceTagV1)
+	whitespaceTagLength := len(coyui.OTRWhitespaceTagStart) + len(coyui.OTRWhiteSpaceTagV1)
 	if !encrypted && len(out) >= whitespaceTagLength {
 		whitespaceTag := out[len(out)-whitespaceTagLength:]
-		if bytes.Equal(whitespaceTag[:len(OTRWhitespaceTagStart)], OTRWhitespaceTagStart) {
-			if bytes.HasSuffix(whitespaceTag, OTRWhiteSpaceTagV1) {
+		if bytes.Equal(whitespaceTag[:len(coyui.OTRWhitespaceTagStart)], coyui.OTRWhitespaceTagStart) {
+			if bytes.HasSuffix(whitespaceTag, coyui.OTRWhiteSpaceTagV1) {
 				s.info(fmt.Sprintf("%s appears to support OTRv1. You should encourage them to upgrade their OTR client!", from))
 				detectedOTRVersion = 1
 			}
-			if bytes.HasSuffix(whitespaceTag, OTRWhiteSpaceTagV2) {
+			if bytes.HasSuffix(whitespaceTag, coyui.OTRWhiteSpaceTagV2) {
 				detectedOTRVersion = 2
 			}
-			if bytes.HasSuffix(whitespaceTag, OTRWhiteSpaceTagV3) {
+			if bytes.HasSuffix(whitespaceTag, coyui.OTRWhiteSpaceTagV3) {
 				detectedOTRVersion = 3
 			}
 		}
@@ -383,7 +383,7 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) (gone bool) {
 		}
 		delete(s.knownStates, from)
 	} else {
-		if _, ok := s.knownStates[from]; !ok && IsAwayStatus(stanza.Show) {
+		if _, ok := s.knownStates[from]; !ok && coyui.IsAwayStatus(stanza.Show) {
 			// Skip people who are initially away.
 			return
 		}
@@ -468,7 +468,7 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 	maxLen := 0
 	escapedJids := make([]string, len(roster))
 	for i, item := range roster {
-		escapedJids[i] = EscapeNonASCII(item.Jid)
+		escapedJids[i] = coyui.EscapeNonASCII(item.Jid)
 		if l := len(escapedJids[i]); l > maxLen {
 			maxLen = l
 		}
@@ -488,7 +488,7 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 		}
 
 		if len(item.Name) > 0 {
-			line += "name:" + EscapeNonASCII(item.Name)
+			line += "name:" + coyui.EscapeNonASCII(item.Name)
 			if len(item.Group) > 0 {
 				line += "\t"
 			}
@@ -498,20 +498,20 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 			if j > 0 {
 				line += "\t"
 			}
-			line += "group:" + EscapeNonASCII(group)
+			line += "group:" + coyui.EscapeNonASCII(group)
 		}
 		line += "\n"
 		io.WriteString(f, line)
 	}
 	f.Close()
 
-	s.pendingRosterChan <- &RosterEdit{
+	s.pendingRosterChan <- &coyui.RosterEdit{
 		FileName: fileName,
 		Roster:   roster,
 	}
 }
 
-func (s *Session) loadEditedRoster(edit RosterEdit) {
+func (s *Session) loadEditedRoster(edit coyui.RosterEdit) {
 	contents, err := ioutil.ReadFile(edit.FileName)
 	if err != nil {
 		s.alert("Failed to load edited roster: " + err.Error())
@@ -525,9 +525,9 @@ func (s *Session) loadEditedRoster(edit RosterEdit) {
 	s.pendingRosterChan <- &edit
 }
 
-func (s *Session) processEditedRoster(edit *RosterEdit) bool {
+func (s *Session) processEditedRoster(edit *coyui.RosterEdit) bool {
 	parsedRoster := make(map[string]xmpp.RosterEntry)
-	lines := bytes.Split(edit.Contents, NewLine)
+	lines := bytes.Split(edit.Contents, coyui.NewLine)
 	tab := []byte{'\t'}
 
 	// Parse roster entries from the file.
@@ -540,7 +540,7 @@ func (s *Session) processEditedRoster(edit *RosterEdit) bool {
 		var entry xmpp.RosterEntry
 		var err error
 
-		if entry.Jid, err = UnescapeNonASCII(string(string(parts[0]))); err != nil {
+		if entry.Jid, err = coyui.UnescapeNonASCII(string(string(parts[0]))); err != nil {
 			s.alert(fmt.Sprintf("Failed to parse JID on line %d: %s", i+1, err))
 			return false
 		}
@@ -556,7 +556,7 @@ func (s *Session) processEditedRoster(edit *RosterEdit) bool {
 			}
 
 			typ := string(part[:pos])
-			value, err := UnescapeNonASCII(string(part[pos+1:]))
+			value, err := coyui.UnescapeNonASCII(string(part[pos+1:]))
 			if err != nil {
 				s.alert(fmt.Sprintf("Failed to unescape item on line %d: %s", i+1, err))
 				return false
@@ -621,7 +621,7 @@ NextAdd:
 		}
 
 		// Filter out any known fingerprints.
-		newKnownFingerprints := make([]KnownFingerprint, 0, len(s.config.KnownFingerprints))
+		newKnownFingerprints := make([]coyconf.KnownFingerprint, 0, len(s.config.KnownFingerprints))
 		for _, fpr := range s.config.KnownFingerprints {
 			if fpr.UserId == jid {
 				continue

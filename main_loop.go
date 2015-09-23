@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	. "github.com/twstrike/coyim/ui"
+	coyui "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-func stanzaLoop(ui UI, s *Session, stanzaChan <-chan xmpp.Stanza, done chan<- bool) {
+func stanzaLoop(ui coyui.UI, s *Session, stanzaChan <-chan xmpp.Stanza, done chan<- bool) {
 
 StanzaLoop:
 	for {

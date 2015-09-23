@@ -16,8 +16,8 @@ import (
 	"syscall"
 	"time"
 
-	. "github.com/twstrike/coyim/config"
-	. "github.com/twstrike/coyim/ui"
+	coyconf "github.com/twstrike/coyim/config"
+	coyui "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
@@ -112,11 +112,11 @@ func (c *cliUI) Alert(m string) {
 	alert(c.term, m)
 }
 
-func (c *cliUI) Enroll(config *Config) bool {
+func (c *cliUI) Enroll(config *coyconf.Config) bool {
 	return enroll(config, c.term)
 }
 
-func (c *cliUI) AskForPassword(config *Config) (string, error) {
+func (c *cliUI) AskForPassword(config *coyconf.Config) (string, error) {
 	var err error
 	c.password, err = c.term.ReadPassword(fmt.Sprintf("Password for %s (will not be saved to disk): ", config.Account))
 
@@ -165,7 +165,7 @@ func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence) {
 		}
 		delete(s.knownStates, from)
 	} else {
-		if _, ok := s.knownStates[from]; !ok && IsAwayStatus(stanza.Show) {
+		if _, ok := s.knownStates[from]; !ok && coyui.IsAwayStatus(stanza.Show) {
 			// Skip people who are initially away.
 			return
 		}
@@ -242,7 +242,7 @@ func main() {
 		knownStates:       make(map[string]string),
 		privateKey:        new(otr3.PrivateKey),
 		config:            config,
-		pendingRosterChan: make(chan *RosterEdit),
+		pendingRosterChan: make(chan *coyui.RosterEdit),
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
 		sessionHandler:    ui,
@@ -270,7 +270,7 @@ func (c *cliUI) MessageReceived(from, timestamp string, encrypted bool, message 
 	t := fmt.Sprintf("(%s) %s: ", timestamp, from)
 	line = append(line, []byte(t)...)
 	line = append(line, c.term.Escape.Reset...)
-	line = appendTerminalEscaped(line, StripHTML(message))
+	line = appendTerminalEscaped(line, coyui.StripHTML(message))
 	line = append(line, '\n')
 	if c.session.config.Bell {
 		line = append(line, '\a')
@@ -679,7 +679,7 @@ CommandLoop:
 				if config.OTRAutoAppendTag &&
 					!bytes.Contains(message, []byte("?OTR")) &&
 					(!ok || !conversation.IsEncrypted()) {
-					message = append(message, OTRWhitespaceTag...)
+					message = append(message, coyui.OTRWhitespaceTag...)
 				}
 				if ok {
 					var err error
@@ -754,7 +754,7 @@ CommandLoop:
 					alert(ui.term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, existing))
 					break
 				}
-				s.config.KnownFingerprints = append(s.config.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserId: cmd.User})
+				s.config.KnownFingerprints = append(s.config.KnownFingerprints, coyconf.KnownFingerprint{Fingerprint: fpr, UserId: cmd.User})
 				s.config.Save()
 				info(ui.term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:

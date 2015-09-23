@@ -15,8 +15,8 @@ import (
 	"strconv"
 	"strings"
 
-	. "github.com/twstrike/coyim/config"
-	. "github.com/twstrike/coyim/ui"
+	coyconf "github.com/twstrike/coyim/config"
+	coyui "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
@@ -26,7 +26,7 @@ import (
 var configFile *string = flag.String("config-file", "", "Location of the config file")
 var createAccount *bool = flag.Bool("create", false, "If true, attempt to create account")
 
-func enroll(config *Config, term *terminal.Terminal) bool {
+func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
 	var err error
 	warn(term, "Enrolling new config file")
 
@@ -47,7 +47,7 @@ func enroll(config *Config, term *terminal.Terminal) bool {
 	}
 
 	term.SetPrompt("Enable debug logging to /tmp/xmpp-client-debug.log? ")
-	if debugLog, err := term.ReadLine(); err != nil || !ParseYes(debugLog) {
+	if debugLog, err := term.ReadLine(); err != nil || !coyconf.ParseYes(debugLog) {
 		info(term, "Not enabling debug logging...")
 	} else {
 		info(term, "Debug logging enabled...")
@@ -55,7 +55,7 @@ func enroll(config *Config, term *terminal.Terminal) bool {
 	}
 
 	term.SetPrompt("Use Tor?: ")
-	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || !ParseYes(useTorQuery) {
+	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || !coyconf.ParseYes(useTorQuery) {
 		info(term, "Not using Tor...")
 		config.UseTor = false
 	} else {
@@ -186,20 +186,20 @@ func enroll(config *Config, term *terminal.Terminal) bool {
 	return true
 }
 
-func loadConfig(ui UI) (*Config, string, error) {
+func loadConfig(ui coyui.UI) (*coyconf.Config, string, error) {
 	var err error
 
 	if len(*configFile) == 0 {
-		if configFile, err = FindConfigFile(os.Getenv("HOME")); err != nil {
+		if configFile, err = coyconf.FindConfigFile(os.Getenv("HOME")); err != nil {
 			ui.Alert(err.Error())
 			return nil, "", err
 		}
 	}
 
-	config, err := ParseConfig(*configFile)
+	config, err := coyconf.ParseConfig(*configFile)
 	if err != nil {
 		ui.Alert("Failed to parse config file: " + err.Error())
-		config = new(Config)
+		config = new(coyconf.Config)
 		if !ui.Enroll(config) {
 			return config, "", errors.New("Failed to create config")
 		}
@@ -219,7 +219,7 @@ func loadConfig(ui UI) (*Config, string, error) {
 	return config, password, err
 }
 
-func NewXMPPConn(ui UI, config *Config, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {
+func NewXMPPConn(ui coyui.UI, config *coyconf.Config, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {
 	parts := strings.SplitN(config.Account, "@", 2)
 	if len(parts) != 2 {
 		return nil, errors.New("invalid username (want user@domain): " + config.Account)

@@ -58,21 +58,21 @@ type Session struct {
 }
 
 type sessionHandler interface {
-	info(string)
-	warn(string)
-	alert(string)
+	Info(string)
+	Warn(string)
+	Alert(string)
 }
 
 func (c *Session) info(m string) {
-	c.sessionHandler.info(m)
+	c.sessionHandler.Info(m)
 }
 
 func (c *Session) warn(m string) {
-	c.sessionHandler.warn(m)
+	c.sessionHandler.Warn(m)
 }
 
 func (c *Session) alert(m string) {
-	c.sessionHandler.alert(m)
+	c.sessionHandler.Alert(m)
 }
 
 func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {

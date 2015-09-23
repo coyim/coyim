@@ -525,6 +525,7 @@ func (ui *gtkUI) Connect() error {
 		pendingRosterChan: make(chan *rosterEdit),
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
+		sessionHandler:    ui,
 	}
 
 	// TODO: GTK main loop freezes unless this is run on a Go routine

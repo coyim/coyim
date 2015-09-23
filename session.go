@@ -13,6 +13,7 @@ import (
 	"time"
 
 	. "github.com/twstrike/coyim/config"
+	. "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 )
@@ -44,10 +45,10 @@ type Session struct {
 	timeouts map[xmpp.Cookie]time.Time
 	// pendingRosterEdit, if non-nil, contains information about a pending
 	// roster edit operation.
-	pendingRosterEdit *rosterEdit
+	pendingRosterEdit *RosterEdit
 	// pendingRosterChan is the channel over which roster edit information
 	// is received.
-	pendingRosterChan chan *rosterEdit
+	pendingRosterChan chan *RosterEdit
 	// pendingSubscribes maps JID with pending subscription requests to the
 	// ID if the iq for the reply.
 	pendingSubscribes map[string]string
@@ -382,7 +383,7 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) (gone bool) {
 		}
 		delete(s.knownStates, from)
 	} else {
-		if _, ok := s.knownStates[from]; !ok && isAwayStatus(stanza.Show) {
+		if _, ok := s.knownStates[from]; !ok && IsAwayStatus(stanza.Show) {
 			// Skip people who are initially away.
 			return
 		}
@@ -467,7 +468,7 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 	maxLen := 0
 	escapedJids := make([]string, len(roster))
 	for i, item := range roster {
-		escapedJids[i] = escapeNonASCII(item.Jid)
+		escapedJids[i] = EscapeNonASCII(item.Jid)
 		if l := len(escapedJids[i]); l > maxLen {
 			maxLen = l
 		}
@@ -487,7 +488,7 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 		}
 
 		if len(item.Name) > 0 {
-			line += "name:" + escapeNonASCII(item.Name)
+			line += "name:" + EscapeNonASCII(item.Name)
 			if len(item.Group) > 0 {
 				line += "\t"
 			}
@@ -497,36 +498,36 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 			if j > 0 {
 				line += "\t"
 			}
-			line += "group:" + escapeNonASCII(group)
+			line += "group:" + EscapeNonASCII(group)
 		}
 		line += "\n"
 		io.WriteString(f, line)
 	}
 	f.Close()
 
-	s.pendingRosterChan <- &rosterEdit{
-		fileName: fileName,
-		roster:   roster,
+	s.pendingRosterChan <- &RosterEdit{
+		FileName: fileName,
+		Roster:   roster,
 	}
 }
 
-func (s *Session) loadEditedRoster(edit rosterEdit) {
-	contents, err := ioutil.ReadFile(edit.fileName)
+func (s *Session) loadEditedRoster(edit RosterEdit) {
+	contents, err := ioutil.ReadFile(edit.FileName)
 	if err != nil {
 		s.alert("Failed to load edited roster: " + err.Error())
 		return
 	}
-	os.Remove(edit.fileName)
-	os.Remove(filepath.Dir(edit.fileName))
+	os.Remove(edit.FileName)
+	os.Remove(filepath.Dir(edit.FileName))
 
-	edit.isComplete = true
-	edit.contents = contents
+	edit.IsComplete = true
+	edit.Contents = contents
 	s.pendingRosterChan <- &edit
 }
 
-func (s *Session) processEditedRoster(edit *rosterEdit) bool {
+func (s *Session) processEditedRoster(edit *RosterEdit) bool {
 	parsedRoster := make(map[string]xmpp.RosterEntry)
-	lines := bytes.Split(edit.contents, newLine)
+	lines := bytes.Split(edit.Contents, NewLine)
 	tab := []byte{'\t'}
 
 	// Parse roster entries from the file.
@@ -539,7 +540,7 @@ func (s *Session) processEditedRoster(edit *rosterEdit) bool {
 		var entry xmpp.RosterEntry
 		var err error
 
-		if entry.Jid, err = unescapeNonASCII(string(string(parts[0]))); err != nil {
+		if entry.Jid, err = UnescapeNonASCII(string(string(parts[0]))); err != nil {
 			s.alert(fmt.Sprintf("Failed to parse JID on line %d: %s", i+1, err))
 			return false
 		}
@@ -555,7 +556,7 @@ func (s *Session) processEditedRoster(edit *rosterEdit) bool {
 			}
 
 			typ := string(part[:pos])
-			value, err := unescapeNonASCII(string(part[pos+1:]))
+			value, err := UnescapeNonASCII(string(part[pos+1:]))
 			if err != nil {
 				s.alert(fmt.Sprintf("Failed to unescape item on line %d: %s", i+1, err))
 				return false
@@ -586,7 +587,7 @@ func (s *Session) processEditedRoster(edit *rosterEdit) bool {
 	var toEdit []xmpp.RosterEntry
 	var toAdd []xmpp.RosterEntry
 
-	for _, entry := range edit.roster {
+	for _, entry := range edit.Roster {
 		newEntry, ok := parsedRoster[entry.Jid]
 		if !ok {
 			toDelete = append(toDelete, entry.Jid)
@@ -599,7 +600,7 @@ func (s *Session) processEditedRoster(edit *rosterEdit) bool {
 
 NextAdd:
 	for jid, newEntry := range parsedRoster {
-		for _, entry := range edit.roster {
+		for _, entry := range edit.Roster {
 			if entry.Jid == jid {
 				continue NextAdd
 			}
@@ -657,6 +658,24 @@ NextAdd:
 		if err != nil {
 			s.alert("Failed to add roster entry: " + err.Error())
 		}
+	}
+
+	return true
+}
+
+func setEqual(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+EachValue:
+	for _, v := range a {
+		for _, v2 := range b {
+			if v == v2 {
+				continue EachValue
+			}
+		}
+		return false
 	}
 
 	return true

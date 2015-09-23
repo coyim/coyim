@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	. "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -77,8 +78,8 @@ RosterLoop:
 			info(term, "Roster received")
 
 		case edit := <-s.pendingRosterChan:
-			if !edit.isComplete {
-				info(term, "Please edit "+edit.fileName+" and run /rostereditdone when complete")
+			if !edit.IsComplete {
+				info(term, "Please edit "+edit.FileName+" and run /rostereditdone when complete")
 				s.pendingRosterEdit = edit
 				continue
 			}

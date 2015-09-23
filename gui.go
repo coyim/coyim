@@ -15,6 +15,7 @@ import (
 	"unsafe"
 
 	. "github.com/twstrike/coyim/config"
+	. "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
@@ -507,7 +508,7 @@ func (ui *gtkUI) Connect() error {
 		knownStates:       make(map[string]string),
 		privateKey:        new(otr3.PrivateKey),
 		config:            config,
-		pendingRosterChan: make(chan *rosterEdit),
+		pendingRosterChan: make(chan *RosterEdit),
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
 		sessionHandler:    ui,
@@ -572,8 +573,8 @@ RosterLoop:
 			fmt.Println("Roster received")
 
 		case edit := <-s.pendingRosterChan:
-			if !edit.isComplete {
-				ui.Info("Please edit " + edit.fileName + " and run /rostereditdone when complete")
+			if !edit.IsComplete {
+				ui.Info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
 				s.pendingRosterEdit = edit
 				continue
 			}

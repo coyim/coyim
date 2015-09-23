@@ -134,19 +134,30 @@ func newConversationWindow(uid string) *conversationWindow {
 	vbox.SetBorderWidth(5)
 
 	text := gtk.NewTextView()
-	text.Connect("key_press_event", func(ctx *glib.CallbackContext) {
+	text.SetWrapMode(gtk.WRAP_WORD)
+	text.Connect("key-press-event", func(ctx *glib.CallbackContext) bool {
 		arg := ctx.Args(0)
 		evKey := *(**gdk.EventKey)(unsafe.Pointer(&arg))
 
-		if evKey.Keyval == 0xff0d {
-			msg := ""
-			conv.sendMessage(msg)
+		//Send message on ENTER press (without modifier key)
+		if evKey.State == 0 && evKey.Keyval == 0xff0d {
+			text.SetEditable(false)
 
-			//target := ctx.Target()
-			//if t, ok := target.(*gtk.TextView); ok {
-			//	t.GetBuffer().SetText("")
-			//}
+			b := text.GetBuffer()
+			s := &gtk.TextIter{}
+			e := &gtk.TextIter{}
+			b.GetStartIter(s)
+			b.GetEndIter(e)
+			msg := b.GetText(s, e, true)
+			b.SetText("")
+
+			text.SetEditable(true)
+
+			conv.sendMessage(msg)
+			return true
 		}
+
+		return false
 	})
 
 	scroll := gtk.NewScrolledWindow(nil, nil)
@@ -171,7 +182,7 @@ func (conv *conversationWindow) Show() {
 }
 
 func (*conversationWindow) sendMessage(message string) {
-	fmt.Println("SEND MESSAGE")
+	fmt.Println("SEND MESSAGE", message)
 
 	/*
 		conversation, ok := s.conversations[cmd.to]

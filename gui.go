@@ -91,16 +91,18 @@ func (r *roster) onActivateBuddy(ctx *glib.CallbackContext) {
 	r.openConversationWindow(to)
 
 	//TODO call g_value_unset() but the lib doesnt provide
-
 }
 
 func (r *roster) openConversationWindow(to string) {
-	if c, ok := r.conversations[to]; ok {
-		c.Show()
-		return
+	//TODO: There is no validation if this person is on our roster
+	c, ok := r.conversations[to]
+
+	if !ok {
+		c = newConversationWindow(r, to)
+		r.conversations[to] = c
 	}
 
-	r.conversations[to] = newConversationWindow(r, to)
+	c.Show()
 }
 
 type conversationWindow struct {
@@ -116,14 +118,14 @@ func newConversationWindow(r *roster, uid string) *conversationWindow {
 		win:    gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
 	}
 
-	conv.win.SetPosition(gtk.WIN_POS_CENTER)
-	conv.win.SetDefaultSize(300, 300)
-	conv.win.SetDestroyWithParent(true)
-	conv.win.SetTitle(conv.to)
-
 	// Unlike the GTK version, this is not supposed to be used as a callback but
 	// it attaches the callback to the widget
 	conv.win.HideOnDelete()
+
+	conv.win.SetPosition(gtk.WIN_POS_CENTER)
+	conv.win.SetDefaultSize(300, 300)
+	conv.win.SetDestroyWithParent(true)
+	conv.win.SetTitle(uid)
 
 	textview := gtk.NewTextView()
 	textview.SetEditable(false)
@@ -172,7 +174,6 @@ func newConversationWindow(r *roster, uid string) *conversationWindow {
 	vbox.PackStart(scroll, true, true, 0)
 
 	conv.win.Add(vbox)
-	conv.win.ShowAll()
 
 	return conv
 }
@@ -182,7 +183,7 @@ func (conv *conversationWindow) Hide() {
 }
 
 func (conv *conversationWindow) Show() {
-	conv.win.Show()
+	conv.win.ShowAll()
 }
 
 func (conv *conversationWindow) sendMessage(message string) {
@@ -233,8 +234,14 @@ func (*gtkUI) RegisterCallback() xmpp.FormCallback {
 }
 
 func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
-	u.Info("TODO: message received")
+	u.Info("TODO: message received " + from)
 	u.Info(string(message))
+
+	//TODO show the message on the history
+	glib.IdleAdd(func() bool {
+		u.roster.openConversationWindow(from)
+		return false
+	})
 }
 
 func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
@@ -289,8 +296,6 @@ func (ui *gtkUI) mainWindow() {
 }
 
 func (ui *gtkUI) sendMessage(to, message string) {
-	fmt.Println("SEND MESSAGE", message)
-
 	conversation, ok := ui.session.conversations[to]
 	if !ok {
 		conversation = &otr3.Conversation{}
@@ -301,7 +306,6 @@ func (ui *gtkUI) sendMessage(to, message string) {
 		conversation.Policies.AllowV3()
 		conversation.Policies.SendWhitespaceTag()
 		conversation.Policies.WhitespaceStartAKE()
-		// Why does this policy send a Query message?
 		// conversation.Policies.RequireEncryption()
 
 		fmt.Println("There is no OTR conversation set up. Setting up a new one")

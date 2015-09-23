@@ -26,6 +26,8 @@ type roster struct {
 	window *gtk.ScrolledWindow
 	model  *gtk.ListStore
 	view   *gtk.TreeView
+
+	conversations map[string]*gtk.Window
 }
 
 func newRoster() *roster {
@@ -37,6 +39,8 @@ func newRoster() *roster {
 			gtk.TYPE_INT,    // id
 		),
 		view: gtk.NewTreeView(),
+
+		conversations: make(map[string]*gtk.Window),
 	}
 
 	r.window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -64,7 +68,74 @@ func newRoster() *roster {
 	return r
 }
 
+func (r *roster) sendMessage(to, message string) {
+	fmt.Println("SEND MESSAGE")
+
+	/*
+		conversation, ok := s.conversations[cmd.to]
+		isEncrypted := ok && conversation.IsEncrypted()
+		if cmd.setPromptIsEncrypted != nil {
+			cmd.setPromptIsEncrypted <- isEncrypted
+		}
+		if !isEncrypted && config.ShouldEncryptTo(cmd.to) {
+			warn(ui.term, fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
+			continue
+		}
+		var msgs [][]byte
+		message := []byte(cmd.msg)
+		// Automatically tag all outgoing plaintext
+		// messages with a whitespace tag that
+		// indicates that we support OTR.
+		if config.OTRAutoAppendTag &&
+			!bytes.Contains(message, []byte("?OTR")) &&
+			(!ok || !conversation.IsEncrypted()) {
+			message = append(message, OTRWhitespaceTag...)
+		}
+		if ok {
+			var err error
+			validMsgs, err := conversation.Send(message)
+			msgs = otr3.Bytes(validMsgs)
+			if err != nil {
+				alert(ui.term, err.Error())
+				break
+			}
+		} else {
+			msgs = [][]byte{[]byte(message)}
+		}
+		for _, message := range msgs {
+			s.conn.Send(cmd.to, string(message))
+		}
+	*/
+}
+
 func (r *roster) onActivateBuddy(ctx *glib.CallbackContext) {
+	var path *gtk.TreePath
+	var column *gtk.TreeViewColumn
+	r.view.GetCursor(&path, &column)
+
+	if path == nil {
+		return
+	}
+
+	iter := &gtk.TreeIter{}
+	if !r.model.GetIter(iter, path) {
+		return
+	}
+
+	val := &glib.GValue{}
+	r.model.GetValue(iter, 0, val)
+	to := val.GetString()
+
+	r.openConversationWindow(to)
+}
+
+func (r *roster) openConversationWindow(to string) {
+	if _, ok := r.conversations[to]; ok {
+		//TODO: show if is hidden
+		fmt.Println("Already open")
+		return
+	}
+
 	//TODO: Only open if it's not already open
 	win := gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
 	win.SetPosition(gtk.WIN_POS_CENTER)
@@ -89,7 +160,11 @@ func (r *roster) onActivateBuddy(ctx *glib.CallbackContext) {
 		evKey := *(**gdk.EventKey)(unsafe.Pointer(&arg))
 
 		if evKey.Keyval == 0xff0d {
-			fmt.Println("SEND MESSAGE")
+			msg := ""
+			r.sendMessage(to, msg)
+
+			//TODO call g_value_unset() but the lib doesnt provide
+
 			//target := ctx.Target()
 			//if t, ok := target.(*gtk.TextView); ok {
 			//	t.GetBuffer().SetText("")
@@ -109,6 +184,10 @@ func (r *roster) onActivateBuddy(ctx *glib.CallbackContext) {
 	//vbox.Add(text)
 	win.Add(vbox)
 	win.ShowAll()
+
+	//TODO: hide instead of quit
+	// win.Connect("destroy", gtk.MainQuit)
+	r.conversations[to] = win
 
 	//r.window.Add(win)
 	//fmt.Println("OPEN MESSAGE")

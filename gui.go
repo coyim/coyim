@@ -27,6 +27,7 @@ type roster struct {
 	model  *gtk.ListStore
 	view   *gtk.TreeView
 
+	sendMessage   func(to, message string)
 	conversations map[string]*conversationWindow
 }
 
@@ -98,24 +99,26 @@ func (r *roster) openConversationWindow(to string) {
 		return
 	}
 
-	r.conversations[to] = newConversationWindow(to)
-
+	r.conversations[to] = newConversationWindow(r, to)
 }
 
 type conversationWindow struct {
-	to  string
-	win *gtk.Window
+	to     string
+	win    *gtk.Window
+	roster *roster
 }
 
-func newConversationWindow(uid string) *conversationWindow {
+func newConversationWindow(r *roster, uid string) *conversationWindow {
 	conv := &conversationWindow{
-		to:  uid,
-		win: gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
+		to:     uid,
+		roster: r,
+		win:    gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
 	}
 
 	conv.win.SetPosition(gtk.WIN_POS_CENTER)
 	conv.win.SetDefaultSize(300, 300)
 	conv.win.SetDestroyWithParent(true)
+	conv.win.SetTitle(conv.to)
 
 	// Unlike the GTK version, this is not supposed to be used as a callback but
 	// it attaches the callback to the widget
@@ -181,44 +184,8 @@ func (conv *conversationWindow) Show() {
 	conv.win.Show()
 }
 
-func (*conversationWindow) sendMessage(message string) {
-	fmt.Println("SEND MESSAGE", message)
-
-	/*
-		conversation, ok := s.conversations[cmd.to]
-		isEncrypted := ok && conversation.IsEncrypted()
-		if cmd.setPromptIsEncrypted != nil {
-			cmd.setPromptIsEncrypted <- isEncrypted
-		}
-		if !isEncrypted && config.ShouldEncryptTo(cmd.to) {
-			warn(ui.term, fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
-			continue
-		}
-		var msgs [][]byte
-		message := []byte(cmd.msg)
-		// Automatically tag all outgoing plaintext
-		// messages with a whitespace tag that
-		// indicates that we support OTR.
-		if config.OTRAutoAppendTag &&
-			!bytes.Contains(message, []byte("?OTR")) &&
-			(!ok || !conversation.IsEncrypted()) {
-			message = append(message, OTRWhitespaceTag...)
-		}
-		if ok {
-			var err error
-			validMsgs, err := conversation.Send(message)
-			msgs = otr3.Bytes(validMsgs)
-			if err != nil {
-				alert(ui.term, err.Error())
-				break
-			}
-		} else {
-			msgs = [][]byte{[]byte(message)}
-		}
-		for _, message := range msgs {
-			s.conn.Send(cmd.to, string(message))
-		}
-	*/
+func (conv *conversationWindow) sendMessage(message string) {
+	conv.roster.sendMessage(conv.to, message)
 }
 
 func (r *roster) update(entries []xmpp.RosterEntry) {
@@ -305,6 +272,7 @@ func NewGTK() *gtkUI {
 func (ui *gtkUI) mainWindow() {
 	ui.window = gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
 	ui.roster = newRoster()
+	ui.roster.sendMessage = ui.sendMessage
 
 	menubar := initMenuBar()
 	vbox := gtk.NewVBox(false, 1)
@@ -316,6 +284,55 @@ func (ui *gtkUI) mainWindow() {
 	ui.window.Connect("destroy", gtk.MainQuit)
 	ui.window.SetSizeRequest(200, 600)
 	ui.window.ShowAll()
+}
+
+func (ui *gtkUI) sendMessage(to, message string) {
+	fmt.Println("SEND MESSAGE", message)
+
+	_, ok := ui.session.conversations[to]
+	if !ok {
+		//should we auto start?
+		fmt.Println("There is no OTR conversation set up")
+
+		//TODO: this should be session.Send(to, message)
+		ui.session.conn.Send(to, string(message))
+	}
+
+	/*
+		conversation, ok := s.conversations[cmd.to]
+		isEncrypted := ok && conversation.IsEncrypted()
+		if cmd.setPromptIsEncrypted != nil {
+			cmd.setPromptIsEncrypted <- isEncrypted
+		}
+		if !isEncrypted && config.ShouldEncryptTo(cmd.to) {
+			warn(ui.term, fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
+			continue
+		}
+		var msgs [][]byte
+		message := []byte(cmd.msg)
+		// Automatically tag all outgoing plaintext
+		// messages with a whitespace tag that
+		// indicates that we support OTR.
+		if config.OTRAutoAppendTag &&
+			!bytes.Contains(message, []byte("?OTR")) &&
+			(!ok || !conversation.IsEncrypted()) {
+			message = append(message, OTRWhitespaceTag...)
+		}
+		if ok {
+			var err error
+			validMsgs, err := conversation.Send(message)
+			msgs = otr3.Bytes(validMsgs)
+			if err != nil {
+				alert(ui.term, err.Error())
+				break
+			}
+		} else {
+			msgs = [][]byte{[]byte(message)}
+		}
+		for _, message := range msgs {
+			s.conn.Send(cmd.to, string(message))
+		}
+	*/
 }
 
 func (*gtkUI) AskForPassword(*Config) (string, error) {

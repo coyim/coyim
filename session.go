@@ -204,7 +204,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	if !ok {
 		conversation = new(otr3.Conversation)
 		conversation.Policies.AllowV2()
-		conversation.SetKeys(s.privateKey, nil)
+		conversation.SetOurKey(s.privateKey)
 		s.conversations[from] = conversation
 	}
 	eh, ok := s.eh[from]

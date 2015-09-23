@@ -233,6 +233,7 @@ func (*gtkUI) RegisterCallback() xmpp.FormCallback {
 
 func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
 	u.Info("TODO: message received")
+	u.Info(string(message))
 }
 
 func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
@@ -289,50 +290,34 @@ func (ui *gtkUI) mainWindow() {
 func (ui *gtkUI) sendMessage(to, message string) {
 	fmt.Println("SEND MESSAGE", message)
 
-	_, ok := ui.session.conversations[to]
+	conversation, ok := ui.session.conversations[to]
 	if !ok {
-		//should we auto start?
-		fmt.Println("There is no OTR conversation set up")
+		conversation = &otr3.Conversation{}
+		conversation.SetOurKey(ui.session.privateKey)
 
-		//TODO: this should be session.Send(to, message)
-		ui.session.conn.Send(to, string(message))
+		//TODO: review this conf
+		conversation.Policies.AllowV2()
+		conversation.Policies.AllowV3()
+		conversation.Policies.SendWhitespaceTag()
+		conversation.Policies.WhitespaceStartAKE()
+		// Why does this policy send a Query message?
+		// conversation.Policies.RequireEncryption()
+
+		fmt.Println("There is no OTR conversation set up. Setting up a new one")
+		ui.session.conversations[to] = conversation
 	}
 
-	/*
-		conversation, ok := s.conversations[cmd.to]
-		isEncrypted := ok && conversation.IsEncrypted()
-		if cmd.setPromptIsEncrypted != nil {
-			cmd.setPromptIsEncrypted <- isEncrypted
-		}
-		if !isEncrypted && config.ShouldEncryptTo(cmd.to) {
-			warn(ui.term, fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
-			continue
-		}
-		var msgs [][]byte
-		message := []byte(cmd.msg)
-		// Automatically tag all outgoing plaintext
-		// messages with a whitespace tag that
-		// indicates that we support OTR.
-		if config.OTRAutoAppendTag &&
-			!bytes.Contains(message, []byte("?OTR")) &&
-			(!ok || !conversation.IsEncrypted()) {
-			message = append(message, OTRWhitespaceTag...)
-		}
-		if ok {
-			var err error
-			validMsgs, err := conversation.Send(message)
-			msgs = otr3.Bytes(validMsgs)
-			if err != nil {
-				alert(ui.term, err.Error())
-				break
-			}
-		} else {
-			msgs = [][]byte{[]byte(message)}
-		}
-		for _, message := range msgs {
-			s.conn.Send(cmd.to, string(message))
-		}
-	*/
+	toSend, err := conversation.Send(otr3.ValidMessage(message))
+	if err != nil {
+		fmt.Println("Failed to generate OTR message")
+		return
+	}
+
+	for _, m := range toSend {
+		//TODO: this should be session.Send(to, message)
+		fmt.Printf("[send] %q\n", string(m))
+		ui.session.conn.Send(to, string(m))
+	}
 }
 
 func (*gtkUI) AskForPassword(*Config) (string, error) {

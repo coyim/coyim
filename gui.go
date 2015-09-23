@@ -27,7 +27,7 @@ type roster struct {
 	model  *gtk.ListStore
 	view   *gtk.TreeView
 
-	conversations map[string]*gtk.Window
+	conversations map[string]*conversationWindow
 }
 
 func newRoster() *roster {
@@ -40,7 +40,7 @@ func newRoster() *roster {
 		),
 		view: gtk.NewTreeView(),
 
-		conversations: make(map[string]*gtk.Window),
+		conversations: make(map[string]*conversationWindow),
 	}
 
 	r.window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -68,7 +68,109 @@ func newRoster() *roster {
 	return r
 }
 
-func (r *roster) sendMessage(to, message string) {
+func (r *roster) onActivateBuddy(ctx *glib.CallbackContext) {
+	var path *gtk.TreePath
+	var column *gtk.TreeViewColumn
+	r.view.GetCursor(&path, &column)
+
+	if path == nil {
+		return
+	}
+
+	iter := &gtk.TreeIter{}
+	if !r.model.GetIter(iter, path) {
+		return
+	}
+
+	val := &glib.GValue{}
+	r.model.GetValue(iter, 0, val)
+	to := val.GetString()
+
+	r.openConversationWindow(to)
+
+	//TODO call g_value_unset() but the lib doesnt provide
+
+}
+
+func (r *roster) openConversationWindow(to string) {
+	if c, ok := r.conversations[to]; ok {
+		c.Show()
+		return
+	}
+
+	r.conversations[to] = newConversationWindow(to)
+
+}
+
+type conversationWindow struct {
+	to  string
+	win *gtk.Window
+}
+
+func newConversationWindow(uid string) *conversationWindow {
+	conv := &conversationWindow{
+		to:  uid,
+		win: gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
+	}
+
+	conv.win.SetPosition(gtk.WIN_POS_CENTER)
+	conv.win.SetDefaultSize(300, 300)
+	conv.win.SetDestroyWithParent(true)
+
+	// Unlike the GTK version, this is not supposed to be used as a callback but
+	// it attaches the callback to the widget
+	conv.win.HideOnDelete()
+
+	textview := gtk.NewTextView()
+	textview.SetEditable(false)
+	textview.SetCursorVisible(false)
+	buffer := textview.GetBuffer()
+	//TODO: Load recent messages
+	buffer.InsertAtCursor("** History here **")
+
+	vbox := gtk.NewVBox(false, 1)
+	vbox.SetHomogeneous(false)
+	vbox.SetSpacing(5)
+	vbox.SetBorderWidth(5)
+
+	text := gtk.NewTextView()
+	text.Connect("key_press_event", func(ctx *glib.CallbackContext) {
+		arg := ctx.Args(0)
+		evKey := *(**gdk.EventKey)(unsafe.Pointer(&arg))
+
+		if evKey.Keyval == 0xff0d {
+			msg := ""
+			conv.sendMessage(msg)
+
+			//target := ctx.Target()
+			//if t, ok := target.(*gtk.TextView); ok {
+			//	t.GetBuffer().SetText("")
+			//}
+		}
+	})
+
+	scroll := gtk.NewScrolledWindow(nil, nil)
+	scroll.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+	scroll.Add(text)
+
+	vbox.PackStart(textview, true, true, 0)
+	vbox.PackStart(scroll, true, true, 0)
+
+	conv.win.Add(vbox)
+	conv.win.ShowAll()
+
+	return conv
+}
+
+func (conv *conversationWindow) Hide() {
+	conv.win.Hide()
+}
+
+func (conv *conversationWindow) Show() {
+	conv.win.Show()
+}
+
+func (*conversationWindow) sendMessage(message string) {
 	fmt.Println("SEND MESSAGE")
 
 	/*
@@ -106,92 +208,6 @@ func (r *roster) sendMessage(to, message string) {
 			s.conn.Send(cmd.to, string(message))
 		}
 	*/
-}
-
-func (r *roster) onActivateBuddy(ctx *glib.CallbackContext) {
-	var path *gtk.TreePath
-	var column *gtk.TreeViewColumn
-	r.view.GetCursor(&path, &column)
-
-	if path == nil {
-		return
-	}
-
-	iter := &gtk.TreeIter{}
-	if !r.model.GetIter(iter, path) {
-		return
-	}
-
-	val := &glib.GValue{}
-	r.model.GetValue(iter, 0, val)
-	to := val.GetString()
-
-	r.openConversationWindow(to)
-}
-
-func (r *roster) openConversationWindow(to string) {
-	if _, ok := r.conversations[to]; ok {
-		//TODO: show if is hidden
-		fmt.Println("Already open")
-		return
-	}
-
-	//TODO: Only open if it's not already open
-	win := gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
-	win.SetPosition(gtk.WIN_POS_CENTER)
-	win.SetDefaultSize(300, 300)
-	win.SetDestroyWithParent(true)
-
-	textview := gtk.NewTextView()
-	textview.SetEditable(false)
-	textview.SetCursorVisible(false)
-	buffer := textview.GetBuffer()
-	//TODO: Load recent messages
-	buffer.InsertAtCursor("** History here **")
-
-	vbox := gtk.NewVBox(false, 1)
-	vbox.SetHomogeneous(false)
-	vbox.SetSpacing(5)
-	vbox.SetBorderWidth(5)
-
-	text := gtk.NewTextView()
-	text.Connect("key_press_event", func(ctx *glib.CallbackContext) {
-		arg := ctx.Args(0)
-		evKey := *(**gdk.EventKey)(unsafe.Pointer(&arg))
-
-		if evKey.Keyval == 0xff0d {
-			msg := ""
-			r.sendMessage(to, msg)
-
-			//TODO call g_value_unset() but the lib doesnt provide
-
-			//target := ctx.Target()
-			//if t, ok := target.(*gtk.TextView); ok {
-			//	t.GetBuffer().SetText("")
-			//}
-		}
-	})
-
-	scroll := gtk.NewScrolledWindow(nil, nil)
-	scroll.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-	scroll.Add(text)
-
-	vbox.PackStart(textview, true, true, 0)
-	vbox.PackStart(scroll, true, true, 0)
-
-	//vbox.Add(textview)
-	//vbox.Add(gtk.NewHSeparator())
-	//vbox.Add(text)
-	win.Add(vbox)
-	win.ShowAll()
-
-	//TODO: hide instead of quit
-	// win.Connect("destroy", gtk.MainQuit)
-	r.conversations[to] = win
-
-	//r.window.Add(win)
-	//fmt.Println("OPEN MESSAGE")
-	//fmt.Printf("-> %#v", ctx.Target())
 }
 
 func (r *roster) update(entries []xmpp.RosterEntry) {

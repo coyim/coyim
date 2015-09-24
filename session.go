@@ -211,7 +211,6 @@ func (s *Session) getConversationWith(peer string) *otr3.Conversation {
 	conversation.Policies.WhitespaceStartAKE()
 	// conversation.Policies.RequireEncryption()
 
-	fmt.Println("There is no OTR conversation set up. Setting up a new one")
 	s.conversations[peer] = conversation
 
 	//TODO: Why do we need a reference to the event handler in the session?
@@ -485,7 +484,7 @@ func (s *Session) WatchRosterEvents() {
 
 	rosterReply, _, err := s.conn.RequestRoster()
 	if err != nil {
-		fmt.Println("Failed to request roster: " + err.Error())
+		s.alert("Failed to request roster: " + err.Error())
 		return
 	}
 

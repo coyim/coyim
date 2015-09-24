@@ -318,6 +318,15 @@ func (u *gtkUI) sendMessage(to, message string) {
 		return
 	}
 
+	glib.IdleAdd(func() bool {
+		//TODO: refactor
+		conv, _ := u.roster.conversations[to]
+
+		encrypted := conversation.IsEncrypted()
+		conv.appendMessage("ME", "NOW", encrypted, coyui.StripHTML([]byte(message)))
+		return false
+	})
+
 	for _, m := range toSend {
 		//TODO: this should be session.Send(to, message)
 		fmt.Printf("[send] %q\n", string(m))

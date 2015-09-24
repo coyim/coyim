@@ -3,7 +3,6 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"os"
@@ -206,7 +205,6 @@ func (conv *conversationWindow) appendMessage(from, timestamp string, encrypted 
 func (r *roster) update(entries []xmpp.RosterEntry) {
 	gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
 
-	gdk.ThreadsEnter()
 	gobj.Ref()
 	r.view.SetModel(nil)
 
@@ -225,7 +223,6 @@ func (r *roster) update(entries []xmpp.RosterEntry) {
 
 	r.view.SetModel(r.model)
 	gobj.Unref()
-	gdk.ThreadsLeave()
 }
 
 type gtkUI struct {
@@ -276,6 +273,10 @@ func (u *gtkUI) Warn(m string) {
 
 func (u *gtkUI) Alert(m string) {
 	fmt.Println(">>> ALERT", m)
+}
+
+func (u *gtkUI) Disconnected() {
+	fmt.Println("TODO: Should disconnect the account")
 }
 
 func (u *gtkUI) Loop() {
@@ -342,11 +343,6 @@ func (*gtkUI) AskForPassword(*coyconf.Config) (string, error) {
 func (*gtkUI) Enroll(*coyconf.Config) bool {
 	//TODO
 	return false
-}
-
-//TODO: we should update periodically (like Pidgin does) if we include the status (online/offline/away) on the label
-func (u *gtkUI) updateRoster(roster []xmpp.RosterEntry) {
-	u.roster.update(roster)
 }
 
 func authors() []string {
@@ -483,8 +479,12 @@ func (u *gtkUI) IQReceived(string) {
 	//TODO
 }
 
+//TODO: we should update periodically (like Pidgin does) if we include the status (online/offline/away) on the label
 func (u *gtkUI) RosterReceived(roster []xmpp.RosterEntry) {
-	//TODO
+	glib.IdleAdd(func() bool {
+		u.roster.update(roster)
+		return false
+	})
 }
 
 func main() {
@@ -530,16 +530,13 @@ func (u *gtkUI) Connect() error {
 	// TODO: GTK main loop freezes unless this is run on a Go routine
 	// and I have no idea why
 	go func() {
-		logger := bytes.NewBuffer(nil)
-		conn, err := NewXMPPConn(u, config, password, u.RegisterCallback(), logger)
+		conn, err := NewXMPPConn(u, config, password, u.RegisterCallback(), os.Stdout)
 		if err != nil {
 			u.Alert(err.Error())
-			//gtk.MainQuit()
 			return
 		}
 
 		u.session.conn = conn
-		u.session.conn.SignalPresence("")
 		u.onConnect()
 	}()
 
@@ -552,57 +549,10 @@ func (u *gtkUI) Connect() error {
 }
 
 func (ui *gtkUI) onConnect() {
-	go ui.handleRosterEvents()
+	go ui.session.WatchTimeout()
+	go ui.session.WatchRosterEvents()
+
 	go ui.handleStanzaEvents()
-}
-
-//TODO: use the rosterLoop() from main_loop.go
-func (ui *gtkUI) handleRosterEvents() {
-	s := ui.session
-
-	fmt.Println("Fetching roster")
-	rosterReply, _, err := s.conn.RequestRoster()
-	if err != nil {
-		fmt.Println("Failed to request roster: " + err.Error())
-		return
-	}
-
-RosterLoop:
-	for {
-		select {
-		case rosterStanza, ok := <-rosterReply:
-			if !ok {
-				ui.Alert("Failed to read roster: " + err.Error())
-				break RosterLoop
-			}
-
-			if s.roster, err = xmpp.ParseRoster(rosterStanza); err != nil {
-				ui.Alert("Failed to parse roster: " + err.Error())
-				break RosterLoop
-			}
-
-			ui.updateRoster(s.roster)
-
-			fmt.Println("Roster received")
-
-		case edit := <-s.pendingRosterChan:
-			if !edit.IsComplete {
-				ui.Info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
-				s.pendingRosterEdit = edit
-				continue
-			}
-			if s.processEditedRoster(edit) {
-				s.pendingRosterEdit = nil
-			} else {
-				ui.Alert("Please reedit file and run /rostereditdone again")
-			}
-		}
-	}
-
-	//TODO should it quit?
-	gdk.ThreadsEnter()
-	gtk.MainQuit()
-	gdk.ThreadsLeave()
 }
 
 func (ui *gtkUI) handleStanzaEvents() {

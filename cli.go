@@ -30,11 +30,15 @@ type cliUI struct {
 	oldState *terminal.State
 	term     *terminal.Terminal
 	input    *Input
+
+	terminate chan bool
 }
 
 func newCLI() *cliUI {
 	var err error
-	c := &cliUI{}
+	c := &cliUI{
+		terminate: make(chan bool),
+	}
 
 	if c.oldState, err = terminal.MakeRaw(0); err != nil {
 		panic(err.Error())
@@ -55,39 +59,30 @@ func newCLI() *cliUI {
 	return c
 }
 
-func (c *cliUI) Loop() {
-	quit := make(chan bool)
+//TODO: This should receive something telling which Session/COnfig should be terminated if we have multiple accounts connected
+func (c *cliUI) Disconnected() {
+	c.terminate <- true
+}
 
+func (c *cliUI) Loop() {
 	c.input = &Input{
 		term:        c.term,
 		uidComplete: new(priorityList),
 	}
 
-	//This should be done by any client
-	info(c.term, "Fetching roster")
-	rosterReply, _, err := c.session.conn.RequestRoster()
-	if err != nil {
-		c.Alert("Failed to request roster: " + err.Error())
-		return
-	}
-
-	c.session.conn.SignalPresence("")
-
-	ticker := time.NewTicker(1 * time.Second)
-	go timeoutLoop(c.session, ticker.C)
+	go c.session.WatchTimeout()
+	go c.session.WatchRosterEvents()
 
 	commandChan := make(chan interface{})
 	go c.input.ProcessCommands(commandChan)
+	go commandLoop(c, commandChan, c.terminate)
 
 	stanzaChan := make(chan xmpp.Stanza)
 	go c.session.readMessages(stanzaChan)
-
-	go commandLoop(c, commandChan, quit)
-	go stanzaLoop(c, c.session, stanzaChan, quit)
-	go rosterLoop(c.term, c.session, rosterReply, quit)
+	go stanzaLoop(c, c.session, stanzaChan, c.terminate)
 
 	c.term.SetPrompt("> ")
-	<-quit // wait
+	<-c.terminate // wait
 }
 
 func (c *cliUI) Close() {
@@ -207,6 +202,8 @@ func (c *cliUI) RosterReceived(roster []xmpp.RosterEntry) {
 	for _, entry := range roster {
 		c.input.AddUser(entry.Jid)
 	}
+
+	info(c.term, "Roster received")
 }
 
 func main() {
@@ -215,8 +212,6 @@ func main() {
 	ui := newCLI()
 	defer ui.Close()
 
-	//Terminal is necessary to print error messages and
-	//to ask for password
 	config, password, err := loadConfig(ui)
 	if err != nil {
 		return
@@ -254,7 +249,6 @@ func main() {
 	info(ui.term, fmt.Sprintf("Your fingerprint is %x", ui.session.privateKey.DefaultFingerprint()))
 
 	ui.Loop()
-
 	os.Stdout.Write([]byte("\n"))
 }
 

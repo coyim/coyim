@@ -37,8 +37,8 @@ type UI interface {
 	MessageReceived(from, timestamp string, encrypted bool, message []byte)
 	IQReceived(string)
 	RosterReceived(roster []xmpp.RosterEntry)
-
 	ProcessPresence(*xmpp.ClientPresence)
+	Disconnected()
 
 	Info(string)
 	Warn(string)

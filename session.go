@@ -33,6 +33,7 @@ type Session struct {
 	// OTR.)
 	conversations map[string]*otr3.Conversation
 	eh            map[string]*eventHandler
+
 	// knownStates maps from a JID (without the resource) to the last known
 	// presence state of that contact. It's used to deduping presence
 	// notifications.
@@ -56,6 +57,8 @@ type Session struct {
 	// or was last notified.
 	lastActionTime time.Time
 	sessionHandler sessionHandler
+
+	timeoutTicker *time.Ticker
 }
 
 type sessionHandler interface {
@@ -444,6 +447,90 @@ func (s *Session) awaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	}
 
 	s.info(fmt.Sprintf("Version reply from %s: %#v", user, versionReply))
+}
+
+func (s *Session) WatchTimeout() {
+	s.timeoutTicker = time.NewTicker(1 * time.Second)
+
+	for now := range s.timeoutTicker.C {
+		haveExpired := false
+		for _, expiry := range s.timeouts {
+			if now.After(expiry) {
+				haveExpired = true
+				break
+			}
+		}
+
+		if !haveExpired {
+			continue
+		}
+
+		newTimeouts := make(map[xmpp.Cookie]time.Time)
+		for cookie, expiry := range s.timeouts {
+			if now.After(expiry) {
+				s.conn.Cancel(cookie)
+			} else {
+				newTimeouts[cookie] = expiry
+			}
+		}
+
+		s.timeouts = newTimeouts
+	}
+}
+
+func (s *Session) WatchRosterEvents() {
+	defer s.Terminate()
+
+	s.info("Fetching roster")
+
+	rosterReply, _, err := s.conn.RequestRoster()
+	if err != nil {
+		fmt.Println("Failed to request roster: " + err.Error())
+		return
+	}
+
+	//TODO: not sure if this belongs here
+	s.conn.SignalPresence("")
+
+RosterLoop:
+	for {
+		select {
+		case rosterStanza, ok := <-rosterReply:
+			if !ok {
+				s.alert("Failed to read roster: " + err.Error())
+				break RosterLoop
+			}
+
+			if s.roster, err = xmpp.ParseRoster(rosterStanza); err != nil {
+				s.alert("Failed to parse roster: " + err.Error())
+				break RosterLoop
+			}
+
+			s.rosterReceived()
+
+		case edit := <-s.pendingRosterChan:
+			if !edit.IsComplete {
+				//TODO: this is specific to CLI
+				s.info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
+				s.pendingRosterEdit = edit
+				continue
+			}
+
+			if s.processEditedRoster(edit) {
+				s.pendingRosterEdit = nil
+			} else {
+				//TODO: this is specific to CLI
+				s.alert("Please reedit file and run /rostereditdone again")
+			}
+		}
+	}
+}
+
+func (s *Session) Terminate() {
+	s.timeoutTicker.Stop()
+	s.timeoutTicker = nil
+
+	s.ui.Disconnected()
 }
 
 // editRoster runs in a goroutine and writes the roster to a file that the user

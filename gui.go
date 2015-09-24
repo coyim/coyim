@@ -93,7 +93,7 @@ func (r *roster) onActivateBuddy(ctx *glib.CallbackContext) {
 	//TODO call g_value_unset() but the lib doesnt provide
 }
 
-func (r *roster) openConversationWindow(to string) {
+func (r *roster) openConversationWindow(to string) *conversationWindow {
 	//TODO: There is no validation if this person is on our roster
 	c, ok := r.conversations[to]
 
@@ -103,19 +103,22 @@ func (r *roster) openConversationWindow(to string) {
 	}
 
 	c.Show()
+	return c
 }
 
 type conversationWindow struct {
-	to     string
-	win    *gtk.Window
-	roster *roster
+	to      string
+	win     *gtk.Window
+	history *gtk.TextView
+	roster  *roster
 }
 
 func newConversationWindow(r *roster, uid string) *conversationWindow {
 	conv := &conversationWindow{
-		to:     uid,
-		roster: r,
-		win:    gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
+		to:      uid,
+		roster:  r,
+		win:     gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
+		history: gtk.NewTextView(),
 	}
 
 	// Unlike the GTK version, this is not supposed to be used as a callback but
@@ -127,12 +130,10 @@ func newConversationWindow(r *roster, uid string) *conversationWindow {
 	conv.win.SetDestroyWithParent(true)
 	conv.win.SetTitle(uid)
 
-	textview := gtk.NewTextView()
-	textview.SetEditable(false)
-	textview.SetCursorVisible(false)
-	buffer := textview.GetBuffer()
 	//TODO: Load recent messages
-	buffer.InsertAtCursor("** History here **")
+	conv.history.SetWrapMode(gtk.WRAP_WORD)
+	conv.history.SetEditable(false)
+	conv.history.SetCursorVisible(false)
 
 	vbox := gtk.NewVBox(false, 1)
 	vbox.SetHomogeneous(false)
@@ -170,7 +171,7 @@ func newConversationWindow(r *roster, uid string) *conversationWindow {
 	scroll.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
 	scroll.Add(text)
 
-	vbox.PackStart(textview, true, true, 0)
+	vbox.PackStart(conv.history, true, true, 0)
 	vbox.PackStart(scroll, true, true, 0)
 
 	conv.win.Add(vbox)
@@ -188,6 +189,18 @@ func (conv *conversationWindow) Show() {
 
 func (conv *conversationWindow) sendMessage(message string) {
 	conv.roster.sendMessage(conv.to, message)
+}
+
+func (conv *conversationWindow) appendMessage(from, timestamp string, encrypted bool, message []byte) {
+	glib.IdleAdd(func() bool {
+		fmt.Println("Appending message", string(message))
+		buff := conv.history.GetBuffer()
+		buff.InsertAtCursor(timestamp)
+		buff.InsertAtCursor(" - ")
+		buff.InsertAtCursor(string(message))
+		buff.InsertAtCursor("\n")
+		return false
+	})
 }
 
 func (r *roster) update(entries []xmpp.RosterEntry) {
@@ -239,7 +252,8 @@ func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message 
 
 	//TODO show the message on the history
 	glib.IdleAdd(func() bool {
-		u.roster.openConversationWindow(from)
+		conv := u.roster.openConversationWindow(from)
+		conv.appendMessage(from, timestamp, encrypted, coyui.StripHTML(message))
 		return false
 	})
 }
@@ -296,21 +310,7 @@ func (ui *gtkUI) mainWindow() {
 }
 
 func (ui *gtkUI) sendMessage(to, message string) {
-	conversation, ok := ui.session.conversations[to]
-	if !ok {
-		conversation = &otr3.Conversation{}
-		conversation.SetOurKey(ui.session.privateKey)
-
-		//TODO: review this conf
-		conversation.Policies.AllowV2()
-		conversation.Policies.AllowV3()
-		conversation.Policies.SendWhitespaceTag()
-		conversation.Policies.WhitespaceStartAKE()
-		// conversation.Policies.RequireEncryption()
-
-		fmt.Println("There is no OTR conversation set up. Setting up a new one")
-		ui.session.conversations[to] = conversation
-	}
+	conversation := ui.session.getConversationWith(to)
 
 	toSend, err := conversation.Send(otr3.ValidMessage(message))
 	if err != nil {
@@ -496,15 +496,15 @@ func main() {
 	os.Stdout.Write([]byte("\n"))
 }
 
-func (ui *gtkUI) Connect() error {
-	config, password, err := loadConfig(ui)
+func (c *gtkUI) Connect() error {
+	config, password, err := loadConfig(c)
 	if err != nil {
 		return err
 	}
 
 	//TODO support one session per account
-	ui.session = &Session{
-		ui: ui,
+	c.session = &Session{
+		ui: c,
 
 		account:           config.Account,
 		conversations:     make(map[string]*otr3.Conversation),
@@ -515,29 +515,29 @@ func (ui *gtkUI) Connect() error {
 		pendingRosterChan: make(chan *coyui.RosterEdit),
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
-		sessionHandler:    ui,
+		sessionHandler:    c,
 	}
 
 	// TODO: GTK main loop freezes unless this is run on a Go routine
 	// and I have no idea why
 	go func() {
 		logger := bytes.NewBuffer(nil)
-		conn, err := NewXMPPConn(ui, config, password, ui.RegisterCallback(), logger)
+		conn, err := NewXMPPConn(c, config, password, c.RegisterCallback(), logger)
 		if err != nil {
-			ui.Alert(err.Error())
+			c.Alert(err.Error())
 			//gtk.MainQuit()
 			return
 		}
 
-		ui.session.conn = conn
-		ui.session.conn.SignalPresence("")
-		ui.onConnect()
+		c.session.conn = conn
+		c.session.conn.SignalPresence("")
+		c.onConnect()
 	}()
 
-	ui.session.privateKey.Parse(config.PrivateKey)
-	ui.session.timeouts = make(map[xmpp.Cookie]time.Time)
+	c.session.privateKey.Parse(config.PrivateKey)
+	c.session.timeouts = make(map[xmpp.Cookie]time.Time)
 
-	fmt.Printf("Your fingerprint is %x", ui.session.privateKey.DefaultFingerprint())
+	fmt.Printf("Your fingerprint is %x", c.session.privateKey.DefaultFingerprint())
 
 	return nil
 }

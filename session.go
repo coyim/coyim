@@ -193,6 +193,38 @@ func (s *Session) otrEnded(uid string) {
 	s.ui.OTREnded(uid)
 }
 
+func (s *Session) getConversationWith(peer string) *otr3.Conversation {
+	if conversation, ok := s.conversations[peer]; ok {
+		return conversation
+	}
+
+	conversation := &otr3.Conversation{}
+	conversation.SetOurKey(s.privateKey)
+
+	//TODO: review this conf
+	conversation.Policies.AllowV2()
+	conversation.Policies.AllowV3()
+	conversation.Policies.SendWhitespaceTag()
+	conversation.Policies.WhitespaceStartAKE()
+	// conversation.Policies.RequireEncryption()
+
+	fmt.Println("There is no OTR conversation set up. Setting up a new one")
+	s.conversations[peer] = conversation
+
+	//TODO: Why do we need a reference to the event handler in the session?
+	eh, ok := s.eh[peer]
+	if !ok {
+		eh = new(eventHandler)
+		conversation.SetSMPEventHandler(eh)
+		conversation.SetErrorMessageHandler(eh)
+		conversation.SetMessageEventHandler(eh)
+		conversation.SetSecurityEventHandler(eh)
+		s.eh[peer] = eh
+	}
+
+	return conversation
+}
+
 func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	from := xmpp.RemoveResourceFromJid(stanza.From)
 
@@ -201,34 +233,20 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		return
 	}
 
-	conversation, ok := s.conversations[from]
-	if !ok {
-		conversation = new(otr3.Conversation)
-		conversation.Policies.AllowV2()
-		conversation.SetOurKey(s.privateKey)
-		s.conversations[from] = conversation
-	}
-	eh, ok := s.eh[from]
-	if !ok {
-		eh = new(eventHandler)
-		conversation.SetSMPEventHandler(eh)
-		conversation.SetErrorMessageHandler(eh)
-		conversation.SetMessageEventHandler(eh)
-		conversation.SetSecurityEventHandler(eh)
-		s.eh[from] = eh
-	}
-
+	conversation := s.getConversationWith(from)
 	out, toSend, err := conversation.Receive([]byte(stanza.Body))
 	encrypted := conversation.IsEncrypted()
-	change := eh.consumeSecurityChange()
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())
 		s.conn.Send(stanza.From, ErrorPrefix+"Error processing message")
 	}
+
 	for _, msg := range toSend {
 		s.conn.Send(stanza.From, string(msg))
 	}
 
+	eh, _ := s.eh[from]
+	change := eh.consumeSecurityChange()
 	switch change {
 	case NewKeys:
 		s.info(fmt.Sprintf("New OTR session with %s established", from))

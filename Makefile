@@ -12,7 +12,7 @@ lint:
 	golint ./...
 
 test:
-	go test -v ./... -cover
+	go test -cover -v ./...
 
 ci: get default
 

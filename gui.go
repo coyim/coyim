@@ -106,20 +106,21 @@ func (r *roster) openConversationWindow(to string) *conversationWindow {
 }
 
 type conversationWindow struct {
-	to      string
-	win     *gtk.Window
-	history *gtk.TextView
-	roster  *roster
+	to            string
+	win           *gtk.Window
+	history       *gtk.TextView
+	scrollHistory *gtk.ScrolledWindow
+	roster        *roster
 }
 
 func newConversationWindow(r *roster, uid string) *conversationWindow {
 	conv := &conversationWindow{
-		to:      uid,
-		roster:  r,
-		win:     gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
-		history: gtk.NewTextView(),
+		to:            uid,
+		roster:        r,
+		win:           gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
+		history:       gtk.NewTextView(),
+		scrollHistory: gtk.NewScrolledWindow(nil, nil),
 	}
-
 	// Unlike the GTK version, this is not supposed to be used as a callback but
 	// it attaches the callback to the widget
 	conv.win.HideOnDelete()
@@ -170,8 +171,11 @@ func newConversationWindow(r *roster, uid string) *conversationWindow {
 	scroll.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
 	scroll.Add(text)
 
-	vbox.PackStart(conv.history, true, true, 0)
-	vbox.PackStart(scroll, true, true, 0)
+	conv.scrollHistory.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+	conv.scrollHistory.Add(conv.history)
+
+	vbox.PackStart(conv.scrollHistory, true, true, 0)
+	vbox.Add(scroll)
 
 	conv.win.Add(vbox)
 
@@ -198,6 +202,8 @@ func (conv *conversationWindow) appendMessage(from, timestamp string, encrypted 
 		buff.InsertAtCursor(" - ")
 		buff.InsertAtCursor(string(message))
 		buff.InsertAtCursor("\n")
+		adj := conv.scrollHistory.GetVAdjustment()
+		adj.SetValue(adj.GetUpper())
 		return false
 	})
 }
@@ -554,4 +560,3 @@ func (ui *gtkUI) onConnect() {
 	go ui.session.WatchRosterEvents()
 	go ui.session.WatchStanzas()
 }
-

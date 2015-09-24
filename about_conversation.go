@@ -6,35 +6,38 @@ import (
 
 const DESTROY_SIGNAL = "destroy"
 
+type aboutConversationWin struct {
+	win *gtk.Window
+	txt textBox
+}
+
 type textBox struct {
 	view *gtk.TextView
 	buf  *gtk.TextBuffer
 	iter *gtk.TextIter
 }
 
-func main() {
-	gtk.Init(nil)
-	window := startNewWindow("Conversation with Fan")
-
-	conv_info := newReadOnlyTextBox()
-	conv_info.write("Started at 10:55:33")
-	conv_info.write("\nConversation has been active for 00:11:23")
-	conv_info.write("\nConversation will be logged")
-	conv_info.write("\nOTR enabled")
-
-	window.Add(conv_info.view)
-
-	window.ShowAll()
-	gtk.Main()
-}
-
-func startNewWindow(title string) *gtk.Window {
+func newAboutConversationWindow(title string) aboutConversationWin {
 	window := gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
 	window.SetPosition(gtk.WIN_POS_CENTER)
 	window.SetTitle(title)
 	window.Connect(DESTROY_SIGNAL, gtk.MainQuit)
 	window.SetSizeRequest(600, 480)
-	return window
+
+	return aboutConversationWin{window, newReadOnlyTextBox()}
+}
+
+func (about aboutConversationWin) add(box textBox) {
+	about.win.Add(box.view)
+}
+
+func (about aboutConversationWin) write(text string) {
+	about.txt.write(text)
+}
+
+func (about aboutConversationWin) render() {
+	about.add(about.txt)
+	about.win.ShowAll()
 }
 
 func newReadOnlyTextBox() textBox {
@@ -50,6 +53,6 @@ func newReadOnlyTextBox() textBox {
 	return textBox{view, buf, &iter}
 }
 
-func (textBox textBox) write(text string) {
-	textBox.buf.Insert(textBox.iter, text)
+func (box textBox) write(text string) {
+	box.buf.Insert(box.iter, text)
 }

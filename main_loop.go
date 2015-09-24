@@ -1,59 +1,5 @@
 package main
 
-import (
-	"fmt"
-
-	coyui "github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
-)
-
-func stanzaLoop(ui coyui.UI, s *Session, stanzaChan <-chan xmpp.Stanza, done chan<- bool) {
-
-StanzaLoop:
-	for {
-		select {
-		case rawStanza, ok := <-stanzaChan:
-			if !ok {
-				ui.Warn("Exiting because channel to server closed")
-				break StanzaLoop
-			}
-			switch stanza := rawStanza.Value.(type) {
-			case *xmpp.StreamError:
-				var text string
-				if len(stanza.Text) > 0 {
-					text = stanza.Text
-				} else {
-					text = fmt.Sprintf("%s", stanza.Any)
-				}
-
-				ui.Alert("Exiting in response to fatal error from server: " + text)
-				break StanzaLoop
-			case *xmpp.ClientMessage:
-				s.processClientMessage(stanza)
-			case *xmpp.ClientPresence:
-				ui.ProcessPresence(stanza)
-			case *xmpp.ClientIQ:
-				if stanza.Type != "get" && stanza.Type != "set" {
-					continue
-				}
-				reply := s.processIQ(stanza)
-				if reply == nil {
-					reply = xmpp.ErrorReply{
-						Type:  "cancel",
-						Error: xmpp.ErrorBadRequest{},
-					}
-				}
-				if err := s.conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
-					ui.Alert("Failed to send IQ message: " + err.Error())
-				}
-			default:
-				ui.Info(fmt.Sprintf("%s %s", rawStanza.Name, rawStanza.Value))
-			}
-		}
-	}
-
-	done <- true
-}
 
 //func rosterLoop(term *terminal.Terminal, s *Session, rosterReply <-chan xmpp.Stanza, done chan<- bool) {
 //RosterLoop:
@@ -92,4 +38,3 @@ StanzaLoop:
 //
 //	done <- true
 //}
-

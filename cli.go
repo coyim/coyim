@@ -71,11 +71,8 @@ func (c *cliUI) Disconnected() {
 func (c *cliUI) Loop() {
 	go c.session.WatchTimeout()
 	go c.session.WatchRosterEvents()
+	go c.session.WatchStanzas()
 	go c.WatchCommands()
-
-	stanzaChan := make(chan xmpp.Stanza)
-	go c.session.readMessages(stanzaChan)
-	go stanzaLoop(c, c.session, stanzaChan, c.terminate)
 
 	<-c.terminate // wait
 }
@@ -126,67 +123,39 @@ func (c *cliUI) RegisterCallback() xmpp.FormCallback {
 	return nil
 }
 
-func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence) {
-	s := c.session
-	gone := false
-
-	switch stanza.Type {
-	case "subscribe":
-		// This is a subscription request
-		jid := xmpp.RemoveResourceFromJid(stanza.From)
-		info(c.term, jid+" wishes to see when you're online. Use '/confirm "+jid+"' to confirm (or likewise with /deny to decline)")
-		s.pendingSubscribes[jid] = stanza.Id
-		c.input.AddUser(jid)
-		return
-	case "unavailable":
-		gone = true
-	case "":
-		break
-	default:
-		return
-	}
+func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool) {
 
 	from := xmpp.RemoveResourceFromJid(stanza.From)
 
+	if stanza.Type == "subscribe" {
+		info(c.term, from+" wishes to see when you're online. Use '/confirm "+from+"' to confirm (or likewise with /deny to decline)")
+		c.input.AddUser(from)
+		return
+	}
+
+	s := c.session
+	if ignore || s.config.HideStatusUpdates {
+		return
+	}
+
+	var line []byte
+	line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
+	line = append(line, c.term.Escape.Magenta...)
+	line = append(line, []byte(from)...)
+	line = append(line, ':')
+	line = append(line, c.term.Escape.Reset...)
+	line = append(line, ' ')
 	if gone {
-		if _, ok := s.knownStates[from]; !ok {
-			// They've gone, but we never knew they were online.
-			return
-		}
-		delete(s.knownStates, from)
+		line = append(line, []byte("offline")...)
+	} else if len(stanza.Show) > 0 {
+		line = append(line, []byte(stanza.Show)...)
 	} else {
-		if _, ok := s.knownStates[from]; !ok && coyui.IsAwayStatus(stanza.Show) {
-			// Skip people who are initially away.
-			return
-		}
-
-		if lastState, ok := s.knownStates[from]; ok && lastState == stanza.Show {
-			// No change. Ignore.
-			return
-		}
-		s.knownStates[from] = stanza.Show
+		line = append(line, []byte("online")...)
 	}
-
-	if !s.config.HideStatusUpdates {
-		var line []byte
-		line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
-		line = append(line, c.term.Escape.Magenta...)
-		line = append(line, []byte(from)...)
-		line = append(line, ':')
-		line = append(line, c.term.Escape.Reset...)
-		line = append(line, ' ')
-		if gone {
-			line = append(line, []byte("offline")...)
-		} else if len(stanza.Show) > 0 {
-			line = append(line, []byte(stanza.Show)...)
-		} else {
-			line = append(line, []byte("online")...)
-		}
-		line = append(line, ' ')
-		line = append(line, []byte(stanza.Status)...)
-		line = append(line, '\n')
-		c.term.Write(line)
-	}
+	line = append(line, ' ')
+	line = append(line, []byte(stanza.Status)...)
+	line = append(line, '\n')
+	c.term.Write(line)
 }
 
 func (c *cliUI) IQReceived(uid string) {

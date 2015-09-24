@@ -92,6 +92,59 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 	}
 }
 
+func (s *Session) WatchStanzas() {
+	defer s.Terminate()
+
+	stanzaChan := make(chan xmpp.Stanza)
+	go s.readMessages(stanzaChan)
+
+StanzaLoop:
+	for {
+		select {
+		case rawStanza, ok := <-stanzaChan:
+			if !ok {
+				s.warn("Exiting because channel to server closed")
+				break StanzaLoop
+			}
+
+			switch stanza := rawStanza.Value.(type) {
+			case *xmpp.StreamError:
+				var text string
+				if len(stanza.Text) > 0 {
+					text = stanza.Text
+				} else {
+					text = fmt.Sprintf("%s", stanza.Any)
+				}
+
+				s.alert("Exiting in response to fatal error from server: " + text)
+				break StanzaLoop
+			case *xmpp.ClientMessage:
+				s.processClientMessage(stanza)
+			case *xmpp.ClientPresence:
+				ignore, gone := s.processPresence(stanza)
+				s.ui.ProcessPresence(stanza, ignore, gone)
+			case *xmpp.ClientIQ:
+				if stanza.Type != "get" && stanza.Type != "set" {
+					continue
+				}
+				reply := s.processIQ(stanza)
+				if reply == nil {
+					reply = xmpp.ErrorReply{
+						Type:  "cancel",
+						Error: xmpp.ErrorBadRequest{},
+					}
+				}
+
+				if err := s.conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
+					s.alert("Failed to send IQ message: " + err.Error())
+				}
+			default:
+				s.info(fmt.Sprintf("%s %s", rawStanza.Name, rawStanza.Value))
+			}
+		}
+	}
+}
+
 func (s *Session) rosterReceived() {
 	s.ui.RosterReceived(s.roster)
 }
@@ -378,19 +431,21 @@ func (s *Session) maybeNotify() {
 	}()
 }
 
-func (s *Session) processPresence(stanza *xmpp.ClientPresence) (gone bool) {
+func (s *Session) processPresence(stanza *xmpp.ClientPresence) (ignore, gone bool) {
+
 	switch stanza.Type {
 	case "subscribe":
 		// This is a subscription request
 		jid := xmpp.RemoveResourceFromJid(stanza.From)
 		s.pendingSubscribes[jid] = stanza.Id
-		//TODO notify the UI about the subscription request
+		ignore = true
 		return
 	case "unavailable":
 		gone = true
 	case "":
 		break
 	default:
+		ignore = true
 		return
 	}
 
@@ -399,17 +454,20 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) (gone bool) {
 	if gone {
 		if _, ok := s.knownStates[from]; !ok {
 			// They've gone, but we never knew they were online.
+			ignore = true
 			return
 		}
 		delete(s.knownStates, from)
 	} else {
 		if _, ok := s.knownStates[from]; !ok && coyui.IsAwayStatus(stanza.Show) {
 			// Skip people who are initially away.
+			ignore = true
 			return
 		}
 
 		if lastState, ok := s.knownStates[from]; ok && lastState == stanza.Show {
 			// No change. Ignore.
+			ignore = true
 			return
 		}
 		s.knownStates[from] = stanza.Show

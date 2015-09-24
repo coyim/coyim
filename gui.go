@@ -464,7 +464,8 @@ func initMenuBar() *gtk.MenuBar {
 	return menubar
 }
 
-func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence) {
+func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool) {
+
 	jid := xmpp.RemoveResourceFromJid(stanza.From)
 	state, ok := u.session.knownStates[jid]
 	if !ok || len(state) == 0 {
@@ -551,62 +552,6 @@ func (u *gtkUI) Connect() error {
 func (ui *gtkUI) onConnect() {
 	go ui.session.WatchTimeout()
 	go ui.session.WatchRosterEvents()
-
-	go ui.handleStanzaEvents()
+	go ui.session.WatchStanzas()
 }
 
-func (ui *gtkUI) handleStanzaEvents() {
-	stanzaChan := make(chan xmpp.Stanza)
-	go ui.session.readMessages(stanzaChan)
-
-StanzaLoop:
-	for {
-		select {
-		case rawStanza, ok := <-stanzaChan:
-			if !ok {
-				fmt.Println("Stanza channel closed")
-				break StanzaLoop
-			}
-
-			switch stanza := rawStanza.Value.(type) {
-			case *xmpp.StreamError:
-				var text string
-				if len(stanza.Text) > 0 {
-					text = stanza.Text
-				} else {
-					text = fmt.Sprintf("%s", stanza.Any)
-				}
-				fmt.Println("Exiting in response to fatal error from server: " + text)
-				break StanzaLoop
-			case *xmpp.ClientMessage:
-				ui.session.processClientMessage(stanza)
-			case *xmpp.ClientPresence:
-				//OKish
-				ui.session.processPresence(stanza)
-				ui.ProcessPresence(stanza)
-			case *xmpp.ClientIQ:
-				if stanza.Type != "get" && stanza.Type != "set" {
-					continue
-				}
-				reply := ui.session.processIQ(stanza)
-				if reply == nil {
-					reply = xmpp.ErrorReply{
-						Type:  "cancel",
-						Error: xmpp.ErrorBadRequest{},
-					}
-				}
-
-				if err := ui.session.conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
-					fmt.Println("Failed to send IQ message: " + err.Error())
-				}
-			default:
-				fmt.Println(fmt.Sprintf("%s %s", rawStanza.Name, rawStanza.Value))
-			}
-		}
-	}
-
-	//TODO should it quit?
-	gdk.ThreadsEnter()
-	gtk.MainQuit()
-	gdk.ThreadsLeave()
-}

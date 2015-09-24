@@ -292,25 +292,25 @@ func NewGTK() *gtkUI {
 	return &gtkUI{}
 }
 
-func (ui *gtkUI) mainWindow() {
-	ui.window = gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
-	ui.roster = newRoster()
-	ui.roster.sendMessage = ui.sendMessage
+func (u *gtkUI) mainWindow() {
+	u.window = gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
+	u.roster = newRoster()
+	u.roster.sendMessage = u.sendMessage
 
 	menubar := initMenuBar()
 	vbox := gtk.NewVBox(false, 1)
 	vbox.PackStart(menubar, false, false, 0)
-	vbox.Add(ui.roster.window)
-	ui.window.Add(vbox)
+	vbox.Add(u.roster.window)
+	u.window.Add(vbox)
 
-	ui.window.SetTitle("Coy")
-	ui.window.Connect("destroy", gtk.MainQuit)
-	ui.window.SetSizeRequest(200, 600)
-	ui.window.ShowAll()
+	u.window.SetTitle("Coy")
+	u.window.Connect("destroy", gtk.MainQuit)
+	u.window.SetSizeRequest(200, 600)
+	u.window.ShowAll()
 }
 
-func (ui *gtkUI) sendMessage(to, message string) {
-	conversation := ui.session.getConversationWith(to)
+func (u *gtkUI) sendMessage(to, message string) {
+	conversation := u.session.getConversationWith(to)
 
 	toSend, err := conversation.Send(otr3.ValidMessage(message))
 	if err != nil {
@@ -321,7 +321,7 @@ func (ui *gtkUI) sendMessage(to, message string) {
 	for _, m := range toSend {
 		//TODO: this should be session.Send(to, message)
 		fmt.Printf("[send] %q\n", string(m))
-		ui.session.conn.Send(to, string(m))
+		u.session.conn.Send(to, string(m))
 	}
 }
 
@@ -336,8 +336,8 @@ func (*gtkUI) Enroll(*coyconf.Config) bool {
 }
 
 //TODO: we should update periodically (like Pidgin does) if we include the status (online/offline/away) on the label
-func (ui *gtkUI) updateRoster(roster []xmpp.RosterEntry) {
-	ui.roster.update(roster)
+func (u *gtkUI) updateRoster(roster []xmpp.RosterEntry) {
+	u.roster.update(roster)
 }
 
 func authors() []string {
@@ -459,9 +459,9 @@ func initMenuBar() *gtk.MenuBar {
 	return menubar
 }
 
-func (ui *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence) {
+func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence) {
 	jid := xmpp.RemoveResourceFromJid(stanza.From)
-	state, ok := ui.session.knownStates[jid]
+	state, ok := u.session.knownStates[jid]
 	if !ok || len(state) == 0 {
 		state = "unknown"
 	}
@@ -470,11 +470,11 @@ func (ui *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence) {
 	fmt.Println(jid, "is", state)
 }
 
-func (ui *gtkUI) IQReceived(string) {
+func (u *gtkUI) IQReceived(string) {
 	//TODO
 }
 
-func (ui *gtkUI) RosterReceived(roster []xmpp.RosterEntry) {
+func (u *gtkUI) RosterReceived(roster []xmpp.RosterEntry) {
 	//TODO
 }
 
@@ -496,15 +496,15 @@ func main() {
 	os.Stdout.Write([]byte("\n"))
 }
 
-func (c *gtkUI) Connect() error {
-	config, password, err := loadConfig(c)
+func (u *gtkUI) Connect() error {
+	config, password, err := loadConfig(u)
 	if err != nil {
 		return err
 	}
 
 	//TODO support one session per account
-	c.session = &Session{
-		ui: c,
+	u.session = &Session{
+		ui: u,
 
 		account:           config.Account,
 		conversations:     make(map[string]*otr3.Conversation),
@@ -515,29 +515,29 @@ func (c *gtkUI) Connect() error {
 		pendingRosterChan: make(chan *coyui.RosterEdit),
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
-		sessionHandler:    c,
+		sessionHandler:    u,
 	}
 
 	// TODO: GTK main loop freezes unless this is run on a Go routine
 	// and I have no idea why
 	go func() {
 		logger := bytes.NewBuffer(nil)
-		conn, err := NewXMPPConn(c, config, password, c.RegisterCallback(), logger)
+		conn, err := NewXMPPConn(u, config, password, u.RegisterCallback(), logger)
 		if err != nil {
-			c.Alert(err.Error())
+			u.Alert(err.Error())
 			//gtk.MainQuit()
 			return
 		}
 
-		c.session.conn = conn
-		c.session.conn.SignalPresence("")
-		c.onConnect()
+		u.session.conn = conn
+		u.session.conn.SignalPresence("")
+		u.onConnect()
 	}()
 
-	c.session.privateKey.Parse(config.PrivateKey)
-	c.session.timeouts = make(map[xmpp.Cookie]time.Time)
+	u.session.privateKey.Parse(config.PrivateKey)
+	u.session.timeouts = make(map[xmpp.Cookie]time.Time)
 
-	fmt.Printf("Your fingerprint is %x", c.session.privateKey.DefaultFingerprint())
+	fmt.Printf("Your fingerprint is %x", u.session.privateKey.DefaultFingerprint())
 
 	return nil
 }

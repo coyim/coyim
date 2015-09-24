@@ -89,6 +89,7 @@ func NewGTK() *gtkUI {
 func (u *gtkUI) mainWindow() {
 	u.window = gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
 	u.roster = gui.NewRoster()
+	u.roster.CheckEncrypted = u.checkEncrypted
 	u.roster.SendMessage = u.sendMessage
 
 	menubar := initMenuBar(u)
@@ -104,6 +105,7 @@ func (u *gtkUI) mainWindow() {
 }
 
 func (u *gtkUI) sendMessage(to, message string) {
+	//TODO: this should not be in both GUI and roster
 	conversation := u.session.getConversationWith(to)
 
 	toSend, err := conversation.Send(otr3.ValidMessage(message))
@@ -119,6 +121,11 @@ func (u *gtkUI) sendMessage(to, message string) {
 		//TODO: this should be session.Send(to, message)
 		u.session.conn.Send(to, string(m))
 	}
+}
+
+func (u *gtkUI) checkEncrypted(to string) bool {
+	c := u.session.getConversationWith(to)
+	return c.IsEncrypted()
 }
 
 func (*gtkUI) AskForPassword(*config.Config) (string, error) {

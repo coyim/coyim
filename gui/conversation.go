@@ -81,6 +81,18 @@ func newConversationWindow(r *Roster, uid string) *conversationWindow {
 	vbox.PackStart(conv.scrollHistory, true, true, 0)
 	vbox.Add(scroll)
 
+	//TODO: provide function to trigger AKE
+	encryptedFlag := gtk.NewButton()
+	vbox.Add(encryptedFlag)
+	glib.IdleAdd(func() bool {
+		if conv.roster.CheckEncrypted(conv.to) {
+			encryptedFlag.SetLabel("encrypted")
+		} else {
+			encryptedFlag.SetLabel("unencrypted")
+		}
+		return true
+	})
+
 	conv.win.Add(vbox)
 
 	return conv

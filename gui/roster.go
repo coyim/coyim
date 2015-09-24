@@ -14,8 +14,9 @@ type Roster struct {
 	model  *gtk.ListStore
 	view   *gtk.TreeView
 
-	SendMessage   func(to, message string)
-	conversations map[string]*conversationWindow
+	CheckEncrypted func(to string) bool
+	SendMessage    func(to, message string)
+	conversations  map[string]*conversationWindow
 }
 
 func NewRoster() *Roster {

@@ -194,13 +194,15 @@ func main() {
 	ui.session = &Session{
 		ui: ui,
 
-		account:           config.Account,
+		//WHY both?
+		account: config.Account,
+		config:  config,
+
 		conn:              conn,
 		conversations:     make(map[string]*otr3.Conversation),
 		eh:                make(map[string]*eventHandler),
 		knownStates:       make(map[string]string),
 		privateKey:        new(otr3.PrivateKey),
-		config:            config,
 		pendingRosterChan: make(chan *coyui.RosterEdit),
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),

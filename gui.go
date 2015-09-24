@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	coyconf "github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/gui"
-	coyui "github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
@@ -26,6 +26,9 @@ type gtkUI struct {
 	roster  *gui.Roster
 	session *Session
 	window  *gtk.Window
+
+	config    *config.Config
+	connected bool
 }
 
 func (*gtkUI) RegisterCallback() xmpp.FormCallback {
@@ -65,6 +68,7 @@ func (u *gtkUI) Alert(m string) {
 }
 
 func (u *gtkUI) Disconnected() {
+	//TODO: remove everybody from the roster
 	fmt.Println("TODO: Should disconnect the account")
 }
 
@@ -87,7 +91,7 @@ func (u *gtkUI) mainWindow() {
 	u.roster = gui.NewRoster()
 	u.roster.SendMessage = u.sendMessage
 
-	menubar := initMenuBar()
+	menubar := initMenuBar(u)
 	vbox := gtk.NewVBox(false, 1)
 	vbox.PackStart(menubar, false, false, 0)
 	vbox.Add(u.roster.Window)
@@ -109,7 +113,7 @@ func (u *gtkUI) sendMessage(to, message string) {
 	}
 
 	encrypted := conversation.IsEncrypted()
-	u.roster.AppendMessageToHistory(to, "ME", "NOW", encrypted, coyui.StripHTML([]byte(message)))
+	u.roster.AppendMessageToHistory(to, "ME", "NOW", encrypted, ui.StripHTML([]byte(message)))
 
 	for _, m := range toSend {
 		//TODO: this should be session.Send(to, message)
@@ -117,12 +121,12 @@ func (u *gtkUI) sendMessage(to, message string) {
 	}
 }
 
-func (*gtkUI) AskForPassword(*coyconf.Config) (string, error) {
+func (*gtkUI) AskForPassword(*config.Config) (string, error) {
 	//TODO
 	return "", nil
 }
 
-func (*gtkUI) Enroll(*coyconf.Config) bool {
+func (*gtkUI) Enroll(*config.Config) bool {
 	//TODO
 	return false
 }
@@ -199,7 +203,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 
 func accountDialog() {
 	//TODO It should not load config here
-	config := &coyconf.Config{}
+	c := &config.Config{}
 	dialog := gtk.NewDialog()
 	dialog.SetTitle("Account Details")
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
@@ -209,7 +213,7 @@ func accountDialog() {
 	vbox.Add(accountLabel)
 
 	accountInput := gtk.NewEntry()
-	accountInput.SetText(config.Account)
+	accountInput.SetText(c.Account)
 	accountInput.SetEditable(true)
 	vbox.Add(accountInput)
 
@@ -223,7 +227,7 @@ func accountDialog() {
 	dialog.ShowAll()
 }
 
-func initMenuBar() *gtk.MenuBar {
+func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	menubar := gtk.NewMenuBar()
 
 	//Config -> Account
@@ -231,9 +235,28 @@ func initMenuBar() *gtk.MenuBar {
 	menubar.Append(cascademenu)
 	submenu := gtk.NewMenu()
 	cascademenu.SetSubmenu(submenu)
+
 	menuitem := gtk.NewMenuItemWithMnemonic("_Account")
-	menuitem.Connect("activate", accountDialog)
 	submenu.Append(menuitem)
+
+	accountSubMenu := gtk.NewMenu()
+	menuitem.SetSubmenu(accountSubMenu)
+
+	connectItem := gtk.NewMenuItemWithMnemonic("_Connect")
+	connectItem.Connect("activate", func() {
+		if err := u.connect(); err != nil {
+			fmt.Println("Failed to connect")
+		}
+	})
+	accountSubMenu.Append(connectItem)
+
+	disconnectItem := gtk.NewMenuItemWithMnemonic("_Disconnect")
+	disconnectItem.Connect("activate", u.disconnect)
+	accountSubMenu.Append(disconnectItem)
+
+	editItem := gtk.NewMenuItemWithMnemonic("_Edit")
+	editItem.Connect("activate", accountDialog)
+	accountSubMenu.Append(editItem)
 
 	//Help -> About
 	cascademenu = gtk.NewMenuItemWithMnemonic("_Help")
@@ -275,11 +298,6 @@ func main() {
 
 	ui := NewGTK()
 
-	if err := ui.Connect(); err != nil {
-		//TODO: Handle error?
-		return
-	}
-
 	//ticker := time.NewTicker(1 * time.Second)
 	//quit := make(chan bool)
 	//go timeoutLoop(&s, ticker.C)
@@ -288,8 +306,26 @@ func main() {
 	os.Stdout.Write([]byte("\n"))
 }
 
-func (u *gtkUI) Connect() error {
-	config, password, err := loadConfig(u)
+func (u *gtkUI) disconnect() error {
+	if !u.connected {
+		return nil
+	}
+
+	u.session.Terminate()
+	u.connected = false
+
+	return nil
+}
+
+func (u *gtkUI) connect() error {
+	if u.connected {
+		return nil
+	}
+
+	var password string
+	var err error
+
+	u.config, password, err = loadConfig(u)
 	if err != nil {
 		return err
 	}
@@ -298,35 +334,35 @@ func (u *gtkUI) Connect() error {
 	u.session = &Session{
 		ui: u,
 
-		account:           config.Account,
+		//Why both?
+		account: u.config.Account,
+		config:  u.config,
+
 		conversations:     make(map[string]*otr3.Conversation),
 		eh:                make(map[string]*eventHandler),
 		knownStates:       make(map[string]string),
 		privateKey:        new(otr3.PrivateKey),
-		config:            config,
-		pendingRosterChan: make(chan *coyui.RosterEdit),
+		pendingRosterChan: make(chan *ui.RosterEdit),
 		pendingSubscribes: make(map[string]string),
 		lastActionTime:    time.Now(),
 		sessionHandler:    u,
 	}
 
+	u.session.privateKey.Parse(u.config.PrivateKey)
+	//TODO: This should happen regardless of connecting
+	fmt.Printf("Your fingerprint is %x\n", u.session.privateKey.DefaultFingerprint())
+
 	// TODO: GTK main loop freezes unless this is run on a Go routine
 	// and I have no idea why
 	go func() {
-		conn, err := NewXMPPConn(u, config, password, u.RegisterCallback(), os.Stdout)
+		err := u.session.Connect(password)
 		if err != nil {
-			u.Alert(err.Error())
 			return
 		}
 
-		u.session.conn = conn
+		u.connected = true
 		u.onConnect()
 	}()
-
-	u.session.privateKey.Parse(config.PrivateKey)
-	u.session.timeouts = make(map[xmpp.Cookie]time.Time)
-
-	fmt.Printf("Your fingerprint is %x", u.session.privateKey.DefaultFingerprint())
 
 	return nil
 }

@@ -58,6 +58,8 @@ func domainFromJid(jid string) string {
 
 // Conn represents a connection to an XMPP server.
 type Conn struct {
+	config *Config
+
 	out     io.Writer
 	rawOut  io.Writer // doesn't log. Used for <auth>
 	in      *xml.Decoder
@@ -67,6 +69,10 @@ type Conn struct {
 	lock          sync.Mutex
 	inflights     map[Cookie]inflight
 	customStorage map[xml.Name]reflect.Type
+}
+
+func (conn *Conn) Close() error {
+	return conn.config.Conn.Close()
 }
 
 // inflight contains the details of a pending request to which we are awaiting
@@ -470,6 +476,7 @@ func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
 // given user.
 func Dial(address, user, domain, password string, config *Config) (c *Conn, err error) {
 	c = new(Conn)
+	c.config = config
 	c.inflights = make(map[Cookie]inflight)
 	c.archive = config.Archive
 

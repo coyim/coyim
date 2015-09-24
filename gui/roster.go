@@ -45,7 +45,7 @@ func NewRoster() *Roster {
 	iter := &gtk.TreeIter{}
 	r.model.Append(iter)
 	r.model.Set(iter,
-		0, "CONNECTING...",
+		0, "Disconnected.\nPlease connect from pref. menu",
 	)
 
 	r.view.SetModel(r.model)

@@ -18,15 +18,23 @@ import (
 	"github.com/twstrike/otr3"
 )
 
+type connStatus int
+
+const (
+	DISCONNECTED connStatus = iota
+	CONNECTED
+)
+
 type Session struct {
 	//TODO: This feels bad.
 	//it only needs a reference to UI callbacks
 	//maybe use the event handler?
 	ui coyui.UI
 
-	account string
-	conn    *xmpp.Conn
-	roster  []xmpp.RosterEntry
+	account    string
+	conn       *xmpp.Conn
+	roster     []xmpp.RosterEntry
+	connStatus connStatus
 
 	// conversations maps from a JID (without the resource) to an OTR
 	// conversation. (Note that unencrypted conversations also pass through
@@ -583,9 +591,52 @@ RosterLoop:
 	}
 }
 
+func (s *Session) Connect(password string) error {
+	if s.connStatus == CONNECTED {
+		return nil
+	}
+
+	//TODO: I believe ui is only used as a sessionHandler
+	conn, err := NewXMPPConn(s.ui, s.config, password, s.ui.RegisterCallback(), os.Stdout)
+	if err != nil {
+		s.alert(err.Error())
+		return err
+	}
+
+	s.timeouts = make(map[xmpp.Cookie]time.Time)
+	s.conn = conn
+	s.connStatus = CONNECTED
+
+	return nil
+}
+
+//TODO: rename to Close
 func (s *Session) Terminate() {
+	if s.connStatus == DISCONNECTED {
+		return
+	}
+
 	s.timeoutTicker.Stop()
-	s.timeoutTicker = nil
+	//s.timeoutTicker = nil
+
+	//Close all conversations
+	for to, conversation := range s.conversations {
+		msgs, err := conversation.End()
+		if err != nil {
+			//TODO: error handle
+			panic("this should not happen")
+		}
+
+		for _, msg := range msgs {
+			s.conn.Send(to, string(msg))
+		}
+
+		//conversation.Wipe()
+		delete(s.conversations, to)
+	}
+
+	s.conn.Close()
+	s.connStatus = DISCONNECTED
 
 	s.ui.Disconnected()
 }

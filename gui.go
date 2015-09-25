@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -222,15 +223,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 	dialog.Destroy()
 }
 
-func accountDialog() {
-	//TODO It should not load config here
-	c := &config.Config{}
+func accountDialog(c *config.Config) {
 	dialog := gtk.NewDialog()
 	dialog.SetTitle("Account Details")
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
 	vbox := dialog.GetVBox()
 
-	accountLabel := gtk.NewLabel("Account:")
+	accountLabel := gtk.NewLabel("Account")
 	vbox.Add(accountLabel)
 
 	accountInput := gtk.NewEntry()
@@ -238,9 +237,54 @@ func accountDialog() {
 	accountInput.SetEditable(true)
 	vbox.Add(accountInput)
 
-	button := gtk.NewButtonWithLabel("OK")
+	vbox.Add(gtk.NewLabel("Password"))
+	passwordInput := gtk.NewEntry()
+	passwordInput.SetText(c.Password)
+	passwordInput.SetEditable(true)
+	passwordInput.SetVisibility(false)
+	vbox.Add(passwordInput)
+
+	vbox.Add(gtk.NewLabel("Server"))
+	serverInput := gtk.NewEntry()
+	serverInput.SetText(c.Server)
+	serverInput.SetEditable(true)
+	vbox.Add(serverInput)
+
+	vbox.Add(gtk.NewLabel("Port"))
+	portInput := gtk.NewEntry()
+	portInput.SetText(strconv.Itoa(c.Port))
+	portInput.SetEditable(true)
+	vbox.Add(portInput)
+
+	vbox.Add(gtk.NewLabel("Tor Proxy"))
+	proxyInput := gtk.NewEntry()
+	if len(c.Proxies) > 0 {
+		proxyInput.SetText(c.Proxies[0])
+	}
+	proxyInput.SetEditable(true)
+	vbox.Add(proxyInput)
+
+	alwaysEncrypt := gtk.NewCheckButtonWithLabel("Always Encrypt")
+	alwaysEncrypt.SetActive(c.AlwaysEncrypt)
+	vbox.Add(alwaysEncrypt)
+
+	button := gtk.NewButtonWithLabel("Save")
 	button.Connect("clicked", func() {
-		fmt.Println(accountInput.GetText())
+		c.Account = accountInput.GetText()
+		c.Password = passwordInput.GetText()
+		c.Server = serverInput.GetText()
+		if v, err := strconv.Atoi(portInput.GetText()); err != nil {
+			c.Port = v
+		}
+
+		if len(c.Proxies) == 0 {
+			c.Proxies = append(c.Proxies, "")
+		}
+		c.Proxies[0] = proxyInput.GetText()
+
+		c.AlwaysEncrypt = alwaysEncrypt.GetActive()
+
+		c.Save()
 		dialog.Destroy()
 	})
 	vbox.Add(button)
@@ -289,7 +333,9 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	u.On(DISCONNECTED_SIG, connToggle)
 
 	editItem := gtk.NewMenuItemWithMnemonic("_Edit")
-	editItem.Connect("activate", accountDialog)
+	editItem.Connect("activate", func() {
+		accountDialog(u.config)
+	})
 	accountSubMenu.Append(editItem)
 
 	//Help -> About

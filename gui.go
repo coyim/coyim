@@ -82,15 +82,29 @@ func (u *gtkUI) Loop() {
 	gdk.ThreadsLeave()
 }
 
+var (
+	CONNECTED_SIG    = glib.NewSignal("coyim-account-connected")
+	DISCONNECTED_SIG = glib.NewSignal("coyim-account-disconnected")
+)
+
 func NewGTK() *gtkUI {
 	return &gtkUI{}
 }
 
-func (u *gtkUI) mainWindow() {
-	u.window = gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
+func (u *gtkUI) On(s *glib.Signal, f func()) {
+	u.window.Connect(s.Name(), f)
+}
+
+func (u *gtkUI) initRoster() {
 	u.roster = gui.NewRoster()
 	u.roster.CheckEncrypted = u.checkEncrypted
 	u.roster.SendMessage = u.sendMessage
+	u.On(DISCONNECTED_SIG, u.roster.Clear)
+}
+
+func (u *gtkUI) mainWindow() {
+	u.window = gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
+	u.initRoster()
 
 	menubar := initMenuBar(u)
 	vbox := gtk.NewVBox(false, 1)
@@ -250,16 +264,29 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	menuitem.SetSubmenu(accountSubMenu)
 
 	connectItem := gtk.NewMenuItemWithMnemonic("_Connect")
+	accountSubMenu.Append(connectItem)
+
+	disconnectItem := gtk.NewMenuItemWithMnemonic("_Disconnect")
+	disconnectItem.SetSensitive(false)
+	accountSubMenu.Append(disconnectItem)
+
 	connectItem.Connect("activate", func() {
+		connectItem.SetSensitive(false)
 		if err := u.connect(); err != nil {
 			fmt.Println("Failed to connect")
 		}
 	})
-	accountSubMenu.Append(connectItem)
 
-	disconnectItem := gtk.NewMenuItemWithMnemonic("_Disconnect")
 	disconnectItem.Connect("activate", u.disconnect)
-	accountSubMenu.Append(disconnectItem)
+
+	connToggle := func() {
+		connected := u.session.connStatus == CONNECTED
+		connectItem.SetSensitive(!connected)
+		disconnectItem.SetSensitive(connected)
+	}
+
+	u.On(CONNECTED_SIG, connToggle)
+	u.On(DISCONNECTED_SIG, connToggle)
 
 	editItem := gtk.NewMenuItemWithMnemonic("_Edit")
 	editItem.Connect("activate", accountDialog)
@@ -319,6 +346,7 @@ func (u *gtkUI) disconnect() error {
 	}
 
 	u.session.Terminate()
+	u.window.EmitSignal(DISCONNECTED_SIG)
 	u.connected = false
 
 	return nil
@@ -367,6 +395,7 @@ func (u *gtkUI) connect() error {
 			return
 		}
 
+		u.window.EmitSignal(CONNECTED_SIG)
 		u.connected = true
 		u.onConnect()
 	}()

@@ -22,6 +22,7 @@ type connStatus int
 
 const (
 	DISCONNECTED connStatus = iota
+	CONNECTING
 	CONNECTED
 )
 
@@ -592,14 +593,17 @@ RosterLoop:
 }
 
 func (s *Session) Connect(password string) error {
-	if s.connStatus == CONNECTED {
+	if s.connStatus != DISCONNECTED {
 		return nil
 	}
+
+	s.connStatus = CONNECTING
 
 	//TODO: I believe ui is only used as a sessionHandler
 	conn, err := NewXMPPConn(s.ui, s.config, password, s.ui.RegisterCallback(), os.Stdout)
 	if err != nil {
 		s.alert(err.Error())
+		s.connStatus = DISCONNECTED
 		return err
 	}
 
@@ -612,6 +616,8 @@ func (s *Session) Connect(password string) error {
 
 //TODO: rename to Close
 func (s *Session) Terminate() {
+	//TODO: what should be done it states == CONNECTING?
+
 	if s.connStatus == DISCONNECTED {
 		return
 	}

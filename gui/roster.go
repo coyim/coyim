@@ -42,19 +42,35 @@ func NewRoster() *Roster {
 			gtk.NewCellRendererText(), "text", 0),
 	)
 
-	//TODO: Replace by something better
-	iter := &gtk.TreeIter{}
-	r.model.Append(iter)
-	r.model.Set(iter,
-		0, "Disconnected.\nPlease connect from pref. menu",
-	)
-
 	r.view.SetModel(r.model)
 	r.view.Connect("row-activated", r.onActivateBuddy)
-
 	r.Window.Add(r.view)
 
+	//initialize the model
+	r.Clear()
+
 	return r
+}
+
+func (r *Roster) Clear() {
+	glib.IdleAdd(func() bool {
+		gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
+
+		gobj.Ref()
+		r.view.SetModel(nil)
+		r.model.Clear()
+
+		//TODO: Replace by something better
+		iter := &gtk.TreeIter{}
+		r.model.Append(iter)
+		r.model.Set(iter,
+			0, "Disconnected.\nPlease connect from pref. menu",
+		)
+
+		r.view.SetModel(r.model)
+		gobj.Unref()
+		return false
+	})
 }
 
 func (r *Roster) onActivateBuddy(ctx *glib.CallbackContext) {

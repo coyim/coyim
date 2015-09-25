@@ -143,9 +143,34 @@ func (u *gtkUI) checkEncrypted(to string) bool {
 	return c.IsEncrypted()
 }
 
-func (*gtkUI) AskForPassword(*config.Config) (string, error) {
-	//TODO
+func (*gtkUI) AskForPassword(c *config.Config) (string, error) {
+	//TODO: REMOVE ME
 	return "", nil
+}
+
+func (*gtkUI) askForPassword(connect func(string)) {
+	glib.IdleAdd(func() bool {
+		dialog := gtk.NewDialog()
+		dialog.SetTitle("Password")
+		dialog.SetPosition(gtk.WIN_POS_CENTER)
+		vbox := dialog.GetVBox()
+
+		vbox.Add(gtk.NewLabel("Password"))
+		passwordInput := gtk.NewEntry()
+		passwordInput.SetEditable(true)
+		passwordInput.SetVisibility(false)
+		vbox.Add(passwordInput)
+
+		button := gtk.NewButtonWithLabel("Send")
+		button.Connect("clicked", func() {
+			go connect(passwordInput.GetText())
+			dialog.Destroy()
+		})
+		vbox.Add(button)
+
+		dialog.ShowAll()
+		return false
+	})
 }
 
 func (*gtkUI) Enroll(*config.Config) bool {
@@ -316,9 +341,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 
 	connectItem.Connect("activate", func() {
 		connectItem.SetSensitive(false)
-		if err := u.connect(); err != nil {
-			fmt.Println("Failed to connect")
-		}
+		u.connect()
 	})
 
 	disconnectItem.Connect("activate", u.disconnect)
@@ -378,9 +401,14 @@ func main() {
 
 	ui := NewGTK()
 
-	//ticker := time.NewTicker(1 * time.Second)
-	//quit := make(chan bool)
-	//go timeoutLoop(&s, ticker.C)
+	glib.IdleAdd(func() bool {
+		var err error
+		if ui.config, err = config.Load(*configFile); err != nil {
+			ui.Alert(err.Error())
+			ui.Enroll(ui.config)
+		}
+		return false
+	})
 
 	ui.Loop()
 	os.Stdout.Write([]byte("\n"))
@@ -398,17 +426,10 @@ func (u *gtkUI) disconnect() error {
 	return nil
 }
 
-func (u *gtkUI) connect() error {
+//TODO: This should be moved to a Controller
+func (u *gtkUI) connect() {
 	if u.connected {
-		return nil
-	}
-
-	var password string
-	var err error
-
-	u.config, password, err = loadConfig(u)
-	if err != nil {
-		return err
+		return
 	}
 
 	//TODO support one session per account
@@ -430,12 +451,11 @@ func (u *gtkUI) connect() error {
 	}
 
 	u.session.privateKey.Parse(u.config.PrivateKey)
+
 	//TODO: This should happen regardless of connecting
 	fmt.Printf("Your fingerprint is %x\n", u.session.privateKey.DefaultFingerprint())
 
-	// TODO: GTK main loop freezes unless this is run on a Go routine
-	// and I have no idea why
-	go func() {
+	connectFn := func(password string) {
 		err := u.session.Connect(password)
 		if err != nil {
 			return
@@ -444,9 +464,15 @@ func (u *gtkUI) connect() error {
 		u.window.EmitSignal(CONNECTED_SIG)
 		u.connected = true
 		u.onConnect()
-	}()
+	}
 
-	return nil
+	//TODO We do not support empty passwords
+	if len(u.config.Password) == 0 {
+		u.askForPassword(connectFn)
+		return
+	}
+
+	go connectFn(u.config.Password)
 }
 
 func (ui *gtkUI) onConnect() {

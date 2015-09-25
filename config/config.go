@@ -195,3 +195,26 @@ func (c *Config) ShouldEncryptTo(uid string) bool {
 	}
 	return false
 }
+
+var (
+	errInvalidConfigFile = errors.New("Failed to parse config file")
+)
+
+func Load(configFile string) (*Config, error) {
+	if len(configFile) == 0 {
+		c, err := FindConfigFile(os.Getenv("HOME"))
+		if err != nil {
+			return nil, err
+		}
+
+		configFile = *c
+	}
+
+	config, err := ParseConfig(configFile)
+	if err != nil {
+		return nil, errInvalidConfigFile
+	}
+
+	config.Filename = configFile
+	return config, nil
+}

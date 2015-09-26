@@ -160,6 +160,7 @@ func (c *Config) Save() error {
 	if err != nil {
 		return err
 	}
+
 	return ioutil.WriteFile(c.Filename, contents, 0600)
 }
 
@@ -199,6 +200,19 @@ func (c *Config) ShouldEncryptTo(uid string) bool {
 var (
 	errInvalidConfigFile = errors.New("Failed to parse config file")
 )
+
+func NewConfig() *Config {
+	//TODO return a config with secure defaults
+	return &Config{
+		Proxies: []string{
+			"socks5://127.0.0.1:9050",
+		},
+
+		UseTor:              true,
+		AlwaysEncrypt:       true,
+		OTRAutoStartSession: true,
+	}
+}
 
 func Load(configFile string) (*Config, error) {
 	if len(configFile) == 0 {

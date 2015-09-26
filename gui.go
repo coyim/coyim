@@ -143,8 +143,8 @@ func (u *gtkUI) checkEncrypted(to string) bool {
 	return c.IsEncrypted()
 }
 
+//TODO: REMOVE ME
 func (*gtkUI) AskForPassword(c *config.Config) (string, error) {
-	//TODO: REMOVE ME
 	return "", nil
 }
 
@@ -173,8 +173,8 @@ func (*gtkUI) askForPassword(connect func(string)) {
 	})
 }
 
-func (*gtkUI) Enroll(*config.Config) bool {
-	//TODO
+//TODO: Remove?
+func (*gtkUI) Enroll(c *config.Config) bool {
 	return false
 }
 
@@ -298,7 +298,9 @@ func accountDialog(c *config.Config) {
 		c.Account = accountInput.GetText()
 		c.Password = passwordInput.GetText()
 		c.Server = serverInput.GetText()
-		if v, err := strconv.Atoi(portInput.GetText()); err != nil {
+
+		v, err := strconv.Atoi(portInput.GetText())
+		if err == nil {
 			c.Port = v
 		}
 
@@ -401,17 +403,32 @@ func main() {
 
 	ui := NewGTK()
 
-	glib.IdleAdd(func() bool {
-		var err error
-		if ui.config, err = config.Load(*configFile); err != nil {
-			ui.Alert(err.Error())
-			ui.Enroll(ui.config)
-		}
-		return false
-	})
+	var err error
+	if ui.config, err = config.Load(*configFile); err != nil {
+		ui.Alert(err.Error())
+		ui.enroll()
+	}
 
 	ui.Loop()
 	os.Stdout.Write([]byte("\n"))
+}
+
+func (u *gtkUI) enroll() {
+	//TODO: import private key?
+
+	filename, err := config.FindConfigFile(os.Getenv("HOME"))
+	if err != nil {
+		//TODO cant write config file. Should it be a problem?
+		return
+	}
+
+	u.config = config.NewConfig()
+	u.config.Filename = *filename
+
+	glib.IdleAdd(func() bool {
+		accountDialog(u.config)
+		return false
+	})
 }
 
 func (u *gtkUI) disconnect() error {

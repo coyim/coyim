@@ -11,7 +11,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 
@@ -184,39 +183,6 @@ func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
 	term.SetPrompt("> ")
 
 	return true
-}
-
-func loadConfig(ui coyui.UI) (*coyconf.Config, string, error) {
-	var err error
-
-	if len(*configFile) == 0 {
-		if configFile, err = coyconf.FindConfigFile(os.Getenv("HOME")); err != nil {
-			ui.Alert(err.Error())
-			return nil, "", err
-		}
-	}
-
-	config, err := coyconf.ParseConfig(*configFile)
-	if err != nil {
-		ui.Alert("Failed to parse config file: " + err.Error())
-		config = new(coyconf.Config)
-		if !ui.Enroll(config) {
-			return config, "", errors.New("Failed to create config")
-		}
-
-		config.Filename = *configFile
-		config.Save()
-	}
-
-	password := config.Password
-	if len(password) == 0 {
-		if password, err = ui.AskForPassword(config); err != nil {
-			ui.Alert("Failed to read password: " + err.Error())
-			return config, "", err
-		}
-	}
-
-	return config, password, err
 }
 
 func NewXMPPConn(ui coyui.UI, config *coyconf.Config, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {

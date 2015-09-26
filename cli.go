@@ -24,6 +24,7 @@ import (
 )
 
 type cliUI struct {
+	config  *coyconf.Config
 	session *Session
 
 	password string
@@ -99,23 +100,10 @@ func (c *cliUI) Alert(m string) {
 	alert(c.term, m)
 }
 
-func (c *cliUI) Enroll(config *coyconf.Config) bool {
-	return enroll(config, c.term)
-}
-
-func (c *cliUI) AskForPassword(config *coyconf.Config) (string, error) {
-	var err error
-	c.password, err = c.term.ReadPassword(fmt.Sprintf("Password for %s (will not be saved to disk): ", config.Account))
-
-	return c.password, err
-}
-
 func (c *cliUI) RegisterCallback() xmpp.FormCallback {
 	if *createAccount {
 		return func(title, instructions string, fields []interface{}) error {
-			//TODO: why does this function needs the
-			//TODO: get user from Config
-			user := "xxxxxx"
+			user := c.config.Account
 			return promptForForm(c.term, user, c.password, title, instructions, fields)
 		}
 	}
@@ -176,15 +164,38 @@ func main() {
 	ui := newCLI()
 	defer ui.Close()
 
-	config, password, err := loadConfig(ui)
+	var err error
+	ui.config, err = coyconf.Load(*configFile)
 	if err != nil {
-		return
+		filename, e := coyconf.FindConfigFile(os.Getenv("HOME"))
+		if e != nil {
+			//TODO cant write config file. Should it be a problem?
+			return
+		}
+
+		ui.config = coyconf.NewConfig()
+		ui.config.Filename = *filename
+		ui.Alert(err.Error())
+		enroll(ui.config, ui.term)
+	}
+
+	//TODO We do not support empty passwords
+	var password string
+	if len(ui.config.Password) == 0 {
+		var err error
+
+		password, err = ui.term.ReadPassword(
+			fmt.Sprintf("Password for %s (will not be saved to disk): ", ui.config.Account),
+		)
+		if err != nil {
+			return
+		}
 	}
 
 	logger := &lineLogger{ui.term, nil}
 
 	// Act on configuration
-	conn, err := NewXMPPConn(ui, config, password, ui.RegisterCallback(), logger)
+	conn, err := NewXMPPConn(ui, ui.config, password, ui.RegisterCallback(), logger)
 	if err != nil {
 		ui.Alert(err.Error())
 		return
@@ -195,8 +206,8 @@ func main() {
 		ui: ui,
 
 		//WHY both?
-		account: config.Account,
-		config:  config,
+		account: ui.config.Account,
+		config:  ui.config,
 
 		conn:              conn,
 		conversations:     make(map[string]*otr3.Conversation),
@@ -209,7 +220,7 @@ func main() {
 		sessionHandler:    ui,
 	}
 
-	ui.session.privateKey.Parse(config.PrivateKey)
+	ui.session.privateKey.Parse(ui.config.PrivateKey)
 	ui.session.timeouts = make(map[xmpp.Cookie]time.Time)
 
 	info(ui.term, fmt.Sprintf("Your fingerprint is %x", ui.session.privateKey.DefaultFingerprint()))

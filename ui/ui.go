@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"sync"
 
-	coyconf "github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/net/html"
@@ -26,8 +25,6 @@ var OTRWhiteSpaceTagV3 = []byte("\x20\x20\x09\x09\x20\x20\x09\x09")
 var OTRWhitespaceTag = append(OTRWhitespaceTagStart, OTRWhiteSpaceTagV2...)
 
 type UI interface {
-	Enroll(*coyconf.Config) bool
-	AskForPassword(*coyconf.Config) (string, error)
 	Loop()
 
 	// callbacks

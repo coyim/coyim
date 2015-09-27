@@ -33,6 +33,7 @@ deps:
 	go get golang.org/x/net/html
 	go get golang.org/x/net/html/atom
 	go get golang.org/x/net/proxy
+	go get gopkg.in/check.v1
 
 cover:
 	go test . -coverprofile=coverage.out

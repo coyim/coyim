@@ -3,9 +3,17 @@ package xmpp
 import (
 	"encoding/xml"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
-func TestDiscoReplyVerSimple(t *testing.T) {
+func Test(t *testing.T) { TestingT(t) }
+
+type XmppSuite struct{}
+
+var _ = Suite(&XmppSuite{})
+
+func (s *XmppSuite) TestDiscoReplyVerSimple(c *C) {
 	expect := "QgayPKawpkPSDYmwT/WM94uAlu0="
 	input := []byte(`
   <query xmlns='http://jabber.org/protocol/disco#info'
@@ -18,19 +26,13 @@ func TestDiscoReplyVerSimple(t *testing.T) {
   </query>
   `)
 	var dr DiscoveryReply
-	if err := xml.Unmarshal(input, &dr); err != nil {
-		t.Fatal(err)
-	}
+	c.Assert(xml.Unmarshal(input, &dr), IsNil)
 	hash, err := dr.VerificationString()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if hash != expect {
-		t.Fatalf("Expected: %s Got: %s", expect, hash)
-	}
+	c.Assert(err, IsNil)
+	c.Assert(hash, Equals, expect)
 }
 
-func TestDiscoReplyVerComplex(t *testing.T) {
+func (s *XmppSuite) TestDiscoReplyVerComplex(c *C) {
 	expect := "q07IKJEyjvHSyhy//CH0CxmKi8w="
 	input := []byte(`
   <query xmlns='http://jabber.org/protocol/disco#info'
@@ -65,14 +67,8 @@ func TestDiscoReplyVerComplex(t *testing.T) {
   </query>
 `)
 	var dr DiscoveryReply
-	if err := xml.Unmarshal(input, &dr); err != nil {
-		t.Fatal(err)
-	}
+	c.Assert(xml.Unmarshal(input, &dr), IsNil)
 	hash, err := dr.VerificationString()
-	if err != nil {
-		t.Fatal(err)
-	}
-	if hash != expect {
-		t.Fatalf("Expected: %s Got: %s", expect, hash)
-	}
+	c.Assert(err, IsNil)
+	c.Assert(hash, Equals, expect)
 }

@@ -17,6 +17,7 @@ import (
 	"time"
 
 	coyconf "github.com/twstrike/coyim/config"
+	. "github.com/twstrike/coyim/event"
 	coyui "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
@@ -211,7 +212,7 @@ func main() {
 
 		conn:              conn,
 		conversations:     make(map[string]*otr3.Conversation),
-		eh:                make(map[string]*eventHandler),
+		eh:                make(map[string]*OtrEventHandler),
 		knownStates:       make(map[string]string),
 		privateKey:        new(otr3.PrivateKey),
 		pendingRosterChan: make(chan *coyui.RosterEdit),
@@ -707,8 +708,8 @@ CommandLoop:
 					break
 				}
 				var ret []otr3.ValidMessage
-				if s.eh[to].waitingForSecret {
-					s.eh[to].waitingForSecret = false
+				if s.eh[to].WaitingForSecret {
+					s.eh[to].WaitingForSecret = false
 					ret, err = conversation.ProvideAuthenticationSecret([]byte(cmd.Secret))
 				} else {
 					ret, err = conversation.StartAuthenticate(cmd.Question, []byte(cmd.Secret))

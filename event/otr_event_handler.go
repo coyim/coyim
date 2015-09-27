@@ -1,17 +1,6 @@
-package main
+package event
 
 import "github.com/twstrike/otr3"
-
-var (
-	// QueryMessage can be sent to a peer to start an OTR conversation.
-	QueryMessage = "?OTRv2?"
-
-	// ErrorPrefix can be used to make an OTR error by appending an error message
-	// to it.
-	ErrorPrefix = "?OTR Error:"
-
-	minFragmentSize = 18
-)
 
 // SecurityChange describes a change in the security state of a Conversation.
 type SecurityChange int
@@ -38,33 +27,44 @@ const (
 	ConversationEnded
 )
 
-type eventHandler struct {
-	smpQuestion      string
+var (
+	// QueryMessage can be sent to a peer to start an OTR conversation.
+	QueryMessage = "?OTRv2?"
+
+	// ErrorPrefix can be used to make an OTR error by appending an error message
+	// to it.
+	ErrorPrefix = "?OTR Error:"
+
+	minFragmentSize = 18
+)
+
+type OtrEventHandler struct {
+	SmpQuestion      string
 	securityChange   SecurityChange
-	waitingForSecret bool
+	WaitingForSecret bool
 }
 
-func (eventHandler) WishToHandleErrorMessage() bool {
+func (OtrEventHandler) WishToHandleErrorMessage() bool {
 	return true
 }
 
-func (eventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
+func (OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
 	return nil
 }
 
-func (e *eventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
+func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 	switch event {
 	case otr3.GoneSecure, otr3.StillSecure:
 		e.securityChange = NewKeys
 	}
 }
 
-func (e *eventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
+func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
 	switch event {
 	case otr3.SMPEventAskForSecret, otr3.SMPEventAskForAnswer:
 		e.securityChange = SMPSecretNeeded
-		e.smpQuestion = question
-		e.waitingForSecret = true
+		e.SmpQuestion = question
+		e.WaitingForSecret = true
 	case otr3.SMPEventSuccess:
 		if progressPercent == 100 {
 			e.securityChange = SMPComplete
@@ -74,13 +74,13 @@ func (e *eventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, 
 	}
 }
 
-func (e *eventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error) {
+func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error) {
 	if event == otr3.MessageEventConnectionEnded {
 		e.securityChange = ConversationEnded
 	}
 }
 
-func (e *eventHandler) consumeSecurityChange() SecurityChange {
+func (e *OtrEventHandler) ConsumeSecurityChange() SecurityChange {
 	ret := e.securityChange
 	e.securityChange = NoChange
 	return ret

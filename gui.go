@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/twstrike/coyim/config"
+	. "github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/gui"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
@@ -458,7 +459,7 @@ func (u *gtkUI) connect() {
 		config:  u.config,
 
 		conversations:     make(map[string]*otr3.Conversation),
-		eh:                make(map[string]*eventHandler),
+		eh:                make(map[string]*OtrEventHandler),
 		knownStates:       make(map[string]string),
 		privateKey:        new(otr3.PrivateKey),
 		pendingRosterChan: make(chan *ui.RosterEdit),

@@ -13,6 +13,7 @@ import (
 	"time"
 
 	coyconf "github.com/twstrike/coyim/config"
+	. "github.com/twstrike/coyim/event"
 	coyui "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
@@ -41,7 +42,7 @@ type Session struct {
 	// conversation. (Note that unencrypted conversations also pass through
 	// OTR.)
 	conversations map[string]*otr3.Conversation
-	eh            map[string]*eventHandler
+	eh            map[string]*OtrEventHandler
 
 	// knownStates maps from a JID (without the resource) to the last known
 	// presence state of that contact. It's used to deduping presence
@@ -278,7 +279,7 @@ func (s *Session) getConversationWith(peer string) *otr3.Conversation {
 	//TODO: Why do we need a reference to the event handler in the session?
 	eh, ok := s.eh[peer]
 	if !ok {
-		eh = new(eventHandler)
+		eh = new(OtrEventHandler)
 		conversation.SetSMPEventHandler(eh)
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)
@@ -310,7 +311,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	}
 
 	eh, _ := s.eh[from]
-	change := eh.consumeSecurityChange()
+	change := eh.ConsumeSecurityChange()
 	switch change {
 	case NewKeys:
 		s.info(fmt.Sprintf("New OTR session with %s established", from))
@@ -344,7 +345,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		}
 	case SMPSecretNeeded:
 		s.info(fmt.Sprintf("%s is attempting to authenticate. Please supply mutual shared secret with /otr-auth user secret", from))
-		if question := eh.smpQuestion; len(question) > 0 {
+		if question := eh.SmpQuestion; len(question) > 0 {
 			s.info(fmt.Sprintf("%s asks: %s", from, question))
 		}
 	case SMPComplete:

@@ -18,6 +18,7 @@ import (
 
 	coyconf "github.com/twstrike/coyim/config"
 	. "github.com/twstrike/coyim/event"
+	. "github.com/twstrike/coyim/session"
 	coyui "github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
@@ -123,7 +124,7 @@ func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool) 
 	}
 
 	s := c.session
-	if ignore || s.config.HideStatusUpdates {
+	if ignore || s.Config.HideStatusUpdates {
 		return
 	}
 
@@ -196,7 +197,7 @@ func main() {
 	logger := &lineLogger{ui.term, nil}
 
 	// Act on configuration
-	conn, err := NewXMPPConn(ui, ui.config, password, ui.RegisterCallback(), logger)
+	conn, err := coyconf.NewXMPPConn(ui.config, password, ui.RegisterCallback(), logger)
 	if err != nil {
 		ui.Alert(err.Error())
 		return
@@ -204,27 +205,27 @@ func main() {
 
 	//TODO support one session per account
 	ui.session = &Session{
-		ui: ui,
+		UI: ui,
 
 		//WHY both?
-		account: ui.config.Account,
-		config:  ui.config,
+		Account: ui.config.Account,
+		Config:  ui.config,
 
-		conn:              conn,
-		conversations:     make(map[string]*otr3.Conversation),
-		eh:                make(map[string]*OtrEventHandler),
-		knownStates:       make(map[string]string),
-		privateKey:        new(otr3.PrivateKey),
-		pendingRosterChan: make(chan *coyui.RosterEdit),
-		pendingSubscribes: make(map[string]string),
-		lastActionTime:    time.Now(),
-		sessionHandler:    ui,
+		Conn:                conn,
+		Conversations:       make(map[string]*otr3.Conversation),
+		OtrEventHandler:     make(map[string]*OtrEventHandler),
+		KnownStates:         make(map[string]string),
+		PrivateKey:          new(otr3.PrivateKey),
+		PendingRosterChan:   make(chan *coyui.RosterEdit),
+		PendingSubscribes:   make(map[string]string),
+		LastActionTime:      time.Now(),
+		SessionEventHandler: ui,
 	}
 
-	ui.session.privateKey.Parse(ui.config.PrivateKey)
-	ui.session.timeouts = make(map[xmpp.Cookie]time.Time)
+	ui.session.PrivateKey.Parse(ui.config.PrivateKey)
+	ui.session.Timeouts = make(map[xmpp.Cookie]time.Time)
 
-	info(ui.term, fmt.Sprintf("Your fingerprint is %x", ui.session.privateKey.DefaultFingerprint()))
+	info(ui.term, fmt.Sprintf("Your fingerprint is %x", ui.session.PrivateKey.DefaultFingerprint()))
 
 	ui.Loop()
 	os.Stdout.Write([]byte("\n"))
@@ -244,7 +245,7 @@ func (c *cliUI) MessageReceived(from, timestamp string, encrypted bool, message 
 	line = append(line, c.term.Escape.Reset...)
 	line = appendTerminalEscaped(line, coyui.StripHTML(message))
 	line = append(line, '\n')
-	if c.session.config.Bell {
+	if c.session.Config.Bell {
 		line = append(line, '\a')
 	}
 
@@ -265,14 +266,14 @@ func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversatio
 	term := c.term
 
 	fpr := conversation.GetTheirKey().DefaultFingerprint()
-	fprUid := s.config.UserIdForFingerprint(fpr)
+	fprUid := s.Config.UserIdForFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %x", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %x", uid, conversation.GetSSID()))
 	if fprUid == uid {
 		info(term, fmt.Sprintf("  Identity key for %s is verified", uid))
 	} else if len(fprUid) > 1 {
 		alert(term, fmt.Sprintf("  Warning: %s is using an identity key which was verified for %s", uid, fprUid))
-	} else if s.config.HasFingerprint(uid) {
+	} else if s.Config.HasFingerprint(uid) {
 		critical(term, fmt.Sprintf("  Identity key for %s is incorrect", uid))
 	} else {
 		alert(term, fmt.Sprintf("  Identity key for %s is not verified. You should use /otr-auth or /otr-authqa or /otr-authoob to verify their identity", uid))
@@ -543,7 +544,7 @@ func (c *cliUI) WatchCommands() {
 
 	term := c.term
 	s := c.session
-	config := s.config
+	config := s.Config
 
 	var err error
 
@@ -555,40 +556,40 @@ CommandLoop:
 				warn(term, "Exiting because command channel closed")
 				break CommandLoop
 			}
-			s.lastActionTime = time.Now()
+			s.LastActionTime = time.Now()
 			switch cmd := cmd.(type) {
 			case quitCommand:
-				for to, conversation := range s.conversations {
+				for to, conversation := range s.Conversations {
 					msgs, err := conversation.End()
 					if err != nil {
 						//TODO: error handle
 						panic("this should not happen")
 					}
 					for _, msg := range msgs {
-						s.conn.Send(to, string(msg))
+						s.Conn.Send(to, string(msg))
 					}
 				}
 				break CommandLoop
 			case versionCommand:
-				replyChan, cookie, err := s.conn.SendIQ(cmd.User, "get", xmpp.VersionQuery{})
+				replyChan, cookie, err := s.Conn.SendIQ(cmd.User, "get", xmpp.VersionQuery{})
 				if err != nil {
 
 					alert(term, "Error sending version request: "+err.Error())
 					continue
 				}
-				s.timeouts[cookie] = time.Now().Add(5 * time.Second)
-				go s.awaitVersionReply(replyChan, cmd.User)
+				s.Timeouts[cookie] = time.Now().Add(5 * time.Second)
+				go s.AwaitVersionReply(replyChan, cmd.User)
 			case rosterCommand:
 				info(term, "Current roster:")
 				maxLen := 0
-				for _, item := range s.roster {
+				for _, item := range s.Roster {
 					if maxLen < len(item.Jid) {
 						maxLen = len(item.Jid)
 					}
 				}
 
-				for _, item := range s.roster {
-					state, ok := s.knownStates[item.Jid]
+				for _, item := range s.Roster {
+					state, ok := s.KnownStates[item.Jid]
 
 					line := ""
 					if ok {
@@ -611,36 +612,36 @@ CommandLoop:
 					info(term, line)
 				}
 			case rosterEditCommand:
-				if s.pendingRosterEdit != nil {
+				if s.PendingRosterEdit != nil {
 					warn(term, "Aborting previous roster edit")
-					s.pendingRosterEdit = nil
+					s.PendingRosterEdit = nil
 				}
-				rosterCopy := make([]xmpp.RosterEntry, len(s.roster))
-				copy(rosterCopy, s.roster)
-				go s.editRoster(rosterCopy)
+				rosterCopy := make([]xmpp.RosterEntry, len(s.Roster))
+				copy(rosterCopy, s.Roster)
+				go s.EditRoster(rosterCopy)
 			case rosterEditDoneCommand:
-				if s.pendingRosterEdit == nil {
+				if s.PendingRosterEdit == nil {
 					warn(term, "No roster edit in progress. Use /rosteredit to start one")
 					continue
 				}
-				go s.loadEditedRoster(*s.pendingRosterEdit)
+				go s.LoadEditedRoster(*s.PendingRosterEdit)
 			case toggleStatusUpdatesCommand:
-				s.config.HideStatusUpdates = !s.config.HideStatusUpdates
-				s.config.Save()
+				s.Config.HideStatusUpdates = !s.Config.HideStatusUpdates
+				s.Config.Save()
 				// Tell the user the current state of the statuses
-				if s.config.HideStatusUpdates {
+				if s.Config.HideStatusUpdates {
 					info(term, "Status updates disabled")
 				} else {
 					info(term, "Status updates enabled")
 				}
 			case confirmCommand:
-				s.handleConfirmOrDeny(cmd.User, true /* confirm */)
+				s.HandleConfirmOrDeny(cmd.User, true /* confirm */)
 			case denyCommand:
-				s.handleConfirmOrDeny(cmd.User, false /* deny */)
+				s.HandleConfirmOrDeny(cmd.User, false /* deny */)
 			case addCommand:
-				s.conn.SendPresence(cmd.User, "subscribe", "" /* generate id */)
+				s.Conn.SendPresence(cmd.User, "subscribe", "" /* generate id */)
 			case msgCommand:
-				conversation, ok := s.conversations[cmd.to]
+				conversation, ok := s.Conversations[cmd.to]
 				isEncrypted := ok && conversation.IsEncrypted()
 				if cmd.setPromptIsEncrypted != nil {
 					cmd.setPromptIsEncrypted <- isEncrypted
@@ -671,13 +672,13 @@ CommandLoop:
 					msgs = [][]byte{[]byte(message)}
 				}
 				for _, message := range msgs {
-					s.conn.Send(cmd.to, string(message))
+					s.Conn.Send(cmd.to, string(message))
 				}
 			case otrCommand:
-				s.conn.Send(string(cmd.User), QueryMessage)
+				s.Conn.Send(string(cmd.User), QueryMessage)
 			case otrInfoCommand:
-				info(term, fmt.Sprintf("Your OTR fingerprint is %x", s.privateKey.DefaultFingerprint()))
-				for to, conversation := range s.conversations {
+				info(term, fmt.Sprintf("Your OTR fingerprint is %x", s.PrivateKey.DefaultFingerprint()))
+				for to, conversation := range s.Conversations {
 					if conversation.IsEncrypted() {
 						info(term, fmt.Sprintf("Secure session with %s underway:", to))
 						c.printConversationInfo(to, conversation)
@@ -685,7 +686,7 @@ CommandLoop:
 				}
 			case endOTRCommand:
 				to := string(cmd.User)
-				conversation, ok := s.conversations[to]
+				conversation, ok := s.Conversations[to]
 				if !ok {
 					alert(term, "No secure session established")
 					break
@@ -696,20 +697,20 @@ CommandLoop:
 					panic("this should not happen")
 				}
 				for _, msg := range msgs {
-					s.conn.Send(to, string(msg))
+					s.Conn.Send(to, string(msg))
 				}
 				c.input.SetPromptForTarget(cmd.User, false)
 				warn(term, "OTR conversation ended with "+cmd.User)
 			case authQACommand:
 				to := string(cmd.User)
-				conversation, ok := s.conversations[to]
+				conversation, ok := s.Conversations[to]
 				if !ok {
 					alert(term, "Can't authenticate without a secure conversation established")
 					break
 				}
 				var ret []otr3.ValidMessage
-				if s.eh[to].WaitingForSecret {
-					s.eh[to].WaitingForSecret = false
+				if s.OtrEventHandler[to].WaitingForSecret {
+					s.OtrEventHandler[to].WaitingForSecret = false
 					ret, err = conversation.ProvideAuthenticationSecret([]byte(cmd.Secret))
 				} else {
 					ret, err = conversation.StartAuthenticate(cmd.Question, []byte(cmd.Secret))
@@ -719,7 +720,7 @@ CommandLoop:
 					alert(term, "Error while starting authentication with "+to+": "+err.Error())
 				}
 				for _, msg := range msgs {
-					s.conn.Send(to, string(msg))
+					s.Conn.Send(to, string(msg))
 				}
 			case authOobCommand:
 				fpr, err := hex.DecodeString(cmd.Fingerprint)
@@ -727,24 +728,24 @@ CommandLoop:
 					alert(term, fmt.Sprintf("Invalid fingerprint %s - not authenticated", cmd.Fingerprint))
 					break
 				}
-				existing := s.config.UserIdForFingerprint(fpr)
+				existing := s.Config.UserIdForFingerprint(fpr)
 				if len(existing) != 0 {
 					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, existing))
 					break
 				}
-				s.config.KnownFingerprints = append(s.config.KnownFingerprints, coyconf.KnownFingerprint{Fingerprint: fpr, UserId: cmd.User})
-				s.config.Save()
+				s.Config.KnownFingerprints = append(s.Config.KnownFingerprints, coyconf.KnownFingerprint{Fingerprint: fpr, UserId: cmd.User})
+				s.Config.Save()
 				info(term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:
-				s.conn.SignalPresence("away")
+				s.Conn.SignalPresence("away")
 			case chatCommand:
-				s.conn.SignalPresence("chat")
+				s.Conn.SignalPresence("chat")
 			case dndCommand:
-				s.conn.SignalPresence("dnd")
+				s.Conn.SignalPresence("dnd")
 			case xaCommand:
-				s.conn.SignalPresence("xa")
+				s.Conn.SignalPresence("xa")
 			case onlineCommand:
-				s.conn.SignalPresence("")
+				s.Conn.SignalPresence("")
 			}
 		}
 	}

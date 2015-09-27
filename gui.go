@@ -16,6 +16,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	. "github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/gui"
+	. "github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/gdk"
@@ -122,7 +123,7 @@ func (u *gtkUI) mainWindow() {
 
 func (u *gtkUI) sendMessage(to, message string) {
 	//TODO: this should not be in both GUI and roster
-	conversation := u.session.getConversationWith(to)
+	conversation := u.session.GetConversationWith(to)
 
 	toSend, err := conversation.Send(otr3.ValidMessage(message))
 	if err != nil {
@@ -135,12 +136,12 @@ func (u *gtkUI) sendMessage(to, message string) {
 
 	for _, m := range toSend {
 		//TODO: this should be session.Send(to, message)
-		u.session.conn.Send(to, string(m))
+		u.session.Conn.Send(to, string(m))
 	}
 }
 
 func (u *gtkUI) checkEncrypted(to string) bool {
-	c := u.session.getConversationWith(to)
+	c := u.session.GetConversationWith(to)
 	return c.IsEncrypted()
 }
 
@@ -350,7 +351,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	disconnectItem.Connect("activate", u.disconnect)
 
 	connToggle := func() {
-		connected := u.session.connStatus == CONNECTED
+		connected := u.session.ConnStatus == CONNECTED
 		connectItem.SetSensitive(!connected)
 		disconnectItem.SetSensitive(connected)
 	}
@@ -378,7 +379,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool) {
 
 	jid := xmpp.RemoveResourceFromJid(stanza.From)
-	state, ok := u.session.knownStates[jid]
+	state, ok := u.session.KnownStates[jid]
 	if !ok || len(state) == 0 {
 		state = "unknown"
 	}
@@ -452,26 +453,26 @@ func (u *gtkUI) connect() {
 
 	//TODO support one session per account
 	u.session = &Session{
-		ui: u,
+		UI: u,
 
 		//Why both?
-		account: u.config.Account,
-		config:  u.config,
+		Account: u.config.Account,
+		Config:  u.config,
 
-		conversations:     make(map[string]*otr3.Conversation),
-		eh:                make(map[string]*OtrEventHandler),
-		knownStates:       make(map[string]string),
-		privateKey:        new(otr3.PrivateKey),
-		pendingRosterChan: make(chan *ui.RosterEdit),
-		pendingSubscribes: make(map[string]string),
-		lastActionTime:    time.Now(),
-		sessionHandler:    u,
+		Conversations:       make(map[string]*otr3.Conversation),
+		OtrEventHandler:     make(map[string]*OtrEventHandler),
+		KnownStates:         make(map[string]string),
+		PrivateKey:          new(otr3.PrivateKey),
+		PendingRosterChan:   make(chan *ui.RosterEdit),
+		PendingSubscribes:   make(map[string]string),
+		LastActionTime:      time.Now(),
+		SessionEventHandler: u,
 	}
 
-	u.session.privateKey.Parse(u.config.PrivateKey)
+	u.session.PrivateKey.Parse(u.config.PrivateKey)
 
 	//TODO: This should happen regardless of connecting
-	fmt.Printf("Your fingerprint is %x\n", u.session.privateKey.DefaultFingerprint())
+	fmt.Printf("Your fingerprint is %x\n", u.session.PrivateKey.DefaultFingerprint())
 
 	connectFn := func(password string) {
 		err := u.session.Connect(password)

@@ -1,5 +1,5 @@
 //TODO change this package
-package main
+package session
 
 import (
 	"bytes"
@@ -31,42 +31,42 @@ type Session struct {
 	//TODO: This feels bad.
 	//it only needs a reference to UI callbacks
 	//maybe use the event handler?
-	ui coyui.UI
+	UI coyui.UI
 
-	account    string
-	conn       *xmpp.Conn
-	roster     []xmpp.RosterEntry
-	connStatus connStatus
+	Account    string
+	Conn       *xmpp.Conn
+	Roster     []xmpp.RosterEntry
+	ConnStatus connStatus
 
 	// conversations maps from a JID (without the resource) to an OTR
 	// conversation. (Note that unencrypted conversations also pass through
 	// OTR.)
-	conversations map[string]*otr3.Conversation
-	eh            map[string]*OtrEventHandler
+	Conversations   map[string]*otr3.Conversation
+	OtrEventHandler map[string]*OtrEventHandler
 
 	// knownStates maps from a JID (without the resource) to the last known
 	// presence state of that contact. It's used to deduping presence
 	// notifications.
-	knownStates map[string]string
-	privateKey  *otr3.PrivateKey
-	config      *coyconf.Config
+	KnownStates map[string]string
+	PrivateKey  *otr3.PrivateKey
+	Config      *coyconf.Config
 
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
-	timeouts map[xmpp.Cookie]time.Time
+	Timeouts map[xmpp.Cookie]time.Time
 	// pendingRosterEdit, if non-nil, contains information about a pending
 	// roster edit operation.
-	pendingRosterEdit *coyui.RosterEdit
+	PendingRosterEdit *coyui.RosterEdit
 	// pendingRosterChan is the channel over which roster edit information
 	// is received.
-	pendingRosterChan chan *coyui.RosterEdit
+	PendingRosterChan chan *coyui.RosterEdit
 	// pendingSubscribes maps JID with pending subscription requests to the
 	// ID if the iq for the reply.
-	pendingSubscribes map[string]string
+	PendingSubscribes map[string]string
 	// lastActionTime is the time at which the user last entered a command,
 	// or was last notified.
-	lastActionTime time.Time
-	sessionHandler sessionHandler
+	LastActionTime      time.Time
+	SessionEventHandler sessionHandler
 
 	timeoutTicker *time.Ticker
 }
@@ -78,22 +78,22 @@ type sessionHandler interface {
 }
 
 func (c *Session) info(m string) {
-	c.sessionHandler.Info(m)
+	c.SessionEventHandler.Info(m)
 }
 
 func (c *Session) warn(m string) {
-	c.sessionHandler.Warn(m)
+	c.SessionEventHandler.Warn(m)
 }
 
 func (c *Session) alert(m string) {
-	c.sessionHandler.Alert(m)
+	c.SessionEventHandler.Alert(m)
 }
 
 func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 	defer close(stanzaChan)
 
 	for {
-		stanza, err := s.conn.Next()
+		stanza, err := s.Conn.Next()
 		if err != nil {
 			s.alert(err.Error())
 			return
@@ -132,7 +132,7 @@ StanzaLoop:
 				s.processClientMessage(stanza)
 			case *xmpp.ClientPresence:
 				ignore, gone := s.processPresence(stanza)
-				s.ui.ProcessPresence(stanza, ignore, gone)
+				s.UI.ProcessPresence(stanza, ignore, gone)
 			case *xmpp.ClientIQ:
 				if stanza.Type != "get" && stanza.Type != "set" {
 					continue
@@ -145,7 +145,7 @@ StanzaLoop:
 					}
 				}
 
-				if err := s.conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
+				if err := s.Conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
 					s.alert("Failed to send IQ message: " + err.Error())
 				}
 			default:
@@ -156,11 +156,11 @@ StanzaLoop:
 }
 
 func (s *Session) rosterReceived() {
-	s.ui.RosterReceived(s.roster)
+	s.UI.RosterReceived(s.Roster)
 }
 
 func (s *Session) iqReceived(uid string) {
-	s.ui.IQReceived(uid)
+	s.UI.IQReceived(uid)
 }
 
 func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
@@ -181,7 +181,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 				{
 					Category: "client",
 					Type:     "pc",
-					Name:     s.config.Account,
+					Name:     s.Config.Account,
 				},
 			},
 		}
@@ -192,7 +192,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 			OS:      "none",
 		}
 	case "jabber:iq:roster query":
-		if len(stanza.From) > 0 && stanza.From != s.account {
+		if len(stanza.From) > 0 && stanza.From != s.Account {
 			s.warn("Ignoring roster IQ from bad address: " + stanza.From)
 			return nil
 		}
@@ -204,26 +204,26 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 		entry := roster.Item[0]
 
 		if entry.Subscription == "remove" {
-			for i, rosterEntry := range s.roster {
+			for i, rosterEntry := range s.Roster {
 				if rosterEntry.Jid == entry.Jid {
-					copy(s.roster[i:], s.roster[i+1:])
-					s.roster = s.roster[:len(s.roster)-1]
+					copy(s.Roster[i:], s.Roster[i+1:])
+					s.Roster = s.Roster[:len(s.Roster)-1]
 				}
 			}
 			return xmpp.EmptyReply{}
 		}
 
 		found := false
-		for i, rosterEntry := range s.roster {
+		for i, rosterEntry := range s.Roster {
 			if rosterEntry.Jid == entry.Jid {
-				s.roster[i] = entry
+				s.Roster[i] = entry
 				found = true
 				break
 			}
 		}
 
 		if !found {
-			s.roster = append(s.roster, entry)
+			s.Roster = append(s.Roster, entry)
 			s.iqReceived(entry.Jid)
 		}
 
@@ -235,37 +235,37 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 	return nil
 }
 
-func (s *Session) handleConfirmOrDeny(jid string, isConfirm bool) {
-	id, ok := s.pendingSubscribes[jid]
+func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
+	id, ok := s.PendingSubscribes[jid]
 	if !ok {
 		s.warn("No pending subscription from " + jid)
 		return
 	}
-	delete(s.pendingSubscribes, id)
+	delete(s.PendingSubscribes, id)
 	typ := "unsubscribed"
 	if isConfirm {
 		typ = "subscribed"
 	}
-	if err := s.conn.SendPresence(jid, typ, id); err != nil {
+	if err := s.Conn.SendPresence(jid, typ, id); err != nil {
 		s.warn("Error sending presence stanza: " + err.Error())
 	}
 }
 
 func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
-	s.ui.NewOTRKeys(from, conversation)
+	s.UI.NewOTRKeys(from, conversation)
 }
 
 func (s *Session) otrEnded(uid string) {
-	s.ui.OTREnded(uid)
+	s.UI.OTREnded(uid)
 }
 
-func (s *Session) getConversationWith(peer string) *otr3.Conversation {
-	if conversation, ok := s.conversations[peer]; ok {
+func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
+	if conversation, ok := s.Conversations[peer]; ok {
 		return conversation
 	}
 
 	conversation := &otr3.Conversation{}
-	conversation.SetOurKey(s.privateKey)
+	conversation.SetOurKey(s.PrivateKey)
 
 	//TODO: review this conf
 	conversation.Policies.AllowV2()
@@ -274,17 +274,17 @@ func (s *Session) getConversationWith(peer string) *otr3.Conversation {
 	conversation.Policies.WhitespaceStartAKE()
 	// conversation.Policies.RequireEncryption()
 
-	s.conversations[peer] = conversation
+	s.Conversations[peer] = conversation
 
 	//TODO: Why do we need a reference to the event handler in the session?
-	eh, ok := s.eh[peer]
+	eh, ok := s.OtrEventHandler[peer]
 	if !ok {
 		eh = new(OtrEventHandler)
 		conversation.SetSMPEventHandler(eh)
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)
 		conversation.SetSecurityEventHandler(eh)
-		s.eh[peer] = eh
+		s.OtrEventHandler[peer] = eh
 	}
 
 	return conversation
@@ -298,19 +298,19 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		return
 	}
 
-	conversation := s.getConversationWith(from)
+	conversation := s.GetConversationWith(from)
 	out, toSend, err := conversation.Receive([]byte(stanza.Body))
 	encrypted := conversation.IsEncrypted()
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())
-		s.conn.Send(stanza.From, ErrorPrefix+"Error processing message")
+		s.Conn.Send(stanza.From, ErrorPrefix+"Error processing message")
 	}
 
 	for _, msg := range toSend {
-		s.conn.Send(stanza.From, string(msg))
+		s.Conn.Send(stanza.From, string(msg))
 	}
 
-	eh, _ := s.eh[from]
+	eh, _ := s.OtrEventHandler[from]
 	change := eh.ConsumeSecurityChange()
 	switch change {
 	case NewKeys:
@@ -324,8 +324,8 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		// their buddy has ended a session, which they have also ended, and they
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
-		if s.config.OTRAutoTearDown {
-			if s.conversations[from] == nil {
+		if s.Config.OTRAutoTearDown {
+			if s.Conversations[from] == nil {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
 				break
 			} else {
@@ -336,7 +336,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 					panic("this should not happen")
 				}
 				for _, msg := range msgs {
-					s.conn.Send(from, string(msg))
+					s.Conn.Send(from, string(msg))
 				}
 				s.info(fmt.Sprintf("Secure session with %s has been automatically ended. Messages will be sent in the clear until another OTR session is established.", from))
 			}
@@ -351,10 +351,10 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	case SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
-		if len(s.config.UserIdForFingerprint(fpr)) == 0 {
-			s.config.KnownFingerprints = append(s.config.KnownFingerprints, coyconf.KnownFingerprint{Fingerprint: fpr, UserId: from})
+		if len(s.Config.UserIdForFingerprint(fpr)) == 0 {
+			s.Config.KnownFingerprints = append(s.Config.KnownFingerprints, coyconf.KnownFingerprint{Fingerprint: fpr, UserId: from})
 		}
-		s.config.Save()
+		s.Config.Save()
 	case SMPFailed:
 		s.alert(fmt.Sprintf("Authentication with %s failed", from))
 	}
@@ -383,10 +383,10 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		}
 	}
 
-	if s.config.OTRAutoStartSession && detectedOTRVersion >= 2 {
+	if s.Config.OTRAutoStartSession && detectedOTRVersion >= 2 {
 		s.info(fmt.Sprintf("%s appears to support OTRv%d. We are attempting to start an OTR session with them.", from, detectedOTRVersion))
-		s.conn.Send(from, QueryMessage)
-	} else if s.config.OTRAutoStartSession && detectedOTRVersion == 1 {
+		s.Conn.Send(from, QueryMessage)
+	} else if s.Config.OTRAutoStartSession && detectedOTRVersion == 1 {
 		s.info(fmt.Sprintf("%s appears to support OTRv%d. You should encourage them to upgrade their OTR client!", from, detectedOTRVersion))
 	}
 
@@ -413,27 +413,27 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 }
 
 func (s *Session) messageReceived(from, timestamp string, encrypted bool, message []byte) {
-	s.ui.MessageReceived(from, timestamp, encrypted, message)
+	s.UI.MessageReceived(from, timestamp, encrypted, message)
 	s.maybeNotify()
 }
 
 func (s *Session) maybeNotify() {
 	now := time.Now()
-	idleThreshold := s.config.IdleSecondsBeforeNotification
+	idleThreshold := s.Config.IdleSecondsBeforeNotification
 	if idleThreshold == 0 {
 		idleThreshold = 60
 	}
-	notifyTime := s.lastActionTime.Add(time.Duration(idleThreshold) * time.Second)
+	notifyTime := s.LastActionTime.Add(time.Duration(idleThreshold) * time.Second)
 	if now.Before(notifyTime) {
 		return
 	}
 
-	s.lastActionTime = now
-	if len(s.config.NotifyCommand) == 0 {
+	s.LastActionTime = now
+	if len(s.Config.NotifyCommand) == 0 {
 		return
 	}
 
-	cmd := exec.Command(s.config.NotifyCommand[0], s.config.NotifyCommand[1:]...)
+	cmd := exec.Command(s.Config.NotifyCommand[0], s.Config.NotifyCommand[1:]...)
 	go func() {
 		if err := cmd.Run(); err != nil {
 			s.alert("Failed to run notify command: " + err.Error())
@@ -447,7 +447,7 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) (ignore, gone boo
 	case "subscribe":
 		// This is a subscription request
 		jid := xmpp.RemoveResourceFromJid(stanza.From)
-		s.pendingSubscribes[jid] = stanza.Id
+		s.PendingSubscribes[jid] = stanza.Id
 		ignore = true
 		return
 	case "unavailable":
@@ -462,31 +462,31 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) (ignore, gone boo
 	from := xmpp.RemoveResourceFromJid(stanza.From)
 
 	if gone {
-		if _, ok := s.knownStates[from]; !ok {
+		if _, ok := s.KnownStates[from]; !ok {
 			// They've gone, but we never knew they were online.
 			ignore = true
 			return
 		}
-		delete(s.knownStates, from)
+		delete(s.KnownStates, from)
 	} else {
-		if _, ok := s.knownStates[from]; !ok && coyui.IsAwayStatus(stanza.Show) {
+		if _, ok := s.KnownStates[from]; !ok && coyui.IsAwayStatus(stanza.Show) {
 			// Skip people who are initially away.
 			ignore = true
 			return
 		}
 
-		if lastState, ok := s.knownStates[from]; ok && lastState == stanza.Show {
+		if lastState, ok := s.KnownStates[from]; ok && lastState == stanza.Show {
 			// No change. Ignore.
 			ignore = true
 			return
 		}
-		s.knownStates[from] = stanza.Show
+		s.KnownStates[from] = stanza.Show
 	}
 
 	return
 }
 
-func (s *Session) awaitVersionReply(ch <-chan xmpp.Stanza, user string) {
+func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	stanza, ok := <-ch
 	if !ok {
 		s.warn("Version request to " + user + " timed out")
@@ -521,7 +521,7 @@ func (s *Session) WatchTimeout() {
 
 	for now := range s.timeoutTicker.C {
 		haveExpired := false
-		for _, expiry := range s.timeouts {
+		for _, expiry := range s.Timeouts {
 			if now.After(expiry) {
 				haveExpired = true
 				break
@@ -533,15 +533,15 @@ func (s *Session) WatchTimeout() {
 		}
 
 		newTimeouts := make(map[xmpp.Cookie]time.Time)
-		for cookie, expiry := range s.timeouts {
+		for cookie, expiry := range s.Timeouts {
 			if now.After(expiry) {
-				s.conn.Cancel(cookie)
+				s.Conn.Cancel(cookie)
 			} else {
 				newTimeouts[cookie] = expiry
 			}
 		}
 
-		s.timeouts = newTimeouts
+		s.Timeouts = newTimeouts
 	}
 }
 
@@ -550,14 +550,14 @@ func (s *Session) WatchRosterEvents() {
 
 	s.info("Fetching roster")
 
-	rosterReply, _, err := s.conn.RequestRoster()
+	rosterReply, _, err := s.Conn.RequestRoster()
 	if err != nil {
 		s.alert("Failed to request roster: " + err.Error())
 		return
 	}
 
 	//TODO: not sure if this belongs here
-	s.conn.SignalPresence("")
+	s.Conn.SignalPresence("")
 
 RosterLoop:
 	for {
@@ -568,23 +568,23 @@ RosterLoop:
 				break RosterLoop
 			}
 
-			if s.roster, err = xmpp.ParseRoster(rosterStanza); err != nil {
+			if s.Roster, err = xmpp.ParseRoster(rosterStanza); err != nil {
 				s.alert("Failed to parse roster: " + err.Error())
 				break RosterLoop
 			}
 
 			s.rosterReceived()
 
-		case edit := <-s.pendingRosterChan:
+		case edit := <-s.PendingRosterChan:
 			if !edit.IsComplete {
 				//TODO: this is specific to CLI
 				s.info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
-				s.pendingRosterEdit = edit
+				s.PendingRosterEdit = edit
 				continue
 			}
 
 			if s.processEditedRoster(edit) {
-				s.pendingRosterEdit = nil
+				s.PendingRosterEdit = nil
 			} else {
 				//TODO: this is specific to CLI
 				s.alert("Please reedit file and run /rostereditdone again")
@@ -594,23 +594,23 @@ RosterLoop:
 }
 
 func (s *Session) Connect(password string) error {
-	if s.connStatus != DISCONNECTED {
+	if s.ConnStatus != DISCONNECTED {
 		return nil
 	}
 
-	s.connStatus = CONNECTING
+	s.ConnStatus = CONNECTING
 
 	//TODO: I believe ui is only used as a sessionHandler
-	conn, err := NewXMPPConn(s.ui, s.config, password, s.ui.RegisterCallback(), os.Stdout)
+	conn, err := coyconf.NewXMPPConn(s.Config, password, s.UI.RegisterCallback(), os.Stdout)
 	if err != nil {
 		s.alert(err.Error())
-		s.connStatus = DISCONNECTED
+		s.ConnStatus = DISCONNECTED
 		return err
 	}
 
-	s.timeouts = make(map[xmpp.Cookie]time.Time)
-	s.conn = conn
-	s.connStatus = CONNECTED
+	s.Timeouts = make(map[xmpp.Cookie]time.Time)
+	s.Conn = conn
+	s.ConnStatus = CONNECTED
 
 	return nil
 }
@@ -619,7 +619,7 @@ func (s *Session) Connect(password string) error {
 func (s *Session) Terminate() {
 	//TODO: what should be done it states == CONNECTING?
 
-	if s.connStatus == DISCONNECTED {
+	if s.ConnStatus == DISCONNECTED {
 		return
 	}
 
@@ -627,7 +627,7 @@ func (s *Session) Terminate() {
 	//s.timeoutTicker = nil
 
 	//Close all conversations
-	for to, conversation := range s.conversations {
+	for to, conversation := range s.Conversations {
 		msgs, err := conversation.End()
 		if err != nil {
 			//TODO: error handle
@@ -635,22 +635,22 @@ func (s *Session) Terminate() {
 		}
 
 		for _, msg := range msgs {
-			s.conn.Send(to, string(msg))
+			s.Conn.Send(to, string(msg))
 		}
 
 		//conversation.Wipe()
-		delete(s.conversations, to)
+		delete(s.Conversations, to)
 	}
 
-	s.conn.Close()
-	s.connStatus = DISCONNECTED
+	s.Conn.Close()
+	s.ConnStatus = DISCONNECTED
 
-	s.ui.Disconnected()
+	s.UI.Disconnected()
 }
 
 // editRoster runs in a goroutine and writes the roster to a file that the user
 // can edit.
-func (s *Session) editRoster(roster []xmpp.RosterEntry) {
+func (s *Session) EditRoster(roster []xmpp.RosterEntry) {
 	// In case the editor rewrites the file, we work inside a temp
 	// directory.
 	dir, err := ioutil.TempDir("" /* system default temp dir */, "xmpp-client")
@@ -695,7 +695,7 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 	}
 	tabs := (maxLen + 7) / 8
 
-	for i, item := range s.roster {
+	for i, item := range s.Roster {
 		line := escapedJids[i]
 		tabsUsed := len(escapedJids[i]) / 8
 
@@ -725,13 +725,13 @@ func (s *Session) editRoster(roster []xmpp.RosterEntry) {
 	}
 	f.Close()
 
-	s.pendingRosterChan <- &coyui.RosterEdit{
+	s.PendingRosterChan <- &coyui.RosterEdit{
 		FileName: fileName,
 		Roster:   roster,
 	}
 }
 
-func (s *Session) loadEditedRoster(edit coyui.RosterEdit) {
+func (s *Session) LoadEditedRoster(edit coyui.RosterEdit) {
 	contents, err := ioutil.ReadFile(edit.FileName)
 	if err != nil {
 		s.alert("Failed to load edited roster: " + err.Error())
@@ -742,7 +742,7 @@ func (s *Session) loadEditedRoster(edit coyui.RosterEdit) {
 
 	edit.IsComplete = true
 	edit.Contents = contents
-	s.pendingRosterChan <- &edit
+	s.PendingRosterChan <- &edit
 }
 
 func (s *Session) processEditedRoster(edit *coyui.RosterEdit) bool {
@@ -830,7 +830,7 @@ NextAdd:
 
 	for _, jid := range toDelete {
 		s.info("Deleting roster entry for " + jid)
-		_, _, err := s.conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+		_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 			Item: xmpp.RosterRequestItem{
 				Jid:          jid,
 				Subscription: "remove",
@@ -841,20 +841,20 @@ NextAdd:
 		}
 
 		// Filter out any known fingerprints.
-		newKnownFingerprints := make([]coyconf.KnownFingerprint, 0, len(s.config.KnownFingerprints))
-		for _, fpr := range s.config.KnownFingerprints {
+		newKnownFingerprints := make([]coyconf.KnownFingerprint, 0, len(s.Config.KnownFingerprints))
+		for _, fpr := range s.Config.KnownFingerprints {
 			if fpr.UserId == jid {
 				continue
 			}
 			newKnownFingerprints = append(newKnownFingerprints, fpr)
 		}
-		s.config.KnownFingerprints = newKnownFingerprints
-		s.config.Save()
+		s.Config.KnownFingerprints = newKnownFingerprints
+		s.Config.Save()
 	}
 
 	for _, entry := range toEdit {
 		s.info("Updating roster entry for " + entry.Jid)
-		_, _, err := s.conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+		_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 			Item: xmpp.RosterRequestItem{
 				Jid:   entry.Jid,
 				Name:  entry.Name,
@@ -868,7 +868,7 @@ NextAdd:
 
 	for _, entry := range toAdd {
 		s.info("Adding roster entry for " + entry.Jid)
-		_, _, err := s.conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+		_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 			Item: xmpp.RosterRequestItem{
 				Jid:   entry.Jid,
 				Name:  entry.Name,

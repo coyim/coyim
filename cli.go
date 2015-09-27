@@ -205,8 +205,6 @@ func main() {
 
 	//TODO support one session per account
 	ui.session = &Session{
-		UI: ui,
-
 		//WHY both?
 		Account: ui.config.Account,
 		Config:  ui.config,

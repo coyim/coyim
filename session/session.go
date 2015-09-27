@@ -1,4 +1,3 @@
-//TODO change this package
 package session
 
 import (
@@ -28,11 +27,6 @@ const (
 )
 
 type Session struct {
-	//TODO: This feels bad.
-	//it only needs a reference to UI callbacks
-	//maybe use the event handler?
-	UI coyui.UI
-
 	Account    string
 	Conn       *xmpp.Conn
 	Roster     []xmpp.RosterEntry
@@ -66,15 +60,9 @@ type Session struct {
 	// lastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	LastActionTime      time.Time
-	SessionEventHandler sessionHandler
+	SessionEventHandler SessionEventHandler
 
 	timeoutTicker *time.Ticker
-}
-
-type sessionHandler interface {
-	Info(string)
-	Warn(string)
-	Alert(string)
 }
 
 func (c *Session) info(m string) {
@@ -132,7 +120,7 @@ StanzaLoop:
 				s.processClientMessage(stanza)
 			case *xmpp.ClientPresence:
 				ignore, gone := s.processPresence(stanza)
-				s.UI.ProcessPresence(stanza, ignore, gone)
+				s.SessionEventHandler.ProcessPresence(stanza, ignore, gone)
 			case *xmpp.ClientIQ:
 				if stanza.Type != "get" && stanza.Type != "set" {
 					continue
@@ -156,11 +144,11 @@ StanzaLoop:
 }
 
 func (s *Session) rosterReceived() {
-	s.UI.RosterReceived(s.Roster)
+	s.SessionEventHandler.RosterReceived(s.Roster)
 }
 
 func (s *Session) iqReceived(uid string) {
-	s.UI.IQReceived(uid)
+	s.SessionEventHandler.IQReceived(uid)
 }
 
 func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
@@ -252,11 +240,11 @@ func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 }
 
 func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
-	s.UI.NewOTRKeys(from, conversation)
+	s.SessionEventHandler.NewOTRKeys(from, conversation)
 }
 
 func (s *Session) otrEnded(uid string) {
-	s.UI.OTREnded(uid)
+	s.SessionEventHandler.OTREnded(uid)
 }
 
 func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
@@ -413,7 +401,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 }
 
 func (s *Session) messageReceived(from, timestamp string, encrypted bool, message []byte) {
-	s.UI.MessageReceived(from, timestamp, encrypted, message)
+	s.SessionEventHandler.MessageReceived(from, timestamp, encrypted, message)
 	s.maybeNotify()
 }
 
@@ -601,7 +589,7 @@ func (s *Session) Connect(password string) error {
 	s.ConnStatus = CONNECTING
 
 	//TODO: I believe ui is only used as a sessionHandler
-	conn, err := coyconf.NewXMPPConn(s.Config, password, s.UI.RegisterCallback(), os.Stdout)
+	conn, err := coyconf.NewXMPPConn(s.Config, password, s.SessionEventHandler.RegisterCallback(), os.Stdout)
 	if err != nil {
 		s.alert(err.Error())
 		s.ConnStatus = DISCONNECTED
@@ -645,7 +633,7 @@ func (s *Session) Terminate() {
 	s.Conn.Close()
 	s.ConnStatus = DISCONNECTED
 
-	s.UI.Disconnected()
+	s.SessionEventHandler.Disconnected()
 }
 
 // editRoster runs in a goroutine and writes the roster to a file that the user

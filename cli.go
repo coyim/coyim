@@ -192,6 +192,8 @@ func main() {
 		if err != nil {
 			return
 		}
+	} else {
+		password = ui.config.Password
 	}
 
 	logger := &lineLogger{ui.term, nil}

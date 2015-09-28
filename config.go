@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	coyconf "github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
@@ -18,20 +18,20 @@ import (
 var configFile *string = flag.String("config-file", "", "Location of the config file")
 var createAccount *bool = flag.Bool("create", false, "If true, attempt to create account")
 
-func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
+func enroll(conf *config.Config, term *terminal.Terminal) bool {
 	var err error
 	warn(term, "Enrolling new config file")
 
 	var domain string
 	for {
 		term.SetPrompt("Account (i.e. user@example.com, enter to quit): ")
-		if config.Account, err = term.ReadLine(); err != nil || len(config.Account) == 0 {
+		if conf.Account, err = term.ReadLine(); err != nil || len(conf.Account) == 0 {
 			return false
 		}
 
-		parts := strings.SplitN(config.Account, "@", 2)
+		parts := strings.SplitN(conf.Account, "@", 2)
 		if len(parts) != 2 {
-			alert(term, "invalid username (want user@domain): "+config.Account)
+			alert(term, "invalid username (want user@domain): "+conf.Account)
 			continue
 		}
 		domain = parts[1]
@@ -39,20 +39,20 @@ func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
 	}
 
 	term.SetPrompt("Enable debug logging to /tmp/xmpp-client-debug.log? ")
-	if debugLog, err := term.ReadLine(); err != nil || !coyconf.ParseYes(debugLog) {
+	if debugLog, err := term.ReadLine(); err != nil || !config.ParseYes(debugLog) {
 		info(term, "Not enabling debug logging...")
 	} else {
 		info(term, "Debug logging enabled...")
-		config.RawLogFile = "/tmp/xmpp-client-debug.log"
+		conf.RawLogFile = "/tmp/xmpp-client-debug.log"
 	}
 
 	term.SetPrompt("Use Tor?: ")
-	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || !coyconf.ParseYes(useTorQuery) {
+	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || !config.ParseYes(useTorQuery) {
 		info(term, "Not using Tor...")
-		config.UseTor = false
+		conf.UseTor = false
 	} else {
 		info(term, "Using Tor...")
-		config.UseTor = true
+		conf.UseTor = true
 	}
 
 	term.SetPrompt("File to import libotr private key from (enter to generate): ")
@@ -81,11 +81,11 @@ func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
 			break
 		}
 	}
-	config.PrivateKey = priv.Serialize()
+	conf.PrivateKey = priv.Serialize()
 
-	config.OTRAutoAppendTag = true
-	config.OTRAutoStartSession = true
-	config.OTRAutoTearDown = false
+	conf.OTRAutoAppendTag = true
+	conf.OTRAutoStartSession = true
+	conf.OTRAutoTearDown = false
 
 	// List well known Tor hidden services.
 	knownTorDomain := map[string]string{
@@ -97,19 +97,19 @@ func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
 	}
 
 	// Autoconfigure well known Tor hidden services.
-	if hiddenService, ok := knownTorDomain[domain]; ok && config.UseTor {
+	if hiddenService, ok := knownTorDomain[domain]; ok && conf.UseTor {
 		const torProxyURL = "socks5://127.0.0.1:9050"
 		info(term, "It appears that you are using a well known server and we will use its Tor hidden service to connect.")
-		config.Server = hiddenService
-		config.Port = 5222
-		config.Proxies = []string{torProxyURL}
+		conf.Server = hiddenService
+		conf.Port = 5222
+		conf.Proxies = []string{torProxyURL}
 		term.SetPrompt("> ")
 		return true
 	}
 
 	var proxyStr string
 	proxyDefaultPrompt := ", enter for none"
-	if config.UseTor {
+	if conf.UseTor {
 		proxyDefaultPrompt = ", which is the default"
 	}
 	term.SetPrompt("Proxy (i.e socks5://127.0.0.1:9050" + proxyDefaultPrompt + "): ")
@@ -119,7 +119,7 @@ func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
 			return false
 		}
 		if len(proxyStr) == 0 {
-			if !config.UseTor {
+			if !conf.UseTor {
 				break
 			} else {
 				proxyStr = "socks5://127.0.0.1:9050"
@@ -138,22 +138,22 @@ func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
 	}
 
 	if len(proxyStr) > 0 {
-		config.Proxies = []string{proxyStr}
+		conf.Proxies = []string{proxyStr}
 
 		info(term, "Since you selected a proxy, we need to know the server and port to connect to as a SRV lookup would leak information every time.")
 		term.SetPrompt("Server (i.e. xmpp.example.com, enter to lookup using unproxied DNS): ")
-		if config.Server, err = term.ReadLine(); err != nil {
+		if conf.Server, err = term.ReadLine(); err != nil {
 			return false
 		}
-		if len(config.Server) == 0 {
+		if len(conf.Server) == 0 {
 			var port uint16
 			info(term, "Performing SRV lookup")
-			if config.Server, port, err = xmpp.Resolve(domain); err != nil {
+			if conf.Server, port, err = xmpp.Resolve(domain); err != nil {
 				alert(term, "SRV lookup failed: "+err.Error())
 				return false
 			}
-			config.Port = int(port)
-			info(term, "Resolved "+config.Server+":"+strconv.Itoa(config.Port))
+			conf.Port = int(port)
+			info(term, "Resolved "+conf.Server+":"+strconv.Itoa(conf.Port))
 		} else {
 			for {
 				term.SetPrompt("Port (enter for 5222): ")
@@ -164,7 +164,7 @@ func enroll(config *coyconf.Config, term *terminal.Terminal) bool {
 				if len(portStr) == 0 {
 					portStr = "5222"
 				}
-				if config.Port, err = strconv.Atoi(portStr); err != nil || config.Port <= 0 || config.Port > 65535 {
+				if conf.Port, err = strconv.Atoi(portStr); err != nil || conf.Port <= 0 || conf.Port > 65535 {
 					info(term, "Port numbers must be 0 < port <= 65535")
 					continue
 				}

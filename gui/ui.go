@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,6 +15,7 @@ import (
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
@@ -27,25 +29,65 @@ var (
 )
 
 type gtkUI struct {
-	roster  *Roster
-	session *session.Session
-	window  *gtk.Window
+	roster *Roster
+	window *gtk.Window
 
-	config    *config.Config
+	//TODO: remove session
+	session  *session.Session
+	sessions map[*config.Config]*session.Session
+
+	//TODO: remove config
+	config      *config.Config
+	multiConfig *config.MultiAccountConfig
+
 	connected bool
 }
 
 func NewGTK() *gtkUI {
-	return &gtkUI{}
+	return &gtkUI{
+		sessions: make(map[*config.Config]*session.Session),
+	}
 }
 
 func (ui *gtkUI) LoadConfig(configFile string) {
 	var err error
-	if ui.config, err = config.Load(configFile); err != nil {
+	if ui.multiConfig, err = config.Load(configFile); err != nil {
 		ui.Alert(err.Error())
 		ui.enroll()
+		return
 	}
 
+	ui.config = &ui.multiConfig.Accounts[0]
+}
+
+func (*gtkUI) Disconnected() {
+	//TODO: remove everybody from the roster
+	fmt.Println("TODO: Should disconnect the account")
+}
+
+func (*gtkUI) RegisterCallback() xmpp.FormCallback {
+	//if !*createAccount {
+	//  return nil
+	//}
+	return nil
+
+	return func(title, instructions string, fields []interface{}) error {
+		//TODO: should open a registration window
+		fmt.Println("TODO")
+		return nil
+	}
+}
+
+func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
+	u.roster.MessageReceived(from, timestamp, encrypted, message)
+}
+
+func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
+	u.Info(fmt.Sprintf("TODO: notify new keys from %s", uid))
+}
+
+func (u *gtkUI) OTREnded(uid string) {
+	//TODO: conversation ended
 }
 
 func (u *gtkUI) Info(m string) {
@@ -70,15 +112,13 @@ func (u *gtkUI) Loop() {
 	gdk.ThreadsLeave()
 }
 
-func (u *gtkUI) On(s *glib.Signal, f func()) {
+func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
 	u.window.Connect(s.Name(), f)
 }
 
 func (u *gtkUI) initRoster() {
 	u.roster = NewRoster()
-	u.roster.CheckEncrypted = u.checkEncrypted
-	u.roster.SendMessage = u.sendMessage
-	u.On(DISCONNECTED_SIG, u.roster.Clear)
+	u.onReceiveSignal(DISCONNECTED_SIG, u.roster.Clear)
 }
 
 func (u *gtkUI) mainWindow() {
@@ -95,30 +135,6 @@ func (u *gtkUI) mainWindow() {
 	u.window.Connect("destroy", gtk.MainQuit)
 	u.window.SetSizeRequest(200, 600)
 	u.window.ShowAll()
-}
-
-func (u *gtkUI) sendMessage(to, message string) {
-	//TODO: this should not be in both GUI and roster
-	conversation := u.session.GetConversationWith(to)
-
-	toSend, err := conversation.Send(otr3.ValidMessage(message))
-	if err != nil {
-		fmt.Println("Failed to generate OTR message")
-		return
-	}
-
-	encrypted := conversation.IsEncrypted()
-	u.roster.AppendMessageToHistory(to, "ME", "NOW", encrypted, ui.StripHTML([]byte(message)))
-
-	for _, m := range toSend {
-		//TODO: this should be session.Send(to, message)
-		u.session.Conn.Send(to, string(m))
-	}
-}
-
-func (u *gtkUI) checkEncrypted(to string) bool {
-	c := u.session.GetConversationWith(to)
-	return c.IsEncrypted()
 }
 
 //TODO: REMOVE ME
@@ -297,17 +313,8 @@ func accountDialog(c *config.Config) {
 	dialog.ShowAll()
 }
 
-func initMenuBar(u *gtkUI) *gtk.MenuBar {
-	menubar := gtk.NewMenuBar()
-
-	//Config -> Account
-	cascademenu := gtk.NewMenuItemWithMnemonic("_Preference")
-	menubar.Append(cascademenu)
-	submenu := gtk.NewMenu()
-	cascademenu.SetSubmenu(submenu)
-
-	menuitem := gtk.NewMenuItemWithMnemonic("_Account")
-	submenu.Append(menuitem)
+func buildAccountSubmenu(u *gtkUI, c *config.Config) *gtk.MenuItem {
+	menuitem := gtk.NewMenuItemWithMnemonic(c.Account)
 
 	accountSubMenu := gtk.NewMenu()
 	menuitem.SetSubmenu(accountSubMenu)
@@ -321,35 +328,82 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 
 	connectItem.Connect("activate", func() {
 		connectItem.SetSensitive(false)
-		u.connect()
+		u.connect(c)
 	})
 
-	disconnectItem.Connect("activate", u.disconnect)
+	disconnectItem.Connect("activate", func() {
+		u.disconnect(c)
+	})
 
 	connToggle := func() {
-		connected := u.session.ConnStatus == session.CONNECTED
+		s, ok := u.sessions[c]
+		if !ok {
+			return
+		}
+
+		connected := s.ConnStatus == session.CONNECTED
 		connectItem.SetSensitive(!connected)
 		disconnectItem.SetSensitive(connected)
 	}
 
-	u.On(CONNECTED_SIG, connToggle)
-	u.On(DISCONNECTED_SIG, connToggle)
+	u.onReceiveSignal(CONNECTED_SIG, connToggle)
+	u.onReceiveSignal(DISCONNECTED_SIG, connToggle)
 
 	editItem := gtk.NewMenuItemWithMnemonic("_Edit")
 	editItem.Connect("activate", func() {
-		accountDialog(u.config)
+		accountDialog(c)
 	})
 	accountSubMenu.Append(editItem)
+
+	return menuitem
+}
+
+func initMenuBar(u *gtkUI) *gtk.MenuBar {
+	menubar := gtk.NewMenuBar()
+
+	//Config -> Account
+	cascademenu := gtk.NewMenuItemWithMnemonic("_Accounts")
+	menubar.Append(cascademenu)
+	submenu := gtk.NewMenu()
+	cascademenu.SetSubmenu(submenu)
+
+	for _, account := range u.multiConfig.Accounts {
+		menuitem := buildAccountSubmenu(u, &account)
+		submenu.Append(menuitem)
+	}
 
 	//Help -> About
 	cascademenu = gtk.NewMenuItemWithMnemonic("_Help")
 	menubar.Append(cascademenu)
 	submenu = gtk.NewMenu()
 	cascademenu.SetSubmenu(submenu)
-	menuitem = gtk.NewMenuItemWithMnemonic("_About")
+	menuitem := gtk.NewMenuItemWithMnemonic("_About")
 	menuitem.Connect("activate", aboutDialog)
 	submenu.Append(menuitem)
 	return menubar
+}
+
+func (u *gtkUI) SubscriptionRequest(from string) {
+}
+
+func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
+
+	//TODO: Notify via UI
+	jid := xmpp.RemoveResourceFromJid(stanza.From)
+	fmt.Println(jid, "is", stanza.Show)
+}
+
+func (u *gtkUI) IQReceived(string) {
+	//TODO
+}
+
+//TODO: we should update periodically (like Pidgin does) if we include the status (online/offline/away) on the label
+func (u *gtkUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
+	glib.IdleAdd(func() bool {
+		u.roster.Update(s, roster)
+		u.roster.Redraw()
+		return false
+	})
 }
 
 func (u *gtkUI) enroll() {
@@ -370,65 +424,90 @@ func (u *gtkUI) enroll() {
 	})
 }
 
-func (u *gtkUI) disconnect() error {
-	if !u.connected {
-		return nil
+func (u *gtkUI) disconnect(c *config.Config) error {
+	//if !u.connected {
+	//	return nil
+	//}
+
+	s, ok := u.sessions[c]
+	if !ok {
+		return errors.New("tried to disconnect an unexisting session")
 	}
 
-	u.session.Terminate()
+	s.Terminate()
 	u.window.EmitSignal(DISCONNECTED_SIG)
-	u.connected = false
+	//u.connected = false
 
 	return nil
 }
 
-//TODO: This should be moved to a Controller
-func (u *gtkUI) connect() {
-	if u.connected {
-		return
+func newSession(u *gtkUI, c *config.Config) *session.Session {
+	s := &session.Session{
+		Config: c,
+
+		Conversations:     make(map[string]*otr3.Conversation),
+		OtrEventHandler:   make(map[string]*event.OtrEventHandler),
+		KnownStates:       make(map[string]string),
+		PrivateKey:        new(otr3.PrivateKey),
+		PendingRosterChan: make(chan *ui.RosterEdit),
+		PendingSubscribes: make(map[string]string),
+		LastActionTime:    time.Now(),
+
+		SessionEventHandler: u,
 	}
 
-	//TODO support one session per account
-	u.session = &session.Session{
-		Config: u.config,
-
-		Conversations:       make(map[string]*otr3.Conversation),
-		OtrEventHandler:     make(map[string]*event.OtrEventHandler),
-		KnownStates:         make(map[string]string),
-		PrivateKey:          new(otr3.PrivateKey),
-		PendingRosterChan:   make(chan *ui.RosterEdit),
-		PendingSubscribes:   make(map[string]string),
-		LastActionTime:      time.Now(),
-		SessionEventHandler: guiSessionEventHandler{u: u},
-	}
-
-	u.session.PrivateKey.Parse(u.config.PrivateKey)
+	s.PrivateKey.Parse(c.PrivateKey)
 
 	//TODO: This should happen regardless of connecting
-	fmt.Printf("Your fingerprint is %x\n", u.session.PrivateKey.DefaultFingerprint())
+	fmt.Printf("Your fingerprint is %x\n", s.PrivateKey.DefaultFingerprint())
+
+	return s
+}
+
+func (u *gtkUI) findOrCreateSession(c *config.Config) *session.Session {
+	s, ok := u.sessions[c]
+	if !ok {
+		s = newSession(u, c)
+		u.sessions[c] = s
+	}
+
+	return s
+}
+
+//TODO: This should be moved to a Controller
+func (u *gtkUI) connect(c *config.Config) {
+	//if u.connected {
+	//	return
+	//}
+
+	//TODO support one session per account
+	//u.session = newSession(u, &u.multiConfig.Accounts[0])
+
+	s := u.findOrCreateSession(c)
 
 	connectFn := func(password string) {
-		err := u.session.Connect(password)
+		err := s.Connect(password)
 		if err != nil {
 			return
 		}
 
+		//TODO: change this signal to be session specific
 		u.window.EmitSignal(CONNECTED_SIG)
-		u.connected = true
-		u.onConnect()
+		//u.connected = true
+		u.onConnect(s)
 	}
 
 	//TODO We do not support empty passwords
-	if len(u.config.Password) == 0 {
+	if len(c.Password) == 0 {
 		u.askForPassword(connectFn)
 		return
 	}
 
-	go connectFn(u.config.Password)
+	go connectFn(c.Password)
 }
 
-func (ui *gtkUI) onConnect() {
-	go ui.session.WatchTimeout()
-	go ui.session.WatchRosterEvents()
-	go ui.session.WatchStanzas()
+func (ui *gtkUI) onConnect(s *session.Session) {
+	go s.WatchTimeout()
+	go s.WatchRosterEvents()
+	go s.WatchStanzas()
 }

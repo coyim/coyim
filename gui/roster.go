@@ -3,6 +3,7 @@ package gui
 import (
 	"unsafe"
 
+	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/glib"
@@ -14,6 +15,8 @@ type Roster struct {
 	model  *gtk.ListStore
 	view   *gtk.TreeView
 
+	contacts map[*session.Session][]xmpp.RosterEntry
+
 	CheckEncrypted func(to string) bool
 	SendMessage    func(to, message string)
 	conversations  map[string]*conversationWindow
@@ -24,12 +27,13 @@ func NewRoster() *Roster {
 		Window: gtk.NewScrolledWindow(nil, nil),
 
 		model: gtk.NewListStore(
-			gtk.TYPE_STRING, // user
-			gtk.TYPE_INT,    // id
+			gtk.TYPE_STRING,  // user
+			gtk.TYPE_POINTER, // *Session
 		),
 		view: gtk.NewTreeView(),
 
 		conversations: make(map[string]*conversationWindow),
+		contacts:      make(map[*session.Session][]xmpp.RosterEntry),
 	}
 
 	r.Window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -91,16 +95,21 @@ func (r *Roster) onActivateBuddy(ctx *glib.CallbackContext) {
 	r.model.GetValue(iter, 0, val)
 	to := val.GetString()
 
-	r.openConversationWindow(to)
+	val2 := &glib.GValue{}
+	r.model.GetValue(iter, 1, val2)
+	s := (*session.Session)(val2.GetPointer())
+
+	r.openConversationWindow(s, to)
 
 	//TODO call g_value_unset() but the lib doesnt provide
 }
 
-func (r *Roster) openConversationWindow(to string) *conversationWindow {
+func (r *Roster) openConversationWindow(s *session.Session, to string) *conversationWindow {
+	//TODO: handle same account on multiple sessions
 	c, ok := r.conversations[to]
 
 	if !ok {
-		c = newConversationWindow(r, to)
+		c = newConversationWindow(s, to)
 		r.conversations[to] = c
 	}
 
@@ -110,7 +119,8 @@ func (r *Roster) openConversationWindow(to string) *conversationWindow {
 
 func (r *Roster) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
-		conv := r.openConversationWindow(from)
+		//TODO: fix me
+		conv := r.openConversationWindow(nil, from)
 		conv.appendMessage(from, timestamp, encrypted, ui.StripHTML(message))
 		return false
 	})
@@ -128,7 +138,11 @@ func (r *Roster) AppendMessageToHistory(to, from, timestamp string, encrypted bo
 	})
 }
 
-func (r *Roster) Update(entries []xmpp.RosterEntry) {
+func (r *Roster) Update(s *session.Session, entries []xmpp.RosterEntry) {
+	r.contacts[s] = entries
+}
+
+func (r *Roster) Redraw() {
 	gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
 
 	gobj.Ref()
@@ -136,15 +150,17 @@ func (r *Roster) Update(entries []xmpp.RosterEntry) {
 
 	r.model.Clear()
 	iter := &gtk.TreeIter{}
-	for _, item := range entries {
-		r.model.Append(iter)
+	for s, contacts := range r.contacts {
+		for _, item := range contacts {
+			r.model.Append(iter)
 
-		//state, ok := s.knownStates[item.Jid]
-		// Subscription, knownState
-		r.model.Set(iter,
-			0, item.Jid,
-			// 1, item.Name,
-		)
+			//state, ok := s.knownStates[item.Jid]
+			// Subscription, knownState
+			r.model.Set(iter,
+				0, item.Jid,
+				1, s,
+			)
+		}
 	}
 
 	r.view.SetModel(r.model)

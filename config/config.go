@@ -90,7 +90,7 @@ func parseMultiConfig(conf []byte) (m *MultiAccountConfig, err error) {
 }
 
 func fallbackToSingleAccountConfig(conf []byte) (*MultiAccountConfig, error) {
-	c, err := parseConfig(conf)
+	c, err := parseSingleConfig(conf)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func fallbackToSingleAccountConfig(conf []byte) (*MultiAccountConfig, error) {
 	}, nil
 }
 
-func ParseConfig(filename string) (*Config, error) {
+func ParseConfig(filename string) (*MultiAccountConfig, error) {
 	m, err := ParseMultiConfig(filename)
 	if err != nil {
 		return nil, err
@@ -112,12 +112,16 @@ func ParseConfig(filename string) (*Config, error) {
 		return nil, errors.New("account config is missing")
 	}
 
-	c := &m.Accounts[0]
-	c.Filename = filename
-	return c, parseFingerprints(c)
+	for _, c := range m.Accounts {
+		//TODO: consider errors
+		//c.Filename = filename
+		parseFingerprints(&c)
+	}
+
+	return m, nil
 }
 
-func parseConfig(contents []byte) (c *Config, err error) {
+func parseSingleConfig(contents []byte) (c *Config, err error) {
 	c = new(Config)
 	if err = json.Unmarshal(contents, &c); err != nil {
 		return
@@ -225,7 +229,7 @@ func NewConfig() *Config {
 	}
 }
 
-func Load(configFile string) (*Config, error) {
+func Load(configFile string) (*MultiAccountConfig, error) {
 	if len(configFile) == 0 {
 		c, err := FindConfigFile(os.Getenv("HOME"))
 		if err != nil {
@@ -240,7 +244,6 @@ func Load(configFile string) (*Config, error) {
 		return nil, errInvalidConfigFile
 	}
 
-	config.Filename = configFile
 	return config, nil
 }
 

@@ -116,20 +116,13 @@ func (c *cliUI) RegisterCallback() xmpp.FormCallback {
 	return nil
 }
 
-func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool) {
+func (c *cliUI) SubscriptionRequest(from string) {
+	info(c.term, from+" wishes to see when you're online. Use '/confirm "+from+"' to confirm (or likewise with /deny to decline)")
+	c.input.AddUser(from)
+}
 
+func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
 	from := xmpp.RemoveResourceFromJid(stanza.From)
-
-	if stanza.Type == "subscribe" {
-		info(c.term, from+" wishes to see when you're online. Use '/confirm "+from+"' to confirm (or likewise with /deny to decline)")
-		c.input.AddUser(from)
-		return
-	}
-
-	s := c.session
-	if ignore || s.Config.HideStatusUpdates {
-		return
-	}
 
 	var line []byte
 	line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
@@ -155,7 +148,7 @@ func (c *cliUI) IQReceived(uid string) {
 	c.input.AddUser(uid)
 }
 
-func (c *cliUI) RosterReceived(roster []xmpp.RosterEntry) {
+func (c *cliUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
 	for _, entry := range roster {
 		c.input.AddUser(entry.Jid)
 	}
@@ -169,8 +162,7 @@ func main() {
 	u := newCLI()
 	defer u.Close()
 
-	var err error
-	u.config, err = config.Load(*config.ConfigFile)
+	multiConfig, err := config.Load(*config.ConfigFile)
 	if err != nil {
 		filename, e := config.FindConfigFile(os.Getenv("HOME"))
 		if e != nil {
@@ -183,6 +175,8 @@ func main() {
 		u.Alert(err.Error())
 		enroll(u.config, u.term)
 	}
+
+	u.config = &multiConfig.Accounts[0]
 
 	//TODO We do not support empty passwords
 	var password string

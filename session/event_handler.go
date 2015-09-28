@@ -1,4 +1,4 @@
-package event
+package session
 
 import (
 	"github.com/twstrike/coyim/xmpp"
@@ -9,12 +9,13 @@ type SessionEventHandler interface {
 	Info(string)
 	Warn(string)
 	Alert(string)
-	RosterReceived([]xmpp.RosterEntry)
+	RosterReceived(*Session, []xmpp.RosterEntry)
 	IQReceived(uid string)
 	NewOTRKeys(from string, conversation *otr3.Conversation)
 	OTREnded(uid string)
 	MessageReceived(from, timestamp string, encrypted bool, message []byte)
-	ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool)
+	ProcessPresence(stanza *xmpp.ClientPresence, gone bool)
+	SubscriptionRequest(uid string)
 	Disconnected()
 	RegisterCallback() xmpp.FormCallback
 }

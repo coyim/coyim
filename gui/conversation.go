@@ -1,25 +1,29 @@
 package gui
 
 import (
+	"fmt"
 	"unsafe"
 
+	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
+	"github.com/twstrike/otr3"
 )
 
 type conversationWindow struct {
 	to            string
+	session       *session.Session
 	win           *gtk.Window
 	history       *gtk.TextView
 	scrollHistory *gtk.ScrolledWindow
-	roster        *Roster
 }
 
-func newConversationWindow(r *Roster, uid string) *conversationWindow {
+func newConversationWindow(s *session.Session, uid string) *conversationWindow {
 	conv := &conversationWindow{
 		to:            uid,
-		roster:        r,
+		session:       s,
 		win:           gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
 		history:       gtk.NewTextView(),
 		scrollHistory: gtk.NewScrolledWindow(nil, nil),
@@ -85,7 +89,7 @@ func newConversationWindow(r *Roster, uid string) *conversationWindow {
 	encryptedFlag := gtk.NewButton()
 	vbox.Add(encryptedFlag)
 	glib.IdleAdd(func() bool {
-		if conv.roster.CheckEncrypted(conv.to) {
+		if s.GetConversationWith(conv.to).IsEncrypted() {
 			encryptedFlag.SetLabel("encrypted")
 		} else {
 			encryptedFlag.SetLabel("unencrypted")
@@ -107,7 +111,25 @@ func (conv *conversationWindow) Show() {
 }
 
 func (conv *conversationWindow) sendMessage(message string) {
-	conv.roster.SendMessage(conv.to, message)
+	//TODO: this should not be in both GUI and roster
+	conversation := conv.session.GetConversationWith(conv.to)
+
+	toSend, err := conversation.Send(otr3.ValidMessage(message))
+	if err != nil {
+		fmt.Println("Failed to generate OTR message")
+		return
+	}
+
+	encrypted := conversation.IsEncrypted()
+	glib.IdleAdd(func() bool {
+		conv.appendMessage("ME", "NOW", encrypted, ui.StripHTML([]byte(message)))
+		return false
+	})
+
+	for _, m := range toSend {
+		//TODO: this should be session.Send(to, message)
+		conv.session.Conn.Send(conv.to, string(m))
+	}
 }
 
 func (conv *conversationWindow) appendMessage(from, timestamp string, encrypted bool, message []byte) {

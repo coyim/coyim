@@ -59,7 +59,7 @@ type Session struct {
 	// lastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	LastActionTime      time.Time
-	SessionEventHandler event.SessionEventHandler
+	SessionEventHandler SessionEventHandler
 
 	timeoutTicker *time.Ticker
 }
@@ -119,7 +119,18 @@ StanzaLoop:
 				s.processClientMessage(stanza)
 			case *xmpp.ClientPresence:
 				ignore, gone := s.processPresence(stanza)
-				s.SessionEventHandler.ProcessPresence(stanza, ignore, gone)
+
+				if stanza.Type == "subscribe" {
+					jid := xmpp.RemoveResourceFromJid(stanza.From)
+					s.SessionEventHandler.SubscriptionRequest(jid)
+					return
+				}
+
+				if ignore || s.Config.HideStatusUpdates {
+					return
+				}
+
+				s.SessionEventHandler.ProcessPresence(stanza, gone)
 			case *xmpp.ClientIQ:
 				if stanza.Type != "get" && stanza.Type != "set" {
 					continue
@@ -143,7 +154,7 @@ StanzaLoop:
 }
 
 func (s *Session) rosterReceived() {
-	s.SessionEventHandler.RosterReceived(s.Roster)
+	s.SessionEventHandler.RosterReceived(s, s.Roster)
 }
 
 func (s *Session) iqReceived(uid string) {

@@ -4,9 +4,10 @@ import (
 	"fmt"
 
 	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/otr3"
 )
+
+//I will ignore this class for now
 
 type guiSessionEventHandler struct {
 	u *gtkUI
@@ -34,10 +35,11 @@ func (seh guiSessionEventHandler) OTREnded(uid string) {
 
 //TODO: we should update periodically (like Pidgin does) if we include the status (online/offline/away) on the label
 func (seh guiSessionEventHandler) RosterReceived(roster []xmpp.RosterEntry) {
-	glib.IdleAdd(func() bool {
-		seh.u.roster.Update(roster)
-		return false
-	})
+	//TODO: outdated
+	//glib.IdleAdd(func() bool {
+	//	seh.u.roster.Update(roster)
+	//	return false
+	//})
 }
 
 func (seh guiSessionEventHandler) IQReceived(string) {

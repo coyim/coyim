@@ -17,5 +17,6 @@ func main() {
 	ui.LoadConfig(*config.ConfigFile)
 
 	ui.Loop()
+
 	os.Stdout.Write([]byte("\n"))
 }

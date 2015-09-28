@@ -210,9 +210,7 @@ func main() {
 
 	//TODO support one session per account
 	u.session = &session.Session{
-		//WHY both?
-		Account: u.config.Account,
-		Config:  u.config,
+		Config: u.config,
 
 		Conn:                conn,
 		Conversations:       make(map[string]*otr3.Conversation),

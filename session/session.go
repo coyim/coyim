@@ -27,7 +27,6 @@ const (
 )
 
 type Session struct {
-	Account    string
 	Conn       *xmpp.Conn
 	Roster     []xmpp.RosterEntry
 	ConnStatus connStatus
@@ -180,7 +179,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 			OS:      "none",
 		}
 	case "jabber:iq:roster query":
-		if len(stanza.From) > 0 && stanza.From != s.Account {
+		if len(stanza.From) > 0 && stanza.From != s.Config.Account {
 			s.warn("Ignoring roster IQ from bad address: " + stanza.From)
 			return nil
 		}

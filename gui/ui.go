@@ -390,9 +390,7 @@ func (u *gtkUI) connect() {
 
 	//TODO support one session per account
 	u.session = &session.Session{
-		//Why both?
-		Account: u.config.Account,
-		Config:  u.config,
+		Config: u.config,
 
 		Conversations:       make(map[string]*otr3.Conversation),
 		OtrEventHandler:     make(map[string]*event.OtrEventHandler),

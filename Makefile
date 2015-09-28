@@ -1,4 +1,5 @@
 default: deps lint test
+.PHONY: test
 
 build: build-cli build-gui
 

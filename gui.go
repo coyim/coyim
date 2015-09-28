@@ -13,21 +13,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/twstrike/coyim/config"
-	. "github.com/twstrike/coyim/event"
-	"github.com/twstrike/coyim/gui"
-	. "github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
 	"github.com/twstrike/otr3"
+
+	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/event"
+	"github.com/twstrike/coyim/gui"
+	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/xmpp"
 )
 
 type gtkUI struct {
 	roster  *gui.Roster
-	session *Session
+	session *session.Session
 	window  *gtk.Window
 
 	config    *config.Config
@@ -351,7 +352,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	disconnectItem.Connect("activate", u.disconnect)
 
 	connToggle := func() {
-		connected := u.session.ConnStatus == CONNECTED
+		connected := u.session.ConnStatus == session.CONNECTED
 		connectItem.SetSensitive(!connected)
 		disconnectItem.SetSensitive(connected)
 	}
@@ -452,13 +453,13 @@ func (u *gtkUI) connect() {
 	}
 
 	//TODO support one session per account
-	u.session = &Session{
+	u.session = &session.Session{
 		//Why both?
 		Account: u.config.Account,
 		Config:  u.config,
 
 		Conversations:       make(map[string]*otr3.Conversation),
-		OtrEventHandler:     make(map[string]*OtrEventHandler),
+		OtrEventHandler:     make(map[string]*event.OtrEventHandler),
 		KnownStates:         make(map[string]string),
 		PrivateKey:          new(otr3.PrivateKey),
 		PendingRosterChan:   make(chan *ui.RosterEdit),

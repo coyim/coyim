@@ -14,7 +14,6 @@ import (
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
@@ -49,30 +48,6 @@ func (ui *gtkUI) LoadConfig(configFile string) {
 
 }
 
-func (*gtkUI) RegisterCallback() xmpp.FormCallback {
-	//if !*createAccount {
-	//  return nil
-	//}
-
-	return func(title, instructions string, fields []interface{}) error {
-		//TODO: should open a registration window
-		fmt.Println("TODO")
-		return nil
-	}
-}
-
-func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
-	u.roster.MessageReceived(from, timestamp, encrypted, message)
-}
-
-func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
-	u.Info(fmt.Sprintf("TODO: notify new keys from %s", uid))
-}
-
-func (u *gtkUI) OTREnded(uid string) {
-	//TODO: conversation ended
-}
-
 func (u *gtkUI) Info(m string) {
 	fmt.Println(">>> INFO", m)
 }
@@ -83,11 +58,6 @@ func (u *gtkUI) Warn(m string) {
 
 func (u *gtkUI) Alert(m string) {
 	fmt.Println(">>> ALERT", m)
-}
-
-func (u *gtkUI) Disconnected() {
-	//TODO: remove everybody from the roster
-	fmt.Println("TODO: Should disconnect the account")
 }
 
 func (u *gtkUI) Loop() {
@@ -382,30 +352,6 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	return menubar
 }
 
-func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool) {
-
-	jid := xmpp.RemoveResourceFromJid(stanza.From)
-	state, ok := u.session.KnownStates[jid]
-	if !ok || len(state) == 0 {
-		state = "unknown"
-	}
-
-	//TODO: Notify via UI
-	fmt.Println(jid, "is", state)
-}
-
-func (u *gtkUI) IQReceived(string) {
-	//TODO
-}
-
-//TODO: we should update periodically (like Pidgin does) if we include the status (online/offline/away) on the label
-func (u *gtkUI) RosterReceived(roster []xmpp.RosterEntry) {
-	glib.IdleAdd(func() bool {
-		u.roster.Update(roster)
-		return false
-	})
-}
-
 func (u *gtkUI) enroll() {
 	//TODO: import private key?
 
@@ -455,7 +401,7 @@ func (u *gtkUI) connect() {
 		PendingRosterChan:   make(chan *ui.RosterEdit),
 		PendingSubscribes:   make(map[string]string),
 		LastActionTime:      time.Now(),
-		SessionEventHandler: u,
+		SessionEventHandler: guiSessionEventHandler{u: u},
 	}
 
 	u.session.PrivateKey.Parse(u.config.PrivateKey)

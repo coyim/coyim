@@ -16,18 +16,18 @@ import (
 	"syscall"
 	"time"
 
-	coyconf "github.com/twstrike/coyim/config"
-	. "github.com/twstrike/coyim/event"
-	. "github.com/twstrike/coyim/session"
-	coyui "github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/event"
+	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
 type cliUI struct {
-	config  *coyconf.Config
-	session *Session
+	config  *config.Config
+	session *session.Session
 
 	password string
 	oldState *terminal.State
@@ -163,71 +163,71 @@ func (c *cliUI) RosterReceived(roster []xmpp.RosterEntry) {
 func main() {
 	flag.Parse()
 
-	ui := newCLI()
-	defer ui.Close()
+	u := newCLI()
+	defer u.Close()
 
 	var err error
-	ui.config, err = coyconf.Load(*configFile)
+	u.config, err = config.Load(*configFile)
 	if err != nil {
-		filename, e := coyconf.FindConfigFile(os.Getenv("HOME"))
+		filename, e := config.FindConfigFile(os.Getenv("HOME"))
 		if e != nil {
 			//TODO cant write config file. Should it be a problem?
 			return
 		}
 
-		ui.config = coyconf.NewConfig()
-		ui.config.Filename = *filename
-		ui.Alert(err.Error())
-		enroll(ui.config, ui.term)
+		u.config = config.NewConfig()
+		u.config.Filename = *filename
+		u.Alert(err.Error())
+		enroll(u.config, u.term)
 	}
 
 	//TODO We do not support empty passwords
 	var password string
-	if len(ui.config.Password) == 0 {
+	if len(u.config.Password) == 0 {
 		var err error
 
-		password, err = ui.term.ReadPassword(
-			fmt.Sprintf("Password for %s (will not be saved to disk): ", ui.config.Account),
+		password, err = u.term.ReadPassword(
+			fmt.Sprintf("Password for %s (will not be saved to disk): ", u.config.Account),
 		)
 		if err != nil {
 			return
 		}
 	} else {
-		password = ui.config.Password
+		password = u.config.Password
 	}
 
-	logger := &lineLogger{ui.term, nil}
+	logger := &lineLogger{u.term, nil}
 
 	// Act on configuration
-	conn, err := coyconf.NewXMPPConn(ui.config, password, ui.RegisterCallback(), logger)
+	conn, err := config.NewXMPPConn(u.config, password, u.RegisterCallback(), logger)
 	if err != nil {
-		ui.Alert(err.Error())
+		u.Alert(err.Error())
 		return
 	}
 
 	//TODO support one session per account
-	ui.session = &Session{
+	u.session = &session.Session{
 		//WHY both?
-		Account: ui.config.Account,
-		Config:  ui.config,
+		Account: u.config.Account,
+		Config:  u.config,
 
 		Conn:                conn,
 		Conversations:       make(map[string]*otr3.Conversation),
-		OtrEventHandler:     make(map[string]*OtrEventHandler),
+		OtrEventHandler:     make(map[string]*event.OtrEventHandler),
 		KnownStates:         make(map[string]string),
 		PrivateKey:          new(otr3.PrivateKey),
-		PendingRosterChan:   make(chan *coyui.RosterEdit),
+		PendingRosterChan:   make(chan *ui.RosterEdit),
 		PendingSubscribes:   make(map[string]string),
 		LastActionTime:      time.Now(),
-		SessionEventHandler: ui,
+		SessionEventHandler: u,
 	}
 
-	ui.session.PrivateKey.Parse(ui.config.PrivateKey)
-	ui.session.Timeouts = make(map[xmpp.Cookie]time.Time)
+	u.session.PrivateKey.Parse(u.config.PrivateKey)
+	u.session.Timeouts = make(map[xmpp.Cookie]time.Time)
 
-	info(ui.term, fmt.Sprintf("Your fingerprint is %x", ui.session.PrivateKey.DefaultFingerprint()))
+	info(u.term, fmt.Sprintf("Your fingerprint is %x", u.session.PrivateKey.DefaultFingerprint()))
 
-	ui.Loop()
+	u.Loop()
 	os.Stdout.Write([]byte("\n"))
 }
 
@@ -243,7 +243,7 @@ func (c *cliUI) MessageReceived(from, timestamp string, encrypted bool, message 
 	t := fmt.Sprintf("(%s) %s: ", timestamp, from)
 	line = append(line, []byte(t)...)
 	line = append(line, c.term.Escape.Reset...)
-	line = appendTerminalEscaped(line, coyui.StripHTML(message))
+	line = appendTerminalEscaped(line, ui.StripHTML(message))
 	line = append(line, '\n')
 	if c.session.Config.Bell {
 		line = append(line, '\a')
@@ -544,7 +544,7 @@ func (c *cliUI) WatchCommands() {
 
 	term := c.term
 	s := c.session
-	config := s.Config
+	conf := s.Config
 
 	var err error
 
@@ -646,7 +646,7 @@ CommandLoop:
 				if cmd.setPromptIsEncrypted != nil {
 					cmd.setPromptIsEncrypted <- isEncrypted
 				}
-				if !isEncrypted && config.ShouldEncryptTo(cmd.to) {
+				if !isEncrypted && conf.ShouldEncryptTo(cmd.to) {
 					warn(term, fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
 					continue
 				}
@@ -655,10 +655,10 @@ CommandLoop:
 				// Automatically tag all outgoing plaintext
 				// messages with a whitespace tag that
 				// indicates that we support OTR.
-				if config.OTRAutoAppendTag &&
+				if conf.OTRAutoAppendTag &&
 					!bytes.Contains(message, []byte("?OTR")) &&
 					(!ok || !conversation.IsEncrypted()) {
-					message = append(message, coyui.OTRWhitespaceTag...)
+					message = append(message, ui.OTRWhitespaceTag...)
 				}
 				if ok {
 					var err error
@@ -675,7 +675,7 @@ CommandLoop:
 					s.Conn.Send(cmd.to, string(message))
 				}
 			case otrCommand:
-				s.Conn.Send(string(cmd.User), QueryMessage)
+				s.Conn.Send(string(cmd.User), event.QueryMessage)
 			case otrInfoCommand:
 				info(term, fmt.Sprintf("Your OTR fingerprint is %x", s.PrivateKey.DefaultFingerprint()))
 				for to, conversation := range s.Conversations {
@@ -733,7 +733,7 @@ CommandLoop:
 					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, existing))
 					break
 				}
-				s.Config.KnownFingerprints = append(s.Config.KnownFingerprints, coyconf.KnownFingerprint{Fingerprint: fpr, UserId: cmd.User})
+				s.Config.KnownFingerprints = append(s.Config.KnownFingerprints, config.KnownFingerprint{Fingerprint: fpr, UserId: cmd.User})
 				s.Config.Save()
 				info(term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:

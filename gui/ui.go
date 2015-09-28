@@ -23,6 +23,7 @@ import (
 	"github.com/twstrike/otr3"
 )
 
+//TODO: this signal should be per Session
 var (
 	CONNECTED_SIG    = glib.NewSignal("coyim-account-connected")
 	DISCONNECTED_SIG = glib.NewSignal("coyim-account-disconnected")
@@ -53,6 +54,7 @@ func (ui *gtkUI) LoadConfig(configFile string) {
 	}
 }
 
+//TODO: Should be per session
 func (*gtkUI) Disconnected() {
 	//TODO: remove everybody from the roster
 	fmt.Println("TODO: Should disconnect the account")
@@ -316,11 +318,11 @@ func buildAccountSubmenu(u *gtkUI, c *config.Config) *gtk.MenuItem {
 	accountSubMenu.Append(connectItem)
 
 	disconnectItem := gtk.NewMenuItemWithMnemonic("_Disconnect")
-	disconnectItem.SetSensitive(false)
+	//disconnectItem.SetSensitive(false)
 	accountSubMenu.Append(disconnectItem)
 
 	connectItem.Connect("activate", func() {
-		connectItem.SetSensitive(false)
+		//connectItem.SetSensitive(false)
 		u.connect(c)
 	})
 
@@ -328,19 +330,20 @@ func buildAccountSubmenu(u *gtkUI, c *config.Config) *gtk.MenuItem {
 		u.disconnect(c)
 	})
 
-	connToggle := func() {
-		s, ok := u.sessions[c]
-		if !ok {
-			return
-		}
+	//TODO: this should be per session
+	//connToggle := func() {
+	//	s, ok := u.sessions[c]
+	//	if !ok {
+	//		return
+	//	}
 
-		connected := s.ConnStatus == session.CONNECTED
-		connectItem.SetSensitive(!connected)
-		disconnectItem.SetSensitive(connected)
-	}
+	//	connected := s.ConnStatus == session.CONNECTED
+	//	connectItem.SetSensitive(!connected)
+	//	disconnectItem.SetSensitive(connected)
+	//}
 
-	u.onReceiveSignal(CONNECTED_SIG, connToggle)
-	u.onReceiveSignal(DISCONNECTED_SIG, connToggle)
+	//u.onReceiveSignal(CONNECTED_SIG, connToggle)
+	//u.onReceiveSignal(DISCONNECTED_SIG, connToggle)
 
 	editItem := gtk.NewMenuItemWithMnemonic("_Edit")
 	editItem.Connect("activate", func() {
@@ -360,9 +363,9 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	submenu := gtk.NewMenu()
 	cascademenu.SetSubmenu(submenu)
 
-	for _, account := range u.multiConfig.Accounts {
-		menuitem := buildAccountSubmenu(u, &account)
-		submenu.Append(menuitem)
+	for i := range u.multiConfig.Accounts {
+		p := &u.multiConfig.Accounts[i]
+		submenu.Append(buildAccountSubmenu(u, p))
 	}
 
 	//Help -> About
@@ -433,6 +436,8 @@ func (u *gtkUI) disconnect(c *config.Config) error {
 	}
 
 	s.Terminate()
+	delete(u.sessions, c)
+
 	u.window.EmitSignal(DISCONNECTED_SIG)
 	//u.connected = false
 
@@ -472,14 +477,10 @@ func (u *gtkUI) findOrCreateSession(c *config.Config) *session.Session {
 	return s
 }
 
-//TODO: This should be moved to a Controller
 func (u *gtkUI) connect(c *config.Config) {
 	//if u.connected {
 	//	return
 	//}
-
-	//TODO support one session per account
-	//u.session = newSession(u, &u.multiConfig.Accounts[0])
 
 	s := u.findOrCreateSession(c)
 

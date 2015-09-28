@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -20,7 +21,9 @@ import (
 )
 
 var (
-	errHomeDirNotSet = errors.New("$HOME not set. Please either export $HOME or use the -config-file option.\n")
+	errHomeDirNotSet         = errors.New("$HOME not set. Please either export $HOME or use the -config-file option.\n")
+	ConfigFile       *string = flag.String("config-file", "", "Location of the config file")
+	CreateAccount    *bool   = flag.Bool("create", false, "If true, attempt to create account")
 )
 
 type MultiAccountConfig struct {

@@ -1,9 +1,6 @@
-// +build nocli
-
-package main
+package gui
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -13,21 +10,25 @@ import (
 	"strings"
 	"time"
 
+	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/event"
+	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/xmpp"
+
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
 	"github.com/twstrike/otr3"
+)
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/event"
-	"github.com/twstrike/coyim/gui"
-	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
+var (
+	CONNECTED_SIG    = glib.NewSignal("coyim-account-connected")
+	DISCONNECTED_SIG = glib.NewSignal("coyim-account-disconnected")
 )
 
 type gtkUI struct {
-	roster  *gui.Roster
+	roster  *Roster
 	session *session.Session
 	window  *gtk.Window
 
@@ -35,16 +36,29 @@ type gtkUI struct {
 	connected bool
 }
 
-func (*gtkUI) RegisterCallback() xmpp.FormCallback {
-	if *createAccount {
-		return func(title, instructions string, fields []interface{}) error {
-			//TODO: should open a registration window
-			fmt.Println("TODO")
-			return nil
-		}
+func NewGTK() *gtkUI {
+	return &gtkUI{}
+}
+
+func (ui *gtkUI) LoadConfig(configFile string) {
+	var err error
+	if ui.config, err = config.Load(configFile); err != nil {
+		ui.Alert(err.Error())
+		ui.enroll()
 	}
 
-	return nil
+}
+
+func (*gtkUI) RegisterCallback() xmpp.FormCallback {
+	//if !*createAccount {
+	//  return nil
+	//}
+
+	return func(title, instructions string, fields []interface{}) error {
+		//TODO: should open a registration window
+		fmt.Println("TODO")
+		return nil
+	}
 }
 
 func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
@@ -86,21 +100,12 @@ func (u *gtkUI) Loop() {
 	gdk.ThreadsLeave()
 }
 
-var (
-	CONNECTED_SIG    = glib.NewSignal("coyim-account-connected")
-	DISCONNECTED_SIG = glib.NewSignal("coyim-account-disconnected")
-)
-
-func NewGTK() *gtkUI {
-	return &gtkUI{}
-}
-
 func (u *gtkUI) On(s *glib.Signal, f func()) {
 	u.window.Connect(s.Name(), f)
 }
 
 func (u *gtkUI) initRoster() {
-	u.roster = gui.NewRoster()
+	u.roster = NewRoster()
 	u.roster.CheckEncrypted = u.checkEncrypted
 	u.roster.SendMessage = u.sendMessage
 	u.On(DISCONNECTED_SIG, u.roster.Clear)
@@ -399,21 +404,6 @@ func (u *gtkUI) RosterReceived(roster []xmpp.RosterEntry) {
 		u.roster.Update(roster)
 		return false
 	})
-}
-
-func main() {
-	flag.Parse()
-
-	ui := NewGTK()
-
-	var err error
-	if ui.config, err = config.Load(*configFile); err != nil {
-		ui.Alert(err.Error())
-		ui.enroll()
-	}
-
-	ui.Loop()
-	os.Stdout.Write([]byte("\n"))
 }
 
 func (u *gtkUI) enroll() {

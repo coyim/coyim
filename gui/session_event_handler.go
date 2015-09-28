@@ -51,14 +51,14 @@ func (seh guiSessionEventHandler) MessageReceived(from, timestamp string, encryp
 }
 
 func (seh guiSessionEventHandler) ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool) {
-	jid := xmpp.RemoveResourceFromJid(stanza.From)
-	state, ok := seh.u.session.KnownStates[jid]
-	if !ok || len(state) == 0 {
-		state = "unknown"
-	}
+	//jid := xmpp.RemoveResourceFromJid(stanza.From)
+	//state, ok := seh.u.session.KnownStates[jid]
+	//if !ok || len(state) == 0 {
+	//	state = "unknown"
+	//}
 
-	//TODO: Notify via UI
-	fmt.Println(jid, "is", state)
+	////TODO: Notify via UI
+	//fmt.Println(jid, "is", state)
 }
 
 func (seh guiSessionEventHandler) Disconnected() {

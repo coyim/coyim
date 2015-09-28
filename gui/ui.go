@@ -32,13 +32,8 @@ type gtkUI struct {
 	roster *Roster
 	window *gtk.Window
 
-	//TODO: remove session
-	session  *session.Session
-	sessions map[*config.Config]*session.Session
-
-	//TODO: remove config
-	config      *config.Config
 	multiConfig *config.MultiAccountConfig
+	sessions    map[*config.Config]*session.Session
 
 	connected bool
 }
@@ -56,8 +51,6 @@ func (ui *gtkUI) LoadConfig(configFile string) {
 		ui.enroll()
 		return
 	}
-
-	ui.config = &ui.multiConfig.Accounts[0]
 }
 
 func (*gtkUI) Disconnected() {
@@ -415,11 +408,16 @@ func (u *gtkUI) enroll() {
 		return
 	}
 
-	u.config = config.NewConfig()
-	u.config.Filename = *filename
+	//TODO: extract to function when implementing "add account"
+	u.multiConfig = &config.MultiAccountConfig{
+		Filename: *filename,
+		Accounts: []config.Config{
+			config.Config{},
+		},
+	}
 
 	glib.IdleAdd(func() bool {
-		accountDialog(u.config)
+		accountDialog(&u.multiConfig.Accounts[0])
 		return false
 	})
 }

@@ -6,6 +6,13 @@ go:
   - 1.4.2
   - 1.0.2
 
-install: make deps
-script: make ci
+before_install:
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+  - if ! go get code.google.com/p/go.tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
 
+install: make deps
+
+script:
+  - make ci
+  - $HOME/gopath/bin/goveralls -service=travis-ci

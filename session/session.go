@@ -610,6 +610,10 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	s.Conn = conn
 	s.ConnStatus = CONNECTED
 
+	go s.WatchTimeout()
+	go s.WatchRosterEvents()
+	go s.WatchStanzas()
+
 	return nil
 }
 

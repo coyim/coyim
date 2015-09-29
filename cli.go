@@ -75,9 +75,11 @@ func (c *cliUI) Disconnected() {
 }
 
 func (c *cliUI) Loop() {
+	//TODO: remove me as soon as cli uses Session.Connect()
 	go c.session.WatchTimeout()
 	go c.session.WatchRosterEvents()
 	go c.session.WatchStanzas()
+
 	go c.WatchCommands()
 
 	<-c.terminate // wait
@@ -194,7 +196,7 @@ func main() {
 		registerCallback = u.RegisterCallback
 	}
 
-	// Act on configuration
+	//TODO replace this by session.Connect()
 	conn, err := config.NewXMPPConn(u.config, password, registerCallback, logger)
 	if err != nil {
 		u.Alert(err.Error())

@@ -504,8 +504,6 @@ func (u *gtkUI) connect(c *config.Config) {
 	go connectFn(c.Password)
 }
 
+//TODO: remove me
 func (ui *gtkUI) onConnect(s *session.Session) {
-	go s.WatchTimeout()
-	go s.WatchRosterEvents()
-	go s.WatchStanzas()
 }

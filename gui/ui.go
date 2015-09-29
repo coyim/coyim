@@ -64,8 +64,8 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 	return nil
 }
 
-func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
-	u.roster.MessageReceived(from, timestamp, encrypted, message)
+func (u *gtkUI) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {
+	u.roster.MessageReceived(s, from, timestamp, encrypted, message)
 }
 
 func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
@@ -437,7 +437,7 @@ func (u *gtkUI) disconnect(c *config.Config) error {
 
 func newSession(u *gtkUI, c *config.Config) *session.Session {
 	s := session.NewSession(c)
-	s.SessionEventHandler = u
+	s.SessionEventHandler = guiSessionEventHandler{u}
 
 	return s
 }

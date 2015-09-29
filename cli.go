@@ -214,7 +214,7 @@ func main() {
 	os.Stdout.Write([]byte("\n"))
 }
 
-func (c *cliUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
+func (c *cliUI) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {
 
 	var line []byte
 	if encrypted {

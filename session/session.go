@@ -452,7 +452,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 }
 
 func (s *Session) messageReceived(from, timestamp string, encrypted bool, message []byte) {
-	s.SessionEventHandler.MessageReceived(from, timestamp, encrypted, message)
+	s.SessionEventHandler.MessageReceived(s, from, timestamp, encrypted, message)
 	s.maybeNotify()
 }
 

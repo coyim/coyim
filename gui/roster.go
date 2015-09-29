@@ -117,10 +117,9 @@ func (r *Roster) openConversationWindow(s *session.Session, to string) *conversa
 	return c
 }
 
-func (r *Roster) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
+func (r *Roster) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
-		//TODO: fix me
-		conv := r.openConversationWindow(nil, from)
+		conv := r.openConversationWindow(s, from)
 		conv.appendMessage(from, timestamp, encrypted, ui.StripHTML(message))
 		return false
 	})

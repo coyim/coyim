@@ -13,7 +13,7 @@ type SessionEventHandler interface {
 	IQReceived(uid string)
 	NewOTRKeys(from string, conversation *otr3.Conversation)
 	OTREnded(uid string)
-	MessageReceived(from, timestamp string, encrypted bool, message []byte)
+	MessageReceived(s *Session, from, timestamp string, encrypted bool, message []byte)
 	ProcessPresence(stanza *xmpp.ClientPresence, gone bool)
 	SubscriptionRequest(uid string)
 	Disconnected()

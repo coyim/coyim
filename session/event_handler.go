@@ -17,5 +17,5 @@ type SessionEventHandler interface {
 	ProcessPresence(stanza *xmpp.ClientPresence, gone bool)
 	SubscriptionRequest(uid string)
 	Disconnected()
-	RegisterCallback() xmpp.FormCallback
+	RegisterCallback(title, instructions string, fields []interface{}) error
 }

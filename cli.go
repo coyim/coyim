@@ -105,15 +105,9 @@ func (c *cliUI) Alert(m string) {
 	alert(c.term, m)
 }
 
-func (c *cliUI) RegisterCallback() xmpp.FormCallback {
-	if *config.CreateAccount {
-		return func(title, instructions string, fields []interface{}) error {
-			user := c.config.Account
-			return promptForForm(c.term, user, c.password, title, instructions, fields)
-		}
-	}
-
-	return nil
+func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{}) error {
+	user := c.config.Account
+	return promptForForm(c.term, user, c.password, title, instructions, fields)
 }
 
 func (c *cliUI) SubscriptionRequest(from string) {
@@ -195,8 +189,13 @@ func main() {
 
 	logger := &lineLogger{u.term, nil}
 
+	var registerCallback xmpp.FormCallback
+	if *config.CreateAccount {
+		registerCallback = u.RegisterCallback
+	}
+
 	// Act on configuration
-	conn, err := config.NewXMPPConn(u.config, password, u.RegisterCallback(), logger)
+	conn, err := config.NewXMPPConn(u.config, password, registerCallback, logger)
 	if err != nil {
 		u.Alert(err.Error())
 		return

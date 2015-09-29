@@ -591,15 +591,14 @@ RosterLoop:
 	}
 }
 
-func (s *Session) Connect(password string) error {
+func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) error {
 	if s.ConnStatus != DISCONNECTED {
 		return nil
 	}
 
 	s.ConnStatus = CONNECTING
 
-	//TODO: I believe ui is only used as a sessionHandler
-	conn, err := config.NewXMPPConn(s.Config, password, s.SessionEventHandler.RegisterCallback(), os.Stdout)
+	conn, err := config.NewXMPPConn(s.Config, password, registerCallback, os.Stdout)
 	if err != nil {
 		s.alert(err.Error())
 		s.ConnStatus = DISCONNECTED

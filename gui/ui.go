@@ -60,17 +60,11 @@ func (*gtkUI) Disconnected() {
 	fmt.Println("TODO: Should disconnect the account")
 }
 
-func (*gtkUI) RegisterCallback() xmpp.FormCallback {
-	//if !*createAccount {
-	//  return nil
-	//}
-	return nil
+func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {
 
-	return func(title, instructions string, fields []interface{}) error {
-		//TODO: should open a registration window
-		fmt.Println("TODO")
-		return nil
-	}
+	//TODO: should open a registration window
+	fmt.Println("TODO")
+	return nil
 }
 
 func (u *gtkUI) MessageReceived(from, timestamp string, encrypted bool, message []byte) {
@@ -484,8 +478,13 @@ func (u *gtkUI) connect(c *config.Config) {
 
 	s := u.findOrCreateSession(c)
 
+	var registerCallback xmpp.FormCallback
+	if *config.CreateAccount {
+		registerCallback = u.RegisterCallback
+	}
+
 	connectFn := func(password string) {
-		err := s.Connect(password)
+		err := s.Connect(password, registerCallback)
 		if err != nil {
 			return
 		}

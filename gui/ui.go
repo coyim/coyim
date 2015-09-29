@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -20,26 +19,16 @@ import (
 	"github.com/twstrike/otr3"
 )
 
-//TODO: this signal should be per Session
-var (
-	CONNECTED_SIG    = glib.NewSignal("coyim-account-connected")
-	DISCONNECTED_SIG = glib.NewSignal("coyim-account-disconnected")
-)
-
 type gtkUI struct {
 	roster *Roster
 	window *gtk.Window
 
 	multiConfig *config.MultiAccountConfig
-	sessions    map[*config.Config]*session.Session
-
-	connected bool
+	accounts    []Account
 }
 
 func NewGTK() *gtkUI {
-	return &gtkUI{
-		sessions: make(map[*config.Config]*session.Session),
-	}
+	return &gtkUI{}
 }
 
 func (ui *gtkUI) LoadConfig(configFile string) {
@@ -49,6 +38,8 @@ func (ui *gtkUI) LoadConfig(configFile string) {
 		ui.enroll()
 		return
 	}
+
+	ui.accounts = BuildAccountsFrom(ui.multiConfig)
 }
 
 //TODO: Should be per session
@@ -104,7 +95,9 @@ func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
 
 func (u *gtkUI) initRoster() {
 	u.roster = NewRoster()
-	u.onReceiveSignal(DISCONNECTED_SIG, u.roster.Clear)
+
+	//TODO: Should redraw the roster when any account is disconnected
+	//u.onReceiveSignal(DISCONNECTED_SIG, u.roster.Clear)
 }
 
 func (u *gtkUI) mainWindow() {
@@ -228,7 +221,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 	dialog.Destroy()
 }
 
-func accountDialog(c *config.Config) {
+func accountDialog(account Account) {
 	dialog := gtk.NewDialog()
 	dialog.SetTitle("Account Details")
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
@@ -238,60 +231,62 @@ func accountDialog(c *config.Config) {
 	vbox.Add(accountLabel)
 
 	accountInput := gtk.NewEntry()
-	accountInput.SetText(c.Account)
+	accountInput.SetText(account.Account)
 	accountInput.SetEditable(true)
 	vbox.Add(accountInput)
 
 	vbox.Add(gtk.NewLabel("Password"))
 	passwordInput := gtk.NewEntry()
-	passwordInput.SetText(c.Password)
+	passwordInput.SetText(account.Password)
 	passwordInput.SetEditable(true)
 	passwordInput.SetVisibility(false)
 	vbox.Add(passwordInput)
 
 	vbox.Add(gtk.NewLabel("Server"))
 	serverInput := gtk.NewEntry()
-	serverInput.SetText(c.Server)
+	serverInput.SetText(account.Server)
 	serverInput.SetEditable(true)
 	vbox.Add(serverInput)
 
 	vbox.Add(gtk.NewLabel("Port"))
 	portInput := gtk.NewEntry()
-	portInput.SetText(strconv.Itoa(c.Port))
+	portInput.SetText(strconv.Itoa(account.Port))
 	portInput.SetEditable(true)
 	vbox.Add(portInput)
 
 	vbox.Add(gtk.NewLabel("Tor Proxy"))
 	proxyInput := gtk.NewEntry()
-	if len(c.Proxies) > 0 {
-		proxyInput.SetText(c.Proxies[0])
+	if len(account.Proxies) > 0 {
+		proxyInput.SetText(account.Proxies[0])
 	}
 	proxyInput.SetEditable(true)
 	vbox.Add(proxyInput)
 
 	alwaysEncrypt := gtk.NewCheckButtonWithLabel("Always Encrypt")
-	alwaysEncrypt.SetActive(c.AlwaysEncrypt)
+	alwaysEncrypt.SetActive(account.AlwaysEncrypt)
 	vbox.Add(alwaysEncrypt)
 
 	button := gtk.NewButtonWithLabel("Save")
 	button.Connect("clicked", func() {
-		c.Account = accountInput.GetText()
-		c.Password = passwordInput.GetText()
-		c.Server = serverInput.GetText()
+		account.Account = accountInput.GetText()
+		account.Password = passwordInput.GetText()
+		account.Server = serverInput.GetText()
 
 		v, err := strconv.Atoi(portInput.GetText())
 		if err == nil {
-			c.Port = v
+			account.Port = v
 		}
 
-		if len(c.Proxies) == 0 {
-			c.Proxies = append(c.Proxies, "")
+		if len(account.Proxies) == 0 {
+			account.Proxies = append(account.Proxies, "")
 		}
-		c.Proxies[0] = proxyInput.GetText()
+		account.Proxies[0] = proxyInput.GetText()
 
-		c.AlwaysEncrypt = alwaysEncrypt.GetActive()
+		account.AlwaysEncrypt = alwaysEncrypt.GetActive()
 
-		c.Save()
+		//TODO accountManager.Save()
+		//It should save the multiConfig
+		account.Save()
 		dialog.Destroy()
 	})
 	vbox.Add(button)
@@ -299,8 +294,8 @@ func accountDialog(c *config.Config) {
 	dialog.ShowAll()
 }
 
-func buildAccountSubmenu(u *gtkUI, c *config.Config) *gtk.MenuItem {
-	menuitem := gtk.NewMenuItemWithMnemonic(c.Account)
+func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
+	menuitem := gtk.NewMenuItemWithMnemonic(account.Account)
 
 	accountSubMenu := gtk.NewMenu()
 	menuitem.SetSubmenu(accountSubMenu)
@@ -309,36 +304,31 @@ func buildAccountSubmenu(u *gtkUI, c *config.Config) *gtk.MenuItem {
 	accountSubMenu.Append(connectItem)
 
 	disconnectItem := gtk.NewMenuItemWithMnemonic("_Disconnect")
-	//disconnectItem.SetSensitive(false)
+	disconnectItem.SetSensitive(false)
 	accountSubMenu.Append(disconnectItem)
 
 	connectItem.Connect("activate", func() {
-		//connectItem.SetSensitive(false)
-		u.connect(c)
+		connectItem.SetSensitive(false)
+		u.connect(account)
 	})
 
 	disconnectItem.Connect("activate", func() {
-		u.disconnect(c)
+		u.disconnect(account)
 	})
 
-	//TODO: this should be per session
-	//connToggle := func() {
-	//	s, ok := u.sessions[c]
-	//	if !ok {
-	//		return
-	//	}
+	connToggle := func() {
+		s := account.Session
+		connected := s.ConnStatus == session.CONNECTED
+		connectItem.SetSensitive(!connected)
+		disconnectItem.SetSensitive(connected)
+	}
 
-	//	connected := s.ConnStatus == session.CONNECTED
-	//	connectItem.SetSensitive(!connected)
-	//	disconnectItem.SetSensitive(connected)
-	//}
-
-	//u.onReceiveSignal(CONNECTED_SIG, connToggle)
-	//u.onReceiveSignal(DISCONNECTED_SIG, connToggle)
+	u.window.Connect(account.Connected.Name(), connToggle)
+	u.window.Connect(account.Disconnected.Name(), connToggle)
 
 	editItem := gtk.NewMenuItemWithMnemonic("_Edit")
 	editItem.Connect("activate", func() {
-		accountDialog(c)
+		accountDialog(account)
 	})
 	accountSubMenu.Append(editItem)
 
@@ -354,9 +344,8 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	submenu := gtk.NewMenu()
 	cascademenu.SetSubmenu(submenu)
 
-	for i := range u.multiConfig.Accounts {
-		p := &u.multiConfig.Accounts[i]
-		submenu.Append(buildAccountSubmenu(u, p))
+	for _, account := range u.accounts {
+		submenu.Append(buildAccountSubmenu(u, account))
 	}
 
 	//Help -> About
@@ -410,54 +399,24 @@ func (u *gtkUI) enroll() {
 		},
 	}
 
+	u.accounts = BuildAccountsFrom(u.multiConfig)
+
 	glib.IdleAdd(func() bool {
-		accountDialog(&u.multiConfig.Accounts[0])
+		accountDialog(u.accounts[0])
 		return false
 	})
 }
 
-func (u *gtkUI) disconnect(c *config.Config) error {
-	//if !u.connected {
-	//	return nil
-	//}
-
-	s, ok := u.sessions[c]
-	if !ok {
-		return errors.New("tried to disconnect an unexisting session")
-	}
-
-	s.Close()
-	delete(u.sessions, c)
-
-	u.window.EmitSignal(DISCONNECTED_SIG)
-	//u.connected = false
-
+func (u *gtkUI) disconnect(account Account) error {
+	account.Session.Close()
+	u.window.Emit(account.Disconnected.Name())
 	return nil
 }
 
-func newSession(u *gtkUI, c *config.Config) *session.Session {
-	s := session.NewSession(c)
+func (u *gtkUI) connect(account Account) {
+	//TODO find a better place to initialize the eventHandler
+	s := account.Session
 	s.SessionEventHandler = guiSessionEventHandler{u}
-
-	return s
-}
-
-func (u *gtkUI) findOrCreateSession(c *config.Config) *session.Session {
-	s, ok := u.sessions[c]
-	if !ok {
-		s = newSession(u, c)
-		u.sessions[c] = s
-	}
-
-	return s
-}
-
-func (u *gtkUI) connect(c *config.Config) {
-	//if u.connected {
-	//	return
-	//}
-
-	s := u.findOrCreateSession(c)
 
 	var registerCallback xmpp.FormCallback
 	if *config.CreateAccount {
@@ -467,24 +426,18 @@ func (u *gtkUI) connect(c *config.Config) {
 	connectFn := func(password string) {
 		err := s.Connect(password, registerCallback)
 		if err != nil {
+			u.window.Emit(account.Disconnected.Name())
 			return
 		}
 
-		//TODO: change this signal to be session specific
-		u.window.EmitSignal(CONNECTED_SIG)
-		//u.connected = true
-		u.onConnect(s)
+		u.window.Emit(account.Connected.Name())
 	}
 
 	//TODO We do not support empty passwords
-	if len(c.Password) == 0 {
+	if len(account.Password) == 0 {
 		u.askForPassword(connectFn)
 		return
 	}
 
-	go connectFn(c.Password)
-}
-
-//TODO: remove me
-func (ui *gtkUI) onConnect(s *session.Session) {
+	go connectFn(account.Password)
 }

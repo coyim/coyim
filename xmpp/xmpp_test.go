@@ -2,6 +2,8 @@ package xmpp
 
 import (
 	"encoding/xml"
+	"io"
+	"net"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -71,4 +73,106 @@ func (s *XmppSuite) TestDiscoReplyVerComplex(c *C) {
 	hash, err := dr.VerificationString()
 	c.Assert(err, IsNil)
 	c.Assert(hash, Equals, expect)
+}
+
+type mockConn struct {
+	calledClose int
+	net.TCPConn
+}
+
+func (c *mockConn) Close() error {
+	c.calledClose++
+	return nil
+}
+func (s *XmppSuite) TestConnClose(c *C) {
+	mockConfigConn := mockConn{}
+	conn := Conn{
+		config: &Config{
+			Conn: &mockConfigConn,
+		},
+	}
+	c.Assert(conn.Close(), IsNil)
+	c.Assert(mockConfigConn.calledClose, Equals, 1)
+}
+
+type mockConnIOReaderWriter struct {
+	read []byte
+	err  error
+}
+
+func (in mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
+	copy(p, in.read)
+	return len(in.read), in.err
+}
+
+func (s *XmppSuite) TestConnNextEOF(c *C) {
+	mockIn := mockConnIOReaderWriter{err: io.EOF}
+	conn := Conn{
+		in: xml.NewDecoder(mockIn),
+	}
+	stanza, err := conn.Next()
+	c.Assert(stanza.Name, Equals, xml.Name{})
+	c.Assert(stanza.Value, IsNil)
+	c.Assert(err, Equals, io.EOF)
+}
+
+func (s *XmppSuite) TestConnNextErr(c *C) {
+	mockIn := mockConnIOReaderWriter{
+		read: []byte(`
+      <field var='os'>
+        <value>Mac</value>
+      </field>
+		`),
+	}
+	conn := Conn{
+		in: xml.NewDecoder(mockIn),
+	}
+	stanza, err := conn.Next()
+	c.Assert(stanza.Name, Equals, xml.Name{})
+	c.Assert(stanza.Value, IsNil)
+	c.Assert(err.Error(), Equals, "unexpected XMPP message  <field/>")
+}
+
+func (s *XmppSuite) TestConnNextIQSet(c *C) {
+	mockIn := mockConnIOReaderWriter{
+		read: []byte(`
+<iq to='example.com'
+    xmlns='jabber:client'
+    type='set'
+    id='sess_1'>
+  <session xmlns='urn:ietf:params:xml:ns:xmpp-session'/>
+</iq>
+  `),
+	}
+	conn := Conn{
+		in: xml.NewDecoder(mockIn),
+	}
+	stanza, err := conn.Next()
+	c.Assert(stanza.Name, Equals, xml.Name{Space: NsClient, Local: "iq"})
+	iq, ok := stanza.Value.(*ClientIQ)
+	c.Assert(ok, Equals, true)
+	c.Assert(iq.To, Equals, "example.com")
+	c.Assert(iq.Type, Equals, "set")
+	c.Assert(err, IsNil)
+}
+
+func (s *XmppSuite) TestConnNextIQResult(c *C) {
+	mockIn := mockConnIOReaderWriter{
+		read: []byte(`
+<iq from='example.com'
+    xmlns='jabber:client'
+    type='result'
+    id='sess_1'/>
+  `),
+	}
+	conn := Conn{
+		in: xml.NewDecoder(mockIn),
+	}
+	stanza, err := conn.Next()
+	c.Assert(stanza.Name, Equals, xml.Name{Space: NsClient, Local: "iq"})
+	iq, ok := stanza.Value.(*ClientIQ)
+	c.Assert(ok, Equals, true)
+	c.Assert(iq.From, Equals, "example.com")
+	c.Assert(iq.Type, Equals, "result")
+	c.Assert(err, ErrorMatches, "xmpp: failed to parse id from iq: .*")
 }

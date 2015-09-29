@@ -90,7 +90,7 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 }
 
 func (s *Session) WatchStanzas() {
-	defer s.Terminate()
+	defer s.Close()
 
 	stanzaChan := make(chan xmpp.Stanza)
 	go s.readMessages(stanzaChan)
@@ -544,10 +544,11 @@ func (s *Session) WatchTimeout() {
 }
 
 func (s *Session) WatchRosterEvents() {
-	defer s.Terminate()
+	defer s.Close()
 
 	s.info("Fetching roster")
 
+	//TODO: cancel the req using cookie on disconnect
 	rosterReply, _, err := s.Conn.RequestRoster()
 	if err != nil {
 		s.alert("Failed to request roster: " + err.Error())
@@ -612,8 +613,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	return nil
 }
 
-//TODO: rename to Close
-func (s *Session) Terminate() {
+func (s *Session) Close() {
 	//TODO: what should be done it states == CONNECTING?
 
 	if s.ConnStatus == DISCONNECTED {

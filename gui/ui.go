@@ -429,7 +429,7 @@ func (u *gtkUI) disconnect(c *config.Config) error {
 		return errors.New("tried to disconnect an unexisting session")
 	}
 
-	s.Terminate()
+	s.Close()
 	delete(u.sessions, c)
 
 	u.window.EmitSignal(DISCONNECTED_SIG)

@@ -4,6 +4,7 @@ go:
   - tip
   - 1.5
   - 1.4.2
+  - 1.0.2
 
 install: make deps
 script: make ci

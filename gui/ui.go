@@ -9,12 +9,9 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/twstrike/go-gtk/gdk"
@@ -439,24 +436,8 @@ func (u *gtkUI) disconnect(c *config.Config) error {
 }
 
 func newSession(u *gtkUI, c *config.Config) *session.Session {
-	s := &session.Session{
-		Config: c,
-
-		Conversations:     make(map[string]*otr3.Conversation),
-		OtrEventHandler:   make(map[string]*event.OtrEventHandler),
-		KnownStates:       make(map[string]string),
-		PrivateKey:        new(otr3.PrivateKey),
-		PendingRosterChan: make(chan *ui.RosterEdit),
-		PendingSubscribes: make(map[string]string),
-		LastActionTime:    time.Now(),
-
-		SessionEventHandler: u,
-	}
-
-	s.PrivateKey.Parse(c.PrivateKey)
-
-	//TODO: This should happen regardless of connecting
-	fmt.Printf("Your fingerprint is %x\n", s.PrivateKey.DefaultFingerprint())
+	s := session.NewSession(c)
+	s.SessionEventHandler = u
 
 	return s
 }

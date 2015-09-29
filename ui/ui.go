@@ -63,22 +63,6 @@ loop:
 	return
 }
 
-// RosterEdit contains information about a pending roster edit. Roster edits
-// occur by writing the roster to a file and inviting the user to edit the
-// file.
-type RosterEdit struct {
-	// FileName is the name of the file containing the roster information.
-	FileName string
-	// Roster contains the state of the roster at the time of writing the
-	// file. It's what we diff against when reading the file.
-	Roster []xmpp.RosterEntry
-	// isComplete is true if this is the result of reading an edited
-	// roster, rather than a report that the file has been written.
-	IsComplete bool
-	// contents contains the edited roster, if isComplete is true.
-	Contents []byte
-}
-
 func IsAwayStatus(status string) bool {
 	switch status {
 	case "xa", "away":

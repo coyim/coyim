@@ -47,12 +47,15 @@ type Session struct {
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
 	Timeouts map[xmpp.Cookie]time.Time
+
+	//TODO Is this only relevant for CLI?
 	// pendingRosterEdit, if non-nil, contains information about a pending
 	// roster edit operation.
-	PendingRosterEdit *ui.RosterEdit
+	PendingRosterEdit *RosterEdit
 	// pendingRosterChan is the channel over which roster edit information
 	// is received.
-	PendingRosterChan chan *ui.RosterEdit
+	PendingRosterChan chan *RosterEdit
+
 	// pendingSubscribes maps JID with pending subscription requests to the
 	// ID if the iq for the reply.
 	PendingSubscribes map[string]string
@@ -62,6 +65,44 @@ type Session struct {
 	SessionEventHandler SessionEventHandler
 
 	timeoutTicker *time.Ticker
+}
+
+// RosterEdit contains information about a pending roster edit. Roster edits
+// occur by writing the roster to a file and inviting the user to edit the
+// file.
+//TODO Is this only relevant for CLI? How should this be handled by the GUI?
+type RosterEdit struct {
+	// FileName is the name of the file containing the roster information.
+	FileName string
+	// Roster contains the state of the roster at the time of writing the
+	// file. It's what we diff against when reading the file.
+	Roster []xmpp.RosterEntry
+	// isComplete is true if this is the result of reading an edited
+	// roster, rather than a report that the file has been written.
+	IsComplete bool
+	// contents contains the edited roster, if isComplete is true.
+	Contents []byte
+}
+
+func NewSession(c *config.Config) *Session {
+	s := &Session{
+		Config: c,
+
+		Conversations:     make(map[string]*otr3.Conversation),
+		OtrEventHandler:   make(map[string]*event.OtrEventHandler),
+		KnownStates:       make(map[string]string),
+		PrivateKey:        new(otr3.PrivateKey),
+		PendingRosterChan: make(chan *RosterEdit),
+		PendingSubscribes: make(map[string]string),
+		LastActionTime:    time.Now(),
+	}
+
+	s.PrivateKey.Parse(c.PrivateKey)
+
+	//TODO: Add this information to some screen
+	//fmt.Printf("Your fingerprint is %x\n", s.PrivateKey.DefaultFingerprint())
+
+	return s
 }
 
 func (c *Session) info(m string) {
@@ -726,13 +767,13 @@ func (s *Session) EditRoster(roster []xmpp.RosterEntry) {
 	}
 	f.Close()
 
-	s.PendingRosterChan <- &ui.RosterEdit{
+	s.PendingRosterChan <- &RosterEdit{
 		FileName: fileName,
 		Roster:   roster,
 	}
 }
 
-func (s *Session) LoadEditedRoster(edit ui.RosterEdit) {
+func (s *Session) LoadEditedRoster(edit RosterEdit) {
 	contents, err := ioutil.ReadFile(edit.FileName)
 	if err != nil {
 		s.alert("Failed to load edited roster: " + err.Error())
@@ -746,7 +787,7 @@ func (s *Session) LoadEditedRoster(edit ui.RosterEdit) {
 	s.PendingRosterChan <- &edit
 }
 
-func (s *Session) processEditedRoster(edit *ui.RosterEdit) bool {
+func (s *Session) processEditedRoster(edit *RosterEdit) bool {
 	parsedRoster := make(map[string]xmpp.RosterEntry)
 	lines := bytes.Split(edit.Contents, ui.NewLine)
 	tab := []byte{'\t'}

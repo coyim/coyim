@@ -204,22 +204,9 @@ func main() {
 	}
 
 	//TODO support one session per account
-	u.session = &session.Session{
-		Config: u.config,
-
-		Conn:                conn,
-		Conversations:       make(map[string]*otr3.Conversation),
-		OtrEventHandler:     make(map[string]*event.OtrEventHandler),
-		KnownStates:         make(map[string]string),
-		PrivateKey:          new(otr3.PrivateKey),
-		PendingRosterChan:   make(chan *ui.RosterEdit),
-		PendingSubscribes:   make(map[string]string),
-		LastActionTime:      time.Now(),
-		SessionEventHandler: u,
-	}
-
-	u.session.PrivateKey.Parse(u.config.PrivateKey)
-	u.session.Timeouts = make(map[xmpp.Cookie]time.Time)
+	u.session = session.NewSession(u.config)
+	u.session.Conn = conn
+	u.session.SessionEventHandler = u
 
 	info(u.term, fmt.Sprintf("Your fingerprint is %x", u.session.PrivateKey.DefaultFingerprint()))
 

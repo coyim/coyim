@@ -123,11 +123,11 @@ StanzaLoop:
 				if stanza.Type == "subscribe" {
 					jid := xmpp.RemoveResourceFromJid(stanza.From)
 					s.SessionEventHandler.SubscriptionRequest(jid)
-					return
+					continue
 				}
 
 				if ignore || s.Config.HideStatusUpdates {
-					return
+					continue
 				}
 
 				s.SessionEventHandler.ProcessPresence(stanza, gone)

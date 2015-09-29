@@ -23,8 +23,9 @@ type gtkUI struct {
 	roster *Roster
 	window *gtk.Window
 
-	multiConfig *config.MultiAccountConfig
-	accounts    []Account
+	configFileManager *config.ConfigFileManager
+	multiConfig       *config.MultiAccountConfig
+	accounts          []Account
 }
 
 func NewGTK() *gtkUI {
@@ -33,11 +34,19 @@ func NewGTK() *gtkUI {
 
 func (ui *gtkUI) LoadConfig(configFile string) {
 	var err error
-	if ui.multiConfig, err = config.Load(configFile); err != nil {
+	if ui.configFileManager, err = config.NewConfigFileManager(configFile); err != nil {
+		ui.Alert(err.Error())
+		return
+	}
+
+	if err := ui.configFileManager.ParseConfigFile(); err != nil {
 		ui.Alert(err.Error())
 		ui.enroll()
 		return
 	}
+
+	//TODO: REMOVE this
+	ui.multiConfig = ui.configFileManager.MultiAccountConfig
 
 	ui.accounts = BuildAccountsFrom(ui.multiConfig)
 }
@@ -221,7 +230,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 	dialog.Destroy()
 }
 
-func accountDialog(account Account) {
+func accountDialog(account Account, saveFunction func() error) {
 	dialog := gtk.NewDialog()
 	dialog.SetTitle("Account Details")
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
@@ -284,9 +293,8 @@ func accountDialog(account Account) {
 
 		account.AlwaysEncrypt = alwaysEncrypt.GetActive()
 
-		//TODO accountManager.Save()
-		//It should save the multiConfig
-		account.Save()
+		//TODO: handle errors
+		saveFunction()
 		dialog.Destroy()
 	})
 	vbox.Add(button)
@@ -328,7 +336,7 @@ func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 
 	editItem := gtk.NewMenuItemWithMnemonic("_Edit")
 	editItem.Connect("activate", func() {
-		accountDialog(account)
+		accountDialog(account, u.configFileManager.Save)
 	})
 	accountSubMenu.Append(editItem)
 
@@ -383,26 +391,20 @@ func (u *gtkUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
 }
 
 func (u *gtkUI) enroll() {
-	//TODO: import private key?
-
-	filename, err := config.FindConfigFile(os.Getenv("HOME"))
-	if err != nil {
-		//TODO cant write config file. Should it be a problem?
-		return
-	}
-
 	//TODO: extract to function when implementing "add account"
-	u.multiConfig = &config.MultiAccountConfig{
-		Filename: *filename,
+	u.configFileManager.MultiAccountConfig = &config.MultiAccountConfig{
 		Accounts: []config.Config{
 			config.Config{},
 		},
 	}
 
+	//TODO: Remove this
+	u.multiConfig = u.configFileManager.MultiAccountConfig
+
 	u.accounts = BuildAccountsFrom(u.multiConfig)
 
 	glib.IdleAdd(func() bool {
-		accountDialog(u.accounts[0])
+		accountDialog(u.accounts[0], u.configFileManager.Save)
 		return false
 	})
 }

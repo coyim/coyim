@@ -158,8 +158,13 @@ func main() {
 	u := newCLI()
 	defer u.Close()
 
-	multiConfig, err := config.Load(*config.ConfigFile)
+	configFileManager, err := config.NewConfigFileManager(*config.ConfigFile)
 	if err != nil {
+		u.Alert(err.Error())
+		return
+	}
+
+	if err := configFileManager.ParseConfigFile(); err != nil {
 		filename, e := config.FindConfigFile(os.Getenv("HOME"))
 		if e != nil {
 			//TODO cant write config file. Should it be a problem?
@@ -168,11 +173,14 @@ func main() {
 
 		u.config = config.NewConfig()
 		u.config.Filename = *filename
+
 		u.Alert(err.Error())
 		enroll(u.config, u.term)
 	}
 
-	u.config = &multiConfig.Accounts[0]
+	//TODO migrate to use configFileManager
+	u.config = &configFileManager.MultiAccountConfig.Accounts[0]
+	u.config.Filename = configFileManager.Filename
 
 	//TODO We do not support empty passwords
 	var password string

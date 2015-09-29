@@ -27,12 +27,21 @@ var (
 )
 
 type MultiAccountConfig struct {
-	Filename string `json:"-"`
-	Accounts []Config
+	keepXmppClientCompat bool
+	Accounts             []Config
+}
+
+func (multiAccountConfig *MultiAccountConfig) Serialize() ([]byte, error) {
+	for _, account := range multiAccountConfig.Accounts {
+		account.SerializeFingerprints()
+	}
+
+	return json.MarshalIndent(multiAccountConfig, "", "\t")
 }
 
 type Config struct {
-	Filename                      string `json:"-"`
+	Filename string `json:"-"`
+
 	Account                       string
 	Server                        string   `json:",omitempty"`
 	Proxies                       []string `json:",omitempty"`
@@ -71,8 +80,6 @@ func ParseMultiConfig(filename string) (*MultiAccountConfig, error) {
 		return nil, err
 	}
 
-	c.Filename = filename
-
 	return c, nil
 }
 
@@ -95,10 +102,9 @@ func fallbackToSingleAccountConfig(conf []byte) (*MultiAccountConfig, error) {
 		return nil, err
 	}
 
-	//TODO: Convert from single to multi account format
-
 	return &MultiAccountConfig{
-		Accounts: []Config{*c},
+		keepXmppClientCompat: true,
+		Accounts:             []Config{*c},
 	}, nil
 }
 
@@ -113,8 +119,6 @@ func ParseConfig(filename string) (*MultiAccountConfig, error) {
 	}
 
 	for _, c := range m.Accounts {
-		//TODO: consider errors
-		//c.Filename = filename
 		parseFingerprints(&c)
 	}
 
@@ -167,16 +171,23 @@ func FindConfigFile(homeDir string) (*string, error) {
 }
 
 func (c *Config) Save() error {
-	for i, known := range c.KnownFingerprints {
-		c.KnownFingerprints[i].FingerprintHex = hex.EncodeToString(known.Fingerprint)
-	}
-
-	contents, err := json.MarshalIndent(c, "", "\t")
+	contents, err := c.Serialize()
 	if err != nil {
 		return err
 	}
 
 	return ioutil.WriteFile(c.Filename, contents, 0600)
+}
+
+func (c *Config) SerializeFingerprints() {
+	for i, known := range c.KnownFingerprints {
+		c.KnownFingerprints[i].FingerprintHex = hex.EncodeToString(known.Fingerprint)
+	}
+}
+
+func (c *Config) Serialize() ([]byte, error) {
+	c.SerializeFingerprints()
+	return json.MarshalIndent(c, "", "\t")
 }
 
 func (c *Config) UserIdForFingerprint(fpr []byte) string {
@@ -227,24 +238,6 @@ func NewConfig() *Config {
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 	}
-}
-
-func Load(configFile string) (*MultiAccountConfig, error) {
-	if len(configFile) == 0 {
-		c, err := FindConfigFile(os.Getenv("HOME"))
-		if err != nil {
-			return nil, err
-		}
-
-		configFile = *c
-	}
-
-	config, err := ParseConfig(configFile)
-	if err != nil {
-		return nil, errInvalidConfigFile
-	}
-
-	return config, nil
 }
 
 func NewXMPPConn(config *Config, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {

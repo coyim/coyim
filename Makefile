@@ -25,10 +25,10 @@ coveralls:
 	go test -coverprofile=session.coverprofile ./session
 	go test -coverprofile=event.coverprofile ./event
 	go test -coverprofile=config.coverprofile ./config
-	go test -coverprofile=gui.coverprofile ./ui
+	go test -coverprofile=ui.coverprofile ./ui
 	go test -coverprofile=gui.coverprofile ./gui
 	go test -coverprofile=main.coverprofile
-	gover
+	gover .
 	goveralls -coverprofile=gover.coverprofile -service=travis-ci || true
 
 get:
@@ -37,6 +37,7 @@ get:
 deps:
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/cover
+	go get github.com/modocache/gover
 	go get github.com/twstrike/go-gtk/gdk
 	go get github.com/twstrike/go-gtk/gdkpixbuf
 	go get github.com/twstrike/go-gtk/glib
@@ -51,5 +52,12 @@ deps:
 	go get gopkg.in/check.v1
 
 cover:
-	go test . -coverprofile=coverage.out
-	go tool cover -html=coverage.out
+	go test -coverprofile=xmpp.coverprofile ./xmpp
+	go test -coverprofile=session.coverprofile ./session
+	go test -coverprofile=event.coverprofile ./event
+	go test -coverprofile=config.coverprofile ./config
+	go test -coverprofile=ui.coverprofile ./ui
+	go test -coverprofile=gui.coverprofile ./gui
+	go test -coverprofile=main.coverprofile
+	gover .
+	go tool cover -html=gover.coverprofile

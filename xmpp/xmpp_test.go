@@ -176,3 +176,19 @@ func (s *XmppSuite) TestConnNextIQResult(c *C) {
 	c.Assert(iq.Type, Equals, "result")
 	c.Assert(err, ErrorMatches, "xmpp: failed to parse id from iq: .*")
 }
+
+func (s *XmppSuite) TestConnCancelError(c *C) {
+	conn := Conn{}
+	ok := conn.Cancel(conn.getCookie())
+	c.Assert(ok, Equals, false)
+}
+
+func (s *XmppSuite) TestConnCancelOK(c *C) {
+	conn := Conn{}
+	cookie := conn.getCookie()
+	ch := make(chan Stanza, 1)
+	conn.inflights = make(map[Cookie]inflight)
+	conn.inflights[cookie] = inflight{ch, ""}
+	ok := conn.Cancel(cookie)
+	c.Assert(ok, Equals, true)
+}

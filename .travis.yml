@@ -13,4 +13,4 @@ install: make deps
 
 script:
   - make ci
-  - $HOME/gopath/bin/goveralls -service=travis-ci
+  - $HOME/gopath/bin/goveralls -service=travis-ci || true

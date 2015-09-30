@@ -191,4 +191,6 @@ func (s *XmppSuite) TestConnCancelOK(c *C) {
 	conn.inflights[cookie] = inflight{ch, ""}
 	ok := conn.Cancel(cookie)
 	c.Assert(ok, Equals, true)
+	_, ok = conn.inflights[cookie]
+	c.Assert(ok, Equals, false)
 }

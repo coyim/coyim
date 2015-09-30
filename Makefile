@@ -52,6 +52,7 @@ deps:
 	go get gopkg.in/check.v1
 
 cover:
+	rm *.coverprofile
 	go test -coverprofile=xmpp.coverprofile ./xmpp
 	go test -coverprofile=session.coverprofile ./session
 	go test -coverprofile=event.coverprofile ./event

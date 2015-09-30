@@ -96,13 +96,19 @@ func (s *XmppSuite) TestConnClose(c *C) {
 }
 
 type mockConnIOReaderWriter struct {
-	read []byte
-	err  error
+	read  []byte
+	write []byte
+	err   error
 }
 
 func (in mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
 	copy(p, in.read)
 	return len(in.read), in.err
+}
+
+func (out mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
+	copy(out.write, p)
+	return len(out.read), out.err
 }
 
 func (s *XmppSuite) TestConnNextEOF(c *C) {
@@ -193,4 +199,28 @@ func (s *XmppSuite) TestConnCancelOK(c *C) {
 	c.Assert(ok, Equals, true)
 	_, ok = conn.inflights[cookie]
 	c.Assert(ok, Equals, false)
+}
+
+func (s *XmppSuite) TestConnRequestRoster(c *C) {
+	mockOut := mockConnIOReaderWriter{}
+	conn := Conn{
+		out: mockOut,
+	}
+	conn.inflights = make(map[Cookie]inflight)
+	ch, cookie, err := conn.RequestRoster()
+	c.Assert(ch, NotNil)
+	c.Assert(cookie, NotNil)
+	c.Assert(err, IsNil)
+}
+
+func (s *XmppSuite) TestConnRequestRosterErr(c *C) {
+	mockOut := mockConnIOReaderWriter{err: io.EOF}
+	conn := Conn{
+		out: mockOut,
+	}
+	conn.inflights = make(map[Cookie]inflight)
+	ch, cookie, err := conn.RequestRoster()
+	c.Assert(ch, IsNil)
+	c.Assert(cookie, NotNil)
+	c.Assert(err, Equals, io.EOF)
 }

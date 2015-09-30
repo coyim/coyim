@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"io"
 	"net"
+	"reflect"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -223,4 +224,41 @@ func (s *XmppSuite) TestConnRequestRosterErr(c *C) {
 	c.Assert(ch, IsNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, Equals, io.EOF)
+}
+
+func (s *XmppSuite) TestConnSendIQReplyAndTyp(c *C) {
+	mockOut := mockConnIOReaderWriter{}
+	conn := Conn{
+		out: mockOut,
+		jid: "fake id",
+	}
+	conn.inflights = make(map[Cookie]inflight)
+	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
+	c.Assert(reply, NotNil)
+	c.Assert(cookie, NotNil)
+	c.Assert(err, IsNil)
+}
+
+func (s *XmppSuite) TestConnSendIQErr(c *C) {
+	mockOut := mockConnIOReaderWriter{err: io.EOF}
+	conn := Conn{
+		out: mockOut,
+	}
+	conn.inflights = make(map[Cookie]inflight)
+	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
+	c.Assert(reply, NotNil)
+	c.Assert(cookie, NotNil)
+	c.Assert(err, Equals, io.EOF)
+}
+
+func (s *XmppSuite) TestConnSendIQEmptyReply(c *C) {
+	mockOut := mockConnIOReaderWriter{}
+	conn := Conn{
+		out: mockOut,
+	}
+	conn.inflights = make(map[Cookie]inflight)
+	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", reflect.ValueOf(EmptyReply{}))
+	c.Assert(reply, NotNil)
+	c.Assert(cookie, NotNil)
+	c.Assert(err, Equals, io.ErrShortWrite)
 }

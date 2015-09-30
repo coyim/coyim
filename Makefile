@@ -15,7 +15,12 @@ lint:
 test:
 	go test -cover -v ./...
 
-ci: get default
+ci: get default coveralls
+
+coveralls:
+	go get github.com/axw/gocov/gocov
+	go get github.com/mattn/goveralls
+	goveralls -service=travis-ci || true
 
 get:
 	go get -t ./...

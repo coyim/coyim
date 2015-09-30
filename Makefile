@@ -19,8 +19,17 @@ ci: get default coveralls
 
 coveralls:
 	go get github.com/axw/gocov/gocov
+	go get github.com/modocache/gover
 	go get github.com/mattn/goveralls
-	goveralls -service=travis-ci || true
+	go test -coverprofile=xmpp.coverprofile ./xmpp
+	go test -coverprofile=session.coverprofile ./session
+	go test -coverprofile=event.coverprofile ./event
+	go test -coverprofile=config.coverprofile ./config
+	go test -coverprofile=gui.coverprofile ./ui
+	go test -coverprofile=gui.coverprofile ./gui
+	go test -coverprofile=main.coverprofile
+	gover
+	goveralls -coverprofile=gover.coverprofile -service=travis-ci || true
 
 get:
 	go get -t ./...

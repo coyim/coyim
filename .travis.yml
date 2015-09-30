@@ -4,7 +4,6 @@ go:
   - tip
   - 1.5
   - 1.4.2
-  - 1.0.2
 
 before_install:
   - go get github.com/axw/gocov/gocov

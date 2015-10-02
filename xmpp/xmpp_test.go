@@ -107,9 +107,9 @@ func (in mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
 	return len(in.read), in.err
 }
 
-func (out mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
-	copy(out.write, p)
-	return len(out.read), out.err
+func (out *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
+	out.write = append(out.write, p...)
+	return len(p), out.err
 }
 
 func (s *XmppSuite) TestConnNextEOF(c *C) {
@@ -205,10 +205,11 @@ func (s *XmppSuite) TestConnCancelOK(c *C) {
 func (s *XmppSuite) TestConnRequestRoster(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := Conn{
-		out: mockOut,
+		out: &mockOut,
 	}
 	conn.inflights = make(map[Cookie]inflight)
 	ch, cookie, err := conn.RequestRoster()
+	c.Assert(string(mockOut.write), Matches, "<iq type='get' id='.*'><query xmlns='jabber:iq:roster'/></iq>")
 	c.Assert(ch, NotNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, IsNil)
@@ -217,10 +218,11 @@ func (s *XmppSuite) TestConnRequestRoster(c *C) {
 func (s *XmppSuite) TestConnRequestRosterErr(c *C) {
 	mockOut := mockConnIOReaderWriter{err: io.EOF}
 	conn := Conn{
-		out: mockOut,
+		out: &mockOut,
 	}
 	conn.inflights = make(map[Cookie]inflight)
 	ch, cookie, err := conn.RequestRoster()
+	c.Assert(string(mockOut.write), Matches, "<iq type='get' id='.*'><query xmlns='jabber:iq:roster'/></iq>")
 	c.Assert(ch, IsNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, Equals, io.EOF)
@@ -258,11 +260,12 @@ func (s *XmppSuite) TestParseRoster(c *C) {
 func (s *XmppSuite) TestConnSendIQReplyAndTyp(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := Conn{
-		out: mockOut,
+		out: &mockOut,
 		jid: "jid",
 	}
 	conn.inflights = make(map[Cookie]inflight)
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
+	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'></iq>")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, IsNil)
@@ -271,9 +274,11 @@ func (s *XmppSuite) TestConnSendIQReplyAndTyp(c *C) {
 func (s *XmppSuite) TestConnSendIQErr(c *C) {
 	mockOut := mockConnIOReaderWriter{err: io.EOF}
 	conn := Conn{
-		out: mockOut,
+		out: &mockOut,
+		jid: "jid",
 	}
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
+	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'>$")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, Equals, io.EOF)
@@ -282,29 +287,35 @@ func (s *XmppSuite) TestConnSendIQErr(c *C) {
 func (s *XmppSuite) TestConnSendIQEmptyReply(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := Conn{
-		out: mockOut,
+		out: &mockOut,
+		jid: "jid",
 	}
+	conn.inflights = make(map[Cookie]inflight)
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", reflect.ValueOf(EmptyReply{}))
+	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'><Value><flag>.*</flag></Value></iq>")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
-	c.Assert(err, Equals, io.ErrShortWrite)
+	c.Assert(err, IsNil)
 }
 
 func (s *XmppSuite) TestConnSendIQReply(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := Conn{
-		out: mockOut,
+		out: &mockOut,
 		jid: "jid",
 	}
 	err := conn.SendIQReply("example@xmpp.com", "typ", "id", nil)
+	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='id'></iq>")
 	c.Assert(err, IsNil)
 }
 
 func (s *XmppSuite) TestConnSend(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := Conn{
-		out: mockOut,
+		out: &mockOut,
+		jid: "jid",
 	}
 	err := conn.Send("example@xmpp.com", "message")
+	c.Assert(string(mockOut.write), Matches, "<message to='example@xmpp.com' from='jid' type='chat'><body>message</body><nos:x xmlns:nos='google:nosave' value='enabled'/><arc:record xmlns:arc='http://jabber.org/protocol/archive' otr='require'/></message>")
 	c.Assert(err, IsNil)
 }

@@ -34,6 +34,23 @@ coveralls:
 get:
 	go get -t ./...
 
+deps-u:
+	go get -u github.com/golang/lint/golint
+	go get -u golang.org/x/tools/cmd/cover
+	go get -u github.com/modocache/gover
+	go get -u github.com/twstrike/go-gtk/gdk
+	go get -u github.com/twstrike/go-gtk/gdkpixbuf
+	go get -u github.com/twstrike/go-gtk/glib
+	go get -u github.com/twstrike/go-gtk/gtk
+	go get -u github.com/twstrike/go-gtk/pango
+	go get -u github.com/twstrike/otr3
+	go get -u github.com/twstrike/otr3/sexp
+	go get -u golang.org/x/crypto/ssh/terminal
+	go get -u golang.org/x/net/html
+	go get -u golang.org/x/net/html/atom
+	go get -u golang.org/x/net/proxy
+	go get -u gopkg.in/check.v1
+
 deps:
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/cover

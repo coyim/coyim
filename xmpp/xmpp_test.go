@@ -273,7 +273,6 @@ func (s *XmppSuite) TestConnSendIQErr(c *C) {
 	conn := Conn{
 		out: mockOut,
 	}
-	conn.inflights = make(map[Cookie]inflight)
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
@@ -285,7 +284,6 @@ func (s *XmppSuite) TestConnSendIQEmptyReply(c *C) {
 	conn := Conn{
 		out: mockOut,
 	}
-	conn.inflights = make(map[Cookie]inflight)
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", reflect.ValueOf(EmptyReply{}))
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
@@ -298,7 +296,15 @@ func (s *XmppSuite) TestConnSendIQReply(c *C) {
 		out: mockOut,
 		jid: "jid",
 	}
-	conn.inflights = make(map[Cookie]inflight)
 	err := conn.SendIQReply("example@xmpp.com", "typ", "id", nil)
+	c.Assert(err, IsNil)
+}
+
+func (s *XmppSuite) TestConnSend(c *C) {
+	mockOut := mockConnIOReaderWriter{}
+	conn := Conn{
+		out: mockOut,
+	}
+	err := conn.Send("example@xmpp.com", "message")
 	c.Assert(err, IsNil)
 }

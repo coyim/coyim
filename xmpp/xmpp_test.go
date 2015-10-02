@@ -226,11 +226,40 @@ func (s *XmppSuite) TestConnRequestRosterErr(c *C) {
 	c.Assert(err, Equals, io.EOF)
 }
 
+func (s *XmppSuite) TestParseRoster(c *C) {
+	iq := ClientIQ{}
+	iq.Query = []byte(`
+  <query xmlns='jabber:iq:roster'>
+    <item jid='romeo@example.net'
+          name='Romeo'
+          subscription='both'>
+      <group>Friends</group>
+    </item>
+    <item jid='mercutio@example.org'
+          name='Mercutio'
+          subscription='from'>
+      <group>Friends</group>
+    </item>
+    <item jid='benvolio@example.org'
+          name='Benvolio'
+          subscription='both'>
+      <group>Friends</group>
+    </item>
+  </query>
+  `)
+	reply := Stanza{
+		Value: &iq,
+	}
+	rosterEntrys, err := ParseRoster(reply)
+	c.Assert(rosterEntrys, NotNil)
+	c.Assert(err, IsNil)
+}
+
 func (s *XmppSuite) TestConnSendIQReplyAndTyp(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := Conn{
 		out: mockOut,
-		jid: "fake id",
+		jid: "jid",
 	}
 	conn.inflights = make(map[Cookie]inflight)
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
@@ -263,31 +292,13 @@ func (s *XmppSuite) TestConnSendIQEmptyReply(c *C) {
 	c.Assert(err, Equals, io.ErrShortWrite)
 }
 
-func (s *XmppSuite) TestParseRoster(c *C) {
-	iq := ClientIQ{}
-	iq.Query = []byte(`
-  <query xmlns='jabber:iq:roster'>
-    <item jid='romeo@example.net'
-          name='Romeo'
-          subscription='both'>
-      <group>Friends</group>
-    </item>
-    <item jid='mercutio@example.org'
-          name='Mercutio'
-          subscription='from'>
-      <group>Friends</group>
-    </item>
-    <item jid='benvolio@example.org'
-          name='Benvolio'
-          subscription='both'>
-      <group>Friends</group>
-    </item>
-  </query>
-  `)
-	reply := Stanza{
-		Value: &iq,
+func (s *XmppSuite) TestConnSendIQReply(c *C) {
+	mockOut := mockConnIOReaderWriter{}
+	conn := Conn{
+		out: mockOut,
+		jid: "jid",
 	}
-	rosterEntrys, err := ParseRoster(reply)
-	c.Assert(rosterEntrys, NotNil)
+	conn.inflights = make(map[Cookie]inflight)
+	err := conn.SendIQReply("example@xmpp.com", "typ", "id", nil)
 	c.Assert(err, IsNil)
 }

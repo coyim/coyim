@@ -262,3 +262,32 @@ func (s *XmppSuite) TestConnSendIQEmptyReply(c *C) {
 	c.Assert(cookie, NotNil)
 	c.Assert(err, Equals, io.ErrShortWrite)
 }
+
+func (s *XmppSuite) TestParseRoster(c *C) {
+	iq := ClientIQ{}
+	iq.Query = []byte(`
+  <query xmlns='jabber:iq:roster'>
+    <item jid='romeo@example.net'
+          name='Romeo'
+          subscription='both'>
+      <group>Friends</group>
+    </item>
+    <item jid='mercutio@example.org'
+          name='Mercutio'
+          subscription='from'>
+      <group>Friends</group>
+    </item>
+    <item jid='benvolio@example.org'
+          name='Benvolio'
+          subscription='both'>
+      <group>Friends</group>
+    </item>
+  </query>
+  `)
+	reply := Stanza{
+		Value: &iq,
+	}
+	rosterEntrys, err := ParseRoster(reply)
+	c.Assert(rosterEntrys, NotNil)
+	c.Assert(err, IsNil)
+}

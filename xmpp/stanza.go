@@ -14,10 +14,6 @@ type Stanza struct {
 	Value interface{}
 }
 
-func (c *Conn) SendStanza(s interface{}) error {
-	return xml.NewEncoder(c.out).Encode(s)
-}
-
 // inflight contains the details of a pending request to which we are awaiting
 // a reply.
 type inflight struct {

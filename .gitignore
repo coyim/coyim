@@ -33,3 +33,5 @@ coverage.out
 
 # project executable
 bin/
+
+*.coverprofile

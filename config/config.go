@@ -31,6 +31,10 @@ type MultiAccountConfig struct {
 	Accounts             []Config
 }
 
+func (multiAccountConfig *MultiAccountConfig) Add(conf Config) {
+	multiAccountConfig.Accounts = append(multiAccountConfig.Accounts, conf)
+}
+
 func (multiAccountConfig *MultiAccountConfig) Serialize() ([]byte, error) {
 	for _, account := range multiAccountConfig.Accounts {
 		account.SerializeFingerprints()

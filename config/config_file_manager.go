@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 )
@@ -32,6 +33,16 @@ func (configFileManager *ConfigFileManager) ParseConfigFile() error {
 	if err != nil {
 		return errInvalidConfigFile
 	}
+
+	return nil
+}
+
+func (configFileManager *ConfigFileManager) Add(conf Config) error {
+	if configFileManager.keepXmppClientCompat {
+		return errors.New("Cant add accounts while in compat mode")
+	}
+
+	configFileManager.MultiAccountConfig.Add(conf)
 
 	return nil
 }

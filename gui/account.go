@@ -46,3 +46,21 @@ func newAccount(conf *config.Config) Account {
 func signalName(id, signal string) string {
 	return "coyim-account-" + signal + "-" + id
 }
+
+func (u *gtkUI) showAddAccountWindow() {
+	conf := &config.Config{}
+	account := Account{
+		Config: conf,
+	}
+
+	accountDialog(account, func() error {
+		defer u.window.Emit(AccountChangedSignal.Name())
+
+		err := u.configFileManager.Add(*conf)
+		if err != nil {
+			return err
+		}
+
+		return u.SaveConfig()
+	})
+}

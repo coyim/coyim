@@ -263,8 +263,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 	dialog.Destroy()
 }
 
+func (u *gtkUI) buildContactsMenu() *gtk.MenuItem {
+	contactsMenu := gtk.NewMenuItemWithMnemonic("_Contacts")
+
+	submenu := gtk.NewMenu()
+	contactsMenu.SetSubmenu(submenu)
+
+	menuitem := gtk.NewMenuItemWithMnemonic("_Add...")
+	submenu.Append(menuitem)
+
+	menuitem.Connect("activate", func() {
+		//TODO: Show a add contact dialog
+		//- choose a connected account
+		//- type a contact jid
+		//- call
+		// s.Conn.SendPresence(cmd.User, "subscribe", "" /* generate id */)
+	})
+
+	return contactsMenu
+}
+
 func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	menubar := gtk.NewMenuBar()
+
+	menubar.Append(u.buildContactsMenu())
 
 	u.accountsMenu = gtk.NewMenuItemWithMnemonic("_Accounts")
 	menubar.Append(u.accountsMenu)

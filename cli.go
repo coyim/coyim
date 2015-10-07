@@ -69,7 +69,7 @@ func newCLI() *cliUI {
 	}
 }
 
-//TODO: This should receive something telling which Session/COnfig should be terminated if we have multiple accounts connected
+//TODO: This should receive something telling which Session/Config should be terminated if we have multiple accounts connected
 func (c *cliUI) Disconnected() {
 	c.terminate <- true
 }

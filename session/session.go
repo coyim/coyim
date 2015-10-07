@@ -692,6 +692,10 @@ func (s *Session) Close() {
 	s.Conn.Close()
 	s.ConnStatus = DISCONNECTED
 
+	//TODO Should we hide all contacts when the account is disconnected?
+	// It wont show a "please connect to view your roster" message
+	s.SessionEventHandler.RosterReceived(s, nil)
+
 	s.SessionEventHandler.Disconnected()
 }
 

@@ -95,10 +95,9 @@ func (u *gtkUI) SaveConfig() error {
 	return nil
 }
 
-//TODO: Should be per session
-func (*gtkUI) Disconnected() {
-	//TODO: remove everybody from the roster
-	fmt.Println("TODO: Should disconnect the account")
+//TODO: Should it be per session?
+func (u *gtkUI) Disconnected() {
+	//TODO: Is it necessary?
 }
 
 func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {

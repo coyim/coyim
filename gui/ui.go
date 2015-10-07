@@ -344,7 +344,7 @@ func (u *gtkUI) connect(account Account) {
 		u.window.Emit(account.Connected.Name())
 	}
 
-	//TODO We do not support empty passwords
+	//TODO We do not support saved empty passwords
 	if len(account.Password) == 0 {
 		u.askForPassword(connectFn)
 		return

@@ -65,6 +65,7 @@ type Session struct {
 	SessionEventHandler SessionEventHandler
 
 	timeoutTicker *time.Ticker
+	rosterCookie  xmpp.Cookie
 }
 
 // RosterEdit contains information about a pending roster edit. Roster edits
@@ -126,6 +127,7 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 			s.alert(err.Error())
 			return
 		}
+
 		stanzaChan <- stanza
 	}
 }
@@ -556,6 +558,7 @@ func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 }
 
 func (s *Session) WatchTimeout() {
+	s.Timeouts = make(map[xmpp.Cookie]time.Time)
 	s.timeoutTicker = time.NewTicker(1 * time.Second)
 
 	for now := range s.timeoutTicker.C {
@@ -587,17 +590,17 @@ func (s *Session) WatchTimeout() {
 func (s *Session) WatchRosterEvents() {
 	defer s.Close()
 
+	//TODO: not sure if this belongs here
+	s.Conn.SignalPresence("")
 	s.info("Fetching roster")
 
-	//TODO: cancel the req using cookie on disconnect
-	rosterReply, _, err := s.Conn.RequestRoster()
+	rosterReply, c, err := s.Conn.RequestRoster()
 	if err != nil {
 		s.alert("Failed to request roster: " + err.Error())
 		return
 	}
 
-	//TODO: not sure if this belongs here
-	s.Conn.SignalPresence("")
+	s.rosterCookie = c
 
 RosterLoop:
 	for {
@@ -647,7 +650,6 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 		return err
 	}
 
-	s.Timeouts = make(map[xmpp.Cookie]time.Time)
 	s.Conn = conn
 	s.ConnStatus = CONNECTED
 
@@ -665,9 +667,6 @@ func (s *Session) Close() {
 		return
 	}
 
-	s.timeoutTicker.Stop()
-	//s.timeoutTicker = nil
-
 	//Close all conversations
 	for to, conversation := range s.Conversations {
 		msgs, err := conversation.End()
@@ -683,6 +682,10 @@ func (s *Session) Close() {
 		//conversation.Wipe()
 		delete(s.Conversations, to)
 	}
+
+	//Stops all
+	s.Conn.Cancel(s.rosterCookie)
+	s.timeoutTicker.Stop()
 
 	s.Conn.Close()
 	s.ConnStatus = DISCONNECTED

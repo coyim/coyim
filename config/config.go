@@ -236,13 +236,11 @@ var (
 func randomString(dest []byte) error {
 	src := make([]byte, len(dest))
 
-	_, err := io.ReadFull(rand.Reader, src)
-	if err != nil {
+	if _, err := io.ReadFull(rand.Reader, src); err != nil {
 		return err
 	}
 
-	encoded := hex.EncodeToString(src)
-	copy(dest, encoded)
+	copy(dest, hex.EncodeToString(src))
 
 	return nil
 }

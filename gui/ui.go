@@ -12,7 +12,6 @@ import (
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
 
-	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
 	"github.com/twstrike/otr3"
@@ -133,12 +132,8 @@ func (u *gtkUI) Alert(m string) {
 
 func (u *gtkUI) Loop() {
 	gtk.Init(&os.Args)
-	gdk.ThreadsInit()
-
-	gdk.ThreadsEnter()
 	u.mainWindow()
 	gtk.Main()
-	gdk.ThreadsLeave()
 }
 
 func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
@@ -294,7 +289,24 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	return menubar
 }
 
-func (u *gtkUI) SubscriptionRequest(from string) {
+func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
+	confirmDialog := gtk.NewMessageDialog(
+		u.window,
+		gtk.DIALOG_MODAL,
+		gtk.MESSAGE_QUESTION,
+		gtk.BUTTONS_YES_NO,
+		"%s wants to talk to you. Is it ok?", from,
+	)
+	confirmDialog.SetTitle("Subscription request")
+
+	glib.IdleAdd(func() bool {
+		confirm := confirmDialog.Run() == gtk.RESPONSE_YES
+		confirmDialog.Destroy()
+
+		s.HandleConfirmOrDeny(from, confirm)
+
+		return false
+	})
 }
 
 func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {

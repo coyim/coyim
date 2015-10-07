@@ -165,7 +165,7 @@ StanzaLoop:
 
 				if stanza.Type == "subscribe" {
 					jid := xmpp.RemoveResourceFromJid(stanza.From)
-					s.SessionEventHandler.SubscriptionRequest(jid)
+					s.SessionEventHandler.SubscriptionRequest(s, jid)
 					continue
 				}
 

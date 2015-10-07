@@ -77,7 +77,7 @@ func (r *Roster) Clear() {
 	})
 }
 
-func (r *Roster) onActivateBuddy(ctx *glib.CallbackContext) {
+func (r *Roster) onActivateBuddy() {
 	var path *gtk.TreePath
 	var column *gtk.TreeViewColumn
 	r.view.GetCursor(&path, &column)

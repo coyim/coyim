@@ -15,7 +15,7 @@ type SessionEventHandler interface {
 	OTREnded(uid string)
 	MessageReceived(s *Session, from, timestamp string, encrypted bool, message []byte)
 	ProcessPresence(stanza *xmpp.ClientPresence, gone bool)
-	SubscriptionRequest(uid string)
+	SubscriptionRequest(s *Session, uid string)
 	Disconnected()
 	RegisterCallback(title, instructions string, fields []interface{}) error
 }

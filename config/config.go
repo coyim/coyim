@@ -251,12 +251,14 @@ func newTorProxy(host, port string) string {
 	user := [10]byte{}
 	pass := [10]byte{}
 
-	if randomString(user[:]) != nil || randomString(pass[:]) != nil {
+	var credentials *url.Userinfo
+	if randomString(user[:]) == nil && randomString(pass[:]) == nil {
+		credentials = url.UserPassword(string(user[:]), string(pass[:]))
 	}
 
 	proxy := url.URL{
 		Scheme: "socks5",
-		User:   url.UserPassword(string(user[:]), string(pass[:])),
+		User:   credentials,
 		Host:   net.JoinHostPort(host, port),
 	}
 

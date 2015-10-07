@@ -6,20 +6,15 @@
 // 6121.
 package xmpp
 
-import (
-	"errors"
-	"net"
-)
+import "net"
 
 // Resolve performs a DNS SRV lookup for the XMPP server that serves the given
 // domain.
 func Resolve(domain string) (host string, port uint16, err error) {
 	_, addrs, err := net.LookupSRV("xmpp-client", "tcp", domain)
+
 	if err != nil {
 		return "", 0, err
-	}
-	if len(addrs) == 0 {
-		return "", 0, errors.New("xmpp: no SRV records found for " + domain)
 	}
 
 	return addrs[0].Target, addrs[0].Port, nil

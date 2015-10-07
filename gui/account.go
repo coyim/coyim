@@ -48,7 +48,7 @@ func signalName(id, signal string) string {
 }
 
 func (u *gtkUI) showAddAccountWindow() {
-	conf := &config.Config{}
+	conf := config.NewConfig()
 	account := Account{
 		Config: conf,
 	}

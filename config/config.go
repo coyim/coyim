@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/hex"
@@ -11,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -231,13 +233,40 @@ var (
 	errInvalidConfigFile = errors.New("Failed to parse config file")
 )
 
-func NewConfig() *Config {
-	//TODO return a config with secure defaults
-	return &Config{
-		Proxies: []string{
-			"socks5://127.0.0.1:9050",
-		},
+func randomString(dest []byte) error {
+	src := make([]byte, len(dest))
 
+	_, err := io.ReadFull(rand.Reader, src)
+	if err != nil {
+		return err
+	}
+
+	encoded := hex.EncodeToString(src)
+	copy(dest, encoded)
+
+	return nil
+}
+
+func newTorProxy(host, port string) string {
+	user := [10]byte{}
+	pass := [10]byte{}
+
+	if randomString(user[:]) != nil || randomString(pass[:]) != nil {
+	}
+
+	proxy := url.URL{
+		Scheme: "socks5",
+		User:   url.UserPassword(string(user[:]), string(pass[:])),
+		Host:   net.JoinHostPort(host, port),
+	}
+
+	return proxy.String()
+}
+
+//TODO return a config with secure defaults
+func NewConfig() *Config {
+	return &Config{
+		Proxies:             []string{newTorProxy("127.0.0.1", "9050")},
 		UseTor:              true,
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,

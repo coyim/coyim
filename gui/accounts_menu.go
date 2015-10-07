@@ -13,7 +13,6 @@ var (
 	AccountChangedSignal = glib.NewSignal("coyim-account-changed")
 )
 
-//TODO: Why does it receive Account?
 func accountDialog(account Account, saveFunction func() error) {
 	dialog := gtk.NewDialog()
 	dialog.SetTitle("Account Details")

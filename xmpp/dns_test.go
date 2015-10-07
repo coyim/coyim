@@ -19,5 +19,5 @@ func (s *DnsXmppSuite) Test_Resolve_resolvesCorrectly(c *C) {
 
 func (s *DnsXmppSuite) Test_Resolve_handlesErrors(c *C) {
 	_, _, err := Resolve("doesntexist.olabini.se")
-	c.Assert(err.Error(), Matches, "lookup _xmpp-client._tcp.doesntexist.olabini.se on .*?: no such host")
+	c.Assert(err.Error(), Matches, "lookup _xmpp-client._tcp.doesntexist.olabini.se.*?: no such host")
 }

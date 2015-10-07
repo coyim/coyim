@@ -48,7 +48,6 @@ func nextStart(p *xml.Decoder) (elem xml.StartElement, err error) {
 			return
 		}
 	}
-	panic("unreachable")
 }
 
 // Scan XML token stream for next element and save into val.

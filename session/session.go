@@ -660,14 +660,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	return nil
 }
 
-func (s *Session) Close() {
-	//TODO: what should be done it states == CONNECTING?
-
-	if s.ConnStatus == DISCONNECTED {
-		return
-	}
-
-	//Close all conversations
+func (s *Session) terminateConversations() {
 	for to, conversation := range s.Conversations {
 		msgs, err := conversation.End()
 		if err != nil {
@@ -682,6 +675,15 @@ func (s *Session) Close() {
 		//conversation.Wipe()
 		delete(s.Conversations, to)
 	}
+}
+
+func (s *Session) Close() {
+	//TODO: what should be done it states == CONNECTING?
+	if s.ConnStatus == DISCONNECTED {
+		return
+	}
+
+	s.terminateConversations()
 
 	//Stops all
 	s.Conn.Cancel(s.rosterCookie)

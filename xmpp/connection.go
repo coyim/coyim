@@ -31,6 +31,7 @@ type Conn struct {
 	in      *xml.Decoder
 	jid     string
 	archive bool
+	Rand    io.Reader
 
 	lock          sync.Mutex
 	inflights     map[Cookie]inflight

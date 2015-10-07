@@ -6,17 +6,14 @@
 // 6121.
 package xmpp
 
-import (
-	"crypto/rand"
-	"encoding/binary"
-)
+import "encoding/binary"
 
 // Cookie is used to give a unique identifier to each request.
 type Cookie uint64
 
 func (c *Conn) getCookie() Cookie {
 	var buf [8]byte
-	if _, err := rand.Reader.Read(buf[:]); err != nil {
+	if _, err := c.rand().Read(buf[:]); err != nil {
 		panic("Failed to read random bytes: " + err.Error())
 	}
 	return Cookie(binary.LittleEndian.Uint64(buf[:]))

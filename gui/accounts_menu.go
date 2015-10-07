@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
@@ -90,6 +89,12 @@ func accountDialog(account Account, saveFunction func() error) {
 	dialog.ShowAll()
 }
 
+func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect *gtk.MenuItem) {
+	connected := s.ConnStatus == session.CONNECTED
+	connect.SetSensitive(!connected)
+	disconnect.SetSensitive(connected)
+}
+
 func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 	menuitem := gtk.NewMenuItemWithMnemonic(account.Account)
 
@@ -100,8 +105,9 @@ func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 	accountSubMenu.Append(connectItem)
 
 	disconnectItem := gtk.NewMenuItemWithMnemonic("_Disconnect")
-	disconnectItem.SetSensitive(false)
 	accountSubMenu.Append(disconnectItem)
+
+	toggleConnectAndDisconnectMenuItems(account.Session, connectItem, disconnectItem)
 
 	connectItem.Connect("activate", func() {
 		connectItem.SetSensitive(false)
@@ -113,28 +119,22 @@ func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 	})
 
 	connToggle := func() {
-		s := account.Session
-		connected := s.ConnStatus == session.CONNECTED
-		connectItem.SetSensitive(!connected)
-		disconnectItem.SetSensitive(connected)
+		toggleConnectAndDisconnectMenuItems(account.Session, connectItem, disconnectItem)
 	}
 
 	u.window.Connect(account.Connected.Name(), connToggle)
 	u.window.Connect(account.Disconnected.Name(), connToggle)
 
 	editItem := gtk.NewMenuItemWithMnemonic("_Edit...")
-	editItem.Connect("activate", func() {
-		accountDialog(account, func() error {
-			defer u.window.Emit(AccountChangedSignal.Name())
-			return u.SaveConfig()
-		})
-	})
 	accountSubMenu.Append(editItem)
 
-	return menuitem
-}
+	editItem.Connect("activate", func() {
+		accountDialog(account, u.SaveConfig)
+	})
 
-func populateAccountsSubMenu(menu *gtk.MenuItem, accounts []config.Config) {
+	//TODO: add "Remove" menu item
+
+	return menuitem
 }
 
 func (u *gtkUI) buildAccountsMenu() {

@@ -63,12 +63,36 @@ func (ui *gtkUI) LoadConfig(configFile string) {
 	ui.accounts = BuildAccountsFrom(ui.multiConfig)
 }
 
-func (u *gtkUI) SaveConfig() error {
-	defer func() {
-		u.accounts = BuildAccountsFrom(u.configFileManager.MultiAccountConfig)
-	}()
+func (u *gtkUI) addNewAccountsFromConfig() {
+	for i := range u.configFileManager.Accounts {
+		conf := &u.configFileManager.Accounts[i]
 
-	return u.configFileManager.Save()
+		var found bool
+		for _, acc := range u.accounts {
+			if acc.Config == conf {
+				found = true
+				break
+			}
+		}
+
+		if found {
+			continue
+		}
+
+		u.accounts = append(u.accounts, newAccount(conf))
+	}
+}
+
+func (u *gtkUI) SaveConfig() error {
+	err := u.configFileManager.Save()
+	if err != nil {
+		return err
+	}
+
+	u.addNewAccountsFromConfig()
+	u.window.Emit(AccountChangedSignal.Name())
+
+	return nil
 }
 
 //TODO: Should be per session
@@ -257,7 +281,6 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 		//TODO: should it destroy the current submenu? HOW?
 		u.accountsMenu.SetSubmenu(nil)
 
-		//TODO: this will lose the the Sensitive state on "connect" and "disconnect" menu items. They should be created based on the Session state.
 		u.buildAccountsMenu()
 	})
 

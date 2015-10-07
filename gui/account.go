@@ -54,8 +54,6 @@ func (u *gtkUI) showAddAccountWindow() {
 	}
 
 	accountDialog(account, func() error {
-		defer u.window.Emit(AccountChangedSignal.Name())
-
 		err := u.configFileManager.Add(*conf)
 		if err != nil {
 			return err

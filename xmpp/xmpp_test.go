@@ -97,14 +97,19 @@ func (s *XmppSuite) TestConnClose(c *C) {
 }
 
 type mockConnIOReaderWriter struct {
-	read  []byte
-	write []byte
-	err   error
+	read      []byte
+	readIndex int
+	write     []byte
+	err       error
 }
 
-func (in mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
-	copy(p, in.read)
-	return len(in.read), in.err
+func (in *mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
+	if in.readIndex >= len(in.read) {
+		return 0, io.EOF
+	}
+	i := copy(p, in.read[in.readIndex:])
+	in.readIndex += i
+	return i, in.err
 }
 
 func (out *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
@@ -113,7 +118,7 @@ func (out *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
 }
 
 func (s *XmppSuite) TestConnNextEOF(c *C) {
-	mockIn := mockConnIOReaderWriter{err: io.EOF}
+	mockIn := &mockConnIOReaderWriter{err: io.EOF}
 	conn := Conn{
 		in: xml.NewDecoder(mockIn),
 	}
@@ -124,7 +129,7 @@ func (s *XmppSuite) TestConnNextEOF(c *C) {
 }
 
 func (s *XmppSuite) TestConnNextErr(c *C) {
-	mockIn := mockConnIOReaderWriter{
+	mockIn := &mockConnIOReaderWriter{
 		read: []byte(`
       <field var='os'>
         <value>Mac</value>
@@ -141,7 +146,7 @@ func (s *XmppSuite) TestConnNextErr(c *C) {
 }
 
 func (s *XmppSuite) TestConnNextIQSet(c *C) {
-	mockIn := mockConnIOReaderWriter{
+	mockIn := &mockConnIOReaderWriter{
 		read: []byte(`
 <iq to='example.com'
     xmlns='jabber:client'
@@ -164,7 +169,7 @@ func (s *XmppSuite) TestConnNextIQSet(c *C) {
 }
 
 func (s *XmppSuite) TestConnNextIQResult(c *C) {
-	mockIn := mockConnIOReaderWriter{
+	mockIn := &mockConnIOReaderWriter{
 		read: []byte(`
 <iq from='example.com'
     xmlns='jabber:client'

@@ -22,7 +22,7 @@ type testFoo struct {
 }
 
 func (s *XmlXmppSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
-	mockIn := mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams' to='hello'></stream:foo>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams' to='hello'></stream:foo>")}
 	conn := Conn{
 		in: xml.NewDecoder(mockIn),
 		customStorage: map[xml.Name]reflect.Type{
@@ -38,7 +38,7 @@ func (s *XmlXmppSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
 }
 
 func (s *XmlXmppSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
-	mockIn := mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams'><something></foo></stream:foo>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams'><something></foo></stream:foo>")}
 	conn := Conn{
 		in: xml.NewDecoder(mockIn),
 		customStorage: map[xml.Name]reflect.Type{

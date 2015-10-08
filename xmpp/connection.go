@@ -93,8 +93,6 @@ func (c *Conn) Next() (stanza Stanza, err error) {
 
 		return
 	}
-
-	panic("unreachable")
 }
 
 // Cancel cancels and outstanding request. The request's channel is closed.

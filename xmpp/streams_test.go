@@ -20,7 +20,7 @@ func (s *StreamsXmppSuite) Test_getFeatures_returnsErrorIfSomethingGoesWrongWith
 }
 
 func (s *StreamsXmppSuite) Test_getFeatures_returnsErrorIfSomethingGoesWrongWithReadingAStream(c *C) {
-	mockIn := mockConnIOReaderWriter{err: errors.New("Hello")}
+	mockIn := &mockConnIOReaderWriter{err: errors.New("Hello")}
 	conn := Conn{
 		out: &mockConnIOReaderWriter{},
 		in:  xml.NewDecoder(mockIn),
@@ -31,7 +31,7 @@ func (s *StreamsXmppSuite) Test_getFeatures_returnsErrorIfSomethingGoesWrongWith
 
 func (s *StreamsXmppSuite) Test_getFeatures_printsACorrectStreamToOutput(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
-	mockIn := mockConnIOReaderWriter{err: errors.New("Hello")}
+	mockIn := &mockConnIOReaderWriter{err: errors.New("Hello")}
 	conn := Conn{
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),
@@ -42,18 +42,18 @@ func (s *StreamsXmppSuite) Test_getFeatures_printsACorrectStreamToOutput(c *C) {
 
 func (s *StreamsXmppSuite) Test_getFeatures_expectsAStreamInReturn(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
-	mockIn := mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' version='1.0'></stream:stream>")}
 	conn := Conn{
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),
 	}
 	_, err := conn.getFeatures("somewhereElse.org")
-	c.Assert(err.Error(), Equals, "unmarshal <features>: expected element type <features> but have <stream>")
+	c.Assert(err.Error(), Equals, "unmarshal <features>: EOF")
 }
 
 func (s *StreamsXmppSuite) Test_getFeatures_failsIfReturnedStreamIsNotCorrectNamespace(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
-	mockIn := mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams2' version='1.0'>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams2' version='1.0'>")}
 	conn := Conn{
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),
@@ -64,7 +64,7 @@ func (s *StreamsXmppSuite) Test_getFeatures_failsIfReturnedStreamIsNotCorrectNam
 
 func (s *StreamsXmppSuite) Test_getFeatures_failsIfReturnedElementIsNotStream(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
-	mockIn := mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:feature xmlns:str='http://etherx.jabber.org/streams' version='1.0'>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:feature xmlns:str='http://etherx.jabber.org/streams' version='1.0'>")}
 	conn := Conn{
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),
@@ -75,7 +75,7 @@ func (s *StreamsXmppSuite) Test_getFeatures_failsIfReturnedElementIsNotStream(c 
 
 func (s *StreamsXmppSuite) Test_getFeatures_expectsFeaturesInReturn(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
-	mockIn := mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'><str:features></str:features>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'><str:features></str:features>")}
 	conn := Conn{
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),

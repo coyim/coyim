@@ -21,7 +21,7 @@ func (s *SaslXmppSuite) Test_authenticate_failsIfPlainIsNotAnOption(c *C) {
 
 func (s *SaslXmppSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c *C) {
 	out := &mockConnIOReaderWriter{}
-	mockIn := mockConnIOReaderWriter{read: []byte("<sasl:success xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:success>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:success xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:success>")}
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
@@ -39,7 +39,7 @@ func (s *SaslXmppSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c
 
 func (s *SaslXmppSuite) Test_authenticate_handlesFailure(c *C) {
 	out := &mockConnIOReaderWriter{}
-	mockIn := mockConnIOReaderWriter{read: []byte("<sasl:failure xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'><foobar></foobar></sasl:failure>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:failure xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'><foobar></foobar></sasl:failure>")}
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
@@ -56,7 +56,7 @@ func (s *SaslXmppSuite) Test_authenticate_handlesFailure(c *C) {
 
 func (s *SaslXmppSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	out := &mockConnIOReaderWriter{}
-	mockIn := mockConnIOReaderWriter{read: []byte("<sasl:something xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:something>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:something xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:something>")}
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),

@@ -46,7 +46,7 @@ func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := Conn{
 		out:  mockOut,
-		Rand: mockConnIOReaderWriter{read: []byte("123555111654")},
+		Rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
 
 	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "")

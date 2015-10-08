@@ -106,8 +106,25 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 	return nil
 }
 
+func (u *gtkUI) findAccountForSession(s *session.Session) *Account {
+	for i := range u.accounts {
+		account := &u.accounts[i]
+		if account.Session == s {
+			return account
+		}
+	}
+
+	return nil
+}
+
 func (u *gtkUI) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {
-	u.roster.MessageReceived(s, from, timestamp, encrypted, message)
+	account := u.findAccountForSession(s)
+	if account == nil {
+		//TODO error
+		return
+	}
+
+	u.roster.MessageReceived(account, from, timestamp, encrypted, message)
 }
 
 func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
@@ -337,8 +354,15 @@ func (u *gtkUI) IQReceived(string) {
 
 //TODO: we should update periodically (like Pidgin does) if we include the status (online/offline/away) on the label
 func (u *gtkUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
+	account := u.findAccountForSession(s)
+	if account == nil {
+		//TODO error
+		return
+	}
+
+	u.roster.Update(account, roster)
+
 	glib.IdleAdd(func() bool {
-		u.roster.Update(s, roster)
 		u.roster.Redraw()
 		return false
 	})

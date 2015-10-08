@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
@@ -14,7 +13,7 @@ import (
 
 type conversationWindow struct {
 	to            string
-	session       *session.Session
+	account       *Account
 	win           *gtk.Window
 	history       *gtk.TextView
 	scrollHistory *gtk.ScrolledWindow
@@ -43,10 +42,10 @@ func conversationMenu() *gtk.MenuBar {
 	return menubar
 }
 
-func newConversationWindow(s *session.Session, uid string) *conversationWindow {
+func newConversationWindow(account *Account, uid string) *conversationWindow {
 	conv := &conversationWindow{
 		to:            uid,
-		session:       s,
+		account:       account,
 		win:           gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
 		history:       gtk.NewTextView(),
 		scrollHistory: gtk.NewScrolledWindow(nil, nil),
@@ -119,7 +118,7 @@ func newConversationWindow(s *session.Session, uid string) *conversationWindow {
 	//the conversation encrypted state changes
 	//This way it would not keep updating the button when the window is not visible
 	glib.IdleAdd(func() bool {
-		if conv.session.GetConversationWith(conv.to).IsEncrypted() {
+		if conv.account.GetConversationWith(conv.to).IsEncrypted() {
 			encryptedFlag.SetLabel("encrypted")
 		} else {
 			encryptedFlag.SetLabel("unencrypted")
@@ -143,7 +142,7 @@ func (conv *conversationWindow) Show() {
 
 func (conv *conversationWindow) sendMessage(message string) {
 	//TODO: this should not be in both GUI and roster
-	conversation := conv.session.GetConversationWith(conv.to)
+	conversation := conv.account.GetConversationWith(conv.to)
 
 	toSend, err := conversation.Send(otr3.ValidMessage(message))
 	if err != nil {
@@ -159,7 +158,7 @@ func (conv *conversationWindow) sendMessage(message string) {
 
 	for _, m := range toSend {
 		//TODO: this should be session.Send(to, message)
-		conv.session.Conn.Send(conv.to, string(m))
+		conv.account.Conn.Send(conv.to, string(m))
 	}
 }
 

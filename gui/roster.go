@@ -3,7 +3,6 @@ package gui
 import (
 	"unsafe"
 
-	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/glib"
@@ -15,7 +14,7 @@ type Roster struct {
 	model  *gtk.ListStore
 	view   *gtk.TreeView
 
-	contacts map[*session.Session][]xmpp.RosterEntry
+	contacts map[*Account][]xmpp.RosterEntry
 
 	CheckEncrypted func(to string) bool
 	SendMessage    func(to, message string)
@@ -28,12 +27,12 @@ func NewRoster() *Roster {
 
 		model: gtk.NewListStore(
 			gtk.TYPE_STRING,  // user
-			gtk.TYPE_POINTER, // *Session
+			gtk.TYPE_POINTER, // *Account
 		),
 		view: gtk.NewTreeView(),
 
 		conversations: make(map[string]*conversationWindow),
-		contacts:      make(map[*session.Session][]xmpp.RosterEntry),
+		contacts:      make(map[*Account][]xmpp.RosterEntry),
 	}
 
 	r.Window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -97,19 +96,19 @@ func (r *Roster) onActivateBuddy() {
 
 	val2 := &glib.GValue{}
 	r.model.GetValue(iter, 1, val2)
-	s := (*session.Session)(val2.GetPointer())
+	account := (*Account)(val2.GetPointer())
 
-	r.openConversationWindow(s, to)
+	r.openConversationWindow(account, to)
 
 	//TODO call g_value_unset() but the lib doesnt provide
 }
 
-func (r *Roster) openConversationWindow(s *session.Session, to string) *conversationWindow {
+func (r *Roster) openConversationWindow(account *Account, to string) *conversationWindow {
 	//TODO: handle same account on multiple sessions
 	c, ok := r.conversations[to]
 
 	if !ok {
-		c = newConversationWindow(s, to)
+		c = newConversationWindow(account, to)
 		r.conversations[to] = c
 	}
 
@@ -117,9 +116,9 @@ func (r *Roster) openConversationWindow(s *session.Session, to string) *conversa
 	return c
 }
 
-func (r *Roster) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {
+func (r *Roster) MessageReceived(account *Account, from, timestamp string, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
-		conv := r.openConversationWindow(s, from)
+		conv := r.openConversationWindow(account, from)
 		conv.appendMessage(from, timestamp, encrypted, ui.StripHTML(message))
 		return false
 	})
@@ -137,8 +136,9 @@ func (r *Roster) AppendMessageToHistory(to, from, timestamp string, encrypted bo
 	})
 }
 
-func (r *Roster) Update(s *session.Session, entries []xmpp.RosterEntry) {
-	r.contacts[s] = entries
+//TODO: It should have a mutex
+func (r *Roster) Update(account *Account, entries []xmpp.RosterEntry) {
+	r.contacts[account] = entries
 }
 
 func (r *Roster) Redraw() {
@@ -149,7 +149,7 @@ func (r *Roster) Redraw() {
 
 	r.model.Clear()
 	iter := &gtk.TreeIter{}
-	for s, contacts := range r.contacts {
+	for account, contacts := range r.contacts {
 		for _, item := range contacts {
 			r.model.Append(iter)
 
@@ -157,7 +157,7 @@ func (r *Roster) Redraw() {
 			// Subscription, knownState
 			r.model.Set(iter,
 				0, item.Jid,
-				1, s,
+				1, account,
 			)
 		}
 	}

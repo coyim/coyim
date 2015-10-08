@@ -59,7 +59,7 @@ func (ui *gtkUI) LoadConfig(configFile string) {
 	//TODO: REMOVE this
 	ui.multiConfig = ui.configFileManager.MultiAccountConfig
 
-	ui.accounts = BuildAccountsFrom(ui.multiConfig)
+	ui.accounts = BuildAccountsFrom(ui.multiConfig, ui.configFileManager)
 }
 
 func (u *gtkUI) addNewAccountsFromConfig() {

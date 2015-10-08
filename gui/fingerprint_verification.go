@@ -29,9 +29,16 @@ func verifyFingerprintDialog(account *Account, uid string) *gtk.Dialog {
 	vbox.Add(button)
 
 	button.Connect("clicked", func() {
-		account.AuthorizeFingerprint(uid, string(fpr))
-		//SAVE ??
-		dialog.Destroy()
+		defer dialog.Destroy()
+
+		err := account.AuthorizeFingerprint(uid, fpr)
+		if err != nil {
+			//TODO: Error
+			return
+		}
+
+		//TODO: error
+		account.configManager.Save()
 	})
 
 	return dialog

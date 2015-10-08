@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"encoding/hex"
 	"errors"
 	"strconv"
 	"time"
@@ -11,11 +10,17 @@ import (
 	"github.com/twstrike/go-gtk/glib"
 )
 
+// someone who knows how to persist account configuration
+type configManager interface {
+	Save() error
+}
+
 type Account struct {
 	ID                 string
 	ConnectedSignal    *glib.Signal
 	DisconnectedSignal *glib.Signal
 
+	configManager
 	*config.Config
 	*session.Session
 }
@@ -28,31 +33,27 @@ var (
 	errFingerprintAlreadyAuthorized = errors.New("the fingerprint is already authorized")
 )
 
-func (acc *Account) AuthorizeFingerprint(uid, fingerprint string) error {
-	fpr, err := hex.DecodeString(fingerprint)
-
-	if err != nil {
-		return err
-	}
-
-	existing := acc.UserIdForFingerprint(fpr)
+func (acc *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
+	existing := acc.UserIdForFingerprint(fingerprint)
 	if len(existing) != 0 {
 		return errFingerprintAlreadyAuthorized
 	}
 
 	acc.KnownFingerprints = append(acc.KnownFingerprints, config.KnownFingerprint{
-		Fingerprint: fpr, UserId: uid,
+		Fingerprint: fingerprint, UserId: uid,
 	})
 
 	return nil
 }
 
-func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig) []Account {
+func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig, manager configManager) []Account {
 	accounts := make([]Account, 0, len(multiAccConfig.Accounts))
 
 	for i := range multiAccConfig.Accounts {
 		conf := &multiAccConfig.Accounts[i]
-		accounts = append(accounts, newAccount(conf))
+		account := newAccount(conf)
+		account.configManager = manager
+		accounts = append(accounts, account)
 	}
 
 	return accounts

@@ -256,72 +256,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 }
 
 func (u *gtkUI) addContactWindow() {
-	dialog := gtk.NewDialog()
-	dialog.SetTitle("Add contact")
-	dialog.SetPosition(gtk.WIN_POS_CENTER)
-	vbox := dialog.GetVBox()
+	accounts := make([]*Account, 0, len(u.accounts))
 
-	accountLabel := gtk.NewLabel("Account")
-	vbox.Add(accountLabel)
-
-	model := gtk.NewListStore(
-		gtk.TYPE_STRING,  // account name
-		gtk.TYPE_POINTER, // *Account
-	)
-
-	//TODO: filter out offline accounts
-	iter := &gtk.TreeIter{}
 	for i := range u.accounts {
-		model.Append(iter)
-
 		acc := &u.accounts[i]
-		model.Set(iter,
-			0, acc.Account,
-			1, acc,
-		)
+		if acc.Connected() {
+			accounts = append(accounts, acc)
+		}
 	}
 
-	accountInput := gtk.NewComboBoxWithModel(&model.TreeModel)
-	vbox.Add(accountInput)
-
-	//TODO: ComboBox should have a CellLayout embedded
-	cellLayout := accountInput.GetCellLayout()
-	renderer := gtk.NewCellRendererText()
-	cellLayout.PackStart(renderer, true)
-	cellLayout.AddAttribute(renderer, "text", 0)
-
-	vbox.Add(gtk.NewLabel("ID"))
-	contactInput := gtk.NewEntry()
-	contactInput.SetEditable(true)
-	vbox.Add(contactInput)
-
-	button := gtk.NewButtonWithLabel("Add")
-	vbox.Add(button)
-
-	button.Connect("clicked", func() {
-		contact := contactInput.GetText()
-
-		iter := &gtk.TreeIter{}
-		if !accountInput.GetActiveIter(iter) {
-			//TODO error
-		}
-
-		val := &glib.GValue{}
-		model.GetValue(iter, 1, val)
-		account := (*Account)(val.GetPointer())
-
-		// fmt.Printf("sending request to %q on account %#v\n", contact, account)
-
-		//TODO: validate
-		// - validate if the account is connected
-		err := account.Conn.SendPresence(contact, "subscribe", "" /* generate id */)
-		if err != nil {
-			u.Alert(err.Error())
-		}
-
-		dialog.Destroy()
-	})
-
+	dialog := presenceSubscriptionDialog(accounts)
 	dialog.ShowAll()
 }
 
@@ -409,7 +353,7 @@ func (u *gtkUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
 
 func (u *gtkUI) disconnect(account Account) error {
 	account.Session.Close()
-	u.window.Emit(account.Disconnected.Name())
+	u.window.Emit(account.DisconnectedSignal.Name())
 	return nil
 }
 
@@ -426,11 +370,11 @@ func (u *gtkUI) connect(account Account) {
 	connectFn := func(password string) {
 		err := s.Connect(password, registerCallback)
 		if err != nil {
-			u.window.Emit(account.Disconnected.Name())
+			u.window.Emit(account.DisconnectedSignal.Name())
 			return
 		}
 
-		u.window.Emit(account.Connected.Name())
+		u.window.Emit(account.ConnectedSignal.Name())
 	}
 
 	//TODO We do not support saved empty passwords

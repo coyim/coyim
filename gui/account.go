@@ -10,12 +10,16 @@ import (
 )
 
 type Account struct {
-	ID           string
-	Connected    *glib.Signal
-	Disconnected *glib.Signal
+	ID                 string
+	ConnectedSignal    *glib.Signal
+	DisconnectedSignal *glib.Signal
 
 	*config.Config
 	*session.Session
+}
+
+func (acc *Account) Connected() bool {
+	return acc.ConnStatus == session.CONNECTED
 }
 
 func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig) []Account {
@@ -38,8 +42,8 @@ func newAccount(conf *config.Config) Account {
 		Config:  conf,
 		Session: session.NewSession(conf),
 
-		Connected:    glib.NewSignal(signalName(id, "connected")),
-		Disconnected: glib.NewSignal(signalName(id, "disconnected")),
+		ConnectedSignal:    glib.NewSignal(signalName(id, "connected")),
+		DisconnectedSignal: glib.NewSignal(signalName(id, "disconnected")),
 	}
 }
 

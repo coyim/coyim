@@ -121,8 +121,8 @@ func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 		toggleConnectAndDisconnectMenuItems(account.Session, connectItem, disconnectItem)
 	}
 
-	u.window.Connect(account.Connected.Name(), connToggle)
-	u.window.Connect(account.Disconnected.Name(), connToggle)
+	u.window.Connect(account.ConnectedSignal.Name(), connToggle)
+	u.window.Connect(account.DisconnectedSignal.Name(), connToggle)
 
 	editItem := gtk.NewMenuItemWithMnemonic("_Edit...")
 	accountSubMenu.Append(editItem)

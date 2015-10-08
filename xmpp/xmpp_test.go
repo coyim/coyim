@@ -100,6 +100,7 @@ type mockConnIOReaderWriter struct {
 	read      []byte
 	readIndex int
 	write     []byte
+	errCount  int
 	err       error
 }
 
@@ -109,12 +110,22 @@ func (in *mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
 	}
 	i := copy(p, in.read[in.readIndex:])
 	in.readIndex += i
-	return i, in.err
+	var e error
+	if in.errCount == 0 {
+		e = in.err
+	}
+	in.errCount--
+	return i, e
 }
 
 func (out *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
 	out.write = append(out.write, p...)
-	return len(p), out.err
+	var e error
+	if out.errCount == 0 {
+		e = out.err
+	}
+	out.errCount--
+	return len(p), e
 }
 
 func (s *XmppSuite) TestConnNextEOF(c *C) {

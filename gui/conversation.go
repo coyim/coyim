@@ -20,6 +20,29 @@ type conversationWindow struct {
 	scrollHistory *gtk.ScrolledWindow
 }
 
+func conversationMenu() *gtk.MenuBar {
+	menubar := gtk.NewMenuBar()
+	conversationMenu := gtk.NewMenuItemWithMnemonic("Conversation")
+	menubar.Append(conversationMenu)
+
+	submenu := gtk.NewMenu()
+	conversationMenu.SetSubmenu(submenu)
+
+	//TODO: Add
+	//- End OTR conversation
+	//- Start OTR conversation
+
+	verify := gtk.NewMenuItemWithMnemonic("_Verify fingerprint...")
+	submenu.Append(verify)
+
+	verify.Connect("activate", func() {
+		dialog := verifyFingerprintDialog()
+		dialog.ShowAll()
+	})
+
+	return menubar
+}
+
 func newConversationWindow(s *session.Session, uid string) *conversationWindow {
 	conv := &conversationWindow{
 		to:            uid,
@@ -82,6 +105,7 @@ func newConversationWindow(s *session.Session, uid string) *conversationWindow {
 	conv.scrollHistory.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
 	conv.scrollHistory.Add(conv.history)
 
+	vbox.PackStart(conversationMenu(), false, false, 0)
 	vbox.PackStart(conv.scrollHistory, true, true, 0)
 	vbox.Add(scroll)
 

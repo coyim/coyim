@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"encoding/hex"
+	"errors"
 	"strconv"
 	"time"
 
@@ -20,6 +22,29 @@ type Account struct {
 
 func (acc *Account) Connected() bool {
 	return acc.ConnStatus == session.CONNECTED
+}
+
+var (
+	errFingerprintAlreadyAuthorized = errors.New("the fingerprint is already authorized")
+)
+
+func (acc *Account) AuthorizeFingerprint(uid, fingerprint string) error {
+	fpr, err := hex.DecodeString(fingerprint)
+
+	if err != nil {
+		return err
+	}
+
+	existing := acc.UserIdForFingerprint(fpr)
+	if len(existing) != 0 {
+		return errFingerprintAlreadyAuthorized
+	}
+
+	acc.KnownFingerprints = append(acc.KnownFingerprints, config.KnownFingerprint{
+		Fingerprint: fpr, UserId: uid,
+	})
+
+	return nil
 }
 
 func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig) []Account {

@@ -142,9 +142,6 @@ func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
 
 func (u *gtkUI) initRoster() {
 	u.roster = NewRoster()
-
-	//TODO: Should redraw the roster when any account is disconnected
-	//u.onReceiveSignal(DISCONNECTED_SIG, u.roster.Clear)
 }
 
 func (u *gtkUI) mainWindow() {
@@ -161,11 +158,6 @@ func (u *gtkUI) mainWindow() {
 	u.window.Connect("destroy", gtk.MainQuit)
 	u.window.SetSizeRequest(200, 600)
 	u.window.ShowAll()
-}
-
-//TODO: REMOVE ME
-func (*gtkUI) AskForPassword(c *config.Config) (string, error) {
-	return "", nil
 }
 
 func (*gtkUI) askForPassword(connect func(string)) {
@@ -263,6 +255,76 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 	dialog.Destroy()
 }
 
+func (u *gtkUI) addContactWindow() {
+	dialog := gtk.NewDialog()
+	dialog.SetTitle("Add contact")
+	dialog.SetPosition(gtk.WIN_POS_CENTER)
+	vbox := dialog.GetVBox()
+
+	accountLabel := gtk.NewLabel("Account")
+	vbox.Add(accountLabel)
+
+	model := gtk.NewListStore(
+		gtk.TYPE_STRING,  // account name
+		gtk.TYPE_POINTER, // *Account
+	)
+
+	//TODO: filter out offline accounts
+	iter := &gtk.TreeIter{}
+	for i := range u.accounts {
+		model.Append(iter)
+
+		acc := &u.accounts[i]
+		model.Set(iter,
+			0, acc.Account,
+			1, acc,
+		)
+	}
+
+	accountInput := gtk.NewComboBoxWithModel(&model.TreeModel)
+	vbox.Add(accountInput)
+
+	//TODO: ComboBox should have a CellLayout embedded
+	cellLayout := accountInput.GetCellLayout()
+	renderer := gtk.NewCellRendererText()
+	cellLayout.PackStart(renderer, true)
+	cellLayout.AddAttribute(renderer, "text", 0)
+
+	vbox.Add(gtk.NewLabel("ID"))
+	contactInput := gtk.NewEntry()
+	contactInput.SetEditable(true)
+	vbox.Add(contactInput)
+
+	button := gtk.NewButtonWithLabel("Add")
+	vbox.Add(button)
+
+	button.Connect("clicked", func() {
+		contact := contactInput.GetText()
+
+		iter := &gtk.TreeIter{}
+		if !accountInput.GetActiveIter(iter) {
+			//TODO error
+		}
+
+		val := &glib.GValue{}
+		model.GetValue(iter, 1, val)
+		account := (*Account)(val.GetPointer())
+
+		// fmt.Printf("sending request to %q on account %#v\n", contact, account)
+
+		//TODO: validate
+		// - validate if the account is connected
+		err := account.Conn.SendPresence(contact, "subscribe", "" /* generate id */)
+		if err != nil {
+			u.Alert(err.Error())
+		}
+
+		dialog.Destroy()
+	})
+
+	dialog.ShowAll()
+}
+
 func (u *gtkUI) buildContactsMenu() *gtk.MenuItem {
 	contactsMenu := gtk.NewMenuItemWithMnemonic("_Contacts")
 
@@ -272,13 +334,7 @@ func (u *gtkUI) buildContactsMenu() *gtk.MenuItem {
 	menuitem := gtk.NewMenuItemWithMnemonic("_Add...")
 	submenu.Append(menuitem)
 
-	menuitem.Connect("activate", func() {
-		//TODO: Show a add contact dialog
-		//- choose a connected account
-		//- type a contact jid
-		//- call
-		// s.Conn.SendPresence(cmd.User, "subscribe", "" /* generate id */)
-	})
+	menuitem.Connect("activate", u.addContactWindow)
 
 	return contactsMenu
 }

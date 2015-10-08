@@ -5,6 +5,19 @@ import (
 	"github.com/twstrike/go-gtk/gtk"
 )
 
+func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.MessageDialog {
+	confirmDialog := gtk.NewMessageDialog(
+		parent,
+		gtk.DIALOG_MODAL,
+		gtk.MESSAGE_QUESTION,
+		gtk.BUTTONS_YES_NO,
+		"%s wants to talk to you. Is it ok?", from,
+	)
+	confirmDialog.SetTitle("Subscription request")
+
+	return confirmDialog
+}
+
 func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 	dialog := gtk.NewDialog()
 	dialog.SetTitle("Add contact")

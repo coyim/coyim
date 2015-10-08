@@ -312,14 +312,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 }
 
 func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
-	confirmDialog := gtk.NewMessageDialog(
-		u.window,
-		gtk.DIALOG_MODAL,
-		gtk.MESSAGE_QUESTION,
-		gtk.BUTTONS_YES_NO,
-		"%s wants to talk to you. Is it ok?", from,
-	)
-	confirmDialog.SetTitle("Subscription request")
+	confirmDialog := authorizePresenceSubscriptionDialog(u.window, from)
 
 	glib.IdleAdd(func() bool {
 		confirm := confirmDialog.Run() == gtk.RESPONSE_YES

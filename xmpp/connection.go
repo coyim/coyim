@@ -66,7 +66,6 @@ func (c *Conn) Next() (stanza Stanza, err error) {
 			if !ok {
 				continue
 			}
-
 			if len(inflight.to) > 0 {
 				// The reply must come from the address to
 				// which we sent the request.
@@ -255,9 +254,6 @@ func Dial(address, user, domain, password string, config *Config) (c *Conn, err 
 			// Try the old-style registration.
 			fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>", user, password)
 		}
-		if err != nil {
-			return nil, err
-		}
 		var iq2 ClientIQ
 		if err = c.in.DecodeElement(&iq2, nil); err != nil {
 			return nil, errors.New("unmarshal <iq>: " + err.Error())
@@ -283,7 +279,7 @@ func Dial(address, user, domain, password string, config *Config) (c *Conn, err 
 	if err = c.in.DecodeElement(&iq, nil); err != nil {
 		return nil, errors.New("unmarshal <iq>: " + err.Error())
 	}
-	if &iq.Bind == nil {
+	if &iq.Bind == nil { // TODO: This one seems unreachable
 		return nil, errors.New("<iq> result missing <bind>")
 	}
 	c.jid = iq.Bind.Jid // our local id

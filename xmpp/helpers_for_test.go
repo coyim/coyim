@@ -53,7 +53,7 @@ func (out *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
 type mockMultiConnIOReaderWriter struct {
 	read      [][]byte
 	readIndex int
-	write     [][]byte
+	write     []byte
 }
 
 func (in *mockMultiConnIOReaderWriter) Read(p []byte) (n int, err error) {
@@ -66,7 +66,7 @@ func (in *mockMultiConnIOReaderWriter) Read(p []byte) (n int, err error) {
 }
 
 func (out *mockMultiConnIOReaderWriter) Write(p []byte) (n int, err error) {
-	out.write = append(out.write, p)
+	out.write = append(out.write, p...)
 	return len(p), nil
 }
 

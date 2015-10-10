@@ -264,7 +264,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromIQReturn(c *C) {
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{Conn: conn, SkipTLS: true}
 	_, err := Dial("addr", "user", "domain", "pass", config)
-	c.Assert(err.Error(), Equals, "unmarshal <iq>: EOF")
+	c.Assert(err.Error(), Matches, "unmarshal <iq>: (XML syntax error on line 1: unexpected)?EOF")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
@@ -432,7 +432,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 		return nil
 	}}
 	_, err := Dial("addr", "user", "domain", "pass", config)
-	c.Assert(err.Error(), Equals, "unmarshal <iq>: EOF")
+	c.Assert(err.Error(), Matches, "unmarshal <iq>: (XML syntax error on line 1: unexpected)?EOF")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
@@ -506,7 +506,7 @@ func (s *ConnectionXmppSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 		return nil
 	}}
 	_, err := Dial("addr", "user", "domain", "pass", config)
-	c.Assert(err.Error(), Equals, "unmarshal <iq>: EOF")
+	c.Assert(err.Error(), Matches, "unmarshal <iq>: (XML syntax error on line 1: unexpected)?EOF")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
@@ -681,7 +681,7 @@ func (s *ConnectionXmppSuite) Test_Dial_setsLog(c *C) {
 		return nil
 	}}
 	_, err := Dial("addr", "user", "domain", "pass", config)
-	c.Assert(err.Error(), Equals, "unmarshal <iq>: EOF")
+	c.Assert(err.Error(), Matches, "unmarshal <iq>: (XML syntax error on line 1: unexpected)?EOF")
 	c.Assert(string(l.write), Equals, "Attempting to create account\n")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+

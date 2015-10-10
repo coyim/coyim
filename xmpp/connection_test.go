@@ -237,7 +237,8 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C)
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{Conn: conn, SkipTLS: true}
 	_, err := Dial("addr", "user", "domain", "pass", config)
-	c.Assert(err, Equals, io.EOF)
+	c.Assert(err.Error(), Matches, "(XML syntax error on line 1: unexpected )?EOF")
+
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
@@ -337,7 +338,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingEOFAfterStartingTLS(c *C
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{Conn: conn, SkipTLS: false}
 	_, err := Dial("addr", "user", "domain", "pass", config)
-	c.Assert(err, Equals, io.EOF)
+	c.Assert(err.Error(), Matches, "(XML syntax error on line 1: unexpected )?EOF")
 }
 
 func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterStarttls(c *C) {
@@ -710,7 +711,8 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSession(c *C) 
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{Conn: conn, SkipTLS: true}
 	_, err := Dial("addr", "user", "domain", "pass", config)
-	c.Assert(err.Error(), Equals, "xmpp: unmarshal <iq>: EOF")
+	c.Assert(err.Error(), Matches, "xmpp: unmarshal <iq>:( XML syntax error on line 1: unexpected)? EOF")
+
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+

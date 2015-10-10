@@ -163,6 +163,7 @@ func (u *gtkUI) initRoster() {
 
 func (u *gtkUI) mainWindow() {
 	u.window = gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
+	u.applyStyle()
 	u.initRoster()
 
 	menubar := initMenuBar(u)
@@ -174,6 +175,7 @@ func (u *gtkUI) mainWindow() {
 	u.window.SetTitle("Coy")
 	u.window.Connect("destroy", gtk.MainQuit)
 	u.window.SetSizeRequest(200, 600)
+
 	u.window.ShowAll()
 }
 

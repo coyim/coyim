@@ -4,6 +4,8 @@ import (
 	"crypto/tls"
 	"encoding/xml"
 	"io"
+	"net"
+	"os"
 
 	. "gopkg.in/check.v1"
 )
@@ -801,25 +803,26 @@ func (s *ConnectionXmppSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 	)
 }
 
-// func (s *ConnectionXmppSuite) Test_blaData(c *C) {
-// 	println("Trying!")
-// 	var tlsC tls.Config
-// 	tlsC.ServerName = "www.olabini.se"
-// 	tlsC.InsecureSkipVerify = true
-// 	tlsC.Rand = fixedRand([]string{
-// 		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-// 		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-// 		"000102030405060708090A0B0C0D0E0F",
-// 		"000102030405060708090A0B0C0D0E0F",
-// 	})
-// 	conn, _ := net.Dial("tcp", "www.olabini.se:443")
-// 	tee := createTeeConn(conn, os.Stdout)
-// 	tlsConn := tls.Client(tee, &tlsC)
-// 	err := tlsConn.Handshake()
-// 	if err != nil {
-// 		println("Error: ", err.Error())
-// 	}
-// }
+func (s *ConnectionXmppSuite) Test_blaData(c *C) {
+	println("Trying!")
+	var tlsC tls.Config
+	tlsC.ServerName = "www.olabini.se"
+	tlsC.InsecureSkipVerify = true
+	tlsC.Rand = fixedRand([]string{
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F",
+		"000102030405060708090A0B0C0D0E0F",
+	})
+	conn, _ := net.Dial("tcp", "www.olabini.se:443")
+	tee := createTeeConn(conn, os.Stdout)
+	tlsConn := tls.Client(tee, &tlsC)
+	err := tlsConn.Handshake()
+	if err != nil {
+		println("Error: ", err.Error())
+	}
+}
+
 var validTLSExchange = [][]byte{
 	[]byte(
 		"<?xml version='1.0'?>" +

@@ -46,6 +46,9 @@ func accountDialog(account Account, saveFunction func() error) {
 	portInput.SetEditable(true)
 	vbox.Add(portInput)
 
+	//TODO: I'm considering to not show this, since it will autodetect Tor running
+	//and autoconfigure the account to use separate circuits.
+	//Should the user be able to disable this even if Tor is found?
 	vbox.Add(gtk.NewLabel("Tor Proxy"))
 	proxyInput := gtk.NewEntry()
 	if len(account.Proxies) > 0 {
@@ -54,6 +57,7 @@ func accountDialog(account Account, saveFunction func() error) {
 	proxyInput.SetEditable(true)
 	vbox.Add(proxyInput)
 
+	//TODO: I'm also considering to hide this
 	alwaysEncrypt := gtk.NewCheckButtonWithLabel("Always Encrypt")
 	alwaysEncrypt.SetActive(account.AlwaysEncrypt)
 	vbox.Add(alwaysEncrypt)

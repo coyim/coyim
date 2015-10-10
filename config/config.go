@@ -306,8 +306,10 @@ func NewConfig() *Config {
 	}
 
 	return &Config{
-		Proxies:             torProxy,
-		UseTor:              true,
+		//TODO: Should those 2 setting be set on startup (or maybe every connection)?
+		Proxies: torProxy,
+		UseTor:  torProxy != nil,
+
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 	}

@@ -2,9 +2,59 @@ package config
 
 import (
 	"encoding/json"
+	"net"
 	"reflect"
 	"testing"
 )
+
+func TestDetectTor(t *testing.T) {
+	scannedForTor = false
+
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, port, err := net.SplitHostPort(ln.Addr().String())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	torPorts = []string{port}
+	torAddress := detectTor()
+	if torAddress != ln.Addr().String() {
+		t.Fatalf("unexpected tor address %s", torAddress)
+	}
+
+	ln.Close()
+
+	newAddr := detectTor()
+	if newAddr != torAddress {
+		t.Fatalf("unexpected tor address %s", torAddress)
+	}
+}
+
+func TestDetectTorConnectionRefused(t *testing.T) {
+	scannedForTor = false
+
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, port, err := net.SplitHostPort(ln.Addr().String())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ln.Close()
+
+	torPorts = []string{port}
+	torAddress := detectTor()
+	if torAddress != "" {
+		t.Fatalf("unexpected tor address %s", torAddress)
+	}
+}
 
 func TestParseYes(t *testing.T) {
 	if ok := ParseYes("Y"); !ok {

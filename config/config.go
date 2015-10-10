@@ -17,6 +17,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/twstrike/coyim/xmpp"
 	"golang.org/x/net/proxy"
@@ -245,7 +246,9 @@ func randomString(dest []byte) error {
 	return nil
 }
 
-func newTorProxy(host, port string) string {
+func newTorProxy(torAddress string) string {
+	host, port, _ := net.SplitHostPort(torAddress)
+
 	user := [10]byte{}
 	pass := [10]byte{}
 
@@ -263,10 +266,47 @@ func newTorProxy(host, port string) string {
 	return proxy.String()
 }
 
+var (
+	torHost            = "127.0.0.1"
+	torPorts           = []string{"9050", "9150"}
+	detectedTorAddress = ""
+	scannedForTor      = false
+)
+
+func detectTor() string {
+	if scannedForTor {
+		return detectedTorAddress
+	}
+
+	detectedTorAddress = ""
+	for _, port := range torPorts {
+		addr := net.JoinHostPort(torHost, port)
+		conn, err := net.DialTimeout("tcp", addr, 30*time.Second)
+		if err != nil {
+			continue
+		}
+
+		detectedTorAddress = addr
+		conn.Close()
+	}
+
+	scannedForTor = true
+	return detectedTorAddress
+}
+
 //TODO return a config with secure defaults
 func NewConfig() *Config {
+	var torProxy []string = nil
+	torAddress := detectTor()
+
+	if len(torAddress) != 0 {
+		torProxy = []string{
+			newTorProxy(torAddress),
+		}
+	}
+
 	return &Config{
-		Proxies:             []string{newTorProxy("127.0.0.1", "9050")},
+		Proxies:             torProxy,
 		UseTor:              true,
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,

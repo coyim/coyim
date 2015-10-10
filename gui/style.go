@@ -2,4 +2,4 @@
 
 package gui
 
-func applyStyle() {}
+func (u *gtkUI) applyStyle() {}

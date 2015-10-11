@@ -4,92 +4,113 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
 )
 
 var (
+	// TODO: shouldn't this be specific to the account ID in question?
 	AccountChangedSignal = glib.NewSignal("coyim-account-changed")
 )
 
-func accountDialog(account Account, saveFunction func() error) {
-	dialog := gtk.NewDialog()
-	dialog.SetTitle("Account Details")
-	dialog.SetPosition(gtk.WIN_POS_CENTER)
-	vbox := dialog.GetVBox()
-
-	accountLabel := gtk.NewLabel("Account")
-	vbox.Add(accountLabel)
-
-	accountInput := gtk.NewEntry()
-	accountInput.SetText(account.Account)
-	accountInput.SetEditable(true)
-	vbox.Add(accountInput)
-
-	vbox.Add(gtk.NewLabel("Password"))
-	passwordInput := gtk.NewEntry()
-	passwordInput.SetText(account.Password)
-	passwordInput.SetEditable(true)
-	passwordInput.SetVisibility(false)
-	vbox.Add(passwordInput)
-
-	vbox.Add(gtk.NewLabel("Server"))
-	serverInput := gtk.NewEntry()
-	serverInput.SetText(account.Server)
-	serverInput.SetEditable(true)
-	vbox.Add(serverInput)
-
-	vbox.Add(gtk.NewLabel("Port"))
-	portInput := gtk.NewEntry()
-	portInput.SetText(strconv.Itoa(account.Port))
-	portInput.SetEditable(true)
-	vbox.Add(portInput)
-
-	//TODO: I'm considering to not show this, since it will autodetect Tor running
-	//and autoconfigure the account to use separate circuits.
-	//Should the user be able to disable this even if Tor is found?
-	vbox.Add(gtk.NewLabel("Tor Proxy"))
-	proxyInput := gtk.NewEntry()
+func firstProxy(account Account) string {
 	if len(account.Proxies) > 0 {
-		proxyInput.SetText(account.Proxies[0])
+		return account.Proxies[0]
 	}
-	proxyInput.SetEditable(true)
-	vbox.Add(proxyInput)
+	return ""
+}
 
-	//TODO: I'm also considering to hide this
-	alwaysEncrypt := gtk.NewCheckButtonWithLabel("Always Encrypt")
-	alwaysEncrypt.SetActive(account.AlwaysEncrypt)
-	vbox.Add(alwaysEncrypt)
+func onAccountDialogClicked(account Account, saveFunction func() error, reg *widgetRegistry) func() {
+	return func() {
+		account.Account = reg.getText("account")
+		account.Password = reg.getText("password")
+		account.Server = reg.getText("server")
 
-	button := gtk.NewButtonWithLabel("Save")
-	button.Connect("clicked", func() {
-		account.Account = accountInput.GetText()
-		account.Password = passwordInput.GetText()
-		account.Server = serverInput.GetText()
-
-		v, err := strconv.Atoi(portInput.GetText())
-		if err == nil {
+		if v, err := strconv.Atoi(reg.getText("port")); err == nil {
 			account.Port = v
 		}
 
 		if len(account.Proxies) == 0 {
 			account.Proxies = append(account.Proxies, "")
 		}
-		account.Proxies[0] = proxyInput.GetText()
 
-		account.AlwaysEncrypt = alwaysEncrypt.GetActive()
+		account.Proxies[0] = reg.getText("tor proxy")
+		account.AlwaysEncrypt = reg.getActive("always encrypt")
 
 		if err := saveFunction(); err != nil {
 			//TODO: handle errors
 			fmt.Println(err.Error())
 		}
 
-		dialog.Destroy()
-	})
-	vbox.Add(button)
+		reg.dialogDestroy("dialog")
+	}
+}
 
-	dialog.ShowAll()
+func accountDialog(account Account, saveFunction func() error) {
+	reg := createWidgetRegistry()
+	d := dialog{
+		title:    i18n.Local("Account Details"),
+		position: gtk.WIN_POS_CENTER,
+		id:       "dialog",
+		vbox: []createable{
+			label{i18n.Local("Account")},
+			entry{
+				text:       account.Account,
+				editable:   true,
+				visibility: true,
+				id:         "account",
+			},
+			label{i18n.Local("Password")},
+			entry{
+				text:       account.Password,
+				editable:   true,
+				visibility: false,
+				id:         "password",
+			},
+			label{i18n.Local("Server")},
+			entry{
+				text:       account.Server,
+				editable:   true,
+				visibility: true,
+				id:         "server",
+			},
+			label{i18n.Local("Port")},
+			entry{
+				text:       strconv.Itoa(account.Port),
+				editable:   true,
+				visibility: true,
+				id:         "port",
+			},
+
+			//TODO: I'm considering to not show this, since it will autodetect Tor running
+			//and autoconfigure the account to use separate circuits.
+			//Should the user be able to disable this even if Tor is found?
+			label{i18n.Local("Tor Proxy")},
+			entry{
+				text:       firstProxy(account),
+				editable:   true,
+				visibility: true,
+				id:         "tor proxy",
+			},
+
+			//TODO: I'm also considering to hide this
+			checkButton{
+				text:   i18n.Local("Always Encrypt"),
+				active: account.AlwaysEncrypt,
+				id:     "always encrypt",
+			},
+
+			button{
+				text:      i18n.Local("Save"),
+				onClicked: onAccountDialogClicked(account, saveFunction, reg),
+			},
+		},
+	}
+
+	d.create(reg)
+	reg.dialogShowAll("dialog")
 }
 
 func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect *gtk.MenuItem) {
@@ -104,10 +125,10 @@ func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 	accountSubMenu := gtk.NewMenu()
 	menuitem.SetSubmenu(accountSubMenu)
 
-	connectItem := gtk.NewMenuItemWithMnemonic("_Connect")
+	connectItem := gtk.NewMenuItemWithMnemonic(i18n.Local("_Connect"))
 	accountSubMenu.Append(connectItem)
 
-	disconnectItem := gtk.NewMenuItemWithMnemonic("_Disconnect")
+	disconnectItem := gtk.NewMenuItemWithMnemonic(i18n.Local("_Disconnect"))
 	accountSubMenu.Append(disconnectItem)
 
 	toggleConnectAndDisconnectMenuItems(account.Session, connectItem, disconnectItem)
@@ -128,7 +149,7 @@ func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 	u.window.Connect(account.ConnectedSignal.Name(), connToggle)
 	u.window.Connect(account.DisconnectedSignal.Name(), connToggle)
 
-	editItem := gtk.NewMenuItemWithMnemonic("_Edit...")
+	editItem := gtk.NewMenuItemWithMnemonic(i18n.Local("_Edit..."))
 	accountSubMenu.Append(editItem)
 
 	editItem.Connect("activate", func() {
@@ -151,7 +172,7 @@ func (u *gtkUI) buildAccountsMenu() {
 		submenu.Append(gtk.NewSeparatorMenuItem())
 	}
 
-	addAccMenu := gtk.NewMenuItemWithMnemonic("_Add...")
+	addAccMenu := gtk.NewMenuItemWithMnemonic(i18n.Local("_Add..."))
 	addAccMenu.Connect("activate", u.showAddAccountWindow)
 
 	submenu.Append(addAccMenu)

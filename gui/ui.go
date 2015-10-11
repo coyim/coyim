@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
 
@@ -172,7 +173,7 @@ func (u *gtkUI) mainWindow() {
 	vbox.Add(u.roster.Window)
 	u.window.Add(vbox)
 
-	u.window.SetTitle("Coy")
+	u.window.SetTitle(i18n.Local("Coy"))
 	u.window.Connect("destroy", gtk.MainQuit)
 	u.window.SetSizeRequest(200, 600)
 
@@ -182,17 +183,17 @@ func (u *gtkUI) mainWindow() {
 func (*gtkUI) askForPassword(connect func(string)) {
 	glib.IdleAdd(func() bool {
 		dialog := gtk.NewDialog()
-		dialog.SetTitle("Password")
+		dialog.SetTitle(i18n.Local("Password"))
 		dialog.SetPosition(gtk.WIN_POS_CENTER)
 		vbox := dialog.GetVBox()
 
-		vbox.Add(gtk.NewLabel("Password"))
+		vbox.Add(gtk.NewLabel(i18n.Local("Password")))
 		passwordInput := gtk.NewEntry()
 		passwordInput.SetEditable(true)
 		passwordInput.SetVisibility(false)
 		vbox.Add(passwordInput)
 
-		button := gtk.NewButtonWithLabel("Send")
+		button := gtk.NewButtonWithLabel(i18n.Local("Send"))
 		button.Connect("clicked", func() {
 			go connect(passwordInput.GetText())
 			dialog.Destroy()
@@ -235,7 +236,7 @@ func authors() []string {
 
 func aboutDialog() {
 	dialog := gtk.NewAboutDialog()
-	dialog.SetName("Coy IM!")
+	dialog.SetName(i18n.Local("Coy IM!"))
 	dialog.SetProgramName("Coyim")
 	dialog.SetAuthors(authors())
 	// dir, _ := path.Split(os.Args[0])
@@ -289,12 +290,12 @@ func (u *gtkUI) addContactWindow() {
 }
 
 func (u *gtkUI) buildContactsMenu() *gtk.MenuItem {
-	contactsMenu := gtk.NewMenuItemWithMnemonic("_Contacts")
+	contactsMenu := gtk.NewMenuItemWithMnemonic(i18n.Local("_Contacts"))
 
 	submenu := gtk.NewMenu()
 	contactsMenu.SetSubmenu(submenu)
 
-	menuitem := gtk.NewMenuItemWithMnemonic("_Add...")
+	menuitem := gtk.NewMenuItemWithMnemonic(i18n.Local("_Add..."))
 	submenu.Append(menuitem)
 
 	menuitem.Connect("activate", u.addContactWindow)
@@ -307,7 +308,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 
 	menubar.Append(u.buildContactsMenu())
 
-	u.accountsMenu = gtk.NewMenuItemWithMnemonic("_Accounts")
+	u.accountsMenu = gtk.NewMenuItemWithMnemonic(i18n.Local("_Accounts"))
 	menubar.Append(u.accountsMenu)
 
 	//TODO: replace this by emiting the signal at startup
@@ -320,11 +321,11 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	})
 
 	//Help -> About
-	cascademenu := gtk.NewMenuItemWithMnemonic("_Help")
+	cascademenu := gtk.NewMenuItemWithMnemonic(i18n.Local("_Help"))
 	menubar.Append(cascademenu)
 	submenu := gtk.NewMenu()
 	cascademenu.SetSubmenu(submenu)
-	menuitem := gtk.NewMenuItemWithMnemonic("_About")
+	menuitem := gtk.NewMenuItemWithMnemonic(i18n.Local("_About"))
 	menuitem.Connect("activate", aboutDialog)
 	submenu.Append(menuitem)
 	return menubar

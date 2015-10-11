@@ -3,6 +3,7 @@ package gui
 import (
 	"unsafe"
 
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/go-gtk/glib"
@@ -67,7 +68,7 @@ func (r *Roster) Clear() {
 		iter := &gtk.TreeIter{}
 		r.model.Append(iter)
 		r.model.Set(iter,
-			0, "Disconnected.\nPlease connect from pref. menu",
+			0, i18n.Local("Disconnected.\nPlease connect from pref. menu"),
 		)
 
 		r.view.SetModel(r.model)

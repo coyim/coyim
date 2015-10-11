@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
 )
@@ -11,20 +12,20 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 		gtk.DIALOG_MODAL,
 		gtk.MESSAGE_QUESTION,
 		gtk.BUTTONS_YES_NO,
-		"%s wants to talk to you. Is it ok?", from,
+		i18n.Local("%s wants to talk to you. Is that ok?"), from,
 	)
-	confirmDialog.SetTitle("Subscription request")
+	confirmDialog.SetTitle(i18n.Local("Subscription request"))
 
 	return confirmDialog
 }
 
 func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 	dialog := gtk.NewDialog()
-	dialog.SetTitle("Add contact")
+	dialog.SetTitle(i18n.Local("Add contact"))
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
 	vbox := dialog.GetVBox()
 
-	accountLabel := gtk.NewLabel("Account")
+	accountLabel := gtk.NewLabel(i18n.Local("Account"))
 	vbox.Add(accountLabel)
 
 	model := gtk.NewListStore(
@@ -50,7 +51,7 @@ func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 	cellLayout.PackStart(renderer, true)
 	cellLayout.AddAttribute(renderer, "text", 0)
 
-	vbox.Add(gtk.NewLabel("ID"))
+	vbox.Add(gtk.NewLabel(i18n.Local("ID")))
 	contactInput := gtk.NewEntry()
 	contactInput.SetEditable(true)
 	vbox.Add(contactInput)
@@ -58,7 +59,7 @@ func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 	//TODO: disable the add button until the form has all the data
 	//- an account selected
 	//- an ID
-	button := gtk.NewButtonWithLabel("Add")
+	button := gtk.NewButtonWithLabel(i18n.Local("Add"))
 	vbox.Add(button)
 
 	button.Connect("clicked", func() {

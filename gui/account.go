@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/go-gtk/glib"
 )
@@ -30,7 +31,7 @@ func (acc *Account) Connected() bool {
 }
 
 var (
-	errFingerprintAlreadyAuthorized = errors.New("the fingerprint is already authorized")
+	errFingerprintAlreadyAuthorized = errors.New(i18n.Local("the fingerprint is already authorized"))
 )
 
 func (acc *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
@@ -47,13 +48,13 @@ func (acc *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
 }
 
 func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig, manager configManager) []Account {
-	accounts := make([]Account, 0, len(multiAccConfig.Accounts))
+	accounts := make([]Account, len(multiAccConfig.Accounts))
 
 	for i := range multiAccConfig.Accounts {
 		conf := &multiAccConfig.Accounts[i]
 		account := newAccount(conf)
 		account.configManager = manager
-		accounts = append(accounts, account)
+		accounts[i] = account
 	}
 
 	return accounts

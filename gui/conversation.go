@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"unsafe"
 
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
@@ -21,7 +22,7 @@ type conversationWindow struct {
 
 func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 	menubar := gtk.NewMenuBar()
-	conversationMenu := gtk.NewMenuItemWithMnemonic("Conversation")
+	conversationMenu := gtk.NewMenuItemWithMnemonic(i18n.Local("Conversation"))
 	menubar.Append(conversationMenu)
 
 	submenu := gtk.NewMenu()
@@ -31,7 +32,7 @@ func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 	//- End OTR conversation
 	//- Start OTR conversation
 
-	verify := gtk.NewMenuItemWithMnemonic("_Verify fingerprint...")
+	verify := gtk.NewMenuItemWithMnemonic(i18n.Local("_Verify fingerprint..."))
 	submenu.Append(verify)
 
 	verify.Connect("activate", func() {
@@ -146,7 +147,7 @@ func (conv *conversationWindow) sendMessage(message string) {
 
 	toSend, err := conversation.Send(otr3.ValidMessage(message))
 	if err != nil {
-		fmt.Println("Failed to generate OTR message")
+		fmt.Println(i18n.Local("Failed to generate OTR message"))
 		return
 	}
 

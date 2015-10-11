@@ -36,8 +36,7 @@ func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 	submenu.Append(verify)
 
 	verify.Connect("activate", func() {
-		dialog := verifyFingerprintDialog(conv.account, conv.to)
-		dialog.ShowAll()
+		verifyFingerprintDialog(conv.account, conv.to)
 	})
 
 	return menubar

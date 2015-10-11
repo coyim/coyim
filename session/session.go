@@ -300,11 +300,7 @@ func (s *Session) otrEnded(uid string) {
 	s.SessionEventHandler.OTREnded(uid)
 }
 
-func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
-	if conversation, ok := s.Conversations[peer]; ok {
-		return conversation
-	}
-
+func (s *Session) newConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKey(s.PrivateKey)
 
@@ -315,6 +311,15 @@ func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
 	conversation.Policies.WhitespaceStartAKE()
 	// conversation.Policies.RequireEncryption()
 
+	return conversation
+}
+
+func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
+	if conversation, ok := s.Conversations[peer]; ok {
+		return conversation
+	}
+
+	conversation := s.newConversation(peer)
 	s.Conversations[peer] = conversation
 
 	//TODO: Why do we need a reference to the event handler in the session?

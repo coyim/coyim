@@ -7,23 +7,24 @@ import (
 	"github.com/twstrike/go-gtk/gtk"
 )
 
-func verifyFingerprintDialog(account *Account, uid string) *gtk.Dialog {
+func verifyFingerprintDialog(account *Account, uid string) {
 	dialog := gtk.NewDialog()
 	dialog.SetTitle(i18n.Local("Fingerprint verification"))
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
 	vbox := dialog.GetVBox()
 
+	//TODO: errors
 	conversation := account.GetConversationWith(uid)
 	fpr := conversation.GetTheirKey().DefaultFingerprint()
 
 	// message copied from libpurple
 	message := fmt.Sprintf(i18n.Local(`
-	Fingerprint for you (%s): %x
+	Fingerprint for you (%[1]s): %[2]x
 
-	Purported fingerprint for %s: %x
+	Purported fingerprint for %[3]s: %[4]x
 
-	Is this the verifiably correct fingerprint for %s?
-	`), account.Account, account.Session.PrivateKey.DefaultFingerprint(), uid, fpr, uid)
+	Is this the verifiably correct fingerprint for %[3]s?
+	`), account.Account, account.Session.PrivateKey.DefaultFingerprint(), uid, fpr)
 	vbox.Add(gtk.NewLabel(message))
 
 	button := gtk.NewButtonWithLabel(i18n.Local("Verify"))
@@ -42,5 +43,5 @@ func verifyFingerprintDialog(account *Account, uid string) *gtk.Dialog {
 		account.configManager.Save()
 	})
 
-	return dialog
+	dialog.ShowAll()
 }

@@ -63,14 +63,6 @@ loop:
 	return
 }
 
-func IsAwayStatus(status string) bool {
-	switch status {
-	case "xa", "away":
-		return true
-	}
-	return false
-}
-
 var hexTable = "0123456789abcdef"
 
 // escapeNonASCII replaces tabs and other non-printable characters with a

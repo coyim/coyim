@@ -490,6 +490,14 @@ func (s *Session) maybeNotify() {
 	}()
 }
 
+func isAwayStatus(status string) bool {
+	switch status {
+	case "xa", "away":
+		return true
+	}
+	return false
+}
+
 func (s *Session) processPresence(stanza *xmpp.ClientPresence) (ignore, gone bool) {
 
 	switch stanza.Type {
@@ -518,7 +526,7 @@ func (s *Session) processPresence(stanza *xmpp.ClientPresence) (ignore, gone boo
 		}
 		delete(s.KnownStates, from)
 	} else {
-		if _, ok := s.KnownStates[from]; !ok && ui.IsAwayStatus(stanza.Show) {
+		if _, ok := s.KnownStates[from]; !ok && isAwayStatus(stanza.Show) {
 			// Skip people who are initially away.
 			ignore = true
 			return

@@ -312,6 +312,7 @@ func NewConfig() *Config {
 
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
+		OTRAutoTearDown:     true, //See #48
 	}
 }
 

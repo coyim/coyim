@@ -35,6 +35,8 @@ type cliUI struct {
 	input    *Input
 
 	terminate chan bool
+
+	RosterEditor
 }
 
 func NewCLI() *cliUI {
@@ -62,6 +64,9 @@ func NewCLI() *cliUI {
 		input: &Input{
 			term:        term,
 			uidComplete: new(priorityList),
+		},
+		RosterEditor: RosterEditor{
+			PendingRosterChan: make(chan *RosterEdit),
 		},
 	}
 }
@@ -139,6 +144,7 @@ func (c *cliUI) Loop() {
 	go c.session.WatchRosterEvents()
 	go c.session.WatchStanzas()
 
+	go c.WatchRosterEdits()
 	go c.WatchCommands()
 
 	<-c.terminate // wait
@@ -515,6 +521,88 @@ func promptForForm(term *terminal.Terminal, user, password, title, instructions 
 	return nil
 }
 
+func (c *cliUI) WatchRosterEdits() {
+	for edit := range c.PendingRosterChan {
+		if !edit.IsComplete {
+			c.Info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
+			c.PendingRosterEdit = edit
+			continue
+		}
+
+		parsedRoster, err := parseEditedRoster(edit.Contents)
+		if err != nil {
+			c.Alert(err.Error())
+			c.Alert("Please reedit file and run /rostereditdone again")
+			continue
+		}
+
+		toDelete, toEdit, toAdd := diffRoster(parsedRoster, edit.Roster)
+
+		//TODO: fix
+		s := c.session
+
+		//DELETE
+		for _, jid := range toDelete {
+			c.Info("Deleting roster entry for " + jid)
+			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+				Item: xmpp.RosterRequestItem{
+					Jid:          jid,
+					Subscription: "remove",
+				},
+			})
+
+			if err != nil {
+				c.Alert("Failed to remove roster entry: " + err.Error())
+			}
+
+			// Filter out any known fingerprints.
+			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(s.Config.KnownFingerprints))
+			for _, fpr := range s.Config.KnownFingerprints {
+				if fpr.UserId == jid {
+					continue
+				}
+				newKnownFingerprints = append(newKnownFingerprints, fpr)
+			}
+			s.Config.KnownFingerprints = newKnownFingerprints
+			s.Config.Save()
+		}
+
+		//EDIT
+		for _, entry := range toEdit {
+			c.Info("Updating roster entry for " + entry.Jid)
+			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+				Item: xmpp.RosterRequestItem{
+					Jid:   entry.Jid,
+					Name:  entry.Name,
+					Group: entry.Group,
+				},
+			})
+
+			if err != nil {
+				c.Alert("Failed to update roster entry: " + err.Error())
+			}
+		}
+
+		//ADD
+		for _, entry := range toAdd {
+			c.Info("Adding roster entry for " + entry.Jid)
+			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+				Item: xmpp.RosterRequestItem{
+					Jid:   entry.Jid,
+					Name:  entry.Name,
+					Group: entry.Group,
+				},
+			})
+
+			if err != nil {
+				c.Alert("Failed to add roster entry: " + err.Error())
+			}
+		}
+
+		c.PendingRosterEdit = nil
+	}
+}
+
 func (c *cliUI) WatchCommands() {
 	defer c.Disconnected()
 
@@ -592,19 +680,36 @@ CommandLoop:
 					info(term, line)
 				}
 			case rosterEditCommand:
-				if s.PendingRosterEdit != nil {
+				if c.PendingRosterEdit != nil {
 					warn(term, "Aborting previous roster edit")
-					s.PendingRosterEdit = nil
+					c.PendingRosterEdit = nil
 				}
+
+				c.RosterEditor.Roster = make([]xmpp.RosterEntry, len(s.Roster))
+				copy(c.RosterEditor.Roster, s.Roster)
+
 				rosterCopy := make([]xmpp.RosterEntry, len(s.Roster))
 				copy(rosterCopy, s.Roster)
-				go s.EditRoster(rosterCopy)
+				go func(rosterCopy []xmpp.RosterEntry) {
+					err := c.EditRoster(rosterCopy)
+					if err != nil {
+						alert(term, err.Error())
+					}
+				}(rosterCopy)
+
 			case rosterEditDoneCommand:
-				if s.PendingRosterEdit == nil {
+				if c.PendingRosterEdit == nil {
 					warn(term, "No roster edit in progress. Use /rosteredit to start one")
 					continue
 				}
-				go s.LoadEditedRoster(*s.PendingRosterEdit)
+
+				go func(edit RosterEdit) {
+					err := c.LoadEditedRoster(edit)
+					if err != nil {
+						alert(term, err.Error())
+					}
+				}(*c.PendingRosterEdit)
+
 			case toggleStatusUpdatesCommand:
 				s.Config.HideStatusUpdates = !s.Config.HideStatusUpdates
 				s.Config.Save()

@@ -1,4 +1,4 @@
-package session
+package cli
 
 import (
 	"bytes"
@@ -8,17 +8,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 )
 
-//TODO Move to CLI
-
 // RosterEdit contains information about a pending roster edit. Roster edits
 // occur by writing the roster to a file and inviting the user to edit the
 // file.
-//TODO Is this only relevant for CLI? How should this be handled by the GUI?
 type RosterEdit struct {
 	// FileName is the name of the file containing the roster information.
 	FileName string
@@ -32,15 +28,25 @@ type RosterEdit struct {
 	Contents []byte
 }
 
+type RosterEditor struct {
+	Roster []xmpp.RosterEntry
+
+	// pendingRosterEdit, if non-nil, contains information about a pending
+	// roster edit operation.
+	PendingRosterEdit *RosterEdit
+	// pendingRosterChan is the channel over which roster edit information
+	// is received.
+	PendingRosterChan chan *RosterEdit
+}
+
 // editRoster runs in a goroutine and writes the roster to a file that the user
 // can edit.
-func (s *Session) EditRoster(roster []xmpp.RosterEntry) {
+func (s *RosterEditor) EditRoster(roster []xmpp.RosterEntry) error {
 	// In case the editor rewrites the file, we work inside a temp
 	// directory.
 	dir, err := ioutil.TempDir("" /* system default temp dir */, "xmpp-client")
 	if err != nil {
-		s.alert("Failed to create temp dir to edit roster: " + err.Error())
-		return
+		return fmt.Errorf("Failed to create temp dir to edit roster: " + err.Error())
 	}
 
 	mode, err := os.Stat(dir)
@@ -51,8 +57,7 @@ func (s *Session) EditRoster(roster []xmpp.RosterEntry) {
 	fileName := filepath.Join(dir, "roster")
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0600)
 	if err != nil {
-		s.alert("Failed to create temp file: " + err.Error())
-		return
+		return fmt.Errorf("Failed to create temp file: " + err.Error())
 	}
 
 	io.WriteString(f, `# Use this file to edit your roster.
@@ -113,25 +118,47 @@ func (s *Session) EditRoster(roster []xmpp.RosterEntry) {
 		FileName: fileName,
 		Roster:   roster,
 	}
+
+	return nil
 }
 
-func (s *Session) LoadEditedRoster(edit RosterEdit) {
+func (s *RosterEditor) LoadEditedRoster(edit RosterEdit) error {
 	contents, err := ioutil.ReadFile(edit.FileName)
 	if err != nil {
-		s.alert("Failed to load edited roster: " + err.Error())
-		return
+		return fmt.Errorf("Failed to load edited roster: " + err.Error())
 	}
+
 	os.Remove(edit.FileName)
 	os.Remove(filepath.Dir(edit.FileName))
 
 	edit.IsComplete = true
 	edit.Contents = contents
 	s.PendingRosterChan <- &edit
+
+	return nil
 }
 
-func (s *Session) processEditedRoster(edit *RosterEdit) bool {
+func setEqual(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+EachValue:
+	for _, v := range a {
+		for _, v2 := range b {
+			if v == v2 {
+				continue EachValue
+			}
+		}
+		return false
+	}
+
+	return true
+}
+
+func parseEditedRoster(editedRoster []byte) (map[string]xmpp.RosterEntry, error) {
 	parsedRoster := make(map[string]xmpp.RosterEntry)
-	lines := bytes.Split(edit.Contents, ui.NewLine)
+	lines := bytes.Split(editedRoster, ui.NewLine)
 	tab := []byte{'\t'}
 
 	// Parse roster entries from the file.
@@ -145,9 +172,9 @@ func (s *Session) processEditedRoster(edit *RosterEdit) bool {
 		var err error
 
 		if entry.Jid, err = ui.UnescapeNonASCII(string(string(parts[0]))); err != nil {
-			s.alert(fmt.Sprintf("Failed to parse JID on line %d: %s", i+1, err))
-			return false
+			return nil, fmt.Errorf(fmt.Sprintf("Failed to parse JID on line %d: %s", i+1, err))
 		}
+
 		for _, part := range parts[1:] {
 			if len(part) == 0 {
 				continue
@@ -155,22 +182,19 @@ func (s *Session) processEditedRoster(edit *RosterEdit) bool {
 
 			pos := bytes.IndexByte(part, ':')
 			if pos == -1 {
-				s.alert(fmt.Sprintf("Failed to find colon in item on line %d", i+1))
-				return false
+				return nil, fmt.Errorf(fmt.Sprintf("Failed to find colon in item on line %d", i+1))
 			}
 
 			typ := string(part[:pos])
-			value, err := ui.UnescapeNonASCII(string(part[pos+1:]))
-			if err != nil {
-				s.alert(fmt.Sprintf("Failed to unescape item on line %d: %s", i+1, err))
-				return false
+			value, e := ui.UnescapeNonASCII(string(part[pos+1:]))
+			if e != nil {
+				return nil, fmt.Errorf(fmt.Sprintf("Failed to unescape item on line %d: %s", i+1, e))
 			}
 
 			switch typ {
 			case "name":
 				if len(entry.Name) > 0 {
-					s.alert(fmt.Sprintf("Multiple names given for contact on line %d", i+1))
-					return false
+					return nil, fmt.Errorf(fmt.Sprintf("Multiple names given for contact on line %d", i+1))
 				}
 				entry.Name = value
 			case "group":
@@ -178,20 +202,18 @@ func (s *Session) processEditedRoster(edit *RosterEdit) bool {
 					entry.Group = append(entry.Group, value)
 				}
 			default:
-				s.alert(fmt.Sprintf("Unknown item tag '%s' on line %d", typ, i+1))
-				return false
+				return nil, fmt.Errorf(fmt.Sprintf("Unknown item tag '%s' on line %d", typ, i+1))
 			}
 		}
 
 		parsedRoster[entry.Jid] = entry
 	}
 
-	// Now diff them from the original roster
-	var toDelete []string
-	var toEdit []xmpp.RosterEntry
-	var toAdd []xmpp.RosterEntry
+	return parsedRoster, nil
+}
 
-	for _, entry := range edit.Roster {
+func diffRoster(parsedRoster map[string]xmpp.RosterEntry, roster []xmpp.RosterEntry) (toDelete []string, toEdit, toAdd []xmpp.RosterEntry) {
+	for _, entry := range roster {
 		newEntry, ok := parsedRoster[entry.Jid]
 		if !ok {
 			toDelete = append(toDelete, entry.Jid)
@@ -204,7 +226,7 @@ func (s *Session) processEditedRoster(edit *RosterEdit) bool {
 
 NextAdd:
 	for jid, newEntry := range parsedRoster {
-		for _, entry := range edit.Roster {
+		for _, entry := range roster {
 			if entry.Jid == jid {
 				continue NextAdd
 			}
@@ -212,57 +234,5 @@ NextAdd:
 		toAdd = append(toAdd, newEntry)
 	}
 
-	for _, jid := range toDelete {
-		s.info("Deleting roster entry for " + jid)
-		_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
-			Item: xmpp.RosterRequestItem{
-				Jid:          jid,
-				Subscription: "remove",
-			},
-		})
-		if err != nil {
-			s.alert("Failed to remove roster entry: " + err.Error())
-		}
-
-		// Filter out any known fingerprints.
-		newKnownFingerprints := make([]config.KnownFingerprint, 0, len(s.Config.KnownFingerprints))
-		for _, fpr := range s.Config.KnownFingerprints {
-			if fpr.UserId == jid {
-				continue
-			}
-			newKnownFingerprints = append(newKnownFingerprints, fpr)
-		}
-		s.Config.KnownFingerprints = newKnownFingerprints
-		s.Config.Save()
-	}
-
-	for _, entry := range toEdit {
-		s.info("Updating roster entry for " + entry.Jid)
-		_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
-			Item: xmpp.RosterRequestItem{
-				Jid:   entry.Jid,
-				Name:  entry.Name,
-				Group: entry.Group,
-			},
-		})
-		if err != nil {
-			s.alert("Failed to update roster entry: " + err.Error())
-		}
-	}
-
-	for _, entry := range toAdd {
-		s.info("Adding roster entry for " + entry.Jid)
-		_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
-			Item: xmpp.RosterRequestItem{
-				Jid:   entry.Jid,
-				Name:  entry.Name,
-				Group: entry.Group,
-			},
-		})
-		if err != nil {
-			s.alert("Failed to add roster entry: " + err.Error())
-		}
-	}
-
-	return true
+	return
 }

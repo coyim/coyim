@@ -44,14 +44,6 @@ type Session struct {
 	// absolute time when that request should timeout.
 	Timeouts map[xmpp.Cookie]time.Time
 
-	//TODO Is this only relevant for CLI?
-	// pendingRosterEdit, if non-nil, contains information about a pending
-	// roster edit operation.
-	PendingRosterEdit *RosterEdit
-	// pendingRosterChan is the channel over which roster edit information
-	// is received.
-	PendingRosterChan chan *RosterEdit
-
 	// pendingSubscribes maps JID with pending subscription requests to the
 	// ID if the iq for the reply.
 	PendingSubscribes map[string]string
@@ -72,7 +64,6 @@ func NewSession(c *config.Config) *Session {
 		OtrEventHandler:   make(map[string]*event.OtrEventHandler),
 		KnownStates:       make(map[string]string),
 		PrivateKey:        new(otr3.PrivateKey),
-		PendingRosterChan: make(chan *RosterEdit),
 		PendingSubscribes: make(map[string]string),
 		LastActionTime:    time.Now(),
 	}
@@ -589,20 +580,21 @@ RosterLoop:
 
 			s.rosterReceived()
 
-		case edit := <-s.PendingRosterChan:
-			if !edit.IsComplete {
-				//TODO: this is specific to CLI
-				s.info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
-				s.PendingRosterEdit = edit
-				continue
-			}
+			//TODO: this is CLI specific
+			//case edit := <-s.PendingRosterChan:
+			//	if !edit.IsComplete {
+			//		//TODO: this is specific to CLI
+			//		s.info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
+			//		s.PendingRosterEdit = edit
+			//		continue
+			//	}
 
-			if s.processEditedRoster(edit) {
-				s.PendingRosterEdit = nil
-			} else {
-				//TODO: this is specific to CLI
-				s.alert("Please reedit file and run /rostereditdone again")
-			}
+			//	if s.processEditedRoster(edit) {
+			//		s.PendingRosterEdit = nil
+			//	} else {
+			//		//TODO: this is specific to CLI
+			//		s.alert("Please reedit file and run /rostereditdone again")
+			//	}
 		}
 	}
 }
@@ -709,22 +701,4 @@ func (s *Session) Close() {
 	s.SessionEventHandler.RosterReceived(s, nil)
 
 	s.SessionEventHandler.Disconnected()
-}
-
-func setEqual(a, b []string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-
-EachValue:
-	for _, v := range a {
-		for _, v2 := range b {
-			if v == v2 {
-				continue EachValue
-			}
-		}
-		return false
-	}
-
-	return true
 }

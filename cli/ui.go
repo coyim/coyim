@@ -71,9 +71,10 @@ func NewCLI() *cliUI {
 	}
 }
 
-func (u *cliUI) ParseConfig() error {
-	configFileManager, err := config.NewConfigFileManager(*config.ConfigFile)
+func (u *cliUI) LoadConfig(configFile string) error {
+	configFileManager, err := config.NewConfigFileManager(configFile)
 	if err != nil {
+		u.Alert(err.Error())
 		return err
 	}
 
@@ -81,6 +82,7 @@ func (u *cliUI) ParseConfig() error {
 		filename, e := config.FindConfigFile(os.Getenv("HOME"))
 		if e != nil {
 			//TODO cant write config file. Should it be a problem?
+			//u.Alert(err.Error())
 			return e
 		}
 
@@ -104,6 +106,7 @@ func (u *cliUI) ParseConfig() error {
 			fmt.Sprintf("Password for %s (will not be saved to disk): ", u.config.Account),
 		)
 		if err != nil {
+			u.Alert(err.Error())
 			return err
 		}
 	} else {
@@ -120,6 +123,7 @@ func (u *cliUI) ParseConfig() error {
 	//TODO replace this by session.Connect()
 	conn, err := config.NewXMPPConn(u.config, password, registerCallback, logger)
 	if err != nil {
+		u.Alert(err.Error())
 		return err
 	}
 

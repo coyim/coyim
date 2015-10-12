@@ -33,11 +33,11 @@ func NewGTK() *gtkUI {
 	return &gtkUI{}
 }
 
-func (ui *gtkUI) LoadConfig(configFile string) {
+func (ui *gtkUI) LoadConfig(configFile string) error {
 	var err error
 	if ui.configFileManager, err = config.NewConfigFileManager(configFile); err != nil {
 		ui.Alert(err.Error())
-		return
+		return err
 	}
 
 	err = ui.configFileManager.ParseConfigFile()
@@ -54,13 +54,15 @@ func (ui *gtkUI) LoadConfig(configFile string) {
 			return false
 		})
 
-		return
+		return nil
 	}
 
 	//TODO: REMOVE this
 	ui.multiConfig = ui.configFileManager.MultiAccountConfig
 
 	ui.accounts = BuildAccountsFrom(ui.multiConfig, ui.configFileManager)
+
+	return nil
 }
 
 func (u *gtkUI) addNewAccountsFromConfig() {
@@ -153,6 +155,8 @@ func (u *gtkUI) Loop() {
 	u.mainWindow()
 	gtk.Main()
 }
+
+func (u *gtkUI) Close() {}
 
 func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
 	u.window.Connect(s.Name(), f)

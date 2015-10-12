@@ -665,20 +665,61 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	return nil
 }
 
-func (s *Session) terminateConversations() {
-	for to, conversation := range s.Conversations {
-		msgs, err := conversation.End()
+func (s *Session) EncryptAndSendTo(peer string, message string) error {
+	conversation := s.GetConversationWith(peer)
+	toSend, err := conversation.Send(otr3.ValidMessage(message))
+	if err != nil {
+		return err
+	}
+
+	for _, m := range toSend {
+		err := s.SendMessageTo(peer, string(m))
 		if err != nil {
-			//TODO: error handle
-			panic("this should not happen")
+			return err
 		}
+	}
 
-		for _, msg := range msgs {
-			s.Conn.Send(to, string(msg))
+	return nil
+}
+
+func (s *Session) SendMessageTo(peer string, message string) error {
+	return s.Conn.Send(peer, message)
+}
+
+func (s *Session) StartEncryptedChatWith(peer string) error {
+	conversation := s.GetConversationWith(peer)
+	return s.SendMessageTo(peer, string(conversation.QueryMessage()))
+}
+
+func (s *Session) TerminateConversationWith(peer string) error {
+	//Do not use GetConversationWith because we dont want to create a new conversation just to destroy it
+	c, ok := s.Conversations[peer]
+	if !ok {
+		return nil
+	}
+
+	msgs, err := c.End()
+	if err != nil {
+		return err
+	}
+
+	for _, msg := range msgs {
+		err := s.Conn.Send(peer, string(msg))
+		if err != nil {
+			return err
 		}
+	}
 
-		//conversation.Wipe()
-		delete(s.Conversations, to)
+	//conversation.Wipe()
+	delete(s.Conversations, peer)
+
+	return nil
+}
+
+func (s *Session) terminateConversations() {
+	for peer := range s.Conversations {
+		//TODO: errors
+		s.TerminateConversationWith(peer)
 	}
 }
 

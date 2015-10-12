@@ -9,7 +9,6 @@ import (
 	"github.com/twstrike/go-gtk/gdk"
 	"github.com/twstrike/go-gtk/glib"
 	"github.com/twstrike/go-gtk/gtk"
-	"github.com/twstrike/otr3"
 )
 
 type conversationWindow struct {
@@ -28,9 +27,29 @@ func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 	submenu := gtk.NewMenu()
 	conversationMenu.SetSubmenu(submenu)
 
-	//TODO: Add
-	//- End OTR conversation
-	//- Start OTR conversation
+	startAKE := gtk.NewMenuItemWithMnemonic(i18n.Local("Start encrypted chat"))
+	submenu.Append(startAKE)
+
+	//TODO: enable/disable depending on the conversation's encryption state
+	startAKE.Connect("activate", func() {
+		//TODO: errors
+		err := conv.account.StartEncryptedChatWith(conv.to)
+		if err != nil {
+			fmt.Printf(i18n.Local("Failed to start the encrypted chat: %s\n"), err.Error())
+		}
+	})
+
+	//TODO: enable/disable depending on the conversation's encryption state
+	endOTR := gtk.NewMenuItemWithMnemonic(i18n.Local("End encrypted chat"))
+	submenu.Append(endOTR)
+
+	endOTR.Connect("activate", func() {
+		//TODO: errors
+		err := conv.account.TerminateConversationWith(conv.to)
+		if err != nil {
+			fmt.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
+		}
+	})
 
 	verify := gtk.NewMenuItemWithMnemonic(i18n.Local("_Verify fingerprint..."))
 	submenu.Append(verify)
@@ -90,7 +109,11 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 
 			text.SetEditable(true)
 
-			conv.sendMessage(msg)
+			err := conv.sendMessage(msg)
+			if err != nil {
+				fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), err.Error())
+			}
+
 			return true
 		}
 
@@ -140,26 +163,21 @@ func (conv *conversationWindow) Show() {
 	conv.win.ShowAll()
 }
 
-func (conv *conversationWindow) sendMessage(message string) {
-	//TODO: this should not be in both GUI and roster
-	conversation := conv.account.GetConversationWith(conv.to)
-
-	toSend, err := conversation.Send(otr3.ValidMessage(message))
+func (conv *conversationWindow) sendMessage(message string) error {
+	err := conv.account.EncryptAndSendTo(conv.to, message)
 	if err != nil {
-		fmt.Println(i18n.Local("Failed to generate OTR message"))
-		return
+		return err
 	}
 
+	//TODO: this should not be in both GUI and roster
+	conversation := conv.account.GetConversationWith(conv.to)
 	encrypted := conversation.IsEncrypted()
 	glib.IdleAdd(func() bool {
 		conv.appendMessage("ME", "NOW", encrypted, ui.StripHTML([]byte(message)))
 		return false
 	})
 
-	for _, m := range toSend {
-		//TODO: this should be session.Send(to, message)
-		conv.account.Conn.Send(conv.to, string(m))
-	}
+	return nil
 }
 
 func (conv *conversationWindow) appendMessage(from, timestamp string, encrypted bool, message []byte) {

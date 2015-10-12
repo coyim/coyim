@@ -1,12 +1,9 @@
-// +build !nocli
-
-package main
+package cli
 
 import (
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/url"
@@ -40,7 +37,7 @@ type cliUI struct {
 	terminate chan bool
 }
 
-func newCLI() *cliUI {
+func NewCLI() *cliUI {
 	oldState, err := terminal.MakeRaw(0)
 	if err != nil {
 		panic(err.Error())
@@ -67,6 +64,68 @@ func newCLI() *cliUI {
 			uidComplete: new(priorityList),
 		},
 	}
+}
+
+func (u *cliUI) ParseConfig() error {
+	configFileManager, err := config.NewConfigFileManager(*config.ConfigFile)
+	if err != nil {
+		return err
+	}
+
+	if err := configFileManager.ParseConfigFile(); err != nil {
+		filename, e := config.FindConfigFile(os.Getenv("HOME"))
+		if e != nil {
+			//TODO cant write config file. Should it be a problem?
+			return e
+		}
+
+		u.config = config.NewConfig()
+		u.config.Filename = *filename
+
+		u.Alert(err.Error())
+		enroll(u.config, u.term)
+	}
+
+	//TODO migrate to use configFileManager
+	u.config = &configFileManager.MultiAccountConfig.Accounts[0]
+	u.config.Filename = configFileManager.Filename
+
+	//TODO We do not support empty passwords
+	var password string
+	if len(u.config.Password) == 0 {
+		var err error
+
+		password, err = u.term.ReadPassword(
+			fmt.Sprintf("Password for %s (will not be saved to disk): ", u.config.Account),
+		)
+		if err != nil {
+			return err
+		}
+	} else {
+		password = u.config.Password
+	}
+
+	logger := &lineLogger{u.term, nil}
+
+	var registerCallback xmpp.FormCallback
+	if *config.CreateAccount {
+		registerCallback = u.RegisterCallback
+	}
+
+	//TODO replace this by session.Connect()
+	conn, err := config.NewXMPPConn(u.config, password, registerCallback, logger)
+	if err != nil {
+		return err
+	}
+
+	//TODO support one session per account
+	u.session = session.NewSession(u.config)
+	u.session.Conn = conn
+	u.session.SessionEventHandler = u
+
+	info(u.term, fmt.Sprintf("Your fingerprint is %x", u.session.PrivateKey.DefaultFingerprint()))
+
+	return nil
 }
 
 //TODO: This should receive something telling which Session/Config should be terminated if we have multiple accounts connected
@@ -150,76 +209,6 @@ func (c *cliUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
 	}
 
 	info(c.term, "Roster received")
-}
-
-func main() {
-	flag.Parse()
-
-	u := newCLI()
-	defer u.Close()
-
-	configFileManager, err := config.NewConfigFileManager(*config.ConfigFile)
-	if err != nil {
-		u.Alert(err.Error())
-		return
-	}
-
-	if err := configFileManager.ParseConfigFile(); err != nil {
-		filename, e := config.FindConfigFile(os.Getenv("HOME"))
-		if e != nil {
-			//TODO cant write config file. Should it be a problem?
-			return
-		}
-
-		u.config = config.NewConfig()
-		u.config.Filename = *filename
-
-		u.Alert(err.Error())
-		enroll(u.config, u.term)
-	}
-
-	//TODO migrate to use configFileManager
-	u.config = &configFileManager.MultiAccountConfig.Accounts[0]
-	u.config.Filename = configFileManager.Filename
-
-	//TODO We do not support empty passwords
-	var password string
-	if len(u.config.Password) == 0 {
-		var err error
-
-		password, err = u.term.ReadPassword(
-			fmt.Sprintf("Password for %s (will not be saved to disk): ", u.config.Account),
-		)
-		if err != nil {
-			return
-		}
-	} else {
-		password = u.config.Password
-	}
-
-	logger := &lineLogger{u.term, nil}
-
-	var registerCallback xmpp.FormCallback
-	if *config.CreateAccount {
-		registerCallback = u.RegisterCallback
-	}
-
-	//TODO replace this by session.Connect()
-	conn, err := config.NewXMPPConn(u.config, password, registerCallback, logger)
-	if err != nil {
-		u.Alert(err.Error())
-		return
-	}
-
-	//TODO support one session per account
-	u.session = session.NewSession(u.config)
-	u.session.Conn = conn
-	u.session.SessionEventHandler = u
-
-	info(u.term, fmt.Sprintf("Your fingerprint is %x", u.session.PrivateKey.DefaultFingerprint()))
-
-	u.Loop()
-	os.Stdout.Write([]byte("\n"))
 }
 
 func (c *cliUI) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {

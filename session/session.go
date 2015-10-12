@@ -356,6 +356,9 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		s.Conn.Send(stanza.From, string(msg))
 	}
 
+	//TODO: refactor
+	//This consumes the security change from OtrEventHandler and trigger an event
+	//on the SessionEventHandler. Why not having a single event handler?
 	eh, _ := s.OtrEventHandler[from]
 	change := eh.ConsumeSecurityChange()
 	switch change {
@@ -365,6 +368,8 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	case event.ConversationEnded:
 		s.otrEnded(from)
 
+		// TODO: twstrike/otr3 does not allow sending messages after the channel has
+		// been terminated, so this should not be a problem.
 		// This is probably unsafe without a policy that _forces_ crypto to
 		// _everyone_ by default and refuses plaintext. Users might not notice
 		// their buddy has ended a session, which they have also ended, and they
@@ -376,14 +381,12 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 				break
 			} else {
 				s.info(fmt.Sprintf("%s has ended the secure conversation.", from))
-				msgs, err := conversation.End()
+				s.TerminateConversationWith(from)
 				if err != nil {
-					//TODO: error handle
-					panic("this should not happen")
+					s.info(fmt.Sprintf("Unable to automatically tear down OTR conversation with %s: %s\n", from, err.Error()))
+					break
 				}
-				for _, msg := range msgs {
-					s.Conn.Send(from, string(msg))
-				}
+
 				s.info(fmt.Sprintf("Secure session with %s has been automatically ended. Messages will be sent in the clear until another OTR session is established.", from))
 			}
 		} else {

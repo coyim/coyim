@@ -12,7 +12,7 @@ import (
 
 var (
 	// TODO: shouldn't this be specific to the account ID in question?
-	AccountChangedSignal, _ = glib.NewSignal("coyim-account-changed")
+	AccountChangedSignal, _ = glib.SignalNew("coyim-account-changed")
 )
 
 func firstProxy(account Account) string {

@@ -5,7 +5,10 @@ go:
   - 1.5
   - 1.4.2
 
-install: make deps
+addons:
+  apt:
+    packages:
+      - libgtk-3-dev
 
-script:
-  - make ci
+install: make deps
+script: make ci

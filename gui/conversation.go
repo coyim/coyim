@@ -141,8 +141,6 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 	//the conversation encrypted state changes
 	//This way it would not keep updating the button when the window is not visible
 	glib.IdleAdd(func() bool {
-		fmt.Println(".")
-
 		if conv.account.GetConversationWith(conv.to).IsEncrypted() {
 			encryptedFlag.SetLabel("encrypted")
 		} else {

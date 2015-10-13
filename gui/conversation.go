@@ -95,8 +95,9 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 
 	text, _ := gtk.TextViewNew()
 	text.SetWrapMode(gtk.WRAP_WORD)
-	text.Connect("key-press-event", func(evKey *gdk.EventKey) bool {
+	text.Connect("key-press-event", func(_ *gtk.TextView, ev *gdk.Event) bool {
 		//Send message on ENTER press (without modifier key)
+		evKey := gdk.EventKey{ev}
 		if (evKey.State()&gdk.GDK_MODIFIER_MASK) == 0 && evKey.KeyVal() == 0xff0d {
 			text.SetEditable(false)
 
@@ -140,6 +141,8 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 	//the conversation encrypted state changes
 	//This way it would not keep updating the button when the window is not visible
 	glib.IdleAdd(func() bool {
+		fmt.Println(".")
+
 		if conv.account.GetConversationWith(conv.to).IsEncrypted() {
 			encryptedFlag.SetLabel("encrypted")
 		} else {

@@ -77,15 +77,7 @@ func (r *Roster) Clear() {
 	})
 }
 
-func (r *Roster) onActivateBuddy() {
-	//var path *gtk.TreePath
-	//var column *gtk.TreeViewColumn
-	path, _ := r.view.GetCursor()
-
-	if path == nil {
-		return
-	}
-
+func (r *Roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	iter, err := r.model.GetIter(path)
 	if err != nil {
 		return
@@ -96,12 +88,9 @@ func (r *Roster) onActivateBuddy() {
 
 	val2, _ := r.model.GetValue(iter, 1)
 	account := (*Account)(val2.GetPointer())
-	//account, _ := val2.GetPointer().(*Account)
 
 	//TODO: change to IDS and fix me
 	r.openConversationWindow(account, to)
-
-	//TODO call g_value_unset() but the lib doesnt provide
 }
 
 func (r *Roster) openConversationWindow(account *Account, to string) *conversationWindow {
@@ -147,7 +136,7 @@ func (r *Roster) Redraw() {
 	//gobj.Ref()
 
 	r.model.TreeModel.Ref()
-	r.view.SetModel(nil)
+	r.view.SetModel((*gtk.TreeModel)(nil))
 
 	r.model.Clear()
 	for account, contacts := range r.contacts {

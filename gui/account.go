@@ -8,7 +8,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/go-gtk/glib"
+	"github.com/gotk3/gotk3/glib"
 )
 
 // someone who knows how to persist account configuration

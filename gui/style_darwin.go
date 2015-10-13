@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/twstrike/go-gtk/gtk"
+import "fmt"
 
 // This is how the gtkrc file should look like on Mac OS
 // https://git.gnome.org/browse/gtk+/commit/?id=4ff709c24b8d4b3e26b3d513fde0676e9c43f897
@@ -165,5 +165,8 @@ binding "gtk-mac-icon-view"
 class "GtkIconView" binding "gtk-mac-icon-view"
 	`
 
-	gtk.ResourceParseString(style)
+	//TODO: FIX
+	return
+	fmt.Println(style)
+	//gtk.ResourceParseString(style)
 }

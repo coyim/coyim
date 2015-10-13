@@ -2,13 +2,12 @@ package gui
 
 import (
 	"fmt"
-	"unsafe"
 
+	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/go-gtk/gdk"
-	"github.com/twstrike/go-gtk/glib"
-	"github.com/twstrike/go-gtk/gtk"
 )
 
 type conversationWindow struct {
@@ -20,14 +19,14 @@ type conversationWindow struct {
 }
 
 func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
-	menubar := gtk.NewMenuBar()
-	conversationMenu := gtk.NewMenuItemWithMnemonic(i18n.Local("Conversation"))
+	menubar, _ := gtk.MenuBarNew()
+	conversationMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("Conversation"))
 	menubar.Append(conversationMenu)
 
-	submenu := gtk.NewMenu()
+	submenu, _ := gtk.MenuNew()
 	conversationMenu.SetSubmenu(submenu)
 
-	startAKE := gtk.NewMenuItemWithMnemonic(i18n.Local("Start encrypted chat"))
+	startAKE, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("Start encrypted chat"))
 	submenu.Append(startAKE)
 
 	//TODO: enable/disable depending on the conversation's encryption state
@@ -40,7 +39,7 @@ func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 	})
 
 	//TODO: enable/disable depending on the conversation's encryption state
-	endOTR := gtk.NewMenuItemWithMnemonic(i18n.Local("End encrypted chat"))
+	endOTR, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("End encrypted chat"))
 	submenu.Append(endOTR)
 
 	endOTR.Connect("activate", func() {
@@ -51,7 +50,7 @@ func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 		}
 	})
 
-	verify := gtk.NewMenuItemWithMnemonic(i18n.Local("_Verify fingerprint..."))
+	verify, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Verify fingerprint..."))
 	submenu.Append(verify)
 
 	verify.Connect("activate", func() {
@@ -62,12 +61,16 @@ func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 }
 
 func newConversationWindow(account *Account, uid string) *conversationWindow {
+	win, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	history, _ := gtk.TextViewNew()
+	scrollHistory, _ := gtk.ScrolledWindowNew(nil, nil)
+
 	conv := &conversationWindow{
 		to:            uid,
 		account:       account,
-		win:           gtk.NewWindow(gtk.WINDOW_TOPLEVEL),
-		history:       gtk.NewTextView(),
-		scrollHistory: gtk.NewScrolledWindow(nil, nil),
+		win:           win,
+		history:       history,
+		scrollHistory: scrollHistory,
 	}
 
 	// Unlike the GTK version, this is not supposed to be used as a callback but
@@ -84,27 +87,23 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 	conv.history.SetEditable(false)
 	conv.history.SetCursorVisible(false)
 
-	vbox := gtk.NewVBox(false, 1)
+	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
+
 	vbox.SetHomogeneous(false)
 	vbox.SetSpacing(5)
 	vbox.SetBorderWidth(5)
 
-	text := gtk.NewTextView()
+	text, _ := gtk.TextViewNew()
 	text.SetWrapMode(gtk.WRAP_WORD)
-	text.Connect("key-press-event", func(ctx *glib.CallbackContext) bool {
-		arg := ctx.Args(0)
-		evKey := *(**gdk.EventKey)(unsafe.Pointer(&arg))
-
+	text.Connect("key-press-event", func(evKey *gdk.EventKey) bool {
 		//Send message on ENTER press (without modifier key)
-		if (uint(evKey.State)&uint(gdk.MODIFIER_MASK)) == 0 && evKey.Keyval == 0xff0d {
+		if (evKey.State()&gdk.GDK_MODIFIER_MASK) == 0 && evKey.KeyVal() == 0xff0d {
 			text.SetEditable(false)
 
-			b := text.GetBuffer()
-			s := &gtk.TextIter{}
-			e := &gtk.TextIter{}
-			b.GetStartIter(s)
-			b.GetEndIter(e)
-			msg := b.GetText(s, e, true)
+			b, _ := text.GetBuffer()
+			s := b.GetStartIter()
+			e := b.GetEndIter()
+			msg, _ := b.GetText(s, e, true)
 			b.SetText("")
 
 			text.SetEditable(true)
@@ -120,7 +119,7 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 		return false
 	})
 
-	scroll := gtk.NewScrolledWindow(nil, nil)
+	scroll, _ := gtk.ScrolledWindowNew(nil, nil)
 	scroll.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
 	scroll.Add(text)
 
@@ -129,10 +128,10 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 
 	vbox.PackStart(conv.conversationMenu(), false, false, 0)
 	vbox.PackStart(conv.scrollHistory, true, true, 0)
-	vbox.Add(scroll)
+	vbox.PackStart(scroll, true, true, 0)
 
 	//TODO: provide function to trigger AKE
-	encryptedFlag := gtk.NewButton()
+	encryptedFlag, _ := gtk.ButtonNew()
 	vbox.Add(encryptedFlag)
 
 	//TODO this will run undefinitely
@@ -182,7 +181,7 @@ func (conv *conversationWindow) sendMessage(message string) error {
 
 func (conv *conversationWindow) appendMessage(from, timestamp string, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
-		buff := conv.history.GetBuffer()
+		buff, _ := conv.history.GetBuffer()
 		buff.InsertAtCursor(timestamp)
 		buff.InsertAtCursor(" - ")
 		buff.InsertAtCursor(string(message))

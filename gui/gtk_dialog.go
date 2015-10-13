@@ -1,11 +1,11 @@
 package gui
 
-import "github.com/twstrike/go-gtk/gtk"
+import "github.com/gotk3/gotk3/gtk"
 
 type dialog struct {
 	title    string
 	position gtk.WindowPosition
-	vbox     []createable
+	content  []createable
 	id       string
 }
 
@@ -17,17 +17,25 @@ func (wr *widgetRegistry) dialogShowAll(id string) {
 	wr.reg[id].(*gtk.Dialog).ShowAll()
 }
 
-func (d dialog) create(reg *widgetRegistry) gtk.IWidget {
-	dialog := gtk.NewDialog()
+func (d dialog) create(reg *widgetRegistry) (gtk.IWidget, error) {
+	dialog, e := gtk.DialogNew()
+	if e != nil {
+		return nil, e
+	}
+
 	dialog.SetTitle(d.title)
 	dialog.SetPosition(d.position)
-	vbox := dialog.GetVBox()
 
-	for _, item := range d.vbox {
-		vbox.Add(item.create(reg))
+	//TODO: error
+	content, _ := dialog.GetContentArea()
+
+	for _, item := range d.content {
+		//TODO: error
+		i, _ := item.create(reg)
+		content.Add(i)
 	}
 
 	reg.register(d.id, dialog)
 
-	return dialog
+	return dialog, nil
 }

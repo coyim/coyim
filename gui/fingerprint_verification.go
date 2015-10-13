@@ -3,15 +3,15 @@ package gui
 import (
 	"fmt"
 
+	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/go-gtk/gtk"
 )
 
 func verifyFingerprintDialog(account *Account, uid string) {
-	dialog := gtk.NewDialog()
+	dialog, _ := gtk.DialogNew()
 	dialog.SetTitle(i18n.Local("Fingerprint verification"))
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
-	vbox := dialog.GetVBox()
+	vbox, _ := dialog.GetContentArea()
 
 	//TODO: errors
 	conversation := account.GetConversationWith(uid)
@@ -25,9 +25,10 @@ func verifyFingerprintDialog(account *Account, uid string) {
 
 	Is this the verifiably correct fingerprint for %[3]s?
 	`), account.Account, account.Session.PrivateKey.DefaultFingerprint(), uid, fpr)
-	vbox.Add(gtk.NewLabel(message))
+	l, _ := gtk.LabelNew(message)
+	vbox.Add(l)
 
-	button := gtk.NewButtonWithLabel(i18n.Local("Verify"))
+	button, _ := gtk.ButtonNewWithLabel(i18n.Local("Verify"))
 	vbox.Add(button)
 
 	button.Connect("clicked", func() {

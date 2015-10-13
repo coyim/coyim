@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/twstrike/go-gtk/gtk"
+import "github.com/gotk3/gotk3/gtk"
 
 type button struct {
 	text      string
@@ -8,11 +8,17 @@ type button struct {
 	id        string
 }
 
-func (b button) create(reg *widgetRegistry) gtk.IWidget {
-	button := gtk.NewButtonWithLabel(b.text)
-	if b.onClicked != nil {
-		button.Connect("clicked", func() { b.onClicked() })
+func (b button) create(reg *widgetRegistry) (gtk.IWidget, error) {
+	button, e := gtk.ButtonNewWithLabel(b.text)
+	if e != nil {
+		return nil, e
 	}
+
+	if b.onClicked != nil {
+		button.Connect("clicked", b.onClicked)
+	}
+
 	reg.register(b.id, button)
-	return button
+
+	return button, e
 }

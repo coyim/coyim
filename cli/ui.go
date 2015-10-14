@@ -18,6 +18,7 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
+	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
@@ -899,20 +900,11 @@ func enroll(conf *config.Config, term *terminal.Terminal) bool {
 	conf.OTRAutoStartSession = true
 	conf.OTRAutoTearDown = false
 
-	// List well known Tor hidden services.
-	knownTorDomain := map[string]string{
-		"jabber.ccc.de":             "okj7xc6j2szr2y75.onion",
-		"riseup.net":                "4cjw6cwpeaeppfqz.onion",
-		"jabber.calyxinstitute.org": "ijeeynrc6x2uy5ob.onion",
-		"jabber.otr.im":             "5rgdtlawqkcplz75.onion",
-		"wtfismyip.com":             "ofkztxcohimx34la.onion",
-	}
-
 	// Autoconfigure well known Tor hidden services.
-	if hiddenService, ok := knownTorDomain[domain]; ok && conf.UseTor {
+	if hiddenService, ok := servers.Get(domain); ok && conf.UseTor {
 		const torProxyURL = "socks5://127.0.0.1:9050"
 		info(term, "It appears that you are using a well known server and we will use its Tor hidden service to connect.")
-		conf.Server = hiddenService
+		conf.Server = hiddenService.Onion
 		conf.Port = 5222
 		conf.Proxies = []string{torProxyURL}
 		term.SetPrompt("> ")

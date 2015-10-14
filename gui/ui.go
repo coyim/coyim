@@ -33,24 +33,24 @@ func NewGTK() *gtkUI {
 	return &gtkUI{}
 }
 
-func (ui *gtkUI) LoadConfig(configFile string) error {
+func (u *gtkUI) LoadConfig(configFile string) error {
 	var err error
-	if ui.configFileManager, err = config.NewConfigFileManager(configFile); err != nil {
-		ui.Alert(err.Error())
+	if u.configFileManager, err = config.NewConfigFileManager(configFile); err != nil {
+		u.Alert(err.Error())
 		return err
 	}
 
-	err = ui.configFileManager.ParseConfigFile()
+	err = u.configFileManager.ParseConfigFile()
 	if err != nil {
-		ui.Alert(err.Error())
+		u.Alert(err.Error())
 
-		ui.configFileManager.MultiAccountConfig = &config.MultiAccountConfig{}
+		u.configFileManager.MultiAccountConfig = &config.MultiAccountConfig{}
 
 		//TODO: Remove this
-		ui.multiConfig = ui.configFileManager.MultiAccountConfig
+		u.multiConfig = u.configFileManager.MultiAccountConfig
 
 		glib.IdleAdd(func() bool {
-			ui.showAddAccountWindow()
+			u.showAddAccountWindow()
 			return false
 		})
 
@@ -58,9 +58,9 @@ func (ui *gtkUI) LoadConfig(configFile string) error {
 	}
 
 	//TODO: REMOVE this
-	ui.multiConfig = ui.configFileManager.MultiAccountConfig
+	u.multiConfig = u.configFileManager.MultiAccountConfig
 
-	ui.accounts = BuildAccountsFrom(ui.multiConfig, ui.configFileManager)
+	u.accounts = BuildAccountsFrom(u.multiConfig, u.configFileManager)
 
 	return nil
 }

@@ -76,16 +76,16 @@ func NewSession(c *config.Config) *Session {
 	return s
 }
 
-func (c *Session) info(m string) {
-	c.SessionEventHandler.Info(m)
+func (s *Session) info(m string) {
+	s.SessionEventHandler.Info(m)
 }
 
-func (c *Session) warn(m string) {
-	c.SessionEventHandler.Warn(m)
+func (s *Session) warn(m string) {
+	s.SessionEventHandler.Warn(m)
 }
 
-func (c *Session) alert(m string) {
-	c.SessionEventHandler.Alert(m)
+func (s *Session) alert(m string) {
+	s.SessionEventHandler.Alert(m)
 }
 
 func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {

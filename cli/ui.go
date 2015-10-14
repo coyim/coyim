@@ -71,10 +71,10 @@ func NewCLI() *cliUI {
 	}
 }
 
-func (u *cliUI) LoadConfig(configFile string) error {
+func (c *cliUI) LoadConfig(configFile string) error {
 	configFileManager, err := config.NewConfigFileManager(configFile)
 	if err != nil {
-		u.Alert(err.Error())
+		c.Alert(err.Error())
 		return err
 	}
 
@@ -82,57 +82,57 @@ func (u *cliUI) LoadConfig(configFile string) error {
 		filename, e := config.FindConfigFile(os.Getenv("HOME"))
 		if e != nil {
 			//TODO cant write config file. Should it be a problem?
-			//u.Alert(err.Error())
+			//c.Alert(err.Error())
 			return e
 		}
 
-		u.config = config.NewConfig()
-		u.config.Filename = *filename
+		c.config = config.NewConfig()
+		c.config.Filename = *filename
 
-		u.Alert(err.Error())
-		enroll(u.config, u.term)
+		c.Alert(err.Error())
+		enroll(c.config, c.term)
 	}
 
 	//TODO migrate to use configFileManager
-	u.config = &configFileManager.MultiAccountConfig.Accounts[0]
-	u.config.Filename = configFileManager.Filename
+	c.config = &configFileManager.MultiAccountConfig.Accounts[0]
+	c.config.Filename = configFileManager.Filename
 
 	//TODO We do not support empty passwords
 	var password string
-	if len(u.config.Password) == 0 {
+	if len(c.config.Password) == 0 {
 		var err error
 
-		password, err = u.term.ReadPassword(
-			fmt.Sprintf("Password for %s (will not be saved to disk): ", u.config.Account),
+		password, err = c.term.ReadPassword(
+			fmt.Sprintf("Password for %s (will not be saved to disk): ", c.config.Account),
 		)
 		if err != nil {
-			u.Alert(err.Error())
+			c.Alert(err.Error())
 			return err
 		}
 	} else {
-		password = u.config.Password
+		password = c.config.Password
 	}
 
-	logger := &lineLogger{u.term, nil}
+	logger := &lineLogger{c.term, nil}
 
 	var registerCallback xmpp.FormCallback
 	if *config.CreateAccount {
-		registerCallback = u.RegisterCallback
+		registerCallback = c.RegisterCallback
 	}
 
 	//TODO replace this by session.Connect()
-	conn, err := config.NewXMPPConn(u.config, password, registerCallback, logger)
+	conn, err := config.NewXMPPConn(c.config, password, registerCallback, logger)
 	if err != nil {
-		u.Alert(err.Error())
+		c.Alert(err.Error())
 		return err
 	}
 
 	//TODO support one session per account
-	u.session = session.NewSession(u.config)
-	u.session.Conn = conn
-	u.session.SessionEventHandler = u
+	c.session = session.NewSession(c.config)
+	c.session.Conn = conn
+	c.session.SessionEventHandler = c
 
-	info(u.term, fmt.Sprintf("Your fingerprint is %x", u.session.PrivateKey.DefaultFingerprint()))
+	info(c.term, fmt.Sprintf("Your fingerprint is %x", c.session.PrivateKey.DefaultFingerprint()))
 
 	return nil
 }

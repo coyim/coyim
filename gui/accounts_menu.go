@@ -6,13 +6,13 @@ import (
 
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/go-gtk/glib"
-	"github.com/twstrike/go-gtk/gtk"
+	"github.com/twstrike/gotk3/glib"
+	"github.com/twstrike/gotk3/gtk"
 )
 
 var (
 	// TODO: shouldn't this be specific to the account ID in question?
-	AccountChangedSignal = glib.NewSignal("coyim-account-changed")
+	AccountChangedSignal, _ = glib.SignalNew("coyim-account-changed")
 )
 
 func firstProxy(account Account) string {
@@ -54,7 +54,7 @@ func accountDialog(account Account, saveFunction func() error) {
 		title:    i18n.Local("Account Details"),
 		position: gtk.WIN_POS_CENTER,
 		id:       "dialog",
-		vbox: []createable{
+		content: []createable{
 			label{i18n.Local("Account")},
 			entry{
 				text:       account.Account,
@@ -120,15 +120,15 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 }
 
 func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
-	menuitem := gtk.NewMenuItemWithMnemonic(account.Account)
+	menuitem, _ := gtk.MenuItemNewWithMnemonic(account.Account)
 
-	accountSubMenu := gtk.NewMenu()
+	accountSubMenu, _ := gtk.MenuNew()
 	menuitem.SetSubmenu(accountSubMenu)
 
-	connectItem := gtk.NewMenuItemWithMnemonic(i18n.Local("_Connect"))
+	connectItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect"))
 	accountSubMenu.Append(connectItem)
 
-	disconnectItem := gtk.NewMenuItemWithMnemonic(i18n.Local("_Disconnect"))
+	disconnectItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect"))
 	accountSubMenu.Append(disconnectItem)
 
 	toggleConnectAndDisconnectMenuItems(account.Session, connectItem, disconnectItem)
@@ -146,10 +146,10 @@ func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 		toggleConnectAndDisconnectMenuItems(account.Session, connectItem, disconnectItem)
 	}
 
-	u.window.Connect(account.ConnectedSignal.Name(), connToggle)
-	u.window.Connect(account.DisconnectedSignal.Name(), connToggle)
+	u.window.Connect(account.ConnectedSignal.String(), connToggle)
+	u.window.Connect(account.DisconnectedSignal.String(), connToggle)
 
-	editItem := gtk.NewMenuItemWithMnemonic(i18n.Local("_Edit..."))
+	editItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
 	accountSubMenu.Append(editItem)
 
 	editItem.Connect("activate", func() {
@@ -162,17 +162,18 @@ func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
 }
 
 func (u *gtkUI) buildAccountsMenu() {
-	submenu := gtk.NewMenu()
+	submenu, _ := gtk.MenuNew()
 
 	for _, account := range u.accounts {
 		submenu.Append(buildAccountSubmenu(u, account))
 	}
 
 	if len(u.accounts) > 0 {
-		submenu.Append(gtk.NewSeparatorMenuItem())
+		sep, _ := gtk.SeparatorMenuItemNew()
+		submenu.Append(sep)
 	}
 
-	addAccMenu := gtk.NewMenuItemWithMnemonic(i18n.Local("_Add..."))
+	addAccMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Add..."))
 	addAccMenu.Connect("activate", u.showAddAccountWindow)
 
 	submenu.Append(addAccMenu)

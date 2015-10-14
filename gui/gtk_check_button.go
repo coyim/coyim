@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/twstrike/go-gtk/gtk"
+import "github.com/twstrike/gotk3/gtk"
 
 type checkButton struct {
 	text   string
@@ -19,10 +19,14 @@ func (wr *widgetRegistry) getActive(id string) bool {
 	return false
 }
 
-func (c checkButton) create(reg *widgetRegistry) gtk.IWidget {
-	entry := gtk.NewCheckButtonWithLabel(c.text)
+func (c checkButton) create(reg *widgetRegistry) (gtk.IWidget, error) {
+	entry, e := gtk.CheckButtonNewWithLabel(c.text)
+	if e != nil {
+		return nil, e
+	}
+
 	entry.SetActive(c.active)
 	reg.register(c.id, entry)
 
-	return entry
+	return entry, nil
 }

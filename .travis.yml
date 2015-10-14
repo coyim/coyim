@@ -5,7 +5,16 @@ go:
   - 1.5
   - 1.4.2
 
-install: make deps
+before_install:
+  - sudo add-apt-repository -y ppa:ricotz/testing
+  - sudo add-apt-repository -y ppa:gnome3-team/gnome3
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq -y gtk+3.0 libgtk-3-dev
 
-script:
-  - make ci
+install:
+  - go get -tags gtk_3_6 -v github.com/twstrike/gotk3
+
+install: make deps
+script: make ci
+
+sudo: true

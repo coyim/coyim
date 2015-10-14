@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/twstrike/go-gtk/gtk"
+import "github.com/twstrike/gotk3/gtk"
 
 type entry struct {
 	text       string
@@ -14,18 +14,23 @@ func (wr *widgetRegistry) getText(id string) string {
 
 	switch w := w.(type) {
 	case *gtk.Entry:
-		return w.GetText()
+		t, _ := w.GetText()
+		return t
 	}
 
 	return ""
 }
 
-func (e entry) create(reg *widgetRegistry) gtk.IWidget {
-	entry := gtk.NewEntry()
+func (e entry) create(reg *widgetRegistry) (gtk.IWidget, error) {
+	entry, err := gtk.EntryNew()
+	if err != nil {
+		return nil, err
+	}
+
 	entry.SetText(e.text)
 	entry.SetEditable(e.editable)
 	entry.SetVisibility(e.visibility)
 	reg.register(e.id, entry)
 
-	return entry
+	return entry, nil
 }

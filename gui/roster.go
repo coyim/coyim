@@ -1,13 +1,11 @@
 package gui
 
 import (
-	"unsafe"
-
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/go-gtk/glib"
-	"github.com/twstrike/go-gtk/gtk"
+	"github.com/twstrike/gotk3/glib"
+	"github.com/twstrike/gotk3/gtk"
 )
 
 type Roster struct {
@@ -23,14 +21,17 @@ type Roster struct {
 }
 
 func NewRoster() *Roster {
-	r := &Roster{
-		Window: gtk.NewScrolledWindow(nil, nil),
+	w, _ := gtk.ScrolledWindowNew(nil, nil)
+	m, _ := gtk.ListStoreNew(
+		glib.TYPE_STRING,  // user
+		glib.TYPE_POINTER, // *Account
+	)
+	v, _ := gtk.TreeViewNew()
 
-		model: gtk.NewListStore(
-			gtk.TYPE_STRING,  // user
-			gtk.TYPE_POINTER, // *Account
-		),
-		view: gtk.NewTreeView(),
+	r := &Roster{
+		Window: w,
+		model:  m,
+		view:   v,
 
 		conversations: make(map[string]*conversationWindow),
 		contacts:      make(map[*Account][]xmpp.RosterEntry),
@@ -39,12 +40,13 @@ func NewRoster() *Roster {
 	r.Window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
 	r.view.SetHeadersVisible(false)
-	r.view.GetSelection().SetMode(gtk.SELECTION_NONE)
+	if s, err := r.view.GetSelection(); err != nil {
+		s.SetMode(gtk.SELECTION_NONE)
+	}
 
-	r.view.AppendColumn(
-		gtk.NewTreeViewColumnWithAttributes("user",
-			gtk.NewCellRendererText(), "text", 0),
-	)
+	cr, _ := gtk.CellRendererTextNew()
+	c, _ := gtk.TreeViewColumnNewWithAttribute("user", cr, "text", 0)
+	r.view.AppendColumn(c)
 
 	r.view.SetModel(r.model)
 	r.view.Connect("row-activated", r.onActivateBuddy)
@@ -57,51 +59,38 @@ func NewRoster() *Roster {
 }
 
 func (r *Roster) Clear() {
-	glib.IdleAdd(func() bool {
-		gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
+	glib.IdleAdd(func() {
+		//gobj := glib.ToGObject(unsafe.Pointer(r.model.GListStore))
+		//gobj.Ref()
+		r.model.TreeModel.Ref()
 
-		gobj.Ref()
-		r.view.SetModel(nil)
+		r.view.SetModel((*gtk.TreeModel)(nil))
 		r.model.Clear()
 
-		//TODO: Replace by something better
-		iter := &gtk.TreeIter{}
-		r.model.Append(iter)
-		r.model.Set(iter,
+		iter := r.model.Append()
+		r.model.SetValue(iter,
 			0, i18n.Local("Disconnected.\nPlease connect from pref. menu"),
 		)
 
 		r.view.SetModel(r.model)
-		gobj.Unref()
-		return false
+		r.model.TreeModel.Unref()
 	})
 }
 
-func (r *Roster) onActivateBuddy() {
-	var path *gtk.TreePath
-	var column *gtk.TreeViewColumn
-	r.view.GetCursor(&path, &column)
-
-	if path == nil {
+func (r *Roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
+	iter, err := r.model.GetIter(path)
+	if err != nil {
 		return
 	}
 
-	iter := &gtk.TreeIter{}
-	if !r.model.GetIter(iter, path) {
-		return
-	}
+	val, _ := r.model.GetValue(iter, 0)
+	to, _ := val.GetString()
 
-	val := &glib.GValue{}
-	r.model.GetValue(iter, 0, val)
-	to := val.GetString()
-
-	val2 := &glib.GValue{}
-	r.model.GetValue(iter, 1, val2)
+	val2, _ := r.model.GetValue(iter, 1)
 	account := (*Account)(val2.GetPointer())
 
+	//TODO: change to IDS and fix me
 	r.openConversationWindow(account, to)
-
-	//TODO call g_value_unset() but the lib doesnt provide
 }
 
 func (r *Roster) openConversationWindow(account *Account, to string) *conversationWindow {
@@ -143,26 +132,21 @@ func (r *Roster) Update(account *Account, entries []xmpp.RosterEntry) {
 }
 
 func (r *Roster) Redraw() {
-	gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
+	//gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
+	//gobj.Ref()
 
-	gobj.Ref()
-	r.view.SetModel(nil)
+	r.model.TreeModel.Ref()
+	r.view.SetModel((*gtk.TreeModel)(nil))
 
 	r.model.Clear()
-	iter := &gtk.TreeIter{}
 	for account, contacts := range r.contacts {
 		for _, item := range contacts {
-			r.model.Append(iter)
-
-			//state, ok := s.knownStates[item.Jid]
-			// Subscription, knownState
-			r.model.Set(iter,
-				0, item.Jid,
-				1, account,
-			)
+			iter := r.model.Append()
+			r.model.Set(iter, []int{0, 1}, []interface{}{item.Jid, account})
 		}
 	}
 
 	r.view.SetModel(r.model)
-	gobj.Unref()
+	r.model.TreeModel.Unref()
+	//gobj.Unref()
 }

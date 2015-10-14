@@ -13,8 +13,8 @@ import (
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
 
-	"github.com/twstrike/go-gtk/glib"
-	"github.com/twstrike/go-gtk/gtk"
+	"github.com/twstrike/gotk3/glib"
+	"github.com/twstrike/gotk3/gtk"
 	"github.com/twstrike/otr3"
 )
 
@@ -88,7 +88,7 @@ func (u *gtkUI) SaveConfig() error {
 	}
 
 	u.addNewAccountsFromConfig()
-	u.window.Emit(AccountChangedSignal.Name())
+	u.window.Emit(AccountChangedSignal.String())
 
 	return nil
 }
@@ -154,23 +154,24 @@ func (u *gtkUI) Loop() {
 
 func (u *gtkUI) Close() {}
 
-func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
-	u.window.Connect(s.Name(), f)
-}
+//func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
+//	u.window.Connect(s.String(), f)
+//}
 
 func (u *gtkUI) initRoster() {
 	u.roster = NewRoster()
 }
 
 func (u *gtkUI) mainWindow() {
-	u.window = gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
+	u.window, _ = gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
 	u.applyStyle()
 	u.initRoster()
 
 	menubar := initMenuBar(u)
-	vbox := gtk.NewVBox(false, 1)
+	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
+	vbox.SetHomogeneous(false)
 	vbox.PackStart(menubar, false, false, 0)
-	vbox.Add(u.roster.Window)
+	vbox.PackStart(u.roster.Window, true, true, 0)
 	u.window.Add(vbox)
 
 	u.window.SetTitle(i18n.Local("Coy"))
@@ -182,20 +183,25 @@ func (u *gtkUI) mainWindow() {
 
 func (*gtkUI) askForPassword(connect func(string)) {
 	glib.IdleAdd(func() bool {
-		dialog := gtk.NewDialog()
+		dialog, _ := gtk.DialogNew()
 		dialog.SetTitle(i18n.Local("Password"))
 		dialog.SetPosition(gtk.WIN_POS_CENTER)
-		vbox := dialog.GetVBox()
 
-		vbox.Add(gtk.NewLabel(i18n.Local("Password")))
-		passwordInput := gtk.NewEntry()
+		vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
+		vbox.SetHomogeneous(false)
+
+		l, _ := gtk.LabelNew(i18n.Local("Password"))
+		vbox.Add(l)
+
+		passwordInput, _ := gtk.EntryNew()
 		passwordInput.SetEditable(true)
 		passwordInput.SetVisibility(false)
 		vbox.Add(passwordInput)
 
-		button := gtk.NewButtonWithLabel(i18n.Local("Send"))
+		button, _ := gtk.ButtonNewWithLabel(i18n.Local("Send"))
 		button.Connect("clicked", func() {
-			go connect(passwordInput.GetText())
+			t, _ := passwordInput.GetText()
+			go connect(t)
 			dialog.Destroy()
 		})
 		vbox.Add(button)
@@ -235,7 +241,7 @@ func authors() []string {
 }
 
 func aboutDialog() {
-	dialog := gtk.NewAboutDialog()
+	dialog, _ := gtk.AboutDialogNew()
 	dialog.SetName(i18n.Local("Coy IM!"))
 	dialog.SetProgramName("Coyim")
 	dialog.SetAuthors(authors())
@@ -290,12 +296,12 @@ func (u *gtkUI) addContactWindow() {
 }
 
 func (u *gtkUI) buildContactsMenu() *gtk.MenuItem {
-	contactsMenu := gtk.NewMenuItemWithMnemonic(i18n.Local("_Contacts"))
+	contactsMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Contacts"))
 
-	submenu := gtk.NewMenu()
+	submenu, _ := gtk.MenuNew()
 	contactsMenu.SetSubmenu(submenu)
 
-	menuitem := gtk.NewMenuItemWithMnemonic(i18n.Local("_Add..."))
+	menuitem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Add..."))
 	submenu.Append(menuitem)
 
 	menuitem.Connect("activate", u.addContactWindow)
@@ -304,16 +310,16 @@ func (u *gtkUI) buildContactsMenu() *gtk.MenuItem {
 }
 
 func initMenuBar(u *gtkUI) *gtk.MenuBar {
-	menubar := gtk.NewMenuBar()
+	menubar, _ := gtk.MenuBarNew()
 
 	menubar.Append(u.buildContactsMenu())
 
-	u.accountsMenu = gtk.NewMenuItemWithMnemonic(i18n.Local("_Accounts"))
+	u.accountsMenu, _ = gtk.MenuItemNewWithMnemonic(i18n.Local("_Accounts"))
 	menubar.Append(u.accountsMenu)
 
 	//TODO: replace this by emiting the signal at startup
 	u.buildAccountsMenu()
-	u.window.Connect(AccountChangedSignal.Name(), func() {
+	u.window.Connect(AccountChangedSignal.String(), func() {
 		//TODO: should it destroy the current submenu? HOW?
 		u.accountsMenu.SetSubmenu(nil)
 
@@ -321,11 +327,11 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	})
 
 	//Help -> About
-	cascademenu := gtk.NewMenuItemWithMnemonic(i18n.Local("_Help"))
+	cascademenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Help"))
 	menubar.Append(cascademenu)
-	submenu := gtk.NewMenu()
+	submenu, _ := gtk.MenuNew()
 	cascademenu.SetSubmenu(submenu)
-	menuitem := gtk.NewMenuItemWithMnemonic(i18n.Local("_About"))
+	menuitem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_About"))
 	menuitem.Connect("activate", aboutDialog)
 	submenu.Append(menuitem)
 	return menubar
@@ -335,7 +341,7 @@ func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
 	confirmDialog := authorizePresenceSubscriptionDialog(u.window, from)
 
 	glib.IdleAdd(func() bool {
-		confirm := confirmDialog.Run() == gtk.RESPONSE_YES
+		confirm := gtk.ResponseType(confirmDialog.Run()) == gtk.RESPONSE_YES
 		confirmDialog.Destroy()
 
 		s.HandleConfirmOrDeny(from, confirm)
@@ -379,7 +385,7 @@ func (u *gtkUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
 
 func (u *gtkUI) disconnect(account Account) error {
 	account.Session.Close()
-	u.window.Emit(account.DisconnectedSignal.Name())
+	u.window.Emit(account.DisconnectedSignal.String())
 	return nil
 }
 
@@ -396,11 +402,11 @@ func (u *gtkUI) connect(account Account) {
 	connectFn := func(password string) {
 		err := s.Connect(password, registerCallback)
 		if err != nil {
-			u.window.Emit(account.DisconnectedSignal.Name())
+			u.window.Emit(account.DisconnectedSignal.String())
 			return
 		}
 
-		u.window.Emit(account.ConnectedSignal.Name())
+		u.window.Emit(account.ConnectedSignal.String())
 	}
 
 	//TODO We do not support saved empty passwords

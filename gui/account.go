@@ -8,7 +8,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/go-gtk/glib"
+	"github.com/twstrike/gotk3/glib"
 )
 
 // someone who knows how to persist account configuration
@@ -63,14 +63,16 @@ func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig, manager config
 func newAccount(conf *config.Config) Account {
 	//id := conf.Account + "-" + strconv.FormatUint(uint64(time.Now().UnixNano()), 10)
 	id := strconv.FormatUint(uint64(time.Now().UnixNano()), 10)
+	c, _ := glib.SignalNew(signalName(id, "connected"))
+	d, _ := glib.SignalNew(signalName(id, "disconnected"))
 
 	return Account{
 		ID:      id,
 		Config:  conf,
 		Session: session.NewSession(conf),
 
-		ConnectedSignal:    glib.NewSignal(signalName(id, "connected")),
-		DisconnectedSignal: glib.NewSignal(signalName(id, "disconnected")),
+		ConnectedSignal:    c,
+		DisconnectedSignal: d,
 	}
 }
 

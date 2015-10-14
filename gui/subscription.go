@@ -2,12 +2,12 @@ package gui
 
 import (
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/go-gtk/glib"
-	"github.com/twstrike/go-gtk/gtk"
+	"github.com/twstrike/gotk3/glib"
+	"github.com/twstrike/gotk3/gtk"
 )
 
 func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.MessageDialog {
-	confirmDialog := gtk.NewMessageDialog(
+	confirmDialog := gtk.MessageDialogNew(
 		parent,
 		gtk.DIALOG_MODAL,
 		gtk.MESSAGE_QUESTION,
@@ -20,59 +20,53 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 }
 
 func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
-	dialog := gtk.NewDialog()
+	dialog, _ := gtk.DialogNew()
 	dialog.SetTitle(i18n.Local("Add contact"))
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
-	vbox := dialog.GetVBox()
+	vbox, _ := dialog.GetContentArea()
 
-	accountLabel := gtk.NewLabel(i18n.Local("Account"))
+	accountLabel, _ := gtk.LabelNew(i18n.Local("Account"))
 	vbox.Add(accountLabel)
 
-	model := gtk.NewListStore(
-		gtk.TYPE_STRING,  // account name
-		gtk.TYPE_POINTER, // *Account
+	model, _ := gtk.ListStoreNew(
+		glib.TYPE_STRING,  // account name
+		glib.TYPE_POINTER, // *Account
 	)
 
-	iter := &gtk.TreeIter{}
 	for _, acc := range accounts {
-		model.Append(iter)
-		model.Set(iter,
-			0, acc.Account,
-			1, acc,
-		)
+		iter := model.Append()
+		//TODO stop passing pointers
+		model.Set(iter, []int{0, 1}, []interface{}{acc.Account, acc})
 	}
 
-	accountInput := gtk.NewComboBoxWithModel(&model.TreeModel)
+	accountInput, _ := gtk.ComboBoxNewWithModel(&model.TreeModel)
 	vbox.Add(accountInput)
 
-	//TODO: ComboBox should have a CellLayout embedded
-	cellLayout := accountInput.GetCellLayout()
-	renderer := gtk.NewCellRendererText()
-	cellLayout.PackStart(renderer, true)
-	cellLayout.AddAttribute(renderer, "text", 0)
+	renderer, _ := gtk.CellRendererTextNew()
+	accountInput.PackStart(renderer, true)
+	accountInput.AddAttribute(renderer, "text", 0)
 
-	vbox.Add(gtk.NewLabel(i18n.Local("ID")))
-	contactInput := gtk.NewEntry()
+	l, _ := gtk.LabelNew(i18n.Local("ID"))
+	vbox.Add(l)
+
+	contactInput, _ := gtk.EntryNew()
 	contactInput.SetEditable(true)
 	vbox.Add(contactInput)
 
 	//TODO: disable the add button until the form has all the data
 	//- an account selected
 	//- an ID
-	button := gtk.NewButtonWithLabel(i18n.Local("Add"))
+	button, _ := gtk.ButtonNewWithLabel(i18n.Local("Add"))
 	vbox.Add(button)
 
 	button.Connect("clicked", func() {
 		//TODO: validate contact
-		contact := contactInput.GetText()
+		contact, _ := contactInput.GetText()
 
-		iter := &gtk.TreeIter{}
-		if !accountInput.GetActiveIter(iter) {
-			//TODO error
-		}
+		//TODO error
+		iter, _ := accountInput.GetActiveIter()
 
-		val := &glib.GValue{}
-		model.GetValue(iter, 1, val)
+		val, _ := model.GetValue(iter, 1)
 		account := (*Account)(val.GetPointer())
 
 		if !account.Connected() {

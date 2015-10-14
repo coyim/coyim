@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"github.com/twstrike/go-gtk/gtk"
+	"github.com/twstrike/gotk3/gtk"
 )
 
 const DESTROY_SIGNAL = "destroy"
@@ -18,7 +18,7 @@ type textBox struct {
 }
 
 func newAboutConversationWindow(title string) aboutConversationWin {
-	window := gtk.NewWindow(gtk.WINDOW_TOPLEVEL)
+	window, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
 	window.SetPosition(gtk.WIN_POS_CENTER)
 	window.SetTitle(title)
 	window.Connect(DESTROY_SIGNAL, gtk.MainQuit)
@@ -41,16 +41,14 @@ func (about aboutConversationWin) render() {
 }
 
 func newReadOnlyTextBox() textBox {
-	view := gtk.NewTextView()
+	view, _ := gtk.TextViewNew()
 	view.SetEditable(false)
 	view.SetCursorVisible(false)
 
-	buf := view.GetBuffer()
+	buf, _ := view.GetBuffer()
+	iter := buf.GetStartIter()
 
-	var iter gtk.TextIter
-	buf.GetStartIter(&iter)
-
-	return textBox{view, buf, &iter}
+	return textBox{view, buf, iter}
 }
 
 func (box textBox) write(text string) {

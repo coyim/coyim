@@ -182,33 +182,34 @@ func (u *gtkUI) mainWindow() {
 }
 
 func (*gtkUI) askForPassword(connect func(string)) {
-	glib.IdleAdd(func() bool {
-		dialog, _ := gtk.DialogNew()
-		dialog.SetTitle(i18n.Local("Password"))
-		dialog.SetPosition(gtk.WIN_POS_CENTER)
+	reg := createWidgetRegistry()
+	dialog := dialog{
+		title:    i18n.Local("Password"),
+		position: gtk.WIN_POS_CENTER,
+		id:       "dialog",
+		content: []createable{
+			label{i18n.Local("Password")},
+			entry{
+				editable:   true,
+				visibility: false,
+				id:         "password",
+			},
+			button{
+				text:      i18n.Local("Connect"),
+				onClicked: onPasswordDialogClicked(reg, connect),
+			},
+		},
+	}
+	dialog.create(reg)
+	reg.dialogShowAll("dialog")
+}
 
-		vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
-		vbox.SetHomogeneous(false)
-
-		l, _ := gtk.LabelNew(i18n.Local("Password"))
-		vbox.Add(l)
-
-		passwordInput, _ := gtk.EntryNew()
-		passwordInput.SetEditable(true)
-		passwordInput.SetVisibility(false)
-		vbox.Add(passwordInput)
-
-		button, _ := gtk.ButtonNewWithLabel(i18n.Local("Send"))
-		button.Connect("clicked", func() {
-			t, _ := passwordInput.GetText()
-			go connect(t)
-			dialog.Destroy()
-		})
-		vbox.Add(button)
-
-		dialog.ShowAll()
-		return false
-	})
+func onPasswordDialogClicked(reg *widgetRegistry, connect func(string)) func() {
+	return func() {
+		password := reg.getText("password")
+		go connect(password)
+		reg.dialogDestroy("dialog")
+	}
 }
 
 func authors() []string {

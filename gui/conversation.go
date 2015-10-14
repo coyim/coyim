@@ -131,25 +131,6 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 	vbox.PackStart(conv.scrollHistory, true, true, 0)
 	vbox.PackStart(scroll, true, true, 0)
 
-	//TODO: provide function to trigger AKE
-	encryptedFlag, _ := gtk.ButtonNew()
-	vbox.Add(encryptedFlag)
-
-	//TODO this will run undefinitely
-	//It should stop at least when the session disconnects
-	//It would be better to connect this button to a signal that is emitted when
-	//the conversation encrypted state changes
-	//This way it would not keep updating the button when the window is not visible
-	glib.IdleAdd(func() bool {
-		if conv.account.GetConversationWith(conv.to).IsEncrypted() {
-			encryptedFlag.SetLabel("encrypted")
-		} else {
-			encryptedFlag.SetLabel("unencrypted")
-		}
-
-		return true
-	})
-
 	conv.win.Add(vbox)
 
 	return conv

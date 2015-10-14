@@ -32,6 +32,8 @@ func (s *ConfigXmppSuite) TestDetectTor(c *C) {
 
 	newAddr := detectTor()
 	c.Assert(newAddr, Equals, torAddress)
+
+	c.Assert(true, false)
 }
 
 func (s *ConfigXmppSuite) TestDetectTorConnectionRefused(c *C) {

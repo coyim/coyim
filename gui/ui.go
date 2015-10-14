@@ -322,7 +322,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	u.buildAccountsMenu()
 	u.window.Connect(AccountChangedSignal.String(), func() {
 		//TODO: should it destroy the current submenu? HOW?
-		u.accountsMenu.SetSubmenu(nil)
+		u.accountsMenu.SetSubmenu((*gtk.Widget)(nil))
 
 		u.buildAccountsMenu()
 	})

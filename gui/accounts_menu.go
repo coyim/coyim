@@ -11,6 +11,8 @@ import (
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/gotk3/glib"
+	"github.com/twstrike/gotk3/gtk"
 )
 
 var (

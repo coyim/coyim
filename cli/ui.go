@@ -209,8 +209,6 @@ func (c *cliUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
 	for _, entry := range roster {
 		c.input.AddUser(entry.Jid)
 	}
-
-	info(c.term, "Roster received")
 }
 
 func (c *cliUI) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {

@@ -579,6 +579,7 @@ RosterLoop:
 			}
 
 			s.rosterReceived()
+			s.info("Roster received")
 
 			//TODO: this is CLI specific
 			//case edit := <-s.PendingRosterChan:

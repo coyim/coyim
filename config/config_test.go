@@ -3,86 +3,62 @@ package config
 import (
 	"encoding/json"
 	"net"
-	"reflect"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
-func TestDetectTor(t *testing.T) {
+func Test(t *testing.T) { TestingT(t) }
+
+type ConfigXmppSuite struct{}
+
+var _ = Suite(&ConfigXmppSuite{})
+
+func (s *ConfigXmppSuite) TestDetectTor(c *C) {
 	scannedForTor = false
 
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
-	if err != nil {
-		t.Fatal(err)
-	}
+	c.Assert(err, IsNil)
 
 	_, port, err := net.SplitHostPort(ln.Addr().String())
-	if err != nil {
-		t.Fatal(err)
-	}
+	c.Assert(err, IsNil)
 
 	torPorts = []string{port}
 	torAddress := detectTor()
-	if torAddress != ln.Addr().String() {
-		t.Fatalf("unexpected tor address %s", torAddress)
-	}
+	c.Assert(torAddress, Equals, ln.Addr().String())
 
 	ln.Close()
 
 	newAddr := detectTor()
-	if newAddr != torAddress {
-		t.Fatalf("unexpected tor address %s", torAddress)
-	}
+	c.Assert(newAddr, Equals, torAddress)
 }
 
-func TestDetectTorConnectionRefused(t *testing.T) {
+func (s *ConfigXmppSuite) TestDetectTorConnectionRefused(c *C) {
 	scannedForTor = false
 
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
-	if err != nil {
-		t.Fatal(err)
-	}
+	c.Assert(err, IsNil)
 
 	_, port, err := net.SplitHostPort(ln.Addr().String())
-	if err != nil {
-		t.Fatal(err)
-	}
+	c.Assert(err, IsNil)
 
 	ln.Close()
 
 	torPorts = []string{port}
 	torAddress := detectTor()
-	if torAddress != "" {
-		t.Fatalf("unexpected tor address %s", torAddress)
-	}
+	c.Assert(torAddress, Equals, "")
 }
 
-func TestParseYes(t *testing.T) {
-	if ok := ParseYes("Y"); !ok {
-		t.Errorf("parsed Y as %v", ok)
-	}
-
-	if ok := ParseYes("y"); !ok {
-		t.Errorf("parsed y as %v", ok)
-	}
-
-	if ok := ParseYes("YES"); !ok {
-		t.Errorf("parsed YES as %v", ok)
-	}
-
-	if ok := ParseYes("yes"); !ok {
-		t.Errorf("parsed yes as %v", ok)
-	}
-
-	if ok := ParseYes("Yes"); !ok {
-		t.Errorf("parsed yes as %v", ok)
-	}
-
-	if ok := ParseYes("anything"); ok {
-		t.Errorf("parsed something else as %v", ok)
-	}
+func (s *ConfigXmppSuite) TestParseYes(c *C) {
+	c.Assert(ParseYes("Y"), Equals, true)
+	c.Assert(ParseYes("y"), Equals, true)
+	c.Assert(ParseYes("YES"), Equals, true)
+	c.Assert(ParseYes("yes"), Equals, true)
+	c.Assert(ParseYes("Yes"), Equals, true)
+	c.Assert(ParseYes("anything"), Equals, false)
 }
 
-func TestSerializeMultiAccountConfig(t *testing.T) {
+func (s *ConfigXmppSuite) TestSerializeMultiAccountConfig(c *C) {
 	expected := `{
 	"Accounts": [
 		{
@@ -125,16 +101,11 @@ func TestSerializeMultiAccountConfig(t *testing.T) {
 	}
 
 	contents, err := json.MarshalIndent(conf, "", "\t")
-	if err != nil {
-		t.Errorf("failed to marshal config: %s", err)
-	}
-
-	if string(contents) != expected {
-		t.Errorf("wrong serialized config: %s", string(contents))
-	}
+	c.Assert(err, IsNil)
+	c.Assert(string(contents), Equals, expected)
 }
 
-func TestParseMultiAccountConfig(t *testing.T) {
+func (s *ConfigXmppSuite) TestParseMultiAccountConfig(c *C) {
 	multiConf := &MultiAccountConfig{
 		Accounts: []Config{
 			Config{
@@ -156,36 +127,20 @@ func TestParseMultiAccountConfig(t *testing.T) {
 	multiConfFile, _ := json.Marshal(multiConf)
 	singleConfFile, _ := json.Marshal(singleConf)
 
-	c, err := parseMultiConfig([]byte(singleConfFile))
-	if err != nil {
-		t.Errorf("unexpected failure %s", err)
-	}
+	conf, err := parseMultiConfig([]byte(singleConfFile))
+	c.Assert(err, IsNil)
+	c.Assert(conf.Accounts[0], DeepEquals, *singleConf)
 
-	if !reflect.DeepEqual(c.Accounts[0], *singleConf) {
-		t.Errorf("single account conf does not match %#v", c.Accounts[0])
-	}
-
-	c, err = parseMultiConfig([]byte(multiConfFile))
-	if err != nil {
-		t.Errorf("unexpected failure %s", err)
-	}
-
-	if !reflect.DeepEqual(c, multiConf) {
-		t.Errorf("multi account conf does not match %#v", c)
-	}
+	conf, err = parseMultiConfig([]byte(multiConfFile))
+	c.Assert(err, IsNil)
+	c.Assert(conf, DeepEquals, multiConf)
 }
 
-func TestFindConfigFile(t *testing.T) {
-	if _, err := FindConfigFile(""); err != errHomeDirNotSet {
-		t.Errorf("unexpected error %s", err)
-	}
+func (s *ConfigXmppSuite) TestFindConfigFile(c *C) {
+	_, err := FindConfigFile("")
+	c.Assert(err, Equals, errHomeDirNotSet)
 
-	c, err := FindConfigFile("/foo")
-	if err != nil {
-		t.Errorf("unexpected error %s", err)
-	}
-
-	if *c != "/foo/.xmpp-client" {
-		t.Errorf("wrong config file path %s", *c)
-	}
+	conf, err := FindConfigFile("/foo")
+	c.Assert(err, IsNil)
+	c.Assert(*conf, Equals, "/foo/.xmpp-client")
 }

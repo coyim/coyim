@@ -28,6 +28,8 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ADD  build.sh /root/build
 ADD  test.sh /root/test
 
+VOLUME /src
+
 # This should be provided by the build script
 ENV REFERENCE_DATETIME ""
 ENV GOPATH /go

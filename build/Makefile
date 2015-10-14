@@ -1,6 +1,8 @@
 IMAGE_NAME=coyim/build
 
-default:
+default: image build
+
+image:
 	docker build -t $(IMAGE_NAME) .
 
 build:

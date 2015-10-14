@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"io"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -26,4 +28,12 @@ func randomString(dest []byte) error {
 	copy(dest, hex.EncodeToString(src))
 
 	return nil
+}
+
+func xdgHomeDir() string {
+	xdghome := os.Getenv("XDG_CONFIG_HOME")
+	if xdghome == "" {
+		xdghome = filepath.Join(os.Getenv("HOME"), ".config")
+	}
+	return xdghome
 }

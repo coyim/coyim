@@ -3,7 +3,6 @@ package config
 import (
 	"errors"
 	"io/ioutil"
-	"os"
 )
 
 type ConfigFileManager struct {
@@ -11,19 +10,14 @@ type ConfigFileManager struct {
 	*MultiAccountConfig
 }
 
-func NewConfigFileManager(configFile string) (*ConfigFileManager, error) {
+func NewConfigFileManager(configFile string) *ConfigFileManager {
 	if len(configFile) == 0 {
-		c, err := FindConfigFile(os.Getenv("HOME"))
-		if err != nil {
-			return nil, err
-		}
-
-		configFile = *c
+		configFile = FindConfigFile()
 	}
 
 	return &ConfigFileManager{
 		Filename: configFile,
-	}, nil
+	}
 }
 
 func (configFileManager *ConfigFileManager) ParseConfigFile() error {

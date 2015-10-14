@@ -72,22 +72,11 @@ func NewCLI() *cliUI {
 }
 
 func (c *cliUI) LoadConfig(configFile string) error {
-	configFileManager, err := config.NewConfigFileManager(configFile)
-	if err != nil {
-		c.Alert(err.Error())
-		return err
-	}
+	configFileManager := config.NewConfigFileManager(configFile)
 
 	if err := configFileManager.ParseConfigFile(); err != nil {
-		filename, e := config.FindConfigFile(os.Getenv("HOME"))
-		if e != nil {
-			//TODO cant write config file. Should it be a problem?
-			//c.Alert(err.Error())
-			return e
-		}
-
 		c.config = config.NewConfig()
-		c.config.Filename = *filename
+		c.config.Filename = config.FindConfigFile()
 
 		c.Alert(err.Error())
 		enroll(c.config, c.term)

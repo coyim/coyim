@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"net"
+	"os"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -137,10 +138,6 @@ func (s *ConfigXmppSuite) TestParseMultiAccountConfig(c *C) {
 }
 
 func (s *ConfigXmppSuite) TestFindConfigFile(c *C) {
-	_, err := FindConfigFile("")
-	c.Assert(err, Equals, errHomeDirNotSet)
-
-	conf, err := FindConfigFile("/foo")
-	c.Assert(err, IsNil)
-	c.Assert(*conf, Equals, "/foo/.xmpp-client")
+	conf := FindConfigFile()
+	c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json")
 }

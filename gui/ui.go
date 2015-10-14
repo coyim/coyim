@@ -34,13 +34,9 @@ func NewGTK() *gtkUI {
 }
 
 func (u *gtkUI) LoadConfig(configFile string) error {
-	var err error
-	if u.configFileManager, err = config.NewConfigFileManager(configFile); err != nil {
-		u.Alert(err.Error())
-		return err
-	}
+	u.configFileManager = config.NewConfigFileManager(configFile)
 
-	err = u.configFileManager.ParseConfigFile()
+	err := u.configFileManager.ParseConfigFile()
 	if err != nil {
 		u.Alert(err.Error())
 

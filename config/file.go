@@ -7,19 +7,21 @@ import (
 	"path/filepath"
 )
 
-func FindConfigFile(homeDir string) (*string, error) {
-	if len(homeDir) == 0 {
-		return nil, errHomeDirNotSet
-	}
+func fileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
+}
 
-	persistentDir := filepath.Join(homeDir, "Persistent")
-	if stat, err := os.Lstat(persistentDir); err == nil && stat.IsDir() {
-		// Looks like Tails.
-		homeDir = persistentDir
+func ensureDir(dirname string, perm os.FileMode) {
+	if !fileExists(dirname) {
+		os.MkdirAll(dirname, perm)
 	}
+}
 
-	configFile := filepath.Join(homeDir, ".xmpp-client")
-	return &configFile, nil
+func FindConfigFile() string {
+	dir := configDir()
+	ensureDir(dir, 0700)
+	return filepath.Join(dir, "accounts.json")
 }
 
 func (c *Config) Save() error {

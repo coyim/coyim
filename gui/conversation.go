@@ -96,7 +96,7 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 		evKey := *(**gdk.EventKey)(unsafe.Pointer(&arg))
 
 		//Send message on ENTER press (without modifier key)
-		if evKey.State == 0 && evKey.Keyval == 0xff0d {
+		if (uint(evKey.State)&uint(gdk.MODIFIER_MASK)) == 0 && evKey.Keyval == 0xff0d {
 			text.SetEditable(false)
 
 			b := text.GetBuffer()

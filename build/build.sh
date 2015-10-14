@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -xe
+
+export PATH="/root/go/bin:$GOPATH/bin:$PATH"
+
+shasum /root/go/bin/*
+
+/root/go/bin/go get -d $GO_PKG
+cd $GOPATH/src && source /root/setup-reproducible
+
+# make build
+/root/go/bin/go build -o /builds/coyim \
+  $GO_PKG
+
+/root/go/bin/go build -o /builds/coyim \
+  -tags nocli $GO_PKG
+
+shasum /builds/*
+

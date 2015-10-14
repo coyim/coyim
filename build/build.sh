@@ -13,7 +13,7 @@ cd $GOPATH/src && source /root/setup-reproducible
 /root/go/bin/go build -o /builds/coyim \
   $GO_PKG
 
-/root/go/bin/go build -o /builds/coyim \
+/root/go/bin/go build -o /builds/coyim-gui \
   -tags nocli $GO_PKG
 
 shasum /builds/*

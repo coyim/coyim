@@ -2,12 +2,15 @@ package gui
 
 import (
 	"fmt"
+	"net/url"
 	"strconv"
+	"strings"
+
+	"golang.org/x/net/proxy"
 
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/gotk3/glib"
-	"github.com/twstrike/gotk3/gtk"
+	"github.com/twstrike/coyim/xmpp"
 )
 
 var (
@@ -26,23 +29,36 @@ func onAccountDialogClicked(account Account, saveFunction func() error, reg *wid
 	return func() {
 		account.Account = reg.getText("account")
 		account.Password = reg.getText("password")
-		account.Server = reg.getText("server")
 
-		if v, err := strconv.Atoi(reg.getText("port")); err == nil {
-			account.Port = v
+		parts := strings.SplitN(account.Account, "@", 2)
+		if len(parts) != 2 {
+			fmt.Println("invalid username (want user@domain): " + account.Account)
+			return
 		}
+		domain := parts[1]
 
-		if len(account.Proxies) == 0 {
-			account.Proxies = append(account.Proxies, "")
-		}
+		go func() {
+			if len(account.Proxies) > 0 {
+				proxyStr := account.Proxies[0]
+				u, _ := url.Parse(proxyStr)
+				dialer, _ := proxy.FromURL(u, proxy.Direct)
 
-		account.Proxies[0] = reg.getText("tor proxy")
-		account.AlwaysEncrypt = reg.getActive("always encrypt")
+				var port uint16
+				var err error
+				fmt.Println("Performing SRV lookup using proxy")
+				if account.Server, port, err = xmpp.ResolveProxy(dialer, domain); err != nil {
+					fmt.Println("SRV lookup failed: " + err.Error())
+				} else {
+					account.Port = int(port)
+					fmt.Println("Resolved " + account.Server + ":" + strconv.Itoa(account.Port))
+				}
+			}
 
-		if err := saveFunction(); err != nil {
-			//TODO: handle errors
-			fmt.Println(err.Error())
-		}
+			if err := saveFunction(); err != nil {
+				//TODO: handle errors
+				fmt.Println(err.Error())
+			}
+		}()
 
 		reg.dialogDestroy("dialog")
 	}
@@ -62,44 +78,13 @@ func accountDialog(account Account, saveFunction func() error) {
 				visibility: true,
 				id:         "account",
 			},
+
 			label{i18n.Local("Password")},
 			entry{
 				text:       account.Password,
 				editable:   true,
 				visibility: false,
 				id:         "password",
-			},
-			label{i18n.Local("Server")},
-			entry{
-				text:       account.Server,
-				editable:   true,
-				visibility: true,
-				id:         "server",
-			},
-			label{i18n.Local("Port")},
-			entry{
-				text:       strconv.Itoa(account.Port),
-				editable:   true,
-				visibility: true,
-				id:         "port",
-			},
-
-			//TODO: I'm considering to not show this, since it will autodetect Tor running
-			//and autoconfigure the account to use separate circuits.
-			//Should the user be able to disable this even if Tor is found?
-			label{i18n.Local("Tor Proxy")},
-			entry{
-				text:       firstProxy(account),
-				editable:   true,
-				visibility: true,
-				id:         "tor proxy",
-			},
-
-			//TODO: I'm also considering to hide this
-			checkButton{
-				text:   i18n.Local("Always Encrypt"),
-				active: account.AlwaysEncrypt,
-				id:     "always encrypt",
 			},
 
 			button{

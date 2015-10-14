@@ -61,6 +61,8 @@ func NewConfig() *Config {
 		Proxies: torProxy,
 		UseTor:  torProxy != nil,
 
+		Port: 5222,
+
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48

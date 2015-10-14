@@ -944,37 +944,17 @@ func enroll(conf *config.Config, term *terminal.Terminal) bool {
 	if len(proxyStr) > 0 {
 		conf.Proxies = []string{proxyStr}
 
-		info(term, "Since you selected a proxy, we need to know the server and port to connect to as a SRV lookup would leak information every time.")
-		term.SetPrompt("Server (i.e. xmpp.example.com, enter to lookup using unproxied DNS): ")
-		if conf.Server, err = term.ReadLine(); err != nil {
+		u, _ := url.Parse(proxyStr)
+		dialer, _ := proxy.FromURL(u, proxy.Direct)
+
+		var port uint16
+		info(term, "Performing SRV lookup using proxy")
+		if conf.Server, port, err = xmpp.ResolveProxy(dialer, domain); err != nil {
+			alert(term, "SRV lookup failed: "+err.Error())
 			return false
 		}
-		if len(conf.Server) == 0 {
-			var port uint16
-			info(term, "Performing SRV lookup")
-			if conf.Server, port, err = xmpp.Resolve(domain); err != nil {
-				alert(term, "SRV lookup failed: "+err.Error())
-				return false
-			}
-			conf.Port = int(port)
-			info(term, "Resolved "+conf.Server+":"+strconv.Itoa(conf.Port))
-		} else {
-			for {
-				term.SetPrompt("Port (enter for 5222): ")
-				portStr, err := term.ReadLine()
-				if err != nil {
-					return false
-				}
-				if len(portStr) == 0 {
-					portStr = "5222"
-				}
-				if conf.Port, err = strconv.Atoi(portStr); err != nil || conf.Port <= 0 || conf.Port > 65535 {
-					info(term, "Port numbers must be 0 < port <= 65535")
-					continue
-				}
-				break
-			}
-		}
+		conf.Port = int(port)
+		info(term, "Resolved "+conf.Server+":"+strconv.Itoa(conf.Port))
 	}
 
 	term.SetPrompt("> ")

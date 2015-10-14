@@ -66,7 +66,7 @@ func newAccount(conf *config.Config) Account {
 	c, _ := glib.SignalNew(signalName(id, "connected"))
 	d, _ := glib.SignalNew(signalName(id, "disconnected"))
 
-	return Account{
+	a := Account{
 		ID:      id,
 		Config:  conf,
 		Session: session.NewSession(conf),
@@ -74,6 +74,8 @@ func newAccount(conf *config.Config) Account {
 		ConnectedSignal:    c,
 		DisconnectedSignal: d,
 	}
+
+	return a
 }
 
 func signalName(id, signal string) string {

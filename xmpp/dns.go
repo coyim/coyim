@@ -6,16 +6,29 @@
 // 6121.
 package xmpp
 
-import "net"
+import (
+	"net"
+	"strings"
+
+	ourNet "github.com/twstrike/coyim/net"
+	"golang.org/x/net/proxy"
+)
 
 // Resolve performs a DNS SRV lookup for the XMPP server that serves the given
 // domain.
 func Resolve(domain string) (host string, port uint16, err error) {
-	_, addrs, err := net.LookupSRV("xmpp-client", "tcp", domain)
+	return massage(net.LookupSRV("xmpp-client", "tcp", domain))
+}
 
+// ResolveProxy performs a DNS SRV lookup for the xmpp server that serves the given domain over the given proxy
+func ResolveProxy(proxy proxy.Dialer, domain string) (host string, port uint16, err error) {
+	return massage(ourNet.LookupSRV(proxy, "xmpp-client", "tcp", domain))
+}
+
+func massage(cname string, addrs []*net.SRV, err error) (string, uint16, error) {
 	if err != nil {
 		return "", 0, err
 	}
 
-	return addrs[0].Target, addrs[0].Port, nil
+	return strings.TrimSuffix(addrs[0].Target, "."), addrs[0].Port, nil
 }

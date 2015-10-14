@@ -46,6 +46,7 @@ deps-u:
 	go get -u golang.org/x/net/html/atom
 	go get -u golang.org/x/net/proxy
 	go get -u gopkg.in/check.v1
+	go get -u github.com/miekg/dns
 
 deps:
 	go get github.com/golang/lint/golint
@@ -59,6 +60,7 @@ deps:
 	go get golang.org/x/net/html/atom
 	go get golang.org/x/net/proxy
 	go get gopkg.in/check.v1
+	go get github.com/miekg/dns
 
 cover:
 	rm -f *.coverprofile

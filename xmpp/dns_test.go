@@ -13,7 +13,7 @@ var _ = Suite(&DnsXmppSuite{})
 func (s *DnsXmppSuite) Test_Resolve_resolvesCorrectly(c *C) {
 	host, port, err := Resolve("olabini.se")
 	c.Assert(err, IsNil)
-	c.Assert(host, Equals, "xmpp.olabini.se.")
+	c.Assert(host, Equals, "xmpp.olabini.se")
 	c.Assert(port, Equals, uint16(5222))
 }
 

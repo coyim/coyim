@@ -38,11 +38,7 @@ deps-u:
 	go get -u github.com/golang/lint/golint
 	go get -u golang.org/x/tools/cmd/cover
 	go get -u github.com/modocache/gover
-	go get -u github.com/twstrike/go-gtk/gdk
-	go get -u github.com/twstrike/go-gtk/gdkpixbuf
-	go get -u github.com/twstrike/go-gtk/glib
-	go get -u github.com/twstrike/go-gtk/gtk
-	go get -u github.com/twstrike/go-gtk/pango
+	go get -u github.com/twstrike/gotk3/gtk
 	go get -u github.com/twstrike/otr3
 	go get -u github.com/twstrike/otr3/sexp
 	go get -u golang.org/x/crypto/ssh/terminal
@@ -55,11 +51,7 @@ deps:
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/modocache/gover
-	go get github.com/twstrike/go-gtk/gdk
-	go get github.com/twstrike/go-gtk/gdkpixbuf
-	go get github.com/twstrike/go-gtk/glib
-	go get github.com/twstrike/go-gtk/gtk
-	go get github.com/twstrike/go-gtk/pango
+	go get github.com/twstrike/gotk3/gtk
 	go get github.com/twstrike/otr3
 	go get github.com/twstrike/otr3/sexp
 	go get golang.org/x/crypto/ssh/terminal

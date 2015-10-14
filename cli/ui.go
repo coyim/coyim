@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/url"
@@ -79,7 +80,9 @@ func (c *cliUI) LoadConfig(configFile string) error {
 		c.config.Filename = config.FindConfigFile()
 
 		c.Alert(err.Error())
-		enroll(c.config, c.term)
+		if !enroll(c.config, c.term) {
+			return errors.New("asked to quit")
+		}
 	}
 
 	//TODO migrate to use configFileManager

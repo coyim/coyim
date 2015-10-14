@@ -16,7 +16,6 @@ import (
 )
 
 var (
-	errHomeDirNotSet             = errors.New("$HOME not set. Please either export $HOME or use the -config-file option.\n")
 	errInvalidConfigFile         = errors.New("Failed to parse config file")
 	ConfigFile           *string = flag.String("config-file", "", "Location of the config file")
 	CreateAccount        *bool   = flag.Bool("create", false, "If true, attempt to create account")

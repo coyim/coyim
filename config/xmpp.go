@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
+	"net"
 	"net/url"
 	"strings"
 
@@ -31,24 +33,23 @@ func init() {
 	})
 }
 
-func resolveXMPPServerOverTor(domain string) (string, error) {
+func resolveXMPPServerOverTor(domain string) ([]string, error) {
 	u, err := url.Parse(newTorProxy(detectTor()))
 	if err != nil {
-		return "", errors.New("Failed to resolve XMPP server: " + err.Error())
-
+		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
 	}
 
 	dnsProxy, err := proxy.FromURL(u, proxy.Direct)
 	if err != nil {
-		return "", errors.New("Failed to resolve XMPP server: " + err.Error())
+		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
 	}
 
-	host, port, err := xmpp.ResolveProxy(dnsProxy, domain)
+	ret, err := xmpp.ResolveProxy(dnsProxy, domain)
 	if err != nil {
-		return "", errors.New("Failed to resolve XMPP server: " + err.Error())
+		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
 	}
 
-	return fmt.Sprintf("%s:%d", host, port), nil
+	return ret, nil
 }
 
 func buildProxyChain(proxies []string) (dialer proxy.Dialer, err error) {
@@ -81,11 +82,11 @@ func NewXMPPConn(config *Config, password string, createCallback xmpp.FormCallba
 	user := parts[0]
 	domain := parts[1]
 
-	var addr string
+	var xmppAddrs []string
 	addrTrusted := false
 
 	if len(config.Server) > 0 && config.Port > 0 {
-		addr = fmt.Sprintf("%s:%d", config.Server, config.Port)
+		xmppAddrs = []string{fmt.Sprintf("%s:%d", config.Server, config.Port)}
 		addrTrusted = true
 	} else {
 		if len(config.Proxies) > 0 && len(detectTor()) == 0 {
@@ -93,8 +94,13 @@ func NewXMPPConn(config *Config, password string, createCallback xmpp.FormCallba
 		}
 
 		var err error
-		if addr, err = resolveXMPPServerOverTor(domain); err != nil {
+		if xmppAddrs, err = resolveXMPPServerOverTor(domain); err != nil {
 			return nil, err
+		}
+
+		// Fallback to using the domain at default port
+		if len(xmppAddrs) == 0 {
+			xmppAddrs = []string{domain + "5222"}
 		}
 	}
 
@@ -177,18 +183,40 @@ func NewXMPPConn(config *Config, password string, createCallback xmpp.FormCallba
 	//	defer out.flush()
 	//}
 
-	if dialer != nil {
-		//TODO
-		//info(term, "Making connection to "+addr+" via proxy")
-		if xmppConfig.Conn, err = dialer.Dial("tcp", addr); err != nil {
-			return nil, errors.New("Failed to connect via proxy: " + err.Error())
-		}
+	var addr string
+	xmppConfig.Conn, addr, err = connectToFirstAvailable(xmppAddrs, dialer)
+	if err != nil {
+		return nil, err
 	}
 
+	return connect(addr, user, domain, password, xmppConfig)
+}
+
+func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn, string, error) {
+	if dialer == nil {
+		dialer = proxy.Direct
+	}
+
+	for _, addr := range xmppAddrs {
+		log.Println("Connecting to " + addr)
+
+		conn, err := dialer.Dial("tcp", addr)
+		if err == nil {
+			return conn, addr, nil
+		}
+
+		log.Println("Failed to connect to", addr, "\n\t", err)
+	}
+
+	// should NOT attempt the fallback described in XMPP section 3.2.2
+	return nil, "", errors.New("Failed to connect to XMPP server: exhausted list of XMPP SRV for server")
+}
+
+func connect(addr, user, domain, password string, xmppConfig *xmpp.Config) (*xmpp.Conn, error) {
 	conn, err := xmpp.Dial(addr, user, domain, password, xmppConfig)
 	if err != nil {
 		return nil, errors.New("Failed to connect to XMPP server: " + err.Error())
 	}
 
-	return conn, err
+	return conn, nil
 }

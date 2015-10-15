@@ -2,15 +2,10 @@ package gui
 
 import (
 	"fmt"
-	"net/url"
-	"strconv"
 	"strings"
-
-	"golang.org/x/net/proxy"
 
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/gotk3/glib"
 	"github.com/twstrike/gotk3/gtk"
 )
@@ -37,25 +32,8 @@ func onAccountDialogClicked(account Account, saveFunction func() error, reg *wid
 			fmt.Println("invalid username (want user@domain): " + account.Account)
 			return
 		}
-		domain := parts[1]
 
 		go func() {
-			if len(account.Proxies) > 0 {
-				proxyStr := account.Proxies[0]
-				u, _ := url.Parse(proxyStr)
-				dialer, _ := proxy.FromURL(u, proxy.Direct)
-
-				var port uint16
-				var err error
-				fmt.Println("Performing SRV lookup using proxy")
-				if account.Server, port, err = xmpp.ResolveProxy(dialer, domain); err != nil {
-					fmt.Println("SRV lookup failed: " + err.Error())
-				} else {
-					account.Port = int(port)
-					fmt.Println("Resolved " + account.Server + ":" + strconv.Itoa(account.Port))
-				}
-			}
-
 			if err := saveFunction(); err != nil {
 				//TODO: handle errors
 				fmt.Println(err.Error())

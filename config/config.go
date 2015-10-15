@@ -1,6 +1,7 @@
 package config
 
 import (
+	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/hex"
@@ -12,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/otr3"
 	"golang.org/x/net/proxy"
 )
 
@@ -56,13 +58,15 @@ func NewConfig() *Config {
 		}
 	}
 
+	var priv otr3.PrivateKey
+	priv.Generate(rand.Reader)
+
 	return &Config{
 		//TODO: Should those 2 setting be set on startup (or maybe every connection)?
 		Proxies: torProxy,
 		UseTor:  torProxy != nil,
 
-		Port: 5222,
-
+		PrivateKey:          priv.Serialize(),
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48

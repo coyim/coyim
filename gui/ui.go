@@ -353,15 +353,15 @@ func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
 
 func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
 	//TODO: Notify via UI
-	jid := xmpp.RemoveResourceFromJid(stanza.From)
-	status := "available"
-	if stanza.Show != "" {
-		status = stanza.Show
-		if stanza.Status != "" {
-			status = status + " (" + stanza.Status + ")"
-		}
-	}
-	fmt.Printf("%s is %s\n", jid, status)
+	// jid := xmpp.RemoveResourceFromJid(stanza.From)
+	// status := "available"
+	// if stanza.Show != "" {
+	// 	status = stanza.Show
+	// 	if stanza.Status != "" {
+	// 		status = status + " (" + stanza.Status + ")"
+	// 	}
+	// }
+	// fmt.Printf("%s is %s\n", jid, status)
 }
 
 func (u *gtkUI) IQReceived(string) {

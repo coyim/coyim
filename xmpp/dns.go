@@ -7,6 +7,7 @@
 package xmpp
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -29,6 +30,11 @@ func ResolveProxy(proxy proxy.Dialer, domain string) (hostport []string, err err
 func massage(cname string, addrs []*net.SRV, err error) ([]string, error) {
 	if err != nil {
 		return nil, err
+	}
+
+	// https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-prefer
+	if len(addrs) == 1 && addrs[0].Target == "." {
+		return nil, errors.New("the service is decidedly not available at this domain")
 	}
 
 	ret := make([]string, 0, len(addrs))

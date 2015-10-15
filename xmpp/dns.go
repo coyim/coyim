@@ -25,6 +25,8 @@ func ResolveProxy(proxy proxy.Dialer, domain string) (host string, port uint16, 
 	return massage(ourNet.LookupSRV(proxy, "xmpp-client", "tcp", domain))
 }
 
+//TODO: It should attempt to use every one of the addrs.
+//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-prefer
 func massage(cname string, addrs []*net.SRV, err error) (string, uint16, error) {
 	if err != nil {
 		return "", 0, err

@@ -7,6 +7,7 @@
 package xmpp
 
 import (
+	"fmt"
 	"net"
 	"strings"
 
@@ -16,21 +17,27 @@ import (
 
 // Resolve performs a DNS SRV lookup for the XMPP server that serves the given
 // domain.
-func Resolve(domain string) (host string, port uint16, err error) {
+func Resolve(domain string) (hostport []string, err error) {
 	return massage(net.LookupSRV("xmpp-client", "tcp", domain))
 }
 
 // ResolveProxy performs a DNS SRV lookup for the xmpp server that serves the given domain over the given proxy
-func ResolveProxy(proxy proxy.Dialer, domain string) (host string, port uint16, err error) {
+func ResolveProxy(proxy proxy.Dialer, domain string) (hostport []string, err error) {
 	return massage(ourNet.LookupSRV(proxy, "xmpp-client", "tcp", domain))
 }
 
-//TODO: It should attempt to use every one of the addrs.
-//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-prefer
-func massage(cname string, addrs []*net.SRV, err error) (string, uint16, error) {
+func massage(cname string, addrs []*net.SRV, err error) ([]string, error) {
 	if err != nil {
-		return "", 0, err
+		return nil, err
 	}
 
-	return strings.TrimSuffix(addrs[0].Target, "."), addrs[0].Port, nil
+	ret := make([]string, 0, len(addrs))
+	for _, addr := range addrs {
+		ret = append(ret, fmt.Sprintf("%s:%d",
+			strings.TrimSuffix(addr.Target, "."),
+			addr.Port,
+		))
+	}
+
+	return ret, nil
 }

@@ -15,7 +15,7 @@ lint:
 test:
 	go test -cover -v ./...
 
-ci: get default coveralls
+ci: get default coveralls build
 
 coveralls:
 	go get github.com/axw/gocov/gocov

@@ -3,6 +3,7 @@ package net
 import (
 	"errors"
 	"net"
+	"sort"
 
 	"github.com/miekg/dns"
 	"golang.org/x/net/proxy"
@@ -65,12 +66,34 @@ func exchange(conn *dns.Conn, m *dns.Msg) (r *dns.Msg, err error) {
 	return
 }
 
+type byPriorityWeight []*net.SRV
+
+func (s byPriorityWeight) Len() int { return len(s) }
+func (s byPriorityWeight) Less(i, j int) bool {
+	if s[i] == nil {
+		return true
+	}
+
+	if s[j] == nil {
+		return false
+	}
+
+	if s[i].Priority == s[j].Priority {
+		return s[i].Weight < s[j].Weight
+	}
+
+	return s[i].Priority < s[j].Priority
+}
+func (s byPriorityWeight) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
 func convertAnswersToSRV(in []dns.RR) []*net.SRV {
 	result := make([]*net.SRV, len(in))
 
 	for ix, a := range in {
 		result[ix] = convertAnswerToSRV(a)
 	}
+
+	sort.Sort(byPriorityWeight(result))
 
 	return result
 }

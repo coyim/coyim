@@ -57,3 +57,73 @@ func (s *DnsXmppSuite) Test_msgSRV_createsMessage(c *C) {
 	c.Assert(res.Question[0].Name, Equals, "foo.com")
 	c.Assert(res.Question[0].Qtype, Equals, dns.TypeSRV)
 }
+
+func (s *DnsXmppSuite) Test_convertAnswersToSRV_sortsByPriority(c *C) {
+	srv1 := &dns.SRV{
+		Target:   "foo1.com",
+		Priority: 5,
+		Weight:   1,
+	}
+	srv2 := &dns.SRV{
+		Target:   "foo2.com",
+		Priority: 3,
+		Weight:   1,
+	}
+	srv3 := &dns.SRV{
+		Target:   "foo3.com",
+		Priority: 6,
+		Weight:   1,
+	}
+	srv4 := &dns.SRV{
+		Target:   "foo4.com",
+		Priority: 1,
+		Weight:   1,
+	}
+
+	in := []dns.RR{
+		srv1,
+		srv2,
+		srv3,
+		srv4,
+	}
+	res := convertAnswersToSRV(in)
+	c.Assert(res[0].Target, Equals, "foo4.com")
+	c.Assert(res[1].Target, Equals, "foo2.com")
+	c.Assert(res[2].Target, Equals, "foo1.com")
+	c.Assert(res[3].Target, Equals, "foo3.com")
+}
+
+func (s *DnsXmppSuite) Test_convertAnswersToSRV_sortsByWeightIfPriotityIsTheSame(c *C) {
+	srv1 := &dns.SRV{
+		Target:   "foo1.com",
+		Priority: 1,
+		Weight:   5,
+	}
+	srv2 := &dns.SRV{
+		Target:   "foo2.com",
+		Priority: 1,
+		Weight:   3,
+	}
+	srv3 := &dns.SRV{
+		Target:   "foo3.com",
+		Priority: 1,
+		Weight:   6,
+	}
+	srv4 := &dns.SRV{
+		Target:   "foo4.com",
+		Priority: 1,
+		Weight:   1,
+	}
+
+	in := []dns.RR{
+		srv1,
+		srv2,
+		srv3,
+		srv4,
+	}
+	res := convertAnswersToSRV(in)
+	c.Assert(res[0].Target, Equals, "foo4.com")
+	c.Assert(res[1].Target, Equals, "foo2.com")
+	c.Assert(res[2].Target, Equals, "foo1.com")
+	c.Assert(res[3].Target, Equals, "foo3.com")
+}

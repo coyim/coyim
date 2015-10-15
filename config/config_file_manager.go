@@ -5,6 +5,10 @@ import (
 	"io/ioutil"
 )
 
+var (
+	errInvalidConfigFile = errors.New("Failed to parse config file")
+)
+
 type ConfigFileManager struct {
 	Filename string
 	*MultiAccountConfig

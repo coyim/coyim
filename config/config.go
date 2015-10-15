@@ -90,6 +90,26 @@ func NewConfig() *Config {
 	}
 }
 
+func resolveXMPPServerOverTor(domain string) (string, error) {
+	u, err := url.Parse(newTorProxy(detectTor()))
+	if err != nil {
+		return "", errors.New("Failed to resolve XMPP server: " + err.Error())
+
+	}
+
+	dnsProxy, err := proxy.FromURL(u, proxy.Direct)
+	if err != nil {
+		return "", errors.New("Failed to resolve XMPP server: " + err.Error())
+	}
+
+	host, port, err := xmpp.ResolveProxy(dnsProxy, domain)
+	if err != nil {
+		return "", errors.New("Failed to resolve XMPP server: " + err.Error())
+	}
+
+	return fmt.Sprintf("%s:%d", host, port), nil
+}
+
 func NewXMPPConn(config *Config, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {
 	parts := strings.SplitN(config.Account, "@", 2)
 	if len(parts) != 2 {
@@ -106,15 +126,14 @@ func NewXMPPConn(config *Config, password string, createCallback xmpp.FormCallba
 		addr = fmt.Sprintf("%s:%d", config.Server, config.Port)
 		addrTrusted = true
 	} else {
-		if len(config.Proxies) > 0 {
+		if len(config.Proxies) > 0 && len(detectTor()) == 0 {
 			return nil, errors.New("Cannot connect via a proxy without Server and Port being set in the config file as an SRV lookup would leak information.")
 		}
 
-		host, port, err := xmpp.Resolve(domain)
-		if err != nil {
-			return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
+		var err error
+		if addr, err = resolveXMPPServerOverTor(domain); err != nil {
+			return nil, err
 		}
-		addr = fmt.Sprintf("%s:%d", host, port)
 	}
 
 	var dialer proxy.Dialer

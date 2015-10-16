@@ -1,10 +1,12 @@
+GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+
 default: deps lint test
 .PHONY: test
 
 build: build-cli build-gui
 
 build-gui:
-	go build -tags nocli -o bin/coyim-gui
+	go build -tags "nocli gtk_$(GTK_VERSION)" -o bin/coyim-gui
 
 build-cli:
 	go build -o bin/coyim
@@ -38,7 +40,7 @@ deps-u:
 	go get -u github.com/golang/lint/golint
 	go get -u golang.org/x/tools/cmd/cover
 	go get -u github.com/modocache/gover
-	go get -u github.com/gotk3/gotk3/gtk
+	go get -u -tags gtk_$(GTK_VERSION) github.com/gotk3/gotk3/gtk
 	go get -u github.com/twstrike/otr3
 	go get -u github.com/twstrike/otr3/sexp
 	go get -u golang.org/x/crypto/ssh/terminal
@@ -52,7 +54,7 @@ deps:
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/modocache/gover
-	go get github.com/gotk3/gotk3/gtk
+	go get -tags gtk_$(GTK_VERSION) github.com/gotk3/gotk3/gtk
 	go get github.com/twstrike/otr3
 	go get github.com/twstrike/otr3/sexp
 	go get golang.org/x/crypto/ssh/terminal

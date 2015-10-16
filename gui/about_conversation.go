@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"github.com/twstrike/gotk3/gtk"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 const DESTROY_SIGNAL = "destroy"

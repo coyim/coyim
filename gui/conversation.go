@@ -3,11 +3,11 @@ package gui
 import (
 	"fmt"
 
+	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/gotk3/gdk"
-	"github.com/twstrike/gotk3/glib"
-	"github.com/twstrike/gotk3/gtk"
 )
 
 type conversationWindow struct {

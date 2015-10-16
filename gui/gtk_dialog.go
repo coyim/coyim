@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/twstrike/gotk3/gtk"
+import "github.com/gotk3/gotk3/gtk"
 
 type dialog struct {
 	title    string

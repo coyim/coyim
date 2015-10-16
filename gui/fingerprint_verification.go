@@ -3,8 +3,8 @@ package gui
 import (
 	"fmt"
 
+	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/gotk3/gtk"
 )
 
 func verifyFingerprintDialog(account *Account, uid string) {

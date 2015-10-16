@@ -10,3 +10,21 @@ To do this, we enable OTR by default, we try hard to use Tor and Tor hidden serv
 ## Security warning
 
 CoyIM is currently under active development. There have been no security audits of the code, and you should currently not use this for anything sensitive.
+
+## Installation instructions
+
+### GUI version
+
+The GUI version requires GTK+ >= 3.6.16
+
+```
+GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+go get -u -tags "nocli gtk_${GTK_VERSION}" github.com/twstrike/coyim
+```
+
+### CLI version (xmpp-client)
+
+```
+go get -u github.com/twstrike/coyim
+```
+

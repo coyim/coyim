@@ -18,6 +18,8 @@ import (
 	"github.com/twstrike/otr3"
 )
 
+const debugEnabled = false
+
 type gtkUI struct {
 	roster       *Roster
 	window       *gtk.Window
@@ -134,6 +136,12 @@ func (u *gtkUI) OTREnded(uid string) {
 	//TODO: conversation ended
 }
 
+func (u *gtkUI) Debug(m string) {
+	if debugEnabled {
+		fmt.Println(">>> DEBUG", m)
+	}
+}
+
 func (u *gtkUI) Info(m string) {
 	fmt.Println(">>> INFO", m)
 }
@@ -175,10 +183,21 @@ func (u *gtkUI) mainWindow() {
 	u.window.Add(vbox)
 
 	u.window.SetTitle(i18n.Local("Coy"))
-	u.window.Connect("destroy", gtk.MainQuit)
+	u.window.Connect("destroy", u.quit)
 	u.window.SetSizeRequest(200, 600)
 
+	u.connectShortcuts()
+
 	u.window.ShowAll()
+}
+
+func (u *gtkUI) quit() {
+	// TODO: we should probably disconnect before quitting, if any account is connected
+	gtk.MainQuit()
+}
+
+func (u *gtkUI) connectShortcuts() {
+	// TODO: once we accelerator support
 }
 
 func (*gtkUI) askForPassword(connect func(string)) {
@@ -351,24 +370,60 @@ func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
 	})
 }
 
-func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
-	//TODO: Notify via UI
-	// jid := xmpp.RemoveResourceFromJid(stanza.From)
-	// status := "available"
-	// if stanza.Show != "" {
-	// 	status = stanza.Show
-	// 	if stanza.Status != "" {
-	// 		status = status + " (" + stanza.Status + ")"
-	// 	}
-	// }
-	// fmt.Printf("%s is %s\n", jid, status)
+func (u *gtkUI) rosterUpdated() {
+	glib.IdleAdd(func() bool {
+		u.roster.Redraw()
+		return false
+	})
 }
 
-func (u *gtkUI) IQReceived(string) {
+func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
+	peer := xmpp.RemoveResourceFromJid(stanza.From)
+	account := xmpp.RemoveResourceFromJid(stanza.To)
+
+	status := "available"
+	statusMsg := ""
+	if stanza.Show != "" {
+		status = stanza.Show
+		if stanza.Status != "" {
+			statusMsg = stanza.Status
+		}
+	}
+
+	if peer != "" && account != "" {
+		p := u.roster.get(account, peer)
+		if p != nil {
+			p.status = status
+			p.statusMsg = statusMsg
+			p.offline = gone
+		}
+	}
+
+	u.rosterUpdated()
+}
+
+func (u *gtkUI) Subscribed(account, peer string) {
+	u.Debug(fmt.Sprintf("[%s] Subscribed to %s\n", account, peer))
+
+	p := u.roster.get(account, peer)
+	if p != nil {
+		p.subscribed()
+	}
+
+	u.rosterUpdated()
+}
+
+func (u *gtkUI) Unsubscribe(account, peer string) {
+	u.Debug(fmt.Sprintf("[%s] Unsubscribed from %s\n", account, peer))
+	u.roster.remove(account, peer)
+	u.rosterUpdated()
+}
+
+func (u *gtkUI) IQReceived(iq string) {
+	u.Debug(fmt.Sprintf("received iq: %v\n", iq))
 	//TODO
 }
 
-//TODO: we should update periodically (like Pidgin does) if we include the status (online/offline/away) on the label
 func (u *gtkUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
 	account := u.findAccountForSession(s)
 	if account == nil {

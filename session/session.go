@@ -131,21 +131,41 @@ StanzaLoop:
 			case *xmpp.ClientMessage:
 				s.processClientMessage(stanza)
 			case *xmpp.ClientPresence:
-				ignore, gone := s.processPresence(stanza)
-
-				if stanza.Type == "subscribe" {
+				switch stanza.Type {
+				case "subscribe":
+					// This is a subscription request
 					jid := xmpp.RemoveResourceFromJid(stanza.From)
+					s.PendingSubscribes[jid] = stanza.Id
 					s.SessionEventHandler.SubscriptionRequest(s, jid)
-					continue
+				case "unavailable":
+					from := xmpp.RemoveResourceFromJid(stanza.From)
+					if _, ok := s.KnownStates[from]; ok {
+						delete(s.KnownStates, from)
+						if !s.Config.HideStatusUpdates {
+							s.SessionEventHandler.ProcessPresence(stanza, true)
+						}
+					}
+				case "":
+					from := xmpp.RemoveResourceFromJid(stanza.From)
+					lastState, ok := s.KnownStates[from]
+					if !((!ok && isAwayStatus(stanza.Show)) || (ok && lastState == stanza.Show)) {
+						s.KnownStates[from] = stanza.Show
+						if !s.Config.HideStatusUpdates {
+							s.SessionEventHandler.ProcessPresence(stanza, false)
+						}
+					}
+				case "subscribed":
+					s.SessionEventHandler.Subscribed(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
+				case "unsubscribe":
+					s.SessionEventHandler.Unsubscribe(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
+				case "unsubscribed":
+					// Ignore
+				default:
+					s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
 				}
-
-				if ignore || s.Config.HideStatusUpdates {
-					continue
-				}
-
-				s.SessionEventHandler.ProcessPresence(stanza, gone)
 			case *xmpp.ClientIQ:
 				if stanza.Type != "get" && stanza.Type != "set" {
+					s.info(fmt.Sprintf("unrecognized iq: %#v", stanza))
 					continue
 				}
 				reply := s.processIQ(stanza)
@@ -185,6 +205,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 	if !ok {
 		return nil
 	}
+
 	switch startElem.Name.Space + " " + startElem.Name.Local {
 	case "http://jabber.org/protocol/disco#info query":
 		return xmpp.DiscoveryReply{
@@ -212,6 +233,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 			s.warn("Failed to parse roster push IQ")
 			return nil
 		}
+
 		entry := roster.Item[0]
 
 		if entry.Subscription == "remove" {
@@ -442,51 +464,6 @@ func isAwayStatus(status string) bool {
 		return true
 	}
 	return false
-}
-
-func (s *Session) processPresence(stanza *xmpp.ClientPresence) (ignore, gone bool) {
-
-	switch stanza.Type {
-	case "subscribe":
-		// This is a subscription request
-		jid := xmpp.RemoveResourceFromJid(stanza.From)
-		s.PendingSubscribes[jid] = stanza.Id
-		ignore = true
-		return
-	case "unavailable":
-		gone = true
-	case "":
-		break
-	default:
-		ignore = true
-		return
-	}
-
-	from := xmpp.RemoveResourceFromJid(stanza.From)
-
-	if gone {
-		if _, ok := s.KnownStates[from]; !ok {
-			// They've gone, but we never knew they were online.
-			ignore = true
-			return
-		}
-		delete(s.KnownStates, from)
-	} else {
-		if _, ok := s.KnownStates[from]; !ok && isAwayStatus(stanza.Show) {
-			// Skip people who are initially away.
-			ignore = true
-			return
-		}
-
-		if lastState, ok := s.KnownStates[from]; ok && lastState == stanza.Show {
-			// No change. Ignore.
-			ignore = true
-			return
-		}
-		s.KnownStates[from] = stanza.Show
-	}
-
-	return
 }
 
 func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {

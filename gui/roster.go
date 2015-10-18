@@ -13,7 +13,7 @@ type Roster struct {
 	model  *gtk.ListStore
 	view   *gtk.TreeView
 
-	contacts map[*Account][]xmpp.RosterEntry
+	contacts map[*Account]*peers
 
 	CheckEncrypted func(to string) bool
 	SendMessage    func(to, message string)
@@ -34,7 +34,7 @@ func NewRoster() *Roster {
 		view:   v,
 
 		conversations: make(map[string]*conversationWindow),
-		contacts:      make(map[*Account][]xmpp.RosterEntry),
+		contacts:      make(map[*Account]*peers),
 	}
 
 	r.Window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -128,7 +128,12 @@ func (r *Roster) AppendMessageToHistory(to, from, timestamp string, encrypted bo
 
 //TODO: It should have a mutex
 func (r *Roster) Update(account *Account, entries []xmpp.RosterEntry) {
-	r.contacts[account] = entries
+	current, ok := r.contacts[account]
+	if !ok {
+		r.contacts[account] = fromRosterEntries(entries)
+	} else {
+		current.updateFromRosterEntries(entries)
+	}
 }
 
 func (r *Roster) Redraw() {
@@ -140,13 +145,30 @@ func (r *Roster) Redraw() {
 
 	r.model.Clear()
 	for account, contacts := range r.contacts {
-		for _, item := range contacts {
+		contacts.iter(func(_ int, item *peer) {
 			iter := r.model.Append()
-			r.model.Set(iter, []int{0, 1}, []interface{}{item.Jid, account})
-		}
+			r.model.Set(iter, []int{0, 1}, []interface{}{item.nameForPresentation(), account})
+		})
 	}
 
 	r.view.SetModel(r.model)
 	r.model.TreeModel.Unref()
 	//gobj.Unref()
+}
+
+func (r *Roster) get(account, peer string) *peer {
+	for a, cs := range r.contacts {
+		if a.Account == account {
+			return cs.getOrAdd(peer)
+		}
+	}
+	return nil
+}
+
+func (r *Roster) remove(account, peer string) {
+	for a, cs := range r.contacts {
+		if a.Account == account {
+			cs.remove(peer)
+		}
+	}
 }

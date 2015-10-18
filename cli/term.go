@@ -16,6 +16,10 @@ func updateTerminalSize(term *terminal.Terminal) {
 	term.SetSize(width, height)
 }
 
+func debug(term *terminal.Terminal, msg string) {
+	terminalMessage(term, term.Escape.Yellow, msg, false)
+}
+
 func info(term *terminal.Terminal, msg string) {
 	terminalMessage(term, term.Escape.Blue, msg, false)
 }

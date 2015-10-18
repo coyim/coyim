@@ -6,6 +6,7 @@ import (
 )
 
 type SessionEventHandler interface {
+	Debug(string)
 	Info(string)
 	Warn(string)
 	Alert(string)
@@ -16,6 +17,8 @@ type SessionEventHandler interface {
 	MessageReceived(s *Session, from, timestamp string, encrypted bool, message []byte)
 	ProcessPresence(stanza *xmpp.ClientPresence, gone bool)
 	SubscriptionRequest(s *Session, uid string)
+	Subscribed(account, peer string)
+	Unsubscribe(account, peer string)
 	Disconnected()
 	RegisterCallback(title, instructions string, fields []interface{}) error
 }

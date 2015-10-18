@@ -158,6 +158,10 @@ func (c *cliUI) Close() {
 	}
 }
 
+func (c *cliUI) Debug(m string) {
+	debug(c.term, m)
+}
+
 func (c *cliUI) Info(m string) {
 	info(c.term, m)
 }
@@ -178,6 +182,12 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 func (c *cliUI) SubscriptionRequest(s *session.Session, from string) {
 	info(c.term, from+" wishes to see when you're online. Use '/confirm "+from+"' to confirm (or likewise with /deny to decline)")
 	c.input.AddUser(from)
+}
+
+func (c *cliUI) Subscribed(account, peer string) {
+}
+
+func (c *cliUI) Unsubscribe(account, peer string) {
 }
 
 func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {

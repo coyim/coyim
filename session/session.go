@@ -393,9 +393,9 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
 		if len(s.Config.UserIdForFingerprint(fpr)) == 0 {
-			s.Config.KnownFingerprints = append(s.Config.KnownFingerprints, config.KnownFingerprint{Fingerprint: fpr, UserId: from})
+			s.Config.AddFingerprint(fpr, from)
+			s.Config.Save()
 		}
-		s.Config.Save()
 	case event.SMPFailed:
 		s.alert(fmt.Sprintf("Authentication with %s failed", from))
 	}

@@ -40,6 +40,10 @@ func (c *Config) UserIdForFingerprint(fpr []byte) string {
 	return ""
 }
 
+func (c *Config) AddFingerprint(fpr []byte, uid string) {
+	c.KnownFingerprints = append(c.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserId: uid})
+}
+
 func (c *Config) HasFingerprint(uid string) bool {
 	for _, known := range c.KnownFingerprints {
 		if uid == known.UserId {

@@ -10,6 +10,7 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
+	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 )
@@ -25,6 +26,7 @@ const (
 type Session struct {
 	Conn       *xmpp.Conn
 	Roster     []xmpp.RosterEntry
+	R          *roster.List
 	ConnStatus connStatus
 
 	// conversations maps from a JID (without the resource) to an OTR
@@ -33,12 +35,8 @@ type Session struct {
 	Conversations   map[string]*otr3.Conversation
 	OtrEventHandler map[string]*event.OtrEventHandler
 
-	// knownStates maps from a JID (without the resource) to the last known
-	// presence state of that contact. It's used to deduping presence
-	// notifications.
-	KnownStates map[string]string
-	PrivateKey  *otr3.PrivateKey
-	Config      *config.Config
+	PrivateKey *otr3.PrivateKey
+	Config     *config.Config
 
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
@@ -60,9 +58,9 @@ func NewSession(c *config.Config) *Session {
 	s := &Session{
 		Config: c,
 
+		R:                 roster.New(),
 		Conversations:     make(map[string]*otr3.Conversation),
 		OtrEventHandler:   make(map[string]*event.OtrEventHandler),
-		KnownStates:       make(map[string]string),
 		PrivateKey:        new(otr3.PrivateKey),
 		PendingSubscribes: make(map[string]string),
 		LastActionTime:    time.Now(),
@@ -127,21 +125,14 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 		s.PendingSubscribes[jid] = stanza.Id
 		s.SessionEventHandler.SubscriptionRequest(s, jid)
 	case "unavailable":
-		from := xmpp.RemoveResourceFromJid(stanza.From)
-		if _, ok := s.KnownStates[from]; ok {
-			delete(s.KnownStates, from)
-			if !s.Config.HideStatusUpdates {
-				s.SessionEventHandler.ProcessPresence(stanza, true)
-			}
+		if s.R.PeerBecameUnavailable(stanza.From) &&
+			!s.Config.HideStatusUpdates {
+			s.SessionEventHandler.ProcessPresence(stanza, true)
 		}
 	case "":
-		from := xmpp.RemoveResourceFromJid(stanza.From)
-		lastState, ok := s.KnownStates[from]
-		if !((!ok && isAwayStatus(stanza.Show)) || (ok && lastState == stanza.Show)) {
-			s.KnownStates[from] = stanza.Show
-			if !s.Config.HideStatusUpdates {
-				s.SessionEventHandler.ProcessPresence(stanza, false)
-			}
+		if s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status) &&
+			!s.Config.HideStatusUpdates {
+			s.SessionEventHandler.ProcessPresence(stanza, false)
 		}
 	case "subscribed":
 		s.SessionEventHandler.Subscribed(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))

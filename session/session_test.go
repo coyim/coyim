@@ -7,6 +7,7 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
+	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 
@@ -604,6 +605,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUs
 	called := 0
 
 	sess := &Session{
+		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
 				called++
@@ -629,8 +631,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 	called := 0
 
 	sess := &Session{
-		Config:      &config.Config{},
-		KnownStates: make(map[string]string),
+		Config: &config.Config{},
+		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
 				called++
@@ -640,12 +642,12 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 		ConnStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
-	sess.KnownStates["some2@one.org"] = "somewhere"
+	sess.R.AddOrReplace(roster.PeerWithState("some2@one.org", "somewhere", ""))
 
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 1)
-	_, inMap := sess.KnownStates["some2@one.org"]
+	_, _, inMap := sess.R.StateOf("some2@one.org")
 	c.Assert(inMap, Equals, false)
 }
 
@@ -718,8 +720,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 	called := 0
 
 	sess := &Session{
-		Config:      &config.Config{},
-		KnownStates: make(map[string]string),
+		Config: &config.Config{},
+		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
 				called++
@@ -733,8 +735,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 1)
-	// TODO: should this status be on the JID or on the bare JID?
-	c.Assert(sess.KnownStates["some2@one.org"], Equals, "dnd")
+	st, _, _ := sess.R.StateOf("some2@one.org")
+	c.Assert(st, Equals, "dnd")
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
@@ -748,8 +750,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config:      &config.Config{},
-		KnownStates: make(map[string]string),
+		Config: &config.Config{},
+		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
 				called++
@@ -762,7 +764,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 0)
-	c.Assert(sess.KnownStates["some2@one.org"], Equals, "")
+	st, _, _ := sess.R.StateOf("some2@one.org")
+	c.Assert(st, Equals, "")
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
@@ -776,8 +779,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config:      &config.Config{},
-		KnownStates: make(map[string]string),
+		Config: &config.Config{},
+		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
 				called++
@@ -786,12 +789,13 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		ConnStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
-	sess.KnownStates["some2@one.org"] = "dnd"
+	sess.R.AddOrReplace(roster.PeerWithState("some2@one.org", "dnd", ""))
 
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 0)
-	c.Assert(sess.KnownStates["some2@one.org"], Equals, "dnd")
+	st, _, _ := sess.R.StateOf("some2@one.org")
+	c.Assert(st, Equals, "dnd")
 }
 
 func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWaiting(c *C) {

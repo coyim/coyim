@@ -19,6 +19,11 @@ func New() *List {
 	}
 }
 
+func (l *List) get(jid string) (*Peer, bool) {
+	v, ok := l.peers[xmpp.RemoveResourceFromJid(jid)]
+	return v, ok
+}
+
 // Remove returns the Peer with the jid from the List - it will first turn the jid into a bare jid.
 // It returns true if it could remove the entry and false otherwise. It also returns the removed entry.
 func (l *List) Remove(jid string) (*Peer, bool) {
@@ -48,12 +53,46 @@ func (l *List) AddOrMerge(p *Peer) bool {
 // AddOrReplace will add a new entry or replace an existing entry with the information from the given Peer
 // It returns true if it added the entry and false otherwise
 func (l *List) AddOrReplace(p *Peer) bool {
-	_, existed := l.peers[p.jid]
+	_, existed := l.get(p.jid)
 
 	l.peers[p.jid] = p
 
 	return !existed
 }
 
+// PeerBecameUnavailable marks the peer as unavailable if they exist
+// Returns true if they existed, otherwise false
+func (l *List) PeerBecameUnavailable(jid string) bool {
+	_, ok := l.Remove(jid)
+
+	return ok
+}
+
+// PeerPresenceUpdate updates the status for the peer
+// It returns true if it actually updated the status of the user
+func (l *List) PeerPresenceUpdate(jid, status, statusMsg string) bool {
+	if p, ok := l.get(jid); ok {
+		if p.status != status || p.statusMsg != statusMsg {
+			p.status = status
+			p.statusMsg = statusMsg
+			return true
+		}
+	} else {
+		if status != "away" && status != "xa" {
+			l.AddOrMerge(PeerWithState(jid, status, statusMsg))
+			return true
+		}
+	}
+	return false
+}
+
+// StateOf returns the status and status msg of the peer if it exists. It returns not ok if the peer doesn't exist.
+func (l *List) StateOf(jid string) (status, statusMsg string, ok bool) {
+	if p, existed := l.get(jid); existed {
+		return p.status, p.statusMsg, true
+	}
+
+	return "", "", false
+}
+
 // - client presence
-// - get current status

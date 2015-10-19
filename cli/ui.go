@@ -662,7 +662,7 @@ CommandLoop:
 				}
 
 				for _, item := range s.Roster {
-					state, ok := s.KnownStates[item.Jid]
+					state, _, ok := s.R.StateOf(item.Jid)
 
 					line := ""
 					if ok {

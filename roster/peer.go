@@ -28,10 +28,19 @@ func toSet(ks ...string) map[string]bool {
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given
 func PeerFrom(e xmpp.RosterEntry) *Peer {
 	return &Peer{
-		jid:          e.Jid,
+		jid:          xmpp.RemoveResourceFromJid(e.Jid),
 		subscription: e.Subscription,
 		name:         e.Name,
 		groups:       toSet(e.Group...),
+	}
+}
+
+// PeerWithState returns a new Peer that contains the given state information
+func PeerWithState(jid, status, statusMsg string) *Peer {
+	return &Peer{
+		jid:       xmpp.RemoveResourceFromJid(jid),
+		status:    status,
+		statusMsg: statusMsg,
 	}
 }
 

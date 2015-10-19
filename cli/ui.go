@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
@@ -733,6 +732,11 @@ CommandLoop:
 				s.Conn.SendPresence(cmd.User, "subscribe", "" /* generate id */)
 			case msgCommand:
 				conversation, ok := s.Conversations[cmd.to]
+
+				if ok && conf.OTRAutoAppendTag {
+					conversation.Policies.SendWhitespaceTag()
+				}
+
 				isEncrypted := ok && conversation.IsEncrypted()
 				if cmd.setPromptIsEncrypted != nil {
 					cmd.setPromptIsEncrypted <- isEncrypted
@@ -743,14 +747,7 @@ CommandLoop:
 				}
 				var msgs [][]byte
 				message := []byte(cmd.msg)
-				// Automatically tag all outgoing plaintext
-				// messages with a whitespace tag that
-				// indicates that we support OTR.
-				if conf.OTRAutoAppendTag &&
-					!bytes.Contains(message, []byte("?OTR")) &&
-					(!ok || !conversation.IsEncrypted()) {
-					message = append(message, ui.OTRWhitespaceTag...)
-				}
+
 				if ok {
 					var err error
 					validMsgs, err := conversation.Send(message)

@@ -12,18 +12,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-// OTRWhitespaceTagStart may be appended to plaintext messages to signal to the
-// remote client that we support OTR. It should be followed by one of the
-// version specific tags, below. See "Tagged plaintext messages" in
-// http://www.cypherpunks.ca/otr/Protocol-v3-4.0.0.html.
-var OTRWhitespaceTagStart = []byte("\x20\x09\x20\x20\x09\x09\x09\x09\x20\x09\x20\x09\x20\x09\x20\x20")
-
-var OTRWhiteSpaceTagV1 = []byte("\x20\x09\x20\x09\x20\x20\x09\x20")
-var OTRWhiteSpaceTagV2 = []byte("\x20\x20\x09\x09\x20\x20\x09\x20")
-var OTRWhiteSpaceTagV3 = []byte("\x20\x20\x09\x09\x20\x20\x09\x09")
-
-var OTRWhitespaceTag = append(OTRWhitespaceTagStart, OTRWhiteSpaceTagV2...)
-
 type UI interface {
 	Loop()
 

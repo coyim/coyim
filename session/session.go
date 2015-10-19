@@ -102,86 +102,108 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 	}
 }
 
+func (s *Session) receivedStreamError(stanza *xmpp.StreamError) bool {
+	var text string
+
+	if len(stanza.Text) > 0 {
+		text = stanza.Text
+	} else {
+		text = fmt.Sprintf("%s", stanza.Any)
+	}
+
+	s.alert("Exiting in response to fatal error from server: " + text)
+	return false
+}
+
+func (s *Session) receivedClientMessage(stanza *xmpp.ClientMessage) bool {
+	s.processClientMessage(stanza)
+	return true
+}
+
+func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
+	switch stanza.Type {
+	case "subscribe":
+		jid := xmpp.RemoveResourceFromJid(stanza.From)
+		s.PendingSubscribes[jid] = stanza.Id
+		s.SessionEventHandler.SubscriptionRequest(s, jid)
+	case "unavailable":
+		from := xmpp.RemoveResourceFromJid(stanza.From)
+		if _, ok := s.KnownStates[from]; ok {
+			delete(s.KnownStates, from)
+			if !s.Config.HideStatusUpdates {
+				s.SessionEventHandler.ProcessPresence(stanza, true)
+			}
+		}
+	case "":
+		from := xmpp.RemoveResourceFromJid(stanza.From)
+		lastState, ok := s.KnownStates[from]
+		if !((!ok && isAwayStatus(stanza.Show)) || (ok && lastState == stanza.Show)) {
+			s.KnownStates[from] = stanza.Show
+			if !s.Config.HideStatusUpdates {
+				s.SessionEventHandler.ProcessPresence(stanza, false)
+			}
+		}
+	case "subscribed":
+		s.SessionEventHandler.Subscribed(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
+	case "unsubscribe":
+		s.SessionEventHandler.Unsubscribe(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
+	case "unsubscribed":
+		// Ignore
+	default:
+		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
+	}
+	return true
+}
+
+func (s *Session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
+	if stanza.Type == "get" || stanza.Type == "set" {
+		reply := s.processIQ(stanza)
+		if reply == nil {
+			reply = xmpp.ErrorReply{
+				Type:  "cancel",
+				Error: xmpp.ErrorBadRequest{},
+			}
+		}
+
+		if err := s.Conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
+			s.alert("Failed to send IQ message: " + err.Error())
+		}
+		return true
+	}
+	s.info(fmt.Sprintf("unrecognized iq: %#v", stanza))
+	return true
+}
+
+func (s *Session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
+	select {
+	case rawStanza, ok := <-stanzaChan:
+		if !ok {
+			s.warn("Exiting because channel to server closed")
+			return false
+		}
+
+		switch stanza := rawStanza.Value.(type) {
+		case *xmpp.StreamError:
+			return s.receivedStreamError(stanza)
+		case *xmpp.ClientMessage:
+			return s.receivedClientMessage(stanza)
+		case *xmpp.ClientPresence:
+			return s.receivedClientPresence(stanza)
+		case *xmpp.ClientIQ:
+			return s.receivedClientIQ(stanza)
+		default:
+			s.info(fmt.Sprintf("%s %s", rawStanza.Name, rawStanza.Value))
+			return true
+		}
+	}
+}
+
 func (s *Session) WatchStanzas() {
 	defer s.Close()
 
 	stanzaChan := make(chan xmpp.Stanza)
 	go s.readMessages(stanzaChan)
-
-StanzaLoop:
-	for {
-		select {
-		case rawStanza, ok := <-stanzaChan:
-			if !ok {
-				s.warn("Exiting because channel to server closed")
-				break StanzaLoop
-			}
-
-			switch stanza := rawStanza.Value.(type) {
-			case *xmpp.StreamError:
-				var text string
-				if len(stanza.Text) > 0 {
-					text = stanza.Text
-				} else {
-					text = fmt.Sprintf("%s", stanza.Any)
-				}
-
-				s.alert("Exiting in response to fatal error from server: " + text)
-				break StanzaLoop
-			case *xmpp.ClientMessage:
-				s.processClientMessage(stanza)
-			case *xmpp.ClientPresence:
-				switch stanza.Type {
-				case "subscribe":
-					jid := xmpp.RemoveResourceFromJid(stanza.From)
-					s.PendingSubscribes[jid] = stanza.Id
-					s.SessionEventHandler.SubscriptionRequest(s, jid)
-				case "unavailable":
-					from := xmpp.RemoveResourceFromJid(stanza.From)
-					if _, ok := s.KnownStates[from]; ok {
-						delete(s.KnownStates, from)
-						if !s.Config.HideStatusUpdates {
-							s.SessionEventHandler.ProcessPresence(stanza, true)
-						}
-					}
-				case "":
-					from := xmpp.RemoveResourceFromJid(stanza.From)
-					lastState, ok := s.KnownStates[from]
-					if !((!ok && isAwayStatus(stanza.Show)) || (ok && lastState == stanza.Show)) {
-						s.KnownStates[from] = stanza.Show
-						if !s.Config.HideStatusUpdates {
-							s.SessionEventHandler.ProcessPresence(stanza, false)
-						}
-					}
-				case "subscribed":
-					s.SessionEventHandler.Subscribed(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
-				case "unsubscribe":
-					s.SessionEventHandler.Unsubscribe(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
-				case "unsubscribed":
-					// Ignore
-				default:
-					s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
-				}
-			case *xmpp.ClientIQ:
-				if stanza.Type != "get" && stanza.Type != "set" {
-					s.info(fmt.Sprintf("unrecognized iq: %#v", stanza))
-					continue
-				}
-				reply := s.processIQ(stanza)
-				if reply == nil {
-					reply = xmpp.ErrorReply{
-						Type:  "cancel",
-						Error: xmpp.ErrorBadRequest{},
-					}
-				}
-
-				if err := s.Conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
-					s.alert("Failed to send IQ message: " + err.Error())
-				}
-			default:
-				s.info(fmt.Sprintf("%s %s", rawStanza.Name, rawStanza.Value))
-			}
-		}
+	for s.receiveStanza(stanzaChan) {
 	}
 }
 
@@ -191,6 +213,72 @@ func (s *Session) rosterReceived() {
 
 func (s *Session) iqReceived(uid string) {
 	s.SessionEventHandler.IQReceived(uid)
+}
+
+func (s *Session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
+	return xmpp.DiscoveryReply{
+		Identities: []xmpp.DiscoveryIdentity{
+			{
+				Category: "client",
+				Type:     "pc",
+				Name:     s.Config.Account,
+			},
+		},
+	}
+}
+
+func (s *Session) receivedIQVersion() xmpp.VersionReply {
+	return xmpp.VersionReply{
+		Name:    "testing",
+		Version: "version",
+		OS:      "none",
+	}
+}
+
+func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
+	// TODO: this code can only be hit by a iq get or iq set. Is iq get actually reasonable for this?
+	// No, a get should likely not even arrive here
+	// TODO: we should deal with "ask" and "approved" attributes here
+
+	if len(stanza.From) > 0 && xmpp.RemoveResourceFromJid(stanza.From) != s.Config.Account {
+		s.warn("Ignoring roster IQ from bad address: " + stanza.From)
+		return nil
+	}
+	var roster xmpp.Roster
+	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&roster); err != nil || len(roster.Item) == 0 {
+		s.warn("Failed to parse roster push IQ")
+		return nil
+	}
+
+	// TODO: this is incorrect - you can get more than one roster Item
+	entry := roster.Item[0]
+
+	if entry.Subscription == "remove" {
+		var newRoster []xmpp.RosterEntry
+		for _, rosterEntry := range s.Roster {
+			if rosterEntry.Jid != entry.Jid {
+				newRoster = append(newRoster, rosterEntry)
+			}
+		}
+		s.Roster = newRoster
+		return xmpp.EmptyReply{}
+	}
+
+	found := false
+	for i, rosterEntry := range s.Roster {
+		if rosterEntry.Jid == entry.Jid {
+			s.Roster[i] = entry
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		s.Roster = append(s.Roster, entry)
+		s.iqReceived(entry.Jid)
+	}
+
+	return xmpp.EmptyReply{}
 }
 
 func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
@@ -207,65 +295,11 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 
 	switch startElem.Name.Space + " " + startElem.Name.Local {
 	case "http://jabber.org/protocol/disco#info query":
-		return xmpp.DiscoveryReply{
-			Identities: []xmpp.DiscoveryIdentity{
-				{
-					Category: "client",
-					Type:     "pc",
-					Name:     s.Config.Account,
-				},
-			},
-		}
+		return s.receivedIQDiscoInfo()
 	case "jabber:iq:version query":
-		return xmpp.VersionReply{
-			Name:    "testing",
-			Version: "version",
-			OS:      "none",
-		}
+		return s.receivedIQVersion()
 	case "jabber:iq:roster query":
-		// TODO: this code can only be hit by a iq get or iq set. Is iq get actually reasonable for this?
-		// No, a get should likely not even arrive here
-		// TODO: we should deal with "ask" and "approved" attributes here
-
-		if len(stanza.From) > 0 && xmpp.RemoveResourceFromJid(stanza.From) != s.Config.Account {
-			s.warn("Ignoring roster IQ from bad address: " + stanza.From)
-			return nil
-		}
-		var roster xmpp.Roster
-		if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&roster); err != nil || len(roster.Item) == 0 {
-			s.warn("Failed to parse roster push IQ")
-			return nil
-		}
-
-		// TODO: this is incorrect - you can get more than one roster Item
-		entry := roster.Item[0]
-
-		if entry.Subscription == "remove" {
-			var newRoster []xmpp.RosterEntry
-			for _, rosterEntry := range s.Roster {
-				if rosterEntry.Jid != entry.Jid {
-					newRoster = append(newRoster, rosterEntry)
-				}
-			}
-			s.Roster = newRoster
-			return xmpp.EmptyReply{}
-		}
-
-		found := false
-		for i, rosterEntry := range s.Roster {
-			if rosterEntry.Jid == entry.Jid {
-				s.Roster[i] = entry
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			s.Roster = append(s.Roster, entry)
-			s.iqReceived(entry.Jid)
-		}
-
-		return xmpp.EmptyReply{}
+		return s.receivedIQRosterQuery(stanza)
 	default:
 		s.info("Unknown IQ: " + startElem.Name.Space + " " + startElem.Name.Local)
 	}

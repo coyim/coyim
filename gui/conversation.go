@@ -78,7 +78,7 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 	conv.win.HideOnDelete()
 
 	conv.win.SetPosition(gtk.WIN_POS_CENTER)
-	conv.win.SetDefaultSize(300, 300)
+	conv.win.SetDefaultSize(500, 440)
 	conv.win.SetDestroyWithParent(true)
 	conv.win.SetTitle(uid)
 
@@ -90,22 +90,17 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
 
 	vbox.SetHomogeneous(false)
-	vbox.SetSpacing(5)
-	vbox.SetBorderWidth(5)
+	vbox.SetBorderWidth(3)
 
-	text, _ := gtk.TextViewNew()
-	text.SetWrapMode(gtk.WRAP_WORD)
-	text.Connect("key-press-event", func(_ *gtk.TextView, ev *gdk.Event) bool {
+	text, _ := gtk.EntryNew()
+	text.Connect("key-press-event", func(_ *gtk.Entry, ev *gdk.Event) bool {
 		//Send message on ENTER press (without modifier key)
 		evKey := gdk.EventKey{ev}
 		if (evKey.State()&gdk.GDK_MODIFIER_MASK) == 0 && evKey.KeyVal() == 0xff0d {
 			text.SetEditable(false)
 
-			b, _ := text.GetBuffer()
-			s := b.GetStartIter()
-			e := b.GetEndIter()
-			msg, _ := b.GetText(s, e, true)
-			b.SetText("")
+			msg, _ := text.GetText()
+			text.SetText("")
 
 			text.SetEditable(true)
 
@@ -120,18 +115,16 @@ func newConversationWindow(account *Account, uid string) *conversationWindow {
 		return false
 	})
 
-	scroll, _ := gtk.ScrolledWindowNew(nil, nil)
-	scroll.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-	scroll.Add(text)
-
 	conv.scrollHistory.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
 	conv.scrollHistory.Add(conv.history)
 
 	vbox.PackStart(conv.conversationMenu(), false, false, 0)
+	vbox.PackEnd(text, false, false, 0)
 	vbox.PackStart(conv.scrollHistory, true, true, 0)
-	vbox.PackStart(scroll, true, true, 0)
 
 	conv.win.Add(vbox)
+
+	text.GrabFocus()
 
 	return conv
 }

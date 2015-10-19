@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
@@ -40,6 +41,10 @@ func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 	}
 
 	accountInput, _ := gtk.ComboBoxNewWithModel(&model.TreeModel)
+	if len(accounts) > 0 {
+		accountInput.SetActive(0)
+	}
+
 	vbox.Add(accountInput)
 
 	renderer, _ := gtk.CellRendererTextNew()
@@ -59,7 +64,7 @@ func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 	button, _ := gtk.ButtonNewWithLabel(i18n.Local("Add"))
 	vbox.Add(button)
 
-	button.Connect("clicked", func() {
+	onAdd := func() {
 		//TODO: validate contact
 		contact, _ := contactInput.GetText()
 
@@ -81,7 +86,19 @@ func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 		}
 
 		dialog.Destroy()
+	}
+
+	button.Connect("clicked", onAdd)
+	contactInput.Connect("key-press-event", func(_ *gtk.Entry, ev *gdk.Event) bool {
+		evKey := gdk.EventKey{ev}
+		if (evKey.State()&gdk.GDK_MODIFIER_MASK) == 0 && evKey.KeyVal() == 0xff0d {
+			onAdd()
+			return true
+		}
+		return false
 	})
+
+	contactInput.GrabFocus()
 
 	return dialog
 }

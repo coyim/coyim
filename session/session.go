@@ -238,7 +238,7 @@ func (s *Session) receivedIQVersion() xmpp.VersionReply {
 func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
 	// TODO: this code can only be hit by a iq get or iq set. Is iq get actually reasonable for this?
 	// No, a get should likely not even arrive here
-	// TODO: we should deal with "ask" and "approved" attributes here
+	// TODO: we should deal with "ask" attributes here
 
 	if len(stanza.From) > 0 && xmpp.RemoveResourceFromJid(stanza.From) != s.Config.Account {
 		s.warn("Ignoring roster IQ from bad address: " + stanza.From)

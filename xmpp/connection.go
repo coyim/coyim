@@ -38,6 +38,14 @@ type Conn struct {
 	customStorage map[xml.Name]reflect.Type
 }
 
+func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
+	return &Conn{
+		in:  in,
+		out: out,
+		jid: jid,
+	}
+}
+
 func (conn *Conn) Close() error {
 	return conn.config.Conn.Close()
 }

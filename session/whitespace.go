@@ -19,6 +19,7 @@ var OTRWhiteSpaceTagV3 = []byte("\x20\x20\x09\x09\x20\x20\x09\x09")
 
 var OTRWhitespaceTag = append(OTRWhitespaceTagStart, OTRWhiteSpaceTagV2...)
 
+// TODO: this is taken care of in OTR3, it shouldn't be necessary here
 func (s *Session) processWhitespaceTag(encrypted bool, out []byte, from string) {
 	detectedOTRVersion := 0
 	// We don't need to alert about tags encoded inside of messages that are

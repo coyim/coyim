@@ -131,38 +131,53 @@ StanzaLoop:
 			case *xmpp.ClientMessage:
 				s.processClientMessage(stanza)
 			case *xmpp.ClientPresence:
-				switch stanza.Type {
-				case "subscribe":
-					// This is a subscription request
+				ignore, gone := s.processPresence(stanza)
+
+				if stanza.Type == "subscribe" {
 					jid := xmpp.RemoveResourceFromJid(stanza.From)
-					s.PendingSubscribes[jid] = stanza.Id
 					s.SessionEventHandler.SubscriptionRequest(s, jid)
-				case "unavailable":
-					from := xmpp.RemoveResourceFromJid(stanza.From)
-					if _, ok := s.KnownStates[from]; ok {
-						delete(s.KnownStates, from)
-						if !s.Config.HideStatusUpdates {
-							s.SessionEventHandler.ProcessPresence(stanza, true)
-						}
-					}
-				case "":
-					from := xmpp.RemoveResourceFromJid(stanza.From)
-					lastState, ok := s.KnownStates[from]
-					if !((!ok && isAwayStatus(stanza.Show)) || (ok && lastState == stanza.Show)) {
-						s.KnownStates[from] = stanza.Show
-						if !s.Config.HideStatusUpdates {
-							s.SessionEventHandler.ProcessPresence(stanza, false)
-						}
-					}
-				case "subscribed":
-					s.SessionEventHandler.Subscribed(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
-				case "unsubscribe":
-					s.SessionEventHandler.Unsubscribe(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
-				case "unsubscribed":
-					// Ignore
-				default:
-					s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
+					continue
 				}
+
+				if ignore || s.Config.HideStatusUpdates {
+					continue
+				}
+
+				s.SessionEventHandler.ProcessPresence(stanza, gone)
+
+				// TODO: new implementation, commented out while testing for current behavior
+				// switch stanza.Type {
+				// case "subscribe":
+				// 	// This is a subscription request
+				// 	jid := xmpp.RemoveResourceFromJid(stanza.From)
+				// 	s.PendingSubscribes[jid] = stanza.Id
+				// 	s.SessionEventHandler.SubscriptionRequest(s, jid)
+				// case "unavailable":
+				// 	from := xmpp.RemoveResourceFromJid(stanza.From)
+				// 	if _, ok := s.KnownStates[from]; ok {
+				// 		delete(s.KnownStates, from)
+				// 		if !s.Config.HideStatusUpdates {
+				// 			s.SessionEventHandler.ProcessPresence(stanza, true)
+				// 		}
+				// 	}
+				// case "":
+				// 	from := xmpp.RemoveResourceFromJid(stanza.From)
+				// 	lastState, ok := s.KnownStates[from]
+				// 	if !((!ok && isAwayStatus(stanza.Show)) || (ok && lastState == stanza.Show)) {
+				// 		s.KnownStates[from] = stanza.Show
+				// 		if !s.Config.HideStatusUpdates {
+				// 			s.SessionEventHandler.ProcessPresence(stanza, false)
+				// 		}
+				// 	}
+				// case "subscribed":
+				// 	s.SessionEventHandler.Subscribed(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
+				// case "unsubscribe":
+				// 	s.SessionEventHandler.Unsubscribe(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
+				// case "unsubscribed":
+				// 	// Ignore
+				// default:
+				// 	s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
+				// }
 			case *xmpp.ClientIQ:
 				if stanza.Type != "get" && stanza.Type != "set" {
 					s.info(fmt.Sprintf("unrecognized iq: %#v", stanza))
@@ -184,6 +199,51 @@ StanzaLoop:
 			}
 		}
 	}
+}
+
+// TODO: old implementation, only put back here for testing behavior
+func (s *Session) processPresence(stanza *xmpp.ClientPresence) (ignore, gone bool) {
+	switch stanza.Type {
+	case "subscribe":
+		// This is a subscription request
+		jid := xmpp.RemoveResourceFromJid(stanza.From)
+		s.PendingSubscribes[jid] = stanza.Id
+		ignore = true
+		return
+	case "unavailable":
+		gone = true
+	case "":
+		break
+	default:
+		ignore = true
+		return
+	}
+
+	from := xmpp.RemoveResourceFromJid(stanza.From)
+
+	if gone {
+		if _, ok := s.KnownStates[from]; !ok {
+			// They've gone, but we never knew they were online.
+			ignore = true
+			return
+		}
+		delete(s.KnownStates, from)
+	} else {
+		if _, ok := s.KnownStates[from]; !ok && isAwayStatus(stanza.Show) {
+			// Skip people who are initially away.
+			ignore = true
+			return
+		}
+
+		if lastState, ok := s.KnownStates[from]; ok && lastState == stanza.Show {
+			// No change. Ignore.
+			ignore = true
+			return
+		}
+		s.KnownStates[from] = stanza.Show
+	}
+
+	return
 }
 
 func (s *Session) rosterReceived() {
@@ -224,7 +284,11 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 			OS:      "none",
 		}
 	case "jabber:iq:roster query":
-		if len(stanza.From) > 0 && stanza.From != s.Config.Account {
+		// TODO: this code can only be hit by a iq get or iq set. Is iq get actually reasonable for this?
+		// No, a get should likely not even arrive here
+		// TODO: we should deal with "ask" and "approved" attributes here
+
+		if len(stanza.From) > 0 && xmpp.RemoveResourceFromJid(stanza.From) != s.Config.Account {
 			s.warn("Ignoring roster IQ from bad address: " + stanza.From)
 			return nil
 		}
@@ -234,15 +298,17 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 			return nil
 		}
 
+		// TODO: this is incorrect - you can get more than one roster Item
 		entry := roster.Item[0]
 
 		if entry.Subscription == "remove" {
-			for i, rosterEntry := range s.Roster {
-				if rosterEntry.Jid == entry.Jid {
-					copy(s.Roster[i:], s.Roster[i+1:])
-					s.Roster = s.Roster[:len(s.Roster)-1]
+			var newRoster []xmpp.RosterEntry
+			for _, rosterEntry := range s.Roster {
+				if rosterEntry.Jid != entry.Jid {
+					newRoster = append(newRoster, rosterEntry)
 				}
 			}
+			s.Roster = newRoster
 			return xmpp.EmptyReply{}
 		}
 
@@ -274,7 +340,7 @@ func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 		s.warn("No pending subscription from " + jid)
 		return
 	}
-	delete(s.PendingSubscribes, id)
+	delete(s.PendingSubscribes, jid)
 	typ := "unsubscribed"
 	if isConfirm {
 		typ = "subscribed"

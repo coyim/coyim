@@ -196,6 +196,20 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidDomain
 	c.Assert(ok, Equals, false)
 }
 
+func (s *ConnectionXmppSuite) Test_Next_returnsNonIQMessage(c *C) {
+	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
+	conn := Conn{
+		in:  xml.NewDecoder(mockIn),
+		jid: "some@one.org/foo",
+	}
+	v, err := conn.Next()
+	c.Assert(err, IsNil)
+	c.Assert(v.Value.(*ClientMessage).From, Equals, "bar@foo.com")
+	c.Assert(v.Value.(*ClientMessage).To, Equals, "fo@bar.com")
+	c.Assert(v.Value.(*ClientMessage).Type, Equals, "chat")
+	c.Assert(v.Value.(*ClientMessage).Body, Equals, "something")
+}
+
 func (s *ConnectionXmppSuite) Test_makeInOut_returnsANewDecoderAndOriginalWriterWhenNoConfigIsGiven(c *C) {
 	mockBoth := &mockConnIOReaderWriter{}
 	_, rout := makeInOut(mockBoth, nil)

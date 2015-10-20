@@ -2,12 +2,15 @@ package config
 
 import (
 	"crypto/rand"
+	"strconv"
+	"time"
 
 	"github.com/twstrike/otr3"
 )
 
 type Config struct {
 	Filename string `json:"-"`
+	id       string `json:"-"`
 
 	Account                       string
 	Server                        string   `json:",omitempty"`
@@ -54,4 +57,12 @@ func NewConfig() *Config {
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48
 	}
+}
+
+func (c *Config) Id() string {
+	if len(c.id) == 0 {
+		c.id = strconv.FormatUint(uint64(time.Now().UnixNano()), 10)
+	}
+
+	return c.id
 }

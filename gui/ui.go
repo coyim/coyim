@@ -69,7 +69,7 @@ func (u *gtkUI) addNewAccountsFromConfig() {
 
 		var found bool
 		for _, acc := range u.accounts {
-			if acc.Config == conf {
+			if acc.Config.Id() == conf.Id() {
 				found = true
 				break
 			}
@@ -342,7 +342,6 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	u.window.Connect(AccountChangedSignal.String(), func() {
 		//TODO: should it destroy the current submenu? HOW?
 		u.accountsMenu.SetSubmenu((*gtk.Widget)(nil))
-
 		u.buildAccountsMenu()
 	})
 

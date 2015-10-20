@@ -8,6 +8,7 @@ import (
 	"github.com/twstrike/otr3"
 )
 
+// Config contains the configuration for one account
 type Config struct {
 	Filename string `json:"-"`
 	id       string `json:"-"`
@@ -33,8 +34,9 @@ type Config struct {
 	AlwaysEncryptWith             []string `json:",omitempty"`
 }
 
+// NewConfig creates a new configuration from scratch
 func NewConfig() *Config {
-	var torProxy []string = nil
+	var torProxy []string
 	torAddress := detectTor()
 
 	if len(torAddress) != 0 {
@@ -57,7 +59,8 @@ func NewConfig() *Config {
 	}
 }
 
-func (c *Config) Id() string {
+// ID returns the unique identifier for this account
+func (c *Config) ID() string {
 	if len(c.id) == 0 {
 		c.id = strconv.FormatUint(uint64(time.Now().UnixNano()), 10)
 	}

@@ -6,30 +6,30 @@ import (
 	"io/ioutil"
 )
 
-type MultiAccountConfig struct {
+type MultiAccount struct {
 	keepXmppClientCompat bool
 	Accounts             []Config
 }
 
-func (multiAccountConfig *MultiAccountConfig) Add(conf Config) {
-	multiAccountConfig.Accounts = append(multiAccountConfig.Accounts, conf)
+func (multiAccount *MultiAccount) Add(conf Config) {
+	multiAccount.Accounts = append(multiAccount.Accounts, conf)
 }
 
-func (multiAccountConfig *MultiAccountConfig) Serialize() ([]byte, error) {
-	for _, account := range multiAccountConfig.Accounts {
+func (multiAccount *MultiAccount) Serialize() ([]byte, error) {
+	for _, account := range multiAccount.Accounts {
 		account.SerializeFingerprints()
 	}
 
-	return json.MarshalIndent(multiAccountConfig, "", "\t")
+	return json.MarshalIndent(multiAccount, "", "\t")
 }
 
-func ParseMultiConfig(filename string) (*MultiAccountConfig, error) {
+func readMultiAccount(filename string) (*MultiAccount, error) {
 	contents, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 
-	c, err := parseMultiConfig(contents)
+	c, err := parseMultiAccount(contents)
 	if err != nil {
 		return nil, err
 	}
@@ -37,8 +37,8 @@ func ParseMultiConfig(filename string) (*MultiAccountConfig, error) {
 	return c, nil
 }
 
-func parseMultiConfig(conf []byte) (m *MultiAccountConfig, err error) {
-	m = &MultiAccountConfig{}
+func parseMultiAccount(conf []byte) (m *MultiAccount, err error) {
+	m = &MultiAccount{}
 	if err = json.Unmarshal(conf, &m); err != nil {
 		return
 	}
@@ -59,20 +59,20 @@ func parseSingleConfig(contents []byte) (c *Config, err error) {
 	return
 }
 
-func fallbackToSingleAccountConfig(conf []byte) (*MultiAccountConfig, error) {
+func fallbackToSingleAccountConfig(conf []byte) (*MultiAccount, error) {
 	c, err := parseSingleConfig(conf)
 	if err != nil {
 		return nil, err
 	}
 
-	return &MultiAccountConfig{
+	return &MultiAccount{
 		keepXmppClientCompat: true,
 		Accounts:             []Config{*c},
 	}, nil
 }
 
-func ParseConfig(filename string) (*MultiAccountConfig, error) {
-	m, err := ParseMultiConfig(filename)
+func ParseConfig(filename string) (*MultiAccount, error) {
+	m, err := readMultiAccount(filename)
 	if err != nil {
 		return nil, err
 	}

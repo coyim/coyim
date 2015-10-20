@@ -25,8 +25,8 @@ type gtkUI struct {
 	window       *gtk.Window
 	accountsMenu *gtk.MenuItem
 
-	configFileManager *config.ConfigFileManager
-	multiConfig       *config.MultiAccountConfig
+	configFileManager *config.FileManager
+	multiConfig       *config.MultiAccount
 
 	accounts []*Account
 }
@@ -36,16 +36,16 @@ func NewGTK() *gtkUI {
 }
 
 func (u *gtkUI) LoadConfig(configFile string) error {
-	u.configFileManager = config.NewConfigFileManager(configFile)
+	u.configFileManager = config.NewFileManager(configFile)
 
 	err := u.configFileManager.ParseConfigFile()
 	if err != nil {
 		u.Alert(err.Error())
 
-		u.configFileManager.MultiAccountConfig = &config.MultiAccountConfig{}
+		u.configFileManager.MultiAccount = &config.MultiAccount{}
 
 		//TODO: Remove this
-		u.multiConfig = u.configFileManager.MultiAccountConfig
+		u.multiConfig = u.configFileManager.MultiAccount
 
 		glib.IdleAdd(func() bool {
 			u.showAddAccountWindow()
@@ -56,7 +56,7 @@ func (u *gtkUI) LoadConfig(configFile string) error {
 	}
 
 	//TODO: REMOVE this
-	u.multiConfig = u.configFileManager.MultiAccountConfig
+	u.multiConfig = u.configFileManager.MultiAccount
 
 	u.accounts = BuildAccountsFrom(u.multiConfig, u.configFileManager, u)
 
@@ -67,7 +67,7 @@ func (u *gtkUI) addNewAccountsFromConfig() {
 	for _, configAccount := range u.configFileManager.Accounts {
 		var found bool
 		for _, acc := range u.accounts {
-			if acc.Id() == configAccount.Id() {
+			if acc.ID() == configAccount.ID() {
 				found = true
 				break
 			}

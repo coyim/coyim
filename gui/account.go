@@ -44,11 +44,11 @@ func (acc *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
 	return nil
 }
 
-func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig, manager configManager, u *gtkUI) []*Account {
-	accounts := make([]*Account, len(multiAccConfig.Accounts))
+func BuildAccountsFrom(multiAcc *config.MultiAccount, manager configManager, u *gtkUI) []*Account {
+	accounts := make([]*Account, len(multiAcc.Accounts))
 
-	for i := range multiAccConfig.Accounts {
-		conf := &multiAccConfig.Accounts[i]
+	for i := range multiAcc.Accounts {
+		conf := &multiAcc.Accounts[i]
 		u.ensureConfigHasKey(conf)
 
 		account := newAccount(conf, manager)
@@ -60,7 +60,7 @@ func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig, manager config
 }
 
 func newAccount(conf *config.Config, m configManager) *Account {
-	id := conf.Id()
+	id := conf.ID()
 	c, _ := glib.SignalNew(signalName(id, "connected"))
 	d, _ := glib.SignalNew(signalName(id, "disconnected"))
 

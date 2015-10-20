@@ -28,6 +28,7 @@ type RosterEdit struct {
 	Contents []byte
 }
 
+// RosterEditor represents an edit of a Roster in progress
 type RosterEditor struct {
 	Roster []xmpp.RosterEntry
 
@@ -39,7 +40,7 @@ type RosterEditor struct {
 	PendingRosterChan chan *RosterEdit
 }
 
-// editRoster runs in a goroutine and writes the roster to a file that the user
+// EditRoster runs in a goroutine and writes the roster to a file that the user
 // can edit.
 func (s *RosterEditor) EditRoster(roster []xmpp.RosterEntry) error {
 	// In case the editor rewrites the file, we work inside a temp
@@ -122,6 +123,7 @@ func (s *RosterEditor) EditRoster(roster []xmpp.RosterEntry) error {
 	return nil
 }
 
+// LoadEditedRoster loads the edits from the given roster
 func (s *RosterEditor) LoadEditedRoster(edit RosterEdit) error {
 	contents, err := ioutil.ReadFile(edit.FileName)
 	if err != nil {

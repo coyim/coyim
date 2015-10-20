@@ -88,7 +88,7 @@ func (s *ConfigXmppSuite) TestSerializeMultiAccountConfig(c *C) {
 	]
 }`
 
-	conf := MultiAccountConfig{
+	conf := MultiAccount{
 		Accounts: []Config{
 			Config{
 				Account:       "bob@riseup.net",
@@ -106,8 +106,8 @@ func (s *ConfigXmppSuite) TestSerializeMultiAccountConfig(c *C) {
 	c.Assert(string(contents), Equals, expected)
 }
 
-func (s *ConfigXmppSuite) TestParseMultiAccountConfig(c *C) {
-	multiConf := &MultiAccountConfig{
+func (s *ConfigXmppSuite) TestParseMultiAccount(c *C) {
+	multiConf := &MultiAccount{
 		Accounts: []Config{
 			Config{
 				Account:           "alice@riseup.net",
@@ -128,11 +128,11 @@ func (s *ConfigXmppSuite) TestParseMultiAccountConfig(c *C) {
 	multiConfFile, _ := json.Marshal(multiConf)
 	singleConfFile, _ := json.Marshal(singleConf)
 
-	conf, err := parseMultiConfig([]byte(singleConfFile))
+	conf, err := parseMultiAccount([]byte(singleConfFile))
 	c.Assert(err, IsNil)
 	c.Assert(conf.Accounts[0], DeepEquals, *singleConf)
 
-	conf, err = parseMultiConfig([]byte(multiConfFile))
+	conf, err = parseMultiAccount([]byte(multiConfFile))
 	c.Assert(err, IsNil)
 	c.Assert(conf, DeepEquals, multiConf)
 }

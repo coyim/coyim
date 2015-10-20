@@ -220,10 +220,10 @@ func setOption(v reflect.Value, t reflect.Type, option string) bool {
 			field := v.Field(i)
 			if field.Bool() {
 				return false // already set
-			} else {
-				field.SetBool(true)
-				return true
 			}
+
+			field.SetBool(true)
+			return true
 		}
 	}
 
@@ -321,7 +321,7 @@ func parseCommand(commands []uiCommand, line []byte) (interface{}, string) {
 	return v.Interface(), ""
 }
 
-type Input struct {
+type input struct {
 	term                 *terminal.Terminal
 	commands             *priorityList
 	lastKeyWasCompletion bool
@@ -333,12 +333,12 @@ type Input struct {
 	lastTarget  string
 }
 
-func (i *Input) AddUser(uid string) {
+func (i *input) addUser(uid string) {
 	i.lock.Lock()
 	defer i.lock.Unlock()
 
-	for _, existingUid := range i.uids {
-		if existingUid == uid {
+	for _, existingUID := range i.uids {
+		if existingUID == uid {
 			return
 		}
 	}
@@ -347,7 +347,7 @@ func (i *Input) AddUser(uid string) {
 	i.uids = append(i.uids, uid)
 }
 
-func (i *Input) ProcessCommands(commandsChan chan<- interface{}) {
+func (i *input) processCommands(commandsChan chan<- interface{}) {
 	i.commands = new(priorityList)
 	for _, command := range uiCommands {
 		i.commands.Insert(command.name)
@@ -456,10 +456,10 @@ func (i *Input) ProcessCommands(commandsChan chan<- interface{}) {
 	}
 }
 
-func (input *Input) SetPromptForTarget(target string, isEncrypted bool) {
-	input.lock.Lock()
-	isCurrent := input.lastTarget == target
-	input.lock.Unlock()
+func (i *input) SetPromptForTarget(target string, isEncrypted bool) {
+	i.lock.Lock()
+	isCurrent := i.lastTarget == target
+	i.lock.Unlock()
 
 	if !isCurrent {
 		return
@@ -467,22 +467,22 @@ func (input *Input) SetPromptForTarget(target string, isEncrypted bool) {
 
 	prompt := make([]byte, 0, len(target)+16)
 	if isEncrypted {
-		prompt = append(prompt, input.term.Escape.Green...)
+		prompt = append(prompt, i.term.Escape.Green...)
 	} else {
-		prompt = append(prompt, input.term.Escape.Red...)
+		prompt = append(prompt, i.term.Escape.Red...)
 	}
 
 	prompt = append(prompt, target...)
-	prompt = append(prompt, input.term.Escape.Reset...)
+	prompt = append(prompt, i.term.Escape.Reset...)
 	prompt = append(prompt, '>', ' ')
-	input.term.SetPrompt(string(prompt))
+	i.term.SetPrompt(string(prompt))
 }
 
-func (input *Input) showHelp() {
+func (i *input) showHelp() {
 	examples := make([]string, len(uiCommands))
 	maxLen := 0
 
-	for i, cmd := range uiCommands {
+	for ix, cmd := range uiCommands {
 		line := "/" + cmd.name
 		prototype := reflect.TypeOf(cmd.prototype)
 		for j := 0; j < prototype.NumField(); j++ {
@@ -495,23 +495,23 @@ func (input *Input) showHelp() {
 		if l := len(line); l > maxLen {
 			maxLen = l
 		}
-		examples[i] = line
+		examples[ix] = line
 	}
 
-	for i, cmd := range uiCommands {
-		line := examples[i]
+	for ix, cmd := range uiCommands {
+		line := examples[ix]
 		numSpaces := 1 + (maxLen - len(line))
 		for j := 0; j < numSpaces; j++ {
 			line += " "
 		}
 		line += cmd.desc
-		info(input.term, line)
+		info(i.term, line)
 	}
 }
 
 const nameTerminator = ": "
 
-func (i *Input) AutoComplete(line string, pos int, key rune) (string, int, bool) {
+func (i *input) AutoComplete(line string, pos int, key rune) (string, int, bool) {
 	const keyTab = 9
 
 	if key != keyTab {

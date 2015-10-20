@@ -34,13 +34,14 @@ type cliUI struct {
 	password string
 	oldState *terminal.State
 	term     *terminal.Terminal
-	input    *Input
+	input    *input
 
 	terminate chan bool
 
 	RosterEditor
 }
 
+// NewCLI creates a new cliUI instance
 func NewCLI() *cliUI {
 	oldState, err := terminal.MakeRaw(0)
 	if err != nil {
@@ -63,7 +64,7 @@ func NewCLI() *cliUI {
 		term:      term,
 		oldState:  oldState,
 		terminate: make(chan bool),
-		input: &Input{
+		input: &input{
 			term:        term,
 			uidComplete: new(priorityList),
 		},
@@ -74,7 +75,7 @@ func NewCLI() *cliUI {
 }
 
 func (c *cliUI) LoadConfig(configFile string) error {
-	configFileManager := config.NewConfigFileManager(configFile)
+	configFileManager := config.NewFileManager(configFile)
 
 	if err := configFileManager.ParseConfigFile(); err != nil {
 		c.config = config.NewConfig()
@@ -87,7 +88,7 @@ func (c *cliUI) LoadConfig(configFile string) error {
 	}
 
 	//TODO migrate to use configFileManager
-	c.config = &configFileManager.MultiAccountConfig.Accounts[0]
+	c.config = &configFileManager.MultiAccount.Accounts[0]
 	c.config.Filename = configFileManager.Filename
 
 	//TODO We do not support empty passwords
@@ -180,7 +181,7 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 
 func (c *cliUI) SubscriptionRequest(s *session.Session, from string) {
 	info(c.term, from+" wishes to see when you're online. Use '/confirm "+from+"' to confirm (or likewise with /deny to decline)")
-	c.input.AddUser(from)
+	c.input.addUser(from)
 }
 
 func (c *cliUI) Subscribed(account, peer string) {
@@ -213,12 +214,12 @@ func (c *cliUI) ProcessPresence(from, to, show, status string, gone bool) {
 }
 
 func (c *cliUI) IQReceived(uid string) {
-	c.input.AddUser(uid)
+	c.input.addUser(uid)
 }
 
 func (c *cliUI) RosterReceived(s *session.Session) {
 	for _, entry := range s.R.ToSlice() {
-		c.input.AddUser(entry.Jid)
+		c.input.addUser(entry.Jid)
 	}
 }
 
@@ -257,13 +258,13 @@ func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversatio
 	term := c.term
 
 	fpr := conversation.GetTheirKey().DefaultFingerprint()
-	fprUid := s.Config.UserIdForFingerprint(fpr)
+	fprUID := s.Config.UserIdForFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %x", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %x", uid, conversation.GetSSID()))
-	if fprUid == uid {
+	if fprUID == uid {
 		info(term, fmt.Sprintf("  Identity key for %s is verified", uid))
-	} else if len(fprUid) > 1 {
-		alert(term, fmt.Sprintf("  Warning: %s is using an identity key which was verified for %s", uid, fprUid))
+	} else if len(fprUID) > 1 {
+		alert(term, fmt.Sprintf("  Warning: %s is using an identity key which was verified for %s", uid, fprUID))
 	} else if s.Config.HasFingerprint(uid) {
 		critical(term, fmt.Sprintf("  Identity key for %s is incorrect", uid))
 	} else {
@@ -612,7 +613,7 @@ func (c *cliUI) WatchCommands() {
 	defer c.Disconnected()
 
 	commandChan := make(chan interface{})
-	go c.input.ProcessCommands(commandChan)
+	go c.input.processCommands(commandChan)
 	c.term.SetPrompt("> ")
 
 	term := c.term

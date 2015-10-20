@@ -65,7 +65,6 @@ func newAccount(conf *config.Config, m configManager) *Account {
 	d, _ := glib.SignalNew(signalName(id, "disconnected"))
 
 	a := &Account{
-		ID:            id,
 		Config:        conf,
 		Session:       session.NewSession(conf),
 		configManager: m,

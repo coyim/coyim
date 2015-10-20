@@ -48,6 +48,8 @@ type Session struct {
 
 	timeoutTicker *time.Ticker
 	rosterCookie  xmpp.Cookie
+
+	Account interface{}
 }
 
 func NewSession(c *config.Config) *Session {

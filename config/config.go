@@ -33,7 +33,6 @@ type Config struct {
 	AlwaysEncryptWith             []string `json:",omitempty"`
 }
 
-//TODO return a config with secure defaults
 func NewConfig() *Config {
 	var torProxy []string = nil
 	torAddress := detectTor()
@@ -48,7 +47,6 @@ func NewConfig() *Config {
 	priv.Generate(rand.Reader)
 
 	return &Config{
-		//TODO: Should those 2 setting be set on startup (or maybe every connection)?
 		Proxies: torProxy,
 		UseTor:  torProxy != nil,
 

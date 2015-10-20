@@ -37,7 +37,7 @@ func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 	for _, acc := range accounts {
 		iter := model.Append()
 		//TODO stop passing pointers
-		model.Set(iter, []int{0, 1}, []interface{}{acc.Account, acc})
+		model.Set(iter, []int{0, 1}, []interface{}{acc.Config.Account, acc})
 	}
 
 	accountInput, _ := gtk.ComboBoxNewWithModel(&model.TreeModel)

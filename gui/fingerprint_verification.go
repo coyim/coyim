@@ -24,7 +24,7 @@ func verifyFingerprintDialog(account *Account, uid string) {
 	Purported fingerprint for %[3]s: %[4]x
 
 	Is this the verifiably correct fingerprint for %[3]s?
-	`), account.Account, account.Session.PrivateKey.DefaultFingerprint(), uid, fpr)
+	`), account.Config.Account, account.Session.PrivateKey.DefaultFingerprint(), uid, fpr)
 	l, _ := gtk.LabelNew(message)
 	vbox.Add(l)
 

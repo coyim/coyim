@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"crypto/rand"
 	"fmt"
 	"os"
 	"os/exec"
@@ -11,14 +12,13 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/otr3"
 )
 
-const debugEnabled = false
+const debugEnabled = true
 
 type gtkUI struct {
 	roster       *Roster
@@ -28,7 +28,7 @@ type gtkUI struct {
 	configFileManager *config.ConfigFileManager
 	multiConfig       *config.MultiAccountConfig
 
-	accounts []Account
+	accounts []*Account
 }
 
 func NewGTK() *gtkUI {
@@ -58,7 +58,7 @@ func (u *gtkUI) LoadConfig(configFile string) error {
 	//TODO: REMOVE this
 	u.multiConfig = u.configFileManager.MultiAccountConfig
 
-	u.accounts = BuildAccountsFrom(u.multiConfig, u.configFileManager)
+	u.accounts = BuildAccountsFrom(u.multiConfig, u.configFileManager, u)
 
 	return nil
 }
@@ -89,7 +89,10 @@ func (u *gtkUI) SaveConfig() error {
 	}
 
 	u.addNewAccountsFromConfig()
-	u.window.Emit(AccountChangedSignal.String())
+
+	if u.window != nil {
+		u.window.Emit(AccountChangedSignal.String())
+	}
 
 	return nil
 }
@@ -100,20 +103,16 @@ func (u *gtkUI) Disconnected() {
 }
 
 func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {
-
 	//TODO: should open a registration window
 	fmt.Println("TODO")
 	return nil
 }
 
 func (u *gtkUI) findAccountForSession(s *session.Session) *Account {
-	for i := range u.accounts {
-		account := &u.accounts[i]
-		if account.Session == s {
-			return account
-		}
+	a, ok := s.Account.(*Account)
+	if ok {
+		return a
 	}
-
 	return nil
 }
 
@@ -304,7 +303,7 @@ func (u *gtkUI) addContactWindow() {
 	accounts := make([]*Account, 0, len(u.accounts))
 
 	for i := range u.accounts {
-		acc := &u.accounts[i]
+		acc := u.accounts[i]
 		if acc.Connected() {
 			accounts = append(accounts, acc)
 		}
@@ -411,24 +410,27 @@ func (u *gtkUI) RosterReceived(s *session.Session) {
 	})
 }
 
-func (u *gtkUI) disconnect(account Account) error {
+func (u *gtkUI) disconnect(account *Account) {
 	account.Session.Close()
 	u.window.Emit(account.DisconnectedSignal.String())
-	return nil
 }
 
-func (u *gtkUI) connect(account Account) {
-	//TODO find a better place to initialize the eventHandler
-	s := account.Session
-	s.SessionEventHandler = guiSessionEventHandler{u}
+func (u *gtkUI) ensureConfigHasKey(c *config.Config) {
+	u.Debug(fmt.Sprintf("[%s] ensureConfigHasKey()\n", c.Account))
 
-	var registerCallback xmpp.FormCallback
-	if *config.CreateAccount {
-		registerCallback = u.RegisterCallback
+	if len(c.PrivateKey) == 0 {
+		u.Debug(fmt.Sprintf("[%s] - No private key available. Generating...\n", c.Account))
+		var priv otr3.PrivateKey
+		priv.Generate(rand.Reader)
+		c.PrivateKey = priv.Serialize()
+		u.SaveConfig()
+		u.Debug(fmt.Sprintf("[%s] - Saved\n", c.Account))
 	}
+}
 
+func (u *gtkUI) connect(account *Account) {
 	connectFn := func(password string) {
-		err := s.Connect(password, registerCallback)
+		err := account.Session.Connect(password, nil)
 		if err != nil {
 			u.window.Emit(account.DisconnectedSignal.String())
 			return
@@ -437,7 +439,6 @@ func (u *gtkUI) connect(account Account) {
 		u.window.Emit(account.ConnectedSignal.String())
 	}
 
-	//TODO We do not support saved empty passwords
 	if len(account.Password) == 0 {
 		u.askForPassword(connectFn)
 		return

@@ -139,7 +139,7 @@ func (r *Roster) debugPrintRosterFor(nm string) {
 	fmt.Printf(" ^^^ Roster for: %s ^^^ \n", nnm)
 
 	for account, rs := range r.contacts {
-		if account.Account == nnm {
+		if account.Config.Account == nnm {
 			rs.Iter(func(_ int, item *roster.Peer) {
 				fmt.Printf("->   #%v\n", item)
 			})

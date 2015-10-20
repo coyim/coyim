@@ -15,21 +15,21 @@ var (
 	AccountChangedSignal, _ = glib.SignalNew("coyim-account-changed")
 )
 
-func firstProxy(account Account) string {
+func firstProxy(account *Account) string {
 	if len(account.Proxies) > 0 {
 		return account.Proxies[0]
 	}
 	return ""
 }
 
-func onAccountDialogClicked(account Account, saveFunction func() error, reg *widgetRegistry) func() {
+func onAccountDialogClicked(account *Account, saveFunction func() error, reg *widgetRegistry) func() {
 	return func() {
-		account.Account = reg.getText("account")
+		account.Config.Account = reg.getText("account")
 		account.Password = reg.getText("password")
 
-		parts := strings.SplitN(account.Account, "@", 2)
+		parts := strings.SplitN(account.Config.Account, "@", 2)
 		if len(parts) != 2 {
-			fmt.Println("invalid username (want user@domain): " + account.Account)
+			fmt.Println("invalid username (want user@domain): " + account.Config.Account)
 			return
 		}
 
@@ -44,7 +44,7 @@ func onAccountDialogClicked(account Account, saveFunction func() error, reg *wid
 	}
 }
 
-func accountDialog(account Account, saveFunction func() error) {
+func accountDialog(account *Account, saveFunction func() error) {
 	reg := createWidgetRegistry()
 	d := dialog{
 		title:    i18n.Local("Account Details"),
@@ -53,7 +53,7 @@ func accountDialog(account Account, saveFunction func() error) {
 		content: []createable{
 			label{i18n.Local("Account")},
 			entry{
-				text:       account.Account,
+				text:       account.Config.Account,
 				editable:   true,
 				visibility: true,
 				id:         "account",
@@ -84,8 +84,8 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 	disconnect.SetSensitive(connected)
 }
 
-func buildAccountSubmenu(u *gtkUI, account Account) *gtk.MenuItem {
-	menuitem, _ := gtk.MenuItemNewWithMnemonic(account.Account)
+func buildAccountSubmenu(u *gtkUI, account *Account) *gtk.MenuItem {
+	menuitem, _ := gtk.MenuItemNewWithMnemonic(account.Config.Account)
 
 	accountSubMenu, _ := gtk.MenuNew()
 	menuitem.SetSubmenu(accountSubMenu)

@@ -25,7 +25,6 @@ const (
 
 type Session struct {
 	Conn       *xmpp.Conn
-	Roster     []xmpp.RosterEntry
 	R          *roster.List
 	ConnStatus connStatus
 
@@ -42,9 +41,6 @@ type Session struct {
 	// absolute time when that request should timeout.
 	Timeouts map[xmpp.Cookie]time.Time
 
-	// pendingSubscribes maps JID with pending subscription requests to the
-	// ID if the iq for the reply.
-	PendingSubscribes map[string]string
 	// lastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	LastActionTime      time.Time
@@ -58,18 +54,14 @@ func NewSession(c *config.Config) *Session {
 	s := &Session{
 		Config: c,
 
-		R:                 roster.New(),
-		Conversations:     make(map[string]*otr3.Conversation),
-		OtrEventHandler:   make(map[string]*event.OtrEventHandler),
-		PrivateKey:        new(otr3.PrivateKey),
-		PendingSubscribes: make(map[string]string),
-		LastActionTime:    time.Now(),
+		R:               roster.New(),
+		Conversations:   make(map[string]*otr3.Conversation),
+		OtrEventHandler: make(map[string]*event.OtrEventHandler),
+		PrivateKey:      new(otr3.PrivateKey),
+		LastActionTime:  time.Now(),
 	}
 
 	s.PrivateKey.Parse(c.PrivateKey)
-
-	//TODO: Add this information to some screen
-	//fmt.Printf("Your fingerprint is %x\n", s.PrivateKey.DefaultFingerprint())
 
 	return s
 }
@@ -121,22 +113,23 @@ func (s *Session) receivedClientMessage(stanza *xmpp.ClientMessage) bool {
 func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
-		jid := xmpp.RemoveResourceFromJid(stanza.From)
-		s.PendingSubscribes[jid] = stanza.Id
-		s.SessionEventHandler.SubscriptionRequest(s, jid)
+		s.R.SubscribeRequest(stanza.From, stanza.Id)
+		s.SessionEventHandler.SubscriptionRequest(s, xmpp.RemoveResourceFromJid(stanza.From))
 	case "unavailable":
 		if s.R.PeerBecameUnavailable(stanza.From) &&
 			!s.Config.HideStatusUpdates {
-			s.SessionEventHandler.ProcessPresence(stanza, true)
+			s.SessionEventHandler.ProcessPresence(stanza.From, stanza.To, stanza.Show, stanza.Status, true)
 		}
 	case "":
 		if s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status) &&
 			!s.Config.HideStatusUpdates {
-			s.SessionEventHandler.ProcessPresence(stanza, false)
+			s.SessionEventHandler.ProcessPresence(stanza.From, stanza.To, stanza.Show, stanza.Status, false)
 		}
 	case "subscribed":
+		s.R.Subscribed(stanza.From)
 		s.SessionEventHandler.Subscribed(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
 	case "unsubscribe":
+		s.R.Unsubscribed(stanza.From)
 		s.SessionEventHandler.Unsubscribe(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
 	case "unsubscribed":
 		// Ignore
@@ -199,7 +192,7 @@ func (s *Session) WatchStanzas() {
 }
 
 func (s *Session) rosterReceived() {
-	s.SessionEventHandler.RosterReceived(s, s.Roster)
+	s.SessionEventHandler.RosterReceived(s)
 }
 
 func (s *Session) iqReceived(uid string) {
@@ -235,37 +228,21 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
 		s.warn("Ignoring roster IQ from bad address: " + stanza.From)
 		return nil
 	}
-	var roster xmpp.Roster
-	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&roster); err != nil || len(roster.Item) == 0 {
+	var rst xmpp.Roster
+	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&rst); err != nil || len(rst.Item) == 0 {
 		s.warn("Failed to parse roster push IQ")
 		return nil
 	}
 
 	// TODO: this is incorrect - you can get more than one roster Item
-	entry := roster.Item[0]
+	entry := rst.Item[0]
 
 	if entry.Subscription == "remove" {
-		var newRoster []xmpp.RosterEntry
-		for _, rosterEntry := range s.Roster {
-			if rosterEntry.Jid != entry.Jid {
-				newRoster = append(newRoster, rosterEntry)
-			}
-		}
-		s.Roster = newRoster
+		s.R.Remove(entry.Jid)
 		return xmpp.EmptyReply{}
 	}
 
-	found := false
-	for i, rosterEntry := range s.Roster {
-		if rosterEntry.Jid == entry.Jid {
-			s.Roster[i] = entry
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		s.Roster = append(s.Roster, entry)
+	if s.R.AddOrMerge(roster.PeerFrom(entry)) {
 		s.iqReceived(entry.Jid)
 	}
 
@@ -299,12 +276,11 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 }
 
 func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
-	id, ok := s.PendingSubscribes[jid]
+	id, ok := s.R.RemovePendingSubscribe(jid)
 	if !ok {
 		s.warn("No pending subscription from " + jid)
 		return
 	}
-	delete(s.PendingSubscribes, jid)
 	typ := "unsubscribed"
 	if isConfirm {
 		typ = "subscribed"
@@ -571,18 +547,23 @@ func (s *Session) WatchRosterEvents() {
 
 	s.rosterCookie = c
 
-RosterLoop:
 	for {
 		select {
 		case rosterStanza, ok := <-rosterReply:
 			if !ok {
 				s.alert("Failed to read roster: " + err.Error())
-				break RosterLoop
+				return
 			}
 
-			if s.Roster, err = xmpp.ParseRoster(rosterStanza); err != nil {
+			rst, err := xmpp.ParseRoster(rosterStanza)
+
+			if err != nil {
 				s.alert("Failed to parse roster: " + err.Error())
-				break RosterLoop
+				return
+			}
+
+			for _, rr := range rst {
+				s.R.AddOrMerge(roster.PeerFrom(rr))
 			}
 
 			s.rosterReceived()
@@ -706,7 +687,8 @@ func (s *Session) Close() {
 
 	//TODO Should we hide all contacts when the account is disconnected?
 	// It wont show a "please connect to view your roster" message
-	s.SessionEventHandler.RosterReceived(s, nil)
+	s.R.Clear()
+	s.SessionEventHandler.RosterReceived(s)
 
 	s.SessionEventHandler.Disconnected()
 }

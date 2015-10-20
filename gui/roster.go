@@ -1,9 +1,12 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 )
@@ -13,7 +16,7 @@ type Roster struct {
 	model  *gtk.ListStore
 	view   *gtk.TreeView
 
-	contacts map[*Account]*peers
+	contacts map[*Account]*roster.List
 
 	CheckEncrypted func(to string) bool
 	SendMessage    func(to, message string)
@@ -34,7 +37,7 @@ func NewRoster() *Roster {
 		view:   v,
 
 		conversations: make(map[string]*conversationWindow),
-		contacts:      make(map[*Account]*peers),
+		contacts:      make(map[*Account]*roster.List),
 	}
 
 	r.Window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -127,13 +130,28 @@ func (r *Roster) AppendMessageToHistory(to, from, timestamp string, encrypted bo
 }
 
 //TODO: It should have a mutex
-func (r *Roster) Update(account *Account, entries []xmpp.RosterEntry) {
-	current, ok := r.contacts[account]
-	if !ok {
-		r.contacts[account] = fromRosterEntries(entries)
-	} else {
-		current.updateFromRosterEntries(entries)
+func (r *Roster) Update(account *Account, entries *roster.List) {
+	r.contacts[account] = entries
+}
+
+func (r *Roster) debugPrintRosterFor(nm string) {
+	nnm := xmpp.RemoveResourceFromJid(nm)
+	fmt.Printf(" ^^^ Roster for: %s ^^^ \n", nnm)
+
+	for account, rs := range r.contacts {
+		if account.Account == nnm {
+			rs.Iter(func(_ int, item *roster.Peer) {
+				fmt.Printf("->   #%v\n", item)
+			})
+		}
 	}
+
+	fmt.Printf(" ************************************** \n")
+	fmt.Println()
+}
+
+func shouldDisplay(p *roster.Peer) bool {
+	return p.Subscription != "none" && p.Subscription != ""
 }
 
 func (r *Roster) Redraw() {
@@ -145,30 +163,15 @@ func (r *Roster) Redraw() {
 
 	r.model.Clear()
 	for account, contacts := range r.contacts {
-		contacts.iter(func(_ int, item *peer) {
-			iter := r.model.Append()
-			r.model.Set(iter, []int{0, 1}, []interface{}{item.nameForPresentation(), account})
+		contacts.Iter(func(_ int, item *roster.Peer) {
+			if shouldDisplay(item) {
+				iter := r.model.Append()
+				r.model.Set(iter, []int{0, 1}, []interface{}{item.NameForPresentation(), account})
+			}
 		})
 	}
 
 	r.view.SetModel(r.model)
 	r.model.TreeModel.Unref()
 	//gobj.Unref()
-}
-
-func (r *Roster) get(account, peer string) *peer {
-	for a, cs := range r.contacts {
-		if a.Account == account {
-			return cs.getOrAdd(peer)
-		}
-	}
-	return nil
-}
-
-func (r *Roster) remove(account, peer string) {
-	for a, cs := range r.contacts {
-		if a.Account == account {
-			cs.remove(peer)
-		}
-	}
 }

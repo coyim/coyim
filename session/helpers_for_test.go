@@ -3,7 +3,6 @@ package session
 import (
 	"io"
 
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 )
 
@@ -12,12 +11,12 @@ type mockSessionEventHandler struct {
 	info                func(string)
 	warn                func(string)
 	alert               func(string)
-	rosterReceived      func(*Session, []xmpp.RosterEntry)
+	rosterReceived      func(*Session)
 	iqReceived          func(uid string)
 	newOTRKeys          func(from string, conversation *otr3.Conversation)
 	otrEnded            func(uid string)
 	messageReceived     func(s *Session, from, timestamp string, encrypted bool, message []byte)
-	processPresence     func(stanza *xmpp.ClientPresence, gone bool)
+	processPresence     func(from, to, show, status string, gone bool)
 	subscriptionRequest func(s *Session, uid string)
 	subscribed          func(account, peer string)
 	unsubscribe         func(account, peer string)
@@ -49,9 +48,9 @@ func (m *mockSessionEventHandler) Alert(v string) {
 	}
 }
 
-func (m *mockSessionEventHandler) RosterReceived(s *Session, e []xmpp.RosterEntry) {
+func (m *mockSessionEventHandler) RosterReceived(s *Session) {
 	if m.rosterReceived != nil {
-		m.rosterReceived(s, e)
+		m.rosterReceived(s)
 	}
 }
 
@@ -79,9 +78,9 @@ func (m *mockSessionEventHandler) MessageReceived(s *Session, from, timestamp st
 	}
 }
 
-func (m *mockSessionEventHandler) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
+func (m *mockSessionEventHandler) ProcessPresence(from, to, show, status string, gone bool) {
 	if m.processPresence != nil {
-		m.processPresence(stanza, gone)
+		m.processPresence(from, to, show, status, gone)
 	}
 }
 

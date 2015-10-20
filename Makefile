@@ -29,6 +29,7 @@ coveralls:
 	go test -coverprofile=config.coverprofile ./config
 	go test -coverprofile=ui.coverprofile ./ui
 	go test -coverprofile=gui.coverprofile ./gui
+	go test -coverprofile=roster.coverprofile ./roster
 	go test -coverprofile=main.coverprofile
 	gover .
 	goveralls -coverprofile=gover.coverprofile -service=travis-ci || true
@@ -72,6 +73,7 @@ cover:
 	go test -coverprofile=config.coverprofile ./config
 	go test -coverprofile=ui.coverprofile ./ui
 	go test -coverprofile=gui.coverprofile ./gui
+	go test -coverprofile=roster.coverprofile ./roster
 	go test -coverprofile=main.coverprofile
 	gover .
 	go tool cover -html=gover.coverprofile

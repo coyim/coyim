@@ -377,45 +377,19 @@ func (u *gtkUI) rosterUpdated() {
 	})
 }
 
-func (u *gtkUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
-	peer := xmpp.RemoveResourceFromJid(stanza.From)
-	account := xmpp.RemoveResourceFromJid(stanza.To)
-
-	status := "available"
-	statusMsg := ""
-	if stanza.Show != "" {
-		status = stanza.Show
-		if stanza.Status != "" {
-			statusMsg = stanza.Status
-		}
-	}
-
-	if peer != "" && account != "" {
-		p := u.roster.get(account, peer)
-		if p != nil {
-			p.status = status
-			p.statusMsg = statusMsg
-			p.offline = gone
-		}
-	}
-
+func (u *gtkUI) ProcessPresence(from, to, show, showStatus string, gone bool) {
+	u.Debug(fmt.Sprintf("[%s] Presence from %s: show: %s status: %s gone: %v\n", to, from, show, showStatus, gone))
+	//	u.roster.debugPrintRosterFor(to)
 	u.rosterUpdated()
 }
 
 func (u *gtkUI) Subscribed(account, peer string) {
 	u.Debug(fmt.Sprintf("[%s] Subscribed to %s\n", account, peer))
-
-	p := u.roster.get(account, peer)
-	if p != nil {
-		p.subscribed()
-	}
-
 	u.rosterUpdated()
 }
 
 func (u *gtkUI) Unsubscribe(account, peer string) {
 	u.Debug(fmt.Sprintf("[%s] Unsubscribed from %s\n", account, peer))
-	u.roster.remove(account, peer)
 	u.rosterUpdated()
 }
 
@@ -424,14 +398,14 @@ func (u *gtkUI) IQReceived(iq string) {
 	//TODO
 }
 
-func (u *gtkUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
+func (u *gtkUI) RosterReceived(s *session.Session) {
 	account := u.findAccountForSession(s)
 	if account == nil {
 		//TODO error
 		return
 	}
 
-	u.roster.Update(account, roster)
+	u.roster.Update(account, s.R)
 
 	glib.IdleAdd(func() bool {
 		u.roster.Redraw()

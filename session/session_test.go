@@ -501,6 +501,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 
 	sess := &Session{
 		Config: &config.Config{Account: "some@one.org"},
+		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			iqReceived: func(v string) {
 				called++
@@ -514,8 +515,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 1)
-	c.Assert(sess.Roster, DeepEquals, []xmpp.RosterEntry{
-		xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}})
+	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
+		roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}})})
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterItem(c *C) {
@@ -534,6 +535,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 
 	sess := &Session{
 		Config: &config.Config{Account: "some@one.org"},
+		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			iqReceived: func(v string) {
 				called++
@@ -542,17 +544,16 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 		ConnStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
-	sess.Roster = append(sess.Roster,
-		xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}},
-		xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}},
-	)
+
+	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}))
+	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}))
 
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 0)
-	c.Assert(sess.Roster, DeepEquals, []xmpp.RosterEntry{
-		xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}},
-		xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}},
+	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
+		roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}),
+		roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}),
 	})
 }
 
@@ -572,6 +573,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 
 	sess := &Session{
 		Config: &config.Config{Account: "some@one.org"},
+		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			iqReceived: func(v string) {
 				called++
@@ -580,17 +582,16 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 		ConnStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
-	sess.Roster = append(sess.Roster,
-		xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}},
-		xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}},
-		xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}},
-	)
+
+	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}))
+	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}))
+	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}))
 
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 0)
-	c.Assert(sess.Roster, DeepEquals, []xmpp.RosterEntry{
-		xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}},
+	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
+		roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}),
 	})
 }
 
@@ -607,7 +608,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUs
 	sess := &Session{
 		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
-			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
+			processPresence: func(from, to, show, status string, gone bool) {
 				called++
 			},
 		},
@@ -634,7 +635,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 		Config: &config.Config{},
 		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
-			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
+			processPresence: func(from, to, show, status string, gone bool) {
 				called++
 				c.Assert(gone, Equals, true)
 			},
@@ -647,8 +648,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 1)
-	_, _, inMap := sess.R.StateOf("some2@one.org")
-	c.Assert(inMap, Equals, false)
+	p, _ := sess.R.Get("some2@one.org")
+	c.Assert(p.Offline, Equals, true)
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
@@ -662,8 +663,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config:            &config.Config{},
-		PendingSubscribes: make(map[string]string),
+		Config: &config.Config{},
+		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			subscriptionRequest: func(s *Session, uid string) {
 				called++
@@ -677,7 +678,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	sess.WatchStanzas()
 
 	c.Assert(called, Equals, 1)
-	c.Assert(sess.PendingSubscribes["some2@one.org"], Equals, "adf12112")
+	v, _ := sess.R.GetPendingSubscribe("some2@one.org")
+	c.Assert(v, Equals, "adf12112")
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
@@ -696,7 +698,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 			subscriptionRequest: func(s *Session, uid string) {
 				called++
 			},
-			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
+			processPresence: func(from, to, show, status string, gone bool) {
 				called++
 			},
 		},
@@ -723,7 +725,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 		Config: &config.Config{},
 		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
-			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
+			processPresence: func(from, to, show, status string, gone bool) {
 				called++
 				c.Assert(gone, Equals, false)
 			},
@@ -753,7 +755,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 		Config: &config.Config{},
 		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
-			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
+			processPresence: func(from, to, show, status string, gone bool) {
 				called++
 			},
 		},
@@ -782,7 +784,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		Config: &config.Config{},
 		R:      roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
-			processPresence: func(stanza *xmpp.ClientPresence, gone bool) {
+			processPresence: func(from, to, show, status string, gone bool) {
 				called++
 			},
 		},
@@ -802,7 +804,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeI
 	called := 0
 
 	sess := &Session{
-		PendingSubscribes: make(map[string]string),
+		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			warn: func(v string) {
 				called++
@@ -826,7 +828,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	called := 0
 
 	sess := &Session{
-		PendingSubscribes: make(map[string]string),
+		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			warn: func(v string) {
 				called++
@@ -834,13 +836,13 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 		},
 	}
 	sess.Conn = conn
-	sess.PendingSubscribes["foo@bar.com"] = "123"
+	sess.R.SubscribeRequest("foo@bar.com", "123")
 
 	sess.HandleConfirmOrDeny("foo@bar.com", false)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Equals, "<presence id='123' to='foo@bar.com' type='unsubscribed'/>")
-	_, inMap := sess.PendingSubscribes["foo@bar.com"]
+	_, inMap := sess.R.GetPendingSubscribe("foo@bar.com")
 	c.Assert(inMap, Equals, false)
 }
 
@@ -855,7 +857,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowed(c *C) {
 	called := 0
 
 	sess := &Session{
-		PendingSubscribes: make(map[string]string),
+		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			warn: func(v string) {
 				called++
@@ -863,13 +865,13 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowed(c *C) {
 		},
 	}
 	sess.Conn = conn
-	sess.PendingSubscribes["foo@bar.com"] = "123"
+	sess.R.SubscribeRequest("foo@bar.com", "123")
 
 	sess.HandleConfirmOrDeny("foo@bar.com", true)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Equals, "<presence id='123' to='foo@bar.com' type='subscribed'/>")
-	_, inMap := sess.PendingSubscribes["foo@bar.com"]
+	_, inMap := sess.R.GetPendingSubscribe("foo@bar.com")
 	c.Assert(inMap, Equals, false)
 }
 
@@ -884,7 +886,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *
 	called := 0
 
 	sess := &Session{
-		PendingSubscribes: make(map[string]string),
+		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			warn: func(v string) {
 				called++
@@ -893,7 +895,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *
 		},
 	}
 	sess.Conn = conn
-	sess.PendingSubscribes["foo@bar.com"] = "123"
+	sess.R.SubscribeRequest("foo@bar.com", "123")
 
 	sess.HandleConfirmOrDeny("foo@bar.com", true)
 

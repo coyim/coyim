@@ -189,8 +189,8 @@ func (c *cliUI) Subscribed(account, peer string) {
 func (c *cliUI) Unsubscribe(account, peer string) {
 }
 
-func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
-	from := xmpp.RemoveResourceFromJid(stanza.From)
+func (c *cliUI) ProcessPresence(from, to, show, status string, gone bool) {
+	from = xmpp.RemoveResourceFromJid(from)
 
 	var line []byte
 	line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
@@ -201,13 +201,13 @@ func (c *cliUI) ProcessPresence(stanza *xmpp.ClientPresence, gone bool) {
 	line = append(line, ' ')
 	if gone {
 		line = append(line, []byte("offline")...)
-	} else if len(stanza.Show) > 0 {
-		line = append(line, []byte(stanza.Show)...)
+	} else if len(show) > 0 {
+		line = append(line, []byte(show)...)
 	} else {
 		line = append(line, []byte("online")...)
 	}
 	line = append(line, ' ')
-	line = append(line, []byte(stanza.Status)...)
+	line = append(line, []byte(status)...)
 	line = append(line, '\n')
 	c.term.Write(line)
 }
@@ -216,8 +216,8 @@ func (c *cliUI) IQReceived(uid string) {
 	c.input.AddUser(uid)
 }
 
-func (c *cliUI) RosterReceived(s *session.Session, roster []xmpp.RosterEntry) {
-	for _, entry := range roster {
+func (c *cliUI) RosterReceived(s *session.Session) {
+	for _, entry := range s.R.ToSlice() {
 		c.input.AddUser(entry.Jid)
 	}
 }
@@ -655,13 +655,13 @@ CommandLoop:
 			case rosterCommand:
 				info(term, "Current roster:")
 				maxLen := 0
-				for _, item := range s.Roster {
+				for _, item := range s.R.ToSlice() {
 					if maxLen < len(item.Jid) {
 						maxLen = len(item.Jid)
 					}
 				}
 
-				for _, item := range s.Roster {
+				for _, item := range s.R.ToSlice() {
 					state, _, ok := s.R.StateOf(item.Jid)
 
 					line := ""
@@ -690,11 +690,15 @@ CommandLoop:
 					c.PendingRosterEdit = nil
 				}
 
-				c.RosterEditor.Roster = make([]xmpp.RosterEntry, len(s.Roster))
-				copy(c.RosterEditor.Roster, s.Roster)
+				currR := s.R.ToSlice()
 
-				rosterCopy := make([]xmpp.RosterEntry, len(s.Roster))
-				copy(rosterCopy, s.Roster)
+				c.RosterEditor.Roster = make([]xmpp.RosterEntry, len(currR))
+				rosterCopy := make([]xmpp.RosterEntry, len(currR))
+				for ix, e := range currR {
+					c.RosterEditor.Roster[ix] = e.ToEntry()
+					rosterCopy[ix] = e.ToEntry()
+				}
+
 				go func(rosterCopy []xmpp.RosterEntry) {
 					err := c.EditRoster(rosterCopy)
 					if err != nil {

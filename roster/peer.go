@@ -6,15 +6,15 @@ import "github.com/twstrike/coyim/xmpp"
 // A Peer is always part of at least one roster.List, which is associated with an account.
 type Peer struct {
 	// The bare jid of the peer
-	jid                string
-	subscription       string
-	name               string
-	groups             map[string]bool
-	status             string
-	statusMsg          string
-	offline            bool
-	asked              bool
-	pendingSubscribeId string
+	Jid                string
+	Subscription       string
+	Name               string
+	Groups             map[string]bool
+	Status             string
+	StatusMsg          string
+	Offline            bool
+	Asked              bool
+	PendingSubscribeId string
 }
 
 func toSet(ks ...string) map[string]bool {
@@ -25,22 +25,50 @@ func toSet(ks ...string) map[string]bool {
 	return m
 }
 
+func fromSet(vs map[string]bool) []string {
+	m := make([]string, 0, len(vs))
+	for k, v := range vs {
+		if v {
+			m = append(m, k)
+		}
+	}
+	return m
+}
+
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given
 func PeerFrom(e xmpp.RosterEntry) *Peer {
 	return &Peer{
-		jid:          xmpp.RemoveResourceFromJid(e.Jid),
-		subscription: e.Subscription,
-		name:         e.Name,
-		groups:       toSet(e.Group...),
+		Jid:          xmpp.RemoveResourceFromJid(e.Jid),
+		Subscription: e.Subscription,
+		Name:         e.Name,
+		Groups:       toSet(e.Group...),
+	}
+}
+
+// ToEntry returns a new RosterEntry with the same values
+func (p *Peer) ToEntry() xmpp.RosterEntry {
+	return xmpp.RosterEntry{
+		Jid:          p.Jid,
+		Subscription: p.Subscription,
+		Name:         p.Name,
+		Group:        fromSet(p.Groups),
 	}
 }
 
 // PeerWithState returns a new Peer that contains the given state information
 func PeerWithState(jid, status, statusMsg string) *Peer {
 	return &Peer{
-		jid:       xmpp.RemoveResourceFromJid(jid),
-		status:    status,
-		statusMsg: statusMsg,
+		Jid:       xmpp.RemoveResourceFromJid(jid),
+		Status:    status,
+		StatusMsg: statusMsg,
+	}
+}
+
+// PeerWithPendingSubscribe returns a new Peer that contains the given subscribe ID
+func PeerWithPendingSubscribe(jid, id string) *Peer {
+	return &Peer{
+		Jid:                xmpp.RemoveResourceFromJid(jid),
+		PendingSubscribeId: id,
 	}
 }
 
@@ -54,20 +82,23 @@ func merge(v1, v2 string) string {
 // MergeWith returns a new Peer that is the merger of the receiver and the argument, giving precedence to the argument when needed
 func (p *Peer) MergeWith(p2 *Peer) *Peer {
 	pNew := &Peer{}
-	pNew.jid = p.jid
-	pNew.subscription = merge(p.subscription, p2.subscription)
-	pNew.name = merge(p.name, p2.name)
-	pNew.status = merge(p.status, p2.status)
-	pNew.statusMsg = merge(p.statusMsg, p2.statusMsg)
-	pNew.offline = p2.offline
-	pNew.asked = p2.asked
-	pNew.pendingSubscribeId = merge(p.pendingSubscribeId, p2.pendingSubscribeId)
-	pNew.groups = make(map[string]bool)
-	for k, v := range p.groups {
-		pNew.groups[k] = v
-	}
-	for k, v := range p2.groups {
-		pNew.groups[k] = v
+	pNew.Jid = p.Jid
+	pNew.Subscription = merge(p.Subscription, p2.Subscription)
+	pNew.Name = merge(p.Name, p2.Name)
+	pNew.Status = merge(p.Status, p2.Status)
+	pNew.StatusMsg = merge(p.StatusMsg, p2.StatusMsg)
+	pNew.Offline = p2.Offline
+	pNew.Asked = p2.Asked
+	pNew.PendingSubscribeId = merge(p.PendingSubscribeId, p2.PendingSubscribeId)
+	pNew.Groups = make(map[string]bool)
+	if len(p2.Groups) > 0 {
+		pNew.Groups = p2.Groups
+	} else {
+		pNew.Groups = p.Groups
 	}
 	return pNew
+}
+
+func (p *Peer) NameForPresentation() string {
+	return merge(p.Jid, p.Name)
 }

@@ -7,28 +7,8 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/otr3"
 	"golang.org/x/net/html"
 )
-
-type UI interface {
-	Loop()
-
-	// callbacks
-	RegisterCallback() xmpp.FormCallback
-	NewOTRKeys(from string, conversation *otr3.Conversation)
-	OTREnded(string)
-	MessageReceived(from, timestamp string, encrypted bool, message []byte)
-	IQReceived(string)
-	RosterReceived(roster []xmpp.RosterEntry)
-	ProcessPresence(stanza *xmpp.ClientPresence, ignore, gone bool)
-	Disconnected()
-
-	Info(string)
-	Warn(string)
-	Alert(string)
-}
 
 func StripHTML(msg []byte) (out []byte) {
 	z := html.NewTokenizer(bytes.NewReader(msg))

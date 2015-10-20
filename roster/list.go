@@ -1,6 +1,10 @@
 package roster
 
-import "github.com/twstrike/coyim/xmpp"
+import (
+	"sort"
+
+	"github.com/twstrike/coyim/xmpp"
+)
 
 // List represent a list of peers. It takes care of both roster and presence information
 // transparently and presents a unified view of this information to any UI
@@ -19,9 +23,14 @@ func New() *List {
 	}
 }
 
-func (l *List) get(jid string) (*Peer, bool) {
+func (l *List) Get(jid string) (*Peer, bool) {
 	v, ok := l.peers[xmpp.RemoveResourceFromJid(jid)]
 	return v, ok
+}
+
+// Clear removes all current entries in the list
+func (l *List) Clear() {
+	l.peers = make(map[string]*Peer)
 }
 
 // Remove returns the Peer with the jid from the List - it will first turn the jid into a bare jid.
@@ -40,12 +49,12 @@ func (l *List) Remove(jid string) (*Peer, bool) {
 // AddOrMerge will add a new entry or merge with an existing entry the information from the given Peer
 // It returns true if it added the entry and false otherwise
 func (l *List) AddOrMerge(p *Peer) bool {
-	if v, existed := l.peers[p.jid]; existed {
-		l.peers[p.jid] = v.MergeWith(p)
+	if v, existed := l.peers[p.Jid]; existed {
+		l.peers[p.Jid] = v.MergeWith(p)
 		return false
 	}
 
-	l.peers[p.jid] = p
+	l.peers[p.Jid] = p
 
 	return true
 }
@@ -53,9 +62,9 @@ func (l *List) AddOrMerge(p *Peer) bool {
 // AddOrReplace will add a new entry or replace an existing entry with the information from the given Peer
 // It returns true if it added the entry and false otherwise
 func (l *List) AddOrReplace(p *Peer) bool {
-	_, existed := l.get(p.jid)
+	_, existed := l.Get(p.Jid)
 
-	l.peers[p.jid] = p
+	l.peers[p.Jid] = p
 
 	return !existed
 }
@@ -63,18 +72,22 @@ func (l *List) AddOrReplace(p *Peer) bool {
 // PeerBecameUnavailable marks the peer as unavailable if they exist
 // Returns true if they existed, otherwise false
 func (l *List) PeerBecameUnavailable(jid string) bool {
-	_, ok := l.Remove(jid)
+	if p, exist := l.Get(jid); exist {
+		p.Offline = true
+		return true
+	}
 
-	return ok
+	return false
 }
 
 // PeerPresenceUpdate updates the status for the peer
 // It returns true if it actually updated the status of the user
 func (l *List) PeerPresenceUpdate(jid, status, statusMsg string) bool {
-	if p, ok := l.get(jid); ok {
-		if p.status != status || p.statusMsg != statusMsg {
-			p.status = status
-			p.statusMsg = statusMsg
+	if p, ok := l.Get(jid); ok {
+		p.Offline = false
+		if p.Status != status || p.StatusMsg != statusMsg {
+			p.Status = status
+			p.StatusMsg = statusMsg
 			return true
 		}
 	} else {
@@ -88,11 +101,89 @@ func (l *List) PeerPresenceUpdate(jid, status, statusMsg string) bool {
 
 // StateOf returns the status and status msg of the peer if it exists. It returns not ok if the peer doesn't exist.
 func (l *List) StateOf(jid string) (status, statusMsg string, ok bool) {
-	if p, existed := l.get(jid); existed {
-		return p.status, p.statusMsg, true
+	if p, existed := l.Get(jid); existed {
+		return p.Status, p.StatusMsg, true
 	}
 
 	return "", "", false
 }
 
-// - client presence
+// SubscribeRequest adds a new pending subscribe request
+func (l *List) SubscribeRequest(jid, id string) {
+	l.AddOrMerge(PeerWithPendingSubscribe(jid, id))
+}
+
+// RemovePendingSubscribe will return a subscribe id and remove the pending subscribe if it exists
+// It will return false if no such subscribe is in flight
+func (l *List) RemovePendingSubscribe(jid string) (string, bool) {
+	if p, existed := l.Get(jid); existed {
+		s := p.PendingSubscribeId
+		p.PendingSubscribeId = ""
+		return s, s != ""
+	}
+
+	return "", false
+}
+
+// GetPendingSubscribe will return a subscribe id without removing it
+func (l *List) GetPendingSubscribe(jid string) (string, bool) {
+	if p, existed := l.Get(jid); existed {
+		return p.PendingSubscribeId, p.PendingSubscribeId != ""
+	}
+
+	return "", false
+}
+
+// Subscribed will mark the jid as subscribed
+func (l *List) Subscribed(jid string) {
+	if p, existed := l.Get(jid); existed {
+		switch p.Subscription {
+		case "from":
+			p.Subscription = "both"
+		case "none", "":
+			p.Subscription = "to"
+		}
+		p.PendingSubscribeId = ""
+		p.Asked = false
+	}
+}
+
+// Unsubscribed will mark the jid as unsubscribed
+func (l *List) Unsubscribed(jid string) {
+	if p, existed := l.Get(jid); existed {
+		switch p.Subscription {
+		case "both":
+			p.Subscription = "from"
+		case "to":
+			p.Subscription = "none"
+		}
+		p.PendingSubscribeId = ""
+		p.Asked = false
+	}
+}
+
+type byJidAlphabetic []*Peer
+
+func (s byJidAlphabetic) Len() int           { return len(s) }
+func (s byJidAlphabetic) Less(i, j int) bool { return s[i].Jid < s[j].Jid }
+func (s byJidAlphabetic) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+
+// ToSlice returns a slice of all the peers in this roster list
+func (l *List) ToSlice() []*Peer {
+	res := make([]*Peer, 0, len(l.peers))
+
+	for _, v := range l.peers {
+		res = append(res, v)
+	}
+
+	sort.Sort(byJidAlphabetic(res))
+
+	return res
+}
+
+// Iter calls the cb function once for each peer in the list
+func (l *List) Iter(cb func(int, *Peer)) {
+	for ix, pr := range l.ToSlice() {
+		cb(ix, pr)
+	}
+}

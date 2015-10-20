@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -16,9 +17,7 @@ func init() {
 
 	flags := log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile
 	log.SetFlags(flags)
-
-	devNull, _ := os.OpenFile(os.DevNull, os.O_RDWR, 0777)
-	log.SetOutput(devNull)
+	log.SetOutput(ioutil.Discard)
 }
 
 func main() {

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"os"
 	"os/exec"
 	"time"
 
@@ -597,7 +596,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 
 	s.ConnStatus = CONNECTING
 
-	conn, err := config.NewXMPPConn(s.Config, password, registerCallback, os.Stdout)
+	conn, err := config.NewXMPPConn(s.Config, password, registerCallback, logger{})
 	if err != nil {
 		s.alert(err.Error())
 		s.ConnStatus = DISCONNECTED

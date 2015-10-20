@@ -8,7 +8,7 @@ package xmpp
 
 import "encoding/xml"
 
-// XEP-0203: Delayed Delivery of <message/> and <presence/> stanzas.
+// Delay represents XEP-0203: Delayed Delivery of <message/> and <presence/> stanzas.
 type Delay struct {
 	XMLName xml.Name `xml:"urn:xmpp:delay delay"`
 	From    string   `xml:"from,attr,omitempty"`

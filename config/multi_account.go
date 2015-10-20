@@ -6,18 +6,21 @@ import (
 	"io/ioutil"
 )
 
+// MultiAccount keeps track of several account configurations
 type MultiAccount struct {
 	keepXmppClientCompat bool
 	Accounts             []Config
 }
 
+// Add will add a new configuration to the multi account
 func (multiAccount *MultiAccount) Add(conf Config) {
 	multiAccount.Accounts = append(multiAccount.Accounts, conf)
 }
 
+// Serialize will serialize all the account information
 func (multiAccount *MultiAccount) Serialize() ([]byte, error) {
 	for _, account := range multiAccount.Accounts {
-		account.SerializeFingerprints()
+		account.serializeFingerprints()
 	}
 
 	return json.MarshalIndent(multiAccount, "", "\t")
@@ -71,6 +74,7 @@ func fallbackToSingleAccountConfig(conf []byte) (*MultiAccount, error) {
 	}, nil
 }
 
+// ParseConfig will parse the config in the named file
 func ParseConfig(filename string) (*MultiAccount, error) {
 	m, err := readMultiAccount(filename)
 	if err != nil {

@@ -2,7 +2,9 @@ package session
 
 import "github.com/twstrike/otr3"
 
-type SessionEventHandler interface {
+// EventHandler represents the main notifications that the session can emit
+// It's really more an observer than an even handler
+type EventHandler interface {
 	Debug(string)
 	Info(string)
 	Warn(string)

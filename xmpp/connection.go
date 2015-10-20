@@ -38,6 +38,7 @@ type Conn struct {
 	customStorage map[xml.Name]reflect.Type
 }
 
+// NewConn creates a new connection
 func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
 	return &Conn{
 		in:  in,
@@ -46,8 +47,9 @@ func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
 	}
 }
 
-func (conn *Conn) Close() error {
-	return conn.config.Conn.Close()
+// Close closes the underlying connection
+func (c *Conn) Close() error {
+	return c.config.Conn.Close()
 }
 
 // Next reads stanzas from the server. If the stanza is a reply, it dispatches
@@ -61,7 +63,7 @@ func (c *Conn) Next() (stanza Stanza, err error) {
 
 		if iq, ok := stanza.Value.(*ClientIQ); ok && (iq.Type == "result" || iq.Type == "error") {
 			var cookieValue uint64
-			if cookieValue, err = strconv.ParseUint(iq.Id, 16, 64); err != nil {
+			if cookieValue, err = strconv.ParseUint(iq.ID, 16, 64); err != nil {
 				err = errors.New("xmpp: failed to parse id from iq: " + err.Error())
 				return
 			}

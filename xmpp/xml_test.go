@@ -7,11 +7,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type XmlXmppSuite struct{}
+type XMLXmppSuite struct{}
 
-var _ = Suite(&XmlXmppSuite{})
+var _ = Suite(&XMLXmppSuite{})
 
-func (s *XmlXmppSuite) Test_xmlEscape_escapesSpecialCharactersButNotRegularOnes(c *C) {
+func (s *XMLXmppSuite) Test_xmlEscape_escapesSpecialCharactersButNotRegularOnes(c *C) {
 	res := xmlEscape("abc\"<foo>bar>bar\\and &her'e;")
 	c.Assert(res, Equals, "abc&quot;&lt;foo&gt;bar&gt;bar\\and &amp;her&apos;e;")
 }
@@ -21,7 +21,7 @@ type testFoo struct {
 	To      string   `xml:"to,attr"`
 }
 
-func (s *XmlXmppSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
+func (s *XMLXmppSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams' to='hello'></stream:foo>")}
 	conn := Conn{
 		in: xml.NewDecoder(mockIn),
@@ -37,7 +37,7 @@ func (s *XmlXmppSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
 	c.Assert(*val, Equals, testFoo{XMLName: nm, To: "hello"})
 }
 
-func (s *XmlXmppSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
+func (s *XMLXmppSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams'><something></foo></stream:foo>")}
 	conn := Conn{
 		in: xml.NewDecoder(mockIn),

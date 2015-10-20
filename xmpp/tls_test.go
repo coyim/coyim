@@ -8,18 +8,18 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type TlsXmppSuite struct{}
+type TLSXmppSuite struct{}
 
-var _ = Suite(&TlsXmppSuite{})
+var _ = Suite(&TLSXmppSuite{})
 
-func (s *TlsXmppSuite) Test_certName_returnsEmptyInformation(c *C) {
+func (s *TLSXmppSuite) Test_certName_returnsEmptyInformation(c *C) {
 	cert := &x509.Certificate{}
 	cert.Subject = pkix.Name{}
 	res := certName(cert)
 	c.Assert(res, Equals, "")
 }
 
-func (s *TlsXmppSuite) Test_certName_usesNameInformation(c *C) {
+func (s *TLSXmppSuite) Test_certName_usesNameInformation(c *C) {
 	cert := &x509.Certificate{}
 	cert.Subject = pkix.Name{}
 	cert.Subject.Organization = []string{"Foo", "Bar.com"}
@@ -29,7 +29,7 @@ func (s *TlsXmppSuite) Test_certName_usesNameInformation(c *C) {
 	c.Assert(res, Equals, "O=Foo/O=Bar.com/OU=Somewhere/OU=Else/OU=Above/OU=Beyond/CN=test.coyim/")
 }
 
-func (s *TlsXmppSuite) Test_printTLSDetails_printsUnknownVersions(c *C) {
+func (s *TLSXmppSuite) Test_printTLSDetails_printsUnknownVersions(c *C) {
 	mockWriter := mockConnIOReaderWriter{}
 	state := tls.ConnectionState{
 		Version: 0x0200,
@@ -43,7 +43,7 @@ func (s *TlsXmppSuite) Test_printTLSDetails_printsUnknownVersions(c *C) {
 	)
 }
 
-func (s *TlsXmppSuite) Test_printTLSDetails_printsCorrectVersions(c *C) {
+func (s *TLSXmppSuite) Test_printTLSDetails_printsCorrectVersions(c *C) {
 	mockWriter := mockConnIOReaderWriter{}
 	state := tls.ConnectionState{
 		Version:     tls.VersionTLS11,

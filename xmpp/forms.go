@@ -13,6 +13,7 @@ import (
 	"strings"
 )
 
+// Form contains the definition for a data submission
 type Form struct {
 	XMLName      xml.Name    `xml:"jabber:x:data x"`
 	Type         string      `xml:"type,attr"`
@@ -69,6 +70,7 @@ type FormField struct {
 	Media [][]Media
 }
 
+// Media contains a specific media uri and data
 type Media struct {
 	MIMEType string
 	// URI contains a URI to the data. It may be empty if Data is not.

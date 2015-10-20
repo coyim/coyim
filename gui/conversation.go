@@ -12,7 +12,7 @@ import (
 
 type conversationWindow struct {
 	to            string
-	account       *Account
+	account       *account
 	win           *gtk.Window
 	history       *gtk.TextView
 	scrollHistory *gtk.ScrolledWindow
@@ -60,7 +60,7 @@ func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 	return menubar
 }
 
-func newConversationWindow(account *Account, uid string) *conversationWindow {
+func newConversationWindow(account *account, uid string) *conversationWindow {
 	win, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
 	history, _ := gtk.TextViewNew()
 	scrollHistory, _ := gtk.ScrolledWindowNew(nil, nil)

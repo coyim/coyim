@@ -6,8 +6,9 @@ import (
 	"errors"
 )
 
+// KnownFingerprint represents one fingerprint
 type KnownFingerprint struct {
-	UserId         string
+	UserID         string
 	FingerprintHex string
 	Fingerprint    []byte `json:"-"`
 }
@@ -17,36 +18,39 @@ func parseFingerprints(c *Config) error {
 	for i, known := range c.KnownFingerprints {
 		c.KnownFingerprints[i].Fingerprint, err = hex.DecodeString(known.FingerprintHex)
 		if err != nil {
-			return errors.New("xmpp: failed to parse hex fingerprint for " + known.UserId + ": " + err.Error())
+			return errors.New("xmpp: failed to parse hex fingerprint for " + known.UserID + ": " + err.Error())
 		}
 	}
 
 	return nil
 }
 
-func (c *Config) SerializeFingerprints() {
+func (c *Config) serializeFingerprints() {
 	for i, known := range c.KnownFingerprints {
 		c.KnownFingerprints[i].FingerprintHex = hex.EncodeToString(known.Fingerprint)
 	}
 }
 
-func (c *Config) UserIdForFingerprint(fpr []byte) string {
+// UserIDForFingerprint returns the user ID for the given fingerprint
+func (c *Config) UserIDForFingerprint(fpr []byte) string {
 	for _, known := range c.KnownFingerprints {
 		if bytes.Equal(fpr, known.Fingerprint) {
-			return known.UserId
+			return known.UserID
 		}
 	}
 
 	return ""
 }
 
+// AddFingerprint adds a new fingerprint for the given user
 func (c *Config) AddFingerprint(fpr []byte, uid string) {
-	c.KnownFingerprints = append(c.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserId: uid})
+	c.KnownFingerprints = append(c.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserID: uid})
 }
 
+// HasFingerprint returns true if we have the fingerprint for the given user
 func (c *Config) HasFingerprint(uid string) bool {
 	for _, known := range c.KnownFingerprints {
-		if uid == known.UserId {
+		if uid == known.UserID {
 			return true
 		}
 	}

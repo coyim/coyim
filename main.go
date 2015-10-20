@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 )
 
@@ -23,7 +22,7 @@ func init() {
 func main() {
 	flag.Parse()
 
-	u := client.NewClient()
+	u := newClient()
 	defer u.Close()
 
 	if err := u.LoadConfig(*config.ConfigFile); err != nil {

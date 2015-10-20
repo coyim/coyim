@@ -1,5 +1,6 @@
 package xmpp
 
+// These constants represent the different namespaces used in standard XMPP
 const (
 	NsStream  = "http://etherx.jabber.org/streams"
 	NsTLS     = "urn:ietf:params:xml:ns:xmpp-tls"

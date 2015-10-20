@@ -10,22 +10,22 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
-type DnsXmppSuite struct{}
+type DNSXmppSuite struct{}
 
-var _ = Suite(&DnsXmppSuite{})
+var _ = Suite(&DNSXmppSuite{})
 
-func (s *DnsXmppSuite) Test_createCName_createsAValidCnameForAService(c *C) {
+func (s *DNSXmppSuite) Test_createCName_createsAValidCnameForAService(c *C) {
 	ret := createCName("foo", "bar", "bax.com")
 	c.Assert(ret, Equals, "_foo._bar.bax.com.")
 }
 
-func (s *DnsXmppSuite) Test_convertAnswerToSRV_returnsNilForNonSRVEntry(c *C) {
+func (s *DNSXmppSuite) Test_convertAnswerToSRV_returnsNilForNonSRVEntry(c *C) {
 	cn := new(dns.CNAME)
 	res := convertAnswerToSRV(cn)
 	c.Assert(res, IsNil)
 }
 
-func (s *DnsXmppSuite) Test_convertAnswerToSRV_returnsAValidNetSRV(c *C) {
+func (s *DNSXmppSuite) Test_convertAnswerToSRV_returnsAValidNetSRV(c *C) {
 	srv := new(dns.SRV)
 	srv.Target = "foo.com"
 	srv.Port = 123
@@ -39,7 +39,7 @@ func (s *DnsXmppSuite) Test_convertAnswerToSRV_returnsAValidNetSRV(c *C) {
 	c.Assert(res.Weight, Equals, uint16(42))
 }
 
-func (s *DnsXmppSuite) Test_convertAnswersToSRV_convertsAnswers(c *C) {
+func (s *DNSXmppSuite) Test_convertAnswersToSRV_convertsAnswers(c *C) {
 	cn := new(dns.CNAME)
 	srv := new(dns.SRV)
 	srv.Target = "foo2.com"
@@ -52,13 +52,13 @@ func (s *DnsXmppSuite) Test_convertAnswersToSRV_convertsAnswers(c *C) {
 	c.Assert(res[1].Target, Equals, "foo2.com")
 }
 
-func (s *DnsXmppSuite) Test_msgSRV_createsMessage(c *C) {
+func (s *DNSXmppSuite) Test_msgSRV_createsMessage(c *C) {
 	res := msgSRV("foo.com")
 	c.Assert(res.Question[0].Name, Equals, "foo.com")
 	c.Assert(res.Question[0].Qtype, Equals, dns.TypeSRV)
 }
 
-func (s *DnsXmppSuite) Test_convertAnswersToSRV_sortsByPriority(c *C) {
+func (s *DNSXmppSuite) Test_convertAnswersToSRV_sortsByPriority(c *C) {
 	srv1 := &dns.SRV{
 		Target:   "foo1.com",
 		Priority: 5,
@@ -93,7 +93,7 @@ func (s *DnsXmppSuite) Test_convertAnswersToSRV_sortsByPriority(c *C) {
 	c.Assert(res[3].Target, Equals, "foo3.com")
 }
 
-func (s *DnsXmppSuite) Test_convertAnswersToSRV_sortsByWeightIfPriotityIsTheSame(c *C) {
+func (s *DNSXmppSuite) Test_convertAnswersToSRV_sortsByWeightIfPriotityIsTheSame(c *C) {
 	srv1 := &dns.SRV{
 		Target:   "foo1.com",
 		Priority: 1,

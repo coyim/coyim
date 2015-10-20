@@ -6,24 +6,24 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/roster"
+	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 )
 
-type Roster struct {
-	Window *gtk.ScrolledWindow
+type roster struct {
+	window *gtk.ScrolledWindow
 	model  *gtk.ListStore
 	view   *gtk.TreeView
 
-	contacts map[*Account]*roster.List
+	contacts map[*account]*rosters.List
 
-	CheckEncrypted func(to string) bool
-	SendMessage    func(to, message string)
+	checkEncrypted func(to string) bool
+	sendMessage    func(to, message string)
 	conversations  map[string]*conversationWindow
 }
 
-func NewRoster() *Roster {
+func newRoster() *roster {
 	w, _ := gtk.ScrolledWindowNew(nil, nil)
 	m, _ := gtk.ListStoreNew(
 		glib.TYPE_STRING,  // jid
@@ -32,16 +32,16 @@ func NewRoster() *Roster {
 	)
 	v, _ := gtk.TreeViewNew()
 
-	r := &Roster{
-		Window: w,
+	r := &roster{
+		window: w,
 		model:  m,
 		view:   v,
 
 		conversations: make(map[string]*conversationWindow),
-		contacts:      make(map[*Account]*roster.List),
+		contacts:      make(map[*account]*rosters.List),
 	}
 
-	r.Window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+	r.window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
 	r.view.SetHeadersVisible(false)
 	if s, err := r.view.GetSelection(); err != nil {
@@ -54,15 +54,15 @@ func NewRoster() *Roster {
 
 	r.view.SetModel(r.model)
 	r.view.Connect("row-activated", r.onActivateBuddy)
-	r.Window.Add(r.view)
+	r.window.Add(r.view)
 
 	//initialize the model
-	r.Clear()
+	r.clear()
 
 	return r
 }
 
-func (r *Roster) Clear() {
+func (r *roster) clear() {
 	glib.IdleAdd(func() {
 		//gobj := glib.ToGObject(unsafe.Pointer(r.model.GListStore))
 		//gobj.Ref()
@@ -81,7 +81,7 @@ func (r *Roster) Clear() {
 	})
 }
 
-func (r *Roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
+func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	iter, err := r.model.GetIter(path)
 	if err != nil {
 		return
@@ -91,13 +91,13 @@ func (r *Roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	to, _ := val.GetString()
 
 	val2, _ := r.model.GetValue(iter, 2)
-	account := (*Account)(val2.GetPointer())
+	account := (*account)(val2.GetPointer())
 
 	//TODO: change to IDS and fix me
 	r.openConversationWindow(account, to)
 }
 
-func (r *Roster) openConversationWindow(account *Account, to string) *conversationWindow {
+func (r *roster) openConversationWindow(account *account, to string) *conversationWindow {
 	//TODO: handle same account on multiple sessions
 	c, ok := r.conversations[to]
 
@@ -110,7 +110,7 @@ func (r *Roster) openConversationWindow(account *Account, to string) *conversati
 	return c
 }
 
-func (r *Roster) MessageReceived(account *Account, from, timestamp string, encrypted bool, message []byte) {
+func (r *roster) messageReceived(account *account, from, timestamp string, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
 		conv := r.openConversationWindow(account, from)
 		conv.appendMessage(from, timestamp, encrypted, ui.StripHTML(message))
@@ -118,7 +118,7 @@ func (r *Roster) MessageReceived(account *Account, from, timestamp string, encry
 	})
 }
 
-func (r *Roster) AppendMessageToHistory(to, from, timestamp string, encrypted bool, message []byte) {
+func (r *roster) appendMessageToHistory(to, from, timestamp string, encrypted bool, message []byte) {
 	conv, ok := r.conversations[to]
 	if !ok {
 		return
@@ -131,17 +131,17 @@ func (r *Roster) AppendMessageToHistory(to, from, timestamp string, encrypted bo
 }
 
 //TODO: It should have a mutex
-func (r *Roster) Update(account *Account, entries *roster.List) {
+func (r *roster) update(account *account, entries *rosters.List) {
 	r.contacts[account] = entries
 }
 
-func (r *Roster) debugPrintRosterFor(nm string) {
+func (r *roster) debugPrintRosterFor(nm string) {
 	nnm := xmpp.RemoveResourceFromJid(nm)
 	fmt.Printf(" ^^^ Roster for: %s ^^^ \n", nnm)
 
 	for account, rs := range r.contacts {
 		if account.Config.Account == nnm {
-			rs.Iter(func(_ int, item *roster.Peer) {
+			rs.Iter(func(_ int, item *rosters.Peer) {
 				fmt.Printf("->   #%v\n", item)
 			})
 		}
@@ -151,11 +151,11 @@ func (r *Roster) debugPrintRosterFor(nm string) {
 	fmt.Println()
 }
 
-func shouldDisplay(p *roster.Peer) bool {
+func shouldDisplay(p *rosters.Peer) bool {
 	return p.Subscription != "none" && p.Subscription != ""
 }
 
-func (r *Roster) Redraw() {
+func (r *roster) redraw() {
 	//gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
 	//gobj.Ref()
 
@@ -164,7 +164,7 @@ func (r *Roster) Redraw() {
 
 	r.model.Clear()
 	for account, contacts := range r.contacts {
-		contacts.Iter(func(_ int, item *roster.Peer) {
+		contacts.Iter(func(_ int, item *rosters.Peer) {
 			if shouldDisplay(item) {
 				iter := r.model.Append()
 				r.model.Set(iter, []int{0, 1, 2}, []interface{}{

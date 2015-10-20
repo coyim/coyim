@@ -22,15 +22,17 @@ func (c *Conn) SendPresence(to, typ, id string) error {
 	return err
 }
 
+// SignalPresence will signal the current presence
 func (c *Conn) SignalPresence(state string) error {
 	_, err := fmt.Fprintf(c.out, "<presence><show>%s</show></presence>", xmlEscape(state))
 	return err
 }
 
+// ClientPresence contains XMPP information about a presence update
 type ClientPresence struct {
 	XMLName xml.Name `xml:"jabber:client presence"`
 	From    string   `xml:"from,attr,omitempty"`
-	Id      string   `xml:"id,attr,omitempty"`
+	ID      string   `xml:"id,attr,omitempty"`
 	To      string   `xml:"to,attr,omitempty"`
 	Type    string   `xml:"type,attr,omitempty"` // error, probe, subscribe, subscribed, unavailable, unsubscribe, unsubscribed
 	Lang    string   `xml:"lang,attr,omitempty"`

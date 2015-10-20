@@ -61,7 +61,7 @@ func (s *PeerXmppSuite) Test_PeerWithPendingSubscribe_createsNewPeer(c *g.C) {
 	p := PeerWithPendingSubscribe("bla@foo.com/1234", "223434")
 	c.Assert(p.Jid, g.Equals, "bla@foo.com")
 	c.Assert(p.Name, g.Equals, "")
-	c.Assert(p.PendingSubscribeId, g.Equals, "223434")
+	c.Assert(p.PendingSubscribeID, g.Equals, "223434")
 }
 
 func (s *PeerXmppSuite) Test_NameForPresentation_returnsTheNameIfItExistsButJidOtherwise(c *g.C) {

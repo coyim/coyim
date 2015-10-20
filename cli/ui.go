@@ -16,6 +16,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/servers"
@@ -42,7 +43,7 @@ type cliUI struct {
 }
 
 // NewCLI creates a new cliUI instance
-func NewCLI() *cliUI {
+func NewCLI() client.Client {
 	oldState, err := terminal.MakeRaw(0)
 	if err != nil {
 		panic(err.Error())
@@ -258,7 +259,7 @@ func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversatio
 	term := c.term
 
 	fpr := conversation.GetTheirKey().DefaultFingerprint()
-	fprUID := s.Config.UserIdForFingerprint(fpr)
+	fprUID := s.Config.UserIDForFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %x", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %x", uid, conversation.GetSSID()))
 	if fprUID == uid {
@@ -564,7 +565,7 @@ func (c *cliUI) WatchRosterEdits() {
 			// Filter out any known fingerprints.
 			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(s.Config.KnownFingerprints))
 			for _, fpr := range s.Config.KnownFingerprints {
-				if fpr.UserId == jid {
+				if fpr.UserID == jid {
 					continue
 				}
 				newKnownFingerprints = append(newKnownFingerprints, fpr)
@@ -821,12 +822,12 @@ CommandLoop:
 					alert(term, fmt.Sprintf("Invalid fingerprint %s - not authenticated", cmd.Fingerprint))
 					break
 				}
-				existing := s.Config.UserIdForFingerprint(fpr)
+				existing := s.Config.UserIDForFingerprint(fpr)
 				if len(existing) != 0 {
 					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, existing))
 					break
 				}
-				s.Config.KnownFingerprints = append(s.Config.KnownFingerprints, config.KnownFingerprint{Fingerprint: fpr, UserId: cmd.User})
+				s.Config.KnownFingerprints = append(s.Config.KnownFingerprints, config.KnownFingerprint{Fingerprint: fpr, UserID: cmd.User})
 				s.Config.Save()
 				info(term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:

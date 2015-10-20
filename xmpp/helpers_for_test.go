@@ -26,27 +26,27 @@ type mockConnIOReaderWriter struct {
 	err       error
 }
 
-func (in *mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
-	if in.readIndex >= len(in.read) {
+func (iom *mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
+	if iom.readIndex >= len(iom.read) {
 		return 0, io.EOF
 	}
-	i := copy(p, in.read[in.readIndex:])
-	in.readIndex += i
+	i := copy(p, iom.read[iom.readIndex:])
+	iom.readIndex += i
 	var e error
-	if in.errCount == 0 {
-		e = in.err
+	if iom.errCount == 0 {
+		e = iom.err
 	}
-	in.errCount--
+	iom.errCount--
 	return i, e
 }
 
-func (out *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
-	out.write = append(out.write, p...)
+func (iom *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
+	iom.write = append(iom.write, p...)
 	var e error
-	if out.errCount == 0 {
-		e = out.err
+	if iom.errCount == 0 {
+		e = iom.err
 	}
-	out.errCount--
+	iom.errCount--
 	return len(p), e
 }
 
@@ -56,17 +56,17 @@ type mockMultiConnIOReaderWriter struct {
 	write     []byte
 }
 
-func (in *mockMultiConnIOReaderWriter) Read(p []byte) (n int, err error) {
-	if in.readIndex >= len(in.read) {
+func (iom *mockMultiConnIOReaderWriter) Read(p []byte) (n int, err error) {
+	if iom.readIndex >= len(iom.read) {
 		return 0, io.EOF
 	}
-	i := copy(p, in.read[in.readIndex])
-	in.readIndex++
+	i := copy(p, iom.read[iom.readIndex])
+	iom.readIndex++
 	return i, nil
 }
 
-func (out *mockMultiConnIOReaderWriter) Write(p []byte) (n int, err error) {
-	out.write = append(out.write, p...)
+func (iom *mockMultiConnIOReaderWriter) Write(p []byte) (n int, err error) {
+	iom.write = append(iom.write, p...)
 	return len(p), nil
 }
 

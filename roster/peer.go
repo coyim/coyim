@@ -14,7 +14,7 @@ type Peer struct {
 	StatusMsg          string
 	Offline            bool
 	Asked              bool
-	PendingSubscribeId string
+	PendingSubscribeID string
 }
 
 func toSet(ks ...string) map[string]bool {
@@ -68,7 +68,7 @@ func PeerWithState(jid, status, statusMsg string) *Peer {
 func PeerWithPendingSubscribe(jid, id string) *Peer {
 	return &Peer{
 		Jid:                xmpp.RemoveResourceFromJid(jid),
-		PendingSubscribeId: id,
+		PendingSubscribeID: id,
 	}
 }
 
@@ -89,7 +89,7 @@ func (p *Peer) MergeWith(p2 *Peer) *Peer {
 	pNew.StatusMsg = merge(p.StatusMsg, p2.StatusMsg)
 	pNew.Offline = p2.Offline
 	pNew.Asked = p2.Asked
-	pNew.PendingSubscribeId = merge(p.PendingSubscribeId, p2.PendingSubscribeId)
+	pNew.PendingSubscribeID = merge(p.PendingSubscribeID, p2.PendingSubscribeID)
 	pNew.Groups = make(map[string]bool)
 	if len(p2.Groups) > 0 {
 		pNew.Groups = p2.Groups
@@ -99,6 +99,7 @@ func (p *Peer) MergeWith(p2 *Peer) *Peer {
 	return pNew
 }
 
+// NameForPresentation returns the name if it exists and otherwise the JID
 func (p *Peer) NameForPresentation() string {
 	return merge(p.Jid, p.Name)
 }

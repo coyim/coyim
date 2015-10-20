@@ -1,5 +1,6 @@
 package servers
 
+// Server represent a known server
 type Server struct {
 	Name  string
 	Onion string
@@ -20,6 +21,7 @@ func init() {
 	Server{"dukgo.com", "wlcpmruglhxp6quz.onion"}.register()
 }
 
+// Get returns the given server information if it is known, and not ok otherwise
 func Get(s string) (serv Server, ok bool) {
 	serv, ok = known[s]
 	return

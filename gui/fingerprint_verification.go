@@ -7,7 +7,7 @@ import (
 	"github.com/twstrike/coyim/i18n"
 )
 
-func verifyFingerprintDialog(account *Account, uid string) {
+func verifyFingerprintDialog(account *account, uid string) {
 	dialog, _ := gtk.DialogNew()
 	dialog.SetTitle(i18n.Local("Fingerprint verification"))
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
@@ -34,7 +34,7 @@ func verifyFingerprintDialog(account *Account, uid string) {
 	button.Connect("clicked", func() {
 		defer dialog.Destroy()
 
-		err := account.AuthorizeFingerprint(uid, fpr)
+		err := account.authorizeFingerprint(uid, fpr)
 		if err != nil {
 			//TODO: Error
 			return

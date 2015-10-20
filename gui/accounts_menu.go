@@ -12,17 +12,17 @@ import (
 
 var (
 	// TODO: shouldn't this be specific to the account ID in question?
-	AccountChangedSignal, _ = glib.SignalNew("coyim-account-changed")
+	accountChangedSignal, _ = glib.SignalNew("coyim-account-changed")
 )
 
-func firstProxy(account *Account) string {
+func firstProxy(account *account) string {
 	if len(account.Proxies) > 0 {
 		return account.Proxies[0]
 	}
 	return ""
 }
 
-func onAccountDialogClicked(account *Account, saveFunction func() error, reg *widgetRegistry) func() {
+func onAccountDialogClicked(account *account, saveFunction func() error, reg *widgetRegistry) func() {
 	return func() {
 		account.Config.Account = reg.getText("account")
 		account.Password = reg.getText("password")
@@ -44,7 +44,7 @@ func onAccountDialogClicked(account *Account, saveFunction func() error, reg *wi
 	}
 }
 
-func accountDialog(account *Account, saveFunction func() error) {
+func accountDialog(account *account, saveFunction func() error) {
 	reg := createWidgetRegistry()
 	d := dialog{
 		title:    i18n.Local("Account Details"),
@@ -84,7 +84,7 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 	disconnect.SetSensitive(connected)
 }
 
-func buildAccountSubmenu(u *gtkUI, account *Account) *gtk.MenuItem {
+func buildAccountSubmenu(u *gtkUI, account *account) *gtk.MenuItem {
 	menuitem, _ := gtk.MenuItemNewWithMnemonic(account.Config.Account)
 
 	accountSubMenu, _ := gtk.MenuNew()

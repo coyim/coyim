@@ -50,6 +50,7 @@ type streamFeatures struct {
 	Session *string `xml:"session"`
 }
 
+// StreamError contains a stream error
 type StreamError struct {
 	XMLName xml.Name `xml:"http://etherx.jabber.org/streams error"`
 	Any     xml.Name `xml:",any"`

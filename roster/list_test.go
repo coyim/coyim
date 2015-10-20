@@ -133,14 +133,14 @@ func (s *ListXmppSuite) Test_Unsubscribed_whenDoesntExist(c *g.C) {
 
 func (s *ListXmppSuite) Test_Unsubscribed_whenExist(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Subscription: "both", Asked: true, PendingSubscribeId: "foo"})
+	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Subscription: "both", Asked: true, PendingSubscribeID: "foo"})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Subscription: "to"})
 	l.AddOrMerge(&Peer{Jid: "foo3@bar.com", Subscription: "from"})
 
 	l.Unsubscribed("foo@bar.com/123")
 	c.Assert(l.peers["foo@bar.com"].Subscription, g.Equals, "from")
 	c.Assert(l.peers["foo@bar.com"].Asked, g.Equals, false)
-	c.Assert(l.peers["foo@bar.com"].PendingSubscribeId, g.Equals, "")
+	c.Assert(l.peers["foo@bar.com"].PendingSubscribeID, g.Equals, "")
 
 	l.Unsubscribed("foo2@bar.com/123")
 	c.Assert(l.peers["foo2@bar.com"].Subscription, g.Equals, "none")
@@ -157,7 +157,7 @@ func (s *ListXmppSuite) Test_Subscribed_whenDoesntExist(c *g.C) {
 
 func (s *ListXmppSuite) Test_Subscribed_whenExist(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Subscription: "from", Asked: true, PendingSubscribeId: "foo"})
+	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Subscription: "from", Asked: true, PendingSubscribeID: "foo"})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Subscription: "none"})
 	l.AddOrMerge(&Peer{Jid: "foo3@bar.com", Subscription: ""})
 	l.AddOrMerge(&Peer{Jid: "foo4@bar.com", Subscription: "both"})
@@ -165,7 +165,7 @@ func (s *ListXmppSuite) Test_Subscribed_whenExist(c *g.C) {
 	l.Subscribed("foo@bar.com/123")
 	c.Assert(l.peers["foo@bar.com"].Subscription, g.Equals, "both")
 	c.Assert(l.peers["foo@bar.com"].Asked, g.Equals, false)
-	c.Assert(l.peers["foo@bar.com"].PendingSubscribeId, g.Equals, "")
+	c.Assert(l.peers["foo@bar.com"].PendingSubscribeID, g.Equals, "")
 
 	l.Subscribed("foo2@bar.com/123")
 	c.Assert(l.peers["foo2@bar.com"].Subscription, g.Equals, "to")
@@ -179,7 +179,7 @@ func (s *ListXmppSuite) Test_Subscribed_whenExist(c *g.C) {
 
 func (s *ListXmppSuite) Test_GetPendingSubscribe_returnsThePendingSubscribeIfExists(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: "foo@bar.com", PendingSubscribeId: "foo"})
+	l.AddOrMerge(&Peer{Jid: "foo@bar.com", PendingSubscribeID: "foo"})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com"})
 
 	v, k := l.GetPendingSubscribe("none@foo.com")
@@ -196,7 +196,7 @@ func (s *ListXmppSuite) Test_GetPendingSubscribe_returnsThePendingSubscribeIfExi
 
 func (s *ListXmppSuite) Test_RemovePendingSubscribe_removesThePendingSubscribe(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: "foo@bar.com", PendingSubscribeId: "foo"})
+	l.AddOrMerge(&Peer{Jid: "foo@bar.com", PendingSubscribeID: "foo"})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com"})
 
 	v, k := l.RemovePendingSubscribe("none@foo.com")
@@ -205,7 +205,7 @@ func (s *ListXmppSuite) Test_RemovePendingSubscribe_removesThePendingSubscribe(c
 	v, k = l.RemovePendingSubscribe("foo@bar.com/bar")
 	c.Assert(k, g.Equals, true)
 	c.Assert(v, g.Equals, "foo")
-	c.Assert(l.peers["foo@bar.com"].PendingSubscribeId, g.Equals, "")
+	c.Assert(l.peers["foo@bar.com"].PendingSubscribeID, g.Equals, "")
 
 	v, k = l.RemovePendingSubscribe("foo2@bar.com/bar")
 	c.Assert(k, g.Equals, false)
@@ -217,10 +217,10 @@ func (s *ListXmppSuite) Test_SubscribeRequest_addsTheSubscribeID(c *g.C) {
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com"})
 
 	l.SubscribeRequest("fox@bar.com/hmm", "something")
-	c.Assert(l.peers["fox@bar.com"].PendingSubscribeId, g.Equals, "something")
+	c.Assert(l.peers["fox@bar.com"].PendingSubscribeID, g.Equals, "something")
 
 	l.SubscribeRequest("foo@bar.com/hmm2", "something3")
-	c.Assert(l.peers["foo@bar.com"].PendingSubscribeId, g.Equals, "something3")
+	c.Assert(l.peers["foo@bar.com"].PendingSubscribeID, g.Equals, "something3")
 }
 
 func (s *ListXmppSuite) Test_StateOf_returnsState(c *g.C) {

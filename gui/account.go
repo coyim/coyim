@@ -14,7 +14,7 @@ type configManager interface {
 	Save() error
 }
 
-type Account struct {
+type account struct {
 	ConnectedSignal    *glib.Signal
 	DisconnectedSignal *glib.Signal
 
@@ -23,7 +23,7 @@ type Account struct {
 	*session.Session
 }
 
-func (acc *Account) Connected() bool {
+func (acc *account) connected() bool {
 	return acc.ConnStatus == session.CONNECTED
 }
 
@@ -31,21 +31,21 @@ var (
 	errFingerprintAlreadyAuthorized = errors.New(i18n.Local("the fingerprint is already authorized"))
 )
 
-func (acc *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
-	existing := acc.UserIdForFingerprint(fingerprint)
+func (acc *account) authorizeFingerprint(uid string, fingerprint []byte) error {
+	existing := acc.UserIDForFingerprint(fingerprint)
 	if len(existing) != 0 {
 		return errFingerprintAlreadyAuthorized
 	}
 
 	acc.KnownFingerprints = append(acc.KnownFingerprints, config.KnownFingerprint{
-		Fingerprint: fingerprint, UserId: uid,
+		Fingerprint: fingerprint, UserID: uid,
 	})
 
 	return nil
 }
 
-func BuildAccountsFrom(multiAcc *config.MultiAccount, manager configManager, u *gtkUI) []*Account {
-	accounts := make([]*Account, len(multiAcc.Accounts))
+func buildAccountsFrom(multiAcc *config.MultiAccount, manager configManager, u *gtkUI) []*account {
+	accounts := make([]*account, len(multiAcc.Accounts))
 
 	for i := range multiAcc.Accounts {
 		conf := &multiAcc.Accounts[i]
@@ -59,12 +59,12 @@ func BuildAccountsFrom(multiAcc *config.MultiAccount, manager configManager, u *
 	return accounts
 }
 
-func newAccount(conf *config.Config, m configManager) *Account {
+func newAccount(conf *config.Config, m configManager) *account {
 	id := conf.ID()
 	c, _ := glib.SignalNew(signalName(id, "connected"))
 	d, _ := glib.SignalNew(signalName(id, "disconnected"))
 
-	a := &Account{
+	a := &account{
 		Config:        conf,
 		Session:       session.NewSession(conf),
 		configManager: m,

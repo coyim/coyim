@@ -73,6 +73,7 @@ func buildProxyChain(proxies []string) (dialer proxy.Dialer, err error) {
 	return
 }
 
+// NewXMPPConn creates a new XMPP connection based on the given information
 func NewXMPPConn(config *Config, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {
 	parts := strings.SplitN(config.Account, "@", 2)
 	if len(parts) != 2 {

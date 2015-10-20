@@ -18,12 +18,14 @@ func ensureDir(dirname string, perm os.FileMode) {
 	}
 }
 
+// FindConfigFile returns the config file for CoyIM
 func FindConfigFile() string {
 	dir := configDir()
 	ensureDir(dir, 0700)
 	return filepath.Join(dir, "accounts.json")
 }
 
+// Save will save the given config to the file
 func (c *Config) Save() error {
 	contents, err := c.Serialize()
 	if err != nil {
@@ -33,7 +35,8 @@ func (c *Config) Save() error {
 	return ioutil.WriteFile(c.Filename, contents, 0600)
 }
 
+// Serialize will serialize the config
 func (c *Config) Serialize() ([]byte, error) {
-	c.SerializeFingerprints()
+	c.serializeFingerprints()
 	return json.MarshalIndent(c, "", "\t")
 }

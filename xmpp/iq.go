@@ -55,10 +55,11 @@ func (c *Conn) SendIQReply(to, typ, id string, value interface{}) error {
 	return err
 }
 
+// ClientIQ contains a specific information query request
 type ClientIQ struct { // info/query
 	XMLName xml.Name    `xml:"jabber:client iq"`
 	From    string      `xml:"from,attr"`
-	Id      string      `xml:"id,attr"`
+	ID      string      `xml:"id,attr"`
 	To      string      `xml:"to,attr"`
 	Type    string      `xml:"type,attr"` // error, get, result, set
 	Error   ClientError `xml:"error"`

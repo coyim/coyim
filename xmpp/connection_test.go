@@ -892,9 +892,8 @@ func isVersionOldish() bool {
 func decideTLSExchangeFromVersion() [][]byte {
 	if isVersionOldish() {
 		return validTLSExchange
-	} else {
-		return validTLSExchange2
 	}
+	return validTLSExchange2
 }
 
 func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {

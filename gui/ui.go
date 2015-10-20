@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
@@ -21,17 +22,18 @@ import (
 const debugEnabled = true
 
 type gtkUI struct {
-	roster       *Roster
+	roster       *roster
 	window       *gtk.Window
 	accountsMenu *gtk.MenuItem
 
 	configFileManager *config.FileManager
 	multiConfig       *config.MultiAccount
 
-	accounts []*Account
+	accounts []*account
 }
 
-func NewGTK() *gtkUI {
+// NewGTK returns a new client for a GTK ui
+func NewGTK() client.Client {
 	return &gtkUI{}
 }
 
@@ -58,7 +60,7 @@ func (u *gtkUI) LoadConfig(configFile string) error {
 	//TODO: REMOVE this
 	u.multiConfig = u.configFileManager.MultiAccount
 
-	u.accounts = BuildAccountsFrom(u.multiConfig, u.configFileManager, u)
+	u.accounts = buildAccountsFrom(u.multiConfig, u.configFileManager, u)
 
 	return nil
 }
@@ -91,7 +93,7 @@ func (u *gtkUI) SaveConfig() error {
 	u.addNewAccountsFromConfig()
 
 	if u.window != nil {
-		u.window.Emit(AccountChangedSignal.String())
+		u.window.Emit(accountChangedSignal.String())
 	}
 
 	return nil
@@ -108,8 +110,8 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 	return nil
 }
 
-func (u *gtkUI) findAccountForSession(s *session.Session) *Account {
-	a, ok := s.Account.(*Account)
+func (u *gtkUI) findAccountForSession(s *session.Session) *account {
+	a, ok := s.Account.(*account)
 	if ok {
 		return a
 	}
@@ -123,7 +125,7 @@ func (u *gtkUI) MessageReceived(s *session.Session, from, timestamp string, encr
 		return
 	}
 
-	u.roster.MessageReceived(account, from, timestamp, encrypted, message)
+	u.roster.messageReceived(account, from, timestamp, encrypted, message)
 }
 
 func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
@@ -165,7 +167,7 @@ func (u *gtkUI) Close() {}
 //}
 
 func (u *gtkUI) initRoster() {
-	u.roster = NewRoster()
+	u.roster = newRoster()
 }
 
 func (u *gtkUI) mainWindow() {
@@ -177,7 +179,7 @@ func (u *gtkUI) mainWindow() {
 	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
 	vbox.SetHomogeneous(false)
 	vbox.PackStart(menubar, false, false, 0)
-	vbox.PackStart(u.roster.Window, true, true, 0)
+	vbox.PackStart(u.roster.window, true, true, 0)
 	u.window.Add(vbox)
 
 	u.window.SetTitle(i18n.Local("Coy"))
@@ -195,7 +197,7 @@ func (u *gtkUI) quit() {
 }
 
 func (u *gtkUI) connectShortcuts() {
-	// TODO: once we accelerator support
+	// TODO: once we have accelerator support
 }
 
 func (*gtkUI) askForPassword(connect func(string)) {
@@ -300,11 +302,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`)
 }
 
 func (u *gtkUI) addContactWindow() {
-	accounts := make([]*Account, 0, len(u.accounts))
+	accounts := make([]*account, 0, len(u.accounts))
 
 	for i := range u.accounts {
 		acc := u.accounts[i]
-		if acc.Connected() {
+		if acc.connected() {
 			accounts = append(accounts, acc)
 		}
 	}
@@ -337,7 +339,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 
 	//TODO: replace this by emiting the signal at startup
 	u.buildAccountsMenu()
-	u.window.Connect(AccountChangedSignal.String(), func() {
+	u.window.Connect(accountChangedSignal.String(), func() {
 		//TODO: should it destroy the current submenu? HOW?
 		u.accountsMenu.SetSubmenu((*gtk.Widget)(nil))
 		u.buildAccountsMenu()
@@ -369,7 +371,7 @@ func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
 
 func (u *gtkUI) rosterUpdated() {
 	glib.IdleAdd(func() bool {
-		u.roster.Redraw()
+		u.roster.redraw()
 		return false
 	})
 }
@@ -402,15 +404,15 @@ func (u *gtkUI) RosterReceived(s *session.Session) {
 		return
 	}
 
-	u.roster.Update(account, s.R)
+	u.roster.update(account, s.R)
 
 	glib.IdleAdd(func() bool {
-		u.roster.Redraw()
+		u.roster.redraw()
 		return false
 	})
 }
 
-func (u *gtkUI) disconnect(account *Account) {
+func (u *gtkUI) disconnect(account *account) {
 	account.Session.Close()
 	u.window.Emit(account.DisconnectedSignal.String())
 }
@@ -428,7 +430,7 @@ func (u *gtkUI) ensureConfigHasKey(c *config.Config) {
 	}
 }
 
-func (u *gtkUI) connect(account *Account) {
+func (u *gtkUI) connect(account *account) {
 	connectFn := func(password string) {
 		err := account.Session.Connect(password, nil)
 		if err != nil {

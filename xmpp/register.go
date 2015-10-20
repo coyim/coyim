@@ -8,6 +8,7 @@ package xmpp
 
 import "encoding/xml"
 
+// RegisterQuery contains register query information for creating a new account
 type RegisterQuery struct {
 	XMLName  xml.Name  `xml:"jabber:iq:register query"`
 	Username *xml.Name `xml:"username"`

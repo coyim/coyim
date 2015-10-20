@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// ParseYes returns true if the string is any combination of yes
 func ParseYes(input string) bool {
 	switch strings.ToLower(input) {
 	case "y", "yes":

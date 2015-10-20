@@ -20,7 +20,7 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 	return confirmDialog
 }
 
-func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
+func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 	dialog, _ := gtk.DialogNew()
 	dialog.SetTitle(i18n.Local("Add contact"))
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
@@ -72,9 +72,9 @@ func presenceSubscriptionDialog(accounts []*Account) *gtk.Dialog {
 		iter, _ := accountInput.GetActiveIter()
 
 		val, _ := model.GetValue(iter, 1)
-		account := (*Account)(val.GetPointer())
+		account := (*account)(val.GetPointer())
 
-		if !account.Connected() {
+		if !account.connected() {
 			//TODO error
 		}
 

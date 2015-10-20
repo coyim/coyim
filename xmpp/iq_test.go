@@ -33,10 +33,6 @@ func (s *IqXmppSuite) Test_SendIQReply_writesAnEmptyReplyIfEmptyIsGiven(c *C) {
 	c.Assert(string(mockIn.write), Equals, "<iq to='f&amp;o' from='som&apos;ewhat@foo.com/somewhere' type='b&quot;ar' id='b&lt;az'></iq>")
 }
 
-type testNonXmlValue struct {
-	x int
-}
-
 func (s *IqXmppSuite) Test_SendIQReply_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := Conn{
@@ -48,13 +44,13 @@ func (s *IqXmppSuite) Test_SendIQReply_returnsErrorIfAnUnXMLableEntryIsGiven(c *
 }
 
 func (s *IqXmppSuite) Test_SendIQ_returnsErrorIfWritingDataFails(c *C) {
-	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails...")}
+	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails")}
 	conn := Conn{
 		out: mockIn,
 		jid: "som'ewhat@foo.com/somewhere",
 	}
 	_, _, err := conn.SendIQ("", "", nil)
-	c.Assert(err.Error(), Equals, "this also fails...")
+	c.Assert(err.Error(), Equals, "this also fails")
 }
 
 func (s *IqXmppSuite) Test_Send_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
@@ -68,12 +64,12 @@ func (s *IqXmppSuite) Test_Send_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 }
 
 func (s *IqXmppSuite) Test_SendIQ_returnsErrorIfWritingDataFailsTheSecondTime(c *C) {
-	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails again..."), errCount: 1}
+	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails again"), errCount: 1}
 	conn := Conn{
 		out: mockIn,
 		jid: "som'ewhat@foo.com/somewhere",
 	}
 	_, _, err := conn.SendIQ("", "", nil)
-	c.Assert(err.Error(), Equals, "this also fails again...")
+	c.Assert(err.Error(), Equals, "this also fails again")
 	c.Assert(string(mockIn.write), Matches, "<iq  from='som&apos;ewhat@foo.com/somewhere' type='' id='.*?'></iq>")
 }

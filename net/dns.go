@@ -17,7 +17,7 @@ func LookupSRV(dialer proxy.Dialer, service, proto, name string) (cname string, 
 	return LookupSRVWith(dialer, defaultDNSServer, service, proto, name)
 }
 
-// LookupSRV looks up the provided service and protocol on the given name using the proxy dialer given and the dns server provided
+// LookupSRVWith looks up the provided service and protocol on the given name using the proxy dialer given and the dns server provided
 func LookupSRVWith(dialer proxy.Dialer, dnsServer, service, proto, name string) (cname string, addrs []*net.SRV, err error) {
 	cname = createCName(service, proto, name)
 

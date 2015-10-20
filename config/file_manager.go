@@ -15,6 +15,7 @@ type FileManager struct {
 	*MultiAccount
 }
 
+// NewFileManager returns a new file manager from the given configuration file
 func NewFileManager(configFile string) *FileManager {
 	if len(configFile) == 0 {
 		configFile = FindConfigFile()
@@ -25,6 +26,7 @@ func NewFileManager(configFile string) *FileManager {
 	}
 }
 
+// ParseConfigFile will parse the config file
 func (fileManager *FileManager) ParseConfigFile() error {
 	var err error
 
@@ -36,6 +38,7 @@ func (fileManager *FileManager) ParseConfigFile() error {
 	return nil
 }
 
+// Add will add the given configuration to the file manager
 func (fileManager *FileManager) Add(conf Config) error {
 	if fileManager.keepXmppClientCompat {
 		return errors.New("Cant add accounts while in compat mode")
@@ -46,6 +49,7 @@ func (fileManager *FileManager) Add(conf Config) error {
 	return nil
 }
 
+// Save will save the file manager
 func (fileManager *FileManager) Save() error {
 	if fileManager.keepXmppClientCompat {
 		account := fileManager.MultiAccount.Accounts[0]

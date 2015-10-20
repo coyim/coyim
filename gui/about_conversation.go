@@ -4,7 +4,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const DESTROY_SIGNAL = "destroy"
+const destroySignal = "destroy"
 
 type aboutConversationWin struct {
 	win *gtk.Window
@@ -21,7 +21,7 @@ func newAboutConversationWindow(title string) aboutConversationWin {
 	window, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
 	window.SetPosition(gtk.WIN_POS_CENTER)
 	window.SetTitle(title)
-	window.Connect(DESTROY_SIGNAL, gtk.MainQuit)
+	window.Connect(destroySignal, gtk.MainQuit)
 	window.SetSizeRequest(600, 480)
 
 	return aboutConversationWin{window, newReadOnlyTextBox()}

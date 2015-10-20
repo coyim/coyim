@@ -8,11 +8,11 @@ package xmpp
 
 import "encoding/xml"
 
-// RFC 3921  B.1  jabber:client
+// ClientMessage implements RFC 3921  B.1  jabber:client
 type ClientMessage struct {
 	XMLName xml.Name `xml:"jabber:client message"`
 	From    string   `xml:"from,attr"`
-	Id      string   `xml:"id,attr"`
+	ID      string   `xml:"id,attr"`
 	To      string   `xml:"to,attr"`
 	Type    string   `xml:"type,attr"` // chat, error, groupchat, headline, or normal
 
@@ -24,11 +24,7 @@ type ClientMessage struct {
 	Delay   *Delay `xml:"delay,omitempty"`
 }
 
-type ClientText struct {
-	Lang string `xml:"lang,attr"`
-	Body string `xml:",chardata"`
-}
-
+// ClientCaps contains information about client capabilities
 type ClientCaps struct {
 	XMLName xml.Name `xml:"http://jabber.org/protocol/caps c"`
 	Ext     string   `xml:"ext,attr"`
@@ -37,6 +33,7 @@ type ClientCaps struct {
 	Ver     string   `xml:"ver,attr"`
 }
 
+// ClientError represents a client error
 type ClientError struct {
 	XMLName xml.Name `xml:"jabber:client error"`
 	Code    string   `xml:"code,attr"`

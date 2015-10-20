@@ -38,20 +38,24 @@ var (
 	minFragmentSize = 18
 )
 
+// OtrEventHandler is used to contain information pertaining to the events of a specific OTR interaction
 type OtrEventHandler struct {
 	SmpQuestion      string
 	securityChange   SecurityChange
 	WaitingForSecret bool
 }
 
+// WishToHandleErrorMessage means this event handler wants to handle error messages
 func (OtrEventHandler) WishToHandleErrorMessage() bool {
 	return true
 }
 
+// HandleErrorMessage is called when asked to handle a specific error message
 func (OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
 	return nil
 }
 
+// HandleSecurityEvent is called to handle a specific security event
 func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 	switch event {
 	case otr3.GoneSecure, otr3.StillSecure:
@@ -59,6 +63,7 @@ func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 	}
 }
 
+// HandleSMPEvent is called to handle a specific SMP event
 func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
 	switch event {
 	case otr3.SMPEventAskForSecret, otr3.SMPEventAskForAnswer:
@@ -74,12 +79,14 @@ func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent in
 	}
 }
 
+// HandleMessageEvent is called to handle a specific message event
 func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error) {
 	if event == otr3.MessageEventConnectionEnded {
 		e.securityChange = ConversationEnded
 	}
 }
 
+// ConsumeSecurityChange is called to get the current security change and forget the old one
 func (e *OtrEventHandler) ConsumeSecurityChange() SecurityChange {
 	ret := e.securityChange
 	e.securityChange = NoChange

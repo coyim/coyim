@@ -23,6 +23,7 @@ func New() *List {
 	}
 }
 
+// Get returns the peer if it's known and false otherwise
 func (l *List) Get(jid string) (*Peer, bool) {
 	v, ok := l.peers[xmpp.RemoveResourceFromJid(jid)]
 	return v, ok
@@ -117,8 +118,8 @@ func (l *List) SubscribeRequest(jid, id string) {
 // It will return false if no such subscribe is in flight
 func (l *List) RemovePendingSubscribe(jid string) (string, bool) {
 	if p, existed := l.Get(jid); existed {
-		s := p.PendingSubscribeId
-		p.PendingSubscribeId = ""
+		s := p.PendingSubscribeID
+		p.PendingSubscribeID = ""
 		return s, s != ""
 	}
 
@@ -128,7 +129,7 @@ func (l *List) RemovePendingSubscribe(jid string) (string, bool) {
 // GetPendingSubscribe will return a subscribe id without removing it
 func (l *List) GetPendingSubscribe(jid string) (string, bool) {
 	if p, existed := l.Get(jid); existed {
-		return p.PendingSubscribeId, p.PendingSubscribeId != ""
+		return p.PendingSubscribeID, p.PendingSubscribeID != ""
 	}
 
 	return "", false
@@ -143,7 +144,7 @@ func (l *List) Subscribed(jid string) {
 		case "none", "":
 			p.Subscription = "to"
 		}
-		p.PendingSubscribeId = ""
+		p.PendingSubscribeID = ""
 		p.Asked = false
 	}
 }
@@ -157,7 +158,7 @@ func (l *List) Unsubscribed(jid string) {
 		case "to":
 			p.Subscription = "none"
 		}
-		p.PendingSubscribeId = ""
+		p.PendingSubscribeID = ""
 		p.Asked = false
 	}
 }

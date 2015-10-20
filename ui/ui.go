@@ -10,6 +10,7 @@ import (
 	"golang.org/x/net/html"
 )
 
+// StripHTML removes all html in the text
 func StripHTML(msg []byte) (out []byte) {
 	z := html.NewTokenizer(bytes.NewReader(msg))
 
@@ -33,7 +34,7 @@ loop:
 
 var hexTable = "0123456789abcdef"
 
-// escapeNonASCII replaces tabs and other non-printable characters with a
+// EscapeNonASCII replaces tabs and other non-printable characters with a
 // "\x01" form of hex escaping. It works on a byte-by-byte basis.
 func EscapeNonASCII(in string) string {
 	escapes := 0
@@ -59,7 +60,7 @@ func EscapeNonASCII(in string) string {
 	return string(out)
 }
 
-// unescapeNonASCII undoes the transformation of escapeNonASCII.
+// UnescapeNonASCII undoes the transformation of escapeNonASCII.
 func UnescapeNonASCII(in string) (string, error) {
 	needsUnescaping := false
 	for i := 0; i < len(in); i++ {
@@ -126,6 +127,7 @@ func (r *rawLogger) Write(data []byte) (int, error) {
 	return origLen, nil
 }
 
+// NewLine contains a new line
 var NewLine = []byte{'\n'}
 
 func (r *rawLogger) flush() error {

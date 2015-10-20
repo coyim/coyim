@@ -16,12 +16,14 @@ import (
 
 type connStatus int
 
+// These constants represent the different connection states
 const (
 	DISCONNECTED connStatus = iota
 	CONNECTING
 	CONNECTED
 )
 
+// Session contains information about one specific connection
 type Session struct {
 	Conn       *xmpp.Conn
 	R          *roster.List
@@ -43,7 +45,7 @@ type Session struct {
 	// lastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	LastActionTime      time.Time
-	SessionEventHandler SessionEventHandler
+	SessionEventHandler EventHandler
 
 	timeoutTicker *time.Ticker
 	rosterCookie  xmpp.Cookie
@@ -51,6 +53,7 @@ type Session struct {
 	Account interface{}
 }
 
+// NewSession creates a new session from the given config
 func NewSession(c *config.Config) *Session {
 	s := &Session{
 		Config: c,
@@ -114,7 +117,7 @@ func (s *Session) receivedClientMessage(stanza *xmpp.ClientMessage) bool {
 func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
-		s.R.SubscribeRequest(stanza.From, stanza.Id)
+		s.R.SubscribeRequest(stanza.From, stanza.ID)
 		s.SessionEventHandler.SubscriptionRequest(s, xmpp.RemoveResourceFromJid(stanza.From))
 	case "unavailable":
 		if s.R.PeerBecameUnavailable(stanza.From) &&
@@ -150,7 +153,7 @@ func (s *Session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
 			}
 		}
 
-		if err := s.Conn.SendIQReply(stanza.From, "result", stanza.Id, reply); err != nil {
+		if err := s.Conn.SendIQReply(stanza.From, "result", stanza.ID, reply); err != nil {
 			s.alert("Failed to send IQ message: " + err.Error())
 		}
 		return true
@@ -183,6 +186,7 @@ func (s *Session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 	}
 }
 
+// WatchStanzas listens to XMPP stanzas and reacts on them
 func (s *Session) WatchStanzas() {
 	defer s.Close()
 
@@ -276,6 +280,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 	return nil
 }
 
+// HandleConfirmOrDeny is used to handle a users response to a subscription request
 func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 	id, ok := s.R.RemovePendingSubscribe(jid)
 	if !ok {
@@ -313,6 +318,7 @@ func (s *Session) newConversation(peer string) *otr3.Conversation {
 	return conversation
 }
 
+// GetConversationWith returns the OTR conversation for the given peer
 func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
 	if conversation, ok := s.Conversations[peer]; ok {
 		return conversation
@@ -399,7 +405,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	case event.SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
-		if len(s.Config.UserIdForFingerprint(fpr)) == 0 {
+		if len(s.Config.UserIDForFingerprint(fpr)) == 0 {
 			s.Config.AddFingerprint(fpr, from)
 			s.Config.Save()
 		}
@@ -473,6 +479,7 @@ func isAwayStatus(status string) bool {
 	return false
 }
 
+// AwaitVersionReply listens on the channel and waits for the version reply
 func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	stanza, ok := <-ch
 	if !ok {
@@ -503,6 +510,7 @@ func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	s.info(fmt.Sprintf("Version reply from %s: %#v", user, versionReply))
 }
 
+// WatchTimeout watches timeouts
 func (s *Session) WatchTimeout() {
 	s.Timeouts = make(map[xmpp.Cookie]time.Time)
 	s.timeoutTicker = time.NewTicker(1 * time.Second)
@@ -533,6 +541,7 @@ func (s *Session) WatchTimeout() {
 	}
 }
 
+// WatchRosterEvents waits for roster events
 func (s *Session) WatchRosterEvents() {
 	defer s.Close()
 
@@ -589,6 +598,7 @@ func (s *Session) WatchRosterEvents() {
 	}
 }
 
+// Connect connects to the server and starts the main threads
 func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) error {
 	if s.ConnStatus != DISCONNECTED {
 		return nil
@@ -613,6 +623,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	return nil
 }
 
+// EncryptAndSendTo encrypts and sends the message to the given peer
 func (s *Session) EncryptAndSendTo(peer string, message string) error {
 	conversation := s.GetConversationWith(peer)
 	toSend, err := conversation.Send(otr3.ValidMessage(message))
@@ -630,15 +641,18 @@ func (s *Session) EncryptAndSendTo(peer string, message string) error {
 	return nil
 }
 
+// SendMessageTo sends the given message directly to the peer
 func (s *Session) SendMessageTo(peer string, message string) error {
 	return s.Conn.Send(peer, message)
 }
 
+// StartEncryptedChatWith starts an encrypted chat with the given peer
 func (s *Session) StartEncryptedChatWith(peer string) error {
 	conversation := s.GetConversationWith(peer)
 	return s.SendMessageTo(peer, string(conversation.QueryMessage()))
 }
 
+// TerminateConversationWith terminates the conversation with a specific peer
 func (s *Session) TerminateConversationWith(peer string) error {
 	//Do not use GetConversationWith because we dont want to create a new conversation just to destroy it
 	c, ok := s.Conversations[peer]
@@ -671,6 +685,7 @@ func (s *Session) terminateConversations() {
 	}
 }
 
+// Close terminates all outstanding OTR conversations and closes the connection to the server
 func (s *Session) Close() {
 	//TODO: what should be done it states == CONNECTING?
 	if s.ConnStatus == DISCONNECTED {

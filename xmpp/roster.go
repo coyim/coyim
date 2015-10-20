@@ -60,11 +60,13 @@ func ParseRoster(reply Stanza) ([]RosterEntry, error) {
 	return roster.Item, nil
 }
 
+// Roster contains a list of roster entries
 type Roster struct {
 	XMLName xml.Name      `xml:"jabber:iq:roster query"`
 	Item    []RosterEntry `xml:"item"`
 }
 
+// RosterEntry contains one roster entry
 type RosterEntry struct {
 	Jid          string   `xml:"jid,attr"`
 	Subscription string   `xml:"subscription,attr"`
@@ -79,6 +81,7 @@ type RosterRequest struct {
 	Item    RosterRequestItem `xml:"item"`
 }
 
+// RosterRequestItem contains one specific entry
 type RosterRequestItem struct {
 	Jid          string   `xml:"jid,attr"`
 	Subscription string   `xml:"subscription,attr"`

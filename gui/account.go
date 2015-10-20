@@ -2,8 +2,6 @@ package gui
 
 import (
 	"errors"
-	"strconv"
-	"time"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/twstrike/coyim/config"
@@ -17,7 +15,6 @@ type configManager interface {
 }
 
 type Account struct {
-	ID                 string
 	ConnectedSignal    *glib.Signal
 	DisconnectedSignal *glib.Signal
 
@@ -52,24 +49,22 @@ func BuildAccountsFrom(multiAccConfig *config.MultiAccountConfig, manager config
 
 	for i := range multiAccConfig.Accounts {
 		conf := &multiAccConfig.Accounts[i]
-		account := newAccount(conf)
-		account.configManager = manager
+		account := newAccount(conf, manager)
 		accounts[i] = account
 	}
 
 	return accounts
 }
 
-func newAccount(conf *config.Config) Account {
-	//TODO: call conf.ID()
-	id := strconv.FormatUint(uint64(time.Now().UnixNano()), 10)
+func newAccount(conf *config.Config, m configManager) Account {
+	id := conf.Id()
 	c, _ := glib.SignalNew(signalName(id, "connected"))
 	d, _ := glib.SignalNew(signalName(id, "disconnected"))
 
 	a := Account{
-		ID:      id,
-		Config:  conf,
-		Session: session.NewSession(conf),
+		Config:        conf,
+		Session:       session.NewSession(conf),
+		configManager: m,
 
 		ConnectedSignal:    c,
 		DisconnectedSignal: d,
@@ -83,13 +78,9 @@ func signalName(id, signal string) string {
 }
 
 func (u *gtkUI) showAddAccountWindow() {
-	conf := config.NewConfig()
-	account := Account{
-		Config: conf,
-	}
-
+	account := newAccount(config.NewConfig(), u.configFileManager)
 	accountDialog(account, func() error {
-		err := u.configFileManager.Add(*conf)
+		err := u.configFileManager.Add(*account.Config)
 		if err != nil {
 			return err
 		}

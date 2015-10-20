@@ -64,12 +64,10 @@ func (u *gtkUI) LoadConfig(configFile string) error {
 }
 
 func (u *gtkUI) addNewAccountsFromConfig() {
-	for i := range u.configFileManager.Accounts {
-		conf := &u.configFileManager.Accounts[i]
-
+	for _, configAccount := range u.configFileManager.Accounts {
 		var found bool
 		for _, acc := range u.accounts {
-			if acc.Config.Id() == conf.Id() {
+			if acc.Id() == configAccount.Id() {
 				found = true
 				break
 			}
@@ -79,7 +77,8 @@ func (u *gtkUI) addNewAccountsFromConfig() {
 			continue
 		}
 
-		u.accounts = append(u.accounts, newAccount(conf))
+		acc := newAccount(&configAccount, u.configFileManager)
+		u.accounts = append(u.accounts, acc)
 	}
 }
 

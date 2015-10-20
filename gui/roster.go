@@ -26,7 +26,8 @@ type Roster struct {
 func NewRoster() *Roster {
 	w, _ := gtk.ScrolledWindowNew(nil, nil)
 	m, _ := gtk.ListStoreNew(
-		glib.TYPE_STRING,  // user
+		glib.TYPE_STRING,  // jid
+		glib.TYPE_STRING,  // display name
 		glib.TYPE_POINTER, // *Account
 	)
 	v, _ := gtk.TreeViewNew()
@@ -48,7 +49,7 @@ func NewRoster() *Roster {
 	}
 
 	cr, _ := gtk.CellRendererTextNew()
-	c, _ := gtk.TreeViewColumnNewWithAttribute("user", cr, "text", 0)
+	c, _ := gtk.TreeViewColumnNewWithAttribute("name", cr, "text", 1)
 	r.view.AppendColumn(c)
 
 	r.view.SetModel(r.model)
@@ -89,7 +90,7 @@ func (r *Roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	val, _ := r.model.GetValue(iter, 0)
 	to, _ := val.GetString()
 
-	val2, _ := r.model.GetValue(iter, 1)
+	val2, _ := r.model.GetValue(iter, 2)
 	account := (*Account)(val2.GetPointer())
 
 	//TODO: change to IDS and fix me
@@ -166,7 +167,11 @@ func (r *Roster) Redraw() {
 		contacts.Iter(func(_ int, item *roster.Peer) {
 			if shouldDisplay(item) {
 				iter := r.model.Append()
-				r.model.Set(iter, []int{0, 1}, []interface{}{item.NameForPresentation(), account})
+				r.model.Set(iter, []int{0, 1, 2}, []interface{}{
+					item.Jid,
+					item.NameForPresentation(),
+					account,
+				})
 			}
 		})
 	}

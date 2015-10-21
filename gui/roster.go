@@ -54,6 +54,7 @@ func newRoster() *roster {
 		glib.TYPE_STRING, // jid
 		glib.TYPE_STRING, // display name
 		glib.TYPE_STRING, // account id
+		glib.TYPE_STRING, // account status
 	)
 	v, _ := gtk.TreeViewNew()
 
@@ -75,6 +76,11 @@ func newRoster() *roster {
 
 	cr, _ := gtk.CellRendererTextNew()
 	c, _ := gtk.TreeViewColumnNewWithAttribute("name", cr, "text", 1)
+
+	cr2, _ := gtk.CellRendererTextNew()
+	c2, _ := gtk.TreeViewColumnNewWithAttribute("status", cr2, "text", 3)
+
+	r.view.AppendColumn(c2)
 	r.view.AppendColumn(c)
 
 	r.view.SetModel(r.model)
@@ -181,7 +187,31 @@ func (r *roster) debugPrintRosterFor(nm string) {
 //TODO: I believe we can achieve the same with a GtkTreeModelFilter
 //See: gtk_tree_model_filter_set_visible_func()
 func shouldDisplay(p *rosters.Peer) bool {
-	return p.Subscription != "none" && p.Subscription != ""
+	return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != ""
+}
+
+func isAway(p *rosters.Peer) bool {
+	switch p.Status {
+	case "dnd", "xa", "away":
+		return true
+	}
+	return false
+}
+
+func decideStatusGlyphFor(p *rosters.Peer) string {
+	if p.PendingSubscribeID != "" {
+		return "?"
+	}
+
+	if !p.Online {
+		return "✘"
+	}
+
+	if isAway(p) {
+		return "⛔"
+	}
+
+	return "✔"
 }
 
 func (r *roster) redraw() {
@@ -193,10 +223,11 @@ func (r *roster) redraw() {
 		contacts.Iter(func(_ int, item *rosters.Peer) {
 			if shouldDisplay(item) {
 				iter := r.model.Append()
-				r.model.Set(iter, []int{0, 1, 2}, []interface{}{
+				r.model.Set(iter, []int{0, 1, 2, 3}, []interface{}{
 					item.Jid,
 					item.NameForPresentation(),
 					account.ID(),
+					decideStatusGlyphFor(item),
 				})
 			}
 		})

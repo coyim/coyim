@@ -650,7 +650,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 
 	c.Assert(called, Equals, 1)
 	p, _ := sess.R.Get("some2@one.org")
-	c.Assert(p.Offline, Equals, true)
+	c.Assert(p.Online, Equals, false)
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {

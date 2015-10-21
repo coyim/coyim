@@ -238,14 +238,14 @@ func (s *ListXmppSuite) Test_StateOf_returnsState(c *g.C) {
 
 func (s *ListXmppSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Offline: false})
+	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Online: true})
 
 	res := l.PeerBecameUnavailable("hmm@bar.com/foo")
 	c.Assert(res, g.Equals, false)
 
 	res = l.PeerBecameUnavailable("foo@bar.com/foo2")
 	c.Assert(res, g.Equals, true)
-	c.Assert(l.peers["foo@bar.com"].Offline, g.Equals, true)
+	c.Assert(l.peers["foo@bar.com"].Online, g.Equals, false)
 }
 
 func (s *ListXmppSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *g.C) {
@@ -268,20 +268,20 @@ func (s *ListXmppSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers
 
 func (s *ListXmppSuite) Test_PeerPresenceUpdate_updatesPreviouslyKnownPeer(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Offline: true})
-	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Offline: false, Status: "dnd", StatusMsg: "working"})
+	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Online: false})
+	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Online: true, Status: "dnd", StatusMsg: "working"})
 
 	res := l.PeerPresenceUpdate("foo@bar.com/hmm", "hello", "goodbye")
 	c.Assert(res, g.Equals, true)
 	c.Assert(l.peers["foo@bar.com"].Status, g.Equals, "hello")
 	c.Assert(l.peers["foo@bar.com"].StatusMsg, g.Equals, "goodbye")
-	c.Assert(l.peers["foo@bar.com"].Offline, g.Equals, false)
+	c.Assert(l.peers["foo@bar.com"].Online, g.Equals, true)
 
 	res = l.PeerPresenceUpdate("foo2@bar.com/hmm", "dnd", "working")
 	c.Assert(res, g.Equals, false)
 	c.Assert(l.peers["foo2@bar.com"].Status, g.Equals, "dnd")
 	c.Assert(l.peers["foo2@bar.com"].StatusMsg, g.Equals, "working")
-	c.Assert(l.peers["foo2@bar.com"].Offline, g.Equals, false)
+	c.Assert(l.peers["foo2@bar.com"].Online, g.Equals, true)
 }
 
 func (s *ListXmppSuite) Test_Clear_clearsTheList(c *g.C) {

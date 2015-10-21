@@ -12,7 +12,7 @@ type Peer struct {
 	Groups             map[string]bool
 	Status             string
 	StatusMsg          string
-	Offline            bool
+	Online             bool
 	Asked              bool
 	PendingSubscribeID string
 }
@@ -61,6 +61,7 @@ func PeerWithState(jid, status, statusMsg string) *Peer {
 		Jid:       xmpp.RemoveResourceFromJid(jid),
 		Status:    status,
 		StatusMsg: statusMsg,
+		Online:    true,
 	}
 }
 
@@ -87,7 +88,7 @@ func (p *Peer) MergeWith(p2 *Peer) *Peer {
 	pNew.Name = merge(p.Name, p2.Name)
 	pNew.Status = merge(p.Status, p2.Status)
 	pNew.StatusMsg = merge(p.StatusMsg, p2.StatusMsg)
-	pNew.Offline = p2.Offline
+	pNew.Online = p.Online || p2.Online
 	pNew.Asked = p2.Asked
 	pNew.PendingSubscribeID = merge(p.PendingSubscribeID, p2.PendingSubscribeID)
 	pNew.Groups = make(map[string]bool)

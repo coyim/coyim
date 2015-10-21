@@ -74,7 +74,7 @@ func (l *List) AddOrReplace(p *Peer) bool {
 // Returns true if they existed, otherwise false
 func (l *List) PeerBecameUnavailable(jid string) bool {
 	if p, exist := l.Get(jid); exist {
-		p.Offline = true
+		p.Online = false
 		return true
 	}
 
@@ -85,12 +85,14 @@ func (l *List) PeerBecameUnavailable(jid string) bool {
 // It returns true if it actually updated the status of the user
 func (l *List) PeerPresenceUpdate(jid, status, statusMsg string) bool {
 	if p, ok := l.Get(jid); ok {
-		p.Offline = false
+		oldOnline := p.Online
+		p.Online = true
 		if p.Status != status || p.StatusMsg != statusMsg {
 			p.Status = status
 			p.StatusMsg = statusMsg
 			return true
 		}
+		return !oldOnline
 	} else {
 		if status != "away" && status != "xa" {
 			l.AddOrMerge(PeerWithState(jid, status, statusMsg))

@@ -668,7 +668,6 @@ func (s *Session) TerminateConversationWith(peer string) error {
 	}
 
 	//conversation.Wipe()
-	delete(s.Conversations, peer)
 
 	return nil
 }

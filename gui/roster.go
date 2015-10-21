@@ -95,12 +95,16 @@ func newRoster() *roster {
 }
 
 func (r *roster) connected() {
-	r.widget.SetCurrentPage(1)
+	glib.IdleAdd(func() {
+		r.widget.SetCurrentPage(1)
+	})
 }
 
 func (r *roster) disconnected() {
 	//TODO: should it destroy all conversations?
-	r.widget.SetCurrentPage(0)
+	glib.IdleAdd(func() {
+		r.widget.SetCurrentPage(0)
+	})
 }
 
 //TODO: move somewhere else

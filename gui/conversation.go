@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
@@ -94,26 +93,18 @@ func newConversationWindow(account *account, uid string) *conversationWindow {
 	vbox.SetBorderWidth(3)
 
 	text, _ := gtk.EntryNew()
-	text.Connect("key-press-event", func(_ *gtk.Entry, ev *gdk.Event) bool {
-		//Send message on ENTER press (without modifier key)
-		evKey := gdk.EventKey{ev}
-		if (evKey.State()&gdk.GDK_MODIFIER_MASK) == 0 && evKey.KeyVal() == 0xff0d {
-			text.SetEditable(false)
+	text.Connect("activate", func() {
+		text.SetEditable(false)
 
-			msg, _ := text.GetText()
-			text.SetText("")
+		msg, _ := text.GetText()
+		text.SetText("")
 
-			text.SetEditable(true)
+		text.SetEditable(true)
 
-			err := conv.sendMessage(msg)
-			if err != nil {
-				fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), err.Error())
-			}
-
-			return true
+		err := conv.sendMessage(msg)
+		if err != nil {
+			fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), err.Error())
 		}
-
-		return false
 	})
 
 	conv.scrollHistory.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)

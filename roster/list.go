@@ -93,12 +93,13 @@ func (l *List) PeerPresenceUpdate(jid, status, statusMsg string) bool {
 			return true
 		}
 		return !oldOnline
-	} else {
-		if status != "away" && status != "xa" {
-			l.AddOrMerge(PeerWithState(jid, status, statusMsg))
-			return true
-		}
 	}
+
+	if status != "away" && status != "xa" {
+		l.AddOrMerge(PeerWithState(jid, status, statusMsg))
+		return true
+	}
+
 	return false
 }
 

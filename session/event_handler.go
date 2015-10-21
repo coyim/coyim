@@ -22,6 +22,7 @@ type EventHandler interface {
 	SubscriptionRequest(s *Session, uid string)
 	Subscribed(account, peer string)
 	Unsubscribe(account, peer string)
+	//Connected()
 	Disconnected()
 	RegisterCallback(title, instructions string, fields []interface{}) error
 }

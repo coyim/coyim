@@ -102,7 +102,13 @@ func (u *gtkUI) SaveConfig() error {
 
 //TODO: Should it be per session?
 func (u *gtkUI) Disconnected() {
-	//TODO: Is it necessary?
+	for _, acc := range u.accounts {
+		if acc.ConnStatus == session.CONNECTED {
+			return
+		}
+	}
+
+	u.roster.disconnected()
 }
 
 func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {
@@ -157,6 +163,7 @@ func (u *gtkUI) Alert(m string) {
 
 func (u *gtkUI) Loop() {
 	gtk.Init(&os.Args)
+	u.applyStyle()
 	u.mainWindow()
 	gtk.Main()
 }
@@ -173,14 +180,13 @@ func (u *gtkUI) initRoster() {
 
 func (u *gtkUI) mainWindow() {
 	u.window, _ = gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
-	u.applyStyle()
 	u.initRoster()
 
 	menubar := initMenuBar(u)
 	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
 	vbox.SetHomogeneous(false)
 	vbox.PackStart(menubar, false, false, 0)
-	vbox.PackStart(u.roster.window, true, true, 0)
+	vbox.PackStart(u.roster.widget, true, true, 0)
 	u.window.Add(vbox)
 
 	u.window.SetTitle(i18n.Local("Coy"))
@@ -440,6 +446,7 @@ func (u *gtkUI) connect(account *account) {
 		}
 
 		u.window.Emit(account.ConnectedSignal.String())
+		u.roster.connected()
 	}
 
 	if len(account.Password) == 0 {

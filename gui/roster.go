@@ -13,15 +13,39 @@ import (
 )
 
 type roster struct {
-	window *gtk.ScrolledWindow
-	model  *gtk.ListStore
-	view   *gtk.TreeView
+	widget *gtk.Notebook
+
+	model *gtk.ListStore
+	view  *gtk.TreeView
 
 	contacts map[*account]*rosters.List
 
 	checkEncrypted func(to string) bool
 	sendMessage    func(to, message string)
 	conversations  map[string]*conversationWindow
+}
+
+func newNotebook() *gtk.Notebook {
+	notebook, err := gtk.NotebookNew()
+	if err != nil {
+		panic("failed")
+	}
+
+	notebook.SetShowTabs(false)
+	notebook.SetShowBorder(false)
+	notebook.PopupDisable()
+
+	welcome, _ := gtk.LabelNew(i18n.Local("You are not connected to any account.\nPlease connect to view your online contacts."))
+
+	//TODO: I cant use css to set this object margins
+	//Waiting for PR
+	//welcome.SetMarginStart(5)
+	//welcome.SetMarginEnd(5)
+	welcome.Show()
+
+	notebook.InsertPage(welcome, nil, 0)
+
+	return notebook
 }
 
 func newRoster() *roster {
@@ -34,7 +58,7 @@ func newRoster() *roster {
 	v, _ := gtk.TreeViewNew()
 
 	r := &roster{
-		window: w,
+		widget: newNotebook(),
 		model:  m,
 		view:   v,
 
@@ -42,7 +66,7 @@ func newRoster() *roster {
 		contacts:      make(map[*account]*rosters.List),
 	}
 
-	r.window.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+	w.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
 	r.view.SetHeadersVisible(false)
 	if s, err := r.view.GetSelection(); err != nil {
@@ -55,29 +79,22 @@ func newRoster() *roster {
 
 	r.view.SetModel(r.model)
 	r.view.Connect("row-activated", r.onActivateBuddy)
-	r.window.Add(r.view)
+	w.Add(r.view)
+	w.ShowAll()
 
-	//initialize the model
-	r.clear()
+	r.widget.AppendPage(w, nil)
+	r.disconnected()
 
 	return r
 }
 
-func (r *roster) clear() {
-	glib.IdleAdd(func() {
-		r.model.TreeModel.Ref()
+func (r *roster) connected() {
+	r.widget.SetCurrentPage(1)
+}
 
-		r.view.SetModel((*gtk.TreeModel)(nil))
-		r.model.Clear()
-
-		iter := r.model.Append()
-		r.model.SetValue(iter,
-			0, i18n.Local("Disconnected.\nPlease connect from pref. menu"),
-		)
-
-		r.view.SetModel(r.model)
-		r.model.TreeModel.Unref()
-	})
+func (r *roster) disconnected() {
+	//TODO: should it destroy all conversations?
+	r.widget.SetCurrentPage(0)
 }
 
 //TODO: move somewhere else

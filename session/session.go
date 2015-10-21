@@ -314,7 +314,10 @@ func (s *Session) newConversation(peer string) *otr3.Conversation {
 	conversation.Policies.AllowV3()
 	conversation.Policies.SendWhitespaceTag()
 	conversation.Policies.WhitespaceStartAKE()
-	conversation.Policies.RequireEncryption()
+
+	if s.Config.ShouldEncryptTo(xmpp.RemoveResourceFromJid(peer)) {
+		conversation.Policies.RequireEncryption()
+	}
 
 	return conversation
 }

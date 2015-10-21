@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"log"
 	"os/exec"
 	"time"
 
@@ -352,12 +353,16 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	conversation := s.GetConversationWith(from)
 	out, toSend, err := conversation.Receive([]byte(stanza.Body))
 	encrypted := conversation.IsEncrypted()
+
+	log.Println("msg received from", from, ":", stanza.Body, "\nencripted:", encrypted)
+
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())
 		s.Conn.Send(stanza.From, event.ErrorPrefix+"Error processing message")
 	}
 
 	for _, msg := range toSend {
+		log.Println("replied with", string(msg))
 		s.Conn.Send(stanza.From, string(msg))
 	}
 
@@ -418,7 +423,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	}
 
 	//TODO: remove because twstrike/otr3 already handles whitespace tags
-	s.processWhitespaceTag(encrypted, out, from)
+	//s.processWhitespaceTag(encrypted, out, from)
 
 	var messageTime time.Time
 	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {
@@ -638,6 +643,7 @@ func (s *Session) EncryptAndSendTo(peer string, message string) error {
 
 // SendMessageTo sends the given message directly to the peer
 func (s *Session) SendMessageTo(peer string, message string) error {
+	log.Println("msg sent to", peer, ":", message)
 	return s.Conn.Send(peer, message)
 }
 

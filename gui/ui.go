@@ -3,6 +3,7 @@ package gui
 import (
 	"crypto/rand"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -141,6 +142,7 @@ func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
 
 func (u *gtkUI) OTREnded(uid string) {
 	//TODO: conversation ended
+	log.Println("OTR conversation ended with", uid)
 }
 
 func (u *gtkUI) Debug(m string) {

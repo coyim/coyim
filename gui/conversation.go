@@ -155,7 +155,7 @@ func (conv *conversationWindow) sendMessage(message string) error {
 	return nil
 }
 
-const timeDisplay = "03:04:05 AM"
+const timeDisplay = "15:04:05"
 
 func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {

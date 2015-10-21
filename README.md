@@ -15,7 +15,17 @@ CoyIM is currently under active development. There have been no security audits 
 
 ### GUI version
 
-The GUI version requires GTK+ >= 3.6.16
+The GUI version requires GTK+ >= 3.6.16, which installation depends on your OS:
+
+**Ubuntu:**
+
+	sudo apt-get install -qq -y gtk+3.0 libgtk-3-dev
+
+**Mac:**
+
+	brew install gtk+3
+
+Then install coyim:
 
 ```
 GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)

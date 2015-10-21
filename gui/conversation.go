@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -147,18 +148,23 @@ func (conv *conversationWindow) sendMessage(message string) error {
 	conversation := conv.account.GetConversationWith(conv.to)
 	encrypted := conversation.IsEncrypted()
 	glib.IdleAdd(func() bool {
-		conv.appendMessage("ME", "NOW", encrypted, ui.StripHTML([]byte(message)))
+		conv.appendMessage(conv.account.Config.Account, time.Now(), encrypted, ui.StripHTML([]byte(message)))
 		return false
 	})
 
 	return nil
 }
 
-func (conv *conversationWindow) appendMessage(from, timestamp string, encrypted bool, message []byte) {
+const timeDisplay = "03:04:05 AM"
+
+func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
 		buff, _ := conv.history.GetBuffer()
-		buff.InsertAtCursor(timestamp)
-		buff.InsertAtCursor(" - ")
+		buff.InsertAtCursor("[")
+		buff.InsertAtCursor(timestamp.Format(timeDisplay))
+		buff.InsertAtCursor("] ")
+		buff.InsertAtCursor(from)
+		buff.InsertAtCursor(":  ")
 		buff.InsertAtCursor(string(message))
 		buff.InsertAtCursor("\n")
 

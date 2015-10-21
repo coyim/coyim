@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
@@ -295,7 +296,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		Conversations:   make(map[string]*otr3.Conversation),
 		OtrEventHandler: make(map[string]*event.OtrEventHandler),
 		SessionEventHandler: &mockSessionEventHandler{
-			messageReceived: func(s *Session, from, timestamp string, encrypted bool, message []byte) {
+			messageReceived: func(s *Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 				called++
 				c.Assert(s, Equals, sess)
 				c.Assert(encrypted, Equals, false)

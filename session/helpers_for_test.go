@@ -2,6 +2,7 @@ package session
 
 import (
 	"io"
+	"time"
 
 	"github.com/twstrike/otr3"
 )
@@ -15,7 +16,7 @@ type mockSessionEventHandler struct {
 	iqReceived          func(uid string)
 	newOTRKeys          func(from string, conversation *otr3.Conversation)
 	otrEnded            func(uid string)
-	messageReceived     func(s *Session, from, timestamp string, encrypted bool, message []byte)
+	messageReceived     func(s *Session, from string, timestamp time.Time, encrypted bool, message []byte)
 	processPresence     func(from, to, show, status string, gone bool)
 	subscriptionRequest func(s *Session, uid string)
 	subscribed          func(account, peer string)
@@ -72,7 +73,7 @@ func (m *mockSessionEventHandler) OTREnded(uid string) {
 	}
 }
 
-func (m *mockSessionEventHandler) MessageReceived(s *Session, from, timestamp string, encrypted bool, message []byte) {
+func (m *mockSessionEventHandler) MessageReceived(s *Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 	if m.messageReceived != nil {
 		m.messageReceived(s, from, timestamp, encrypted, message)
 	}

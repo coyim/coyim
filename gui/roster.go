@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -100,8 +101,8 @@ func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	to, _ := val.GetString()
 
 	val2, _ := r.model.GetValue(iter, 2)
-	account_name, _ := val2.GetString()
-	account, ok := r.getAccount(account_name)
+	accountName, _ := val2.GetString()
+	account, ok := r.getAccount(accountName)
 
 	if !ok {
 		return
@@ -123,22 +124,18 @@ func (r *roster) openConversationWindow(account *account, to string) *conversati
 	return c
 }
 
-func (r *roster) messageReceived(account *account, from, timestamp string, encrypted bool, message []byte) {
-	glib.IdleAdd(func() bool {
-		conv := r.openConversationWindow(account, from)
-		conv.appendMessage(from, timestamp, encrypted, ui.StripHTML(message))
-		return false
-	})
+func (r *roster) displayNameFor(account *account, from string) string {
+	p, ok := r.contacts[account].Get(from)
+	if ok {
+		return p.NameForPresentation()
+	}
+	return from
 }
 
-func (r *roster) appendMessageToHistory(to, from, timestamp string, encrypted bool, message []byte) {
-	conv, ok := r.conversations[to]
-	if !ok {
-		return
-	}
-
+func (r *roster) messageReceived(account *account, from string, timestamp time.Time, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
-		conv.appendMessage(from, timestamp, encrypted, ui.StripHTML(message))
+		conv := r.openConversationWindow(account, from)
+		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripHTML(message))
 		return false
 	})
 }

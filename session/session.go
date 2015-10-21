@@ -420,7 +420,6 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	//TODO: remove because twstrike/otr3 already handles whitespace tags
 	s.processWhitespaceTag(encrypted, out, from)
 
-	var timestamp string
 	var messageTime time.Time
 	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {
 		// An XEP-0203 Delayed Delivery <delay/> element exists for
@@ -430,19 +429,15 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		messageTime, err = time.Parse(time.RFC3339, stanza.Delay.Stamp)
 		if err != nil {
 			s.alert("Can not parse Delayed Delivery timestamp, using quoted string instead.")
-			timestamp = fmt.Sprintf("%q", stanza.Delay.Stamp)
 		}
 	} else {
 		messageTime = time.Now()
 	}
-	if len(timestamp) == 0 {
-		timestamp = messageTime.Format(time.Stamp)
-	}
 
-	s.messageReceived(from, timestamp, encrypted, out)
+	s.messageReceived(from, messageTime, encrypted, out)
 }
 
-func (s *Session) messageReceived(from, timestamp string, encrypted bool, message []byte) {
+func (s *Session) messageReceived(from string, timestamp time.Time, encrypted bool, message []byte) {
 	s.SessionEventHandler.MessageReceived(s, from, timestamp, encrypted, message)
 	s.maybeNotify()
 }

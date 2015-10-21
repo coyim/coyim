@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
@@ -118,7 +119,7 @@ func (u *gtkUI) findAccountForSession(s *session.Session) *account {
 	return nil
 }
 
-func (u *gtkUI) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {
+func (u *gtkUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 	account := u.findAccountForSession(s)
 	if account == nil {
 		//TODO error

@@ -224,7 +224,7 @@ func (c *cliUI) RosterReceived(s *session.Session) {
 	}
 }
 
-func (c *cliUI) MessageReceived(s *session.Session, from, timestamp string, encrypted bool, message []byte) {
+func (c *cliUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 
 	var line []byte
 	if encrypted {
@@ -233,7 +233,7 @@ func (c *cliUI) MessageReceived(s *session.Session, from, timestamp string, encr
 		line = append(line, c.term.Escape.Red...)
 	}
 
-	t := fmt.Sprintf("(%s) %s: ", timestamp, from)
+	t := fmt.Sprintf("(%s) %s: ", timestamp.Format(time.Stamp), from)
 	line = append(line, []byte(t)...)
 	line = append(line, c.term.Escape.Reset...)
 	line = appendTerminalEscaped(line, ui.StripHTML(message))

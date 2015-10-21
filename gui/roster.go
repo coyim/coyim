@@ -26,9 +26,9 @@ type roster struct {
 func newRoster() *roster {
 	w, _ := gtk.ScrolledWindowNew(nil, nil)
 	m, _ := gtk.ListStoreNew(
-		glib.TYPE_STRING,  // jid
-		glib.TYPE_STRING,  // display name
-		glib.TYPE_POINTER, // *Account
+		glib.TYPE_STRING, // jid
+		glib.TYPE_STRING, // display name
+		glib.TYPE_STRING, // account id
 	)
 	v, _ := gtk.TreeViewNew()
 
@@ -64,8 +64,6 @@ func newRoster() *roster {
 
 func (r *roster) clear() {
 	glib.IdleAdd(func() {
-		//gobj := glib.ToGObject(unsafe.Pointer(r.model.GListStore))
-		//gobj.Ref()
 		r.model.TreeModel.Ref()
 
 		r.view.SetModel((*gtk.TreeModel)(nil))
@@ -81,6 +79,17 @@ func (r *roster) clear() {
 	})
 }
 
+//TODO: move somewhere else
+func (r *roster) getAccount(id string) (*account, bool) {
+	for account := range r.contacts {
+		if account.ID() == id {
+			return account, true
+		}
+	}
+
+	return nil, false
+}
+
 func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	iter, err := r.model.GetIter(path)
 	if err != nil {
@@ -91,9 +100,13 @@ func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	to, _ := val.GetString()
 
 	val2, _ := r.model.GetValue(iter, 2)
-	account := (*account)(val2.GetPointer())
+	account_name, _ := val2.GetString()
+	account, ok := r.getAccount(account_name)
 
-	//TODO: change to IDS and fix me
+	if !ok {
+		return
+	}
+
 	r.openConversationWindow(account, to)
 }
 
@@ -151,14 +164,13 @@ func (r *roster) debugPrintRosterFor(nm string) {
 	fmt.Println()
 }
 
+//TODO: I believe we can achieve the same with a GtkTreeModelFilter
+//See: gtk_tree_model_filter_set_visible_func()
 func shouldDisplay(p *rosters.Peer) bool {
 	return p.Subscription != "none" && p.Subscription != ""
 }
 
 func (r *roster) redraw() {
-	//gobj := glib.ObjectFromNative(unsafe.Pointer(r.model.GListStore))
-	//gobj.Ref()
-
 	r.model.TreeModel.Ref()
 	r.view.SetModel((*gtk.TreeModel)(nil))
 
@@ -170,7 +182,7 @@ func (r *roster) redraw() {
 				r.model.Set(iter, []int{0, 1, 2}, []interface{}{
 					item.Jid,
 					item.NameForPresentation(),
-					account,
+					account.ID(),
 				})
 			}
 		})
@@ -178,5 +190,4 @@ func (r *roster) redraw() {
 
 	r.view.SetModel(r.model)
 	r.model.TreeModel.Unref()
-	//gobj.Unref()
 }

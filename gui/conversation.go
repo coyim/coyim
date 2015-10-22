@@ -87,6 +87,24 @@ func newConversationWindow(account *account, uid string) *conversationWindow {
 	conv.history.SetEditable(false)
 	conv.history.SetCursorVisible(false)
 
+	buff, _ := conv.history.GetBuffer()
+	ttable, _ := buff.GetTagTable()
+
+	outgoingUser, _ := gtk.TextTagNew("outgoingUser")
+	outgoingUser.SetProperty("foreground", "#3465a4")
+	ttable.Add(outgoingUser)
+
+	incomingUser, _ := gtk.TextTagNew("incomingUser")
+	incomingUser.SetProperty("foreground", "#a40000")
+	ttable.Add(incomingUser)
+
+	outgoingText, _ := gtk.TextTagNew("outgoingText")
+	outgoingText.SetProperty("foreground", "#555753")
+	ttable.Add(outgoingText)
+
+	incomingText, _ := gtk.TextTagNew("incomingText")
+	ttable.Add(incomingText)
+
 	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
 
 	vbox.SetHomogeneous(false)
@@ -139,7 +157,7 @@ func (conv *conversationWindow) sendMessage(message string) error {
 	conversation := conv.account.GetConversationWith(conv.to)
 	encrypted := conversation.IsEncrypted()
 	glib.IdleAdd(func() bool {
-		conv.appendMessage(conv.account.Config.Account, time.Now(), encrypted, ui.StripHTML([]byte(message)))
+		conv.appendMessage(conv.account.Config.Account, time.Now(), encrypted, ui.StripHTML([]byte(message)), true)
 		return false
 	})
 
@@ -148,15 +166,30 @@ func (conv *conversationWindow) sendMessage(message string) error {
 
 const timeDisplay = "15:04:05"
 
-func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte) {
+func insertWithTag(buff *gtk.TextBuffer, tagName, text string) {
+	charCount := buff.GetCharCount()
+	buff.InsertAtCursor(text)
+	oldEnd := buff.GetIterAtOffset(charCount)
+	newEnd := buff.GetEndIter()
+	buff.ApplyTagByName(tagName, oldEnd, newEnd)
+}
+
+func is(v bool, left, right string) string {
+	if v {
+		return left
+	}
+	return right
+}
+
+func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
 	glib.IdleAdd(func() bool {
 		buff, _ := conv.history.GetBuffer()
 		buff.InsertAtCursor("[")
 		buff.InsertAtCursor(timestamp.Format(timeDisplay))
 		buff.InsertAtCursor("] ")
-		buff.InsertAtCursor(from)
+		insertWithTag(buff, is(outgoing, "outgoingUser", "incomingUser"), from)
 		buff.InsertAtCursor(":  ")
-		buff.InsertAtCursor(string(message))
+		insertWithTag(buff, is(outgoing, "outgoingText", "incomingText"), string(message))
 		buff.InsertAtCursor("\n")
 
 		adj := conv.scrollHistory.GetVAdjustment()

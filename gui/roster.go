@@ -162,7 +162,7 @@ func (r *roster) displayNameFor(account *account, from string) string {
 func (r *roster) messageReceived(account *account, from string, timestamp time.Time, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
 		conv := r.openConversationWindow(account, from)
-		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripHTML(message))
+		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripHTML(message), false)
 		return false
 	})
 }

@@ -341,6 +341,7 @@ func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
 	eh, ok := s.OtrEventHandler[peer]
 	if !ok {
 		eh = new(event.OtrEventHandler)
+		eh.Debugger = s.SessionEventHandler
 		conversation.SetSMPEventHandler(eh)
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)
@@ -428,9 +429,6 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	if len(out) == 0 {
 		return
 	}
-
-	//TODO: remove because twstrike/otr3 already handles whitespace tags
-	//s.processWhitespaceTag(encrypted, out, from)
 
 	var messageTime time.Time
 	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {

@@ -1,3 +1,5 @@
+dist: trusty
+sudo: required
 language: go
 
 go:
@@ -8,13 +10,18 @@ go:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq -y libgtk-3-dev
-  # - sudo apt-get install -qq -y gtk+3.0 libgtk-3-dev
 
 install:
-  #- go get -tags gtk_3_6 -v github.com/twstrike/gotk3
   - make deps
 
 script: make ci
 
-sudo: required
-dist: trusty
+deploy:
+  provider: bintray
+  file: build/bintray.json
+  user: twstrike
+  dry-run: true
+
+env:
+  global:
+    secure: ZXk8N55FGX/9XrH4XbLDGQlBk/sWQk5ZgrypSiTEcu/zRcPOmLKmGi4Mtt2zaS6YNjc0pjql4UtdMQsGntRMlXoBJsVpzZ1yhA9bIM0L3OR0JjEIOSCDxZElCzh85/hkx90j5/meyEARPnSXR2/Z9fNJ+c4rsmMsbOJ9RgJX5XteH396KFOnuFLWNAtbQemdgh+swWZgL4EiwVv29hWjXj92E4ikG0xMSnBr/DoUTo0EqThkadKv1GPiIwURDf4jpuxDjDSgzeYf5yApIOk5QOM38cUYtY3mY2upP9enmDGKiRJ8hFg53LpryTotaClw53dMEwsnunEQNMyCl02UxxKabfs6kVNwbmSKPEW9C0mWq0dbohuVCSIY/5tChqYhXGP6+UYDi6WRQo94RQF+7omSfN4SvGaVsOnB3JI0jkjSF3/yMzVoW5A5wuf5nmb9MKlX/j9UEhizZ2P+J2YvxTHgwy9SqWtzVZG9cOhrhJkwe3a7Qhc1v34svW4iDOedN+oJPBZVkpUYAlAQyRuUUajUKP1zvmsgIn3WP4DPRLmpo1gesnmDZJGgKOisp0dwOBzHtx0mMnE4YRr0Z8kKLXRKt7KZBfLKj8hG/I8YTRta1Wn6pPHTvND30O2or2VotoGijYcKXa3InJBr49naImH947R6BkdhXHbSUUZzq6k=

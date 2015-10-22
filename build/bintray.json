@@ -1,0 +1,29 @@
+{
+    "package": {
+        "name": "coyim-gui",
+        "repo": "coyim",
+        "subject": "twstrike",
+        "desc": "I was pushed completely automatically",
+        "website_url": "https://coy.im",
+        "issue_tracker_url": "https://github.com/twstrike/coyim/issues",
+        "vcs_url": "https://github.com/twstrike/coyim.git",
+        "github_use_tag_release_notes": true,
+        "github_release_notes_file": "RELEASE.txt",
+        "licenses": ["MIT"],
+        "labels": ["instant", "messenger", "gtk"],
+        "public_download_numbers": true,
+        "public_stats": true
+    },
+
+    "version": {
+        "name": "dogfood",
+        "desc": "",
+        "gpgSign": false
+    },
+
+    "files": [{
+      "includePattern": "bin/(.*)",
+      "uploadPattern": "dogfood/$1"
+    }],
+    "publish": true
+}

@@ -18,9 +18,10 @@ type conversationWindow struct {
 	scrollHistory *gtk.ScrolledWindow
 }
 
+// TODO: basically I think this whole menu should be rethought. It's useful for us to have during development
 func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
 	menubar, _ := gtk.MenuBarNew()
-	conversationMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("Conversation"))
+	conversationMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("Developer options"))
 	menubar.Append(conversationMenu)
 
 	submenu, _ := gtk.MenuNew()

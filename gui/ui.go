@@ -401,6 +401,10 @@ func (u *gtkUI) Unsubscribe(account, peer string) {
 	u.rosterUpdated()
 }
 
+func (u *gtkUI) SaveConfiguration() {
+	u.SaveConfig()
+}
+
 func (u *gtkUI) IQReceived(iq string) {
 	u.Debug(fmt.Sprintf("received iq: %v\n", iq))
 	//TODO

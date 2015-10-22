@@ -309,6 +309,12 @@ func (s *Session) newConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKey(s.PrivateKey)
 
+	hadInstanceTag := s.Config.InstanceTag != 0
+	s.Config.InstanceTag = conversation.InitializeInstanceTag(s.Config.InstanceTag)
+	if !hadInstanceTag {
+		s.SessionEventHandler.SaveConfiguration()
+	}
+
 	//TODO: review this conf
 	conversation.Policies.AllowV2()
 	conversation.Policies.AllowV3()
@@ -356,8 +362,6 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	conversation := s.GetConversationWith(from)
 	out, toSend, err := conversation.Receive([]byte(stanza.Body))
 	encrypted := conversation.IsEncrypted()
-
-	log.Println("msg received from", from, ":", stanza.Body, "\nencripted:", encrypted)
 
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())
@@ -415,7 +419,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
 		if len(s.Config.UserIDForFingerprint(fpr)) == 0 {
 			s.Config.AddFingerprint(fpr, from)
-			s.Config.Save()
+			s.SessionEventHandler.SaveConfiguration()
 		}
 	case event.SMPFailed:
 		s.alert(fmt.Sprintf("Authentication with %s failed", from))

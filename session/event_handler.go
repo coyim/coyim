@@ -25,4 +25,5 @@ type EventHandler interface {
 	//Connected()
 	Disconnected()
 	RegisterCallback(title, instructions string, fields []interface{}) error
+	SaveConfiguration()
 }

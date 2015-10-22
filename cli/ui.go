@@ -75,6 +75,10 @@ func NewCLI() client.Client {
 	}
 }
 
+func (c *cliUI) SaveConfiguration() {
+	c.config.Save()
+}
+
 func (c *cliUI) LoadConfig(configFile string) error {
 	configFileManager := config.NewFileManager(configFile)
 

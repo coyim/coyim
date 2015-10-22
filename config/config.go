@@ -32,6 +32,7 @@ type Config struct {
 	ServerCertificateSHA256       string   `json:",omitempty"`
 	AlwaysEncrypt                 bool     `json:",omitempty"`
 	AlwaysEncryptWith             []string `json:",omitempty"`
+	InstanceTag                   uint32   `json:",omitempty"`
 }
 
 // NewConfig creates a new configuration from scratch

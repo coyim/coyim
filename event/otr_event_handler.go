@@ -3,6 +3,7 @@ package event
 import (
 	"fmt"
 
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/otr3"
 )
 
@@ -55,13 +56,25 @@ func (*OtrEventHandler) WishToHandleErrorMessage() bool {
 
 // HandleErrorMessage is called when asked to handle a specific error message
 func (e *OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
-	e.Debugger.Debug(fmt.Sprintf("HandleErrorMessage(%d)", error))
+	e.Debugger.Debug(fmt.Sprintf("HandleErrorMessage(%s)", error.String()))
+
+	switch error {
+	case otr3.ErrorCodeEncryptionError:
+		return []byte(i18n.Local("Error occurred encrypting message."))
+	case otr3.ErrorCodeMessageUnreadable:
+		return []byte(i18n.Local("You transmitted an unreadable encrypted message."))
+	case otr3.ErrorCodeMessageMalformed:
+		return []byte(i18n.Local("You transmitted a malformed data message."))
+	case otr3.ErrorCodeMessageNotInPrivate:
+		return []byte(i18n.Local("You sent encrypted data to a peer, who wasn't expecting it."))
+	}
+
 	return nil
 }
 
 // HandleSecurityEvent is called to handle a specific security event
 func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
-	e.Debugger.Debug(fmt.Sprintf("HandleSecurityEvent(%d)", event))
+	e.Debugger.Debug(fmt.Sprintf("HandleSecurityEvent(%s)", event.String()))
 	switch event {
 	case otr3.GoneSecure, otr3.StillSecure:
 		e.securityChange = NewKeys
@@ -70,7 +83,7 @@ func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 
 // HandleSMPEvent is called to handle a specific SMP event
 func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
-	e.Debugger.Debug(fmt.Sprintf("HandleSMPEvent(%d, %d, %s)", event, progressPercent, question))
+	e.Debugger.Debug(fmt.Sprintf("HandleSMPEvent(%s, %d, %s)", event.String(), progressPercent, question))
 	switch event {
 	case otr3.SMPEventAskForSecret, otr3.SMPEventAskForAnswer:
 		e.securityChange = SMPSecretNeeded
@@ -87,7 +100,7 @@ func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent in
 
 // HandleMessageEvent is called to handle a specific message event
 func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error) {
-	e.Debugger.Debug(fmt.Sprintf("HandleMessageEvent(%d, %s, %v)", event, message, err))
+	e.Debugger.Debug(fmt.Sprintf("HandleMessageEvent(%s, %s, %v)", event.String(), message, err))
 	if event == otr3.MessageEventConnectionEnded {
 		e.securityChange = ConversationEnded
 	}

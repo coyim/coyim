@@ -2,12 +2,28 @@
 
 set -xe
 
+# We can deploy only when a tag is pushed, and use ir as the version
+VERSION="${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}"
 OS=${TRAVIS_OS_NAME:-linux}
 
 [[ $OS = "linux" ]] && make cross-compile
+if [[ $OS = "osx" ]]; then
+  make build-gui
+
+  rm -rf ./gtk-mac-bundler
+  git clone https://github.com/twstrike/gtk-mac-bundler.git
+  make -C gtk-mac-bundler install
+  ~/.local/bin/gtk-mac-bundler build/mac-bundle/coyim.bundle
+
+  #TODO: Investigate why this directory is duplicate
+  rm -rf bin/CoyIM.app/Contents/Resources/Cellar
+
+  ci/make-dmg coyim $VERSION bin/CoyIM.app
+fi
+
 make release-gui
 
-# We can deploy only when a tag is pushed, and use ir as the version
-VERSION="${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}"
+# update version on bintray conf file
 sed -i".bak" "s <VERSION> $VERSION g" ci/bintray.json
+
 

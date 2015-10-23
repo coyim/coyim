@@ -25,6 +25,10 @@
     "files": [{
       "includePattern": "bin/(.*)_(.*)_(.*)",
       "uploadPattern": "$2-$3-<VERSION>/$1"
+    },
+    {
+      "includePattern": "bin/(.*).dmg",
+      "uploadPattern": "mac-bundle-<VERSION>/$1.dmg"
     }],
     "publish": true
 }

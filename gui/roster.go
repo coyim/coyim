@@ -44,6 +44,8 @@ func newNotebook() *gtk.Notebook {
 
 	welcome, _ := gtk.LabelNew(i18n.Local("You are not connected to any account.\nPlease connect to view your online contacts."))
 
+	welcome.SetProperty("margin-start", 5)
+	welcome.SetProperty("margin-end", 5)
 	welcome.SetMarginTop(7)
 	welcome.Show()
 

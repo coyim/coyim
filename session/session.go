@@ -116,6 +116,7 @@ func (s *Session) receivedClientMessage(stanza *xmpp.ClientMessage) bool {
 }
 
 func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
+	//	s.SessionEventHandler.Debug(fmt.Sprintf("client presence: %#v\n", stanza))
 	switch stanza.Type {
 	case "subscribe":
 		s.R.SubscribeRequest(stanza.From, stanza.ID)

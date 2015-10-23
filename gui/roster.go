@@ -182,6 +182,17 @@ func (r *roster) displayNameFor(account *account, from string) string {
 	return from
 }
 
+func (r *roster) presenceUpdated(account *account, from, show, showStatus string, gone bool) {
+	_, ok := r.conversations[from]
+	if ok {
+		glib.IdleAdd(func() bool {
+			conv := r.openConversationWindow(account, from)
+			conv.appendStatus(r.displayNameFor(account, from), time.Now(), show, showStatus, gone)
+			return false
+		})
+	}
+}
+
 func (r *roster) messageReceived(account *account, from string, timestamp time.Time, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
 		conv := r.openConversationWindow(account, from)

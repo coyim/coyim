@@ -15,6 +15,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -126,6 +127,17 @@ func (u *gtkUI) findAccountForSession(s *session.Session) *account {
 	return nil
 }
 
+func (u *gtkUI) findAccountForUsername(s string) *account {
+	jid := xmpp.RemoveResourceFromJid(s)
+	for _, a := range u.accounts {
+		if a.Config.Account == jid {
+			return a
+		}
+	}
+
+	return nil
+}
+
 func (u *gtkUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 	account := u.findAccountForSession(s)
 	if account == nil {
@@ -133,7 +145,7 @@ func (u *gtkUI) MessageReceived(s *session.Session, from string, timestamp time.
 		return
 	}
 
-	u.roster.messageReceived(account, from, timestamp, encrypted, message)
+	u.roster.messageReceived(account, xmpp.RemoveResourceFromJid(from), timestamp, encrypted, message)
 }
 
 func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
@@ -383,8 +395,16 @@ func (u *gtkUI) rosterUpdated() {
 
 func (u *gtkUI) ProcessPresence(from, to, show, showStatus string, gone bool) {
 	u.Debug(fmt.Sprintf("[%s] Presence from %s: show: %s status: %s gone: %v\n", to, from, show, showStatus, gone))
-	//	u.roster.debugPrintRosterFor(to)
 	u.rosterUpdated()
+
+	account := u.findAccountForUsername(to)
+	if account == nil {
+		u.Warn("couldn't find account for " + to)
+		return
+	}
+
+	u.roster.presenceUpdated(account, xmpp.RemoveResourceFromJid(from), show, showStatus, gone)
+
 }
 
 func (u *gtkUI) Subscribed(account, peer string) {

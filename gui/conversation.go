@@ -163,6 +163,32 @@ func newConversationWindow(account *account, uid string) *conversationWindow {
 		},
 	})
 
+	// Unlike the GTK version, this is not supposed to be used as a callback but
+	// it attaches the callback to the widget
+	conv.win.HideOnDelete()
+
+	buff, _ := conv.history.GetBuffer()
+	ttable, _ := buff.GetTagTable()
+
+	outgoingUser, _ := gtk.TextTagNew("outgoingUser")
+	outgoingUser.SetProperty("foreground", "#3465a4")
+	ttable.Add(outgoingUser)
+
+	incomingUser, _ := gtk.TextTagNew("incomingUser")
+	incomingUser.SetProperty("foreground", "#a40000")
+	ttable.Add(incomingUser)
+
+	outgoingText, _ := gtk.TextTagNew("outgoingText")
+	outgoingText.SetProperty("foreground", "#555753")
+	ttable.Add(outgoingText)
+
+	incomingText, _ := gtk.TextTagNew("incomingText")
+	ttable.Add(incomingText)
+
+	statusText, _ := gtk.TextTagNew("statusText")
+	statusText.SetProperty("foreground", "#4e9a06")
+	ttable.Add(statusText)
+
 	return conv
 }
 
@@ -206,6 +232,83 @@ func is(v bool, left, right string) string {
 		return left
 	}
 	return right
+}
+
+func showForDisplay(show string, gone bool) string {
+	switch show {
+	case "", "available", "online":
+		if gone {
+			return ""
+		}
+		return i18n.Local("Available")
+	case "xa":
+		return i18n.Local("Not Available")
+	case "away":
+		return i18n.Local("Away")
+	case "dnd":
+		return i18n.Local("Busy")
+	case "chat":
+		return i18n.Local("Free for Chat")
+	case "invisible":
+		return i18n.Local("Invisible")
+	}
+	return show
+}
+
+func onlineStatus(show, showStatus string) string {
+	sshow := showForDisplay(show, false)
+	if sshow != "" {
+		return sshow + showStatusForDisplay(showStatus)
+	}
+	return ""
+}
+
+func showStatusForDisplay(showStatus string) string {
+	if showStatus != "" {
+		return " (" + showStatus + ")"
+	}
+	return ""
+}
+
+func extraOfflineStatus(show, showStatus string) string {
+	sshow := showForDisplay(show, true)
+	if sshow != "" {
+		if showStatus != "" {
+			return " (" + sshow + ": " + showStatus + ")"
+		}
+		return " (" + sshow + ")"
+	} else {
+		return showStatusForDisplay(showStatus)
+	}
+
+}
+
+func createStatusMessage(from string, show, showStatus string, gone bool) string {
+	tail := ""
+	if gone {
+		tail = i18n.Local("Offline") + extraOfflineStatus(show, showStatus)
+	} else {
+		tail = onlineStatus(show, showStatus)
+	}
+
+	if tail != "" {
+		return from + i18n.Local(" is now ") + tail
+	}
+	return ""
+}
+
+func (conv *conversationWindow) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
+	glib.IdleAdd(func() bool {
+		text := createStatusMessage(from, show, showStatus, gone)
+		buff, _ := conv.history.GetBuffer()
+		buff.InsertAtCursor("[")
+		buff.InsertAtCursor(timestamp.Format(timeDisplay))
+		buff.InsertAtCursor("] ")
+		insertWithTag(buff, "statusText", text)
+		buff.InsertAtCursor("\n")
+
+		return false
+	})
 }
 
 func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {

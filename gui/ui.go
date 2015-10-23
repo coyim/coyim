@@ -440,6 +440,7 @@ func (u *gtkUI) ensureConfigHasKey(c *config.Config) {
 }
 
 func (u *gtkUI) connect(account *account) {
+	u.roster.connecting()
 	connectFn := func(password string) {
 		err := account.Session.Connect(password, nil)
 		if err != nil {

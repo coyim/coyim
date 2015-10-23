@@ -51,7 +51,11 @@ func newNotebook() *gtk.Notebook {
 
 	vbox.PackStart(welcome, false, false, 0)
 
-	notebook.InsertPage(vbox, nil, 0)
+	notebook.AppendPage(vbox, nil)
+
+	spinner, _ := gtk.SpinnerNew()
+	spinner.Start()
+	notebook.AppendPage(spinner, nil)
 
 	return notebook
 }
@@ -107,6 +111,12 @@ func (u *gtkUI) newRoster() *roster {
 }
 
 func (r *roster) connected() {
+	glib.IdleAdd(func() {
+		r.widget.SetCurrentPage(2)
+	})
+}
+
+func (r *roster) connecting() {
 	glib.IdleAdd(func() {
 		r.widget.SetCurrentPage(1)
 	})

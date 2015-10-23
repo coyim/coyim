@@ -380,10 +380,8 @@ func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
 		responseType := gtk.ResponseType(confirmDialog.Run())
 		switch responseType {
 		case gtk.RESPONSE_YES:
-			u.Debug(fmt.Sprintf("Got a response YES to subscription request dialog\n"))
 			s.HandleConfirmOrDeny(from, true)
 		case gtk.RESPONSE_NO:
-			u.Debug(fmt.Sprintf("Got a response NO to subscription request dialog\n"))
 			s.HandleConfirmOrDeny(from, false)
 		default:
 			// We got a different response, such as a close of the window. In this case we want

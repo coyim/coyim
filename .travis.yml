@@ -11,12 +11,13 @@ matrix:
   include:
     - go: 1.5
       env: DEPLOY=true
-      env: TRAVIS_BRANCH=release
       os: linux
     - go: 1.5
       env: DEPLOY=true
-      env: TRAVIS_BRANCH=release
       os: osx
+  exclude:
+    - env: DEPLOY=true
+      env: TRAVIS_BRANCH=master
   allow_failures:
     - os: osx
     - env: DEPLOY=true
@@ -30,6 +31,7 @@ before_deploy: ci/release
 deploy:
   on:
     condition: $DEPLOY = "true"
+    branch: release
   provider: bintray
   file: ci/bintray.json
   user:

@@ -20,19 +20,26 @@ test:
 
 ci: get default coveralls build
 
-coveralls:
-	go get github.com/axw/gocov/gocov
-	go get github.com/modocache/gover
-	go get github.com/mattn/goveralls
+run-cover: clean-cover 
 	go test -coverprofile=xmpp.coverprofile ./xmpp
 	go test -coverprofile=session.coverprofile ./session
 	go test -coverprofile=event.coverprofile ./event
 	go test -coverprofile=config.coverprofile ./config
 	go test -coverprofile=ui.coverprofile ./ui
-	go test -coverprofile=gui.coverprofile ./gui
+	go test -tags $(GTK_BUILD_TAG) -coverprofile=gui.coverprofile ./gui
 	go test -coverprofile=roster.coverprofile ./roster
 	go test -coverprofile=main.coverprofile
 	gover .
+
+clean-cover:
+	$(RM) *.coverprofile
+
+# generats an HTML report with coverage information
+cover: run-cover
+	go tool cover -html=gover.coverprofile
+
+# send coverage data to coveralls
+coveralls: run-cover
 	goveralls -coverprofile=gover.coverprofile -service=travis-ci || true
 
 get:
@@ -66,15 +73,3 @@ deps:
 	go get gopkg.in/check.v1
 	go get github.com/miekg/dns
 
-cover:
-	rm -f *.coverprofile
-	go test -coverprofile=xmpp.coverprofile ./xmpp
-	go test -coverprofile=session.coverprofile ./session
-	go test -coverprofile=event.coverprofile ./event
-	go test -coverprofile=config.coverprofile ./config
-	go test -coverprofile=ui.coverprofile ./ui
-	go test -tags $(GTK_BUILD_TAG) -coverprofile=gui.coverprofile ./gui
-	go test -coverprofile=roster.coverprofile ./roster
-	go test -coverprofile=main.coverprofile
-	gover .
-	go tool cover -html=gover.coverprofile

@@ -353,6 +353,8 @@ func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
 }
 
 func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
+	log.Printf("-> Stanza %#v\n", stanza)
+
 	from := xmpp.RemoveResourceFromJid(stanza.From)
 
 	if stanza.Type == "error" {
@@ -385,9 +387,13 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 }
 
 func (s *Session) receiveClientMessage(from string, when time.Time, body string) {
+	log.Println("received message from", from, ":", body)
+
 	conversation := s.GetConversationWith(from)
 	out, toSend, err := conversation.Receive([]byte(body))
 	encrypted := conversation.IsEncrypted()
+
+	log.Printf("toSend = %#v \n", toSend)
 
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())

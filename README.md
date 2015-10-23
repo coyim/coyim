@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/twstrike/coyim.svg?branch=master)](https://travis-ci.org/twstrike/coyim)
 [![Coverage Status](https://coveralls.io/repos/twstrike/coyim/badge.svg?branch=master&service=github)](https://coveralls.io/github/twstrike/coyim?branch=master)
+[ ![Download](https://api.bintray.com/packages/twstrike/coyim/coyim-bin/images/download.svg)
+](https://bintray.com/twstrike/coyim/coyim-bin/_latestVersion)
 
 CoyIM is a new client for the XMPP protocol. It is built upon https://github.com/agl/xmpp-client. It adds a graphical user interface and tries to be safe and secure by default. Our ambition is that it should be possible for even the most high-risk people on the planet to safely use CoyIM, without having to make any configuration changes.
 

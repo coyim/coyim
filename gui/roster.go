@@ -55,6 +55,7 @@ func (u *gtkUI) newRoster() *roster {
 		glib.TYPE_STRING, // display name
 		glib.TYPE_STRING, // account id
 		glib.TYPE_STRING, // account status
+		glib.TYPE_STRING, // color (used to indicate status)
 	)
 	v, _ := gtk.TreeViewNew()
 
@@ -78,6 +79,7 @@ func (u *gtkUI) newRoster() *roster {
 
 	cr, _ := gtk.CellRendererTextNew()
 	c, _ := gtk.TreeViewColumnNewWithAttribute("name", cr, "text", 1)
+	c.AddAttribute(cr, "foreground", 4)
 
 	cr2, _ := gtk.CellRendererTextNew()
 	c2, _ := gtk.TreeViewColumnNewWithAttribute("status", cr2, "text", 3)
@@ -221,6 +223,13 @@ func decideStatusGlyphFor(p *rosters.Peer) string {
 	return "✔"
 }
 
+func decideColorFor(p *rosters.Peer) string {
+	if !p.Online {
+		return "#aaaaaa"
+	}
+	return "#000000"
+}
+
 func (r *roster) redraw() {
 	r.model.TreeModel.Ref()
 	r.view.SetModel((*gtk.TreeModel)(nil))
@@ -230,11 +239,12 @@ func (r *roster) redraw() {
 		contacts.Iter(func(_ int, item *rosters.Peer) {
 			if shouldDisplay(item) {
 				iter := r.model.Append()
-				r.model.Set(iter, []int{0, 1, 2, 3}, []interface{}{
+				r.model.Set(iter, []int{0, 1, 2, 3, 4}, []interface{}{
 					item.Jid,
 					item.NameForPresentation(),
 					account.ID(),
 					decideStatusGlyphFor(item),
+					decideColorFor(item),
 				})
 			}
 		})

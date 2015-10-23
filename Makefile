@@ -7,17 +7,22 @@ default: deps lint test
 build: build-cli build-gui
 
 build-gui:
-	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim-gui
+	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim
 
 build-cli:
-	go build -o bin/coyim
+	go build -o bin/coyim-cli
 
-release:
+clean-release:
+	$(RM) bin/*
+
+release: clean-release build-gui
+	mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
 	go get github.com/mitchellh/gox
+	gox -build-toolchain || true
 	# windows does not have syscall.SIGWINCH
 	gox -os "!windows" -output "bin/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
 	# there seems to be no such thing as cgo cross-compiling
-	gox -os "linux" -arch "!arm" -cgo -tags "nocli $(GTK_BUILD_TAG)" -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
+	# gox -os "linux" -arch "!arm" -cgo -tags "nocli $(GTK_BUILD_TAG)" -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
 
 lint:
 	golint ./...

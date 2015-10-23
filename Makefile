@@ -12,13 +12,20 @@ build-gui:
 build-cli:
 	go build -o bin/coyim
 
+release:
+	go get github.com/mitchellh/gox
+	# windows does not have syscall.SIGWINCH
+	gox -os "!windows" -output "bin/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
+	# there seems to be no such thing as cgo cross-compiling
+	gox -os "linux" -arch "!arm" -cgo -tags "nocli $(GTK_BUILD_TAG)" -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
+
 lint:
 	golint ./...
 
 test:
 	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
 
-ci: get default coveralls build
+ci: get default coveralls
 
 run-cover: clean-cover 
 	go test -coverprofile=xmpp.coverprofile ./xmpp

@@ -7,10 +7,10 @@
         "website_url": "https://coy.im",
         "issue_tracker_url": "https://github.com/twstrike/coyim/issues",
         "vcs_url": "https://github.com/twstrike/coyim.git",
-        "github_use_tag_release_notes": true,
+        "github_use_tag_release_notes": false,
         "github_release_notes_file": "RELEASE.txt",
         "licenses": ["MIT"],
-        "labels": ["instant", "messenger", "gtk"],
+        "labels": ["instant", "messenger", "gtk", "otr"],
         "public_download_numbers": true,
         "public_stats": true
     },
@@ -22,8 +22,8 @@
     },
 
     "files": [{
-      "includePattern": "bin/(.*)",
-      "uploadPattern": "dogfood/$1"
+      "includePattern": "bin/(.*)_(.*)_(.*)",
+      "uploadPattern": "$2-$3/$1"
     }],
     "publish": true
 }

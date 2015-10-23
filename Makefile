@@ -15,14 +15,18 @@ build-cli:
 clean-release:
 	$(RM) bin/*
 
-release: clean-release build-gui
-	mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
+cross-compile:
 	go get github.com/mitchellh/gox
 	gox -build-toolchain || true
 	# windows does not have syscall.SIGWINCH
 	gox -os "!windows" -output "bin/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
 	# there seems to be no such thing as cgo cross-compiling
 	# gox -os "linux" -arch "!arm" -cgo -tags "nocli $(GTK_BUILD_TAG)" -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
+
+release-gui: build-gui
+	mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
+
+release: clean-release cross-compile
 
 lint:
 	golint ./...

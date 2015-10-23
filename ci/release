@@ -2,10 +2,12 @@
 
 set -xe
 
+OS=${TRAVIS_OS_NAME:-linux}
+
+[[ $OS = "linux" ]] && make cross-compile
+make release-gui
+
 # We can deploy only when a tag is pushed, and use ir as the version
 VERSION="${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}"
-
 sed -i".bak" "s <VERSION> $VERSION g" ci/bintray.json
-
-make release
 

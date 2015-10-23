@@ -39,10 +39,8 @@ func newNotebook() *gtk.Notebook {
 
 	welcome, _ := gtk.LabelNew(i18n.Local("You are not connected to any account.\nPlease connect to view your online contacts."))
 
-	//TODO: I cant use css to set this object margins
-	//Waiting for PR
-	//welcome.SetMarginStart(5)
-	//welcome.SetMarginEnd(5)
+	welcome.SetMarginStart(5)
+	welcome.SetMarginEnd(5)
 	welcome.Show()
 
 	notebook.InsertPage(welcome, nil, 0)

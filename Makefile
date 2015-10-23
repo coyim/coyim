@@ -1,4 +1,5 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 
 default: deps lint test
 .PHONY: test
@@ -6,7 +7,7 @@ default: deps lint test
 build: build-cli build-gui
 
 build-gui:
-	go build -tags "nocli gtk_$(GTK_VERSION)" -o bin/coyim-gui
+	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim-gui
 
 build-cli:
 	go build -o bin/coyim
@@ -15,7 +16,7 @@ lint:
 	golint ./...
 
 test:
-	go test -cover -v ./...
+	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
 
 ci: get default coveralls build
 
@@ -35,13 +36,13 @@ coveralls:
 	goveralls -coverprofile=gover.coverprofile -service=travis-ci || true
 
 get:
-	go get -t -tags gtk_$(GTK_VERSION) ./...
+	go get -t -tags $(GTK_BUILD_TAG) ./...
 
 deps-u:
 	go get -u github.com/golang/lint/golint
 	go get -u golang.org/x/tools/cmd/cover
 	go get -u github.com/modocache/gover
-	go get -u -tags gtk_$(GTK_VERSION) github.com/gotk3/gotk3/gtk
+	go get -u -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
 	go get -u github.com/twstrike/otr3
 	go get -u github.com/twstrike/otr3/sexp
 	go get -u golang.org/x/crypto/ssh/terminal
@@ -55,7 +56,7 @@ deps:
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/modocache/gover
-	go get -tags gtk_$(GTK_VERSION) github.com/gotk3/gotk3/gtk
+	go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
 	go get github.com/twstrike/otr3
 	go get github.com/twstrike/otr3/sexp
 	go get golang.org/x/crypto/ssh/terminal
@@ -72,7 +73,7 @@ cover:
 	go test -coverprofile=event.coverprofile ./event
 	go test -coverprofile=config.coverprofile ./config
 	go test -coverprofile=ui.coverprofile ./ui
-	go test -coverprofile=gui.coverprofile ./gui
+	go test -tags $(GTK_BUILD_TAG) -coverprofile=gui.coverprofile ./gui
 	go test -coverprofile=roster.coverprofile ./roster
 	go test -coverprofile=main.coverprofile
 	gover .

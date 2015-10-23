@@ -3,6 +3,8 @@ package session
 import (
 	"encoding/xml"
 	"errors"
+	"io/ioutil"
+	"log"
 	"testing"
 	"time"
 
@@ -14,6 +16,10 @@ import (
 
 	. "gopkg.in/check.v1"
 )
+
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
 
 func Test(t *testing.T) { TestingT(t) }
 

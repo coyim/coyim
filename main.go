@@ -11,12 +11,12 @@ import (
 
 func init() {
 	if !*config.DebugFlag {
+		log.SetOutput(ioutil.Discard)
 		return
 	}
 
 	flags := log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile
 	log.SetFlags(flags)
-	log.SetOutput(ioutil.Discard)
 }
 
 func main() {

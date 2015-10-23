@@ -297,9 +297,8 @@ func createStatusMessage(from string, show, showStatus string, gone bool) string
 	return ""
 }
 
-func (conv *conversationWindow) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
+func (conv *conversationWindow) appendStatusString(text string, timestamp time.Time) {
 	glib.IdleAdd(func() bool {
-		text := createStatusMessage(from, show, showStatus, gone)
 		buff, _ := conv.history.GetBuffer()
 		buff.InsertAtCursor("[")
 		buff.InsertAtCursor(timestamp.Format(timeDisplay))
@@ -309,6 +308,10 @@ func (conv *conversationWindow) appendStatus(from string, timestamp time.Time, s
 
 		return false
 	})
+}
+
+func (conv *conversationWindow) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
+	conv.appendStatusString(createStatusMessage(from, show, showStatus, gone), timestamp)
 }
 
 func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {

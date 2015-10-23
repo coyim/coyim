@@ -16,7 +16,7 @@
     },
 
     "version": {
-        "name": "dogfood",
+        "name": "<VERSION>",
         "desc": "",
         "gpgSign": false
     },

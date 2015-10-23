@@ -6,11 +6,12 @@ os:
   - linux
   - osx
 
+go:
+  - tip
+  - 1.5
+  - 1.4.2
+
 matrix:
-  fast_finish: true
-  allow_failures:
-    - os: osx
-    - env: DEPLOY=true
   include:
     - go: 1.5
       env: DEPLOY=true
@@ -18,11 +19,10 @@ matrix:
     - go: 1.5
       env: DEPLOY=true
       os: osx
-
-go:
-  - tip
-  - 1.5
-  - 1.4.2
+  allow_failures:
+    - os: osx
+    - env: DEPLOY=true
+  fast_finish: true
 
 before_install: ci/install-deps-${TRAVIS_OS_NAME:-linux}
 install: make deps

@@ -18,124 +18,150 @@ type conversationWindow struct {
 	scrollHistory *gtk.ScrolledWindow
 }
 
-// TODO: basically I think this whole menu should be rethought. It's useful for us to have during development
-func (conv *conversationWindow) conversationMenu() *gtk.MenuBar {
-	menubar, _ := gtk.MenuBarNew()
-	conversationMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("Developer options"))
-	menubar.Append(conversationMenu)
-
-	submenu, _ := gtk.MenuNew()
-	conversationMenu.SetSubmenu(submenu)
-
-	startAKE, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("Start encrypted chat"))
-	submenu.Append(startAKE)
-
-	//TODO: enable/disable depending on the conversation's encryption state
-	startAKE.Connect("activate", func() {
-		//TODO: errors
-		err := conv.account.StartEncryptedChatWith(conv.to)
-		if err != nil {
-			fmt.Printf(i18n.Local("Failed to start the encrypted chat: %s\n"), err.Error())
-		}
-	})
-
-	//TODO: enable/disable depending on the conversation's encryption state
-	endOTR, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("End encrypted chat"))
-	submenu.Append(endOTR)
-
-	endOTR.Connect("activate", func() {
-		//TODO: errors
-		err := conv.account.TerminateConversationWith(conv.to)
-		if err != nil {
-			fmt.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
-		}
-	})
-
-	verify, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Verify fingerprint..."))
-	submenu.Append(verify)
-
-	verify.Connect("activate", func() {
-		verifyFingerprintDialog(conv.account, conv.to)
-	})
-
-	return menubar
-}
-
 func newConversationWindow(account *account, uid string) *conversationWindow {
-	win, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
-	history, _ := gtk.TextViewNew()
-	scrollHistory, _ := gtk.ScrolledWindowNew(nil, nil)
+	des := `
+	<interface>
+	  <object class="GtkWindow" id="conversation">
+	    <property name="window-position">0</property>
+	    <property name="default-height">500</property>
+	    <property name="default-width">400</property>
+	    <property name="destroy-with-parent">true</property>
+	    <property name="title">` + uid + `</property>
+
+	    <child>
+	      <object class="GtkVBox">
+                <property name="homogeneous">false</property>
+	      	<child>
+	          <object class="GtkMenuBar" id="menubar">
+	            <child>
+	              <object class="GtkMenuItem" id="conversationMenu">
+	                <property name="label">` + i18n.Local("Developer options") + `</property>
+	                <child type="submenu">
+	                  <object class="GtkMenu">
+	                    <child>
+	                      <object class="GtkMenuItem" id="startOTRMenu">
+	                        <property name="label">` + i18n.Local("Start encrypted chat") + `</property>
+		                <signal name="activate" handler="on_start_otr_signal" />
+	            	      </object>
+	            	    </child>
+	                    <child>
+	                      <object class="GtkMenuItem" id="endOTRMenu">
+	                        <property name="label">` + i18n.Local("End encrypted chat") + `</property>
+		                <signal name="activate" handler="on_end_otr_signal" />
+	            	      </object>
+	            	    </child>
+	                    <child>
+	                      <object class="GtkMenuItem" id="verifyFingerMenu">
+	                        <property name="label">` + i18n.Local("_Verify fingerprint...") + `</property>
+		                <signal name="activate" handler="on_verify_fp_signal" />
+	            	      </object>
+	            	    </child>
+	                  </object>
+	                </child>
+	              </object>
+	            </child>
+	          </object>
+
+	          <packing>
+	            <property name="expand">false</property>
+	            <property name="fill">true</property>
+	            <property name="position">0</property>
+	          </packing>
+		</child>
+
+		<child>
+	            <object class="GtkScrolledWindow" id="historyScroll">
+	              <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+	              <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+	              <child>
+	                <object class="GtkTextView" id="history">
+		          <property name="visible">true</property>
+		          <property name="wrap-mode">1</property>
+		          <property name="editable">false</property>
+		          <property name="cursor-visible">false</property>
+	                </object>
+
+	              </child>
+
+	            </object>
+
+	          <packing>
+	            <property name="expand">true</property>
+	            <property name="fill">true</property>
+	            <property name="position">1</property>
+	          </packing>
+		</child>
+
+	        <child>
+	          <object class="GtkEntry" id="message">
+	            <property name="has-focus">true</property>
+		    <signal name="activate" handler="on_send_message_signal" />
+	          </object>
+	          <packing>
+	            <property name="expand">false</property>
+	            <property name="fill">true</property>
+	            <property name="position">2</property>
+	          </packing>
+	        </child>
+	      </object>
+	    </child>
+
+	  </object>
+	</interface>
+	`
+	builder, _ := gtk.BuilderNew()
+	addError := builder.AddFromString(des)
+	if addError != nil {
+		fmt.Printf("Failed to add the UI XML: %s", addError.Error())
+	}
+
+	win, _ := builder.GetObject("conversation")
+	history, _ := builder.GetObject("history")
+	scrollHistory, _ := builder.GetObject("historyScroll")
 
 	conv := &conversationWindow{
 		to:            uid,
 		account:       account,
-		win:           win,
-		history:       history,
-		scrollHistory: scrollHistory,
+		win:           win.(*gtk.Window),
+		history:       history.(*gtk.TextView),
+		scrollHistory: scrollHistory.(*gtk.ScrolledWindow),
 	}
 
-	// Unlike the GTK version, this is not supposed to be used as a callback but
-	// it attaches the callback to the widget
-	conv.win.HideOnDelete()
-
-	conv.win.SetPosition(gtk.WIN_POS_CENTER)
-	conv.win.SetDefaultSize(500, 440)
-	conv.win.SetDestroyWithParent(true)
-	conv.win.SetTitle(uid)
-
-	//TODO: Load recent messages
-	conv.history.SetWrapMode(gtk.WRAP_WORD)
-	conv.history.SetEditable(false)
-	conv.history.SetCursorVisible(false)
-
-	buff, _ := conv.history.GetBuffer()
-	ttable, _ := buff.GetTagTable()
-
-	outgoingUser, _ := gtk.TextTagNew("outgoingUser")
-	outgoingUser.SetProperty("foreground", "#3465a4")
-	ttable.Add(outgoingUser)
-
-	incomingUser, _ := gtk.TextTagNew("incomingUser")
-	incomingUser.SetProperty("foreground", "#a40000")
-	ttable.Add(incomingUser)
-
-	outgoingText, _ := gtk.TextTagNew("outgoingText")
-	outgoingText.SetProperty("foreground", "#555753")
-	ttable.Add(outgoingText)
-
-	incomingText, _ := gtk.TextTagNew("incomingText")
-	ttable.Add(incomingText)
-
-	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
-
-	vbox.SetHomogeneous(false)
-	vbox.SetBorderWidth(3)
-
-	text, _ := gtk.EntryNew()
-	text.Connect("activate", func() {
-		text.SetEditable(false)
-
-		msg, _ := text.GetText()
-		text.SetText("")
-
-		text.SetEditable(true)
-
-		err := conv.sendMessage(msg)
-		if err != nil {
-			fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), err.Error())
-		}
+	builder.ConnectSignals(map[string]interface{}{
+		"on_send_message_signal": func() {
+			entryNode, _ := builder.GetObject("message")
+			entry := entryNode.(*gtk.Entry)
+			entry.SetEditable(false)
+			text, _ := entry.GetText()
+			entry.SetText("")
+			entry.SetEditable(true)
+			sendError := conv.sendMessage(text)
+			if sendError != nil {
+				fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
+			}
+			entry.GrabFocus()
+		},
+		// TODO: basically I think this whole menu should be rethought. It's useful for us to have during development
+		"on_start_otr_signal": func() {
+			//TODO: enable/disable depending on the conversation's encryption state
+			//TODO: errors
+			err := conv.account.StartEncryptedChatWith(conv.to)
+			if err != nil {
+				fmt.Printf(i18n.Local("Failed to start the encrypted chat: %s\n"), err.Error())
+			}
+		},
+		"on_end_otr_signal": func() {
+			//TODO: errors
+			//TODO: enable/disable depending on the conversation's encryption state
+			err := conv.account.TerminateConversationWith(conv.to)
+			if err != nil {
+				fmt.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
+			}
+		},
+		"on_verify_fp_signal": func() {
+			verifyFingerprintDialog(conv.account, conv.to)
+		},
 	})
-
-	conv.scrollHistory.SetPolicy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-	conv.scrollHistory.Add(conv.history)
-
-	vbox.PackStart(conv.conversationMenu(), false, false, 0)
-	vbox.PackEnd(text, false, false, 0)
-	vbox.PackStart(conv.scrollHistory, true, true, 0)
-
-	conv.win.Add(vbox)
-
-	text.GrabFocus()
 
 	return conv
 }

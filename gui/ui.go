@@ -449,7 +449,6 @@ func (u *gtkUI) connect(account *account) {
 		}
 
 		u.window.Emit(account.ConnectedSignal.String())
-		u.roster.connected()
 	}
 
 	if len(account.Password) == 0 {

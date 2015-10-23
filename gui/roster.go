@@ -270,4 +270,7 @@ func (r *roster) redraw() {
 
 	r.view.SetModel(r.model)
 	r.model.TreeModel.Unref()
+
+	// We call connected here to make sure we don't display the roster until we have some roster data
+	r.connected()
 }

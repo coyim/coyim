@@ -49,3 +49,39 @@ func (s *XMLXmppSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
 	_, _, e := next(&conn)
 	c.Assert(e.Error(), Equals, "XML syntax error on line 1: element <something> closed by </foo>")
 }
+
+func (s *XMLXmppSuite) Test_ClientMesage_unmarshalsXMPPExtensions(c *C) {
+	data := `
+	<message 
+    xmlns='jabber:client'
+		xmlns:stream='http://etherx.jabber.org/streams'
+		id='coyim1234'
+    from='bernardo@shakespeare.lit/pda'
+		to='francisco@shakespeare.lit/elsinore'
+		type='chat'>
+		<composing xmlns='http://jabber.org/protocol/chatstates'/>
+		<x xmlns='jabber:x:event'>
+	    <offline/>
+			<delivered/>
+			<composing/>
+		</x>
+	</message>
+	`
+
+	nv := reflect.New(reflect.TypeOf(ClientMessage{})).Interface()
+	err := xml.Unmarshal([]byte(data), &nv)
+	c.Assert(err, Equals, nil)
+
+	v, _ := nv.(*ClientMessage)
+	c.Assert(v.ID, Equals, "coyim1234")
+	c.Assert(v.From, Equals, "bernardo@shakespeare.lit/pda")
+	c.Assert(v.To, Equals, "francisco@shakespeare.lit/elsinore")
+	c.Assert(v.Type, Equals, "chat")
+	c.Assert(v.Extension, DeepEquals, []AnyHolder{
+		AnyHolder{XMLName: xml.Name{Space: "http://jabber.org/protocol/chatstates", Local: "composing"}},
+		AnyHolder{
+			XMLName: xml.Name{Space: "jabber:x:event", Local: "x"},
+			XML:     "\n\t    <offline/>\n\t\t\t<delivered/>\n\t\t\t<composing/>\n\t\t",
+		},
+	})
+}

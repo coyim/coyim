@@ -35,17 +35,15 @@ func xmlEscape(s string) string {
 }
 
 // Scan XML token stream to find next StartElement.
-func nextStart(p *xml.Decoder) (elem xml.StartElement, err error) {
+func nextStart(p *xml.Decoder) (xml.StartElement, error) {
 	for {
-		var t xml.Token
-		t, err = p.Token()
+		t, err := p.Token()
 		if err != nil {
-			return
+			return xml.StartElement{}, err
 		}
-		switch t := t.(type) {
-		case xml.StartElement:
-			elem = t
-			return
+
+		if start, ok := t.(xml.StartElement); ok {
+			return start, nil
 		}
 	}
 }

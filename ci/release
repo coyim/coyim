@@ -10,7 +10,7 @@ chmod 755 jsawk
 
 # update in-place
 mkfifo pipe
-cat ci/bintray.json | ./jsawk "this.version.name = '$VERSION'" > pipe
+cat ci/bintray.json | ./jsawk "this.version.name = '$VERSION'" > pipe &
 cat < pipe > ci/bintray.json
 rm pipe
 

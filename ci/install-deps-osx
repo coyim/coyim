@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -x
+
+# We could build on any GTK+3 version we want
+# brew tap twstrike/gtk-versions
+
+brew update
+for dep in gtk+3; do
+  brew outdated gtk+3 || brew upgrade
+done
+

@@ -8,8 +8,7 @@ go:
   - 1.4.2
 
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq -y libgtk-3-dev
+  - ci/install-deps-${TRAVIS_OS_NAME:-linux}
 
 install: make deps
 script: make ci
@@ -17,7 +16,7 @@ script: make ci
 before_deploy: make release
 deploy:
   provider: bintray
-  file: build/bintray.json
+  file: ci/bintray.json
   user: twstrike
   key:
     secure: "RcRNGucD8aZuVdTcERN/6kj0HolD59lkBb4HexwQGC6PxQfGU2W++J5ee0ELY886YednLHQFJb4n+O7pkyK/kTHSFlh47gqpmlYoHvwbSWqOJwXg58ccK8GL+vTD/bPv5+KWzuXfyxT279WbHBPOBFO2C+wCr+d4w4BXR2Vibu2UH036L3XiyJ/TJOOncwuaERBjK5LKjxhI46luDDbLifi7brYnnfJ8hhU4MqIyyHrx7c6yizq0emikEIhm0hIrDQGYnScterEHLqGcPXYm9JYtnQAXO+HOlq6+5EIy9a7GLuw7FeN/m8T76yu9kVQHqKAODhnFrW/SmJKGr58IcMEykgRC/S6VFd3t/vdIkyEi0IdjwykcC6PtIFjF0U+lD9TjCRCAqgEVxA7Qi6CN43sjpaIKB+uowDl9fwYG+aSo2D3DzeotxeUaClhWdGT66gc1kBeg2wZ4rUKpdC2fdDDBjZ+3Ut3I01av+wnr48wneI2z/+pMtF29c9DpTwTVETkgltv1h9fEPQDThBpJkFJStgiP4JcKcwHrbw5IQlSxqOGxfdxw22Io8giV8lCfPuL0qYfr9OTP0Jvr5p0QraI8zNtfp76/pYEj4LwqHYFFiSN73iKn9gCPznme3ZjNS87doiZpaGBdG9RZn4rjncPRt+d2G6OjazoLd6O5DV0="

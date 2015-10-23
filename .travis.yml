@@ -2,10 +2,6 @@ dist: trusty
 sudo: required
 language: go
 
-os:
-  - linux
-  - osx
-
 go:
   - tip
   - 1.5

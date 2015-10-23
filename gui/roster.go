@@ -45,8 +45,6 @@ func newNotebook() *gtk.Notebook {
 	welcome, _ := gtk.LabelNew(i18n.Local("You are not connected to any account.\nPlease connect to view your online contacts."))
 
 	welcome.SetMarginTop(7)
-	welcome.SetMarginStart(5)
-	welcome.SetMarginEnd(5)
 	welcome.Show()
 
 	vbox.PackStart(welcome, false, false, 0)

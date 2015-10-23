@@ -115,11 +115,18 @@ func (s *Session) receivedClientMessage(stanza *xmpp.ClientMessage) bool {
 	return true
 }
 
+func either(l, r string) string {
+	if l == "" {
+		return r
+	}
+	return l
+}
+
 func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	//	s.SessionEventHandler.Debug(fmt.Sprintf("client presence: %#v\n", stanza))
 	switch stanza.Type {
 	case "subscribe":
-		s.R.SubscribeRequest(stanza.From, stanza.ID)
+		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"))
 		s.SessionEventHandler.SubscriptionRequest(s, xmpp.RemoveResourceFromJid(stanza.From))
 	case "unavailable":
 		if s.R.PeerBecameUnavailable(stanza.From) &&

@@ -377,10 +377,19 @@ func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
 	confirmDialog := authorizePresenceSubscriptionDialog(u.window, from)
 
 	glib.IdleAdd(func() bool {
-		confirm := gtk.ResponseType(confirmDialog.Run()) == gtk.RESPONSE_YES
+		responseType := gtk.ResponseType(confirmDialog.Run())
+		switch responseType {
+		case gtk.RESPONSE_YES:
+			u.Debug(fmt.Sprintf("Got a response YES to subscription request dialog\n"))
+			s.HandleConfirmOrDeny(from, true)
+		case gtk.RESPONSE_NO:
+			u.Debug(fmt.Sprintf("Got a response NO to subscription request dialog\n"))
+			s.HandleConfirmOrDeny(from, false)
+		default:
+			// We got a different response, such as a close of the window. In this case we want
+			// to keep the subscription request open
+		}
 		confirmDialog.Destroy()
-
-		s.HandleConfirmOrDeny(from, confirm)
 
 		return false
 	})

@@ -52,6 +52,7 @@ cover: run-cover
 
 # send coverage data to coveralls
 coveralls: run-cover
+	go get github.com/mattn/goveralls
 	goveralls -coverprofile=gover.coverprofile -service=travis-ci || true
 
 get:

@@ -15,13 +15,11 @@ go:
   - 1.5
   - 1.4.2
 
-before_install:
-  - ci/install-deps-${TRAVIS_OS_NAME:-linux}
-
+before_install: ci/install-deps-${TRAVIS_OS_NAME:-linux}
 install: make deps
 script: make ci
 
-before_deploy: make release
+before_deploy: ci/release
 deploy:
   provider: bintray
   file: ci/bintray.json

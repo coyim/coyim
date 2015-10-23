@@ -37,13 +37,21 @@ func newNotebook() *gtk.Notebook {
 	notebook.SetShowBorder(false)
 	notebook.PopupDisable()
 
+	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
+
+	vbox.SetHomogeneous(false)
+	vbox.SetBorderWidth(3)
+
 	welcome, _ := gtk.LabelNew(i18n.Local("You are not connected to any account.\nPlease connect to view your online contacts."))
 
+	welcome.SetMarginTop(7)
 	welcome.SetMarginStart(5)
 	welcome.SetMarginEnd(5)
 	welcome.Show()
 
-	notebook.InsertPage(welcome, nil, 0)
+	vbox.PackStart(welcome, false, false, 0)
+
+	notebook.InsertPage(vbox, nil, 0)
 
 	return notebook
 }

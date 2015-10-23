@@ -35,7 +35,7 @@ coveralls:
 	goveralls -coverprofile=gover.coverprofile -service=travis-ci || true
 
 get:
-	go get -t ./...
+	go get -t -tags gtk_$(GTK_VERSION) ./...
 
 deps-u:
 	go get -u github.com/golang/lint/golint

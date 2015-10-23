@@ -23,6 +23,8 @@ type roster struct {
 	checkEncrypted func(to string) bool
 	sendMessage    func(to, message string)
 	conversations  map[string]*conversationWindow
+
+	ui *gtkUI
 }
 
 func newNotebook() *gtk.Notebook {
@@ -48,7 +50,7 @@ func newNotebook() *gtk.Notebook {
 	return notebook
 }
 
-func newRoster() *roster {
+func (u *gtkUI) newRoster() *roster {
 	w, _ := gtk.ScrolledWindowNew(nil, nil)
 	m, _ := gtk.ListStoreNew(
 		glib.TYPE_STRING, // jid
@@ -65,6 +67,8 @@ func newRoster() *roster {
 
 		conversations: make(map[string]*conversationWindow),
 		contacts:      make(map[*account]*rosters.List),
+
+		ui: u,
 	}
 
 	w.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -144,6 +148,7 @@ func (r *roster) openConversationWindow(account *account, to string) *conversati
 
 	if !ok {
 		c = newConversationWindow(account, to)
+		r.ui.connectShortcutsChildWindow(c.win)
 		r.conversations[to] = c
 	}
 

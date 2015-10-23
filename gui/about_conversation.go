@@ -17,16 +17,6 @@ type textBox struct {
 	iter *gtk.TextIter
 }
 
-func newAboutConversationWindow(title string) aboutConversationWin {
-	window, _ := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
-	window.SetPosition(gtk.WIN_POS_CENTER)
-	window.SetTitle(title)
-	window.Connect(destroySignal, gtk.MainQuit)
-	window.SetSizeRequest(600, 480)
-
-	return aboutConversationWin{window, newReadOnlyTextBox()}
-}
-
 func (about aboutConversationWin) add(box textBox) {
 	about.win.Add(box.view)
 }

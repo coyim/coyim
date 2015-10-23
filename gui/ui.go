@@ -177,7 +177,7 @@ func (u *gtkUI) Close() {}
 //}
 
 func (u *gtkUI) initRoster() {
-	u.roster = newRoster()
+	u.roster = u.newRoster()
 }
 
 func (u *gtkUI) mainWindow() {
@@ -195,7 +195,7 @@ func (u *gtkUI) mainWindow() {
 	u.window.Connect("destroy", u.quit)
 	u.window.SetSizeRequest(200, 600)
 
-	u.connectShortcuts()
+	u.connectShortcutsMainWindow(u.window)
 
 	u.window.ShowAll()
 }
@@ -203,10 +203,6 @@ func (u *gtkUI) mainWindow() {
 func (u *gtkUI) quit() {
 	// TODO: we should probably disconnect before quitting, if any account is connected
 	gtk.MainQuit()
-}
-
-func (u *gtkUI) connectShortcuts() {
-	// TODO: once we have accelerator support
 }
 
 func (*gtkUI) askForPassword(connect func(string)) {

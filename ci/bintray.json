@@ -24,7 +24,7 @@
 
     "files": [{
       "includePattern": "bin/(.*)_(.*)_(.*)",
-      "uploadPattern": "$2-$3/$1"
+      "uploadPattern": "$2-$3-<VERSION>/$1"
     }],
     "publish": true
 }

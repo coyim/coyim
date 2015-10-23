@@ -360,18 +360,43 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		return
 	}
 
+	//TODO: Add a more general solution to XEP's
+	if len(stanza.Body) == 0 && len(stanza.Extension) > 0 {
+		//Extension only stanza
+		return
+	}
+
+	var err error
+	var messageTime time.Time
+	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {
+		// An XEP-0203 Delayed Delivery <delay/> element exists for
+		// this message, meaning that someone sent it while we were
+		// offline. Let's show the timestamp for when the message was
+		// sent, rather than time.Now().
+		messageTime, err = time.Parse(time.RFC3339, stanza.Delay.Stamp)
+		if err != nil {
+			s.alert("Can not parse Delayed Delivery timestamp, using quoted string instead.")
+		}
+	} else {
+		messageTime = time.Now()
+	}
+
+	s.receiveClientMessage(from, messageTime, stanza.Body)
+}
+
+func (s *Session) receiveClientMessage(from string, when time.Time, body string) {
 	conversation := s.GetConversationWith(from)
-	out, toSend, err := conversation.Receive([]byte(stanza.Body))
+	out, toSend, err := conversation.Receive([]byte(body))
 	encrypted := conversation.IsEncrypted()
 
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())
-		s.Conn.Send(stanza.From, event.ErrorPrefix+"Error processing message")
+		s.Conn.Send(from, event.ErrorPrefix+"Error processing message")
 	}
 
 	for _, msg := range toSend {
 		log.Println("replied with", string(msg))
-		s.Conn.Send(stanza.From, string(msg))
+		s.Conn.Send(from, string(msg))
 	}
 
 	//TODO: refactor
@@ -430,21 +455,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 		return
 	}
 
-	var messageTime time.Time
-	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {
-		// An XEP-0203 Delayed Delivery <delay/> element exists for
-		// this message, meaning that someone sent it while we were
-		// offline. Let's show the timestamp for when the message was
-		// sent, rather than time.Now().
-		messageTime, err = time.Parse(time.RFC3339, stanza.Delay.Stamp)
-		if err != nil {
-			s.alert("Can not parse Delayed Delivery timestamp, using quoted string instead.")
-		}
-	} else {
-		messageTime = time.Now()
-	}
-
-	s.messageReceived(from, messageTime, encrypted, out)
+	s.messageReceived(from, when, encrypted, out)
 }
 
 func (s *Session) messageReceived(from string, timestamp time.Time, encrypted bool, message []byte) {

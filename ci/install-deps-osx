@@ -7,6 +7,6 @@ set -x
 
 brew update
 for dep in gtk+3; do
-  brew outdated $dep || brew upgrade $dep
+   brew install $dep || brew outdated $dep || brew upgrade $dep
 done
 

@@ -3,7 +3,7 @@
 set -xe
 
 # We can deploy only when a tag is pushed, and use ir as the version
-VERSION="${TRAVIS_BRANCH}-${TRAVIS_COMMIT}"
+VERSION="${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}"
 
 curl -L http://github.com/micha/jsawk/raw/master/jsawk > jsawk
 chmod 755 jsawk

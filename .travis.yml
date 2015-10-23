@@ -10,6 +10,10 @@ matrix:
   fast_finish: true
   allow_failures:
     - os: osx
+    - env: DEPLOY=true
+  include:
+    - go: 1.5
+      env: DEPLOY=true
 
 go:
   - tip
@@ -22,6 +26,8 @@ script: make ci
 
 before_deploy: ci/release
 deploy:
+  on:
+    condition: $DEPLOY = "true"
   provider: bintray
   file: ci/bintray.json
   user:
@@ -29,6 +35,4 @@ deploy:
   key:
     secure: TssP9ek1VXehTuJ7u3K2OE5G99tgooHwF2/sSJTZDPk3+8DAliZ+5GZI+K6e+avKn11bVcMGoQ23StngOp5BHYu2/Z9A5A4TENi8xwYzXzsFYGxYlvfk8lvE8Vl5JpTk2/XvBg+80O672TxAFthKddARSoDx8Zlb1Ya1ae4O87hVSFDuzrQGoy+fSZjRctmCFlwB2kcYQdcXSjbcGamdFLOSHQ176abtcQBNFBeRzeRQNAz3Z/2ZkS1M7858bVWnuMcQlYaKXZ3eyG+Hp+wYLDL35NgPigEYqOZE3b6YFTsjniJ4sHt9SbLEHKUBUWCLjv64zyo/vyp5Yp6vGbZqTvD1gypIXyAMkszjmVsgWSDZLYKYzQGeAXcvHDAK7G5e7Nn+m79Y2bMlTwN4qSj3N0qA9arrgiWPjr6bWtmx3ZKGgC0nlnnQtsR20ivbG5+2+AlDFO0O55DZxxDHBd2sAejx9FF0IageIqHXP7Opr6h0/FFHi4BqnDxo+EanhBNd3qt4Onft3zFxFiJZg8vkIwRYX2pKd4mPMQ7df7XTS2hW0lCe7EqEpSqL6qWTdYG0ZxkIl2cpa9Ll8stHJybvQot8gA6ZpOvyEbY8OzQNKu6KNap0l5cpP0tiQcIK6I6NbNJFMHlRwn/uxy+KY/ukCrzpeRn7NBB4tjQN6stD6ns=
   dry-run: false
-  on:
-    condition: $TRAVIS_GO_VERSION = "1.5"
 

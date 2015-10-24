@@ -19,6 +19,8 @@ if [[ $OS = "osx" ]]; then
   rm -rf bin/CoyIM.app/Contents/Resources/Cellar
 
   ci/make-dmg coyim $VERSION bin/CoyIM.app
+
+  rf -rf bin/CoyIM.app
 fi
 
 make release-gui

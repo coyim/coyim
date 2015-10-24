@@ -20,7 +20,7 @@ if [[ $OS = "osx" ]]; then
 
   ci/make-dmg coyim $VERSION bin/CoyIM.app
 
-  rf -rf bin/CoyIM.app
+  rm -rf bin/CoyIM.app
 fi
 
 make release-gui

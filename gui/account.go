@@ -9,70 +9,61 @@ import (
 	"github.com/twstrike/coyim/session"
 )
 
-// someone who knows how to persist account configuration
-type configManager interface {
-	Save() error
-}
-
 type account struct {
-	ConnectedSignal    *glib.Signal
-	DisconnectedSignal *glib.Signal
+	connectedSignal    *glib.Signal
+	disconnectedSignal *glib.Signal
 
-	configManager
-	*config.Config
-	*session.Session
+	session *session.Session
 }
 
 func (acc *account) connected() bool {
-	return acc.ConnStatus == session.CONNECTED
+	return acc.session.ConnStatus == session.CONNECTED
 }
 
 var (
 	errFingerprintAlreadyAuthorized = errors.New(i18n.Local("the fingerprint is already authorized"))
 )
 
+// TODO: this functionality is duplicated
 func (acc *account) authorizeFingerprint(uid string, fingerprint []byte) error {
-	existing := acc.UserIDForFingerprint(fingerprint)
+	existing := acc.session.CurrentAccount.UserIDForFingerprint(fingerprint)
 	if len(existing) != 0 {
 		return errFingerprintAlreadyAuthorized
 	}
 
-	acc.KnownFingerprints = append(acc.KnownFingerprints, config.KnownFingerprint{
+	acc.session.CurrentAccount.KnownFingerprints = append(acc.session.CurrentAccount.KnownFingerprints, config.KnownFingerprint{
 		Fingerprint: fingerprint, UserID: uid,
 	})
 
 	return nil
 }
 
-func buildAccountsFrom(multiAcc *config.MultiAccount, manager configManager, u *gtkUI) []*account {
-	accounts := make([]*account, len(multiAcc.Accounts))
+func (u *gtkUI) buildAccounts() []*account {
+	accounts := make([]*account, len(u.config.Accounts))
 
-	for i := range multiAcc.Accounts {
-		conf := &multiAcc.Accounts[i]
-		u.ensureConfigHasKey(conf)
+	for i, accountConf := range u.config.Accounts {
+		u.ensureConfigHasKey(accountConf)
 
-		account := newAccount(conf, manager)
-		account.Session.SessionEventHandler = u
+		account := newAccount(u.config, accountConf)
+		account.session.SessionEventHandler = u
 		accounts[i] = account
 	}
 
 	return accounts
 }
 
-func newAccount(conf *config.Config, m configManager) *account {
-	id := conf.ID()
+func newAccount(conf *config.Accounts, currentConf *config.Account) *account {
+	id := currentConf.ID()
 	c, _ := glib.SignalNew(signalName(id, "connected"))
 	d, _ := glib.SignalNew(signalName(id, "disconnected"))
 
 	a := &account{
-		Config:        conf,
-		Session:       session.NewSession(conf),
-		configManager: m,
+		session: session.NewSession(conf, currentConf),
 
-		ConnectedSignal:    c,
-		DisconnectedSignal: d,
+		connectedSignal:    c,
+		disconnectedSignal: d,
 	}
-	a.Session.Account = a
+	a.session.Account = a
 
 	return a
 }
@@ -82,13 +73,9 @@ func signalName(id, signal string) string {
 }
 
 func (u *gtkUI) showAddAccountWindow() {
-	account := newAccount(config.NewConfig(), u.configFileManager)
+	account := newAccount(u.config, config.NewAccount())
 	accountDialog(account, func() error {
-		err := u.configFileManager.Add(*account.Config)
-		if err != nil {
-			return err
-		}
-
+		u.config.Add(account.session.CurrentAccount)
 		return u.SaveConfig()
 	})
 }

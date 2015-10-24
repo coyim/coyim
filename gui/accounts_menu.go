@@ -16,20 +16,20 @@ var (
 )
 
 func firstProxy(account *account) string {
-	if len(account.Proxies) > 0 {
-		return account.Proxies[0]
+	if len(account.session.CurrentAccount.Proxies) > 0 {
+		return account.session.CurrentAccount.Proxies[0]
 	}
 	return ""
 }
 
 func onAccountDialogClicked(account *account, saveFunction func() error, reg *widgetRegistry) func() {
 	return func() {
-		account.Config.Account = reg.getText("account")
-		account.Password = reg.getText("password")
+		account.session.CurrentAccount.Account = reg.getText("account")
+		account.session.CurrentAccount.Password = reg.getText("password")
 
-		parts := strings.SplitN(account.Config.Account, "@", 2)
+		parts := strings.SplitN(account.session.CurrentAccount.Account, "@", 2)
 		if len(parts) != 2 {
-			fmt.Println("invalid username (want user@domain): " + account.Config.Account)
+			fmt.Println("invalid username (want user@domain): " + account.session.CurrentAccount.Account)
 			return
 		}
 
@@ -53,7 +53,7 @@ func accountDialog(account *account, saveFunction func() error) {
 		content: []createable{
 			label{i18n.Local("Account")},
 			entry{
-				text:       account.Config.Account,
+				text:       account.session.CurrentAccount.Account,
 				editable:   true,
 				visibility: true,
 				id:         "account",
@@ -61,7 +61,7 @@ func accountDialog(account *account, saveFunction func() error) {
 
 			label{i18n.Local("Password")},
 			entry{
-				text:       account.Password,
+				text:       account.session.CurrentAccount.Password,
 				editable:   true,
 				visibility: false,
 				id:         "password",
@@ -85,7 +85,7 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 }
 
 func buildAccountSubmenu(u *gtkUI, account *account) *gtk.MenuItem {
-	menuitem, _ := gtk.MenuItemNewWithMnemonic(account.Config.Account)
+	menuitem, _ := gtk.MenuItemNewWithMnemonic(account.session.CurrentAccount.Account)
 
 	accountSubMenu, _ := gtk.MenuNew()
 	menuitem.SetSubmenu(accountSubMenu)
@@ -96,7 +96,7 @@ func buildAccountSubmenu(u *gtkUI, account *account) *gtk.MenuItem {
 	disconnectItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect"))
 	accountSubMenu.Append(disconnectItem)
 
-	toggleConnectAndDisconnectMenuItems(account.Session, connectItem, disconnectItem)
+	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
 
 	connectItem.Connect("activate", func() {
 		connectItem.SetSensitive(false)
@@ -108,11 +108,11 @@ func buildAccountSubmenu(u *gtkUI, account *account) *gtk.MenuItem {
 	})
 
 	connToggle := func() {
-		toggleConnectAndDisconnectMenuItems(account.Session, connectItem, disconnectItem)
+		toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
 	}
 
-	u.window.Connect(account.ConnectedSignal.String(), connToggle)
-	u.window.Connect(account.DisconnectedSignal.String(), connToggle)
+	u.window.Connect(account.connectedSignal.String(), connToggle)
+	u.window.Connect(account.disconnectedSignal.String(), connToggle)
 
 	editItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
 	accountSubMenu.Append(editItem)

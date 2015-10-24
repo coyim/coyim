@@ -11,12 +11,13 @@ type KnownFingerprint struct {
 	UserID         string
 	FingerprintHex string
 	Fingerprint    []byte `json:"-"`
+	// TODO: add a verified/trusted parameter for each fingerprint
 }
 
-func parseFingerprints(c *Config) error {
+func parseFingerprints(a *Account) error {
 	var err error
-	for i, known := range c.KnownFingerprints {
-		c.KnownFingerprints[i].Fingerprint, err = hex.DecodeString(known.FingerprintHex)
+	for i, known := range a.KnownFingerprints {
+		a.KnownFingerprints[i].Fingerprint, err = hex.DecodeString(known.FingerprintHex)
 		if err != nil {
 			return errors.New("xmpp: failed to parse hex fingerprint for " + known.UserID + ": " + err.Error())
 		}
@@ -25,15 +26,15 @@ func parseFingerprints(c *Config) error {
 	return nil
 }
 
-func (c *Config) serializeFingerprints() {
-	for i, known := range c.KnownFingerprints {
-		c.KnownFingerprints[i].FingerprintHex = hex.EncodeToString(known.Fingerprint)
+func (a *Account) serializeFingerprints() {
+	for i, known := range a.KnownFingerprints {
+		a.KnownFingerprints[i].FingerprintHex = hex.EncodeToString(known.Fingerprint)
 	}
 }
 
 // UserIDForFingerprint returns the user ID for the given fingerprint
-func (c *Config) UserIDForFingerprint(fpr []byte) string {
-	for _, known := range c.KnownFingerprints {
+func (a *Account) UserIDForFingerprint(fpr []byte) string {
+	for _, known := range a.KnownFingerprints {
 		if bytes.Equal(fpr, known.Fingerprint) {
 			return known.UserID
 		}
@@ -43,13 +44,13 @@ func (c *Config) UserIDForFingerprint(fpr []byte) string {
 }
 
 // AddFingerprint adds a new fingerprint for the given user
-func (c *Config) AddFingerprint(fpr []byte, uid string) {
-	c.KnownFingerprints = append(c.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserID: uid})
+func (a *Account) AddFingerprint(fpr []byte, uid string) {
+	a.KnownFingerprints = append(a.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserID: uid})
 }
 
 // HasFingerprint returns true if we have the fingerprint for the given user
-func (c *Config) HasFingerprint(uid string) bool {
-	for _, known := range c.KnownFingerprints {
+func (a *Account) HasFingerprint(uid string) bool {
+	for _, known := range a.KnownFingerprints {
 		if uid == known.UserID {
 			return true
 		}

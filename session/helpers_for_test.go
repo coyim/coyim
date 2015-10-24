@@ -23,7 +23,6 @@ type mockSessionEventHandler struct {
 	unsubscribe         func(account, peer string)
 	disconnected        func()
 	registerCallback    func(title, instructions string, fields []interface{}) error
-	saveConfiguration   func()
 }
 
 func (m *mockSessionEventHandler) Debug(v string) {
@@ -107,12 +106,6 @@ func (m *mockSessionEventHandler) Unsubscribe(account, peer string) {
 func (m *mockSessionEventHandler) Disconnected() {
 	if m.disconnected != nil {
 		m.disconnected()
-	}
-}
-
-func (m *mockSessionEventHandler) SaveConfiguration() {
-	if m.saveConfiguration != nil {
-		m.saveConfiguration()
 	}
 }
 

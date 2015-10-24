@@ -29,7 +29,6 @@ import (
 )
 
 type cliUI struct {
-	config  *config.Config
 	session *session.Session
 
 	password string
@@ -75,41 +74,31 @@ func NewCLI() client.Client {
 	}
 }
 
-func (c *cliUI) SaveConfiguration() {
-	c.config.Save()
-}
-
 func (c *cliUI) LoadConfig(configFile string) error {
-	configFileManager := config.NewFileManager(configFile)
-
-	if err := configFileManager.ParseConfigFile(); err != nil {
-		c.config = config.NewConfig()
-		c.config.Filename = config.FindConfigFile()
-
+	accounts, err := config.LoadOrCreate(configFile)
+	if err != nil {
 		c.Alert(err.Error())
-		if !enroll(c.config, c.term) {
+		if !enroll(accounts, accounts.AddNewAccount(), c.term) {
 			return errors.New("asked to quit")
 		}
 	}
 
-	//TODO migrate to use configFileManager
-	c.config = &configFileManager.MultiAccount.Accounts[0]
-	c.config.Filename = configFileManager.Filename
+	account := accounts.Accounts[0]
 
 	//TODO We do not support empty passwords
 	var password string
-	if len(c.config.Password) == 0 {
+	if len(account.Password) == 0 {
 		var err error
 
 		password, err = c.term.ReadPassword(
-			fmt.Sprintf("Password for %s (will not be saved to disk): ", c.config.Account),
+			fmt.Sprintf("Password for %s (will not be saved to disk): ", account.Account),
 		)
 		if err != nil {
 			c.Alert(err.Error())
 			return err
 		}
 	} else {
-		password = c.config.Password
+		password = account.Password
 	}
 
 	logger := &lineLogger{c.term, nil}
@@ -120,14 +109,14 @@ func (c *cliUI) LoadConfig(configFile string) error {
 	}
 
 	//TODO replace this by session.Connect()
-	conn, err := config.NewXMPPConn(c.config, password, registerCallback, logger)
+	conn, err := config.NewXMPPConn(account, password, registerCallback, logger)
 	if err != nil {
 		c.Alert(err.Error())
 		return err
 	}
 
 	//TODO support one session per account
-	c.session = session.NewSession(c.config)
+	c.session = session.NewSession(accounts, account)
 	c.session.Conn = conn
 	c.session.SessionEventHandler = c
 
@@ -180,7 +169,7 @@ func (c *cliUI) Alert(m string) {
 }
 
 func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{}) error {
-	user := c.config.Account
+	user := c.session.CurrentAccount.Account
 	return promptForForm(c.term, user, c.password, title, instructions, fields)
 }
 
@@ -263,14 +252,14 @@ func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversatio
 	term := c.term
 
 	fpr := conversation.GetTheirKey().DefaultFingerprint()
-	fprUID := s.Config.UserIDForFingerprint(fpr)
+	fprUID := s.CurrentAccount.UserIDForFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %x", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %x", uid, conversation.GetSSID()))
 	if fprUID == uid {
 		info(term, fmt.Sprintf("  Identity key for %s is verified", uid))
 	} else if len(fprUID) > 1 {
 		alert(term, fmt.Sprintf("  Warning: %s is using an identity key which was verified for %s", uid, fprUID))
-	} else if s.Config.HasFingerprint(uid) {
+	} else if s.CurrentAccount.HasFingerprint(uid) {
 		critical(term, fmt.Sprintf("  Identity key for %s is incorrect", uid))
 	} else {
 		alert(term, fmt.Sprintf("  Identity key for %s is not verified. You should use /otr-auth or /otr-authqa or /otr-authoob to verify their identity", uid))
@@ -567,15 +556,15 @@ func (c *cliUI) WatchRosterEdits() {
 			}
 
 			// Filter out any known fingerprints.
-			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(s.Config.KnownFingerprints))
-			for _, fpr := range s.Config.KnownFingerprints {
+			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(s.CurrentAccount.KnownFingerprints))
+			for _, fpr := range s.CurrentAccount.KnownFingerprints {
 				if fpr.UserID == jid {
 					continue
 				}
 				newKnownFingerprints = append(newKnownFingerprints, fpr)
 			}
-			s.Config.KnownFingerprints = newKnownFingerprints
-			s.Config.Save()
+			s.CurrentAccount.KnownFingerprints = newKnownFingerprints
+			s.SaveConfiguration()
 		}
 
 		//EDIT
@@ -623,7 +612,7 @@ func (c *cliUI) WatchCommands() {
 
 	term := c.term
 	s := c.session
-	conf := s.Config
+	conf := s.CurrentAccount
 
 	var err error
 
@@ -726,10 +715,10 @@ CommandLoop:
 				}(*c.PendingRosterEdit)
 
 			case toggleStatusUpdatesCommand:
-				s.Config.HideStatusUpdates = !s.Config.HideStatusUpdates
-				s.Config.Save()
+				s.CurrentAccount.HideStatusUpdates = !s.CurrentAccount.HideStatusUpdates
+				s.SaveConfiguration()
 				// Tell the user the current state of the statuses
-				if s.Config.HideStatusUpdates {
+				if s.CurrentAccount.HideStatusUpdates {
 					info(term, "Status updates disabled")
 				} else {
 					info(term, "Status updates enabled")
@@ -826,13 +815,13 @@ CommandLoop:
 					alert(term, fmt.Sprintf("Invalid fingerprint %s - not authenticated", cmd.Fingerprint))
 					break
 				}
-				existing := s.Config.UserIDForFingerprint(fpr)
+				existing := s.CurrentAccount.UserIDForFingerprint(fpr)
 				if len(existing) != 0 {
 					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, existing))
 					break
 				}
-				s.Config.KnownFingerprints = append(s.Config.KnownFingerprints, config.KnownFingerprint{Fingerprint: fpr, UserID: cmd.User})
-				s.Config.Save()
+				s.CurrentAccount.KnownFingerprints = append(s.CurrentAccount.KnownFingerprints, config.KnownFingerprint{Fingerprint: fpr, UserID: cmd.User})
+				s.SaveConfiguration()
 				info(term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:
 				s.Conn.SignalPresence("away")
@@ -849,20 +838,20 @@ CommandLoop:
 	}
 }
 
-func enroll(conf *config.Config, term *terminal.Terminal) bool {
+func enroll(conf *config.Accounts, currentConf *config.Account, term *terminal.Terminal) bool {
 	var err error
 	warn(term, "Enrolling new config file")
 
 	var domain string
 	for {
 		term.SetPrompt("Account (i.e. user@example.com, enter to quit): ")
-		if conf.Account, err = term.ReadLine(); err != nil || len(conf.Account) == 0 {
+		if currentConf.Account, err = term.ReadLine(); err != nil || len(currentConf.Account) == 0 {
 			return false
 		}
 
-		parts := strings.SplitN(conf.Account, "@", 2)
+		parts := strings.SplitN(currentConf.Account, "@", 2)
 		if len(parts) != 2 {
-			alert(term, "invalid username (want user@domain): "+conf.Account)
+			alert(term, "invalid username (want user@domain): "+currentConf.Account)
 			continue
 		}
 		domain = parts[1]
@@ -880,10 +869,10 @@ func enroll(conf *config.Config, term *terminal.Terminal) bool {
 	term.SetPrompt("Use Tor?: ")
 	if useTorQuery, err := term.ReadLine(); err != nil || len(useTorQuery) == 0 || !config.ParseYes(useTorQuery) {
 		info(term, "Not using Tor...")
-		conf.UseTor = false
+		currentConf.RequireTor = false
 	} else {
 		info(term, "Using Tor...")
-		conf.UseTor = true
+		currentConf.RequireTor = true
 	}
 
 	term.SetPrompt("File to import libotr private key from (enter to generate): ")
@@ -912,26 +901,26 @@ func enroll(conf *config.Config, term *terminal.Terminal) bool {
 			break
 		}
 	}
-	conf.PrivateKey = priv.Serialize()
+	currentConf.PrivateKey = priv.Serialize()
 
-	conf.OTRAutoAppendTag = true
-	conf.OTRAutoStartSession = true
-	conf.OTRAutoTearDown = false
+	currentConf.OTRAutoAppendTag = true
+	currentConf.OTRAutoStartSession = true
+	currentConf.OTRAutoTearDown = false
 
 	// Autoconfigure well known Tor hidden services.
-	if hiddenService, ok := servers.Get(domain); ok && conf.UseTor {
+	if hiddenService, ok := servers.Get(domain); ok && currentConf.RequireTor {
 		const torProxyURL = "socks5://127.0.0.1:9050"
 		info(term, "It appears that you are using a well known server and we will use its Tor hidden service to connect.")
-		conf.Server = hiddenService.Onion
-		conf.Port = 5222
-		conf.Proxies = []string{torProxyURL}
+		currentConf.Server = hiddenService.Onion
+		currentConf.Port = 5222
+		currentConf.Proxies = []string{torProxyURL}
 		term.SetPrompt("> ")
 		return true
 	}
 
 	var proxyStr string
 	proxyDefaultPrompt := ", enter for none"
-	if conf.UseTor {
+	if currentConf.RequireTor {
 		proxyDefaultPrompt = ", which is the default"
 	}
 	term.SetPrompt("Proxy (i.e socks5://127.0.0.1:9050" + proxyDefaultPrompt + "): ")
@@ -941,7 +930,7 @@ func enroll(conf *config.Config, term *terminal.Terminal) bool {
 			return false
 		}
 		if len(proxyStr) == 0 {
-			if !conf.UseTor {
+			if !currentConf.RequireTor {
 				break
 			} else {
 				proxyStr = "socks5://127.0.0.1:9050"
@@ -960,7 +949,7 @@ func enroll(conf *config.Config, term *terminal.Terminal) bool {
 	}
 
 	if len(proxyStr) > 0 {
-		conf.Proxies = []string{proxyStr}
+		currentConf.Proxies = []string{proxyStr}
 
 		//TODO: Remove me from here. We make SRV lookup over Tor on each connection
 		u, _ := url.Parse(proxyStr)
@@ -975,10 +964,10 @@ func enroll(conf *config.Config, term *terminal.Terminal) bool {
 		}
 
 		host, port, _ := net.SplitHostPort(hostports[0])
-		conf.Server = host
-		conf.Port, _ = strconv.Atoi(port)
+		currentConf.Server = host
+		currentConf.Port, _ = strconv.Atoi(port)
 
-		info(term, "Resolved "+conf.Server+":"+strconv.Itoa(conf.Port))
+		info(term, "Resolved "+currentConf.Server+":"+strconv.Itoa(currentConf.Port))
 	}
 
 	term.SetPrompt("> ")

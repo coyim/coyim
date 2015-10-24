@@ -145,7 +145,7 @@ func newConversationWindow(account *account, uid string) *conversationWindow {
 		"on_start_otr_signal": func() {
 			//TODO: enable/disable depending on the conversation's encryption state
 			//TODO: errors
-			err := conv.account.StartEncryptedChatWith(conv.to)
+			err := conv.account.session.StartEncryptedChatWith(conv.to)
 			if err != nil {
 				fmt.Printf(i18n.Local("Failed to start the encrypted chat: %s\n"), err.Error())
 			}
@@ -153,7 +153,7 @@ func newConversationWindow(account *account, uid string) *conversationWindow {
 		"on_end_otr_signal": func() {
 			//TODO: errors
 			//TODO: enable/disable depending on the conversation's encryption state
-			err := conv.account.TerminateConversationWith(conv.to)
+			err := conv.account.session.TerminateConversationWith(conv.to)
 			if err != nil {
 				fmt.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 			}
@@ -201,16 +201,16 @@ func (conv *conversationWindow) Show() {
 }
 
 func (conv *conversationWindow) sendMessage(message string) error {
-	err := conv.account.EncryptAndSendTo(conv.to, message)
+	err := conv.account.session.EncryptAndSendTo(conv.to, message)
 	if err != nil {
 		return err
 	}
 
 	//TODO: this should not be in both GUI and roster
-	conversation := conv.account.GetConversationWith(conv.to)
+	conversation := conv.account.session.GetConversationWith(conv.to)
 	encrypted := conversation.IsEncrypted()
 	glib.IdleAdd(func() bool {
-		conv.appendMessage(conv.account.Config.Account, time.Now(), encrypted, ui.StripHTML([]byte(message)), true)
+		conv.appendMessage(conv.account.session.CurrentAccount.Account, time.Now(), encrypted, ui.StripHTML([]byte(message)), true)
 		return false
 	})
 

@@ -9,7 +9,6 @@ import (
 	"github.com/twstrike/coyim/i18n"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
 )
 
 type roster struct {
@@ -132,7 +131,7 @@ func (r *roster) disconnected() {
 //TODO: move somewhere else
 func (r *roster) getAccount(id string) (*account, bool) {
 	for account := range r.contacts {
-		if account.ID() == id {
+		if account.session.CurrentAccount.ID() == id {
 			return account, true
 		}
 	}
@@ -207,11 +206,8 @@ func (r *roster) update(account *account, entries *rosters.List) {
 }
 
 func (r *roster) debugPrintRosterFor(nm string) {
-	nnm := xmpp.RemoveResourceFromJid(nm)
-	fmt.Printf(" ^^^ Roster for: %s ^^^ \n", nnm)
-
 	for account, rs := range r.contacts {
-		if account.Config.Account == nnm {
+		if account.session.CurrentAccount.Is(nm) {
 			rs.Iter(func(_ int, item *rosters.Peer) {
 				fmt.Printf("->   #%v\n", item)
 			})
@@ -271,7 +267,7 @@ func (r *roster) redraw() {
 				r.model.Set(iter, []int{0, 1, 2, 3, 4}, []interface{}{
 					item.Jid,
 					item.NameForPresentation(),
-					account.ID(),
+					account.session.CurrentAccount.ID(),
 					decideStatusGlyphFor(item),
 					decideColorFor(item),
 				})

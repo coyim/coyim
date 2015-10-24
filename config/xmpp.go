@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/twstrike/coyim/xmpp"
+
 	"golang.org/x/net/proxy"
 )
 
@@ -74,7 +75,7 @@ func buildProxyChain(proxies []string) (dialer proxy.Dialer, err error) {
 }
 
 // NewXMPPConn creates a new XMPP connection based on the given information
-func NewXMPPConn(config *Config, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {
+func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {
 	parts := strings.SplitN(config.Account, "@", 2)
 	if len(parts) != 2 {
 		return nil, errors.New("invalid username (want user@domain): " + config.Account)

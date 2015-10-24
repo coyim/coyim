@@ -37,7 +37,7 @@ func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 	for _, acc := range accounts {
 		iter := model.Append()
 		//TODO stop passing pointers
-		model.Set(iter, []int{0, 1}, []interface{}{acc.Config.Account, acc})
+		model.Set(iter, []int{0, 1}, []interface{}{acc.session.CurrentAccount.Account, acc})
 	}
 
 	accountInput, _ := gtk.ComboBoxNewWithModel(&model.TreeModel)
@@ -80,7 +80,7 @@ func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 
 		//TODO: validate
 		// - validate if the account is connected
-		err := account.Conn.SendPresence(contact, "subscribe", "" /* generate id */)
+		err := account.session.Conn.SendPresence(contact, "subscribe", "" /* generate id */)
 		if err != nil {
 			//TODO: error
 		}

@@ -28,7 +28,7 @@ type SessionXmppSuite struct{}
 var _ = Suite(&SessionXmppSuite{})
 
 func (s *SessionXmppSuite) Test_NewSession_returnsANewSession(c *C) {
-	sess := NewSession(&config.Config{})
+	sess := NewSession(&config.Accounts{}, &config.Account{})
 	c.Assert(sess, Not(IsNil))
 }
 
@@ -298,7 +298,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 
 	var sess *Session
 	sess = &Session{
-		Config:          &config.Config{},
+		Config:          &config.Accounts{},
+		CurrentAccount:  &config.Account{InstanceTag: uint32(42)},
 		Conversations:   make(map[string]*otr3.Conversation),
 		OtrEventHandler: make(map[string]*event.OtrEventHandler),
 		SessionEventHandler: &mockSessionEventHandler{
@@ -355,7 +356,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.Config{
+		Config: &config.Accounts{},
+		CurrentAccount: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		SessionEventHandler: &mockSessionEventHandler{},
@@ -383,7 +385,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.Config{
+		Config: &config.Accounts{},
+		CurrentAccount: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		SessionEventHandler: &mockSessionEventHandler{},
@@ -414,7 +417,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{
+		Config: &config.Accounts{},
+		CurrentAccount: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		SessionEventHandler: &mockSessionEventHandler{
@@ -443,7 +447,10 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{Account: "some@one.org"},
+		Config: &config.Accounts{},
+		CurrentAccount: &config.Account{
+			Account: "some@one.org",
+		},
 		SessionEventHandler: &mockSessionEventHandler{
 			warn: func(v string) {
 				called++
@@ -474,7 +481,10 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{Account: "some@one.org"},
+		Config: &config.Accounts{},
+		CurrentAccount: &config.Account{
+			Account: "some@one.org",
+		},
 		SessionEventHandler: &mockSessionEventHandler{
 			warn: func(v string) {
 				called++
@@ -507,8 +517,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{Account: "some@one.org"},
-		R:      roster.New(),
+		Config: &config.Accounts{},
+		CurrentAccount: &config.Account{
+			Account: "some@one.org",
+		},
+		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			iqReceived: func(v string) {
 				called++
@@ -541,8 +554,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{Account: "some@one.org"},
-		R:      roster.New(),
+		Config: &config.Accounts{},
+		CurrentAccount: &config.Account{
+			Account: "some@one.org",
+		},
+		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			iqReceived: func(v string) {
 				called++
@@ -579,8 +595,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{Account: "some@one.org"},
-		R:      roster.New(),
+		Config: &config.Accounts{},
+		CurrentAccount: &config.Account{
+			Account: "some@one.org",
+		},
+		R: roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			iqReceived: func(v string) {
 				called++
@@ -639,8 +658,9 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{},
-		R:      roster.New(),
+		Config:         &config.Accounts{},
+		CurrentAccount: &config.Account{},
+		R:              roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(from, to, show, status string, gone bool) {
 				called++
@@ -670,8 +690,9 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{},
-		R:      roster.New(),
+		Config:         &config.Accounts{},
+		CurrentAccount: &config.Account{},
+		R:              roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			subscriptionRequest: func(s *Session, uid string) {
 				called++
@@ -700,7 +721,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{},
+		Config:         &config.Accounts{},
+		CurrentAccount: &config.Account{},
 		SessionEventHandler: &mockSessionEventHandler{
 			subscriptionRequest: func(s *Session, uid string) {
 				called++
@@ -729,8 +751,9 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{},
-		R:      roster.New(),
+		Config:         &config.Accounts{},
+		CurrentAccount: &config.Account{},
+		R:              roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(from, to, show, status string, gone bool) {
 				called++
@@ -759,8 +782,9 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{},
-		R:      roster.New(),
+		Config:         &config.Accounts{},
+		CurrentAccount: &config.Account{},
+		R:              roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(from, to, show, status string, gone bool) {
 				called++
@@ -788,8 +812,9 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	called := 0
 
 	sess := &Session{
-		Config: &config.Config{},
-		R:      roster.New(),
+		Config:         &config.Accounts{},
+		CurrentAccount: &config.Account{},
+		R:              roster.New(),
 		SessionEventHandler: &mockSessionEventHandler{
 			processPresence: func(from, to, show, status string, gone bool) {
 				called++

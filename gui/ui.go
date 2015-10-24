@@ -29,8 +29,7 @@ type gtkUI struct {
 	window       *gtk.Window
 	accountsMenu *gtk.MenuItem
 
-	configFileManager *config.FileManager
-	multiConfig       *config.MultiAccount
+	config *config.Accounts
 
 	accounts []*account
 }
@@ -41,38 +40,27 @@ func NewGTK() client.Client {
 }
 
 func (u *gtkUI) LoadConfig(configFile string) error {
-	u.configFileManager = config.NewFileManager(configFile)
+	accounts, err := config.LoadOrCreate(configFile)
+	u.config = accounts
 
-	err := u.configFileManager.ParseConfigFile()
 	if err != nil {
 		u.Alert(err.Error())
-
-		u.configFileManager.MultiAccount = &config.MultiAccount{}
-
-		//TODO: Remove this
-		u.multiConfig = u.configFileManager.MultiAccount
 
 		glib.IdleAdd(func() bool {
 			u.showAddAccountWindow()
 			return false
 		})
-
-		return nil
 	}
 
-	//TODO: REMOVE this
-	u.multiConfig = u.configFileManager.MultiAccount
-
-	u.accounts = buildAccountsFrom(u.multiConfig, u.configFileManager, u)
-
+	u.accounts = u.buildAccounts()
 	return nil
 }
 
 func (u *gtkUI) addNewAccountsFromConfig() {
-	for _, configAccount := range u.configFileManager.Accounts {
+	for _, configAccount := range u.config.Accounts {
 		var found bool
 		for _, acc := range u.accounts {
-			if acc.ID() == configAccount.ID() {
+			if acc.session.CurrentAccount.ID() == configAccount.ID() {
 				found = true
 				break
 			}
@@ -82,13 +70,12 @@ func (u *gtkUI) addNewAccountsFromConfig() {
 			continue
 		}
 
-		acc := newAccount(&configAccount, u.configFileManager)
-		u.accounts = append(u.accounts, acc)
+		u.accounts = append(u.accounts, newAccount(u.config, configAccount))
 	}
 }
 
 func (u *gtkUI) SaveConfig() error {
-	err := u.configFileManager.Save()
+	err := u.config.Save()
 	if err != nil {
 		return err
 	}
@@ -105,7 +92,7 @@ func (u *gtkUI) SaveConfig() error {
 //TODO: Should it be per session?
 func (u *gtkUI) Disconnected() {
 	for _, acc := range u.accounts {
-		if acc.ConnStatus == session.CONNECTED {
+		if acc.session.ConnStatus == session.CONNECTED {
 			return
 		}
 	}
@@ -128,9 +115,8 @@ func (u *gtkUI) findAccountForSession(s *session.Session) *account {
 }
 
 func (u *gtkUI) findAccountForUsername(s string) *account {
-	jid := xmpp.RemoveResourceFromJid(s)
 	for _, a := range u.accounts {
-		if a.Config.Account == jid {
+		if a.session.CurrentAccount.Is(s) {
 			return a
 		}
 	}
@@ -424,10 +410,6 @@ func (u *gtkUI) Unsubscribe(account, peer string) {
 	u.rosterUpdated()
 }
 
-func (u *gtkUI) SaveConfiguration() {
-	u.SaveConfig()
-}
-
 func (u *gtkUI) IQReceived(iq string) {
 	u.Debug(fmt.Sprintf("received iq: %v\n", iq))
 	//TODO
@@ -449,11 +431,11 @@ func (u *gtkUI) RosterReceived(s *session.Session) {
 }
 
 func (u *gtkUI) disconnect(account *account) {
-	account.Session.Close()
-	u.window.Emit(account.DisconnectedSignal.String())
+	account.session.Close()
+	u.window.Emit(account.disconnectedSignal.String())
 }
 
-func (u *gtkUI) ensureConfigHasKey(c *config.Config) {
+func (u *gtkUI) ensureConfigHasKey(c *config.Account) {
 	u.Debug(fmt.Sprintf("[%s] ensureConfigHasKey()\n", c.Account))
 
 	if len(c.PrivateKey) == 0 {
@@ -469,19 +451,19 @@ func (u *gtkUI) ensureConfigHasKey(c *config.Config) {
 func (u *gtkUI) connect(account *account) {
 	u.roster.connecting()
 	connectFn := func(password string) {
-		err := account.Session.Connect(password, nil)
+		err := account.session.Connect(password, nil)
 		if err != nil {
-			u.window.Emit(account.DisconnectedSignal.String())
+			u.window.Emit(account.disconnectedSignal.String())
 			return
 		}
 
-		u.window.Emit(account.ConnectedSignal.String())
+		u.window.Emit(account.connectedSignal.String())
 	}
 
-	if len(account.Password) == 0 {
+	if len(account.session.CurrentAccount.Password) == 0 {
 		u.askForPassword(connectFn)
 		return
 	}
 
-	go connectFn(account.Password)
+	go connectFn(account.session.CurrentAccount.Password)
 }

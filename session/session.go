@@ -36,8 +36,9 @@ type Session struct {
 	Conversations   map[string]*otr3.Conversation
 	OtrEventHandler map[string]*event.OtrEventHandler
 
-	PrivateKey *otr3.PrivateKey
-	Config     *config.Config
+	PrivateKey     *otr3.PrivateKey
+	Config         *config.Accounts
+	CurrentAccount *config.Account
 
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
@@ -55,9 +56,10 @@ type Session struct {
 }
 
 // NewSession creates a new session from the given config
-func NewSession(c *config.Config) *Session {
+func NewSession(c *config.Accounts, cu *config.Account) *Session {
 	s := &Session{
-		Config: c,
+		Config:         c,
+		CurrentAccount: cu,
 
 		R:               roster.New(),
 		Conversations:   make(map[string]*otr3.Conversation),
@@ -66,7 +68,7 @@ func NewSession(c *config.Config) *Session {
 		LastActionTime:  time.Now(),
 	}
 
-	s.PrivateKey.Parse(c.PrivateKey)
+	s.PrivateKey.Parse(cu.PrivateKey)
 
 	return s
 }
@@ -130,12 +132,12 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 		s.SessionEventHandler.SubscriptionRequest(s, xmpp.RemoveResourceFromJid(stanza.From))
 	case "unavailable":
 		if s.R.PeerBecameUnavailable(stanza.From) &&
-			!s.Config.HideStatusUpdates {
+			!s.CurrentAccount.HideStatusUpdates {
 			s.SessionEventHandler.ProcessPresence(stanza.From, stanza.To, stanza.Show, stanza.Status, true)
 		}
 	case "":
 		if s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status) &&
-			!s.Config.HideStatusUpdates {
+			!s.CurrentAccount.HideStatusUpdates {
 			s.SessionEventHandler.ProcessPresence(stanza.From, stanza.To, stanza.Show, stanza.Status, false)
 		}
 	case "subscribed":
@@ -219,7 +221,7 @@ func (s *Session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
 			{
 				Category: "client",
 				Type:     "pc",
-				Name:     s.Config.Account,
+				Name:     s.CurrentAccount.Account,
 			},
 		},
 	}
@@ -238,7 +240,7 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
 	// No, a get should likely not even arrive here
 	// TODO: we should deal with "ask" attributes here
 
-	if len(stanza.From) > 0 && xmpp.RemoveResourceFromJid(stanza.From) != s.Config.Account {
+	if len(stanza.From) > 0 && !s.CurrentAccount.Is(stanza.From) {
 		s.warn("Ignoring roster IQ from bad address: " + stanza.From)
 		return nil
 	}
@@ -313,14 +315,19 @@ func (s *Session) otrEnded(uid string) {
 	s.SessionEventHandler.OTREnded(uid)
 }
 
+// SaveConfiguration will save the current configuration to the expected filename
+func (s *Session) SaveConfiguration() {
+	s.Config.Save()
+}
+
 func (s *Session) newConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKey(s.PrivateKey)
 
-	hadInstanceTag := s.Config.InstanceTag != 0
-	s.Config.InstanceTag = conversation.InitializeInstanceTag(s.Config.InstanceTag)
+	hadInstanceTag := s.CurrentAccount.InstanceTag != 0
+	s.CurrentAccount.InstanceTag = conversation.InitializeInstanceTag(s.CurrentAccount.InstanceTag)
 	if !hadInstanceTag {
-		s.SessionEventHandler.SaveConfiguration()
+		s.SaveConfiguration()
 	}
 
 	//TODO: review this conf
@@ -329,7 +336,7 @@ func (s *Session) newConversation(peer string) *otr3.Conversation {
 	conversation.Policies.SendWhitespaceTag()
 	conversation.Policies.WhitespaceStartAKE()
 
-	if s.Config.ShouldEncryptTo(xmpp.RemoveResourceFromJid(peer)) {
+	if s.CurrentAccount.ShouldEncryptTo(peer) {
 		conversation.Policies.RequireEncryption()
 	}
 
@@ -432,7 +439,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		// their buddy has ended a session, which they have also ended, and they
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
-		if s.Config.OTRAutoTearDown {
+		if s.CurrentAccount.OTRAutoTearDown {
 			if s.Conversations[from] == nil {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
 				break
@@ -457,9 +464,9 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	case event.SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
-		if len(s.Config.UserIDForFingerprint(fpr)) == 0 {
-			s.Config.AddFingerprint(fpr, from)
-			s.SessionEventHandler.SaveConfiguration()
+		if len(s.CurrentAccount.UserIDForFingerprint(fpr)) == 0 {
+			s.CurrentAccount.AddFingerprint(fpr, from)
+			s.SaveConfiguration()
 		}
 	case event.SMPFailed:
 		s.alert(fmt.Sprintf("Authentication with %s failed", from))
@@ -636,7 +643,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 
 	s.ConnStatus = CONNECTING
 
-	conn, err := config.NewXMPPConn(s.Config, password, registerCallback, newLogger())
+	conn, err := config.NewXMPPConn(s.CurrentAccount, password, registerCallback, newLogger())
 	if err != nil {
 		s.alert(err.Error())
 		s.ConnStatus = DISCONNECTED

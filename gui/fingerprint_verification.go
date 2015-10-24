@@ -14,7 +14,7 @@ func verifyFingerprintDialog(account *account, uid string) {
 	vbox, _ := dialog.GetContentArea()
 
 	//TODO: errors
-	conversation := account.GetConversationWith(uid)
+	conversation := account.session.GetConversationWith(uid)
 	fpr := conversation.GetTheirKey().DefaultFingerprint()
 
 	// message copied from libpurple
@@ -24,7 +24,7 @@ func verifyFingerprintDialog(account *account, uid string) {
 	Purported fingerprint for %[3]s: %[4]x
 
 	Is this the verifiably correct fingerprint for %[3]s?
-	`), account.Config.Account, account.Session.PrivateKey.DefaultFingerprint(), uid, fpr)
+	`), account.session.CurrentAccount.Account, account.session.PrivateKey.DefaultFingerprint(), uid, fpr)
 	l, _ := gtk.LabelNew(message)
 	vbox.Add(l)
 
@@ -41,7 +41,7 @@ func verifyFingerprintDialog(account *account, uid string) {
 		}
 
 		//TODO: error
-		account.configManager.Save()
+		account.session.SaveConfiguration()
 	})
 
 	dialog.ShowAll()

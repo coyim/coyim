@@ -13,6 +13,8 @@ var (
 	scannedForTor      = false
 )
 
+// TODO: set up Tor config correctly here, instead of from session
+
 func detectTor() string {
 	if scannedForTor {
 		return detectedTorAddress

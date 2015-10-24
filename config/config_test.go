@@ -59,16 +59,15 @@ func (s *ConfigXmppSuite) TestParseYes(c *C) {
 	c.Assert(ParseYes("anything"), Equals, false)
 }
 
-func (s *ConfigXmppSuite) TestSerializeMultiAccountConfig(c *C) {
+func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 	expected := `{
 	"Accounts": [
 		{
 			"Account": "bob@riseup.net",
 			"PrivateKey": null,
 			"KnownFingerprints": null,
-			"Bell": false,
 			"HideStatusUpdates": false,
-			"UseTor": true,
+			"RequireTor": true,
 			"OTRAutoTearDown": false,
 			"OTRAutoAppendTag": false,
 			"OTRAutoStartSession": false,
@@ -78,24 +77,24 @@ func (s *ConfigXmppSuite) TestSerializeMultiAccountConfig(c *C) {
 			"Account": "bob@riseup.net",
 			"PrivateKey": null,
 			"KnownFingerprints": null,
-			"Bell": false,
 			"HideStatusUpdates": false,
-			"UseTor": false,
+			"RequireTor": false,
 			"OTRAutoTearDown": false,
 			"OTRAutoAppendTag": false,
 			"OTRAutoStartSession": false
 		}
-	]
+	],
+	"Bell": false
 }`
 
-	conf := MultiAccount{
-		Accounts: []Config{
-			Config{
+	conf := Accounts{
+		Accounts: []*Account{
+			&Account{
 				Account:       "bob@riseup.net",
-				UseTor:        true,
+				RequireTor:    true,
 				AlwaysEncrypt: true,
 			},
-			Config{
+			&Account{
 				Account: "bob@riseup.net",
 			},
 		},
@@ -106,38 +105,7 @@ func (s *ConfigXmppSuite) TestSerializeMultiAccountConfig(c *C) {
 	c.Assert(string(contents), Equals, expected)
 }
 
-func (s *ConfigXmppSuite) TestParseMultiAccount(c *C) {
-	multiConf := &MultiAccount{
-		Accounts: []Config{
-			Config{
-				Account:           "alice@riseup.net",
-				HideStatusUpdates: true,
-				OTRAutoTearDown:   true,
-				OTRAutoAppendTag:  true,
-			},
-		},
-	}
-
-	singleConf := &Config{
-		Account:       "bob@riseup.net",
-		Bell:          true,
-		UseTor:        true,
-		AlwaysEncrypt: true,
-	}
-
-	multiConfFile, _ := json.Marshal(multiConf)
-	singleConfFile, _ := json.Marshal(singleConf)
-
-	conf, err := parseMultiAccount([]byte(singleConfFile))
-	c.Assert(err, IsNil)
-	c.Assert(conf.Accounts[0], DeepEquals, *singleConf)
-
-	conf, err = parseMultiAccount([]byte(multiConfFile))
-	c.Assert(err, IsNil)
-	c.Assert(conf, DeepEquals, multiConf)
-}
-
 func (s *ConfigXmppSuite) TestFindConfigFile(c *C) {
-	conf := FindConfigFile()
+	conf := findConfigFile()
 	c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json")
 }

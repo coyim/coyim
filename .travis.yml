@@ -4,7 +4,6 @@ language: go
 
 go:
   - tip
-  - 1.5
   - 1.4.2
 
 matrix:
@@ -15,12 +14,8 @@ matrix:
     - go: 1.5
       env: DEPLOY=true
       os: osx
-  exclude:
-    - env: DEPLOY=true
-      env: TRAVIS_BRANCH=master
   allow_failures:
     - os: osx
-    - env: DEPLOY=true
   fast_finish: true
 
 before_install: ci/install-deps-${TRAVIS_OS_NAME:-linux}

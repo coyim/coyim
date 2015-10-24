@@ -378,7 +378,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	}
 
 	//TODO: Add a more general solution to XEP's
-	if len(stanza.Body) == 0 && len(stanza.Extension) > 0 {
+	if len(stanza.Body) == 0 && len(stanza.Extensions) > 0 {
 		//Extension only stanza
 		return
 	}

@@ -8,9 +8,11 @@ package xmpp
 
 import "encoding/xml"
 
-type AnyHolder struct {
+// Extensions implements generic XEPs.
+type Extensions []*Extension
+type Extension struct {
 	XMLName xml.Name
-	XML     string `xml:",innerxml"`
+	Body    string `xml:",innerxml"`
 }
 
 // ClientMessage implements RFC 3921  B.1  jabber:client
@@ -28,12 +30,7 @@ type ClientMessage struct {
 	Thread  string `xml:"thread"`
 	Delay   *Delay `xml:"delay,omitempty"`
 
-	// TODO: we should name this according to XEP-0001
-	// https://xmpp.org/extensions/xep-0001.html
-	// The idea, for now is being able to identify the extension tag name,
-	// and having its content as verbatim in the XML attribute. This way, extension
-	// implementers can unmarshal it to a struct on their own.
-	Extension []AnyHolder `xml:",any"`
+	Extensions `xml:",any,omitempty"`
 }
 
 // ClientCaps contains information about client capabilities

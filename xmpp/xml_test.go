@@ -68,20 +68,19 @@ func (s *XMLXmppSuite) Test_ClientMesage_unmarshalsXMPPExtensions(c *C) {
 	</message>
 	`
 
-	nv := reflect.New(reflect.TypeOf(ClientMessage{})).Interface()
-	err := xml.Unmarshal([]byte(data), &nv)
+	v := &ClientMessage{}
+	err := xml.Unmarshal([]byte(data), v)
 	c.Assert(err, Equals, nil)
 
-	v, _ := nv.(*ClientMessage)
 	c.Assert(v.ID, Equals, "coyim1234")
 	c.Assert(v.From, Equals, "bernardo@shakespeare.lit/pda")
 	c.Assert(v.To, Equals, "francisco@shakespeare.lit/elsinore")
 	c.Assert(v.Type, Equals, "chat")
-	c.Assert(v.Extension, DeepEquals, []AnyHolder{
-		AnyHolder{XMLName: xml.Name{Space: "http://jabber.org/protocol/chatstates", Local: "composing"}},
-		AnyHolder{
+	c.Assert(v.Extensions, DeepEquals, Extensions{
+		&Extension{XMLName: xml.Name{Space: "http://jabber.org/protocol/chatstates", Local: "composing"}},
+		&Extension{
 			XMLName: xml.Name{Space: "jabber:x:event", Local: "x"},
-			XML:     "\n\t    <offline/>\n\t\t\t<delivered/>\n\t\t\t<composing/>\n\t\t",
+			Body:    "\n\t    <offline/>\n\t\t\t<delivered/>\n\t\t\t<composing/>\n\t\t",
 		},
 	})
 }

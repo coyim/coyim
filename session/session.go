@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
 	"os/exec"
 	"time"
@@ -26,9 +27,10 @@ const (
 
 // Session contains information about one specific connection
 type Session struct {
-	Conn       *xmpp.Conn
-	R          *roster.List
-	ConnStatus connStatus
+	Conn             *xmpp.Conn
+	ConnectionLogger io.Writer
+	R                *roster.List
+	ConnStatus       connStatus
 
 	// conversations maps from a JID (without the resource) to an OTR
 	// conversation. (Note that unencrypted conversations also pass through
@@ -642,8 +644,11 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	}
 
 	s.ConnStatus = CONNECTING
+	if s.ConnectionLogger == nil {
+		s.ConnectionLogger = newLogger()
+	}
 
-	conn, err := config.NewXMPPConn(s.CurrentAccount, password, registerCallback, newLogger())
+	conn, err := config.NewXMPPConn(s.CurrentAccount, password, registerCallback, s.ConnectionLogger)
 	if err != nil {
 		s.alert(err.Error())
 		s.ConnStatus = DISCONNECTED

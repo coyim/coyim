@@ -110,21 +110,16 @@ func (c *cliUI) LoadConfig(configFile string) error {
 		registerCallback = c.RegisterCallback
 	}
 
-	//TODO replace this by session.Connect()
-	conn, err := config.NewXMPPConn(account, password, registerCallback, logger)
-	if err != nil {
-		c.Alert(err.Error())
-		return err
-	}
-
 	//TODO support one session per account
 	c.session = session.NewSession(accounts, account)
-	c.session.Conn = conn
-	c.session.ConnStatus = session.CONNECTED
 	c.session.SessionEventHandler = c
 	c.session.Subscribe(c.events)
 
-	info(c.term, fmt.Sprintf("Your fingerprint is %x", c.session.PrivateKey.DefaultFingerprint()))
+	c.session.ConnectionLogger = logger
+	if err := c.session.Connect(password, registerCallback); err != nil {
+		c.Alert(err.Error())
+		return err
+	}
 
 	return nil
 }
@@ -132,11 +127,18 @@ func (c *cliUI) LoadConfig(configFile string) error {
 //TODO: This should receive something telling which Session/Config should be terminated if we have multiple accounts connected
 func (c *cliUI) Disconnected() {}
 
+func (c *cliUI) quit() {
+	c.session.Close()
+	c.terminate <- true
+}
+
 func (c *cliUI) observeAccountEvents() {
 	//TODO: check for channel close
 	for ev := range c.events {
 		switch ev.EventType {
 		case session.Connected:
+			info(c.term, fmt.Sprintf("Your fingerprint is %x", ev.Session.PrivateKey.DefaultFingerprint()))
+
 		case session.Disconnected:
 			c.terminate <- true
 		}
@@ -145,12 +147,6 @@ func (c *cliUI) observeAccountEvents() {
 
 func (c *cliUI) Loop() {
 	go c.observeAccountEvents()
-
-	//TODO: remove me as soon as cli uses Session.Connect()
-	go c.session.WatchTimeout()
-	go c.session.WatchRosterEvents()
-	go c.session.WatchStanzas()
-
 	go c.WatchRosterEdits()
 	go c.WatchCommands()
 
@@ -619,7 +615,7 @@ func (c *cliUI) WatchRosterEdits() {
 }
 
 func (c *cliUI) WatchCommands() {
-	defer c.Disconnected()
+	defer c.quit()
 
 	commandChan := make(chan interface{})
 	go c.input.processCommands(commandChan)
@@ -642,16 +638,6 @@ CommandLoop:
 			s.LastActionTime = time.Now()
 			switch cmd := cmd.(type) {
 			case quitCommand:
-				for to, conversation := range s.Conversations {
-					msgs, err := conversation.End()
-					if err != nil {
-						//TODO: error handle
-						panic("this should not happen")
-					}
-					for _, msg := range msgs {
-						s.Conn.Send(to, string(msg))
-					}
-				}
 				break CommandLoop
 			case versionCommand:
 				replyChan, cookie, err := s.Conn.SendIQ(cmd.User, "get", xmpp.VersionQuery{})

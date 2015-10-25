@@ -5,6 +5,7 @@ import "sync"
 type Event struct {
 	EventType
 	*Session
+	From string
 }
 
 type EventType int
@@ -29,14 +30,25 @@ func (s *Session) Subscribe(c chan<- Event) {
 	subscribers.subs = append(subscribers.subs, c)
 }
 
+func publishEvent(c chan<- Event, e Event) {
+	//prevents from blocking the publisher if any subscriber is not listening to the channel
+	go func(subscriber chan<- Event) {
+		subscriber <- e
+	}(c)
+}
+
 func (s *Session) publish(e EventType) {
+	s.publishEvent(Event{
+		EventType: e,
+	})
+}
+
+func (s *Session) publishEvent(e Event) {
 	subscribers.RLock()
 	defer subscribers.RUnlock()
 
 	for _, c := range subscribers.subs {
-		//prevents from blocking the publisher if any subscriber is not listening to the channel
-		go func(subscriber chan<- Event) {
-			subscriber <- Event{e, s}
-		}(c)
+		e.Session = s
+		publishEvent(c, e)
 	}
 }

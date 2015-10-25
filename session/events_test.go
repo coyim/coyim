@@ -20,7 +20,11 @@ func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
 
 	select {
 	case e := <-subs:
-		c.Assert(e, DeepEquals, Event{Connected, session})
+		c.Assert(e, DeepEquals, Event{
+			EventType: Connected,
+			Session:   session,
+			From:      "",
+		})
 	case <-time.After(1 * time.Second):
 		c.Error("Did not receive expected notification")
 	}
@@ -29,7 +33,11 @@ func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
 
 	select {
 	case e := <-subs:
-		c.Assert(e, DeepEquals, Event{Disconnected, session})
+		c.Assert(e, DeepEquals, Event{
+			EventType: Disconnected,
+			Session:   session,
+			From:      "",
+		})
 	case <-time.After(1 * time.Second):
 		c.Error("Did not receive expected notification")
 	}

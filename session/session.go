@@ -653,7 +653,6 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 		s.alert(err.Error())
 		s.ConnStatus = DISCONNECTED
 		s.publish(Disconnected)
-		s.SessionEventHandler.Disconnected()
 
 		return err
 	}
@@ -753,5 +752,4 @@ func (s *Session) Close() {
 
 	s.ConnStatus = DISCONNECTED
 	s.publish(Disconnected)
-	s.SessionEventHandler.Disconnected()
 }

@@ -209,12 +209,6 @@ func (c *cliUI) IQReceived(uid string) {
 	c.input.addUser(uid)
 }
 
-func (c *cliUI) RosterReceived(s *session.Session) {
-	for _, entry := range s.R.ToSlice() {
-		c.input.addUser(entry.Jid)
-	}
-}
-
 func (c *cliUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 
 	var line []byte

@@ -13,7 +13,6 @@ type EventHandler interface {
 	Info(string)
 	Warn(string)
 	Alert(string)
-	RosterReceived(*Session)
 	IQReceived(uid string)
 	NewOTRKeys(from string, conversation *otr3.Conversation)
 	OTREnded(uid string)

@@ -1,20 +1,23 @@
 package gui
 
-import "github.com/twstrike/coyim/session"
+import (
+	"github.com/gotk3/gotk3/glib"
+	"github.com/twstrike/coyim/session"
+)
 
 func (u *gtkUI) observeAccountEvents() {
 	//TODO: check for channel close
 	for ev := range u.events {
+		account := u.findAccountForSession(ev.Session)
+
 		switch ev.EventType {
 		case session.Connected:
-			account := u.findAccountForSession(ev.Session)
 			if account == nil {
 				return
 			}
 
 			u.window.Emit(account.connectedSignal.String())
 		case session.Disconnected:
-			account := u.findAccountForSession(ev.Session)
 			if account != nil {
 				u.window.Emit(account.disconnectedSignal.String())
 			}
@@ -26,6 +29,17 @@ func (u *gtkUI) observeAccountEvents() {
 			}
 
 			u.roster.disconnected()
+		case session.RosterReceived:
+			if account == nil {
+				return
+			}
+
+			u.roster.update(account, ev.Session.R)
+
+			glib.IdleAdd(func() bool {
+				u.roster.redraw()
+				return false
+			})
 		}
 	}
 }

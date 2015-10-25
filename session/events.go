@@ -12,6 +12,7 @@ type EventType int
 const (
 	Disconnected EventType = iota
 	Connected
+	RosterReceived
 )
 
 var subscribers = struct {

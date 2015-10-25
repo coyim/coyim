@@ -53,8 +53,6 @@ type Session struct {
 
 	timeoutTicker *time.Ticker
 	rosterCookie  xmpp.Cookie
-
-	Account interface{}
 }
 
 // NewSession creates a new session from the given config
@@ -210,7 +208,7 @@ func (s *Session) WatchStanzas() {
 }
 
 func (s *Session) rosterReceived() {
-	s.SessionEventHandler.RosterReceived(s)
+	s.publish(RosterReceived)
 }
 
 func (s *Session) iqReceived(uid string) {
@@ -748,7 +746,7 @@ func (s *Session) Close() {
 	//TODO Should we hide all contacts when the account is disconnected?
 	// It wont show a "please connect to view your roster" message
 	s.R.Clear()
-	s.SessionEventHandler.RosterReceived(s)
+	s.rosterReceived() //Why?
 
 	s.ConnStatus = DISCONNECTED
 	s.publish(Disconnected)

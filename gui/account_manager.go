@@ -87,7 +87,6 @@ func newAccount(conf *config.Accounts, currentConf *config.Account) *account {
 		connectedSignal:    c,
 		disconnectedSignal: d,
 	}
-	a.session.Account = a
 
 	return a
 }

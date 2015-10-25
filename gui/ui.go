@@ -88,14 +88,6 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 	return nil
 }
 
-func (u *gtkUI) findAccountForSession(s *session.Session) *account {
-	a, ok := s.Account.(*account)
-	if ok {
-		return a
-	}
-	return nil
-}
-
 func (u *gtkUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 	account := u.findAccountForSession(s)
 	if account == nil {
@@ -387,21 +379,6 @@ func (u *gtkUI) Unsubscribe(account, peer string) {
 func (u *gtkUI) IQReceived(iq string) {
 	u.Debug(fmt.Sprintf("received iq: %v\n", iq))
 	//TODO
-}
-
-func (u *gtkUI) RosterReceived(s *session.Session) {
-	account := u.findAccountForSession(s)
-	if account == nil {
-		//TODO error
-		return
-	}
-
-	u.roster.update(account, s.R)
-
-	glib.IdleAdd(func() bool {
-		u.roster.redraw()
-		return false
-	})
 }
 
 func (u *gtkUI) disconnect(account *account) {

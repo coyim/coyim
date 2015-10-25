@@ -78,9 +78,6 @@ func (u *gtkUI) SaveConfig() error {
 	return nil
 }
 
-//TODO: remove me
-func (u *gtkUI) Disconnected() {}
-
 func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {
 	//TODO: should open a registration window
 	fmt.Println("TODO")
@@ -335,8 +332,6 @@ func (u *gtkUI) ProcessPresence(from, to, show, showStatus string, gone bool) {
 	u.roster.presenceUpdated(account, xmpp.RemoveResourceFromJid(from), show, showStatus, gone)
 
 }
-func (u *gtkUI) IQReceived(iq string) {}
-
 func (u *gtkUI) disconnect(account *account) {
 	account.session.Close()
 }

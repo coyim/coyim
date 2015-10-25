@@ -124,9 +124,6 @@ func (c *cliUI) LoadConfig(configFile string) error {
 	return nil
 }
 
-//TODO: This should receive something telling which Session/Config should be terminated if we have multiple accounts connected
-func (c *cliUI) Disconnected() {}
-
 func (c *cliUI) quit() {
 	c.session.Close()
 	c.terminate <- true
@@ -193,8 +190,6 @@ func (c *cliUI) ProcessPresence(from, to, show, status string, gone bool) {
 	line = append(line, '\n')
 	c.term.Write(line)
 }
-
-func (c *cliUI) IQReceived(uid string) {}
 
 func (c *cliUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 

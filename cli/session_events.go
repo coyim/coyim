@@ -23,6 +23,10 @@ func (c *cliUI) observeSessionEvents() {
 			c.input.addUser(ev.From)
 		case session.OTREnded:
 			c.input.SetPromptForTarget(ev.From, false)
+		case session.OTRNewKeys:
+			uid := ev.From
+			c.input.SetPromptForTarget(uid, true)
+			c.printConversationInfo(uid, ev.Session.GetConversationWith(uid))
 		}
 	}
 }

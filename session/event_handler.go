@@ -1,10 +1,6 @@
 package session
 
-import (
-	"time"
-
-	"github.com/twstrike/otr3"
-)
+import "time"
 
 // EventHandler represents the main notifications that the session can emit
 // It's really more an observer than an even handler
@@ -13,7 +9,6 @@ type EventHandler interface {
 	Info(string)
 	Warn(string)
 	Alert(string)
-	NewOTRKeys(from string, conversation *otr3.Conversation)
 	MessageReceived(s *Session, from string, timestamp time.Time, encrypted bool, message []byte)
 	ProcessPresence(from, to, show, status string, gone bool)
 	SubscriptionRequest(s *Session, uid string)

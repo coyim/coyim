@@ -311,7 +311,12 @@ func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 }
 
 func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
-	s.SessionEventHandler.NewOTRKeys(from, conversation)
+	s.info(fmt.Sprintf("New OTR session with %s established", from))
+
+	s.publishEvent(Event{
+		EventType: OTRNewKeys,
+		From:      from,
+	})
 }
 
 func (s *Session) otrEnded(uid string) {
@@ -433,7 +438,6 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	change := eh.ConsumeSecurityChange()
 	switch change {
 	case event.NewKeys:
-		s.info(fmt.Sprintf("New OTR session with %s established", from))
 		s.newOTRKeys(from, conversation)
 	case event.ConversationEnded:
 		s.otrEnded(from)

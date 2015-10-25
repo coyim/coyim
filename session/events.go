@@ -16,6 +16,7 @@ const (
 	RosterReceived
 	IQReceived
 	OTREnded
+	OTRNewKeys
 )
 
 var subscribers = struct {

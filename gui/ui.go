@@ -97,10 +97,6 @@ func (u *gtkUI) MessageReceived(s *session.Session, from string, timestamp time.
 	u.roster.messageReceived(account, xmpp.RemoveResourceFromJid(from), timestamp, encrypted, message)
 }
 
-func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
-	u.Info(fmt.Sprintf("TODO: notify new keys from %s", uid))
-}
-
 func (u *gtkUI) Debug(m string) {
 	if debugEnabled {
 		fmt.Println(">>> DEBUG", m)

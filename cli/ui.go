@@ -228,11 +228,6 @@ func (c *cliUI) MessageReceived(s *session.Session, from string, timestamp time.
 	c.term.Write(line)
 }
 
-func (c *cliUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
-	c.input.SetPromptForTarget(uid, true)
-	c.printConversationInfo(uid, conversation)
-}
-
 func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversation) {
 	s := c.session
 	term := c.term

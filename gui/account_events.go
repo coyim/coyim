@@ -49,6 +49,10 @@ func (u *gtkUI) observeAccountEvents() {
 		case session.OTREnded:
 			//TODO
 			log.Println("OTR conversation ended with", ev.From)
+		case session.OTRNewKeys:
+			//TODO
+			u.Info(fmt.Sprintf("TODO: notify new keys from %s", ev.From))
+
 		}
 	}
 }

@@ -13,7 +13,6 @@ type EventHandler interface {
 	Info(string)
 	Warn(string)
 	Alert(string)
-	IQReceived(uid string)
 	NewOTRKeys(from string, conversation *otr3.Conversation)
 	OTREnded(uid string)
 	MessageReceived(s *Session, from string, timestamp time.Time, encrypted bool, message []byte)

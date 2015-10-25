@@ -205,9 +205,7 @@ func (c *cliUI) ProcessPresence(from, to, show, status string, gone bool) {
 	c.term.Write(line)
 }
 
-func (c *cliUI) IQReceived(uid string) {
-	c.input.addUser(uid)
-}
+func (c *cliUI) IQReceived(uid string) {}
 
 func (c *cliUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 

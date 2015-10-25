@@ -14,6 +14,7 @@ const (
 	Disconnected EventType = iota
 	Connected
 	RosterReceived
+	IQReceived
 )
 
 var subscribers = struct {

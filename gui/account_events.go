@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/gotk3/gotk3/glib"
 	"github.com/twstrike/coyim/session"
 )
@@ -40,6 +42,9 @@ func (u *gtkUI) observeAccountEvents() {
 				u.roster.redraw()
 				return false
 			})
+		case session.IQReceived:
+			//TODO
+			u.Debug(fmt.Sprintf("received iq: %v\n", ev.From))
 		}
 	}
 }

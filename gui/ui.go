@@ -376,10 +376,7 @@ func (u *gtkUI) Unsubscribe(account, peer string) {
 	u.rosterUpdated()
 }
 
-func (u *gtkUI) IQReceived(iq string) {
-	u.Debug(fmt.Sprintf("received iq: %v\n", iq))
-	//TODO
-}
+func (u *gtkUI) IQReceived(iq string) {}
 
 func (u *gtkUI) disconnect(account *account) {
 	account.session.Close()

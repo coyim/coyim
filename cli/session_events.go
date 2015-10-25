@@ -19,6 +19,8 @@ func (c *cliUI) observeSessionEvents() {
 			for _, entry := range ev.Session.R.ToSlice() {
 				c.input.addUser(entry.Jid)
 			}
+		case session.IQReceived:
+			c.input.addUser(ev.From)
 		}
 	}
 }

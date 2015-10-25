@@ -212,7 +212,10 @@ func (s *Session) rosterReceived() {
 }
 
 func (s *Session) iqReceived(uid string) {
-	s.SessionEventHandler.IQReceived(uid)
+	s.publishEvent(Event{
+		EventType: IQReceived,
+		From:      uid,
+	})
 }
 
 func (s *Session) receivedIQDiscoInfo() xmpp.DiscoveryReply {

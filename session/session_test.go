@@ -89,23 +89,23 @@ func (s *SessionXmppSuite) Test_alert_callsSessionHandlerAlert(c *C) {
 	c.Assert(calledWith, Equals, "hello world3")
 }
 
-func (s *SessionXmppSuite) Test_iqReceived_passesToSessionHandler(c *C) {
-	called := 0
-	calledWith := ""
+func (s *SessionXmppSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
+	observer := make(chan Event)
 
-	sess := &Session{
-		SessionEventHandler: &mockSessionEventHandler{
-			iqReceived: func(v string) {
-				called++
-				calledWith = v
-			},
-		},
-	}
-
+	sess := &Session{}
+	sess.Subscribe(observer)
 	sess.iqReceived("someone@somewhere")
 
-	c.Assert(called, Equals, 1)
-	c.Assert(calledWith, Equals, "someone@somewhere")
+	select {
+	case ev := <-observer:
+		c.Assert(ev, Equals, Event{
+			Session:   sess,
+			EventType: IQReceived,
+			From:      "someone@somewhere",
+		})
+	case <-time.After(1 * time.Second):
+		c.Error("did not receive event")
+	}
 }
 
 func (s *SessionXmppSuite) Test_readMessages_passesStanzaToChannel(c *C) {
@@ -514,27 +514,19 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 		"some@one.org/foo",
 	)
 
-	called := 0
-
 	sess := &Session{
 		Config: &config.Accounts{},
 		CurrentAccount: &config.Account{
 			Account: "some@one.org",
 		},
-		R: roster.New(),
-		SessionEventHandler: &mockSessionEventHandler{
-			iqReceived: func(v string) {
-				called++
-				c.Assert(v, Equals, "romeo@example.net")
-			},
-		},
-		ConnStatus: DISCONNECTED,
+		R:                   roster.New(),
+		SessionEventHandler: &mockSessionEventHandler{},
+		ConnStatus:          DISCONNECTED,
 	}
 	sess.Conn = conn
 
 	sess.WatchStanzas()
 
-	c.Assert(called, Equals, 1)
 	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
 		roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}})})
 }
@@ -558,13 +550,9 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 		CurrentAccount: &config.Account{
 			Account: "some@one.org",
 		},
-		R: roster.New(),
-		SessionEventHandler: &mockSessionEventHandler{
-			iqReceived: func(v string) {
-				called++
-			},
-		},
-		ConnStatus: DISCONNECTED,
+		R:                   roster.New(),
+		SessionEventHandler: &mockSessionEventHandler{},
+		ConnStatus:          DISCONNECTED,
 	}
 	sess.Conn = conn
 

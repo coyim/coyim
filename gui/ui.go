@@ -315,26 +315,6 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	return menubar
 }
 
-func (u *gtkUI) SubscriptionRequest(s *session.Session, from string) {
-	confirmDialog := authorizePresenceSubscriptionDialog(u.window, from)
-
-	glib.IdleAdd(func() bool {
-		responseType := gtk.ResponseType(confirmDialog.Run())
-		switch responseType {
-		case gtk.RESPONSE_YES:
-			s.HandleConfirmOrDeny(from, true)
-		case gtk.RESPONSE_NO:
-			s.HandleConfirmOrDeny(from, false)
-		default:
-			// We got a different response, such as a close of the window. In this case we want
-			// to keep the subscription request open
-		}
-		confirmDialog.Destroy()
-
-		return false
-	})
-}
-
 func (u *gtkUI) rosterUpdated() {
 	glib.IdleAdd(func() bool {
 		u.roster.redraw()

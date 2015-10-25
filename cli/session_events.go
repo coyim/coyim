@@ -27,6 +27,11 @@ func (c *cliUI) observeSessionEvents() {
 			uid := ev.From
 			c.input.SetPromptForTarget(uid, true)
 			c.printConversationInfo(uid, ev.Session.GetConversationWith(uid))
+		case session.SubscriptionRequest:
+			msg := fmt.Sprintf("%[1]s wishes to see when you're online. Use '/confirm %[1]s' to confirm (or likewise with /deny to decline)", ev.From)
+
+			info(c.term, msg)
+			c.input.addUser(ev.From)
 		}
 	}
 }

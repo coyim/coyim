@@ -11,7 +11,6 @@ type EventHandler interface {
 	Alert(string)
 	MessageReceived(s *Session, from string, timestamp time.Time, encrypted bool, message []byte)
 	ProcessPresence(from, to, show, status string, gone bool)
-	SubscriptionRequest(s *Session, uid string)
 	Subscribed(account, peer string)
 	Unsubscribe(account, peer string)
 	RegisterCallback(title, instructions string, fields []interface{}) error

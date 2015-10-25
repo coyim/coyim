@@ -171,11 +171,6 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 	return promptForForm(c.term, user, c.password, title, instructions, fields)
 }
 
-func (c *cliUI) SubscriptionRequest(s *session.Session, from string) {
-	info(c.term, from+" wishes to see when you're online. Use '/confirm "+from+"' to confirm (or likewise with /deny to decline)")
-	c.input.addUser(from)
-}
-
 func (c *cliUI) Subscribed(account, peer string) {
 }
 

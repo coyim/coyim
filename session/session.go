@@ -129,7 +129,11 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
 		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"))
-		s.SessionEventHandler.SubscriptionRequest(s, xmpp.RemoveResourceFromJid(stanza.From))
+
+		s.publishEvent(Event{
+			EventType: SubscriptionRequest,
+			From:      xmpp.RemoveResourceFromJid(stanza.From),
+		})
 	case "unavailable":
 		if s.R.PeerBecameUnavailable(stanza.From) &&
 			!s.CurrentAccount.HideStatusUpdates {

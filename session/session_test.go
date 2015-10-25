@@ -675,25 +675,17 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 		"some@one.org/foo",
 	)
 
-	called := 0
-
 	sess := &Session{
-		Config:         &config.Accounts{},
-		CurrentAccount: &config.Account{},
-		R:              roster.New(),
-		SessionEventHandler: &mockSessionEventHandler{
-			subscriptionRequest: func(s *Session, uid string) {
-				called++
-				c.Assert(uid, Equals, "some2@one.org")
-			},
-		},
-		ConnStatus: DISCONNECTED,
+		Config:              &config.Accounts{},
+		CurrentAccount:      &config.Account{},
+		R:                   roster.New(),
+		SessionEventHandler: &mockSessionEventHandler{},
+		ConnStatus:          DISCONNECTED,
 	}
 	sess.Conn = conn
 
 	sess.WatchStanzas()
 
-	c.Assert(called, Equals, 1)
 	v, _ := sess.R.GetPendingSubscribe("some2@one.org")
 	c.Assert(v, Equals, "adf12112")
 }

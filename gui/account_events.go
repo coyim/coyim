@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/session"
 )
 
@@ -52,7 +53,24 @@ func (u *gtkUI) observeAccountEvents() {
 		case session.OTRNewKeys:
 			//TODO
 			u.Info(fmt.Sprintf("TODO: notify new keys from %s", ev.From))
+		case session.SubscriptionRequest:
+			confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From)
 
+			glib.IdleAdd(func() bool {
+				responseType := gtk.ResponseType(confirmDialog.Run())
+				switch responseType {
+				case gtk.RESPONSE_YES:
+					ev.Session.HandleConfirmOrDeny(ev.From, true)
+				case gtk.RESPONSE_NO:
+					ev.Session.HandleConfirmOrDeny(ev.From, false)
+				default:
+					// We got a different response, such as a close of the window. In this case we want
+					// to keep the subscription request open
+				}
+				confirmDialog.Destroy()
+
+				return false
+			})
 		}
 	}
 }

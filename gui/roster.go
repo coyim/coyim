@@ -201,6 +201,7 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 }
 
 //TODO: It should have a mutex
+//Does it need the account? Why not having the session?
 func (r *roster) update(account *account, entries *rosters.List) {
 	r.contacts[account] = entries
 }

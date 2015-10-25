@@ -336,11 +336,6 @@ func (u *gtkUI) ProcessPresence(from, to, show, showStatus string, gone bool) {
 
 }
 
-func (u *gtkUI) Subscribed(account, peer string) {
-	u.Debug(fmt.Sprintf("[%s] Subscribed to %s\n", account, peer))
-	u.rosterUpdated()
-}
-
 func (u *gtkUI) Unsubscribe(account, peer string) {
 	u.Debug(fmt.Sprintf("[%s] Unsubscribed from %s\n", account, peer))
 	u.rosterUpdated()

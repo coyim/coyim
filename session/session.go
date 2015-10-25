@@ -146,7 +146,10 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 		}
 	case "subscribed":
 		s.R.Subscribed(stanza.From)
-		s.SessionEventHandler.Subscribed(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))
+		s.publishEvent(Event{
+			EventType: Subscribed,
+			From:      xmpp.RemoveResourceFromJid(stanza.From),
+		})
 	case "unsubscribe":
 		s.R.Unsubscribed(stanza.From)
 		s.SessionEventHandler.Unsubscribe(xmpp.RemoveResourceFromJid(stanza.To), xmpp.RemoveResourceFromJid(stanza.From))

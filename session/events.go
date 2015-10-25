@@ -20,6 +20,7 @@ const (
 	OTRNewKeys
 
 	SubscriptionRequest
+	Subscribed
 )
 
 var subscribers = struct {

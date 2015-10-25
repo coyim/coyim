@@ -26,14 +26,13 @@ var (
 
 // TODO: this functionality is duplicated
 func (acc *account) authorizeFingerprint(uid string, fingerprint []byte) error {
-	existing := acc.session.CurrentAccount.UserIDForFingerprint(fingerprint)
+	a := acc.session.CurrentAccount
+	existing := a.UserIDForFingerprint(fingerprint)
 	if len(existing) != 0 {
 		return errFingerprintAlreadyAuthorized
 	}
 
-	acc.session.CurrentAccount.KnownFingerprints = append(acc.session.CurrentAccount.KnownFingerprints, config.KnownFingerprint{
-		Fingerprint: fingerprint, UserID: uid,
-	})
+	a.AddFingerprint(fingerprint, uid)
 
 	return nil
 }

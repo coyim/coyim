@@ -820,7 +820,7 @@ CommandLoop:
 					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, existing))
 					break
 				}
-				s.CurrentAccount.KnownFingerprints = append(s.CurrentAccount.KnownFingerprints, config.KnownFingerprint{Fingerprint: fpr, UserID: cmd.User})
+				s.CurrentAccount.AddFingerprint(fpr, cmd.User)
 				s.SaveConfiguration()
 				info(term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:

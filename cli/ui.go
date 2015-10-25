@@ -30,6 +30,7 @@ import (
 
 type cliUI struct {
 	session *session.Session
+	events  chan session.Event
 
 	password string
 	oldState *terminal.State
@@ -71,6 +72,7 @@ func NewCLI() client.Client {
 		RosterEditor: RosterEditor{
 			PendingRosterChan: make(chan *RosterEdit),
 		},
+		events: make(chan session.Event),
 	}
 }
 
@@ -120,6 +122,7 @@ func (c *cliUI) LoadConfig(configFile string) error {
 	c.session.Conn = conn
 	c.session.ConnStatus = session.CONNECTED
 	c.session.SessionEventHandler = c
+	c.session.Subscribe(c.events)
 
 	info(c.term, fmt.Sprintf("Your fingerprint is %x", c.session.PrivateKey.DefaultFingerprint()))
 
@@ -127,11 +130,22 @@ func (c *cliUI) LoadConfig(configFile string) error {
 }
 
 //TODO: This should receive something telling which Session/Config should be terminated if we have multiple accounts connected
-func (c *cliUI) Disconnected() {
-	c.terminate <- true
+func (c *cliUI) Disconnected() {}
+
+func (c *cliUI) observeAccountEvents() {
+	//TODO: check for channel close
+	for ev := range c.events {
+		switch ev.EventType {
+		case session.Connected:
+		case session.Disconnected:
+			c.terminate <- true
+		}
+	}
 }
 
 func (c *cliUI) Loop() {
+	go c.observeAccountEvents()
+
 	//TODO: remove me as soon as cli uses Session.Connect()
 	go c.session.WatchTimeout()
 	go c.session.WatchRosterEvents()

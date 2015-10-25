@@ -79,16 +79,8 @@ func (u *gtkUI) SaveConfig() error {
 	return nil
 }
 
-//TODO: Should it be per session?
-func (u *gtkUI) Disconnected() {
-	for _, acc := range u.accounts {
-		if acc.session.ConnStatus == session.CONNECTED {
-			return
-		}
-	}
-
-	u.roster.disconnected()
-}
+//TODO: remove me
+func (u *gtkUI) Disconnected() {}
 
 func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {
 	//TODO: should open a registration window
@@ -142,6 +134,8 @@ func (u *gtkUI) Alert(m string) {
 }
 
 func (u *gtkUI) Loop() {
+	go u.observeAccountEvents()
+
 	gtk.Init(&os.Args)
 	u.applyStyle()
 	u.mainWindow()
@@ -412,7 +406,6 @@ func (u *gtkUI) RosterReceived(s *session.Session) {
 
 func (u *gtkUI) disconnect(account *account) {
 	account.session.Close()
-	u.window.Emit(account.disconnectedSignal.String())
 }
 
 func (u *gtkUI) ensureConfigHasKey(c *config.Account) {
@@ -435,11 +428,8 @@ func (u *gtkUI) connect(account *account) {
 	connectFn := func(password string) {
 		err := account.session.Connect(password, nil)
 		if err != nil {
-			u.window.Emit(account.disconnectedSignal.String())
 			return
 		}
-
-		u.window.Emit(account.connectedSignal.String())
 	}
 
 	if len(account.session.CurrentAccount.Password) == 0 {

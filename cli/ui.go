@@ -132,21 +132,8 @@ func (c *cliUI) quit() {
 	c.terminate <- true
 }
 
-func (c *cliUI) observeAccountEvents() {
-	//TODO: check for channel close
-	for ev := range c.events {
-		switch ev.EventType {
-		case session.Connected:
-			info(c.term, fmt.Sprintf("Your fingerprint is %x", ev.Session.PrivateKey.DefaultFingerprint()))
-
-		case session.Disconnected:
-			c.terminate <- true
-		}
-	}
-}
-
 func (c *cliUI) Loop() {
-	go c.observeAccountEvents()
+	go c.observeSessionEvents()
 	go c.WatchRosterEdits()
 	go c.WatchCommands()
 

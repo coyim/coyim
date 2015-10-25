@@ -14,7 +14,6 @@ type EventHandler interface {
 	Warn(string)
 	Alert(string)
 	NewOTRKeys(from string, conversation *otr3.Conversation)
-	OTREnded(uid string)
 	MessageReceived(s *Session, from string, timestamp time.Time, encrypted bool, message []byte)
 	ProcessPresence(from, to, show, status string, gone bool)
 	SubscriptionRequest(s *Session, uid string)

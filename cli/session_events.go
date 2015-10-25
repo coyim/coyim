@@ -21,6 +21,8 @@ func (c *cliUI) observeSessionEvents() {
 			}
 		case session.IQReceived:
 			c.input.addUser(ev.From)
+		case session.OTREnded:
+			c.input.SetPromptForTarget(ev.From, false)
 		}
 	}
 }

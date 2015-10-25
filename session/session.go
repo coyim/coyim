@@ -315,7 +315,10 @@ func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
 }
 
 func (s *Session) otrEnded(uid string) {
-	s.SessionEventHandler.OTREnded(uid)
+	s.publishEvent(Event{
+		EventType: OTREnded,
+		From:      uid,
+	})
 }
 
 // SaveConfiguration will save the current configuration to the expected filename

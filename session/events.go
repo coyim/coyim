@@ -15,6 +15,7 @@ const (
 	Connected
 	RosterReceived
 	IQReceived
+	OTREnded
 )
 
 var subscribers = struct {

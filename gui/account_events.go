@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/twstrike/coyim/session"
@@ -45,6 +46,9 @@ func (u *gtkUI) observeAccountEvents() {
 		case session.IQReceived:
 			//TODO
 			u.Debug(fmt.Sprintf("received iq: %v\n", ev.From))
+		case session.OTREnded:
+			//TODO
+			log.Println("OTR conversation ended with", ev.From)
 		}
 	}
 }

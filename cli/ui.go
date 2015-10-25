@@ -233,10 +233,6 @@ func (c *cliUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
 	c.printConversationInfo(uid, conversation)
 }
 
-func (c *cliUI) OTREnded(uid string) {
-	c.input.SetPromptForTarget(uid, false)
-}
-
 func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversation) {
 	s := c.session
 	term := c.term

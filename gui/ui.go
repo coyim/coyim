@@ -3,7 +3,6 @@ package gui
 import (
 	"crypto/rand"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -100,11 +99,6 @@ func (u *gtkUI) MessageReceived(s *session.Session, from string, timestamp time.
 
 func (u *gtkUI) NewOTRKeys(uid string, conversation *otr3.Conversation) {
 	u.Info(fmt.Sprintf("TODO: notify new keys from %s", uid))
-}
-
-func (u *gtkUI) OTREnded(uid string) {
-	//TODO: conversation ended
-	log.Println("OTR conversation ended with", uid)
 }
 
 func (u *gtkUI) Debug(m string) {

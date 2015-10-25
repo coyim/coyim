@@ -898,6 +898,7 @@ func enroll(conf *config.Accounts, currentConf *config.Account, term *terminal.T
 			break
 		} else {
 			info(term, "Generating private key...")
+			//TODO: error handling
 			priv.Generate(rand.Reader)
 			break
 		}

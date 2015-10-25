@@ -37,40 +37,6 @@ func (acc *account) authorizeFingerprint(uid string, fingerprint []byte) error {
 	return nil
 }
 
-func (u *gtkUI) buildAccounts() []*account {
-	accounts := make([]*account, len(u.config.Accounts))
-
-	for i, accountConf := range u.config.Accounts {
-		u.ensureConfigHasKey(accountConf)
-
-		account := newAccount(u.config, accountConf)
-		account.session.SessionEventHandler = u
-		accounts[i] = account
-	}
-
-	return accounts
-}
-
-func newAccount(conf *config.Accounts, currentConf *config.Account) *account {
-	id := currentConf.ID()
-	c, _ := glib.SignalNew(signalName(id, "connected"))
-	d, _ := glib.SignalNew(signalName(id, "disconnected"))
-
-	a := &account{
-		session: session.NewSession(conf, currentConf),
-
-		connectedSignal:    c,
-		disconnectedSignal: d,
-	}
-	a.session.Account = a
-
-	return a
-}
-
-func signalName(id, signal string) string {
-	return "coyim-account-" + signal + "-" + id
-}
-
 func (u *gtkUI) showAddAccountWindow() {
 	account := newAccount(u.config, config.NewAccount())
 	accountDialog(account, func() error {

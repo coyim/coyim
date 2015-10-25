@@ -70,6 +70,8 @@ func NewAccount() *Account {
 	}
 
 	var priv otr3.PrivateKey
+
+	//TODO: error
 	priv.Generate(rand.Reader)
 
 	return &Account{

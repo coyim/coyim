@@ -31,12 +31,14 @@ type gtkUI struct {
 
 	config *config.Accounts
 
-	accounts []*account
+	*accountManager
 }
 
 // NewGTK returns a new client for a GTK ui
 func NewGTK() client.Client {
-	return &gtkUI{}
+	return &gtkUI{
+		accountManager: newAccountManager(),
+	}
 }
 
 func (u *gtkUI) LoadConfig(configFile string) error {
@@ -52,26 +54,14 @@ func (u *gtkUI) LoadConfig(configFile string) error {
 		})
 	}
 
-	u.accounts = u.buildAccounts()
-	return nil
-}
+	u.buildAccounts(u.config)
 
-func (u *gtkUI) addNewAccountsFromConfig() {
-	for _, configAccount := range u.config.Accounts {
-		var found bool
-		for _, acc := range u.accounts {
-			if acc.session.CurrentAccount.ID() == configAccount.ID() {
-				found = true
-				break
-			}
-		}
-
-		if found {
-			continue
-		}
-
-		u.accounts = append(u.accounts, newAccount(u.config, configAccount))
+	//TODO: replace me by observer
+	for _, acc := range u.accounts {
+		acc.session.SessionEventHandler = u
 	}
+
+	return nil
 }
 
 func (u *gtkUI) SaveConfig() error {
@@ -80,7 +70,7 @@ func (u *gtkUI) SaveConfig() error {
 		return err
 	}
 
-	u.addNewAccountsFromConfig()
+	u.addNewAccountsFromConfig(u.config)
 
 	if u.window != nil {
 		u.window.Emit(accountChangedSignal.String())
@@ -111,16 +101,6 @@ func (u *gtkUI) findAccountForSession(s *session.Session) *account {
 	if ok {
 		return a
 	}
-	return nil
-}
-
-func (u *gtkUI) findAccountForUsername(s string) *account {
-	for _, a := range u.accounts {
-		if a.session.CurrentAccount.Is(s) {
-			return a
-		}
-	}
-
 	return nil
 }
 
@@ -441,6 +421,8 @@ func (u *gtkUI) ensureConfigHasKey(c *config.Account) {
 	if len(c.PrivateKey) == 0 {
 		u.Debug(fmt.Sprintf("[%s] - No private key available. Generating...\n", c.Account))
 		var priv otr3.PrivateKey
+
+		//TODO: error
 		priv.Generate(rand.Reader)
 		c.PrivateKey = priv.Serialize()
 		u.SaveConfig()

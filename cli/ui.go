@@ -118,6 +118,7 @@ func (c *cliUI) LoadConfig(configFile string) error {
 	//TODO support one session per account
 	c.session = session.NewSession(accounts, account)
 	c.session.Conn = conn
+	c.session.ConnStatus = session.CONNECTED
 	c.session.SessionEventHandler = c
 
 	info(c.term, fmt.Sprintf("Your fingerprint is %x", c.session.PrivateKey.DefaultFingerprint()))

@@ -2,14 +2,17 @@ package session
 
 import "sync"
 
+// Event represents a XMPP event
 type Event struct {
 	EventType
 	*Session
 	From string
 }
 
+// EventType represents the type of XMPP event
 type EventType int
 
+// XMPP event types
 const (
 	Disconnected EventType = iota
 	Connected
@@ -31,6 +34,7 @@ var subscribers = struct {
 	subs: make([]chan<- Event, 0),
 }
 
+// Subscribe subscribes the observer to XMPP events
 func (s *Session) Subscribe(c chan<- Event) {
 	subscribers.Lock()
 	defer subscribers.Unlock()

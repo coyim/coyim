@@ -272,15 +272,14 @@ func showStatusForDisplay(showStatus string) string {
 
 func extraOfflineStatus(show, showStatus string) string {
 	sshow := showForDisplay(show, true)
-	if sshow != "" {
-		if showStatus != "" {
-			return " (" + sshow + ": " + showStatus + ")"
-		}
-		return " (" + sshow + ")"
-	} else {
+	if sshow == "" {
 		return showStatusForDisplay(showStatus)
 	}
 
+	if showStatus != "" {
+		return " (" + sshow + ": " + showStatus + ")"
+	}
+	return " (" + sshow + ")"
 }
 
 func createStatusMessage(from string, show, showStatus string, gone bool) string {

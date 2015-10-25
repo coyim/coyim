@@ -62,6 +62,7 @@ func (a *Account) ID() string {
 	return a.id
 }
 
+// EnsurePrivateKey generates a private key for the account in case it's missing
 func (a *Account) EnsurePrivateKey() error {
 	log.Printf("[%s] ensureConfigHasKey()\n", a.Account)
 

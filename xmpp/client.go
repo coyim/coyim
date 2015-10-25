@@ -10,6 +10,8 @@ import "encoding/xml"
 
 // Extensions implements generic XEPs.
 type Extensions []*Extension
+
+// Extension represents any XML node not included in the Stanza definition
 type Extension struct {
 	XMLName xml.Name
 	Body    string `xml:",innerxml"`

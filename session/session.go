@@ -129,10 +129,10 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
 		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"))
-		s.publishEvent(Event{
-			EventType: SubscriptionRequest,
-			From:      xmpp.RemoveResourceFromJid(stanza.From),
-		})
+		s.publishPeerEvent(
+			SubscriptionRequest,
+			xmpp.RemoveResourceFromJid(stanza.From),
+		)
 	case "unavailable":
 		if s.R.PeerBecameUnavailable(stanza.From) &&
 			!s.CurrentAccount.HideStatusUpdates {
@@ -145,16 +145,16 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 		}
 	case "subscribed":
 		s.R.Subscribed(stanza.From)
-		s.publishEvent(Event{
-			EventType: Subscribed,
-			From:      xmpp.RemoveResourceFromJid(stanza.From),
-		})
+		s.publishPeerEvent(
+			Subscribed,
+			xmpp.RemoveResourceFromJid(stanza.From),
+		)
 	case "unsubscribe":
 		s.R.Unsubscribed(stanza.From)
-		s.publishEvent(Event{
-			EventType: Unsubscribe,
-			From:      xmpp.RemoveResourceFromJid(stanza.From),
-		})
+		s.publishPeerEvent(
+			Unsubscribe,
+			xmpp.RemoveResourceFromJid(stanza.From),
+		)
 	case "unsubscribed":
 		// Ignore
 	default:
@@ -221,10 +221,7 @@ func (s *Session) rosterReceived() {
 }
 
 func (s *Session) iqReceived(uid string) {
-	s.publishEvent(Event{
-		EventType: IQReceived,
-		From:      uid,
-	})
+	s.publishPeerEvent(IQReceived, uid)
 }
 
 func (s *Session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
@@ -322,17 +319,11 @@ func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
 	s.info(fmt.Sprintf("New OTR session with %s established", from))
 
-	s.publishEvent(Event{
-		EventType: OTRNewKeys,
-		From:      from,
-	})
+	s.publishPeerEvent(OTRNewKeys, from)
 }
 
 func (s *Session) otrEnded(uid string) {
-	s.publishEvent(Event{
-		EventType: OTREnded,
-		From:      uid,
-	})
+	s.publishPeerEvent(OTREnded, uid)
 }
 
 // SaveConfiguration will save the current configuration to the expected filename

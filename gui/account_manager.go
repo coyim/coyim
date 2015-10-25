@@ -10,12 +10,12 @@ import (
 // and this could be in a client package (ui agnostic)
 type accountManager struct {
 	accounts []*account
-	events   chan session.Event
+	events   chan interface{}
 }
 
 func newAccountManager() *accountManager {
 	return &accountManager{
-		events: make(chan session.Event, 10),
+		events: make(chan interface{}, 10),
 	}
 }
 

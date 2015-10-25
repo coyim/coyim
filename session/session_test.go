@@ -90,7 +90,7 @@ func (s *SessionXmppSuite) Test_alert_callsSessionHandlerAlert(c *C) {
 }
 
 func (s *SessionXmppSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
-	observer := make(chan Event)
+	observer := make(chan interface{})
 
 	sess := &Session{}
 	sess.Subscribe(observer)
@@ -98,10 +98,10 @@ func (s *SessionXmppSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 
 	select {
 	case ev := <-observer:
-		c.Assert(ev, Equals, Event{
-			Session:   sess,
-			EventType: IQReceived,
-			From:      "someone@somewhere",
+		c.Assert(ev, Equals, PeerEvent{
+			Session: sess,
+			Type:    IQReceived,
+			From:    "someone@somewhere",
 		})
 	case <-time.After(1 * time.Second):
 		c.Error("did not receive event")

@@ -30,7 +30,7 @@ import (
 
 type cliUI struct {
 	session *session.Session
-	events  chan session.Event
+	events  chan interface{}
 
 	password string
 	oldState *terminal.State
@@ -72,7 +72,7 @@ func NewCLI() client.Client {
 		RosterEditor: RosterEditor{
 			PendingRosterChan: make(chan *RosterEdit),
 		},
-		events: make(chan session.Event),
+		events: make(chan interface{}),
 	}
 }
 

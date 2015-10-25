@@ -11,7 +11,7 @@ type SessionEventSuite struct{}
 var _ = Suite(&SessionEventSuite{})
 
 func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
-	subs := make(chan Event)
+	subs := make(chan interface{})
 
 	session := &Session{}
 	session.Subscribe(subs)
@@ -21,9 +21,8 @@ func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
 	select {
 	case e := <-subs:
 		c.Assert(e, DeepEquals, Event{
-			EventType: Connected,
-			Session:   session,
-			From:      "",
+			Type:    Connected,
+			Session: session,
 		})
 	case <-time.After(1 * time.Second):
 		c.Error("Did not receive expected notification")
@@ -34,9 +33,8 @@ func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
 	select {
 	case e := <-subs:
 		c.Assert(e, DeepEquals, Event{
-			EventType: Disconnected,
-			Session:   session,
-			From:      "",
+			Type:    Disconnected,
+			Session: session,
 		})
 	case <-time.After(1 * time.Second):
 		c.Error("Did not receive expected notification")

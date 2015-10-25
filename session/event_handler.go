@@ -9,7 +9,9 @@ type EventHandler interface {
 	Info(string)
 	Warn(string)
 	Alert(string)
+
 	MessageReceived(s *Session, from string, timestamp time.Time, encrypted bool, message []byte)
 	ProcessPresence(from, to, show, status string, gone bool)
+
 	RegisterCallback(title, instructions string, fields []interface{}) error
 }

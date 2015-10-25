@@ -2,22 +2,35 @@ package session
 
 import "sync"
 
-// Event represents a XMPP event
+// Event represents a Session event
 type Event struct {
-	EventType
+	Type EventType
 	*Session
-	From string
 }
 
-// EventType represents the type of XMPP event
+// EventType represents the type of Session event
 type EventType int
 
-// XMPP event types
+// Session event types
 const (
 	Disconnected EventType = iota
 	Connected
 	RosterReceived
-	IQReceived
+)
+
+// PeerEvent represents an event associated to a peer
+type PeerEvent struct {
+	*Session
+	Type PeerEventType
+	From string
+}
+
+// PeerEventType represents the type of Peer event
+type PeerEventType int
+
+// PeerEvent types
+const (
+	IQReceived PeerEventType = iota
 
 	OTREnded
 	OTRNewKeys
@@ -29,38 +42,46 @@ const (
 
 var subscribers = struct {
 	sync.RWMutex
-	subs []chan<- Event
+	subs []chan<- interface{}
 }{
-	subs: make([]chan<- Event, 0),
+	subs: make([]chan<- interface{}, 0),
 }
 
 // Subscribe subscribes the observer to XMPP events
-func (s *Session) Subscribe(c chan<- Event) {
+func (s *Session) Subscribe(c chan<- interface{}) {
 	subscribers.Lock()
 	defer subscribers.Unlock()
 
 	subscribers.subs = append(subscribers.subs, c)
 }
 
-func publishEvent(c chan<- Event, e Event) {
+func publishEvent(c chan<- interface{}, e interface{}) {
 	//prevents from blocking the publisher if any subscriber is not listening to the channel
-	go func(subscriber chan<- Event) {
+	go func(subscriber chan<- interface{}) {
 		subscriber <- e
 	}(c)
 }
 
 func (s *Session) publish(e EventType) {
 	s.publishEvent(Event{
-		EventType: e,
+		Session: s,
+		Type:    e,
 	})
 }
 
-func (s *Session) publishEvent(e Event) {
+func (s *Session) publishPeerEvent(e PeerEventType, peer string) {
+	s.publishEvent(PeerEvent{
+		Session: s,
+		Type:    e,
+		From:    peer,
+	})
+}
+
+func (s *Session) publishEvent(e interface{}) {
 	subscribers.RLock()
 	defer subscribers.RUnlock()
 
 	for _, c := range subscribers.subs {
-		e.Session = s
 		publishEvent(c, e)
 	}
 }

@@ -75,6 +75,10 @@ func (u *gtkUI) observeAccountEvents() {
 			jid := ev.Session.CurrentAccount.Account
 			u.Debug(fmt.Sprintf("[%s] Subscribed to %s\n", jid, ev.From))
 			u.rosterUpdated()
+		case session.Unsubscribe:
+			jid := ev.Session.CurrentAccount.Account
+			u.Debug(fmt.Sprintf("[%s] Unsubscribed from %s\n", jid, ev.From))
+			u.rosterUpdated()
 		}
 	}
 }

@@ -335,12 +335,6 @@ func (u *gtkUI) ProcessPresence(from, to, show, showStatus string, gone bool) {
 	u.roster.presenceUpdated(account, xmpp.RemoveResourceFromJid(from), show, showStatus, gone)
 
 }
-
-func (u *gtkUI) Unsubscribe(account, peer string) {
-	u.Debug(fmt.Sprintf("[%s] Unsubscribed from %s\n", account, peer))
-	u.rosterUpdated()
-}
-
 func (u *gtkUI) IQReceived(iq string) {}
 
 func (u *gtkUI) disconnect(account *account) {

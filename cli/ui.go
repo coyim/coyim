@@ -171,9 +171,6 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 	return promptForForm(c.term, user, c.password, title, instructions, fields)
 }
 
-func (c *cliUI) Unsubscribe(account, peer string) {
-}
-
 func (c *cliUI) ProcessPresence(from, to, show, status string, gone bool) {
 	from = xmpp.RemoveResourceFromJid(from)
 

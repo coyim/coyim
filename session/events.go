@@ -21,6 +21,7 @@ const (
 
 	SubscriptionRequest
 	Subscribed
+	Unsubscribe
 )
 
 var subscribers = struct {

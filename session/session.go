@@ -647,11 +647,15 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	if err != nil {
 		s.alert(err.Error())
 		s.ConnStatus = DISCONNECTED
+		s.publish(Disconnected)
+		s.SessionEventHandler.Disconnected()
+
 		return err
 	}
 
 	s.Conn = conn
 	s.ConnStatus = CONNECTED
+	s.publish(Connected)
 
 	go s.WatchTimeout()
 	go s.WatchRosterEvents()
@@ -736,12 +740,13 @@ func (s *Session) Close() {
 	s.timeoutTicker.Stop()
 
 	s.Conn.Close()
-	s.ConnStatus = DISCONNECTED
 
 	//TODO Should we hide all contacts when the account is disconnected?
 	// It wont show a "please connect to view your roster" message
 	s.R.Clear()
 	s.SessionEventHandler.RosterReceived(s)
 
+	s.ConnStatus = DISCONNECTED
+	s.publish(Disconnected)
 	s.SessionEventHandler.Disconnected()
 }

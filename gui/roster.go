@@ -164,8 +164,9 @@ func (r *roster) openConversationWindow(account *account, to string) *conversati
 	c, ok := r.conversations[to]
 
 	if !ok {
-		c = newConversationWindow(account, to)
+		c = newConversationWindow(account, to, r.ui)
 		r.ui.connectShortcutsChildWindow(c.win)
+		r.ui.connectShortcutsConversationWindow(c)
 		r.conversations[to] = c
 	}
 

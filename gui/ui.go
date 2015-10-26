@@ -28,6 +28,8 @@ type gtkUI struct {
 	config *config.Accounts
 
 	*accountManager
+
+	displaySettings *displaySettings
 }
 
 // NewGTK returns a new client for a GTK ui
@@ -120,6 +122,7 @@ func (u *gtkUI) initRoster() {
 
 func (u *gtkUI) mainWindow() {
 	u.window, _ = gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
 	u.initRoster()
 
 	menubar := initMenuBar(u)

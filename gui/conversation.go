@@ -18,7 +18,7 @@ type conversationWindow struct {
 	scrollHistory *gtk.ScrolledWindow
 }
 
-func newConversationWindow(account *account, uid string) *conversationWindow {
+func newConversationWindow(account *account, uid string, u *gtkUI) *conversationWindow {
 	des := `
 	<interface>
 	  <object class="GtkWindow" id="conversation">
@@ -118,6 +118,7 @@ func newConversationWindow(account *account, uid string) *conversationWindow {
 	win, _ := builder.GetObject("conversation")
 	history, _ := builder.GetObject("history")
 	scrollHistory, _ := builder.GetObject("historyScroll")
+	messageEntry, _ := builder.GetObject("message")
 
 	conv := &conversationWindow{
 		to:            uid,
@@ -188,6 +189,9 @@ func newConversationWindow(account *account, uid string) *conversationWindow {
 	statusText, _ := gtk.TextTagNew("statusText")
 	statusText.SetProperty("foreground", "#4e9a06")
 	ttable.Add(statusText)
+
+	u.displaySettings.control(&conv.history.Container.Widget)
+	u.displaySettings.control(&messageEntry.(*gtk.Entry).Widget)
 
 	return conv
 }

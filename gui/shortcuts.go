@@ -2,6 +2,14 @@ package gui
 
 import "github.com/gotk3/gotk3/gtk"
 
+func (u *gtkUI) increaseFontSize(w *gtk.Window) {
+	u.displaySettings.increaseFontSize()
+}
+
+func (u *gtkUI) decreaseFontSize(w *gtk.Window) {
+	u.displaySettings.decreaseFontSize()
+}
+
 func (u *gtkUI) closeApplication(w *gtk.Window) {
 	u.quit()
 }
@@ -37,4 +45,10 @@ func (u *gtkUI) connectShortcutsChildWindow(w *gtk.Window) {
 	connectShortcut("<Primary>F4", w, u.closeWindow)
 	connectShortcut("<Alt>F4", w, u.closeApplication)
 	connectShortcut("Escape", w, u.closeWindow)
+}
+
+func (u *gtkUI) connectShortcutsConversationWindow(c *conversationWindow) {
+	// <Primary> maps to Command on OS X, but Control on other platforms
+	connectShortcut("<Primary>plus", c.win, u.increaseFontSize)
+	connectShortcut("<Primary>minus", c.win, u.decreaseFontSize)
 }

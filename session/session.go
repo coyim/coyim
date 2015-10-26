@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os/exec"
+	"sync"
 	"time"
 
 	"github.com/twstrike/coyim/config"
@@ -53,6 +54,11 @@ type Session struct {
 
 	timeoutTicker *time.Ticker
 	rosterCookie  xmpp.Cookie
+
+	subscribers struct {
+		sync.RWMutex
+		subs []chan<- interface{}
+	}
 }
 
 // NewSession creates a new session from the given config

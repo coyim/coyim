@@ -1,7 +1,6 @@
 package session
 
 import (
-	"sync"
 	"time"
 
 	"github.com/twstrike/coyim/xmpp"
@@ -59,19 +58,16 @@ type MessageEvent struct {
 	Encrypted bool
 }
 
-var subscribers = struct {
-	sync.RWMutex
-	subs []chan<- interface{}
-}{
-	subs: make([]chan<- interface{}, 0),
-}
-
 // Subscribe subscribes the observer to XMPP events
 func (s *Session) Subscribe(c chan<- interface{}) {
-	subscribers.Lock()
-	defer subscribers.Unlock()
+	s.subscribers.Lock()
+	defer s.subscribers.Unlock()
 
-	subscribers.subs = append(subscribers.subs, c)
+	if s.subscribers.subs == nil {
+		s.subscribers.subs = make([]chan<- interface{}, 0)
+	}
+
+	s.subscribers.subs = append(s.subscribers.subs, c)
 }
 
 func publishEvent(c chan<- interface{}, e interface{}) {
@@ -97,10 +93,10 @@ func (s *Session) publishPeerEvent(e PeerEventType, peer string) {
 }
 
 func (s *Session) publishEvent(e interface{}) {
-	subscribers.RLock()
-	defer subscribers.RUnlock()
+	s.subscribers.RLock()
+	defer s.subscribers.RUnlock()
 
-	for _, c := range subscribers.subs {
+	for _, c := range s.subscribers.subs {
 		publishEvent(c, e)
 	}
 }

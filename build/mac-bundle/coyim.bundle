@@ -30,7 +30,7 @@
 
     <!-- Comment this out to keep the install names in binaries -->
     <run-install-name-tool/>
- 
+
     <!-- Optionally specify a launcher script to use. If the
          application sets up everything needed itself, like
          environment variable, linker paths, etc, a launcher script is
@@ -39,11 +39,7 @@
     -->
     <launcher-script>${project}/coyim-launcher.sh</launcher-script>
 
-    <!-- Not implemented: Optional runtime, could be python or mono
-         for example.
-    -->
-    <!-- runtime copy="yes">/usr/bin/python</runtime -->
-    <!-- Indicate the active gtk version to use. This is needed only
+  <!-- Indicate the active gtk version to use. This is needed only
          for gtk+-3.0 projects. -->
     <gtk>gtk+-3.0</gtk>
   </meta>
@@ -84,7 +80,7 @@
        want to copy in to the bundle. The "dest" attribute is
        optional, as usual. Bundler will find all translations of that
        library/program under the indicated directory and copy them.-->
-  <translations  name="gtk30">
+  <translations name="gtk30">
     ${prefix}/share/locale
   </translations>
 
@@ -109,12 +105,8 @@
     ${prefix}/share/icons
   </data>
 
-  <!-- Copy icons. Note that the .icns file is an Apple format which
-       contains up to 4 sizes of icon. You can use
-       /Developer/Applications/Utilities/Icon Composer.app to import
-       artwork and create the file. >
   <data dest="${bundle}/Contents/Resources">
-    ${project}/Giggle.icns
-  </data -->
+    ${project}/Coy.icns
+  </data>
 
-  </app-bundle>
+</app-bundle>

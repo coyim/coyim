@@ -10,6 +10,8 @@ OS=${TRAVIS_OS_NAME:-linux}
 if [[ $OS = "osx" ]]; then
   make build-gui
 
+  iconutil -c icns -o build/mac-bundle/Coy.icns build/mac-bundle/coy.iconset
+
   rm -rf ./gtk-mac-bundler
   git clone https://github.com/twstrike/gtk-mac-bundler.git
   make -C gtk-mac-bundler install

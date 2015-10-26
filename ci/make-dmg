@@ -24,8 +24,8 @@ TMP_DMG="/tmp/tmp-$VOL.dmg"
 DMG="bin/${VOL}-${VER}.dmg"
 
 # create temporary disk image and format, ejecting when done
-SIZE=`echo $(du -sk ${FILES}) | cut -d ' ' -f 1`
-SIZE=$((${SIZE}/1000+1))
+SIZE=`echo $(du -sm ${FILES}) | cut -d ' ' -f 1`
+SIZE=$((${SIZE}+5))
 hdiutil create -megabytes ${SIZE} -ov -fs HFS+ -volname "$VOL" -srcfolder ${FILES} "$TMP_DMG" 
 
 # convert to compressed image, delete temp image

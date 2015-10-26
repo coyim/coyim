@@ -78,7 +78,7 @@ func NewCLI() client.Client {
 func (c *cliUI) LoadConfig(configFile string) error {
 	accounts, err := config.LoadOrCreate(configFile)
 	if err != nil {
-		c.Alert(err.Error())
+		c.alert(err.Error())
 		if !enroll(accounts, accounts.AddNewAccount(), c.term) {
 			return errors.New("asked to quit")
 		}
@@ -95,7 +95,7 @@ func (c *cliUI) LoadConfig(configFile string) error {
 			fmt.Sprintf("Password for %s (will not be saved to disk): ", account.Account),
 		)
 		if err != nil {
-			c.Alert(err.Error())
+			c.alert(err.Error())
 			return err
 		}
 	} else {
@@ -116,7 +116,7 @@ func (c *cliUI) LoadConfig(configFile string) error {
 
 	c.session.ConnectionLogger = logger
 	if err := c.session.Connect(password, registerCallback); err != nil {
-		c.Alert(err.Error())
+		c.alert(err.Error())
 		return err
 	}
 
@@ -150,15 +150,15 @@ func (c *cliUI) Debug(m string) {
 	debug(c.term, m)
 }
 
-func (c *cliUI) Info(m string) {
+func (c *cliUI) info(m string) {
 	info(c.term, m)
 }
 
-func (c *cliUI) Warn(m string) {
+func (c *cliUI) warn(m string) {
 	warn(c.term, m)
 }
 
-func (c *cliUI) Alert(m string) {
+func (c *cliUI) alert(m string) {
 	alert(c.term, m)
 }
 
@@ -444,15 +444,15 @@ func promptForForm(term *terminal.Terminal, user, password, title, instructions 
 func (c *cliUI) WatchRosterEdits() {
 	for edit := range c.PendingRosterChan {
 		if !edit.IsComplete {
-			c.Info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
+			c.info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
 			c.PendingRosterEdit = edit
 			continue
 		}
 
 		parsedRoster, err := parseEditedRoster(edit.Contents)
 		if err != nil {
-			c.Alert(err.Error())
-			c.Alert("Please reedit file and run /rostereditdone again")
+			c.alert(err.Error())
+			c.alert("Please reedit file and run /rostereditdone again")
 			continue
 		}
 
@@ -463,7 +463,7 @@ func (c *cliUI) WatchRosterEdits() {
 
 		//DELETE
 		for _, jid := range toDelete {
-			c.Info("Deleting roster entry for " + jid)
+			c.info("Deleting roster entry for " + jid)
 			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:          jid,
@@ -472,7 +472,7 @@ func (c *cliUI) WatchRosterEdits() {
 			})
 
 			if err != nil {
-				c.Alert("Failed to remove roster entry: " + err.Error())
+				c.alert("Failed to remove roster entry: " + err.Error())
 			}
 
 			// Filter out any known fingerprints.
@@ -489,7 +489,7 @@ func (c *cliUI) WatchRosterEdits() {
 
 		//EDIT
 		for _, entry := range toEdit {
-			c.Info("Updating roster entry for " + entry.Jid)
+			c.info("Updating roster entry for " + entry.Jid)
 			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:   entry.Jid,
@@ -499,13 +499,13 @@ func (c *cliUI) WatchRosterEdits() {
 			})
 
 			if err != nil {
-				c.Alert("Failed to update roster entry: " + err.Error())
+				c.alert("Failed to update roster entry: " + err.Error())
 			}
 		}
 
 		//ADD
 		for _, entry := range toAdd {
-			c.Info("Adding roster entry for " + entry.Jid)
+			c.info("Adding roster entry for " + entry.Jid)
 			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:   entry.Jid,
@@ -515,7 +515,7 @@ func (c *cliUI) WatchRosterEdits() {
 			})
 
 			if err != nil {
-				c.Alert("Failed to add roster entry: " + err.Error())
+				c.alert("Failed to add roster entry: " + err.Error())
 			}
 		}
 

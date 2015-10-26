@@ -22,9 +22,28 @@ func (u *gtkUI) observeAccountEvents() {
 			u.handlePresenceEvent(t)
 		case session.MessageEvent:
 			u.handleMessageEvent(t)
+		case session.LogEvent:
+			u.handleLogEvent(t)
 		default:
 			log.Printf("unsupported event %#v\n", t)
 		}
+	}
+}
+
+func (u *gtkUI) handleLogEvent(ev session.LogEvent) {
+	m := ev.Message
+
+	switch ev.Level {
+	case session.Debug:
+		if debugEnabled {
+			fmt.Println(">>> DEBUG", m)
+		}
+	case session.Info:
+		fmt.Println(">>> INFO", m)
+	case session.Warn:
+		fmt.Println(">>> WARN", m)
+	case session.Alert:
+		fmt.Println(">>> ALERT", m)
 	}
 }
 
@@ -90,7 +109,7 @@ func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
 
 	account := u.findAccountForSession(ev.Session)
 	if account == nil {
-		u.Warn("couldn't find account for " + ev.To)
+		//u.Warn("couldn't find account for " + ev.To)
 		return
 	}
 
@@ -113,7 +132,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		log.Println("OTR conversation ended with", ev.From)
 	case session.OTRNewKeys:
 		//TODO
-		u.Info(fmt.Sprintf("TODO: notify new keys from %s", ev.From))
+		log.Printf("TODO: notify new keys from %s", ev.From)
 	case session.SubscriptionRequest:
 		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From)
 

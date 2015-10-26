@@ -3,6 +3,7 @@ package gui
 import (
 	"crypto/rand"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -44,7 +45,8 @@ func (u *gtkUI) LoadConfig(configFile string) error {
 	u.config = accounts
 
 	if err != nil {
-		u.Alert(err.Error())
+		//TODO error
+		log.Printf(err.Error())
 
 		glib.IdleAdd(func() bool {
 			u.showAddAccountWindow()
@@ -87,18 +89,6 @@ func (u *gtkUI) Debug(m string) {
 	if debugEnabled {
 		fmt.Println(">>> DEBUG", m)
 	}
-}
-
-func (u *gtkUI) Info(m string) {
-	fmt.Println(">>> INFO", m)
-}
-
-func (u *gtkUI) Warn(m string) {
-	fmt.Println(">>> WARN", m)
-}
-
-func (u *gtkUI) Alert(m string) {
-	fmt.Println(">>> ALERT", m)
 }
 
 func (u *gtkUI) Loop() {

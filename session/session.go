@@ -79,16 +79,32 @@ func NewSession(c *config.Accounts, cu *config.Account) *Session {
 	return s
 }
 
+func (s *Session) Debug(m string) {
+	s.publishEvent(LogEvent{
+		Level:   Debug,
+		Message: m,
+	})
+}
+
 func (s *Session) info(m string) {
-	s.SessionEventHandler.Info(m)
+	s.publishEvent(LogEvent{
+		Level:   Info,
+		Message: m,
+	})
 }
 
 func (s *Session) warn(m string) {
-	s.SessionEventHandler.Warn(m)
+	s.publishEvent(LogEvent{
+		Level:   Warn,
+		Message: m,
+	})
 }
 
 func (s *Session) alert(m string) {
-	s.SessionEventHandler.Alert(m)
+	s.publishEvent(LogEvent{
+		Level:   Alert,
+		Message: m,
+	})
 }
 
 func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
@@ -131,7 +147,6 @@ func either(l, r string) string {
 }
 
 func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
-	//	s.SessionEventHandler.Debug(fmt.Sprintf("client presence: %#v\n", stanza))
 	switch stanza.Type {
 	case "subscribe":
 		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"))
@@ -383,7 +398,7 @@ func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
 	eh, ok := s.OtrEventHandler[peer]
 	if !ok {
 		eh = new(event.OtrEventHandler)
-		eh.Debugger = s.SessionEventHandler
+		eh.Debugger = s
 		conversation.SetSMPEventHandler(eh)
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)
@@ -447,9 +462,6 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		s.Conn.Send(from, string(msg))
 	}
 
-	//TODO: refactor
-	//This consumes the security change from OtrEventHandler and trigger an event
-	//on the SessionEventHandler. Why not having a single event handler?
 	eh, _ := s.OtrEventHandler[from]
 	change := eh.ConsumeSecurityChange()
 	switch change {

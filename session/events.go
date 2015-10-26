@@ -58,6 +58,20 @@ type MessageEvent struct {
 	Encrypted bool
 }
 
+type LogLevel int
+
+const (
+	Debug LogLevel = iota
+	Info
+	Warn
+	Alert
+)
+
+type LogEvent struct {
+	Level   LogLevel
+	Message string
+}
+
 // Subscribe subscribes the observer to XMPP events
 func (s *Session) Subscribe(c chan<- interface{}) {
 	s.subscribers.Lock()

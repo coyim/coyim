@@ -2,7 +2,10 @@ package session
 
 import (
 	"io"
+	"reflect"
 	"time"
+
+	gocheck "gopkg.in/check.v1"
 
 	"github.com/twstrike/otr3"
 )
@@ -146,4 +149,34 @@ func (iom *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
 	}
 	iom.errCount--
 	return len(p), e
+}
+
+func captureLogsEvents(c <-chan interface{}) (ret []LogEvent) {
+	for {
+		select {
+		case ev := <-c:
+			switch t := ev.(type) {
+			case LogEvent:
+				ret = append(ret, t)
+			default:
+				//ignore
+			}
+		case <-time.After(1 * time.Millisecond):
+			return
+		}
+	}
+
+	return
+}
+
+func assertLogContains(c *gocheck.C, ch <-chan interface{}, exp LogEvent) {
+	logs := captureLogsEvents(ch)
+
+	for _, l := range logs {
+		if reflect.DeepEqual(l, exp) {
+			return
+		}
+	}
+
+	c.Errorf("Could not finr %#v in %#v", exp, logs)
 }

@@ -90,6 +90,19 @@ func (c *cliUI) handleMessageEvent(ev session.MessageEvent) {
 	c.term.Write(line)
 }
 
+func (c *cliUI) handleLogEvent(ev session.LogEvent) {
+	switch ev.Level {
+	case session.Debug:
+		debug(c.term, ev.Message)
+	case session.Info:
+		info(c.term, ev.Message)
+	case session.Warn:
+		warn(c.term, ev.Message)
+	case session.Alert:
+		alert(c.term, ev.Message)
+	}
+}
+
 func (c *cliUI) observeSessionEvents() {
 	//TODO: check for channel close
 	for ev := range c.events {

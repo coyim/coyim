@@ -22,7 +22,7 @@
          app. If you leave out the path, the current directory is
          used. Note the usage of an environment variable here again.
     -->
-    <destination overwrite="yes">${prefix:build}/../bin</destination>
+    <destination overwrite="yes">${prefix:build}/../bin/mac-bundle</destination>
 
     <image>
       <!-- Not implemented yet (DMG image). -->

@@ -1,6 +1,10 @@
 package session
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/twstrike/coyim/xmpp"
+)
 
 // Event represents a Session event
 type Event struct {
@@ -39,6 +43,12 @@ const (
 	Subscribed
 	Unsubscribe
 )
+
+type PresenceEvent struct {
+	*Session
+	*xmpp.ClientPresence
+	Gone bool
+}
 
 var subscribers = struct {
 	sync.RWMutex

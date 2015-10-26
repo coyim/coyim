@@ -168,29 +168,6 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 	return promptForForm(c.term, user, c.password, title, instructions, fields)
 }
 
-func (c *cliUI) ProcessPresence(from, to, show, status string, gone bool) {
-	from = xmpp.RemoveResourceFromJid(from)
-
-	var line []byte
-	line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
-	line = append(line, c.term.Escape.Magenta...)
-	line = append(line, []byte(from)...)
-	line = append(line, ':')
-	line = append(line, c.term.Escape.Reset...)
-	line = append(line, ' ')
-	if gone {
-		line = append(line, []byte("offline")...)
-	} else if len(show) > 0 {
-		line = append(line, []byte(show)...)
-	} else {
-		line = append(line, []byte("online")...)
-	}
-	line = append(line, ' ')
-	line = append(line, []byte(status)...)
-	line = append(line, '\n')
-	c.term.Write(line)
-}
-
 func (c *cliUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 
 	var line []byte

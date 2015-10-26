@@ -134,15 +134,25 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 			xmpp.RemoveResourceFromJid(stanza.From),
 		)
 	case "unavailable":
-		if s.R.PeerBecameUnavailable(stanza.From) &&
-			!s.CurrentAccount.HideStatusUpdates {
-			s.SessionEventHandler.ProcessPresence(stanza.From, stanza.To, stanza.Show, stanza.Status, true)
+		if !s.R.PeerBecameUnavailable(stanza.From) {
+			return true
 		}
+
+		s.publishEvent(PresenceEvent{
+			Session:        s,
+			ClientPresence: stanza,
+			Gone:           true,
+		})
 	case "":
-		if s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status) &&
-			!s.CurrentAccount.HideStatusUpdates {
-			s.SessionEventHandler.ProcessPresence(stanza.From, stanza.To, stanza.Show, stanza.Status, false)
+		if !s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status) {
+			return true
 		}
+
+		s.publishEvent(PresenceEvent{
+			Session:        s,
+			ClientPresence: stanza,
+			Gone:           false,
+		})
 	case "subscribed":
 		s.R.Subscribed(stanza.From)
 		s.publishPeerEvent(

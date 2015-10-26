@@ -319,19 +319,6 @@ func (u *gtkUI) rosterUpdated() {
 	})
 }
 
-func (u *gtkUI) ProcessPresence(from, to, show, showStatus string, gone bool) {
-	u.Debug(fmt.Sprintf("[%s] Presence from %s: show: %s status: %s gone: %v\n", to, from, show, showStatus, gone))
-	u.rosterUpdated()
-
-	account := u.findAccountForUsername(to)
-	if account == nil {
-		u.Warn("couldn't find account for " + to)
-		return
-	}
-
-	u.roster.presenceUpdated(account, xmpp.RemoveResourceFromJid(from), show, showStatus, gone)
-
-}
 func (u *gtkUI) disconnect(account *account) {
 	account.session.Close()
 }

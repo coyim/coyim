@@ -643,26 +643,29 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 		"some@one.org/foo",
 	)
 
-	called := 0
-
 	sess := &Session{
-		Config:         &config.Accounts{},
-		CurrentAccount: &config.Account{},
-		R:              roster.New(),
-		SessionEventHandler: &mockSessionEventHandler{
-			processPresence: func(from, to, show, status string, gone bool) {
-				called++
-				c.Assert(gone, Equals, true)
-			},
-		},
-		ConnStatus: DISCONNECTED,
+		Config:              &config.Accounts{},
+		CurrentAccount:      &config.Account{},
+		R:                   roster.New(),
+		SessionEventHandler: &mockSessionEventHandler{},
+		ConnStatus:          DISCONNECTED,
 	}
 	sess.Conn = conn
 	sess.R.AddOrReplace(roster.PeerWithState("some2@one.org", "somewhere", ""))
 
+	observer := make(chan interface{})
+	sess.Subscribe(observer)
+
 	sess.WatchStanzas()
 
-	c.Assert(called, Equals, 1)
+	select {
+	case ev := <-observer:
+		t := ev.(PresenceEvent)
+		c.Assert(t.Gone, Equals, true)
+	case <-time.After(1 * time.Second):
+		c.Errorf("did not receive event")
+	}
+
 	p, _ := sess.R.Get("some2@one.org")
 	c.Assert(p.Online, Equals, false)
 }
@@ -728,25 +731,28 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 		"some@one.org/foo",
 	)
 
-	called := 0
-
 	sess := &Session{
-		Config:         &config.Accounts{},
-		CurrentAccount: &config.Account{},
-		R:              roster.New(),
-		SessionEventHandler: &mockSessionEventHandler{
-			processPresence: func(from, to, show, status string, gone bool) {
-				called++
-				c.Assert(gone, Equals, false)
-			},
-		},
-		ConnStatus: DISCONNECTED,
+		Config:              &config.Accounts{},
+		CurrentAccount:      &config.Account{},
+		R:                   roster.New(),
+		SessionEventHandler: &mockSessionEventHandler{},
+		ConnStatus:          DISCONNECTED,
 	}
 	sess.Conn = conn
 
+	observer := make(chan interface{})
+	sess.Subscribe(observer)
+
 	sess.WatchStanzas()
 
-	c.Assert(called, Equals, 1)
+	select {
+	case ev := <-observer:
+		t := ev.(PresenceEvent)
+		c.Assert(t.Gone, Equals, false)
+	case <-time.After(1 * time.Second):
+		c.Errorf("did not receive event")
+	}
+
 	st, _, _ := sess.R.StateOf("some2@one.org")
 	c.Assert(st, Equals, "dnd")
 }

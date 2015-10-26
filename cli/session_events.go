@@ -3,8 +3,10 @@ package cli
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/xmpp"
 )
 
 func (c *cliUI) handleSessionEvent(ev session.Event) {
@@ -39,6 +41,34 @@ func (c *cliUI) handlePeerEvent(ev session.PeerEvent) {
 	}
 }
 
+func (c *cliUI) handlePresenceEvent(ev session.PresenceEvent) {
+	if ev.Session.CurrentAccount.HideStatusUpdates {
+		return
+	}
+
+	from := xmpp.RemoveResourceFromJid(ev.From)
+
+	var line []byte
+	line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
+	line = append(line, c.term.Escape.Magenta...)
+	line = append(line, []byte(from)...)
+	line = append(line, ':')
+	line = append(line, c.term.Escape.Reset...)
+	line = append(line, ' ')
+
+	if ev.Gone {
+		line = append(line, []byte("offline")...)
+	} else if len(ev.Show) > 0 {
+		line = append(line, []byte(ev.Show)...)
+	} else {
+		line = append(line, []byte("online")...)
+	}
+	line = append(line, ' ')
+	line = append(line, []byte(ev.Status)...)
+	line = append(line, '\n')
+	c.term.Write(line)
+}
+
 func (c *cliUI) observeSessionEvents() {
 	//TODO: check for channel close
 	for ev := range c.events {
@@ -47,6 +77,8 @@ func (c *cliUI) observeSessionEvents() {
 			c.handleSessionEvent(t)
 		case session.PeerEvent:
 			c.handlePeerEvent(t)
+		case session.PresenceEvent:
+			c.handlePresenceEvent(t)
 		default:
 			log.Printf("unsupported event %#v\n", t)
 		}

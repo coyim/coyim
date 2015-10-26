@@ -7,6 +7,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/xmpp"
 )
 
 func (u *gtkUI) observeAccountEvents() {
@@ -17,6 +18,8 @@ func (u *gtkUI) observeAccountEvents() {
 			u.handleSessionEvent(t)
 		case session.PeerEvent:
 			u.handlePeerEvent(t)
+		case session.PresenceEvent:
+			u.handlePresenceEvent(t)
 		default:
 			log.Printf("unsupported event %#v\n", t)
 		}
@@ -57,6 +60,29 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 			return false
 		})
 	}
+}
+
+func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
+	if ev.Session.CurrentAccount.HideStatusUpdates {
+		return
+	}
+
+	u.Debug(fmt.Sprintf("[%s] Presence from %s: show: %s status: %s gone: %v\n", ev.To, ev.From, ev.Show, ev.Status, ev.Gone))
+	u.rosterUpdated()
+
+	account := u.findAccountForSession(ev.Session)
+	if account == nil {
+		u.Warn("couldn't find account for " + ev.To)
+		return
+	}
+
+	u.roster.presenceUpdated(
+		account,
+		xmpp.RemoveResourceFromJid(ev.From),
+		ev.Show,
+		ev.Status,
+		ev.Gone,
+	)
 }
 
 func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 )
 
@@ -69,6 +70,26 @@ func (c *cliUI) handlePresenceEvent(ev session.PresenceEvent) {
 	c.term.Write(line)
 }
 
+func (c *cliUI) handleMessageEvent(ev session.MessageEvent) {
+	var line []byte
+	if ev.Encrypted {
+		line = append(line, c.term.Escape.Green...)
+	} else {
+		line = append(line, c.term.Escape.Red...)
+	}
+
+	t := fmt.Sprintf("(%s) %s: ", ev.When.Format(time.Stamp), ev.From)
+	line = append(line, []byte(t)...)
+	line = append(line, c.term.Escape.Reset...)
+	line = appendTerminalEscaped(line, ui.StripHTML(ev.Body))
+	line = append(line, '\n')
+	if c.session.Config.Bell {
+		line = append(line, '\a')
+	}
+
+	c.term.Write(line)
+}
+
 func (c *cliUI) observeSessionEvents() {
 	//TODO: check for channel close
 	for ev := range c.events {
@@ -79,6 +100,8 @@ func (c *cliUI) observeSessionEvents() {
 			c.handlePeerEvent(t)
 		case session.PresenceEvent:
 			c.handlePresenceEvent(t)
+		case session.MessageEvent:
+			c.handleMessageEvent(t)
 		default:
 			log.Printf("unsupported event %#v\n", t)
 		}

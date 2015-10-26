@@ -8,13 +8,10 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -82,16 +79,6 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 	//TODO: should open a registration window
 	fmt.Println("TODO")
 	return nil
-}
-
-func (u *gtkUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
-	account := u.findAccountForSession(s)
-	if account == nil {
-		//TODO error
-		return
-	}
-
-	u.roster.messageReceived(account, xmpp.RemoveResourceFromJid(from), timestamp, encrypted, message)
 }
 
 func (u *gtkUI) Debug(m string) {

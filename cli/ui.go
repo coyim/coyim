@@ -21,7 +21,6 @@ import (
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 	"golang.org/x/crypto/ssh/terminal"
@@ -166,27 +165,6 @@ func (c *cliUI) Alert(m string) {
 func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{}) error {
 	user := c.session.CurrentAccount.Account
 	return promptForForm(c.term, user, c.password, title, instructions, fields)
-}
-
-func (c *cliUI) MessageReceived(s *session.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
-
-	var line []byte
-	if encrypted {
-		line = append(line, c.term.Escape.Green...)
-	} else {
-		line = append(line, c.term.Escape.Red...)
-	}
-
-	t := fmt.Sprintf("(%s) %s: ", timestamp.Format(time.Stamp), from)
-	line = append(line, []byte(t)...)
-	line = append(line, c.term.Escape.Reset...)
-	line = appendTerminalEscaped(line, ui.StripHTML(message))
-	line = append(line, '\n')
-	if c.session.Config.Bell {
-		line = append(line, '\a')
-	}
-
-	c.term.Write(line)
 }
 
 func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversation) {

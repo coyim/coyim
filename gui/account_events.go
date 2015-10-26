@@ -20,10 +20,28 @@ func (u *gtkUI) observeAccountEvents() {
 			u.handlePeerEvent(t)
 		case session.PresenceEvent:
 			u.handlePresenceEvent(t)
+		case session.MessageEvent:
+			u.handleMessageEvent(t)
 		default:
 			log.Printf("unsupported event %#v\n", t)
 		}
 	}
+}
+
+func (u *gtkUI) handleMessageEvent(ev session.MessageEvent) {
+	account := u.findAccountForSession(ev.Session)
+	if account == nil {
+		//TODO error
+		return
+	}
+
+	u.roster.messageReceived(
+		account,
+		xmpp.RemoveResourceFromJid(ev.From),
+		ev.When,
+		ev.Encrypted,
+		ev.Body,
+	)
 }
 
 func (u *gtkUI) handleSessionEvent(ev session.Event) {

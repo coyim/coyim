@@ -2,6 +2,7 @@ package session
 
 import (
 	"sync"
+	"time"
 
 	"github.com/twstrike/coyim/xmpp"
 )
@@ -48,6 +49,14 @@ type PresenceEvent struct {
 	*Session
 	*xmpp.ClientPresence
 	Gone bool
+}
+
+type MessageEvent struct {
+	*Session
+	From      string
+	When      time.Time
+	Body      []byte
+	Encrypted bool
 }
 
 var subscribers = struct {

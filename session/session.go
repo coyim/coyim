@@ -500,7 +500,14 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 }
 
 func (s *Session) messageReceived(from string, timestamp time.Time, encrypted bool, message []byte) {
-	s.SessionEventHandler.MessageReceived(s, from, timestamp, encrypted, message)
+	s.publishEvent(MessageEvent{
+		Session:   s,
+		From:      from,
+		When:      timestamp,
+		Body:      message,
+		Encrypted: encrypted,
+	})
+
 	s.maybeNotify()
 }
 

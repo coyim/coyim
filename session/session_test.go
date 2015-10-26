@@ -294,30 +294,31 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		"some@one.org/foo",
 	)
 
-	called := 0
-
-	var sess *Session
-	sess = &Session{
-		Config:          &config.Accounts{},
-		CurrentAccount:  &config.Account{InstanceTag: uint32(42)},
-		Conversations:   make(map[string]*otr3.Conversation),
-		OtrEventHandler: make(map[string]*event.OtrEventHandler),
-		SessionEventHandler: &mockSessionEventHandler{
-			messageReceived: func(s *Session, from string, timestamp time.Time, encrypted bool, message []byte) {
-				called++
-				c.Assert(s, Equals, sess)
-				c.Assert(encrypted, Equals, false)
-				c.Assert(from, Equals, "bla@hmm.org")
-				c.Assert(string(message), Equals, "well, hello there")
-			},
-		},
-		ConnStatus: DISCONNECTED,
+	sess := &Session{
+		Config:              &config.Accounts{},
+		CurrentAccount:      &config.Account{InstanceTag: uint32(42)},
+		Conversations:       make(map[string]*otr3.Conversation),
+		OtrEventHandler:     make(map[string]*event.OtrEventHandler),
+		SessionEventHandler: &mockSessionEventHandler{},
+		ConnStatus:          DISCONNECTED,
 	}
 	sess.Conn = conn
 
+	observer := make(chan interface{})
+	sess.Subscribe(observer)
+
 	sess.WatchStanzas()
 
-	c.Assert(called, Equals, 1)
+	select {
+	case ev := <-observer:
+		t := ev.(MessageEvent)
+		c.Assert(t.Session, Equals, sess)
+		c.Assert(t.Encrypted, Equals, false)
+		c.Assert(t.From, Equals, "bla@hmm.org")
+		c.Assert(string(t.Body), Equals, "well, hello there")
+	case <-time.After(1 * time.Second):
+		c.Errorf("did not receive event")
+	}
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {

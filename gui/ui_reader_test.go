@@ -42,13 +42,13 @@ func (tw TestWindow) getDefinition() string {
 	return testFile
 }
 
-func (s *UIReaderSuite) Test_parseUI_useXMLIfExists(c *C) {
+func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 	gtk.Init(nil)
 	removeFile("definitions/TestWindow.xml")
 	writeTestFile("definitions/TestWindow.xml", testFile)
 	ui := "TestWindow"
 
-	builder, parseErr := parseUI(ui)
+	builder, parseErr := loadBuilderWith(ui)
 	if parseErr != nil {
 		fmt.Errorf("\nFailed!\n%s", parseErr.Error())
 		c.Fail()
@@ -60,13 +60,13 @@ func (s *UIReaderSuite) Test_parseUI_useXMLIfExists(c *C) {
 	c.Assert(w, Equals, 400)
 }
 
-func (s *UIReaderSuite) Test_parseUI_useGoFileIfXMLDoesntExists(c *C) {
+func (s *UIReaderSuite) Test_loadBuilderWith_useGoFileIfXMLDoesntExists(c *C) {
 	gtk.Init(nil)
 	removeFile("definitions/TestWindow.xml")
 	//writeTestFile("definitions/TestWindow.xml", testFile)
 	ui := "TestWindow"
 
-	builder, parseErr := parseUI(ui)
+	builder, parseErr := loadBuilderWith(ui)
 	if parseErr != nil {
 		fmt.Errorf("\nFailed!\n%s", parseErr.Error())
 		c.Fail()
@@ -78,11 +78,11 @@ func (s *UIReaderSuite) Test_parseUI_useGoFileIfXMLDoesntExists(c *C) {
 	c.Assert(w, Equals, 400)
 }
 
-func (s *UIReaderSuite) Test_parseUI_shouldReturnErrorWhenDefinitionDoesntExist(c *C) {
+func (s *UIReaderSuite) Test_loadBuilderWith_shouldReturnErrorWhenDefinitionDoesntExist(c *C) {
 	removeFile("definitions/nonexistent")
 	ui := "nonexistent"
 
-	_, parseErr := parseUI(ui)
+	_, parseErr := loadBuilderWith(ui)
 
 	expected := "There's no definition for nonexistent"
 	c.Assert(parseErr.Error(), Equals, expected)

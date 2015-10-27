@@ -59,7 +59,7 @@ func accountDialog(account *account, saveFunction func() error) {
 				id:         "account",
 			},
 
-			label{i18n.Local("Password")},
+			label{i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")},
 			entry{
 				text:       account.session.CurrentAccount.Password,
 				editable:   true,

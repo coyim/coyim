@@ -16,6 +16,28 @@ type account struct {
 	session *session.Session
 }
 
+func newAccount(conf *config.Accounts, currentConf *config.Account) (acc *account, err error) {
+	acc = &account{}
+
+	id := currentConf.ID()
+	acc.connectedSignal, err = glib.SignalNew(signalName(id, "connected"))
+	if err != nil {
+		return
+	}
+
+	acc.disconnectedSignal, err = glib.SignalNew(signalName(id, "disconnected"))
+	if err != nil {
+		return
+	}
+
+	acc.session = session.NewSession(conf, currentConf)
+	return
+}
+
+func signalName(id, signal string) string {
+	return "coyim-account-" + signal + "-" + id
+}
+
 func (acc *account) connected() bool {
 	return acc.session.ConnStatus == session.CONNECTED
 }

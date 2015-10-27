@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/session"
 )
@@ -21,10 +20,14 @@ func newAccountManager() *accountManager {
 }
 
 func (m *accountManager) addAccount(appConfig *config.Accounts, account *config.Account) {
-	acc := newAccount(appConfig, account)
+	acc, err := newAccount(appConfig, account)
+	if err != nil {
+		//TODO error
+		return
+	}
+
 	acc.session.SaveConfiguration = m.saveConfiguration
 	acc.session.Subscribe(m.events)
-
 	m.accounts = append(m.accounts, acc)
 }
 
@@ -80,23 +83,4 @@ func (m *accountManager) addNewAccountsFromConfig(appConfig *config.Accounts) {
 
 		m.addAccount(appConfig, configAccount)
 	}
-}
-
-func newAccount(conf *config.Accounts, currentConf *config.Account) *account {
-	id := currentConf.ID()
-	c, _ := glib.SignalNew(signalName(id, "connected"))
-	d, _ := glib.SignalNew(signalName(id, "disconnected"))
-
-	a := &account{
-		session: session.NewSession(conf, currentConf),
-
-		connectedSignal:    c,
-		disconnectedSignal: d,
-	}
-
-	return a
-}
-
-func signalName(id, signal string) string {
-	return "coyim-account-" + signal + "-" + id
 }

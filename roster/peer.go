@@ -15,6 +15,7 @@ type Peer struct {
 	Online             bool
 	Asked              bool
 	PendingSubscribeID string
+	BelongsTo          string
 }
 
 func toSet(ks ...string) map[string]bool {
@@ -36,12 +37,13 @@ func fromSet(vs map[string]bool) []string {
 }
 
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given
-func PeerFrom(e xmpp.RosterEntry) *Peer {
+func PeerFrom(e xmpp.RosterEntry, belongsTo string) *Peer {
 	return &Peer{
 		Jid:          xmpp.RemoveResourceFromJid(e.Jid),
 		Subscription: e.Subscription,
 		Name:         e.Name,
 		Groups:       toSet(e.Group...),
+		BelongsTo:    belongsTo,
 	}
 }
 
@@ -56,20 +58,21 @@ func (p *Peer) ToEntry() xmpp.RosterEntry {
 }
 
 // PeerWithState returns a new Peer that contains the given state information
-func PeerWithState(jid, status, statusMsg string) *Peer {
+func PeerWithState(jid, status, statusMsg, belongsTo string) *Peer {
 	return &Peer{
 		Jid:       xmpp.RemoveResourceFromJid(jid),
 		Status:    status,
 		StatusMsg: statusMsg,
 		Online:    true,
+		BelongsTo: belongsTo,
 	}
 }
 
-// PeerWithPendingSubscribe returns a new Peer that contains the given subscribe ID
-func PeerWithPendingSubscribe(jid, id string) *Peer {
+func peerWithPendingSubscribe(jid, id, belongsTo string) *Peer {
 	return &Peer{
 		Jid:                xmpp.RemoveResourceFromJid(jid),
 		PendingSubscribeID: id,
+		BelongsTo:          belongsTo,
 	}
 }
 
@@ -92,6 +95,7 @@ func (p *Peer) MergeWith(p2 *Peer) *Peer {
 	pNew.Asked = p2.Asked
 	pNew.PendingSubscribeID = merge(p.PendingSubscribeID, p2.PendingSubscribeID)
 	pNew.Groups = make(map[string]bool)
+	pNew.BelongsTo = merge(p.BelongsTo, p2.BelongsTo)
 	if len(p2.Groups) > 0 {
 		pNew.Groups = p2.Groups
 	} else {

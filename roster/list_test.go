@@ -216,10 +216,10 @@ func (s *ListXmppSuite) Test_SubscribeRequest_addsTheSubscribeID(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com"})
 
-	l.SubscribeRequest("fox@bar.com/hmm", "something")
+	l.SubscribeRequest("fox@bar.com/hmm", "something", "")
 	c.Assert(l.peers["fox@bar.com"].PendingSubscribeID, g.Equals, "something")
 
-	l.SubscribeRequest("foo@bar.com/hmm2", "something3")
+	l.SubscribeRequest("foo@bar.com/hmm2", "something3", "")
 	c.Assert(l.peers["foo@bar.com"].PendingSubscribeID, g.Equals, "something3")
 }
 
@@ -251,16 +251,16 @@ func (s *ListXmppSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 func (s *ListXmppSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *g.C) {
 	l := New()
 
-	res := l.PeerPresenceUpdate("foo@bar.com/hmm", "hello", "goodbye")
+	res := l.PeerPresenceUpdate("foo@bar.com/hmm", "hello", "goodbye", "")
 	c.Assert(res, g.Equals, true)
 	c.Assert(l.peers["foo@bar.com"].Status, g.Equals, "hello")
 	c.Assert(l.peers["foo@bar.com"].StatusMsg, g.Equals, "goodbye")
 
-	res = l.PeerPresenceUpdate("foo2@bar.com/hmm", "xa", "goodbye")
+	res = l.PeerPresenceUpdate("foo2@bar.com/hmm", "xa", "goodbye", "")
 	c.Assert(res, g.Equals, false)
 	c.Assert(l.peers["foo2@bar.com"], g.IsNil)
 
-	res = l.PeerPresenceUpdate("foo3@bar.com/hmm", "away", "goodbye")
+	res = l.PeerPresenceUpdate("foo3@bar.com/hmm", "away", "goodbye", "")
 	c.Assert(res, g.Equals, false)
 	c.Assert(l.peers["foo3@bar.com"], g.IsNil)
 
@@ -271,13 +271,13 @@ func (s *ListXmppSuite) Test_PeerPresenceUpdate_updatesPreviouslyKnownPeer(c *g.
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Online: false})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Online: true, Status: "dnd", StatusMsg: "working"})
 
-	res := l.PeerPresenceUpdate("foo@bar.com/hmm", "hello", "goodbye")
+	res := l.PeerPresenceUpdate("foo@bar.com/hmm", "hello", "goodbye", "")
 	c.Assert(res, g.Equals, true)
 	c.Assert(l.peers["foo@bar.com"].Status, g.Equals, "hello")
 	c.Assert(l.peers["foo@bar.com"].StatusMsg, g.Equals, "goodbye")
 	c.Assert(l.peers["foo@bar.com"].Online, g.Equals, true)
 
-	res = l.PeerPresenceUpdate("foo2@bar.com/hmm", "dnd", "working")
+	res = l.PeerPresenceUpdate("foo2@bar.com/hmm", "dnd", "working", "")
 	c.Assert(res, g.Equals, false)
 	c.Assert(l.peers["foo2@bar.com"].Status, g.Equals, "dnd")
 	c.Assert(l.peers["foo2@bar.com"].StatusMsg, g.Equals, "working")

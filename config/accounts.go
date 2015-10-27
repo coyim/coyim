@@ -18,6 +18,7 @@ type Accounts struct {
 	NotifyCommand                 []string `json:",omitempty"`
 	IdleSecondsBeforeNotification int      `json:",omitempty"`
 	Bell                          bool
+	MergeAccounts                 bool
 }
 
 // LoadOrCreate will try to load the configuration from the given configuration file

@@ -83,7 +83,7 @@ func (l *List) PeerBecameUnavailable(jid string) bool {
 
 // PeerPresenceUpdate updates the status for the peer
 // It returns true if it actually updated the status of the user
-func (l *List) PeerPresenceUpdate(jid, status, statusMsg string) bool {
+func (l *List) PeerPresenceUpdate(jid, status, statusMsg, belongsTo string) bool {
 	if p, ok := l.Get(jid); ok {
 		oldOnline := p.Online
 		p.Online = true
@@ -96,7 +96,7 @@ func (l *List) PeerPresenceUpdate(jid, status, statusMsg string) bool {
 	}
 
 	if status != "away" && status != "xa" {
-		l.AddOrMerge(PeerWithState(jid, status, statusMsg))
+		l.AddOrMerge(PeerWithState(jid, status, statusMsg, belongsTo))
 		return true
 	}
 
@@ -113,8 +113,8 @@ func (l *List) StateOf(jid string) (status, statusMsg string, ok bool) {
 }
 
 // SubscribeRequest adds a new pending subscribe request
-func (l *List) SubscribeRequest(jid, id string) {
-	l.AddOrMerge(PeerWithPendingSubscribe(jid, id))
+func (l *List) SubscribeRequest(jid, id, belongsTo string) {
+	l.AddOrMerge(peerWithPendingSubscribe(jid, id, belongsTo))
 }
 
 // RemovePendingSubscribe will return a subscribe id and remove the pending subscribe if it exists
@@ -172,13 +172,17 @@ func (s byJidAlphabetic) Len() int           { return len(s) }
 func (s byJidAlphabetic) Less(i, j int) bool { return s[i].Jid < s[j].Jid }
 func (s byJidAlphabetic) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 
-// ToSlice returns a slice of all the peers in this roster list
-func (l *List) ToSlice() []*Peer {
-	res := make([]*Peer, 0, len(l.peers))
-
+func (l *List) intoSlice(res []*Peer) []*Peer {
 	for _, v := range l.peers {
 		res = append(res, v)
 	}
+
+	return res
+}
+
+// ToSlice returns a slice of all the peers in this roster list
+func (l *List) ToSlice() []*Peer {
+	res := l.intoSlice(make([]*Peer, 0, len(l.peers)))
 
 	sort.Sort(byJidAlphabetic(res))
 
@@ -188,6 +192,20 @@ func (l *List) ToSlice() []*Peer {
 // Iter calls the cb function once for each peer in the list
 func (l *List) Iter(cb func(int, *Peer)) {
 	for ix, pr := range l.ToSlice() {
+		cb(ix, pr)
+	}
+}
+
+// IterAll calls the cb function once for each peer in all the lists
+func IterAll(cb func(int, *Peer), ls ...*List) {
+	res := make([]*Peer, 0, 20)
+	for _, l := range ls {
+		res = l.intoSlice(res)
+	}
+
+	sort.Sort(byJidAlphabetic(res))
+
+	for ix, pr := range res {
 		cb(ix, pr)
 	}
 }

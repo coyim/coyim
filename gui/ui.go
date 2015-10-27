@@ -169,6 +169,10 @@ func onPasswordDialogClicked(reg *widgetRegistry, connect func(string)) func() {
 	}
 }
 
+func (u *gtkUI) shouldViewAccounts() bool {
+	return !u.config.MergeAccounts
+}
+
 func authors() []string {
 	if b, err := exec.Command("git", "log").Output(); err == nil {
 		lines := strings.Split(string(b), "\n")

@@ -21,7 +21,7 @@ func (s *PeerXmppSuite) Test_PeerFrom_returnsANewPeerWithTheSameInformation(c *g
 		},
 	}
 
-	p := PeerFrom(re)
+	p := PeerFrom(re, "")
 
 	c.Assert(p.Jid, g.Equals, "foo@bar.com")
 	c.Assert(p.Subscription, g.Equals, "from")
@@ -50,7 +50,7 @@ func (s *PeerXmppSuite) Test_toEntry_ReturnsAnEntryWithTheInformation(c *g.C) {
 }
 
 func (s *PeerXmppSuite) Test_PeerWithState_createsANewPeer(c *g.C) {
-	p := PeerWithState("bla@foo.com/1234", "hmm", "no")
+	p := PeerWithState("bla@foo.com/1234", "hmm", "no", "")
 	c.Assert(p.Jid, g.Equals, "bla@foo.com")
 	c.Assert(p.Name, g.Equals, "")
 	c.Assert(p.Status, g.Equals, "hmm")
@@ -58,7 +58,7 @@ func (s *PeerXmppSuite) Test_PeerWithState_createsANewPeer(c *g.C) {
 }
 
 func (s *PeerXmppSuite) Test_PeerWithPendingSubscribe_createsNewPeer(c *g.C) {
-	p := PeerWithPendingSubscribe("bla@foo.com/1234", "223434")
+	p := peerWithPendingSubscribe("bla@foo.com/1234", "223434", "")
 	c.Assert(p.Jid, g.Equals, "bla@foo.com")
 	c.Assert(p.Name, g.Equals, "")
 	c.Assert(p.PendingSubscribeID, g.Equals, "223434")

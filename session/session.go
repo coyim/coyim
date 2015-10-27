@@ -149,7 +149,7 @@ func either(l, r string) string {
 func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
-		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"))
+		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"), s.CurrentAccount.ID())
 		s.publishPeerEvent(
 			SubscriptionRequest,
 			xmpp.RemoveResourceFromJid(stanza.From),
@@ -165,7 +165,7 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 			Gone:           true,
 		})
 	case "":
-		if !s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status) {
+		if !s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status, s.CurrentAccount.ID()) {
 			return true
 		}
 
@@ -298,7 +298,7 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
 		return xmpp.EmptyReply{}
 	}
 
-	if s.R.AddOrMerge(roster.PeerFrom(entry)) {
+	if s.R.AddOrMerge(roster.PeerFrom(entry, s.CurrentAccount.ID())) {
 		s.iqReceived(entry.Jid)
 	}
 
@@ -655,7 +655,7 @@ func (s *Session) WatchRosterEvents() {
 			}
 
 			for _, rr := range rst {
-				s.R.AddOrMerge(roster.PeerFrom(rr))
+				s.R.AddOrMerge(roster.PeerFrom(rr, s.CurrentAccount.ID()))
 			}
 
 			s.rosterReceived()

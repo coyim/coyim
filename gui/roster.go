@@ -14,7 +14,7 @@ import (
 type roster struct {
 	widget *gtk.Notebook
 
-	model *gtk.ListStore
+	model *gtk.TreeStore
 	view  *gtk.TreeView
 
 	contacts map[*account]*rosters.List
@@ -22,6 +22,8 @@ type roster struct {
 	checkEncrypted func(to string) bool
 	sendMessage    func(to, message string)
 	conversations  map[string]*conversationWindow
+
+	isExpanded map[string]bool
 
 	ui *gtkUI
 }
@@ -59,15 +61,28 @@ func newNotebook() *gtk.Notebook {
 	return notebook
 }
 
+const (
+	indexJid               = 0
+	indexDisplayName       = 1
+	indexAccountID         = 2
+	indexColor             = 3
+	indexBackgroundColor   = 4
+	indexWeight            = 5
+	indexParentJid         = 0
+	indexParentDisplayName = 1
+)
+
 func (u *gtkUI) newRoster() *roster {
 	w, _ := gtk.ScrolledWindowNew(nil, nil)
-	m, _ := gtk.ListStoreNew(
+	m, _ := gtk.TreeStoreNew(
 		glib.TYPE_STRING, // jid
 		glib.TYPE_STRING, // display name
 		glib.TYPE_STRING, // account id
-		glib.TYPE_STRING, // account status
 		glib.TYPE_STRING, // color (used to indicate status)
+		glib.TYPE_STRING, // background color (used for background of all cell renderers
+		glib.TYPE_INT,    // weight of font
 	)
+
 	v, _ := gtk.TreeViewNew()
 
 	r := &roster{
@@ -77,6 +92,7 @@ func (u *gtkUI) newRoster() *roster {
 
 		conversations: make(map[string]*conversationWindow),
 		contacts:      make(map[*account]*rosters.List),
+		isExpanded:    make(map[string]bool),
 
 		ui: u,
 	}
@@ -89,14 +105,15 @@ func (u *gtkUI) newRoster() *roster {
 	}
 
 	cr, _ := gtk.CellRendererTextNew()
-	c, _ := gtk.TreeViewColumnNewWithAttribute("name", cr, "text", 1)
-	c.AddAttribute(cr, "foreground", 4)
+	c, _ := gtk.TreeViewColumnNewWithAttribute("name", cr, "text", indexDisplayName)
+	c.AddAttribute(cr, "foreground", indexColor)
+	c.AddAttribute(cr, "background", indexBackgroundColor)
+	c.AddAttribute(cr, "weight", indexWeight)
 
-	cr2, _ := gtk.CellRendererTextNew()
-	c2, _ := gtk.TreeViewColumnNewWithAttribute("status", cr2, "text", 3)
-
-	r.view.AppendColumn(c2)
 	r.view.AppendColumn(c)
+
+	r.view.SetShowExpanders(false)
+	r.view.SetLevelIndentation(3)
 
 	r.view.SetModel(r.model)
 	r.view.Connect("row-activated", r.onActivateBuddy)
@@ -139,24 +156,34 @@ func (r *roster) getAccount(id string) (*account, bool) {
 	return nil, false
 }
 
+func getFromModelIter(m *gtk.TreeStore, iter *gtk.TreeIter, index int) string {
+	val, _ := m.GetValue(iter, index)
+	v, _ := val.GetString()
+	return v
+}
+
 func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	iter, err := r.model.GetIter(path)
 	if err != nil {
 		return
 	}
 
-	val, _ := r.model.GetValue(iter, 0)
-	to, _ := val.GetString()
+	jid := getFromModelIter(r.model, iter, indexJid)
+	accountID := getFromModelIter(r.model, iter, indexAccountID)
 
-	val2, _ := r.model.GetValue(iter, 2)
-	accountName, _ := val2.GetString()
-	account, ok := r.getAccount(accountName)
+	if accountID == accountIDTopLevelMarker {
+		r.isExpanded[jid] = !r.isExpanded[jid]
+		r.redraw()
+		return
+	}
+
+	account, ok := r.getAccount(accountID)
 
 	if !ok {
 		return
 	}
 
-	r.openConversationWindow(account, to)
+	r.openConversationWindow(account, jid)
 }
 
 func (r *roster) openConversationWindow(account *account, to string) *conversationWindow {
@@ -183,11 +210,10 @@ func (r *roster) displayNameFor(account *account, from string) string {
 }
 
 func (r *roster) presenceUpdated(account *account, from, show, showStatus string, gone bool) {
-	_, ok := r.conversations[from]
+	c, ok := r.conversations[from]
 	if ok {
 		glib.IdleAdd(func() bool {
-			conv := r.openConversationWindow(account, from)
-			conv.appendStatus(r.displayNameFor(account, from), time.Now(), show, showStatus, gone)
+			c.appendStatus(r.displayNameFor(account, from), time.Now(), show, showStatus, gone)
 			return false
 		})
 	}
@@ -234,6 +260,10 @@ func isAway(p *rosters.Peer) bool {
 	return false
 }
 
+func isOnline(p *rosters.Peer) bool {
+	return p.PendingSubscribeID == "" && p.Online
+}
+
 func decideStatusGlyphFor(p *rosters.Peer) string {
 	if p.PendingSubscribeID != "" {
 		return "?"
@@ -257,29 +287,94 @@ func decideColorFor(p *rosters.Peer) string {
 	return "#000000"
 }
 
-func (r *roster) redraw() {
-	r.model.TreeModel.Ref()
-	r.view.SetModel((*gtk.TreeModel)(nil))
+const accountIDTopLevelMarker = "--is-account-top-level--"
 
-	r.model.Clear()
-	for account, contacts := range r.contacts {
-		contacts.Iter(func(_ int, item *rosters.Peer) {
-			if shouldDisplay(item) {
-				iter := r.model.Append()
-				r.model.Set(iter, []int{0, 1, 2, 3, 4}, []interface{}{
-					item.Jid,
-					item.NameForPresentation(),
-					account.session.CurrentAccount.ID(),
-					decideStatusGlyphFor(item),
-					decideColorFor(item),
-				})
-			}
-		})
+func createAccountDisplayName(parentName string, count, countOnline int, isExpanded bool) string {
+	name := parentName
+	if !isExpanded {
+		name = fmt.Sprintf("[%s]", name)
+	}
+	return fmt.Sprintf("%s (%d/%d)", name, countOnline, count)
+}
+
+func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent string) {
+	iter := r.model.Append(parentIter)
+	setAll(r.model, iter,
+		item.Jid,
+		fmt.Sprintf("%s%s %s", indent, decideStatusGlyphFor(item), item.NameForPresentation()),
+		item.BelongsTo,
+		decideColorFor(item),
+		"#ffffff",
+	)
+}
+
+func (r *roster) redrawMerged() {
+	allContacts := make([]*rosters.List, 0, len(r.contacts))
+	for _, contacts := range r.contacts {
+		allContacts = append(allContacts, contacts)
 	}
 
-	r.view.SetModel(r.model)
-	r.model.TreeModel.Unref()
+	rosters.IterAll(func(_ int, item *rosters.Peer) {
+		if shouldDisplay(item) {
+			r.addItem(item, nil, "")
+		}
+	}, allContacts...)
+}
+
+func (r *roster) redrawSeparate() {
+	var parentIter *gtk.TreeIter
+
+	for account, contacts := range r.contacts {
+		parentIter = r.model.Append(nil)
+
+		count := 0
+		countOnline := 0
+
+		contacts.Iter(func(_ int, item *rosters.Peer) {
+			if shouldDisplay(item) {
+				count++
+				if isOnline(item) {
+					countOnline++
+				}
+				r.addItem(item, parentIter, "   ")
+			}
+		})
+
+		parentName := account.session.CurrentAccount.Account
+		r.model.SetValue(parentIter, indexParentJid, parentName)
+		r.model.SetValue(parentIter, indexAccountID, accountIDTopLevelMarker)
+		r.model.SetValue(parentIter, indexWeight, 500)
+		r.model.SetValue(parentIter, indexBackgroundColor, "#918caa")
+		parentPath, _ := r.model.GetPath(parentIter)
+		isExpanded, ok := r.isExpanded[parentName]
+		if !ok {
+			isExpanded = true
+			r.isExpanded[parentName] = isExpanded
+		}
+		r.model.SetValue(parentIter, indexParentDisplayName, createAccountDisplayName(parentName, count, countOnline, isExpanded))
+		if isExpanded {
+			r.view.ExpandRow(parentPath, false)
+		} else {
+			r.view.CollapseRow(parentPath)
+		}
+	}
+}
+
+func (r *roster) redraw() {
+	r.model.Clear()
+
+	if r.ui.shouldViewAccounts() {
+		r.redrawSeparate()
+	} else {
+		r.redrawMerged()
+	}
 
 	// We call connected here to make sure we don't display the roster until we have some roster data
 	r.connected()
+}
+
+func setAll(v *gtk.TreeStore, iter *gtk.TreeIter, values ...interface{}) {
+	for i, val := range values {
+		v.SetValue(iter, i, val)
+	}
 }

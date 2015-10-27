@@ -6,6 +6,7 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
 )
@@ -22,14 +23,14 @@ func firstProxy(account *account) string {
 	return ""
 }
 
-func onAccountDialogClicked(account *account, saveFunction func() error, reg *widgetRegistry) func() {
+func onAccountDialogClicked(account *config.Account, saveFunction func() error, reg *widgetRegistry) func() {
 	return func() {
-		account.session.CurrentAccount.Account = reg.getText("account")
-		account.session.CurrentAccount.Password = reg.getText("password")
+		account.Account = reg.getText("account")
+		account.Password = reg.getText("password")
 
-		parts := strings.SplitN(account.session.CurrentAccount.Account, "@", 2)
+		parts := strings.SplitN(account.Account, "@", 2)
 		if len(parts) != 2 {
-			fmt.Println("invalid username (want user@domain): " + account.session.CurrentAccount.Account)
+			fmt.Println("invalid username (want user@domain): " + account.Account)
 			return
 		}
 
@@ -44,7 +45,7 @@ func onAccountDialogClicked(account *account, saveFunction func() error, reg *wi
 	}
 }
 
-func accountDialog(account *account, saveFunction func() error) {
+func accountDialog(account *config.Account, saveFunction func() error) {
 	reg := createWidgetRegistry()
 	d := dialog{
 		title:    i18n.Local("Account Details"),
@@ -53,7 +54,7 @@ func accountDialog(account *account, saveFunction func() error) {
 		content: []createable{
 			label{i18n.Local("Account")},
 			entry{
-				text:       account.session.CurrentAccount.Account,
+				text:       account.Account,
 				editable:   true,
 				visibility: true,
 				id:         "account",
@@ -61,7 +62,7 @@ func accountDialog(account *account, saveFunction func() error) {
 
 			label{i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")},
 			entry{
-				text:       account.session.CurrentAccount.Password,
+				text:       account.Password,
 				editable:   true,
 				visibility: false,
 				id:         "password",
@@ -118,7 +119,7 @@ func buildAccountSubmenu(u *gtkUI, account *account) *gtk.MenuItem {
 	accountSubMenu.Append(editItem)
 
 	editItem.Connect("activate", func() {
-		accountDialog(account, u.SaveConfig)
+		accountDialog(account.session.CurrentAccount, u.SaveConfig)
 	})
 
 	//TODO: add "Remove" menu item

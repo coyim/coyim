@@ -39,8 +39,8 @@ func (acc *account) authorizeFingerprint(uid string, fingerprint []byte) error {
 
 func (u *gtkUI) showAddAccountWindow() {
 	c := config.NewAccount()
-	accountDialog(c, func() error {
+	accountDialog(c, func() {
 		u.config.Add(c)
-		return u.SaveConfig()
+		u.SaveConfig()
 	})
 }

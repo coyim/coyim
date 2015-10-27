@@ -10,20 +10,13 @@ OS=${TRAVIS_OS_NAME:-linux}
 if [[ $OS = "osx" ]]; then
   make build-gui
 
-  iconutil -c icns -o build/mac-bundle/Coy.icns build/mac-bundle/coy.iconset
+  iconutil -c icns -o build/mac-bundle/coy.icns build/mac-bundle/coy.iconset
 
-  rm -rf ./gtk-mac-bundler
-  git clone https://github.com/twstrike/gtk-mac-bundler.git
-  make -C gtk-mac-bundler install
-
-  rm -rf bin/mac-bundle
-  ~/.local/bin/gtk-mac-bundler build/mac-bundle/coyim.bundle
-
-  #TODO: Investigate why this directory is duplicate
-  rm -rf bin/mac-bundle/CoyIM.app/Contents/Resources/Cellar
+	ci/build-osx-bundle bin/mac-bundle/CoyIM.app
 
   ln -s /Applications bin/mac-bundle/Applications
   cp build/mac-bundle/ds-store bin/mac-bundle/.DS_Store 
+
   ci/make-dmg coyim $VERSION bin/mac-bundle/
 
   rm -rf bin/mac-bundle

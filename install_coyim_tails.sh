@@ -11,9 +11,8 @@ mkdir -p $GOPATH
 git clone https://github.com/golang/net.git $GOPATH/src/golang.org/x/net
 git clone https://github.com/golang/crypto.git $GOPATH/src/golang.org/x/crypto
 
-go get -u -v github.com/twstrike/go-gtk/gdk
-go get -u -v github.com/twstrike/go-gtk/glib
-go get -u -v github.com/twstrike/go-gtk/gtk
+GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+go get -u -v -tags "gtk_$(GTK_VERSION)" github.com/gotk3/gotk3
 go get -u -v -tags nocli github.com/twstrike/coyim
 
 $GOPATH/bin/coyim

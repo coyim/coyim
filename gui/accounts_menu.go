@@ -52,7 +52,7 @@ func accountDialog(account *config.Account, saveFunction func() error) {
 		position: gtk.WIN_POS_CENTER,
 		id:       "dialog",
 		content: []createable{
-			label{i18n.Local("Account")},
+			label{i18n.Local("Your account (for example: kim42@dukgo.com)")},
 			entry{
 				text:       account.Account,
 				editable:   true,

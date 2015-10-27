@@ -50,7 +50,7 @@ func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 	accountInput.PackStart(renderer, true)
 	accountInput.AddAttribute(renderer, "text", 0)
 
-	l, _ := gtk.LabelNew(i18n.Local("ID"))
+	l, _ := gtk.LabelNew(i18n.Local("Account to add (for example: arnoldsPub@jabber.ccc.de)"))
 	vbox.Add(l)
 
 	contactInput, _ := gtk.EntryNew()
@@ -92,7 +92,6 @@ func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 	dialog.SetDefault(button)
 
 	button.Connect("clicked", onAdd)
-
 	contactInput.GrabFocus()
 
 	return dialog

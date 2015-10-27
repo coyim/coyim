@@ -11,11 +11,18 @@ type accountManager struct {
 	accounts          []*account
 	events            chan interface{}
 	saveConfiguration func()
+
+	onConnect    chan<- *account
+	onDisconnect chan<- *account
+	onEdit       chan<- *account
 }
 
-func newAccountManager() *accountManager {
+func newAccountManager(c chan<- *account, d chan<- *account, e chan<- *account) *accountManager {
 	return &accountManager{
-		events: make(chan interface{}, 10),
+		events:       make(chan interface{}, 10),
+		onConnect:    c,
+		onDisconnect: d,
+		onEdit:       e,
 	}
 }
 
@@ -28,6 +35,11 @@ func (m *accountManager) addAccount(appConfig *config.Accounts, account *config.
 
 	acc.session.SaveConfiguration = m.saveConfiguration
 	acc.session.Subscribe(m.events)
+
+	acc.onConnect = m.onConnect
+	acc.onDisconnect = m.onDisconnect
+	acc.onEdit = m.onEdit
+
 	m.accounts = append(m.accounts, acc)
 }
 

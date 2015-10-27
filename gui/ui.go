@@ -39,12 +39,34 @@ type UI interface {
 
 // NewGTK returns a new client for a GTK ui
 func NewGTK() UI {
-	res := &gtkUI{
-		accountManager: newAccountManager(),
-	}
-	res.accountManager.saveConfiguration = res.SaveConfig
+	gtk.Init(&os.Args)
 
+	connect := make(chan *account, 0)
+	disconnect := make(chan *account, 0)
+	edit := make(chan *account, 0)
+
+	res := &gtkUI{
+		accountManager: newAccountManager(connect, disconnect, edit),
+	}
+
+	res.accountManager.saveConfiguration = res.SaveConfig
 	res.keySupplier = config.CachingKeySupplier(res.getMasterPassword)
+
+	go func() {
+		for {
+			select {
+			case acc := <-connect:
+				res.connect(acc)
+			case acc := <-disconnect:
+				res.disconnect(acc)
+			case acc := <-edit:
+				glib.IdleAdd(func() bool {
+					accountDialog(acc.session.CurrentAccount, res.SaveConfig)
+					return false
+				})
+			}
+		}
+	}()
 
 	return res
 }
@@ -119,8 +141,6 @@ func (u *gtkUI) Debug(m string) {
 func (u *gtkUI) Loop() {
 	defer u.close()
 	go u.observeAccountEvents()
-
-	gtk.Init(&os.Args)
 
 	u.loadConfig(*config.ConfigFile)
 	u.applyStyle()

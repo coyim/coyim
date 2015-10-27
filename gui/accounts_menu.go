@@ -82,55 +82,11 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 	disconnect.SetSensitive(connected)
 }
 
-func buildAccountSubmenu(u *gtkUI, account *account) *gtk.MenuItem {
-	menuitem, _ := gtk.MenuItemNewWithMnemonic(account.session.CurrentAccount.Account)
-
-	accountSubMenu, _ := gtk.MenuNew()
-	menuitem.SetSubmenu(accountSubMenu)
-
-	connectItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect"))
-	accountSubMenu.Append(connectItem)
-
-	disconnectItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect"))
-	accountSubMenu.Append(disconnectItem)
-
-	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
-
-	connectItem.Connect("activate", func() {
-		connectItem.SetSensitive(false)
-		u.connect(account)
-	})
-
-	disconnectItem.Connect("activate", func() {
-		u.disconnect(account)
-	})
-
-	connToggle := func() {
-		toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
-	}
-
-	u.window.Connect(account.connectedSignal.String(), connToggle)
-	u.window.Connect(account.disconnectedSignal.String(), connToggle)
-
-	editItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
-	accountSubMenu.Append(editItem)
-
-	editItem.Connect("activate", func() {
-		accountDialog(account.session.CurrentAccount, func() {
-			u.SaveConfig()
-		})
-	})
-
-	//TODO: add "Remove" menu item
-
-	return menuitem
-}
-
 func (u *gtkUI) buildAccountsMenu() {
 	submenu, _ := gtk.MenuNew()
 
 	for _, account := range u.accounts {
-		submenu.Append(buildAccountSubmenu(u, account))
+		account.appendMenuTo(submenu)
 	}
 
 	if len(u.accounts) > 0 {

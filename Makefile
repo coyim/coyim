@@ -36,7 +36,7 @@ test:
 
 ci: get default coveralls
 
-run-cover: clean-cover 
+run-cover: clean-cover
 	go test -coverprofile=xmpp.coverprofile ./xmpp
 	go test -coverprofile=session.coverprofile ./session
 	go test -coverprofile=event.coverprofile ./event
@@ -75,6 +75,7 @@ deps-u:
 	go get -u golang.org/x/net/proxy
 	go get -u gopkg.in/check.v1
 	go get -u github.com/miekg/dns
+	go get -u golang.org/x/crypto/scrypt
 
 deps:
 	go get github.com/golang/lint/golint
@@ -89,4 +90,4 @@ deps:
 	go get golang.org/x/net/proxy
 	go get gopkg.in/check.v1
 	go get github.com/miekg/dns
-
+	go get golang.org/x/crypto/scrypt

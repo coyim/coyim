@@ -11,7 +11,8 @@ import (
 
 // Accounts contains the configuration for several accounts
 type Accounts struct {
-	filename string `json:"-"`
+	filename      string `json:"-"`
+	ShouldEncrypt bool   `json:"-"`
 
 	Accounts                      []*Account
 	RawLogFile                    string   `json:",omitempty"`
@@ -24,14 +25,16 @@ type Accounts struct {
 // LoadOrCreate will try to load the configuration from the given configuration file
 // or from the standard configuration file. If no file exists or it is malformed, an error will
 // be returned. However, the returned Accounts instance will always be usable
-func LoadOrCreate(configFile string) (a *Accounts, e error) {
+func LoadOrCreate(configFile string, ks KeySupplier) (a *Accounts, e error) {
+	shouldEncrypt := false
 	if len(configFile) == 0 {
-		configFile = findConfigFile()
+		configFile, shouldEncrypt = findConfigFile()
 	}
 
 	a = new(Accounts)
 	a.filename = configFile
-	e = a.tryLoad()
+	a.ShouldEncrypt = shouldEncrypt
+	e = a.tryLoad(ks)
 
 	return
 }
@@ -40,8 +43,21 @@ var (
 	errInvalidConfigFile = errors.New("Failed to parse config file")
 )
 
-func (a *Accounts) tryLoad() error {
-	contents, err := ioutil.ReadFile(a.filename)
+func (a *Accounts) tryLoad(ks KeySupplier) error {
+	var contents []byte
+	var err error
+
+	if a.ShouldEncrypt {
+		contents2, err2 := ioutil.ReadFile(a.filename)
+		if err2 != nil {
+			err = err2
+		} else {
+			contents, err = decryptConfiguration(contents2, ks)
+		}
+	} else {
+		contents, err = ioutil.ReadFile(a.filename)
+	}
+
 	if err != nil {
 		return errInvalidConfigFile
 	}
@@ -99,7 +115,7 @@ func (a *Accounts) AddNewAccount() *Account {
 }
 
 // Save will save the account configuration
-func (a *Accounts) Save() error {
+func (a *Accounts) Save(ks KeySupplier) error {
 	contents, err := a.serialize()
 	if err != nil {
 		return err

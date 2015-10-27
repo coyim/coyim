@@ -7,6 +7,8 @@ type entry struct {
 	editable   bool
 	visibility bool
 	id         string
+	focused    bool
+	onActivate func()
 }
 
 func (e entry) getId() string {
@@ -34,6 +36,15 @@ func (e entry) create(reg *widgetRegistry) (gtk.IWidget, error) {
 	entry.SetText(e.text)
 	entry.SetEditable(e.editable)
 	entry.SetVisibility(e.visibility)
+
+	if e.focused {
+		entry.GrabFocus()
+	}
+
+	if e.onActivate != nil {
+		entry.Connect("activate", e.onActivate)
+	}
+
 	reg.register(e.id, entry)
 
 	return entry, nil

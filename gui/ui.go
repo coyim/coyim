@@ -10,7 +10,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 
@@ -31,17 +30,24 @@ type gtkUI struct {
 	*accountManager
 
 	displaySettings *displaySettings
+
+	keySupplier config.KeySupplier
 }
 
 // NewGTK returns a new client for a GTK ui
-func NewGTK() client.Client {
-	return &gtkUI{
+func NewGTK() *gtkUI {
+	res := &gtkUI{
 		accountManager: newAccountManager(),
 	}
+	res.accountManager.saveConfiguration = res.SaveConfig
+
+	res.keySupplier = config.CachingKeySupplier(res.getMasterPassword)
+
+	return res
 }
 
-func (u *gtkUI) LoadConfig(configFile string) error {
-	accounts, err := config.LoadOrCreate(configFile)
+func (u *gtkUI) loadConfig(configFile string) error {
+	accounts, err := config.LoadOrCreate(configFile, u.keySupplier)
 	u.config = accounts
 
 	if err != nil {
@@ -49,7 +55,10 @@ func (u *gtkUI) LoadConfig(configFile string) error {
 		log.Printf(err.Error())
 
 		glib.IdleAdd(func() bool {
-			u.showAddAccountWindow()
+			u.wouldYouLikeToEncryptYourFile(func(res bool) {
+				u.config.ShouldEncrypt = res
+				u.showAddAccountWindow()
+			})
 			return false
 		})
 	}
@@ -64,10 +73,10 @@ func (u *gtkUI) LoadConfig(configFile string) error {
 	return nil
 }
 
-func (u *gtkUI) SaveConfig() error {
-	err := u.config.Save()
+func (u *gtkUI) saveConfigInternal() {
+	err := u.config.Save(u.keySupplier)
 	if err != nil {
-		return err
+		return
 	}
 
 	u.addNewAccountsFromConfig(u.config)
@@ -75,8 +84,10 @@ func (u *gtkUI) SaveConfig() error {
 	if u.window != nil {
 		u.window.Emit(accountChangedSignal.String())
 	}
+}
 
-	return nil
+func (u *gtkUI) SaveConfig() {
+	go u.saveConfigInternal()
 }
 
 func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {
@@ -92,15 +103,21 @@ func (u *gtkUI) Debug(m string) {
 }
 
 func (u *gtkUI) Loop() {
+	defer u.close()
 	go u.observeAccountEvents()
 
 	gtk.Init(&os.Args)
+
+	if err := u.loadConfig(*config.ConfigFile); err != nil {
+		return
+	}
+
 	u.applyStyle()
 	u.mainWindow()
 	gtk.Main()
 }
 
-func (u *gtkUI) Close() {}
+func (u *gtkUI) close() {}
 
 //func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
 //	u.window.Connect(s.String(), f)
@@ -148,6 +165,7 @@ func (*gtkUI) askForPassword(connect func(string)) {
 			entry{
 				editable:   true,
 				visibility: false,
+				focused:    true,
 				id:         "password",
 			},
 			button{

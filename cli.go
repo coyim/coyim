@@ -2,11 +2,8 @@
 
 package main
 
-import (
-	"github.com/twstrike/coyim/cli"
-	"github.com/twstrike/coyim/client"
-)
+import "github.com/twstrike/coyim/cli"
 
-func newClient() client.Client {
-	return cli.NewCLI()
+func runClient() {
+	cli.NewCLI().Loop()
 }

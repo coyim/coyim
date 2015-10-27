@@ -23,7 +23,7 @@ func firstProxy(account *account) string {
 	return ""
 }
 
-func onAccountDialogClicked(account *config.Account, saveFunction func() error, reg *widgetRegistry) func() {
+func onAccountDialogClicked(account *config.Account, saveFunction func(), reg *widgetRegistry) func() {
 	return func() {
 		account.Account = reg.getText("account")
 		account.Password = reg.getText("password")
@@ -34,18 +34,12 @@ func onAccountDialogClicked(account *config.Account, saveFunction func() error, 
 			return
 		}
 
-		go func() {
-			if err := saveFunction(); err != nil {
-				//TODO: handle errors
-				fmt.Println(err.Error())
-			}
-		}()
-
+		go saveFunction()
 		reg.dialogDestroy("dialog")
 	}
 }
 
-func accountDialog(account *config.Account, saveFunction func() error) {
+func accountDialog(account *config.Account, saveFunction func()) {
 	reg := createWidgetRegistry()
 	d := dialog{
 		title:    i18n.Local("Account Details"),

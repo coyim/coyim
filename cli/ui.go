@@ -16,7 +16,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/servers"
@@ -42,7 +41,7 @@ type cliUI struct {
 }
 
 // NewCLI creates a new cliUI instance
-func NewCLI() client.Client {
+func NewCLI() *cliUI {
 	oldState, err := terminal.MakeRaw(0)
 	if err != nil {
 		panic(err.Error())
@@ -75,8 +74,12 @@ func NewCLI() client.Client {
 	}
 }
 
-func (c *cliUI) LoadConfig(configFile string) error {
-	accounts, err := config.LoadOrCreate(configFile)
+func (c *cliUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {
+	panic("TODO: not implemented yet, master password support for CLI")
+}
+
+func (c *cliUI) loadConfig(configFile string) error {
+	accounts, err := config.LoadOrCreate(configFile, c.getMasterPassword)
 	if err != nil {
 		c.alert(err.Error())
 		if !enroll(accounts, accounts.AddNewAccount(), c.term) {
@@ -113,6 +116,7 @@ func (c *cliUI) LoadConfig(configFile string) error {
 	c.session = session.NewSession(accounts, account)
 	c.session.SessionEventHandler = c
 	c.session.Subscribe(c.events)
+	c.session.SaveConfiguration = c.SaveConf
 
 	c.session.ConnectionLogger = logger
 	if err := c.session.Connect(password, registerCallback); err != nil {
@@ -128,7 +132,17 @@ func (c *cliUI) quit() {
 	c.terminate <- true
 }
 
+func (c *cliUI) SaveConf() {
+	c.session.Config.Save(c.getMasterPassword)
+}
+
 func (c *cliUI) Loop() {
+	defer c.close()
+
+	if err := c.loadConfig(*config.ConfigFile); err != nil {
+		return
+	}
+
 	go c.observeSessionEvents()
 	go c.WatchRosterEdits()
 	go c.WatchCommands()
@@ -136,7 +150,7 @@ func (c *cliUI) Loop() {
 	<-c.terminate // wait
 }
 
-func (c *cliUI) Close() {
+func (c *cliUI) close() {
 	if c.oldState != nil {
 		terminal.Restore(0, c.oldState)
 	}

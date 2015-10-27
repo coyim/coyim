@@ -107,6 +107,6 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 }
 
 func (s *ConfigXmppSuite) TestFindConfigFile(c *C) {
-	conf := findConfigFile()
+	conf, _ := findConfigFile()
 	c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json")
 }

@@ -59,6 +59,8 @@ type Session struct {
 		sync.RWMutex
 		subs []chan<- interface{}
 	}
+
+	SaveConfiguration func()
 }
 
 // NewSession creates a new session from the given config
@@ -355,11 +357,6 @@ func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
 
 func (s *Session) otrEnded(uid string) {
 	s.publishPeerEvent(OTREnded, uid)
-}
-
-// SaveConfiguration will save the current configuration to the expected filename
-func (s *Session) SaveConfiguration() {
-	s.Config.Save()
 }
 
 func (s *Session) newConversation(peer string) *otr3.Conversation {

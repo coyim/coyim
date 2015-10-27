@@ -9,8 +9,9 @@ import (
 //TODO: once glib signals are removed from account, it could be a sessionManager
 // and this could be in a client package (ui agnostic)
 type accountManager struct {
-	accounts []*account
-	events   chan interface{}
+	accounts          []*account
+	events            chan interface{}
+	saveConfiguration func()
 }
 
 func newAccountManager() *accountManager {
@@ -21,6 +22,7 @@ func newAccountManager() *accountManager {
 
 func (m *accountManager) addAccount(appConfig *config.Accounts, account *config.Account) {
 	acc := newAccount(appConfig, account)
+	acc.session.SaveConfiguration = m.saveConfiguration
 	acc.session.Subscribe(m.events)
 
 	m.accounts = append(m.accounts, acc)

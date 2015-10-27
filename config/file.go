@@ -16,8 +16,12 @@ func ensureDir(dirname string, perm os.FileMode) {
 	}
 }
 
-func findConfigFile() string {
+func findConfigFile() (string, bool) {
 	dir := configDir()
 	ensureDir(dir, 0700)
-	return filepath.Join(dir, "accounts.json")
+	basePath := filepath.Join(dir, "accounts.json")
+	if fileExists(basePath + encryptedFileEnding) {
+		return basePath + encryptedFileEnding, true
+	}
+	return basePath, false
 }

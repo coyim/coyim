@@ -22,13 +22,7 @@ func init() {
 func main() {
 	flag.Parse()
 
-	u := newClient()
-	defer u.Close()
+	runClient()
 
-	if err := u.LoadConfig(*config.ConfigFile); err != nil {
-		return
-	}
-
-	u.Loop()
 	os.Stdout.Write([]byte("\n"))
 }

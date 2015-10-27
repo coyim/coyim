@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
@@ -88,15 +87,11 @@ func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 		dialog.Destroy()
 	}
 
+	button.SetCanDefault(true)
+	contactInput.SetActivatesDefault(true)
+	dialog.SetDefault(button)
+
 	button.Connect("clicked", onAdd)
-	contactInput.Connect("key-press-event", func(_ *gtk.Entry, ev *gdk.Event) bool {
-		evKey := gdk.EventKey{ev}
-		if (evKey.State()&gdk.GDK_MODIFIER_MASK) == 0 && evKey.KeyVal() == 0xff0d {
-			onAdd()
-			return true
-		}
-		return false
-	})
 
 	contactInput.GrabFocus()
 

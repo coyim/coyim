@@ -7,6 +7,10 @@ type hbox struct {
 	fromRight bool
 }
 
+func (h hbox) getId() string {
+	return ""
+}
+
 func (h hbox) create(reg *widgetRegistry) (gtk.IWidget, error) {
 	b, e := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 1)
 	if e != nil {

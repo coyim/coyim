@@ -141,13 +141,17 @@ func (r *roster) connected() {
 }
 
 func (r *roster) connecting() {
+	//only if there is nothing connected
+	if len(r.contacts) != 0 {
+		return
+	}
+
 	glib.IdleAdd(func() {
 		r.widget.SetCurrentPage(spinnerPageIndex)
 	})
 }
 
 func (r *roster) disconnected() {
-	//TODO: should it destroy all conversations?
 	glib.IdleAdd(func() {
 		r.widget.SetCurrentPage(disconnectedPageIndex)
 	})

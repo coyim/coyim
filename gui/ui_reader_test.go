@@ -15,8 +15,8 @@ var _ = Suite(&UIReaderSuite{})
 const testFile string = `
 <interface>
   <object class="GtkWindow" id="conversation">
-    <property name="default-height">500</property>
-    <property name="default-width">400</property>
+    <property name="default-height">$win-height</property>
+    <property name="default-width">$win-width</property>
 
       <child>
 	<object class="GtkVBox">
@@ -48,7 +48,10 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 	writeTestFile("definitions/TestWindow.xml", testFile)
 	ui := "TestWindow"
 
-	builder, parseErr := loadBuilderWith(ui)
+	vars := make(map[string]string)
+	vars["$win-height"] = "500"
+	vars["$win-width"] = "400"
+	builder, parseErr := loadBuilderWith(ui, vars)
 	if parseErr != nil {
 		fmt.Errorf("\nFailed!\n%s", parseErr.Error())
 		c.Fail()
@@ -66,7 +69,10 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useGoFileIfXMLDoesntExists(c *C) {
 	//writeTestFile("definitions/TestWindow.xml", testFile)
 	ui := "TestWindow"
 
-	builder, parseErr := loadBuilderWith(ui)
+	vars := make(map[string]string)
+	vars["$win-height"] = "500"
+	vars["$win-width"] = "400"
+	builder, parseErr := loadBuilderWith(ui, vars)
 	if parseErr != nil {
 		fmt.Errorf("\nFailed!\n%s", parseErr.Error())
 		c.Fail()
@@ -82,7 +88,7 @@ func (s *UIReaderSuite) Test_loadBuilderWith_shouldReturnErrorWhenDefinitionDoes
 	removeFile("definitions/nonexistent")
 	ui := "nonexistent"
 
-	_, parseErr := loadBuilderWith(ui)
+	_, parseErr := loadBuilderWith(ui, nil)
 
 	expected := "There's no definition for nonexistent"
 	c.Assert(parseErr.Error(), Equals, expected)

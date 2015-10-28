@@ -10,7 +10,7 @@ func (tw testWindow) getDefinition() string {
     <property name="default-width">$win-width</property>
 
       <child>
-	<object class="GtkVBox">
+	<object class="GtkVBox" id="vbox">
 	</object>
       </child>
 

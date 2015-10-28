@@ -45,8 +45,8 @@ func signalName(id, signal string) string {
 	return "coyim-account-" + signal + "-" + id
 }
 
-func (acc *account) connected() bool {
-	return acc.session.ConnStatus == session.CONNECTED
+func (account *account) connected() bool {
+	return account.session.ConnStatus == session.CONNECTED
 }
 
 var (
@@ -54,8 +54,8 @@ var (
 )
 
 // TODO: this functionality is duplicated
-func (acc *account) authorizeFingerprint(uid string, fingerprint []byte) error {
-	a := acc.session.CurrentAccount
+func (account *account) authorizeFingerprint(uid string, fingerprint []byte) error {
+	a := account.session.CurrentAccount
 	existing := a.UserIDForFingerprint(fingerprint)
 	if len(existing) != 0 {
 		return errFingerprintAlreadyAuthorized

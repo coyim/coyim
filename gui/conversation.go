@@ -18,6 +18,50 @@ type conversationWindow struct {
 	scrollHistory *gtk.ScrolledWindow
 }
 
+type tags struct {
+	table *gtk.TextTagTable
+}
+
+func (u *gtkUI) getTags() *tags {
+	if u.tags == nil {
+		u.tags = newTags()
+	}
+	return u.tags
+}
+
+func newTags() *tags {
+	t := new(tags)
+
+	t.table, _ = gtk.TextTagTableNew()
+
+	outgoingUser, _ := gtk.TextTagNew("outgoingUser")
+	outgoingUser.SetProperty("foreground", "#3465a4")
+
+	incomingUser, _ := gtk.TextTagNew("incomingUser")
+	incomingUser.SetProperty("foreground", "#a40000")
+
+	outgoingText, _ := gtk.TextTagNew("outgoingText")
+	outgoingText.SetProperty("foreground", "#555753")
+
+	incomingText, _ := gtk.TextTagNew("incomingText")
+
+	statusText, _ := gtk.TextTagNew("statusText")
+	statusText.SetProperty("foreground", "#4e9a06")
+
+	t.table.Add(outgoingUser)
+	t.table.Add(incomingUser)
+	t.table.Add(outgoingText)
+	t.table.Add(incomingText)
+	t.table.Add(statusText)
+
+	return t
+}
+
+func (t *tags) createTextBuffer() *gtk.TextBuffer {
+	buf, _ := gtk.TextBufferNew(t.table)
+	return buf
+}
+
 func newConversationWindow(account *account, uid string, u *gtkUI) *conversationWindow {
 	vars := make(map[string]string)
 	vars["$uid"] = uid
@@ -80,27 +124,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) *conversation
 	// it attaches the callback to the widget
 	conv.win.HideOnDelete()
 
-	buff, _ := conv.history.GetBuffer()
-	ttable, _ := buff.GetTagTable()
-
-	outgoingUser, _ := gtk.TextTagNew("outgoingUser")
-	outgoingUser.SetProperty("foreground", "#3465a4")
-	ttable.Add(outgoingUser)
-
-	incomingUser, _ := gtk.TextTagNew("incomingUser")
-	incomingUser.SetProperty("foreground", "#a40000")
-	ttable.Add(incomingUser)
-
-	outgoingText, _ := gtk.TextTagNew("outgoingText")
-	outgoingText.SetProperty("foreground", "#555753")
-	ttable.Add(outgoingText)
-
-	incomingText, _ := gtk.TextTagNew("incomingText")
-	ttable.Add(incomingText)
-
-	statusText, _ := gtk.TextTagNew("statusText")
-	statusText.SetProperty("foreground", "#4e9a06")
-	ttable.Add(statusText)
+	conv.history.SetBuffer(u.getTags().createTextBuffer())
 
 	u.displaySettings.control(&conv.history.Container.Widget)
 	u.displaySettings.control(&messageEntry.(*gtk.Entry).Widget)

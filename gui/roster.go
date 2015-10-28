@@ -136,20 +136,20 @@ func (u *gtkUI) newRoster() *roster {
 
 func (r *roster) connected() {
 	glib.IdleAdd(func() {
-		r.widget.SetCurrentPage(2)
+		r.widget.SetCurrentPage(rosterPageIndex)
 	})
 }
 
 func (r *roster) connecting() {
 	glib.IdleAdd(func() {
-		r.widget.SetCurrentPage(1)
+		r.widget.SetCurrentPage(spinnerPageIndex)
 	})
 }
 
 func (r *roster) disconnected() {
 	//TODO: should it destroy all conversations?
 	glib.IdleAdd(func() {
-		r.widget.SetCurrentPage(0)
+		r.widget.SetCurrentPage(disconnectedPageIndex)
 	})
 }
 
@@ -256,8 +256,11 @@ func (r *roster) debugPrintRosterFor(nm string) {
 
 //TODO: I believe we can achieve the same with a GtkTreeModelFilter
 //See: gtk_tree_model_filter_set_visible_func()
-func shouldDisplay(p *rosters.Peer) bool {
-	return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != ""
+func shouldDisplay(p *rosters.Peer, showOffline bool) bool {
+	if showOffline {
+		return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != ""
+	}
+	return p.Online && ((p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != "")
 }
 
 func isAway(p *rosters.Peer) bool {
@@ -317,13 +320,15 @@ func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent st
 }
 
 func (r *roster) redrawMerged() {
+	showOffline := !r.ui.config.ShowOnlyOnline
+
 	allContacts := make([]*rosters.List, 0, len(r.contacts))
 	for _, contacts := range r.contacts {
 		allContacts = append(allContacts, contacts)
 	}
 
 	rosters.IterAll(func(_ int, item *rosters.Peer) {
-		if shouldDisplay(item) {
+		if shouldDisplay(item, showOffline) {
 			r.addItem(item, nil, "")
 		}
 	}, allContacts...)
@@ -331,6 +336,7 @@ func (r *roster) redrawMerged() {
 
 func (r *roster) redrawSeparate() {
 	var parentIter *gtk.TreeIter
+	showOffline := !r.ui.config.ShowOnlyOnline
 
 	for account, contacts := range r.contacts {
 		parentIter = r.model.Append(nil)
@@ -339,7 +345,7 @@ func (r *roster) redrawSeparate() {
 		countOnline := 0
 
 		contacts.Iter(func(_ int, item *rosters.Peer) {
-			if shouldDisplay(item) {
+			if shouldDisplay(item, showOffline) {
 				count++
 				if isOnline(item) {
 					countOnline++
@@ -365,6 +371,16 @@ func (r *roster) redrawSeparate() {
 		} else {
 			r.view.CollapseRow(parentPath)
 		}
+	}
+}
+
+const disconnectedPageIndex = 0
+const spinnerPageIndex = 1
+const rosterPageIndex = 2
+
+func (r *roster) redrawIfRosterVisible() {
+	if r.widget.GetCurrentPage() == rosterPageIndex {
+		r.redraw()
 	}
 }
 

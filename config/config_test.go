@@ -86,7 +86,8 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 		}
 	],
 	"Bell": false,
-	"MergeAccounts": false
+	"MergeAccounts": false,
+	"ShowOnlyOnline": false
 }`
 
 	conf := Accounts{

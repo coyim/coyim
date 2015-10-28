@@ -22,6 +22,7 @@ type gtkUI struct {
 	roster       *roster
 	window       *gtk.Window
 	accountsMenu *gtk.MenuItem
+	viewMenu     *viewMenu
 
 	config *config.Accounts
 
@@ -30,6 +31,8 @@ type gtkUI struct {
 	displaySettings *displaySettings
 
 	keySupplier config.KeySupplier
+
+	tags *tags
 }
 
 // UI is the user interface functionality exposed to main
@@ -81,7 +84,9 @@ func (u *gtkUI) loadConfigInternal(configFile string) {
 	accounts, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
 	u.config = accounts
 	if ok {
-
+		if u.viewMenu != nil {
+			u.viewMenu.setFromConfig(accounts)
+		}
 		if err != nil {
 			//TODO error
 			log.Printf(err.Error())
@@ -116,7 +121,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 }
 
 func (u *gtkUI) saveConfigInternal() {
-	err := u.config.Save(u.keySupplier)
+	err := u.saveConfigOnlyInternal()
 	if err != nil {
 		return
 	}
@@ -128,8 +133,16 @@ func (u *gtkUI) saveConfigInternal() {
 	}
 }
 
+func (u *gtkUI) saveConfigOnlyInternal() error {
+	return u.config.Save(u.keySupplier)
+}
+
 func (u *gtkUI) SaveConfig() {
 	go u.saveConfigInternal()
+}
+
+func (u *gtkUI) saveConfigOnly() {
+	go u.saveConfigOnlyInternal()
 }
 
 func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {
@@ -342,6 +355,8 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 		u.accountsMenu.SetSubmenu((*gtk.Widget)(nil))
 		u.buildAccountsMenu()
 	})
+
+	u.createViewMenu(menubar)
 
 	//Help -> About
 	cascademenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Help"))

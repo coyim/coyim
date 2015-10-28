@@ -21,6 +21,7 @@ type Accounts struct {
 	IdleSecondsBeforeNotification int      `json:",omitempty"`
 	Bell                          bool
 	MergeAccounts                 bool
+	ShowOnlyOnline                bool
 }
 
 // LoadOrCreate will try to load the configuration from the given configuration file

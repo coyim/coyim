@@ -14,6 +14,14 @@ type displaySettings struct {
 	provider *gtk.CssProvider
 }
 
+func (ds *displaySettings) defaultSettingsOn(w *gtk.Widget) {
+	glib.IdleAdd(func() bool {
+		styleContext, _ := w.GetStyleContext()
+		styleContext.AddProvider(ds.provider, 9999)
+		return false
+	})
+}
+
 func (ds *displaySettings) unifiedBackgroundColor(w *gtk.Widget) {
 	glib.IdleAdd(func() bool {
 		styleContext, _ := w.GetStyleContext()
@@ -44,6 +52,10 @@ func (ds *displaySettings) decreaseFontSize() {
 
 func (ds *displaySettings) update() {
 	css := fmt.Sprintf(`
+* {
+  -GtkCheckMenuItem-indicator-size: 16;
+}
+
 .currentFontSetting {
   font-size: %dpx;
 }

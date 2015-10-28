@@ -47,6 +47,7 @@ func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error
 
 	addErr := builder.AddFromString(replaced)
 	if addErr != nil {
+		log.Printf("\nFailed to add string %s\n%s", replaced, addErr.Error())
 		return nil, addErr
 	}
 

@@ -7,42 +7,71 @@ import (
 	"github.com/twstrike/coyim/i18n"
 )
 
-func verifyFingerprintDialog(account *account, uid string) {
+func formatFingerprint(fpr []byte) string {
+	str := fmt.Sprintf("%X", fpr)
+	result := ""
+
+	sep := ""
+	for len(str) > 0 {
+		result = result + sep + str[0:10]
+		sep = " "
+		str = str[10:]
+	}
+
+	return result
+}
+
+func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
+	//TODO: errors
 	dialog, _ := gtk.DialogNew()
-	dialog.SetTitle(i18n.Local("Fingerprint verification"))
+	defer dialog.Destroy()
+	dialog.SetTransientFor(parent)
+	dialog.SetTitle(fmt.Sprintf(i18n.Local("Verify fingerprint for %s"), uid))
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
 	vbox, _ := dialog.GetContentArea()
+	vbox.SetBorderWidth(10)
 
-	//TODO: errors
 	conversation := account.session.GetConversationWith(uid)
-	fpr := conversation.GetTheirKey().DefaultFingerprint()
+	if conversation == nil || conversation.GetTheirKey() == nil {
+		message := fmt.Sprintf(i18n.Local(`
+You can't verify the fingerprint for %s yet.
+You first have to start an encrypted conversation with them.
 
-	// message copied from libpurple
-	message := fmt.Sprintf(i18n.Local(`
-	Fingerprint for you (%[1]s): %[2]x
+Fingerprint for you (%s):
+  %s
+	`), uid, account.session.CurrentAccount.Account, formatFingerprint(account.session.PrivateKey.DefaultFingerprint()))
 
-	Purported fingerprint for %[3]s: %[4]x
+		l, _ := gtk.LabelNew(message)
+		vbox.Add(l)
+		dialog.AddButton(i18n.Local("OK"), gtk.RESPONSE_OK)
+		dialog.SetDefaultResponse(gtk.RESPONSE_OK)
+		dialog.ShowAll()
+		dialog.Run()
+	} else {
+		fpr := conversation.GetTheirKey().DefaultFingerprint()
+		message := fmt.Sprintf(i18n.Local(`
+Is this the correct fingerprint for %s?
 
-	Is this the verifiably correct fingerprint for %[3]s?
-	`), account.session.CurrentAccount.Account, account.session.PrivateKey.DefaultFingerprint(), uid, fpr)
-	l, _ := gtk.LabelNew(message)
-	vbox.Add(l)
+Fingerprint for you (%s):
+  %s
 
-	button, _ := gtk.ButtonNewWithLabel(i18n.Local("Verify"))
-	vbox.Add(button)
+Purported fingerprint for %s:
+  %s
+	`), uid, account.session.CurrentAccount.Account, formatFingerprint(account.session.PrivateKey.DefaultFingerprint()), uid, formatFingerprint(fpr))
 
-	button.Connect("clicked", func() {
-		defer dialog.Destroy()
+		l, _ := gtk.LabelNew(message)
+		vbox.Add(l)
+		dialog.AddButton(i18n.Local("Cancel"), gtk.RESPONSE_NO)
+		dialog.AddButton(i18n.Local("Verify"), gtk.RESPONSE_YES)
+		dialog.SetDefaultResponse(gtk.RESPONSE_NO)
 
-		err := account.authorizeFingerprint(uid, fpr)
-		if err != nil {
-			//TODO: Error
-			return
+		dialog.ShowAll()
+
+		responseType := gtk.ResponseType(dialog.Run())
+		switch responseType {
+		case gtk.RESPONSE_YES:
+			account.authorizeFingerprint(uid, fpr)
+			account.session.SaveConfiguration()
 		}
-
-		//TODO: error
-		account.session.SaveConfiguration()
-	})
-
-	dialog.ShowAll()
+	}
 }

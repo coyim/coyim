@@ -28,7 +28,7 @@ type roster struct {
 	ui *gtkUI
 }
 
-func newNotebook() *gtk.Notebook {
+func (u *gtkUI) newNotebook() *gtk.Notebook {
 	notebook, err := gtk.NotebookNew()
 	if err != nil {
 		panic("failed")
@@ -39,9 +39,9 @@ func newNotebook() *gtk.Notebook {
 	notebook.PopupDisable()
 
 	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
-
 	vbox.SetHomogeneous(false)
 	vbox.SetBorderWidth(3)
+	u.displaySettings.unifiedBackgroundColor(&vbox.Container.Widget)
 
 	welcome, _ := gtk.LabelNew(i18n.Local("You are not connected to any account.\nPlease connect to view your online contacts."))
 
@@ -54,9 +54,17 @@ func newNotebook() *gtk.Notebook {
 
 	notebook.AppendPage(vbox, nil)
 
+	vboxSpinner, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
+	vboxSpinner.SetHomogeneous(false)
+	vboxSpinner.SetBorderWidth(3)
+	u.displaySettings.unifiedBackgroundColor(&vboxSpinner.Container.Widget)
 	spinner, _ := gtk.SpinnerNew()
 	spinner.Start()
-	notebook.AppendPage(spinner, nil)
+	vboxSpinner.PackStart(spinner, true, true, 0)
+
+	notebook.AppendPage(vboxSpinner, nil)
+
+	u.displaySettings.update()
 
 	return notebook
 }
@@ -86,7 +94,7 @@ func (u *gtkUI) newRoster() *roster {
 	v, _ := gtk.TreeViewNew()
 
 	r := &roster{
-		widget: newNotebook(),
+		widget: u.newNotebook(),
 		model:  m,
 		view:   v,
 

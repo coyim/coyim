@@ -35,6 +35,8 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 
 	pwdResultChan := make(chan string)
 
+	// TODO: This should be refactored to use the standard button things
+
 	dialog := dialog{
 		title:       i18n.Local("Enter master password"),
 		position:    gtk.WIN_POS_CENTER,

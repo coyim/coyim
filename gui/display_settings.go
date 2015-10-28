@@ -14,6 +14,15 @@ type displaySettings struct {
 	provider *gtk.CssProvider
 }
 
+func (ds *displaySettings) unifiedBackgroundColor(w *gtk.Widget) {
+	glib.IdleAdd(func() bool {
+		styleContext, _ := w.GetStyleContext()
+		styleContext.AddProvider(ds.provider, 9999)
+		styleContext.AddClass("currentBackgroundColor")
+		return false
+	})
+}
+
 func (ds *displaySettings) control(w *gtk.Widget) {
 	glib.IdleAdd(func() bool {
 		styleContext, _ := w.GetStyleContext()
@@ -37,6 +46,10 @@ func (ds *displaySettings) update() {
 	css := fmt.Sprintf(`
 .currentFontSetting {
   font-size: %dpx;
+}
+
+.currentBackgroundColor {
+  background-color: #fff;
 }
 `, ds.fontSize)
 	glib.IdleAdd(func() bool {

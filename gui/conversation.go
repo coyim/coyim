@@ -71,7 +71,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) *conversation
 			}
 		},
 		"on_verify_fp_signal": func() {
-			verifyFingerprintDialog(conv.account, conv.to)
+			verifyFingerprintDialog(conv.account, conv.to, conv.win)
 		},
 	})
 

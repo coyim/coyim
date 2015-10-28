@@ -25,6 +25,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) *conversation
 	vars["$StartOTR"] = i18n.Local("Start encrypted chat")
 	vars["$EndOTR"] = i18n.Local("End encrypted chat")
 	vars["$VerifyFP"] = i18n.Local("_Verify fingerprint...")
+
 	builder, _ := loadBuilderWith("ConversationDefinition", vars)
 	win, _ := builder.GetObject("conversation")
 	history, _ := builder.GetObject("history")

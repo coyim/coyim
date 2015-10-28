@@ -3,30 +3,48 @@ package gui
 import (
 	"bufio"
 	"fmt"
-	"github.com/gotk3/gotk3/gtk"
+	"log"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type uiDefinition interface {
 	getDefinition() string
 }
 
-const defsFolder string = "gui/definitions"
-const xmlExtension string = ".xml"
+const (
+	defsFolder   string = "gui/definitions"
+	xmlExtension string = ".xml"
+)
+
+//hold a reference to them to prevent garbage collecting
+var builders map[string]*gtk.Builder
 
 func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error) {
-	//TODO: Add OS-aware path separator
-	fileName := defsFolder + "/" + uiName + xmlExtension
-	builder, _ := gtk.BuilderNew()
+	if builders == nil {
+		builders = make(map[string]*gtk.Builder)
+	}
+
+	builder, ok := builders[uiName]
+	if ok {
+		return builder, nil
+	}
+
+	fileName := filepath.Join(defsFolder, uiName+xmlExtension)
+	builder, _ = gtk.BuilderNew()
 	var toReplace string
 	if doesnotExist(fileName) {
+		log.Printf("Loading compiled definition %q")
 		uiDef := getDefinition(uiName)
 		if uiDef == nil {
 			return nil, fmt.Errorf("There's no definition for %s", uiName)
 		}
 		toReplace = uiDef.getDefinition()
 	} else {
+		log.Printf("Loading UI definition %q from: %s", uiName, fileName)
 		toReplace = readFile(fileName)
 	}
 
@@ -37,6 +55,7 @@ func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error
 		return nil, addErr
 	}
 
+	builders[uiName] = builder
 	return builder, nil
 }
 

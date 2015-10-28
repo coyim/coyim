@@ -169,4 +169,4 @@ if /bin/expr "x$1" : '^x-psn_' > /dev/null; then
     shift 1
 fi
 
-$EXEC "$bundle_contents/MacOS/$name-bin" "$@" $EXTRA_ARGS
+$EXEC "$bundle_contents/MacOS/$name-bin" "$@" $EXTRA_ARGS -debug >> ~/.coyim.log 2>&1

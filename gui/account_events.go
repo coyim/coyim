@@ -15,15 +15,30 @@ func (u *gtkUI) observeAccountEvents() {
 	for ev := range u.events {
 		switch t := ev.(type) {
 		case session.Event:
-			u.handleSessionEvent(t)
+			glib.IdleAdd(func() bool {
+				u.handleSessionEvent(t)
+				return false
+			})
 		case session.PeerEvent:
-			u.handlePeerEvent(t)
+			glib.IdleAdd(func() bool {
+				u.handlePeerEvent(t)
+				return false
+			})
 		case session.PresenceEvent:
-			u.handlePresenceEvent(t)
+			glib.IdleAdd(func() bool {
+				u.handlePresenceEvent(t)
+				return false
+			})
 		case session.MessageEvent:
-			u.handleMessageEvent(t)
+			glib.IdleAdd(func() bool {
+				u.handleMessageEvent(t)
+				return false
+			})
 		case session.LogEvent:
-			u.handleLogEvent(t)
+			glib.IdleAdd(func() bool {
+				u.handleLogEvent(t)
+				return false
+			})
 		default:
 			log.Printf("unsupported event %#v\n", t)
 		}

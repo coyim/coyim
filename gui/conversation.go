@@ -19,102 +19,13 @@ type conversationWindow struct {
 }
 
 func newConversationWindow(account *account, uid string, u *gtkUI) *conversationWindow {
-	des := `
-	<interface>
-	  <object class="GtkWindow" id="conversation">
-	    <property name="window-position">0</property>
-	    <property name="default-height">500</property>
-	    <property name="default-width">400</property>
-	    <property name="destroy-with-parent">true</property>
-	    <property name="title">` + uid + `</property>
-
-	    <child>
-	      <object class="GtkVBox">
-                <property name="homogeneous">false</property>
-	      	<child>
-	          <object class="GtkMenuBar" id="menubar">
-	            <child>
-	              <object class="GtkMenuItem" id="conversationMenu">
-	                <property name="label">` + i18n.Local("Developer options") + `</property>
-	                <child type="submenu">
-	                  <object class="GtkMenu">
-	                    <child>
-	                      <object class="GtkMenuItem" id="startOTRMenu">
-	                        <property name="label">` + i18n.Local("Start encrypted chat") + `</property>
-		                <signal name="activate" handler="on_start_otr_signal" />
-	            	      </object>
-	            	    </child>
-	                    <child>
-	                      <object class="GtkMenuItem" id="endOTRMenu">
-	                        <property name="label">` + i18n.Local("End encrypted chat") + `</property>
-		                <signal name="activate" handler="on_end_otr_signal" />
-	            	      </object>
-	            	    </child>
-	                    <child>
-	                      <object class="GtkMenuItem" id="verifyFingerMenu">
-	                        <property name="label">` + i18n.Local("_Verify fingerprint...") + `</property>
-		                <signal name="activate" handler="on_verify_fp_signal" />
-	            	      </object>
-	            	    </child>
-	                  </object>
-	                </child>
-	              </object>
-	            </child>
-	          </object>
-
-	          <packing>
-	            <property name="expand">false</property>
-	            <property name="fill">true</property>
-	            <property name="position">0</property>
-	          </packing>
-		</child>
-
-		<child>
-	            <object class="GtkScrolledWindow" id="historyScroll">
-	              <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
-	              <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
-	              <child>
-	                <object class="GtkTextView" id="history">
-		          <property name="visible">true</property>
-		          <property name="wrap-mode">1</property>
-		          <property name="editable">false</property>
-		          <property name="cursor-visible">false</property>
-	                </object>
-
-	              </child>
-
-	            </object>
-
-	          <packing>
-	            <property name="expand">true</property>
-	            <property name="fill">true</property>
-	            <property name="position">1</property>
-	          </packing>
-		</child>
-
-	        <child>
-	          <object class="GtkEntry" id="message">
-	            <property name="has-focus">true</property>
-		    <signal name="activate" handler="on_send_message_signal" />
-	          </object>
-	          <packing>
-	            <property name="expand">false</property>
-	            <property name="fill">true</property>
-	            <property name="position">2</property>
-	          </packing>
-	        </child>
-	      </object>
-	    </child>
-
-	  </object>
-	</interface>
-	`
-	builder, _ := gtk.BuilderNew()
-	addError := builder.AddFromString(des)
-	if addError != nil {
-		fmt.Printf("Failed to add the UI XML: %s", addError.Error())
-	}
-
+	vars := make(map[string]string)
+	vars["$uid"] = uid
+	vars["$DevOptions"] = i18n.Local("Developer options")
+	vars["$StartOTR"] = i18n.Local("Start encrypted chat")
+	vars["$EndOTR"] = i18n.Local("End encrypted chat")
+	vars["$VerifyFP"] = i18n.Local("_Verify fingerprint...")
+	builder, _ := loadBuilderWith("ConversationDefinition", vars)
 	win, _ := builder.GetObject("conversation")
 	history, _ := builder.GetObject("history")
 	scrollHistory, _ := builder.GetObject("historyScroll")

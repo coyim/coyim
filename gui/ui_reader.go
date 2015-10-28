@@ -12,7 +12,7 @@ type UIDefinition interface {
 	getDefinition() string
 }
 
-const defsFolder string = "definitions"
+const defsFolder string = "gui/definitions"
 const xmlExtension string = ".xml"
 
 func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error) {

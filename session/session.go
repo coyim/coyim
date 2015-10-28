@@ -384,7 +384,6 @@ func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
 	conversation := s.newConversation(peer)
 	s.Conversations[peer] = conversation
 
-	//TODO: Why do we need a reference to the event handler in the session?
 	eh, ok := s.OtrEventHandler[peer]
 	if !ok {
 		eh = new(event.OtrEventHandler)

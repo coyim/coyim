@@ -30,13 +30,17 @@ func (m *accountManager) addAccount(appConfig *config.Accounts, account *config.
 
 func (m *accountManager) buildAccounts(appConfig *config.Accounts) {
 	m.accounts = make([]*account, 0, len(appConfig.Accounts))
-
+	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
-		if err := accountConf.EnsurePrivateKey(); err != nil {
+		hasUpdate, err := accountConf.EnsurePrivateKey()
+		if err != nil {
 			continue
 		}
-
+		hasConfUpdates = hasConfUpdates || hasUpdate
 		m.addAccount(appConfig, accountConf)
+	}
+	if hasConfUpdates {
+		m.saveConfiguration()
 	}
 }
 

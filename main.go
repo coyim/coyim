@@ -17,7 +17,7 @@ func initLog() {
 
 	flags := log.Ldate | log.Ltime | log.Llongfile
 	log.SetFlags(flags)
-	log.SetPrefix("[CoyIM]")
+	log.SetPrefix("[CoyIM] ")
 }
 
 func main() {

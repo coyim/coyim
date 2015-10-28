@@ -63,23 +63,21 @@ func (a *Account) ID() string {
 }
 
 // EnsurePrivateKey generates a private key for the account in case it's missing
-func (a *Account) EnsurePrivateKey() error {
+func (a *Account) EnsurePrivateKey() (hasUpdate bool, e error) {
 	log.Printf("[%s] ensureConfigHasKey()\n", a.Account)
 
 	if len(a.PrivateKey) != 0 {
-		return nil
+		return false, nil
 	}
 
 	log.Printf("[%s] - No private key available. Generating...\n", a.Account)
 	var priv otr3.PrivateKey
 
 	if err := priv.Generate(rand.Reader); err != nil {
-		return err
+		return false, err
 	}
 
 	a.PrivateKey = priv.Serialize()
 
-	// TODO: urgently, we need to save the config here
-
-	return nil
+	return true, nil
 }

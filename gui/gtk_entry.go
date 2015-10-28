@@ -9,6 +9,10 @@ type entry struct {
 	id         string
 }
 
+func (e entry) getId() string {
+	return e.id
+}
+
 func (wr *widgetRegistry) getText(id string) string {
 	w := wr.reg[id]
 

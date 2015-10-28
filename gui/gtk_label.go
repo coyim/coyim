@@ -6,6 +6,10 @@ type label struct {
 	text string
 }
 
+func (l label) getId() string {
+	return ""
+}
+
 func (l label) create(reg *widgetRegistry) (gtk.IWidget, error) {
 	return gtk.LabelNew(l.text)
 }

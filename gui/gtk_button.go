@@ -8,6 +8,10 @@ type button struct {
 	id        string
 }
 
+func (b button) getId() string {
+	return b.id
+}
+
 func (b button) create(reg *widgetRegistry) (gtk.IWidget, error) {
 	button, e := gtk.ButtonNewWithLabel(b.text)
 	if e != nil {

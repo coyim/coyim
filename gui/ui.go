@@ -138,6 +138,7 @@ func (u *gtkUI) quit() {
 
 func (*gtkUI) askForPassword(connect func(string)) {
 	reg := createWidgetRegistry()
+	buttonId := "connect"
 	dialog := dialog{
 		title:    i18n.Local("Password"),
 		position: gtk.WIN_POS_CENTER,
@@ -150,12 +151,13 @@ func (*gtkUI) askForPassword(connect func(string)) {
 				id:         "password",
 			},
 			button{
+				id:        buttonId,
 				text:      i18n.Local("Connect"),
 				onClicked: onPasswordDialogClicked(reg, connect),
 			},
 		},
 	}
-	dialog.create(reg)
+	dialog.createWithDefault(reg, buttonId)
 	reg.dialogShowAll("dialog")
 }
 

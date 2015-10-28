@@ -53,7 +53,7 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 
 	win, getErr := builder.GetObject("conversation")
 	if getErr != nil {
-		fmt.Errorf("\nFailed to get window \n%s")
+		fmt.Errorf("\nFailed to get window \n%s", getErr.Error())
 		c.Fail()
 	}
 	w, h := win.(*gtk.Window).GetSize()
@@ -78,7 +78,7 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useGoFileIfXMLDoesntExists(c *C) {
 
 	win, getErr := builder.GetObject("conversation")
 	if getErr != nil {
-		fmt.Errorf("\nFailed to get window \n%s")
+		fmt.Errorf("\nFailed to get window \n%s", getErr.Error())
 		c.Fail()
 	}
 	w, h := win.(*gtk.Window).GetSize()

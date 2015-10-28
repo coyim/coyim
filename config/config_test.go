@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net"
 	"os"
+	"strings"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -108,5 +109,9 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 
 func (s *ConfigXmppSuite) TestFindConfigFile(c *C) {
 	conf, _ := findConfigFile()
-	c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json")
+	if strings.HasSuffix(conf, ".enc") {
+		c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json.enc")
+	} else {
+		c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json")
+	}
 }

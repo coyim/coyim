@@ -75,11 +75,22 @@ func NewCLI() *cliUI {
 }
 
 func (c *cliUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {
-	panic("TODO: not implemented yet, master password support for CLI")
+	password, err := c.term.ReadPassword("Master password for configuration file: ")
+	if err != nil {
+		c.alert(err.Error())
+		return nil, nil, false
+	}
+
+	l, r := config.GenerateKeys(password, params)
+	return l, r, true
 }
 
 func (c *cliUI) loadConfig(configFile string) error {
-	accounts, err := config.LoadOrCreate(configFile, c.getMasterPassword)
+	accounts, ok, err := config.LoadOrCreate(configFile, c.getMasterPassword)
+	if !ok {
+		c.alert("Couldn't open encrypted file - did you enter your password correctly?")
+		return errors.New("couldn't open encrypted file - did you supply the wrong password?")
+	}
 	if err != nil {
 		c.alert(err.Error())
 		if !enroll(accounts, accounts.AddNewAccount(), c.term) {

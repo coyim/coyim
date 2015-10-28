@@ -79,5 +79,7 @@ func (a *Account) EnsurePrivateKey() error {
 
 	a.PrivateKey = priv.Serialize()
 
+	// TODO: urgently, we need to save the config here
+
 	return nil
 }

@@ -62,16 +62,16 @@ func (s *EncryptedConfigXmppSuite) Test_decryptData(c *C) {
 	c.Assert(string(res), DeepEquals, "this is some data I want to have encrypted")
 
 	_, e = decryptData(testKey, testMacKey, testNonce, testEncryptedDataFlip)
-	c.Assert(e.Error(), Equals, "cipher: message authentication failed")
+	c.Assert(e, Equals, errDecryptionFailed)
 
 	_, e = decryptData(testKeyWrong, testMacKey, testNonce, testEncryptedData)
-	c.Assert(e.Error(), Equals, "cipher: message authentication failed")
+	c.Assert(e, Equals, errDecryptionFailed)
 
 	_, e = decryptData(testKey, testMacKeyWrong, testNonce, testEncryptedData)
-	c.Assert(e.Error(), Equals, "cipher: message authentication failed")
+	c.Assert(e, Equals, errDecryptionFailed)
 
 	_, e = decryptData(testKey, testMacKey, testNonceWrong, testEncryptedData)
-	c.Assert(e.Error(), Equals, "cipher: message authentication failed")
+	c.Assert(e, Equals, errDecryptionFailed)
 }
 
 var encryptedDataContent = []byte(`
@@ -89,7 +89,7 @@ var encryptedDataContent = []byte(`
 `)
 
 func (s *EncryptedConfigXmppSuite) Test_decryptConfiguration(c *C) {
-	res, e := decryptConfiguration(encryptedDataContent, func(params EncryptionParameters) ([]byte, []byte, bool) {
+	res, _, e := decryptConfiguration(encryptedDataContent, func(params EncryptionParameters) ([]byte, []byte, bool) {
 		return testKey, testMacKey, true
 	})
 	c.Assert(e, IsNil)

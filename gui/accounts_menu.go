@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"fmt"
+	"log"
 	"strings"
 
 	"github.com/gotk3/gotk3/glib"
@@ -30,7 +30,7 @@ func onAccountDialogClicked(account *config.Account, saveFunction func(), reg *w
 
 		parts := strings.SplitN(account.Account, "@", 2)
 		if len(parts) != 2 {
-			fmt.Println("invalid username (want user@domain): " + account.Account)
+			log.Println("invalid username (want user@domain): " + account.Account)
 			return
 		}
 
@@ -41,30 +41,33 @@ func onAccountDialogClicked(account *config.Account, saveFunction func(), reg *w
 
 func accountDialog(account *config.Account, saveFunction func()) {
 	reg := createWidgetRegistry()
+	onClicked := onAccountDialogClicked(account, saveFunction, reg)
 	d := dialog{
 		title:    i18n.Local("Account Details"),
 		position: gtk.WIN_POS_CENTER,
 		id:       "dialog",
-		content: []createable{
-			label{i18n.Local("Your account (for example: kim42@dukgo.com)")},
+		content: []creatable{
+			label{text: i18n.Local("Your account (for example: kim42@dukgo.com)")},
 			entry{
 				text:       account.Account,
 				editable:   true,
 				visibility: true,
 				id:         "account",
+				onActivate: onClicked,
 			},
 
-			label{i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")},
+			label{text: i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")},
 			entry{
 				text:       account.Password,
 				editable:   true,
 				visibility: false,
 				id:         "password",
+				onActivate: onClicked,
 			},
 
 			button{
 				text:      i18n.Local("Save"),
-				onClicked: onAccountDialogClicked(account, saveFunction, reg),
+				onClicked: onClicked,
 			},
 		},
 	}
@@ -113,7 +116,9 @@ func buildAccountSubmenu(u *gtkUI, account *account) *gtk.MenuItem {
 	accountSubMenu.Append(editItem)
 
 	editItem.Connect("activate", func() {
-		accountDialog(account.session.CurrentAccount, u.SaveConfig)
+		accountDialog(account.session.CurrentAccount, func() {
+			u.SaveConfig()
+		})
 	})
 
 	//TODO: add "Remove" menu item

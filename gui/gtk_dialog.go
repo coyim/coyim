@@ -3,10 +3,11 @@ package gui
 import "github.com/gotk3/gotk3/gtk"
 
 type dialog struct {
-	title    string
-	position gtk.WindowPosition
-	content  []createable
-	id       string
+	title       string
+	position    gtk.WindowPosition
+	content     []creatable
+	id          string
+	defaultSize []int
 }
 
 func (wr *widgetRegistry) dialogDestroy(id string) {
@@ -25,6 +26,10 @@ func (d dialog) create(reg *widgetRegistry) (gtk.IWidget, error) {
 
 	dialog.SetTitle(d.title)
 	dialog.SetPosition(d.position)
+
+	if d.defaultSize != nil {
+		dialog.SetDefaultSize(d.defaultSize[0], d.defaultSize[1])
+	}
 
 	//TODO: error
 	content, _ := dialog.GetContentArea()

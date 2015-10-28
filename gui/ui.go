@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"crypto/rand"
 	"fmt"
 	"log"
 	"os"
@@ -15,7 +14,6 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/otr3"
 )
 
 const debugEnabled = true
@@ -46,31 +44,42 @@ func NewGTK() *gtkUI {
 	return res
 }
 
-func (u *gtkUI) loadConfig(configFile string) error {
-	accounts, err := config.LoadOrCreate(configFile, u.keySupplier)
+func (u *gtkUI) loadConfigInternal(configFile string) {
+	accounts, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
 	u.config = accounts
+	if ok {
 
-	if err != nil {
-		//TODO error
-		log.Printf(err.Error())
+		if err != nil {
+			//TODO error
+			log.Printf(err.Error())
 
-		glib.IdleAdd(func() bool {
-			u.wouldYouLikeToEncryptYourFile(func(res bool) {
-				u.config.ShouldEncrypt = res
-				u.showAddAccountWindow()
+			glib.IdleAdd(func() bool {
+				u.wouldYouLikeToEncryptYourFile(func(res bool) {
+					u.config.ShouldEncrypt = res
+					u.showAddAccountWindow()
+				})
+				return false
 			})
-			return false
-		})
+		}
+
+		u.buildAccounts(u.config)
+
+		//TODO: replace me by observer
+		for _, acc := range u.accounts {
+			acc.session.SessionEventHandler = u
+		}
+
+		if u.window != nil {
+			u.window.Emit(accountChangedSignal.String())
+		}
+	} else {
+		log.Printf("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
+		// TODO: tell the user we couldn't open the encrypted file
 	}
+}
 
-	u.buildAccounts(u.config)
-
-	//TODO: replace me by observer
-	for _, acc := range u.accounts {
-		acc.session.SessionEventHandler = u
-	}
-
-	return nil
+func (u *gtkUI) loadConfig(configFile string) {
+	go u.loadConfigInternal(configFile)
 }
 
 func (u *gtkUI) saveConfigInternal() {
@@ -108,10 +117,7 @@ func (u *gtkUI) Loop() {
 
 	gtk.Init(&os.Args)
 
-	if err := u.loadConfig(*config.ConfigFile); err != nil {
-		return
-	}
-
+	u.loadConfig(*config.ConfigFile)
 	u.applyStyle()
 	u.mainWindow()
 	gtk.Main()
@@ -160,13 +166,14 @@ func (*gtkUI) askForPassword(connect func(string)) {
 		title:    i18n.Local("Password"),
 		position: gtk.WIN_POS_CENTER,
 		id:       "dialog",
-		content: []createable{
-			label{i18n.Local("Password")},
+		content: []creatable{
+			label{text: i18n.Local("Password")},
 			entry{
 				editable:   true,
 				visibility: false,
 				focused:    true,
 				id:         "password",
+				onActivate: onPasswordDialogClicked(reg, connect),
 			},
 			button{
 				id:        buttonId,
@@ -325,21 +332,6 @@ func (u *gtkUI) rosterUpdated() {
 
 func (u *gtkUI) disconnect(account *account) {
 	account.session.Close()
-}
-
-func (u *gtkUI) ensureConfigHasKey(c *config.Account) {
-	u.Debug(fmt.Sprintf("[%s] ensureConfigHasKey()\n", c.Account))
-
-	if len(c.PrivateKey) == 0 {
-		u.Debug(fmt.Sprintf("[%s] - No private key available. Generating...\n", c.Account))
-		var priv otr3.PrivateKey
-
-		//TODO: error
-		priv.Generate(rand.Reader)
-		c.PrivateKey = priv.Serialize()
-		u.SaveConfig()
-		u.Debug(fmt.Sprintf("[%s] - Saved\n", c.Account))
-	}
 }
 
 func (u *gtkUI) connect(account *account) {

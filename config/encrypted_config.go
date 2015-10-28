@@ -11,12 +11,6 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
-// look for encrypted file first
-// if an encrypted file exists, ask for password
-// if NO file exists, ask if we should encrypt the file
-// if we get a password, keep track of the hash and the parameters for the hash
-// when saving the file, generate a new IV and put the parameters first in the file
-
 const encryptedFileEnding = ".enc"
 
 type encryptedData struct {
@@ -26,6 +20,7 @@ type encryptedData struct {
 
 // We will generate a new nonce every time we encrypt, but we will keep the salt the same. This way we can cache the scrypted password
 
+// EncryptionParameters contains the parameters used for scrypting the password and encrypting the configuration file
 type EncryptionParameters struct {
 	Nonce string
 	Salt  string
@@ -45,13 +40,17 @@ func genRand(size int) []byte {
 	return buf
 }
 
+func (p *EncryptionParameters) regenerateNonce() {
+	p.nonceInternal = genRand(nonceLen)
+}
+
 func newEncryptionParameters() EncryptionParameters {
 	res := EncryptionParameters{
 		N: 262144, // 2 ** 18
 		R: 8,
 		P: 1,
 	}
-	res.nonceInternal = genRand(nonceLen)
+	res.regenerateNonce()
 	res.saltInternal = genRand(saltLen)
 	return res
 }
@@ -61,6 +60,7 @@ const macKeyLen = 16
 const nonceLen = 12
 const saltLen = 16
 
+// GenerateKeys takes a password and encryption parameters and generates an AES key and a MAC key using SCrypt
 func GenerateKeys(password string, params EncryptionParameters) ([]byte, []byte) {
 	res, _ := scrypt.Key([]byte(password), params.saltInternal, params.N, params.R, params.P, aesKeyLen+macKeyLen)
 	return res[0:aesKeyLen], res[aesKeyLen+1:]
@@ -77,7 +77,7 @@ func decryptData(key, macKey, nonce, cipherText []byte) ([]byte, error) {
 	block, _ := cipher.NewGCM(c)
 	res, e := block.Open(nil, nonce, cipherText, macKey)
 	if e != nil {
-		return nil, e
+		return nil, errDecryptionFailed
 	}
 	return res, nil
 }
@@ -114,25 +114,30 @@ func parseEncryptedData(content []byte) (ed *encryptedData, e error) {
 	return data, e
 }
 
+// KeySupplier is a function that can be used to get key data from a user
 type KeySupplier func(params EncryptionParameters) ([]byte, []byte, bool)
 
-func decryptConfiguration(content []byte, getKeys KeySupplier) ([]byte, error) {
+var errNoPasswordSupplied = errors.New("no password supplied, aborting")
+var errDecryptionFailed = errors.New("decryption failed")
+
+func decryptConfiguration(content []byte, getKeys KeySupplier) ([]byte, *EncryptionParameters, error) {
 	data, err := parseEncryptedData(content)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	key, macKey, ok := getKeys(data.Params)
 	if !ok {
-		return nil, errors.New("no password supplied, aborting")
+		return nil, nil, errNoPasswordSupplied
 	}
 
 	ctext, err := hex.DecodeString(data.Data)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return decryptData(key, macKey, data.Params.nonceInternal, ctext)
+	res, err := decryptData(key, macKey, data.Params.nonceInternal, ctext)
+	return res, &data.Params, err
 }
 
 func encryptConfiguration(content string, params *EncryptionParameters, getKeys KeySupplier) ([]byte, error) {
@@ -153,6 +158,7 @@ func encryptConfiguration(content string, params *EncryptionParameters, getKeys 
 	return json.MarshalIndent(dd, "", "\t")
 }
 
+// CachingKeySupplier is a key supplier that only asks the user for a password if it doesn't already have the key material
 func CachingKeySupplier(getKeys KeySupplier) KeySupplier {
 	haveKeys := false
 	var key, macKey []byte

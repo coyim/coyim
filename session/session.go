@@ -441,13 +441,9 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 }
 
 func (s *Session) receiveClientMessage(from string, when time.Time, body string) {
-	log.Println("received message from", from, ":", body)
-
 	conversation := s.GetConversationWith(from)
 	out, toSend, err := conversation.Receive([]byte(body))
 	encrypted := conversation.IsEncrypted()
-
-	log.Printf("toSend = %#v \n", toSend)
 
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())
@@ -455,7 +451,6 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	}
 
 	for _, msg := range toSend {
-		log.Println("replied with", string(msg))
 		s.Conn.Send(from, string(msg))
 	}
 
@@ -728,7 +723,6 @@ func (s *Session) EncryptAndSendTo(peer string, message string) error {
 
 // SendMessageTo sends the given message directly to the peer
 func (s *Session) SendMessageTo(peer string, message string) error {
-	log.Println("msg sent to", peer, ":", message)
 	return s.Conn.Send(peer, message)
 }
 

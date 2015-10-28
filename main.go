@@ -9,7 +9,7 @@ import (
 	"github.com/twstrike/coyim/config"
 )
 
-func init() {
+func initLog() {
 	if !*config.DebugFlag {
 		log.SetOutput(ioutil.Discard)
 		return
@@ -21,6 +21,7 @@ func init() {
 
 func main() {
 	flag.Parse()
+	initLog()
 
 	runClient()
 

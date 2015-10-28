@@ -4,15 +4,16 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"strings"
 
 	"github.com/twstrike/otr3"
 )
 
 // Accounts contains the configuration for several accounts
 type Accounts struct {
-	filename      string `json:"-"`
-	ShouldEncrypt bool   `json:"-"`
+	filename      string                `json:"-"`
+	ShouldEncrypt bool                  `json:"-"`
+	params        *EncryptionParameters `json:"-"`
 
 	Accounts                      []*Account
 	RawLogFile                    string   `json:",omitempty"`
@@ -25,7 +26,7 @@ type Accounts struct {
 // LoadOrCreate will try to load the configuration from the given configuration file
 // or from the standard configuration file. If no file exists or it is malformed, an error will
 // be returned. However, the returned Accounts instance will always be usable
-func LoadOrCreate(configFile string, ks KeySupplier) (a *Accounts, e error) {
+func LoadOrCreate(configFile string, ks KeySupplier) (a *Accounts, ok bool, e error) {
 	shouldEncrypt := false
 	if len(configFile) == 0 {
 		configFile, shouldEncrypt = findConfigFile()
@@ -35,6 +36,7 @@ func LoadOrCreate(configFile string, ks KeySupplier) (a *Accounts, e error) {
 	a.filename = configFile
 	a.ShouldEncrypt = shouldEncrypt
 	e = a.tryLoad(ks)
+	ok = !(e == errNoPasswordSupplied || e == errDecryptionFailed)
 
 	return
 }
@@ -48,14 +50,20 @@ func (a *Accounts) tryLoad(ks KeySupplier) error {
 	var err error
 
 	if a.ShouldEncrypt {
-		contents2, err2 := ioutil.ReadFile(a.filename)
+		contents2, err2 := readFileOrTemporaryBackup(a.filename)
 		if err2 != nil {
 			err = err2
 		} else {
-			contents, err = decryptConfiguration(contents2, ks)
+			contents, a.params, err = decryptConfiguration(contents2, ks)
+
+			if err == errNoPasswordSupplied {
+				return err
+			} else if err == errDecryptionFailed {
+				return err
+			}
 		}
 	} else {
-		contents, err = ioutil.ReadFile(a.filename)
+		contents, err = readFileOrTemporaryBackup(a.filename)
 	}
 
 	if err != nil {
@@ -121,7 +129,25 @@ func (a *Accounts) Save(ks KeySupplier) error {
 		return err
 	}
 
-	return ioutil.WriteFile(a.filename, contents, 0600)
+	if a.ShouldEncrypt && !strings.HasSuffix(a.filename, encryptedFileEnding) {
+		a.filename = a.filename + encryptedFileEnding
+	}
+
+	if a.ShouldEncrypt {
+		if a.params == nil {
+			ps := newEncryptionParameters()
+			a.params = &ps
+		} else {
+			a.params.regenerateNonce()
+		}
+
+		contents, err = encryptConfiguration(string(contents), a.params, ks)
+		if err != nil {
+			return err
+		}
+	}
+
+	return safeWrite(a.filename, contents, 0600)
 }
 
 func (a *Accounts) serialize() ([]byte, error) {

@@ -12,6 +12,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -40,9 +41,16 @@ type UI interface {
 	Loop()
 }
 
+func argsWithApplicationName() *[]string {
+	newSlice := make([]string, len(os.Args))
+	copy(newSlice, os.Args)
+	newSlice[0] = "CoyIM"
+	return &newSlice
+}
+
 // NewGTK returns a new client for a GTK ui
 func NewGTK() UI {
-	gtk.Init(&os.Args)
+	gtk.Init(argsWithApplicationName())
 
 	connect := make(chan *account, 0)
 	disconnect := make(chan *account, 0)
@@ -196,6 +204,12 @@ func (u *gtkUI) mainWindow() {
 	u.connectShortcutsMainWindow(u.window)
 
 	u.window.ShowAll()
+
+	pl, _ := gdk.PixbufLoaderNew()
+	pl.Write(decodedIcon256x256)
+	pl.Close()
+	pixbuf, _ := pl.GetPixbuf()
+	u.window.SetIcon(pixbuf)
 }
 
 func (u *gtkUI) quit() {

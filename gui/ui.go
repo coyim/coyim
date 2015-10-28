@@ -56,9 +56,15 @@ func NewGTK() UI {
 		for {
 			select {
 			case acc := <-connect:
-				res.connect(acc)
+				glib.IdleAdd(func() bool {
+					res.connect(acc)
+					return false
+				})
 			case acc := <-disconnect:
-				res.disconnect(acc)
+				glib.IdleAdd(func() bool {
+					res.disconnect(acc)
+					return false
+				})
 			case acc := <-edit:
 				glib.IdleAdd(func() bool {
 					accountDialog(acc.session.CurrentAccount, res.SaveConfig)

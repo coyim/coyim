@@ -37,7 +37,7 @@ func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error
 	builder, _ = gtk.BuilderNew()
 	var toReplace string
 	if doesnotExist(fileName) {
-		log.Printf("Loading compiled definition %q")
+		log.Printf("Loading compiled definition %q", uiName)
 		uiDef := getDefinition(uiName)
 		if uiDef == nil {
 			return nil, fmt.Errorf("There's no definition for %s", uiName)

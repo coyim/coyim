@@ -36,12 +36,6 @@ func removeFile(name string) {
 	os.Remove(name)
 }
 
-type TestWindow struct{}
-
-func (tw TestWindow) getDefinition() string {
-	return testFile
-}
-
 func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 	gtk.Init(nil)
 	removeFile("definitions/TestWindow.xml")

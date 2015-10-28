@@ -20,6 +20,6 @@ func (wr *widgetRegistry) register(id string, w gtk.IWidget) {
 }
 
 type creatable interface {
-	getId() string
+	getID() string
 	create(reg *widgetRegistry) (gtk.IWidget, error)
 }

@@ -11,7 +11,7 @@ type entry struct {
 	onActivate func()
 }
 
-func (e entry) getId() string {
+func (e entry) getID() string {
 	return e.id
 }
 

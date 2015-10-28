@@ -81,13 +81,6 @@ func NewSession(c *config.Accounts, cu *config.Account) *Session {
 	return s
 }
 
-func (s *Session) Debug(m string) {
-	s.publishEvent(LogEvent{
-		Level:   Debug,
-		Message: m,
-	})
-}
-
 func (s *Session) info(m string) {
 	s.publishEvent(LogEvent{
 		Level:   Info,
@@ -395,7 +388,6 @@ func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
 	eh, ok := s.OtrEventHandler[peer]
 	if !ok {
 		eh = new(event.OtrEventHandler)
-		eh.Debugger = s
 		conversation.SetSMPEventHandler(eh)
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)

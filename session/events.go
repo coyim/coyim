@@ -44,12 +44,14 @@ const (
 	Unsubscribe
 )
 
+// PresenceEvent represents a presence event
 type PresenceEvent struct {
 	*Session
 	*xmpp.ClientPresence
 	Gone bool
 }
 
+// MessageEvent represents a message event
 type MessageEvent struct {
 	*Session
 	From      string
@@ -58,8 +60,10 @@ type MessageEvent struct {
 	Encrypted bool
 }
 
+// LogLevel is the current log level
 type LogLevel int
 
+// The different available log levels
 const (
 	Debug LogLevel = iota
 	Info
@@ -67,6 +71,7 @@ const (
 	Alert
 )
 
+// LogEvent contains information one specific log event
 type LogEvent struct {
 	Level   LogLevel
 	Message string

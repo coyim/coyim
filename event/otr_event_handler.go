@@ -1,7 +1,7 @@
 package event
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/otr3"
@@ -46,7 +46,6 @@ type OtrEventHandler struct {
 	SmpQuestion      string
 	securityChange   SecurityChange
 	WaitingForSecret bool
-	Debugger         Debugger
 }
 
 // WishToHandleErrorMessage means this event handler wants to handle error messages
@@ -56,7 +55,7 @@ func (*OtrEventHandler) WishToHandleErrorMessage() bool {
 
 // HandleErrorMessage is called when asked to handle a specific error message
 func (e *OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
-	e.Debugger.Debug(fmt.Sprintf("HandleErrorMessage(%s)", error.String()))
+	log.Printf("HandleErrorMessage(%s)", error.String())
 
 	switch error {
 	case otr3.ErrorCodeEncryptionError:
@@ -74,7 +73,7 @@ func (e *OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
 
 // HandleSecurityEvent is called to handle a specific security event
 func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
-	e.Debugger.Debug(fmt.Sprintf("HandleSecurityEvent(%s)", event.String()))
+	log.Printf("HandleSecurityEvent(%s)", event.String())
 	switch event {
 	case otr3.GoneSecure, otr3.StillSecure:
 		e.securityChange = NewKeys
@@ -83,7 +82,7 @@ func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 
 // HandleSMPEvent is called to handle a specific SMP event
 func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
-	e.Debugger.Debug(fmt.Sprintf("HandleSMPEvent(%s, %d, %s)", event.String(), progressPercent, question))
+	log.Printf("HandleSMPEvent(%s, %d, %s)", event.String(), progressPercent, question)
 	switch event {
 	case otr3.SMPEventAskForSecret, otr3.SMPEventAskForAnswer:
 		e.securityChange = SMPSecretNeeded
@@ -100,7 +99,7 @@ func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent in
 
 // HandleMessageEvent is called to handle a specific message event
 func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error) {
-	e.Debugger.Debug(fmt.Sprintf("HandleMessageEvent(%s, %s, %v)", event.String(), message, err))
+	log.Printf("HandleMessageEvent(%s, %s, %v)", event.String(), message, err)
 	if event == otr3.MessageEventConnectionEnded {
 		e.securityChange = ConversationEnded
 	}

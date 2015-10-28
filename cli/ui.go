@@ -40,8 +40,13 @@ type cliUI struct {
 	RosterEditor
 }
 
+// UI is the user interface functionality exposed to main
+type UI interface {
+	Loop()
+}
+
 // NewCLI creates a new cliUI instance
-func NewCLI() *cliUI {
+func NewCLI() UI {
 	oldState, err := terminal.MakeRaw(0)
 	if err != nil {
 		panic(err.Error())

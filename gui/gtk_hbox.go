@@ -7,7 +7,7 @@ type hbox struct {
 	fromRight bool
 }
 
-func (h hbox) getId() string {
+func (h hbox) getID() string {
 	return ""
 }
 

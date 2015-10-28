@@ -7,7 +7,7 @@ type label struct {
 	wrapLines bool
 }
 
-func (l label) getId() string {
+func (l label) getID() string {
 	return ""
 }
 

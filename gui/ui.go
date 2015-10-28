@@ -32,8 +32,13 @@ type gtkUI struct {
 	keySupplier config.KeySupplier
 }
 
+// UI is the user interface functionality exposed to main
+type UI interface {
+	Loop()
+}
+
 // NewGTK returns a new client for a GTK ui
-func NewGTK() *gtkUI {
+func NewGTK() UI {
 	res := &gtkUI{
 		accountManager: newAccountManager(),
 	}
@@ -161,7 +166,7 @@ func (u *gtkUI) quit() {
 
 func (*gtkUI) askForPassword(connect func(string)) {
 	reg := createWidgetRegistry()
-	buttonId := "connect"
+	buttonID := "connect"
 	dialog := dialog{
 		title:    i18n.Local("Password"),
 		position: gtk.WIN_POS_CENTER,
@@ -176,13 +181,13 @@ func (*gtkUI) askForPassword(connect func(string)) {
 				onActivate: onPasswordDialogClicked(reg, connect),
 			},
 			button{
-				id:        buttonId,
+				id:        buttonID,
 				text:      i18n.Local("Connect"),
 				onClicked: onPasswordDialogClicked(reg, connect),
 			},
 		},
 	}
-	dialog.createWithDefault(reg, buttonId)
+	dialog.createWithDefault(reg, buttonID)
 	reg.dialogShowAll("dialog")
 }
 

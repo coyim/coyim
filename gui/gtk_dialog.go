@@ -45,18 +45,18 @@ func (d dialog) create(reg *widgetRegistry) (gtk.IWidget, error) {
 	return dialog, nil
 }
 
-func (d dialog) createWithDefault(wr *widgetRegistry, buttonId string) (gtk.IWidget, error) {
+func (d dialog) createWithDefault(wr *widgetRegistry, buttonID string) (gtk.IWidget, error) {
 	dialog, e := d.create(wr)
 	if e != nil {
 		return nil, e
 	}
 
-	button := wr.reg[buttonId].(*gtk.Button)
+	button := wr.reg[buttonID].(*gtk.Button)
 	button.SetCanDefault(true)
 	dialog.(*gtk.Dialog).SetDefault(button)
 
 	for _, item := range d.content {
-		widget := wr.reg[item.getId()]
+		widget := wr.reg[item.getID()]
 		switch w := widget.(type) {
 		case *gtk.Entry:
 			w.SetActivatesDefault(true)

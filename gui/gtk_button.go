@@ -9,7 +9,7 @@ type button struct {
 	focused   bool
 }
 
-func (b button) getId() string {
+func (b button) getID() string {
 	return b.id
 }
 

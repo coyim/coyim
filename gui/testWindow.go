@@ -1,8 +1,8 @@
 package gui
 
-type TestWindow struct{}
+type testWindow struct{}
 
-func (tw TestWindow) getDefinition() string {
+func (tw testWindow) getDefinition() string {
 	return `
 <interface>
   <object class="GtkWindow" id="conversation">

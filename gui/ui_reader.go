@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type UIDefinition interface {
+type uiDefinition interface {
 	getDefinition() string
 }
 
@@ -64,11 +64,11 @@ func replaceVars(toReplace string, vars map[string]string) string {
 	return replaced
 }
 
-func getDefinition(uiName string) UIDefinition {
+func getDefinition(uiName string) uiDefinition {
 	switch uiName {
 	default:
 		return nil
 	case "TestWindow":
-		return new(TestWindow)
+		return new(testWindow)
 	}
 }

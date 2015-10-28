@@ -21,20 +21,15 @@ const (
 )
 
 //hold a reference to them to prevent garbage collecting
-var builders map[string]*gtk.Builder
+var builders []*gtk.Builder
 
 func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error) {
 	if builders == nil {
-		builders = make(map[string]*gtk.Builder)
-	}
-
-	builder, ok := builders[uiName]
-	if ok {
-		return builder, nil
+		builders = make([]*gtk.Builder, 0, 10)
 	}
 
 	fileName := filepath.Join(defsFolder, uiName+xmlExtension)
-	builder, _ = gtk.BuilderNew()
+	builder, _ := gtk.BuilderNew()
 	var toReplace string
 	if doesnotExist(fileName) {
 		log.Printf("Loading compiled definition %q", uiName)
@@ -55,7 +50,7 @@ func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error
 		return nil, addErr
 	}
 
-	builders[uiName] = builder
+	builders = append(builders, builder)
 	return builder, nil
 }
 

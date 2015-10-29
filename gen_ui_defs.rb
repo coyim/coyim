@@ -30,11 +30,13 @@ func (w #{t}) getDefinition() string {
   target.puts template
 end
 
+puts "Start UI defintions generation"
 Dir['./gui/definitions/*.xml'].each do |file_name|
-  puts "found #{file_name}"
+  puts "\tfound #{file_name}"
   go_file = parse_go_name file_name
   remove_if_exists go_file
-  puts "reading #{file_name} and generating #{go_file}"
+  puts "\treading #{file_name} and generating #{go_file}"
   gen_go_file(file_name, go_file)
 end
+puts "UI definitions were generated"
 

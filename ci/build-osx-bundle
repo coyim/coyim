@@ -6,7 +6,7 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-set -xe
+set -e
 
 OUTPUT=$1
 

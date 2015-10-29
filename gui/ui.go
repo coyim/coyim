@@ -186,20 +186,31 @@ func (u *gtkUI) initRoster() {
 }
 
 func (u *gtkUI) mainWindow() {
-	u.window, _ = gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
+	vars := make(map[string]string)
+	vars["$title"] = i18n.Local("Coy")
+	vars["$contactsMenu"] = i18n.Local("Contacts")
+	vars["$addMenu"] = i18n.Local("Add...")
+	vars["$accountsMenu"] = i18n.Local("Accounts")
+	vars["$helpMenu"] = i18n.Local("Help")
+	vars["$aboutMenu"] = i18n.Local("About")
+	builder, _ := loadBuilderWith("MainDefinition", vars)
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_window_signal":       u.quit,
+		"on_add_contact_window_signal": u.addContactWindow,
+		"on_about_dialog_signal":       u.aboutDialog,
+	})
+	win, _ := builder.GetObject("mainWindow")
+	u.window, _ = win.(*gtk.Window)
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
 	u.initRoster()
 
-	menubar := initMenuBar(u)
-	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
-	vbox.SetHomogeneous(false)
-	vbox.PackStart(menubar, false, false, 0)
-	vbox.PackStart(u.roster.widget, true, true, 0)
-	u.window.Add(vbox)
-
-	u.window.SetTitle(i18n.Local("Coy"))
-	u.window.Connect("destroy", u.quit)
-	u.window.SetSizeRequest(200, 600)
+	mb, _ := builder.GetObject("menubar")
+	menubar := mb.(*gtk.MenuBar)
+	am, _ := builder.GetObject("AccountsMenu")
+	u.accountsMenu = am.(*gtk.MenuItem)
+	initMenuBar(u, menubar)
+	vbox, _ := builder.GetObject("Vbox")
+	vbox.(*gtk.Box).PackStart(u.roster.widget, true, true, 0)
 
 	u.connectShortcutsMainWindow(u.window)
 
@@ -285,7 +296,7 @@ func authors() []string {
 	return []string{"STRIKE Team <strike-public@thoughtworks.com>"}
 }
 
-func aboutDialog() {
+func (u gtkUI) aboutDialog() {
 	dialog, _ := gtk.AboutDialogNew()
 	dialog.SetName(i18n.Local("Coy IM!"))
 	dialog.SetProgramName("Coyim")
@@ -340,28 +351,7 @@ func (u *gtkUI) addContactWindow() {
 	dialog.ShowAll()
 }
 
-func (u *gtkUI) buildContactsMenu() *gtk.MenuItem {
-	contactsMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Contacts"))
-
-	submenu, _ := gtk.MenuNew()
-	contactsMenu.SetSubmenu(submenu)
-
-	menuitem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Add..."))
-	submenu.Append(menuitem)
-
-	menuitem.Connect("activate", u.addContactWindow)
-
-	return contactsMenu
-}
-
-func initMenuBar(u *gtkUI) *gtk.MenuBar {
-	menubar, _ := gtk.MenuBarNew()
-
-	menubar.Append(u.buildContactsMenu())
-
-	u.accountsMenu, _ = gtk.MenuItemNewWithMnemonic(i18n.Local("_Accounts"))
-	menubar.Append(u.accountsMenu)
-
+func initMenuBar(u *gtkUI, menubar *gtk.MenuBar) {
 	//TODO: replace this by emiting the signal at startup
 	u.buildAccountsMenu()
 	u.window.Connect(accountChangedSignal.String(), func() {
@@ -371,16 +361,7 @@ func initMenuBar(u *gtkUI) *gtk.MenuBar {
 	})
 
 	u.createViewMenu(menubar)
-
-	//Help -> About
-	cascademenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Help"))
-	menubar.Append(cascademenu)
-	submenu, _ := gtk.MenuNew()
-	cascademenu.SetSubmenu(submenu)
-	menuitem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_About"))
-	menuitem.Connect("activate", aboutDialog)
-	submenu.Append(menuitem)
-	return menubar
+	return
 }
 
 func (u *gtkUI) rosterUpdated() {

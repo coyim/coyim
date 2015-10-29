@@ -1,9 +1,11 @@
+
 package gui
 
-type testWindow struct{}
+type testWindow  struct{}
 
-func (tw testWindow) getDefinition() string {
+func (w testWindow) getDefinition() string {
 	return `
+
 <interface>
   <object class="GtkWindow" id="conversation">
     <property name="default-height">$win-height</property>
@@ -16,5 +18,6 @@ func (tw testWindow) getDefinition() string {
 
   </object>
 </interface>
+
 `
 }

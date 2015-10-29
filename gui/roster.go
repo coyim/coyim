@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/gotk3/gotk3/glib"
@@ -11,14 +12,18 @@ import (
 	"github.com/twstrike/coyim/ui"
 )
 
+type contacts struct {
+	sync.RWMutex
+	m map[*account]*rosters.List
+}
+
 type roster struct {
 	widget *gtk.Notebook
 
 	model *gtk.TreeStore
 	view  *gtk.TreeView
 
-	contacts map[*account]*rosters.List
-
+	contacts       contacts
 	checkEncrypted func(to string) bool
 	sendMessage    func(to, message string)
 	conversations  map[string]*conversationWindow
@@ -99,8 +104,10 @@ func (u *gtkUI) newRoster() *roster {
 		view:   v,
 
 		conversations: make(map[string]*conversationWindow),
-		contacts:      make(map[*account]*rosters.List),
-		isExpanded:    make(map[string]bool),
+		contacts: contacts{
+			m: make(map[*account]*rosters.List),
+		},
+		isExpanded: make(map[string]bool),
 
 		ui: u,
 	}
@@ -142,7 +149,7 @@ func (r *roster) connected() {
 
 func (r *roster) connecting() {
 	//only if there is nothing connected
-	if len(r.contacts) != 0 {
+	if len(r.contacts.m) != 0 {
 		return
 	}
 
@@ -159,7 +166,10 @@ func (r *roster) disconnected() {
 
 //TODO: move somewhere else
 func (r *roster) getAccount(id string) (*account, bool) {
-	for account := range r.contacts {
+	r.contacts.RLock()
+	defer r.contacts.RUnlock()
+
+	for account := range r.contacts.m {
 		if account.session.CurrentAccount.ID() == id {
 			return account, true
 		}
@@ -218,7 +228,14 @@ func (r *roster) openConversationWindow(account *account, to string) (*conversat
 }
 
 func (r *roster) displayNameFor(account *account, from string) string {
-	p, ok := r.contacts[account].Get(from)
+	r.contacts.RLock()
+	l, ok := r.contacts.m[account]
+	r.contacts.RUnlock()
+	if !ok {
+		return ""
+	}
+
+	p, ok := l.Get(from)
 	if ok {
 		return p.NameForPresentation()
 	}
@@ -249,14 +266,18 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 	})
 }
 
-//TODO: It should have a mutex
-//Does it need the account? Why not having the session?
+//TODO: Does it need the account? Why not having the session?
 func (r *roster) update(account *account, entries *rosters.List) {
-	r.contacts[account] = entries
+	r.contacts.Lock()
+	defer r.contacts.Unlock()
+	r.contacts.m[account] = entries
 }
 
 func (r *roster) debugPrintRosterFor(nm string) {
-	for account, rs := range r.contacts {
+	r.contacts.RLock()
+	defer r.contacts.RUnlock()
+
+	for account, rs := range r.contacts.m {
 		if account.session.CurrentAccount.Is(nm) {
 			rs.Iter(func(_ int, item *rosters.Peer) {
 				fmt.Printf("->   #%v\n", item)
@@ -336,10 +357,12 @@ func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent st
 func (r *roster) redrawMerged() {
 	showOffline := !r.ui.config.ShowOnlyOnline
 
-	allContacts := make([]*rosters.List, 0, len(r.contacts))
-	for _, contacts := range r.contacts {
+	r.contacts.RLock()
+	allContacts := make([]*rosters.List, 0, len(r.contacts.m))
+	for _, contacts := range r.contacts.m {
 		allContacts = append(allContacts, contacts)
 	}
+	r.contacts.RUnlock()
 
 	rosters.IterAll(func(_ int, item *rosters.Peer) {
 		if shouldDisplay(item, showOffline) {
@@ -352,7 +375,9 @@ func (r *roster) redrawSeparate() {
 	var parentIter *gtk.TreeIter
 	showOffline := !r.ui.config.ShowOnlyOnline
 
-	for account, contacts := range r.contacts {
+	r.contacts.RLock()
+	defer r.contacts.RUnlock()
+	for account, contacts := range r.contacts.m {
 		parentIter = r.model.Append(nil)
 
 		count := 0

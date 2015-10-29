@@ -79,6 +79,8 @@ func getDefinition(uiName string) uiDefinition {
 	switch uiName {
 	default:
 		return nil
+	case "MainDefinition":
+		return new(mainDefinition)
 	case "ConversationDefinition":
 		return new(conversationDefinition)
 	case "TestWindow":

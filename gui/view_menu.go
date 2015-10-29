@@ -23,11 +23,13 @@ func (u *gtkUI) createViewMenu(bar *gtk.MenuBar) {
 	checkItemMerge, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("_Merge Accounts"))
 	u.viewMenu.merge = checkItemMerge
 	viewSubmenu.Append(checkItemMerge)
+	checkItemMerge.SetActive(u.config.MergeAccounts)
 	checkItemMerge.Connect("toggled", u.toggleMergeAccounts)
 
 	checkItemShowOffline, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Show _Offline Contacts"))
 	u.viewMenu.offline = checkItemShowOffline
 	viewSubmenu.Append(checkItemShowOffline)
+	checkItemShowOffline.SetActive(u.config.ShowOnlyOnline)
 	checkItemShowOffline.Connect("toggled", u.toggleShowOffline)
 
 	u.displaySettings.defaultSettingsOn(&checkItemMerge.MenuItem.Bin.Container.Widget)

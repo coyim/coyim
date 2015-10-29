@@ -6,7 +6,7 @@ set -x
 # brew tap twstrike/gtk-versions
 
 brew update
-for dep in gtk+3; do
+for dep in gtk+3 gnome-icon-theme; do
    brew install $dep || brew outdated $dep || brew upgrade $dep
 done
 

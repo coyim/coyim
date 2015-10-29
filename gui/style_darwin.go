@@ -163,12 +163,12 @@ GtkIconView {
 func (u *gtkUI) applyStyle() {
 	css, err := gtk.CssProviderGetDefault()
 	if err != nil {
-		log.Println(err)
+		log.Println("Failed to apply style:", err)
 		return
 	}
 
 	err = css.LoadFromData(style)
 	if err != nil {
-		log.Println(err)
+		log.Println("Failed to apply style:", err)
 	}
 }

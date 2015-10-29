@@ -60,6 +60,7 @@ func NewGTK() UI {
 		accountManager: newAccountManager(connect, disconnect, edit),
 	}
 
+	res.applyStyle()
 	res.accountManager.saveConfiguration = res.SaveConfig
 	res.keySupplier = config.CachingKeySupplier(res.getMasterPassword)
 
@@ -170,7 +171,6 @@ func (u *gtkUI) Loop() {
 	go u.observeAccountEvents()
 
 	u.loadConfig(*config.ConfigFile)
-	u.applyStyle()
 	u.mainWindow()
 	gtk.Main()
 }

@@ -190,7 +190,6 @@ func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	}
 
 	account, ok := r.getAccount(accountID)
-
 	if !ok {
 		return
 	}
@@ -198,19 +197,24 @@ func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	r.openConversationWindow(account, jid)
 }
 
-func (r *roster) openConversationWindow(account *account, to string) *conversationWindow {
+func (r *roster) openConversationWindow(account *account, to string) (*conversationWindow, error) {
 	//TODO: handle same account on multiple sessions
 	c, ok := r.conversations[to]
 
 	if !ok {
-		c = newConversationWindow(account, to, r.ui)
+		var err error
+		c, err = newConversationWindow(account, to, r.ui)
+		if err != nil {
+			return nil, err
+		}
+
 		r.ui.connectShortcutsChildWindow(c.win)
 		r.ui.connectShortcutsConversationWindow(c)
 		r.conversations[to] = c
 	}
 
 	c.Show()
-	return c
+	return c, nil
 }
 
 func (r *roster) displayNameFor(account *account, from string) string {
@@ -223,17 +227,23 @@ func (r *roster) displayNameFor(account *account, from string) string {
 
 func (r *roster) presenceUpdated(account *account, from, show, showStatus string, gone bool) {
 	c, ok := r.conversations[from]
-	if ok {
-		glib.IdleAdd(func() bool {
-			c.appendStatus(r.displayNameFor(account, from), time.Now(), show, showStatus, gone)
-			return false
-		})
+	if !ok {
+		return
 	}
+
+	glib.IdleAdd(func() bool {
+		c.appendStatus(r.displayNameFor(account, from), time.Now(), show, showStatus, gone)
+		return false
+	})
 }
 
 func (r *roster) messageReceived(account *account, from string, timestamp time.Time, encrypted bool, message []byte) {
 	glib.IdleAdd(func() bool {
-		conv := r.openConversationWindow(account, from)
+		conv, err := r.openConversationWindow(account, from)
+		if err != nil {
+			return false
+		}
+
 		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripHTML(message), false)
 		return false
 	})

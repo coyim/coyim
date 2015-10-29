@@ -62,7 +62,7 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 	return buf
 }
 
-func newConversationWindow(account *account, uid string, u *gtkUI) *conversationWindow {
+func newConversationWindow(account *account, uid string, u *gtkUI) (*conversationWindow, error) {
 	vars := make(map[string]string)
 	vars["$uid"] = uid
 	vars["$DevOptions"] = i18n.Local("Developer options")
@@ -70,11 +70,32 @@ func newConversationWindow(account *account, uid string, u *gtkUI) *conversation
 	vars["$EndOTR"] = i18n.Local("End encrypted chat")
 	vars["$VerifyFP"] = i18n.Local("_Verify fingerprint...")
 
-	builder, _ := loadBuilderWith("ConversationDefinition", vars)
-	win, _ := builder.GetObject("conversation")
-	history, _ := builder.GetObject("history")
-	scrollHistory, _ := builder.GetObject("historyScroll")
-	messageEntry, _ := builder.GetObject("message")
+	var win, history, scrollHistory, messageEntry glib.IObject
+
+	builder, err := loadBuilderWith("ConversationDefinition", vars)
+	if err != nil {
+		return nil, err
+	}
+
+	win, err = builder.GetObject("conversation")
+	if err != nil {
+		return nil, err
+	}
+
+	history, err = builder.GetObject("history")
+	if err != nil {
+		return nil, err
+	}
+
+	scrollHistory, err = builder.GetObject("historyScroll")
+	if err != nil {
+		return nil, err
+	}
+
+	messageEntry, err = builder.GetObject("message")
+	if err != nil {
+		return nil, err
+	}
 
 	conv := &conversationWindow{
 		to:            uid,
@@ -86,8 +107,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) *conversation
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_send_message_signal": func() {
-			entryNode, _ := builder.GetObject("message")
-			entry := entryNode.(*gtk.Entry)
+			entry := messageEntry.(*gtk.Entry)
 			entry.SetEditable(false)
 			text, _ := entry.GetText()
 			entry.SetText("")
@@ -129,7 +149,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) *conversation
 	u.displaySettings.control(&conv.history.Container.Widget)
 	u.displaySettings.control(&messageEntry.(*gtk.Entry).Widget)
 
-	return conv
+	return conv, nil
 }
 
 func (conv *conversationWindow) Hide() {

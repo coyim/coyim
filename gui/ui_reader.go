@@ -20,26 +20,23 @@ const (
 	xmlExtension string = ".xml"
 )
 
-//hold a reference to them to prevent garbage collecting
-var builders []*gtk.Builder
-
 func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error) {
-	if builders == nil {
-		builders = make([]*gtk.Builder, 0, 10)
+	fileName := filepath.Join(defsFolder, uiName+xmlExtension)
+	builder, err := gtk.BuilderNew()
+	if err != nil {
+		return nil, err
 	}
 
-	fileName := filepath.Join(defsFolder, uiName+xmlExtension)
-	builder, _ := gtk.BuilderNew()
 	var toReplace string
 	if doesnotExist(fileName) {
-		log.Printf("Loading compiled definition %q", uiName)
+		log.Printf("Loading compiled definition %q\n", uiName)
 		uiDef := getDefinition(uiName)
 		if uiDef == nil {
 			return nil, fmt.Errorf("There's no definition for %s", uiName)
 		}
 		toReplace = uiDef.getDefinition()
 	} else {
-		log.Printf("Loading UI definition %q from: %s", uiName, fileName)
+		log.Printf("Loading UI definition %q from: %s\n", uiName, fileName)
 		toReplace = readFile(fileName)
 	}
 
@@ -47,11 +44,10 @@ func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error
 
 	addErr := builder.AddFromString(replaced)
 	if addErr != nil {
-		log.Printf("\nFailed to add string %s\n%s", replaced, addErr.Error())
+		log.Printf("Failed to add string %s: %s\n", replaced, addErr.Error())
 		return nil, addErr
 	}
 
-	builders = append(builders, builder)
 	return builder, nil
 }
 

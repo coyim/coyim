@@ -101,7 +101,6 @@ func (account *account) buildAccountSubmenu() {
 	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
 
 	connectItem.Connect("activate", func() {
-		connectItem.SetSensitive(false)
 		account.onConnect <- account
 	})
 

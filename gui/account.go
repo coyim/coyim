@@ -83,6 +83,7 @@ func (account *account) appendMenuTo(submenu *gtk.Menu) {
 
 	account.menu.Unparent()
 	submenu.Append(account.menu)
+	submenu.ShowAll()
 }
 
 func (account *account) buildAccountSubmenu() {

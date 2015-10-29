@@ -248,23 +248,10 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 
 	sess.WatchStanzas()
 
-	for i := 0; i < 2; i++ {
-		select {
-		case ev := <-observer:
-			t := ev.(LogEvent)
-			if i < 1 {
-				continue
-			}
-
-			c.Assert(t.Level, Equals, Alert)
-			c.Assert(t.Message, Equals, "Exiting in response to fatal error from server: bad horse showed up")
-			return
-
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-			return
-		}
-	}
+	assertLogContains(c, observer, LogEvent{
+		Level:   Alert,
+		Message: "Exiting in response to fatal error from server: bad horse showed up",
+	})
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C) {

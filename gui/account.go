@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -9,9 +8,7 @@ import (
 )
 
 type account struct {
-	connectedSignal    *glib.Signal
-	disconnectedSignal *glib.Signal
-	menu               *gtk.MenuItem
+	menu *gtk.MenuItem
 
 	session *session.Session
 
@@ -22,25 +19,9 @@ type account struct {
 
 func newAccount(conf *config.Accounts, currentConf *config.Account) (acc *account, err error) {
 	acc = &account{}
-
-	id := currentConf.ID()
-	acc.connectedSignal, err = glib.SignalNew(signalName(id, "connected"))
-	if err != nil {
-		return
-	}
-
-	acc.disconnectedSignal, err = glib.SignalNew(signalName(id, "disconnected"))
-	if err != nil {
-		return
-	}
-
 	acc.session = session.NewSession(conf, currentConf)
 
 	return
-}
-
-func signalName(id, signal string) string {
-	return "coyim-account-" + signal + "-" + id
 }
 
 func (account *account) connected() bool {

@@ -443,6 +443,9 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	case event.ConversationEnded:
 		s.otrEnded(from)
 
+		// TODO: all this stuff is very CLI specific, we should move it out and create good interaction
+		// for the gui
+
 		// TODO: twstrike/otr3 does not allow sending messages after the channel has
 		// been terminated, so this should not be a problem.
 		// This is probably unsafe without a policy that _forces_ crypto to
@@ -600,7 +603,6 @@ func (s *Session) WatchTimeout() {
 func (s *Session) WatchRosterEvents() {
 	defer s.Close()
 
-	//TODO: not sure if this belongs here
 	s.Conn.SignalPresence("")
 	s.info("Fetching roster")
 
@@ -740,7 +742,6 @@ func (s *Session) TerminateConversationWith(peer string) error {
 
 func (s *Session) terminateConversations() {
 	for peer := range s.Conversations {
-		//TODO: errors
 		s.TerminateConversationWith(peer)
 	}
 }
@@ -760,10 +761,8 @@ func (s *Session) Close() {
 
 	s.Conn.Close()
 
-	//TODO Should we hide all contacts when the account is disconnected?
-	// It wont show a "please connect to view your roster" message
 	s.R.Clear()
-	s.rosterReceived() //Why?
+	s.rosterReceived()
 
 	s.ConnStatus = DISCONNECTED
 	s.publish(Disconnected)

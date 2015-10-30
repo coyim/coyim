@@ -176,10 +176,6 @@ func (c *cliUI) close() {
 	}
 }
 
-func (c *cliUI) Debug(m string) {
-	debug(c.term, m)
-}
-
 func (c *cliUI) info(m string) {
 	info(c.term, m)
 }

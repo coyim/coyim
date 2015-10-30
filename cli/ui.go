@@ -726,8 +726,8 @@ CommandLoop:
 				}
 				msgs, err := conversation.End()
 				if err != nil {
-					//TODO: error handle
-					panic("this should not happen")
+					alert(term, "Can't end the conversation - it seems there is no randomness in your system. This could be a significant problem.")
+					break
 				}
 				for _, msg := range msgs {
 					s.Conn.Send(to, string(msg))

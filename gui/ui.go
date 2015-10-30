@@ -89,7 +89,7 @@ func NewGTK() UI {
 	return res
 }
 
-func (u *gtkUI) loadConfigInternal(configFile string, done chan<- bool) {
+func (u *gtkUI) loadConfigInternal(configFile string) {
 	config, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
 	u.config = config
 
@@ -111,18 +111,14 @@ func (u *gtkUI) loadConfigInternal(configFile string, done chan<- bool) {
 			return false
 		})
 	}
-
-	done <- true
 }
 
 func (u *gtkUI) loadConfig(configFile string) {
-	done := make(chan bool, 0)
-	go func(c <-chan bool) {
-		<-c
+	//IO would block the UI loop
+	go func() {
+		u.loadConfigInternal(configFile)
 		u.configLoaded()
-	}(done)
-
-	go u.loadConfigInternal(configFile, done)
+	}()
 }
 
 func (u *gtkUI) configLoaded() {

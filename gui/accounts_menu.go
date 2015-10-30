@@ -40,6 +40,12 @@ func onAccountDialogClicked(account *config.Account, saveFunction func(), reg *w
 }
 
 func accountDialog(account *config.Account, saveFunction func()) {
+	vars := make(map[string]string)
+	vars["$title"] = i18n.Local("Account Details")
+	vars["$accountMessage"] = i18n.Local("Your account (for example: kim42@dukgo.com)")
+	//TODO: is this message still necessary?
+	vars["$pswMessage"] = i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")
+	builder, _ := loadBuilderWith("AccountDetailsDefinition", vars)
 	reg := createWidgetRegistry()
 	onClicked := onAccountDialogClicked(account, saveFunction, reg)
 	d := dialog{

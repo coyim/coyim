@@ -1,0 +1,62 @@
+<interface>
+  <object class="GtkDialog" id="AccountDetailsDialog">
+    <property name="label">$title</property>
+    <child>
+      <object class="GtkBox" id="Vbox">
+        <property name="homogeneous">false</property>
+	<property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <child>
+          <object class="GtkLabel">
+	    <property name="label">$accountMessage</property>
+	  </object>
+	  <packing>
+            <property name="expand">false</property>
+	    <property name="fill">true</property>
+	    <property name="position">0</property>
+	  </packing>
+	</child>
+        <child>
+          <object class="GtkEntry" id="account">
+	    <property name="has-focus">true</property>
+	    <signal name="activate" handler="on_clicked_signal" />
+	  </object>
+	  <packing>
+            <property name="expand">false</property>
+	    <property name="fill">true</property>
+	    <property name="position">1</property>
+	  </packing>
+	</child>
+        <child>
+          <object class="GtkLabel">
+	    <property name="label">$pswMessage</property>
+	  </object>
+	  <packing>
+            <property name="expand">false</property>
+	    <property name="fill">true</property>
+	    <property name="position">2</property>
+	  </packing>
+	</child>
+        <child>
+          <object class="GtkEntry" id="password">
+            <signal name="activate" handler="on_clicked_signal" />
+	  </object>
+	  <packing>
+            <property name="expand">false</property>
+	    <property name="fill">true</property>
+	    <property name="position">3</property>
+	  </packing>
+	</child>
+	<child type="action">
+          <object class="GtkButton" id="save">
+            <signal name="activate" handler="on_clicked_signal"/>
+	  </object>
+	  <packing>
+            <property name="expand">false</property>
+	    <property name="fill">true</property>
+	    <property name="position">4</property>
+	  </packing>
+	</child>
+      </object>
+    </child>
+  </object>
+</interface>

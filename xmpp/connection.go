@@ -289,9 +289,6 @@ func Dial(address, user, domain, password string, config *Config) (c *Conn, err 
 	if err = c.in.DecodeElement(&iq, nil); err != nil {
 		return nil, errors.New("unmarshal <iq>: " + err.Error())
 	}
-	if &iq.Bind == nil { // TODO: This one seems unreachable
-		return nil, errors.New("<iq> result missing <bind>")
-	}
 	c.jid = iq.Bind.Jid // our local id
 
 	if features.Session != nil {

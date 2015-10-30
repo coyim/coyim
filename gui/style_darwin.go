@@ -161,7 +161,7 @@ GtkIconView {
 `
 
 func (u *gtkUI) applyStyle() {
-	css, err := gtk.CssProviderGetDefault()
+	css, err := gtk.CssProviderNew()
 	if err != nil {
 		log.Println("Failed to apply style:", err)
 		return

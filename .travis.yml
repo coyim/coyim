@@ -18,7 +18,7 @@ matrix:
     - os: osx
   fast_finish: true
 
-before_install:
+before_install: 
   - "export DISPLAY=:99.0"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
 install: make deps

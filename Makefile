@@ -32,8 +32,7 @@ lint:
 	golint ./...
 
 test:
-	go test -cover -v -tags $(GTK_BUILD_TAG) ./..
-	python gui_tests/run_tests.py bin/coyim
+	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
 
 ci: get default coveralls
 

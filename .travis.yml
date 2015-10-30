@@ -21,7 +21,6 @@ matrix:
 before_install: 
   - "export DISPLAY=:99.0"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
-  - sudo apt-get -y install ruby
 install: make deps
 script: make ci
 

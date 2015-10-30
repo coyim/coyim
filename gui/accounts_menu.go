@@ -101,4 +101,5 @@ func (u *gtkUI) buildAccountsMenu() {
 	submenu.ShowAll()
 
 	u.accountsMenu.SetSubmenu(submenu)
+	u.accountsMenu.ShowAll()
 }

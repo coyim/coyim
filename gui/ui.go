@@ -383,14 +383,10 @@ func (u *gtkUI) addContactWindow() {
 }
 
 func initMenuBar(u *gtkUI) {
-	//TODO: replace this by emiting the signal at startup
-	u.buildAccountsMenu()
 	u.window.Connect(accountChangedSignal.String(), func() {
-		//TODO: should it destroy the current submenu? HOW?
-		u.accountsMenu.SetSubmenu((*gtk.Widget)(nil))
 		u.buildAccountsMenu()
+		u.accountsMenu.ShowAll()
 	})
-	return
 }
 
 func (u *gtkUI) rosterUpdated() {

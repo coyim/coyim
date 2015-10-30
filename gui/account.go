@@ -41,19 +41,21 @@ func (u *gtkUI) showAddAccountWindow() error {
 }
 
 func (account *account) appendMenuTo(submenu *gtk.Menu) {
-	if account.menu == nil {
-		account.buildAccountSubmenu()
+	if account.menu != nil {
+		//I dont know how to remove it from its current parent without breaking the menu
+		//unparent does not seem to work as expected
+		account.menu.Destroy()
 	}
 
-	account.menu.SetLabel(account.session.CurrentAccount.Account)
-
-	account.menu.Unparent()
+	account.buildAccountSubmenu()
+	account.menu.Show()
 	submenu.Append(account.menu)
-	submenu.ShowAll()
 }
 
 func (account *account) buildAccountSubmenu() {
 	menuitem, _ := gtk.MenuItemNew()
+
+	menuitem.SetLabel(account.session.CurrentAccount.Account)
 
 	accountSubMenu, _ := gtk.MenuNew()
 	menuitem.SetSubmenu(accountSubMenu)

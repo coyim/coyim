@@ -207,22 +207,37 @@ func (u *gtkUI) mainWindow() {
 	vars["$accountsMenu"] = i18n.Local("Accounts")
 	vars["$helpMenu"] = i18n.Local("Help")
 	vars["$aboutMenu"] = i18n.Local("About")
+	vars["$viewMenu"] = i18n.Local("View")
+	vars["$checkItemMerge"] = i18n.Local("Merge Accounts")
+	vars["$checkItemShowOffline"] = i18n.Local("Show Offline Contacts")
+
 	builder, _ := loadBuilderWith("MainDefinition", vars)
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_window_signal":       u.quit,
-		"on_add_contact_window_signal": u.addContactWindow,
-		"on_about_dialog_signal":       u.aboutDialog,
+		"on_close_window_signal":                    u.quit,
+		"on_add_contact_window_signal":              u.addContactWindow,
+		"on_about_dialog_signal":                    u.aboutDialog,
+		"on_toggled_check_Item_Merge_signal":        u.toggleMergeAccounts,
+		"on_toggled_check_Item_Show_Offline_signal": u.toggleShowOffline,
 	})
 	win, _ := builder.GetObject("mainWindow")
 	u.window, _ = win.(*gtk.Window)
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
 	u.initRoster()
 
-	mb, _ := builder.GetObject("menubar")
-	menubar := mb.(*gtk.MenuBar)
+	// AccountsMenu
 	am, _ := builder.GetObject("AccountsMenu")
 	u.accountsMenu = am.(*gtk.MenuItem)
-	initMenuBar(u, menubar)
+	// ViewMenu
+	u.viewMenu = new(viewMenu)
+	checkItemMerge, _ := builder.GetObject("CheckItemMerge")
+	u.viewMenu.merge = checkItemMerge.(*gtk.CheckMenuItem)
+	u.displaySettings.defaultSettingsOn(&u.viewMenu.merge.MenuItem.Bin.Container.Widget)
+
+	checkItemShowOffline, _ := builder.GetObject("CheckItemShowOffline")
+	u.viewMenu.offline = checkItemShowOffline.(*gtk.CheckMenuItem)
+	u.displaySettings.defaultSettingsOn(&u.viewMenu.offline.MenuItem.Bin.Container.Widget)
+
+	initMenuBar(u)
 	vbox, _ := builder.GetObject("Vbox")
 	vbox.(*gtk.Box).PackStart(u.roster.widget, true, true, 0)
 
@@ -365,7 +380,7 @@ func (u *gtkUI) addContactWindow() {
 	dialog.ShowAll()
 }
 
-func initMenuBar(u *gtkUI, menubar *gtk.MenuBar) {
+func initMenuBar(u *gtkUI) {
 	//TODO: replace this by emiting the signal at startup
 	u.buildAccountsMenu()
 	u.window.Connect(accountChangedSignal.String(), func() {
@@ -373,8 +388,6 @@ func initMenuBar(u *gtkUI, menubar *gtk.MenuBar) {
 		u.accountsMenu.SetSubmenu((*gtk.Widget)(nil))
 		u.buildAccountsMenu()
 	})
-
-	u.createViewMenu(menubar)
 	return
 }
 

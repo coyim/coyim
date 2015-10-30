@@ -40,6 +40,27 @@ func (w mainDefinition) getDefinition() string {
               </object>
             </child>
             <child>
+              <object class="GtkMenuItem" id="ViewMenu">
+                <property name="label">$viewMenu</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object class="GtkCheckMenuItem" id="CheckItemMerge">
+                        <property name="label">$checkItemMerge</property>
+                        <signal name="toggled" handler="on_toggled_check_Item_Merge_signal" />
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckMenuItem" id="CheckItemShowOffline">
+                        <property name="label">$checkItemShowOffline</property>
+                        <signal name="toggled" handler="on_toggled_check_Item_Show_Offline_signal" />
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
               <object class="GtkMenuItem" id="HelpMenu">
                 <property name="label">$helpMenu</property>
                 <child type="submenu">

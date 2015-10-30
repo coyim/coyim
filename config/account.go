@@ -37,6 +37,7 @@ func (a *Account) Is(jid string) bool {
 	return a.Account == xmpp.RemoveResourceFromJid(jid)
 }
 
+// ShouldEncryptTo returns true if the connection with this peer should be encrypted
 func (a *Account) ShouldEncryptTo(jid string) bool {
 	if a.AlwaysEncrypt {
 		return true

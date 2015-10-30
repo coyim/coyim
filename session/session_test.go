@@ -178,19 +178,12 @@ func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 
 	sess.WatchStanzas()
 
-	for i := 0; i < 2; i++ {
-		select {
-		case ev := <-observer:
-			t := ev.(LogEvent)
-			switch t.Level {
-			case Warn:
-				c.Assert(t.Message, Equals, "Exiting because channel to server closed")
-			case Alert:
-				c.Assert(t.Message, Equals, "unexpected XMPP message clientx <message/>")
-			}
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-		}
+	select {
+	case ev := <-observer:
+		t := ev.(LogEvent)
+		c.Assert(t.Message, Equals, "unexpected XMPP message clientx <message/>")
+	case <-time.After(1 * time.Millisecond):
+		c.Errorf("did not receive event")
 	}
 }
 
@@ -495,7 +488,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	})
 
 	// TODO: this is actually incorrect - something like this should be ignored, not responded to
-	c.Assert(string(mockIn.write), Equals, "<iq to='some2@one.org' from='some@one.org/foo' type='result' id=''><error type=\"cancel\"><bad-request xmlns=\"urn:ietf:params:xml:ns:xmpp-stanzas\"></bad-request></error></iq>")
+	c.Assert(string(mockIn.write), Equals, "")
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *C) {
@@ -691,7 +684,6 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
-
 	sess.WatchStanzas()
 
 	p, _ := sess.R.Get("some2@one.org")

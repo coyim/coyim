@@ -191,7 +191,11 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 
 func (s *Session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
 	if stanza.Type == "get" || stanza.Type == "set" {
-		reply := s.processIQ(stanza)
+		reply, ignore := s.processIQ(stanza)
+		if ignore {
+			return true
+		}
+
 		if reply == nil {
 			reply = xmpp.ErrorReply{
 				Type:  "cancel",
@@ -269,17 +273,17 @@ func (s *Session) receivedIQVersion() xmpp.VersionReply {
 	}
 }
 
-func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
+func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
 	// TODO: we should deal with "ask" attributes here
 
 	if len(stanza.From) > 0 && !s.CurrentAccount.Is(stanza.From) {
 		s.warn("Ignoring roster IQ from bad address: " + stanza.From)
-		return nil
+		return nil, true
 	}
 	var rst xmpp.Roster
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&rst); err != nil || len(rst.Item) == 0 {
 		s.warn("Failed to parse roster push IQ")
-		return nil
+		return nil, false
 	}
 
 	for _, entry := range rst.Item {
@@ -290,30 +294,30 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
 		}
 	}
 
-	return xmpp.EmptyReply{}
+	return xmpp.EmptyReply{}, false
 }
 
-func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
+func (s *Session) processIQ(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
 	buf := bytes.NewBuffer(stanza.Query)
 	parser := xml.NewDecoder(buf)
 	token, _ := parser.Token()
 	isGet := stanza.Type == "get"
 	if token == nil {
-		return nil
+		return nil, false
 	}
 	startElem, ok := token.(xml.StartElement)
 	if !ok {
-		return nil
+		return nil, false
 	}
 
 	switch startElem.Name.Space + " " + startElem.Name.Local {
 	case "http://jabber.org/protocol/disco#info query":
 		if isGet {
-			return s.receivedIQDiscoInfo()
+			return s.receivedIQDiscoInfo(), false
 		}
 	case "jabber:iq:version query":
 		if isGet {
-			return s.receivedIQVersion()
+			return s.receivedIQVersion(), false
 		}
 	case "jabber:iq:roster query":
 		if !isGet {
@@ -322,7 +326,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 	}
 	s.info("Unknown IQ: " + startElem.Name.Space + " " + startElem.Name.Local)
 
-	return nil
+	return nil, false
 }
 
 // HandleConfirmOrDeny is used to handle a users response to a subscription request

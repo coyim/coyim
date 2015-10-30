@@ -83,7 +83,7 @@ func getDefinition(uiName string) uiDefinition {
 		return new(mainDefinition)
 	case "ConversationDefinition":
 		return new(conversationDefinition)
-	case "TestWindow":
-		return new(testWindow)
+	case "TestDefinition":
+		return new(testDefinition)
 	}
 }

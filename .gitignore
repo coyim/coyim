@@ -36,3 +36,5 @@ bin/
 
 *.coverprofile
 
+# generated go ui components
+gui/*_definition.go

@@ -1,7 +1,7 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 
-default: deps lint test
+default: deps gen-ui-defs lint test
 .PHONY: test
 
 build: build-cli build-gui

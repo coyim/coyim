@@ -2,8 +2,9 @@ package gui
 
 import (
 	"fmt"
-	"github.com/gotk3/gotk3/gtk"
 	"os"
+
+	"github.com/gotk3/gotk3/gtk"
 
 	. "gopkg.in/check.v1"
 )
@@ -38,9 +39,9 @@ func removeFile(name string) {
 
 func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 	gtk.Init(nil)
-	removeFile("definitions/TestWindow.xml")
-	writeTestFile("definitions/TestWindow.xml", testFile)
-	ui := "TestWindow"
+	removeFile("definitions/TestDefinition.xml")
+	writeTestFile("definitions/TestDefinition.xml", testFile)
+	ui := "TestDefinition"
 
 	vars := make(map[string]string)
 	vars["$win-height"] = "500"
@@ -63,9 +64,9 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 
 func (s *UIReaderSuite) Test_loadBuilderWith_useGoFileIfXMLDoesntExists(c *C) {
 	gtk.Init(nil)
-	removeFile("definitions/TestWindow.xml")
-	//writeTestFile("definitions/TestWindow.xml", testFile)
-	ui := "TestWindow"
+	removeFile("definitions/TestDefinition.xml")
+	//writeTestFile("definitions/TestDefinition.xml", testFile)
+	ui := "TestDefinition"
 
 	vars := make(map[string]string)
 	vars["$win-height"] = "500"

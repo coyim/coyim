@@ -100,13 +100,15 @@ func (u *gtkUI) loadConfigInternal(configFile string) {
 	}
 
 	if err != nil {
-		//TODO error
 		log.Printf(err.Error())
 
 		glib.IdleAdd(func() bool {
 			u.wouldYouLikeToEncryptYourFile(func(res bool) {
 				u.config.ShouldEncrypt = res
-				u.showAddAccountWindow()
+				err = u.showAddAccountWindow()
+				if err != nil {
+					log.Printf(err.Error())
+				}
 			})
 			return false
 		})

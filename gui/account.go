@@ -66,12 +66,16 @@ func (account *account) authorizeFingerprint(uid string, fingerprint []byte) err
 	return nil
 }
 
-func (u *gtkUI) showAddAccountWindow() {
-	c := config.NewAccount()
+func (u *gtkUI) showAddAccountWindow() error {
+	c, err := config.NewAccount()
+	if err != nil {
+		return err
+	}
 	accountDialog(c, func() {
 		u.config.Add(c)
 		u.SaveConfig()
 	})
+	return nil
 }
 
 func (account *account) appendMenuTo(submenu *gtk.Menu) {

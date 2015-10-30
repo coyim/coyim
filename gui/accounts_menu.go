@@ -95,7 +95,7 @@ func (u *gtkUI) buildAccountsMenu() {
 	}
 
 	addAccMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Add..."))
-	addAccMenu.Connect("activate", u.showAddAccountWindow)
+	addAccMenu.Connect("activate", func() { u.showAddAccountWindow() })
 
 	submenu.Append(addAccMenu)
 	submenu.ShowAll()

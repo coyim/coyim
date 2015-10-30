@@ -20,8 +20,6 @@ func detectTor() string {
 		return detectedTorAddress
 	}
 
-	//TODO: probe for Tor unix domain socket if there is any default for it
-
 	detectedTorAddress = ""
 	for _, port := range torPorts {
 		addr := net.JoinHostPort(torHost, port)

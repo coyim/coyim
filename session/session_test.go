@@ -487,7 +487,6 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 		Message: "Ignoring roster IQ from bad address: some2@one.org",
 	})
 
-	// TODO: this is actually incorrect - something like this should be ignored, not responded to
 	c.Assert(string(mockIn.write), Equals, "")
 }
 

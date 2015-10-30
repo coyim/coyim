@@ -98,7 +98,11 @@ func (c *cliUI) loadConfig(configFile string) error {
 	}
 	if err != nil {
 		c.alert(err.Error())
-		if !enroll(accounts, accounts.AddNewAccount(), c.term) {
+		acc, e := accounts.AddNewAccount()
+		if e != nil {
+			return e
+		}
+		if !enroll(accounts, acc, c.term) {
 			return errors.New("asked to quit")
 		}
 	}

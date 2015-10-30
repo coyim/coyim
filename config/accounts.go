@@ -88,7 +88,7 @@ func (a *Accounts) tryLoad(ks KeySupplier) error {
 }
 
 // NewAccount creates a new account
-func NewAccount() *Account {
+func NewAccount() (*Account, error) {
 	var torProxy []string
 	torAddress := detectTor()
 
@@ -98,8 +98,10 @@ func NewAccount() *Account {
 
 	var priv otr3.PrivateKey
 
-	//TODO: error
-	priv.Generate(rand.Reader)
+	err := priv.Generate(rand.Reader)
+	if err != nil {
+		return nil, err
+	}
 
 	return &Account{
 		Proxies:    torProxy,
@@ -109,7 +111,7 @@ func NewAccount() *Account {
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48
-	}
+	}, nil
 }
 
 // Add will add the account to the configuration
@@ -118,10 +120,12 @@ func (a *Accounts) Add(ac *Account) {
 }
 
 // AddNewAccount creates a new account and adds it to the list of accounts
-func (a *Accounts) AddNewAccount() *Account {
-	ac := NewAccount()
-	a.Add(ac)
-	return ac
+func (a *Accounts) AddNewAccount() (ac *Account, err error) {
+	ac, err = NewAccount()
+	if err == nil {
+		a.Add(ac)
+	}
+	return
 }
 
 // Save will save the account configuration

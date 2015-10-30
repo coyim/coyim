@@ -1,7 +1,7 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 
-default: deps lint test test-gui
+default: deps lint test
 .PHONY: test
 
 build: build-cli build-gui
@@ -33,14 +33,6 @@ lint:
 
 test:
 	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
-
-test-gui: clean-test-gui
-ifeq ($(shell uname), Linux)
-	python gui_tests/run_tests.py bin/coyim
-endif
-
-clean-test-gui:
-	$(RM) ~/.config/coyim/*
 
 ci: get default coveralls
 

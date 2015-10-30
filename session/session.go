@@ -430,7 +430,6 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())
-		s.Conn.Send(from, event.ErrorPrefix+"Error processing message")
 	}
 
 	for _, msg := range toSend {

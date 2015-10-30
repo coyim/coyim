@@ -212,7 +212,6 @@ func (s *Session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 	select {
 	case rawStanza, ok := <-stanzaChan:
 		if !ok {
-			s.warn("Exiting because channel to server closed")
 			return false
 		}
 

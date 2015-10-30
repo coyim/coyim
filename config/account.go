@@ -37,7 +37,6 @@ func (a *Account) Is(jid string) bool {
 	return a.Account == xmpp.RemoveResourceFromJid(jid)
 }
 
-// ShouldEncryptTo returns true if the connection to the given peer should be encrypted
 func (a *Account) ShouldEncryptTo(jid string) bool {
 	if a.AlwaysEncrypt {
 		return true
@@ -51,6 +50,37 @@ func (a *Account) ShouldEncryptTo(jid string) bool {
 	}
 
 	return false
+}
+
+func (a *Account) allowsOTR(version int) bool {
+	return version == 2 || version == 3
+}
+
+func (a *Account) shouldSendWhitespace() bool {
+	return true
+}
+
+func (a *Account) shouldStartAKEAutomatically() bool {
+	return true
+}
+
+// SetOTRPoliciesFor will set the OTR policies on the given conversation based on the users settings
+func (a *Account) SetOTRPoliciesFor(jid string, c *otr3.Conversation) {
+	if a.allowsOTR(2) {
+		c.Policies.AllowV2()
+	}
+	if a.allowsOTR(3) {
+		c.Policies.AllowV3()
+	}
+	if a.shouldSendWhitespace() {
+		c.Policies.SendWhitespaceTag()
+	}
+	if a.shouldStartAKEAutomatically() {
+		c.Policies.SendWhitespaceTag()
+	}
+	if a.ShouldEncryptTo(jid) {
+		c.Policies.RequireEncryption()
+	}
 }
 
 // ID returns the unique identifier for this account

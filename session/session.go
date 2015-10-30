@@ -362,15 +362,7 @@ func (s *Session) newConversation(peer string) *otr3.Conversation {
 		s.SaveConfiguration()
 	}
 
-	//TODO: review this conf
-	conversation.Policies.AllowV2()
-	conversation.Policies.AllowV3()
-	conversation.Policies.SendWhitespaceTag()
-	conversation.Policies.WhitespaceStartAKE()
-
-	if s.CurrentAccount.ShouldEncryptTo(peer) {
-		conversation.Policies.RequireEncryption()
-	}
+	s.CurrentAccount.SetOTRPoliciesFor(peer, conversation)
 
 	return conversation
 }

@@ -283,16 +283,12 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
 		return nil
 	}
 
-	// TODO: this is incorrect - you can get more than one roster Item
-	entry := rst.Item[0]
-
-	if entry.Subscription == "remove" {
-		s.R.Remove(entry.Jid)
-		return xmpp.EmptyReply{}
-	}
-
-	if s.R.AddOrMerge(roster.PeerFrom(entry, s.CurrentAccount.ID())) {
-		s.iqReceived(entry.Jid)
+	for _, entry := range rst.Item {
+		if entry.Subscription == "remove" {
+			s.R.Remove(entry.Jid)
+		} else if s.R.AddOrMerge(roster.PeerFrom(entry, s.CurrentAccount.ID())) {
+			s.iqReceived(entry.Jid)
+		}
 	}
 
 	return xmpp.EmptyReply{}

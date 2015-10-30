@@ -271,8 +271,6 @@ func (s *Session) receivedIQVersion() xmpp.VersionReply {
 }
 
 func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) interface{} {
-	// TODO: this code can only be hit by a iq get or iq set. Is iq get actually reasonable for this?
-	// No, a get should likely not even arrive here
 	// TODO: we should deal with "ask" attributes here
 
 	if len(stanza.From) > 0 && !s.CurrentAccount.Is(stanza.From) {
@@ -304,6 +302,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 	buf := bytes.NewBuffer(stanza.Query)
 	parser := xml.NewDecoder(buf)
 	token, _ := parser.Token()
+	isGet := stanza.Type == "get"
 	if token == nil {
 		return nil
 	}
@@ -314,14 +313,19 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) interface{} {
 
 	switch startElem.Name.Space + " " + startElem.Name.Local {
 	case "http://jabber.org/protocol/disco#info query":
-		return s.receivedIQDiscoInfo()
+		if isGet {
+			return s.receivedIQDiscoInfo()
+		}
 	case "jabber:iq:version query":
-		return s.receivedIQVersion()
+		if isGet {
+			return s.receivedIQVersion()
+		}
 	case "jabber:iq:roster query":
-		return s.receivedIQRosterQuery(stanza)
-	default:
-		s.info("Unknown IQ: " + startElem.Name.Space + " " + startElem.Name.Local)
+		if !isGet {
+			return s.receivedIQRosterQuery(stanza)
+		}
 	}
+	s.info("Unknown IQ: " + startElem.Name.Space + " " + startElem.Name.Local)
 
 	return nil
 }

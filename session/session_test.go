@@ -468,7 +468,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' from='some2@one.org' to='cde'><query xmlns='jabber:iq:roster'/></client:iq>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' from='some2@one.org' to='cde'><query xmlns='jabber:iq:roster'/></client:iq>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
 		mockIn,
@@ -499,7 +499,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' from='some@one.org/foo' to='cde'><query xmlns='jabber:iq:roster'/></client:iq>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' from='some@one.org/foo' to='cde'><query xmlns='jabber:iq:roster'/></client:iq>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
 		mockIn,
@@ -527,7 +527,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' to='cde'><query xmlns='jabber:iq:roster'>" +
+	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' to='cde'><query xmlns='jabber:iq:roster'>" +
 		"<item jid='romeo@example.net' name='Romeo' subscription='both'>" +
 		"<group>Friends</group>" +
 		"</item>" +
@@ -555,7 +555,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterItem(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' to='cde'><query xmlns='jabber:iq:roster'>" +
+	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' to='cde'><query xmlns='jabber:iq:roster'>" +
 		"<item jid='romeo@example.net' name='Romeo' subscription='both'>" +
 		"<group>Friends</group>" +
 		"</item>" +
@@ -591,7 +591,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' to='cde'><query xmlns='jabber:iq:roster'>" +
+	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' to='cde'><query xmlns='jabber:iq:roster'>" +
 		"<item jid='romeo@example.net' name='Romeo' subscription='remove'>" +
 		"<group>Friends</group>" +
 		"</item>" +

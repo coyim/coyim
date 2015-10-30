@@ -104,7 +104,6 @@ func (c *cliUI) handleLogEvent(ev session.LogEvent) {
 }
 
 func (c *cliUI) observeSessionEvents() {
-	//TODO: check for channel close
 	for ev := range c.events {
 		switch t := ev.(type) {
 		case session.Event:

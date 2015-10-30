@@ -748,7 +748,6 @@ func (s *Session) terminateConversations() {
 
 // Close terminates all outstanding OTR conversations and closes the connection to the server
 func (s *Session) Close() {
-	//TODO: what should be done it states == CONNECTING?
 	if s.ConnStatus == DISCONNECTED {
 		return
 	}

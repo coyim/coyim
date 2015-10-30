@@ -120,7 +120,6 @@ func (c *cliUI) loadConfig(configFile string) error {
 
 	account := findAccount(config.AccountFlag, accounts.Accounts)
 
-	//TODO We do not support empty passwords
 	var password string
 	if len(account.Password) == 0 {
 		var err error

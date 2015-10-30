@@ -6,7 +6,10 @@ default: deps lint test
 
 build: build-cli build-gui
 
-build-gui:
+gen-ui-defs:
+	ruby gen_ui_defs.rb
+
+build-gui: gen-ui-defs
 	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim
 
 build-cli:

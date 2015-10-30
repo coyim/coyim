@@ -89,44 +89,62 @@ func NewGTK() UI {
 	return res
 }
 
-func (u *gtkUI) loadConfigInternal(configFile string) {
-	accounts, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
-	u.config = accounts
-	if ok {
-		if u.viewMenu != nil {
-			u.viewMenu.setFromConfig(accounts)
-		}
-		if err != nil {
-			//TODO error
-			log.Printf(err.Error())
+func (u *gtkUI) loadConfigInternal(configFile string, done chan<- bool) {
+	config, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
+	u.config = config
 
-			glib.IdleAdd(func() bool {
-				u.wouldYouLikeToEncryptYourFile(func(res bool) {
-					u.config.ShouldEncrypt = res
-					u.showAddAccountWindow()
-				})
-				return false
+	if !ok {
+		// TODO: tell the user we couldn't open the encrypted file
+		log.Printf("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
+		return
+	}
+
+	if err != nil {
+		//TODO error
+		log.Printf(err.Error())
+
+		glib.IdleAdd(func() bool {
+			u.wouldYouLikeToEncryptYourFile(func(res bool) {
+				u.config.ShouldEncrypt = res
+				u.showAddAccountWindow()
 			})
-		}
+			return false
+		})
+	}
 
-		u.buildAccounts(u.config)
+	done <- true
+}
 
-		//TODO: replace me by observer
-		for _, acc := range u.accounts {
-			acc.session.SessionEventHandler = u
+func (u *gtkUI) loadConfig(configFile string) {
+	done := make(chan bool, 0)
+	go func(c <-chan bool) {
+		<-c
+		u.configLoaded()
+	}(done)
+
+	go u.loadConfigInternal(configFile, done)
+}
+
+func (u *gtkUI) configLoaded() {
+	u.buildAccounts(u.config)
+
+	//TODO: replace me by session observer
+	for _, acc := range u.accounts {
+		acc.session.SessionEventHandler = u
+	}
+
+	glib.IdleAdd(func() bool {
+		if u.viewMenu != nil {
+			u.viewMenu.setFromConfig(u.config)
 		}
 
 		if u.window != nil {
 			u.window.Emit(accountChangedSignal.String())
 		}
-	} else {
-		log.Printf("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
-		// TODO: tell the user we couldn't open the encrypted file
-	}
-}
 
-func (u *gtkUI) loadConfig(configFile string) {
-	go u.loadConfigInternal(configFile)
+		return false
+	})
+
 }
 
 func (u *gtkUI) saveConfigInternal() {

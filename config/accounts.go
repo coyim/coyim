@@ -25,8 +25,9 @@ type Accounts struct {
 }
 
 // LoadOrCreate will try to load the configuration from the given configuration file
-// or from the standard configuration file. If no file exists or it is malformed, an error will
-// be returned. However, the returned Accounts instance will always be usable
+// or from the standard configuration file. If no file exists or it is malformed,
+// or it could not be decrypted, an error will be returned.
+// However, the returned Accounts instance will always be usable
 func LoadOrCreate(configFile string, ks KeySupplier) (a *Accounts, ok bool, e error) {
 	shouldEncrypt := false
 	if len(configFile) == 0 {

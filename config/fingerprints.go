@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/hex"
 	"errors"
+
+	"github.com/twstrike/coyim/i18n"
 )
 
 // KnownFingerprint represents one fingerprint
@@ -57,4 +59,20 @@ func (a *Account) HasFingerprint(uid string) bool {
 	}
 
 	return false
+}
+
+var (
+	errFingerprintAlreadyAuthorized = errors.New(i18n.Local("the fingerprint is already authorized"))
+)
+
+// AuthorizeFingerprint will authorize and add the fingerprint for the given user
+// or return an error if the fingerprint is already associated with another user
+func (a *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
+	existing := a.UserIDForFingerprint(fingerprint)
+	if len(existing) != 0 {
+		return errFingerprintAlreadyAuthorized
+	}
+
+	a.AddFingerprint(fingerprint, uid)
+	return nil
 }

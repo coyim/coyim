@@ -70,7 +70,7 @@ Purported fingerprint for %s:
 		responseType := gtk.ResponseType(dialog.Run())
 		switch responseType {
 		case gtk.RESPONSE_YES:
-			account.authorizeFingerprint(uid, fpr)
+			account.session.CurrentAccount.AuthorizeFingerprint(uid, fpr)
 			account.session.SaveConfiguration()
 		}
 	}

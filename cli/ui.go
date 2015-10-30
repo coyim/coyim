@@ -203,8 +203,8 @@ func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversatio
 
 	fpr := conversation.GetTheirKey().DefaultFingerprint()
 	fprUID := s.CurrentAccount.UserIDForFingerprint(fpr)
-	info(term, fmt.Sprintf("  Fingerprint  for %s: %x", uid, fpr))
-	info(term, fmt.Sprintf("  Session  ID  for %s: %x", uid, conversation.GetSSID()))
+	info(term, fmt.Sprintf("  Fingerprint  for %s: %X", uid, fpr))
+	info(term, fmt.Sprintf("  Session  ID  for %s: %X", uid, conversation.GetSSID()))
 	if fprUID == uid {
 		info(term, fmt.Sprintf("  Identity key for %s is verified", uid))
 	} else if len(fprUID) > 1 {
@@ -755,12 +755,12 @@ CommandLoop:
 					alert(term, fmt.Sprintf("Invalid fingerprint %s - not authenticated", cmd.Fingerprint))
 					break
 				}
-				existing := s.CurrentAccount.UserIDForFingerprint(fpr)
-				if len(existing) != 0 {
-					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, existing))
+
+				e := s.CurrentAccount.AuthorizeFingerprint(cmd.User, fpr)
+				if e != nil {
+					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, s.CurrentAccount.UserIDForFingerprint(fpr)))
 					break
 				}
-				s.CurrentAccount.AddFingerprint(fpr, cmd.User)
 				s.SaveConfiguration()
 				info(term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:

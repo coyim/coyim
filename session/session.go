@@ -482,10 +482,8 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	case event.SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.GetTheirKey().DefaultFingerprint()
-		if len(s.CurrentAccount.UserIDForFingerprint(fpr)) == 0 {
-			s.CurrentAccount.AddFingerprint(fpr, from)
-			s.SaveConfiguration()
-		}
+		s.CurrentAccount.AuthorizeFingerprint(from, fpr)
+		s.SaveConfiguration()
 	case event.SMPFailed:
 		s.alert(fmt.Sprintf("Authentication with %s failed", from))
 	}

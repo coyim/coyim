@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"errors"
-
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
@@ -47,23 +45,6 @@ func signalName(id, signal string) string {
 
 func (account *account) connected() bool {
 	return account.session.ConnStatus == session.CONNECTED
-}
-
-var (
-	errFingerprintAlreadyAuthorized = errors.New(i18n.Local("the fingerprint is already authorized"))
-)
-
-// TODO: this functionality is duplicated
-func (account *account) authorizeFingerprint(uid string, fingerprint []byte) error {
-	a := account.session.CurrentAccount
-	existing := a.UserIDForFingerprint(fingerprint)
-	if len(existing) != 0 {
-		return errFingerprintAlreadyAuthorized
-	}
-
-	a.AddFingerprint(fingerprint, uid)
-
-	return nil
 }
 
 func (u *gtkUI) showAddAccountWindow() error {

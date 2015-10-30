@@ -497,13 +497,10 @@ func (c *cliUI) WatchRosterEdits() {
 
 		toDelete, toEdit, toAdd := diffRoster(parsedRoster, edit.Roster)
 
-		//TODO: fix
-		s := c.session
-
 		//DELETE
 		for _, jid := range toDelete {
 			c.info("Deleting roster entry for " + jid)
-			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+			_, _, err := c.session.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:          jid,
 					Subscription: "remove",
@@ -515,21 +512,21 @@ func (c *cliUI) WatchRosterEdits() {
 			}
 
 			// Filter out any known fingerprints.
-			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(s.CurrentAccount.KnownFingerprints))
-			for _, fpr := range s.CurrentAccount.KnownFingerprints {
+			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(c.session.CurrentAccount.KnownFingerprints))
+			for _, fpr := range c.session.CurrentAccount.KnownFingerprints {
 				if fpr.UserID == jid {
 					continue
 				}
 				newKnownFingerprints = append(newKnownFingerprints, fpr)
 			}
-			s.CurrentAccount.KnownFingerprints = newKnownFingerprints
-			s.SaveConfiguration()
+			c.session.CurrentAccount.KnownFingerprints = newKnownFingerprints
+			c.session.SaveConfiguration()
 		}
 
 		//EDIT
 		for _, entry := range toEdit {
 			c.info("Updating roster entry for " + entry.Jid)
-			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+			_, _, err := c.session.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:   entry.Jid,
 					Name:  entry.Name,
@@ -545,7 +542,7 @@ func (c *cliUI) WatchRosterEdits() {
 		//ADD
 		for _, entry := range toAdd {
 			c.info("Adding roster entry for " + entry.Jid)
-			_, _, err := s.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+			_, _, err := c.session.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:   entry.Jid,
 					Name:  entry.Name,

@@ -601,12 +601,19 @@ func (s *Session) WatchTimeout() {
 	}
 }
 
+const defaultDelimiter = "::"
+
 // WatchRosterEvents waits for roster events
 func (s *Session) WatchRosterEvents() {
 	defer s.Close()
 
 	s.Conn.SignalPresence("")
 	s.info("Fetching roster")
+
+	delim, err := s.Conn.GetRosterDelimiter()
+	if err != nil || delim == "" {
+		delim = defaultDelimiter
+	}
 
 	rosterReply, c, err := s.Conn.RequestRoster()
 	if err != nil {

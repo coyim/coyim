@@ -90,6 +90,17 @@ func (c *cliUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 	return l, r, true
 }
 
+func findAccount(a *string, acs []*config.Account) *config.Account {
+	if a != nil && *a != "" {
+		for _, ac := range acs {
+			if ac.Account == *a {
+				return ac
+			}
+		}
+	}
+	return acs[0]
+}
+
 func (c *cliUI) loadConfig(configFile string) error {
 	accounts, ok, err := config.LoadOrCreate(configFile, c.getMasterPassword)
 	if !ok {
@@ -107,7 +118,7 @@ func (c *cliUI) loadConfig(configFile string) error {
 		}
 	}
 
-	account := accounts.Accounts[0]
+	account := findAccount(config.AccountFlag, accounts.Accounts)
 
 	//TODO We do not support empty passwords
 	var password string
@@ -132,7 +143,6 @@ func (c *cliUI) loadConfig(configFile string) error {
 		registerCallback = c.RegisterCallback
 	}
 
-	//TODO support one session per account
 	c.session = session.NewSession(accounts, account)
 	c.session.SessionEventHandler = c
 	c.session.Subscribe(c.events)

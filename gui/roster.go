@@ -403,10 +403,10 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter *gtk.TreeIter, accoun
 	}
 
 	for _, item := range g.Peers() {
-		o := isOnline(item)
 		vs := isNominallyVisible(item)
-		accountCounter.inc(vs, o)
-		groupCounter.inc(vs, o)
+		o := isOnline(item)
+		accountCounter.inc(vs, vs && o)
+		groupCounter.inc(vs, vs && o)
 
 		if shouldDisplay(item, showOffline) {
 			r.addItem(item, pi, "")

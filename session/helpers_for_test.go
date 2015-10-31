@@ -11,7 +11,6 @@ import (
 )
 
 type mockSessionEventHandler struct {
-	debug               func(string)
 	info                func(string)
 	warn                func(string)
 	alert               func(string)
@@ -26,12 +25,6 @@ type mockSessionEventHandler struct {
 	unsubscribe         func(account, peer string)
 	disconnected        func()
 	registerCallback    func(title, instructions string, fields []interface{}) error
-}
-
-func (m *mockSessionEventHandler) Debug(v string) {
-	if m.debug != nil {
-		m.debug(v)
-	}
 }
 
 func (m *mockSessionEventHandler) Info(v string) {

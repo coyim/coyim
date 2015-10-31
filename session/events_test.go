@@ -17,17 +17,6 @@ func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
 	session.Subscribe(subs)
 
 	go session.publish(Connected)
-
-	select {
-	case e := <-subs:
-		c.Assert(e, DeepEquals, Event{
-			Type:    Connected,
-			Session: session,
-		})
-	case <-time.After(1 * time.Millisecond):
-		c.Error("Did not receive expected notification")
-	}
-
 	go session.publish(Disconnected)
 
 	select {

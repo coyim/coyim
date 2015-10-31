@@ -49,10 +49,6 @@ func (u *gtkUI) handleLogEvent(ev session.LogEvent) {
 	m := ev.Message
 
 	switch ev.Level {
-	case session.Debug:
-		if debugEnabled {
-			fmt.Println(">>> DEBUG", m)
-		}
 	case session.Info:
 		fmt.Println(">>> INFO", m)
 	case session.Warn:
@@ -110,7 +106,7 @@ func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
 		return
 	}
 
-	u.Debug(fmt.Sprintf("[%s] Presence from %s: show: %s status: %s gone: %v\n", ev.To, ev.From, ev.Show, ev.Status, ev.Gone))
+	log.Printf("[%s] Presence from %s: show: %s status: %s gone: %v\n", ev.To, ev.From, ev.Show, ev.Status, ev.Gone)
 	u.rosterUpdated()
 
 	account := u.findAccountForSession(ev.Session)
@@ -132,7 +128,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 	switch ev.Type {
 	case session.IQReceived:
 		//TODO
-		u.Debug(fmt.Sprintf("received iq: %v\n", ev.From))
+		log.Printf("received iq: %v\n", ev.From)
 	case session.OTREnded:
 		//TODO
 		log.Println("OTR conversation ended with", ev.From)
@@ -159,11 +155,11 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		})
 	case session.Subscribed:
 		jid := ev.Session.CurrentAccount.Account
-		u.Debug(fmt.Sprintf("[%s] Subscribed to %s\n", jid, ev.From))
+		log.Printf("[%s] Subscribed to %s\n", jid, ev.From)
 		u.rosterUpdated()
 	case session.Unsubscribe:
 		jid := ev.Session.CurrentAccount.Account
-		u.Debug(fmt.Sprintf("[%s] Unsubscribed from %s\n", jid, ev.From))
+		log.Printf("[%s] Unsubscribed from %s\n", jid, ev.From)
 		u.rosterUpdated()
 	}
 }

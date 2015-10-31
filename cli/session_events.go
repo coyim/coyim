@@ -92,8 +92,6 @@ func (c *cliUI) handleMessageEvent(ev session.MessageEvent) {
 
 func (c *cliUI) handleLogEvent(ev session.LogEvent) {
 	switch ev.Level {
-	case session.Debug:
-		debug(c.term, ev.Message)
 	case session.Info:
 		info(c.term, ev.Message)
 	case session.Warn:

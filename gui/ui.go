@@ -17,8 +17,6 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const debugEnabled = true
-
 type gtkUI struct {
 	roster       *roster
 	window       *gtk.Window
@@ -174,12 +172,6 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 	//TODO: should open a registration window
 	fmt.Println("TODO")
 	return nil
-}
-
-func (u *gtkUI) Debug(m string) {
-	if debugEnabled {
-		fmt.Println(">>> DEBUG", m)
-	}
 }
 
 func (u *gtkUI) Loop() {

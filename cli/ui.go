@@ -211,7 +211,7 @@ func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversatio
 	term := c.term
 
 	fpr := conversation.GetTheirKey().DefaultFingerprint()
-	fprUID := s.CurrentAccount.UserIDForFingerprint(fpr)
+	fprUID := s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %X", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %X", uid, conversation.GetSSID()))
 	if fprUID == uid {
@@ -764,7 +764,7 @@ CommandLoop:
 
 				e := s.CurrentAccount.AuthorizeFingerprint(cmd.User, fpr)
 				if e != nil {
-					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, s.CurrentAccount.UserIDForFingerprint(fpr)))
+					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)))
 					break
 				}
 				s.SaveConfiguration()

@@ -13,7 +13,7 @@ type KnownFingerprint struct {
 	UserID         string
 	FingerprintHex string
 	Fingerprint    []byte `json:"-"`
-	// TODO: add a verified/trusted parameter for each fingerprint
+	Untrusted      bool
 }
 
 func parseFingerprints(a *Account) error {
@@ -34,10 +34,10 @@ func (a *Account) serializeFingerprints() {
 	}
 }
 
-// UserIDForFingerprint returns the user ID for the given fingerprint
-func (a *Account) UserIDForFingerprint(fpr []byte) string {
+// UserIDForVerifiedFingerprint returns the user ID for the given verified fingerprint
+func (a *Account) UserIDForVerifiedFingerprint(fpr []byte) string {
 	for _, known := range a.KnownFingerprints {
-		if bytes.Equal(fpr, known.Fingerprint) {
+		if bytes.Equal(fpr, known.Fingerprint) && !known.Untrusted {
 			return known.UserID
 		}
 	}
@@ -47,7 +47,7 @@ func (a *Account) UserIDForFingerprint(fpr []byte) string {
 
 // AddFingerprint adds a new fingerprint for the given user
 func (a *Account) AddFingerprint(fpr []byte, uid string) {
-	a.KnownFingerprints = append(a.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserID: uid})
+	a.KnownFingerprints = append(a.KnownFingerprints, KnownFingerprint{Fingerprint: fpr, UserID: uid, Untrusted: false})
 }
 
 // HasFingerprint returns true if we have the fingerprint for the given user
@@ -68,7 +68,7 @@ var (
 // AuthorizeFingerprint will authorize and add the fingerprint for the given user
 // or return an error if the fingerprint is already associated with another user
 func (a *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
-	existing := a.UserIDForFingerprint(fingerprint)
+	existing := a.UserIDForVerifiedFingerprint(fingerprint)
 	if len(existing) != 0 {
 		return errFingerprintAlreadyAuthorized
 	}

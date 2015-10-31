@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
@@ -28,7 +29,8 @@ type roster struct {
 	sendMessage    func(to, message string)
 	conversations  map[string]*conversationWindow
 
-	isExpanded map[string]bool
+	isCollapsed map[string]bool
+	toCollapse  []*gtk.TreePath
 
 	ui *gtkUI
 }
@@ -107,7 +109,7 @@ func (u *gtkUI) newRoster() *roster {
 		contacts: contacts{
 			m: make(map[*account]*rosters.List),
 		},
-		isExpanded: make(map[string]bool),
+		isCollapsed: make(map[string]bool),
 
 		ui: u,
 	}
@@ -194,7 +196,7 @@ func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
 	accountID := getFromModelIter(r.model, iter, indexAccountID)
 
 	if accountID == accountIDTopLevelMarker {
-		r.isExpanded[jid] = !r.isExpanded[jid]
+		r.isCollapsed[jid] = !r.isCollapsed[jid]
 		r.redraw()
 		return
 	}
@@ -266,7 +268,6 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 	})
 }
 
-//TODO: Does it need the account? Why not having the session?
 func (r *roster) update(account *account, entries *rosters.List) {
 	r.contacts.Lock()
 	defer r.contacts.Unlock()
@@ -289,8 +290,6 @@ func (r *roster) debugPrintRosterFor(nm string) {
 	fmt.Println()
 }
 
-//TODO: I believe we can achieve the same with a GtkTreeModelFilter
-//See: gtk_tree_model_filter_set_visible_func()
 func shouldDisplay(p *rosters.Peer, showOffline bool) bool {
 	if showOffline {
 		return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != ""
@@ -335,12 +334,12 @@ func decideColorFor(p *rosters.Peer) string {
 
 const accountIDTopLevelMarker = "--is-account-top-level--"
 
-func createAccountDisplayName(parentName string, count, countOnline int, isExpanded bool) string {
+func createGroupDisplayName(parentName string, counter *counter, isExpanded bool) string {
 	name := parentName
 	if !isExpanded {
 		name = fmt.Sprintf("[%s]", name)
 	}
-	return fmt.Sprintf("%s (%d/%d)", name, countOnline, count)
+	return fmt.Sprintf("%s (%d/%d)", name, counter.online, counter.total)
 }
 
 func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent string) {
@@ -358,58 +357,126 @@ func (r *roster) redrawMerged() {
 	showOffline := !r.ui.config.ShowOnlyOnline
 
 	r.contacts.RLock()
-	allContacts := make([]*rosters.List, 0, len(r.contacts.m))
-	for _, contacts := range r.contacts.m {
-		allContacts = append(allContacts, contacts)
-	}
-	r.contacts.RUnlock()
+	defer r.contacts.RUnlock()
 
-	rosters.IterAll(func(_ int, item *rosters.Peer) {
-		if shouldDisplay(item, showOffline) {
-			r.addItem(item, nil, "")
+	r.toCollapse = nil
+
+	grp := rosters.TopLevelGroup()
+	for account, contacts := range r.contacts.m {
+		contacts.AddTo(grp, account.session.GroupDelimiter)
+	}
+
+	accountCounter := &counter{}
+	r.displayGroup(grp, nil, accountCounter, showOffline, "")
+
+	r.view.ExpandAll()
+	for _, path := range r.toCollapse {
+		r.view.CollapseRow(path)
+	}
+}
+
+type counter struct {
+	total  int
+	online int
+}
+
+func (c *counter) inc(total, online bool) {
+	if total {
+		c.total++
+	}
+	if online {
+		c.online++
+	}
+}
+
+func (r *roster) displayGroup(g *rosters.Group, parentIter *gtk.TreeIter, accountCounter *counter, showOffline bool, accountName string) {
+	pi := parentIter
+	groupCounter := &counter{}
+	groupID := accountName + "//" + g.FullGroupName()
+	if g.GroupName != "" {
+		pi = r.model.Append(parentIter)
+		r.model.SetValue(pi, indexParentJid, groupID)
+		r.model.SetValue(pi, indexAccountID, accountIDTopLevelMarker)
+		r.model.SetValue(pi, indexWeight, 500)
+		r.model.SetValue(pi, indexBackgroundColor, "#e9e7f3")
+	}
+
+	for _, item := range g.Peers() {
+		o := isOnline(item)
+		sd := shouldDisplay(item, showOffline)
+		accountCounter.inc(sd, o)
+		groupCounter.inc(sd, o)
+
+		if sd {
+			r.addItem(item, pi, "")
 		}
-	}, allContacts...)
+	}
+
+	for _, gr := range g.Groups() {
+		r.displayGroup(gr, pi, accountCounter, showOffline, accountName)
+	}
+
+	if g.GroupName != "" {
+		parentPath, _ := r.model.GetPath(pi)
+		shouldCollapse, ok := r.isCollapsed[groupID]
+		isExpanded := true
+		if ok && shouldCollapse {
+			isExpanded = false
+			r.toCollapse = append(r.toCollapse, parentPath)
+		}
+
+		r.model.SetValue(pi, indexParentDisplayName, createGroupDisplayName(g.FullGroupName(), groupCounter, isExpanded))
+	}
+}
+
+func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List, showOffline bool) {
+	parentIter := r.model.Append(nil)
+
+	accountCounter := &counter{}
+
+	grp := contacts.Grouped(account.session.GroupDelimiter)
+	parentName := account.session.CurrentAccount.Account
+	r.displayGroup(grp, parentIter, accountCounter, showOffline, parentName)
+
+	r.model.SetValue(parentIter, indexParentJid, parentName)
+	r.model.SetValue(parentIter, indexAccountID, accountIDTopLevelMarker)
+	r.model.SetValue(parentIter, indexWeight, 500)
+	r.model.SetValue(parentIter, indexBackgroundColor, "#918caa")
+	parentPath, _ := r.model.GetPath(parentIter)
+	shouldCollapse, ok := r.isCollapsed[parentName]
+	isExpanded := true
+	if ok && shouldCollapse {
+		isExpanded = false
+		r.toCollapse = append(r.toCollapse, parentPath)
+	}
+	r.model.SetValue(parentIter, indexParentDisplayName, createGroupDisplayName(parentName, accountCounter, isExpanded))
+}
+
+func (r *roster) sortedAccounts() []*account {
+	var as []*account
+	for account := range r.contacts.m {
+		as = append(as, account)
+	}
+	sort.Sort(byAccountNameAlphabetic(as))
+	return as
 }
 
 func (r *roster) redrawSeparate() {
-	var parentIter *gtk.TreeIter
 	showOffline := !r.ui.config.ShowOnlyOnline
 
 	r.contacts.RLock()
+
+	r.toCollapse = nil
+
 	defer r.contacts.RUnlock()
-	for account, contacts := range r.contacts.m {
-		parentIter = r.model.Append(nil)
 
-		count := 0
-		countOnline := 0
+	for _, account := range r.sortedAccounts() {
+		r.redrawSeparateAccount(account, r.contacts.m[account], showOffline)
+	}
 
-		contacts.Iter(func(_ int, item *rosters.Peer) {
-			if shouldDisplay(item, showOffline) {
-				count++
-				if isOnline(item) {
-					countOnline++
-				}
-				r.addItem(item, parentIter, "   ")
-			}
-		})
-
-		parentName := account.session.CurrentAccount.Account
-		r.model.SetValue(parentIter, indexParentJid, parentName)
-		r.model.SetValue(parentIter, indexAccountID, accountIDTopLevelMarker)
-		r.model.SetValue(parentIter, indexWeight, 500)
-		r.model.SetValue(parentIter, indexBackgroundColor, "#918caa")
-		parentPath, _ := r.model.GetPath(parentIter)
-		isExpanded, ok := r.isExpanded[parentName]
-		if !ok {
-			isExpanded = true
-			r.isExpanded[parentName] = isExpanded
-		}
-		r.model.SetValue(parentIter, indexParentDisplayName, createAccountDisplayName(parentName, count, countOnline, isExpanded))
-		if isExpanded {
-			r.view.ExpandRow(parentPath, false)
-		} else {
-			r.view.CollapseRow(parentPath)
-		}
+	r.view.ExpandAll()
+	for _, path := range r.toCollapse {
+		r.view.CollapseRow(path)
 	}
 }
 

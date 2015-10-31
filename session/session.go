@@ -61,6 +61,8 @@ type Session struct {
 	}
 
 	SaveConfiguration func()
+
+	GroupDelimiter string
 }
 
 // NewSession creates a new session from the given config
@@ -614,6 +616,7 @@ func (s *Session) WatchRosterEvents() {
 	if err != nil || delim == "" {
 		delim = defaultDelimiter
 	}
+	s.GroupDelimiter = delim
 
 	rosterReply, c, err := s.Conn.RequestRoster()
 	if err != nil {

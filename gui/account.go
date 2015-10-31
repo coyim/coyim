@@ -17,6 +17,14 @@ type account struct {
 	onEdit       chan<- *account
 }
 
+type byAccountNameAlphabetic []*account
+
+func (s byAccountNameAlphabetic) Len() int { return len(s) }
+func (s byAccountNameAlphabetic) Less(i, j int) bool {
+	return s[i].session.CurrentAccount.Account < s[j].session.CurrentAccount.Account
+}
+func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
 func newAccount(conf *config.Accounts, currentConf *config.Account) (acc *account, err error) {
 	acc = &account{}
 	acc.session = session.NewSession(conf, currentConf)

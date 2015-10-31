@@ -16,7 +16,6 @@ func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
 	session := &Session{}
 	session.Subscribe(subs)
 
-	go session.publish(Connected)
 	go session.publish(Disconnected)
 
 	select {

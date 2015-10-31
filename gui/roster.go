@@ -290,11 +290,12 @@ func (r *roster) debugPrintRosterFor(nm string) {
 	fmt.Println()
 }
 
+func isNominallyVisible(p *rosters.Peer) bool {
+	return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != ""
+}
+
 func shouldDisplay(p *rosters.Peer, showOffline bool) bool {
-	if showOffline {
-		return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != ""
-	}
-	return p.Online && ((p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != "")
+	return isNominallyVisible(p) && (showOffline || p.Online)
 }
 
 func isAway(p *rosters.Peer) bool {
@@ -403,11 +404,11 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter *gtk.TreeIter, accoun
 
 	for _, item := range g.Peers() {
 		o := isOnline(item)
-		sd := shouldDisplay(item, showOffline)
-		accountCounter.inc(sd, o)
-		groupCounter.inc(sd, o)
+		vs := isNominallyVisible(item)
+		accountCounter.inc(vs, o)
+		groupCounter.inc(vs, o)
 
-		if sd {
+		if shouldDisplay(item, showOffline) {
 			r.addItem(item, pi, "")
 		}
 	}

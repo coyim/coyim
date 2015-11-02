@@ -63,7 +63,7 @@ const saltLen = 16
 // GenerateKeys takes a password and encryption parameters and generates an AES key and a MAC key using SCrypt
 func GenerateKeys(password string, params EncryptionParameters) ([]byte, []byte) {
 	res, _ := scrypt.Key([]byte(password), params.saltInternal, params.N, params.R, params.P, aesKeyLen+macKeyLen)
-	return res[0:aesKeyLen], res[aesKeyLen+1:]
+	return res[0:aesKeyLen], res[aesKeyLen:]
 }
 
 func encryptData(key, macKey, nonce []byte, plain string) []byte {

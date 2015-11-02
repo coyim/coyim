@@ -31,12 +31,12 @@ const testP = 1
 
 var testKey = bytesFromHex("a9af9b3684e680e9ef6b7986c142783f5bf9da26fde00b69dd550451df240998")
 var testKeyWrong = bytesFromHex("a9af9b3684e680e9ef6b7986c142783f5bf9da26fde00b69dd560451df240998")
-var testMacKey = bytesFromHex("d1d2f87e9280a8a338a1d0e180bd19")
-var testMacKeyWrong = bytesFromHex("d1d2f87e9281a8a338a1d0e180bd19")
+var testMacKey = bytesFromHex("78d1d2f87e9280a8a338a1d0e180bd19")
+var testMacKeyWrong = bytesFromHex("78d1d2f87e9281a8a338a1d0e180bd19")
 var testNonce = bytesFromHex("dbd8f7642b05349123d59d1b")
 var testNonceWrong = bytesFromHex("dcd8f7642b05349123d59d1b")
-var testEncryptedData = bytesFromHex("2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d28cb9b5a2e4e029923465f2cf794d5e9f")
-var testEncryptedDataFlip = bytesFromHex("2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54668c44f78c714af73152b52e2d28cb9b5a2e4e029923465f2cf794d5e9f")
+var testEncryptedData = bytesFromHex("2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d2a61e79b8671f85a27505cb9c5477ed75")
+var testEncryptedDataFlip = bytesFromHex("2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d2a61e79b8671f85a27505cb9c5477ed76")
 
 func (s *EncryptedConfigXmppSuite) Test_generateKeys(c *C) {
 	params := EncryptionParameters{
@@ -49,6 +49,8 @@ func (s *EncryptedConfigXmppSuite) Test_generateKeys(c *C) {
 	res, res2 := GenerateKeys(testPassword, params)
 	c.Assert(res, DeepEquals, testKey)
 	c.Assert(res2, DeepEquals, testMacKey)
+	c.Assert(len(res), Equals, aesKeyLen)
+	c.Assert(len(res2), Equals, macKeyLen)
 }
 
 func (s *EncryptedConfigXmppSuite) Test_encryptData(c *C) {
@@ -84,7 +86,7 @@ var encryptedDataContent = []byte(`
     "P": 1
   },
 
-  "Data": "2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d28cb9b5a2e4e029923465f2cf794d5e9f"
+  "Data": "2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d2a61e79b8671f85a27505cb9c5477ed75"
 }
 `)
 
@@ -118,6 +120,6 @@ func (s *EncryptedConfigXmppSuite) Test_encryptConfiguration(c *C) {
 		"R": 8,
 		"P": 1
 	},
-	"Data": "2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d28cb9b5a2e4e029923465f2cf794d5e9f"
+	"Data": "2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d2a61e79b8671f85a27505cb9c5477ed75"
 }`)
 }

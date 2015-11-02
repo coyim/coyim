@@ -1,0 +1,38 @@
+{
+	"Account": "ox@coyim.net",
+	"Server": "xmpp.coyim.net",
+	"Proxies": [
+		"socks5://127.0.0.1:9051"
+	],
+	"Password": "123547567846rghdfghdrghr6ythdt",
+	"Port": 5223,
+	"PrivateKey": "ABCABCAB",
+	"KnownFingerprints": [
+		{
+			"UserId": "arnold@jabber.ccc.de",
+			"FingerprintHex": "c2a23b8e8852bff5335b39b674ceec13228be0af"
+		},
+		{
+			"UserId": "some@one.com",
+			"FingerprintHex": "410aad3ce865b83ed564b2e1ce52882b07b00976"
+		},
+		{
+			"UserId": "hello@riseup.net",
+			"FingerprintHex": "50ae9522641401e1a58de568fc4b265493d451b4"
+		},
+		{
+			"UserId": "second.hello@riseup.net",
+			"FingerprintHex": "4da542fdd60e077b38b05aa3485916d5d7c958aa"
+		}
+	],
+	"Bell": true,
+	"HideStatusUpdates": true,
+	"UseTor": true,
+	"OTRAutoTearDown": true,
+	"OTRAutoAppendTag": true,
+	"OTRAutoStartSession": true,
+	"ServerCertificateSHA256": "592f46183527ab40838882ab4cb4aef4e2cf916074ab01f9bc243931ca5c4ed1",
+    "NotifyCommand": ["hello"],
+    "RawLogFile": "bla",
+    "IdleSecondsBeforeNotification": 42
+}

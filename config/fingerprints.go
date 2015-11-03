@@ -16,6 +16,19 @@ type KnownFingerprint struct {
 	Untrusted      bool
 }
 
+// ByNaturalOrder sorts fingerprints according to first the user ID and then the fingerprint
+type ByNaturalOrder []*KnownFingerprint
+
+func (s ByNaturalOrder) Len() int { return len(s) }
+func (s ByNaturalOrder) Less(i, j int) bool {
+	if s[i].UserID == s[j].UserID {
+		return s[i].FingerprintHex < s[j].FingerprintHex
+	}
+	return s[i].UserID < s[j].UserID
+}
+
+func (s ByNaturalOrder) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
 func parseFingerprints(a *Account) error {
 	var err error
 	for i, known := range a.KnownFingerprints {

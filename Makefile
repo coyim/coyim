@@ -80,6 +80,7 @@ deps-u:
 	go get -u github.com/miekg/dns
 	go get -u golang.org/x/crypto/scrypt
 	go get -u github.com/DHowett/go-plist
+	go get -u github.com/hydrogen18/stalecucumber
 
 deps:
 	go get github.com/golang/lint/golint
@@ -96,3 +97,4 @@ deps:
 	go get github.com/miekg/dns
 	go get golang.org/x/crypto/scrypt
 	go get github.com/DHowett/go-plist
+	go get github.com/hydrogen18/stalecucumber

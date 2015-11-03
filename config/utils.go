@@ -31,10 +31,25 @@ func randomString(dest []byte) error {
 	return nil
 }
 
-func xdgHomeDir() string {
-	xdghome := os.Getenv("XDG_CONFIG_HOME")
-	if xdghome == "" {
-		xdghome = filepath.Join(os.Getenv("HOME"), ".config")
+func xdgOr(env, or string) string {
+	x := os.Getenv(env)
+	if x == "" {
+		x = filepath.Join(os.Getenv("HOME"), or)
 	}
-	return xdghome
+	return x
+}
+
+// XdgConfigDir returns the standardized XDG Configuration directory
+func XdgConfigDir() string {
+	return xdgOr("XDG_CONFIG_HOME", ".config")
+}
+
+// XdgCacheDir returns the standardized XDG Cache directory
+func XdgCacheDir() string {
+	return xdgOr("XDG_CACHE_HOME", ".cache")
+}
+
+// XdgDataDir returns the standardized XDG Data directory
+func XdgDataDir() string {
+	return xdgOr("XDG_DATA_HOME", ".local/share")
 }

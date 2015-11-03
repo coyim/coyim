@@ -29,6 +29,7 @@ type Account struct {
 	ServerCertificateSHA256 string   `json:",omitempty"`
 	AlwaysEncrypt           bool     `json:",omitempty"`
 	AlwaysEncryptWith       []string `json:",omitempty"`
+	DontEncryptWith         []string `json:",omitempty"`
 	InstanceTag             uint32   `json:",omitempty"`
 }
 

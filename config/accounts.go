@@ -163,3 +163,12 @@ func (a *Accounts) serialize() ([]byte, error) {
 
 	return json.MarshalIndent(a, "", "\t")
 }
+
+// ByAccountNameAlphabetic sorts the accounts based on their account names
+type ByAccountNameAlphabetic []*Account
+
+func (s ByAccountNameAlphabetic) Len() int { return len(s) }
+func (s ByAccountNameAlphabetic) Less(i, j int) bool {
+	return s[i].Account < s[j].Account
+}
+func (s ByAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }

@@ -32,7 +32,7 @@ func (s *XmppClientXmppSuite) Test_XmppClient_canImportXmppClientConfiguration(c
 	c.Assert(res.Accounts[0].ServerCertificateSHA256, Equals, "592f46183527ab40838882ab4cb4aef4e2cf916074ab01f9bc243931ca5c4ed1")
 	c.Assert(res.Accounts[0].PrivateKey, DeepEquals, []byte{0x00, 0x10, 0x80, 0x04, 0x20, 0x01})
 	c.Assert(res.Accounts[0].AlwaysEncrypt, Equals, true)
-	c.Assert(res.Accounts[0].AlwaysEncryptWith, DeepEquals, []string{})
+	c.Assert(res.Accounts[0].AlwaysEncryptWith, DeepEquals, []string(nil))
 	c.Assert(res.Accounts[0].InstanceTag, Equals, uint32(0))
 
 	c.Assert(len(res.Accounts[0].KnownFingerprints), Equals, 4)

@@ -2,8 +2,12 @@
 
 package config
 
-import "path/filepath"
+// IsWindows returns true if this is running under windows
+func IsWindows() bool {
+	return false
+}
 
-func configDir() string {
-	return filepath.Join(xdgHomeDir(), "coyim")
+// SystemConfigDir returns the application data directory, valid on both windows and posix systems
+func SystemConfigDir() string {
+	return XdgConfigDir()
 }

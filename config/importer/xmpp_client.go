@@ -56,7 +56,7 @@ func (x *xmppClientImporter) importFrom(f string) (*config.Accounts, bool) {
 	ac.OTRAutoAppendTag = c.OTRAutoAppendTag
 	ac.ServerCertificateSHA256 = c.ServerCertificateSHA256
 	ac.PrivateKey = c.PrivateKey
-	ac.AlwaysEncryptWith = []string{}
+	ac.AlwaysEncryptWith = c.AlwaysEncryptWith
 	ac.KnownFingerprints = make([]config.KnownFingerprint, len(c.KnownFingerprints))
 	for ix, kf := range c.KnownFingerprints {
 		ac.KnownFingerprints[ix] = config.KnownFingerprint{

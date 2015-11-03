@@ -56,3 +56,7 @@ func readFileOrTemporaryBackup(name string) (data []byte, e error) {
 	}
 	return ioutil.ReadFile(name + tmpExtension)
 }
+
+func configDir() string {
+	return filepath.Join(SystemConfigDir(), "coyim")
+}

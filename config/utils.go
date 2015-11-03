@@ -31,10 +31,15 @@ func randomString(dest []byte) error {
 	return nil
 }
 
+// WithHome returns the given relative file/dir with the $HOME prepended
+func WithHome(file string) string {
+	return filepath.Join(os.Getenv("HOME"), file)
+}
+
 func xdgOr(env, or string) string {
 	x := os.Getenv(env)
 	if x == "" {
-		x = filepath.Join(os.Getenv("HOME"), or)
+		x = WithHome(or)
 	}
 	return x
 }

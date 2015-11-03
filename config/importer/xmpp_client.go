@@ -3,6 +3,8 @@ package importer
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/twstrike/coyim/config"
 )
@@ -37,13 +39,22 @@ type xmppClientKnownFingerprint struct {
 type xmppClientImporter struct{}
 
 func (x *xmppClientImporter) importFrom(f string) (*config.Accounts, bool) {
-	contents, _ := ioutil.ReadFile(f)
+	contents, err := ioutil.ReadFile(f)
+	if err != nil {
+		return nil, false
+	}
 
 	c := new(xmppClientConfig)
-	json.Unmarshal(contents, c)
+	err = json.Unmarshal(contents, c)
+	if err != nil {
+		return nil, false
+	}
 
 	a := new(config.Accounts)
-	ac, _ := a.AddNewAccount()
+	ac, err := a.AddNewAccount()
+	if err != nil {
+		return nil, false
+	}
 
 	ac.Account = c.Account
 	ac.Server = c.Server
@@ -75,23 +86,48 @@ func (x *xmppClientImporter) importFrom(f string) (*config.Accounts, bool) {
 
 	return a, true
 }
+
+func ifExists(fs []string, f string) []string {
+	if fi, err := os.Stat(f); err == nil && !fi.IsDir() {
+		return append(fs, f)
+	}
+	return fs
+}
+
+func ifExistsDir(fs []string, d string) []string {
+	if fi, err := os.Stat(d); err == nil && fi.IsDir() {
+		entries, err := ioutil.ReadDir(d)
+		if err == nil {
+			for _, e := range entries {
+				if !e.IsDir() {
+					fs = append(fs, filepath.Join(d, e.Name()))
+				}
+			}
+		}
+	}
+	return fs
+}
+
 func (x *xmppClientImporter) findFiles() []string {
 	var res []string
-	// look at .xmpp-client
-	// look at Persistent/.xmpp-client
-	// look at all files in .xmpp-client
-	// look at all files in .xmpp-clients
-	// persistentDir := filepath.Join(homeDir, "Persistent")
-	// if stat, err := os.Lstat(persistentDir); err == nil && stat.IsDir() {
-	// 	// Looks like Tails.
-	// 	homeDir = persistentDir
-	// }
-	// *configFile = filepath.Join(homeDir, ".xmpp-client")
+
+	res = ifExists(res, config.WithHome(".xmpp-client"))
+	res = ifExists(res, config.WithHome("Persistent/.xmpp-client"))
+	res = ifExistsDir(res, config.WithHome(".xmpp-client"))
+	res = ifExistsDir(res, config.WithHome(".xmpp-clients"))
 
 	return res
 }
 
 func (x *xmppClientImporter) TryImport() []*config.Accounts {
 	var res []*config.Accounts
+
+	for _, f := range x.findFiles() {
+		ac, ok := x.importFrom(f)
+		if ok {
+			res = append(res, ac)
+		}
+	}
+
 	return res
 }

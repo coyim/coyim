@@ -66,10 +66,32 @@ func (x *xmppClientImporter) importFrom(f string) (*config.Accounts, bool) {
 		}
 	}
 
+	ac.RequireTor = len(c.Proxies) > 0
+
 	a.NotifyCommand = c.NotifyCommand
 	a.Bell = c.Bell
 	a.RawLogFile = c.RawLogFile
 	a.IdleSecondsBeforeNotification = c.IdleSecondsBeforeNotification
 
 	return a, true
+}
+func (x *xmppClientImporter) findFiles() []string {
+	var res []string
+	// look at .xmpp-client
+	// look at Persistent/.xmpp-client
+	// look at all files in .xmpp-client
+	// look at all files in .xmpp-clients
+	// persistentDir := filepath.Join(homeDir, "Persistent")
+	// if stat, err := os.Lstat(persistentDir); err == nil && stat.IsDir() {
+	// 	// Looks like Tails.
+	// 	homeDir = persistentDir
+	// }
+	// *configFile = filepath.Join(homeDir, ".xmpp-client")
+
+	return res
+}
+
+func (x *xmppClientImporter) TryImport() []*config.Accounts {
+	var res []*config.Accounts
+	return res
 }

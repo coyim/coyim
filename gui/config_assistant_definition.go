@@ -12,6 +12,7 @@ func (w configAssistantDefinition) getDefinition() string {
     <property name="width_request">450</property>
     <property name="height_request">300</property>
     <property name="border_width">10</property>
+    <signal name="apply" handler="create-account" />
 
     <!--
          <property name="border_width">12</property>
@@ -119,15 +120,13 @@ func (w configAssistantDefinition) getDefinition() string {
         <property name="page_type">GTK_ASSISTANT_PAGE_PROGRESS</property>
       </packing>
     </child>
-
-
     <child>
-      <object class="GtkLabel" id="label3">
+      <object class="GtkLabel">
         <property name="visible">True</property>
         <property name="label" translatable="yes">Confirmation page</property>
       </object>
       <packing>
-        <property name="page_type">confirm</property>
+        <property name="page_type">GTK_ASSISTANT_PAGE_CONFIRM</property>
       </packing>
     </child>
   </object>

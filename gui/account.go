@@ -41,10 +41,11 @@ func (u *gtkUI) showAddAccountWindow() error {
 	if err != nil {
 		return err
 	}
+
 	accountDialog(c, func() {
-		u.config.Add(c)
-		u.SaveConfig()
+		u.addAndSaveAccountConfig(c)
 	})
+
 	return nil
 }
 

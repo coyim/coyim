@@ -12,8 +12,15 @@ import (
 	"github.com/twstrike/coyim/i18n"
 )
 
+type saveAccountFunc func(*config.Account)
+
+func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
+	u.config.Add(c)
+	u.SaveConfig()
+}
+
 func (u *gtkUI) showConfigAssistant() error {
-	assistant, err := buildConfigAssistant()
+	assistant, err := buildConfigAssistant(u.addAndSaveAccountConfig)
 	if err != nil {
 		return err
 	}
@@ -22,7 +29,7 @@ func (u *gtkUI) showConfigAssistant() error {
 	return nil
 }
 
-func buildConfigAssistant() (*gtk.Assistant, error) {
+func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 	builder, err := loadBuilderWith("ConfigAssistantDefinition", nil)
 	if err != nil {
 		return nil, err
@@ -39,6 +46,15 @@ func buildConfigAssistant() (*gtk.Assistant, error) {
 	//TODO: fix after PR
 	intro := assistant.GetNthPage(0)
 	assistant.SetPageComplete(intro, true)
+
+	confirm := assistant.GetNthPage(-1)
+	assistant.SetPageComplete(confirm, true)
+
+	obj, _ = builder.GetObject("account")
+	accountEntry := obj.(*gtk.Entry)
+
+	obj, _ = builder.GetObject("password")
+	passwordEntry := obj.(*gtk.Entry)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"detect-tor": func(page *gtk.Box) {
@@ -86,13 +102,7 @@ func buildConfigAssistant() (*gtk.Assistant, error) {
 			}
 			msgLabel := obj.(*gtk.Label)
 
-			obj, err = builder.GetObject("account")
-			if err != nil {
-				return
-			}
-			entry := obj.(*gtk.Entry)
-
-			xmppID, err := entry.GetText()
+			xmppID, err := accountEntry.GetText()
 			if err != nil {
 				return
 			}
@@ -148,6 +158,18 @@ func buildConfigAssistant() (*gtk.Assistant, error) {
 				})
 			}()
 
+		},
+
+		"create-account": func() {
+			c, err := config.NewAccount()
+			if err != nil {
+				return
+			}
+
+			c.Account, _ = accountEntry.GetText()
+			c.Password, _ = passwordEntry.GetText()
+
+			saveFn(c)
 		},
 	})
 

@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<account version='1.0'>
+	<account>
+		<protocol>prpl-jabber</protocol>
+		<name>left.misery@coy.im/</name>
+		<password>abcdefABCDEF</password>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes/>
+			</status>
+			<status type='mood' name='Feeling' active='false'>
+				<attributes/>
+			</status>
+			<status type='freeforchat' name='Chatty' active='false'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes/>
+			</status>
+			<status type='extended_away' name='Extended away' active='false'>
+				<attributes/>
+			</status>
+			<status type='dnd' name='Do Not Disturb' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<settings>
+			<setting name='bosh_url' type='string'></setting>
+			<setting name='auth_plain_in_clear' type='bool'>0</setting>
+			<setting name='custom_smileys' type='bool'>1</setting>
+			<setting name='port' type='int'>5223</setting>
+			<setting name='connect_server' type='string'></setting>
+			<setting name='ft_proxies' type='string'>proxy.eu.jabber.org</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='connection_security' type='string'>require_tls</setting>
+			<setting name='use-global-buddyicon' type='bool'>1</setting>
+			<setting name='silence-suppression' type='bool'>0</setting>
+		</settings>
+		<settings ui='gtk-gaim'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<proxy>
+			<type>tor</type>
+			<host>127.0.0.1</host>
+			<port>9050</port>
+			<username>foo</username>
+			<password>bar</password>
+		</proxy>
+		<current_error/>
+	</account>
+	<account>
+		<protocol>prpl-jabber</protocol>
+		<name>serge.shore@coy.im/</name>
+		<password>xyxyxyxyxyx asdfgsfg &lt;foo</password>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes/>
+			</status>
+			<status type='mood' name='Feeling' active='false'>
+				<attributes/>
+			</status>
+			<status type='freeforchat' name='Chatty' active='false'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes/>
+			</status>
+			<status type='extended_away' name='Extended away' active='false'>
+				<attributes/>
+			</status>
+			<status type='dnd' name='Do Not Disturb' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<settings>
+			<setting name='auth_plain_in_clear' type='bool'>0</setting>
+			<setting name='custom_smileys' type='bool'>1</setting>
+			<setting name='port' type='int'>5224</setting>
+			<setting name='connect_server' type='string'>xmpp2.coy.im</setting>
+			<setting name='ft_proxies' type='string'>proxy.eu.jabber.org</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='connection_security' type='string'>require_tls</setting>
+			<setting name='use-global-buddyicon' type='bool'>1</setting>
+			<setting name='silence-suppression' type='bool'>0</setting>
+		</settings>
+		<settings ui='gtk-gaim'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<current_error/>
+	</account>
+	<account>
+		<protocol>prpl-icq</protocol>
+		<name>left.misery@coy.im/</name>
+		<password>abc</password>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes/>
+			</status>
+			<status type='mood' name='Feeling' active='false'>
+				<attributes/>
+			</status>
+			<status type='freeforchat' name='Chatty' active='false'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes/>
+			</status>
+			<status type='extended_away' name='Extended away' active='false'>
+				<attributes/>
+			</status>
+			<status type='dnd' name='Do Not Disturb' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<settings>
+			<setting name='auth_plain_in_clear' type='bool'>0</setting>
+			<setting name='custom_smileys' type='bool'>1</setting>
+			<setting name='port' type='int'>5222</setting>
+			<setting name='ft_proxies' type='string'>proxy.eu.jabber.org</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='connection_security' type='string'>require_tls</setting>
+			<setting name='use-global-buddyicon' type='bool'>1</setting>
+			<setting name='silence-suppression' type='bool'>0</setting>
+		</settings>
+		<settings ui='gtk-gaim'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<proxy>
+			<type>tor</type>
+			<host>127.0.0.1</host>
+			<port>9050</port>
+		</proxy>
+		<current_error/>
+	</account>
+</account>

@@ -65,11 +65,13 @@ func (g *gajimImporter) importFingerprintsFrom(f string) (string, []*config.Know
 	for sc.Scan() {
 		ln := strings.Split(sc.Text(), "\t")
 		name = ln[1]
-		result = append(result, &config.KnownFingerprint{
-			UserID:         ln[0],
-			FingerprintHex: ln[3],
-			Untrusted:      len(ln) < 5 || ln[4] != "verified",
-		})
+		if ln[2] == "xmpp" {
+			result = append(result, &config.KnownFingerprint{
+				UserID:         ln[0],
+				FingerprintHex: ln[3],
+				Untrusted:      len(ln) < 5 || ln[4] != "verified",
+			})
+		}
 
 	}
 	return name, result, true
@@ -176,22 +178,11 @@ func composeProxyStringFrom(proxy map[string]string) string {
 		return ""
 	}
 
-	authPrefix := ""
-
-	if proxy["useauth"] == "True" {
-		authPrefix = proxy["user"]
-		if proxy["pass"] != "" {
-			authPrefix = authPrefix + ":" + proxy["pass"]
-		}
-		authPrefix = authPrefix + "@"
+	if proxy["useauth"] != "True" {
+		proxy["user"] = ""
 	}
 
-	main := proxy["type"] + "://" + authPrefix + proxy["host"]
-	if proxy["port"] != "" {
-		main = main + ":" + proxy["port"]
-	}
-
-	return main
+	return composeProxyString(proxy["type"], proxy["user"], proxy["pass"], proxy["host"], proxy["port"])
 }
 
 func transformSettingsIntoAccount(user string, settings map[string]string, proxies map[string]map[string]string) gajimAccountInfo {

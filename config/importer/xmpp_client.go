@@ -3,8 +3,6 @@ package importer
 import (
 	"encoding/json"
 	"io/ioutil"
-	"os"
-	"path/filepath"
 
 	"github.com/twstrike/coyim/config"
 )
@@ -85,27 +83,6 @@ func (x *xmppClientImporter) importFrom(f string) (*config.Accounts, bool) {
 	a.IdleSecondsBeforeNotification = c.IdleSecondsBeforeNotification
 
 	return a, true
-}
-
-func ifExists(fs []string, f string) []string {
-	if fi, err := os.Stat(f); err == nil && !fi.IsDir() {
-		return append(fs, f)
-	}
-	return fs
-}
-
-func ifExistsDir(fs []string, d string) []string {
-	if fi, err := os.Stat(d); err == nil && fi.IsDir() {
-		entries, err := ioutil.ReadDir(d)
-		if err == nil {
-			for _, e := range entries {
-				if !e.IsDir() {
-					fs = append(fs, filepath.Join(d, e.Name()))
-				}
-			}
-		}
-	}
-	return fs
 }
 
 func (x *xmppClientImporter) findFiles() []string {

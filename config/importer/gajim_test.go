@@ -8,11 +8,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type GajimXmppSuite struct{}
+type GajimSuite struct{}
 
-var _ = Suite(&GajimXmppSuite{})
+var _ = Suite(&GajimSuite{})
 
-func (s *GajimXmppSuite) Test_GajimImporter_canImportFingerprintsFromFile(c *C) {
+func (s *GajimSuite) Test_GajimImporter_canImportFingerprintsFromFile(c *C) {
 	importer := gajimImporter{}
 
 	nm, res, ok := importer.importFingerprintsFrom(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.fpr"))
@@ -46,7 +46,7 @@ func (s *GajimXmppSuite) Test_GajimImporter_canImportFingerprintsFromFile(c *C) 
 	c.Assert(res[5].Untrusted, Equals, true)
 }
 
-func (s *GajimXmppSuite) Test_GajimImporter_canImportPrivateKey(c *C) {
+func (s *GajimSuite) Test_GajimImporter_canImportPrivateKey(c *C) {
 	importer := gajimImporter{}
 
 	nm, res, ok := importer.importKeyFrom(testResourceFilename("gajim_test_data/aba.baba@jabber.ccc.de.key3"))
@@ -60,7 +60,7 @@ func (s *GajimXmppSuite) Test_GajimImporter_canImportPrivateKey(c *C) {
 	c.Assert(fmt.Sprintf("%X", pk.DefaultFingerprint()), Equals, "0AB95107E9457E494F7FA68E8AAD1B86EE96935E")
 }
 
-func (s *GajimXmppSuite) Test_GajimImporter_canImportPluginSettings(c *C) {
+func (s *GajimSuite) Test_GajimImporter_canImportPluginSettings(c *C) {
 	importer := gajimImporter{}
 	res, res2, ok := importer.importOTRSettings(testResourceFilename("gajim_test_data/gotr"))
 
@@ -158,7 +158,7 @@ func (s *GajimXmppSuite) Test_GajimImporter_canImportPluginSettings(c *C) {
 	c.Assert(res2[gajimAccountAndPeer{"yyyyy@thoughtworks.com", "sixseve@thoughtworks.com"}], Equals, gajimOTRSettings{})
 }
 
-func (s *GajimXmppSuite) Test_GajimImporter_canImportAccountInformation(c *C) {
+func (s *GajimSuite) Test_GajimImporter_canImportAccountInformation(c *C) {
 	importer := gajimImporter{}
 	res, ok := importer.importAccounts(testResourceFilename("gajim_test_data/config"))
 
@@ -183,7 +183,7 @@ func (s *GajimXmppSuite) Test_GajimImporter_canImportAccountInformation(c *C) {
 	c.Assert(res["z@coy.im"], Equals, gajimAccountInfo{accountNickName: "z@coy.im", password: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", sslFingerprint: "FB30D19A4C6D2ECA4530DECE9EA7A1106B824E60", hostname: "coy.im", server: "", name: "z", proxy: "", port: "5222"})
 }
 
-func (s *GajimXmppSuite) Test_GajimImporter_canDoAFullImport(c *C) {
+func (s *GajimSuite) Test_GajimImporter_canDoAFullImport(c *C) {
 	importer := gajimImporter{}
 	res, ok := importer.importAllFrom(
 		testResourceFilename("gajim_test_data/config"),
@@ -411,7 +411,7 @@ func (s *GajimXmppSuite) Test_GajimImporter_canDoAFullImport(c *C) {
 	})
 }
 
-func (s *GajimXmppSuite) Test_GajimImporter_canFailAFullImport(c *C) {
+func (s *GajimSuite) Test_GajimImporter_canFailAFullImport(c *C) {
 	importer := gajimImporter{}
 	_, ok := importer.importAllFrom(
 		testResourceFilename("gajim_test_data/config2"),

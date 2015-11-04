@@ -8,6 +8,7 @@ func (w configAssistantDefinition) getDefinition() string {
 <?xml version="1.0"?>
 <interface>
   <object class="GtkAssistant" id="assistant">
+    <property name="name">Configuration Assistant</property>
     <property name="visible">true</property>
     <property name="width_request">450</property>
     <property name="height_request">300</property>

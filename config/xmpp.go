@@ -34,13 +34,9 @@ func init() {
 	})
 }
 
-func resolveXMPPServerOverTor(domain string) ([]string, error) {
-	u, err := url.Parse(newTorProxy(detectTor()))
-	if err != nil {
-		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
-	}
-
-	dnsProxy, err := proxy.FromURL(u, proxy.Direct)
+// ResolveXMPPServerOverTor resolves the XMPP service from a domain using Tor
+func ResolveXMPPServerOverTor(domain string) ([]string, error) {
+	dnsProxy, err := NewTorProxy()
 	if err != nil {
 		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
 	}
@@ -96,7 +92,7 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 		}
 
 		var err error
-		if xmppAddrs, err = resolveXMPPServerOverTor(domain); err != nil {
+		if xmppAddrs, err = ResolveXMPPServerOverTor(domain); err != nil {
 			return nil, err
 		}
 

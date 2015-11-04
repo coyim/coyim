@@ -4,6 +4,8 @@ import (
 	"net"
 	"net/url"
 	"time"
+
+	"golang.org/x/net/proxy"
 )
 
 var (
@@ -14,6 +16,24 @@ var (
 )
 
 // TODO: set up Tor config correctly here, instead of from session
+
+// DetectTor detects a Tor service running in the machine.
+func DetectTor() (string, bool) {
+	detectedTorAddress = ""
+	detectTor()
+
+	return detectedTorAddress, len(detectedTorAddress) != 0
+}
+
+// NewTorProxy creates a new proxy using the Tor service detected at the machine.
+func NewTorProxy() (proxy.Dialer, error) {
+	u, err := url.Parse(newTorProxy(detectTor()))
+	if err != nil {
+		return nil, err
+	}
+
+	return proxy.FromURL(u, proxy.Direct)
+}
 
 func detectTor() string {
 	if scannedForTor {

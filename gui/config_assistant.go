@@ -36,7 +36,8 @@ func buildConfigAssistant() (*gtk.Assistant, error) {
 	}
 
 	assistant := obj.(*gtk.Assistant)
-	intro, _ := assistant.GetNthPage(0)
+	//TODO: fix after PR
+	intro := assistant.GetNthPage(0)
 	assistant.SetPageComplete(intro, true)
 
 	builder.ConnectSignals(map[string]interface{}{

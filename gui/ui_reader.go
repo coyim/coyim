@@ -78,11 +78,13 @@ func replaceVars(toReplace string, vars map[string]string) string {
 func getDefinition(uiName string) uiDefinition {
 	switch uiName {
 	default:
-		return nil
+		panic(fmt.Sprintf("No definition found for %s", uiName))
 	case "MainDefinition":
 		return new(mainDefinition)
 	case "ConversationDefinition":
 		return new(conversationDefinition)
+	case "ConfigAssistantDefinition":
+		return new(configAssistantDefinition)
 	case "TestDefinition":
 		return new(testDefinition)
 	}

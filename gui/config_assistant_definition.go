@@ -8,7 +8,6 @@ func (w configAssistantDefinition) getDefinition() string {
 <?xml version="1.0"?>
 <interface>
   <object class="GtkAssistant" id="assistant">
-    <property name="name">Configuration Assistant</property>
     <property name="visible">true</property>
     <property name="width_request">450</property>
     <property name="height_request">300</property>
@@ -16,6 +15,11 @@ func (w configAssistantDefinition) getDefinition() string {
     <signal name="destroy" handler="close-assistant" />
     <signal name="cancel" handler="close-assistant" />
     <signal name="apply" handler="create-account" />
+    <child internal-child="accessible">
+      <object class="AtkObject">
+        <property name="accessible-name" translatable="yes">Configuration Assistant</property>
+      </object>
+    </child>
     <child>
       <object class="GtkLabel" id="welcome">
         <property name="visible">true</property>

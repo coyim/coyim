@@ -159,7 +159,9 @@ func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 
 		},
 
-		"create-account": func() {
+		"close-assistant": assistant.Destroy,
+
+		"create-account": func(assistant *gtk.Assistant) {
 			c, err := config.NewAccount()
 			if err != nil {
 				return
@@ -169,6 +171,8 @@ func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 			c.Password, _ = passwordEntry.GetText()
 
 			saveFn(c)
+
+			assistant.Close()
 		},
 	})
 

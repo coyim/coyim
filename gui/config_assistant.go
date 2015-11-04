@@ -43,11 +43,10 @@ func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 	}
 
 	assistant := obj.(*gtk.Assistant)
-	//TODO: fix after PR
-	intro := assistant.GetNthPage(0)
+	intro, _ := assistant.GetNthPage(0)
 	assistant.SetPageComplete(intro, true)
 
-	confirm := assistant.GetNthPage(-1)
+	confirm, _ := assistant.GetNthPage(-1)
 	assistant.SetPageComplete(confirm, true)
 
 	obj, _ = builder.GetObject("account")

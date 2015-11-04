@@ -91,8 +91,7 @@ func (s *UIReaderSuite) Test_loadBuilderWith_shouldReturnErrorWhenDefinitionDoes
 	removeFile("definitions/nonexistent")
 	ui := "nonexistent"
 
-	_, parseErr := loadBuilderWith(ui, nil)
-
-	expected := "There's no definition for nonexistent"
-	c.Assert(parseErr.Error(), Equals, expected)
+	c.Assert(func() {
+		loadBuilderWith(ui, nil)
+	}, Panics, "No definition found for nonexistent")
 }

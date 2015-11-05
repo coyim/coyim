@@ -6,7 +6,7 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-set -e
+set -eu
 
 OUTPUT=$1
 
@@ -15,7 +15,10 @@ resources=$OUTPUT/Contents/Resources
 macos=$OUTPUT/Contents/MacOS
 wrapper=$macos/Coy
 binary=${wrapper}-bin
+
 cellar=$(brew --prefix)/Cellar
+gtk_prefix=$(pkg-config gtk+-3.0 --variable prefix)
+gtk_version=$(pkg-config gtk+-3.0 --variable gtk_binary_version)
 
 rm -rf $OUTPUT
 mkdir -p $macos $frameworks $resources
@@ -48,7 +51,8 @@ for lib in $(otool -L $binary | grep "^\t$(brew --prefix)" | sed -e 's/^[^\/]*//
   rewrite_library $frameworks/$base
 done
 
-pango_lib=$(strings $frameworks/libpango-1.0.0.dylib  | grep usr/local | grep lib)
+# Why resources?
+pango_lib=$(strings $frameworks/libpango-1.0.0.dylib | grep usr/local | grep lib)
 cp -a $(dirname $pango_lib) $resources
 
 # There is no pango modules anymore
@@ -64,12 +68,15 @@ for loader in $pixbuf_moddir/*.so; do
   rewrite_library $frameworks/$(basename $loader)
 done
 
-mkdir -p $resources/lib/gdk-pixbuf-2.0/2.10.0
-gdk-pixbuf-query-loaders | sed 's|/usr/local/Cellar/gdk-pixbuf/2.32.1/lib/gdk-pixbuf-2.0/2.10.0/loaders/|../F/|g' \
-  > $resources/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache 
+# /usr/local/Cellar/gdk-pixbuf/2.32.1/lib/gdk-pixbuf-2.0/2.10.0/loaders/
+gdk_pixbuf_prefix=$(pkg-config gdk-pixbuf-2.0 --variable prefix)
+gdk_pixbuf_version=$(pkg-config gdk-pixbuf-2.0 --variable gdk_pixbuf_binary_version)
+mkdir -p $resources/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version
+gdk-pixbuf-query-loaders | sed "s|$gdk_pixbuf_prefix/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version/loaders/|../F/|g" \
+  > $resources/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version/loaders.cache 
 
-# We need immodules to have nice font drawing.
-immodules_dir=$(pkg-config gtk+-3.0 --variable=libdir)/gtk-3.0/$(pkg-config gtk+-3.0 --variable=gtk_binary_version)/immodules/
+# input methods modules
+immodules_dir=$gtk_prefix/lib/gtk-3.0/$gtk_version/immodules/
 for module in $immodules_dir/*.so; do
   cp $module $frameworks
   rewrite_library $frameworks/$(basename $module)
@@ -77,8 +84,8 @@ done
 
 mkdir -p $resources/etc/gtk-3.0
 gtk-query-immodules-3.0 \
-  | sed 's|/usr/local/Cellar/gtk+3-316/3.16.7/lib/gtk-3.0/3.0.0/immodules/|../F/|g' \
-  | sed 's|/usr/local/Cellar/gtk+3-316/3.16.7/share/locale|../Resources/share/locale|g' \
+  | sed "s|$gtk_prefix/lib/gtk-3.0/$gtk_version/immodules/|@executable_path/../F/|g" \
+  | sed "s|$gtk_prefix/share/locale|@executable_path/../Resources/share/locale|g" \
   > $resources/etc/gtk-3.0/gtk.immodules 
 
 # Icons and themes

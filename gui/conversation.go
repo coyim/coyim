@@ -181,9 +181,15 @@ const timeDisplay = "15:04:05"
 
 // Expects to be called from the GUI thread.
 // Expects to be called when conv is already locked
+func insertAtEnd(buff *gtk.TextBuffer, text string) {
+	buff.Insert(buff.GetEndIter(), text)
+}
+
+// Expects to be called from the GUI thread.
+// Expects to be called when conv is already locked
 func insertWithTag(buff *gtk.TextBuffer, tagName, text string) {
 	charCount := buff.GetCharCount()
-	buff.InsertAtCursor(text)
+	insertAtEnd(buff, text)
 	oldEnd := buff.GetIterAtOffset(charCount)
 	newEnd := buff.GetEndIter()
 	buff.ApplyTagByName(tagName, oldEnd, newEnd)
@@ -258,6 +264,11 @@ func createStatusMessage(from string, show, showStatus string, gone bool) string
 	return ""
 }
 
+func (conv *conversationWindow) scrollToBottom() {
+	adj := conv.scrollHistory.GetVAdjustment()
+	adj.SetValue(adj.GetUpper())
+}
+
 // ADDS_TO_GUI_THREAD
 // LOCKS_CONV
 func (conv *conversationWindow) appendStatusString(text string, timestamp time.Time) {
@@ -266,11 +277,13 @@ func (conv *conversationWindow) appendStatusString(text string, timestamp time.T
 		defer conv.Unlock()
 
 		buff, _ := conv.history.GetBuffer()
-		buff.InsertAtCursor("[")
-		buff.InsertAtCursor(timestamp.Format(timeDisplay))
-		buff.InsertAtCursor("] ")
+		insertAtEnd(buff, "[")
+		insertAtEnd(buff, timestamp.Format(timeDisplay))
+		insertAtEnd(buff, "]")
 		insertWithTag(buff, "statusText", text)
-		buff.InsertAtCursor("\n")
+		insertAtEnd(buff, "\n")
+
+		conv.scrollToBottom()
 
 		return false
 	})
@@ -288,16 +301,15 @@ func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, 
 		defer conv.Unlock()
 
 		buff, _ := conv.history.GetBuffer()
-		buff.InsertAtCursor("[")
-		buff.InsertAtCursor(timestamp.Format(timeDisplay))
-		buff.InsertAtCursor("] ")
+		insertAtEnd(buff, "[")
+		insertAtEnd(buff, timestamp.Format(timeDisplay))
+		insertAtEnd(buff, "]")
 		insertWithTag(buff, is(outgoing, "outgoingUser", "incomingUser"), from)
-		buff.InsertAtCursor(":  ")
+		insertAtEnd(buff, ":  ")
 		insertWithTag(buff, is(outgoing, "outgoingText", "incomingText"), string(message))
-		buff.InsertAtCursor("\n")
+		insertAtEnd(buff, "\n")
 
-		adj := conv.scrollHistory.GetVAdjustment()
-		adj.SetValue(adj.GetUpper())
+		conv.scrollToBottom()
 
 		return false
 	})

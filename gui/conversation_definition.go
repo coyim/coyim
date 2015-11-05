@@ -58,7 +58,7 @@ func (w conversationDefinition) getDefinition() string {
             <child>
               <object class="GtkTextView" id="history">
                 <property name="visible">true</property>
-                <property name="wrap-mode">1</property>
+                <property name="wrap-mode">2</property>
                 <property name="editable">false</property>
                 <property name="cursor-visible">false</property>
               </object>
@@ -85,8 +85,6 @@ func (w conversationDefinition) getDefinition() string {
     </child>
   </object>
 </interface>
-
-
 
 `
 }

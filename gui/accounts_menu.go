@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -40,46 +41,77 @@ func onAccountDialogClicked(account *config.Account, saveFunction func(), reg *w
 }
 
 func accountDialog(account *config.Account, saveFunction func()) {
+	//	onClicked := onAccountDialogClicked(account, saveFunction, reg)
+	//
+	//d := dialog{
+	//	title:    i18n.Local("Account Details"),
+	//	position: gtk.WIN_POS_CENTER,
+	//	id:       "dialog",
+	//	content: []creatable{
+	//		label{text: i18n.Local("Your account (for example: kim42@dukgo.com)")},
+	//		entry{
+	//			text:       account.Account,
+	//			editable:   true,
+	//			visibility: true,
+	//			id:         "account",
+	//			onActivate: onClicked,
+	//		},
+
+	//		label{text: i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")},
+	//		entry{
+	//			text:       account.Password,
+	//			editable:   true,
+	//			visibility: false,
+	//			id:         "password",
+	//			onActivate: onClicked,
+	//		},
+
+	//		button{
+	//			text:      i18n.Local("Save"),
+	//			onClicked: onClicked,
+	//		},
+	//	},
+	//}
+
+	////d.create(reg)
+	//reg.dialogShowAll("dialog")
 	vars := make(map[string]string)
 	vars["$title"] = i18n.Local("Account Details")
 	vars["$accountMessage"] = i18n.Local("Your account (for example: kim42@dukgo.com)")
 	//TODO: is this message still necessary?
 	vars["$pswMessage"] = i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")
-	builder, _ := loadBuilderWith("AccountDetailsDefinition", vars)
-	reg := createWidgetRegistry()
-	onClicked := onAccountDialogClicked(account, saveFunction, reg)
-	d := dialog{
-		title:    i18n.Local("Account Details"),
-		position: gtk.WIN_POS_CENTER,
-		id:       "dialog",
-		content: []creatable{
-			label{text: i18n.Local("Your account (for example: kim42@dukgo.com)")},
-			entry{
-				text:       account.Account,
-				editable:   true,
-				visibility: true,
-				id:         "account",
-				onActivate: onClicked,
-			},
-
-			label{text: i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")},
-			entry{
-				text:       account.Password,
-				editable:   true,
-				visibility: false,
-				id:         "password",
-				onActivate: onClicked,
-			},
-
-			button{
-				text:      i18n.Local("Save"),
-				onClicked: onClicked,
-			},
-		},
+	vars["$saveLabel"] = i18n.Local("Save")
+	builder, buildError := loadBuilderWith("AccountDetailsDefinition", vars)
+	if buildError != nil {
+		panic(buildError.Error())
 	}
+	// reg := createWidgetRegistry()
+	obj, _ := builder.GetObject("AccountDetailsDialog")
+	dialog := obj.(*gtk.Dialog)
+	accObj, _ := builder.GetObject("account")
+	accEntry := accObj.(*gtk.Entry)
+	accEntry.SetText(account.Account)
 
-	d.create(reg)
-	reg.dialogShowAll("dialog")
+	builder.ConnectSignals(map[string]interface{}{
+		"on_save_signal": func() {
+			passObj, _ := builder.GetObject("password")
+			accTxt, _ := accEntry.GetText()
+			passTxt, _ := passObj.(*gtk.Entry).GetText()
+			account.Account = accTxt
+			account.Password = passTxt
+
+			parts := strings.SplitN(account.Account, "@", 2)
+			if len(parts) != 2 {
+				log.Println("invalid username (want user@domain): " + account.Account)
+				return
+			}
+
+			fmt.Printf("\nsaving account %s", accTxt)
+			go saveFunction()
+			dialog.Destroy()
+		},
+	})
+	dialog.ShowAll()
 }
 
 func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect *gtk.MenuItem) {

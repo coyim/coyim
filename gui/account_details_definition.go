@@ -1,3 +1,10 @@
+
+package gui
+
+type accountDetailsDefinition  struct{}
+
+func (w accountDetailsDefinition) getDefinition() string {
+	return `
 <interface>
   <object class="GtkDialog" id="AccountDetailsDialog">
 	  <property name="title">$title</property>
@@ -17,6 +24,7 @@
 	</child>
         <child>
           <object class="GtkEntry" id="account">
+	    <property name="has-focus">true</property>
 	    <signal name="activate" handler="on_save_signal" />
 	  </object>
 	  <packing>
@@ -37,7 +45,6 @@
 	</child>
         <child>
           <object class="GtkEntry" id="password">
-	    <property name="has-focus">true</property>
             <property name="visibility">false</property>
             <signal name="activate" handler="on_save_signal" />
 	  </object>
@@ -62,3 +69,6 @@
     </child>
   </object>
 </interface>
+
+`
+}

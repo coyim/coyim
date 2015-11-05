@@ -303,7 +303,7 @@ func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, 
 		buff, _ := conv.history.GetBuffer()
 		insertAtEnd(buff, "[")
 		insertAtEnd(buff, timestamp.Format(timeDisplay))
-		insertAtEnd(buff, "]")
+		insertAtEnd(buff, "] ")
 		insertWithTag(buff, is(outgoing, "outgoingUser", "incomingUser"), from)
 		insertAtEnd(buff, ":  ")
 		insertWithTag(buff, is(outgoing, "outgoingText", "incomingText"), string(message))

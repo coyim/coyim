@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/gotk3/gotk3/glib"
@@ -16,6 +17,7 @@ type conversationWindow struct {
 	win           *gtk.Window
 	history       *gtk.TextView
 	scrollHistory *gtk.ScrolledWindow
+	sync.Mutex
 }
 
 type tags struct {
@@ -112,9 +114,11 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 			text, _ := entry.GetText()
 			entry.SetText("")
 			entry.SetEditable(true)
-			sendError := conv.sendMessage(text)
-			if sendError != nil {
-				fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
+			if text != "" {
+				sendError := conv.sendMessage(text)
+				if sendError != nil {
+					fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
+				}
 			}
 			entry.GrabFocus()
 		},
@@ -168,17 +172,15 @@ func (conv *conversationWindow) sendMessage(message string) error {
 
 	//TODO: this should not be in both GUI and roster
 	conversation := conv.account.session.GetConversationWith(conv.to)
-	encrypted := conversation.IsEncrypted()
-	glib.IdleAdd(func() bool {
-		conv.appendMessage(conv.account.session.CurrentAccount.Account, time.Now(), encrypted, ui.StripHTML([]byte(message)), true)
-		return false
-	})
+	conv.appendMessage(conv.account.session.CurrentAccount.Account, time.Now(), conversation.IsEncrypted(), ui.StripHTML([]byte(message)), true)
 
 	return nil
 }
 
 const timeDisplay = "15:04:05"
 
+// Expects to be called from the GUI thread.
+// Expects to be called when conv is already locked
 func insertWithTag(buff *gtk.TextBuffer, tagName, text string) {
 	charCount := buff.GetCharCount()
 	buff.InsertAtCursor(text)
@@ -256,8 +258,13 @@ func createStatusMessage(from string, show, showStatus string, gone bool) string
 	return ""
 }
 
+// ADDS_TO_GUI_THREAD
+// LOCKS_CONV
 func (conv *conversationWindow) appendStatusString(text string, timestamp time.Time) {
 	glib.IdleAdd(func() bool {
+		conv.Lock()
+		defer conv.Unlock()
+
 		buff, _ := conv.history.GetBuffer()
 		buff.InsertAtCursor("[")
 		buff.InsertAtCursor(timestamp.Format(timeDisplay))
@@ -273,8 +280,13 @@ func (conv *conversationWindow) appendStatus(from string, timestamp time.Time, s
 	conv.appendStatusString(createStatusMessage(from, show, showStatus, gone), timestamp)
 }
 
+// ADDS_TO_GUI_THREAD
+// LOCKS_CONV
 func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
 	glib.IdleAdd(func() bool {
+		conv.Lock()
+		defer conv.Unlock()
+
 		buff, _ := conv.history.GetBuffer()
 		buff.InsertAtCursor("[")
 		buff.InsertAtCursor(timestamp.Format(timeDisplay))

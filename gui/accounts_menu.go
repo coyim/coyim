@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -24,57 +23,7 @@ func firstProxy(account *account) string {
 	return ""
 }
 
-func onAccountDialogClicked(account *config.Account, saveFunction func(), reg *widgetRegistry) func() {
-	return func() {
-		account.Account = reg.getText("account")
-		account.Password = reg.getText("password")
-
-		parts := strings.SplitN(account.Account, "@", 2)
-		if len(parts) != 2 {
-			log.Println("invalid username (want user@domain): " + account.Account)
-			return
-		}
-
-		go saveFunction()
-		reg.dialogDestroy("dialog")
-	}
-}
-
 func accountDialog(account *config.Account, saveFunction func()) {
-	//	onClicked := onAccountDialogClicked(account, saveFunction, reg)
-	//
-	//d := dialog{
-	//	title:    i18n.Local("Account Details"),
-	//	position: gtk.WIN_POS_CENTER,
-	//	id:       "dialog",
-	//	content: []creatable{
-	//		label{text: i18n.Local("Your account (for example: kim42@dukgo.com)")},
-	//		entry{
-	//			text:       account.Account,
-	//			editable:   true,
-	//			visibility: true,
-	//			id:         "account",
-	//			onActivate: onClicked,
-	//		},
-
-	//		label{text: i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")},
-	//		entry{
-	//			text:       account.Password,
-	//			editable:   true,
-	//			visibility: false,
-	//			id:         "password",
-	//			onActivate: onClicked,
-	//		},
-
-	//		button{
-	//			text:      i18n.Local("Save"),
-	//			onClicked: onClicked,
-	//		},
-	//	},
-	//}
-
-	////d.create(reg)
-	//reg.dialogShowAll("dialog")
 	vars := make(map[string]string)
 	vars["$title"] = i18n.Local("Account Details")
 	vars["$accountMessage"] = i18n.Local("Your account (for example: kim42@dukgo.com)")
@@ -85,7 +34,6 @@ func accountDialog(account *config.Account, saveFunction func()) {
 	if buildError != nil {
 		panic(buildError.Error())
 	}
-	// reg := createWidgetRegistry()
 	obj, _ := builder.GetObject("AccountDetailsDialog")
 	dialog := obj.(*gtk.Dialog)
 	accObj, _ := builder.GetObject("account")
@@ -106,7 +54,6 @@ func accountDialog(account *config.Account, saveFunction func()) {
 				return
 			}
 
-			fmt.Printf("\nsaving account %s", accTxt)
 			go saveFunction()
 			dialog.Destroy()
 		},
@@ -139,5 +86,4 @@ func (u *gtkUI) buildAccountsMenu() {
 	submenu.ShowAll()
 
 	u.accountsMenu.SetSubmenu(submenu)
-	u.accountsMenu.ShowAll()
 }

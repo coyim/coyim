@@ -24,7 +24,6 @@ func (w accountDetailsDefinition) getDefinition() string {
 	</child>
         <child>
           <object class="GtkEntry" id="account">
-	    <property name="has-focus">true</property>
 	    <signal name="activate" handler="on_save_signal" />
 	  </object>
 	  <packing>
@@ -45,6 +44,7 @@ func (w accountDetailsDefinition) getDefinition() string {
 	</child>
         <child>
           <object class="GtkEntry" id="password">
+	    <property name="has-focus">true</property>
             <property name="visibility">false</property>
             <signal name="activate" handler="on_save_signal" />
 	  </object>

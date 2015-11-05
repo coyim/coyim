@@ -99,6 +99,11 @@ cat > $resources/etc/gtk-3.0/settings.ini << EOF
 [Settings]
 gtk-theme-name=Adwaita
 EOF
+# copy pango etcs
+mkdir -p $resources/etc/pango
+if [ -d $(brew --prefix pango)/etc/ ] ; then
+    cp -a $(brew --prefix pango)/etc/* $resources/etc/pango
+fi
 
 #TODO: copy GTK/GLIB/* locales
 #mkdir -p $resources/share/locale

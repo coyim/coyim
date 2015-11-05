@@ -150,6 +150,10 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 
 	conv.history.SetBuffer(u.getTags().createTextBuffer())
 
+	conv.history.Connect("size-allocate", func() {
+		conv.scrollToBottom()
+	})
+
 	u.displaySettings.control(&conv.history.Container.Widget)
 	u.displaySettings.control(&messageEntry.(*gtk.Entry).Widget)
 
@@ -266,7 +270,7 @@ func createStatusMessage(from string, show, showStatus string, gone bool) string
 
 func (conv *conversationWindow) scrollToBottom() {
 	adj := conv.scrollHistory.GetVAdjustment()
-	adj.SetValue(adj.GetUpper())
+	adj.SetValue(adj.GetUpper() - adj.GetPageSize())
 }
 
 // ADDS_TO_GUI_THREAD
@@ -277,13 +281,11 @@ func (conv *conversationWindow) appendStatusString(text string, timestamp time.T
 		defer conv.Unlock()
 
 		buff, _ := conv.history.GetBuffer()
+		insertAtEnd(buff, "\n")
 		insertAtEnd(buff, "[")
 		insertAtEnd(buff, timestamp.Format(timeDisplay))
 		insertAtEnd(buff, "]")
 		insertWithTag(buff, "statusText", text)
-		insertAtEnd(buff, "\n")
-
-		conv.scrollToBottom()
 
 		return false
 	})
@@ -301,15 +303,13 @@ func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, 
 		defer conv.Unlock()
 
 		buff, _ := conv.history.GetBuffer()
+		insertAtEnd(buff, "\n")
 		insertAtEnd(buff, "[")
 		insertAtEnd(buff, timestamp.Format(timeDisplay))
 		insertAtEnd(buff, "] ")
 		insertWithTag(buff, is(outgoing, "outgoingUser", "incomingUser"), from)
 		insertAtEnd(buff, ":  ")
 		insertWithTag(buff, is(outgoing, "outgoingText", "incomingText"), string(message))
-		insertAtEnd(buff, "\n")
-
-		conv.scrollToBottom()
 
 		return false
 	})

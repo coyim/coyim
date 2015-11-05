@@ -4,7 +4,6 @@ import (
 	"log"
 	"net"
 	"strings"
-	"time"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -77,7 +76,6 @@ func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 			//notDetectedMsg.SetVisible(false)
 
 			go func() {
-				<-time.After(5 * time.Second) // just to simulate
 				_, ok := config.DetectTor()
 
 				glib.IdleAdd(func() {
@@ -136,8 +134,6 @@ func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 			}
 
 			go func() {
-				<-time.After(5 * time.Second) // just to simulate
-
 				conn, err := torProxy.Dial("tcp", addr)
 				defer conn.Close()
 

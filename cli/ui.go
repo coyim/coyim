@@ -102,7 +102,7 @@ func findAccount(a *string, acs []*config.Account) *config.Account {
 }
 
 func (c *cliUI) loadConfig(configFile string) error {
-	accounts, ok, err := config.LoadOrCreate(configFile, c.getMasterPassword)
+	accounts, ok, err := config.LoadOrCreate(configFile, config.FunctionKeySupplier(c.getMasterPassword))
 	if !ok {
 		c.alert("Couldn't open encrypted file - did you enter your password correctly?")
 		return errors.New("couldn't open encrypted file - did you supply the wrong password?")
@@ -162,7 +162,7 @@ func (c *cliUI) quit() {
 }
 
 func (c *cliUI) SaveConf() {
-	c.session.Config.Save(c.getMasterPassword)
+	c.session.Config.Save(config.FunctionKeySupplier(c.getMasterPassword))
 }
 
 func (c *cliUI) Loop() {

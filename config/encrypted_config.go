@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"sync"
 
 	"golang.org/x/crypto/scrypt"
 )
@@ -114,19 +115,16 @@ func parseEncryptedData(content []byte) (ed *encryptedData, e error) {
 	return data, e
 }
 
-// KeySupplier is a function that can be used to get key data from a user
-type KeySupplier func(params EncryptionParameters) ([]byte, []byte, bool)
-
 var errNoPasswordSupplied = errors.New("no password supplied, aborting")
 var errDecryptionFailed = errors.New("decryption failed")
 
-func decryptConfiguration(content []byte, getKeys KeySupplier) ([]byte, *EncryptionParameters, error) {
+func decryptConfiguration(content []byte, ks KeySupplier) ([]byte, *EncryptionParameters, error) {
 	data, err := parseEncryptedData(content)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	key, macKey, ok := getKeys(data.Params)
+	key, macKey, ok := ks.GenerateKey(data.Params)
 	if !ok {
 		return nil, nil, errNoPasswordSupplied
 	}
@@ -140,8 +138,8 @@ func decryptConfiguration(content []byte, getKeys KeySupplier) ([]byte, *Encrypt
 	return res, &data.Params, err
 }
 
-func encryptConfiguration(content string, params *EncryptionParameters, getKeys KeySupplier) ([]byte, error) {
-	key, macKey, ok := getKeys(*params)
+func encryptConfiguration(content string, params *EncryptionParameters, ks KeySupplier) ([]byte, error) {
+	key, macKey, ok := ks.GenerateKey(*params)
 	if !ok {
 		return nil, errors.New("no password supplied, aborting")
 	}
@@ -158,20 +156,60 @@ func encryptConfiguration(content string, params *EncryptionParameters, getKeys 
 	return json.MarshalIndent(dd, "", "\t")
 }
 
-// CachingKeySupplier is a key supplier that only asks the user for a password if it doesn't already have the key material
-func CachingKeySupplier(getKeys KeySupplier) KeySupplier {
-	haveKeys := false
-	var key, macKey []byte
+// KeySupplier is a function that can be used to get key data from a user
+type KeySupplier interface {
+	GenerateKey(params EncryptionParameters) ([]byte, []byte, bool)
+	Invalidate()
+}
 
-	return func(params EncryptionParameters) ([]byte, []byte, bool) {
-		var ok bool
-		if !haveKeys {
-			key, macKey, ok = getKeys(params)
-			if !ok {
-				return nil, nil, false
-			}
-			haveKeys = true
+type functionKeySupplier struct {
+	getKeys func(params EncryptionParameters) ([]byte, []byte, bool)
+}
+
+// FunctionKeySupplier is a key supplier that wraps a function to ask for the password
+func FunctionKeySupplier(getKeys func(params EncryptionParameters) ([]byte, []byte, bool)) KeySupplier {
+	return &functionKeySupplier{getKeys}
+}
+
+func (fk *functionKeySupplier) Invalidate() {
+}
+
+func (fk *functionKeySupplier) GenerateKey(params EncryptionParameters) ([]byte, []byte, bool) {
+	return fk.getKeys(params)
+}
+
+type cachingKeySupplier struct {
+	sync.Mutex
+	haveKeys    bool
+	key, macKey []byte
+	getKeys     func(params EncryptionParameters) ([]byte, []byte, bool)
+}
+
+func (ck *cachingKeySupplier) Invalidate() {
+	ck.Lock()
+	defer ck.Unlock()
+	ck.haveKeys = false
+	ck.key = []byte{}
+	ck.macKey = []byte{}
+}
+
+func (ck *cachingKeySupplier) GenerateKey(params EncryptionParameters) ([]byte, []byte, bool) {
+	var ok bool
+	ck.Lock()
+	defer ck.Unlock()
+	if !ck.haveKeys {
+		ck.key, ck.macKey, ok = ck.getKeys(params)
+		if !ok {
+			return nil, nil, false
 		}
-		return key, macKey, true
+		ck.haveKeys = true
+	}
+	return ck.key, ck.macKey, true
+}
+
+// CachingKeySupplier is a key supplier that only asks the user for a password if it doesn't already have the key material
+func CachingKeySupplier(getKeys func(params EncryptionParameters) ([]byte, []byte, bool)) KeySupplier {
+	return &cachingKeySupplier{
+		getKeys: getKeys,
 	}
 }

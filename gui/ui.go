@@ -89,13 +89,16 @@ func NewGTK() UI {
 
 func (u *gtkUI) loadConfigInternal(configFile string) {
 	config, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
-	u.config = config
 
 	if !ok {
+		u.keySupplier.Invalidate()
 		// TODO: tell the user we couldn't open the encrypted file
 		log.Printf("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
 		return
 	}
+
+	// We assign config here, AFTER the return - so that a nil config means we are in a state of incorrectness and shouldn't do stuff.
+	u.config = config
 
 	if err != nil {
 		log.Printf(err.Error())
@@ -110,15 +113,14 @@ func (u *gtkUI) loadConfigInternal(configFile string) {
 			})
 			return false
 		})
+	} else {
+		u.configLoaded()
 	}
 }
 
 func (u *gtkUI) loadConfig(configFile string) {
 	//IO would block the UI loop
-	go func() {
-		u.loadConfigInternal(configFile)
-		u.configLoaded()
-	}()
+	go u.loadConfigInternal(configFile)
 }
 
 func (u *gtkUI) configLoaded() {
@@ -237,7 +239,11 @@ func (u *gtkUI) mainWindow() {
 
 	u.connectShortcutsMainWindow(u.window)
 
+	x, y := u.window.GetPosition()
+	fmt.Printf("window pos x: %d y: %d\n", x, y)
 	u.window.ShowAll()
+	x, y = u.window.GetPosition()
+	fmt.Printf("window pos2 x: %d y: %d\n", x, y)
 
 	pl, _ := gdk.PixbufLoaderNew()
 	pl.Write(decodedIcon256x256)

@@ -15,6 +15,7 @@ type conversationWindow struct {
 	to            string
 	account       *account
 	win           *gtk.Window
+	parentWin     *gtk.Window
 	history       *gtk.TextView
 	scrollHistory *gtk.ScrolledWindow
 	sync.Mutex
@@ -99,6 +100,8 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 		return nil, err
 	}
 
+	entry := messageEntry.(*gtk.Entry)
+
 	conv := &conversationWindow{
 		to:            uid,
 		account:       account,
@@ -109,7 +112,6 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_send_message_signal": func() {
-			entry := messageEntry.(*gtk.Entry)
 			entry.SetEditable(false)
 			text, _ := entry.GetText()
 			entry.SetText("")
@@ -148,10 +150,29 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 	// it attaches the callback to the widget
 	conv.win.HideOnDelete()
 
+	conv.parentWin = u.window
+
 	conv.history.SetBuffer(u.getTags().createTextBuffer())
 
 	conv.history.Connect("size-allocate", func() {
 		conv.scrollToBottom()
+	})
+
+	inEventHandler := false
+	conv.win.Connect("set-focus", func() {
+		if !inEventHandler {
+			inEventHandler = true
+			entry.GrabFocus()
+			inEventHandler = false
+		}
+	})
+
+	conv.win.Connect("notify::is-active", func() {
+		if conv.win.IsActive() {
+			inEventHandler = true
+			entry.GrabFocus()
+			inEventHandler = false
+		}
 	})
 
 	u.displaySettings.control(&conv.history.Container.Widget)
@@ -165,7 +186,11 @@ func (conv *conversationWindow) Hide() {
 }
 
 func (conv *conversationWindow) Show() {
+	x, y := conv.win.GetPosition()
+	fmt.Printf("conv window pos x: %d y: %d\n", x, y)
 	conv.win.ShowAll()
+	x, y = conv.win.GetPosition()
+	fmt.Printf("conv window pos2 x: %d y: %d\n", x, y)
 }
 
 func (conv *conversationWindow) sendMessage(message string) error {
@@ -281,7 +306,9 @@ func (conv *conversationWindow) appendStatusString(text string, timestamp time.T
 		defer conv.Unlock()
 
 		buff, _ := conv.history.GetBuffer()
-		insertAtEnd(buff, "\n")
+		if buff.GetCharCount() != 0 {
+			insertAtEnd(buff, "\n")
+		}
 		insertAtEnd(buff, "[")
 		insertAtEnd(buff, timestamp.Format(timeDisplay))
 		insertAtEnd(buff, "]")
@@ -303,7 +330,9 @@ func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, 
 		defer conv.Unlock()
 
 		buff, _ := conv.history.GetBuffer()
-		insertAtEnd(buff, "\n")
+		if buff.GetCharCount() != 0 {
+			insertAtEnd(buff, "\n")
+		}
 		insertAtEnd(buff, "[")
 		insertAtEnd(buff, timestamp.Format(timeDisplay))
 		insertAtEnd(buff, "] ")

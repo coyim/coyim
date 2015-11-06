@@ -16,6 +16,7 @@ type saveAccountFunc func(*config.Account)
 func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
 	u.config.Add(c)
 	u.SaveConfig()
+	u.configLoaded()
 }
 
 func (u *gtkUI) showConfigAssistant() error {

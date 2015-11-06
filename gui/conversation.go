@@ -186,11 +186,7 @@ func (conv *conversationWindow) Hide() {
 }
 
 func (conv *conversationWindow) Show() {
-	x, y := conv.win.GetPosition()
-	fmt.Printf("conv window pos x: %d y: %d\n", x, y)
 	conv.win.ShowAll()
-	x, y = conv.win.GetPosition()
-	fmt.Printf("conv window pos2 x: %d y: %d\n", x, y)
 }
 
 func (conv *conversationWindow) sendMessage(message string) error {

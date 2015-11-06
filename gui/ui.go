@@ -239,17 +239,14 @@ func (u *gtkUI) mainWindow() {
 
 	u.connectShortcutsMainWindow(u.window)
 
-	x, y := u.window.GetPosition()
-	fmt.Printf("window pos x: %d y: %d\n", x, y)
 	u.window.ShowAll()
-	x, y = u.window.GetPosition()
-	fmt.Printf("window pos2 x: %d y: %d\n", x, y)
 
 	pl, _ := gdk.PixbufLoaderNew()
 	pl.Write(decodedIcon256x256)
 	pl.Close()
 	pixbuf, _ := pl.GetPixbuf()
 	u.window.SetIcon(pixbuf)
+	gtk.WindowSetDefaultIcon(pixbuf)
 }
 
 func (u *gtkUI) quit() {

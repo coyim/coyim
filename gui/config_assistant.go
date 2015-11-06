@@ -72,9 +72,6 @@ func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 
 			notDetectedMsg := obj.(*gtk.Label)
 
-			//detectedMsg.SetVisible(false)
-			//notDetectedMsg.SetVisible(false)
-
 			go func() {
 				_, ok := config.DetectTor()
 
@@ -111,42 +108,48 @@ func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 			}
 
 			domain := parts[1]
-			services, err := config.ResolveXMPPServerOverTor(domain)
-			if err != nil {
-				//TODO: some network/DNS failure. Should it show a retry option?
-				return
-			}
-
-			if len(services) > 0 {
-				msgLabel.SetVisible(true)
-				msgLabel.SetText(i18n.Local("All right with SRV"))
-				assistant.SetPageComplete(page, true)
-				return
-			}
-
-			// Fallback to using the domain at default port
-			// TODO: proxy.Dialer does not support DialTimeout
-			addr := net.JoinHostPort(domain, "5222")
-			torProxy, err := config.NewTorProxy()
-			if err != nil {
-				//TODO: how to recover from this?
-				return
-			}
 
 			go func() {
-				conn, err := torProxy.Dial("tcp", addr)
-				defer conn.Close()
+				services, err := config.ResolveXMPPServerOverTor(domain)
+				if err != nil {
+					//TODO: some network/DNS failure. Should it show a retry option?
+					return
+				}
 
-				glib.IdleAdd(func() {
-					if err != nil {
+				if len(services) > 0 {
+					glib.IdleAdd(func() {
+						msgLabel.SetVisible(true)
+						msgLabel.SetText(i18n.Local("All right with SRV"))
+						assistant.SetPageComplete(page, true)
+						return
+					})
+				}
+
+				// Fallback to using the domain at default port
+				// TODO: proxy.Dialer does not support DialTimeout
+				addr := net.JoinHostPort(domain, "5222")
+				torProxy, err := config.NewTorProxy()
+				if err != nil {
+					//TODO: how to recover from this?
+					return
+				}
+
+				conn, err := torProxy.Dial("tcp", addr)
+
+				if err != nil {
+					glib.IdleAdd(func() {
 						//TODO: Failed to connect, should ask for XMPP server (and port)
 						msgLabel.SetVisible(true)
 						msgLabel.SetText(i18n.Localf(
 							"Could not detect XMPP server for %s. Please inform the server domain.", domain,
 						))
-						return
-					}
+					})
+					return
+				}
 
+				conn.Close()
+
+				glib.IdleAdd(func() {
 					msgLabel.SetVisible(true)
 					msgLabel.SetText(i18n.Local("All right with fallback"))
 					assistant.SetPageComplete(page, true)

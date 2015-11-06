@@ -70,7 +70,7 @@ func (w configAssistantDefinition) getDefinition() string {
           <object class="GtkLabel">
             <property name="visible">true</property>
             <property name="wrap">true</property>
-            <property name="label" translatable="yes">XMPP ID</property>
+            <property name="label" translatable="yes">Your account (for example: kim42@dukgo.com)</property>
           </object>
         </child>
         <child>
@@ -108,7 +108,7 @@ func (w configAssistantDefinition) getDefinition() string {
           <object class="GtkLabel">
             <property name="visible">true</property>
             <property name="wrap">true</property>
-            <property name="label" translatable="yes">Detecting XMPP server configuration</property>
+            <property name="label" translatable="yes">Detecting XMPP server configuration...</property>
           </object>
         </child>
         <child>
@@ -126,7 +126,7 @@ func (w configAssistantDefinition) getDefinition() string {
     <child>
       <object class="GtkLabel">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">You are all set. Enjoy.</property>
+        <property name="label" translatable="yes">Click "Apply" to accept this configuration.</property>
       </object>
       <packing>
         <property name="page_type">GTK_ASSISTANT_PAGE_CONFIRM</property>

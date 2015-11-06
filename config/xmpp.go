@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/twstrike/coyim/xmpp"
 
@@ -58,7 +59,9 @@ func buildProxyChain(proxies []string) (dialer proxy.Dialer, err error) {
 		}
 
 		if dialer == nil {
-			dialer = proxy.Direct
+			dialer = &net.Dialer{
+				Timeout: 30 * time.Second,
+			}
 		}
 
 		if dialer, err = proxy.FromURL(u, dialer); err != nil {

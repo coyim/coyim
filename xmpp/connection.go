@@ -136,6 +136,8 @@ func Dial(address, user, domain, password string, config *Config) (c *Conn, err 
 	if config != nil && config.Conn != nil {
 		conn = config.Conn
 	} else {
+		//TODO this is gonna make a request without Tor
+		//Should we allow it?
 		io.WriteString(log, "Making TCP connection to "+address+"\n")
 
 		if conn, err = net.Dial("tcp", address); err != nil {

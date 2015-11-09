@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
@@ -185,8 +186,18 @@ func (conv *conversationWindow) Hide() {
 	conv.win.Hide()
 }
 
+func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
+	if gdk.WorkspaceControlSupported() {
+		wi, _ := conv.parentWin.GetWindow()
+		parentPlace := wi.GetDesktop()
+		cwi, _ := conv.win.GetWindow()
+		cwi.MoveToDesktop(parentPlace)
+	}
+}
+
 func (conv *conversationWindow) Show() {
 	conv.win.ShowAll()
+	conv.tryEnsureCorrectWorkspace()
 }
 
 func (conv *conversationWindow) sendMessage(message string) error {

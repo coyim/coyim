@@ -16,10 +16,13 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net"
 	"reflect"
 	"strconv"
 	"sync"
+
+	"golang.org/x/net/proxy"
 )
 
 // Conn represents a connection to an XMPP server.
@@ -119,32 +122,79 @@ func (c *Conn) Cancel(cookie Cookie) bool {
 	return true
 }
 
-// Dial creates a new connection to an XMPP server, authenticates as the
-// given user.
-func Dial(address, user, domain, password string, config *Config) (c *Conn, err error) {
-	c = new(Conn)
-	c.config = config
-	c.inflights = make(map[Cookie]inflight)
-	c.archive = config.Archive
+func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn, string, error) {
+	if dialer == nil {
+		dialer = proxy.Direct
+	}
 
+	for _, addr := range xmppAddrs {
+		log.Println("Connecting to " + addr)
+
+		conn, err := dialer.Dial("tcp", addr)
+		if err == nil {
+			return conn, addr, nil
+		}
+
+		log.Println("Failed to connect to", addr, "\n\t", err)
+	}
+
+	// should NOT attempt the fallback described in XMPP section 3.2.2
+	return nil, "", errors.New("Failed to connect to XMPP server: exhausted list of XMPP SRV for server")
+}
+
+// DialWithProxy uses a proxy to create a new connection to an XMPP server.
+// It will use the user and password to authenticate to the server.
+func DialWithProxy(user, domain, password string, config *Config, dialer proxy.Dialer) (c *Conn, err error) {
+	xmppAddrs, err := ResolveProxy(dialer, domain)
+	if err != nil {
+		return nil, err
+	}
+
+	// Fallback to using the domain at default port
+	if len(xmppAddrs) == 0 {
+		xmppAddrs = []string{domain + "5222"}
+	}
+
+	var addr string
+	config.Conn, addr, err = connectToFirstAvailable(xmppAddrs, dialer)
+	if err != nil {
+		return nil, err
+	}
+
+	return Dial(addr, user, domain, password, config)
+}
+
+func logFor(config *Config) io.Writer {
 	log := ioutil.Discard
 	if config != nil && config.Log != nil {
 		log = config.Log
 	}
 
-	var conn net.Conn
-	if config != nil && config.Conn != nil {
-		conn = config.Conn
-	} else {
-		//TODO this is gonna make a request without Tor
-		//Should we allow it?
-		io.WriteString(log, "Making TCP connection to "+address+"\n")
+	return log
+}
 
-		if conn, err = net.Dial("tcp", address); err != nil {
+// Dial creates a new connection to an XMPP server, authenticates as the given user.
+func Dial(address, user, domain, password string, config *Config) (*Conn, error) {
+	var err error
+	if config == nil || config.Conn == nil {
+		io.WriteString(logFor(config), "Making TCP connection to "+address+"\n")
+
+		if config.Conn, err = net.Dial("tcp", address); err != nil {
 			return nil, err
 		}
 	}
 
+	return dial(address, user, domain, password, config)
+}
+
+func dial(address, user, domain, password string, config *Config) (c *Conn, err error) {
+	c = new(Conn)
+	c.config = config
+	c.inflights = make(map[Cookie]inflight)
+	c.archive = config.Archive
+
+	log := logFor(config)
+	conn := config.Conn
 	c.in, c.out = makeInOut(conn, config)
 
 	features, err := c.getFeatures(domain)

@@ -5,9 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/url"
 	"strings"
@@ -36,6 +34,7 @@ func init() {
 }
 
 // ResolveXMPPServerOverTor resolves the XMPP service from a domain using Tor
+//TODO: remove me once config assistant goes away
 func ResolveXMPPServerOverTor(domain string) ([]string, error) {
 	dnsProxy, err := NewTorProxy()
 	if err != nil {
@@ -82,26 +81,13 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 
 	user := parts[0]
 	domain := parts[1]
-
-	var xmppAddrs []string
 	addrTrusted := false
 
 	if len(config.Server) > 0 && config.Port > 0 {
-		xmppAddrs = []string{fmt.Sprintf("%s:%d", config.Server, config.Port)}
 		addrTrusted = true
 	} else {
 		if len(config.Proxies) > 0 && len(detectTor()) == 0 {
 			return nil, errors.New("Cannot connect via a proxy without Server and Port being set in the config file as an SRV lookup would leak information.")
-		}
-
-		var err error
-		if xmppAddrs, err = ResolveXMPPServerOverTor(domain); err != nil {
-			return nil, err
-		}
-
-		// Fallback to using the domain at default port
-		if len(xmppAddrs) == 0 {
-			xmppAddrs = []string{domain + "5222"}
 		}
 	}
 
@@ -184,40 +170,11 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 	//	defer out.flush()
 	//}
 
-	var addr string
-	xmppConfig.Conn, addr, err = connectToFirstAvailable(xmppAddrs, dialer)
-	if err != nil {
-		return nil, err
-	}
-
-	return connect(addr, user, domain, password, xmppConfig)
+	return connect(user, domain, password, xmppConfig, dialer)
 }
 
-func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn, string, error) {
-	if dialer == nil {
-		dialer = proxy.Direct
-	}
-
-	for _, addr := range xmppAddrs {
-		log.Println("Connecting to " + addr)
-
-		conn, err := dialer.Dial("tcp", addr)
-		if err == nil {
-			return conn, addr, nil
-		}
-
-		log.Println("Failed to connect to", addr, "\n\t", err)
-	}
-
-	// should NOT attempt the fallback described in XMPP section 3.2.2
-	return nil, "", errors.New("Failed to connect to XMPP server: exhausted list of XMPP SRV for server")
-}
-
-func connect(addr, user, domain, password string, xmppConfig *xmpp.Config) (*xmpp.Conn, error) {
-	conn, err := xmpp.Dial(addr, user, domain, password, xmppConfig)
-	if err != nil {
-		return nil, errors.New("Failed to connect to XMPP server: " + err.Error())
-	}
-
-	return conn, nil
+func connect(user, domain, password string, xmppConfig *xmpp.Config, dialer proxy.Dialer) (*xmpp.Conn, error) {
+	// TODO: identify is the domain has a hidden service and use it
+	// We do not need to separate user and domain here
+	return xmpp.DialWithProxy(user, domain, password, xmppConfig, dialer)
 }

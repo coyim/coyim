@@ -11,9 +11,11 @@ matrix:
     - go: 1.5
       env: DEPLOY=true
       os: linux
+      rvm: 1.9.3
     - go: 1.5
       env: DEPLOY=true
       os: osx
+      rvm: 1.9.3
   allow_failures:
     - os: osx
   fast_finish: true

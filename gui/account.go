@@ -12,9 +12,10 @@ type account struct {
 
 	session *session.Session
 
-	onConnect    chan<- *account
-	onDisconnect chan<- *account
-	onEdit       chan<- *account
+	onConnect                         chan<- *account
+	onDisconnect                      chan<- *account
+	onEdit                            chan<- *account
+	toggleConnectAutomaticallyRequest chan<- *account
 }
 
 type byAccountNameAlphabetic []*account
@@ -75,6 +76,13 @@ func (account *account) buildAccountSubmenu() {
 	disconnectItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect"))
 	accountSubMenu.Append(disconnectItem)
 
+	editItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
+	accountSubMenu.Append(editItem)
+
+	connectAutomaticallyItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect _Automatically"))
+	accountSubMenu.Append(connectAutomaticallyItem)
+	connectAutomaticallyItem.SetActive(account.session.CurrentAccount.ConnectAutomatically)
+
 	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
 
 	connectItem.Connect("activate", func() {
@@ -85,8 +93,9 @@ func (account *account) buildAccountSubmenu() {
 		account.onDisconnect <- account
 	})
 
-	editItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
-	accountSubMenu.Append(editItem)
+	connectAutomaticallyItem.Connect("activate", func() {
+		account.toggleConnectAutomaticallyRequest <- account
+	})
 
 	editItem.Connect("activate", func() {
 		account.onEdit <- account

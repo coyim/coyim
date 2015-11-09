@@ -11,7 +11,6 @@ import (
 )
 
 func (u *gtkUI) observeAccountEvents() {
-	//TODO: check for channel close
 	for ev := range u.events {
 		switch t := ev.(type) {
 		case session.Event:

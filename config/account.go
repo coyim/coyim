@@ -31,6 +31,7 @@ type Account struct {
 	AlwaysEncryptWith       []string `json:",omitempty"`
 	DontEncryptWith         []string `json:",omitempty"`
 	InstanceTag             uint32   `json:",omitempty"`
+	ConnectAutomatically    bool
 }
 
 // Is returns true if this account represents the same identity as the given JID

@@ -27,8 +27,7 @@ func accountDialog(account *config.Account, saveFunction func()) {
 	vars := make(map[string]string)
 	vars["$title"] = i18n.Local("Account Details")
 	vars["$accountMessage"] = i18n.Local("Your account (for example: kim42@dukgo.com)")
-	//TODO: is this message still necessary?
-	vars["$pswMessage"] = i18n.Local("Password\nAlert!! Your password is going to be stored as plaintext")
+	vars["$pswMessage"] = i18n.Local("Password")
 	vars["$saveLabel"] = i18n.Local("Save")
 	builder, buildError := loadBuilderWith("AccountDetailsDefinition", vars)
 	if buildError != nil {
@@ -67,7 +66,7 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 	disconnect.SetSensitive(connected)
 }
 
-func (u *gtkUI) buildAccountsMenu() {
+func (u *gtkUI) buildAccountsMenu(connectAutomaticallySet <-chan bool) {
 	submenu, _ := gtk.MenuNew()
 
 	for _, account := range u.accounts {
@@ -78,6 +77,25 @@ func (u *gtkUI) buildAccountsMenu() {
 		sep, _ := gtk.SeparatorMenuItemNew()
 		submenu.Append(sep)
 	}
+
+	connectAutomaticallyItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect On _Startup"))
+	go func() {
+		for {
+			newVal := <-connectAutomaticallySet
+			connectAutomaticallyItem.SetActive(newVal)
+		}
+	}()
+	connectAutomaticallyItem.Connect("activate", func() {
+		u.toggleConnectAllAutomatically()
+	})
+	submenu.Append(connectAutomaticallyItem)
+
+	connectAllMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect All"))
+	connectAllMenu.Connect("activate", func() { u.connectAllAutomatics(true) })
+	submenu.Append(connectAllMenu)
+
+	sep2, _ := gtk.SeparatorMenuItemNew()
+	submenu.Append(sep2)
 
 	addAccMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Add..."))
 	addAccMenu.Connect("activate", func() { u.showAddAccountWindow() })

@@ -72,7 +72,8 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 			"OTRAutoTearDown": false,
 			"OTRAutoAppendTag": false,
 			"OTRAutoStartSession": false,
-			"AlwaysEncrypt": true
+			"AlwaysEncrypt": true,
+			"ConnectAutomatically": false
 		},
 		{
 			"Account": "bob@riseup.net",
@@ -82,12 +83,14 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 			"RequireTor": false,
 			"OTRAutoTearDown": false,
 			"OTRAutoAppendTag": false,
-			"OTRAutoStartSession": false
+			"OTRAutoStartSession": false,
+			"ConnectAutomatically": false
 		}
 	],
 	"Bell": false,
 	"MergeAccounts": false,
-	"ShowOnlyOnline": false
+	"ShowOnlyOnline": false,
+	"ConnectAutomatically": false
 }`
 
 	conf := Accounts{

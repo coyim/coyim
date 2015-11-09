@@ -3,11 +3,13 @@ package gui
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"os/exec"
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -32,6 +34,9 @@ type gtkUI struct {
 	keySupplier config.KeySupplier
 
 	tags *tags
+
+	toggleConnectAllAutomaticallyRequest chan bool
+	setConnectAutomatically              chan bool
 }
 
 // UI is the user interface functionality exposed to main
@@ -53,14 +58,17 @@ func NewGTK() UI {
 	connect := make(chan *account, 0)
 	disconnect := make(chan *account, 0)
 	edit := make(chan *account, 0)
+	toggleConnect := make(chan *account, 0)
 
 	res := &gtkUI{
-		accountManager: newAccountManager(connect, disconnect, edit),
+		accountManager: newAccountManager(connect, disconnect, edit, toggleConnect),
 	}
 
 	res.applyStyle()
 	res.accountManager.saveConfiguration = res.SaveConfig
 	res.keySupplier = config.CachingKeySupplier(res.getMasterPassword)
+	res.toggleConnectAllAutomaticallyRequest = make(chan bool, 100)
+	res.setConnectAutomatically = make(chan bool, 2)
 
 	go func() {
 		for {
@@ -80,6 +88,11 @@ func NewGTK() UI {
 					accountDialog(acc.session.CurrentAccount, res.SaveConfig)
 					return false
 				})
+			case acc := <-toggleConnect:
+				go func() {
+					acc.session.CurrentAccount.ConnectAutomatically = !acc.session.CurrentAccount.ConnectAutomatically
+					res.saveConfigOnly()
+				}()
 			}
 		}
 	}()
@@ -143,6 +156,12 @@ func (u *gtkUI) configLoaded() {
 		return false
 	})
 
+	if u.config.ConnectAutomatically {
+		u.connectAllAutomatics(false)
+	}
+
+	u.setConnectAutomatically <- u.config.ConnectAutomatically
+	go u.listenToToggleConnectAllAutomatically()
 }
 
 func (u *gtkUI) saveConfigInternal() {
@@ -377,9 +396,21 @@ func (u *gtkUI) addContactWindow() {
 	dialog.ShowAll()
 }
 
+func (u *gtkUI) listenToToggleConnectAllAutomatically() {
+	for {
+		<-u.toggleConnectAllAutomaticallyRequest
+		u.config.ConnectAutomatically = !u.config.ConnectAutomatically
+		u.saveConfigOnly()
+	}
+}
+
+func (u *gtkUI) toggleConnectAllAutomatically() {
+	u.toggleConnectAllAutomaticallyRequest <- true
+}
+
 func initMenuBar(u *gtkUI) {
 	u.window.Connect(accountChangedSignal.String(), func() {
-		u.buildAccountsMenu()
+		u.buildAccountsMenu(u.setConnectAutomatically)
 		u.accountsMenu.ShowAll()
 	})
 }
@@ -410,4 +441,37 @@ func (u *gtkUI) connect(account *account) {
 	}
 
 	go connectFn(account.session.CurrentAccount.Password)
+}
+
+// implemented using Sattolo’s variant of the Fisher–Yates shuffle
+func shuffleAccounts(a []*account) {
+	for i := range a {
+		j := rand.Intn(i + 1)
+		a[i], a[j] = a[j], a[i]
+	}
+}
+
+func (u *gtkUI) connectWithRandomDelay(a *account) {
+	sleepDelay := time.Duration(rand.Int31n(7643)) * time.Millisecond
+	log.Printf("connectWithRandomDelay(%v, %vms)\n", a.session.CurrentAccount.Account, sleepDelay)
+	time.Sleep(sleepDelay)
+	a.onConnect <- a
+}
+
+func (u *gtkUI) connectAllAutomatics(all bool) {
+	log.Printf("connectAllAutomatics(%v)\n", all)
+	var acc []*account
+	for _, a := range u.accounts {
+		if (all || a.session.CurrentAccount.ConnectAutomatically) && a.session.IsDisconnected() {
+			acc = append(acc, a)
+		}
+	}
+
+	if len(acc) > 0 {
+		u.roster.connecting()
+	}
+
+	for _, a := range acc {
+		go u.connectWithRandomDelay(a)
+	}
 }

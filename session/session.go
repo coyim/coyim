@@ -667,9 +667,14 @@ func (s *Session) WatchRosterEvents() {
 	}
 }
 
+// IsDisconnected returns true if this account is disconnected and is not in the process of connecting
+func (s *Session) IsDisconnected() bool {
+	return s.ConnStatus == DISCONNECTED
+}
+
 // Connect connects to the server and starts the main threads
 func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) error {
-	if s.ConnStatus != DISCONNECTED {
+	if !s.IsDisconnected() {
 		return nil
 	}
 
@@ -760,7 +765,7 @@ func (s *Session) terminateConversations() {
 
 // Close terminates all outstanding OTR conversations and closes the connection to the server
 func (s *Session) Close() {
-	if s.ConnStatus == DISCONNECTED {
+	if s.IsDisconnected() {
 		return
 	}
 

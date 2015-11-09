@@ -22,6 +22,7 @@ type Accounts struct {
 	Bell                          bool
 	MergeAccounts                 bool
 	ShowOnlyOnline                bool
+	ConnectAutomatically          bool
 }
 
 // LoadOrCreate will try to load the configuration from the given configuration file

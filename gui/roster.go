@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"html"
 	"sort"
 	"sync"
 	"time"
@@ -85,6 +86,7 @@ const (
 	indexWeight            = 5
 	indexParentJid         = 0
 	indexParentDisplayName = 1
+	indexTooltip           = 6
 )
 
 func (u *gtkUI) newRoster() *roster {
@@ -96,6 +98,7 @@ func (u *gtkUI) newRoster() *roster {
 		glib.TYPE_STRING, // color (used to indicate status)
 		glib.TYPE_STRING, // background color (used for background of all cell renderers
 		glib.TYPE_INT,    // weight of font
+		glib.TYPE_STRING, // tooltip
 	)
 
 	v, _ := gtk.TreeViewNew()
@@ -129,8 +132,14 @@ func (u *gtkUI) newRoster() *roster {
 
 	r.view.AppendColumn(c)
 
+	// crtooltip, _ := gtk.CellRendererTextNew()
+	// ctoolip, _ := gtk.TreeViewColumnNewWithAttribute("tooltip", crtooltip, "text", indexTooltip)
+
+	// r.view.AppendColumn(ctooltip)
+
 	r.view.SetShowExpanders(false)
 	r.view.SetLevelIndentation(3)
+	r.view.SetTooltipColumn(indexTooltip)
 
 	r.view.SetModel(r.model)
 	r.view.Connect("row-activated", r.onActivateBuddy)
@@ -343,6 +352,15 @@ func createGroupDisplayName(parentName string, counter *counter, isExpanded bool
 	return fmt.Sprintf("%s (%d/%d)", name, counter.online, counter.total)
 }
 
+func createTooltipFor(item *rosters.Peer) string {
+	pname := html.EscapeString(item.NameForPresentation())
+	jid := html.EscapeString(item.Jid)
+	if pname != jid {
+		return fmt.Sprintf("%s (%s)", pname, jid)
+	}
+	return jid
+}
+
 func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent string) {
 	iter := r.model.Append(parentIter)
 	setAll(r.model, iter,
@@ -351,6 +369,8 @@ func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent st
 		item.BelongsTo,
 		decideColorFor(item),
 		"#ffffff",
+		nil,
+		createTooltipFor(item),
 	)
 }
 
@@ -506,6 +526,8 @@ func (r *roster) redraw() {
 
 func setAll(v *gtk.TreeStore, iter *gtk.TreeIter, values ...interface{}) {
 	for i, val := range values {
-		v.SetValue(iter, i, val)
+		if val != nil {
+			v.SetValue(iter, i, val)
+		}
 	}
 }

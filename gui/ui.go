@@ -467,9 +467,11 @@ func (u *gtkUI) connectAllAutomatics(all bool) {
 		}
 	}
 
-	if len(acc) > 0 {
-		u.roster.connecting()
-	}
+	glib.IdleAdd(func() {
+		if len(acc) > 0 && u.roster != nil {
+			u.roster.connecting()
+		}
+	})
 
 	for _, a := range acc {
 		go u.connectWithRandomDelay(a)

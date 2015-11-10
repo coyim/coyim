@@ -243,7 +243,7 @@ func (r *roster) displayNameFor(account *account, from string) string {
 	l, ok := r.contacts.m[account]
 	r.contacts.RUnlock()
 	if !ok {
-		return ""
+		return from
 	}
 
 	p, ok := l.Get(from)

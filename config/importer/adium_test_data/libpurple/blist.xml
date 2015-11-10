@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<purple version='1.0'>
+	<blist>
+		<group name='Orphans'>
+			<contact>
+				<buddy account='baarfoo@coyim.com/Adium' proto='prpl-jabber'>
+					<name>hmmabc@mesopotamia.xmpp</name>
+					<setting name='last_seen' type='int'>1439888876</setting>
+					<setting name='buddy_icon' type='string'>2caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa9c.png</setting>
+					<setting name='icon_checksum' type='string'>2caaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa9c</setting>
+				</buddy>
+				<setting name='gtk-mute-sound' type='bool'>0</setting>
+			</contact>
+			<contact>
+				<buddy account='baarfoo@coyim.com/Adium' proto='prpl-jabber'>
+					<name>abcaaaa@mesopotamia.xmpp</name>
+					<setting name='OTR/enabled' type='bool'>1</setting>
+					<setting name='OTR/automatic' type='bool'>0</setting>
+					<setting name='OTR/overridedefault' type='bool'>0</setting>
+					<setting name='OTR/avoidloggingotr' type='bool'>1</setting>
+					<setting name='OTR/onlyprivate' type='bool'>0</setting>
+				</buddy>
+			</contact>
+		</group>
+		<group name='orphans'/>
+		<group name='ABC'>
+		</group>
+		<group name='Top Level'>
+		</group>
+		<group name='Merged Contacts'>
+		</group>
+	</blist>
+	<privacy>
+	</privacy>
+</purple>

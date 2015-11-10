@@ -1,0 +1,408 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<account version='1.0'>
+	<account>
+		<protocol>prpl-yahoo</protocol>
+		<name>foobar</name>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes>
+					<attribute id='message' value='Away'/>
+				</attributes>
+			</status>
+			<status type='brb' name='Be Right Back' active='false'>
+				<attributes/>
+			</status>
+			<status type='busy' name='Busy' active='false'>
+				<attributes/>
+			</status>
+			<status type='notathome' name='Not at Home' active='false'>
+				<attributes/>
+			</status>
+			<status type='notatdesk' name='Not at Desk' active='false'>
+				<attributes/>
+			</status>
+			<status type='notinoffice' name='Not in Office' active='false'>
+				<attributes/>
+			</status>
+			<status type='onphone' name='On the Phone' active='false'>
+				<attributes/>
+			</status>
+			<status type='onvacation' name='On Vacation' active='false'>
+				<attributes/>
+			</status>
+			<status type='outtolunch' name='Out to Lunch' active='false'>
+				<attributes/>
+			</status>
+			<status type='steppedout' name='Stepped Out' active='false'>
+				<attributes/>
+			</status>
+			<status type='invisible' name='Invisible' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<userinfo></userinfo>
+		<settings>
+			<setting name='buddy_icon_timestamp' type='int'>1381922222</setting>
+			<setting name='picture_expire' type='int'>1382361110</setting>
+			<setting name='proxy_ssl' type='bool'>1</setting>
+			<setting name='custom_smileys' type='bool'>0</setting>
+			<setting name='port' type='int'>5050</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='buddy_icon' type='string'>abcdefabcdefaaaaaaaaaaaaaaaaaaaaaaaaaaaa.png</setting>
+			<setting name='picture_url' type='string'>http://msgr.zenfs.com/msgrDisImg/ABCDEFABCDEFABCEFFREFRDFDF</setting>
+			<setting name='room_list_locale' type='string'>us</setting>
+			<setting name='server' type='string'>scsa.msg.yahoo.com</setting>
+			<setting name='picture_checksum' type='int'>111111111</setting>
+		</settings>
+		<settings ui='Adium'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<current_error/>
+	</account>
+	<account>
+		<protocol>prpl-jabber</protocol>
+		<name>baarfoo@coyim.com/Adium</name>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes>
+					<attribute id='priority' value='0'/>
+				</attributes>
+			</status>
+			<status type='mood' name='Feeling' active='false'>
+				<attributes/>
+			</status>
+			<status type='freeforchat' name='Chatty' active='false'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes>
+					<attribute id='message' value='&lt;FONT&gt;Away&lt;/FONT&gt;'/>
+				</attributes>
+			</status>
+			<status type='extended_away' name='Extended away' active='false'>
+				<attributes/>
+			</status>
+			<status type='dnd' name='Do Not Disturb' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<userinfo></userinfo>
+		<settings>
+			<setting name='bosh_url' type='string'></setting>
+			<setting name='buddy_icon_timestamp' type='int'>1122334455</setting>
+			<setting name='require_tls' type='bool'>0</setting>
+			<setting name='auth_plain_in_clear' type='bool'>0</setting>
+			<setting name='custom_smileys' type='bool'>1</setting>
+			<setting name='port' type='int'>5222</setting>
+			<setting name='connect_server' type='string'>talk.google.com</setting>
+			<setting name='ft_proxies' type='string'>proxy.eu.jabber.org</setting>
+			<setting name='buddy_icon' type='string'>7777777777777777777777777777777777777777.png</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='connection_security' type='string'>require_tls</setting>
+			<setting name='old_ssl' type='bool'>0</setting>
+			<setting name='ssl_cdsa_buggy_tls_workaround' type='bool'>0</setting>
+			<setting name='server' type='string'>talk.google.com</setting>
+		</settings>
+		<settings ui='Adium'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<current_error/>
+	</account>
+	<account>
+		<protocol>prpl-icq</protocol>
+		<name>123123123</name>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes/>
+			</status>
+			<status type='free4chat' name='Free For Chat' active='false'>
+				<attributes/>
+			</status>
+			<status type='evil' name='Evil' active='false'>
+				<attributes/>
+			</status>
+			<status type='depression' name='Depression' active='false'>
+				<attributes/>
+			</status>
+			<status type='athome' name='At home' active='false'>
+				<attributes/>
+			</status>
+			<status type='atwork' name='At work' active='false'>
+				<attributes/>
+			</status>
+			<status type='lunch' name='Lunch' active='false'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes>
+					<attribute id='message' value='&lt;HTML&gt;&lt;FONT&gt;Away&lt;/FONT&gt;&lt;/HTML&gt;'/>
+				</attributes>
+			</status>
+			<status type='invisible' name='Invisible' active='false'>
+				<attributes/>
+			</status>
+			<status type='occupied' name='Occupied' active='false'>
+				<attributes/>
+			</status>
+			<status type='dnd' name='Do Not Disturb' active='false'>
+				<attributes/>
+			</status>
+			<status type='na' name='Not Available' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+			<status type='mood' name='Feeling' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<settings>
+			<setting name='encoding' type='string'>ISO-8859-1</setting>
+			<setting name='encryption' type='string'>no_encryption</setting>
+			<setting name='buddy_icon_timestamp' type='int'>1111111116</setting>
+			<setting name='allow_multiple_logins' type='bool'>0</setting>
+			<setting name='web_aware' type='bool'>0</setting>
+			<setting name='always_use_rv_proxy' type='bool'>0</setting>
+			<setting name='custom_smileys' type='bool'>0</setting>
+			<setting name='port' type='int'>5190</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='buddy_icon' type='string'>8ddddddddddddddddddddddddddddddddddddddd.jpg</setting>
+			<setting name='use_ssl' type='bool'>0</setting>
+			<setting name='use_clientlogin' type='bool'>1</setting>
+			<setting name='server' type='string'>login.icq.com</setting>
+			<setting name='authorization' type='bool'>1</setting>
+		</settings>
+		<settings ui='Adium'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<current_error/>
+	</account>
+	<account>
+		<protocol>prpl-icq</protocol>
+		<name>333333333</name>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes/>
+			</status>
+			<status type='free4chat' name='Free For Chat' active='false'>
+				<attributes/>
+			</status>
+			<status type='evil' name='Evil' active='false'>
+				<attributes/>
+			</status>
+			<status type='depression' name='Depression' active='false'>
+				<attributes/>
+			</status>
+			<status type='athome' name='At home' active='false'>
+				<attributes/>
+			</status>
+			<status type='atwork' name='At work' active='false'>
+				<attributes/>
+			</status>
+			<status type='lunch' name='Lunch' active='false'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes>
+					<attribute id='message' value='&lt;HTML&gt;&lt;FONT&gt;Away&lt;/FONT&gt;&lt;/HTML&gt;'/>
+				</attributes>
+			</status>
+			<status type='invisible' name='Invisible' active='false'>
+				<attributes/>
+			</status>
+			<status type='occupied' name='Occupied' active='false'>
+				<attributes/>
+			</status>
+			<status type='dnd' name='Do Not Disturb' active='false'>
+				<attributes/>
+			</status>
+			<status type='na' name='Not Available' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+			<status type='mood' name='Feeling' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<settings>
+			<setting name='encoding' type='string'>ISO-8859-1</setting>
+			<setting name='encryption' type='string'>no_encryption</setting>
+			<setting name='buddy_icon_timestamp' type='int'>1231231231</setting>
+			<setting name='allow_multiple_logins' type='bool'>0</setting>
+			<setting name='web_aware' type='bool'>0</setting>
+			<setting name='always_use_rv_proxy' type='bool'>0</setting>
+			<setting name='custom_smileys' type='bool'>0</setting>
+			<setting name='port' type='int'>5190</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='buddy_icon' type='string'>8888888888888888888888888888888888888888.jpg</setting>
+			<setting name='use_ssl' type='bool'>0</setting>
+			<setting name='use_clientlogin' type='bool'>1</setting>
+			<setting name='server' type='string'>login.icq.com</setting>
+			<setting name='authorization' type='bool'>1</setting>
+		</settings>
+		<settings ui='Adium'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<current_error/>
+	</account>
+	<account>
+		<protocol>prpl-msn</protocol>
+		<name>coyim@hotmail.com</name>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes/>
+			</status>
+			<status type='brb' name='Be Right Back' active='false'>
+				<attributes/>
+			</status>
+			<status type='busy' name='Busy' active='false'>
+				<attributes/>
+			</status>
+			<status type='phone' name='On the Phone' active='false'>
+				<attributes/>
+			</status>
+			<status type='lunch' name='Out to Lunch' active='false'>
+				<attributes/>
+			</status>
+			<status type='invisible' name='Invisible' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<userinfo></userinfo>
+		<settings>
+			<setting name='display-name' type='string'>Coy IM</setting>
+			<setting name='buddy_icon_timestamp' type='int'>12312312312</setting>
+			<setting name='endpoint-name' type='string'>Adium</setting>
+			<setting name='custom_smileys' type='bool'>1</setting>
+			<setting name='port' type='int'>1863</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='buddy_icon' type='string'>ecececececececececececececececececececec.png</setting>
+			<setting name='direct_connect' type='bool'>1</setting>
+			<setting name='http_method' type='bool'>0</setting>
+			<setting name='ablastChange' type='string'>2013-10-16T06:11:11.11-07:00</setting>
+			<setting name='server' type='string'>messenger.hotmail.com</setting>
+			<setting name='CLLastChange' type='string'>2013-08-04T05:02:02.002-07:00</setting>
+			<setting name='DynamicItemLastChanged' type='string'>0001-01-01T00:00:00</setting>
+		</settings>
+		<settings ui='Adium'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<current_error/>
+	</account>
+	<account>
+		<protocol>prpl-jabber</protocol>
+		<name>foobaar@mesopotamia.xmpp/Adium</name>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes>
+					<attribute id='priority' value='0'/>
+				</attributes>
+			</status>
+			<status type='mood' name='Feeling' active='false'>
+				<attributes/>
+			</status>
+			<status type='freeforchat' name='Chatty' active='false'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes>
+					<attribute id='message' value='&lt;FONT&gt;Away&lt;/FONT&gt;'/>
+				</attributes>
+			</status>
+			<status type='extended_away' name='Extended away' active='false'>
+				<attributes/>
+			</status>
+			<status type='dnd' name='Do Not Disturb' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<userinfo></userinfo>
+		<settings>
+			<setting name='bosh_url' type='string'></setting>
+			<setting name='buddy_icon_timestamp' type='int'>1313131313</setting>
+			<setting name='require_tls' type='bool'>0</setting>
+			<setting name='auth_plain_in_clear' type='bool'>0</setting>
+			<setting name='custom_smileys' type='bool'>1</setting>
+			<setting name='port' type='int'>5222</setting>
+			<setting name='connect_server' type='string'>talk.google.com</setting>
+			<setting name='ft_proxies' type='string'>proxy.eu.jabber.org</setting>
+			<setting name='buddy_icon' type='string'>7133333111111333331111133333111133333311.png</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='connection_security' type='string'>require_tls</setting>
+			<setting name='old_ssl' type='bool'>0</setting>
+			<setting name='server' type='string'>talk.google.com</setting>
+		</settings>
+		<settings ui='Adium'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<current_error/>
+	</account>
+	<account>
+		<protocol>prpl-jabber</protocol>
+		<name>baarfoo@coyim.org/Somewhe-2</name>
+		<statuses>
+			<status type='available' name='Available' active='true'>
+				<attributes>
+					<attribute id='priority' value='0'/>
+				</attributes>
+			</status>
+			<status type='mood' name='Feeling' active='false'>
+				<attributes/>
+			</status>
+			<status type='freeforchat' name='Chatty' active='false'>
+				<attributes/>
+			</status>
+			<status type='away' name='Away' active='false'>
+				<attributes/>
+			</status>
+			<status type='extended_away' name='Extended away' active='false'>
+				<attributes/>
+			</status>
+			<status type='dnd' name='Do Not Disturb' active='false'>
+				<attributes/>
+			</status>
+			<status type='offline' name='Offline' active='false'>
+				<attributes/>
+			</status>
+		</statuses>
+		<userinfo></userinfo>
+		<settings>
+			<setting name='buddy_icon_timestamp' type='int'>1311111111</setting>
+			<setting name='auth_plain_in_clear' type='bool'>0</setting>
+			<setting name='custom_smileys' type='bool'>1</setting>
+			<setting name='port' type='int'>5222</setting>
+			<setting name='ft_proxies' type='string'>proxy.eu.jabber.org</setting>
+			<setting name='buddy_icon' type='string'>ddddddddddddddddddddddddddddddddddddd1d0.png</setting>
+			<setting name='check-mail' type='bool'>0</setting>
+			<setting name='connection_security' type='string'>opportunistic_tls</setting>
+			<setting name='ssl_cdsa_buggy_tls_workaround' type='bool'>0</setting>
+			<setting name='server' type='string'>xmpp.coy.im</setting>
+		</settings>
+		<settings ui='Adium'>
+			<setting name='auto-login' type='bool'>0</setting>
+		</settings>
+		<current_error/>
+	</account>
+</account>

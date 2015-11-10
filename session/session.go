@@ -185,6 +185,8 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 		)
 	case "unsubscribed":
 		// Ignore
+	case "error":
+		s.warn(fmt.Sprintf("Got a presence error from %s: %s\n", stanza.From, stanza.Error))
 	default:
 		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
 	}

@@ -76,13 +76,13 @@ func (s *XmppSuite) TestDiscoReplyVerComplex(c *C) {
 }
 
 func (s *XmppSuite) TestConnClose(c *C) {
-	mockConfigConn := mockConn{}
+	mockCloser := &mockConnIOReaderWriter{}
 	conn := Conn{
-		closer: &mockConfigConn,
+		rawOut: mockCloser,
 	}
 
 	c.Assert(conn.Close(), IsNil)
-	c.Assert(mockConfigConn.calledClose, Equals, 1)
+	c.Assert(mockCloser.calledClose, Equals, 1)
 }
 
 func (s *XmppSuite) TestConnNextEOF(c *C) {

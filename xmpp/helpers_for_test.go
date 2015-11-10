@@ -24,6 +24,8 @@ type mockConnIOReaderWriter struct {
 	write     []byte
 	errCount  int
 	err       error
+
+	calledClose int
 }
 
 func (iom *mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
@@ -48,6 +50,11 @@ func (iom *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
 	}
 	iom.errCount--
 	return len(p), e
+}
+
+func (iom *mockConnIOReaderWriter) Close() error {
+	iom.calledClose++
+	return nil
 }
 
 type mockMultiConnIOReaderWriter struct {

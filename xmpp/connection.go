@@ -29,9 +29,8 @@ import (
 type Conn struct {
 	config *Config
 
-	closer  io.Closer
 	out     io.Writer
-	rawOut  io.Writer // doesn't log. Used for <auth>
+	rawOut  io.WriteCloser // doesn't log. Used for <auth>
 	in      *xml.Decoder
 	jid     string
 	archive bool
@@ -53,7 +52,7 @@ func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
 
 // Close closes the underlying connection
 func (c *Conn) Close() error {
-	return c.closer.Close()
+	return c.rawOut.Close()
 }
 
 // Next reads stanzas from the server. If the stanza is a reply, it dispatches
@@ -202,7 +201,6 @@ func (c *Conn) startTLS(address, domain string, conn net.Conn) error {
 
 	c.in, c.out = makeInOut(tlsConn, c.config)
 	c.rawOut = tlsConn
-	c.closer = tlsConn
 
 	return nil
 }
@@ -277,7 +275,6 @@ func dial(address, user, domain, password string, config *Config, conn net.Conn)
 
 	c.in, c.out = makeInOut(conn, config)
 	c.rawOut = conn
-	c.closer = conn
 
 	features, err := c.getFeatures(domain)
 	if err != nil {

@@ -128,14 +128,14 @@ func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn,
 	}
 
 	for _, addr := range xmppAddrs {
-		log.Println("Connecting to " + addr)
+		log.Printf("Connecting to %s\n", addr)
 
 		conn, err := dialer.Dial("tcp", addr)
 		if err == nil {
 			return conn, addr, nil
 		}
 
-		log.Println("Failed to connect to", addr, "\n\t", err)
+		log.Printf("Failed to connect to %s: %s\n", addr, err)
 	}
 
 	// should NOT attempt the fallback described in XMPP section 3.2.2
@@ -283,6 +283,7 @@ func dial(address, user, domain, password string, config *Config) (c *Conn, err 
 		c.in, c.out = makeInOut(tlsConn, config)
 		c.rawOut = tlsConn
 
+		//TODO: Why is it done twice?
 		if features, err = c.getFeatures(domain); err != nil {
 			return nil, err
 		}
@@ -291,37 +292,8 @@ func dial(address, user, domain, password string, config *Config) (c *Conn, err 
 	}
 
 	if config != nil && config.CreateCallback != nil {
-		io.WriteString(log, "Attempting to create account\n")
-		fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
-		var iq ClientIQ
-		if err = c.in.DecodeElement(&iq, nil); err != nil {
-			return nil, errors.New("unmarshal <iq>: " + err.Error())
-		}
-		if iq.Type != "result" {
-			return nil, errors.New("xmpp: account creation failed")
-		}
-		var register RegisterQuery
-		if err := xml.NewDecoder(bytes.NewBuffer(iq.Query)).Decode(&register); err != nil {
+		if err := createAccount(user, password, config, c); err != nil {
 			return nil, err
-		}
-
-		if len(register.Form.Type) > 0 {
-			reply, err := processForm(&register.Form, register.Datas, config.CreateCallback)
-			fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'>")
-			if err = xml.NewEncoder(c.rawOut).Encode(reply); err != nil {
-				return nil, err
-			}
-			fmt.Fprintf(c.rawOut, "</query></iq>")
-		} else if register.Username != nil && register.Password != nil {
-			// Try the old-style registration.
-			fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>", user, password)
-		}
-		var iq2 ClientIQ
-		if err = c.in.DecodeElement(&iq2, nil); err != nil {
-			return nil, errors.New("unmarshal <iq>: " + err.Error())
-		}
-		if iq2.Type == "error" {
-			return nil, errors.New("xmpp: account creation failed")
 		}
 	}
 
@@ -355,6 +327,46 @@ func dial(address, user, domain, password string, config *Config) (c *Conn, err 
 		}
 	}
 	return c, nil
+}
+
+func createAccount(user, password string, config *Config, c *Conn) error {
+	io.WriteString(logFor(config), "Attempting to create account\n")
+	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
+	var iq ClientIQ
+	if err := c.in.DecodeElement(&iq, nil); err != nil {
+		return errors.New("unmarshal <iq>: " + err.Error())
+	}
+
+	if iq.Type != "result" {
+		return errors.New("xmpp: account creation failed")
+	}
+	var register RegisterQuery
+	if err := xml.NewDecoder(bytes.NewBuffer(iq.Query)).Decode(&register); err != nil {
+		return err
+	}
+
+	if len(register.Form.Type) > 0 {
+		reply, err := processForm(&register.Form, register.Datas, config.CreateCallback)
+		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'>")
+		if err = xml.NewEncoder(c.rawOut).Encode(reply); err != nil {
+			return err
+		}
+		fmt.Fprintf(c.rawOut, "</query></iq>")
+	} else if register.Username != nil && register.Password != nil {
+		// Try the old-style registration.
+		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>", user, password)
+	}
+
+	var iq2 ClientIQ
+	if err := c.in.DecodeElement(&iq2, nil); err != nil {
+		return errors.New("unmarshal <iq>: " + err.Error())
+	}
+
+	if iq2.Type == "error" {
+		return errors.New("xmpp: account creation failed")
+	}
+
+	return nil
 }
 
 // Send sends an IM message to the given user.

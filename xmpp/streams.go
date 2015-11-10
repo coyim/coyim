@@ -22,6 +22,7 @@ func (c *Conn) getFeatures(domain string) (features streamFeatures, err error) {
 	if err != nil {
 		return
 	}
+
 	if se.Name.Space != NsStream || se.Name.Local != "stream" {
 		err = errors.New("xmpp: expected <stream> but got <" + se.Name.Local + "> in " + se.Name.Space)
 		return

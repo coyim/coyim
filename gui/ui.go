@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -392,7 +393,25 @@ func (u *gtkUI) addContactWindow() {
 		}
 	}
 
-	dialog := presenceSubscriptionDialog(accounts)
+	dialog := presenceSubscriptionDialog(accounts, func(accountID, peer string) error {
+		//TODO errors
+		account, ok := u.roster.getAccount(accountID)
+		if !ok {
+			return errors.New("Cant send a contact request to an offline account")
+		}
+
+		if !account.connected() {
+			return errors.New("Cant send a contact request to an offline account")
+		}
+
+		err := account.session.Conn.SendPresence(peer, "subscribe", "" /* generate id */)
+		if err != nil {
+			return errors.New("Cant send a contact request to an offline account")
+		}
+
+		return nil
+	})
+
 	dialog.ShowAll()
 }
 

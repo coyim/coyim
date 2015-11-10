@@ -19,7 +19,7 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 	return confirmDialog
 }
 
-func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
+func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer string) error) *gtk.Dialog {
 	dialog, _ := gtk.DialogNew()
 	dialog.SetTitle(i18n.Local("Add contact"))
 	dialog.SetPosition(gtk.WIN_POS_CENTER)
@@ -29,14 +29,14 @@ func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 	vbox.Add(accountLabel)
 
 	model, _ := gtk.ListStoreNew(
-		glib.TYPE_STRING,  // account name
-		glib.TYPE_POINTER, // *Account
+		glib.TYPE_STRING, // account name
+		glib.TYPE_STRING, // account_id
 	)
 
 	for _, acc := range accounts {
 		iter := model.Append()
 		//TODO stop passing pointers
-		model.Set(iter, []int{0, 1}, []interface{}{acc.session.CurrentAccount.Account, acc})
+		model.Set(iter, []int{0, 1}, []interface{}{acc.session.CurrentAccount.Account, acc.session.CurrentAccount.ID()})
 	}
 
 	accountInput, _ := gtk.ComboBoxNewWithModel(&model.TreeModel)
@@ -64,6 +64,8 @@ func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 	vbox.Add(button)
 
 	onAdd := func() {
+		defer dialog.Destroy()
+
 		//TODO: validate contact
 		contact, _ := contactInput.GetText()
 
@@ -71,20 +73,10 @@ func presenceSubscriptionDialog(accounts []*account) *gtk.Dialog {
 		iter, _ := accountInput.GetActiveIter()
 
 		val, _ := model.GetValue(iter, 1)
-		account := (*account)(val.GetPointer())
+		accountID, _ := val.GetString()
 
-		if !account.connected() {
-			//TODO error
-		}
-
-		//TODO: validate
-		// - validate if the account is connected
-		err := account.session.Conn.SendPresence(contact, "subscribe", "" /* generate id */)
-		if err != nil {
-			//TODO: error
-		}
-
-		dialog.Destroy()
+		//TODO error
+		sendSubscription(accountID, contact)
 	}
 
 	button.SetCanDefault(true)

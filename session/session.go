@@ -783,3 +783,12 @@ func (s *Session) Close() {
 	s.ConnStatus = DISCONNECTED
 	s.publish(Disconnected)
 }
+
+// Ping
+func (s *Session) Ping() {
+	if s.ConnStatus == DISCONNECTED {
+		return
+	}
+	fmt.Println("Publish Ping")
+	s.publish(Ping)
+}

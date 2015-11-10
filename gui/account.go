@@ -1,6 +1,9 @@
 package gui
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -111,8 +114,23 @@ func (account *account) buildAccountSubmenu() {
 			switch t := ev.(type) {
 			case session.Event:
 				switch t.Type {
-				case session.Connected, session.Disconnected:
+				case session.Connected:
+
 					toggleConnectAndDisconnectMenuItems(t.Session, connectItem, disconnectItem)
+					go func() {
+						for {
+							time.Sleep(time.Second * 10)
+							account.session.Ping()
+						}
+					}()
+
+				case session.Disconnected:
+					toggleConnectAndDisconnectMenuItems(t.Session, connectItem, disconnectItem)
+				case session.Ping:
+					fmt.Println("Pinging")
+					//TODO: add check for return message
+					//t.Session.Conn.Ping()
+					fmt.Println("Just Pinged")
 				}
 			}
 		}

@@ -20,6 +20,8 @@ const (
 	Disconnected EventType = iota
 	Connected
 	RosterReceived
+	Ping
+	PongReceived
 )
 
 // PeerEvent represents an event associated to a peer

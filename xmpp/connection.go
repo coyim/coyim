@@ -372,6 +372,12 @@ func (c *Conn) Send(to, msg string) error {
 	return err
 }
 
+// SendPing sends an IQ message to the given user.
+func (c *Conn) Ping() error {
+	_, err := fmt.Fprintf(c.out, "<iq from='%s' type='chat'><ping xmlns='urn:xmpp:ping'/></iq>", xmlEscape(c.jid))
+	return err
+}
+
 func makeInOut(conn io.ReadWriter, config *Config) (in *xml.Decoder, out io.Writer) {
 	if config != nil && config.InLog != nil {
 		in = xml.NewDecoder(io.TeeReader(conn, config.InLog))

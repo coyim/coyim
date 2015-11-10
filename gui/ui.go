@@ -397,19 +397,14 @@ func (u *gtkUI) addContactWindow() {
 		//TODO errors
 		account, ok := u.roster.getAccount(accountID)
 		if !ok {
-			return errors.New("Cant send a contact request to an offline account")
+			return fmt.Errorf("There is no account with the id %q", accountID)
 		}
 
 		if !account.connected() {
-			return errors.New("Cant send a contact request to an offline account")
+			return errors.New("Cant send a contact request from an offline account")
 		}
 
-		err := account.session.Conn.SendPresence(peer, "subscribe", "" /* generate id */)
-		if err != nil {
-			return errors.New("Cant send a contact request to an offline account")
-		}
-
-		return nil
+		return account.session.Conn.SendPresence(peer, "subscribe", "" /* generate id */)
 	})
 
 	dialog.ShowAll()

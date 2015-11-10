@@ -66,7 +66,7 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 	disconnect.SetSensitive(connected)
 }
 
-func (u *gtkUI) buildAccountsMenu(connectAutomaticallySet <-chan bool) {
+func (u *gtkUI) buildAccountsMenu() {
 	submenu, _ := gtk.MenuNew()
 
 	for _, account := range u.accounts {
@@ -79,12 +79,9 @@ func (u *gtkUI) buildAccountsMenu(connectAutomaticallySet <-chan bool) {
 	}
 
 	connectAutomaticallyItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect On _Startup"))
-	go func() {
-		for {
-			newVal := <-connectAutomaticallySet
-			connectAutomaticallyItem.SetActive(newVal)
-		}
-	}()
+	u.config.WhenLoaded(func(a *config.Accounts) {
+		connectAutomaticallyItem.SetActive(a.ConnectAutomatically)
+	})
 	connectAutomaticallyItem.Connect("activate", func() {
 		u.toggleConnectAllAutomatically()
 	})

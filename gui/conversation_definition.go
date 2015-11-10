@@ -11,7 +11,7 @@ func (w conversationDefinition) getDefinition() string {
     <property name="default-height">500</property>
     <property name="default-width">400</property>
     <property name="destroy-with-parent">true</property>
-    <property name="title">$uid</property>
+    <property name="title">$title</property>
     <child>
       <object class="GtkVBox">
         <property name="homogeneous">false</property>

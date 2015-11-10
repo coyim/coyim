@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"html"
 	"sync"
 	"time"
 
@@ -68,7 +69,7 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 
 func newConversationWindow(account *account, uid string, u *gtkUI) (*conversationWindow, error) {
 	vars := make(map[string]string)
-	vars["$uid"] = uid
+	vars["$title"] = html.EscapeString(fmt.Sprintf("%s <-> %s", account.session.CurrentAccount.Account, uid))
 	vars["$DevOptions"] = i18n.Local("Developer options")
 	vars["$StartOTR"] = i18n.Local("Start encrypted chat")
 	vars["$EndOTR"] = i18n.Local("End encrypted chat")

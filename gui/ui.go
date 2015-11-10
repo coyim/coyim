@@ -37,7 +37,6 @@ type gtkUI struct {
 	tags *tags
 
 	toggleConnectAllAutomaticallyRequest chan bool
-	setConnectAutomatically              chan bool
 }
 
 // UI is the user interface functionality exposed to main
@@ -69,7 +68,6 @@ func NewGTK() UI {
 	res.accountManager.saveConfiguration = res.SaveConfig
 	res.keySupplier = config.CachingKeySupplier(res.getMasterPassword)
 	res.toggleConnectAllAutomaticallyRequest = make(chan bool, 100)
-	res.setConnectAutomatically = make(chan bool, 2)
 
 	go func() {
 		for {
@@ -161,7 +159,6 @@ func (u *gtkUI) configLoaded() {
 		u.connectAllAutomatics(false)
 	}
 
-	u.setConnectAutomatically <- u.config.ConnectAutomatically
 	go u.listenToToggleConnectAllAutomatically()
 }
 
@@ -253,7 +250,7 @@ func (u *gtkUI) mainWindow() {
 	u.viewMenu.offline = checkItemShowOffline.(*gtk.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(&u.viewMenu.offline.MenuItem.Bin.Container.Widget)
 
-	initMenuBar(u)
+	u.initMenuBar()
 	vbox, _ := builder.GetObject("Vbox")
 	vbox.(*gtk.Box).PackStart(u.roster.widget, true, true, 0)
 
@@ -422,9 +419,9 @@ func (u *gtkUI) toggleConnectAllAutomatically() {
 	u.toggleConnectAllAutomaticallyRequest <- true
 }
 
-func initMenuBar(u *gtkUI) {
+func (u *gtkUI) initMenuBar() {
 	u.window.Connect(accountChangedSignal.String(), func() {
-		u.buildAccountsMenu(u.setConnectAutomatically)
+		u.buildAccountsMenu()
 		u.accountsMenu.ShowAll()
 	})
 }

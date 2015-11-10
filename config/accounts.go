@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+	"sync"
 
 	"github.com/twstrike/otr3"
 )
@@ -23,6 +24,30 @@ type Accounts struct {
 	MergeAccounts                 bool
 	ShowOnlyOnline                bool
 	ConnectAutomatically          bool
+}
+
+var loadEntries []func(*Accounts)
+var loadEntryLock = sync.Mutex{}
+
+func (a *Accounts) WhenLoaded(f func(*Accounts)) {
+	if a != nil {
+		f(a)
+		return
+	}
+	loadEntryLock.Lock()
+	defer loadEntryLock.Unlock()
+
+	loadEntries = append(loadEntries, f)
+}
+
+func (a *Accounts) accountLoaded() {
+	loadEntryLock.Lock()
+	defer loadEntryLock.Unlock()
+	ourEntries := loadEntries
+	loadEntries = []func(*Accounts){}
+	for _, f := range ourEntries {
+		go f(a)
+	}
 }
 
 // LoadOrCreate will try to load the configuration from the given configuration file
@@ -84,6 +109,8 @@ func (a *Accounts) tryLoad(ks KeySupplier) error {
 	for _, c := range a.Accounts {
 		parseFingerprints(c)
 	}
+
+	a.accountLoaded()
 
 	return nil
 }

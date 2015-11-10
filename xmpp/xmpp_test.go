@@ -78,10 +78,9 @@ func (s *XmppSuite) TestDiscoReplyVerComplex(c *C) {
 func (s *XmppSuite) TestConnClose(c *C) {
 	mockConfigConn := mockConn{}
 	conn := Conn{
-		config: &Config{
-			Conn: &mockConfigConn,
-		},
+		closer: &mockConfigConn,
 	}
+
 	c.Assert(conn.Close(), IsNil)
 	c.Assert(mockConfigConn.calledClose, Equals, 1)
 }

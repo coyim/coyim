@@ -173,8 +173,15 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 	return connect(user, domain, password, xmppConfig, dialer)
 }
 
-func connect(user, domain, password string, xmppConfig *xmpp.Config, dialer proxy.Dialer) (*xmpp.Conn, error) {
+func connect(user, domain, password string, xmppConfig *xmpp.Config, tor proxy.Dialer) (*xmpp.Conn, error) {
 	// TODO: identify is the domain has a hidden service and use it
 	// We do not need to separate user and domain here
-	return xmpp.DialWithProxy(user, domain, password, xmppConfig, dialer)
+	dialer := xmpp.Dialer{
+		User:     user,
+		Password: password,
+		Domain:   domain,
+		Proxy:    tor,
+	}
+
+	return dialer.Dial(xmppConfig)
 }

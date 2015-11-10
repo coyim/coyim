@@ -29,6 +29,7 @@ import (
 type Conn struct {
 	config *Config
 
+	closer  io.Closer
 	out     io.Writer
 	rawOut  io.Writer // doesn't log. Used for <auth>
 	in      *xml.Decoder
@@ -52,7 +53,7 @@ func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
 
 // Close closes the underlying connection
 func (c *Conn) Close() error {
-	return c.config.Conn.Close()
+	return c.closer.Close()
 }
 
 // Next reads stanzas from the server. If the stanza is a reply, it dispatches
@@ -122,7 +123,7 @@ func (c *Conn) Cancel(cookie Cookie) bool {
 	return true
 }
 
-func (c *Conn) startTLS(address, domain string) error {
+func (c *Conn) startTLS(address, domain string, conn net.Conn) error {
 	fmt.Fprintf(c.out, "<starttls xmlns='%s'/>", NsTLS)
 
 	proceed, err := nextStart(c.in)
@@ -144,7 +145,7 @@ func (c *Conn) startTLS(address, domain string) error {
 	tlsConfig.ServerName = domain
 	tlsConfig.InsecureSkipVerify = true
 
-	tlsConn := tls.Client(c.config.Conn, &tlsConfig)
+	tlsConn := tls.Client(conn, &tlsConfig)
 	if err := tlsConn.Handshake(); err != nil {
 		return err
 	}
@@ -201,6 +202,7 @@ func (c *Conn) startTLS(address, domain string) error {
 
 	c.in, c.out = makeInOut(tlsConn, c.config)
 	c.rawOut = tlsConn
+	c.closer = tlsConn
 
 	return nil
 }
@@ -225,26 +227,37 @@ func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn,
 	return nil, "", errors.New("Failed to connect to XMPP server: exhausted list of XMPP SRV for server")
 }
 
-// DialWithProxy uses a proxy to create a new connection to an XMPP server.
-// It will use the user and password to authenticate to the server.
-func DialWithProxy(user, domain, password string, config *Config, dialer proxy.Dialer) (c *Conn, err error) {
-	xmppAddrs, err := ResolveProxy(dialer, domain)
+type Dialer struct {
+	User     string
+	Domain   string
+	Password string
+
+	Proxy proxy.Dialer
+}
+
+// Dial creates a new connection to an XMPP server with the given proxy
+// and authenticates as the given user.
+func (d *Dialer) Dial(config *Config) (*Conn, error) {
+	if d.Proxy == nil {
+		d.Proxy = proxy.Direct
+	}
+
+	xmppAddrs, err := ResolveProxy(d.Proxy, d.Domain)
 	if err != nil {
 		return nil, err
 	}
 
 	// Fallback to using the domain at default port
 	if len(xmppAddrs) == 0 {
-		xmppAddrs = []string{domain + "5222"}
+		xmppAddrs = []string{d.Domain + "5222"}
 	}
 
-	var addr string
-	config.Conn, addr, err = connectToFirstAvailable(xmppAddrs, dialer)
+	conn, addr, err := connectToFirstAvailable(xmppAddrs, d.Proxy)
 	if err != nil {
 		return nil, err
 	}
 
-	return Dial(addr, user, domain, password, config)
+	return dial(addr, d.User, d.Domain, d.Password, config, conn)
 }
 
 func logFor(config *Config) io.Writer {
@@ -256,28 +269,15 @@ func logFor(config *Config) io.Writer {
 	return log
 }
 
-// Dial creates a new connection to an XMPP server, authenticates as the given user.
-func Dial(address, user, domain, password string, config *Config) (*Conn, error) {
-	var err error
-	if config == nil || config.Conn == nil {
-		io.WriteString(logFor(config), "Making TCP connection to "+address+"\n")
-
-		if config.Conn, err = net.Dial("tcp", address); err != nil {
-			return nil, err
-		}
-	}
-
-	return dial(address, user, domain, password, config)
-}
-
-func dial(address, user, domain, password string, config *Config) (c *Conn, err error) {
+func dial(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {
 	c = new(Conn)
 	c.config = config
 	c.inflights = make(map[Cookie]inflight)
 	c.archive = config.Archive
 
-	conn := config.Conn
 	c.in, c.out = makeInOut(conn, config)
+	c.rawOut = conn
+	c.closer = conn
 
 	features, err := c.getFeatures(domain)
 	if err != nil {
@@ -289,15 +289,13 @@ func dial(address, user, domain, password string, config *Config) (c *Conn, err 
 			return nil, errors.New("xmpp: server doesn't support TLS")
 		}
 
-		if err := c.startTLS(address, domain); err != nil {
+		if err := c.startTLS(address, domain, conn); err != nil {
 			return nil, err
 		}
 
 		if features, err = c.getFeatures(domain); err != nil {
 			return nil, err
 		}
-	} else {
-		c.rawOut = conn
 	}
 
 	if err := createAccount(user, password, config, c); err != nil {

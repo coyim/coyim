@@ -9,14 +9,10 @@ package xmpp
 import (
 	"crypto/tls"
 	"io"
-	"net"
 )
 
 // Config contains options for an XMPP connection.
 type Config struct {
-	//TODO: Why does a config has a net.Conn and a xmpp.Conn has a config?
-	// Conn is the connection to the server, if non-nill.
-	Conn net.Conn
 	// InLog is an optional Writer which receives the raw contents of the
 	// XML from the server.
 	InLog io.Writer

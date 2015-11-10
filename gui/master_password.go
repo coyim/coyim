@@ -31,60 +31,35 @@ func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 }
 
 func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {
-	reg := createWidgetRegistry()
+	vars := make(map[string]string)
+	vars["$title"] = i18n.Local("Enter master password")
+	vars["$passwordMessage"] = i18n.Local("Please enter the master password for the configuration file. You will not be asked for this password again until you restart CoyIM.")
+	vars["$saveLabel"] = i18n.Local("OK")
+	vars["$cancelLabel"] = i18n.Local("Cancel")
 
+	builder, _ := loadBuilderWith("MasterPasswordDefinition", vars)
+	dialogOb, _ := builder.GetObject("MasterPassword")
+	dialog := dialogOb.(*gtk.Dialog)
+	passObj, _ := builder.GetObject("password")
+	password := passObj.(*gtk.Entry)
 	pwdResultChan := make(chan string)
 
-	// TODO: This should be refactored to use the standard button things
-
-	dialog := dialog{
-		title:       i18n.Local("Enter master password"),
-		position:    gtk.WIN_POS_CENTER,
-		id:          "masterPasswordDialog",
-		defaultSize: []int{300, 0},
-		content: []creatable{
-			label{
-				text:      i18n.Local("Please enter the master password for the configuration file. You will not be asked for this password again until you restart CoyIM."),
-				wrapLines: true,
-			},
-			entry{
-				editable:   true,
-				visibility: false,
-				id:         "password",
-				focused:    true,
-				onActivate: func() {
-					pwdResultChan <- reg.getText("password")
-					close(pwdResultChan)
-					reg.dialogDestroy("masterPasswordDialog")
-				},
-			},
-			hbox{
-				fromRight: true,
-				content: []creatable{
-					button{
-						text: i18n.Local("OK"),
-						onClicked: func() {
-							pwdResultChan <- reg.getText("password")
-							close(pwdResultChan)
-							reg.dialogDestroy("masterPasswordDialog")
-						},
-					},
-					button{
-						text: i18n.Local("Cancel"),
-						onClicked: func() {
-							close(pwdResultChan)
-							reg.dialogDestroy("masterPasswordDialog")
-						},
-					},
-				},
-			},
+	builder.ConnectSignals(map[string]interface{}{
+		"on_save_signal": func() {
+			passText, _ := password.GetText()
+			pwdResultChan <- passText
+			close(pwdResultChan)
+			dialog.Destroy()
 		},
-	}
+		"on_cancel_signal": func() {
+			close(pwdResultChan)
+			dialog.Destroy()
+		},
+	})
 
 	glib.IdleAdd(func() {
-		deg, _ := dialog.create(reg)
-		deg.(*gtk.Dialog).SetTransientFor(u.window)
-		reg.dialogShowAll("masterPasswordDialog")
+		dialog.SetTransientFor(u.window)
+		dialog.ShowAll()
 	})
 
 	pwd, ok := <-pwdResultChan

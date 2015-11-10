@@ -83,6 +83,8 @@ func getDefinition(uiName string) uiDefinition {
 		return new(mainDefinition)
 	case "AccountDetailsDefinition":
 		return new(accountDetailsDefinition)
+	case "MasterPasswordDefinition":
+		return new(accountDetailsDefinition)
 	case "ConversationDefinition":
 		return new(conversationDefinition)
 	case "ConfigAssistantDefinition":

@@ -23,6 +23,7 @@ matrix:
 before_install: 
   - "export DISPLAY=:99.0"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
+  - rm -rf $GOPATH/src/
 install: make deps
 script: make ci
 

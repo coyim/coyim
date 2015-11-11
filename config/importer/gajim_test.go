@@ -226,7 +226,7 @@ func (s *GajimSuite) Test_GajimImporter_canDoAFullImport(c *C) {
 		OTRAutoStartSession: true,
 		AlwaysEncrypt:       true,
 		AlwaysEncryptWith:   []string{},
-		DontEncryptWith:     []string{"a234@jabber.ccc.de", "a23accccccccc@jabber.ccc.de", "a56@jabber.ccc.de", "aaaaaaqqqq@jabber.ccc.de", "aapaapa@jabber.ccc.de", "ab123@riseup.net", "ab@cddefg.com", "ababab@jabber.ccc.de", "abcd7575@jabber.ccc.de", "abcd@abcdabcd.org", "abcdefa@jabber.ccc.de", "abcdefb@jabber.ccc.de", "abcdefg@jabber.ccc.de", "blueblue@jabber.ccc.de", "ccccc-ddddd@jabber.ccc.de", "foofoofooa@jabber.ccc.de", "ggggg@jabber.ccc.de", "llll@jabber.xxxxxxx.yyy.se", "lllll@nnnnnnnn.im", "nlnln@jabber.ccc.de", "pmpmm@jabber.ccc.de", "rraarraa111@jabber.ccc.de", "rrrrrrrr@jabber.ccc.de", "spspspsps.marttt@jabber.ccc.de", "sysysysysysysy@jabber.ccc.de", "vsvsvs@jabber.ccc.de", "xxxcc@jabber.ccc.de", "zzzzzzz.xxxxx@jabber.ccc.de"},
+		DontEncryptWith:     []string{},
 	})
 
 	c.Assert(*res.Accounts[2], DeepEquals, config.Account{
@@ -236,7 +236,7 @@ func (s *GajimSuite) Test_GajimImporter_canDoAFullImport(c *C) {
 		Port:                5222,
 		AlwaysEncrypt:       true,
 		AlwaysEncryptWith:   []string{},
-		DontEncryptWith:     []string{"aabbccdde@riseup.net", "abcabca@dukgo.com", "abcdefgabcdefabce@dukgo.com", "cthrr@coy.com", "fourfive.sixe@riseup.net", "onetwot@riseup.net", "onetwoth@jabber.calyxinstitute.org"},
+		DontEncryptWith:     []string{},
 		OTRAutoTearDown:     true,
 		OTRAutoAppendTag:    true,
 		OTRAutoStartSession: true,
@@ -311,7 +311,7 @@ func (s *GajimSuite) Test_GajimImporter_canDoAFullImport(c *C) {
 		Port:                5222,
 		Proxies:             []string{"socks5://tor3:tor3@localhost:9050"},
 		AlwaysEncryptWith:   []string{},
-		DontEncryptWith:     []string{"z12312312@jabber.ccc.de", "z1231231@jabber.org", "z123123@riseup.net"},
+		DontEncryptWith:     []string{},
 		RequireTor:          true,
 		OTRAutoTearDown:     true,
 		OTRAutoAppendTag:    true,
@@ -351,7 +351,7 @@ func (s *GajimSuite) Test_GajimImporter_canDoAFullImport(c *C) {
 		Password:            "GDFGDFgsdfgsdfgdDFGSDFGSDFGS",
 		Port:                5222,
 		AlwaysEncryptWith:   []string{},
-		DontEncryptWith:     []string{"abcabc@jabber.org"},
+		DontEncryptWith:     []string{},
 		OTRAutoTearDown:     true,
 		OTRAutoAppendTag:    true,
 		OTRAutoStartSession: true,

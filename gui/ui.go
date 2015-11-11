@@ -256,14 +256,14 @@ func (u *gtkUI) mainWindow() {
 
 	u.connectShortcutsMainWindow(u.window)
 
-	u.window.ShowAll()
-
 	pl, _ := gdk.PixbufLoaderNew()
 	pl.Write(decodedIcon256x256)
 	pl.Close()
 	pixbuf, _ := pl.GetPixbuf()
 	u.window.SetIcon(pixbuf)
 	gtk.WindowSetDefaultIcon(pixbuf)
+
+	u.window.ShowAll()
 }
 
 func (u *gtkUI) quit() {

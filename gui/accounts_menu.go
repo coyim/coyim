@@ -67,6 +67,9 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 }
 
 func (u *gtkUI) buildAccountsMenu() {
+	accountsLock.Lock()
+	defer accountsLock.Unlock()
+
 	submenu, _ := gtk.MenuNew()
 
 	for _, account := range u.accounts {
@@ -96,8 +99,12 @@ func (u *gtkUI) buildAccountsMenu() {
 
 	addAccMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Add..."))
 	addAccMenu.Connect("activate", func() { u.showAddAccountWindow() })
-
 	submenu.Append(addAccMenu)
+
+	importMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Import..."))
+	importMenu.Connect("activate", func() { u.runImporter() })
+	submenu.Append(importMenu)
+
 	submenu.ShowAll()
 
 	u.accountsMenu.SetSubmenu(submenu)

@@ -42,6 +42,18 @@ func (w masterPasswordDefinition) getDefinition() string {
             <property name="homogeneous">false</property>
             <property name="border-width">5</property>
             <child>
+              <object class="GtkButton" id="cancel">
+                <property name="label">$cancelLabel</property>
+                <signal name="clicked" handler="on_cancel_signal" />
+              </object>
+              <packing>
+                <property name="expand">false</property>
+                <property name="fill">true</property>
+                <property name="padding">2</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="save">
                 <property name="label">$saveLabel</property>
                 <signal name="clicked" handler="on_save_signal" />
@@ -52,18 +64,6 @@ func (w masterPasswordDefinition) getDefinition() string {
                 <property name="padding">2</property>
                 <property name="position">0</property>
               </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="cancel">
-                <property name="label">$cancelLabel</property>
-                <signal name="clicked" handler="on_cancel_signal" />
-              </object>
-          <packing>
-            <property name="expand">false</property>
-            <property name="fill">true</property>
-            <property name="padding">2</property>
-            <property name="position">1</property>
-          </packing>
             </child>
           </object>
           <packing>

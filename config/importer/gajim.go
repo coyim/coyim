@@ -316,7 +316,9 @@ func mergeAccountInformation(ac gajimAccountInfo, s gajimOTRSettings, s2 map[str
 		if settings.requireEncryption {
 			res.AlwaysEncryptWith = append(res.AlwaysEncryptWith, peer)
 		} else {
-			res.DontEncryptWith = append(res.DontEncryptWith, peer)
+			if !s.requireEncryption {
+				res.DontEncryptWith = append(res.DontEncryptWith, peer)
+			}
 		}
 	}
 	sort.Sort(byAlpha(res.AlwaysEncryptWith))

@@ -786,7 +786,7 @@ func (s *Session) Close() {
 	s.publish(Disconnected)
 }
 
-// Ping
+// Ping does a Ping
 func (s *Session) Ping() {
 	if s.ConnStatus == DISCONNECTED {
 		return

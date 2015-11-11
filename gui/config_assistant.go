@@ -14,13 +14,20 @@ import (
 type saveAccountFunc func(*config.Account)
 
 func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
+	accountsLock.Lock()
+	defer accountsLock.Unlock()
+
 	u.config.Add(c)
 	u.SaveConfig()
 	u.configLoaded()
 }
 
 func (u *gtkUI) showConfigAssistant() error {
-	assistant, err := buildConfigAssistant(u.addAndSaveAccountConfig)
+	assistant, err := buildConfigAssistant(u.addAndSaveAccountConfig, func() {
+		if u.window != nil {
+			u.window.Emit(accountChangedSignal.String())
+		}
+	})
 	if err != nil {
 		return err
 	}
@@ -29,7 +36,7 @@ func (u *gtkUI) showConfigAssistant() error {
 	return nil
 }
 
-func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
+func buildConfigAssistant(saveFn saveAccountFunc, closeFn func()) (*gtk.Assistant, error) {
 	builder, err := loadBuilderWith("ConfigAssistantDefinition", nil)
 	if err != nil {
 		return nil, err
@@ -159,7 +166,10 @@ func buildConfigAssistant(saveFn saveAccountFunc) (*gtk.Assistant, error) {
 
 		},
 
-		"close-assistant": assistant.Destroy,
+		"close-assistant": func() {
+			closeFn()
+			assistant.Destroy()
+		},
 
 		"create-account": func(assistant *gtk.Assistant) {
 			c, err := config.NewAccount()

@@ -29,6 +29,7 @@ type Accounts struct {
 var loadEntries []func(*Accounts)
 var loadEntryLock = sync.Mutex{}
 
+// WhenLoaded will ensure that the function f is not called until the configuration has been loaded
 func (a *Accounts) WhenLoaded(f func(*Accounts)) {
 	if a != nil {
 		f(a)
@@ -154,6 +155,16 @@ func (a *Accounts) AddNewAccount() (ac *Account, err error) {
 		a.Add(ac)
 	}
 	return
+}
+
+// GetAccount will return the account with the given JID or not OK if it doesn't exist
+func (a *Accounts) GetAccount(jid string) (*Account, bool) {
+	for _, aa := range a.Accounts {
+		if aa.Is(jid) {
+			return aa, true
+		}
+	}
+	return nil, false
 }
 
 // Save will save the account configuration

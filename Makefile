@@ -37,7 +37,7 @@ lint:
 test:
 	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
 
-ci: get default coveralls
+ci: get-u default coveralls
 
 run-cover: clean-cover
 	go test -coverprofile=xmpp.coverprofile ./xmpp
@@ -64,6 +64,9 @@ coveralls: run-cover
 
 get:
 	go get -t -tags $(GTK_BUILD_TAG) ./...
+
+get-u:
+	go get -u -t -tags $(GTK_BUILD_TAG) ./...
 
 deps-u:
 	go get -u github.com/golang/lint/golint

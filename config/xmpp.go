@@ -91,12 +91,8 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 		}
 	}
 
-	dialer, err := buildProxyChain(config.Proxies)
-	if err != nil {
-		return nil, err
-	}
-
 	var certSHA256 []byte
+	var err error
 	if len(config.ServerCertificateSHA256) > 0 {
 		certSHA256, err = hex.DecodeString(config.ServerCertificateSHA256)
 		if err != nil {
@@ -169,6 +165,11 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 	//	defer in.flush()
 	//	defer out.flush()
 	//}
+
+	dialer, err := buildProxyChain(config.Proxies)
+	if err != nil {
+		return nil, err
+	}
 
 	return connect(user, domain, password, xmppConfig, dialer)
 }

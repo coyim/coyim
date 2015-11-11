@@ -213,6 +213,9 @@ func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn,
 	for _, addr := range xmppAddrs {
 		log.Printf("Connecting to %s\n", addr)
 
+		//TODO: It is not clear to me if this follows
+		//RFC 6120, Section 3.2.1, item 6
+		//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution
 		conn, err := dialer.Dial("tcp", addr)
 		if err == nil {
 			return conn, addr, nil
@@ -221,7 +224,6 @@ func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn,
 		log.Printf("Failed to connect to %s: %s\n", addr, err)
 	}
 
-	// should NOT attempt the fallback described in XMPP section 3.2.2
 	return nil, "", errors.New("Failed to connect to XMPP server: exhausted list of XMPP SRV for server")
 }
 
@@ -245,8 +247,12 @@ func (d *Dialer) Dial(config *Config) (*Conn, error) {
 		return nil, err
 	}
 
-	// Fallback to using the domain at default port
+	//RFC 6120, Section 3.2.1, item 9
+	//If the SRV has no response, we fallback to use
+	//the domain at default port
 	if len(xmppAddrs) == 0 {
+		//TODO: in this case, a failure to connect might be recovered using HTTP binding
+		//See: RFC 6120, Section 3.2.2
 		xmppAddrs = []string{d.Domain + "5222"}
 	}
 

@@ -438,6 +438,10 @@ func (u *gtkUI) disconnect(account *account) {
 }
 
 func (u *gtkUI) connect(account *account) {
+	if account.session.CurrentAccount.RequireTor == true {
+		//TODO: detect Tor
+	}
+
 	u.roster.connecting()
 	connectFn := func(password string) {
 		err := account.session.Connect(password, nil)

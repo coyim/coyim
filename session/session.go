@@ -791,6 +791,6 @@ func (s *Session) Ping() {
 	if s.ConnStatus == DISCONNECTED {
 		return
 	}
-	fmt.Println("Publish Ping")
+	/* fmt.Println("Publish Ping") */
 	s.publish(Ping)
 }

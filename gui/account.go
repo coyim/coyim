@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gotk3/gotk3/gtk"
@@ -127,10 +126,8 @@ func (account *account) buildAccountSubmenu() {
 				case session.Disconnected:
 					toggleConnectAndDisconnectMenuItems(t.Session, connectItem, disconnectItem)
 				case session.Ping:
-					fmt.Println("Pinging")
 					//TODO: add check for return message
-					//t.Session.Conn.Ping()
-					fmt.Println("Just Pinged")
+					// t.Session.Conn.Ping()
 				}
 			}
 		}

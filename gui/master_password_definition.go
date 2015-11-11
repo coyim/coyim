@@ -50,7 +50,7 @@ func (w masterPasswordDefinition) getDefinition() string {
                 <property name="expand">false</property>
                 <property name="fill">true</property>
                 <property name="padding">2</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -62,7 +62,7 @@ func (w masterPasswordDefinition) getDefinition() string {
                 <property name="expand">false</property>
                 <property name="fill">true</property>
                 <property name="padding">2</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>

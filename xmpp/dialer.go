@@ -39,16 +39,6 @@ func (d *Dialer) hardcodedServer() bool {
 	return d.ServerAddress != ""
 }
 
-func (d *Dialer) getHardcodedDomain() string {
-	h, _, err := net.SplitHostPort(d.ServerAddress)
-	if err != nil {
-		//TODO: error
-		return ""
-	}
-
-	return h
-}
-
 func (d *Dialer) getJIDLocalpart() string {
 	parts := strings.SplitN(d.JID, "@", 2)
 	return parts[0]
@@ -83,7 +73,7 @@ func (d *Dialer) Dial() (*Conn, error) {
 	//RFC 6120, Section 3.2.3
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.hardcodedServer() {
-		addr := d.getHardcodedDomain()
+		addr := d.ServerAddress
 		conn, err := connectWithProxy(addr, d.Proxy)
 		if err != nil {
 			return nil, err

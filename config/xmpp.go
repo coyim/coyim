@@ -2,7 +2,6 @@ package config
 
 import (
 	"crypto/tls"
-	"crypto/x509"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -110,35 +109,20 @@ func NewXMPPConn(conf *Account, password string, createCallback xmpp.FormCallbac
 		TrustedAddress:          addrTrusted,
 		Archive:                 false,
 		ServerCertificateSHA256: certSHA256,
-		TLSConfig: &tls.Config{
-			MinVersion: tls.VersionTLS10,
-			CipherSuites: []uint16{tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-				tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-				tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-			},
-		},
+		TLSConfig:               newTLSConfig(),
 	}
 
-	if domain == "jabber.ccc.de" {
-		// jabber.ccc.de uses CACert but distros are removing that root
-		// certificate.
-		roots := x509.NewCertPool()
-		caCertRoot, err := x509.ParseCertificate(caCertRootDER)
-		if err == nil {
-			//TODO: UI should have a Alert() method
-			//alert(term, "Temporarily trusting only CACert root for CCC Jabber server")
-			roots.AddCert(caCertRoot)
-			xmppConfig.TLSConfig.RootCAs = roots
-		} else {
-			//TODO
-			//alert(term, "Tried to add CACert root for jabber.ccc.de but failed: "+err.Error())
-		}
+	domainRoot, err := rootCAFor(domain)
+	if err != nil {
+		//alert(term, "Tried to add CACert root for jabber.ccc.de but failed: "+err.Error())
 	}
 
-	//TODO: It may be locking
+	if domainRoot != nil {
+		//alert(term, "Temporarily trusting only CACert root for CCC Jabber server")
+		xmppConfig.TLSConfig.RootCAs = domainRoot
+	}
+
+	//TODO: uncomment me
 	//Also, move this defered functions
 	//if len(conf.RawLogFile) > 0 {
 	//	rawLog, err := os.OpenFile(conf.RawLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
@@ -183,4 +167,17 @@ func NewXMPPConn(conf *Account, password string, createCallback xmpp.FormCallbac
 	}
 
 	return dialer.Dial()
+}
+
+func newTLSConfig() *tls.Config {
+	return &tls.Config{
+		MinVersion: tls.VersionTLS10,
+		CipherSuites: []uint16{tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+		},
+	}
 }

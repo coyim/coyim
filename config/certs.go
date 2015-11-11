@@ -1,5 +1,7 @@
 package config
 
+import "crypto/x509"
+
 // caCertRootDER is the DER-format, root certificate for CACert. Downloaded
 // from http://www.cacert.org/certs/root.der.
 var caCertRootDER = []byte{
@@ -158,4 +160,21 @@ var caCertRootDER = []byte{
 	0xa2, 0x64, 0xf1, 0x24, 0x1c, 0xdc, 0xa1, 0x35, 0x9c, 0x15, 0xb2, 0xd4,
 	0xbc, 0x55, 0x2e, 0x7d, 0x06, 0xf5, 0x9c, 0x0e, 0x55, 0xf4, 0x5a, 0xd6,
 	0x93, 0xda, 0x76, 0xad, 0x25, 0x73, 0x4c, 0xc5, 0x43,
+}
+
+func rootCAFor(domain string) (*x509.CertPool, error) {
+	// jabber.ccc.de uses CACert but distros are removing that root
+	// certificate.
+	if domain == "jabber.ccc.de" {
+		caCertRoot, err := x509.ParseCertificate(caCertRootDER)
+		if err != nil {
+			return nil, err
+		}
+
+		roots := x509.NewCertPool()
+		roots.AddCert(caCertRoot)
+		return roots, nil
+	}
+
+	return nil, nil
 }

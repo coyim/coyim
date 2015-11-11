@@ -23,7 +23,7 @@ matrix:
 before_install: 
   - "export DISPLAY=:99.0"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
-install: make deps-u
+install: make deps
 script: make ci
 
 before_deploy: ci/release

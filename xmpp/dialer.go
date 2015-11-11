@@ -12,28 +12,88 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"strings"
 
 	"golang.org/x/net/proxy"
 )
 
+// A Dialer connects and authenticates to an XMPP server
 type Dialer struct {
-	User     string
-	Domain   string
+	// JID represents the user's "bare JID" as specified in RFC 6120
+	JID string
+
+	// Password used to authenticate to the server
 	Password string
 
+	// ServerAddress associates a particular FQDN with the origin domain specified by the JID.
+	ServerAddress string
+
+	// Proxy configures a proxy used to connect to the server
 	Proxy proxy.Dialer
 
-	HostAlias map[string]string
+	// Config configures the XMPP protocol
+	Config Config
+}
+
+func (d *Dialer) hardcodedServer() bool {
+	return d.ServerAddress != ""
+}
+
+func (d *Dialer) getHardcodedDomain() string {
+	h, _, err := net.SplitHostPort(d.ServerAddress)
+	if err != nil {
+		//TODO: error
+		return ""
+	}
+
+	return h
+}
+
+func (d *Dialer) getJIDLocalpart() string {
+	parts := strings.SplitN(d.JID, "@", 2)
+	return parts[0]
+}
+
+func (d *Dialer) getJIDDomainpart() string {
+	//TODO: remove any existing resourcepart although our doc says it is a bare JID (without resourcepart) but it would be nice
+	parts := strings.SplitN(d.JID, "@", 2)
+	return parts[1]
+}
+
+func (d *Dialer) connect(addr string, conn net.Conn) (*Conn, error) {
+	config := d.Config
+
+	//JID domainpart is separated from localpart because it is used as "origin domain" for the TLS cert
+	return dial(addr,
+		d.getJIDLocalpart(),
+		d.getJIDDomainpart(),
+		d.Password,
+		&config,
+		conn,
+	)
 }
 
 // Dial creates a new connection to an XMPP server with the given proxy
 // and authenticates as the given user.
-func (d *Dialer) Dial(config *Config) (*Conn, error) {
+func (d *Dialer) Dial() (*Conn, error) {
 	if d.Proxy == nil {
 		d.Proxy = proxy.Direct
 	}
 
-	xmppAddrs, err := ResolveProxy(d.Proxy, d.Domain)
+	//RFC 6120, Section 3.2.3
+	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
+	if d.hardcodedServer() {
+		addr := d.getHardcodedDomain()
+		conn, err := connectWithProxy(addr, d.Proxy)
+		if err != nil {
+			return nil, err
+		}
+
+		return d.connect(addr, conn)
+	}
+
+	addr := d.getJIDDomainpart()
+	xmppAddrs, err := ResolveProxy(d.Proxy, addr)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +104,7 @@ func (d *Dialer) Dial(config *Config) (*Conn, error) {
 	if len(xmppAddrs) == 0 {
 		//TODO: in this case, a failure to connect might be recovered using HTTP binding
 		//See: RFC 6120, Section 3.2.2
-		xmppAddrs = []string{d.Domain + "5222"}
+		xmppAddrs = []string{net.JoinHostPort(addr, "5222")}
 	}
 
 	conn, addr, err := connectToFirstAvailable(xmppAddrs, d.Proxy)
@@ -52,7 +112,7 @@ func (d *Dialer) Dial(config *Config) (*Conn, error) {
 		return nil, err
 	}
 
-	return dial(addr, d.User, d.Domain, d.Password, config, conn)
+	return d.connect(addr, conn)
 }
 
 func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn, string, error) {
@@ -61,20 +121,28 @@ func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn,
 	}
 
 	for _, addr := range xmppAddrs {
-		log.Printf("Connecting to %s\n", addr)
-
-		//TODO: It is not clear to me if this follows
-		//RFC 6120, Section 3.2.1, item 6
-		//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution
-		conn, err := dialer.Dial("tcp", addr)
+		conn, err := connectWithProxy(addr, dialer)
 		if err == nil {
 			return conn, addr, nil
 		}
-
-		log.Printf("Failed to connect to %s: %s\n", addr, err)
 	}
 
 	return nil, "", errors.New("Failed to connect to XMPP server: exhausted list of XMPP SRV for server")
+}
+
+func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err error) {
+	log.Printf("Connecting to %s\n", addr)
+
+	//TODO: It is not clear to me if this follows
+	//RFC 6120, Section 3.2.1, item 6
+	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution
+	conn, err = dialer.Dial("tcp", addr)
+	if err != nil {
+		log.Printf("Failed to connect to %s: %s\n", addr, err)
+		return
+	}
+
+	return
 }
 
 func dial(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {

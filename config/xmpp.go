@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/url"
@@ -73,28 +74,27 @@ func buildProxyChain(proxies []string) (dialer proxy.Dialer, err error) {
 }
 
 // NewXMPPConn creates a new XMPP connection based on the given information
-func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {
-	parts := strings.SplitN(config.Account, "@", 2)
+func NewXMPPConn(conf *Account, password string, createCallback xmpp.FormCallback, logger io.Writer) (*xmpp.Conn, error) {
+	parts := strings.SplitN(conf.Account, "@", 2)
 	if len(parts) != 2 {
-		return nil, errors.New("invalid username (want user@domain): " + config.Account)
+		return nil, errors.New("invalid username (want user@domain): " + conf.Account)
 	}
 
-	user := parts[0]
 	domain := parts[1]
 	addrTrusted := false
 
-	if len(config.Server) > 0 && config.Port > 0 {
+	if len(conf.Server) > 0 && conf.Port > 0 {
 		addrTrusted = true
 	} else {
-		if len(config.Proxies) > 0 && len(detectTor()) == 0 {
+		if len(conf.Proxies) > 0 && len(detectTor()) == 0 {
 			return nil, errors.New("Cannot connect via a proxy without Server and Port being set in the config file as an SRV lookup would leak information.")
 		}
 	}
 
 	var certSHA256 []byte
 	var err error
-	if len(config.ServerCertificateSHA256) > 0 {
-		certSHA256, err = hex.DecodeString(config.ServerCertificateSHA256)
+	if len(conf.ServerCertificateSHA256) > 0 {
+		certSHA256, err = hex.DecodeString(conf.ServerCertificateSHA256)
 		if err != nil {
 			return nil, errors.New("Failed to parse ServerCertificateSHA256 (should be hex string): " + err.Error())
 		}
@@ -104,7 +104,7 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 		}
 	}
 
-	xmppConfig := &xmpp.Config{
+	xmppConfig := xmpp.Config{
 		Log:                     logger,
 		CreateCallback:          createCallback,
 		TrustedAddress:          addrTrusted,
@@ -140,8 +140,8 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 
 	//TODO: It may be locking
 	//Also, move this defered functions
-	//if len(config.RawLogFile) > 0 {
-	//	rawLog, err := os.OpenFile(config.RawLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+	//if len(conf.RawLogFile) > 0 {
+	//	rawLog, err := os.OpenFile(conf.RawLogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	//	if err != nil {
 	//		return nil, errors.New("Failed to open raw log file: " + err.Error())
 	//	}
@@ -166,23 +166,21 @@ func NewXMPPConn(config *Account, password string, createCallback xmpp.FormCallb
 	//	defer out.flush()
 	//}
 
-	dialer, err := buildProxyChain(config.Proxies)
+	proxy, err := buildProxyChain(conf.Proxies)
 	if err != nil {
 		return nil, err
 	}
 
-	return connect(user, domain, password, xmppConfig, dialer)
-}
-
-func connect(user, domain, password string, xmppConfig *xmpp.Config, tor proxy.Dialer) (*xmpp.Conn, error) {
-	// TODO: identify is the domain has a hidden service and use it
-	// We do not need to separate user and domain here
 	dialer := xmpp.Dialer{
-		User:     user,
+		JID:      conf.Account,
 		Password: password,
-		Domain:   domain,
-		Proxy:    tor,
+		Proxy:    proxy,
+		Config:   xmppConfig,
 	}
 
-	return dialer.Dial(xmppConfig)
+	if len(conf.Server) > 0 && conf.Port > 0 {
+		dialer.ServerAddress = fmt.Sprintf("%s:%d", conf.Server, conf.Port)
+	}
+
+	return dialer.Dial()
 }

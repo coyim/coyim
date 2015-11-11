@@ -272,38 +272,27 @@ func (u *gtkUI) quit() {
 }
 
 func (*gtkUI) askForPassword(connect func(string)) {
-	reg := createWidgetRegistry()
-	buttonID := "connect"
-	dialog := dialog{
-		title:    i18n.Local("Password"),
-		position: gtk.WIN_POS_CENTER,
-		id:       "dialog",
-		content: []creatable{
-			label{text: i18n.Local("Password")},
-			entry{
-				editable:   true,
-				visibility: false,
-				focused:    true,
-				id:         "password",
-				onActivate: onPasswordDialogClicked(reg, connect),
-			},
-			button{
-				id:        buttonID,
-				text:      i18n.Local("Connect"),
-				onClicked: onPasswordDialogClicked(reg, connect),
-			},
-		},
-	}
-	dialog.createWithDefault(reg, buttonID)
-	reg.dialogShowAll("dialog")
-}
+	vars := make(map[string]string)
+	vars["$title"] = i18n.Local("Password")
+	vars["$passwordLabel"] = i18n.Local("Password")
+	vars["$saveLabel"] = i18n.Local("Connect")
 
-func onPasswordDialogClicked(reg *widgetRegistry, connect func(string)) func() {
-	return func() {
-		password := reg.getText("password")
-		go connect(password)
-		reg.dialogDestroy("dialog")
-	}
+	builder, _ := loadBuilderWith("AskForPasswordDefinition", vars)
+
+	dialogObj, _ := builder.GetObject("AskForPassword")
+	dialog := dialogObj.(*gtk.Dialog)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_save_signal": func() {
+			passwordObj, _ := builder.GetObject("password")
+			passwordEntry := passwordObj.(*gtk.Entry)
+			password, _ := passwordEntry.GetText()
+			go connect(password)
+			dialog.Destroy()
+		},
+	})
+
+	dialog.ShowAll()
 }
 
 func (u *gtkUI) shouldViewAccounts() bool {
@@ -438,10 +427,6 @@ func (u *gtkUI) disconnect(account *account) {
 }
 
 func (u *gtkUI) connect(account *account) {
-	if account.session.CurrentAccount.RequireTor == true {
-		//TODO: detect Tor
-	}
-
 	u.roster.connecting()
 	connectFn := func(password string) {
 		err := account.session.Connect(password, nil)

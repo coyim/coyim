@@ -81,6 +81,8 @@ func getDefinition(uiName string) uiDefinition {
 		panic(fmt.Sprintf("No definition found for %s", uiName))
 	case "MainDefinition":
 		return new(mainDefinition)
+	case "AddContactDefinition":
+		return new(accountDetailsDefinition)
 	case "AccountDetailsDefinition":
 		return new(accountDetailsDefinition)
 	case "MasterPasswordDefinition":

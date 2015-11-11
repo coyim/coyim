@@ -20,13 +20,16 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 }
 
 func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer string) error) *gtk.Dialog {
-	dialog, _ := gtk.DialogNew()
-	dialog.SetTitle(i18n.Local("Add contact"))
-	dialog.SetPosition(gtk.WIN_POS_CENTER)
-	vbox, _ := dialog.GetContentArea()
+	vars := make(map[string]string)
+	vars["$title"] = i18n.Local("Add contact")
+	vars["$accountsLabel"] = i18n.Local("Account")
+	vars["$addressLabel"] = i18n.Local("Account to add (for example: arnoldsPub@jabber.ccc.de)")
+	vars["$addLabel"] = i18n.Local("Add")
 
-	accountLabel, _ := gtk.LabelNew(i18n.Local("Account"))
-	vbox.Add(accountLabel)
+	builder, loadErr := loadBuilderWith("AddContactDefinition", vars)
+	if loadErr != nil {
+		panic(loadErr.Error())
+	}
 
 	model, _ := gtk.ListStoreNew(
 		glib.TYPE_STRING, // account name
@@ -39,52 +42,41 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 		model.Set(iter, []int{0, 1}, []interface{}{acc.session.CurrentAccount.Account, acc.session.CurrentAccount.ID()})
 	}
 
-	accountInput, _ := gtk.ComboBoxNewWithModel(&model.TreeModel)
+	accountsObj, _ := builder.GetObject("accounts")
+	accountInput, _ := accountsObj.(*gtk.ComboBox)
+	accountInput.SetModel(&model.TreeModel)
+
+	accountObj, _ := builder.GetObject("address")
+	contactInput := accountObj.(*gtk.Entry)
+
 	if len(accounts) > 0 {
 		accountInput.SetActive(0)
 	}
-
-	vbox.Add(accountInput)
 
 	renderer, _ := gtk.CellRendererTextNew()
 	accountInput.PackStart(renderer, true)
 	accountInput.AddAttribute(renderer, "text", 0)
 
-	l, _ := gtk.LabelNew(i18n.Local("Account to add (for example: arnoldsPub@jabber.ccc.de)"))
-	vbox.Add(l)
+	dialogObj, _ := builder.GetObject("AddContact")
+	dialog := dialogObj.(*gtk.Dialog)
 
-	contactInput, _ := gtk.EntryNew()
-	contactInput.SetEditable(true)
-	vbox.Add(contactInput)
+	builder.ConnectSignals(map[string]interface{}{
+		"on_save_signal": func() {
+			defer dialog.Destroy()
 
-	//TODO: disable the add button until the form has all the data
-	//- an account selected
-	//- an ID
-	button, _ := gtk.ButtonNewWithLabel(i18n.Local("Add"))
-	vbox.Add(button)
+			//TODO: validate contact
+			contact, _ := contactInput.GetText()
 
-	onAdd := func() {
-		defer dialog.Destroy()
+			//TODO error
+			iter, _ := accountInput.GetActiveIter()
 
-		//TODO: validate contact
-		contact, _ := contactInput.GetText()
+			val, _ := model.GetValue(iter, 1)
+			accountID, _ := val.GetString()
 
-		//TODO error
-		iter, _ := accountInput.GetActiveIter()
-
-		val, _ := model.GetValue(iter, 1)
-		accountID, _ := val.GetString()
-
-		//TODO error
-		sendSubscription(accountID, contact)
-	}
-
-	button.SetCanDefault(true)
-	contactInput.SetActivatesDefault(true)
-	dialog.SetDefault(button)
-
-	button.Connect("clicked", onAdd)
-	contactInput.GrabFocus()
+			//TODO error
+			sendSubscription(accountID, contact)
+		},
+	})
 
 	return dialog
 }

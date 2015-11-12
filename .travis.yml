@@ -3,7 +3,6 @@ sudo: required
 language: go
 
 go:
-  - tip
   - 1.4.2
 
 matrix:

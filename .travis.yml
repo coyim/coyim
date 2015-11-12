@@ -3,6 +3,7 @@ sudo: required
 language: go
 
 go:
+  - tip
   - 1.4.2
 
 matrix:
@@ -17,6 +18,7 @@ matrix:
       rvm: 1.9.3
   allow_failures:
     - os: osx
+    - go: tip
   fast_finish: true
 
 before_install: 

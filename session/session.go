@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"os/exec"
 	"sync"
 	"time"
@@ -63,6 +64,8 @@ type Session struct {
 	SaveConfiguration func()
 
 	GroupDelimiter string
+
+	xmppLogger io.Writer
 }
 
 // NewSession creates a new session from the given config
@@ -76,11 +79,31 @@ func NewSession(c *config.Accounts, cu *config.Account) *Session {
 		OtrEventHandler: make(map[string]*event.OtrEventHandler),
 		PrivateKey:      new(otr3.PrivateKey),
 		LastActionTime:  time.Now(),
+
+		xmppLogger: openLogFile(c.RawLogFile),
 	}
 
 	s.PrivateKey.Parse(cu.PrivateKey)
 
 	return s
+}
+
+//TODO: error
+func openLogFile(logFile string) io.Writer {
+	if len(logFile) == 0 {
+		return nil
+	}
+
+	log.Println("Logging XMPP messages to:", logFile)
+
+	rawLog, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+	if err != nil {
+		log.Println("Failed to open log file.", err)
+		//return nil, errors.New("Failed to open raw log file: " + err.Error())
+		return nil
+	}
+
+	return rawLog
 }
 
 func (s *Session) info(m string) {
@@ -685,7 +708,16 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 		s.ConnectionLogger = newLogger()
 	}
 
-	conn, err := config.NewXMPPConn(s.CurrentAccount, password, registerCallback, s.ConnectionLogger)
+	conf := s.CurrentAccount
+	policy := config.ConnectionPolicy{
+		RequireTor:       conf.RequireTor,
+		UseHiddenService: true,
+
+		Logger:     s.ConnectionLogger,
+		XMPPLogger: s.xmppLogger,
+	}
+
+	conn, err := policy.Connect(password, conf)
 	if err != nil {
 		s.alert(err.Error())
 		s.ConnStatus = DISCONNECTED

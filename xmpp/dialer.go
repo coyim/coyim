@@ -50,6 +50,15 @@ func (d *Dialer) getJIDDomainpart() string {
 	return parts[1]
 }
 
+// GetServer returns the "hardcoded" server chosen if available, otherwise returns the domainpart from the JID. The server contains port information
+func (d *Dialer) GetServer() (string, error) {
+	if d.hardcodedServer() {
+		return d.ServerAddress, nil
+	}
+
+	return net.JoinHostPort(d.getJIDDomainpart(), "5222"), nil
+}
+
 func (d *Dialer) connect(addr string, conn net.Conn) (*Conn, error) {
 	config := d.Config
 
@@ -63,6 +72,12 @@ func (d *Dialer) connect(addr string, conn net.Conn) (*Conn, error) {
 	)
 }
 
+// RegisterAccount registers an account on the server. The formCallback is used to handle XMPP forms.
+func (d *Dialer) RegisterAccount(formCallback FormCallback) (*Conn, error) {
+	d.Config.CreateCallback = formCallback
+	return d.Dial()
+}
+
 // Dial creates a new connection to an XMPP server with the given proxy
 // and authenticates as the given user.
 func (d *Dialer) Dial() (*Conn, error) {
@@ -73,6 +88,8 @@ func (d *Dialer) Dial() (*Conn, error) {
 	//RFC 6120, Section 3.2.3
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.hardcodedServer() {
+		d.Config.TrustedAddress = true
+
 		addr := d.ServerAddress
 		conn, err := connectWithProxy(addr, d.Proxy)
 		if err != nil {
@@ -135,6 +152,7 @@ func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err erro
 	return
 }
 
+//TODO: read the RFC and find a better name for this
 func dial(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {
 	c = new(Conn)
 	c.config = config

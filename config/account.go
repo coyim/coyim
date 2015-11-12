@@ -2,6 +2,8 @@ package config
 
 import (
 	"crypto/rand"
+	"encoding/hex"
+	"errors"
 	"log"
 	"strconv"
 	"time"
@@ -32,6 +34,23 @@ type Account struct {
 	DontEncryptWith         []string `json:",omitempty"`
 	InstanceTag             uint32   `json:",omitempty"`
 	ConnectAutomatically    bool
+}
+
+func (a *Account) ServerCertificate() ([]byte, error) {
+	var certSHA256 []byte
+	var err error
+	if len(a.ServerCertificateSHA256) > 0 {
+		certSHA256, err = hex.DecodeString(a.ServerCertificateSHA256)
+		if err != nil {
+			return nil, errors.New("Failed to parse ServerCertificateSHA256 (should be hex string): " + err.Error())
+		}
+
+		if len(certSHA256) != 32 {
+			return nil, errors.New("ServerCertificateSHA256 is not 32 bytes long")
+		}
+	}
+
+	return certSHA256, err
 }
 
 // Is returns true if this account represents the same identity as the given JID

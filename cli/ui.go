@@ -856,7 +856,7 @@ func enroll(conf *config.Accounts, currentConf *config.Account, term *terminal.T
 	currentConf.OTRAutoStartSession = true
 	currentConf.OTRAutoTearDown = false
 
-	// Autoconfigure well known Tor hidden services.
+	// Force Tor for servers with well known Tor hidden services.
 	if _, ok := servers.Get(domain); ok && currentConf.RequireTor {
 		const torProxyURL = "socks5://127.0.0.1:9050"
 		info(term, "It appears that you are using a well known server and we will use its Tor hidden service to connect.")

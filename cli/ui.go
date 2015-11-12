@@ -851,18 +851,16 @@ func enroll(conf *config.Accounts, currentConf *config.Account, term *terminal.T
 			break
 		}
 	}
-	currentConf.PrivateKey = priv.Serialize()
 
+	currentConf.PrivateKey = priv.Serialize()
 	currentConf.OTRAutoAppendTag = true
 	currentConf.OTRAutoStartSession = true
 	currentConf.OTRAutoTearDown = false
 
 	// Autoconfigure well known Tor hidden services.
-	if hiddenService, ok := servers.Get(domain); ok && currentConf.RequireTor {
+	if _, ok := servers.Get(domain); ok && currentConf.RequireTor {
 		const torProxyURL = "socks5://127.0.0.1:9050"
 		info(term, "It appears that you are using a well known server and we will use its Tor hidden service to connect.")
-		currentConf.Server = hiddenService.Onion
-		currentConf.Port = 5222
 		currentConf.Proxies = []string{torProxyURL}
 		term.SetPrompt("> ")
 		return true

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"net/url"
 	"os"
 	"os/signal"
@@ -894,28 +893,6 @@ func enroll(conf *config.Accounts, currentConf *config.Account, term *terminal.T
 			continue
 		}
 		break
-	}
-
-	if len(proxyStr) > 0 {
-		currentConf.Proxies = []string{proxyStr}
-
-		//TODO: Remove me from here. We make SRV lookup over Tor on each connection
-		u, _ := url.Parse(proxyStr)
-		dialer, _ := proxy.FromURL(u, proxy.Direct)
-
-		info(term, "Performing SRV lookup using proxy")
-
-		var hostports []string
-		if hostports, err = xmpp.ResolveProxy(dialer, domain); err != nil {
-			alert(term, "SRV lookup failed: "+err.Error())
-			return false
-		}
-
-		host, port, _ := net.SplitHostPort(hostports[0])
-		currentConf.Server = host
-		currentConf.Port, _ = strconv.Atoi(port)
-
-		info(term, "Resolved "+currentConf.Server+":"+strconv.Itoa(currentConf.Port))
 	}
 
 	term.SetPrompt("> ")

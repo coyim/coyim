@@ -77,6 +77,8 @@ func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 	switch event {
 	case otr3.GoneSecure, otr3.StillSecure:
 		e.securityChange = NewKeys
+	case otr3.GoneInsecure:
+		e.securityChange = ConversationEnded
 	}
 }
 
@@ -100,9 +102,6 @@ func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent in
 // HandleMessageEvent is called to handle a specific message event
 func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error) {
 	log.Printf("HandleMessageEvent(%s, %s, %v)", event.String(), message, err)
-	if event == otr3.MessageEventConnectionEnded {
-		e.securityChange = ConversationEnded
-	}
 }
 
 // ConsumeSecurityChange is called to get the current security change and forget the old one

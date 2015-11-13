@@ -786,6 +786,7 @@ func (s *Session) TerminateConversationWith(peer string) error {
 		}
 	}
 
+	//TODO: add wipe for conversation
 	//conversation.Wipe()
 
 	return nil

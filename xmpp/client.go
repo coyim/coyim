@@ -17,6 +17,21 @@ type Extension struct {
 	Body    string `xml:",innerxml"`
 }
 
+// StanzaError implements RFC 3920, section 9.3.
+type StanzaError struct {
+	// cancel -- do not retry (the error is unrecoverable)
+	// continue -- proceed (the condition was only a warning)
+	// modify -- retry after changing the data sent
+	// auth -- retry after providing credentials
+	// wait -- retry after waiting (the error is temporary)
+	Type string `xml:"type,attr"`
+
+	Condition struct {
+		XMLName xml.Name
+		Body    string `xml:",innerxml"`
+	} `xml:",any"`
+}
+
 // ClientMessage implements RFC 3921  B.1  jabber:client
 type ClientMessage struct {
 	XMLName xml.Name `xml:"jabber:client message"`
@@ -31,6 +46,8 @@ type ClientMessage struct {
 	Body    string `xml:"body"`
 	Thread  string `xml:"thread"`
 	Delay   *Delay `xml:"delay,omitempty"`
+
+	Error *StanzaError `xml:"error"`
 
 	Extensions `xml:",any,omitempty"`
 }

@@ -424,8 +424,10 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 
 	from := xmpp.RemoveResourceFromJid(stanza.From)
 
-	if stanza.Type == "error" {
-		s.alert("Error reported from " + from + ": " + stanza.Body)
+	//TODO: investigate which errors are recoverable
+	//https://xmpp.org/rfcs/rfc3920.html#stanzas-error
+	if stanza.Type == "error" && stanza.Error != nil {
+		s.alert(fmt.Sprintf("Error reported from %s: %#v", from, stanza.Error))
 		return
 	}
 

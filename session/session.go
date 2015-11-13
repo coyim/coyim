@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"os"
 	"os/exec"
 	"sync"
@@ -630,6 +631,45 @@ func (s *Session) WatchTimeout() {
 	}
 }
 
+// WatchPing watches pings
+func (s *Session) WatchPing() {
+	for {
+		time.Sleep(time.Duration(rand.Int31n(100)) * 100 * time.Millisecond)
+		if s.ConnStatus != CONNECTED {
+			return
+		}
+		pongReply, _, err := s.Conn.SendPing()
+		if err != nil {
+			s.alert("Ping error: " + err.Error())
+			return
+		}
+		go func() {
+			for {
+				if s.ConnStatus != CONNECTED {
+					return
+				}
+				select {
+				case pongStanza, ok := <-pongReply:
+					if !ok {
+						s.alert("Failed to ping server: " + err.Error())
+						return
+					}
+
+					err := xmpp.ParsePong(pongStanza)
+
+					if err != nil {
+						s.alert("Failed to parse ping: " + err.Error())
+						return
+					}
+					s.Conn.ReceivePong()
+
+					return
+				}
+			}
+		}()
+	}
+}
+
 const defaultDelimiter = "::"
 
 // WatchRosterEvents waits for roster events
@@ -733,6 +773,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	s.publish(Connected)
 
 	go s.WatchTimeout()
+	go s.WatchPing()
 	go s.WatchRosterEvents()
 	go s.WatchStanzas()
 

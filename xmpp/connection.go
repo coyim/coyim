@@ -14,6 +14,7 @@ import (
 	"reflect"
 	"strconv"
 	"sync"
+	"time"
 )
 
 // Conn represents a connection to an XMPP server.
@@ -30,6 +31,9 @@ type Conn struct {
 	lock          sync.Mutex
 	inflights     map[Cookie]inflight
 	customStorage map[xml.Name]reflect.Type
+
+	lastPingRequest  time.Time
+	lastPongResponse time.Time
 }
 
 // NewConn creates a new connection
@@ -125,11 +129,5 @@ func (c *Conn) Send(to, msg string) error {
 		archive = "<nos:x xmlns:nos='google:nosave' value='enabled'/><arc:record xmlns:arc='http://jabber.org/protocol/archive' otr='require'/>"
 	}
 	_, err := fmt.Fprintf(c.out, "<message to='%s' from='%s' type='chat'><body>%s</body>%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive)
-	return err
-}
-
-// Ping sends an IQ message to the given user.
-func (c *Conn) Ping() error {
-	_, err := fmt.Fprintf(c.out, "<iq from='%s' type='chat'><ping xmlns='urn:xmpp:ping'/></iq>", xmlEscape(c.jid))
 	return err
 }

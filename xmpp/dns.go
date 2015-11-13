@@ -39,10 +39,12 @@ func massage(cname string, addrs []*net.SRV, err error) ([]string, error) {
 
 	ret := make([]string, 0, len(addrs))
 	for _, addr := range addrs {
-		ret = append(ret, fmt.Sprintf("%s:%d",
+		hostport := net.JoinHostPort(
 			strings.TrimSuffix(addr.Target, "."),
-			addr.Port,
-		))
+			strconv.Itoa(int(addr.Port)),
+		)
+
+		ret = append(ret, hostport)
 	}
 
 	return ret, nil

@@ -119,9 +119,7 @@ func (a *Accounts) tryLoad(ks KeySupplier) error {
 // NewAccount creates a new account
 func NewAccount() (*Account, error) {
 	var torProxy []string
-	torAddress := detectTor()
-
-	if len(torAddress) != 0 {
+	if torAddress, ok := DetectTor(); ok {
 		torProxy = []string{newTorProxy(torAddress)}
 	}
 

@@ -19,7 +19,7 @@ var (
 
 // DetectTor detects a Tor service running in the machine.
 func DetectTor() (string, bool) {
-	detectedTorAddress = ""
+	scannedForTor = false
 	detectTor()
 
 	return detectedTorAddress, len(detectedTorAddress) != 0

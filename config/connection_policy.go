@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	errTorNotRunning = errors.New("Tor is not running")
+	ErrTorNotRunning = errors.New("Tor is not running")
 )
 
 // ConnectionPolicy represents a policy to connect to XMPP servers
@@ -39,8 +39,10 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 
 	domainpart := jidParts[1]
 
-	if p.RequireTor && len(detectTor()) == 0 {
-		return nil, errTorNotRunning
+	_, torDetected := DetectTor()
+	if p.RequireTor && !torDetected {
+		scannedForTor = false
+		return nil, ErrTorNotRunning
 	}
 
 	certSHA256, err := conf.ServerCertificate()

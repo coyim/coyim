@@ -426,10 +426,28 @@ func (u *gtkUI) disconnect(account *account) {
 	account.session.Close()
 }
 
+func (u *gtkUI) alertTorIsNotRunning() {
+	builder, err := loadBuilderWith("TorNotRunningDef", nil)
+	if err != nil {
+		return
+	}
+
+	obj, _ := builder.GetObject("TorNotRunningDialog")
+	dialog := obj.(*gtk.Dialog)
+
+	dialog.SetTransientFor(u.window)
+	dialog.ShowAll()
+}
+
 func (u *gtkUI) connect(account *account) {
 	u.roster.connecting()
 	connectFn := func(password string) {
 		err := account.session.Connect(password, nil)
+
+		if err == config.ErrTorNotRunning {
+			glib.IdleAdd(u.alertTorIsNotRunning)
+		}
+
 		if err != nil {
 			return
 		}

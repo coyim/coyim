@@ -91,6 +91,8 @@ func getDefinition(uiName string) uiDefinition {
 		return new(conversationDefinition)
 	case "ConfigAssistantDefinition":
 		return new(configAssistantDefinition)
+	case "TorNotRunningDef":
+		return new(torNotRunningDef)
 	case "TestDefinition":
 		return new(testDefinition)
 	}

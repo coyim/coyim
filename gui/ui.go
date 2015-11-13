@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -440,6 +441,47 @@ func (u *gtkUI) alertTorIsNotRunning() {
 	dialog.ShowAll()
 }
 
+func (u *gtkUI) askForServerDetails(conf *config.Account, password string, connectFn func(string)) {
+	builder, err := loadBuilderWith("ConnectionSettingsDialogDef", nil)
+	if err != nil {
+		return
+	}
+
+	obj, _ := builder.GetObject("ConnectionSettingsDialog")
+	dialog := obj.(*gtk.Dialog)
+
+	obj, _ = builder.GetObject("server")
+	serverEntry := obj.(*gtk.Entry)
+
+	obj, _ = builder.GetObject("port")
+	portEntry := obj.(*gtk.Entry)
+
+	if conf.Port == 0 {
+		conf.Port = 5222
+	}
+
+	serverEntry.SetText(conf.Server)
+	portEntry.SetText(strconv.Itoa(conf.Port))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"reconnect": func() {
+			//TODO: validate
+			conf.Server, _ = serverEntry.GetText()
+
+			p, _ := portEntry.GetText()
+			conf.Port, _ = strconv.Atoi(p)
+
+			//TODO: save
+
+			go connectFn(password)
+			dialog.Destroy()
+		},
+	})
+
+	dialog.SetTransientFor(u.window)
+	dialog.ShowAll()
+}
+
 func (u *gtkUI) connect(account *account) {
 	u.roster.connecting()
 
@@ -452,7 +494,13 @@ func (u *gtkUI) connect(account *account) {
 		}
 
 		if err == xmpp.ErrConnectionFailed {
-			//TODO ask for domain and port
+			glib.IdleAdd(func() {
+				u.askForServerDetails(
+					account.session.CurrentAccount,
+					password,
+					connectFn,
+				)
+			})
 		}
 
 		if err == xmpp.ErrAuthenticationFailed {

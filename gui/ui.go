@@ -14,6 +14,7 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -446,6 +447,14 @@ func (u *gtkUI) connect(account *account) {
 
 		if err == config.ErrTorNotRunning {
 			glib.IdleAdd(u.alertTorIsNotRunning)
+		}
+
+		if err == xmpp.ErrConnectionFailed {
+			//TODO ask for domain and port
+		}
+
+		if err == xmpp.ErrAuthenticationFailed {
+			//TODO ask for password
 		}
 
 		if err != nil {

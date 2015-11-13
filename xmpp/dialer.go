@@ -17,6 +17,13 @@ import (
 	"golang.org/x/net/proxy"
 )
 
+var (
+	// ErrConnectionFailed indicates a failure to connect to the server provided.
+	ErrConnectionFailed = errors.New("could not connect to XMPP server")
+	// ErrAuthenticationFailed indicates a failure to authenticate to the server with the user and password provided.
+	ErrAuthenticationFailed = errors.New("could not authenticate to the XMPP server")
+)
+
 // A Dialer connects and authenticates to an XMPP server
 type Dialer struct {
 	// JID represents the user's "bare JID" as specified in RFC 6120
@@ -134,7 +141,7 @@ func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn,
 		}
 	}
 
-	return nil, "", errors.New("Failed to connect to XMPP server: exhausted list of XMPP SRV for server")
+	return nil, "", ErrConnectionFailed
 }
 
 func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err error) {
@@ -186,7 +193,7 @@ func dial(address, user, domain, password string, config *Config, conn net.Conn)
 	}
 
 	if err := authenticate(features, user, password, config, c); err != nil {
-		return nil, err
+		return nil, ErrAuthenticationFailed
 	}
 
 	if features, err = c.getFeatures(domain); err != nil {

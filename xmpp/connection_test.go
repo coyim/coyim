@@ -237,7 +237,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromAuthenticateIfSkipTLS(c 
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: true}
 	_, err := dial("addr", "user", "domain", "pass", config, conn)
-	c.Assert(err.Error(), Equals, "xmpp: PLAIN authentication is not an option")
+	c.Assert(err, Equals, ErrAuthenticationFailed)
 }
 
 func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C) {
@@ -599,7 +599,7 @@ func (s *ConnectionXmppSuite) Test_Dial_continuesWithAuthenticationAfterRegister
 		return nil
 	}}
 	_, err := dial("addr", "user", "domain", "pass", config, conn)
-	c.Assert(err.Error(), Equals, "expected <success> or <failure>, got <> in ")
+	c.Assert(err, Equals, ErrAuthenticationFailed)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
@@ -627,7 +627,7 @@ func (s *ConnectionXmppSuite) Test_Dial_continuesWithAuthenticationAfterRegister
 		return nil
 	}}
 	_, err := dial("addr", "user", "domain", "pass", config, conn)
-	c.Assert(err.Error(), Equals, "expected <success> or <failure>, got <> in ")
+	c.Assert(err, Equals, ErrAuthenticationFailed)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
@@ -655,7 +655,7 @@ func (s *ConnectionXmppSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 		return nil
 	}}
 	_, err := dial("addr", "user", "domain", "pass", config, conn)
-	c.Assert(err.Error(), Equals, "expected <success> or <failure>, got <> in ")
+	c.Assert(err, Equals, ErrAuthenticationFailed)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
@@ -694,7 +694,7 @@ func (s *ConnectionXmppSuite) Test_Dial_runsForm(c *C) {
 		return nil
 	}}
 	_, err := dial("addr", "user", "domain", "pass", config, conn)
-	c.Assert(err.Error(), Equals, "expected <success> or <failure>, got <> in ")
+	c.Assert(err, Equals, ErrAuthenticationFailed)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+

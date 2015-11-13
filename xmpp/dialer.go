@@ -108,7 +108,12 @@ func (d *Dialer) Dial() (*Conn, error) {
 
 	addr := d.getJIDDomainpart()
 	xmppAddrs, err := ResolveProxy(d.Proxy, addr)
-	if err != nil {
+
+	//Every other error means
+	//"the initiating entity [did] not receive a response to its SRV query" and
+	//we should use the fallback method
+	//See RFC 6120, Section 3.2.1, item 9
+	if err == ErrServiceNotAvailable {
 		return nil, err
 	}
 

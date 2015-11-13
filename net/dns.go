@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net"
 	"sort"
+	"strconv"
 
 	"github.com/miekg/dns"
 	"golang.org/x/net/proxy"
@@ -35,7 +36,6 @@ func LookupSRVWith(dialer proxy.Dialer, dnsServer, service, proto, name string) 
 	}
 
 	addrs = convertAnswersToSRV(r.Answer)
-
 	return
 }
 
@@ -60,7 +60,7 @@ func exchange(conn *dns.Conn, m *dns.Msg) (r *dns.Msg, err error) {
 	}
 
 	if r.Rcode != dns.RcodeSuccess {
-		err = errors.New("got return: " + string(r.Rcode))
+		err = errors.New("got return: " + strconv.Itoa(r.Rcode))
 	}
 
 	return

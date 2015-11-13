@@ -8,12 +8,17 @@ package xmpp
 
 import (
 	"errors"
-	"fmt"
 	"net"
+	"strconv"
 	"strings"
 
 	ourNet "github.com/twstrike/coyim/net"
 	"golang.org/x/net/proxy"
+)
+
+var (
+	// ErrServiceNotAvailable means that the service is decidedly not available at this domain
+	ErrServiceNotAvailable = errors.New("service not available")
 )
 
 // Resolve performs a DNS SRV lookup for the XMPP server that serves the given
@@ -34,7 +39,7 @@ func massage(cname string, addrs []*net.SRV, err error) ([]string, error) {
 
 	// https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-prefer
 	if len(addrs) == 1 && addrs[0].Target == "." {
-		return nil, errors.New("the service is decidedly not available at this domain")
+		return nil, ErrServiceNotAvailable
 	}
 
 	ret := make([]string, 0, len(addrs))

@@ -102,6 +102,7 @@ func (a *Account) SetOTRPoliciesFor(jid string, c *otr3.Conversation) {
 	}
 	if a.ShouldEncryptTo(jid) {
 		c.Policies.RequireEncryption()
+		c.Policies.ErrorStartAKE()
 	}
 }
 

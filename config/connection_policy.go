@@ -15,6 +15,8 @@ import (
 )
 
 var (
+	// ErrTorNotRunning is the error returned when Tor is required by the policy
+	// but it was not found to be running (on port 9050 or 9051).
 	ErrTorNotRunning = errors.New("Tor is not running")
 )
 
@@ -45,7 +47,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		return nil, ErrTorNotRunning
 	}
 
-	certSHA256, err := conf.ServerCertificate()
+	certSHA256, err := conf.ServerCertificateHash()
 	if err != nil {
 		return nil, err
 	}

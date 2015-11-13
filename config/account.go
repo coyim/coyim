@@ -36,7 +36,8 @@ type Account struct {
 	ConnectAutomatically    bool
 }
 
-func (a *Account) ServerCertificate() ([]byte, error) {
+// ServerCertificateHash returns the hash for the server certificate
+func (a *Account) ServerCertificateHash() ([]byte, error) {
 	var certSHA256 []byte
 	var err error
 	if len(a.ServerCertificateSHA256) > 0 {

@@ -442,7 +442,9 @@ func (u *gtkUI) alertTorIsNotRunning() {
 
 func (u *gtkUI) connect(account *account) {
 	u.roster.connecting()
-	connectFn := func(password string) {
+
+	var connectFn func(string)
+	connectFn = func(password string) {
 		err := account.session.Connect(password, nil)
 
 		if err == config.ErrTorNotRunning {
@@ -454,7 +456,9 @@ func (u *gtkUI) connect(account *account) {
 		}
 
 		if err == xmpp.ErrAuthenticationFailed {
-			//TODO ask for password
+			glib.IdleAdd(func() {
+				u.askForPassword(connectFn)
+			})
 		}
 
 		if err != nil {

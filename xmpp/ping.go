@@ -19,7 +19,7 @@ type PingRequest struct {
 
 // SendPing sends a Ping request.
 func (c *Conn) SendPing() (reply chan Stanza, cookie Cookie, err error) {
-	c.lastPingRequest = time.Now()
+	c.lastPingRequest = time.Now() //TODO: this seems should not belong to Conn
 	return c.SendIQ("", "get", PingRequest{})
 }
 
@@ -28,10 +28,12 @@ func (c *Conn) SendPingReply(id string) error {
 	return c.SendIQReply("", "result", id, EmptyReply{})
 }
 
+// ReceivePong update the timestamp for lastPongResponse,
 func (c *Conn) ReceivePong() {
-	c.lastPongResponse = time.Now()
+	c.lastPongResponse = time.Now() //TODO: this seems should not belong to Conn
 }
 
+// ParsePong parse a reply of a Pong response.
 func ParsePong(reply Stanza) error {
 	iq, ok := reply.Value.(*ClientIQ)
 	if !ok {

@@ -70,7 +70,7 @@ func (d *Dialer) connect(addr string, conn net.Conn) (*Conn, error) {
 	config := d.Config
 
 	//JID domainpart is separated from localpart because it is used as "origin domain" for the TLS cert
-	return dial(addr,
+	return negotiateStream(addr,
 		d.getJIDLocalpart(),
 		d.getJIDDomainpart(),
 		d.Password,
@@ -164,8 +164,8 @@ func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err erro
 	return
 }
 
-//TODO: read the RFC and find a better name for this
-func dial(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {
+// RFC 6120, Section 4.3.
+func negotiateStream(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {
 	c = new(Conn)
 	c.config = config
 	c.inflights = make(map[Cookie]inflight)

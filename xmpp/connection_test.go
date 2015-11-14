@@ -228,7 +228,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromGetFeatures(c *C) {
 	rw := &mockConnIOReaderWriter{}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, io.EOF)
 }
 
@@ -236,7 +236,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromAuthenticateIfSkipTLS(c 
 	rw := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'><str:features></str:features>")}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: true}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, ErrAuthenticationFailed)
 }
 
@@ -252,7 +252,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C)
 			"<sasl:success xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:success>")}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: true}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Matches, "(XML syntax error on line 1: unexpected )?EOF")
 
 	c.Assert(string(rw.write), Equals, ""+
@@ -280,7 +280,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromIQReturn(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: true}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Matches, "unmarshal <iq>:( XML syntax error on line 1: unexpected)? EOF")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -310,7 +310,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsWorkingConnIfEverythingPasses(c *
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: true}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, IsNil)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -335,7 +335,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfTheServerDoesntSupportTLS(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: false}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Equals, "xmpp: server doesn't support TLS")
 }
 
@@ -353,7 +353,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingEOFAfterStartingTLS(c *C
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: false}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Matches, "(XML syntax error on line 1: unexpected )?EOF")
 }
 
@@ -372,7 +372,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterSt
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: false}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Equals, "xmpp: expected <proceed> after <starttls> but got <proceed> in http://etherx.jabber.org/streams")
 }
 
@@ -391,7 +391,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: false}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Equals, "xmpp: expected <proceed> after <starttls> but got <things> in urn:ietf:params:xml:ns:xmpp-tls")
 }
 
@@ -412,7 +412,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	var tlsC tls.Config
 	config := &Config{SkipTLS: false, TLSConfig: &tlsC}
 	tlsC.Rand = fixedRand([]string{"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F"})
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, io.EOF)
 	if isVersionOldish() {
 		c.Assert(string(rw.write), Equals, ""+
@@ -452,7 +452,7 @@ func (s *ConnectionXmppSuite) Test_Dial_setsServerNameOnTLSContext(c *C) {
 	var tlsC tls.Config
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: false, TLSConfig: &tlsC}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, io.EOF)
 }
 
@@ -470,7 +470,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Matches, "unmarshal <iq>:( XML syntax error on line 1: unexpected)? EOF")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -494,7 +494,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Equals, "xmpp: account creation failed")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -518,7 +518,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, io.EOF)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -544,7 +544,7 @@ func (s *ConnectionXmppSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Matches, "unmarshal <iq>:( XML syntax error on line 1: unexpected)? EOF")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -571,7 +571,7 @@ func (s *ConnectionXmppSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Equals, "xmpp: account creation failed")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -598,7 +598,7 @@ func (s *ConnectionXmppSuite) Test_Dial_continuesWithAuthenticationAfterRegister
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, ErrAuthenticationFailed)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -626,7 +626,7 @@ func (s *ConnectionXmppSuite) Test_Dial_continuesWithAuthenticationAfterRegister
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, ErrAuthenticationFailed)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -654,7 +654,7 @@ func (s *ConnectionXmppSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, ErrAuthenticationFailed)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -693,7 +693,7 @@ func (s *ConnectionXmppSuite) Test_Dial_runsForm(c *C) {
 	config := &Config{SkipTLS: true, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, Equals, ErrAuthenticationFailed)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -719,7 +719,7 @@ func (s *ConnectionXmppSuite) Test_Dial_setsLog(c *C) {
 	config := &Config{SkipTLS: true, Log: l, CreateCallback: func(title, instructions string, fields []interface{}) error {
 		return nil
 	}}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Matches, "unmarshal <iq>:( XML syntax error on line 1: unexpected)? EOF")
 	c.Assert(string(l.write), Equals, "Attempting to create account\n")
 	c.Assert(string(rw.write), Equals, ""+
@@ -748,7 +748,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSession(c *C) 
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: true}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Matches, "xmpp: unmarshal <iq>:( XML syntax error on line 1: unexpected)? EOF")
 
 	c.Assert(string(rw.write), Equals, ""+
@@ -782,7 +782,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSessionAndGets
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: true}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err.Error(), Equals, "xmpp: session establishment failed")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -815,7 +815,7 @@ func (s *ConnectionXmppSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 	config := &Config{SkipTLS: true}
-	_, err := dial("addr", "user", "domain", "pass", config, conn)
+	_, err := negotiateStream("addr", "user", "domain", "pass", config, conn)
 	c.Assert(err, IsNil)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
@@ -839,7 +839,7 @@ func (s *ConnectionXmppSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 // 		"000102030405060708090A0B0C0D0E0F",
 // 		"000102030405060708090A0B0C0D0E0F",
 // 	})
-// 	conn, _ := net.dial("tcp", "www.olabini.se:443")
+// 	conn, _ := net.negotiateStream("tcp", "www.olabini.se:443")
 // 	tee := createTeeConn(conn, os.Stdout)
 // 	tlsConn := tls.Client(tee, &tlsC)
 // 	err := tlsConn.Handshake()
@@ -907,7 +907,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 		"000102030405060708090A0B0C0D0E0F",
 		"000102030405060708090A0B0C0D0E0F",
 	})
-	_, err := dial("www.olabini.se:443", "user", "www.olabini.se", "pass", config, conn)
+	_, err := negotiateStream("www.olabini.se:443", "user", "www.olabini.se", "pass", config, conn)
 	c.Assert(err, Equals, io.EOF)
 	if isVersionOldish() {
 		c.Assert(string(rw.write), Equals, ""+
@@ -947,7 +947,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 		"000102030405060708090A0B0C0D0E0F",
 		"000102030405060708090A0B0C0D0E0F",
 	})
-	_, err := dial("www.olabini.se:443", "user", "www.olabini.se", "pass", config, conn)
+	_, err := negotiateStream("www.olabini.se:443", "user", "www.olabini.se", "pass", config, conn)
 	c.Assert(err.Error(), Equals, "xmpp: server certificate does not match expected hash (got: 2300818fdc977ce5eb357694d421e47869a952990bc3230ef6aca2bb6ee6f00b, want: 6161616161)")
 }
 
@@ -962,6 +962,6 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 		"000102030405060708090A0B0C0D0E0F",
 		"000102030405060708090A0B0C0D0E0F",
 	})
-	_, err := dial("www.olabini.se:443", "user", "www.olabini.se", "pass", config, conn)
+	_, err := negotiateStream("www.olabini.se:443", "user", "www.olabini.se", "pass", config, conn)
 	c.Assert(err, Equals, io.EOF)
 }

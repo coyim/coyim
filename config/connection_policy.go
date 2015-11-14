@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"io"
 	"net"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -85,8 +85,11 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		Config: xmppConfig,
 	}
 
-	if len(conf.Server) > 0 && conf.Port > 0 {
-		dialer.ServerAddress = fmt.Sprintf("%s:%d", conf.Server, conf.Port)
+	// We ignore the configured server if it is the same as the domainpart.
+	// This will avoid preventing misconfigured (and imported) accounts to use
+	// the SRV lookup - which is in conformance to RFC 6120.
+	if len(conf.Server) > 0 && conf.Port > 0 && (conf.Server != domainpart || conf.Port != 5222) {
+		dialer.ServerAddress = net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port))
 	}
 
 	if p.UseHiddenService {

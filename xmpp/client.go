@@ -18,6 +18,7 @@ type Extension struct {
 }
 
 // StanzaError implements RFC 3920, section 9.3.
+//TODO RFC 6120 obsoletes RFC 3920
 type StanzaError struct {
 	// cancel -- do not retry (the error is unrecoverable)
 	// continue -- proceed (the condition was only a warning)

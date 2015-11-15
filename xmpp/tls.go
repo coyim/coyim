@@ -69,6 +69,7 @@ func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
 }
 
 // RFC 3920  C.3  TLS name space
+//TODO RFC 6120 obsoletes RFC 3920
 
 type tlsStartTLS struct {
 	XMLName  xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-tls starttls"`

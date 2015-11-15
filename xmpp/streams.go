@@ -13,6 +13,7 @@ import (
 )
 
 // rfc3920 section 5.2
+//TODO RFC 6120 obsoletes RFC 3920
 func (c *Conn) getFeatures(domain string) (features streamFeatures, err error) {
 	if _, err = fmt.Fprintf(c.out, "<?xml version='1.0'?><stream:stream to='%s' xmlns='%s' xmlns:stream='%s' version='1.0'>\n", xmlEscape(domain), NsClient, NsStream); err != nil {
 		return
@@ -31,6 +32,7 @@ func (c *Conn) getFeatures(domain string) (features streamFeatures, err error) {
 	// Now we're in the stream and can use Unmarshal.
 	// Next message should be <features> to tell us authentication options.
 	// See section 4.6 in RFC 3920.
+	//TODO RFC 6120 obsoletes RFC 3920
 	if err = c.in.DecodeElement(&features, nil); err != nil {
 		err = errors.New("unmarshal <features>: " + err.Error())
 		return
@@ -40,6 +42,7 @@ func (c *Conn) getFeatures(domain string) (features streamFeatures, err error) {
 }
 
 // RFC 3920  C.1  Streams name space
+//TODO RFC 6120 obsoletes RFC 3920
 
 type streamFeatures struct {
 	XMLName    xml.Name `xml:"http://etherx.jabber.org/streams features"`

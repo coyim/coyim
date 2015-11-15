@@ -48,7 +48,6 @@ func (c *Conn) authenticate(features streamFeatures, user, password string) (err
 
 // RFC 3920  C.4  SASL name space
 //TODO RFC 6120 obsoletes RFC 3920
-
 type saslMechanisms struct {
 	XMLName   xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-sasl mechanisms"`
 	Mechanism []string `xml:"mechanism"`

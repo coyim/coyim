@@ -8,14 +8,17 @@ package xmpp
 
 import "encoding/xml"
 
+//Any provides a convenient way to debug any child element
+type Any struct {
+	XMLName xml.Name
+	Body    string `xml:",innerxml"`
+}
+
 // Extensions implements generic XEPs.
 type Extensions []*Extension
 
 // Extension represents any XML node not included in the Stanza definition
-type Extension struct {
-	XMLName xml.Name
-	Body    string `xml:",innerxml"`
-}
+type Extension Any
 
 // StanzaError implements RFC 3920, section 9.3.
 //TODO RFC 6120 obsoletes RFC 3920

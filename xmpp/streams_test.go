@@ -86,3 +86,47 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_expectsFeaturesInReturn(
 	expected.XMLName = xml.Name{Space: "http://etherx.jabber.org/streams", Local: "features"}
 	c.Assert(feat, DeepEquals, expected)
 }
+
+func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_receiveResponseStreamHeaderInReturn(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+	mockIn := &mockConnIOReaderWriter{read: []byte(`
+	<?xml version='1.0'?>
+	<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>
+		<str:features>
+			<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind' />
+			<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'>
+				<required/>
+			</starttls>
+			<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+				<mechanism>PLAIN</mechanism>
+				<mechanism>X-OAUTH2</mechanism>
+				<mechanism>X-GOOGLE-TOKEN</mechanism>
+			</mechanisms>
+			<register xmlns='http://jabber.org/features/iq-register'/>
+		</str:features>
+	`)}
+	conn := Conn{
+		out: mockOut,
+		in:  xml.NewDecoder(mockIn),
+	}
+
+	feat, err := conn.sendInitialStreamHeader("somewhereElse.org")
+	c.Assert(err, IsNil)
+	expected := streamFeatures{
+		XMLName: xml.Name{Space: "http://etherx.jabber.org/streams", Local: "features"},
+		Bind: bindBind{
+			XMLName: xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"}, Resource: "", Jid: "",
+		},
+		StartTLS: tlsStartTLS{
+			XMLName:  xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-tls", Local: "starttls"},
+			Required: xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-tls", Local: "required"},
+		},
+		Mechanisms: saslMechanisms{
+			XMLName:   xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-sasl", Local: "mechanisms"},
+			Mechanism: []string{"PLAIN", "X-OAUTH2", "X-GOOGLE-TOKEN"},
+		},
+		InBandRegistration: &inBandRegistration{xml.Name{Space: "http://jabber.org/features/iq-register", Local: "register"}},
+	}
+
+	c.Assert(feat, DeepEquals, expected)
+}

@@ -464,6 +464,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>",
 	)}
 	conn := &fullMockedConn{rw: rw}
@@ -487,6 +488,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='something'></iq>",
 	)}
@@ -511,6 +513,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='result'></iq>",
 	)}
@@ -535,6 +538,7 @@ func (s *ConnectionXmppSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='result'>" +
 			"<query xmlns='jabber:iq:register'></query>" +
@@ -561,6 +565,7 @@ func (s *ConnectionXmppSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='result'>" +
 			"<query xmlns='jabber:iq:register'></query>" +
@@ -588,6 +593,7 @@ func (s *ConnectionXmppSuite) Test_Dial_continuesWithAuthenticationAfterRegister
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='result'>" +
 			"<query xmlns='jabber:iq:register'><username/></query>" +
@@ -616,6 +622,7 @@ func (s *ConnectionXmppSuite) Test_Dial_continuesWithAuthenticationAfterRegister
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='result'>" +
 			"<query xmlns='jabber:iq:register'><password/></query>" +
@@ -644,6 +651,7 @@ func (s *ConnectionXmppSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='result'>" +
 			"<query xmlns='jabber:iq:register'><username/><password/></query>" +
@@ -673,6 +681,7 @@ func (s *ConnectionXmppSuite) Test_Dial_runsForm(c *C) {
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>" +
 			"<iq xmlns='jabber:client' type='result'>" +
 			"<query xmlns='jabber:iq:register'>" +
@@ -713,6 +722,7 @@ func (s *ConnectionXmppSuite) Test_Dial_setsLog(c *C) {
 			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
 			"<mechanism>PLAIN</mechanism>" +
 			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
 			"</str:features>",
 	)}
 	conn := &fullMockedConn{rw: rw}

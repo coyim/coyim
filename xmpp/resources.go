@@ -8,9 +8,7 @@ package xmpp
 
 import "encoding/xml"
 
-// RFC 3920  C.5  Resource binding name space
-//TODO RFC 6120 obsoletes RFC 3920
-
+// RFC 6120, section 7
 type bindBind struct {
 	XMLName  xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-bind bind"`
 	Resource string   `xml:"resource"`

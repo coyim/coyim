@@ -179,8 +179,10 @@ func setupStream(address, user, domain, password string, config *Config, conn ne
 		return nil, err
 	}
 
-	if err := createAccount(user, password, config, c); err != nil {
-		return nil, err
+	if features.InBandRegistration != nil {
+		if err := createAccount(user, password, config, c); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := authenticate(features, user, password, config, c); err != nil {
@@ -192,6 +194,8 @@ func setupStream(address, user, domain, password string, config *Config, conn ne
 	}
 
 	// Send IQ message asking to bind to the local user name.
+	// RFC 6210 section 7 states this is mandatory, so a missing features.Bind
+	// is a protocol failure
 	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
 	var iq ClientIQ
 	if err = c.in.DecodeElement(&iq, nil); err != nil {

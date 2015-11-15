@@ -78,6 +78,7 @@ func next(c *Conn) (xml.Name, interface{}, error) {
 	return se.Name, nv, err
 }
 
+//TODO: We should also handle </stream:stream> tags and close the stream on our side
 var defaultStorage = map[xml.Name]reflect.Type{
 	xml.Name{Space: NsStream, Local: "features"}: reflect.TypeOf(streamFeatures{}),
 	xml.Name{Space: NsStream, Local: "error"}:    reflect.TypeOf(StreamError{}),

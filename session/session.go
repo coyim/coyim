@@ -134,7 +134,7 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 	for {
 		stanza, err := s.Conn.Next()
 		if err != nil {
-			s.alert(err.Error())
+			s.alert(fmt.Sprintf("error reading XMPP message: %s", err))
 			return
 		}
 
@@ -151,6 +151,8 @@ func (s *Session) receivedStreamError(stanza *xmpp.StreamError) bool {
 		text = fmt.Sprintf("%s", stanza.Any)
 	}
 
+	//TODO: Close the channel if the error is unrecoverable
+	//See RC 6120, Section 4.9.1.1
 	s.alert("Exiting in response to fatal error from server: " + text)
 	return false
 }
@@ -257,7 +259,7 @@ func (s *Session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 		case *xmpp.ClientIQ:
 			return s.receivedClientIQ(stanza)
 		default:
-			s.info(fmt.Sprintf("%s %s", rawStanza.Name, rawStanza.Value))
+			s.info(fmt.Sprintf("RECEIVED %s %s", rawStanza.Name, rawStanza.Value))
 			return true
 		}
 	}

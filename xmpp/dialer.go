@@ -70,7 +70,7 @@ func (d *Dialer) connect(addr string, conn net.Conn) (*Conn, error) {
 	config := d.Config
 
 	//JID domainpart is separated from localpart because it is used as "origin domain" for the TLS cert
-	return negotiateStream(addr,
+	return setupStream(addr,
 		d.getJIDLocalpart(),
 		d.getJIDDomainpart(),
 		d.Password,
@@ -164,8 +164,8 @@ func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err erro
 	return
 }
 
-// RFC 6120, Section 4.3.
-func negotiateStream(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {
+// RFC 6120, Section 4.2
+func setupStream(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {
 	c = new(Conn)
 	c.config = config
 	c.inflights = make(map[Cookie]inflight)
@@ -174,23 +174,9 @@ func negotiateStream(address, user, domain, password string, config *Config, con
 	c.in, c.out = makeInOut(conn, config)
 	c.rawOut = conn
 
-	features, err := c.getFeatures(domain)
+	features, err := c.negotiateStream(address, domain, conn)
 	if err != nil {
 		return nil, err
-	}
-
-	if !config.SkipTLS {
-		if features.StartTLS.XMLName.Local == "" {
-			return nil, errors.New("xmpp: server doesn't support TLS")
-		}
-
-		if err := c.startTLS(address, domain, conn); err != nil {
-			return nil, err
-		}
-
-		if features, err = c.getFeatures(domain); err != nil {
-			return nil, err
-		}
 	}
 
 	if err := createAccount(user, password, config, c); err != nil {
@@ -201,7 +187,7 @@ func negotiateStream(address, user, domain, password string, config *Config, con
 		return nil, ErrAuthenticationFailed
 	}
 
-	if features, err = c.getFeatures(domain); err != nil {
+	if features, err = c.sendInitialStreamHeader(domain); err != nil {
 		return nil, err
 	}
 
@@ -226,6 +212,30 @@ func negotiateStream(address, user, domain, password string, config *Config, con
 	}
 
 	return c, nil
+}
+
+//rfc3920 section 5.2
+//TODO RFC 6120 obsoletes RFC 3920
+func (c *Conn) negotiateStream(address, domain string, conn net.Conn) (features streamFeatures, err error) {
+	features, err = c.sendInitialStreamHeader(domain)
+	if err != nil {
+		return
+	}
+
+	if !c.config.SkipTLS {
+		if features.StartTLS.XMLName.Local == "" {
+			err = errors.New("xmpp: server doesn't support TLS")
+			return
+		}
+
+		if err = c.startTLS(address, domain, conn); err != nil {
+			return
+		}
+
+		features, err = c.sendInitialStreamHeader(domain)
+	}
+
+	return
 }
 
 func (c *Conn) startTLS(address, domain string, conn net.Conn) error {

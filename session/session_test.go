@@ -154,7 +154,7 @@ func (s *SessionXmppSuite) Test_readMessages_alertsOnError(c *C) {
 	case ev := <-observer:
 		t := ev.(LogEvent)
 		c.Assert(t.Level, Equals, Alert)
-		c.Assert(t.Message, Equals, "unexpected XMPP message clientx <message/>")
+		c.Assert(t.Message, Equals, "error reading XMPP message: unexpected XMPP message clientx <message/>")
 	case <-time.After(1 * time.Millisecond):
 		c.Errorf("did not receive event")
 	}
@@ -181,7 +181,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	select {
 	case ev := <-observer:
 		t := ev.(LogEvent)
-		c.Assert(t.Message, Equals, "unexpected XMPP message clientx <message/>")
+		c.Assert(t.Message, Equals, "error reading XMPP message: unexpected XMPP message clientx <message/>")
 	case <-time.After(1 * time.Millisecond):
 		c.Errorf("did not receive event")
 	}
@@ -213,7 +213,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 				continue
 			}
 
-			c.Assert(t.Message, Equals, "{urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
+			c.Assert(t.Message, Equals, "RECEIVED {urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
 			return
 
 		case <-time.After(1 * time.Millisecond):

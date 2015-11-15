@@ -12,9 +12,10 @@ import (
 	"fmt"
 )
 
-// rfc3920 section 5.2
-//TODO RFC 6120 obsoletes RFC 3920
-func (c *Conn) getFeatures(domain string) (features streamFeatures, err error) {
+//Send an initial stream header and receive the features required for
+//continuation of the stream negotiation process.
+//RFC 6120 section 4.3
+func (c *Conn) sendInitialStreamHeader(domain string) (features streamFeatures, err error) {
 	if _, err = fmt.Fprintf(c.out, "<?xml version='1.0'?><stream:stream to='%s' xmlns='%s' xmlns:stream='%s' version='1.0'>\n", xmlEscape(domain), NsClient, NsStream); err != nil {
 		return
 	}
@@ -28,6 +29,8 @@ func (c *Conn) getFeatures(domain string) (features streamFeatures, err error) {
 		err = errors.New("xmpp: expected <stream> but got <" + se.Name.Local + "> in " + se.Name.Space)
 		return
 	}
+
+	//TODO: there must be an ID in the response stream header
 
 	// Now we're in the stream and can use Unmarshal.
 	// Next message should be <features> to tell us authentication options.
@@ -43,7 +46,6 @@ func (c *Conn) getFeatures(domain string) (features streamFeatures, err error) {
 
 // RFC 3920  C.1  Streams name space
 //TODO RFC 6120 obsoletes RFC 3920
-
 type streamFeatures struct {
 	XMLName    xml.Name `xml:"http://etherx.jabber.org/streams features"`
 	StartTLS   tlsStartTLS

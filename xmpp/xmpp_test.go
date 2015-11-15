@@ -79,10 +79,12 @@ func (s *XmppSuite) TestConnClose(c *C) {
 	mockCloser := &mockConnIOReaderWriter{}
 	conn := Conn{
 		rawOut: mockCloser,
+		out:    mockCloser,
 	}
 
 	c.Assert(conn.Close(), IsNil)
 	c.Assert(mockCloser.calledClose, Equals, 1)
+	c.Assert(mockCloser.write, DeepEquals, []byte("</stream:stream>"))
 }
 
 func (s *XmppSuite) TestConnNextEOF(c *C) {

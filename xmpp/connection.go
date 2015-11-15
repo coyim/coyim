@@ -47,6 +47,10 @@ func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
 
 // Close closes the underlying connection
 func (c *Conn) Close() error {
+	// RFC 6120, Section 4.4 and 9.1.5
+	fmt.Fprint(c.out, "</stream:stream>")
+	//TODO: Wait for a </stream:stream> from server
+
 	return c.rawOut.Close()
 }
 

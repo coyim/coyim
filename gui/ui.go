@@ -273,7 +273,7 @@ func (u *gtkUI) quit() {
 	gtk.MainQuit()
 }
 
-func (*gtkUI) askForPassword(connect func(string)) {
+func (*gtkUI) askForPassword(connect func(string) error) {
 	vars := make(map[string]string)
 	vars["$title"] = i18n.Local("Password")
 	vars["$passwordLabel"] = i18n.Local("Password")
@@ -441,7 +441,7 @@ func (u *gtkUI) alertTorIsNotRunning() {
 	dialog.ShowAll()
 }
 
-func (u *gtkUI) askForServerDetails(conf *config.Account, password string, connectFn func(string)) {
+func (u *gtkUI) askForServerDetails(conf *config.Account, password string, connectFn func(string) error) {
 	builder, err := loadBuilderWith("ConnectionSettingsDialogDef", nil)
 	if err != nil {
 		return
@@ -471,9 +471,14 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, password string, conne
 			p, _ := portEntry.GetText()
 			conf.Port, _ = strconv.Atoi(p)
 
-			//TODO: save
+			go func() {
+				if connectFn(password) != nil {
+					return
+				}
 
-			go connectFn(password)
+				u.saveConfigOnly()
+			}()
+
 			dialog.Destroy()
 		},
 	})
@@ -485,8 +490,8 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, password string, conne
 func (u *gtkUI) connect(account *account) {
 	u.roster.connecting()
 
-	var connectFn func(string)
-	connectFn = func(password string) {
+	var connectFn func(string) error
+	connectFn = func(password string) error {
 		err := account.session.Connect(password, nil)
 
 		if err == config.ErrTorNotRunning {
@@ -509,9 +514,7 @@ func (u *gtkUI) connect(account *account) {
 			})
 		}
 
-		if err != nil {
-			return
-		}
+		return err
 	}
 
 	if len(account.session.CurrentAccount.Password) == 0 {

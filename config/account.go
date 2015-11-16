@@ -145,7 +145,7 @@ func (a *Account) SetOTRPoliciesFor(jid string, c *otr3.Conversation) {
 		c.Policies.SendWhitespaceTag()
 	}
 	if a.shouldStartAKEAutomatically() {
-		c.Policies.SendWhitespaceTag()
+		c.Policies.WhitespaceStartAKE()
 	}
 	if a.ShouldEncryptTo(jid) {
 		c.Policies.RequireEncryption()

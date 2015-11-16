@@ -3,6 +3,8 @@ package config
 import (
 	"net/url"
 
+	"github.com/twstrike/otr3"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -83,4 +85,37 @@ func (s *AccountXmppSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *
 	c.Check(a.AlwaysEncrypt, Equals, true)
 	c.Check(a.OTRAutoStartSession, Equals, true)
 	c.Check(a.OTRAutoTearDown, Equals, true)
+}
+
+func (s *AccountXmppSuite) Test_SetOTRPoliciesFor_SetupOTRPolicies(c *C) {
+	a, _ := NewAccount()
+	conv := &otr3.Conversation{}
+
+	expectedConv := &otr3.Conversation{}
+	expectedPolicies := expectedConv.Policies
+	expectedPolicies.AllowV2()
+	expectedPolicies.AllowV3()
+	expectedPolicies.SendWhitespaceTag()
+	expectedPolicies.WhitespaceStartAKE()
+	expectedPolicies.RequireEncryption()
+	expectedPolicies.ErrorStartAKE()
+
+	a.SetOTRPoliciesFor("someon@jabber.com", conv)
+	c.Check(conv.Policies, Equals, expectedPolicies)
+}
+
+func (s *AccountXmppSuite) Test_SetOTRPoliciesFor_SetupOTRPoliciesWithOptionalEncription(c *C) {
+	a, _ := NewAccount()
+	a.AlwaysEncrypt = false
+	conv := &otr3.Conversation{}
+
+	expectedConv := &otr3.Conversation{}
+	expectedPolicies := expectedConv.Policies
+	expectedPolicies.AllowV2()
+	expectedPolicies.AllowV3()
+	expectedPolicies.SendWhitespaceTag()
+	expectedPolicies.WhitespaceStartAKE()
+
+	a.SetOTRPoliciesFor("someon@jabber.com", conv)
+	c.Check(conv.Policies, Equals, expectedPolicies)
 }

@@ -36,7 +36,7 @@ func ResolveXMPPServerOverTor(domain string) ([]string, error) {
 		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
 	}
 
-	ret, err := xmpp.ResolveProxy(dnsProxy, domain)
+	ret, err := xmpp.ResolveSRVWithProxy(dnsProxy, domain)
 	if err != nil {
 		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
 	}

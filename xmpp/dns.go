@@ -27,8 +27,8 @@ func Resolve(domain string) (hostport []string, err error) {
 	return massage(net.LookupSRV("xmpp-client", "tcp", domain))
 }
 
-// ResolveProxy performs a DNS SRV lookup for the xmpp server that serves the given domain over the given proxy
-func ResolveProxy(proxy proxy.Dialer, domain string) (hostport []string, err error) {
+// ResolveSRVWithProxy performs a DNS SRV lookup for the xmpp server that serves the given domain over the given proxy
+func ResolveSRVWithProxy(proxy proxy.Dialer, domain string) (hostport []string, err error) {
 	return massage(ourNet.LookupSRV(proxy, "xmpp-client", "tcp", domain))
 }
 

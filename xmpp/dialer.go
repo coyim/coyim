@@ -109,7 +109,7 @@ func (d *Dialer) Dial() (*Conn, error) {
 	}
 
 	addr := d.getJIDDomainpart()
-	xmppAddrs, err := ResolveProxy(d.Proxy, addr)
+	xmppAddrs, err := ResolveSRVWithProxy(d.Proxy, addr)
 
 	//Every other error means
 	//"the initiating entity [did] not receive a response to its SRV query" and

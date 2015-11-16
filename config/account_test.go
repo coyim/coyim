@@ -73,3 +73,14 @@ func (s *AccountXmppSuite) Test_EnsureTorProxy_DoNotOverrideExistingTorConfig(c 
 	a.EnsureTorProxy(torAddress)
 	c.Check(a.Proxies, DeepEquals, []string{existingTorProxy})
 }
+
+func (s *AccountXmppSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *C) {
+	a, err := NewAccount()
+
+	c.Check(err, IsNil)
+	c.Check(a.RequireTor, Equals, true)
+	c.Check(a.PrivateKey, NotNil)
+	c.Check(a.AlwaysEncrypt, Equals, true)
+	c.Check(a.OTRAutoStartSession, Equals, true)
+	c.Check(a.OTRAutoTearDown, Equals, true)
+}

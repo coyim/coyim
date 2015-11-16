@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"log"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -34,6 +35,51 @@ type Account struct {
 	DontEncryptWith         []string `json:",omitempty"`
 	InstanceTag             uint32   `json:",omitempty"`
 	ConnectAutomatically    bool
+}
+
+// NewAccount creates a new account
+func NewAccount() (*Account, error) {
+	var priv otr3.PrivateKey
+
+	err := priv.Generate(rand.Reader)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Account{
+		RequireTor:          true,
+		PrivateKey:          priv.Serialize(),
+		AlwaysEncrypt:       true,
+		OTRAutoStartSession: true,
+		OTRAutoTearDown:     true, //See #48
+	}, nil
+}
+
+// EnsureTorProxy makes sure the account has a Tor Proxy configured
+func (a *Account) EnsureTorProxy(torAddress string) {
+	if !a.RequireTor {
+		return
+	}
+
+	if a.Proxies == nil {
+		a.Proxies = make([]string, 0, 1)
+	}
+
+	for _, proxy := range a.Proxies {
+		p, err := url.Parse(proxy)
+		if err != nil {
+			continue
+		}
+
+		//Already configured
+		if p.Host == torAddress {
+			return
+		}
+	}
+
+	// We do not want to override any already configured proxy
+	torProxy := newTorProxy(torAddress)
+	a.Proxies = append(a.Proxies, torProxy)
 }
 
 // ServerCertificateHash returns the hash for the server certificate

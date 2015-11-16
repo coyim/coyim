@@ -119,3 +119,32 @@ func (s *AccountXmppSuite) Test_SetOTRPoliciesFor_SetupOTRPoliciesWithOptionalEn
 	a.SetOTRPoliciesFor("someon@jabber.com", conv)
 	c.Check(conv.Policies, Equals, expectedPolicies)
 }
+
+func (s *AccountXmppSuite) Test_EnsurePrivateKey_DoesNotUpdateIfKeyExists(c *C) {
+	a, _ := NewAccount()
+	changed, err := a.EnsurePrivateKey()
+
+	c.Check(err, IsNil)
+	c.Check(changed, Equals, false)
+}
+
+func (s *AccountXmppSuite) Test_EnsurePrivateKey_GeneratePrivateKeyIfMissing(c *C) {
+	a := &Account{}
+	changed, err := a.EnsurePrivateKey()
+
+	c.Check(err, IsNil)
+	c.Check(changed, Equals, true)
+	c.Check(a.PrivateKey, NotNil)
+}
+
+func (s *AccountXmppSuite) Test_ID_generatesID(c *C) {
+	a := &Account{}
+	c.Check(a.ID(), Not(HasLen), 0)
+}
+
+func (s *AccountXmppSuite) Test_ID_doesNotChangeID(c *C) {
+	a := &Account{
+		id: "existing",
+	}
+	c.Check(a.ID(), Equals, "existing")
+}

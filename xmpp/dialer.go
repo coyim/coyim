@@ -99,6 +99,8 @@ func (d *Dialer) Dial() (*Conn, error) {
 	//RFC 6120, Section 3.2.3
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.Config.SkipSRVLookup {
+		log.Println("Skipping SRV lookup")
+
 		addr := d.GetServer()
 		conn, err := connectWithProxy(addr, d.Proxy)
 		if err != nil {
@@ -108,8 +110,14 @@ func (d *Dialer) Dial() (*Conn, error) {
 		return d.connect(addr, conn)
 	}
 
-	addr := d.getJIDDomainpart()
-	xmppAddrs, err := ResolveSRVWithProxy(d.Proxy, addr)
+	addr := d.GetServer()
+	host, _, err := net.SplitHostPort(addr)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("Make SRV lookup to:", host)
+	xmppAddrs, err := ResolveSRVWithProxy(d.Proxy, host)
 
 	//Every other error means
 	//"the initiating entity [did] not receive a response to its SRV query" and
@@ -125,10 +133,12 @@ func (d *Dialer) Dial() (*Conn, error) {
 	if len(xmppAddrs) == 0 {
 		//TODO: in this case, a failure to connect might be recovered using HTTP binding
 		//See: RFC 6120, Section 3.2.2
-		xmppAddrs = []string{net.JoinHostPort(addr, "5222")}
+		xmppAddrs = []string{
+			net.JoinHostPort(d.getJIDDomainpart(), "5222"),
+		}
 	}
 
-	conn, addr, err := connectToFirstAvailable(xmppAddrs, d.Proxy)
+	conn, _, err := connectToFirstAvailable(xmppAddrs, d.Proxy)
 	if err != nil {
 		return nil, err
 	}

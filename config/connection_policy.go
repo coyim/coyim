@@ -41,11 +41,13 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 
 	domainpart := jidParts[1]
 
-	_, torDetected := DetectTor()
+	torAddress, torDetected := DetectTor()
 	if p.RequireTor && !torDetected {
 		scannedForTor = false
 		return nil, ErrTorNotRunning
 	}
+
+	conf.EnsureTorProxy(torAddress)
 
 	certSHA256, err := conf.ServerCertificateHash()
 	if err != nil {

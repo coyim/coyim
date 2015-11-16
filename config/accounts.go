@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"errors"
+	"net/url"
 	"strings"
 	"sync"
 
@@ -118,11 +119,6 @@ func (a *Accounts) tryLoad(ks KeySupplier) error {
 
 // NewAccount creates a new account
 func NewAccount() (*Account, error) {
-	var torProxy []string
-	if torAddress, ok := DetectTor(); ok {
-		torProxy = []string{newTorProxy(torAddress)}
-	}
-
 	var priv otr3.PrivateKey
 
 	err := priv.Generate(rand.Reader)
@@ -131,14 +127,39 @@ func NewAccount() (*Account, error) {
 	}
 
 	return &Account{
-		Proxies:    torProxy,
-		RequireTor: torProxy != nil,
-
+		RequireTor:          true,
 		PrivateKey:          priv.Serialize(),
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48
 	}, nil
+}
+
+// EnsureTorProxy makes sure the account has a Tor Proxy configured
+func (a *Account) EnsureTorProxy(torAddress string) {
+	if !a.RequireTor {
+		return
+	}
+
+	if a.Proxies == nil {
+		a.Proxies = make([]string, 0, 1)
+	}
+
+	for _, proxy := range a.Proxies {
+		p, err := url.Parse(proxy)
+		if err != nil {
+			continue
+		}
+
+		//Already configured
+		if p.Host == torAddress {
+			return
+		}
+	}
+
+	// We do not want to override any already configured proxy
+	torProxy := newTorProxy(torAddress)
+	a.Proxies = append(a.Proxies, torProxy)
 }
 
 // Add will add the account to the configuration

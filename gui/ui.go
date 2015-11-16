@@ -160,10 +160,10 @@ func (u *gtkUI) configLoaded() {
 	go u.listenToToggleConnectAllAutomatically()
 }
 
-func (u *gtkUI) saveConfigInternal() {
+func (u *gtkUI) saveConfigInternal() error {
 	err := u.saveConfigOnlyInternal()
 	if err != nil {
-		return
+		return err
 	}
 
 	u.addNewAccountsFromConfig(u.config)
@@ -171,6 +171,8 @@ func (u *gtkUI) saveConfigInternal() {
 	if u.window != nil {
 		u.window.Emit(accountChangedSignal.String())
 	}
+
+	return nil
 }
 
 func (u *gtkUI) saveConfigOnlyInternal() error {
@@ -178,11 +180,21 @@ func (u *gtkUI) saveConfigOnlyInternal() error {
 }
 
 func (u *gtkUI) SaveConfig() {
-	go u.saveConfigInternal()
+	go func() {
+		err := u.saveConfigInternal()
+		if err != nil {
+			log.Println("Failed to save config file:", err.Error())
+		}
+	}()
 }
 
 func (u *gtkUI) saveConfigOnly() {
-	go u.saveConfigOnlyInternal()
+	go func() {
+		err := u.saveConfigOnlyInternal()
+		if err != nil {
+			log.Println("Failed to save config file:", err.Error())
+		}
+	}()
 }
 
 func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {

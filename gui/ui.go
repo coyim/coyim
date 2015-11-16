@@ -101,7 +101,17 @@ func NewGTK() UI {
 	return res
 }
 
-func (u *gtkUI) loadConfigInternal(configFile string) {
+func (u *gtkUI) initialSetupWindow() {
+	u.wouldYouLikeToEncryptYourFile(func(res bool) {
+		u.config.ShouldEncrypt = res
+		err := u.showAddAccountWindow()
+		if err != nil {
+			log.Println("Failed to add account:", err.Error())
+		}
+	})
+}
+
+func (u *gtkUI) loadConfig(configFile string) {
 	config, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
 
 	if !ok {
@@ -116,25 +126,11 @@ func (u *gtkUI) loadConfigInternal(configFile string) {
 
 	if err != nil {
 		log.Printf(err.Error())
-
-		glib.IdleAdd(func() bool {
-			u.wouldYouLikeToEncryptYourFile(func(res bool) {
-				u.config.ShouldEncrypt = res
-				err := u.showConfigAssistant()
-				if err != nil {
-					log.Println(err.Error())
-				}
-			})
-			return false
-		})
-	} else {
-		u.configLoaded()
+		glib.IdleAdd(u.initialSetupWindow)
+		return
 	}
-}
 
-func (u *gtkUI) loadConfig(configFile string) {
-	//IO would block the UI loop
-	go u.loadConfigInternal(configFile)
+	u.configLoaded()
 }
 
 func (u *gtkUI) configLoaded() {
@@ -198,8 +194,8 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 func (u *gtkUI) Loop() {
 	defer u.close()
 	go u.observeAccountEvents()
+	go u.loadConfig(*config.ConfigFile)
 
-	u.loadConfig(*config.ConfigFile)
 	u.mainWindow()
 	gtk.Main()
 }

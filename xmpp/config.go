@@ -43,4 +43,8 @@ type Config struct {
 	// TLSConfig contains the configuration to be used by the TLS
 	// handshake. If nil, sensible defaults will be used.
 	TLSConfig *tls.Config
+	// SkipSRVLookup skips SRV lookup during resolution of fully qualified domain
+	// names. RFC 6210 section 3.2.3 recomends to skip the SRV lookup when the
+	// initiating entity has a hardcoded FQDN associated with the origin domain.
+	SkipSRVLookup bool
 }

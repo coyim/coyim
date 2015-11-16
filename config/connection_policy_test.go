@@ -35,7 +35,7 @@ func (s *ConnectionPolicySuite) TestBuildDialerFor_UsesCustomRootCAForJabberDotC
 	)
 }
 
-func (s *ConnectionPolicySuite) TestBuildDialerFor_UsesConfiguredServerAddressAndPort(c *C) {
+func (s *ConnectionPolicySuite) TestBuildDialerFor_UsesConfiguredServerAddressAndPortAndMakesSRVLookup(c *C) {
 	policy := ConnectionPolicy{}
 
 	dialer, err := policy.buildDialerFor(&Account{
@@ -54,25 +54,11 @@ func (s *ConnectionPolicySuite) TestBuildDialerFor_UsesConfiguredServerAddressAn
 	})
 
 	c.Check(err, Equals, nil)
+	c.Check(dialer.Config.SkipSRVLookup, Equals, false)
 	c.Check(dialer.ServerAddress, Equals, "coy.im:5234")
 }
 
-func (s *ConnectionPolicySuite) TestBuildDialerFor_IgnoresConfiguredServerAddressAndPortIfItIsTheSameAsJIDDomainpart(c *C) {
-	account := &Account{
-		Account: "coyim@coy.im",
-		Server:  "coy.im",
-		Port:    5222,
-	}
-
-	policy := ConnectionPolicy{}
-
-	dialer, err := policy.buildDialerFor(account)
-
-	c.Check(err, Equals, nil)
-	c.Check(dialer.ServerAddress, Equals, "")
-}
-
-func (s *ConnectionPolicySuite) TestBuildDialerFor_UsesAssociatedHiddenServiceIfFound(c *C) {
+func (s *ConnectionPolicySuite) TestBuildDialerFor_UsesAssociatedHiddenServiceIfFoundAndSkipsSRVLookup(c *C) {
 	account := &Account{
 		Account: "coyim@riseup.net",
 	}
@@ -84,6 +70,7 @@ func (s *ConnectionPolicySuite) TestBuildDialerFor_UsesAssociatedHiddenServiceIf
 	dialer, err := policy.buildDialerFor(account)
 
 	c.Check(err, Equals, nil)
+	c.Check(dialer.Config.SkipSRVLookup, Equals, true)
 	c.Check(dialer.ServerAddress, Equals, "4cjw6cwpeaeppfqz.onion:5222")
 }
 

@@ -85,25 +85,23 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		Config: xmppConfig,
 	}
 
-	// We ignore the configured server if it is the same as the domainpart.
-	// This will avoid preventing misconfigured (and imported) accounts to use
-	// the SRV lookup - which is in conformance to RFC 6120.
-	if len(conf.Server) > 0 && conf.Port > 0 && (conf.Server != domainpart || conf.Port != 5222) {
+	// Although RFC 6120, section 3.2.3 recommends to skip the SRV lookup in this
+	// case, we opt for keep compatibility with existing client implementations
+	// and still make the SRV lookup. This avoids preventing imported accounts to
+	// use the SRV lookup.
+	if len(conf.Server) > 0 && conf.Port > 0 {
 		dialer.ServerAddress = net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port))
 	}
 
 	if p.UseHiddenService {
-		server, err := dialer.GetServer()
-		if err != nil {
-			return nil, err
-		}
-
+		server := dialer.GetServer()
 		host, port, err := net.SplitHostPort(server)
 		if err != nil {
 			return nil, err
 		}
 
 		if hidden, ok := servers.Get(host); ok {
+			dialer.Config.SkipSRVLookup = true
 			dialer.ServerAddress = net.JoinHostPort(hidden.Onion, port)
 		}
 	}

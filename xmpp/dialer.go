@@ -58,12 +58,12 @@ func (d *Dialer) getJIDDomainpart() string {
 }
 
 // GetServer returns the "hardcoded" server chosen if available, otherwise returns the domainpart from the JID. The server contains port information
-func (d *Dialer) GetServer() (string, error) {
+func (d *Dialer) GetServer() string {
 	if d.hardcodedServer() {
-		return d.ServerAddress, nil
+		return d.ServerAddress
 	}
 
-	return net.JoinHostPort(d.getJIDDomainpart(), "5222"), nil
+	return net.JoinHostPort(d.getJIDDomainpart(), "5222")
 }
 
 func (d *Dialer) connect(addr string, conn net.Conn) (*Conn, error) {
@@ -92,12 +92,14 @@ func (d *Dialer) Dial() (*Conn, error) {
 		d.Proxy = proxy.Direct
 	}
 
-	//RFC 6120, Section 3.2.3
-	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.hardcodedServer() {
 		d.Config.TrustedAddress = true
+	}
 
-		addr := d.ServerAddress
+	//RFC 6120, Section 3.2.3
+	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
+	if d.Config.SkipSRVLookup {
+		addr := d.GetServer()
 		conn, err := connectWithProxy(addr, d.Proxy)
 		if err != nil {
 			return nil, err

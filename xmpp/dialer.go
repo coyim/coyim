@@ -2,14 +2,10 @@ package xmpp
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"crypto/tls"
-	"crypto/x509"
 	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"strings"
 
@@ -173,89 +169,6 @@ func (c *Conn) negotiateStream(address, domain string, conn net.Conn) (features 
 	return
 }
 
-func (c *Conn) startTLS(address, domain string, conn net.Conn) error {
-	fmt.Fprintf(c.out, "<starttls xmlns='%s'/>", NsTLS)
-
-	proceed, err := nextStart(c.in)
-	if err != nil {
-		return err
-	}
-
-	if proceed.Name.Space != NsTLS || proceed.Name.Local != "proceed" {
-		return errors.New("xmpp: expected <proceed> after <starttls> but got <" + proceed.Name.Local + "> in " + proceed.Name.Space)
-	}
-
-	l := logFor(c.config)
-	io.WriteString(l, "Starting TLS handshake\n")
-
-	var tlsConfig tls.Config
-	if c.config.TLSConfig != nil {
-		tlsConfig = *c.config.TLSConfig
-	}
-	tlsConfig.ServerName = domain
-	tlsConfig.InsecureSkipVerify = true
-
-	tlsConn := tls.Client(conn, &tlsConfig)
-	if err := tlsConn.Handshake(); err != nil {
-		return err
-	}
-
-	tlsState := tlsConn.ConnectionState()
-	printTLSDetails(l, tlsState)
-
-	haveCertHash := len(c.config.ServerCertificateSHA256) != 0
-	if haveCertHash {
-		h := sha256.New()
-		h.Write(tlsState.PeerCertificates[0].Raw)
-		if digest := h.Sum(nil); !bytes.Equal(digest, c.config.ServerCertificateSHA256) {
-			return fmt.Errorf("xmpp: server certificate does not match expected hash (got: %x, want: %x)",
-				digest, c.config.ServerCertificateSHA256)
-		}
-	} else {
-		if len(tlsState.PeerCertificates) == 0 {
-			return errors.New("xmpp: server has no certificates")
-		}
-
-		opts := x509.VerifyOptions{
-			Intermediates: x509.NewCertPool(),
-		}
-		for _, cert := range tlsState.PeerCertificates[1:] {
-			opts.Intermediates.AddCert(cert)
-		}
-		verifiedChains, err := tlsState.PeerCertificates[0].Verify(opts)
-		if err != nil {
-			return errors.New("xmpp: failed to verify TLS certificate: " + err.Error())
-		}
-
-		for i, cert := range verifiedChains[0] {
-			fmt.Fprintf(l, "  certificate %d: %s\n", i, certName(cert))
-		}
-		leafCert := verifiedChains[0][0]
-
-		if err := leafCert.VerifyHostname(domain); err != nil {
-			if c.config.TrustedAddress {
-				fmt.Fprintf(l, "Certificate fails to verify against domain in username: %s\n", err)
-				host, _, err := net.SplitHostPort(address)
-				if err != nil {
-					return errors.New("xmpp: failed to split address when checking whether TLS certificate is valid: " + err.Error())
-				}
-
-				if err = leafCert.VerifyHostname(host); err != nil {
-					return errors.New("xmpp: failed to match TLS certificate to address after failing to match to username: " + err.Error())
-				}
-				fmt.Fprintf(l, "Certificate matches against trusted server hostname: %s\n", host)
-			} else {
-				return errors.New("xmpp: failed to match TLS certificate to name: " + err.Error())
-			}
-		}
-	}
-
-	c.in, c.out = makeInOut(tlsConn, c.config)
-	c.rawOut = tlsConn
-
-	return nil
-}
-
 func makeInOut(conn io.ReadWriter, config *Config) (in *xml.Decoder, out io.Writer) {
 	if config != nil && config.InLog != nil {
 		in = xml.NewDecoder(io.TeeReader(conn, config.InLog))
@@ -272,17 +185,8 @@ func makeInOut(conn io.ReadWriter, config *Config) (in *xml.Decoder, out io.Writ
 	return
 }
 
-func logFor(config *Config) io.Writer {
-	log := ioutil.Discard
-	if config != nil && config.Log != nil {
-		log = config.Log
-	}
-
-	return log
-}
-
 func authenticate(features streamFeatures, user, password string, config *Config, c *Conn) error {
-	l := logFor(config)
+	l := config.getLog()
 	io.WriteString(l, "Authenticating as "+user+"\n")
 	if err := c.authenticate(features, user, password); err != nil {
 		return err
@@ -297,7 +201,7 @@ func createAccount(user, password string, config *Config, c *Conn) error {
 		return nil
 	}
 
-	io.WriteString(logFor(config), "Attempting to create account\n")
+	io.WriteString(config.getLog(), "Attempting to create account\n")
 	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
 	var iq ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {

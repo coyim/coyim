@@ -9,6 +9,7 @@ package xmpp
 import (
 	"crypto/tls"
 	"io"
+	"io/ioutil"
 )
 
 // Config contains options for an XMPP connection.
@@ -47,4 +48,12 @@ type Config struct {
 	// names. RFC 6210 section 3.2.3 recomends to skip the SRV lookup when the
 	// initiating entity has a hardcoded FQDN associated with the origin domain.
 	SkipSRVLookup bool
+}
+
+func (c *Config) getLog() io.Writer {
+	if c.Log == nil {
+		return ioutil.Discard
+	}
+
+	return c.Log
 }

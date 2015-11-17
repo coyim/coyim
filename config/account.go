@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"log"
+	"net"
 	"net/url"
 	"strconv"
 	"time"
@@ -77,9 +78,30 @@ func (a *Account) EnsureTorProxy(torAddress string) {
 		}
 	}
 
-	// We do not want to override any already configured proxy
+	//Tor refuses to connect to any other proxy at localhost/127.0.0.1 in the
+	//chain, so we remove them
+	allowedProxies := make([]string, 0, len(a.Proxies))
+	for _, proxy := range a.Proxies {
+		p, err := url.Parse(proxy)
+		if err != nil {
+			continue
+		}
+
+		host, _, err := net.SplitHostPort(p.Host)
+		if err != nil {
+			continue
+		}
+
+		if host == "localhost" || host == "127.0.0.1" {
+			continue
+		}
+
+		allowedProxies = append(allowedProxies, proxy)
+	}
+
 	torProxy := newTorProxy(torAddress)
-	a.Proxies = append(a.Proxies, torProxy)
+	allowedProxies = append(allowedProxies, torProxy)
+	a.Proxies = allowedProxies
 }
 
 // ServerCertificateHash returns the hash for the server certificate

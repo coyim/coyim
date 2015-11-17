@@ -42,7 +42,7 @@ clean-gui-test:
 
 gui-test: clean-gui-test
 ifeq ($(shell uname), Linux)
-	git clone git@github.com:twstrike/coyim-testing.git gui-test
+	git clone https://github.com/twstrike/coyim-testing.git gui-test
 	echo $$COYIM_PATH
 	cd gui-test && behave --stop
 endif

@@ -43,7 +43,6 @@ func (c *Conn) sendInitialStreamHeader(domain string) (features streamFeatures, 
 		return
 	}
 
-
 	return
 }
 
@@ -66,10 +65,6 @@ type streamFeatures struct {
 	//and the features described here
 	//https://xmpp.org/registrar/stream-features.html
 	any []Any `xml:",any,omitempty"`
-}
-
-type inBandRegistration struct {
-	XMLName xml.Name `xml:"http://jabber.org/features/iq-register register,omitempty"`
 }
 
 // StreamError contains a stream error

@@ -1,7 +1,6 @@
 package xmpp
 
 import (
-	"bytes"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -193,49 +192,5 @@ func authenticate(features streamFeatures, user, password string, config *Config
 	}
 
 	io.WriteString(l, "Authentication successful\n")
-	return nil
-}
-
-func createAccount(user, password string, config *Config, c *Conn) error {
-	if config == nil || config.CreateCallback == nil {
-		return nil
-	}
-
-	io.WriteString(config.getLog(), "Attempting to create account\n")
-	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
-	var iq ClientIQ
-	if err := c.in.DecodeElement(&iq, nil); err != nil {
-		return errors.New("unmarshal <iq>: " + err.Error())
-	}
-
-	if iq.Type != "result" {
-		return errors.New("xmpp: account creation failed")
-	}
-	var register RegisterQuery
-	if err := xml.NewDecoder(bytes.NewBuffer(iq.Query)).Decode(&register); err != nil {
-		return err
-	}
-
-	if len(register.Form.Type) > 0 {
-		reply, err := processForm(&register.Form, register.Datas, config.CreateCallback)
-		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'>")
-		if err = xml.NewEncoder(c.rawOut).Encode(reply); err != nil {
-			return err
-		}
-		fmt.Fprintf(c.rawOut, "</query></iq>")
-	} else if register.Username != nil && register.Password != nil {
-		// Try the old-style registration.
-		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>", user, password)
-	}
-
-	var iq2 ClientIQ
-	if err := c.in.DecodeElement(&iq2, nil); err != nil {
-		return errors.New("unmarshal <iq>: " + err.Error())
-	}
-
-	if iq2.Type == "error" {
-		return errors.New("xmpp: account creation failed")
-	}
-
 	return nil
 }

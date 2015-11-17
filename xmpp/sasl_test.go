@@ -11,9 +11,7 @@ type SaslXmppSuite struct{}
 var _ = Suite(&SaslXmppSuite{})
 
 func (s *SaslXmppSuite) Test_authenticate_failsIfPlainIsNotAnOption(c *C) {
-	conn := Conn{
-		config: &Config{},
-	}
+	conn := Conn{}
 	stream := streamFeatures{}
 
 	e := conn.authenticate(stream, "", "")
@@ -27,7 +25,6 @@ func (s *SaslXmppSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-		config: &Config{},
 	}
 	stream := streamFeatures{
 		Mechanisms: saslMechanisms{
@@ -46,7 +43,6 @@ func (s *SaslXmppSuite) Test_authenticate_handlesFailure(c *C) {
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-		config: &Config{},
 	}
 	stream := streamFeatures{
 		Mechanisms: saslMechanisms{
@@ -64,7 +60,6 @@ func (s *SaslXmppSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-		config: &Config{},
 	}
 	stream := streamFeatures{
 		Mechanisms: saslMechanisms{

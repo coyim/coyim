@@ -27,8 +27,8 @@ type RegisterQuery struct {
 	Datas    []bobData `xml:"data"`
 }
 
-func createAccount(user, password string, config *Config, c *Conn) error {
-	if config == nil || config.CreateCallback == nil {
+func createAccount(user, password string, config Config, c *Conn) error {
+	if config.CreateCallback == nil {
 		return nil
 	}
 

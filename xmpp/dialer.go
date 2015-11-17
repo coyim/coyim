@@ -83,10 +83,10 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 	}
 
 	//JID domainpart is separated from localpart because it is used as "origin domain" for the TLS cert
-	return setupStream(d.GetServer(), d.getJIDLocalpart(), d.getJIDDomainpart(), d.Password, &d.Config, conn)
+	return setupStream(d.GetServer(), d.getJIDLocalpart(), d.getJIDDomainpart(), d.Password, d.Config, conn)
 }
 
-func setupStream(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {
+func setupStream(address, user, domain, password string, config Config, conn net.Conn) (c *Conn, err error) {
 	c = new(Conn)
 	c.config = config
 	c.inflights = make(map[Cookie]inflight)
@@ -163,14 +163,14 @@ func (c *Conn) negotiateStream(address, domain string, conn net.Conn) (features 
 	return
 }
 
-func makeInOut(conn io.ReadWriter, config *Config) (in *xml.Decoder, out io.Writer) {
-	if config != nil && config.InLog != nil {
+func makeInOut(conn io.ReadWriter, config Config) (in *xml.Decoder, out io.Writer) {
+	if config.InLog != nil {
 		in = xml.NewDecoder(io.TeeReader(conn, config.InLog))
 	} else {
 		in = xml.NewDecoder(conn)
 	}
 
-	if config != nil && config.OutLog != nil {
+	if config.OutLog != nil {
 		out = io.MultiWriter(conn, config.OutLog)
 	} else {
 		out = conn

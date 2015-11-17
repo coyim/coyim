@@ -19,7 +19,7 @@ import (
 
 // Conn represents a connection to an XMPP server.
 type Conn struct {
-	config *Config
+	config Config
 
 	out     io.Writer
 	rawOut  io.WriteCloser // doesn't log. Used for <auth>

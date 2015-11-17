@@ -21,8 +21,9 @@ matrix:
     - go: tip
   fast_finish: true
 
-before_install: 
+before_install:
   - "export DISPLAY=:99.0"
+  - "export COYIM_PATH=$(pwd)/bin/coyim"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
 install: make deps
 script: make ci

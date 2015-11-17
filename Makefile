@@ -37,7 +37,17 @@ lint:
 test:
 	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
 
-ci: get-uf default coveralls
+clean-gui-test:
+	$(RM) gui-test/*
+
+gui-test: clean-gui-test
+ifeq ($(shell uname), Linux)
+	git clone git@github.com:twstrike/coyim-testing.git gui-test
+	echo $$COYIM_PATH
+	cd gui-test && behave --stop
+endif
+
+ci: get-uf default coveralls gui-test
 
 run-cover: clean-cover
 	go test -coverprofile=xmpp.coverprofile ./xmpp

@@ -47,7 +47,7 @@ ifeq ($(shell uname), Linux)
 	cd gui-test && behave --stop
 endif
 
-ci: get-uf default coveralls gui-test
+ci: get-uf default coveralls
 
 run-cover: clean-cover
 	go test -coverprofile=xmpp.coverprofile ./xmpp

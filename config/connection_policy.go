@@ -5,9 +5,13 @@ import (
 	"errors"
 	"io"
 	"net"
+	"net/url"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
+
+	"golang.org/x/net/proxy"
 
 	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/xmpp"
@@ -108,6 +112,29 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 	}
 
 	return dialer, nil
+}
+
+func buildProxyChain(proxies []string) (dialer proxy.Dialer, err error) {
+	for i := len(proxies) - 1; i >= 0; i-- {
+		u, e := url.Parse(proxies[i])
+		if e != nil {
+			err = errors.New("Failed to parse " + proxies[i] + " as a URL: " + e.Error())
+			return
+		}
+
+		if dialer == nil {
+			dialer = &net.Dialer{
+				Timeout: 30 * time.Second,
+			}
+		}
+
+		if dialer, err = proxy.FromURL(u, dialer); err != nil {
+			err = errors.New("Failed to parse " + proxies[i] + " as a proxy: " + err.Error())
+			return
+		}
+	}
+
+	return
 }
 
 func buildInOutLogs(rawLog io.Writer) (io.Writer, io.Writer) {

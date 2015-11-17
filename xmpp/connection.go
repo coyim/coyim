@@ -21,12 +21,11 @@ import (
 type Conn struct {
 	config Config
 
-	out     io.Writer
-	rawOut  io.WriteCloser // doesn't log. Used for <auth>
-	in      *xml.Decoder
-	jid     string
-	archive bool
-	Rand    io.Reader
+	out    io.Writer
+	rawOut io.WriteCloser // doesn't log. Used for <auth>
+	in     *xml.Decoder
+	jid    string
+	Rand   io.Reader
 
 	lock          sync.Mutex
 	inflights     map[Cookie]inflight
@@ -124,7 +123,7 @@ func (c *Conn) Cancel(cookie Cookie) bool {
 // Send sends an IM message to the given user.
 func (c *Conn) Send(to, msg string) error {
 	archive := ""
-	if !c.archive {
+	if !c.config.Archive {
 		// The first part of archive is from google:
 		// See https://developers.google.com/talk/jep_extensions/otr
 		// The second part of the stanza is from XEP-0136

@@ -89,9 +89,6 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 		rawOut:    conn,
 		config:    d.Config,
 		inflights: make(map[Cookie]inflight),
-
-		//TODO: replace me by Config.Archive
-		archive: d.Config.Archive,
 	}
 
 	c.in, c.out = makeInOut(conn, d.Config)

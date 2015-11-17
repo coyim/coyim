@@ -27,12 +27,12 @@ type RegisterQuery struct {
 	Datas    []bobData `xml:"data"`
 }
 
-func createAccount(user, password string, config Config, c *Conn) error {
-	if config.CreateCallback == nil {
+func (c *Conn) createAccount(user, password string) error {
+	if c.config.CreateCallback == nil {
 		return nil
 	}
 
-	io.WriteString(config.getLog(), "Attempting to create account\n")
+	io.WriteString(c.config.getLog(), "Attempting to create account\n")
 	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
 	var iq ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
@@ -48,7 +48,7 @@ func createAccount(user, password string, config Config, c *Conn) error {
 	}
 
 	if len(register.Form.Type) > 0 {
-		reply, err := processForm(&register.Form, register.Datas, config.CreateCallback)
+		reply, err := processForm(&register.Form, register.Datas, c.config.CreateCallback)
 		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'>")
 		if err = xml.NewEncoder(c.rawOut).Encode(reply); err != nil {
 			return err

@@ -83,25 +83,30 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 	}
 
 	//JID domainpart is separated from localpart because it is used as "origin domain" for the TLS cert
-	return setupStream(d.GetServer(), d.getJIDLocalpart(), d.getJIDDomainpart(), d.Password, d.Config, conn)
-}
+	//return setupStream(d.GetServer(), d.getJIDLocalpart(), d.getJIDDomainpart(), d.Password, d.Config, conn)
+	//func setupStream(address, user, domain, password string, config Config, conn net.Conn) (c *Conn, err error) {
+	c = &Conn{
+		rawOut:    conn,
+		config:    d.Config,
+		inflights: make(map[Cookie]inflight),
 
-func setupStream(address, user, domain, password string, config Config, conn net.Conn) (c *Conn, err error) {
-	c = new(Conn)
-	c.config = config
-	c.inflights = make(map[Cookie]inflight)
-	c.archive = config.Archive
+		//TODO: replace me by Config.Archive
+		archive: d.Config.Archive,
+	}
 
-	c.in, c.out = makeInOut(conn, config)
-	c.rawOut = conn
+	c.in, c.out = makeInOut(conn, d.Config)
 
-	features, err := c.negotiateStream(address, domain, conn)
+	user := d.getJIDLocalpart()
+	password := d.Password
+	originDomain := d.getJIDDomainpart()
+
+	features, err := c.negotiateStream(d.GetServer(), originDomain, conn)
 	if err != nil {
 		return nil, err
 	}
 
 	if features.InBandRegistration != nil {
-		if err := createAccount(user, password, config, c); err != nil {
+		if err := c.createAccount(user, password); err != nil {
 			return nil, err
 		}
 	}
@@ -110,7 +115,7 @@ func setupStream(address, user, domain, password string, config Config, conn net
 		return nil, ErrAuthenticationFailed
 	}
 
-	if features, err = c.sendInitialStreamHeader(domain); err != nil {
+	if features, err = c.sendInitialStreamHeader(originDomain); err != nil {
 		return nil, err
 	}
 
@@ -127,7 +132,7 @@ func setupStream(address, user, domain, password string, config Config, conn net
 	if features.Session != nil {
 		// The server needs a session to be established. See RFC 3921,
 		// section 3.
-		fmt.Fprintf(c.out, "<iq to='%s' type='set' id='sess_1'><session xmlns='%s'/></iq>", domain, NsSession)
+		fmt.Fprintf(c.out, "<iq to='%s' type='set' id='sess_1'><session xmlns='%s'/></iq>", originDomain, NsSession)
 		if err = c.in.DecodeElement(&iq, nil); err != nil {
 			return nil, errors.New("xmpp: unmarshal <iq>: " + err.Error())
 		}

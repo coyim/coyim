@@ -20,7 +20,7 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
 	defer accountsLock.Unlock()
 
 	u.config.Add(c)
-	u.SaveConfig()
+	// u.SaveConfig()
 	u.configLoaded()
 }
 

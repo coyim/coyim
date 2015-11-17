@@ -10,19 +10,19 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type DialerSuite struct{}
+type TCPSuite struct{}
 
-func (*DialerSuite) SetUpSuite(c *C) {
+func (*TCPSuite) SetUpSuite(c *C) {
 	log.SetOutput(ioutil.Discard)
 }
 
-func (*DialerSuite) TearDownSuite(c *C) {
+func (*TCPSuite) TearDownSuite(c *C) {
 	log.SetOutput(os.Stderr)
 }
 
-var _ = Suite(&DialerSuite{})
+var _ = Suite(&TCPSuite{})
 
-func (s *DialerSuite) Test_newTCPConn_SkipsSRVAndConnectsToOriginDomain(c *C) {
+func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToOriginDomain(c *C) {
 	p := &mockProxy{}
 	d := &Dialer{
 		JID: "foo@jabber.com",
@@ -48,7 +48,7 @@ func (s *DialerSuite) Test_newTCPConn_SkipsSRVAndConnectsToOriginDomain(c *C) {
 	c.Check(p, MatchesExpectations)
 }
 
-func (s *DialerSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddress(c *C) {
+func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddress(c *C) {
 	p := &mockProxy{}
 	d := &Dialer{
 		JID:           "foo@jabber.com",
@@ -75,7 +75,7 @@ func (s *DialerSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddre
 	c.Check(p, MatchesExpectations)
 }
 
-func (s *DialerSuite) Test_newTCPConn_ErrorsOnMalformedServerAddress(c *C) {
+func (s *TCPSuite) Test_newTCPConn_ErrorsOnMalformedServerAddress(c *C) {
 	p := &mockProxy{}
 	d := &Dialer{
 		JID:           "foo@jabber.com",
@@ -90,7 +90,7 @@ func (s *DialerSuite) Test_newTCPConn_ErrorsOnMalformedServerAddress(c *C) {
 	c.Check(p, MatchesExpectations)
 }
 
-func (s *DialerSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
+func (s *TCPSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 	p := &mockProxy{}
 	d := &Dialer{
 		JID: "foo@jabber.com",
@@ -113,7 +113,7 @@ func (s *DialerSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 	c.Check(p, MatchesExpectations)
 }
 
-func (s *DialerSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortIfSRVLookupFails(c *C) {
+func (s *TCPSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortAfterSRVFails(c *C) {
 	p := &mockProxy{}
 	d := &Dialer{
 		JID: "foo@jabber.com",
@@ -143,7 +143,7 @@ func (s *DialerSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortIfSRVLo
 	c.Check(p, MatchesExpectations)
 }
 
-func (s *DialerSuite) Test_newTCPConn_IgnoresConfiguredServerWhenFallingBackIfSRVLookupFails(c *C) {
+func (s *TCPSuite) Test_newTCPConn_IgnoresConfiguredServerWhenFallingBackAfterSRVFailure(c *C) {
 	p := &mockProxy{}
 	d := &Dialer{
 		JID:           "foo@jabber.com",
@@ -174,7 +174,7 @@ func (s *DialerSuite) Test_newTCPConn_IgnoresConfiguredServerWhenFallingBackIfSR
 	c.Check(p, MatchesExpectations)
 }
 
-func (s *DialerSuite) Test_newTCPConn_ErrorsWhenFallbackMEthodFails(c *C) {
+func (s *TCPSuite) Test_newTCPConn_ErrorsWhenFallbackMethodFails(c *C) {
 	p := &mockProxy{}
 	d := &Dialer{
 		JID: "foo@jabber.com",

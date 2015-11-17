@@ -66,19 +66,6 @@ func (d *Dialer) GetServer() string {
 	return net.JoinHostPort(d.getJIDDomainpart(), "5222")
 }
 
-func (d *Dialer) connect(addr string, conn net.Conn) (*Conn, error) {
-	config := d.Config
-
-	//JID domainpart is separated from localpart because it is used as "origin domain" for the TLS cert
-	return setupStream(addr,
-		d.getJIDLocalpart(),
-		d.getJIDDomainpart(),
-		d.Password,
-		&config,
-		conn,
-	)
-}
-
 // RegisterAccount registers an account on the server. The formCallback is used to handle XMPP forms.
 func (d *Dialer) RegisterAccount(formCallback FormCallback) (*Conn, error) {
 	d.Config.CreateCallback = formCallback
@@ -107,7 +94,7 @@ func (d *Dialer) Dial() (*Conn, error) {
 	}
 
 	// RFC 6120, section 4
-	return d.connect(d.GetServer(), conn)
+	return d.setupStream(conn)
 }
 
 func (d *Dialer) newTCPConn() (net.Conn, error) {
@@ -156,10 +143,6 @@ func (d *Dialer) newTCPConn() (net.Conn, error) {
 }
 
 func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn, string, error) {
-	if dialer == nil {
-		dialer = proxy.Direct
-	}
-
 	for _, addr := range xmppAddrs {
 		conn, err := connectWithProxy(addr, dialer)
 		if err == nil {
@@ -186,6 +169,11 @@ func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err erro
 }
 
 // RFC 6120, Section 4.2
+func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
+	//JID domainpart is separated from localpart because it is used as "origin domain" for the TLS cert
+	return setupStream(d.GetServer(), d.getJIDLocalpart(), d.getJIDDomainpart(), d.Password, &d.Config, conn)
+}
+
 func setupStream(address, user, domain, password string, config *Config, conn net.Conn) (c *Conn, err error) {
 	c = new(Conn)
 	c.config = config

@@ -47,19 +47,23 @@ func (s *AccountXmppSuite) Test_EnsureTorProxy_AddsTorProxy(c *C) {
 
 func (s *AccountXmppSuite) Test_EnsureTorProxy_AddsTorProxyToTheLastPosition(c *C) {
 	torAddress := "127.0.0.1:9050"
-	existingTorProxy := "socks5://mycompany.com:9080"
+	existingProxy := "socks5://mycompany.com:9080"
+	existingProxyWithoutPort := "socks5://qaproxy.local"
 
 	a := &Account{
 		RequireTor: true,
-		Proxies:    []string{existingTorProxy},
+		Proxies: []string{
+			existingProxy, existingProxyWithoutPort,
+		},
 	}
 
 	a.EnsureTorProxy(torAddress)
 
-	c.Check(len(a.Proxies), Equals, 2)
-	c.Check(a.Proxies[0], Equals, existingTorProxy)
+	c.Check(len(a.Proxies), Equals, 3)
+	c.Check(a.Proxies[0], Equals, existingProxy)
+	c.Check(a.Proxies[1], Equals, existingProxyWithoutPort)
 
-	proxy, _ := url.Parse(a.Proxies[1])
+	proxy, _ := url.Parse(a.Proxies[2])
 	c.Check(proxy.Host, Equals, torAddress)
 }
 
@@ -69,8 +73,9 @@ func (s *AccountXmppSuite) Test_EnsureTorProxy_FiltersOutAnyExistingLocalProxy(c
 	a := &Account{
 		RequireTor: true,
 		Proxies: []string{
-			"127.0.0.1:9999",
-			"localhost:8888",
+			"socks5://127.0.0.1:9999",
+			"socks5://localhost:8888",
+			"socks5://localhost",
 		},
 	}
 

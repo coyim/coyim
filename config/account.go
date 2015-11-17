@@ -89,7 +89,7 @@ func (a *Account) EnsureTorProxy(torAddress string) {
 
 		host, _, err := net.SplitHostPort(p.Host)
 		if err != nil {
-			continue
+			host = p.Host
 		}
 
 		if host == "localhost" || host == "127.0.0.1" {

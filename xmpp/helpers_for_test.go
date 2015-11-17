@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"sync"
 	"time"
+
+	"gopkg.in/check.v1"
 )
 
 type mockConn struct {
@@ -189,4 +192,60 @@ func (c *teeConn) SetReadDeadline(t time.Time) error {
 
 func (c *teeConn) SetWriteDeadline(t time.Time) error {
 	return c.c.SetWriteDeadline(t)
+}
+
+type dialCall func(string, string) (c net.Conn, e error)
+type dialCallExp struct {
+	f      dialCall
+	called bool
+}
+
+type mockProxy struct {
+	called int
+	calls  []dialCallExp
+	sync.Mutex
+}
+
+func (p *mockProxy) Dial(network, addr string) (net.Conn, error) {
+	if len(p.calls)-1 < p.called {
+		return nil, fmt.Errorf("unexpected call to Dial: %s, %s \n", network, addr)
+	}
+
+	p.Lock()
+	defer p.Unlock()
+
+	fn := p.calls[p.called]
+	p.called = p.called + 1
+
+	fn.called = true
+	return fn.f(network, addr)
+}
+
+func (p *mockProxy) Expects(f dialCall) {
+	p.Lock()
+	defer p.Unlock()
+
+	if p.calls == nil {
+		p.calls = []dialCallExp{}
+	}
+
+	p.calls = append(p.calls, dialCallExp{f: f})
+}
+
+var MatchesExpectations check.Checker = &allExpectations{
+	&check.CheckerInfo{Name: "IsNil", Params: []string{"value"}},
+}
+
+type allExpectations struct {
+	*check.CheckerInfo
+}
+
+func (checker *allExpectations) Check(params []interface{}, names []string) (result bool, error string) {
+	p := params[0].(*mockProxy)
+
+	if p.called != len(p.calls) {
+		return false, fmt.Sprintf("expected: %d calls, got: %d", len(p.calls), p.called)
+	}
+
+	return true, ""
 }

@@ -53,14 +53,8 @@ func (a *Accounts) accountLoaded() {
 // or it could not be decrypted, an error will be returned.
 // However, the returned Accounts instance will always be usable
 func LoadOrCreate(configFile string, ks KeySupplier) (a *Accounts, ok bool, e error) {
-	shouldEncrypt := false
-	if len(configFile) == 0 {
-		configFile, shouldEncrypt = findConfigFile()
-	}
-
 	a = new(Accounts)
-	a.filename = configFile
-	a.ShouldEncrypt = shouldEncrypt
+	a.filename = findConfigFile(configFile)
 	e = a.tryLoad(ks)
 	ok = !(e == errNoPasswordSupplied || e == errDecryptionFailed)
 
@@ -75,24 +69,23 @@ func (a *Accounts) tryLoad(ks KeySupplier) error {
 	var contents []byte
 	var err error
 
-	if a.ShouldEncrypt {
-		contents2, err2 := readFileOrTemporaryBackup(a.filename)
-		if err2 != nil {
-			err = err2
-		} else {
-			contents, a.params, err = decryptConfiguration(contents2, ks)
-
-			if err == errNoPasswordSupplied {
-				return err
-			} else if err == errDecryptionFailed {
-				return err
-			}
-		}
-	} else {
-		contents, err = readFileOrTemporaryBackup(a.filename)
-	}
-
+	contents, err = readFileOrTemporaryBackup(a.filename)
 	if err != nil {
+		return errInvalidConfigFile
+	}
+	_, err = parseEncryptedData(contents)
+	switch err {
+	case nil:
+		a.ShouldEncrypt = true
+		contents, a.params, err = decryptConfiguration(contents, ks)
+		if err == errNoPasswordSupplied {
+			return err
+		} else if err == errDecryptionFailed {
+			return err
+		}
+	case errDecryptionParamsEmpty:
+		a.ShouldEncrypt = false
+	default:
 		return errInvalidConfigFile
 	}
 

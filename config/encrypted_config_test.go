@@ -123,3 +123,15 @@ func (s *EncryptedConfigXmppSuite) Test_encryptConfiguration(c *C) {
 	"Data": "2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d2a61e79b8671f85a27505cb9c5477ed75"
 }`)
 }
+
+func (s *EncryptedConfigXmppSuite) Test_deserializeConfigurationEmptyErr(c *C) {
+	p := &EncryptionParameters{
+		Nonce: "",
+		Salt:  "",
+		N:     262144,
+		R:     8,
+		P:     1,
+	}
+	e := p.deserialize()
+	c.Assert(e, Equals, errDecryptionParamsEmpty)
+}

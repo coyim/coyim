@@ -94,6 +94,10 @@ func (p *EncryptionParameters) deserialize() (e error) {
 		return
 	}
 
+	if len(p.nonceInternal) == 0 || len(p.saltInternal) == 0 {
+		return errDecryptionParamsEmpty
+	}
+
 	return nil
 }
 
@@ -117,6 +121,7 @@ func parseEncryptedData(content []byte) (ed *encryptedData, e error) {
 
 var errNoPasswordSupplied = errors.New("no password supplied, aborting")
 var errDecryptionFailed = errors.New("decryption failed")
+var errDecryptionParamsEmpty = errors.New("decryption params are empty")
 
 func decryptConfiguration(content []byte, ks KeySupplier) ([]byte, *EncryptionParameters, error) {
 	data, err := parseEncryptedData(content)

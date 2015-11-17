@@ -17,17 +17,20 @@ func ensureDir(dirname string, perm os.FileMode) {
 	}
 }
 
-func findConfigFile() (string, bool) {
-	dir := configDir()
-	ensureDir(dir, 0700)
-	basePath := filepath.Join(dir, "accounts.json")
-	switch {
-	case fileExists(basePath + encryptedFileEnding):
-		return basePath + encryptedFileEnding, true
-	case fileExists(basePath + encryptedFileEnding + tmpExtension):
-		return basePath + encryptedFileEnding, true
+func findConfigFile(filename string) string {
+	if len(filename) == 0 {
+		dir := configDir()
+		ensureDir(dir, 0700)
+		basePath := filepath.Join(dir, "accounts.json")
+		switch {
+		case fileExists(basePath + encryptedFileEnding):
+			return basePath + encryptedFileEnding
+		case fileExists(basePath + encryptedFileEnding + tmpExtension):
+			return basePath + encryptedFileEnding
+		}
+		return basePath
 	}
-	return basePath, false
+	return filename
 }
 
 const tmpExtension = ".000~"

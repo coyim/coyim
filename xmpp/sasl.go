@@ -11,9 +11,18 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"io"
+)
+
+var (
+	// ErrAuthenticationFailed indicates a failure to authenticate to the server with the user and password provided.
+	ErrAuthenticationFailed = errors.New("could not authenticate to the XMPP server")
 )
 
 func (c *Conn) authenticate(features streamFeatures, user, password string) (err error) {
+	l := c.config.getLog()
+	io.WriteString(l, "Authenticating as "+user+"\n")
+
 	havePlain := false
 	for _, m := range features.Mechanisms.Mechanism {
 		if m == "PLAIN" {
@@ -43,6 +52,7 @@ func (c *Conn) authenticate(features streamFeatures, user, password string) (err
 		return errors.New("expected <success> or <failure>, got <" + name.Local + "> in " + name.Space)
 	}
 
+	io.WriteString(l, "Authentication successful\n")
 	return nil
 }
 

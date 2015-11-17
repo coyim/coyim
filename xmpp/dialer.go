@@ -11,11 +11,6 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-var (
-	// ErrAuthenticationFailed indicates a failure to authenticate to the server with the user and password provided.
-	ErrAuthenticationFailed = errors.New("could not authenticate to the XMPP server")
-)
-
 // A Dialer connects and authenticates to an XMPP server
 type Dialer struct {
 	// JID represents the user's "bare JID" as specified in RFC 6120
@@ -111,7 +106,7 @@ func setupStream(address, user, domain, password string, config *Config, conn ne
 		}
 	}
 
-	if err := authenticate(features, user, password, config, c); err != nil {
+	if err := c.authenticate(features, user, password); err != nil {
 		return nil, ErrAuthenticationFailed
 	}
 
@@ -182,15 +177,4 @@ func makeInOut(conn io.ReadWriter, config *Config) (in *xml.Decoder, out io.Writ
 	}
 
 	return
-}
-
-func authenticate(features streamFeatures, user, password string, config *Config, c *Conn) error {
-	l := config.getLog()
-	io.WriteString(l, "Authenticating as "+user+"\n")
-	if err := c.authenticate(features, user, password); err != nil {
-		return err
-	}
-
-	io.WriteString(l, "Authentication successful\n")
-	return nil
 }

@@ -96,21 +96,30 @@ func (d *Dialer) Dial() (*Conn, error) {
 		d.Config.TrustedAddress = true
 	}
 
+	// Starting an XMPP connectin comprises two parts:
+	// - Opening a transport channel (TCP)
+	// - Opening an XML stream over the transport channel
+
+	// RFC 6120, section 3
+	conn, err := d.newTCPConn()
+	if err != nil {
+		return nil, err
+	}
+
+	// RFC 6120, section 4
+	return d.connect(d.GetServer(), conn)
+}
+
+func (d *Dialer) newTCPConn() (net.Conn, error) {
+	addr := d.GetServer()
+
 	//RFC 6120, Section 3.2.3
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.Config.SkipSRVLookup {
 		log.Println("Skipping SRV lookup")
-
-		addr := d.GetServer()
-		conn, err := connectWithProxy(addr, d.Proxy)
-		if err != nil {
-			return nil, err
-		}
-
-		return d.connect(addr, conn)
+		return connectWithProxy(addr, d.Proxy)
 	}
 
-	addr := d.GetServer()
 	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
 		return nil, err
@@ -143,7 +152,7 @@ func (d *Dialer) Dial() (*Conn, error) {
 		return nil, err
 	}
 
-	return d.connect(addr, conn)
+	return conn, err
 }
 
 func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn, string, error) {

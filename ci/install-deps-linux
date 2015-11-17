@@ -7,7 +7,7 @@ sudo apt-get install -qq -y libgtk-3-dev
 sudo apt-get install -qq -y xvfb
 sudo /usr/bin/Xvfb $DISPLAY 2>&1 > /dev/null &
 
-sudo apt-get install -qq -y python-dogtail mate-desktop-environment-core
+sudo apt-get install -qq -y python-dogtail gsettings-desktop-schemas
 sudo apt-get install -qq -y libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev
 sudo pip install --upgrade pip
 sudo pip install Pillow

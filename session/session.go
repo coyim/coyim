@@ -754,7 +754,6 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 
 	conf := s.CurrentAccount
 	policy := config.ConnectionPolicy{
-		RequireTor:       conf.RequireTor,
 		UseHiddenService: true,
 
 		Logger:     s.ConnectionLogger,

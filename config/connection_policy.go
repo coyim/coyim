@@ -13,6 +13,7 @@ import (
 
 	"golang.org/x/net/proxy"
 
+	ournet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/xmpp"
 )
@@ -25,7 +26,6 @@ var (
 
 // ConnectionPolicy represents a policy to connect to XMPP servers
 type ConnectionPolicy struct {
-	RequireTor       bool
 	UseHiddenService bool
 
 	// Logger logs connection information.
@@ -33,6 +33,26 @@ type ConnectionPolicy struct {
 
 	// XMPPLogger logs XMPP messages
 	XMPPLogger io.Writer
+
+	torState ournet.TorState
+}
+
+func (p *ConnectionPolicy) ensureTorFor(conf *Account) error {
+	if !conf.RequireTor {
+		return nil
+	}
+
+	tor := p.torState
+	if tor == nil {
+		tor = ournet.Tor
+	}
+
+	if !tor.Detect() {
+		return ErrTorNotRunning
+	}
+
+	conf.EnsureTorProxy(tor.Address())
+	return nil
 }
 
 func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
@@ -44,13 +64,9 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 
 	domainpart := jidParts[1]
 
-	torAddress, torDetected := DetectTor()
-	if p.RequireTor && !torDetected {
-		scannedForTor = false
-		return nil, ErrTorNotRunning
+	if err := p.ensureTorFor(conf); err != nil {
+		return nil, err
 	}
-
-	conf.EnsureTorProxy(torAddress)
 
 	certSHA256, err := conf.ServerCertificateHash()
 	if err != nil {
@@ -162,13 +178,14 @@ func buildInOutLogs(rawLog io.Writer) (io.Writer, io.Writer) {
 }
 
 // Connect to the server and authenticates with the password
-//TODO: it is weird that conf.Password is ignored and password is used
 func (p *ConnectionPolicy) Connect(password string, conf *Account) (*xmpp.Conn, error) {
 	dialer, err := p.buildDialerFor(conf)
 	if err != nil {
 		return nil, err
 	}
 
+	// We use password rather than conf.Password because the user might have not
+	// stored the password, and changing conf.Password in this case will store it.
 	dialer.Password = password
 
 	return dialer.Dial()

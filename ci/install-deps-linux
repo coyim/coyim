@@ -8,6 +8,7 @@ sudo apt-get install -qq -y xvfb
 sudo /usr/bin/Xvfb $DISPLAY 2>&1 > /dev/null &
 
 sudo apt-get install -qq -y python-dogtail gsettings-desktop-schemas
+gsettings set org.gnome.desktop.interface toolkit-accessibility true
 sudo apt-get install -qq -y libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev
 sudo pip install --upgrade pip
 sudo pip install Pillow

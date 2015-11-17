@@ -14,6 +14,10 @@ import (
 	"github.com/twstrike/otr3"
 )
 
+var (
+	errCertificateSizeMismatch = errors.New("ServerCertificateSHA256 is not 32 bytes long")
+)
+
 // Account contains the configuration for one account
 type Account struct {
 	id string `json:"-"`
@@ -115,7 +119,7 @@ func (a *Account) ServerCertificateHash() ([]byte, error) {
 		}
 
 		if len(certSHA256) != 32 {
-			return nil, errors.New("ServerCertificateSHA256 is not 32 bytes long")
+			return nil, errCertificateSizeMismatch
 		}
 	}
 

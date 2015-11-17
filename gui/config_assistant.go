@@ -9,6 +9,8 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+
+	ournet "github.com/twstrike/coyim/net"
 )
 
 type saveAccountFunc func(*config.Account)
@@ -81,7 +83,7 @@ func buildConfigAssistant(saveFn saveAccountFunc, closeFn func()) (*gtk.Assistan
 			notDetectedMsg := obj.(*gtk.Label)
 
 			go func() {
-				_, ok := config.DetectTor()
+				ok := ournet.Tor.Detect()
 
 				glib.IdleAdd(func() {
 					detectedMsg.SetVisible(ok)

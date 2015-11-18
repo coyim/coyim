@@ -37,7 +37,7 @@ clean-gui-test:
 	$(RM) gui-test/*
 
 #TODO: this should only be called on a linux environment
-gui-test: clean-gui-test
+gui-test: clean-gui-test build-gui
 ifeq ($(shell uname), Linux)
 	git clone https://github.com/twstrike/coyim-testing.git gui-test
 	cd gui-test && COYIM_PATH=$(PWD)/bin/coyim behave --stop

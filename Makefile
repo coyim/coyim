@@ -47,7 +47,7 @@ ifeq ($(shell uname), Linux)
 	cd gui-test && behave --stop
 endif
 
-ci: get-uf default coveralls
+ci: get default coveralls
 
 run-cover: clean-cover
 	go test -coverprofile=xmpp.coverprofile ./xmpp
@@ -74,9 +74,6 @@ coveralls: run-cover
 
 get:
 	go get -t -tags $(GTK_BUILD_TAG) ./...
-
-get-uf:
-	go get -u -f -t -tags $(GTK_BUILD_TAG) ./...
 
 deps-u:
 	go get -u github.com/golang/lint/golint

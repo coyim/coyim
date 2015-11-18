@@ -8,7 +8,7 @@
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel" id="label1`">
+          <object class="GtkLabel" id="label1">
             <property name="label" translatable="yes">Server (for google accounts, you may want to try xmpp.google.com)</property>
           </object>
           <packing>

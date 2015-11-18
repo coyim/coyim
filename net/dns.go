@@ -87,10 +87,14 @@ func (s byPriorityWeight) Less(i, j int) bool {
 func (s byPriorityWeight) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 func convertAnswersToSRV(in []dns.RR) []*net.SRV {
-	result := make([]*net.SRV, len(in))
+	result := make([]*net.SRV, 0, len(in))
+	for _, a := range in {
+		srv := convertAnswerToSRV(a)
+		if srv == nil {
+			continue
+		}
 
-	for ix, a := range in {
-		result[ix] = convertAnswerToSRV(a)
+		result = append(result, srv)
 	}
 
 	sort.Sort(byPriorityWeight(result))

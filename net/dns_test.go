@@ -48,8 +48,9 @@ func (s *DNSXmppSuite) Test_convertAnswersToSRV_convertsAnswers(c *C) {
 	in[0] = cn
 	in[1] = srv
 	res := convertAnswersToSRV(in)
-	c.Assert(res[0], IsNil)
-	c.Assert(res[1].Target, Equals, "foo2.com")
+
+	c.Assert(res, HasLen, 1)
+	c.Assert(res[0].Target, Equals, "foo2.com")
 }
 
 func (s *DNSXmppSuite) Test_msgSRV_createsMessage(c *C) {

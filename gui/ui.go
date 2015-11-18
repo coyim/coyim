@@ -433,7 +433,7 @@ func (u *gtkUI) rosterUpdated() {
 }
 
 func (u *gtkUI) disconnect(account *account) {
-	account.session.Close()
+	go account.session.Close()
 }
 
 func (u *gtkUI) alertTorIsNotRunning() {

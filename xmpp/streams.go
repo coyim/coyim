@@ -73,3 +73,6 @@ type StreamError struct {
 	Any     xml.Name `xml:",any"`
 	Text    string   `xml:"text"`
 }
+
+// StreamClose represents a request to close the stream
+type StreamClose struct{}

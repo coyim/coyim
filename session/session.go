@@ -138,6 +138,11 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 			return
 		}
 
+		//The receiving entity has closed the channel
+		if _, quit := stanza.Value.(*xmpp.StreamClose); quit {
+			return
+		}
+
 		stanzaChan <- stanza
 	}
 }

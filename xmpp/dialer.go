@@ -82,16 +82,10 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 		d.Config.TrustedAddress = true
 	}
 
-	//JID domainpart is separated from localpart because it is used as "origin domain" for the TLS cert
-	//return setupStream(d.GetServer(), d.getJIDLocalpart(), d.getJIDDomainpart(), d.Password, d.Config, conn)
-	//func setupStream(address, user, domain, password string, config Config, conn net.Conn) (c *Conn, err error) {
-	c = &Conn{
-		rawOut:    conn,
-		config:    d.Config,
-		inflights: make(map[Cookie]inflight),
-	}
-
-	c.in, c.out = makeInOut(conn, d.Config)
+	in, out := makeInOut(conn, d.Config)
+	c = NewConn(in, out, "")
+	c.rawOut = conn
+	c.config = d.Config
 
 	user := d.getJIDLocalpart()
 	password := d.Password
@@ -108,6 +102,7 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 		}
 	}
 
+	// SASL negotiation. RFC 6120, section 6
 	if err := c.authenticate(features, user, password); err != nil {
 		return nil, ErrAuthenticationFailed
 	}
@@ -116,9 +111,8 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 		return nil, err
 	}
 
-	// Send IQ message asking to bind to the local user name.
-	// RFC 6210 section 7 states this is mandatory, so a missing features.Bind
-	// is a protocol failure
+	// Resource binding. RFC 6120, section 7
+	// This is mandatory, so a missing features.Bind is a protocol failure
 	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
 	var iq ClientIQ
 	if err = c.in.DecodeElement(&iq, nil); err != nil {

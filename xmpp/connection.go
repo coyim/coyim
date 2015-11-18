@@ -11,6 +11,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"reflect"
 	"strconv"
 	"sync"
@@ -33,6 +35,9 @@ type Conn struct {
 
 	lastPingRequest  time.Time
 	lastPongResponse time.Time
+
+	delayedClose chan bool
+	closed       bool
 }
 
 // NewConn creates a new connection
@@ -41,15 +46,46 @@ func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
 		in:  in,
 		out: out,
 		jid: jid,
+
+		inflights:    make(map[Cookie]inflight),
+		delayedClose: make(chan bool),
 	}
 }
 
 // Close closes the underlying connection
 func (c *Conn) Close() error {
-	// RFC 6120, Section 4.4 and 9.1.5
-	fmt.Fprint(c.out, "</stream:stream>")
-	//TODO: Wait for a </stream:stream> from server
+	if c.closed {
+		return errors.New("xmpp: the connection is already closed")
+	}
 
+	log.Println("xmpp: sending closing stream tag")
+
+	// RFC 6120, Section 4.4 and 9.1.5
+	c.closed = true
+	fmt.Fprint(c.out, "</stream:stream>")
+
+	//TODO: find a better way to prevent sending message.
+	c.out = ioutil.Discard
+
+	select {
+	case <-c.delayedClose:
+	case <-time.After(30 * time.Second):
+		log.Println("xmpp: timed out waiting for closing stream")
+	}
+
+	return c.closeTCP()
+}
+
+func (c *Conn) receivedClosingStreamTag() {
+	if !c.closed {
+		go c.Close()
+	}
+
+	c.delayedClose <- true
+}
+
+func (c *Conn) closeTCP() error {
+	log.Println("xmpp: TCP closed")
 	return c.rawOut.Close()
 }
 
@@ -59,6 +95,12 @@ func (c *Conn) Close() error {
 func (c *Conn) Next() (stanza Stanza, err error) {
 	for {
 		if stanza.Name, stanza.Value, err = next(c); err != nil {
+			return
+		}
+
+		if _, ok := stanza.Value.(*StreamClose); ok {
+			log.Println("xmpp: received closing stream tag")
+			go c.receivedClosingStreamTag()
 			return
 		}
 

@@ -10,6 +10,8 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
+	"fmt"
+	"log"
 	"reflect"
 )
 
@@ -34,10 +36,32 @@ func xmlEscape(s string) string {
 	return b.String()
 }
 
+// Scan XML token stream to finc next Element (start or end)
+func nextElement(p *xml.Decoder) (xml.Token, error) {
+	for {
+		t, err := p.Token()
+		if err != nil {
+			return xml.StartElement{}, err
+		}
+
+		switch elem := t.(type) {
+		case xml.StartElement, xml.EndElement:
+			return t, nil
+		case xml.CharData:
+			// https://xmpp.org/rfcs/rfc6120.html#xml-whitespace
+			if string(elem) == " " {
+				log.Println("xmpp: received whitespace ping")
+			}
+		default:
+			log.Printf("xmpp: received unhandled element: %#v\n", elem)
+		}
+	}
+}
+
 // Scan XML token stream to find next StartElement.
 func nextStart(p *xml.Decoder) (xml.StartElement, error) {
 	for {
-		t, err := p.Token()
+		t, err := nextElement(p)
 		if err != nil {
 			return xml.StartElement{}, err
 		}
@@ -52,16 +76,28 @@ func nextStart(p *xml.Decoder) (xml.StartElement, error) {
 // If val == nil, allocate new element based on proto map.
 // Either way, return val.
 func next(c *Conn) (xml.Name, interface{}, error) {
-	// Read start element to find out what type we want.
-	se, err := nextStart(c.in)
+	elem, err := nextElement(c.in)
 	if err != nil {
 		return xml.Name{}, nil, err
 	}
 
-	// Put it in an interface and allocate one.
-	var nv interface{}
 	c.lock.Lock()
 	defer c.lock.Unlock()
+
+	switch el := elem.(type) {
+	case xml.StartElement:
+		return decodeStartElement(c, el)
+	case xml.EndElement:
+		return decodeEndElement(el)
+	}
+
+	return xml.Name{}, nil, fmt.Errorf("unexpected element %s", elem)
+}
+
+func decodeStartElement(c *Conn, se xml.StartElement) (xml.Name, interface{}, error) {
+
+	// Put it in an interface and allocate one.
+	var nv interface{}
 	if t, e := c.customStorage[se.Name]; e {
 		nv = reflect.New(t).Interface()
 	} else if t, e := defaultStorage[se.Name]; e {
@@ -72,13 +108,22 @@ func next(c *Conn) (xml.Name, interface{}, error) {
 	}
 
 	// Unmarshal into that storage.
-	if err = c.in.DecodeElement(nv, &se); err != nil {
+	if err := c.in.DecodeElement(nv, &se); err != nil {
 		return xml.Name{}, nil, err
 	}
-	return se.Name, nv, err
+
+	return se.Name, nv, nil
 }
 
-//TODO: We should also handle </stream:stream> tags and close the stream on our side
+func decodeEndElement(ce xml.EndElement) (xml.Name, interface{}, error) {
+	switch ce.Name {
+	case xml.Name{NsStream, "stream"}:
+		return ce.Name, &StreamClose{}, nil
+	}
+
+	return ce.Name, nil, nil
+}
+
 var defaultStorage = map[xml.Name]reflect.Type{
 	xml.Name{Space: NsStream, Local: "features"}: reflect.TypeOf(streamFeatures{}),
 	xml.Name{Space: NsStream, Local: "error"}:    reflect.TypeOf(StreamError{}),

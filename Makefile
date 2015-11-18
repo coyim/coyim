@@ -40,7 +40,6 @@ clean-gui-test:
 gui-test: clean-gui-test
 ifeq ($(shell uname), Linux)
 	git clone https://github.com/twstrike/coyim-testing.git gui-test
-	echo $$COYIM_PATH
 	cd gui-test && COYIM_PATH=$(PWD)/bin/coyim behave --stop
 endif
 

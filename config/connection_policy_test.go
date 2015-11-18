@@ -73,7 +73,9 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceI
 		RequireTor: true,
 	}
 
-	policy := ConnectionPolicy{}
+	policy := ConnectionPolicy{
+		torState: nettest.MockTorState("127.0.0.1:9999"),
+	}
 	dialer, err := policy.buildDialerFor(account)
 
 	c.Check(err, IsNil)

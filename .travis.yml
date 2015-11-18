@@ -11,11 +11,9 @@ matrix:
     - go: 1.5
       env: DEPLOY=true
       os: linux
-      rvm: 1.9.3
     - go: 1.5
       env: DEPLOY=true
       os: osx
-      rvm: 1.9.3
   allow_failures:
     - os: osx
     - go: tip
@@ -24,7 +22,7 @@ matrix:
 before_install:
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
   - "export DISPLAY=:99.0"
-  - [[ "$TRAVIS_OS_NAME" = "linux" ]] && sh -e /etc/init.d/xvfb start && sleep 3
+  - '[[ "$TRAVIS_OS_NAME" = "linux" ]] && sh -e /etc/init.d/xvfb start && sleep 3'
   - "export COYIM_PATH=$(pwd)/bin/coyim"
 install: make deps
 script: make ci

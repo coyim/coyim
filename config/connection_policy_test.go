@@ -69,12 +69,11 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesConfiguredServerAddressA
 func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceIfFoundAndSkipsSRVLookup(c *C) {
 	account := &Account{
 		Account: "coyim@riseup.net",
+
+		RequireTor: true,
 	}
 
-	policy := ConnectionPolicy{
-		UseHiddenService: true,
-	}
-
+	policy := ConnectionPolicy{}
 	dialer, err := policy.buildDialerFor(account)
 
 	c.Check(err, IsNil)

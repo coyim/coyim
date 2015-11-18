@@ -749,8 +749,6 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 
 	conf := s.CurrentAccount
 	policy := config.ConnectionPolicy{
-		UseHiddenService: true,
-
 		Logger:     s.ConnectionLogger,
 		XMPPLogger: s.xmppLogger,
 	}

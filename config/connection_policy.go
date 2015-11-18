@@ -26,8 +26,6 @@ var (
 
 // ConnectionPolicy represents a policy to connect to XMPP servers
 type ConnectionPolicy struct {
-	UseHiddenService bool
-
 	// Logger logs connection information.
 	Logger io.Writer
 
@@ -114,7 +112,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		dialer.ServerAddress = net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port))
 	}
 
-	if p.UseHiddenService {
+	if conf.RequireTor {
 		server := dialer.GetServer()
 		host, port, err := net.SplitHostPort(server)
 		if err != nil {

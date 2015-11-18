@@ -93,6 +93,8 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 		return nil, err
 	}
 
+	go c.watchKeepAlive(conn)
+
 	// Resource binding. RFC 6120, section 7
 	// This is mandatory, so a missing features.Bind is a protocol failure
 	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
@@ -151,6 +153,7 @@ func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) (features strea
 func (d *Dialer) bindTransport(c *Conn, conn net.Conn) {
 	c.in, c.out = makeInOut(conn, d.Config)
 	c.rawOut = conn
+	c.keepaliveOut = &timeoutableConn{conn, keepaliveTimeout}
 }
 
 func makeInOut(conn io.ReadWriter, config Config) (in *xml.Decoder, out io.Writer) {

@@ -23,11 +23,13 @@ import (
 type Conn struct {
 	config Config
 
-	out    io.Writer
-	rawOut io.WriteCloser // doesn't log. Used for <auth>
-	in     *xml.Decoder
-	jid    string
-	Rand   io.Reader
+	in           *xml.Decoder
+	out          io.Writer
+	rawOut       io.WriteCloser // doesn't log. Used for <auth>
+	keepaliveOut io.Writer
+
+	jid  string
+	Rand io.Reader
 
 	lock          sync.Mutex
 	inflights     map[Cookie]inflight

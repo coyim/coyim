@@ -14,10 +14,10 @@
     <property name="height_request">600</property>
     <property name="border_width">10</property>
     <child internal-child="vbox">
-      <object class="GtkVBox">
+      <object class="GtkVBox" id="box">
         <property name="homogeneous">false</property>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="label">
 	        <property name="label">$importMessage</property>
             <property name="wrap">true</property>
             <property name="wrap-mode">2</property>

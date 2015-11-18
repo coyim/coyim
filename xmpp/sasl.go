@@ -19,6 +19,19 @@ var (
 	ErrAuthenticationFailed = errors.New("could not authenticate to the XMPP server")
 )
 
+// SASL negotiation. RFC 6120, section 6
+func (d *Dialer) negotiateSASL(features streamFeatures, c *Conn) (streamFeatures, error) {
+	originDomain := d.getJIDDomainpart()
+	user := d.getJIDLocalpart()
+	password := d.Password
+
+	if err := c.authenticate(features, user, password); err != nil {
+		return features, ErrAuthenticationFailed
+	}
+
+	return c.sendInitialStreamHeader(originDomain)
+}
+
 func (c *Conn) authenticate(features streamFeatures, user, password string) (err error) {
 	l := c.config.getLog()
 	io.WriteString(l, "Authenticating as "+user+"\n")

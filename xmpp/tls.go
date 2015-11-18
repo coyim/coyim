@@ -88,7 +88,31 @@ type tlsFailure struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-tls failure"`
 }
 
-func (c *Conn) startTLS(address, domain string, conn net.Conn) error {
+// RFC 6210, section 5.4
+func (d *Dialer) negotiateSTARTTLS(features streamFeatures, c *Conn, conn net.Conn) (streamFeatures, error) {
+	// RFC 6210, section 5.3
+	// TODO: STARTTLS is mandatory-to-negotiate in some circunstances, but we allow to it to be skipped
+	if c.config.SkipTLS {
+		return features, nil
+	}
+
+	originDomain := d.getJIDDomainpart()
+
+	if features.StartTLS.XMLName.Local == "" {
+		return features, errors.New("xmpp: server doesn't support TLS")
+	}
+
+	if err := d.startTLS(c, conn); err != nil {
+		return features, err
+	}
+
+	return c.sendInitialStreamHeader(originDomain)
+}
+
+func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
+	address := d.GetServer()
+	domain := d.getJIDDomainpart()
+
 	fmt.Fprintf(c.out, "<starttls xmlns='%s'/>", NsTLS)
 
 	proceed, err := nextStart(c.in)
@@ -165,8 +189,7 @@ func (c *Conn) startTLS(address, domain string, conn net.Conn) error {
 		}
 	}
 
-	c.in, c.out = makeInOut(tlsConn, c.config)
-	c.rawOut = tlsConn
+	d.bindTransport(c, tlsConn)
 
 	return nil
 }

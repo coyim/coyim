@@ -82,32 +82,14 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 		d.Config.TrustedAddress = true
 	}
 
-	in, out := makeInOut(conn, d.Config)
-	c = NewConn(in, out, "")
-	c.rawOut = conn
+	c = NewConn(nil, nil, "")
 	c.config = d.Config
+	d.bindTransport(c, conn)
 
-	user := d.getJIDLocalpart()
-	password := d.Password
 	originDomain := d.getJIDDomainpart()
 
-	features, err := c.negotiateStream(d.GetServer(), originDomain, conn)
+	features, err := d.negotiateStreamFeatures(c, conn)
 	if err != nil {
-		return nil, err
-	}
-
-	if features.InBandRegistration != nil {
-		if err := c.createAccount(user, password); err != nil {
-			return nil, err
-		}
-	}
-
-	// SASL negotiation. RFC 6120, section 6
-	if err := c.authenticate(features, user, password); err != nil {
-		return nil, ErrAuthenticationFailed
-	}
-
-	if features, err = c.sendInitialStreamHeader(originDomain); err != nil {
 		return nil, err
 	}
 
@@ -135,28 +117,40 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 	return c, nil
 }
 
-//rfc3920 section 5.2
-//TODO RFC 6120 obsoletes RFC 3920
-func (c *Conn) negotiateStream(address, domain string, conn net.Conn) (features streamFeatures, err error) {
-	features, err = c.sendInitialStreamHeader(domain)
+// RFC 6210, section 4.3.2
+func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) (features streamFeatures, err error) {
+	originDomain := d.getJIDDomainpart()
+
+	features, err = c.sendInitialStreamHeader(originDomain)
 	if err != nil {
 		return
 	}
 
-	if !c.config.SkipTLS {
-		if features.StartTLS.XMLName.Local == "" {
-			err = errors.New("xmpp: server doesn't support TLS")
-			return
-		}
-
-		if err = c.startTLS(address, domain, conn); err != nil {
-			return
-		}
-
-		features, err = c.sendInitialStreamHeader(domain)
+	// STARTTLS is the first feature to be negotiated
+	features, err = d.negotiateSTARTTLS(features, c, conn)
+	if err != nil {
+		return
 	}
 
+	err = d.negotiateInBandRegistration(features, c)
+	if err != nil {
+		return
+	}
+
+	// SASL negotiation. RFC 6120, section 6
+	features, err = d.negotiateSASL(features, c)
+	if err != nil {
+		return
+	}
+
+	//TODO: negotiate other features
+
 	return
+}
+
+func (d *Dialer) bindTransport(c *Conn, conn net.Conn) {
+	c.in, c.out = makeInOut(conn, d.Config)
+	c.rawOut = conn
 }
 
 func makeInOut(conn io.ReadWriter, config Config) (in *xml.Decoder, out io.Writer) {

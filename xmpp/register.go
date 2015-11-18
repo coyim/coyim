@@ -27,6 +27,17 @@ type RegisterQuery struct {
 	Datas    []bobData `xml:"data"`
 }
 
+// XEP-0077
+func (d *Dialer) negotiateInBandRegistration(features streamFeatures, c *Conn) error {
+	if features.InBandRegistration == nil {
+		return nil
+	}
+
+	user := d.getJIDLocalpart()
+	password := d.Password
+	return c.createAccount(user, password)
+}
+
 func (c *Conn) createAccount(user, password string) error {
 	if c.config.CreateCallback == nil {
 		return nil

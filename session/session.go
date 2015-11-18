@@ -148,15 +148,7 @@ func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
 }
 
 func (s *Session) receivedStreamError(stanza *xmpp.StreamError) bool {
-	var text string
-
-	if len(stanza.Text) > 0 {
-		text = stanza.Text
-	} else {
-		text = fmt.Sprintf("%s", stanza.Any)
-	}
-
-	s.alert("Exiting in response to fatal error from server: " + text)
+	s.alert("Exiting in response to fatal error from server: " + stanza.String())
 	return false
 }
 

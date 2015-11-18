@@ -67,12 +67,5 @@ type streamFeatures struct {
 	any []Any `xml:",any,omitempty"`
 }
 
-// StreamError contains a stream error
-type StreamError struct {
-	XMLName xml.Name `xml:"http://etherx.jabber.org/streams error"`
-	Any     xml.Name `xml:",any"`
-	Text    string   `xml:"text"`
-}
-
 // StreamClose represents a request to close the stream
 type StreamClose struct{}

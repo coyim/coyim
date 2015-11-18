@@ -50,5 +50,5 @@ func (s *DNSXmppSuite) Test_Resolve_handlesErrors(c *C) {
 	//It only happens when using golang resolver
 	//ResolveSRVWithProxy will not return an error
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Matches, "lookup _xmpp-client._tcp.doesntexist.olabini.se on .*?: .*?")
+	c.Assert(err.Error(), Matches, "lookup _xmpp-client._tcp.doesntexist.olabini.se.*?")
 }

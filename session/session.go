@@ -156,8 +156,6 @@ func (s *Session) receivedStreamError(stanza *xmpp.StreamError) bool {
 		text = fmt.Sprintf("%s", stanza.Any)
 	}
 
-	//TODO: Close the channel if the error is unrecoverable
-	//See RC 6120, Section 4.9.1.1
 	s.alert("Exiting in response to fatal error from server: " + text)
 	return false
 }

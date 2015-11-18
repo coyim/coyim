@@ -116,6 +116,9 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 		}
 	}
 
+	//Must happen after the resource binding
+	go c.watchPings()
+
 	return c, nil
 }
 

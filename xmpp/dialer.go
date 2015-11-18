@@ -119,7 +119,7 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 	return c, nil
 }
 
-// RFC 6210, section 4.3.2
+// RFC 6120, section 4.3.2
 func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) (features streamFeatures, err error) {
 	originDomain := d.getJIDDomainpart()
 

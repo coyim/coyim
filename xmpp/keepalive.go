@@ -12,7 +12,7 @@ var (
 	keepaliveTimeout  = 30 * time.Second
 )
 
-// Manage whitespace keepalives as specified in RFC 6210, section 4.6.1
+// Manage whitespace keepalives as specified in RFC 6120, section 4.6.1
 func (c *Conn) watchKeepAlive(conn net.Conn) {
 	for !c.closed {
 		<-time.After(keepaliveInterval)

@@ -88,9 +88,9 @@ type tlsFailure struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-tls failure"`
 }
 
-// RFC 6210, section 5.4
+// RFC 6120, section 5.4
 func (d *Dialer) negotiateSTARTTLS(features streamFeatures, c *Conn, conn net.Conn) (streamFeatures, error) {
-	// RFC 6210, section 5.3
+	// RFC 6120, section 5.3
 	// TODO: STARTTLS is mandatory-to-negotiate in some circunstances, but we allow to it to be skipped
 	if c.config.SkipTLS {
 		return features, nil

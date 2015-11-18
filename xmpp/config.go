@@ -45,7 +45,7 @@ type Config struct {
 	// handshake. If nil, sensible defaults will be used.
 	TLSConfig *tls.Config
 	// SkipSRVLookup skips SRV lookup during resolution of fully qualified domain
-	// names. RFC 6210 section 3.2.3 recomends to skip the SRV lookup when the
+	// names. RFC 6120 section 3.2.3 recomends to skip the SRV lookup when the
 	// initiating entity has a hardcoded FQDN associated with the origin domain.
 	SkipSRVLookup bool
 }

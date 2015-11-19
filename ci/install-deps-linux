@@ -5,7 +5,9 @@ set -x
 sudo apt-get update -qq
 sudo apt-get install -qq -y libgtk-3-dev
 sudo apt-get install -qq -y xvfb
-sudo /usr/bin/Xvfb $DISPLAY 2>&1 > /dev/null &
+# sudo /usr/bin/Xvfb $DISPLAY 2>&1 > /dev/null &
+sh -e /etc/init.d/xvfb start
+sleep 3 # waitfor xvfb
 
 sudo apt-get install -qq -y python-dogtail gsettings-desktop-schemas
 gsettings set org.gnome.desktop.interface toolkit-accessibility true

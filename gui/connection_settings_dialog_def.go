@@ -11,11 +11,11 @@ func (w connectionSettingsDialogDef) getDefinition() string {
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Could not connect to account</property>
     <child internal-child="vbox">
-      <object class="GtkBox">
+      <object class="GtkBox" id="box">
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="label1">
             <property name="label" translatable="yes">Server (for google accounts, you may want to try xmpp.google.com)</property>
           </object>
           <packing>
@@ -36,7 +36,7 @@ func (w connectionSettingsDialogDef) getDefinition() string {
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="label2">
             <property name="label" translatable="yes">Port</property>
           </object>
           <packing>

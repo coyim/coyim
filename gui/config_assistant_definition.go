@@ -16,7 +16,7 @@ func (w configAssistantDefinition) getDefinition() string {
     <signal name="cancel" handler="close-assistant" />
     <signal name="apply" handler="create-account" />
     <child internal-child="accessible">
-      <object class="AtkObject">
+      <object class="AtkObject" id="ConfigurationName">
         <property name="accessible-name" translatable="yes">Configuration Assistant</property>
       </object>
     </child>
@@ -36,7 +36,7 @@ func (w configAssistantDefinition) getDefinition() string {
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <signal name="realize" handler="detect-tor" />
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="TorLabel">
             <property name="visible">true</property>
             <property name="wrap">true</property>
             <property name="label" translatable="yes">Detecting Tor...</property>
@@ -67,7 +67,7 @@ func (w configAssistantDefinition) getDefinition() string {
         <property name="visible">true</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="AccountLabel">
             <property name="visible">true</property>
             <property name="wrap">true</property>
             <property name="label" translatable="yes">Your account (for example: kim42@dukgo.com)</property>
@@ -81,7 +81,7 @@ func (w configAssistantDefinition) getDefinition() string {
           </object>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="PasswordLabel">
             <property name="visible">true</property>
             <property name="wrap">true</property>
             <property name="label" translatable="yes">Password (optional)</property>
@@ -105,7 +105,7 @@ func (w configAssistantDefinition) getDefinition() string {
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <signal name="realize" handler="detect-xmpp-server" />
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="DetectingLabel">
             <property name="visible">true</property>
             <property name="wrap">true</property>
             <property name="label" translatable="yes">Detecting XMPP server configuration...</property>
@@ -124,7 +124,7 @@ func (w configAssistantDefinition) getDefinition() string {
       </packing>
     </child>
     <child>
-      <object class="GtkLabel">
+      <object class="GtkLabel" id="ApplyLabel">
         <property name="visible">True</property>
         <property name="label" translatable="yes">Click "Apply" to accept this configuration.</property>
       </object>
@@ -134,6 +134,7 @@ func (w configAssistantDefinition) getDefinition() string {
     </child>
   </object>
 </interface>
+
 
 `
 }

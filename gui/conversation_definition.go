@@ -13,7 +13,7 @@ func (w conversationDefinition) getDefinition() string {
     <property name="destroy-with-parent">true</property>
     <property name="title">$title</property>
     <child>
-      <object class="GtkVBox">
+      <object class="GtkVBox" id="box">
         <property name="homogeneous">false</property>
         <child>
           <object class="GtkMenuBar" id="menubar">
@@ -21,7 +21,7 @@ func (w conversationDefinition) getDefinition() string {
               <object class="GtkMenuItem" id="conversationMenu">
                 <property name="label">$DevOptions</property>
                 <child type="submenu">
-                  <object class="GtkMenu">
+                  <object class="GtkMenu" id="menu">
                     <child>
                       <object class="GtkMenuItem" id="startOTRMenu">
                         <property name="label">$StartOTR</property>

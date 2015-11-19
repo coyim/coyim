@@ -23,7 +23,7 @@ func (w mainDefinition) getDefinition() string {
               <object class="GtkMenuItem" id="ContactsMenu">
                 <property name="label">$contactsMenu</property>
                 <child type="submenu">
-                  <object class="GtkMenu">
+                  <object class="GtkMenu" id="menu">
                     <child>
                       <object class="GtkMenuItem" id="addMenu">
                         <property name="label">$addMenu</property>
@@ -43,7 +43,7 @@ func (w mainDefinition) getDefinition() string {
               <object class="GtkMenuItem" id="ViewMenu">
                 <property name="label">$viewMenu</property>
                 <child type="submenu">
-                  <object class="GtkMenu">
+                  <object class="GtkMenu" id="menu2">
                     <child>
                       <object class="GtkCheckMenuItem" id="CheckItemMerge">
                         <property name="label">$checkItemMerge</property>
@@ -64,7 +64,7 @@ func (w mainDefinition) getDefinition() string {
               <object class="GtkMenuItem" id="HelpMenu">
                 <property name="label">$helpMenu</property>
                 <child type="submenu">
-                  <object class="GtkMenu">
+                  <object class="GtkMenu" id="menu3">
                     <child>
                       <object class="GtkMenuItem" id="aboutMenu">
                         <property name="label">$aboutMenu</property>

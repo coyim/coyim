@@ -16,7 +16,7 @@ func (w torNotRunningDef) getDefinition() string {
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="label">
             <property name="label" translatable="yes">Tor was not found running on your system. Make sure it is running.</property>
           </object>
           <packing>

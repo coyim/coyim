@@ -13,7 +13,7 @@ func (w accountDetailsDefinition) getDefinition() string {
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="AccountMessageLabel">
             <property name="label">$accountMessage</property>
           </object>
           <packing>
@@ -34,7 +34,7 @@ func (w accountDetailsDefinition) getDefinition() string {
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel" id="PasswordLabel">
             <property name="label">$pswMessage</property>
           </object>
           <packing>

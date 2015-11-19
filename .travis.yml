@@ -20,8 +20,8 @@ matrix:
   fast_finish: true
 
 before_install:
-  - ci/install-deps-${TRAVIS_OS_NAME:-linux}
   - "export DISPLAY=:99.0"
+  - ci/install-deps-${TRAVIS_OS_NAME:-linux}
   - '[[ "$TRAVIS_OS_NAME" = "linux" ]] && sh -e /etc/init.d/xvfb start && sleep 3'
   - "export COYIM_PATH=$(pwd)/bin/coyim"
 install: make deps

@@ -27,6 +27,7 @@ cp -av bin/coyim $binary
 cp -av build/mac-bundle/coyim-launcher.sh $wrapper
 cp -av build/mac-bundle/Info.plist $OUTPUT/Contents/Info.plist
 cp -av build/mac-bundle/coy.icns $resources
+cp -av build/mac-bundle/environment.sh $resources
 
 chmod a+x $wrapper $binary
 

@@ -40,7 +40,7 @@ type Session struct {
 	Conversations   map[string]*otr3.Conversation
 	OtrEventHandler map[string]*event.OtrEventHandler
 
-	PrivateKey     *otr3.PrivateKey
+	PrivateKey     otr3.PrivateKey
 	Config         *config.Accounts
 	CurrentAccount *config.Account
 
@@ -77,13 +77,14 @@ func NewSession(c *config.Accounts, cu *config.Account) *Session {
 		R:               roster.New(),
 		Conversations:   make(map[string]*otr3.Conversation),
 		OtrEventHandler: make(map[string]*event.OtrEventHandler),
-		PrivateKey:      new(otr3.PrivateKey),
 		LastActionTime:  time.Now(),
 
 		xmppLogger: openLogFile(c.RawLogFile),
 	}
 
-	s.PrivateKey.Parse(cu.PrivateKey)
+	kk := new(otr3.DSAPrivateKey)
+	kk.Parse(cu.PrivateKey)
+	s.PrivateKey = kk
 
 	return s
 }
@@ -381,7 +382,7 @@ func (s *Session) otrEnded(uid string) {
 
 func (s *Session) newConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
-	conversation.SetOurKey(s.PrivateKey)
+	conversation.SetOurKeys([]otr3.PrivateKey{s.PrivateKey})
 
 	hadInstanceTag := s.CurrentAccount.InstanceTag != 0
 	s.CurrentAccount.InstanceTag = conversation.InitializeInstanceTag(s.CurrentAccount.InstanceTag)
@@ -507,7 +508,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		}
 	case event.SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
-		fpr := conversation.GetTheirKey().DefaultFingerprint()
+		fpr := conversation.DefaultFingerprintFor(conversation.GetTheirKey())
 		s.CurrentAccount.AuthorizeFingerprint(from, fpr)
 		s.SaveConfiguration()
 	case event.SMPFailed:

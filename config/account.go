@@ -44,7 +44,7 @@ type Account struct {
 
 // NewAccount creates a new account
 func NewAccount() (*Account, error) {
-	var priv otr3.PrivateKey
+	var priv otr3.DSAPrivateKey
 
 	err := priv.Generate(rand.Reader)
 	if err != nil {
@@ -197,7 +197,7 @@ func (a *Account) EnsurePrivateKey() (hasUpdate bool, e error) {
 	}
 
 	log.Printf("[%s] - No private key available. Generating...\n", a.Account)
-	var priv otr3.PrivateKey
+	var priv otr3.DSAPrivateKey
 
 	if err := priv.Generate(rand.Reader); err != nil {
 		return false, err

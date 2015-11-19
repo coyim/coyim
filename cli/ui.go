@@ -209,7 +209,7 @@ func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversatio
 	s := c.session
 	term := c.term
 
-	fpr := conversation.GetTheirKey().DefaultFingerprint()
+	fpr := conversation.DefaultFingerprintFor(conversation.GetTheirKey())
 	fprUID := s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %X", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %X", uid, conversation.GetSSID()))
@@ -709,7 +709,7 @@ CommandLoop:
 			case otrCommand:
 				s.Conn.Send(string(cmd.User), event.QueryMessage)
 			case otrInfoCommand:
-				info(term, fmt.Sprintf("Your OTR fingerprint is %x", s.PrivateKey.DefaultFingerprint()))
+				info(term, fmt.Sprintf("Your OTR fingerprint is %x", otr3.NewConversationWithVersion(3).DefaultFingerprintFor(s.PrivateKey.PublicKey())))
 				for to, conversation := range s.Conversations {
 					if conversation.IsEncrypted() {
 						info(term, fmt.Sprintf("Secure session with %s underway:", to))
@@ -822,7 +822,7 @@ func enroll(conf *config.Accounts, currentConf *config.Account, term *terminal.T
 
 	term.SetPrompt("File to import libotr private key from (enter to generate): ")
 
-	var priv otr3.PrivateKey
+	var priv otr3.DSAPrivateKey
 	for {
 		importFile, err := term.ReadLine()
 		if err != nil {

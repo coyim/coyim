@@ -5,6 +5,7 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/otr3"
 )
 
 func formatFingerprint(fpr []byte) string {
@@ -39,7 +40,7 @@ You first have to start an encrypted conversation with them.
 
 Fingerprint for you (%s):
   %s
-	`), uid, account.session.CurrentAccount.Account, formatFingerprint(account.session.PrivateKey.DefaultFingerprint()))
+	`), uid, account.session.CurrentAccount.Account, formatFingerprint(otr3.NewConversationWithVersion(3).DefaultFingerprintFor(account.session.PrivateKey.PublicKey())))
 
 		l, _ := gtk.LabelNew(message)
 		vbox.Add(l)
@@ -48,7 +49,7 @@ Fingerprint for you (%s):
 		dialog.ShowAll()
 		dialog.Run()
 	} else {
-		fpr := conversation.GetTheirKey().DefaultFingerprint()
+		fpr := conversation.DefaultFingerprintFor(conversation.GetTheirKey())
 		message := fmt.Sprintf(i18n.Local(`
 Is this the correct fingerprint for %s?
 
@@ -57,7 +58,7 @@ Fingerprint for you (%s):
 
 Purported fingerprint for %s:
   %s
-	`), uid, account.session.CurrentAccount.Account, formatFingerprint(account.session.PrivateKey.DefaultFingerprint()), uid, formatFingerprint(fpr))
+	`), uid, account.session.CurrentAccount.Account, formatFingerprint(otr3.NewConversationWithVersion(3).DefaultFingerprintFor(account.session.PrivateKey.PublicKey())), uid, formatFingerprint(fpr))
 
 		l, _ := gtk.LabelNew(message)
 		vbox.Add(l)

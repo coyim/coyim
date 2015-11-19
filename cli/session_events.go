@@ -8,12 +8,13 @@ import (
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/otr3"
 )
 
 func (c *cliUI) handleSessionEvent(ev session.Event) {
 	switch ev.Type {
 	case session.Connected:
-		info(c.term, fmt.Sprintf("Your fingerprint is %x", ev.Session.PrivateKey.DefaultFingerprint()))
+		info(c.term, fmt.Sprintf("Your fingerprint is %x", otr3.NewConversationWithVersion(3).DefaultFingerprintFor(ev.Session.PrivateKey.PublicKey())))
 
 	case session.Disconnected:
 		c.terminate <- true

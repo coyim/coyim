@@ -56,7 +56,7 @@ func (w mainDefinition) String() string {
                     </child>
                     <child>
                       <object class="GtkCheckMenuItem" id="CheckItemShowOffline">
-                        <property name="label">$checkItemShowOffline</property>
+                        <property name="label" translatable="yes">Show Offline Contacts</property>
                         <signal name="toggled" handler="on_toggled_check_Item_Show_Offline_signal" />
                       </object>
                     </child>

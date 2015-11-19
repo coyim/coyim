@@ -1,0 +1,5 @@
+# binary translations
+**/*.mo
+
+# merge backups
+**/*.po~

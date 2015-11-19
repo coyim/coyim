@@ -55,6 +55,8 @@ func argsWithApplicationName() *[]string {
 
 // NewGTK returns a new client for a GTK ui
 func NewGTK() UI {
+	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
+	glib.InitI18n("coy", "./i18n")
 	gtk.Init(argsWithApplicationName())
 
 	connect := make(chan *account, 0)

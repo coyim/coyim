@@ -6,10 +6,12 @@ default: deps gen-ui-defs lint test
 
 build: build-cli build-gui
 
+# This should not be added as a requirement to build-gui because it may hide
+# build problems. build-gui is exactly what `go get` will do on a clean repo
 gen-ui-defs:
 	make -C ./gui/definitions
 
-build-gui: gen-ui-defs
+build-gui:
 	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim
 
 build-cli:
@@ -26,7 +28,10 @@ cross-compile:
 	# there seems to be no such thing as cgo cross-compiling
 	# gox -os "linux" -arch "!arm" -cgo -tags "nocli $(GTK_BUILD_TAG)" -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
 
-release-gui: build-gui
+i18n:
+	make -C i18n
+
+release-gui: i18n build-gui
 	mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
 
 release: clean-release cross-compile

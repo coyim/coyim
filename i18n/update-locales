@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+template=$1
+for translation in "${@:2}"; do
+  locale=$(echo $translation | cut -d '/' -f 1)
+  echo "Updating locale: $locale"
+
+  dest=$(echo $translation | rev | cut -d '.' -f 2- | rev).po
+  dir=$(dirname $dest)
+  if [[ ! -f $dest ]]; then
+    mkdir -p $dir
+    msginit --no-translator --locale $locale -i $template -o $dest
+    continue
+  fi
+
+  msgmerge --update --no-fuzzy-matching --backup=off $dest $template
+done
+

@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`ConnectionSettingsDialogDef`, &connectionSettingsDialogDef{})
+  add(`ConnectionSettingsDialogDef`, &defConnectionSettingsDialogDef{})
 }
 
-type connectionSettingsDialogDef struct{}
+type defConnectionSettingsDialogDef struct{}
 
-func (w connectionSettingsDialogDef) String() string {
+func (*defConnectionSettingsDialogDef) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="ConnectionSettingsDialog">

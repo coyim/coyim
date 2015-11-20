@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`AskForPasswordDefinition`, &askForPasswordDefinition{})
+  add(`AskForPasswordDefinition`, &defAskForPasswordDefinition{})
 }
 
-type askForPasswordDefinition struct{}
+type defAskForPasswordDefinition struct{}
 
-func (w askForPasswordDefinition) String() string {
+func (*defAskForPasswordDefinition) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="AskForPassword">

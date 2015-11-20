@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`MasterPasswordDefinition`, &masterPasswordDefinition{})
+  add(`MasterPasswordDefinition`, &defMasterPasswordDefinition{})
 }
 
-type masterPasswordDefinition struct{}
+type defMasterPasswordDefinition struct{}
 
-func (w masterPasswordDefinition) String() string {
+func (*defMasterPasswordDefinition) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="MasterPassword">

@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`TorNotRunningDef`, &torNotRunningDef{})
+  add(`TorNotRunningDef`, &defTorNotRunningDef{})
 }
 
-type torNotRunningDef struct{}
+type defTorNotRunningDef struct{}
 
-func (w torNotRunningDef) String() string {
+func (*defTorNotRunningDef) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="TorNotRunningDialog">

@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`TestDefinition`, &testDefinition{})
+  add(`TestDefinition`, &defTestDefinition{})
 }
 
-type testDefinition struct{}
+type defTestDefinition struct{}
 
-func (w testDefinition) String() string {
+func (*defTestDefinition) String() string {
 	return `
 
 <interface>

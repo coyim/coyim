@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`AccountDetailsDefinition`, &accountDetailsDefinition{})
+  add(`AccountDetailsDefinition`, &defAccountDetailsDefinition{})
 }
 
-type accountDetailsDefinition struct{}
+type defAccountDetailsDefinition struct{}
 
-func (w accountDetailsDefinition) String() string {
+func (*defAccountDetailsDefinition) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="AccountDetailsDialog">

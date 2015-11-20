@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`AddContactDefinition`, &addContactDefinition{})
+  add(`AddContactDefinition`, &defAddContactDefinition{})
 }
 
-type addContactDefinition struct{}
+type defAddContactDefinition struct{}
 
-func (w addContactDefinition) String() string {
+func (*defAddContactDefinition) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="AddContact">

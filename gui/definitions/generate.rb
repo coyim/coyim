@@ -12,18 +12,17 @@ end
 def gen_go_file(xml_file, go_file)
   source = File.open xml_file
   ui_name = File.basename(xml_file, '.xml')
-  t = ui_name.gsub(/^[A-Z]/) { |c| c.downcase }
   xml_definition = source.read
   template = """
 package definitions
 
 func init(){
-  add(`#{ui_name}`, &#{t}{})
+  add(`#{ui_name}`, &def#{ui_name}{})
 }
 
-type #{t} struct{}
+type def#{ui_name} struct{}
 
-func (w #{t}) String() string {
+func (*def#{ui_name}) String() string {
 	return `
 #{xml_definition}
 `

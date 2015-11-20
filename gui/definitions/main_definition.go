@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`MainDefinition`, &mainDefinition{})
+  add(`MainDefinition`, &defMainDefinition{})
 }
 
-type mainDefinition struct{}
+type defMainDefinition struct{}
 
-func (w mainDefinition) String() string {
+func (*defMainDefinition) String() string {
 	return `
 <interface>
   <object class="GtkWindow" id="mainWindow">

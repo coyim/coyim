@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type masterPasswordDefinition  struct{}
+func init(){
+  add(`MasterPasswordDefinition`, &masterPasswordDefinition{})
+}
 
-func (w masterPasswordDefinition) getDefinition() string {
+type masterPasswordDefinition struct{}
+
+func (w masterPasswordDefinition) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="MasterPassword">

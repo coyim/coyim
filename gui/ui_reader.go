@@ -9,11 +9,8 @@ import (
 	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/coyim/gui/definitions"
 )
-
-type uiDefinition interface {
-	getDefinition() string
-}
 
 const (
 	defsFolder   = "gui/definitions"
@@ -27,7 +24,7 @@ func getDefinitionWithFileFallback(uiName string) string {
 	fileName := filepath.Join(defsFolder, uiName+xmlExtension)
 	if fileNotFound(fileName) {
 		log.Printf("gui: loading compiled definition %q\n", uiName)
-		return uiDef.getDefinition()
+		return uiDef.String()
 	}
 
 	return readFile(fileName)
@@ -75,29 +72,11 @@ func replaceVars(toReplace string, vars map[string]string) string {
 	return replaced
 }
 
-func getDefinition(uiName string) uiDefinition {
-	switch uiName {
-	default:
+func getDefinition(uiName string) definitions.UIDefinition {
+	def, ok := definitions.Get(uiName)
+	if !ok {
 		panic(fmt.Sprintf("No definition found for %s", uiName))
-	case "MainDefinition":
-		return new(mainDefinition)
-	case "AddContactDefinition":
-		return new(accountDetailsDefinition)
-	case "AccountDetailsDefinition":
-		return new(accountDetailsDefinition)
-	case "MasterPasswordDefinition":
-		return new(accountDetailsDefinition)
-	case "ConversationDefinition":
-		return new(conversationDefinition)
-	case "ConfigAssistantDefinition":
-		return new(configAssistantDefinition)
-	case "TorNotRunningDef":
-		return new(torNotRunningDef)
-	case "ConnectionSettingsDialogDef":
-		return new(connectionSettingsDialogDef)
-	case "AskForPasswordDefinition":
-		return new(askForPasswordDefinition)
-	case "TestDefinition":
-		return new(testDefinition)
 	}
+
+	return def
 }

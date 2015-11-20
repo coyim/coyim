@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type importerDef  struct{}
+func init(){
+  add(`ImporterDef`, &importerDef{})
+}
 
-func (w importerDef) getDefinition() string {
+type importerDef struct{}
+
+func (w importerDef) String() string {
 	return `
 <?xml version="1.0" encoding="utf-8"?>
 <interface>

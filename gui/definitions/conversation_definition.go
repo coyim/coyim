@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type conversationDefinition  struct{}
+func init(){
+  add(`ConversationDefinition`, &conversationDefinition{})
+}
 
-func (w conversationDefinition) getDefinition() string {
+type conversationDefinition struct{}
+
+func (w conversationDefinition) String() string {
 	return `
 <interface>
   <object class="GtkWindow" id="conversation">

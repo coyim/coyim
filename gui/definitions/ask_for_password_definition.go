@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type askForPasswordDefinition  struct{}
+func init(){
+  add(`AskForPasswordDefinition`, &askForPasswordDefinition{})
+}
 
-func (w askForPasswordDefinition) getDefinition() string {
+type askForPasswordDefinition struct{}
+
+func (w askForPasswordDefinition) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="AskForPassword">

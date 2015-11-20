@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type torNotRunningDef  struct{}
+func init(){
+  add(`TorNotRunningDef`, &torNotRunningDef{})
+}
 
-func (w torNotRunningDef) getDefinition() string {
+type torNotRunningDef struct{}
+
+func (w torNotRunningDef) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="TorNotRunningDialog">

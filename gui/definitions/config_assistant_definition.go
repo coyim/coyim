@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type configAssistantDefinition  struct{}
+func init(){
+  add(`ConfigAssistantDefinition`, &configAssistantDefinition{})
+}
 
-func (w configAssistantDefinition) getDefinition() string {
+type configAssistantDefinition struct{}
+
+func (w configAssistantDefinition) String() string {
 	return `
 <?xml version="1.0"?>
 <interface>

@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type addContactDefinition  struct{}
+func init(){
+  add(`AddContactDefinition`, &addContactDefinition{})
+}
 
-func (w addContactDefinition) getDefinition() string {
+type addContactDefinition struct{}
+
+func (w addContactDefinition) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="AddContact">

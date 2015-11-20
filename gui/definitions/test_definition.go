@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type testDefinition  struct{}
+func init(){
+  add(`TestDefinition`, &testDefinition{})
+}
 
-func (w testDefinition) getDefinition() string {
+type testDefinition struct{}
+
+func (w testDefinition) String() string {
 	return `
 
 <interface>

@@ -1,6 +1,5 @@
 def parse_go_name(file_name)
 file_name.gsub(/[A-Z]/, '_\0')
-    .gsub(/gui\/definitions/, 'gui')
     .gsub(/\.xml/, '.go')
     .downcase
     .gsub(/\/_/, '/')
@@ -12,15 +11,19 @@ end
 
 def gen_go_file(xml_file, go_file)
   source = File.open xml_file
-  t = File.basename(xml_file, '.xml')
-    .gsub(/^[A-Z]/) { |c| c.downcase }
+  ui_name = File.basename(xml_file, '.xml')
+  t = ui_name.gsub(/^[A-Z]/) { |c| c.downcase }
   xml_definition = source.read
   template ="""
-package gui
+package definitions
 
-type #{t}  struct{}
+func init(){
+  add(`#{ui_name}`, &#{t}{})
+}
 
-func (w #{t}) getDefinition() string {
+type #{t} struct{}
+
+func (w #{t}) String() string {
 	return `
 #{xml_definition}
 `

@@ -1,9 +1,13 @@
 
-package gui
+package definitions
 
-type mainDefinition  struct{}
+func init(){
+  add(`MainDefinition`, &mainDefinition{})
+}
 
-func (w mainDefinition) getDefinition() string {
+type mainDefinition struct{}
+
+func (w mainDefinition) String() string {
 	return `
 <interface>
   <object class="GtkWindow" id="mainWindow">

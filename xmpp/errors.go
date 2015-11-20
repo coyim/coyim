@@ -50,6 +50,7 @@ func (s *StreamError) String() string {
 // as defined in RFC 6120, section 4.9.3
 type StreamErrorCondition string
 
+// MarshalXML implements xml.Marshaler interface
 func (c StreamErrorCondition) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	t := xml.StartElement{
 		Name: xml.Name{
@@ -63,6 +64,7 @@ func (c StreamErrorCondition) MarshalXML(e *xml.Encoder, start xml.StartElement)
 	return nil
 }
 
+// Stream error conditions as defined in RFC 6120, section 4.9.3
 const (
 	BadFormat              StreamErrorCondition = "bad-format"
 	BadNamespacePrefix                          = "bad-namespace-prefix"

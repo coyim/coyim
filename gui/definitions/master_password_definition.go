@@ -20,7 +20,7 @@ func (*defMasterPasswordDefinition) String() string {
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <object class="GtkLabel" id="passMessage" >
-            <property name="label">$passwordMessage</property>
+            <property name="label" translatable="yes">Please enter the master password for the configuration file. You will not be asked for this password again until you restart CoyIM.</property>
             <property name="wrap">true</property>
           </object>
           <packing>

@@ -76,18 +76,16 @@ func (s *XmppSuite) TestDiscoReplyVerComplex(c *C) {
 }
 
 func (s *XmppSuite) TestConnClose(c *C) {
-	mockIn := &mockConnIOReaderWriter{
-		read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'></str:stream>"),
-	}
+	mockIn := &mockConnIOReaderWriter{}
 	mockCloser := &mockConnIOReaderWriter{}
 	conn := NewConn(xml.NewDecoder(mockIn), mockCloser, "")
 	conn.rawOut = mockCloser
 
-	// consumes the opening stream
-	nextElement(conn.in)
-	go conn.Next()
+	go func() {
+		c.Assert(conn.Close(), IsNil)
+	}()
 
-	c.Assert(conn.Close(), IsNil)
+	conn.delayedClose <- true
 	c.Assert(mockCloser.calledClose, Equals, 1)
 	c.Assert(mockCloser.write, DeepEquals, []byte("</stream:stream>"))
 }

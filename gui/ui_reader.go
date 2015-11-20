@@ -16,42 +16,42 @@ type uiDefinition interface {
 }
 
 const (
-	defsFolder   string = "gui/definitions"
-	xmlExtension string = ".xml"
+	defsFolder   = "gui/definitions"
+	xmlExtension = ".xml"
 )
 
-func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error) {
+func getDefinitionWithFileFallback(uiName string) string {
+	// this makes sure a missing definition wont break only when the app is released
+	uiDef := getDefinition(uiName)
+
 	fileName := filepath.Join(defsFolder, uiName+xmlExtension)
+	if fileNotFound(fileName) {
+		log.Printf("gui: loading compiled definition %q\n", uiName)
+		return uiDef.getDefinition()
+	}
+
+	return readFile(fileName)
+}
+
+func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error) {
+	//TODO: replace this by gettext
+	replaced := replaceVars(getDefinitionWithFileFallback(uiName), vars)
+
 	builder, err := gtk.BuilderNew()
 	if err != nil {
 		return nil, err
 	}
 
-	var toReplace string
-	if doesnotExist(fileName) {
-		log.Printf("Loading compiled definition %q\n", uiName)
-		uiDef := getDefinition(uiName)
-		if uiDef == nil {
-			return nil, fmt.Errorf("There's no definition for %s", uiName)
-		}
-		toReplace = uiDef.getDefinition()
-	} else {
-		log.Printf("Loading UI definition %q from: %s\n", uiName, fileName)
-		toReplace = readFile(fileName)
-	}
-
-	replaced := replaceVars(toReplace, vars)
-
-	addErr := builder.AddFromString(replaced)
-	if addErr != nil {
-		log.Printf("Failed to add string %s: %s\n", replaced, addErr.Error())
-		return nil, addErr
+	err = builder.AddFromString(replaced)
+	if err != nil {
+		log.Printf("gui: failed load %s: %s\n", uiName, err.Error())
+		return nil, err
 	}
 
 	return builder, nil
 }
 
-func doesnotExist(fileName string) bool {
+func fileNotFound(fileName string) bool {
 	_, fnf := os.Stat(fileName)
 	return os.IsNotExist(fnf)
 }

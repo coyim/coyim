@@ -2,18 +2,20 @@ package definitions
 
 import "sync"
 
-type UIDefinition interface {
+var definitions = struct {
+	m map[string]UI
+	sync.RWMutex
+}{
+	m: make(map[string]UI),
+}
+
+// UI represents a bundled UI description for GTK builder
+type UI interface {
 	String() string
 }
 
-var definitions = struct {
-	m map[string]UIDefinition
-	sync.RWMutex
-}{
-	m: make(map[string]UIDefinition),
-}
-
-func Get(uiName string) (UIDefinition, bool) {
+// Get returns the XML description of a UI definition and whether it was found
+func Get(uiName string) (UI, bool) {
 	definitions.RLock()
 	defer definitions.RUnlock()
 
@@ -21,7 +23,7 @@ func Get(uiName string) (UIDefinition, bool) {
 	return def, ok
 }
 
-func add(uiName string, def UIDefinition) {
+func add(uiName string, def UI) {
 	definitions.Lock()
 	defer definitions.Unlock()
 

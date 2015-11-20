@@ -72,7 +72,7 @@ func replaceVars(toReplace string, vars map[string]string) string {
 	return replaced
 }
 
-func getDefinition(uiName string) definitions.UIDefinition {
+func getDefinition(uiName string) definitions.UI {
 	def, ok := definitions.Get(uiName)
 	if !ok {
 		panic(fmt.Sprintf("No definition found for %s", uiName))

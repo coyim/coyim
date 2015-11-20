@@ -29,3 +29,7 @@ update-locales: $(TEMPLATE)
 
 clean:
 	$(RM) $(TEMPLATE) $(TRANSLATIONS)
+
+# We need this to prevent make from removing the intermediate .po
+.SECONDARY:
+

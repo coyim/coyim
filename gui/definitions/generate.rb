@@ -14,7 +14,7 @@ def gen_go_file(xml_file, go_file)
   ui_name = File.basename(xml_file, '.xml')
   t = ui_name.gsub(/^[A-Z]/) { |c| c.downcase }
   xml_definition = source.read
-  template ="""
+  template = """
 package definitions
 
 func init(){
@@ -33,13 +33,10 @@ func (w #{t}) String() string {
   target.puts template
 end
 
-puts "Start UI defintions generation"
 Dir['./*.xml'].each do |file_name|
-  puts "\tfound #{file_name}"
   go_file = parse_go_name file_name
   remove_if_exists go_file
-  puts "\treading #{file_name} and generating #{go_file}"
+  STDERR.puts "  - #{file_name} -> #{go_file}"
   gen_go_file(file_name, go_file)
 end
-puts "UI definitions were generated"
 

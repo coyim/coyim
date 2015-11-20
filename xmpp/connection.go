@@ -60,10 +60,10 @@ func (c *Conn) Close() error {
 		return errors.New("xmpp: the connection is already closed")
 	}
 
-	log.Println("xmpp: sending closing stream tag")
+	c.closed = true
 
 	// RFC 6120, Section 4.4 and 9.1.5
-	c.closed = true
+	log.Println("xmpp: sending closing stream tag")
 	fmt.Fprint(c.out, "</stream:stream>")
 
 	//TODO: find a better way to prevent sending message.
@@ -79,10 +79,7 @@ func (c *Conn) Close() error {
 }
 
 func (c *Conn) receivedClosingStreamTag() {
-	if !c.closed {
-		go c.Close()
-	}
-
+	go c.Close()
 	c.delayedClose <- true
 }
 

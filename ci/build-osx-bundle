@@ -106,6 +106,9 @@ if [ -d $(brew --prefix pango)/etc/ ] ; then
     cp -a $(brew --prefix pango)/etc/* $resources/etc/pango
 fi
 
+# Copy locales from our app
+cp -av i18n $macos/
+
 #TODO: copy GTK/GLIB/* locales
 #mkdir -p $resources/share/locale
 #for dir in $(find $cellar -name locale -type d); do

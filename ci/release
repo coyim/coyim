@@ -10,6 +10,10 @@ OS=${TRAVIS_OS_NAME:-linux}
 if [[ $OS = "osx" ]]; then
   make build-gui
 
+  # gettext is not linked on OSX
+  export PATH="$PATH:$(brew --prefix gettext)/bin"
+  make i18n
+
   iconutil -c icns -o build/mac-bundle/coy.icns build/mac-bundle/coy.iconset
 
 	ci/build-osx-bundle bin/mac-bundle/CoyIM.app
@@ -20,9 +24,6 @@ if [[ $OS = "osx" ]]; then
   ci/make-dmg coyim $VERSION bin/mac-bundle/
 
   rm -rf bin/mac-bundle
-
-  # gettext is not linked on OSX
-  export PATH="$PATH:$(brew --prefix gettext)/bin"
 fi
 
 make release-gui

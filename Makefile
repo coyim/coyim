@@ -7,7 +7,7 @@ default: deps gen-ui-defs lint test
 build: build-cli build-gui
 
 gen-ui-defs:
-	ruby gen_ui_defs.rb
+	make -C ./gui/definitions
 
 build-gui: gen-ui-defs
 	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim

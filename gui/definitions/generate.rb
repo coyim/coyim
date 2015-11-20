@@ -34,7 +34,7 @@ func (w #{t}) String() string {
 end
 
 puts "Start UI defintions generation"
-Dir['./gui/definitions/*.xml'].each do |file_name|
+Dir['./*.xml'].each do |file_name|
   puts "\tfound #{file_name}"
   go_file = parse_go_name file_name
   remove_if_exists go_file

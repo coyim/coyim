@@ -1,0 +1,2 @@
+default:
+	ruby ./generate.rb

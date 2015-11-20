@@ -21,10 +21,6 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 
 func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer string) error) *gtk.Dialog {
 	vars := make(map[string]string)
-	vars["$title"] = i18n.Local("Add contact")
-	vars["$accountsLabel"] = i18n.Local("Account")
-	vars["$addressLabel"] = i18n.Local("Account to add (for example: arnoldsPub@jabber.ccc.de)")
-	vars["$addLabel"] = i18n.Local("Add")
 
 	builder, loadErr := loadBuilderWith("AddContactDefinition", vars)
 	if loadErr != nil {

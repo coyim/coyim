@@ -12,14 +12,14 @@ func (*defAddContactDefinition) String() string {
 <interface>
   <object class="GtkDialog" id="AddContact">
     <property name="window-position">1</property>
-    <property name="title">$title</property>
+    <property name="title" translatable="yes">Add contact</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <object class="GtkLabel" id="accountsLabel" >
-            <property name="label">$accountsLabel</property>
+            <property name="label" translatable="yes">Account</property>
           </object>
           <packing>
             <property name="expand">false</property>
@@ -38,7 +38,7 @@ func (*defAddContactDefinition) String() string {
         </child>
         <child>
           <object class="GtkLabel" id="accountLabel" >
-            <property name="label">$addressLabel</property>
+            <property name="label" translatable="yes">Contact to add (for example: arnoldsPub@jabber.ccc.de)</property>
           </object>
           <packing>
             <property name="expand">false</property>
@@ -59,7 +59,7 @@ func (*defAddContactDefinition) String() string {
         </child>
         <child>
           <object class="GtkButton" id="add">
-            <property name="label">$addLabel</property>
+            <property name="label" translatable="yes">Add</property>
             <signal name="clicked" handler="on_save_signal" />
           </object>
           <packing>

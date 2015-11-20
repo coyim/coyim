@@ -16,5 +16,10 @@ for translation in "${@:2}"; do
   fi
 
   msgmerge --update --no-fuzzy-matching --backup=off $dest $template
+
+  # msgmerge does not change the file if it has no changes, even if the template
+  # has been touched. It helps make to know we are done with this file, until
+  # template changes.
+  touch $dest
 done
 

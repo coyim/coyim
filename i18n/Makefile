@@ -31,5 +31,5 @@ clean:
 	$(RM) $(TRANSLATIONS)
 
 # We need this to prevent make from removing the intermediate .po
-.SECONDARY:
+.PRECIOUS: %.po
 

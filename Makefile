@@ -30,6 +30,7 @@ cross-compile:
 
 i18n:
 	make -C i18n
+.PHONY: i18n
 
 release-gui: i18n build-gui
 	mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)

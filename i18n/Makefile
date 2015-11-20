@@ -10,8 +10,8 @@ DEFINITIONS=$(shell ls ../gui/definitions/*.xml)
 DOMAIN=coy
 TEMPLATE=$(DOMAIN).pot
 TRANSLATIONS=\
-	en_US.utf8/LC_MESSAGES/$(DOMAIN).mo \
-	pt_BR.utf8/LC_MESSAGES/$(DOMAIN).mo
+	en_US/LC_MESSAGES/$(DOMAIN).mo \
+	pt_BR/LC_MESSAGES/$(DOMAIN).mo
 
 gettext: $(TEMPLATE) $(TRANSLATIONS)
 

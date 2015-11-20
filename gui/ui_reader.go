@@ -95,6 +95,8 @@ func getDefinition(uiName string) uiDefinition {
 		return new(torNotRunningDef)
 	case "ConnectionSettingsDialogDef":
 		return new(connectionSettingsDialogDef)
+	case "AskForPasswordDefinition":
+		return new(askForPasswordDefinition)
 	case "TestDefinition":
 		return new(testDefinition)
 	}

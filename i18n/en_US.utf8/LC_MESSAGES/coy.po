@@ -73,6 +73,12 @@ msgstr "Connect"
 msgid "Show Offline Contacts"
 msgstr "Show Offline Contacts"
 
+#: ../gui/definitions/MasterPasswordDefinition.xml:12
+msgid ""
+"Please enter the master password for the configuration file. You will not be "
+"asked for this password again until you restart CoyIM."
+msgstr ""
+
 #: ../gui/definitions/TorNotRunningDef.xml:6
 msgid "Tor is not running"
 msgstr "Tor is not running"

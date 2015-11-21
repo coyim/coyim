@@ -11,7 +11,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io"
 )
 
 var (
@@ -33,9 +32,20 @@ func (d *Dialer) negotiateSASL(c *Conn) error {
 }
 
 func (c *Conn) authenticate(user, password string) (err error) {
-	l := c.config.getLog()
-	io.WriteString(l, "Authenticating as "+user+"\n")
+	// TODO: Section 13.8 mandates clients and servers to implement SCRAM, DIGEST-MD5 and PLAIN.
+	// SCRAM replaces DIGEST-MD5 as mandatory, but for compatibility reasons we should keep DIGEST-MD5
+	// - SCRAM-SHA-1 and SCRAM-SHA-1-PLUS: RFC 5802
+	// - DIGEST-MD5: RFC 2831
+	// See: https://prosody.im/doc/plain_or_hashed
 
+	// TODO: Google accounts with 2-step auth MUST use app-specific passwords:
+	// https://security.google.com/settings/security/apppasswords
+	// An alternative would be implementing the Google authentication mechanisms
+	// - X-OAUTH2: requires app registration on Google, and a server to receive the oauth callback
+	// https://developers.google.com/talk/jep_extensions/oauth?hl=en
+	// - X-GOOGLE-TOKEN: seems to be this https://developers.google.com/identity/protocols/AuthForInstalledApps
+
+	// TODO: this is dangerous, specially with skipTLS
 	havePlain := false
 	for _, m := range c.features.Mechanisms.Mechanism {
 		if m == "PLAIN" {
@@ -66,7 +76,6 @@ func (c *Conn) authenticate(user, password string) (err error) {
 		return errors.New("expected <success> or <failure>, got <" + name.Local + "> in " + name.Space)
 	}
 
-	io.WriteString(l, "Authentication successful\n")
 	return nil
 }
 

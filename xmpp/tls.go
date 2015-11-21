@@ -89,21 +89,21 @@ type tlsFailure struct {
 }
 
 // RFC 6120, section 5.4
-func (d *Dialer) negotiateSTARTTLS(features streamFeatures, c *Conn, conn net.Conn) (streamFeatures, error) {
+func (d *Dialer) negotiateSTARTTLS(c *Conn, conn net.Conn) error {
 	// RFC 6120, section 5.3
 	// TODO: STARTTLS is mandatory-to-negotiate in some circunstances, but we allow to it to be skipped
 	if c.config.SkipTLS {
-		return features, nil
+		return nil
 	}
 
 	originDomain := d.getJIDDomainpart()
 
-	if features.StartTLS.XMLName.Local == "" {
-		return features, errors.New("xmpp: server doesn't support TLS")
+	if c.features.StartTLS.XMLName.Local == "" {
+		return errors.New("xmpp: server doesn't support TLS")
 	}
 
 	if err := d.startTLS(c, conn); err != nil {
-		return features, err
+		return err
 	}
 
 	return c.sendInitialStreamHeader(originDomain)

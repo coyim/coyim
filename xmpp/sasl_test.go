@@ -12,9 +12,8 @@ var _ = Suite(&SaslXmppSuite{})
 
 func (s *SaslXmppSuite) Test_authenticate_failsIfPlainIsNotAnOption(c *C) {
 	conn := Conn{}
-	stream := streamFeatures{}
 
-	e := conn.authenticate(stream, "", "")
+	e := conn.authenticate("", "")
 
 	c.Assert(e.Error(), Equals, "xmpp: PLAIN authentication is not an option")
 }
@@ -25,14 +24,14 @@ func (s *SaslXmppSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-	}
-	stream := streamFeatures{
-		Mechanisms: saslMechanisms{
-			Mechanism: []string{"FOO", "PLAIN"},
+		features: streamFeatures{
+			Mechanisms: saslMechanisms{
+				Mechanism: []string{"FOO", "PLAIN"},
+			},
 		},
 	}
 
-	e := conn.authenticate(stream, "foo", "bar")
+	e := conn.authenticate("foo", "bar")
 	c.Assert(e, IsNil)
 	c.Assert(string(out.write), Equals, "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>AGZvbwBiYXI=</auth>\n")
 }
@@ -43,14 +42,14 @@ func (s *SaslXmppSuite) Test_authenticate_handlesFailure(c *C) {
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-	}
-	stream := streamFeatures{
-		Mechanisms: saslMechanisms{
-			Mechanism: []string{"FOO", "PLAIN"},
+		features: streamFeatures{
+			Mechanisms: saslMechanisms{
+				Mechanism: []string{"FOO", "PLAIN"},
+			},
 		},
 	}
 
-	e := conn.authenticate(stream, "foo", "bar")
+	e := conn.authenticate("foo", "bar")
 	c.Assert(e.Error(), Equals, "xmpp: authentication failure: foobar")
 }
 
@@ -60,13 +59,13 @@ func (s *SaslXmppSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-	}
-	stream := streamFeatures{
-		Mechanisms: saslMechanisms{
-			Mechanism: []string{"FOO", "PLAIN"},
+		features: streamFeatures{
+			Mechanisms: saslMechanisms{
+				Mechanism: []string{"FOO", "PLAIN"},
+			},
 		},
 	}
 
-	e := conn.authenticate(stream, "foo", "bar")
+	e := conn.authenticate("foo", "bar")
 	c.Assert(e.Error(), Equals, "expected <success> or <failure>, got <> in ")
 }

@@ -28,9 +28,10 @@ type Conn struct {
 	rawOut       io.WriteCloser // doesn't log. Used for <auth>
 	keepaliveOut io.Writer
 
-	jid  string
-	Rand io.Reader
+	jid      string
+	features streamFeatures
 
+	Rand          io.Reader
 	lock          sync.Mutex
 	inflights     map[Cookie]inflight
 	customStorage map[xml.Name]reflect.Type

@@ -55,6 +55,7 @@ func (d *Dialer) GetServer() string {
 
 // RegisterAccount registers an account on the server. The formCallback is used to handle XMPP forms.
 func (d *Dialer) RegisterAccount(formCallback FormCallback) (*Conn, error) {
+	//TODO: notify in case the feature is not supported
 	d.Config.CreateCallback = formCallback
 	return d.Dial()
 }
@@ -88,12 +89,13 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 
 	originDomain := d.getJIDDomainpart()
 
-	features, err := d.negotiateStreamFeatures(c, conn)
-	if err != nil {
+	if err := d.negotiateStreamFeatures(c, conn); err != nil {
 		return nil, err
 	}
 
 	go c.watchKeepAlive(conn)
+
+	features := c.features
 
 	// Resource binding. RFC 6120, section 7
 	// This is mandatory, so a missing features.Bind is a protocol failure
@@ -123,34 +125,30 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 }
 
 // RFC 6120, section 4.3.2
-func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) (features streamFeatures, err error) {
+func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) error {
 	originDomain := d.getJIDDomainpart()
 
-	features, err = c.sendInitialStreamHeader(originDomain)
-	if err != nil {
-		return
+	if err := c.sendInitialStreamHeader(originDomain); err != nil {
+		return err
 	}
 
-	// STARTTLS is the first feature to be negotiated
-	features, err = d.negotiateSTARTTLS(features, c, conn)
-	if err != nil {
-		return
+	// STARTTLS MUST be the first feature to be negotiated
+	if err := d.negotiateSTARTTLS(c, conn); err != nil {
+		return err
 	}
 
-	err = d.negotiateInBandRegistration(features, c)
-	if err != nil {
-		return
+	if err := d.negotiateInBandRegistration(c); err != nil {
+		return err
 	}
 
 	// SASL negotiation. RFC 6120, section 6
-	features, err = d.negotiateSASL(features, c)
-	if err != nil {
-		return
+	if err := d.negotiateSASL(c); err != nil {
+		return err
 	}
 
 	//TODO: negotiate other features
 
-	return
+	return nil
 }
 
 func (d *Dialer) bindTransport(c *Conn, conn net.Conn) {

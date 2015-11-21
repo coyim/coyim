@@ -20,29 +20,30 @@ var (
 )
 
 // SASL negotiation. RFC 6120, section 6
-func (d *Dialer) negotiateSASL(features streamFeatures, c *Conn) (streamFeatures, error) {
+func (d *Dialer) negotiateSASL(c *Conn) error {
 	originDomain := d.getJIDDomainpart()
 	user := d.getJIDLocalpart()
 	password := d.Password
 
-	if err := c.authenticate(features, user, password); err != nil {
-		return features, ErrAuthenticationFailed
+	if err := c.authenticate(user, password); err != nil {
+		return ErrAuthenticationFailed
 	}
 
 	return c.sendInitialStreamHeader(originDomain)
 }
 
-func (c *Conn) authenticate(features streamFeatures, user, password string) (err error) {
+func (c *Conn) authenticate(user, password string) (err error) {
 	l := c.config.getLog()
 	io.WriteString(l, "Authenticating as "+user+"\n")
 
 	havePlain := false
-	for _, m := range features.Mechanisms.Mechanism {
+	for _, m := range c.features.Mechanisms.Mechanism {
 		if m == "PLAIN" {
 			havePlain = true
 			break
 		}
 	}
+
 	if !havePlain {
 		return errors.New("xmpp: PLAIN authentication is not an option")
 	}

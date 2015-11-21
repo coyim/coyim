@@ -15,35 +15,33 @@ import (
 //Send an initial stream header and receive the features required for
 //continuation of the stream negotiation process.
 //RFC 6120 section 4.3
-func (c *Conn) sendInitialStreamHeader(domain string) (features streamFeatures, err error) {
-	if _, err = fmt.Fprintf(c.out, "<?xml version='1.0'?><stream:stream to='%s' xmlns='%s' xmlns:stream='%s' version='1.0'>\n", xmlEscape(domain), NsClient, NsStream); err != nil {
-		return
+func (c *Conn) sendInitialStreamHeader(domain string) error {
+	if _, err := fmt.Fprintf(c.out, "<?xml version='1.0'?><stream:stream to='%s' xmlns='%s' xmlns:stream='%s' version='1.0'>\n", xmlEscape(domain), NsClient, NsStream); err != nil {
+		return err
 	}
 
 	se, err := nextStart(c.in)
 	if err != nil {
-		return
+		return err
 	}
 
 	if se.Name.Space != NsStream || se.Name.Local != "stream" {
-		err = errors.New("xmpp: expected <stream> but got <" + se.Name.Local + "> in " + se.Name.Space)
-		return
+		//TODO: should send bad-namespace-prefix error?
+		return errors.New("xmpp: expected <stream> but got <" + se.Name.Local + "> in " + se.Name.Space)
 	}
 
 	//TODO: there must be an ID in the response stream header
 	//TODO: there must be an xml:lang in the response stream header
 	//RFC 6120, Section 4.7.3
 
-	// Now we're in the stream and can use Unmarshal.
-	// Next message should be <features> to tell us authentication options.
-	// See section 4.6 in RFC 3920.
-	//TODO RFC 6120 obsoletes RFC 3920
-	if err = c.in.DecodeElement(&features, nil); err != nil {
-		err = errors.New("unmarshal <features>: " + err.Error())
-		return
+	// Stream features MUST follow the response stream header
+	// RFC 6120, section 4.3.2
+	if err := c.in.DecodeElement(&c.features, nil); err != nil {
+		//TODO: should send bad-format error?
+		return errors.New("xmpp: error to unmarshal <features>: " + err.Error())
 	}
 
-	return
+	return nil
 }
 
 // RFC 3920  C.1  Streams name space

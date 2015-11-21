@@ -15,7 +15,8 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_returnsErrorIfSomethingG
 	conn := Conn{
 		out: &mockConnIOReaderWriter{err: errors.New("Hello")},
 	}
-	_, err := conn.sendInitialStreamHeader("foo.com")
+
+	err := conn.sendInitialStreamHeader("foo.com")
 	c.Assert(err, Not(IsNil))
 }
 
@@ -25,7 +26,8 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_returnsErrorIfSomethingG
 		out: &mockConnIOReaderWriter{},
 		in:  xml.NewDecoder(mockIn),
 	}
-	_, err := conn.sendInitialStreamHeader("foo.com")
+
+	err := conn.sendInitialStreamHeader("foo.com")
 	c.Assert(err, Not(IsNil))
 }
 
@@ -47,8 +49,9 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_expectsResponseStreamHea
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),
 	}
-	_, err := conn.sendInitialStreamHeader("somewhereElse.org")
-	c.Assert(err.Error(), Equals, "unmarshal <features>: EOF")
+
+	err := conn.sendInitialStreamHeader("somewhereElse.org")
+	c.Assert(err.Error(), Equals, "xmpp: error to unmarshal <features>: EOF")
 }
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_failsIfReturnedStreamIsNotCorrectNamespace(c *C) {
@@ -58,7 +61,8 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_failsIfReturnedStreamIsN
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),
 	}
-	_, err := conn.sendInitialStreamHeader("somewhereElse.org")
+
+	err := conn.sendInitialStreamHeader("somewhereElse.org")
 	c.Assert(err.Error(), Equals, "xmpp: expected <stream> but got <stream> in http://etherx.jabber.org/streams2")
 }
 
@@ -69,7 +73,8 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_failsIfReturnedElementIs
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),
 	}
-	_, err := conn.sendInitialStreamHeader("somewhereElse.org")
+
+	err := conn.sendInitialStreamHeader("somewhereElse.org")
 	c.Assert(err.Error(), Equals, "xmpp: expected <stream> but got <feature> in http://etherx.jabber.org/streams")
 }
 
@@ -80,11 +85,12 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_expectsFeaturesInReturn(
 		out: mockOut,
 		in:  xml.NewDecoder(mockIn),
 	}
-	feat, err := conn.sendInitialStreamHeader("somewhereElse.org")
+
+	err := conn.sendInitialStreamHeader("somewhereElse.org")
 	c.Assert(err, IsNil)
 	expected := streamFeatures{}
 	expected.XMLName = xml.Name{Space: "http://etherx.jabber.org/streams", Local: "features"}
-	c.Assert(feat, DeepEquals, expected)
+	c.Assert(conn.features, DeepEquals, expected)
 }
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_receiveResponseStreamHeaderInReturn(c *C) {
@@ -110,7 +116,7 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_receiveResponseStreamHea
 		in:  xml.NewDecoder(mockIn),
 	}
 
-	feat, err := conn.sendInitialStreamHeader("somewhereElse.org")
+	err := conn.sendInitialStreamHeader("somewhereElse.org")
 	c.Assert(err, IsNil)
 	expected := streamFeatures{
 		XMLName: xml.Name{Space: "http://etherx.jabber.org/streams", Local: "features"},
@@ -128,5 +134,5 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_receiveResponseStreamHea
 		InBandRegistration: &inBandRegistration{xml.Name{Space: "http://jabber.org/features/iq-register", Local: "register"}},
 	}
 
-	c.Assert(feat, DeepEquals, expected)
+	c.Assert(conn.features, DeepEquals, expected)
 }

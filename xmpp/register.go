@@ -28,8 +28,8 @@ type RegisterQuery struct {
 }
 
 // XEP-0077
-func (d *Dialer) negotiateInBandRegistration(features streamFeatures, c *Conn) error {
-	if features.InBandRegistration == nil {
+func (d *Dialer) negotiateInBandRegistration(c *Conn) error {
+	if c.features.InBandRegistration == nil {
 		return nil
 	}
 

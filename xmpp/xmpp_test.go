@@ -85,14 +85,10 @@ func (s *XmppSuite) TestConnClose(c *C) {
 
 	// consumes the opening stream
 	nextElement(conn.in)
-	done := make(chan bool)
-	go func() {
-		c.Assert(conn.Close(), IsNil)
-		done <- true
-	}()
-
 	go conn.Next()
-	<-done
+
+	// blocks until it receives the </stream> or timeouts
+	c.Assert(conn.Close(), IsNil)
 	c.Assert(mockCloser.calledClose, Equals, 1)
 	c.Assert(mockCloser.write, DeepEquals, []byte("</stream:stream>"))
 }

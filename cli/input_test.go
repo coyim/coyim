@@ -3,6 +3,8 @@ package cli
 import (
 	"reflect"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
 const (
@@ -37,14 +39,20 @@ var priorityListTests = []struct {
 	{opNext, "", "charlie"},
 }
 
-func TestPriorityList(t *testing.T) {
+func Test(t *testing.T) { TestingT(t) }
+
+type CLISuite struct{}
+
+var _ = Suite(&CLISuite{})
+
+func (s *CLISuite) TestPriorityList(c *C) {
 	var pl priorityList
 
 	for _, word := range []string{"bop", "boom", "bob", "anvil", "anchor", "charlie"} {
 		pl.Insert(word)
 	}
 
-	for i, step := range priorityListTests {
+	for _, step := range priorityListTests {
 		var out string
 
 		switch step.op {
@@ -55,9 +63,8 @@ func TestPriorityList(t *testing.T) {
 		default:
 			panic("unknown op")
 		}
-		if string(out) != step.out {
-			t.Fatalf("failed at step %d: got %s, want %s", i, string(out), step.out)
-		}
+
+		c.Check(out, Equals, step.out)
 	}
 }
 
@@ -99,7 +106,7 @@ var parseForCompletionTests = []struct {
 	{"/b c de f", false, "", "", false},
 }
 
-func TestParseCommandForCompletion(t *testing.T) {
+func (s *CLISuite) TestParseCommandForCompletion(t *C) {
 	for i, test := range parseForCompletionTests {
 		before, prefix, isCommand, ok := parseCommandForCompletion(testCommands, test.in)
 		if ok != test.ok {
@@ -142,7 +149,7 @@ var parseCommandTests = []struct {
 	{"/b a \"b \\\"b\" c", true, bCommand{"a", "b \"b", "c"}},
 }
 
-func TestParseCommand(t *testing.T) {
+func (s *CLISuite) TestParseCommand(t *C) {
 	for i, test := range parseCommandTests {
 		v, err := parseCommand(testCommands, []byte(test.in))
 		if (len(err) == 0) != test.ok {

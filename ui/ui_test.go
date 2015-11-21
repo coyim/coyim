@@ -1,8 +1,9 @@
 package ui
 
 import (
-	"bytes"
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
 
 var escapingTests = []string{
@@ -13,7 +14,13 @@ var escapingTests = []string{
 	"العربية",
 }
 
-func TestEscaping(t *testing.T) {
+func Test(t *testing.T) { TestingT(t) }
+
+type UISuite struct{}
+
+var _ = Suite(&UISuite{})
+
+func (s *UISuite) TestEscaping(t *C) {
 	for _, test := range escapingTests {
 		escaped := EscapeNonASCII(test)
 		unescaped, err := UnescapeNonASCII(escaped)
@@ -27,12 +34,10 @@ func TestEscaping(t *testing.T) {
 	}
 }
 
-func TestHTMLStripping(t *testing.T) {
+func (s *UISuite) TestHTMLStripping(t *C) {
 	raw := []byte("<hr>This is some <font color='green'>html</font><br />.")
 	exp := []byte("This is some html.")
 	res := StripHTML(raw)
-	if !bytes.Equal(res, exp) {
-		t.Errorf("HTML wasn't properly stripped: '%s' -> '%s' but expected '%s'", raw, res, exp)
-	}
 
+	t.Check(res, DeepEquals, exp)
 }

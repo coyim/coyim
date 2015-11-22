@@ -1,19 +1,22 @@
-def parse_go_name(file_name)
-file_name.gsub(/[A-Z]/, '_\0')
-    .gsub(/\.xml/, '.go')
-    .downcase
-    .gsub(/\/_/, '/')
-end
+#!/usr/bin/env ruby
 
-def remove_if_exists(go_file)
-  File.delete go_file if File.exist? go_file
+require 'fileutils'
+
+def parse_go_name(file_name)
+  File.basename(file_name, ".xml").
+    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+    gsub(/([a-z\d])([A-Z])/,'\1_\2').
+    tr("-", "_").
+    gsub(/\/_/, '/').
+    downcase + ".go"
 end
 
 def gen_go_file(xml_file, go_file)
-  source = File.open xml_file
+  xml_definition = File.read(xml_file)
   ui_name = File.basename(xml_file, '.xml')
-  xml_definition = source.read
-  template = """
+  File.open(go_file, 'w+') do |target|
+    target.puts <<TEMPLATE
+
 package definitions
 
 func init(){
@@ -27,15 +30,19 @@ func (*def#{ui_name}) String() string {
 #{xml_definition}
 `
 }
-"""
-  target = File.new(go_file, 'w+')
-  target.puts template
+TEMPLATE
+  end
 end
 
-Dir['./*.xml'].each do |file_name|
+def file_mtime(nm)
+  return Time.at(0) unless File.exists?(nm)
+  File.mtime(nm)
+end
+
+Dir[File.join(File.dirname(__FILE__), '*.xml')].each do |file_name|
   go_file = parse_go_name file_name
-  remove_if_exists go_file
-  STDERR.puts "  - #{file_name} -> #{go_file}"
-  gen_go_file(file_name, go_file)
+  if file_mtime(file_name) > file_mtime(go_file) || file_mtime(__FILE__) > file_mtime(go_file)
+    STDERR.puts "  - #{file_name} -> #{go_file}"
+    gen_go_file(file_name, go_file)
+  end
 end
-

@@ -1,31 +1,25 @@
 package definitions
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
-var definitions = struct {
-	m map[string]UI
-	sync.RWMutex
-}{
-	m: make(map[string]UI),
-}
-
-// UI represents a bundled UI description for GTK builder
-type UI interface {
-	String() string
-}
+var lock sync.RWMutex
+var definitions = make(map[string]fmt.Stringer)
 
 // Get returns the XML description of a UI definition and whether it was found
-func Get(uiName string) (UI, bool) {
-	definitions.RLock()
-	defer definitions.RUnlock()
+func Get(uiName string) (fmt.Stringer, bool) {
+	lock.RLock()
+	defer lock.RUnlock()
 
-	def, ok := definitions.m[uiName]
+	def, ok := definitions[uiName]
 	return def, ok
 }
 
-func add(uiName string, def UI) {
-	definitions.Lock()
-	defer definitions.Unlock()
+func add(uiName string, def fmt.Stringer) {
+	lock.Lock()
+	defer lock.Unlock()
 
-	definitions.m[uiName] = def
+	definitions[uiName] = def
 }

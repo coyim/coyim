@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`ConversationDefinition`, &defConversationDefinition{})
+  add(`Conversation`, &defConversation{})
 }
 
-type defConversationDefinition struct{}
+type defConversation struct{}
 
-func (*defConversationDefinition) String() string {
+func (*defConversation) String() string {
 	return `
 <interface>
   <object class="GtkWindow" id="conversation">

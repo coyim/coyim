@@ -37,7 +37,7 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 	vars["$saveLabel"] = i18n.Local("OK")
 	vars["$cancelLabel"] = i18n.Local("Cancel")
 
-	builder, _ := loadBuilderWith("MasterPasswordDefinition", vars)
+	builder, _ := loadBuilderWith("MasterPassword", vars)
 	dialogOb, _ := builder.GetObject("MasterPassword")
 	dialog := dialogOb.(*gtk.Dialog)
 	passObj, _ := builder.GetObject("password")

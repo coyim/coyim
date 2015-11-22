@@ -29,7 +29,7 @@ func accountDialog(account *config.Account, saveFunction func()) {
 	vars["$accountMessage"] = i18n.Local("Your account (for example: kim42@dukgo.com)")
 	vars["$pswMessage"] = i18n.Local("Password")
 	vars["$saveLabel"] = i18n.Local("Save")
-	builder, buildError := loadBuilderWith("AccountDetailsDefinition", vars)
+	builder, buildError := loadBuilderWith("AccountDetails", vars)
 	if buildError != nil {
 		panic(buildError.Error())
 	}

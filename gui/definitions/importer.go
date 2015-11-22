@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`ImporterDef`, &defImporterDef{})
+  add(`Importer`, &defImporter{})
 }
 
-type defImporterDef struct{}
+type defImporter struct{}
 
-func (*defImporterDef) String() string {
+func (*defImporter) String() string {
 	return `
 <?xml version="1.0" encoding="utf-8"?>
 <interface>

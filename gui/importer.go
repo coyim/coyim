@@ -71,7 +71,7 @@ func (u *gtkUI) runImporter() {
 	vars["$columnTitleAccountName"] = i18n.Local("Account name")
 	vars["$columnTitleFromApplication"] = i18n.Local("From application")
 	vars["$columnTitleImportThis"] = i18n.Local("Import this")
-	builder, _ := loadBuilderWith("ImporterDef", vars)
+	builder, _ := loadBuilderWith("Importer", vars)
 
 	win, _ := builder.GetObject("importerWindow")
 	w, _ := win.(*gtk.Dialog)

@@ -39,9 +39,9 @@ func removeFile(name string) {
 
 func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 	gtk.Init(nil)
-	removeFile("definitions/TestDefinition.xml")
-	writeTestFile("definitions/TestDefinition.xml", testFile)
-	ui := "TestDefinition"
+	removeFile("definitions/Test.xml")
+	writeTestFile("definitions/Test.xml", testFile)
+	ui := "Test"
 
 	vars := make(map[string]string)
 	vars["$win-height"] = "500"
@@ -64,9 +64,9 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 
 func (s *UIReaderSuite) Test_loadBuilderWith_useGoFileIfXMLDoesntExists(c *C) {
 	gtk.Init(nil)
-	removeFile("definitions/TestDefinition.xml")
+	removeFile("definitions/Test.xml")
 	//writeTestFile("definitions/TestDefinition.xml", testFile)
-	ui := "TestDefinition"
+	ui := "Test"
 
 	vars := make(map[string]string)
 	vars["$win-height"] = "500"

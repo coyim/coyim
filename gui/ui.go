@@ -236,7 +236,7 @@ func (u *gtkUI) mainWindow() {
 	vars["$checkItemMerge"] = i18n.Local("Merge Accounts")
 	vars["$checkItemShowOffline"] = i18n.Local("Show Offline Contacts")
 
-	builder, _ := loadBuilderWith("MainDefinition", vars)
+	builder, _ := loadBuilderWith("Main", vars)
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window_signal":                    u.quit,
 		"on_add_contact_window_signal":              u.addContactWindow,
@@ -289,7 +289,7 @@ func (*gtkUI) askForPassword(connect func(string) error) {
 	vars["$passwordLabel"] = i18n.Local("Password")
 	vars["$saveLabel"] = i18n.Local("Connect")
 
-	builder, _ := loadBuilderWith("AskForPasswordDefinition", vars)
+	builder, _ := loadBuilderWith("AskForPassword", vars)
 
 	dialogObj, _ := builder.GetObject("AskForPassword")
 	dialog := dialogObj.(*gtk.Dialog)
@@ -439,7 +439,7 @@ func (u *gtkUI) disconnect(account *account) {
 }
 
 func (u *gtkUI) alertTorIsNotRunning() {
-	builder, err := loadBuilderWith("TorNotRunningDef", nil)
+	builder, err := loadBuilderWith("TorNotRunning", nil)
 	if err != nil {
 		return
 	}
@@ -452,7 +452,7 @@ func (u *gtkUI) alertTorIsNotRunning() {
 }
 
 func (u *gtkUI) askForServerDetails(conf *config.Account, password string, connectFn func(string) error) {
-	builder, err := loadBuilderWith("ConnectionSettingsDialogDef", nil)
+	builder, err := loadBuilderWith("ConnectionSettings", nil)
 	if err != nil {
 		return
 	}

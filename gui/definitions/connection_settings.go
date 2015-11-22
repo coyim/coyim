@@ -2,24 +2,25 @@
 package definitions
 
 func init(){
-  add(`AddContactDefinition`, &defAddContactDefinition{})
+  add(`ConnectionSettings`, &defConnectionSettings{})
 }
 
-type defAddContactDefinition struct{}
+type defConnectionSettings struct{}
 
-func (*defAddContactDefinition) String() string {
+func (*defConnectionSettings) String() string {
 	return `
 <interface>
-  <object class="GtkDialog" id="AddContact">
-    <property name="window-position">1</property>
-    <property name="title" translatable="yes">Add contact</property>
+  <object class="GtkDialog" id="ConnectionSettingsDialog">
+    <property name="default-width">300</property>
+    <property name="window-position">GTK_WIN_POS_CENTER</property>
+    <property name="title" translatable="yes">Could not connect to account</property>
     <child internal-child="vbox">
-      <object class="GtkBox" id="Vbox">
+      <object class="GtkBox" id="box">
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel" id="accountsLabel" >
-            <property name="label" translatable="yes">Account</property>
+          <object class="GtkLabel" id="label1">
+            <property name="label" translatable="yes">Server (for google accounts, you may want to try xmpp.google.com)</property>
           </object>
           <packing>
             <property name="expand">false</property>
@@ -28,7 +29,9 @@ func (*defAddContactDefinition) String() string {
           </packing>
         </child>
         <child>
-          <object class="GtkComboBox" id="accounts">
+          <object class="GtkEntry" id="server">
+            <property name="has-focus">true</property>
+            <signal name="activate" handler="reconnect" />
           </object>
           <packing>
             <property name="expand">false</property>
@@ -37,8 +40,8 @@ func (*defAddContactDefinition) String() string {
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="accountLabel" >
-            <property name="label" translatable="yes">Contact to add (for example: arnoldsPub@jabber.ccc.de)</property>
+          <object class="GtkLabel" id="label2">
+            <property name="label" translatable="yes">Port</property>
           </object>
           <packing>
             <property name="expand">false</property>
@@ -47,9 +50,8 @@ func (*defAddContactDefinition) String() string {
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="address">
-            <property name="has-focus">true</property>
-            <signal name="activate" handler="on_save_signal" />
+          <object class="GtkEntry" id="port">
+            <signal name="activate" handler="reconnect" />
           </object>
           <packing>
             <property name="expand">false</property>
@@ -58,9 +60,9 @@ func (*defAddContactDefinition) String() string {
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="add">
-            <property name="label" translatable="yes">Add</property>
-            <signal name="clicked" handler="on_save_signal" />
+          <object class="GtkButton" id="save">
+            <property name="label" translatable="yes">Connect</property>
+            <signal name="clicked" handler="reconnect"/>
           </object>
           <packing>
             <property name="expand">false</property>

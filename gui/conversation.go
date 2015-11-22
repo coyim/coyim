@@ -77,7 +77,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 
 	var win, history, scrollHistory, messageEntry glib.IObject
 
-	builder, err := loadBuilderWith("ConversationDefinition", vars)
+	builder, err := loadBuilderWith("Conversation", vars)
 	if err != nil {
 		return nil, err
 	}

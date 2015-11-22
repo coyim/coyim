@@ -39,7 +39,7 @@ func (u *gtkUI) showConfigAssistant() error {
 }
 
 func buildConfigAssistant(saveFn saveAccountFunc, closeFn func()) (*gtk.Assistant, error) {
-	builder, err := loadBuilderWith("ConfigAssistantDefinition", nil)
+	builder, err := loadBuilderWith("ConfigAssistant", nil)
 	if err != nil {
 		return nil, err
 	}

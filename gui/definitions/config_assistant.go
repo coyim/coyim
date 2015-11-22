@@ -2,12 +2,12 @@
 package definitions
 
 func init(){
-  add(`ConfigAssistantDefinition`, &defConfigAssistantDefinition{})
+  add(`ConfigAssistant`, &defConfigAssistant{})
 }
 
-type defConfigAssistantDefinition struct{}
+type defConfigAssistant struct{}
 
-func (*defConfigAssistantDefinition) String() string {
+func (*defConfigAssistant) String() string {
 	return `
 <?xml version="1.0"?>
 <interface>

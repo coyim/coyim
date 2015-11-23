@@ -72,9 +72,7 @@ func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
 	fmt.Fprintf(w, "  Cipher suite: %s\n", cipherSuite)
 }
 
-// RFC 3920  C.3  TLS name space
-//TODO RFC 6120 obsoletes RFC 3920
-
+// RFC 6120, section 5
 type tlsStartTLS struct {
 	XMLName  xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-tls starttls"`
 	Required xml.Name `xml:"required"`
@@ -91,13 +89,15 @@ type tlsFailure struct {
 // RFC 6120, section 5.4
 func (d *Dialer) negotiateSTARTTLS(c *Conn, conn net.Conn) error {
 	// RFC 6120, section 5.3
-	// TODO: STARTTLS is mandatory-to-negotiate in some circunstances, but we allow to it to be skipped
-	if c.config.SkipTLS {
+	mandatoryToNegotiate := c.features.StartTLS.Required.Local == "required"
+	if c.config.SkipTLS && !mandatoryToNegotiate {
 		return nil
 	}
 
 	originDomain := d.getJIDDomainpart()
 
+	// Section 5.2 states:
+	// "Support for STARTTLS is REQUIRED in XMPP client and server implementations"
 	if c.features.StartTLS.XMLName.Local == "" {
 		return errors.New("xmpp: server doesn't support TLS")
 	}

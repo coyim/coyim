@@ -676,13 +676,27 @@ func (s *Session) IsDisconnected() bool {
 	return s.ConnStatus == DISCONNECTED
 }
 
+func (s *Session) setStatus(status connStatus) {
+	s.ConnStatus = status
+
+	switch status {
+	case CONNECTED:
+		s.publish(Connected)
+	case DISCONNECTED:
+		s.publish(Disconnected)
+	case CONNECTING:
+		s.publish(Connecting)
+	}
+}
+
 // Connect connects to the server and starts the main threads
 func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) error {
 	if !s.IsDisconnected() {
 		return nil
 	}
 
-	s.ConnStatus = CONNECTING
+	s.setStatus(CONNECTING)
+
 	if s.ConnectionLogger == nil {
 		s.ConnectionLogger = newLogger()
 	}
@@ -696,15 +710,13 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	conn, err := policy.Connect(password, conf)
 	if err != nil {
 		s.alert(err.Error())
-		s.ConnStatus = DISCONNECTED
-		s.publish(Disconnected)
+		s.setStatus(DISCONNECTED)
 
 		return err
 	}
 
 	s.Conn = conn
-	s.ConnStatus = CONNECTED
-	s.publish(Connected)
+	s.setStatus(CONNECTED)
 
 	go s.watchTimeout()
 	go s.watchRosterEvents()

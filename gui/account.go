@@ -127,7 +127,7 @@ func (account *account) watchAndToggleMenuItems(connectItem, disconnectItem *gtk
 		switch t := ev.(type) {
 		case session.Event:
 			switch t.Type {
-			case session.Connected, session.Disconnected:
+			case session.Connected, session.Disconnected, session.Connecting:
 				toggleConnectAndDisconnectMenuItems(t.Session, connectItem, disconnectItem)
 			}
 		}

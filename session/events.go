@@ -18,6 +18,7 @@ type EventType int
 // Session event types
 const (
 	Disconnected EventType = iota
+	Connecting
 	Connected
 	RosterReceived
 	Ping

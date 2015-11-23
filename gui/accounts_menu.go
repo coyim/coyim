@@ -61,9 +61,8 @@ func accountDialog(account *config.Account, saveFunction func()) {
 }
 
 func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect *gtk.MenuItem) {
-	connected := s.ConnStatus == session.CONNECTED
-	connect.SetSensitive(!connected)
-	disconnect.SetSensitive(connected)
+	connect.SetSensitive(s.ConnStatus == session.DISCONNECTED)
+	disconnect.SetSensitive(s.ConnStatus == session.CONNECTED)
 }
 
 func (u *gtkUI) buildAccountsMenu() {

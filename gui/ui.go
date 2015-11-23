@@ -135,6 +135,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 
 	if !ok {
 		u.keySupplier.Invalidate()
+		u.loadConfig(configFile)
 		// TODO: tell the user we couldn't open the encrypted file
 		log.Printf("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
 		return

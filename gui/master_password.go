@@ -54,6 +54,7 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 		"on_cancel_signal": func() {
 			close(pwdResultChan)
 			dialog.Destroy()
+			u.quit()
 		},
 	})
 

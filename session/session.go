@@ -655,12 +655,10 @@ func (s *Session) WatchRosterEvents() {
 		select {
 		case rosterStanza, ok := <-rosterReply:
 			if !ok {
-				s.alert("Failed to read roster: " + err.Error())
 				return
 			}
 
 			rst, err := xmpp.ParseRoster(rosterStanza)
-
 			if err != nil {
 				s.alert("Failed to parse roster: " + err.Error())
 				return

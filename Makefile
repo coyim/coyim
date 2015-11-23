@@ -17,6 +17,9 @@ build-gui:
 build-cli:
 	go build -o bin/coyim-cli
 
+debug:
+	go build -gcflags "-N -l" -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim-debug
+
 clean-release:
 	$(RM) bin/*
 

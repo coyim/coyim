@@ -111,6 +111,22 @@ func (a *Accounts) Add(ac *Account) {
 	a.Accounts = append(a.Accounts, ac)
 }
 
+// Remove will update the accounts to exclude the account to remove, if
+// it does exist
+func (acs *Accounts) Remove(toRemove *Account) {
+	res := make([]*Account, len(acs.Accounts)-1)
+	found := false
+	for i, a := range acs.Accounts {
+		if a.Is(toRemove.Account) {
+			res = append(acs.Accounts[:i], acs.Accounts[i+1:]...)
+			found = true
+		}
+	}
+	if found {
+		acs.Accounts = res
+	}
+}
+
 // AddNewAccount creates a new account and adds it to the list of accounts
 func (a *Accounts) AddNewAccount() (ac *Account, err error) {
 	ac, err = NewAccount()

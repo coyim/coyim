@@ -94,9 +94,7 @@ func NewGTK() UI {
 				})
 			case acc := <-remove:
 				glib.IdleAdd(func() bool {
-					res.config.Remove(acc.session.CurrentAccount)
-					res.SaveConfig()
-					res.accountManager.buildAccounts(res.config)
+					confirmAccountRemoval(acc.session.CurrentAccount, res.removeSaveReload)
 					return false
 				})
 			case acc := <-toggleConnect:
@@ -109,6 +107,17 @@ func NewGTK() UI {
 	}()
 
 	return res
+}
+
+func confirmAccountRemoval(acc *config.Account, responseFunc func(*config.Account)) {
+	builder, _ := loadBuilderWith("ConfirmAccountRemovalDefinition", nil)
+	dialogObj, _ := builder.GetObject("RemoveAccount")
+	dialog := dialogObj.(*gtk.MessageDialog)
+	response := dialog.Run()
+	if gtk.ResponseType(response) == gtk.RESPONSE_OK {
+		responseFunc(acc)
+	}
+	dialog.Destroy()
 }
 
 func (u *gtkUI) initialSetupWindow() {
@@ -196,6 +205,12 @@ func (u *gtkUI) SaveConfig() {
 			log.Println("Failed to save config file:", err.Error())
 		}
 	}()
+}
+
+func (u *gtkUI) removeSaveReload(acc *config.Account) {
+	u.config.Remove(acc)
+	u.SaveConfig()
+	u.accountManager.buildAccounts(u.config)
 }
 
 func (u *gtkUI) saveConfigOnly() {

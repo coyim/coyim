@@ -94,7 +94,10 @@ func NewGTK() UI {
 				})
 			case acc := <-remove:
 				glib.IdleAdd(func() bool {
-					confirmAccountRemoval(acc.session.CurrentAccount, res.removeSaveReload)
+					confirmAccountRemoval(acc.session.CurrentAccount, func(c *config.Account) {
+						res.disconnect(acc)
+						res.removeSaveReload(c)
+					})
 					return false
 				})
 			case acc := <-toggleConnect:

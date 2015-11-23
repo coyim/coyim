@@ -62,10 +62,11 @@ func NewGTK() UI {
 	connect := make(chan *account, 0)
 	disconnect := make(chan *account, 0)
 	edit := make(chan *account, 0)
+	remove := make(chan *account, 0)
 	toggleConnect := make(chan *account, 0)
 
 	res := &gtkUI{
-		accountManager: newAccountManager(connect, disconnect, edit, toggleConnect),
+		accountManager: newAccountManager(connect, disconnect, edit, remove, toggleConnect),
 	}
 
 	res.applyStyle()
@@ -89,6 +90,13 @@ func NewGTK() UI {
 			case acc := <-edit:
 				glib.IdleAdd(func() bool {
 					accountDialog(acc.session.CurrentAccount, res.SaveConfig)
+					return false
+				})
+			case acc := <-remove:
+				glib.IdleAdd(func() bool {
+					res.config.Remove(acc.session.CurrentAccount)
+					res.SaveConfig()
+					res.accountManager.buildAccounts(res.config)
 					return false
 				})
 			case acc := <-toggleConnect:

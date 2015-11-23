@@ -15,6 +15,7 @@ type account struct {
 	onConnect                         chan<- *account
 	onDisconnect                      chan<- *account
 	onEdit                            chan<- *account
+	onRemove                          chan<- *account
 	toggleConnectAutomaticallyRequest chan<- *account
 }
 
@@ -79,6 +80,9 @@ func (account *account) buildAccountSubmenu() {
 	editItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
 	accountSubMenu.Append(editItem)
 
+	removeItem, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Remove"))
+	accountSubMenu.Append(removeItem)
+
 	connectAutomaticallyItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect _Automatically"))
 	accountSubMenu.Append(connectAutomaticallyItem)
 	connectAutomaticallyItem.SetActive(account.session.CurrentAccount.ConnectAutomatically)
@@ -101,7 +105,9 @@ func (account *account) buildAccountSubmenu() {
 		account.onEdit <- account
 	})
 
-	//TODO: add "Remove" menu item
+	removeItem.Connect("activate", func() {
+		account.onRemove <- account
+	})
 
 	c := make(chan interface{})
 	account.session.Subscribe(c)

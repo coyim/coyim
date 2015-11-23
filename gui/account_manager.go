@@ -19,15 +19,17 @@ type accountManager struct {
 	onConnect                         chan<- *account
 	onDisconnect                      chan<- *account
 	onEdit                            chan<- *account
+	onRemove                          chan<- *account
 	toggleConnectAutomaticallyRequest chan<- *account
 }
 
-func newAccountManager(c chan<- *account, d chan<- *account, e chan<- *account, ac chan<- *account) *accountManager {
+func newAccountManager(c chan<- *account, d chan<- *account, e chan<- *account, r chan<- *account, ac chan<- *account) *accountManager {
 	return &accountManager{
 		events:       make(chan interface{}, 10),
 		onConnect:    c,
 		onDisconnect: d,
 		onEdit:       e,
+		onRemove:     r,
 		toggleConnectAutomaticallyRequest: ac,
 	}
 }
@@ -45,6 +47,7 @@ func (m *accountManager) addAccount(appConfig *config.Accounts, account *config.
 	acc.onConnect = m.onConnect
 	acc.onDisconnect = m.onDisconnect
 	acc.onEdit = m.onEdit
+	acc.onRemove = m.onRemove
 	acc.toggleConnectAutomaticallyRequest = m.toggleConnectAutomaticallyRequest
 
 	m.accounts = append(m.accounts, acc)

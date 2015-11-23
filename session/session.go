@@ -635,8 +635,7 @@ func (s *Session) Timeout(c xmpp.Cookie, t time.Time) {
 
 const defaultDelimiter = "::"
 
-// WatchRosterEvents waits for roster events
-func (s *Session) WatchRosterEvents() {
+func (s *Session) watchRosterEvents() {
 	defer s.Close()
 
 	s.Conn.SignalPresence("")
@@ -656,42 +655,19 @@ func (s *Session) WatchRosterEvents() {
 
 	s.rosterCookie = c
 
-	for {
-		select {
-		case rosterStanza, ok := <-rosterReply:
-			if !ok {
-				return
-			}
-
-			rst, err := xmpp.ParseRoster(rosterStanza)
-			if err != nil {
-				s.alert("Failed to parse roster: " + err.Error())
-				return
-			}
-
-			for _, rr := range rst {
-				s.R.AddOrMerge(roster.PeerFrom(rr, s.CurrentAccount.ID()))
-			}
-
-			s.rosterReceived()
-			s.info("Roster received")
-
-			//TODO: this is CLI specific
-			//case edit := <-s.PendingRosterChan:
-			//	if !edit.IsComplete {
-			//		//TODO: this is specific to CLI
-			//		s.info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
-			//		s.PendingRosterEdit = edit
-			//		continue
-			//	}
-
-			//	if s.processEditedRoster(edit) {
-			//		s.PendingRosterEdit = nil
-			//	} else {
-			//		//TODO: this is specific to CLI
-			//		s.alert("Please reedit file and run /rostereditdone again")
-			//	}
+	for rosterStanza := range rosterReply {
+		rst, err := xmpp.ParseRoster(rosterStanza)
+		if err != nil {
+			s.alert("Failed to parse roster: " + err.Error())
+			return
 		}
+
+		for _, rr := range rst {
+			s.R.AddOrMerge(roster.PeerFrom(rr, s.CurrentAccount.ID()))
+		}
+
+		s.rosterReceived()
+		s.info("Roster received")
 	}
 }
 
@@ -731,7 +707,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	s.publish(Connected)
 
 	go s.watchTimeout()
-	go s.WatchRosterEvents()
+	go s.watchRosterEvents()
 	go s.WatchStanzas()
 
 	return nil

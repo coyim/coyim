@@ -1003,7 +1003,7 @@ func (s *SessionXmppSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsA
 	now := time.Now()
 	timeouts := map[xmpp.Cookie]time.Time{
 		xmpp.Cookie(1): now.Add(-1 * time.Second),
-		xmpp.Cookie(2): now.Add(2 * time.Second),
+		xmpp.Cookie(2): now.Add(10 * time.Second),
 	}
 
 	sess := &Session{

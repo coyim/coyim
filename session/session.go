@@ -806,7 +806,7 @@ func (s *Session) Close() {
 
 	s.terminateConversations()
 
-	s.Conn.Cancel(s.rosterCookie)
+	s.Conn.CancelAll()
 	s.Conn.Close()
 
 	s.R.Clear()

@@ -17,6 +17,8 @@ type account struct {
 	onEdit                            chan<- *account
 	onRemove                          chan<- *account
 	toggleConnectAutomaticallyRequest chan<- *account
+
+	sessionObserver chan interface{}
 }
 
 type byAccountNameAlphabetic []*account
@@ -51,11 +53,15 @@ func (u *gtkUI) showAddAccountWindow() error {
 	return nil
 }
 
+func (account *account) destroyMenu() {
+	//I dont know how to remove it from its current parent without breaking the menu
+	//unparent does not seem to work as expected
+	account.menu.Destroy()
+}
+
 func (account *account) appendMenuTo(submenu *gtk.Menu) {
 	if account.menu != nil {
-		//I dont know how to remove it from its current parent without breaking the menu
-		//unparent does not seem to work as expected
-		account.menu.Destroy()
+		account.destroyMenu()
 	}
 
 	account.buildAccountSubmenu()
@@ -109,20 +115,21 @@ func (account *account) buildAccountSubmenu() {
 		account.onRemove <- account
 	})
 
-	c := make(chan interface{})
-	account.session.Subscribe(c)
+	go account.watchAndToggleMenuItems(connectItem, disconnectItem)
+	account.menu = menuitem
+}
 
-	go func() {
-		for ev := range c {
-			switch t := ev.(type) {
-			case session.Event:
-				switch t.Type {
-				case session.Connected, session.Disconnected:
-					toggleConnectAndDisconnectMenuItems(t.Session, connectItem, disconnectItem)
-				}
+func (account *account) watchAndToggleMenuItems(connectItem, disconnectItem *gtk.MenuItem) {
+	account.sessionObserver = make(chan interface{})
+	account.session.Subscribe(account.sessionObserver)
+
+	for ev := range account.sessionObserver {
+		switch t := ev.(type) {
+		case session.Event:
+			switch t.Type {
+			case session.Connected, session.Disconnected:
+				toggleConnectAndDisconnectMenuItems(t.Session, connectItem, disconnectItem)
 			}
 		}
-	}()
-
-	account.menu = menuitem
+	}
 }

@@ -46,15 +46,14 @@ type Session struct {
 
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
-	Timeouts map[xmpp.Cookie]time.Time
+	timeouts map[xmpp.Cookie]time.Time
 
 	// lastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	LastActionTime      time.Time
 	SessionEventHandler EventHandler
 
-	timeoutTicker *time.Ticker
-	rosterCookie  xmpp.Cookie
+	rosterCookie xmpp.Cookie
 
 	subscribers struct {
 		sync.RWMutex
@@ -78,6 +77,8 @@ func NewSession(c *config.Accounts, cu *config.Account) *Session {
 		Conversations:   make(map[string]*otr3.Conversation),
 		OtrEventHandler: make(map[string]*event.OtrEventHandler),
 		LastActionTime:  time.Now(),
+
+		timeouts: make(map[xmpp.Cookie]time.Time),
 
 		xmppLogger: openLogFile(c.RawLogFile),
 	}
@@ -597,14 +598,13 @@ func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	s.info(fmt.Sprintf("Version reply from %s: %#v", user, versionReply))
 }
 
-// WatchTimeout watches timeouts
-func (s *Session) WatchTimeout() {
-	s.Timeouts = make(map[xmpp.Cookie]time.Time)
-	s.timeoutTicker = time.NewTicker(1 * time.Second)
+func (s *Session) watchTimeout() {
+	tickInterval := time.Second
 
-	for now := range s.timeoutTicker.C {
+	for s.ConnStatus == CONNECTED {
+		now := <-time.After(tickInterval)
 		haveExpired := false
-		for _, expiry := range s.Timeouts {
+		for _, expiry := range s.timeouts {
 			if now.After(expiry) {
 				haveExpired = true
 				break
@@ -616,7 +616,7 @@ func (s *Session) WatchTimeout() {
 		}
 
 		newTimeouts := make(map[xmpp.Cookie]time.Time)
-		for cookie, expiry := range s.Timeouts {
+		for cookie, expiry := range s.timeouts {
 			if now.After(expiry) {
 				s.Conn.Cancel(cookie)
 			} else {
@@ -624,8 +624,13 @@ func (s *Session) WatchTimeout() {
 			}
 		}
 
-		s.Timeouts = newTimeouts
+		s.timeouts = newTimeouts
 	}
+}
+
+// Timeout set the timeout for an XMPP request
+func (s *Session) Timeout(c xmpp.Cookie, t time.Time) {
+	s.timeouts[c] = t
 }
 
 const defaultDelimiter = "::"
@@ -725,7 +730,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	s.ConnStatus = CONNECTED
 	s.publish(Connected)
 
-	go s.WatchTimeout()
+	go s.watchTimeout()
 	go s.WatchRosterEvents()
 	go s.WatchStanzas()
 
@@ -801,10 +806,7 @@ func (s *Session) Close() {
 
 	s.terminateConversations()
 
-	//Stops all
 	s.Conn.Cancel(s.rosterCookie)
-	s.timeoutTicker.Stop()
-
 	s.Conn.Close()
 
 	s.R.Clear()

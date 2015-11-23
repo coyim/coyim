@@ -998,3 +998,28 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *
 		}
 	}
 }
+
+func (s *SessionXmppSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAboutThem(c *C) {
+	now := time.Now()
+	timeouts := map[xmpp.Cookie]time.Time{
+		xmpp.Cookie(1): now.Add(-1 * time.Second),
+		xmpp.Cookie(2): now.Add(2 * time.Second),
+	}
+
+	sess := &Session{
+		ConnStatus: CONNECTED,
+		timeouts:   timeouts,
+		Conn:       &xmpp.Conn{},
+	}
+
+	go func() {
+		<-time.After(1 * time.Second)
+		sess.ConnStatus = DISCONNECTED
+	}()
+
+	sess.watchTimeout()
+	c.Check(sess.timeouts, HasLen, 1)
+
+	_, ok := sess.timeouts[xmpp.Cookie(2)]
+	c.Check(ok, Equals, true)
+}

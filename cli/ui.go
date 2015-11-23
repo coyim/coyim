@@ -590,7 +590,8 @@ CommandLoop:
 					alert(term, "Error sending version request: "+err.Error())
 					continue
 				}
-				s.Timeouts[cookie] = time.Now().Add(5 * time.Second)
+
+				s.Timeout(cookie, time.Now().Add(5*time.Second))
 				go s.AwaitVersionReply(replyChan, cmd.User)
 			case rosterCommand:
 				info(term, "Current roster:")

@@ -54,6 +54,8 @@ func (u *gtkUI) showAddAccountWindow() error {
 }
 
 func (account *account) destroyMenu() {
+	close(account.sessionObserver)
+
 	//I dont know how to remove it from its current parent without breaking the menu
 	//unparent does not seem to work as expected
 	account.menu.Destroy()

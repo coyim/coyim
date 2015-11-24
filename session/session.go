@@ -53,8 +53,6 @@ type Session struct {
 	LastActionTime      time.Time
 	SessionEventHandler EventHandler
 
-	rosterCookie xmpp.Cookie
-
 	subscribers struct {
 		sync.RWMutex
 		subs []chan<- interface{}
@@ -635,9 +633,7 @@ func (s *Session) Timeout(c xmpp.Cookie, t time.Time) {
 
 const defaultDelimiter = "::"
 
-func (s *Session) watchRosterEvents() {
-	defer s.Close()
-
+func (s *Session) requestRoster() {
 	s.Conn.SignalPresence("")
 	s.info("Fetching roster")
 
@@ -647,28 +643,30 @@ func (s *Session) watchRosterEvents() {
 	}
 	s.GroupDelimiter = delim
 
-	rosterReply, c, err := s.Conn.RequestRoster()
+	rosterReply, _, err := s.Conn.RequestRoster()
 	if err != nil {
 		s.alert("Failed to request roster: " + err.Error())
 		return
 	}
 
-	s.rosterCookie = c
-
-	for rosterStanza := range rosterReply {
-		rst, err := xmpp.ParseRoster(rosterStanza)
-		if err != nil {
-			s.alert("Failed to parse roster: " + err.Error())
-			return
-		}
-
-		for _, rr := range rst {
-			s.R.AddOrMerge(roster.PeerFrom(rr, s.CurrentAccount.ID()))
-		}
-
-		s.rosterReceived()
-		s.info("Roster received")
+	rosterStanza, ok := <-rosterReply
+	if !ok {
+		//roster request cancelled or timedout by the session
+		return
 	}
+
+	rst, err := xmpp.ParseRoster(rosterStanza)
+	if err != nil {
+		s.alert("Failed to parse roster: " + err.Error())
+		return
+	}
+
+	for _, rr := range rst {
+		s.R.AddOrMerge(roster.PeerFrom(rr, s.CurrentAccount.ID()))
+	}
+
+	s.rosterReceived()
+	s.info("Roster received")
 }
 
 // IsDisconnected returns true if this account is disconnected and is not in the process of connecting
@@ -718,8 +716,8 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 	s.Conn = conn
 	s.setStatus(CONNECTED)
 
+	go s.requestRoster()
 	go s.watchTimeout()
-	go s.watchRosterEvents()
 	go s.WatchStanzas()
 
 	return nil

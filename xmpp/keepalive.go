@@ -29,7 +29,7 @@ func (c *Conn) watchKeepAlive(conn net.Conn) {
 			continue
 		}
 
-		log.Println("xmpp: failed to send keepalive")
+		log.Println("xmpp: keepalive failed")
 
 		go c.sendStreamError(StreamError{
 			DefinedCondition: ConnectionTimeout,

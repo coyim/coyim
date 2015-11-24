@@ -615,6 +615,7 @@ func (s *Session) watchTimeout() {
 		newTimeouts := make(map[xmpp.Cookie]time.Time)
 		for cookie, expiry := range s.timeouts {
 			if now.After(expiry) {
+				log.Println("session: cookie", cookie, "has expired")
 				s.Conn.Cancel(cookie)
 			} else {
 				newTimeouts[cookie] = expiry
@@ -650,7 +651,8 @@ func (s *Session) requestRoster() {
 
 	rosterStanza, ok := <-rosterReply
 	if !ok {
-		//roster request cancelled or timedout by the session
+		//TODO: should we retry the request in such case?
+		log.Println("session: roster request cancelled or timedout")
 		return
 	}
 

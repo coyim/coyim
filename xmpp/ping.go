@@ -68,7 +68,7 @@ func (c *Conn) watchPings() {
 			return
 		}
 
-		log.Println("xmpp: send ping")
+		log.Println("xmpp: ping")
 		pongReply, _, err := c.SendPing()
 		if err != nil {
 			return
@@ -76,15 +76,15 @@ func (c *Conn) watchPings() {
 
 		select {
 		case <-time.After(pingTimeout):
-			log.Println("xmpp: pong not received")
+			log.Println("xmpp: pong timed out")
 			failures = failures + 1
 		case pongStanza, ok := <-pongReply:
 			if !ok {
-				log.Println("xmpp: pong was cancelled")
+				log.Println("xmpp: pong cancelled")
 				continue
 			}
 
-			log.Println("xmpp: receive pong")
+			log.Println("xmpp: pong")
 			failures = 0
 			iq, ok := pongStanza.Value.(*ClientIQ)
 			if !ok {
@@ -103,7 +103,7 @@ func (c *Conn) watchPings() {
 			continue
 		}
 
-		log.Println("xmpp: ping failures reached treshold of ", maxPingFailures)
+		log.Println("xmpp: ping failures reached treshold of", maxPingFailures)
 		go c.sendStreamError(StreamError{
 			DefinedCondition: ConnectionTimeout,
 		})

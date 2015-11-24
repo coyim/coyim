@@ -113,7 +113,7 @@ func NewGTK() UI {
 }
 
 func confirmAccountRemoval(acc *config.Account, responseFunc func(*config.Account)) {
-	builder, _ := loadBuilderWith("ConfirmAccountRemovalDefinition", nil)
+	builder, _ := loadBuilderWith("ConfirmAccountRemoval", nil)
 	dialogObj, _ := builder.GetObject("RemoveAccount")
 	dialog := dialogObj.(*gtk.MessageDialog)
 	response := dialog.Run()

@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/servers"
@@ -26,8 +27,9 @@ import (
 )
 
 type cliUI struct {
-	session *session.Session
-	events  chan interface{}
+	session  *session.Session
+	events   chan interface{}
+	commands chan interface{}
 
 	password string
 	oldState *terminal.State
@@ -74,7 +76,8 @@ func NewCLI() UI {
 		RosterEditor: RosterEditor{
 			PendingRosterChan: make(chan *RosterEdit),
 		},
-		events: make(chan interface{}),
+		events:   make(chan interface{}),
+		commands: make(chan interface{}, 5),
 	}
 }
 
@@ -144,7 +147,6 @@ func (c *cliUI) loadConfig(configFile string) error {
 	c.session = session.NewSession(accounts, account)
 	c.session.SessionEventHandler = c
 	c.session.Subscribe(c.events)
-	c.session.SaveConfiguration = c.SaveConf
 
 	c.session.ConnectionLogger = logger
 	if err := c.session.Connect(password, registerCallback); err != nil {
@@ -171,9 +173,10 @@ func (c *cliUI) Loop() {
 		return
 	}
 
+	go c.watchClientCommands()
 	go c.observeSessionEvents()
-	go c.WatchRosterEdits()
-	go c.WatchCommands()
+	go c.watchRosterEdits()
+	go c.watchInputCommands()
 
 	<-c.terminate // wait
 }
@@ -479,7 +482,7 @@ func promptForForm(term *terminal.Terminal, user, password, title, instructions 
 	return nil
 }
 
-func (c *cliUI) WatchRosterEdits() {
+func (c *cliUI) watchRosterEdits() {
 	for edit := range c.PendingRosterChan {
 		if !edit.IsComplete {
 			c.info("Please edit " + edit.FileName + " and run /rostereditdone when complete")
@@ -518,8 +521,9 @@ func (c *cliUI) WatchRosterEdits() {
 				}
 				newKnownFingerprints = append(newKnownFingerprints, fpr)
 			}
+
 			c.session.CurrentAccount.KnownFingerprints = newKnownFingerprints
-			c.session.SaveConfiguration()
+			c.ExecuteCmd(client.SaveApplicationConfigCmd{})
 		}
 
 		//EDIT
@@ -558,7 +562,7 @@ func (c *cliUI) WatchRosterEdits() {
 	}
 }
 
-func (c *cliUI) WatchCommands() {
+func (c *cliUI) watchInputCommands() {
 	defer c.quit()
 
 	commandChan := make(chan interface{})
@@ -662,7 +666,8 @@ CommandLoop:
 
 			case toggleStatusUpdatesCommand:
 				s.CurrentAccount.HideStatusUpdates = !s.CurrentAccount.HideStatusUpdates
-				s.SaveConfiguration()
+				s.ExecuteCmd(client.SaveApplicationConfigCmd{})
+
 				// Tell the user the current state of the statuses
 				if s.CurrentAccount.HideStatusUpdates {
 					info(term, "Status updates disabled")
@@ -762,12 +767,18 @@ CommandLoop:
 					break
 				}
 
-				e := s.CurrentAccount.AuthorizeFingerprint(cmd.User, fpr)
-				if e != nil {
-					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)))
+				idForFpr := s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)
+				if len(idForFpr) != 0 {
+					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, idForFpr))
 					break
 				}
-				s.SaveConfiguration()
+
+				s.ExecuteCmd(client.AuthorizeFingerprintCmd{
+					Account:     s.CurrentAccount,
+					Peer:        cmd.User,
+					Fingerprint: fpr,
+				})
+
 				info(term, fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:
 				s.Conn.SignalPresence("away")

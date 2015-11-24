@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/roster"
@@ -40,8 +41,11 @@ type Session struct {
 	Conversations   map[string]*otr3.Conversation
 	OtrEventHandler map[string]*event.OtrEventHandler
 
-	PrivateKey     otr3.PrivateKey
-	Config         *config.ApplicationConfig
+	PrivateKey otr3.PrivateKey
+
+	//TODO: the session does not need all application config. Copy only what it needs to configure the session
+	Config *config.ApplicationConfig
+	// TODO: this is the account config, not the current account
 	CurrentAccount *config.Account
 
 	// timeouts maps from Cookies (from outstanding requests) to the
@@ -58,11 +62,11 @@ type Session struct {
 		subs []chan<- interface{}
 	}
 
-	SaveConfiguration func()
-
 	GroupDelimiter string
 
 	xmppLogger io.Writer
+
+	client.CommandManager
 }
 
 // NewSession creates a new session from the given config
@@ -382,10 +386,13 @@ func (s *Session) newConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys([]otr3.PrivateKey{s.PrivateKey})
 
-	hadInstanceTag := s.CurrentAccount.InstanceTag != 0
-	s.CurrentAccount.InstanceTag = conversation.InitializeInstanceTag(s.CurrentAccount.InstanceTag)
-	if !hadInstanceTag {
-		s.SaveConfiguration()
+	instanceTag := conversation.InitializeInstanceTag(s.CurrentAccount.InstanceTag)
+
+	if s.CurrentAccount.InstanceTag != instanceTag {
+		s.ExecuteCmd(client.SaveInstanceTagCmd{
+			Account:     s.CurrentAccount,
+			InstanceTag: instanceTag,
+		})
 	}
 
 	s.CurrentAccount.SetOTRPoliciesFor(peer, conversation)
@@ -507,8 +514,11 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	case event.SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.DefaultFingerprintFor(conversation.GetTheirKey())
-		s.CurrentAccount.AuthorizeFingerprint(from, fpr)
-		s.SaveConfiguration()
+		s.ExecuteCmd(client.AuthorizeFingerprintCmd{
+			Account:     s.CurrentAccount,
+			Peer:        from,
+			Fingerprint: fpr,
+		})
 	case event.SMPFailed:
 		s.alert(fmt.Sprintf("Authentication with %s failed", from))
 	}

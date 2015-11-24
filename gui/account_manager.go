@@ -3,6 +3,7 @@ package gui
 import (
 	"sync"
 
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/session"
 )
@@ -16,21 +17,13 @@ type accountManager struct {
 	events            chan interface{}
 	saveConfiguration func()
 
-	onConnect                         chan<- *account
-	onDisconnect                      chan<- *account
-	onEdit                            chan<- *account
-	onRemove                          chan<- *account
-	toggleConnectAutomaticallyRequest chan<- *account
+	client.CommandManager
 }
 
-func newAccountManager(c chan<- *account, d chan<- *account, e chan<- *account, r chan<- *account, ac chan<- *account) *accountManager {
+func newAccountManager(c client.CommandManager) *accountManager {
 	return &accountManager{
-		events:       make(chan interface{}, 10),
-		onConnect:    c,
-		onDisconnect: d,
-		onEdit:       e,
-		onRemove:     r,
-		toggleConnectAutomaticallyRequest: ac,
+		events:         make(chan interface{}, 10),
+		CommandManager: c,
 	}
 }
 
@@ -41,14 +34,13 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 		return
 	}
 
-	acc.session.SaveConfiguration = m.saveConfiguration
+	//We dont need this anymore, only CLI
+	//acc.session.SaveConfiguration = m.saveConfiguration
 	acc.session.Subscribe(m.events)
 
-	acc.onConnect = m.onConnect
-	acc.onDisconnect = m.onDisconnect
-	acc.onEdit = m.onEdit
-	acc.onRemove = m.onRemove
-	acc.toggleConnectAutomaticallyRequest = m.toggleConnectAutomaticallyRequest
+	//TODO: remove this duplication
+	acc.CommandManager = m
+	acc.session.CommandManager = m
 
 	m.accounts = append(m.accounts, acc)
 }
@@ -64,8 +56,9 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
 		hasConfUpdates = hasConfUpdates || hasUpdate
 		m.addAccount(appConfig, accountConf)
 	}
+
 	if hasConfUpdates {
-		m.saveConfiguration()
+		m.ExecuteCmd(client.SaveApplicationConfigCmd{})
 	}
 }
 

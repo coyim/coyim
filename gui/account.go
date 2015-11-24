@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
@@ -12,13 +13,9 @@ type account struct {
 
 	session *session.Session
 
-	onConnect                         chan<- *account
-	onDisconnect                      chan<- *account
-	onEdit                            chan<- *account
-	onRemove                          chan<- *account
-	toggleConnectAutomaticallyRequest chan<- *account
-
 	sessionObserver chan interface{}
+
+	client.CommandManager
 }
 
 type byAccountNameAlphabetic []*account
@@ -30,10 +27,9 @@ func (s byAccountNameAlphabetic) Less(i, j int) bool {
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 func newAccount(conf *config.ApplicationConfig, currentConf *config.Account) (acc *account, err error) {
-	acc = &account{}
-	acc.session = session.NewSession(conf, currentConf)
-
-	return
+	return &account{
+		session: session.NewSession(conf, currentConf),
+	}, nil
 }
 
 func (account *account) connected() bool {
@@ -97,25 +93,11 @@ func (account *account) buildAccountSubmenu() {
 
 	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
 
-	connectItem.Connect("activate", func() {
-		account.onConnect <- account
-	})
-
-	disconnectItem.Connect("activate", func() {
-		account.onDisconnect <- account
-	})
-
-	connectAutomaticallyItem.Connect("activate", func() {
-		account.toggleConnectAutomaticallyRequest <- account
-	})
-
-	editItem.Connect("activate", func() {
-		account.onEdit <- account
-	})
-
-	removeItem.Connect("activate", func() {
-		account.onRemove <- account
-	})
+	connectItem.Connect("activate", account.connect)
+	disconnectItem.Connect("activate", account.disconnect)
+	editItem.Connect("activate", account.edit)
+	removeItem.Connect("activate", account.remove)
+	connectAutomaticallyItem.Connect("activate", account.toggleAutoConnect)
 
 	go account.watchAndToggleMenuItems(connectItem, disconnectItem)
 	account.menu = menuitem
@@ -134,4 +116,24 @@ func (account *account) watchAndToggleMenuItems(connectItem, disconnectItem *gtk
 			}
 		}
 	}
+}
+
+func (account *account) connect() {
+	account.ExecuteCmd(connectAccountCmd(account))
+}
+
+func (account *account) disconnect() {
+	account.ExecuteCmd(disconnectAccountCmd(account))
+}
+
+func (account *account) toggleAutoConnect() {
+	account.ExecuteCmd(toggleAutoConnectCmd(account))
+}
+
+func (account *account) edit() {
+	account.ExecuteCmd(editAccountCmd(account))
+}
+
+func (account *account) remove() {
+	account.ExecuteCmd(removeAccountCmd(account))
 }

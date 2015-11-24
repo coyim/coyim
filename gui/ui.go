@@ -39,6 +39,8 @@ type gtkUI struct {
 	tags *tags
 
 	toggleConnectAllAutomaticallyRequest chan bool
+
+	commands chan interface{}
 }
 
 // UI is the user interface functionality exposed to main
@@ -59,57 +61,19 @@ func NewGTK() UI {
 	glib.InitI18n("coy", "./i18n")
 	gtk.Init(argsWithApplicationName())
 
-	connect := make(chan *account, 0)
-	disconnect := make(chan *account, 0)
-	edit := make(chan *account, 0)
-	remove := make(chan *account, 0)
-	toggleConnect := make(chan *account, 0)
-
-	res := &gtkUI{
-		accountManager: newAccountManager(connect, disconnect, edit, remove, toggleConnect),
+	ret := &gtkUI{
+		commands: make(chan interface{}, 5),
+		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
 	}
 
-	res.applyStyle()
-	res.accountManager.saveConfiguration = res.SaveConfig
-	res.keySupplier = config.CachingKeySupplier(res.getMasterPassword)
-	res.toggleConnectAllAutomaticallyRequest = make(chan bool, 100)
+	ret.applyStyle()
+	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
-	go func() {
-		for {
-			select {
-			case acc := <-connect:
-				glib.IdleAdd(func() bool {
-					res.connect(acc)
-					return false
-				})
-			case acc := <-disconnect:
-				glib.IdleAdd(func() bool {
-					res.disconnect(acc)
-					return false
-				})
-			case acc := <-edit:
-				glib.IdleAdd(func() bool {
-					accountDialog(acc.session.CurrentAccount, res.SaveConfig)
-					return false
-				})
-			case acc := <-remove:
-				glib.IdleAdd(func() bool {
-					confirmAccountRemoval(acc.session.CurrentAccount, func(c *config.Account) {
-						res.disconnect(acc)
-						res.removeSaveReload(c)
-					})
-					return false
-				})
-			case acc := <-toggleConnect:
-				go func() {
-					acc.session.CurrentAccount.ConnectAutomatically = !acc.session.CurrentAccount.ConnectAutomatically
-					res.saveConfigOnly()
-				}()
-			}
-		}
-	}()
+	ret.accountManager = newAccountManager(ret)
+	//TODO: replace by a command
+	ret.accountManager.saveConfiguration = ret.SaveConfig
 
-	return res
+	return ret
 }
 
 func confirmAccountRemoval(acc *config.Account, responseFunc func(*config.Account)) {
@@ -233,19 +197,13 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 }
 
 func (u *gtkUI) Loop() {
-	defer u.close()
+	go u.watchCommands()
 	go u.observeAccountEvents()
 	go u.loadConfig(*config.ConfigFile)
 
 	u.mainWindow()
 	gtk.Main()
 }
-
-func (u *gtkUI) close() {}
-
-//func (u *gtkUI) onReceiveSignal(s *glib.Signal, f func()) {
-//	u.window.Connect(s.String(), f)
-//}
 
 func (u *gtkUI) initRoster() {
 	u.roster = u.newRoster()
@@ -461,10 +419,6 @@ func (u *gtkUI) rosterUpdated() {
 	})
 }
 
-func (u *gtkUI) disconnect(account *account) {
-	go account.session.Close()
-}
-
 func (u *gtkUI) alertTorIsNotRunning() {
 	builder, err := loadBuilderWith("TorNotRunning", nil)
 	if err != nil {
@@ -524,7 +478,7 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, password string, conne
 	dialog.ShowAll()
 }
 
-func (u *gtkUI) connect(account *account) {
+func (u *gtkUI) connectAccount(account *account) {
 	u.roster.connecting()
 
 	var connectFn func(string) error
@@ -562,6 +516,26 @@ func (u *gtkUI) connect(account *account) {
 	go connectFn(account.session.CurrentAccount.Password)
 }
 
+func (u *gtkUI) disconnectAccount(account *account) {
+	go account.session.Close()
+}
+
+func (u *gtkUI) editAccount(account *account) {
+	accountDialog(account.session.CurrentAccount, u.SaveConfig)
+}
+
+func (u *gtkUI) removeAccount(account *account) {
+	confirmAccountRemoval(account.session.CurrentAccount, func(c *config.Account) {
+		u.disconnectAccount(account)
+		u.removeSaveReload(c)
+	})
+}
+
+func (u *gtkUI) toggleAutoConnectAccount(account *account) {
+	account.session.CurrentAccount.ToggleConnectAutomatically()
+	u.saveConfigOnly()
+}
+
 // implemented using Sattolo’s variant of the Fisher–Yates shuffle
 func shuffleAccounts(a []*account) {
 	for i := range a {
@@ -574,7 +548,7 @@ func (u *gtkUI) connectWithRandomDelay(a *account) {
 	sleepDelay := time.Duration(rand.Int31n(7643)) * time.Millisecond
 	log.Printf("connectWithRandomDelay(%v, %vms)\n", a.session.CurrentAccount.Account, sleepDelay)
 	time.Sleep(sleepDelay)
-	a.onConnect <- a
+	a.connect()
 }
 
 func (u *gtkUI) connectAllAutomatics(all bool) {

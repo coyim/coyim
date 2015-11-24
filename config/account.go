@@ -147,6 +147,11 @@ func (a *Account) ShouldEncryptTo(jid string) bool {
 	return false
 }
 
+// ToggleConnectAutomatically toggles the state of ConnectAutomatically config
+func (a *Account) ToggleConnectAutomatically() {
+	a.ConnectAutomatically = !a.ConnectAutomatically
+}
+
 func (a *Account) allowsOTR(version int) bool {
 	return version == 2 || version == 3
 }

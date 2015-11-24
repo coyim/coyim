@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/otr3"
 )
@@ -71,8 +72,11 @@ Purported fingerprint for %s:
 		responseType := gtk.ResponseType(dialog.Run())
 		switch responseType {
 		case gtk.RESPONSE_YES:
-			account.session.CurrentAccount.AuthorizeFingerprint(uid, fpr)
-			account.session.SaveConfiguration()
+			account.ExecuteCmd(client.AuthorizeFingerprintCmd{
+				Account:     account.session.CurrentAccount,
+				Peer:        uid,
+				Fingerprint: fpr,
+			})
 		}
 	}
 }

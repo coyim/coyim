@@ -76,6 +76,9 @@ func (c *Conn) Close() error {
 		log.Println("xmpp: timed out waiting for closing stream")
 	}
 
+	//Close all pending requests at this moment. It will include pending pings
+	c.cancelInflights()
+
 	return c.closeTCP()
 }
 

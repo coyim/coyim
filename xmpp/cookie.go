@@ -19,8 +19,7 @@ func (c *Conn) getCookie() Cookie {
 	return Cookie(binary.LittleEndian.Uint64(buf[:]))
 }
 
-// CancelAll cancels all outstanding request.
-func (c *Conn) CancelAll() {
+func (c *Conn) cancelInflights() {
 	for cookie := range c.inflights {
 		c.Cancel(cookie)
 	}

@@ -794,7 +794,6 @@ func (s *Session) Close() {
 
 	s.terminateConversations()
 
-	s.Conn.CancelAll()
 	s.Conn.Close()
 
 	s.R.Clear()

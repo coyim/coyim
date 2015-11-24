@@ -34,7 +34,7 @@ func newAccountManager(c chan<- *account, d chan<- *account, e chan<- *account, 
 	}
 }
 
-func (m *accountManager) addAccount(appConfig *config.Accounts, account *config.Account) {
+func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account) {
 	acc, err := newAccount(appConfig, account)
 	if err != nil {
 		//TODO error
@@ -53,7 +53,7 @@ func (m *accountManager) addAccount(appConfig *config.Accounts, account *config.
 	m.accounts = append(m.accounts, acc)
 }
 
-func (m *accountManager) buildAccounts(appConfig *config.Accounts) {
+func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
 	m.accounts = make([]*account, 0, len(appConfig.Accounts))
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
@@ -89,7 +89,7 @@ func (m *accountManager) findAccountForUsername(s string) *account {
 	return nil
 }
 
-func (m *accountManager) addNewAccountsFromConfig(appConfig *config.Accounts) {
+func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig) {
 	for _, configAccount := range appConfig.Accounts {
 		var found bool
 		for _, acc := range m.accounts {

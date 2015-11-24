@@ -21,7 +21,7 @@ type applicationAndAccount struct {
 	acc string
 }
 
-func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potential map[string][]*config.Accounts) {
+func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potential map[string][]*config.ApplicationConfig) {
 	for k, v := range choices {
 		if v {
 			for _, accs := range potential[k.app] {
@@ -29,7 +29,7 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 					if a.Account == k.acc {
 						log.Printf("[import] Doing import of %s from %s", k.acc, k.app)
 						accountToImport := a
-						u.config.WhenLoaded(func(conf *config.Accounts) {
+						u.config.WhenLoaded(func(conf *config.ApplicationConfig) {
 							_, exists := conf.GetAccount(k.acc)
 							if exists {
 								// TODO: view message

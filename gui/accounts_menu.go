@@ -81,7 +81,7 @@ func (u *gtkUI) buildAccountsMenu() {
 	}
 
 	connectAutomaticallyItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect On _Startup"))
-	u.config.WhenLoaded(func(a *config.Accounts) {
+	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
 		connectAutomaticallyItem.SetActive(a.ConnectAutomatically)
 	})
 	connectAutomaticallyItem.Connect("activate", func() {

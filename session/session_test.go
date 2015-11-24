@@ -28,7 +28,7 @@ type SessionXmppSuite struct{}
 var _ = Suite(&SessionXmppSuite{})
 
 func (s *SessionXmppSuite) Test_NewSession_returnsANewSession(c *C) {
-	sess := NewSession(&config.Accounts{}, &config.Account{})
+	sess := NewSession(&config.ApplicationConfig{}, &config.Account{})
 	c.Assert(sess, Not(IsNil))
 }
 
@@ -293,7 +293,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 	)
 
 	sess := &Session{
-		Config:          &config.Accounts{},
+		Config:          &config.ApplicationConfig{},
 		CurrentAccount:  &config.Account{InstanceTag: uint32(42)},
 		Conversations:   make(map[string]*otr3.Conversation),
 		OtrEventHandler: make(map[string]*event.OtrEventHandler),
@@ -372,7 +372,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.Accounts{},
+		Config: &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
@@ -400,7 +400,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.Accounts{},
+		Config: &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
@@ -429,7 +429,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.Accounts{},
+		Config: &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
@@ -469,7 +469,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.Accounts{},
+		Config: &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{
 			Account: "some@one.org",
 		},
@@ -499,7 +499,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 	)
 
 	sess := &Session{
-		Config: &config.Accounts{},
+		Config: &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{
 			Account: "some@one.org",
 		},
@@ -531,7 +531,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 	)
 
 	sess := &Session{
-		Config: &config.Accounts{},
+		Config: &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{
 			Account: "some@one.org",
 		},
@@ -561,7 +561,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 	called := 0
 
 	sess := &Session{
-		Config: &config.Accounts{},
+		Config: &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{
 			Account: "some@one.org",
 		},
@@ -595,7 +595,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 	)
 
 	sess := &Session{
-		Config: &config.Accounts{},
+		Config: &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{
 			Account: "some@one.org",
 		},
@@ -673,7 +673,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 	)
 
 	sess := &Session{
-		Config:         &config.Accounts{},
+		Config:         &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
@@ -715,7 +715,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	)
 
 	sess := &Session{
-		Config:         &config.Accounts{},
+		Config:         &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
@@ -737,7 +737,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	)
 
 	sess := &Session{
-		Config:         &config.Accounts{},
+		Config:         &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{},
 		ConnStatus:     DISCONNECTED,
 	}
@@ -776,7 +776,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 	)
 
 	sess := &Session{
-		Config:         &config.Accounts{},
+		Config:         &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
@@ -817,7 +817,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 	)
 
 	sess := &Session{
-		Config:         &config.Accounts{},
+		Config:         &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
@@ -855,7 +855,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	)
 
 	sess := &Session{
-		Config:         &config.Accounts{},
+		Config:         &config.ApplicationConfig{},
 		CurrentAccount: &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,

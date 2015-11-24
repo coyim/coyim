@@ -11,7 +11,7 @@ type viewMenu struct {
 	offline *gtk.CheckMenuItem
 }
 
-func (v *viewMenu) setFromConfig(c *config.Accounts) {
+func (v *viewMenu) setFromConfig(c *config.ApplicationConfig) {
 	glib.IdleAdd(func() bool {
 		v.merge.SetActive(c.MergeAccounts)
 		v.offline.SetActive(!c.ShowOnlyOnline)

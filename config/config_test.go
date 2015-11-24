@@ -57,7 +57,7 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 	"ConnectAutomatically": false
 }`
 
-	conf := Accounts{
+	conf := ApplicationConfig{
 		Accounts: []*Account{
 			&Account{
 				Account:       "bob@riseup.net",

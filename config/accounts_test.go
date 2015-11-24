@@ -11,7 +11,7 @@ var _ = Suite(&AccountsSuite{})
 func (s *AccountsSuite) Test_Accounts_RemoveAccount(c *C) {
 	ac1 := &Account{Account: "account@one.com"}
 	ac2 := &Account{Account: "account@two.com"}
-	acs := Accounts{
+	acs := ApplicationConfig{
 		Accounts: []*Account{ac1, ac2},
 	}
 
@@ -26,7 +26,7 @@ func (s *AccountsSuite) Test_Accounts_DontRemoveWhenDoesntExist(c *C) {
 	ac1 := &Account{Account: "account@one.com"}
 	ac2 := &Account{Account: "account@two.com"}
 	ac3 := &Account{Account: "nohay@anywhere.com"}
-	acs := Accounts{
+	acs := ApplicationConfig{
 		Accounts: []*Account{ac1, ac2},
 	}
 

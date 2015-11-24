@@ -36,7 +36,7 @@ type xmppClientKnownFingerprint struct {
 
 type xmppClientImporter struct{}
 
-func (x *xmppClientImporter) importFrom(f string) (*config.Accounts, bool) {
+func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bool) {
 	contents, err := ioutil.ReadFile(f)
 	if err != nil {
 		return nil, false
@@ -48,7 +48,7 @@ func (x *xmppClientImporter) importFrom(f string) (*config.Accounts, bool) {
 		return nil, false
 	}
 
-	a := new(config.Accounts)
+	a := new(config.ApplicationConfig)
 	ac, err := a.AddNewAccount()
 	if err != nil {
 		return nil, false
@@ -96,8 +96,8 @@ func (x *xmppClientImporter) findFiles() []string {
 	return res
 }
 
-func (x *xmppClientImporter) TryImport() []*config.Accounts {
-	var res []*config.Accounts
+func (x *xmppClientImporter) TryImport() []*config.ApplicationConfig {
+	var res []*config.ApplicationConfig
 
 	for _, f := range x.findFiles() {
 		ac, ok := x.importFrom(f)

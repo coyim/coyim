@@ -28,7 +28,7 @@ type gtkUI struct {
 	accountsMenu *gtk.MenuItem
 	viewMenu     *viewMenu
 
-	config *config.Accounts
+	config *config.ApplicationConfig
 
 	*accountManager
 

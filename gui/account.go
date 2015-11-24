@@ -29,7 +29,7 @@ func (s byAccountNameAlphabetic) Less(i, j int) bool {
 }
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-func newAccount(conf *config.Accounts, currentConf *config.Account) (acc *account, err error) {
+func newAccount(conf *config.ApplicationConfig, currentConf *config.Account) (acc *account, err error) {
 	acc = &account{}
 	acc.session = session.NewSession(conf, currentConf)
 

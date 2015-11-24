@@ -70,7 +70,7 @@ func (p *adiumImporter) importGlobalPrefs(f string) (*pidginOTRSettings, bool) {
 	return importGlobalPrefsPidginStyle(f)
 }
 
-func (p *adiumImporter) importAllFrom(accountMappingsFile, accountsFile, prefsFile, blistFile, keyFile, fprFile string) (*config.Accounts, bool) {
+func (p *adiumImporter) importAllFrom(accountMappingsFile, accountsFile, prefsFile, blistFile, keyFile, fprFile string) (*config.ApplicationConfig, bool) {
 	accountMappings, ok0 := p.readAccountMappings(accountMappingsFile)
 	accounts, ok1 := p.importAccounts(accountsFile)
 	globalPrefs, ok2 := p.importGlobalPrefs(prefsFile)
@@ -92,7 +92,7 @@ func (p *adiumImporter) importAllFrom(accountMappingsFile, accountsFile, prefsFi
 		fprs[accountMappings[k].uid] = v
 	}
 
-	res := &config.Accounts{}
+	res := &config.ApplicationConfig{}
 	for name, ac := range accounts {
 		res.Add(ac)
 		if ok2 {
@@ -159,8 +159,8 @@ func (p *adiumImporter) composeFileNamesFrom(dir string) (accountMappingsFile, a
 		filepath.Join(dir, pidginOtrDataFingerprintsFile)
 }
 
-func (p *adiumImporter) TryImport() []*config.Accounts {
-	var res []*config.Accounts
+func (p *adiumImporter) TryImport() []*config.ApplicationConfig {
+	var res []*config.ApplicationConfig
 
 	dd, ok := p.findDir()
 	if ok {

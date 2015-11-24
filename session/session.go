@@ -41,7 +41,7 @@ type Session struct {
 	OtrEventHandler map[string]*event.OtrEventHandler
 
 	PrivateKey     otr3.PrivateKey
-	Config         *config.Accounts
+	Config         *config.ApplicationConfig
 	CurrentAccount *config.Account
 
 	// timeouts maps from Cookies (from outstanding requests) to the
@@ -68,7 +68,7 @@ type Session struct {
 }
 
 // NewSession creates a new session from the given config
-func NewSession(c *config.Accounts, cu *config.Account) *Session {
+func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	s := &Session{
 		Config:         c,
 		CurrentAccount: cu,

@@ -784,7 +784,7 @@ CommandLoop:
 	}
 }
 
-func enroll(conf *config.Accounts, currentConf *config.Account, term *terminal.Terminal) bool {
+func enroll(conf *config.ApplicationConfig, currentConf *config.Account, term *terminal.Terminal) bool {
 	var err error
 	warn(term, "Enrolling new config file")
 

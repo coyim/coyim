@@ -150,7 +150,7 @@ func (p *pidginImporter) importAccounts(f string) (map[string]*config.Account, b
 	return importAccountsPidginStyle(f)
 }
 
-func (p *pidginImporter) importAllFrom(accountsFile, prefsFile, blistFile, keyFile, fprFile string) (*config.Accounts, bool) {
+func (p *pidginImporter) importAllFrom(accountsFile, prefsFile, blistFile, keyFile, fprFile string) (*config.ApplicationConfig, bool) {
 	accounts, ok1 := p.importAccounts(accountsFile)
 	globalPrefs, ok2 := p.importGlobalPrefs(prefsFile)
 	peerPrefs, ok3 := p.importPeerPrefs(blistFile)
@@ -161,7 +161,7 @@ func (p *pidginImporter) importAllFrom(accountsFile, prefsFile, blistFile, keyFi
 		return nil, false
 	}
 
-	res := &config.Accounts{}
+	res := &config.ApplicationConfig{}
 	for name, ac := range accounts {
 		res.Add(ac)
 		if ok2 {
@@ -231,8 +231,8 @@ func (p *pidginImporter) composeFileNamesFrom(dir string) (accountsFile, prefsFi
 	return filepath.Join(dir, pidginAccountsFile), filepath.Join(dir, pidginPrefsFile), filepath.Join(dir, pidginBuddyFile), filepath.Join(dir, pidginOtrDataKeyFile), filepath.Join(dir, pidginOtrDataFingerprintsFile)
 }
 
-func (p *pidginImporter) TryImport() []*config.Accounts {
-	var res []*config.Accounts
+func (p *pidginImporter) TryImport() []*config.ApplicationConfig {
+	var res []*config.ApplicationConfig
 
 	dd, ok := p.findDir()
 	if ok {

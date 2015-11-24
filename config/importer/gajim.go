@@ -244,7 +244,7 @@ func (g *gajimImporter) importAccounts(f string) (map[string]gajimAccountInfo, b
 	return accountInfo, true
 }
 
-func (g *gajimImporter) importAllFrom(configFile, gotrFile string, keyFiles []string, fprFiles []string) (*config.Accounts, bool) {
+func (g *gajimImporter) importAllFrom(configFile, gotrFile string, keyFiles []string, fprFiles []string) (*config.ApplicationConfig, bool) {
 	accounts, ok1 := g.importAccounts(configFile)
 	accountOTRSettings, accountAndPeerOTRSettings, _ := g.importOTRSettings(gotrFile)
 
@@ -341,9 +341,9 @@ func mergeAll(
 	accountAndPeerOTRSettings map[gajimAccountAndPeer]gajimOTRSettings,
 	fprs map[string][]*config.KnownFingerprint,
 	keys map[string][]byte,
-) *config.Accounts {
+) *config.ApplicationConfig {
 
-	res := &config.Accounts{}
+	res := &config.ApplicationConfig{}
 
 	for name, ac := range accounts {
 		if name != "Local" {
@@ -369,8 +369,8 @@ func getPeerSettingsFor(name string, s map[gajimAccountAndPeer]gajimOTRSettings)
 	return res
 }
 
-func (g *gajimImporter) TryImport() []*config.Accounts {
-	var res []*config.Accounts
+func (g *gajimImporter) TryImport() []*config.ApplicationConfig {
+	var res []*config.ApplicationConfig
 
 	ac, ok := g.importAllFrom(g.findFiles())
 	if ok {

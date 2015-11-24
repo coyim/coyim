@@ -53,9 +53,6 @@ func (u *gtkUI) newNotebook() *gtk.Notebook {
 
 	welcome, _ := gtk.LabelNew(i18n.Local("You are not connected to any account.\nPlease connect to view your online contacts."))
 
-	welcome.SetProperty("margin-start", 5)
-	welcome.SetProperty("margin-end", 5)
-	welcome.SetMarginTop(7)
 	welcome.Show()
 
 	vbox.PackStart(welcome, false, false, 0)
@@ -90,64 +87,46 @@ const (
 )
 
 func (u *gtkUI) newRoster() *roster {
-	w, _ := gtk.ScrolledWindowNew(nil, nil)
-	m, _ := gtk.TreeStoreNew(
-		glib.TYPE_STRING, // jid
-		glib.TYPE_STRING, // display name
-		glib.TYPE_STRING, // account id
-		glib.TYPE_STRING, // color (used to indicate status)
-		glib.TYPE_STRING, // background color (used for background of all cell renderers
-		glib.TYPE_INT,    // weight of font
-		glib.TYPE_STRING, // tooltip
-	)
-
-	v, _ := gtk.TreeViewNew()
+	builder, err := loadBuilderWith("Roster", nil)
+	if err != nil {
+		panic(err)
+	}
 
 	r := &roster{
-		widget: u.newNotebook(),
-		model:  m,
-		view:   v,
-
 		conversations: make(map[string]*conversationWindow),
 		contacts: contacts{
 			m: make(map[*account]*rosters.List),
 		},
+
 		isCollapsed: make(map[string]bool),
 
 		ui: u,
 	}
 
-	w.SetPolicy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+	builder.ConnectSignals(map[string]interface{}{
+		"on_activate_buddy": r.onActivateBuddy,
+	})
 
-	r.view.SetHeadersVisible(false)
-	if s, err := r.view.GetSelection(); err != nil {
-		s.SetMode(gtk.SELECTION_NONE)
-	}
+	obj, _ := builder.GetObject("notebook")
+	r.widget = obj.(*gtk.Notebook)
 
-	cr, _ := gtk.CellRendererTextNew()
-	c, _ := gtk.TreeViewColumnNewWithAttribute("name", cr, "text", indexDisplayName)
-	c.AddAttribute(cr, "foreground", indexColor)
-	c.AddAttribute(cr, "background", indexBackgroundColor)
-	c.AddAttribute(cr, "weight", indexWeight)
+	obj, _ = builder.GetObject("roster-view")
+	r.view = obj.(*gtk.TreeView)
 
-	r.view.AppendColumn(c)
+	obj, _ = builder.GetObject("roster-model")
+	r.model = obj.(*gtk.TreeStore)
 
-	// crtooltip, _ := gtk.CellRendererTextNew()
-	// ctoolip, _ := gtk.TreeViewColumnNewWithAttribute("tooltip", crtooltip, "text", indexTooltip)
+	//TODO: cant this be achieved by using CSS classes / IDs?
+	//For example: #notebook GtkBox { .... }
+	obj, _ = builder.GetObject("disconnected-page")
+	vbox := obj.(*gtk.Box)
+	u.displaySettings.unifiedBackgroundColor(&vbox.Container.Widget)
 
-	// r.view.AppendColumn(ctooltip)
+	obj, _ = builder.GetObject("spinner-page")
+	vboxSpinner := obj.(*gtk.Box)
+	u.displaySettings.unifiedBackgroundColor(&vboxSpinner.Container.Widget)
 
-	r.view.SetShowExpanders(false)
-	r.view.SetLevelIndentation(3)
-	r.view.SetTooltipColumn(indexTooltip)
-
-	r.view.SetModel(r.model)
-	r.view.Connect("row-activated", r.onActivateBuddy)
-	w.Add(r.view)
-	w.ShowAll()
-
-	r.widget.AppendPage(w, nil)
-	r.disconnected()
+	u.displaySettings.update()
 
 	return r
 }

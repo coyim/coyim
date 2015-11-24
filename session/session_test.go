@@ -176,7 +176,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	select {
 	case ev := <-observer:
@@ -203,7 +203,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	for {
 		select {
@@ -239,7 +239,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	assertLogContains(c, observer, LogEvent{
 		Level:   Alert,
@@ -263,7 +263,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	for i := 0; i < 2; i++ {
 		select {
@@ -304,7 +304,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	for {
 		select {
@@ -343,7 +343,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	for {
 		select {
@@ -380,7 +380,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	}
 	sess.Conn = conn
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	c.Assert(string(mockIn.write), Equals, ""+
 		"<iq to='abc' from='some@one.org/foo' type='result' id=''>"+
@@ -408,7 +408,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	}
 	sess.Conn = conn
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	c.Assert(string(mockIn.write), Equals, ""+
 		"<iq to='abc' from='some@one.org/foo' type='result' id=''>"+
@@ -440,7 +440,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	for {
 		select {
@@ -480,7 +480,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	assertLogContains(c, observer, LogEvent{
 		Level:   Warn,
@@ -510,7 +510,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	assertLogContains(c, observer, LogEvent{
 		Level:   Warn,
@@ -540,7 +540,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 	}
 	sess.Conn = conn
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
 		roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.CurrentAccount.ID())})
@@ -573,7 +573,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.CurrentAccount.ID()))
 	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.CurrentAccount.ID()))
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	c.Assert(called, Equals, 0)
 	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
@@ -611,7 +611,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
 		roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, ""),
@@ -648,7 +648,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUs
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	select {
 	case ev := <-observer:
@@ -683,7 +683,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	p, _ := sess.R.Get("some2@one.org")
 	c.Assert(p.Online, Equals, false)
@@ -722,7 +722,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	}
 	sess.Conn = conn
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	v, _ := sess.R.GetPendingSubscribe("some2@one.org")
 	c.Assert(v, Equals, "adf12112")
@@ -746,7 +746,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	select {
 	case ev := <-observer:
@@ -786,7 +786,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	st, _, _ := sess.R.StateOf("some2@one.org")
 	c.Assert(st, Equals, "dnd")
@@ -827,7 +827,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	st, _, _ := sess.R.StateOf("some2@one.org")
 	c.Assert(st, Equals, "")
@@ -866,7 +866,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.WatchStanzas()
+	sess.watchStanzas()
 
 	st, _, _ := sess.R.StateOf("some2@one.org")
 	c.Assert(st, Equals, "dnd")

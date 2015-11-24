@@ -259,8 +259,7 @@ func (s *Session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 	}
 }
 
-// WatchStanzas listens to XMPP stanzas and reacts on them
-func (s *Session) WatchStanzas() {
+func (s *Session) watchStanzas() {
 	defer s.Close()
 
 	stanzaChan := make(chan xmpp.Stanza)
@@ -718,7 +717,7 @@ func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) e
 
 	go s.requestRoster()
 	go s.watchTimeout()
-	go s.WatchStanzas()
+	go s.watchStanzas()
 
 	return nil
 }

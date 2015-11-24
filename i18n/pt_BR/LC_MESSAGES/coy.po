@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-20 17:21-0500\n"
+"POT-Creation-Date: 2015-11-24 16:49-0500\n"
 "PO-Revision-Date: 2015-11-20 09:40-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,88 +17,94 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../gui/definitions/AddContactDefinition.xml:4
+#: ../gui/definitions/AddContact.xml:4
 msgid "Add contact"
 msgstr ""
 
-#: ../gui/definitions/AddContactDefinition.xml:11
+#: ../gui/definitions/AddContact.xml:11
 msgid "Account"
 msgstr ""
 
-#: ../gui/definitions/AddContactDefinition.xml:30
+#: ../gui/definitions/AddContact.xml:30
 msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
 msgstr ""
 
-#: ../gui/definitions/AddContactDefinition.xml:51
+#: ../gui/definitions/AddContact.xml:51
 msgid "Add"
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:13
+#: ../gui/definitions/ConfigAssistant.xml:13
 msgid "Configuration Assistant"
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:20
+#: ../gui/definitions/ConfigAssistant.xml:20
 msgid "Welcome to CoyIM, the safe and secure xmpp client."
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:35
+#: ../gui/definitions/ConfigAssistant.xml:35
 msgid "Detecting Tor..."
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:42
+#: ../gui/definitions/ConfigAssistant.xml:42
 msgid "Tor detected successfully. Continue."
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:49
+#: ../gui/definitions/ConfigAssistant.xml:49
 msgid "Failed to detect Tor. Make sure it is running and try again."
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:66
+#: ../gui/definitions/ConfigAssistant.xml:66
 msgid "Your account (for example: kim42@dukgo.com)"
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:80
+#: ../gui/definitions/ConfigAssistant.xml:80
 msgid "Password (optional)"
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:104
+#: ../gui/definitions/ConfigAssistant.xml:104
 msgid "Detecting XMPP server configuration..."
 msgstr ""
 
-#: ../gui/definitions/ConfigAssistantDefinition.xml:122
+#: ../gui/definitions/ConfigAssistant.xml:122
 msgid "Click \"Apply\" to accept this configuration."
 msgstr ""
 
-#: ../gui/definitions/ConnectionSettingsDialogDef.xml:5
+#: ../gui/definitions/ConnectionSettings.xml:5
 msgid "Could not connect to account"
 msgstr ""
 
-#: ../gui/definitions/ConnectionSettingsDialogDef.xml:12
+#: ../gui/definitions/ConnectionSettings.xml:12
 msgid "Server (for google accounts, you may want to try xmpp.google.com)"
 msgstr ""
 
-#: ../gui/definitions/ConnectionSettingsDialogDef.xml:33
+#: ../gui/definitions/ConnectionSettings.xml:33
 msgid "Port"
 msgstr ""
 
-#: ../gui/definitions/ConnectionSettingsDialogDef.xml:53
+#: ../gui/definitions/ConnectionSettings.xml:53
 msgid "Connect"
 msgstr ""
 
-#: ../gui/definitions/MainDefinition.xml:48
+#: ../gui/definitions/Main.xml:48
 msgid "Show Offline Contacts"
 msgstr "Exibir contatos offline"
 
-#: ../gui/definitions/MasterPasswordDefinition.xml:12
+#: ../gui/definitions/MasterPassword.xml:12
 msgid ""
 "Please enter the master password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."
 msgstr ""
 
-#: ../gui/definitions/TorNotRunningDef.xml:6
+#: ../gui/definitions/Roster.xml:31
+msgid ""
+"You are not connected to any account.\n"
+"Please connect to view your online contacts."
+msgstr ""
+
+#: ../gui/definitions/TorNotRunning.xml:6
 msgid "Tor is not running"
 msgstr ""
 
-#: ../gui/definitions/TorNotRunningDef.xml:13
+#: ../gui/definitions/TorNotRunning.xml:13
 msgid "Tor was not found running on your system. Make sure it is running."
 msgstr ""

@@ -91,11 +91,30 @@ func (s *Session) Subscribe(c chan<- interface{}) {
 	s.subscribers.subs = append(s.subscribers.subs, c)
 }
 
-func publishEvent(c chan<- interface{}, e interface{}) {
-	//prevents from blocking the publisher if any subscriber is not listening to the channel
-	go func(subscriber chan<- interface{}) {
-		subscriber <- e
-	}(c)
+// Unsubscribe unsubscribes the observer to XMPP events
+func (s *Session) Unsubscribe(c chan<- interface{}) {
+	s.subscribers.Lock()
+	defer s.subscribers.Unlock()
+
+	for i, subs := range s.subscribers.subs {
+		if subs == c {
+			s.subscribers.subs = append(
+				s.subscribers.subs[:i], s.subscribers.subs[i+1:]...,
+			)
+			return
+		}
+	}
+}
+
+func (s *Session) publishEventTo(subscriber chan<- interface{}, e interface{}) {
+	defer func() {
+		if r := recover(); r != nil {
+			//published to a closed channel
+			s.Unsubscribe(subscriber)
+		}
+	}()
+
+	subscriber <- e
 }
 
 func (s *Session) publish(e EventType) {
@@ -118,6 +137,6 @@ func (s *Session) publishEvent(e interface{}) {
 	defer s.subscribers.RUnlock()
 
 	for _, c := range s.subscribers.subs {
-		publishEvent(c, e)
+		go s.publishEventTo(c, e)
 	}
 }

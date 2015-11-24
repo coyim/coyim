@@ -9,7 +9,6 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/i18n"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
 )
@@ -34,44 +33,6 @@ type roster struct {
 	toCollapse  []*gtk.TreePath
 
 	ui *gtkUI
-}
-
-func (u *gtkUI) newNotebook() *gtk.Notebook {
-	notebook, err := gtk.NotebookNew()
-	if err != nil {
-		panic("failed")
-	}
-
-	notebook.SetShowTabs(false)
-	notebook.SetShowBorder(false)
-	notebook.PopupDisable()
-
-	vbox, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
-	vbox.SetHomogeneous(false)
-	vbox.SetBorderWidth(3)
-	u.displaySettings.unifiedBackgroundColor(&vbox.Container.Widget)
-
-	welcome, _ := gtk.LabelNew(i18n.Local("You are not connected to any account.\nPlease connect to view your online contacts."))
-
-	welcome.Show()
-
-	vbox.PackStart(welcome, false, false, 0)
-
-	notebook.AppendPage(vbox, nil)
-
-	vboxSpinner, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 1)
-	vboxSpinner.SetHomogeneous(false)
-	vboxSpinner.SetBorderWidth(3)
-	u.displaySettings.unifiedBackgroundColor(&vboxSpinner.Container.Widget)
-	spinner, _ := gtk.SpinnerNew()
-	spinner.Start()
-	vboxSpinner.PackStart(spinner, true, true, 0)
-
-	notebook.AppendPage(vboxSpinner, nil)
-
-	u.displaySettings.update()
-
-	return notebook
 }
 
 const (

@@ -2,6 +2,7 @@ package xmpp
 
 import (
 	"encoding/xml"
+	"io"
 	"log"
 	"net"
 	"time"
@@ -14,8 +15,14 @@ var (
 
 // Manage whitespace keepalives as specified in RFC 6120, section 4.6.1
 func (c *Conn) watchKeepAlive(conn net.Conn) {
-	for !c.closed {
-		<-time.After(keepaliveInterval)
+	tick := time.NewTicker(keepaliveInterval)
+	defer tick.Stop()
+	defer log.Println("xmpp: no more watching keepalives")
+
+	for range tick.C {
+		if c.closed {
+			return
+		}
 
 		if c.sendKeepalive() {
 			log.Println("xmpp: keepalive sent")
@@ -34,7 +41,7 @@ func (c *Conn) watchKeepAlive(conn net.Conn) {
 
 func (c *Conn) sendKeepalive() bool {
 	_, err := c.keepaliveOut.Write([]byte{0x20})
-	return err == nil
+	return c.closed || err == nil || err == io.EOF
 }
 
 func (c *Conn) sendStreamError(streamError StreamError) error {

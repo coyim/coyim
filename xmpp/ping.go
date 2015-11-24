@@ -58,10 +58,15 @@ var (
 )
 
 func (c *Conn) watchPings() {
+	tick := time.NewTicker(pingIterval)
+	defer tick.Stop()
+	defer log.Println("xmpp: no more watching pings")
 	failures := 0
 
-	for !c.closed {
-		<-time.After(pingIterval)
+	for range tick.C {
+		if c.closed {
+			return
+		}
 
 		log.Println("xmpp: send ping")
 		pongReply, _, err := c.SendPing()
@@ -75,7 +80,7 @@ func (c *Conn) watchPings() {
 			failures = failures + 1
 		case pongStanza, ok := <-pongReply:
 			if !ok {
-				//somebody canceled the IQ
+				log.Println("xmpp: pong was cancelled")
 				continue
 			}
 

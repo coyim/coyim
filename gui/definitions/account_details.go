@@ -23,7 +23,8 @@ func (*defAccountDetails) String() string {
             <property name="column-spacing">6</property>
             <child>
               <object class="GtkLabel" id="AccountMessageLabel">
-                <property name="label" translatable="yes">Your account</property>
+                <property name="label" translatable="yes">Your account&#xA;(example: kim42@dukgo.com)</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -32,7 +33,6 @@ func (*defAccountDetails) String() string {
             </child>
             <child>
               <object class="GtkEntry" id="account">
-                <property name="placeholder-text">user@server.com</property>
                 <signal name="activate" handler="on_save_signal" />
               </object>
               <packing>
@@ -43,6 +43,7 @@ func (*defAccountDetails) String() string {
             <child>
               <object class="GtkLabel" id="PasswordLabel">
                 <property name="label" translatable="yes">Password</property>
+                <property name="halign">GTK_ALIGN_END</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>

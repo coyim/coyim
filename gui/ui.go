@@ -76,22 +76,20 @@ func NewGTK() UI {
 	return ret
 }
 
-func (u *gtkUI) confirmAccountRemoval(acc *config.Account, responseFunc func(*config.Account)) {
-	vars := make(map[string]string)
-	vars["accountName"] = acc.Account
-	builder, err := loadBuilderWith("ConfirmAccountRemoval", vars)
+func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc func(*config.Account)) {
+	builder, err := loadBuilderWith("ConfirmAccountRemoval", nil)
 	if err != nil {
 		panic(err)
 	}
 
 	obj, _ := builder.GetObject("RemoveAccount")
 	dialog := obj.(*gtk.MessageDialog)
-
 	dialog.SetTransientFor(u.window)
+	dialog.SetProperty("text", acc.Account)
 
 	response := dialog.Run()
-	if gtk.ResponseType(response) == gtk.RESPONSE_OK {
-		responseFunc(acc)
+	if gtk.ResponseType(response) == gtk.RESPONSE_YES {
+		removeAccountFunc(acc)
 	}
 
 	dialog.Destroy()

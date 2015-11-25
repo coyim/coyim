@@ -12,7 +12,7 @@ func (*defMasterPassword) String() string {
 <interface>
   <object class="GtkDialog" id="MasterPassword">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
-    <property name="title">$title</property>
+    <property name="title" translatable="yes">Enter master password</property>
     <property name="default-width">160</property>
     <signal name="close" handler="on_cancel_signal" />
     <child internal-child="vbox">
@@ -48,13 +48,13 @@ func (*defMasterPassword) String() string {
     </child>
     <child type="action">
       <object class="GtkButton" id="cancel">
-        <property name="label">$cancelLabel</property>
+        <property name="label" translatable="yes">Cancel</property>
         <signal name="clicked" handler="on_cancel_signal" />
       </object>
     </child>
     <child type="action">
       <object class="GtkButton" id="save">
-        <property name="label">$saveLabel</property>
+        <property name="label" translatable="yes">OK</property>
         <signal name="clicked" handler="on_save_signal" />
       </object>
     </child>

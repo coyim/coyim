@@ -4,7 +4,6 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
 )
 
 func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
@@ -29,13 +28,7 @@ func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 }
 
 func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {
-	vars := make(map[string]string)
-	vars["$title"] = i18n.Local("Enter master password")
-	vars["$passwordMessage"] = i18n.Local("Please enter the master password for the configuration file. You will not be asked for this password again until you restart CoyIM.")
-	vars["$saveLabel"] = i18n.Local("OK")
-	vars["$cancelLabel"] = i18n.Local("Cancel")
-
-	builder, _ := loadBuilderWith("MasterPassword", vars)
+	builder, _ := loadBuilderWith("MasterPassword", nil)
 	dialogOb, _ := builder.GetObject("MasterPassword")
 	dialog := dialogOb.(*gtk.Dialog)
 	passObj, _ := builder.GetObject("password")

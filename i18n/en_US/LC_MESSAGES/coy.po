@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 11:36-0500\n"
+"POT-Creation-Date: 2015-11-25 18:55-0500\n"
 "PO-Revision-Date: 2015-11-20 09:40-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -21,18 +21,23 @@ msgstr ""
 msgid "Account Details"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:11
-#: ../gui/definitions/ConfigAssistant.xml:66
-msgid "Your account (for example: kim42@dukgo.com)"
-msgstr "Your account (for example: kim42@dukgo.com)"
+#: ../gui/definitions/AccountDetails.xml:15
+msgid ""
+"Your account\n"
+"(example: kim42@dukgo.com)"
+msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:32
-#: ../gui/definitions/AskForPassword.xml:4
-#: ../gui/definitions/AskForPassword.xml:38
+#: ../gui/definitions/AccountDetails.xml:34
+#: ../gui/definitions/AskForPassword.xml:36
 msgid "Password"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:53
+#: ../gui/definitions/AccountDetails.xml:58
+#: ../gui/definitions/MasterPassword.xml:40
+msgid "Cancel"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:64
 msgid "Save"
 msgstr ""
 
@@ -41,7 +46,7 @@ msgid "Add contact"
 msgstr ""
 
 #: ../gui/definitions/AddContact.xml:11
-#: ../gui/definitions/AskForPassword.xml:16
+#: ../gui/definitions/AskForPassword.xml:15
 msgid "Account"
 msgstr ""
 
@@ -49,7 +54,7 @@ msgstr ""
 msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
 msgstr ""
 
-#: ../gui/definitions/AddContact.xml:51
+#: ../gui/definitions/AddContact.xml:51 ../gui/definitions/Main.xml:22
 msgid "Add"
 msgstr ""
 
@@ -57,10 +62,22 @@ msgstr ""
 msgid "Enter your password"
 msgstr ""
 
-#: ../gui/definitions/AskForPassword.xml:68
+#: ../gui/definitions/AskForPassword.xml:66
 #: ../gui/definitions/ConnectionSettings.xml:53
 msgid "Connect"
 msgstr "Connect"
+
+#: ../gui/definitions/AskToEncrypt.xml:5
+msgid "Encrypt configuration file"
+msgstr ""
+
+#: ../gui/definitions/AskToEncrypt.xml:6
+msgid ""
+"Would you like to save your configuration file in an encrypted format? This "
+"can be significantly more secure, but you will not be able to access your "
+"configuration if you lose the password. You will only be asked for your "
+"password when CoyIM starts."
+msgstr ""
 
 #: ../gui/definitions/ConfigAssistant.xml:13
 msgid "Configuration Assistant"
@@ -81,6 +98,10 @@ msgstr "Tor detected successfully. Continue."
 #: ../gui/definitions/ConfigAssistant.xml:49
 msgid "Failed to detect Tor. Make sure it is running and try again."
 msgstr "Failed to detect Tor. Make sure it is running and try again."
+
+#: ../gui/definitions/ConfigAssistant.xml:66
+msgid "Your account (for example: kim42@dukgo.com)"
+msgstr "Your account (for example: kim42@dukgo.com)"
 
 #: ../gui/definitions/ConfigAssistant.xml:80
 msgid "Password (optional)"
@@ -106,14 +127,46 @@ msgstr "Server (for google accounts, you may want to try xmpp.google.com)"
 msgid "Port"
 msgstr "Port"
 
-#: ../gui/definitions/Main.xml:48
+#: ../gui/definitions/Main.xml:17
+msgid "Contacts"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:33
+msgid "Accounts"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:38
+msgid "View"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:43
+msgid "Merge Accounts"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:49
 msgid "Show Offline Contacts"
 msgstr "Show Offline Contacts"
 
-#: ../gui/definitions/MasterPassword.xml:14
+#: ../gui/definitions/Main.xml:59
+msgid "Help"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:64
+msgid "About"
+msgstr ""
+
+#: ../gui/definitions/MasterPassword.xml:4
+msgid "Enter master password"
+msgstr ""
+
+#: ../gui/definitions/MasterPassword.xml:15
 msgid ""
 "Please enter the master password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."
+msgstr ""
+
+#: ../gui/definitions/MasterPassword.xml:46
+msgid "OK"
 msgstr ""
 
 #: ../gui/definitions/Roster.xml:31

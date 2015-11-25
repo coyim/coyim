@@ -294,8 +294,11 @@ func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 			passwordObj, _ := builder.GetObject("password")
 			passwordEntry := passwordObj.(*gtk.Entry)
 			password, _ := passwordEntry.GetText()
-			go connect(password)
-			dialog.Destroy()
+
+			if len(password) > 0 {
+				go connect(password)
+				dialog.Destroy()
+			}
 		},
 		"on_cancel_signal": func() {
 			dialog.Destroy()

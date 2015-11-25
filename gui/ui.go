@@ -278,7 +278,7 @@ func (u *gtkUI) quit() {
 	gtk.MainQuit()
 }
 
-func (*gtkUI) askForPassword(accountName string, connect func(string) error) {
+func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 	dialogTemplate := "AskForPassword"
 
 	vars := make(map[string]string)
@@ -302,6 +302,7 @@ func (*gtkUI) askForPassword(accountName string, connect func(string) error) {
 		},
 	})
 
+	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
 }
 

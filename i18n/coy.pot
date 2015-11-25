@@ -8,7 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2015-11-25 11:25-0500\n"
+=======
+"POT-Creation-Date: 2015-11-25 10:44-0500\n"
+>>>>>>> Changes AksPasswordDialog title to be more explicity
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,6 +57,17 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
+<<<<<<< HEAD
+=======
+#: ../gui/definitions/AskForPassword.xml:4
+msgid "Enter your password"
+msgstr ""
+
+#: ../gui/definitions/AskForPassword.xml:38
+msgid "Password"
+msgstr ""
+
+>>>>>>> Changes AksPasswordDialog title to be more explicity
 #: ../gui/definitions/AskForPassword.xml:68
 #: ../gui/definitions/ConnectionSettings.xml:53
 msgid "Connect"

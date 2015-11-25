@@ -42,6 +42,13 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 	password := passObj.(*gtk.Entry)
 	pwdResultChan := make(chan string)
 
+	abort := func() {
+		close(pwdResultChan)
+		dialog.Destroy()
+		u.quit()
+	}
+	dialog.Connect("close", abort)
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
 			passText, _ := password.GetText()
@@ -49,11 +56,7 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 			close(pwdResultChan)
 			dialog.Destroy()
 		},
-		"on_cancel_signal": func() {
-			close(pwdResultChan)
-			dialog.Destroy()
-			u.quit()
-		},
+		"on_cancel_signal": abort,
 	})
 
 	glib.IdleAdd(func() {

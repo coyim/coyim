@@ -268,15 +268,15 @@ func (u *gtkUI) quit() {
 	gtk.MainQuit()
 }
 
-func (*gtkUI) askForPassword(connect func(string) error) {
+func (*gtkUI) askForPassword(accountName string, connect func(string) error) {
+	dialogTemplate := "AskForPassword"
+
 	vars := make(map[string]string)
-	vars["$title"] = i18n.Local("Password")
-	vars["$passwordLabel"] = i18n.Local("Password")
-	vars["$saveLabel"] = i18n.Local("Connect")
+	vars["$accountName"] = accountName
 
-	builder, _ := loadBuilderWith("AskForPassword", vars)
+	builder, _ := loadBuilderWith(dialogTemplate, vars)
 
-	dialogObj, _ := builder.GetObject("AskForPassword")
+	dialogObj, _ := builder.GetObject(dialogTemplate)
 	dialog := dialogObj.(*gtk.Dialog)
 
 	builder.ConnectSignals(map[string]interface{}{
@@ -481,7 +481,9 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, password string, conne
 func (u *gtkUI) connectAccount(account *account) {
 	u.roster.connecting()
 
-	var connectFn func(string) error
+	var connectFn func(string) errori
+	var accountName = account.session.CurrentAccount.Account
+
 	connectFn = func(password string) error {
 		err := account.session.Connect(password, nil)
 
@@ -501,7 +503,7 @@ func (u *gtkUI) connectAccount(account *account) {
 
 		if err == xmpp.ErrAuthenticationFailed {
 			glib.IdleAdd(func() {
-				u.askForPassword(connectFn)
+				u.askForPassword(accountName, connectFn)
 			})
 		}
 
@@ -509,7 +511,7 @@ func (u *gtkUI) connectAccount(account *account) {
 	}
 
 	if len(account.session.CurrentAccount.Password) == 0 {
-		u.askForPassword(connectFn)
+		u.askForPassword(accountName, connectFn)
 		return
 	}
 

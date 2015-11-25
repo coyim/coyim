@@ -14,6 +14,7 @@ func (*defMasterPassword) String() string {
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title">$title</property>
     <property name="default-width">160</property>
+    <signal name="close" handler="on_cancel_signal" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>

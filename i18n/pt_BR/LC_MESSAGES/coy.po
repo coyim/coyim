@@ -57,10 +57,6 @@ msgstr ""
 msgid "Enter your password"
 msgstr ""
 
-#: ../gui/definitions/AskForPassword.xml:38
-msgid "Password"
-msgstr ""
-
 #: ../gui/definitions/AskForPassword.xml:68
 #: ../gui/definitions/ConnectionSettings.xml:53
 msgid "Connect"

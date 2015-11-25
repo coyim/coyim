@@ -218,18 +218,7 @@ func (u *gtkUI) initRoster() {
 }
 
 func (u *gtkUI) mainWindow() {
-	vars := make(map[string]string)
-	vars["$title"] = i18n.Local("Coy")
-	vars["$contactsMenu"] = i18n.Local("Contacts")
-	vars["$addMenu"] = i18n.Local("Add...")
-	vars["$accountsMenu"] = i18n.Local("Accounts")
-	vars["$helpMenu"] = i18n.Local("Help")
-	vars["$aboutMenu"] = i18n.Local("About")
-	vars["$viewMenu"] = i18n.Local("View")
-	vars["$checkItemMerge"] = i18n.Local("Merge Accounts")
-	vars["$checkItemShowOffline"] = i18n.Local("Show Offline Contacts")
-
-	builder, _ := loadBuilderWith("Main", vars)
+	builder, _ := loadBuilderWith("Main", nil)
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window_signal":                    u.quit,
 		"on_add_contact_window_signal":              u.addContactWindow,

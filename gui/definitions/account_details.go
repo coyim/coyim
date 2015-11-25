@@ -12,6 +12,7 @@ func (*defAccountDetails) String() string {
 <interface>
   <object class="GtkDialog" id="AccountDetailsDialog">
     <property name="title">$title</property>
+    <signal name="close" handler="on_close_signal" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="homogeneous">false</property>

@@ -521,7 +521,7 @@ func (u *gtkUI) disconnectAccount(account *account) {
 }
 
 func (u *gtkUI) editAccount(account *account) {
-	accountDialog(account.session.CurrentAccount, u.SaveConfig)
+	u.accountDialog(account.session.CurrentAccount, u.SaveConfig)
 }
 
 func (u *gtkUI) removeAccount(account *account) {

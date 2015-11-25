@@ -23,7 +23,7 @@ func firstProxy(account *account) string {
 	return ""
 }
 
-func accountDialog(account *config.Account, saveFunction func()) {
+func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	vars := make(map[string]string)
 	vars["$title"] = i18n.Local("Account Details")
 	vars["$accountMessage"] = i18n.Local("Your account (for example: kim42@dukgo.com)")
@@ -56,6 +56,7 @@ func accountDialog(account *config.Account, saveFunction func()) {
 			go saveFunction()
 			dialog.Destroy()
 		},
+		"on_close_signal": u.buildAccountsMenu,
 	})
 	dialog.ShowAll()
 }

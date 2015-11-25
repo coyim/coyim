@@ -42,7 +42,7 @@ func (u *gtkUI) showAddAccountWindow() error {
 		return err
 	}
 
-	accountDialog(c, func() {
+	u.accountDialog(c, func() {
 		u.addAndSaveAccountConfig(c)
 	})
 

@@ -287,6 +287,9 @@ func (*gtkUI) askForPassword(accountName string, connect func(string) error) {
 			go connect(password)
 			dialog.Destroy()
 		},
+		"on_cancel_signal": func() {
+			dialog.Destroy()
+		},
 	})
 
 	dialog.ShowAll()
@@ -481,7 +484,7 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, password string, conne
 func (u *gtkUI) connectAccount(account *account) {
 	u.roster.connecting()
 
-	var connectFn func(string) errori
+	var connectFn func(string) error
 	var accountName = account.session.CurrentAccount.Account
 
 	connectFn = func(password string) error {

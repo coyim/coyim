@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-24 22:56-0500\n"
+"POT-Creation-Date: 2015-11-25 02:17-0500\n"
 "PO-Revision-Date: 2015-11-20 09:40-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -22,7 +22,7 @@ msgid "Add contact"
 msgstr ""
 
 #: ../gui/definitions/AddContact.xml:11
-#: ../gui/definitions/AskForPassword.xml:11
+#: ../gui/definitions/AskForPassword.xml:15
 msgid "Account"
 msgstr ""
 
@@ -35,11 +35,11 @@ msgid "Add"
 msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:4
-#: ../gui/definitions/AskForPassword.xml:31
+#: ../gui/definitions/AskForPassword.xml:37
 msgid "Password"
 msgstr ""
 
-#: ../gui/definitions/AskForPassword.xml:53
+#: ../gui/definitions/AskForPassword.xml:68
 #: ../gui/definitions/ConnectionSettings.xml:53
 msgid "Connect"
 msgstr ""

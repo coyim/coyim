@@ -8,15 +8,13 @@ import (
 )
 
 func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
-	encryptDialog := gtk.MessageDialogNew(
-		nil,
-		gtk.DIALOG_MODAL,
-		gtk.MESSAGE_QUESTION,
-		gtk.BUTTONS_YES_NO,
-		i18n.Local("Would you like to save your configuration file in an encrypted format? This can be significantly more secure, but you will not be able to access your configuration if you lose the password. You will only be asked for your password when CoyIM starts."),
-	)
-	encryptDialog.SetTitle(i18n.Local("Encrypt configuration file"))
+	dialogId := "AskToEncrypt"
+	builder, _ := loadBuilderWith(dialogId, nil)
+
+	dialogOb, _ := builder.GetObject(dialogId)
+	encryptDialog := dialogOb.(*gtk.MessageDialog)
 	encryptDialog.SetDefaultResponse(gtk.RESPONSE_YES)
+	encryptDialog.SetTransientFor(u.window)
 
 	responseType := gtk.ResponseType(encryptDialog.Run())
 	switch responseType {

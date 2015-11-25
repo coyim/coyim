@@ -9,10 +9,14 @@ msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 <<<<<<< HEAD
+<<<<<<< HEAD
 "POT-Creation-Date: 2015-11-25 11:25-0500\n"
 =======
 "POT-Creation-Date: 2015-11-25 10:44-0500\n"
 >>>>>>> Changes AksPasswordDialog title to be more explicity
+=======
+"POT-Creation-Date: 2015-11-25 11:36-0500\n"
+>>>>>>> Changes button to YES_NO to confirm removal and add account name
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,7 +125,7 @@ msgstr ""
 msgid "Show Offline Contacts"
 msgstr ""
 
-#: ../gui/definitions/MasterPassword.xml:12
+#: ../gui/definitions/MasterPassword.xml:14
 msgid ""
 "Please enter the master password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."

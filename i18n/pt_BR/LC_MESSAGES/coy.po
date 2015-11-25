@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 11:25-0500\n"
+"POT-Creation-Date: 2015-11-25 11:36-0500\n"
 "PO-Revision-Date: 2015-11-20 09:40-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Show Offline Contacts"
 msgstr "Exibir contatos offline"
 
-#: ../gui/definitions/MasterPassword.xml:12
+#: ../gui/definitions/MasterPassword.xml:14
 msgid ""
 "Please enter the master password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."

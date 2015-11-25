@@ -36,7 +36,6 @@ func (*defAskForPassword) String() string {
             </child>
             <child>
               <object class="GtkLabel" id="accountName" >
-                <property name="label">$accountName</property>
                 <property name="halign">GTK_ALIGN_START</property>
               </object>
               <packing>

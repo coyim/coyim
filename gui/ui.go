@@ -281,13 +281,14 @@ func (u *gtkUI) quit() {
 func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 	dialogTemplate := "AskForPassword"
 
-	vars := make(map[string]string)
-	vars["$accountName"] = accountName
+	builder, _ := loadBuilderWith(dialogTemplate, nil)
 
-	builder, _ := loadBuilderWith(dialogTemplate, vars)
+	obj, _ := builder.GetObject(dialogTemplate)
+	dialog := obj.(*gtk.Dialog)
 
-	dialogObj, _ := builder.GetObject(dialogTemplate)
-	dialog := dialogObj.(*gtk.Dialog)
+	obj, _ = builder.GetObject("accountName")
+	label := obj.(*gtk.Label)
+	label.SetText(accountName)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {

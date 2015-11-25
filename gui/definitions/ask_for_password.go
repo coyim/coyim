@@ -65,24 +65,19 @@ func (*defAskForPassword) String() string {
             </child>
           </object>
         </child>
-        <child>
-          <object class="GtkButtonBox" id="buttonBox">
-            <property name="layout-style">GTK_BUTTONBOX_SPREAD</property>
-            <child>
-              <object class="GtkButton" id="button_cancel">
-                <property name="label">Cancel</property>
-                <signal name="clicked" handler="on_cancel_signal" />
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="button_ok">
-                <property name="label" translatable="yes">Connect</property>
-                <property name="can-default">true</property>
-                <signal name="clicked" handler="on_save_signal" />
-              </object>
-            </child>
-          </object>
-        </child>
+      </object>
+    </child>
+    <child type="action">
+      <object class="GtkButton" id="button_cancel">
+        <property name="label">Cancel</property>
+        <signal name="clicked" handler="on_cancel_signal" />
+      </object>
+    </child>
+    <child type="action">
+      <object class="GtkButton" id="button_ok">
+        <property name="label" translatable="yes">Connect</property>
+        <property name="can-default">true</property>
+        <signal name="clicked" handler="on_save_signal" />
       </object>
     </child>
   </object>

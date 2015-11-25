@@ -18,7 +18,6 @@ func (*defAskForPassword) String() string {
         <property name="margin">10</property>
         <child>
           <object class="GtkGrid" id="grid">
-            <property name="margin">6</property>
             <property name="margin-bottom">10</property>
             <property name="row-spacing">12</property>
             <property name="column-spacing">6</property>

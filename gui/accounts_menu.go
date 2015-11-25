@@ -25,12 +25,13 @@ func firstProxy(account *account) string {
 }
 
 func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
-	builder, err := loadBuilderWith("AccountDetails", nil)
+	dialogId := "AccountDetails"
+	builder, err := loadBuilderWith(dialogId, nil)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	obj, _ := builder.GetObject("AccountDetailsDialog")
+	obj, _ := builder.GetObject(dialogId)
 	dialog := obj.(*gtk.Dialog)
 
 	obj, _ = builder.GetObject("account")
@@ -54,7 +55,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			go saveFunction()
 			dialog.Destroy()
 		},
-		"on_close_signal": u.buildAccountsMenu,
+		"on_cancel_signal": u.buildAccountsMenu,
 	})
 
 	dialog.SetTransientFor(u.window)

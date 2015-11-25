@@ -11,7 +11,7 @@ func (*defAccountDetails) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="AccountDetailsDialog">
-    <property name="title">$title</property>
+    <property name="title" translatable="yes">Account Details</property>
     <signal name="close" handler="on_close_signal" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
@@ -19,7 +19,7 @@ func (*defAccountDetails) String() string {
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <object class="GtkLabel" id="AccountMessageLabel">
-            <property name="label">$accountMessage</property>
+            <property name="label" translatable="yes">Your account (for example: kim42@dukgo.com)</property>
           </object>
           <packing>
             <property name="expand">false</property>
@@ -40,7 +40,7 @@ func (*defAccountDetails) String() string {
         </child>
         <child>
           <object class="GtkLabel" id="PasswordLabel">
-            <property name="label">$pswMessage</property>
+            <property name="label" translatable="yes">Password</property>
           </object>
           <packing>
             <property name="expand">false</property>
@@ -61,7 +61,7 @@ func (*defAccountDetails) String() string {
         </child>
         <child>
           <object class="GtkButton" id="save">
-            <property name="label">$saveLabel</property>
+            <property name="label" translatable="yes">Save</property>
             <signal name="clicked" handler="on_save_signal"/>
           </object>
           <packing>

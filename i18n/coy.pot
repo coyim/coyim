@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 02:17-0500\n"
+"POT-Creation-Date: 2015-11-25 11:25-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,31 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../gui/definitions/AccountDetails.xml:3
+msgid "Account Details"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:11
+#: ../gui/definitions/ConfigAssistant.xml:66
+msgid "Your account (for example: kim42@dukgo.com)"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:32
+#: ../gui/definitions/AskForPassword.xml:4
+#: ../gui/definitions/AskForPassword.xml:38
+msgid "Password"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:53
+msgid "Save"
+msgstr ""
+
 #: ../gui/definitions/AddContact.xml:4
 msgid "Add contact"
 msgstr ""
 
 #: ../gui/definitions/AddContact.xml:11
-#: ../gui/definitions/AskForPassword.xml:15
+#: ../gui/definitions/AskForPassword.xml:16
 msgid "Account"
 msgstr ""
 
@@ -32,11 +51,6 @@ msgstr ""
 
 #: ../gui/definitions/AddContact.xml:51
 msgid "Add"
-msgstr ""
-
-#: ../gui/definitions/AskForPassword.xml:4
-#: ../gui/definitions/AskForPassword.xml:37
-msgid "Password"
 msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:68
@@ -62,10 +76,6 @@ msgstr ""
 
 #: ../gui/definitions/ConfigAssistant.xml:49
 msgid "Failed to detect Tor. Make sure it is running and try again."
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:66
-msgid "Your account (for example: kim42@dukgo.com)"
 msgstr ""
 
 #: ../gui/definitions/ConfigAssistant.xml:80

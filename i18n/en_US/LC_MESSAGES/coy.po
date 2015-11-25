@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 02:17-0500\n"
+"POT-Creation-Date: 2015-11-25 11:25-0500\n"
 "PO-Revision-Date: 2015-11-20 09:40-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,12 +17,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: ../gui/definitions/AccountDetails.xml:3
+msgid "Account Details"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:11
+#: ../gui/definitions/ConfigAssistant.xml:66
+msgid "Your account (for example: kim42@dukgo.com)"
+msgstr "Your account (for example: kim42@dukgo.com)"
+
+#: ../gui/definitions/AccountDetails.xml:32
+#: ../gui/definitions/AskForPassword.xml:4
+#: ../gui/definitions/AskForPassword.xml:38
+msgid "Password"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:53
+msgid "Save"
+msgstr ""
+
 #: ../gui/definitions/AddContact.xml:4
 msgid "Add contact"
 msgstr ""
 
 #: ../gui/definitions/AddContact.xml:11
-#: ../gui/definitions/AskForPassword.xml:15
+#: ../gui/definitions/AskForPassword.xml:16
 msgid "Account"
 msgstr ""
 
@@ -32,11 +51,6 @@ msgstr ""
 
 #: ../gui/definitions/AddContact.xml:51
 msgid "Add"
-msgstr ""
-
-#: ../gui/definitions/AskForPassword.xml:4
-#: ../gui/definitions/AskForPassword.xml:37
-msgid "Password"
 msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:68
@@ -63,10 +77,6 @@ msgstr "Tor detected successfully. Continue."
 #: ../gui/definitions/ConfigAssistant.xml:49
 msgid "Failed to detect Tor. Make sure it is running and try again."
 msgstr "Failed to detect Tor. Make sure it is running and try again."
-
-#: ../gui/definitions/ConfigAssistant.xml:66
-msgid "Your account (for example: kim42@dukgo.com)"
-msgstr "Your account (for example: kim42@dukgo.com)"
 
 #: ../gui/definitions/ConfigAssistant.xml:80
 msgid "Password (optional)"

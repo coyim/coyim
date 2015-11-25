@@ -393,6 +393,7 @@ func (u *gtkUI) addContactWindow() {
 		return account.session.Conn.SendPresence(peer, "subscribe", "" /* generate id */)
 	})
 
+	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
 }
 

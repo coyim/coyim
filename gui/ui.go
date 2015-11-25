@@ -300,9 +300,7 @@ func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 				dialog.Destroy()
 			}
 		},
-		"on_cancel_signal": func() {
-			dialog.Destroy()
-		},
+		"on_cancel_signal": dialog.Destroy,
 	})
 
 	dialog.SetTransientFor(u.window)

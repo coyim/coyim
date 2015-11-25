@@ -12,13 +12,14 @@ func (*defAskForPassword) String() string {
 <interface>
   <object class="GtkDialog" id="AskForPassword">
     <property name="window-position">1</property>
-    <property name="title" translatable="yes">Password</property>
+    <property name="title" translatable="yes">Enter your password</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
         <child>
           <object class="GtkGrid" id="grid">
             <property name="margin">6</property>
+            <property name="margin-bottom">10</property>
             <property name="row-spacing">12</property>
             <property name="column-spacing">6</property>
             <child>

@@ -38,11 +38,14 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	accEntry := obj.(*gtk.Entry)
 	accEntry.SetText(account.Account)
 
+	obj, _ = builder.GetObject("password")
+	passEntry := obj.(*gtk.Entry)
+	passEntry.SetText(account.Password)
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
-			passObj, _ := builder.GetObject("password")
 			accTxt, _ := accEntry.GetText()
-			passTxt, _ := passObj.(*gtk.Entry).GetText()
+			passTxt, _ := passEntry.GetText()
 			account.Account = accTxt
 			account.Password = passTxt
 

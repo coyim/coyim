@@ -39,9 +39,11 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
 			passText, _ := password.GetText()
-			pwdResultChan <- passText
-			close(pwdResultChan)
-			dialog.Destroy()
+			if len(passText) > 0 {
+				pwdResultChan <- passText
+				close(pwdResultChan)
+				dialog.Destroy()
+			}
 		},
 		"on_cancel_signal": func() {
 			close(pwdResultChan)

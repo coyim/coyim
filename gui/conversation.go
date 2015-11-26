@@ -2,7 +2,6 @@ package gui
 
 import (
 	"fmt"
-	"html"
 	"sync"
 	"time"
 
@@ -68,24 +67,20 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 }
 
 func newConversationWindow(account *account, uid string, u *gtkUI) (*conversationWindow, error) {
-	vars := make(map[string]string)
-	vars["$title"] = html.EscapeString(fmt.Sprintf("%s <-> %s", account.session.CurrentAccount.Account, uid))
-	vars["$DevOptions"] = i18n.Local("Developer options")
-	vars["$StartOTR"] = i18n.Local("Start encrypted chat")
-	vars["$EndOTR"] = i18n.Local("End encrypted chat")
-	vars["$VerifyFP"] = i18n.Local("_Verify fingerprint...")
+	var history, scrollHistory, messageEntry glib.IObject
 
-	var win, history, scrollHistory, messageEntry glib.IObject
-
-	builder, err := loadBuilderWith("Conversation", vars)
+	builder, err := loadBuilderWith("Conversation", nil)
 	if err != nil {
 		return nil, err
 	}
 
-	win, err = builder.GetObject("conversation")
+	obj, err := builder.GetObject("conversation")
 	if err != nil {
 		return nil, err
 	}
+	win := obj.(*gtk.Window)
+	title := fmt.Sprintf("%s <-> %s", account.session.CurrentAccount.Account, uid)
+	win.SetTitle(title)
 
 	history, err = builder.GetObject("history")
 	if err != nil {
@@ -107,7 +102,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 	conv := &conversationWindow{
 		to:            uid,
 		account:       account,
-		win:           win.(*gtk.Window),
+		win:           win,
 		history:       history.(*gtk.TextView),
 		scrollHistory: scrollHistory.(*gtk.ScrolledWindow),
 	}

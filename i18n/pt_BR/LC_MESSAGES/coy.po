@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-26 13:43-0500\n"
+"POT-Creation-Date: 2015-11-26 14:23-0500\n"
 "PO-Revision-Date: 2015-11-20 09:40-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -125,6 +125,22 @@ msgstr ""
 
 #: ../gui/definitions/ConnectionSettings.xml:33
 msgid "Port"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:14
+msgid "Developer options"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:19
+msgid "Start encrypted chat"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:25
+msgid "End encrypted chat"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:31
+msgid "Verify fingerprint"
 msgstr ""
 
 #: ../gui/definitions/Importer.xml:12

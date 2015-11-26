@@ -15,7 +15,6 @@ func (*defConversation) String() string {
     <property name="default-height">500</property>
     <property name="default-width">400</property>
     <property name="destroy-with-parent">true</property>
-    <property name="title">$title</property>
     <child>
       <object class="GtkVBox" id="box">
         <property name="homogeneous">false</property>
@@ -23,24 +22,24 @@ func (*defConversation) String() string {
           <object class="GtkMenuBar" id="menubar">
             <child>
               <object class="GtkMenuItem" id="conversationMenu">
-                <property name="label">$DevOptions</property>
+                <property name="label" translatable="yes">Developer options</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu">
                     <child>
                       <object class="GtkMenuItem" id="startOTRMenu">
-                        <property name="label">$StartOTR</property>
+                        <property name="label" translatable="yes">Start encrypted chat</property>
                         <signal name="activate" handler="on_start_otr_signal" />
                       </object>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="endOTRMenu">
-                        <property name="label">$EndOTR</property>
+                        <property name="label" translatable="yes">End encrypted chat</property>
                         <signal name="activate" handler="on_end_otr_signal" />
                       </object>
                     </child>
                     <child>
                       <object class="GtkMenuItem" id="verifyFingerMenu">
-                        <property name="label">$VerifyFP</property>
+                        <property name="label" translatable="yes">Verify fingerprint</property>
                         <signal name="activate" handler="on_verify_fp_signal" />
                       </object>
                     </child>

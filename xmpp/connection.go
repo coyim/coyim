@@ -7,6 +7,7 @@
 package xmpp
 
 import (
+	"crypto/rand"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -52,6 +53,8 @@ func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
 
 		inflights:    make(map[Cookie]inflight),
 		delayedClose: make(chan bool),
+
+		Rand: rand.Reader,
 	}
 }
 

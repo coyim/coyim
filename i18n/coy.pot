@@ -32,7 +32,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:58
+#: ../gui/definitions/AccountDetails.xml:58 ../gui/definitions/Importer.xml:89
 #: ../gui/definitions/MasterPassword.xml:40
 msgid "Cancel"
 msgstr ""
@@ -125,6 +125,31 @@ msgstr ""
 
 #: ../gui/definitions/ConnectionSettings.xml:33
 msgid "Port"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:12
+msgid "Import Accounts"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:21
+msgid ""
+"Choose the accounts you would like to import and start using from CoyIM."
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:40
+msgid "Import this"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:54
+msgid "From application"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:66
+msgid "Account name"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:94
+msgid "Import"
 msgstr ""
 
 #: ../gui/definitions/Main.xml:17

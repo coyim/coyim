@@ -20,7 +20,7 @@ func (*defImporter) String() string {
   </object>
   <object class="GtkDialog" id="importerWindow">
     <property name="window-position">1</property>
-    <property name="title">$title</property>
+    <property name="title" translatable="yes">Import Accounts</property>
     <property name="width_request">450</property>
     <property name="height_request">600</property>
     <property name="border_width">10</property>
@@ -29,7 +29,7 @@ func (*defImporter) String() string {
         <property name="homogeneous">false</property>
         <child>
           <object class="GtkLabel" id="label">
-	        <property name="label">$importMessage</property>
+	        <property name="label" translatable="yes">Choose the accounts you would like to import and start using from CoyIM.</property>
             <property name="wrap">true</property>
             <property name="wrap-mode">2</property>
 	      </object>
@@ -48,7 +48,7 @@ func (*defImporter) String() string {
                 <property name="model">importAccountsStore</property>
                 <child>
                   <object class="GtkTreeViewColumn" id="import-this-account-column">
-                    <property name="title">$columnTitleImportThis</property>
+                    <property name="title" translatable="yes">Import this</property>
                     <property name="sort_column_id">2</property>
                     <child>
                       <object class="GtkCellRendererToggle" id="import-this-account-renderer">
@@ -62,7 +62,7 @@ func (*defImporter) String() string {
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="from-application-column">
-                    <property name="title">$columnTitleFromApplication</property>
+                    <property name="title" translatable="yes">From application</property>
                     <property name="sort_column_id">0</property>
                     <child>
                       <object class="GtkCellRendererText" id="from-application-renderer"/>
@@ -74,7 +74,7 @@ func (*defImporter) String() string {
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="account-name-column">
-                    <property name="title">$columnTitleAccountName</property>
+                    <property name="title" translatable="yes">Account name</property>
                     <property name="sort_column_id">1</property>
                     <child>
                       <object class="GtkCellRendererText" id="account-name-renderer"/>
@@ -97,12 +97,12 @@ func (*defImporter) String() string {
     </child>
     <child type="action">
       <object class="GtkButton" id="button_cancel">
-        <property name="label">$buttonTitleCancel</property>
+        <property name="label" translatable="yes">Cancel</property>
       </object>
     </child>
     <child type="action">
       <object class="GtkButton" id="button_ok">
-        <property name="label">$buttonTitleImport</property>
+        <property name="label" translatable="yes">Import</property>
         <property name="can-default">true</property>
       </object>
     </child>

@@ -7,7 +7,6 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/config/importer"
-	"github.com/twstrike/coyim/i18n"
 )
 
 func valAt(s *gtk.ListStore, iter *gtk.TreeIter, col int) interface{} {
@@ -63,15 +62,7 @@ func (u *gtkUI) runImporter() {
 	importSettings := make(map[applicationAndAccount]bool)
 	allImports := importer.TryImportAll()
 
-	vars := make(map[string]string)
-	vars["$importMessage"] = i18n.Local("Choose the accounts you would like to import and start using from CoyIM.")
-	vars["$title"] = i18n.Local("Import Accounts")
-	vars["$buttonTitleCancel"] = i18n.Local("Cancel")
-	vars["$buttonTitleImport"] = i18n.Local("Import")
-	vars["$columnTitleAccountName"] = i18n.Local("Account name")
-	vars["$columnTitleFromApplication"] = i18n.Local("From application")
-	vars["$columnTitleImportThis"] = i18n.Local("Import this")
-	builder, _ := loadBuilderWith("Importer", vars)
+	builder, _ := loadBuilderWith("Importer", nil)
 
 	win, _ := builder.GetObject("importerWindow")
 	w, _ := win.(*gtk.Dialog)

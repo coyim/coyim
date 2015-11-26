@@ -55,7 +55,10 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			go saveFunction()
 			dialog.Destroy()
 		},
-		"on_cancel_signal": u.buildAccountsMenu,
+		"on_cancel_signal": func() {
+			u.buildAccountsMenu()
+			dialog.Destroy()
+		},
 	})
 
 	dialog.SetTransientFor(u.window)

@@ -16,14 +16,11 @@ var _ = Suite(&UIReaderSuite{})
 const testFile string = `
 <interface>
   <object class="GtkWindow" id="conversation">
-    <property name="default-height">$win-height</property>
-    <property name="default-width">$win-width</property>
-
-      <child>
-	<object class="GtkVBox" id="vbox">
-	</object>
-      </child>
-
+    <property name="default-height">500</property>
+    <property name="default-width">400</property>
+    <child>
+      <object class="GtkVBox" id="vbox"></object>
+    </child>
   </object>
 </interface>
 `

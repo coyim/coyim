@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-25 18:55-0500\n"
+"POT-Creation-Date: 2015-11-26 13:43-0500\n"
 "PO-Revision-Date: 2015-11-20 09:40-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
 msgstr ""
 
-#: ../gui/definitions/AddContact.xml:51 ../gui/definitions/Main.xml:22
+#: ../gui/definitions/AddContact.xml:51
 msgid "Add"
 msgstr ""
 
@@ -131,27 +131,31 @@ msgstr "Port"
 msgid "Contacts"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:33
+#: ../gui/definitions/Main.xml:22
+msgid "Add..."
+msgstr ""
+
+#: ../gui/definitions/Main.xml:32
 msgid "Accounts"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:38
+#: ../gui/definitions/Main.xml:37
 msgid "View"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:43
+#: ../gui/definitions/Main.xml:42
 msgid "Merge Accounts"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:49
+#: ../gui/definitions/Main.xml:48
 msgid "Show Offline Contacts"
 msgstr "Show Offline Contacts"
 
-#: ../gui/definitions/Main.xml:59
+#: ../gui/definitions/Main.xml:58
 msgid "Help"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:64
+#: ../gui/definitions/Main.xml:63
 msgid "About"
 msgstr ""
 

@@ -31,7 +31,6 @@ func (*defMain) String() string {
                     <child>
                       <object class="GtkMenuItem" id="addMenu">
                         <property name="label" translatable="yes">Add</property>
-                        <property name="ellipsize">true</property>
                         <signal name="activate" handler="on_add_contact_window_signal" />
                       </object>
                     </child>

@@ -26,7 +26,7 @@ func firstProxy(account *account) string {
 
 func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	dialogId := "AccountDetails"
-	builder, err := loadBuilderWith(dialogId, nil)
+	builder, err := loadBuilderWith(dialogId)
 	if err != nil {
 		panic(err.Error())
 	}

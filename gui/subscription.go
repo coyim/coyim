@@ -20,7 +20,7 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 }
 
 func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer string) error) *gtk.Dialog {
-	builder, loadErr := loadBuilderWith("AddContact", nil)
+	builder, loadErr := loadBuilderWith("AddContact")
 	if loadErr != nil {
 		panic(loadErr.Error())
 	}

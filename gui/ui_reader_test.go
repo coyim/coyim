@@ -43,10 +43,7 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 	writeTestFile("definitions/Test.xml", testFile)
 	ui := "Test"
 
-	vars := make(map[string]string)
-	vars["$win-height"] = "500"
-	vars["$win-width"] = "400"
-	builder, parseErr := loadBuilderWith(ui, vars)
+	builder, parseErr := loadBuilderWith(ui)
 	if parseErr != nil {
 		fmt.Errorf("\nFailed!\n%s", parseErr.Error())
 		c.Fail()
@@ -68,10 +65,7 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useGoFileIfXMLDoesntExists(c *C) {
 	//writeTestFile("definitions/TestDefinition.xml", testFile)
 	ui := "Test"
 
-	vars := make(map[string]string)
-	vars["$win-height"] = "500"
-	vars["$win-width"] = "400"
-	builder, parseErr := loadBuilderWith(ui, vars)
+	builder, parseErr := loadBuilderWith(ui)
 	if parseErr != nil {
 		fmt.Errorf("\nFailed!\n%s", parseErr.Error())
 		c.Fail()
@@ -92,6 +86,6 @@ func (s *UIReaderSuite) Test_loadBuilderWith_shouldReturnErrorWhenDefinitionDoes
 	ui := "nonexistent"
 
 	c.Assert(func() {
-		loadBuilderWith(ui, nil)
+		loadBuilderWith(ui)
 	}, Panics, "No definition found for nonexistent")
 }

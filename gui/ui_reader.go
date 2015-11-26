@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/gui/definitions"
@@ -30,16 +29,15 @@ func getDefinitionWithFileFallback(uiName string) string {
 	return readFile(fileName)
 }
 
-func loadBuilderWith(uiName string, vars map[string]string) (*gtk.Builder, error) {
-	//TODO: replace this by gettext
-	replaced := replaceVars(getDefinitionWithFileFallback(uiName), vars)
+func loadBuilderWith(uiName string) (*gtk.Builder, error) {
+	template := getDefinitionWithFileFallback(uiName)
 
 	builder, err := gtk.BuilderNew()
 	if err != nil {
 		return nil, err
 	}
 
-	err = builder.AddFromString(replaced)
+	err = builder.AddFromString(template)
 	if err != nil {
 		log.Printf("gui: failed load %s: %s\n", uiName, err.Error())
 		return nil, err
@@ -62,14 +60,6 @@ func readFile(fileName string) string {
 	}
 	file.Close()
 	return content
-}
-
-func replaceVars(toReplace string, vars map[string]string) string {
-	replaced := toReplace
-	for k, v := range vars {
-		replaced = strings.Replace(replaced, k, v, -1)
-	}
-	return replaced
 }
 
 func getDefinition(uiName string) fmt.Stringer {

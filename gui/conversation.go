@@ -69,7 +69,7 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 func newConversationWindow(account *account, uid string, u *gtkUI) (*conversationWindow, error) {
 	var history, scrollHistory, messageEntry glib.IObject
 
-	builder, err := loadBuilderWith("Conversation", nil)
+	builder, err := loadBuilderWith("Conversation")
 	if err != nil {
 		return nil, err
 	}

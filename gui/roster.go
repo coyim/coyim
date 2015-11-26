@@ -48,7 +48,7 @@ const (
 )
 
 func (u *gtkUI) newRoster() *roster {
-	builder, err := loadBuilderWith("Roster", nil)
+	builder, err := loadBuilderWith("Roster")
 	if err != nil {
 		panic(err)
 	}

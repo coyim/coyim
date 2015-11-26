@@ -77,7 +77,7 @@ func NewGTK() UI {
 }
 
 func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc func(*config.Account)) {
-	builder, err := loadBuilderWith("ConfirmAccountRemoval", nil)
+	builder, err := loadBuilderWith("ConfirmAccountRemoval")
 	if err != nil {
 		panic(err)
 	}
@@ -218,7 +218,7 @@ func (u *gtkUI) initRoster() {
 }
 
 func (u *gtkUI) mainWindow() {
-	builder, _ := loadBuilderWith("Main", nil)
+	builder, _ := loadBuilderWith("Main")
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window_signal":                    u.quit,
 		"on_add_contact_window_signal":              u.addContactWindow,
@@ -268,7 +268,7 @@ func (u *gtkUI) quit() {
 func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 	dialogTemplate := "AskForPassword"
 
-	builder, _ := loadBuilderWith(dialogTemplate, nil)
+	builder, _ := loadBuilderWith(dialogTemplate)
 
 	obj, _ := builder.GetObject(dialogTemplate)
 	dialog := obj.(*gtk.Dialog)
@@ -424,7 +424,7 @@ func (u *gtkUI) rosterUpdated() {
 }
 
 func (u *gtkUI) alertTorIsNotRunning() {
-	builder, err := loadBuilderWith("TorNotRunning", nil)
+	builder, err := loadBuilderWith("TorNotRunning")
 	if err != nil {
 		return
 	}
@@ -437,7 +437,7 @@ func (u *gtkUI) alertTorIsNotRunning() {
 }
 
 func (u *gtkUI) askForServerDetails(conf *config.Account, password string, connectFn func(string) error) {
-	builder, err := loadBuilderWith("ConnectionSettings", nil)
+	builder, err := loadBuilderWith("ConnectionSettings")
 	if err != nil {
 		return
 	}

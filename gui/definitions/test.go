@@ -9,6 +9,7 @@ type defTest struct{}
 
 func (*defTest) String() string {
 	return `
+
 <interface>
   <object class="GtkWindow" id="conversation">
     <property name="default-height">500</property>

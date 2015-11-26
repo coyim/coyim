@@ -98,6 +98,7 @@ deps-u:
 	go get -u golang.org/x/net/html
 	go get -u golang.org/x/net/html/atom
 	go get -u golang.org/x/net/proxy
+	go get -u golang.org/x/text/transform
 	go get -u gopkg.in/check.v1
 	go get -u github.com/miekg/dns
 	go get -u golang.org/x/crypto/scrypt
@@ -115,6 +116,7 @@ deps:
 	go get golang.org/x/net/html
 	go get golang.org/x/net/html/atom
 	go get golang.org/x/net/proxy
+	go get golang.org/x/text/transform
 	go get gopkg.in/check.v1
 	go get github.com/miekg/dns
 	go get golang.org/x/crypto/scrypt

@@ -2,9 +2,11 @@ package net
 
 import (
 	"errors"
+	"log"
 	"net"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/miekg/dns"
 	"golang.org/x/net/proxy"
@@ -12,31 +14,52 @@ import (
 
 const defaultDNSServer = "208.67.222.222:53"
 
+const defaultLookupTimeout = 5 * time.Second
+
 // LookupSRV mirrors net.LookupSRV but uses the provided proxy dialer in order to do the lookup instead.
 // By default it uses the OpenDNS server
 func LookupSRV(dialer proxy.Dialer, service, proto, name string) (cname string, addrs []*net.SRV, err error) {
 	return LookupSRVWith(dialer, defaultDNSServer, service, proto, name)
 }
 
+func timingOutLookup(f func() (cname string, addrs []*net.SRV, err error), t time.Duration) (cname string, addrs []*net.SRV, err error) {
+	result := make(chan bool, 1)
+
+	go func() {
+		cname, addrs, err = f()
+		result <- true
+	}()
+
+	select {
+	case <-time.After(t):
+		log.Println("dns: lookup timed out")
+		return "", nil, ErrTimeout
+	case <-result:
+		return
+	}
+}
+
 // LookupSRVWith looks up the provided service and protocol on the given name using the proxy dialer given and the dns server provided
 func LookupSRVWith(dialer proxy.Dialer, dnsServer, service, proto, name string) (cname string, addrs []*net.SRV, err error) {
-	cname = createCName(service, proto, name)
+	return timingOutLookup(func() (cname string, addrs []*net.SRV, err error) {
+		cname = createCName(service, proto, name)
 
-	conn, err := dialer.Dial("tcp", dnsServer)
-	if err != nil {
+		conn, err := dialer.Dial("tcp", dnsServer)
+		if err != nil {
+			return
+		}
+
+		dnsConn := &dns.Conn{Conn: conn}
+		defer dnsConn.Close()
+
+		r, err := exchange(dnsConn, msgSRV(cname))
+		if err != nil {
+			return
+		}
+
+		addrs = convertAnswersToSRV(r.Answer)
 		return
-	}
-
-	dnsConn := &dns.Conn{Conn: conn}
-	defer dnsConn.Close()
-
-	r, err := exchange(dnsConn, msgSRV(cname))
-	if err != nil {
-		return
-	}
-
-	addrs = convertAnswersToSRV(r.Answer)
-	return
+	}, defaultLookupTimeout)
 }
 
 func createCName(service, proto, name string) string {

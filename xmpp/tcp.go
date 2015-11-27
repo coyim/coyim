@@ -4,7 +4,9 @@ import (
 	"errors"
 	"log"
 	"net"
+	"time"
 
+	ourNet "github.com/twstrike/coyim/net"
 	"golang.org/x/net/proxy"
 )
 
@@ -12,6 +14,8 @@ var (
 	// ErrConnectionFailed indicates a failure to connect to the server provided.
 	ErrConnectionFailed = errors.New("could not connect to XMPP server")
 )
+
+const defaultDialTimeout = 30 * time.Second
 
 func (d *Dialer) newTCPConn() (net.Conn, error) {
 	if d.Proxy == nil {
@@ -73,13 +77,30 @@ func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn,
 	return nil, "", ErrConnectionFailed
 }
 
+func dialTimeout(network, addr string, dialer proxy.Dialer, t time.Duration) (c net.Conn, err error) {
+	result := make(chan bool, 1)
+
+	go func() {
+		c, err = dialer.Dial(network, addr)
+		result <- true
+	}()
+
+	select {
+	case <-time.After(t):
+		log.Println("tcp: dial timed out")
+		return nil, ourNet.ErrTimeout
+	case <-result:
+		return
+	}
+}
+
 func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err error) {
 	log.Printf("Connecting to %s\n", addr)
 
 	//TODO: It is not clear to me if this follows
 	//RFC 6120, Section 3.2.1, item 6
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution
-	conn, err = dialer.Dial("tcp", addr)
+	conn, err = dialTimeout("tcp", addr, dialer, defaultDialTimeout)
 	if err != nil {
 		log.Printf("Failed to connect to %s: %s\n", addr, err)
 		return

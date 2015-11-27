@@ -218,7 +218,11 @@ func (u *gtkUI) initRoster() {
 }
 
 func (u *gtkUI) mainWindow() {
-	builder, _ := loadBuilderWith("Main")
+	builder, err := loadBuilderWith("Main")
+	if err != nil {
+		panic(err)
+	}
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window_signal":                    u.quit,
 		"on_add_contact_window_signal":              u.addContactWindow,
@@ -226,8 +230,14 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Merge_signal":        u.toggleMergeAccounts,
 		"on_toggled_check_Item_Show_Offline_signal": u.toggleShowOffline,
 	})
-	win, _ := builder.GetObject("mainWindow")
-	u.window, _ = win.(*gtk.Window)
+
+	win, err := builder.GetObject("mainWindow")
+	if err != nil {
+		panic(err)
+	}
+
+	u.window = win.(*gtk.Window)
+
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
 	u.initRoster()
 

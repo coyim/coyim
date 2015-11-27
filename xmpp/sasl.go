@@ -160,13 +160,6 @@ func (c *Conn) digestMD5Auth(user, password string) error {
 		return errors.New("xmpp: challenge does not support auth QOP")
 	}
 
-	//TODO: if we had the full JID we could use it here
-	digestMD5.authorizationID = fmt.Sprintf("%s@%s/%s",
-		user,                  //JID localpart
-		digestMD5.realm,       //JID domainpart
-		digestMD5.clientNonce, // resource or any random
-	)
-
 	fmt.Fprintf(c.rawOut, "<response xmlns='%s'>%s</response>\n", NsSASL, digestMD5.send())
 
 	// Anything but challenge is an auth failure at this point

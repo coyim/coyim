@@ -93,7 +93,7 @@ func (s *SaslXmppSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C
 	}
 
 	expectedOut := "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='DIGEST-MD5' />\n" +
-		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iZm9vIixyZWFsbT0iY295LmltIixub25jZT0iT0E2TUc5dEVRR20yaGgiLG5jPTAwMDAwMDAxLGNub25jZT0iMDEwMjAzMDQwNTA2MDciLGRpZ2VzdC11cmk9InhtcHAvY295LmltIixyZXNwb25zZT03OTI3NTEzNGFkY2NiZjk2NjM4YTg4MTYzZGUzYjA3Myxxb3A9YXV0aGF1dGh6aWQ9ImZvb0Bjb3kuaW0vMDEwMjAzMDQwNTA2MDci</response>\n" +
+		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iZm9vIixyZWFsbT0iY295LmltIixub25jZT0iT0E2TUc5dEVRR20yaGgiLG5jPTAwMDAwMDAxLGNub25jZT0iMDEwMjAzMDQwNTA2MDciLGRpZ2VzdC11cmk9InhtcHAvY295LmltIixyZXNwb25zZT00ZGVlODYyNjkxOTZiNmUxNGI5Zjc2OWZhYmQ5OTdiZCxxb3A9YXV0aA==</response>\n" +
 		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />\n"
 
 	e := conn.authenticate("foo", "bar")
@@ -124,7 +124,7 @@ func (s *SaslXmppSuite) Test_digestMD5_serverFailsToVerifyChallenge(c *C) {
 	}
 
 	expectedOut := "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='DIGEST-MD5' />\n" +
-		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iZm9vIixyZWFsbT0iY295LmltIixub25jZT0iT0E2TUc5dEVRR20yaGgiLG5jPTAwMDAwMDAxLGNub25jZT0iMDEwMjAzMDQwNTA2MDciLGRpZ2VzdC11cmk9InhtcHAvY295LmltIixyZXNwb25zZT03OTI3NTEzNGFkY2NiZjk2NjM4YTg4MTYzZGUzYjA3Myxxb3A9YXV0aGF1dGh6aWQ9ImZvb0Bjb3kuaW0vMDEwMjAzMDQwNTA2MDci</response>\n"
+		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iZm9vIixyZWFsbT0iY295LmltIixub25jZT0iT0E2TUc5dEVRR20yaGgiLG5jPTAwMDAwMDAxLGNub25jZT0iMDEwMjAzMDQwNTA2MDciLGRpZ2VzdC11cmk9InhtcHAvY295LmltIixyZXNwb25zZT00ZGVlODYyNjkxOTZiNmUxNGI5Zjc2OWZhYmQ5OTdiZCxxb3A9YXV0aA==</response>\n"
 
 	e := conn.authenticate("foo", "bar")
 	c.Assert(e, Equals, ErrAuthenticationFailed)

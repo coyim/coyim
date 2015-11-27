@@ -122,7 +122,7 @@ func (d *digestMD5) send() string {
 	)
 
 	if d.authorizationID != "" {
-		ret = ret + "authzid=\"" + d.authorizationID + "\""
+		ret = ret + ",authzid=\"" + d.authorizationID + "\""
 	}
 
 	return base64.StdEncoding.EncodeToString([]byte(ret))

@@ -114,17 +114,17 @@ func (a *ApplicationConfig) Add(ac *Account) {
 
 // Remove will update the accounts to exclude the account to remove, if
 // it does exist
-func (acs *ApplicationConfig) Remove(toRemove *Account) {
-	res := make([]*Account, len(acs.Accounts)-1)
+func (a *ApplicationConfig) Remove(toRemove *Account) {
+	res := make([]*Account, len(a.Accounts)-1)
 	found := false
-	for i, a := range acs.Accounts {
-		if a.Is(toRemove.Account) {
-			res = append(acs.Accounts[:i], acs.Accounts[i+1:]...)
+	for i, ac := range a.Accounts {
+		if ac.Is(toRemove.Account) {
+			res = append(a.Accounts[:i], a.Accounts[i+1:]...)
 			found = true
 		}
 	}
 	if found {
-		acs.Accounts = res
+		a.Accounts = res
 	}
 }
 

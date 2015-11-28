@@ -27,7 +27,8 @@ type Account struct {
 	Proxies                 []string `json:",omitempty"`
 	Password                string   `json:",omitempty"`
 	Port                    int      `json:",omitempty"`
-	PrivateKey              []byte
+	DeprecatedPrivateKey    []byte   `json:"PrivateKey,omitempty"`
+	PrivateKeys             [][]byte `json:",omitempty"`
 	KnownFingerprints       []KnownFingerprint
 	HideStatusUpdates       bool
 	RequireTor              bool
@@ -42,6 +43,14 @@ type Account struct {
 	ConnectAutomatically    bool
 }
 
+// AllPrivateKeys returns all private keys for this account
+func (a *Account) AllPrivateKeys() [][]byte {
+	if len(a.DeprecatedPrivateKey) > 0 {
+		return append(a.PrivateKeys, a.DeprecatedPrivateKey)
+	}
+	return a.PrivateKeys
+}
+
 // NewAccount creates a new account
 func NewAccount() (*Account, error) {
 	var priv otr3.DSAPrivateKey
@@ -53,7 +62,7 @@ func NewAccount() (*Account, error) {
 
 	return &Account{
 		RequireTor:          true,
-		PrivateKey:          priv.Serialize(),
+		PrivateKeys:         [][]byte{priv.Serialize()},
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48
@@ -197,7 +206,7 @@ func (a *Account) ID() string {
 func (a *Account) EnsurePrivateKey() (hasUpdate bool, e error) {
 	log.Printf("[%s] ensureConfigHasKey()\n", a.Account)
 
-	if len(a.PrivateKey) != 0 {
+	if len(a.AllPrivateKeys()) > 0 {
 		return false, nil
 	}
 
@@ -208,7 +217,7 @@ func (a *Account) EnsurePrivateKey() (hasUpdate bool, e error) {
 		return false, err
 	}
 
-	a.PrivateKey = priv.Serialize()
+	a.PrivateKeys = [][]byte{priv.Serialize()}
 
 	return true, nil
 }

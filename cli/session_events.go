@@ -14,8 +14,9 @@ import (
 func (c *cliUI) handleSessionEvent(ev session.Event) {
 	switch ev.Type {
 	case session.Connected:
-		info(c.term, fmt.Sprintf("Your fingerprint is %x", otr3.NewConversationWithVersion(3).DefaultFingerprintFor(ev.Session.PrivateKey.PublicKey())))
-
+		for _, pk := range ev.Session.PrivateKeys {
+			info(c.term, fmt.Sprintf("Your fingerprint is %x", otr3.NewConversationWithVersion(3).DefaultFingerprintFor(pk.PublicKey())))
+		}
 	case session.Disconnected:
 		c.terminate <- true
 	case session.RosterReceived:

@@ -94,4 +94,5 @@ var mappedToNothing = transform.RemoveFunc(func(r rune) bool {
 	return true
 })
 
+// SASLprep does something I don't know what
 var SASLprep = transform.Chain(nonASCIISpaceTransformer, mappedToNothing, norm.NFKC)

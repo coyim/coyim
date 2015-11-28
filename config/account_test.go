@@ -105,7 +105,7 @@ func (s *AccountXmppSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *
 
 	c.Check(err, IsNil)
 	c.Check(a.RequireTor, Equals, true)
-	c.Check(a.PrivateKey, NotNil)
+	c.Check(len(a.PrivateKeys), Equals, 1)
 	c.Check(a.AlwaysEncrypt, Equals, true)
 	c.Check(a.OTRAutoStartSession, Equals, true)
 	c.Check(a.OTRAutoTearDown, Equals, true)
@@ -158,7 +158,7 @@ func (s *AccountXmppSuite) Test_EnsurePrivateKey_GeneratePrivateKeyIfMissing(c *
 
 	c.Check(err, IsNil)
 	c.Check(changed, Equals, true)
-	c.Check(a.PrivateKey, NotNil)
+	c.Check(len(a.PrivateKeys), Equals, 1)
 }
 
 func (s *AccountXmppSuite) Test_ID_generatesID(c *C) {

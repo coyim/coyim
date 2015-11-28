@@ -29,7 +29,6 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 	"Accounts": [
 		{
 			"Account": "bob@riseup.net",
-			"PrivateKey": null,
 			"KnownFingerprints": null,
 			"HideStatusUpdates": false,
 			"RequireTor": true,
@@ -41,7 +40,6 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 		},
 		{
 			"Account": "bob@riseup.net",
-			"PrivateKey": null,
 			"KnownFingerprints": null,
 			"HideStatusUpdates": false,
 			"RequireTor": false,

@@ -192,7 +192,7 @@ func (p *pidginImporter) importAllFrom(accountsFile, prefsFile, blistFile, keyFi
 		}
 		if ok4 {
 			if kk, ok := keys[name]; ok {
-				ac.PrivateKey = kk
+				ac.PrivateKeys = [][]byte{kk}
 			}
 		}
 		if ok5 {

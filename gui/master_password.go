@@ -7,10 +7,10 @@ import (
 )
 
 func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
-	dialogId := "AskToEncrypt"
-	builder, _ := loadBuilderWith(dialogId)
+	dialogID := "AskToEncrypt"
+	builder, _ := loadBuilderWith(dialogID)
 
-	dialogOb, _ := builder.GetObject(dialogId)
+	dialogOb, _ := builder.GetObject(dialogID)
 	encryptDialog := dialogOb.(*gtk.MessageDialog)
 	encryptDialog.SetDefaultResponse(gtk.RESPONSE_YES)
 	encryptDialog.SetTransientFor(u.window)
@@ -28,9 +28,9 @@ func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 }
 
 func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {
-	dialogId := "MasterPassword"
-	builder, _ := loadBuilderWith(dialogId)
-	dialogOb, _ := builder.GetObject(dialogId)
+	dialogID := "MasterPassword"
+	builder, _ := loadBuilderWith(dialogID)
+	dialogOb, _ := builder.GetObject(dialogID)
 	dialog := dialogOb.(*gtk.Dialog)
 	passObj, _ := builder.GetObject("password")
 	password := passObj.(*gtk.Entry)

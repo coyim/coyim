@@ -715,7 +715,9 @@ CommandLoop:
 			case otrCommand:
 				s.Conn.Send(string(cmd.User), event.QueryMessage)
 			case otrInfoCommand:
-				info(term, fmt.Sprintf("Your OTR fingerprint is %x", otr3.NewConversationWithVersion(3).DefaultFingerprintFor(s.PrivateKey.PublicKey())))
+				for _, pk := range s.PrivateKeys {
+					info(term, fmt.Sprintf("Your OTR fingerprint is %x", otr3.NewConversationWithVersion(3).DefaultFingerprintFor(pk.PublicKey())))
+				}
 				for to, conversation := range s.Conversations {
 					if conversation.IsEncrypted() {
 						info(term, fmt.Sprintf("Secure session with %s underway:", to))
@@ -863,7 +865,7 @@ func enroll(conf *config.ApplicationConfig, currentConf *config.Account, term *t
 		}
 	}
 
-	currentConf.PrivateKey = priv.Serialize()
+	currentConf.PrivateKeys = [][]byte{priv.Serialize()}
 	currentConf.OTRAutoAppendTag = true
 	currentConf.OTRAutoStartSession = true
 	currentConf.OTRAutoTearDown = false

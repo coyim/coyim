@@ -41,7 +41,7 @@ type Session struct {
 	Conversations   map[string]*otr3.Conversation
 	OtrEventHandler map[string]*event.OtrEventHandler
 
-	PrivateKey otr3.PrivateKey
+	PrivateKeys []otr3.PrivateKey
 
 	//TODO: the session does not need all application config. Copy only what it needs to configure the session
 	Config *config.ApplicationConfig
@@ -69,6 +69,19 @@ type Session struct {
 	client.CommandManager
 }
 
+func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
+	var result []otr3.PrivateKey
+
+	for _, pp := range cu.AllPrivateKeys() {
+		_, ok, parsedKey := otr3.ParsePrivateKey(pp)
+		if ok {
+			result = append(result, parsedKey)
+		}
+	}
+
+	return result
+}
+
 // NewSession creates a new session from the given config
 func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	s := &Session{
@@ -85,9 +98,7 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 		xmppLogger: openLogFile(c.RawLogFile),
 	}
 
-	kk := new(otr3.DSAPrivateKey)
-	kk.Parse(cu.PrivateKey)
-	s.PrivateKey = kk
+	s.PrivateKeys = parseFromConfig(cu)
 
 	return s
 }
@@ -384,7 +395,7 @@ func (s *Session) otrEnded(uid string) {
 
 func (s *Session) newConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
-	conversation.SetOurKeys([]otr3.PrivateKey{s.PrivateKey})
+	conversation.SetOurKeys(s.PrivateKeys)
 
 	instanceTag := conversation.InitializeInstanceTag(s.CurrentAccount.InstanceTag)
 

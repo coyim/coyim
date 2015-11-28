@@ -35,13 +35,20 @@ func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
 
 	conversation := account.session.GetConversationWith(uid)
 	if conversation == nil || conversation.GetTheirKey() == nil {
+		pkey := account.session.PrivateKeys[0]
+		if conversation == nil {
+			conversation = otr3.NewConversationWithVersion(3)
+		} else {
+			pkey = conversation.GetOurCurrentKey()
+		}
+
 		message := fmt.Sprintf(i18n.Local(`
 You can't verify the fingerprint for %s yet.
 You first have to start an encrypted conversation with them.
 
 Fingerprint for you (%s):
   %s
-	`), uid, account.session.CurrentAccount.Account, formatFingerprint(otr3.NewConversationWithVersion(3).DefaultFingerprintFor(account.session.PrivateKey.PublicKey())))
+	`), uid, account.session.CurrentAccount.Account, formatFingerprint(conversation.DefaultFingerprintFor(pkey.PublicKey())))
 
 		l, _ := gtk.LabelNew(message)
 		vbox.Add(l)
@@ -59,7 +66,7 @@ Fingerprint for you (%s):
 
 Purported fingerprint for %s:
   %s
-	`), uid, account.session.CurrentAccount.Account, formatFingerprint(otr3.NewConversationWithVersion(3).DefaultFingerprintFor(account.session.PrivateKey.PublicKey())), uid, formatFingerprint(fpr))
+	`), uid, account.session.CurrentAccount.Account, formatFingerprint(conversation.DefaultFingerprintFor(conversation.GetOurCurrentKey().PublicKey())), uid, formatFingerprint(fpr))
 
 		l, _ := gtk.LabelNew(message)
 		vbox.Add(l)

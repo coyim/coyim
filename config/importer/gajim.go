@@ -299,7 +299,7 @@ func mergeAccountInformation(ac gajimAccountInfo, s gajimOTRSettings, s2 map[str
 	res.OTRAutoTearDown = true
 
 	if key != nil {
-		res.PrivateKey = key
+		res.PrivateKeys = [][]byte{key}
 	}
 
 	if fprs != nil {

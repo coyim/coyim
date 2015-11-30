@@ -66,9 +66,15 @@ func (c *Conn) Close() error {
 
 	c.closed = true
 
+	//Close all pending requests at this moment. It will include pending pings
+	defer c.cancelInflights()
+
 	// RFC 6120, Section 4.4 and 9.1.5
 	log.Println("xmpp: sending closing stream tag")
-	fmt.Fprint(c.out, "</stream:stream>")
+	_, err := fmt.Fprint(c.out, "</stream:stream>")
+	if err != nil {
+		return err
+	}
 
 	//TODO: find a better way to prevent sending message.
 	c.out = ioutil.Discard
@@ -78,9 +84,6 @@ func (c *Conn) Close() error {
 	case <-time.After(30 * time.Second):
 		log.Println("xmpp: timed out waiting for closing stream")
 	}
-
-	//Close all pending requests at this moment. It will include pending pings
-	c.cancelInflights()
 
 	return c.closeTCP()
 }

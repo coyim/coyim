@@ -83,7 +83,7 @@ func (*defRoster) String() string {
 
             <child internal-child="selection">
               <object class="GtkTreeSelection" id="selection">
-                <property name="mode">GTK_SELECTION_NONE</property>
+                <property name="mode">GTK_SELECTION_SINGLE</property>
               </object>
             </child>
 

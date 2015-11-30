@@ -135,7 +135,10 @@ func getFromModelIter(m *gtk.TreeStore, iter *gtk.TreeIter, index int) string {
 	return v
 }
 
-func (r *roster) onActivateBuddy(_ *gtk.TreeView, path *gtk.TreePath) {
+func (r *roster) onActivateBuddy(v *gtk.TreeView, path *gtk.TreePath) {
+	selection, _ := v.GetSelection()
+	defer selection.UnselectPath(path)
+
 	iter, err := r.model.GetIter(path)
 	if err != nil {
 		return

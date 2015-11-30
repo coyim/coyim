@@ -53,6 +53,7 @@ func (c *Conn) authenticateWithPreferedMethod(user, password string) error {
 		"PLAIN":       c.plainAuth,
 		"DIGEST-MD5":  c.digestMD5Auth,
 		"SCRAM-SHA-1": c.scramSHA1Auth,
+		"X-OAUTH2":    c.xOAuth,
 	}
 
 	//TODO: this should be configurable by the client
@@ -128,6 +129,21 @@ func (c *Conn) plainAuth(user, password string) error {
 	fmt.Fprintf(c.rawOut, "<auth xmlns='%s' mechanism='PLAIN'>%s</auth>\n", NsSASL, enc)
 
 	_, err := c.verifyAuthenticationSuccess()
+	return err
+}
+
+func (c *Conn) xOAuth(user, token string) error {
+	encoding := base64.StdEncoding
+
+	raw := "\x00" + user + "\x00" + token
+	enc := make([]byte, encoding.EncodedLen(len(raw)))
+	encoding.Encode(enc, []byte(raw))
+	fmt.Fprintf(c.rawOut, "<auth xmlns='%s' mechanism='X-OAUTH2' auth:service='oauth2' xmlns:auth='%s'>%s</auth>\n", NsSASL, NsXOAuth, enc)
+
+	_, err := c.verifyAuthenticationSuccess()
+
+	fmt.Println(err)
+
 	return err
 }
 

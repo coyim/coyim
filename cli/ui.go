@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -836,7 +835,7 @@ func enroll(conf *config.ApplicationConfig, currentConf *config.Account, term *t
 
 	term.SetPrompt("File to import libotr private key from (enter to generate): ")
 
-	var priv otr3.DSAPrivateKey
+	var pkeys []otr3.PrivateKey
 	for {
 		importFile, err := term.ReadLine()
 		if err != nil {
@@ -848,15 +847,16 @@ func enroll(conf *config.ApplicationConfig, currentConf *config.Account, term *t
 				alert(term, "Failed to open private key file: "+err.Error())
 				continue
 			}
-
+			var priv otr3.DSAPrivateKey
 			if !priv.Import(privKeyBytes) {
 				alert(term, "Failed to parse libotr private key file (the parser is pretty simple I'm afraid)")
 				continue
 			}
+			pkeys = append(pkeys, &priv)
 			break
 		} else {
 			info(term, "Generating private key...")
-			err = priv.Generate(rand.Reader)
+			pkeys, err = otr3.GenerateMissingKeys([][]byte{})
 			if err != nil {
 				alert(term, "Failed to generate private key - this implies something is really bad with your system, so we bail out now")
 				return false
@@ -865,7 +865,7 @@ func enroll(conf *config.ApplicationConfig, currentConf *config.Account, term *t
 		}
 	}
 
-	currentConf.PrivateKeys = [][]byte{priv.Serialize()}
+	currentConf.PrivateKeys = config.SerializedKeys(pkeys)
 	currentConf.OTRAutoAppendTag = true
 	currentConf.OTRAutoStartSession = true
 	currentConf.OTRAutoTearDown = false

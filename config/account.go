@@ -1,7 +1,6 @@
 package config
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"errors"
 	"log"
@@ -51,18 +50,27 @@ func (a *Account) AllPrivateKeys() [][]byte {
 	return a.PrivateKeys
 }
 
+// SerializedKeys will generate a new slice of a byte slice containing serializations of all keys given
+func SerializedKeys(keys []otr3.PrivateKey) [][]byte {
+	var result [][]byte
+
+	for _, k := range keys {
+		result = append(result, k.Serialize())
+	}
+
+	return result
+}
+
 // NewAccount creates a new account
 func NewAccount() (*Account, error) {
-	var priv otr3.DSAPrivateKey
-
-	err := priv.Generate(rand.Reader)
+	pkeys, err := otr3.GenerateMissingKeys([][]byte{})
 	if err != nil {
 		return nil, err
 	}
 
 	return &Account{
 		RequireTor:          true,
-		PrivateKeys:         [][]byte{priv.Serialize()},
+		PrivateKeys:         SerializedKeys(pkeys),
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48
@@ -206,18 +214,18 @@ func (a *Account) ID() string {
 func (a *Account) EnsurePrivateKey() (hasUpdate bool, e error) {
 	log.Printf("[%s] ensureConfigHasKey()\n", a.Account)
 
-	if len(a.AllPrivateKeys()) > 0 {
+	prevKeys := a.AllPrivateKeys()
+	newKeys, err := otr3.GenerateMissingKeys(prevKeys)
+
+	if err != nil {
+		return false, err
+	}
+	if len(newKeys) == 0 {
 		return false, nil
 	}
 
-	log.Printf("[%s] - No private key available. Generating...\n", a.Account)
-	var priv otr3.DSAPrivateKey
-
-	if err := priv.Generate(rand.Reader); err != nil {
-		return false, err
-	}
-
-	a.PrivateKeys = [][]byte{priv.Serialize()}
+	a.DeprecatedPrivateKey = nil
+	a.PrivateKeys = append(prevKeys, SerializedKeys(newKeys)...)
 
 	return true, nil
 }

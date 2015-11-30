@@ -94,5 +94,6 @@ var mappedToNothing = transform.RemoveFunc(func(r rune) bool {
 	return true
 })
 
-// SASLprep does something I don't know what
+// SASLprep implements Stringprep Profile for User Names and Passwords (RFC 4013)
+// as a transform.Transformer
 var SASLprep = transform.Chain(nonASCIISpaceTransformer, mappedToNothing, norm.NFKC)

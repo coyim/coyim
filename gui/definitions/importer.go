@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`Importer`, &defImporter{})
+func init() {
+	add(`Importer`, &defImporter{})
 }
 
 type defImporter struct{}

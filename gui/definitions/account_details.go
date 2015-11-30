@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`AccountDetails`, &defAccountDetails{})
+func init() {
+	add(`AccountDetails`, &defAccountDetails{})
 }
 
 type defAccountDetails struct{}

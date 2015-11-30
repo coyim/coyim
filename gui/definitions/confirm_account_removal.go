@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`ConfirmAccountRemoval`, &defConfirmAccountRemoval{})
+func init() {
+	add(`ConfirmAccountRemoval`, &defConfirmAccountRemoval{})
 }
 
 type defConfirmAccountRemoval struct{}

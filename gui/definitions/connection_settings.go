@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`ConnectionSettings`, &defConnectionSettings{})
+func init() {
+	add(`ConnectionSettings`, &defConnectionSettings{})
 }
 
 type defConnectionSettings struct{}

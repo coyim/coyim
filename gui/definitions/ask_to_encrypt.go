@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`AskToEncrypt`, &defAskToEncrypt{})
+func init() {
+	add(`AskToEncrypt`, &defAskToEncrypt{})
 }
 
 type defAskToEncrypt struct{}

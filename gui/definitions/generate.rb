@@ -16,17 +16,16 @@ def gen_go_file(xml_file, go_file)
   ui_name = File.basename(xml_file, '.xml')
   File.open(go_file, 'w+') do |target|
     target.puts <<TEMPLATE
-
 package definitions
 
-func init(){
-  add(`#{ui_name}`, &def#{ui_name}{})
+func init() {
+\tadd(`#{ui_name}`, &def#{ui_name}{})
 }
 
 type def#{ui_name} struct{}
 
 func (*def#{ui_name}) String() string {
-	return `
+\treturn `
 #{xml_definition}
 `
 }

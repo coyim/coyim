@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`Main`, &defMain{})
+func init() {
+	add(`Main`, &defMain{})
 }
 
 type defMain struct{}
@@ -30,7 +29,7 @@ func (*defMain) String() string {
                   <object class="GtkMenu" id="menu">
                     <child>
                       <object class="GtkMenuItem" id="addMenu">
-                        <property name="label" translatable="yes">Add</property>
+                        <property name="label" translatable="yes">Add...</property>
                         <signal name="activate" handler="on_add_contact_window_signal" />
                       </object>
                     </child>

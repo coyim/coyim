@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`TorNotRunning`, &defTorNotRunning{})
+func init() {
+	add(`TorNotRunning`, &defTorNotRunning{})
 }
 
 type defTorNotRunning struct{}

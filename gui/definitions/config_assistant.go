@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`ConfigAssistant`, &defConfigAssistant{})
+func init() {
+	add(`ConfigAssistant`, &defConfigAssistant{})
 }
 
 type defConfigAssistant struct{}

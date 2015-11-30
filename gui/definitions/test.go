@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`Test`, &defTest{})
+func init() {
+	add(`Test`, &defTest{})
 }
 
 type defTest struct{}

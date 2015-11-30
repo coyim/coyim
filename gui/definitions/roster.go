@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`Roster`, &defRoster{})
+func init() {
+	add(`Roster`, &defRoster{})
 }
 
 type defRoster struct{}

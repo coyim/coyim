@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`MasterPassword`, &defMasterPassword{})
+func init() {
+	add(`MasterPassword`, &defMasterPassword{})
 }
 
 type defMasterPassword struct{}

@@ -1,8 +1,7 @@
-
 package definitions
 
-func init(){
-  add(`AskForPassword`, &defAskForPassword{})
+func init() {
+	add(`AskForPassword`, &defAskForPassword{})
 }
 
 type defAskForPassword struct{}

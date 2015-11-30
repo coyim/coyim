@@ -106,65 +106,11 @@ func (s *SessionXmppSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_readMessages_passesStanzaToChannel(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
-	conn := xmpp.NewConn(
-		xml.NewDecoder(mockIn),
-		nil,
-		"some@one.org/foo",
-	)
-
-	sess := &Session{}
-	sess.Conn = conn
-
-	stanzaChan := make(chan xmpp.Stanza)
-	go sess.readMessages(stanzaChan)
-
-	select {
-	case rawStanza, ok := <-stanzaChan:
-		c.Assert(ok, Equals, true)
-		c.Assert(rawStanza.Name.Local, Equals, "message")
-		c.Assert(rawStanza.Value.(*xmpp.ClientMessage).Body, Equals, "something")
-	}
-}
-
-func (s *SessionXmppSuite) Test_readMessages_alertsOnError(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<clientx:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
-	conn := xmpp.NewConn(
-		xml.NewDecoder(mockIn),
-		nil,
-		"some@one.org/foo",
-	)
-
-	sess := &Session{}
-	sess.Conn = conn
-
-	observer := make(chan interface{}, 1)
-	sess.Subscribe(observer)
-
-	stanzaChan := make(chan xmpp.Stanza)
-	go sess.readMessages(stanzaChan)
-
-	select {
-	case _, ok := <-stanzaChan:
-		c.Assert(ok, Equals, false)
-	}
-
-	select {
-	case ev := <-observer:
-		t := ev.(LogEvent)
-		c.Assert(t.Level, Equals, Alert)
-		c.Assert(t.Message, Equals, "error reading XMPP message: unexpected XMPP message clientx <message/>")
-	case <-time.After(1 * time.Millisecond):
-		c.Errorf("did not receive event")
-	}
-}
-
 func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<clientx:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
-		nil,
+		mockIn,
 		"some@one.org/foo",
 	)
 
@@ -191,7 +137,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<bind:bind xmlns:bind='urn:ietf:params:xml:ns:xmpp-bind'></bind:bind>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
-		nil,
+		mockIn,
 		"some@one.org/foo",
 	)
 
@@ -227,7 +173,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:error xmlns:stream='http://etherx.jabber.org/streams'><stream:text>bad horse showed up</stream:text></stream:error>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
-		nil,
+		mockIn,
 		"some@one.org/foo",
 	)
 
@@ -251,7 +197,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:error xmlns:stream='http://etherx.jabber.org/streams'><not-well-formed xmlns='urn:ietf:params:xml:ns:xmpp-streams'/></stream:error>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
-		nil,
+		mockIn,
 		"some@one.org/foo",
 	)
 
@@ -380,7 +326,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	}
 	sess.Conn = conn
 
-	sess.watchStanzas()
+	stanzaChan := make(chan xmpp.Stanza, 1)
+	stanza, _ := conn.Next()
+	stanzaChan <- stanza
+
+	sess.receiveStanza(stanzaChan)
 
 	c.Assert(string(mockIn.write), Equals, ""+
 		"<iq to='abc' from='some@one.org/foo' type='result' id=''>"+
@@ -408,7 +358,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	}
 	sess.Conn = conn
 
-	sess.watchStanzas()
+	stanzaChan := make(chan xmpp.Stanza, 1)
+	stanza, _ := conn.Next()
+	stanzaChan <- stanza
+
+	sess.receiveStanza(stanzaChan)
 
 	c.Assert(string(mockIn.write), Equals, ""+
 		"<iq to='abc' from='some@one.org/foo' type='result' id=''>"+
@@ -480,7 +434,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.watchStanzas()
+	stanzaChan := make(chan xmpp.Stanza, 1)
+	stanza, _ := conn.Next()
+	stanzaChan <- stanza
+
+	sess.receiveStanza(stanzaChan)
 
 	assertLogContains(c, observer, LogEvent{
 		Level:   Warn,

@@ -45,12 +45,26 @@ type Conn struct {
 }
 
 // NewConn creates a new connection
-func NewConn(in *xml.Decoder, out io.Writer, jid string) *Conn {
-	return &Conn{
-		in:  in,
-		out: out,
-		jid: jid,
+//TODO: this is used only for testing. Remove when we have a Conn interface
+func NewConn(in *xml.Decoder, out io.WriteCloser, jid string) *Conn {
+	conn := &Conn{
+		in:     in,
+		out:    out,
+		rawOut: out,
+		jid:    jid,
 
+		inflights:    make(map[Cookie]inflight),
+		delayedClose: make(chan bool, 1),
+
+		Rand: rand.Reader,
+	}
+
+	conn.delayedClose <- true // closes immediately
+	return conn
+}
+
+func newConn() *Conn {
+	return &Conn{
 		inflights:    make(map[Cookie]inflight),
 		delayedClose: make(chan bool),
 
@@ -184,4 +198,25 @@ func (c *Conn) Send(to, msg string) error {
 	}
 	_, err := fmt.Fprintf(c.out, "<message to='%s' from='%s' type='chat'><body>%s</body>%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive)
 	return err
+}
+
+// ReadStanzas reads XMPP stanzas
+func (c *Conn) ReadStanzas(stanzaChan chan<- Stanza) error {
+	defer close(stanzaChan)
+	defer c.Close()
+
+	for {
+		stanza, err := c.Next()
+		if err != nil {
+			log.Printf("xmpp: error receiving stanza. %s\n", err)
+			return err
+		}
+
+		//The receiving entity has closed the channel
+		if _, quit := stanza.Value.(*StreamClose); quit {
+			return nil
+		}
+
+		stanzaChan <- stanza
+	}
 }

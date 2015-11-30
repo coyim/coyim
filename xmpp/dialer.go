@@ -83,7 +83,7 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 		d.Config.TrustedAddress = true
 	}
 
-	c = NewConn(nil, nil, "")
+	c = newConn()
 	c.config = d.Config
 	d.bindTransport(c, conn)
 

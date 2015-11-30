@@ -1187,3 +1187,40 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 
 	c.Assert(err, Equals, io.EOF)
 }
+
+func (s *ConnectionXmppSuite) Test_readMessages_passesStanzaToChannel(c *C) {
+	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
+
+	conn := &Conn{
+		in:     xml.NewDecoder(mockIn),
+		closed: true, //This avoids trying to close the connection after the EOF
+	}
+	stanzaChan := make(chan Stanza)
+	go conn.ReadStanzas(stanzaChan)
+
+	select {
+	case rawStanza, ok := <-stanzaChan:
+		c.Assert(ok, Equals, true)
+		c.Assert(rawStanza.Name.Local, Equals, "message")
+		c.Assert(rawStanza.Value.(*ClientMessage).Body, Equals, "something")
+	}
+}
+
+func (s *ConnectionXmppSuite) Test_readMessages_alertsOnError(c *C) {
+	mockIn := &mockConnIOReaderWriter{read: []byte("<clientx:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
+
+	conn := &Conn{
+		in:     xml.NewDecoder(mockIn),
+		closed: true, //This avoids trying to close the connection after the EOF
+	}
+
+	stanzaChan := make(chan Stanza, 1)
+	err := conn.ReadStanzas(stanzaChan)
+
+	select {
+	case _, ok := <-stanzaChan:
+		c.Assert(ok, Equals, false)
+	}
+
+	c.Assert(err.Error(), Equals, "unexpected XMPP message clientx <message/>")
+}

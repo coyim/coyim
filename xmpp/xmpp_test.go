@@ -81,7 +81,6 @@ func (s *XmppSuite) TestConnClose(c *C) {
 	}
 	mockCloser := &mockConnIOReaderWriter{}
 	conn := NewConn(xml.NewDecoder(mockIn), mockCloser, "")
-	conn.rawOut = mockCloser
 
 	// consumes the opening stream
 	nextElement(conn.in)

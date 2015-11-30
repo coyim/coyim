@@ -142,25 +142,6 @@ func (s *Session) alert(m string) {
 	})
 }
 
-func (s *Session) readMessages(stanzaChan chan<- xmpp.Stanza) {
-	defer close(stanzaChan)
-
-	for {
-		stanza, err := s.Conn.Next()
-		if err != nil {
-			s.alert(fmt.Sprintf("error reading XMPP message: %s", err))
-			return
-		}
-
-		//The receiving entity has closed the channel
-		if _, quit := stanza.Value.(*xmpp.StreamClose); quit {
-			return
-		}
-
-		stanzaChan <- stanza
-	}
-}
-
 func (s *Session) receivedStreamError(stanza *xmpp.StreamError) bool {
 	s.alert("Exiting in response to fatal error from server: " + stanza.String())
 	return false
@@ -278,8 +259,14 @@ func (s *Session) watchStanzas() {
 	defer s.Close()
 
 	stanzaChan := make(chan xmpp.Stanza)
-	go s.readMessages(stanzaChan)
+	go s.readStanzasAndAlertOnErrors(stanzaChan)
 	for s.receiveStanza(stanzaChan) {
+	}
+}
+
+func (s *Session) readStanzasAndAlertOnErrors(stanzaChan chan xmpp.Stanza) {
+	if err := s.Conn.ReadStanzas(stanzaChan); err != nil {
+		s.alert(fmt.Sprintf("error reading XMPP message: %s", err.Error()))
 	}
 }
 

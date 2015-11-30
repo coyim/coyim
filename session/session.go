@@ -800,7 +800,6 @@ func (s *Session) Close() {
 	}
 
 	s.terminateConversations()
-
 	s.Conn.Close()
 
 	s.R.Clear()

@@ -102,9 +102,12 @@ func (c *Conn) Close() error {
 	return c.closeTCP()
 }
 
-func (c *Conn) receivedClosingStreamTag() {
-	go c.Close()
-	c.delayedClose <- true
+func (c *Conn) closeImmediately() error {
+	go func() {
+		c.delayedClose <- true
+	}()
+
+	return c.Close()
 }
 
 func (c *Conn) closeTCP() error {
@@ -123,7 +126,7 @@ func (c *Conn) Next() (stanza Stanza, err error) {
 
 		if _, ok := stanza.Value.(*StreamClose); ok {
 			log.Println("xmpp: received closing stream tag")
-			go c.receivedClosingStreamTag()
+			go c.closeImmediately()
 			return
 		}
 
@@ -203,7 +206,7 @@ func (c *Conn) Send(to, msg string) error {
 // ReadStanzas reads XMPP stanzas
 func (c *Conn) ReadStanzas(stanzaChan chan<- Stanza) error {
 	defer close(stanzaChan)
-	defer c.Close()
+	defer c.closeImmediately()
 
 	for {
 		stanza, err := c.Next()

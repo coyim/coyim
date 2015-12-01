@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-01 14:42-0500\n"
+"POT-Creation-Date: 2015-12-01 15:43-0500\n"
 "PO-Revision-Date: 2015-11-20 09:40-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,219 +17,121 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../gui/definitions/AccountDetails.xml:3
-msgid "Account Details"
+#: ../gui/account.go:78
+msgid "_Connect"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:15
+#: ../gui/account.go:81
+msgid "_Disconnect"
+msgstr ""
+
+#: ../gui/account.go:84
+msgid "_Edit..."
+msgstr ""
+
+#: ../gui/account.go:87
+msgid "_Remove"
+msgstr ""
+
+#: ../gui/account.go:90
+msgid "Connect _Automatically"
+msgstr ""
+
+#: ../gui/accounts_menu.go:91
+msgid "Connect On _Startup"
+msgstr ""
+
+#: ../gui/accounts_menu.go:100
+msgid "_Connect All"
+msgstr ""
+
+#: ../gui/accounts_menu.go:107
+msgid "_Add..."
+msgstr ""
+
+#: ../gui/accounts_menu.go:111
+msgid "_Import..."
+msgstr ""
+
+#: ../gui/config_assistant.go:132
+msgid "All right with SRV"
+msgstr ""
+
+#: ../gui/config_assistant.go:164
+msgid "All right with fallback"
+msgstr ""
+
+#: ../gui/conversation.go:119
+#, python-format
+msgid "Failed to generate OTR message: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:130
+#, python-format
+msgid "Failed to start the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:138
+#, python-format
+msgid "Failed to terminate the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:243
+msgid "Available"
+msgstr ""
+
+#: ../gui/conversation.go:245
+msgid "Not Available"
+msgstr ""
+
+#: ../gui/conversation.go:247
+msgid "Away"
+msgstr ""
+
+#: ../gui/conversation.go:249
+msgid "Busy"
+msgstr ""
+
+#: ../gui/conversation.go:251
+msgid "Free for Chat"
+msgstr ""
+
+#: ../gui/conversation.go:253
+msgid "Invisible"
+msgstr ""
+
+#: ../gui/conversation.go:288
+msgid "Offline"
+msgstr ""
+
+#: ../gui/conversation.go:294
+msgid " is now "
+msgstr ""
+
+#: ../gui/fingerprint_verification.go:20
+#, python-format
 msgid ""
-"Your account\n"
-"(example: kim42@dukgo.com)"
+"You can't verify the fingerprint for %s yet.\n"
+"You first have to start an encrypted conversation with them."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:34
-#: ../gui/definitions/AskForPassword.xml:36
-msgid "Password"
+#: ../gui/fingerprint_verification.go:57
+#, python-format
+msgid "Verify fingerprint for %s"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:58 ../gui/definitions/Importer.xml:89
-#: ../gui/definitions/MasterPassword.xml:40
-#: ../gui/definitions/VerifyFingerprint.xml:19
-msgid "Cancel"
+#: ../gui/subscription.go:15
+#, python-format
+msgid "%s wants to talk to you. Is that ok?"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:64
-msgid "Save"
+#: ../gui/subscription.go:17
+msgid "Subscription request"
 msgstr ""
 
-#: ../gui/definitions/AddContact.xml:4
-msgid "Add contact"
+#: ../gui/ui.go:343
+msgid "Coy IM!"
 msgstr ""
 
-#: ../gui/definitions/AddContact.xml:11
-#: ../gui/definitions/AskForPassword.xml:15
-msgid "Account"
-msgstr ""
-
-#: ../gui/definitions/AddContact.xml:30
-msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
-msgstr ""
-
-#: ../gui/definitions/AddContact.xml:51
-msgid "Add"
-msgstr ""
-
-#: ../gui/definitions/AskForPassword.xml:4
-msgid "Enter your password"
-msgstr ""
-
-#: ../gui/definitions/AskForPassword.xml:66
-#: ../gui/definitions/ConnectionSettings.xml:53
-msgid "Connect"
-msgstr ""
-
-#: ../gui/definitions/AskToEncrypt.xml:5
-msgid "Encrypt configuration file"
-msgstr ""
-
-#: ../gui/definitions/AskToEncrypt.xml:6
-msgid ""
-"Would you like to save your configuration file in an encrypted format? This "
-"can be significantly more secure, but you will not be able to access your "
-"configuration if you lose the password. You will only be asked for your "
-"password when CoyIM starts."
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:13
-msgid "Configuration Assistant"
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:20
-msgid "Welcome to CoyIM, the safe and secure xmpp client."
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:35
-msgid "Detecting Tor..."
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:42
-msgid "Tor detected successfully. Continue."
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:49
-msgid "Failed to detect Tor. Make sure it is running and try again."
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:66
-msgid "Your account (for example: kim42@dukgo.com)"
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:80
-msgid "Password (optional)"
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:104
-msgid "Detecting XMPP server configuration..."
-msgstr ""
-
-#: ../gui/definitions/ConfigAssistant.xml:122
-msgid "Click \"Apply\" to accept this configuration."
-msgstr ""
-
-#: ../gui/definitions/ConnectionSettings.xml:5
-msgid "Could not connect to account"
-msgstr ""
-
-#: ../gui/definitions/ConnectionSettings.xml:12
-msgid "Server (for google accounts, you may want to try xmpp.google.com)"
-msgstr ""
-
-#: ../gui/definitions/ConnectionSettings.xml:33
-msgid "Port"
-msgstr ""
-
-#: ../gui/definitions/Conversation.xml:14
-msgid "Developer options"
-msgstr ""
-
-#: ../gui/definitions/Conversation.xml:19
-msgid "Start encrypted chat"
-msgstr ""
-
-#: ../gui/definitions/Conversation.xml:25
-msgid "End encrypted chat"
-msgstr ""
-
-#: ../gui/definitions/Conversation.xml:31
-msgid "Verify fingerprint"
-msgstr ""
-
-#: ../gui/definitions/Importer.xml:12
-msgid "Import Accounts"
-msgstr ""
-
-#: ../gui/definitions/Importer.xml:21
-msgid ""
-"Choose the accounts you would like to import and start using from CoyIM."
-msgstr ""
-
-#: ../gui/definitions/Importer.xml:40
-msgid "Import this"
-msgstr ""
-
-#: ../gui/definitions/Importer.xml:54
-msgid "From application"
-msgstr ""
-
-#: ../gui/definitions/Importer.xml:66
-msgid "Account name"
-msgstr ""
-
-#: ../gui/definitions/Importer.xml:94
-msgid "Import"
-msgstr ""
-
-#: ../gui/definitions/Main.xml:17
-msgid "Contacts"
-msgstr ""
-
-#: ../gui/definitions/Main.xml:22
-msgid "Add..."
-msgstr ""
-
-#: ../gui/definitions/Main.xml:32
-msgid "Accounts"
-msgstr ""
-
-#: ../gui/definitions/Main.xml:37
-msgid "View"
-msgstr ""
-
-#: ../gui/definitions/Main.xml:42
-msgid "Merge Accounts"
-msgstr ""
-
-#: ../gui/definitions/Main.xml:48
-msgid "Show Offline Contacts"
-msgstr "Exibir contatos offline"
-
-#: ../gui/definitions/Main.xml:58
-msgid "Help"
-msgstr ""
-
-#: ../gui/definitions/Main.xml:63
-msgid "About"
-msgstr ""
-
-#: ../gui/definitions/MasterPassword.xml:4
-msgid "Enter master password"
-msgstr ""
-
-#: ../gui/definitions/MasterPassword.xml:15
-msgid ""
-"Please enter the master password for the configuration file. You will not be "
-"asked for this password again until you restart CoyIM."
-msgstr ""
-
-#: ../gui/definitions/MasterPassword.xml:46
-#: ../gui/definitions/VerifyFingerprintUnknown.xml:19
-msgid "OK"
-msgstr ""
-
-#: ../gui/definitions/Roster.xml:31
-msgid ""
-"You are not connected to any account.\n"
-"Please connect to view your online contacts."
-msgstr ""
-
-#: ../gui/definitions/TorNotRunning.xml:6
-msgid "Tor is not running"
-msgstr ""
-
-#: ../gui/definitions/TorNotRunning.xml:13
-msgid "Tor was not found running on your system. Make sure it is running."
-msgstr ""
-
-#: ../gui/definitions/VerifyFingerprint.xml:24
-msgid "Verify"
-msgstr ""
+#~ msgid "Show Offline Contacts"
+#~ msgstr "Exibir contatos offline"

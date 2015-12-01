@@ -1,21 +1,26 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
 )
 
 func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.MessageDialog {
-	confirmDialog := gtk.MessageDialogNew(
-		parent,
-		gtk.DIALOG_MODAL,
-		gtk.MESSAGE_QUESTION,
-		gtk.BUTTONS_YES_NO,
-		i18n.Local("%s wants to talk to you. Is that ok?"), from,
-	)
-	confirmDialog.SetTitle(i18n.Local("Subscription request"))
+	builder, err := loadBuilderWith("AuthorizeSubscription")
+	if err != nil {
+		panic(err)
+	}
 
+	obj, _ := builder.GetObject("dialog")
+	confirmDialog := obj.(*gtk.MessageDialog)
+
+	text := fmt.Sprintf(i18n.Local("%s wants to talk to you. Is that ok?"), from)
+	confirmDialog.SetProperty("text", text)
+
+	confirmDialog.SetTransientFor(parent)
 	return confirmDialog
 }
 

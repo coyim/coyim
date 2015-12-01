@@ -10,7 +10,7 @@ func (*defAddContact) String() string {
 	return `
 <interface>
   <object class="GtkDialog" id="AddContact">
-    <property name="window-position">1</property>
+    <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Add contact</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">

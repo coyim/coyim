@@ -18,7 +18,7 @@ func (*defImporter) String() string {
     </columns>
   </object>
   <object class="GtkDialog" id="importerWindow">
-    <property name="window-position">1</property>
+    <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Import Accounts</property>
     <property name="width_request">450</property>
     <property name="height_request">600</property>
@@ -30,7 +30,7 @@ func (*defImporter) String() string {
           <object class="GtkLabel" id="label">
 	        <property name="label" translatable="yes">Choose the accounts you would like to import and start using from CoyIM.</property>
             <property name="wrap">true</property>
-            <property name="wrap-mode">2</property>
+            <property name="wrap-mode">PANGO_WRAP_WORD_CHAR</property>
 	      </object>
           <packing>
             <property name="expand">false</property>

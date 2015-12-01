@@ -10,7 +10,7 @@ func (*defMain) String() string {
 	return `
 <interface>
   <object class="GtkWindow" id="mainWindow">
-    <property name="window-position">0</property>
+    <property name="window-position">GTK_WIN_POS_NONE</property>
     <property name="default-height">600</property>
     <property name="default-width">200</property>
     <property name="title">CoyIM</property>

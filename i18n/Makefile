@@ -1,4 +1,5 @@
 DEFINITIONS=$(shell ls ../gui/definitions/*.xml)
+IN_FILES=$(shell find ../gui -name "*.go" ! -path "gui/definitions/*")
 
 # https://www.gnu.org/software/gettext/manual/gettext.html#Overview
 # translatables from source -> .po
@@ -8,24 +9,32 @@ DEFINITIONS=$(shell ls ../gui/definitions/*.xml)
 # For now, a single translation domain. We could use multiple domains if
 # needed.
 DOMAIN=coy
-TEMPLATE=$(DOMAIN).pot
+
+TEMPLATE_UI=$(DOMAIN)-ui.pot
+TEMPLATE_CODE=$(DOMAIN)-code.pot
+
 TRANSLATIONS=\
 	en_US/LC_MESSAGES/$(DOMAIN).mo \
 	pt_BR/LC_MESSAGES/$(DOMAIN).mo
 
-gettext: $(TEMPLATE) $(TRANSLATIONS)
+gettext: $(TEMPLATE_UI) $(TEMPLATE_CODE) $(TRANSLATIONS)
 
-$(TEMPLATE): $(DEFINITIONS)
-	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) -L glade $(DEFINITIONS) -o $(TEMPLATE)
+$(TEMPLATE_UI): $(DEFINITIONS)
+	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L glade $(DEFINITIONS) -o $(TEMPLATE_UI)
 
-%.po: $(TEMPLATE)
-	./update-locales $(TEMPLATE) $@
+$(TEMPLATE_CODE): $(IN_FILES)
+	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L python $(IN_FILES) --keyword=Local -o $(TEMPLATE_CODE)
+
+%.po: $(TEMPLATE_UI) $(TEMPLATE_CODE)
+	./update-locales $(TEMPLATE_UI) $@
+	./update-locales $(TEMPLATE_CODE) $@
 
 %.mo: %.po
 	msgfmt -c -v -o $@ $<
 
-update-locales: $(TEMPLATE)
-	./update-locales $(TEMPLATE) $(TRANSLATIONS)
+update-locales: $(TEMPLATE_UI) $(TEMPLATE_CODE)
+	./update-locales $(TEMPLATE_UI) $(TRANSLATIONS)
+	./update-locales $(TEMPLATE_CODE) $(TRANSLATIONS)
 
 clean:
 	$(RM) $(TRANSLATIONS)

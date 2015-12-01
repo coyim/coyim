@@ -1,0 +1,134 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the coy package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: coy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-12-01 15:43-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../gui/account.go:78
+msgid "_Connect"
+msgstr ""
+
+#: ../gui/account.go:81
+msgid "_Disconnect"
+msgstr ""
+
+#: ../gui/account.go:84
+msgid "_Edit..."
+msgstr ""
+
+#: ../gui/account.go:87
+msgid "_Remove"
+msgstr ""
+
+#: ../gui/account.go:90
+msgid "Connect _Automatically"
+msgstr ""
+
+#: ../gui/accounts_menu.go:91
+msgid "Connect On _Startup"
+msgstr ""
+
+#: ../gui/accounts_menu.go:100
+msgid "_Connect All"
+msgstr ""
+
+#: ../gui/accounts_menu.go:107
+msgid "_Add..."
+msgstr ""
+
+#: ../gui/accounts_menu.go:111
+msgid "_Import..."
+msgstr ""
+
+#: ../gui/config_assistant.go:132
+msgid "All right with SRV"
+msgstr ""
+
+#: ../gui/config_assistant.go:164
+msgid "All right with fallback"
+msgstr ""
+
+#: ../gui/conversation.go:119
+#, python-format
+msgid "Failed to generate OTR message: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:130
+#, python-format
+msgid "Failed to start the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:138
+#, python-format
+msgid "Failed to terminate the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:243
+msgid "Available"
+msgstr ""
+
+#: ../gui/conversation.go:245
+msgid "Not Available"
+msgstr ""
+
+#: ../gui/conversation.go:247
+msgid "Away"
+msgstr ""
+
+#: ../gui/conversation.go:249
+msgid "Busy"
+msgstr ""
+
+#: ../gui/conversation.go:251
+msgid "Free for Chat"
+msgstr ""
+
+#: ../gui/conversation.go:253
+msgid "Invisible"
+msgstr ""
+
+#: ../gui/conversation.go:288
+msgid "Offline"
+msgstr ""
+
+#: ../gui/conversation.go:294
+msgid " is now "
+msgstr ""
+
+#: ../gui/fingerprint_verification.go:20
+#, python-format
+msgid ""
+"You can't verify the fingerprint for %s yet.\n"
+"You first have to start an encrypted conversation with them."
+msgstr ""
+
+#: ../gui/fingerprint_verification.go:57
+#, python-format
+msgid "Verify fingerprint for %s"
+msgstr ""
+
+#: ../gui/subscription.go:15
+#, python-format
+msgid "%s wants to talk to you. Is that ok?"
+msgstr ""
+
+#: ../gui/subscription.go:17
+msgid "Subscription request"
+msgstr ""
+
+#: ../gui/ui.go:343
+msgid "Coy IM!"
+msgstr ""

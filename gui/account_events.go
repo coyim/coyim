@@ -105,7 +105,7 @@ func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
 		return
 	}
 
-	log.Printf("[%s] Presence from %s: show: %s status: %s gone: %v\n", ev.To, ev.From, ev.Show, ev.Status, ev.Gone)
+	log.Printf("[%s] Presence from %v: show: %v status: %v gone: %v\n", ev.To, ev.From, ev.Show, ev.Status, ev.Gone)
 	u.rosterUpdated()
 
 	account := u.findAccountForSession(ev.Session)

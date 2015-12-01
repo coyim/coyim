@@ -5,23 +5,10 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/client"
+	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/otr3"
 )
-
-func formatFingerprint(fpr []byte) string {
-	str := fmt.Sprintf("%X", fpr)
-	result := ""
-
-	sep := ""
-	for len(str) > 0 {
-		result = result + sep + str[0:10]
-		sep = " "
-		str = str[10:]
-	}
-
-	return result
-}
 
 func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
 	//TODO: errors
@@ -48,7 +35,7 @@ You first have to start an encrypted conversation with them.
 
 Fingerprint for you (%s):
   %s
-	`), uid, account.session.CurrentAccount.Account, formatFingerprint(conversation.DefaultFingerprintFor(pkey.PublicKey())))
+	`), uid, account.session.CurrentAccount.Account, config.FormatFingerprint(conversation.DefaultFingerprintFor(pkey.PublicKey())))
 
 		l, _ := gtk.LabelNew(message)
 		vbox.Add(l)
@@ -66,7 +53,7 @@ Fingerprint for you (%s):
 
 Purported fingerprint for %s:
   %s
-	`), uid, account.session.CurrentAccount.Account, formatFingerprint(conversation.DefaultFingerprintFor(conversation.GetOurCurrentKey().PublicKey())), uid, formatFingerprint(fpr))
+	`), uid, account.session.CurrentAccount.Account, config.FormatFingerprint(conversation.DefaultFingerprintFor(conversation.GetOurCurrentKey().PublicKey())), uid, config.FormatFingerprint(fpr))
 
 		l, _ := gtk.LabelNew(message)
 		vbox.Add(l)

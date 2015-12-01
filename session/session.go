@@ -72,10 +72,14 @@ type Session struct {
 func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 	var result []otr3.PrivateKey
 
+	allKeys := cu.AllPrivateKeys()
+
+	log.Printf("Loading %d configured keys", len(allKeys))
 	for _, pp := range cu.AllPrivateKeys() {
 		_, ok, parsedKey := otr3.ParsePrivateKey(pp)
 		if ok {
 			result = append(result, parsedKey)
+			log.Printf("Loaded key: %s", config.FormatFingerprint(otr3.NewConversationWithVersion(3).DefaultFingerprintFor(parsedKey.PublicKey())))
 		}
 	}
 

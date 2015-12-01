@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -17,6 +18,23 @@ func ParseYes(input string) bool {
 	}
 
 	return false
+}
+
+const fingerprintDefaultGrouping = 8
+
+// FormatFingerprint returns a formatted string of the fingerprint
+func FormatFingerprint(fpr []byte) string {
+	str := fmt.Sprintf("%X", fpr)
+	result := ""
+
+	sep := ""
+	for len(str) > 0 {
+		result = result + sep + str[0:fingerprintDefaultGrouping]
+		sep = " "
+		str = str[fingerprintDefaultGrouping:]
+	}
+
+	return result
 }
 
 func randomString(dest []byte) error {

@@ -30,6 +30,7 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 		panic(loadErr.Error())
 	}
 
+	//TODO: move model to XML builder
 	model, _ := gtk.ListStoreNew(
 		glib.TYPE_STRING, // account name
 		glib.TYPE_STRING, // account_id

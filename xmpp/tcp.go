@@ -24,6 +24,13 @@ func (d *Dialer) newTCPConn() (net.Conn, error) {
 
 	addr := d.GetServer()
 
+	//libpurple and xmpp-client are strict to this section and skip SRV lookup
+	//whenever the user has configured a custom server address. We decided to not
+	//do this, and as a consequence we can only set a custom server to an address
+	//containing SRV records, otherwise it will fail.
+	//On libpurple, a custom server with value "xmpp.google.com" or "talk.google.com"
+	//will work, but for us it will fail unless config.SkipSRVLookup is set.
+	//Our users must use "google.com" or "gmail.com" when asked for a custom server address
 	//RFC 6120, Section 3.2.3
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.Config.SkipSRVLookup {

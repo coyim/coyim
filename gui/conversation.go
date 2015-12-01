@@ -302,9 +302,12 @@ func (conv *conversationWindow) scrollToBottom() {
 	adj.SetValue(adj.GetUpper() - adj.GetPageSize())
 }
 
-// ADDS_TO_GUI_THREAD
-// LOCKS_CONV
-func (conv *conversationWindow) appendStatusString(text string, timestamp time.Time) {
+type taggableText struct {
+	tag  string
+	text string
+}
+
+func (conv *conversationWindow) appendToHistory(timestamp time.Time, entries ...taggableText) {
 	glib.IdleAdd(func() bool {
 		conv.Lock()
 		defer conv.Unlock()
@@ -313,37 +316,38 @@ func (conv *conversationWindow) appendStatusString(text string, timestamp time.T
 		if buff.GetCharCount() != 0 {
 			insertAtEnd(buff, "\n")
 		}
+
 		insertAtEnd(buff, "[")
 		insertAtEnd(buff, timestamp.Format(timeDisplay))
-		insertAtEnd(buff, "]")
-		insertWithTag(buff, "statusText", text)
+		insertAtEnd(buff, "] ")
+
+		for _, entry := range entries {
+			if entry.tag != "" {
+				insertWithTag(buff, entry.tag, entry.text)
+			} else {
+				insertAtEnd(buff, entry.text)
+			}
+		}
 
 		return false
 	})
 }
 
 func (conv *conversationWindow) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
-	conv.appendStatusString(createStatusMessage(from, show, showStatus, gone), timestamp)
+	conv.appendToHistory(timestamp, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
 
-// ADDS_TO_GUI_THREAD
-// LOCKS_CONV
 func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
-	glib.IdleAdd(func() bool {
-		conv.Lock()
-		defer conv.Unlock()
-
-		buff, _ := conv.history.GetBuffer()
-		if buff.GetCharCount() != 0 {
-			insertAtEnd(buff, "\n")
-		}
-		insertAtEnd(buff, "[")
-		insertAtEnd(buff, timestamp.Format(timeDisplay))
-		insertAtEnd(buff, "] ")
-		insertWithTag(buff, is(outgoing, "outgoingUser", "incomingUser"), from)
-		insertAtEnd(buff, ":  ")
-		insertWithTag(buff, is(outgoing, "outgoingText", "incomingText"), string(message))
-
-		return false
-	})
+	conv.appendToHistory(timestamp,
+		taggableText{
+			is(outgoing, "outgoingUser", "incomingUser"),
+			from,
+		},
+		taggableText{
+			text: ":  ",
+		},
+		taggableText{
+			is(outgoing, "outgoingText", "incomingText"),
+			string(message),
+		})
 }

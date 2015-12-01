@@ -505,7 +505,7 @@ func (u *gtkUI) connectAccount(account *account) {
 			glib.IdleAdd(u.alertTorIsNotRunning)
 		}
 
-		if err == xmpp.ErrConnectionFailed {
+		if err == xmpp.ErrTCPBindingFailed {
 			glib.IdleAdd(func() {
 				u.askForServerDetails(
 					account.session.CurrentAccount,

@@ -1,6 +1,7 @@
 package xmpp
 
 import (
+	"encoding/hex"
 	"io"
 	"io/ioutil"
 	"log"
@@ -174,7 +175,7 @@ func (s *TCPSuite) Test_newTCPConn_IgnoresConfiguredServerWhenFallingBackAfterSR
 	c.Check(p, MatchesExpectations)
 }
 
-func (s *TCPSuite) Test_newTCPConn_ErrorsWhenFallbackMethodFails(c *C) {
+func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingFails(c *C) {
 	p := &mockProxy{}
 	d := &Dialer{
 		JID: "foo@jabber.com",
@@ -197,7 +198,36 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenFallbackMethodFails(c *C) {
 	})
 
 	_, err := d.newTCPConn()
-	c.Check(err, Equals, ErrConnectionFailed)
+	c.Check(err, Equals, ErrTCPBindingFailed)
 
+	c.Check(p, MatchesExpectations)
+}
+
+func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFails(c *C) {
+	dec, _ := hex.DecodeString("00511eea818000010001000000000c5f786d70702d636c69656e74045f746370076f6c6162696e690273650000210001c00c0021000100000258001700000005146604786d7070076f6c6162696e6902736500")
+
+	p := &mockProxy{}
+	d := &Dialer{
+		JID: "foo@olabini.se",
+
+		Proxy: p,
+	}
+
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		c.Check(network, Equals, "tcp")
+		c.Check(addr, Equals, "208.67.222.222:53")
+
+		return fakeTCPConnToDNS(dec)
+	})
+
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		c.Check(network, Equals, "tcp")
+		c.Check(addr, Equals, "xmpp.olabini.se:5222")
+
+		return nil, io.EOF
+	})
+
+	_, err := d.newTCPConn()
+	c.Check(err, Equals, ErrConnectionFailed)
 	c.Check(p, MatchesExpectations)
 }

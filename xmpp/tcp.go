@@ -11,8 +11,11 @@ import (
 )
 
 var (
-	// ErrConnectionFailed indicates a failure to connect to the server provided.
+	//ErrConnectionFailed indicates a failure to connect to the server provided.
 	ErrConnectionFailed = errors.New("could not connect to XMPP server")
+
+	//ErrTCPBindingFailed indicates a failure to determine a server address for the given origin domain
+	ErrTCPBindingFailed = errors.New("failed to find a TCP address for XMPP server")
 )
 
 const defaultDialTimeout = 30 * time.Second
@@ -58,19 +61,24 @@ func (d *Dialer) newTCPConn() (net.Conn, error) {
 	//If the SRV has no response, we fallback to use
 	//the domain at default port
 	if len(xmppAddrs) == 0 {
+		err = ErrTCPBindingFailed
+
 		//TODO: in this case, a failure to connect might be recovered using HTTP binding
 		//See: RFC 6120, Section 3.2.2
 		xmppAddrs = []string{
 			net.JoinHostPort(d.getJIDDomainpart(), "5222"),
 		}
+	} else {
+		//The SRV lookup succeeded but we failed to connect
+		err = ErrConnectionFailed
 	}
 
-	conn, _, err := connectToFirstAvailable(xmppAddrs, d.Proxy)
-	if err != nil {
+	conn, _, e := connectToFirstAvailable(xmppAddrs, d.Proxy)
+	if e != nil {
 		return nil, err
 	}
 
-	return conn, err
+	return conn, nil
 }
 
 func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn, string, error) {
@@ -109,7 +117,7 @@ func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err erro
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution
 	conn, err = dialTimeout("tcp", addr, dialer, defaultDialTimeout)
 	if err != nil {
-		log.Printf("Failed to connect to %s: %s\n", addr, err)
+		log.Printf("tcp: failed to connect to %s: %s\n", addr, err)
 		return
 	}
 

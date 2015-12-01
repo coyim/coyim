@@ -13,6 +13,8 @@ var (
 	keepaliveTimeout  = 30 * time.Second
 )
 
+const logKeepAlives = false
+
 // Manage whitespace keepalives as specified in RFC 6120, section 4.6.1
 func (c *Conn) watchKeepAlive(conn net.Conn) {
 	tick := time.NewTicker(keepaliveInterval)
@@ -25,7 +27,9 @@ func (c *Conn) watchKeepAlive(conn net.Conn) {
 		}
 
 		if c.sendKeepalive() {
-			log.Println("xmpp: keepalive sent")
+			if logKeepAlives {
+				log.Println("xmpp: keepalive sent")
+			}
 			continue
 		}
 

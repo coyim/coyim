@@ -10,67 +10,87 @@ import (
 	"github.com/twstrike/otr3"
 )
 
-func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
-	//TODO: errors
-	dialog, _ := gtk.DialogNew()
-	defer dialog.Destroy()
-	dialog.SetTransientFor(parent)
-	dialog.SetTitle(fmt.Sprintf(i18n.Local("Verify fingerprint for %s"), uid))
-	dialog.SetPosition(gtk.WIN_POS_CENTER)
-	vbox, _ := dialog.GetContentArea()
-	vbox.SetBorderWidth(10)
+func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, theirFp []byte) *gtk.Dialog {
+	var message string
+	var builderName string
 
-	conversation := account.session.GetConversationWith(uid)
-	if conversation == nil || conversation.GetTheirKey() == nil {
-		pkey := account.session.PrivateKeys[0]
-		if conversation == nil {
-			conversation = otr3.NewConversationWithVersion(3)
-		} else {
-			pkey = conversation.GetOurCurrentKey()
-		}
-
-		message := fmt.Sprintf(i18n.Local(`
+	if theirFp == nil {
+		builderName = "VerifyFingerprintUnknown"
+		message = fmt.Sprintf(i18n.Local(`
 You can't verify the fingerprint for %s yet.
 You first have to start an encrypted conversation with them.
+`), uid)
 
-Fingerprint for you (%s):
-  %s
-	`), uid, account.session.CurrentAccount.Account, config.FormatFingerprint(conversation.DefaultFingerprintFor(pkey.PublicKey())))
-
-		l, _ := gtk.LabelNew(message)
-		vbox.Add(l)
-		dialog.AddButton(i18n.Local("OK"), gtk.RESPONSE_OK)
-		dialog.SetDefaultResponse(gtk.RESPONSE_OK)
-		dialog.ShowAll()
-		dialog.Run()
 	} else {
-		fpr := conversation.DefaultFingerprintFor(conversation.GetTheirKey())
-		message := fmt.Sprintf(i18n.Local(`
-Is this the correct fingerprint for %s?
+		m := i18n.Local(`
+Is this the correct fingerprint for %[1]s?
 
-Fingerprint for you (%s):
-  %s
+Fingerprint for you (%[3]s):
+  %[4]s
 
-Purported fingerprint for %s:
-  %s
-	`), uid, account.session.CurrentAccount.Account, config.FormatFingerprint(conversation.DefaultFingerprintFor(conversation.GetOurCurrentKey().PublicKey())), uid, config.FormatFingerprint(fpr))
+Purported fingerprint for %[1]s:
+  %[2]s
+	`)
 
-		l, _ := gtk.LabelNew(message)
-		vbox.Add(l)
-		dialog.AddButton(i18n.Local("Cancel"), gtk.RESPONSE_NO)
-		dialog.AddButton(i18n.Local("Verify"), gtk.RESPONSE_YES)
-		dialog.SetDefaultResponse(gtk.RESPONSE_NO)
+		message = fmt.Sprintf(m,
+			uid,
+			config.FormatFingerprint(theirFp),
+			accountName,
+			config.FormatFingerprint(ourFp),
+		)
 
-		dialog.ShowAll()
+		builderName = "VerifyFingerprint"
+	}
 
-		responseType := gtk.ResponseType(dialog.Run())
-		switch responseType {
-		case gtk.RESPONSE_YES:
-			account.ExecuteCmd(client.AuthorizeFingerprintCmd{
-				Account:     account.session.CurrentAccount,
-				Peer:        uid,
-				Fingerprint: fpr,
-			})
-		}
+	builder, err := loadBuilderWith(builderName)
+	if err != nil {
+		panic(err)
+	}
+
+	obj, _ := builder.GetObject("dialog")
+	dialog := obj.(*gtk.Dialog)
+
+	obj, _ = builder.GetObject("message")
+	l := obj.(*gtk.Label)
+	l.SetText(message)
+
+	dialog.SetTitle(fmt.Sprintf(i18n.Local("Verify fingerprint for %s"), uid))
+	return dialog
+}
+
+func getFingerprintsFor(conversation *otr3.Conversation) ([]byte, []byte) {
+	var ourFp, theirFp []byte
+	ourKey := conversation.GetOurCurrentKey()
+	if ourKey != nil {
+		ourFp = conversation.DefaultFingerprintFor(ourKey.PublicKey())
+	}
+
+	theirKey := conversation.GetTheirKey()
+	if theirKey != nil {
+		theirFp = conversation.DefaultFingerprintFor(theirKey)
+	}
+
+	return ourFp, theirFp
+}
+
+func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
+	accountConfig := account.session.CurrentAccount
+	conversation := account.session.GetConversationWith(uid)
+	ourFp, theirFp := getFingerprintsFor(conversation)
+
+	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, uid, theirFp)
+	defer dialog.Destroy()
+
+	dialog.SetTransientFor(parent)
+	dialog.ShowAll()
+
+	responseType := gtk.ResponseType(dialog.Run())
+	switch responseType {
+	case gtk.RESPONSE_YES:
+		account.ExecuteCmd(client.AuthorizeFingerprintCmd{
+			Account:     accountConfig,
+			Peer:        uid,
+			Fingerprint: theirFp,
+		})
 	}
 }

@@ -65,10 +65,10 @@ func (u *gtkUI) runImporter() {
 	builder, _ := loadBuilderWith("Importer")
 
 	win, _ := builder.GetObject("importerWindow")
-	w, _ := win.(*gtk.Dialog)
+	w := win.(*gtk.Dialog)
 
 	store, _ := builder.GetObject("importAccountsStore")
-	s, _ := store.(*gtk.ListStore)
+	s := store.(*gtk.ListStore)
 
 	for appName, v := range allImports {
 		for _, vv := range v {
@@ -82,7 +82,7 @@ func (u *gtkUI) runImporter() {
 	}
 
 	rend, _ := builder.GetObject("import-this-account-renderer")
-	rr, _ := rend.(*gtk.CellRendererToggle)
+	rr := rend.(*gtk.CellRendererToggle)
 
 	rr.Connect("toggled", func(_ interface{}, path string) {
 		iter, _ := s.GetIterFromString(path)

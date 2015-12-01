@@ -78,6 +78,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 	if err != nil {
 		return nil, err
 	}
+
 	win := obj.(*gtk.Window)
 	title := fmt.Sprintf("%s <-> %s", account.session.CurrentAccount.Account, uid)
 	win.SetTitle(title)

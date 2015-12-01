@@ -37,7 +37,7 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 	}
 
 	accountsObj, _ := builder.GetObject("accounts")
-	accountInput, _ := accountsObj.(*gtk.ComboBox)
+	accountInput := accountsObj.(*gtk.ComboBox)
 	accountInput.SetModel(&model.TreeModel)
 
 	accountObj, _ := builder.GetObject("address")

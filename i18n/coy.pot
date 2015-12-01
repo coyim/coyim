@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-26 14:23-0500\n"
+"POT-Creation-Date: 2015-12-01 14:42-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,6 +34,7 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:58 ../gui/definitions/Importer.xml:89
 #: ../gui/definitions/MasterPassword.xml:40
+#: ../gui/definitions/VerifyFingerprint.xml:19
 msgid "Cancel"
 msgstr ""
 
@@ -211,6 +212,7 @@ msgid ""
 msgstr ""
 
 #: ../gui/definitions/MasterPassword.xml:46
+#: ../gui/definitions/VerifyFingerprintUnknown.xml:19
 msgid "OK"
 msgstr ""
 
@@ -226,4 +228,8 @@ msgstr ""
 
 #: ../gui/definitions/TorNotRunning.xml:13
 msgid "Tor was not found running on your system. Make sure it is running."
+msgstr ""
+
+#: ../gui/definitions/VerifyFingerprint.xml:24
+msgid "Verify"
 msgstr ""

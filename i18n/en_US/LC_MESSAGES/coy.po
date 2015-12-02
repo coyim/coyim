@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 15:34+0100\n"
+"POT-Creation-Date: 2015-12-02 17:45-0500\n"
 "PO-Revision-Date: 2015-12-02 15:34+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -37,53 +37,6 @@ msgstr ""
 msgid "Connect _Automatically"
 msgstr ""
 
-#: ../gui/conversation.go:120
-#, python-format
-msgid "Failed to generate OTR message: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:131
-#, python-format
-msgid "Failed to start the encrypted chat: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:139
-#, python-format
-msgid "Failed to terminate the encrypted chat: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:244
-msgid "Available"
-msgstr ""
-
-#: ../gui/conversation.go:246
-msgid "Not Available"
-msgstr ""
-
-#: ../gui/conversation.go:248
-msgid "Away"
-msgstr ""
-
-#: ../gui/conversation.go:250
-msgid "Busy"
-msgstr ""
-
-#: ../gui/conversation.go:252
-msgid "Free for Chat"
-msgstr ""
-
-#: ../gui/conversation.go:254
-msgid "Invisible"
-msgstr ""
-
-#: ../gui/conversation.go:289
-msgid "Offline"
-msgstr ""
-
-#: ../gui/conversation.go:295
-msgid " is now "
-msgstr ""
-
 #: ../gui/accounts_menu.go:91
 msgid "Connect On _Startup"
 msgstr ""
@@ -100,8 +53,59 @@ msgstr ""
 msgid "_Import..."
 msgstr ""
 
-#: ../gui/ui.go:343
-msgid "Coy IM!"
+#: ../gui/config_assistant.go:132
+msgid "All right with SRV"
+msgstr ""
+
+#: ../gui/config_assistant.go:164
+msgid "All right with fallback"
+msgstr ""
+
+#: ../gui/conversation.go:125
+#, python-format
+msgid "Failed to generate OTR message: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:136
+#, python-format
+msgid "Failed to start the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:144
+#, python-format
+msgid "Failed to terminate the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:257
+msgid "Available"
+msgstr ""
+
+#: ../gui/conversation.go:259
+msgid "Not Available"
+msgstr ""
+
+#: ../gui/conversation.go:261
+msgid "Away"
+msgstr ""
+
+#: ../gui/conversation.go:263
+msgid "Busy"
+msgstr ""
+
+#: ../gui/conversation.go:265
+msgid "Free for Chat"
+msgstr ""
+
+#: ../gui/conversation.go:267
+msgid "Invisible"
+msgstr ""
+
+#: ../gui/conversation.go:302
+msgid "Offline"
+msgstr ""
+
+#: ../gui/conversation.go:308
+msgid " is now "
 msgstr ""
 
 #: ../gui/fingerprint_verification.go:20
@@ -121,12 +125,8 @@ msgstr ""
 msgid "%s wants to talk to you. Is that ok?"
 msgstr ""
 
-#: ../gui/config_assistant.go:132
-msgid "All right with SRV"
-msgstr ""
-
-#: ../gui/config_assistant.go:164
-msgid "All right with fallback"
+#: ../gui/ui.go:343
+msgid "Coy IM!"
 msgstr ""
 
 #~ msgid "Account Details"
@@ -228,14 +228,14 @@ msgstr ""
 #~ msgid "Remove"
 #~ msgstr "Remove"
 
+#~ msgid "Ask contact to see their status"
+#~ msgstr "Ask contact to see their status"
+
 #~ msgid "Allow contact to see my status"
 #~ msgstr "Allow contact to see my status"
 
 #~ msgid "Forbid contact to see my status"
 #~ msgstr "Forbid contact to see my status"
-
-#~ msgid "Ask contact to see their status"
-#~ msgstr "Ask contact to see their status"
 
 #~ msgid "Dump info"
 #~ msgstr "Dump info"

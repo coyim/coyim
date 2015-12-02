@@ -1,6 +1,6 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the coy package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 15:34+0100\n"
+"POT-Creation-Date: 2015-12-02 17:45-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,13 +32,13 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:58 ../gui/definitions/Importer.xml:89
-#: ../gui/definitions/MasterPassword.xml:40
-#: ../gui/definitions/VerifyFingerprint.xml:19
+#: ../gui/definitions/AccountDetails.xml:59 ../gui/definitions/Importer.xml:91
+#: ../gui/definitions/MasterPassword.xml:43
+#: ../gui/definitions/VerifyFingerprint.xml:18
 msgid "Cancel"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:64
+#: ../gui/definitions/AccountDetails.xml:65
 msgid "Save"
 msgstr ""
 
@@ -63,7 +63,7 @@ msgstr ""
 msgid "Enter your password"
 msgstr ""
 
-#: ../gui/definitions/AskForPassword.xml:66
+#: ../gui/definitions/AskForPassword.xml:67
 #: ../gui/definitions/ConnectionSettings.xml:53
 msgid "Connect"
 msgstr ""
@@ -144,35 +144,35 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: ../gui/definitions/ContactPopupMenu.xml:11
-msgid "Allow contact to see my status"
-msgstr ""
-
-#: ../gui/definitions/ContactPopupMenu.xml:17
-msgid "Forbid contact to see my status"
-msgstr ""
-
-#: ../gui/definitions/ContactPopupMenu.xml:23
+#: ../gui/definitions/ContactPopupMenu.xml:14
 msgid "Ask contact to see their status"
 msgstr ""
 
-#: ../gui/definitions/ContactPopupMenu.xml:29
+#: ../gui/definitions/ContactPopupMenu.xml:20
+msgid "Allow contact to see my status"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:26
+msgid "Forbid contact to see my status"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:35
 msgid "Dump info"
 msgstr ""
 
-#: ../gui/definitions/Conversation.xml:14
+#: ../gui/definitions/Conversation.xml:16
 msgid "Developer options"
 msgstr ""
 
-#: ../gui/definitions/Conversation.xml:19
+#: ../gui/definitions/Conversation.xml:21
 msgid "Start encrypted chat"
 msgstr ""
 
-#: ../gui/definitions/Conversation.xml:25
+#: ../gui/definitions/Conversation.xml:27
 msgid "End encrypted chat"
 msgstr ""
 
-#: ../gui/definitions/Conversation.xml:31
+#: ../gui/definitions/Conversation.xml:33
 msgid "Verify fingerprint"
 msgstr ""
 
@@ -197,7 +197,7 @@ msgstr ""
 msgid "Account name"
 msgstr ""
 
-#: ../gui/definitions/Importer.xml:94
+#: ../gui/definitions/Importer.xml:96
 msgid "Import"
 msgstr ""
 
@@ -243,7 +243,7 @@ msgid ""
 "asked for this password again until you restart CoyIM."
 msgstr ""
 
-#: ../gui/definitions/MasterPassword.xml:46
+#: ../gui/definitions/MasterPassword.xml:49
 #: ../gui/definitions/VerifyFingerprintUnknown.xml:19
 msgid "OK"
 msgstr ""
@@ -262,6 +262,6 @@ msgstr ""
 msgid "Tor was not found running on your system. Make sure it is running."
 msgstr ""
 
-#: ../gui/definitions/VerifyFingerprint.xml:24
+#: ../gui/definitions/VerifyFingerprint.xml:23
 msgid "Verify"
 msgstr ""

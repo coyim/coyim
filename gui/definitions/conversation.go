@@ -14,6 +14,8 @@ func (*defConversation) String() string {
     <property name="default-height">500</property>
     <property name="default-width">400</property>
     <property name="destroy-with-parent">true</property>
+    <signal name="enable" handler="on_connect" />
+    <signal name="disable" handler="on_disconnect" />
     <child>
       <object class="GtkVBox" id="box">
         <property name="homogeneous">false</property>

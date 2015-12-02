@@ -78,7 +78,10 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 
 	switch ev.Type {
 	case session.Connected:
+		u.roster.enableExistingConversationWindows(account, true)
 	case session.Disconnected:
+		u.roster.enableExistingConversationWindows(account, false)
+
 		for _, acc := range u.accounts {
 			if acc.session.ConnStatus == session.CONNECTED {
 				return

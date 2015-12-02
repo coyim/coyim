@@ -12,6 +12,11 @@ import (
 	"github.com/twstrike/coyim/ui"
 )
 
+var (
+	enableWindow, _  = glib.SignalNew("enable")
+	disableWindow, _ = glib.SignalNew("disable")
+)
+
 type conversationWindow struct {
 	to            string
 	account       *account
@@ -141,6 +146,14 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 		},
 		"on_verify_fp_signal": func() {
 			verifyFingerprintDialog(conv.account, conv.to, conv.win)
+		},
+		"on_connect": func() {
+			entry.SetEditable(true)
+			entry.SetSensitive(true)
+		},
+		"on_disconnect": func() {
+			entry.SetEditable(false)
+			entry.SetSensitive(false)
 		},
 	})
 

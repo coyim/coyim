@@ -68,7 +68,7 @@ func (*defRoster) String() string {
       <object class="GtkScrolledWindow" id="roster-page">
         <property name="hscrollbar-policy">GTK_POLICY_NEVER</property>
         <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
-        
+
         <child>
           <object class="GtkTreeView" id="roster-view">
             <property name="model">roster-model</property>

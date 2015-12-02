@@ -7,10 +7,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/xmpp"
 )
 
 type contacts struct {
@@ -89,6 +91,9 @@ func (u *gtkUI) newRoster() *roster {
 
 	u.displaySettings.update()
 
+	// TODO: change to ConnectAfter once that pull request is merged
+	r.view.Connect("button-press-event", r.onButtonPress)
+
 	return r
 }
 
@@ -133,6 +138,85 @@ func getFromModelIter(m *gtk.TreeStore, iter *gtk.TreeIter, index int) string {
 	val, _ := m.GetValue(iter, index)
 	v, _ := val.GetString()
 	return v
+}
+
+func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, account *account, ok bool) {
+	x := bt.X()
+	y := bt.Y()
+	path := new(gtk.TreePath)
+	found := r.view.GetPathAtPos(int(x), int(y), path, nil, nil, nil)
+	if !found {
+		return "", nil, false
+	}
+	iter, err := r.model.GetIter(path)
+	if err != nil {
+		return "", nil, false
+	}
+	jid = getFromModelIter(r.model, iter, indexJid)
+	accountID := getFromModelIter(r.model, iter, indexAccountID)
+	if accountID != accountIDTopLevelMarker {
+		account, ok = r.getAccount(accountID)
+		return jid, account, ok
+	}
+
+	return "", nil, false
+}
+
+func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventButton) {
+	builder, err := loadBuilderWith("ContactPopupMenu")
+	if err != nil {
+		// TODO: print error
+		return
+	}
+
+	obj, err := builder.GetObject("contactMenu")
+	if err != nil {
+		// TODO: print error
+		return
+	}
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_remove_contact": func() {
+			account.session.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+				Item: xmpp.RosterRequestItem{
+					Jid:          jid,
+					Subscription: "remove",
+				},
+			})
+			r.contacts.Lock()
+			r.contacts.m[account].Remove(jid)
+			r.contacts.Unlock()
+			r.redraw()
+		},
+		"on_allow_contact_to_see_status": func() {
+			account.session.Conn.SendPresence(jid, "subscribed", "" /* generate id */)
+		},
+		"on_forbid_contact_to_see_status": func() {
+			account.session.Conn.SendPresence(jid, "unsubscribed", "" /* generate id */)
+		},
+		"on_ask_contact_to_see_status": func() {
+			account.session.Conn.SendPresence(jid, "subscribe", "" /* generate id */)
+		},
+		"on_dump_info": func() {
+			r.debugPrintRosterFor(account.session.CurrentAccount.Account)
+		},
+	})
+
+	mn := obj.(*gtk.Menu)
+	mn.ShowAll()
+	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
+}
+
+func (r *roster) onButtonPress(view *gtk.TreeView, ev *gdk.Event) bool {
+	bt := &gdk.EventButton{ev}
+	if bt.Button() == 0x03 {
+		jid, account, ok := r.getAccountAndJidFromEvent(bt)
+		if ok {
+			r.createAccountPopup(jid, account, bt)
+		}
+	}
+
+	return false
 }
 
 func (r *roster) onActivateBuddy(v *gtk.TreeView, path *gtk.TreePath) {

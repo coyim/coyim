@@ -1,4 +1,5 @@
-# Portuguese translations for coy package.
+# Portuguese translations for coy package
+# Traduções em português brasileiro para o pacote coy.
 # Copyright (C) 2015 THE coy'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the coy package.
 # Automatically generated, 2015.
@@ -7,13 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-01 15:43-0500\n"
-"PO-Revision-Date: 2015-11-20 09:40-0500\n"
+"POT-Creation-Date: 2015-12-02 15:34+0100\n"
+"PO-Revision-Date: 2015-12-02 15:34+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
@@ -37,6 +38,53 @@ msgstr ""
 msgid "Connect _Automatically"
 msgstr ""
 
+#: ../gui/conversation.go:120
+#, python-format
+msgid "Failed to generate OTR message: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:131
+#, python-format
+msgid "Failed to start the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:139
+#, python-format
+msgid "Failed to terminate the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:244
+msgid "Available"
+msgstr ""
+
+#: ../gui/conversation.go:246
+msgid "Not Available"
+msgstr ""
+
+#: ../gui/conversation.go:248
+msgid "Away"
+msgstr ""
+
+#: ../gui/conversation.go:250
+msgid "Busy"
+msgstr ""
+
+#: ../gui/conversation.go:252
+msgid "Free for Chat"
+msgstr ""
+
+#: ../gui/conversation.go:254
+msgid "Invisible"
+msgstr ""
+
+#: ../gui/conversation.go:289
+msgid "Offline"
+msgstr ""
+
+#: ../gui/conversation.go:295
+msgid " is now "
+msgstr ""
+
 #: ../gui/accounts_menu.go:91
 msgid "Connect On _Startup"
 msgstr ""
@@ -53,59 +101,8 @@ msgstr ""
 msgid "_Import..."
 msgstr ""
 
-#: ../gui/config_assistant.go:132
-msgid "All right with SRV"
-msgstr ""
-
-#: ../gui/config_assistant.go:164
-msgid "All right with fallback"
-msgstr ""
-
-#: ../gui/conversation.go:119
-#, python-format
-msgid "Failed to generate OTR message: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:130
-#, python-format
-msgid "Failed to start the encrypted chat: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:138
-#, python-format
-msgid "Failed to terminate the encrypted chat: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:243
-msgid "Available"
-msgstr ""
-
-#: ../gui/conversation.go:245
-msgid "Not Available"
-msgstr ""
-
-#: ../gui/conversation.go:247
-msgid "Away"
-msgstr ""
-
-#: ../gui/conversation.go:249
-msgid "Busy"
-msgstr ""
-
-#: ../gui/conversation.go:251
-msgid "Free for Chat"
-msgstr ""
-
-#: ../gui/conversation.go:253
-msgid "Invisible"
-msgstr ""
-
-#: ../gui/conversation.go:288
-msgid "Offline"
-msgstr ""
-
-#: ../gui/conversation.go:294
-msgid " is now "
+#: ../gui/ui.go:343
+msgid "Coy IM!"
 msgstr ""
 
 #: ../gui/fingerprint_verification.go:20
@@ -120,18 +117,15 @@ msgstr ""
 msgid "Verify fingerprint for %s"
 msgstr ""
 
-#: ../gui/subscription.go:15
+#: ../gui/subscription.go:20
 #, python-format
 msgid "%s wants to talk to you. Is that ok?"
 msgstr ""
 
-#: ../gui/subscription.go:17
-msgid "Subscription request"
+#: ../gui/config_assistant.go:132
+msgid "All right with SRV"
 msgstr ""
 
-#: ../gui/ui.go:343
-msgid "Coy IM!"
+#: ../gui/config_assistant.go:164
+msgid "All right with fallback"
 msgstr ""
-
-#~ msgid "Show Offline Contacts"
-#~ msgstr "Exibir contatos offline"

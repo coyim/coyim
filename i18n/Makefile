@@ -15,7 +15,8 @@ TEMPLATE_CODE=$(DOMAIN)-code.pot
 
 TRANSLATIONS=\
 	en_US/LC_MESSAGES/$(DOMAIN).mo \
-	pt_BR/LC_MESSAGES/$(DOMAIN).mo
+	pt_BR/LC_MESSAGES/$(DOMAIN).mo \
+	sv_SE/LC_MESSAGES/$(DOMAIN).mo
 
 gettext: $(TEMPLATE_UI) $(TEMPLATE_CODE) $(TRANSLATIONS)
 
@@ -41,4 +42,3 @@ clean:
 
 # We need this to prevent make from removing the intermediate .po
 .PRECIOUS: %.po
-

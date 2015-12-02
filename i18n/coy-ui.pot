@@ -1,6 +1,6 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the coy package.
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-01 14:42-0500\n"
+"POT-Creation-Date: 2015-12-02 15:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,6 +80,10 @@ msgid ""
 "password when CoyIM starts."
 msgstr ""
 
+#: ../gui/definitions/AuthorizeSubscription.xml:3
+msgid "Subscription request"
+msgstr ""
+
 #: ../gui/definitions/ConfigAssistant.xml:13
 msgid "Configuration Assistant"
 msgstr ""
@@ -116,6 +120,14 @@ msgstr ""
 msgid "Click \"Apply\" to accept this configuration."
 msgstr ""
 
+#: ../gui/definitions/ConfirmAccountRemoval.xml:3
+msgid "Confirm account removal"
+msgstr ""
+
+#: ../gui/definitions/ConfirmAccountRemoval.xml:4
+msgid "Are you sure to remove?"
+msgstr ""
+
 #: ../gui/definitions/ConnectionSettings.xml:5
 msgid "Could not connect to account"
 msgstr ""
@@ -126,6 +138,26 @@ msgstr ""
 
 #: ../gui/definitions/ConnectionSettings.xml:33
 msgid "Port"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:5
+msgid "Remove"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:11
+msgid "Allow contact to see my status"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:17
+msgid "Forbid contact to see my status"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:23
+msgid "Ask contact to see their status"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:29
+msgid "Dump info"
 msgstr ""
 
 #: ../gui/definitions/Conversation.xml:14

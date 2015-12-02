@@ -28,10 +28,10 @@ func (*defImporter) String() string {
         <property name="homogeneous">false</property>
         <child>
           <object class="GtkLabel" id="label">
-	        <property name="label" translatable="yes">Choose the accounts you would like to import and start using from CoyIM.</property>
+            <property name="label" translatable="yes">Choose the accounts you would like to import and start using from CoyIM.</property>
             <property name="wrap">true</property>
             <property name="wrap-mode">PANGO_WRAP_WORD_CHAR</property>
-	      </object>
+          </object>
           <packing>
             <property name="expand">false</property>
             <property name="fill">true</property>
@@ -92,17 +92,23 @@ func (*defImporter) String() string {
             <property name="position">1</property>
           </packing>
         </child>
-      </object>
-    </child>
-    <child type="action">
-      <object class="GtkButton" id="button_cancel">
-        <property name="label" translatable="yes">Cancel</property>
-      </object>
-    </child>
-    <child type="action">
-      <object class="GtkButton" id="button_ok">
-        <property name="label" translatable="yes">Import</property>
-        <property name="can-default">true</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="button_box">
+            <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+            <property name="margin-top">10</property>
+            <child>
+              <object class="GtkButton" id="button_cancel">
+                <property name="label" translatable="yes">Cancel</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_ok">
+                <property name="label" translatable="yes">Import</property>
+                <property name="can-default">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
     <action-widgets>

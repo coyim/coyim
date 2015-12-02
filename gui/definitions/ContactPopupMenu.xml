@@ -7,6 +7,15 @@
       </object>
     </child>
     <child>
+      <object class="GtkSeparatorMenuItem" id="sep1"/>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="askContactToSeeStatusMenuItem">
+        <property name="label" translatable="yes">Ask contact to see their status</property>
+        <signal name="activate" handler="on_ask_contact_to_see_status" />
+      </object>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="allowContactToSeeStatusMenuItem">
         <property name="label" translatable="yes">Allow contact to see my status</property>
         <signal name="activate" handler="on_allow_contact_to_see_status" />
@@ -19,10 +28,7 @@
       </object>
     </child>
     <child>
-      <object class="GtkMenuItem" id="askContactToSeeStatusMenuItem">
-        <property name="label" translatable="yes">Ask contact to see their status</property>
-        <signal name="activate" handler="on_ask_contact_to_see_status" />
-      </object>
+      <object class="GtkSeparatorMenuItem" id="sep2"/>
     </child>
     <child>
       <object class="GtkMenuItem" id="dumpInfoMenuItem">

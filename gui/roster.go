@@ -91,7 +91,6 @@ func (u *gtkUI) newRoster() *roster {
 
 	u.displaySettings.update()
 
-	// TODO: change to ConnectAfter once that pull request is merged
 	r.view.Connect("button-press-event", r.onButtonPress)
 
 	return r

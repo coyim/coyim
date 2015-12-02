@@ -22,36 +22,38 @@ type applicationAndAccount struct {
 
 func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potential map[string][]*config.ApplicationConfig) {
 	for k, v := range choices {
-		if v {
-			for _, accs := range potential[k.app] {
-				for _, a := range accs.Accounts {
-					if a.Account == k.acc {
-						log.Printf("[import] Doing import of %s from %s", k.acc, k.app)
-						accountToImport := a
-						u.config.WhenLoaded(func(conf *config.ApplicationConfig) {
-							_, exists := conf.GetAccount(k.acc)
-							if exists {
-								// TODO: view message
-								log.Printf("[import] Can't import account %s since you already have an account configured with the same name. Remove that account and import again if you really want to overwrite it.", k.acc)
-								return
-							}
+		if !v {
+			continue
+		}
 
-							if conf.RawLogFile == "" {
-								conf.RawLogFile = accs.RawLogFile
-							}
-							if len(conf.NotifyCommand) == 0 {
-								conf.NotifyCommand = accs.NotifyCommand
-							}
-							if conf.IdleSecondsBeforeNotification == 0 {
-								conf.IdleSecondsBeforeNotification = accs.IdleSecondsBeforeNotification
-							}
-							if !conf.Bell {
-								conf.Bell = accs.Bell
-							}
+		for _, accs := range potential[k.app] {
+			for _, a := range accs.Accounts {
+				if a.Account == k.acc {
+					log.Printf("[import] Doing import of %s from %s", k.acc, k.app)
+					accountToImport := a
+					u.config.WhenLoaded(func(conf *config.ApplicationConfig) {
+						_, exists := conf.GetAccount(k.acc)
+						if exists {
+							// TODO: view message
+							log.Printf("[import] Can't import account %s since you already have an account configured with the same name. Remove that account and import again if you really want to overwrite it.", k.acc)
+							return
+						}
 
-							u.addAndSaveAccountConfig(accountToImport)
-						})
-					}
+						if conf.RawLogFile == "" {
+							conf.RawLogFile = accs.RawLogFile
+						}
+						if len(conf.NotifyCommand) == 0 {
+							conf.NotifyCommand = accs.NotifyCommand
+						}
+						if conf.IdleSecondsBeforeNotification == 0 {
+							conf.IdleSecondsBeforeNotification = accs.IdleSecondsBeforeNotification
+						}
+						if !conf.Bell {
+							conf.Bell = accs.Bell
+						}
+
+						u.addAndSaveAccountConfig(accountToImport)
+					})
 				}
 			}
 		}

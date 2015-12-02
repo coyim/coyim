@@ -2,6 +2,7 @@ package importer
 
 import (
 	"bufio"
+	"encoding/hex"
 	"io/ioutil"
 	"os"
 	"path"
@@ -65,13 +66,20 @@ func (g *gajimImporter) importFingerprintsFrom(f string) (string, []*config.Know
 	for sc.Scan() {
 		ln := strings.Split(sc.Text(), "\t")
 		name = ln[1]
-		if ln[2] == "xmpp" {
-			result = append(result, &config.KnownFingerprint{
-				UserID:         ln[0],
-				FingerprintHex: ln[3],
-				Untrusted:      len(ln) < 5 || ln[4] != "verified",
-			})
+		if ln[2] != "xmpp" {
+			continue
 		}
+
+		fp, err := hex.DecodeString(ln[3])
+		if err != nil {
+			continue
+		}
+
+		result = append(result, &config.KnownFingerprint{
+			UserID:      ln[0],
+			Fingerprint: fp,
+			Untrusted:   len(ln) < 5 || ln[4] != "verified",
+		})
 
 	}
 	return name, result, true

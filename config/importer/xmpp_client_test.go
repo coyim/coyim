@@ -1,6 +1,7 @@
 package importer
 
 import (
+	"encoding/hex"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -11,6 +12,11 @@ func Test(t *testing.T) { TestingT(t) }
 type XmppClientXmppSuite struct{}
 
 var _ = Suite(&XmppClientXmppSuite{})
+
+func decode(in string) []byte {
+	ret, _ := hex.DecodeString(in)
+	return ret
+}
 
 func (s *XmppClientXmppSuite) Test_XmppClient_canImportXmppClientConfiguration(c *C) {
 	importer := xmppClientImporter{}
@@ -37,16 +43,16 @@ func (s *XmppClientXmppSuite) Test_XmppClient_canImportXmppClientConfiguration(c
 
 	c.Assert(len(res.Accounts[0].KnownFingerprints), Equals, 4)
 	c.Assert(res.Accounts[0].KnownFingerprints[0].UserID, Equals, "arnold@jabber.ccc.de")
-	c.Assert(res.Accounts[0].KnownFingerprints[0].FingerprintHex, Equals, "c2a23b8e8852bff5335b39b674ceec13228be0af")
+	c.Assert(res.Accounts[0].KnownFingerprints[0].Fingerprint, DeepEquals, decode("c2a23b8e8852bff5335b39b674ceec13228be0af"))
 	c.Assert(res.Accounts[0].KnownFingerprints[0].Untrusted, Equals, false)
 	c.Assert(res.Accounts[0].KnownFingerprints[1].UserID, Equals, "some@one.com")
-	c.Assert(res.Accounts[0].KnownFingerprints[1].FingerprintHex, Equals, "410aad3ce865b83ed564b2e1ce52882b07b00976")
+	c.Assert(res.Accounts[0].KnownFingerprints[1].Fingerprint, DeepEquals, decode("410aad3ce865b83ed564b2e1ce52882b07b00976"))
 	c.Assert(res.Accounts[0].KnownFingerprints[1].Untrusted, Equals, false)
 	c.Assert(res.Accounts[0].KnownFingerprints[2].UserID, Equals, "hello@riseup.net")
-	c.Assert(res.Accounts[0].KnownFingerprints[2].FingerprintHex, Equals, "50ae9522641401e1a58de568fc4b265493d451b4")
+	c.Assert(res.Accounts[0].KnownFingerprints[2].Fingerprint, DeepEquals, decode("50ae9522641401e1a58de568fc4b265493d451b4"))
 	c.Assert(res.Accounts[0].KnownFingerprints[2].Untrusted, Equals, false)
 	c.Assert(res.Accounts[0].KnownFingerprints[3].UserID, Equals, "second.hello@riseup.net")
-	c.Assert(res.Accounts[0].KnownFingerprints[3].FingerprintHex, Equals, "4da542fdd60e077b38b05aa3485916d5d7c958aa")
+	c.Assert(res.Accounts[0].KnownFingerprints[3].Fingerprint, DeepEquals, decode("4da542fdd60e077b38b05aa3485916d5d7c958aa"))
 	c.Assert(res.Accounts[0].KnownFingerprints[3].Untrusted, Equals, false)
 
 	c.Assert(res.Bell, Equals, true)

@@ -2,6 +2,7 @@ package importer
 
 import (
 	"bufio"
+	"encoding/hex"
 	"encoding/xml"
 	"io/ioutil"
 	"os"
@@ -52,10 +53,16 @@ func importFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bo
 			if !ok {
 				vv = make([]*config.KnownFingerprint, 0, 1)
 			}
+
+			fp, err := hex.DecodeString(ln[3])
+			if err != nil {
+				continue
+			}
+
 			result[name] = append(vv, &config.KnownFingerprint{
-				UserID:         ln[0],
-				FingerprintHex: ln[3],
-				Untrusted:      len(ln) < 5 || ln[4] != "verified",
+				UserID:      ln[0],
+				Fingerprint: fp,
+				Untrusted:   len(ln) < 5 || ln[4] != "verified",
 			})
 		}
 

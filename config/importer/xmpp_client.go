@@ -1,6 +1,7 @@
 package importer
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"io/ioutil"
 
@@ -67,11 +68,17 @@ func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bo
 	ac.PrivateKeys = [][]byte{c.PrivateKey}
 	ac.AlwaysEncryptWith = c.AlwaysEncryptWith
 	ac.KnownFingerprints = make([]config.KnownFingerprint, len(c.KnownFingerprints))
+
 	for ix, kf := range c.KnownFingerprints {
+		fp, err := hex.DecodeString(kf.FingerprintHex)
+		if err != nil {
+			continue
+		}
+
 		ac.KnownFingerprints[ix] = config.KnownFingerprint{
-			UserID:         kf.UserID,
-			FingerprintHex: kf.FingerprintHex,
-			Untrusted:      false,
+			UserID:      kf.UserID,
+			Fingerprint: fp,
+			Untrusted:   false,
 		}
 	}
 

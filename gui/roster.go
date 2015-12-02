@@ -188,13 +188,13 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 			r.redraw()
 		},
 		"on_allow_contact_to_see_status": func() {
-			account.session.Conn.SendPresence(jid, "subscribed", "" /* generate id */)
+			account.session.ApprovePresenceSubscription(jid, "" /* generate id */)
 		},
 		"on_forbid_contact_to_see_status": func() {
-			account.session.Conn.SendPresence(jid, "unsubscribed", "" /* generate id */)
+			account.session.DenyPresenceSubscription(jid, "" /* generate id */)
 		},
 		"on_ask_contact_to_see_status": func() {
-			account.session.Conn.SendPresence(jid, "subscribe", "" /* generate id */)
+			account.session.RequestPresenceSubscription(jid)
 		},
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.CurrentAccount.Account)

@@ -365,12 +365,22 @@ func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 		s.warn("No pending subscription from " + jid)
 		return
 	}
-	typ := "unsubscribed"
-	if isConfirm {
-		typ = "subscribed"
+
+	var err error
+	switch isConfirm {
+	case true:
+		err = s.ApprovePresenceSubscription(jid, id)
+	default:
+		err = s.DenyPresenceSubscription(jid, id)
 	}
-	if err := s.Conn.SendPresence(jid, typ, id); err != nil {
+
+	if err != nil {
 		s.warn("Error sending presence stanza: " + err.Error())
+		return
+	}
+
+	if isConfirm {
+		s.RequestPresenceSubscription(jid)
 	}
 }
 

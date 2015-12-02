@@ -891,7 +891,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	c.Assert(inMap, Equals, false)
 }
 
-func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowed(c *C) {
+func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -915,7 +915,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowed(c *C) {
 	sess.HandleConfirmOrDeny("foo@bar.com", true)
 
 	c.Assert(called, Equals, 0)
-	c.Assert(string(mockIn.write), Equals, "<presence id='123' to='foo@bar.com' type='subscribed'/>")
+	c.Assert(string(mockIn.write), Matches, "<presence id='123' to='foo@bar.com' type='subscribed'/><presence id='[0-9]+' to='foo@bar.com' type='subscribe'/>")
 	_, inMap := sess.R.GetPendingSubscribe("foo@bar.com")
 	c.Assert(inMap, Equals, false)
 }

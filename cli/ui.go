@@ -678,7 +678,7 @@ CommandLoop:
 			case denyCommand:
 				s.HandleConfirmOrDeny(cmd.User, false /* deny */)
 			case addCommand:
-				s.Conn.SendPresence(cmd.User, "subscribe", "" /* generate id */)
+				s.RequestPresenceSubscription(cmd.User)
 			case msgCommand:
 				conversation, ok := s.Conversations[cmd.to]
 

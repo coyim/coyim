@@ -400,7 +400,7 @@ func (u *gtkUI) addContactWindow() {
 			return errors.New("Cant send a contact request from an offline account")
 		}
 
-		return account.session.Conn.SendPresence(peer, "subscribe", "" /* generate id */)
+		return account.session.RequestPresenceSubscription(peer)
 	})
 
 	dialog.SetTransientFor(u.window)

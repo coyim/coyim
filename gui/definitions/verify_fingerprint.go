@@ -22,7 +22,6 @@ func (*defVerifyFingerprint) String() string {
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-
             <child>
               <object class="GtkButton" id="button_cancel">
                 <property name="can-default">true</property>
@@ -35,7 +34,6 @@ func (*defVerifyFingerprint) String() string {
               </object>
             </child>
           </object>
-
         </child>
       </object>
     </child>

@@ -1,6 +1,10 @@
 package roster
 
-import "github.com/twstrike/coyim/xmpp"
+import (
+	"fmt"
+
+	"github.com/twstrike/coyim/xmpp"
+)
 
 // Peer represents and contains all the information you have about a specific peer.
 // A Peer is always part of at least one roster.List, which is associated with an account.
@@ -34,6 +38,11 @@ func fromSet(vs map[string]bool) []string {
 		}
 	}
 	return m
+}
+
+// Dump will dump all info in the peer in a very verbose format
+func (p *Peer) Dump() string {
+	return fmt.Sprintf("Peer{%s[%s], subscription='%s', status='%s'('%s') online=%v, asked=%v, pendingSubscribe='%s', belongsTo='%s'}", p.Jid, p.Name, p.Subscription, p.Status, p.StatusMsg, p.Online, p.Asked, p.PendingSubscribeID, p.BelongsTo)
 }
 
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given

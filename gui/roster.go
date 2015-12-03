@@ -327,7 +327,7 @@ func (r *roster) debugPrintRosterFor(nm string) {
 	for account, rs := range r.contacts.m {
 		if account.session.CurrentAccount.Is(nm) {
 			rs.Iter(func(_ int, item *rosters.Peer) {
-				fmt.Printf("->   #%v\n", item)
+				fmt.Printf("->   %s\n", item.Dump())
 			})
 		}
 	}

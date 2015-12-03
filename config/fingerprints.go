@@ -3,17 +3,53 @@ package config
 import (
 	"bytes"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/twstrike/coyim/i18n"
 )
 
 // KnownFingerprint represents one fingerprint
 type KnownFingerprint struct {
-	UserID         string
-	FingerprintHex string
-	Fingerprint    []byte `json:"-"`
-	Untrusted      bool
+	UserID      string
+	Fingerprint []byte
+	Untrusted   bool
+}
+
+func (k KnownFingerprint) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		UserID         string
+		FingerprintHex string
+		Untrusted      bool
+	}{
+		UserID:         k.UserID,
+		FingerprintHex: hex.EncodeToString(k.Fingerprint),
+		Untrusted:      k.Untrusted,
+	})
+}
+
+func (k *KnownFingerprint) UnmarshalJSON(data []byte) error {
+	v := struct {
+		UserID         string
+		FingerprintHex string
+		Untrusted      bool
+	}{}
+
+	err := json.Unmarshal(data, &v)
+	if err != nil {
+		return err
+	}
+
+	k.Fingerprint, err = hex.DecodeString(v.FingerprintHex)
+	if err != nil {
+		return nil
+	}
+
+	k.UserID = v.UserID
+	k.Untrusted = v.Untrusted
+
+	return nil
 }
 
 // ByNaturalOrder sorts fingerprints according to first the user ID and then the fingerprint
@@ -21,31 +57,17 @@ type ByNaturalOrder []*KnownFingerprint
 
 func (s ByNaturalOrder) Len() int { return len(s) }
 func (s ByNaturalOrder) Less(i, j int) bool {
-	if s[i].UserID == s[j].UserID {
-		return s[i].FingerprintHex < s[j].FingerprintHex
+	switch strings.Compare(s[i].UserID, s[j].UserID) {
+	case 0:
+		return bytes.Compare(s[i].Fingerprint, s[j].Fingerprint) == -1
+	case -1:
+		return true
 	}
-	return s[i].UserID < s[j].UserID
+
+	return false
 }
 
 func (s ByNaturalOrder) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
-
-func parseFingerprints(a *Account) error {
-	var err error
-	for i, known := range a.KnownFingerprints {
-		a.KnownFingerprints[i].Fingerprint, err = hex.DecodeString(known.FingerprintHex)
-		if err != nil {
-			return errors.New("xmpp: failed to parse hex fingerprint for " + known.UserID + ": " + err.Error())
-		}
-	}
-
-	return nil
-}
-
-func (a *Account) serializeFingerprints() {
-	for i, known := range a.KnownFingerprints {
-		a.KnownFingerprints[i].FingerprintHex = hex.EncodeToString(known.Fingerprint)
-	}
-}
 
 // UserIDForVerifiedFingerprint returns the user ID for the given verified fingerprint
 func (a *Account) UserIDForVerifiedFingerprint(fpr []byte) string {

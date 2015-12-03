@@ -98,10 +98,6 @@ func (a *ApplicationConfig) tryLoad(ks KeySupplier) error {
 		return errInvalidConfigFile
 	}
 
-	for _, c := range a.Accounts {
-		parseFingerprints(c)
-	}
-
 	a.accountLoaded()
 
 	return nil
@@ -176,10 +172,6 @@ func (a *ApplicationConfig) Save(ks KeySupplier) error {
 }
 
 func (a *ApplicationConfig) serialize() ([]byte, error) {
-	for _, account := range a.Accounts {
-		account.serializeFingerprints()
-	}
-
 	return json.MarshalIndent(a, "", "\t")
 }
 

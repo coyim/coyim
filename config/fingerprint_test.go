@@ -1,6 +1,11 @@
 package config
 
-import . "gopkg.in/check.v1"
+import (
+	"encoding/hex"
+	"encoding/json"
+
+	. "gopkg.in/check.v1"
+)
 
 type FingerprintXmppSuite struct{}
 
@@ -12,4 +17,29 @@ func (s *FingerprintXmppSuite) Test_formatFingerprint(c *C) {
 	res := FormatFingerprint(testVal)
 
 	c.Assert(res, Equals, "5DFC9E41 6BF783EA 1490B816 9B866821 B52EBBB7")
+}
+
+func (s *FingerprintXmppSuite) Test_SerializeAndDeserialize(c *C) {
+	var jsonBlob = []byte(`{
+	"UserID": "user@coy.im",
+	"FingerprintHex": "a0cbc473380411c659e87088031035ed464c9270",
+	"Untrusted": true
+}`)
+
+	fp, _ := hex.DecodeString("a0cbc473380411c659e87088031035ed464c9270")
+	expected := KnownFingerprint{
+		UserID:      "user@coy.im",
+		Fingerprint: fp,
+		Untrusted:   true,
+	}
+
+	dest := KnownFingerprint{}
+	err := json.Unmarshal(jsonBlob, &dest)
+
+	c.Check(err, IsNil)
+	c.Check(dest, DeepEquals, expected)
+
+	marshal, err := json.MarshalIndent(dest, "", "\t")
+	c.Check(err, IsNil)
+	c.Check(string(marshal), Equals, string(jsonBlob))
 }

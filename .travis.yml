@@ -1,7 +1,9 @@
 dist: trusty
 sudo: required
 language: go
-
+branches:
+  except:
+    - windows
 go:
   - tip
   - 1.4.2

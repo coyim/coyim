@@ -20,13 +20,9 @@ func (*defContactPopupMenu) String() string {
       <object class="GtkSeparatorMenuItem" id="sep1"/>
     </child>
     <child>
-      <object class="GtkMenuItem" id="menuItemForVisibilitySection">
-        <child>
-          <object class="GtkLabel" id="labelForVisibilitySection">
-            <property name="label" translatable="yes">Visibility</property>
-            <property name="sensitive">false</property>
-          </object>
-        </child>
+      <object class="GtkMenuItem" id="askContactToSeeStatusMenuItem">
+        <property name="label" translatable="yes">Ask contact to see their status</property>
+        <signal name="activate" handler="on_ask_contact_to_see_status" />
       </object>
     </child>
     <child>
@@ -39,12 +35,6 @@ func (*defContactPopupMenu) String() string {
       <object class="GtkMenuItem" id="forbidContactToSeeStatusMenuItem">
         <property name="label" translatable="yes">Forbid contact to see my status</property>
         <signal name="activate" handler="on_forbid_contact_to_see_status" />
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="askContactToSeeStatusMenuItem">
-        <property name="label" translatable="yes">Ask contact to see their status</property>
-        <signal name="activate" handler="on_ask_contact_to_see_status" />
       </object>
     </child>
     <child>

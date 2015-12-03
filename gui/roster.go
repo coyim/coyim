@@ -21,10 +21,9 @@ type contacts struct {
 }
 
 type roster struct {
-	widget *gtk.Notebook
-
-	model *gtk.TreeStore
-	view  *gtk.TreeView
+	widget *gtk.ScrolledWindow
+	model  *gtk.TreeStore
+	view   *gtk.TreeView
 
 	contacts       contacts
 	checkEncrypted func(to string) bool
@@ -70,8 +69,8 @@ func (u *gtkUI) newRoster() *roster {
 		"on_activate_buddy": r.onActivateBuddy,
 	})
 
-	obj, _ := builder.GetObject("notebook")
-	r.widget = obj.(*gtk.Notebook)
+	obj, _ := builder.GetObject("roster")
+	r.widget = obj.(*gtk.ScrolledWindow)
 
 	obj, _ = builder.GetObject("roster-view")
 	r.view = obj.(*gtk.TreeView)
@@ -79,44 +78,11 @@ func (u *gtkUI) newRoster() *roster {
 	obj, _ = builder.GetObject("roster-model")
 	r.model = obj.(*gtk.TreeStore)
 
-	//TODO: cant this be achieved by using CSS classes / IDs?
-	//For example: #notebook GtkBox { .... }
-	obj, _ = builder.GetObject("disconnected-page")
-	vbox := obj.(*gtk.Box)
-	u.displaySettings.unifiedBackgroundColor(&vbox.Container.Widget)
-
-	obj, _ = builder.GetObject("spinner-page")
-	vboxSpinner := obj.(*gtk.Box)
-	u.displaySettings.unifiedBackgroundColor(&vboxSpinner.Container.Widget)
-
 	u.displaySettings.update()
 
 	r.view.Connect("button-press-event", r.onButtonPress)
 
 	return r
-}
-
-func (r *roster) connected() {
-	glib.IdleAdd(func() {
-		r.widget.SetCurrentPage(rosterPageIndex)
-	})
-}
-
-func (r *roster) connecting() {
-	//only if there is nothing connected
-	if len(r.contacts.m) != 0 {
-		return
-	}
-
-	glib.IdleAdd(func() {
-		r.widget.SetCurrentPage(spinnerPageIndex)
-	})
-}
-
-func (r *roster) disconnected() {
-	glib.IdleAdd(func() {
-		r.widget.SetCurrentPage(disconnectedPageIndex)
-	})
 }
 
 //TODO: move somewhere else
@@ -543,9 +509,8 @@ const spinnerPageIndex = 1
 const rosterPageIndex = 2
 
 func (r *roster) redrawIfRosterVisible() {
-	if r.widget.GetCurrentPage() == rosterPageIndex {
-		r.redraw()
-	}
+	//Now the roster is always visible
+	r.redraw()
 }
 
 func (r *roster) redraw() {
@@ -556,9 +521,6 @@ func (r *roster) redraw() {
 	} else {
 		r.redrawMerged()
 	}
-
-	// We call connected here to make sure we don't display the roster until we have some roster data
-	r.connected()
 }
 
 func setAll(v *gtk.TreeStore, iter *gtk.TreeIter, values ...interface{}) {

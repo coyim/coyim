@@ -138,17 +138,18 @@ func (c *cliUI) loadConfig(configFile string) error {
 
 	logger := &lineLogger{c.term, nil}
 
-	var registerCallback xmpp.FormCallback
-	if *config.CreateAccount {
-		registerCallback = c.RegisterCallback
-	}
+	//TODO: call session.ConnectAndRegister() in this case
+	//var registerCallback xmpp.FormCallback
+	//if *config.CreateAccount {
+	//	registerCallback = c.RegisterCallback
+	//}
 
 	c.session = session.NewSession(accounts, account)
 	c.session.SessionEventHandler = c
 	c.session.Subscribe(c.events)
 
 	c.session.ConnectionLogger = logger
-	if err := c.session.Connect(password, registerCallback); err != nil {
+	if err := c.session.Connect(password); err != nil {
 		c.alert(err.Error())
 		return err
 	}

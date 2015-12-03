@@ -23,10 +23,11 @@ import (
 )
 
 type gtkUI struct {
-	roster       *roster
-	window       *gtk.Window
-	accountsMenu *gtk.MenuItem
-	viewMenu     *viewMenu
+	roster           *roster
+	window           *gtk.Window
+	accountsMenu     *gtk.MenuItem
+	notificationArea *gtk.Box
+	viewMenu         *viewMenu
 
 	config *config.ApplicationConfig
 
@@ -257,6 +258,9 @@ func (u *gtkUI) mainWindow() {
 	u.initMenuBar()
 	vbox, _ := builder.GetObject("Vbox")
 	vbox.(*gtk.Box).PackStart(u.roster.widget, true, true, 0)
+
+	obj, _ := builder.GetObject("notification-area")
+	u.notificationArea = obj.(*gtk.Box)
 
 	u.connectShortcutsMainWindow(u.window)
 
@@ -493,15 +497,16 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, password string, conne
 }
 
 func (u *gtkUI) connectAccount(account *account) {
-	u.roster.connecting()
-
 	var connectFn func(string) error
 	var accountName = account.session.CurrentAccount.Account
 
 	connectFn = func(password string) error {
-		err := account.session.Connect(password, nil)
+		u.showConnectAccountNotification(account)
+		defer u.removeConnectAccountNotification(account)
+		err := account.session.Connect(password)
 
 		if err == config.ErrTorNotRunning {
+			//TODO: notify instead of alert?
 			glib.IdleAdd(u.alertTorIsNotRunning)
 		}
 
@@ -516,9 +521,14 @@ func (u *gtkUI) connectAccount(account *account) {
 		}
 
 		if err == xmpp.ErrAuthenticationFailed {
+			//TODO: notify authentication failure?
 			glib.IdleAdd(func() {
 				u.askForPassword(accountName, connectFn)
 			})
+		}
+
+		if err == xmpp.ErrConnectionFailed {
+			//TODO: notify connection failure?
 		}
 
 		return err
@@ -576,11 +586,7 @@ func (u *gtkUI) connectAllAutomatics(all bool) {
 		}
 	}
 
-	glib.IdleAdd(func() {
-		if len(acc) > 0 && u.roster != nil {
-			u.roster.connecting()
-		}
-	})
+	//TODO: add notification?
 
 	for _, a := range acc {
 		go u.connectWithRandomDelay(a)

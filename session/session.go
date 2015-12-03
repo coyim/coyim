@@ -711,7 +711,7 @@ func (s *Session) setStatus(status connStatus) {
 }
 
 // Connect connects to the server and starts the main threads
-func (s *Session) Connect(password string, registerCallback xmpp.FormCallback) error {
+func (s *Session) Connect(password string) error {
 	if !s.IsDisconnected() {
 		return nil
 	}

@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
@@ -9,7 +11,8 @@ import (
 )
 
 type account struct {
-	menu *gtk.MenuItem
+	menu                   *gtk.MenuItem
+	connectionNotification *gtk.InfoBar
 
 	session *session.Session
 
@@ -136,4 +139,39 @@ func (account *account) edit() {
 
 func (account *account) remove() {
 	account.ExecuteCmd(removeAccountCmd(account))
+}
+
+func (account *account) buildConnectionNotification() error {
+	builder, err := loadBuilderWith("ConnectingAccountInfo")
+	if err != nil {
+		return err
+	}
+
+	obj, err := builder.GetObject("infobar")
+	if err != nil {
+		return err
+	}
+
+	infoBar := obj.(*gtk.InfoBar)
+
+	obj, err = builder.GetObject("message")
+	if err != nil {
+		return err
+	}
+
+	msg := obj.(*gtk.Label)
+
+	text := fmt.Sprintf(i18n.Local("Connecting to %s"),
+		account.session.CurrentAccount.Account)
+
+	msg.SetText(text)
+
+	account.connectionNotification = infoBar
+	return nil
+}
+
+func (account *account) removeConnectionNotification() {
+	account.connectionNotification.Hide()
+	account.connectionNotification.Destroy()
+	account.connectionNotification = nil
 }

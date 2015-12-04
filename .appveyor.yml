@@ -1,0 +1,50 @@
+platform:
+  - x64
+environment:
+  global:
+    MSYS2_BASEVER: 20150916
+    GOPATH: c:\gopath
+  matrix:
+    #- MSYSTEM: MSYS2
+    #  METHOD: ci
+    #- MSYS2_ARCH: i686
+    #  MSYS2_BITS: 32
+    #  MSYSTEM: MINGW32
+    #  METHOD: cross
+    - MSYS2_ARCH: x86_64
+      MSYS2_BITS: 64
+      MSYSTEM: MINGW64
+      METHOD: cross
+install:
+  - mkdir %GOPATH%\src\github.com\twstrike\
+  - xcopy %APPVEYOR_BUILD_FOLDER%\* %GOPATH%\src\github.com\twstrike\coyim /e /i /EXCLUDE:%MSYS_PATH% > $nul
+  - dir %GOPATH%\src\github.com\twstrike\coyim
+  - if "%METHOD%"=="ci" SET MSYS_PATH=c:\msys64
+  - if "%METHOD%"=="cross" SET MSYS_PATH=%APPVEYOR_BUILD_FOLDER%\msys%MSYS2_BITS%
+  - if "%METHOD%"=="cross" appveyor DownloadFile http://kent.dl.sourceforge.net/project/msys2/Base/%MSYS2_ARCH%/msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz
+  - if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz > $nul
+  - if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > $nul
+  - SET PATH=%PATH%;%MSYS_PATH%\usr\bin
+  - SET PATH=%PATH%;%MSYS_PATH%\mingw32\bin
+  - SET PATH=%PATH%;%MSYS_PATH%\mingw64\bin
+  - '%MSYS_PATH%\usr\bin\bash -lc "echo update-core starting..." 2> $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "update-core" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "echo install-deps starting..."'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy autoconf" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy automake" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy tree" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy make" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-libiconv" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-gcc" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-gdb" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-make" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy zlib-devel" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-pango" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-gtk3" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-pkg-config" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "yes|pacman --noconfirm -Sc" > $nul'
+  - if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > $nul
+build_script:
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps gen-ui-defs build-gui-win"'
+artifacts:
+  - path: %GOPATH%\src\github.com\twstrike\coyim\bin\coyim.exe

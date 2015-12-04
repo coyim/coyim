@@ -29,7 +29,7 @@ type Dialer struct {
 	Config Config
 }
 
-func (d *Dialer) hardcodedServer() bool {
+func (d *Dialer) hasCustomServer() bool {
 	return d.ServerAddress != ""
 }
 
@@ -46,10 +46,14 @@ func (d *Dialer) getJIDDomainpart() string {
 
 // GetServer returns the "hardcoded" server chosen if available, otherwise returns the domainpart from the JID. The server contains port information
 func (d *Dialer) GetServer() string {
-	if d.hardcodedServer() {
+	if d.hasCustomServer() {
 		return d.ServerAddress
 	}
 
+	return d.getFallbackServer()
+}
+
+func (d *Dialer) getFallbackServer() string {
 	return net.JoinHostPort(d.getJIDDomainpart(), "5222")
 }
 
@@ -79,7 +83,7 @@ func (d *Dialer) Dial() (*Conn, error) {
 
 // RFC 6120, Section 4.2
 func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
-	if d.hardcodedServer() {
+	if d.hasCustomServer() {
 		d.Config.TrustedAddress = true
 	}
 

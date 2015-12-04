@@ -25,27 +25,26 @@ func (d *Dialer) newTCPConn() (net.Conn, error) {
 		d.Proxy = proxy.Direct
 	}
 
-	addr := d.GetServer()
+	//libpurple and xmpp-client are strict to section 3.2.3 and skip SRV lookup
+	//whenever the user has configured a custom server address.
+	//This is necessary to keep imported accounts from Adium/Pidgin/xmpp-client
+	//working as expected.
+	if d.hasCustomServer() {
+		d.Config.SkipSRVLookup = true
+	}
 
-	//libpurple and xmpp-client are strict to this section and skip SRV lookup
-	//whenever the user has configured a custom server address. We decided to not
-	//do this, and as a consequence we can only set a custom server to an address
-	//containing SRV records, otherwise it will fail.
-	//On libpurple, a custom server with value "xmpp.google.com" or "talk.google.com"
-	//will work, but for us it will fail unless config.SkipSRVLookup is set.
-	//Our users must use "google.com" or "gmail.com" when asked for a custom server address
 	//RFC 6120, Section 3.2.3
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.Config.SkipSRVLookup {
 		log.Println("Skipping SRV lookup")
-		return connectWithProxy(addr, d.Proxy)
+		return connectWithProxy(d.GetServer(), d.Proxy)
 	}
 
-	host, _, err := net.SplitHostPort(addr)
-	if err != nil {
-		return nil, err
-	}
+	return d.srvLookupAndFallback()
+}
 
+func (d *Dialer) srvLookupAndFallback() (net.Conn, error) {
+	host := d.getJIDDomainpart()
 	log.Println("Make SRV lookup to:", host)
 	xmppAddrs, err := ResolveSRVWithProxy(d.Proxy, host)
 
@@ -58,16 +57,14 @@ func (d *Dialer) newTCPConn() (net.Conn, error) {
 	}
 
 	//RFC 6120, Section 3.2.1, item 9
-	//If the SRV has no response, we fallback to use
-	//the domain at default port
+	//If the SRV has no response, we fallback to use the origin domain
+	//at default port.
 	if len(xmppAddrs) == 0 {
 		err = ErrTCPBindingFailed
 
 		//TODO: in this case, a failure to connect might be recovered using HTTP binding
 		//See: RFC 6120, Section 3.2.2
-		xmppAddrs = []string{
-			net.JoinHostPort(d.getJIDDomainpart(), "5222"),
-		}
+		xmppAddrs = []string{d.getFallbackServer()}
 	} else {
 		//The SRV lookup succeeded but we failed to connect
 		err = ErrConnectionFailed

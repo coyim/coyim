@@ -56,9 +56,6 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddress(
 		ServerAddress: "jabber.im:5333",
 
 		Proxy: p,
-		Config: Config{
-			SkipSRVLookup: true,
-		},
 	}
 
 	expectedConn := &net.TCPConn{}
@@ -72,21 +69,7 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddress(
 	conn, err := d.newTCPConn()
 	c.Check(err, IsNil)
 	c.Check(conn, Equals, expectedConn)
-
-	c.Check(p, MatchesExpectations)
-}
-
-func (s *TCPSuite) Test_newTCPConn_ErrorsOnMalformedServerAddress(c *C) {
-	p := &mockProxy{}
-	d := &Dialer{
-		JID:           "foo@jabber.com",
-		ServerAddress: "jabber.im",
-
-		Proxy: p,
-	}
-
-	_, err := d.newTCPConn()
-	c.Check(err.Error(), Equals, "missing port in address jabber.im")
+	c.Check(d.Config.SkipSRVLookup, Equals, true)
 
 	c.Check(p, MatchesExpectations)
 }
@@ -118,37 +101,6 @@ func (s *TCPSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortAfterSRVFa
 	p := &mockProxy{}
 	d := &Dialer{
 		JID: "foo@jabber.com",
-
-		Proxy: p,
-	}
-
-	p.Expects(func(network, addr string) (net.Conn, error) {
-		c.Check(network, Equals, "tcp")
-		c.Check(addr, Equals, "208.67.222.222:53")
-
-		return nil, io.EOF
-	})
-
-	expectedConn := &net.TCPConn{}
-	p.Expects(func(network, addr string) (net.Conn, error) {
-		c.Check(network, Equals, "tcp")
-		c.Check(addr, Equals, "jabber.com:5222")
-
-		return expectedConn, nil
-	})
-
-	conn, err := d.newTCPConn()
-	c.Check(err, IsNil)
-	c.Check(conn, Equals, expectedConn)
-
-	c.Check(p, MatchesExpectations)
-}
-
-func (s *TCPSuite) Test_newTCPConn_IgnoresConfiguredServerWhenFallingBackAfterSRVFailure(c *C) {
-	p := &mockProxy{}
-	d := &Dialer{
-		JID:           "foo@jabber.com",
-		ServerAddress: "jabber.im:5333",
 
 		Proxy: p,
 	}

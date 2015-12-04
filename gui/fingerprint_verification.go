@@ -62,12 +62,12 @@ func getFingerprintsFor(conversation *otr3.Conversation) ([]byte, []byte) {
 	var ourFp, theirFp []byte
 	ourKey := conversation.GetOurCurrentKey()
 	if ourKey != nil {
-		ourFp = conversation.DefaultFingerprintFor(ourKey.PublicKey())
+		ourFp = ourKey.PublicKey().Fingerprint()
 	}
 
 	theirKey := conversation.GetTheirKey()
 	if theirKey != nil {
-		theirFp = conversation.DefaultFingerprintFor(theirKey)
+		theirFp = theirKey.Fingerprint()
 	}
 
 	return ourFp, theirFp

@@ -212,7 +212,7 @@ func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversatio
 	s := c.session
 	term := c.term
 
-	fpr := conversation.DefaultFingerprintFor(conversation.GetTheirKey())
+	fpr := conversation.GetTheirKey().Fingerprint()
 	fprUID := s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %X", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %X", uid, conversation.GetSSID()))
@@ -716,7 +716,7 @@ CommandLoop:
 				s.Conn.Send(string(cmd.User), event.QueryMessage)
 			case otrInfoCommand:
 				for _, pk := range s.PrivateKeys {
-					info(term, fmt.Sprintf("Your OTR fingerprint is %x", otr3.NewConversationWithVersion(3).DefaultFingerprintFor(pk.PublicKey())))
+					info(term, fmt.Sprintf("Your OTR fingerprint is %x", pk.PublicKey().Fingerprint()))
 				}
 				for to, conversation := range s.Conversations {
 					if conversation.IsEncrypted() {

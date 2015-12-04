@@ -79,7 +79,7 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 		_, ok, parsedKey := otr3.ParsePrivateKey(pp)
 		if ok {
 			result = append(result, parsedKey)
-			log.Printf("Loaded key: %s", config.FormatFingerprint(otr3.NewConversationWithVersion(3).DefaultFingerprintFor(parsedKey.PublicKey())))
+			log.Printf("Loaded key: %s", config.FormatFingerprint(parsedKey.PublicKey().Fingerprint()))
 		}
 	}
 
@@ -525,7 +525,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		}
 	case event.SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
-		fpr := conversation.DefaultFingerprintFor(conversation.GetTheirKey())
+		fpr := conversation.GetTheirKey().Fingerprint()
 		s.ExecuteCmd(client.AuthorizeFingerprintCmd{
 			Account:     s.CurrentAccount,
 			Peer:        from,

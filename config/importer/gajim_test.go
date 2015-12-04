@@ -57,7 +57,7 @@ func (s *GajimSuite) Test_GajimImporter_canImportPrivateKey(c *C) {
 	pk := &otr3.DSAPrivateKey{}
 	pk.Parse(res)
 
-	c.Assert(fmt.Sprintf("%X", otr3.NewConversationWithVersion(3).DefaultFingerprintFor(pk)), Equals, "0AB95107E9457E494F7FA68E8AAD1B86EE96935E")
+	c.Assert(fmt.Sprintf("%X", pk.Fingerprint()), Equals, "0AB95107E9457E494F7FA68E8AAD1B86EE96935E")
 }
 
 func (s *GajimSuite) Test_GajimImporter_canImportPluginSettings(c *C) {

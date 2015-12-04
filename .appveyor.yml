@@ -47,4 +47,4 @@ install:
 build_script:
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps gen-ui-defs build-gui-win"'
 artifacts:
-  - path: %GOPATH%\src\github.com\twstrike\coyim\bin\coyim.exe
+  - path: '%GOPATH%\src\github.com\twstrike\coyim\bin\coyim.exe'

@@ -14,6 +14,9 @@ gen-ui-defs:
 build-gui:
 	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim
 
+build-gui-win:
+	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim.exe
+
 build-cli:
 	go build -o bin/coyim-cli
 

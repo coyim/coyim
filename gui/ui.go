@@ -15,7 +15,6 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -282,7 +281,10 @@ func (u *gtkUI) quit() {
 func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 	dialogTemplate := "AskForPassword"
 
-	builder, _ := loadBuilderWith(dialogTemplate)
+	builder, err := loadBuilderWith(dialogTemplate)
+	if err != nil {
+		panic(err)
+	}
 
 	obj, _ := builder.GetObject(dialogTemplate)
 	dialog := obj.(*gtk.Dialog)
@@ -438,6 +440,8 @@ func (u *gtkUI) rosterUpdated() {
 }
 
 func (u *gtkUI) alertTorIsNotRunning() {
+	//TODO: should it notify instead of alert?
+
 	builder, err := loadBuilderWith("TorNotRunning")
 	if err != nil {
 		return
@@ -450,10 +454,10 @@ func (u *gtkUI) alertTorIsNotRunning() {
 	dialog.ShowAll()
 }
 
-func (u *gtkUI) askForServerDetails(conf *config.Account, password string, connectFn func(string) error) {
+func (u *gtkUI) askForServerDetails(conf *config.Account, connectFn func() error) {
 	builder, err := loadBuilderWith("ConnectionSettings")
 	if err != nil {
-		return
+		panic(err)
 	}
 
 	obj, _ := builder.GetObject("ConnectionSettingsDialog")
@@ -474,6 +478,8 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, password string, conne
 
 	builder.ConnectSignals(map[string]interface{}{
 		"reconnect": func() {
+			defer dialog.Destroy()
+
 			//TODO: validate
 			conf.Server, _ = serverEntry.GetText()
 
@@ -481,65 +487,17 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, password string, conne
 			conf.Port, _ = strconv.Atoi(p)
 
 			go func() {
-				if connectFn(password) != nil {
+				if connectFn() != nil {
 					return
 				}
 
 				u.saveConfigOnly()
 			}()
-
-			dialog.Destroy()
 		},
 	})
 
 	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
-}
-
-func (u *gtkUI) connectAccount(account *account) {
-	var connectFn func(string) error
-	var accountName = account.session.CurrentAccount.Account
-
-	connectFn = func(password string) error {
-		u.showConnectAccountNotification(account)
-		defer u.removeConnectAccountNotification(account)
-		err := account.session.Connect(password)
-
-		if err == config.ErrTorNotRunning {
-			//TODO: notify instead of alert?
-			glib.IdleAdd(u.alertTorIsNotRunning)
-		}
-
-		if err == xmpp.ErrTCPBindingFailed {
-			glib.IdleAdd(func() {
-				u.askForServerDetails(
-					account.session.CurrentAccount,
-					password,
-					connectFn,
-				)
-			})
-		}
-
-		if err == xmpp.ErrAuthenticationFailed {
-			//TODO: notify authentication failure?
-			glib.IdleAdd(func() {
-				u.askForPassword(accountName, connectFn)
-			})
-		}
-
-		if err == xmpp.ErrConnectionFailed {
-			//TODO: notify connection failure?
-		}
-
-		return err
-	}
-
-	if len(account.session.CurrentAccount.Password) == 0 {
-		u.askForPassword(accountName, connectFn)
-		return
-	}
-
-	go connectFn(account.session.CurrentAccount.Password)
 }
 
 func (u *gtkUI) disconnectAccount(account *account) {

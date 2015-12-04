@@ -16,7 +16,6 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 
-	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -263,12 +262,8 @@ func (u *gtkUI) mainWindow() {
 
 	u.connectShortcutsMainWindow(u.window)
 
-	pl, _ := gdk.PixbufLoaderNew()
-	pl.Write(decodedIcon256x256)
-	pl.Close()
-	pixbuf, _ := pl.GetPixbuf()
-	u.window.SetIcon(pixbuf)
-	gtk.WindowSetDefaultIcon(pixbuf)
+	u.window.SetIcon(coyimIcon.getPixbuf())
+	gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
 
 	u.window.ShowAll()
 }

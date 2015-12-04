@@ -46,6 +46,7 @@ const (
 	indexParentJid         = 0
 	indexParentDisplayName = 1
 	indexTooltip           = 6
+	indexStatusIcon        = 7
 )
 
 func (u *gtkUI) newRoster() *roster {
@@ -322,20 +323,25 @@ func isOnline(p *rosters.Peer) bool {
 	return p.PendingSubscribeID == "" && p.Online
 }
 
-func decideStatusGlyphFor(p *rosters.Peer) string {
+func decideStatusFor(p *rosters.Peer) string {
 	if p.PendingSubscribeID != "" {
-		return "?"
+		return "unknown"
 	}
 
 	if !p.Online {
-		return "✘"
+		return "offline"
 	}
 
-	if isAway(p) {
-		return "⛔"
+	switch p.Status {
+	case "dnd":
+		return "busy"
+	case "xa":
+		return "extended-away"
+	case "away":
+		return "away"
 	}
 
-	return "✔"
+	return "available"
 }
 
 func decideColorFor(p *rosters.Peer) string {
@@ -368,13 +374,15 @@ func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent st
 	iter := r.model.Append(parentIter)
 	setAll(r.model, iter,
 		item.Jid,
-		fmt.Sprintf("%s%s %s", indent, decideStatusGlyphFor(item), item.NameForPresentation()),
+		fmt.Sprintf("%s %s", indent, item.NameForPresentation()),
 		item.BelongsTo,
 		decideColorFor(item),
 		"#ffffff",
 		nil,
 		createTooltipFor(item),
 	)
+
+	r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].getPixbuf())
 }
 
 func (r *roster) redrawMerged() {

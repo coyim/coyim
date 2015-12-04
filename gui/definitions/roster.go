@@ -25,6 +25,8 @@ func (*defRoster) String() string {
       <column type="gint"/>
       <!-- tooltip -->
       <column type="gchararray"/>
+      <!-- icon -->
+      <column type="GdkPixbuf"/>
     </columns>
   </object>
   <object class="GtkScrolledWindow" id="roster">
@@ -45,7 +47,18 @@ func (*defRoster) String() string {
           </object>
         </child>
         <child>
-          <object class="GtkTreeViewColumn" id="test-column">
+          <object class="GtkTreeViewColumn" id="icon-column">
+            <child>
+              <object class="GtkCellRendererPixbuf" id="icon-column-rendered"/>
+              <attributes>
+                <attribute name="pixbuf">7</attribute>
+                <attribute name="cell-background">4</attribute>
+              </attributes>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkTreeViewColumn" id="name-column">
             <property name="title">name</property>
             <child>
               <object class="GtkCellRendererText" id="name-column-rendered"/>

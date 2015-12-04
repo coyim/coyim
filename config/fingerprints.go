@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"strings"
 
 	"github.com/twstrike/coyim/i18n"
 )
@@ -57,14 +56,11 @@ type ByNaturalOrder []*KnownFingerprint
 
 func (s ByNaturalOrder) Len() int { return len(s) }
 func (s ByNaturalOrder) Less(i, j int) bool {
-	switch strings.Compare(s[i].UserID, s[j].UserID) {
-	case 0:
+	if s[i].UserID == s[j].UserID {
 		return bytes.Compare(s[i].Fingerprint, s[j].Fingerprint) == -1
-	case -1:
-		return true
 	}
 
-	return false
+	return s[i].UserID < s[j].UserID
 }
 
 func (s ByNaturalOrder) Swap(i, j int) { s[i], s[j] = s[j], s[i] }

@@ -2,6 +2,7 @@ package gui
 
 import (
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/gotk3/gotk3/glib"
@@ -42,12 +43,34 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	passEntry := obj.(*gtk.Entry)
 	passEntry.SetText(account.Password)
 
+	obj, _ = builder.GetObject("server")
+	serverEntry := obj.(*gtk.Entry)
+	serverEntry.SetText(account.Server)
+
+	obj, _ = builder.GetObject("port")
+	portEntry := obj.(*gtk.Entry)
+	if account.Port == 0 {
+		account.Port = 5222
+	}
+	portEntry.SetText(strconv.Itoa(account.Port))
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
 			accTxt, _ := accEntry.GetText()
 			passTxt, _ := passEntry.GetText()
+			servTxt, _ := serverEntry.GetText()
+			portTxt, _ := portEntry.GetText()
+
 			account.Account = accTxt
 			account.Password = passTxt
+			account.Server = servTxt
+
+			convertedPort, e := strconv.Atoi(portTxt)
+			if len(strings.TrimSpace(portTxt)) == 0 || e != nil {
+				convertedPort = 5222
+			}
+
+			account.Port = convertedPort
 
 			parts := strings.SplitN(account.Account, "@", 2)
 			if len(parts) != 2 {

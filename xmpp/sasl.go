@@ -7,7 +7,6 @@
 package xmpp
 
 import (
-	"encoding/base64"
 	"encoding/hex"
 	"encoding/xml"
 	"errors"
@@ -172,32 +171,6 @@ func (c *Conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 
 	t, err = sasl.DecodeToken(encodedChallenge)
 	return
-}
-
-//TODO: decide how to get the OAuth token from the OAuth code
-func (c *Conn) xOAuth(user, token string) error {
-	encoding := base64.StdEncoding
-
-	raw := "\x00" + user + "\x00" + token
-	enc := make([]byte, encoding.EncodedLen(len(raw)))
-	encoding.Encode(enc, []byte(raw))
-	fmt.Fprintf(c.rawOut, "<auth xmlns='%s' mechanism='X-OAUTH2' auth:service='oauth2' xmlns:auth='%s'>%s</auth>\n", NsSASL, NsXOAuth, enc)
-
-	_, err := c.verifyAuthenticationSuccess()
-	return err
-}
-
-func (c *Conn) verifyAuthenticationSuccess() (*saslSuccess, error) {
-	// Next message should be either success or failure.
-	name, val, _ := next(c)
-	switch v := val.(type) {
-	case *saslSuccess:
-		return v, nil
-	case *saslFailure:
-		return nil, errors.New("xmpp: authentication failure: " + v.String())
-	}
-
-	return nil, errors.New("expected <success> or <failure>, got <" + name.Local + "> in " + name.Space)
 }
 
 // RFC 3920  C.4  SASL name space

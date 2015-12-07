@@ -66,7 +66,7 @@ func (s *SaslXmppSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	}
 
 	e := conn.authenticate("foo", "bar")
-	c.Assert(e.Error(), Equals, "expected <success> or <failure>, got <> in ")
+	c.Assert(e, Equals, ErrAuthenticationFailed)
 }
 
 func (s *SaslXmppSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C) {
@@ -92,9 +92,9 @@ func (s *SaslXmppSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C
 		},
 	}
 
-	expectedOut := "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='DIGEST-MD5' />\n" +
+	expectedOut := "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='DIGEST-MD5'></auth>\n" +
 		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iZm9vIixyZWFsbT0iY295LmltIixub25jZT0iT0E2TUc5dEVRR20yaGgiLG5jPTAwMDAwMDAxLGNub25jZT0iMDEwMjAzMDQwNTA2MDciLGRpZ2VzdC11cmk9InhtcHAvY295LmltIixyZXNwb25zZT00ZGVlODYyNjkxOTZiNmUxNGI5Zjc2OWZhYmQ5OTdiZCxxb3A9YXV0aA==</response>\n" +
-		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />\n"
+		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'></response>\n"
 
 	e := conn.authenticate("foo", "bar")
 	c.Assert(e, IsNil)
@@ -123,11 +123,11 @@ func (s *SaslXmppSuite) Test_digestMD5_serverFailsToVerifyChallenge(c *C) {
 		},
 	}
 
-	expectedOut := "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='DIGEST-MD5' />\n" +
+	expectedOut := "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='DIGEST-MD5'></auth>\n" +
 		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Y2hhcnNldD11dGYtOCx1c2VybmFtZT0iZm9vIixyZWFsbT0iY295LmltIixub25jZT0iT0E2TUc5dEVRR20yaGgiLG5jPTAwMDAwMDAxLGNub25jZT0iMDEwMjAzMDQwNTA2MDciLGRpZ2VzdC11cmk9InhtcHAvY295LmltIixyZXNwb25zZT00ZGVlODYyNjkxOTZiNmUxNGI5Zjc2OWZhYmQ5OTdiZCxxb3A9YXV0aA==</response>\n"
 
 	e := conn.authenticate("foo", "bar")
-	c.Assert(e, Equals, ErrAuthenticationFailed)
+	c.Assert(e.Error(), Equals, "xmpp: unexpected <response> in urn:ietf:params:xml:ns:xmpp-sasl")
 	c.Assert(string(out.write), Equals, expectedOut)
 }
 

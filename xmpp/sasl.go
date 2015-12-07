@@ -7,7 +7,6 @@
 package xmpp
 
 import (
-	"crypto/subtle"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/xml"
@@ -15,6 +14,11 @@ import (
 	"fmt"
 	"io"
 	"log"
+
+	"github.com/twstrike/coyim/sasl"
+	"github.com/twstrike/coyim/sasl/digestmd5"
+	"github.com/twstrike/coyim/sasl/plain"
+	"github.com/twstrike/coyim/sasl/scram"
 )
 
 var (
@@ -23,6 +27,12 @@ var (
 
 	errUnsupportedSASLMechanism = errors.New("xmpp: server does not support any of the prefered SASL mechanism")
 )
+
+func init() {
+	plain.Register()
+	digestmd5.Register()
+	scram.Register()
+}
 
 // SASL negotiation. RFC 6120, section 6
 func (d *Dialer) negotiateSASL(c *Conn) error {
@@ -49,28 +59,20 @@ func (c *Conn) authenticate(user, password string) error {
 }
 
 func (c *Conn) authenticateWithPreferedMethod(user, password string) error {
-	saslMechanisms := map[string]func(string, string) error{
-		"PLAIN":       c.plainAuth,
-		"DIGEST-MD5":  c.digestMD5Auth,
-		"SCRAM-SHA-1": c.scramSHA1Auth,
-		"X-OAUTH2":    c.xOAuth,
-	}
-
 	//TODO: this should be configurable by the client
 	preferedMechanisms := []string{"SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
 
 	log.Println("sasl: server supports mechanisms", c.features.Mechanisms.Mechanism)
 
 	for _, prefered := range preferedMechanisms {
-		if _, ok := saslMechanisms[prefered]; !ok {
+		if !sasl.ClientSupport(prefered) {
 			continue
 		}
 
 		for _, m := range c.features.Mechanisms.Mechanism {
 			if prefered == m {
 				log.Println("sasl: authenticating via", m)
-				fn := saslMechanisms[m]
-				return fn(user, password)
+				return c.authenticatWith(prefered, user, password)
 			}
 		}
 	}
@@ -90,48 +92,89 @@ func clientNonce(r io.Reader) (string, error) {
 	return hex.EncodeToString(conceRand), nil
 }
 
-func (c *Conn) receiveChallenge() (string, error) {
-	name, val, err := next(c)
+func (c *Conn) authenticatWith(mechanism string, user string, password string) error {
+	clientAuth, err := sasl.NewClient(mechanism)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	v, ok := val.(*string)
-	if !ok || name.Local != "challenge" || name.Space != NsSASL {
-		return "", errors.New("expected <challenge>, got <" + name.Local + "> in " + name.Space)
+	clientNonce, err := clientNonce(c.rand())
+	if err != nil {
+		return err
 	}
 
-	return *v, nil
+	clientAuth.SetProperty(sasl.AuthID, user)
+	clientAuth.SetProperty(sasl.Password, password)
+
+	clientAuth.SetProperty(sasl.Service, "xmpp")
+	clientAuth.SetProperty(sasl.QOP, "auth")
+
+	//TODO: this should come from username if it were a full JID
+	//clientAuth.SetProperty(sasl.Realm, "")
+
+	clientAuth.SetProperty(sasl.ClientNonce, clientNonce)
+
+	t, err := clientAuth.Step(nil)
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprintf(c.rawOut, "<auth xmlns='%s' mechanism='%s'>%s</auth>\n", NsSASL, mechanism, t.Encode())
+
+	return c.challengeLoop(clientAuth)
 }
 
-func (c *Conn) verifyAuthenticationSuccess() (*saslSuccess, error) {
-	// Next message should be either success or failure.
+func (c *Conn) challengeLoop(clientAuth sasl.Session) error {
+	for {
+		t, success, err := c.receiveChallenge()
+		if err != nil {
+			return err
+		}
+
+		t, err = clientAuth.Step(t)
+		if err != nil {
+			return err
+		}
+
+		if success {
+			return nil
+		}
+
+		if !clientAuth.NeedsMore() {
+			break
+		}
+
+		fmt.Fprintf(c.rawOut, "<response xmlns='%s'>%s</response>\n", NsSASL, t.Encode())
+	}
+
+	return ErrAuthenticationFailed
+}
+
+func (c *Conn) receiveChallenge() (t sasl.Token, success bool, err error) {
+	var encodedChallenge []byte
+
 	name, val, _ := next(c)
 	switch v := val.(type) {
-	case *saslSuccess:
-		return v, nil
 	case *saslFailure:
-		// v.Any is type of sub-element in failure,
-		// which gives a description of what failed.
-		return nil, errors.New("xmpp: authentication failure: " + v.String())
+		err = errors.New("xmpp: authentication failure: " + v.String())
+		return
+	case *saslSuccess:
+		encodedChallenge = v.Content
+		success = true
+	case *string:
+		if name.Local != "challenge" || name.Space != NsSASL {
+			err = errors.New("xmpp: unexpected <" + name.Local + "> in " + name.Space)
+			return
+		}
+
+		encodedChallenge = []byte(*v)
 	}
 
-	return nil, errors.New("expected <success> or <failure>, got <" + name.Local + "> in " + name.Space)
+	t, err = sasl.DecodeToken(encodedChallenge)
+	return
 }
 
-func (c *Conn) plainAuth(user, password string) error {
-	encoding := base64.StdEncoding
-
-	// Plain authentication: send base64-encoded \x00 user \x00 password.
-	raw := "\x00" + user + "\x00" + password
-	enc := make([]byte, encoding.EncodedLen(len(raw)))
-	encoding.Encode(enc, []byte(raw))
-	fmt.Fprintf(c.rawOut, "<auth xmlns='%s' mechanism='PLAIN'>%s</auth>\n", NsSASL, enc)
-
-	_, err := c.verifyAuthenticationSuccess()
-	return err
-}
-
+//TODO: decide how to get the OAuth token from the OAuth code
 func (c *Conn) xOAuth(user, token string) error {
 	encoding := base64.StdEncoding
 
@@ -141,99 +184,20 @@ func (c *Conn) xOAuth(user, token string) error {
 	fmt.Fprintf(c.rawOut, "<auth xmlns='%s' mechanism='X-OAUTH2' auth:service='oauth2' xmlns:auth='%s'>%s</auth>\n", NsSASL, NsXOAuth, enc)
 
 	_, err := c.verifyAuthenticationSuccess()
-
-	fmt.Println(err)
-
 	return err
 }
 
-func (c *Conn) digestMD5Auth(user, password string) error {
-	clientNonce, err := clientNonce(c.rand())
-	if err != nil {
-		return err
+func (c *Conn) verifyAuthenticationSuccess() (*saslSuccess, error) {
+	// Next message should be either success or failure.
+	name, val, _ := next(c)
+	switch v := val.(type) {
+	case *saslSuccess:
+		return v, nil
+	case *saslFailure:
+		return nil, errors.New("xmpp: authentication failure: " + v.String())
 	}
 
-	digestMD5 := digestMD5{
-		servType: "xmpp",
-
-		user:        user,
-		password:    password,
-		clientNonce: clientNonce,
-	}
-
-	fmt.Fprintf(c.rawOut, "<auth xmlns='%s' mechanism='DIGEST-MD5' />\n", NsSASL)
-
-	received, err := c.receiveChallenge()
-	if err != nil {
-		return err
-	}
-
-	if err := digestMD5.receive(received); err != nil {
-		return err
-	}
-
-	if digestMD5.qop != "auth" {
-		return errors.New("xmpp: challenge does not support auth QOP")
-	}
-
-	fmt.Fprintf(c.rawOut, "<response xmlns='%s'>%s</response>\n", NsSASL, digestMD5.send())
-
-	// Anything but challenge is an auth failure at this point
-	received, err = c.receiveChallenge()
-	if err != nil {
-		return ErrAuthenticationFailed
-	}
-
-	if err := digestMD5.verifyResponse(received); err != nil {
-		return err
-	}
-
-	fmt.Fprintf(c.rawOut, "<response xmlns='%s' />\n", NsSASL)
-
-	_, err = c.verifyAuthenticationSuccess()
-	return err
-}
-
-func (c *Conn) scramSHA1Auth(user, password string) error {
-	clientNonce, err := clientNonce(c.rand())
-	if err != nil {
-		return err
-	}
-
-	scram := scramClient{
-		user:        user,
-		password:    password,
-		clientNonce: clientNonce,
-	}
-
-	fmt.Fprintf(c.rawOut, "<auth xmlns='%s' mechanism='SCRAM-SHA-1'>%s</auth>\n", NsSASL, scram.firstMessage())
-
-	received, err := c.receiveChallenge()
-	if err != nil {
-		return err
-	}
-
-	if err := scram.receive(received); err != nil {
-		return err
-	}
-
-	finalMessage, serverAuth, err := scram.reply()
-	if err != nil {
-		return err
-	}
-
-	fmt.Fprintf(c.rawOut, "<response xmlns='%s'>%s</response>\n", NsSASL, finalMessage)
-
-	success, err := c.verifyAuthenticationSuccess()
-	if err != nil {
-		return err
-	}
-
-	if subtle.ConstantTimeCompare(success.Content, []byte(serverAuth)) != 1 {
-		return ErrAuthenticationFailed
-	}
-
-	return nil
+	return nil, errors.New("expected <success> or <failure>, got <" + name.Local + "> in " + name.Space)
 }
 
 // RFC 3920  C.4  SASL name space

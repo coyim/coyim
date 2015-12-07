@@ -6,8 +6,9 @@ set -xe
 VERSION="${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}"
 OS=${TRAVIS_OS_NAME:-linux}
 
-[[ $OS = "linux" ]] && make cross-compile
-if [[ $OS = "osx" ]]; then
+if [[ $OS = "linux" ]]; then
+  make cross-compile
+elif [[ $OS = "osx" ]]; then
   make build-gui
 
   # gettext is not linked on OSX
@@ -24,11 +25,13 @@ if [[ $OS = "osx" ]]; then
   ci/make-dmg coyim $VERSION bin/mac-bundle/
 
   rm -rf bin/mac-bundle
+else
+  echo "Unsupported OS: ${OS}" >2
+  exit 1
 fi
 
 make release-gui
 
-# update version on bintray conf file
+# update version on bintray conf file, preparing to send
 sed -i".bak" "s <VERSION> $VERSION g" ci/bintray.json
-
 

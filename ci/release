@@ -2,7 +2,9 @@
 
 set -xe
 
-VERSION="${APPVEYOR_REPO_BRANCH:-${TRAVIS_BRANCH}}-${${APPVEYOR_REPO_COMMIT:-${TRAVIS_COMMIT}}:0:7}"
+BRANCH_NAME=${APPVEYOR_REPO_BRANCH:-${TRAVIS_BRANCH}}
+COMMIT_HASH=${APPVEYOR_REPO_COMMIT:-${TRAVIS_COMMIT}}
+VERSION="${BRANCH_NAME}-${COMMIT_HASH:0:7}"
 OS=${APPVEYOR_OS_NAME:-${TRAVIS_OS_NAME:-linux}}
 # We can deploy only when a tag is pushed, and use ir as the version
 if [[ $OS = "windows" ]] && [[ $APPVEYOR_REPO_BRANCH = "release" ]]; then

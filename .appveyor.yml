@@ -7,10 +7,10 @@ environment:
   matrix:
     #- MSYSTEM: MSYS2
     #  METHOD: ci
-    #- MSYS2_ARCH: i686
-    #  MSYS2_BITS: 32
-    #  MSYSTEM: MINGW32
-    #  METHOD: cross
+    - MSYS2_ARCH: i686
+      MSYS2_BITS: 32
+      MSYSTEM: MINGW32
+      METHOD: cross
     - MSYS2_ARCH: x86_64
       MSYS2_BITS: 64
       MSYSTEM: MINGW64
@@ -34,14 +34,14 @@ install:
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy automake" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy tree" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy make" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-libiconv" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-gcc" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-gdb" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-make" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-libiconv" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gcc" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gdb" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-make" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy zlib-devel" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-pango" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-gtk3" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-x86_64-pkg-config" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pango" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gtk3" > $nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pkg-config" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "yes|pacman --noconfirm -Sc" > $nul'
   - if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > $nul
 build_script:

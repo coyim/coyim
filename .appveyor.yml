@@ -39,7 +39,6 @@ install:
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy autoconf" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy automake" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy make" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-sed" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-libiconv" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gcc" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gdb" > $nul'
@@ -56,6 +55,7 @@ build_script:
 artifacts:
   - path: '%GOPATH%\src\github.com\twstrike\coyim\bin\coyim.exe'
 before_deploy:
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy sed" > $nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && ci/release"'
 deploy_script:
   - '%MSYS_PATH%\usr\bin\bash -lc "gem install dpl && cd /c/gopath/src/github.com/twstrike/coyim && dpl --provider=bintray --file=ci/bintray.json --user=%BINTRAY_USER% --key=%BINTRAY_APIKEY%"'

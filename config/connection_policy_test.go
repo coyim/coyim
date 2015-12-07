@@ -66,7 +66,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesConfiguredServerAddressA
 	c.Check(dialer.ServerAddress, Equals, "coy.im:5234")
 }
 
-func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceIfFoundAndSkipsSRVLookup(c *C) {
+func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceIfFound(c *C) {
 	account := &Account{
 		Account: "coyim@riseup.net",
 
@@ -79,7 +79,6 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceI
 	dialer, err := policy.buildDialerFor(account)
 
 	c.Check(err, IsNil)
-	c.Check(dialer.Config.SkipSRVLookup, Equals, true)
 	c.Check(dialer.ServerAddress, Equals, "4cjw6cwpeaeppfqz.onion:5222")
 }
 

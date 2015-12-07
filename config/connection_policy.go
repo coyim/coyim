@@ -120,7 +120,6 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		}
 
 		if hidden, ok := servers.Get(host); ok {
-			dialer.Config.SkipSRVLookup = true
 			dialer.ServerAddress = net.JoinHostPort(hidden.Onion, port)
 		}
 	}

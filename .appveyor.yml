@@ -5,10 +5,10 @@ environment:
     MSYS2_BASEVER: 20150916
     GOPATH: c:\gopath
   matrix:
-    - MSYS2_ARCH: x86_64
-      MSYS2_BITS: 64
-      MSYSTEM: MSYS2
-      METHOD: ci
+    #- MSYS2_ARCH: x86_64
+    #  MSYS2_BITS: 64
+    #  MSYSTEM: MSYS2
+    #  METHOD: ci
     #- MSYS2_ARCH: i686
     #  MSYS2_BITS: 32
     #  MSYSTEM: MINGW32

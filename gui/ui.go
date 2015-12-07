@@ -251,6 +251,7 @@ func (u *gtkUI) mainWindow() {
 
 	obj, _ := builder.GetObject("notification-area")
 	u.notificationArea = obj.(*gtk.Box)
+	u.addFeedbackInfoBar()
 
 	u.connectShortcutsMainWindow(u.window)
 
@@ -258,6 +259,20 @@ func (u *gtkUI) mainWindow() {
 	gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
 
 	u.window.ShowAll()
+}
+
+func (u *gtkUI) addFeedbackInfoBar() {
+	builder := builderForDefinition("FeedbackInfo")
+
+	obj, _ := builder.GetObject("feedbackInfo")
+	infobar := obj.(*gtk.InfoBar)
+	u.notificationArea.PackEnd(infobar, true, true, 0)
+
+	obj, _ = builder.GetObject("feedbackButton")
+	button := obj.(*gtk.Button)
+	button.Connect("clicked", func() {
+		u.feedbackDialog()
+	})
 }
 
 func (u *gtkUI) quit() {
@@ -293,6 +308,19 @@ func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 
 	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
+}
+
+func (u *gtkUI) feedbackDialog() {
+	builder := builderForDefinition("Feedback")
+
+	obj, _ := builder.GetObject("dialog")
+	dialog := obj.(*gtk.MessageDialog)
+	dialog.SetTransientFor(u.window)
+
+	response := dialog.Run()
+	if gtk.ResponseType(response) == gtk.RESPONSE_CLOSE {
+		dialog.Destroy()
+	}
 }
 
 func (u *gtkUI) shouldViewAccounts() bool {

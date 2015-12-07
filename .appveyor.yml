@@ -7,10 +7,10 @@ environment:
   matrix:
     #- MSYSTEM: MSYS2
     #  METHOD: ci
-    - MSYS2_ARCH: i686
-      MSYS2_BITS: 32
-      MSYSTEM: MINGW32
-      METHOD: cross
+    #- MSYS2_ARCH: i686
+    #  MSYS2_BITS: 32
+    #  MSYSTEM: MINGW32
+    #  METHOD: cross
     - MSYS2_ARCH: x86_64
       MSYS2_BITS: 64
       MSYSTEM: MINGW64

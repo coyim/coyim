@@ -51,7 +51,7 @@ install:
   - if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > $nul
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps"'
 build_script:
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make ci"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make build-gui"'
 artifacts:
   - path: '%GOPATH%\src\github.com\twstrike\coyim\bin\coyim.exe'
 before_deploy:

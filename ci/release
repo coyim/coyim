@@ -2,36 +2,30 @@
 
 set -xe
 
+VERSION="${APPVEYOR_REPO_BRANCH:-${TRAVIS_BRANCH}}-${${APPVEYOR_REPO_COMMIT:-${TRAVIS_COMMIT}}:0:7}"
+OS=${APPVEYOR_OS_NAME:-${TRAVIS_OS_NAME:-linux}}
 # We can deploy only when a tag is pushed, and use ir as the version
-VERSION="${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:7}"
-OS=${TRAVIS_OS_NAME:-linux}
-
-if [[ $OS = "linux" ]]; then
-  make cross-compile
+if [[ $OS = "windows" ]] && [[ $APPVEYOR_REPO_BRANCH = "release" ]]; then
+    make build-gui
+elif [[ $OS = "linux" ]]; then
+    make cross-compile i18n build-gui
 elif [[ $OS = "osx" ]]; then
-  make build-gui
+    # gettext is not linked on OSX
+    export PATH="$PATH:$(brew --prefix gettext)/bin"
+    make i18n build-gui
 
-  # gettext is not linked on OSX
-  export PATH="$PATH:$(brew --prefix gettext)/bin"
-  make i18n
-
-  iconutil -c icns -o build/mac-bundle/coy.icns build/mac-bundle/coy.iconset
-
-	ci/build-osx-bundle bin/mac-bundle/CoyIM.app
-
-  ln -s /Applications bin/mac-bundle/Applications
-  cp build/mac-bundle/ds-store bin/mac-bundle/.DS_Store 
-
-  ci/make-dmg coyim $VERSION bin/mac-bundle/
-
-  rm -rf bin/mac-bundle
+    # bundle into dmg
+    iconutil -c icns -o build/mac-bundle/coy.icns build/mac-bundle/coy.iconset
+    ci/build-osx-bundle bin/mac-bundle/CoyIM.app
+    ln -s /Applications bin/mac-bundle/Applications
+    cp build/mac-bundle/ds-store bin/mac-bundle/.DS_Store
+    ci/make-dmg coyim $VERSION bin/mac-bundle/
+    rm -rf bin/mac-bundle
 else
-  echo "Unsupported OS: ${OS}" >2
-  exit 1
+    echo "Unsupported OS: ${OS}" >2
+    exit 1
 fi
 
-make release-gui
-
+mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
 # update version on bintray conf file, preparing to send
 sed -i".bak" "s <VERSION> $VERSION g" ci/bintray.json
-

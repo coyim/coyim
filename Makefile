@@ -14,9 +14,6 @@ gen-ui-defs:
 build-gui:
 	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim
 
-build-gui-win:
-	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim.exe
-
 build-cli:
 	go build -o bin/coyim-cli
 
@@ -43,6 +40,9 @@ i18n:
 
 release-gui: i18n build-gui
 	mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
+
+release-gui-win: build-gui-win
+	mv bin/coyim.exe bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe
 
 release: clean-release cross-compile
 

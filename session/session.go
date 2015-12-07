@@ -259,8 +259,9 @@ func (s *Session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 	}
 }
 
+//TODO: differentiate errors from disconnect request
 func (s *Session) watchStanzas() {
-	defer s.Close()
+	defer s.connectionLost()
 
 	stanzaChan := make(chan xmpp.Stanza)
 	go s.readStanzasAndAlertOnErrors(stanzaChan)
@@ -807,20 +808,32 @@ func (s *Session) terminateConversations() {
 	}
 }
 
+func (s *Session) connectionLost() {
+	if s.IsDisconnected() {
+		return
+	}
+
+	s.Close()
+	s.publish(ConnectionLost)
+}
+
 // Close terminates all outstanding OTR conversations and closes the connection to the server
 func (s *Session) Close() {
 	if s.IsDisconnected() {
 		return
 	}
 
+	s.ConnStatus = DISCONNECTED
+	defer s.onDisconnect()
+
 	s.terminateConversations()
 	s.Conn.Close()
+}
 
+func (s *Session) onDisconnect() {
+	s.publish(Disconnected)
 	s.R.Clear()
 	s.rosterReceived()
-
-	s.ConnStatus = DISCONNECTED
-	s.publish(Disconnected)
 }
 
 // Ping does a Ping

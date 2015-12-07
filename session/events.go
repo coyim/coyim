@@ -20,6 +20,8 @@ const (
 	Disconnected EventType = iota
 	Connecting
 	Connected
+	ConnectionLost
+
 	RosterReceived
 	Ping
 	PongReceived

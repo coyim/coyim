@@ -82,6 +82,13 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 	case session.Disconnected:
 		//TODO: notify account disconnect?
 		u.roster.enableExistingConversationWindows(account, false)
+	case session.ConnectionLost:
+		log.Println("Connection lost. Should we reconnect?")
+
+		if ev.Session.CurrentAccount.ConnectAutomatically {
+			go u.connectWithRandomDelay(account)
+			//u.ExecuteCmd(connectAccountCmd(account))
+		}
 	case session.RosterReceived:
 		if account == nil {
 			return

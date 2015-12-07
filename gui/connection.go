@@ -29,7 +29,7 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 		//TODO: notify authentication failure?
 		u.askForPasswordAndConnect(account)
 	case xmpp.ErrConnectionFailed:
-		//TODO: notify connection failure?
+		u.notifyConnectionFailure(account)
 	}
 
 	return err

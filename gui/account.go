@@ -161,7 +161,7 @@ func (account *account) buildConnectionNotification() error {
 
 	msg := obj.(*gtk.Label)
 
-	text := fmt.Sprintf(i18n.Local("Connecting to %s"),
+	text := fmt.Sprintf(i18n.Local("Connecting account\n%s"),
 		account.session.CurrentAccount.Account)
 
 	msg.SetText(text)

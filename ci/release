@@ -32,6 +32,6 @@ else
     exit 1
 fi
 
-mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
+mv bin/coyim bin/coyim_$(go env GOOS)_$(go env GOARCH)
 # update version on bintray conf file, preparing to send
 sed -i".bak" "s <VERSION> $VERSION g" ci/bintray.json

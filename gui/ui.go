@@ -271,7 +271,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 	obj, _ = builder.GetObject("feedbackButton")
 	button := obj.(*gtk.Button)
 	button.Connect("clicked", func() {
-		u.feedbackDialog()
+		glib.IdleAdd(u.feedbackDialog)
 	})
 }
 

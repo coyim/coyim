@@ -9,12 +9,12 @@ import (
 	"github.com/twstrike/coyim/session"
 )
 
+// account wraps a Session with GUI functionality
 type account struct {
 	menu                   *gtk.MenuItem
 	connectionNotification *gtk.InfoBar
 
-	session *session.Session
-
+	session         *session.Session
 	sessionObserver chan interface{}
 }
 
@@ -56,9 +56,8 @@ func (u *gtkUI) showAddAccountWindow() error {
 func (account *account) destroyMenu() {
 	close(account.sessionObserver)
 
-	//I dont know how to remove it from its current parent without breaking the menu
-	//unparent does not seem to work as expected
 	account.menu.Destroy()
+	account.menu = nil
 }
 
 func (account *account) appendMenuTo(submenu *gtk.Menu) {

@@ -4,6 +4,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -94,6 +95,8 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 		disconnect.SetSensitive(s.ConnStatus == session.CONNECTED)
 	})
 }
+
+var accountsLock sync.Mutex
 
 func (u *gtkUI) buildAccountsMenu() {
 	accountsLock.Lock()

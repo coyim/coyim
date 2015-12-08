@@ -69,8 +69,6 @@ func NewGTK() UI {
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
 	ret.accountManager = newAccountManager(ret)
-	//TODO: replace by a command
-	ret.accountManager.saveConfiguration = ret.SaveConfig
 
 	return ret
 }

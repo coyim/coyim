@@ -20,8 +20,7 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
 	defer accountsLock.Unlock()
 
 	u.config.Add(c)
-	// u.SaveConfig()
-	u.configLoaded()
+	u.configLoaded() //Saves if config has changed
 }
 
 func (u *gtkUI) showConfigAssistant() error {

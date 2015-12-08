@@ -184,7 +184,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 			}
 
 			glib.IdleAdd(func() {
-				verifyFingerprintDialog(account, peer, u.window)
+				verifyFingerprintDialog(account, peer, convWin.win)
 			})
 
 			//TODO: should only hide the notification when the identity is verified

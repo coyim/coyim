@@ -328,32 +328,36 @@ func (u *gtkUI) shouldViewAccounts() bool {
 }
 
 func authors() []string {
-	if b, err := exec.Command("git", "log").Output(); err == nil {
-		lines := strings.Split(string(b), "\n")
+	strikeMessage := "STRIKE Team <coyim@thoughtworks.com>"
 
-		var a []string
-		r := regexp.MustCompile(`^Author:\s*([^ <]+).*$`)
-		for _, e := range lines {
-			ms := r.FindStringSubmatch(e)
-			if ms == nil {
-				continue
-			}
-			a = append(a, ms[1])
-		}
-		sort.Strings(a)
-		var p string
-		lines = []string{}
-		for _, e := range a {
-			if p == e {
-				continue
-			}
-			lines = append(lines, e)
-			p = e
-		}
-		lines = append(lines, "STRIKE Team <strike-public(AT)thoughtworks.com>")
-		return lines
+	b, err := exec.Command("git", "log").Output()
+	if err != nil {
+		return []string{strikeMessage}
 	}
-	return []string{"STRIKE Team <strike-public@thoughtworks.com>"}
+
+	lines := strings.Split(string(b), "\n")
+
+	var a []string
+	r := regexp.MustCompile(`^Author:\s*([^ <]+).*$`)
+	for _, e := range lines {
+		ms := r.FindStringSubmatch(e)
+		if ms == nil {
+			continue
+		}
+		a = append(a, ms[1])
+	}
+	sort.Strings(a)
+	var p string
+	lines = []string{}
+	for _, e := range a {
+		if p == e {
+			continue
+		}
+		lines = append(lines, e)
+		p = e
+	}
+	lines = append(lines, strikeMessage)
+	return lines
 }
 
 func (u gtkUI) aboutDialog() {

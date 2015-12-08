@@ -4,6 +4,7 @@ environment:
   global:
     APPVEYOR_OS_NAME: windows
     RUBY_VERSION: "22-x64"
+    GO_VERSION: "14"
     GOPATH: c:\gopath
     BINTRAY_USER:
       secure: HvXDg/3xn3Du2GPXPyf1tQ==
@@ -33,6 +34,7 @@ install:
   - if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz > $nul
   - if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > $nul
   - SET PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
+  - SET PATH=C:\go%GO_VERSION%\bin;%PATH%
   - appveyor DownloadFile http://curl.haxx.se/ca/cacert.pem
   - xcopy cacert.pem C:\Ruby%RUBY_VERSION%\lib\ruby\2.2.0\rubygems\ssl_certs
   - SET PATH=%MSYS_PATH%\usr\bin;%PATH%

@@ -42,10 +42,7 @@ Purported fingerprint for %[1]s:
 		builderName = "VerifyFingerprint"
 	}
 
-	builder, err := loadBuilderWith(builderName)
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition(builderName)
 
 	obj, _ := builder.GetObject("dialog")
 	dialog := obj.(*gtk.Dialog)

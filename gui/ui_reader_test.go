@@ -34,17 +34,13 @@ func removeFile(name string) {
 	os.Remove(name)
 }
 
-func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
+func (s *UIReaderSuite) Test_builderForDefinition_useXMLIfExists(c *C) {
 	gtk.Init(nil)
 	removeFile("definitions/Test.xml")
 	writeTestFile("definitions/Test.xml", testFile)
 	ui := "Test"
 
-	builder, parseErr := loadBuilderWith(ui)
-	if parseErr != nil {
-		fmt.Errorf("\nFailed!\n%s", parseErr.Error())
-		c.Fail()
-	}
+	builder := builderForDefinition(ui)
 
 	win, getErr := builder.GetObject("conversation")
 	if getErr != nil {
@@ -56,17 +52,13 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useXMLIfExists(c *C) {
 	c.Assert(w, Equals, 400)
 }
 
-func (s *UIReaderSuite) Test_loadBuilderWith_useGoFileIfXMLDoesntExists(c *C) {
+func (s *UIReaderSuite) Test_builderForDefinition_useGoFileIfXMLDoesntExists(c *C) {
 	gtk.Init(nil)
 	removeFile("definitions/Test.xml")
 	//writeTestFile("definitions/TestDefinition.xml", testFile)
 	ui := "Test"
 
-	builder, parseErr := loadBuilderWith(ui)
-	if parseErr != nil {
-		fmt.Errorf("\nFailed!\n%s", parseErr.Error())
-		c.Fail()
-	}
+	builder := builderForDefinition(ui)
 
 	win, getErr := builder.GetObject("conversation")
 	if getErr != nil {
@@ -78,11 +70,11 @@ func (s *UIReaderSuite) Test_loadBuilderWith_useGoFileIfXMLDoesntExists(c *C) {
 	c.Assert(w, Equals, 400)
 }
 
-func (s *UIReaderSuite) Test_loadBuilderWith_shouldReturnErrorWhenDefinitionDoesntExist(c *C) {
+func (s *UIReaderSuite) Test_builderForDefinition_shouldReturnErrorWhenDefinitionDoesntExist(c *C) {
 	removeFile("definitions/nonexistent")
 	ui := "nonexistent"
 
 	c.Assert(func() {
-		loadBuilderWith(ui)
+		builderForDefinition(ui)
 	}, Panics, "No definition found for nonexistent")
 }

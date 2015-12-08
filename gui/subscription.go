@@ -9,10 +9,7 @@ import (
 )
 
 func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.MessageDialog {
-	builder, err := loadBuilderWith("AuthorizeSubscription")
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition("AuthorizeSubscription")
 
 	obj, _ := builder.GetObject("dialog")
 	confirmDialog := obj.(*gtk.MessageDialog)
@@ -25,10 +22,7 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 }
 
 func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer string) error) *gtk.Dialog {
-	builder, loadErr := loadBuilderWith("AddContact")
-	if loadErr != nil {
-		panic(loadErr.Error())
-	}
+	builder := builderForDefinition("AddContact")
 
 	//TODO: move model to XML builder
 	model, _ := gtk.ListStoreNew(

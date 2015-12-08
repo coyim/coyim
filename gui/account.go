@@ -141,24 +141,13 @@ func (account *account) remove() {
 	account.ExecuteCmd(removeAccountCmd(account))
 }
 
-func (account *account) buildConnectionNotification() error {
-	builder, err := loadBuilderWith("ConnectingAccountInfo")
-	if err != nil {
-		return err
-	}
+func (account *account) buildConnectionNotification() {
+	builder := builderForDefinition("ConnectingAccountInfo")
 
-	obj, err := builder.GetObject("infobar")
-	if err != nil {
-		return err
-	}
-
+	obj, _ := builder.GetObject("infobar")
 	infoBar := obj.(*gtk.InfoBar)
 
-	obj, err = builder.GetObject("message")
-	if err != nil {
-		return err
-	}
-
+	obj, _ = builder.GetObject("message")
 	msg := obj.(*gtk.Label)
 
 	text := fmt.Sprintf(i18n.Local("Connecting account\n%s"),
@@ -167,7 +156,6 @@ func (account *account) buildConnectionNotification() error {
 	msg.SetText(text)
 
 	account.connectionNotification = infoBar
-	return nil
 }
 
 func (account *account) removeConnectionNotification() {

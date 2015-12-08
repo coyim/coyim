@@ -64,7 +64,7 @@ func (u *gtkUI) runImporter() {
 	importSettings := make(map[applicationAndAccount]bool)
 	allImports := importer.TryImportAll()
 
-	builder, _ := loadBuilderWith("Importer")
+	builder := builderForDefinition("Importer")
 
 	win, _ := builder.GetObject("importerWindow")
 	w := win.(*gtk.Dialog)

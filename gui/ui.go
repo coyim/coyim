@@ -76,10 +76,7 @@ func NewGTK() UI {
 }
 
 func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc func(*config.Account)) {
-	builder, err := loadBuilderWith("ConfirmAccountRemoval")
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition("ConfirmAccountRemoval")
 
 	obj, _ := builder.GetObject("RemoveAccount")
 	dialog := obj.(*gtk.MessageDialog)
@@ -217,10 +214,7 @@ func (u *gtkUI) initRoster() {
 }
 
 func (u *gtkUI) mainWindow() {
-	builder, err := loadBuilderWith("Main")
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition("Main")
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window_signal":                    u.quit,
@@ -276,10 +270,7 @@ func (u *gtkUI) quit() {
 func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 	dialogTemplate := "AskForPassword"
 
-	builder, err := loadBuilderWith(dialogTemplate)
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition(dialogTemplate)
 
 	obj, _ := builder.GetObject(dialogTemplate)
 	dialog := obj.(*gtk.Dialog)
@@ -437,10 +428,7 @@ func (u *gtkUI) rosterUpdated() {
 func (u *gtkUI) alertTorIsNotRunning() {
 	//TODO: should it notify instead of alert?
 
-	builder, err := loadBuilderWith("TorNotRunning")
-	if err != nil {
-		return
-	}
+	builder := builderForDefinition("TorNotRunning")
 
 	obj, _ := builder.GetObject("TorNotRunningDialog")
 	dialog := obj.(*gtk.Dialog)
@@ -450,10 +438,7 @@ func (u *gtkUI) alertTorIsNotRunning() {
 }
 
 func (u *gtkUI) askForServerDetails(conf *config.Account, connectFn func() error) {
-	builder, err := loadBuilderWith("ConnectionSettings")
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition("ConnectionSettings")
 
 	obj, _ := builder.GetObject("ConnectionSettingsDialog")
 	dialog := obj.(*gtk.Dialog)

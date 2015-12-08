@@ -50,10 +50,7 @@ const (
 )
 
 func (u *gtkUI) newRoster() *roster {
-	builder, err := loadBuilderWith("Roster")
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition("Roster")
 
 	r := &roster{
 		conversations: make(map[string]*conversationWindow),
@@ -129,17 +126,9 @@ func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, acc
 }
 
 func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventButton) {
-	builder, err := loadBuilderWith("ContactPopupMenu")
-	if err != nil {
-		// TODO: print error
-		return
-	}
-
-	obj, err := builder.GetObject("contactMenu")
-	if err != nil {
-		// TODO: print error
-		return
-	}
+	builder := builderForDefinition("ContactPopupMenu")
+	obj, _ := builder.GetObject("contactMenu")
+	mn := obj.(*gtk.Menu)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
@@ -168,7 +157,6 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 		},
 	})
 
-	mn := obj.(*gtk.Menu)
 	mn.ShowAll()
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }

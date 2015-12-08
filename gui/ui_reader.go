@@ -29,21 +29,22 @@ func getDefinitionWithFileFallback(uiName string) string {
 	return readFile(fileName)
 }
 
-func loadBuilderWith(uiName string) (*gtk.Builder, error) {
+func builderForDefinition(uiName string) *gtk.Builder {
 	template := getDefinitionWithFileFallback(uiName)
 
 	builder, err := gtk.BuilderNew()
 	if err != nil {
-		return nil, err
+		//We cant recover from this
+		panic(err)
 	}
 
 	err = builder.AddFromString(template)
 	if err != nil {
-		log.Printf("gui: failed load %s: %s\n", uiName, err.Error())
-		return nil, err
+		//This is a programming error
+		panic(fmt.Sprintf("gui: failed load %s: %s\n", uiName, err.Error()))
 	}
 
-	return builder, nil
+	return builder
 }
 
 func fileNotFound(fileName string) bool {

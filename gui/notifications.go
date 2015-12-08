@@ -9,10 +9,7 @@ import (
 )
 
 func (u *gtkUI) showConnectAccountNotification(account *account) {
-	err := account.buildConnectionNotification()
-	if err != nil {
-		panic(err)
-	}
+	account.buildConnectionNotification()
 
 	glib.IdleAdd(func() {
 		infoBar := account.connectionNotification
@@ -28,10 +25,7 @@ func (u *gtkUI) removeConnectAccountNotification(account *account) {
 }
 
 func (u *gtkUI) notifyConnectionFailure(account *account) {
-	builder, err := loadBuilderWith("ConnectionFailureNotification")
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition("ConnectionFailureNotification")
 
 	builder.ConnectSignals(map[string]interface{}{
 		"handleResponse": func(info *gtk.InfoBar, response gtk.ResponseType) {
@@ -61,10 +55,7 @@ func (u *gtkUI) notifyConnectionFailure(account *account) {
 }
 
 func buildVerifyIdentityNotification(peer string) *gtk.InfoBar {
-	builder, err := loadBuilderWith("VerifyIdentityNotification")
-	if err != nil {
-		panic(err)
-	}
+	builder := builderForDefinition("VerifyIdentityNotification")
 
 	obj, _ := builder.GetObject("infobar")
 	infoBar := obj.(*gtk.InfoBar)

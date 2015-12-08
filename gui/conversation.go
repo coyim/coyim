@@ -74,10 +74,7 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 }
 
 func newConversationWindow(account *account, uid string, u *gtkUI) (*conversationWindow, error) {
-	builder, err := loadBuilderWith("Conversation")
-	if err != nil {
-		return nil, err
-	}
+	builder := builderForDefinition("Conversation")
 
 	obj, _ := builder.GetObject("conversation")
 	win := obj.(*gtk.Window)

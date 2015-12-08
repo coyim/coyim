@@ -39,17 +39,9 @@ func (u *gtkUI) showConfigAssistant() error {
 }
 
 func buildConfigAssistant(saveFn saveAccountFunc, closeFn func()) (*gtk.Assistant, error) {
-	builder, err := loadBuilderWith("ConfigAssistant")
-	if err != nil {
-		return nil, err
-	}
+	builder := builderForDefinition("ConfigAssistant")
 
-	var obj glib.IObject
-	obj, err = builder.GetObject("assistant")
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
+	obj, _ := builder.GetObject("assistant")
 
 	assistant := obj.(*gtk.Assistant)
 	intro, _ := assistant.GetNthPage(0)

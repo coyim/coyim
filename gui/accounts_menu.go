@@ -27,10 +27,7 @@ func firstProxy(account *account) string {
 
 func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	dialogID := "AccountDetails"
-	builder, err := loadBuilderWith(dialogID)
-	if err != nil {
-		panic(err.Error())
-	}
+	builder := builderForDefinition(dialogID)
 
 	obj, _ := builder.GetObject(dialogID)
 	dialog := obj.(*gtk.Dialog)

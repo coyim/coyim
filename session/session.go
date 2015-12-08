@@ -99,9 +99,13 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	}
 
 	s.PrivateKeys = parseFromConfig(cu)
-	s.ConversationManager = client.NewConversationManager(s, s.Conn)
+	s.ConversationManager = client.NewConversationManager(s, s)
 
 	return s
+}
+
+func (s *Session) Send(to string, msg string) error {
+	return s.Conn.Send(to, msg)
 }
 
 //TODO: error

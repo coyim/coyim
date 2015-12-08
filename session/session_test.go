@@ -9,10 +9,8 @@ import (
 	"time"
 
 	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/otr3"
 
 	. "gopkg.in/check.v1"
 )
@@ -238,13 +236,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
-		Config:          &config.ApplicationConfig{},
-		CurrentAccount:  &config.Account{InstanceTag: uint32(42)},
-		Conversations:   make(map[string]*otr3.Conversation),
-		OtrEventHandler: make(map[string]*event.OtrEventHandler),
-		ConnStatus:      DISCONNECTED,
-	}
+	sess := NewSession(
+		&config.ApplicationConfig{},
+		&config.Account{InstanceTag: uint32(42)},
+	)
+
 	sess.Conn = conn
 
 	observer := make(chan interface{}, 1)

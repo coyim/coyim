@@ -259,7 +259,7 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 }
 
 func (r *roster) enableExistingConversationWindows(account *account, enable bool) {
-	//TODO: shold lock r.conversations
+	//TODO: should lock r.conversations
 	for _, convWindow := range r.conversations {
 		if enable {
 			convWindow.win.Emit("enable")

@@ -74,6 +74,7 @@ func NewAccount() (*Account, error) {
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48
+		OTRAutoAppendTag:    true,
 	}, nil
 }
 
@@ -174,7 +175,7 @@ func (a *Account) allowsOTR(version int) bool {
 }
 
 func (a *Account) shouldSendWhitespace() bool {
-	return true
+	return a.OTRAutoAppendTag
 }
 
 func (a *Account) shouldStartAKEAutomatically() bool {

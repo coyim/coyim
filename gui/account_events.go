@@ -139,7 +139,12 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		log.Println("New OTR keys from", ev.From)
 
 		peer := ev.From
-		conversation := ev.Session.GetConversationWith(peer)
+		conversation, exists := ev.Session.GetConversationWith(peer)
+		if !exists {
+			//Something is wrong
+			log.Println("Conversation does not exist")
+			return
+		}
 
 		theirKey := conversation.GetTheirKey()
 		if theirKey == nil {

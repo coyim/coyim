@@ -35,10 +35,6 @@ type Session struct {
 	R                *roster.List
 	ConnStatus       connStatus
 
-	// conversations maps from a JID (without the resource) to an OTR
-	// conversation. (Note that unencrypted conversations also pass through
-	// OTR.)
-	Conversations   map[string]*otr3.Conversation
 	OtrEventHandler map[string]*event.OtrEventHandler
 
 	PrivateKeys []otr3.PrivateKey
@@ -67,6 +63,7 @@ type Session struct {
 	xmppLogger io.Writer
 
 	client.CommandManager
+	client.ConversationManager
 }
 
 func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
@@ -93,7 +90,6 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 		CurrentAccount: cu,
 
 		R:               roster.New(),
-		Conversations:   make(map[string]*otr3.Conversation),
 		OtrEventHandler: make(map[string]*event.OtrEventHandler),
 		LastActionTime:  time.Now(),
 
@@ -103,6 +99,7 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	}
 
 	s.PrivateKeys = parseFromConfig(cu)
+	s.ConversationManager = client.NewConversationManager(s, s.Conn)
 
 	return s
 }
@@ -385,7 +382,7 @@ func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 	}
 }
 
-func (s *Session) newOTRKeys(from string, conversation *otr3.Conversation) {
+func (s *Session) newOTRKeys(from string, conversation client.Conversation) {
 	s.info(fmt.Sprintf("New OTR session with %s established", from))
 
 	s.publishPeerEvent(OTRNewKeys, from)
@@ -395,7 +392,8 @@ func (s *Session) otrEnded(uid string) {
 	s.publishPeerEvent(OTREnded, uid)
 }
 
-func (s *Session) newConversation(peer string) *otr3.Conversation {
+//TODO: why creating a conversation is coupled to the account config and the session
+func (s *Session) NewConversation(peer string) client.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.PrivateKeys)
 
@@ -409,18 +407,6 @@ func (s *Session) newConversation(peer string) *otr3.Conversation {
 	}
 
 	s.CurrentAccount.SetOTRPoliciesFor(peer, conversation)
-
-	return conversation
-}
-
-// GetConversationWith returns the OTR conversation for the given peer
-func (s *Session) GetConversationWith(peer string) *otr3.Conversation {
-	if conversation, ok := s.Conversations[peer]; ok {
-		return conversation
-	}
-
-	conversation := s.newConversation(peer)
-	s.Conversations[peer] = conversation
 
 	eh, ok := s.OtrEventHandler[peer]
 	if !ok {
@@ -472,7 +458,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 }
 
 func (s *Session) receiveClientMessage(from string, when time.Time, body string) {
-	conversation := s.GetConversationWith(from)
+	conversation, _ := s.EnsureConversationWith(from)
 	out, toSend, err := conversation.Receive([]byte(body))
 	encrypted := conversation.IsEncrypted()
 
@@ -503,7 +489,8 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
 		if s.CurrentAccount.OTRAutoTearDown {
-			if s.Conversations[from] == nil {
+			_, existing := s.GetConversationWith(from)
+			if !existing {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
 				break
 			} else {
@@ -749,7 +736,8 @@ func (s *Session) Connect(password string) error {
 
 // EncryptAndSendTo encrypts and sends the message to the given peer
 func (s *Session) EncryptAndSendTo(peer string, message string) error {
-	conversation := s.GetConversationWith(peer)
+	//TODO: review whether it should create a conversation
+	conversation, _ := s.EnsureConversationWith(peer)
 	toSend, err := conversation.Send(otr3.ValidMessage(message))
 	if err != nil {
 		return err
@@ -770,42 +758,8 @@ func (s *Session) SendMessageTo(peer string, message string) error {
 	return s.Conn.Send(peer, message)
 }
 
-// StartEncryptedChatWith starts an encrypted chat with the given peer
-func (s *Session) StartEncryptedChatWith(peer string) error {
-	conversation := s.GetConversationWith(peer)
-	return s.SendMessageTo(peer, string(conversation.QueryMessage()))
-}
-
-// TerminateConversationWith terminates the conversation with a specific peer
-func (s *Session) TerminateConversationWith(peer string) error {
-	//Do not use GetConversationWith because we dont want to create a new conversation just to destroy it
-	c, ok := s.Conversations[peer]
-	if !ok {
-		return nil
-	}
-
-	msgs, err := c.End()
-	if err != nil {
-		return err
-	}
-
-	for _, msg := range msgs {
-		err := s.Conn.Send(peer, string(msg))
-		if err != nil {
-			return err
-		}
-	}
-
-	//TODO: add wipe for conversation
-	//conversation.Wipe()
-
-	return nil
-}
-
 func (s *Session) terminateConversations() {
-	for peer := range s.Conversations {
-		s.TerminateConversationWith(peer)
-	}
+	s.ConversationManager.TerminateAll()
 }
 
 func (s *Session) connectionLost() {

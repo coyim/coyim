@@ -209,8 +209,10 @@ func (conv *conversationWindow) sendMessage(message string) error {
 		return err
 	}
 
-	//TODO: this should not be in both GUI and roster
-	conversation := conv.account.session.GetConversationWith(conv.to)
+	//TODO: review whether it should create a conversation
+	//TODO: this should be whether the message was encrypted or not, rather than
+	//whether the conversation is encrypted or not
+	conversation, _ := conv.account.session.EnsureConversationWith(conv.to)
 	conv.appendMessage(conv.account.session.CurrentAccount.Account, time.Now(), conversation.IsEncrypted(), ui.StripHTML([]byte(message)), true)
 
 	return nil

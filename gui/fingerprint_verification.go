@@ -7,7 +7,6 @@ import (
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/otr3"
 )
 
 func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, theirFp []byte) *gtk.Dialog {
@@ -55,7 +54,7 @@ Purported fingerprint for %[1]s:
 	return dialog
 }
 
-func getFingerprintsFor(conversation *otr3.Conversation) ([]byte, []byte) {
+func getFingerprintsFor(conversation client.Conversation) ([]byte, []byte) {
 	var ourFp, theirFp []byte
 	ourKey := conversation.GetOurCurrentKey()
 	if ourKey != nil {
@@ -72,7 +71,10 @@ func getFingerprintsFor(conversation *otr3.Conversation) ([]byte, []byte) {
 
 func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
 	accountConfig := account.session.CurrentAccount
-	conversation := account.session.GetConversationWith(uid)
+	//TODO: review whether it should create new conversations
+	//Anyway, if it has created the conversation this function could return
+	//(there is no theirFP in this case)
+	conversation, _ := account.session.EnsureConversationWith(uid)
 	ourFp, theirFp := getFingerprintsFor(conversation)
 
 	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, uid, theirFp)

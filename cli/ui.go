@@ -208,7 +208,7 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 	return promptForForm(c.term, user, c.password, title, instructions, fields)
 }
 
-func (c *cliUI) printConversationInfo(uid string, conversation *otr3.Conversation) {
+func (c *cliUI) printConversationInfo(uid string, conversation client.Conversation) {
 	s := c.session
 	term := c.term
 
@@ -681,24 +681,23 @@ CommandLoop:
 			case addCommand:
 				s.RequestPresenceSubscription(cmd.User)
 			case msgCommand:
-				conversation, ok := s.Conversations[cmd.to]
-
-				if ok && conf.OTRAutoAppendTag {
-					conversation.Policies.SendWhitespaceTag()
-				}
-
-				isEncrypted := ok && conversation.IsEncrypted()
-				if cmd.setPromptIsEncrypted != nil {
-					cmd.setPromptIsEncrypted <- isEncrypted
-				}
-				if !isEncrypted && conf.ShouldEncryptTo(cmd.to) {
-					warn(term, fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
-					continue
-				}
 				var msgs [][]byte
 				message := []byte(cmd.msg)
+				conversation, exists := s.GetConversationWith(cmd.to)
 
-				if ok {
+				if !exists {
+					msgs = [][]byte{[]byte(message)}
+				} else {
+					isEncrypted := conversation.IsEncrypted()
+					if cmd.setPromptIsEncrypted != nil {
+						cmd.setPromptIsEncrypted <- isEncrypted
+					}
+
+					if !isEncrypted && conf.ShouldEncryptTo(cmd.to) {
+						warn(term, fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
+						continue
+					}
+
 					var err error
 					validMsgs, err := conversation.Send(message)
 					msgs = otr3.Bytes(validMsgs)
@@ -706,9 +705,8 @@ CommandLoop:
 						alert(term, err.Error())
 						break
 					}
-				} else {
-					msgs = [][]byte{[]byte(message)}
 				}
+
 				for _, message := range msgs {
 					s.Conn.Send(cmd.to, string(message))
 				}
@@ -718,7 +716,7 @@ CommandLoop:
 				for _, pk := range s.PrivateKeys {
 					info(term, fmt.Sprintf("Your OTR fingerprint is %x", pk.PublicKey().Fingerprint()))
 				}
-				for to, conversation := range s.Conversations {
+				for to, conversation := range s.Conversations() {
 					if conversation.IsEncrypted() {
 						info(term, fmt.Sprintf("Secure session with %s underway:", to))
 						c.printConversationInfo(to, conversation)
@@ -726,11 +724,13 @@ CommandLoop:
 				}
 			case endOTRCommand:
 				to := string(cmd.User)
-				conversation, ok := s.Conversations[to]
-				if !ok {
+				conversation, exists := s.GetConversationWith(to)
+
+				if !exists {
 					alert(term, "No secure session established")
 					break
 				}
+
 				msgs, err := conversation.End()
 				if err != nil {
 					alert(term, "Can't end the conversation - it seems there is no randomness in your system. This could be a significant problem.")
@@ -743,11 +743,12 @@ CommandLoop:
 				warn(term, "OTR conversation ended with "+cmd.User)
 			case authQACommand:
 				to := string(cmd.User)
-				conversation, ok := s.Conversations[to]
-				if !ok {
+				conversation, exists := s.GetConversationWith(to)
+				if !exists {
 					alert(term, "Can't authenticate without a secure conversation established")
 					break
 				}
+
 				var ret []otr3.ValidMessage
 				if s.OtrEventHandler[to].WaitingForSecret {
 					s.OtrEventHandler[to].WaitingForSecret = false

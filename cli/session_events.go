@@ -33,8 +33,11 @@ func (c *cliUI) handlePeerEvent(ev session.PeerEvent) {
 		c.input.SetPromptForTarget(ev.From, false)
 	case session.OTRNewKeys:
 		uid := ev.From
+		//TODO: review whether it should create conversations
+		conversation, _ := ev.Session.EnsureConversationWith(uid)
+
 		c.input.SetPromptForTarget(uid, true)
-		c.printConversationInfo(uid, ev.Session.GetConversationWith(uid))
+		c.printConversationInfo(uid, conversation)
 	case session.SubscriptionRequest:
 		msg := fmt.Sprintf("%[1]s wishes to see when you're online. Use '/confirm %[1]s' to confirm (or likewise with /deny to decline)", ev.From)
 

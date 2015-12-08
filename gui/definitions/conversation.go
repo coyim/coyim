@@ -94,13 +94,11 @@ func (*defConversation) String() string {
                         <property name="visible">true</property>
                         <property name="label" translatable="yes">Secure chat</property>
                         <property name="can-default">true</property>
+                        <signal name="clicked" handler="on_start_otr_signal" />
                       </object>
                     </child>
                   </object>
                 </child>
-                <action-widgets>
-                  <action-widget response="GTK_RESPONSE_ACCEPT">button_verify</action-widget>
-                </action-widgets>
               </object>
               <packing>
                 <property name="expand">false</property>

@@ -128,10 +128,9 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 		// TODO: basically I think this whole menu should be rethought. It's useful for us to have during development
 		"on_start_otr_signal": func() {
 			//TODO: enable/disable depending on the conversation's encryption state
-			//TODO: errors
 			err := conv.account.session.StartEncryptedChatWith(conv.to)
 			if err != nil {
-				fmt.Printf(i18n.Local("Failed to start the encrypted chat: %s\n"), err.Error())
+				//TODO: notify failure
 			}
 		},
 		"on_end_otr_signal": func() {

@@ -42,7 +42,19 @@
           <packing>
             <property name="expand">false</property>
             <property name="fill">true</property>
+            <property name="pack-type">GTK_PACK_START</property>
             <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="notification-area">
+            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+          </object>
+          <packing>
+            <property name="expand">false</property>
+            <property name="fill">false</property>
+            <property name="pack-type">GTK_PACK_START</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -61,6 +73,7 @@
           <packing>
             <property name="expand">true</property>
             <property name="fill">true</property>
+            <property name="pack-type">GTK_PACK_END</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -72,7 +85,8 @@
           <packing>
             <property name="expand">false</property>
             <property name="fill">true</property>
-            <property name="position">2</property>
+            <property name="pack-type">GTK_PACK_END</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>

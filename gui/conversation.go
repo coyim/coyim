@@ -18,12 +18,14 @@ var (
 )
 
 type conversationWindow struct {
-	to            string
-	account       *account
-	win           *gtk.Window
-	parentWin     *gtk.Window
-	history       *gtk.TextView
-	scrollHistory *gtk.ScrolledWindow
+	to               string
+	account          *account
+	win              *gtk.Window
+	parentWin        *gtk.Window
+	history          *gtk.TextView
+	scrollHistory    *gtk.ScrolledWindow
+	notificationArea *gtk.Box
+
 	sync.Mutex
 }
 
@@ -72,45 +74,35 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 }
 
 func newConversationWindow(account *account, uid string, u *gtkUI) (*conversationWindow, error) {
-	var history, scrollHistory, messageEntry glib.IObject
-
 	builder, err := loadBuilderWith("Conversation")
 	if err != nil {
 		return nil, err
 	}
 
-	obj, err := builder.GetObject("conversation")
-	if err != nil {
-		return nil, err
-	}
-
+	obj, _ := builder.GetObject("conversation")
 	win := obj.(*gtk.Window)
 	title := fmt.Sprintf("%s <-> %s", account.session.CurrentAccount.Account, uid)
 	win.SetTitle(title)
 
-	history, err = builder.GetObject("history")
-	if err != nil {
-		return nil, err
-	}
+	obj, _ = builder.GetObject("history")
+	history := obj.(*gtk.TextView)
 
-	scrollHistory, err = builder.GetObject("historyScroll")
-	if err != nil {
-		return nil, err
-	}
+	obj, _ = builder.GetObject("historyScroll")
+	scrollHistory := obj.(*gtk.ScrolledWindow)
 
-	messageEntry, err = builder.GetObject("message")
-	if err != nil {
-		return nil, err
-	}
+	obj, _ = builder.GetObject("message")
+	entry := obj.(*gtk.Entry)
 
-	entry := messageEntry.(*gtk.Entry)
+	obj, _ = builder.GetObject("notification-area")
+	notificationArea := obj.(*gtk.Box)
 
 	conv := &conversationWindow{
-		to:            uid,
-		account:       account,
-		win:           win,
-		history:       history.(*gtk.TextView),
-		scrollHistory: scrollHistory.(*gtk.ScrolledWindow),
+		to:               uid,
+		account:          account,
+		win:              win,
+		history:          history,
+		scrollHistory:    scrollHistory,
+		notificationArea: notificationArea,
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
@@ -187,9 +179,13 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 	})
 
 	u.displaySettings.control(&conv.history.Container.Widget)
-	u.displaySettings.control(&messageEntry.(*gtk.Entry).Widget)
+	u.displaySettings.control(&entry.Widget)
 
 	return conv, nil
+}
+
+func (conv *conversationWindow) addNotification(notification *gtk.InfoBar) {
+	conv.notificationArea.Add(notification)
 }
 
 func (conv *conversationWindow) Hide() {

@@ -59,3 +59,21 @@ func (u *gtkUI) notifyConnectionFailure(account *account) {
 		infoBar.ShowAll()
 	})
 }
+
+func buildVerifyIdentityNotification(peer string) *gtk.InfoBar {
+	builder, err := loadBuilderWith("VerifyIdentityNotification")
+	if err != nil {
+		panic(err)
+	}
+
+	obj, _ := builder.GetObject("infobar")
+	infoBar := obj.(*gtk.InfoBar)
+
+	obj, _ = builder.GetObject("message")
+	message := obj.(*gtk.Label)
+
+	text := fmt.Sprintf(i18n.Local("You have not verified the identity of %s"), peer)
+	message.SetText(text)
+
+	return infoBar
+}

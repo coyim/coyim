@@ -34,12 +34,7 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 		return
 	}
 
-	//We dont need this anymore, only CLI
-	//acc.session.SaveConfiguration = m.saveConfiguration
 	acc.session.Subscribe(m.events)
-
-	//TODO: remove this duplication
-	acc.CommandManager = m
 	acc.session.CommandManager = m
 
 	m.accounts = append(m.accounts, acc)

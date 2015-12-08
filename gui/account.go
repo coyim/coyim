@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
@@ -17,8 +16,6 @@ type account struct {
 	session *session.Session
 
 	sessionObserver chan interface{}
-
-	client.CommandManager
 }
 
 type byAccountNameAlphabetic []*account
@@ -33,6 +30,10 @@ func newAccount(conf *config.ApplicationConfig, currentConf *config.Account) (ac
 	return &account{
 		session: session.NewSession(conf, currentConf),
 	}, nil
+}
+
+func (account *account) executeCmd(c interface{}) {
+	account.session.CommandManager.ExecuteCmd(c)
 }
 
 func (account *account) connected() bool {
@@ -122,23 +123,23 @@ func (account *account) watchAndToggleMenuItems(connectItem, disconnectItem *gtk
 }
 
 func (account *account) connect() {
-	account.ExecuteCmd(connectAccountCmd(account))
+	account.executeCmd(connectAccountCmd(account))
 }
 
 func (account *account) disconnect() {
-	account.ExecuteCmd(disconnectAccountCmd(account))
+	account.executeCmd(disconnectAccountCmd(account))
 }
 
 func (account *account) toggleAutoConnect() {
-	account.ExecuteCmd(toggleAutoConnectCmd(account))
+	account.executeCmd(toggleAutoConnectCmd(account))
 }
 
 func (account *account) edit() {
-	account.ExecuteCmd(editAccountCmd(account))
+	account.executeCmd(editAccountCmd(account))
 }
 
 func (account *account) remove() {
-	account.ExecuteCmd(removeAccountCmd(account))
+	account.executeCmd(removeAccountCmd(account))
 }
 
 func (account *account) buildConnectionNotification() {

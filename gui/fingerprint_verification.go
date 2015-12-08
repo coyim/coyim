@@ -84,7 +84,7 @@ func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
 	responseType := gtk.ResponseType(dialog.Run())
 	switch responseType {
 	case gtk.RESPONSE_YES:
-		account.ExecuteCmd(client.AuthorizeFingerprintCmd{
+		account.executeCmd(client.AuthorizeFingerprintCmd{
 			Account:     accountConfig,
 			Peer:        uid,
 			Fingerprint: theirFp,

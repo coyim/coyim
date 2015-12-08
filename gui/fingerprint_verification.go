@@ -69,7 +69,7 @@ func getFingerprintsFor(conversation client.Conversation) ([]byte, []byte) {
 	return ourFp, theirFp
 }
 
-func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
+func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) gtk.ResponseType {
 	accountConfig := account.session.CurrentAccount
 	//TODO: review whether it should create new conversations
 	//Anyway, if it has created the conversation this function could return
@@ -92,4 +92,6 @@ func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) {
 			Fingerprint: theirFp,
 		})
 	}
+
+	return responseType
 }

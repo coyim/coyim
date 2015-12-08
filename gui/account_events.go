@@ -133,74 +133,24 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		//TODO
 		log.Printf("received iq: %v\n", ev.From)
 	case session.OTREnded:
-		//TODO
-		log.Println("OTR conversation ended with", ev.From)
-	case session.OTRNewKeys:
-		log.Println("New OTR keys from", ev.From)
-
 		peer := ev.From
-		conversation, exists := ev.Session.GetConversationWith(peer)
-		if !exists {
-			//Something is wrong
-			log.Println("Conversation does not exist")
-			return
-		}
-
-		theirKey := conversation.GetTheirKey()
-		if theirKey == nil {
-			//Something is VERY wrong
-			log.Println("Conversation has no theirKey")
-			return
-		}
-
-		fingerprint := theirKey.Fingerprint()
-		conf := ev.Session.CurrentAccount
-
-		//TODO: this only returns the userID if the fingerprint matches AND is not
-		//untrusted. What if this fingerprint is associated with another (untrusted)
-		//userID and we trust it for a different userID? Is this a problem?
-		userID := conf.UserIDForVerifiedFingerprint(fingerprint)
-
-		switch userID {
-		case "":
-			//TODO: Unknown fingerprint. User must verify.
-		case ev.From:
-			//TODO: Already verifyed. Should we notify?
-			log.Println("Fingerprint already verified")
-			return
-		default:
-			//TODO: The fingerprint is associated with someone else. Warn!!!
-			log.Println("Fingerprint verified with another userID")
-			return
-		}
-
 		convWin, ok := u.roster.conversations[peer]
 		if !ok {
 			log.Println("Could not find a conversation window")
 			return
 		}
 
-		account := u.findAccountForSession(ev.Session)
-		infoBar := buildVerifyIdentityNotification(peer)
-		infoBar.Connect("response", func(info *gtk.InfoBar, response gtk.ResponseType) {
-			if response != gtk.RESPONSE_ACCEPT {
-				log.Println("Got response", response)
-				return
-			}
+		convWin.updateSecurityWarning()
+	case session.OTRNewKeys:
+		peer := ev.From
+		convWin, ok := u.roster.conversations[peer]
+		if !ok {
+			log.Println("Could not find a conversation window")
+			return
+		}
 
-			glib.IdleAdd(func() {
-				verifyFingerprintDialog(account, peer, convWin.win)
-			})
-
-			//TODO: should only hide the notification when the identity is verified
-			info.Hide()
-			info.Destroy()
-		})
-
-		log.Println("Notification as added")
-
-		convWin.addNotification(infoBar)
-		infoBar.ShowAll()
+		convWin.updateSecurityWarning()
+		convWin.showIdentityVerificationWarning()
 	case session.SubscriptionRequest:
 		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From)
 

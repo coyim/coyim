@@ -2,12 +2,14 @@ package gui
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/ui"
 )
@@ -18,13 +20,15 @@ var (
 )
 
 type conversationWindow struct {
-	to               string
-	account          *account
-	win              *gtk.Window
-	parentWin        *gtk.Window
-	history          *gtk.TextView
-	scrollHistory    *gtk.ScrolledWindow
+	to            string
+	account       *account
+	win           *gtk.Window
+	parentWin     *gtk.Window
+	history       *gtk.TextView
+	scrollHistory *gtk.ScrolledWindow
+
 	notificationArea *gtk.Box
+	securityWarning  *gtk.InfoBar
 
 	sync.Mutex
 }
@@ -93,13 +97,18 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 	obj, _ = builder.GetObject("notification-area")
 	notificationArea := obj.(*gtk.Box)
 
+	obj, _ = builder.GetObject("security-warning")
+	securityWarning := obj.(*gtk.InfoBar)
+
 	conv := &conversationWindow{
-		to:               uid,
-		account:          account,
-		win:              win,
-		history:          history,
-		scrollHistory:    scrollHistory,
+		to:            uid,
+		account:       account,
+		win:           win,
+		history:       history,
+		scrollHistory: scrollHistory,
+
 		notificationArea: notificationArea,
+		securityWarning:  securityWarning,
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
@@ -198,8 +207,77 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 	}
 }
 
+func (conv *conversationWindow) getConversation() (client.Conversation, bool) {
+	return conv.account.session.GetConversationWith(conv.to)
+}
+
+func (conv *conversationWindow) showIdentityVerificationWarning() {
+	conversation, exists := conv.getConversation()
+	if !exists {
+		//Something is wrong
+		log.Println("Conversation does not exist")
+		return
+	}
+
+	theirKey := conversation.GetTheirKey()
+	if theirKey == nil {
+		//Something is VERY wrong
+		log.Println("Conversation has no theirKey")
+		return
+	}
+
+	fingerprint := theirKey.Fingerprint()
+	conf := conv.account.session.CurrentAccount
+
+	//TODO: this only returns the userID if the fingerprint matches AND is not
+	//untrusted. What if this fingerprint is associated with another (untrusted)
+	//userID and we trust it for a different userID? Is this a problem?
+	userID := conf.UserIDForVerifiedFingerprint(fingerprint)
+
+	switch userID {
+	case "":
+		//TODO: Unknown fingerprint. User must verify.
+	case conv.to:
+		//TODO: Already verifyed. Should we notify?
+		log.Println("Fingerprint already verified")
+		return
+	default:
+		//TODO: The fingerprint is associated with someone else. Warn!!!
+		log.Println("Fingerprint verified with another userID")
+		return
+	}
+
+	infoBar := buildVerifyIdentityNotification(conv.to)
+	infoBar.Connect("response", func(info *gtk.InfoBar, response gtk.ResponseType) {
+		if response != gtk.RESPONSE_ACCEPT {
+			return
+		}
+
+		glib.IdleAdd(func() {
+			resp := verifyFingerprintDialog(conv.account, conv.to, conv.win)
+			if resp == gtk.RESPONSE_YES {
+				info.Hide()
+				info.Destroy()
+			}
+		})
+	})
+
+	conv.addNotification(infoBar)
+	infoBar.ShowAll()
+}
+
+func (conv *conversationWindow) updateSecurityWarning() {
+	conversation, ok := conv.getConversation()
+	if !ok {
+		return
+	}
+
+	conv.securityWarning.SetVisible(!conversation.IsEncrypted())
+}
+
 func (conv *conversationWindow) Show() {
-	conv.win.ShowAll()
+	conv.updateSecurityWarning()
+	conv.win.Show()
 	conv.tryEnsureCorrectWorkspace()
 }
 

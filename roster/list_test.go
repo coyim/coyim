@@ -292,3 +292,31 @@ func (s *ListXmppSuite) Test_Clear_clearsTheList(c *g.C) {
 
 	c.Assert(len(l.peers), g.Equals, 0)
 }
+
+func (s *ListXmppSuite) Test_Peers_sortsByNameForPresentation(c *g.C) {
+	expectedPeers := []*Peer{
+		&Peer{
+			Jid: "ba", Name: "ab",
+		},
+		&Peer{
+			Jid: "ac", Name: "",
+		},
+		&Peer{
+			Jid: "aa", Name: "bb",
+		},
+		&Peer{
+			Jid: "aa", Name: "cb",
+		},
+	}
+
+	group := &Group{
+		peers: []*Peer{
+			expectedPeers[2],
+			expectedPeers[0],
+			expectedPeers[3],
+			expectedPeers[1],
+		},
+	}
+
+	c.Assert(group.Peers(), g.DeepEquals, expectedPeers)
+}

@@ -172,6 +172,14 @@ func (s byJidAlphabetic) Len() int           { return len(s) }
 func (s byJidAlphabetic) Less(i, j int) bool { return s[i].Jid < s[j].Jid }
 func (s byJidAlphabetic) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 
+type byNameForPresentation []*Peer
+
+func (s byNameForPresentation) Len() int { return len(s) }
+func (s byNameForPresentation) Less(i, j int) bool {
+	return s[i].NameForPresentation() < s[j].NameForPresentation()
+}
+func (s byNameForPresentation) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
 func (l *List) intoSlice(res []*Peer) []*Peer {
 	for _, v := range l.peers {
 		res = append(res, v)

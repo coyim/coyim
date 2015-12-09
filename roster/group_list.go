@@ -87,7 +87,7 @@ func (l *List) Grouped(delim string) *Group {
 
 // Peers returns a sorted list of all the peers in this group
 func (g *Group) Peers() []*Peer {
-	sort.Sort(byJidAlphabetic(g.peers))
+	sort.Sort(byNameForPresentation(g.peers))
 	return g.peers
 }
 

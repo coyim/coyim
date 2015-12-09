@@ -8,11 +8,7 @@ VERSION="${BRANCH_NAME}-${COMMIT_HASH:0:7}"
 OS=${APPVEYOR_OS_NAME:-${TRAVIS_OS_NAME:-linux}}
 # We can deploy only when a tag is pushed, and use ir as the version
 if [[ $OS = "windows" ]]; then
-    if [[ $APPVEYOR_REPO_BRANCH = "release" ]]; then
-        make build-gui
-    else
-        exit 0
-    fi
+    make build-gui
 elif [[ $OS = "linux" ]]; then
     make cross-compile i18n build-gui
 elif [[ $OS = "osx" ]]; then

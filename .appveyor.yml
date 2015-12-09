@@ -3,7 +3,6 @@ platform:
 environment:
   global:
     APPVEYOR_OS_NAME: windows
-    RUBY_VERSION: "22-x64"
     GOPATH: c:\gopath
     BINTRAY_USER:
       secure: HvXDg/3xn3Du2GPXPyf1tQ==
@@ -32,9 +31,6 @@ install:
   - if "%METHOD%"=="cross" appveyor DownloadFile http://kent.dl.sourceforge.net/project/msys2/Base/%MSYS2_ARCH%/msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz
   - if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz > $nul
   - if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > $nul
-  - SET PATH=C:\Ruby%RUBY_VERSION%\bin;%PATH%
-  - appveyor DownloadFile http://curl.haxx.se/ca/cacert.pem
-  - xcopy cacert.pem C:\Ruby%RUBY_VERSION%\lib\ruby\2.2.0\rubygems\ssl_certs
   - SET PATH=%MSYS_PATH%\usr\bin;%PATH%
   - SET PATH=%MSYS_PATH%\mingw%MSYS2_BITS%\bin;%PATH%
   - '%MSYS_PATH%\usr\bin\bash -lc "echo update-core starting..." 2> $nul'
@@ -59,7 +55,11 @@ build_script:
 artifacts:
   - path: '%GOPATH%\src\github.com\twstrike\coyim\bin\coyim.exe'
 before_deploy:
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy sed" > $nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && ci/release"'
+  - if "%APPVEYOR_REPO_BRANCH%"=="release" %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy sed" > $nul
+  - if "%APPVEYOR_REPO_BRANCH%"=="release" %MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && ci/release"
 deploy_script:
-  - '%MSYS_PATH%\usr\bin\bash -lc "gem install dpl --no-ri --no-rdoc && cd /c/gopath/src/github.com/twstrike/coyim && dpl --provider=bintray --file=ci/bintray.json --user=%BINTRAY_USER% --key=%BINTRAY_APIKEY%"'
+  - if "%APPVEYOR_REPO_BRANCH%"=="release" gem install dpl --no-ri --no-rdoc
+  - if "%APPVEYOR_REPO_BRANCH%"=="release" appveyor DownloadFile https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt
+  - if "%APPVEYOR_REPO_BRANCH%"=="release" xcopy ca-bundle.crt C:\ssl\certs\
+  - if "%APPVEYOR_REPO_BRANCH%"=="release" set SSL_CERT_FILE=C:\ssl\certs\ca-bundle.crt
+  - if "%APPVEYOR_REPO_BRANCH%"=="release" cd %GOPATH%\src\github.com\twstrike\coyim && dpl --provider=bintray --file=ci/bintray.json --user=%BINTRAY_USER% --key=%BINTRAY_APIKEY%"

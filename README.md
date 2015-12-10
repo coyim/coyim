@@ -41,3 +41,8 @@ go get -u -tags "nocli gtk_${GTK_VERSION}" github.com/twstrike/coyim
 go get -u github.com/twstrike/coyim
 ```
 
+## Contributing to Coy
+
+We have instructions to help you [get started contributing to
+Coy](CONTRIBUTING.md).
+

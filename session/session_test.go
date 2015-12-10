@@ -204,28 +204,15 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(
 	}
 	sess.Conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 2)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	for i := 0; i < 2; i++ {
-		select {
-		case ev := <-observer:
-			t := ev.(LogEvent)
-			if i < 1 {
-				continue
-			}
-
-			c.Assert(t.Level, Equals, Alert)
-			c.Assert(t.Message, Equals, "Exiting in response to fatal error from server: {urn:ietf:params:xml:ns:xmpp-streams not-well-formed}")
-			return
-
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-			return
-		}
-	}
+	assertLogContains(c, observer, LogEvent{
+		Level:   Alert,
+		Message: "Exiting in response to fatal error from server: {urn:ietf:params:xml:ns:xmpp-streams not-well-formed}",
+	})
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {

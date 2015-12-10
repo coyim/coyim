@@ -28,6 +28,11 @@
       "matrixParams": { "override": 1 }
     },
     {
+      "includePattern": "release/checksum",
+      "uploadPattern": "<RELEASE>/checksum",
+      "matrixParams": { "override": 1 }
+    },
+    {
       "includePattern": "release/(.*).dmg",
       "uploadPattern": "<RELEASE>/mac-bundle/$1.dmg",
       "matrixParams": { "override": 1 }

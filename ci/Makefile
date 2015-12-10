@@ -46,6 +46,7 @@ release-dmg: clean-mac-bundle mac-bundle
 	ln -s /Applications ../bin/mac-bundle/Applications
 	cp ../build/mac-bundle/ds-store ../bin/mac-bundle/.DS_Store
 	./make-dmg coyim ../bin/mac-bundle ../release/coyim.dmg
+	openssl dgst -sha1 ../release/coyim.dmg >> ../release/checksum
 
 ../bin/coyim:
 	make -C ../ build-gui
@@ -53,6 +54,7 @@ release-dmg: clean-mac-bundle mac-bundle
 release-gui: ../bin/coyim
 	mkdir -p ../release
 	cp ../bin/coyim ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
+	openssl dgst -sha1 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/checksum
 
 ../bin/coyim.exe:
 	make -C ../ build-gui
@@ -60,3 +62,4 @@ release-gui: ../bin/coyim
 release-gui-win: ../bin/coyim.exe
 	mkdir -p ../release
 	cp ../bin/coyim.exe ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe
+	openssl dgst -sha1 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe >> ../release/checksum

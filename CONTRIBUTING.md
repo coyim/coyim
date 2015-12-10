@@ -1,5 +1,4 @@
 # How to contribute
-
 Here's the brief:
 
 * We welcome contributions of all kinds, including but not limited to features, bug fixes, quality assurance, documentation, security review or asking questions
@@ -11,6 +10,33 @@ Here's the brief:
   * Twitter: [@coyproject](https://twitter.com/coyproject)
 
   This document outlines our way of working, gives hints and outlines the steps to make your contribution to Coy IM as smooth as possible. You're not required to read this before getting started. We're explaining the way we work to make sure you're having a good experience and can make best use of the time you're contributing to our project.
+
+## Getting started
+
+Coy is written in [Golang](https://golang.org/) and uses
+[GTK+3](http://www.gtk.org/) as its UI toolkit.
+
+### Requirements
+
+- `git`
+- `golang` with `cgo` support.
+- `gtk`
+- `make`
+
+Installing these requirements differs on each system.
+
+### Instructions
+
+Get the code
+
+```
+git clone https://github.com/twstrike/coyim.git
+cd coyim
+```
+
+Build and run the tests
+
+`make`
 
 ## Contributions steps
 

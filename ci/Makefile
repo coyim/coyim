@@ -36,7 +36,7 @@ clean-mac-bundle:
 	$(RM) -r ../bin/mac-bundle
 
 mac-bundle:
-	make -C ../ i18n build-gui
+	make -C ../ build-gui
 
 	iconutil -c icns -o ../build/mac-bundle/coy.icns ../build/mac-bundle/coy.iconset
 	cd .. && ci/build-osx-bundle bin/mac-bundle/CoyIM.app

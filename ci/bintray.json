@@ -17,7 +17,7 @@
     },
 
     "version": {
-        "name": "<VERSION>",
+        "name": "<RELEASE>",
         "desc": "",
         "gpgSign": false
     },

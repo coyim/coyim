@@ -28,12 +28,12 @@ before_install:
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
   - "export COYIM_PATH=$(pwd)/bin/coyim"
 install: make deps-dev
-script: cd ci && make
+script: make -C ci/
 
 before_deploy: cd ci && ./release
 deploy:
   on:
-    condition: "$RELEASE" = "true" && ( -n "$TRAVIS_TAG" || "$TRAVIS_BRANCH" = "master" )
+    condition: '"$RELEASE" = "true" && ( -n "$TRAVIS_TAG" || "$TRAVIS_BRANCH" = "master" )'
   provider: bintray
   file: ci/bintray.json
   user:

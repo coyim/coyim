@@ -33,6 +33,7 @@ script: cd ci && make
 before_deploy: cd ci && ./release
 deploy:
   on:
+    tags: true
     condition: $RELEASE = "true"
   provider: bintray
   file: ci/bintray.json

@@ -24,11 +24,11 @@
 
     "files": [{
       "includePattern": "bin/(.*)_(.*)_(.*)",
-      "uploadPattern": "$2-$3-<VERSION>/$1"
+      "uploadPattern": "$2/$3/$1"
     },
     {
       "includePattern": "bin/(.*).dmg",
-      "uploadPattern": "mac-bundle-<VERSION>/$1.dmg"
+      "uploadPattern": "mac-bundle/$1.dmg"
     }],
     "publish": true
 }

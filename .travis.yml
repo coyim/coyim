@@ -33,8 +33,7 @@ script: cd ci && make
 before_deploy: cd ci && ./release
 deploy:
   on:
-    tags: true
-    condition: $RELEASE = "true"
+    condition: "$RELEASE" = "true" && ( -n "$TRAVIS_TAG" || "$TRAVIS_BRANCH" = "master" )
   provider: bintray
   file: ci/bintray.json
   user:

@@ -1,4 +1,4 @@
-ci: get lint test coveralls
+ci: get lint check-ui-defs test coveralls
 
 get:
 	make get -C ../
@@ -8,6 +8,10 @@ lint:
 
 test:
 	make test -C ../
+
+# make sure the ui definitions checked in are in sync
+check-ui-defs:
+	make doctor -C ../gui/definitions
 
 # send coverage data to coveralls
 coveralls:

@@ -23,12 +23,12 @@
     },
 
     "files": [{
-      "includePattern": "bin/(.*)_(.*)_(.*)",
+      "includePattern": "release/(.*)_(.*)_(.*)",
       "uploadPattern": "<RELEASE>/$2/$3/$1",
       "matrixParams": { "override": 1 }
     },
     {
-      "includePattern": "bin/(.*).dmg",
+      "includePattern": "release/(.*).dmg",
       "uploadPattern": "<RELEASE>/mac-bundle/$1.dmg",
       "matrixParams": { "override": 1 }
     }],

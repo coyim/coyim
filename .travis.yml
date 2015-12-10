@@ -27,8 +27,8 @@ before_install:
   - "export DISPLAY=:99.0"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
   - "export COYIM_PATH=$(pwd)/bin/coyim"
-install: make deps
-script: make ci
+install: make deps-dev
+script: cd ci && make
 
 before_deploy: ci/release
 deploy:

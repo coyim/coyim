@@ -20,15 +20,10 @@ elif [[ $OS = "linux" ]]; then
 elif [[ $OS = "osx" ]]; then
     # gettext is not linked on OSX
     export PATH="$PATH:$(brew --prefix gettext)/bin"
-    make i18n build-gui
 
-    # bundle into dmg
-    iconutil -c icns -o build/mac-bundle/coy.icns build/mac-bundle/coy.iconset
-    ci/build-osx-bundle bin/mac-bundle/CoyIM.app
-    ln -s /Applications bin/mac-bundle/Applications
-    cp build/mac-bundle/ds-store bin/mac-bundle/.DS_Store
-    ci/make-dmg coyim $VERSION bin/mac-bundle/
-    rm -rf bin/mac-bundle
+    VERSION="${VERSION}" make release-dmg
+    make clean-mac-bundle
+    make release-gui
 else
     echo "Unsupported OS: ${OS}" >2
     exit 1

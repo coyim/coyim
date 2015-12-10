@@ -17,16 +17,16 @@ if [ $# != 3 ]; then
 fi
 
 VOL="$1"
-VER="$2"
-FILES="$3"
+FILES="$2"
+DEST="$3"
 
 TMP_DMG="/tmp/tmp-$VOL.dmg"
-DMG="bin/${VOL}-${VER}.dmg"
+rm -f "$TMP_DMG"
 
 # create temporary disk image and format, ejecting when done
 hdiutil create -ov -fs HFS+ -volname "$VOL" -srcfolder ${FILES} "$TMP_DMG" 
 
 # convert to compressed image, delete temp image
-rm -f $DMG
-hdiutil convert "$TMP_DMG" -format UDZO -o $DMG
+rm -f $DEST
+hdiutil convert "$TMP_DMG" -format UDZO -o $DEST
 rm -f "$TMP_DMG"

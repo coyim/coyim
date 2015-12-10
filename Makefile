@@ -23,28 +23,9 @@ build-debug:
 debug: build-debug
 	gdb bin/coyim-debug -d $(shell go env GOROOT) -x build/debug
 
-clean-release:
-	$(RM) bin/*
-
-cross-compile:
-	go get github.com/mitchellh/gox
-	gox -build-toolchain || true
-	# windows does not have syscall.SIGWINCH
-	gox -os "!windows" -output "bin/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
-	# there seems to be no such thing as cgo cross-compiling
-	# gox -os "linux" -arch "!arm" -cgo -tags "nocli $(GTK_BUILD_TAG)" -output "bin/{{.Dir}}_{{.OS}}_{{.Arch}}"
-
 i18n:
 	make -C i18n
 .PHONY: i18n
-
-release-gui: i18n build-gui
-	mv bin/coyim bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
-
-release-gui-win: build-gui-win
-	mv bin/coyim.exe bin/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe
-
-release: clean-release cross-compile
 
 lint:
 	golint ./...
@@ -55,14 +36,13 @@ test:
 clean-gui-test:
 	$(RM) gui-test/*
 
+#TODO: this should only be called on a linux environment
 gui-test: clean-gui-test
 ifeq ($(shell uname), Linux)
 	git clone https://github.com/twstrike/coyim-testing.git gui-test
 	echo $$COYIM_PATH
 	cd gui-test && behave --stop
 endif
-
-ci: get default coveralls
 
 run-cover: clean-cover
 	go test -coverprofile=xmpp.coverprofile ./xmpp
@@ -81,11 +61,6 @@ clean-cover:
 # generats an HTML report with coverage information
 cover: run-cover
 	go tool cover -html=gover.coverprofile
-
-# send coverage data to coveralls
-coveralls: run-cover
-	go get github.com/mattn/goveralls
-	goveralls -coverprofile=gover.coverprofile -service=travis-ci || true
 
 get:
 	go get -t -tags $(GTK_BUILD_TAG) ./...
@@ -108,10 +83,12 @@ deps-u:
 	go get -u github.com/hydrogen18/stalecucumber
 	go get -u github.com/DHowett/go-plist
 
-deps:
+deps-dev:
 	go get github.com/golang/lint/golint
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/modocache/gover
+
+deps: deps-dev
 	go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
 	go get github.com/twstrike/otr3
 	go get github.com/twstrike/otr3/sexp

@@ -2,6 +2,8 @@
 
 set -xe
 
+CI_DIR="$(dirname $0)/"
+
 BRANCH_NAME=${APPVEYOR_REPO_BRANCH:-${TRAVIS_BRANCH}}
 COMMIT_HASH=${APPVEYOR_REPO_COMMIT:-${TRAVIS_COMMIT}}
 SHORT_COMMIT_HASH="${COMMIT_HASH:0:7}"
@@ -20,9 +22,9 @@ elif [[ $OS = "osx" ]]; then
     # gettext is not linked on OSX
     export PATH="$PATH:$(brew --prefix gettext)/bin"
 
-    make release-dmg
-    make clean-mac-bundle
-    make release-gui
+    make -C "${CI_DIR}" release-dmg
+    make -C "${CI_DIR}" clean-mac-bundle
+    make -C "${CI_DIR}" release-gui
 else
     echo "Unsupported OS: ${OS}" >2
     exit 1

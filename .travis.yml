@@ -30,7 +30,7 @@ before_install:
 install: make deps-dev
 script: make -C ci/
 
-before_deploy: cd ci && ./release
+before_deploy: ci/release
 deploy:
   on:
     condition: '"$RELEASE" = "true" && ( -n "$TRAVIS_TAG" || "$TRAVIS_BRANCH" = "master" )'

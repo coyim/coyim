@@ -6,7 +6,8 @@ branches:
     - windows
 go:
   - tip
-  - 1.4.2
+  - 1.4
+  - 1.5
 
 matrix:
   include:
@@ -19,6 +20,7 @@ matrix:
   allow_failures:
     - os: osx
     - go: tip
+    - env: DEPLOY=true
   fast_finish: true
 
 before_install:

@@ -40,9 +40,7 @@ Build and run the tests
 
 ## Contributions steps
 
-This is the lifecycle of a contribution. See our [README](README.md) for details on how to set up your development environment.
-
-We follow a simplified fork + pull request workflow:
+This is the lifecycle of a contribution. We follow a simplified fork + pull request workflow:
 
 * To start, fork this repository and create a branch that's based off the latest commit in the `master` branch
 * Implement the change

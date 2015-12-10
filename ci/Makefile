@@ -27,7 +27,7 @@ clean-gui-test:
 gui-test: clean-gui-test ../bin/coyim
 ifeq ($(shell uname), Linux)
 	git clone https://github.com/twstrike/coyim-testing.git gui-test
-	cd gui-test && COYIM_PATH="../../bin/coyim" behave --stop
+	cd gui-test && COYIM_PATH="../../bin/coyim -debug" behave --stop
 endif
 
 clean-release:

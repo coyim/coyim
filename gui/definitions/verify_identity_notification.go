@@ -22,22 +22,19 @@ func (*defVerifyIdentityNotification) String() string {
         </child>
       </object>
     </child>
-
-        <child internal-child="action_area">
-          <object class="GtkBox" id="button_box">
-            <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-            <child>
-              <object class="GtkButton" id="verify">
-                <property name="label" translatable="yes">Verify</property>
-                <property name="can-default">true</property>
-              </object>
-            </child>
+    <child internal-child="action_area">
+      <object class="GtkBox" id="button_box">
+        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+        <child>
+          <object class="GtkButton" id="button_verify">
+            <property name="label" translatable="yes">Verify</property>
+            <property name="can-default">true</property>
           </object>
         </child>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="GTK_RESPONSE_ACCEPT" default="true">button_ok</action-widget>
+      <action-widget response="GTK_RESPONSE_ACCEPT">button_verify</action-widget>
     </action-widgets>
   </object>
 </interface>

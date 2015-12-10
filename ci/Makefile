@@ -45,7 +45,7 @@ release-dmg: clean-mac-bundle mac-bundle
 	mkdir -p ../release
 	ln -s /Applications ../bin/mac-bundle/Applications
 	cp ../build/mac-bundle/ds-store ../bin/mac-bundle/.DS_Store
-	./make-dmg coyim ../bin/mac-bundle ../release/coyim-$(VERSION).dmg
+	./make-dmg coyim ../bin/mac-bundle ../release/coyim.dmg
 
 ../bin/coyim:
 	make -C ../ build-gui

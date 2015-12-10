@@ -21,7 +21,7 @@ elif [[ $OS = "osx" ]]; then
     # gettext is not linked on OSX
     export PATH="$PATH:$(brew --prefix gettext)/bin"
 
-    VERSION="${VERSION}" make release-dmg
+    make release-dmg
     make clean-mac-bundle
     make release-gui
 else

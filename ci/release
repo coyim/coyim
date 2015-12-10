@@ -4,9 +4,15 @@ set -xe
 
 BRANCH_NAME=${APPVEYOR_REPO_BRANCH:-${TRAVIS_BRANCH}}
 COMMIT_HASH=${APPVEYOR_REPO_COMMIT:-${TRAVIS_COMMIT}}
-VERSION="${BRANCH_NAME}-${COMMIT_HASH:0:7}"
+SHORT_COMMIT_HASH="${COMMIT_HASH:0:7}"
+
+VERSION="${BRANCH_NAME}-${SHORT_COMMIT_HASH}"
+RELEASE="${BRANCH_NAME}"
+[[ $BRANCH_NAME != "master" ]] && RELEASE="${VERSION}"
+
 OS=${APPVEYOR_OS_NAME:-${TRAVIS_OS_NAME:-linux}}
-# We can deploy only when a tag is pushed, and use ir as the version
+
+# We can deploy only when a tag is pushed, and use it as the version
 if [[ $OS = "windows" ]]; then
     make build-gui
 elif [[ $OS = "linux" ]]; then
@@ -29,5 +35,7 @@ else
 fi
 
 mv bin/coyim bin/coyim_$(go env GOOS)_$(go env GOARCH)
+
 # update version on bintray conf file, preparing to send
 sed -i".bak" "s <VERSION> $VERSION g" ci/bintray.json
+sed -i".bak" "s <RELEASE> $RELEASE g" ci/bintray.json

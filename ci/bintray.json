@@ -24,11 +24,13 @@
 
     "files": [{
       "includePattern": "bin/(.*)_(.*)_(.*)",
-      "uploadPattern": "$2/$3/$1"
+      "uploadPattern": "<RELEASE>/$2/$3/$1",
+      "matrixParams": { "override": 1 }
     },
     {
       "includePattern": "bin/(.*).dmg",
-      "uploadPattern": "mac-bundle/$1.dmg"
+      "uploadPattern": "<RELEASE>/mac-bundle/$1.dmg",
+      "matrixParams": { "override": 1 }
     }],
     "publish": true
 }

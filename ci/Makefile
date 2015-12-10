@@ -1,4 +1,4 @@
-ci: get lint check-ui-defs test coveralls
+ci: get lint check-ui-defs test coveralls gui-test
 
 get:
 	make get -C ../
@@ -18,6 +18,17 @@ coveralls:
 	make run-cover -C ../
 	go get github.com/mattn/goveralls
 	goveralls -coverprofile=../gover.coverprofile -service=travis-ci || true
+
+
+clean-gui-test:
+	$(RM) -r gui-test
+
+#TODO: this should only be called on a linux environment
+gui-test: clean-gui-test ../bin/coyim
+ifeq ($(shell uname), Linux)
+	git clone https://github.com/twstrike/coyim-testing.git gui-test
+	cd gui-test && COYIM_PATH="../../bin/coyim" behave --stop
+endif
 
 clean-release:
 	$(RM) bin/*

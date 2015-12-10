@@ -12,15 +12,15 @@ go:
 matrix:
   include:
     - go: 1.5
-      env: DEPLOY=true
+      env: RELEASE=true
       os: linux
     - go: 1.5
-      env: DEPLOY=true
+      env: RELEASE=true
       os: osx
   allow_failures:
     - os: osx
     - go: tip
-    - env: DEPLOY=true
+    - env: RELEASE=true
   fast_finish: true
 
 before_install:
@@ -33,8 +33,7 @@ script: make ci
 before_deploy: ci/release
 deploy:
   on:
-    condition: $DEPLOY = "true"
-    branch: release
+    condition: $RELEASE = "true"
   provider: bintray
   file: ci/bintray.json
   user:

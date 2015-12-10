@@ -30,7 +30,7 @@ before_install:
 install: make deps-dev
 script: cd ci && make
 
-before_deploy: ci/release
+before_deploy: cd ci && ./release
 deploy:
   on:
     condition: $RELEASE = "true"

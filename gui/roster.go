@@ -11,6 +11,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
+	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp"
 )
@@ -47,6 +48,7 @@ const (
 	indexParentDisplayName = 1
 	indexTooltip           = 6
 	indexStatusIcon        = 7
+	indexRowType           = 8
 )
 
 func (u *gtkUI) newRoster() *roster {
@@ -103,29 +105,26 @@ func getFromModelIter(m *gtk.TreeStore, iter *gtk.TreeIter, index int) string {
 	return v
 }
 
-func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, account *account, ok bool) {
+func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, account *account, rowType string, ok bool) {
 	x := bt.X()
 	y := bt.Y()
 	path := new(gtk.TreePath)
 	found := r.view.GetPathAtPos(int(x), int(y), path, nil, nil, nil)
 	if !found {
-		return "", nil, false
+		return "", nil, "", false
 	}
 	iter, err := r.model.GetIter(path)
 	if err != nil {
-		return "", nil, false
+		return "", nil, "", false
 	}
 	jid = getFromModelIter(r.model, iter, indexJid)
 	accountID := getFromModelIter(r.model, iter, indexAccountID)
-	if accountID != accountIDTopLevelMarker {
-		account, ok = r.getAccount(accountID)
-		return jid, account, ok
-	}
-
-	return "", nil, false
+	rowType = getFromModelIter(r.model, iter, indexRowType)
+	account, ok = r.getAccount(accountID)
+	return jid, account, rowType, ok
 }
 
-func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventButton) {
+func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.EventButton) {
 	builder := builderForDefinition("ContactPopupMenu")
 	obj, _ := builder.GetObject("contactMenu")
 	mn := obj.(*gtk.Menu)
@@ -161,12 +160,47 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }
 
+func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventButton) {
+	builder := builderForDefinition("AccountPopupMenu")
+	obj, _ := builder.GetObject("accountMenu")
+	mn := obj.(*gtk.Menu)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_connect": func() {
+			account.connect()
+		},
+		"on_disconnect": func() {
+			account.disconnect()
+		},
+		"on_dump_info": func() {
+			r.debugPrintRosterFor(account.session.CurrentAccount.Account)
+		},
+	})
+
+	connx, _ := builder.GetObject("connectMenuItem")
+	connect := connx.(*gtk.MenuItem)
+
+	dconnx, _ := builder.GetObject("disconnectMenuItem")
+	disconnect := dconnx.(*gtk.MenuItem)
+
+	connect.SetSensitive(account.session.ConnStatus == session.DISCONNECTED)
+	disconnect.SetSensitive(account.session.ConnStatus == session.CONNECTED)
+
+	mn.ShowAll()
+	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
+}
+
 func (r *roster) onButtonPress(view *gtk.TreeView, ev *gdk.Event) bool {
 	bt := &gdk.EventButton{ev}
 	if bt.Button() == 0x03 {
-		jid, account, ok := r.getAccountAndJidFromEvent(bt)
+		jid, account, rowType, ok := r.getAccountAndJidFromEvent(bt)
 		if ok {
-			r.createAccountPopup(jid, account, bt)
+			switch rowType {
+			case "peer":
+				r.createAccountPeerPopup(jid, account, bt)
+			case "account":
+				r.createAccountPopup(jid, account, bt)
+			}
 		}
 	}
 
@@ -184,8 +218,9 @@ func (r *roster) onActivateBuddy(v *gtk.TreeView, path *gtk.TreePath) {
 
 	jid := getFromModelIter(r.model, iter, indexJid)
 	accountID := getFromModelIter(r.model, iter, indexAccountID)
+	rowType := getFromModelIter(r.model, iter, indexRowType)
 
-	if accountID == accountIDTopLevelMarker {
+	if rowType == "account" {
 		r.isCollapsed[jid] = !r.isCollapsed[jid]
 		r.redraw()
 		return
@@ -339,8 +374,6 @@ func decideColorFor(p *rosters.Peer) string {
 	return "#000000"
 }
 
-const accountIDTopLevelMarker = "--is-account-top-level--"
-
 func createGroupDisplayName(parentName string, counter *counter, isExpanded bool) string {
 	name := parentName
 	if !isExpanded {
@@ -370,6 +403,7 @@ func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent st
 		createTooltipFor(item),
 	)
 
+	r.model.SetValue(iter, indexRowType, "peer")
 	r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].getPixbuf())
 }
 
@@ -416,7 +450,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter *gtk.TreeIter, accoun
 	if g.GroupName != "" {
 		pi = r.model.Append(parentIter)
 		r.model.SetValue(pi, indexParentJid, groupID)
-		r.model.SetValue(pi, indexAccountID, accountIDTopLevelMarker)
+		r.model.SetValue(pi, indexRowType, "group")
 		r.model.SetValue(pi, indexWeight, 500)
 		r.model.SetValue(pi, indexBackgroundColor, "#e9e7f3")
 	}
@@ -459,7 +493,8 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	r.displayGroup(grp, parentIter, accountCounter, showOffline, parentName)
 
 	r.model.SetValue(parentIter, indexParentJid, parentName)
-	r.model.SetValue(parentIter, indexAccountID, accountIDTopLevelMarker)
+	r.model.SetValue(parentIter, indexAccountID, account.session.CurrentAccount.ID())
+	r.model.SetValue(parentIter, indexRowType, "account")
 	r.model.SetValue(parentIter, indexWeight, 500)
 	r.model.SetValue(parentIter, indexBackgroundColor, "#918caa")
 	parentPath, _ := r.model.GetPath(parentIter)
@@ -469,6 +504,16 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 		isExpanded = false
 		r.toCollapse = append(r.toCollapse, parentPath)
 	}
+	var stat string
+	switch account.session.ConnStatus {
+	case session.DISCONNECTED:
+		stat = "offline"
+	case session.CONNECTING:
+		stat = "connecting"
+	case session.CONNECTED:
+		stat = "available"
+	}
+	r.model.SetValue(parentIter, indexStatusIcon, statusIcons[stat].getPixbuf())
 	r.model.SetValue(parentIter, indexParentDisplayName, createGroupDisplayName(parentName, accountCounter, isExpanded))
 }
 

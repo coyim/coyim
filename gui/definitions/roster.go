@@ -27,6 +27,8 @@ func (*defRoster) String() string {
       <column type="gchararray"/>
       <!-- icon -->
       <column type="GdkPixbuf"/>
+      <!-- row type -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkScrolledWindow" id="roster">

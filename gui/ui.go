@@ -15,6 +15,7 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	xroster "github.com/twstrike/coyim/roster"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -128,6 +129,7 @@ func (u *gtkUI) configLoaded() {
 	//TODO: replace me by session observer
 	for _, acc := range u.accounts {
 		acc.session.SessionEventHandler = u
+		u.roster.update(acc, xroster.New())
 	}
 
 	glib.IdleAdd(func() bool {

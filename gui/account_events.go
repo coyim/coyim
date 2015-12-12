@@ -96,12 +96,12 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 		}
 
 		u.roster.update(account, ev.Session.R)
-
-		glib.IdleAdd(func() bool {
-			u.roster.redraw()
-			return false
-		})
 	}
+	glib.IdleAdd(func() bool {
+		u.roster.redraw()
+		return false
+	})
+
 }
 
 func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {

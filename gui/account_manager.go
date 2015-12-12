@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"sync"
+
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/session"
@@ -13,6 +15,8 @@ type accountManager struct {
 	events   chan interface{}
 
 	client.CommandManager
+
+	sync.Mutex
 }
 
 func newAccountManager(c client.CommandManager) *accountManager {
@@ -36,6 +40,8 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 }
 
 func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
+	m.Lock()
+	defer m.Unlock()
 	m.accounts = make([]*account, 0, len(appConfig.Accounts))
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
@@ -73,6 +79,8 @@ func (m *accountManager) findAccountForUsername(s string) *account {
 }
 
 func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig) {
+	m.Lock()
+	defer m.Unlock()
 	for _, configAccount := range appConfig.Accounts {
 		var found bool
 		for _, acc := range m.accounts {

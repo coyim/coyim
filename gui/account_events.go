@@ -150,7 +150,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		}
 
 		convWin.updateSecurityWarning()
-		convWin.showIdentityVerificationWarning()
+		convWin.showIdentityVerificationWarning(u)
 	case session.SubscriptionRequest:
 		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From)
 

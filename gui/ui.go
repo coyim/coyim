@@ -232,6 +232,8 @@ func (u *gtkUI) mainWindow() {
 	u.window = win.(*gtk.Window)
 
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
+	u.displaySettings.globalFontSettingOn(&u.window.Bin.Container.Widget)
+	u.displaySettings.setDefaultFontSize()
 	u.initRoster()
 
 	// AccountsMenu

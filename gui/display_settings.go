@@ -9,7 +9,8 @@ import (
 )
 
 type displaySettings struct {
-	fontSize uint
+	fontSize        uint
+	defaultFontSize uint
 
 	provider *gtk.CssProvider
 }
@@ -31,6 +32,15 @@ func (ds *displaySettings) unifiedBackgroundColor(w *gtk.Widget) {
 	})
 }
 
+func (ds *displaySettings) globalFontSettingOn(w *gtk.Widget) {
+	glib.IdleAdd(func() bool {
+		styleContext, _ := w.GetStyleContext()
+		styleContext.AddProvider(ds.provider, 9999)
+		styleContext.AddClass("globalFontSetting")
+		return false
+	})
+}
+
 func (ds *displaySettings) control(w *gtk.Widget) {
 	glib.IdleAdd(func() bool {
 		styleContext, _ := w.GetStyleContext()
@@ -38,6 +48,11 @@ func (ds *displaySettings) control(w *gtk.Widget) {
 		styleContext.AddClass("currentFontSetting")
 		return false
 	})
+}
+
+func (ds *displaySettings) setDefaultFontSize() {
+	ds.fontSize = ds.defaultFontSize
+	ds.update()
 }
 
 func (ds *displaySettings) increaseFontSize() {
@@ -56,6 +71,10 @@ func (ds *displaySettings) update() {
   -GtkCheckMenuItem-indicator-size: 16;
 }
 
+.globalFontSetting {
+  font-size: %dpx;
+}
+
 .currentFontSetting {
   font-size: %dpx;
 }
@@ -63,7 +82,7 @@ func (ds *displaySettings) update() {
 .currentBackgroundColor {
   background-color: #fff;
 }
-`, ds.fontSize)
+`, ds.defaultFontSize, ds.fontSize)
 	glib.IdleAdd(func() bool {
 		ds.provider.LoadFromData(css)
 		return false
@@ -74,6 +93,7 @@ func newDisplaySettings() *displaySettings {
 	ds := &displaySettings{}
 	prov, _ := gtk.CssProviderNew()
 	ds.provider = prov
+	ds.defaultFontSize = 16
 	return ds
 }
 

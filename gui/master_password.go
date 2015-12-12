@@ -32,6 +32,9 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 	builder := builderForDefinition(dialogID)
 	dialogOb, _ := builder.GetObject(dialogID)
 	dialog := dialogOb.(*gtk.Dialog)
+
+	u.displaySettings.globalFontSettingOn(&dialog.Window.Bin.Container.Widget)
+
 	passObj, _ := builder.GetObject("password")
 	password := passObj.(*gtk.Entry)
 	pwdResultChan := make(chan string)

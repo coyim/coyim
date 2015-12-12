@@ -84,6 +84,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 	win := obj.(*gtk.Window)
 	title := fmt.Sprintf("%s <-> %s", account.session.CurrentAccount.Account, uid)
 	win.SetTitle(title)
+	u.displaySettings.globalFontSettingOn(&win.Bin.Container.Widget)
 
 	obj, _ = builder.GetObject("history")
 	history := obj.(*gtk.TextView)
@@ -142,7 +143,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 			}
 		},
 		"on_verify_fp_signal": func() {
-			verifyFingerprintDialog(conv.account, conv.to, conv.win)
+			u.verifyFingerprintDialog(conv.account, conv.to, conv.win)
 		},
 		"on_connect": func() {
 			entry.SetEditable(true)
@@ -210,7 +211,7 @@ func (conv *conversationWindow) getConversation() (client.Conversation, bool) {
 	return conv.account.session.GetConversationWith(conv.to)
 }
 
-func (conv *conversationWindow) showIdentityVerificationWarning() {
+func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 	conversation, exists := conv.getConversation()
 	if !exists {
 		//Something is wrong
@@ -253,7 +254,7 @@ func (conv *conversationWindow) showIdentityVerificationWarning() {
 		}
 
 		glib.IdleAdd(func() {
-			resp := verifyFingerprintDialog(conv.account, conv.to, conv.win)
+			resp := u.verifyFingerprintDialog(conv.account, conv.to, conv.win)
 			if resp == gtk.RESPONSE_YES {
 				info.Hide()
 				info.Destroy()

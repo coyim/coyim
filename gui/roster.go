@@ -220,7 +220,7 @@ func (r *roster) onActivateBuddy(v *gtk.TreeView, path *gtk.TreePath) {
 	accountID := getFromModelIter(r.model, iter, indexAccountID)
 	rowType := getFromModelIter(r.model, iter, indexRowType)
 
-	if rowType == "account" {
+	if rowType != "peer" {
 		r.isCollapsed[jid] = !r.isCollapsed[jid]
 		r.redraw()
 		return

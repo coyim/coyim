@@ -453,10 +453,7 @@ func (u *gtkUI) initMenuBar() {
 }
 
 func (u *gtkUI) rosterUpdated() {
-	glib.IdleAdd(func() bool {
-		u.roster.redraw()
-		return false
-	})
+	glib.IdleAdd(u.roster.redraw)
 }
 
 func (u *gtkUI) alertTorIsNotRunning() {

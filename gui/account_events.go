@@ -82,26 +82,18 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 	case session.Disconnected:
 		u.roster.enableExistingConversationWindows(account, false)
 	case session.ConnectionLost:
-		log.Println("Connection lost. Should we reconnect?")
-
 		u.notifyConnectionFailure(account)
 
-		if ev.Session.CurrentAccount.ConnectAutomatically {
-			go u.connectWithRandomDelay(account)
-			//u.ExecuteCmd(connectAccountCmd(account))
-		}
-	case session.RosterReceived:
-		if account == nil {
+		if !ev.Session.CurrentAccount.ConnectAutomatically {
 			return
 		}
 
+		go u.connectWithRandomDelay(account)
+	case session.RosterReceived:
 		u.roster.update(account, ev.Session.R)
 	}
-	glib.IdleAdd(func() bool {
-		u.roster.redraw()
-		return false
-	})
 
+	u.rosterUpdated()
 }
 
 func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
@@ -114,7 +106,6 @@ func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
 
 	account := u.findAccountForSession(ev.Session)
 	if account == nil {
-		//u.Warn("couldn't find account for " + ev.To)
 		return
 	}
 

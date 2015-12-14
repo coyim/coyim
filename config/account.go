@@ -165,6 +165,11 @@ func (a *Account) ShouldEncryptTo(jid string) bool {
 	return false
 }
 
+// ToggleAlwaysEncrypt toggles the state of AlwaysEncrypt config
+func (a *Account) ToggleAlwaysEncrypt() {
+	a.AlwaysEncrypt = !a.AlwaysEncrypt
+}
+
 // ToggleConnectAutomatically toggles the state of ConnectAutomatically config
 func (a *Account) ToggleConnectAutomatically() {
 	a.ConnectAutomatically = !a.ConnectAutomatically

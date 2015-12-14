@@ -534,6 +534,11 @@ func (u *gtkUI) toggleAutoConnectAccount(account *account) {
 	u.saveConfigOnly()
 }
 
+func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
+	account.session.CurrentAccount.ToggleAlwaysEncrypt()
+	u.saveConfigOnly()
+}
+
 // implemented using Sattolo’s variant of the Fisher–Yates shuffle
 func shuffleAccounts(a []*account) {
 	for i := range a {

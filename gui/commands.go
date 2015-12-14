@@ -10,6 +10,7 @@ type disconnectAccountCmd *account
 type editAccountCmd *account
 type removeAccountCmd *account
 type toggleAutoConnectCmd *account
+type toggleAlwaysEncryptCmd *account
 
 func (u *gtkUI) ExecuteCmd(c interface{}) {
 	u.commands <- c
@@ -36,6 +37,8 @@ func (u *gtkUI) watchCommands() {
 			})
 		case toggleAutoConnectCmd:
 			go u.toggleAutoConnectAccount(c)
+		case toggleAlwaysEncryptCmd:
+			go u.toggleAlwaysEncryptAccount(c)
 		case client.AuthorizeFingerprintCmd:
 			account := c.Account
 			uid := c.Peer

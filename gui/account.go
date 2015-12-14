@@ -94,6 +94,10 @@ func (account *account) buildAccountSubmenu() {
 	accountSubMenu.Append(connectAutomaticallyItem)
 	connectAutomaticallyItem.SetActive(account.session.CurrentAccount.ConnectAutomatically)
 
+	alwaysEncryptItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Always Encrypt Conversation"))
+	accountSubMenu.Append(alwaysEncryptItem)
+	alwaysEncryptItem.SetActive(account.session.CurrentAccount.AlwaysEncrypt)
+
 	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
 
 	connectItem.Connect("activate", account.connect)
@@ -101,6 +105,7 @@ func (account *account) buildAccountSubmenu() {
 	editItem.Connect("activate", account.edit)
 	removeItem.Connect("activate", account.remove)
 	connectAutomaticallyItem.Connect("activate", account.toggleAutoConnect)
+	alwaysEncryptItem.Connect("activate", account.toggleAlwaysEncrypt)
 
 	go account.watchAndToggleMenuItems(connectItem, disconnectItem)
 	account.menu = menuitem
@@ -131,6 +136,10 @@ func (account *account) disconnect() {
 
 func (account *account) toggleAutoConnect() {
 	account.executeCmd(toggleAutoConnectCmd(account))
+}
+
+func (account *account) toggleAlwaysEncrypt() {
+	account.executeCmd(toggleAlwaysEncryptCmd(account))
 }
 
 func (account *account) edit() {

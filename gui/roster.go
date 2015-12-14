@@ -21,12 +21,36 @@ type contacts struct {
 	m map[*account]*rosters.List
 }
 
+func (c *contacts) remove(account *account, peer string) {
+	c.Lock()
+	defer c.Unlock()
+
+	l, ok := c.m[account]
+	if !ok {
+		return
+	}
+
+	l.Remove(peer)
+}
+
+func (c *contacts) get(account *account, peer string) (*rosters.Peer, bool) {
+	c.RLock()
+	defer c.RUnlock()
+
+	l, ok := c.m[account]
+	if !ok {
+		return nil, false
+	}
+
+	return l.Get(peer)
+}
+
 type roster struct {
 	widget *gtk.ScrolledWindow
 	model  *gtk.TreeStore
 	view   *gtk.TreeView
 
-	contacts       contacts
+	contacts       *contacts
 	checkEncrypted func(to string) bool
 	sendMessage    func(to, message string)
 	conversations  map[string]*conversationWindow
@@ -56,7 +80,7 @@ func (u *gtkUI) newRoster() *roster {
 
 	r := &roster{
 		conversations: make(map[string]*conversationWindow),
-		contacts: contacts{
+		contacts: &contacts{
 			m: make(map[*account]*rosters.List),
 		},
 
@@ -137,9 +161,8 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 					Subscription: "remove",
 				},
 			})
-			r.contacts.Lock()
-			r.contacts.m[account].Remove(jid)
-			r.contacts.Unlock()
+
+			r.contacts.remove(account, jid)
 			r.redraw()
 		},
 		"on_allow_contact_to_see_status": func() {
@@ -255,18 +278,12 @@ func (r *roster) openConversationWindow(account *account, to string) (*conversat
 }
 
 func (r *roster) displayNameFor(account *account, from string) string {
-	r.contacts.RLock()
-	l, ok := r.contacts.m[account]
-	r.contacts.RUnlock()
+	p, ok := r.contacts.get(account, from)
 	if !ok {
 		return from
 	}
 
-	p, ok := l.Get(from)
-	if ok {
-		return p.NameForPresentation()
-	}
-	return from
+	return p.NameForPresentation()
 }
 
 func (r *roster) presenceUpdated(account *account, from, show, showStatus string, gone bool) {
@@ -307,6 +324,9 @@ func (r *roster) enableExistingConversationWindows(account *account, enable bool
 func (r *roster) update(account *account, entries *rosters.List) {
 	r.contacts.Lock()
 	defer r.contacts.Unlock()
+
+	//TODO: the duplication could happend here if we have multiple *account for
+	//the same config.Account
 	r.contacts.m[account] = entries
 }
 
@@ -555,6 +575,7 @@ func (r *roster) redrawIfRosterVisible() {
 }
 
 func (r *roster) redraw() {
+	//TODO: this should be behind a mutex
 	r.model.Clear()
 
 	if r.ui.shouldViewAccounts() {

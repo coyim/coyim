@@ -13,7 +13,6 @@ import (
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
 )
 
 type contacts struct {
@@ -155,13 +154,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
-			account.session.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
-				Item: xmpp.RosterRequestItem{
-					Jid:          jid,
-					Subscription: "remove",
-				},
-			})
-
+			account.session.RemoveContact(jid)
 			r.contacts.remove(account, jid)
 			r.redraw()
 		},

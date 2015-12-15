@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -52,6 +53,11 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	}
 	portEntry.SetText(strconv.Itoa(account.Port))
 
+	obj, _ = builder.GetObject("notification-area")
+	notificationArea := obj.(*gtk.Box)
+
+	failures := 0
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
 			accTxt, _ := accEntry.GetText()
@@ -59,12 +65,18 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			servTxt, _ := serverEntry.GetText()
 			portTxt, _ := portEntry.GetText()
 
-			if "" == accTxt {
-				log.Println("username can't be empty")
+			if failures > 0 {
+				failures++
+				log.Printf("authentication has failed %d times", failures)
 				return
 			}
-			if !isEmail(accTxt) {
-				log.Println("invalid username (want user@domain): " + account.Account)
+
+			if "" == accTxt || !isEmail(accTxt) {
+				notification := buildBadUsernameNotification()
+				notificationArea.Add(notification)
+				notification.ShowAll()
+				failures++
+				log.Printf("invalid username %s)", accTxt)
 				return
 			}
 
@@ -98,6 +110,21 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 func isEmail(address string) bool {
 	matcher := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 	return matcher.MatchString(address)
+}
+
+func buildBadUsernameNotification() *gtk.InfoBar {
+	builder := builderForDefinition("BadUsernameNotification")
+
+	obj, _ := builder.GetObject("infobar")
+	infoBar := obj.(*gtk.InfoBar)
+
+	obj, _ = builder.GetObject("message")
+	message := obj.(*gtk.Label)
+
+	text := fmt.Sprintf(i18n.Local("Username is required and should look like an email address"))
+	message.SetText(text)
+
+	return infoBar
 }
 
 func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect *gtk.MenuItem) {

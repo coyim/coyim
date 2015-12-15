@@ -221,6 +221,7 @@ func (u *gtkUI) mainWindow() {
 		"on_close_window_signal":                    u.quit,
 		"on_add_contact_window_signal":              u.addContactWindow,
 		"on_about_dialog_signal":                    u.aboutDialog,
+		"on_feedback_dialog_signal":                 u.feedbackDialog,
 		"on_toggled_check_Item_Merge_signal":        u.toggleMergeAccounts,
 		"on_toggled_check_Item_Show_Offline_signal": u.toggleShowOffline,
 	})
@@ -275,6 +276,17 @@ func (u *gtkUI) addFeedbackInfoBar() {
 	obj, _ := builder.GetObject("feedbackInfo")
 	infobar := obj.(*gtk.InfoBar)
 	u.notificationArea.PackEnd(infobar, true, true, 0)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"handleResponse": func(info *gtk.InfoBar, response gtk.ResponseType) {
+			if response != gtk.RESPONSE_CLOSE {
+				return
+			}
+
+			infobar.Hide()
+			infobar.Destroy()
+		},
+	})
 
 	obj, _ = builder.GetObject("feedbackButton")
 	button := obj.(*gtk.Button)

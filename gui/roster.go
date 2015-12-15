@@ -318,13 +318,7 @@ func (r *roster) update(account *account, entries *rosters.List) {
 	r.contacts.Lock()
 	defer r.contacts.Unlock()
 
-	//TODO: the duplication could happend here if we have multiple *account for
-	//the same config.Account
-	if entries.IsEmpty() && r.contacts.m[account] == nil {
-		r.contacts.m[account] = entries
-	} else if !entries.IsEmpty() {
-		r.contacts.m[account] = entries
-	}
+	r.contacts.m[account] = entries
 }
 
 func (r *roster) debugPrintRosterFor(nm string) {

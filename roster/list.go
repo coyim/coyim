@@ -23,11 +23,6 @@ func New() *List {
 	}
 }
 
-// Get returns if list is empty
-func (l *List) IsEmpty() bool {
-	return len(l.peers) == 0
-}
-
 // Get returns the peer if it's known and false otherwise
 func (l *List) Get(jid string) (*Peer, bool) {
 	v, ok := l.peers[xmpp.RemoveResourceFromJid(jid)]

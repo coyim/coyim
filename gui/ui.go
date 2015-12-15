@@ -126,7 +126,6 @@ func (u *gtkUI) loadConfig(configFile string) {
 func (u *gtkUI) configLoaded() {
 	u.buildAccounts(u.config)
 
-
 	glib.IdleAdd(func() bool {
 		if u.viewMenu != nil {
 			u.viewMenu.setFromConfig(u.config)
@@ -343,7 +342,7 @@ func (u *gtkUI) shouldViewAccounts() bool {
 }
 
 func authors() []string {
-	strikeMessage := "STRIKE Team <coyim@thoughtworks.com>"
+	strikeMessage := "STRIKE Team - coyim@thoughtworks.com"
 
 	b, err := exec.Command("git", "log").Output()
 	if err != nil {

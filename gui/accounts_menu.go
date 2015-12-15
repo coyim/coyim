@@ -2,6 +2,7 @@ package gui
 
 import (
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -58,6 +59,15 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			servTxt, _ := serverEntry.GetText()
 			portTxt, _ := portEntry.GetText()
 
+			if "" == accTxt {
+				log.Println("username can't be empty")
+				return
+			}
+			if !isEmail(accTxt) {
+				log.Println("invalid username (want user@domain): " + account.Account)
+				return
+			}
+
 			account.Account = accTxt
 			account.Server = servTxt
 
@@ -72,12 +82,6 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 
 			account.Port = convertedPort
 
-			parts := strings.SplitN(account.Account, "@", 2)
-			if len(parts) != 2 {
-				log.Println("invalid username (want user@domain): " + account.Account)
-				return
-			}
-
 			go saveFunction()
 			dialog.Destroy()
 		},
@@ -89,6 +93,11 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 
 	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
+}
+
+func isEmail(address string) bool {
+	matcher := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	return matcher.MatchString(address)
 }
 
 func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect *gtk.MenuItem) {

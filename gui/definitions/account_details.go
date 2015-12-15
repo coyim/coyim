@@ -66,19 +66,6 @@ func (*defAccountDetails) String() string {
           <object class="GtkBox" id="notification-area">
             <property name="visible">true</property>
             <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-            <child>
-              <object class="GtkInfoBar" id="security-warning">
-                <property name="visible">false</property>
-                <property name="message-type">GTK_MESSAGE_WARNING</property>
-                <child internal-child="content_area">
-                  <object class="GtkBox" id="security-warning-box">
-                    <property name="visible">true</property>
-                    <property name="homogeneous">false</property>
-                    <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-                  </object>
-                </child>
-              </object>
-            </child>
           </object>
         </child>
 

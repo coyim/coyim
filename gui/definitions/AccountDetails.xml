@@ -56,25 +56,6 @@
           <object class="GtkBox" id="notification-area">
             <property name="visible">true</property>
             <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-            <child>
-              <object class="GtkInfoBar" id="security-warning">
-                <property name="visible">false</property>
-                <property name="message-type">GTK_MESSAGE_WARNING</property>
-                <child internal-child="content_area">
-                  <object class="GtkBox" id="security-warning-box">
-                    <property name="visible">true</property>
-                    <property name="homogeneous">false</property>
-                    <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-                  </object>
-                  <packing>
-                    <property name="expand">false</property>
-                    <property name="fill">false</property>
-                    <property name="pack-type">GTK_PACK_START</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-              </object>
-            </child>
           </object>
         </child>
 

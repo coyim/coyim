@@ -69,6 +69,12 @@ func (*defMain) String() string {
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">
                     <child>
+                      <object class="GtkMenuItem" id="feedbackMenu">
+                        <property name="label" translatable="yes">Feedback</property>
+                        <signal name="activate" handler="on_feedback_dialog_signal" />
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkMenuItem" id="aboutMenu">
                         <property name="label" translatable="yes">About</property>
                         <signal name="activate" handler="on_about_dialog_signal" />

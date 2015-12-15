@@ -11,6 +11,8 @@ func (*defFeedbackInfo) String() string {
 <interface>
   <object class="GtkInfoBar" id="feedbackInfo">
     <property name="message-type">GTK_MESSAGE_OTHER</property>
+    <property name="show-close-button">true</property>
+    <signal name="response" handler="handleResponse" />
     <child internal-child="content_area">
       <object class="GtkBox" id="box">
         <property name="homogeneous">false</property>

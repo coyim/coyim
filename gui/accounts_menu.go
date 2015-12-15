@@ -39,7 +39,6 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 
 	obj, _ = builder.GetObject("password")
 	passEntry := obj.(*gtk.Entry)
-	passEntry.SetText(account.Password)
 
 	obj, _ = builder.GetObject("server")
 	serverEntry := obj.(*gtk.Entry)
@@ -60,8 +59,11 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			portTxt, _ := portEntry.GetText()
 
 			account.Account = accTxt
-			account.Password = passTxt
 			account.Server = servTxt
+
+			if passTxt != "" {
+				account.Password = passTxt
+			}
 
 			convertedPort, e := strconv.Atoi(portTxt)
 			if len(strings.TrimSpace(portTxt)) == 0 || e != nil {

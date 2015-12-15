@@ -20,6 +20,10 @@ func (u *gtkUI) connectAccount(account *account) {
 }
 
 func (u *gtkUI) connectWithPassword(account *account, password string) error {
+	if !account.session.IsDisconnected() {
+		return nil
+	}
+
 	u.showConnectAccountNotification(account)
 	defer u.removeConnectAccountNotification(account)
 

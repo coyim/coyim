@@ -212,7 +212,7 @@ func (c *cliUI) printConversationInfo(uid string, conversation client.Conversati
 	s := c.session
 	term := c.term
 
-	fpr := conversation.GetTheirKey().Fingerprint()
+	fpr := conversation.TheirFingerprint()
 	fprUID := s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %X", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %X", uid, conversation.GetSSID()))
@@ -681,13 +681,10 @@ CommandLoop:
 			case addCommand:
 				s.RequestPresenceSubscription(cmd.User)
 			case msgCommand:
-				var msgs [][]byte
 				message := []byte(cmd.msg)
 				conversation, exists := s.GetConversationWith(cmd.to)
 
-				if !exists {
-					msgs = [][]byte{[]byte(message)}
-				} else {
+				if exists {
 					isEncrypted := conversation.IsEncrypted()
 					if cmd.setPromptIsEncrypted != nil {
 						cmd.setPromptIsEncrypted <- isEncrypted
@@ -697,19 +694,14 @@ CommandLoop:
 						warn(term, fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
 						continue
 					}
-
-					var err error
-					validMsgs, err := conversation.Send(message)
-					msgs = otr3.Bytes(validMsgs)
-					if err != nil {
-						alert(term, err.Error())
-						break
-					}
 				}
 
-				for _, message := range msgs {
-					s.Conn.Send(cmd.to, string(message))
+				err := conversation.Send(s.Conn, message)
+				if err != nil {
+					alert(term, err.Error())
+					break
 				}
+
 			case otrCommand:
 				s.Conn.Send(string(cmd.User), event.QueryMessage)
 			case otrInfoCommand:
@@ -731,14 +723,12 @@ CommandLoop:
 					break
 				}
 
-				msgs, err := conversation.End()
+				err := conversation.EndEncryptedChat(s)
 				if err != nil {
 					alert(term, "Can't end the conversation - it seems there is no randomness in your system. This could be a significant problem.")
 					break
 				}
-				for _, msg := range msgs {
-					s.Conn.Send(to, string(msg))
-				}
+
 				c.input.SetPromptForTarget(cmd.User, false)
 				warn(term, "OTR conversation ended with "+cmd.User)
 			case authQACommand:
@@ -749,20 +739,17 @@ CommandLoop:
 					break
 				}
 
-				var ret []otr3.ValidMessage
 				if s.OtrEventHandler[to].WaitingForSecret {
 					s.OtrEventHandler[to].WaitingForSecret = false
-					ret, err = conversation.ProvideAuthenticationSecret([]byte(cmd.Secret))
+					err = conversation.ProvideAuthenticationSecret(s.Conn, []byte(cmd.Secret))
 				} else {
-					ret, err = conversation.StartAuthenticate(cmd.Question, []byte(cmd.Secret))
+					err = conversation.StartAuthenticate(s.Conn, cmd.Question, []byte(cmd.Secret))
 				}
-				msgs := otr3.Bytes(ret)
+
 				if err != nil {
 					alert(term, "Error while starting authentication with "+to+": "+err.Error())
 				}
-				for _, msg := range msgs {
-					s.Conn.Send(to, string(msg))
-				}
+
 			case authOobCommand:
 				fpr, err := hex.DecodeString(cmd.Fingerprint)
 				if err != nil {

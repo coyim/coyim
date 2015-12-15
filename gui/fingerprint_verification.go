@@ -54,28 +54,14 @@ Purported fingerprint for %[1]s:
 	return dialog
 }
 
-func getFingerprintsFor(conversation client.Conversation) ([]byte, []byte) {
-	var ourFp, theirFp []byte
-	ourKey := conversation.GetOurCurrentKey()
-	if ourKey != nil {
-		ourFp = ourKey.PublicKey().Fingerprint()
-	}
-
-	theirKey := conversation.GetTheirKey()
-	if theirKey != nil {
-		theirFp = theirKey.Fingerprint()
-	}
-
-	return ourFp, theirFp
-}
-
 func (u *gtkUI) verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) gtk.ResponseType {
 	accountConfig := account.session.CurrentAccount
 	//TODO: review whether it should create new conversations
 	//Anyway, if it has created the conversation this function could return
 	//(there is no theirFP in this case)
 	conversation, _ := account.session.EnsureConversationWith(uid)
-	ourFp, theirFp := getFingerprintsFor(conversation)
+	ourFp := conversation.OurFingerprint()
+	theirFp := conversation.TheirFingerprint()
 
 	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, uid, theirFp)
 	u.displaySettings.globalFontSettingOn(&dialog.Window.Bin.Container.Widget)

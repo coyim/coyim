@@ -129,7 +129,9 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 		// TODO: basically I think this whole menu should be rethought. It's useful for us to have during development
 		"on_start_otr_signal": func() {
 			//TODO: enable/disable depending on the conversation's encryption state
-			err := conv.account.session.StartEncryptedChatWith(conv.to)
+			session := conv.account.session
+			c, _ := session.EnsureConversationWith(conv.to)
+			err := c.StartEncryptedChat(session)
 			if err != nil {
 				//TODO: notify failure
 			}
@@ -137,7 +139,13 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 		"on_end_otr_signal": func() {
 			//TODO: errors
 			//TODO: enable/disable depending on the conversation's encryption state
-			err := conv.account.session.TerminateConversationWith(conv.to)
+			session := conv.account.session
+			c, ok := session.GetConversationWith(conv.to)
+			if !ok {
+				return
+			}
+
+			err := c.EndEncryptedChat(session)
 			if err != nil {
 				fmt.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 			}
@@ -219,14 +227,7 @@ func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 		return
 	}
 
-	theirKey := conversation.GetTheirKey()
-	if theirKey == nil {
-		//Something is VERY wrong
-		log.Println("Conversation has no theirKey")
-		return
-	}
-
-	fingerprint := theirKey.Fingerprint()
+	fingerprint := conversation.TheirFingerprint()
 	conf := conv.account.session.CurrentAccount
 
 	//TODO: this only returns the userID if the fingerprint matches AND is not

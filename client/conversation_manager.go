@@ -6,27 +6,10 @@ import (
 	"github.com/twstrike/otr3"
 )
 
-// Conversation represents a conversation with encryption capabilities
-type Conversation interface {
-	Send(otr3.ValidMessage) ([]otr3.ValidMessage, error)
-	Receive(otr3.ValidMessage) (otr3.MessagePlaintext, []otr3.ValidMessage, error)
-	End() ([]otr3.ValidMessage, error)
-
-	GetSSID() [8]byte
-	IsEncrypted() bool
-	QueryMessage() otr3.ValidMessage
-
-	ProvideAuthenticationSecret([]byte) ([]otr3.ValidMessage, error)
-	StartAuthenticate(string, []byte) ([]otr3.ValidMessage, error)
-
-	GetOurCurrentKey() otr3.PrivateKey
-	GetTheirKey() otr3.PublicKey
-}
-
 // ConversationBuilder represents an entity capable of building Conversations
 type ConversationBuilder interface {
 	// NewConversation returns a new conversation to a peer
-	NewConversation(peer string) Conversation
+	NewConversation(peer string) *otr3.Conversation
 }
 
 // Sender represents an entity capable of sending messages to peers
@@ -50,19 +33,13 @@ type ConversationManager interface {
 	// Conversations return all conversations currently managed
 	Conversations() map[string]Conversation
 
-	// StartEncryptedChatWith starts an encrypted chat with the given peer
-	StartEncryptedChatWith(peer string) error
-
-	// TerminateConversationWith terminates a conversation with a peer
-	TerminateConversationWith(peer string) error
-
 	// TerminateAll terminates all existing conversations
 	TerminateAll()
 }
 
 type conversationManager struct {
 	// conversations maps from a bare JID to Conversation
-	conversations map[string]Conversation
+	conversations map[string]*conversation
 	sync.RWMutex
 
 	builder ConversationBuilder
@@ -72,7 +49,7 @@ type conversationManager struct {
 // NewConversationManager returns a new ConversationManager
 func NewConversationManager(builder ConversationBuilder, sender Sender) ConversationManager {
 	return &conversationManager{
-		conversations: make(map[string]Conversation),
+		conversations: make(map[string]*conversation),
 		builder:       builder,
 		sender:        sender,
 	}
@@ -85,8 +62,8 @@ func (m *conversationManager) sendMsg(peer, msg string) error {
 func (m *conversationManager) GetConversationWith(peer string) (Conversation, bool) {
 	m.RLock()
 	defer m.RUnlock()
-	conversation, ok := m.conversations[peer]
-	return conversation, ok
+	c, ok := m.conversations[peer]
+	return c, ok
 }
 
 func (m *conversationManager) Conversations() map[string]Conversation {
@@ -108,16 +85,14 @@ func (m *conversationManager) EnsureConversationWith(peer string) (Conversation,
 
 	m.Lock()
 	defer m.Unlock()
-	conversation := m.builder.NewConversation(peer)
-	m.conversations[peer] = conversation
 
-	return conversation, true
-}
+	c := &conversation{
+		to:           peer,
+		Conversation: m.builder.NewConversation(peer),
+	}
+	m.conversations[peer] = c
 
-func (m *conversationManager) StartEncryptedChatWith(peer string) error {
-	//TODO: review whether it should create a conversation
-	conversation, _ := m.EnsureConversationWith(peer)
-	return m.sendMsg(peer, string(conversation.QueryMessage()))
+	return c, true
 }
 
 func (m *conversationManager) TerminateAll() {
@@ -135,20 +110,5 @@ func (m *conversationManager) TerminateConversationWith(peer string) error {
 		return nil
 	}
 
-	msgs, err := c.End()
-	if err != nil {
-		return err
-	}
-
-	for _, msg := range msgs {
-		err := m.sendMsg(peer, string(msg))
-		if err != nil {
-			return err
-		}
-	}
-
-	//TODO: add wipe for conversation
-	//conversation.Wipe()
-
-	return nil
+	return c.EndEncryptedChat(m.sender)
 }

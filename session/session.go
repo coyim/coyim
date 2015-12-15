@@ -397,7 +397,7 @@ func (s *Session) otrEnded(uid string) {
 }
 
 //TODO: why creating a conversation is coupled to the account config and the session
-func (s *Session) NewConversation(peer string) client.Conversation {
+func (s *Session) NewConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.PrivateKeys)
 
@@ -463,15 +463,11 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 
 func (s *Session) receiveClientMessage(from string, when time.Time, body string) {
 	conversation, _ := s.EnsureConversationWith(from)
-	out, toSend, err := conversation.Receive([]byte(body))
+	out, err := conversation.Receive(s, []byte(body))
 	encrypted := conversation.IsEncrypted()
 
 	if err != nil {
 		s.alert("While processing message from " + from + ": " + err.Error())
-	}
-
-	for _, msg := range toSend {
-		s.Conn.Send(from, string(msg))
 	}
 
 	eh, _ := s.OtrEventHandler[from]
@@ -493,13 +489,14 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
 		if s.CurrentAccount.OTRAutoTearDown {
-			_, existing := s.GetConversationWith(from)
+			c, existing := s.GetConversationWith(from)
 			if !existing {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
 				break
 			} else {
 				s.info(fmt.Sprintf("%s has ended the secure conversation.", from))
-				s.TerminateConversationWith(from)
+
+				err := c.EndEncryptedChat(s)
 				if err != nil {
 					s.info(fmt.Sprintf("Unable to automatically tear down OTR conversation with %s: %s\n", from, err.Error()))
 					break
@@ -517,7 +514,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		}
 	case event.SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
-		fpr := conversation.GetTheirKey().Fingerprint()
+		fpr := conversation.TheirFingerprint()
 		s.ExecuteCmd(client.AuthorizeFingerprintCmd{
 			Account:     s.CurrentAccount,
 			Peer:        from,
@@ -742,19 +739,7 @@ func (s *Session) Connect(password string) error {
 func (s *Session) EncryptAndSendTo(peer string, message string) error {
 	//TODO: review whether it should create a conversation
 	conversation, _ := s.EnsureConversationWith(peer)
-	toSend, err := conversation.Send(otr3.ValidMessage(message))
-	if err != nil {
-		return err
-	}
-
-	for _, m := range toSend {
-		err := s.SendMessageTo(peer, string(m))
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return conversation.Send(s, []byte(message))
 }
 
 // SendMessageTo sends the given message directly to the peer

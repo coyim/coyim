@@ -42,9 +42,14 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
 	m.Lock()
 	defer m.Unlock()
-	m.accounts = make([]*account, 0, len(appConfig.Accounts))
+	if len(m.accounts) == 0 {
+		m.accounts = make([]*account, 0, len(appConfig.Accounts))
+	}
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
+		if m.findAccountForUsername(accountConf.Account) != nil {
+			continue
+		}
 		hasUpdate, err := accountConf.EnsurePrivateKey()
 		if err != nil {
 			continue

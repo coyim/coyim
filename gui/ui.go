@@ -4,18 +4,15 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"os/exec"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
-	xroster "github.com/twstrike/coyim/roster"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -101,6 +98,10 @@ func (u *gtkUI) initialSetupWindow() {
 }
 
 func (u *gtkUI) loadConfig(configFile string) {
+	u.config.WhenLoaded(func(*config.ApplicationConfig) {
+		u.configLoaded()
+	})
+
 	config, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
 
 	if !ok {
@@ -112,6 +113,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 	}
 
 	// We assign config here, AFTER the return - so that a nil config means we are in a state of incorrectness and shouldn't do stuff.
+	// TODO: we never check if config is nil. Is it intentional to have panics due nil pointer?
 	u.config = config
 
 	if err != nil {
@@ -119,18 +121,11 @@ func (u *gtkUI) loadConfig(configFile string) {
 		glib.IdleAdd(u.initialSetupWindow)
 		return
 	}
-
-	u.configLoaded()
 }
 
 func (u *gtkUI) configLoaded() {
 	u.buildAccounts(u.config)
 
-	//TODO: replace me by session observer
-	for _, acc := range u.accounts {
-		acc.session.SessionEventHandler = u
-		u.roster.update(acc, xroster.New())
-	}
 
 	glib.IdleAdd(func() bool {
 		if u.viewMenu != nil {
@@ -527,17 +522,13 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, connectFn func() error
 	dialog.ShowAll()
 }
 
-func (u *gtkUI) disconnectAccount(account *account) {
-	go account.session.Close()
-}
-
 func (u *gtkUI) editAccount(account *account) {
 	u.accountDialog(account.session.CurrentAccount, u.SaveConfig)
 }
 
 func (u *gtkUI) removeAccount(account *account) {
 	u.confirmAccountRemoval(account.session.CurrentAccount, func(c *config.Account) {
-		u.disconnectAccount(account)
+		account.disconnect()
 		u.removeSaveReload(c)
 	})
 }
@@ -550,35 +541,4 @@ func (u *gtkUI) toggleAutoConnectAccount(account *account) {
 func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
 	account.session.CurrentAccount.ToggleAlwaysEncrypt()
 	u.saveConfigOnly()
-}
-
-// implemented using Sattolo’s variant of the Fisher–Yates shuffle
-func shuffleAccounts(a []*account) {
-	for i := range a {
-		j := rand.Intn(i + 1)
-		a[i], a[j] = a[j], a[i]
-	}
-}
-
-func (u *gtkUI) connectWithRandomDelay(a *account) {
-	sleepDelay := time.Duration(rand.Int31n(7643)) * time.Millisecond
-	log.Printf("connectWithRandomDelay(%v, %vms)\n", a.session.CurrentAccount.Account, sleepDelay)
-	time.Sleep(sleepDelay)
-	a.connect()
-}
-
-func (u *gtkUI) connectAllAutomatics(all bool) {
-	log.Printf("connectAllAutomatics(%v)\n", all)
-	var acc []*account
-	for _, a := range u.accounts {
-		if (all || a.session.CurrentAccount.ConnectAutomatically) && a.session.IsDisconnected() {
-			acc = append(acc, a)
-		}
-	}
-
-	//TODO: add notification?
-
-	for _, a := range acc {
-		go u.connectWithRandomDelay(a)
-	}
 }

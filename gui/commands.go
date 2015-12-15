@@ -24,9 +24,7 @@ func (u *gtkUI) watchCommands() {
 				u.connectAccount(c)
 			})
 		case disconnectAccountCmd:
-			glib.IdleAdd(func() {
-				u.disconnectAccount(c)
-			})
+			go c.session.Close()
 		case editAccountCmd:
 			glib.IdleAdd(func() {
 				u.editAccount(c)

@@ -1,6 +1,10 @@
 package gui
 
 import (
+	"log"
+	"math/rand"
+	"time"
+
 	"github.com/gotk3/gotk3/glib"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
@@ -51,4 +55,25 @@ func (u *gtkUI) askForServerDetailsAndConnect(account *account, password string)
 			return u.connectWithPassword(account, password)
 		})
 	})
+}
+
+func (u *gtkUI) connectWithRandomDelay(a *account) {
+	sleepDelay := time.Duration(rand.Int31n(7643)) * time.Millisecond
+	log.Printf("connectWithRandomDelay(%v, %vms)\n", a.session.CurrentAccount.Account, sleepDelay)
+	time.Sleep(sleepDelay)
+	a.connect()
+}
+
+func (u *gtkUI) connectAllAutomatics(all bool) {
+	log.Printf("connectAllAutomatics(%v)\n", all)
+	var acc []*account
+	for _, a := range u.accounts {
+		if (all || a.session.CurrentAccount.ConnectAutomatically) && a.session.IsDisconnected() {
+			acc = append(acc, a)
+		}
+	}
+
+	for _, a := range acc {
+		go u.connectWithRandomDelay(a)
+	}
 }

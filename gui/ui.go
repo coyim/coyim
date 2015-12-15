@@ -201,11 +201,12 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 }
 
 func (u *gtkUI) Loop() {
+	u.mainWindow()
+
 	go u.watchCommands()
 	go u.observeAccountEvents()
 	go u.loadConfig(*config.ConfigFile)
 
-	u.mainWindow()
 	gtk.Main()
 }
 
@@ -234,6 +235,9 @@ func (u *gtkUI) mainWindow() {
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
 	u.displaySettings.globalFontSettingOn(&u.window.Bin.Container.Widget)
 	u.displaySettings.setDefaultFontSize()
+
+	// This must happen after u.displaySettings is initialized
+	// So now, roster depends on displaySettings which depends on mainWindow
 	u.initRoster()
 
 	// AccountsMenu

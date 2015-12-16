@@ -32,15 +32,6 @@ func (ds *displaySettings) unifiedBackgroundColor(w *gtk.Widget) {
 	})
 }
 
-func (ds *displaySettings) globalFontSettingOn(w *gtk.Widget) {
-	glib.IdleAdd(func() bool {
-		styleContext, _ := w.GetStyleContext()
-		styleContext.AddProvider(ds.provider, 9999)
-		styleContext.AddClass("globalFontSetting")
-		return false
-	})
-}
-
 func (ds *displaySettings) control(w *gtk.Widget) {
 	glib.IdleAdd(func() bool {
 		styleContext, _ := w.GetStyleContext()
@@ -48,11 +39,6 @@ func (ds *displaySettings) control(w *gtk.Widget) {
 		styleContext.AddClass("currentFontSetting")
 		return false
 	})
-}
-
-func (ds *displaySettings) setDefaultFontSize() {
-	ds.fontSize = ds.defaultFontSize
-	ds.update()
 }
 
 func (ds *displaySettings) increaseFontSize() {
@@ -69,10 +55,6 @@ func (ds *displaySettings) update() {
 	css := fmt.Sprintf(`
 * {
   -GtkCheckMenuItem-indicator-size: 16;
-}
-
-.globalFontSetting {
-  font-size: %dpt;
 }
 
 .currentFontSetting {

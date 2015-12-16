@@ -84,7 +84,6 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 	win := obj.(*gtk.Window)
 	title := fmt.Sprintf("%s <-> %s", account.session.CurrentAccount.Account, uid)
 	win.SetTitle(title)
-	u.displaySettings.globalFontSettingOn(&win.Bin.Container.Widget)
 
 	obj, _ = builder.GetObject("history")
 	history := obj.(*gtk.TextView)

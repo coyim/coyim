@@ -64,7 +64,6 @@ func (u *gtkUI) verifyFingerprintDialog(account *account, uid string, parent *gt
 	theirFp := conversation.TheirFingerprint()
 
 	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, uid, theirFp)
-	u.displaySettings.globalFontSettingOn(&dialog.Window.Bin.Container.Widget)
 
 	defer dialog.Destroy()
 

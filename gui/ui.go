@@ -228,8 +228,6 @@ func (u *gtkUI) mainWindow() {
 	u.window = win.(*gtk.Window)
 
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
-	u.displaySettings.globalFontSettingOn(&u.window.Bin.Container.Widget)
-	u.displaySettings.setDefaultFontSize()
 
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow

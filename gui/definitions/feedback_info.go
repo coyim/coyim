@@ -19,7 +19,6 @@ func (*defFeedbackInfo) String() string {
         <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
         <child>
           <object class="GtkLabel" id="feedbackMessage">
-            <property name="wrap">true</property>
             <property name="label" translatable="yes">Are you liking it?</property>
           </object>
         </child>

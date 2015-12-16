@@ -65,18 +65,19 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			servTxt, _ := serverEntry.GetText()
 			portTxt, _ := portEntry.GetText()
 
-			if failures > 0 {
+			isEmail, err := isEmail(accTxt)
+			if !isEmail && failures > 0 {
 				failures++
 				log.Printf("authentication has failed %d times", failures)
 				return
 			}
 
-			if "" == accTxt || !isEmail(accTxt) {
+			if "" == accTxt || !isEmail {
 				notification := buildBadUsernameNotification()
 				notificationArea.Add(notification)
 				notification.ShowAll()
 				failures++
-				log.Printf("invalid username %s)", accTxt)
+				log.Printf(err)
 				return
 			}
 
@@ -107,9 +108,14 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	dialog.ShowAll()
 }
 
-func isEmail(address string) bool {
+func isEmail(address string) (bool, string) {
 	matcher := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
-	return matcher.MatchString(address)
+	matches := matcher.MatchString(address)
+	var err string
+	if !matches {
+		err = fmt.Sprintf("<%s> is not a valid username", address)
+	}
+	return matches, err
 }
 
 func buildBadUsernameNotification() *gtk.InfoBar {

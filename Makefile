@@ -88,7 +88,7 @@ deps-dev:
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/modocache/gover
 
-deps: deps-dev
+deps: deps-dev osx-deps
 	go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
 	go get github.com/twstrike/otr3
 	go get github.com/twstrike/otr3/sexp
@@ -102,3 +102,8 @@ deps: deps-dev
 	go get golang.org/x/crypto/scrypt
 	go get github.com/hydrogen18/stalecucumber
 	go get github.com/DHowett/go-plist
+
+osx-deps:
+ifeq ($(shell uname), Darwin)
+	brew install gtk+3
+endif

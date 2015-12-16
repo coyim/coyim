@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/twstrike/coyim/config"
+	"../../config"
 )
 
 type xmppClientConfig struct {

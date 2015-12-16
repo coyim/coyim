@@ -1,7 +1,7 @@
 package importer
 
 import (
-	"github.com/twstrike/coyim/config"
+	"../../config"
 	. "gopkg.in/check.v1"
 )
 

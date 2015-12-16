@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/twstrike/coyim/net/nettest"
+	"../net/nettest"
 	"golang.org/x/net/proxy"
 	. "gopkg.in/check.v1"
 )

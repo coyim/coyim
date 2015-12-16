@@ -3,7 +3,7 @@ package event
 import (
 	"log"
 
-	"github.com/twstrike/coyim/i18n"
+	"../i18n"
 	"github.com/twstrike/otr3"
 )
 

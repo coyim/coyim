@@ -14,10 +14,10 @@ import (
 	"io"
 	"log"
 
-	"github.com/twstrike/coyim/sasl"
-	"github.com/twstrike/coyim/sasl/digestmd5"
-	"github.com/twstrike/coyim/sasl/plain"
-	"github.com/twstrike/coyim/sasl/scram"
+	"../sasl"
+	"../sasl/digestmd5"
+	"../sasl/plain"
+	"../sasl/scram"
 )
 
 var (

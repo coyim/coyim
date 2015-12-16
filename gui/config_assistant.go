@@ -7,10 +7,10 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
+	"../config"
+	"../i18n"
 
-	ournet "github.com/twstrike/coyim/net"
+	ournet "../net"
 )
 
 type saveAccountFunc func(*config.Account)

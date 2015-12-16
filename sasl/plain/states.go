@@ -1,6 +1,6 @@
 package plain
 
-import "github.com/twstrike/coyim/sasl"
+import "../../sasl"
 
 type state interface {
 	challenge(string, string) (state, sasl.Token, error)

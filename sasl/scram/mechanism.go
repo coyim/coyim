@@ -2,7 +2,7 @@
 // according to RFC 5802.
 package scram
 
-import "github.com/twstrike/coyim/sasl"
+import "../../sasl"
 
 var (
 	// Mechanism is the SCRAM-SHA1 SASL mechanism

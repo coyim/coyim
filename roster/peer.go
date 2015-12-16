@@ -3,7 +3,7 @@ package roster
 import (
 	"fmt"
 
-	"github.com/twstrike/coyim/xmpp"
+	"../xmpp"
 )
 
 // Peer represents and contains all the information you have about a specific peer.

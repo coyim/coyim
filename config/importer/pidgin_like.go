@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/xmpp"
+	"../../config"
+	"../../xmpp"
 	"github.com/twstrike/otr3"
 )
 

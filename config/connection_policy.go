@@ -13,9 +13,9 @@ import (
 
 	"golang.org/x/net/proxy"
 
-	ournet "github.com/twstrike/coyim/net"
-	"github.com/twstrike/coyim/servers"
-	"github.com/twstrike/coyim/xmpp"
+	ournet "../net"
+	"../servers"
+	"../xmpp"
 )
 
 var (

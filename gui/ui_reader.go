@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/gui/definitions"
+	"../gui/definitions"
 )
 
 const (

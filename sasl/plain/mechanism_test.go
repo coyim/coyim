@@ -3,7 +3,7 @@ package plain
 import (
 	"testing"
 
-	"github.com/twstrike/coyim/sasl"
+	"../../sasl"
 	. "gopkg.in/check.v1"
 )
 

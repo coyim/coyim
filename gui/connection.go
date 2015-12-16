@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/gotk3/gotk3/glib"
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/xmpp"
+	"../config"
+	"../xmpp"
 )
 
 func (u *gtkUI) connectAccount(account *account) {

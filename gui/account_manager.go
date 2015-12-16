@@ -3,9 +3,9 @@ package gui
 import (
 	"sync"
 
-	"github.com/twstrike/coyim/client"
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/session"
+	"../client"
+	"../config"
+	"../session"
 )
 
 //TODO: once glib signals are removed from account, it could be a sessionManager

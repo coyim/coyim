@@ -8,8 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
+	"../ui"
+	"../xmpp"
 )
 
 // RosterEdit contains information about a pending roster edit. Roster edits

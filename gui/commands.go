@@ -2,7 +2,7 @@ package gui
 
 import (
 	"github.com/gotk3/gotk3/glib"
-	"github.com/twstrike/coyim/client"
+	"../client"
 )
 
 type connectAccountCmd *account

@@ -150,7 +150,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 			}
 		},
 		"on_verify_fp_signal": func() {
-			u.verifyFingerprintDialog(conv.account, conv.to, conv.win)
+			verifyFingerprintDialog(conv.account, conv.to, conv.win)
 		},
 		"on_connect": func() {
 			entry.SetEditable(true)
@@ -247,23 +247,8 @@ func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 		return
 	}
 
-	infoBar := buildVerifyIdentityNotification(conv.to)
-	infoBar.Connect("response", func(info *gtk.InfoBar, response gtk.ResponseType) {
-		if response != gtk.RESPONSE_ACCEPT {
-			return
-		}
-
-		glib.IdleAdd(func() {
-			resp := u.verifyFingerprintDialog(conv.account, conv.to, conv.win)
-			if resp == gtk.RESPONSE_YES {
-				info.Hide()
-				info.Destroy()
-			}
-		})
-	})
-
+	infoBar := buildVerifyIdentityNotification(conv.account, conv.to, conv.win)
 	conv.addNotification(infoBar)
-	infoBar.ShowAll()
 }
 
 func (conv *conversationWindow) updateSecurityWarning() {

@@ -33,9 +33,6 @@ func (*defVerifyIdentityNotification) String() string {
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="GTK_RESPONSE_ACCEPT">button_verify</action-widget>
-    </action-widgets>
   </object>
 </interface>
 

@@ -54,7 +54,7 @@ func (u *gtkUI) notifyConnectionFailure(account *account) {
 	})
 }
 
-func buildVerifyIdentityNotification(peer string) *gtk.InfoBar {
+func buildVerifyIdentityNotification(acc *account, peer string, win *gtk.Window) *gtk.InfoBar {
 	builder := builderForDefinition("VerifyIdentityNotification")
 
 	obj, _ := builder.GetObject("infobar")
@@ -65,6 +65,20 @@ func buildVerifyIdentityNotification(peer string) *gtk.InfoBar {
 
 	text := fmt.Sprintf(i18n.Local("You have not verified the identity of %s"), peer)
 	message.SetText(text)
+
+	obj, _ = builder.GetObject("button_verify")
+	button := obj.(*gtk.Button)
+	button.Connect("clicked", func() {
+		glib.IdleAdd(func() {
+			resp := verifyFingerprintDialog(acc, peer, win)
+			if resp == gtk.RESPONSE_YES {
+				infoBar.Hide()
+				infoBar.Destroy()
+			}
+		})
+	})
+
+	infoBar.ShowAll()
 
 	return infoBar
 }

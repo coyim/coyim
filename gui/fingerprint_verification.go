@@ -54,7 +54,7 @@ Purported fingerprint for %[1]s:
 	return dialog
 }
 
-func (u *gtkUI) verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) gtk.ResponseType {
+func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) gtk.ResponseType {
 	accountConfig := account.session.CurrentAccount
 	//TODO: review whether it should create new conversations
 	//Anyway, if it has created the conversation this function could return

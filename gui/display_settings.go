@@ -72,7 +72,7 @@ func (ds *displaySettings) update() {
 }
 
 .globalFontSetting {
-  font-size: %dpx;
+  font-size: %dpt;
 }
 
 .currentFontSetting {
@@ -93,7 +93,7 @@ func newDisplaySettings() *displaySettings {
 	ds := &displaySettings{}
 	prov, _ := gtk.CssProviderNew()
 	ds.provider = prov
-	ds.defaultFontSize = 16
+	ds.defaultFontSize = 12
 	return ds
 }
 

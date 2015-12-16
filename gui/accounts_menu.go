@@ -68,7 +68,6 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			isEmail, err := isEmail(accTxt)
 			if !isEmail && failures > 0 {
 				failures++
-				log.Printf("authentication has failed %d times", failures)
 				return
 			}
 

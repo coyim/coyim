@@ -15,6 +15,14 @@ func (*defAccountDetails) String() string {
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
+
+        <child>
+          <object class="GtkBox" id="notification-area">
+            <property name="visible">true</property>
+            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+          </object>
+        </child>
+
         <child>
           <object class="GtkGrid" id="grid">
             <property name="margin-bottom">10</property>
@@ -59,13 +67,6 @@ func (*defAccountDetails) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-          </object>
-        </child>
-
-        <child>
-          <object class="GtkBox" id="notification-area">
-            <property name="visible">true</property>
-            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
           </object>
         </child>
 

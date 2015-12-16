@@ -82,7 +82,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 
 	obj, _ := builder.GetObject("conversation")
 	win := obj.(*gtk.Window)
-	title := fmt.Sprintf("%s <-> %s", account.session.CurrentAccount.Account, uid)
+	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, uid)
 	win.SetTitle(title)
 
 	obj, _ = builder.GetObject("history")
@@ -227,7 +227,7 @@ func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 	}
 
 	fingerprint := conversation.TheirFingerprint()
-	conf := conv.account.session.CurrentAccount
+	conf := conv.account.session.GetConfig()
 
 	//TODO: this only returns the userID if the fingerprint matches AND is not
 	//untrusted. What if this fingerprint is associated with another (untrusted)
@@ -276,7 +276,7 @@ func (conv *conversationWindow) sendMessage(message string) error {
 	//TODO: this should be whether the message was encrypted or not, rather than
 	//whether the conversation is encrypted or not
 	conversation, _ := conv.account.session.EnsureConversationWith(conv.to)
-	conv.appendMessage(conv.account.session.CurrentAccount.Account, time.Now(), conversation.IsEncrypted(), ui.StripHTML([]byte(message)), true)
+	conv.appendMessage(conv.account.session.GetConfig().Account, time.Now(), conversation.IsEncrypted(), ui.StripHTML([]byte(message)), true)
 
 	return nil
 }

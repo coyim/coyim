@@ -520,22 +520,22 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, connectFn func() error
 }
 
 func (u *gtkUI) editAccount(account *account) {
-	u.accountDialog(account.session.CurrentAccount, u.SaveConfig)
+	u.accountDialog(account.session.GetConfig(), u.SaveConfig)
 }
 
 func (u *gtkUI) removeAccount(account *account) {
-	u.confirmAccountRemoval(account.session.CurrentAccount, func(c *config.Account) {
+	u.confirmAccountRemoval(account.session.GetConfig(), func(c *config.Account) {
 		account.disconnect()
 		u.removeSaveReload(c)
 	})
 }
 
 func (u *gtkUI) toggleAutoConnectAccount(account *account) {
-	account.session.CurrentAccount.ToggleConnectAutomatically()
+	account.session.GetConfig().ToggleConnectAutomatically()
 	u.saveConfigOnly()
 }
 
 func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
-	account.session.CurrentAccount.ToggleAlwaysEncrypt()
+	account.session.GetConfig().ToggleAlwaysEncrypt()
 	u.saveConfigOnly()
 }

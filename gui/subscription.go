@@ -33,7 +33,7 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 	for _, acc := range accounts {
 		iter := model.Append()
 		//TODO stop passing pointers
-		model.Set(iter, []int{0, 1}, []interface{}{acc.session.CurrentAccount.Account, acc.session.CurrentAccount.ID()})
+		model.Set(iter, []int{0, 1}, []interface{}{acc.session.GetConfig().Account, acc.session.GetConfig().ID()})
 	}
 
 	accountsObj, _ := builder.GetObject("accounts")

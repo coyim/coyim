@@ -47,7 +47,7 @@ func (c *cliUI) handlePeerEvent(ev session.PeerEvent) {
 }
 
 func (c *cliUI) handlePresenceEvent(ev session.PresenceEvent) {
-	if ev.Session.CurrentAccount.HideStatusUpdates {
+	if ev.Session.GetConfig().HideStatusUpdates {
 		return
 	}
 

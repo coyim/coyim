@@ -11,7 +11,7 @@ import (
 )
 
 func (u *gtkUI) connectAccount(account *account) {
-	switch p := account.session.CurrentAccount.Password; p {
+	switch p := account.session.GetConfig().Password; p {
 	case "":
 		u.askForPasswordAndConnect(account)
 	default:
@@ -44,7 +44,7 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 }
 
 func (u *gtkUI) askForPasswordAndConnect(account *account) {
-	accountName := account.session.CurrentAccount.Account
+	accountName := account.session.GetConfig().Account
 	glib.IdleAdd(func() {
 		u.askForPassword(accountName, func(password string) error {
 			return u.connectWithPassword(account, password)
@@ -53,7 +53,7 @@ func (u *gtkUI) askForPasswordAndConnect(account *account) {
 }
 
 func (u *gtkUI) askForServerDetailsAndConnect(account *account, password string) {
-	conf := account.session.CurrentAccount
+	conf := account.session.GetConfig()
 	glib.IdleAdd(func() {
 		u.askForServerDetails(conf, func() error {
 			return u.connectWithPassword(account, password)
@@ -63,7 +63,7 @@ func (u *gtkUI) askForServerDetailsAndConnect(account *account, password string)
 
 func (u *gtkUI) connectWithRandomDelay(a *account) {
 	sleepDelay := time.Duration(rand.Int31n(7643)) * time.Millisecond
-	log.Printf("connectWithRandomDelay(%v, %vms)\n", a.session.CurrentAccount.Account, sleepDelay)
+	log.Printf("connectWithRandomDelay(%v, %vms)\n", a.session.GetConfig().Account, sleepDelay)
 	time.Sleep(sleepDelay)
 	a.connect()
 }
@@ -72,7 +72,7 @@ func (u *gtkUI) connectAllAutomatics(all bool) {
 	log.Printf("connectAllAutomatics(%v)\n", all)
 	var acc []*account
 	for _, a := range u.accounts {
-		if (all || a.session.CurrentAccount.ConnectAutomatically) && a.session.IsDisconnected() {
+		if (all || a.session.GetConfig().ConnectAutomatically) && a.session.IsDisconnected() {
 			acc = append(acc, a)
 		}
 	}

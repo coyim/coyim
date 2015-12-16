@@ -22,7 +22,7 @@ type byAccountNameAlphabetic []*account
 
 func (s byAccountNameAlphabetic) Len() int { return len(s) }
 func (s byAccountNameAlphabetic) Less(i, j int) bool {
-	return s[i].session.CurrentAccount.Account < s[j].session.CurrentAccount.Account
+	return s[i].session.GetConfig().Account < s[j].session.GetConfig().Account
 }
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
@@ -73,7 +73,7 @@ func (account *account) appendMenuTo(submenu *gtk.Menu) {
 func (account *account) buildAccountSubmenu() {
 	menuitem, _ := gtk.MenuItemNew()
 
-	menuitem.SetLabel(account.session.CurrentAccount.Account)
+	menuitem.SetLabel(account.session.GetConfig().Account)
 
 	accountSubMenu, _ := gtk.MenuNew()
 	menuitem.SetSubmenu(accountSubMenu)
@@ -92,11 +92,11 @@ func (account *account) buildAccountSubmenu() {
 
 	connectAutomaticallyItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect _Automatically"))
 	accountSubMenu.Append(connectAutomaticallyItem)
-	connectAutomaticallyItem.SetActive(account.session.CurrentAccount.ConnectAutomatically)
+	connectAutomaticallyItem.SetActive(account.session.GetConfig().ConnectAutomatically)
 
 	alwaysEncryptItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Always Encrypt Conversation"))
 	accountSubMenu.Append(alwaysEncryptItem)
-	alwaysEncryptItem.SetActive(account.session.CurrentAccount.AlwaysEncrypt)
+	alwaysEncryptItem.SetActive(account.session.GetConfig().AlwaysEncrypt)
 
 	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
 
@@ -160,7 +160,7 @@ func (account *account) buildConnectionNotification() {
 	msg := obj.(*gtk.Label)
 
 	text := fmt.Sprintf(i18n.Local("Connecting account\n%s"),
-		account.session.CurrentAccount.Account)
+		account.session.GetConfig().Account)
 
 	msg.SetText(text)
 

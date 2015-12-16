@@ -45,7 +45,7 @@ func (u *gtkUI) notifyConnectionFailure(account *account) {
 	message := obj.(*gtk.Label)
 
 	text := fmt.Sprintf(i18n.Local("Connection failure\n%s"),
-		account.session.CurrentAccount.Account)
+		account.session.GetConfig().Account)
 	message.SetText(text)
 
 	glib.IdleAdd(func() {

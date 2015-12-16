@@ -75,7 +75,7 @@ func (m *accountManager) findAccountForSession(s *session.Session) *account {
 
 func (m *accountManager) findAccountForUsername(s string) *account {
 	for _, a := range m.accounts {
-		if a.session.CurrentAccount.Is(s) {
+		if a.session.GetConfig().Is(s) {
 			return a
 		}
 	}
@@ -89,7 +89,7 @@ func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationC
 	for _, configAccount := range appConfig.Accounts {
 		var found bool
 		for _, acc := range m.accounts {
-			if acc.session.CurrentAccount.ID() == configAccount.ID() {
+			if acc.session.GetConfig().ID() == configAccount.ID() {
 				found = true
 				break
 			}

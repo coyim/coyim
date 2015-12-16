@@ -21,8 +21,8 @@ var (
 )
 
 func firstProxy(account *account) string {
-	if len(account.session.CurrentAccount.Proxies) > 0 {
-		return account.session.CurrentAccount.Proxies[0]
+	if len(account.session.GetConfig().Proxies) > 0 {
+		return account.session.GetConfig().Proxies[0]
 	}
 
 	return ""

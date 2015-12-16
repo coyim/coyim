@@ -114,7 +114,7 @@ func (r *roster) getAccount(id string) (*account, bool) {
 	defer r.contacts.RUnlock()
 
 	for account := range r.contacts.m {
-		if account.session.CurrentAccount.ID() == id {
+		if account.session.GetConfig().ID() == id {
 			return account, true
 		}
 	}
@@ -168,7 +168,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 			account.session.RequestPresenceSubscription(jid)
 		},
 		"on_dump_info": func() {
-			r.debugPrintRosterFor(account.session.CurrentAccount.Account)
+			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},
 	})
 
@@ -189,7 +189,7 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 			account.disconnect()
 		},
 		"on_dump_info": func() {
-			r.debugPrintRosterFor(account.session.CurrentAccount.Account)
+			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},
 	})
 
@@ -326,7 +326,7 @@ func (r *roster) debugPrintRosterFor(nm string) {
 	defer r.contacts.RUnlock()
 
 	for account, rs := range r.contacts.m {
-		if account.session.CurrentAccount.Is(nm) {
+		if account.session.GetConfig().Is(nm) {
 			rs.Iter(func(_ int, item *rosters.Peer) {
 				fmt.Printf("->   %s\n", item.Dump())
 			})
@@ -500,11 +500,11 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	accountCounter := &counter{}
 
 	grp := contacts.Grouped(account.session.GroupDelimiter)
-	parentName := account.session.CurrentAccount.Account
+	parentName := account.session.GetConfig().Account
 	r.displayGroup(grp, parentIter, accountCounter, showOffline, parentName)
 
 	r.model.SetValue(parentIter, indexParentJid, parentName)
-	r.model.SetValue(parentIter, indexAccountID, account.session.CurrentAccount.ID())
+	r.model.SetValue(parentIter, indexAccountID, account.session.GetConfig().ID())
 	r.model.SetValue(parentIter, indexRowType, "account")
 	r.model.SetValue(parentIter, indexWeight, 500)
 	r.model.SetValue(parentIter, indexBackgroundColor, "#918caa")

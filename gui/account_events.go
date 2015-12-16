@@ -84,7 +84,7 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 	case session.ConnectionLost:
 		u.notifyConnectionFailure(account)
 
-		if !ev.Session.CurrentAccount.ConnectAutomatically {
+		if !ev.Session.GetConfig().ConnectAutomatically {
 			return
 		}
 
@@ -97,7 +97,7 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 }
 
 func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
-	if ev.Session.CurrentAccount.HideStatusUpdates {
+	if ev.Session.GetConfig().HideStatusUpdates {
 		return
 	}
 
@@ -161,11 +161,11 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 			return false
 		})
 	case session.Subscribed:
-		jid := ev.Session.CurrentAccount.Account
+		jid := ev.Session.GetConfig().Account
 		log.Printf("[%s] Subscribed to %s\n", jid, ev.From)
 		u.rosterUpdated()
 	case session.Unsubscribe:
-		jid := ev.Session.CurrentAccount.Account
+		jid := ev.Session.GetConfig().Account
 		log.Printf("[%s] Unsubscribed from %s\n", jid, ev.From)
 		u.rosterUpdated()
 	}

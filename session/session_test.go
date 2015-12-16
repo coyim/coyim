@@ -302,7 +302,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 
 	sess := &Session{
 		Config: &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{
+	.GetConfig(): &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		ConnStatus: DISCONNECTED,
@@ -334,7 +334,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 
 	sess := &Session{
 		Config: &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{
+	.GetConfig(): &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		ConnStatus: DISCONNECTED,
@@ -367,7 +367,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 
 	sess := &Session{
 		Config: &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{
+	.GetConfig(): &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		ConnStatus: DISCONNECTED,
@@ -407,7 +407,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 
 	sess := &Session{
 		Config: &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{
+	.GetConfig(): &config.Account{
 			Account: "some@one.org",
 		},
 		ConnStatus: DISCONNECTED,
@@ -441,7 +441,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 
 	sess := &Session{
 		Config: &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{
+	.GetConfig(): &config.Account{
 			Account: "some@one.org",
 		},
 		ConnStatus: DISCONNECTED,
@@ -473,7 +473,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 
 	sess := &Session{
 		Config: &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{
+	.GetConfig(): &config.Account{
 			Account: "some@one.org",
 		},
 		R:          roster.New(),
@@ -484,7 +484,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 	sess.watchStanzas()
 
 	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
-		roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.CurrentAccount.ID())})
+		roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig().ID())})
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterItem(c *C) {
@@ -503,7 +503,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 
 	sess := &Session{
 		Config: &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{
+	.GetConfig(): &config.Account{
 			Account: "some@one.org",
 		},
 		R:          roster.New(),
@@ -511,15 +511,15 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 	}
 	sess.Conn = conn
 
-	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.CurrentAccount.ID()))
-	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.CurrentAccount.ID()))
+	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig().ID()))
+	sess.R.AddOrReplace(roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig().ID()))
 
 	sess.watchStanzas()
 
 	c.Assert(called, Equals, 0)
 	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
-		roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.CurrentAccount.ID()),
-		roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.CurrentAccount.ID()),
+		roster.PeerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig().ID()),
+		roster.PeerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig().ID()),
 	})
 }
 
@@ -537,7 +537,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 
 	sess := &Session{
 		Config: &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{
+	.GetConfig(): &config.Account{
 			Account: "some@one.org",
 		},
 		R:          roster.New(),
@@ -615,7 +615,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 
 	sess := &Session{
 		Config:         &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{},
+	.GetConfig(): &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
 	}
@@ -657,7 +657,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 
 	sess := &Session{
 		Config:         &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{},
+	.GetConfig(): &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
 	}
@@ -679,7 +679,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 
 	sess := &Session{
 		Config:         &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{},
+	.GetConfig(): &config.Account{},
 		ConnStatus:     DISCONNECTED,
 	}
 	sess.Conn = conn
@@ -718,7 +718,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 
 	sess := &Session{
 		Config:         &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{},
+	.GetConfig(): &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
 	}
@@ -759,7 +759,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 
 	sess := &Session{
 		Config:         &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{},
+	.GetConfig(): &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
 	}
@@ -797,7 +797,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 
 	sess := &Session{
 		Config:         &config.ApplicationConfig{},
-		CurrentAccount: &config.Account{},
+	.GetConfig(): &config.Account{},
 		R:              roster.New(),
 		ConnStatus:     DISCONNECTED,
 	}

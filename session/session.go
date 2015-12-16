@@ -41,8 +41,8 @@ type Session struct {
 
 	//TODO: the session does not need all application config. Copy only what it needs to configure the session
 	Config *config.ApplicationConfig
-	// TODO: this is the account config, not the current account
-	CurrentAccount *config.Account
+
+	accountConfig *config.Account
 
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
@@ -66,6 +66,10 @@ type Session struct {
 	client.ConversationManager
 }
 
+func (s *Session) GetConfig() *config.Account {
+	return s.accountConfig
+}
+
 func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 	var result []otr3.PrivateKey
 
@@ -86,8 +90,8 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 // NewSession creates a new session from the given config
 func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	s := &Session{
-		Config:         c,
-		CurrentAccount: cu,
+		Config:        c,
+		accountConfig: cu,
 
 		R:               roster.New(),
 		OtrEventHandler: make(map[string]*event.OtrEventHandler),
@@ -167,7 +171,7 @@ func either(l, r string) string {
 func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
-		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"), s.CurrentAccount.ID())
+		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"), s.GetConfig().ID())
 		s.publishPeerEvent(
 			SubscriptionRequest,
 			xmpp.RemoveResourceFromJid(stanza.From),
@@ -183,7 +187,7 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 			Gone:           true,
 		})
 	case "":
-		if !s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status, s.CurrentAccount.ID()) {
+		if !s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status, s.GetConfig().ID()) {
 			return true
 		}
 
@@ -290,7 +294,7 @@ func (s *Session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
 			{
 				Category: "client",
 				Type:     "pc",
-				Name:     s.CurrentAccount.Account,
+				Name:     s.GetConfig().Account,
 			},
 		},
 	}
@@ -307,7 +311,7 @@ func (s *Session) receivedIQVersion() xmpp.VersionReply {
 func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
 	// TODO: we should deal with "ask" attributes here
 
-	if len(stanza.From) > 0 && !s.CurrentAccount.Is(stanza.From) {
+	if len(stanza.From) > 0 && !s.GetConfig().Is(stanza.From) {
 		s.warn("Ignoring roster IQ from bad address: " + stanza.From)
 		return nil, true
 	}
@@ -320,7 +324,7 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{},
 	for _, entry := range rst.Item {
 		if entry.Subscription == "remove" {
 			s.R.Remove(entry.Jid)
-		} else if s.R.AddOrMerge(roster.PeerFrom(entry, s.CurrentAccount.ID())) {
+		} else if s.R.AddOrMerge(roster.PeerFrom(entry, s.GetConfig().ID())) {
 			s.iqReceived(entry.Jid)
 		}
 	}
@@ -401,16 +405,16 @@ func (s *Session) NewConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.PrivateKeys)
 
-	instanceTag := conversation.InitializeInstanceTag(s.CurrentAccount.InstanceTag)
+	instanceTag := conversation.InitializeInstanceTag(s.GetConfig().InstanceTag)
 
-	if s.CurrentAccount.InstanceTag != instanceTag {
+	if s.GetConfig().InstanceTag != instanceTag {
 		s.ExecuteCmd(client.SaveInstanceTagCmd{
-			Account:     s.CurrentAccount,
+			Account:     s.GetConfig(),
 			InstanceTag: instanceTag,
 		})
 	}
 
-	s.CurrentAccount.SetOTRPoliciesFor(peer, conversation)
+	s.GetConfig().SetOTRPoliciesFor(peer, conversation)
 
 	eh, ok := s.OtrEventHandler[peer]
 	if !ok {
@@ -488,7 +492,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		// their buddy has ended a session, which they have also ended, and they
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
-		if s.CurrentAccount.OTRAutoTearDown {
+		if s.GetConfig().OTRAutoTearDown {
 			c, existing := s.GetConversationWith(from)
 			if !existing {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
@@ -516,7 +520,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.TheirFingerprint()
 		s.ExecuteCmd(client.AuthorizeFingerprintCmd{
-			Account:     s.CurrentAccount,
+			Account:     s.GetConfig(),
 			Peer:        from,
 			Fingerprint: fpr,
 		})
@@ -674,7 +678,7 @@ func (s *Session) requestRoster() {
 	}
 
 	for _, rr := range rst {
-		s.R.AddOrMerge(roster.PeerFrom(rr, s.CurrentAccount.ID()))
+		s.R.AddOrMerge(roster.PeerFrom(rr, s.GetConfig().ID()))
 	}
 
 	s.rosterReceived()
@@ -711,7 +715,7 @@ func (s *Session) Connect(password string) error {
 		s.ConnectionLogger = newLogger()
 	}
 
-	conf := s.CurrentAccount
+	conf := s.GetConfig()
 	policy := config.ConnectionPolicy{
 		Logger:     s.ConnectionLogger,
 		XMPPLogger: s.xmppLogger,

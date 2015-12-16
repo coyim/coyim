@@ -204,7 +204,7 @@ func (c *cliUI) alert(m string) {
 }
 
 func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{}) error {
-	user := c.session.CurrentAccount.Account
+	user := c.session.GetConfig().Account
 	return promptForForm(c.term, user, c.password, title, instructions, fields)
 }
 
@@ -213,14 +213,14 @@ func (c *cliUI) printConversationInfo(uid string, conversation client.Conversati
 	term := c.term
 
 	fpr := conversation.TheirFingerprint()
-	fprUID := s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)
+	fprUID := s.GetConfig().UserIDForVerifiedFingerprint(fpr)
 	info(term, fmt.Sprintf("  Fingerprint  for %s: %X", uid, fpr))
 	info(term, fmt.Sprintf("  Session  ID  for %s: %X", uid, conversation.GetSSID()))
 	if fprUID == uid {
 		info(term, fmt.Sprintf("  Identity key for %s is verified", uid))
 	} else if len(fprUID) > 1 {
 		alert(term, fmt.Sprintf("  Warning: %s is using an identity key which was verified for %s", uid, fprUID))
-	} else if s.CurrentAccount.HasFingerprint(uid) {
+	} else if s.GetConfig().HasFingerprint(uid) {
 		critical(term, fmt.Sprintf("  Identity key for %s is incorrect", uid))
 	} else {
 		alert(term, fmt.Sprintf("  Identity key for %s is not verified. You should use /otr-auth or /otr-authqa or /otr-authoob to verify their identity", uid))
@@ -514,15 +514,15 @@ func (c *cliUI) watchRosterEdits() {
 			}
 
 			// Filter out any known fingerprints.
-			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(c.session.CurrentAccount.KnownFingerprints))
-			for _, fpr := range c.session.CurrentAccount.KnownFingerprints {
+			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(c.session.GetConfig().KnownFingerprints))
+			for _, fpr := range c.session.GetConfig().KnownFingerprints {
 				if fpr.UserID == jid {
 					continue
 				}
 				newKnownFingerprints = append(newKnownFingerprints, fpr)
 			}
 
-			c.session.CurrentAccount.KnownFingerprints = newKnownFingerprints
+			c.session.GetConfig().KnownFingerprints = newKnownFingerprints
 			c.ExecuteCmd(client.SaveApplicationConfigCmd{})
 		}
 
@@ -571,7 +571,7 @@ func (c *cliUI) watchInputCommands() {
 
 	term := c.term
 	s := c.session
-	conf := s.CurrentAccount
+	conf := s.GetConfig()
 
 	var err error
 
@@ -665,11 +665,11 @@ CommandLoop:
 				}(*c.PendingRosterEdit)
 
 			case toggleStatusUpdatesCommand:
-				s.CurrentAccount.HideStatusUpdates = !s.CurrentAccount.HideStatusUpdates
+				s.GetConfig().HideStatusUpdates = !s.GetConfig().HideStatusUpdates
 				s.ExecuteCmd(client.SaveApplicationConfigCmd{})
 
 				// Tell the user the current state of the statuses
-				if s.CurrentAccount.HideStatusUpdates {
+				if s.GetConfig().HideStatusUpdates {
 					info(term, "Status updates disabled")
 				} else {
 					info(term, "Status updates enabled")
@@ -757,14 +757,14 @@ CommandLoop:
 					break
 				}
 
-				idForFpr := s.CurrentAccount.UserIDForVerifiedFingerprint(fpr)
+				idForFpr := s.GetConfig().UserIDForVerifiedFingerprint(fpr)
 				if len(idForFpr) != 0 {
 					alert(term, fmt.Sprintf("Fingerprint %s already belongs to %s", cmd.Fingerprint, idForFpr))
 					break
 				}
 
 				s.ExecuteCmd(client.AuthorizeFingerprintCmd{
-					Account:     s.CurrentAccount,
+					Account:     s.GetConfig(),
 					Peer:        cmd.User,
 					Fingerprint: fpr,
 				})

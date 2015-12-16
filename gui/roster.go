@@ -10,9 +10,9 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	rosters "github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/ui"
+	rosters "../roster"
+	"../session"
+	"../ui"
 )
 
 type contacts struct {

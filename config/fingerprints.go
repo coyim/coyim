@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/twstrike/coyim/i18n"
+	"../i18n"
 )
 
 // KnownFingerprint represents one fingerprint

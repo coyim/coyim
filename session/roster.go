@@ -1,6 +1,6 @@
 package session
 
-import "github.com/twstrike/coyim/xmpp"
+import "../xmpp"
 
 //TODO: double check how the RFC calls this
 func (s *Session) RemoveContact(jid string) {

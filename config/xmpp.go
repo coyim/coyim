@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/url"
 
-	"github.com/twstrike/coyim/xmpp"
+	"../xmpp"
 
 	"golang.org/x/net/proxy"
 )

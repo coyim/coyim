@@ -3,7 +3,7 @@ package session
 import (
 	"time"
 
-	"github.com/twstrike/coyim/xmpp"
+	"../xmpp"
 )
 
 // Event represents a Session event

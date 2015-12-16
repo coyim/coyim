@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/twstrike/coyim/xmpp"
+	"../xmpp"
 	"github.com/twstrike/otr3"
 )
 

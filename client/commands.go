@@ -1,6 +1,6 @@
 package client
 
-import "github.com/twstrike/coyim/config"
+import "../config"
 
 type AuthorizeFingerprintCmd struct {
 	Account     *config.Account

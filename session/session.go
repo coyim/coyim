@@ -11,11 +11,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/twstrike/coyim/client"
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/event"
-	"github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/xmpp"
+	"../client"
+	"../config"
+	"../event"
+	"../roster"
+	"../xmpp"
 	"github.com/twstrike/otr3"
 )
 

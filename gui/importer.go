@@ -5,8 +5,8 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/config/importer"
+	"../config"
+	"../config/importer"
 )
 
 func valAt(s *gtk.ListStore, iter *gtk.TreeIter, col int) interface{} {

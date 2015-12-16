@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/twstrike/coyim/config"
+	"./config"
 )
 
 func initLog() {

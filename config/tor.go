@@ -4,7 +4,7 @@ import (
 	"net"
 	"net/url"
 
-	ournet "github.com/twstrike/coyim/net"
+	ournet "../net"
 	"golang.org/x/net/proxy"
 )
 

@@ -1,7 +1,7 @@
 package roster
 
 import (
-	"github.com/twstrike/coyim/xmpp"
+	"../xmpp"
 
 	g "gopkg.in/check.v1"
 )

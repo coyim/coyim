@@ -5,7 +5,7 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/i18n"
+	"../i18n"
 )
 
 func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.MessageDialog {

@@ -1,6 +1,6 @@
 package importer
 
-import "github.com/twstrike/coyim/config"
+import "../../config"
 
 // TryImportAll will try to import from all known importers
 func TryImportAll() map[string][]*config.ApplicationConfig {

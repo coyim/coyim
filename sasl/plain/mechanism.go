@@ -2,7 +2,7 @@
 // according to RFC 4616
 package plain
 
-import "github.com/twstrike/coyim/sasl"
+import "../../sasl"
 
 var (
 	// Mechanism is the PLAIN SASL mechanism

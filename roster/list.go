@@ -3,7 +3,7 @@ package roster
 import (
 	"sort"
 
-	"github.com/twstrike/coyim/xmpp"
+	"../xmpp"
 )
 
 // List represent a list of peers. It takes care of both roster and presence information

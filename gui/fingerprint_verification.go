@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/client"
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
+	"../client"
+	"../config"
+	"../i18n"
 )
 
 func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, theirFp []byte) *gtk.Dialog {

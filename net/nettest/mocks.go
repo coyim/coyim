@@ -1,6 +1,6 @@
 package nettest
 
-import "github.com/twstrike/coyim/net"
+import "../../net"
 
 // MockTorState returns a mocked TorState
 func MockTorState(addr string) net.TorState {

@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
+	"../config"
+	"../i18n"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"

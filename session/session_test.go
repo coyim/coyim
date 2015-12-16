@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/xmpp"
+	"../config"
+	"../roster"
+	"../xmpp"
 
 	. "gopkg.in/check.v1"
 )

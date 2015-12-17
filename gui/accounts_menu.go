@@ -160,6 +160,7 @@ func (u *gtkUI) buildAccountsMenu() {
 	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
 		connectAutomaticallyItem.SetActive(a.ConnectAutomatically)
 	})
+
 	connectAutomaticallyItem.Connect("activate", func() {
 		u.toggleConnectAllAutomatically()
 	})

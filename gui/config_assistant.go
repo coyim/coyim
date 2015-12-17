@@ -15,14 +15,6 @@ import (
 
 type saveAccountFunc func(*config.Account)
 
-func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
-	accountsLock.Lock()
-	defer accountsLock.Unlock()
-
-	u.config.Add(c)
-	u.configLoaded() //Saves if config has changed
-}
-
 func (u *gtkUI) showConfigAssistant() error {
 	assistant, err := buildConfigAssistant(u.addAndSaveAccountConfig, func() {
 		if u.window != nil {

@@ -83,6 +83,14 @@ func (u *gtkUI) showAddAccountWindow() error {
 	return nil
 }
 
+func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
+	accountsLock.Lock()
+	u.config.Add(c)
+	accountsLock.Unlock()
+
+	u.saveConfigInternal()
+}
+
 func (account *account) destroyMenu() {
 	close(account.sessionObserver)
 

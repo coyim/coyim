@@ -174,9 +174,10 @@ func (u *gtkUI) SaveConfig() {
 }
 
 func (u *gtkUI) removeSaveReload(acc *config.Account) {
+	//TODO: the account configs should be managed by the account manager
+	u.accountManager.removeAccount(acc)
 	u.config.Remove(acc)
 	u.SaveConfig()
-	u.accountManager.buildAccounts(u.config)
 }
 
 func (u *gtkUI) saveConfigOnly() {

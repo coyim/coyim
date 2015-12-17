@@ -59,6 +59,27 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 	m.accounts = append(m.accounts, acc)
 }
 
+func (m *accountManager) removeAccount(conf *config.Account) {
+	toRemove, exists := m.getAccountByID(conf.ID())
+	if !exists {
+		return
+	}
+
+	m.Lock()
+	defer m.Unlock()
+
+	accs := make([]*account, 0, len(m.accounts)-1)
+	for _, acc := range m.accounts {
+		if acc == toRemove {
+			continue
+		}
+
+		accs = append(accs, acc)
+	}
+
+	m.accounts = accs
+}
+
 func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {

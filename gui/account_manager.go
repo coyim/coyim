@@ -8,25 +8,45 @@ import (
 	"github.com/twstrike/coyim/session"
 )
 
-//TODO: once glib signals are removed from account, it could be a sessionManager
-// and this could be in a client package (ui agnostic)
 type accountManager struct {
 	accounts []*account
 	events   chan interface{}
 
 	client.CommandManager
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 func newAccountManager(c client.CommandManager) *accountManager {
 	return &accountManager{
 		events:         make(chan interface{}, 10),
+		accounts:       make([]*account, 0, 5),
 		CommandManager: c,
 	}
 }
 
+func (m *accountManager) getAccountByID(ID string) (*account, bool) {
+	m.RLock()
+	defer m.RUnlock()
+
+	for _, acc := range m.accounts {
+		if acc.ID() == ID {
+			return acc, true
+		}
+	}
+
+	return nil, false
+}
+
+func (m *accountManager) findAccountForSession(s *session.Session) *account {
+	acc, _ := m.getAccountByID(s.GetConfig().ID())
+	return acc
+}
+
 func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account) {
+	m.Lock()
+	defer m.Unlock()
+
 	acc, err := newAccount(appConfig, account)
 	if err != nil {
 		//TODO error
@@ -40,20 +60,17 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 }
 
 func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
-	m.Lock()
-	defer m.Unlock()
-	if len(m.accounts) == 0 {
-		m.accounts = make([]*account, 0, len(appConfig.Accounts))
-	}
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
-		if m.findAccountForUsername(accountConf.Account) != nil {
+		if _, ok := m.getAccountByID(accountConf.ID()); ok {
 			continue
 		}
+
 		hasUpdate, err := accountConf.EnsurePrivateKey()
 		if err != nil {
 			continue
 		}
+
 		hasConfUpdates = hasConfUpdates || hasUpdate
 		m.addAccount(appConfig, accountConf)
 	}
@@ -63,38 +80,9 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
 	}
 }
 
-func (m *accountManager) findAccountForSession(s *session.Session) *account {
-	for _, a := range m.accounts {
-		if a.session == s {
-			return a
-		}
-	}
-
-	return nil
-}
-
-func (m *accountManager) findAccountForUsername(s string) *account {
-	for _, a := range m.accounts {
-		if a.session.GetConfig().Is(s) {
-			return a
-		}
-	}
-
-	return nil
-}
-
 func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig) {
-	m.Lock()
-	defer m.Unlock()
 	for _, configAccount := range appConfig.Accounts {
-		var found bool
-		for _, acc := range m.accounts {
-			if acc.session.GetConfig().ID() == configAccount.ID() {
-				found = true
-				break
-			}
-		}
-
+		_, found := m.getAccountByID(configAccount.ID())
 		if found {
 			continue
 		}

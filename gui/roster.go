@@ -15,6 +15,7 @@ import (
 	"github.com/twstrike/coyim/ui"
 )
 
+//TODO: why not use the account ID, the same way as the gtk.TreeModel?
 type contacts struct {
 	sync.RWMutex
 	m map[*account]*rosters.List
@@ -52,7 +53,6 @@ type roster struct {
 	contacts       *contacts
 	checkEncrypted func(to string) bool
 	sendMessage    func(to, message string)
-	conversations  map[string]*conversationWindow
 
 	isCollapsed map[string]bool
 	toCollapse  []*gtk.TreePath
@@ -78,7 +78,6 @@ func (u *gtkUI) newRoster() *roster {
 	builder := builderForDefinition("Roster")
 
 	r := &roster{
-		conversations: make(map[string]*conversationWindow),
 		contacts: &contacts{
 			m: make(map[*account]*rosters.List),
 		},
@@ -108,18 +107,8 @@ func (u *gtkUI) newRoster() *roster {
 	return r
 }
 
-//TODO: move somewhere else
 func (r *roster) getAccount(id string) (*account, bool) {
-	r.contacts.RLock()
-	defer r.contacts.RUnlock()
-
-	for account := range r.contacts.m {
-		if account.session.GetConfig().ID() == id {
-			return account, true
-		}
-	}
-
-	return nil, false
+	return r.ui.accountManager.getAccountByID(id)
 }
 
 func getFromModelIter(m *gtk.TreeStore, iter *gtk.TreeIter, index int) string {
@@ -244,26 +233,24 @@ func (r *roster) onActivateBuddy(v *gtk.TreeView, path *gtk.TreePath) {
 
 	account, ok := r.getAccount(accountID)
 	if !ok {
+		log.Println("account not found")
 		return
 	}
 
+	fmt.Println("will open")
 	r.openConversationWindow(account, jid)
 }
 
 func (r *roster) openConversationWindow(account *account, to string) (*conversationWindow, error) {
-	//TODO: handle same account on multiple sessions
-	c, ok := r.conversations[to]
+	c, ok := account.getConversationWith(to)
 
 	if !ok {
-		var err error
-		c, err = newConversationWindow(account, to, r.ui)
-		if err != nil {
-			return nil, err
-		}
+		textBuffer := r.ui.getTags().createTextBuffer()
+		c = account.createConversationWindow(to, r.ui.displaySettings, textBuffer)
 
 		r.ui.connectShortcutsChildWindow(c.win)
 		r.ui.connectShortcutsConversationWindow(c)
-		r.conversations[to] = c
+		c.parentWin = r.ui.window
 	}
 
 	c.Show()
@@ -280,7 +267,7 @@ func (r *roster) displayNameFor(account *account, from string) string {
 }
 
 func (r *roster) presenceUpdated(account *account, from, show, showStatus string, gone bool) {
-	c, ok := r.conversations[from]
+	c, ok := account.getConversationWith(from)
 	if !ok {
 		return
 	}
@@ -301,17 +288,6 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripHTML(message), false)
 		return false
 	})
-}
-
-func (r *roster) enableExistingConversationWindows(account *account, enable bool) {
-	//TODO: should lock r.conversations
-	for _, convWindow := range r.conversations {
-		if enable {
-			convWindow.win.Emit("enable")
-		} else {
-			convWindow.win.Emit("disable")
-		}
-	}
 }
 
 func (r *roster) update(account *account, entries *rosters.List) {

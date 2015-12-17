@@ -77,7 +77,7 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 	return buf
 }
 
-func newConversationWindow(account *account, uid string, u *gtkUI) (*conversationWindow, error) {
+func newConversationWindow(account *account, uid string, displaySettings *displaySettings, textBuffer *gtk.TextBuffer) *conversationWindow {
 	builder := builderForDefinition("Conversation")
 
 	obj, _ := builder.GetObject("conversation")
@@ -166,9 +166,7 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 	// it attaches the callback to the widget
 	conv.win.HideOnDelete()
 
-	conv.parentWin = u.window
-
-	conv.history.SetBuffer(u.getTags().createTextBuffer())
+	conv.history.SetBuffer(textBuffer)
 
 	conv.history.Connect("size-allocate", func() {
 		conv.scrollToBottom()
@@ -191,10 +189,10 @@ func newConversationWindow(account *account, uid string, u *gtkUI) (*conversatio
 		}
 	})
 
-	u.displaySettings.control(&conv.history.Container.Widget)
-	u.displaySettings.control(&entry.Widget)
+	displaySettings.control(&conv.history.Container.Widget)
+	displaySettings.control(&entry.Widget)
 
-	return conv, nil
+	return conv
 }
 
 func (conv *conversationWindow) addNotification(notification *gtk.InfoBar) {

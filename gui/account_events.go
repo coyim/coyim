@@ -78,9 +78,9 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 
 	switch ev.Type {
 	case session.Connected:
-		u.roster.enableExistingConversationWindows(account, true)
+		account.enableExistingConversationWindows(true)
 	case session.Disconnected:
-		u.roster.enableExistingConversationWindows(account, false)
+		account.enableExistingConversationWindows(false)
 	case session.ConnectionLost:
 		u.notifyConnectionFailure(account)
 
@@ -125,7 +125,8 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		log.Printf("received iq: %v\n", ev.From)
 	case session.OTREnded:
 		peer := ev.From
-		convWin, ok := u.roster.conversations[peer]
+		account := u.findAccountForSession(ev.Session)
+		convWin, ok := account.getConversationWith(peer)
 		if !ok {
 			log.Println("Could not find a conversation window")
 			return
@@ -134,7 +135,8 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		convWin.updateSecurityWarning()
 	case session.OTRNewKeys:
 		peer := ev.From
-		convWin, ok := u.roster.conversations[peer]
+		account := u.findAccountForSession(ev.Session)
+		convWin, ok := account.getConversationWith(peer)
 		if !ok {
 			log.Println("Could not find a conversation window")
 			return

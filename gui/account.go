@@ -14,6 +14,9 @@ type account struct {
 	menu                   *gtk.MenuItem
 	connectionNotification *gtk.InfoBar
 
+	//TODO: Should this be a map of roster.Peer and conversationWindow?
+	conversations map[string]*conversationWindow
+
 	session         *session.Session
 	sessionObserver chan interface{}
 }
@@ -28,8 +31,35 @@ func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 func newAccount(conf *config.ApplicationConfig, currentConf *config.Account) (acc *account, err error) {
 	return &account{
-		session: session.NewSession(conf, currentConf),
+		session:       session.NewSession(conf, currentConf),
+		conversations: make(map[string]*conversationWindow),
 	}, nil
+}
+
+func (account *account) ID() string {
+	return account.session.GetConfig().ID()
+}
+
+func (account *account) getConversationWith(to string) (*conversationWindow, bool) {
+	c, ok := account.conversations[to]
+	return c, ok
+}
+
+func (account *account) createConversationWindow(to string, displaySettings *displaySettings, textBuffer *gtk.TextBuffer) *conversationWindow {
+	c := newConversationWindow(account, to, displaySettings, textBuffer)
+	account.conversations[to] = c
+	return c
+}
+
+func (account *account) enableExistingConversationWindows(enable bool) {
+	//TODO: should lock account.conversations
+	for _, convWindow := range account.conversations {
+		if enable {
+			convWindow.win.Emit("enable")
+		} else {
+			convWindow.win.Emit("disable")
+		}
+	}
 }
 
 func (account *account) executeCmd(c interface{}) {

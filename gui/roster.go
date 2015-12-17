@@ -233,11 +233,9 @@ func (r *roster) onActivateBuddy(v *gtk.TreeView, path *gtk.TreePath) {
 
 	account, ok := r.getAccount(accountID)
 	if !ok {
-		log.Println("account not found")
 		return
 	}
 
-	fmt.Println("will open")
 	r.openConversationWindow(account, jid)
 }
 

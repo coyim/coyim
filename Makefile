@@ -102,3 +102,27 @@ deps: deps-dev
 	go get golang.org/x/crypto/scrypt
 	go get github.com/hydrogen18/stalecucumber
 	go get github.com/DHowett/go-plist
+
+ifeq ($(shell uname), Darwin)
+installer = brew
+
+ifneq ($(shell which port),)
+	installer = port
+else ifneq ($(shell which fink),)
+	installer = fink
+else ifneq ($(shell which rudix),)
+	installer = rudix
+endif
+
+deps: osx-deps
+endif
+
+osx-deps:
+	$(installer) install gnome-icon-theme
+	$(installer) install hicolor-icon-theme
+ifeq ($(shell which gtk-launch),)
+	$(installer) install gtk+3
+endif
+ifeq ($(shell which gettext),)
+	$(installer) install gettext
+endif

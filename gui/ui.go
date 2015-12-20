@@ -253,7 +253,12 @@ func (u *gtkUI) mainWindow() {
 
 	obj, _ := builder.GetObject("notification-area")
 	u.notificationArea = obj.(*gtk.Box)
-	u.addFeedbackInfoBar()
+
+	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
+		if !a.Display.HideFeedbackBar {
+			u.addFeedbackInfoBar()
+		}
+	})
 
 	u.connectShortcutsMainWindow(u.window)
 
@@ -268,7 +273,9 @@ func (u *gtkUI) addFeedbackInfoBar() {
 
 	obj, _ := builder.GetObject("feedbackInfo")
 	infobar := obj.(*gtk.InfoBar)
+
 	u.notificationArea.PackEnd(infobar, true, true, 0)
+	infobar.ShowAll()
 
 	builder.ConnectSignals(map[string]interface{}{
 		"handleResponse": func(info *gtk.InfoBar, response gtk.ResponseType) {
@@ -278,6 +285,9 @@ func (u *gtkUI) addFeedbackInfoBar() {
 
 			infobar.Hide()
 			infobar.Destroy()
+
+			u.config.Display.HideFeedbackBar = true
+			u.saveConfigOnly()
 		},
 	})
 

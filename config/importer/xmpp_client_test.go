@@ -56,8 +56,8 @@ func (s *XmppClientXmppSuite) Test_XmppClient_canImportXmppClientConfiguration(c
 	c.Assert(res.Accounts[0].KnownFingerprints[3].Untrusted, Equals, false)
 
 	c.Assert(res.Bell, Equals, true)
-	c.Assert(res.MergeAccounts, Equals, false)
-	c.Assert(res.ShowOnlyOnline, Equals, false)
+	c.Assert(res.Display.MergeAccounts, Equals, false)
+	c.Assert(res.Display.ShowOnlyOnline, Equals, false)
 	c.Assert(res.RawLogFile, Equals, "bla")
 	c.Assert(res.NotifyCommand, DeepEquals, []string{"hello"})
 	c.Assert(res.IdleSecondsBeforeNotification, Equals, 42)

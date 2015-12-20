@@ -393,7 +393,7 @@ func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent st
 }
 
 func (r *roster) redrawMerged() {
-	showOffline := !r.ui.config.ShowOnlyOnline
+	showOffline := !r.ui.config.Display.ShowOnlyOnline
 
 	r.contacts.RLock()
 	defer r.contacts.RUnlock()
@@ -512,7 +512,7 @@ func (r *roster) sortedAccounts() []*account {
 }
 
 func (r *roster) redrawSeparate() {
-	showOffline := !r.ui.config.ShowOnlyOnline
+	showOffline := !r.ui.config.Display.ShowOnlyOnline
 
 	r.contacts.RLock()
 

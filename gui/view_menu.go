@@ -13,15 +13,15 @@ type viewMenu struct {
 
 func (v *viewMenu) setFromConfig(c *config.ApplicationConfig) {
 	glib.IdleAdd(func() bool {
-		v.merge.SetActive(c.MergeAccounts)
-		v.offline.SetActive(!c.ShowOnlyOnline)
+		v.merge.SetActive(c.Display.MergeAccounts)
+		v.offline.SetActive(!c.Display.ShowOnlyOnline)
 		return false
 	})
 }
 
 func (u *gtkUI) toggleMergeAccounts() {
 	if u.config != nil {
-		u.config.MergeAccounts = u.viewMenu.merge.GetActive()
+		u.config.Display.MergeAccounts = u.viewMenu.merge.GetActive()
 		u.saveConfigOnly()
 	}
 
@@ -30,7 +30,7 @@ func (u *gtkUI) toggleMergeAccounts() {
 
 func (u *gtkUI) toggleShowOffline() {
 	if u.config != nil {
-		u.config.ShowOnlyOnline = !u.viewMenu.offline.GetActive()
+		u.config.Display.ShowOnlyOnline = !u.viewMenu.offline.GetActive()
 		u.saveConfigOnly()
 	}
 

@@ -19,9 +19,8 @@ type ApplicationConfig struct {
 	NotifyCommand                 []string `json:",omitempty"`
 	IdleSecondsBeforeNotification int      `json:",omitempty"`
 	Bell                          bool
-	MergeAccounts                 bool
-	ShowOnlyOnline                bool
 	ConnectAutomatically          bool
+	Display                       DisplayConfig `json:",omitempty"`
 }
 
 var loadEntries []func(*ApplicationConfig)

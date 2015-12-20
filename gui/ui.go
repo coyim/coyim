@@ -337,7 +337,7 @@ func (u *gtkUI) feedbackDialog() {
 }
 
 func (u *gtkUI) shouldViewAccounts() bool {
-	return !u.config.MergeAccounts
+	return !u.config.Display.MergeAccounts
 }
 
 func authors() []string {

@@ -68,7 +68,6 @@ func (c *Conn) watchPings() {
 			return
 		}
 
-		log.Println("xmpp: ping")
 		pongReply, _, err := c.SendPing()
 		if err != nil {
 			return
@@ -84,7 +83,6 @@ func (c *Conn) watchPings() {
 				continue
 			}
 
-			log.Println("xmpp: pong")
 			failures = 0
 			iq, ok := pongStanza.Value.(*ClientIQ)
 			if !ok {

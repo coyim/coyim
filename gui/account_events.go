@@ -6,6 +6,7 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
 )
@@ -81,13 +82,10 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 		account.enableExistingConversationWindows(true)
 	case session.Disconnected:
 		account.enableExistingConversationWindows(false)
+		u.roster.update(account, rosters.New())
 	case session.ConnectionLost:
 		u.notifyConnectionFailure(account)
-
-		if !ev.Session.GetConfig().ConnectAutomatically {
-			return
-		}
-
+		u.roster.update(account, rosters.New())
 		go u.connectWithRandomDelay(account)
 	case session.RosterReceived:
 		u.roster.update(account, ev.Session.R)

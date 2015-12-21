@@ -25,7 +25,7 @@ func (u *gtkUI) toggleMergeAccounts() {
 		u.saveConfigOnly()
 	}
 
-	u.roster.redrawIfRosterVisible()
+	u.roster.redraw()
 }
 
 func (u *gtkUI) toggleShowOffline() {
@@ -34,5 +34,5 @@ func (u *gtkUI) toggleShowOffline() {
 		u.saveConfigOnly()
 	}
 
-	u.roster.redrawIfRosterVisible()
+	u.roster.redraw()
 }

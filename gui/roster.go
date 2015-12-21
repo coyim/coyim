@@ -480,8 +480,14 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	r.model.SetValue(parentIter, indexParentJid, parentName)
 	r.model.SetValue(parentIter, indexAccountID, account.session.GetConfig().ID())
 	r.model.SetValue(parentIter, indexRowType, "account")
-	r.model.SetValue(parentIter, indexWeight, 500)
-	r.model.SetValue(parentIter, indexBackgroundColor, "#918caa")
+	r.model.SetValue(parentIter, indexWeight, 700)
+
+	bgcolor := "#918caa"
+	if account.session.ConnStatus == session.DISCONNECTED {
+		bgcolor = "#d5d3de"
+	}
+	r.model.SetValue(parentIter, indexBackgroundColor, bgcolor)
+
 	parentPath, _ := r.model.GetPath(parentIter)
 	shouldCollapse, ok := r.isCollapsed[parentName]
 	isExpanded := true
@@ -533,11 +539,6 @@ func (r *roster) redrawSeparate() {
 const disconnectedPageIndex = 0
 const spinnerPageIndex = 1
 const rosterPageIndex = 2
-
-func (r *roster) redrawIfRosterVisible() {
-	//Now the roster is always visible
-	r.redraw()
-}
 
 func (r *roster) redraw() {
 	//TODO: this should be behind a mutex

@@ -4,10 +4,13 @@ import (
 	"strings"
 )
 
+// Method to validate a jabber id is correct according to the RFC-6122
+// on Address Format
+// TODO: verify the resource part
 func verify(address string) (bool, string) {
 	var err string
 
-	tldIndex := strings.Index(address, ".")
+	tldIndex := strings.LastIndex(address, ".")
 	atIndex := strings.Index(address, "@")
 	isValidDomain, errDomain := verifyDomainPart(tldIndex, atIndex, address)
 	isValidPart, errPart := verifyLocalPart(atIndex)

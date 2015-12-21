@@ -43,6 +43,13 @@ func (s *JidSuite) Test_verify_addressWithoutLocalPart(c *C) {
 	c.Assert(strings.Contains(err, "part"), Equals, true)
 }
 
+func (s *JidSuite) Test_verify_addressWithLocalPartIncludingDot(c *C) {
+	address := "local.foo@domain.com"
+	valid, err := verify(address)
+	c.Assert(valid, Equals, true)
+	c.Assert(err, Equals, "")
+}
+
 func (s *JidSuite) Test_verify_addressWithSeveralErrors(c *C) {
 	address := "@.com"
 	valid, err := verify(address)

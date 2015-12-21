@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
@@ -11,14 +12,16 @@ import (
 
 // account wraps a Session with GUI functionality
 type account struct {
-	menu                   *gtk.MenuItem
-	connectionNotification *gtk.InfoBar
+	menu                *gtk.MenuItem
+	currentNotification *gtk.InfoBar
 
 	//TODO: Should this be a map of roster.Peer and conversationWindow?
 	conversations map[string]*conversationWindow
 
 	session         *session.Session
 	sessionObserver chan interface{}
+
+	sync.Mutex
 }
 
 type byAccountNameAlphabetic []*account
@@ -188,25 +191,62 @@ func (account *account) remove() {
 	account.executeCmd(removeAccountCmd(account))
 }
 
-func (account *account) buildConnectionNotification() {
-	builder := builderForDefinition("ConnectingAccountInfo")
+func (account *account) buildNotification(template, msg string) *gtk.InfoBar {
+	builder := builderForDefinition(template)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"handleResponse": func(info *gtk.InfoBar, response gtk.ResponseType) {
+			if response != gtk.RESPONSE_CLOSE {
+				return
+			}
+
+			info.Hide()
+			info.Destroy()
+		},
+	})
 
 	obj, _ := builder.GetObject("infobar")
 	infoBar := obj.(*gtk.InfoBar)
 
 	obj, _ = builder.GetObject("message")
-	msg := obj.(*gtk.Label)
+	msgLabel := obj.(*gtk.Label)
 
-	text := fmt.Sprintf(i18n.Local("Connecting account\n%s"),
-		account.session.GetConfig().Account)
+	text := fmt.Sprintf(i18n.Local(msg), account.session.GetConfig().Account)
+	msgLabel.SetText(text)
 
-	msg.SetText(text)
-
-	account.connectionNotification = infoBar
+	return infoBar
 }
 
-func (account *account) removeConnectionNotification() {
-	account.connectionNotification.Hide()
-	account.connectionNotification.Destroy()
-	account.connectionNotification = nil
+func (account *account) buildConnectionNotification() *gtk.InfoBar {
+	return account.buildNotification("ConnectingAccountInfo", "Connecting account\n%s")
+}
+
+func (account *account) buildConnectionFailureNotification() *gtk.InfoBar {
+	return account.buildNotification("ConnectionFailureNotification", "Connection failure\n%s")
+}
+
+func (account *account) removeCurrentNotification() {
+	if account.currentNotification != nil {
+		account.currentNotification.Hide()
+		account.currentNotification.Destroy()
+		account.currentNotification = nil
+	}
+}
+
+func (account *account) removeCurrentNotificationIf(ib *gtk.InfoBar) {
+	if account.currentNotification == ib {
+		account.currentNotification.Hide()
+		account.currentNotification.Destroy()
+		account.currentNotification = nil
+	}
+}
+
+func (account *account) setCurrentNotification(ib *gtk.InfoBar, notificationArea *gtk.Box) {
+	account.Lock()
+	defer account.Unlock()
+
+	account.removeCurrentNotification()
+	account.currentNotification = ib
+	notificationArea.Add(ib)
+	ib.ShowAll()
 }

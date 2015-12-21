@@ -8,49 +8,25 @@ import (
 	"github.com/twstrike/coyim/i18n"
 )
 
-func (u *gtkUI) showConnectAccountNotification(account *account) {
-	account.buildConnectionNotification()
+func (u *gtkUI) showConnectAccountNotification(account *account) func() {
+	notification := account.buildConnectionNotification()
 
 	glib.IdleAdd(func() {
-		infoBar := account.connectionNotification
-		u.notificationArea.Add(infoBar)
-		infoBar.ShowAll()
+		account.setCurrentNotification(notification, u.notificationArea)
 	})
-}
 
-func (u *gtkUI) removeConnectAccountNotification(account *account) {
-	glib.IdleAdd(func() {
-		account.removeConnectionNotification()
-	})
+	return func() {
+		glib.IdleAdd(func() {
+			account.removeCurrentNotificationIf(notification)
+		})
+	}
 }
 
 func (u *gtkUI) notifyConnectionFailure(account *account) {
-	builder := builderForDefinition("ConnectionFailureNotification")
-
-	builder.ConnectSignals(map[string]interface{}{
-		"handleResponse": func(info *gtk.InfoBar, response gtk.ResponseType) {
-			if response != gtk.RESPONSE_CLOSE {
-				return
-			}
-
-			info.Hide()
-			info.Destroy()
-		},
-	})
-
-	obj, _ := builder.GetObject("infobar")
-	infoBar := obj.(*gtk.InfoBar)
-
-	obj, _ = builder.GetObject("message")
-	message := obj.(*gtk.Label)
-
-	text := fmt.Sprintf(i18n.Local("Connection failure\n%s"),
-		account.session.GetConfig().Account)
-	message.SetText(text)
+	notification := account.buildConnectionFailureNotification()
 
 	glib.IdleAdd(func() {
-		u.notificationArea.Add(infoBar)
-		infoBar.ShowAll()
+		account.setCurrentNotification(notification, u.notificationArea)
 	})
 }
 

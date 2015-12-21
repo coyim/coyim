@@ -24,8 +24,8 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 		return nil
 	}
 
-	u.showConnectAccountNotification(account)
-	defer u.removeConnectAccountNotification(account)
+	removeNotification := u.showConnectAccountNotification(account)
+	defer removeNotification()
 
 	err := account.session.Connect(password)
 	switch err {

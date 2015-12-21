@@ -3,7 +3,6 @@ package gui
 import (
 	"fmt"
 	"log"
-	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -65,14 +64,15 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			servTxt, _ := serverEntry.GetText()
 			portTxt, _ := portEntry.GetText()
 
-			isEmail, err := isEmail(accTxt)
-			if !isEmail && failures > 0 {
+			isJid, err := verify(accTxt)
+			fmt.Printf("\n jid: ", err)
+			if !isJid && failures > 0 {
 				failures++
 				return
 			}
 
-			if "" == accTxt || !isEmail {
-				notification := buildBadUsernameNotification()
+			if !isJid {
+				notification := buildBadUsernameNotification(err)
 				notificationArea.Add(notification)
 				notification.ShowAll()
 				failures++
@@ -107,17 +107,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	dialog.ShowAll()
 }
 
-func isEmail(address string) (bool, string) {
-	matcher := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
-	matches := matcher.MatchString(address)
-	var err string
-	if !matches {
-		err = fmt.Sprintf("<%s> is not a valid username", address)
-	}
-	return matches, err
-}
-
-func buildBadUsernameNotification() *gtk.InfoBar {
+func buildBadUsernameNotification(msg string) *gtk.InfoBar {
 	builder := builderForDefinition("BadUsernameNotification")
 
 	obj, _ := builder.GetObject("infobar")
@@ -126,7 +116,7 @@ func buildBadUsernameNotification() *gtk.InfoBar {
 	obj, _ = builder.GetObject("message")
 	message := obj.(*gtk.Label)
 
-	text := fmt.Sprintf(i18n.Local("Username is required and should look like an email address"))
+	text := fmt.Sprintf(i18n.Local(msg))
 	message.SetText(text)
 
 	return infoBar

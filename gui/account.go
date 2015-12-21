@@ -168,27 +168,27 @@ func (account *account) watchAndToggleMenuItems(connectItem, disconnectItem *gtk
 }
 
 func (account *account) connect() {
-	account.executeCmd(connectAccountCmd(account))
+	account.executeCmd(connectAccountCmd{account})
 }
 
 func (account *account) disconnect() {
-	account.executeCmd(disconnectAccountCmd(account))
+	account.executeCmd(disconnectAccountCmd{account})
 }
 
 func (account *account) toggleAutoConnect() {
-	account.executeCmd(toggleAutoConnectCmd(account))
+	account.executeCmd(toggleAutoConnectCmd{account})
 }
 
 func (account *account) toggleAlwaysEncrypt() {
-	account.executeCmd(toggleAlwaysEncryptCmd(account))
+	account.executeCmd(toggleAlwaysEncryptCmd{account})
 }
 
 func (account *account) edit() {
-	account.executeCmd(editAccountCmd(account))
+	account.executeCmd(editAccountCmd{account})
 }
 
 func (account *account) remove() {
-	account.executeCmd(removeAccountCmd(account))
+	account.executeCmd(removeAccountCmd{account})
 }
 
 func (account *account) buildNotification(template, msg string) *gtk.InfoBar {

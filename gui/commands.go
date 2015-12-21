@@ -5,38 +5,56 @@ import (
 	"github.com/twstrike/coyim/client"
 )
 
-type connectAccountCmd *account
-type disconnectAccountCmd *account
-type editAccountCmd *account
-type removeAccountCmd *account
-type toggleAutoConnectCmd *account
-type toggleAlwaysEncryptCmd *account
+type executable interface {
+	execute(u *gtkUI)
+}
+
+type connectAccountCmd struct{ a *account }
+type disconnectAccountCmd struct{ a *account }
+type editAccountCmd struct{ a *account }
+type removeAccountCmd struct{ a *account }
+type toggleAutoConnectCmd struct{ a *account }
+type toggleAlwaysEncryptCmd struct{ a *account }
 
 func (u *gtkUI) ExecuteCmd(c interface{}) {
 	u.commands <- c
 }
 
+func (c connectAccountCmd) execute(u *gtkUI) {
+	glib.IdleAdd(func() {
+		u.connectAccount(c.a)
+	})
+}
+
+func (c disconnectAccountCmd) execute(u *gtkUI) {
+	go c.a.session.Close()
+}
+
+func (c editAccountCmd) execute(u *gtkUI) {
+	glib.IdleAdd(func() {
+		u.editAccount(c.a)
+	})
+}
+
+func (c removeAccountCmd) execute(u *gtkUI) {
+	glib.IdleAdd(func() {
+		u.removeAccount(c.a)
+	})
+}
+
+func (c toggleAutoConnectCmd) execute(u *gtkUI) {
+	go u.toggleAutoConnectAccount(c.a)
+}
+
+func (c toggleAlwaysEncryptCmd) execute(u *gtkUI) {
+	go u.toggleAlwaysEncryptAccount(c.a)
+}
+
 func (u *gtkUI) watchCommands() {
 	for command := range u.commands {
 		switch c := command.(type) {
-		case connectAccountCmd:
-			glib.IdleAdd(func() {
-				u.connectAccount(c)
-			})
-		case disconnectAccountCmd:
-			go c.session.Close()
-		case editAccountCmd:
-			glib.IdleAdd(func() {
-				u.editAccount(c)
-			})
-		case removeAccountCmd:
-			glib.IdleAdd(func() {
-				u.removeAccount(c)
-			})
-		case toggleAutoConnectCmd:
-			go u.toggleAutoConnectAccount(c)
-		case toggleAlwaysEncryptCmd:
-			go u.toggleAlwaysEncryptAccount(c)
+		case executable:
+			c.execute(u)
 		case client.AuthorizeFingerprintCmd:
 			account := c.Account
 			uid := c.Peer

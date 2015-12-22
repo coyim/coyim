@@ -176,7 +176,7 @@ func (a *Account) ToggleConnectAutomatically() {
 }
 
 func (a *Account) allowsOTR(version int) bool {
-	return version == 2 || version == 3
+	return version == 2 || version == 3 //|| version == 4
 }
 
 func (a *Account) shouldSendWhitespace() bool {
@@ -195,6 +195,9 @@ func (a *Account) SetOTRPoliciesFor(jid string, c *otr3.Conversation) {
 	if a.allowsOTR(3) {
 		c.Policies.AllowV3()
 	}
+	// if a.allowsOTR(4) {
+	// 	c.Policies.AllowV3X()
+	// }
 	if a.shouldSendWhitespace() {
 		c.Policies.SendWhitespaceTag()
 	}

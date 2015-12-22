@@ -76,7 +76,7 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 	allKeys := cu.AllPrivateKeys()
 
 	log.Printf("Loading %d configured keys", len(allKeys))
-	for _, pp := range cu.AllPrivateKeys() {
+	for _, pp := range allKeys {
 		_, ok, parsedKey := otr3.ParsePrivateKey(pp)
 		if ok {
 			result = append(result, parsedKey)

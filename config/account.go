@@ -175,8 +175,8 @@ func (a *Account) ToggleConnectAutomatically() {
 	a.ConnectAutomatically = !a.ConnectAutomatically
 }
 
-func (a *Account) allowsOTR(version int) bool {
-	return version == 2 || version == 3 //|| version == 4
+func (a *Account) allowsOTR(version string) bool {
+	return version == "2" || version == "3" // || version == "J"
 }
 
 func (a *Account) shouldSendWhitespace() bool {
@@ -189,14 +189,14 @@ func (a *Account) shouldStartAKEAutomatically() bool {
 
 // SetOTRPoliciesFor will set the OTR policies on the given conversation based on the users settings
 func (a *Account) SetOTRPoliciesFor(jid string, c *otr3.Conversation) {
-	if a.allowsOTR(2) {
+	if a.allowsOTR("2") {
 		c.Policies.AllowV2()
 	}
-	if a.allowsOTR(3) {
+	if a.allowsOTR("3") {
 		c.Policies.AllowV3()
 	}
-	// if a.allowsOTR(4) {
-	// 	c.Policies.AllowV3X()
+	// if a.allowsOTR("J") {
+	// 	c.Policies.AllowVExtensionJ()
 	// }
 	if a.shouldSendWhitespace() {
 		c.Policies.SendWhitespaceTag()

@@ -152,7 +152,7 @@ func (s *ConnectionPolicySuite) Test_buildProxyChain_Returns(c *C) {
 		"socks5://proxy.remote",
 	}
 
-	direct := &net.Dialer{Timeout: 30 * time.Second}
+	direct := &net.Dialer{Timeout: 60 * time.Second}
 	p1, _ := proxy.FromURL(
 		&url.URL{
 			Scheme: "socks5",

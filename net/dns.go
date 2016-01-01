@@ -14,7 +14,7 @@ import (
 
 const defaultDNSServer = "208.67.222.222:53"
 
-const defaultLookupTimeout = 5 * time.Second
+const defaultLookupTimeout = 10 * time.Second
 
 // LookupSRV mirrors net.LookupSRV but uses the provided proxy dialer in order to do the lookup instead.
 // By default it uses the OpenDNS server

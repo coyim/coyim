@@ -18,7 +18,7 @@ var (
 	ErrTCPBindingFailed = errors.New("failed to find a TCP address for XMPP server")
 )
 
-const defaultDialTimeout = 30 * time.Second
+const defaultDialTimeout = 60 * time.Second
 
 func (d *Dialer) newTCPConn() (net.Conn, error) {
 	if d.Proxy == nil {

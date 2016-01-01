@@ -137,7 +137,7 @@ func buildProxyChain(proxies []string) (dialer proxy.Dialer, err error) {
 
 		if dialer == nil {
 			dialer = &net.Dialer{
-				Timeout: 30 * time.Second,
+				Timeout: 60 * time.Second,
 			}
 		}
 

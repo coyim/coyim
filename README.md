@@ -3,12 +3,11 @@
 [![Build Status](https://travis-ci.org/twstrike/coyim.svg?branch=master)](https://travis-ci.org/twstrike/coyim)
 [![Build status](https://ci.appveyor.com/api/projects/status/hcmdu0qtlcljq19v?svg=true)](https://ci.appveyor.com/project/tcz001/coyim)
 [![Coverage Status](https://coveralls.io/repos/twstrike/coyim/badge.svg?branch=master&service=github)](https://coveralls.io/github/twstrike/coyim?branch=master)
-[ ![Download](https://api.bintray.com/packages/twstrike/coyim/coyim-bin/images/download.svg)
-](https://bintray.com/twstrike/coyim/coyim-bin/_latestVersion#files)
+[![Download](https://api.bintray.com/packages/twstrike/coyim/coyim-bin/images/download.svg)](https://bintray.com/twstrike/coyim/coyim-bin/_latestVersion#files)
 
 CoyIM is a new client for the XMPP protocol. It is built upon https://github.com/agl/xmpp-client. It adds a graphical user interface and tries to be safe and secure by default. Our ambition is that it should be possible for even the most high-risk people on the planet to safely use CoyIM, without having to make any configuration changes.
 
-To do this, we enable OTR by default, we try hard to use Tor and Tor hidden services, and also to use TLS and TLS certificates to verify the connection. The implementation is written in the Go language, to avoid many common types of vulnerabilities that come from using unsafe languages.
+To do this, we enable OTR by default, we default to use Tor and we will use the Tor Onion Service for a server if we know it, and also to use TLS and TLS certificates to verify the connection - no configuration necessary. The implementation is written in the Go language, to avoid many common types of vulnerabilities that come from using unsafe languages.
 
 ## Security warning
 

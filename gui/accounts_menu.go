@@ -164,12 +164,16 @@ func (u *gtkUI) buildAccountsMenu() {
 	submenu.Append(sep2)
 
 	addAccMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Add..."))
-	addAccMenu.Connect("activate", func() { u.showAddAccountWindow() })
+	addAccMenu.Connect("activate", u.showAddAccountWindow)
 	submenu.Append(addAccMenu)
 
 	importMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Import..."))
-	importMenu.Connect("activate", func() { u.runImporter() })
+	importMenu.Connect("activate", u.runImporter)
 	submenu.Append(importMenu)
+
+	registerAccMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Register..."))
+	registerAccMenu.Connect("activate", u.showServerSelectionWindow)
+	submenu.Append(registerAccMenu)
 
 	submenu.ShowAll()
 

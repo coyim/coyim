@@ -73,6 +73,36 @@ func (account *account) connected() bool {
 	return account.session.ConnStatus == session.CONNECTED
 }
 
+func (u *gtkUI) showServerSelectionWindow() error {
+	builder := builderForDefinition("AccountRegistration")
+	builder.ConnectSignals(map[string]interface{}{
+		"response-handler": func(d *gtk.Dialog, resp gtk.ResponseType) {
+			defer d.Destroy()
+
+			if resp != gtk.RESPONSE_APPLY {
+				return
+			}
+
+			obj, _ := builder.GetObject("server")
+			iter, _ := obj.(*gtk.ComboBox).GetActiveIter()
+
+			obj, _ = builder.GetObject("servers-model")
+			val, _ := obj.(*gtk.ListStore).GetValue(iter, 0)
+			server, _ := val.GetString()
+
+			go requestAndRenderRegistrationForm(server, u.renderRegistrationForm)
+		},
+	})
+
+	obj, _ := builder.GetObject("dialog")
+
+	dialog := obj.(*gtk.Dialog)
+	dialog.SetTransientFor(u.window)
+	dialog.ShowAll()
+
+	return nil
+}
+
 func (u *gtkUI) showAddAccountWindow() error {
 	c, err := config.NewAccount()
 	if err != nil {

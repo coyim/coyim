@@ -1,0 +1,110 @@
+package gui
+
+import (
+	"errors"
+	"log"
+
+	"github.com/agl/go-gtk/glib"
+	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/xmpp"
+)
+
+var (
+	errRegistrationAborted = errors.New("registration cancelled")
+)
+
+func (u *gtkUI) renderRegistrationForm(title, instructions string, fields []interface{}) error {
+	builder := builderForDefinition("RegistrationForm")
+
+	obj, _ := builder.GetObject("dialog")
+	dialog := obj.(*gtk.Dialog)
+	dialog.SetTitle(title)
+
+	obj, _ = builder.GetObject("instructions")
+	label := obj.(*gtk.Label)
+	label.SetText(instructions)
+
+	obj, _ = builder.GetObject("grid")
+	grid := obj.(*gtk.Grid)
+
+	for i, f := range buildWidgetsForFields(fields) {
+		grid.Attach(f.Label, 0, i+1, 1, 1)
+		grid.Attach(f.IWidget, 1, i+1, 1, 1)
+	}
+	grid.ShowAll()
+
+	dialog.SetTransientFor(u.window)
+
+	wait := make(chan error)
+	glib.IdleAdd(func() {
+		resp := gtk.ResponseType(dialog.Run())
+		switch resp {
+		case gtk.RESPONSE_APPLY:
+			wait <- nil
+		default:
+			wait <- errRegistrationAborted
+		}
+
+		dialog.Destroy()
+	})
+
+	return <-wait
+}
+
+//TODO: this should be in the UI agnostic client
+func requestAndRenderRegistrationForm(server string, formHandler xmpp.FormCallback) error {
+	policy := config.ConnectionPolicy{}
+
+	//TODO: this would not be necessary if RegisterAccount did not use it
+	conf := &config.Account{
+		Account:    "@" + server,
+		RequireTor: true,
+	}
+
+	//TODO: this should not connect after registering
+	//TODO: this should receive only a JID domainpart
+	//TODO: how to get the username and password out of this blackbox?
+	_, err := policy.RegisterAccount(formHandler, conf)
+
+	//TODO: the current behavior is auto connect after registering.
+	//so we need to plug everything with the UI when this finishes
+
+	//TODO: should we save the password in this case?
+	//conf.Password = password
+	//conf.Acccount = username + "@" + server
+	//u.addAndSaveAccountConfig(conf)
+
+	return err
+}
+
+type formField struct {
+	xmpp.FormField
+	*gtk.Label
+	gtk.IWidget
+}
+
+func buildWidgetsForFields(fields []interface{}) []formField {
+	ret := make([]formField, 0, len(fields))
+
+	for _, f := range fields {
+		switch field := f.(type) {
+		case *xmpp.TextFormField:
+			//TODO: notify if it is required
+			l, _ := gtk.LabelNew(field.Label)
+
+			w, _ := gtk.EntryNew()
+			w.SetText(field.Default)
+			w.SetVisibility(!field.Private)
+			w.Connect("notify::text", func() {
+				field.Result, _ = w.GetText()
+			})
+
+			ret = append(ret, formField{field.FormField, l, w})
+		default:
+			log.Println("Missing to implement form field:", field)
+		}
+	}
+
+	return ret
+}

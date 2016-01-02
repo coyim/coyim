@@ -14,6 +14,12 @@ import (
 	"io"
 )
 
+var (
+	ErrUsernameConlict                 = errors.New("xmpp: the username is not available for registration")
+	ErrMissingRequiredRegistrationInfo = errors.New("xmpp: missing required registration information")
+	ErrRegistrationFailed              = errors.New("xmpp: account creation failed")
+)
+
 type inBandRegistration struct {
 	XMLName xml.Name `xml:"http://jabber.org/features/iq-register register,omitempty"`
 }
@@ -64,8 +70,13 @@ func (c *Conn) createAccount(user, password string) error {
 		if err = xml.NewEncoder(c.rawOut).Encode(reply); err != nil {
 			return err
 		}
+
 		fmt.Fprintf(c.rawOut, "</query></iq>")
 	} else if register.Username != nil && register.Password != nil {
+		//TODO: make sure this only happens via SSL
+		//TODO: should generate form asking for username and password,
+		//and call processForm for consistency
+
 		// Try the old-style registration.
 		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>", user, password)
 	}
@@ -76,7 +87,16 @@ func (c *Conn) createAccount(user, password string) error {
 	}
 
 	if iq2.Type == "error" {
-		return errors.New("xmpp: account creation failed")
+		switch iq2.Error.Code {
+		case "409":
+			// <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrUsernameConlict
+		case "406":
+			// <not-acceptable xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrMissingRequiredRegistrationInfo
+		default:
+			return ErrRegistrationFailed
+		}
 	}
 
 	return nil

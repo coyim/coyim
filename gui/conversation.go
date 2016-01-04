@@ -27,8 +27,9 @@ type conversationWindow struct {
 	history       *gtk.TextView
 	scrollHistory *gtk.ScrolledWindow
 
-	notificationArea *gtk.Box
-	securityWarning  *gtk.InfoBar
+	notificationArea   *gtk.Box
+	securityWarning    *gtk.InfoBar
+	fingerprintWarning *gtk.InfoBar
 
 	sync.Mutex
 }
@@ -150,7 +151,10 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 			}
 		},
 		"on_verify_fp_signal": func() {
-			verifyFingerprintDialog(conv.account, conv.to, conv.win)
+			switch verifyFingerprintDialog(conv.account, conv.to, conv.win) {
+			case gtk.RESPONSE_YES:
+				conv.removeIdentityVerificationWarning()
+			}
 		},
 		"on_connect": func() {
 			entry.SetEditable(true)
@@ -217,6 +221,8 @@ func (conv *conversationWindow) getConversation() (client.Conversation, bool) {
 }
 
 func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
+	conv.Lock()
+	defer conv.Unlock()
 	conversation, exists := conv.getConversation()
 	if !exists {
 		//Something is wrong
@@ -245,8 +251,19 @@ func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 		return
 	}
 
-	infoBar := buildVerifyIdentityNotification(conv.account, conv.to, conv.win)
-	conv.addNotification(infoBar)
+	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.win)
+	conv.addNotification(conv.fingerprintWarning)
+}
+
+func (conv *conversationWindow) removeIdentityVerificationWarning() {
+	conv.Lock()
+	defer conv.Unlock()
+
+	if conv.fingerprintWarning != nil {
+		conv.fingerprintWarning.Hide()
+		conv.fingerprintWarning.Destroy()
+		conv.fingerprintWarning = nil
+	}
 }
 
 func (conv *conversationWindow) updateSecurityWarning() {

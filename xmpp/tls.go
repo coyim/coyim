@@ -157,6 +157,7 @@ func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
 
 		opts := x509.VerifyOptions{
 			Intermediates: x509.NewCertPool(),
+			Roots:         tlsConfig.RootCAs,
 		}
 		for _, cert := range tlsState.PeerCertificates[1:] {
 			opts.Intermediates.AddCert(cert)

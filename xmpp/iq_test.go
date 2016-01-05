@@ -90,6 +90,21 @@ func (s *IqXmppSuite) TestConnSendIQReplyAndTyp(c *C) {
 	c.Assert(err, IsNil)
 }
 
+func (s *IqXmppSuite) TestConnSendIQRaw(c *C) {
+	mockOut := mockConnIOReaderWriter{}
+	conn := Conn{
+		out: &mockOut,
+		jid: "jid",
+	}
+
+	conn.inflights = make(map[Cookie]inflight)
+	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", rawXML("<foo param='bar' />"))
+	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'><foo param='bar' /></iq>")
+	c.Assert(reply, NotNil)
+	c.Assert(cookie, NotNil)
+	c.Assert(err, IsNil)
+}
+
 func (s *IqXmppSuite) TestConnSendIQErr(c *C) {
 	mockOut := mockConnIOReaderWriter{err: io.EOF}
 	conn := Conn{

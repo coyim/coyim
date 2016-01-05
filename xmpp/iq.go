@@ -11,6 +11,8 @@ import (
 	"fmt"
 )
 
+type rawXML []byte
+
 // SendIQ sends an info/query message to the given user. It returns a channel
 // on which the reply can be read when received and a Cookie that can be used
 // to cancel the request.
@@ -25,14 +27,24 @@ func (c *Conn) SendIQ(to, typ string, value interface{}) (reply chan Stanza, coo
 	if len(to) > 0 {
 		toAttr = "to='" + xmlEscape(to) + "'"
 	}
+
 	if _, err = fmt.Fprintf(c.out, "<iq %s from='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), cookie); err != nil {
 		return
 	}
-	if _, ok := value.(EmptyReply); !ok {
-		if err = xml.NewEncoder(c.out).Encode(value); err != nil {
-			return
-		}
+
+	switch v := value.(type) {
+	case EmptyReply:
+		//nothing
+	case rawXML:
+		_, err = c.out.Write(v)
+	default:
+		err = xml.NewEncoder(c.out).Encode(value)
 	}
+
+	if err != nil {
+		return
+	}
+
 	if _, err = fmt.Fprintf(c.out, "</iq>"); err != nil {
 		return
 	}

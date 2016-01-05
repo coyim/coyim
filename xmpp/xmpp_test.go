@@ -3,7 +3,6 @@ package xmpp
 import (
 	"encoding/xml"
 	"io"
-	"reflect"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -234,58 +233,6 @@ func (s *XmppSuite) TestParseRoster(c *C) {
 	}
 	rosterEntrys, err := ParseRoster(reply)
 	c.Assert(rosterEntrys, NotNil)
-	c.Assert(err, IsNil)
-}
-
-func (s *XmppSuite) TestConnSendIQReplyAndTyp(c *C) {
-	mockOut := mockConnIOReaderWriter{}
-	conn := Conn{
-		out: &mockOut,
-		jid: "jid",
-	}
-	conn.inflights = make(map[Cookie]inflight)
-	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'></iq>")
-	c.Assert(reply, NotNil)
-	c.Assert(cookie, NotNil)
-	c.Assert(err, IsNil)
-}
-
-func (s *XmppSuite) TestConnSendIQErr(c *C) {
-	mockOut := mockConnIOReaderWriter{err: io.EOF}
-	conn := Conn{
-		out: &mockOut,
-		jid: "jid",
-	}
-	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'>$")
-	c.Assert(reply, NotNil)
-	c.Assert(cookie, NotNil)
-	c.Assert(err, Equals, io.EOF)
-}
-
-func (s *XmppSuite) TestConnSendIQEmptyReply(c *C) {
-	mockOut := mockConnIOReaderWriter{}
-	conn := Conn{
-		out: &mockOut,
-		jid: "jid",
-	}
-	conn.inflights = make(map[Cookie]inflight)
-	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", reflect.ValueOf(EmptyReply{}))
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'><Value><flag>.*</flag></Value></iq>")
-	c.Assert(reply, NotNil)
-	c.Assert(cookie, NotNil)
-	c.Assert(err, IsNil)
-}
-
-func (s *XmppSuite) TestConnSendIQReply(c *C) {
-	mockOut := mockConnIOReaderWriter{}
-	conn := Conn{
-		out: &mockOut,
-		jid: "jid",
-	}
-	err := conn.SendIQReply("example@xmpp.com", "typ", "id", nil)
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='id'></iq>")
 	c.Assert(err, IsNil)
 }
 

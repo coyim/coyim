@@ -65,7 +65,6 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			portTxt, _ := portEntry.GetText()
 
 			isJid, err := verifyXmppAddress(accTxt)
-			fmt.Printf("\n jid: ", err)
 			if !isJid && failures > 0 {
 				failures++
 				return

@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -195,13 +196,17 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 	return nil
 }
 
+func init() {
+	runtime.LockOSThread()
+}
+
 func (u *gtkUI) Loop() {
-	u.mainWindow()
+	go u.loadConfig(*config.ConfigFile)
 
 	go u.watchCommands()
 	go u.observeAccountEvents()
-	go u.loadConfig(*config.ConfigFile)
 
+	glib.IdleAdd(u.mainWindow)
 	gtk.Main()
 }
 
@@ -255,9 +260,11 @@ func (u *gtkUI) mainWindow() {
 	u.notificationArea = obj.(*gtk.Box)
 
 	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
-		if !a.Display.HideFeedbackBar {
-			u.addFeedbackInfoBar()
+		if a.Display.HideFeedbackBar {
+			return
 		}
+
+		glib.IdleAdd(u.addFeedbackInfoBar)
 	})
 
 	u.connectShortcutsMainWindow(u.window)

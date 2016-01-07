@@ -1,5 +1,3 @@
-// +build nocli
-
 package main
 
 import "github.com/twstrike/coyim/gui"

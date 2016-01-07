@@ -1,4 +1,4 @@
-// +build !nocli
+// +build cli
 
 package main
 

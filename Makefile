@@ -12,13 +12,13 @@ gen-ui-defs:
 	make -C ./gui/definitions
 
 build-gui:
-	go build -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim
+	go build -tags $(GTK_BUILD_TAG) -o bin/coyim
 
 build-cli:
-	go build -o bin/coyim-cli
+	go build -tags cli -o bin/coyim-cli
 
 build-debug:
-	go build -gcflags "-N -l" -tags "nocli $(GTK_BUILD_TAG)" -o bin/coyim-debug
+	go build -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o bin/coyim-debug
 
 debug: build-debug
 	gdb bin/coyim-debug -d $(shell go env GOROOT) -x build/debug

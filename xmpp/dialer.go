@@ -141,7 +141,7 @@ func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) error {
 		return err
 	}
 
-	if err := d.negotiateInBandRegistration(c); err != nil {
+	if err, registered := d.negotiateInBandRegistration(c); err != nil || registered {
 		return err
 	}
 

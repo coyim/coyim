@@ -277,14 +277,13 @@ func (r *roster) presenceUpdated(account *account, from, show, showStatus string
 }
 
 func (r *roster) messageReceived(account *account, from string, timestamp time.Time, encrypted bool, message []byte) {
-	glib.IdleAdd(func() bool {
+	glib.IdleAdd(func() {
 		conv, err := r.openConversationWindow(account, from)
 		if err != nil {
-			return false
+			return
 		}
 
 		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripHTML(message), false)
-		return false
 	})
 }
 

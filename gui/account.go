@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/gotk3/gotk3/gtk"
@@ -90,7 +91,19 @@ func (u *gtkUI) showServerSelectionWindow() error {
 			val, _ := obj.(*gtk.ListStore).GetValue(iter, 0)
 			server, _ := val.GetString()
 
-			go requestAndRenderRegistrationForm(server, u.renderRegistrationForm)
+			form := &registrationForm{
+				parent: u.window,
+				server: server,
+			}
+
+			saveFn := func() {
+				u.addAndSaveAccountConfig(form.conf)
+				if acc, ok := u.getAccountByID(form.conf.ID()); ok {
+					acc.connect()
+				}
+			}
+
+			go requestAndRenderRegistrationForm(form.server, form.renderForm, saveFn)
 		},
 	})
 
@@ -121,7 +134,10 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
 	u.config.Add(c)
 	accountsLock.Unlock()
 
-	u.saveConfigInternal()
+	err := u.saveConfigInternal()
+	if err != nil {
+		log.Println("Failed to save config:", err)
+	}
 }
 
 func (account *account) destroyMenu() {

@@ -14,47 +14,7 @@ var (
 	errRegistrationAborted = errors.New("registration cancelled")
 )
 
-type registrationForm struct {
-	parent gtk.IWindow
-
-	server string
-	conf   *config.Account
-	fields []formField
-}
-
-func (f *registrationForm) accepted() error {
-	conf, err := config.NewAccount()
-	if err != nil {
-		return err
-	}
-
-	//Find the fields we need to copy from the form to the account
-	for _, field := range f.fields {
-		ff := field.field.(*xmpp.TextFormField)
-		w := field.widget.(*gtk.Entry)
-		ff.Result, _ = w.GetText()
-
-		switch ff.Label {
-		case "User", "Username":
-			conf.Account = ff.Result + "@" + f.server
-		case "Password":
-			conf.Password = ff.Result
-		default:
-			log.Println("Field", ff.Label)
-		}
-	}
-
-	f.conf = conf
-	return nil
-}
-
-func (f *registrationForm) addFields(fields []interface{}) {
-	f.fields = buildWidgetsForFields(fields)
-}
-
-func (f *registrationForm) renderForm(title, instructions string, fields []interface{}) error {
-	f.addFields(fields)
-
+func (u *gtkUI) renderRegistrationForm(title, instructions string, fields []interface{}) error {
 	builder := builderForDefinition("RegistrationForm")
 
 	obj, _ := builder.GetObject("dialog")
@@ -68,20 +28,20 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	obj, _ = builder.GetObject("grid")
 	grid := obj.(*gtk.Grid)
 
-	for i, field := range f.fields {
-		grid.Attach(field.label, 0, i+1, 1, 1)
-		grid.Attach(field.widget, 1, i+1, 1, 1)
+	for i, f := range buildWidgetsForFields(fields) {
+		grid.Attach(f.Label, 0, i+1, 1, 1)
+		grid.Attach(f.IWidget, 1, i+1, 1, 1)
 	}
 	grid.ShowAll()
 
-	dialog.SetTransientFor(f.parent)
+	dialog.SetTransientFor(u.window)
 
 	wait := make(chan error)
 	glib.IdleAdd(func() {
 		resp := gtk.ResponseType(dialog.Run())
 		switch resp {
 		case gtk.RESPONSE_APPLY:
-			wait <- f.accepted()
+			wait <- nil
 		default:
 			wait <- errRegistrationAborted
 		}
@@ -92,7 +52,8 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	return <-wait
 }
 
-func requestAndRenderRegistrationForm(server string, formHandler xmpp.FormCallback, saveFn func()) error {
+//TODO: this should be in the UI agnostic client
+func requestAndRenderRegistrationForm(server string, formHandler xmpp.FormCallback) error {
 	policy := config.ConnectionPolicy{}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
@@ -101,24 +62,26 @@ func requestAndRenderRegistrationForm(server string, formHandler xmpp.FormCallba
 		RequireTor: true,
 	}
 
+	//TODO: this should not connect after registering
 	//TODO: this should receive only a JID domainpart
+	//TODO: how to get the username and password out of this blackbox?
 	_, err := policy.RegisterAccount(formHandler, conf)
 
-	if err != nil {
-		//TODO: show something in the UI
-		log.Println("Registration failed:", err)
-		return err
-	}
+	//TODO: the current behavior is auto connect after registering.
+	//so we need to plug everything with the UI when this finishes
 
-	go saveFn()
+	//TODO: should we save the password in this case?
+	//conf.Password = password
+	//conf.Acccount = username + "@" + server
+	//u.addAndSaveAccountConfig(conf)
 
-	return nil
+	return err
 }
 
 type formField struct {
-	field  interface{}
-	label  *gtk.Label
-	widget gtk.IWidget
+	xmpp.FormField
+	*gtk.Label
+	gtk.IWidget
 }
 
 func buildWidgetsForFields(fields []interface{}) []formField {
@@ -133,8 +96,11 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 			w, _ := gtk.EntryNew()
 			w.SetText(field.Default)
 			w.SetVisibility(!field.Private)
+			w.Connect("notify::text", func() {
+				field.Result, _ = w.GetText()
+			})
 
-			ret = append(ret, formField{field, l, w})
+			ret = append(ret, formField{field.FormField, l, w})
 		default:
 			log.Println("Missing to implement form field:", field)
 		}

@@ -1,9 +1,8 @@
 package gui
 
 import (
-	"strings"
-
 	. "gopkg.in/check.v1"
+	"strings"
 )
 
 type JidSuite struct{}

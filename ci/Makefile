@@ -1,4 +1,4 @@
-ci: get lint doctor test coveralls
+ci: get lint check-ui-defs test coveralls
 
 get:
 	make get -C ../
@@ -8,12 +8,6 @@ lint:
 
 test:
 	make test -C ../
-
-doctor: check-go-imports check-ui-defs
-
-check-go-imports:
-	goimports -w .
-	git diff --exit-code .
 
 # make sure the ui definitions checked in are in sync
 check-ui-defs:

@@ -109,6 +109,7 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 }
 
 func (s *Session) Send(to string, msg string) error {
+	log.Printf("<- to=%v {%v}\n", to, msg)
 	return s.Conn.Send(to, msg)
 }
 

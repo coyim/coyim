@@ -14,8 +14,9 @@ import (
 	"io"
 )
 
+// Various errors signalled by the registration component
 var (
-	ErrUsernameConlict                 = errors.New("xmpp: the username is not available for registration")
+	ErrUsernameConflict                = errors.New("xmpp: the username is not available for registration")
 	ErrMissingRequiredRegistrationInfo = errors.New("xmpp: missing required registration information")
 	ErrRegistrationFailed              = errors.New("xmpp: account creation failed")
 )
@@ -90,7 +91,7 @@ func (c *Conn) createAccount(user, password string) error {
 		switch iq2.Error.Code {
 		case "409":
 			// <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return ErrUsernameConlict
+			return ErrUsernameConflict
 		case "406":
 			// <not-acceptable xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrMissingRequiredRegistrationInfo

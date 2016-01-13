@@ -16,6 +16,7 @@ type KnownFingerprint struct {
 	Untrusted   bool
 }
 
+// MarshalJSON is used to create a JSON representation of this known fingerprint
 func (k KnownFingerprint) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		UserID         string
@@ -28,6 +29,7 @@ func (k KnownFingerprint) MarshalJSON() ([]byte, error) {
 	})
 }
 
+// UnmarshalJSON is used to parse the JSON representation of a known fingerprint
 func (k *KnownFingerprint) UnmarshalJSON(data []byte) error {
 	v := struct {
 		UserID         string

@@ -4,6 +4,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/i18n"
 )
 
 func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
@@ -37,18 +38,20 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 	password := passObj.(*gtk.Entry)
 	pwdResultChan := make(chan string)
 
+	msgObj, _ := builder.GetObject("passMessage")
+	messageObj := msgObj.(*gtk.Label)
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
 			passText, _ := password.GetText()
 			if len(passText) > 0 {
+				messageObj.SetLabel(i18n.Local("Checking password..."))
 				pwdResultChan <- passText
 				close(pwdResultChan)
-				dialog.Destroy()
 			}
 		},
 		"on_cancel_signal": func() {
 			close(pwdResultChan)
-			dialog.Destroy()
 			u.quit()
 		},
 	})
@@ -61,9 +64,15 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 	pwd, ok := <-pwdResultChan
 
 	if !ok {
+		glib.IdleAdd(func() {
+			dialog.Destroy()
+		})
 		return nil, nil, false
 	}
 
 	l, r := config.GenerateKeys(pwd, params)
+	glib.IdleAdd(func() {
+		dialog.Destroy()
+	})
 	return l, r, true
 }

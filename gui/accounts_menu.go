@@ -130,21 +130,7 @@ func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect
 
 var accountsLock sync.Mutex
 
-func (u *gtkUI) buildAccountsMenu() {
-	accountsLock.Lock()
-	defer accountsLock.Unlock()
-
-	submenu, _ := gtk.MenuNew()
-
-	for _, account := range u.accounts {
-		account.appendMenuTo(submenu)
-	}
-
-	if len(u.accounts) > 0 {
-		sep, _ := gtk.SeparatorMenuItemNew()
-		submenu.Append(sep)
-	}
-
+func (u *gtkUI) buildStaticAccountsMenu(submenu *gtk.Menu) {
 	connectAutomaticallyItem, _ := gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect On _Startup"))
 	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
 		connectAutomaticallyItem.SetActive(a.ConnectAutomatically)
@@ -173,6 +159,24 @@ func (u *gtkUI) buildAccountsMenu() {
 	registerAccMenu, _ := gtk.MenuItemNewWithMnemonic(i18n.Local("_Register..."))
 	registerAccMenu.Connect("activate", u.showServerSelectionWindow)
 	submenu.Append(registerAccMenu)
+}
+
+func (u *gtkUI) buildAccountsMenu() {
+	accountsLock.Lock()
+	defer accountsLock.Unlock()
+
+	submenu, _ := gtk.MenuNew()
+
+	for _, account := range u.accounts {
+		account.appendMenuTo(submenu)
+	}
+
+	if len(u.accounts) > 0 {
+		sep, _ := gtk.SeparatorMenuItemNew()
+		submenu.Append(sep)
+	}
+
+	u.buildStaticAccountsMenu(submenu)
 
 	submenu.ShowAll()
 

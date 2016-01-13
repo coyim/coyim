@@ -476,6 +476,9 @@ func (u *gtkUI) initMenuBar() {
 		u.buildAccountsMenu()
 		u.accountsMenu.ShowAll()
 	})
+
+	u.buildAccountsMenu()
+	u.accountsMenu.ShowAll()
 }
 
 func (u *gtkUI) rosterUpdated() {

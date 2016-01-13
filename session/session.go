@@ -66,6 +66,7 @@ type Session struct {
 	client.ConversationManager
 }
 
+// GetConfig returns the current account configuration
 func (s *Session) GetConfig() *config.Account {
 	return s.accountConfig
 }
@@ -108,6 +109,7 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	return s
 }
 
+// Send will send the given message to the receiver given
 func (s *Session) Send(to string, msg string) error {
 	log.Printf("<- to=%v {%v}\n", to, msg)
 	return s.Conn.Send(to, msg)
@@ -401,6 +403,7 @@ func (s *Session) otrEnded(uid string) {
 	s.publishPeerEvent(OTREnded, uid)
 }
 
+// NewConversation will create a new OTR conversation with the given peer
 //TODO: why creating a conversation is coupled to the account config and the session
 func (s *Session) NewConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}

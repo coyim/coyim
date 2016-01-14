@@ -35,21 +35,30 @@ type RegisterQuery struct {
 }
 
 // XEP-0077
-func (d *Dialer) negotiateInBandRegistration(c *Conn) error {
+func (d *Dialer) negotiateInBandRegistration(c *Conn) (error, bool) {
 	if c.features.InBandRegistration == nil {
-		return nil
+		return nil, false
 	}
 
 	user := d.getJIDLocalpart()
 	password := d.Password
-	return c.createAccount(user, password)
+	return c.registerAccount(user, password)
+}
+
+func (c *Conn) registerAccount(user, password string) (error, bool) {
+	if c.config.CreateCallback == nil {
+		return nil, false
+	}
+
+	err := c.createAccount(user, password)
+	if err != nil {
+		return err, false
+	}
+
+	return nil, true
 }
 
 func (c *Conn) createAccount(user, password string) error {
-	if c.config.CreateCallback == nil {
-		return nil
-	}
-
 	io.WriteString(c.config.getLog(), "Attempting to create account\n")
 	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
 	var iq ClientIQ
@@ -82,17 +91,17 @@ func (c *Conn) createAccount(user, password string) error {
 		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>", user, password)
 	}
 
-	var iq2 ClientIQ
-	if err := c.in.DecodeElement(&iq2, nil); err != nil {
+	iq2 := &ClientIQ{}
+	if err := c.in.DecodeElement(iq2, nil); err != nil {
 		return errors.New("unmarshal <iq>: " + err.Error())
 	}
 
 	if iq2.Type == "error" {
-		switch iq2.Error.Code {
-		case "409":
+		switch iq2.Error.Any.Local {
+		case "conflict":
 			// <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrUsernameConflict
-		case "406":
+		case "not-acceptable":
 			// <not-acceptable xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrMissingRequiredRegistrationInfo
 		default:

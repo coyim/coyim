@@ -9,6 +9,8 @@ import (
 	"github.com/twstrike/coyim/config"
 )
 
+var coyimVersion = "<UNSET>"
+
 func initLog() {
 	if !*config.DebugFlag {
 		log.SetOutput(ioutil.Discard)
@@ -23,7 +25,6 @@ func initLog() {
 func main() {
 	flag.Parse()
 	initLog()
-
 	runClient()
 
 	os.Stdout.Write([]byte("\n"))

@@ -42,6 +42,8 @@ type gtkUI struct {
 	commands chan interface{}
 }
 
+var coyimVersion string
+
 // UI is the user interface functionality exposed to main
 type UI interface {
 	Loop()
@@ -55,7 +57,8 @@ func argsWithApplicationName() *[]string {
 }
 
 // NewGTK returns a new client for a GTK ui
-func NewGTK() UI {
+func NewGTK(version string) UI {
+	coyimVersion = version
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
 	glib.InitI18n("coy", "./i18n")
 	gtk.Init(argsWithApplicationName())
@@ -404,6 +407,8 @@ func (u gtkUI) aboutDialog() {
 	dialog.SetName(i18n.Local("Coy IM!"))
 	dialog.SetProgramName("Coyim")
 	dialog.SetAuthors(authors())
+	dialog.SetVersion(coyimVersion)
+
 	// dir, _ := path.Split(os.Args[0])
 	// imagefile := path.Join(dir, "../../data/coyim-logo.png")
 	// pixbuf, _ := gdkpixbuf.NewFromFile(imagefile)

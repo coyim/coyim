@@ -1,5 +1,6 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
+GIT_VERSION=$(shell git rev-parse HEAD)
 
 default: deps gen-ui-defs lint test
 .PHONY: test
@@ -11,10 +12,10 @@ build: build-cli build-gui
 gen-ui-defs:
 	make -C ./gui/definitions
 
-build-gui:
+build-gui: generate-version-file
 	go build -tags $(GTK_BUILD_TAG) -o bin/coyim
 
-build-cli:
+build-cli: generate-version-file
 	go build -tags cli -o bin/coyim-cli
 
 build-debug:
@@ -43,6 +44,9 @@ ifeq ($(shell uname), Linux)
 	echo $$COYIM_PATH
 	cd gui-test && behave --stop
 endif
+
+generate-version-file:
+	./gen_version_file.sh $(GIT_VERSION)
 
 run-cover: clean-cover
 	go test -coverprofile=xmpp.coverprofile ./xmpp

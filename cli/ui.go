@@ -46,7 +46,7 @@ type UI interface {
 }
 
 // NewCLI creates a new cliUI instance
-func NewCLI() UI {
+func NewCLI(version string) UI {
 	oldState, err := terminal.MakeRaw(0)
 	if err != nil {
 		panic(err.Error())

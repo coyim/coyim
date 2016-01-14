@@ -2,8 +2,6 @@ package xmpp
 
 import (
 	"encoding/xml"
-	"errors"
-	"fmt"
 	"io"
 	"net"
 	"strings"
@@ -67,7 +65,7 @@ func (d *Dialer) RegisterAccount(formCallback FormCallback) (*Conn, error) {
 // Dial creates a new connection to an XMPP server with the given proxy
 // and authenticates as the given user.
 func (d *Dialer) Dial() (*Conn, error) {
-	// Starting an XMPP connectin comprises two parts:
+	// Starting an XMPP connection comprises two parts:
 	// - Opening a transport channel (TCP)
 	// - Opening an XML stream over the transport channel
 
@@ -91,38 +89,11 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 	c.config = d.Config
 	d.bindTransport(c, conn)
 
-	originDomain := d.getJIDDomainpart()
-
 	if err := d.negotiateStreamFeatures(c, conn); err != nil {
 		return nil, err
 	}
 
 	go c.watchKeepAlive(conn)
-
-	features := c.features
-
-	// Resource binding. RFC 6120, section 7
-	// This is mandatory, so a missing features.Bind is a protocol failure
-	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
-	var iq ClientIQ
-	if err = c.in.DecodeElement(&iq, nil); err != nil {
-		return nil, errors.New("unmarshal <iq>: " + err.Error())
-	}
-	c.jid = iq.Bind.Jid // our local id
-
-	if features.Session != nil {
-		// The server needs a session to be established. See RFC 3921,
-		// section 3.
-		fmt.Fprintf(c.out, "<iq to='%s' type='set' id='sess_1'><session xmlns='%s'/></iq>", originDomain, NsSession)
-		if err = c.in.DecodeElement(&iq, nil); err != nil {
-			return nil, errors.New("xmpp: unmarshal <iq>: " + err.Error())
-		}
-		if iq.Type != "result" {
-			return nil, errors.New("xmpp: session establishment failed")
-		}
-	}
-
-	//Must happen after the resource binding
 	go c.watchPings()
 
 	return c, nil

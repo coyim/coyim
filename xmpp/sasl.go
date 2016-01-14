@@ -43,7 +43,13 @@ func (d *Dialer) negotiateSASL(c *Conn) error {
 		return ErrAuthenticationFailed
 	}
 
-	return c.sendInitialStreamHeader(originDomain)
+	// RFC 6120, section 6.3.2. Restart the stream
+	err := c.sendInitialStreamHeader(originDomain)
+	if err != nil {
+		return err
+	}
+
+	return c.bindResource(originDomain)
 }
 
 func (c *Conn) authenticate(user, password string) error {
@@ -171,6 +177,39 @@ func (c *Conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 
 	t, err = sasl.DecodeToken(encodedChallenge)
 	return
+}
+
+// Resource binding. RFC 6120, section 7
+func (c *Conn) bindResource(originDomain string) error {
+	// This is mandatory, so a missing features.Bind is a protocol failure
+	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
+	var iq ClientIQ
+	if err := c.in.DecodeElement(&iq, nil); err != nil {
+		return errors.New("unmarshal <iq>: " + err.Error())
+	}
+	c.jid = iq.Bind.Jid // our local id
+
+	return c.establishSession(originDomain)
+}
+
+// See RFC 3921, section 3.
+func (c *Conn) establishSession(originDomain string) error {
+	if c.features.Session == nil {
+		return nil
+	}
+
+	// The server needs a session to be established.
+	fmt.Fprintf(c.out, "<iq to='%s' type='set' id='sess_1'><session xmlns='%s'/></iq>", originDomain, NsSession)
+	var iq ClientIQ
+	if err := c.in.DecodeElement(&iq, nil); err != nil {
+		return errors.New("xmpp: unmarshal <iq>: " + err.Error())
+	}
+
+	if iq.Type != "result" {
+		return errors.New("xmpp: session establishment failed")
+	}
+
+	return nil
 }
 
 // RFC 3920  C.4  SASL name space

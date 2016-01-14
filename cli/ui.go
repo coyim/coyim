@@ -16,7 +16,6 @@ import (
 
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
@@ -703,7 +702,8 @@ CommandLoop:
 				}
 
 			case otrCommand:
-				s.Conn.Send(string(cmd.User), event.QueryMessage)
+				conversation, _ := s.GetConversationWith(string(cmd.User))
+				conversation.StartEncryptedChat(s)
 			case otrInfoCommand:
 				for _, pk := range s.PrivateKeys {
 					info(term, fmt.Sprintf("Your OTR fingerprint is %x", pk.PublicKey().Fingerprint()))

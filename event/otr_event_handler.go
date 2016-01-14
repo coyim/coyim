@@ -33,9 +33,6 @@ const (
 )
 
 var (
-	// QueryMessage can be sent to a peer to start an OTR conversation.
-	QueryMessage = "?OTRv2?"
-
 	// ErrorPrefix can be used to make an OTR error by appending an error message
 	// to it.
 	ErrorPrefix = "?OTR Error:"

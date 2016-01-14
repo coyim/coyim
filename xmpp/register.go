@@ -55,7 +55,7 @@ func (c *Conn) registerAccount(user, password string) (error, bool) {
 		return err, false
 	}
 
-	return nil, true
+	return c.closeImmediately(), true
 }
 
 func (c *Conn) createAccount(user, password string) error {

@@ -695,82 +695,6 @@ func (s *ConnectionXmppSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_continuesWithAuthenticationAfterRegistering(c *C) {
-	rw := &mockConnIOReaderWriter{read: []byte(
-		"<?xml version='1.0'?>" +
-			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
-			"<str:features>" +
-			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
-			"<mechanism>PLAIN</mechanism>" +
-			"</mechanisms>" +
-			"<register xmlns='http://jabber.org/features/iq-register'/>" +
-			"</str:features>" +
-			"<iq xmlns='jabber:client' type='result'>" +
-			"<query xmlns='jabber:iq:register'><username/></query>" +
-			"</iq>" +
-			"<iq xmlns='jabber:client' type='result'></iq>",
-	)}
-	conn := &fullMockedConn{rw: rw}
-
-	d := &Dialer{
-		JID:      "user@domain",
-		Password: "pass",
-		Config: Config{
-			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
-				return nil
-			},
-		},
-	}
-	_, err := d.setupStream(conn)
-
-	c.Assert(err, Equals, ErrAuthenticationFailed)
-	c.Assert(string(rw.write), Equals, ""+
-		"<?xml version='1.0'?>"+
-		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
-		"<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>"+
-		"<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>AHVzZXIAcGFzcw==</auth>\n",
-	)
-}
-
-func (s *ConnectionXmppSuite) Test_Dial_continuesWithAuthenticationAfterRegistering2(c *C) {
-	rw := &mockConnIOReaderWriter{read: []byte(
-		"<?xml version='1.0'?>" +
-			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
-			"<str:features>" +
-			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
-			"<mechanism>PLAIN</mechanism>" +
-			"</mechanisms>" +
-			"<register xmlns='http://jabber.org/features/iq-register'/>" +
-			"</str:features>" +
-			"<iq xmlns='jabber:client' type='result'>" +
-			"<query xmlns='jabber:iq:register'><password/></query>" +
-			"</iq>" +
-			"<iq xmlns='jabber:client' type='result'></iq>",
-	)}
-	conn := &fullMockedConn{rw: rw}
-
-	d := &Dialer{
-		JID:      "user@domain",
-		Password: "pass",
-		Config: Config{
-			SkipTLS: true,
-			CreateCallback: func(title, instructions string, fields []interface{}) error {
-				return nil
-			},
-		},
-	}
-	_, err := d.setupStream(conn)
-
-	c.Assert(err, Equals, ErrAuthenticationFailed)
-	c.Assert(string(rw.write), Equals, ""+
-		"<?xml version='1.0'?>"+
-		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
-		"<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>"+
-		"<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>AHVzZXIAcGFzcw==</auth>\n",
-	)
-}
-
 func (s *ConnectionXmppSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
@@ -800,13 +724,13 @@ func (s *ConnectionXmppSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 	}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err, Equals, ErrAuthenticationFailed)
+	c.Assert(err, IsNil)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
 		"<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>"+
 		"<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>user</username><password>pass</password></query></iq>"+
-		"<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>AHVzZXIAcGFzcw==</auth>\n",
+		"</stream:stream>",
 	)
 }
 
@@ -849,13 +773,13 @@ func (s *ConnectionXmppSuite) Test_Dial_runsForm(c *C) {
 	}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err, Equals, ErrAuthenticationFailed)
+	c.Assert(err, IsNil)
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
 		"<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>"+
 		"<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><x xmlns=\"jabber:x:data\" type=\"submit\"><field var=\"FORM_TYPE\"><value>jabber:iq:register</value></field><field var=\"first\"><value></value></field></x></query></iq>"+
-		"<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>AHVzZXIAcGFzcw==</auth>\n",
+		"</stream:stream>",
 	)
 }
 

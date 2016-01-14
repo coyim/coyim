@@ -15,8 +15,8 @@ import (
 //Send an initial stream header and receive the features required for
 //continuation of the stream negotiation process.
 //RFC 6120 section 4.3
-func (c *Conn) sendInitialStreamHeader(domain string) error {
-	if _, err := fmt.Fprintf(c.out, "<?xml version='1.0'?><stream:stream to='%s' xmlns='%s' xmlns:stream='%s' version='1.0'>\n", xmlEscape(domain), NsClient, NsStream); err != nil {
+func (c *Conn) sendInitialStreamHeader() error {
+	if _, err := fmt.Fprintf(c.out, "<?xml version='1.0'?><stream:stream to='%s' xmlns='%s' xmlns:stream='%s' version='1.0'>\n", xmlEscape(c.originDomain), NsClient, NsStream); err != nil {
 		return err
 	}
 

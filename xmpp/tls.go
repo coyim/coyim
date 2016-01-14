@@ -94,8 +94,6 @@ func (d *Dialer) negotiateSTARTTLS(c *Conn, conn net.Conn) error {
 		return nil
 	}
 
-	originDomain := d.getJIDDomainpart()
-
 	// Section 5.2 states:
 	// "Support for STARTTLS is REQUIRED in XMPP client and server implementations"
 	if c.features.StartTLS.XMLName.Local == "" {
@@ -106,12 +104,11 @@ func (d *Dialer) negotiateSTARTTLS(c *Conn, conn net.Conn) error {
 		return err
 	}
 
-	return c.sendInitialStreamHeader(originDomain)
+	return c.sendInitialStreamHeader()
 }
 
 func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
 	address := d.GetServer()
-	domain := d.getJIDDomainpart()
 
 	fmt.Fprintf(c.out, "<starttls xmlns='%s'/>", NsTLS)
 
@@ -131,7 +128,7 @@ func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
 	if c.config.TLSConfig != nil {
 		tlsConfig = *c.config.TLSConfig
 	}
-	tlsConfig.ServerName = domain
+	tlsConfig.ServerName = c.originDomain
 	tlsConfig.InsecureSkipVerify = true
 
 	tlsConn := tls.Client(conn, &tlsConfig)
@@ -172,7 +169,7 @@ func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
 		}
 		leafCert := verifiedChains[0][0]
 
-		if err := leafCert.VerifyHostname(domain); err != nil {
+		if err := leafCert.VerifyHostname(c.originDomain); err != nil {
 			if c.config.TrustedAddress {
 				fmt.Fprintf(l, "Certificate fails to verify against domain in username: %s\n", err)
 				host, _, err := net.SplitHostPort(address)

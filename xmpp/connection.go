@@ -29,8 +29,9 @@ type Conn struct {
 	rawOut       io.WriteCloser // doesn't log. Used for <auth>
 	keepaliveOut io.Writer
 
-	jid      string
-	features streamFeatures
+	jid          string
+	originDomain string
+	features     streamFeatures
 
 	Rand          io.Reader
 	lock          sync.Mutex

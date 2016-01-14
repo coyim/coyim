@@ -87,6 +87,7 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 
 	c = newConn()
 	c.config = d.Config
+	c.originDomain = d.getJIDDomainpart()
 	d.bindTransport(c, conn)
 
 	if err := d.negotiateStreamFeatures(c, conn); err != nil {
@@ -101,9 +102,7 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 
 // RFC 6120, section 4.3.2
 func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) error {
-	originDomain := d.getJIDDomainpart()
-
-	if err := c.sendInitialStreamHeader(originDomain); err != nil {
+	if err := c.sendInitialStreamHeader(); err != nil {
 		return err
 	}
 

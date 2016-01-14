@@ -652,8 +652,17 @@ func (s *Session) Timeout(c xmpp.Cookie, t time.Time) {
 
 const defaultDelimiter = "::"
 
-func (s *Session) requestRoster() {
-	s.Conn.SignalPresence("")
+func (s *Session) watchRoster() {
+	for s.requestRoster() {
+		time.Sleep(time.Duration(3) * time.Minute)
+	}
+}
+
+func (s *Session) requestRoster() bool {
+	if !s.IsConnected() {
+		return false
+	}
+
 	s.info("Fetching roster")
 
 	delim, err := s.Conn.GetRosterDelimiter()
@@ -665,20 +674,20 @@ func (s *Session) requestRoster() {
 	rosterReply, _, err := s.Conn.RequestRoster()
 	if err != nil {
 		s.alert("Failed to request roster: " + err.Error())
-		return
+		return true
 	}
 
 	rosterStanza, ok := <-rosterReply
 	if !ok {
 		//TODO: should we retry the request in such case?
 		log.Println("session: roster request cancelled or timedout")
-		return
+		return true
 	}
 
 	rst, err := xmpp.ParseRoster(rosterStanza)
 	if err != nil {
 		s.alert("Failed to parse roster: " + err.Error())
-		return
+		return true
 	}
 
 	for _, rr := range rst {
@@ -687,11 +696,18 @@ func (s *Session) requestRoster() {
 
 	s.rosterReceived()
 	s.info("Roster received")
+
+	return true
 }
 
 // IsDisconnected returns true if this account is disconnected and is not in the process of connecting
 func (s *Session) IsDisconnected() bool {
 	return s.ConnStatus == DISCONNECTED
+}
+
+// IsConnected returns true if this account is connected and is not in the process of connecting
+func (s *Session) IsConnected() bool {
+	return s.ConnStatus == CONNECTED
 }
 
 func (s *Session) setStatus(status connStatus) {
@@ -736,7 +752,8 @@ func (s *Session) Connect(password string) error {
 	s.Conn = conn
 	s.setStatus(CONNECTED)
 
-	go s.requestRoster()
+	s.Conn.SignalPresence("")
+	go s.watchRoster()
 	go s.watchTimeout()
 	go s.watchStanzas()
 
@@ -789,7 +806,7 @@ func (s *Session) onDisconnect() {
 
 // Ping does a Ping
 func (s *Session) Ping() {
-	if s.ConnStatus == DISCONNECTED {
+	if s.IsDisconnected() {
 		return
 	}
 	/* fmt.Println("Publish Ping") */

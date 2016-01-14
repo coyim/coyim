@@ -12,6 +12,7 @@ test:
 doctor: check-go-imports check-ui-defs
 
 check-go-imports:
+	go get golang.org/x/tools/cmd/goimports
 	goimports -w .
 	git diff --exit-code .
 

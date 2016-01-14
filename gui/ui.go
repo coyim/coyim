@@ -14,6 +14,7 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	rosters "github.com/twstrike/coyim/roster"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -138,6 +139,8 @@ func (u *gtkUI) configLoaded() {
 
 		return false
 	})
+
+	u.addInitialAccountsToRoster()
 
 	if u.config.ConnectAutomatically {
 		u.connectAllAutomatics(false)
@@ -273,6 +276,12 @@ func (u *gtkUI) mainWindow() {
 	gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
 
 	u.window.ShowAll()
+}
+
+func (u *gtkUI) addInitialAccountsToRoster() {
+	for _, account := range u.accounts {
+		u.roster.update(account, rosters.New())
+	}
 }
 
 func (u *gtkUI) addFeedbackInfoBar() {
@@ -475,6 +484,7 @@ func (u *gtkUI) initMenuBar() {
 	u.window.Connect(accountChangedSignal.String(), func() {
 		u.buildAccountsMenu()
 		u.accountsMenu.ShowAll()
+		u.rosterUpdated()
 	})
 
 	u.buildAccountsMenu()

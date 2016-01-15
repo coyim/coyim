@@ -14,6 +14,7 @@ import (
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
@@ -408,6 +409,7 @@ func (s *Session) otrEnded(uid string) {
 func (s *Session) NewConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.PrivateKeys)
+	conversation.SetFriendlyQueryMessage(i18n.Local("Your peer has requested a private conversation with you, but your client doesn't seem to support the OTR protocol."))
 
 	instanceTag := conversation.InitializeInstanceTag(s.GetConfig().InstanceTag)
 

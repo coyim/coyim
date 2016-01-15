@@ -56,7 +56,7 @@ run-cover: clean-cover
 	go test -coverprofile=ui.coverprofile ./ui
 	go test -tags $(GTK_BUILD_TAG) -coverprofile=gui.coverprofile ./gui
 	go test -coverprofile=roster.coverprofile ./roster
-	go test -coverprofile=main.coverprofile
+	go test -tags $(GTK_BUILD_TAG) -coverprofile=main.coverprofile
 	gover .
 
 clean-cover:
@@ -106,3 +106,4 @@ deps: deps-dev
 	go get golang.org/x/crypto/scrypt
 	go get github.com/hydrogen18/stalecucumber
 	go get github.com/DHowett/go-plist
+

@@ -7,6 +7,51 @@ import (
 	"github.com/twstrike/coyim/i18n"
 )
 
+func (u *gtkUI) captureInitialMasterPassword(k func()) {
+	dialogID := "CaptureInitialMasterPassword"
+	builder := builderForDefinition(dialogID)
+	dialogOb, _ := builder.GetObject(dialogID)
+	pwdDialog := dialogOb.(*gtk.Dialog)
+
+	passObj, _ := builder.GetObject("password")
+	password := passObj.(*gtk.Entry)
+
+	pass2Obj, _ := builder.GetObject("password2")
+	password2 := pass2Obj.(*gtk.Entry)
+
+	msgObj, _ := builder.GetObject("passMessage")
+	messageObj := msgObj.(*gtk.Label)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_save_signal": func() {
+			passText1, _ := password.GetText()
+			passText2, _ := password2.GetText()
+			if len(passText1) == 0 {
+				messageObj.SetLabel(i18n.Local("Password can not be empty - please try again"))
+				password.GrabFocus()
+			} else if passText1 != passText2 {
+				messageObj.SetLabel(i18n.Local("Passwords have to be the same - please try again"))
+				password.GrabFocus()
+			} else {
+				u.keySupplier = &onetimeSavedPassword{
+					savedPassword: passText1,
+					realF:         u.keySupplier,
+				}
+				pwdDialog.Destroy()
+				k()
+			}
+		},
+		"on_cancel_signal": func() {
+			pwdDialog.Destroy()
+		},
+	})
+
+	glib.IdleAdd(func() {
+		pwdDialog.SetTransientFor(u.window)
+		pwdDialog.ShowAll()
+	})
+}
+
 func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 	dialogID := "AskToEncrypt"
 	builder := builderForDefinition(dialogID)
@@ -17,15 +62,29 @@ func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 	encryptDialog.SetTransientFor(u.window)
 
 	responseType := gtk.ResponseType(encryptDialog.Run())
-	switch responseType {
-	case gtk.RESPONSE_YES:
-		k(true)
-	case gtk.RESPONSE_NO:
-		k(false)
-	default:
-		k(false)
-	}
+	result := responseType == gtk.RESPONSE_YES
 	encryptDialog.Destroy()
+	k(result)
+}
+
+type onetimeSavedPassword struct {
+	savedPassword string
+	realF         config.KeySupplier
+}
+
+func (o *onetimeSavedPassword) Invalidate() {
+	o.realF.Invalidate()
+}
+
+func (o *onetimeSavedPassword) GenerateKey(params config.EncryptionParameters) ([]byte, []byte, bool) {
+	if o.savedPassword != "" {
+		ourPwd := o.savedPassword
+		o.savedPassword = ""
+
+		l, r := config.GenerateKeys(ourPwd, params)
+		return l, r, true
+	}
+	return o.realF.GenerateKey(params)
 }
 
 func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {

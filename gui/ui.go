@@ -95,9 +95,16 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 func (u *gtkUI) initialSetupWindow() {
 	u.wouldYouLikeToEncryptYourFile(func(res bool) {
 		u.config.ShouldEncrypt = res
-		err := u.showAddAccountWindow()
-		if err != nil {
-			log.Println("Failed to add account:", err.Error())
+		k := func() {
+			err := u.showAddAccountWindow()
+			if err != nil {
+				log.Println("Failed to add account:", err.Error())
+			}
+		}
+		if res {
+			u.captureInitialMasterPassword(k)
+		} else {
+			k()
 		}
 	})
 }

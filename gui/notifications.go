@@ -38,6 +38,7 @@ func buildVerifyIdentityNotification(acc *account, peer string, win *gtk.Window)
 
 	obj, _ = builder.GetObject("message")
 	message := obj.(*gtk.Label)
+	message.SetSelectable(true)
 
 	text := fmt.Sprintf(i18n.Local("You have not verified the identity of %s"), peer)
 	message.SetText(text)

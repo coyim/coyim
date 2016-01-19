@@ -114,6 +114,7 @@ func buildBadUsernameNotification(msg string) *gtk.InfoBar {
 
 	obj, _ = builder.GetObject("message")
 	message := obj.(*gtk.Label)
+	message.SetSelectable(true)
 
 	text := fmt.Sprintf(i18n.Local(msg))
 	message.SetText(text)

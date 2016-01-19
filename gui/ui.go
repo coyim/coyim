@@ -340,6 +340,7 @@ func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 	obj, _ = builder.GetObject("accountName")
 	label := obj.(*gtk.Label)
 	label.SetText(accountName)
+	label.SetSelectable(true)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {

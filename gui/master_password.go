@@ -21,6 +21,7 @@ func (u *gtkUI) captureInitialMasterPassword(k func()) {
 
 	msgObj, _ := builder.GetObject("passMessage")
 	messageObj := msgObj.(*gtk.Label)
+	messageObj.SetSelectable(true)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
@@ -99,6 +100,7 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 
 	msgObj, _ := builder.GetObject("passMessage")
 	messageObj := msgObj.(*gtk.Label)
+	messageObj.SetSelectable(true)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {

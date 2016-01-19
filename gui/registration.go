@@ -64,6 +64,7 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	obj, _ = builder.GetObject("instructions")
 	label := obj.(*gtk.Label)
 	label.SetText(instructions)
+	label.SetSelectable(true)
 
 	obj, _ = builder.GetObject("grid")
 	grid := obj.(*gtk.Grid)
@@ -129,6 +130,7 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 		case *xmpp.TextFormField:
 			//TODO: notify if it is required
 			l, _ := gtk.LabelNew(field.Label)
+			l.SetSelectable(true)
 
 			w, _ := gtk.EntryNew()
 			w.SetText(field.Default)

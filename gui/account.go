@@ -256,6 +256,7 @@ func (account *account) buildNotification(template, msg string) *gtk.InfoBar {
 
 	obj, _ = builder.GetObject("message")
 	msgLabel := obj.(*gtk.Label)
+	msgLabel.SetSelectable(true)
 
 	text := fmt.Sprintf(i18n.Local(msg), account.session.GetConfig().Account)
 	msgLabel.SetText(text)

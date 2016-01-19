@@ -49,6 +49,7 @@ Purported fingerprint for %[1]s:
 	obj, _ = builder.GetObject("message")
 	l := obj.(*gtk.Label)
 	l.SetText(message)
+	l.SetSelectable(true)
 
 	dialog.SetTitle(fmt.Sprintf(i18n.Local("Verify fingerprint for %s"), uid))
 	return dialog

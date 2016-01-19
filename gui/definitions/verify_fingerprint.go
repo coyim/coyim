@@ -17,7 +17,7 @@ func (*defVerifyFingerprint) String() string {
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel" id="message" />
+          <object class="GtkLabel" id="message"/>
         </child>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">

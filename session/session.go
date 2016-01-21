@@ -34,7 +34,7 @@ type Session struct {
 	Conn             *xmpp.Conn
 	ConnectionLogger io.Writer
 	R                *roster.List
-	ConnStatus       connStatus
+	connStatus       connStatus
 
 	OtrEventHandler map[string]*event.OtrEventHandler
 
@@ -106,6 +106,8 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 
 	s.PrivateKeys = parseFromConfig(cu)
 	s.ConversationManager = client.NewConversationManager(s, s)
+
+	go observe(s)
 
 	return s
 }
@@ -619,7 +621,7 @@ func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 func (s *Session) watchTimeout() {
 	tickInterval := time.Second
 
-	for s.ConnStatus == CONNECTED {
+	for s.IsConnected() {
 		now := <-time.After(tickInterval)
 		haveExpired := false
 		for _, expiry := range s.timeouts {
@@ -704,16 +706,16 @@ func (s *Session) requestRoster() bool {
 
 // IsDisconnected returns true if this account is disconnected and is not in the process of connecting
 func (s *Session) IsDisconnected() bool {
-	return s.ConnStatus == DISCONNECTED
+	return s.connStatus == DISCONNECTED
 }
 
 // IsConnected returns true if this account is connected and is not in the process of connecting
 func (s *Session) IsConnected() bool {
-	return s.ConnStatus == CONNECTED
+	return s.connStatus == CONNECTED
 }
 
 func (s *Session) setStatus(status connStatus) {
-	s.ConnStatus = status
+	s.connStatus = status
 
 	switch status {
 	case CONNECTED:
@@ -793,17 +795,10 @@ func (s *Session) Close() {
 		return
 	}
 
-	s.ConnStatus = DISCONNECTED
-	defer s.onDisconnect()
+	s.setStatus(DISCONNECTED)
 
 	s.terminateConversations()
 	s.Conn.Close()
-}
-
-func (s *Session) onDisconnect() {
-	s.publish(Disconnected)
-	s.R.Clear()
-	s.rosterReceived()
 }
 
 // Ping does a Ping

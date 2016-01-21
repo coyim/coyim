@@ -11,7 +11,6 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 )
 
@@ -188,8 +187,8 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 	dconnx, _ := builder.GetObject("disconnectMenuItem")
 	disconnect := dconnx.(*gtk.MenuItem)
 
-	connect.SetSensitive(account.session.ConnStatus == session.DISCONNECTED)
-	disconnect.SetSensitive(account.session.ConnStatus == session.CONNECTED)
+	connect.SetSensitive(account.session.IsDisconnected())
+	disconnect.SetSensitive(account.session.IsConnected())
 
 	mn.ShowAll()
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
@@ -482,7 +481,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	r.model.SetValue(parentIter, indexWeight, 700)
 
 	bgcolor := "#918caa"
-	if account.session.ConnStatus == session.DISCONNECTED {
+	if account.session.IsDisconnected() {
 		bgcolor = "#d5d3de"
 	}
 	r.model.SetValue(parentIter, indexBackgroundColor, bgcolor)
@@ -495,14 +494,14 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 		r.toCollapse = append(r.toCollapse, parentPath)
 	}
 	var stat string
-	switch account.session.ConnStatus {
-	case session.DISCONNECTED:
+	if account.session.IsDisconnected() {
 		stat = "offline"
-	case session.CONNECTING:
-		stat = "connecting"
-	case session.CONNECTED:
+	} else if account.session.IsConnected() {
 		stat = "available"
+	} else {
+		stat = "connecting"
 	}
+
 	r.model.SetValue(parentIter, indexStatusIcon, statusIcons[stat].getPixbuf())
 	r.model.SetValue(parentIter, indexParentDisplayName, createGroupDisplayName(parentName, accountCounter, isExpanded))
 }

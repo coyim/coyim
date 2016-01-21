@@ -71,7 +71,7 @@ func (account *account) executeCmd(c interface{}) {
 }
 
 func (account *account) connected() bool {
-	return account.session.ConnStatus == session.CONNECTED
+	return account.session.IsConnected()
 }
 
 func (u *gtkUI) showServerSelectionWindow() error {

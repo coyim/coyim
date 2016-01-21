@@ -124,8 +124,8 @@ func buildBadUsernameNotification(msg string) *gtk.InfoBar {
 
 func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect *gtk.MenuItem) {
 	glib.IdleAdd(func() {
-		connect.SetSensitive(s.ConnStatus == session.DISCONNECTED)
-		disconnect.SetSensitive(s.ConnStatus == session.CONNECTED)
+		connect.SetSensitive(s.IsDisconnected())
+		disconnect.SetSensitive(s.IsConnected())
 	})
 }
 

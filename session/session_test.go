@@ -113,7 +113,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	)
 
 	sess := &Session{
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -140,7 +140,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	)
 
 	sess := &Session{
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -176,7 +176,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	)
 
 	sess := &Session{
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -200,7 +200,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(
 	)
 
 	sess := &Session{
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -265,7 +265,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 
 	var sess *Session
 	sess = &Session{
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -305,7 +305,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -337,7 +337,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -370,7 +370,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -410,7 +410,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 		accountConfig: &config.Account{
 			Account: "some@one.org",
 		},
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -444,7 +444,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 		accountConfig: &config.Account{
 			Account: "some@one.org",
 		},
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -477,7 +477,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 			Account: "some@one.org",
 		},
 		R:          roster.New(),
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -507,7 +507,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 			Account: "some@one.org",
 		},
 		R:          roster.New(),
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -541,7 +541,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 			Account: "some@one.org",
 		},
 		R:          roster.New(),
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -582,7 +582,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUs
 
 	sess := &Session{
 		R:          roster.New(),
-		ConnStatus: DISCONNECTED,
+		connStatus: DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -617,7 +617,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 		Config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		R:             roster.New(),
-		ConnStatus:    DISCONNECTED,
+		connStatus:    DISCONNECTED,
 	}
 	sess.Conn = conn
 	sess.R.AddOrReplace(roster.PeerWithState("some2@one.org", "somewhere", "", ""))
@@ -659,7 +659,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 		Config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		R:             roster.New(),
-		ConnStatus:    DISCONNECTED,
+		connStatus:    DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -680,7 +680,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	sess := &Session{
 		Config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
-		ConnStatus:    DISCONNECTED,
+		connStatus:    DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -720,7 +720,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 		Config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		R:             roster.New(),
-		ConnStatus:    DISCONNECTED,
+		connStatus:    DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -761,7 +761,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 		Config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		R:             roster.New(),
-		ConnStatus:    DISCONNECTED,
+		connStatus:    DISCONNECTED,
 	}
 	sess.Conn = conn
 
@@ -799,7 +799,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		Config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		R:             roster.New(),
-		ConnStatus:    DISCONNECTED,
+		connStatus:    DISCONNECTED,
 	}
 	sess.Conn = conn
 	sess.R.AddOrReplace(roster.PeerWithState("some2@one.org", "dnd", "", ""))
@@ -948,14 +948,14 @@ func (s *SessionXmppSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsA
 	}
 
 	sess := &Session{
-		ConnStatus: CONNECTED,
+		connStatus: CONNECTED,
 		timeouts:   timeouts,
 		Conn:       &xmpp.Conn{},
 	}
 
 	go func() {
 		<-time.After(1 * time.Second)
-		sess.ConnStatus = DISCONNECTED
+		sess.connStatus = DISCONNECTED
 	}()
 
 	sess.watchTimeout()

@@ -301,6 +301,10 @@ func mergeAccountInformation(ac gajimAccountInfo, s gajimOTRSettings, s2 map[str
 		res.RequireTor = true
 	}
 
+	if strings.HasSuffix(res.Server, ".onion") {
+		res.RequireTor = true
+	}
+
 	res.AlwaysEncrypt = s.requireEncryption
 	res.OTRAutoAppendTag = s.sendTag
 	res.OTRAutoStartSession = s.whitespaceStartAke

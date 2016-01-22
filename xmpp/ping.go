@@ -57,6 +57,7 @@ var (
 	maxPingFailures = 2
 )
 
+// TODO: ola investigate this thing
 func (c *Conn) watchPings() {
 	tick := time.NewTicker(pingIterval)
 	defer tick.Stop()

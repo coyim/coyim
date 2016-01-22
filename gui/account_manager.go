@@ -5,12 +5,14 @@ import (
 
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
+	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session"
 )
 
 type accountManager struct {
 	accounts []*account
 	events   chan interface{}
+	contacts map[*account]*rosters.List
 
 	client.CommandManager
 
@@ -21,6 +23,7 @@ func newAccountManager(c client.CommandManager) *accountManager {
 	return &accountManager{
 		events:         make(chan interface{}, 10),
 		accounts:       make([]*account, 0, 5),
+		contacts:       make(map[*account]*rosters.List),
 		CommandManager: c,
 	}
 }
@@ -43,6 +46,21 @@ func (m *accountManager) findAccountForSession(s *session.Session) *account {
 	return acc
 }
 
+func (m *accountManager) getAllContacts() map[*account]*rosters.List {
+	return m.contacts
+}
+
+func (m *accountManager) getContacts(acc *account) *rosters.List {
+	return m.contacts[acc]
+}
+
+func (m *accountManager) setContacts(account *account, contacts *rosters.List) {
+	if account == nil {
+		panic("Developer error: account should never be nil")
+	}
+	m.contacts[account] = contacts
+}
+
 func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account) {
 	m.Lock()
 	defer m.Unlock()
@@ -57,9 +75,10 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 	acc.session.CommandManager = m
 
 	m.accounts = append(m.accounts, acc)
+	m.setContacts(acc, rosters.New())
 }
 
-func (m *accountManager) removeAccount(conf *config.Account) {
+func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 	toRemove, exists := m.getAccountByID(conf.ID())
 	if !exists {
 		return
@@ -71,6 +90,7 @@ func (m *accountManager) removeAccount(conf *config.Account) {
 	accs := make([]*account, 0, len(m.accounts)-1)
 	for _, acc := range m.accounts {
 		if acc == toRemove {
+			delete(m.contacts, acc)
 			continue
 		}
 
@@ -78,6 +98,8 @@ func (m *accountManager) removeAccount(conf *config.Account) {
 	}
 
 	m.accounts = accs
+
+	k()
 }
 
 func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
@@ -110,4 +132,28 @@ func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationC
 
 		m.addAccount(appConfig, configAccount)
 	}
+}
+
+func (m *accountManager) removePeer(account *account, peer string) {
+	m.Lock()
+	defer m.Unlock()
+
+	l, ok := m.contacts[account]
+	if !ok {
+		return
+	}
+
+	l.Remove(peer)
+}
+
+func (m *accountManager) getPeer(account *account, peer string) (*rosters.Peer, bool) {
+	m.RLock()
+	defer m.RUnlock()
+
+	l, ok := m.contacts[account]
+	if !ok {
+		return nil, false
+	}
+
+	return l.Get(peer)
 }

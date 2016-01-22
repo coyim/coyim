@@ -3,8 +3,8 @@ package gui
 import (
 	"fmt"
 	"html"
+	"log"
 	"sort"
-	"sync"
 	"time"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -14,42 +14,11 @@ import (
 	"github.com/twstrike/coyim/ui"
 )
 
-//TODO: why not use the account ID, the same way as the gtk.TreeModel?
-type contacts struct {
-	sync.RWMutex
-	m map[*account]*rosters.List
-}
-
-func (c *contacts) remove(account *account, peer string) {
-	c.Lock()
-	defer c.Unlock()
-
-	l, ok := c.m[account]
-	if !ok {
-		return
-	}
-
-	l.Remove(peer)
-}
-
-func (c *contacts) get(account *account, peer string) (*rosters.Peer, bool) {
-	c.RLock()
-	defer c.RUnlock()
-
-	l, ok := c.m[account]
-	if !ok {
-		return nil, false
-	}
-
-	return l.Get(peer)
-}
-
 type roster struct {
 	widget *gtk.ScrolledWindow
 	model  *gtk.TreeStore
 	view   *gtk.TreeView
 
-	contacts       *contacts
 	checkEncrypted func(to string) bool
 	sendMessage    func(to, message string)
 
@@ -77,10 +46,6 @@ func (u *gtkUI) newRoster() *roster {
 	builder := builderForDefinition("Roster")
 
 	r := &roster{
-		contacts: &contacts{
-			m: make(map[*account]*rosters.List),
-		},
-
 		isCollapsed: make(map[string]bool),
 
 		ui: u,
@@ -143,7 +108,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
 			account.session.RemoveContact(jid)
-			r.contacts.remove(account, jid)
+			r.ui.removePeer(account, jid)
 			r.redraw()
 		},
 		"on_allow_contact_to_see_status": func() {
@@ -255,7 +220,7 @@ func (r *roster) openConversationWindow(account *account, to string) (*conversat
 }
 
 func (r *roster) displayNameFor(account *account, from string) string {
-	p, ok := r.contacts.get(account, from)
+	p, ok := r.ui.getPeer(account, from)
 	if !ok {
 		return from
 	}
@@ -287,17 +252,17 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 }
 
 func (r *roster) update(account *account, entries *rosters.List) {
-	r.contacts.Lock()
-	defer r.contacts.Unlock()
+	r.ui.accountManager.Lock()
+	defer r.ui.accountManager.Unlock()
 
-	r.contacts.m[account] = entries
+	r.ui.accountManager.setContacts(account, entries)
 }
 
 func (r *roster) debugPrintRosterFor(nm string) {
-	r.contacts.RLock()
-	defer r.contacts.RUnlock()
+	r.ui.accountManager.RLock()
+	defer r.ui.accountManager.RUnlock()
 
-	for account, rs := range r.contacts.m {
+	for account, rs := range r.ui.accountManager.getAllContacts() {
 		if account.session.GetConfig().Is(nm) {
 			rs.Iter(func(_ int, item *rosters.Peer) {
 				fmt.Printf("->   %s\n", item.Dump())
@@ -393,13 +358,13 @@ func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent st
 func (r *roster) redrawMerged() {
 	showOffline := !r.ui.config.Display.ShowOnlyOnline
 
-	r.contacts.RLock()
-	defer r.contacts.RUnlock()
+	r.ui.accountManager.RLock()
+	defer r.ui.accountManager.RUnlock()
 
 	r.toCollapse = nil
 
 	grp := rosters.TopLevelGroup()
-	for account, contacts := range r.contacts.m {
+	for account, contacts := range r.ui.accountManager.getAllContacts() {
 		contacts.AddTo(grp, account.session.GroupDelimiter)
 	}
 
@@ -508,7 +473,10 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 
 func (r *roster) sortedAccounts() []*account {
 	var as []*account
-	for account := range r.contacts.m {
+	for account := range r.ui.accountManager.getAllContacts() {
+		if account == nil {
+			log.Printf("adding an account that is nil...\n")
+		}
 		as = append(as, account)
 	}
 	sort.Sort(byAccountNameAlphabetic(as))
@@ -518,14 +486,13 @@ func (r *roster) sortedAccounts() []*account {
 func (r *roster) redrawSeparate() {
 	showOffline := !r.ui.config.Display.ShowOnlyOnline
 
-	r.contacts.RLock()
+	r.ui.accountManager.RLock()
+	defer r.ui.accountManager.RUnlock()
 
 	r.toCollapse = nil
 
-	defer r.contacts.RUnlock()
-
 	for _, account := range r.sortedAccounts() {
-		r.redrawSeparateAccount(account, r.contacts.m[account], showOffline)
+		r.redrawSeparateAccount(account, r.ui.accountManager.getContacts(account), showOffline)
 	}
 
 	r.view.ExpandAll()

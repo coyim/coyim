@@ -5,6 +5,7 @@ import (
 	"log"
 	"sync"
 
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -29,6 +30,25 @@ type byAccountNameAlphabetic []*account
 
 func (s byAccountNameAlphabetic) Len() int { return len(s) }
 func (s byAccountNameAlphabetic) Less(i, j int) bool {
+	if s[i] == nil {
+		log.Printf("sigh i == nil\n")
+	}
+	if s[j] == nil {
+		log.Printf("sigh j == nil\n")
+	}
+	if s[i].session == nil {
+		log.Printf("sigh i.session == nil\n")
+	}
+	if s[i].session.GetConfig() == nil {
+		log.Printf("sigh i.session.GetConfig() == nil\n")
+	}
+	if s[j].session == nil {
+		log.Printf("sigh j.session == nil\n")
+	}
+	if s[j].session.GetConfig() == nil {
+		log.Printf("sigh j.session.GetConfig() == nil\n")
+	}
+
 	return s[i].session.GetConfig().Account < s[j].session.GetConfig().Account
 }
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
@@ -56,12 +76,16 @@ func (account *account) createConversationWindow(to string, displaySettings *dis
 }
 
 func (account *account) enableExistingConversationWindows(enable bool) {
-	//TODO: should lock account.conversations
-	for _, convWindow := range account.conversations {
-		if enable {
-			convWindow.win.Emit("enable")
-		} else {
-			convWindow.win.Emit("disable")
+	if account != nil {
+		account.Lock()
+		defer account.Unlock()
+
+		for _, convWindow := range account.conversations {
+			if enable {
+				convWindow.win.Emit("enable")
+			} else {
+				convWindow.win.Emit("disable")
+			}
 		}
 	}
 }
@@ -124,6 +148,7 @@ func (u *gtkUI) showAddAccountWindow() error {
 
 	u.accountDialog(c, func() {
 		u.addAndSaveAccountConfig(c)
+		u.notify(i18n.Local("Account added"), fmt.Sprintf(i18n.Local("The account %s was added successfully."), c.Account))
 	})
 
 	return nil
@@ -138,6 +163,11 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
 	if err != nil {
 		log.Println("Failed to save config:", err)
 	}
+	glib.IdleAdd(func() {
+		if u.window != nil {
+			u.window.Emit(accountChangedSignal.String())
+		}
+	})
 }
 
 func (account *account) destroyMenu() {

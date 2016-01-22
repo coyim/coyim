@@ -59,3 +59,18 @@ func buildVerifyIdentityNotification(acc *account, peer string, win *gtk.Window)
 
 	return infoBar
 }
+
+func (u *gtkUI) notify(title, message string) {
+	builder := builderForDefinition("SimpleNotification")
+	obj, _ := builder.GetObject("dialog")
+	dlg := obj.(*gtk.MessageDialog)
+
+	dlg.SetProperty("title", title)
+	dlg.SetProperty("text", message)
+	dlg.SetTransientFor(u.window)
+
+	glib.IdleAdd(func() {
+		dlg.Run()
+		dlg.Destroy()
+	})
+}

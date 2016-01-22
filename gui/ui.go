@@ -110,8 +110,8 @@ func (u *gtkUI) initialSetupWindow() {
 }
 
 func (u *gtkUI) loadConfig(configFile string) {
-	u.config.WhenLoaded(func(*config.ApplicationConfig) {
-		u.configLoaded()
+	u.config.WhenLoaded(func(c *config.ApplicationConfig) {
+		u.configLoaded(c)
 	})
 
 	config, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
@@ -135,12 +135,12 @@ func (u *gtkUI) loadConfig(configFile string) {
 	}
 }
 
-func (u *gtkUI) configLoaded() {
-	u.buildAccounts(u.config)
+func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
+	u.buildAccounts(c)
 
 	glib.IdleAdd(func() bool {
 		if u.viewMenu != nil {
-			u.viewMenu.setFromConfig(u.config)
+			u.viewMenu.setFromConfig(c)
 		}
 
 		if u.window != nil {
@@ -152,7 +152,7 @@ func (u *gtkUI) configLoaded() {
 
 	u.addInitialAccountsToRoster()
 
-	if u.config.ConnectAutomatically {
+	if c.ConnectAutomatically {
 		u.connectAllAutomatics(false)
 	}
 
@@ -189,9 +189,10 @@ func (u *gtkUI) SaveConfig() {
 
 func (u *gtkUI) removeSaveReload(acc *config.Account) {
 	//TODO: the account configs should be managed by the account manager
-	u.accountManager.removeAccount(acc)
-	u.config.Remove(acc)
-	u.SaveConfig()
+	u.accountManager.removeAccount(acc, func() {
+		u.config.Remove(acc)
+		u.SaveConfig()
+	})
 }
 
 func (u *gtkUI) saveConfigOnly() {

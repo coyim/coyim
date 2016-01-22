@@ -57,11 +57,9 @@ var (
 	maxPingFailures = 2
 )
 
-// TODO: ola investigate this thing
 func (c *Conn) watchPings() {
 	tick := time.NewTicker(pingIterval)
 	defer tick.Stop()
-	defer log.Println("xmpp: no more watching pings")
 	failures := 0
 
 	for range tick.C {
@@ -76,11 +74,11 @@ func (c *Conn) watchPings() {
 
 		select {
 		case <-time.After(pingTimeout):
-			log.Println("xmpp: pong timed out")
+			// ping timed out
 			failures = failures + 1
 		case pongStanza, ok := <-pongReply:
 			if !ok {
-				log.Println("xmpp: pong cancelled")
+				// pong cancelled
 				continue
 			}
 

@@ -3,29 +3,28 @@ package gui
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
 )
 
 func (u *gtkUI) showConnectAccountNotification(account *account) func() {
-	notification := account.buildConnectionNotification()
+	var notification *gtk.InfoBar
 
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
+		notification = account.buildConnectionNotification()
 		account.setCurrentNotification(notification, u.notificationArea)
 	})
 
 	return func() {
-		glib.IdleAdd(func() {
+		doInUIThread(func() {
 			account.removeCurrentNotificationIf(notification)
 		})
 	}
 }
 
 func (u *gtkUI) notifyConnectionFailure(account *account) {
-	notification := account.buildConnectionFailureNotification()
-
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
+		notification := account.buildConnectionFailureNotification()
 		account.setCurrentNotification(notification, u.notificationArea)
 	})
 }
@@ -46,7 +45,7 @@ func buildVerifyIdentityNotification(acc *account, peer string, win *gtk.Window)
 	obj, _ = builder.GetObject("button_verify")
 	button := obj.(*gtk.Button)
 	button.Connect("clicked", func() {
-		glib.IdleAdd(func() {
+		doInUIThread(func() {
 			resp := verifyFingerprintDialog(acc, peer, win)
 			if resp == gtk.RESPONSE_YES {
 				infoBar.Hide()
@@ -69,7 +68,7 @@ func (u *gtkUI) notify(title, message string) {
 	dlg.SetProperty("text", message)
 	dlg.SetTransientFor(u.window)
 
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		dlg.Run()
 		dlg.Destroy()
 	})

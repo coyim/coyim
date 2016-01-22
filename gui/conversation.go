@@ -394,7 +394,7 @@ type taggableText struct {
 }
 
 func (conv *conversationWindow) appendToHistory(timestamp time.Time, entries ...taggableText) {
-	glib.IdleAdd(func() bool {
+	doInUIThread(func() {
 		conv.Lock()
 		defer conv.Unlock()
 
@@ -414,8 +414,6 @@ func (conv *conversationWindow) appendToHistory(timestamp time.Time, entries ...
 				insertAtEnd(buff, entry.text)
 			}
 		}
-
-		return false
 	})
 }
 

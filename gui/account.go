@@ -5,7 +5,6 @@ import (
 	"log"
 	"sync"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -163,7 +162,7 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
 	if err != nil {
 		log.Println("Failed to save config:", err)
 	}
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		if u.window != nil {
 			u.window.Emit(accountChangedSignal.String())
 		}

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
@@ -234,14 +233,13 @@ func (r *roster) presenceUpdated(account *account, from, show, showStatus string
 		return
 	}
 
-	glib.IdleAdd(func() bool {
+	doInUIThread(func() {
 		c.appendStatus(r.displayNameFor(account, from), time.Now(), show, showStatus, gone)
-		return false
 	})
 }
 
 func (r *roster) messageReceived(account *account, from string, timestamp time.Time, encrypted bool, message []byte) {
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		conv, err := r.openConversationWindow(account, from)
 		if err != nil {
 			return

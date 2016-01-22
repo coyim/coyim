@@ -3,7 +3,6 @@ package gui
 import (
 	"log"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/config/importer"
@@ -105,7 +104,7 @@ func (u *gtkUI) runImporter() {
 	})
 
 	u.connectShortcutsChildWindow(&w.Window)
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		w.SetTransientFor(u.window)
 		w.ShowAll()
 	})

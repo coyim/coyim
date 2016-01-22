@@ -1,9 +1,6 @@
 package gui
 
-import (
-	"github.com/gotk3/gotk3/glib"
-	"github.com/twstrike/coyim/client"
-)
+import "github.com/twstrike/coyim/client"
 
 type executable interface {
 	execute(u *gtkUI)
@@ -21,7 +18,7 @@ func (u *gtkUI) ExecuteCmd(c interface{}) {
 }
 
 func (c connectAccountCmd) execute(u *gtkUI) {
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		u.connectAccount(c.a)
 	})
 }
@@ -31,13 +28,13 @@ func (c disconnectAccountCmd) execute(u *gtkUI) {
 }
 
 func (c editAccountCmd) execute(u *gtkUI) {
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		u.editAccount(c.a)
 	})
 }
 
 func (c removeAccountCmd) execute(u *gtkUI) {
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		u.removeAccount(c.a)
 	})
 }

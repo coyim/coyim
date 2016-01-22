@@ -130,7 +130,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 
 	if err != nil {
 		log.Printf(err.Error())
-		glib.IdleAdd(u.initialSetupWindow)
+		doInUIThread(u.initialSetupWindow)
 		return
 	}
 }
@@ -138,7 +138,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 	u.buildAccounts(c)
 
-	glib.IdleAdd(func() bool {
+	doInUIThread(func() {
 		if u.viewMenu != nil {
 			u.viewMenu.setFromConfig(c)
 		}
@@ -146,8 +146,6 @@ func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 		if u.window != nil {
 			u.window.Emit(accountChangedSignal.String())
 		}
-
-		return false
 	})
 
 	u.addInitialAccountsToRoster()
@@ -220,7 +218,7 @@ func (u *gtkUI) Loop() {
 	go u.watchCommands()
 	go u.observeAccountEvents()
 
-	glib.IdleAdd(u.mainWindow)
+	doInUIThread(u.mainWindow)
 	gtk.Main()
 }
 
@@ -278,7 +276,7 @@ func (u *gtkUI) mainWindow() {
 			return
 		}
 
-		glib.IdleAdd(u.addFeedbackInfoBar)
+		doInUIThread(u.addFeedbackInfoBar)
 	})
 
 	u.connectShortcutsMainWindow(u.window)
@@ -321,7 +319,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 	obj, _ = builder.GetObject("feedbackButton")
 	button := obj.(*gtk.Button)
 	button.Connect("clicked", func() {
-		glib.IdleAdd(u.feedbackDialog)
+		doInUIThread(u.feedbackDialog)
 	})
 }
 
@@ -506,7 +504,7 @@ func (u *gtkUI) initMenuBar() {
 }
 
 func (u *gtkUI) rosterUpdated() {
-	glib.IdleAdd(u.roster.redraw)
+	doInUIThread(u.roster.redraw)
 }
 
 func (u *gtkUI) alertTorIsNotRunning() {

@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 )
@@ -12,10 +11,9 @@ type viewMenu struct {
 }
 
 func (v *viewMenu) setFromConfig(c *config.ApplicationConfig) {
-	glib.IdleAdd(func() bool {
+	doInUIThread(func() {
 		v.merge.SetActive(c.Display.MergeAccounts)
 		v.offline.SetActive(!c.Display.ShowOnlyOnline)
-		return false
 	})
 }
 

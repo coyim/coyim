@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
@@ -14,29 +13,24 @@ func (u *gtkUI) observeAccountEvents() {
 	for ev := range u.events {
 		switch t := ev.(type) {
 		case session.Event:
-			glib.IdleAdd(func() bool {
+			doInUIThread(func() {
 				u.handleSessionEvent(t)
-				return false
 			})
 		case session.PeerEvent:
-			glib.IdleAdd(func() bool {
+			doInUIThread(func() {
 				u.handlePeerEvent(t)
-				return false
 			})
 		case session.PresenceEvent:
-			glib.IdleAdd(func() bool {
+			doInUIThread(func() {
 				u.handlePresenceEvent(t)
-				return false
 			})
 		case session.MessageEvent:
-			glib.IdleAdd(func() bool {
+			doInUIThread(func() {
 				u.handleMessageEvent(t)
-				return false
 			})
 		case session.LogEvent:
-			glib.IdleAdd(func() bool {
+			doInUIThread(func() {
 				u.handleLogEvent(t)
-				return false
 			})
 		default:
 			log.Printf("unsupported event %#v\n", t)
@@ -144,7 +138,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 	case session.SubscriptionRequest:
 		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From)
 
-		glib.IdleAdd(func() bool {
+		doInUIThread(func() {
 			responseType := gtk.ResponseType(confirmDialog.Run())
 			switch responseType {
 			case gtk.RESPONSE_YES:
@@ -156,8 +150,6 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 				// to keep the subscription request open
 			}
 			confirmDialog.Destroy()
-
-			return false
 		})
 	case session.Subscribed:
 		jid := ev.Session.GetConfig().Account

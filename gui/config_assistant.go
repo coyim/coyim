@@ -5,7 +5,6 @@ import (
 	"net"
 	"strings"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -68,7 +67,7 @@ func buildConfigAssistant(saveFn saveAccountFunc, closeFn func()) (*gtk.Assistan
 			go func() {
 				ok := ournet.Tor.Detect()
 
-				glib.IdleAdd(func() {
+				doInUIThread(func() {
 					detectedMsg.SetVisible(ok)
 					notDetectedMsg.SetVisible(!ok)
 					assistant.SetPageComplete(page, ok)
@@ -110,11 +109,10 @@ func buildConfigAssistant(saveFn saveAccountFunc, closeFn func()) (*gtk.Assistan
 				}
 
 				if len(services) > 0 {
-					glib.IdleAdd(func() {
+					doInUIThread(func() {
 						msgLabel.SetVisible(true)
 						msgLabel.SetText(i18n.Local("All right with SRV"))
 						assistant.SetPageComplete(page, true)
-						return
 					})
 				}
 
@@ -130,7 +128,7 @@ func buildConfigAssistant(saveFn saveAccountFunc, closeFn func()) (*gtk.Assistan
 				conn, err := torProxy.Dial("tcp", addr)
 
 				if err != nil {
-					glib.IdleAdd(func() {
+					doInUIThread(func() {
 						//TODO: Failed to connect, should ask for XMPP server (and port)
 						msgLabel.SetVisible(true)
 						msgLabel.SetText(i18n.Localf(
@@ -142,7 +140,7 @@ func buildConfigAssistant(saveFn saveAccountFunc, closeFn func()) (*gtk.Assistan
 
 				conn.Close()
 
-				glib.IdleAdd(func() {
+				doInUIThread(func() {
 					msgLabel.SetVisible(true)
 					msgLabel.SetText(i18n.Local("All right with fallback"))
 					assistant.SetPageComplete(page, true)

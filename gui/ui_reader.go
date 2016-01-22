@@ -29,7 +29,10 @@ func getDefinitionWithFileFallback(uiName string) string {
 	return readFile(fileName)
 }
 
+// This must be called from the UI thread - otherwise bad things will happen sooner or later
 func builderForDefinition(uiName string) *gtk.Builder {
+	// assertInUIThread()
+
 	template := getDefinitionWithFileFallback(uiName)
 
 	builder, err := gtk.BuilderNew()

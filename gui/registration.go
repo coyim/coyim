@@ -4,7 +4,6 @@ import (
 	"errors"
 	"log"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp"
@@ -78,7 +77,7 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	dialog.SetTransientFor(f.parent)
 
 	wait := make(chan error)
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		resp := gtk.ResponseType(dialog.Run())
 		switch resp {
 		case gtk.RESPONSE_APPLY:

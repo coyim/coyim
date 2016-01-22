@@ -3,7 +3,6 @@ package gui
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/gotk3/gotk3/pango"
 )
@@ -16,28 +15,25 @@ type displaySettings struct {
 }
 
 func (ds *displaySettings) defaultSettingsOn(w *gtk.Widget) {
-	glib.IdleAdd(func() bool {
+	doInUIThread(func() {
 		styleContext, _ := w.GetStyleContext()
 		styleContext.AddProvider(ds.provider, 9999)
-		return false
 	})
 }
 
 func (ds *displaySettings) unifiedBackgroundColor(w *gtk.Widget) {
-	glib.IdleAdd(func() bool {
+	doInUIThread(func() {
 		styleContext, _ := w.GetStyleContext()
 		styleContext.AddProvider(ds.provider, 9999)
 		styleContext.AddClass("currentBackgroundColor")
-		return false
 	})
 }
 
 func (ds *displaySettings) control(w *gtk.Widget) {
-	glib.IdleAdd(func() bool {
+	doInUIThread(func() {
 		styleContext, _ := w.GetStyleContext()
 		styleContext.AddProvider(ds.provider, 9999)
 		styleContext.AddClass("currentFontSetting")
-		return false
 	})
 }
 
@@ -65,9 +61,8 @@ func (ds *displaySettings) update() {
   background-color: #fff;
 }
 `, ds.defaultFontSize, ds.fontSize)
-	glib.IdleAdd(func() bool {
+	doInUIThread(func() {
 		ds.provider.LoadFromData(css)
-		return false
 	})
 }
 

@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -47,7 +46,7 @@ func (u *gtkUI) captureInitialMasterPassword(k func()) {
 		},
 	})
 
-	glib.IdleAdd(func() {
+	doInUIThread(func() {
 		pwdDialog.SetTransientFor(u.window)
 		pwdDialog.ShowAll()
 	})
@@ -90,34 +89,38 @@ func (o *onetimeSavedPassword) GenerateKey(params config.EncryptionParameters) (
 
 func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {
 	dialogID := "MasterPassword"
-	builder := builderForDefinition(dialogID)
-	dialogOb, _ := builder.GetObject(dialogID)
-	dialog := dialogOb.(*gtk.Dialog)
-
-	passObj, _ := builder.GetObject("password")
-	password := passObj.(*gtk.Entry)
 	pwdResultChan := make(chan string)
+	var cleanup func()
 
-	msgObj, _ := builder.GetObject("passMessage")
-	messageObj := msgObj.(*gtk.Label)
-	messageObj.SetSelectable(true)
+	doInUIThread(func() {
+		builder := builderForDefinition(dialogID)
+		dialogOb, _ := builder.GetObject(dialogID)
+		dialog := dialogOb.(*gtk.Dialog)
 
-	builder.ConnectSignals(map[string]interface{}{
-		"on_save_signal": func() {
-			passText, _ := password.GetText()
-			if len(passText) > 0 {
-				messageObj.SetLabel(i18n.Local("Checking password..."))
-				pwdResultChan <- passText
+		cleanup = dialog.Destroy
+
+		passObj, _ := builder.GetObject("password")
+		password := passObj.(*gtk.Entry)
+
+		msgObj, _ := builder.GetObject("passMessage")
+		messageObj := msgObj.(*gtk.Label)
+		messageObj.SetSelectable(true)
+
+		builder.ConnectSignals(map[string]interface{}{
+			"on_save_signal": func() {
+				passText, _ := password.GetText()
+				if len(passText) > 0 {
+					messageObj.SetLabel(i18n.Local("Checking password..."))
+					pwdResultChan <- passText
+					close(pwdResultChan)
+				}
+			},
+			"on_cancel_signal": func() {
 				close(pwdResultChan)
-			}
-		},
-		"on_cancel_signal": func() {
-			close(pwdResultChan)
-			u.quit()
-		},
-	})
+				u.quit()
+			},
+		})
 
-	glib.IdleAdd(func() {
 		dialog.SetTransientFor(u.window)
 		dialog.ShowAll()
 	})
@@ -125,15 +128,11 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 	pwd, ok := <-pwdResultChan
 
 	if !ok {
-		glib.IdleAdd(func() {
-			dialog.Destroy()
-		})
+		doInUIThread(cleanup)
 		return nil, nil, false
 	}
 
 	l, r := config.GenerateKeys(pwd, params)
-	glib.IdleAdd(func() {
-		dialog.Destroy()
-	})
+	doInUIThread(cleanup)
 	return l, r, true
 }

@@ -3,6 +3,8 @@ package gui
 import (
 	"fmt"
 	"log"
+	"net"
+	"net/url"
 	"strconv"
 	"strings"
 	"sync"
@@ -25,6 +27,37 @@ func firstProxy(account *account) string {
 	}
 
 	return ""
+}
+
+func checkIsLikelyRandom(protocol, username, password string) bool {
+	return protocol == "socks5" && ((strings.HasPrefix(username, "randomTor:") &&
+		strings.HasPrefix(password, "randomTor:")) ||
+		(len(username) == 10 &&
+			len(password) == 10))
+}
+
+func parseProxy(s string) (protocol, host, port, username, password string, ok bool) {
+	p, err := url.Parse(s)
+	if err != nil {
+		return "", "", "", "", "", false
+	}
+
+	host, port, err = net.SplitHostPort(p.Host)
+	if err != nil {
+		nerr, ok := err.(*net.AddrError)
+		if !ok || nerr.Err != "missing port in address" {
+			return "", "", "", "", "", false
+		}
+
+		port = ""
+	}
+
+	ok = true
+	protocol = p.Scheme
+	username = p.User.Username()
+	password, _ = p.User.Password()
+
+	return
 }
 
 func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
@@ -52,12 +85,54 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	}
 	portEntry.SetText(strconv.Itoa(account.Port))
 
+	obj, _ = builder.GetObject("proxyServer")
+	proxyServer := obj.(*gtk.Entry)
+	obj, _ = builder.GetObject("proxyPort")
+	proxyPort := obj.(*gtk.Entry)
+	obj, _ = builder.GetObject("proxyRandomUser")
+	proxyRandomUser := obj.(*gtk.CheckButton)
+	obj, _ = builder.GetObject("proxyUsernameLabel")
+	proxyUsernameLabel := obj.(*gtk.Label)
+	obj, _ = builder.GetObject("proxyPasswordLabel")
+	proxyPasswordLabel := obj.(*gtk.Label)
+	obj, _ = builder.GetObject("proxyUsername")
+	proxyUsername := obj.(*gtk.Entry)
+	obj, _ = builder.GetObject("proxyPassword")
+	proxyPassword := obj.(*gtk.Entry)
+
+	isLikelyRandom := true
+	log.Printf("account proxies: %v\n", account.Proxies)
+	if len(account.Proxies) > 0 {
+		log.Printf("first proxy: %v\n", account.Proxies[0])
+		scheme, server, port, user, pass, ok := parseProxy(account.Proxies[0])
+		if ok {
+			log.Printf("yeah it was OK\n")
+			isLikelyRandom = checkIsLikelyRandom(scheme, user, pass)
+			proxyRandomUser.SetActive(isLikelyRandom)
+			proxyUsernameLabel.SetSensitive(!isLikelyRandom)
+			proxyPasswordLabel.SetSensitive(!isLikelyRandom)
+			proxyUsername.SetSensitive(!isLikelyRandom)
+			proxyPassword.SetSensitive(!isLikelyRandom)
+			proxyServer.SetText(server)
+			proxyPort.SetText(port)
+			proxyUsername.SetText(user)
+			proxyPassword.SetText(pass)
+		}
+	}
+
 	obj, _ = builder.GetObject("notification-area")
 	notificationArea := obj.(*gtk.Box)
 
 	failures := 0
 
 	builder.ConnectSignals(map[string]interface{}{
+		"on_toggle_random_user": func() {
+			isLikelyRandom = proxyRandomUser.GetActive()
+			proxyUsernameLabel.SetSensitive(!isLikelyRandom)
+			proxyPasswordLabel.SetSensitive(!isLikelyRandom)
+			proxyUsername.SetSensitive(!isLikelyRandom)
+			proxyPassword.SetSensitive(!isLikelyRandom)
+		},
 		"on_save_signal": func() {
 			accTxt, _ := accEntry.GetText()
 			passTxt, _ := passEntry.GetText()

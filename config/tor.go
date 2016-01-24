@@ -31,7 +31,7 @@ func newTorProxy(torAddress string) string {
 
 	var credentials *url.Userinfo
 	if randomString(user[:]) == nil && randomString(pass[:]) == nil {
-		credentials = url.UserPassword(string(user[:]), string(pass[:]))
+		credentials = url.UserPassword("randomTor:"+string(user[:]), "randomTor:"+string(pass[:]))
 	}
 
 	proxy := url.URL{

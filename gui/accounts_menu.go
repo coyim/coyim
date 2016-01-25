@@ -70,6 +70,9 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	obj, _ = builder.GetObject("notebook1")
 	notebook := obj.(*gtk.Notebook)
 
+	obj, _ = builder.GetObject("otherSettings")
+	otherSettingsToggle := obj.(*gtk.CheckButton)
+
 	obj, _ = builder.GetObject("account")
 	accEntry := obj.(*gtk.Entry)
 	accEntry.SetText(account.Account)
@@ -88,53 +91,24 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	}
 	portEntry.SetText(strconv.Itoa(account.Port))
 
-	obj, _ = builder.GetObject("proxyServer")
-	proxyServer := obj.(*gtk.Entry)
-	obj, _ = builder.GetObject("proxyPort")
-	proxyPort := obj.(*gtk.Entry)
-	obj, _ = builder.GetObject("proxyRandomUser")
-	proxyRandomUser := obj.(*gtk.CheckButton)
-	obj, _ = builder.GetObject("proxyUsernameLabel")
-	proxyUsernameLabel := obj.(*gtk.Label)
-	obj, _ = builder.GetObject("proxyPasswordLabel")
-	proxyPasswordLabel := obj.(*gtk.Label)
-	obj, _ = builder.GetObject("proxyUsername")
-	proxyUsername := obj.(*gtk.Entry)
-	obj, _ = builder.GetObject("proxyPassword")
-	proxyPassword := obj.(*gtk.Entry)
-
-	isLikelyRandom := true
-	log.Printf("account proxies: %v\n", account.Proxies)
-	if len(account.Proxies) > 0 {
-		log.Printf("first proxy: %v\n", account.Proxies[0])
-		scheme, server, port, user, pass, ok := parseProxy(account.Proxies[0])
-		if ok {
-			log.Printf("yeah it was OK\n")
-			isLikelyRandom = checkIsLikelyRandom(scheme, user, pass)
-			proxyRandomUser.SetActive(isLikelyRandom)
-			proxyUsernameLabel.SetSensitive(!isLikelyRandom)
-			proxyPasswordLabel.SetSensitive(!isLikelyRandom)
-			proxyUsername.SetSensitive(!isLikelyRandom)
-			proxyPassword.SetSensitive(!isLikelyRandom)
-			proxyServer.SetText(server)
-			proxyPort.SetText(port)
-			proxyUsername.SetText(user)
-			proxyPassword.SetText(pass)
-		}
-	}
-
 	obj, _ = builder.GetObject("notification-area")
 	notificationArea := obj.(*gtk.Box)
+
+	p2, _ := notebook.GetNthPage(1)
+	p3, _ := notebook.GetNthPage(2)
 
 	failures := 0
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_toggle_random_user": func() {
-			isLikelyRandom = proxyRandomUser.GetActive()
-			proxyUsernameLabel.SetSensitive(!isLikelyRandom)
-			proxyPasswordLabel.SetSensitive(!isLikelyRandom)
-			proxyUsername.SetSensitive(!isLikelyRandom)
-			proxyPassword.SetSensitive(!isLikelyRandom)
+		"on_toggle_other_settings": func() {
+			otherSettings := otherSettingsToggle.GetActive()
+			if otherSettings {
+				p2.Show()
+				p3.Show()
+			} else {
+				p2.Hide()
+				p3.Hide()
+			}
 		},
 		"on_save_signal": func() {
 			accTxt, _ := accEntry.GetText()
@@ -183,6 +157,9 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
 	notebook.SetCurrentPage(0)
+
+	p2.Hide()
+	p3.Hide()
 }
 
 func buildBadUsernameNotification(msg string) *gtk.InfoBar {

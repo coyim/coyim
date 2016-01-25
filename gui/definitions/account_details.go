@@ -26,6 +26,7 @@ func (*defAccountDetails) String() string {
         <child>
           <object class="GtkNotebook" id="notebook1">
             <property name="visible">True</property>
+            <property name="show-border">False</property>
             <property name="page">0</property>
             <property name="margin-bottom">10</property>
             <child>
@@ -73,6 +74,28 @@ func (*defAccountDetails) String() string {
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">1</property>
+                  </packing>
+                </child>
+
+                <child>
+                  <object class="GtkLabel" id="showOtherSettings">
+                    <property name="label" translatable="yes">Other settings</property>
+                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                    <property name="halign">GTK_ALIGN_END</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="otherSettings">
+                    <signal name="toggled" handler="on_toggle_other_settings" />
+                  </object>
+                  
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">2</property>
                   </packing>
                 </child>
               </object>
@@ -136,111 +159,6 @@ func (*defAccountDetails) String() string {
                   </packing>
                 </child>
 
-                <child>
-                  <object class="GtkLabel" id="proxyServerLabel">
-                    <property name="label" translatable="yes">Proxy server</property>
-                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
-                    <property name="halign">GTK_ALIGN_END</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="proxyServer">
-                    <signal name="activate" handler="on_save_signal" />
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">2</property>
-                  </packing>
-                </child>
-                
-                <child>
-                  <object class="GtkLabel" id="proxyPortLabel">
-                    <property name="label" translatable="yes">Proxy port</property>
-                    <property name="halign">GTK_ALIGN_END</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="proxyPort">
-                    <signal name="activate" handler="on_save_signal" />
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">3</property>
-                  </packing>
-                </child>
-
-                <child>
-                  <object class="GtkLabel" id="proxyRandomUserLabel">
-                    <property name="label" translatable="yes">Random user/password</property>
-                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
-                    <property name="halign">GTK_ALIGN_END</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="proxyRandomUser">
-                    <signal name="toggled" handler="on_toggle_random_user" />
-                  </object>
-                  
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">4</property>
-                  </packing>
-                </child>
-                
-                <child>
-                  <object class="GtkLabel" id="proxyUsernameLabel">
-                    <property name="label" translatable="yes">Proxy username</property>
-                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
-                    <property name="halign">GTK_ALIGN_END</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="proxyUsername">
-                    <signal name="activate" handler="on_save_signal" />
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">5</property>
-                  </packing>
-                </child>
-                
-                <child>
-                  <object class="GtkLabel" id="proxyPasswordLabel">
-                    <property name="label" translatable="yes">Proxy password</property>
-                    <property name="halign">GTK_ALIGN_END</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">6</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="proxyPassword">
-                    <property name="visibility">false</property>
-                    <signal name="activate" handler="on_save_signal" />
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">6</property>
-                  </packing>
-                </child>
-                
               </object>
             </child>
             <child type="tab">

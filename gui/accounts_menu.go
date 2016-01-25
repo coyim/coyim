@@ -67,6 +67,9 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	obj, _ := builder.GetObject(dialogID)
 	dialog := obj.(*gtk.Dialog)
 
+	obj, _ = builder.GetObject("notebook1")
+	notebook := obj.(*gtk.Notebook)
+
 	obj, _ = builder.GetObject("account")
 	accEntry := obj.(*gtk.Entry)
 	accEntry.SetText(account.Account)
@@ -179,6 +182,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 
 	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
+	notebook.SetCurrentPage(0)
 }
 
 func buildBadUsernameNotification(msg string) *gtk.InfoBar {

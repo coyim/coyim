@@ -35,9 +35,9 @@ type RegisterQuery struct {
 }
 
 // XEP-0077
-func (d *Dialer) negotiateInBandRegistration(c *Conn) (error, bool) {
+func (d *Dialer) negotiateInBandRegistration(c *Conn) (bool, error) {
 	if c.features.InBandRegistration == nil {
-		return nil, false
+		return false, nil
 	}
 
 	user := d.getJIDLocalpart()
@@ -45,17 +45,17 @@ func (d *Dialer) negotiateInBandRegistration(c *Conn) (error, bool) {
 	return c.registerAccount(user, password)
 }
 
-func (c *Conn) registerAccount(user, password string) (error, bool) {
+func (c *Conn) registerAccount(user, password string) (bool, error) {
 	if c.config.CreateCallback == nil {
-		return nil, false
+		return false, nil
 	}
 
 	err := c.createAccount(user, password)
 	if err != nil {
-		return err, false
+		return false, err
 	}
 
-	return c.closeImmediately(), true
+	return true, c.closeImmediately()
 }
 
 func (c *Conn) createAccount(user, password string) error {

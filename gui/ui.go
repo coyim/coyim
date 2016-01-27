@@ -213,12 +213,14 @@ func init() {
 }
 
 func (u *gtkUI) Loop() {
-	go u.loadConfig(*config.ConfigFile)
-
 	go u.watchCommands()
 	go u.observeAccountEvents()
 
-	doInUIThread(u.mainWindow)
+	doInUIThread(func() {
+		u.mainWindow()
+		go u.loadConfig(*config.ConfigFile)
+	})
+
 	gtk.Main()
 }
 

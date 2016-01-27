@@ -94,8 +94,10 @@ mkdir -p $resources/share/icons
 cp -a $(brew --prefix gnome-icon-theme)/share/icons/* $resources/share/icons
 cp -a $(brew --prefix hicolor-icon-theme)/share/icons/* $resources/share/icons
 
+mkdir -p $resources/share/themes/Mac
+cp -a $(brew --prefix gtk+3)/share/themes/Mac/* $resources/share/themes/Mac
+
 mkdir -p $resources/etc/gtk-3.0
-mkdir -p $resources/share/themes
 cat > $resources/etc/gtk-3.0/settings.ini << EOF
 [Settings]
 gtk-theme-name=Adwaita

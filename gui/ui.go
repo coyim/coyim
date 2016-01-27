@@ -444,7 +444,7 @@ func (u *gtkUI) addContactWindow() {
 		//TODO errors
 		account, ok := u.roster.getAccount(accountID)
 		if !ok {
-			return errors.New(fmt.Sprintf(i18n.Local("There is no account with the id %q"), accountID))
+			return fmt.Errorf(i18n.Local("There is no account with the id %q"), accountID)
 		}
 
 		if !account.connected() {

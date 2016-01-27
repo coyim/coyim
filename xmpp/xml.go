@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 )
 
 var xmlSpecial = map[byte]string{
@@ -51,6 +52,10 @@ func nextElement(p *xml.Decoder) (xml.Token, error) {
 			// https://xmpp.org/rfcs/rfc6120.html#xml-whitespace
 			if string(elem) == " " {
 				log.Println("xmpp: received whitespace ping")
+			}
+		case xml.ProcInst:
+			if !(elem.Target == "xml" && strings.HasPrefix(string(elem.Inst), "version=")) {
+				log.Printf("xmpp: received unhandled ProcInst element: target=%s inst=%s\n", elem.Target, string(elem.Inst))
 			}
 		default:
 			log.Printf("xmpp: received unhandled element: %#v\n", elem)

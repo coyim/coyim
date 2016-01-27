@@ -76,6 +76,10 @@ func (o *onetimeSavedPassword) Invalidate() {
 	o.realF.Invalidate()
 }
 
+func (o *onetimeSavedPassword) LastAttemptFailed() {
+	o.realF.LastAttemptFailed()
+}
+
 func (o *onetimeSavedPassword) GenerateKey(params config.EncryptionParameters) ([]byte, []byte, bool) {
 	if o.savedPassword != "" {
 		ourPwd := o.savedPassword
@@ -87,7 +91,7 @@ func (o *onetimeSavedPassword) GenerateKey(params config.EncryptionParameters) (
 	return o.realF.GenerateKey(params)
 }
 
-func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {
+func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemptFailed bool) ([]byte, []byte, bool) {
 	dialogID := "MasterPassword"
 	pwdResultChan := make(chan string)
 	var cleanup func()
@@ -105,6 +109,10 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters) ([]byte, [
 		msgObj, _ := builder.GetObject("passMessage")
 		messageObj := msgObj.(*gtk.Label)
 		messageObj.SetSelectable(true)
+
+		if lastAttemptFailed {
+			messageObj.SetLabel(i18n.Local("Incorrect password entered, please try again."))
+		}
 
 		builder.ConnectSignals(map[string]interface{}{
 			"on_save_signal": func() {

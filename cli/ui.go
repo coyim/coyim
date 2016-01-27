@@ -79,7 +79,7 @@ func NewCLI(version string) UI {
 	}
 }
 
-func (c *cliUI) getMasterPassword(params config.EncryptionParameters) ([]byte, []byte, bool) {
+func (c *cliUI) getMasterPassword(params config.EncryptionParameters, previousFailed bool) ([]byte, []byte, bool) {
 	password, err := c.term.ReadPassword("Master password for configuration file: ")
 	if err != nil {
 		c.alert(err.Error())

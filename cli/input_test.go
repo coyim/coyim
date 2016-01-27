@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"io/ioutil"
+	"log"
 	"reflect"
 	"testing"
 
@@ -40,6 +42,10 @@ var priorityListTests = []struct {
 }
 
 func Test(t *testing.T) { TestingT(t) }
+
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
 
 type CLISuite struct{}
 

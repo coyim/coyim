@@ -1,6 +1,8 @@
 package plain
 
 import (
+	"io/ioutil"
+	"log"
 	"testing"
 
 	"github.com/twstrike/coyim/sasl"
@@ -8,6 +10,10 @@ import (
 )
 
 func Test(t *testing.T) { TestingT(t) }
+
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
 
 type SASLPlain struct{}
 

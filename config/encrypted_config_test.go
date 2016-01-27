@@ -91,7 +91,7 @@ var encryptedDataContent = []byte(`
 `)
 
 func (s *EncryptedConfigXmppSuite) Test_decryptConfiguration(c *C) {
-	res, _, e := decryptConfiguration(encryptedDataContent, FunctionKeySupplier(func(params EncryptionParameters) ([]byte, []byte, bool) {
+	res, _, e := decryptConfiguration(encryptedDataContent, FunctionKeySupplier(func(params EncryptionParameters, _ bool) ([]byte, []byte, bool) {
 		return testKey, testMacKey, true
 	}))
 	c.Assert(e, IsNil)
@@ -108,7 +108,7 @@ func (s *EncryptedConfigXmppSuite) Test_encryptConfiguration(c *C) {
 	}
 	p.deserialize()
 
-	res, e := encryptConfiguration("this is some data I want to have encrypted", p, FunctionKeySupplier(func(params EncryptionParameters) ([]byte, []byte, bool) {
+	res, e := encryptConfiguration("this is some data I want to have encrypted", p, FunctionKeySupplier(func(params EncryptionParameters, _ bool) ([]byte, []byte, bool) {
 		return testKey, testMacKey, true
 	}))
 	c.Assert(e, IsNil)

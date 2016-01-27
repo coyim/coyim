@@ -21,6 +21,10 @@ func init() {
 
 func Test(t *testing.T) { TestingT(t) }
 
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
+
 type SessionXmppSuite struct{}
 
 var _ = Suite(&SessionXmppSuite{})

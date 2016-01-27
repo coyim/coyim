@@ -114,19 +114,21 @@ func (u *gtkUI) loadConfig(configFile string) {
 		u.configLoaded(c)
 	})
 
-	config, ok, err := config.LoadOrCreate(configFile, u.keySupplier)
-
-	if !ok {
-		u.keySupplier.Invalidate()
-		u.loadConfig(configFile)
-		// TODO: tell the user we couldn't open the encrypted file
-		log.Printf("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
-		return
+	ok := false
+	var conf *config.ApplicationConfig
+	var err error
+	for !ok {
+		conf, ok, err = config.LoadOrCreate(configFile, u.keySupplier)
+		if !ok {
+			log.Printf("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect: %v", err)
+			u.keySupplier.Invalidate()
+			u.keySupplier.LastAttemptFailed()
+		}
 	}
 
 	// We assign config here, AFTER the return - so that a nil config means we are in a state of incorrectness and shouldn't do stuff.
 	// TODO: we never check if config is nil. Is it intentional to have panics due nil pointer?
-	u.config = config
+	u.config = conf
 
 	if err != nil {
 		log.Printf(err.Error())

@@ -1,12 +1,18 @@
 package roster
 
 import (
+	"io/ioutil"
+	"log"
 	"testing"
 
 	g "gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { g.TestingT(t) }
+
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
 
 type ListXmppSuite struct{}
 

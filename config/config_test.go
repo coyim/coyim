@@ -2,6 +2,8 @@ package config
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 	"testing"
@@ -11,9 +13,17 @@ import (
 
 func Test(t *testing.T) { TestingT(t) }
 
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
+
 type ConfigXmppSuite struct{}
 
 var _ = Suite(&ConfigXmppSuite{})
+
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
 
 func (s *ConfigXmppSuite) TestParseYes(c *C) {
 	c.Assert(ParseYes("Y"), Equals, true)

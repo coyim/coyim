@@ -165,29 +165,42 @@ func encryptConfiguration(content string, params *EncryptionParameters, ks KeySu
 type KeySupplier interface {
 	GenerateKey(params EncryptionParameters) ([]byte, []byte, bool)
 	Invalidate()
+	LastAttemptFailed()
 }
 
 type functionKeySupplier struct {
-	getKeys func(params EncryptionParameters) ([]byte, []byte, bool)
+	getKeys           func(params EncryptionParameters, lastAttemptFailed bool) ([]byte, []byte, bool)
+	lastAttemptFailed bool
 }
 
 // FunctionKeySupplier is a key supplier that wraps a function to ask for the password
-func FunctionKeySupplier(getKeys func(params EncryptionParameters) ([]byte, []byte, bool)) KeySupplier {
-	return &functionKeySupplier{getKeys}
+func FunctionKeySupplier(getKeys func(params EncryptionParameters, lastAttemptFailed bool) ([]byte, []byte, bool)) KeySupplier {
+	return &functionKeySupplier{getKeys, false}
 }
 
 func (fk *functionKeySupplier) Invalidate() {
 }
 
+func (fk *functionKeySupplier) LastAttemptFailed() {
+	fk.lastAttemptFailed = true
+}
+
 func (fk *functionKeySupplier) GenerateKey(params EncryptionParameters) ([]byte, []byte, bool) {
-	return fk.getKeys(params)
+	laf := fk.lastAttemptFailed
+	fk.lastAttemptFailed = false
+	return fk.getKeys(params, laf)
 }
 
 type cachingKeySupplier struct {
 	sync.Mutex
-	haveKeys    bool
-	key, macKey []byte
-	getKeys     func(params EncryptionParameters) ([]byte, []byte, bool)
+	haveKeys          bool
+	key, macKey       []byte
+	getKeys           func(params EncryptionParameters, lastAttemptFailed bool) ([]byte, []byte, bool)
+	lastAttemptFailed bool
+}
+
+func (ck *cachingKeySupplier) LastAttemptFailed() {
+	ck.lastAttemptFailed = true
 }
 
 func (ck *cachingKeySupplier) Invalidate() {
@@ -203,7 +216,9 @@ func (ck *cachingKeySupplier) GenerateKey(params EncryptionParameters) ([]byte, 
 	ck.Lock()
 	defer ck.Unlock()
 	if !ck.haveKeys {
-		ck.key, ck.macKey, ok = ck.getKeys(params)
+		laf := ck.lastAttemptFailed
+		ck.lastAttemptFailed = false
+		ck.key, ck.macKey, ok = ck.getKeys(params, laf)
 		if !ok {
 			return nil, nil, false
 		}
@@ -213,7 +228,7 @@ func (ck *cachingKeySupplier) GenerateKey(params EncryptionParameters) ([]byte, 
 }
 
 // CachingKeySupplier is a key supplier that only asks the user for a password if it doesn't already have the key material
-func CachingKeySupplier(getKeys func(params EncryptionParameters) ([]byte, []byte, bool)) KeySupplier {
+func CachingKeySupplier(getKeys func(params EncryptionParameters, lastAttemptFailed bool) ([]byte, []byte, bool)) KeySupplier {
 	return &cachingKeySupplier{
 		getKeys: getKeys,
 	}

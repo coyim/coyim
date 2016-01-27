@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"io/ioutil"
+	"log"
 	"testing"
 
 	. "gopkg.in/check.v1"
@@ -15,6 +17,10 @@ var escapingTests = []string{
 }
 
 func Test(t *testing.T) { TestingT(t) }
+
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
 
 type UISuite struct{}
 

@@ -17,8 +17,9 @@ func (*defAddContact) String() string {
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel" id="accountsLabel" >
-            <property name="label" translatable="yes">Account</property>
+          <object class="GtkBox" id="notification-area">
+            <property name="visible">true</property>
+            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
           </object>
           <packing>
             <property name="expand">false</property>
@@ -27,12 +28,22 @@ func (*defAddContact) String() string {
           </packing>
         </child>
         <child>
-          <object class="GtkComboBox" id="accounts">
+          <object class="GtkLabel" id="accountsLabel" >
+            <property name="label" translatable="yes">Account</property>
           </object>
           <packing>
             <property name="expand">false</property>
             <property name="fill">true</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBox" id="accounts">
+          </object>
+          <packing>
+            <property name="expand">false</property>
+            <property name="fill">true</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -42,7 +53,7 @@ func (*defAddContact) String() string {
           <packing>
             <property name="expand">false</property>
             <property name="fill">true</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
         <child>
@@ -53,7 +64,7 @@ func (*defAddContact) String() string {
           <packing>
             <property name="expand">false</property>
             <property name="fill">true</property>
-            <property name="position">3</property>
+            <property name="position">4</property>
           </packing>
         </child>
         <child>
@@ -64,7 +75,7 @@ func (*defAddContact) String() string {
           <packing>
             <property name="expand">false</property>
             <property name="fill">true</property>
-            <property name="position">4</property>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>

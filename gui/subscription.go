@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -52,21 +53,59 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 	dialogObj, _ := builder.GetObject("AddContact")
 	dialog := dialogObj.(*gtk.Dialog)
 
+	obj, _ := builder.GetObject("notification-area")
+	notificationArea := obj.(*gtk.Box)
+
+	failures := 0
+	var notification *gtk.InfoBar
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
-			defer dialog.Destroy()
-
-			//TODO: validate contact
 			contact, _ := contactInput.GetText()
+			isJid, errmsg := verifyXmppAddress(contact)
 
-			//TODO error
-			iter, _ := accountInput.GetActiveIter()
+			if !isJid && failures > 0 {
+				notificationArea.Remove(notification)
+				notification = buildBadUsernameNotification(errmsg)
+				notificationArea.Add(notification)
+				notification.ShowAll()
+				failures++
+				log.Printf(errmsg)
+				return
+			}
 
-			val, _ := model.GetValue(iter, 1)
-			accountID, _ := val.GetString()
+			if !isJid {
+				notification = buildBadUsernameNotification(errmsg)
+				notificationArea.Add(notification)
+				notification.ShowAll()
+				failures++
+				log.Printf(errmsg)
+				return
+			}
 
-			//TODO error
-			sendSubscription(accountID, contact)
+			iter, err := accountInput.GetActiveIter()
+			if err != nil {
+				log.Printf("Error encountered when getting account: %v", err)
+				return
+			}
+			val, err := model.GetValue(iter, 1)
+			if err != nil {
+				log.Printf("Error encountered when getting account: %v", err)
+				return
+			}
+			accountID, err := val.GetString()
+			if err != nil {
+				log.Printf("Error encountered when getting account: %v", err)
+				return
+			}
+
+			err = sendSubscription(accountID, contact)
+			if err != nil {
+				log.Printf("Error encountered when sending subscription: %v", err)
+				return
+			}
+
+			dialog.Destroy()
 		},
 	})
 

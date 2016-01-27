@@ -20,6 +20,14 @@ type Peer struct {
 	Asked              bool
 	PendingSubscribeID string
 	BelongsTo          string
+	LatestError        *PeerError
+}
+
+// PeerError contains information about an error for this peer
+type PeerError struct {
+	Code string
+	Type string
+	More string
 }
 
 func toSet(ks ...string) map[string]bool {
@@ -116,4 +124,9 @@ func (p *Peer) MergeWith(p2 *Peer) *Peer {
 // NameForPresentation returns the name if it exists and otherwise the JID
 func (p *Peer) NameForPresentation() string {
 	return merge(p.Jid, p.Name)
+}
+
+// SetLatestError will set the latest error on the jid in question
+func (p *Peer) SetLatestError(code, tp, more string) {
+	p.LatestError = &PeerError{code, tp, more}
 }

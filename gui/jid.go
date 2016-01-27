@@ -17,8 +17,17 @@ func verifyXmppAddress(address string) (bool, string) {
 	isValid := isValidDomain && isValidPart
 
 	if !isValid {
-		errs := []string{errDomain, errPart, "XMPP address should look like local@domain.com"}
-		err = strings.Join(errs, ", ")
+		result := "Validation failed: "
+		sep := ""
+		if errDomain != "" {
+			result += errDomain
+			sep = ", "
+		}
+		if errPart != "" {
+			result += sep + errPart
+		}
+
+		err = result + ". An XMPP address should look like this: local@domain.com."
 	}
 
 	return isValid, err
@@ -38,7 +47,7 @@ func verifyDomainPart(tldIndex, atIndex int, address string) (bool, string) {
 func verifyLocalPart(atIndex int) (bool, string) {
 	isValid := true
 	var err string
-	if atIndex < 1 {
+	if atIndex == 0 {
 		isValid = false
 		err = "XMMP address has an invalid local part"
 	}

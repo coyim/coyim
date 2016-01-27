@@ -152,6 +152,13 @@ func (l *List) Subscribed(jid string) {
 	}
 }
 
+// LatestError will set the latest error on the jid in question
+func (l *List) LatestError(jid string, code, tp, more string) {
+	if p, existed := l.Get(jid); existed {
+		p.SetLatestError(code, tp, more)
+	}
+}
+
 // Unsubscribed will mark the jid as unsubscribed
 func (l *List) Unsubscribed(jid string) {
 	if p, existed := l.Get(jid); existed {

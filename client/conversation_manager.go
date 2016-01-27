@@ -55,10 +55,6 @@ func NewConversationManager(builder ConversationBuilder, sender Sender) Conversa
 	}
 }
 
-func (m *conversationManager) sendMsg(peer, msg string) error {
-	return m.sender.Send(peer, msg)
-}
-
 func (m *conversationManager) GetConversationWith(peer string) (Conversation, bool) {
 	m.RLock()
 	defer m.RUnlock()
@@ -67,8 +63,8 @@ func (m *conversationManager) GetConversationWith(peer string) (Conversation, bo
 }
 
 func (m *conversationManager) Conversations() map[string]Conversation {
-	m.Lock()
-	defer m.Unlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	ret := make(map[string]Conversation)
 	for to, c := range m.conversations {
@@ -79,12 +75,12 @@ func (m *conversationManager) Conversations() map[string]Conversation {
 }
 
 func (m *conversationManager) EnsureConversationWith(peer string) (Conversation, bool) {
-	if c, ok := m.GetConversationWith(peer); ok {
-		return c, false
-	}
-
 	m.Lock()
 	defer m.Unlock()
+
+	if c, ok := m.conversations[peer]; ok {
+		return c, false
+	}
 
 	c := &conversation{
 		to:           peer,
@@ -96,19 +92,18 @@ func (m *conversationManager) EnsureConversationWith(peer string) (Conversation,
 }
 
 func (m *conversationManager) TerminateAll() {
-	m.Lock()
-	defer m.Unlock()
+	m.RLock()
+	defer m.RUnlock()
 
 	for peer := range m.conversations {
-		m.TerminateConversationWith(peer)
+		m.terminateConversationWith(peer)
 	}
 }
 
-func (m *conversationManager) TerminateConversationWith(peer string) error {
-	c, ok := m.GetConversationWith(peer)
-	if !ok {
-		return nil
+func (m *conversationManager) terminateConversationWith(peer string) error {
+	if c, ok := m.conversations[peer]; ok {
+		return c.EndEncryptedChat(m.sender)
 	}
 
-	return c.EndEncryptedChat(m.sender)
+	return nil
 }

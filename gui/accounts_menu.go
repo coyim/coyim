@@ -72,6 +72,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 
 	obj, _ = builder.GetObject("otherSettings")
 	otherSettingsToggle := obj.(*gtk.CheckButton)
+	otherSettingsToggle.SetActive(u.config.AdvancedOptions)
 
 	obj, _ = builder.GetObject("account")
 	accEntry := obj.(*gtk.Entry)
@@ -125,6 +126,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_toggle_other_settings": func() {
 			otherSettings := otherSettingsToggle.GetActive()
+			u.setShowAdvancedSettings(otherSettings)
 			if otherSettings {
 				p2.Show()
 				p3.Show()
@@ -181,8 +183,10 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	dialog.ShowAll()
 	notebook.SetCurrentPage(0)
 
-	p2.Hide()
-	p3.Hide()
+	if !u.config.AdvancedOptions {
+		p2.Hide()
+		p3.Hide()
+	}
 }
 
 func buildBadUsernameNotification(msg string) *gtk.InfoBar {

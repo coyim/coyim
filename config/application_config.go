@@ -21,6 +21,7 @@ type ApplicationConfig struct {
 	Bell                          bool
 	ConnectAutomatically          bool
 	Display                       DisplayConfig `json:",omitempty"`
+	AdvancedOptions               bool
 }
 
 var loadEntries []func(*ApplicationConfig)

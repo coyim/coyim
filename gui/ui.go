@@ -38,6 +38,7 @@ type gtkUI struct {
 	tags *tags
 
 	toggleConnectAllAutomaticallyRequest chan bool
+	setShowAdvancedSettingsRequest       chan bool
 
 	commands chan interface{}
 }
@@ -66,6 +67,7 @@ func NewGTK(version string) UI {
 	ret := &gtkUI{
 		commands: make(chan interface{}, 5),
 		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
+		setShowAdvancedSettingsRequest:       make(chan bool, 100),
 	}
 
 	ret.applyStyle()
@@ -157,6 +159,7 @@ func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 	}
 
 	go u.listenToToggleConnectAllAutomatically()
+	go u.listenToSetShowAdvancedSettings()
 }
 
 func (u *gtkUI) saveConfigInternal() error {
@@ -468,6 +471,18 @@ func (u *gtkUI) listenToToggleConnectAllAutomatically() {
 
 func (u *gtkUI) toggleConnectAllAutomatically() {
 	u.toggleConnectAllAutomaticallyRequest <- true
+}
+
+func (u *gtkUI) setShowAdvancedSettings(val bool) {
+	u.setShowAdvancedSettingsRequest <- val
+}
+
+func (u *gtkUI) listenToSetShowAdvancedSettings() {
+	for {
+		val := <-u.setShowAdvancedSettingsRequest
+		u.config.AdvancedOptions = val
+		u.saveConfigOnly()
+	}
 }
 
 func (u *gtkUI) initMenuBar() {

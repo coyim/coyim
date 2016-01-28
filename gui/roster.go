@@ -122,10 +122,29 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},
+		"on_rename_signal" : func() {
+			renameContactPopup(jid)
+		},
 	})
 
 	mn.ShowAll()
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
+}
+
+func renameContactPopup(jid string) {
+	builder := builderForDefinition("RenameContact")
+	obj, _ := builder.GetObject("RenameContactPopup")
+	popup := obj.(*gtk.Dialog)
+	builder.ConnectSignals(map[string]interface{} {
+		"on_rename_signal": func() {
+			obj, _ = builder.GetObject("rename")
+			renameTxt := obj.(*gtk.Entry)
+			newName, _ := renameTxt.GetText()
+			fmt.Printf("<%s> was renamed to <%s>", jid, newName)
+			popup.Destroy()
+		},
+	})
+	popup.ShowAll()
 }
 
 func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventButton) {

@@ -29,6 +29,11 @@ const (
 	CONNECTED
 )
 
+// Connector represents something that connect
+type Connector interface {
+	Connect()
+}
+
 // Session contains information about one specific connection
 type Session struct {
 	Conn             *xmpp.Conn
@@ -49,10 +54,14 @@ type Session struct {
 	// absolute time when that request should timeout.
 	timeouts map[xmpp.Cookie]time.Time
 
-	// lastActionTime is the time at which the user last entered a command,
+	// LastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	LastActionTime      time.Time
 	SessionEventHandler EventHandler
+
+	// WantToBeOnline keeps track of whether a user has expressed a wish
+	// to be online - if it's true, it will do more aggressive reconnecting
+	WantToBeOnline bool
 
 	subscribers struct {
 		sync.RWMutex
@@ -62,6 +71,9 @@ type Session struct {
 	GroupDelimiter string
 
 	xmppLogger io.Writer
+
+	// Connector is something that can connect
+	Connector Connector
 
 	client.CommandManager
 	client.ConversationManager
@@ -108,6 +120,7 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	s.ConversationManager = client.NewConversationManager(s, s)
 
 	go observe(s)
+	go checkReconnect(s)
 
 	return s
 }

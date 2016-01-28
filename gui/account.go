@@ -29,34 +29,15 @@ type byAccountNameAlphabetic []*account
 
 func (s byAccountNameAlphabetic) Len() int { return len(s) }
 func (s byAccountNameAlphabetic) Less(i, j int) bool {
-	if s[i] == nil {
-		log.Printf("sigh i == nil\n")
-	}
-	if s[j] == nil {
-		log.Printf("sigh j == nil\n")
-	}
-	if s[i].session == nil {
-		log.Printf("sigh i.session == nil\n")
-	}
-	if s[i].session.GetConfig() == nil {
-		log.Printf("sigh i.session.GetConfig() == nil\n")
-	}
-	if s[j].session == nil {
-		log.Printf("sigh j.session == nil\n")
-	}
-	if s[j].session.GetConfig() == nil {
-		log.Printf("sigh j.session.GetConfig() == nil\n")
-	}
-
 	return s[i].session.GetConfig().Account < s[j].session.GetConfig().Account
 }
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-func newAccount(conf *config.ApplicationConfig, currentConf *config.Account) (acc *account, err error) {
+func newAccount(conf *config.ApplicationConfig, currentConf *config.Account) *account {
 	return &account{
 		session:       session.NewSession(conf, currentConf),
 		conversations: make(map[string]*conversationWindow),
-	}, nil
+	}
 }
 
 func (account *account) ID() string {
@@ -122,7 +103,8 @@ func (u *gtkUI) showServerSelectionWindow() error {
 			saveFn := func() {
 				u.addAndSaveAccountConfig(form.conf)
 				if acc, ok := u.getAccountByID(form.conf.ID()); ok {
-					acc.connect()
+					acc.session.WantToBeOnline = true
+					acc.Connect()
 				}
 			}
 
@@ -216,7 +198,7 @@ func (account *account) buildAccountSubmenu() {
 
 	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
 
-	connectItem.Connect("activate", account.connect)
+	connectItem.Connect("activate", account.Connect)
 	disconnectItem.Connect("activate", account.disconnect)
 	editItem.Connect("activate", account.edit)
 	removeItem.Connect("activate", account.remove)
@@ -242,7 +224,7 @@ func (account *account) watchAndToggleMenuItems(connectItem, disconnectItem *gtk
 	}
 }
 
-func (account *account) connect() {
+func (account *account) Connect() {
 	account.executeCmd(connectAccountCmd{account})
 }
 
@@ -286,19 +268,21 @@ func (account *account) buildNotification(template, msg string) *gtk.InfoBar {
 	obj, _ = builder.GetObject("message")
 	msgLabel := obj.(*gtk.Label)
 	msgLabel.SetSelectable(true)
-
-	text := fmt.Sprintf(i18n.Local(msg), account.session.GetConfig().Account)
-	msgLabel.SetText(text)
+	msgLabel.SetText(msg)
 
 	return infoBar
 }
 
 func (account *account) buildConnectionNotification() *gtk.InfoBar {
-	return account.buildNotification("ConnectingAccountInfo", "Connecting account\n%s")
+	return account.buildNotification("ConnectingAccountInfo", fmt.Sprintf(i18n.Local("Connecting account\n%s"), account.session.GetConfig().Account))
 }
 
 func (account *account) buildConnectionFailureNotification() *gtk.InfoBar {
-	return account.buildNotification("ConnectionFailureNotification", "Connection failure\n%s")
+	return account.buildNotification("ConnectionFailureNotification", fmt.Sprintf(i18n.Local("Connection failure\n%s"), account.session.GetConfig().Account))
+}
+
+func (account *account) buildTorNotRunningNotification() *gtk.InfoBar {
+	return account.buildNotification("TorNotRunningNotification", i18n.Local("Tor is not currently running"))
 }
 
 func (account *account) removeCurrentNotification() {

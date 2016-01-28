@@ -65,14 +65,10 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 	m.Lock()
 	defer m.Unlock()
 
-	acc, err := newAccount(appConfig, account)
-	if err != nil {
-		//TODO error
-		return
-	}
-
+	acc := newAccount(appConfig, account)
 	acc.session.Subscribe(m.events)
 	acc.session.CommandManager = m
+	acc.session.Connector = acc
 
 	m.accounts = append(m.accounts, acc)
 	m.setContacts(acc, rosters.New())

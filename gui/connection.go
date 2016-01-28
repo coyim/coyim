@@ -29,8 +29,11 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 	err := account.session.Connect(password)
 	switch err {
 	case config.ErrTorNotRunning:
-		doInUIThread(u.alertTorIsNotRunning)
+		u.notifyTorIsNotRunning(account)
 	case xmpp.ErrTCPBindingFailed:
+		// TODO: I'm getting more and more uncomfortable with this
+		// it almost only happens to me when something goes wrong in connecting
+		// so is a false alarm. My recommendation is to remove it, and treat as ConnectionFailed
 		u.askForServerDetailsAndConnect(account, password)
 	case xmpp.ErrAuthenticationFailed:
 		//TODO: notify authentication failure?
@@ -64,7 +67,8 @@ func (u *gtkUI) connectWithRandomDelay(a *account) {
 	sleepDelay := time.Duration(rand.Int31n(7643)) * time.Millisecond
 	log.Printf("connectWithRandomDelay(%v, %vms)\n", a.session.GetConfig().Account, sleepDelay)
 	time.Sleep(sleepDelay)
-	a.connect()
+	a.session.WantToBeOnline = true
+	a.Connect()
 }
 
 func (u *gtkUI) connectAllAutomatics(all bool) {

@@ -135,9 +135,11 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_connect": func() {
-			account.connect()
+			account.session.WantToBeOnline = true
+			account.Connect()
 		},
 		"on_disconnect": func() {
+			account.session.WantToBeOnline = false
 			account.disconnect()
 		},
 		"on_dump_info": func() {

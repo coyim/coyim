@@ -485,18 +485,6 @@ func (u *gtkUI) rosterUpdated() {
 	doInUIThread(u.roster.redraw)
 }
 
-func (u *gtkUI) alertTorIsNotRunning() {
-	//TODO: should it notify instead of alert?
-
-	builder := builderForDefinition("TorNotRunning")
-
-	obj, _ := builder.GetObject("TorNotRunningDialog")
-	dialog := obj.(*gtk.Dialog)
-
-	dialog.SetTransientFor(u.window)
-	dialog.ShowAll()
-}
-
 func (u *gtkUI) askForServerDetails(conf *config.Account, connectFn func() error) {
 	builder := builderForDefinition("ConnectionSettings")
 
@@ -546,6 +534,7 @@ func (u *gtkUI) editAccount(account *account) {
 
 func (u *gtkUI) removeAccount(account *account) {
 	u.confirmAccountRemoval(account.session.GetConfig(), func(c *config.Account) {
+		account.session.WantToBeOnline = false
 		account.disconnect()
 		u.removeSaveReload(c)
 	})

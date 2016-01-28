@@ -16,6 +16,15 @@
       <object class="GtkSeparatorMenuItem" id="sep1"/>
     </child>
     <child>
+      <object class="GtkMenuItem" id="editMenuItem">
+        <property name="label" translatable="yes">Edit...</property>
+        <signal name="activate" handler="on_edit" />
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="sep2"/>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="dumpInfoMenuItem">
         <property name="label" translatable="yes">Dump info</property>
         <signal name="activate" handler="on_dump_info" />

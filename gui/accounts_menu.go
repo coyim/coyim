@@ -30,8 +30,8 @@ func firstProxy(account *account) string {
 }
 
 func checkIsLikelyRandom(protocol, username, password string) bool {
-	return protocol == "socks5" && ((strings.HasPrefix(username, "randomTor:") &&
-		strings.HasPrefix(password, "randomTor:")) ||
+	return protocol == "socks5" && ((strings.HasPrefix(username, "randomTor-") &&
+		strings.HasPrefix(password, "randomTor-")) ||
 		(len(username) == 10 &&
 			len(password) == 10))
 }
@@ -90,6 +90,28 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 		account.Port = 5222
 	}
 	portEntry.SetText(strconv.Itoa(account.Port))
+
+	obj, _ = builder.GetObject("proxies-model")
+	proxiesModel := obj.(*gtk.ListStore)
+
+	for _, px := range account.Proxies {
+		p, _ := url.Parse(px)
+		us := ""
+		ps := ""
+		compose := ""
+		if p.User != nil {
+			us = p.User.Username()
+			compose = "@"
+			_, passSet := p.User.Password()
+			if passSet {
+				ps = ":*****"
+			}
+		}
+
+		iter := proxiesModel.Append()
+		proxiesModel.SetValue(iter, 0,
+			fmt.Sprintf("%s://%s%s%s%s", p.Scheme, us, ps, compose, p.Host))
+	}
 
 	obj, _ = builder.GetObject("notification-area")
 	notificationArea := obj.(*gtk.Box)

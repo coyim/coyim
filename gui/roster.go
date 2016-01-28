@@ -142,6 +142,7 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 			account.session.WantToBeOnline = false
 			account.disconnect()
 		},
+		"on_edit": account.edit,
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},

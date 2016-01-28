@@ -1,4 +1,11 @@
 <interface>
+  <object class="GtkListStore" id="proxies-model">
+    <columns>
+      <!-- proxy -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+
   <object class="GtkDialog" id="AccountDetails">
     <property name="title" translatable="yes">Account Details</property>
     <signal name="close" handler="on_cancel_signal" />
@@ -162,9 +169,122 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label-interesting">
-                <property name="label" translatable="yes">Interesting</property>
+              <object class="GtkBox" id="vbox1">
+                <property name="margin">5</property>
                 <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkPaned" id="hpaned1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="position">175</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="scrolledwindow1">
+                        <property name="hscrollbar-policy">GTK_POLICY_NEVER</property>
+                        <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+                        <property name="width-request">170</property>
+                        <property name="height-request">230</property>
+                        <property name="margin">5</property>
+                        <property name="visible">True</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="proxies-view">
+                            <property name="model">proxies-model</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="headers-visible">false</property>
+                            <property name="show-expanders">false</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection" id="selection">
+                                <property name="mode">GTK_SELECTION_SINGLE</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="proxy-name-column">
+                                <property name="title">proxy-name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="proxy-name-column-rendered"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="resize">True</property>
+                        <property name="shrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="vbox3">
+                        <property name="margin">5</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="GtkButton" id="add_button">
+                            <property name="label" translatable="yes">_Add</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="remove_button">
+                            <property name="label" translatable="yes">_Remove</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="rename_button">
+                            <property name="label" translatable="yes">_Edit</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="resize">False</property>
+                        <property name="shrink">False</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
               </object>
             </child>
             <child type="tab">

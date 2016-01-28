@@ -111,6 +111,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 		iter := proxiesModel.Append()
 		proxiesModel.SetValue(iter, 0,
 			fmt.Sprintf("%s://%s%s%s%s", p.Scheme, us, ps, compose, p.Host))
+		proxiesModel.SetValue(iter, 1, px)
 	}
 
 	obj, _ = builder.GetObject("notification-area")

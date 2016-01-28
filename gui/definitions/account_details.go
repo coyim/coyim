@@ -13,6 +13,8 @@ func (*defAccountDetails) String() string {
     <columns>
       <!-- proxy -->
       <column type="gchararray"/>
+      <!-- real proxy data -->
+      <column type="gchararray"/>
     </columns>
   </object>
 
@@ -207,8 +209,9 @@ func (*defAccountDetails) String() string {
                             <property name="model">proxies-model</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="headers-visible">false</property>
-                            <property name="show-expanders">false</property>
+                            <property name="headers-visible">False</property>
+                            <property name="show-expanders">False</property>
+                            <property name="reorderable">True</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection">
                                 <property name="mode">GTK_SELECTION_SINGLE</property>

@@ -135,6 +135,17 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 
 			account.Port = convertedPort
 
+			newProxies := []string{}
+			iter, ok := data.proxies.GetIterFirst()
+			for ok {
+				vv, _ := data.proxies.GetValue(iter, 1)
+				newProxy, _ := vv.GetString()
+				newProxies = append(newProxies, newProxy)
+				ok = data.proxies.IterNext(iter)
+			}
+
+			account.Proxies = newProxies
+
 			go saveFunction()
 			data.dialog.Destroy()
 		},

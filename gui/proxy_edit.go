@@ -16,7 +16,7 @@ func orNil(s string) *string {
 	return nil
 }
 
-func (u *gtkUI) editProxy(proxy string, onSave func(net.Proxy), onCancel func()) {
+func (u *gtkUI) editProxy(proxy string, w *gtk.Dialog, onSave func(net.Proxy), onCancel func()) {
 	prox := net.ParseProxy(proxy)
 
 	b := builderForDefinition("EditProxy")
@@ -69,6 +69,6 @@ func (u *gtkUI) editProxy(proxy string, onSave func(net.Proxy), onCancel func())
 		},
 	})
 
-	dialog.SetTransientFor(u.window)
+	dialog.SetTransientFor(w)
 	dialog.ShowAll()
 }

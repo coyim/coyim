@@ -212,6 +212,7 @@ func (*defAccountDetails) String() string {
                             <property name="headers-visible">False</property>
                             <property name="show-expanders">False</property>
                             <property name="reorderable">True</property>
+                            <signal name="row-activated" handler="on_edit_activate_proxy_signal" />
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection">
                                 <property name="mode">GTK_SELECTION_SINGLE</property>
@@ -245,11 +246,12 @@ func (*defAccountDetails) String() string {
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkButton" id="add_button">
-                            <property name="label" translatable="yes">_Add</property>
+                            <property name="label" translatable="yes">_Add...</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_underline">True</property>
+                            <signal name="clicked" handler="on_add_proxy_signal" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -264,6 +266,7 @@ func (*defAccountDetails) String() string {
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_underline">True</property>
+                            <signal name="clicked" handler="on_remove_proxy_signal" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -272,12 +275,13 @@ func (*defAccountDetails) String() string {
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="rename_button">
-                            <property name="label" translatable="yes">_Edit</property>
+                          <object class="GtkButton" id="edit_button">
+                            <property name="label" translatable="yes">_Edit...</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_underline">True</property>
+                            <signal name="clicked" handler="on_edit_proxy_signal" />
                           </object>
                           <packing>
                             <property name="expand">False</property>

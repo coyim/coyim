@@ -24,6 +24,7 @@ type accountDetailsData struct {
 	port             *gtk.Entry
 	proxies          *gtk.ListStore
 	notificationArea *gtk.Box
+	proxiesView      *gtk.TreeView
 }
 
 func getObjIgnoringErrors(b *gtk.Builder, name string) glib.IObject {
@@ -50,6 +51,7 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 	data.port = data.getObjIgnoringErrors("port").(*gtk.Entry)
 	data.proxies = data.getObjIgnoringErrors("proxies-model").(*gtk.ListStore)
 	data.notificationArea = data.getObjIgnoringErrors("notification-area").(*gtk.Box)
+	data.proxiesView = data.getObjIgnoringErrors("proxies-view").(*gtk.TreeView)
 
 	return data
 }
@@ -75,6 +77,16 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	p3, _ := data.notebook.GetNthPage(2)
 
 	failures := 0
+
+	editProxy := func(iter *gtk.TreeIter, onCancel func()) {
+		val, _ := data.proxies.GetValue(iter, 1)
+		realProxyData, _ := val.GetString()
+		u.editProxy(realProxyData, data.dialog,
+			func(p net.Proxy) {
+				data.proxies.SetValue(iter, 0, p.ForPresentation())
+				data.proxies.SetValue(iter, 1, p.ForProcessing())
+			}, onCancel)
+	}
 
 	data.builder.ConnectSignals(map[string]interface{}{
 		"on_toggle_other_settings": func() {
@@ -125,6 +137,36 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 
 			go saveFunction()
 			data.dialog.Destroy()
+		},
+		"on_edit_proxy_signal": func() {
+			ts, _ := data.proxiesView.GetSelection()
+			var iter gtk.TreeIter
+			if ts.GetSelected(nil, &iter) {
+				editProxy(&iter, func() {})
+			}
+		},
+		"on_remove_proxy_signal": func() {
+			ts, _ := data.proxiesView.GetSelection()
+			var iter gtk.TreeIter
+			if ts.GetSelected(nil, &iter) {
+				data.proxies.Remove(&iter)
+			}
+		},
+		"on_add_proxy_signal": func() {
+			iter := data.proxies.Append()
+			data.proxies.SetValue(iter, 0, "tor-auto://")
+			data.proxies.SetValue(iter, 1, "tor-auto://")
+			ts, _ := data.proxiesView.GetSelection()
+			ts.SelectIter(iter)
+			editProxy(iter, func() {
+				data.proxies.Remove(iter)
+			})
+		},
+		"on_edit_activate_proxy_signal": func(_ *gtk.TreeView, path *gtk.TreePath) {
+			iter, err := data.proxies.GetIter(path)
+			if err == nil {
+				editProxy(iter, func() {})
+			}
 		},
 		"on_cancel_signal": func() {
 			u.buildAccountsMenu()

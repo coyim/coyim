@@ -76,6 +76,27 @@ func ParseProxy(px string) Proxy {
 	return prox
 }
 
+// ForProcessing represents a string valid for computer processing
+func (p Proxy) ForProcessing() string {
+	us := ""
+	ps := ""
+	compose := ""
+	if p.User != nil {
+		us = *p.User
+		compose = "@"
+		if p.Pass != nil {
+			ps = ":" + *p.Pass
+		}
+	}
+
+	pr := ""
+	if p.Port != nil {
+		pr = ":" + *p.Port
+	}
+
+	return fmt.Sprintf("%s://%s%s%s%s%s", p.Scheme, us, ps, compose, p.Host, pr)
+}
+
 // ForPresentation represents a string valid for user presentation - blanking out the password
 func (p Proxy) ForPresentation() string {
 	us := ""

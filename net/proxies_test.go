@@ -64,3 +64,9 @@ func (s *ProxiesSuite) Test_Proxy_ForPresentation_returnsAStringSuitableForUserP
 	c.Check(ParseProxy("socks5://ooo@127.1.1.2").ForPresentation(), Equals, "socks5://ooo@127.1.1.2")
 	c.Check(ParseProxy("socks5://abc:foo@127.1.1.3:http/foo/bar").ForPresentation(), Equals, "socks5://abc:*****@127.1.1.3:http")
 }
+
+func (s *ProxiesSuite) Test_Proxy_ForProcessing_returnsAStringSuitableForProcessing(c *C) {
+	c.Check(ParseProxy("socks5://localhost").ForProcessing(), Equals, "socks5://localhost")
+	c.Check(ParseProxy("socks5://ooo@127.1.1.2").ForProcessing(), Equals, "socks5://ooo@127.1.1.2")
+	c.Check(ParseProxy("socks5://abc:foo@127.1.1.3:http/foo/bar").ForProcessing(), Equals, "socks5://abc:foo@127.1.1.3:http")
+}

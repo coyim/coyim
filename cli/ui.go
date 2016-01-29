@@ -512,16 +512,7 @@ func (c *cliUI) watchRosterEdits() {
 				c.alert("Failed to remove roster entry: " + err.Error())
 			}
 
-			// Filter out any known fingerprints.
-			newKnownFingerprints := make([]config.KnownFingerprint, 0, len(c.session.GetConfig().KnownFingerprints))
-			for _, fpr := range c.session.GetConfig().KnownFingerprints {
-				if fpr.UserID == jid {
-					continue
-				}
-				newKnownFingerprints = append(newKnownFingerprints, fpr)
-			}
-
-			c.session.GetConfig().KnownFingerprints = newKnownFingerprints
+			c.session.GetConfig().RemovePeer(jid)
 			c.ExecuteCmd(client.SaveApplicationConfigCmd{})
 		}
 

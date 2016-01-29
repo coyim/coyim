@@ -197,10 +197,13 @@ func (p *pidginImporter) importAllFrom(accountsFile, prefsFile, blistFile, keyFi
 		}
 		if ok5 {
 			if fprs, ok := fprs[name]; ok {
-				ac.KnownFingerprints = make([]config.KnownFingerprint, len(fprs))
-				sort.Sort(config.ByNaturalOrder(fprs))
-				for ix, fpr := range fprs {
-					ac.KnownFingerprints[ix] = *fpr
+				ac.Peers = nil
+				sort.Sort(config.LegacyByNaturalOrder(fprs))
+				for _, kfpr := range fprs {
+					fpr := ac.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
+					if !kfpr.Untrusted {
+						fpr.Trusted = true
+					}
 				}
 			}
 		}

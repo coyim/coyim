@@ -67,19 +67,11 @@ func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bo
 	ac.ServerCertificateSHA256 = c.ServerCertificateSHA256
 	ac.PrivateKeys = [][]byte{c.PrivateKey}
 	ac.AlwaysEncryptWith = c.AlwaysEncryptWith
-	ac.KnownFingerprints = make([]config.KnownFingerprint, len(c.KnownFingerprints))
-
-	for ix, kf := range c.KnownFingerprints {
-		fp, err := hex.DecodeString(kf.FingerprintHex)
-		if err != nil {
-			continue
-		}
-
-		ac.KnownFingerprints[ix] = config.KnownFingerprint{
-			UserID:      kf.UserID,
-			Fingerprint: fp,
-			Untrusted:   false,
-		}
+	ac.Peers = nil
+	for _, kfpr := range c.KnownFingerprints {
+		fp, _ := hex.DecodeString(kfpr.FingerprintHex)
+		fpr := ac.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(fp)
+		fpr.Trusted = true
 	}
 
 	ac.RequireTor = len(c.Proxies) > 0

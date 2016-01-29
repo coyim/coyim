@@ -129,13 +129,16 @@ func (u *gtkUI) loadConfig(configFile string) {
 	}
 
 	// We assign config here, AFTER the return - so that a nil config means we are in a state of incorrectness and shouldn't do stuff.
-	// TODO: we never check if config is nil. Is it intentional to have panics due nil pointer?
+	// We never check, since a panic here is a serious programming error
 	u.config = conf
 
 	if err != nil {
 		log.Printf(err.Error())
 		doInUIThread(u.initialSetupWindow)
 		return
+	}
+	if u.config.UpdateToLatestVersion() {
+		u.saveConfigOnlyInternal()
 	}
 }
 

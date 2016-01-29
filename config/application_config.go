@@ -171,6 +171,19 @@ func (a *ApplicationConfig) Save(ks KeySupplier) error {
 	return safeWrite(a.filename, contents, 0600)
 }
 
+// UpdateToLatestVersion will run through all accounts and update their configuration to latest version
+// for cases where we have changed the configuration format.
+// It returns true if any changes were made
+func (a *ApplicationConfig) UpdateToLatestVersion() bool {
+	res := false
+
+	for _, acc := range a.Accounts {
+		res = acc.updateToLatestVersion() || res
+	}
+
+	return res
+}
+
 func (a *ApplicationConfig) serialize() ([]byte, error) {
 	return json.MarshalIndent(a, "", "\t")
 }

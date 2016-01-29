@@ -22,13 +22,14 @@ type Account struct {
 	id string `json:"-"`
 
 	Account                 string
-	Server                  string   `json:",omitempty"`
-	Proxies                 []string `json:",omitempty"`
-	Password                string   `json:",omitempty"`
-	Port                    int      `json:",omitempty"`
-	DeprecatedPrivateKey    []byte   `json:"PrivateKey,omitempty"`
-	PrivateKeys             [][]byte `json:",omitempty"`
-	KnownFingerprints       []KnownFingerprint
+	Server                  string             `json:",omitempty"`
+	Proxies                 []string           `json:",omitempty"`
+	Password                string             `json:",omitempty"`
+	Port                    int                `json:",omitempty"`
+	DeprecatedPrivateKey    []byte             `json:"PrivateKey,omitempty"`
+	PrivateKeys             [][]byte           `json:",omitempty"`
+	LegacyKnownFingerprints []KnownFingerprint `json:"KnownFingerprints,omitempty"`
+	Peers                   []*Peer
 	HideStatusUpdates       bool
 	RequireTor              bool
 	OTRAutoTearDown         bool

@@ -25,6 +25,7 @@ type Fingerprint struct {
 type Peer struct {
 	UserID       string
 	Fingerprints []*Fingerprint
+	Nickname	 string
 }
 
 // MarshalJSON is used to create a JSON representation of this fingerprint

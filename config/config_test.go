@@ -39,7 +39,13 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 	"Accounts": [
 		{
 			"Account": "bob@riseup.net",
-			"Peers": null,
+			"Peers": [
+				{
+					"UserID": "bob@riseup.net",
+					"Fingerprints": null,
+					"Nickname": "boby"
+				}
+			],
 			"HideStatusUpdates": false,
 			"RequireTor": true,
 			"OTRAutoTearDown": false,
@@ -73,6 +79,12 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 		Accounts: []*Account{
 			&Account{
 				Account:       "bob@riseup.net",
+				Peers: []*Peer{
+					&Peer{
+						UserID: "bob@riseup.net",
+						Nickname: "boby",
+					},
+				},
 				RequireTor:    true,
 				AlwaysEncrypt: true,
 			},

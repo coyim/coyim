@@ -3,8 +3,6 @@ package gui
 import (
 	"fmt"
 	"log"
-	"net"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -12,6 +10,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/coyim/net"
 )
 
 type accountDetailsData struct {
@@ -55,52 +54,6 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 	return data
 }
 
-type proxy struct {
-	scheme  string
-	userSet bool
-	user    string
-	passSet bool
-	pass    string
-	host    string
-	portSet bool
-	port    string
-}
-
-func parseProxy(px string) proxy {
-	prox := proxy{}
-	p, _ := url.Parse(px)
-	if p.User != nil {
-		prox.user = p.User.Username()
-		prox.userSet = true
-		prox.pass, prox.passSet = p.User.Password()
-	}
-	prox.scheme = p.Scheme
-	var err error
-	prox.host, prox.port, err = net.SplitHostPort(p.Host)
-	prox.portSet = true
-	if err != nil && err.(*net.AddrError).Err == "missing port in address" {
-		prox.host = p.Host
-		prox.portSet = false
-	}
-	return prox
-}
-
-func proxyForPresentation(px string) string {
-	p, _ := url.Parse(px)
-	us := ""
-	ps := ""
-	compose := ""
-	if p.User != nil {
-		us = p.User.Username()
-		compose = "@"
-		_, passSet := p.User.Password()
-		if passSet {
-			ps = ":*****"
-		}
-	}
-	return fmt.Sprintf("%s://%s%s%s%s", p.Scheme, us, ps, compose, p.Host)
-}
-
 func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	data := getBuilderAndAccountDialogDetails()
 
@@ -114,7 +67,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 
 	for _, px := range account.Proxies {
 		iter := data.proxies.Append()
-		data.proxies.SetValue(iter, 0, proxyForPresentation(px))
+		data.proxies.SetValue(iter, 0, net.ParseProxy(px).ForPresentation())
 		data.proxies.SetValue(iter, 1, px)
 	}
 

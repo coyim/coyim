@@ -32,21 +32,21 @@ func (s *AccountXmppSuite) Test_Account_ShouldEncryptTo(c *C) {
 	c.Check(a2.ShouldEncryptTo("hello@bar.com"), Equals, true)
 }
 
-func (s *AccountXmppSuite) Test_EnsureTorProxy_AddsTorProxy(c *C) {
+func (s *AccountXmppSuite) Test_ensureTorProxy_AddsTorProxy(c *C) {
 	torAddress := "127.0.0.1:9050"
 
 	a := &Account{
 		RequireTor: true,
 	}
 
-	a.EnsureTorProxy(torAddress)
+	a.ensureTorProxy(torAddress)
 
 	c.Check(len(a.Proxies), Equals, 1)
 	proxy, _ := url.Parse(a.Proxies[0])
 	c.Check(proxy.Host, Equals, torAddress)
 }
 
-func (s *AccountXmppSuite) Test_EnsureTorProxy_AddsTorProxyToTheLastPosition(c *C) {
+func (s *AccountXmppSuite) Test_ensureTorProxy_AddsTorProxyToTheLastPosition(c *C) {
 	torAddress := "127.0.0.1:9050"
 	existingProxy := "socks5://mycompany.com:9080"
 	existingProxyWithoutPort := "socks5://qaproxy.local"
@@ -58,7 +58,7 @@ func (s *AccountXmppSuite) Test_EnsureTorProxy_AddsTorProxyToTheLastPosition(c *
 		},
 	}
 
-	a.EnsureTorProxy(torAddress)
+	a.ensureTorProxy(torAddress)
 
 	c.Check(len(a.Proxies), Equals, 3)
 	c.Check(a.Proxies[0], Equals, existingProxy)
@@ -68,7 +68,7 @@ func (s *AccountXmppSuite) Test_EnsureTorProxy_AddsTorProxyToTheLastPosition(c *
 	c.Check(proxy.Host, Equals, torAddress)
 }
 
-func (s *AccountXmppSuite) Test_EnsureTorProxy_FiltersOutAnyExistingLocalProxy(c *C) {
+func (s *AccountXmppSuite) Test_ensureTorProxy_FiltersOutAnyExistingLocalProxy(c *C) {
 	torAddress := "127.0.0.1:9050"
 
 	a := &Account{
@@ -80,14 +80,14 @@ func (s *AccountXmppSuite) Test_EnsureTorProxy_FiltersOutAnyExistingLocalProxy(c
 		},
 	}
 
-	a.EnsureTorProxy(torAddress)
+	a.ensureTorProxy(torAddress)
 
 	c.Check(a.Proxies, HasLen, 1)
 	proxy, _ := url.Parse(a.Proxies[0])
 	c.Check(proxy.Host, Equals, torAddress)
 }
 
-func (s *AccountXmppSuite) Test_EnsureTorProxy_DoNotOverrideExistingTorConfig(c *C) {
+func (s *AccountXmppSuite) Test_ensureTorProxy_DoNotOverrideExistingTorConfig(c *C) {
 	torAddress := "127.0.0.1:9050"
 	existingTorProxy := "socks5://foo:bar@" + torAddress
 
@@ -96,7 +96,7 @@ func (s *AccountXmppSuite) Test_EnsureTorProxy_DoNotOverrideExistingTorConfig(c 
 		Proxies:    []string{existingTorProxy},
 	}
 
-	a.EnsureTorProxy(torAddress)
+	a.ensureTorProxy(torAddress)
 	c.Check(a.Proxies, DeepEquals, []string{existingTorProxy})
 }
 

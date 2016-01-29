@@ -49,7 +49,7 @@ func (p *ConnectionPolicy) ensureTorFor(conf *Account) error {
 		return ErrTorNotRunning
 	}
 
-	conf.EnsureTorProxy(tor.Address())
+	conf.ensureTorProxy(tor.Address())
 	return nil
 }
 

@@ -1,10 +1,7 @@
 package config
 
 import (
-	"errors"
 	"net/url"
-
-	"github.com/twstrike/coyim/xmpp"
 
 	"golang.org/x/net/proxy"
 )
@@ -24,20 +21,4 @@ func init() {
 
 		return proxy.SOCKS5("unix", u.Path, auth, d)
 	})
-}
-
-// ResolveXMPPServerOverTor resolves the XMPP service from a domain using Tor
-//TODO: remove me once config assistant goes away
-func ResolveXMPPServerOverTor(domain string) ([]string, error) {
-	dnsProxy, err := NewTorProxy()
-	if err != nil {
-		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
-	}
-
-	ret, err := xmpp.ResolveSRVWithProxy(dnsProxy, domain)
-	if err != nil {
-		return nil, errors.New("Failed to resolve XMPP server: " + err.Error())
-	}
-
-	return ret, nil
 }

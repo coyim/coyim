@@ -5,23 +5,7 @@ import (
 	"net/url"
 
 	ournet "github.com/twstrike/coyim/net"
-	"golang.org/x/net/proxy"
 )
-
-var (
-	detectedTorAddress = ""
-	scannedForTor      = false
-)
-
-// NewTorProxy creates a new proxy using the Tor service detected at the machine.
-func NewTorProxy() (proxy.Dialer, error) {
-	u, err := url.Parse(newTorProxy(ournet.Tor.Address()))
-	if err != nil {
-		return nil, err
-	}
-
-	return proxy.FromURL(u, proxy.Direct)
-}
 
 func newTorProxy(torAddress string) string {
 	host, port, _ := net.SplitHostPort(torAddress)
@@ -41,4 +25,37 @@ func newTorProxy(torAddress string) string {
 	}
 
 	return proxy.String()
+}
+
+// TODO[ola] figure out this one
+func (a *Account) ensureTorProxy(torAddress string) {
+	if !a.RequireTor {
+		return
+	}
+
+	for _, proxy := range a.Proxies {
+		p, err := url.Parse(proxy)
+		if err != nil {
+			continue
+		}
+
+		//Already configured
+		if p.Host == torAddress {
+			return
+		}
+	}
+
+	//Tor refuses to connect to any other proxy at localhost/127.0.0.1 in the
+	//chain, so we remove them
+	allowedProxies := make([]string, 0, len(a.Proxies))
+	for _, proxy := range a.Proxies {
+		p := ournet.ParseProxy(proxy)
+		if p.Host != "localhost" && p.Host != "127.0.0.1" {
+			allowedProxies = append(allowedProxies, proxy)
+		}
+	}
+
+	torProxy := newTorProxy(torAddress)
+	allowedProxies = append(allowedProxies, torProxy)
+	a.Proxies = allowedProxies
 }

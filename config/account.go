@@ -74,6 +74,9 @@ func NewAccount() (*Account, error) {
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48
 		OTRAutoAppendTag:    true,
+		Proxies: []string{
+			"tor-auto://",
+		},
 	}, nil
 }
 

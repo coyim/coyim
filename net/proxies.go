@@ -19,7 +19,6 @@ type Proxy struct {
 
 var proxyTypes = [][]string{
 	[]string{"tor-auto", "Automatic Tor"},
-	[]string{"socks4", "SOCKS4"},
 	[]string{"socks5", "SOCKS5"},
 }
 

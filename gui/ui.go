@@ -547,7 +547,7 @@ func (u *gtkUI) askForServerDetails(conf *config.Account, connectFn func() error
 }
 
 func (u *gtkUI) editAccount(account *account) {
-	u.accountDialog(account.session.GetConfig(), u.SaveConfig)
+	u.accountDialog(account.session, account.session.GetConfig(), u.SaveConfig)
 }
 
 func (u *gtkUI) removeAccount(account *account) {

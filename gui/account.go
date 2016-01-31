@@ -127,7 +127,7 @@ func (u *gtkUI) showAddAccountWindow() error {
 		return err
 	}
 
-	u.accountDialog(c, func() {
+	u.accountDialog(nil, c, func() {
 		u.addAndSaveAccountConfig(c)
 		u.notify(i18n.Local("Account added"), fmt.Sprintf(i18n.Local("The account %s was added successfully."), c.Account))
 	})

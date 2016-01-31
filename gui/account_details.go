@@ -11,20 +11,22 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/net"
+	"github.com/twstrike/coyim/session"
 )
 
 type accountDetailsData struct {
-	builder          *gtk.Builder
-	dialog           *gtk.Dialog
-	notebook         *gtk.Notebook
-	otherSettings    *gtk.CheckButton
-	acc              *gtk.Entry
-	pass             *gtk.Entry
-	server           *gtk.Entry
-	port             *gtk.Entry
-	proxies          *gtk.ListStore
-	notificationArea *gtk.Box
-	proxiesView      *gtk.TreeView
+	builder             *gtk.Builder
+	dialog              *gtk.Dialog
+	notebook            *gtk.Notebook
+	otherSettings       *gtk.CheckButton
+	acc                 *gtk.Entry
+	pass                *gtk.Entry
+	server              *gtk.Entry
+	port                *gtk.Entry
+	proxies             *gtk.ListStore
+	notificationArea    *gtk.Box
+	proxiesView         *gtk.TreeView
+	fingerprintsMessage *gtk.Label
 }
 
 func getObjIgnoringErrors(b *gtk.Builder, name string) glib.IObject {
@@ -52,11 +54,27 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 	data.proxies = data.getObjIgnoringErrors("proxies-model").(*gtk.ListStore)
 	data.notificationArea = data.getObjIgnoringErrors("notification-area").(*gtk.Box)
 	data.proxiesView = data.getObjIgnoringErrors("proxies-view").(*gtk.TreeView)
+	data.fingerprintsMessage = data.getObjIgnoringErrors("fingerprintsMessage").(*gtk.Label)
 
 	return data
 }
 
-func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
+func formattedFingerprintsFor(s *session.Session) string {
+	result := ""
+
+	if s != nil {
+		for _, sk := range s.PrivateKeys {
+			pk := sk.PublicKey()
+			if pk != nil {
+				result = fmt.Sprintf("%s%s%s\n", result, "    ", config.FormatFingerprint(pk.Fingerprint()))
+			}
+		}
+	}
+
+	return result
+}
+
+func (u *gtkUI) accountDialog(s *session.Session, account *config.Account, saveFunction func()) {
 	data := getBuilderAndAccountDialogDetails()
 
 	data.otherSettings.SetActive(u.config.AdvancedOptions)
@@ -73,8 +91,14 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 		data.proxies.SetValue(iter, 1, px)
 	}
 
+	data.fingerprintsMessage.SetSelectable(true)
+	m := i18n.Local("Your fingerprints for %s:\n%s")
+	message := fmt.Sprintf(m, account.Account, formattedFingerprintsFor(s))
+	data.fingerprintsMessage.SetText(message)
+
 	p2, _ := data.notebook.GetNthPage(1)
 	p3, _ := data.notebook.GetNthPage(2)
+	p4, _ := data.notebook.GetNthPage(3)
 
 	failures := 0
 
@@ -96,9 +120,11 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 			if otherSettings {
 				p2.Show()
 				p3.Show()
+				p4.Show()
 			} else {
 				p2.Hide()
 				p3.Hide()
+				p4.Hide()
 			}
 		},
 		"on_save_signal": func() {
@@ -194,6 +220,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	if !u.config.AdvancedOptions {
 		p2.Hide()
 		p3.Hide()
+		p4.Hide()
 	}
 }
 

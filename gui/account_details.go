@@ -210,6 +210,18 @@ func (u *gtkUI) accountDialog(s *session.Session, account *config.Account, saveF
 			u.buildAccountsMenu()
 			data.dialog.Destroy()
 		},
+		"on_import_key_signal": func() {
+			u.importKeysForDialog(account, data.dialog)
+		},
+		"on_import_fpr_signal": func() {
+			u.importFingerprintsForDialog(account, data.dialog)
+		},
+		"on_export_key_signal": func() {
+			u.exportKeysForDialog(account, data.dialog)
+		},
+		"on_export_fpr_signal": func() {
+			u.exportFingerprintsForDialog(account, data.dialog)
+		},
 	})
 
 	data.dialog.SetTransientFor(u.window)

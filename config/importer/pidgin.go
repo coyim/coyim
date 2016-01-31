@@ -62,11 +62,11 @@ func (p *pidginImporter) protocolMatches(s string) bool {
 }
 
 func (p *pidginImporter) importKeysFrom(f string) (map[string][]byte, bool) {
-	return importKeysFromPidginStyle(f, p.protocolMatches)
+	return ImportKeysFromPidginStyle(f, p.protocolMatches)
 }
 
 func (p *pidginImporter) importFingerprintsFrom(f string) (map[string][]*config.KnownFingerprint, bool) {
-	return importFingerprintsFromPidginStyle(f, p.protocolMatches)
+	return ImportFingerprintsFromPidginStyle(f, p.protocolMatches)
 }
 
 func parseIntOr(s string, def int) int {

@@ -14,7 +14,8 @@ import (
 	"github.com/twstrike/otr3"
 )
 
-func importKeysFromPidginStyle(f string, protocolMatcher func(string) bool) (map[string][]byte, bool) {
+// ImportKeysFromPidginStyle will try to read keys in Pidgin style from the given file
+func ImportKeysFromPidginStyle(f string, protocolMatcher func(string) bool) (map[string][]byte, bool) {
 	file, err := os.Open(f)
 	if err != nil {
 		return nil, false
@@ -36,7 +37,8 @@ func importKeysFromPidginStyle(f string, protocolMatcher func(string) bool) (map
 	return res, true
 }
 
-func importFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bool) (map[string][]*config.KnownFingerprint, bool) {
+// ImportFingerprintsFromPidginStyle will try to read fingerprints in Pidgin style from the given file
+func ImportFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bool) (map[string][]*config.KnownFingerprint, bool) {
 	file, err := os.Open(f)
 	if err != nil {
 		return nil, false
@@ -47,6 +49,9 @@ func importFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bo
 	result := make(map[string][]*config.KnownFingerprint)
 	for sc.Scan() {
 		ln := strings.Split(sc.Text(), "\t")
+		if len(ln) < 4 {
+			return nil, false
+		}
 		name := strings.TrimSuffix(ln[1], "/")
 		if protocolMatcher(ln[2]) {
 			vv, ok := result[name]

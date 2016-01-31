@@ -116,13 +116,18 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 		xmppLogger: openLogFile(c.RawLogFile),
 	}
 
-	s.PrivateKeys = parseFromConfig(cu)
+	s.ReloadKeys()
 	s.ConversationManager = client.NewConversationManager(s, s)
 
 	go observe(s)
 	go checkReconnect(s)
 
 	return s
+}
+
+// ReloadKeys will reload the keys from the configuration
+func (s *Session) ReloadKeys() {
+	s.PrivateKeys = parseFromConfig(s.accountConfig)
 }
 
 // Send will send the given message to the receiver given

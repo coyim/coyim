@@ -117,7 +117,8 @@ func (p *Peer) EnsureHasFingerprint(fpr []byte) *Fingerprint {
 	return f
 }
 
-func (p *Peer) hasTrustedFingerprint(fpr []byte) bool {
+// HasTrustedFingerprint returns true if the peer has the given fingerprint and it is trusted
+func (p *Peer) HasTrustedFingerprint(fpr []byte) bool {
 	for _, ff := range p.Fingerprints {
 		if ff.Trusted && bytes.Equal(fpr, ff.Fingerprint) {
 			return true
@@ -144,7 +145,7 @@ func (a *Account) HasFingerprint(uid string) bool {
 // UserIDForVerifiedFingerprint returns the user ID for the given verified fingerprint
 func (a *Account) UserIDForVerifiedFingerprint(fpr []byte) string {
 	for _, pe := range a.Peers {
-		if pe.hasTrustedFingerprint(fpr) {
+		if pe.HasTrustedFingerprint(fpr) {
 			return pe.UserID
 		}
 	}

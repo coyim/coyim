@@ -223,31 +223,24 @@ func (conv *conversationWindow) getConversation() (client.Conversation, bool) {
 func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 	conv.Lock()
 	defer conv.Unlock()
+
+	if conv.fingerprintWarning != nil {
+		log.Println("we are already showing a fingerprint warning, so not doing it again")
+		return
+	}
+
 	conversation, exists := conv.getConversation()
 	if !exists {
-		//Something is wrong
-		log.Println("Conversation does not exist")
+		log.Println("Conversation does not exist - this shouldn't happen")
 		return
 	}
 
 	fingerprint := conversation.TheirFingerprint()
 	conf := conv.account.session.GetConfig()
 
-	//TODO: this only returns the userID if the fingerprint matches AND is not
-	//untrusted. What if this fingerprint is associated with another (untrusted)
-	//userID and we trust it for a different userID? Is this a problem?
-	userID := conf.UserIDForVerifiedFingerprint(fingerprint)
-
-	switch userID {
-	case "":
-		//TODO: Unknown fingerprint. User must verify.
-	case conv.to:
-		//TODO: Already verifyed. Should we notify?
-		log.Println("Fingerprint already verified")
-		return
-	default:
-		//TODO: The fingerprint is associated with someone else. Warn!!!
-		log.Println("Fingerprint verified with another userID")
+	p, hasPeer := conf.GetPeer(conv.to)
+	if hasPeer && p.HasTrustedFingerprint(fingerprint) {
+		log.Println("We have a peer and a trusted fingerprint already, so no reason to warn")
 		return
 	}
 

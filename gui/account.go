@@ -22,6 +22,9 @@ type account struct {
 	session         *session.Session
 	sessionObserver chan interface{}
 
+	delayedConversations     map[string][]func(*conversationWindow)
+	delayedConversationsLock sync.Mutex
+
 	sync.Mutex
 }
 
@@ -35,8 +38,9 @@ func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 func newAccount(conf *config.ApplicationConfig, currentConf *config.Account) *account {
 	return &account{
-		session:       session.NewSession(conf, currentConf),
-		conversations: make(map[string]*conversationWindow),
+		session:              session.NewSession(conf, currentConf),
+		conversations:        make(map[string]*conversationWindow),
+		delayedConversations: make(map[string][]func(*conversationWindow)),
 	}
 }
 
@@ -52,7 +56,22 @@ func (account *account) getConversationWith(to string) (*conversationWindow, boo
 func (account *account) createConversationWindow(to string, displaySettings *displaySettings, textBuffer *gtk.TextBuffer) *conversationWindow {
 	c := newConversationWindow(account, to, displaySettings, textBuffer)
 	account.conversations[to] = c
+
+	account.delayedConversationsLock.Lock()
+	defer account.delayedConversationsLock.Unlock()
+	for _, f := range account.delayedConversations[to] {
+		f(c)
+	}
+	delete(account.delayedConversations, to)
+
 	return c
+}
+
+func (account *account) afterConversationWindowCreated(to string, f func(*conversationWindow)) {
+	account.delayedConversationsLock.Lock()
+	defer account.delayedConversationsLock.Unlock()
+
+	account.delayedConversations[to] = append(account.delayedConversations[to], f)
 }
 
 func (account *account) enableExistingConversationWindows(enable bool) {

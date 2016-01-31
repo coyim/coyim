@@ -92,6 +92,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 		"on_toggle_other_settings": func() {
 			otherSettings := data.otherSettings.GetActive()
 			u.setShowAdvancedSettings(otherSettings)
+			data.notebook.SetShowTabs(otherSettings)
 			if otherSettings {
 				p2.Show()
 				p3.Show()
@@ -189,6 +190,7 @@ func (u *gtkUI) accountDialog(account *config.Account, saveFunction func()) {
 	data.dialog.ShowAll()
 	data.notebook.SetCurrentPage(0)
 
+	data.notebook.SetShowTabs(u.config.AdvancedOptions)
 	if !u.config.AdvancedOptions {
 		p2.Hide()
 		p3.Hide()

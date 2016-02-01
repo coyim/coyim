@@ -101,8 +101,7 @@ func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, acc
 
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.EventButton) {
 	builder := builderForDefinition("ContactPopupMenu")
-	obj, _ := builder.GetObject("contactMenu")
-	mn := obj.(*gtk.Menu)
+	mn := getObjIgnoringErrors(builder, "contactMenu").(*gtk.Menu)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
@@ -118,6 +117,9 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 		},
 		"on_ask_contact_to_see_status": func() {
 			account.session.RequestPresenceSubscription(jid)
+		},
+		"on_peer_fingerprints": func() {
+			r.ui.showFingerprintsForPeer(jid, account)
 		},
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.GetConfig().Account)

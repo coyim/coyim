@@ -69,7 +69,6 @@ func NewGTK(version string) UI {
 		setShowAdvancedSettingsRequest:       make(chan bool, 100),
 	}
 
-	ret.applyStyle()
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
 	ret.accountManager = newAccountManager(ret)

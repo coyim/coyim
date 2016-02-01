@@ -244,6 +244,10 @@ func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 		return
 	}
 
+	if hasPeer {
+		p.EnsureHasFingerprint(fingerprint)
+	}
+
 	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.win)
 	conv.addNotification(conv.fingerprintWarning)
 }

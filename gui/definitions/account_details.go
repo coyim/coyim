@@ -88,7 +88,7 @@ func (*defAccountDetails) String() string {
 
                 <child>
                   <object class="GtkLabel" id="showOtherSettings">
-                    <property name="label" translatable="yes">Other settings</property>
+                    <property name="label" translatable="yes">Display all settings</property>
                     <property name="justify">GTK_JUSTIFY_RIGHT</property>
                     <property name="halign">GTK_ALIGN_END</property>
                   </object>
@@ -172,7 +172,7 @@ func (*defAccountDetails) String() string {
             </child>
             <child type="tab">
               <object class="GtkLabel" id="label-tab2">
-                <property name="label" translatable="yes">Other options</property>
+                <property name="label" translatable="yes">Server</property>
                 <property name="visible">True</property>
               </object>
               <packing>

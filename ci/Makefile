@@ -64,7 +64,7 @@ release-gui: ../bin/coyim
 	openssl dgst -sha1 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/checksum
 
 ../bin/coyim.exe:
-	make -C ../ build-gui
+	make -C ../ build-gui-win
 
 release-gui-win: ../bin/coyim.exe
 	mkdir -p ../release

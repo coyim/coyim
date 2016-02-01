@@ -47,19 +47,29 @@ install:
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pango" > nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gtk3" > nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pkg-config" > nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy tree" > nul'
   - '%MSYS_PATH%\usr\bin\bash -lc "yes|pacman --noconfirm -Sc" > nul'
   - if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > nul
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps-u"'
 build_script:
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make build-gui"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make build-gui-win"'
+after_build:
+  - mkdir %GOPATH%\src\github.com\twstrike\coyim\release\
+  - '%MSYS_PATH%\usr\bin\bash -lc "cp /mingw%MSYS2_BITS%/**/*.dll /c/gopath/src/github.com/twstrike/coyim/release/"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy sed" > nul'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && ci/release"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim/release && 7z a -tzip coyim.zip *"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim/release && rm *.dll"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim/release && rm *.exe"'
+  - xcopy %GOPATH%\src\github.com\twstrike\coyim\release\coyim.zip %APPVEYOR_BUILD_FOLDER%\ /e /i > nul
 artifacts:
-  - path: '%GOPATH%\src\github.com\twstrike\coyim\bin\coyim.exe'
+  - path: coyim.zip
+    name: CoyIM
 before_deploy:
-  - if "%APPVEYOR_REPO_BRANCH%"=="release" %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy sed" > nul
-  - if "%APPVEYOR_REPO_BRANCH%"=="release" %MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && ci/release"
+  - gem install dpl --no-ri --no-rdoc
+  - appveyor DownloadFile https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt
+  - set SSL_CERT_FILE=C:\ssl\certs\ca-bundle.crt
+  - xcopy ca-bundle.crt C:\ssl\certs\
 deploy_script:
-  - if "%APPVEYOR_REPO_BRANCH%"=="release" gem install dpl --no-ri --no-rdoc
-  - if "%APPVEYOR_REPO_BRANCH%"=="release" appveyor DownloadFile https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt
-  - if "%APPVEYOR_REPO_BRANCH%"=="release" xcopy ca-bundle.crt C:\ssl\certs\
-  - if "%APPVEYOR_REPO_BRANCH%"=="release" set SSL_CERT_FILE=C:\ssl\certs\ca-bundle.crt
-  - if "%APPVEYOR_REPO_BRANCH%"=="release" cd %GOPATH%\src\github.com\twstrike\coyim && dpl --provider=bintray --file=ci/bintray.json --user=%BINTRAY_USER% --key=%BINTRAY_APIKEY%"
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim/release && ls -l"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && dpl --provider=bintray --file=ci/bintray.json --user=%BINTRAY_USER% --key=%BINTRAY_APIKEY%"'

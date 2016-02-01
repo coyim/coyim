@@ -15,7 +15,7 @@ OS=${APPVEYOR_OS_NAME:-${TRAVIS_OS_NAME:-linux}}
 
 # We can deploy only when a tag is pushed, and use it as the version
 if [[ $OS = "windows" ]]; then
-    make build-gui
+    make -C "${CI_DIR}" release-gui-win
 elif [[ $OS = "linux" ]]; then
     make -C "${CI_DIR}" cross-compile release-gui
 elif [[ $OS = "osx" ]]; then
@@ -29,8 +29,6 @@ else
     echo "Unsupported OS: ${OS}" >2
     exit 1
 fi
-
-mv bin/coyim bin/coyim_$(go env GOOS)_$(go env GOARCH)
 
 # update version on bintray conf file, preparing to send
 sed -i".bak" "s <VERSION> $VERSION g" ci/bintray.json

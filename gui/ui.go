@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/twstrike/coyim/config"
@@ -501,49 +500,6 @@ func (u *gtkUI) initMenuBar() {
 
 func (u *gtkUI) rosterUpdated() {
 	doInUIThread(u.roster.redraw)
-}
-
-func (u *gtkUI) askForServerDetails(conf *config.Account, connectFn func() error) {
-	builder := builderForDefinition("ConnectionSettings")
-
-	obj, _ := builder.GetObject("ConnectionSettingsDialog")
-	dialog := obj.(*gtk.Dialog)
-
-	obj, _ = builder.GetObject("server")
-	serverEntry := obj.(*gtk.Entry)
-
-	obj, _ = builder.GetObject("port")
-	portEntry := obj.(*gtk.Entry)
-
-	if conf.Port == 0 {
-		conf.Port = 5222
-	}
-
-	serverEntry.SetText(conf.Server)
-	portEntry.SetText(strconv.Itoa(conf.Port))
-
-	builder.ConnectSignals(map[string]interface{}{
-		"reconnect": func() {
-			defer dialog.Destroy()
-
-			//TODO: validate
-			conf.Server, _ = serverEntry.GetText()
-
-			p, _ := portEntry.GetText()
-			conf.Port, _ = strconv.Atoi(p)
-
-			go func() {
-				if connectFn() != nil {
-					return
-				}
-
-				u.saveConfigOnly()
-			}()
-		},
-	})
-
-	dialog.SetTransientFor(u.window)
-	dialog.ShowAll()
 }
 
 func (u *gtkUI) editAccount(account *account) {

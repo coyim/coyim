@@ -79,12 +79,21 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 }
 
 func newConversationWindow(account *account, uid string, displaySettings *displaySettings, textBuffer *gtk.TextBuffer) *conversationWindow {
-	builder := builderForDefinition("Conversation")
+	builder := builderForDefinition("ConversationPane")
+	winBuilder := builderForDefinition("Conversation")
 
-	obj, _ := builder.GetObject("conversation")
+	obj, _ := winBuilder.GetObject("conversation")
 	win := obj.(*gtk.Window)
 	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, uid)
 	win.SetTitle(title)
+
+	obj, _ = winBuilder.GetObject("box")
+	winBox := obj.(*gtk.Box)
+
+	obj, _ = builder.GetObject("box")
+	pane := obj.(*gtk.Box)
+
+	winBox.PackStart(pane, true, true, 0)
 
 	obj, _ = builder.GetObject("history")
 	history := obj.(*gtk.TextView)

@@ -1,13 +1,16 @@
 package gui
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/config/importer"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/otr3"
 )
 
 func valAt(s *gtk.ListStore, iter *gtk.TreeIter, col int) interface{} {
@@ -149,11 +152,45 @@ func (u *gtkUI) importKeysFor(account *config.Account, file string) (int, bool) 
 }
 
 func (u *gtkUI) exportFingerprintsFor(account *config.Account, file string) bool {
+	f, err := os.Create(file)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+	bw := bufio.NewWriter(f)
+
+	for _, p := range account.Peers {
+		for _, fpr := range p.Fingerprints {
+			trusted := ""
+			if fpr.Trusted {
+				trusted = "\tverified"
+			}
+			bw.WriteString(fmt.Sprintf("%s\t%s/\tprpl-jabber\t%x%s\n", p.UserID, account.Account, fpr.Fingerprint, trusted))
+		}
+	}
+
+	bw.Flush()
 	return true
 }
 
 func (u *gtkUI) exportKeysFor(account *config.Account, file string) bool {
-	return true
+	var result []*otr3.Account
+
+	allKeys := account.AllPrivateKeys()
+
+	for _, pp := range allKeys {
+		_, ok, parsedKey := otr3.ParsePrivateKey(pp)
+		if ok {
+			result = append(result, &otr3.Account{
+				Name:     account.Account,
+				Protocol: "prpl-jabber",
+				Key:      parsedKey,
+			})
+		}
+	}
+
+	err := otr3.ExportKeysToFile(result, file)
+	return err == nil
 }
 
 func (u *gtkUI) importKeysForDialog(account *config.Account, w *gtk.Dialog) {
@@ -192,7 +229,12 @@ func (u *gtkUI) exportKeysForDialog(account *config.Account, w *gtk.Dialog) {
 	dialog.SetCurrentName("otr.private_key")
 
 	if gtk.ResponseType(dialog.Run()) == gtk.RESPONSE_OK {
-		u.exportKeysFor(account, dialog.GetFilename())
+		ok := u.exportKeysFor(account, dialog.GetFilename())
+		if ok {
+			u.notify(i18n.Local("Keys exported"), i18n.Local("Keys were exported correctly."))
+		} else {
+			u.notify(i18n.Local("Failure exporting keys"), fmt.Sprintf(i18n.Local("Couldn't export keys to %s."), dialog.GetFilename()))
+		}
 	}
 	dialog.Destroy()
 }
@@ -233,7 +275,12 @@ func (u *gtkUI) exportFingerprintsForDialog(account *config.Account, w *gtk.Dial
 	dialog.SetCurrentName("otr.fingerprints")
 
 	if gtk.ResponseType(dialog.Run()) == gtk.RESPONSE_OK {
-		u.exportKeysFor(account, dialog.GetFilename())
+		ok := u.exportFingerprintsFor(account, dialog.GetFilename())
+		if ok {
+			u.notify(i18n.Local("Fingerprints exported"), i18n.Local("Fingerprints were exported correctly."))
+		} else {
+			u.notify(i18n.Local("Failure exporting fingerprints"), fmt.Sprintf(i18n.Local("Couldn't export fingerprints to %s."), dialog.GetFilename()))
+		}
 	}
 	dialog.Destroy()
 }

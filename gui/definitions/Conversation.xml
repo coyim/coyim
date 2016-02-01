@@ -7,9 +7,10 @@
     <signal name="enable" handler="on_connect" />
     <signal name="disable" handler="on_disconnect" />
     <child>
-      <object class="GtkVBox" id="box">
+      <object class="GtkBox" id="box">
         <property name="visible">true</property>
         <property name="homogeneous">false</property>
+    	<property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <object class="GtkMenuBar" id="menubar">
             <property name="visible">true</property>

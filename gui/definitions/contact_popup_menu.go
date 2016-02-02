@@ -20,6 +20,10 @@ func (*defContactPopupMenu) String() string {
       <object class="GtkSeparatorMenuItem" id="sep1"/>
     </child>
     <child>
+      <object class="GtkMenuItem" id="editContactMenuItem">
+        <property name="label" translatable="yes">Edit...</property>
+        <signal name="activate" handler="on_edit_contact" />
+      </object>
       <object class="GtkMenuItem" id="removeContactMenuItem">
         <property name="label" translatable="yes">Remove</property>
         <signal name="activate" handler="on_remove_contact" />

@@ -100,6 +100,24 @@ func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, acc
 	return jid, account, rowType, ok
 }
 
+func (r *roster) openEditContactDialog(jid string, acc *account) {
+	builder := builderForDefinition("PeerDetails")
+	dialog := getObjIgnoringErrors(builder, "dialog").(*gtk.Dialog)
+
+	accName := getObjIgnoringErrors(builder, "account-name").(*gtk.Label)
+	accName.SetText(acc.session.GetConfig().Account)
+
+	contactJID := getObjIgnoringErrors(builder, "jid").(*gtk.Label)
+	contactJID.SetText(jid)
+
+	//TODO: add signals
+	//TODO: manage groups
+	//TODO: update nickname
+
+	dialog.SetTransientFor(r.ui.window)
+	dialog.ShowAll()
+}
+
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.EventButton) {
 	builder := builderForDefinition("ContactPopupMenu")
 	mn := getObjIgnoringErrors(builder, "contactMenu").(*gtk.Menu)
@@ -109,6 +127,9 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 			account.session.RemoveContact(jid)
 			r.ui.removePeer(account, jid)
 			r.redraw()
+		},
+		"on_edit_contact": func() {
+			doInUIThread(func() { r.openEditContactDialog(jid, account) })
 		},
 		"on_allow_contact_to_see_status": func() {
 			account.session.ApprovePresenceSubscription(jid, "" /* generate id */)

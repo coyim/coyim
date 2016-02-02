@@ -42,11 +42,13 @@ type OtrEventHandler struct {
 	SmpQuestion      string
 	securityChange   SecurityChange
 	WaitingForSecret bool
+	Account          string
+	Peer             string
 }
 
 // HandleErrorMessage is called when asked to handle a specific error message
 func (e *OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
-	log.Printf("HandleErrorMessage(%s)", error.String())
+	log.Printf("[%s] HandleErrorMessage(%s)", e.Account, error.String())
 
 	switch error {
 	case otr3.ErrorCodeEncryptionError:
@@ -64,7 +66,7 @@ func (e *OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
 
 // HandleSecurityEvent is called to handle a specific security event
 func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
-	log.Printf("HandleSecurityEvent(%s)", event.String())
+	log.Printf("[%s] HandleSecurityEvent(%s)", e.Account, event.String())
 	switch event {
 	case otr3.GoneSecure, otr3.StillSecure:
 		e.securityChange = NewKeys
@@ -75,7 +77,7 @@ func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 
 // HandleSMPEvent is called to handle a specific SMP event
 func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
-	log.Printf("HandleSMPEvent(%s, %d, %s)", event.String(), progressPercent, question)
+	log.Printf("[%s] HandleSMPEvent(%s, %d, %s)", e.Account, event.String(), progressPercent, question)
 	switch event {
 	case otr3.SMPEventAskForSecret, otr3.SMPEventAskForAnswer:
 		e.securityChange = SMPSecretNeeded
@@ -92,7 +94,18 @@ func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent in
 
 // HandleMessageEvent is called to handle a specific message event
 func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error) {
-	log.Printf("HandleMessageEvent(%s, %s, %v)", event.String(), message, err)
+	switch event {
+	case otr3.MessageEventLogHeartbeatReceived:
+		log.Printf("[%s] Heartbeat received from %s.", e.Account, e.Peer)
+	case otr3.MessageEventLogHeartbeatSent:
+		log.Printf("[%s] Heartbeat sent to %s.", e.Account, e.Peer)
+	case otr3.MessageEventReceivedMessageUnrecognized:
+		log.Printf("[%s] Unrecognized OTR message received from %s.", e.Account, e.Peer)
+	case otr3.MessageEventReceivedMessageForOtherInstance:
+		// We ignore this message on purpose, for now it would be too noisy to notify about it
+	default:
+		log.Printf("[%s] Unhandled OTR3 Message Event(%s, %s, %v)", e.Account, event.String(), message, err)
+	}
 }
 
 // ConsumeSecurityChange is called to get the current security change and forget the old one

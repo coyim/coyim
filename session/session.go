@@ -427,6 +427,7 @@ func (s *Session) otrEnded(uid string) {
 
 // NewConversation will create a new OTR conversation with the given peer
 //TODO: why creating a conversation is coupled to the account config and the session
+//TODO: does the creation of the OTR event handler need to be guarded with a lock?
 func (s *Session) NewConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.PrivateKeys)
@@ -446,6 +447,8 @@ func (s *Session) NewConversation(peer string) *otr3.Conversation {
 	eh, ok := s.OtrEventHandler[peer]
 	if !ok {
 		eh = new(event.OtrEventHandler)
+		eh.Account = s.GetConfig().Account
+		eh.Peer = peer
 		conversation.SetSMPEventHandler(eh)
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)

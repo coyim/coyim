@@ -22,7 +22,7 @@ gettext: $(TRANSLATIONS)
 
 $(DOMAIN).pot: $(DEFINITIONS) $(IN_FILES)
 	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L glade $(DEFINITIONS) -o $(DOMAIN).pot
-	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L python $(IN_FILES) --keyword=Local -j -o $(DOMAIN).pot
+	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L python $(IN_FILES) --keyword=Local --keyword=T -j -o $(DOMAIN).pot
 
 %.po: $(DOMAIN).pot
 	./update-locales $(DOMAIN).pot $@

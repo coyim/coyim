@@ -2,6 +2,9 @@ package i18n
 
 import "fmt"
 
+// T marks a string literal as transatable
+type T string
+
 // Local returns the given string in the local language
 func Local(v string) string {
 	return glib._(v)

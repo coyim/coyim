@@ -430,6 +430,8 @@ func (u gtkUI) aboutDialog() {
 	// dialog.SetLogo(pixbuf)
 	dialog.SetLicense(`GNU GENERAL PUBLIC LICENSE, Version 3`)
 	dialog.SetWrapLicense(true)
+
+	dialog.SetTransientFor(u.window)
 	dialog.Run()
 	dialog.Destroy()
 }

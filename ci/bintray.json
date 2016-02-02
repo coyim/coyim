@@ -36,11 +36,6 @@
       "includePattern": "release/(.*).dmg",
       "uploadPattern": "<RELEASE>/mac-bundle/$1.dmg",
       "matrixParams": { "override": 1 }
-    },
-    {
-      "includePattern": "release/(.*).zip",
-      "uploadPattern": "<RELEASE>/windows-bundle/$1.zip",
-      "matrixParams": { "override": 1 }
     }],
     "publish": true
 }

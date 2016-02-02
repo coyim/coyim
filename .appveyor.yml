@@ -4,6 +4,7 @@ environment:
   global:
     APPVEYOR_OS_NAME: windows
     GOPATH: c:\gopath
+    BINTRAY_PATH: twstrike/coyim/coyim-bin/windows
     BINTRAY_USER:
       secure: HvXDg/3xn3Du2GPXPyf1tQ==
     BINTRAY_APIKEY:
@@ -23,53 +24,14 @@ environment:
       METHOD: cross
       MSYS2_BASEVER: 20150916
 install:
-  - mkdir %GOPATH%\src\github.com\twstrike\
-  - xcopy %APPVEYOR_BUILD_FOLDER%\* %GOPATH%\src\github.com\twstrike\coyim /e /i /EXCLUDE:%MSYS_PATH% > nul
-  - dir %GOPATH%\src\github.com\twstrike\coyim
-  - if "%METHOD%"=="ci" SET MSYS_PATH=c:\msys64
-  - if "%METHOD%"=="cross" SET MSYS_PATH=%APPVEYOR_BUILD_FOLDER%\msys%MSYS2_BITS%
-  - if "%METHOD%"=="cross" appveyor DownloadFile http://kent.dl.sourceforge.net/project/msys2/Base/%MSYS2_ARCH%/msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz
-  - if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz > nul
-  - if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > nul
-  - SET PATH=%MSYS_PATH%\usr\bin;%PATH%
-  - SET PATH=%MSYS_PATH%\mingw%MSYS2_BITS%\bin;%PATH%
-  - '%MSYS_PATH%\usr\bin\bash -lc "echo update-core starting..." 2> nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "update-core" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "echo install-deps starting..."'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy autoconf" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy automake" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy make" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-libiconv" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gcc" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gdb" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-make" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy zlib-devel" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pango" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gtk3" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pkg-config" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy tree" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "yes|pacman --noconfirm -Sc" > nul'
-  - if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > nul
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps-u"'
+  - .\ci\install-deps-windows.bat
 build_script:
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps-u"'
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make build-gui-win"'
 after_build:
-  - mkdir %GOPATH%\src\github.com\twstrike\coyim\release\
-  - '%MSYS_PATH%\usr\bin\bash -lc "cp /mingw%MSYS2_BITS%/**/*.dll /c/gopath/src/github.com/twstrike/coyim/release/"'
-  - '%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy sed" > nul'
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && ci/release"'
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim/release && 7z a -tzip coyim.zip *"'
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim/release && rm *.dll"'
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim/release && rm *.exe"'
-  - xcopy %GOPATH%\src\github.com\twstrike\coyim\release\coyim.zip %APPVEYOR_BUILD_FOLDER%\ /e /i > nul
+  - .\ci\build-windows-bundle.bat
 artifacts:
   - path: coyim.zip
     name: CoyIM
-before_deploy:
-  - gem install dpl --no-ri --no-rdoc
-  - appveyor DownloadFile https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt
-  - set SSL_CERT_FILE=C:\ssl\certs\ca-bundle.crt
-  - xcopy ca-bundle.crt C:\ssl\certs\
 deploy_script:
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim/release && ls -l"'
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && dpl --provider=bintray --file=ci/bintray.json --user=%BINTRAY_USER% --key=%BINTRAY_APIKEY%"'
+  - curl -T coyim.zip -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" "https://api.bintray.com/content/%BINTRAY_PATH%/windows-bundle/CoyIM.zip?override=1&publish=1"

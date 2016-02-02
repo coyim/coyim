@@ -466,14 +466,14 @@ func (u *gtkUI) addContactWindow() {
 
 func (u *gtkUI) listenToToggleConnectAllAutomatically() {
 	for {
-		<-u.toggleConnectAllAutomaticallyRequest
-		u.config.ConnectAutomatically = !u.config.ConnectAutomatically
+		val := <-u.toggleConnectAllAutomaticallyRequest
+		u.config.ConnectAutomatically = val
 		u.saveConfigOnly()
 	}
 }
 
-func (u *gtkUI) toggleConnectAllAutomatically() {
-	u.toggleConnectAllAutomaticallyRequest <- true
+func (u *gtkUI) setConnectAllAutomatically(val bool) {
+	u.toggleConnectAllAutomaticallyRequest <- val
 }
 
 func (u *gtkUI) setShowAdvancedSettings(val bool) {

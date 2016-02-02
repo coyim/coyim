@@ -31,7 +31,7 @@ func (u *gtkUI) buildStaticAccountsMenu(submenu *gtk.Menu) {
 	})
 
 	connectAutomaticallyItem.Connect("activate", func() {
-		u.toggleConnectAllAutomatically()
+		u.setConnectAllAutomatically(connectAutomaticallyItem.GetActive())
 	})
 	submenu.Append(connectAutomaticallyItem)
 

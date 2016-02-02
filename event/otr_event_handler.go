@@ -3,7 +3,6 @@ package event
 import (
 	"log"
 
-	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/otr3"
 )
 
@@ -45,24 +44,19 @@ type OtrEventHandler struct {
 	WaitingForSecret bool
 }
 
-// WishToHandleErrorMessage means this event handler wants to handle error messages
-func (*OtrEventHandler) WishToHandleErrorMessage() bool {
-	return true
-}
-
 // HandleErrorMessage is called when asked to handle a specific error message
 func (e *OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
 	log.Printf("HandleErrorMessage(%s)", error.String())
 
 	switch error {
 	case otr3.ErrorCodeEncryptionError:
-		return []byte(i18n.Local("Error occurred encrypting message."))
+		return []byte("Error occurred encrypting message.")
 	case otr3.ErrorCodeMessageUnreadable:
-		return []byte(i18n.Local("You transmitted an unreadable encrypted message."))
+		return []byte("You transmitted an unreadable encrypted message.")
 	case otr3.ErrorCodeMessageMalformed:
-		return []byte(i18n.Local("You transmitted a malformed data message."))
+		return []byte("You transmitted a malformed data message.")
 	case otr3.ErrorCodeMessageNotInPrivate:
-		return []byte(i18n.Local("You sent encrypted data to a peer, who wasn't expecting it."))
+		return []byte("You sent encrypted data to a peer, who wasn't expecting it.")
 	}
 
 	return nil

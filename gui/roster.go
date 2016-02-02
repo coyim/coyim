@@ -10,6 +10,7 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
+	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/ui"
 )
 
@@ -123,7 +124,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},
 		"on_rename_signal" : func() {
-			renameContactPopup(jid)
+			r.renameContactPopup(account.session, jid)
 		},
 	})
 
@@ -131,7 +132,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }
 
-func renameContactPopup(jid string) {
+func (r *roster) renameContactPopup(s *session.Session, jid string) {
 	builder := builderForDefinition("RenameContact")
 	obj, _ := builder.GetObject("RenameContactPopup")
 	popup := obj.(*gtk.Dialog)
@@ -140,7 +141,9 @@ func renameContactPopup(jid string) {
 			obj, _ = builder.GetObject("rename")
 			renameTxt := obj.(*gtk.Entry)
 			newName, _ := renameTxt.GetText()
-			fmt.Printf("<%s> was renamed to <%s>", jid, newName)
+			s.RenamePeer(jid, newName)
+			r.ui.SaveConfig()
+			r.redraw()
 			popup.Destroy()
 		},
 	})
@@ -499,6 +502,7 @@ func (r *roster) sortedAccounts() []*account {
 		}
 		as = append(as, account)
 	}
+	//TODO sort by nickname if available
 	sort.Sort(byAccountNameAlphabetic(as))
 	return as
 }

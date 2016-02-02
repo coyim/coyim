@@ -195,3 +195,8 @@ func (a *Account) RemovePeer(uid string) {
 	}
 	a.Peers = newPeers
 }
+
+//SetPeersNickname sets the nickname for the account
+func (a *Account) SetPeersNickname(pid, nickname string) {
+	a.EnsurePeer(pid).Nickname = nickname
+}

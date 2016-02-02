@@ -344,7 +344,7 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{},
 	for _, entry := range rst.Item {
 		if entry.Subscription == "remove" {
 			s.R.Remove(entry.Jid)
-		} else if s.R.AddOrMerge(roster.PeerFrom(entry, s.GetConfig().ID())) {
+		} else if s.R.AddOrMerge(roster.PeerFrom(entry, s.GetConfig())) {
 			s.iqReceived(entry.Jid)
 		}
 	}
@@ -709,7 +709,7 @@ func (s *Session) requestRoster() bool {
 	}
 
 	for _, rr := range rst {
-		s.R.AddOrMerge(roster.PeerFrom(rr, s.GetConfig().ID()))
+		s.R.AddOrMerge(roster.PeerFrom(rr, s.GetConfig()))
 	}
 
 	s.rosterReceived()

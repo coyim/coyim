@@ -2,6 +2,7 @@ package roster
 
 import (
 	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/config"
 
 	g "gopkg.in/check.v1"
 )
@@ -20,8 +21,11 @@ func (s *PeerXmppSuite) Test_PeerFrom_returnsANewPeerWithTheSameInformation(c *g
 			"twogroup",
 		},
 	}
+	config := &config.Account{
+		Account: "some@one.org",
+	}
 
-	p := PeerFrom(re, "")
+	p := PeerFrom(re, config)
 
 	c.Assert(p.Jid, g.Equals, "foo@bar.com")
 	c.Assert(p.Subscription, g.Equals, "from")
@@ -67,6 +71,7 @@ func (s *PeerXmppSuite) Test_PeerWithPendingSubscribe_createsNewPeer(c *g.C) {
 func (s *PeerXmppSuite) Test_NameForPresentation_returnsTheNameIfItExistsButJidOtherwise(c *g.C) {
 	c.Assert((&Peer{Name: "foo", Jid: "foo@bar.com"}).NameForPresentation(), g.Equals, "foo")
 	c.Assert((&Peer{Jid: "foo@bar.com"}).NameForPresentation(), g.Equals, "foo@bar.com")
+	c.Assert((&Peer{Jid: "jid@coy.im", Name: "Name", Nickname: "Nick"}).NameForPresentation(), g.Equals, "Nick")
 }
 
 func (s *PeerXmppSuite) Test_MergeWith_takesTheFirstGroupsIfExists(c *g.C) {

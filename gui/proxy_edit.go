@@ -6,15 +6,21 @@ import (
 	"github.com/twstrike/coyim/net"
 )
 
-var proxyTypes = [][]string{
-	[]string{"tor-auto", "Automatic Tor"},
-	[]string{"socks5", "SOCKS5"},
+// this is an array because it must be sorted
+var proxyTypes = []string{
+	"tor-auto",
+	"socks5",
+}
+
+var proxyTypesNames = map[string]i18n.T{
+	"tor-auto": i18n.T("Automatic Tor"),
+	"socks5":   i18n.T("SOCKS5"),
 }
 
 // findProxyTypeFor returns the index of the proxy type given
 func findProxyTypeFor(s string) int {
 	for ix, px := range proxyTypes {
-		if px[0] == s {
+		if px == s {
 			return ix
 		}
 	}
@@ -25,15 +31,19 @@ func findProxyTypeFor(s string) int {
 // getProxyTypeNames will yield all i18n proxy names to the function
 func getProxyTypeNames(f func(string)) {
 	for _, px := range proxyTypes {
-		f(i18n.Local(px[1]))
+		l := i18n.Local(string(proxyTypesNames[px]))
+		f(l)
 	}
 }
 
 // getProxyTypeFor will return the proxy type for the given i18n proxy name
+// we are using a GtkComboBoxText "that hides the model-view complexity for simple text-only use cases"
+// this function implements our (proxy type, proxy label) model.
 func getProxyTypeFor(act string) string {
 	for _, px := range proxyTypes {
-		if act == i18n.Local(px[1]) {
-			return px[0]
+		l := i18n.Local(string(proxyTypesNames[px]))
+		if act == l {
+			return px
 		}
 	}
 	return ""

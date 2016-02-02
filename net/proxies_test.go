@@ -6,27 +6,6 @@ type ProxiesSuite struct{}
 
 var _ = Suite(&ProxiesSuite{})
 
-func (s *ProxiesSuite) Test_FindProxyTypeFor_findsTheIndexForAProxyType(c *C) {
-	c.Check(FindProxyTypeFor("tor-auto"), Equals, 0)
-	c.Check(FindProxyTypeFor("socks5"), Equals, 1)
-	c.Check(FindProxyTypeFor("something-weird"), Equals, -1)
-}
-
-func (s *ProxiesSuite) Test_GetProxyTypeNames_yieldsAllProxyTypeNames(c *C) {
-	result := []string{}
-	GetProxyTypeNames(func(s string) {
-		result = append(result, s)
-	})
-
-	c.Assert(result, DeepEquals, []string{"Automatic Tor", "SOCKS5"})
-}
-
-func (s *ProxiesSuite) Test_GetProxyTypeFor_returnsTheCorrectProxyType(c *C) {
-	c.Check(GetProxyTypeFor("Automatic Tor"), Equals, "tor-auto")
-	c.Check(GetProxyTypeFor("SOCKS5"), Equals, "socks5")
-	c.Check(GetProxyTypeFor("something else"), Equals, "")
-}
-
 func (s *ProxiesSuite) Test_ParseProxy_returnsTheSchemeOfTheProxySpecification(c *C) {
 	c.Check(ParseProxy("socks4://localhost").Scheme, Equals, "socks4")
 	c.Check(ParseProxy("socks5://127.1.1.2").Scheme, Equals, "socks5")

@@ -10,7 +10,7 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/ui"
 )
 
@@ -126,7 +126,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},
 		"on_rename_signal" : func() {
-			r.renameContactPopup(account.session, jid)
+			r.renameContactPopup(account.session.GetConfig(), jid)
 		},
 	})
 
@@ -134,7 +134,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }
 
-func (r *roster) renameContactPopup(s *session.Session, jid string) {
+func (r *roster) renameContactPopup(conf *config.Account, jid string) {
 	builder := builderForDefinition("RenameContact")
 	obj, _ := builder.GetObject("RenameContactPopup")
 	popup := obj.(*gtk.Dialog)
@@ -143,7 +143,7 @@ func (r *roster) renameContactPopup(s *session.Session, jid string) {
 			obj, _ = builder.GetObject("rename")
 			renameTxt := obj.(*gtk.Entry)
 			newName, _ := renameTxt.GetText()
-			s.RenamePeer(jid, newName)
+			conf.SetPeersNickname(jid, newName)
 			r.ui.SaveConfig()
 			r.redraw()
 			popup.Destroy()

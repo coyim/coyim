@@ -14,8 +14,3 @@ func (s *Session) RemoveContact(jid string) {
 		},
 	})
 }
-
-// RenamePeer is used to add a nickname for an account's peer
-func (s *Session) RenamePeer(pid, nickname string) {
-	s.GetConfig().SetPeersNickname(pid, nickname)
-}

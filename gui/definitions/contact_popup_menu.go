@@ -26,11 +26,8 @@ func (*defContactPopupMenu) String() string {
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="sepRename"/>
-    </child>
-    <child>
       <object class="GtkMenuItem" id="renameMenuItem">
-        <property name="label" translatable="yes">Rename contact...</property>
+        <property name="label" translatable="yes">Rename...</property>
         <signal name="activate" handler="on_rename_signal" />
       </object>
     </child>

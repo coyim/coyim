@@ -143,7 +143,7 @@ func (r *roster) renameContactPopup(conf *config.Account, jid string) {
 			obj, _ = builder.GetObject("rename")
 			renameTxt := obj.(*gtk.Entry)
 			newName, _ := renameTxt.GetText()
-			conf.SetPeersNickname(jid, newName)
+			conf.RenamePeer(jid, newName)
 			r.ui.SaveConfig()
 			r.redraw()
 			popup.Destroy()

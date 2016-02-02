@@ -19,7 +19,7 @@ func (s *AccountPeerSuite) Test_Peer_ChangesNickname(c *C) {
 		},
 	}
 	
-	a.SetPeersNickname(pid, "bff")
+	a.RenamePeer(pid, "bff")
 	
 	p, _ := a.GetPeer(pid)
 	c.Check(p.Nickname, Equals, "bff")

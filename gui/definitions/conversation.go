@@ -129,8 +129,6 @@ func (*defConversation) String() string {
                 <property name="pixels-below-lines">5</property>
                 <property name="left-margin">5</property>
                 <property name="right-margin">5</property>
-                <property name="top-margin">5</property>
-                <property name="bottom-margin">5</property>
               </object>
             </child>
           </object>

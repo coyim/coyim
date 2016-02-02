@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-02 17:45-0500\n"
+"POT-Creation-Date: 2016-02-01 14:56-0500\n"
 "PO-Revision-Date: 2015-12-02 15:30+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,114 +18,289 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../gui/account.go:78
+#: ../gui/account.go:151
+msgid "Account added"
+msgstr ""
+
+#: ../gui/account.go:151
+#, python-format
+msgid "The account %s was added successfully."
+msgstr ""
+
+#: ../gui/account.go:198
 msgid "_Connect"
 msgstr ""
 
-#: ../gui/account.go:81
+#: ../gui/account.go:201
 msgid "_Disconnect"
 msgstr ""
 
-#: ../gui/account.go:84
+#: ../gui/account.go:204
 msgid "_Edit..."
 msgstr ""
 
-#: ../gui/account.go:87
+#: ../gui/account.go:207
 msgid "_Remove"
 msgstr ""
 
-#: ../gui/account.go:90
+#: ../gui/account.go:210
 msgid "Connect _Automatically"
 msgstr ""
 
-#: ../gui/accounts_menu.go:91
+#: ../gui/account.go:214
+msgid "Always Encrypt Conversation"
+msgstr ""
+
+#: ../gui/account.go:296
+#, python-format
+msgid ""
+"Connecting account\n"
+"%s"
+msgstr ""
+
+#: ../gui/account.go:300
+#, python-format
+msgid ""
+"Connection failure\n"
+"%s"
+msgstr ""
+
+#: ../gui/account.go:304
+msgid "Tor is not currently running"
+msgstr ""
+
+#: ../gui/account_details.go:95
+#, python-format
+msgid ""
+"Your fingerprints for %s:\n"
+"%s"
+msgstr ""
+
+#: ../gui/accounts_menu.go:28
 msgid "Connect On _Startup"
 msgstr ""
 
-#: ../gui/accounts_menu.go:100
+#: ../gui/accounts_menu.go:38
 msgid "_Connect All"
 msgstr ""
 
-#: ../gui/accounts_menu.go:107
+#: ../gui/accounts_menu.go:45
 msgid "_Add..."
 msgstr ""
 
-#: ../gui/accounts_menu.go:111
+#: ../gui/accounts_menu.go:49
 msgid "_Import..."
 msgstr ""
 
-#: ../gui/config_assistant.go:132
-msgid "All right with SRV"
+#: ../gui/accounts_menu.go:53
+msgid "_Register..."
 msgstr ""
 
-#: ../gui/config_assistant.go:164
-msgid "All right with fallback"
-msgstr ""
-
-#: ../gui/conversation.go:125
+#: ../gui/conversation.go:124
 #, python-format
 msgid "Failed to generate OTR message: %s\n"
 msgstr ""
 
-#: ../gui/conversation.go:136
-#, python-format
-msgid "Failed to start the encrypted chat: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:144
+#: ../gui/conversation.go:150
 #, python-format
 msgid "Failed to terminate the encrypted chat: %s\n"
 msgstr ""
 
-#: ../gui/conversation.go:257
+#: ../gui/conversation.go:327
 msgid "Available"
 msgstr ""
 
-#: ../gui/conversation.go:259
+#: ../gui/conversation.go:329
 msgid "Not Available"
 msgstr ""
 
-#: ../gui/conversation.go:261
+#: ../gui/conversation.go:331
 msgid "Away"
 msgstr ""
 
-#: ../gui/conversation.go:263
+#: ../gui/conversation.go:333
 msgid "Busy"
 msgstr ""
 
-#: ../gui/conversation.go:265
+#: ../gui/conversation.go:335
 msgid "Free for Chat"
 msgstr ""
 
-#: ../gui/conversation.go:267
+#: ../gui/conversation.go:337
 msgid "Invisible"
 msgstr ""
 
-#: ../gui/conversation.go:302
+#: ../gui/conversation.go:372
 msgid "Offline"
 msgstr ""
 
-#: ../gui/conversation.go:308
+#: ../gui/conversation.go:378
 msgid " is now "
 msgstr ""
 
-#: ../gui/fingerprint_verification.go:20
+#: ../gui/fingerprint_verification.go:19
 #, python-format
 msgid ""
 "You can't verify the fingerprint for %s yet.\n"
 "You first have to start an encrypted conversation with them."
 msgstr ""
 
-#: ../gui/fingerprint_verification.go:57
+#: ../gui/fingerprint_verification.go:54
 #, python-format
 msgid "Verify fingerprint for %s"
 msgstr ""
 
-#: ../gui/subscription.go:20
+#: ../gui/importer.go:198
+msgid "Import private keys"
+msgstr ""
+
+#: ../gui/importer.go:201 ../gui/importer.go:223 ../gui/importer.go:247
+#: ../gui/importer.go:269
+msgid "_Cancel"
+msgstr ""
+
+#: ../gui/importer.go:203 ../gui/importer.go:249
+msgid "_Import"
+msgstr ""
+
+#: ../gui/importer.go:210
+msgid "Keys imported"
+msgstr ""
+
+#: ../gui/importer.go:210
+#, python-format
+msgid "%d key(s) were imported correctly."
+msgstr ""
+
+#: ../gui/importer.go:212
+msgid "Failure importing keys"
+msgstr ""
+
+#: ../gui/importer.go:212
+#, python-format
+msgid "Couldn't import any keys from %s."
+msgstr ""
+
+#: ../gui/importer.go:220
+msgid "Export private keys"
+msgstr ""
+
+#: ../gui/importer.go:225 ../gui/importer.go:271
+msgid "_Export"
+msgstr ""
+
+#: ../gui/importer.go:234
+msgid "Keys exported"
+msgstr ""
+
+#: ../gui/importer.go:234
+msgid "Keys were exported correctly."
+msgstr ""
+
+#: ../gui/importer.go:236
+msgid "Failure exporting keys"
+msgstr ""
+
+#: ../gui/importer.go:236
+#, python-format
+msgid "Couldn't export keys to %s."
+msgstr ""
+
+#: ../gui/importer.go:244
+msgid "Import fingerprints"
+msgstr ""
+
+#: ../gui/importer.go:256
+msgid "Fingerprints imported"
+msgstr ""
+
+#: ../gui/importer.go:256
+#, python-format
+msgid "%d fingerprint(s) were imported correctly."
+msgstr ""
+
+#: ../gui/importer.go:258
+msgid "Failure importing fingerprints"
+msgstr ""
+
+#: ../gui/importer.go:258
+#, python-format
+msgid "Couldn't import any fingerprints from %s."
+msgstr ""
+
+#: ../gui/importer.go:266
+msgid "Export fingerprints"
+msgstr ""
+
+#: ../gui/importer.go:280
+msgid "Fingerprints exported"
+msgstr ""
+
+#: ../gui/importer.go:280
+msgid "Fingerprints were exported correctly."
+msgstr ""
+
+#: ../gui/importer.go:282
+msgid "Failure exporting fingerprints"
+msgstr ""
+
+#: ../gui/importer.go:282
+#, python-format
+msgid "Couldn't export fingerprints to %s."
+msgstr ""
+
+#: ../gui/master_password.go:30
+msgid "Password can not be empty - please try again"
+msgstr ""
+
+#: ../gui/master_password.go:33
+msgid "Passwords have to be the same - please try again"
+msgstr ""
+
+#: ../gui/master_password.go:114
+msgid "Incorrect password entered, please try again."
+msgstr ""
+
+#: ../gui/master_password.go:121
+msgid "Checking password..."
+msgstr ""
+
+#: ../gui/notifications.go:49
+#, python-format
+msgid "You have not verified the identity of %s"
+msgstr ""
+
+#: ../gui/peer_information.go:26
+#, python-format
+msgid "There are no known fingerprints for %s"
+msgstr ""
+
+#: ../gui/peer_information.go:28
+#, python-format
+msgid "These are the fingerprints known for %s:"
+msgstr ""
+
+#: ../gui/peer_information.go:34
+msgid "not trusted"
+msgstr ""
+
+#: ../gui/peer_information.go:36
+msgid "trusted"
+msgstr ""
+
+#: ../gui/subscription.go:18
 #, python-format
 msgid "%s wants to talk to you. Is that ok?"
 msgstr ""
 
-#: ../gui/ui.go:343
+#: ../gui/ui.go:423
 msgid "Coy IM!"
+msgstr ""
+
+#: ../gui/ui.go:452
+msgid "There is no account with the id %q"
+msgstr ""
+
+#: ../gui/ui.go:456
+msgid "Can't send a contact request from an offline account"
 msgstr ""

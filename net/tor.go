@@ -39,9 +39,10 @@ func (m *defaultTorManager) Detect() bool {
 		torPorts = defaultTorPorts
 	}
 
-	m.addr = detectTor(torHost, torPorts)
-	m.detected = len(m.addr) > 0
-	return m.detected
+	var found bool
+	m.addr, found = detectTor(torHost, torPorts)
+	m.detected = found
+	return found
 }
 
 func (m *defaultTorManager) Address() string {
@@ -52,7 +53,7 @@ func (m *defaultTorManager) Address() string {
 	return m.addr
 }
 
-func detectTor(host string, ports []string) string {
+func detectTor(host string, ports []string) (string, bool) {
 	for _, port := range ports {
 		addr := net.JoinHostPort(host, port)
 		conn, err := net.DialTimeout("tcp", addr, timeout)
@@ -61,8 +62,8 @@ func detectTor(host string, ports []string) string {
 		}
 
 		defer conn.Close()
-		return addr
+		return addr, true
 	}
 
-	return ""
+	return "", false
 }

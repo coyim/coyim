@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/hex"
-	"net/url"
 
 	"github.com/twstrike/otr3"
 
@@ -32,74 +31,6 @@ func (s *AccountXmppSuite) Test_Account_ShouldEncryptTo(c *C) {
 	c.Check(a2.ShouldEncryptTo("hello@bar.com"), Equals, true)
 }
 
-func (s *AccountXmppSuite) Test_EnsureTorProxy_AddsTorProxy(c *C) {
-	torAddress := "127.0.0.1:9050"
-
-	a := &Account{
-		RequireTor: true,
-	}
-
-	a.EnsureTorProxy(torAddress)
-
-	c.Check(len(a.Proxies), Equals, 1)
-	proxy, _ := url.Parse(a.Proxies[0])
-	c.Check(proxy.Host, Equals, torAddress)
-}
-
-func (s *AccountXmppSuite) Test_EnsureTorProxy_AddsTorProxyToTheLastPosition(c *C) {
-	torAddress := "127.0.0.1:9050"
-	existingProxy := "socks5://mycompany.com:9080"
-	existingProxyWithoutPort := "socks5://qaproxy.local"
-
-	a := &Account{
-		RequireTor: true,
-		Proxies: []string{
-			existingProxy, existingProxyWithoutPort,
-		},
-	}
-
-	a.EnsureTorProxy(torAddress)
-
-	c.Check(len(a.Proxies), Equals, 3)
-	c.Check(a.Proxies[0], Equals, existingProxy)
-	c.Check(a.Proxies[1], Equals, existingProxyWithoutPort)
-
-	proxy, _ := url.Parse(a.Proxies[2])
-	c.Check(proxy.Host, Equals, torAddress)
-}
-
-func (s *AccountXmppSuite) Test_EnsureTorProxy_FiltersOutAnyExistingLocalProxy(c *C) {
-	torAddress := "127.0.0.1:9050"
-
-	a := &Account{
-		RequireTor: true,
-		Proxies: []string{
-			"socks5://127.0.0.1:9999",
-			"socks5://localhost:8888",
-			"socks5://localhost",
-		},
-	}
-
-	a.EnsureTorProxy(torAddress)
-
-	c.Check(a.Proxies, HasLen, 1)
-	proxy, _ := url.Parse(a.Proxies[0])
-	c.Check(proxy.Host, Equals, torAddress)
-}
-
-func (s *AccountXmppSuite) Test_EnsureTorProxy_DoNotOverrideExistingTorConfig(c *C) {
-	torAddress := "127.0.0.1:9050"
-	existingTorProxy := "socks5://foo:bar@" + torAddress
-
-	a := &Account{
-		RequireTor: true,
-		Proxies:    []string{existingTorProxy},
-	}
-
-	a.EnsureTorProxy(torAddress)
-	c.Check(a.Proxies, DeepEquals, []string{existingTorProxy})
-}
-
 func (s *AccountXmppSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *C) {
 	a, err := NewAccount()
 
@@ -109,6 +40,7 @@ func (s *AccountXmppSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *
 	c.Check(a.AlwaysEncrypt, Equals, true)
 	c.Check(a.OTRAutoStartSession, Equals, true)
 	c.Check(a.OTRAutoTearDown, Equals, true)
+	c.Check(a.Proxies, DeepEquals, []string{"tor-auto://"})
 }
 
 func (s *AccountXmppSuite) Test_SetOTRPoliciesFor_SetupOTRPolicies(c *C) {

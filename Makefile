@@ -15,6 +15,9 @@ gen-ui-defs:
 build-gui: generate-version-file
 	go build -tags $(GTK_BUILD_TAG) -o bin/coyim
 
+build-gui-win: generate-version-file
+	go build -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o bin/coyim.exe
+
 build-cli: generate-version-file
 	go build -tags cli -o bin/coyim-cli
 

@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/twstrike/coyim/config"
@@ -70,7 +69,6 @@ func NewGTK(version string) UI {
 		setShowAdvancedSettingsRequest:       make(chan bool, 100),
 	}
 
-	ret.applyStyle()
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
 	ret.accountManager = newAccountManager(ret)
@@ -432,6 +430,8 @@ func (u gtkUI) aboutDialog() {
 	// dialog.SetLogo(pixbuf)
 	dialog.SetLicense(`GNU GENERAL PUBLIC LICENSE, Version 3`)
 	dialog.SetWrapLicense(true)
+
+	dialog.SetTransientFor(u.window)
 	dialog.Run()
 	dialog.Destroy()
 }
@@ -503,51 +503,11 @@ func (u *gtkUI) rosterUpdated() {
 	doInUIThread(u.roster.redraw)
 }
 
-func (u *gtkUI) askForServerDetails(conf *config.Account, connectFn func() error) {
-	builder := builderForDefinition("ConnectionSettings")
-
-	obj, _ := builder.GetObject("ConnectionSettingsDialog")
-	dialog := obj.(*gtk.Dialog)
-
-	obj, _ = builder.GetObject("server")
-	serverEntry := obj.(*gtk.Entry)
-
-	obj, _ = builder.GetObject("port")
-	portEntry := obj.(*gtk.Entry)
-
-	if conf.Port == 0 {
-		conf.Port = 5222
-	}
-
-	serverEntry.SetText(conf.Server)
-	portEntry.SetText(strconv.Itoa(conf.Port))
-
-	builder.ConnectSignals(map[string]interface{}{
-		"reconnect": func() {
-			defer dialog.Destroy()
-
-			//TODO: validate
-			conf.Server, _ = serverEntry.GetText()
-
-			p, _ := portEntry.GetText()
-			conf.Port, _ = strconv.Atoi(p)
-
-			go func() {
-				if connectFn() != nil {
-					return
-				}
-
-				u.saveConfigOnly()
-			}()
-		},
-	})
-
-	dialog.SetTransientFor(u.window)
-	dialog.ShowAll()
-}
-
 func (u *gtkUI) editAccount(account *account) {
-	u.accountDialog(account.session.GetConfig(), u.SaveConfig)
+	u.accountDialog(account.session, account.session.GetConfig(), func() {
+		u.SaveConfig()
+		account.session.ReloadKeys()
+	})
 }
 
 func (u *gtkUI) removeAccount(account *account) {

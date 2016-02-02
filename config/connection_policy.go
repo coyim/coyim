@@ -35,11 +35,7 @@ type ConnectionPolicy struct {
 	torState ournet.TorState
 }
 
-func (p *ConnectionPolicy) ensureTorFor(conf *Account) error {
-	if !conf.RequireTor {
-		return nil
-	}
-
+func (p *ConnectionPolicy) isTorRunning() error {
 	tor := p.torState
 	if tor == nil {
 		tor = ournet.Tor
@@ -49,8 +45,16 @@ func (p *ConnectionPolicy) ensureTorFor(conf *Account) error {
 		return ErrTorNotRunning
 	}
 
-	conf.EnsureTorProxy(tor.Address())
 	return nil
+}
+
+func (a *Account) hasTorAuto() bool {
+	for _, px := range a.Proxies {
+		if strings.HasPrefix(px, "tor-auto://") {
+			return true
+		}
+	}
+	return false
 }
 
 func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
@@ -62,8 +66,12 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 
 	domainpart := jidParts[1]
 
-	if err := p.ensureTorFor(conf); err != nil {
-		return nil, err
+	hasTorAuto := conf.hasTorAuto()
+
+	if conf.RequireTor || hasTorAuto {
+		if err := p.isTorRunning(); err != nil {
+			return nil, err
+		}
 	}
 
 	certSHA256, err := conf.ServerCertificateHash()
@@ -112,7 +120,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		dialer.ServerAddress = net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port))
 	}
 
-	if conf.RequireTor {
+	if conf.RequireTor || hasTorAuto {
 		server := dialer.GetServer()
 		host, port, err := net.SplitHostPort(server)
 		if err != nil {

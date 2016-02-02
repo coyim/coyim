@@ -29,7 +29,7 @@ type Peer struct {
 }
 
 // MarshalJSON is used to create a JSON representation of this fingerprint
-func (k Fingerprint) MarshalJSON() ([]byte, error) {
+func (k *Fingerprint) MarshalJSON() ([]byte, error) {
 	return json.Marshal(FingerprintForSerialization{
 		FingerprintHex: hex.EncodeToString(k.Fingerprint),
 		Trusted:        k.Trusted,
@@ -64,7 +64,20 @@ func (s ByNaturalOrder) Less(i, j int) bool {
 func (s ByNaturalOrder) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 func (a *Account) updateToLatestVersion() bool {
-	return a.updateFingerprintsToLatestVersion()
+	return a.updateFingerprintsToLatestVersion() ||
+		a.removeEmptyFingerprints()
+}
+
+func (a *Account) removeEmptyFingerprints() bool {
+	changed := false
+
+	for _, p := range a.Peers {
+		if a.RemoveFingerprint(p.UserID, []byte{}) {
+			changed = true
+		}
+	}
+
+	return changed
 }
 
 func (a *Account) updateFingerprintsToLatestVersion() bool {
@@ -73,9 +86,11 @@ func (a *Account) updateFingerprintsToLatestVersion() bool {
 	}
 
 	for _, kfpr := range a.LegacyKnownFingerprints {
-		fpr := a.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
-		if !kfpr.Untrusted {
-			fpr.Trusted = true
+		if len(kfpr.Fingerprint) > 0 {
+			fpr := a.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
+			if !kfpr.Untrusted {
+				fpr.Trusted = true
+			}
 		}
 	}
 
@@ -118,7 +133,8 @@ func (p *Peer) EnsureHasFingerprint(fpr []byte) *Fingerprint {
 	return f
 }
 
-func (p *Peer) hasTrustedFingerprint(fpr []byte) bool {
+// HasTrustedFingerprint returns true if the peer has the given fingerprint and it is trusted
+func (p *Peer) HasTrustedFingerprint(fpr []byte) bool {
 	for _, ff := range p.Fingerprints {
 		if ff.Trusted && bytes.Equal(fpr, ff.Fingerprint) {
 			return true
@@ -145,7 +161,7 @@ func (a *Account) HasFingerprint(uid string) bool {
 // UserIDForVerifiedFingerprint returns the user ID for the given verified fingerprint
 func (a *Account) UserIDForVerifiedFingerprint(fpr []byte) string {
 	for _, pe := range a.Peers {
-		if pe.hasTrustedFingerprint(fpr) {
+		if pe.HasTrustedFingerprint(fpr) {
 			return pe.UserID
 		}
 	}
@@ -170,19 +186,23 @@ func (a *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
 }
 
 // RemoveFingerprint removes the fingerprint for the given uid
-func (a *Account) RemoveFingerprint(uid string, fpr []byte) {
+func (a *Account) RemoveFingerprint(uid string, fpr []byte) bool {
 	p, ex := a.GetPeer(uid)
 	if !ex {
-		return
+		return false
 	}
+
+	result := false
 
 	newFprs := make([]*Fingerprint, 0, len(p.Fingerprints))
 	for _, f := range p.Fingerprints {
 		if !bytes.Equal(f.Fingerprint, fpr) {
 			newFprs = append(newFprs, f)
+			result = true
 		}
 	}
 	p.Fingerprints = newFprs
+	return result
 }
 
 // RemovePeer removes the given peer

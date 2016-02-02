@@ -57,15 +57,11 @@ Purported fingerprint for %[1]s:
 
 func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) gtk.ResponseType {
 	accountConfig := account.session.GetConfig()
-	//TODO: review whether it should create new conversations
-	//Anyway, if it has created the conversation this function could return
-	//(there is no theirFP in this case)
 	conversation, _ := account.session.EnsureConversationWith(uid)
 	ourFp := conversation.OurFingerprint()
 	theirFp := conversation.TheirFingerprint()
 
 	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, uid, theirFp)
-
 	defer dialog.Destroy()
 
 	dialog.SetTransientFor(parent)

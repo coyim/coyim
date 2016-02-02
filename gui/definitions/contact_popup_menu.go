@@ -11,6 +11,15 @@ func (*defContactPopupMenu) String() string {
 <interface>
   <object class="GtkMenu" id="contactMenu">
     <child>
+      <object class="GtkMenuItem" id="peerFingerprintsMenuItem">
+        <property name="label" translatable="yes">Fingerprints...</property>
+        <signal name="activate" handler="on_peer_fingerprints" />
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="sep1"/>
+    </child>
+    <child>
       <object class="GtkMenuItem" id="removeContactMenuItem">
         <property name="label" translatable="yes">Remove</property>
         <signal name="activate" handler="on_remove_contact" />
@@ -21,12 +30,12 @@ func (*defContactPopupMenu) String() string {
     </child>
     <child>
       <object class="GtkMenuItem" id="renameMenuItem">
-        <property name="label" translatable="yes">Rename contact</property>
+        <property name="label" translatable="yes">Rename contact...</property>
         <signal name="activate" handler="on_rename_signal" />
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="sep1"/>
+      <object class="GtkSeparatorMenuItem" id="sep2"/>
     </child>
     <child>
       <object class="GtkMenuItem" id="askContactToSeeStatusMenuItem">
@@ -47,7 +56,7 @@ func (*defContactPopupMenu) String() string {
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="sep2"/>
+      <object class="GtkSeparatorMenuItem" id="sep3"/>
     </child>
     <child>
       <object class="GtkMenuItem" id="dumpInfoMenuItem">

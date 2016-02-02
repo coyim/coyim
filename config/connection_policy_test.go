@@ -110,24 +110,6 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_ErrorsIfTorIsRequiredButNotF
 	c.Check(err, Equals, ErrTorNotRunning)
 }
 
-func (s *ConnectionPolicySuite) Test_buildDialerFor_EnforcesTorProxyOnAccountIfRequired(c *C) {
-	account := &Account{
-		Account:    "coyim@riseup.net",
-		RequireTor: true,
-	}
-
-	policy := ConnectionPolicy{
-		torState: nettest.MockTorState("127.0.0.1:9999"),
-	}
-
-	c.Check(account.Proxies, HasLen, 0)
-
-	_, err := policy.buildDialerFor(account)
-
-	c.Check(err, IsNil)
-	c.Check(account.Proxies, HasLen, 1)
-}
-
 func (s *ConnectionPolicySuite) Test_buildProxyChain_ErrorsIfProxyIsMalformed(c *C) {
 	proxies := []string{
 		"%gh&%ij",

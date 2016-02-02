@@ -4,8 +4,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"log"
-	"net"
-	"net/url"
 	"strconv"
 	"time"
 
@@ -76,55 +74,10 @@ func NewAccount() (*Account, error) {
 		OTRAutoStartSession: true,
 		OTRAutoTearDown:     true, //See #48
 		OTRAutoAppendTag:    true,
+		Proxies: []string{
+			"tor-auto://",
+		},
 	}, nil
-}
-
-// EnsureTorProxy makes sure the account has a Tor Proxy configured
-func (a *Account) EnsureTorProxy(torAddress string) {
-	if !a.RequireTor {
-		return
-	}
-
-	if a.Proxies == nil {
-		a.Proxies = make([]string, 0, 1)
-	}
-
-	for _, proxy := range a.Proxies {
-		p, err := url.Parse(proxy)
-		if err != nil {
-			continue
-		}
-
-		//Already configured
-		if p.Host == torAddress {
-			return
-		}
-	}
-
-	//Tor refuses to connect to any other proxy at localhost/127.0.0.1 in the
-	//chain, so we remove them
-	allowedProxies := make([]string, 0, len(a.Proxies))
-	for _, proxy := range a.Proxies {
-		p, err := url.Parse(proxy)
-		if err != nil {
-			continue
-		}
-
-		host, _, err := net.SplitHostPort(p.Host)
-		if err != nil {
-			host = p.Host
-		}
-
-		if host == "localhost" || host == "127.0.0.1" {
-			continue
-		}
-
-		allowedProxies = append(allowedProxies, proxy)
-	}
-
-	torProxy := newTorProxy(torAddress)
-	allowedProxies = append(allowedProxies, torProxy)
-	a.Proxies = allowedProxies
 }
 
 // ServerCertificateHash returns the hash for the server certificate

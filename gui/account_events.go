@@ -9,32 +9,36 @@ import (
 	"github.com/twstrike/coyim/xmpp"
 )
 
+func (u *gtkUI) handleOneAccountEvent(ev interface{}) {
+	switch t := ev.(type) {
+	case session.Event:
+		doInUIThread(func() {
+			u.handleSessionEvent(t)
+		})
+	case session.PeerEvent:
+		doInUIThread(func() {
+			u.handlePeerEvent(t)
+		})
+	case session.PresenceEvent:
+		doInUIThread(func() {
+			u.handlePresenceEvent(t)
+		})
+	case session.MessageEvent:
+		doInUIThread(func() {
+			u.handleMessageEvent(t)
+		})
+	case session.LogEvent:
+		doInUIThread(func() {
+			u.handleLogEvent(t)
+		})
+	default:
+		log.Printf("unsupported event %#v\n", t)
+	}
+}
+
 func (u *gtkUI) observeAccountEvents() {
 	for ev := range u.events {
-		switch t := ev.(type) {
-		case session.Event:
-			doInUIThread(func() {
-				u.handleSessionEvent(t)
-			})
-		case session.PeerEvent:
-			doInUIThread(func() {
-				u.handlePeerEvent(t)
-			})
-		case session.PresenceEvent:
-			doInUIThread(func() {
-				u.handlePresenceEvent(t)
-			})
-		case session.MessageEvent:
-			doInUIThread(func() {
-				u.handleMessageEvent(t)
-			})
-		case session.LogEvent:
-			doInUIThread(func() {
-				u.handleLogEvent(t)
-			})
-		default:
-			log.Printf("unsupported event %#v\n", t)
-		}
+		u.handleOneAccountEvent(ev)
 	}
 }
 
@@ -119,7 +123,6 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		account := u.findAccountForSession(ev.Session)
 		convWin, ok := account.getConversationWith(peer)
 		if !ok {
-			log.Println("Could not find a conversation window")
 			return
 		}
 
@@ -129,7 +132,10 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		account := u.findAccountForSession(ev.Session)
 		convWin, ok := account.getConversationWith(peer)
 		if !ok {
-			log.Println("Could not find a conversation window")
+			account.afterConversationWindowCreated(peer, func(cw *conversationWindow) {
+				cw.updateSecurityWarning()
+				cw.showIdentityVerificationWarning(u)
+			})
 			return
 		}
 

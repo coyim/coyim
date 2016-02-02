@@ -31,12 +31,8 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 	case config.ErrTorNotRunning:
 		u.notifyTorIsNotRunning(account)
 	case xmpp.ErrTCPBindingFailed:
-		// TODO: I'm getting more and more uncomfortable with this
-		// it almost only happens to me when something goes wrong in connecting
-		// so is a false alarm. My recommendation is to remove it, and treat as ConnectionFailed
-		u.askForServerDetailsAndConnect(account, password)
+		u.notifyConnectionFailure(account)
 	case xmpp.ErrAuthenticationFailed:
-		//TODO: notify authentication failure?
 		u.askForPasswordAndConnect(account)
 	case xmpp.ErrConnectionFailed:
 		u.notifyConnectionFailure(account)
@@ -49,15 +45,6 @@ func (u *gtkUI) askForPasswordAndConnect(account *account) {
 	accountName := account.session.GetConfig().Account
 	doInUIThread(func() {
 		u.askForPassword(accountName, func(password string) error {
-			return u.connectWithPassword(account, password)
-		})
-	})
-}
-
-func (u *gtkUI) askForServerDetailsAndConnect(account *account, password string) {
-	conf := account.session.GetConfig()
-	doInUIThread(func() {
-		u.askForServerDetails(conf, func() error {
 			return u.connectWithPassword(account, password)
 		})
 	})

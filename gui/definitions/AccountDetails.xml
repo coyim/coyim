@@ -78,7 +78,7 @@
 
                 <child>
                   <object class="GtkLabel" id="showOtherSettings">
-                    <property name="label" translatable="yes">Other settings</property>
+                    <property name="label" translatable="yes">Display all settings</property>
                     <property name="justify">GTK_JUSTIFY_RIGHT</property>
                     <property name="halign">GTK_ALIGN_END</property>
                   </object>
@@ -107,7 +107,7 @@
               </object>
               <packing>
                 <property name="position">0</property>
-                <property name="tab_fill">False</property>
+                <property name="tab-fill">False</property>
               </packing>
             </child>
 
@@ -162,12 +162,12 @@
             </child>
             <child type="tab">
               <object class="GtkLabel" id="label-tab2">
-                <property name="label" translatable="yes">Other options</property>
+                <property name="label" translatable="yes">Server</property>
                 <property name="visible">True</property>
               </object>
               <packing>
                 <property name="position">1</property>
-                <property name="tab_fill">False</property>
+                <property name="tab-fill">False</property>
               </packing>
             </child>
             <child>
@@ -202,6 +202,7 @@
                             <property name="headers-visible">False</property>
                             <property name="show-expanders">False</property>
                             <property name="reorderable">True</property>
+                            <signal name="row-activated" handler="on_edit_activate_proxy_signal" />
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection">
                                 <property name="mode">GTK_SELECTION_SINGLE</property>
@@ -230,16 +231,17 @@
                       <object class="GtkBox" id="vbox3">
                         <property name="margin">5</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkButton" id="add_button">
-                            <property name="label" translatable="yes">_Add</property>
+                            <property name="label" translatable="yes">_Add...</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
                             <property name="use_underline">True</property>
+                            <signal name="clicked" handler="on_add_proxy_signal" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -251,9 +253,10 @@
                           <object class="GtkButton" id="remove_button">
                             <property name="label" translatable="yes">_Remove</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
                             <property name="use_underline">True</property>
+                            <signal name="clicked" handler="on_remove_proxy_signal" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -262,12 +265,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="rename_button">
-                            <property name="label" translatable="yes">_Edit</property>
+                          <object class="GtkButton" id="edit_button">
+                            <property name="label" translatable="yes">_Edit...</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="use_underline">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="use-underline">True</property>
+                            <signal name="clicked" handler="on_edit_proxy_signal" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -297,7 +301,122 @@
               </object>
               <packing>
                 <property name="position">2</property>
-                <property name="tab_fill">False</property>
+                <property name="tab-fill">False</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkBox" id="encryptionOptionsBox">
+                <property name="border-width">10</property>
+                <property name="homogeneous">false</property>
+                <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+                <child>
+                  <object class="GtkLabel" id="fingerprintsMessage">
+                    <property name="justify">GTK_JUSTIFY_LEFT</property>
+                    <property name="halign">GTK_ALIGN_START</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkGrid" id="encryptionGrid">
+                    <property name="margin-top">15</property>
+                    <property name="margin-bottom">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-end">10</property>
+                    <property name="row-spacing">12</property>
+                    <property name="column-spacing">6</property>
+                    <child>
+                      <object class="GtkLabel" id="encryptionImportInstructions">
+                        <property name="label" translatable="yes">The below buttons allow you to import private keys and fingerprints. Both of them should be in the Pidgin/libotr format. If you import private keys, your existing private keys will be deleted, since current there is no way to choose which key to use for encrypted chat.</property>
+                        <property name="visible">true</property>
+                        <property name="wrap">true</property>
+                        <property name="max-width-chars">50</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="import_key_button">
+                        <property name="label" translatable="yes">Import Private _Keys...</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="use_underline">True</property>
+                        <signal name="clicked" handler="on_import_key_signal" />
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="import_fpr_button">
+                        <property name="label" translatable="yes">Import _Fingerprints...</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="use_underline">True</property>
+                        <signal name="clicked" handler="on_import_fpr_signal" />
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="encryptionExportInstructions">
+                        <property name="label" translatable="yes">The below buttons allow you to export private keys and fingerprints. Be careful with the files that come out of this process, since they contain potentially sensitive data. The export will be in Pidgin/libotr format.</property>
+                        <property name="visible">true</property>
+                        <property name="wrap">true</property>
+                        <property name="max-width-chars">50</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="export_key_button">
+                        <property name="label" translatable="yes">Export Private Keys...</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <signal name="clicked" handler="on_export_key_signal" />
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="export_fpr_button">
+                        <property name="label" translatable="yes">Export Fingerprints...</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <signal name="clicked" handler="on_export_fpr_signal" />
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label-tab4">
+                <property name="label" translatable="yes">Encryption</property>
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="position">3</property>
+                <property name="tab-fill">False</property>
               </packing>
             </child>
           </object>

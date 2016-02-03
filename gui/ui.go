@@ -5,11 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
-	"regexp"
 	"runtime"
-	"sort"
-	"strings"
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -259,6 +255,7 @@ func (u *gtkUI) mainWindow() {
 	}
 
 	u.window = win.(*gtk.ApplicationWindow)
+	fmt.Printf("window: %#v\n", u.window)
 	u.window.SetApplication(u.app)
 
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
@@ -382,10 +379,8 @@ func (u *gtkUI) feedbackDialog() {
 	dialog := obj.(*gtk.MessageDialog)
 	dialog.SetTransientFor(u.window)
 
-	response := dialog.Run()
-	if gtk.ResponseType(response) == gtk.RESPONSE_CLOSE {
-		dialog.Destroy()
-	}
+	dialog.Run()
+	dialog.Destroy()
 }
 
 func (u *gtkUI) shouldViewAccounts() bool {
@@ -393,49 +388,21 @@ func (u *gtkUI) shouldViewAccounts() bool {
 }
 
 func authors() []string {
-	strikeMessage := "STRIKE Team - coyim@thoughtworks.com"
-
-	b, err := exec.Command("git", "log").Output()
-	if err != nil {
-		return []string{strikeMessage}
+	return []string{
+		"Fan Jiang  -  fan.torchz@gmail.com",
+		"Iván Pazmiño  -  iapazmino@gmail.com",
+		"Ola Bini  -  ola@olabini.se",
+		"Reinaldo de Souza Jr  -  juniorz@gmail.com",
+		"Tania Silva  -  tsilva@thoughtworks.com",
 	}
-
-	lines := strings.Split(string(b), "\n")
-
-	var a []string
-	r := regexp.MustCompile(`^Author:\s*([^ <]+).*$`)
-	for _, e := range lines {
-		ms := r.FindStringSubmatch(e)
-		if ms == nil {
-			continue
-		}
-		a = append(a, ms[1])
-	}
-	sort.Strings(a)
-	var p string
-	lines = []string{}
-	for _, e := range a {
-		if p == e {
-			continue
-		}
-		lines = append(lines, e)
-		p = e
-	}
-	lines = append(lines, strikeMessage)
-	return lines
 }
 
-func (u gtkUI) aboutDialog() {
+func (u *gtkUI) aboutDialog() {
 	dialog, _ := gtk.AboutDialogNew()
 	dialog.SetName(i18n.Local("Coy IM!"))
-	dialog.SetProgramName("Coyim")
+	dialog.SetProgramName("CoyIM")
 	dialog.SetAuthors(authors())
 	dialog.SetVersion(coyimVersion)
-
-	// dir, _ := path.Split(os.Args[0])
-	// imagefile := path.Join(dir, "../../data/coyim-logo.png")
-	// pixbuf, _ := gdkpixbuf.NewFromFile(imagefile)
-	// dialog.SetLogo(pixbuf)
 	dialog.SetLicense(`GNU GENERAL PUBLIC LICENSE, Version 3`)
 	dialog.SetWrapLicense(true)
 

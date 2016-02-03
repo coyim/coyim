@@ -301,6 +301,11 @@ func (u *gtkUI) mainWindow() {
 	gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
 
 	u.window.ShowAll()
+
+	log.Printf("Showing notification hopefully")
+	not := glib.NotificationNew("HAHAHAHAHA")
+	not.SetBody("this is interesting, don't you think?")
+	u.app.SendNotification("WotWot", not)
 }
 
 func (u *gtkUI) addInitialAccountsToRoster() {

@@ -220,6 +220,25 @@ func (conv *conversationWindow) getConversation() (client.Conversation, bool) {
 	return conv.account.session.GetConversationWith(conv.to)
 }
 
+func (conv *conversationWindow) isVerified() bool {
+	conversation, exists := conv.getConversation()
+	if !exists {
+		log.Println("Conversation does not exist - this shouldn't happen")
+		return false
+	}
+
+	fingerprint := conversation.TheirFingerprint()
+	conf := conv.account.session.GetConfig()
+
+	p, hasPeer := conf.GetPeer(conv.to)
+
+	if hasPeer {
+		p.EnsureHasFingerprint(fingerprint)
+	}
+
+	return hasPeer && p.HasTrustedFingerprint(fingerprint)
+}
+
 func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 	conv.Lock()
 	defer conv.Unlock()
@@ -229,23 +248,9 @@ func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
 		return
 	}
 
-	conversation, exists := conv.getConversation()
-	if !exists {
-		log.Println("Conversation does not exist - this shouldn't happen")
-		return
-	}
-
-	fingerprint := conversation.TheirFingerprint()
-	conf := conv.account.session.GetConfig()
-
-	p, hasPeer := conf.GetPeer(conv.to)
-	if hasPeer && p.HasTrustedFingerprint(fingerprint) {
+	if conv.isVerified() {
 		log.Println("We have a peer and a trusted fingerprint already, so no reason to warn")
 		return
-	}
-
-	if hasPeer {
-		p.EnsureHasFingerprint(fingerprint)
 	}
 
 	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.win)
@@ -431,4 +436,16 @@ func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, 
 			is(outgoing, "outgoingText", "incomingText"),
 			string(message),
 		})
+}
+
+func (conv *conversationWindow) displayNotification(notification string) {
+	conv.appendToHistory(time.Now(), taggableText{"statusText", notification})
+}
+
+func (conv *conversationWindow) displayNotificationVerifiedOrNot(notificationV, notificationNV string) {
+	if conv.isVerified() {
+		conv.displayNotification(notificationV)
+	} else {
+		conv.displayNotification(notificationNV)
+	}
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
 )
@@ -18,6 +19,10 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}) {
 	case session.PeerEvent:
 		doInUIThread(func() {
 			u.handlePeerEvent(t)
+		})
+	case session.NotificationEvent:
+		doInUIThread(func() {
+			u.handleNotificationEvent(t)
 		})
 	case session.PresenceEvent:
 		doInUIThread(func() {
@@ -113,7 +118,21 @@ func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
 	)
 }
 
+func convWindowNowOrLater(account *account, peer string, f func(*conversationWindow)) {
+	convWin, ok := account.getConversationWith(peer)
+	if !ok {
+		account.afterConversationWindowCreated(peer, f)
+	} else {
+		f(convWin)
+	}
+}
+
 func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
+	identityWarning := func(cw *conversationWindow) {
+		cw.updateSecurityWarning()
+		cw.showIdentityVerificationWarning(u)
+	}
+
 	switch ev.Type {
 	case session.IQReceived:
 		//TODO
@@ -121,26 +140,27 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 	case session.OTREnded:
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
-		convWin, ok := account.getConversationWith(peer)
-		if !ok {
-			return
-		}
+		convWindowNowOrLater(account, peer, func(cw *conversationWindow) {
+			cw.displayNotification(i18n.Local("Private conversation lost."))
+			cw.updateSecurityWarning()
+		})
 
-		convWin.updateSecurityWarning()
 	case session.OTRNewKeys:
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
-		convWin, ok := account.getConversationWith(peer)
-		if !ok {
-			account.afterConversationWindowCreated(peer, func(cw *conversationWindow) {
-				cw.updateSecurityWarning()
-				cw.showIdentityVerificationWarning(u)
-			})
-			return
-		}
+		convWindowNowOrLater(account, peer, func(cw *conversationWindow) {
+			cw.displayNotificationVerifiedOrNot(i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
+			identityWarning(cw)
+		})
 
-		convWin.updateSecurityWarning()
-		convWin.showIdentityVerificationWarning(u)
+	case session.OTRRenewedKeys:
+		peer := ev.From
+		account := u.findAccountForSession(ev.Session)
+		convWindowNowOrLater(account, peer, func(cw *conversationWindow) {
+			cw.displayNotificationVerifiedOrNot(i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
+			identityWarning(cw)
+		})
+
 	case session.SubscriptionRequest:
 		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From)
 
@@ -166,4 +186,18 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		log.Printf("[%s] Unsubscribed from %s\n", jid, ev.From)
 		u.rosterUpdated()
 	}
+}
+
+func (u *gtkUI) handleNotificationEvent(ev session.NotificationEvent) {
+	peer := ev.Peer
+	account := u.findAccountForSession(ev.Session)
+	convWin, ok := account.getConversationWith(peer)
+	if !ok {
+		account.afterConversationWindowCreated(peer, func(cw *conversationWindow) {
+			cw.displayNotification(i18n.Local(ev.Notification))
+		})
+		return
+	}
+
+	convWin.displayNotification(ev.Notification)
 }

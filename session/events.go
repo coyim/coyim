@@ -34,6 +34,13 @@ type PeerEvent struct {
 	From string
 }
 
+// NotificationEvent represents a notification event
+type NotificationEvent struct {
+	*Session
+	Peer         string
+	Notification string
+}
+
 // PeerEventType represents the type of Peer event
 type PeerEventType int
 
@@ -43,6 +50,7 @@ const (
 
 	OTREnded
 	OTRNewKeys
+	OTRRenewedKeys
 
 	SubscriptionRequest
 	Subscribed

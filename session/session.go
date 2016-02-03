@@ -416,13 +416,25 @@ func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 }
 
 func (s *Session) newOTRKeys(from string, conversation client.Conversation) {
-	s.info(fmt.Sprintf("New OTR session with %s established", from))
-
 	s.publishPeerEvent(OTRNewKeys, from)
+}
+
+func (s *Session) renewedOTRKeys(from string, conversation client.Conversation) {
+	s.publishPeerEvent(OTRRenewedKeys, from)
 }
 
 func (s *Session) otrEnded(uid string) {
 	s.publishPeerEvent(OTREnded, uid)
+}
+
+func (s *Session) listenToNotifications(c <-chan string, peer string) {
+	for notification := range c {
+		s.publishEvent(NotificationEvent{
+			Session:      s,
+			Peer:         peer,
+			Notification: notification,
+		})
+	}
 }
 
 // NewConversation will create a new OTR conversation with the given peer
@@ -449,6 +461,9 @@ func (s *Session) NewConversation(peer string) *otr3.Conversation {
 		eh = new(event.OtrEventHandler)
 		eh.Account = s.GetConfig().Account
 		eh.Peer = peer
+		notificationsChan := make(chan string)
+		eh.Notifications = notificationsChan
+		go s.listenToNotifications(notificationsChan, peer)
 		conversation.SetSMPEventHandler(eh)
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)
@@ -509,6 +524,8 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	switch change {
 	case event.NewKeys:
 		s.newOTRKeys(from, conversation)
+	case event.RenewedKeys:
+		s.renewedOTRKeys(from, conversation)
 	case event.ConversationEnded:
 		s.otrEnded(from)
 

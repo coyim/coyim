@@ -9,7 +9,7 @@ type defMain struct{}
 func (*defMain) String() string {
 	return `
 <interface>
-  <object class="GtkWindow" id="mainWindow">
+  <object class="GtkApplicationWindow" id="mainWindow">
     <property name="window-position">GTK_WIN_POS_NONE</property>
     <property name="default-height">600</property>
     <property name="default-width">200</property>

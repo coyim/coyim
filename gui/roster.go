@@ -9,8 +9,8 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
-	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/config"
+	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
 )
 
@@ -125,7 +125,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},
-		"on_rename_signal" : func() {
+		"on_rename_signal": func() {
 			r.renameContactPopup(account.session.GetConfig(), jid)
 		},
 	})
@@ -138,7 +138,7 @@ func (r *roster) renameContactPopup(conf *config.Account, jid string) {
 	builder := builderForDefinition("RenameContact")
 	obj, _ := builder.GetObject("RenameContactPopup")
 	popup := obj.(*gtk.Dialog)
-	builder.ConnectSignals(map[string]interface{} {
+	builder.ConnectSignals(map[string]interface{}{
 		"on_rename_signal": func() {
 			obj, _ = builder.GetObject("rename")
 			renameTxt := obj.(*gtk.Entry)
@@ -238,7 +238,7 @@ func (r *roster) openConversationWindow(account *account, to string) (*conversat
 
 		r.ui.connectShortcutsChildWindow(c.win)
 		r.ui.connectShortcutsConversationWindow(c)
-		c.parentWin = r.ui.window
+		c.parentWin = &r.ui.window.Window
 	}
 
 	c.Show()

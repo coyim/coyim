@@ -162,7 +162,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 		})
 
 	case session.SubscriptionRequest:
-		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From)
+		confirmDialog := authorizePresenceSubscriptionDialog(&u.window.Window, ev.From)
 
 		doInUIThread(func() {
 			responseType := gtk.ResponseType(confirmDialog.Run())

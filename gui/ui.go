@@ -21,7 +21,8 @@ import (
 
 type gtkUI struct {
 	roster           *roster
-	window           *gtk.Window
+	app              *gtk.Application
+	window           *gtk.ApplicationWindow
 	accountsMenu     *gtk.MenuItem
 	notificationArea *gtk.Box
 	viewMenu         *viewMenu
@@ -67,6 +68,12 @@ func NewGTK(version string) UI {
 		commands: make(chan interface{}, 5),
 		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
 		setShowAdvancedSettingsRequest:       make(chan bool, 100),
+	}
+
+	var err error
+	ret.app, err = gtk.ApplicationNew("im.coy.CoyIM", glib.APPLICATION_FLAGS_NONE)
+	if err != nil {
+		panic(err)
 	}
 
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
@@ -219,15 +226,15 @@ func init() {
 }
 
 func (u *gtkUI) Loop() {
-	go u.watchCommands()
-	go u.observeAccountEvents()
+	u.app.Connect("activate", func() {
+		go u.watchCommands()
+		go u.observeAccountEvents()
 
-	doInUIThread(func() {
 		u.mainWindow()
 		go u.loadConfig(*config.ConfigFile)
 	})
 
-	gtk.Main()
+	u.app.Run([]string{})
 }
 
 func (u *gtkUI) initRoster() {
@@ -251,7 +258,8 @@ func (u *gtkUI) mainWindow() {
 		panic(err)
 	}
 
-	u.window = win.(*gtk.Window)
+	u.window = win.(*gtk.ApplicationWindow)
+	u.window.SetApplication(u.app)
 
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
 
@@ -287,7 +295,7 @@ func (u *gtkUI) mainWindow() {
 		doInUIThread(u.addFeedbackInfoBar)
 	})
 
-	u.connectShortcutsMainWindow(u.window)
+	u.connectShortcutsMainWindow(&u.window.Window)
 
 	u.window.SetIcon(coyimIcon.getPixbuf())
 	gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
@@ -333,7 +341,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 
 func (u *gtkUI) quit() {
 	// TODO: we should probably disconnect before quitting, if any account is connected
-	gtk.MainQuit()
+	u.app.Quit()
 }
 
 func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {

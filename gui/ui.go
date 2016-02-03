@@ -255,7 +255,6 @@ func (u *gtkUI) mainWindow() {
 	}
 
 	u.window = win.(*gtk.ApplicationWindow)
-	fmt.Printf("window: %#v\n", u.window)
 	u.window.SetApplication(u.app)
 
 	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)

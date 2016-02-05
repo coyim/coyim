@@ -52,13 +52,19 @@ generate-version-file:
 	./gen_version_file.sh $(GIT_VERSION)
 
 run-cover: clean-cover
-	go test -coverprofile=xmpp.coverprofile ./xmpp
+	go test -coverprofile=cli.coverprofile     ./cli
+	go test -coverprofile=client.coverprofile  ./client
+	go test -coverprofile=config.coverprofile  ./config
+	go test -coverprofile=event.coverprofile   ./event
+	go test -coverprofile=i18n.coverprofile    ./i18n
+	go test -coverprofile=net.coverprofile     ./net
+	go test -coverprofile=roster.coverprofile  ./roster
+	go test -coverprofile=sasl.coverprofile    ./sasl
+	go test -coverprofile=servers.coverprofile ./servers
 	go test -coverprofile=session.coverprofile ./session
-	go test -coverprofile=event.coverprofile ./event
-	go test -coverprofile=config.coverprofile ./config
-	go test -coverprofile=ui.coverprofile ./ui
-	go test -tags $(GTK_BUILD_TAG) -coverprofile=gui.coverprofile ./gui
-	go test -coverprofile=roster.coverprofile ./roster
+	go test -coverprofile=xmpp.coverprofile    ./xmpp
+	go test -coverprofile=ui.coverprofile      ./ui
+	go test -tags $(GTK_BUILD_TAG) -coverprofile=gui.coverprofile  ./gui
 	go test -tags $(GTK_BUILD_TAG) -coverprofile=main.coverprofile
 	gover .
 

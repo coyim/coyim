@@ -3,7 +3,7 @@
 set -x
 
 sudo apt-get update -qq
-sudo apt-get install -qq -y libgtk-3-dev gettext libglib2.0-dev libc6-dev-i386 ia32-libs
+sudo apt-get install -qq -y libgtk-3-dev gettext libglib2.0-dev libc6-dev-i386
 sudo apt-get install -qq -y xvfb
 # sudo /usr/bin/Xvfb $DISPLAY 2>&1 > /dev/null &
 sh -e /etc/init.d/xvfb start

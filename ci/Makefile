@@ -37,7 +37,7 @@ cross-compile:
 	gox -build-toolchain || true
 
 	# windows does not have syscall.SIGWINCH
-	cd .. && gox -os "!windows" -output "release/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
+	cd .. && gox -os "!windows" -cgo -output "release/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
 
 clean-mac-bundle:
 	$(RM) -r ../bin/mac-bundle

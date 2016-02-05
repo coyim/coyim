@@ -99,43 +99,40 @@ func (account *account) connected() bool {
 
 func (u *gtkUI) showServerSelectionWindow() error {
 	builder := builderForDefinition("AccountRegistration")
-	builder.ConnectSignals(map[string]interface{}{
-		"response-handler": func(d *gtk.Dialog, resp gtk.ResponseType) {
-			defer d.Destroy()
-
-			if resp != gtk.RESPONSE_APPLY {
-				return
-			}
-
-			obj, _ := builder.GetObject("server")
-			iter, _ := obj.(*gtk.ComboBox).GetActiveIter()
-
-			obj, _ = builder.GetObject("servers-model")
-			val, _ := obj.(*gtk.ListStore).GetValue(iter, 0)
-			server, _ := val.GetString()
-
-			form := &registrationForm{
-				parent: u.window,
-				server: server,
-			}
-
-			saveFn := func() {
-				u.addAndSaveAccountConfig(form.conf)
-				if acc, ok := u.getAccountByID(form.conf.ID()); ok {
-					acc.session.WantToBeOnline = true
-					acc.Connect()
-				}
-			}
-
-			go requestAndRenderRegistrationForm(form.server, form.renderForm, saveFn)
-		},
-	})
-
 	obj, _ := builder.GetObject("dialog")
 
-	dialog := obj.(*gtk.Dialog)
-	dialog.SetTransientFor(u.window)
-	dialog.ShowAll()
+	d := obj.(*gtk.Dialog)
+	defer d.Destroy()
+
+	d.SetTransientFor(u.window)
+	d.ShowAll()
+
+	resp := d.Run()
+	if gtk.ResponseType(resp) != gtk.RESPONSE_APPLY {
+		return nil
+	}
+
+	obj, _ = builder.GetObject("server")
+	iter, _ := obj.(*gtk.ComboBox).GetActiveIter()
+
+	obj, _ = builder.GetObject("servers-model")
+	val, _ := obj.(*gtk.ListStore).GetValue(iter, 0)
+	server, _ := val.GetString()
+
+	form := &registrationForm{
+		parent: u.window,
+		server: server,
+	}
+
+	saveFn := func() {
+		u.addAndSaveAccountConfig(form.conf)
+		if acc, ok := u.getAccountByID(form.conf.ID()); ok {
+			acc.session.WantToBeOnline = true
+			acc.Connect()
+		}
+	}
+
+	go requestAndRenderRegistrationForm(form.server, form.renderForm, saveFn)
 
 	return nil
 }

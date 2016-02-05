@@ -23,7 +23,6 @@ func (*defAccountRegistration) String() string {
 
   <object class="GtkDialog" id="dialog">
     <property name="title" translatable="yes">Choose a server to register your account</property>
-    <signal name="response" handler="response-handler" />
     <signal name="close" handler="close-handler" />
 
     <child internal-child="vbox">

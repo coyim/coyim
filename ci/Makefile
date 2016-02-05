@@ -1,3 +1,6 @@
+GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
+
 ci: get lint doctor test coveralls
 
 get:
@@ -37,7 +40,7 @@ cross-compile:
 	gox -build-toolchain || true
 
 	# windows does not have syscall.SIGWINCH
-	cd .. && gox -os "!windows" -cgo -output "release/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
+	cd .. && gox -tags $(GTK_BUILD_TAG) -os "!windows" -cgo -output "release/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
 
 clean-mac-bundle:
 	$(RM) -r ../bin/mac-bundle

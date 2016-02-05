@@ -149,6 +149,7 @@ func (r *roster) renameContactPopup(conf *config.Account, jid string) {
 			popup.Destroy()
 		},
 	})
+	popup.SetTransientFor(r.ui.window)
 	popup.ShowAll()
 }
 

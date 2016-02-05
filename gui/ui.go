@@ -67,7 +67,11 @@ func NewGTK(version string) UI {
 	}
 
 	var err error
-	ret.app, err = gtk.ApplicationNew("im.coy.CoyIM", glib.APPLICATION_FLAGS_NONE)
+	flags := glib.APPLICATION_FLAGS_NONE
+	if *config.MultiFlag {
+		flags = glib.APPLICATION_NON_UNIQUE
+	}
+	ret.app, err = gtk.ApplicationNew("im.coy.CoyIM", flags)
 	if err != nil {
 		panic(err)
 	}

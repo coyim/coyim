@@ -62,8 +62,8 @@ func xdgOr(env, or string) string {
 	return x
 }
 
-// XdgConfigDir returns the standardized XDG Configuration directory
-func XdgConfigDir() string {
+// XdgConfigHome returns the standardized XDG Configuration directory
+func XdgConfigHome() string {
 	return xdgOr("XDG_CONFIG_HOME", ".config")
 }
 

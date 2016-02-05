@@ -306,6 +306,7 @@ func (s *session) readStanzasAndAlertOnErrors(stanzaChan chan data.Stanza) {
 }
 
 func (s *session) rosterReceived() {
+	s.info("Roster received")
 	s.publish(events.RosterReceived)
 }
 
@@ -344,7 +345,6 @@ func peerFrom(entry data.RosterEntry, c *config.Account) *roster.Peer {
 }
 
 func (s *session) addOrMergeNewPeer(entry data.RosterEntry, c *config.Account) bool {
-
 	return s.r.AddOrMerge(peerFrom(entry, c))
 }
 
@@ -753,7 +753,6 @@ func (s *session) requestRoster() bool {
 	}
 
 	s.rosterReceived()
-	s.info("Roster received")
 
 	return true
 }

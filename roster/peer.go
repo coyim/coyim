@@ -135,3 +135,8 @@ func (p *Peer) NameForPresentation() string {
 func (p *Peer) SetLatestError(code, tp, more string) {
 	p.LatestError = &PeerError{code, tp, more}
 }
+
+// SetGroups set the Peer groups
+func (p *Peer) SetGroups(groups []string) {
+	p.Groups = toSet(groups...)
+}

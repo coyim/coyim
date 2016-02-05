@@ -9,6 +9,19 @@ import (
 	"github.com/twstrike/coyim/i18n"
 )
 
+// EncryptionSettings configures the encryption setting for this peer
+type EncryptionSettings string
+
+const (
+	// Default encrypts conversations with this peer depending on the account
+	// configuration (config.Account#AlwaysEncrypt)
+	Default EncryptionSettings = "default"
+	// AlwaysEncrypt always encrypts conversations with this peer
+	AlwaysEncrypt = "always"
+	// NeverEncrypt never encrypts conversations with this peer
+	NeverEncrypt = "never"
+)
+
 // FingerprintForSerialization represents a fingerprint in its serialized form
 type FingerprintForSerialization struct {
 	FingerprintHex string
@@ -23,9 +36,11 @@ type Fingerprint struct {
 
 // Peer represents one peer
 type Peer struct {
-	UserID       string
+	UserID             string
+	Nickname           string
+	EncryptionSettings EncryptionSettings
+
 	Fingerprints []*Fingerprint
-	Nickname	 string
 }
 
 // MarshalJSON is used to create a JSON representation of this fingerprint

@@ -19,25 +19,28 @@ var (
 type Account struct {
 	id string `json:"-"`
 
+	//TODO: this should be JID
 	Account                 string
-	Server                  string             `json:",omitempty"`
-	Proxies                 []string           `json:",omitempty"`
-	Password                string             `json:",omitempty"`
-	Port                    int                `json:",omitempty"`
-	DeprecatedPrivateKey    []byte             `json:"PrivateKey,omitempty"`
-	PrivateKeys             [][]byte           `json:",omitempty"`
-	LegacyKnownFingerprints []KnownFingerprint `json:"KnownFingerprints,omitempty"`
+	Server                  string   `json:",omitempty"`
+	Proxies                 []string `json:",omitempty"`
+	Password                string   `json:",omitempty"`
+	Port                    int      `json:",omitempty"`
+	PrivateKeys             [][]byte `json:",omitempty"`
 	Peers                   []*Peer
 	HideStatusUpdates       bool
 	OTRAutoTearDown         bool
 	OTRAutoAppendTag        bool
 	OTRAutoStartSession     bool
-	ServerCertificateSHA256 string   `json:",omitempty"`
-	AlwaysEncrypt           bool     `json:",omitempty"`
-	AlwaysEncryptWith       []string `json:",omitempty"`
-	DontEncryptWith         []string `json:",omitempty"`
-	InstanceTag             uint32   `json:",omitempty"`
+	ServerCertificateSHA256 string `json:",omitempty"`
+	AlwaysEncrypt           bool   `json:",omitempty"`
+	InstanceTag             uint32 `json:",omitempty"`
 	ConnectAutomatically    bool
+
+	//TODO remove
+	LegacyKnownFingerprints []KnownFingerprint `json:"KnownFingerprints,omitempty"`
+	DeprecatedPrivateKey    []byte             `json:"PrivateKey,omitempty"`
+	AlwaysEncryptWith       []string           `json:",omitempty"`
+	DontEncryptWith         []string           `json:",omitempty"`
 }
 
 // AllPrivateKeys returns all private keys for this account

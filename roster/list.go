@@ -224,3 +224,17 @@ func IterAll(cb func(int, *Peer), ls ...*List) {
 		cb(ix, pr)
 	}
 }
+
+// GetGroupNames return all group names for this peer list.
+func (l *List) GetGroupNames() map[string]bool {
+	names := map[string]bool{}
+
+	//TODO: Should not group separator be part of a Peer List?
+	for _, peer := range l.peers {
+		for group := range peer.Groups {
+			names[group] = true
+		}
+	}
+
+	return names
+}

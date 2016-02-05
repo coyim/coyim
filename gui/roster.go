@@ -11,6 +11,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/xmpp/data"
 )
 
 type roster struct {
@@ -99,14 +100,39 @@ func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, acc
 	return jid, account, rowType, ok
 }
 
-func (r *roster) renamePeer(acc *account, jid, nickname string) bool {
-	peer, ok := r.ui.getPeer(acc, jid)
-	if !ok {
-		return false
+func (r *roster) allGroupNames() []string {
+	groups := map[string]bool{}
+	for _, contacts := range r.ui.accountManager.getAllContacts() {
+		for name := range contacts.GetGroupNames() {
+			if groups[name] {
+				continue
+			}
+
+			groups[name] = true
+		}
 	}
 
-	// This updates what is displaied in the roster
+	sortedNames := make([]string, 0, len(groups))
+	for k := range groups {
+		sortedNames = append(sortedNames, k)
+	}
+
+	sort.Strings(sortedNames)
+
+	return sortedNames
+}
+
+func (r *roster) updatePeer(acc *account, jid, nickname string, groups []string) error {
+	peer, ok := r.ui.getPeer(acc, jid)
+	if !ok {
+		return fmt.Errorf("Could not find peer %s", jid)
+	}
+
+	//TODO: should we update only the "nickname" or the real name?
+	// This updates what is displayed in the roster
+	//peer.Name = nickname
 	peer.Nickname = nickname
+	peer.SetGroups(groups)
 
 	// This saves the nickname to the config file
 	// NOTE: This requires the account to be connected in order to rename peers,
@@ -114,7 +140,171 @@ func (r *roster) renamePeer(acc *account, jid, nickname string) bool {
 	// own the account config -  and not the session.
 	acc.session.GetConfig().RenamePeer(jid, nickname)
 
-	return true
+	_, _, err := acc.session.Conn().SendIQ("" /* to the server */, "set", data.RosterRequest{
+		Item: data.RosterRequestItem{
+			Jid: jid,
+			//Name:  nickname,
+			Group: groups,
+		},
+	})
+
+	if err != nil {
+		return err
+	}
+
+	//r.ui.SaveConfig()
+	doInUIThread(r.redraw)
+	return nil
+}
+
+func (r *roster) renamePeer(acc *account, jid, nickname string) {
+	peer, ok := r.ui.getPeer(acc, jid)
+	if !ok {
+		return
+	}
+
+	// This updates what is displayed in the roster
+	peer.Nickname = nickname
+
+	// This saves the nickname to the config file
+	// NOTE: This requires the account to be connected in order to rename peers,
+	// which should not be the case. This is one example of why gui.account should
+	// own the account config -  and not the session.
+	//acc.session.GetConfig().RenamePeer(jid, nickname)
+
+	doInUIThread(r.redraw)
+	r.ui.SaveConfig()
+}
+
+func toArray(groupList *gtk.ListStore) []string {
+	groups := []string{}
+
+	iter, ok := groupList.GetIterFirst()
+	for ok {
+		gValue, _ := groupList.GetValue(iter, 0)
+		if group, err := gValue.GetString(); err == nil {
+			groups = append(groups, group)
+		}
+
+		ok = groupList.IterNext(iter)
+	}
+
+	return groups
+}
+
+func (r *roster) addGroupDialog(groupList *gtk.ListStore) {
+	builder := builderForDefinition("GroupDetails")
+	dialog := getObjIgnoringErrors(builder, "dialog").(*gtk.Dialog)
+
+	nameEntry := getObjIgnoringErrors(builder, "group-name").(*gtk.Entry)
+
+	defaultBtn := getObjIgnoringErrors(builder, "btn-ok").(*gtk.Button)
+	defaultBtn.GrabDefault()
+	dialog.SetTransientFor(r.ui.window)
+	dialog.ShowAll()
+
+	response := dialog.Run()
+	defer dialog.Destroy()
+
+	if gtk.ResponseType(response) != gtk.RESPONSE_OK {
+		return
+	}
+
+	groupName, _ := nameEntry.GetText()
+	groupList.SetValue(groupList.Append(), 0, groupName)
+}
+
+func (r *roster) openEditContactDialog(jid string, acc *account) {
+	peer, ok := r.ui.accountManager.getPeer(acc, jid)
+	if !ok {
+		panic("Could not find existing peer")
+	}
+
+	builder := builderForDefinition("PeerDetails")
+	dialog := getObjIgnoringErrors(builder, "dialog").(*gtk.Dialog)
+
+	conf := acc.session.GetConfig()
+	accName := getObjIgnoringErrors(builder, "account-name").(*gtk.Label)
+	accName.SetText(conf.Account)
+
+	contactJID := getObjIgnoringErrors(builder, "jid").(*gtk.Label)
+	contactJID.SetText(jid)
+
+	nickNameEntry := getObjIgnoringErrors(builder, "nickname").(*gtk.Entry)
+	//nickNameEntry.SetText(peer.Name)
+	if peer, ok := r.ui.getPeer(acc, jid); ok {
+		nickNameEntry.SetText(peer.Nickname)
+	}
+
+	currentGroups := getObjIgnoringErrors(builder, "current-groups").(*gtk.ListStore)
+	currentGroups.Clear()
+
+	for n := range peer.Groups {
+		currentGroups.SetValue(currentGroups.Append(), 0, n)
+	}
+
+	existingGroups := getObjIgnoringErrors(builder, "groups-menu").(*gtk.Menu)
+	allGroups := r.allGroupNames()
+	for _, g := range allGroups {
+		menu, err := gtk.MenuItemNewWithLabel(g)
+		if err != nil {
+			continue
+		}
+
+		menu.SetVisible(true)
+		menu.Connect("activate", func(m *gtk.MenuItem) {
+			currentGroups.SetValue(currentGroups.Append(), 0, m.GetLabel())
+		})
+
+		existingGroups.Add(menu)
+	}
+
+	if len(allGroups) > 0 {
+		sep, err := gtk.SeparatorMenuItemNew()
+		if err != nil {
+			return
+		}
+
+		sep.SetVisible(true)
+		existingGroups.Add(sep)
+	}
+
+	addMenuItem := getObjIgnoringErrors(builder, "addGroup").(*gtk.MenuItem)
+	existingGroups.Add(addMenuItem)
+
+	currentGroupsView := getObjIgnoringErrors(builder, "groups-view").(*gtk.TreeView)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on-add-new-group": func() {
+			r.addGroupDialog(currentGroups)
+		},
+		"on-remove-group": func() {
+			path, _ := currentGroupsView.GetCursor()
+			iter, err := currentGroups.GetIter(path)
+			if err != nil {
+				return
+			}
+
+			currentGroups.Remove(iter)
+		},
+		"on-cancel": dialog.Destroy,
+		"on-save": func() {
+			defer dialog.Destroy()
+
+			groups := toArray(currentGroups)
+			nickname, _ := nickNameEntry.GetText()
+
+			err := r.updatePeer(acc, jid, nickname, groups)
+			if err != nil {
+				log.Println(err)
+			}
+		},
+	})
+
+	defaultBtn := getObjIgnoringErrors(builder, "btn-save").(*gtk.Button)
+	defaultBtn.GrabDefault()
+	dialog.SetTransientFor(r.ui.window)
+	dialog.ShowAll()
 }
 
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.EventButton) {
@@ -126,6 +316,9 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 			account.session.RemoveContact(jid)
 			r.ui.removePeer(account, jid)
 			r.redraw()
+		},
+		"on_edit_contact": func() {
+			doInUIThread(func() { r.openEditContactDialog(jid, account) })
 		},
 		"on_allow_contact_to_see_status": func() {
 			account.session.ApprovePresenceSubscription(jid, "" /* generate id */)
@@ -142,37 +335,10 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},
-		"on_rename_signal": func() {
-			r.renameContactPopup(account, jid)
-		},
 	})
 
 	mn.ShowAll()
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
-}
-
-func (r *roster) renameContactPopup(acc *account, jid string) {
-	builder := builderForDefinition("RenameContact")
-	popup := getObjIgnoringErrors(builder, "RenameContactPopup").(*gtk.Dialog)
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_rename_signal": func() {
-			defer popup.Destroy()
-
-			renameTxt := getObjIgnoringErrors(builder, "rename").(*gtk.Entry)
-			newName, _ := renameTxt.GetText()
-
-			if !r.renamePeer(acc, jid, newName) {
-				return
-			}
-
-			doInUIThread(r.redraw)
-			r.ui.SaveConfig()
-		},
-	})
-
-	popup.SetTransientFor(r.ui.window)
-	popup.ShowAll()
 }
 
 func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventButton) {

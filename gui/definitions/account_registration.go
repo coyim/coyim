@@ -82,8 +82,8 @@ func (*defAccountRegistration) String() string {
     </child>
 
     <action-widgets>
-      <action-widget response="GTK_RESPONSE_CANCEL">btn-cancel</action-widget>
-      <action-widget response="GTK_RESPONSE_APPLY" default="true">btn-apply</action-widget>
+      <action-widget response="cancel">btn-cancel</action-widget>
+      <action-widget response="apply" default="true">btn-apply</action-widget>
     </action-widgets>
   </object>
 </interface>

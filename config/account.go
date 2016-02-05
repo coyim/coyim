@@ -19,7 +19,6 @@ var (
 type Account struct {
 	id string `json:"-"`
 
-	//TODO: this should be JID
 	Account                 string
 	Server                  string             `json:",omitempty"`
 	Proxies                 []string           `json:",omitempty"`

@@ -2,45 +2,11 @@ package gui
 
 import (
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/net"
 )
 
-var proxyTypes = [][]string{
-	[]string{"tor-auto", "Automatic Tor"},
-	[]string{"socks5", "SOCKS5"},
-}
-
-// findProxyTypeFor returns the index of the proxy type given
-func findProxyTypeFor(s string) int {
-	for ix, px := range proxyTypes {
-		if px[0] == s {
-			return ix
-		}
-	}
-
-	return -1
-}
-
-// getProxyTypeNames will yield all i18n proxy names to the function
-func getProxyTypeNames(f func(string)) {
-	for _, px := range proxyTypes {
-		f(i18n.Local(px[1]))
-	}
-}
-
-// getProxyTypeFor will return the proxy type for the given i18n proxy name
-func getProxyTypeFor(act string) string {
-	for _, px := range proxyTypes {
-		if act == i18n.Local(px[1]) {
-			return px[0]
-		}
-	}
-	return ""
-}
-
 func getScheme(s *gtk.ComboBoxText) string {
-	return getProxyTypeFor(s.GetActiveText())
+	return net.GetProxyTypeFor(s.GetActiveText())
 }
 
 func orNil(s string) *string {
@@ -61,10 +27,10 @@ func (u *gtkUI) editProxy(proxy string, w *gtk.Dialog, onSave func(net.Proxy), o
 	server := getObjIgnoringErrors(b, "server").(*gtk.Entry)
 	port := getObjIgnoringErrors(b, "port").(*gtk.Entry)
 
-	getProxyTypeNames(func(name string) {
+	net.GetProxyTypeNames(func(name string) {
 		scheme.AppendText(name)
 	})
-	scheme.SetActive(findProxyTypeFor(prox.Scheme))
+	scheme.SetActive(net.FindProxyTypeFor(prox.Scheme))
 
 	if prox.User != nil {
 		user.SetText(*prox.User)
@@ -87,7 +53,7 @@ func (u *gtkUI) editProxy(proxy string, w *gtk.Dialog, onSave func(net.Proxy), o
 			servTxt, _ := server.GetText()
 			portTxt, _ := port.GetText()
 
-			prox.Scheme = getProxyTypeFor(scheme.GetActiveText())
+			prox.Scheme = net.GetProxyTypeFor(scheme.GetActiveText())
 
 			prox.User = orNil(userTxt)
 			prox.Pass = orNil(passTxt)

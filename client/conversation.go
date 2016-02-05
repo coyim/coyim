@@ -66,11 +66,13 @@ func (c *conversation) Send(s Sender, m []byte) error {
 
 func (c *conversation) Receive(s Sender, m []byte) ([]byte, error) {
 	plain, toSend, err := c.Conversation.Receive(m)
+	err2 := c.sendAll(s, toSend)
+
 	if err != nil {
-		return nil, err
+		return plain, err
 	}
 
-	return plain, c.sendAll(s, toSend)
+	return plain, err2
 }
 
 func (c *conversation) ProvideAuthenticationSecret(s Sender, m []byte) error {

@@ -140,6 +140,7 @@ func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []
 		e.notify(fmt.Sprintf("We received this error from the other person: %s.", string(message)))
 	case otr3.MessageEventReceivedMessageNotInPrivate:
 		// This happens when we receive what looks like a data message, but we're not in encrypted state
+		// TODO: this should open conversation window
 		e.notify("We received a an encrypted message which can't be read, since private communication is not currently turned on.")
 	case otr3.MessageEventReceivedMessageUnencrypted:
 		// This happens when we receive a non-OTR message, even though we have require encryption turned on

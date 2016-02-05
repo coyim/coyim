@@ -34,4 +34,4 @@ artifacts:
   - path: coyim.zip
     name: CoyIM
 deploy_script:
-  - curl -T coyim.zip -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" "https://api.bintray.com/content/%BINTRAY_PATH%/windows-bundle/CoyIM.zip?override=1&publish=1"
+  - curl -T coyim.zip -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" "https://api.bintray.com/content/twstrike/coyim/coyim-bin/%APPVEYOR_REPO_TAG_NAME%/windows-bundle/CoyIM.zip?override=1&publish=1"

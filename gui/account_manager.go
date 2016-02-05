@@ -28,6 +28,12 @@ func newAccountManager(c client.CommandManager) *accountManager {
 	}
 }
 
+func (m *accountManager) disconnectAll() {
+	for _, acc := range m.accounts {
+		acc.disconnect()
+	}
+}
+
 func (m *accountManager) getAccountByID(ID string) (*account, bool) {
 	m.RLock()
 	defer m.RUnlock()

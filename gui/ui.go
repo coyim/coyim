@@ -340,7 +340,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 }
 
 func (u *gtkUI) quit() {
-	// TODO: we should probably disconnect before quitting, if any account is connected
+	u.accountManager.disconnectAll()
 	u.app.Quit()
 }
 

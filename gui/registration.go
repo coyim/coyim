@@ -99,6 +99,7 @@ func requestAndRenderRegistrationForm(server string, formHandler xmpp.FormCallba
 	conf := &config.Account{
 		Account:    "@" + server,
 		RequireTor: true,
+		Proxies:    []string{"tor-auto://"},
 	}
 
 	//TODO: this should receive only a JID domainpart

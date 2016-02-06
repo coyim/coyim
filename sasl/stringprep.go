@@ -66,7 +66,6 @@ var mappedToNothing = transform.RemoveFunc(func(r rune) bool {
 	case '\u180B':
 	case '\u180C':
 	case '\u180D':
-	case '\u200B':
 	case '\u200C':
 	case '\u200D':
 	case '\u2060':

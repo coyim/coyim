@@ -2,8 +2,8 @@ package roster
 
 import (
 	"fmt"
+
 	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/coyim/config"
 )
 
 // Peer represents and contains all the information you have about a specific peer.
@@ -55,13 +55,7 @@ func (p *Peer) Dump() string {
 }
 
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given
-func PeerFrom(e xmpp.RosterEntry, conf *config.Account) *Peer {
-	belongsTo := conf.ID()
-	var nickname string
-	p, ok := conf.GetPeer(e.Jid)
-	if ok {
-		nickname = p.Nickname
-	}
+func PeerFrom(e xmpp.RosterEntry, belongsTo, nickname string) *Peer {
 	return &Peer{
 		Jid:          xmpp.RemoveResourceFromJid(e.Jid),
 		Subscription: e.Subscription,

@@ -14,17 +14,17 @@ func init() {
 	log.SetOutput(ioutil.Discard)
 }
 
-type ListXmppSuite struct{}
+type ListSuite struct{}
 
-var _ = g.Suite(&ListXmppSuite{})
+var _ = g.Suite(&ListSuite{})
 
-func (s *ListXmppSuite) Test_New_returnsANewList(c *g.C) {
+func (s *ListSuite) Test_New_returnsANewList(c *g.C) {
 	l := New()
 	c.Assert(l, g.Not(g.IsNil))
 	c.Assert(l.peers, g.Not(g.IsNil))
 }
 
-func (s *ListXmppSuite) Test_Remove_doesNothingWhenAskedToRemoveEntryNotInList(c *g.C) {
+func (s *ListSuite) Test_Remove_doesNothingWhenAskedToRemoveEntryNotInList(c *g.C) {
 	l := New()
 	l.peers["foo@bar.com"] = &Peer{}
 
@@ -35,7 +35,7 @@ func (s *ListXmppSuite) Test_Remove_doesNothingWhenAskedToRemoveEntryNotInList(c
 	c.Assert(len(l.peers), g.Equals, 1)
 }
 
-func (s *ListXmppSuite) Test_Remove_removesAnEntryIfInTheList(c *g.C) {
+func (s *ListSuite) Test_Remove_removesAnEntryIfInTheList(c *g.C) {
 	l := New()
 	l.peers["foo@bar.com"] = &Peer{}
 	l.peers["bar@foo.com"] = &Peer{Name: "me"}
@@ -47,7 +47,7 @@ func (s *ListXmppSuite) Test_Remove_removesAnEntryIfInTheList(c *g.C) {
 	c.Assert(len(l.peers), g.Equals, 1)
 }
 
-func (s *ListXmppSuite) Test_AddOrReplace_addsTheEntryIfNotInTheList(c *g.C) {
+func (s *ListSuite) Test_AddOrReplace_addsTheEntryIfNotInTheList(c *g.C) {
 	l := New()
 	p := &Peer{Jid: "somewhere", Name: "something"}
 
@@ -58,7 +58,7 @@ func (s *ListXmppSuite) Test_AddOrReplace_addsTheEntryIfNotInTheList(c *g.C) {
 	c.Assert(l.peers["somewhere"], g.Equals, p)
 }
 
-func (s *ListXmppSuite) Test_AddOrReplace_replacesTheEntryIfInTheList(c *g.C) {
+func (s *ListSuite) Test_AddOrReplace_replacesTheEntryIfInTheList(c *g.C) {
 	l := New()
 	p1 := &Peer{Jid: "somewhere", Name: "something", Groups: toSet("hello"), Subscription: "from"}
 	l.peers["somewhere"] = p1
@@ -71,7 +71,7 @@ func (s *ListXmppSuite) Test_AddOrReplace_replacesTheEntryIfInTheList(c *g.C) {
 	c.Assert(l.peers["somewhere"], g.Equals, p2)
 }
 
-func (s *ListXmppSuite) Test_AddOrMerge_addsTheEntryIfNotInTheList(c *g.C) {
+func (s *ListSuite) Test_AddOrMerge_addsTheEntryIfNotInTheList(c *g.C) {
 	l := New()
 	p := &Peer{Jid: "somewhere", Name: "something"}
 
@@ -82,7 +82,7 @@ func (s *ListXmppSuite) Test_AddOrMerge_addsTheEntryIfNotInTheList(c *g.C) {
 	c.Assert(l.peers["somewhere"], g.Equals, p)
 }
 
-func (s *ListXmppSuite) Test_AddOrReplace_mergesTheEntriesIfInTheList(c *g.C) {
+func (s *ListSuite) Test_AddOrReplace_mergesTheEntriesIfInTheList(c *g.C) {
 	l := New()
 	p1 := &Peer{Jid: "somewhere", Name: "something", Groups: toSet("hello"), Subscription: "from"}
 	l.peers["somewhere"] = p1
@@ -95,7 +95,7 @@ func (s *ListXmppSuite) Test_AddOrReplace_mergesTheEntriesIfInTheList(c *g.C) {
 	c.Assert(*l.peers["somewhere"], g.DeepEquals, Peer{Jid: "somewhere", Name: "something2", Groups: toSet("goodbye"), Subscription: "from"})
 }
 
-func (s *ListXmppSuite) Test_ToSlice_createsASliceOfTheContentSortedAlphabetically(c *g.C) {
+func (s *ListSuite) Test_ToSlice_createsASliceOfTheContentSortedAlphabetically(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@somewhere.com"})
 	l.AddOrMerge(&Peer{Jid: "foo@somewhen.com"})
@@ -108,7 +108,7 @@ func (s *ListXmppSuite) Test_ToSlice_createsASliceOfTheContentSortedAlphabetical
 	})
 }
 
-func (s *ListXmppSuite) Test_Iter_yieldsEachEntry(c *g.C) {
+func (s *ListSuite) Test_Iter_yieldsEachEntry(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@somewhere.com"})
 	l.AddOrMerge(&Peer{Jid: "foo@somewhen.com"})
@@ -132,12 +132,12 @@ func (s *ListXmppSuite) Test_Iter_yieldsEachEntry(c *g.C) {
 	c.Assert(called, g.DeepEquals, 3)
 }
 
-func (s *ListXmppSuite) Test_Unsubscribed_whenDoesntExist(c *g.C) {
+func (s *ListSuite) Test_Unsubscribed_whenDoesntExist(c *g.C) {
 	l := New()
 	l.Unsubscribed("foo@bar.com")
 }
 
-func (s *ListXmppSuite) Test_Unsubscribed_whenExist(c *g.C) {
+func (s *ListSuite) Test_Unsubscribed_whenExist(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Subscription: "both", Asked: true, PendingSubscribeID: "foo"})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Subscription: "to"})
@@ -155,13 +155,13 @@ func (s *ListXmppSuite) Test_Unsubscribed_whenExist(c *g.C) {
 	c.Assert(l.peers["foo3@bar.com"].Subscription, g.Equals, "from")
 }
 
-func (s *ListXmppSuite) Test_Subscribed_whenDoesntExist(c *g.C) {
+func (s *ListSuite) Test_Subscribed_whenDoesntExist(c *g.C) {
 	l := New()
 	l.Subscribed("foo@bar.com")
 	c.Assert(len(l.peers), g.Equals, 0)
 }
 
-func (s *ListXmppSuite) Test_Subscribed_whenExist(c *g.C) {
+func (s *ListSuite) Test_Subscribed_whenExist(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Subscription: "from", Asked: true, PendingSubscribeID: "foo"})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Subscription: "none"})
@@ -183,7 +183,7 @@ func (s *ListXmppSuite) Test_Subscribed_whenExist(c *g.C) {
 	c.Assert(l.peers["foo4@bar.com"].Subscription, g.Equals, "both")
 }
 
-func (s *ListXmppSuite) Test_GetPendingSubscribe_returnsThePendingSubscribeIfExists(c *g.C) {
+func (s *ListSuite) Test_GetPendingSubscribe_returnsThePendingSubscribeIfExists(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com", PendingSubscribeID: "foo"})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com"})
@@ -200,7 +200,7 @@ func (s *ListXmppSuite) Test_GetPendingSubscribe_returnsThePendingSubscribeIfExi
 	c.Assert(v, g.Equals, "")
 }
 
-func (s *ListXmppSuite) Test_RemovePendingSubscribe_removesThePendingSubscribe(c *g.C) {
+func (s *ListSuite) Test_RemovePendingSubscribe_removesThePendingSubscribe(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com", PendingSubscribeID: "foo"})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com"})
@@ -218,7 +218,7 @@ func (s *ListXmppSuite) Test_RemovePendingSubscribe_removesThePendingSubscribe(c
 	c.Assert(v, g.Equals, "")
 }
 
-func (s *ListXmppSuite) Test_SubscribeRequest_addsTheSubscribeID(c *g.C) {
+func (s *ListSuite) Test_SubscribeRequest_addsTheSubscribeID(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com"})
 
@@ -229,7 +229,7 @@ func (s *ListXmppSuite) Test_SubscribeRequest_addsTheSubscribeID(c *g.C) {
 	c.Assert(l.peers["foo@bar.com"].PendingSubscribeID, g.Equals, "something3")
 }
 
-func (s *ListXmppSuite) Test_StateOf_returnsState(c *g.C) {
+func (s *ListSuite) Test_StateOf_returnsState(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Status: "bla", StatusMsg: "hmm"})
 
@@ -242,7 +242,7 @@ func (s *ListXmppSuite) Test_StateOf_returnsState(c *g.C) {
 	c.Assert(sm, g.Equals, "hmm")
 }
 
-func (s *ListXmppSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
+func (s *ListSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Online: true})
 
@@ -254,7 +254,7 @@ func (s *ListXmppSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 	c.Assert(l.peers["foo@bar.com"].Online, g.Equals, false)
 }
 
-func (s *ListXmppSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *g.C) {
+func (s *ListSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *g.C) {
 	l := New()
 
 	res := l.PeerPresenceUpdate("foo@bar.com/hmm", "hello", "goodbye", "")
@@ -272,7 +272,7 @@ func (s *ListXmppSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers
 
 }
 
-func (s *ListXmppSuite) Test_PeerPresenceUpdate_updatesPreviouslyKnownPeer(c *g.C) {
+func (s *ListSuite) Test_PeerPresenceUpdate_updatesPreviouslyKnownPeer(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Online: false})
 	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Online: true, Status: "dnd", StatusMsg: "working"})
@@ -290,7 +290,7 @@ func (s *ListXmppSuite) Test_PeerPresenceUpdate_updatesPreviouslyKnownPeer(c *g.
 	c.Assert(l.peers["foo2@bar.com"].Online, g.Equals, true)
 }
 
-func (s *ListXmppSuite) Test_Clear_clearsTheList(c *g.C) {
+func (s *ListSuite) Test_Clear_clearsTheList(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: "foo@bar.com"})
 
@@ -299,7 +299,7 @@ func (s *ListXmppSuite) Test_Clear_clearsTheList(c *g.C) {
 	c.Assert(len(l.peers), g.Equals, 0)
 }
 
-func (s *ListXmppSuite) Test_Peers_sortsByNameForPresentation(c *g.C) {
+func (s *ListSuite) Test_Peers_sortsByNameForPresentation(c *g.C) {
 	expectedPeers := []*Peer{
 		&Peer{
 			Jid: "ba", Name: "ab",
@@ -325,4 +325,34 @@ func (s *ListXmppSuite) Test_Peers_sortsByNameForPresentation(c *g.C) {
 	}
 
 	c.Assert(group.Peers(), g.DeepEquals, expectedPeers)
+}
+
+func (s *ListSuite) Test_LatestError_setsLatestErrorWhenExists(c *g.C) {
+	l := New()
+	pp := &Peer{Jid: "foo@bar.com"}
+	l.AddOrMerge(pp)
+	l.LatestError("foo@bar.com/foo", "tow", "frou", "sxi")
+
+	c.Assert(pp.LatestError, g.DeepEquals, &PeerError{"tow", "frou", "sxi"})
+}
+
+func (s *ListSuite) Test_LatestError_doesntDoAnythingForUnexistingPeer(c *g.C) {
+	l := New()
+	l.LatestError("foo@bar.com/foo", "tow", "frou", "sxi")
+}
+
+func (s *ListSuite) Test_IterAll_willIterateOverAllTheListsGivenAndYieldTheirPeers(c *g.C) {
+	l := New()
+	l2 := New()
+	pp := &Peer{Jid: "foo@bar.com"}
+	pp2 := &Peer{Jid: "foo2@bar.com"}
+	l.AddOrMerge(pp)
+	l2.AddOrMerge(pp2)
+
+	result := []*Peer{}
+	IterAll(func(_ int, p *Peer) {
+		result = append(result, p)
+	}, l, l2)
+
+	c.Assert(result, g.DeepEquals, []*Peer{pp2, pp})
 }

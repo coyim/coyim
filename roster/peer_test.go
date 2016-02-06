@@ -2,7 +2,6 @@ package roster
 
 import (
 	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/coyim/config"
 
 	g "gopkg.in/check.v1"
 )
@@ -21,11 +20,8 @@ func (s *PeerXmppSuite) Test_PeerFrom_returnsANewPeerWithTheSameInformation(c *g
 			"twogroup",
 		},
 	}
-	config := &config.Account{
-		Account: "some@one.org",
-	}
 
-	p := PeerFrom(re, config)
+	p := PeerFrom(re, "", "")
 
 	c.Assert(p.Jid, g.Equals, "foo@bar.com")
 	c.Assert(p.Subscription, g.Equals, "from")
@@ -51,6 +47,17 @@ func (s *PeerXmppSuite) Test_toEntry_ReturnsAnEntryWithTheInformation(c *g.C) {
 	c.Assert(p.ToEntry().Name, g.Equals, "something")
 	c.Assert(p.ToEntry().Subscription, g.Equals, "from")
 	c.Assert(p.ToEntry().Group, g.DeepEquals, []string{"hello::bar"})
+}
+
+func (s *PeerXmppSuite) Test_Dump_willDumpAllInfo(c *g.C) {
+	p := &Peer{
+		Jid:          "foo@bar.com",
+		Name:         "something",
+		Subscription: "from",
+		Groups:       toSet("hello::bar"),
+	}
+
+	c.Assert(p.Dump(), g.Equals, "Peer{foo@bar.com[something ()], subscription='from', status=''('') online=false, asked=false, pendingSubscribe='', belongsTo=''}")
 }
 
 func (s *PeerXmppSuite) Test_PeerWithState_createsANewPeer(c *g.C) {
@@ -81,4 +88,13 @@ func (s *PeerXmppSuite) Test_MergeWith_takesTheFirstGroupsIfExists(c *g.C) {
 	p2 := &Peer{}
 
 	c.Assert(fromSet(p1.MergeWith(p2).Groups)[0], g.Equals, "one")
+}
+
+func (s *PeerXmppSuite) Test_SetLatestError_setsLatestError(c *g.C) {
+	p1 := &Peer{
+		Groups: toSet("one"),
+	}
+	p1.SetLatestError("oen", "tow", "there")
+
+	c.Assert(p1.LatestError, g.DeepEquals, &PeerError{"oen", "tow", "there"})
 }

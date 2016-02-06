@@ -1,7 +1,6 @@
 package roster
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 )
@@ -12,18 +11,6 @@ type Group struct {
 	fullGroupName []string
 	peers         []*Peer
 	groups        map[string]*Group
-}
-
-func (g *Group) findInside(path []string) *Group {
-	if len(path) == 0 {
-		return g
-	}
-
-	gg, ok := g.groups[path[0]]
-	if ok {
-		return gg.findInside(path[1:])
-	}
-	return nil
 }
 
 func (g *Group) findOrCreateInside(path, pathTilNow []string) *Group {
@@ -111,16 +98,4 @@ func (g *Group) Groups() []*Group {
 // FullGroupName returns the full group name
 func (g *Group) FullGroupName() string {
 	return strings.Join(g.fullGroupName, "::")
-}
-
-func (g *Group) printIndented(i string) {
-	fmt.Printf("%sGroup: %s\n", i, g.GroupName)
-	fmt.Printf("%sGroup (full): %s\n", i, g.fullGroupName)
-	fmt.Printf("%sPeers:\n", i)
-	for _, p := range g.peers {
-		fmt.Printf("%s  Peer: %s:\n", i, p.Jid)
-	}
-	for _, gg := range g.groups {
-		gg.printIndented(i + "  ")
-	}
 }

@@ -118,7 +118,7 @@ func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []
 		e.notify("An error occurred when encrypting your message. The message was not sent.")
 	case otr3.MessageEventConnectionEnded:
 		// This happens when we have finished a conversation and tries to send a message afterwards
-		e.notify("'Your message was not sent, since the other person has already closed their private connection to you.")
+		e.notify("Your message was not sent, since the other person has already closed their private connection to you.")
 	case otr3.MessageEventMessageReflected:
 		e.notify("We are receiving our own OTR messages. You are either trying to talk to yourself, or someone is reflecting your messages back at you.")
 	case otr3.MessageEventSetupError:

@@ -1,5 +1,0 @@
-/* Fixes #189 */
-* > GtkMenu,
-.context-menu {
-  margin: 0;
-}

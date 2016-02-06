@@ -230,6 +230,7 @@ func (u *gtkUI) Loop() {
 		go u.watchCommands()
 		go u.observeAccountEvents()
 
+		applyHacks()
 		u.mainWindow()
 		go u.loadConfig(*config.ConfigFile)
 	})

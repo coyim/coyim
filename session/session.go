@@ -333,6 +333,21 @@ func (s *Session) receivedIQVersion() xmpp.VersionReply {
 	}
 }
 
+func peerFrom(entry xmpp.RosterEntry, c *config.Account) *roster.Peer {
+	belongsTo := c.ID()
+	var nickname string
+	p, ok := c.GetPeer(entry.Jid)
+	if ok {
+		nickname = p.Nickname
+	}
+	return roster.PeerFrom(entry, belongsTo, nickname)
+}
+
+func (s *Session) addOrMergeNewPeer(entry xmpp.RosterEntry, c *config.Account) bool {
+
+	return s.R.AddOrMerge(peerFrom(entry, c))
+}
+
 func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
 	// TODO: we should deal with "ask" attributes here
 
@@ -349,7 +364,7 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{},
 	for _, entry := range rst.Item {
 		if entry.Subscription == "remove" {
 			s.R.Remove(entry.Jid)
-		} else if s.R.AddOrMerge(roster.PeerFrom(entry, s.GetConfig())) {
+		} else if s.addOrMergeNewPeer(entry, s.GetConfig()) {
 			s.iqReceived(entry.Jid)
 		}
 	}
@@ -734,7 +749,7 @@ func (s *Session) requestRoster() bool {
 	}
 
 	for _, rr := range rst {
-		s.R.AddOrMerge(roster.PeerFrom(rr, s.GetConfig()))
+		s.addOrMergeNewPeer(rr, s.GetConfig())
 	}
 
 	s.rosterReceived()

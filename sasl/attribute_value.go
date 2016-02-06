@@ -23,10 +23,6 @@ func ParseAttributeValuePairs(src []byte) AttributeValuePairs {
 	params := strings.Split(string(src), ",")
 
 	for _, p := range params {
-		if _, exists := ret[p]; exists {
-			continue
-		}
-
 		m := quotedKeyValue.FindStringSubmatch(p)
 		if len(m) != 3 {
 			m = keyValue.FindStringSubmatch(p)

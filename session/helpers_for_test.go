@@ -7,6 +7,8 @@ import (
 
 	gocheck "gopkg.in/check.v1"
 
+	"github.com/twstrike/coyim/session/access"
+	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/otr3"
 )
 
@@ -14,13 +16,13 @@ type mockSessionEventHandler struct {
 	info                func(string)
 	warn                func(string)
 	alert               func(string)
-	rosterReceived      func(*Session)
+	rosterReceived      func(access.Session)
 	iqReceived          func(uid string)
 	newOTRKeys          func(from string, conversation *otr3.Conversation)
 	otrEnded            func(uid string)
-	messageReceived     func(s *Session, from string, timestamp time.Time, encrypted bool, message []byte)
+	messageReceived     func(s access.Session, from string, timestamp time.Time, encrypted bool, message []byte)
 	processPresence     func(from, to, show, status string, gone bool)
-	subscriptionRequest func(s *Session, uid string)
+	subscriptionRequest func(s access.Session, uid string)
 	subscribed          func(account, peer string)
 	unsubscribe         func(account, peer string)
 	disconnected        func()
@@ -45,7 +47,7 @@ func (m *mockSessionEventHandler) Alert(v string) {
 	}
 }
 
-func (m *mockSessionEventHandler) RosterReceived(s *Session) {
+func (m *mockSessionEventHandler) RosterReceived(s access.Session) {
 	if m.rosterReceived != nil {
 		m.rosterReceived(s)
 	}
@@ -69,7 +71,7 @@ func (m *mockSessionEventHandler) OTREnded(uid string) {
 	}
 }
 
-func (m *mockSessionEventHandler) MessageReceived(s *Session, from string, timestamp time.Time, encrypted bool, message []byte) {
+func (m *mockSessionEventHandler) MessageReceived(s access.Session, from string, timestamp time.Time, encrypted bool, message []byte) {
 	if m.messageReceived != nil {
 		m.messageReceived(s, from, timestamp, encrypted, message)
 	}
@@ -81,7 +83,7 @@ func (m *mockSessionEventHandler) ProcessPresence(from, to, show, status string,
 	}
 }
 
-func (m *mockSessionEventHandler) SubscriptionRequest(s *Session, uid string) {
+func (m *mockSessionEventHandler) SubscriptionRequest(s access.Session, uid string) {
 	if m.subscriptionRequest != nil {
 		m.subscriptionRequest(s, uid)
 	}
@@ -150,12 +152,12 @@ func (iom *mockConnIOReaderWriter) Close() error {
 	return nil
 }
 
-func captureLogsEvents(c <-chan interface{}) (ret []LogEvent) {
+func captureLogsEvents(c <-chan interface{}) (ret []events.Log) {
 	for {
 		select {
 		case ev := <-c:
 			switch t := ev.(type) {
-			case LogEvent:
+			case events.Log:
 				ret = append(ret, t)
 			default:
 				//ignore
@@ -168,7 +170,7 @@ func captureLogsEvents(c <-chan interface{}) (ret []LogEvent) {
 	return
 }
 
-func assertLogContains(c *gocheck.C, ch <-chan interface{}, exp LogEvent) {
+func assertLogContains(c *gocheck.C, ch <-chan interface{}, exp events.Log) {
 	logs := captureLogsEvents(ch)
 
 	for _, l := range logs {

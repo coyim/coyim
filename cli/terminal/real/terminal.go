@@ -52,6 +52,7 @@ func (*realTerminalControl) Escape(t terminal.Terminal) terminal.EscapeCodes {
 	}
 }
 
+// Factory creates a new terminal.Control that is connected to a real terminal
 func Factory() terminal.Control {
 	return &realTerminalControl{}
 }

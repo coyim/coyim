@@ -2,8 +2,11 @@
 
 package main
 
-import "github.com/twstrike/coyim/gui"
+import (
+	"github.com/twstrike/coyim/gui"
+	"github.com/twstrike/coyim/session"
+)
 
 func runClient() {
-	gui.NewGTK(coyimVersion).Loop()
+	gui.NewGTK(coyimVersion, session.Factory).Loop()
 }

@@ -16,6 +16,8 @@ import (
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/roster"
+	"github.com/twstrike/coyim/session/access"
+	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/otr3"
 )
@@ -29,13 +31,8 @@ const (
 	CONNECTED
 )
 
-// Connector represents something that connect
-type Connector interface {
-	Connect()
-}
-
 // Session contains information about one specific connection
-type Session struct {
+type session struct {
 	conn             *xmpp.Conn
 	connectionLogger io.Writer
 	r                *roster.List
@@ -57,7 +54,7 @@ type Session struct {
 	// LastActionTime is the time at which the user last entered a command,
 	// or was last notified.
 	lastActionTime      time.Time
-	sessionEventHandler EventHandler
+	sessionEventHandler access.EventHandler
 
 	// WantToBeOnline keeps track of whether a user has expressed a wish
 	// to be online - if it's true, it will do more aggressive reconnecting
@@ -72,14 +69,14 @@ type Session struct {
 
 	xmppLogger io.Writer
 
-	connector Connector
+	connector access.Connector
 
 	cmdManager  client.CommandManager
 	convManager client.ConversationManager
 }
 
 // GetConfig returns the current account configuration
-func (s *Session) GetConfig() *config.Account {
+func (s *session) GetConfig() *config.Account {
 	return s.accountConfig
 }
 
@@ -100,9 +97,9 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 	return result
 }
 
-// NewSession creates a new session from the given config
-func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
-	s := &Session{
+// Factory creates a new session from the given config
+func Factory(c *config.ApplicationConfig, cu *config.Account) access.Session {
+	s := &session{
 		config:        c,
 		accountConfig: cu,
 
@@ -125,12 +122,12 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 }
 
 // ReloadKeys will reload the keys from the configuration
-func (s *Session) ReloadKeys() {
+func (s *session) ReloadKeys() {
 	s.privateKeys = parseFromConfig(s.accountConfig)
 }
 
 // Send will send the given message to the receiver given
-func (s *Session) Send(to string, msg string) error {
+func (s *session) Send(to string, msg string) error {
 	log.Printf("<- to=%v {%v}\n", to, msg)
 	return s.conn.Send(to, msg)
 }
@@ -153,33 +150,33 @@ func openLogFile(logFile string) io.Writer {
 	return rawLog
 }
 
-func (s *Session) info(m string) {
-	s.publishEvent(LogEvent{
-		Level:   Info,
+func (s *session) info(m string) {
+	s.publishEvent(events.Log{
+		Level:   events.Info,
 		Message: m,
 	})
 }
 
-func (s *Session) warn(m string) {
-	s.publishEvent(LogEvent{
-		Level:   Warn,
+func (s *session) warn(m string) {
+	s.publishEvent(events.Log{
+		Level:   events.Warn,
 		Message: m,
 	})
 }
 
-func (s *Session) alert(m string) {
-	s.publishEvent(LogEvent{
-		Level:   Alert,
+func (s *session) alert(m string) {
+	s.publishEvent(events.Log{
+		Level:   events.Alert,
 		Message: m,
 	})
 }
 
-func (s *Session) receivedStreamError(stanza *xmpp.StreamError) bool {
+func (s *session) receivedStreamError(stanza *xmpp.StreamError) bool {
 	s.alert("Exiting in response to fatal error from server: " + stanza.String())
 	return false
 }
 
-func (s *Session) receivedClientMessage(stanza *xmpp.ClientMessage) bool {
+func (s *session) receivedClientMessage(stanza *xmpp.ClientMessage) bool {
 	s.processClientMessage(stanza)
 	return true
 }
@@ -191,12 +188,12 @@ func either(l, r string) string {
 	return l
 }
 
-func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
+func (s *session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
 		s.r.SubscribeRequest(stanza.From, either(stanza.ID, "0000"), s.GetConfig().ID())
 		s.publishPeerEvent(
-			SubscriptionRequest,
+			events.SubscriptionRequest,
 			xmpp.RemoveResourceFromJid(stanza.From),
 		)
 	case "unavailable":
@@ -204,7 +201,7 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 			return true
 		}
 
-		s.publishEvent(PresenceEvent{
+		s.publishEvent(events.Presence{
 			Session:        s,
 			ClientPresence: stanza,
 			Gone:           true,
@@ -214,7 +211,7 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 			return true
 		}
 
-		s.publishEvent(PresenceEvent{
+		s.publishEvent(events.Presence{
 			Session:        s,
 			ClientPresence: stanza,
 			Gone:           false,
@@ -222,13 +219,13 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	case "subscribed":
 		s.r.Subscribed(stanza.From)
 		s.publishPeerEvent(
-			Subscribed,
+			events.Subscribed,
 			xmpp.RemoveResourceFromJid(stanza.From),
 		)
 	case "unsubscribe":
 		s.r.Unsubscribed(stanza.From)
 		s.publishPeerEvent(
-			Unsubscribe,
+			events.Unsubscribe,
 			xmpp.RemoveResourceFromJid(stanza.From),
 		)
 	case "unsubscribed":
@@ -242,7 +239,7 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	return true
 }
 
-func (s *Session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
+func (s *session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
 	if stanza.Type == "get" || stanza.Type == "set" {
 		reply, ignore := s.processIQ(stanza)
 		if ignore {
@@ -265,7 +262,7 @@ func (s *Session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
 	return true
 }
 
-func (s *Session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
+func (s *session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 	select {
 	case rawStanza, ok := <-stanzaChan:
 		if !ok {
@@ -289,7 +286,7 @@ func (s *Session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 }
 
 //TODO: differentiate errors from disconnect request
-func (s *Session) watchStanzas() {
+func (s *session) watchStanzas() {
 	defer s.connectionLost()
 
 	stanzaChan := make(chan xmpp.Stanza)
@@ -298,21 +295,21 @@ func (s *Session) watchStanzas() {
 	}
 }
 
-func (s *Session) readStanzasAndAlertOnErrors(stanzaChan chan xmpp.Stanza) {
+func (s *session) readStanzasAndAlertOnErrors(stanzaChan chan xmpp.Stanza) {
 	if err := s.conn.ReadStanzas(stanzaChan); err != nil {
 		s.alert(fmt.Sprintf("error reading XMPP message: %s", err.Error()))
 	}
 }
 
-func (s *Session) rosterReceived() {
-	s.publish(RosterReceived)
+func (s *session) rosterReceived() {
+	s.publish(events.RosterReceived)
 }
 
-func (s *Session) iqReceived(uid string) {
-	s.publishPeerEvent(IQReceived, uid)
+func (s *session) iqReceived(uid string) {
+	s.publishPeerEvent(events.IQReceived, uid)
 }
 
-func (s *Session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
+func (s *session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
 	return xmpp.DiscoveryReply{
 		Identities: []xmpp.DiscoveryIdentity{
 			{
@@ -324,7 +321,7 @@ func (s *Session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
 	}
 }
 
-func (s *Session) receivedIQVersion() xmpp.VersionReply {
+func (s *session) receivedIQVersion() xmpp.VersionReply {
 	return xmpp.VersionReply{
 		Name:    "testing",
 		Version: "version",
@@ -342,12 +339,12 @@ func peerFrom(entry xmpp.RosterEntry, c *config.Account) *roster.Peer {
 	return roster.PeerFrom(entry, belongsTo, nickname)
 }
 
-func (s *Session) addOrMergeNewPeer(entry xmpp.RosterEntry, c *config.Account) bool {
+func (s *session) addOrMergeNewPeer(entry xmpp.RosterEntry, c *config.Account) bool {
 
 	return s.r.AddOrMerge(peerFrom(entry, c))
 }
 
-func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
+func (s *session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
 	// TODO: we should deal with "ask" attributes here
 
 	if len(stanza.From) > 0 && !s.GetConfig().Is(stanza.From) {
@@ -371,7 +368,7 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{},
 	return xmpp.EmptyReply{}, false
 }
 
-func (s *Session) processIQ(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
+func (s *session) processIQ(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
 	buf := bytes.NewBuffer(stanza.Query)
 	parser := xml.NewDecoder(buf)
 	token, _ := parser.Token()
@@ -404,7 +401,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool
 }
 
 // HandleConfirmOrDeny is used to handle a users response to a subscription request
-func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
+func (s *session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 	id, ok := s.r.RemovePendingSubscribe(jid)
 	if !ok {
 		s.warn("No pending subscription from " + jid)
@@ -429,21 +426,21 @@ func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 	}
 }
 
-func (s *Session) newOTRKeys(from string, conversation client.Conversation) {
-	s.publishPeerEvent(OTRNewKeys, from)
+func (s *session) newOTRKeys(from string, conversation client.Conversation) {
+	s.publishPeerEvent(events.OTRNewKeys, from)
 }
 
-func (s *Session) renewedOTRKeys(from string, conversation client.Conversation) {
-	s.publishPeerEvent(OTRRenewedKeys, from)
+func (s *session) renewedOTRKeys(from string, conversation client.Conversation) {
+	s.publishPeerEvent(events.OTRRenewedKeys, from)
 }
 
-func (s *Session) otrEnded(uid string) {
-	s.publishPeerEvent(OTREnded, uid)
+func (s *session) otrEnded(uid string) {
+	s.publishPeerEvent(events.OTREnded, uid)
 }
 
-func (s *Session) listenToNotifications(c <-chan string, peer string) {
+func (s *session) listenToNotifications(c <-chan string, peer string) {
 	for notification := range c {
-		s.publishEvent(NotificationEvent{
+		s.publishEvent(events.Notification{
 			Session:      s,
 			Peer:         peer,
 			Notification: notification,
@@ -454,7 +451,7 @@ func (s *Session) listenToNotifications(c <-chan string, peer string) {
 // NewConversation will create a new OTR conversation with the given peer
 //TODO: why creating a conversation is coupled to the account config and the session
 //TODO: does the creation of the OTR event handler need to be guarded with a lock?
-func (s *Session) NewConversation(peer string) *otr3.Conversation {
+func (s *session) NewConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.privateKeys)
 	conversation.SetFriendlyQueryMessage(i18n.Local("Your peer has requested a private conversation with you, but your client doesn't seem to support the OTR protocol."))
@@ -488,7 +485,7 @@ func (s *Session) NewConversation(peer string) *otr3.Conversation {
 	return conversation
 }
 
-func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
+func (s *session) processClientMessage(stanza *xmpp.ClientMessage) {
 	log.Printf("-> Stanza %#v\n", stanza)
 
 	from := xmpp.RemoveResourceFromJid(stanza.From)
@@ -524,7 +521,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 	s.receiveClientMessage(from, messageTime, stanza.Body)
 }
 
-func (s *Session) receiveClientMessage(from string, when time.Time, body string) {
+func (s *session) receiveClientMessage(from string, when time.Time, body string) {
 	conversation, _ := s.convManager.EnsureConversationWith(from)
 	out, err := conversation.Receive(s, []byte(body))
 	encrypted := conversation.IsEncrypted()
@@ -596,8 +593,8 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	s.messageReceived(from, when, encrypted, out)
 }
 
-func (s *Session) messageReceived(from string, timestamp time.Time, encrypted bool, message []byte) {
-	s.publishEvent(MessageEvent{
+func (s *session) messageReceived(from string, timestamp time.Time, encrypted bool, message []byte) {
+	s.publishEvent(events.Message{
 		Session:   s,
 		From:      from,
 		When:      timestamp,
@@ -608,7 +605,7 @@ func (s *Session) messageReceived(from string, timestamp time.Time, encrypted bo
 	s.maybeNotify()
 }
 
-func (s *Session) maybeNotify() {
+func (s *session) maybeNotify() {
 	now := time.Now()
 	idleThreshold := s.config.IdleSecondsBeforeNotification
 	if idleThreshold == 0 {
@@ -641,7 +638,7 @@ func isAwayStatus(status string) bool {
 }
 
 // AwaitVersionReply listens on the channel and waits for the version reply
-func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
+func (s *session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	stanza, ok := <-ch
 	if !ok {
 		s.warn("Version request to " + user + " timed out")
@@ -671,7 +668,7 @@ func (s *Session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	s.info(fmt.Sprintf("Version reply from %s: %#v", user, versionReply))
 }
 
-func (s *Session) watchTimeout() {
+func (s *session) watchTimeout() {
 	tickInterval := time.Second
 
 	for s.IsConnected() {
@@ -703,19 +700,19 @@ func (s *Session) watchTimeout() {
 }
 
 // Timeout set the timeout for an XMPP request
-func (s *Session) Timeout(c xmpp.Cookie, t time.Time) {
+func (s *session) Timeout(c xmpp.Cookie, t time.Time) {
 	s.timeouts[c] = t
 }
 
 const defaultDelimiter = "::"
 
-func (s *Session) watchRoster() {
+func (s *session) watchRoster() {
 	for s.requestRoster() {
 		time.Sleep(time.Duration(3) * time.Minute)
 	}
 }
 
-func (s *Session) requestRoster() bool {
+func (s *session) requestRoster() bool {
 	if !s.IsConnected() {
 		return false
 	}
@@ -758,30 +755,30 @@ func (s *Session) requestRoster() bool {
 }
 
 // IsDisconnected returns true if this account is disconnected and is not in the process of connecting
-func (s *Session) IsDisconnected() bool {
+func (s *session) IsDisconnected() bool {
 	return s.connStatus == DISCONNECTED
 }
 
 // IsConnected returns true if this account is connected and is not in the process of connecting
-func (s *Session) IsConnected() bool {
+func (s *session) IsConnected() bool {
 	return s.connStatus == CONNECTED
 }
 
-func (s *Session) setStatus(status connStatus) {
+func (s *session) setStatus(status connStatus) {
 	s.connStatus = status
 
 	switch status {
 	case CONNECTED:
-		s.publish(Connected)
+		s.publish(events.Connected)
 	case DISCONNECTED:
-		s.publish(Disconnected)
+		s.publish(events.Disconnected)
 	case CONNECTING:
-		s.publish(Connecting)
+		s.publish(events.Connecting)
 	}
 }
 
 // Connect connects to the server and starts the main threads
-func (s *Session) Connect(password string) error {
+func (s *session) Connect(password string) error {
 	if !s.IsDisconnected() {
 		return nil
 	}
@@ -818,32 +815,32 @@ func (s *Session) Connect(password string) error {
 }
 
 // EncryptAndSendTo encrypts and sends the message to the given peer
-func (s *Session) EncryptAndSendTo(peer string, message string) error {
+func (s *session) EncryptAndSendTo(peer string, message string) error {
 	//TODO: review whether it should create a conversation
 	conversation, _ := s.convManager.EnsureConversationWith(peer)
 	return conversation.Send(s, []byte(message))
 }
 
 // SendMessageTo sends the given message directly to the peer
-func (s *Session) SendMessageTo(peer string, message string) error {
+func (s *session) SendMessageTo(peer string, message string) error {
 	return s.conn.Send(peer, message)
 }
 
-func (s *Session) terminateConversations() {
+func (s *session) terminateConversations() {
 	s.convManager.TerminateAll()
 }
 
-func (s *Session) connectionLost() {
+func (s *session) connectionLost() {
 	if s.IsDisconnected() {
 		return
 	}
 
 	s.Close()
-	s.publish(ConnectionLost)
+	s.publish(events.ConnectionLost)
 }
 
 // Close terminates all outstanding OTR conversations and closes the connection to the server
-func (s *Session) Close() {
+func (s *session) Close() {
 	if s.IsDisconnected() {
 		return
 	}
@@ -855,66 +852,66 @@ func (s *Session) Close() {
 }
 
 // Ping does a Ping
-func (s *Session) Ping() {
+func (s *session) Ping() {
 	if s.IsDisconnected() {
 		return
 	}
 	/* fmt.Println("Publish Ping") */
-	s.publish(Ping)
+	s.publish(events.Ping)
 }
 
-func (s *Session) CommandManager() client.CommandManager {
+func (s *session) CommandManager() client.CommandManager {
 	return s.cmdManager
 }
 
-func (s *Session) SetCommandManager(c client.CommandManager) {
+func (s *session) SetCommandManager(c client.CommandManager) {
 	s.cmdManager = c
 }
 
-func (s *Session) ConversationManager() client.ConversationManager {
+func (s *session) ConversationManager() client.ConversationManager {
 	return s.convManager
 }
 
-func (s *Session) SetWantToBeOnline(val bool) {
+func (s *session) SetWantToBeOnline(val bool) {
 	s.wantToBeOnline = val
 }
 
-func (s *Session) PrivateKeys() []otr3.PrivateKey {
+func (s *session) PrivateKeys() []otr3.PrivateKey {
 	return s.privateKeys
 }
 
-func (s *Session) R() *roster.List {
+func (s *session) R() *roster.List {
 	return s.r
 }
 
-func (s *Session) SetConnector(c Connector) {
+func (s *session) SetConnector(c access.Connector) {
 	s.connector = c
 }
 
-func (s *Session) GroupDelimiter() string {
+func (s *session) GroupDelimiter() string {
 	return s.groupDelimiter
 }
 
-func (s *Session) Config() *config.ApplicationConfig {
+func (s *session) Config() *config.ApplicationConfig {
 	return s.config
 }
 
-func (s *Session) Conn() *xmpp.Conn {
+func (s *session) Conn() *xmpp.Conn {
 	return s.conn
 }
 
-func (s *Session) SetSessionEventHandler(eh EventHandler) {
+func (s *session) SetSessionEventHandler(eh access.EventHandler) {
 	s.sessionEventHandler = eh
 }
 
-func (s *Session) SetConnectionLogger(l io.Writer) {
+func (s *session) SetConnectionLogger(l io.Writer) {
 	s.connectionLogger = l
 }
 
-func (s *Session) OtrEventHandler() map[string]*event.OtrEventHandler {
+func (s *session) OtrEventHandler() map[string]*event.OtrEventHandler {
 	return s.otrEventHandler
 }
 
-func (s *Session) SetLastActionTime(t time.Time) {
+func (s *session) SetLastActionTime(t time.Time) {
 	s.lastActionTime = t
 }

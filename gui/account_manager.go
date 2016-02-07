@@ -6,7 +6,7 @@ import (
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	rosters "github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/session/access"
 )
 
 type accountManager struct {
@@ -47,7 +47,7 @@ func (m *accountManager) getAccountByID(ID string) (*account, bool) {
 	return nil, false
 }
 
-func (m *accountManager) findAccountForSession(s *session.Session) *account {
+func (m *accountManager) findAccountForSession(s access.Session) *account {
 	acc, _ := m.getAccountByID(s.GetConfig().ID())
 	return acc
 }
@@ -67,11 +67,11 @@ func (m *accountManager) setContacts(account *account, contacts *rosters.List) {
 	m.contacts[account] = contacts
 }
 
-func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account) {
+func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory) {
 	m.Lock()
 	defer m.Unlock()
 
-	acc := newAccount(appConfig, account)
+	acc := newAccount(appConfig, account, sf)
 	acc.session.Subscribe(m.events)
 	acc.session.SetCommandManager(m)
 	acc.session.SetConnector(acc)
@@ -104,7 +104,7 @@ func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 	k()
 }
 
-func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
+func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory) {
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
 		if _, ok := m.getAccountByID(accountConf.ID()); ok {
@@ -117,7 +117,7 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
 		}
 
 		hasConfUpdates = hasConfUpdates || hasUpdate
-		m.addAccount(appConfig, accountConf)
+		m.addAccount(appConfig, accountConf, sf)
 	}
 
 	if hasConfUpdates {
@@ -125,14 +125,14 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig) {
 	}
 }
 
-func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig) {
+func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory) {
 	for _, configAccount := range appConfig.Accounts {
 		_, found := m.getAccountByID(configAccount.ID())
 		if found {
 			continue
 		}
 
-		m.addAccount(appConfig, configAccount)
+		m.addAccount(appConfig, configAccount, sf)
 	}
 }
 

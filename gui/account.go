@@ -8,7 +8,8 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/session/access"
+	"github.com/twstrike/coyim/session/events"
 )
 
 // account wraps a Session with GUI functionality
@@ -19,7 +20,7 @@ type account struct {
 	//TODO: Should this be a map of roster.Peer and conversationWindow?
 	conversations map[string]*conversationWindow
 
-	session         *session.Session
+	session         access.Session
 	sessionObserver chan interface{}
 
 	delayedConversations     map[string][]func(*conversationWindow)
@@ -36,9 +37,9 @@ func (s byAccountNameAlphabetic) Less(i, j int) bool {
 }
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-func newAccount(conf *config.ApplicationConfig, currentConf *config.Account) *account {
+func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf access.Factory) *account {
 	return &account{
-		session:              session.NewSession(conf, currentConf),
+		session:              sf(conf, currentConf),
 		conversations:        make(map[string]*conversationWindow),
 		delayedConversations: make(map[string][]func(*conversationWindow)),
 	}
@@ -231,9 +232,9 @@ func (account *account) watchAndToggleMenuItems(connectItem, disconnectItem *gtk
 
 	for ev := range account.sessionObserver {
 		switch t := ev.(type) {
-		case session.Event:
+		case events.Event:
 			switch t.Type {
-			case session.Connected, session.Disconnected, session.Connecting:
+			case events.Connected, events.Disconnected, events.Connecting:
 				toggleConnectAndDisconnectMenuItems(t.Session, connectItem, disconnectItem)
 			}
 		}

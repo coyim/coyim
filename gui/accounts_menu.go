@@ -7,7 +7,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/session/access"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 	accountChangedSignal, _ = glib.SignalNew("coyim-account-changed")
 )
 
-func toggleConnectAndDisconnectMenuItems(s *session.Session, connect, disconnect *gtk.MenuItem) {
+func toggleConnectAndDisconnectMenuItems(s access.Session, connect, disconnect *gtk.MenuItem) {
 	doInUIThread(func() {
 		connect.SetSensitive(s.IsDisconnected())
 		disconnect.SetSensitive(s.IsConnected())

@@ -6,33 +6,33 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session"
+	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp"
 )
 
 func (u *gtkUI) handleOneAccountEvent(ev interface{}) {
 	switch t := ev.(type) {
-	case session.Event:
+	case events.Event:
 		doInUIThread(func() {
 			u.handleSessionEvent(t)
 		})
-	case session.PeerEvent:
+	case events.Peer:
 		doInUIThread(func() {
 			u.handlePeerEvent(t)
 		})
-	case session.NotificationEvent:
+	case events.Notification:
 		doInUIThread(func() {
 			u.handleNotificationEvent(t)
 		})
-	case session.PresenceEvent:
+	case events.Presence:
 		doInUIThread(func() {
 			u.handlePresenceEvent(t)
 		})
-	case session.MessageEvent:
+	case events.Message:
 		doInUIThread(func() {
 			u.handleMessageEvent(t)
 		})
-	case session.LogEvent:
+	case events.Log:
 		doInUIThread(func() {
 			u.handleLogEvent(t)
 		})
@@ -47,20 +47,20 @@ func (u *gtkUI) observeAccountEvents() {
 	}
 }
 
-func (u *gtkUI) handleLogEvent(ev session.LogEvent) {
+func (u *gtkUI) handleLogEvent(ev events.Log) {
 	m := ev.Message
 
 	switch ev.Level {
-	case session.Info:
+	case events.Info:
 		fmt.Println(">>> INFO", m)
-	case session.Warn:
+	case events.Warn:
 		fmt.Println(">>> WARN", m)
-	case session.Alert:
+	case events.Alert:
 		fmt.Println(">>> ALERT", m)
 	}
 }
 
-func (u *gtkUI) handleMessageEvent(ev session.MessageEvent) {
+func (u *gtkUI) handleMessageEvent(ev events.Message) {
 	account := u.findAccountForSession(ev.Session)
 	if account == nil {
 		//TODO error
@@ -76,19 +76,19 @@ func (u *gtkUI) handleMessageEvent(ev session.MessageEvent) {
 	)
 }
 
-func (u *gtkUI) handleSessionEvent(ev session.Event) {
+func (u *gtkUI) handleSessionEvent(ev events.Event) {
 	account := u.findAccountForSession(ev.Session)
 
 	if account != nil {
 		switch ev.Type {
-		case session.Connected:
+		case events.Connected:
 			account.enableExistingConversationWindows(true)
-		case session.Disconnected:
+		case events.Disconnected:
 			account.enableExistingConversationWindows(false)
-		case session.ConnectionLost:
+		case events.ConnectionLost:
 			u.notifyConnectionFailure(account)
 			go u.connectWithRandomDelay(account)
-		case session.RosterReceived:
+		case events.RosterReceived:
 			u.roster.update(account, ev.Session.R())
 		}
 	}
@@ -96,7 +96,7 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 	u.rosterUpdated()
 }
 
-func (u *gtkUI) handlePresenceEvent(ev session.PresenceEvent) {
+func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 	if ev.Session.GetConfig().HideStatusUpdates {
 		return
 	}
@@ -127,17 +127,17 @@ func convWindowNowOrLater(account *account, peer string, f func(*conversationWin
 	}
 }
 
-func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
+func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 	identityWarning := func(cw *conversationWindow) {
 		cw.updateSecurityWarning()
 		cw.showIdentityVerificationWarning(u)
 	}
 
 	switch ev.Type {
-	case session.IQReceived:
+	case events.IQReceived:
 		//TODO
 		log.Printf("received iq: %v\n", ev.From)
-	case session.OTREnded:
+	case events.OTREnded:
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, func(cw *conversationWindow) {
@@ -145,7 +145,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 			cw.updateSecurityWarning()
 		})
 
-	case session.OTRNewKeys:
+	case events.OTRNewKeys:
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, func(cw *conversationWindow) {
@@ -153,7 +153,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 			identityWarning(cw)
 		})
 
-	case session.OTRRenewedKeys:
+	case events.OTRRenewedKeys:
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, func(cw *conversationWindow) {
@@ -161,7 +161,7 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 			identityWarning(cw)
 		})
 
-	case session.SubscriptionRequest:
+	case events.SubscriptionRequest:
 		confirmDialog := authorizePresenceSubscriptionDialog(&u.window.Window, ev.From)
 
 		doInUIThread(func() {
@@ -177,18 +177,18 @@ func (u *gtkUI) handlePeerEvent(ev session.PeerEvent) {
 			}
 			confirmDialog.Destroy()
 		})
-	case session.Subscribed:
+	case events.Subscribed:
 		jid := ev.Session.GetConfig().Account
 		log.Printf("[%s] Subscribed to %s\n", jid, ev.From)
 		u.rosterUpdated()
-	case session.Unsubscribe:
+	case events.Unsubscribe:
 		jid := ev.Session.GetConfig().Account
 		log.Printf("[%s] Unsubscribed from %s\n", jid, ev.From)
 		u.rosterUpdated()
 	}
 }
 
-func (u *gtkUI) handleNotificationEvent(ev session.NotificationEvent) {
+func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
 	peer := ev.Peer
 	account := u.findAccountForSession(ev.Session)
 	convWin, ok := account.getConversationWith(peer)

@@ -10,6 +10,7 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/roster"
+	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp"
 
 	. "gopkg.in/check.v1"
@@ -30,12 +31,12 @@ type SessionXmppSuite struct{}
 var _ = Suite(&SessionXmppSuite{})
 
 func (s *SessionXmppSuite) Test_NewSession_returnsANewSession(c *C) {
-	sess := NewSession(&config.ApplicationConfig{}, &config.Account{})
+	sess := Factory(&config.ApplicationConfig{}, &config.Account{})
 	c.Assert(sess, Not(IsNil))
 }
 
 func (s *SessionXmppSuite) Test_info_publishesInfoEvent(c *C) {
-	sess := &Session{}
+	sess := &session{}
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -44,8 +45,8 @@ func (s *SessionXmppSuite) Test_info_publishesInfoEvent(c *C) {
 
 	select {
 	case ev := <-observer:
-		t := ev.(LogEvent)
-		c.Assert(t.Level, Equals, Info)
+		t := ev.(events.Log)
+		c.Assert(t.Level, Equals, events.Info)
 		c.Assert(t.Message, Equals, "hello world")
 	case <-time.After(1 * time.Millisecond):
 		c.Errorf("did not receive event")
@@ -53,7 +54,7 @@ func (s *SessionXmppSuite) Test_info_publishesInfoEvent(c *C) {
 }
 
 func (s *SessionXmppSuite) Test_warn_publishesWarnEvent(c *C) {
-	sess := &Session{}
+	sess := &session{}
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -62,8 +63,8 @@ func (s *SessionXmppSuite) Test_warn_publishesWarnEvent(c *C) {
 
 	select {
 	case ev := <-observer:
-		t := ev.(LogEvent)
-		c.Assert(t.Level, Equals, Warn)
+		t := ev.(events.Log)
+		c.Assert(t.Level, Equals, events.Warn)
 		c.Assert(t.Message, Equals, "hello world2")
 	case <-time.After(1 * time.Millisecond):
 		c.Errorf("did not receive event")
@@ -71,7 +72,7 @@ func (s *SessionXmppSuite) Test_warn_publishesWarnEvent(c *C) {
 }
 
 func (s *SessionXmppSuite) Test_alert_publishedAlertEvent(c *C) {
-	sess := &Session{}
+	sess := &session{}
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -80,8 +81,8 @@ func (s *SessionXmppSuite) Test_alert_publishedAlertEvent(c *C) {
 
 	select {
 	case ev := <-observer:
-		t := ev.(LogEvent)
-		c.Assert(t.Level, Equals, Alert)
+		t := ev.(events.Log)
+		c.Assert(t.Level, Equals, events.Alert)
 		c.Assert(t.Message, Equals, "hello world3")
 	case <-time.After(1 * time.Millisecond):
 		c.Errorf("did not receive event")
@@ -89,7 +90,7 @@ func (s *SessionXmppSuite) Test_alert_publishedAlertEvent(c *C) {
 }
 
 func (s *SessionXmppSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
-	sess := &Session{}
+	sess := &session{}
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -98,9 +99,9 @@ func (s *SessionXmppSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 
 	select {
 	case ev := <-observer:
-		c.Assert(ev, Equals, PeerEvent{
+		c.Assert(ev, Equals, events.Peer{
 			Session: sess,
-			Type:    IQReceived,
+			Type:    events.IQReceived,
 			From:    "someone@somewhere",
 		})
 	case <-time.After(1 * time.Millisecond):
@@ -116,7 +117,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -128,7 +129,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 
 	select {
 	case ev := <-observer:
-		t := ev.(LogEvent)
+		t := ev.(events.Log)
 		c.Assert(t.Message, Equals, "error reading XMPP message: unexpected XMPP message clientx <message/>")
 	case <-time.After(1 * time.Millisecond):
 		c.Errorf("did not receive event")
@@ -143,7 +144,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -156,8 +157,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	for {
 		select {
 		case ev := <-observer:
-			t := ev.(LogEvent)
-			if t.Level != Info {
+			t := ev.(events.Log)
+			if t.Level != events.Info {
 				continue
 			}
 
@@ -179,7 +180,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -189,8 +190,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 
 	sess.watchStanzas()
 
-	assertLogContains(c, observer, LogEvent{
-		Level:   Alert,
+	assertLogContains(c, observer, events.Log{
+		Level:   events.Alert,
 		Message: "Exiting in response to fatal error from server: bad horse showed up",
 	})
 }
@@ -203,7 +204,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -213,8 +214,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(
 
 	sess.watchStanzas()
 
-	assertLogContains(c, observer, LogEvent{
-		Level:   Alert,
+	assertLogContains(c, observer, events.Log{
+		Level:   events.Alert,
 		Message: "Exiting in response to fatal error from server: {urn:ietf:params:xml:ns:xmpp-streams not-well-formed}",
 	})
 }
@@ -227,10 +228,10 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := NewSession(
+	sess := Factory(
 		&config.ApplicationConfig{},
 		&config.Account{InstanceTag: uint32(42)},
-	)
+	).(*session)
 
 	sess.conn = conn
 
@@ -243,7 +244,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		select {
 		case ev := <-observer:
 			switch t := ev.(type) {
-			case MessageEvent:
+			case events.Message:
 				c.Assert(t.Session, Equals, sess)
 				c.Assert(t.Encrypted, Equals, false)
 				c.Assert(t.From, Equals, "bla@hmm.org")
@@ -267,8 +268,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 		"some@one.org/foo",
 	)
 
-	var sess *Session
-	sess = &Session{
+	sess := &session{
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -281,8 +281,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	for {
 		select {
 		case ev := <-observer:
-			t := ev.(LogEvent)
-			if t.Level != Info {
+			t := ev.(events.Log)
+			if t.Level != events.Info {
 				continue
 			}
 
@@ -304,7 +304,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
@@ -336,7 +336,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
@@ -369,7 +369,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
@@ -386,8 +386,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	for {
 		select {
 		case ev := <-observer:
-			t := ev.(LogEvent)
-			if t.Level != Info {
+			t := ev.(events.Log)
+			if t.Level != events.Info {
 				continue
 			}
 
@@ -409,7 +409,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -427,8 +427,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 
 	sess.receiveStanza(stanzaChan)
 
-	assertLogContains(c, observer, LogEvent{
-		Level:   Warn,
+	assertLogContains(c, observer, events.Log{
+		Level:   events.Warn,
 		Message: "Ignoring roster IQ from bad address: some2@one.org",
 	})
 
@@ -443,7 +443,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -457,8 +457,8 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 
 	sess.watchStanzas()
 
-	assertLogContains(c, observer, LogEvent{
-		Level:   Warn,
+	assertLogContains(c, observer, events.Log{
+		Level:   events.Warn,
 		Message: "Failed to parse roster push IQ",
 	})
 }
@@ -475,7 +475,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -505,7 +505,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 
 	called := 0
 
-	sess := &Session{
+	sess := &session{
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -539,7 +539,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -565,7 +565,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 	select {
 	case ev := <-observer:
 		switch ev.(type) {
-		case PeerEvent:
+		case events.Peer:
 			c.Error("Received peer event")
 			return
 		default:
@@ -584,7 +584,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUs
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		r:          roster.New(),
 		connStatus: DISCONNECTED,
 	}
@@ -598,7 +598,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUs
 	select {
 	case ev := <-observer:
 		switch ev.(type) {
-		case PresenceEvent:
+		case events.Presence:
 			c.Error("Received presence event")
 			return
 		default:
@@ -617,7 +617,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -637,7 +637,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 		select {
 		case ev := <-observer:
 			switch t := ev.(type) {
-			case PresenceEvent:
+			case events.Presence:
 				c.Assert(t.Gone, Equals, true)
 				return
 			default:
@@ -659,7 +659,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -681,7 +681,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		connStatus:    DISCONNECTED,
@@ -696,11 +696,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	select {
 	case ev := <-observer:
 		switch t := ev.(type) {
-		case PresenceEvent:
+		case events.Presence:
 			c.Error("Received presence event")
 			return
-		case PeerEvent:
-			if t.Type == SubscriptionRequest {
+		case events.Peer:
+			if t.Type == events.SubscriptionRequest {
 				c.Error("Received subscription request event")
 			}
 			return
@@ -720,7 +720,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -740,7 +740,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 		select {
 		case ev := <-observer:
 			switch t := ev.(type) {
-			case PresenceEvent:
+			case events.Presence:
 				c.Assert(t.Gone, Equals, false)
 			default:
 				//ignore
@@ -761,7 +761,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -780,7 +780,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 	select {
 	case ev := <-observer:
 		switch ev.(type) {
-		case PresenceEvent:
+		case events.Presence:
 			c.Error("Received presence event")
 			return
 		default:
@@ -799,7 +799,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -819,7 +819,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	select {
 	case ev := <-observer:
 		switch ev.(type) {
-		case PresenceEvent:
+		case events.Presence:
 			c.Error("Received presence event")
 			return
 		default:
@@ -831,7 +831,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 }
 
 func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWaiting(c *C) {
-	sess := &Session{
+	sess := &session{
 		r: roster.New(),
 	}
 
@@ -842,8 +842,8 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeI
 
 	select {
 	case ev := <-observer:
-		t := ev.(LogEvent)
-		c.Assert(t.Level, Equals, Warn)
+		t := ev.(events.Log)
+		c.Assert(t.Level, Equals, events.Warn)
 	case <-time.After(1 * time.Millisecond):
 		c.Errorf("did not receive event")
 	}
@@ -859,7 +859,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 
 	called := 0
 
-	sess := &Session{
+	sess := &session{
 		r:                   roster.New(),
 		sessionEventHandler: &mockSessionEventHandler{
 		//warn: func(v string) {
@@ -888,7 +888,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(
 
 	called := 0
 
-	sess := &Session{
+	sess := &session{
 		r:                   roster.New(),
 		sessionEventHandler: &mockSessionEventHandler{
 		//warn: func(v string) {
@@ -915,7 +915,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *
 		"some@one.org/foo",
 	)
 
-	sess := &Session{
+	sess := &session{
 		r: roster.New(),
 	}
 	sess.conn = conn
@@ -929,8 +929,8 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *
 	for {
 		select {
 		case ev := <-observer:
-			t := ev.(LogEvent)
-			if t.Level != Warn {
+			t := ev.(events.Log)
+			if t.Level != events.Warn {
 				continue
 			}
 
@@ -951,7 +951,7 @@ func (s *SessionXmppSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsA
 		xmpp.Cookie(2): now.Add(10 * time.Second),
 	}
 
-	sess := &Session{
+	sess := &session{
 		connStatus: CONNECTED,
 		timeouts:   timeouts,
 		conn:       &xmpp.Conn{},

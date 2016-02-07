@@ -10,6 +10,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	rosters "github.com/twstrike/coyim/roster"
+	sessions "github.com/twstrike/coyim/session/access"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
@@ -37,6 +38,8 @@ type gtkUI struct {
 	setShowAdvancedSettingsRequest       chan bool
 
 	commands chan interface{}
+
+	sessionFactory sessions.Factory
 }
 
 var coyimVersion string
@@ -54,7 +57,7 @@ func argsWithApplicationName() *[]string {
 }
 
 // NewGTK returns a new client for a GTK ui
-func NewGTK(version string) UI {
+func NewGTK(version string, sf sessions.Factory) UI {
 	coyimVersion = version
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
 	glib.InitI18n("coy", "./i18n")
@@ -79,6 +82,8 @@ func NewGTK(version string) UI {
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
 	ret.accountManager = newAccountManager(ret)
+
+	ret.sessionFactory = sf
 
 	return ret
 }
@@ -148,7 +153,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 }
 
 func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
-	u.buildAccounts(c)
+	u.buildAccounts(c, u.sessionFactory)
 
 	doInUIThread(func() {
 		if u.viewMenu != nil {
@@ -176,7 +181,7 @@ func (u *gtkUI) saveConfigInternal() error {
 		return err
 	}
 
-	u.addNewAccountsFromConfig(u.config)
+	u.addNewAccountsFromConfig(u.config, u.sessionFactory)
 
 	if u.window != nil {
 		u.window.Emit(accountChangedSignal.String())

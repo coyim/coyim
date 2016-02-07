@@ -18,7 +18,7 @@ import (
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/servers"
-	"github.com/twstrike/coyim/session"
+	sessions "github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/xmpp"
 
 	"github.com/twstrike/otr3"
@@ -27,9 +27,10 @@ import (
 )
 
 type cliUI struct {
-	session  *session.Session
-	events   chan interface{}
-	commands chan interface{}
+	session        sessions.Session
+	sessionFactory sessions.Factory
+	events         chan interface{}
+	commands       chan interface{}
 
 	password string
 
@@ -50,7 +51,7 @@ type UI interface {
 }
 
 // NewCLI creates a new cliUI instance
-func NewCLI(version string, cf terminal.ControlFactory) UI {
+func NewCLI(version string, cf terminal.ControlFactory, sf sessions.Factory) UI {
 	termControl := cf()
 	oldState, err := termControl.MakeRaw(0)
 	if err != nil {
@@ -82,8 +83,9 @@ func NewCLI(version string, cf terminal.ControlFactory) UI {
 		RosterEditor: RosterEditor{
 			PendingRosterChan: make(chan *RosterEdit),
 		},
-		events:   make(chan interface{}),
-		commands: make(chan interface{}, 5),
+		events:         make(chan interface{}),
+		commands:       make(chan interface{}, 5),
+		sessionFactory: sf,
 	}
 }
 
@@ -151,7 +153,7 @@ func (c *cliUI) loadConfig(configFile string) error {
 	//	registerCallback = c.RegisterCallback
 	//}
 
-	c.session = session.NewSession(accounts, account)
+	c.session = c.sessionFactory(accounts, account)
 	c.session.SetSessionEventHandler(c)
 	c.session.Subscribe(c.events)
 

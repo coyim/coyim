@@ -1,96 +1,9 @@
 package session
 
-import (
-	"time"
-
-	"github.com/twstrike/coyim/xmpp"
-)
-
-// Event represents a Session event
-type Event struct {
-	Type EventType
-	*Session
-}
-
-// EventType represents the type of Session event
-type EventType int
-
-// Session event types
-const (
-	Disconnected EventType = iota
-	Connecting
-	Connected
-	ConnectionLost
-
-	RosterReceived
-	Ping
-	PongReceived
-)
-
-// PeerEvent represents an event associated to a peer
-type PeerEvent struct {
-	*Session
-	Type PeerEventType
-	From string
-}
-
-// NotificationEvent represents a notification event
-type NotificationEvent struct {
-	*Session
-	Peer         string
-	Notification string
-}
-
-// PeerEventType represents the type of Peer event
-type PeerEventType int
-
-// PeerEvent types
-const (
-	IQReceived PeerEventType = iota
-
-	OTREnded
-	OTRNewKeys
-	OTRRenewedKeys
-
-	SubscriptionRequest
-	Subscribed
-	Unsubscribe
-)
-
-// PresenceEvent represents a presence event
-type PresenceEvent struct {
-	*Session
-	*xmpp.ClientPresence
-	Gone bool
-}
-
-// MessageEvent represents a message event
-type MessageEvent struct {
-	*Session
-	From      string
-	When      time.Time
-	Body      []byte
-	Encrypted bool
-}
-
-// LogLevel is the current log level
-type LogLevel int
-
-// The different available log levels
-const (
-	Info LogLevel = iota
-	Warn
-	Alert
-)
-
-// LogEvent contains information one specific log event
-type LogEvent struct {
-	Level   LogLevel
-	Message string
-}
+import "github.com/twstrike/coyim/session/events"
 
 // Subscribe subscribes the observer to XMPP events
-func (s *Session) Subscribe(c chan<- interface{}) {
+func (s *session) Subscribe(c chan<- interface{}) {
 	s.subscribers.Lock()
 	defer s.subscribers.Unlock()
 
@@ -102,7 +15,7 @@ func (s *Session) Subscribe(c chan<- interface{}) {
 }
 
 // Unsubscribe unsubscribes the observer to XMPP events
-func (s *Session) Unsubscribe(c chan<- interface{}) {
+func (s *session) Unsubscribe(c chan<- interface{}) {
 	s.subscribers.Lock()
 	defer s.subscribers.Unlock()
 
@@ -116,7 +29,7 @@ func (s *Session) Unsubscribe(c chan<- interface{}) {
 	}
 }
 
-func (s *Session) publishEventTo(subscriber chan<- interface{}, e interface{}) {
+func (s *session) publishEventTo(subscriber chan<- interface{}, e interface{}) {
 	defer func() {
 		if r := recover(); r != nil {
 			//published to a closed channel
@@ -127,22 +40,22 @@ func (s *Session) publishEventTo(subscriber chan<- interface{}, e interface{}) {
 	subscriber <- e
 }
 
-func (s *Session) publish(e EventType) {
-	s.publishEvent(Event{
+func (s *session) publish(e events.EventType) {
+	s.publishEvent(events.Event{
 		Session: s,
 		Type:    e,
 	})
 }
 
-func (s *Session) publishPeerEvent(e PeerEventType, peer string) {
-	s.publishEvent(PeerEvent{
+func (s *session) publishPeerEvent(e events.PeerType, peer string) {
+	s.publishEvent(events.Peer{
 		Session: s,
 		Type:    e,
 		From:    peer,
 	})
 }
 
-func (s *Session) publishEvent(e interface{}) {
+func (s *session) publishEvent(e interface{}) {
 	s.subscribers.RLock()
 	defer s.subscribers.RUnlock()
 

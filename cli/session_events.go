@@ -13,13 +13,13 @@ import (
 func (c *cliUI) handleSessionEvent(ev session.Event) {
 	switch ev.Type {
 	case session.Connected:
-		for _, pk := range ev.Session.PrivateKeys {
+		for _, pk := range ev.Session.PrivateKeys() {
 			info(c.term, c.termControl, fmt.Sprintf("Your fingerprint is %x", pk.PublicKey().Fingerprint()))
 		}
 	case session.Disconnected:
 		c.terminate <- true
 	case session.RosterReceived:
-		for _, entry := range ev.Session.R.ToSlice() {
+		for _, entry := range ev.Session.R().ToSlice() {
 			c.input.addUser(entry.Jid)
 		}
 	}
@@ -35,7 +35,7 @@ func (c *cliUI) handlePeerEvent(ev session.PeerEvent) {
 		uid := ev.From
 		info(c.term, c.termControl, fmt.Sprintf("New OTR session with %s established", uid))
 		//TODO: review whether it should create conversations
-		conversation, _ := ev.Session.EnsureConversationWith(uid)
+		conversation, _ := ev.Session.ConversationManager().EnsureConversationWith(uid)
 
 		c.input.SetPromptForTarget(uid, true)
 		c.printConversationInfo(uid, conversation)
@@ -88,7 +88,7 @@ func (c *cliUI) handleMessageEvent(ev session.MessageEvent) {
 	line = append(line, c.termControl.Escape(c.term).Reset...)
 	line = appendTerminalEscaped(line, ui.StripHTML(ev.Body))
 	line = append(line, '\n')
-	if c.session.Config.Bell {
+	if c.session.Config().Bell {
 		line = append(line, '\a')
 	}
 

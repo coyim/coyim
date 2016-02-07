@@ -152,10 +152,10 @@ func (c *cliUI) loadConfig(configFile string) error {
 	//}
 
 	c.session = session.NewSession(accounts, account)
-	c.session.SessionEventHandler = c
+	c.session.SetSessionEventHandler(c)
 	c.session.Subscribe(c.events)
 
-	c.session.ConnectionLogger = logger
+	c.session.SetConnectionLogger(logger)
 	if err := c.session.Connect(password); err != nil {
 		c.alert(err.Error())
 		return err
@@ -170,7 +170,7 @@ func (c *cliUI) quit() {
 }
 
 func (c *cliUI) SaveConf() {
-	c.session.Config.Save(config.FunctionKeySupplier(c.getMasterPassword))
+	c.session.Config().Save(config.FunctionKeySupplier(c.getMasterPassword))
 }
 
 func (c *cliUI) Loop() {
@@ -512,7 +512,7 @@ func (c *cliUI) watchRosterEdits() {
 		//DELETE
 		for _, jid := range toDelete {
 			c.info("Deleting roster entry for " + jid)
-			_, _, err := c.session.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:          jid,
 					Subscription: "remove",
@@ -524,13 +524,13 @@ func (c *cliUI) watchRosterEdits() {
 			}
 
 			c.session.GetConfig().RemovePeer(jid)
-			c.ExecuteCmd(client.SaveApplicationConfigCmd{})
+			c.session.CommandManager().ExecuteCmd(client.SaveApplicationConfigCmd{})
 		}
 
 		//EDIT
 		for _, entry := range toEdit {
 			c.info("Updating roster entry for " + entry.Jid)
-			_, _, err := c.session.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:   entry.Jid,
 					Name:  entry.Name,
@@ -546,7 +546,7 @@ func (c *cliUI) watchRosterEdits() {
 		//ADD
 		for _, entry := range toAdd {
 			c.info("Adding roster entry for " + entry.Jid)
-			_, _, err := c.session.Conn.SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
+			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
 				Item: xmpp.RosterRequestItem{
 					Jid:   entry.Jid,
 					Name:  entry.Name,
@@ -583,12 +583,12 @@ CommandLoop:
 				c.warn("Exiting because command channel closed")
 				break CommandLoop
 			}
-			s.LastActionTime = time.Now()
+			s.SetLastActionTime(time.Now())
 			switch cmd := cmd.(type) {
 			case quitCommand:
 				break CommandLoop
 			case versionCommand:
-				replyChan, cookie, err := s.Conn.SendIQ(cmd.User, "get", xmpp.VersionQuery{})
+				replyChan, cookie, err := s.Conn().SendIQ(cmd.User, "get", xmpp.VersionQuery{})
 				if err != nil {
 
 					c.alert("Error sending version request: " + err.Error())
@@ -600,14 +600,14 @@ CommandLoop:
 			case rosterCommand:
 				c.info("Current roster:")
 				maxLen := 0
-				for _, item := range s.R.ToSlice() {
+				for _, item := range s.R().ToSlice() {
 					if maxLen < len(item.Jid) {
 						maxLen = len(item.Jid)
 					}
 				}
 
-				for _, item := range s.R.ToSlice() {
-					state, _, ok := s.R.StateOf(item.Jid)
+				for _, item := range s.R().ToSlice() {
+					state, _, ok := s.R().StateOf(item.Jid)
 
 					line := ""
 					if ok {
@@ -635,7 +635,7 @@ CommandLoop:
 					c.PendingRosterEdit = nil
 				}
 
-				currR := s.R.ToSlice()
+				currR := s.R().ToSlice()
 
 				c.RosterEditor.Roster = make([]xmpp.RosterEntry, len(currR))
 				rosterCopy := make([]xmpp.RosterEntry, len(currR))
@@ -666,7 +666,7 @@ CommandLoop:
 
 			case toggleStatusUpdatesCommand:
 				s.GetConfig().HideStatusUpdates = !s.GetConfig().HideStatusUpdates
-				s.ExecuteCmd(client.SaveApplicationConfigCmd{})
+				s.CommandManager().ExecuteCmd(client.SaveApplicationConfigCmd{})
 
 				// Tell the user the current state of the statuses
 				if s.GetConfig().HideStatusUpdates {
@@ -682,7 +682,7 @@ CommandLoop:
 				s.RequestPresenceSubscription(cmd.User)
 			case msgCommand:
 				message := []byte(cmd.msg)
-				conversation, exists := s.GetConversationWith(cmd.to)
+				conversation, exists := s.ConversationManager().GetConversationWith(cmd.to)
 
 				if exists {
 					isEncrypted := conversation.IsEncrypted()
@@ -696,20 +696,20 @@ CommandLoop:
 					}
 				}
 
-				err := conversation.Send(s.Conn, message)
+				err := conversation.Send(s.Conn(), message)
 				if err != nil {
 					c.alert(err.Error())
 					break
 				}
 
 			case otrCommand:
-				conversation, _ := s.GetConversationWith(string(cmd.User))
+				conversation, _ := s.ConversationManager().GetConversationWith(string(cmd.User))
 				conversation.StartEncryptedChat(s)
 			case otrInfoCommand:
-				for _, pk := range s.PrivateKeys {
+				for _, pk := range s.PrivateKeys() {
 					c.info(fmt.Sprintf("Your OTR fingerprint is %x", pk.PublicKey().Fingerprint()))
 				}
-				for to, conversation := range s.Conversations() {
+				for to, conversation := range s.ConversationManager().Conversations() {
 					if conversation.IsEncrypted() {
 						c.info(fmt.Sprintf("Secure session with %s underway:", to))
 						c.printConversationInfo(to, conversation)
@@ -717,7 +717,7 @@ CommandLoop:
 				}
 			case endOTRCommand:
 				to := string(cmd.User)
-				conversation, exists := s.GetConversationWith(to)
+				conversation, exists := s.ConversationManager().GetConversationWith(to)
 
 				if !exists {
 					c.alert("No secure session established")
@@ -734,17 +734,17 @@ CommandLoop:
 				c.warn("OTR conversation ended with " + cmd.User)
 			case authQACommand:
 				to := string(cmd.User)
-				conversation, exists := s.GetConversationWith(to)
+				conversation, exists := s.ConversationManager().GetConversationWith(to)
 				if !exists {
 					c.alert("Can't authenticate without a secure conversation established")
 					break
 				}
 
-				if s.OtrEventHandler[to].WaitingForSecret {
-					s.OtrEventHandler[to].WaitingForSecret = false
-					err = conversation.ProvideAuthenticationSecret(s.Conn, []byte(cmd.Secret))
+				if s.OtrEventHandler()[to].WaitingForSecret {
+					s.OtrEventHandler()[to].WaitingForSecret = false
+					err = conversation.ProvideAuthenticationSecret(s.Conn(), []byte(cmd.Secret))
 				} else {
-					err = conversation.StartAuthenticate(s.Conn, cmd.Question, []byte(cmd.Secret))
+					err = conversation.StartAuthenticate(s.Conn(), cmd.Question, []byte(cmd.Secret))
 				}
 
 				if err != nil {
@@ -764,7 +764,7 @@ CommandLoop:
 					break
 				}
 
-				s.ExecuteCmd(client.AuthorizeFingerprintCmd{
+				s.CommandManager().ExecuteCmd(client.AuthorizeFingerprintCmd{
 					Account:     s.GetConfig(),
 					Peer:        cmd.User,
 					Fingerprint: fpr,
@@ -772,15 +772,15 @@ CommandLoop:
 
 				c.info(fmt.Sprintf("Saved manually verified fingerprint %s for %s", cmd.Fingerprint, cmd.User))
 			case awayCommand:
-				s.Conn.SignalPresence("away")
+				s.Conn().SignalPresence("away")
 			case chatCommand:
-				s.Conn.SignalPresence("chat")
+				s.Conn().SignalPresence("chat")
 			case dndCommand:
-				s.Conn.SignalPresence("dnd")
+				s.Conn().SignalPresence("dnd")
 			case xaCommand:
-				s.Conn.SignalPresence("xa")
+				s.Conn().SignalPresence("xa")
 			case onlineCommand:
-				s.Conn.SignalPresence("")
+				s.Conn().SignalPresence("")
 			}
 		}
 	}

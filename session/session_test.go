@@ -119,7 +119,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	sess := &Session{
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -146,7 +146,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	sess := &Session{
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -182,7 +182,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	sess := &Session{
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -206,7 +206,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(
 	sess := &Session{
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 2)
 	sess.Subscribe(observer)
@@ -232,7 +232,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		&config.Account{InstanceTag: uint32(42)},
 	)
 
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -271,7 +271,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	sess = &Session{
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -305,13 +305,13 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.ApplicationConfig{},
+		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	stanzaChan := make(chan xmpp.Stanza, 1)
 	stanza, _ := conn.Next()
@@ -337,13 +337,13 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.ApplicationConfig{},
+		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	stanzaChan := make(chan xmpp.Stanza, 1)
 	stanza, _ := conn.Next()
@@ -370,13 +370,13 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.ApplicationConfig{},
+		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
 		},
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -410,13 +410,13 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	)
 
 	sess := &Session{
-		Config: &config.ApplicationConfig{},
+		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
 		},
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -444,13 +444,13 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 	)
 
 	sess := &Session{
-		Config: &config.ApplicationConfig{},
+		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
 		},
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -476,18 +476,18 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 	)
 
 	sess := &Session{
-		Config: &config.ApplicationConfig{},
+		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
 		},
-		R:          roster.New(),
+		r:          roster.New(),
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	sess.watchStanzas()
 
-	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
+	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
 		peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig())})
 }
 
@@ -506,22 +506,22 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 	called := 0
 
 	sess := &Session{
-		Config: &config.ApplicationConfig{},
+		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
 		},
-		R:          roster.New(),
+		r:          roster.New(),
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
-	sess.R.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
-	sess.R.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
 
 	sess.watchStanzas()
 
 	c.Assert(called, Equals, 0)
-	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
+	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
 		peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()),
 		peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig()),
 	})
@@ -540,25 +540,25 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 	)
 
 	sess := &Session{
-		Config: &config.ApplicationConfig{},
+		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
 		},
-		R:          roster.New(),
+		r:          roster.New(),
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
-	sess.R.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
-	sess.R.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
-	sess.R.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	c.Assert(sess.R.ToSlice(), DeepEquals, []*roster.Peer{
+	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
 		peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()),
 	})
 
@@ -585,10 +585,10 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUs
 	)
 
 	sess := &Session{
-		R:          roster.New(),
+		r:          roster.New(),
 		connStatus: DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -618,19 +618,19 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 	)
 
 	sess := &Session{
-		Config:        &config.ApplicationConfig{},
+		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
-		R:             roster.New(),
+		r:             roster.New(),
 		connStatus:    DISCONNECTED,
 	}
-	sess.Conn = conn
-	sess.R.AddOrReplace(roster.PeerWithState("some2@one.org", "somewhere", "", ""))
+	sess.conn = conn
+	sess.r.AddOrReplace(roster.PeerWithState("some2@one.org", "somewhere", "", ""))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 	sess.watchStanzas()
 
-	p, _ := sess.R.Get("some2@one.org")
+	p, _ := sess.r.Get("some2@one.org")
 	c.Assert(p.Online, Equals, false)
 
 	for {
@@ -660,16 +660,16 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	)
 
 	sess := &Session{
-		Config:        &config.ApplicationConfig{},
+		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
-		R:             roster.New(),
+		r:             roster.New(),
 		connStatus:    DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	sess.watchStanzas()
 
-	v, _ := sess.R.GetPendingSubscribe("some2@one.org")
+	v, _ := sess.r.GetPendingSubscribe("some2@one.org")
 	c.Assert(v, Equals, "adf12112")
 }
 
@@ -682,11 +682,11 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	)
 
 	sess := &Session{
-		Config:        &config.ApplicationConfig{},
+		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		connStatus:    DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -721,19 +721,19 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 	)
 
 	sess := &Session{
-		Config:        &config.ApplicationConfig{},
+		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
-		R:             roster.New(),
+		r:             roster.New(),
 		connStatus:    DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.R.StateOf("some2@one.org")
+	st, _, _ := sess.r.StateOf("some2@one.org")
 	c.Assert(st, Equals, "dnd")
 
 	for {
@@ -762,19 +762,19 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
 	)
 
 	sess := &Session{
-		Config:        &config.ApplicationConfig{},
+		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
-		R:             roster.New(),
+		r:             roster.New(),
 		connStatus:    DISCONNECTED,
 	}
-	sess.Conn = conn
+	sess.conn = conn
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.R.StateOf("some2@one.org")
+	st, _, _ := sess.r.StateOf("some2@one.org")
 	c.Assert(st, Equals, "")
 
 	select {
@@ -800,20 +800,20 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	)
 
 	sess := &Session{
-		Config:        &config.ApplicationConfig{},
+		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
-		R:             roster.New(),
+		r:             roster.New(),
 		connStatus:    DISCONNECTED,
 	}
-	sess.Conn = conn
-	sess.R.AddOrReplace(roster.PeerWithState("some2@one.org", "dnd", "", ""))
+	sess.conn = conn
+	sess.r.AddOrReplace(roster.PeerWithState("some2@one.org", "dnd", "", ""))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.R.StateOf("some2@one.org")
+	st, _, _ := sess.r.StateOf("some2@one.org")
 	c.Assert(st, Equals, "dnd")
 
 	select {
@@ -832,7 +832,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 
 func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWaiting(c *C) {
 	sess := &Session{
-		R: roster.New(),
+		r: roster.New(),
 	}
 
 	observer := make(chan interface{}, 1)
@@ -860,21 +860,21 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	called := 0
 
 	sess := &Session{
-		R:                   roster.New(),
-		SessionEventHandler: &mockSessionEventHandler{
+		r:                   roster.New(),
+		sessionEventHandler: &mockSessionEventHandler{
 		//warn: func(v string) {
 		//	called++
 		//},
 		},
 	}
-	sess.Conn = conn
-	sess.R.SubscribeRequest("foo@bar.com", "123", "")
+	sess.conn = conn
+	sess.r.SubscribeRequest("foo@bar.com", "123", "")
 
 	sess.HandleConfirmOrDeny("foo@bar.com", false)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Equals, "<presence id='123' to='foo@bar.com' type='unsubscribed'/>")
-	_, inMap := sess.R.GetPendingSubscribe("foo@bar.com")
+	_, inMap := sess.r.GetPendingSubscribe("foo@bar.com")
 	c.Assert(inMap, Equals, false)
 }
 
@@ -889,21 +889,21 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(
 	called := 0
 
 	sess := &Session{
-		R:                   roster.New(),
-		SessionEventHandler: &mockSessionEventHandler{
+		r:                   roster.New(),
+		sessionEventHandler: &mockSessionEventHandler{
 		//warn: func(v string) {
 		//	called++
 		//},
 		},
 	}
-	sess.Conn = conn
-	sess.R.SubscribeRequest("foo@bar.com", "123", "")
+	sess.conn = conn
+	sess.r.SubscribeRequest("foo@bar.com", "123", "")
 
 	sess.HandleConfirmOrDeny("foo@bar.com", true)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Matches, "<presence id='123' to='foo@bar.com' type='subscribed'/><presence id='[0-9]+' to='foo@bar.com' type='subscribe'/>")
-	_, inMap := sess.R.GetPendingSubscribe("foo@bar.com")
+	_, inMap := sess.r.GetPendingSubscribe("foo@bar.com")
 	c.Assert(inMap, Equals, false)
 }
 
@@ -916,10 +916,10 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *
 	)
 
 	sess := &Session{
-		R: roster.New(),
+		r: roster.New(),
 	}
-	sess.Conn = conn
-	sess.R.SubscribeRequest("foo@bar.com", "123", "")
+	sess.conn = conn
+	sess.r.SubscribeRequest("foo@bar.com", "123", "")
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -954,7 +954,7 @@ func (s *SessionXmppSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsA
 	sess := &Session{
 		connStatus: CONNECTED,
 		timeouts:   timeouts,
-		Conn:       &xmpp.Conn{},
+		conn:       &xmpp.Conn{},
 	}
 
 	go func() {

@@ -130,7 +130,7 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 		"on_start_otr_signal": func() {
 			//TODO: enable/disable depending on the conversation's encryption state
 			session := conv.account.session
-			c, _ := session.EnsureConversationWith(conv.to)
+			c, _ := session.ConversationManager().EnsureConversationWith(conv.to)
 			err := c.StartEncryptedChat(session)
 			if err != nil {
 				//TODO: notify failure
@@ -140,7 +140,7 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 			//TODO: errors
 			//TODO: enable/disable depending on the conversation's encryption state
 			session := conv.account.session
-			c, ok := session.GetConversationWith(conv.to)
+			c, ok := session.ConversationManager().GetConversationWith(conv.to)
 			if !ok {
 				return
 			}
@@ -217,7 +217,7 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 }
 
 func (conv *conversationWindow) getConversation() (client.Conversation, bool) {
-	return conv.account.session.GetConversationWith(conv.to)
+	return conv.account.session.ConversationManager().GetConversationWith(conv.to)
 }
 
 func (conv *conversationWindow) isVerified() bool {
@@ -292,7 +292,7 @@ func (conv *conversationWindow) sendMessage(message string) error {
 	//TODO: review whether it should create a conversation
 	//TODO: this should be whether the message was encrypted or not, rather than
 	//whether the conversation is encrypted or not
-	conversation, _ := conv.account.session.EnsureConversationWith(conv.to)
+	conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to)
 	conv.appendMessage(conv.account.session.GetConfig().Account, time.Now(), conversation.IsEncrypted(), ui.StripHTML([]byte(message)), true)
 
 	return nil

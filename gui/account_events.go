@@ -89,7 +89,7 @@ func (u *gtkUI) handleSessionEvent(ev session.Event) {
 			u.notifyConnectionFailure(account)
 			go u.connectWithRandomDelay(account)
 		case session.RosterReceived:
-			u.roster.update(account, ev.Session.R)
+			u.roster.update(account, ev.Session.R())
 		}
 	}
 

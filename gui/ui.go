@@ -491,7 +491,7 @@ func (u *gtkUI) editAccount(account *account) {
 
 func (u *gtkUI) removeAccount(account *account) {
 	u.confirmAccountRemoval(account.session.GetConfig(), func(c *config.Account) {
-		account.session.WantToBeOnline = false
+		account.session.SetWantToBeOnline(false)
 		account.disconnect()
 		u.removeSaveReload(c)
 	})

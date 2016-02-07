@@ -63,7 +63,7 @@ func formattedFingerprintsFor(s *session.Session) string {
 	result := ""
 
 	if s != nil {
-		for _, sk := range s.PrivateKeys {
+		for _, sk := range s.PrivateKeys() {
 			pk := sk.PublicKey()
 			if pk != nil {
 				result = fmt.Sprintf("%s%s%s\n", result, "    ", config.FormatFingerprint(pk.Fingerprint()))

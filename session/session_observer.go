@@ -9,7 +9,7 @@ func observe(s *Session) {
 		case Event:
 			switch t.Type {
 			case Disconnected, ConnectionLost:
-				s.R.Clear()
+				s.r.Clear()
 				s.rosterReceived()
 			}
 		}

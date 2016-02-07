@@ -36,17 +36,17 @@ type Connector interface {
 
 // Session contains information about one specific connection
 type Session struct {
-	Conn             *xmpp.Conn
-	ConnectionLogger io.Writer
-	R                *roster.List
+	conn             *xmpp.Conn
+	connectionLogger io.Writer
+	r                *roster.List
 	connStatus       connStatus
 
-	OtrEventHandler map[string]*event.OtrEventHandler
+	otrEventHandler map[string]*event.OtrEventHandler
 
-	PrivateKeys []otr3.PrivateKey
+	privateKeys []otr3.PrivateKey
 
 	//TODO: the session does not need all application config. Copy only what it needs to configure the session
-	Config *config.ApplicationConfig
+	config *config.ApplicationConfig
 
 	accountConfig *config.Account
 
@@ -56,27 +56,26 @@ type Session struct {
 
 	// LastActionTime is the time at which the user last entered a command,
 	// or was last notified.
-	LastActionTime      time.Time
-	SessionEventHandler EventHandler
+	lastActionTime      time.Time
+	sessionEventHandler EventHandler
 
 	// WantToBeOnline keeps track of whether a user has expressed a wish
 	// to be online - if it's true, it will do more aggressive reconnecting
-	WantToBeOnline bool
+	wantToBeOnline bool
 
 	subscribers struct {
 		sync.RWMutex
 		subs []chan<- interface{}
 	}
 
-	GroupDelimiter string
+	groupDelimiter string
 
 	xmppLogger io.Writer
 
-	// Connector is something that can connect
-	Connector Connector
+	connector Connector
 
-	client.CommandManager
-	client.ConversationManager
+	cmdManager  client.CommandManager
+	convManager client.ConversationManager
 }
 
 // GetConfig returns the current account configuration
@@ -104,12 +103,12 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 // NewSession creates a new session from the given config
 func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	s := &Session{
-		Config:        c,
+		config:        c,
 		accountConfig: cu,
 
-		R:               roster.New(),
-		OtrEventHandler: make(map[string]*event.OtrEventHandler),
-		LastActionTime:  time.Now(),
+		r:               roster.New(),
+		otrEventHandler: make(map[string]*event.OtrEventHandler),
+		lastActionTime:  time.Now(),
 
 		timeouts: make(map[xmpp.Cookie]time.Time),
 
@@ -117,7 +116,7 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 	}
 
 	s.ReloadKeys()
-	s.ConversationManager = client.NewConversationManager(s, s)
+	s.convManager = client.NewConversationManager(s, s)
 
 	go observe(s)
 	go checkReconnect(s)
@@ -127,13 +126,13 @@ func NewSession(c *config.ApplicationConfig, cu *config.Account) *Session {
 
 // ReloadKeys will reload the keys from the configuration
 func (s *Session) ReloadKeys() {
-	s.PrivateKeys = parseFromConfig(s.accountConfig)
+	s.privateKeys = parseFromConfig(s.accountConfig)
 }
 
 // Send will send the given message to the receiver given
 func (s *Session) Send(to string, msg string) error {
 	log.Printf("<- to=%v {%v}\n", to, msg)
-	return s.Conn.Send(to, msg)
+	return s.conn.Send(to, msg)
 }
 
 //TODO: error
@@ -195,13 +194,13 @@ func either(l, r string) string {
 func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
-		s.R.SubscribeRequest(stanza.From, either(stanza.ID, "0000"), s.GetConfig().ID())
+		s.r.SubscribeRequest(stanza.From, either(stanza.ID, "0000"), s.GetConfig().ID())
 		s.publishPeerEvent(
 			SubscriptionRequest,
 			xmpp.RemoveResourceFromJid(stanza.From),
 		)
 	case "unavailable":
-		if !s.R.PeerBecameUnavailable(stanza.From) {
+		if !s.r.PeerBecameUnavailable(stanza.From) {
 			return true
 		}
 
@@ -211,7 +210,7 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 			Gone:           true,
 		})
 	case "":
-		if !s.R.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status, s.GetConfig().ID()) {
+		if !s.r.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status, s.GetConfig().ID()) {
 			return true
 		}
 
@@ -221,13 +220,13 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 			Gone:           false,
 		})
 	case "subscribed":
-		s.R.Subscribed(stanza.From)
+		s.r.Subscribed(stanza.From)
 		s.publishPeerEvent(
 			Subscribed,
 			xmpp.RemoveResourceFromJid(stanza.From),
 		)
 	case "unsubscribe":
-		s.R.Unsubscribed(stanza.From)
+		s.r.Unsubscribed(stanza.From)
 		s.publishPeerEvent(
 			Unsubscribe,
 			xmpp.RemoveResourceFromJid(stanza.From),
@@ -236,7 +235,7 @@ func (s *Session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 		// Ignore
 	case "error":
 		s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
-		s.R.LatestError(stanza.From, stanza.Error.Code, stanza.Error.Type, stanza.Error.Any.Space+" "+stanza.Error.Any.Local)
+		s.r.LatestError(stanza.From, stanza.Error.Code, stanza.Error.Type, stanza.Error.Any.Space+" "+stanza.Error.Any.Local)
 	default:
 		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
 	}
@@ -257,7 +256,7 @@ func (s *Session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
 			}
 		}
 
-		if err := s.Conn.SendIQReply(stanza.From, "result", stanza.ID, reply); err != nil {
+		if err := s.conn.SendIQReply(stanza.From, "result", stanza.ID, reply); err != nil {
 			s.alert("Failed to send IQ message: " + err.Error())
 		}
 		return true
@@ -300,7 +299,7 @@ func (s *Session) watchStanzas() {
 }
 
 func (s *Session) readStanzasAndAlertOnErrors(stanzaChan chan xmpp.Stanza) {
-	if err := s.Conn.ReadStanzas(stanzaChan); err != nil {
+	if err := s.conn.ReadStanzas(stanzaChan); err != nil {
 		s.alert(fmt.Sprintf("error reading XMPP message: %s", err.Error()))
 	}
 }
@@ -345,7 +344,7 @@ func peerFrom(entry xmpp.RosterEntry, c *config.Account) *roster.Peer {
 
 func (s *Session) addOrMergeNewPeer(entry xmpp.RosterEntry, c *config.Account) bool {
 
-	return s.R.AddOrMerge(peerFrom(entry, c))
+	return s.r.AddOrMerge(peerFrom(entry, c))
 }
 
 func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
@@ -363,7 +362,7 @@ func (s *Session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{},
 
 	for _, entry := range rst.Item {
 		if entry.Subscription == "remove" {
-			s.R.Remove(entry.Jid)
+			s.r.Remove(entry.Jid)
 		} else if s.addOrMergeNewPeer(entry, s.GetConfig()) {
 			s.iqReceived(entry.Jid)
 		}
@@ -406,7 +405,7 @@ func (s *Session) processIQ(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool
 
 // HandleConfirmOrDeny is used to handle a users response to a subscription request
 func (s *Session) HandleConfirmOrDeny(jid string, isConfirm bool) {
-	id, ok := s.R.RemovePendingSubscribe(jid)
+	id, ok := s.r.RemovePendingSubscribe(jid)
 	if !ok {
 		s.warn("No pending subscription from " + jid)
 		return
@@ -457,13 +456,13 @@ func (s *Session) listenToNotifications(c <-chan string, peer string) {
 //TODO: does the creation of the OTR event handler need to be guarded with a lock?
 func (s *Session) NewConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
-	conversation.SetOurKeys(s.PrivateKeys)
+	conversation.SetOurKeys(s.privateKeys)
 	conversation.SetFriendlyQueryMessage(i18n.Local("Your peer has requested a private conversation with you, but your client doesn't seem to support the OTR protocol."))
 
 	instanceTag := conversation.InitializeInstanceTag(s.GetConfig().InstanceTag)
 
 	if s.GetConfig().InstanceTag != instanceTag {
-		s.ExecuteCmd(client.SaveInstanceTagCmd{
+		s.cmdManager.ExecuteCmd(client.SaveInstanceTagCmd{
 			Account:     s.GetConfig(),
 			InstanceTag: instanceTag,
 		})
@@ -471,7 +470,7 @@ func (s *Session) NewConversation(peer string) *otr3.Conversation {
 
 	s.GetConfig().SetOTRPoliciesFor(peer, conversation)
 
-	eh, ok := s.OtrEventHandler[peer]
+	eh, ok := s.otrEventHandler[peer]
 	if !ok {
 		eh = new(event.OtrEventHandler)
 		eh.Account = s.GetConfig().Account
@@ -483,7 +482,7 @@ func (s *Session) NewConversation(peer string) *otr3.Conversation {
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)
 		conversation.SetSecurityEventHandler(eh)
-		s.OtrEventHandler[peer] = eh
+		s.otrEventHandler[peer] = eh
 	}
 
 	return conversation
@@ -526,7 +525,7 @@ func (s *Session) processClientMessage(stanza *xmpp.ClientMessage) {
 }
 
 func (s *Session) receiveClientMessage(from string, when time.Time, body string) {
-	conversation, _ := s.EnsureConversationWith(from)
+	conversation, _ := s.convManager.EnsureConversationWith(from)
 	out, err := conversation.Receive(s, []byte(body))
 	encrypted := conversation.IsEncrypted()
 
@@ -534,7 +533,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		s.alert("While processing message from " + from + ": " + err.Error())
 	}
 
-	eh, _ := s.OtrEventHandler[from]
+	eh, _ := s.otrEventHandler[from]
 	change := eh.ConsumeSecurityChange()
 	switch change {
 	case event.NewKeys:
@@ -555,7 +554,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
 		if s.GetConfig().OTRAutoTearDown {
-			c, existing := s.GetConversationWith(from)
+			c, existing := s.convManager.GetConversationWith(from)
 			if !existing {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
 				break
@@ -581,7 +580,7 @@ func (s *Session) receiveClientMessage(from string, when time.Time, body string)
 	case event.SMPComplete:
 		s.info(fmt.Sprintf("Authentication with %s successful", from))
 		fpr := conversation.TheirFingerprint()
-		s.ExecuteCmd(client.AuthorizeFingerprintCmd{
+		s.cmdManager.ExecuteCmd(client.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
 			Peer:        from,
 			Fingerprint: fpr,
@@ -611,21 +610,21 @@ func (s *Session) messageReceived(from string, timestamp time.Time, encrypted bo
 
 func (s *Session) maybeNotify() {
 	now := time.Now()
-	idleThreshold := s.Config.IdleSecondsBeforeNotification
+	idleThreshold := s.config.IdleSecondsBeforeNotification
 	if idleThreshold == 0 {
 		idleThreshold = 60
 	}
-	notifyTime := s.LastActionTime.Add(time.Duration(idleThreshold) * time.Second)
+	notifyTime := s.lastActionTime.Add(time.Duration(idleThreshold) * time.Second)
 	if now.Before(notifyTime) {
 		return
 	}
 
-	s.LastActionTime = now
-	if len(s.Config.NotifyCommand) == 0 {
+	s.lastActionTime = now
+	if len(s.config.NotifyCommand) == 0 {
 		return
 	}
 
-	cmd := exec.Command(s.Config.NotifyCommand[0], s.Config.NotifyCommand[1:]...)
+	cmd := exec.Command(s.config.NotifyCommand[0], s.config.NotifyCommand[1:]...)
 	go func() {
 		if err := cmd.Run(); err != nil {
 			s.alert("Failed to run notify command: " + err.Error())
@@ -693,7 +692,7 @@ func (s *Session) watchTimeout() {
 		for cookie, expiry := range s.timeouts {
 			if now.After(expiry) {
 				log.Println("session: cookie", cookie, "has expired")
-				s.Conn.Cancel(cookie)
+				s.conn.Cancel(cookie)
 			} else {
 				newTimeouts[cookie] = expiry
 			}
@@ -723,13 +722,13 @@ func (s *Session) requestRoster() bool {
 
 	s.info("Fetching roster")
 
-	delim, err := s.Conn.GetRosterDelimiter()
+	delim, err := s.conn.GetRosterDelimiter()
 	if err != nil || delim == "" {
 		delim = defaultDelimiter
 	}
-	s.GroupDelimiter = delim
+	s.groupDelimiter = delim
 
-	rosterReply, _, err := s.Conn.RequestRoster()
+	rosterReply, _, err := s.conn.RequestRoster()
 	if err != nil {
 		s.alert("Failed to request roster: " + err.Error())
 		return true
@@ -789,13 +788,13 @@ func (s *Session) Connect(password string) error {
 
 	s.setStatus(CONNECTING)
 
-	if s.ConnectionLogger == nil {
-		s.ConnectionLogger = newLogger()
+	if s.connectionLogger == nil {
+		s.connectionLogger = newLogger()
 	}
 
 	conf := s.GetConfig()
 	policy := config.ConnectionPolicy{
-		Logger:     s.ConnectionLogger,
+		Logger:     s.connectionLogger,
 		XMPPLogger: s.xmppLogger,
 	}
 
@@ -807,10 +806,10 @@ func (s *Session) Connect(password string) error {
 		return err
 	}
 
-	s.Conn = conn
+	s.conn = conn
 	s.setStatus(CONNECTED)
 
-	s.Conn.SignalPresence("")
+	s.conn.SignalPresence("")
 	go s.watchRoster()
 	go s.watchTimeout()
 	go s.watchStanzas()
@@ -821,17 +820,17 @@ func (s *Session) Connect(password string) error {
 // EncryptAndSendTo encrypts and sends the message to the given peer
 func (s *Session) EncryptAndSendTo(peer string, message string) error {
 	//TODO: review whether it should create a conversation
-	conversation, _ := s.EnsureConversationWith(peer)
+	conversation, _ := s.convManager.EnsureConversationWith(peer)
 	return conversation.Send(s, []byte(message))
 }
 
 // SendMessageTo sends the given message directly to the peer
 func (s *Session) SendMessageTo(peer string, message string) error {
-	return s.Conn.Send(peer, message)
+	return s.conn.Send(peer, message)
 }
 
 func (s *Session) terminateConversations() {
-	s.ConversationManager.TerminateAll()
+	s.convManager.TerminateAll()
 }
 
 func (s *Session) connectionLost() {
@@ -852,7 +851,7 @@ func (s *Session) Close() {
 	s.setStatus(DISCONNECTED)
 
 	s.terminateConversations()
-	s.Conn.Close()
+	s.conn.Close()
 }
 
 // Ping does a Ping
@@ -862,4 +861,60 @@ func (s *Session) Ping() {
 	}
 	/* fmt.Println("Publish Ping") */
 	s.publish(Ping)
+}
+
+func (s *Session) CommandManager() client.CommandManager {
+	return s.cmdManager
+}
+
+func (s *Session) SetCommandManager(c client.CommandManager) {
+	s.cmdManager = c
+}
+
+func (s *Session) ConversationManager() client.ConversationManager {
+	return s.convManager
+}
+
+func (s *Session) SetWantToBeOnline(val bool) {
+	s.wantToBeOnline = val
+}
+
+func (s *Session) PrivateKeys() []otr3.PrivateKey {
+	return s.privateKeys
+}
+
+func (s *Session) R() *roster.List {
+	return s.r
+}
+
+func (s *Session) SetConnector(c Connector) {
+	s.connector = c
+}
+
+func (s *Session) GroupDelimiter() string {
+	return s.groupDelimiter
+}
+
+func (s *Session) Config() *config.ApplicationConfig {
+	return s.config
+}
+
+func (s *Session) Conn() *xmpp.Conn {
+	return s.conn
+}
+
+func (s *Session) SetSessionEventHandler(eh EventHandler) {
+	s.sessionEventHandler = eh
+}
+
+func (s *Session) SetConnectionLogger(l io.Writer) {
+	s.connectionLogger = l
+}
+
+func (s *Session) OtrEventHandler() map[string]*event.OtrEventHandler {
+	return s.otrEventHandler
+}
+
+func (s *Session) SetLastActionTime(t time.Time) {
+	s.lastActionTime = t
 }

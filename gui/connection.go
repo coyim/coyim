@@ -54,7 +54,7 @@ func (u *gtkUI) connectWithRandomDelay(a *account) {
 	sleepDelay := time.Duration(rand.Int31n(7643)) * time.Millisecond
 	log.Printf("connectWithRandomDelay(%v, %v)\n", a.session.GetConfig().Account, sleepDelay)
 	time.Sleep(sleepDelay)
-	a.session.WantToBeOnline = true
+	a.session.SetWantToBeOnline(true)
 	a.Connect()
 }
 

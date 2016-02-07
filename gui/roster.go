@@ -160,11 +160,11 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_connect": func() {
-			account.session.WantToBeOnline = true
+			account.session.SetWantToBeOnline(true)
 			account.Connect()
 		},
 		"on_disconnect": func() {
-			account.session.WantToBeOnline = false
+			account.session.SetWantToBeOnline(false)
 			account.disconnect()
 		},
 		"on_edit": account.edit,
@@ -391,7 +391,7 @@ func (r *roster) redrawMerged() {
 
 	grp := rosters.TopLevelGroup()
 	for account, contacts := range r.ui.accountManager.getAllContacts() {
-		contacts.AddTo(grp, account.session.GroupDelimiter)
+		contacts.AddTo(grp, account.session.GroupDelimiter())
 	}
 
 	accountCounter := &counter{}
@@ -462,7 +462,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 
 	accountCounter := &counter{}
 
-	grp := contacts.Grouped(account.session.GroupDelimiter)
+	grp := contacts.Grouped(account.session.GroupDelimiter())
 	parentName := account.session.GetConfig().Account
 	r.displayGroup(grp, parentIter, accountCounter, showOffline, parentName)
 

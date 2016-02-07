@@ -90,7 +90,7 @@ func (account *account) enableExistingConversationWindows(enable bool) {
 }
 
 func (account *account) executeCmd(c interface{}) {
-	account.session.CommandManager.ExecuteCmd(c)
+	account.session.CommandManager().ExecuteCmd(c)
 }
 
 func (account *account) connected() bool {
@@ -127,7 +127,7 @@ func (u *gtkUI) showServerSelectionWindow() error {
 	saveFn := func() {
 		u.addAndSaveAccountConfig(form.conf)
 		if acc, ok := u.getAccountByID(form.conf.ID()); ok {
-			acc.session.WantToBeOnline = true
+			acc.session.SetWantToBeOnline(true)
 			acc.Connect()
 		}
 	}

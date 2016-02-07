@@ -73,8 +73,8 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 
 	acc := newAccount(appConfig, account)
 	acc.session.Subscribe(m.events)
-	acc.session.CommandManager = m
-	acc.session.Connector = acc
+	acc.session.SetCommandManager(m)
+	acc.session.SetConnector(acc)
 
 	m.accounts = append(m.accounts, acc)
 	m.setContacts(acc, rosters.New())

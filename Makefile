@@ -52,28 +52,33 @@ generate-version-file:
 	./gen_version_file.sh $(GIT_VERSION)
 
 run-cover: clean-cover
-	go test -coverprofile=cli.coverprofile     ./cli
-	go test -coverprofile=client.coverprofile  ./client
-	go test -coverprofile=config.coverprofile  ./config
-	go test -coverprofile=event.coverprofile   ./event
-	go test -coverprofile=i18n.coverprofile    ./i18n
-	go test -coverprofile=net.coverprofile     ./net
-	go test -coverprofile=roster.coverprofile  ./roster
-	go test -coverprofile=sasl.coverprofile    ./sasl
-	go test -coverprofile=servers.coverprofile ./servers
-	go test -coverprofile=session.coverprofile ./session
-	go test -coverprofile=xmpp.coverprofile    ./xmpp
-	go test -coverprofile=ui.coverprofile      ./ui
-	go test -tags $(GTK_BUILD_TAG) -coverprofile=gui.coverprofile  ./gui
-	go test -tags $(GTK_BUILD_TAG) -coverprofile=main.coverprofile
-	gover .
+	mkdir -p .coverprofiles
+	go test -coverprofile=.coverprofiles/cli.coverprofile     ./cli
+	go test -coverprofile=.coverprofiles/client.coverprofile  ./client
+	go test -coverprofile=.coverprofiles/config.coverprofile  ./config
+	go test -coverprofile=.coverprofiles/config_importer.coverprofile  ./config/importer
+	go test -coverprofile=.coverprofiles/event.coverprofile   ./event
+	go test -coverprofile=.coverprofiles/i18n.coverprofile    ./i18n
+	go test -coverprofile=.coverprofiles/net.coverprofile     ./net
+	go test -coverprofile=.coverprofiles/roster.coverprofile  ./roster
+	go test -coverprofile=.coverprofiles/sasl.coverprofile    ./sasl
+	go test -coverprofile=.coverprofiles/sasl_digestmd5.coverprofile    ./sasl/digestmd5
+	go test -coverprofile=.coverprofiles/sasl_plain.coverprofile        ./sasl/plain
+	go test -coverprofile=.coverprofiles/sasl_scram.coverprofile        ./sasl/scram
+	go test -coverprofile=.coverprofiles/servers.coverprofile ./servers
+	go test -coverprofile=.coverprofiles/session.coverprofile ./session
+	go test -coverprofile=.coverprofiles/xmpp.coverprofile    ./xmpp
+	go test -coverprofile=.coverprofiles/ui.coverprofile      ./ui
+	go test -tags $(GTK_BUILD_TAG) -coverprofile=.coverprofiles/gui.coverprofile  ./gui
+	go test -tags $(GTK_BUILD_TAG) -coverprofile=.coverprofiles/main.coverprofile
+	gover .coverprofiles .coverprofiles/gover.coverprofile
 
 clean-cover:
-	$(RM) *.coverprofile
+	$(RM) -rf .coverprofiles 
 
 # generats an HTML report with coverage information
 cover: run-cover
-	go tool cover -html=gover.coverprofile
+	go tool cover -html=.coverprofiles/gover.coverprofile
 
 get:
 	go get -t -tags $(GTK_BUILD_TAG) ./...

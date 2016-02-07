@@ -35,6 +35,7 @@ coverage.out
 bin/
 
 *.coverprofile
+/.coverprofiles/
 
 # generated files
 version_generated.go

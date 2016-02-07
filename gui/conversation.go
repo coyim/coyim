@@ -19,6 +19,17 @@ var (
 	disableWindow, _ = glib.SignalNew("disable")
 )
 
+type conversationView interface {
+	showIdentityVerificationWarning(u *gtkUI)
+	updateSecurityWarning()
+	Show()
+	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
+	appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool)
+	displayNotification(notification string)
+	displayNotificationVerifiedOrNot(notificationV, notificationNV string)
+	SetEnabled(enabled bool)
+}
+
 type conversationWindow struct {
 	to            string
 	account       *account
@@ -78,22 +89,29 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 	return buf
 }
 
-func newConversationWindow(account *account, uid string, displaySettings *displaySettings, textBuffer *gtk.TextBuffer) *conversationWindow {
-	builder := builderForDefinition("ConversationPane")
-	winBuilder := builderForDefinition("Conversation")
+func createConversationWindow(account *account, uid string, pane *gtk.Box) *gtk.Window {
+	builder := builderForDefinition("Conversation")
 
-	obj, _ := winBuilder.GetObject("conversation")
+	obj, _ := builder.GetObject("conversation")
 	win := obj.(*gtk.Window)
 	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, uid)
 	win.SetTitle(title)
 
-	obj, _ = winBuilder.GetObject("box")
+	obj, _ = builder.GetObject("box")
 	winBox := obj.(*gtk.Box)
 
-	obj, _ = builder.GetObject("box")
+	winBox.PackStart(pane, true, true, 0)
+	return win
+}
+
+func newConversationWindow(account *account, uid string, ui *gtkUI, textBuffer *gtk.TextBuffer) *conversationWindow {
+	builder := builderForDefinition("ConversationPane")
+
+	obj, _ := builder.GetObject("box")
 	pane := obj.(*gtk.Box)
 
-	winBox.PackStart(pane, true, true, 0)
+	var window *gtk.Window
+	window = createConversationWindow(account, uid, pane)
 
 	obj, _ = builder.GetObject("history")
 	history := obj.(*gtk.TextView)
@@ -113,7 +131,7 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 	conv := &conversationWindow{
 		to:            uid,
 		account:       account,
-		win:           win,
+		win:           window,
 		history:       history,
 		scrollHistory: scrollHistory,
 
@@ -202,8 +220,12 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 		}
 	})
 
-	displaySettings.control(&conv.history.Container.Widget)
-	displaySettings.control(&entry.Widget)
+	ui.displaySettings.control(&conv.history.Container.Widget)
+	ui.displaySettings.control(&entry.Widget)
+
+	ui.connectShortcutsChildWindow(conv.win)
+	ui.connectShortcutsConversationWindow(conv)
+	conv.parentWin = &ui.window.Window
 
 	return conv
 }
@@ -456,5 +478,13 @@ func (conv *conversationWindow) displayNotificationVerifiedOrNot(notificationV, 
 		conv.displayNotification(notificationV)
 	} else {
 		conv.displayNotification(notificationNV)
+	}
+}
+
+func (conv *conversationWindow) SetEnabled(enabled bool) {
+	if enabled {
+		conv.win.Emit("enable")
+	} else {
+		conv.win.Emit("disable")
 	}
 }

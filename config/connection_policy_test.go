@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/twstrike/coyim/net/nettest"
+	ournet "github.com/twstrike/coyim/net"
 	"golang.org/x/net/proxy"
 	. "gopkg.in/check.v1"
 )
@@ -13,6 +13,22 @@ import (
 type ConnectionPolicySuite struct{}
 
 var _ = Suite(&ConnectionPolicySuite{})
+
+func mockTorState(addr string) ournet.TorState {
+	return &torStateMock{addr}
+}
+
+type torStateMock struct {
+	addr string
+}
+
+func (s *torStateMock) Address() string {
+	return s.addr
+}
+
+func (s *torStateMock) Detect() bool {
+	return len(s.addr) > 0
+}
 
 func (s *ConnectionPolicySuite) Test_buildDialerFor_ValidatesJid(c *C) {
 	account := &Account{
@@ -74,7 +90,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceI
 	}
 
 	policy := ConnectionPolicy{
-		torState: nettest.MockTorState("127.0.0.1:9999"),
+		torState: mockTorState("127.0.0.1:9999"),
 	}
 	dialer, err := policy.buildDialerFor(account)
 
@@ -102,7 +118,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_ErrorsIfTorIsRequiredButNotF
 	}
 
 	policy := ConnectionPolicy{
-		torState: nettest.MockTorState(""),
+		torState: mockTorState(""),
 	}
 
 	_, err := policy.buildDialerFor(account)

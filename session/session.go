@@ -31,7 +31,6 @@ const (
 	CONNECTED
 )
 
-// Session contains information about one specific connection
 type session struct {
 	conn             *xmpp.Conn
 	connectionLogger io.Writer
@@ -821,11 +820,6 @@ func (s *session) EncryptAndSendTo(peer string, message string) error {
 	return conversation.Send(s, []byte(message))
 }
 
-// SendMessageTo sends the given message directly to the peer
-func (s *session) SendMessageTo(peer string, message string) error {
-	return s.conn.Send(peer, message)
-}
-
 func (s *session) terminateConversations() {
 	s.convManager.TerminateAll()
 }
@@ -849,15 +843,6 @@ func (s *session) Close() {
 
 	s.terminateConversations()
 	s.conn.Close()
-}
-
-// Ping does a Ping
-func (s *session) Ping() {
-	if s.IsDisconnected() {
-		return
-	}
-	/* fmt.Println("Publish Ping") */
-	s.publish(events.Ping)
 }
 
 func (s *session) CommandManager() client.CommandManager {

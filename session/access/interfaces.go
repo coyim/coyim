@@ -27,18 +27,18 @@ type Connector interface {
 // Session is an interface that defines the functionality of a Session
 type Session interface {
 	ApprovePresenceSubscription(string, string) error
-	AwaitVersionReply(ch <-chan xmpp.Stanza, user string)
+	AwaitVersionReply(<-chan xmpp.Stanza, string)
 	Close()
 	CommandManager() client.CommandManager
 	Config() *config.ApplicationConfig
 	Conn() *xmpp.Conn
-	Connect(password string) error
+	Connect(string) error
 	ConversationManager() client.ConversationManager
 	DenyPresenceSubscription(string, string) error
 	EncryptAndSendTo(string, string) error
 	GetConfig() *config.Account
 	GroupDelimiter() string
-	HandleConfirmOrDeny(jid string, isConfirm bool)
+	HandleConfirmOrDeny(string, bool)
 	IsConnected() bool
 	IsDisconnected() bool
 	OtrEventHandler() map[string]*event.OtrEventHandler
@@ -46,16 +46,16 @@ type Session interface {
 	R() *roster.List
 	ReloadKeys()
 	RemoveContact(string)
-	RequestPresenceSubscription(jid string) error
-	Send(to string, msg string) error
+	RequestPresenceSubscription(string) error
+	Send(string, string) error
 	SetCommandManager(client.CommandManager)
-	SetConnectionLogger(l io.Writer)
+	SetConnectionLogger(io.Writer)
 	SetConnector(Connector)
-	SetLastActionTime(t time.Time)
-	SetSessionEventHandler(eh EventHandler)
+	SetLastActionTime(time.Time)
+	SetSessionEventHandler(EventHandler)
 	SetWantToBeOnline(bool)
-	Subscribe(c chan<- interface{})
-	Timeout(c xmpp.Cookie, t time.Time)
+	Subscribe(chan<- interface{})
+	Timeout(xmpp.Cookie, time.Time)
 }
 
 // Factory is a function that can create new Sessions

@@ -15,7 +15,7 @@ func (s *session) Subscribe(c chan<- interface{}) {
 }
 
 // Unsubscribe unsubscribes the observer to XMPP events
-func (s *session) Unsubscribe(c chan<- interface{}) {
+func (s *session) unsubscribe(c chan<- interface{}) {
 	s.subscribers.Lock()
 	defer s.subscribers.Unlock()
 
@@ -33,7 +33,7 @@ func (s *session) publishEventTo(subscriber chan<- interface{}, e interface{}) {
 	defer func() {
 		if r := recover(); r != nil {
 			//published to a closed channel
-			s.Unsubscribe(subscriber)
+			s.unsubscribe(subscriber)
 		}
 	}()
 

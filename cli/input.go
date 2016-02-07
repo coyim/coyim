@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"golang.org/x/crypto/ssh/terminal"
+	"github.com/twstrike/coyim/cli/terminal"
 )
 
 type uiCommand struct {
@@ -322,7 +322,8 @@ func parseCommand(commands []uiCommand, line []byte) (interface{}, string) {
 }
 
 type input struct {
-	term                 *terminal.Terminal
+	tc                   terminal.Control
+	term                 terminal.Terminal
 	commands             *priorityList
 	lastKeyWasCompletion bool
 
@@ -362,15 +363,15 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 
 	for {
 		if paste {
-			i.term.AutoCompleteCallback = nil
+			i.tc.SetAutoCompleteCallback(i.term, nil)
 		} else {
-			i.term.AutoCompleteCallback = autoCompleteCallback
+			i.tc.SetAutoCompleteCallback(i.term, autoCompleteCallback)
 		}
 
 		line, err := i.term.ReadLine()
-		if err == terminal.ErrPasteIndicator {
+		if err == i.tc.ErrPasteIndicator() {
 			if len(i.lastTarget) == 0 {
-				alert(i.term, "Pasted line ignored. Send a message to someone to select the destination.")
+				alert(i.term, i.tc, "Pasted line ignored. Send a message to someone to select the destination.")
 			} else {
 				commandsChan <- msgCommand{i.lastTarget, string(line), nil}
 			}
@@ -395,7 +396,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 		if line[0] == '/' {
 			cmd, err := parseCommand(uiCommands, []byte(line))
 			if len(err) != 0 {
-				alert(i.term, err)
+				alert(i.term, i.tc, err)
 				continue
 			}
 			// authCommand is turned into authQACommand with an
@@ -412,7 +413,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 			}
 			if _, ok := cmd.(pasteCommand); ok {
 				if len(i.lastTarget) == 0 {
-					alert(i.term, "Can't enter paste mode without a destination. Send a message to someone to select the destination.")
+					alert(i.term, i.tc, "Can't enter paste mode without a destination. Send a message to someone to select the destination.")
 					continue
 				}
 				paste = true
@@ -447,7 +448,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 		i.lock.Unlock()
 
 		if len(i.lastTarget) == 0 {
-			warn(i.term, "Start typing a Jabber address and hit tab to send a message to someone")
+			warn(i.term, i.tc, "Start typing a Jabber address and hit tab to send a message to someone")
 			continue
 		}
 		commandsChan <- msgCommand{i.lastTarget, string(line), setPromptIsEncrypted}
@@ -467,13 +468,13 @@ func (i *input) SetPromptForTarget(target string, isEncrypted bool) {
 
 	prompt := make([]byte, 0, len(target)+16)
 	if isEncrypted {
-		prompt = append(prompt, i.term.Escape.Green...)
+		prompt = append(prompt, i.tc.Escape(i.term).Green...)
 	} else {
-		prompt = append(prompt, i.term.Escape.Red...)
+		prompt = append(prompt, i.tc.Escape(i.term).Red...)
 	}
 
 	prompt = append(prompt, target...)
-	prompt = append(prompt, i.term.Escape.Reset...)
+	prompt = append(prompt, i.tc.Escape(i.term).Reset...)
 	prompt = append(prompt, '>', ' ')
 	i.term.SetPrompt(string(prompt))
 }
@@ -505,7 +506,7 @@ func (i *input) showHelp() {
 			line += " "
 		}
 		line += cmd.desc
-		info(i.term, line)
+		info(i.term, i.tc, line)
 	}
 }
 

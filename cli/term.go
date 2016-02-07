@@ -5,61 +5,62 @@ import (
 	"fmt"
 	"time"
 
-	"golang.org/x/crypto/ssh/terminal"
+	"github.com/twstrike/coyim/cli/terminal"
 )
 
-func updateTerminalSize(term *terminal.Terminal) {
-	width, height, err := terminal.GetSize(0)
+func updateTerminalSize(term terminal.Terminal, tc terminal.Control) {
+	width, height, err := tc.GetSize(0)
 	if err != nil {
 		return
 	}
 	term.SetSize(width, height)
 }
 
-func info(term *terminal.Terminal, msg string) {
-	terminalMessage(term, term.Escape.Blue, msg, false)
+func info(term terminal.Terminal, tc terminal.Control, msg string) {
+	terminalMessage(term, tc, tc.Escape(term).Blue, msg, false)
 }
 
-func warn(term *terminal.Terminal, msg string) {
-	terminalMessage(term, term.Escape.Magenta, msg, false)
+func warn(term terminal.Terminal, tc terminal.Control, msg string) {
+	terminalMessage(term, tc, tc.Escape(term).Magenta, msg, false)
 }
 
-func alert(term *terminal.Terminal, msg string) {
-	terminalMessage(term, term.Escape.Red, msg, false)
+func alert(term terminal.Terminal, tc terminal.Control, msg string) {
+	terminalMessage(term, tc, tc.Escape(term).Red, msg, false)
 }
 
-func critical(term *terminal.Terminal, msg string) {
-	terminalMessage(term, term.Escape.Red, msg, true)
+func critical(term terminal.Terminal, tc terminal.Control, msg string) {
+	terminalMessage(term, tc, tc.Escape(term).Red, msg, true)
 }
 
-func terminalMessage(term *terminal.Terminal, color []byte, msg string, critical bool) {
+func terminalMessage(term terminal.Terminal, tc terminal.Control, color []byte, msg string, critical bool) {
 	line := make([]byte, 0, len(msg)+16)
 
 	line = append(line, ' ')
 	line = append(line, color...)
 	line = append(line, '*')
-	line = append(line, term.Escape.Reset...)
+	line = append(line, tc.Escape(term).Reset...)
 	line = append(line, []byte(fmt.Sprintf(" (%s) ", time.Now().Format(time.Kitchen)))...)
 	if critical {
-		line = append(line, term.Escape.Red...)
+		line = append(line, tc.Escape(term).Red...)
 	}
 	line = appendTerminalEscaped(line, []byte(msg))
 	if critical {
-		line = append(line, term.Escape.Reset...)
+		line = append(line, tc.Escape(term).Reset...)
 	}
 	line = append(line, '\n')
 	term.Write(line)
 }
 
 type lineLogger struct {
-	term *terminal.Terminal
+	term terminal.Terminal
+	tc   terminal.Control
 	buf  []byte
 }
 
 func (l *lineLogger) logLines(in []byte) []byte {
 	for len(in) > 0 {
 		if newLine := bytes.IndexByte(in, '\n'); newLine >= 0 {
-			info(l.term, string(in[:newLine]))
+			info(l.term, l.tc, string(in[:newLine]))
 			in = in[newLine+1:]
 		} else {
 			break

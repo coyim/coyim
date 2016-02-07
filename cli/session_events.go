@@ -14,7 +14,7 @@ func (c *cliUI) handleSessionEvent(ev session.Event) {
 	switch ev.Type {
 	case session.Connected:
 		for _, pk := range ev.Session.PrivateKeys {
-			info(c.term, fmt.Sprintf("Your fingerprint is %x", pk.PublicKey().Fingerprint()))
+			info(c.term, c.termControl, fmt.Sprintf("Your fingerprint is %x", pk.PublicKey().Fingerprint()))
 		}
 	case session.Disconnected:
 		c.terminate <- true
@@ -33,7 +33,7 @@ func (c *cliUI) handlePeerEvent(ev session.PeerEvent) {
 		c.input.SetPromptForTarget(ev.From, false)
 	case session.OTRNewKeys, session.OTRRenewedKeys:
 		uid := ev.From
-		info(c.term, fmt.Sprintf("New OTR session with %s established", uid))
+		info(c.term, c.termControl, fmt.Sprintf("New OTR session with %s established", uid))
 		//TODO: review whether it should create conversations
 		conversation, _ := ev.Session.EnsureConversationWith(uid)
 
@@ -42,7 +42,7 @@ func (c *cliUI) handlePeerEvent(ev session.PeerEvent) {
 	case session.SubscriptionRequest:
 		msg := fmt.Sprintf("%[1]s wishes to see when you're online. Use '/confirm %[1]s' to confirm (or likewise with /deny to decline)", ev.From)
 
-		info(c.term, msg)
+		info(c.term, c.termControl, msg)
 		c.input.addUser(ev.From)
 	}
 }
@@ -56,10 +56,10 @@ func (c *cliUI) handlePresenceEvent(ev session.PresenceEvent) {
 
 	var line []byte
 	line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)
-	line = append(line, c.term.Escape.Magenta...)
+	line = append(line, c.termControl.Escape(c.term).Magenta...)
 	line = append(line, []byte(from)...)
 	line = append(line, ':')
-	line = append(line, c.term.Escape.Reset...)
+	line = append(line, c.termControl.Escape(c.term).Reset...)
 	line = append(line, ' ')
 
 	if ev.Gone {
@@ -78,14 +78,14 @@ func (c *cliUI) handlePresenceEvent(ev session.PresenceEvent) {
 func (c *cliUI) handleMessageEvent(ev session.MessageEvent) {
 	var line []byte
 	if ev.Encrypted {
-		line = append(line, c.term.Escape.Green...)
+		line = append(line, c.termControl.Escape(c.term).Green...)
 	} else {
-		line = append(line, c.term.Escape.Red...)
+		line = append(line, c.termControl.Escape(c.term).Red...)
 	}
 
 	t := fmt.Sprintf("(%s) %s: ", ev.When.Format(time.Stamp), ev.From)
 	line = append(line, []byte(t)...)
-	line = append(line, c.term.Escape.Reset...)
+	line = append(line, c.termControl.Escape(c.term).Reset...)
 	line = appendTerminalEscaped(line, ui.StripHTML(ev.Body))
 	line = append(line, '\n')
 	if c.session.Config.Bell {
@@ -98,11 +98,11 @@ func (c *cliUI) handleMessageEvent(ev session.MessageEvent) {
 func (c *cliUI) handleLogEvent(ev session.LogEvent) {
 	switch ev.Level {
 	case session.Info:
-		info(c.term, ev.Message)
+		info(c.term, c.termControl, ev.Message)
 	case session.Warn:
-		warn(c.term, ev.Message)
+		warn(c.term, c.termControl, ev.Message)
 	case session.Alert:
-		alert(c.term, ev.Message)
+		alert(c.term, c.termControl, ev.Message)
 	}
 }
 

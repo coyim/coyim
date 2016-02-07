@@ -46,6 +46,8 @@ type conversationPane struct {
 	notificationArea   *gtk.Box
 	securityWarning    *gtk.InfoBar
 	fingerprintWarning *gtk.InfoBar
+	// The window to set dialogs transient for
+	transientParent    *gtk.Window
 	sync.Mutex
 }
 
@@ -203,6 +205,7 @@ func newConversationWindow(account *account, uid string, ui *gtkUI, textBuffer *
 	winBox := obj.(*gtk.Box)
 
 	cp := createConversationPane(account, uid, ui, win, textBuffer)
+	cp.transientParent = win
 	winBox.PackStart(cp.widget, true, true, 0)
 
 	conv := &conversationWindow{
@@ -278,22 +281,22 @@ func (conv *conversationPane) isVerified() bool {
 	return hasPeer && p.HasTrustedFingerprint(fingerprint)
 }
 
-func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
-	conv.Lock()
-	defer conv.Unlock()
+func (cp *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
+	cp.Lock()
+	defer cp.Unlock()
 
-	if conv.fingerprintWarning != nil {
+	if cp.fingerprintWarning != nil {
 		log.Println("we are already showing a fingerprint warning, so not doing it again")
 		return
 	}
 
-	if conv.isVerified() {
+	if cp.isVerified() {
 		log.Println("We have a peer and a trusted fingerprint already, so no reason to warn")
 		return
 	}
 
-	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.win)
-	conv.addNotification(conv.fingerprintWarning)
+	cp.fingerprintWarning = buildVerifyIdentityNotification(cp.account, cp.to, cp.transientParent)
+	cp.addNotification(cp.fingerprintWarning)
 }
 
 func (conv *conversationPane) removeIdentityVerificationWarning() {

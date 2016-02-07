@@ -3,7 +3,8 @@ package roster
 import (
 	"fmt"
 
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/data"
+	xutils "github.com/twstrike/coyim/xmpp/utils"
 )
 
 // Peer represents and contains all the information you have about a specific peer.
@@ -55,9 +56,9 @@ func (p *Peer) Dump() string {
 }
 
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given
-func PeerFrom(e xmpp.RosterEntry, belongsTo, nickname string) *Peer {
+func PeerFrom(e data.RosterEntry, belongsTo, nickname string) *Peer {
 	return &Peer{
-		Jid:          xmpp.RemoveResourceFromJid(e.Jid),
+		Jid:          xutils.RemoveResourceFromJid(e.Jid),
 		Subscription: e.Subscription,
 		Name:         e.Name,
 		Nickname:     nickname,
@@ -67,8 +68,8 @@ func PeerFrom(e xmpp.RosterEntry, belongsTo, nickname string) *Peer {
 }
 
 // ToEntry returns a new RosterEntry with the same values
-func (p *Peer) ToEntry() xmpp.RosterEntry {
-	return xmpp.RosterEntry{
+func (p *Peer) ToEntry() data.RosterEntry {
+	return data.RosterEntry{
 		Jid:          p.Jid,
 		Subscription: p.Subscription,
 		Name:         p.Name,
@@ -79,7 +80,7 @@ func (p *Peer) ToEntry() xmpp.RosterEntry {
 // PeerWithState returns a new Peer that contains the given state information
 func PeerWithState(jid, status, statusMsg, belongsTo string) *Peer {
 	return &Peer{
-		Jid:       xmpp.RemoveResourceFromJid(jid),
+		Jid:       xutils.RemoveResourceFromJid(jid),
 		Status:    status,
 		StatusMsg: statusMsg,
 		Online:    true,
@@ -89,7 +90,7 @@ func PeerWithState(jid, status, statusMsg, belongsTo string) *Peer {
 
 func peerWithPendingSubscribe(jid, id, belongsTo string) *Peer {
 	return &Peer{
-		Jid:                xmpp.RemoveResourceFromJid(jid),
+		Jid:                xutils.RemoveResourceFromJid(jid),
 		PendingSubscribeID: id,
 		BelongsTo:          belongsTo,
 	}

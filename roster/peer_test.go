@@ -1,8 +1,7 @@
 package roster
 
 import (
-	"github.com/twstrike/coyim/xmpp"
-
+	"github.com/twstrike/coyim/xmpp/data"
 	g "gopkg.in/check.v1"
 )
 
@@ -11,7 +10,7 @@ type PeerXmppSuite struct{}
 var _ = g.Suite(&PeerXmppSuite{})
 
 func (s *PeerXmppSuite) Test_PeerFrom_returnsANewPeerWithTheSameInformation(c *g.C) {
-	re := xmpp.RosterEntry{
+	re := data.RosterEntry{
 		Jid:          "foo@bar.com",
 		Subscription: "from",
 		Name:         "someone",

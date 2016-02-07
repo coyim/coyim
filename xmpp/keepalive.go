@@ -6,6 +6,8 @@ import (
 	"log"
 	"net"
 	"time"
+
+	"github.com/twstrike/coyim/xmpp/data"
 )
 
 var (
@@ -35,8 +37,8 @@ func (c *Conn) watchKeepAlive(conn net.Conn) {
 
 		log.Println("xmpp: keepalive failed")
 
-		go c.sendStreamError(StreamError{
-			DefinedCondition: ConnectionTimeout,
+		go c.sendStreamError(data.StreamError{
+			DefinedCondition: data.ConnectionTimeout,
 		})
 
 		return
@@ -48,7 +50,7 @@ func (c *Conn) sendKeepalive() bool {
 	return c.closed || err == nil || err == io.EOF
 }
 
-func (c *Conn) sendStreamError(streamError StreamError) error {
+func (c *Conn) sendStreamError(streamError data.StreamError) error {
 	enc, err := xml.Marshal(streamError)
 	if err != nil {
 		return err

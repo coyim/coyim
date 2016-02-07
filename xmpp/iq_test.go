@@ -5,6 +5,8 @@ import (
 	"io"
 	"reflect"
 
+	"github.com/twstrike/coyim/xmpp/data"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -30,7 +32,7 @@ func (s *IqXmppSuite) Test_SendIQReply_writesAnEmptyReplyIfEmptyIsGiven(c *C) {
 		jid: "som'ewhat@foo.com/somewhere",
 	}
 
-	err := conn.SendIQReply("f&o", "b\"ar", "b<az", EmptyReply{})
+	err := conn.SendIQReply("f&o", "b\"ar", "b<az", data.EmptyReply{})
 	c.Assert(err, IsNil)
 	c.Assert(string(mockIn.write), Equals, "<iq to='f&amp;o' from='som&apos;ewhat@foo.com/somewhere' type='b&quot;ar' id='b&lt;az'></iq>")
 }
@@ -125,7 +127,7 @@ func (s *IqXmppSuite) TestConnSendIQEmptyReply(c *C) {
 		jid: "jid",
 	}
 	conn.inflights = make(map[Cookie]inflight)
-	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", reflect.ValueOf(EmptyReply{}))
+	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", reflect.ValueOf(data.EmptyReply{}))
 	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'><Value><flag>.*</flag></Value></iq>")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)

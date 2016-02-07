@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/utils"
 	"github.com/twstrike/otr3"
 )
 
@@ -100,7 +100,7 @@ func (a *Account) ServerCertificateHash() ([]byte, error) {
 
 // Is returns true if this account represents the same identity as the given JID
 func (a *Account) Is(jid string) bool {
-	return a.Account == xmpp.RemoveResourceFromJid(jid)
+	return a.Account == utils.RemoveResourceFromJid(jid)
 }
 
 // ShouldEncryptTo returns true if the connection with this peer should be encrypted
@@ -109,7 +109,7 @@ func (a *Account) ShouldEncryptTo(jid string) bool {
 		return true
 	}
 
-	bareJid := xmpp.RemoveResourceFromJid(jid)
+	bareJid := utils.RemoveResourceFromJid(jid)
 	for _, contact := range a.AlwaysEncryptWith {
 		if contact == bareJid {
 			return true

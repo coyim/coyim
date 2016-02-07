@@ -7,6 +7,8 @@ import (
 	"log"
 	"testing"
 
+	"github.com/twstrike/coyim/xmpp/data"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -32,9 +34,9 @@ func (s *XmppSuite) TestDiscoReplyVerSimple(c *C) {
     <feature var='http://jabber.org/protocol/muc'/>
   </query>
   `)
-	var dr DiscoveryReply
+	var dr data.DiscoveryReply
 	c.Assert(xml.Unmarshal(input, &dr), IsNil)
-	hash, err := dr.VerificationString()
+	hash, err := VerificationString(&dr)
 	c.Assert(err, IsNil)
 	c.Assert(hash, Equals, expect)
 }
@@ -73,9 +75,9 @@ func (s *XmppSuite) TestDiscoReplyVerComplex(c *C) {
     </x>
   </query>
 `)
-	var dr DiscoveryReply
+	var dr data.DiscoveryReply
 	c.Assert(xml.Unmarshal(input, &dr), IsNil)
-	hash, err := dr.VerificationString()
+	hash, err := VerificationString(&dr)
 	c.Assert(err, IsNil)
 	c.Assert(hash, Equals, expect)
 }
@@ -141,7 +143,7 @@ func (s *XmppSuite) TestConnNextIQSet(c *C) {
 	}
 	stanza, err := conn.Next()
 	c.Assert(stanza.Name, Equals, xml.Name{Space: NsClient, Local: "iq"})
-	iq, ok := stanza.Value.(*ClientIQ)
+	iq, ok := stanza.Value.(*data.ClientIQ)
 	c.Assert(ok, Equals, true)
 	c.Assert(iq.To, Equals, "example.com")
 	c.Assert(iq.Type, Equals, "set")
@@ -162,7 +164,7 @@ func (s *XmppSuite) TestConnNextIQResult(c *C) {
 	}
 	stanza, err := conn.Next()
 	c.Assert(stanza.Name, Equals, xml.Name{Space: NsClient, Local: "iq"})
-	iq, ok := stanza.Value.(*ClientIQ)
+	iq, ok := stanza.Value.(*data.ClientIQ)
 	c.Assert(ok, Equals, true)
 	c.Assert(iq.From, Equals, "example.com")
 	c.Assert(iq.Type, Equals, "result")
@@ -178,7 +180,7 @@ func (s *XmppSuite) TestConnCancelError(c *C) {
 func (s *XmppSuite) TestConnCancelOK(c *C) {
 	conn := Conn{}
 	cookie := conn.getCookie()
-	ch := make(chan Stanza, 1)
+	ch := make(chan data.Stanza, 1)
 	conn.inflights = make(map[Cookie]inflight)
 	conn.inflights[cookie] = inflight{ch, ""}
 	ok := conn.Cancel(cookie)
@@ -214,7 +216,7 @@ func (s *XmppSuite) TestConnRequestRosterErr(c *C) {
 }
 
 func (s *XmppSuite) TestParseRoster(c *C) {
-	iq := ClientIQ{}
+	iq := data.ClientIQ{}
 	iq.Query = []byte(`
   <query xmlns='jabber:iq:roster'>
     <item jid='romeo@example.net'
@@ -234,7 +236,7 @@ func (s *XmppSuite) TestParseRoster(c *C) {
     </item>
   </query>
   `)
-	reply := Stanza{
+	reply := data.Stanza{
 		Value: &iq,
 	}
 	rosterEntrys, err := ParseRoster(reply)

@@ -7,6 +7,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/twstrike/coyim/xmpp/data"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -64,7 +66,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesInflightIfItMatches(c *C) {
 		inflights: inflights,
 	}
 	cookie := Cookie(1048576)
-	reply := make(chan Stanza, 1)
+	reply := make(chan data.Stanza, 1)
 	conn.inflights[cookie] =
 		inflight{
 			to:        "foo@somewhere.com",
@@ -105,7 +107,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsNoFrom(c *C) {
 		inflights: inflights,
 	}
 	cookie := Cookie(1048576)
-	reply := make(chan Stanza, 1)
+	reply := make(chan data.Stanza, 1)
 	conn.inflights[cookie] =
 		inflight{
 			replyChan: reply,
@@ -130,7 +132,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJid(c *C)
 		jid:       "some@one.org/foo",
 	}
 	cookie := Cookie(1048576)
-	reply := make(chan Stanza, 1)
+	reply := make(chan data.Stanza, 1)
 	conn.inflights[cookie] =
 		inflight{
 			replyChan: reply,
@@ -155,7 +157,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidWithou
 		jid:       "some@one.org/foo",
 	}
 	cookie := Cookie(1048576)
-	reply := make(chan Stanza, 1)
+	reply := make(chan data.Stanza, 1)
 	conn.inflights[cookie] =
 		inflight{
 			replyChan: reply,
@@ -180,7 +182,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidDomain
 		jid:       "some@one.org/foo",
 	}
 	cookie := Cookie(1048576)
-	reply := make(chan Stanza, 1)
+	reply := make(chan data.Stanza, 1)
 	conn.inflights[cookie] =
 		inflight{
 			replyChan: reply,
@@ -204,10 +206,10 @@ func (s *ConnectionXmppSuite) Test_Next_returnsNonIQMessage(c *C) {
 	}
 	v, err := conn.Next()
 	c.Assert(err, IsNil)
-	c.Assert(v.Value.(*ClientMessage).From, Equals, "bar@foo.com")
-	c.Assert(v.Value.(*ClientMessage).To, Equals, "fo@bar.com")
-	c.Assert(v.Value.(*ClientMessage).Type, Equals, "chat")
-	c.Assert(v.Value.(*ClientMessage).Body, Equals, "something")
+	c.Assert(v.Value.(*data.ClientMessage).From, Equals, "bar@foo.com")
+	c.Assert(v.Value.(*data.ClientMessage).To, Equals, "fo@bar.com")
+	c.Assert(v.Value.(*data.ClientMessage).Type, Equals, "chat")
+	c.Assert(v.Value.(*data.ClientMessage).Body, Equals, "something")
 }
 
 func (s *ConnectionXmppSuite) Test_makeInOut_returnsANewDecoderAndOriginalWriterWhenNoConfigIsGiven(c *C) {
@@ -1119,14 +1121,14 @@ func (s *ConnectionXmppSuite) Test_readMessages_passesStanzaToChannel(c *C) {
 		in:     xml.NewDecoder(mockIn),
 		closed: true, //This avoids trying to close the connection after the EOF
 	}
-	stanzaChan := make(chan Stanza)
+	stanzaChan := make(chan data.Stanza)
 	go conn.ReadStanzas(stanzaChan)
 
 	select {
 	case rawStanza, ok := <-stanzaChan:
 		c.Assert(ok, Equals, true)
 		c.Assert(rawStanza.Name.Local, Equals, "message")
-		c.Assert(rawStanza.Value.(*ClientMessage).Body, Equals, "something")
+		c.Assert(rawStanza.Value.(*data.ClientMessage).Body, Equals, "something")
 	}
 }
 
@@ -1138,7 +1140,7 @@ func (s *ConnectionXmppSuite) Test_readMessages_alertsOnError(c *C) {
 		closed: true, //This avoids trying to close the connection after the EOF
 	}
 
-	stanzaChan := make(chan Stanza, 1)
+	stanzaChan := make(chan data.Stanza, 1)
 	err := conn.ReadStanzas(stanzaChan)
 
 	select {

@@ -1,21 +1,24 @@
 package xmpp
 
-import . "gopkg.in/check.v1"
+import (
+	"github.com/twstrike/coyim/xmpp/data"
+	. "gopkg.in/check.v1"
+)
 
 type DiscoveryXmppSuite struct{}
 
 var _ = Suite(&DiscoveryXmppSuite{})
 
 func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateIdentities(c *C) {
-	reply := DiscoveryReply{
-		Identities: []DiscoveryIdentity{
-			DiscoveryIdentity{
+	reply := &data.DiscoveryReply{
+		Identities: []data.DiscoveryIdentity{
+			data.DiscoveryIdentity{
 				Lang:     "en",
 				Category: "stuff",
 				Type:     "thing",
 				Name:     "something",
 			},
-			DiscoveryIdentity{
+			data.DiscoveryIdentity{
 				Lang:     "en",
 				Category: "stuff",
 				Type:     "thing",
@@ -24,43 +27,43 @@ func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateIde
 		},
 	}
 
-	_, err := reply.VerificationString()
+	_, err := VerificationString(reply)
 	c.Assert(err.Error(), Equals, "duplicate discovery identity")
 }
 
 func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateFeatures(c *C) {
-	reply := DiscoveryReply{
-		Features: []DiscoveryFeature{
-			DiscoveryFeature{
+	reply := &data.DiscoveryReply{
+		Features: []data.DiscoveryFeature{
+			data.DiscoveryFeature{
 				Var: "foo",
 			},
-			DiscoveryFeature{
+			data.DiscoveryFeature{
 				Var: "foo",
 			},
 		},
 	}
 
-	_, err := reply.VerificationString()
+	_, err := VerificationString(reply)
 	c.Assert(err.Error(), Equals, "duplicate discovery feature")
 }
 
 func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateFormTypes(c *C) {
-	reply := DiscoveryReply{
-		Forms: []Form{
-			Form{
+	reply := &data.DiscoveryReply{
+		Forms: []data.Form{
+			data.Form{
 				Type: "foo",
-				Fields: []formField{
-					formField{
+				Fields: []data.FormFieldX{
+					data.FormFieldX{
 						Var:    "FORM_TYPE",
 						Type:   "Foo",
 						Values: []string{"foo"},
 					},
 				},
 			},
-			Form{
+			data.Form{
 				Type: "foo",
-				Fields: []formField{
-					formField{
+				Fields: []data.FormFieldX{
+					data.FormFieldX{
 						Var:    "FORM_TYPE",
 						Type:   "Foo",
 						Values: []string{"foo"},
@@ -70,38 +73,38 @@ func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateFor
 		},
 	}
 
-	_, err := reply.VerificationString()
+	_, err := VerificationString(reply)
 	c.Assert(err.Error(), Equals, "multiple forms of the same type")
 }
 
 func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreNoValues(c *C) {
-	reply := DiscoveryReply{
-		Forms: []Form{
-			Form{
+	reply := &data.DiscoveryReply{
+		Forms: []data.Form{
+			data.Form{
 				Type: "foo",
 			},
-			Form{
+			data.Form{
 				Type: "foo",
-				Fields: []formField{
-					formField{
+				Fields: []data.FormFieldX{
+					data.FormFieldX{
 						Var:  "FORM_TYPE2",
 						Type: "Foo",
 					},
 				},
 			},
-			Form{
+			data.Form{
 				Type: "foo",
-				Fields: []formField{
-					formField{
+				Fields: []data.FormFieldX{
+					data.FormFieldX{
 						Var:  "FORM_TYPE",
 						Type: "Foo",
 					},
 				},
 			},
-			Form{
+			data.Form{
 				Type: "foo",
-				Fields: []formField{
-					formField{
+				Fields: []data.FormFieldX{
+					data.FormFieldX{
 						Var:  "FORM_TYPE",
 						Type: "Foo",
 					},
@@ -110,6 +113,6 @@ func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreNoValues(c *
 		},
 	}
 
-	_, err := reply.VerificationString()
+	_, err := VerificationString(reply)
 	c.Assert(err.Error(), Equals, "form does not have a single FORM_TYPE value")
 }

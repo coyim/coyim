@@ -7,7 +7,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/utils"
 )
 
 func (u *gtkUI) handleOneAccountEvent(ev interface{}) {
@@ -69,7 +69,7 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 
 	u.roster.messageReceived(
 		account,
-		xmpp.RemoveResourceFromJid(ev.From),
+		utils.RemoveResourceFromJid(ev.From),
 		ev.When,
 		ev.Encrypted,
 		ev.Body,
@@ -111,7 +111,7 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 
 	u.roster.presenceUpdated(
 		account,
-		xmpp.RemoveResourceFromJid(ev.From),
+		utils.RemoveResourceFromJid(ev.From),
 		ev.Show,
 		ev.Status,
 		ev.Gone,

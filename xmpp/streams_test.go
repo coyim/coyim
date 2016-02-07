@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	"errors"
 
+	"github.com/twstrike/coyim/xmpp/data"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -95,7 +97,7 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_expectsFeaturesInReturn(
 
 	err := conn.sendInitialStreamHeader()
 	c.Assert(err, IsNil)
-	expected := streamFeatures{}
+	expected := data.StreamFeatures{}
 	expected.XMLName = xml.Name{Space: "http://etherx.jabber.org/streams", Local: "features"}
 	c.Assert(conn.features, DeepEquals, expected)
 }
@@ -126,20 +128,20 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_receiveResponseStreamHea
 
 	err := conn.sendInitialStreamHeader()
 	c.Assert(err, IsNil)
-	expected := streamFeatures{
+	expected := data.StreamFeatures{
 		XMLName: xml.Name{Space: "http://etherx.jabber.org/streams", Local: "features"},
-		Bind: bindBind{
+		Bind: data.BindBind{
 			XMLName: xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"}, Resource: "", Jid: "",
 		},
-		StartTLS: tlsStartTLS{
+		StartTLS: data.StartTLS{
 			XMLName:  xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-tls", Local: "starttls"},
 			Required: xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-tls", Local: "required"},
 		},
-		Mechanisms: saslMechanisms{
+		Mechanisms: data.SaslMechanisms{
 			XMLName:   xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-sasl", Local: "mechanisms"},
 			Mechanism: []string{"PLAIN", "X-OAUTH2", "X-GOOGLE-TOKEN"},
 		},
-		InBandRegistration: &inBandRegistration{xml.Name{Space: "http://jabber.org/features/iq-register", Local: "register"}},
+		InBandRegistration: &data.InBandRegistration{xml.Name{Space: "http://jabber.org/features/iq-register", Local: "register"}},
 	}
 
 	c.Assert(conn.features, DeepEquals, expected)

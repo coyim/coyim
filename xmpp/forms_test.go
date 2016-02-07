@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	"errors"
 
+	"github.com/twstrike/coyim/xmpp/data"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -13,7 +15,7 @@ var _ = Suite(&FormsXmppSuite{})
 
 func (s *FormsXmppSuite) Test_processForm_returnsErrorFromCallback(c *C) {
 	e := errors.New("some kind of error")
-	f := &Form{}
+	f := &data.Form{}
 	_, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
 		return e
 	})
@@ -22,24 +24,24 @@ func (s *FormsXmppSuite) Test_processForm_returnsErrorFromCallback(c *C) {
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsEmptySubmitFormForEmptyForm(c *C) {
-	f := &Form{}
+	f := &data.Form{}
 	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
 		return nil
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{Type: "submit"})
+	c.Assert(*f2, DeepEquals, data.Form{Type: "submit"})
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsFixedFields(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label:  "hello",
 			Type:   "fixed",
 			Values: []string{"Something"},
 		},
-		formField{
+		data.FormFieldX{
 			Label: "hello2",
 			Type:  "fixed",
 		},
@@ -49,7 +51,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsFixedFields(c *C) {
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
@@ -58,9 +60,9 @@ func (s *FormsXmppSuite) Test_processForm_returnsFixedFields(c *C) {
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsBooleanFields(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello3",
 			Type:  "boolean",
 		},
@@ -70,32 +72,32 @@ func (s *FormsXmppSuite) Test_processForm_returnsBooleanFields(c *C) {
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string{"false"},
-				Options:  []formFieldOption(nil),
-				Media:    []formFieldMedia(nil)}}})
+				Options:  []data.FormFieldOptionX(nil),
+				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsMultiFields(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello4",
 			Type:  "jid-multi",
 		},
-		formField{
+		data.FormFieldX{
 			Label: "hello5",
 			Type:  "text-multi",
 		},
@@ -105,43 +107,43 @@ func (s *FormsXmppSuite) Test_processForm_returnsMultiFields(c *C) {
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string(nil),
-				Options:  []formFieldOption(nil),
-				Media:    []formFieldMedia(nil)},
-			formField{
+				Options:  []data.FormFieldOptionX(nil),
+				Media:    []data.FormFieldMediaX(nil)},
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string(nil),
-				Options:  []formFieldOption(nil),
-				Media:    []formFieldMedia(nil)}}})
+				Options:  []data.FormFieldOptionX(nil),
+				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsListSingle(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello7",
 			Type:  "list-single",
-			Options: []formFieldOption{
-				formFieldOption{Label: "One", Value: "Two"},
-				formFieldOption{Label: "Three", Value: "Four"},
+			Options: []data.FormFieldOptionX{
+				data.FormFieldOptionX{Label: "One", Value: "Two"},
+				data.FormFieldOptionX{Label: "Three", Value: "Four"},
 			},
 		},
 	}
@@ -150,32 +152,32 @@ func (s *FormsXmppSuite) Test_processForm_returnsListSingle(c *C) {
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string{"Two"},
-				Options:  []formFieldOption(nil), Media: []formFieldMedia(nil)}}})
+				Options:  []data.FormFieldOptionX(nil), Media: []data.FormFieldMediaX(nil)}}})
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsListMulti(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello1o7",
 			Type:  "list-multi",
-			Options: []formFieldOption{
-				formFieldOption{Label: "One", Value: "Two"},
-				formFieldOption{Label: "Three", Value: "Four"},
+			Options: []data.FormFieldOptionX{
+				data.FormFieldOptionX{Label: "One", Value: "Two"},
+				data.FormFieldOptionX{Label: "Three", Value: "Four"},
 			},
 		},
 	}
@@ -184,27 +186,28 @@ func (s *FormsXmppSuite) Test_processForm_returnsListMulti(c *C) {
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string(nil),
-				Options:  []formFieldOption(nil), Media: []formFieldMedia(nil)}}})
+				Options:  []data.FormFieldOptionX(nil),
+				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsHidden(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello1o71",
 			Type:  "hidden",
 		},
@@ -214,31 +217,32 @@ func (s *FormsXmppSuite) Test_processForm_returnsHidden(c *C) {
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string(nil),
-				Options:  []formFieldOption(nil), Media: []formFieldMedia(nil)}}})
+				Options:  []data.FormFieldOptionX(nil),
+				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsUnknown(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello1o71",
 			Type:  "another-fancy-type",
 		},
-		formField{
+		data.FormFieldX{
 			Label:  "hello1o73",
 			Type:   "another-fancy-type",
 			Values: []string{"another one"},
@@ -249,40 +253,40 @@ func (s *FormsXmppSuite) Test_processForm_returnsUnknown(c *C) {
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string{""},
-				Options:  []formFieldOption(nil),
-				Media:    []formFieldMedia(nil)},
-			formField{
+				Options:  []data.FormFieldOptionX(nil),
+				Media:    []data.FormFieldMediaX(nil)},
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string{""},
-				Options:  []formFieldOption(nil),
-				Media:    []formFieldMedia(nil)}}})
+				Options:  []data.FormFieldOptionX(nil),
+				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
 type testOtherFormType struct{}
 
 func (s *FormsXmppSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello1o71",
 			Type:  "another-fancy-type",
 		},
@@ -296,102 +300,102 @@ func (s *FormsXmppSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
 }
 
 func (s *FormsXmppSuite) Test_processForm_setsAValidBooleanReturnValue(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello1o71",
 			Type:  "boolean",
 		},
 	}
 	f2, _ := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
-		fields[0].(*BooleanFormField).Result = true
+		fields[0].(*data.BooleanFormField).Result = true
 		return nil
 	})
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string{"true"},
-				Options:  []formFieldOption(nil),
-				Media:    []formFieldMedia(nil)}}})
+				Options:  []data.FormFieldOptionX(nil),
+				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
 func (s *FormsXmppSuite) Test_processForm_returnsListMultiWithResults(c *C) {
-	f := &Form{}
-	f.Fields = []formField{
-		formField{
+	f := &data.Form{}
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello1o7",
 			Type:  "list-multi",
-			Options: []formFieldOption{
-				formFieldOption{Label: "One", Value: "Two"},
-				formFieldOption{Label: "Three", Value: "Four"},
+			Options: []data.FormFieldOptionX{
+				data.FormFieldOptionX{Label: "One", Value: "Two"},
+				data.FormFieldOptionX{Label: "Three", Value: "Four"},
 			},
 		},
 	}
 	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
-		fields[0].(*MultiSelectionFormField).Results = []int{1}
+		fields[0].(*data.MultiSelectionFormField).Results = []int{1}
 		return nil
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",
 				Type:     "",
 				Label:    "",
-				Required: (*formFieldRequired)(nil),
+				Required: (*data.FormFieldRequiredX)(nil),
 				Values:   []string{"Four"},
-				Options:  []formFieldOption(nil), Media: []formFieldMedia(nil)}}})
+				Options:  []data.FormFieldOptionX(nil), Media: []data.FormFieldMediaX(nil)}}})
 }
 
 func (s *FormsXmppSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
-	f := &Form{}
-	datas := []bobData{
-		bobData{
+	f := &data.Form{}
+	datas := []data.BobData{
+		data.BobData{
 			CID:    "foobax",
 			Base64: ".....",
 		},
-		bobData{
+		data.BobData{
 			CID:    "foobar",
 			Base64: "aGVsbG8=",
 		},
 	}
-	f.Fields = []formField{
-		formField{
+	f.Fields = []data.FormFieldX{
+		data.FormFieldX{
 			Label: "hello1o7",
 			Type:  "hidden",
-			Media: []formFieldMedia{
-				formFieldMedia{
-					URIs: []mediaURI{
-						mediaURI{
+			Media: []data.FormFieldMediaX{
+				data.FormFieldMediaX{
+					URIs: []data.MediaURIX{
+						data.MediaURIX{
 							MIMEType: "",
 							URI:      "",
 						},
-						mediaURI{
+						data.MediaURIX{
 							MIMEType: "",
 							URI:      "hello:world",
 						},
-						mediaURI{
+						data.MediaURIX{
 							MIMEType: "",
 							URI:      "cid:foobar",
 						},
-						mediaURI{
+						data.MediaURIX{
 							MIMEType: "",
 							URI:      "cid:foobax",
 						},
@@ -405,13 +409,13 @@ func (s *FormsXmppSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, Form{
+	c.Assert(*f2, DeepEquals, data.Form{
 		XMLName:      xml.Name{Space: "", Local: ""},
 		Type:         "submit",
 		Title:        "",
 		Instructions: "",
-		Fields: []formField{
-			formField{
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
 				XMLName:  xml.Name{Space: "", Local: ""},
 				Desc:     "",
 				Var:      "",

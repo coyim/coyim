@@ -9,6 +9,8 @@ package xmpp
 import (
 	"encoding/xml"
 	"fmt"
+
+	"github.com/twstrike/coyim/xmpp/data"
 )
 
 type rawXML []byte
@@ -16,12 +18,12 @@ type rawXML []byte
 // SendIQ sends an info/query message to the given user. It returns a channel
 // on which the reply can be read when received and a Cookie that can be used
 // to cancel the request.
-func (c *Conn) SendIQ(to, typ string, value interface{}) (reply chan Stanza, cookie Cookie, err error) {
+func (c *Conn) SendIQ(to, typ string, value interface{}) (reply chan data.Stanza, cookie Cookie, err error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
 	cookie = c.getCookie()
-	reply = make(chan Stanza, 1)
+	reply = make(chan data.Stanza, 1)
 
 	toAttr := ""
 	if len(to) > 0 {
@@ -33,7 +35,7 @@ func (c *Conn) SendIQ(to, typ string, value interface{}) (reply chan Stanza, coo
 	}
 
 	switch v := value.(type) {
-	case EmptyReply:
+	case data.EmptyReply:
 		//nothing
 	case rawXML:
 		_, err = c.out.Write(v)
@@ -58,27 +60,11 @@ func (c *Conn) SendIQReply(to, typ, id string, value interface{}) error {
 	if _, err := fmt.Fprintf(c.out, "<iq to='%s' from='%s' type='%s' id='%s'>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(typ), xmlEscape(id)); err != nil {
 		return err
 	}
-	if _, ok := value.(EmptyReply); !ok {
+	if _, ok := value.(data.EmptyReply); !ok {
 		if err := xml.NewEncoder(c.out).Encode(value); err != nil {
 			return err
 		}
 	}
 	_, err := fmt.Fprintf(c.out, "</iq>")
 	return err
-}
-
-// ClientIQ contains a specific information query request
-type ClientIQ struct { // info/query
-	XMLName xml.Name    `xml:"jabber:client iq"`
-	From    string      `xml:"from,attr"`
-	ID      string      `xml:"id,attr"`
-	To      string      `xml:"to,attr"`
-	Type    string      `xml:"type,attr"` // error, get, result, set
-	Error   ClientError `xml:"error"`
-	Bind    bindBind    `xml:"bind"`
-	Query   []byte      `xml:",innerxml"`
-}
-
-// An EmptyReply results in in no XML.
-type EmptyReply struct {
 }

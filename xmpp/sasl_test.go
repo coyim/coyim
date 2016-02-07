@@ -3,6 +3,8 @@ package xmpp
 import (
 	"encoding/xml"
 
+	"github.com/twstrike/coyim/xmpp/data"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -23,8 +25,8 @@ func (s *SaslXmppSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-		features: streamFeatures{
-			Mechanisms: saslMechanisms{
+		features: data.StreamFeatures{
+			Mechanisms: data.SaslMechanisms{
 				Mechanism: []string{"FOO", "PLAIN"},
 			},
 		},
@@ -41,8 +43,8 @@ func (s *SaslXmppSuite) Test_authenticate_handlesFailure(c *C) {
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-		features: streamFeatures{
-			Mechanisms: saslMechanisms{
+		features: data.StreamFeatures{
+			Mechanisms: data.SaslMechanisms{
 				Mechanism: []string{"FOO", "PLAIN"},
 			},
 		},
@@ -58,8 +60,8 @@ func (s *SaslXmppSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	conn := Conn{
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
-		features: streamFeatures{
-			Mechanisms: saslMechanisms{
+		features: data.StreamFeatures{
+			Mechanisms: data.SaslMechanisms{
 				Mechanism: []string{"FOO", "PLAIN"},
 			},
 		},
@@ -85,8 +87,8 @@ func (s *SaslXmppSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		Rand:   mockRand,
-		features: streamFeatures{
-			Mechanisms: saslMechanisms{
+		features: data.StreamFeatures{
+			Mechanisms: data.SaslMechanisms{
 				Mechanism: []string{"DIGEST-MD5"},
 			},
 		},
@@ -116,8 +118,8 @@ func (s *SaslXmppSuite) Test_digestMD5_serverFailsToVerifyChallenge(c *C) {
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		Rand:   mockRand,
-		features: streamFeatures{
-			Mechanisms: saslMechanisms{
+		features: data.StreamFeatures{
+			Mechanisms: data.SaslMechanisms{
 				Mechanism: []string{"DIGEST-MD5"},
 			},
 		},
@@ -148,8 +150,8 @@ func (s *SaslXmppSuite) Test_scramSHA1Auth_authenticatesWithUsernameAndPassword(
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		Rand:   mockRand,
-		features: streamFeatures{
-			Mechanisms: saslMechanisms{
+		features: data.StreamFeatures{
+			Mechanisms: data.SaslMechanisms{
 				Mechanism: []string{"SCRAM-SHA-1"},
 			},
 		},

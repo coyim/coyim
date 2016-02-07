@@ -8,11 +8,12 @@ package xmpp
 
 import (
 	"encoding/hex"
-	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
 	"log"
+
+	"github.com/twstrike/coyim/xmpp/data"
 
 	"github.com/twstrike/coyim/sasl"
 	"github.com/twstrike/coyim/sasl/digestmd5"
@@ -159,10 +160,10 @@ func (c *Conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 
 	name, val, _ := next(c)
 	switch v := val.(type) {
-	case *saslFailure:
+	case *data.SaslFailure:
 		err = errors.New("xmpp: authentication failure: " + v.String())
 		return
-	case *saslSuccess:
+	case *data.SaslSuccess:
 		encodedChallenge = v.Content
 		success = true
 	case *string:
@@ -182,7 +183,7 @@ func (c *Conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 func (c *Conn) bindResource() error {
 	// This is mandatory, so a missing features.Bind is a protocol failure
 	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
-	var iq ClientIQ
+	var iq data.ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
 		return errors.New("unmarshal <iq>: " + err.Error())
 	}
@@ -199,7 +200,7 @@ func (c *Conn) establishSession() error {
 
 	// The server needs a session to be established.
 	fmt.Fprintf(c.out, "<iq to='%s' type='set' id='sess_1'><session xmlns='%s'/></iq>", c.originDomain, NsSession)
-	var iq ClientIQ
+	var iq data.ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
 		return errors.New("xmpp: unmarshal <iq>: " + err.Error())
 	}
@@ -210,65 +211,3 @@ func (c *Conn) establishSession() error {
 
 	return nil
 }
-
-// RFC 3920  C.4  SASL name space
-//TODO RFC 6120 obsoletes RFC 3920
-type saslMechanisms struct {
-	XMLName   xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-sasl mechanisms"`
-	Mechanism []string `xml:"mechanism"`
-}
-
-type saslAuth struct {
-	XMLName   xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-sasl auth"`
-	Mechanism string   `xml:"mechanism,attr"`
-}
-
-type saslChallenge string
-
-type saslResponse string
-
-type saslAbort struct {
-	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-sasl abort"`
-}
-
-type saslSuccess struct {
-	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-sasl success"`
-	Content []byte   `xml:",innerxml"`
-}
-
-type saslFailure struct {
-	XMLName          xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-sasl failure"`
-	Text             string   `xml:"text,omitempty"`
-	DefinedCondition Any      `xml:",any"`
-}
-
-// Condition returns a SASL-related error condition
-func (f saslFailure) Condition() SASLErrorCondition {
-	return SASLErrorCondition(f.DefinedCondition.XMLName.Local)
-}
-
-func (f saslFailure) String() string {
-	if f.Text != "" {
-		return fmt.Sprintf("%s: %q", f.Condition(), f.Text)
-	}
-
-	return string(f.Condition())
-}
-
-// SASLErrorCondition represents a defined SASL-related error conditions as defined in RFC 6120, section 6.5
-type SASLErrorCondition string
-
-// SASL error conditions as defined in RFC 6120, section 6.5
-const (
-	SASLAborted              SASLErrorCondition = "aborted"
-	SASLAccountDisabled                         = "account-disabled"
-	SASLCredentialsExpired                      = "credentials-expired"
-	SASLEncryptionRequired                      = "encryption-required"
-	SASLIncorrectEncoding                       = "incorrect-encoding"
-	SASLInvalidAuthzid                          = "invalid-authzid"
-	SASLInvalidMechanism                        = "invalid-mechanism"
-	SASLMalformedRequest                        = "malformed-request"
-	SASLMechanismTooWeak                        = "mechanism-too-weak"
-	SASLNotAuthorized                           = "not-authorized"
-	SASLTemporaryAuthFailure                    = "temporary-auth-failure"
-)

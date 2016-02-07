@@ -5,6 +5,8 @@ import (
 	"encoding/xml"
 	"fmt"
 	"time"
+
+	"github.com/twstrike/coyim/xmpp/data"
 )
 
 const requestDelimiterXML = `
@@ -34,7 +36,7 @@ func (c *Conn) GetRosterDelimiter() (string, error) {
 
 	select {
 	case iqStanza := <-rep:
-		stanza, ok := iqStanza.Value.(*ClientIQ)
+		stanza, ok := iqStanza.Value.(*data.ClientIQ)
 		if ok {
 			var rst rosterQuery
 			if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&rst); err != nil || len(rst.delimiter.delimiter) == 0 {
@@ -49,7 +51,7 @@ func (c *Conn) GetRosterDelimiter() (string, error) {
 }
 
 // RequestRosterDelimiter will request the roster delimiter
-func (c *Conn) RequestRosterDelimiter() (<-chan Stanza, Cookie, error) {
+func (c *Conn) RequestRosterDelimiter() (<-chan data.Stanza, Cookie, error) {
 	cookie := c.getCookie()
 	if _, err := fmt.Fprintf(c.out, requestDelimiterXML, cookie); err != nil {
 		return nil, 0, err
@@ -58,7 +60,7 @@ func (c *Conn) RequestRosterDelimiter() (<-chan Stanza, Cookie, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
-	ch := make(chan Stanza, 1)
+	ch := make(chan data.Stanza, 1)
 	c.inflights[cookie] = inflight{ch, ""}
 	return ch, cookie, nil
 }

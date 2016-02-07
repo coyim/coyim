@@ -11,7 +11,6 @@ import (
 	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
-	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -70,20 +69,6 @@ func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
 
 	fmt.Fprintf(w, "  SSL/TLS version: %s\n", version)
 	fmt.Fprintf(w, "  Cipher suite: %s\n", cipherSuite)
-}
-
-// RFC 6120, section 5
-type tlsStartTLS struct {
-	XMLName  xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-tls starttls"`
-	Required xml.Name `xml:"required"`
-}
-
-type tlsProceed struct {
-	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-tls proceed"`
-}
-
-type tlsFailure struct {
-	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-tls failure"`
 }
 
 // RFC 6120, section 5.4

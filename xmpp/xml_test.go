@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	"reflect"
 
+	"github.com/twstrike/coyim/xmpp/data"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -51,7 +53,7 @@ func (s *XMLXmppSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
 }
 
 func (s *XMLXmppSuite) Test_ClientMesage_unmarshalsXMPPExtensions(c *C) {
-	data := `
+	datax := `
 	<message 
     xmlns='jabber:client'
 		xmlns:stream='http://etherx.jabber.org/streams'
@@ -68,17 +70,17 @@ func (s *XMLXmppSuite) Test_ClientMesage_unmarshalsXMPPExtensions(c *C) {
 	</message>
 	`
 
-	v := &ClientMessage{}
-	err := xml.Unmarshal([]byte(data), v)
+	v := &data.ClientMessage{}
+	err := xml.Unmarshal([]byte(datax), v)
 	c.Assert(err, Equals, nil)
 
 	c.Assert(v.ID, Equals, "coyim1234")
 	c.Assert(v.From, Equals, "bernardo@shakespeare.lit/pda")
 	c.Assert(v.To, Equals, "francisco@shakespeare.lit/elsinore")
 	c.Assert(v.Type, Equals, "chat")
-	c.Assert(v.Extensions, DeepEquals, Extensions{
-		&Extension{XMLName: xml.Name{Space: "http://jabber.org/protocol/chatstates", Local: "composing"}},
-		&Extension{
+	c.Assert(v.Extensions, DeepEquals, data.Extensions{
+		&data.Extension{XMLName: xml.Name{Space: "http://jabber.org/protocol/chatstates", Local: "composing"}},
+		&data.Extension{
 			XMLName: xml.Name{Space: "jabber:x:event", Local: "x"},
 			Body:    "\n\t    <offline/>\n\t\t\t<delivered/>\n\t\t\t<composing/>\n\t\t",
 		},

@@ -6,19 +6,29 @@
 // 6121.
 package xmpp
 
-type xep0115Less interface {
-	xep0115Less(interface{}) bool
-}
+import "github.com/twstrike/coyim/xmpp/data"
 
-type xep0115Sorter struct{ s []xep0115Less }
+type xep0115Sorter struct{ s []interface{} }
 
-func (s *xep0115Sorter) add(c xep0115Less)  { s.s = append(s.s, c) }
+func (s *xep0115Sorter) add(c interface{})  { s.s = append(s.s, c) }
 func (s *xep0115Sorter) Len() int           { return len(s.s) }
 func (s *xep0115Sorter) Swap(i, j int)      { s.s[i], s.s[j] = s.s[j], s.s[i] }
-func (s *xep0115Sorter) Less(i, j int) bool { return s.s[i].xep0115Less(s.s[j]) }
+func (s *xep0115Sorter) Less(i, j int) bool { return xep0115Less(s.s[i], s.s[j]) }
 
-func (a *DiscoveryIdentity) xep0115Less(other interface{}) bool {
-	b := other.(*DiscoveryIdentity)
+func xep0115Less(a interface{}, other interface{}) bool {
+	switch v := a.(type) {
+	case *data.DiscoveryIdentity:
+		return xep0115LessDI(v, other)
+	case *data.DiscoveryFeature:
+		return xep0115LessDF(v, other)
+	case *data.FormFieldX:
+		return xep0115LessFF(v, other)
+	}
+	return false
+}
+
+func xep0115LessDI(a *data.DiscoveryIdentity, other interface{}) bool {
+	b := other.(*data.DiscoveryIdentity)
 	if a.Category != b.Category {
 		return a.Category < b.Category
 	}
@@ -28,13 +38,13 @@ func (a *DiscoveryIdentity) xep0115Less(other interface{}) bool {
 	return a.Lang < b.Lang
 }
 
-func (a *DiscoveryFeature) xep0115Less(other interface{}) bool {
-	b := other.(*DiscoveryFeature)
+func xep0115LessDF(a *data.DiscoveryFeature, other interface{}) bool {
+	b := other.(*data.DiscoveryFeature)
 	return a.Var < b.Var
 }
 
-func (a *formField) xep0115Less(other interface{}) bool {
-	b := other.(*formField)
+func xep0115LessFF(a *data.FormFieldX, other interface{}) bool {
+	b := other.(*data.FormFieldX)
 	if a.Var == "FORM_TYPE" {
 		return true
 	} else if b.Var == "FORM_TYPE" {

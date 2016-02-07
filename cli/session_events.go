@@ -7,7 +7,7 @@ import (
 
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/utils"
 )
 
 func (c *cliUI) handleSessionEvent(ev events.Event) {
@@ -52,7 +52,7 @@ func (c *cliUI) handlePresenceEvent(ev events.Presence) {
 		return
 	}
 
-	from := xmpp.RemoveResourceFromJid(ev.From)
+	from := utils.RemoveResourceFromJid(ev.From)
 
 	var line []byte
 	line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)

@@ -6,19 +6,13 @@
 // 6121.
 package xmpp
 
-import "encoding/xml"
-
-// Stanza represents a message from the XMPP server.
-type Stanza struct {
-	Name  xml.Name
-	Value interface{}
-}
+import "github.com/twstrike/coyim/xmpp/data"
 
 // inflight contains the details of a pending request to which we are awaiting
 // a reply.
 type inflight struct {
 	// replyChan is the channel to which we'll send the reply.
-	replyChan chan<- Stanza
+	replyChan chan<- data.Stanza
 	// to is the address to which we sent the request.
 	to string
 }

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/data"
 )
 
 // Event represents a Session event
@@ -61,7 +61,7 @@ const (
 // Presence represents a presence event
 type Presence struct {
 	Session access.Session
-	*xmpp.ClientPresence
+	*data.ClientPresence
 	Gone bool
 }
 

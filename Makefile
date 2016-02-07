@@ -68,6 +68,8 @@ run-cover: clean-cover
 	go test -coverprofile=.coverprofiles/servers.coverprofile ./servers
 	go test -coverprofile=.coverprofiles/session.coverprofile ./session
 	go test -coverprofile=.coverprofiles/xmpp.coverprofile    ./xmpp
+	go test -coverprofile=.coverprofiles/xmpp_data.coverprofile    ./xmpp/data
+	go test -coverprofile=.coverprofiles/xmpp_utils.coverprofile    ./xmpp/utils
 	go test -coverprofile=.coverprofiles/ui.coverprofile      ./ui
 	go test -tags $(GTK_BUILD_TAG) -coverprofile=.coverprofiles/gui.coverprofile  ./gui
 	go test -tags $(GTK_BUILD_TAG) -coverprofile=.coverprofiles/main.coverprofile

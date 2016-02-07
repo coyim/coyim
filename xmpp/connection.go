@@ -18,6 +18,9 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/coyim/xmpp/utils"
 )
 
 // Conn represents a connection to an XMPP server.
@@ -31,7 +34,7 @@ type Conn struct {
 
 	jid          string
 	originDomain string
-	features     streamFeatures
+	features     data.StreamFeatures
 
 	Rand          io.Reader
 	lock          sync.Mutex
@@ -119,19 +122,19 @@ func (c *Conn) closeTCP() error {
 // Next reads stanzas from the server. If the stanza is a reply, it dispatches
 // it to the correct channel and reads the next message. Otherwise it returns
 // the stanza for processing.
-func (c *Conn) Next() (stanza Stanza, err error) {
+func (c *Conn) Next() (stanza data.Stanza, err error) {
 	for {
 		if stanza.Name, stanza.Value, err = next(c); err != nil {
 			return
 		}
 
-		if _, ok := stanza.Value.(*StreamClose); ok {
+		if _, ok := stanza.Value.(*data.StreamClose); ok {
 			log.Println("xmpp: received closing stream tag")
 			go c.closeImmediately()
 			return
 		}
 
-		if iq, ok := stanza.Value.(*ClientIQ); ok && (iq.Type == "result" || iq.Type == "error") {
+		if iq, ok := stanza.Value.(*data.ClientIQ); ok && (iq.Type == "result" || iq.Type == "error") {
 			var cookieValue uint64
 			if cookieValue, err = strconv.ParseUint(iq.ID, 16, 64); err != nil {
 				err = errors.New("xmpp: failed to parse id from iq: " + err.Error())
@@ -157,7 +160,7 @@ func (c *Conn) Next() (stanza Stanza, err error) {
 				// then the matching is more complex because
 				// servers differ in how they construct the
 				// reply.
-				if len(iq.From) > 0 && iq.From != c.jid && iq.From != RemoveResourceFromJid(c.jid) && iq.From != domainFromJid(c.jid) {
+				if len(iq.From) > 0 && iq.From != c.jid && iq.From != utils.RemoveResourceFromJid(c.jid) && iq.From != utils.DomainFromJid(c.jid) {
 					continue
 				}
 			}
@@ -205,7 +208,7 @@ func (c *Conn) Send(to, msg string) error {
 }
 
 // ReadStanzas reads XMPP stanzas
-func (c *Conn) ReadStanzas(stanzaChan chan<- Stanza) error {
+func (c *Conn) ReadStanzas(stanzaChan chan<- data.Stanza) error {
 	defer close(stanzaChan)
 	defer c.closeImmediately()
 
@@ -217,7 +220,7 @@ func (c *Conn) ReadStanzas(stanzaChan chan<- Stanza) error {
 		}
 
 		//The receiving entity has closed the channel
-		if _, quit := stanza.Value.(*StreamClose); quit {
+		if _, quit := stanza.Value.(*data.StreamClose); quit {
 			return nil
 		}
 

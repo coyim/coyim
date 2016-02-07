@@ -3,6 +3,8 @@ package xmpp
 import (
 	"encoding/xml"
 
+	"github.com/twstrike/coyim/xmpp/data"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -13,7 +15,7 @@ var _ = Suite(&RosterXmppSuite{})
 type testStanzaValue struct{}
 
 func (s *RosterXmppSuite) Test_ParseRoster_failsIfItDoesntReceiveAClientIQ(c *C) {
-	rep := Stanza{
+	rep := data.Stanza{
 		Name:  xml.Name{Local: "Foobarium"},
 		Value: testStanzaValue{},
 	}
@@ -23,9 +25,9 @@ func (s *RosterXmppSuite) Test_ParseRoster_failsIfItDoesntReceiveAClientIQ(c *C)
 }
 
 func (s *RosterXmppSuite) Test_ParseRoster_failsIfTheRosterContentIsIncorrect(c *C) {
-	rep := Stanza{
+	rep := data.Stanza{
 		Name: xml.Name{Local: "iq"},
-		Value: &ClientIQ{
+		Value: &data.ClientIQ{
 			Query: []byte("<foo></bar>"),
 		},
 	}

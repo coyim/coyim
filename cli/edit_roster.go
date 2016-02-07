@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/data"
 )
 
 // RosterEdit contains information about a pending roster edit. Roster edits
@@ -20,7 +20,7 @@ type RosterEdit struct {
 	FileName string
 	// Roster contains the state of the roster at the time of writing the
 	// file. It's what we diff against when reading the file.
-	Roster []xmpp.RosterEntry
+	Roster []data.RosterEntry
 	// isComplete is true if this is the result of reading an edited
 	// roster, rather than a report that the file has been written.
 	IsComplete bool
@@ -30,7 +30,7 @@ type RosterEdit struct {
 
 // RosterEditor represents an edit of a Roster in progress
 type RosterEditor struct {
-	Roster []xmpp.RosterEntry
+	Roster []data.RosterEntry
 
 	// pendingRosterEdit, if non-nil, contains information about a pending
 	// roster edit operation.
@@ -42,7 +42,7 @@ type RosterEditor struct {
 
 // EditRoster runs in a goroutine and writes the roster to a file that the user
 // can edit.
-func (s *RosterEditor) EditRoster(roster []xmpp.RosterEntry) error {
+func (s *RosterEditor) EditRoster(roster []data.RosterEntry) error {
 	// In case the editor rewrites the file, we work inside a temp
 	// directory.
 	dir, err := ioutil.TempDir("" /* system default temp dir */, "xmpp-client")
@@ -158,8 +158,8 @@ EachValue:
 	return true
 }
 
-func parseEditedRoster(editedRoster []byte) (map[string]xmpp.RosterEntry, error) {
-	parsedRoster := make(map[string]xmpp.RosterEntry)
+func parseEditedRoster(editedRoster []byte) (map[string]data.RosterEntry, error) {
+	parsedRoster := make(map[string]data.RosterEntry)
 	lines := bytes.Split(editedRoster, ui.NewLine)
 	tab := []byte{'\t'}
 
@@ -170,7 +170,7 @@ func parseEditedRoster(editedRoster []byte) (map[string]xmpp.RosterEntry, error)
 		}
 		parts := bytes.Split(line, tab)
 
-		var entry xmpp.RosterEntry
+		var entry data.RosterEntry
 		var err error
 
 		if entry.Jid, err = ui.UnescapeNonASCII(string(string(parts[0]))); err != nil {
@@ -214,7 +214,7 @@ func parseEditedRoster(editedRoster []byte) (map[string]xmpp.RosterEntry, error)
 	return parsedRoster, nil
 }
 
-func diffRoster(parsedRoster map[string]xmpp.RosterEntry, roster []xmpp.RosterEntry) (toDelete []string, toEdit, toAdd []xmpp.RosterEntry) {
+func diffRoster(parsedRoster map[string]data.RosterEntry, roster []data.RosterEntry) (toDelete []string, toEdit, toAdd []data.RosterEntry) {
 	for _, entry := range roster {
 		newEntry, ok := parsedRoster[entry.Jid]
 		if !ok {

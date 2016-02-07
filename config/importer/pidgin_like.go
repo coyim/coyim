@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/utils"
 	"github.com/twstrike/otr3"
 )
 
@@ -91,7 +91,7 @@ func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
 	res := make(map[string]*config.Account)
 	for _, ac := range a.Accounts {
 		if ac.Protocol == "prpl-jabber" {
-			nm := xmpp.RemoveResourceFromJid(ac.Name)
+			nm := utils.RemoveResourceFromJid(ac.Name)
 			a := &config.Account{}
 			a.Account = nm
 			a.Password = ac.Password
@@ -158,7 +158,7 @@ func importPeerPrefsPidginStyle(f string) (map[string]map[string]*pidginOTRSetti
 				}
 			}
 			if haveOTR {
-				getOrMake(res, xmpp.RemoveResourceFromJid(p.Account))[xmpp.RemoveResourceFromJid(p.Name)] = settings
+				getOrMake(res, utils.RemoveResourceFromJid(p.Account))[utils.RemoveResourceFromJid(p.Name)] = settings
 
 			}
 		}

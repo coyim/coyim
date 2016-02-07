@@ -3,7 +3,7 @@ package roster
 import (
 	"sort"
 
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/utils"
 )
 
 // List represent a list of peers. It takes care of both roster and presence information
@@ -25,7 +25,7 @@ func New() *List {
 
 // Get returns the peer if it's known and false otherwise
 func (l *List) Get(jid string) (*Peer, bool) {
-	v, ok := l.peers[xmpp.RemoveResourceFromJid(jid)]
+	v, ok := l.peers[utils.RemoveResourceFromJid(jid)]
 	return v, ok
 }
 
@@ -37,7 +37,7 @@ func (l *List) Clear() {
 // Remove returns the Peer with the jid from the List - it will first turn the jid into a bare jid.
 // It returns true if it could remove the entry and false otherwise. It also returns the removed entry.
 func (l *List) Remove(jid string) (*Peer, bool) {
-	j := xmpp.RemoveResourceFromJid(jid)
+	j := utils.RemoveResourceFromJid(jid)
 
 	if v, ok := l.peers[j]; ok {
 		delete(l.peers, j)

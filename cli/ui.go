@@ -19,7 +19,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/servers"
 	sessions "github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/data"
 
 	"github.com/twstrike/otr3"
 
@@ -260,7 +260,7 @@ func (c *cliUI) promptForForm(user, password, title, instructions string, fields
 
 	var tmpDir string
 
-	showMediaEntries := func(questionNumber int, medias [][]xmpp.Media) {
+	showMediaEntries := func(questionNumber int, medias [][]data.Media) {
 		if len(medias) == 0 {
 			return
 		}
@@ -328,12 +328,12 @@ func (c *cliUI) promptForForm(user, password, title, instructions string, fields
 		write("\n")
 
 		switch field := field.(type) {
-		case *xmpp.FixedFormField:
+		case *data.FixedFormField:
 			write(formStringForPrinting(field.Text))
 			write("\n")
 			questionNumber--
 
-		case *xmpp.BooleanFormField:
+		case *data.BooleanFormField:
 			write(fmt.Sprintf("%d. %s\n\n", questionNumber, formStringForPrinting(field.Label)))
 			showMediaEntries(questionNumber, field.Media)
 			c.term.SetPrompt("Please enter yes, y, no or n: ")
@@ -355,7 +355,7 @@ func (c *cliUI) promptForForm(user, password, title, instructions string, fields
 				break
 			}
 
-		case *xmpp.TextFormField:
+		case *data.TextFormField:
 			switch field.Label {
 			case "CAPTCHA web page":
 				if strings.HasPrefix(field.Default, "http") {
@@ -403,7 +403,7 @@ func (c *cliUI) promptForForm(user, password, title, instructions string, fields
 				field.Result = field.Default
 			}
 
-		case *xmpp.MultiTextFormField:
+		case *data.MultiTextFormField:
 			write(fmt.Sprintf("%d. %s\n\n", questionNumber, formStringForPrinting(field.Label)))
 			showMediaEntries(questionNumber, field.Media)
 
@@ -421,7 +421,7 @@ func (c *cliUI) promptForForm(user, password, title, instructions string, fields
 				field.Results = append(field.Results, line)
 			}
 
-		case *xmpp.SelectionFormField:
+		case *data.SelectionFormField:
 			write(fmt.Sprintf("%d. %s\n\n", questionNumber, formStringForPrinting(field.Label)))
 			showMediaEntries(questionNumber, field.Media)
 
@@ -447,7 +447,7 @@ func (c *cliUI) promptForForm(user, password, title, instructions string, fields
 				break
 			}
 
-		case *xmpp.MultiSelectionFormField:
+		case *data.MultiSelectionFormField:
 			write(fmt.Sprintf("%d. %s\n\n", questionNumber, formStringForPrinting(field.Label)))
 			showMediaEntries(questionNumber, field.Media)
 
@@ -514,8 +514,8 @@ func (c *cliUI) watchRosterEdits() {
 		//DELETE
 		for _, jid := range toDelete {
 			c.info("Deleting roster entry for " + jid)
-			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
-				Item: xmpp.RosterRequestItem{
+			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", data.RosterRequest{
+				Item: data.RosterRequestItem{
 					Jid:          jid,
 					Subscription: "remove",
 				},
@@ -532,8 +532,8 @@ func (c *cliUI) watchRosterEdits() {
 		//EDIT
 		for _, entry := range toEdit {
 			c.info("Updating roster entry for " + entry.Jid)
-			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
-				Item: xmpp.RosterRequestItem{
+			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", data.RosterRequest{
+				Item: data.RosterRequestItem{
 					Jid:   entry.Jid,
 					Name:  entry.Name,
 					Group: entry.Group,
@@ -548,8 +548,8 @@ func (c *cliUI) watchRosterEdits() {
 		//ADD
 		for _, entry := range toAdd {
 			c.info("Adding roster entry for " + entry.Jid)
-			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", xmpp.RosterRequest{
-				Item: xmpp.RosterRequestItem{
+			_, _, err := c.session.Conn().SendIQ("" /* to the server */, "set", data.RosterRequest{
+				Item: data.RosterRequestItem{
 					Jid:   entry.Jid,
 					Name:  entry.Name,
 					Group: entry.Group,
@@ -590,7 +590,7 @@ CommandLoop:
 			case quitCommand:
 				break CommandLoop
 			case versionCommand:
-				replyChan, cookie, err := s.Conn().SendIQ(cmd.User, "get", xmpp.VersionQuery{})
+				replyChan, cookie, err := s.Conn().SendIQ(cmd.User, "get", data.VersionQuery{})
 				if err != nil {
 
 					c.alert("Error sending version request: " + err.Error())
@@ -639,14 +639,14 @@ CommandLoop:
 
 				currR := s.R().ToSlice()
 
-				c.RosterEditor.Roster = make([]xmpp.RosterEntry, len(currR))
-				rosterCopy := make([]xmpp.RosterEntry, len(currR))
+				c.RosterEditor.Roster = make([]data.RosterEntry, len(currR))
+				rosterCopy := make([]data.RosterEntry, len(currR))
 				for ix, e := range currR {
 					c.RosterEditor.Roster[ix] = e.ToEntry()
 					rosterCopy[ix] = e.ToEntry()
 				}
 
-				go func(rosterCopy []xmpp.RosterEntry) {
+				go func(rosterCopy []data.RosterEntry) {
 					err := c.EditRoster(rosterCopy)
 					if err != nil {
 						c.alert(err.Error())

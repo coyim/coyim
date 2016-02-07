@@ -12,6 +12,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+
+	"github.com/twstrike/coyim/xmpp/data"
 )
 
 // Various errors signalled by the registration component
@@ -20,19 +22,6 @@ var (
 	ErrMissingRequiredRegistrationInfo = errors.New("xmpp: missing required registration information")
 	ErrRegistrationFailed              = errors.New("xmpp: account creation failed")
 )
-
-type inBandRegistration struct {
-	XMLName xml.Name `xml:"http://jabber.org/features/iq-register register,omitempty"`
-}
-
-// RegisterQuery contains register query information for creating a new account
-type RegisterQuery struct {
-	XMLName  xml.Name  `xml:"jabber:iq:register query"`
-	Username *xml.Name `xml:"username"`
-	Password *xml.Name `xml:"password"`
-	Form     Form      `xml:"x"`
-	Datas    []bobData `xml:"data"`
-}
 
 // XEP-0077
 func (d *Dialer) negotiateInBandRegistration(c *Conn) (bool, error) {
@@ -61,7 +50,7 @@ func (c *Conn) registerAccount(user, password string) (bool, error) {
 func (c *Conn) createAccount(user, password string) error {
 	io.WriteString(c.config.getLog(), "Attempting to create account\n")
 	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
-	var iq ClientIQ
+	var iq data.ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
 		return errors.New("unmarshal <iq>: " + err.Error())
 	}
@@ -69,7 +58,7 @@ func (c *Conn) createAccount(user, password string) error {
 	if iq.Type != "result" {
 		return errors.New("xmpp: account creation failed")
 	}
-	var register RegisterQuery
+	var register data.RegisterQuery
 	if err := xml.NewDecoder(bytes.NewBuffer(iq.Query)).Decode(&register); err != nil {
 		return err
 	}
@@ -91,7 +80,7 @@ func (c *Conn) createAccount(user, password string) error {
 		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>", user, password)
 	}
 
-	iq2 := &ClientIQ{}
+	iq2 := &data.ClientIQ{}
 	if err := c.in.DecodeElement(iq2, nil); err != nil {
 		return errors.New("unmarshal <iq>: " + err.Error())
 	}
@@ -113,7 +102,7 @@ func (c *Conn) createAccount(user, password string) error {
 }
 
 // CancelRegistration cancels the account registration with the server
-func (c *Conn) CancelRegistration() (reply chan Stanza, cookie Cookie, err error) {
+func (c *Conn) CancelRegistration() (reply chan data.Stanza, cookie Cookie, err error) {
 	// https://xmpp.org/extensions/xep-0077.html#usecases-cancel
 	registrationCancel := rawXML(`
 	<query xmlns='jabber:iq:register'>

@@ -8,26 +8,22 @@
 package xmpp
 
 import (
-	"encoding/xml"
 	"errors"
 	"log"
 	"time"
+
+	"github.com/twstrike/coyim/xmpp/data"
 )
 
-// PingRequest represents a Ping IQ as defined by XEP-0199
-type PingRequest struct {
-	XMLName xml.Name `xml:"urn:xmpp:ping ping"`
-}
-
 // SendPing sends a Ping request.
-func (c *Conn) SendPing() (reply chan Stanza, cookie Cookie, err error) {
+func (c *Conn) SendPing() (reply chan data.Stanza, cookie Cookie, err error) {
 	c.lastPingRequest = time.Now() //TODO: this seems should not belong to Conn
-	return c.SendIQ("", "get", PingRequest{})
+	return c.SendIQ("", "get", data.PingRequest{})
 }
 
 // SendPingReply sends a reply to a Ping request.
 func (c *Conn) SendPingReply(id string) error {
-	return c.SendIQReply("", "result", id, EmptyReply{})
+	return c.SendIQReply("", "result", id, data.EmptyReply{})
 }
 
 // ReceivePong update the timestamp for lastPongResponse,
@@ -36,8 +32,8 @@ func (c *Conn) ReceivePong() {
 }
 
 // ParsePong parse a reply of a Pong response.
-func ParsePong(reply Stanza) error {
-	iq, ok := reply.Value.(*ClientIQ)
+func ParsePong(reply data.Stanza) error {
+	iq, ok := reply.Value.(*data.ClientIQ)
 	if !ok {
 		return errors.New("xmpp: ping request resulted in tag of type " + reply.Name.Local)
 	}
@@ -62,7 +58,7 @@ func (c *Conn) watchPings() {
 	defer tick.Stop()
 	failures := 0
 
-	for range tick.C {
+	for _ = range tick.C {
 		if c.closed {
 			return
 		}
@@ -83,7 +79,7 @@ func (c *Conn) watchPings() {
 			}
 
 			failures = 0
-			iq, ok := pongStanza.Value.(*ClientIQ)
+			iq, ok := pongStanza.Value.(*data.ClientIQ)
 			if !ok {
 				//not the expected IQ
 				return
@@ -101,8 +97,8 @@ func (c *Conn) watchPings() {
 		}
 
 		log.Println("xmpp: ping failures reached treshold of", maxPingFailures)
-		go c.sendStreamError(StreamError{
-			DefinedCondition: ConnectionTimeout,
+		go c.sendStreamError(data.StreamError{
+			DefinedCondition: data.ConnectionTimeout,
 		})
 
 		return

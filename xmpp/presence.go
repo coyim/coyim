@@ -7,7 +7,6 @@
 package xmpp
 
 import (
-	"encoding/xml"
 	"fmt"
 	"strconv"
 )
@@ -26,21 +25,4 @@ func (c *Conn) SendPresence(to, typ, id string) error {
 func (c *Conn) SignalPresence(state string) error {
 	_, err := fmt.Fprintf(c.out, "<presence><show>%s</show></presence>", xmlEscape(state))
 	return err
-}
-
-// ClientPresence contains XMPP information about a presence update
-type ClientPresence struct {
-	XMLName xml.Name `xml:"jabber:client presence"`
-	From    string   `xml:"from,attr,omitempty"`
-	ID      string   `xml:"id,attr,omitempty"`
-	To      string   `xml:"to,attr,omitempty"`
-	Type    string   `xml:"type,attr,omitempty"` // error, probe, subscribe, subscribed, unavailable, unsubscribe, unsubscribed
-	Lang    string   `xml:"lang,attr,omitempty"`
-
-	Show     string       `xml:"show,omitempty"`   // away, chat, dnd, xa
-	Status   string       `xml:"status,omitempty"` // sb []clientText
-	Priority string       `xml:"priority,omitempty"`
-	Caps     *ClientCaps  `xml:"c"`
-	Error    *ClientError `xml:"error"`
-	Delay    Delay        `xml:"delay"`
 }

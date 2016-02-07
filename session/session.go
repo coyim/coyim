@@ -19,6 +19,8 @@ import (
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/coyim/xmpp/utils"
 	"github.com/twstrike/otr3"
 )
 
@@ -170,12 +172,12 @@ func (s *session) alert(m string) {
 	})
 }
 
-func (s *session) receivedStreamError(stanza *xmpp.StreamError) bool {
+func (s *session) receivedStreamError(stanza *data.StreamError) bool {
 	s.alert("Exiting in response to fatal error from server: " + stanza.String())
 	return false
 }
 
-func (s *session) receivedClientMessage(stanza *xmpp.ClientMessage) bool {
+func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	s.processClientMessage(stanza)
 	return true
 }
@@ -187,13 +189,13 @@ func either(l, r string) string {
 	return l
 }
 
-func (s *session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
+func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
 		s.r.SubscribeRequest(stanza.From, either(stanza.ID, "0000"), s.GetConfig().ID())
 		s.publishPeerEvent(
 			events.SubscriptionRequest,
-			xmpp.RemoveResourceFromJid(stanza.From),
+			utils.RemoveResourceFromJid(stanza.From),
 		)
 	case "unavailable":
 		if !s.r.PeerBecameUnavailable(stanza.From) {
@@ -219,13 +221,13 @@ func (s *session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 		s.r.Subscribed(stanza.From)
 		s.publishPeerEvent(
 			events.Subscribed,
-			xmpp.RemoveResourceFromJid(stanza.From),
+			utils.RemoveResourceFromJid(stanza.From),
 		)
 	case "unsubscribe":
 		s.r.Unsubscribed(stanza.From)
 		s.publishPeerEvent(
 			events.Unsubscribe,
-			xmpp.RemoveResourceFromJid(stanza.From),
+			utils.RemoveResourceFromJid(stanza.From),
 		)
 	case "unsubscribed":
 		// Ignore
@@ -238,7 +240,7 @@ func (s *session) receivedClientPresence(stanza *xmpp.ClientPresence) bool {
 	return true
 }
 
-func (s *session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
+func (s *session) receivedClientIQ(stanza *data.ClientIQ) bool {
 	if stanza.Type == "get" || stanza.Type == "set" {
 		reply, ignore := s.processIQ(stanza)
 		if ignore {
@@ -246,9 +248,9 @@ func (s *session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
 		}
 
 		if reply == nil {
-			reply = xmpp.ErrorReply{
+			reply = data.ErrorReply{
 				Type:  "cancel",
-				Error: xmpp.ErrorBadRequest{},
+				Error: data.ErrorBadRequest{},
 			}
 		}
 
@@ -261,7 +263,7 @@ func (s *session) receivedClientIQ(stanza *xmpp.ClientIQ) bool {
 	return true
 }
 
-func (s *session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
+func (s *session) receiveStanza(stanzaChan chan data.Stanza) bool {
 	select {
 	case rawStanza, ok := <-stanzaChan:
 		if !ok {
@@ -269,13 +271,13 @@ func (s *session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 		}
 
 		switch stanza := rawStanza.Value.(type) {
-		case *xmpp.StreamError:
+		case *data.StreamError:
 			return s.receivedStreamError(stanza)
-		case *xmpp.ClientMessage:
+		case *data.ClientMessage:
 			return s.receivedClientMessage(stanza)
-		case *xmpp.ClientPresence:
+		case *data.ClientPresence:
 			return s.receivedClientPresence(stanza)
-		case *xmpp.ClientIQ:
+		case *data.ClientIQ:
 			return s.receivedClientIQ(stanza)
 		default:
 			s.info(fmt.Sprintf("RECEIVED %s %s", rawStanza.Name, rawStanza.Value))
@@ -288,13 +290,13 @@ func (s *session) receiveStanza(stanzaChan chan xmpp.Stanza) bool {
 func (s *session) watchStanzas() {
 	defer s.connectionLost()
 
-	stanzaChan := make(chan xmpp.Stanza)
+	stanzaChan := make(chan data.Stanza)
 	go s.readStanzasAndAlertOnErrors(stanzaChan)
 	for s.receiveStanza(stanzaChan) {
 	}
 }
 
-func (s *session) readStanzasAndAlertOnErrors(stanzaChan chan xmpp.Stanza) {
+func (s *session) readStanzasAndAlertOnErrors(stanzaChan chan data.Stanza) {
 	if err := s.conn.ReadStanzas(stanzaChan); err != nil {
 		s.alert(fmt.Sprintf("error reading XMPP message: %s", err.Error()))
 	}
@@ -308,9 +310,9 @@ func (s *session) iqReceived(uid string) {
 	s.publishPeerEvent(events.IQReceived, uid)
 }
 
-func (s *session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
-	return xmpp.DiscoveryReply{
-		Identities: []xmpp.DiscoveryIdentity{
+func (s *session) receivedIQDiscoInfo() data.DiscoveryReply {
+	return data.DiscoveryReply{
+		Identities: []data.DiscoveryIdentity{
 			{
 				Category: "client",
 				Type:     "pc",
@@ -320,15 +322,15 @@ func (s *session) receivedIQDiscoInfo() xmpp.DiscoveryReply {
 	}
 }
 
-func (s *session) receivedIQVersion() xmpp.VersionReply {
-	return xmpp.VersionReply{
+func (s *session) receivedIQVersion() data.VersionReply {
+	return data.VersionReply{
 		Name:    "testing",
 		Version: "version",
 		OS:      "none",
 	}
 }
 
-func peerFrom(entry xmpp.RosterEntry, c *config.Account) *roster.Peer {
+func peerFrom(entry data.RosterEntry, c *config.Account) *roster.Peer {
 	belongsTo := c.ID()
 	var nickname string
 	p, ok := c.GetPeer(entry.Jid)
@@ -338,19 +340,19 @@ func peerFrom(entry xmpp.RosterEntry, c *config.Account) *roster.Peer {
 	return roster.PeerFrom(entry, belongsTo, nickname)
 }
 
-func (s *session) addOrMergeNewPeer(entry xmpp.RosterEntry, c *config.Account) bool {
+func (s *session) addOrMergeNewPeer(entry data.RosterEntry, c *config.Account) bool {
 
 	return s.r.AddOrMerge(peerFrom(entry, c))
 }
 
-func (s *session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
+func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{}, ignore bool) {
 	// TODO: we should deal with "ask" attributes here
 
 	if len(stanza.From) > 0 && !s.GetConfig().Is(stanza.From) {
 		s.warn("Ignoring roster IQ from bad address: " + stanza.From)
 		return nil, true
 	}
-	var rst xmpp.Roster
+	var rst data.Roster
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&rst); err != nil || len(rst.Item) == 0 {
 		s.warn("Failed to parse roster push IQ")
 		return nil, false
@@ -364,10 +366,10 @@ func (s *session) receivedIQRosterQuery(stanza *xmpp.ClientIQ) (ret interface{},
 		}
 	}
 
-	return xmpp.EmptyReply{}, false
+	return data.EmptyReply{}, false
 }
 
-func (s *session) processIQ(stanza *xmpp.ClientIQ) (ret interface{}, ignore bool) {
+func (s *session) processIQ(stanza *data.ClientIQ) (ret interface{}, ignore bool) {
 	buf := bytes.NewBuffer(stanza.Query)
 	parser := xml.NewDecoder(buf)
 	token, _ := parser.Token()
@@ -484,10 +486,10 @@ func (s *session) NewConversation(peer string) *otr3.Conversation {
 	return conversation
 }
 
-func (s *session) processClientMessage(stanza *xmpp.ClientMessage) {
+func (s *session) processClientMessage(stanza *data.ClientMessage) {
 	log.Printf("-> Stanza %#v\n", stanza)
 
-	from := xmpp.RemoveResourceFromJid(stanza.From)
+	from := utils.RemoveResourceFromJid(stanza.From)
 
 	//TODO: investigate which errors are recoverable
 	//https://xmpp.org/rfcs/rfc3920.html#stanzas-error
@@ -637,13 +639,13 @@ func isAwayStatus(status string) bool {
 }
 
 // AwaitVersionReply listens on the channel and waits for the version reply
-func (s *session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
+func (s *session) AwaitVersionReply(ch <-chan data.Stanza, user string) {
 	stanza, ok := <-ch
 	if !ok {
 		s.warn("Version request to " + user + " timed out")
 		return
 	}
-	reply, ok := stanza.Value.(*xmpp.ClientIQ)
+	reply, ok := stanza.Value.(*data.ClientIQ)
 	if !ok {
 		s.warn("Version request to " + user + " resulted in bad reply type")
 		return
@@ -658,7 +660,7 @@ func (s *session) AwaitVersionReply(ch <-chan xmpp.Stanza, user string) {
 	}
 
 	buf := bytes.NewBuffer(reply.Query)
-	var versionReply xmpp.VersionReply
+	var versionReply data.VersionReply
 	if err := xml.NewDecoder(buf).Decode(&versionReply); err != nil {
 		s.warn("Failed to parse version reply from " + user + ": " + err.Error())
 		return

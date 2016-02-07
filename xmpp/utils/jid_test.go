@@ -1,6 +1,18 @@
-package xmpp
+package utils
 
-import . "gopkg.in/check.v1"
+import (
+	"io/ioutil"
+	"log"
+	"testing"
+
+	. "gopkg.in/check.v1"
+)
+
+func Test(t *testing.T) { TestingT(t) }
+
+func init() {
+	log.SetOutput(ioutil.Discard)
+}
 
 type JidXmppSuite struct{}
 
@@ -19,8 +31,8 @@ func (s *JidXmppSuite) Test_RemoveResourceFromJid_returnsTheWholeStringIfNoSlash
 	c.Assert(RemoveResourceFromJid(""), Equals, "")
 }
 
-func (s *JidXmppSuite) Test_domainFromJid_returnsTheDomain(c *C) {
-	c.Assert(domainFromJid("foo@bar/blarg"), Equals, "bar")
-	c.Assert(domainFromJid("foo@bar2"), Equals, "bar2")
-	c.Assert(domainFromJid("foobar2/blarg"), Equals, "foobar2")
+func (s *JidXmppSuite) Test_DomainFromJid_returnsTheDomain(c *C) {
+	c.Assert(DomainFromJid("foo@bar/blarg"), Equals, "bar")
+	c.Assert(DomainFromJid("foo@bar2"), Equals, "bar2")
+	c.Assert(DomainFromJid("foobar2/blarg"), Equals, "foobar2")
 }

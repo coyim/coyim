@@ -1,4 +1,4 @@
-package xmpp
+package utils
 
 import "strings"
 
@@ -11,8 +11,8 @@ func RemoveResourceFromJid(jid string) string {
 	return jid
 }
 
-// domainFromJid returns the domain of a full or bare JID.
-func domainFromJid(jid string) string {
+// DomainFromJid returns the domain of a full or bare JID.
+func DomainFromJid(jid string) string {
 	jid = RemoveResourceFromJid(jid)
 	at := strings.Index(jid, "@")
 	if at != -1 {

@@ -12,6 +12,7 @@ import (
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/data"
 
 	. "gopkg.in/check.v1"
 )
@@ -286,7 +287,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 				continue
 			}
 
-			c.Assert(t.Message, Equals, "unrecognized iq: &xmpp.ClientIQ{XMLName:xml.Name{Space:\"jabber:client\", Local:\"iq\"}, From:\"\", ID:\"\", To:\"\", Type:\"something\", Error:xmpp.ClientError{XMLName:xml.Name{Space:\"\", Local:\"\"}, Code:\"\", Type:\"\", Any:xml.Name{Space:\"\", Local:\"\"}, Text:\"\"}, Bind:xmpp.bindBind{XMLName:xml.Name{Space:\"\", Local:\"\"}, Resource:\"\", Jid:\"\"}, Query:[]uint8{}}")
+			c.Assert(t.Message, Equals, "unrecognized iq: &data.ClientIQ{XMLName:xml.Name{Space:\"jabber:client\", Local:\"iq\"}, From:\"\", ID:\"\", To:\"\", Type:\"something\", Error:data.ClientError{XMLName:xml.Name{Space:\"\", Local:\"\"}, Code:\"\", Type:\"\", Any:xml.Name{Space:\"\", Local:\"\"}, Text:\"\"}, Bind:data.BindBind{XMLName:xml.Name{Space:\"\", Local:\"\"}, Resource:\"\", Jid:\"\"}, Query:[]uint8{}}")
 			return
 
 		case <-time.After(1 * time.Millisecond):
@@ -313,7 +314,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	}
 	sess.conn = conn
 
-	stanzaChan := make(chan xmpp.Stanza, 1)
+	stanzaChan := make(chan data.Stanza, 1)
 	stanza, _ := conn.Next()
 	stanzaChan <- stanza
 
@@ -345,7 +346,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	}
 	sess.conn = conn
 
-	stanzaChan := make(chan xmpp.Stanza, 1)
+	stanzaChan := make(chan data.Stanza, 1)
 	stanza, _ := conn.Next()
 	stanzaChan <- stanza
 
@@ -421,7 +422,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	stanzaChan := make(chan xmpp.Stanza, 1)
+	stanzaChan := make(chan data.Stanza, 1)
 	stanza, _ := conn.Next()
 	stanzaChan <- stanza
 
@@ -488,7 +489,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 	sess.watchStanzas()
 
 	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
-		peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig())})
+		peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig())})
 }
 
 func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterItem(c *C) {
@@ -515,15 +516,15 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 	}
 	sess.conn = conn
 
-	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
-	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
 
 	sess.watchStanzas()
 
 	c.Assert(called, Equals, 0)
 	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
-		peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()),
-		peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig()),
+		peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()),
+		peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig()),
 	})
 }
 
@@ -549,9 +550,9 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 	}
 	sess.conn = conn
 
-	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
-	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
-	sess.r.AddOrReplace(peerFrom(xmpp.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
+	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -559,7 +560,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 	sess.watchStanzas()
 
 	c.Assert(sess.r.ToSlice(), DeepEquals, []*roster.Peer{
-		peerFrom(xmpp.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()),
+		peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()),
 	})
 
 	select {

@@ -9,6 +9,7 @@ import (
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/data"
 
 	"github.com/twstrike/otr3"
 )
@@ -27,7 +28,7 @@ type Connector interface {
 // Session is an interface that defines the functionality of a Session
 type Session interface {
 	ApprovePresenceSubscription(string, string) error
-	AwaitVersionReply(<-chan xmpp.Stanza, string)
+	AwaitVersionReply(<-chan data.Stanza, string)
 	Close()
 	CommandManager() client.CommandManager
 	Config() *config.ApplicationConfig

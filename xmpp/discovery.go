@@ -9,39 +9,16 @@ package xmpp
 import (
 	"crypto/sha1"
 	"encoding/base64"
-	"encoding/xml"
 	"errors"
 	"io"
 	"sort"
+
+	"github.com/twstrike/coyim/xmpp/data"
 )
-
-// DiscoveryReply contains the deserialized information about a discovery reply
-type DiscoveryReply struct {
-	XMLName    xml.Name            `xml:"http://jabber.org/protocol/disco#info query"`
-	Node       string              `xml:"node"`
-	Identities []DiscoveryIdentity `xml:"identity"`
-	Features   []DiscoveryFeature  `xml:"feature"`
-	Forms      []Form              `xml:"jabber:x:data x"`
-}
-
-// DiscoveryIdentity contains identity information for a specific discovery
-type DiscoveryIdentity struct {
-	XMLName  xml.Name `xml:"http://jabber.org/protocol/disco#info identity"`
-	Lang     string   `xml:"lang,attr,omitempty"`
-	Category string   `xml:"category,attr"`
-	Type     string   `xml:"type,attr"`
-	Name     string   `xml:"name,attr"`
-}
-
-// DiscoveryFeature contains information about a specific discovery feature
-type DiscoveryFeature struct {
-	XMLName xml.Name `xml:"http://jabber.org/protocol/disco#info feature"`
-	Var     string   `xml:"var,attr"`
-}
 
 // VerificationString returns a SHA-1 verification string as defined in XEP-0115.
 // See http://xmpp.org/extensions/xep-0115.html#ver
-func (r *DiscoveryReply) VerificationString() (string, error) {
+func VerificationString(r *data.DiscoveryReply) (string, error) {
 	h := sha1.New()
 
 	seen := make(map[string]bool)
@@ -51,7 +28,7 @@ func (r *DiscoveryReply) VerificationString() (string, error) {
 	}
 	sort.Sort(identitySorter)
 	for _, id := range identitySorter.s {
-		id := id.(*DiscoveryIdentity)
+		id := id.(*data.DiscoveryIdentity)
 		c := id.Category + "/" + id.Type + "/" + id.Lang + "/" + id.Name + "<"
 		if seen[c] {
 			return "", errors.New("duplicate discovery identity")
@@ -67,7 +44,7 @@ func (r *DiscoveryReply) VerificationString() (string, error) {
 	}
 	sort.Sort(featureSorter)
 	for _, f := range featureSorter.s {
-		f := f.(*DiscoveryFeature)
+		f := f.(*data.DiscoveryFeature)
 		if seen[f.Var] {
 			return "", errors.New("duplicate discovery feature")
 		}
@@ -85,7 +62,7 @@ func (r *DiscoveryReply) VerificationString() (string, error) {
 			fieldSorter.add(&f.Fields[i])
 		}
 		sort.Sort(fieldSorter)
-		formTypeField := fieldSorter.s[0].(*formField)
+		formTypeField := fieldSorter.s[0].(*data.FormFieldX)
 		if formTypeField.Var != "FORM_TYPE" {
 			continue
 		}
@@ -101,7 +78,7 @@ func (r *DiscoveryReply) VerificationString() (string, error) {
 		}
 		io.WriteString(h, formTypeField.Values[0]+"<")
 		for _, field := range fieldSorter.s[1:] {
-			field := field.(*formField)
+			field := field.(*data.FormFieldX)
 			io.WriteString(h, field.Var+"<")
 			values := append([]string{}, field.Values...)
 			sort.Strings(values)

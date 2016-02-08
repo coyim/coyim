@@ -15,6 +15,8 @@ import (
 	"fmt"
 	"io"
 	"net"
+
+	"github.com/twstrike/coyim/xmpp/interfaces"
 )
 
 var tlsVersionStrings = map[uint16]string{
@@ -72,16 +74,16 @@ func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
 }
 
 // RFC 6120, section 5.4
-func (d *Dialer) negotiateSTARTTLS(c *Conn, conn net.Conn) error {
+func (d *Dialer) negotiateSTARTTLS(c interfaces.Conn, conn net.Conn) error {
 	// RFC 6120, section 5.3
-	mandatoryToNegotiate := c.features.StartTLS.Required.Local == "required"
-	if c.config.SkipTLS && !mandatoryToNegotiate {
+	mandatoryToNegotiate := c.Features().StartTLS.Required.Local == "required"
+	if c.Config().SkipTLS && !mandatoryToNegotiate {
 		return nil
 	}
 
 	// Section 5.2 states:
 	// "Support for STARTTLS is REQUIRED in XMPP client and server implementations"
-	if c.features.StartTLS.XMLName.Local == "" {
+	if c.Features().StartTLS.XMLName.Local == "" {
 		return errors.New("xmpp: server doesn't support TLS")
 	}
 
@@ -89,15 +91,15 @@ func (d *Dialer) negotiateSTARTTLS(c *Conn, conn net.Conn) error {
 		return err
 	}
 
-	return c.sendInitialStreamHeader()
+	return c.SendInitialStreamHeader()
 }
 
-func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
+func (d *Dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 	address := d.GetServer()
 
-	fmt.Fprintf(c.out, "<starttls xmlns='%s'/>", NsTLS)
+	fmt.Fprintf(c.Out(), "<starttls xmlns='%s'/>", NsTLS)
 
-	proceed, err := nextStart(c.in)
+	proceed, err := nextStart(c.In())
 	if err != nil {
 		return err
 	}
@@ -106,14 +108,14 @@ func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
 		return errors.New("xmpp: expected <proceed> after <starttls> but got <" + proceed.Name.Local + "> in " + proceed.Name.Space)
 	}
 
-	l := c.config.getLog()
+	l := c.Config().GetLog()
 	io.WriteString(l, "Starting TLS handshake\n")
 
 	var tlsConfig tls.Config
-	if c.config.TLSConfig != nil {
-		tlsConfig = *c.config.TLSConfig
+	if c.Config().TLSConfig != nil {
+		tlsConfig = *c.Config().TLSConfig
 	}
-	tlsConfig.ServerName = c.originDomain
+	tlsConfig.ServerName = c.OriginDomain()
 	tlsConfig.InsecureSkipVerify = true
 
 	tlsConn := tls.Client(conn, &tlsConfig)
@@ -124,13 +126,13 @@ func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
 	tlsState := tlsConn.ConnectionState()
 	printTLSDetails(l, tlsState)
 
-	haveCertHash := len(c.config.ServerCertificateSHA256) != 0
+	haveCertHash := len(c.Config().ServerCertificateSHA256) != 0
 	if haveCertHash {
 		h := sha256.New()
 		h.Write(tlsState.PeerCertificates[0].Raw)
-		if digest := h.Sum(nil); !bytes.Equal(digest, c.config.ServerCertificateSHA256) {
+		if digest := h.Sum(nil); !bytes.Equal(digest, c.Config().ServerCertificateSHA256) {
 			return fmt.Errorf("xmpp: server certificate does not match expected hash (got: %x, want: %x)",
-				digest, c.config.ServerCertificateSHA256)
+				digest, c.Config().ServerCertificateSHA256)
 		}
 	} else {
 		if len(tlsState.PeerCertificates) == 0 {
@@ -154,8 +156,8 @@ func (d *Dialer) startTLS(c *Conn, conn net.Conn) error {
 		}
 		leafCert := verifiedChains[0][0]
 
-		if err := leafCert.VerifyHostname(c.originDomain); err != nil {
-			if c.config.TrustedAddress {
+		if err := leafCert.VerifyHostname(c.OriginDomain()); err != nil {
+			if c.Config().TrustedAddress {
 				fmt.Fprintf(l, "Certificate fails to verify against domain in username: %s\n", err)
 				host, _, err := net.SplitHostPort(address)
 				if err != nil {

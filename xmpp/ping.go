@@ -16,18 +16,18 @@ import (
 )
 
 // SendPing sends a Ping request.
-func (c *Conn) SendPing() (reply chan data.Stanza, cookie Cookie, err error) {
+func (c *conn) SendPing() (reply chan data.Stanza, cookie data.Cookie, err error) {
 	c.lastPingRequest = time.Now() //TODO: this seems should not belong to Conn
 	return c.SendIQ("", "get", data.PingRequest{})
 }
 
 // SendPingReply sends a reply to a Ping request.
-func (c *Conn) SendPingReply(id string) error {
+func (c *conn) SendPingReply(id string) error {
 	return c.SendIQReply("", "result", id, data.EmptyReply{})
 }
 
 // ReceivePong update the timestamp for lastPongResponse,
-func (c *Conn) ReceivePong() {
+func (c *conn) ReceivePong() {
 	c.lastPongResponse = time.Now() //TODO: this seems should not belong to Conn
 }
 
@@ -53,7 +53,7 @@ var (
 	maxPingFailures = 2
 )
 
-func (c *Conn) watchPings() {
+func (c *conn) watchPings() {
 	tick := time.NewTicker(pingIterval)
 	defer tick.Stop()
 	failures := 0

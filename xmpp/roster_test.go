@@ -20,7 +20,7 @@ func (s *RosterXmppSuite) Test_ParseRoster_failsIfItDoesntReceiveAClientIQ(c *C)
 		Value: testStanzaValue{},
 	}
 
-	_, err := ParseRoster(rep)
+	_, err := data.ParseRoster(rep)
 	c.Assert(err.Error(), Equals, "xmpp: roster request resulted in tag of type Foobarium")
 }
 
@@ -32,6 +32,6 @@ func (s *RosterXmppSuite) Test_ParseRoster_failsIfTheRosterContentIsIncorrect(c 
 		},
 	}
 
-	_, err := ParseRoster(rep)
+	_, err := data.ParseRoster(rep)
 	c.Assert(err.Error(), Equals, "expected element type <query> but have <foo>")
 }

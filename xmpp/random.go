@@ -5,9 +5,9 @@ import (
 	"io"
 )
 
-func (c *Conn) rand() io.Reader {
-	if c.Rand != nil {
-		return c.Rand
+func (c *conn) Rand() io.Reader {
+	if c.rand != nil {
+		return c.rand
 	}
 	return rand.Reader
 }

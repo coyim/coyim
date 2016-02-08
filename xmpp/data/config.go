@@ -1,10 +1,4 @@
-// Copyright 2013 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// Package xmpp implements the XMPP IM protocol, as specified in RFC 6120 and
-// 6121.
-package xmpp
+package data
 
 import (
 	"crypto/tls"
@@ -50,7 +44,7 @@ type Config struct {
 	SkipSRVLookup bool
 }
 
-func (c *Config) getLog() io.Writer {
+func (c *Config) GetLog() io.Writer {
 	if c.Log == nil {
 		return ioutil.Discard
 	}

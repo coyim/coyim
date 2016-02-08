@@ -6,7 +6,6 @@ import (
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
@@ -93,7 +92,7 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	return <-wait
 }
 
-func requestAndRenderRegistrationForm(server string, formHandler xmpp.FormCallback, saveFn func()) error {
+func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, saveFn func()) error {
 	policy := config.ConnectionPolicy{}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it

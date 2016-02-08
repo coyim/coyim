@@ -25,7 +25,7 @@ type testFoo struct {
 
 func (s *XMLXmppSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams' to='hello'></stream:foo>")}
-	conn := Conn{
+	conn := conn{
 		in: xml.NewDecoder(mockIn),
 		customStorage: map[xml.Name]reflect.Type{
 			xml.Name{Space: NsStream, Local: "foo"}: reflect.TypeOf(testFoo{}),
@@ -41,7 +41,7 @@ func (s *XMLXmppSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
 
 func (s *XMLXmppSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams'><something></foo></stream:foo>")}
-	conn := Conn{
+	conn := conn{
 		in: xml.NewDecoder(mockIn),
 		customStorage: map[xml.Name]reflect.Type{
 			xml.Name{Space: NsStream, Local: "foo"}: reflect.TypeOf(testFoo{}),
@@ -54,7 +54,7 @@ func (s *XMLXmppSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
 
 func (s *XMLXmppSuite) Test_ClientMesage_unmarshalsXMPPExtensions(c *C) {
 	datax := `
-	<message 
+	<message
     xmlns='jabber:client'
 		xmlns:stream='http://etherx.jabber.org/streams'
 		id='coyim1234'

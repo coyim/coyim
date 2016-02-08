@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/coyim/xmpp/interfaces"
 )
 
 var xmlSpecial = map[byte]string{
@@ -82,14 +83,14 @@ func nextStart(p *xml.Decoder) (xml.StartElement, error) {
 // Scan XML token stream for next element and save into val.
 // If val == nil, allocate new element based on proto map.
 // Either way, return val.
-func next(c *Conn) (xml.Name, interface{}, error) {
-	elem, err := nextElement(c.in)
+func next(c interfaces.Conn) (xml.Name, interface{}, error) {
+	elem, err := nextElement(c.In())
 	if err != nil {
 		return xml.Name{}, nil, err
 	}
 
-	c.lock.Lock()
-	defer c.lock.Unlock()
+	c.Lock().Lock()
+	defer c.Lock().Unlock()
 
 	switch el := elem.(type) {
 	case xml.StartElement:
@@ -101,11 +102,11 @@ func next(c *Conn) (xml.Name, interface{}, error) {
 	return xml.Name{}, nil, fmt.Errorf("unexpected element %s", elem)
 }
 
-func decodeStartElement(c *Conn, se xml.StartElement) (xml.Name, interface{}, error) {
+func decodeStartElement(c interfaces.Conn, se xml.StartElement) (xml.Name, interface{}, error) {
 
 	// Put it in an interface and allocate one.
 	var nv interface{}
-	if t, e := c.customStorage[se.Name]; e {
+	if t, e := c.CustomStorage()[se.Name]; e {
 		nv = reflect.New(t).Interface()
 	} else if t, e := defaultStorage[se.Name]; e {
 		nv = reflect.New(t).Interface()
@@ -115,7 +116,7 @@ func decodeStartElement(c *Conn, se xml.StartElement) (xml.Name, interface{}, er
 	}
 
 	// Unmarshal into that storage.
-	if err := c.in.DecodeElement(nv, &se); err != nil {
+	if err := c.In().DecodeElement(nv, &se); err != nil {
 		return xml.Name{}, nil, err
 	}
 

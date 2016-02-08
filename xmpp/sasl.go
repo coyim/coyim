@@ -14,6 +14,8 @@ import (
 	"log"
 
 	"github.com/twstrike/coyim/xmpp/data"
+	xe "github.com/twstrike/coyim/xmpp/errors"
+	"github.com/twstrike/coyim/xmpp/interfaces"
 
 	"github.com/twstrike/coyim/sasl"
 	"github.com/twstrike/coyim/sasl/digestmd5"
@@ -22,9 +24,6 @@ import (
 )
 
 var (
-	// ErrAuthenticationFailed indicates a failure to authenticate to the server with the user and password provided.
-	ErrAuthenticationFailed = errors.New("could not authenticate to the XMPP server")
-
 	errUnsupportedSASLMechanism = errors.New("xmpp: server does not support any of the prefered SASL mechanism")
 )
 
@@ -35,24 +34,24 @@ func init() {
 }
 
 // SASL negotiation. RFC 6120, section 6
-func (d *Dialer) negotiateSASL(c *Conn) error {
+func (d *Dialer) negotiateSASL(c interfaces.Conn) error {
 	user := d.getJIDLocalpart()
 	password := d.Password
 
-	if err := c.authenticate(user, password); err != nil {
-		return ErrAuthenticationFailed
+	if err := c.Authenticate(user, password); err != nil {
+		return xe.ErrAuthenticationFailed
 	}
 
 	// RFC 6120, section 6.3.2. Restart the stream
-	err := c.sendInitialStreamHeader()
+	err := c.SendInitialStreamHeader()
 	if err != nil {
 		return err
 	}
 
-	return c.bindResource()
+	return c.BindResource()
 }
 
-func (c *Conn) authenticate(user, password string) error {
+func (c *conn) Authenticate(user, password string) error {
 	// TODO: Google accounts with 2-step auth MUST use app-specific passwords:
 	// https://security.google.com/settings/security/apppasswords
 	// An alternative would be implementing the Google authentication mechanisms
@@ -63,7 +62,7 @@ func (c *Conn) authenticate(user, password string) error {
 	return c.authenticateWithPreferedMethod(user, password)
 }
 
-func (c *Conn) authenticateWithPreferedMethod(user, password string) error {
+func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	//TODO: this should be configurable by the client
 	preferedMechanisms := []string{"SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
 
@@ -97,13 +96,13 @@ func clientNonce(r io.Reader) (string, error) {
 	return hex.EncodeToString(conceRand), nil
 }
 
-func (c *Conn) authenticatWith(mechanism string, user string, password string) error {
+func (c *conn) authenticatWith(mechanism string, user string, password string) error {
 	clientAuth, err := sasl.NewClient(mechanism)
 	if err != nil {
 		return err
 	}
 
-	clientNonce, err := clientNonce(c.rand())
+	clientNonce, err := clientNonce(c.Rand())
 	if err != nil {
 		return err
 	}
@@ -129,7 +128,7 @@ func (c *Conn) authenticatWith(mechanism string, user string, password string) e
 	return c.challengeLoop(clientAuth)
 }
 
-func (c *Conn) challengeLoop(clientAuth sasl.Session) error {
+func (c *conn) challengeLoop(clientAuth sasl.Session) error {
 	for {
 		t, success, err := c.receiveChallenge()
 		if err != nil {
@@ -152,10 +151,10 @@ func (c *Conn) challengeLoop(clientAuth sasl.Session) error {
 		fmt.Fprintf(c.rawOut, "<response xmlns='%s'>%s</response>\n", NsSASL, t.Encode())
 	}
 
-	return ErrAuthenticationFailed
+	return xe.ErrAuthenticationFailed
 }
 
-func (c *Conn) receiveChallenge() (t sasl.Token, success bool, err error) {
+func (c *conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 	var encodedChallenge []byte
 
 	name, val, _ := next(c)
@@ -180,7 +179,7 @@ func (c *Conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 }
 
 // Resource binding. RFC 6120, section 7
-func (c *Conn) bindResource() error {
+func (c *conn) BindResource() error {
 	// This is mandatory, so a missing features.Bind is a protocol failure
 	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
 	var iq data.ClientIQ
@@ -193,7 +192,7 @@ func (c *Conn) bindResource() error {
 }
 
 // See RFC 3921, section 3.
-func (c *Conn) establishSession() error {
+func (c *conn) establishSession() error {
 	if c.features.Session == nil {
 		return nil
 	}

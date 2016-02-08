@@ -6,20 +6,21 @@
 // 6121.
 package xmpp
 
-import "encoding/binary"
+import (
+	"encoding/binary"
 
-// Cookie is used to give a unique identifier to each request.
-type Cookie uint64
+	"github.com/twstrike/coyim/xmpp/data"
+)
 
-func (c *Conn) getCookie() Cookie {
+func (c *conn) getCookie() data.Cookie {
 	var buf [8]byte
-	if _, err := c.rand().Read(buf[:]); err != nil {
+	if _, err := c.Rand().Read(buf[:]); err != nil {
 		panic("Failed to read random bytes: " + err.Error())
 	}
-	return Cookie(binary.LittleEndian.Uint64(buf[:]))
+	return data.Cookie(binary.LittleEndian.Uint64(buf[:]))
 }
 
-func (c *Conn) cancelInflights() {
+func (c *conn) cancelInflights() {
 	for cookie := range c.inflights {
 		c.Cancel(cookie)
 	}

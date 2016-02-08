@@ -947,15 +947,15 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *
 
 func (s *SessionXmppSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAboutThem(c *C) {
 	now := time.Now()
-	timeouts := map[xmpp.Cookie]time.Time{
-		xmpp.Cookie(1): now.Add(-1 * time.Second),
-		xmpp.Cookie(2): now.Add(10 * time.Second),
+	timeouts := map[data.Cookie]time.Time{
+		data.Cookie(1): now.Add(-1 * time.Second),
+		data.Cookie(2): now.Add(10 * time.Second),
 	}
 
 	sess := &session{
 		connStatus: CONNECTED,
 		timeouts:   timeouts,
-		conn:       &xmpp.Conn{},
+		conn:       xmpp.NewConn(nil, nil, ""),
 	}
 
 	go func() {
@@ -966,6 +966,6 @@ func (s *SessionXmppSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsA
 	sess.watchTimeout()
 	c.Check(sess.timeouts, HasLen, 1)
 
-	_, ok := sess.timeouts[xmpp.Cookie(2)]
+	_, ok := sess.timeouts[data.Cookie(2)]
 	c.Check(ok, Equals, true)
 }

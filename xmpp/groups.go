@@ -28,7 +28,7 @@ type rosterQuery struct {
 }
 
 // GetRosterDelimiter blocks and waits for the roster delimiter to be delivered
-func (c *Conn) GetRosterDelimiter() (string, error) {
+func (c *conn) GetRosterDelimiter() (string, error) {
 	rep, _, err := c.RequestRosterDelimiter()
 	if err != nil {
 		return "", err
@@ -51,7 +51,7 @@ func (c *Conn) GetRosterDelimiter() (string, error) {
 }
 
 // RequestRosterDelimiter will request the roster delimiter
-func (c *Conn) RequestRosterDelimiter() (<-chan data.Stanza, Cookie, error) {
+func (c *conn) RequestRosterDelimiter() (<-chan data.Stanza, data.Cookie, error) {
 	cookie := c.getCookie()
 	if _, err := fmt.Fprintf(c.out, requestDelimiterXML, cookie); err != nil {
 		return nil, 0, err

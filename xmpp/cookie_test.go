@@ -12,8 +12,8 @@ var _ = Suite(&CookieXmppSuite{})
 
 func (s *CookieXmppSuite) Test_getCookie_panicsOnReadFailure(c *C) {
 	mockReader := &mockConnIOReaderWriter{err: errors.New("stuff")}
-	conn := Conn{
-		Rand: mockReader,
+	conn := conn{
+		rand: mockReader,
 	}
 
 	c.Assert(func() {

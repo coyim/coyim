@@ -1,21 +1,13 @@
 package xmpp
 
 import (
-	"errors"
 	"log"
 	"net"
 	"time"
 
 	ourNet "github.com/twstrike/coyim/net"
+	"github.com/twstrike/coyim/xmpp/errors"
 	"golang.org/x/net/proxy"
-)
-
-var (
-	//ErrConnectionFailed indicates a failure to connect to the server provided.
-	ErrConnectionFailed = errors.New("could not connect to XMPP server")
-
-	//ErrTCPBindingFailed indicates a failure to determine a server address for the given origin domain
-	ErrTCPBindingFailed = errors.New("failed to find a TCP address for XMPP server")
 )
 
 const defaultDialTimeout = 60 * time.Second
@@ -60,14 +52,14 @@ func (d *Dialer) srvLookupAndFallback() (net.Conn, error) {
 	//If the SRV has no response, we fallback to use the origin domain
 	//at default port.
 	if len(xmppAddrs) == 0 {
-		err = ErrTCPBindingFailed
+		err = errors.ErrTCPBindingFailed
 
 		//TODO: in this case, a failure to connect might be recovered using HTTP binding
 		//See: RFC 6120, Section 3.2.2
 		xmppAddrs = []string{d.getFallbackServer()}
 	} else {
 		//The SRV lookup succeeded but we failed to connect
-		err = ErrConnectionFailed
+		err = errors.ErrConnectionFailed
 	}
 
 	conn, _, e := connectToFirstAvailable(xmppAddrs, d.Proxy)
@@ -86,7 +78,7 @@ func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn,
 		}
 	}
 
-	return nil, "", ErrConnectionFailed
+	return nil, "", errors.ErrConnectionFailed
 }
 
 func dialTimeout(network, addr string, dialer proxy.Dialer, t time.Duration) (c net.Conn, err error) {

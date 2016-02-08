@@ -14,16 +14,10 @@ import (
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
-// FormCallback is the type of a function called to process a form. The
-// argument is a list of pointers to FormField types. The function should type
-// cast the elements, prompt the user and fill in the result field in each
-// struct.
-type FormCallback func(title, instructions string, fields []interface{}) error
-
 // processForm calls the callback with the given XMPP form and returns the
 // result form. The datas argument contains any additional XEP-0231 blobs that
 // might contain media for the questions in the form.
-func processForm(form *data.Form, datas []data.BobData, callback FormCallback) (*data.Form, error) {
+func processForm(form *data.Form, datas []data.BobData, callback data.FormCallback) (*data.Form, error) {
 	var fields []interface{}
 
 	for _, field := range form.Fields {

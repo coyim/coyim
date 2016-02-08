@@ -1,6 +1,9 @@
 package xmpp
 
-import . "gopkg.in/check.v1"
+import (
+	"github.com/twstrike/coyim/xmpp/data"
+	. "gopkg.in/check.v1"
+)
 
 type RegisterSuite struct{}
 
@@ -43,7 +46,7 @@ func (s *RegisterSuite) Test_setupStream_registerWithoutAuthenticating(c *C) {
 	d := &Dialer{
 		JID:      "user@domain",
 		Password: "pass",
-		Config: Config{
+		Config: data.Config{
 			SkipTLS: true,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
 				return nil

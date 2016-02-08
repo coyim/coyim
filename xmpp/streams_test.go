@@ -14,88 +14,88 @@ type StreamsXmppSuite struct{}
 var _ = Suite(&StreamsXmppSuite{})
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_returnsErrorIfSomethingGoesWrongWithFmtPrintf(c *C) {
-	conn := Conn{
+	conn := conn{
 		out:          &mockConnIOReaderWriter{err: errors.New("Hello")},
 		originDomain: "foo.com",
 	}
 
-	err := conn.sendInitialStreamHeader()
+	err := conn.SendInitialStreamHeader()
 	c.Assert(err, Not(IsNil))
 }
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_returnsErrorIfSomethingGoesWrongWithReadingAStream(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: errors.New("Hello")}
-	conn := Conn{
+	conn := conn{
 		out:          &mockConnIOReaderWriter{},
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "foo.com",
 	}
 
-	err := conn.sendInitialStreamHeader()
+	err := conn.SendInitialStreamHeader()
 	c.Assert(err, Not(IsNil))
 }
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_sendsInitialStreamHeaderToOutput(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{err: errors.New("Hello")}
-	conn := Conn{
+	conn := conn{
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhere.org",
 	}
-	conn.sendInitialStreamHeader()
+	conn.SendInitialStreamHeader()
 	c.Assert(string(mockOut.write), Equals, "<?xml version='1.0'?><stream:stream to='somewhere.org' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n")
 }
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_expectsResponseStreamHeaderInReturn(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' version='1.0'></stream:stream>")}
-	conn := Conn{
+	conn := conn{
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
 	}
 
-	err := conn.sendInitialStreamHeader()
+	err := conn.SendInitialStreamHeader()
 	c.Assert(err.Error(), Equals, "xmpp: error to unmarshal <features>: EOF")
 }
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_failsIfReturnedStreamIsNotCorrectNamespace(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams2' version='1.0'>")}
-	conn := Conn{
+	conn := conn{
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
 	}
 
-	err := conn.sendInitialStreamHeader()
+	err := conn.SendInitialStreamHeader()
 	c.Assert(err.Error(), Equals, "xmpp: expected <stream> but got <stream> in http://etherx.jabber.org/streams2")
 }
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_failsIfReturnedElementIsNotStream(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:feature xmlns:str='http://etherx.jabber.org/streams' version='1.0'>")}
-	conn := Conn{
+	conn := conn{
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
 	}
 
-	err := conn.sendInitialStreamHeader()
+	err := conn.SendInitialStreamHeader()
 	c.Assert(err.Error(), Equals, "xmpp: expected <stream> but got <feature> in http://etherx.jabber.org/streams")
 }
 
 func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_expectsFeaturesInReturn(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'><str:features></str:features>")}
-	conn := Conn{
+	conn := conn{
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
 	}
 
-	err := conn.sendInitialStreamHeader()
+	err := conn.SendInitialStreamHeader()
 	c.Assert(err, IsNil)
 	expected := data.StreamFeatures{}
 	expected.XMLName = xml.Name{Space: "http://etherx.jabber.org/streams", Local: "features"}
@@ -120,13 +120,13 @@ func (s *StreamsXmppSuite) Test_sendInitialStreamHeader_receiveResponseStreamHea
 			<register xmlns='http://jabber.org/features/iq-register'/>
 		</str:features>
 	`)}
-	conn := Conn{
+	conn := conn{
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
 	}
 
-	err := conn.sendInitialStreamHeader()
+	err := conn.SendInitialStreamHeader()
 	c.Assert(err, IsNil)
 	expected := data.StreamFeatures{
 		XMLName: xml.Name{Space: "http://etherx.jabber.org/streams", Local: "features"},

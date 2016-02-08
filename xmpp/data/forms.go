@@ -2,6 +2,12 @@ package data
 
 import "encoding/xml"
 
+// FormCallback is the type of a function called to process a form. The
+// argument is a list of pointers to FormField types. The function should type
+// cast the elements, prompt the user and fill in the result field in each
+// struct.
+type FormCallback func(title, instructions string, fields []interface{}) error
+
 // Form contains the definition for a data submission
 type Form struct {
 	XMLName      xml.Name     `xml:"jabber:x:data x"`

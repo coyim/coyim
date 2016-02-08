@@ -18,8 +18,8 @@ import (
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
+	xi "github.com/twstrike/coyim/xmpp/interfaces"
 	"github.com/twstrike/coyim/xmpp/utils"
 	"github.com/twstrike/otr3"
 )
@@ -34,7 +34,7 @@ const (
 )
 
 type session struct {
-	conn             *xmpp.Conn
+	conn             xi.Conn
 	connectionLogger io.Writer
 	r                *roster.List
 	connStatus       connStatus
@@ -50,7 +50,7 @@ type session struct {
 
 	// timeouts maps from Cookies (from outstanding requests) to the
 	// absolute time when that request should timeout.
-	timeouts map[xmpp.Cookie]time.Time
+	timeouts map[data.Cookie]time.Time
 
 	// LastActionTime is the time at which the user last entered a command,
 	// or was last notified.
@@ -108,7 +108,7 @@ func Factory(c *config.ApplicationConfig, cu *config.Account) access.Session {
 		otrEventHandler: make(map[string]*event.OtrEventHandler),
 		lastActionTime:  time.Now(),
 
-		timeouts: make(map[xmpp.Cookie]time.Time),
+		timeouts: make(map[data.Cookie]time.Time),
 
 		xmppLogger: openLogFile(c.RawLogFile),
 	}
@@ -686,7 +686,7 @@ func (s *session) watchTimeout() {
 			continue
 		}
 
-		newTimeouts := make(map[xmpp.Cookie]time.Time)
+		newTimeouts := make(map[data.Cookie]time.Time)
 		for cookie, expiry := range s.timeouts {
 			if now.After(expiry) {
 				log.Println("session: cookie", cookie, "has expired")
@@ -701,7 +701,7 @@ func (s *session) watchTimeout() {
 }
 
 // Timeout set the timeout for an XMPP request
-func (s *session) Timeout(c xmpp.Cookie, t time.Time) {
+func (s *session) Timeout(c data.Cookie, t time.Time) {
 	s.timeouts[c] = t
 }
 
@@ -739,7 +739,7 @@ func (s *session) requestRoster() bool {
 		return true
 	}
 
-	rst, err := xmpp.ParseRoster(rosterStanza)
+	rst, err := data.ParseRoster(rosterStanza)
 	if err != nil {
 		s.alert("Failed to parse roster: " + err.Error())
 		return true
@@ -883,7 +883,7 @@ func (s *session) Config() *config.ApplicationConfig {
 	return s.config
 }
 
-func (s *session) Conn() *xmpp.Conn {
+func (s *session) Conn() xi.Conn {
 	return s.conn
 }
 

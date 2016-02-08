@@ -16,6 +16,8 @@ import (
 	ournet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/coyim/xmpp/interfaces"
 )
 
 var (
@@ -79,7 +81,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		return nil, err
 	}
 
-	xmppConfig := xmpp.Config{
+	xmppConfig := data.Config{
 		Archive: false,
 
 		ServerCertificateSHA256: certSHA256,
@@ -183,7 +185,7 @@ func buildInOutLogs(rawLog io.Writer) (io.Writer, io.Writer) {
 }
 
 // Connect to the server and authenticates with the password
-func (p *ConnectionPolicy) Connect(password string, conf *Account) (*xmpp.Conn, error) {
+func (p *ConnectionPolicy) Connect(password string, conf *Account) (interfaces.Conn, error) {
 	dialer, err := p.buildDialerFor(conf)
 	if err != nil {
 		return nil, err
@@ -197,7 +199,7 @@ func (p *ConnectionPolicy) Connect(password string, conf *Account) (*xmpp.Conn, 
 }
 
 // RegisterAccount register the account on the XMPP server.
-func (p *ConnectionPolicy) RegisterAccount(createCallback xmpp.FormCallback, conf *Account) (*xmpp.Conn, error) {
+func (p *ConnectionPolicy) RegisterAccount(createCallback data.FormCallback, conf *Account) (interfaces.Conn, error) {
 	dialer, err := p.buildDialerFor(conf)
 	if err != nil {
 		return nil, err

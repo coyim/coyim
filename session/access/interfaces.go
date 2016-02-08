@@ -8,8 +8,8 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
+	xi "github.com/twstrike/coyim/xmpp/interfaces"
 
 	"github.com/twstrike/otr3"
 )
@@ -32,7 +32,7 @@ type Session interface {
 	Close()
 	CommandManager() client.CommandManager
 	Config() *config.ApplicationConfig
-	Conn() *xmpp.Conn
+	Conn() xi.Conn
 	Connect(string) error
 	ConversationManager() client.ConversationManager
 	DenyPresenceSubscription(string, string) error
@@ -56,7 +56,7 @@ type Session interface {
 	SetSessionEventHandler(EventHandler)
 	SetWantToBeOnline(bool)
 	Subscribe(chan<- interface{})
-	Timeout(xmpp.Cookie, time.Time)
+	Timeout(data.Cookie, time.Time)
 }
 
 // Factory is a function that can create new Sessions

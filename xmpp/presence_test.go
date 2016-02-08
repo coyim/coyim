@@ -12,7 +12,7 @@ var _ = Suite(&PresenceXmppSuite{})
 
 func (s *PresenceXmppSuite) Test_SignalPresence_sendsPresenceInformation(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
-	conn := Conn{
+	conn := conn{
 		out: mockOut,
 	}
 
@@ -23,7 +23,7 @@ func (s *PresenceXmppSuite) Test_SignalPresence_sendsPresenceInformation(c *C) {
 
 func (s *PresenceXmppSuite) Test_SignalPresence_returnsWriterError(c *C) {
 	mockOut := &mockConnIOReaderWriter{err: errors.New("foo bar")}
-	conn := Conn{
+	conn := conn{
 		out: mockOut,
 	}
 
@@ -33,7 +33,7 @@ func (s *PresenceXmppSuite) Test_SignalPresence_returnsWriterError(c *C) {
 
 func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
-	conn := Conn{
+	conn := conn{
 		out: mockOut,
 	}
 
@@ -44,9 +44,9 @@ func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) 
 
 func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
-	conn := Conn{
+	conn := conn{
 		out:  mockOut,
-		Rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
+		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
 
 	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "")
@@ -56,7 +56,7 @@ func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 
 func (s *PresenceXmppSuite) Test_SendPresence_returnsWriterError(c *C) {
 	mockOut := &mockConnIOReaderWriter{err: errors.New("bar foo")}
-	conn := Conn{
+	conn := conn{
 		out: mockOut,
 	}
 

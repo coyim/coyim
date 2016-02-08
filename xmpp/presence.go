@@ -13,7 +13,7 @@ import (
 
 // SendPresence sends a presence stanza. If id is empty, a unique id is
 // generated.
-func (c *Conn) SendPresence(to, typ, id string) error {
+func (c *conn) SendPresence(to, typ, id string) error {
 	if len(id) == 0 {
 		id = strconv.FormatUint(uint64(c.getCookie()), 10)
 	}
@@ -22,7 +22,7 @@ func (c *Conn) SendPresence(to, typ, id string) error {
 }
 
 // SignalPresence will signal the current presence
-func (c *Conn) SignalPresence(state string) error {
+func (c *conn) SignalPresence(state string) error {
 	_, err := fmt.Fprintf(c.out, "<presence><show>%s</show></presence>", xmlEscape(state))
 	return err
 }

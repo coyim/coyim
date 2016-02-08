@@ -6,6 +6,9 @@ import (
 	"net"
 	"strings"
 
+	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/coyim/xmpp/interfaces"
+
 	"golang.org/x/net/proxy"
 )
 
@@ -24,7 +27,7 @@ type Dialer struct {
 	Proxy proxy.Dialer
 
 	// Config configures the XMPP protocol
-	Config Config
+	Config data.Config
 }
 
 func (d *Dialer) hasCustomServer() bool {
@@ -56,7 +59,7 @@ func (d *Dialer) getFallbackServer() string {
 }
 
 // RegisterAccount registers an account on the server. The formCallback is used to handle XMPP forms.
-func (d *Dialer) RegisterAccount(formCallback FormCallback) (*Conn, error) {
+func (d *Dialer) RegisterAccount(formCallback data.FormCallback) (interfaces.Conn, error) {
 	//TODO: notify in case the feature is not supported
 	d.Config.CreateCallback = formCallback
 	return d.Dial()
@@ -64,7 +67,7 @@ func (d *Dialer) RegisterAccount(formCallback FormCallback) (*Conn, error) {
 
 // Dial creates a new connection to an XMPP server with the given proxy
 // and authenticates as the given user.
-func (d *Dialer) Dial() (*Conn, error) {
+func (d *Dialer) Dial() (interfaces.Conn, error) {
 	// Starting an XMPP connection comprises two parts:
 	// - Opening a transport channel (TCP)
 	// - Opening an XML stream over the transport channel
@@ -80,12 +83,12 @@ func (d *Dialer) Dial() (*Conn, error) {
 }
 
 // RFC 6120, Section 4.2
-func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
+func (d *Dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
 	if d.hasCustomServer() {
 		d.Config.TrustedAddress = true
 	}
 
-	c = newConn()
+	c := newConn()
 	c.config = d.Config
 	c.originDomain = d.getJIDDomainpart()
 	d.bindTransport(c, conn)
@@ -101,8 +104,8 @@ func (d *Dialer) setupStream(conn net.Conn) (c *Conn, err error) {
 }
 
 // RFC 6120, section 4.3.2
-func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) error {
-	if err := c.sendInitialStreamHeader(); err != nil {
+func (d *Dialer) negotiateStreamFeatures(c interfaces.Conn, conn net.Conn) error {
+	if err := c.SendInitialStreamHeader(); err != nil {
 		return err
 	}
 
@@ -125,13 +128,13 @@ func (d *Dialer) negotiateStreamFeatures(c *Conn, conn net.Conn) error {
 	return nil
 }
 
-func (d *Dialer) bindTransport(c *Conn, conn net.Conn) {
-	c.in, c.out = makeInOut(conn, d.Config)
-	c.rawOut = conn
-	c.keepaliveOut = &timeoutableConn{conn, keepaliveTimeout}
+func (d *Dialer) bindTransport(c interfaces.Conn, conn net.Conn) {
+	c.SetInOut(makeInOut(conn, d.Config))
+	c.SetRawOut(conn)
+	c.SetKeepaliveOut(&timeoutableConn{conn, keepaliveTimeout})
 }
 
-func makeInOut(conn io.ReadWriter, config Config) (in *xml.Decoder, out io.Writer) {
+func makeInOut(conn io.ReadWriter, config data.Config) (in *xml.Decoder, out io.Writer) {
 	if config.InLog != nil {
 		in = xml.NewDecoder(io.TeeReader(conn, config.InLog))
 	} else {

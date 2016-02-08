@@ -14,6 +14,7 @@ import (
 	"io"
 
 	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/coyim/xmpp/interfaces"
 )
 
 // Various errors signalled by the registration component
@@ -24,17 +25,17 @@ var (
 )
 
 // XEP-0077
-func (d *Dialer) negotiateInBandRegistration(c *Conn) (bool, error) {
-	if c.features.InBandRegistration == nil {
+func (d *Dialer) negotiateInBandRegistration(c interfaces.Conn) (bool, error) {
+	if c.Features().InBandRegistration == nil {
 		return false, nil
 	}
 
 	user := d.getJIDLocalpart()
 	password := d.Password
-	return c.registerAccount(user, password)
+	return c.RegisterAccount(user, password)
 }
 
-func (c *Conn) registerAccount(user, password string) (bool, error) {
+func (c *conn) RegisterAccount(user, password string) (bool, error) {
 	if c.config.CreateCallback == nil {
 		return false, nil
 	}
@@ -47,8 +48,8 @@ func (c *Conn) registerAccount(user, password string) (bool, error) {
 	return true, c.closeImmediately()
 }
 
-func (c *Conn) createAccount(user, password string) error {
-	io.WriteString(c.config.getLog(), "Attempting to create account\n")
+func (c *conn) createAccount(user, password string) error {
+	io.WriteString(c.config.GetLog(), "Attempting to create account\n")
 	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
 	var iq data.ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
@@ -102,7 +103,7 @@ func (c *Conn) createAccount(user, password string) error {
 }
 
 // CancelRegistration cancels the account registration with the server
-func (c *Conn) CancelRegistration() (reply chan data.Stanza, cookie Cookie, err error) {
+func (c *conn) CancelRegistration() (reply chan data.Stanza, cookie data.Cookie, err error) {
 	// https://xmpp.org/extensions/xep-0077.html#usecases-cancel
 	registrationCancel := rawXML(`
 	<query xmlns='jabber:iq:register'>

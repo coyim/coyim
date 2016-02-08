@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/twstrike/coyim/xmpp/errors"
 )
 
 func (u *gtkUI) connectAccount(account *account) {
@@ -30,11 +30,11 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 	switch err {
 	case config.ErrTorNotRunning:
 		u.notifyTorIsNotRunning(account)
-	case xmpp.ErrTCPBindingFailed:
+	case errors.ErrTCPBindingFailed:
 		u.notifyConnectionFailure(account)
-	case xmpp.ErrAuthenticationFailed:
+	case errors.ErrAuthenticationFailed:
 		u.askForPasswordAndConnect(account)
-	case xmpp.ErrConnectionFailed:
+	case errors.ErrConnectionFailed:
 		u.notifyConnectionFailure(account)
 	}
 

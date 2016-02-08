@@ -18,7 +18,7 @@ type rawXML []byte
 // SendIQ sends an info/query message to the given user. It returns a channel
 // on which the reply can be read when received and a Cookie that can be used
 // to cancel the request.
-func (c *Conn) SendIQ(to, typ string, value interface{}) (reply chan data.Stanza, cookie Cookie, err error) {
+func (c *conn) SendIQ(to, typ string, value interface{}) (reply chan data.Stanza, cookie data.Cookie, err error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
@@ -56,7 +56,7 @@ func (c *Conn) SendIQ(to, typ string, value interface{}) (reply chan data.Stanza
 }
 
 // SendIQReply sends a reply to an IQ query.
-func (c *Conn) SendIQReply(to, typ, id string, value interface{}) error {
+func (c *conn) SendIQReply(to, typ, id string, value interface{}) error {
 	if _, err := fmt.Fprintf(c.out, "<iq to='%s' from='%s' type='%s' id='%s'>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(typ), xmlEscape(id)); err != nil {
 		return err
 	}

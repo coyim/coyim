@@ -8,6 +8,9 @@ import (
 	"net"
 	"os"
 
+	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/coyim/xmpp/errors"
+
 	. "gopkg.in/check.v1"
 )
 
@@ -29,7 +32,7 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToOriginDomain(c *C) {
 		JID: "foo@jabber.com",
 
 		Proxy: p,
-		Config: Config{
+		Config: data.Config{
 			SkipSRVLookup: true,
 		},
 	}
@@ -150,7 +153,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingFails(c *C) {
 	})
 
 	_, err := d.newTCPConn()
-	c.Check(err, Equals, ErrTCPBindingFailed)
+	c.Check(err, Equals, errors.ErrTCPBindingFailed)
 
 	c.Check(p, MatchesExpectations)
 }
@@ -180,6 +183,6 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 	})
 
 	_, err := d.newTCPConn()
-	c.Check(err, Equals, ErrConnectionFailed)
+	c.Check(err, Equals, errors.ErrConnectionFailed)
 	c.Check(p, MatchesExpectations)
 }

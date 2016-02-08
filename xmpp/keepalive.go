@@ -18,12 +18,12 @@ var (
 const logKeepAlives = false
 
 // Manage whitespace keepalives as specified in RFC 6120, section 4.6.1
-func (c *Conn) watchKeepAlive(conn net.Conn) {
+func (c *conn) watchKeepAlive(conn net.Conn) {
 	tick := time.NewTicker(keepaliveInterval)
 	defer tick.Stop()
 	defer log.Println("xmpp: no more watching keepalives")
 
-	for range tick.C {
+	for _ = range tick.C {
 		if c.closed {
 			return
 		}
@@ -45,12 +45,12 @@ func (c *Conn) watchKeepAlive(conn net.Conn) {
 	}
 }
 
-func (c *Conn) sendKeepalive() bool {
+func (c *conn) sendKeepalive() bool {
 	_, err := c.keepaliveOut.Write([]byte{0x20})
 	return c.closed || err == nil || err == io.EOF
 }
 
-func (c *Conn) sendStreamError(streamError data.StreamError) error {
+func (c *conn) sendStreamError(streamError data.StreamError) error {
 	enc, err := xml.Marshal(streamError)
 	if err != nil {
 		return err

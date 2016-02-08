@@ -25,7 +25,7 @@ func init() {
 	Server{"jabber.otr.im", "5rgdtlawqkcplz75.onion"}.register()
 	Server{"jabber.so36.net", "s4fgy24e2b5weqdb.onion"}.register()
 	Server{"jabber.systemli.org", "x5tno6mwkncu5m3h.onion"}.register()
-	Server{"kjabber.de", "ANONYMOUSsb4444v.onion"}.register()
+	Server{"kjabber.de", "JABBERthelv5p7qv.onion"}.register()
 	Server{"kode.im", "ihkw7qy3tok45dun.onion"}.register()
 	Server{"riseup.net", "4cjw6cwpeaeppfqz.onion"}.register()
 	Server{"securejabber.me", "giyvshdnojeivkom.onion"}.register()

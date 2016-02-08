@@ -34,9 +34,9 @@ func init() {
 }
 
 // SASL negotiation. RFC 6120, section 6
-func (d *Dialer) negotiateSASL(c interfaces.Conn) error {
+func (d *dialer) negotiateSASL(c interfaces.Conn) error {
 	user := d.getJIDLocalpart()
-	password := d.Password
+	password := d.password
 
 	if err := c.Authenticate(user, password); err != nil {
 		return xe.ErrAuthenticationFailed

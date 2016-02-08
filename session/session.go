@@ -74,6 +74,8 @@ type session struct {
 
 	cmdManager  client.CommandManager
 	convManager client.ConversationManager
+
+	dialerFactory func() xi.Dialer
 }
 
 // GetConfig returns the current account configuration
@@ -99,7 +101,7 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 }
 
 // Factory creates a new session from the given config
-func Factory(c *config.ApplicationConfig, cu *config.Account) access.Session {
+func Factory(c *config.ApplicationConfig, cu *config.Account, df func() xi.Dialer) access.Session {
 	s := &session{
 		config:        c,
 		accountConfig: cu,
@@ -110,7 +112,8 @@ func Factory(c *config.ApplicationConfig, cu *config.Account) access.Session {
 
 		timeouts: make(map[data.Cookie]time.Time),
 
-		xmppLogger: openLogFile(c.RawLogFile),
+		xmppLogger:    openLogFile(c.RawLogFile),
+		dialerFactory: df,
 	}
 
 	s.ReloadKeys()
@@ -792,8 +795,9 @@ func (s *session) Connect(password string) error {
 
 	conf := s.GetConfig()
 	policy := config.ConnectionPolicy{
-		Logger:     s.connectionLogger,
-		XMPPLogger: s.xmppLogger,
+		Logger:        s.connectionLogger,
+		XMPPLogger:    s.xmppLogger,
+		DialerFactory: s.dialerFactory,
 	}
 
 	conn, err := policy.Connect(password, conf)

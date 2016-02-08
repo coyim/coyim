@@ -20,6 +20,7 @@ import (
 	"github.com/twstrike/coyim/servers"
 	sessions "github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/xmpp/data"
+	xi "github.com/twstrike/coyim/xmpp/interfaces"
 
 	"github.com/twstrike/otr3"
 
@@ -29,6 +30,7 @@ import (
 type cliUI struct {
 	session        sessions.Session
 	sessionFactory sessions.Factory
+	dialerFactory  func() xi.Dialer
 	events         chan interface{}
 	commands       chan interface{}
 
@@ -51,7 +53,7 @@ type UI interface {
 }
 
 // NewCLI creates a new cliUI instance
-func NewCLI(version string, cf terminal.ControlFactory, sf sessions.Factory) UI {
+func NewCLI(version string, cf terminal.ControlFactory, sf sessions.Factory, df func() xi.Dialer) UI {
 	termControl := cf()
 	oldState, err := termControl.MakeRaw(0)
 	if err != nil {
@@ -86,6 +88,7 @@ func NewCLI(version string, cf terminal.ControlFactory, sf sessions.Factory) UI 
 		events:         make(chan interface{}),
 		commands:       make(chan interface{}, 5),
 		sessionFactory: sf,
+		dialerFactory:  df,
 	}
 }
 
@@ -153,7 +156,7 @@ func (c *cliUI) loadConfig(configFile string) error {
 	//	registerCallback = c.RegisterCallback
 	//}
 
-	c.session = c.sessionFactory(accounts, account)
+	c.session = c.sessionFactory(accounts, account, c.dialerFactory)
 	c.session.SetSessionEventHandler(c)
 	c.session.Subscribe(c.events)
 

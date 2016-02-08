@@ -28,11 +28,11 @@ var _ = Suite(&TCPSuite{})
 
 func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToOriginDomain(c *C) {
 	p := &mockProxy{}
-	d := &Dialer{
+	d := &dialer{
 		JID: "foo@jabber.com",
 
-		Proxy: p,
-		Config: data.Config{
+		proxy: p,
+		config: data.Config{
 			SkipSRVLookup: true,
 		},
 	}
@@ -54,11 +54,11 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToOriginDomain(c *C) {
 
 func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddress(c *C) {
 	p := &mockProxy{}
-	d := &Dialer{
+	d := &dialer{
 		JID:           "foo@jabber.com",
-		ServerAddress: "jabber.im:5333",
+		serverAddress: "jabber.im:5333",
 
-		Proxy: p,
+		proxy: p,
 	}
 
 	expectedConn := &net.TCPConn{}
@@ -72,17 +72,17 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddress(
 	conn, err := d.newTCPConn()
 	c.Check(err, IsNil)
 	c.Check(conn, Equals, expectedConn)
-	c.Check(d.Config.SkipSRVLookup, Equals, true)
+	c.Check(d.config.SkipSRVLookup, Equals, true)
 
 	c.Check(p, MatchesExpectations)
 }
 
 func (s *TCPSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 	p := &mockProxy{}
-	d := &Dialer{
+	d := &dialer{
 		JID: "foo@jabber.com",
 
-		Proxy: p,
+		proxy: p,
 	}
 
 	// We exploit ResolveSRVWithProxy forwarding conn errors
@@ -102,10 +102,10 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 
 func (s *TCPSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortAfterSRVFails(c *C) {
 	p := &mockProxy{}
-	d := &Dialer{
+	d := &dialer{
 		JID: "foo@jabber.com",
 
-		Proxy: p,
+		proxy: p,
 	}
 
 	p.Expects(func(network, addr string) (net.Conn, error) {
@@ -132,10 +132,10 @@ func (s *TCPSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortAfterSRVFa
 
 func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingFails(c *C) {
 	p := &mockProxy{}
-	d := &Dialer{
+	d := &dialer{
 		JID: "foo@jabber.com",
 
-		Proxy: p,
+		proxy: p,
 	}
 
 	p.Expects(func(network, addr string) (net.Conn, error) {
@@ -162,10 +162,10 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 	dec, _ := hex.DecodeString("00511eea818000010001000000000c5f786d70702d636c69656e74045f746370076f6c6162696e690273650000210001c00c0021000100000258001700000005146604786d7070076f6c6162696e6902736500")
 
 	p := &mockProxy{}
-	d := &Dialer{
+	d := &dialer{
 		JID: "foo@olabini.se",
 
-		Proxy: p,
+		proxy: p,
 	}
 
 	p.Expects(func(network, addr string) (net.Conn, error) {

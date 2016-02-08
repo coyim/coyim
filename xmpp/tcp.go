@@ -12,9 +12,9 @@ import (
 
 const defaultDialTimeout = 60 * time.Second
 
-func (d *Dialer) newTCPConn() (net.Conn, error) {
-	if d.Proxy == nil {
-		d.Proxy = proxy.Direct
+func (d *dialer) newTCPConn() (net.Conn, error) {
+	if d.proxy == nil {
+		d.proxy = proxy.Direct
 	}
 
 	//libpurple and xmpp-client are strict to section 3.2.3 and skip SRV lookup
@@ -22,23 +22,23 @@ func (d *Dialer) newTCPConn() (net.Conn, error) {
 	//This is necessary to keep imported accounts from Adium/Pidgin/xmpp-client
 	//working as expected.
 	if d.hasCustomServer() {
-		d.Config.SkipSRVLookup = true
+		d.config.SkipSRVLookup = true
 	}
 
 	//RFC 6120, Section 3.2.3
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
-	if d.Config.SkipSRVLookup {
+	if d.config.SkipSRVLookup {
 		log.Println("Skipping SRV lookup")
-		return connectWithProxy(d.GetServer(), d.Proxy)
+		return connectWithProxy(d.GetServer(), d.proxy)
 	}
 
 	return d.srvLookupAndFallback()
 }
 
-func (d *Dialer) srvLookupAndFallback() (net.Conn, error) {
+func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
 	host := d.getJIDDomainpart()
 	log.Println("Make SRV lookup to:", host)
-	xmppAddrs, err := ResolveSRVWithProxy(d.Proxy, host)
+	xmppAddrs, err := ResolveSRVWithProxy(d.proxy, host)
 
 	//Every other error means
 	//"the initiating entity [did] not receive a response to its SRV query" and
@@ -62,7 +62,7 @@ func (d *Dialer) srvLookupAndFallback() (net.Conn, error) {
 		err = errors.ErrConnectionFailed
 	}
 
-	conn, _, e := connectToFirstAvailable(xmppAddrs, d.Proxy)
+	conn, _, e := connectToFirstAvailable(xmppAddrs, d.proxy)
 	if e != nil {
 		return nil, err
 	}

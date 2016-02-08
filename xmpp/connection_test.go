@@ -231,9 +231,9 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromGetFeatures(c *C) {
 	rw := &mockConnIOReaderWriter{}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
+		password: "pass",
 	}
 	_, err := d.setupStream(conn)
 
@@ -244,10 +244,10 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromAuthenticateIfSkipTLS(c 
 	rw := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'><str:features></str:features>")}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config:   data.Config{SkipTLS: true},
+		password: "pass",
+		config:   data.Config{SkipTLS: true},
 	}
 	_, err := d.setupStream(conn)
 
@@ -266,10 +266,10 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C)
 			"<sasl:success xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:success>")}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config:   data.Config{SkipTLS: true},
+		password: "pass",
+		config:   data.Config{SkipTLS: true},
 	}
 	_, err := d.setupStream(conn)
 
@@ -300,10 +300,10 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromIQReturn(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config:   data.Config{SkipTLS: true},
+		password: "pass",
+		config:   data.Config{SkipTLS: true},
 	}
 	_, err := d.setupStream(conn)
 
@@ -336,10 +336,10 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsWorkingConnIfEverythingPasses(c *
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config:   data.Config{SkipTLS: true},
+		password: "pass",
+		config:   data.Config{SkipTLS: true},
 	}
 	_, err := d.setupStream(conn)
 
@@ -367,9 +367,9 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfTheServerDoesntSupportTLS(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
+		password: "pass",
 	}
 	_, err := d.setupStream(conn)
 
@@ -390,9 +390,9 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingEOFAfterStartingTLS(c *C
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
+		password: "pass",
 	}
 	_, err := d.setupStream(conn)
 
@@ -414,9 +414,9 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterSt
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
+		password: "pass",
 	}
 	_, err := d.setupStream(conn)
 
@@ -438,9 +438,9 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
+		password: "pass",
 	}
 	_, err := d.setupStream(conn)
 
@@ -464,10 +464,10 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	var tlsC tls.Config
 	tlsC.Rand = fixedRand([]string{"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F"})
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			TLSConfig: &tlsC,
 		},
 	}
@@ -512,10 +512,10 @@ func (s *ConnectionXmppSuite) Test_Dial_setsServerNameOnTLSContext(c *C) {
 	var tlsC tls.Config
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			TLSConfig: &tlsC,
 		},
 	}
@@ -537,10 +537,10 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
 				return nil
@@ -571,10 +571,10 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
 				return nil
@@ -605,10 +605,10 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
 				return nil
@@ -641,10 +641,10 @@ func (s *ConnectionXmppSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
 				return nil
@@ -678,10 +678,10 @@ func (s *ConnectionXmppSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
 				return nil
@@ -715,10 +715,10 @@ func (s *ConnectionXmppSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
 				return nil
@@ -764,10 +764,10 @@ func (s *ConnectionXmppSuite) Test_Dial_runsForm(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
 				return nil
@@ -800,10 +800,10 @@ func (s *ConnectionXmppSuite) Test_Dial_setsLog(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 			Log:     l,
 			CreateCallback: func(title, instructions string, fields []interface{}) error {
@@ -841,10 +841,10 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSession(c *C) 
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 		},
 	}
@@ -883,10 +883,10 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSessionAndGets
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 		},
 	}
@@ -924,10 +924,10 @@ func (s *ConnectionXmppSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 
-	d := &Dialer{
+	d := &dialer{
 		JID:      "user@domain",
-		Password: "pass",
-		Config: data.Config{
+		password: "pass",
+		config: data.Config{
 			SkipTLS: true,
 		},
 	}
@@ -1024,12 +1024,12 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 		"000102030405060708090A0B0C0D0E0F",
 	})
 
-	d := &Dialer{
+	d := &dialer{
 		JID:           "user@www.olabini.se",
-		Password:      "pass",
-		ServerAddress: "www.olabini.se:443",
+		password:      "pass",
+		serverAddress: "www.olabini.se:443",
 
-		Config: data.Config{
+		config: data.Config{
 			TLSConfig: &tlsC,
 		},
 	}
@@ -1074,12 +1074,12 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 		"000102030405060708090A0B0C0D0E0F",
 	})
 
-	d := &Dialer{
+	d := &dialer{
 		JID:           "user@www.olabini.se",
-		Password:      "pass",
-		ServerAddress: "www.olabini.se:443",
+		password:      "pass",
+		serverAddress: "www.olabini.se:443",
 
-		Config: data.Config{
+		config: data.Config{
 			TLSConfig:               &tlsC,
 			ServerCertificateSHA256: []byte("aaaaa"),
 		},
@@ -1100,12 +1100,12 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 		"000102030405060708090A0B0C0D0E0F",
 	})
 
-	d := &Dialer{
+	d := &dialer{
 		JID:           "user@www.olabini.se",
-		Password:      "pass",
-		ServerAddress: "www.olabini.se:443",
+		password:      "pass",
+		serverAddress: "www.olabini.se:443",
 
-		Config: data.Config{
+		config: data.Config{
 			TLSConfig:               &tlsC,
 			ServerCertificateSHA256: bytesFromHex("2300818fdc977ce5eb357694d421e47869a952990bc3230ef6aca2bb6ee6f00b"),
 		},

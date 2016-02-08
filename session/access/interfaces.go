@@ -60,4 +60,4 @@ type Session interface {
 }
 
 // Factory is a function that can create new Sessions
-type Factory func(*config.ApplicationConfig, *config.Account) Session
+type Factory func(*config.ApplicationConfig, *config.Account, func() xi.Dialer) Session

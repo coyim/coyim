@@ -9,30 +9,31 @@ import (
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
+// Conn represents a connection to an XMPP server.
 type Conn interface {
-	SetInOut(*xml.Decoder, io.Writer)
-	SendInitialStreamHeader() error
-	SetRawOut(io.WriteCloser)
-	SetKeepaliveOut(io.Writer)
-	Features() data.StreamFeatures
-	RegisterAccount(user, password string) (bool, error)
-	Authenticate(user, password string) error
+	Authenticate(string, string) error
 	BindResource() error
-	Config() *data.Config
-	In() *xml.Decoder
-	Out() io.Writer
-	OriginDomain() string
-	Lock() *sync.Mutex
-	CustomStorage() map[xml.Name]reflect.Type
-	SendPresence(to, typ, id string) error
-	Send(to, msg string) error
-	SendIQ(to, typ string, value interface{}) (reply chan data.Stanza, cookie data.Cookie, err error)
-	SendIQReply(to, typ, id string, value interface{}) error
-	Cancel(cookie data.Cookie) bool
-	RequestRoster() (<-chan data.Stanza, data.Cookie, error)
-	ReadStanzas(stanzaChan chan<- data.Stanza) error
+	Cancel(data.Cookie) bool
 	Close() error
+	Config() *data.Config
+	CustomStorage() map[xml.Name]reflect.Type
+	Features() data.StreamFeatures
 	GetRosterDelimiter() (string, error)
-	SignalPresence(state string) error
-	Next() (stanza data.Stanza, err error)
+	In() *xml.Decoder
+	Lock() *sync.Mutex
+	Next() (data.Stanza, error)
+	OriginDomain() string
+	Out() io.Writer
+	ReadStanzas(chan<- data.Stanza) error
+	RegisterAccount(string, string) (bool, error)
+	RequestRoster() (<-chan data.Stanza, data.Cookie, error)
+	Send(string, string) error
+	SendIQ(string, string, interface{}) (chan data.Stanza, data.Cookie, error)
+	SendIQReply(string, string, string, interface{}) error
+	SendInitialStreamHeader() error
+	SendPresence(string, string, string) error
+	SetInOut(*xml.Decoder, io.Writer)
+	SetKeepaliveOut(io.Writer)
+	SetRawOut(io.WriteCloser)
+	SignalPresence(string) error
 }

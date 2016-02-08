@@ -74,7 +74,7 @@ func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
 }
 
 // RFC 6120, section 5.4
-func (d *Dialer) negotiateSTARTTLS(c interfaces.Conn, conn net.Conn) error {
+func (d *dialer) negotiateSTARTTLS(c interfaces.Conn, conn net.Conn) error {
 	// RFC 6120, section 5.3
 	mandatoryToNegotiate := c.Features().StartTLS.Required.Local == "required"
 	if c.Config().SkipTLS && !mandatoryToNegotiate {
@@ -94,7 +94,7 @@ func (d *Dialer) negotiateSTARTTLS(c interfaces.Conn, conn net.Conn) error {
 	return c.SendInitialStreamHeader()
 }
 
-func (d *Dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
+func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 	address := d.GetServer()
 
 	fmt.Fprintf(c.Out(), "<starttls xmlns='%s'/>", NsTLS)

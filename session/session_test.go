@@ -32,7 +32,7 @@ type SessionXmppSuite struct{}
 var _ = Suite(&SessionXmppSuite{})
 
 func (s *SessionXmppSuite) Test_NewSession_returnsANewSession(c *C) {
-	sess := Factory(&config.ApplicationConfig{}, &config.Account{})
+	sess := Factory(&config.ApplicationConfig{}, &config.Account{}, xmpp.DialerFactory)
 	c.Assert(sess, Not(IsNil))
 }
 
@@ -232,6 +232,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 	sess := Factory(
 		&config.ApplicationConfig{},
 		&config.Account{InstanceTag: uint32(42)},
+		xmpp.DialerFactory,
 	).(*session)
 
 	sess.conn = conn

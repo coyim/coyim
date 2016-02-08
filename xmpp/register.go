@@ -25,14 +25,13 @@ var (
 )
 
 // XEP-0077
-func (d *Dialer) negotiateInBandRegistration(c interfaces.Conn) (bool, error) {
+func (d *dialer) negotiateInBandRegistration(c interfaces.Conn) (bool, error) {
 	if c.Features().InBandRegistration == nil {
 		return false, nil
 	}
 
 	user := d.getJIDLocalpart()
-	password := d.Password
-	return c.RegisterAccount(user, password)
+	return c.RegisterAccount(user, d.password)
 }
 
 func (c *conn) RegisterAccount(user, password string) (bool, error) {

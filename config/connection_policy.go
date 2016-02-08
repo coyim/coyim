@@ -15,7 +15,6 @@ import (
 
 	ournet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/servers"
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/interfaces"
 )
@@ -33,6 +32,8 @@ type ConnectionPolicy struct {
 
 	// XMPPLogger logs XMPP messages
 	XMPPLogger io.Writer
+
+	DialerFactory func() interfaces.Dialer
 
 	torState ournet.TorState
 }
@@ -59,7 +60,7 @@ func (a *Account) hasTorAuto() bool {
 	return false
 }
 
-func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
+func (p *ConnectionPolicy) buildDialerFor(conf *Account) (interfaces.Dialer, error) {
 	//Account is a bare JID
 	jidParts := strings.SplitN(conf.Account, "@", 2)
 	if len(jidParts) != 2 {
@@ -108,18 +109,17 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		return nil, err
 	}
 
-	dialer := &xmpp.Dialer{
-		JID:    conf.Account,
-		Proxy:  proxy,
-		Config: xmppConfig,
-	}
+	dialer := p.DialerFactory()
+	dialer.SetJID(conf.Account)
+	dialer.SetProxy(proxy)
+	dialer.SetConfig(xmppConfig)
 
 	// Although RFC 6120, section 3.2.3 recommends to skip the SRV lookup in this
 	// case, we opt for keep compatibility with existing client implementations
 	// and still make the SRV lookup. This avoids preventing imported accounts to
 	// use the SRV lookup.
 	if len(conf.Server) > 0 && conf.Port > 0 {
-		dialer.ServerAddress = net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port))
+		dialer.SetServerAddress(net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port)))
 	}
 
 	if conf.RequireTor || hasTorAuto {
@@ -130,7 +130,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (*xmpp.Dialer, error) {
 		}
 
 		if hidden, ok := servers.Get(host); ok {
-			dialer.ServerAddress = net.JoinHostPort(hidden.Onion, port)
+			dialer.SetServerAddress(net.JoinHostPort(hidden.Onion, port))
 		}
 	}
 
@@ -193,7 +193,7 @@ func (p *ConnectionPolicy) Connect(password string, conf *Account) (interfaces.C
 
 	// We use password rather than conf.Password because the user might have not
 	// stored the password, and changing conf.Password in this case will store it.
-	dialer.Password = password
+	dialer.SetPassword(password)
 
 	return dialer.Dial()
 }

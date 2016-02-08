@@ -44,6 +44,7 @@ type Config struct {
 	SkipSRVLookup bool
 }
 
+// GetLog returns the log to use for logging, either a discard or a real log
 func (c *Config) GetLog() io.Writer {
 	if c.Log == nil {
 		return ioutil.Discard

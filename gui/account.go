@@ -10,6 +10,7 @@ import (
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
+	"github.com/twstrike/coyim/xmpp/interfaces"
 )
 
 // account wraps a Session with GUI functionality
@@ -37,9 +38,9 @@ func (s byAccountNameAlphabetic) Less(i, j int) bool {
 }
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf access.Factory) *account {
+func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf access.Factory, df func() interfaces.Dialer) *account {
 	return &account{
-		session:              sf(conf, currentConf),
+		session:              sf(conf, currentConf, df),
 		conversations:        make(map[string]*conversationWindow),
 		delayedConversations: make(map[string][]func(*conversationWindow)),
 	}
@@ -133,7 +134,7 @@ func (u *gtkUI) showServerSelectionWindow() error {
 		}
 	}
 
-	go requestAndRenderRegistrationForm(form.server, form.renderForm, saveFn)
+	go requestAndRenderRegistrationForm(form.server, form.renderForm, saveFn, u.dialerFactory)
 
 	return nil
 }

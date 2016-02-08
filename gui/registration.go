@@ -7,6 +7,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/coyim/xmpp/interfaces"
 )
 
 var (
@@ -92,8 +93,8 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	return <-wait
 }
 
-func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, saveFn func()) error {
-	policy := config.ConnectionPolicy{}
+func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, saveFn func(), df func() interfaces.Dialer) error {
+	policy := config.ConnectionPolicy{DialerFactory: df}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
 	conf := &config.Account{

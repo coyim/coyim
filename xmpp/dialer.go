@@ -12,62 +12,95 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-// A Dialer connects and authenticates to an XMPP server
-type Dialer struct {
+// A dialer connects and authenticates to an XMPP server
+type dialer struct {
 	// JID represents the user's "bare JID" as specified in RFC 6120
 	JID string
 
-	// Password used to authenticate to the server
-	Password string
+	// password used to authenticate to the server
+	password string
 
-	// ServerAddress associates a particular FQDN with the origin domain specified by the JID.
-	ServerAddress string
+	// serverAddress associates a particular FQDN with the origin domain specified by the JID.
+	serverAddress string
 
-	// Proxy configures a proxy used to connect to the server
-	Proxy proxy.Dialer
+	// proxy configures a proxy used to connect to the server
+	proxy proxy.Dialer
 
-	// Config configures the XMPP protocol
-	Config data.Config
+	// config configures the XMPP protocol
+	config data.Config
 }
 
-func (d *Dialer) hasCustomServer() bool {
-	return d.ServerAddress != ""
+// DialerFactory returns a new xmpp dialer
+func DialerFactory() interfaces.Dialer {
+	return &dialer{}
 }
 
-func (d *Dialer) getJIDLocalpart() string {
+func (d *dialer) SetJID(v string) {
+	d.JID = v
+}
+
+func (d *dialer) SetServerAddress(v string) {
+	d.serverAddress = v
+}
+
+func (d *dialer) SetPassword(v string) {
+	d.password = v
+}
+
+func (d *dialer) SetProxy(v proxy.Dialer) {
+	d.proxy = v
+}
+
+func (d *dialer) SetConfig(v data.Config) {
+	d.config = v
+}
+
+func (d *dialer) Config() data.Config {
+	return d.config
+}
+
+func (d *dialer) ServerAddress() string {
+	return d.serverAddress
+}
+
+func (d *dialer) hasCustomServer() bool {
+	return d.serverAddress != ""
+}
+
+func (d *dialer) getJIDLocalpart() string {
 	parts := strings.SplitN(d.JID, "@", 2)
 	return parts[0]
 }
 
-func (d *Dialer) getJIDDomainpart() string {
+func (d *dialer) getJIDDomainpart() string {
 	//TODO: remove any existing resourcepart although our doc says it is a bare JID (without resourcepart) but it would be nice
 	parts := strings.SplitN(d.JID, "@", 2)
 	return parts[1]
 }
 
 // GetServer returns the "hardcoded" server chosen if available, otherwise returns the domainpart from the JID. The server contains port information
-func (d *Dialer) GetServer() string {
+func (d *dialer) GetServer() string {
 	if d.hasCustomServer() {
-		return d.ServerAddress
+		return d.serverAddress
 	}
 
 	return d.getFallbackServer()
 }
 
-func (d *Dialer) getFallbackServer() string {
+func (d *dialer) getFallbackServer() string {
 	return net.JoinHostPort(d.getJIDDomainpart(), "5222")
 }
 
 // RegisterAccount registers an account on the server. The formCallback is used to handle XMPP forms.
-func (d *Dialer) RegisterAccount(formCallback data.FormCallback) (interfaces.Conn, error) {
+func (d *dialer) RegisterAccount(formCallback data.FormCallback) (interfaces.Conn, error) {
 	//TODO: notify in case the feature is not supported
-	d.Config.CreateCallback = formCallback
+	d.config.CreateCallback = formCallback
 	return d.Dial()
 }
 
 // Dial creates a new connection to an XMPP server with the given proxy
 // and authenticates as the given user.
-func (d *Dialer) Dial() (interfaces.Conn, error) {
+func (d *dialer) Dial() (interfaces.Conn, error) {
 	// Starting an XMPP connection comprises two parts:
 	// - Opening a transport channel (TCP)
 	// - Opening an XML stream over the transport channel
@@ -83,13 +116,13 @@ func (d *Dialer) Dial() (interfaces.Conn, error) {
 }
 
 // RFC 6120, Section 4.2
-func (d *Dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
+func (d *dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
 	if d.hasCustomServer() {
-		d.Config.TrustedAddress = true
+		d.config.TrustedAddress = true
 	}
 
 	c := newConn()
-	c.config = d.Config
+	c.config = d.config
 	c.originDomain = d.getJIDDomainpart()
 	d.bindTransport(c, conn)
 
@@ -104,7 +137,7 @@ func (d *Dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
 }
 
 // RFC 6120, section 4.3.2
-func (d *Dialer) negotiateStreamFeatures(c interfaces.Conn, conn net.Conn) error {
+func (d *dialer) negotiateStreamFeatures(c interfaces.Conn, conn net.Conn) error {
 	if err := c.SendInitialStreamHeader(); err != nil {
 		return err
 	}
@@ -128,8 +161,8 @@ func (d *Dialer) negotiateStreamFeatures(c interfaces.Conn, conn net.Conn) error
 	return nil
 }
 
-func (d *Dialer) bindTransport(c interfaces.Conn, conn net.Conn) {
-	c.SetInOut(makeInOut(conn, d.Config))
+func (d *dialer) bindTransport(c interfaces.Conn, conn net.Conn) {
+	c.SetInOut(makeInOut(conn, d.config))
 	c.SetRawOut(conn)
 	c.SetKeepaliveOut(&timeoutableConn{conn, keepaliveTimeout})
 }

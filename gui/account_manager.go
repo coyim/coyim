@@ -7,6 +7,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/access"
+	"github.com/twstrike/coyim/xmpp/interfaces"
 )
 
 type accountManager struct {
@@ -67,11 +68,11 @@ func (m *accountManager) setContacts(account *account, contacts *rosters.List) {
 	m.contacts[account] = contacts
 }
 
-func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory) {
+func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory, df func() interfaces.Dialer) {
 	m.Lock()
 	defer m.Unlock()
 
-	acc := newAccount(appConfig, account, sf)
+	acc := newAccount(appConfig, account, sf, df)
 	acc.session.Subscribe(m.events)
 	acc.session.SetCommandManager(m)
 	acc.session.SetConnector(acc)
@@ -104,7 +105,7 @@ func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 	k()
 }
 
-func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory) {
+func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory, df func() interfaces.Dialer) {
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
 		if _, ok := m.getAccountByID(accountConf.ID()); ok {
@@ -117,7 +118,7 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf a
 		}
 
 		hasConfUpdates = hasConfUpdates || hasUpdate
-		m.addAccount(appConfig, accountConf, sf)
+		m.addAccount(appConfig, accountConf, sf, df)
 	}
 
 	if hasConfUpdates {
@@ -125,14 +126,14 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf a
 	}
 }
 
-func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory) {
+func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory, df func() interfaces.Dialer) {
 	for _, configAccount := range appConfig.Accounts {
 		_, found := m.getAccountByID(configAccount.ID())
 		if found {
 			continue
 		}
 
-		m.addAccount(appConfig, configAccount, sf)
+		m.addAccount(appConfig, configAccount, sf, df)
 	}
 }
 

@@ -407,6 +407,8 @@ func authors() []string {
 		"Ola Bini  -  ola@olabini.se",
 		"Reinaldo de Souza Jr  -  juniorz@gmail.com",
 		"Tania Silva  -  tsilva@thoughtworks.com",
+		"Adam Langley",
+		"Gray Leonard - gl7039a@american.edu",
 	}
 }
 

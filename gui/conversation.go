@@ -19,18 +19,36 @@ var (
 	disableWindow, _ = glib.SignalNew("disable")
 )
 
-type conversationWindow struct {
-	to            string
-	account       *account
-	win           *gtk.Window
-	parentWin     *gtk.Window
-	history       *gtk.TextView
-	scrollHistory *gtk.ScrolledWindow
+type conversationView interface {
+	showIdentityVerificationWarning(u *gtkUI)
+	updateSecurityWarning()
+	show(userInitiated bool)
+	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
+	appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool)
+	displayNotification(notification string)
+	displayNotificationVerifiedOrNot(notificationV, notificationNV string)
+	setEnabled(enabled bool)
+}
 
+type conversationWindow struct {
+	*conversationPane
+	win       *gtk.Window
+	parentWin *gtk.Window
+}
+
+type conversationPane struct {
+	to                 string
+	account            *account
+	widget             *gtk.Box
+	menubar            *gtk.MenuBar
+	entry              *gtk.Entry
+	history            *gtk.TextView
+	scrollHistory      *gtk.ScrolledWindow
 	notificationArea   *gtk.Box
 	securityWarning    *gtk.InfoBar
 	fingerprintWarning *gtk.InfoBar
-
+	// The window to set dialogs transient for
+	transientParent *gtk.Window
 	sync.Mutex
 }
 
@@ -78,13 +96,11 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 	return buf
 }
 
-func newConversationWindow(account *account, uid string, displaySettings *displaySettings, textBuffer *gtk.TextBuffer) *conversationWindow {
-	builder := builderForDefinition("Conversation")
+func createConversationPane(account *account, uid string, ui *gtkUI, transientParent *gtk.Window) *conversationPane {
+	builder := builderForDefinition("ConversationPane")
 
-	obj, _ := builder.GetObject("conversation")
-	win := obj.(*gtk.Window)
-	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, uid)
-	win.SetTitle(title)
+	obj, _ := builder.GetObject("box")
+	pane := obj.(*gtk.Box)
 
 	obj, _ = builder.GetObject("history")
 	history := obj.(*gtk.TextView)
@@ -101,15 +117,20 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 	obj, _ = builder.GetObject("security-warning")
 	securityWarning := obj.(*gtk.InfoBar)
 
-	conv := &conversationWindow{
-		to:            uid,
-		account:       account,
-		win:           win,
-		history:       history,
-		scrollHistory: scrollHistory,
+	obj, _ = builder.GetObject("menubar")
+	menubar := obj.(*gtk.MenuBar)
 
+	cp := &conversationPane{
+		to:               uid,
+		account:          account,
+		history:          history,
+		widget:           pane,
+		menubar:          menubar,
+		entry:            entry,
+		scrollHistory:    scrollHistory,
 		notificationArea: notificationArea,
 		securityWarning:  securityWarning,
+		transientParent:  transientParent,
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
@@ -119,7 +140,7 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 			entry.SetText("")
 			entry.SetEditable(true)
 			if text != "" {
-				sendError := conv.sendMessage(text)
+				sendError := cp.sendMessage(text)
 				if sendError != nil {
 					fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
 				}
@@ -129,8 +150,8 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 		// TODO: basically I think this whole menu should be rethought. It's useful for us to have during development
 		"on_start_otr_signal": func() {
 			//TODO: enable/disable depending on the conversation's encryption state
-			session := conv.account.session
-			c, _ := session.ConversationManager().EnsureConversationWith(conv.to)
+			session := cp.account.session
+			c, _ := session.ConversationManager().EnsureConversationWith(cp.to)
 			err := c.StartEncryptedChat(session)
 			if err != nil {
 				//TODO: notify failure
@@ -139,8 +160,8 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 		"on_end_otr_signal": func() {
 			//TODO: errors
 			//TODO: enable/disable depending on the conversation's encryption state
-			session := conv.account.session
-			c, ok := session.ConversationManager().GetConversationWith(conv.to)
+			session := cp.account.session
+			c, ok := session.ConversationManager().GetConversationWith(cp.to)
 			if !ok {
 				return
 			}
@@ -151,9 +172,9 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 			}
 		},
 		"on_verify_fp_signal": func() {
-			switch verifyFingerprintDialog(conv.account, conv.to, conv.win) {
+			switch verifyFingerprintDialog(cp.account, cp.to, transientParent) {
 			case gtk.RESPONSE_YES:
-				conv.removeIdentityVerificationWarning()
+				cp.removeIdentityVerificationWarning()
 			}
 		},
 		"on_connect": func() {
@@ -166,21 +187,46 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 		},
 	})
 
+	cp.history.SetBuffer(ui.getTags().createTextBuffer())
+
+	cp.history.Connect("size-allocate", func() {
+		cp.scrollToBottom()
+	})
+
+	ui.displaySettings.control(&cp.history.Container.Widget)
+	ui.displaySettings.control(&entry.Widget)
+
+	return cp
+}
+
+func newConversationWindow(account *account, uid string, ui *gtkUI) *conversationWindow {
+	builder := builderForDefinition("Conversation")
+
+	obj, _ := builder.GetObject("conversation")
+	win := obj.(*gtk.Window)
+	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, uid)
+	win.SetTitle(title)
+
+	obj, _ = builder.GetObject("box")
+	winBox := obj.(*gtk.Box)
+
+	cp := createConversationPane(account, uid, ui, win)
+	winBox.PackStart(cp.widget, true, true, 0)
+
+	conv := &conversationWindow{
+		conversationPane: cp,
+		win:              win,
+	}
+
 	// Unlike the GTK version, this is not supposed to be used as a callback but
 	// it attaches the callback to the widget
 	conv.win.HideOnDelete()
-
-	conv.history.SetBuffer(textBuffer)
-
-	conv.history.Connect("size-allocate", func() {
-		conv.scrollToBottom()
-	})
 
 	inEventHandler := false
 	conv.win.Connect("set-focus", func() {
 		if !inEventHandler {
 			inEventHandler = true
-			entry.GrabFocus()
+			conv.entry.GrabFocus()
 			inEventHandler = false
 		}
 	})
@@ -188,18 +234,19 @@ func newConversationWindow(account *account, uid string, displaySettings *displa
 	conv.win.Connect("notify::is-active", func() {
 		if conv.win.IsActive() {
 			inEventHandler = true
-			entry.GrabFocus()
+			conv.entry.GrabFocus()
 			inEventHandler = false
 		}
 	})
 
-	displaySettings.control(&conv.history.Container.Widget)
-	displaySettings.control(&entry.Widget)
+	ui.connectShortcutsChildWindow(conv.win)
+	ui.connectShortcutsConversationWindow(conv)
+	conv.parentWin = &ui.window.Window
 
 	return conv
 }
 
-func (conv *conversationWindow) addNotification(notification *gtk.InfoBar) {
+func (conv *conversationPane) addNotification(notification *gtk.InfoBar) {
 	conv.notificationArea.Add(notification)
 }
 
@@ -216,11 +263,11 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 	}
 }
 
-func (conv *conversationWindow) getConversation() (client.Conversation, bool) {
+func (conv *conversationPane) getConversation() (client.Conversation, bool) {
 	return conv.account.session.ConversationManager().GetConversationWith(conv.to)
 }
 
-func (conv *conversationWindow) isVerified() bool {
+func (conv *conversationPane) isVerified() bool {
 	conversation, exists := conv.getConversation()
 	if !exists {
 		log.Println("Conversation does not exist - this shouldn't happen")
@@ -239,25 +286,25 @@ func (conv *conversationWindow) isVerified() bool {
 	return hasPeer && p.HasTrustedFingerprint(fingerprint)
 }
 
-func (conv *conversationWindow) showIdentityVerificationWarning(u *gtkUI) {
-	conv.Lock()
-	defer conv.Unlock()
+func (cp *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
+	cp.Lock()
+	defer cp.Unlock()
 
-	if conv.fingerprintWarning != nil {
+	if cp.fingerprintWarning != nil {
 		log.Println("we are already showing a fingerprint warning, so not doing it again")
 		return
 	}
 
-	if conv.isVerified() {
+	if cp.isVerified() {
 		log.Println("We have a peer and a trusted fingerprint already, so no reason to warn")
 		return
 	}
 
-	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.win)
-	conv.addNotification(conv.fingerprintWarning)
+	cp.fingerprintWarning = buildVerifyIdentityNotification(cp.account, cp.to, cp.transientParent)
+	cp.addNotification(cp.fingerprintWarning)
 }
 
-func (conv *conversationWindow) removeIdentityVerificationWarning() {
+func (conv *conversationPane) removeIdentityVerificationWarning() {
 	conv.Lock()
 	defer conv.Unlock()
 
@@ -268,7 +315,7 @@ func (conv *conversationWindow) removeIdentityVerificationWarning() {
 	}
 }
 
-func (conv *conversationWindow) updateSecurityWarning() {
+func (conv *conversationPane) updateSecurityWarning() {
 	conversation, ok := conv.getConversation()
 	if !ok {
 		return
@@ -277,13 +324,13 @@ func (conv *conversationWindow) updateSecurityWarning() {
 	conv.securityWarning.SetVisible(!conversation.IsEncrypted())
 }
 
-func (conv *conversationWindow) Show() {
+func (conv *conversationWindow) show(userInitiated bool) {
 	conv.updateSecurityWarning()
 	conv.win.Show()
 	conv.tryEnsureCorrectWorkspace()
 }
 
-func (conv *conversationWindow) sendMessage(message string) error {
+func (conv *conversationPane) sendMessage(message string) error {
 	err := conv.account.session.EncryptAndSendTo(conv.to, message)
 	if err != nil {
 		return err
@@ -385,7 +432,7 @@ func createStatusMessage(from string, show, showStatus string, gone bool) string
 	return ""
 }
 
-func (conv *conversationWindow) scrollToBottom() {
+func (conv *conversationPane) scrollToBottom() {
 	adj := conv.scrollHistory.GetVAdjustment()
 	adj.SetValue(adj.GetUpper() - adj.GetPageSize())
 }
@@ -395,7 +442,7 @@ type taggableText struct {
 	text string
 }
 
-func (conv *conversationWindow) appendToHistory(timestamp time.Time, entries ...taggableText) {
+func (conv *conversationPane) appendToHistory(timestamp time.Time, entries ...taggableText) {
 	doInUIThread(func() {
 		conv.Lock()
 		defer conv.Unlock()
@@ -419,11 +466,11 @@ func (conv *conversationWindow) appendToHistory(timestamp time.Time, entries ...
 	})
 }
 
-func (conv *conversationWindow) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
+func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
 	conv.appendToHistory(timestamp, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
 
-func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
+func (conv *conversationPane) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
 	conv.appendToHistory(timestamp,
 		taggableText{
 			is(outgoing, "outgoingUser", "incomingUser"),
@@ -438,14 +485,22 @@ func (conv *conversationWindow) appendMessage(from string, timestamp time.Time, 
 		})
 }
 
-func (conv *conversationWindow) displayNotification(notification string) {
+func (conv *conversationPane) displayNotification(notification string) {
 	conv.appendToHistory(time.Now(), taggableText{"statusText", notification})
 }
 
-func (conv *conversationWindow) displayNotificationVerifiedOrNot(notificationV, notificationNV string) {
+func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, notificationNV string) {
 	if conv.isVerified() {
 		conv.displayNotification(notificationV)
 	} else {
 		conv.displayNotification(notificationNV)
+	}
+}
+
+func (conv *conversationWindow) setEnabled(enabled bool) {
+	if enabled {
+		conv.win.Emit("enable")
+	} else {
+		conv.win.Emit("disable")
 	}
 }

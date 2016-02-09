@@ -25,6 +25,8 @@ type gtkUI struct {
 	notificationArea *gtk.Box
 	viewMenu         *viewMenu
 
+	unified *unifiedLayout
+
 	config *config.ApplicationConfig
 
 	*accountManager
@@ -291,10 +293,17 @@ func (u *gtkUI) mainWindow() {
 	u.displaySettings.defaultSettingsOn(&u.viewMenu.offline.MenuItem.Bin.Container.Widget)
 
 	u.initMenuBar()
-	vbox, _ := builder.GetObject("Vbox")
-	vbox.(*gtk.Box).PackStart(u.roster.widget, true, true, 0)
+	obj, _ := builder.GetObject("Vbox")
+	vbox := obj.(*gtk.Box)
+	vbox.PackStart(u.roster.widget, true, true, 0)
 
-	obj, _ := builder.GetObject("notification-area")
+	if *config.SingleWindowFlag {
+		obj, _ := builder.GetObject("Hbox")
+		hbox := obj.(*gtk.Box)
+		u.unified = newUnifiedLayout(u, vbox, hbox)
+	}
+
+	obj, _ = builder.GetObject("notification-area")
 	u.notificationArea = obj.(*gtk.Box)
 
 	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
@@ -491,6 +500,9 @@ func (u *gtkUI) initMenuBar() {
 
 func (u *gtkUI) rosterUpdated() {
 	doInUIThread(u.roster.redraw)
+	if u.unified != nil {
+		doInUIThread(u.unified.update)
+	}
 }
 
 func (u *gtkUI) editAccount(account *account) {

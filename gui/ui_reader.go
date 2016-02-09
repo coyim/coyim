@@ -7,8 +7,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/gui/definitions"
+	"reflect"
 )
 
 const (
@@ -73,4 +75,40 @@ func getDefinition(uiName string) fmt.Stringer {
 	}
 
 	return def
+}
+
+type builder struct {
+	*gtk.Builder
+}
+
+func newBuilder(uiName string) *builder {
+	return &builder{builderForDefinition(uiName)}
+}
+
+func (b *builder) getItem(name string, target interface{}) {
+	v := reflect.ValueOf(target)
+	if v.Kind() != reflect.Ptr {
+		panic("builder.getItem() target argument must be a pointer")
+	}
+	elem := v.Elem()
+	elem.Set(reflect.ValueOf(b.get(name)))
+}
+
+func (b *builder) getItems(args ...interface{}) {
+	for len(args) >= 2 {
+		name, ok := args[0].(string)
+		if !ok {
+			panic("string argument expected in builder.getItems()")
+		}
+		b.getItem(name, args[1])
+		args = args[2:]
+	}
+}
+
+func (b *builder) get(name string) glib.IObject {
+	obj, err := b.GetObject(name)
+	if err != nil {
+		panic("builder.GetObject() failed: " + err.Error())
+	}
+	return obj
 }

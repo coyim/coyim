@@ -18,13 +18,13 @@ type account struct {
 	menu                *gtk.MenuItem
 	currentNotification *gtk.InfoBar
 
-	//TODO: Should this be a map of roster.Peer and conversationWindow?
-	conversations map[string]*conversationWindow
+	//TODO: Should this be a map of roster.Peer and conversationView?
+	conversations map[string]conversationView
 
 	session         access.Session
 	sessionObserver chan interface{}
 
-	delayedConversations     map[string][]func(*conversationWindow)
+	delayedConversations     map[string][]func(conversationView)
 	delayedConversationsLock sync.Mutex
 
 	sync.Mutex
@@ -41,8 +41,8 @@ func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf access.Factory, df func() interfaces.Dialer) *account {
 	return &account{
 		session:              sf(conf, currentConf, df),
-		conversations:        make(map[string]*conversationWindow),
-		delayedConversations: make(map[string][]func(*conversationWindow)),
+		conversations:        make(map[string]conversationView),
+		delayedConversations: make(map[string][]func(conversationView)),
 	}
 }
 
@@ -50,26 +50,31 @@ func (account *account) ID() string {
 	return account.session.GetConfig().ID()
 }
 
-func (account *account) getConversationWith(to string) (*conversationWindow, bool) {
+func (account *account) getConversationWith(to string) (conversationView, bool) {
 	c, ok := account.conversations[to]
 	return c, ok
 }
 
-func (account *account) createConversationWindow(to string, displaySettings *displaySettings, textBuffer *gtk.TextBuffer) *conversationWindow {
-	c := newConversationWindow(account, to, displaySettings, textBuffer)
-	account.conversations[to] = c
+func (account *account) createConversationView(to string, ui *gtkUI) conversationView {
+	var cv conversationView
+	if *config.SingleWindowFlag {
+		cv = ui.unified.createConversation(account, to)
+	} else {
+		cv = newConversationWindow(account, to, ui)
+	}
+	account.conversations[to] = cv
 
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 	for _, f := range account.delayedConversations[to] {
-		f(c)
+		f(cv)
 	}
 	delete(account.delayedConversations, to)
 
-	return c
+	return cv
 }
 
-func (account *account) afterConversationWindowCreated(to string, f func(*conversationWindow)) {
+func (account *account) afterConversationWindowCreated(to string, f func(conversationView)) {
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 
@@ -81,12 +86,8 @@ func (account *account) enableExistingConversationWindows(enable bool) {
 		account.Lock()
 		defer account.Unlock()
 
-		for _, convWindow := range account.conversations {
-			if enable {
-				convWindow.win.Emit("enable")
-			} else {
-				convWindow.win.Emit("disable")
-			}
+		for _, cv := range account.conversations {
+			cv.setEnabled(enable)
 		}
 	}
 }

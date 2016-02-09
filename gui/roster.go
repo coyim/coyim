@@ -180,7 +180,7 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 	disconnect := dconnx.(*gtk.MenuItem)
 
 	connect.SetSensitive(account.session.IsDisconnected())
-	disconnect.SetSensitive(account.session.IsConnected())
+	disconnect.SetSensitive(!account.session.IsDisconnected())
 
 	mn.ShowAll()
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())

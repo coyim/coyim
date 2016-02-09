@@ -808,13 +808,19 @@ func (s *session) Connect(password string) error {
 		return err
 	}
 
-	s.conn = conn
-	s.setStatus(CONNECTED)
+	if s.connStatus == CONNECTING {
+		s.conn = conn
+		s.setStatus(CONNECTED)
 
-	s.conn.SignalPresence("")
-	go s.watchRoster()
-	go s.watchTimeout()
-	go s.watchStanzas()
+		s.conn.SignalPresence("")
+		go s.watchRoster()
+		go s.watchTimeout()
+		go s.watchStanzas()
+	} else {
+		if s.conn != nil {
+			s.conn.Close()
+		}
+	}
 
 	return nil
 }
@@ -847,8 +853,11 @@ func (s *session) Close() {
 
 	s.setStatus(DISCONNECTED)
 
-	s.terminateConversations()
-	s.conn.Close()
+	if s.conn != nil {
+		s.terminateConversations()
+		s.conn.Close()
+		s.conn = nil
+	}
 }
 
 func (s *session) CommandManager() client.CommandManager {

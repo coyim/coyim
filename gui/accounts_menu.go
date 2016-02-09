@@ -18,7 +18,7 @@ var (
 func toggleConnectAndDisconnectMenuItems(s access.Session, connect, disconnect *gtk.MenuItem) {
 	doInUIThread(func() {
 		connect.SetSensitive(s.IsDisconnected())
-		disconnect.SetSensitive(s.IsConnected())
+		disconnect.SetSensitive(!s.IsDisconnected())
 	})
 }
 

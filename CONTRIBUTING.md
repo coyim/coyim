@@ -52,7 +52,7 @@ This is the lifecycle of a contribution. We follow a simplified fork + pull requ
 
 Generally, all issues that have no user assigned are awaiting work and free to play. If you want to make sure, or you think it will take more than a couple of days to complete your work, please reach out to us using the contact info above.
 
-TODO: add link to unasigned issues tagged as beginner
+TODO: add link to unassigned issues tagged as beginner
 
 ### Guidelines
 
@@ -64,7 +64,7 @@ When implementing your change, please follow this advice:
   2. Expected behavior
   3. Actual behavior. Please also include as much meta-information as reasonable, e.g. time & date, software version etc.
 * Pull requests need not to be finished work only; you can also submit changes in consecutive Pull Requests as long as CI stays green. Also, please send a PR with the intention of discussion & feedback. Please mark those Pull Requests appropriately.
-* We review your pull request. This review is prioritised and done as part of our priotisation. During this time, we ask you to keep it up to date by frequently rebasing against master
+* We review your pull request. This review is prioritised and done as part of our prioritisation. During this time, we ask you to keep it up to date by frequently rebasing against master.
 
 ### Review Criteria
 

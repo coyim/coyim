@@ -1,8 +1,6 @@
 mkdir %GOPATH%\src\github.com\twstrike\coyim\release\
-mkdir %GOPATH%\src\github.com\twstrike\coyim\release\bin
 mkdir %GOPATH%\src\github.com\twstrike\coyim\release\share
-%MSYS_PATH%\usr\bin\bash -lc "mv /c/gopath/src/github.com/twstrike/coyim/release/*.exe /c/gopath/src/github.com/twstrike/coyim/release/bin/"
-%MSYS_PATH%\usr\bin\bash -lc "cp /mingw%MSYS2_BITS%/**/*.dll /c/gopath/src/github.com/twstrike/coyim/release/bin/"
+%MSYS_PATH%\usr\bin\bash -lc "cp /mingw%MSYS2_BITS%/**/*.dll /c/gopath/src/github.com/twstrike/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -r /mingw%MSYS2_BITS%/share/icons /c/gopath/src/github.com/twstrike/coyim/release/share/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -r /mingw%MSYS2_BITS%/share/glib-2.0 /c/gopath/src/github.com/twstrike/coyim/release/share/"
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy sed" > nul

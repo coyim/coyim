@@ -171,7 +171,7 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.convsVisible = false
 }
 
-func (csi *conversationStackItem) SetEnabled(enabled bool) {
+func (csi *conversationStackItem) setEnabled(enabled bool) {
 	log.Printf("csi.SetEnabled(%v)", enabled)
 }
 
@@ -191,7 +191,7 @@ func (csi *conversationStackItem) setBold(bold bool) {
 	csi.layout.cl.model.SetValue(csi.iter, ulIndexWeight, weight)
 }
 
-func (csi *conversationStackItem) Show(userInitiated bool) {
+func (csi *conversationStackItem) show(userInitiated bool) {
 	csi.layout.showConversations()
 	csi.updateSecurityWarning()
 	csi.layout.cl.add(csi)

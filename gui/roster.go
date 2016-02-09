@@ -237,7 +237,7 @@ func (r *roster) openConversationView(account *account, to string, userInitiated
 		c = account.createConversationView(to, r.ui)
 	}
 
-	c.Show(userInitiated)
+	c.show(userInitiated)
 	return c, nil
 }
 

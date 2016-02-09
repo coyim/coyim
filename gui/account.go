@@ -87,7 +87,7 @@ func (account *account) enableExistingConversationWindows(enable bool) {
 		defer account.Unlock()
 
 		for _, cv := range account.conversations {
-			cv.SetEnabled(enable)
+			cv.setEnabled(enable)
 		}
 	}
 }

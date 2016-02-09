@@ -22,12 +22,12 @@ var (
 type conversationView interface {
 	showIdentityVerificationWarning(u *gtkUI)
 	updateSecurityWarning()
-	Show(userInitiated bool)
+	show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool)
 	displayNotification(notification string)
 	displayNotificationVerifiedOrNot(notificationV, notificationNV string)
-	SetEnabled(enabled bool)
+	setEnabled(enabled bool)
 }
 
 type conversationWindow struct {
@@ -324,7 +324,7 @@ func (conv *conversationPane) updateSecurityWarning() {
 	conv.securityWarning.SetVisible(!conversation.IsEncrypted())
 }
 
-func (conv *conversationWindow) Show(userInitiated bool) {
+func (conv *conversationWindow) show(userInitiated bool) {
 	conv.updateSecurityWarning()
 	conv.win.Show()
 	conv.tryEnsureCorrectWorkspace()
@@ -497,7 +497,7 @@ func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, no
 	}
 }
 
-func (conv *conversationWindow) SetEnabled(enabled bool) {
+func (conv *conversationWindow) setEnabled(enabled bool) {
 	if enabled {
 		conv.win.Emit("enable")
 	} else {

@@ -286,22 +286,22 @@ func (conv *conversationPane) isVerified() bool {
 	return hasPeer && p.HasTrustedFingerprint(fingerprint)
 }
 
-func (cp *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
-	cp.Lock()
-	defer cp.Unlock()
+func (conv *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
+	conv.Lock()
+	defer conv.Unlock()
 
-	if cp.fingerprintWarning != nil {
+	if conv.fingerprintWarning != nil {
 		log.Println("we are already showing a fingerprint warning, so not doing it again")
 		return
 	}
 
-	if cp.isVerified() {
+	if conv.isVerified() {
 		log.Println("We have a peer and a trusted fingerprint already, so no reason to warn")
 		return
 	}
 
-	cp.fingerprintWarning = buildVerifyIdentityNotification(cp.account, cp.to, cp.transientParent)
-	cp.addNotification(cp.fingerprintWarning)
+	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.transientParent)
+	conv.addNotification(conv.fingerprintWarning)
 }
 
 func (conv *conversationPane) removeIdentityVerificationWarning() {

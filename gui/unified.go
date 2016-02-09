@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	ulIndexId          = 0
+	ulIndexID          = 0
 	ulIndexDisplayName = 1
 	ulIndexJid         = 2
 	ulIndexColor       = 3
@@ -219,14 +219,14 @@ func (csi *conversationStackItem) remove() {
 }
 
 func (cl *conversationList) getItemForIter(iter *gtk.TreeIter) *conversationStackItem {
-	val, err := cl.model.GetValue(iter, ulIndexId)
+	val, err := cl.model.GetValue(iter, ulIndexID)
 	if err != nil {
-		log.Printf("Error getting ulIndexId value: %v", err)
+		log.Printf("Error getting ulIndexID value: %v", err)
 		return nil
 	}
 	gv, err := val.GoValue()
 	if err != nil {
-		fmt.Printf("Error getting GoValue for ulIndexId: %v", err)
+		fmt.Printf("Error getting GoValue for ulIndexID: %v", err)
 		return nil
 	}
 	return cl.layout.itemMap[gv.(int)]

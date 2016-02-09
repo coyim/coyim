@@ -418,6 +418,7 @@ func authors() []string {
 		"Tania Silva  -  tsilva@thoughtworks.com",
 		"Adam Langley",
 		"Gray Leonard - gl7039a@american.edu",
+		"Bruce Leidl - bruce@subgraph.com",
 	}
 }
 

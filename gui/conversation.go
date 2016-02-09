@@ -22,7 +22,7 @@ var (
 type conversationView interface {
 	showIdentityVerificationWarning(u *gtkUI)
 	updateSecurityWarning()
-	Show()
+	Show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool)
 	displayNotification(notification string)
@@ -40,6 +40,7 @@ type conversationPane struct {
 	to                 string
 	account            *account
 	widget             *gtk.Box
+	menubar            *gtk.MenuBar
 	entry              *gtk.Entry
 	history            *gtk.TextView
 	scrollHistory      *gtk.ScrolledWindow
@@ -47,7 +48,7 @@ type conversationPane struct {
 	securityWarning    *gtk.InfoBar
 	fingerprintWarning *gtk.InfoBar
 	// The window to set dialogs transient for
-	transientParent    *gtk.Window
+	transientParent *gtk.Window
 	sync.Mutex
 }
 
@@ -95,7 +96,7 @@ func (t *tags) createTextBuffer() *gtk.TextBuffer {
 	return buf
 }
 
-func createConversationPane(account *account, uid string, ui *gtkUI, win *gtk.Window, textBuffer *gtk.TextBuffer) *conversationPane {
+func createConversationPane(account *account, uid string, ui *gtkUI, transientParent *gtk.Window) *conversationPane {
 	builder := builderForDefinition("ConversationPane")
 
 	obj, _ := builder.GetObject("box")
@@ -116,15 +117,20 @@ func createConversationPane(account *account, uid string, ui *gtkUI, win *gtk.Wi
 	obj, _ = builder.GetObject("security-warning")
 	securityWarning := obj.(*gtk.InfoBar)
 
+	obj, _ = builder.GetObject("menubar")
+	menubar := obj.(*gtk.MenuBar)
+
 	cp := &conversationPane{
 		to:               uid,
 		account:          account,
 		history:          history,
 		widget:           pane,
+		menubar:          menubar,
 		entry:            entry,
 		scrollHistory:    scrollHistory,
 		notificationArea: notificationArea,
 		securityWarning:  securityWarning,
+		transientParent:  transientParent,
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
@@ -166,7 +172,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, win *gtk.Wi
 			}
 		},
 		"on_verify_fp_signal": func() {
-			switch verifyFingerprintDialog(cp.account, cp.to, win) {
+			switch verifyFingerprintDialog(cp.account, cp.to, transientParent) {
 			case gtk.RESPONSE_YES:
 				cp.removeIdentityVerificationWarning()
 			}
@@ -181,7 +187,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, win *gtk.Wi
 		},
 	})
 
-	cp.history.SetBuffer(textBuffer)
+	cp.history.SetBuffer(ui.getTags().createTextBuffer())
 
 	cp.history.Connect("size-allocate", func() {
 		cp.scrollToBottom()
@@ -193,7 +199,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, win *gtk.Wi
 	return cp
 }
 
-func newConversationWindow(account *account, uid string, ui *gtkUI, textBuffer *gtk.TextBuffer) *conversationWindow {
+func newConversationWindow(account *account, uid string, ui *gtkUI) *conversationWindow {
 	builder := builderForDefinition("Conversation")
 
 	obj, _ := builder.GetObject("conversation")
@@ -204,8 +210,7 @@ func newConversationWindow(account *account, uid string, ui *gtkUI, textBuffer *
 	obj, _ = builder.GetObject("box")
 	winBox := obj.(*gtk.Box)
 
-	cp := createConversationPane(account, uid, ui, win, textBuffer)
-	cp.transientParent = win
+	cp := createConversationPane(account, uid, ui, win)
 	winBox.PackStart(cp.widget, true, true, 0)
 
 	conv := &conversationWindow{
@@ -319,7 +324,7 @@ func (conv *conversationPane) updateSecurityWarning() {
 	conv.securityWarning.SetVisible(!conversation.IsEncrypted())
 }
 
-func (conv *conversationWindow) Show() {
+func (conv *conversationWindow) Show(userInitiated bool) {
 	conv.updateSecurityWarning()
 	conv.win.Show()
 	conv.tryEnsureCorrectWorkspace()

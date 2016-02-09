@@ -227,18 +227,17 @@ func (r *roster) onActivateBuddy(v *gtk.TreeView, path *gtk.TreePath) {
 		return
 	}
 
-	r.openConversationView(account, jid)
+	r.openConversationView(account, jid, true)
 }
 
-func (r *roster) openConversationView(account *account, to string) (conversationView, error) {
+func (r *roster) openConversationView(account *account, to string, userInitiated bool) (conversationView, error) {
 	c, ok := account.getConversationWith(to)
 
 	if !ok {
-		textBuffer := r.ui.getTags().createTextBuffer()
-		c = account.createConversationView(to, r.ui, textBuffer)
+		c = account.createConversationView(to, r.ui)
 	}
 
-	c.Show()
+	c.Show(userInitiated)
 	return c, nil
 }
 
@@ -264,7 +263,7 @@ func (r *roster) presenceUpdated(account *account, from, show, showStatus string
 
 func (r *roster) messageReceived(account *account, from string, timestamp time.Time, encrypted bool, message []byte) {
 	doInUIThread(func() {
-		conv, err := r.openConversationView(account, from)
+		conv, err := r.openConversationView(account, from, false)
 		if err != nil {
 			return
 		}

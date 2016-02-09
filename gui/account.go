@@ -55,18 +55,23 @@ func (account *account) getConversationWith(to string) (conversationView, bool) 
 	return c, ok
 }
 
-func (account *account) createConversationView(to string, ui *gtkUI, textBuffer *gtk.TextBuffer) conversationView {
-	c := newConversationWindow(account, to, ui, textBuffer)
-	account.conversations[to] = c
+func (account *account) createConversationView(to string, ui *gtkUI) conversationView {
+	var cv conversationView
+	if *config.SingleWindowFlag {
+		cv = ui.unified.createConversation(account, to)
+	} else {
+		cv = newConversationWindow(account, to, ui)
+	}
+	account.conversations[to] = cv
 
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 	for _, f := range account.delayedConversations[to] {
-		f(c)
+		f(cv)
 	}
 	delete(account.delayedConversations, to)
 
-	return c
+	return cv
 }
 
 func (account *account) afterConversationWindowCreated(to string, f func(conversationView)) {

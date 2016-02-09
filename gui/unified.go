@@ -245,10 +245,12 @@ func (cl *conversationList) onActivate(v *gtk.TreeView, path *gtk.TreePath) {
 }
 
 func (cl *conversationList) removeSelection() {
-	selection, _ := cl.view.GetSelection()
-	selection.GetSelectedRows(cl.model).Foreach(func(item interface{}) {
-		selection.UnselectPath(item.(*gtk.TreePath))
-	})
+	ts, _ := cl.view.GetSelection()
+	var iter gtk.TreeIter
+	if ts.GetSelected(nil, &iter) {
+		path, _ := cl.model.GetPath(&iter)
+		ts.UnselectPath(path)
+	}
 }
 
 func (ul *unifiedLayout) setCurrentPage(csi *conversationStackItem) {

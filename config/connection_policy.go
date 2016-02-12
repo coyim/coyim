@@ -51,7 +51,8 @@ func (p *ConnectionPolicy) isTorRunning() error {
 	return nil
 }
 
-func (a *Account) hasTorAuto() bool {
+// HasTorAuto check if account has proxy with prefix "tor-auto://"
+func (a *Account) HasTorAuto() bool {
 	for _, px := range a.Proxies {
 		if strings.HasPrefix(px, "tor-auto://") {
 			return true
@@ -69,9 +70,9 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (interfaces.Dialer, err
 
 	domainpart := jidParts[1]
 
-	hasTorAuto := conf.hasTorAuto()
+	hasTorAuto := conf.HasTorAuto()
 
-	if conf.RequireTor || hasTorAuto {
+	if hasTorAuto {
 		if err := p.isTorRunning(); err != nil {
 			return nil, err
 		}
@@ -122,7 +123,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (interfaces.Dialer, err
 		dialer.SetServerAddress(net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port)))
 	}
 
-	if conf.RequireTor || hasTorAuto {
+	if hasTorAuto {
 		server := dialer.GetServer()
 		host, port, err := net.SplitHostPort(server)
 		if err != nil {

@@ -96,21 +96,18 @@ func (s *AdiumSuite) Test_AdiumImporter_canImportAccountsFromFile(c *C) {
 	c.Check(res["baarfoo@coyim.com"].Server, Equals, "talk.google.com")
 	c.Check(res["baarfoo@coyim.com"].Password, Equals, "")
 	c.Check(res["baarfoo@coyim.com"].Port, Equals, 5222)
-	c.Check(res["baarfoo@coyim.com"].RequireTor, Equals, false)
 	c.Check(len(res["baarfoo@coyim.com"].Proxies), Equals, 0)
 
 	c.Check(res["baarfoo@coyim.org"].Account, Equals, "baarfoo@coyim.org")
 	c.Check(res["baarfoo@coyim.org"].Server, Equals, "")
 	c.Check(res["baarfoo@coyim.org"].Password, Equals, "")
 	c.Check(res["baarfoo@coyim.org"].Port, Equals, 5222)
-	c.Check(res["baarfoo@coyim.org"].RequireTor, Equals, false)
 	c.Check(len(res["baarfoo@coyim.com"].Proxies), Equals, 0)
 
 	c.Check(res["foobaar@mesopotamia.xmpp"].Account, Equals, "foobaar@mesopotamia.xmpp")
 	c.Check(res["foobaar@mesopotamia.xmpp"].Server, Equals, "talk.google.com")
 	c.Check(res["foobaar@mesopotamia.xmpp"].Password, Equals, "")
 	c.Check(res["foobaar@mesopotamia.xmpp"].Port, Equals, 5222)
-	c.Check(res["foobaar@mesopotamia.xmpp"].RequireTor, Equals, false)
 	c.Check(len(res["foobaar@mesopotamia.xmpp"].Proxies), Equals, 0)
 }
 
@@ -193,7 +190,6 @@ func (s *AdiumSuite) Test_AdiumImporter_canDoAFullImport(c *C) {
 		},
 		HideStatusUpdates:    false,
 		Proxies:              []string{},
-		RequireTor:           false,
 		OTRAutoTearDown:      false,
 		OTRAutoAppendTag:     false,
 		OTRAutoStartSession:  false,
@@ -206,7 +202,6 @@ func (s *AdiumSuite) Test_AdiumImporter_canDoAFullImport(c *C) {
 		Proxies:              []string{},
 		Port:                 5222,
 		HideStatusUpdates:    false,
-		RequireTor:           false,
 		OTRAutoTearDown:      false,
 		OTRAutoAppendTag:     false,
 		OTRAutoStartSession:  false,
@@ -264,7 +259,6 @@ func (s *AdiumSuite) Test_AdiumImporter_canDoAFullImport(c *C) {
 			},
 		},
 		HideStatusUpdates:    false,
-		RequireTor:           false,
 		OTRAutoTearDown:      false,
 		OTRAutoAppendTag:     false,
 		OTRAutoStartSession:  false,

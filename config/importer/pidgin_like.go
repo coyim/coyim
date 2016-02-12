@@ -101,7 +101,7 @@ func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
 			a.Proxies = make([]string, 0)
 			for _, px := range ac.Proxy {
 				if px.Type == "tor" {
-					a.RequireTor = true
+					a.Proxies = append(a.Proxies, "tor-auto://")
 				}
 				a.Proxies = append(a.Proxies,
 					composeProxyString(px.Type, px.Username, px.Password, px.Host, strconv.Itoa(px.Port)),
@@ -113,7 +113,7 @@ func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
 			}
 
 			if strings.HasSuffix(a.Server, ".onion") {
-				a.RequireTor = true
+				a.Proxies = append(a.Proxies, "tor-auto://")
 			}
 
 			res[nm] = a

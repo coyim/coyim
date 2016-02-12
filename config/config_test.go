@@ -47,7 +47,6 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 				}
 			],
 			"HideStatusUpdates": false,
-			"RequireTor": true,
 			"OTRAutoTearDown": false,
 			"OTRAutoAppendTag": false,
 			"OTRAutoStartSession": false,
@@ -58,7 +57,6 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 			"Account": "bob@riseup.net",
 			"Peers": null,
 			"HideStatusUpdates": false,
-			"RequireTor": false,
 			"OTRAutoTearDown": false,
 			"OTRAutoAppendTag": false,
 			"OTRAutoStartSession": false,
@@ -78,14 +76,13 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 	conf := ApplicationConfig{
 		Accounts: []*Account{
 			&Account{
-				Account:       "bob@riseup.net",
+				Account: "bob@riseup.net",
 				Peers: []*Peer{
 					&Peer{
-						UserID: "bob@riseup.net",
+						UserID:   "bob@riseup.net",
 						Nickname: "boby",
 					},
 				},
-				RequireTor:    true,
 				AlwaysEncrypt: true,
 			},
 			&Account{

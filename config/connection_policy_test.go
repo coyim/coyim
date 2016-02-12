@@ -86,8 +86,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesConfiguredServerAddressA
 func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceIfFound(c *C) {
 	account := &Account{
 		Account: "coyim@riseup.net",
-
-		RequireTor: true,
+		Proxies: []string{"tor-auto://"},
 	}
 
 	policy := ConnectionPolicy{
@@ -115,8 +114,8 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_IgnoresAssociatedHiddenServi
 
 func (s *ConnectionPolicySuite) Test_buildDialerFor_ErrorsIfTorIsRequiredButNotFound(c *C) {
 	account := &Account{
-		Account:    "coyim@riseup.net",
-		RequireTor: true,
+		Account: "coyim@riseup.net",
+		Proxies: []string{"tor-auto://"},
 	}
 
 	policy := ConnectionPolicy{

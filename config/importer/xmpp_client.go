@@ -74,7 +74,7 @@ func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bo
 		fpr.Trusted = true
 	}
 
-	ac.RequireTor = len(c.Proxies) > 0
+	c.Proxies = append(c.Proxies, "tor-auto://")
 
 	a.NotifyCommand = c.NotifyCommand
 	a.Bell = c.Bell

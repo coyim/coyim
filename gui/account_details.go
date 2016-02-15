@@ -178,16 +178,14 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		},
 		"on_edit_proxy_signal": func() {
 			ts, _ := data.proxiesView.GetSelection()
-			var iter gtk.TreeIter
-			if ts.GetSelected(nil, &iter) {
-				editProxy(&iter, func() {})
+			if _, iter, ok := ts.GetSelected(); ok {
+				editProxy(iter, func() {})
 			}
 		},
 		"on_remove_proxy_signal": func() {
 			ts, _ := data.proxiesView.GetSelection()
-			var iter gtk.TreeIter
-			if ts.GetSelected(nil, &iter) {
-				data.proxies.Remove(&iter)
+			if _, iter, ok := ts.GetSelected(); ok {
+				data.proxies.Remove(iter)
 			}
 		},
 		"on_add_proxy_signal": func() {

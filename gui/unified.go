@@ -246,9 +246,8 @@ func (cl *conversationList) onActivate(v *gtk.TreeView, path *gtk.TreePath) {
 
 func (cl *conversationList) removeSelection() {
 	ts, _ := cl.view.GetSelection()
-	var iter gtk.TreeIter
-	if ts.GetSelected(nil, &iter) {
-		path, _ := cl.model.GetPath(&iter)
+	if _, iter, ok := ts.GetSelected(); ok {
+		path, _ := cl.model.GetPath(iter)
 		ts.UnselectPath(path)
 	}
 }

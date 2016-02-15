@@ -73,9 +73,6 @@ func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bo
 		fpr := ac.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(fp)
 		fpr.Trusted = true
 	}
-
-	c.Proxies = append(c.Proxies, "tor-auto://")
-
 	a.NotifyCommand = c.NotifyCommand
 	a.Bell = c.Bell
 	a.RawLogFile = c.RawLogFile

@@ -112,10 +112,6 @@ func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
 				a.Server = settings["connect_server"]
 			}
 
-			if strings.HasSuffix(a.Server, ".onion") {
-				a.Proxies = append(a.Proxies, "tor-auto://")
-			}
-
 			res[nm] = a
 		}
 	}

@@ -35,7 +35,6 @@ func (s *AccountXmppSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *
 	a, err := NewAccount()
 
 	c.Check(err, IsNil)
-	c.Check(a.RequireTor, Equals, true)
 	c.Check(len(a.PrivateKeys), Equals, 1)
 	c.Check(a.AlwaysEncrypt, Equals, true)
 	c.Check(a.OTRAutoStartSession, Equals, true)

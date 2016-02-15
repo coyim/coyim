@@ -822,10 +822,9 @@ func (c *cliUI) enroll(conf *config.ApplicationConfig, currentConf *config.Accou
 	c.term.SetPrompt("Use Tor?: ")
 	if useTorQuery, err := c.term.ReadLine(); err != nil || len(useTorQuery) == 0 || !config.ParseYes(useTorQuery) {
 		c.info("Not using Tor...")
-		currentConf.RequireTor = false
+		currentConf.Proxies = []string{}
 	} else {
 		c.info("Using Tor...")
-		currentConf.RequireTor = true
 	}
 
 	c.term.SetPrompt("File to import libotr private key from (enter to generate): ")
@@ -866,7 +865,7 @@ func (c *cliUI) enroll(conf *config.ApplicationConfig, currentConf *config.Accou
 	currentConf.OTRAutoTearDown = false
 
 	// Force Tor for servers with well known Tor hidden services.
-	if _, ok := servers.Get(domain); ok && currentConf.RequireTor {
+	if _, ok := servers.Get(domain); ok && currentConf.HasTorAuto() {
 		const torProxyURL = "socks5://127.0.0.1:9050"
 		c.info("It appears that you are using a well known server and we will use its Tor hidden service to connect.")
 		currentConf.Proxies = []string{torProxyURL}
@@ -876,7 +875,7 @@ func (c *cliUI) enroll(conf *config.ApplicationConfig, currentConf *config.Accou
 
 	var proxyStr string
 	proxyDefaultPrompt := ", enter for none"
-	if currentConf.RequireTor {
+	if currentConf.HasTorAuto() {
 		proxyDefaultPrompt = ", which is the default"
 	}
 	c.term.SetPrompt("Proxy (i.e socks5://127.0.0.1:9050" + proxyDefaultPrompt + "): ")
@@ -886,7 +885,7 @@ func (c *cliUI) enroll(conf *config.ApplicationConfig, currentConf *config.Accou
 			return false
 		}
 		if len(proxyStr) == 0 {
-			if !currentConf.RequireTor {
+			if !currentConf.HasTorAuto() {
 				break
 			} else {
 				proxyStr = "socks5://127.0.0.1:9050"

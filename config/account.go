@@ -29,7 +29,6 @@ type Account struct {
 	LegacyKnownFingerprints []KnownFingerprint `json:"KnownFingerprints,omitempty"`
 	Peers                   []*Peer
 	HideStatusUpdates       bool
-	RequireTor              bool
 	OTRAutoTearDown         bool
 	OTRAutoAppendTag        bool
 	OTRAutoStartSession     bool
@@ -68,7 +67,6 @@ func NewAccount() (*Account, error) {
 	}
 
 	return &Account{
-		RequireTor:          true,
 		PrivateKeys:         SerializedKeys(pkeys),
 		AlwaysEncrypt:       true,
 		OTRAutoStartSession: true,

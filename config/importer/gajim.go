@@ -296,13 +296,9 @@ func mergeAccountInformation(ac gajimAccountInfo, s gajimOTRSettings, s2 map[str
 		}
 	}
 
+	res.Proxies = make([]string, 0)
 	if ac.proxy != "" {
-		res.Proxies = []string{ac.proxy}
-		res.RequireTor = true
-	}
-
-	if strings.HasSuffix(res.Server, ".onion") {
-		res.RequireTor = true
+		res.Proxies = append(res.Proxies, ac.proxy)
 	}
 
 	res.AlwaysEncrypt = s.requireEncryption

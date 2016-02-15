@@ -5,9 +5,10 @@ import (
 	"net/url"
 	"time"
 
+	"golang.org/x/net/proxy"
+
 	ournet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/xmpp"
-	"golang.org/x/net/proxy"
 	. "gopkg.in/check.v1"
 )
 
@@ -86,15 +87,20 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesConfiguredServerAddressA
 func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceIfFound(c *C) {
 	account := &Account{
 		Account: "coyim@riseup.net",
-
-		RequireTor: true,
+		Proxies: []string{
+			"tor-auto://",
+		},
 	}
 
+	currentTor := ournet.Tor
+
+	ournet.Tor = mockTorState("127.0.0.1:9999")
 	policy := ConnectionPolicy{
 		DialerFactory: xmpp.DialerFactory,
-		torState:      mockTorState("127.0.0.1:9999"),
+		torState:      ournet.Tor,
 	}
 	dialer, err := policy.buildDialerFor(account)
+	ournet.Tor = currentTor
 
 	c.Check(err, IsNil)
 	c.Check(dialer.ServerAddress(), Equals, "4cjw6cwpeaeppfqz.onion:5222")
@@ -115,8 +121,8 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_IgnoresAssociatedHiddenServi
 
 func (s *ConnectionPolicySuite) Test_buildDialerFor_ErrorsIfTorIsRequiredButNotFound(c *C) {
 	account := &Account{
-		Account:    "coyim@riseup.net",
-		RequireTor: true,
+		Account: "coyim@riseup.net",
+		Proxies: []string{"tor-auto://"},
 	}
 
 	policy := ConnectionPolicy{

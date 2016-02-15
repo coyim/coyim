@@ -98,9 +98,8 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
 	conf := &config.Account{
-		Account:    "@" + server,
-		RequireTor: true,
-		Proxies:    []string{"tor-auto://"},
+		Account: "@" + server,
+		Proxies: []string{"tor-auto://"},
 	}
 
 	//TODO: this should receive only a JID domainpart

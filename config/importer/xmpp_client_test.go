@@ -37,7 +37,6 @@ func (s *XmppClientXmppSuite) Test_XmppClient_canImportXmppClientConfiguration(c
 	c.Assert(res.Accounts[0].Password, Equals, "123547567846rghdfghdrghr6ythdt")
 	c.Assert(res.Accounts[0].Port, Equals, 5223)
 	c.Assert(res.Accounts[0].HideStatusUpdates, Equals, true)
-	c.Assert(res.Accounts[0].RequireTor, Equals, true)
 	c.Assert(res.Accounts[0].OTRAutoTearDown, Equals, true)
 	c.Assert(res.Accounts[0].OTRAutoAppendTag, Equals, true)
 	c.Assert(res.Accounts[0].OTRAutoStartSession, Equals, true)

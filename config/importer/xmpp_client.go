@@ -73,9 +73,6 @@ func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bo
 		fpr := ac.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(fp)
 		fpr.Trusted = true
 	}
-
-	ac.RequireTor = len(c.Proxies) > 0
-
 	a.NotifyCommand = c.NotifyCommand
 	a.Bell = c.Bell
 	a.RawLogFile = c.RawLogFile

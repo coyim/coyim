@@ -18,7 +18,7 @@ msgstr ""
 
 #: ../gui/definitions/AccountDetails.xml:12
 msgid "Account Details"
-msgstr ""
+msgstr "تفاصيل الحساب"
 
 #: ../gui/definitions/AccountDetails.xml:41
 msgid ""
@@ -29,7 +29,7 @@ msgstr ""
 #: ../gui/definitions/AccountDetails.xml:60
 #: ../gui/definitions/AskForPassword.xml:36
 msgid "Password"
-msgstr ""
+msgstr "كلمة المرور"
 
 #: ../gui/definitions/AccountDetails.xml:81
 msgid "Display all settings"
@@ -39,7 +39,7 @@ msgstr ""
 #: ../gui/definitions/AddContact.xml:22
 #: ../gui/definitions/AskForPassword.xml:15
 msgid "Account"
-msgstr ""
+msgstr "حساب"
 
 #: ../gui/definitions/AccountDetails.xml:124
 msgid "Server (leave empty for default)"
@@ -113,17 +113,17 @@ msgstr ""
 #: ../gui/definitions/RegistrationForm.xml:38
 #: ../gui/definitions/VerifyFingerprint.xml:18
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: ../gui/definitions/AccountDetails.xml:436
 #: ../gui/definitions/EditProxy.xml:131
 msgid "Save"
-msgstr ""
+msgstr "حفظ"
 
 #: ../gui/definitions/AccountPopupMenu.xml:5
 #: ../gui/definitions/AskForPassword.xml:67
 msgid "Connect"
-msgstr ""
+msgstr "إتصل"
 
 #: ../gui/definitions/AccountPopupMenu.xml:11
 msgid "Disconnect"
@@ -148,7 +148,7 @@ msgstr ""
 
 #: ../gui/definitions/AddContact.xml:4 ../gui/definitions/RenameContact.xml:4
 msgid "Add contact"
-msgstr ""
+msgstr "أضف حسابًا"
 
 #: ../gui/definitions/AddContact.xml:41
 msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
@@ -156,7 +156,7 @@ msgstr ""
 
 #: ../gui/definitions/AddContact.xml:62
 msgid "Add"
-msgstr ""
+msgstr "إضافة"
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
@@ -206,7 +206,7 @@ msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:14
 msgid "Remove"
-msgstr ""
+msgstr "حذف"
 
 #: ../gui/definitions/ContactPopupMenu.xml:20
 msgid "Rename..."
@@ -226,19 +226,19 @@ msgstr ""
 
 #: ../gui/definitions/ConversationPane.xml:12
 msgid "Developer options"
-msgstr ""
+msgstr "خيارات المطوّر"
 
 #: ../gui/definitions/ConversationPane.xml:19
 msgid "Start encrypted chat"
-msgstr ""
+msgstr "إبدء محادثة مشفّرة"
 
 #: ../gui/definitions/ConversationPane.xml:26
 msgid "End encrypted chat"
-msgstr ""
+msgstr "أنه المحادثة المشفّرة"
 
 #: ../gui/definitions/ConversationPane.xml:33
 msgid "Verify fingerprint"
-msgstr ""
+msgstr "التحقق من البصمة"
 
 #: ../gui/definitions/ConversationPane.xml:66
 msgid "You are talking over an unprotected channel"
@@ -270,7 +270,7 @@ msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:99
 msgid "Port:"
-msgstr ""
+msgstr "منفذ"
 
 #: ../gui/definitions/Feedback.xml:3
 msgid "We would like to receive your feedback"
@@ -306,35 +306,35 @@ msgstr ""
 
 #: ../gui/definitions/Importer.xml:40
 msgid "Import this"
-msgstr ""
+msgstr "إسترد هذا"
 
 #: ../gui/definitions/Importer.xml:54
 msgid "From application"
-msgstr ""
+msgstr "من خلال التطبيق"
 
 #: ../gui/definitions/Importer.xml:66
 msgid "Account name"
-msgstr ""
+msgstr "إسم الحساب"
 
 #: ../gui/definitions/Importer.xml:96
 msgid "Import"
-msgstr ""
+msgstr "إستيراد"
 
 #: ../gui/definitions/Main.xml:22
 msgid "Contacts"
-msgstr ""
+msgstr "جهات الإتصال"
 
 #: ../gui/definitions/Main.xml:29
 msgid "Add..."
-msgstr ""
+msgstr "إضافة..."
 
 #: ../gui/definitions/Main.xml:40
 msgid "Accounts"
-msgstr ""
+msgstr "حسابات"
 
 #: ../gui/definitions/Main.xml:46
 msgid "View"
-msgstr ""
+msgstr "عرض"
 
 #: ../gui/definitions/Main.xml:53
 msgid "Merge Accounts"
@@ -350,7 +350,7 @@ msgstr ""
 
 #: ../gui/definitions/Main.xml:85
 msgid "About"
-msgstr ""
+msgstr "حول"
 
 #: ../gui/definitions/MasterPassword.xml:4
 msgid "Enter master password"
@@ -397,7 +397,7 @@ msgstr ""
 #: ../gui/definitions/VerifyFingerprint.xml:23
 #: ../gui/definitions/VerifyIdentityNotification.xml:20
 msgid "Verify"
-msgstr ""
+msgstr "تحقيق"
 
 #: ../gui/account.go:151
 msgid "Account added"
@@ -497,19 +497,19 @@ msgstr ""
 
 #: ../gui/conversation.go:379
 msgid "Available"
-msgstr ""
+msgstr "متوفر"
 
 #: ../gui/conversation.go:381
 msgid "Not Available"
-msgstr ""
+msgstr "غير متوفر"
 
 #: ../gui/conversation.go:383
 msgid "Away"
-msgstr ""
+msgstr "في الخارج"
 
 #: ../gui/conversation.go:385
 msgid "Busy"
-msgstr ""
+msgstr "مشغول"
 
 #: ../gui/conversation.go:387
 msgid "Free for Chat"
@@ -671,11 +671,11 @@ msgstr ""
 
 #: ../gui/peer_information.go:34
 msgid "not trusted"
-msgstr ""
+msgstr "غير آمن"
 
 #: ../gui/peer_information.go:36
 msgid "trusted"
-msgstr ""
+msgstr "آمن"
 
 #: ../gui/subscription.go:18
 #, python-format

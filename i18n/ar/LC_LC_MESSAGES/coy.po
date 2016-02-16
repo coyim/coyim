@@ -5,17 +5,28 @@
 #
 msgid ""
 msgstr ""
+"#-#-#-#-#  coy-code.pot (coy)  #-#-#-#-#\n"
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-02-16 12:28-0500\n"
-"PO-Revision-Date: 2016-02-01 14:56-0500\n"
+"PO-Revision-Date: 2016-02-16 12:28-0500\n"
 "Last-Translator: Automatically generated\n"
-"Language-Team: ZAKARIA\n"
-"Language: ar_AR\n"
+"Language-Team: none\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=ASCII\n"
 "Content-Transfer-Encoding: 8bit\n"
- "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"#-#-#-#-#  coy-ui.pot (coy)  #-#-#-#-#\n"
+"Project-Id-Version: coy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-01 14:56-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: ../gui/master_password.go:30
 msgid "Password can not be empty - please try again"
@@ -83,7 +94,7 @@ msgstr ""
 msgid "_Connect All"
 msgstr ""
 
-#: ../gui/accounts_menu.go:45
+#: ../gui/accounts_menu.go:45 ../gui/definitions/AccountDetails.xml:239
 msgid "_Add..."
 msgstr ""
 
@@ -112,11 +123,11 @@ msgstr ""
 msgid "_Disconnect"
 msgstr ""
 
-#: ../gui/account.go:204
+#: ../gui/account.go:204 ../gui/definitions/AccountDetails.xml:269
 msgid "_Edit..."
 msgstr ""
 
-#: ../gui/account.go:207
+#: ../gui/account.go:207 ../gui/definitions/AccountDetails.xml:254
 msgid "_Remove"
 msgstr ""
 
@@ -322,4 +333,351 @@ msgstr ""
 #: ../gui/notifications.go:49
 #, python-format
 msgid "You have not verified the identity of %s"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:12
+msgid "Account Details"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:41
+msgid ""
+"Your account\n"
+"(example: kim42@dukgo.com)"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:60
+#: ../gui/definitions/AskForPassword.xml:36
+msgid "Password"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:81
+msgid "Display all settings"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:105
+#: ../gui/definitions/AddContact.xml:22
+#: ../gui/definitions/AskForPassword.xml:15
+msgid "Account"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:124
+msgid "Server (leave empty for default)"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:143
+msgid "Port (leave empty for default)"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:165
+#: ../gui/definitions/AccountRegistration.xml:30
+msgid "Server"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:299
+msgid "Proxies"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:329
+msgid ""
+"The below buttons allow you to import private keys and fingerprints. Both of "
+"them should be in the Pidgin/libotr format. If you import private keys, your "
+"existing private keys will be deleted, since current there is no way to "
+"choose which key to use for encrypted chat."
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:342
+msgid "Import Private _Keys..."
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:356
+msgid "Import _Fingerprints..."
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:370
+msgid ""
+"The below buttons allow you to export private keys and fingerprints. Be "
+"careful with the files that come out of this process, since they contain "
+"potentially sensitive data. The export will be in Pidgin/libotr format."
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:383
+msgid "Export Private Keys..."
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:396
+msgid "Export Fingerprints..."
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:414
+msgid "Encryption"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:430
+#: ../gui/definitions/AccountRegistration.xml:61
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:54
+#: ../gui/definitions/EditProxy.xml:125 ../gui/definitions/Importer.xml:91
+#: ../gui/definitions/MasterPassword.xml:43
+#: ../gui/definitions/RegistrationForm.xml:38
+#: ../gui/definitions/VerifyFingerprint.xml:18
+msgid "Cancel"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:436
+#: ../gui/definitions/EditProxy.xml:131
+msgid "Save"
+msgstr ""
+
+#: ../gui/definitions/AccountPopupMenu.xml:5
+#: ../gui/definitions/AskForPassword.xml:67
+msgid "Connect"
+msgstr ""
+
+#: ../gui/definitions/AccountPopupMenu.xml:11
+msgid "Disconnect"
+msgstr ""
+
+#: ../gui/definitions/AccountPopupMenu.xml:20
+msgid "Edit..."
+msgstr ""
+
+#: ../gui/definitions/AccountPopupMenu.xml:29
+#: ../gui/definitions/ContactPopupMenu.xml:44
+msgid "Dump info"
+msgstr ""
+
+#: ../gui/definitions/AccountRegistration.xml:15
+msgid "Choose a server to register your account"
+msgstr ""
+
+#: ../gui/definitions/AccountRegistration.xml:66
+msgid "Apply"
+msgstr ""
+
+#: ../gui/definitions/AddContact.xml:4
+msgid "Add contact"
+msgstr ""
+
+#: ../gui/definitions/AddContact.xml:41
+msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
+msgstr ""
+
+#: ../gui/definitions/AddContact.xml:62
+msgid "Add"
+msgstr ""
+
+#: ../gui/definitions/AskForPassword.xml:4
+msgid "Enter your password"
+msgstr ""
+
+#: ../gui/definitions/AskToEncrypt.xml:5
+msgid "Encrypt configuration file"
+msgstr ""
+
+#: ../gui/definitions/AskToEncrypt.xml:6
+msgid ""
+"Would you like to save your configuration file in an encrypted format? This "
+"can be significantly more secure, but you will not be able to access your "
+"configuration if you lose the password. You will only be asked for your "
+"password when CoyIM starts."
+msgstr ""
+
+#: ../gui/definitions/AuthorizeSubscription.xml:3
+msgid "Subscription request"
+msgstr ""
+
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:4
+msgid "Configure master password"
+msgstr ""
+
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:15
+msgid "Please enter the master password for the configuration file, two times."
+msgstr ""
+
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:60
+#: ../gui/definitions/MasterPassword.xml:49
+#: ../gui/definitions/VerifyFingerprintUnknown.xml:19
+msgid "OK"
+msgstr ""
+
+#: ../gui/definitions/ConfirmAccountRemoval.xml:3
+msgid "Confirm account removal"
+msgstr ""
+
+#: ../gui/definitions/ConfirmAccountRemoval.xml:4
+msgid "Are you sure you want to remove this account?"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:5
+msgid "Fingerprints..."
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:14
+msgid "Remove"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:23
+msgid "Ask contact to see their status"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:29
+msgid "Allow contact to see my status"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:35
+msgid "Forbid contact to see my status"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:19
+msgid "Developer options"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:26
+msgid "Start encrypted chat"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:33
+msgid "End encrypted chat"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:40
+msgid "Verify fingerprint"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:73
+msgid "You are talking over an unprotected channel"
+msgstr ""
+
+#: ../gui/definitions/Conversation.xml:85
+msgid "Secure chat"
+msgstr ""
+
+#: ../gui/definitions/EditProxy.xml:3
+msgid "Edit Proxy"
+msgstr ""
+
+#: ../gui/definitions/EditProxy.xml:17
+msgid "Proxy type:"
+msgstr ""
+
+#: ../gui/definitions/EditProxy.xml:38
+msgid "User:"
+msgstr ""
+
+#: ../gui/definitions/EditProxy.xml:58
+msgid "Password:"
+msgstr ""
+
+#: ../gui/definitions/EditProxy.xml:79
+msgid "Server:"
+msgstr ""
+
+#: ../gui/definitions/EditProxy.xml:99
+msgid "Port:"
+msgstr ""
+
+#: ../gui/definitions/Feedback.xml:4
+msgid "We would like to receive your feedback"
+msgstr ""
+
+#: ../gui/definitions/Feedback.xml:6
+msgid ""
+"Please, tell us how is going for you to use CoyIM.\n"
+"This is the only way we can create a better tool to keep your conversations "
+"private."
+msgstr ""
+
+#: ../gui/definitions/Feedback.xml:7
+msgid "https://coy.im/feedback"
+msgstr ""
+
+#: ../gui/definitions/FeedbackInfo.xml:12
+msgid "Are you liking it?"
+msgstr ""
+
+#: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:63
+msgid "Feedback"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:12
+msgid "Import Accounts"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:21
+msgid ""
+"Choose the accounts you would like to import and start using from CoyIM."
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:40
+msgid "Import this"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:54
+msgid "From application"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:66
+msgid "Account name"
+msgstr ""
+
+#: ../gui/definitions/Importer.xml:96
+msgid "Import"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:17
+msgid "Contacts"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:22
+msgid "Add..."
+msgstr ""
+
+#: ../gui/definitions/Main.xml:32
+msgid "Accounts"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:37
+msgid "View"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:42
+msgid "Merge Accounts"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:48
+msgid "Show Offline Contacts"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:58
+msgid "Help"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:69
+msgid "About"
+msgstr ""
+
+#: ../gui/definitions/MasterPassword.xml:4
+msgid "Enter master password"
+msgstr ""
+
+#: ../gui/definitions/MasterPassword.xml:15
+msgid ""
+"Please enter the master password for the configuration file. You will not be "
+"asked for this password again until you restart CoyIM."
+msgstr ""
+
+#: ../gui/definitions/PeerFingerprints.xml:3
+msgid "Peer fingerprints"
+msgstr ""
+
+#: ../gui/definitions/PeerFingerprints.xml:28
+msgid "_OK"
+msgstr ""
+
+#: ../gui/definitions/RegistrationForm.xml:44
+msgid "Register"
+msgstr ""
+
+#: ../gui/definitions/VerifyFingerprint.xml:23
+#: ../gui/definitions/VerifyIdentityNotification.xml:20
+msgid "Verify"
 msgstr ""

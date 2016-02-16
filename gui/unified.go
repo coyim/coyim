@@ -43,9 +43,10 @@ type conversationList struct {
 
 type conversationStackItem struct {
 	*conversationPane
-	pageIndex int
-	iter      *gtk.TreeIter
-	layout    *unifiedLayout
+	pageIndex      int
+	needsAttention bool
+	iter           *gtk.TreeIter
+	layout         *unifiedLayout
 }
 
 func newUnifiedLayout(ui *gtkUI, left, parent *gtk.Box) *unifiedLayout {
@@ -107,7 +108,8 @@ func (ul *unifiedLayout) createConversation(account *account, uid string) conver
 
 func (ul *unifiedLayout) onConversationChanged(csi *conversationStackItem) {
 	if ul.notebook.GetCurrentPage() != csi.pageIndex {
-		csi.setBold(true)
+		csi.needsAttention = true
+		csi.applyTextWeight()
 	}
 }
 
@@ -138,7 +140,7 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 		peer.Jid,
 		decideColorFor(peer),
 		"#ffffff",
-		500,
+		csi.getTextWeight(),
 		createTooltipFor(peer),
 		statusIcons[decideStatusFor(peer)].getPixbuf(),
 	},
@@ -180,14 +182,18 @@ func (csi *conversationStackItem) shortName() string {
 	return ss[0]
 }
 
-func (csi *conversationStackItem) setBold(bold bool) {
+func (csi *conversationStackItem) getTextWeight() int {
+	if csi.needsAttention {
+		return 700
+	}
+	return 500
+}
+
+func (csi *conversationStackItem) applyTextWeight() {
 	if csi.iter == nil {
 		return
 	}
-	weight := 500
-	if bold {
-		weight = 700
-	}
+	weight := csi.getTextWeight()
 	csi.layout.cl.model.SetValue(csi.iter, ulIndexWeight, weight)
 }
 
@@ -201,13 +207,15 @@ func (csi *conversationStackItem) show(userInitiated bool) {
 		return
 	}
 	if csi.layout.notebook.GetCurrentPage() != csi.pageIndex {
-		csi.setBold(true)
+		csi.needsAttention = true
+		csi.applyTextWeight()
 	}
 }
 
 func (csi *conversationStackItem) bringToFront() {
 	csi.layout.showConversations()
-	csi.setBold(false)
+	csi.needsAttention = false
+	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
 	csi.layout.header.SetText(csi.to)
 	csi.entry.GrabFocus()

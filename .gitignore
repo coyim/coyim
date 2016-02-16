@@ -43,3 +43,6 @@ version_generated.go
 # Intellij
 *.iml
 .idea/
+
+#Zanata - Translation platform
+.zanata

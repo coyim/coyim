@@ -11,7 +11,7 @@ IN_FILES=$(shell find ../gui -name "*.go" ! -path "gui/definitions/*")
 DOMAIN=coy
 
 TRANSLATIONS=\
-	ar/LC_LC_MESSAGES/$(DOMAIN).mo \
+	ar/LC_MESSAGES/$(DOMAIN).mo \
 	en_US/LC_MESSAGES/$(DOMAIN).mo \
 	pt_BR/LC_MESSAGES/$(DOMAIN).mo \
 	sv_SE/LC_MESSAGES/$(DOMAIN).mo

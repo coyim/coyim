@@ -4,9 +4,8 @@
     <project>coyim</project>
     <project-version>v1</project-version>
     <project-type>gettext</project-type>
-    <src-dir>.</src-dir>
-    <trans-dir>.</trans-dir>
+    <src-dir>i18n</src-dir>
     <rules>
-      <rule pattern="**/*.pot">{locale_with_underscore}/LC_MESSAGES/coy.po</rule>
+      <rule pattern="**/*.pot">i18n/{locale_with_underscore}/LC_MESSAGES/{filename}.po</rule>
     </rules>
 </config>

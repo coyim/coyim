@@ -45,19 +45,19 @@ msgstr ""
 
 #: ../gui/conversation.go:379
 msgid "Available"
-msgstr "متوفر"
+msgstr ""
 
 #: ../gui/conversation.go:381
 msgid "Not Available"
-msgstr "غير متوفر"
+msgstr ""
 
 #: ../gui/conversation.go:383
 msgid "Away"
-msgstr "في الخارج"
+msgstr ""
 
 #: ../gui/conversation.go:385
 msgid "Busy"
-msgstr "مشغول"
+msgstr ""
 
 #: ../gui/conversation.go:387
 msgid "Free for Chat"
@@ -178,11 +178,11 @@ msgstr ""
 
 #: ../gui/peer_information.go:34
 msgid "not trusted"
-msgstr "غير آمن"
+msgstr ""
 
 #: ../gui/peer_information.go:36
 msgid "trusted"
-msgstr "آمن"
+msgstr ""
 
 #: ../gui/subscription.go:18
 #, python-format

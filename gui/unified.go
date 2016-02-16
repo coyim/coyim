@@ -25,7 +25,7 @@ type unifiedLayout struct {
 	ui           *gtkUI
 	cl           *conversationList
 	leftPane     *gtk.Box
-	revealer     *gtk.Revealer
+	rightPane    *gtk.Box
 	notebook     *gtk.Notebook
 	header       *gtk.Label
 	headerBox    *gtk.Box
@@ -63,7 +63,7 @@ func newUnifiedLayout(ui *gtkUI, left, parent *gtk.Box) *unifiedLayout {
 		"treeview", &ul.cl.view,
 		"liststore", &ul.cl.model,
 
-		"revealer", &ul.revealer,
+		"right", &ul.rightPane,
 		"notebook", &ul.notebook,
 		"header_label", &ul.header,
 		"header_box", &ul.headerBox,
@@ -74,10 +74,10 @@ func newUnifiedLayout(ui *gtkUI, left, parent *gtk.Box) *unifiedLayout {
 		"on_clicked":     ul.onCloseClicked,
 		"on_switch_page": ul.onSwitchPage,
 	})
-	parent.PackStart(ul.revealer, false, true, 0)
-	parent.SetChildPacking(left, false, true, 0, gtk.PACK_START)
+	parent.PackStart(ul.rightPane, false, true, 0)
+	parent.SetChildPacking(ul.leftPane, false, true, 0, gtk.PACK_START)
 	ul.notebook.SetSizeRequest(500, -1)
-	ul.revealer.Hide()
+	ul.rightPane.Hide()
 	left.SetHAlign(gtk.ALIGN_FILL)
 	left.SetHExpand(true)
 	return ul
@@ -151,11 +151,10 @@ func (ul *unifiedLayout) showConversations() {
 	if ul.convsVisible {
 		return
 	}
-	ul.leftPane.SetHExpand(false)
-	ul.revealer.Show()
-	ul.revealer.SetHExpand(true)
-	ul.revealer.SetRevealChild(true)
 
+	ul.leftPane.SetHExpand(false)
+	ul.rightPane.SetHExpand(true)
+	ul.rightPane.Show()
 	ul.convsVisible = true
 }
 
@@ -165,9 +164,8 @@ func (ul *unifiedLayout) hideConversations() {
 	}
 	width := ul.leftPane.GetAllocatedWidth()
 	height := ul.ui.window.GetAllocatedHeight()
-	ul.revealer.SetRevealChild(false)
-	ul.revealer.SetHExpand(false)
-	ul.revealer.Hide()
+	ul.rightPane.SetHExpand(false)
+	ul.rightPane.Hide()
 	ul.leftPane.SetHExpand(true)
 	ul.ui.window.Resize(width, height)
 	ul.convsVisible = false

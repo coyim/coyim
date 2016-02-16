@@ -27,16 +27,17 @@ $(TEMPLATE_UI): $(DEFINITIONS)
 $(TEMPLATE_CODE): $(IN_FILES)
 	xgettext --package-name=$(DOMAIN) --default-domain=$(DOMAIN) --from-code=utf-8 -L python $(IN_FILES) --keyword=Local -o $(TEMPLATE_CODE)
 
-%.po: $(TEMPLATE_UI) $(TEMPLATE_CODE)
-	./update-locales $(TEMPLATE_UI) $@
-	./update-locales $(TEMPLATE_CODE) $@
+$(DOMAIN).pot: $(TEMPLATE_CODE) $(TEMPLATE_UI)
+	msgcat $(TEMPLATE_CODE) $(TEMPLATE_UI) > $(DOMAIN).pot
+
+%.po: $(DOMAIN).pot
+	./update-locales $(DOMAIN).pot $@
 
 %.mo: %.po
 	msgfmt -c -v -o $@ $<
 
-update-locales: $(TEMPLATE_UI) $(TEMPLATE_CODE)
-	./update-locales $(TEMPLATE_UI) $(TRANSLATIONS)
-	./update-locales $(TEMPLATE_CODE) $(TRANSLATIONS)
+update-locales: $(DOMAIN).pot
+	./update-locales $(DOMAIN).pot $(TRANSLATIONS)
 
 clean:
 	$(RM) $(TRANSLATIONS)

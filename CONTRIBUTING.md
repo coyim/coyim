@@ -2,6 +2,7 @@
 Here's the brief:
 
 * We welcome contributions of all kinds, including but not limited to features, bug fixes, quality assurance, documentation, security review or asking questions
+* If you do not know how to code yet you can help us translating CoyIM thought [Zanata](https://translate.zanata.org/zanata/project/view/coyim)
 * Pull requests are based off, integrated into & rebased against master
 * Write automated tests, ideally using TDD. CI needs to be green in order to merge.
 * Contact us for questions & suggestions:
@@ -51,9 +52,6 @@ This is the lifecycle of a contribution. We follow a simplified fork + pull requ
 ### What to work on
 
 Generally, all issues that have no user assigned are awaiting work and free to play. If you want to make sure, or you think it will take more than a couple of days to complete your work, please reach out to us using the contact info above.
-If you don't know how to code yet you can help us with the translation. For it, you should provide us your Zanata id before jumpping into the translation.
-https://translate.zanata.org/zanata/project/view/coyim
-
 
 ### Guidelines
 

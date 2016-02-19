@@ -20,9 +20,8 @@ matrix:
       os: osx
   allow_failures:
     - os: osx
-    - go:
-      - tip
-      - 1.6
+    - go: tip
+    - go: 1.6
     - env: RELEASE=true
   fast_finish: true
 

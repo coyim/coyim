@@ -24,6 +24,7 @@ var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7}
 type unifiedLayout struct {
 	ui           *gtkUI
 	cl           *conversationList
+	headerBar    *gtk.HeaderBar
 	leftPane     *gtk.Box
 	rightPane    *gtk.Box
 	notebook     *gtk.Notebook
@@ -62,6 +63,7 @@ func newUnifiedLayout(ui *gtkUI, left, parent *gtk.Box) *unifiedLayout {
 	builder.getItems(
 		"treeview", &ul.cl.view,
 		"liststore", &ul.cl.model,
+		"headerbar", &ul.headerBar,
 
 		"right", &ul.rightPane,
 		"notebook", &ul.notebook,
@@ -74,10 +76,18 @@ func newUnifiedLayout(ui *gtkUI, left, parent *gtk.Box) *unifiedLayout {
 		"on_clicked":     ul.onCloseClicked,
 		"on_switch_page": ul.onSwitchPage,
 	})
+
+	connectShortcut("<Primary>Page_Down", &ul.ui.window.Window, ul.nextTab)
+	connectShortcut("<Primary>Page_Up", &ul.ui.window.Window, ul.previousTab)
+
 	parent.PackStart(ul.rightPane, false, true, 0)
 	parent.SetChildPacking(ul.leftPane, false, true, 0, gtk.PACK_START)
+
 	ul.notebook.SetSizeRequest(500, -1)
 	ul.rightPane.Hide()
+
+	ul.ui.window.SetTitlebar(ul.headerBar)
+
 	left.SetHAlign(gtk.ALIGN_FILL)
 	left.SetHExpand(true)
 	return ul
@@ -96,6 +106,10 @@ func (ul *unifiedLayout) createConversation(account *account, uid string) conver
 		pageIndex:        idx,
 		layout:           ul,
 	}
+
+	csi.entry.SetHasFrame(true)
+	csi.entry.SetMarginTop(5)
+	csi.entry.SetMarginBottom(5)
 
 	ul.notebook.SetTabLabelText(cp.widget, csi.shortName())
 	ul.itemMap[idx] = csi
@@ -169,6 +183,7 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.leftPane.SetHExpand(true)
 	ul.ui.window.Resize(width, height)
 	ul.convsVisible = false
+	ul.headerBar.SetSubtitle("")
 }
 
 func (csi *conversationStackItem) setEnabled(enabled bool) {
@@ -177,7 +192,14 @@ func (csi *conversationStackItem) setEnabled(enabled bool) {
 
 func (csi *conversationStackItem) shortName() string {
 	ss := strings.Split(csi.to, "@")
-	return ss[0]
+	uiName := ss[0]
+
+	peer, ok := csi.layout.ui.getPeer(csi.account, csi.to)
+	if ok && peer.NameForPresentation() != peer.Jid {
+		uiName = peer.NameForPresentation()
+	}
+
+	return uiName
 }
 
 func (csi *conversationStackItem) getTextWeight() int {
@@ -216,6 +238,7 @@ func (csi *conversationStackItem) bringToFront() {
 	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
 	csi.layout.header.SetText(csi.to)
+	csi.layout.headerBar.SetSubtitle(csi.to)
 	csi.entry.GrabFocus()
 }
 
@@ -298,6 +321,32 @@ func (ul *unifiedLayout) displayFirstConvo() bool {
 		}
 	}
 	return false
+}
+
+func (ul *unifiedLayout) nextTab(*gtk.Window) {
+	page := ul.notebook.GetCurrentPage()
+	np := (ul.notebook.GetNPages() - 1)
+	if page < 0 || np < 0 {
+		return
+	}
+	if page == np {
+		ul.notebook.SetCurrentPage(0)
+	} else {
+		ul.notebook.NextPage()
+	}
+}
+
+func (ul *unifiedLayout) previousTab(*gtk.Window) {
+	page := ul.notebook.GetCurrentPage()
+	np := (ul.notebook.GetNPages() - 1)
+	if page < 0 || np < 0 {
+		return
+	}
+	if page > 0 {
+		ul.notebook.PrevPage()
+	} else {
+		ul.notebook.SetCurrentPage(np)
+	}
 }
 
 func (ul *unifiedLayout) update() {

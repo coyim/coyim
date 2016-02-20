@@ -29,6 +29,11 @@ func (*defUnifiedLayout) String() string {
       <column type="GdkPixbuf"/>
     </columns>
   </object>
+  <object class="GtkHeaderBar" id="headerbar">
+    <property name="visible">1</property>
+    <property name="title">CoyIM</property>
+    <property name="show_close_button">True</property>
+  </object>
   <object class="GtkBox" id="right">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -103,6 +108,10 @@ func (*defUnifiedLayout) String() string {
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="scrollable">True</property>
+            <property name="show_tabs">False</property>
+            <property name="show_border">False</property>
+            <property name="margin_start">5</property>
+            <property name="margin_end">5</property>
             <signal name="switch-page" handler="on_switch_page" swapped="no"/>
           </object>
           <packing>

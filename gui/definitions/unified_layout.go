@@ -29,19 +29,73 @@ func (*defUnifiedLayout) String() string {
       <column type="GdkPixbuf"/>
     </columns>
   </object>
-  <object class="GtkRevealer" id="revealer">
+  <object class="GtkHeaderBar" id="headerbar">
+    <property name="visible">1</property>
+    <property name="title">CoyIM</property>
+    <property name="show_close_button">True</property>
+  </object>
+  <object class="GtkBox" id="right">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="transition_type">slide-right</property>
+    <property name="no_show_all">True</property>
     <child>
-      <object class="GtkBox" id="right">
+      <object class="GtkSeparator" id="separator1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="box1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="hexpand">True</property>
+        <property name="orientation">vertical</property>
         <child>
-          <object class="GtkSeparator" id="separator1">
+          <object class="GtkBox" id="header_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel" id="header_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="close_button">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="on_clicked" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="image1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="icon_name">window-close-symbolic</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="pack_type">end</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -50,69 +104,102 @@ func (*defUnifiedLayout) String() string {
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="box1">
+          <object class="GtkNotebook" id="notebook">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="scrollable">True</property>
+            <property name="show_tabs">False</property>
+            <property name="show_border">False</property>
+            <property name="margin_start">5</property>
+            <property name="margin_end">5</property>
+            <signal name="switch-page" handler="on_switch_page" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkSeparator" id="separator2">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="box3">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkBox" id="header_box">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkLabel" id="header_label">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <attributes>
-                      <attribute name="weight" value="bold"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="close_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="relief">none</property>
-                    <signal name="clicked" handler="on_clicked" swapped="no"/>
-                    <child>
-                      <object class="GtkImage" id="image1">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="icon_name">window-close-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="pack_type">end</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+            <property name="label" translatable="yes">Conversations</property>
+            <attributes>
+              <attribute name="weight" value="bold"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkTreeView" id="treeview">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="hscroll_policy">natural</property>
+            <property name="model">liststore</property>
+            <property name="headers_visible">False</property>
+            <property name="enable_search">False</property>
+            <property name="activate_on_single_click">True</property>
+            <signal name="row-activated" handler="on_activate" swapped="no"/>
+            <child internal-child="selection">
+              <object class="GtkTreeSelection" id="treeview-selection1"/>
             </child>
             <child>
-              <object class="GtkNotebook" id="notebook">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="scrollable">True</property>
-                <signal name="switch-page" handler="on_switch_page" swapped="no"/>
+              <object class="GtkTreeViewColumn" id="icon">
+                <property name="title" translatable="yes">icon</property>
+                <child>
+                  <object class="GtkCellRendererPixbuf" id="icon-column-rendered"/>
+                  <attributes>
+                    <attribute name="cell-background">4</attribute>
+                    <attribute name="pixbuf">7</attribute>
+                  </attributes>
+                </child>
               </object>
-              <packing>
+            </child>
+            <child>
+              <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                <property name="spacing">8</property>
+                <property name="min_width">160</property>
+                <property name="title" translatable="yes">column</property>
                 <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
+                <child>
+                  <object class="GtkCellRendererText" id="uid-column-renderer"/>
+                  <attributes>
+                    <attribute name="background">4</attribute>
+                    <attribute name="foreground">3</attribute>
+                    <attribute name="text">1</attribute>
+                    <attribute name="weight">5</attribute>
+                  </attributes>
+                </child>
+              </object>
             </child>
           </object>
           <packing>
@@ -121,95 +208,12 @@ func (*defUnifiedLayout) String() string {
             <property name="position">1</property>
           </packing>
         </child>
-        <child>
-          <object class="GtkSeparator" id="separator2">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox" id="box3">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Conversations</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkTreeView" id="treeview">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hscroll_policy">natural</property>
-                <property name="model">liststore</property>
-                <property name="headers_visible">False</property>
-                <property name="enable_search">False</property>
-                <property name="activate_on_single_click">True</property>
-                <signal name="row-activated" handler="on_activate" swapped="no"/>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="treeview-selection1"/>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="icon">
-                    <property name="title" translatable="yes">icon</property>
-                    <child>
-                      <object class="GtkCellRendererPixbuf" id="icon-column-rendered"/>
-                      <attributes>
-                        <attribute name="cell-background">4</attribute>
-                        <attribute name="pixbuf">7</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-                    <property name="spacing">8</property>
-                    <property name="min_width">160</property>
-                    <property name="title" translatable="yes">column</property>
-                    <property name="expand">True</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="uid-column-renderer"/>
-                      <attributes>
-                        <attribute name="background">4</attribute>
-                        <attribute name="foreground">3</attribute>
-                        <attribute name="text">1</attribute>
-                        <attribute name="weight">5</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
       </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">3</property>
+      </packing>
     </child>
   </object>
   <object class="GtkSizeGroup" id="sizegroup">

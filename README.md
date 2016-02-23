@@ -21,7 +21,7 @@ The GUI version requires GTK+ >= 3.6.16, which installation depends on your OS:
 
 **Ubuntu:**
 
-	sudo apt-get install -qq -y gtk+3.0 libgtk-3-dev
+	sudo apt-get install gtk+3.0 libgtk-3-dev
 
 **Mac:**
 

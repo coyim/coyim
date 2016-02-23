@@ -4,13 +4,13 @@ msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-02-16 14:02-0500\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: 2016-02-23 03:48-0500\n"
 "Last-Translator: Fan Jiang <fan.torchz@gmail.com>\n"
 "Language-Team: Chinese (Simplified, China)\n"
 "Language: zh-Hans-CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Zanata 3.8.2\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
@@ -19,7 +19,8 @@ msgid "Account Details"
 msgstr "账号详情"
 
 #: ../gui/definitions/AccountDetails.xml:41
-msgid "Your account\n"
+msgid ""
+"Your account\n"
 "(example: kim42@dukgo.com)"
 msgstr "我的账号"
 
@@ -53,15 +54,15 @@ msgstr "服务器"
 
 #: ../gui/definitions/AccountDetails.xml:239 ../gui/accounts_menu.go:45
 msgid "_Add..."
-msgstr "添加..."
+msgstr "_添加..."
 
 #: ../gui/definitions/AccountDetails.xml:254 ../gui/account.go:207
 msgid "_Remove"
-msgstr "删除..."
+msgstr "_删除..."
 
 #: ../gui/definitions/AccountDetails.xml:269 ../gui/account.go:204
 msgid "_Edit..."
-msgstr "编辑..."
+msgstr "_编辑..."
 
 #: ../gui/definitions/AccountDetails.xml:299
 msgid "Proxies"
@@ -73,7 +74,9 @@ msgid ""
 "them should be in the Pidgin/libotr format. If you import private keys, your "
 "existing private keys will be deleted, since current there is no way to "
 "choose which key to use for encrypted chat."
-msgstr "下列按钮，可以为您导入Pidgin和libotr格式的私钥和Fingerprint，如果您需要导入私钥，你的现有私钥会被覆盖。"
+msgstr ""
+"下列按钮，可以为您导入Pidgin和libotr格式的私钥和Fingerprint，如果您需要导入私"
+"钥，你的现有私钥会被覆盖。"
 
 #: ../gui/definitions/AccountDetails.xml:342
 msgid "Import Private _Keys..."
@@ -89,7 +92,8 @@ msgid ""
 "careful with the files that come out of this process, since they contain "
 "potentially sensitive data. The export will be in Pidgin/libotr format."
 msgstr ""
-"下列按钮，可以为您导出私钥和fingerprint，请谨慎处理导出的文件，因为它可能包含敏感信息，导出的格式将会是Pidgin和libotr格式。"
+"下列按钮，可以为您导出私钥和fingerprint，请谨慎处理导出的文件，因为它可能包含"
+"敏感信息，导出的格式将会是Pidgin和libotr格式。"
 
 #: ../gui/definitions/AccountDetails.xml:383
 msgid "Export Private Keys..."
@@ -170,7 +174,9 @@ msgid ""
 "can be significantly more secure, but you will not be able to access your "
 "configuration if you lose the password. You will only be asked for your "
 "password when CoyIM starts."
-msgstr "是否希望加密配置文件？这可以为您提供更安全的环境，加密后您需要使用主密码来登陆CoyIM"
+msgstr ""
+"是否希望加密配置文件？这可以为您提供更安全的环境，加密后您需要使用主密码来登"
+"陆CoyIM"
 
 #: ../gui/definitions/AuthorizeSubscription.xml:3
 msgid "Subscription request"
@@ -181,8 +187,7 @@ msgid "Configure master password"
 msgstr "设置主密码"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:15
-msgid ""
-"Please enter the master password for the configuration file, two times."
+msgid "Please enter the master password for the configuration file, two times."
 msgstr "请输入用于加密配置文件的主密码，确保一致"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:60
@@ -280,7 +285,8 @@ msgid ""
 "Please, tell us how is going for you to use CoyIM.\n"
 "This is the only way we can create a better tool to keep your conversations "
 "private."
-msgstr "请告诉我们您的使用体验。\n"
+msgstr ""
+"请告诉我们您的使用体验。\n"
 "这能帮助我们提供更好的隐私聊天工具。"
 
 #: ../gui/definitions/Feedback.xml:5
@@ -426,16 +432,20 @@ msgstr "始终加密会话"
 
 #: ../gui/account.go:296
 #, python-format
-msgid "Connecting account\n"
+msgid ""
+"Connecting account\n"
 "%s"
-msgstr "正在连接账号\n"
+msgstr ""
+"正在连接账号\n"
 "%s"
 
 #: ../gui/account.go:300
 #, python-format
-msgid "Connection failure\n"
+msgid ""
+"Connection failure\n"
 "%s"
-msgstr "连接失败\n"
+msgstr ""
+"连接失败\n"
 "%s"
 
 #: ../gui/account.go:304
@@ -444,9 +454,11 @@ msgstr "检测到Tor未运行"
 
 #: ../gui/account_details.go:95
 #, python-format
-msgid "Your fingerprints for %s:\n"
+msgid ""
+"Your fingerprints for %s:\n"
 "%s"
-msgstr "您的账号%s的Fingerprint:\n"
+msgstr ""
+"您的账号%s的Fingerprint:\n"
 "%s"
 
 #: ../gui/account_events.go:144
@@ -475,15 +487,15 @@ msgstr "打开时连接"
 
 #: ../gui/accounts_menu.go:38
 msgid "_Connect All"
-msgstr "连接所有账号"
+msgstr "_连接所有账号"
 
 #: ../gui/accounts_menu.go:49
 msgid "_Import..."
-msgstr "导入..."
+msgstr "_导入..."
 
 #: ../gui/accounts_menu.go:53
 msgid "_Register..."
-msgstr "导出..."
+msgstr "_导出..."
 
 #: ../gui/conversation.go:145
 #, python-format
@@ -532,7 +544,8 @@ msgstr "状态为"
 msgid ""
 "You can't verify the fingerprint for %s yet.\n"
 "You first have to start an encrypted conversation with them."
-msgstr "目前无法验证%s的Fingerprint。\n"
+msgstr ""
+"目前无法验证%s的Fingerprint。\n"
 "你必须先建立一个加密会话。"
 
 #: ../gui/fingerprint_verification.go:54
@@ -547,11 +560,11 @@ msgstr "导入私钥"
 #: ../gui/importer.go:201 ../gui/importer.go:223 ../gui/importer.go:247
 #: ../gui/importer.go:269
 msgid "_Cancel"
-msgstr "取消"
+msgstr "_取消"
 
 #: ../gui/importer.go:203 ../gui/importer.go:249
 msgid "_Import"
-msgstr "导入"
+msgstr "_导入"
 
 #: ../gui/importer.go:210
 msgid "Keys imported"
@@ -577,7 +590,7 @@ msgstr "导出私钥"
 
 #: ../gui/importer.go:225 ../gui/importer.go:271
 msgid "_Export"
-msgstr "导出"
+msgstr "_导出"
 
 #: ../gui/importer.go:234
 msgid "Keys exported"

@@ -38,7 +38,7 @@ type Fingerprint struct {
 type Peer struct {
 	UserID             string
 	Nickname           string
-	EncryptionSettings EncryptionSettings
+	EncryptionSettings EncryptionSettings `json:",omitempty"`
 
 	Fingerprints []*Fingerprint
 }

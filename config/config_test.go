@@ -42,8 +42,8 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 			"Peers": [
 				{
 					"UserID": "bob@riseup.net",
-					"Fingerprints": null,
-					"Nickname": "boby"
+					"Nickname": "boby",
+					"Fingerprints": null
 				}
 			],
 			"HideStatusUpdates": false,

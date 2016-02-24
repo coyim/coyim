@@ -9,7 +9,6 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/twstrike/coyim/config"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
 )
@@ -100,6 +99,24 @@ func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, acc
 	return jid, account, rowType, ok
 }
 
+func (r *roster) renamePeer(acc *account, jid, nickname string) bool {
+	peer, ok := r.ui.getPeer(acc, jid)
+	if !ok {
+		return false
+	}
+
+	// This updates what is displaied in the roster
+	peer.Nickname = nickname
+
+	// This saves the nickname to the config file
+	// NOTE: This requires the account to be connected in order to rename peers,
+	// which should not be the case. This is one example of why gui.account should
+	// own the account config -  and not the session.
+	acc.session.GetConfig().RenamePeer(jid, nickname)
+
+	return true
+}
+
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.EventButton) {
 	builder := builderForDefinition("ContactPopupMenu")
 	mn := getObjIgnoringErrors(builder, "contactMenu").(*gtk.Menu)
@@ -126,7 +143,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},
 		"on_rename_signal": func() {
-			r.renameContactPopup(account.session.GetConfig(), jid)
+			r.renameContactPopup(account, jid)
 		},
 	})
 
@@ -134,21 +151,26 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }
 
-func (r *roster) renameContactPopup(conf *config.Account, jid string) {
+func (r *roster) renameContactPopup(acc *account, jid string) {
 	builder := builderForDefinition("RenameContact")
-	obj, _ := builder.GetObject("RenameContactPopup")
-	popup := obj.(*gtk.Dialog)
+	popup := getObjIgnoringErrors(builder, "RenameContactPopup").(*gtk.Dialog)
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_rename_signal": func() {
-			obj, _ = builder.GetObject("rename")
-			renameTxt := obj.(*gtk.Entry)
+			defer popup.Destroy()
+
+			renameTxt := getObjIgnoringErrors(builder, "rename").(*gtk.Entry)
 			newName, _ := renameTxt.GetText()
-			conf.RenamePeer(jid, newName)
+
+			if !r.renamePeer(acc, jid, newName) {
+				return
+			}
+
+			doInUIThread(r.redraw)
 			r.ui.SaveConfig()
-			r.redraw()
-			popup.Destroy()
 		},
 	})
+
 	popup.SetTransientFor(r.ui.window)
 	popup.ShowAll()
 }

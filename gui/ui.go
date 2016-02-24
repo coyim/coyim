@@ -17,6 +17,12 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
+const (
+	programName        = "CoyIM"
+	applicationID      = "im.coy.CoyIM"
+	localizationDomain = "coy"
+)
+
 type gtkUI struct {
 	roster           *roster
 	app              *gtk.Application
@@ -57,7 +63,7 @@ type UI interface {
 func argsWithApplicationName() *[]string {
 	newSlice := make([]string, len(os.Args))
 	copy(newSlice, os.Args)
-	newSlice[0] = "CoyIM"
+	newSlice[0] = programName
 	return &newSlice
 }
 
@@ -65,7 +71,7 @@ func argsWithApplicationName() *[]string {
 func NewGTK(version string, sf sessions.Factory, df func() interfaces.Dialer) UI {
 	coyimVersion = version
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
-	glib.InitI18n("coy", "./i18n")
+	glib.InitI18n(localizationDomain, "./i18n")
 	gtk.Init(argsWithApplicationName())
 
 	ret := &gtkUI{
@@ -80,7 +86,7 @@ func NewGTK(version string, sf sessions.Factory, df func() interfaces.Dialer) UI
 	if *config.MultiFlag {
 		flags = glib.APPLICATION_NON_UNIQUE
 	}
-	ret.app, err = gtk.ApplicationNew("im.coy.CoyIM", flags)
+	ret.app, err = gtk.ApplicationNew(applicationID, flags)
 	if err != nil {
 		panic(err)
 	}
@@ -425,7 +431,7 @@ func authors() []string {
 func (u *gtkUI) aboutDialog() {
 	dialog, _ := gtk.AboutDialogNew()
 	dialog.SetName(i18n.Local("Coy IM!"))
-	dialog.SetProgramName("CoyIM")
+	dialog.SetProgramName(programName)
 	dialog.SetAuthors(authors())
 	dialog.SetVersion(coyimVersion)
 	dialog.SetLicense(`GNU GENERAL PUBLIC LICENSE, Version 3`)

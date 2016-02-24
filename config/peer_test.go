@@ -8,9 +8,9 @@ type AccountPeerSuite struct{}
 
 var _ = Suite(&AccountPeerSuite{})
 
-func (s *AccountPeerSuite) Test_Peer_ChangesNickname(c *C) {
+func (s *AccountPeerSuite) Test_Peer_ChangesNicknameAndGroups(c *C) {
 	pid := "peer@coy.im"
-	a := &Account {
+	a := &Account{
 		Account: "account@coy.im",
 		Peers: []*Peer{
 			&Peer{
@@ -18,9 +18,10 @@ func (s *AccountPeerSuite) Test_Peer_ChangesNickname(c *C) {
 			},
 		},
 	}
-	
-	a.RenamePeer(pid, "bff")
-	
+
+	a.SavePeerDetails(pid, "bff", []string{"Foes"})
+
 	p, _ := a.GetPeer(pid)
 	c.Check(p.Nickname, Equals, "bff")
+	c.Check(p.Groups, DeepEquals, []string{"Foes"})
 }

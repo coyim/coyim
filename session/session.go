@@ -336,12 +336,15 @@ func (s *session) receivedIQVersion() data.VersionReply {
 
 func peerFrom(entry data.RosterEntry, c *config.Account) *roster.Peer {
 	belongsTo := c.ID()
+
 	var nickname string
-	p, ok := c.GetPeer(entry.Jid)
-	if ok {
+	var groups []string
+	if p, ok := c.GetPeer(entry.Jid); ok {
 		nickname = p.Nickname
+		groups = p.Groups
 	}
-	return roster.PeerFrom(entry, belongsTo, nickname)
+
+	return roster.PeerFrom(entry, belongsTo, nickname, groups)
 }
 
 func (s *session) addOrMergeNewPeer(entry data.RosterEntry, c *config.Account) bool {

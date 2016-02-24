@@ -56,13 +56,16 @@ func (p *Peer) Dump() string {
 }
 
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given
-func PeerFrom(e data.RosterEntry, belongsTo, nickname string) *Peer {
+func PeerFrom(e data.RosterEntry, belongsTo, nickname string, groups []string) *Peer {
+	// merge remote and local groups
+	allGroups := toSet(append(groups, e.Group...)...)
+
 	return &Peer{
 		Jid:          xutils.RemoveResourceFromJid(e.Jid),
 		Subscription: e.Subscription,
 		Name:         e.Name,
 		Nickname:     nickname,
-		Groups:       toSet(e.Group...),
+		Groups:       allGroups,
 		BelongsTo:    belongsTo,
 	}
 }

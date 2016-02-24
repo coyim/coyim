@@ -20,7 +20,7 @@ func (s *PeerXmppSuite) Test_PeerFrom_returnsANewPeerWithTheSameInformation(c *g
 		},
 	}
 
-	p := PeerFrom(re, "", "")
+	p := PeerFrom(re, "", "", nil)
 
 	c.Assert(p.Jid, g.Equals, "foo@bar.com")
 	c.Assert(p.Subscription, g.Equals, "from")

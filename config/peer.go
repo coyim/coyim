@@ -40,6 +40,7 @@ type Peer struct {
 	Nickname           string
 	EncryptionSettings EncryptionSettings `json:",omitempty"`
 
+	Groups       []string `json:",omitempty"`
 	Fingerprints []*Fingerprint
 }
 
@@ -231,7 +232,9 @@ func (a *Account) RemovePeer(uid string) {
 	a.Peers = newPeers
 }
 
-// RenamePeer sets the nickname for the account
-func (a *Account) RenamePeer(pid, nickname string) {
-	a.EnsurePeer(pid).Nickname = nickname
+// SavePeerDetails store peer identifiable information only locally
+func (a *Account) SavePeerDetails(jid, nickname string, groups []string) {
+	p := a.EnsurePeer(jid)
+	p.Nickname = nickname
+	p.Groups = groups
 }

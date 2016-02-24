@@ -11,7 +11,6 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp/data"
 )
 
 type roster struct {
@@ -128,32 +127,19 @@ func (r *roster) updatePeer(acc *account, jid, nickname string, groups []string)
 		return fmt.Errorf("Could not find peer %s", jid)
 	}
 
-	//TODO: should we update only the "nickname" or the real name?
 	// This updates what is displayed in the roster
-	//peer.Name = nickname
 	peer.Nickname = nickname
 	peer.SetGroups(groups)
 
-	// This saves the nickname to the config file
 	// NOTE: This requires the account to be connected in order to rename peers,
 	// which should not be the case. This is one example of why gui.account should
 	// own the account config -  and not the session.
-	acc.session.GetConfig().RenamePeer(jid, nickname)
+	conf := acc.session.GetConfig()
+	conf.SavePeerDetails(jid, nickname, groups)
 
-	_, _, err := acc.session.Conn().SendIQ("" /* to the server */, "set", data.RosterRequest{
-		Item: data.RosterRequestItem{
-			Jid: jid,
-			//Name:  nickname,
-			Group: groups,
-		},
-	})
-
-	if err != nil {
-		return err
-	}
-
-	//r.ui.SaveConfig()
+	r.ui.SaveConfig()
 	doInUIThread(r.redraw)
+
 	return nil
 }
 

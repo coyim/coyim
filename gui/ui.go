@@ -369,7 +369,7 @@ func (u *gtkUI) quit() {
 	u.app.Quit()
 }
 
-func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
+func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(string) error) {
 	dialogTemplate := "AskForPassword"
 
 	builder := builderForDefinition(dialogTemplate)
@@ -393,7 +393,10 @@ func (u *gtkUI) askForPassword(accountName string, connect func(string) error) {
 				dialog.Destroy()
 			}
 		},
-		"on_cancel_signal": dialog.Destroy,
+		"on_cancel_signal": func() {
+			cancel()
+			dialog.Destroy()
+		},
 	})
 
 	dialog.SetTransientFor(u.window)

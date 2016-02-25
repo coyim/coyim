@@ -42,12 +42,20 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 }
 
 func (u *gtkUI) askForPasswordAndConnect(account *account) {
-	accountName := account.session.GetConfig().Account
-	doInUIThread(func() {
-		u.askForPassword(accountName, func(password string) error {
-			return u.connectWithPassword(account, password)
+	if !account.IsAskingForPassword() {
+		accountName := account.session.GetConfig().Account
+		doInUIThread(func() {
+			account.AskForPassword()
+			u.askForPassword(accountName,
+				func() {
+					account.AskedForPassword()
+				},
+				func(password string) error {
+					account.AskedForPassword()
+					return u.connectWithPassword(account, password)
+				})
 		})
-	})
+	}
 }
 
 func (u *gtkUI) connectWithRandomDelay(a *account) {

@@ -27,6 +27,8 @@ type account struct {
 	delayedConversations     map[string][]func(conversationView)
 	delayedConversationsLock sync.Mutex
 
+	askingForPassword bool
+
 	sync.Mutex
 }
 
@@ -328,4 +330,14 @@ func (account *account) setCurrentNotification(ib *gtk.InfoBar, notificationArea
 	account.currentNotification = ib
 	notificationArea.Add(ib)
 	ib.ShowAll()
+}
+
+func (a *account) IsAskingForPassword() bool {
+	return a.askingForPassword
+}
+func (a *account) AskForPassword() {
+	a.askingForPassword = true
+}
+func (a *account) AskedForPassword() {
+	a.askingForPassword = false
 }

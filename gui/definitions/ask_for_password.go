@@ -12,6 +12,7 @@ func (*defAskForPassword) String() string {
   <object class="GtkDialog" id="AskForPassword">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Enter your password</property>
+    <signal name="close" handler="on_cancel_signal" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>

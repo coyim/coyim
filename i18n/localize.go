@@ -1,14 +1,12 @@
 package i18n
 
-import (
-	"fmt"
-
-	"github.com/gotk3/gotk3/glib"
-)
+import "fmt"
 
 // Local returns the given string in the local language
 func Local(v string) string {
-	return glib.Local(v)
+	// TODO: fix
+	// return glib.Local(v)
+	return v
 }
 
 // Localf returns the given string in the local language. It supports Printf formatting.

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp/utils"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) handleOneAccountEvent(ev interface{}) {
@@ -162,14 +162,14 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		})
 
 	case events.SubscriptionRequest:
-		confirmDialog := authorizePresenceSubscriptionDialog(&u.window.Window, ev.From)
+		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From)
 
 		doInUIThread(func() {
-			responseType := gtk.ResponseType(confirmDialog.Run())
+			responseType := gtki.ResponseType(confirmDialog.Run())
 			switch responseType {
-			case gtk.RESPONSE_YES:
+			case gtki.RESPONSE_YES:
 				ev.Session.HandleConfirmOrDeny(ev.From, true)
-			case gtk.RESPONSE_NO:
+			case gtki.RESPONSE_NO:
 				ev.Session.HandleConfirmOrDeny(ev.From, false)
 			default:
 				// We got a different response, such as a close of the window. In this case we want

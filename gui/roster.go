@@ -7,22 +7,22 @@ import (
 	"sort"
 	"time"
 
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/gtk"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/gotk3adapter/gdki"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 type roster struct {
-	widget *gtk.ScrolledWindow
-	model  *gtk.TreeStore
-	view   *gtk.TreeView
+	widget gtki.ScrolledWindow
+	model  gtki.TreeStore
+	view   gtki.TreeView
 
 	checkEncrypted func(to string) bool
 	sendMessage    func(to, message string)
 
 	isCollapsed map[string]bool
-	toCollapse  []*gtk.TreePath
+	toCollapse  []gtki.TreePath
 
 	ui *gtkUI
 }
@@ -55,13 +55,13 @@ func (u *gtkUI) newRoster() *roster {
 	})
 
 	obj, _ := builder.GetObject("roster")
-	r.widget = obj.(*gtk.ScrolledWindow)
+	r.widget = obj.(gtki.ScrolledWindow)
 
 	obj, _ = builder.GetObject("roster-view")
-	r.view = obj.(*gtk.TreeView)
+	r.view = obj.(gtki.TreeView)
 
 	obj, _ = builder.GetObject("roster-model")
-	r.model = obj.(*gtk.TreeStore)
+	r.model = obj.(gtki.TreeStore)
 
 	u.displaySettings.update()
 
@@ -74,16 +74,16 @@ func (r *roster) getAccount(id string) (*account, bool) {
 	return r.ui.accountManager.getAccountByID(id)
 }
 
-func getFromModelIter(m *gtk.TreeStore, iter *gtk.TreeIter, index int) string {
+func getFromModelIter(m gtki.TreeStore, iter gtki.TreeIter, index int) string {
 	val, _ := m.GetValue(iter, index)
 	v, _ := val.GetString()
 	return v
 }
 
-func (r *roster) getAccountAndJidFromEvent(bt *gdk.EventButton) (jid string, account *account, rowType string, ok bool) {
+func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (jid string, account *account, rowType string, ok bool) {
 	x := bt.X()
 	y := bt.Y()
-	path := new(gtk.TreePath)
+	path := g.gtk.TreePathNew()
 	found := r.view.GetPathAtPos(int(x), int(y), path, nil, nil, nil)
 	if !found {
 		return "", nil, "", false
@@ -162,7 +162,7 @@ func (r *roster) renamePeer(acc *account, jid, nickname string) {
 	r.ui.SaveConfig()
 }
 
-func toArray(groupList *gtk.ListStore) []string {
+func toArray(groupList gtki.ListStore) []string {
 	groups := []string{}
 
 	iter, ok := groupList.GetIterFirst()
@@ -178,13 +178,13 @@ func toArray(groupList *gtk.ListStore) []string {
 	return groups
 }
 
-func (r *roster) addGroupDialog(groupList *gtk.ListStore) {
+func (r *roster) addGroupDialog(groupList gtki.ListStore) {
 	builder := builderForDefinition("GroupDetails")
-	dialog := getObjIgnoringErrors(builder, "dialog").(*gtk.Dialog)
+	dialog := getObjIgnoringErrors(builder, "dialog").(gtki.Dialog)
 
-	nameEntry := getObjIgnoringErrors(builder, "group-name").(*gtk.Entry)
+	nameEntry := getObjIgnoringErrors(builder, "group-name").(gtki.Entry)
 
-	defaultBtn := getObjIgnoringErrors(builder, "btn-ok").(*gtk.Button)
+	defaultBtn := getObjIgnoringErrors(builder, "btn-ok").(gtki.Button)
 	defaultBtn.GrabDefault()
 	dialog.SetTransientFor(r.ui.window)
 	dialog.ShowAll()
@@ -192,7 +192,7 @@ func (r *roster) addGroupDialog(groupList *gtk.ListStore) {
 	response := dialog.Run()
 	defer dialog.Destroy()
 
-	if gtk.ResponseType(response) != gtk.RESPONSE_OK {
+	if gtki.ResponseType(response) != gtki.RESPONSE_OK {
 		return
 	}
 
@@ -207,38 +207,38 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 	}
 
 	builder := builderForDefinition("PeerDetails")
-	dialog := getObjIgnoringErrors(builder, "dialog").(*gtk.Dialog)
+	dialog := getObjIgnoringErrors(builder, "dialog").(gtki.Dialog)
 
 	conf := acc.session.GetConfig()
-	accName := getObjIgnoringErrors(builder, "account-name").(*gtk.Label)
+	accName := getObjIgnoringErrors(builder, "account-name").(gtki.Label)
 	accName.SetText(conf.Account)
 
-	contactJID := getObjIgnoringErrors(builder, "jid").(*gtk.Label)
+	contactJID := getObjIgnoringErrors(builder, "jid").(gtki.Label)
 	contactJID.SetText(jid)
 
-	nickNameEntry := getObjIgnoringErrors(builder, "nickname").(*gtk.Entry)
+	nickNameEntry := getObjIgnoringErrors(builder, "nickname").(gtki.Entry)
 	//nickNameEntry.SetText(peer.Name)
 	if peer, ok := r.ui.getPeer(acc, jid); ok {
 		nickNameEntry.SetText(peer.Nickname)
 	}
 
-	currentGroups := getObjIgnoringErrors(builder, "current-groups").(*gtk.ListStore)
+	currentGroups := getObjIgnoringErrors(builder, "current-groups").(gtki.ListStore)
 	currentGroups.Clear()
 
 	for n := range peer.Groups {
 		currentGroups.SetValue(currentGroups.Append(), 0, n)
 	}
 
-	existingGroups := getObjIgnoringErrors(builder, "groups-menu").(*gtk.Menu)
+	existingGroups := getObjIgnoringErrors(builder, "groups-menu").(gtki.Menu)
 	allGroups := r.allGroupNames()
-	for _, g := range allGroups {
-		menu, err := gtk.MenuItemNewWithLabel(g)
+	for _, gr := range allGroups {
+		menu, err := g.gtk.MenuItemNewWithLabel(gr)
 		if err != nil {
 			continue
 		}
 
 		menu.SetVisible(true)
-		menu.Connect("activate", func(m *gtk.MenuItem) {
+		menu.Connect("activate", func(m gtki.MenuItem) {
 			currentGroups.SetValue(currentGroups.Append(), 0, m.GetLabel())
 		})
 
@@ -246,7 +246,7 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 	}
 
 	if len(allGroups) > 0 {
-		sep, err := gtk.SeparatorMenuItemNew()
+		sep, err := g.gtk.SeparatorMenuItemNew()
 		if err != nil {
 			return
 		}
@@ -255,10 +255,10 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 		existingGroups.Add(sep)
 	}
 
-	addMenuItem := getObjIgnoringErrors(builder, "addGroup").(*gtk.MenuItem)
+	addMenuItem := getObjIgnoringErrors(builder, "addGroup").(gtki.MenuItem)
 	existingGroups.Add(addMenuItem)
 
-	currentGroupsView := getObjIgnoringErrors(builder, "groups-view").(*gtk.TreeView)
+	currentGroupsView := getObjIgnoringErrors(builder, "groups-view").(gtki.TreeView)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on-add-new-group": func() {
@@ -287,15 +287,15 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 		},
 	})
 
-	defaultBtn := getObjIgnoringErrors(builder, "btn-save").(*gtk.Button)
+	defaultBtn := getObjIgnoringErrors(builder, "btn-save").(gtki.Button)
 	defaultBtn.GrabDefault()
 	dialog.SetTransientFor(r.ui.window)
 	dialog.ShowAll()
 }
 
-func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.EventButton) {
+func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.EventButton) {
 	builder := builderForDefinition("ContactPopupMenu")
-	mn := getObjIgnoringErrors(builder, "contactMenu").(*gtk.Menu)
+	mn := getObjIgnoringErrors(builder, "contactMenu").(gtki.Menu)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
@@ -327,10 +327,10 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt *gdk.Ev
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }
 
-func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventButton) {
+func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventButton) {
 	builder := builderForDefinition("AccountPopupMenu")
 	obj, _ := builder.GetObject("accountMenu")
-	mn := obj.(*gtk.Menu)
+	mn := obj.(gtki.Menu)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_connect": func() {
@@ -348,10 +348,10 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 	})
 
 	connx, _ := builder.GetObject("connectMenuItem")
-	connect := connx.(*gtk.MenuItem)
+	connect := connx.(gtki.MenuItem)
 
 	dconnx, _ := builder.GetObject("disconnectMenuItem")
-	disconnect := dconnx.(*gtk.MenuItem)
+	disconnect := dconnx.(gtki.MenuItem)
 
 	connect.SetSensitive(account.session.IsDisconnected())
 	disconnect.SetSensitive(!account.session.IsDisconnected())
@@ -360,8 +360,8 @@ func (r *roster) createAccountPopup(jid string, account *account, bt *gdk.EventB
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }
 
-func (r *roster) onButtonPress(view *gtk.TreeView, ev *gdk.Event) bool {
-	bt := &gdk.EventButton{ev}
+func (r *roster) onButtonPress(view gtki.TreeView, ev gdki.Event) bool {
+	bt := g.gdk.EventButtonFrom(ev)
 	if bt.Button() == 0x03 {
 		jid, account, rowType, ok := r.getAccountAndJidFromEvent(bt)
 		if ok {
@@ -377,7 +377,7 @@ func (r *roster) onButtonPress(view *gtk.TreeView, ev *gdk.Event) bool {
 	return false
 }
 
-func (r *roster) onActivateBuddy(v *gtk.TreeView, path *gtk.TreePath) {
+func (r *roster) onActivateBuddy(v gtki.TreeView, path gtki.TreePath) {
 	selection, _ := v.GetSelection()
 	defer selection.UnselectPath(path)
 
@@ -534,7 +534,7 @@ func createTooltipFor(item *rosters.Peer) string {
 	return jid
 }
 
-func (r *roster) addItem(item *rosters.Peer, parentIter *gtk.TreeIter, indent string) {
+func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent string) {
 	iter := r.model.Append(parentIter)
 	setAll(r.model, iter,
 		item.Jid,
@@ -586,7 +586,7 @@ func (c *counter) inc(total, online bool) {
 	}
 }
 
-func (r *roster) displayGroup(g *rosters.Group, parentIter *gtk.TreeIter, accountCounter *counter, showOffline bool, accountName string) {
+func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accountCounter *counter, showOffline bool, accountName string) {
 	pi := parentIter
 	groupCounter := &counter{}
 	groupID := accountName + "//" + g.FullGroupName()
@@ -712,7 +712,7 @@ func (r *roster) redraw() {
 	}
 }
 
-func setAll(v *gtk.TreeStore, iter *gtk.TreeIter, values ...interface{}) {
+func setAll(v gtki.TreeStore, iter gtki.TreeIter, values ...interface{}) {
 	for i, val := range values {
 		if val != nil {
 			v.SetValue(iter, i, val)

@@ -1,9 +1,9 @@
 package gui
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/net"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 var proxyTypes = [][]string{
@@ -39,7 +39,7 @@ func getProxyTypeFor(act string) string {
 	return ""
 }
 
-func getScheme(s *gtk.ComboBoxText) string {
+func getScheme(s gtki.ComboBoxText) string {
 	return getProxyTypeFor(s.GetActiveText())
 }
 
@@ -50,16 +50,16 @@ func orNil(s string) *string {
 	return nil
 }
 
-func (u *gtkUI) editProxy(proxy string, w *gtk.Dialog, onSave func(net.Proxy), onCancel func()) {
+func (u *gtkUI) editProxy(proxy string, w gtki.Dialog, onSave func(net.Proxy), onCancel func()) {
 	prox := net.ParseProxy(proxy)
 
 	b := builderForDefinition("EditProxy")
-	dialog := getObjIgnoringErrors(b, "EditProxy").(*gtk.Dialog)
-	scheme := getObjIgnoringErrors(b, "protocol-type").(*gtk.ComboBoxText)
-	user := getObjIgnoringErrors(b, "user").(*gtk.Entry)
-	pass := getObjIgnoringErrors(b, "password").(*gtk.Entry)
-	server := getObjIgnoringErrors(b, "server").(*gtk.Entry)
-	port := getObjIgnoringErrors(b, "port").(*gtk.Entry)
+	dialog := getObjIgnoringErrors(b, "EditProxy").(gtki.Dialog)
+	scheme := getObjIgnoringErrors(b, "protocol-type").(gtki.ComboBoxText)
+	user := getObjIgnoringErrors(b, "user").(gtki.Entry)
+	pass := getObjIgnoringErrors(b, "password").(gtki.Entry)
+	server := getObjIgnoringErrors(b, "server").(gtki.Entry)
+	port := getObjIgnoringErrors(b, "port").(gtki.Entry)
 
 	getProxyTypeNames(func(name string) {
 		scheme.AppendText(name)

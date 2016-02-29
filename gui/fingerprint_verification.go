@@ -3,13 +3,13 @@ package gui
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
-func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, theirFp []byte) *gtk.Dialog {
+func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, theirFp []byte) gtki.Dialog {
 	var message string
 	var builderName string
 
@@ -44,10 +44,10 @@ Purported fingerprint for %[1]s:
 	builder := builderForDefinition(builderName)
 
 	obj, _ := builder.GetObject("dialog")
-	dialog := obj.(*gtk.Dialog)
+	dialog := obj.(gtki.Dialog)
 
 	obj, _ = builder.GetObject("message")
-	l := obj.(*gtk.Label)
+	l := obj.(gtki.Label)
 	l.SetText(message)
 	l.SetSelectable(true)
 
@@ -55,7 +55,7 @@ Purported fingerprint for %[1]s:
 	return dialog
 }
 
-func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) gtk.ResponseType {
+func verifyFingerprintDialog(account *account, uid string, parent gtki.Window) gtki.ResponseType {
 	accountConfig := account.session.GetConfig()
 	conversation, _ := account.session.ConversationManager().EnsureConversationWith(uid)
 	ourFp := conversation.OurFingerprint()
@@ -67,9 +67,9 @@ func verifyFingerprintDialog(account *account, uid string, parent *gtk.Window) g
 	dialog.SetTransientFor(parent)
 	dialog.ShowAll()
 
-	responseType := gtk.ResponseType(dialog.Run())
+	responseType := gtki.ResponseType(dialog.Run())
 	switch responseType {
-	case gtk.RESPONSE_YES:
+	case gtki.RESPONSE_YES:
 		account.executeCmd(client.AuthorizeFingerprintCmd{
 			Account:     accountConfig,
 			Peer:        uid,

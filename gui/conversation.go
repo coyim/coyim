@@ -6,17 +6,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 var (
-	enableWindow, _  = glib.SignalNew("enable")
-	disableWindow, _ = glib.SignalNew("disable")
+	enableWindow, _  = g.glib.SignalNew("enable")
+	disableWindow, _ = g.glib.SignalNew("disable")
 )
 
 type conversationView interface {
@@ -32,28 +30,28 @@ type conversationView interface {
 
 type conversationWindow struct {
 	*conversationPane
-	win       *gtk.Window
-	parentWin *gtk.Window
+	win       gtki.Window
+	parentWin gtki.Window
 }
 
 type conversationPane struct {
 	to                 string
 	account            *account
-	widget             *gtk.Box
-	menubar            *gtk.MenuBar
-	entry              *gtk.Entry
-	history            *gtk.TextView
-	scrollHistory      *gtk.ScrolledWindow
-	notificationArea   *gtk.Box
-	securityWarning    *gtk.InfoBar
-	fingerprintWarning *gtk.InfoBar
+	widget             gtki.Box
+	menubar            gtki.MenuBar
+	entry              gtki.Entry
+	history            gtki.TextView
+	scrollHistory      gtki.ScrolledWindow
+	notificationArea   gtki.Box
+	securityWarning    gtki.InfoBar
+	fingerprintWarning gtki.InfoBar
 	// The window to set dialogs transient for
-	transientParent *gtk.Window
+	transientParent gtki.Window
 	sync.Mutex
 }
 
 type tags struct {
-	table *gtk.TextTagTable
+	table gtki.TextTagTable
 }
 
 func (u *gtkUI) getTags() *tags {
@@ -66,20 +64,20 @@ func (u *gtkUI) getTags() *tags {
 func newTags() *tags {
 	t := new(tags)
 
-	t.table, _ = gtk.TextTagTableNew()
+	t.table, _ = g.gtk.TextTagTableNew()
 
-	outgoingUser, _ := gtk.TextTagNew("outgoingUser")
+	outgoingUser, _ := g.gtk.TextTagNew("outgoingUser")
 	outgoingUser.SetProperty("foreground", "#3465a4")
 
-	incomingUser, _ := gtk.TextTagNew("incomingUser")
+	incomingUser, _ := g.gtk.TextTagNew("incomingUser")
 	incomingUser.SetProperty("foreground", "#a40000")
 
-	outgoingText, _ := gtk.TextTagNew("outgoingText")
+	outgoingText, _ := g.gtk.TextTagNew("outgoingText")
 	outgoingText.SetProperty("foreground", "#555753")
 
-	incomingText, _ := gtk.TextTagNew("incomingText")
+	incomingText, _ := g.gtk.TextTagNew("incomingText")
 
-	statusText, _ := gtk.TextTagNew("statusText")
+	statusText, _ := g.gtk.TextTagNew("statusText")
 	statusText.SetProperty("foreground", "#4e9a06")
 
 	t.table.Add(outgoingUser)
@@ -91,34 +89,34 @@ func newTags() *tags {
 	return t
 }
 
-func (t *tags) createTextBuffer() *gtk.TextBuffer {
-	buf, _ := gtk.TextBufferNew(t.table)
+func (t *tags) createTextBuffer() gtki.TextBuffer {
+	buf, _ := g.gtk.TextBufferNew(t.table)
 	return buf
 }
 
-func createConversationPane(account *account, uid string, ui *gtkUI, transientParent *gtk.Window) *conversationPane {
+func createConversationPane(account *account, uid string, ui *gtkUI, transientParent gtki.Window) *conversationPane {
 	builder := builderForDefinition("ConversationPane")
 
 	obj, _ := builder.GetObject("box")
-	pane := obj.(*gtk.Box)
+	pane := obj.(gtki.Box)
 
 	obj, _ = builder.GetObject("history")
-	history := obj.(*gtk.TextView)
+	history := obj.(gtki.TextView)
 
 	obj, _ = builder.GetObject("historyScroll")
-	scrollHistory := obj.(*gtk.ScrolledWindow)
+	scrollHistory := obj.(gtki.ScrolledWindow)
 
 	obj, _ = builder.GetObject("message")
-	entry := obj.(*gtk.Entry)
+	entry := obj.(gtki.Entry)
 
 	obj, _ = builder.GetObject("notification-area")
-	notificationArea := obj.(*gtk.Box)
+	notificationArea := obj.(gtki.Box)
 
 	obj, _ = builder.GetObject("security-warning")
-	securityWarning := obj.(*gtk.InfoBar)
+	securityWarning := obj.(gtki.InfoBar)
 
 	obj, _ = builder.GetObject("menubar")
-	menubar := obj.(*gtk.MenuBar)
+	menubar := obj.(gtki.MenuBar)
 
 	cp := &conversationPane{
 		to:               uid,
@@ -173,7 +171,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		},
 		"on_verify_fp_signal": func() {
 			switch verifyFingerprintDialog(cp.account, cp.to, transientParent) {
-			case gtk.RESPONSE_YES:
+			case gtki.RESPONSE_YES:
 				cp.removeIdentityVerificationWarning()
 			}
 		},
@@ -193,8 +191,8 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		cp.scrollToBottom()
 	})
 
-	ui.displaySettings.control(&cp.history.Container.Widget)
-	ui.displaySettings.control(&entry.Widget)
+	ui.displaySettings.control(cp.history)
+	ui.displaySettings.control(entry)
 
 	return cp
 }
@@ -203,12 +201,12 @@ func newConversationWindow(account *account, uid string, ui *gtkUI) *conversatio
 	builder := builderForDefinition("Conversation")
 
 	obj, _ := builder.GetObject("conversation")
-	win := obj.(*gtk.Window)
+	win := obj.(gtki.Window)
 	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, uid)
 	win.SetTitle(title)
 
 	obj, _ = builder.GetObject("box")
-	winBox := obj.(*gtk.Box)
+	winBox := obj.(gtki.Box)
 
 	cp := createConversationPane(account, uid, ui, win)
 	winBox.PackStart(cp.widget, true, true, 0)
@@ -241,12 +239,12 @@ func newConversationWindow(account *account, uid string, ui *gtkUI) *conversatio
 
 	ui.connectShortcutsChildWindow(conv.win)
 	ui.connectShortcutsConversationWindow(conv)
-	conv.parentWin = &ui.window.Window
+	conv.parentWin = ui.window
 
 	return conv
 }
 
-func (conv *conversationPane) addNotification(notification *gtk.InfoBar) {
+func (conv *conversationPane) addNotification(notification gtki.InfoBar) {
 	conv.notificationArea.Add(notification)
 }
 
@@ -255,7 +253,7 @@ func (conv *conversationWindow) Hide() {
 }
 
 func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
-	if gdk.WorkspaceControlSupported() {
+	if g.gdk.WorkspaceControlSupported() {
 		wi, _ := conv.parentWin.GetWindow()
 		parentPlace := wi.GetDesktop()
 		cwi, _ := conv.win.GetWindow()
@@ -349,13 +347,13 @@ const timeDisplay = "15:04:05"
 
 // Expects to be called from the GUI thread.
 // Expects to be called when conv is already locked
-func insertAtEnd(buff *gtk.TextBuffer, text string) {
+func insertAtEnd(buff gtki.TextBuffer, text string) {
 	buff.Insert(buff.GetEndIter(), text)
 }
 
 // Expects to be called from the GUI thread.
 // Expects to be called when conv is already locked
-func insertWithTag(buff *gtk.TextBuffer, tagName, text string) {
+func insertWithTag(buff gtki.TextBuffer, tagName, text string) {
 	charCount := buff.GetCharCount()
 	insertAtEnd(buff, text)
 	oldEnd := buff.GetIterAtOffset(charCount)

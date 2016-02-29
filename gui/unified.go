@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 const (
@@ -24,13 +24,13 @@ var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7}
 type unifiedLayout struct {
 	ui           *gtkUI
 	cl           *conversationList
-	headerBar    *gtk.HeaderBar
-	leftPane     *gtk.Box
-	rightPane    *gtk.Box
-	notebook     *gtk.Notebook
-	header       *gtk.Label
-	headerBox    *gtk.Box
-	close        *gtk.Button
+	headerBar    gtki.HeaderBar
+	leftPane     gtki.Box
+	rightPane    gtki.Box
+	notebook     gtki.Notebook
+	header       gtki.Label
+	headerBox    gtki.Box
+	close        gtki.Button
 	convsVisible bool
 	inPageSet    bool
 	itemMap      map[int]*conversationStackItem
@@ -38,19 +38,19 @@ type unifiedLayout struct {
 
 type conversationList struct {
 	layout *unifiedLayout
-	view   *gtk.TreeView
-	model  *gtk.ListStore
+	view   gtki.TreeView
+	model  gtki.ListStore
 }
 
 type conversationStackItem struct {
 	*conversationPane
 	pageIndex      int
 	needsAttention bool
-	iter           *gtk.TreeIter
+	iter           gtki.TreeIter
 	layout         *unifiedLayout
 }
 
-func newUnifiedLayout(ui *gtkUI, left, parent *gtk.Box) *unifiedLayout {
+func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	ul := &unifiedLayout{
 		ui:       ui,
 		cl:       &conversationList{},
@@ -77,24 +77,24 @@ func newUnifiedLayout(ui *gtkUI, left, parent *gtk.Box) *unifiedLayout {
 		"on_switch_page": ul.onSwitchPage,
 	})
 
-	connectShortcut("<Primary>Page_Down", &ul.ui.window.Window, ul.nextTab)
-	connectShortcut("<Primary>Page_Up", &ul.ui.window.Window, ul.previousTab)
+	connectShortcut("<Primary>Page_Down", ul.ui.window, ul.nextTab)
+	connectShortcut("<Primary>Page_Up", ul.ui.window, ul.previousTab)
 
 	parent.PackStart(ul.rightPane, false, true, 0)
-	parent.SetChildPacking(ul.leftPane, false, true, 0, gtk.PACK_START)
+	parent.SetChildPacking(ul.leftPane, false, true, 0, gtki.PACK_START)
 
 	ul.notebook.SetSizeRequest(500, -1)
 	ul.rightPane.Hide()
 
 	ul.ui.window.SetTitlebar(ul.headerBar)
 
-	left.SetHAlign(gtk.ALIGN_FILL)
+	left.SetHAlign(gtki.ALIGN_FILL)
 	left.SetHExpand(true)
 	return ul
 }
 
 func (ul *unifiedLayout) createConversation(account *account, uid string) conversationView {
-	cp := createConversationPane(account, uid, ul.ui, &ul.ui.window.Window)
+	cp := createConversationPane(account, uid, ul.ui, ul.ui.window)
 	cp.menubar.Hide()
 	idx := ul.notebook.AppendPage(cp.widget, nil)
 	if idx < 0 {
@@ -148,7 +148,7 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 		log.Printf("No peer found for %s", csi.to)
 		return
 	}
-	cl.model.Set(csi.iter, ulAllIndexValues, []interface{}{
+	cl.model.Set2(csi.iter, ulAllIndexValues, []interface{}{
 		csi.pageIndex,
 		csi.shortName(),
 		peer.Jid,
@@ -247,7 +247,7 @@ func (csi *conversationStackItem) remove() {
 	csi.widget.Hide()
 }
 
-func (cl *conversationList) getItemForIter(iter *gtk.TreeIter) *conversationStackItem {
+func (cl *conversationList) getItemForIter(iter gtki.TreeIter) *conversationStackItem {
 	val, err := cl.model.GetValue(iter, ulIndexID)
 	if err != nil {
 		log.Printf("Error getting ulIndexID value: %v", err)
@@ -261,7 +261,7 @@ func (cl *conversationList) getItemForIter(iter *gtk.TreeIter) *conversationStac
 	return cl.layout.itemMap[gv.(int)]
 }
 
-func (cl *conversationList) onActivate(v *gtk.TreeView, path *gtk.TreePath) {
+func (cl *conversationList) onActivate(v gtki.TreeView, path gtki.TreePath) {
 	iter, err := cl.model.GetIter(path)
 	if err != nil {
 		log.Printf("Error converting path to iter: %v", err)
@@ -303,7 +303,7 @@ func (ul *unifiedLayout) onCloseClicked() {
 	}
 }
 
-func (ul *unifiedLayout) onSwitchPage(notebook *gtk.Notebook, page *gtk.Widget, idx int) {
+func (ul *unifiedLayout) onSwitchPage(notebook gtki.Notebook, page gtki.Widget, idx int) {
 	if ul.inPageSet {
 		return
 	}
@@ -323,7 +323,7 @@ func (ul *unifiedLayout) displayFirstConvo() bool {
 	return false
 }
 
-func (ul *unifiedLayout) nextTab(*gtk.Window) {
+func (ul *unifiedLayout) nextTab(gtki.Window) {
 	page := ul.notebook.GetCurrentPage()
 	np := (ul.notebook.GetNPages() - 1)
 	if page < 0 || np < 0 {
@@ -336,7 +336,7 @@ func (ul *unifiedLayout) nextTab(*gtk.Window) {
 	}
 }
 
-func (ul *unifiedLayout) previousTab(*gtk.Window) {
+func (ul *unifiedLayout) previousTab(gtki.Window) {
 	page := ul.notebook.GetCurrentPage()
 	np := (ul.notebook.GetNPages() - 1)
 	if page < 0 || np < 0 {

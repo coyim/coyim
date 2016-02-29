@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/gotk3adapter/glibi"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
-func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.MessageDialog {
+func authorizePresenceSubscriptionDialog(parent gtki.Window, from string) gtki.MessageDialog {
 	builder := builderForDefinition("AuthorizeSubscription")
 
 	obj, _ := builder.GetObject("dialog")
-	confirmDialog := obj.(*gtk.MessageDialog)
+	confirmDialog := obj.(gtki.MessageDialog)
 
 	text := fmt.Sprintf(i18n.Local("%s wants to talk to you. Is that ok?"), from)
 	confirmDialog.SetProperty("text", text)
@@ -22,42 +22,42 @@ func authorizePresenceSubscriptionDialog(parent *gtk.Window, from string) *gtk.M
 	return confirmDialog
 }
 
-func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer string) error) *gtk.Dialog {
+func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer string) error) gtki.Dialog {
 	builder := builderForDefinition("AddContact")
 
 	//TODO: move model to XML builder
-	model, _ := gtk.ListStoreNew(
-		glib.TYPE_STRING, // account name
-		glib.TYPE_STRING, // account_id
+	model, _ := g.gtk.ListStoreNew(
+		glibi.TYPE_STRING, // account name
+		glibi.TYPE_STRING, // account_id
 	)
 
 	for _, acc := range accounts {
-		model.Set(model.Append(), []int{0, 1}, []interface{}{acc.session.GetConfig().Account, acc.session.GetConfig().ID()})
+		model.Set2(model.Append(), []int{0, 1}, []interface{}{acc.session.GetConfig().Account, acc.session.GetConfig().ID()})
 	}
 
 	accountsObj, _ := builder.GetObject("accounts")
-	accountInput := accountsObj.(*gtk.ComboBox)
-	accountInput.SetModel(&model.TreeModel)
+	accountInput := accountsObj.(gtki.ComboBox)
+	accountInput.SetModel(model)
 
 	accountObj, _ := builder.GetObject("address")
-	contactInput := accountObj.(*gtk.Entry)
+	contactInput := accountObj.(gtki.Entry)
 
 	if len(accounts) > 0 {
 		accountInput.SetActive(0)
 	}
 
-	renderer, _ := gtk.CellRendererTextNew()
+	renderer, _ := g.gtk.CellRendererTextNew()
 	accountInput.PackStart(renderer, true)
 	accountInput.AddAttribute(renderer, "text", 0)
 
 	dialogObj, _ := builder.GetObject("AddContact")
-	dialog := dialogObj.(*gtk.Dialog)
+	dialog := dialogObj.(gtki.Dialog)
 
 	obj, _ := builder.GetObject("notification-area")
-	notificationArea := obj.(*gtk.Box)
+	notificationArea := obj.(gtki.Box)
 
 	failures := 0
-	var notification *gtk.InfoBar
+	var notification gtki.InfoBar
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {

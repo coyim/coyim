@@ -1,25 +1,25 @@
 package gui
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) captureInitialMasterPassword(k func()) {
 	dialogID := "CaptureInitialMasterPassword"
 	builder := builderForDefinition(dialogID)
 	dialogOb, _ := builder.GetObject(dialogID)
-	pwdDialog := dialogOb.(*gtk.Dialog)
+	pwdDialog := dialogOb.(gtki.Dialog)
 
 	passObj, _ := builder.GetObject("password")
-	password := passObj.(*gtk.Entry)
+	password := passObj.(gtki.Entry)
 
 	pass2Obj, _ := builder.GetObject("password2")
-	password2 := pass2Obj.(*gtk.Entry)
+	password2 := pass2Obj.(gtki.Entry)
 
 	msgObj, _ := builder.GetObject("passMessage")
-	messageObj := msgObj.(*gtk.Label)
+	messageObj := msgObj.(gtki.Label)
 	messageObj.SetSelectable(true)
 
 	builder.ConnectSignals(map[string]interface{}{
@@ -57,12 +57,12 @@ func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 	builder := builderForDefinition(dialogID)
 
 	dialogOb, _ := builder.GetObject(dialogID)
-	encryptDialog := dialogOb.(*gtk.MessageDialog)
-	encryptDialog.SetDefaultResponse(gtk.RESPONSE_YES)
+	encryptDialog := dialogOb.(gtki.MessageDialog)
+	encryptDialog.SetDefaultResponse(gtki.RESPONSE_YES)
 	encryptDialog.SetTransientFor(u.window)
 
-	responseType := gtk.ResponseType(encryptDialog.Run())
-	result := responseType == gtk.RESPONSE_YES
+	responseType := gtki.ResponseType(encryptDialog.Run())
+	result := responseType == gtki.RESPONSE_YES
 	encryptDialog.Destroy()
 	k(result)
 }
@@ -99,15 +99,15 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 	doInUIThread(func() {
 		builder := builderForDefinition(dialogID)
 		dialogOb, _ := builder.GetObject(dialogID)
-		dialog := dialogOb.(*gtk.Dialog)
+		dialog := dialogOb.(gtki.Dialog)
 
 		cleanup = dialog.Destroy
 
 		passObj, _ := builder.GetObject("password")
-		password := passObj.(*gtk.Entry)
+		password := passObj.(gtki.Entry)
 
 		msgObj, _ := builder.GetObject("passMessage")
-		messageObj := msgObj.(*gtk.Label)
+		messageObj := msgObj.(gtki.Label)
 		messageObj.SetSelectable(true)
 
 		if lastAttemptFailed {

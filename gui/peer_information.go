@@ -3,16 +3,16 @@ package gui
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) showFingerprintsForPeer(jid string, account *account) {
 	builder := builderForDefinition("PeerFingerprints")
-	dialog := getObjIgnoringErrors(builder, "dialog").(*gtk.Dialog)
-	info := getObjIgnoringErrors(builder, "information").(*gtk.Label)
-	grid := getObjIgnoringErrors(builder, "grid").(*gtk.Grid)
+	dialog := getObjIgnoringErrors(builder, "dialog").(gtki.Dialog)
+	info := getObjIgnoringErrors(builder, "information").(gtki.Label)
+	grid := getObjIgnoringErrors(builder, "grid").(gtki.Grid)
 
 	info.SetSelectable(true)
 
@@ -29,14 +29,14 @@ func (u *gtkUI) showFingerprintsForPeer(jid string, account *account) {
 	}
 
 	for ix, fpr := range fprs {
-		flabel, _ := gtk.LabelNew(config.FormatFingerprint(fpr.Fingerprint))
+		flabel, _ := g.gtk.LabelNew(config.FormatFingerprint(fpr.Fingerprint))
 		flabel.SetSelectable(true)
 		trusted := i18n.Local("not trusted")
 		if fpr.Trusted {
 			trusted = i18n.Local("trusted")
 		}
 
-		ftrusted, _ := gtk.LabelNew(trusted)
+		ftrusted, _ := g.gtk.LabelNew(trusted)
 		ftrusted.SetSelectable(true)
 
 		grid.Attach(flabel, 0, ix, 1, 1)

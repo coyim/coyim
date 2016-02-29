@@ -12,9 +12,10 @@ import (
 	rosters "github.com/twstrike/coyim/roster"
 	sessions "github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/xmpp/interfaces"
-
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/gotk3adapter/gdki"
+	"github.com/twstrike/gotk3adapter/glibi"
+	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/twstrike/gotk3adapter/pangoi"
 )
 
 const (
@@ -25,10 +26,10 @@ const (
 
 type gtkUI struct {
 	roster           *roster
-	app              *gtk.Application
-	window           *gtk.ApplicationWindow
-	accountsMenu     *gtk.MenuItem
-	notificationArea *gtk.Box
+	app              gtki.Application
+	window           gtki.ApplicationWindow
+	accountsMenu     gtki.MenuItem
+	notificationArea gtki.Box
 	viewMenu         *viewMenu
 
 	unified *unifiedLayout
@@ -53,6 +54,26 @@ type gtkUI struct {
 	dialerFactory func() interfaces.Dialer
 }
 
+// Graphics represent the graphic configuration
+type Graphics struct {
+	gtk   gtki.Gtk
+	glib  glibi.Glib
+	gdk   gdki.Gdk
+	pango pangoi.Pango
+}
+
+// CreateGraphics creates a Graphic represention from the given arguments
+func CreateGraphics(gtkVal gtki.Gtk, glibVal glibi.Glib, gdkVal gdki.Gdk, pangoVal pangoi.Pango) Graphics {
+	return Graphics{
+		gtk:   gtkVal,
+		glib:  glibVal,
+		gdk:   gdkVal,
+		pango: pangoVal,
+	}
+}
+
+var g Graphics
+
 var coyimVersion string
 
 // UI is the user interface functionality exposed to main
@@ -68,11 +89,12 @@ func argsWithApplicationName() *[]string {
 }
 
 // NewGTK returns a new client for a GTK ui
-func NewGTK(version string, sf sessions.Factory, df func() interfaces.Dialer) UI {
+func NewGTK(version string, sf sessions.Factory, df func() interfaces.Dialer, gx Graphics) UI {
 	coyimVersion = version
+	g = gx
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
-	glib.InitI18n(localizationDomain, "./i18n")
-	gtk.Init(argsWithApplicationName())
+	g.glib.InitI18n(localizationDomain, "./i18n")
+	g.gtk.Init(argsWithApplicationName())
 
 	ret := &gtkUI{
 		commands: make(chan interface{}, 5),
@@ -82,11 +104,11 @@ func NewGTK(version string, sf sessions.Factory, df func() interfaces.Dialer) UI
 	}
 
 	var err error
-	flags := glib.APPLICATION_FLAGS_NONE
+	flags := glibi.APPLICATION_FLAGS_NONE
 	if *config.MultiFlag {
-		flags = glib.APPLICATION_NON_UNIQUE
+		flags = glibi.APPLICATION_NON_UNIQUE
 	}
-	ret.app, err = gtk.ApplicationNew(applicationID, flags)
+	ret.app, err = g.gtk.ApplicationNew(applicationID, flags)
 	if err != nil {
 		panic(err)
 	}
@@ -104,12 +126,12 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 	builder := builderForDefinition("ConfirmAccountRemoval")
 
 	obj, _ := builder.GetObject("RemoveAccount")
-	dialog := obj.(*gtk.MessageDialog)
+	dialog := obj.(gtki.MessageDialog)
 	dialog.SetTransientFor(u.window)
 	dialog.SetProperty("text", acc.Account)
 
 	response := dialog.Run()
-	if gtk.ResponseType(response) == gtk.RESPONSE_YES {
+	if gtki.ResponseType(response) == gtki.RESPONSE_YES {
 		removeAccountFunc(acc)
 	}
 
@@ -276,10 +298,10 @@ func (u *gtkUI) mainWindow() {
 		panic(err)
 	}
 
-	u.window = win.(*gtk.ApplicationWindow)
+	u.window = win.(gtki.ApplicationWindow)
 	u.window.SetApplication(u.app)
 
-	u.displaySettings = detectCurrentDisplaySettingsFrom(&u.window.Bin.Container.Widget)
+	u.displaySettings = detectCurrentDisplaySettingsFrom(u.window)
 
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow
@@ -287,30 +309,30 @@ func (u *gtkUI) mainWindow() {
 
 	// AccountsMenu
 	am, _ := builder.GetObject("AccountsMenu")
-	u.accountsMenu = am.(*gtk.MenuItem)
+	u.accountsMenu = am.(gtki.MenuItem)
 	// ViewMenu
 	u.viewMenu = new(viewMenu)
 	checkItemMerge, _ := builder.GetObject("CheckItemMerge")
-	u.viewMenu.merge = checkItemMerge.(*gtk.CheckMenuItem)
-	u.displaySettings.defaultSettingsOn(&u.viewMenu.merge.MenuItem.Bin.Container.Widget)
+	u.viewMenu.merge = checkItemMerge.(gtki.CheckMenuItem)
+	u.displaySettings.defaultSettingsOn(u.viewMenu.merge)
 
 	checkItemShowOffline, _ := builder.GetObject("CheckItemShowOffline")
-	u.viewMenu.offline = checkItemShowOffline.(*gtk.CheckMenuItem)
-	u.displaySettings.defaultSettingsOn(&u.viewMenu.offline.MenuItem.Bin.Container.Widget)
+	u.viewMenu.offline = checkItemShowOffline.(gtki.CheckMenuItem)
+	u.displaySettings.defaultSettingsOn(u.viewMenu.offline)
 
 	u.initMenuBar()
 	obj, _ := builder.GetObject("Vbox")
-	vbox := obj.(*gtk.Box)
+	vbox := obj.(gtki.Box)
 	vbox.PackStart(u.roster.widget, true, true, 0)
 
 	if *config.SingleWindowFlag {
 		obj, _ := builder.GetObject("Hbox")
-		hbox := obj.(*gtk.Box)
+		hbox := obj.(gtki.Box)
 		u.unified = newUnifiedLayout(u, vbox, hbox)
 	}
 
 	obj, _ = builder.GetObject("notification-area")
-	u.notificationArea = obj.(*gtk.Box)
+	u.notificationArea = obj.(gtki.Box)
 
 	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
 		if a.Display.HideFeedbackBar {
@@ -320,10 +342,10 @@ func (u *gtkUI) mainWindow() {
 		doInUIThread(u.addFeedbackInfoBar)
 	})
 
-	u.connectShortcutsMainWindow(&u.window.Window)
+	u.connectShortcutsMainWindow(u.window)
 
 	u.window.SetIcon(coyimIcon.getPixbuf())
-	gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
+	g.gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
 
 	u.window.ShowAll()
 }
@@ -338,14 +360,14 @@ func (u *gtkUI) addFeedbackInfoBar() {
 	builder := builderForDefinition("FeedbackInfo")
 
 	obj, _ := builder.GetObject("feedbackInfo")
-	infobar := obj.(*gtk.InfoBar)
+	infobar := obj.(gtki.InfoBar)
 
 	u.notificationArea.PackEnd(infobar, true, true, 0)
 	infobar.ShowAll()
 
 	builder.ConnectSignals(map[string]interface{}{
-		"handleResponse": func(info *gtk.InfoBar, response gtk.ResponseType) {
-			if response != gtk.RESPONSE_CLOSE {
+		"handleResponse": func(info gtki.InfoBar, response gtki.ResponseType) {
+			if response != gtki.RESPONSE_CLOSE {
 				return
 			}
 
@@ -358,7 +380,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 	})
 
 	obj, _ = builder.GetObject("feedbackButton")
-	button := obj.(*gtk.Button)
+	button := obj.(gtki.Button)
 	button.Connect("clicked", func() {
 		doInUIThread(u.feedbackDialog)
 	})
@@ -375,17 +397,17 @@ func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(s
 	builder := builderForDefinition(dialogTemplate)
 
 	obj, _ := builder.GetObject(dialogTemplate)
-	dialog := obj.(*gtk.Dialog)
+	dialog := obj.(gtki.Dialog)
 
 	obj, _ = builder.GetObject("accountName")
-	label := obj.(*gtk.Label)
+	label := obj.(gtki.Label)
 	label.SetText(accountName)
 	label.SetSelectable(true)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_save_signal": func() {
 			passwordObj, _ := builder.GetObject("password")
-			passwordEntry := passwordObj.(*gtk.Entry)
+			passwordEntry := passwordObj.(gtki.Entry)
 			password, _ := passwordEntry.GetText()
 
 			if len(password) > 0 {
@@ -407,7 +429,7 @@ func (u *gtkUI) feedbackDialog() {
 	builder := builderForDefinition("Feedback")
 
 	obj, _ := builder.GetObject("dialog")
-	dialog := obj.(*gtk.MessageDialog)
+	dialog := obj.(gtki.MessageDialog)
 	dialog.SetTransientFor(u.window)
 
 	dialog.Run()
@@ -432,7 +454,7 @@ func authors() []string {
 }
 
 func (u *gtkUI) aboutDialog() {
-	dialog, _ := gtk.AboutDialogNew()
+	dialog, _ := g.gtk.AboutDialogNew()
 	dialog.SetName(i18n.Local("Coy IM!"))
 	dialog.SetProgramName(programName)
 	dialog.SetAuthors(authors())

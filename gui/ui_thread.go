@@ -1,7 +1,5 @@
 package gui
 
-import "github.com/gotk3/gotk3/glib"
-
 var weAreInUIThread = false
 
 func assertInUIThread() {
@@ -11,7 +9,7 @@ func assertInUIThread() {
 }
 
 func doInUIThread(f func()) {
-	glib.IdleAdd(func() {
+	g.glib.IdleAdd(func() {
 		weAreInUIThread = true
 		defer func() {
 			weAreInUIThread = false

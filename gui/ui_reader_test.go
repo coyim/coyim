@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/gotk3adapter/gtki"
 
 	. "gopkg.in/check.v1"
 )
@@ -35,7 +35,7 @@ func removeFile(name string) {
 }
 
 func (s *UIReaderSuite) Test_builderForDefinition_useXMLIfExists(c *C) {
-	gtk.Init(nil)
+	g.gtk.Init(nil)
 	removeFile("definitions/Test.xml")
 	writeTestFile("definitions/Test.xml", testFile)
 	ui := "Test"
@@ -47,13 +47,13 @@ func (s *UIReaderSuite) Test_builderForDefinition_useXMLIfExists(c *C) {
 		fmt.Errorf("\nFailed to get window \n%s", getErr.Error())
 		c.Fail()
 	}
-	w, h := win.(*gtk.Window).GetSize()
+	w, h := win.(gtki.Window).GetSize()
 	c.Assert(h, Equals, 500)
 	c.Assert(w, Equals, 400)
 }
 
 func (s *UIReaderSuite) Test_builderForDefinition_useGoFileIfXMLDoesntExists(c *C) {
-	gtk.Init(nil)
+	g.gtk.Init(nil)
 	removeFile("definitions/Test.xml")
 	//writeTestFile("definitions/TestDefinition.xml", testFile)
 	ui := "Test"
@@ -65,7 +65,7 @@ func (s *UIReaderSuite) Test_builderForDefinition_useGoFileIfXMLDoesntExists(c *
 		fmt.Errorf("\nFailed to get window \n%s", getErr.Error())
 		c.Fail()
 	}
-	w, h := win.(*gtk.Window).GetSize()
+	w, h := win.(gtki.Window).GetSize()
 	c.Assert(h, Equals, 500)
 	c.Assert(w, Equals, 400)
 }

@@ -1,20 +1,18 @@
 package gui
 
-import (
-	"github.com/gotk3/gotk3/gtk"
-)
+import "github.com/twstrike/gotk3adapter/gtki"
 
 const destroySignal = "destroy"
 
 type aboutConversationWin struct {
-	win *gtk.Window
+	win gtki.Window
 	txt textBox
 }
 
 type textBox struct {
-	view *gtk.TextView
-	buf  *gtk.TextBuffer
-	iter *gtk.TextIter
+	view gtki.TextView
+	buf  gtki.TextBuffer
+	iter gtki.TextIter
 }
 
 func (about aboutConversationWin) add(box textBox) {
@@ -31,7 +29,7 @@ func (about aboutConversationWin) render() {
 }
 
 func newReadOnlyTextBox() textBox {
-	view, _ := gtk.TextViewNew()
+	view, _ := g.gtk.TextViewNew()
 	view.SetEditable(false)
 	view.SetCursorVisible(false)
 

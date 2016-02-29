@@ -250,6 +250,7 @@ func (account *account) Connect() {
 }
 
 func (account *account) disconnect() {
+	account.session.SetWantToBeOnline(false)
 	account.executeCmd(disconnectAccountCmd{account})
 }
 

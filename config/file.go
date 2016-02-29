@@ -30,6 +30,7 @@ func findConfigFile(filename string) string {
 		}
 		return basePath
 	}
+	ensureDir(filepath.Dir(filename), 0700)
 	return filename
 }
 

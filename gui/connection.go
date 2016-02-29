@@ -48,6 +48,7 @@ func (u *gtkUI) askForPasswordAndConnect(account *account) {
 			account.AskForPassword()
 			u.askForPassword(accountName,
 				func() {
+					account.session.SetWantToBeOnline(false)
 					account.AskedForPassword()
 				},
 				func(password string) error {

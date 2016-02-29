@@ -9,12 +9,13 @@ import (
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 var (
-	enableWindow, _  = g.glib.SignalNew("enable")
-	disableWindow, _ = g.glib.SignalNew("disable")
+	enableWindow  glibi.Signal
+	disableWindow glibi.Signal
 )
 
 type conversationView interface {

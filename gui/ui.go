@@ -92,6 +92,8 @@ func argsWithApplicationName() *[]string {
 func NewGTK(version string, sf sessions.Factory, df func() interfaces.Dialer, gx Graphics) UI {
 	coyimVersion = version
 	g = gx
+	initSignals()
+
 	//*.mo files should be in ./i18n/locale_code.utf8/LC_MESSAGES/
 	g.glib.InitI18n(localizationDomain, "./i18n")
 	g.gtk.Init(argsWithApplicationName())
@@ -520,6 +522,7 @@ func (u *gtkUI) listenToSetShowAdvancedSettings() {
 }
 
 func (u *gtkUI) initMenuBar() {
+	fmt.Printf("stuff 1: %#v  2: %#v\n", u.window, accountChangedSignal)
 	u.window.Connect(accountChangedSignal.String(), func() {
 		u.buildAccountsMenu()
 		u.accountsMenu.ShowAll()

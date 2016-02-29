@@ -6,12 +6,13 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/access"
+	"github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 var (
 	// TODO: shouldn't this be specific to the account ID in question?
-	accountChangedSignal, _ = g.glib.SignalNew("coyim-account-changed")
+	accountChangedSignal glibi.Signal
 )
 
 func toggleConnectAndDisconnectMenuItems(s access.Session, connect, disconnect gtki.MenuItem) {

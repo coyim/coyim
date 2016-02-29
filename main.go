@@ -24,8 +24,14 @@ func initLog() {
 
 func main() {
 	flag.Parse()
-	initLog()
-	runClient()
 
-	os.Stdout.Write([]byte("\n"))
+	if !*config.VersionFlag {
+		initLog()
+		runClient()
+
+		os.Stdout.Write([]byte("\n"))
+	} else {
+		var versionMessage = "CoyIM version " + coyimVersion + "\n"
+		os.Stdout.WriteString(versionMessage)
+	}
 }

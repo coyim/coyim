@@ -10,4 +10,5 @@ var (
 	AccountFlag      = flag.String("account", "", "The account the CLI should connect to, if more than one is configured")
 	MultiFlag        = flag.Bool("multi", false, "If true, will not try to unify the windows, but create separate instances")
 	SingleWindowFlag = flag.Bool("single-window", false, "Enable single window UI layout")
+	VersionFlag      = flag.Bool("version", false, "Print CoyIM version and exit")
 )

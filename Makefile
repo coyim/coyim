@@ -1,6 +1,7 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 GIT_VERSION=$(shell git rev-parse HEAD)
+VERSION=$(shell git tag -l --contains $$GIT_VERSION)
 
 default: deps gen-ui-defs lint test
 .PHONY: test
@@ -49,7 +50,7 @@ ifeq ($(shell uname), Linux)
 endif
 
 generate-version-file:
-	./gen_version_file.sh $(GIT_VERSION)
+	./gen_version_file.sh $(VERSION)
 
 run-cover: clean-cover
 	mkdir -p .coverprofiles

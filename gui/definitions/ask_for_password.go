@@ -12,7 +12,7 @@ func (*defAskForPassword) String() string {
   <object class="GtkDialog" id="AskForPassword">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Enter your password</property>
-    <signal name="close" handler="on_cancel_signal" />
+    <signal name="close" handler="on_cancel_password_signal" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
@@ -55,7 +55,7 @@ func (*defAskForPassword) String() string {
               <object class="GtkEntry" id="password">
                 <property name="has-focus">true</property>
                 <property name="visibility">false</property>
-                <signal name="activate" handler="on_save_signal" />
+                <signal name="activate" handler="on_entered_pasword_signal" />
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -70,14 +70,14 @@ func (*defAskForPassword) String() string {
             <child>
               <object class="GtkButton" id="button_cancel">
                 <property name="label">Cancel</property>
-                <signal name="clicked" handler="on_cancel_signal" />
+                <signal name="clicked" handler="on_cancel_password_signal" />
               </object>
             </child>
             <child>
               <object class="GtkButton" id="button_ok">
                 <property name="label" translatable="yes">Connect</property>
                 <property name="can-default">true</property>
-                <signal name="clicked" handler="on_save_signal" />
+                <signal name="clicked" handler="on_entered_password_signal" />
               </object>
             </child>
           </object>

@@ -333,12 +333,12 @@ func (account *account) setCurrentNotification(ib gtki.InfoBar, notificationArea
 	ib.ShowAll()
 }
 
-func (a *account) IsAskingForPassword() bool {
-	return a.askingForPassword
+func (account *account) IsAskingForPassword() bool {
+	return account.askingForPassword
 }
-func (a *account) AskForPassword() {
-	a.askingForPassword = true
+func (account *account) AskForPassword() {
+	account.askingForPassword = true
 }
-func (a *account) AskedForPassword() {
-	a.askingForPassword = false
+func (account *account) AskedForPassword() {
+	account.askingForPassword = false
 }

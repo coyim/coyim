@@ -522,7 +522,6 @@ func (u *gtkUI) listenToSetShowAdvancedSettings() {
 }
 
 func (u *gtkUI) initMenuBar() {
-	fmt.Printf("stuff 1: %#v  2: %#v\n", u.window, accountChangedSignal)
 	u.window.Connect(accountChangedSignal.String(), func() {
 		u.buildAccountsMenu()
 		u.accountsMenu.ShowAll()

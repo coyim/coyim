@@ -407,7 +407,7 @@ func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(s
 	label.SetSelectable(true)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_save_signal": func() {
+		"on_entered_password_signal": func() {
 			passwordObj, _ := builder.GetObject("password")
 			passwordEntry := passwordObj.(gtki.Entry)
 			password, _ := passwordEntry.GetText()
@@ -417,7 +417,7 @@ func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(s
 				dialog.Destroy()
 			}
 		},
-		"on_cancel_signal": func() {
+		"on_cancel_password_signal": func() {
 			cancel()
 			dialog.Destroy()
 		},

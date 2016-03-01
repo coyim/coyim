@@ -30,7 +30,7 @@ The GUI version requires GTK+ >= 3.6.16, which installation depends on your OS:
 Then install coyim:
 
 ```
-GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+export GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 go get -u -tags "gtk_${GTK_VERSION}" github.com/twstrike/coyim
 ```
 

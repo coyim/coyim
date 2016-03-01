@@ -90,6 +90,7 @@ deps-u:
 	go get -u github.com/golang/lint/golint
 	go get -u golang.org/x/tools/cmd/cover
 	go get -u github.com/modocache/gover
+	go get -u -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
 	go get -u -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
 	go get -u github.com/twstrike/otr3
 	go get -u github.com/twstrike/otr3/sexp
@@ -110,6 +111,7 @@ deps-dev:
 	go get github.com/modocache/gover
 
 deps: deps-dev
+	go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
 	go get -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
 	go get github.com/twstrike/otr3
 	go get github.com/twstrike/otr3/sexp

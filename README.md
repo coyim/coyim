@@ -43,5 +43,5 @@ go get -u -tags cli github.com/twstrike/coyim
 ## Contributing to Coy
 
 We have instructions to help you [get started contributing to
-Coy](CONTRIBUTING.md).
+CoyIM](CONTRIBUTING.md).
 

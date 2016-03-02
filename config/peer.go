@@ -5,8 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-
-	"github.com/twstrike/coyim/i18n"
 )
 
 // EncryptionSettings configures the encryption setting for this peer
@@ -186,7 +184,7 @@ func (a *Account) UserIDForVerifiedFingerprint(fpr []byte) string {
 }
 
 var (
-	errFingerprintAlreadyAuthorized = errors.New(i18n.Local("the fingerprint is already authorized"))
+	errFingerprintAlreadyAuthorized = errors.New("the fingerprint is already authorized")
 )
 
 // AuthorizeFingerprint will authorize and add the fingerprint for the given user

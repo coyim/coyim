@@ -9,23 +9,22 @@ import (
 	"time"
 
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/gotk3adapter/glib_mock"
 
 	. "gopkg.in/check.v1"
 )
 
 func init() {
 	log.SetOutput(ioutil.Discard)
+	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
 func Test(t *testing.T) { TestingT(t) }
-
-func init() {
-	log.SetOutput(ioutil.Discard)
-}
 
 type SessionXmppSuite struct{}
 

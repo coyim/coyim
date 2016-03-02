@@ -5,6 +5,9 @@ import (
 	"log"
 	"testing"
 
+	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/gotk3adapter/glib_mock"
+
 	g "gopkg.in/check.v1"
 )
 
@@ -12,6 +15,7 @@ func Test(t *testing.T) { g.TestingT(t) }
 
 func init() {
 	log.SetOutput(ioutil.Discard)
+	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
 type ListSuite struct{}

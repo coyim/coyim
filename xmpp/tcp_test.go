@@ -8,8 +8,10 @@ import (
 	"net"
 	"os"
 
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/errors"
+	"github.com/twstrike/gotk3adapter/glib_mock"
 
 	. "gopkg.in/check.v1"
 )
@@ -18,6 +20,7 @@ type TCPSuite struct{}
 
 func (*TCPSuite) SetUpSuite(c *C) {
 	log.SetOutput(ioutil.Discard)
+	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
 func (*TCPSuite) TearDownSuite(c *C) {

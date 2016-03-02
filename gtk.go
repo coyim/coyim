@@ -4,6 +4,7 @@ package main
 
 import (
 	"github.com/twstrike/coyim/gui"
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/gotk3adapter/gdka"
@@ -19,5 +20,6 @@ func runClient() {
 		gdka.Real,
 		pangoa.Real,
 	)
+	i18n.InitLocalization(gliba.Real)
 	gui.NewGTK(coyimVersion, session.Factory, xmpp.DialerFactory, g).Loop()
 }

@@ -268,12 +268,17 @@ func init() {
 
 func (u *gtkUI) Loop() {
 	u.app.Connect("activate", func() {
-		go u.watchCommands()
-		go u.observeAccountEvents()
+		activeWindow := u.app.GetActiveWindow()
+		if activeWindow == nil {
+			go u.watchCommands()
+			go u.observeAccountEvents()
 
-		applyHacks()
-		u.mainWindow()
-		go u.loadConfig(*config.ConfigFile)
+			applyHacks()
+			u.mainWindow()
+			go u.loadConfig(*config.ConfigFile)
+		} else {
+			activeWindow.Present()
+		}
 	})
 
 	u.app.Run([]string{})

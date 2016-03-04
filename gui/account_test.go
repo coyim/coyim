@@ -41,11 +41,11 @@ type accountInfoBarMock struct {
 }
 
 func (v *accountInfoBarMock) Hide() {
-	v.hideCalled += 1
+	v.hideCalled++
 }
 
 func (v *accountInfoBarMock) Destroy() {
-	v.destroyCalled += 1
+	v.destroyCalled++
 }
 
 func (*AccountSuite) Test_account_removeCurrentNotification_doesNothingIfItIsNil(c *C) {

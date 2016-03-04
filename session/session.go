@@ -830,8 +830,11 @@ func (s *session) Connect(password string) error {
 // EncryptAndSendTo encrypts and sends the message to the given peer
 func (s *session) EncryptAndSendTo(peer string, message string) error {
 	//TODO: review whether it should create a conversation
-	conversation, _ := s.convManager.EnsureConversationWith(peer)
-	return conversation.Send(s, []byte(message))
+	if s.IsConnected() {
+		conversation, _ := s.convManager.EnsureConversationWith(peer)
+		return conversation.Send(s, []byte(message))
+	}
+	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }
 
 func (s *session) terminateConversations() {

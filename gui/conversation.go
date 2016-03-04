@@ -8,6 +8,7 @@ import (
 
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/gotk3adapter/gtki"
@@ -140,6 +141,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 			entry.SetEditable(true)
 			if text != "" {
 				sendError := cp.sendMessage(text)
+
 				if sendError != nil {
 					fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
 				}
@@ -331,16 +333,21 @@ func (conv *conversationWindow) show(userInitiated bool) {
 
 func (conv *conversationPane) sendMessage(message string) error {
 	err := conv.account.session.EncryptAndSendTo(conv.to, message)
+
 	if err != nil {
-		return err
+		oerr, isoff := err.(*access.OfflineError)
+		if !isoff {
+			return err
+		}
+
+		conv.displayNotification(oerr.Error())
+	} else {
+		//TODO: review whether it should create a conversation
+		//TODO: this should be whether the message was encrypted or not, rather than
+		//whether the conversation is encrypted or not
+		conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to)
+		conv.appendMessage(conv.account.session.GetConfig().Account, time.Now(), conversation.IsEncrypted(), ui.StripHTML([]byte(message)), true)
 	}
-
-	//TODO: review whether it should create a conversation
-	//TODO: this should be whether the message was encrypted or not, rather than
-	//whether the conversation is encrypted or not
-	conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to)
-	conv.appendMessage(conv.account.session.GetConfig().Account, time.Now(), conversation.IsEncrypted(), ui.StripHTML([]byte(message)), true)
-
 	return nil
 }
 

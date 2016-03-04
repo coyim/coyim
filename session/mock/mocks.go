@@ -15,6 +15,7 @@ import (
 	"github.com/twstrike/otr3"
 )
 
+// SessionMock is a mock of the Session interface
 type SessionMock struct{}
 
 func (*SessionMock) ApprovePresenceSubscription(string, string) error {

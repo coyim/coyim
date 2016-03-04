@@ -7,8 +7,7 @@ func init() {
 type defRoster struct{}
 
 func (*defRoster) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkTreeStore" id="roster-model">
     <columns>
       <!-- jid -->
@@ -78,6 +77,5 @@ func (*defRoster) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

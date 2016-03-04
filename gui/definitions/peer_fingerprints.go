@@ -7,8 +7,7 @@ func init() {
 type defPeerFingerprints struct{}
 
 func (*defPeerFingerprints) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkDialog" id="dialog">
     <property name="title" translatable="yes">Peer fingerprints</property>
     <signal name="close" handler="on_close_signal" />
@@ -46,6 +45,5 @@ func (*defPeerFingerprints) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

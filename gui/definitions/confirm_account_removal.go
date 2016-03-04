@@ -7,8 +7,7 @@ func init() {
 type defConfirmAccountRemoval struct{}
 
 func (*defConfirmAccountRemoval) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkMessageDialog" id="RemoveAccount">
     <property name="title" translatable="yes">Confirm account removal</property>
     <property name="secondary-text" translatable="yes">Are you sure you want to remove this account?</property>
@@ -18,6 +17,5 @@ func (*defConfirmAccountRemoval) String() string {
     <property name="buttons">GTK_BUTTONS_YES_NO</property>
   </object>
 </interface>
-
 `
 }

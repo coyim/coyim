@@ -7,8 +7,7 @@ func init() {
 type defAccountRegistration struct{}
 
 func (*defAccountRegistration) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkListStore" id="servers-model">
     <columns>
       <!-- server -->
@@ -87,6 +86,5 @@ func (*defAccountRegistration) String() string {
     </action-widgets>
   </object>
 </interface>
-
 `
 }

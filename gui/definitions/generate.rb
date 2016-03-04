@@ -25,9 +25,7 @@ func init() {
 type def#{ui_name} struct{}
 
 func (*def#{ui_name}) String() string {
-\treturn `
-#{xml_definition}
-`
+\treturn `#{xml_definition}`
 }
 TEMPLATE
   end

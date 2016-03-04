@@ -8,16 +8,14 @@ type defTest struct{}
 
 func (*defTest) String() string {
 	return `
-
 <interface>
   <object class="GtkWindow" id="conversation">
-    <property name="default-height">500</property>
-    <property name="default-width">400</property>
+    <property name="default-height">600</property>
+    <property name="default-width">500</property>
     <child>
       <object class="GtkVBox" id="vbox"></object>
     </child>
   </object>
 </interface>
-
 `
 }

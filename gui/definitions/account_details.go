@@ -7,8 +7,7 @@ func init() {
 type defAccountDetails struct{}
 
 func (*defAccountDetails) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkListStore" id="proxies-model">
     <columns>
       <!-- proxy -->
@@ -455,6 +454,5 @@ func (*defAccountDetails) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

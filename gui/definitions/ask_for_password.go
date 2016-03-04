@@ -7,8 +7,7 @@ func init() {
 type defAskForPassword struct{}
 
 func (*defAskForPassword) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkDialog" id="AskForPassword">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Enter your password</property>
@@ -86,6 +85,5 @@ func (*defAskForPassword) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

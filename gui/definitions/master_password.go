@@ -7,8 +7,7 @@ func init() {
 type defMasterPassword struct{}
 
 func (*defMasterPassword) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkDialog" id="MasterPassword">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Enter master password</property>
@@ -64,6 +63,5 @@ func (*defMasterPassword) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

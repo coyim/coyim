@@ -7,8 +7,7 @@ func init() {
 type defConnectionFailureNotification struct{}
 
 func (*defConnectionFailureNotification) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkInfoBar" id="infobar">
     <property name="message-type">GTK_MESSAGE_ERROR</property>
     <property name="show-close-button">true</property>
@@ -27,6 +26,5 @@ func (*defConnectionFailureNotification) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

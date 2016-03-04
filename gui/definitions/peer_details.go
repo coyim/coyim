@@ -7,8 +7,7 @@ func init() {
 type defPeerDetails struct{}
 
 func (*defPeerDetails) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkListStore" id="current-groups">
     <columns>
       <column type="gchararray"/>
@@ -203,6 +202,5 @@ func (*defPeerDetails) String() string {
       </object>
     </child>
   </object>
-</interface>
-`
+</interface>`
 }

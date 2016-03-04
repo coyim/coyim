@@ -7,8 +7,7 @@ func init() {
 type defVerifyFingerprintUnknown struct{}
 
 func (*defVerifyFingerprintUnknown) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <child internal-child="vbox">
@@ -39,6 +38,5 @@ func (*defVerifyFingerprintUnknown) String() string {
     </action-widgets>
   </object>
 </interface>
-
 `
 }

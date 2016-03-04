@@ -7,8 +7,7 @@ func init() {
 type defConnectingAccountInfo struct{}
 
 func (*defConnectingAccountInfo) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkInfoBar" id="infobar">
     <property name="message-type">GTK_MESSAGE_INFO</property>
     <child internal-child="content_area">
@@ -32,6 +31,5 @@ func (*defConnectingAccountInfo) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

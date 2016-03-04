@@ -7,8 +7,7 @@ func init() {
 type defBadUsernameNotification struct{}
 
 func (*defBadUsernameNotification) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkInfoBar" id="infobar">
     <property name="message-type">GTK_MESSAGE_WARNING</property>
 
@@ -26,6 +25,5 @@ func (*defBadUsernameNotification) String() string {
 
   </object>
 </interface>
-
 `
 }

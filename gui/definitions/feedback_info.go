@@ -7,8 +7,7 @@ func init() {
 type defFeedbackInfo struct{}
 
 func (*defFeedbackInfo) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkInfoBar" id="feedbackInfo">
     <property name="message-type">GTK_MESSAGE_OTHER</property>
     <property name="show-close-button">true</property>
@@ -37,6 +36,5 @@ func (*defFeedbackInfo) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

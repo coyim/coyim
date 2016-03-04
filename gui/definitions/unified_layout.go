@@ -7,8 +7,7 @@ func init() {
 type defUnifiedLayout struct{}
 
 func (*defUnifiedLayout) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkListStore" id="liststore">
     <columns>
       <!-- column-name page_index -->
@@ -224,6 +223,5 @@ func (*defUnifiedLayout) String() string {
     </widgets>
   </object>
 </interface>
-
 `
 }

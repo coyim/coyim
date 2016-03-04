@@ -7,8 +7,7 @@ func init() {
 type defRegistrationForm struct{}
 
 func (*defRegistrationForm) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkDialog" id="dialog">
     <signal name="response" handler="response-handler" />
     <signal name="close" handler="close-handler" />
@@ -66,6 +65,5 @@ func (*defRegistrationForm) String() string {
     </action-widgets>
   </object>
 </interface>
-
 `
 }

@@ -7,8 +7,7 @@ func init() {
 type defVerifyIdentityNotification struct{}
 
 func (*defVerifyIdentityNotification) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkInfoBar" id="infobar">
     <property name="message-type">GTK_MESSAGE_WARNING</property>
     <child internal-child="content_area">
@@ -35,6 +34,5 @@ func (*defVerifyIdentityNotification) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

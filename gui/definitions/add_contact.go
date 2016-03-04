@@ -7,8 +7,7 @@ func init() {
 type defAddContact struct{}
 
 func (*defAddContact) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkDialog" id="AddContact">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Add contact</property>
@@ -82,6 +81,5 @@ func (*defAddContact) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

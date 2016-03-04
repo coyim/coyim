@@ -7,8 +7,7 @@ func init() {
 type defEditProxy struct{}
 
 func (*defEditProxy) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkDialog" id="EditProxy">
     <property name="title" translatable="yes">Edit Proxy</property>
     <property name="modal">True</property>
@@ -149,6 +148,5 @@ func (*defEditProxy) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

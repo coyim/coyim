@@ -1,11 +1,12 @@
 package gui
 
 import (
-	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"reflect"
 
@@ -19,11 +20,19 @@ const (
 	xmlExtension = ".xml"
 )
 
+func getActualDefsFolder() string {
+	wd, _ := os.Getwd()
+	if strings.HasSuffix(wd, "/gui") {
+		return "definitions"
+	}
+	return "gui/definitions"
+}
+
 func getDefinitionWithFileFallback(uiName string) string {
 	// this makes sure a missing definition wont break only when the app is released
 	uiDef := getDefinition(uiName)
 
-	fileName := filepath.Join(defsFolder, uiName+xmlExtension)
+	fileName := filepath.Join(getActualDefsFolder(), uiName+xmlExtension)
 	if fileNotFound(fileName) {
 		log.Printf("gui: loading compiled definition %q\n", uiName)
 		return uiDef.String()
@@ -59,14 +68,8 @@ func fileNotFound(fileName string) bool {
 }
 
 func readFile(fileName string) string {
-	file, _ := os.Open(fileName)
-	reader := bufio.NewScanner(file)
-	var content string
-	for reader.Scan() {
-		content = content + reader.Text()
-	}
-	file.Close()
-	return content
+	data, _ := ioutil.ReadFile(fileName)
+	return string(data)
 }
 
 func getDefinition(uiName string) fmt.Stringer {

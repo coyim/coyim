@@ -7,8 +7,7 @@ func init() {
 type defConversationPane struct{}
 
 func (*defConversationPane) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkBox" id="box">
     <property name="visible">true</property>
     <property name="homogeneous">false</property>
@@ -147,6 +146,5 @@ func (*defConversationPane) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

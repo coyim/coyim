@@ -7,8 +7,7 @@ func init() {
 type defFeedback struct{}
 
 func (*defFeedback) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkMessageDialog" id="dialog">
     <property name="title" translatable="yes">We would like to receive your feedback</property>
     <property name="secondary-text" translatable="yes">Please, tell us how is going for you to use CoyIM.&#xA;This is the only way we can create a better tool to keep your conversations private.</property>
@@ -19,6 +18,5 @@ func (*defFeedback) String() string {
     <property name="buttons">GTK_BUTTONS_CLOSE</property>
   </object>
 </interface>
-
 `
 }

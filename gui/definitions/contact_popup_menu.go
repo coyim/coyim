@@ -7,8 +7,7 @@ func init() {
 type defContactPopupMenu struct{}
 
 func (*defContactPopupMenu) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkMenu" id="contactMenu">
     <child>
       <object class="GtkMenuItem" id="peerFingerprintsMenuItem">
@@ -63,6 +62,5 @@ func (*defContactPopupMenu) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

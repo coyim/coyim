@@ -7,8 +7,7 @@ func init() {
 type defImporter struct{}
 
 func (*defImporter) String() string {
-	return `
-<?xml version="1.0" encoding="utf-8"?>
+	return `<?xml version="1.0" encoding="utf-8"?>
 <interface>
   <object class="GtkListStore" id="importAccountsStore">
     <columns>
@@ -117,6 +116,5 @@ func (*defImporter) String() string {
     </action-widgets>
   </object>
 </interface>
-
 `
 }

@@ -7,8 +7,7 @@ func init() {
 type defAuthorizeSubscription struct{}
 
 func (*defAuthorizeSubscription) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkMessageDialog" id="dialog">
     <property name="title" translatable="yes">Subscription request</property>
 
@@ -18,6 +17,5 @@ func (*defAuthorizeSubscription) String() string {
     <property name="buttons">GTK_BUTTONS_YES_NO</property>
   </object>
 </interface>
-
 `
 }

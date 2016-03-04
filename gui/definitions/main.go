@@ -7,8 +7,7 @@ func init() {
 type defMain struct{}
 
 func (*defMain) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkApplicationWindow" id="mainWindow">
     <property name="can_focus">False</property>
     <property name="title">CoyIM</property>
@@ -130,6 +129,5 @@ func (*defMain) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

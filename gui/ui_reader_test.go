@@ -1,7 +1,11 @@
 package gui
 
 import (
+	"io/ioutil"
 	"os"
+
+	"github.com/twstrike/gotk3adapter/gtk_mock"
+	"github.com/twstrike/gotk3adapter/gtki"
 
 	. "gopkg.in/check.v1"
 )
@@ -13,8 +17,8 @@ var _ = Suite(&UIReaderSuite{})
 const testFile string = `
 <interface>
   <object class="GtkWindow" id="conversation">
-    <property name="default-height">500</property>
-    <property name="default-width">400</property>
+    <property name="default-height">600</property>
+    <property name="default-width">500</property>
     <child>
       <object class="GtkVBox" id="vbox"></object>
     </child>
@@ -23,55 +27,60 @@ const testFile string = `
 `
 
 func writeTestFile(name, content string) {
-	desc, _ := os.Create(name)
-	desc.WriteString(content)
+	ioutil.WriteFile(name, []byte(content), 0700)
 }
 
 func removeFile(name string) {
 	os.Remove(name)
 }
 
-// func (s *UIReaderSuite) Test_builderForDefinition_useXMLIfExists(c *C) {
-// 	g.gtk.Init(nil)
-// 	removeFile("definitions/Test.xml")
-// 	writeTestFile("definitions/Test.xml", testFile)
-// 	ui := "Test"
+type mockBuilder struct {
+	gtk_mock.MockBuilder
+	stringGiven string
+}
 
-// 	builder := builderForDefinition(ui)
+func (v *mockBuilder) AddFromString(v1 string) error {
+	v.stringGiven = v1
+	return nil
+}
 
-// 	win, getErr := builder.GetObject("conversation")
-// 	if getErr != nil {
-// 		fmt.Errorf("\nFailed to get window \n%s", getErr.Error())
-// 		c.Fail()
-// 	}
-// 	w, h := win.(gtki.Window).GetSize()
-// 	c.Assert(h, Equals, 500)
-// 	c.Assert(w, Equals, 400)
-// }
+type mockWithBuilder struct {
+	gtk_mock.Mock
+}
 
-// func (s *UIReaderSuite) Test_builderForDefinition_useGoFileIfXMLDoesntExists(c *C) {
-// 	g.gtk.Init(nil)
-// 	removeFile("definitions/Test.xml")
-// 	//writeTestFile("definitions/TestDefinition.xml", testFile)
-// 	ui := "Test"
+func (*mockWithBuilder) BuilderNew() (gtki.Builder, error) {
+	return &mockBuilder{}, nil
+}
 
-// 	builder := builderForDefinition(ui)
+func (s *UIReaderSuite) Test_builderForDefinition_useXMLIfExists(c *C) {
+	g = Graphics{gtk: &mockWithBuilder{}}
+	removeFile(getActualDefsFolder() + "/Test.xml")
+	writeTestFile(getActualDefsFolder()+"/Test.xml", testFile)
+	ui := "Test"
 
-// 	win, getErr := builder.GetObject("conversation")
-// 	if getErr != nil {
-// 		fmt.Errorf("\nFailed to get window \n%s", getErr.Error())
-// 		c.Fail()
-// 	}
-// 	w, h := win.(gtki.Window).GetSize()
-// 	c.Assert(h, Equals, 500)
-// 	c.Assert(w, Equals, 400)
-// }
+	builder := builderForDefinition(ui)
 
-// func (s *UIReaderSuite) Test_builderForDefinition_shouldReturnErrorWhenDefinitionDoesntExist(c *C) {
-// 	removeFile("definitions/nonexistent")
-// 	ui := "nonexistent"
+	str := builder.(*mockBuilder).stringGiven
 
-// 	c.Assert(func() {
-// 		builderForDefinition(ui)
-// 	}, Panics, "No definition found for nonexistent")
-// }
+	c.Assert(str, Equals, testFile)
+}
+
+func (s *UIReaderSuite) Test_builderForDefinition_useGoFileIfXMLDoesntExists(c *C) {
+	g = Graphics{gtk: &mockWithBuilder{}}
+	removeFile(getActualDefsFolder() + "/Test.xml")
+	ui := "Test"
+
+	builder := builderForDefinition(ui)
+
+	str := builder.(*mockBuilder).stringGiven
+
+	c.Assert(str, Equals, testFile)
+}
+
+func (s *UIReaderSuite) Test_builderForDefinition_shouldReturnErrorWhenDefinitionDoesntExist(c *C) {
+	ui := "nonexistent"
+
+	c.Assert(func() {
+		builderForDefinition(ui)
+	}, Panics, "No definition found for nonexistent")
+}

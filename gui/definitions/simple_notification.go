@@ -7,8 +7,7 @@ func init() {
 type defSimpleNotification struct{}
 
 func (*defSimpleNotification) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkMessageDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="modal">true</property>
@@ -16,6 +15,5 @@ func (*defSimpleNotification) String() string {
     <property name="buttons">GTK_BUTTONS_OK</property>
   </object>
 </interface>
-
 `
 }

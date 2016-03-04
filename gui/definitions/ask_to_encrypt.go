@@ -7,8 +7,7 @@ func init() {
 type defAskToEncrypt struct{}
 
 func (*defAskToEncrypt) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkMessageDialog" id="AskToEncrypt">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="modal">true</property>
@@ -17,6 +16,5 @@ func (*defAskToEncrypt) String() string {
     <property name="buttons">GTK_BUTTONS_YES_NO</property>
   </object>
 </interface>
-
 `
 }

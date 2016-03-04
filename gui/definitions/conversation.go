@@ -7,8 +7,7 @@ func init() {
 type defConversation struct{}
 
 func (*defConversation) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkWindow" id="conversation">
     <property name="window-position">GTK_WIN_POS_NONE</property>
     <property name="default-height">500</property>
@@ -25,6 +24,5 @@ func (*defConversation) String() string {
     </child>
   </object>
 </interface>
-
 `
 }

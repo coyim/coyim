@@ -7,8 +7,7 @@ func init() {
 type defGroupDetails struct{}
 
 func (*defGroupDetails) String() string {
-	return `
-<interface>
+	return `<interface>
   <object class="GtkDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Add Group</property>
@@ -63,6 +62,5 @@ func (*defGroupDetails) String() string {
     </action-widgets>
 
   </object>
-</interface>
-`
+</interface>`
 }

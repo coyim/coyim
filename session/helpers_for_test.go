@@ -5,11 +5,11 @@ import (
 	"reflect"
 	"time"
 
-	gocheck "gopkg.in/check.v1"
+	gocheck "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/otr3"
 )
 
 type mockSessionEventHandler struct {

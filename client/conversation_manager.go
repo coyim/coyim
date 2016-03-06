@@ -3,7 +3,7 @@ package client
 import (
 	"sync"
 
-	"github.com/twstrike/otr3"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
 )
 
 // ConversationBuilder represents an entity capable of building Conversations

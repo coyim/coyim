@@ -1,9 +1,9 @@
 package gui
 
 import (
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/net"
-	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 var proxyTypes = [][]string{

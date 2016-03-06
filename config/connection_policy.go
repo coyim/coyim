@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"golang.org/x/net/proxy"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
 
 	ournet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/servers"

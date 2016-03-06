@@ -22,9 +22,9 @@ import (
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 
-	"github.com/twstrike/otr3"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
 
-	"golang.org/x/net/proxy"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
 )
 
 type cliUI struct {

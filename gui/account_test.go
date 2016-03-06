@@ -3,10 +3,10 @@ package gui
 import (
 	"sort"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtk_mock"
+	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/session/mock"
-	"github.com/twstrike/gotk3adapter/gtk_mock"
-	. "gopkg.in/check.v1"
 )
 
 type AccountSuite struct{}

@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/miekg/dns"
-	"golang.org/x/net/proxy"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/miekg/dns"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
 )
 
 const defaultDNSServer = "208.67.222.222:53"

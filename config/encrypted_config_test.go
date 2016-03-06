@@ -3,7 +3,7 @@ package config
 import (
 	"encoding/hex"
 
-	. "gopkg.in/check.v1"
+	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 )
 
 type EncryptedConfigXmppSuite struct{}

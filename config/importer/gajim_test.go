@@ -3,9 +3,9 @@ package importer
 import (
 	"fmt"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
+	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/otr3"
-	. "gopkg.in/check.v1"
 )
 
 type GajimSuite struct{}

@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
 	"github.com/twstrike/coyim/xmpp/utils"
-	"github.com/twstrike/otr3"
 )
 
 var (

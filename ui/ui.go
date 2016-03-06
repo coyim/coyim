@@ -6,7 +6,7 @@ import (
 	"io"
 	"strconv"
 
-	"golang.org/x/net/html"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/html"
 )
 
 // StripHTML removes all html in the text

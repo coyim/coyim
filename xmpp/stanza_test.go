@@ -1,6 +1,6 @@
 package xmpp
 
-import . "gopkg.in/check.v1"
+import . "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 
 type StanzaXmppSuite struct{}
 

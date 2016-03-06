@@ -4,8 +4,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"golang.org/x/text/transform"
-	"golang.org/x/text/unicode/norm"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/text/transform"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/text/unicode/norm"
 )
 
 type replaceTransformer func(r rune) rune

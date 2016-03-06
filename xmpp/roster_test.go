@@ -5,7 +5,7 @@ import (
 
 	"github.com/twstrike/coyim/xmpp/data"
 
-	. "gopkg.in/check.v1"
+	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 )
 
 type RosterXmppSuite struct{}

@@ -1,0 +1,130 @@
+{
+	"ImportPath": "github.com/twstrike/coyim",
+	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/DHowett/go-plist",
+			"Rev": "a34fbb33e60256707d230f730e60f75946fd2d7c"
+		},
+		{
+			"ImportPath": "github.com/gotk3/gotk3/cairo",
+			"Comment": "GOTK3_0_2_0-434-g630caee",
+			"Rev": "630caee13b27db1b1643b85de71ad4dc524d3843"
+		},
+		{
+			"ImportPath": "github.com/gotk3/gotk3/gdk",
+			"Comment": "GOTK3_0_2_0-434-g630caee",
+			"Rev": "630caee13b27db1b1643b85de71ad4dc524d3843"
+		},
+		{
+			"ImportPath": "github.com/gotk3/gotk3/glib",
+			"Comment": "GOTK3_0_2_0-434-g630caee",
+			"Rev": "630caee13b27db1b1643b85de71ad4dc524d3843"
+		},
+		{
+			"ImportPath": "github.com/gotk3/gotk3/gtk",
+			"Comment": "GOTK3_0_2_0-434-g630caee",
+			"Rev": "630caee13b27db1b1643b85de71ad4dc524d3843"
+		},
+		{
+			"ImportPath": "github.com/gotk3/gotk3/pango",
+			"Comment": "GOTK3_0_2_0-434-g630caee",
+			"Rev": "630caee13b27db1b1643b85de71ad4dc524d3843"
+		},
+		{
+			"ImportPath": "github.com/hydrogen18/stalecucumber",
+			"Rev": "9b38526d4bdf8e197c31344777fc28f7f48d250d"
+		},
+		{
+			"ImportPath": "github.com/miekg/dns",
+			"Rev": "cce6c130cdb92c752850880fd285bea1d64439dd"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/gdka",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/gdki",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/glib_mock",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/gliba",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/glibi",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/gtka",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/gtki",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/pangoa",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/pangoi",
+			"Rev": "63c0766cf0dfad7ba6ce080ef5788eaf5e8d117e"
+		},
+		{
+			"ImportPath": "github.com/twstrike/otr3",
+			"Rev": "819b719e7acd8b98994a130c52b3005ae48ad0fd"
+		},
+		{
+			"ImportPath": "github.com/twstrike/otr3/sexp",
+			"Rev": "819b719e7acd8b98994a130c52b3005ae48ad0fd"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/pbkdf2",
+			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/scrypt",
+			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh/terminal",
+			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "6acef71eb69611914f7a30939ea9f6e194c78172"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html/atom",
+			"Rev": "6acef71eb69611914f7a30939ea9f6e194c78172"
+		},
+		{
+			"ImportPath": "golang.org/x/net/proxy",
+			"Rev": "6acef71eb69611914f7a30939ea9f6e194c78172"
+		},
+		{
+			"ImportPath": "golang.org/x/text/transform",
+			"Rev": "a71fd10341b064c10f4a81ceac72bcf70f26ea34"
+		},
+		{
+			"ImportPath": "golang.org/x/text/unicode/norm",
+			"Rev": "a71fd10341b064c10f4a81ceac72bcf70f26ea34"
+		},
+		{
+			"ImportPath": "gopkg.in/check.v1",
+			"Rev": "4f90aeace3a26ad7021961c297b22c42160c7b25"
+		}
+	]
+}

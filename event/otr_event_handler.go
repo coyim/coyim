@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/twstrike/otr3"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
 )
 
 // SecurityChange describes a change in the security state of a Conversation.

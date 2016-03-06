@@ -3,8 +3,8 @@ package gui
 import (
 	"fmt"
 
-	"github.com/twstrike/gotk3adapter/gtki"
-	"github.com/twstrike/gotk3adapter/pangoi"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/pangoi"
 )
 
 type displaySettings struct {

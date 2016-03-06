@@ -1,0 +1,25 @@
+language: go
+
+go:
+  - tip
+  - 1.6
+  - 1.5.3
+  - 1.4.3
+
+matrix:
+  allow_failures:
+    - go: tip
+
+addons:
+  apt:
+    packages:
+      - automake
+      - libtool
+      - libgcrypt11-dev
+      - libgpg-error-dev
+
+install: make deps
+script: make ci
+
+cache:
+  apt:

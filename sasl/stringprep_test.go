@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"strings"
 
-	"golang.org/x/text/transform"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/text/transform"
 
-	. "gopkg.in/check.v1"
+	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 )
 
 func (s *SASLSuite) TestScramNormalizesPassword(c *C) {

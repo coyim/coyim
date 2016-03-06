@@ -1,6 +1,6 @@
 package roster
 
-import g "gopkg.in/check.v1"
+import g "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 
 type GroupListSuite struct{}
 

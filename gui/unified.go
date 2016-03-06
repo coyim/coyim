@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 )
 
 const (

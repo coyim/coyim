@@ -3,7 +3,7 @@ package xmpp
 import (
 	"errors"
 
-	. "gopkg.in/check.v1"
+	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 )
 
 type CookieXmppSuite struct{}

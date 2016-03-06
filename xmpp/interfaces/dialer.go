@@ -1,8 +1,8 @@
 package interfaces
 
 import (
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
 	"github.com/twstrike/coyim/xmpp/data"
-	"golang.org/x/net/proxy"
 )
 
 // Dialer connects and authenticates to an XMPP server

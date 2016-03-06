@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
 	ourNet "github.com/twstrike/coyim/net"
-	"golang.org/x/net/proxy"
 )
 
 var (

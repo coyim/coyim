@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/twstrike/gotk3adapter/gtki"
+import "github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 
 func (u *gtkUI) increaseFontSize(w gtki.Window) {
 	u.displaySettings.increaseFontSize()

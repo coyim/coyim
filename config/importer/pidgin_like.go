@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/xmpp/utils"
-	"github.com/twstrike/otr3"
 )
 
 // ImportKeysFromPidginStyle will try to read keys in Pidgin style from the given file

@@ -5,10 +5,10 @@ import (
 	"log"
 	"testing"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glib_mock"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/gotk3adapter/glib_mock"
 
-	. "gopkg.in/check.v1"
+	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }

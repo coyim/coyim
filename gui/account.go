@@ -21,8 +21,11 @@ type account struct {
 	//TODO: Should this be a map of roster.Peer and conversationView?
 	conversations map[string]conversationView
 
-	session         access.Session
-	sessionObserver chan interface{}
+	session access.Session
+
+	sessionObserver         chan interface{}
+	connectionEventHandlers []func()
+	sessionObserverLock     sync.RWMutex
 
 	delayedConversations     map[string][]func(conversationView)
 	delayedConversationsLock sync.Mutex
@@ -173,7 +176,11 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
 }
 
 func (account *account) destroyMenu() {
+	account.sessionObserverLock.Lock()
+	defer account.sessionObserverLock.Unlock()
+
 	close(account.sessionObserver)
+	account.connectionEventHandlers = nil
 
 	account.menu.Destroy()
 	account.menu = nil
@@ -189,60 +196,120 @@ func (account *account) appendMenuTo(submenu gtki.Menu) {
 	submenu.Append(account.menu)
 }
 
-func (account *account) buildAccountSubmenu() {
-	menuitem, _ := g.gtk.MenuItemNew()
-
-	menuitem.SetLabel(account.session.GetConfig().Account)
-
-	accountSubMenu, _ := g.gtk.MenuNew()
-	menuitem.SetSubmenu(accountSubMenu)
-
-	connectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect"))
-	accountSubMenu.Append(connectItem)
-
-	disconnectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect"))
-	accountSubMenu.Append(disconnectItem)
-
-	editItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
-	accountSubMenu.Append(editItem)
-
-	removeItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Remove"))
-	accountSubMenu.Append(removeItem)
-
-	connectAutomaticallyItem, _ := g.gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect _Automatically"))
-	accountSubMenu.Append(connectAutomaticallyItem)
-	connectAutomaticallyItem.SetActive(account.session.GetConfig().ConnectAutomatically)
-
-	alwaysEncryptItem, _ := g.gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Always Encrypt Conversation"))
-	accountSubMenu.Append(alwaysEncryptItem)
-	alwaysEncryptItem.SetActive(account.session.GetConfig().AlwaysEncrypt)
-
-	toggleConnectAndDisconnectMenuItems(account.session, connectItem, disconnectItem)
-
-	connectItem.Connect("activate", account.Connect)
-	disconnectItem.Connect("activate", account.disconnect)
-	editItem.Connect("activate", account.edit)
-	removeItem.Connect("activate", account.remove)
-	connectAutomaticallyItem.Connect("activate", account.toggleAutoConnect)
-	alwaysEncryptItem.Connect("activate", account.toggleAlwaysEncrypt)
-
-	go account.watchAndToggleMenuItems(connectItem, disconnectItem)
-	account.menu = menuitem
-}
-
-func (account *account) watchAndToggleMenuItems(connectItem, disconnectItem gtki.MenuItem) {
-	account.sessionObserver = make(chan interface{})
-	account.session.Subscribe(account.sessionObserver)
-
+func (account *account) runSessionObserver() {
 	for ev := range account.sessionObserver {
 		switch t := ev.(type) {
 		case events.Event:
 			switch t.Type {
 			case events.Connected, events.Disconnected, events.Connecting:
-				toggleConnectAndDisconnectMenuItems(t.Session, connectItem, disconnectItem)
+				account.sessionObserverLock.RLock()
+				for _, ff := range account.connectionEventHandlers {
+					ff()
+				}
+				account.sessionObserverLock.RUnlock()
 			}
 		}
 	}
+}
+
+func (account *account) observeConnectionEvents(f func()) {
+	account.sessionObserverLock.Lock()
+	defer account.sessionObserverLock.Unlock()
+
+	if account.sessionObserver == nil {
+		account.sessionObserver = make(chan interface{})
+		account.session.Subscribe(account.sessionObserver)
+		go account.runSessionObserver()
+	}
+	account.connectionEventHandlers = append(account.connectionEventHandlers, f)
+}
+
+func (account *account) createConnectItem() gtki.MenuItem {
+	connectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect"))
+	connectItem.Connect("activate", func() {
+		account.session.SetWantToBeOnline(true)
+		account.Connect()
+	})
+	connectItem.SetSensitive(account.session.IsDisconnected())
+	account.observeConnectionEvents(func() {
+		connectItem.SetSensitive(account.session.IsDisconnected())
+	})
+	return connectItem
+}
+
+func (account *account) createDisconnectItem() gtki.MenuItem {
+	disconnectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect"))
+	disconnectItem.Connect("activate", func() {
+		account.session.SetWantToBeOnline(false)
+		account.disconnect()
+	})
+	disconnectItem.SetSensitive(!account.session.IsDisconnected())
+	account.observeConnectionEvents(func() {
+		disconnectItem.SetSensitive(!account.session.IsDisconnected())
+	})
+	return disconnectItem
+}
+
+func (account *account) createSeparatorItem() gtki.MenuItem {
+	sep, _ := g.gtk.SeparatorMenuItemNew()
+	return sep
+}
+
+func (account *account) createEditItem() gtki.MenuItem {
+	editItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
+	editItem.Connect("activate", account.edit)
+	return editItem
+}
+
+func (account *account) createRemoveItem() gtki.MenuItem {
+	removeItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Remove"))
+	removeItem.Connect("activate", account.remove)
+	return removeItem
+}
+
+func (account *account) createConnectAutomaticallyItem() gtki.MenuItem {
+	connectAutomaticallyItem, _ := g.gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Connect _Automatically"))
+	connectAutomaticallyItem.SetActive(account.session.GetConfig().ConnectAutomatically)
+	connectAutomaticallyItem.Connect("activate", account.toggleAutoConnect)
+	return connectAutomaticallyItem
+}
+
+func (account *account) createAlwaysEncryptItem() gtki.MenuItem {
+	alwaysEncryptItem, _ := g.gtk.CheckMenuItemNewWithMnemonic(i18n.Local("Always Encrypt Conversation"))
+	alwaysEncryptItem.SetActive(account.session.GetConfig().AlwaysEncrypt)
+	alwaysEncryptItem.Connect("activate", account.toggleAlwaysEncrypt)
+	return alwaysEncryptItem
+}
+
+func (account *account) createDumpInfoItem(r *roster) gtki.MenuItem {
+	dumpInfoItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("Dump info"))
+	dumpInfoItem.Connect("activate", func() {
+		r.debugPrintRosterFor(account.session.GetConfig().Account)
+	})
+	return dumpInfoItem
+}
+
+func (account *account) createSubmenu() gtki.Menu {
+	m, _ := g.gtk.MenuNew()
+
+	m.Append(account.createConnectItem())
+	m.Append(account.createDisconnectItem())
+	m.Append(account.createSeparatorItem())
+	m.Append(account.createEditItem())
+	m.Append(account.createRemoveItem())
+	m.Append(account.createSeparatorItem())
+	m.Append(account.createConnectAutomaticallyItem())
+	m.Append(account.createAlwaysEncryptItem())
+	m.Append(account.createSeparatorItem())
+
+	return m
+}
+
+func (account *account) buildAccountSubmenu() {
+	menuitem, _ := g.gtk.MenuItemNew()
+	menuitem.SetLabel(account.session.GetConfig().Account)
+	menuitem.SetSubmenu(account.createSubmenu())
+	account.menu = menuitem
 }
 
 func (account *account) Connect() {

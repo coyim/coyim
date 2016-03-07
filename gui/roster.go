@@ -328,34 +328,9 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 }
 
 func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventButton) {
-	builder := builderForDefinition("AccountPopupMenu")
-	obj, _ := builder.GetObject("accountMenu")
-	mn := obj.(gtki.Menu)
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_connect": func() {
-			account.session.SetWantToBeOnline(true)
-			account.Connect()
-		},
-		"on_disconnect": func() {
-			account.session.SetWantToBeOnline(false)
-			account.disconnect()
-		},
-		"on_edit": account.edit,
-		"on_dump_info": func() {
-			r.debugPrintRosterFor(account.session.GetConfig().Account)
-		},
-	})
-
-	connx, _ := builder.GetObject("connectMenuItem")
-	connect := connx.(gtki.MenuItem)
-
-	dconnx, _ := builder.GetObject("disconnectMenuItem")
-	disconnect := dconnx.(gtki.MenuItem)
-
-	connect.SetSensitive(account.session.IsDisconnected())
-	disconnect.SetSensitive(!account.session.IsDisconnected())
-
+	mn := account.createSubmenu()
+	mn.Append(account.createSeparatorItem())
+	mn.Append(account.createDumpInfoItem(r))
 	mn.ShowAll()
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }

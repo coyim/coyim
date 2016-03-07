@@ -7,20 +7,12 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session/access"
 )
 
 var (
 	// TODO: shouldn't this be specific to the account ID in question?
 	accountChangedSignal glibi.Signal
 )
-
-func toggleConnectAndDisconnectMenuItems(s access.Session, connect, disconnect gtki.MenuItem) {
-	doInUIThread(func() {
-		connect.SetSensitive(s.IsDisconnected())
-		disconnect.SetSensitive(!s.IsDisconnected())
-	})
-}
 
 var accountsLock sync.Mutex
 

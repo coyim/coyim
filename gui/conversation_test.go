@@ -15,7 +15,6 @@ func Test(t *testing.T) { TestingT(t) }
 
 func init() {
 	log.SetOutput(ioutil.Discard)
-	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
 type GUIXmppSuite struct{}
@@ -23,6 +22,8 @@ type GUIXmppSuite struct{}
 var _ = Suite(&GUIXmppSuite{})
 
 func (s *GUIXmppSuite) Test_createStatusMessage_createsStatusMessages(c *C) {
+	i18n.InitLocalization(&glib_mock.Mock{})
+
 	c.Assert(createStatusMessage("Foo", "", "", false), Equals, "Foo is now Available")
 
 	c.Assert(createStatusMessage("Foo", "", "", true), Equals, "Foo is now Offline")

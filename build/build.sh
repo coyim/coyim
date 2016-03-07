@@ -14,10 +14,10 @@ mkdir -p $(echo "${GOPATH}/src/${GO_PKG}" | rev | cut -d '/' -f 2- | rev) &&\
 cd $GOPATH/src && source /root/setup-reproducible
 
 # make build
-/root/go/bin/go build -o /builds/coyim \
+/root/go/bin/go build -i -o /builds/coyim \
   $GO_PKG
 
-/root/go/bin/go build -o /builds/coyim-gui \
+/root/go/bin/go build -i -o /builds/coyim-gui \
   $GO_PKG
 
 shasum /builds/*

@@ -14,16 +14,16 @@ gen-ui-defs:
 	make -C ./gui/definitions
 
 build-gui: generate-version-file
-	go build -tags $(GTK_BUILD_TAG) -o bin/coyim
+	go build -i -tags $(GTK_BUILD_TAG) -o bin/coyim
 
 build-gui-win: generate-version-file
-	go build -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o bin/coyim.exe
+	go build -i -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o bin/coyim.exe
 
 build-cli: generate-version-file
-	go build -tags cli -o bin/coyim-cli
+	go build -i -tags cli -o bin/coyim-cli
 
 build-debug:
-	go build -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o bin/coyim-debug
+	go build -i -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o bin/coyim-debug
 
 debug: build-debug
 	gdb bin/coyim-debug -d $(shell go env GOROOT) -x build/debug

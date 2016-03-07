@@ -105,10 +105,10 @@ get:
 # 	go get -u github.com/hydrogen18/stalecucumber
 # 	go get -u github.com/DHowett/go-plist
 
-# deps-dev:
-# 	go get github.com/golang/lint/golint
-# 	go get golang.org/x/tools/cmd/cover
-# 	go get github.com/modocache/gover
+deps-dev:
+	go get github.com/golang/lint/golint
+	go get golang.org/x/tools/cmd/cover
+	go get github.com/modocache/gover
 
 # deps: deps-dev
 # 	go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk

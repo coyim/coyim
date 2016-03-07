@@ -2,6 +2,7 @@ package gui
 
 import (
 	"sort"
+	"time"
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glib_mock"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
@@ -334,7 +335,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheCon
 		}
 	}
 
-	c.Assert(connectItem.sensitive, Equals, false)
+	waitFor(c, func() bool { return !connectItem.sensitive })
 
 	sess.isDisconnected = false
 	for _, cc := range sess.events {
@@ -343,7 +344,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheCon
 		}
 	}
 
-	c.Assert(connectItem.sensitive, Equals, false)
+	waitFor(c, func() bool { return !connectItem.sensitive })
 
 	sess.isDisconnected = true
 	for _, cc := range sess.events {
@@ -352,7 +353,25 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheCon
 		}
 	}
 
-	c.Assert(connectItem.sensitive, Equals, true)
+	waitFor(c, func() bool { return connectItem.sensitive })
+}
+
+func waitFor(c *C, f func() bool) {
+	cx := make(chan bool)
+
+	go func() {
+		for !f() {
+			time.Sleep(time.Duration(20) * time.Millisecond)
+		}
+		cx <- true
+	}()
+
+	select {
+	case <-time.After(5 * time.Second):
+		c.Assert(f(), Equals, true)
+	case <-cx:
+		c.Assert(f(), Equals, true)
+	}
 }
 
 func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDisconnectSensitivity(c *C) {
@@ -374,7 +393,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDis
 		}
 	}
 
-	c.Assert(disconnectItem.sensitive, Equals, true)
+	waitFor(c, func() bool { return disconnectItem.sensitive })
 
 	sess.isDisconnected = false
 	for _, cc := range sess.events {
@@ -383,7 +402,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDis
 		}
 	}
 
-	c.Assert(disconnectItem.sensitive, Equals, true)
+	waitFor(c, func() bool { return disconnectItem.sensitive })
 
 	sess.isDisconnected = true
 	for _, cc := range sess.events {
@@ -392,5 +411,5 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDis
 		}
 	}
 
-	c.Assert(disconnectItem.sensitive, Equals, false)
+	waitFor(c, func() bool { return !disconnectItem.sensitive })
 }

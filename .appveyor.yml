@@ -26,7 +26,7 @@ environment:
 install:
   - .\ci\install-deps-windows.bat
 build_script:
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps-u"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps-dev"'
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make build-gui-win"'
 after_build:
   - .\ci\build-windows-bundle.bat

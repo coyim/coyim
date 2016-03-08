@@ -180,7 +180,7 @@ func (*defAccountDetails) String() string {
 
                 <child>
                   <object class="GtkLabel" id="pinningPolicyInstructions">
-                    <property name="label" translatable="yes">TODO: PUT INSTRUCTIONS HERE</property>
+                    <property name="label" translatable="yes">The pinning policy governs whether we will consider saving information about certificates we have seen before, and how we will react in these cases. The none policy turns off this behavior. Deny will try to use the pins we already have, but will never connect to a server that has another certificate. The add policy will always add new pins - by itself, this is not so useful, but if you turn it off or change it to deny, you will have a list of pins that you can curate later. The add first and ask after policy will pin the first certificate we ever see, and then let the user know if we encounter other certifacates. The add first and deny policy does the same thing except it doesn't ever ask after the first certificate. Finally, the ask policy will always ask what to do when seeing certificates we haven't added.</property>
                     <property name="visible">true</property>
                     <property name="wrap">true</property>
                     <property name="max-width-chars">50</property>

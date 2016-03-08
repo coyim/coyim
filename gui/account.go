@@ -180,6 +180,7 @@ func (account *account) destroyMenu() {
 	defer account.sessionObserverLock.Unlock()
 
 	close(account.sessionObserver)
+	account.sessionObserver = nil
 	account.connectionEventHandlers = nil
 
 	account.menu.Destroy()

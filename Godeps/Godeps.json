@@ -44,43 +44,43 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdka",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdki",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glib_mock",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gliba",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glibi",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtka",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtki",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/pangoa",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/pangoi",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+			"Rev": "d652bf0a0a84b973dc6958e60636967742ffc5b5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/otr3",

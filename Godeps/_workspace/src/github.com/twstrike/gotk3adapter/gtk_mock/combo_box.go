@@ -10,6 +10,10 @@ func (*MockComboBox) GetActiveIter() (gtki.TreeIter, error) {
 	return nil, nil
 }
 
+func (*MockComboBox) GetActiveID() string {
+	return ""
+}
+
 func (*MockComboBox) SetActive(v1 int) {
 }
 

@@ -32,6 +32,10 @@ func (v *comboBox) GetActiveIter() (gtki.TreeIter, error) {
 	return wrapTreeIter(v.internal.GetActiveIter())
 }
 
+func (v *comboBox) GetActiveID() string {
+	return v.internal.GetActiveID()
+}
+
 func (v *comboBox) SetActive(v1 int) {
 	v.internal.SetActive(v1)
 }

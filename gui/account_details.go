@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"encoding/hex"
 	"fmt"
 	"log"
 	"strconv"
@@ -15,7 +16,7 @@ import (
 )
 
 type accountDetailsData struct {
-	builder             gtki.Builder
+	builder             *builder
 	dialog              gtki.Dialog
 	notebook            gtki.Notebook
 	otherSettings       gtki.CheckButton
@@ -24,9 +25,12 @@ type accountDetailsData struct {
 	server              gtki.Entry
 	port                gtki.Entry
 	proxies             gtki.ListStore
+	pins                gtki.ListStore
 	notificationArea    gtki.Box
 	proxiesView         gtki.TreeView
 	fingerprintsMessage gtki.Label
+	pinningPolicy       gtki.ComboBoxText
+	pinsView            gtki.TreeView
 }
 
 func getObjIgnoringErrors(b gtki.Builder, name string) glibi.Object {
@@ -42,19 +46,24 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 	data := &accountDetailsData{}
 
 	dialogID := "AccountDetails"
-	data.builder = builderForDefinition(dialogID)
+	data.builder = newBuilder(dialogID)
 
-	data.dialog = data.getObjIgnoringErrors(dialogID).(gtki.Dialog)
-	data.notebook = data.getObjIgnoringErrors("notebook1").(gtki.Notebook)
-	data.otherSettings = data.getObjIgnoringErrors("otherSettings").(gtki.CheckButton)
-	data.acc = data.getObjIgnoringErrors("account").(gtki.Entry)
-	data.pass = data.getObjIgnoringErrors("password").(gtki.Entry)
-	data.server = data.getObjIgnoringErrors("server").(gtki.Entry)
-	data.port = data.getObjIgnoringErrors("port").(gtki.Entry)
-	data.proxies = data.getObjIgnoringErrors("proxies-model").(gtki.ListStore)
-	data.notificationArea = data.getObjIgnoringErrors("notification-area").(gtki.Box)
-	data.proxiesView = data.getObjIgnoringErrors("proxies-view").(gtki.TreeView)
-	data.fingerprintsMessage = data.getObjIgnoringErrors("fingerprintsMessage").(gtki.Label)
+	data.builder.getItems(
+		dialogID, &data.dialog,
+		"notebook1", &data.notebook,
+		"otherSettings", &data.otherSettings,
+		"account", &data.acc,
+		"password", &data.pass,
+		"server", &data.server,
+		"port", &data.port,
+		"proxies-model", &data.proxies,
+		"notification-area", &data.notificationArea,
+		"proxies-view", &data.proxiesView,
+		"fingerprintsMessage", &data.fingerprintsMessage,
+		"pins-model", &data.pins,
+		"pinningPolicyValue", &data.pinningPolicy,
+		"pins-view", &data.pinsView,
+	)
 
 	return data
 }
@@ -74,6 +83,46 @@ func formattedFingerprintsFor(s access.Session) string {
 	return result
 }
 
+func findPinningPolicyFor(t string) int {
+	switch t {
+	case "none":
+		return 0
+	case "deny":
+		return 1
+	case "add":
+		return 2
+	case "", "add-first-ask-rest":
+		return 3
+	case "add-first-deny-rest":
+		return 4
+	case "ask":
+		return 5
+	}
+	return -1
+}
+
+func filterCertificates(oldCerts []*config.CertificatePin, newList gtki.ListStore) []*config.CertificatePin {
+	allPins := make(map[string]bool)
+
+	iter, ok := newList.GetIterFirst()
+	for ok {
+		vv, _ := newList.GetValue(iter, 2)
+		pp, _ := vv.GetString()
+		allPins[pp] = true
+		ok = newList.IterNext(iter)
+	}
+
+	newCerts := []*config.CertificatePin{}
+
+	for _, cc := range oldCerts {
+		if allPins[hex.EncodeToString(cc.Fingerprint)] {
+			newCerts = append(newCerts, cc)
+		}
+	}
+
+	return newCerts
+}
+
 func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFunction func()) {
 	data := getBuilderAndAccountDialogDetails()
 
@@ -90,6 +139,15 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		data.proxies.SetValue(iter, 0, net.ParseProxy(px).ForPresentation())
 		data.proxies.SetValue(iter, 1, px)
 	}
+
+	for _, px := range account.Certificates {
+		iter := data.pins.Append()
+		data.pins.SetValue(iter, 0, px.Subject)
+		data.pins.SetValue(iter, 1, px.Issuer)
+		data.pins.SetValue(iter, 2, hex.EncodeToString(px.Fingerprint))
+	}
+
+	data.pinningPolicy.SetActive(findPinningPolicyFor(account.PinningPolicy))
 
 	data.fingerprintsMessage.SetSelectable(true)
 	m := i18n.Local("Your fingerprints for %s:\n%s")
@@ -173,6 +231,9 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 
 			account.Proxies = newProxies
 
+			account.Certificates = filterCertificates(account.Certificates, data.pins)
+			account.PinningPolicy = data.pinningPolicy.GetActiveID()
+
 			go saveFunction()
 			data.dialog.Destroy()
 		},
@@ -186,6 +247,12 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			ts, _ := data.proxiesView.GetSelection()
 			if _, iter, ok := ts.GetSelected(); ok {
 				data.proxies.Remove(iter)
+			}
+		},
+		"on_remove_pin_signal": func() {
+			ts, _ := data.pinsView.GetSelection()
+			if _, iter, ok := ts.GetSelected(); ok {
+				data.pins.Remove(iter)
 			}
 		},
 		"on_add_proxy_signal": func() {

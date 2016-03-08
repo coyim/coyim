@@ -10,7 +10,6 @@ func (*defCertificateDialog) String() string {
 	return `<interface>
   <object class="GtkDialog" id="dialog">
     <property name="title" translatable="yes">Problem with secure connection for ACCOUNT_NAME</property>
-    <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="modal">true</property>
     <property name="width_request">480</property>
     <property name="border_width">10</property>
@@ -22,14 +21,13 @@ func (*defCertificateDialog) String() string {
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <object class="GtkLabel" id="message">
-            <property name="label" translatable="yes">We couldn't verify the certificate for the connection to account ACCOUNT_NAME. This can happen if the server you are connecting to doesn't use the traditional certificate hierarchies. It can also be the symptom of an attack.
-
-Try to verify that this information is correct before proceeding with the connection.              
-            </property>
+            <property name="label" translatable="yes"></property>
             <property name="halign">GTK_ALIGN_START</property>
+            <property name="justify">GTK_JUSTIFY_LEFT</property>
             <property name="wrap">true</property>
             <property name="max-width-chars">80</property>
             <property name="selectable">TRUE</property>
+            <property name="margin-bottom">10</property>
           </object>
         </child>
 
@@ -37,6 +35,7 @@ Try to verify that this information is correct before proceeding with the connec
           <object class="GtkLabel" id="issuedToMessage">
             <property name="label" translatable="yes">Issued to:</property>
             <property name="halign">GTK_ALIGN_START</property>
+            <property name="justify">GTK_JUSTIFY_LEFT</property>
             <property name="selectable">TRUE</property>
             <attributes>
               <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
@@ -56,6 +55,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedToCnLabel">
                 <property name="label" translatable="yes">Common Name (CN):</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -67,6 +67,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedToCnValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -76,9 +77,11 @@ Try to verify that this information is correct before proceeding with the connec
             </child>
 
             <child>
-              <object class="GtkLabel" id="issuedToOLabel">
-                <property name="label" translatable="yes">Organization (O):</property>
+              <object class="GtkLabel" id="snisLabel">
+                <property name="label" translatable="yes">Other names:</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="valign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -87,14 +90,41 @@ Try to verify that this information is correct before proceeding with the connec
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="issuedToOValue">
+              <object class="GtkLabel" id="snisValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
+                <property name="wrap">true</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
                 <property name="top-attach">1</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="issuedToOLabel">
+                <property name="label" translatable="yes">Organization (O):</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="issuedToOValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
               </packing>
             </child>
 
@@ -102,22 +132,24 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedToOULabel">
                 <property name="label" translatable="yes">Organizational Unit (OU):</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
+                <property name="top-attach">3</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="issuedToOUValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">2</property>
+                <property name="top-attach">3</property>
               </packing>
             </child>
 
@@ -125,22 +157,24 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="SNLabel">
                 <property name="label" translatable="yes">Serial Number:</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">4</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="SNValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">4</property>
               </packing>
             </child>
           </object>          
@@ -150,6 +184,7 @@ Try to verify that this information is correct before proceeding with the connec
           <object class="GtkLabel" id="issuedByMessage">
             <property name="label" translatable="yes">Issued by:</property>
             <property name="halign">GTK_ALIGN_START</property>
+            <property name="justify">GTK_JUSTIFY_LEFT</property>
             <property name="selectable">TRUE</property>
             <attributes>
               <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
@@ -169,6 +204,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedByCnLabel">
                 <property name="label" translatable="yes">Common Name (CN):</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -180,6 +216,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedByCnValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -192,6 +229,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedByOLabel">
                 <property name="label" translatable="yes">Organization (O):</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -203,6 +241,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedByOValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -215,6 +254,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedByOULabel">
                 <property name="label" translatable="yes">Organizational Unit (OU):</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -226,6 +266,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedByOUValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -240,6 +281,7 @@ Try to verify that this information is correct before proceeding with the connec
           <object class="GtkLabel" id="validityMessage">
             <property name="label" translatable="yes">Validity:</property>
             <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
             <property name="selectable">TRUE</property>
             <attributes>
               <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
@@ -259,6 +301,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedOnLabel">
                 <property name="label" translatable="yes">Issued on:</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -270,6 +313,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="issuedOnValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -282,6 +326,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="expiresOnLabel">
                 <property name="label" translatable="yes">Expires on:</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -293,6 +338,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="expiresOnValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -315,6 +361,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="sha1FingerprintLabel">
                 <property name="label" translatable="yes">SHA-1 fingerprint:</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -326,6 +373,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="sha1FingerprintValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
                 <attributes>
                   <attribute name="font-desc" value="Monospace"/>
@@ -341,6 +389,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="sha256FingerprintLabel">
                 <property name="label" translatable="yes">SHA-256 fingerprint:</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -352,6 +401,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="sha256FingerprintValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
                 <attributes>
                   <attribute name="font-desc" value="Monospace"/>
@@ -367,6 +417,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="sha3_256FingerprintLabel">
                 <property name="label" translatable="yes">SHA3-256 fingerprint:</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
               </object>
               <packing>
@@ -378,6 +429,7 @@ Try to verify that this information is correct before proceeding with the connec
               <object class="GtkLabel" id="sha3_256FingerprintValue">
                 <property name="label" translatable="yes"></property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
                 <property name="selectable">TRUE</property>
                 <attributes>
                   <attribute name="font-desc" value="Monospace"/>
@@ -395,6 +447,7 @@ Try to verify that this information is correct before proceeding with the connec
           <object class="GtkLabel" id="buttonInstructionsMessage">
             <property name="label" translatable="yes">Depending on whether you judge the above information correct, or how much risk you are willing to take, you have three choices: Decide to not connect, connect using this information this time but request that we ask again next time, or connect using this information and remember it for the future.</property>
             <property name="halign">GTK_ALIGN_START</property>
+            <property name="justify">GTK_JUSTIFY_LEFT</property>
             <property name="selectable">TRUE</property>
             <property name="wrap">true</property>
             <property name="max-width-chars">80</property>

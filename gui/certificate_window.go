@@ -3,6 +3,7 @@ package gui
 import (
 	"crypto/x509"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -13,7 +14,15 @@ import (
 func (u *gtkUI) certificateFailedToVerify(a *account, certs []*x509.Certificate) <-chan bool {
 	c := make(chan bool)
 
-	u.certificateFailedToVerifyDisplayDialog(a, certs, c)
+	u.certificateFailedToVerifyDisplayDialog(a, certs, c, "verify", "")
+
+	return c
+}
+
+func (u *gtkUI) certificateFailedToVerifyHostname(a *account, certs []*x509.Certificate, origin string) <-chan bool {
+	c := make(chan bool)
+
+	u.certificateFailedToVerifyDisplayDialog(a, certs, c, "hostname", origin)
 
 	return c
 }
@@ -55,13 +64,13 @@ func displayChunked(fpr []byte) string {
 	}
 }
 
-func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509.Certificate, c chan<- bool) {
+func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509.Certificate, c chan<- bool, tp, extra string) {
 	doInUIThread(func() {
 		builder := newBuilder("CertificateDialog")
 
 		var md gtki.Dialog
 		var message gtki.Label
-		var issuedToCN, issuedToO, issuedToOU, serial gtki.Label
+		var issuedToCN, issuedToO, snis, issuedToOU, serial gtki.Label
 		var issuedByCN, issuedByO, issuedByOU gtki.Label
 		var issuedOn, expiresOn gtki.Label
 		var sha1Fingerprint, sha256Fingerprint, sha3_256Fingerprint gtki.Label
@@ -72,6 +81,7 @@ func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509
 			"issuedToCnValue", &issuedToCN,
 			"issuedToOValue", &issuedToO,
 			"issuedToOUValue", &issuedToOU,
+			"snisValue", &snis,
 			"SNValue", &serial,
 			"issuedByCnValue", &issuedByCN,
 			"issuedByOValue", &issuedByO,
@@ -87,6 +97,9 @@ func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509
 		issuedToO.SetLabel(strings.Join(certs[0].Subject.Organization, ", "))
 		issuedToOU.SetLabel(strings.Join(certs[0].Subject.OrganizationalUnit, ", "))
 		serial.SetLabel(certs[0].SerialNumber.String())
+		ss := certs[0].DNSNames[:]
+		sort.Strings(ss)
+		snis.SetLabel(strings.Join(ss, ", "))
 
 		issuedByCN.SetLabel(certs[0].Issuer.CommonName)
 		issuedByO.SetLabel(strings.Join(certs[0].Issuer.Organization, ", "))
@@ -105,7 +118,13 @@ func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509
 		}
 
 		md.SetTitle(strings.Replace(md.GetTitle(), "ACCOUNT_NAME", accountName, -1))
-		message.SetLabel(strings.Replace(message.GetLabel(), "ACCOUNT_NAME", accountName, -1))
+
+		switch tp {
+		case "verify":
+			message.SetLabel(fmt.Sprintf("We couldn't verify the certificate for the connection to account %s. This can happen if the server you are connecting to doesn't use the traditional certificate hierarchies. It can also be the symptom of an attack.\n\nTry to verify that this information is correct before proceeding with the connection.", accountName))
+		case "hostname":
+			message.SetLabel(fmt.Sprintf("The certificate for the connection to account %s is correct, but the names for it doesn't match. We need a certificate for the name %s, but this wasn't provided. This can happen if the server is configured incorrectly or there are other reasons the proper name couldn't be used. This is very common for corporate Google accounts. It can also be the symptom of an attack.\n\nTry to verify that this information is correct before proceeding with the connection.", accountName, extra))
+		}
 
 		md.SetTransientFor(u.window)
 

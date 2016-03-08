@@ -38,14 +38,16 @@ func (v *accountTLSVerifier) verifyCert(certs []*x509.Certificate, conf tls.Conf
 }
 
 func (v *accountTLSVerifier) verifyFailure(certs []*x509.Certificate, err error) error {
-	c := v.u.certificateFailedToVerify(v.account, certs)
-	if <-c {
+	if <-v.u.certificateFailedToVerify(v.account, certs) {
 		return nil
 	}
 	return errors.New("tls: failed to verify TLS certificate: " + err.Error())
 }
 
-func (v *accountTLSVerifier) verifyHostnameFailure(err error) error {
+func (v *accountTLSVerifier) verifyHostnameFailure(certs []*x509.Certificate, origin string, err error) error {
+	if <-v.u.certificateFailedToVerifyHostname(v.account, certs, origin) {
+		return nil
+	}
 	return errors.New("tls: failed to match TLS certificate to name: " + err.Error())
 }
 
@@ -80,7 +82,7 @@ func (v *accountTLSVerifier) Verify(state tls.ConnectionState, conf tls.Config, 
 	}
 
 	if err = v.verifyHostName(chains[0][0], originDomain); err != nil {
-		return v.verifyHostnameFailure(err)
+		return v.verifyHostnameFailure(state.PeerCertificates, originDomain, err)
 	}
 
 	return nil

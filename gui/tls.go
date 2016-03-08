@@ -57,9 +57,9 @@ func (v *accountTLSVerifier) verifyHostName(leafCert *x509.Certificate, originDo
 	return leafCert.VerifyHostname(originDomain)
 }
 
-func (v *accountTLSVerifier) hasPinned(certs []*x509.Certificate) bool {
-	if v.config != nil {
-		for _, pin := range v.config.Certificates {
+func checkPinned(c *config.Account, certs []*x509.Certificate) bool {
+	if c != nil {
+		for _, pin := range c.Certificates {
 			if pin.Matches(certs[0]) {
 				return true
 			}
@@ -67,6 +67,10 @@ func (v *accountTLSVerifier) hasPinned(certs []*x509.Certificate) bool {
 	}
 
 	return false
+}
+
+func (v *accountTLSVerifier) hasPinned(certs []*x509.Certificate) bool {
+	return checkPinned(v.config, certs)
 }
 
 func (v *accountTLSVerifier) needToCheckPins() bool {

@@ -56,6 +56,7 @@ func certName(cert *x509.Certificate) string {
 	return ret
 }
 
+// GetCipherSuiteName returns a human readable string of the cipher suite used in the state
 func GetCipherSuiteName(tlsState tls.ConnectionState) string {
 	cipherSuite, ok := tlsCipherSuiteNames[tlsState.CipherSuite]
 	if !ok {
@@ -64,6 +65,7 @@ func GetCipherSuiteName(tlsState tls.ConnectionState) string {
 	return cipherSuite
 }
 
+// GetTLSVersion returns a human readable string of the TLS version used in the state
 func GetTLSVersion(tlsState tls.ConnectionState) string {
 	version, ok := tlsVersionStrings[tlsState.Version]
 	if !ok {

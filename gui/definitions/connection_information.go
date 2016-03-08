@@ -97,6 +97,46 @@ func (*defConnectionInformation) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
+
+            <child>
+              <object class="GtkLabel" id="tlsFingerprintLabel">
+                <property name="label" translatable="yes">Secure connection fingerprint:</property>
+                <property name="valign">GTK_ALIGN_START</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="tlsFingerprintValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
+                <property name="selectable">TRUE</property>
+                <attributes>
+                  <attribute name="font-desc" value="Monospace"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="pin-cert">
+                <property name="label" translatable="yes">Pin certificate</property>
+                <signal name="clicked" handler="on_pin_signal"/>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">4</property>
+              </packing>
+            </child>
           </object>
         </child>
       </object>

@@ -11,6 +11,7 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/digests"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/session/access"
@@ -130,13 +131,16 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 	builder := newBuilder(dialogID)
 
 	var dialog gtki.Dialog
-	var server, tlsAlgo, tlsVersion gtki.Label
+	var server, tlsAlgo, tlsVersion, tlsFingerprint gtki.Label
+	var pinCertButton gtki.Button
 
 	builder.getItems(
 		dialogID, &dialog,
 		"serverValue", &server,
 		"tlsAlgoValue", &tlsAlgo,
 		"tlsVersionValue", &tlsVersion,
+		"tlsFingerprintValue", &tlsFingerprint,
+		"pin-cert", &pinCertButton,
 	)
 
 	tlsConn := account.session.Conn().RawOut().(*tls.Conn)
@@ -151,9 +155,23 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 	tlsAlgo.SetLabel(xmpp.GetCipherSuiteName(tlsConn.ConnectionState()))
 	tlsVersion.SetLabel(xmpp.GetTLSVersion(tlsConn.ConnectionState()))
 
+	certs := tlsConn.ConnectionState().PeerCertificates
+	chunks := splitStringEvery(fmt.Sprintf("%X", digests.Sha3_256(certs[0].Raw)), chunkingDefaultGrouping)
+	tlsFingerprint.SetLabel(fmt.Sprintf("%s %s %s %s\n%s %s %s %s", chunks[0], chunks[1], chunks[2], chunks[3], chunks[4], chunks[5], chunks[6], chunks[7]))
+
+	if checkPinned(account.session.GetConfig(), certs) {
+		pinCertButton.SetSensitive(false)
+	}
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_signal": func() {
 			dialog.Destroy()
+		},
+
+		"on_pin_signal": func() {
+			account.session.GetConfig().SaveCert(certs[0].Subject.CommonName, certs[0].Issuer.CommonName, digests.Sha3_256(certs[0].Raw))
+			u.SaveConfig()
+			pinCertButton.SetSensitive(false)
 		},
 	})
 

@@ -1,6 +1,9 @@
 {
 	"ImportPath": "github.com/twstrike/coyim",
 	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/DHowett/go-plist",
@@ -60,15 +63,15 @@
 			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
 		},
 		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
+			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
+		},
+		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtka",
 			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtki",
-			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
-		},
-		{
-			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
 			"Rev": "d2b56439a8127908365aba2f2163ec5e849c5172"
 		},
 		{

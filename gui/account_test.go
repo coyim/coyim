@@ -109,6 +109,16 @@ func (*AccountSuite) Test_account_AskedForPassword(c *C) {
 	c.Assert(a.askingForPassword, Equals, false)
 }
 
+type accountDirectGlibIdleAddMock struct {
+	glib_mock.Mock
+}
+
+func (v *accountDirectGlibIdleAddMock) IdleAdd(v1 interface{}, v2 ...interface{}) (glibi.SourceHandle, error) {
+	ffx := v1.(func())
+	ffx()
+	return glibi.SourceHandle(0), nil
+}
+
 type accountMockGtk struct {
 	gtk_mock.Mock
 }
@@ -195,7 +205,7 @@ func (*accountMockGlib) Local(vx string) string {
 
 func (*AccountSuite) Test_account_createSubmenu_createsTheGeneralStructure(c *C) {
 	i18n.InitLocalization(&accountMockGlib{})
-	g = Graphics{gtk: &accountMockGtk{}}
+	g = Graphics{gtk: &accountMockGtk{}, glib: &accountDirectGlibIdleAddMock{}}
 
 	sess := &accountMockSession{config: &config.Account{}}
 	a := &account{session: sess}
@@ -223,7 +233,7 @@ func (*AccountSuite) Test_account_createSubmenu_createsTheGeneralStructure(c *C)
 
 func (*AccountSuite) Test_account_createSubmenu_setsTheCheckboxesCorrectly(c *C) {
 	i18n.InitLocalization(&accountMockGlib{})
-	g = Graphics{gtk: &accountMockGtk{}}
+	g = Graphics{gtk: &accountMockGtk{}, glib: &accountDirectGlibIdleAddMock{}}
 
 	conf := &config.Account{ConnectAutomatically: true, AlwaysEncrypt: true}
 	sess := &accountMockSession{config: conf}
@@ -255,7 +265,7 @@ func (*AccountSuite) Test_account_createSubmenu_setsTheCheckboxesCorrectly(c *C)
 
 func (*AccountSuite) Test_account_createSubmenu_setsActivationCorrectly(c *C) {
 	i18n.InitLocalization(&accountMockGlib{})
-	g = Graphics{gtk: &accountMockGtk{}}
+	g = Graphics{gtk: &accountMockGtk{}, glib: &accountDirectGlibIdleAddMock{}}
 
 	sess := &accountMockSession{config: &config.Account{}}
 	a := &account{session: sess}
@@ -299,7 +309,7 @@ func (v *accountMockSession) Subscribe(v1 chan<- interface{}) {
 
 func (*AccountSuite) Test_account_createSubmenu_setsConnectAndDisconnectSensitivity(c *C) {
 	i18n.InitLocalization(&accountMockGlib{})
-	g = Graphics{gtk: &accountMockGtk{}}
+	g = Graphics{gtk: &accountMockGtk{}, glib: &accountDirectGlibIdleAddMock{}}
 
 	sess := &accountMockSession{isDisconnected: true, config: &config.Account{}}
 	a := &account{session: sess}
@@ -318,7 +328,7 @@ func (*AccountSuite) Test_account_createSubmenu_setsConnectAndDisconnectSensitiv
 
 func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheConnectSensitivity(c *C) {
 	i18n.InitLocalization(&accountMockGlib{})
-	g = Graphics{gtk: &accountMockGtk{}}
+	g = Graphics{gtk: &accountMockGtk{}, glib: &accountDirectGlibIdleAddMock{}}
 
 	sess := &accountMockSession{isDisconnected: true, config: &config.Account{}}
 	a := &account{session: sess}
@@ -376,7 +386,7 @@ func waitFor(c *C, f func() bool) {
 
 func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDisconnectSensitivity(c *C) {
 	i18n.InitLocalization(&accountMockGlib{})
-	g = Graphics{gtk: &accountMockGtk{}}
+	g = Graphics{gtk: &accountMockGtk{}, glib: &accountDirectGlibIdleAddMock{}}
 
 	sess := &accountMockSession{isDisconnected: true, config: &config.Account{}}
 	a := &account{session: sess}

@@ -203,11 +203,13 @@ func (account *account) runSessionObserver() {
 		case events.Event:
 			switch t.Type {
 			case events.Connected, events.Disconnected, events.Connecting:
-				account.sessionObserverLock.RLock()
-				for _, ff := range account.connectionEventHandlers {
-					ff()
-				}
-				account.sessionObserverLock.RUnlock()
+				doInUIThread(func() {
+					account.sessionObserverLock.RLock()
+					for _, ff := range account.connectionEventHandlers {
+						ff()
+					}
+					account.sessionObserverLock.RUnlock()
+				})
 			}
 		}
 	}

@@ -33,9 +33,10 @@ type conn struct {
 	rawOut       io.WriteCloser // doesn't log. Used for <auth>
 	keepaliveOut io.Writer
 
-	jid          string
-	originDomain string
-	features     data.StreamFeatures
+	jid           string
+	originDomain  string
+	features      data.StreamFeatures
+	serverAddress string
 
 	rand          io.Reader
 	lock          sync.Mutex
@@ -88,6 +89,14 @@ func (c *conn) In() *xml.Decoder {
 
 func (c *conn) RawOut() io.WriteCloser {
 	return c.rawOut
+}
+
+func (c *conn) SetServerAddress(s1 string) {
+	c.serverAddress = s1
+}
+
+func (c *conn) ServerAddress() string {
+	return c.serverAddress
 }
 
 func (c *conn) Out() io.Writer {

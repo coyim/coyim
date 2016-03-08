@@ -544,6 +544,10 @@ func (u *gtkUI) rosterUpdated() {
 	}
 }
 
+func (u *gtkUI) connectionInfo(account *account) {
+	u.connectionInfoDialog(account)
+}
+
 func (u *gtkUI) editAccount(account *account) {
 	u.accountDialog(account.session, account.session.GetConfig(), func() {
 		u.SaveConfig()

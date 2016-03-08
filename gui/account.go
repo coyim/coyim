@@ -256,6 +256,16 @@ func (account *account) createSeparatorItem() gtki.MenuItem {
 	return sep
 }
 
+func (account *account) createConnectionItem() gtki.MenuItem {
+	connInfoItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("Connection _information..."))
+	connInfoItem.Connect("activate", account.connectionInfo)
+	connInfoItem.SetSensitive(!account.session.IsDisconnected())
+	account.observeConnectionEvents(func() {
+		connInfoItem.SetSensitive(!account.session.IsDisconnected())
+	})
+	return connInfoItem
+}
+
 func (account *account) createEditItem() gtki.MenuItem {
 	editItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Edit..."))
 	editItem.Connect("activate", account.edit)
@@ -296,12 +306,12 @@ func (account *account) createSubmenu() gtki.Menu {
 	m.Append(account.createConnectItem())
 	m.Append(account.createDisconnectItem())
 	m.Append(account.createSeparatorItem())
+	m.Append(account.createConnectionItem())
 	m.Append(account.createEditItem())
 	m.Append(account.createRemoveItem())
 	m.Append(account.createSeparatorItem())
 	m.Append(account.createConnectAutomaticallyItem())
 	m.Append(account.createAlwaysEncryptItem())
-	m.Append(account.createSeparatorItem())
 
 	return m
 }
@@ -332,6 +342,10 @@ func (account *account) toggleAlwaysEncrypt() {
 
 func (account *account) edit() {
 	account.executeCmd(editAccountCmd{account})
+}
+
+func (account *account) connectionInfo() {
+	account.executeCmd(connectionInfoCmd{account})
 }
 
 func (account *account) remove() {

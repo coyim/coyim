@@ -56,19 +56,26 @@ func certName(cert *x509.Certificate) string {
 	return ret
 }
 
-func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
-	version, ok := tlsVersionStrings[tlsState.Version]
-	if !ok {
-		version = "unknown"
-	}
-
+func GetCipherSuiteName(tlsState tls.ConnectionState) string {
 	cipherSuite, ok := tlsCipherSuiteNames[tlsState.CipherSuite]
 	if !ok {
-		cipherSuite = "unknown"
+		return "unknown"
+	}
+	return cipherSuite
+}
+
+func GetTLSVersion(tlsState tls.ConnectionState) string {
+	version, ok := tlsVersionStrings[tlsState.Version]
+	if !ok {
+		return "unknown"
 	}
 
-	fmt.Fprintf(w, "  SSL/TLS version: %s\n", version)
-	fmt.Fprintf(w, "  Cipher suite: %s\n", cipherSuite)
+	return version
+}
+
+func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
+	fmt.Fprintf(w, "  SSL/TLS version: %s\n", GetTLSVersion(tlsState))
+	fmt.Fprintf(w, "  Cipher suite: %s\n", GetCipherSuiteName(tlsState))
 }
 
 // RFC 6120, section 5.4

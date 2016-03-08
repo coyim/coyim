@@ -164,6 +164,7 @@ func (d *dialer) bindTransport(c interfaces.Conn, conn net.Conn) {
 	c.SetInOut(makeInOut(conn, d.config))
 	c.SetRawOut(conn)
 	c.SetKeepaliveOut(&timeoutableConn{conn, keepaliveTimeout})
+	c.SetServerAddress(d.serverAddress)
 }
 
 func makeInOut(conn io.ReadWriter, config data.Config) (in *xml.Decoder, out io.Writer) {

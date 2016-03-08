@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/url"
@@ -115,6 +116,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 	// and still make the SRV lookup. This avoids preventing imported accounts to
 	// use the SRV lookup.
 	if len(conf.Server) > 0 && conf.Port > 0 {
+		fmt.Printf("SetServerAddress1 %s\n", net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port)))
 		dialer.SetServerAddress(net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port)))
 	}
 
@@ -126,6 +128,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 		}
 
 		if hidden, ok := servers.Get(host); ok {
+			fmt.Printf("SetServerAddress2 %s\n", net.JoinHostPort(hidden.Onion, port))
 			dialer.SetServerAddress(net.JoinHostPort(hidden.Onion, port))
 		}
 	}

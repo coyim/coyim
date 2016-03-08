@@ -8,6 +8,7 @@ type executable interface {
 
 type connectAccountCmd struct{ a *account }
 type disconnectAccountCmd struct{ a *account }
+type connectionInfoCmd struct{ a *account }
 type editAccountCmd struct{ a *account }
 type removeAccountCmd struct{ a *account }
 type toggleAutoConnectCmd struct{ a *account }
@@ -25,6 +26,12 @@ func (c connectAccountCmd) execute(u *gtkUI) {
 
 func (c disconnectAccountCmd) execute(u *gtkUI) {
 	go c.a.session.Close()
+}
+
+func (c connectionInfoCmd) execute(u *gtkUI) {
+	doInUIThread(func() {
+		u.connectionInfo(c.a)
+	})
 }
 
 func (c editAccountCmd) execute(u *gtkUI) {

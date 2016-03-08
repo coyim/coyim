@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"crypto/tls"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -13,6 +14,7 @@ import (
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/session/access"
+	"github.com/twstrike/coyim/xmpp"
 )
 
 type accountDetailsData struct {
@@ -121,6 +123,42 @@ func filterCertificates(oldCerts []*config.CertificatePin, newList gtki.ListStor
 	}
 
 	return newCerts
+}
+
+func (u *gtkUI) connectionInfoDialog(account *account) {
+	dialogID := "ConnectionInformation"
+	builder := newBuilder(dialogID)
+
+	var dialog gtki.Dialog
+	var server, tlsAlgo, tlsVersion gtki.Label
+
+	builder.getItems(
+		dialogID, &dialog,
+		"serverValue", &server,
+		"tlsAlgoValue", &tlsAlgo,
+		"tlsVersionValue", &tlsVersion,
+	)
+
+	tlsConn := account.session.Conn().RawOut().(*tls.Conn)
+
+	serverAddress := account.session.Conn().ServerAddress()
+	if serverAddress == "" {
+		parts := strings.SplitN(account.session.GetConfig().Account, "@", 2)
+		serverAddress = parts[1]
+	}
+	server.SetLabel(serverAddress)
+
+	tlsAlgo.SetLabel(xmpp.GetCipherSuiteName(tlsConn.ConnectionState()))
+	tlsVersion.SetLabel(xmpp.GetTLSVersion(tlsConn.ConnectionState()))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_signal": func() {
+			dialog.Destroy()
+		},
+	})
+
+	dialog.SetTransientFor(u.window)
+	dialog.ShowAll()
 }
 
 func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFunction func()) {

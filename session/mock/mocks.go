@@ -9,6 +9,7 @@ import (
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/access"
+	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 
@@ -45,7 +46,7 @@ func (*SessionMock) Conn() xi.Conn {
 }
 
 // Connect is the implementation for Session interface
-func (*SessionMock) Connect(string) error {
+func (*SessionMock) Connect(string, tls.Verifier) error {
 	return nil
 }
 

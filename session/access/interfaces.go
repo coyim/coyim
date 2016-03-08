@@ -8,6 +8,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/roster"
+	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 
@@ -33,7 +34,7 @@ type Session interface {
 	CommandManager() client.CommandManager
 	Config() *config.ApplicationConfig
 	Conn() xi.Conn
-	Connect(string) error
+	Connect(string, tls.Verifier) error
 	ConversationManager() client.ConversationManager
 	DenyPresenceSubscription(string, string) error
 	EncryptAndSendTo(string, string) error
@@ -60,4 +61,4 @@ type Session interface {
 }
 
 // Factory is a function that can create new Sessions
-type Factory func(*config.ApplicationConfig, *config.Account, func() xi.Dialer) Session
+type Factory func(*config.ApplicationConfig, *config.Account, func(tls.Verifier) xi.Dialer) Session

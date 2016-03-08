@@ -79,7 +79,8 @@ func (s ByNaturalOrder) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 func (a *Account) updateToLatestVersion() bool {
 	return a.updateFingerprintsToLatestVersion() ||
-		a.removeEmptyFingerprints()
+		a.removeEmptyFingerprints() ||
+		a.updateCertificatePins()
 }
 
 func (a *Account) removeEmptyFingerprints() bool {

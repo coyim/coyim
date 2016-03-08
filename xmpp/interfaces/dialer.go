@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
+	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
@@ -18,3 +19,6 @@ type Dialer interface {
 	SetProxy(proxy.Dialer)
 	SetServerAddress(v string)
 }
+
+// DialerFactory represents a function that can create a Dialer
+type DialerFactory func(tls.Verifier) Dialer

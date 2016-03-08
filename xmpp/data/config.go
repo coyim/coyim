@@ -21,17 +21,10 @@ type Config struct {
 	// the server. The callback is needed in order to be able to handle
 	// XMPP forms.
 	CreateCallback FormCallback
-	// TrustedAddress, if true, means that the address passed to Dial is
-	// trusted and that certificates for that name should be accepted.
-	TrustedAddress bool
 	// Archive determines whether we disable archiving for messages. If
 	// false, XML is sent with each message to disable recording on the
 	// server.
 	Archive bool
-	// ServerCertificateSHA256 contains the SHA-256 hash of the server's
-	// leaf certificate, or may be empty to use normal X.509 verification.
-	// If this is specified then normal X.509 verification is disabled.
-	ServerCertificateSHA256 []byte
 	// SkipTLS, if true, causes the TLS handshake to be skipped.
 	// WARNING: this should only be used if Conn is already secure.
 	SkipTLS bool

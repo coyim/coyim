@@ -1,0 +1,426 @@
+<interface>
+  <object class="GtkDialog" id="dialog">
+    <property name="title" translatable="yes">Problem with secure connection for ACCOUNT_NAME</property>
+    <property name="window-position">GTK_WIN_POS_CENTER</property>
+    <property name="modal">true</property>
+    <property name="width_request">480</property>
+    <property name="border_width">10</property>
+
+    <child internal-child="vbox">
+      <object class="GtkBox" id="box">
+        <property name="border-width">10</property>
+        <property name="homogeneous">false</property>
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <child>
+          <object class="GtkLabel" id="message">
+            <property name="label" translatable="yes">We couldn't verify the certificate for the connection to account ACCOUNT_NAME. This can happen if the server you are connecting to doesn't use the traditional certificate hierarchies. It can also be the symptom of an attack.
+
+Try to verify that this information is correct before proceeding with the connection.              
+            </property>
+            <property name="halign">GTK_ALIGN_START</property>
+            <property name="wrap">true</property>
+            <property name="max-width-chars">80</property>
+            <property name="selectable">TRUE</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkLabel" id="issuedToMessage">
+            <property name="label" translatable="yes">Issued to:</property>
+            <property name="halign">GTK_ALIGN_START</property>
+            <property name="selectable">TRUE</property>
+            <attributes>
+              <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
+            </attributes>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkGrid" id="issuedToGrid">
+            <property name="margin-top">2</property>
+            <property name="margin-bottom">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="row-spacing">2</property>
+            <property name="column-spacing">12</property>
+            <child>
+              <object class="GtkLabel" id="issuedToCnLabel">
+                <property name="label" translatable="yes">Common Name (CN):</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="issuedToCnValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="issuedToOLabel">
+                <property name="label" translatable="yes">Organization (O):</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="issuedToOValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="issuedToOULabel">
+                <property name="label" translatable="yes">Organizational Unit (OU):</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="issuedToOUValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="SNLabel">
+                <property name="label" translatable="yes">Serial Number:</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="SNValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+          </object>          
+        </child>
+
+        <child>
+          <object class="GtkLabel" id="issuedByMessage">
+            <property name="label" translatable="yes">Issued by:</property>
+            <property name="halign">GTK_ALIGN_START</property>
+            <property name="selectable">TRUE</property>
+            <attributes>
+              <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
+            </attributes>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkGrid" id="issuedByGrid">
+            <property name="margin-top">2</property>
+            <property name="margin-bottom">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="row-spacing">2</property>
+            <property name="column-spacing">12</property>
+            <child>
+              <object class="GtkLabel" id="issuedByCnLabel">
+                <property name="label" translatable="yes">Common Name (CN):</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="issuedByCnValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="issuedByOLabel">
+                <property name="label" translatable="yes">Organization (O):</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="issuedByOValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="issuedByOULabel">
+                <property name="label" translatable="yes">Organizational Unit (OU):</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="issuedByOUValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+          </object>          
+        </child>
+        
+        <child>
+          <object class="GtkLabel" id="validityMessage">
+            <property name="label" translatable="yes">Validity:</property>
+            <property name="halign">GTK_ALIGN_START</property>
+            <property name="selectable">TRUE</property>
+            <attributes>
+              <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
+            </attributes>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkGrid" id="validityGrid">
+            <property name="margin-top">2</property>
+            <property name="margin-bottom">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="row-spacing">2</property>
+            <property name="column-spacing">12</property>
+            <child>
+              <object class="GtkLabel" id="issuedOnLabel">
+                <property name="label" translatable="yes">Issued on:</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="issuedOnValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="expiresOnLabel">
+                <property name="label" translatable="yes">Expires on:</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="expiresOnValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+          </object>          
+        </child>
+
+        <child>
+          <object class="GtkGrid" id="fingerprintsGrid">
+            <property name="margin-top">2</property>
+            <property name="margin-bottom">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="row-spacing">2</property>
+            <property name="column-spacing">12</property>
+            <child>
+              <object class="GtkLabel" id="sha1FingerprintLabel">
+                <property name="label" translatable="yes">SHA-1 fingerprint:</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="sha1FingerprintValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+                <attributes>
+                  <attribute name="font-desc" value="Monospace"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="sha256FingerprintLabel">
+                <property name="label" translatable="yes">SHA-256 fingerprint:</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="sha256FingerprintValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+                <attributes>
+                  <attribute name="font-desc" value="Monospace"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="sha3_256FingerprintLabel">
+                <property name="label" translatable="yes">SHA3-256 fingerprint:</property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="sha3_256FingerprintValue">
+                <property name="label" translatable="yes"></property>
+                <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
+                <attributes>
+                  <attribute name="font-desc" value="Monospace"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+          </object>          
+        </child>
+
+        <child>
+          <object class="GtkLabel" id="buttonInstructionsMessage">
+            <property name="label" translatable="yes">Depending on whether you judge the above information correct, or how much risk you are willing to take, you have three choices: Decide to not connect, connect using this information this time but request that we ask again next time, or connect using this information and remember it for the future.</property>
+            <property name="halign">GTK_ALIGN_START</property>
+            <property name="selectable">TRUE</property>
+            <property name="wrap">true</property>
+            <property name="max-width-chars">80</property>
+            <property name="margin-bottom">10</property>
+          </object>
+        </child>
+        
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="button_box">
+            <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+            <child>
+              <object class="GtkButton" id="button_dont">
+                <property name="can-default">true</property>
+                <property name="label" translatable="yes">Don't connect</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_temp_ok">
+                <property name="label" translatable="yes">Accept temporarily</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_perm_ok">
+                <property name="label" translatable="yes">Accept permanently</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <action-widgets>
+      <action-widget response="cancel" default="true">button_dont</action-widget>
+      <action-widget response="ok">button_temp_ok</action-widget>
+      <action-widget response="accept">button_perm_ok</action-widget>
+    </action-widgets>
+  </object>
+</interface>

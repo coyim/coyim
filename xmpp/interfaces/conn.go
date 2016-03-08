@@ -24,6 +24,7 @@ type Conn interface {
 	Next() (data.Stanza, error)
 	OriginDomain() string
 	Out() io.Writer
+	RawOut() io.WriteCloser
 	ReadStanzas(chan<- data.Stanza) error
 	RegisterAccount(string, string) (bool, error)
 	RequestRoster() (<-chan data.Stanza, data.Cookie, error)

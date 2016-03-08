@@ -6,6 +6,7 @@ type Window interface {
 	Bin
 
 	AddAccelGroup(AccelGroup)
+	GetTitle() string
 	IsActive() bool
 	Present()
 	Resize(int, int)

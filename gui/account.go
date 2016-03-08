@@ -43,7 +43,7 @@ func (s byAccountNameAlphabetic) Less(i, j int) bool {
 }
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf access.Factory, df func() interfaces.Dialer) *account {
+func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf access.Factory, df interfaces.DialerFactory) *account {
 	return &account{
 		session:              sf(conf, currentConf, df),
 		conversations:        make(map[string]conversationView),
@@ -140,7 +140,7 @@ func (u *gtkUI) showServerSelectionWindow() error {
 		}
 	}
 
-	go requestAndRenderRegistrationForm(form.server, form.renderForm, saveFn, u.dialerFactory)
+	go requestAndRenderRegistrationForm(form.server, form.renderForm, saveFn, u.dialerFactory, u.unassociatedVerifier())
 
 	return nil
 }

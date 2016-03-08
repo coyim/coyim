@@ -28,6 +28,10 @@ func unwrapLabel(v gtki.Label) *gtk.Label {
 	return v.(*label).internal
 }
 
+func (v *label) GetLabel() string {
+	return v.internal.GetLabel()
+}
+
 func (v *label) SetLabel(v1 string) {
 	v.internal.SetLabel(v1)
 }

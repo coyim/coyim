@@ -15,6 +15,7 @@ import (
 
 	ournet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/servers"
+	ourtls "github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/interfaces"
 )
@@ -33,7 +34,7 @@ type ConnectionPolicy struct {
 	// XMPPLogger logs XMPP messages
 	XMPPLogger io.Writer
 
-	DialerFactory func() interfaces.Dialer
+	DialerFactory interfaces.DialerFactory
 
 	torState ournet.TorState
 }
@@ -61,7 +62,7 @@ func (a *Account) HasTorAuto() bool {
 	return false
 }
 
-func (p *ConnectionPolicy) buildDialerFor(conf *Account) (interfaces.Dialer, error) {
+func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifier) (interfaces.Dialer, error) {
 	//Account is a bare JID
 	jidParts := strings.SplitN(conf.Account, "@", 2)
 	if len(jidParts) != 2 {
@@ -78,16 +79,10 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (interfaces.Dialer, err
 		}
 	}
 
-	certSHA256, err := conf.ServerCertificateHash()
-	if err != nil {
-		return nil, err
-	}
-
 	xmppConfig := data.Config{
 		Archive: false,
 
-		ServerCertificateSHA256: certSHA256,
-		TLSConfig:               newTLSConfig(),
+		TLSConfig: newTLSConfig(),
 
 		Log: p.Logger,
 	}
@@ -110,7 +105,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account) (interfaces.Dialer, err
 		return nil, err
 	}
 
-	dialer := p.DialerFactory()
+	dialer := p.DialerFactory(verifier)
 	dialer.SetJID(conf.Account)
 	dialer.SetProxy(proxy)
 	dialer.SetConfig(xmppConfig)
@@ -186,8 +181,8 @@ func buildInOutLogs(rawLog io.Writer) (io.Writer, io.Writer) {
 }
 
 // Connect to the server and authenticates with the password
-func (p *ConnectionPolicy) Connect(password string, conf *Account) (interfaces.Conn, error) {
-	dialer, err := p.buildDialerFor(conf)
+func (p *ConnectionPolicy) Connect(password string, conf *Account, verifier ourtls.Verifier) (interfaces.Conn, error) {
+	dialer, err := p.buildDialerFor(conf, verifier)
 	if err != nil {
 		return nil, err
 	}
@@ -200,8 +195,8 @@ func (p *ConnectionPolicy) Connect(password string, conf *Account) (interfaces.C
 }
 
 // RegisterAccount register the account on the XMPP server.
-func (p *ConnectionPolicy) RegisterAccount(createCallback data.FormCallback, conf *Account) (interfaces.Conn, error) {
-	dialer, err := p.buildDialerFor(conf)
+func (p *ConnectionPolicy) RegisterAccount(createCallback data.FormCallback, conf *Account, verifier ourtls.Verifier) (interfaces.Conn, error) {
+	dialer, err := p.buildDialerFor(conf, verifier)
 	if err != nil {
 		return nil, err
 	}

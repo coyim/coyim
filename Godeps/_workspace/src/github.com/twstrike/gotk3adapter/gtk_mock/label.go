@@ -4,6 +4,10 @@ type MockLabel struct {
 	MockWidget
 }
 
+func (*MockLabel) GetLabel() string {
+	return ""
+}
+
 func (*MockLabel) SetLabel(v1 string) {
 }
 

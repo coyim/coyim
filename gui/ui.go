@@ -51,7 +51,7 @@ type gtkUI struct {
 
 	sessionFactory sessions.Factory
 
-	dialerFactory func() interfaces.Dialer
+	dialerFactory interfaces.DialerFactory
 }
 
 // Graphics represent the graphic configuration
@@ -89,7 +89,7 @@ func argsWithApplicationName() *[]string {
 }
 
 // NewGTK returns a new client for a GTK ui
-func NewGTK(version string, sf sessions.Factory, df func() interfaces.Dialer, gx Graphics) UI {
+func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics) UI {
 	coyimVersion = version
 	g = gx
 	initSignals()

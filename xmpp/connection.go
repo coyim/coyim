@@ -86,6 +86,10 @@ func (c *conn) In() *xml.Decoder {
 	return c.in
 }
 
+func (c *conn) RawOut() io.WriteCloser {
+	return c.rawOut
+}
+
 func (c *conn) Out() io.Writer {
 	return c.out
 }

@@ -12,6 +12,10 @@ type MockWindow struct {
 func (*MockWindow) AddAccelGroup(v2 gtki.AccelGroup) {
 }
 
+func (*MockWindow) GetTitle() string {
+	return ""
+}
+
 func (*MockWindow) IsActive() bool {
 	return false
 }

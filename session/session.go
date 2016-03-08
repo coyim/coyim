@@ -19,6 +19,7 @@ import (
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
+	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 	"github.com/twstrike/coyim/xmpp/utils"
@@ -75,7 +76,7 @@ type session struct {
 	cmdManager  client.CommandManager
 	convManager client.ConversationManager
 
-	dialerFactory func() xi.Dialer
+	dialerFactory func(tls.Verifier) xi.Dialer
 }
 
 // GetConfig returns the current account configuration
@@ -101,7 +102,7 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 }
 
 // Factory creates a new session from the given config
-func Factory(c *config.ApplicationConfig, cu *config.Account, df func() xi.Dialer) access.Session {
+func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifier) xi.Dialer) access.Session {
 	s := &session{
 		config:        c,
 		accountConfig: cu,
@@ -784,7 +785,7 @@ func (s *session) setStatus(status connStatus) {
 }
 
 // Connect connects to the server and starts the main threads
-func (s *session) Connect(password string) error {
+func (s *session) Connect(password string, verifier tls.Verifier) error {
 	if !s.IsDisconnected() {
 		return nil
 	}
@@ -802,7 +803,7 @@ func (s *session) Connect(password string) error {
 		DialerFactory: s.dialerFactory,
 	}
 
-	conn, err := policy.Connect(password, conf)
+	conn, err := policy.Connect(password, conf, verifier)
 	if err != nil {
 		s.alert(err.Error())
 		s.setStatus(DISCONNECTED)

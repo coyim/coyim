@@ -64,7 +64,7 @@ func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bo
 	ac.OTRAutoStartSession = c.OTRAutoStartSession
 	ac.OTRAutoTearDown = c.OTRAutoTearDown
 	ac.OTRAutoAppendTag = c.OTRAutoAppendTag
-	ac.ServerCertificateSHA256 = c.ServerCertificateSHA256
+	ac.LegacyServerCertificateSHA256 = c.ServerCertificateSHA256
 	ac.PrivateKeys = [][]byte{c.PrivateKey}
 	ac.AlwaysEncryptWith = c.AlwaysEncryptWith
 	ac.Peers = nil

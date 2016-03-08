@@ -26,7 +26,7 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 	removeNotification := u.showConnectAccountNotification(account)
 	defer removeNotification()
 
-	err := account.session.Connect(password)
+	err := account.session.Connect(password, u.verifierFor(account))
 	switch err {
 	case config.ErrTorNotRunning:
 		u.notifyTorIsNotRunning(account)

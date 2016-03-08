@@ -39,7 +39,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_ValidatesJid(c *C) {
 
 	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory}
 
-	_, err := policy.buildDialerFor(account)
+	_, err := policy.buildDialerFor(account, nil)
 
 	c.Check(err.Error(), Equals, "invalid username (want user@domain): invalid.com")
 }
@@ -52,7 +52,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesCustomRootCAForJabberDot
 	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory}
 
 	expectedRootCA, _ := rootCAFor("jabber.ccc.de")
-	dialer, err := policy.buildDialerFor(account)
+	dialer, err := policy.buildDialerFor(account, nil)
 
 	c.Check(err, IsNil)
 	c.Check(dialer.Config().TLSConfig.RootCAs.Subjects(),
@@ -68,7 +68,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesConfiguredServerAddressA
 		Account: "coyim@coy.im",
 		Server:  "xmpp.coy.im",
 		Port:    5234,
-	})
+	}, nil)
 
 	c.Check(err, IsNil)
 	c.Check(dialer.ServerAddress(), Equals, "xmpp.coy.im:5234")
@@ -77,7 +77,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesConfiguredServerAddressA
 		Account: "coyim@coy.im",
 		Server:  "coy.im",
 		Port:    5234,
-	})
+	}, nil)
 
 	c.Check(err, IsNil)
 	c.Check(dialer.Config().SkipSRVLookup, Equals, false)
@@ -99,7 +99,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceI
 		DialerFactory: xmpp.DialerFactory,
 		torState:      ournet.Tor,
 	}
-	dialer, err := policy.buildDialerFor(account)
+	dialer, err := policy.buildDialerFor(account, nil)
 	ournet.Tor = currentTor
 
 	c.Check(err, IsNil)
@@ -113,7 +113,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_IgnoresAssociatedHiddenServi
 
 	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory}
 
-	dialer, err := policy.buildDialerFor(account)
+	dialer, err := policy.buildDialerFor(account, nil)
 
 	c.Check(err, IsNil)
 	c.Check(dialer.ServerAddress(), Equals, "")
@@ -130,7 +130,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_ErrorsIfTorIsRequiredButNotF
 		torState:      mockTorState(""),
 	}
 
-	_, err := policy.buildDialerFor(account)
+	_, err := policy.buildDialerFor(account, nil)
 
 	c.Check(err, Equals, ErrTorNotRunning)
 }

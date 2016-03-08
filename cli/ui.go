@@ -19,6 +19,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/servers"
 	sessions "github.com/twstrike/coyim/session/access"
+	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 
@@ -30,7 +31,7 @@ import (
 type cliUI struct {
 	session        sessions.Session
 	sessionFactory sessions.Factory
-	dialerFactory  func() xi.Dialer
+	dialerFactory  func(tls.Verifier) xi.Dialer
 	events         chan interface{}
 	commands       chan interface{}
 
@@ -53,7 +54,7 @@ type UI interface {
 }
 
 // NewCLI creates a new cliUI instance
-func NewCLI(version string, cf terminal.ControlFactory, sf sessions.Factory, df func() xi.Dialer) UI {
+func NewCLI(version string, cf terminal.ControlFactory, sf sessions.Factory, df func(tls.Verifier) xi.Dialer) UI {
 	termControl := cf()
 	oldState, err := termControl.MakeRaw(0)
 	if err != nil {
@@ -161,7 +162,8 @@ func (c *cliUI) loadConfig(configFile string) error {
 	c.session.Subscribe(c.events)
 
 	c.session.SetConnectionLogger(logger)
-	if err := c.session.Connect(password); err != nil {
+	// TODO: this nil is incorrect and will cause failures when trying to use it.
+	if err := c.session.Connect(password, nil); err != nil {
 		c.alert(err.Error())
 		return err
 	}

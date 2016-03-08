@@ -1,12 +1,18 @@
 package xmpp
 
 import (
+	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"runtime"
 	"strings"
 
+	goerr "errors"
+
+	"github.com/twstrike/coyim/digests"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/errors"
 
@@ -16,6 +22,69 @@ import (
 type ConnectionXmppSuite struct{}
 
 var _ = Suite(&ConnectionXmppSuite{})
+
+type basicTLSVerifier struct {
+	shaSum []byte
+}
+
+func (v *basicTLSVerifier) verifyCert(state tls.ConnectionState, conf tls.Config) ([][]*x509.Certificate, error) {
+	opts := x509.VerifyOptions{
+		Intermediates: x509.NewCertPool(),
+		Roots:         conf.RootCAs,
+	}
+
+	for _, cert := range state.PeerCertificates[1:] {
+		opts.Intermediates.AddCert(cert)
+	}
+
+	return state.PeerCertificates[0].Verify(opts)
+}
+
+func (v *basicTLSVerifier) verifyFailure(err error) error {
+	return goerr.New("xmpp: failed to verify TLS certificate: " + err.Error())
+}
+
+func (v *basicTLSVerifier) verifyHostnameFailure(err error) error {
+	return goerr.New("xmpp: failed to match TLS certificate to name: " + err.Error())
+}
+
+func (v *basicTLSVerifier) verifyHostName(leafCert *x509.Certificate, originDomain string) error {
+	return leafCert.VerifyHostname(originDomain)
+}
+
+func (v *basicTLSVerifier) hasPinned(certs []*x509.Certificate) error {
+	savedHash := v.shaSum
+	if len(savedHash) == 0 {
+		return nil
+	}
+
+	if digest := digests.Sha256(certs[0].Raw); !bytes.Equal(digest, savedHash) {
+		return fmt.Errorf("tls: server certificate does not match expected hash (got: %x, want: %x)", digest, savedHash)
+	}
+
+	return nil
+}
+
+func (v *basicTLSVerifier) Verify(state tls.ConnectionState, conf tls.Config, originDomain string) error {
+	if len(state.PeerCertificates) == 0 {
+		return goerr.New("tls: server has no certificates")
+	}
+
+	if err := v.hasPinned(state.PeerCertificates); err != nil {
+		return err
+	}
+
+	chains, err := v.verifyCert(state, conf)
+	if err != nil {
+		return v.verifyFailure(err)
+	}
+
+	if err = v.verifyHostName(chains[0][0], originDomain); err != nil {
+		return v.verifyHostnameFailure(err)
+	}
+
+	return nil
+}
 
 func (s *ConnectionXmppSuite) Test_Next_returnsErrorIfOneIsEncountered(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams' to='hello'></stream:foo>")}
@@ -1028,6 +1097,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 		JID:           "user@www.olabini.se",
 		password:      "pass",
 		serverAddress: "www.olabini.se:443",
+		verifier:      &basicTLSVerifier{},
 
 		config: data.Config{
 			TLSConfig: &tlsC,
@@ -1078,15 +1148,15 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 		JID:           "user@www.olabini.se",
 		password:      "pass",
 		serverAddress: "www.olabini.se:443",
+		verifier:      &basicTLSVerifier{[]byte("aaaaa")},
 
 		config: data.Config{
-			TLSConfig:               &tlsC,
-			ServerCertificateSHA256: []byte("aaaaa"),
+			TLSConfig: &tlsC,
 		},
 	}
 	_, err := d.setupStream(conn)
 
-	c.Assert(err.Error(), Equals, "xmpp: server certificate does not match expected hash (got: 2300818fdc977ce5eb357694d421e47869a952990bc3230ef6aca2bb6ee6f00b, want: 6161616161)")
+	c.Assert(err.Error(), Equals, "tls: server certificate does not match expected hash (got: 2300818fdc977ce5eb357694d421e47869a952990bc3230ef6aca2bb6ee6f00b, want: 6161616161)")
 }
 
 func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {
@@ -1104,10 +1174,10 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 		JID:           "user@www.olabini.se",
 		password:      "pass",
 		serverAddress: "www.olabini.se:443",
+		verifier:      &basicTLSVerifier{bytesFromHex("2300818fdc977ce5eb357694d421e47869a952990bc3230ef6aca2bb6ee6f00b")},
 
 		config: data.Config{
-			TLSConfig:               &tlsC,
-			ServerCertificateSHA256: bytesFromHex("2300818fdc977ce5eb357694d421e47869a952990bc3230ef6aca2bb6ee6f00b"),
+			TLSConfig: &tlsC,
 		},
 	}
 	_, err := d.setupStream(conn)

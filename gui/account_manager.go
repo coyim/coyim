@@ -68,7 +68,7 @@ func (m *accountManager) setContacts(account *account, contacts *rosters.List) {
 	m.contacts[account] = contacts
 }
 
-func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory, df func() interfaces.Dialer) {
+func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory, df interfaces.DialerFactory) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -105,7 +105,7 @@ func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 	k()
 }
 
-func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory, df func() interfaces.Dialer) {
+func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
 		if _, ok := m.getAccountByID(accountConf.ID()); ok {
@@ -126,7 +126,7 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf a
 	}
 }
 
-func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory, df func() interfaces.Dialer) {
+func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
 	for _, configAccount := range appConfig.Accounts {
 		_, found := m.getAccountByID(configAccount.ID())
 		if found {

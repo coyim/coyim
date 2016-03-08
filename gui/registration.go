@@ -6,6 +6,7 @@ import (
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/interfaces"
 )
@@ -93,7 +94,7 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	return <-wait
 }
 
-func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, saveFn func(), df func() interfaces.Dialer) error {
+func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, saveFn func(), df interfaces.DialerFactory, verifier tls.Verifier) error {
 	policy := config.ConnectionPolicy{DialerFactory: df}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
@@ -103,7 +104,7 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 	}
 
 	//TODO: this should receive only a JID domainpart
-	_, err := policy.RegisterAccount(formHandler, conf)
+	_, err := policy.RegisterAccount(formHandler, conf, verifier)
 
 	if err != nil {
 		//TODO: show something in the UI

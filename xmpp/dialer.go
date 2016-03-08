@@ -6,6 +6,7 @@ import (
 	"net"
 	"strings"
 
+	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/interfaces"
 
@@ -28,11 +29,13 @@ type dialer struct {
 
 	// config configures the XMPP protocol
 	config data.Config
+
+	verifier tls.Verifier
 }
 
 // DialerFactory returns a new xmpp dialer
-func DialerFactory() interfaces.Dialer {
-	return &dialer{}
+func DialerFactory(verifier tls.Verifier) interfaces.Dialer {
+	return &dialer{verifier: verifier}
 }
 
 func (d *dialer) SetJID(v string) {
@@ -117,10 +120,6 @@ func (d *dialer) Dial() (interfaces.Conn, error) {
 
 // RFC 6120, Section 4.2
 func (d *dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
-	if d.hasCustomServer() {
-		d.config.TrustedAddress = true
-	}
-
 	c := newConn()
 	c.config = d.config
 	c.originDomain = d.getJIDDomainpart()

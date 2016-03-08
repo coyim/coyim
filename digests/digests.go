@@ -4,7 +4,7 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 
-	"golang.org/x/crypto/sha3"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/crypto/sha3"
 )
 
 // Sha1 will generate a SHA1 digest

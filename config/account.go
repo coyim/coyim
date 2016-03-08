@@ -30,6 +30,7 @@ type Account struct {
 	InstanceTag          uint32 `json:",omitempty"`
 	ConnectAutomatically bool
 	Certificates         []*CertificatePin `json:",omitempty"`
+	PinningPolicy        string            `json:",omitempty"`
 
 	LegacyKnownFingerprints       []KnownFingerprint `json:"KnownFingerprints,omitempty"`
 	DeprecatedPrivateKey          []byte             `json:"PrivateKey,omitempty"`

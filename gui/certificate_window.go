@@ -27,6 +27,14 @@ func (u *gtkUI) certificateFailedToVerifyHostname(a *account, certs []*x509.Cert
 	return c
 }
 
+func (u *gtkUI) validCertificateShouldBePinned(a *account, certs []*x509.Certificate) <-chan bool {
+	c := make(chan bool)
+
+	u.certificateFailedToVerifyDisplayDialog(a, certs, c, "pinning", "")
+
+	return c
+}
+
 const chunkingDefaultGrouping = 8
 
 func splitStringEvery(s string, n int) []string {
@@ -124,6 +132,9 @@ func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509
 			message.SetLabel(fmt.Sprintf("We couldn't verify the certificate for the connection to account %s. This can happen if the server you are connecting to doesn't use the traditional certificate hierarchies. It can also be the symptom of an attack.\n\nTry to verify that this information is correct before proceeding with the connection.", accountName))
 		case "hostname":
 			message.SetLabel(fmt.Sprintf("The certificate for the connection to account %s is correct, but the names for it doesn't match. We need a certificate for the name %s, but this wasn't provided. This can happen if the server is configured incorrectly or there are other reasons the proper name couldn't be used. This is very common for corporate Google accounts. It can also be the symptom of an attack.\n\nTry to verify that this information is correct before proceeding with the connection.", accountName, extra))
+		case "pinning":
+			message.SetLabel(fmt.Sprintf("The certificate for the connection to account %s is correct - but you have a pinning policy that requires us to ask whether you would like to continue connecting using this certificate, save it for the future, or stop connecting.\n\nTry to verify that this information is correct before proceeding with the connection.", accountName))
+
 		}
 
 		md.SetTransientFor(u.window)

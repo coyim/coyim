@@ -106,8 +106,11 @@ func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err erro
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution
 	conn, err = dialTimeout("tcp", addr, dialer, defaultDialTimeout)
 	if err != nil {
-		log.Printf("tcp: failed to connect to %s: %s\n", addr, err)
-		return
+		if err == ourNet.ErrTimeout {
+			return nil, err
+		}
+
+		return nil, errors.CreateErrFailedToConnect(addr, err)
 	}
 
 	return

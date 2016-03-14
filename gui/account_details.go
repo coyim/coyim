@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/digests"
@@ -34,15 +33,6 @@ type accountDetailsData struct {
 	fingerprintsMessage gtki.Label
 	pinningPolicy       gtki.ComboBoxText
 	pinsView            gtki.TreeView
-}
-
-func getObjIgnoringErrors(b gtki.Builder, name string) glibi.Object {
-	obj, _ := b.GetObject(name)
-	return obj
-}
-
-func (d *accountDetailsData) getObjIgnoringErrors(name string) glibi.Object {
-	return getObjIgnoringErrors(d.builder, name)
 }
 
 func getBuilderAndAccountDialogDetails() *accountDetailsData {
@@ -358,10 +348,10 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 }
 
 func buildBadUsernameNotification(msg string) gtki.InfoBar {
-	b := builderForDefinition("BadUsernameNotification")
+	b := newBuilder("BadUsernameNotification")
 
-	infoBar := getObjIgnoringErrors(b, "infobar").(gtki.InfoBar)
-	message := getObjIgnoringErrors(b, "message").(gtki.Label)
+	infoBar := b.getObj("infobar").(gtki.InfoBar)
+	message := b.getObj("message").(gtki.Label)
 
 	message.SetSelectable(true)
 	message.SetText(fmt.Sprintf(i18n.Local(msg)))

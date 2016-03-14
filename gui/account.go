@@ -354,10 +354,21 @@ func (account *account) remove() {
 	account.executeCmd(removeAccountCmd{account})
 }
 
-func (account *account) buildNotification(template, msg string) gtki.InfoBar {
-	builder := builderForDefinition(template)
+func (account *account) buildNotification(template, msg string, u *gtkUI, moreInfo func()) gtki.InfoBar {
+	builder := newBuilder(template)
+
+	infoBar := builder.getObj("infobar").(gtki.InfoBar)
 
 	builder.ConnectSignals(map[string]interface{}{
+		"on_more_info_signal": func() {
+			if moreInfo != nil {
+				moreInfo()
+			}
+		},
+		"on_close_signal": func() {
+			infoBar.Hide()
+			infoBar.Destroy()
+		},
 		"handleResponse": func(info gtki.InfoBar, response gtki.ResponseType) {
 			if response != gtki.RESPONSE_CLOSE {
 				return
@@ -368,27 +379,22 @@ func (account *account) buildNotification(template, msg string) gtki.InfoBar {
 		},
 	})
 
-	obj, _ := builder.GetObject("infobar")
-	infoBar := obj.(gtki.InfoBar)
-
-	obj, _ = builder.GetObject("message")
-	msgLabel := obj.(gtki.Label)
-	msgLabel.SetSelectable(true)
+	msgLabel := builder.getObj("message").(gtki.Label)
 	msgLabel.SetText(msg)
 
 	return infoBar
 }
 
-func (account *account) buildConnectionNotification() gtki.InfoBar {
-	return account.buildNotification("ConnectingAccountInfo", fmt.Sprintf(i18n.Local("Connecting account\n%s"), account.session.GetConfig().Account))
+func (account *account) buildConnectionNotification(u *gtkUI) gtki.InfoBar {
+	return account.buildNotification("ConnectingAccountInfo", fmt.Sprintf(i18n.Local("Connecting account\n%s"), account.session.GetConfig().Account), u, nil)
 }
 
-func (account *account) buildConnectionFailureNotification() gtki.InfoBar {
-	return account.buildNotification("ConnectionFailureNotification", fmt.Sprintf(i18n.Local("Connection failure\n%s"), account.session.GetConfig().Account))
+func (account *account) buildConnectionFailureNotification(u *gtkUI, moreInfo func()) gtki.InfoBar {
+	return account.buildNotification("ConnectionFailureNotification", fmt.Sprintf(i18n.Local("Connection failure\n%s"), account.session.GetConfig().Account), u, moreInfo)
 }
 
-func (account *account) buildTorNotRunningNotification() gtki.InfoBar {
-	return account.buildNotification("TorNotRunningNotification", i18n.Local("Tor is not currently running"))
+func (account *account) buildTorNotRunningNotification(u *gtkUI) gtki.InfoBar {
+	return account.buildNotification("TorNotRunningNotification", i18n.Local("Tor is not currently running"), u, nil)
 }
 
 func (account *account) removeCurrentNotification() {

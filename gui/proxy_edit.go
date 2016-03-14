@@ -53,13 +53,13 @@ func orNil(s string) *string {
 func (u *gtkUI) editProxy(proxy string, w gtki.Dialog, onSave func(net.Proxy), onCancel func()) {
 	prox := net.ParseProxy(proxy)
 
-	b := builderForDefinition("EditProxy")
-	dialog := getObjIgnoringErrors(b, "EditProxy").(gtki.Dialog)
-	scheme := getObjIgnoringErrors(b, "protocol-type").(gtki.ComboBoxText)
-	user := getObjIgnoringErrors(b, "user").(gtki.Entry)
-	pass := getObjIgnoringErrors(b, "password").(gtki.Entry)
-	server := getObjIgnoringErrors(b, "server").(gtki.Entry)
-	port := getObjIgnoringErrors(b, "port").(gtki.Entry)
+	b := newBuilder("EditProxy")
+	dialog := b.getObj("EditProxy").(gtki.Dialog)
+	scheme := b.getObj("protocol-type").(gtki.ComboBoxText)
+	user := b.getObj("user").(gtki.Entry)
+	pass := b.getObj("password").(gtki.Entry)
+	server := b.getObj("server").(gtki.Entry)
+	port := b.getObj("port").(gtki.Entry)
 
 	getProxyTypeNames(func(name string) {
 		scheme.AppendText(name)

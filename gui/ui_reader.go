@@ -89,6 +89,11 @@ func newBuilder(uiName string) *builder {
 	return &builder{builderForDefinition(uiName)}
 }
 
+func (b *builder) getObj(name string) glibi.Object {
+	obj, _ := b.GetObject(name)
+	return obj
+}
+
 func (b *builder) getItem(name string, target interface{}) {
 	v := reflect.ValueOf(target)
 	if v.Kind() != reflect.Ptr {

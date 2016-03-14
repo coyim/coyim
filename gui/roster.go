@@ -179,12 +179,12 @@ func toArray(groupList gtki.ListStore) []string {
 }
 
 func (r *roster) addGroupDialog(groupList gtki.ListStore) {
-	builder := builderForDefinition("GroupDetails")
-	dialog := getObjIgnoringErrors(builder, "dialog").(gtki.Dialog)
+	builder := newBuilder("GroupDetails")
+	dialog := builder.getObj("dialog").(gtki.Dialog)
 
-	nameEntry := getObjIgnoringErrors(builder, "group-name").(gtki.Entry)
+	nameEntry := builder.getObj("group-name").(gtki.Entry)
 
-	defaultBtn := getObjIgnoringErrors(builder, "btn-ok").(gtki.Button)
+	defaultBtn := builder.getObj("btn-ok").(gtki.Button)
 	defaultBtn.GrabDefault()
 	dialog.SetTransientFor(r.ui.window)
 	dialog.ShowAll()
@@ -206,30 +206,30 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 		panic("Could not find existing peer")
 	}
 
-	builder := builderForDefinition("PeerDetails")
-	dialog := getObjIgnoringErrors(builder, "dialog").(gtki.Dialog)
+	builder := newBuilder("PeerDetails")
+	dialog := builder.getObj("dialog").(gtki.Dialog)
 
 	conf := acc.session.GetConfig()
-	accName := getObjIgnoringErrors(builder, "account-name").(gtki.Label)
+	accName := builder.getObj("account-name").(gtki.Label)
 	accName.SetText(conf.Account)
 
-	contactJID := getObjIgnoringErrors(builder, "jid").(gtki.Label)
+	contactJID := builder.getObj("jid").(gtki.Label)
 	contactJID.SetText(jid)
 
-	nickNameEntry := getObjIgnoringErrors(builder, "nickname").(gtki.Entry)
+	nickNameEntry := builder.getObj("nickname").(gtki.Entry)
 	//nickNameEntry.SetText(peer.Name)
 	if peer, ok := r.ui.getPeer(acc, jid); ok {
 		nickNameEntry.SetText(peer.Nickname)
 	}
 
-	currentGroups := getObjIgnoringErrors(builder, "current-groups").(gtki.ListStore)
+	currentGroups := builder.getObj("current-groups").(gtki.ListStore)
 	currentGroups.Clear()
 
 	for n := range peer.Groups {
 		currentGroups.SetValue(currentGroups.Append(), 0, n)
 	}
 
-	existingGroups := getObjIgnoringErrors(builder, "groups-menu").(gtki.Menu)
+	existingGroups := builder.getObj("groups-menu").(gtki.Menu)
 	allGroups := r.allGroupNames()
 	for _, gr := range allGroups {
 		menu, err := g.gtk.MenuItemNewWithLabel(gr)
@@ -255,10 +255,10 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 		existingGroups.Add(sep)
 	}
 
-	addMenuItem := getObjIgnoringErrors(builder, "addGroup").(gtki.MenuItem)
+	addMenuItem := builder.getObj("addGroup").(gtki.MenuItem)
 	existingGroups.Add(addMenuItem)
 
-	currentGroupsView := getObjIgnoringErrors(builder, "groups-view").(gtki.TreeView)
+	currentGroupsView := builder.getObj("groups-view").(gtki.TreeView)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on-add-new-group": func() {
@@ -287,15 +287,15 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 		},
 	})
 
-	defaultBtn := getObjIgnoringErrors(builder, "btn-save").(gtki.Button)
+	defaultBtn := builder.getObj("btn-save").(gtki.Button)
 	defaultBtn.GrabDefault()
 	dialog.SetTransientFor(r.ui.window)
 	dialog.ShowAll()
 }
 
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.EventButton) {
-	builder := builderForDefinition("ContactPopupMenu")
-	mn := getObjIgnoringErrors(builder, "contactMenu").(gtki.Menu)
+	builder := newBuilder("ContactPopupMenu")
+	mn := builder.getObj("contactMenu").(gtki.Menu)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {

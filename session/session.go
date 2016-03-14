@@ -805,7 +805,6 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 
 	conn, err := policy.Connect(password, conf, verifier)
 	if err != nil {
-		s.alert(err.Error())
 		s.setStatus(DISCONNECTED)
 
 		return err

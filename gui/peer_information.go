@@ -9,10 +9,10 @@ import (
 )
 
 func (u *gtkUI) showFingerprintsForPeer(jid string, account *account) {
-	builder := builderForDefinition("PeerFingerprints")
-	dialog := getObjIgnoringErrors(builder, "dialog").(gtki.Dialog)
-	info := getObjIgnoringErrors(builder, "information").(gtki.Label)
-	grid := getObjIgnoringErrors(builder, "grid").(gtki.Grid)
+	builder := newBuilder("PeerFingerprints")
+	dialog := builder.getObj("dialog").(gtki.Dialog)
+	info := builder.getObj("information").(gtki.Label)
+	grid := builder.getObj("grid").(gtki.Grid)
 
 	info.SetSelectable(true)
 

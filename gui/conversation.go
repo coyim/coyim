@@ -97,28 +97,15 @@ func (t *tags) createTextBuffer() gtki.TextBuffer {
 }
 
 func createConversationPane(account *account, uid string, ui *gtkUI, transientParent gtki.Window) *conversationPane {
-	builder := builderForDefinition("ConversationPane")
+	builder := newBuilder("ConversationPane")
 
-	obj, _ := builder.GetObject("box")
-	pane := obj.(gtki.Box)
-
-	obj, _ = builder.GetObject("history")
-	history := obj.(gtki.TextView)
-
-	obj, _ = builder.GetObject("historyScroll")
-	scrollHistory := obj.(gtki.ScrolledWindow)
-
-	obj, _ = builder.GetObject("message")
-	entry := obj.(gtki.Entry)
-
-	obj, _ = builder.GetObject("notification-area")
-	notificationArea := obj.(gtki.Box)
-
-	obj, _ = builder.GetObject("security-warning")
-	securityWarning := obj.(gtki.InfoBar)
-
-	obj, _ = builder.GetObject("menubar")
-	menubar := obj.(gtki.MenuBar)
+	pane := builder.getObj("box").(gtki.Box)
+	history := builder.getObj("history").(gtki.TextView)
+	scrollHistory := builder.getObj("historyScroll").(gtki.ScrolledWindow)
+	entry := builder.getObj("message").(gtki.Entry)
+	notificationArea := builder.getObj("notification-area").(gtki.Box)
+	securityWarning := builder.getObj("security-warning").(gtki.InfoBar)
+	menubar := builder.getObj("menubar").(gtki.MenuBar)
 
 	cp := &conversationPane{
 		to:               uid,

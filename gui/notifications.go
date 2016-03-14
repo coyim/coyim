@@ -11,7 +11,7 @@ func (u *gtkUI) showConnectAccountNotification(account *account) func() {
 	var notification gtki.InfoBar
 
 	doInUIThread(func() {
-		notification = account.buildConnectionNotification()
+		notification = account.buildConnectionNotification(u)
 		account.setCurrentNotification(notification, u.notificationArea)
 	})
 
@@ -24,14 +24,14 @@ func (u *gtkUI) showConnectAccountNotification(account *account) func() {
 
 func (u *gtkUI) notifyTorIsNotRunning(account *account) {
 	doInUIThread(func() {
-		notification := account.buildTorNotRunningNotification()
+		notification := account.buildTorNotRunningNotification(u)
 		account.setCurrentNotification(notification, u.notificationArea)
 	})
 }
 
-func (u *gtkUI) notifyConnectionFailure(account *account) {
+func (u *gtkUI) notifyConnectionFailure(account *account, moreInfo func()) {
 	doInUIThread(func() {
-		notification := account.buildConnectionFailureNotification()
+		notification := account.buildConnectionFailureNotification(u, moreInfo)
 		account.setCurrentNotification(notification, u.notificationArea)
 	})
 }

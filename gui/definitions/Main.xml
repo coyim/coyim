@@ -66,6 +66,25 @@
                   </object>
                 </child>
                 <child>
+                  <object class="GtkMenuItem" id="OptionsMenu">
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">_Options</property>
+                    <property name="use-underline">True</property>
+                    <child type="submenu">
+                      <object class="GtkMenu" id="options_submenu">
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkCheckMenuItem" id="EncryptConfigurationFileCheckMenuItem">
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Encrypt configuration file</property>
+                            <signal name="toggled" handler="on_toggled_encrypt_configuration_file_signal" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkMenuItem" id="HelpMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Help</property>

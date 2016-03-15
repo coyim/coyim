@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"errors"
+	"os"
 	"strings"
 	"sync"
 )
@@ -11,8 +12,10 @@ import (
 // account information.
 type ApplicationConfig struct {
 	filename      string                `json:"-"`
-	ShouldEncrypt bool                  `json:"-"`
+	shouldEncrypt bool                  `json:"-"`
 	params        *EncryptionParameters `json:"-"`
+	ioLock        sync.Mutex            `json:"-"`
+	afterSave     []func()              `json:"-"`
 
 	Accounts                      []*Account
 	RawLogFile                    string   `json:",omitempty"`
@@ -55,6 +58,9 @@ func (a *ApplicationConfig) accountLoaded() {
 // However, the returned Accounts instance will always be usable
 func LoadOrCreate(configFile string, ks KeySupplier) (a *ApplicationConfig, ok bool, e error) {
 	a = new(ApplicationConfig)
+	a.ioLock.Lock()
+	defer a.ioLock.Unlock()
+
 	a.filename = findConfigFile(configFile)
 	e = a.tryLoad(ks)
 	ok = !(e == errNoPasswordSupplied || e == errDecryptionFailed)
@@ -65,6 +71,76 @@ func LoadOrCreate(configFile string, ks KeySupplier) (a *ApplicationConfig, ok b
 var (
 	errInvalidConfigFile = errors.New("Failed to parse config file")
 )
+
+func (a *ApplicationConfig) doAfterSave(f func()) {
+	a.afterSave = append(a.afterSave, f)
+}
+
+func (a *ApplicationConfig) onAfterSave() {
+	afterSaves := a.afterSave
+	a.afterSave = nil
+	for _, f := range afterSaves {
+		f()
+	}
+}
+
+func (a *ApplicationConfig) removeOldFileOnNextSave() {
+	oldFilename := a.filename
+
+	a.doAfterSave(func() {
+		if fileExists(oldFilename) && a.filename != oldFilename {
+			// TODO: Hmm, should we safe wipe this maybe? The old file can contain potentially sensitive things
+			os.Remove(oldFilename)
+		}
+	})
+}
+
+func (a *ApplicationConfig) turnOnEncryption() bool {
+	a.ioLock.Lock()
+	defer a.ioLock.Unlock()
+
+	if a.shouldEncrypt {
+		return false
+	}
+
+	a.shouldEncrypt = true
+
+	if !strings.HasSuffix(a.filename, encryptedFileEnding) && !*ConfigFileEncrypted {
+		a.removeOldFileOnNextSave()
+		a.filename = a.filename + encryptedFileEnding
+	}
+
+	return true
+}
+
+func (a *ApplicationConfig) turnOffEncryption() bool {
+	a.ioLock.Lock()
+	defer a.ioLock.Unlock()
+
+	if !a.shouldEncrypt {
+		return false
+	}
+
+	a.shouldEncrypt = false
+	a.removeOldFileOnNextSave()
+	a.filename = strings.TrimSuffix(a.filename, encryptedFileEnding)
+
+	return true
+}
+
+// HasEncryptedStorage returns true if this configuration file is stored encrypt
+func (a *ApplicationConfig) HasEncryptedStorage() bool {
+	return a.shouldEncrypt
+}
+
+// SetShouldSaveFileEncrypted will change whether the file is saved in encrypted form or not
+// It will immediately ask for a password if turning on encryption, and it will remove the old configuration file
+func (a *ApplicationConfig) SetShouldSaveFileEncrypted(val bool) bool {
+	if val {
+		return a.turnOnEncryption()
+	}
+	return a.turnOffEncryption()
+}
 
 func (a *ApplicationConfig) tryLoad(ks KeySupplier) error {
 	var contents []byte
@@ -77,7 +153,7 @@ func (a *ApplicationConfig) tryLoad(ks KeySupplier) error {
 	_, err = parseEncryptedData(contents)
 	switch err {
 	case nil:
-		a.ShouldEncrypt = true
+		a.shouldEncrypt = true
 		contents, a.params, err = decryptConfiguration(contents, ks)
 		if err == errNoPasswordSupplied {
 			return err
@@ -85,7 +161,7 @@ func (a *ApplicationConfig) tryLoad(ks KeySupplier) error {
 			return err
 		}
 	case errDecryptionParamsEmpty:
-		a.ShouldEncrypt = false
+		a.shouldEncrypt = false
 	default:
 		return errInvalidConfigFile
 	}
@@ -145,16 +221,20 @@ func (a *ApplicationConfig) GetAccount(jid string) (*Account, bool) {
 
 // Save will save the application configuration
 func (a *ApplicationConfig) Save(ks KeySupplier) error {
+	a.ioLock.Lock()
+	defer a.ioLock.Unlock()
+	defer a.onAfterSave()
+
 	contents, err := a.serialize()
 	if err != nil {
 		return err
 	}
 
-	if a.ShouldEncrypt && !strings.HasSuffix(a.filename, encryptedFileEnding) && !*ConfigFileEncrypted {
-		a.filename = a.filename + encryptedFileEnding
-	}
+	if a.shouldEncrypt {
+		if !strings.HasSuffix(a.filename, encryptedFileEnding) && !*ConfigFileEncrypted {
+			a.filename = a.filename + encryptedFileEnding
+		}
 
-	if a.ShouldEncrypt {
 		if a.params == nil {
 			ps := newEncryptionParameters()
 			a.params = &ps

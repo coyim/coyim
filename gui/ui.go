@@ -31,6 +31,7 @@ type gtkUI struct {
 	accountsMenu     gtki.MenuItem
 	notificationArea gtki.Box
 	viewMenu         *viewMenu
+	optionsMenu      *optionsMenu
 
 	unified *unifiedLayout
 
@@ -142,7 +143,7 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 
 func (u *gtkUI) initialSetupWindow() {
 	u.wouldYouLikeToEncryptYourFile(func(res bool) {
-		u.config.ShouldEncrypt = res
+		u.config.SetShouldSaveFileEncrypted(res)
 		k := func() {
 			err := u.showAddAccountWindow()
 			if err != nil {
@@ -194,6 +195,10 @@ func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 	doInUIThread(func() {
 		if u.viewMenu != nil {
 			u.viewMenu.setFromConfig(c)
+		}
+
+		if u.optionsMenu != nil {
+			u.optionsMenu.setFromConfig(c)
 		}
 
 		if u.window != nil {
@@ -289,15 +294,16 @@ func (u *gtkUI) initRoster() {
 }
 
 func (u *gtkUI) mainWindow() {
-	builder := builderForDefinition("Main")
+	builder := newBuilder("Main")
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_window_signal":                    u.quit,
-		"on_add_contact_window_signal":              u.addContactWindow,
-		"on_about_dialog_signal":                    u.aboutDialog,
-		"on_feedback_dialog_signal":                 u.feedbackDialog,
-		"on_toggled_check_Item_Merge_signal":        u.toggleMergeAccounts,
-		"on_toggled_check_Item_Show_Offline_signal": u.toggleShowOffline,
+		"on_close_window_signal":                       u.quit,
+		"on_add_contact_window_signal":                 u.addContactWindow,
+		"on_about_dialog_signal":                       u.aboutDialog,
+		"on_feedback_dialog_signal":                    u.feedbackDialog,
+		"on_toggled_check_Item_Merge_signal":           u.toggleMergeAccounts,
+		"on_toggled_check_Item_Show_Offline_signal":    u.toggleShowOffline,
+		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 	})
 
 	win, err := builder.GetObject("mainWindow")
@@ -315,17 +321,20 @@ func (u *gtkUI) mainWindow() {
 	u.initRoster()
 
 	// AccountsMenu
-	am, _ := builder.GetObject("AccountsMenu")
-	u.accountsMenu = am.(gtki.MenuItem)
+	u.accountsMenu = builder.getObj("AccountsMenu").(gtki.MenuItem)
+
 	// ViewMenu
 	u.viewMenu = new(viewMenu)
-	checkItemMerge, _ := builder.GetObject("CheckItemMerge")
-	u.viewMenu.merge = checkItemMerge.(gtki.CheckMenuItem)
+	u.viewMenu.merge = builder.getObj("CheckItemMerge").(gtki.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(u.viewMenu.merge)
 
-	checkItemShowOffline, _ := builder.GetObject("CheckItemShowOffline")
-	u.viewMenu.offline = checkItemShowOffline.(gtki.CheckMenuItem)
+	u.viewMenu.offline = builder.getObj("CheckItemShowOffline").(gtki.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(u.viewMenu.offline)
+
+	// OptionsMenu
+	u.optionsMenu = new(optionsMenu)
+	u.optionsMenu.encryptConfig = builder.getObj("EncryptConfigurationFileCheckMenuItem").(gtki.CheckMenuItem)
+	u.displaySettings.defaultSettingsOn(u.optionsMenu.encryptConfig)
 
 	u.initMenuBar()
 	obj, _ := builder.GetObject("Vbox")

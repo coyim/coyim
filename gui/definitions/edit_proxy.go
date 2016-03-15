@@ -36,6 +36,7 @@ func (*defEditProxy) String() string {
               <object class="GtkComboBoxText" id="protocol-type">
                 <items>
                 </items>
+                <signal name="changed" handler="on_protocol_type_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -121,6 +122,26 @@ func (*defEditProxy) String() string {
               <packing>
                 <property name="left-attach">1</property>
                 <property name="top-attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="pathLabel">
+                <property name="label" translatable="yes">Path:</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="path">
+                <signal name="activate" handler="on_save_signal" />
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">5</property>
               </packing>
             </child>
           </object>

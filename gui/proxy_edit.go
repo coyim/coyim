@@ -9,6 +9,7 @@ import (
 var proxyTypes = [][]string{
 	[]string{"tor-auto", "Automatic Tor"},
 	[]string{"socks5", "SOCKS5"},
+	[]string{"socks5+unix", "SOCKS5 Unix Domain"},
 }
 
 // findProxyTypeFor returns the index of the proxy type given
@@ -50,6 +51,12 @@ func orNil(s string) *string {
 	return nil
 }
 
+func updateSensitivity(v bool, es ...gtki.Widget) {
+	for _, ee := range es {
+		ee.SetSensitive(v)
+	}
+}
+
 func (u *gtkUI) editProxy(proxy string, w gtki.Dialog, onSave func(net.Proxy), onCancel func()) {
 	prox := net.ParseProxy(proxy)
 
@@ -59,7 +66,11 @@ func (u *gtkUI) editProxy(proxy string, w gtki.Dialog, onSave func(net.Proxy), o
 	user := b.getObj("user").(gtki.Entry)
 	pass := b.getObj("password").(gtki.Entry)
 	server := b.getObj("server").(gtki.Entry)
+	serverLabel := b.getObj("serverLabel").(gtki.Label)
 	port := b.getObj("port").(gtki.Entry)
+	portLabel := b.getObj("portLabel").(gtki.Label)
+	path := b.getObj("path").(gtki.Entry)
+	pathLabel := b.getObj("pathLabel").(gtki.Label)
 
 	getProxyTypeNames(func(name string) {
 		scheme.AppendText(name)
@@ -74,25 +85,46 @@ func (u *gtkUI) editProxy(proxy string, w gtki.Dialog, onSave func(net.Proxy), o
 		pass.SetText(*prox.Pass)
 	}
 
-	server.SetText(prox.Host)
+	if prox.Host != nil {
+		server.SetText(*prox.Host)
+	}
 
 	if prox.Port != nil {
 		port.SetText(*prox.Port)
 	}
 
+	if prox.Path != nil {
+		path.SetText(*prox.Path)
+	}
+
+	isUD := getProxyTypeFor(scheme.GetActiveText()) == "socks5+unix"
+	updateSensitivity(isUD, path, pathLabel)
+	updateSensitivity(!isUD, server, serverLabel, port, portLabel)
+
 	b.ConnectSignals(map[string]interface{}{
+		"on_protocol_type_changed": func() {
+			isUD := getProxyTypeFor(scheme.GetActiveText()) == "socks5+unix"
+			updateSensitivity(isUD, path, pathLabel)
+			updateSensitivity(!isUD, server, serverLabel, port, portLabel)
+		},
 		"on_save_signal": func() {
 			userTxt, _ := user.GetText()
 			passTxt, _ := pass.GetText()
 			servTxt, _ := server.GetText()
 			portTxt, _ := port.GetText()
+			pathTxt, _ := path.GetText()
 
 			prox.Scheme = getProxyTypeFor(scheme.GetActiveText())
+			isUD := prox.Scheme == "socks5+unix"
 
 			prox.User = orNil(userTxt)
 			prox.Pass = orNil(passTxt)
-			prox.Host = servTxt
-			prox.Port = orNil(portTxt)
+			if isUD {
+				prox.Path = orNil(pathTxt)
+			} else {
+				prox.Host = orNil(servTxt)
+				prox.Port = orNil(portTxt)
+			}
 
 			go onSave(prox)
 			dialog.Destroy()

@@ -13,13 +13,15 @@ type Proxy struct {
 	Scheme string
 	User   *string
 	Pass   *string
-	Host   string
+	Host   *string
 	Port   *string
+	Path   *string
 }
 
 var proxyTypes = [][]string{
 	[]string{"tor-auto", "Automatic Tor"},
 	[]string{"socks5", "SOCKS5"},
+	[]string{"socks5+unix", "SOCKS5 over Unix Domain Socket"},
 }
 
 // FindProxyTypeFor returns the index of the proxy type given
@@ -64,15 +66,29 @@ func ParseProxy(px string) Proxy {
 		}
 	}
 	var err error
-	var potPort string
-	prox.Host, potPort, err = net.SplitHostPort(p.Host)
-	if err != nil && err.(*net.AddrError).Err == "missing port in address" {
-		prox.Host = p.Host
-	} else {
-		prox.Port = &potPort
+	if p.Host != "" {
+		var potHost, potPort string
+		potHost, potPort, err = net.SplitHostPort(p.Host)
+		if err != nil && err.(*net.AddrError).Err == "missing port in address" {
+			prox.Host = &p.Host
+		} else {
+			prox.Host = &potHost
+			prox.Port = &potPort
+		}
+	}
+
+	if p.Path != "" {
+		prox.Path = &p.Path
 	}
 
 	return prox
+}
+
+func orEmpty(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
 
 // ForProcessing represents a string valid for computer processing
@@ -93,7 +109,7 @@ func (p Proxy) ForProcessing() string {
 		pr = ":" + *p.Port
 	}
 
-	return fmt.Sprintf("%s://%s%s%s%s%s", p.Scheme, us, ps, compose, p.Host, pr)
+	return fmt.Sprintf("%s://%s%s%s%s%s%s", p.Scheme, us, ps, compose, orEmpty(p.Host), pr, orEmpty(p.Path))
 }
 
 // ForPresentation represents a string valid for user presentation - blanking out the password
@@ -114,5 +130,5 @@ func (p Proxy) ForPresentation() string {
 		pr = ":" + *p.Port
 	}
 
-	return fmt.Sprintf("%s://%s%s%s%s%s", p.Scheme, us, ps, compose, p.Host, pr)
+	return fmt.Sprintf("%s://%s%s%s%s%s%s", p.Scheme, us, ps, compose, orEmpty(p.Host), pr, orEmpty(p.Path))
 }

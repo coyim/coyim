@@ -150,7 +150,7 @@ func (a *ApplicationConfig) Save(ks KeySupplier) error {
 		return err
 	}
 
-	if a.ShouldEncrypt && !strings.HasSuffix(a.filename, encryptedFileEnding) {
+	if a.ShouldEncrypt && !strings.HasSuffix(a.filename, encryptedFileEnding) && !*ConfigFileEncrypted {
 		a.filename = a.filename + encryptedFileEnding
 	}
 

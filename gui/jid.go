@@ -17,7 +17,7 @@ func verifyXmppAddress(address string) (bool, string) {
 	isValid := isValidDomain && isValidPart
 
 	if !isValid {
-		result := "Validation failed: "
+		result := "Validation failed:\n"
 		sep := ""
 		if errDomain != "" {
 			result += errDomain

@@ -30,6 +30,9 @@ func (*SessionMock) AwaitVersionReply(<-chan data.Stanza, string) {}
 // Close is the implementation for Session interface
 func (*SessionMock) Close() {}
 
+// AutoApprove is the implementation for Session interface
+func (*SessionMock) AutoApprove(string) {}
+
 // CommandManager is the implementation for Session interface
 func (*SessionMock) CommandManager() client.CommandManager {
 	return nil
@@ -110,7 +113,7 @@ func (*SessionMock) ReloadKeys() {}
 func (*SessionMock) RemoveContact(string) {}
 
 // RequestPresenceSubscription is the implementation for Session interface
-func (*SessionMock) RequestPresenceSubscription(string) error {
+func (*SessionMock) RequestPresenceSubscription(string, string) error {
 	return nil
 }
 

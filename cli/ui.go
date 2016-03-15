@@ -686,7 +686,7 @@ CommandLoop:
 			case denyCommand:
 				s.HandleConfirmOrDeny(cmd.User, false /* deny */)
 			case addCommand:
-				s.RequestPresenceSubscription(cmd.User)
+				s.RequestPresenceSubscription(cmd.User, "")
 			case msgCommand:
 				message := []byte(cmd.msg)
 				conversation, exists := s.ConversationManager().GetConversationWith(cmd.to)

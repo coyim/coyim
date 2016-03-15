@@ -484,8 +484,7 @@ func (u *gtkUI) addContactWindow() {
 		}
 	}
 
-	dialog := presenceSubscriptionDialog(accounts, func(accountID, peer string) error {
-		//TODO errors
+	dialog := presenceSubscriptionDialog(accounts, func(accountID, peer, msg, nick string, autoAuth bool) error {
 		account, ok := u.roster.getAccount(accountID)
 		if !ok {
 			return fmt.Errorf(i18n.Local("There is no account with the id %q"), accountID)
@@ -495,7 +494,18 @@ func (u *gtkUI) addContactWindow() {
 			return errors.New(i18n.Local("Can't send a contact request from an offline account"))
 		}
 
-		return account.session.RequestPresenceSubscription(peer)
+		err := account.session.RequestPresenceSubscription(peer, msg)
+
+		if nick != "" {
+			account.session.GetConfig().SavePeerDetails(peer, nick, []string{})
+			u.SaveConfig()
+		}
+
+		if autoAuth {
+			account.session.AutoApprove(peer)
+		}
+
+		return err
 	})
 
 	dialog.SetTransientFor(u.window)

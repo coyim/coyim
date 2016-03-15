@@ -313,7 +313,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 			account.session.DenyPresenceSubscription(jid, "" /* generate id */)
 		},
 		"on_ask_contact_to_see_status": func() {
-			account.session.RequestPresenceSubscription(jid)
+			account.session.RequestPresenceSubscription(jid, "")
 		},
 		"on_peer_fingerprints": func() {
 			r.ui.showFingerprintsForPeer(jid, account)

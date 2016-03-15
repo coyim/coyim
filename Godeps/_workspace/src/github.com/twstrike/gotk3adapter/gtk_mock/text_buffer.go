@@ -30,3 +30,7 @@ func (*MockTextBuffer) GetStartIter() gtki.TextIter {
 
 func (*MockTextBuffer) Insert(v1 gtki.TextIter, v2 string) {
 }
+
+func (*MockTextBuffer) GetText(gtki.TextIter, gtki.TextIter, bool) string {
+	return ""
+}

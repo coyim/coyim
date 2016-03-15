@@ -29,6 +29,7 @@ type Connector interface {
 // Session is an interface that defines the functionality of a Session
 type Session interface {
 	ApprovePresenceSubscription(string, string) error
+	AutoApprove(string)
 	AwaitVersionReply(<-chan data.Stanza, string)
 	Close()
 	CommandManager() client.CommandManager
@@ -48,7 +49,7 @@ type Session interface {
 	R() *roster.List
 	ReloadKeys()
 	RemoveContact(string)
-	RequestPresenceSubscription(string) error
+	RequestPresenceSubscription(string, string) error
 	Send(string, string) error
 	SetCommandManager(client.CommandManager)
 	SetConnectionLogger(io.Writer)

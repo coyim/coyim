@@ -13,11 +13,15 @@ import (
 
 // SendPresence sends a presence stanza. If id is empty, a unique id is
 // generated.
-func (c *conn) SendPresence(to, typ, id string) error {
+func (c *conn) SendPresence(to, typ, id, status string) error {
 	if len(id) == 0 {
 		id = strconv.FormatUint(uint64(c.getCookie()), 10)
 	}
-	_, err := fmt.Fprintf(c.out, "<presence id='%s' to='%s' type='%s'/>", xmlEscape(id), xmlEscape(to), xmlEscape(typ))
+	end := "/>"
+	if typ == "subscribe" && status != "" {
+		end = fmt.Sprintf("><status>%s</status></presence>", xmlEscape(status))
+	}
+	_, err := fmt.Fprintf(c.out, "<presence id='%s' to='%s' type='%s'%s", xmlEscape(id), xmlEscape(to), xmlEscape(typ), end)
 	return err
 }
 

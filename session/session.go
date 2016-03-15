@@ -77,6 +77,8 @@ type session struct {
 	convManager client.ConversationManager
 
 	dialerFactory func(tls.Verifier) xi.Dialer
+
+	autoApproves map[string]bool
 }
 
 // GetConfig returns the current account configuration
@@ -112,6 +114,8 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 		lastActionTime:  time.Now(),
 
 		timeouts: make(map[data.Cookie]time.Time),
+
+		autoApproves: make(map[string]bool),
 
 		xmppLogger:    openLogFile(c.RawLogFile),
 		dialerFactory: df,
@@ -196,11 +200,17 @@ func either(l, r string) string {
 func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	switch stanza.Type {
 	case "subscribe":
-		s.r.SubscribeRequest(stanza.From, either(stanza.ID, "0000"), s.GetConfig().ID())
-		s.publishPeerEvent(
-			events.SubscriptionRequest,
-			utils.RemoveResourceFromJid(stanza.From),
-		)
+		jj := utils.RemoveResourceFromJid(stanza.From)
+		if s.autoApproves[jj] {
+			delete(s.autoApproves, jj)
+			s.ApprovePresenceSubscription(jj, stanza.ID)
+		} else {
+			s.r.SubscribeRequest(jj, either(stanza.ID, "0000"), s.GetConfig().ID())
+			s.publishPeerEvent(
+				events.SubscriptionRequest,
+				jj,
+			)
+		}
 	case "unavailable":
 		if !s.r.PeerBecameUnavailable(stanza.From) {
 			return true
@@ -430,7 +440,7 @@ func (s *session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 	}
 
 	if isConfirm {
-		s.RequestPresenceSubscription(jid)
+		s.RequestPresenceSubscription(jid, "")
 	}
 }
 

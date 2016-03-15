@@ -10,6 +10,7 @@ type TextBuffer interface {
 	GetEndIter() TextIter
 	GetIterAtOffset(int) TextIter
 	GetStartIter() TextIter
+	GetText(TextIter, TextIter, bool) string
 	Insert(TextIter, string)
 }
 

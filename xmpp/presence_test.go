@@ -37,7 +37,7 @@ func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) 
 		out: mockOut,
 	}
 
-	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "123456&")
+	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "123456&", "")
 	c.Assert(err, IsNil)
 	c.Assert(string(mockOut.write), Equals, "<presence id='123456&amp;' to='someone&lt;strange&gt;@foo.com' type='subsc&apos;ribe'/>")
 }
@@ -49,7 +49,7 @@ func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
 
-	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "")
+	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "", "")
 	c.Assert(err, IsNil)
 	c.Assert(string(mockOut.write), Equals, "<presence id='3544672884359377457' to='someone&lt;strange&gt;@foo.com' type='subsc&apos;ribe'/>")
 }
@@ -60,6 +60,17 @@ func (s *PresenceXmppSuite) Test_SendPresence_returnsWriterError(c *C) {
 		out: mockOut,
 	}
 
-	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "abc")
+	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "abc", "")
 	c.Assert(err.Error(), Equals, "bar foo")
+}
+
+func (s *PresenceXmppSuite) Test_SendPresence_addsStatusToSubscribeMessage(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+	conn := conn{
+		out: mockOut,
+	}
+
+	err := conn.SendPresence("someone<strange>@foo.com", "subscribe", "123", "do you want <to>?")
+	c.Assert(err, IsNil)
+	c.Assert(string(mockOut.write), Equals, "<presence id='123' to='someone&lt;strange&gt;@foo.com' type='subscribe'><status>do you want &lt;to&gt;?</status></presence>")
 }

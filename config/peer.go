@@ -237,3 +237,15 @@ func (a *Account) SavePeerDetails(jid, nickname string, groups []string) {
 	p.Nickname = nickname
 	p.Groups = groups
 }
+
+// UpdateEncryptionRequired will set a specific encryption setting for this peer
+func (a *Account) UpdateEncryptionRequired(jid string, requireEnc bool) {
+	p := a.EnsurePeer(jid)
+	if requireEnc {
+		p.EncryptionSettings = AlwaysEncrypt
+		a.AlwaysEncryptWith = append(a.AlwaysEncryptWith, jid)
+	} else {
+		p.EncryptionSettings = NeverEncrypt
+		a.DontEncryptWith = append(a.DontEncryptWith, jid)
+	}
+}

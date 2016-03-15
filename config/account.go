@@ -36,6 +36,7 @@ type Account struct {
 	DeprecatedPrivateKey          []byte             `json:"PrivateKey,omitempty"`
 	LegacyServerCertificateSHA256 string             `json:"ServerCertificateSHA256,omitempty"`
 
+	// AlwaysEncryptWith and DontEncryptWith should be promoted to legacy and replaced with the peer settings
 	AlwaysEncryptWith []string `json:",omitempty"`
 	DontEncryptWith   []string `json:",omitempty"`
 }
@@ -85,6 +86,12 @@ func (a *Account) Is(jid string) bool {
 
 // ShouldEncryptTo returns true if the connection with this peer should be encrypted
 func (a *Account) ShouldEncryptTo(jid string) bool {
+	p, ok := a.GetPeer(jid)
+
+	if ok && p.EncryptionSettings != Default && p.EncryptionSettings != "" {
+		return p.EncryptionSettings == AlwaysEncrypt
+	}
+
 	if a.AlwaysEncrypt {
 		return true
 	}

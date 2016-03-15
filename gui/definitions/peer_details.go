@@ -99,6 +99,26 @@ func (*defPeerDetails) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
+
+            <child>
+              <object class="GtkLabel" id="require-encryption-label">
+                <property name="label" translatable="yes">Require encryption with this peer</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="require-encryption"/>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+            
+
             <child>
               <object class="GtkLabel" id="groups">
                 <property name="label" translatable="yes">Groups</property>
@@ -106,7 +126,7 @@ func (*defPeerDetails) String() string {
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">4</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -139,7 +159,7 @@ func (*defPeerDetails) String() string {
 
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">4</property>
+                <property name="top-attach">5</property>
                 <property name="width">2</property>
               </packing>
             </child>
@@ -174,7 +194,7 @@ func (*defPeerDetails) String() string {
 
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">5</property>
+                <property name="top-attach">6</property>
               </packing>
             </child>
           </object>
@@ -202,5 +222,6 @@ func (*defPeerDetails) String() string {
       </object>
     </child>
   </object>
-</interface>`
+</interface>
+`
 }

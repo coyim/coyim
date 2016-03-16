@@ -50,6 +50,8 @@ type conversationPane struct {
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
+	marks  []*timedMark
+	hidden bool
 }
 
 type tags struct {
@@ -188,15 +190,15 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 }
 
 func newConversationWindow(account *account, uid string, ui *gtkUI) *conversationWindow {
-	builder := builderForDefinition("Conversation")
+	builder := newBuilder("Conversation")
 
-	obj, _ := builder.GetObject("conversation")
-	win := obj.(gtki.Window)
+	win := builder.getObj("conversation").(gtki.Window)
+
+	// TODO: Can we put the security rating here, maybe?
 	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, uid)
 	win.SetTitle(title)
 
-	obj, _ = builder.GetObject("box")
-	winBox := obj.(gtki.Box)
+	winBox := builder.getObj("box").(gtki.Box)
 
 	cp := createConversationPane(account, uid, ui, win)
 	winBox.PackStart(cp.widget, true, true, 0)
@@ -225,6 +227,14 @@ func newConversationWindow(account *account, uid string, ui *gtkUI) *conversatio
 			conv.entry.GrabFocus()
 			inEventHandler = false
 		}
+	})
+
+	conv.win.Connect("hide", func() {
+		conv.onHide()
+	})
+
+	conv.win.Connect("show", func() {
+		conv.onShow()
 	})
 
 	ui.connectShortcutsChildWindow(conv.win)
@@ -436,6 +446,7 @@ type taggableText struct {
 }
 
 func (conv *conversationPane) appendToHistory(timestamp time.Time, entries ...taggableText) {
+	conv.markNow()
 	doInUIThread(func() {
 		conv.Lock()
 		defer conv.Unlock()
@@ -495,5 +506,74 @@ func (conv *conversationWindow) setEnabled(enabled bool) {
 		conv.win.Emit("enable")
 	} else {
 		conv.win.Emit("disable")
+	}
+}
+
+type timedMark struct {
+	at     time.Time
+	offset int
+}
+
+func (conv *conversationPane) markNow() {
+	conv.Lock()
+	defer conv.Unlock()
+
+	buf, _ := conv.history.GetBuffer()
+	offset := buf.GetCharCount()
+
+	conv.marks = append(conv.marks, &timedMark{
+		at:     time.Now(),
+		offset: offset,
+	})
+}
+
+const reapInterval = time.Duration(1) * time.Hour
+
+func (conv *conversationPane) reapOlderThan(t time.Time) {
+	conv.Lock()
+	defer conv.Unlock()
+
+	newMarks := []*timedMark{}
+	var lastMark *timedMark
+	isEnd := false
+
+	for ix, m := range conv.marks {
+		if t.Before(m.at) {
+			newMarks = conv.marks[ix:]
+			break
+		}
+		lastMark = m
+		isEnd = len(conv.marks)-1 == ix
+	}
+
+	if lastMark != nil {
+		off := lastMark.offset + 1
+		buf, _ := conv.history.GetBuffer()
+		sit := buf.GetStartIter()
+		eit := buf.GetIterAtOffset(off)
+		if isEnd {
+			eit = buf.GetEndIter()
+			newMarks = []*timedMark{}
+		}
+
+		buf.Delete(sit, eit)
+
+		for _, nm := range newMarks {
+			nm.offset = nm.offset - off
+		}
+
+		conv.marks = newMarks
+	}
+}
+
+func (conv *conversationPane) onHide() {
+	conv.reapOlderThan(time.Now().Add(-reapInterval))
+	conv.hidden = true
+}
+
+func (conv *conversationPane) onShow() {
+	if conv.hidden {
+		conv.reapOlderThan(time.Now().Add(-reapInterval))
+		conv.hidden = false
 	}
 }

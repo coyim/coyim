@@ -39,6 +39,7 @@ func init() {
 	gtki.AssertStyleContext(&MockStyleContext{})
 	gtki.AssertTextBuffer(&MockTextBuffer{})
 	gtki.AssertTextIter(&MockTextIter{})
+	gtki.AssertTextMark(&MockTextMark{})
 	gtki.AssertTextTagTable(&MockTextTagTable{})
 	gtki.AssertTextTag(&MockTextTag{})
 	gtki.AssertTextView(&MockTextView{})

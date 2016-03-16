@@ -57,3 +57,15 @@ func (v *textBuffer) GetText(v1, v2 gtki.TextIter, v3 bool) string {
 	vx1, _ := v.internal.GetText(unwrapTextIter(v1), unwrapTextIter(v2), v3)
 	return vx1
 }
+
+func (v *textBuffer) Delete(v1, v2 gtki.TextIter) {
+	v.internal.Delete(unwrapTextIter(v1), unwrapTextIter(v2))
+}
+
+func (v *textBuffer) CreateMark(v1 string, v2 gtki.TextIter, v3 bool) gtki.TextMark {
+	return wrapTextMarkSimple(v.internal.CreateMark(v1, unwrapTextIter(v2), v3))
+}
+
+func (v *textBuffer) GetIterAtMark(v1 gtki.TextMark) gtki.TextIter {
+	return wrapTextIterSimple(v.internal.GetIterAtMark(unwrapTextMark(v1)))
+}

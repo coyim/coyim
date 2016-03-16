@@ -34,3 +34,14 @@ func (*MockTextBuffer) Insert(v1 gtki.TextIter, v2 string) {
 func (*MockTextBuffer) GetText(gtki.TextIter, gtki.TextIter, bool) string {
 	return ""
 }
+
+func (*MockTextBuffer) Delete(gtki.TextIter, gtki.TextIter) {
+}
+
+func (*MockTextBuffer) CreateMark(string, gtki.TextIter, bool) gtki.TextMark {
+	return nil
+}
+
+func (*MockTextBuffer) GetIterAtMark(gtki.TextMark) gtki.TextIter {
+	return nil
+}

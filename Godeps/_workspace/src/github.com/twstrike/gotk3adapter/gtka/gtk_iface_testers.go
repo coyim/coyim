@@ -39,6 +39,7 @@ func init() {
 	gtki.AssertStyleContext(&styleContext{})
 	gtki.AssertTextBuffer(&textBuffer{})
 	gtki.AssertTextIter(&textIter{})
+	gtki.AssertTextMark(&textMark{})
 	gtki.AssertTextTagTable(&textTagTable{})
 	gtki.AssertTextTag(&textTag{})
 	gtki.AssertTextView(&textView{})

@@ -91,6 +91,7 @@ func argsWithApplicationName() *[]string {
 
 // NewGTK returns a new client for a GTK ui
 func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics) UI {
+	runtime.LockOSThread()
 	coyimVersion = version
 	g = gx
 	initSignals()
@@ -267,10 +268,6 @@ func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{})
 	return nil
 }
 
-func init() {
-	runtime.LockOSThread()
-}
-
 func (u *gtkUI) Loop() {
 	u.app.Connect("activate", func() {
 		activeWindow := u.app.GetActiveWindow()
@@ -319,6 +316,8 @@ func (u *gtkUI) mainWindow() {
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow
 	u.initRoster()
+
+	g.gtk.LabelNew("hello")
 
 	// AccountsMenu
 	u.accountsMenu = builder.getObj("AccountsMenu").(gtki.MenuItem)
@@ -547,9 +546,11 @@ func (u *gtkUI) listenToSetShowAdvancedSettings() {
 
 func (u *gtkUI) initMenuBar() {
 	u.window.Connect(accountChangedSignal.String(), func() {
-		u.buildAccountsMenu()
-		u.accountsMenu.ShowAll()
-		u.rosterUpdated()
+		doInUIThread(func() {
+			u.buildAccountsMenu()
+			u.accountsMenu.ShowAll()
+			u.rosterUpdated()
+		})
 	})
 
 	u.buildAccountsMenu()

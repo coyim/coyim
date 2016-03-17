@@ -43,8 +43,6 @@ func getDefinitionWithFileFallback(uiName string) string {
 
 // This must be called from the UI thread - otherwise bad things will happen sooner or later
 func builderForDefinition(uiName string) gtki.Builder {
-	// assertInUIThread()
-
 	template := getDefinitionWithFileFallback(uiName)
 
 	builder, err := g.gtk.BuilderNew()

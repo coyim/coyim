@@ -117,6 +117,8 @@ func filterCertificates(oldCerts []*config.CertificatePin, newList gtki.ListStor
 }
 
 func (u *gtkUI) connectionInfoDialog(account *account) {
+	assertInUIThread()
+
 	dialogID := "ConnectionInformation"
 	builder := newBuilder(dialogID)
 
@@ -170,6 +172,8 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 }
 
 func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFunction func()) {
+	assertInUIThread()
+
 	data := getBuilderAndAccountDialogDetails()
 
 	data.otherSettings.SetActive(u.config.AdvancedOptions)
@@ -348,6 +352,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 }
 
 func buildBadUsernameNotification(msg string) gtki.InfoBar {
+	assertInUIThread()
 	b := newBuilder("BadUsernameNotification")
 
 	infoBar := b.getObj("infobar").(gtki.InfoBar)

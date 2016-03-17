@@ -15,6 +15,10 @@ func (*Mock) Local(vx string) string {
 	return vx
 }
 
+func (*Mock) MainDepth() int {
+	return 0
+}
+
 func (*Mock) SignalNew(s string) (glibi.Signal, error) {
 	return &MockSignal{}, nil
 }

@@ -99,6 +99,17 @@ func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (jid string, acc
 	return jid, account, rowType, ok
 }
 
+func sortedGroupNames(groups map[string]bool) []string {
+	sortedNames := make([]string, 0, len(groups))
+	for k := range groups {
+		sortedNames = append(sortedNames, k)
+	}
+
+	sort.Strings(sortedNames)
+
+	return sortedNames
+}
+
 func (r *roster) allGroupNames() []string {
 	groups := map[string]bool{}
 	for _, contacts := range r.ui.accountManager.getAllContacts() {
@@ -111,14 +122,21 @@ func (r *roster) allGroupNames() []string {
 		}
 	}
 
-	sortedNames := make([]string, 0, len(groups))
-	for k := range groups {
-		sortedNames = append(sortedNames, k)
+	return sortedGroupNames(groups)
+}
+
+func (r *roster) getGroupNamesFor(a *account) []string {
+	groups := map[string]bool{}
+	contacts := r.ui.accountManager.getAllContacts()[a]
+	for name := range contacts.GetGroupNames() {
+		if groups[name] {
+			continue
+		}
+
+		groups[name] = true
 	}
 
-	sort.Strings(sortedNames)
-
-	return sortedNames
+	return sortedGroupNames(groups)
 }
 
 func (r *roster) updatePeer(acc *account, jid, nickname string, groups []string, updateRequireEncryption, requireEncryption bool) error {

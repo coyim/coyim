@@ -117,7 +117,7 @@ func (*defPeerDetails) String() string {
                 <property name="top-attach">3</property>
               </packing>
             </child>
-            
+
 
             <child>
               <object class="GtkLabel" id="groups">
@@ -142,6 +142,7 @@ func (*defPeerDetails) String() string {
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="selection">
                     <property name="mode">GTK_SELECTION_SINGLE</property>
+                    <signal name="changed" handler="on-group-selection-changed" swapped="no"/>
                   </object>
                 </child>
                 <child>

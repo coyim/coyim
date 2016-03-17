@@ -6,104 +6,128 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 )
 
+type editContactDialog struct {
+	builder           *builder
+	dialog            gtki.Dialog
+	accountName       gtki.Label
+	contactJID        gtki.Label
+	nickname          gtki.Entry
+	requireEncryption gtki.CheckButton
+	currentGroups     gtki.ListStore
+	existingGroups    gtki.Menu
+	addGroup          gtki.MenuItem
+	removeGroup       gtki.Button
+	currentGroupsView gtki.TreeView
+	save              gtki.Button
+}
+
+func (ecd *editContactDialog) init() {
+	ecd.builder = newBuilder("PeerDetails")
+	ecd.builder.getItems(
+		"dialog", &ecd.dialog,
+		"account-name", &ecd.accountName,
+		"jid", &ecd.contactJID,
+		"nickname", &ecd.nickname,
+		"require-encryption", &ecd.requireEncryption,
+		"current-groups", &ecd.currentGroups,
+		"groups-menu", &ecd.existingGroups,
+		"addGroup", &ecd.addGroup,
+		"remove-btn", &ecd.removeGroup,
+		"groups-view", &ecd.currentGroupsView,
+		"btn-save", &ecd.save,
+	)
+}
+
+func (ecd *editContactDialog) addCurrentGroup(g string) {
+	ecd.currentGroups.SetValue(ecd.currentGroups.Append(), 0, g)
+}
+
+func (ecd *editContactDialog) initAllGroups(allGroups []string) {
+	for _, gr := range allGroups {
+		menu, _ := g.gtk.MenuItemNewWithLabel(gr)
+		menu.SetVisible(true)
+		menu.Connect("activate", func(m gtki.MenuItem) {
+			ecd.addCurrentGroup(m.GetLabel())
+		})
+
+		ecd.existingGroups.Add(menu)
+	}
+
+	if len(allGroups) > 0 {
+		sep, _ := g.gtk.SeparatorMenuItemNew()
+		sep.SetVisible(true)
+		ecd.existingGroups.Add(sep)
+	}
+}
+
+func (ecd *editContactDialog) initCurrentGroups(groups []string) {
+	ecd.currentGroups.Clear()
+
+	for _, g := range groups {
+		ecd.addCurrentGroup(g)
+	}
+}
+
 func (r *roster) openEditContactDialog(jid string, acc *account) {
+	assertInUIThread()
 	peer, ok := r.ui.accountManager.getPeer(acc, jid)
 	if !ok {
 		log.Printf("Couldn't find peer %s in account %v", jid, acc)
 		return
 	}
 
-	builder := newBuilder("PeerDetails")
-	dialog := builder.getObj("dialog").(gtki.Dialog)
-
+	ecd := &editContactDialog{}
+	ecd.init()
 	conf := acc.session.GetConfig()
-	accName := builder.getObj("account-name").(gtki.Label)
-	accName.SetText(conf.Account)
 
-	contactJID := builder.getObj("jid").(gtki.Label)
-	contactJID.SetText(jid)
+	ecd.accountName.SetText(conf.Account)
+	ecd.contactJID.SetText(jid)
 
-	nickNameEntry := builder.getObj("nickname").(gtki.Entry)
 	//nickNameEntry.SetText(peer.Name)
 	if peer, ok := r.ui.getPeer(acc, jid); ok {
-		nickNameEntry.SetText(peer.Nickname)
+		ecd.nickname.SetText(peer.Nickname)
 	}
 
-	requireEncryptionEntry := builder.getObj("require-encryption").(gtki.CheckButton)
 	shouldEncryptTo := conf.ShouldEncryptTo(jid)
-	requireEncryptionEntry.SetActive(shouldEncryptTo)
+	ecd.requireEncryption.SetActive(shouldEncryptTo)
 
-	currentGroups := builder.getObj("current-groups").(gtki.ListStore)
-	currentGroups.Clear()
+	ecd.initCurrentGroups(sortedGroupNames(peer.Groups))
+	ecd.initAllGroups(r.getGroupNamesFor(acc))
 
-	for n := range peer.Groups {
-		currentGroups.SetValue(currentGroups.Append(), 0, n)
-	}
+	ecd.existingGroups.Add(ecd.addGroup)
+	ecd.removeGroup.SetSensitive(false)
 
-	existingGroups := builder.getObj("groups-menu").(gtki.Menu)
-	allGroups := r.allGroupNames()
-	for _, gr := range allGroups {
-		menu, err := g.gtk.MenuItemNewWithLabel(gr)
-		if err != nil {
-			continue
-		}
-
-		menu.SetVisible(true)
-		menu.Connect("activate", func(m gtki.MenuItem) {
-			currentGroups.SetValue(currentGroups.Append(), 0, m.GetLabel())
-		})
-
-		existingGroups.Add(menu)
-	}
-
-	if len(allGroups) > 0 {
-		sep, err := g.gtk.SeparatorMenuItemNew()
-		if err != nil {
-			return
-		}
-
-		sep.SetVisible(true)
-		existingGroups.Add(sep)
-	}
-
-	addMenuItem := builder.getObj("addGroup").(gtki.MenuItem)
-	existingGroups.Add(addMenuItem)
-
-	currentGroupsView := builder.getObj("groups-view").(gtki.TreeView)
-
-	builder.ConnectSignals(map[string]interface{}{
+	ecd.builder.ConnectSignals(map[string]interface{}{
 		"on-add-new-group": func() {
-			r.addGroupDialog(currentGroups)
+			r.addGroupDialog(ecd.currentGroups)
+		},
+		"on-group-selection-changed": func() {
+			ts, _ := ecd.currentGroupsView.GetSelection()
+			_, _, ok := ts.GetSelected()
+			ecd.removeGroup.SetSensitive(ok)
 		},
 		"on-remove-group": func() {
-			path, err := currentGroupsView.GetCursor()
-			if err != nil {
-				return
+			ts, _ := ecd.currentGroupsView.GetSelection()
+			if _, iter, ok := ts.GetSelected(); ok {
+				ecd.currentGroups.Remove(iter)
 			}
-
-			iter, err2 := currentGroups.GetIter(path)
-			if err2 != nil {
-				return
-			}
-
-			currentGroups.Remove(iter)
 		},
-		"on-cancel": dialog.Destroy,
+		"on-cancel": ecd.dialog.Destroy,
 		"on-save": func() {
-			defer dialog.Destroy()
+			assertInUIThread()
+			defer ecd.dialog.Destroy()
 
-			groups := toArray(currentGroups)
-			nickname, _ := nickNameEntry.GetText()
+			groups := toArray(ecd.currentGroups)
+			nickname, _ := ecd.nickname.GetText()
 
-			err := r.updatePeer(acc, jid, nickname, groups, requireEncryptionEntry.GetActive() != shouldEncryptTo, requireEncryptionEntry.GetActive())
+			err := r.updatePeer(acc, jid, nickname, groups, ecd.requireEncryption.GetActive() != shouldEncryptTo, ecd.requireEncryption.GetActive())
 			if err != nil {
 				log.Println(err)
 			}
 		},
 	})
 
-	defaultBtn := builder.getObj("btn-save").(gtki.Button)
-	defaultBtn.GrabDefault()
-	dialog.SetTransientFor(r.ui.window)
-	dialog.ShowAll()
+	ecd.save.GrabDefault()
+	ecd.dialog.SetTransientFor(r.ui.window)
+	ecd.dialog.ShowAll()
 }

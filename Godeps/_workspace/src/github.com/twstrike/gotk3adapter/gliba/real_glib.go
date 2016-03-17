@@ -21,6 +21,10 @@ func (*RealGlib) Local(v1 string) string {
 	return glib.Local(v1)
 }
 
+func (*RealGlib) MainDepth() int {
+	return glib.MainDepth()
+}
+
 func (*RealGlib) SignalNew(s string) (glibi.Signal, error) {
 	return wrapSignal(glib.SignalNew(s))
 }

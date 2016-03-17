@@ -74,13 +74,15 @@ func newDisplaySettings() *displaySettings {
 	return ds
 }
 
-func detectCurrentDisplaySettingsFrom(w gtki.Widget) *displaySettings {
+func getFontSizeFrom(w gtki.Widget) uint {
 	styleContext, _ := w.GetStyleContext()
 	property, _ := styleContext.GetProperty2("font", gtki.STATE_FLAG_NORMAL)
 	fontDescription := property.(pangoi.FontDescription)
+	return uint(fontDescription.GetSize() / pangoi.PANGO_SCALE)
+}
 
-	size := uint(fontDescription.GetSize() / pangoi.PANGO_SCALE)
+func detectCurrentDisplaySettingsFrom(w gtki.Widget) *displaySettings {
 	ds := newDisplaySettings()
-	ds.fontSize = size
+	ds.fontSize = getFontSizeFrom(w)
 	return ds
 }

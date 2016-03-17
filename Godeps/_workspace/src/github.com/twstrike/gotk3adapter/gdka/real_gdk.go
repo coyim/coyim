@@ -13,6 +13,10 @@ func (*RealGdk) EventButtonFrom(ev gdki.Event) gdki.EventButton {
 	return wrapEventAsEventButton(eventCast(ev))
 }
 
+func (*RealGdk) EventKeyFrom(ev gdki.Event) gdki.EventKey {
+	return wrapEventAsEventKey(eventCast(ev))
+}
+
 func (*RealGdk) PixbufLoaderNew() (gdki.PixbufLoader, error) {
 	return wrapPixbufLoader(gdk.PixbufLoaderNew())
 }

@@ -6,6 +6,7 @@ func init() {
 	gdki.AssertGdk(&RealGdk{})
 	gdki.AssertEvent(&event{})
 	gdki.AssertEventButton(&eventButton{})
+	gdki.AssertEventKey(&eventKey{})
 	gdki.AssertPixbuf(&pixbuf{})
 	gdki.AssertPixbufLoader(&pixbufLoader{})
 	gdki.AssertScreen(&screen{})

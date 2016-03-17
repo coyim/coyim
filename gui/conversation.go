@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gdki"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/client"
@@ -41,7 +42,8 @@ type conversationPane struct {
 	account            *account
 	widget             gtki.Box
 	menubar            gtki.MenuBar
-	entry              gtki.Entry
+	entry              gtki.TextView
+	entryScroll        gtki.ScrolledWindow
 	history            gtki.TextView
 	scrollHistory      gtki.ScrolledWindow
 	notificationArea   gtki.Box
@@ -98,95 +100,157 @@ func (t *tags) createTextBuffer() gtki.TextBuffer {
 	return buf
 }
 
+func getTextBufferFrom(e gtki.TextView) gtki.TextBuffer {
+	tb, _ := e.GetBuffer()
+	return tb
+}
+
+func getTextFrom(e gtki.TextView) string {
+	tb := getTextBufferFrom(e)
+	return tb.GetText(tb.GetStartIter(), tb.GetEndIter(), false)
+}
+
+func insertEnter(e gtki.TextView) {
+	tb := getTextBufferFrom(e)
+	tb.Insert(tb.GetEndIter(), "\n")
+}
+
+func clearIn(e gtki.TextView) {
+	tb := getTextBufferFrom(e)
+	tb.Delete(tb.GetStartIter(), tb.GetEndIter())
+}
+
+func (conv *conversationPane) onSendMessageSignal() {
+	conv.entry.SetEditable(false)
+	text := getTextFrom(conv.entry)
+	clearIn(conv.entry)
+	conv.entry.SetEditable(true)
+	if text != "" {
+		sendError := conv.sendMessage(text)
+
+		if sendError != nil {
+			fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
+		}
+	}
+	conv.entry.GrabFocus()
+}
+
+func (conv *conversationPane) onStartOtrSignal() {
+	//TODO: enable/disable depending on the conversation's encryption state
+	session := conv.account.session
+	c, _ := session.ConversationManager().EnsureConversationWith(conv.to)
+	err := c.StartEncryptedChat(session)
+	if err != nil {
+		//TODO: notify failure
+	}
+}
+
+func (conv *conversationPane) onEndOtrSignal() {
+	//TODO: errors
+	//TODO: enable/disable depending on the conversation's encryption state
+	session := conv.account.session
+	c, ok := session.ConversationManager().GetConversationWith(conv.to)
+	if !ok {
+		return
+	}
+
+	err := c.EndEncryptedChat(session)
+	if err != nil {
+		fmt.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
+	}
+}
+
+func (conv *conversationPane) onVerifyFpSignal() {
+	switch verifyFingerprintDialog(conv.account, conv.to, conv.transientParent) {
+	case gtki.RESPONSE_YES:
+		conv.removeIdentityVerificationWarning()
+	}
+}
+
+func (conv *conversationPane) onConnect() {
+	conv.entry.SetEditable(true)
+	conv.entry.SetSensitive(true)
+}
+
+func (conv *conversationPane) onDisconnect() {
+	conv.entry.SetEditable(false)
+	conv.entry.SetSensitive(false)
+}
+
+// func countVisibleLines(v gtki.TextView) int {
+// 	lines := 1
+
+// }
+
 func createConversationPane(account *account, uid string, ui *gtkUI, transientParent gtki.Window) *conversationPane {
 	builder := newBuilder("ConversationPane")
 
-	pane := builder.getObj("box").(gtki.Box)
-	history := builder.getObj("history").(gtki.TextView)
-	scrollHistory := builder.getObj("historyScroll").(gtki.ScrolledWindow)
-	entry := builder.getObj("message").(gtki.Entry)
-	notificationArea := builder.getObj("notification-area").(gtki.Box)
-	securityWarning := builder.getObj("security-warning").(gtki.InfoBar)
-	menubar := builder.getObj("menubar").(gtki.MenuBar)
-
 	cp := &conversationPane{
-		to:               uid,
-		account:          account,
-		history:          history,
-		widget:           pane,
-		menubar:          menubar,
-		entry:            entry,
-		scrollHistory:    scrollHistory,
-		notificationArea: notificationArea,
-		securityWarning:  securityWarning,
-		transientParent:  transientParent,
+		to:              uid,
+		account:         account,
+		transientParent: transientParent,
 	}
 
+	builder.getItems(
+		"box", &cp.widget,
+		"history", &cp.history,
+		"historyScroll", &cp.scrollHistory,
+		"message", &cp.entry,
+		"notification-area", &cp.notificationArea,
+		"security-warning", &cp.securityWarning,
+		"menubar", &cp.menubar,
+		"messageScroll", &cp.entryScroll,
+	)
+
 	builder.ConnectSignals(map[string]interface{}{
-		"on_send_message_signal": func() {
-			entry.SetEditable(false)
-			text, _ := entry.GetText()
-			entry.SetText("")
-			entry.SetEditable(true)
-			if text != "" {
-				sendError := cp.sendMessage(text)
-
-				if sendError != nil {
-					fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
-				}
-			}
-			entry.GrabFocus()
-		},
-		// TODO: basically I think this whole menu should be rethought. It's useful for us to have during development
-		"on_start_otr_signal": func() {
-			//TODO: enable/disable depending on the conversation's encryption state
-			session := cp.account.session
-			c, _ := session.ConversationManager().EnsureConversationWith(cp.to)
-			err := c.StartEncryptedChat(session)
-			if err != nil {
-				//TODO: notify failure
-			}
-		},
-		"on_end_otr_signal": func() {
-			//TODO: errors
-			//TODO: enable/disable depending on the conversation's encryption state
-			session := cp.account.session
-			c, ok := session.ConversationManager().GetConversationWith(cp.to)
-			if !ok {
-				return
-			}
-
-			err := c.EndEncryptedChat(session)
-			if err != nil {
-				fmt.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
-			}
-		},
-		"on_verify_fp_signal": func() {
-			switch verifyFingerprintDialog(cp.account, cp.to, transientParent) {
-			case gtki.RESPONSE_YES:
-				cp.removeIdentityVerificationWarning()
-			}
-		},
-		"on_connect": func() {
-			entry.SetEditable(true)
-			entry.SetSensitive(true)
-		},
-		"on_disconnect": func() {
-			entry.SetEditable(false)
-			entry.SetSensitive(false)
-		},
+		"on_start_otr_signal": cp.onStartOtrSignal,
+		"on_end_otr_signal":   cp.onEndOtrSignal,
+		"on_verify_fp_signal": cp.onVerifyFpSignal,
+		"on_connect":          cp.onConnect,
+		"on_disconnect":       cp.onDisconnect,
 	})
 
+	cp.entryScroll.SetProperty("height-request", 3*2*getFontSizeFrom(cp.entry))
 	cp.history.SetBuffer(ui.getTags().createTextBuffer())
-
 	cp.history.Connect("size-allocate", func() {
 		cp.scrollToBottom()
 	})
 
+	cp.entry.Connect("key-press-event", func(recv gtki.TextView, ev gdki.Event) bool {
+		evk := g.gdk.EventKeyFrom(ev)
+
+		if account.isInsertEnter(evk) {
+			insertEnter(cp.entry)
+			return true
+		} else if account.isSend(evk) {
+			cp.onSendMessageSignal()
+			return true
+		}
+
+		return false
+	})
+
 	ui.displaySettings.control(cp.history)
-	ui.displaySettings.control(entry)
+	ui.displaySettings.control(cp.entry)
 
 	return cp
+}
+
+func (a *account) isInsertEnter(evk gdki.EventKey) bool {
+	return evk.State()&uint(gdki.GDK_SHIFT_MASK) != 0 && hasEnter(evk)
+}
+
+func (a *account) isSend(evk gdki.EventKey) bool {
+	return !hasModifier(evk) && hasEnter(evk)
+}
+
+func hasModifier(evk gdki.EventKey) bool {
+	return evk.State()&uint(gdki.GDK_MODIFIER_MASK) != 0
+}
+
+func hasEnter(evk gdki.EventKey) bool {
+	return evk.KeyVal() == gdki.KEY_Return ||
+		evk.KeyVal() == gdki.KEY_KP_Enter
 }
 
 func newConversationWindow(account *account, uid string, ui *gtkUI) *conversationWindow {

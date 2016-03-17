@@ -107,7 +107,7 @@ func (ul *unifiedLayout) createConversation(account *account, uid string) conver
 		layout:           ul,
 	}
 
-	csi.entry.SetHasFrame(true)
+	//	csi.entry.SetHasFrame(true)
 	csi.entry.SetMarginTop(5)
 	csi.entry.SetMarginBottom(5)
 

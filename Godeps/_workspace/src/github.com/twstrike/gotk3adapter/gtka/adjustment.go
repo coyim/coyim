@@ -29,6 +29,10 @@ func unwrapAdjustment(v gtki.Adjustment) *gtk.Adjustment {
 	return v.(*adjustment).internal
 }
 
+func (v *adjustment) GetLower() float64 {
+	return v.internal.GetLower()
+}
+
 func (v *adjustment) GetPageSize() float64 {
 	return v.internal.GetPageSize()
 }

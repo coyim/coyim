@@ -177,10 +177,32 @@ func (conv *conversationPane) onDisconnect() {
 	conv.entry.SetSensitive(false)
 }
 
-// func countVisibleLines(v gtki.TextView) int {
-// 	lines := 1
+func countVisibleLines(v gtki.TextView) uint {
+	lines := uint(1)
+	iter := getTextBufferFrom(v).GetStartIter()
+	for v.ForwardDisplayLine(iter) {
+		lines++
+	}
 
-// }
+	return lines
+}
+
+func (conv *conversationPane) calculateHeight(lines uint) uint {
+	return lines * 2 * getFontSizeFrom(conv.entry)
+}
+
+func (conv *conversationPane) doPotentialEntryResize() {
+	lines := countVisibleLines(conv.entry)
+	scroll := true
+	if lines > 3 {
+		scroll = false
+		lines = 3
+	}
+	conv.entryScroll.SetProperty("height-request", conv.calculateHeight(lines))
+	if scroll {
+		scrollToTop(conv.entryScroll)
+	}
+}
 
 func createConversationPane(account *account, uid string, ui *gtkUI, transientParent gtki.Window) *conversationPane {
 	builder := newBuilder("ConversationPane")
@@ -210,25 +232,28 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		"on_disconnect":       cp.onDisconnect,
 	})
 
-	cp.entryScroll.SetProperty("height-request", 3*2*getFontSizeFrom(cp.entry))
+	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
 	cp.history.SetBuffer(ui.getTags().createTextBuffer())
 	cp.history.Connect("size-allocate", func() {
-		cp.scrollToBottom()
+		scrollToBottom(cp.scrollHistory)
 	})
 
 	cp.entry.Connect("key-press-event", func(recv gtki.TextView, ev gdki.Event) bool {
 		evk := g.gdk.EventKeyFrom(ev)
+		ret := false
 
 		if account.isInsertEnter(evk) {
 			insertEnter(cp.entry)
-			return true
+			ret = true
 		} else if account.isSend(evk) {
 			cp.onSendMessageSignal()
-			return true
+			ret = true
 		}
 
-		return false
+		return ret
 	})
+
+	cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
 
 	ui.displaySettings.control(cp.history)
 	ui.displaySettings.control(cp.entry)
@@ -499,9 +524,14 @@ func createStatusMessage(from string, show, showStatus string, gone bool) string
 	return ""
 }
 
-func (conv *conversationPane) scrollToBottom() {
-	adj := conv.scrollHistory.GetVAdjustment()
+func scrollToBottom(sw gtki.ScrolledWindow) {
+	adj := sw.GetVAdjustment()
 	adj.SetValue(adj.GetUpper() - adj.GetPageSize())
+}
+
+func scrollToTop(sw gtki.ScrolledWindow) {
+	adj := sw.GetVAdjustment()
+	adj.SetValue(adj.GetLower())
 }
 
 type taggableText struct {

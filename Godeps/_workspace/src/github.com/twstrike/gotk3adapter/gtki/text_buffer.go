@@ -12,6 +12,7 @@ type TextBuffer interface {
 	GetEndIter() TextIter
 	GetIterAtMark(TextMark) TextIter
 	GetIterAtOffset(int) TextIter
+	GetLineCount() int
 	GetStartIter() TextIter
 	GetText(TextIter, TextIter, bool) string
 	Insert(TextIter, string)

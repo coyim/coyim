@@ -8,6 +8,10 @@ func (*MockObject) Connect(v1 string, v2 interface{}, v3 ...interface{}) (glibi.
 	return glibi.SignalHandle(0), nil
 }
 
+func (*MockObject) ConnectAfter(v1 string, v2 interface{}, v3 ...interface{}) (glibi.SignalHandle, error) {
+	return glibi.SignalHandle(0), nil
+}
+
 func (*MockObject) Emit(v1 string, v2 ...interface{}) (interface{}, error) {
 	return nil, nil
 }

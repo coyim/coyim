@@ -24,6 +24,10 @@ func (*MockTextBuffer) GetIterAtOffset(v1 int) gtki.TextIter {
 	return nil
 }
 
+func (*MockTextBuffer) GetLineCount() int {
+	return 0
+}
+
 func (*MockTextBuffer) GetStartIter() gtki.TextIter {
 	return nil
 }

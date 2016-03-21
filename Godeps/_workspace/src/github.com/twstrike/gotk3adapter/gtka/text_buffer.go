@@ -37,6 +37,10 @@ func (v *textBuffer) GetCharCount() int {
 	return v.internal.GetCharCount()
 }
 
+func (v *textBuffer) GetLineCount() int {
+	return v.internal.GetLineCount()
+}
+
 func (v *textBuffer) GetEndIter() gtki.TextIter {
 	return wrapTextIterSimple(v.internal.GetEndIter())
 }

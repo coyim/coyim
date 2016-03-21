@@ -6,6 +6,10 @@ type MockAdjustment struct {
 	glib_mock.MockObject
 }
 
+func (*MockAdjustment) GetLower() float64 {
+	return 0
+}
+
 func (*MockAdjustment) GetPageSize() float64 {
 	return 0
 }

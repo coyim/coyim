@@ -152,6 +152,12 @@ func (v *Object) Connect(v1 string, v2 interface{}, v3 ...interface{}) (glibi.Si
 	return glibi.SignalHandle(vx1), vx2
 }
 
+func (v *Object) ConnectAfter(v1 string, v2 interface{}, v3 ...interface{}) (glibi.SignalHandle, error) {
+	nv2 := FixupFunction(v2)
+	vx1, vx2 := v.Object.ConnectAfter(v1, nv2, FixupArray(v3)...)
+	return glibi.SignalHandle(vx1), vx2
+}
+
 func (v *Object) Emit(v1 string, v2 ...interface{}) (interface{}, error) {
 	vx1, vx2 := v.Object.Emit(v1, FixupArray(v2)...)
 	return WrapAllGuard(vx1), vx2

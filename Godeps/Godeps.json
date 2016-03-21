@@ -11,28 +11,28 @@
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/cairo",
-			"Comment": "GOTK3_0_2_0-444-g15a9b52",
-			"Rev": "15a9b52ab05c957cc4ca926df3223c915364a967"
+			"Comment": "GOTK3_0_2_0-446-g3b2b175",
+			"Rev": "3b2b17537e33586945060efacdea54693122644d"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/gdk",
-			"Comment": "GOTK3_0_2_0-444-g15a9b52",
-			"Rev": "15a9b52ab05c957cc4ca926df3223c915364a967"
+			"Comment": "GOTK3_0_2_0-446-g3b2b175",
+			"Rev": "3b2b17537e33586945060efacdea54693122644d"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/glib",
-			"Comment": "GOTK3_0_2_0-444-g15a9b52",
-			"Rev": "15a9b52ab05c957cc4ca926df3223c915364a967"
+			"Comment": "GOTK3_0_2_0-446-g3b2b175",
+			"Rev": "3b2b17537e33586945060efacdea54693122644d"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/gtk",
-			"Comment": "GOTK3_0_2_0-444-g15a9b52",
-			"Rev": "15a9b52ab05c957cc4ca926df3223c915364a967"
+			"Comment": "GOTK3_0_2_0-446-g3b2b175",
+			"Rev": "3b2b17537e33586945060efacdea54693122644d"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/pango",
-			"Comment": "GOTK3_0_2_0-444-g15a9b52",
-			"Rev": "15a9b52ab05c957cc4ca926df3223c915364a967"
+			"Comment": "GOTK3_0_2_0-446-g3b2b175",
+			"Rev": "3b2b17537e33586945060efacdea54693122644d"
 		},
 		{
 			"ImportPath": "github.com/hydrogen18/stalecucumber",
@@ -44,43 +44,43 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdka",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdki",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glib_mock",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gliba",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glibi",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtka",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtki",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/pangoa",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/pangoi",
-			"Rev": "8791177605f7ac2046bc509b8ea8309b4753dc1e"
+			"Rev": "7a52efe8b19bbd113919994ef97ecd35c7fc97a5"
 		},
 		{
 			"ImportPath": "github.com/twstrike/otr3",

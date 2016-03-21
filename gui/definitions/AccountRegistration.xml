@@ -1,11 +1,4 @@
 <interface>
-  <object class="GtkListStore" id="servers-model">
-    <columns>
-      <!-- server -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-
   <object class="GtkDialog" id="dialog">
     <property name="title" translatable="yes">Choose a server to register your account</property>
     <signal name="close" handler="close-handler" />
@@ -30,14 +23,8 @@
               </packing>
             </child>
             <child>
-              <object class="GtkComboBox" id="server">
-                <property name="model">servers-model</property>
-                <child>
-                  <object class="GtkCellRendererText" id="server-label-rendered"/>
-                  <attributes>
-                    <attribute name="text">0</attribute>
-                  </attributes>
-                </child>
+              <object class="GtkComboBoxText" id="server">
+                <property name="has-entry">True</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>

@@ -27,3 +27,8 @@ func unwrapBin(v gtki.Bin) *gtk.Bin {
 	}
 	return v.(*bin).Bin
 }
+
+func (v *bin) GetChild() gtki.Widget {
+	vx, _ := v.Bin.GetChild()
+	return Wrap(vx).(gtki.Widget)
+}

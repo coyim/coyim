@@ -109,12 +109,10 @@ func (account *account) connected() bool {
 func (u *gtkUI) showServerSelectionWindow() error {
 	builder := newBuilder("AccountRegistration")
 	d := builder.getObj("dialog").(gtki.Dialog)
-	serversModel := builder.getObj("servers-model").(gtki.ListStore)
-	serverBox := builder.getObj("server").(gtki.ComboBox)
+	serverBox := builder.getObj("server").(gtki.ComboBoxText)
 
 	for _, s := range servers.GetServersForRegistration() {
-		iter := serversModel.Append()
-		serversModel.SetValue(iter, 0, s.Name)
+		serverBox.AppendText(s.Name)
 	}
 
 	serverBox.SetActive(0)
@@ -128,9 +126,7 @@ func (u *gtkUI) showServerSelectionWindow() error {
 		return nil
 	}
 
-	iter, _ := serverBox.GetActiveIter()
-	val, _ := serversModel.GetValue(iter, 0)
-	server, _ := val.GetString()
+	server := serverBox.GetActiveText()
 
 	form := &registrationForm{
 		parent: u.window,

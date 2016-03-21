@@ -146,10 +146,7 @@ func (u *gtkUI) initialSetupWindow() {
 	u.wouldYouLikeToEncryptYourFile(func(res bool) {
 		u.config.SetShouldSaveFileEncrypted(res)
 		k := func() {
-			err := u.showAddAccountWindow()
-			if err != nil {
-				log.Println("Failed to add account:", err.Error())
-			}
+			go u.showFirstAccountWindow()
 		}
 		if res {
 			u.captureInitialMasterPassword(k)
@@ -340,8 +337,7 @@ func (u *gtkUI) mainWindow() {
 		u.unified = newUnifiedLayout(u, vbox, hbox)
 	}
 
-	obj, _ = builder.GetObject("notification-area")
-	u.notificationArea = obj.(gtki.Box)
+	u.notificationArea = builder.getObj("notification-area").(gtki.Box)
 
 	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
 		if a.Display.HideFeedbackBar {

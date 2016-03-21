@@ -178,18 +178,13 @@ func (u *gtkUI) showServerSelectionWindow() {
 	d.ShowAll()
 }
 
-func (u *gtkUI) showAddAccountWindow() error {
-	c, err := config.NewAccount()
-	if err != nil {
-		return err
-	}
+func (u *gtkUI) showAddAccountWindow() {
+	c, _ := config.NewAccount()
 
 	u.accountDialog(nil, c, func() {
 		u.addAndSaveAccountConfig(c)
 		u.notify(i18n.Local("Account added"), fmt.Sprintf(i18n.Local("The account %s was added successfully."), c.Account))
 	})
-
-	return nil
 }
 
 func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {

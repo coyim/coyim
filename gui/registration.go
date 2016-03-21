@@ -54,32 +54,32 @@ func (f *registrationForm) addFields(fields []interface{}) {
 }
 
 func (f *registrationForm) renderForm(title, instructions string, fields []interface{}) error {
-	f.addFields(fields)
-
-	builder := builderForDefinition("RegistrationForm")
-
-	obj, _ := builder.GetObject("dialog")
-	dialog := obj.(gtki.Dialog)
-	dialog.SetTitle(title)
-
-	obj, _ = builder.GetObject("instructions")
-	label := obj.(gtki.Label)
-	label.SetText(instructions)
-	label.SetSelectable(true)
-
-	obj, _ = builder.GetObject("grid")
-	grid := obj.(gtki.Grid)
-
-	for i, field := range f.fields {
-		grid.Attach(field.label, 0, i+1, 1, 1)
-		grid.Attach(field.widget, 1, i+1, 1, 1)
-	}
-	grid.ShowAll()
-
-	dialog.SetTransientFor(f.parent)
-
 	wait := make(chan error)
 	doInUIThread(func() {
+		f.addFields(fields)
+
+		builder := builderForDefinition("RegistrationForm")
+
+		obj, _ := builder.GetObject("dialog")
+		dialog := obj.(gtki.Dialog)
+		dialog.SetTitle(title)
+
+		obj, _ = builder.GetObject("instructions")
+		label := obj.(gtki.Label)
+		label.SetText(instructions)
+		label.SetSelectable(true)
+
+		obj, _ = builder.GetObject("grid")
+		grid := obj.(gtki.Grid)
+
+		for i, field := range f.fields {
+			grid.Attach(field.label, 0, i+1, 1, 1)
+			grid.Attach(field.widget, 1, i+1, 1, 1)
+		}
+		grid.ShowAll()
+
+		dialog.SetTransientFor(f.parent)
+
 		resp := gtki.ResponseType(dialog.Run())
 		switch resp {
 		case gtki.RESPONSE_APPLY:
@@ -94,7 +94,7 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	return <-wait
 }
 
-func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, saveFn func(), df interfaces.DialerFactory, verifier tls.Verifier) error {
+func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, saveFn func(), errorFn func(error), df interfaces.DialerFactory, verifier tls.Verifier) {
 	policy := config.ConnectionPolicy{DialerFactory: df}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
@@ -107,14 +107,11 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 	_, err := policy.RegisterAccount(formHandler, conf, verifier)
 
 	if err != nil {
-		//TODO: show something in the UI
-		log.Println("Registration failed:", err)
-		return err
+		errorFn(err)
+		return
 	}
 
 	go saveFn()
-
-	return nil
 }
 
 type formField struct {

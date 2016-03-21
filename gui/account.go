@@ -106,44 +106,76 @@ func (account *account) connected() bool {
 	return account.session.IsConnected()
 }
 
-func (u *gtkUI) showServerSelectionWindow() error {
+func (u *gtkUI) showServerSelectionWindow() {
 	builder := newBuilder("AccountRegistration")
 	d := builder.getObj("dialog").(gtki.Dialog)
+	d.SetTransientFor(u.window)
+	message := builder.getObj("message").(gtki.Label)
 	serverBox := builder.getObj("server").(gtki.ComboBoxText)
+	applyBtn := builder.getObj("btn-apply").(gtki.Button)
 
 	for _, s := range servers.GetServersForRegistration() {
 		serverBox.AppendText(s.Name)
 	}
 
 	serverBox.SetActive(0)
+	destroyed := false
 
-	d.SetTransientFor(u.window)
+	builder.ConnectSignals(map[string]interface{}{
+		"on_save_signal": func() {
+			message.SetLabel(i18n.Local("Connecting to server for registration..."))
+			applyBtn.SetSensitive(false)
+			serverBox.SetSensitive(false)
+
+			server := serverBox.GetActiveText()
+
+			form := &registrationForm{
+				parent: u.window,
+				server: server,
+			}
+
+			saveFn := func() {
+				doInUIThread(func() {
+					if !destroyed {
+						d.Destroy()
+						destroyed = true
+					}
+				})
+				u.addAndSaveAccountConfig(form.conf)
+				if acc, ok := u.getAccountByID(form.conf.ID()); ok {
+					acc.session.SetWantToBeOnline(true)
+					acc.Connect()
+				}
+			}
+
+			renderFn := func(title, instructions string, fields []interface{}) error {
+				doInUIThread(func() {
+					if !destroyed {
+						d.Destroy()
+						destroyed = true
+					}
+				})
+				return form.renderForm(title, instructions, fields)
+			}
+
+			errorFn := func(err error) {
+				log.Printf("Error when trying to get registration form: %v", err)
+				doInUIThread(func() {
+					message.SetLabel(i18n.Local("We had an error when trying to contact the server. Please correct your server choice and try again."))
+					applyBtn.SetSensitive(true)
+					serverBox.SetSensitive(true)
+				})
+			}
+
+			go requestAndRenderRegistrationForm(form.server, renderFn, saveFn, errorFn, u.dialerFactory, u.unassociatedVerifier())
+		},
+
+		"on_cancel_signal": func() {
+			d.Destroy()
+		},
+	})
+
 	d.ShowAll()
-	defer d.Destroy()
-
-	resp := d.Run()
-	if gtki.ResponseType(resp) != gtki.RESPONSE_APPLY {
-		return nil
-	}
-
-	server := serverBox.GetActiveText()
-
-	form := &registrationForm{
-		parent: u.window,
-		server: server,
-	}
-
-	saveFn := func() {
-		u.addAndSaveAccountConfig(form.conf)
-		if acc, ok := u.getAccountByID(form.conf.ID()); ok {
-			acc.session.SetWantToBeOnline(true)
-			acc.Connect()
-		}
-	}
-
-	go requestAndRenderRegistrationForm(form.server, form.renderForm, saveFn, u.dialerFactory, u.unassociatedVerifier())
-
-	return nil
 }
 
 func (u *gtkUI) showAddAccountWindow() error {

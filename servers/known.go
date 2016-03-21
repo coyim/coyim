@@ -69,6 +69,7 @@ func (s sortedServers) Less(i, j int) bool {
 }
 func (s sortedServers) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
+// GetServersForRegistration returns all known servers that we can register at
 func GetServersForRegistration() []Server {
 	res := []Server{}
 	for _, s := range known {

@@ -32,7 +32,7 @@ func (s *KnownSuite) Test_Get_returnsTheServerIfItExists(c *C) {
 }
 
 func (s *KnownSuite) Test_register_willAddANewServer(c *C) {
-	Server{"something.de", "123123123.onion"}.register()
+	Server{"something.de", "123123123.onion", false}.register()
 	serv, _ := Get("something.de")
 	c.Assert(serv.Onion, Equals, "123123123.onion")
 }

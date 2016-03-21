@@ -262,12 +262,6 @@ func (u *gtkUI) saveConfigOnly() {
 	}()
 }
 
-func (*gtkUI) RegisterCallback(title, instructions string, fields []interface{}) error {
-	//TODO: should open a registration window
-	fmt.Println("TODO")
-	return nil
-}
-
 func (u *gtkUI) Loop() {
 	u.app.Connect("activate", func() {
 		activeWindow := u.app.GetActiveWindow()

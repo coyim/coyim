@@ -8,6 +8,7 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp/interfaces"
@@ -106,25 +107,29 @@ func (account *account) connected() bool {
 }
 
 func (u *gtkUI) showServerSelectionWindow() error {
-	builder := builderForDefinition("AccountRegistration")
-	obj, _ := builder.GetObject("dialog")
+	builder := newBuilder("AccountRegistration")
+	d := builder.getObj("dialog").(gtki.Dialog)
+	serversModel := builder.getObj("servers-model").(gtki.ListStore)
+	serverBox := builder.getObj("server").(gtki.ComboBox)
 
-	d := obj.(gtki.Dialog)
-	defer d.Destroy()
+	for _, s := range servers.GetServersForRegistration() {
+		iter := serversModel.Append()
+		serversModel.SetValue(iter, 0, s.Name)
+	}
+
+	serverBox.SetActive(0)
 
 	d.SetTransientFor(u.window)
 	d.ShowAll()
+	defer d.Destroy()
 
 	resp := d.Run()
 	if gtki.ResponseType(resp) != gtki.RESPONSE_APPLY {
 		return nil
 	}
 
-	obj, _ = builder.GetObject("server")
-	iter, _ := obj.(gtki.ComboBox).GetActiveIter()
-
-	obj, _ = builder.GetObject("servers-model")
-	val, _ := obj.(gtki.ListStore).GetValue(iter, 0)
+	iter, _ := serverBox.GetActiveIter()
+	val, _ := serversModel.GetValue(iter, 0)
 	server, _ := val.GetString()
 
 	form := &registrationForm{

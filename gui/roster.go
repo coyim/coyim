@@ -10,7 +10,6 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gdki"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	rosters "github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/ui"
 )
 
 type roster struct {
@@ -345,7 +344,7 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 			return
 		}
 
-		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripHTML(message), false)
+		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, message, false)
 	})
 }
 

@@ -12,7 +12,6 @@ import (
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/ui"
 )
 
 var (
@@ -437,7 +436,7 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
 		conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to)
-		conv.appendMessage(conv.account.session.GetConfig().Account, time.Now(), conversation.IsEncrypted(), ui.StripHTML([]byte(message)), true)
+		conv.appendMessage(conv.account.session.GetConfig().Account, time.Now(), conversation.IsEncrypted(), []byte(message), true)
 	}
 	return nil
 }

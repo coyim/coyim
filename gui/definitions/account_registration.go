@@ -13,11 +13,6 @@ func (*defAccountRegistration) String() string {
       <!-- server -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row><col id="0">jabber.calyxinstitute.org</col></row>
-      <row><col id="0">dukgo.com</col></row>
-      <row><col id="0">jabber.ccc.de</col></row>
-    </data>
   </object>
 
   <object class="GtkDialog" id="dialog">

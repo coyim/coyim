@@ -280,11 +280,16 @@ func hasEnter(evk gdki.EventKey) bool {
 
 func newConversationWindow(account *account, uid string, ui *gtkUI) *conversationWindow {
 	builder := newBuilder("Conversation")
-
 	win := builder.getObj("conversation").(gtki.Window)
 
+	peer, ok := ui.accountManager.contacts[account].Get(uid)
+	otherName := uid
+	if ok {
+		otherName = peer.NameForPresentation()
+	}
+
 	// TODO: Can we put the security rating here, maybe?
-	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, uid)
+	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, otherName)
 	win.SetTitle(title)
 
 	winBox := builder.getObj("box").(gtki.Box)

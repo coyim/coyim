@@ -2,6 +2,7 @@ GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 GIT_VERSION=$(shell git rev-parse HEAD)
 VERSION=$(shell git tag -l --contains $$GIT_VERSION)
+GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
 default: gen-ui-defs lint test
 .PHONY: test
@@ -33,7 +34,15 @@ i18n:
 .PHONY: i18n
 
 lint:
+ifeq ($(GO_VERSION), go1.3)
+	echo "Your version of Go is too old for running lint"
+else
+ifeq ($(GO_VERSION), go1.4)
+	echo "Your version of Go is too old for running lint"
+else
 	golint ./...
+endif
+endif
 
 test:
 	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
@@ -87,7 +96,13 @@ get:
 	go get -t -tags $(GTK_BUILD_TAG) ./...
 
 deps-u:
+ifeq ($(GO_VERSION), go1.3)
+else
+ifeq ($(GO_VERSION), go1.4)
+else
 	go get -u github.com/golang/lint/golint
+endif
+endif
 	go get -u golang.org/x/tools/cmd/cover
 	go get -u github.com/modocache/gover
 	go get -u -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
@@ -107,7 +122,13 @@ deps-u:
 	go get -u github.com/DHowett/go-plist
 
 deps-dev:
+ifeq ($(GO_VERSION), go1.3)
+else
+ifeq ($(GO_VERSION), go1.4)
+else
 	go get github.com/golang/lint/golint
+endif
+endif
 	go get golang.org/x/tools/cmd/cover
 	go get github.com/modocache/gover
 

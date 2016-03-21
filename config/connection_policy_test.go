@@ -16,12 +16,13 @@ type ConnectionPolicySuite struct{}
 
 var _ = Suite(&ConnectionPolicySuite{})
 
-func mockTorState(addr string) ournet.TorState {
-	return &torStateMock{addr}
+func mockTorState(addr string, overTor bool) ournet.TorState {
+	return &torStateMock{addr, overTor}
 }
 
 type torStateMock struct {
-	addr string
+	addr    string
+	overTor bool
 }
 
 func (s *torStateMock) Address() string {
@@ -30,6 +31,10 @@ func (s *torStateMock) Address() string {
 
 func (s *torStateMock) Detect() bool {
 	return len(s.addr) > 0
+}
+
+func (s *torStateMock) IsConnectionOverTor(proxy.Dialer) bool {
+	return s.overTor
 }
 
 func (s *ConnectionPolicySuite) Test_buildDialerFor_ValidatesJid(c *C) {
@@ -49,7 +54,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesCustomRootCAForJabberDot
 		Account: "coyim@jabber.ccc.de",
 	}
 
-	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory}
+	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory, torState: mockTorState("", false)}
 
 	expectedRootCA, _ := rootCAFor("jabber.ccc.de")
 	dialer, err := policy.buildDialerFor(account, nil)
@@ -62,7 +67,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesCustomRootCAForJabberDot
 }
 
 func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesConfiguredServerAddressAndPortAndMakesSRVLookup(c *C) {
-	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory}
+	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory, torState: mockTorState("", false)}
 
 	dialer, err := policy.buildDialerFor(&Account{
 		Account: "coyim@coy.im",
@@ -94,7 +99,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_UsesAssociatedHiddenServiceI
 
 	currentTor := ournet.Tor
 
-	ournet.Tor = mockTorState("127.0.0.1:9999")
+	ournet.Tor = mockTorState("127.0.0.1:9999", true)
 	policy := ConnectionPolicy{
 		DialerFactory: xmpp.DialerFactory,
 		torState:      ournet.Tor,
@@ -111,7 +116,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_IgnoresAssociatedHiddenServi
 		Account: "coyim@riseup.net",
 	}
 
-	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory}
+	policy := ConnectionPolicy{DialerFactory: xmpp.DialerFactory, torState: mockTorState("", false)}
 
 	dialer, err := policy.buildDialerFor(account, nil)
 
@@ -127,7 +132,7 @@ func (s *ConnectionPolicySuite) Test_buildDialerFor_ErrorsIfTorIsRequiredButNotF
 
 	policy := ConnectionPolicy{
 		DialerFactory: xmpp.DialerFactory,
-		torState:      mockTorState(""),
+		torState:      mockTorState("", false),
 	}
 
 	_, err := policy.buildDialerFor(account, nil)

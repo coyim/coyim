@@ -39,13 +39,16 @@ type ConnectionPolicy struct {
 	torState ournet.TorState
 }
 
-func (p *ConnectionPolicy) isTorRunning() error {
-	tor := p.torState
-	if tor == nil {
-		tor = ournet.Tor
+func (p *ConnectionPolicy) initTorState() {
+	if p.torState == nil {
+		p.torState = ournet.Tor
 	}
+}
 
-	if !tor.Detect() {
+func (p *ConnectionPolicy) isTorRunning() error {
+	p.initTorState()
+
+	if !p.torState.Detect() {
 		return ErrTorNotRunning
 	}
 
@@ -70,6 +73,8 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 	}
 
 	domainpart := jidParts[1]
+
+	p.initTorState()
 
 	hasTorAuto := conf.HasTorAuto()
 
@@ -118,7 +123,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 		dialer.SetServerAddress(net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port)))
 	}
 
-	if hasTorAuto {
+	if hasTorAuto || p.torState.IsConnectionOverTor(proxy) {
 		server := dialer.GetServer()
 		host, port, err := net.SplitHostPort(server)
 		if err != nil {

@@ -1,8 +1,14 @@
 package net
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
 	"net"
+	"net/http"
 	"time"
+
+	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
 )
 
 var (
@@ -15,6 +21,7 @@ var (
 type TorState interface {
 	Detect() bool
 	Address() string
+	IsConnectionOverTor(proxy.Dialer) bool
 }
 
 // Tor is the default state manager for Tor
@@ -66,4 +73,38 @@ func detectTor(host string, ports []string) (string, bool) {
 	}
 
 	return "", false
+}
+
+// CheckTorResult represents the JSON result from a check tor request
+type CheckTorResult struct {
+	IsTor bool
+	IP    string
+}
+
+// IsConnectionOverTor will make a connection to the check.torproject page to see if we're using Tor or not
+func (*defaultTorManager) IsConnectionOverTor(d proxy.Dialer) bool {
+	c := &http.Client{Transport: &http.Transport{Dial: func(network, addr string) (net.Conn, error) {
+		return d.Dial(network, addr)
+	}}}
+
+	resp, err := c.Get("https://check.torproject.org/api/ip")
+	if err != nil {
+		log.Printf("Got error when trying to check tor: %v", err)
+		return false
+	}
+
+	content, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Got error when trying to check tor: %v", err)
+		return false
+	}
+
+	v := CheckTorResult{}
+	err = json.Unmarshal(content, &v)
+	if err != nil {
+		log.Printf("Got error when trying to check tor: %v", err)
+		return false
+	}
+
+	return v.IsTor
 }

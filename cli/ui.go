@@ -163,7 +163,7 @@ func (c *cliUI) loadConfig(configFile string) error {
 
 	c.session.SetConnectionLogger(logger)
 	// TODO: this nil is incorrect and will cause failures when trying to use it.
-	if err := c.session.Connect(password, nil); err != nil {
+	if err := c.session.Connect(password, c.verifier()); err != nil {
 		c.alert(err.Error())
 		return err
 	}

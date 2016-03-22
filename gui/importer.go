@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
@@ -136,19 +137,95 @@ func (u *gtkUI) importFingerprintsFor(account *config.Account, file string) (int
 	return num, true
 }
 
+func firstItem(mm map[string][]byte) []byte {
+	for _, v := range mm {
+		return v
+	}
+	return nil
+}
+
+func sortKeys(keys map[string]otr3.PrivateKey) []string {
+	res := []string{}
+
+	for k := range keys {
+		res = append(res, k)
+	}
+
+	sort.Strings(res)
+
+	return res
+}
+
+func (u *gtkUI) chooseKeyToImport(keys map[string][]byte) ([]byte, bool) {
+	result := make(chan int)
+	parsedKeys := make(map[string]otr3.PrivateKey)
+	for v, vv := range keys {
+		_, ok, parsedKey := otr3.ParsePrivateKey(vv)
+		if ok {
+			parsedKeys[v] = parsedKey
+		}
+	}
+	sortedKeys := sortKeys(parsedKeys)
+
+	doInUIThread(func() {
+		builder := newBuilder("ChooseKeyToImport")
+		d := builder.getObj("dialog").(gtki.Dialog)
+		d.SetTransientFor(u.window)
+		keyBox := builder.getObj("keys").(gtki.ComboBoxText)
+
+		for _, s := range sortedKeys {
+			kval := parsedKeys[s]
+			keyBox.AppendText(fmt.Sprintf("%s -- %s", s, config.FormatFingerprint(kval.PublicKey().Fingerprint())))
+		}
+
+		keyBox.SetActive(0)
+
+		builder.ConnectSignals(map[string]interface{}{
+			"on_import_signal": func() {
+				ix := keyBox.GetActive()
+				if ix != -1 {
+					result <- ix
+					close(result)
+					d.Destroy()
+				}
+			},
+
+			"on_cancel_signal": func() {
+				close(result)
+				d.Destroy()
+			},
+		})
+
+		d.ShowAll()
+	})
+
+	res, ok := <-result
+	if ok {
+		return keys[sortedKeys[res]], true
+	}
+	return nil, false
+}
+
 func (u *gtkUI) importKeysFor(account *config.Account, file string) (int, bool) {
 	keys, ok := importer.ImportKeysFromPidginStyle(file, func(string) bool { return true })
 	if !ok {
 		return 0, false
 	}
 
-	newKeys := [][]byte{}
-	for _, kk := range keys {
-		newKeys = append(newKeys, kk)
+	switch len(keys) {
+	case 0:
+		return 0, true
+	case 1:
+		account.PrivateKeys = [][]byte{firstItem(keys)}
+		return 1, true
+	default:
+		kk, ok := u.chooseKeyToImport(keys)
+		if ok {
+			account.PrivateKeys = [][]byte{kk}
+			return 1, true
+		}
+		return 0, false
 	}
-	account.PrivateKeys = newKeys
-
-	return len(newKeys), true
 }
 
 func (u *gtkUI) exportFingerprintsFor(account *config.Account, file string) bool {
@@ -205,12 +282,15 @@ func (u *gtkUI) importKeysForDialog(account *config.Account, w gtki.Dialog) {
 	)
 
 	if gtki.ResponseType(dialog.Run()) == gtki.RESPONSE_OK {
-		num, ok := u.importKeysFor(account, dialog.GetFilename())
-		if ok {
-			u.notify(i18n.Local("Keys imported"), fmt.Sprintf(i18n.Local("%d key(s) were imported correctly."), num))
-		} else {
-			u.notify(i18n.Local("Failure importing keys"), fmt.Sprintf(i18n.Local("Couldn't import any keys from %s."), dialog.GetFilename()))
-		}
+		fname := dialog.GetFilename()
+		go func() {
+			_, ok := u.importKeysFor(account, fname)
+			if ok {
+				u.notify(i18n.Local("Keys imported"), i18n.Local("The key was imported correctly."))
+			} else {
+				u.notify(i18n.Local("Failure importing keys"), fmt.Sprintf(i18n.Local("Couldn't import any keys from %s."), fname))
+			}
+		}()
 	}
 	dialog.Destroy()
 }

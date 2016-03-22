@@ -14,6 +14,10 @@ func (*MockComboBox) GetActiveID() string {
 	return ""
 }
 
+func (*MockComboBox) GetActive() int {
+	return 0
+}
+
 func (*MockComboBox) SetActive(v1 int) {
 }
 

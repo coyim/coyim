@@ -36,6 +36,10 @@ func (v *comboBox) GetActiveID() string {
 	return v.internal.GetActiveID()
 }
 
+func (v *comboBox) GetActive() int {
+	return v.internal.GetActive()
+}
+
 func (v *comboBox) SetActive(v1 int) {
 	v.internal.SetActive(v1)
 }

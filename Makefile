@@ -107,9 +107,9 @@ endif
 	go get -u github.com/modocache/gover
 	go get -u github.com/tools/godep
 
-	#go get -u -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
-	#go get -u -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
-	godep update -d
+	go get -u -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
+	go get -u -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
+	godep update
 
 deps-dev:
 ifeq ($(GO_VERSION), go1.3)
@@ -124,7 +124,7 @@ endif
 	go get github.com/tools/godep
 
 deps: deps-dev
-	#go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
-	#go get -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
-	godep get -d -t
+	go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
+	go get -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
+	godep get -t
 

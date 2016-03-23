@@ -109,7 +109,7 @@ endif
 
 	#go get -u -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
 	#go get -u -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
-	godep update
+	godep update -d
 
 deps-dev:
 ifeq ($(GO_VERSION), go1.3)
@@ -126,5 +126,5 @@ endif
 deps: deps-dev
 	#go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
 	#go get -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
-	godep get
+	godep get -d -t
 

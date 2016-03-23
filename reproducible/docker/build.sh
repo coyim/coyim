@@ -11,6 +11,9 @@ shasum /root/go/bin/*
 mkdir -p $(echo "${GOPATH}/src/${GO_PKG}" | rev | cut -d '/' -f 2- | rev) &&\
   ln -s /src "${GOPATH}/src/${GO_PKG}"
 
+# go get github.com/tools/godep
+# godep get
+
 cd $GOPATH/src && source /root/setup-reproducible
 
 # make build

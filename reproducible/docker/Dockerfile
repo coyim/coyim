@@ -36,3 +36,4 @@ ENV GOPATH /go
 ENV GO_PKG "github.com/twstrike/coyim"
 
 CMD bash -c /root/test && /root/build 
+

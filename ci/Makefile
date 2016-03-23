@@ -1,10 +1,10 @@
 #GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 #GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 
-ci: get lint doctor test coveralls
+ci: deps lint doctor test coveralls
 
-get:
-	make get -C ../
+deps:
+	make deps -C ../
 
 lint:
 	make lint -C ../

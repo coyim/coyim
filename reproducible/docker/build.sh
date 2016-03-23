@@ -4,24 +4,14 @@ set -xe
 
 export PATH="/root/go/bin:$GOPATH/bin:$PATH"
 
-shasum /root/go/bin/*
+# Get package and setup a reproducible environment
+/root/get-reproducibly $GO_PKG
 
-# Use source code from current volume
-# /root/go/bin/go get -d $GO_PKG
-mkdir -p $(echo "${GOPATH}/src/${GO_PKG}" | rev | cut -d '/' -f 2- | rev) &&\
-  ln -s /src "${GOPATH}/src/${GO_PKG}"
+cd ${GOPATH}/src/${GO_PKG}
+ls -l
 
-# go get github.com/tools/godep
-# godep get
-
-cd $GOPATH/src && source /root/setup-reproducible
-
-# make build
-/root/go/bin/go build -i -o /builds/coyim \
-  $GO_PKG
-
-/root/go/bin/go build -i -o /builds/coyim-gui \
-  $GO_PKG
+make build-cli BUILD_DIR=/builds
+make build-gui BUILD_DIR=/builds
 
 shasum /builds/*
 

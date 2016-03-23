@@ -4,6 +4,8 @@ GIT_VERSION=$(shell git rev-parse HEAD)
 VERSION=$(shell git tag -l --contains $$GIT_VERSION)
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
+BUILD_DIR= bin/
+
 default: gen-ui-defs lint test
 .PHONY: test
 
@@ -15,19 +17,19 @@ gen-ui-defs:
 	make -C ./gui/definitions
 
 build-gui: generate-version-file
-	go build -i -tags $(GTK_BUILD_TAG) -o bin/coyim
+	go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
 
 build-gui-win: generate-version-file
-	go build -i -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o bin/coyim.exe
+	go build -i -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o $(BUILD_DIR)/coyim.exe
 
 build-cli: generate-version-file
-	go build -i -tags cli -o bin/coyim-cli
+	go build -i -tags cli -o $(BUILD_DIR)/coyim-cli
 
 build-debug:
-	go build -i -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o bin/coyim-debug
+	go build -i -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug
 
 debug: build-debug
-	gdb bin/coyim-debug -d $(shell go env GOROOT) -x build/debug
+	gdb $(BUILD_DIR)/coyim-debug -d $(shell go env GOROOT) -x build/debug
 
 i18n:
 	make -C i18n
@@ -108,7 +110,5 @@ endif
 	go get github.com/tools/godep
 
 deps: deps-dev
-	#go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
-	#go get -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
 	godep restore
 

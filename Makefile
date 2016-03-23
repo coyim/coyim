@@ -95,22 +95,6 @@ cover: run-cover
 get:
 	go get -t -tags $(GTK_BUILD_TAG) ./...
 
-deps-u:
-ifeq ($(GO_VERSION), go1.3)
-else
-ifeq ($(GO_VERSION), go1.4)
-else
-	go get -u github.com/golang/lint/golint
-endif
-endif
-	go get -u golang.org/x/tools/cmd/cover
-	go get -u github.com/modocache/gover
-	go get -u github.com/tools/godep
-
-	go get -u -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
-	go get -u -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
-	godep update
-
 deps-dev:
 ifeq ($(GO_VERSION), go1.3)
 else
@@ -124,7 +108,7 @@ endif
 	go get github.com/tools/godep
 
 deps: deps-dev
-	go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
-	go get -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
-	godep get -t
+	#go get -tags $(GTK_BUILD_TAG) github.com/gotk3/gotk3/gtk
+	#go get -tags $(GTK_BUILD_TAG) github.com/twstrike/gotk3adapter/gtka
+	godep restore
 

@@ -51,3 +51,11 @@ func (s *UISuite) TestHTMLStripping(t *C) {
 
 	t.Check(res, DeepEquals, exp)
 }
+
+func (s *UISuite) Test_StripSomeHTML(t *C) {
+	raw := []byte("<p>This is <walloftext>some</walloftext> <FONT color='green'>html</font><br />.")
+	exp := "This is <walloftext>some</walloftext> html."
+	res := StripSomeHTML(raw)
+
+	t.Check(string(res), DeepEquals, exp)
+}

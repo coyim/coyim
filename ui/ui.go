@@ -9,6 +9,52 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/html"
 )
 
+var tagsToAvoid = make(map[string]bool)
+
+func init() {
+	tagsToAvoid["blockquote"] = true
+	tagsToAvoid["br"] = true
+	tagsToAvoid["cite"] = true
+	tagsToAvoid["em"] = true
+	tagsToAvoid["font"] = true
+	tagsToAvoid["p"] = true
+	tagsToAvoid["span"] = true
+	tagsToAvoid["strong"] = true
+}
+
+// StripSomeHTML removes the most common html presentation tags from the text
+func StripSomeHTML(msg []byte) (out []byte) {
+	z := html.NewTokenizer(bytes.NewReader(msg))
+
+loop:
+	for {
+		tt := z.Next()
+		switch tt {
+		case html.TextToken:
+			out = append(out, z.Text()...)
+		case html.ErrorToken:
+			if err := z.Err(); err != nil && err != io.EOF {
+				out = msg
+				return
+			}
+			break loop
+		case html.StartTagToken, html.EndTagToken, html.SelfClosingTagToken:
+			raw := z.Raw()
+			name, _ := z.TagName()
+
+			if !tagsToAvoid[string(name)] {
+				out = append(out, raw...)
+			}
+		case html.CommentToken:
+			out = append(out, z.Raw()...)
+		case html.DoctypeToken:
+			out = append(out, z.Raw()...)
+		}
+	}
+
+	return
+}
+
 // StripHTML removes all html in the text
 func StripHTML(msg []byte) (out []byte) {
 	z := html.NewTokenizer(bytes.NewReader(msg))

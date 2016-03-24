@@ -608,6 +608,7 @@ func (s *session) receiveClientMessage(from string, when time.Time, body string)
 		return
 	}
 
+	log.Printf("  -> Content %#v\n", out)
 	s.messageReceived(from, when, encrypted, out)
 }
 

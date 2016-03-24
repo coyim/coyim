@@ -108,8 +108,8 @@ func (ul *unifiedLayout) createConversation(account *account, uid string) conver
 	}
 
 	//	csi.entry.SetHasFrame(true)
-	csi.entry.SetMarginTop(5)
-	csi.entry.SetMarginBottom(5)
+	csi.entryScroll.SetMarginTop(5)
+	csi.entryScroll.SetMarginBottom(5)
 
 	ul.notebook.SetTabLabelText(cp.widget, csi.shortName())
 	ul.itemMap[idx] = csi

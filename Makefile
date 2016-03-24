@@ -4,7 +4,7 @@ GIT_VERSION=$(shell git rev-parse HEAD)
 VERSION=$(shell git tag -l --contains $$GIT_VERSION)
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
-BUILD_DIR= bin/
+BUILD_DIR=bin
 
 default: gen-ui-defs lint test
 .PHONY: test
@@ -111,4 +111,3 @@ endif
 
 deps: deps-dev
 	godep restore
-

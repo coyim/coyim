@@ -6,6 +6,7 @@ import (
 	"errors"
 )
 
+// BasicVerifier contains the shared logic for verifying TLS connections
 type BasicVerifier struct {
 	OnNoPeerCertificates  func()
 	OnPinDeny             func()
@@ -67,6 +68,7 @@ func (v *BasicVerifier) canConnectInPresenceOfPins(certs []*x509.Certificate) er
 	return errors.New("tls: you have a pinning policy that stops us from connecting using other certificates")
 }
 
+// Verify implements tls.Verifier
 func (v *BasicVerifier) Verify(state tls.ConnectionState, conf tls.Config, originDomain string) error {
 	if len(state.PeerCertificates) == 0 {
 		v.OnNoPeerCertificates()

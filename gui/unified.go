@@ -143,6 +143,7 @@ func (cl *conversationList) remove(csi *conversationStackItem) {
 }
 
 func (cl *conversationList) updateItem(csi *conversationStackItem) {
+	cs := cl.layout.ui.currentColorSet()
 	peer, ok := cl.layout.ui.getPeer(csi.account, csi.to)
 	if !ok {
 		log.Printf("No peer found for %s", csi.to)
@@ -152,8 +153,8 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 		csi.pageIndex,
 		csi.shortName(),
 		peer.Jid,
-		decideColorFor(peer),
-		"#ffffff",
+		decideColorFor(cs, peer),
+		cs.rosterPeerBackground,
 		csi.getTextWeight(),
 		createTooltipFor(peer),
 		statusIcons[decideStatusFor(peer)].getPixbuf(),

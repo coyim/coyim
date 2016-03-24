@@ -413,11 +413,11 @@ func decideStatusFor(p *rosters.Peer) string {
 	return "available"
 }
 
-func decideColorFor(p *rosters.Peer) string {
+func decideColorFor(cs colorSet, p *rosters.Peer) string {
 	if !p.Online {
-		return "#aaaaaa"
+		return cs.rosterPeerOfflineForeground
 	}
-	return "#000000"
+	return cs.rosterPeerOnlineForeground
 }
 
 func createGroupDisplayName(parentName string, counter *counter, isExpanded bool) string {
@@ -438,13 +438,14 @@ func createTooltipFor(item *rosters.Peer) string {
 }
 
 func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent string) {
+	cs := r.ui.currentColorSet()
 	iter := r.model.Append(parentIter)
 	setAll(r.model, iter,
 		item.Jid,
 		fmt.Sprintf("%s %s", indent, item.NameForPresentation()),
 		item.BelongsTo,
-		decideColorFor(item),
-		"#ffffff",
+		decideColorFor(cs, item),
+		cs.rosterPeerBackground,
 		nil,
 		createTooltipFor(item),
 	)
@@ -498,7 +499,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 		r.model.SetValue(pi, indexParentJid, groupID)
 		r.model.SetValue(pi, indexRowType, "group")
 		r.model.SetValue(pi, indexWeight, 500)
-		r.model.SetValue(pi, indexBackgroundColor, "#e9e7f3")
+		r.model.SetValue(pi, indexBackgroundColor, r.ui.currentColorSet().rosterGroupBackground)
 	}
 
 	for _, item := range g.Peers() {
@@ -530,6 +531,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 }
 
 func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List, showOffline bool) {
+	cs := r.ui.currentColorSet()
 	parentIter := r.model.Append(nil)
 
 	accountCounter := &counter{}
@@ -543,9 +545,9 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	r.model.SetValue(parentIter, indexRowType, "account")
 	r.model.SetValue(parentIter, indexWeight, 700)
 
-	bgcolor := "#918caa"
+	bgcolor := cs.rosterAccountOnlineBackground
 	if account.session.IsDisconnected() {
-		bgcolor = "#d5d3de"
+		bgcolor = cs.rosterAccountOfflineBackground
 	}
 	r.model.SetValue(parentIter, indexBackgroundColor, bgcolor)
 

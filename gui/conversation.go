@@ -62,29 +62,31 @@ type tags struct {
 
 func (u *gtkUI) getTags() *tags {
 	if u.tags == nil {
-		u.tags = newTags()
+		u.tags = u.newTags()
 	}
 	return u.tags
 }
 
-func newTags() *tags {
+func (u *gtkUI) newTags() *tags {
+	cs := u.currentColorSet()
 	t := new(tags)
 
 	t.table, _ = g.gtk.TextTagTableNew()
 
 	outgoingUser, _ := g.gtk.TextTagNew("outgoingUser")
-	outgoingUser.SetProperty("foreground", "#3465a4")
+	outgoingUser.SetProperty("foreground", cs.conversationOutgoingUserForeground)
 
 	incomingUser, _ := g.gtk.TextTagNew("incomingUser")
-	incomingUser.SetProperty("foreground", "#a40000")
+	incomingUser.SetProperty("foreground", cs.conversationIncomingUserForeground)
 
 	outgoingText, _ := g.gtk.TextTagNew("outgoingText")
-	outgoingText.SetProperty("foreground", "#555753")
+	outgoingText.SetProperty("foreground", cs.conversationOutgoingTextForeground)
 
 	incomingText, _ := g.gtk.TextTagNew("incomingText")
+	outgoingText.SetProperty("foreground", cs.conversationIncomingTextForeground)
 
 	statusText, _ := g.gtk.TextTagNew("statusText")
-	statusText.SetProperty("foreground", "#4e9a06")
+	statusText.SetProperty("foreground", cs.conversationStatusTextForeground)
 
 	t.table.Add(outgoingUser)
 	t.table.Add(incomingUser)

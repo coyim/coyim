@@ -83,6 +83,10 @@ type CheckTorResult struct {
 
 // IsConnectionOverTor will make a connection to the check.torproject page to see if we're using Tor or not
 func (*defaultTorManager) IsConnectionOverTor(d proxy.Dialer) bool {
+	if d == nil {
+		d = proxy.Direct
+	}
+
 	c := &http.Client{Transport: &http.Transport{Dial: func(network, addr string) (net.Conn, error) {
 		return d.Dial(network, addr)
 	}}}

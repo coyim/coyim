@@ -455,6 +455,7 @@ func authors() []string {
 		"Adam Langley",
 		"Gray Leonard - gl7039a@american.edu",
 		"Bruce Leidl - bruce@subgraph.com",
+		"xSmurf - matth@subgraph.com",
 	}
 }
 

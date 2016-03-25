@@ -108,3 +108,7 @@ func (*Mock) TreePathNew() gtki.TreePath {
 
 func (*Mock) WindowSetDefaultIcon(icon gdki.Pixbuf) {
 }
+
+func (*Mock) SettingsGetDefault() (gtki.Settings, error) {
+	return nil, nil
+}

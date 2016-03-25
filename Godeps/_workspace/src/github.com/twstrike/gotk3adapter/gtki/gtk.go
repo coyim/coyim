@@ -32,6 +32,7 @@ type Gtk interface {
 	TextViewNew() (TextView, error)
 	TreePathNew() TreePath
 	WindowSetDefaultIcon(gdki.Pixbuf)
+	SettingsGetDefault() (Settings, error)
 }
 
 func AssertGtk(_ Gtk) {}

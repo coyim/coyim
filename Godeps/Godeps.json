@@ -1,6 +1,7 @@
 {
 	"ImportPath": "github.com/twstrike/coyim",
 	"GoVersion": "go1.5",
+	"GodepVersion": "v60",
 	"Packages": [
 		"./..."
 	],
@@ -44,43 +45,43 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdka",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdki",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glib_mock",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gliba",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glibi",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtka",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtki",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/pangoa",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/pangoi",
-			"Rev": "d12a1dea1f27d490d41740d4152cd4005c0e3daa"
+			"Rev": "c5ab189f6519a9186547c58d8f3ecac5361ead5d"
 		},
 		{
 			"ImportPath": "github.com/twstrike/otr3",

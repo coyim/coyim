@@ -36,6 +36,7 @@ func init() {
 	gtki.AssertRevealer(&MockRevealer{})
 	gtki.AssertScrolledWindow(&MockScrolledWindow{})
 	gtki.AssertSeparatorMenuItem(&MockSeparatorMenuItem{})
+	gtki.AssertSettings(&MockSettings{})
 	gtki.AssertStyleContext(&MockStyleContext{})
 	gtki.AssertTextBuffer(&MockTextBuffer{})
 	gtki.AssertTextIter(&MockTextIter{})

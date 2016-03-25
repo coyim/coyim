@@ -1,14 +1,7 @@
 package gtk_mock
 
-import (
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glib_mock"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
-)
+import "github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glib_mock"
 
-type MockSettings interface {
+type MockSettings struct {
 	glib_mock.MockObject
-}
-
-func (*MockSettings) GetProperty(string) (interface{}, error) {
-	return nil, nil
 }

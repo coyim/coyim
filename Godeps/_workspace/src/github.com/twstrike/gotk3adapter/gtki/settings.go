@@ -4,8 +4,6 @@ import "github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk
 
 type Settings interface {
 	glibi.Object
-
-	GetProperty(string) (interface{}, error)
 }
 
 func AssertSettings(_ Settings) {}

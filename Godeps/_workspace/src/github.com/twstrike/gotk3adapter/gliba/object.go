@@ -163,6 +163,11 @@ func (v *Object) Emit(v1 string, v2 ...interface{}) (interface{}, error) {
 	return WrapAllGuard(vx1), vx2
 }
 
+func (v *Object) GetProperty(v1 string) (interface{}, error) {
+	vx1, vx2 := v.Object.GetProperty(v1)
+	return WrapAllGuard(vx1), vx2
+}
+
 func (v *Object) SetProperty(v1 string, v2 interface{}) error {
 	return v.Object.SetProperty(v1, WrapAllGuard(v2))
 }

@@ -81,3 +81,7 @@ func (v *window) SetTransientFor(v2 gtki.Window) {
 func (v *window) Present() {
 	v.internal.Present()
 }
+
+func (v *window) HasToplevelFocus() bool {
+	return v.internal.HasToplevelFocus()
+}

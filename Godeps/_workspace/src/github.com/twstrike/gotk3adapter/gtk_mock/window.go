@@ -16,6 +16,10 @@ func (*MockWindow) GetTitle() string {
 	return ""
 }
 
+func (*MockWindow) HasToplevelFocus() bool {
+	return false
+}
+
 func (*MockWindow) IsActive() bool {
 	return false
 }

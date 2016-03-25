@@ -7,6 +7,7 @@ type Window interface {
 
 	AddAccelGroup(AccelGroup)
 	GetTitle() string
+	HasToplevelFocus() bool
 	IsActive() bool
 	Present()
 	Resize(int, int)

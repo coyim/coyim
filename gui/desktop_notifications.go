@@ -7,8 +7,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/godbus/dbus"
-	"github.com/TheCreeper/go-notify"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/TheCreeper/go-notify"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/godbus/dbus"
 )
 
 type DesktopNotifications struct {

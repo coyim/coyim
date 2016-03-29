@@ -1,6 +1,7 @@
 {
 	"ImportPath": "github.com/twstrike/coyim",
 	"GoVersion": "go1.5",
+	"GodepVersion": "v60",
 	"Packages": [
 		"./..."
 	],
@@ -8,6 +9,15 @@
 		{
 			"ImportPath": "github.com/DHowett/go-plist",
 			"Rev": "a34fbb33e60256707d230f730e60f75946fd2d7c"
+		},
+		{
+			"ImportPath": "github.com/TheCreeper/go-notify",
+			"Rev": "b5cd14745a5c675c08f7d5c3203cf5f0324e85f3"
+		},
+		{
+			"ImportPath": "github.com/godbus/dbus",
+			"Comment": "v3-20-ge2cf281",
+			"Rev": "e2cf28118e66a6a63db46cf6088a35d2054d3bb0"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/cairo",

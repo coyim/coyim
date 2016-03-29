@@ -2,7 +2,7 @@
 
 package gui
 
-type DesktopNotifications struct {}
+type DesktopNotifications struct{}
 
 func newDesktopNotifications() *DesktopNotifications {
 	return nil

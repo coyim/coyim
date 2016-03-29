@@ -494,7 +494,15 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 	pi := parentIter
 	groupCounter := &counter{}
 	groupID := accountName + "//" + g.FullGroupName()
-	if g.GroupName != "" {
+
+	isEmpty := true
+	for _, item := range g.Peers() {
+		if shouldDisplay(item, showOffline) {
+			isEmpty = false
+		}
+	}
+
+	if g.GroupName != "" && (!isEmpty || r.showEmptyGroups()) {
 		pi = r.model.Append(parentIter)
 		r.model.SetValue(pi, indexParentJid, groupID)
 		r.model.SetValue(pi, indexRowType, "group")
@@ -582,6 +590,10 @@ func (r *roster) sortedAccounts() []*account {
 	//TODO sort by nickname if available
 	sort.Sort(byAccountNameAlphabetic(as))
 	return as
+}
+
+func (r *roster) showEmptyGroups() bool {
+	return false
 }
 
 func (r *roster) redrawSeparate() {

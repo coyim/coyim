@@ -29,6 +29,7 @@ type conversationView interface {
 	displayNotification(notification string)
 	displayNotificationVerifiedOrNot(notificationV, notificationNV string)
 	setEnabled(enabled bool)
+	isVisible() bool
 }
 
 type conversationWindow struct {
@@ -120,6 +121,11 @@ func insertEnter(e gtki.TextView) {
 func clearIn(e gtki.TextView) {
 	tb := getTextBufferFrom(e)
 	tb.Delete(tb.GetStartIter(), tb.GetEndIter())
+}
+
+func (conv *conversationWindow) isVisible() bool {
+	return conv.win.HasToplevelFocus()
+
 }
 
 func (conv *conversationPane) onSendMessageSignal() {

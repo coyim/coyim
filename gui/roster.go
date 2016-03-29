@@ -24,7 +24,8 @@ type roster struct {
 	isCollapsed map[string]bool
 	toCollapse  []gtki.TreePath
 
-	ui *gtkUI
+	ui       *gtkUI
+	deNotify *DesktopNotifications
 }
 
 const (
@@ -46,6 +47,7 @@ func (u *gtkUI) newRoster() *roster {
 
 	r := &roster{
 		isCollapsed: make(map[string]bool),
+		deNotify:    newDesktopNotifications(),
 
 		ui: u,
 	}
@@ -346,6 +348,13 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 		}
 
 		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripSomeHTML(message), false)
+
+		if !conv.isVisible() && r.deNotify != nil {
+			err := r.deNotify.show(from, r.displayNameFor(account, from), string(ui.StripSomeHTML(message)), true, true)
+			if err != nil {
+				log.Println(err)
+			}
+		}
 	})
 }
 

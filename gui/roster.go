@@ -350,7 +350,7 @@ func (r *roster) messageReceived(account *account, from string, timestamp time.T
 		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripSomeHTML(message), false)
 
 		if !conv.isVisible() && r.deNotify != nil {
-			err := r.deNotify.show(from, r.displayNameFor(account, from), string(ui.StripSomeHTML(message)), true, true)
+			err := r.deNotify.show(from, r.displayNameFor(account, from), string(ui.StripSomeHTML(message)), false, true)
 			if err != nil {
 				log.Println(err)
 			}

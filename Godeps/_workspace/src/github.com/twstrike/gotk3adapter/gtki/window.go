@@ -9,6 +9,8 @@ type Window interface {
 	GetTitle() string
 	HasToplevelFocus() bool
 	IsActive() bool
+	Fullscreen()
+	Unfullscreen()
 	Present()
 	Resize(int, int)
 	SetApplication(Application)

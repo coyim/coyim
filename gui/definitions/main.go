@@ -28,7 +28,8 @@ func (*defMain) String() string {
                 <child>
                   <object class="GtkMenuItem" id="ContactsMenu">
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Contacts</property>
+                    <property name="label" translatable="yes">_Contacts</property>
+                    <property name="use-underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="menu">
                         <property name="can_focus">False</property>
@@ -46,13 +47,15 @@ func (*defMain) String() string {
                 <child>
                   <object class="GtkMenuItem" id="AccountsMenu">
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Accounts</property>
+                    <property name="label" translatable="yes">_Accounts</property>
+                    <property name="use-underline">True</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkMenuItem" id="ViewMenu">
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">View</property>
+                    <property name="label" translatable="yes">_View</property>
+                    <property name="use-underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="menu2">
                         <property name="can_focus">False</property>

@@ -18,7 +18,8 @@ func (*defConversationPane) String() string {
         <child>
           <object class="GtkMenuItem" id="conversationMenu">
             <property name="visible">true</property>
-            <property name="label" translatable="yes">Developer options</property>
+            <property name="label" translatable="yes">_Developer options</property>
+            <property name="use-underline">True</property>
             <child type="submenu">
               <object class="GtkMenu" id="menu">
                 <property name="visible">true</property>

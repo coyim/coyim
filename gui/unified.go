@@ -187,6 +187,11 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.headerBar.SetSubtitle("")
 }
 
+func (csi *conversationStackItem) isVisible() bool {
+	convoFrontMost := (csi.layout.notebook.GetCurrentPage() == csi.pageIndex)
+	return (convoFrontMost && csi.layout.ui.window.HasToplevelFocus())
+}
+
 func (csi *conversationStackItem) setEnabled(enabled bool) {
 	log.Printf("csi.SetEnabled(%v)", enabled)
 }

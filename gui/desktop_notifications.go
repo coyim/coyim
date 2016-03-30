@@ -9,6 +9,8 @@ import (
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/TheCreeper/go-notify"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/godbus/dbus"
+
+	"github.com/twstrike/coyim/ui"
 )
 
 type desktopNotifications struct {
@@ -31,21 +33,27 @@ func (dn *desktopNotifications) show(jid, from, message string, showMessage, sho
 	//hints[notify.HintResident] = true
 	hints[notify.HintTransient] = false
 	hints[notify.HintActionIcons] = "coyim"
+	hints[notify.HintDesktopEntry] = "coyim.desktop"
+	hints[notify.HintCategory] = notify.ClassImReceived
 	if showFullscreen {
 		hints[notify.HintUrgency] = notify.UrgencyCritical
 	}
 	notification := notify.Notification{
-		AppName: "CoyIM",
-		AppIcon: "coyim",
-		Timeout: notify.ExpiresNever,
-		Hints:   hints,
+		AppName:    "CoyIM",
+		AppIcon:    "coyim",
+		Timeout:    notify.ExpiresNever,
+		Hints:      hints,
+		ReplacesID: dn.notifications[jid],
 	}
+
+	from = ui.EscapeAllHTMLTags(string(ui.StripSomeHTML([]byte(from))))
 	if message == "" || showMessage == false {
 		notification.Summary = "New message!"
 		notification.Body = "From: <b>" + from + "</b>"
 	} else {
 		notification.Summary = "From: " + from
 		smsg := strings.Split(message, "\n")[0]
+		smsg = ui.EscapeAllHTMLTags(smsg)
 		if len(smsg) > 254 {
 			smsg = smsg[0:253]
 			stok := strings.Split(smsg, " ")

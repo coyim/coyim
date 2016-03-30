@@ -25,7 +25,7 @@ type roster struct {
 	toCollapse  []gtki.TreePath
 
 	ui       *gtkUI
-	deNotify *DesktopNotifications
+	deNotify *desktopNotifications
 }
 
 const (

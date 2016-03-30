@@ -2,12 +2,12 @@
 
 package gui
 
-type DesktopNotifications struct{}
+type desktopNotifications struct{}
 
-func newDesktopNotifications() *DesktopNotifications {
+func newDesktopNotifications() *desktopNotifications {
 	return nil
 }
 
-func (dn *DesktopNotifications) show(jid, from, message string, showMessage, showFullscreen bool) error {
+func (dn *desktopNotifications) show(jid, from, message string, showMessage, showFullscreen bool) error {
 	return nil
 }

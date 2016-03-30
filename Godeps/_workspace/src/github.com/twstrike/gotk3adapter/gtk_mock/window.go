@@ -20,6 +20,12 @@ func (*MockWindow) HasToplevelFocus() bool {
 	return false
 }
 
+func (*MockWindow) Fullscreen() {
+}
+
+func (*MockWindow) Unfullscreen() {
+}
+
 func (*MockWindow) IsActive() bool {
 	return false
 }

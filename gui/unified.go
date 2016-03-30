@@ -33,6 +33,7 @@ type unifiedLayout struct {
 	close        gtki.Button
 	convsVisible bool
 	inPageSet    bool
+	isFullscreen bool
 	itemMap      map[int]*conversationStackItem
 }
 
@@ -52,10 +53,11 @@ type conversationStackItem struct {
 
 func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	ul := &unifiedLayout{
-		ui:       ui,
-		cl:       &conversationList{},
-		leftPane: left,
-		itemMap:  make(map[int]*conversationStackItem),
+		ui:           ui,
+		cl:           &conversationList{},
+		leftPane:     left,
+		itemMap:      make(map[int]*conversationStackItem),
+		isFullscreen: false,
 	}
 	ul.cl.layout = ul
 
@@ -79,6 +81,7 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 
 	connectShortcut("<Primary>Page_Down", ul.ui.window, ul.nextTab)
 	connectShortcut("<Primary>Page_Up", ul.ui.window, ul.previousTab)
+	connectShortcut("F11", ul.ui.window, ul.toggleFullscreen)
 
 	parent.PackStart(ul.rightPane, false, true, 0)
 	parent.SetChildPacking(ul.leftPane, false, true, 0, gtki.PACK_START)
@@ -238,8 +241,9 @@ func (csi *conversationStackItem) bringToFront() {
 	csi.needsAttention = false
 	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
-	csi.layout.header.SetText(csi.to)
-	csi.layout.headerBar.SetSubtitle(csi.to)
+	title := fmt.Sprintf("%s <-> %s", csi.account.session.GetConfig().Account, csi.to)
+	csi.layout.header.SetText(title)
+	csi.layout.headerBar.SetSubtitle(title)
 	csi.entry.GrabFocus()
 }
 
@@ -348,6 +352,15 @@ func (ul *unifiedLayout) previousTab(gtki.Window) {
 	} else {
 		ul.notebook.SetCurrentPage(np)
 	}
+}
+
+func (ul *unifiedLayout) toggleFullscreen(gtki.Window) {
+	if ul.isFullscreen {
+		ul.ui.window.Unfullscreen()
+	} else {
+		ul.ui.window.Fullscreen()
+	}
+	ul.isFullscreen = !ul.isFullscreen
 }
 
 func (ul *unifiedLayout) update() {

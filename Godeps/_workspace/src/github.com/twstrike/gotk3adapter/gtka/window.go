@@ -85,3 +85,11 @@ func (v *window) Present() {
 func (v *window) HasToplevelFocus() bool {
 	return v.internal.HasToplevelFocus()
 }
+
+func (v *window) Fullscreen() {
+	v.internal.Fullscreen()
+}
+
+func (v *window) Unfullscreen() {
+	v.internal.Unfullscreen()
+}

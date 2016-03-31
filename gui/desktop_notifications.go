@@ -15,6 +15,7 @@ import (
 
 type desktopNotifications struct {
 	notifications map[string]uint32
+	notification notify.Notification
 }
 
 func newDesktopNotifications() *desktopNotifications {
@@ -70,5 +71,6 @@ func (dn *desktopNotifications) show(jid, from, message string, showMessage, sho
 		return fmt.Errorf("Error showing notification: %v", err)
 	}
 	dn.notifications[jid] = nid
+	dn.notification = notification
 	return nil
 }

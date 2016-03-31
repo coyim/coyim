@@ -6,7 +6,7 @@ Here's the brief:
 * Pull requests are based off, integrated into & rebased against master
 * Write automated tests, ideally using TDD. CI needs to be green in order to merge.
 * Contact us for questions & suggestions:
-  * IRC: #coyim @ chat.freenode.org ([join via webchat](https://webchat.freenode.net/))
+  * IRC: #coyim @ irc.oftc.net ([join via webchat](https://webchat.oftc.net))
   * Email: [coyim@thoughtworks.com](mailto:coyim@thoughtworks.com)
   * Twitter: [@coyproject](https://twitter.com/coyproject)
 

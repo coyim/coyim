@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"strconv"
+	"strings"
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/html"
 )
@@ -20,6 +21,11 @@ func init() {
 	tagsToAvoid["p"] = true
 	tagsToAvoid["span"] = true
 	tagsToAvoid["strong"] = true
+	tagsToAvoid["a"] = true
+	tagsToAvoid["i"] = true
+	tagsToAvoid["b"] = true
+	tagsToAvoid["u"] = true
+	tagsToAvoid["img"] = true
 }
 
 // StripSomeHTML removes the most common html presentation tags from the text
@@ -75,6 +81,12 @@ loop:
 	}
 
 	return
+}
+
+func EscapeAllHTMLTags(in string) string {
+	in = strings.Replace(in, "<", "&lt;", -1)
+	in = strings.Replace(in, ">", "&gt;", -1)
+	return in
 }
 
 var (

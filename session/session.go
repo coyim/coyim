@@ -608,7 +608,6 @@ func (s *session) receiveClientMessage(from string, when time.Time, body string)
 		return
 	}
 
-	log.Printf("  -> Content %#v\n", out)
 	s.messageReceived(from, when, encrypted, out)
 }
 
@@ -870,7 +869,9 @@ func (s *session) Close() {
 	s.setStatus(DISCONNECTED)
 
 	if s.conn != nil {
-		s.terminateConversations()
+		if !s.wantToBeOnline {
+			s.terminateConversations()
+		}
 		s.conn.Close()
 		s.conn = nil
 	}

@@ -1,7 +1,6 @@
 {
 	"ImportPath": "github.com/twstrike/coyim",
 	"GoVersion": "go1.5",
-	"GodepVersion": "v60",
 	"Packages": [
 		"./..."
 	],
@@ -94,11 +93,11 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/otr3",
-			"Rev": "819b719e7acd8b98994a130c52b3005ae48ad0fd"
+			"Rev": "7b5319fce06d461d44c45743a01c1d37c7593520"
 		},
 		{
 			"ImportPath": "github.com/twstrike/otr3/sexp",
-			"Rev": "819b719e7acd8b98994a130c52b3005ae48ad0fd"
+			"Rev": "7b5319fce06d461d44c45743a01c1d37c7593520"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/pbkdf2",

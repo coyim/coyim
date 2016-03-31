@@ -97,6 +97,10 @@ cp -a $(brew --prefix hicolor-icon-theme)/share/icons/* $resources/share/icons
 mkdir -p $resources/share/themes/Mac
 cp -a $(brew --prefix gtk+3)/share/themes/Mac/* $resources/share/themes/Mac
 
+# GSetting Schemas
+mkdir -p $resources/share/glib-2.0/schemas
+cp -a $(brew --prefix)/share/glib-2.0/schemas/* $resources/share/glib-2.0/schemas
+
 mkdir -p $resources/etc/gtk-3.0
 cat > $resources/etc/gtk-3.0/settings.ini << EOF
 [Settings]

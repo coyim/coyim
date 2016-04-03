@@ -187,7 +187,7 @@ func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_notifiesOnSeveralMessageE
 	c.Assert(<-nn, Equals, "We received this error from the other person: hmm this is weird.")
 
 	handler.HandleMessageEvent(otr3.MessageEventReceivedMessageNotInPrivate, nil, nil)
-	c.Assert(<-nn, Equals, "We received a an encrypted message which can't be read, since private communication is not currently turned on.")
+	c.Assert(<-nn, Equals, "We received an encrypted message which can't be read, since private communication is not currently turned on. You should ask your peer to repeat what they said.")
 
 	handler.HandleMessageEvent(otr3.MessageEventReceivedMessageUnencrypted, nil, nil)
 	c.Assert(<-nn, Equals, "We received a message that was transferred without encryption")

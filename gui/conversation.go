@@ -138,7 +138,7 @@ func (conv *conversationPane) onSendMessageSignal() {
 		sendError := conv.sendMessage(text)
 
 		if sendError != nil {
-			fmt.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
+			log.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
 		}
 	}
 	conv.entry.GrabFocus()
@@ -165,7 +165,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 
 	err := c.EndEncryptedChat(session)
 	if err != nil {
-		fmt.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
+		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 	}
 }
 

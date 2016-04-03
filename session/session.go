@@ -117,8 +117,9 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 
 		autoApproves: make(map[string]bool),
 
-		xmppLogger:    openLogFile(c.RawLogFile),
-		dialerFactory: df,
+		xmppLogger:       openLogFile(c.RawLogFile),
+		connectionLogger: logToDebugLog(),
+		dialerFactory:    df,
 	}
 
 	s.ReloadKeys()
@@ -804,10 +805,6 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 	}
 
 	s.setStatus(CONNECTING)
-
-	if s.connectionLogger == nil {
-		s.connectionLogger = newLogger()
-	}
 
 	conf := s.GetConfig()
 	policy := config.ConnectionPolicy{

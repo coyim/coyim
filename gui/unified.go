@@ -266,7 +266,7 @@ func (cl *conversationList) getItemForIter(iter gtki.TreeIter) *conversationStac
 	}
 	gv, err := val.GoValue()
 	if err != nil {
-		fmt.Printf("Error getting GoValue for ulIndexID: %v", err)
+		log.Printf("Error getting GoValue for ulIndexID: %v", err)
 		return nil
 	}
 	return cl.layout.itemMap[gv.(int)]

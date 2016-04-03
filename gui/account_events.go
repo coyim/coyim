@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
@@ -52,11 +51,11 @@ func (u *gtkUI) handleLogEvent(ev events.Log) {
 
 	switch ev.Level {
 	case events.Info:
-		fmt.Println(">>> INFO", m)
+		log.Println(">>> INFO", m)
 	case events.Warn:
-		fmt.Println(">>> WARN", m)
+		log.Println(">>> WARN", m)
 	case events.Alert:
-		fmt.Println(">>> ALERT", m)
+		log.Println(">>> ALERT", m)
 	}
 }
 

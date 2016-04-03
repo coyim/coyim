@@ -45,6 +45,10 @@ func (*MockWidget) GrabFocus() {
 func (*MockWidget) GrabDefault() {
 }
 
+func (*MockWidget) HasFocus() bool {
+	return false
+}
+
 func (*MockWidget) Hide() {
 }
 

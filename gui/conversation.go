@@ -53,8 +53,9 @@ type conversationPane struct {
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
-	marks  []*timedMark
-	hidden bool
+	marks           []*timedMark
+	hidden          bool
+	afterNewMessage func()
 }
 
 type tags struct {
@@ -219,6 +220,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		to:              uid,
 		account:         account,
 		transientParent: transientParent,
+		afterNewMessage: func() {},
 	}
 
 	builder.getItems(
@@ -301,6 +303,8 @@ func newConversationWindow(account *account, uid string, ui *gtkUI) *conversatio
 		win:              win,
 	}
 
+	cp.afterNewMessage = conv.potentiallySetUrgent
+
 	// Unlike the GTK version, this is not supposed to be used as a callback but
 	// it attaches the callback to the widget
 	conv.win.HideOnDelete()
@@ -312,6 +316,10 @@ func newConversationWindow(account *account, uid string, ui *gtkUI) *conversatio
 			conv.entry.GrabFocus()
 			inEventHandler = false
 		}
+	})
+
+	conv.win.Connect("focus-in-event", func() {
+		conv.unsetUrgent()
 	})
 
 	conv.win.Connect("notify::is-active", func() {
@@ -565,6 +573,7 @@ func (conv *conversationPane) appendToHistory(timestamp time.Time, entries ...ta
 				insertAtEnd(buff, entry.text)
 			}
 		}
+		conv.afterNewMessage()
 	})
 }
 
@@ -674,4 +683,14 @@ func (conv *conversationPane) onShow() {
 		conv.reapOlderThan(time.Now().Add(-reapInterval))
 		conv.hidden = false
 	}
+}
+
+func (conv *conversationWindow) potentiallySetUrgent() {
+	if !conv.win.HasToplevelFocus() {
+		conv.win.SetUrgencyHint(true)
+	}
+}
+
+func (conv *conversationWindow) unsetUrgent() {
+	conv.win.SetUrgencyHint(false)
 }

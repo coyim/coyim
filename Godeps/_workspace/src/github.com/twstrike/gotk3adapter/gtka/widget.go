@@ -114,3 +114,7 @@ func (v *widget) SetHAlign(v2 gtki.Align) {
 func (v *widget) Destroy() {
 	v.internal.Destroy()
 }
+
+func (v *widget) HasFocus() bool {
+	return v.internal.HasFocus()
+}

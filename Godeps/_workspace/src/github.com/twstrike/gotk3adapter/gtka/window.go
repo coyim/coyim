@@ -93,3 +93,7 @@ func (v *window) Fullscreen() {
 func (v *window) Unfullscreen() {
 	v.internal.Unfullscreen()
 }
+
+func (v *window) SetUrgencyHint(v1 bool) {
+	v.internal.SetUrgencyHint(v1)
+}

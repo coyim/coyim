@@ -18,6 +18,7 @@ type Window interface {
 	SetTitle(string)
 	SetTitlebar(Widget) // Since 3.10
 	SetTransientFor(Window)
+	SetUrgencyHint(bool)
 }
 
 func AssertWindow(_ Window) {}

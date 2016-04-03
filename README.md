@@ -13,7 +13,7 @@ To do this, we enable OTR by default, we default to use Tor and we will use the 
 
 CoyIM is currently under active development. There have been no security audits of the code, and you should currently not use this for anything sensitive.
 
-## Get started
+## Getting started
 
 **Requirements:** to run CoyIM you need a 64bit operating system
 
@@ -27,7 +27,7 @@ If the client you have been using so far is Pidgin, you will find the files you 
 
 If you want to know more about the features you will and will not find in CoyIM, read [this page](https://coy.im/about/).
 
-## Build CoyIM
+## Building CoyIM
 
 ### GUI version
 

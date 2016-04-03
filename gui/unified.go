@@ -98,6 +98,7 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 
 func (ul *unifiedLayout) createConversation(account *account, uid string) conversationView {
 	cp := createConversationPane(account, uid, ul.ui, ul.ui.window)
+	cp.connectEnterHandler(nil)
 	cp.menubar.Hide()
 	idx := ul.notebook.AppendPage(cp.widget, nil)
 	if idx < 0 {

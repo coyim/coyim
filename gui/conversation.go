@@ -248,27 +248,33 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		scrollToBottom(cp.scrollHistory)
 	})
 
-	cp.entry.Connect("key-press-event", func(recv gtki.TextView, ev gdki.Event) bool {
-		evk := g.gdk.EventKeyFrom(ev)
-		ret := false
-
-		if account.isInsertEnter(evk) {
-			insertEnter(cp.entry)
-			ret = true
-		} else if account.isSend(evk) {
-			cp.onSendMessageSignal()
-			ret = true
-		}
-
-		return ret
-	})
-
 	cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
 
 	ui.displaySettings.control(cp.history)
 	ui.displaySettings.control(cp.entry)
 
 	return cp
+}
+
+func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
+	if target == nil {
+		target = conv.entry
+	}
+
+	target.Connect("key-press-event", func(_ gtki.Widget, ev gdki.Event) bool {
+		evk := g.gdk.EventKeyFrom(ev)
+		ret := false
+
+		if conv.account.isInsertEnter(evk) {
+			insertEnter(conv.entry)
+			ret = true
+		} else if conv.account.isSend(evk) {
+			conv.onSendMessageSignal()
+			ret = true
+		}
+
+		return ret
+	})
 }
 
 func (a *account) isInsertEnter(evk gdki.EventKey) bool {
@@ -303,6 +309,7 @@ func newConversationWindow(account *account, uid string, ui *gtkUI) *conversatio
 		win:              win,
 	}
 
+	cp.connectEnterHandler(conv.win)
 	cp.afterNewMessage = conv.potentiallySetUrgent
 
 	// Unlike the GTK version, this is not supposed to be used as a callback but

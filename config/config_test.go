@@ -70,7 +70,8 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 		"ShowOnlyOnline": false,
 		"HideFeedbackBar": false
 	},
-	"AdvancedOptions": false
+	"AdvancedOptions": false,
+	"UniqueConfigurationID": ""
 }`
 
 	conf := ApplicationConfig{

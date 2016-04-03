@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"os"
@@ -25,6 +26,7 @@ type ApplicationConfig struct {
 	ConnectAutomatically          bool
 	Display                       DisplayConfig `json:",omitempty"`
 	AdvancedOptions               bool
+	UniqueConfigurationID         string
 }
 
 var loadEntries []func(*ApplicationConfig)
@@ -81,6 +83,19 @@ func (a *ApplicationConfig) onAfterSave() {
 	a.afterSave = nil
 	for _, f := range afterSaves {
 		f()
+	}
+}
+
+// GenUniqueID will generate and set a new unique ID fro this application config
+func (a *ApplicationConfig) GenUniqueID() {
+	s := [32]byte{}
+	randomString(s[:])
+	a.UniqueConfigurationID = hex.EncodeToString(s[:])
+}
+
+func (a *ApplicationConfig) onBeforeSave() {
+	if a.UniqueConfigurationID == "" {
+		a.GenUniqueID()
 	}
 }
 
@@ -223,6 +238,7 @@ func (a *ApplicationConfig) GetAccount(jid string) (*Account, bool) {
 func (a *ApplicationConfig) Save(ks KeySupplier) error {
 	a.ioLock.Lock()
 	defer a.ioLock.Unlock()
+	a.onBeforeSave()
 	defer a.onAfterSave()
 
 	contents, err := a.serialize()

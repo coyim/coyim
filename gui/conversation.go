@@ -270,20 +270,11 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 }
 
 func (a *account) isInsertEnter(evk gdki.EventKey) bool {
-	return evk.State()&uint(gdki.GDK_SHIFT_MASK) != 0 && hasEnter(evk)
+	return hasShift(evk) && hasEnter(evk)
 }
 
 func (a *account) isSend(evk gdki.EventKey) bool {
-	return !hasModifier(evk) && hasEnter(evk)
-}
-
-func hasModifier(evk gdki.EventKey) bool {
-	return evk.State()&uint(gdki.GDK_MODIFIER_MASK) != 0
-}
-
-func hasEnter(evk gdki.EventKey) bool {
-	return evk.KeyVal() == gdki.KEY_Return ||
-		evk.KeyVal() == gdki.KEY_KP_Enter
+	return !hasControlingModifier(evk) && hasEnter(evk)
 }
 
 func newConversationWindow(account *account, uid string, ui *gtkUI) *conversationWindow {

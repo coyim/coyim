@@ -137,10 +137,10 @@ func (s *session) ReloadKeys() {
 }
 
 // Send will send the given message to the receiver given
-func (s *session) Send(to string, msg string) error {
+func (s *session) Send(to, resource string, msg string) error {
 	if s.IsConnected() {
-		log.Printf("<- to=%v {%v}\n", to, msg)
-		return s.conn.Send(to, msg)
+		log.Printf("<- to=%v {%v}\n", utils.ComposeFullJid(to, resource), msg)
+		return s.conn.Send(utils.ComposeFullJid(to, resource), msg)
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }
@@ -510,7 +510,7 @@ func (s *session) NewConversation(peer string) *otr3.Conversation {
 func (s *session) processClientMessage(stanza *data.ClientMessage) {
 	log.Printf("-> Stanza %#v\n", stanza)
 
-	from := utils.RemoveResourceFromJid(stanza.From)
+	from, resource := utils.SplitJid(stanza.From)
 
 	//TODO: investigate which errors are recoverable
 	//https://xmpp.org/rfcs/rfc3920.html#stanzas-error
@@ -540,12 +540,13 @@ func (s *session) processClientMessage(stanza *data.ClientMessage) {
 		messageTime = time.Now()
 	}
 
-	s.receiveClientMessage(from, messageTime, stanza.Body)
+	s.receiveClientMessage(from, resource, messageTime, stanza.Body)
 }
 
-func (s *session) receiveClientMessage(from string, when time.Time, body string) {
+func (s *session) receiveClientMessage(from, resource string, when time.Time, body string) {
+	// TODO: do we want to have different conversation instances for different resources?
 	conversation, _ := s.convManager.EnsureConversationWith(from)
-	out, err := conversation.Receive(s, []byte(body))
+	out, err := conversation.Receive(s, resource, []byte(body))
 	encrypted := conversation.IsEncrypted()
 
 	if err != nil {
@@ -580,7 +581,7 @@ func (s *session) receiveClientMessage(from string, when time.Time, body string)
 			} else {
 				s.info(fmt.Sprintf("%s has ended the secure conversation.", from))
 
-				err := c.EndEncryptedChat(s)
+				err := c.EndEncryptedChat(s, resource)
 				if err != nil {
 					s.info(fmt.Sprintf("Unable to automatically tear down OTR conversation with %s: %s\n", from, err.Error()))
 					break
@@ -612,13 +613,14 @@ func (s *session) receiveClientMessage(from string, when time.Time, body string)
 		return
 	}
 
-	s.messageReceived(from, when, encrypted, out)
+	s.messageReceived(from, resource, when, encrypted, out)
 }
 
-func (s *session) messageReceived(from string, timestamp time.Time, encrypted bool, message []byte) {
+func (s *session) messageReceived(from, resource string, timestamp time.Time, encrypted bool, message []byte) {
 	s.publishEvent(events.Message{
 		Session:   s,
 		From:      from,
+		Resource:  resource,
 		When:      timestamp,
 		Body:      message,
 		Encrypted: encrypted,
@@ -838,11 +840,11 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 }
 
 // EncryptAndSendTo encrypts and sends the message to the given peer
-func (s *session) EncryptAndSendTo(peer string, message string) error {
+func (s *session) EncryptAndSendTo(peer, resource string, message string) error {
 	//TODO: review whether it should create a conversation
 	if s.IsConnected() {
 		conversation, _ := s.convManager.EnsureConversationWith(peer)
-		return conversation.Send(s, []byte(message))
+		return conversation.Send(s, resource, []byte(message))
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }

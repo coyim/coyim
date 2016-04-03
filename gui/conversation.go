@@ -11,6 +11,7 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
+	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/ui"
 )
@@ -56,6 +57,7 @@ type conversationPane struct {
 	marks           []*timedMark
 	hidden          bool
 	afterNewMessage func()
+	currentPeer     func() (*rosters.Peer, bool)
 }
 
 type tags struct {
@@ -144,11 +146,19 @@ func (conv *conversationPane) onSendMessageSignal() {
 	conv.entry.GrabFocus()
 }
 
+func (conv *conversationPane) currentResource() string {
+	resource := ""
+	conv.withCurrentPeer(func(p *rosters.Peer) {
+		resource = p.ResourceToUse()
+	})
+	return resource
+}
+
 func (conv *conversationPane) onStartOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
 	c, _ := session.ConversationManager().EnsureConversationWith(conv.to)
-	err := c.StartEncryptedChat(session)
+	err := c.StartEncryptedChat(session, conv.currentResource())
 	if err != nil {
 		//TODO: notify failure
 	}
@@ -163,7 +173,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 		return
 	}
 
-	err := c.EndEncryptedChat(session)
+	err := c.EndEncryptedChat(session, conv.currentResource())
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 	}
@@ -221,6 +231,9 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		account:         account,
 		transientParent: transientParent,
 		afterNewMessage: func() {},
+		currentPeer: func() (*rosters.Peer, bool) {
+			return ui.getPeer(account, uid)
+		},
 	}
 
 	builder.getItems(
@@ -373,6 +386,13 @@ func (conv *conversationPane) getConversation() (client.Conversation, bool) {
 	return conv.account.session.ConversationManager().GetConversationWith(conv.to)
 }
 
+func (conv *conversationPane) withCurrentPeer(f func(*rosters.Peer)) {
+	p, ok := conv.currentPeer()
+	if ok {
+		f(p)
+	}
+}
+
 func (conv *conversationPane) isVerified() bool {
 	conversation, exists := conv.getConversation()
 	if !exists {
@@ -437,7 +457,7 @@ func (conv *conversationWindow) show(userInitiated bool) {
 }
 
 func (conv *conversationPane) sendMessage(message string) error {
-	err := conv.account.session.EncryptAndSendTo(conv.to, message)
+	err := conv.account.session.EncryptAndSendTo(conv.to, conv.currentResource(), message)
 
 	if err != nil {
 		oerr, isoff := err.(*access.OfflineError)

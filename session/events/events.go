@@ -69,6 +69,7 @@ type Presence struct {
 type Message struct {
 	Session   access.Session
 	From      string
+	Resource  string
 	When      time.Time
 	Body      []byte
 	Encrypted bool

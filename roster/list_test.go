@@ -96,7 +96,7 @@ func (s *ListSuite) Test_AddOrReplace_mergesTheEntriesIfInTheList(c *g.C) {
 
 	c.Assert(res, g.Equals, false)
 	c.Assert(len(l.peers), g.Equals, 1)
-	c.Assert(*l.peers["somewhere"], g.DeepEquals, Peer{Jid: "somewhere", Name: "something2", Groups: toSet("goodbye"), Subscription: "from"})
+	c.Assert(*l.peers["somewhere"], g.DeepEquals, Peer{Jid: "somewhere", Name: "something2", Groups: toSet("goodbye"), Subscription: "from", resources: toSet()})
 }
 
 func (s *ListSuite) Test_ToSlice_createsASliceOfTheContentSortedAlphabetically(c *g.C) {
@@ -278,8 +278,8 @@ func (s *ListSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *
 
 func (s *ListSuite) Test_PeerPresenceUpdate_updatesPreviouslyKnownPeer(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Online: false})
-	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Online: true, Status: "dnd", StatusMsg: "working"})
+	l.AddOrMerge(&Peer{Jid: "foo@bar.com", Online: false, resources: toSet()})
+	l.AddOrMerge(&Peer{Jid: "foo2@bar.com", Online: true, Status: "dnd", StatusMsg: "working", resources: toSet()})
 
 	res := l.PeerPresenceUpdate("foo@bar.com/hmm", "hello", "goodbye", "")
 	c.Assert(res, g.Equals, true)

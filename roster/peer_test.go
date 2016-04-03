@@ -40,6 +40,7 @@ func (s *PeerXmppSuite) Test_toEntry_ReturnsAnEntryWithTheInformation(c *g.C) {
 		Name:         "something",
 		Subscription: "from",
 		Groups:       toSet("hello::bar"),
+		resources:    toSet(),
 	}
 
 	c.Assert(p.ToEntry().Jid, g.Equals, "foo@bar.com")
@@ -54,13 +55,14 @@ func (s *PeerXmppSuite) Test_Dump_willDumpAllInfo(c *g.C) {
 		Name:         "something",
 		Subscription: "from",
 		Groups:       toSet("hello::bar"),
+		resources:    toSet(),
 	}
 
 	c.Assert(p.Dump(), g.Equals, "Peer{foo@bar.com[something ()], subscription='from', status=''('') online=false, asked=false, pendingSubscribe='', belongsTo=''}")
 }
 
 func (s *PeerXmppSuite) Test_PeerWithState_createsANewPeer(c *g.C) {
-	p := PeerWithState("bla@foo.com/1234", "hmm", "no", "")
+	p := PeerWithState("bla@foo.com/1234", "hmm", "no", "", "")
 	c.Assert(p.Jid, g.Equals, "bla@foo.com")
 	c.Assert(p.Name, g.Equals, "")
 	c.Assert(p.Status, g.Equals, "hmm")
@@ -82,7 +84,8 @@ func (s *PeerXmppSuite) Test_NameForPresentation_returnsTheNameIfItExistsButJidO
 
 func (s *PeerXmppSuite) Test_MergeWith_takesTheFirstGroupsIfExists(c *g.C) {
 	p1 := &Peer{
-		Groups: toSet("one"),
+		Groups:    toSet("one"),
+		resources: toSet(),
 	}
 	p2 := &Peer{}
 
@@ -91,7 +94,8 @@ func (s *PeerXmppSuite) Test_MergeWith_takesTheFirstGroupsIfExists(c *g.C) {
 
 func (s *PeerXmppSuite) Test_SetLatestError_setsLatestError(c *g.C) {
 	p1 := &Peer{
-		Groups: toSet("one"),
+		Groups:    toSet("one"),
+		resources: toSet(),
 	}
 	p1.SetLatestError("oen", "tow", "there")
 

@@ -24,8 +24,8 @@ type ConversationManagerSuite struct{}
 var _ = Suite(&ConversationManagerSuite{})
 
 type testSender struct {
-	peer, msg string
-	err       error
+	peer, resource, msg string
+	err                 error
 }
 
 type testConvBuilder struct {
@@ -36,9 +36,10 @@ func (cb *testConvBuilder) NewConversation(peer string) *otr3.Conversation {
 	return cb.fake
 }
 
-func (ts *testSender) Send(peer, msg string) error {
+func (ts *testSender) Send(peer, resource, msg string) error {
 	ts.peer = peer
 	ts.msg = msg
+	ts.resource = resource
 	return ts.err
 }
 

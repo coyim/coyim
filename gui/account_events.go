@@ -68,7 +68,8 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 
 	u.roster.messageReceived(
 		account,
-		utils.RemoveResourceFromJid(ev.From),
+		ev.From,
+		ev.Resource,
 		ev.When,
 		ev.Encrypted,
 		ev.Body,

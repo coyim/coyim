@@ -38,7 +38,7 @@ type Session interface {
 	Connect(string, tls.Verifier) error
 	ConversationManager() client.ConversationManager
 	DenyPresenceSubscription(string, string) error
-	EncryptAndSendTo(string, string) error
+	EncryptAndSendTo(string, string, string) error
 	GetConfig() *config.Account
 	GroupDelimiter() string
 	HandleConfirmOrDeny(string, bool)
@@ -50,7 +50,7 @@ type Session interface {
 	ReloadKeys()
 	RemoveContact(string)
 	RequestPresenceSubscription(string, string) error
-	Send(string, string) error
+	Send(string, string, string) error
 	SetCommandManager(client.CommandManager)
 	SetConnectionLogger(io.Writer)
 	SetConnector(Connector)

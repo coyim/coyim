@@ -16,7 +16,7 @@ type ConversationBuilder interface {
 //TODO: this assumes there is no more than one simultaneous conversations with a given peer
 type Sender interface {
 	// Send sends a message to a peer
-	Send(peer, msg string) error
+	Send(peer, resource, msg string) error
 }
 
 // ConversationManager represents an entity capable of managing Conversations
@@ -102,7 +102,7 @@ func (m *conversationManager) TerminateAll() {
 
 func (m *conversationManager) terminateConversationWith(peer string) error {
 	if c, ok := m.conversations[peer]; ok {
-		return c.EndEncryptedChat(m.sender)
+		return c.EndEncryptedChat(m.sender, "")
 	}
 
 	return nil

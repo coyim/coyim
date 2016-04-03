@@ -703,7 +703,7 @@ CommandLoop:
 					}
 				}
 
-				err := conversation.Send(s.Conn(), message)
+				err := conversation.Send(s, "", message)
 				if err != nil {
 					c.alert(err.Error())
 					break
@@ -711,7 +711,7 @@ CommandLoop:
 
 			case otrCommand:
 				conversation, _ := s.ConversationManager().GetConversationWith(string(cmd.User))
-				conversation.StartEncryptedChat(s)
+				conversation.StartEncryptedChat(s, "")
 			case otrInfoCommand:
 				for _, pk := range s.PrivateKeys() {
 					c.info(fmt.Sprintf("Your OTR fingerprint is %x", pk.PublicKey().Fingerprint()))
@@ -731,7 +731,7 @@ CommandLoop:
 					break
 				}
 
-				err := conversation.EndEncryptedChat(s)
+				err := conversation.EndEncryptedChat(s, "")
 				if err != nil {
 					c.alert("Can't end the conversation - it seems there is no randomness in your system. This could be a significant problem.")
 					break
@@ -749,9 +749,9 @@ CommandLoop:
 
 				if s.OtrEventHandler()[to].WaitingForSecret {
 					s.OtrEventHandler()[to].WaitingForSecret = false
-					err = conversation.ProvideAuthenticationSecret(s.Conn(), []byte(cmd.Secret))
+					err = conversation.ProvideAuthenticationSecret(s, "", []byte(cmd.Secret))
 				} else {
-					err = conversation.StartAuthenticate(s.Conn(), cmd.Question, []byte(cmd.Secret))
+					err = conversation.StartAuthenticate(s, "", cmd.Question, []byte(cmd.Secret))
 				}
 
 				if err != nil {

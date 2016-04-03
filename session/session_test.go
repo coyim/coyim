@@ -625,7 +625,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState("some2@one.org", "somewhere", "", ""))
+	sess.r.AddOrReplace(roster.PeerWithState("some2@one.org", "somewhere", "", "", ""))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -807,7 +807,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState("some2@one.org", "dnd", "", ""))
+	sess.r.AddOrReplace(roster.PeerWithState("some2@one.org", "dnd", "", "", ""))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)

@@ -340,7 +340,12 @@ func (r *roster) presenceUpdated(account *account, from, show, showStatus string
 	})
 }
 
-func (r *roster) messageReceived(account *account, from string, timestamp time.Time, encrypted bool, message []byte) {
+func (r *roster) messageReceived(account *account, from, resource string, timestamp time.Time, encrypted bool, message []byte) {
+	p, ok := r.ui.getPeer(account, from)
+	if ok {
+		p.LastResource(resource)
+	}
+
 	doInUIThread(func() {
 		conv, err := r.openConversationView(account, from, false)
 		if err != nil {

@@ -64,7 +64,7 @@ func (*SessionMock) DenyPresenceSubscription(string, string) error {
 }
 
 // EncryptAndSendTo is the implementation for Session interface
-func (*SessionMock) EncryptAndSendTo(string, string) error {
+func (*SessionMock) EncryptAndSendTo(string, string, string) error {
 	return nil
 }
 
@@ -118,7 +118,7 @@ func (*SessionMock) RequestPresenceSubscription(string, string) error {
 }
 
 // Send is the implementation for Session interface
-func (*SessionMock) Send(string, string) error {
+func (*SessionMock) Send(string, string, string) error {
 	return nil
 }
 

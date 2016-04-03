@@ -137,8 +137,11 @@ func (s *session) ReloadKeys() {
 
 // Send will send the given message to the receiver given
 func (s *session) Send(to string, msg string) error {
-	log.Printf("<- to=%v {%v}\n", to, msg)
-	return s.conn.Send(to, msg)
+	if s.IsConnected() {
+		log.Printf("<- to=%v {%v}\n", to, msg)
+		return s.conn.Send(to, msg)
+	}
+	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }
 
 //TODO: error

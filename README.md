@@ -13,9 +13,23 @@ To do this, we enable OTR by default, we default to use Tor and we will use the 
 
 CoyIM is currently under active development. There have been no security audits of the code, and you should currently not use this for anything sensitive.
 
-## Installation instructions
+## Getting started
+
+Using CoyIM is very simple: you just need to download the executable file from the project's [home page](https://coy.im/) and then run it.
+
+When you first launch CoyIM, a wizard will appear. If you already have a Jabber client installed and configured for OTR encryption in your computer, you can use this wizard to import your account settings as well as your OTR keys and your contacts' fingerprints. By importing them, you won't have to do anything else to use CoyIM just as you used your former client.
+
+If you don't import your account settings, keys and fingerprints through the wizard that opens at the first launch, you can still import them by going to Accounts -> Import at a later stage.
+
+If the client you have been using so far is Pidgin, you will find the files you need to import in the .purple directory in your home.
+
+If you want to know more about the features you will and will not find in CoyIM, read [this page](https://coy.im/about/).
+
+## Building CoyIM
 
 ### GUI version
+
+**Please note**: Important requirements for building CoyIM are also git and golang (at least version 1.4).
 
 The GUI version requires GTK+ >= 3.6.16, which installation depends on your OS:
 

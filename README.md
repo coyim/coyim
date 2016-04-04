@@ -15,8 +15,6 @@ CoyIM is currently under active development. There have been no security audits 
 
 ## Getting started
 
-**Requirements:** to run CoyIM you need a 64bit operating system
-
 Using CoyIM is very simple: you just need to download the executable file from the project's [home page](https://coy.im/) and then run it.
 
 When you first launch CoyIM, a wizard will appear. If you already have a Jabber client installed and configured for OTR encryption in your computer, you can use this wizard to import your account settings as well as your OTR keys and your contacts' fingerprints. By importing them, you won't have to do anything else to use CoyIM just as you used your former client.

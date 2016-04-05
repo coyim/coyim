@@ -20,28 +20,28 @@
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/cairo",
-			"Comment": "GOTK3_0_2_0-446-g3b2b175",
-			"Rev": "3b2b17537e33586945060efacdea54693122644d"
+			"Comment": "GOTK3_0_2_0-449-gf08ae2d",
+			"Rev": "f08ae2d77873a86f5c8dc46a8b8eecb93272a1f7"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/gdk",
-			"Comment": "GOTK3_0_2_0-446-g3b2b175",
-			"Rev": "3b2b17537e33586945060efacdea54693122644d"
+			"Comment": "GOTK3_0_2_0-449-gf08ae2d",
+			"Rev": "f08ae2d77873a86f5c8dc46a8b8eecb93272a1f7"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/glib",
-			"Comment": "GOTK3_0_2_0-446-g3b2b175",
-			"Rev": "3b2b17537e33586945060efacdea54693122644d"
+			"Comment": "GOTK3_0_2_0-449-gf08ae2d",
+			"Rev": "f08ae2d77873a86f5c8dc46a8b8eecb93272a1f7"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/gtk",
-			"Comment": "GOTK3_0_2_0-446-g3b2b175",
-			"Rev": "3b2b17537e33586945060efacdea54693122644d"
+			"Comment": "GOTK3_0_2_0-449-gf08ae2d",
+			"Rev": "f08ae2d77873a86f5c8dc46a8b8eecb93272a1f7"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/pango",
-			"Comment": "GOTK3_0_2_0-446-g3b2b175",
-			"Rev": "3b2b17537e33586945060efacdea54693122644d"
+			"Comment": "GOTK3_0_2_0-449-gf08ae2d",
+			"Rev": "f08ae2d77873a86f5c8dc46a8b8eecb93272a1f7"
 		},
 		{
 			"ImportPath": "github.com/hydrogen18/stalecucumber",

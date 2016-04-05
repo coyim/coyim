@@ -12,4 +12,5 @@ var (
 	MultiFlag           = flag.Bool("multi", false, "If true, will not try to unify the windows, but create separate instances")
 	SingleWindowFlag    = flag.Bool("single-window", false, "Enable single window UI layout")
 	VersionFlag         = flag.Bool("version", false, "Print CoyIM version and exit")
+	RunTestsFlag        = flag.Bool("dev-run-tests", false, "Run dev tests")
 )

@@ -6,7 +6,7 @@ GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
 BUILD_DIR=bin
 
-default: gen-ui-defs lint test
+default: gen-ui-defs gen-schema-defs lint test
 .PHONY: test
 
 build: build-cli build-gui
@@ -15,6 +15,9 @@ build: build-cli build-gui
 # build problems. build-gui is exactly what `go get` will do on a clean repo
 gen-ui-defs:
 	make -C ./gui/definitions
+
+gen-schema-defs:
+	make -C ./gui/settings/definitions
 
 build-gui: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim

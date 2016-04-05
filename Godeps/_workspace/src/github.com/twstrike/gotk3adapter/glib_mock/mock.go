@@ -22,3 +22,50 @@ func (*Mock) MainDepth() int {
 func (*Mock) SignalNew(s string) (glibi.Signal, error) {
 	return &MockSignal{}, nil
 }
+
+func (*Mock) SettingsNew(string) glibi.Settings {
+	return nil
+}
+
+func (*Mock) SettingsNewWithPath(string, string) glibi.Settings {
+	return nil
+}
+
+func (*Mock) SettingsNewWithBackend(string, glibi.SettingsBackend) glibi.Settings {
+	return nil
+}
+
+func (*Mock) SettingsNewWithBackendAndPath(string, glibi.SettingsBackend, string) glibi.Settings {
+	return nil
+}
+
+func (*Mock) SettingsNewFull(glibi.SettingsSchema, glibi.SettingsBackend, string) glibi.Settings {
+	return nil
+}
+
+func (*Mock) SettingsSync() {
+}
+
+func (*Mock) SettingsBackendGetDefault() glibi.SettingsBackend {
+	return nil
+}
+
+func (*Mock) KeyfileSettingsBackendNew(string, string, string) glibi.SettingsBackend {
+	return nil
+}
+
+func (*Mock) MemorySettingsBackendNew() glibi.SettingsBackend {
+	return nil
+}
+
+func (*Mock) NullSettingsBackendNew() glibi.SettingsBackend {
+	return nil
+}
+
+func (*Mock) SettingsSchemaSourceGetDefault() glibi.SettingsSchemaSource {
+	return nil
+}
+
+func (*Mock) SettingsSchemaSourceNewFromDirectory(string, glibi.SettingsSchemaSource, bool) glibi.SettingsSchemaSource {
+	return nil
+}

@@ -2,8 +2,72 @@
 
 <schemalist>
   <schema id="im.coy.coyim.MainSettings">
-    <key name="hello" type="s">
-      <default>"Test value"</default>
+    <key name="single-window" type="b">
+      <default>false</default>
+      <summary>Use single window layout</summary>
+      <description>
+        Should we display message windows in one unified view, or separate windows?
+      </description>
     </key>
+
+    <key name="has-set-single-window" type="b">
+      <default>false</default>
+    </key>
+
+    <key name="slash-me" type="b">
+      <default>false</default>
+      <summary>Parse /me in messages</summary>
+      <description>
+        Should we support XEP-0245 and parse /me in message text
+      </description>
+    </key>
+
+    <key name="has-set-slash-me" type="b">
+      <default>false</default>
+    </key>
+
+    <key name="notification-style" type="s">
+      <choices>
+        <choice value='off'/>
+        <choice value='only-presence-of-new-information'/>
+        <choice value='with-author-but-no-content'/>
+        <choice value='with-content'/>
+      </choices>
+      <default>'with-author-but-no-content'</default>
+      <summary>How much information should be contained in notifications?</summary>
+      <description>
+        This settings describes what style of notification to use - ranging from not using them at all, to showing all content.
+      </description>
+    </key>
+
+    <key name="has-set-notification-style" type="b">
+      <default>false</default>
+    </key>
+
+    <key name="notification-urgency" type="b">
+      <default>false</default>
+      <summary>Should we use urgent notifications</summary>
+      <description>
+        When using urgent notifications, they will be visible over fullscreen windows - but might be a bit too strong. This setting allow you to tune that behavior.
+      </description>
+    </key>
+
+    <key name="has-set-notification-urgency" type="b">
+      <default>false</default>
+    </key>
+
+    <key name="notification-expires" type="b">
+      <default>true</default>
+      <summary>Should notifications expire?</summary>
+      <description>
+        If you want notifications to stay on the screen until you've seen the thing that originating them, this setting allow you to tune it.
+      </description>
+    </key>
+
+    <key name="has-set-notification-expires" type="b">
+      <default>false</default>
+    </key>
+
+    <!-- Other things to add later: font size, window positions, folding of groups - maybe also things like show offline people etc -->
   </schema>
 </schemalist>

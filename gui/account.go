@@ -63,7 +63,7 @@ func (account *account) getConversationWith(to string) (conversationView, bool) 
 
 func (account *account) createConversationView(to string, ui *gtkUI) conversationView {
 	var cv conversationView
-	if *config.SingleWindowFlag {
+	if ui.settings.GetSingleWindow() {
 		cv = ui.unified.createConversation(account, to)
 	} else {
 		cv = newConversationWindow(account, to, ui)

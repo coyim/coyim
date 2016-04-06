@@ -4,48 +4,55 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/gotk3/gotk3/glib"
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/coyim/gui/settings/definitions"
 )
 
+var g glibi.Glib
+
+// InitSettings should be called before using settings
+func InitSettings(gx glibi.Glib) {
+	g = gx
+}
+
 // TODO: Create a parent with default settings without the default config id to allow setting real defaults for eg SG
 
-var cachedSchema *glib.SettingsSchemaSource
+var cachedSchema glibi.SettingsSchemaSource
 
-func getSchemaSource() *glib.SettingsSchemaSource {
+func getSchemaSource() glibi.SettingsSchemaSource {
 	if cachedSchema == nil {
 		dir := definitions.SchemaInTempDir()
 		defer os.Remove(dir)
 		fmt.Printf("using directory: %s\n", dir)
-		cachedSchema = glib.SettingsSchemaSourceNewFromDirectory(dir, nil, true)
+		cachedSchema = g.SettingsSchemaSourceNewFromDirectory(dir, nil, true)
 	}
 
 	return cachedSchema
 }
 
-func getSchema() *glib.SettingsSchema {
+func getSchema() glibi.SettingsSchema {
 	return getSchemaSource().Lookup("im.coy.coyim.MainSettings", false)
 }
 
-func getSettingsFor(s string) *glib.Settings {
-	return glib.SettingsNewFull(getSchema(), nil, fmt.Sprintf("/im/coy/coyim/%s/", s))
+func getSettingsFor(s string) glibi.Settings {
+	return g.SettingsNewFull(getSchema(), nil, fmt.Sprintf("/im/coy/coyim/%s/", s))
 }
 
-func getDefaultSettings() *glib.Settings {
-	return glib.SettingsNewFull(getSchema(), nil, "/im/coy/coyim/")
+func getDefaultSettings() glibi.Settings {
+	return g.SettingsNewFull(getSchema(), nil, "/im/coy/coyim/")
 }
 
-func RunTest() {
-	before1 := getSettingsFor("foo1").GetString("hello")
-	getSettingsFor("foo1").SetString("hello", "goodbye")
-	after1 := getSettingsFor("foo1").GetString("hello")
+// func RunTest() {
+// 	before1 := getSettingsFor("foo1").GetString("hello")
+// 	getSettingsFor("foo1").SetString("hello", "goodbye")
+// 	after1 := getSettingsFor("foo1").GetString("hello")
 
-	before2 := getDefaultSettings().GetString("hello")
-	getDefaultSettings().SetString("hello", "somewhere")
-	after2 := getDefaultSettings().GetString("hello")
+// 	before2 := getDefaultSettings().GetString("hello")
+// 	getDefaultSettings().SetString("hello", "somewhere")
+// 	after2 := getDefaultSettings().GetString("hello")
 
-	fmt.Printf("before1: %s\n", before1)
-	fmt.Printf("after1: %s\n", after1)
-	fmt.Printf("before2: %s\n", before2)
-	fmt.Printf("after2: %s\n", after2)
-}
+// 	fmt.Printf("before1: %s\n", before1)
+// 	fmt.Printf("after1: %s\n", after1)
+// 	fmt.Printf("before2: %s\n", before2)
+// 	fmt.Printf("after2: %s\n", after2)
+// }

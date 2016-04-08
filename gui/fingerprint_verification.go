@@ -55,9 +55,9 @@ Purported fingerprint for %[1]s:
 	return dialog
 }
 
-func verifyFingerprintDialog(account *account, uid string, parent gtki.Window) gtki.ResponseType {
+func verifyFingerprintDialog(account *account, uid, resource string, parent gtki.Window) gtki.ResponseType {
 	accountConfig := account.session.GetConfig()
-	conversation, _ := account.session.ConversationManager().EnsureConversationWith(uid)
+	conversation, _ := account.session.ConversationManager().EnsureConversationWith(uid, resource)
 	ourFp := conversation.OurFingerprint()
 	theirFp := conversation.TheirFingerprint()
 

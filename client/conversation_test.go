@@ -12,7 +12,7 @@ type ConversationSuite struct{}
 var _ = Suite(&ConversationSuite{})
 
 func (s *ConversationSuite) Test_StartEncryptedChat_startsAnEncryptedChat(c *C) {
-	cb := &conversation{"foo@bar.com", &otr3.Conversation{}}
+	cb := &conversation{"foo@bar.com", "", &otr3.Conversation{}}
 	ts := &testSender{err: nil}
 	e := cb.StartEncryptedChat(ts, "")
 
@@ -22,7 +22,7 @@ func (s *ConversationSuite) Test_StartEncryptedChat_startsAnEncryptedChat(c *C) 
 }
 
 func (s *ConversationSuite) Test_sendAll_returnsTheFirstErrorEncountered(c *C) {
-	cb := &conversation{"foo@bar.com", &otr3.Conversation{}}
+	cb := &conversation{"foo@bar.com", "", &otr3.Conversation{}}
 	ts := &testSender{err: errors.New("hello")}
 	e := cb.sendAll(ts, "", []otr3.ValidMessage{otr3.ValidMessage([]byte("Hello there"))})
 
@@ -30,7 +30,7 @@ func (s *ConversationSuite) Test_sendAll_returnsTheFirstErrorEncountered(c *C) {
 }
 
 func (s *ConversationSuite) Test_sendAll_sendsTheMessageGiven(c *C) {
-	cb := &conversation{"foo@bar.com", &otr3.Conversation{}}
+	cb := &conversation{"foo@bar.com", "", &otr3.Conversation{}}
 	ts := &testSender{err: nil}
 	e := cb.sendAll(ts, "", []otr3.ValidMessage{otr3.ValidMessage([]byte("Hello there"))})
 
@@ -40,7 +40,7 @@ func (s *ConversationSuite) Test_sendAll_sendsTheMessageGiven(c *C) {
 }
 
 func (s *ConversationSuite) Test_Send_(c *C) {
-	cb := &conversation{"foo@bar.com", &otr3.Conversation{}}
+	cb := &conversation{"foo@bar.com", "", &otr3.Conversation{}}
 	ts := &testSender{err: nil}
 	e := cb.Send(ts, "", []byte("Hello there"))
 

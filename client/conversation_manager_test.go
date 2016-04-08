@@ -47,7 +47,7 @@ func (s *ConversationManagerSuite) Test_TerminateAll_willTerminate(c *C) {
 	cb := &testConvBuilder{&otr3.Conversation{}}
 	ts := &testSender{err: nil}
 	mgr := NewConversationManager(cb, ts)
-	conv, created := mgr.EnsureConversationWith("someone@whitehouse.gov")
+	conv, created := mgr.EnsureConversationWith("someone@whitehouse.gov", "")
 
 	c.Assert(created, Equals, true)
 	c.Assert(conv, Not(IsNil))

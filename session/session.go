@@ -545,7 +545,7 @@ func (s *session) processClientMessage(stanza *data.ClientMessage) {
 
 func (s *session) receiveClientMessage(from, resource string, when time.Time, body string) {
 	// TODO: do we want to have different conversation instances for different resources?
-	conversation, _ := s.convManager.EnsureConversationWith(from)
+	conversation, _ := s.convManager.EnsureConversationWith(from, resource)
 	out, err := conversation.Receive(s, resource, []byte(body))
 	encrypted := conversation.IsEncrypted()
 
@@ -574,7 +574,7 @@ func (s *session) receiveClientMessage(from, resource string, when time.Time, bo
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
 		if s.GetConfig().OTRAutoTearDown {
-			c, existing := s.convManager.GetConversationWith(from)
+			c, existing := s.convManager.GetConversationWith(from, resource)
 			if !existing {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", from))
 				break
@@ -843,7 +843,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 func (s *session) EncryptAndSendTo(peer, resource string, message string) error {
 	//TODO: review whether it should create a conversation
 	if s.IsConnected() {
-		conversation, _ := s.convManager.EnsureConversationWith(peer)
+		conversation, _ := s.convManager.EnsureConversationWith(peer, resource)
 		return conversation.Send(s, resource, []byte(message))
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}

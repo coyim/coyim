@@ -35,7 +35,7 @@ func (c *cliUI) handlePeerEvent(ev events.Peer) {
 		uid := ev.From
 		info(c.term, c.termControl, fmt.Sprintf("New OTR session with %s established", uid))
 		//TODO: review whether it should create conversations
-		conversation, _ := ev.Session.ConversationManager().EnsureConversationWith(uid)
+		conversation, _ := ev.Session.ConversationManager().EnsureConversationWith(uid, "")
 
 		c.input.SetPromptForTarget(uid, true)
 		c.printConversationInfo(uid, conversation)

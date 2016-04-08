@@ -157,7 +157,7 @@ func (conv *conversationPane) currentResource() string {
 func (conv *conversationPane) onStartOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	c, _ := session.ConversationManager().EnsureConversationWith(conv.to)
+	c, _ := session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
 	err := c.StartEncryptedChat(session, conv.currentResource())
 	if err != nil {
 		//TODO: notify failure
@@ -168,7 +168,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 	//TODO: errors
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	c, ok := session.ConversationManager().GetConversationWith(conv.to)
+	c, ok := session.ConversationManager().GetConversationWith(conv.to, conv.currentResource())
 	if !ok {
 		return
 	}
@@ -180,7 +180,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 }
 
 func (conv *conversationPane) onVerifyFpSignal() {
-	switch verifyFingerprintDialog(conv.account, conv.to, conv.transientParent) {
+	switch verifyFingerprintDialog(conv.account, conv.to, conv.currentResource(), conv.transientParent) {
 	case gtki.RESPONSE_YES:
 		conv.removeIdentityVerificationWarning()
 	}
@@ -383,7 +383,7 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 }
 
 func (conv *conversationPane) getConversation() (client.Conversation, bool) {
-	return conv.account.session.ConversationManager().GetConversationWith(conv.to)
+	return conv.account.session.ConversationManager().GetConversationWith(conv.to, conv.currentResource())
 }
 
 func (conv *conversationPane) withCurrentPeer(f func(*rosters.Peer)) {
@@ -426,7 +426,7 @@ func (conv *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
 		return
 	}
 
-	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.transientParent)
+	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.currentResource(), conv.transientParent)
 	conv.addNotification(conv.fingerprintWarning)
 }
 
@@ -470,7 +470,7 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: review whether it should create a conversation
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
-		conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to)
+		conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
 		conv.appendMessage(conv.account.session.GetConfig().Account, time.Now(), conversation.IsEncrypted(), ui.StripSomeHTML([]byte(message)), true)
 	}
 	return nil

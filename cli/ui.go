@@ -689,7 +689,7 @@ CommandLoop:
 				s.RequestPresenceSubscription(cmd.User, "")
 			case msgCommand:
 				message := []byte(cmd.msg)
-				conversation, exists := s.ConversationManager().GetConversationWith(cmd.to)
+				conversation, exists := s.ConversationManager().GetConversationWith(cmd.to, "")
 
 				if exists {
 					isEncrypted := conversation.IsEncrypted()
@@ -710,7 +710,7 @@ CommandLoop:
 				}
 
 			case otrCommand:
-				conversation, _ := s.ConversationManager().GetConversationWith(string(cmd.User))
+				conversation, _ := s.ConversationManager().GetConversationWith(string(cmd.User), "")
 				conversation.StartEncryptedChat(s, "")
 			case otrInfoCommand:
 				for _, pk := range s.PrivateKeys() {
@@ -724,7 +724,7 @@ CommandLoop:
 				}
 			case endOTRCommand:
 				to := string(cmd.User)
-				conversation, exists := s.ConversationManager().GetConversationWith(to)
+				conversation, exists := s.ConversationManager().GetConversationWith(to, "")
 
 				if !exists {
 					c.alert("No secure session established")
@@ -741,7 +741,7 @@ CommandLoop:
 				c.warn("OTR conversation ended with " + cmd.User)
 			case authQACommand:
 				to := string(cmd.User)
-				conversation, exists := s.ConversationManager().GetConversationWith(to)
+				conversation, exists := s.ConversationManager().GetConversationWith(to, "")
 				if !exists {
 					c.alert("Can't authenticate without a secure conversation established")
 					break

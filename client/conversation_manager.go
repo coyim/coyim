@@ -23,12 +23,12 @@ type Sender interface {
 type ConversationManager interface {
 	// GetConversationWith returns the conversation for the given peer, and
 	// whether the Conversation exists
-	GetConversationWith(peer string) (Conversation, bool)
+	GetConversationWith(peer, resource string) (Conversation, bool)
 
 	// GetConversationWith returns the conversation for the given peer, and
 	// creates the conversation if none exists. Additionally, returns whether the
 	// conversation was created.
-	EnsureConversationWith(peer string) (Conversation, bool)
+	EnsureConversationWith(peer, resource string) (Conversation, bool)
 
 	// Conversations return all conversations currently managed
 	Conversations() map[string]Conversation
@@ -55,10 +55,16 @@ func NewConversationManager(builder ConversationBuilder, sender Sender) Conversa
 	}
 }
 
-func (m *conversationManager) GetConversationWith(peer string) (Conversation, bool) {
+func (m *conversationManager) GetConversationWith(peer, resource string) (Conversation, bool) {
 	m.RLock()
 	defer m.RUnlock()
 	c, ok := m.conversations[peer]
+	if ok && c.resource != "" && c.resource != resource {
+		return c, false
+	}
+	if ok {
+		c.resource = resource
+	}
 	return c, ok
 }
 
@@ -74,16 +80,23 @@ func (m *conversationManager) Conversations() map[string]Conversation {
 	return ret
 }
 
-func (m *conversationManager) EnsureConversationWith(peer string) (Conversation, bool) {
+func (m *conversationManager) EnsureConversationWith(peer, resource string) (Conversation, bool) {
 	m.Lock()
 	defer m.Unlock()
 
-	if c, ok := m.conversations[peer]; ok {
-		return c, false
+	c, ok := m.conversations[peer]
+	if ok && (c.resource == "" || c.resource == resource) {
+		c.resource = resource
+		return c, true
 	}
 
-	c := &conversation{
+	if ok {
+		m.terminateConversationWith(peer)
+	}
+
+	c = &conversation{
 		to:           peer,
+		resource:     resource,
 		Conversation: m.builder.NewConversation(peer),
 	}
 	m.conversations[peer] = c

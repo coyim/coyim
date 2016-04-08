@@ -25,7 +25,8 @@ type Conversation interface {
 }
 
 type conversation struct {
-	to string
+	to       string
+	resource string
 	*otr3.Conversation
 }
 

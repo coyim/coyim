@@ -36,7 +36,7 @@ func (u *gtkUI) notifyConnectionFailure(account *account, moreInfo func()) {
 	})
 }
 
-func buildVerifyIdentityNotification(acc *account, peer string, win gtki.Window) gtki.InfoBar {
+func buildVerifyIdentityNotification(acc *account, peer, resource string, win gtki.Window) gtki.InfoBar {
 	builder := builderForDefinition("VerifyIdentityNotification")
 
 	obj, _ := builder.GetObject("infobar")
@@ -53,7 +53,7 @@ func buildVerifyIdentityNotification(acc *account, peer string, win gtki.Window)
 	button := obj.(gtki.Button)
 	button.Connect("clicked", func() {
 		doInUIThread(func() {
-			resp := verifyFingerprintDialog(acc, peer, win)
+			resp := verifyFingerprintDialog(acc, peer, resource, win)
 			if resp == gtki.RESPONSE_YES {
 				infoBar.Hide()
 				infoBar.Destroy()

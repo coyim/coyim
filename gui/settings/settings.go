@@ -145,3 +145,13 @@ func (s *Settings) GetNotificationStyle() string {
 func (s *Settings) SetNotificationStyle(val string) {
 	s.setStringSetting("notification-style", val)
 }
+
+// GetShiftEnterForSend returns the shift-enter-for-send setting
+func (s *Settings) GetShiftEnterForSend() bool {
+	return s.getBooleanSetting("shift-enter-for-send")
+}
+
+// SetShiftEnterForSend sets the shift-enter-for-send setting
+func (s *Settings) SetShiftEnterForSend(val bool) {
+	s.setBooleanSetting("shift-enter-for-send", val)
+}

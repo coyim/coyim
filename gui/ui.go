@@ -213,7 +213,6 @@ func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 		if u.window != nil {
 			u.window.Emit(accountChangedSignal.String())
 		}
-		u.showGlobalPreferences()
 	})
 
 	u.addInitialAccountsToRoster()
@@ -304,6 +303,7 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Merge_signal":           u.toggleMergeAccounts,
 		"on_toggled_check_Item_Show_Offline_signal":    u.toggleShowOffline,
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
+		"on_preferences_signal":                        u.showGlobalPreferences,
 	})
 
 	win, err := builder.GetObject("mainWindow")

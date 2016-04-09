@@ -6,7 +6,7 @@ gschemas.compiled: *.xml
 schemas.go: gschemas.compiled
 	ruby ./generate.rb
 
-generate: schemas.go
+generate: touch schemas.go
 
 touch:
 	ls *.xml | xargs -n1 touch

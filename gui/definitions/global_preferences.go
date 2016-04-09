@@ -109,6 +109,26 @@ func (*defGlobalPreferences) String() string {
                     <property name="top-attach">1</property>
                   </packing>
                 </child>
+
+                <child>
+                  <object class="GtkLabel" id="sendWithShiftEnterLabel">
+                    <property name="label" translatable="yes">Send messages with Shift-Enter</property>
+                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                    <property name="halign">GTK_ALIGN_END</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="sendWithShiftEnter">
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">2</property>
+                  </packing>
+                </child>
               </object>
             </child>
 
@@ -325,7 +345,7 @@ func (*defGlobalPreferences) String() string {
                 <property name="column-spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="rawLogFileInstructions">
-                    <property name="label" translatable="yes">BLA BLA BLA CAREFUL</property>
+                    <property name="label" translatable="yes">If you set this property to a file name, low level information will be logged there. Be very careful - this information is sensitive and could potentially contain very private information. Only turn this setting on if you absolutely need it for debugging. This file will specifically log XMPP traffic information. This setting will only take effect after a restart of CoyIM.</property>
                     <property name="visible">true</property>
                     <property name="wrap">true</property>
                     <property name="max-width-chars">50</property>
@@ -339,7 +359,7 @@ func (*defGlobalPreferences) String() string {
 
                 <child>
                   <object class="GtkLabel" id="rawLogFileLabel">
-                    <property name="label" translatable="yes">Raw log file (TODO LOGS WHAT?)</property>
+                    <property name="label" translatable="yes">Raw log file</property>
                     <property name="justify">GTK_JUSTIFY_RIGHT</property>
                     <property name="halign">GTK_ALIGN_END</property>
                   </object>

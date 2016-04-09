@@ -26,6 +26,18 @@
       <default>false</default>
     </key>
 
+    <key name="shift-enter-for-send" type="b">
+      <default>false</default>
+      <summary>Use shift-Enter to send messages</summary>
+      <description>
+        We will default to use enter for sending a message, but with this setting set, we will instead use shift-enter.
+      </description>
+    </key>
+
+    <key name="has-set-shift-enter-for-send" type="b">
+      <default>false</default>
+    </key>
+
     <key name="notification-style" type="s">
       <choices>
         <choice value='off'/>

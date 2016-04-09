@@ -213,6 +213,7 @@ func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 		if u.window != nil {
 			u.window.Emit(accountChangedSignal.String())
 		}
+		u.showGlobalPreferences()
 	})
 
 	u.addInitialAccountsToRoster()

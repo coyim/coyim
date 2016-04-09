@@ -37,6 +37,7 @@ func init() {
 	gtki.AssertScrolledWindow(&scrolledWindow{})
 	gtki.AssertSeparatorMenuItem(&separatorMenuItem{})
 	gtki.AssertSettings(&settings{})
+	gtki.AssertSpinButton(&spinButton{})
 	gtki.AssertStyleContext(&styleContext{})
 	gtki.AssertTextBuffer(&textBuffer{})
 	gtki.AssertTextIter(&textIter{})

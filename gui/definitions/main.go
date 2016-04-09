@@ -92,6 +92,14 @@ func (*defMain) String() string {
                             <signal name="toggled" handler="on_toggled_encrypt_configuration_file_signal" swapped="no"/>
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkMenuItem" id="preferencesMenuItem">
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">_Preferences...</property>
+                            <property name="use-underline">True</property>
+                            <signal name="activate" handler="on_preferences_signal" swapped="no"/>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>

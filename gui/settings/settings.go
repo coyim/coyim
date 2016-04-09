@@ -15,15 +15,12 @@ func InitSettings(gx glibi.Glib) {
 	g = gx
 }
 
-// TODO: Create a parent with default settings without the default config id to allow setting real defaults for eg SG
-
 var cachedSchema glibi.SettingsSchemaSource
 
 func getSchemaSource() glibi.SettingsSchemaSource {
 	if cachedSchema == nil {
 		dir := definitions.SchemaInTempDir()
 		defer os.Remove(dir)
-		fmt.Printf("using directory: %s\n", dir)
 		cachedSchema = g.SettingsSchemaSourceNewFromDirectory(dir, nil, true)
 	}
 
@@ -42,17 +39,119 @@ func getDefaultSettings() glibi.Settings {
 	return g.SettingsNewFull(getSchema(), nil, "/im/coy/coyim/")
 }
 
-// func RunTest() {
-// 	before1 := getSettingsFor("foo1").GetString("hello")
-// 	getSettingsFor("foo1").SetString("hello", "goodbye")
-// 	after1 := getSettingsFor("foo1").GetString("hello")
+// Settings allow access to our configured settings
+type Settings struct {
+	def, spec glibi.Settings
+}
 
-// 	before2 := getDefaultSettings().GetString("hello")
-// 	getDefaultSettings().SetString("hello", "somewhere")
-// 	after2 := getDefaultSettings().GetString("hello")
+// For will return a valid settings instance for the given ident, or the empty string
+func For(ident string) *Settings {
+	s := &Settings{}
+	s.def = getDefaultSettings()
+	if ident != "" {
+		s.spec = getSettingsFor(ident)
+	}
+	return s
+}
 
-// 	fmt.Printf("before1: %s\n", before1)
-// 	fmt.Printf("after1: %s\n", after1)
-// 	fmt.Printf("before2: %s\n", before2)
-// 	fmt.Printf("after2: %s\n", after2)
-// }
+func hasSetStr(k string) string {
+	return fmt.Sprintf("has-set-%s", k)
+}
+
+func hasSet(s glibi.Settings, k string) bool {
+	return s.GetBoolean(hasSetStr(k))
+}
+
+func (s *Settings) settingsForGet(name string) glibi.Settings {
+	if s.spec != nil && hasSet(s.spec, name) {
+		return s.spec
+	}
+	return s.def
+}
+
+func (s *Settings) settingsForSet() glibi.Settings {
+	if s.spec != nil {
+		return s.spec
+	}
+	return s.def
+}
+
+func (s *Settings) getBooleanSetting(name string) bool {
+	return s.settingsForGet(name).GetBoolean(name)
+}
+
+func (s *Settings) setBooleanSetting(name string, val bool) {
+	sets := s.settingsForSet()
+	sets.SetBoolean(hasSetStr(name), true)
+	sets.SetBoolean(name, val)
+}
+
+func (s *Settings) getStringSetting(name string) string {
+	return s.settingsForGet(name).GetString(name)
+}
+
+func (s *Settings) setStringSetting(name string, val string) {
+	sets := s.settingsForSet()
+	sets.SetBoolean(hasSetStr(name), true)
+	sets.SetString(name, val)
+}
+
+// GetSingleWindow returns the single-window setting
+func (s *Settings) GetSingleWindow() bool {
+	return s.getBooleanSetting("single-window")
+}
+
+// SetSingleWindow sets the single-window setting
+func (s *Settings) SetSingleWindow(val bool) {
+	s.setBooleanSetting("single-window", val)
+}
+
+// GetSlashMe returns the slash-me setting
+func (s *Settings) GetSlashMe() bool {
+	return s.getBooleanSetting("slash-me")
+}
+
+// SetSlashMe sets the slash-me setting
+func (s *Settings) SetSlashMe(val bool) {
+	s.setBooleanSetting("slash-me", val)
+}
+
+// GetNotificationUrgency returns the notification-urgency setting
+func (s *Settings) GetNotificationUrgency() bool {
+	return s.getBooleanSetting("notification-urgency")
+}
+
+// SetNotificationUrgency sets the notification-urgency setting
+func (s *Settings) SetNotificationUrgency(val bool) {
+	s.setBooleanSetting("notification-urgency", val)
+}
+
+// GetNotificationExpires returns the notification-expires setting
+func (s *Settings) GetNotificationExpires() bool {
+	return s.getBooleanSetting("notification-expires")
+}
+
+// SetNotificationExpires sets the notification-expires setting
+func (s *Settings) SetNotificationExpires(val bool) {
+	s.setBooleanSetting("notification-expires", val)
+}
+
+// GetNotificationStyle returns the notification-style setting
+func (s *Settings) GetNotificationStyle() string {
+	return s.getStringSetting("notification-style")
+}
+
+// SetNotificationStyle sets the notification-style setting
+func (s *Settings) SetNotificationStyle(val string) {
+	s.setStringSetting("notification-style", val)
+}
+
+// GetShiftEnterForSend returns the shift-enter-for-send setting
+func (s *Settings) GetShiftEnterForSend() bool {
+	return s.getBooleanSetting("shift-enter-for-send")
+}
+
+// SetShiftEnterForSend sets the shift-enter-for-send setting
+func (s *Settings) SetShiftEnterForSend(val bool) {
+	s.setBooleanSetting("shift-enter-for-send", val)
+}

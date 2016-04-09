@@ -12,6 +12,7 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/pangoi"
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/gui/settings"
 	"github.com/twstrike/coyim/i18n"
 	rosters "github.com/twstrike/coyim/roster"
 	sessions "github.com/twstrike/coyim/session/access"
@@ -53,6 +54,8 @@ type gtkUI struct {
 	sessionFactory sessions.Factory
 
 	dialerFactory interfaces.DialerFactory
+
+	settings *settings.Settings
 }
 
 // Graphics represent the graphic configuration
@@ -123,6 +126,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.sessionFactory = sf
 
+	ret.settings = settings.For("")
+
 	return ret
 }
 
@@ -188,6 +193,12 @@ func (u *gtkUI) loadConfig(configFile string) {
 }
 
 func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
+	u.settings = settings.For(c.GetUniqueID())
+	u.roster.deNotify.updateWith(u.settings)
+	if !u.settings.GetSingleWindow() {
+		u.unified = nil
+	}
+
 	u.buildAccounts(c, u.sessionFactory, u.dialerFactory)
 
 	doInUIThread(func() {
@@ -292,6 +303,7 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Merge_signal":           u.toggleMergeAccounts,
 		"on_toggled_check_Item_Show_Offline_signal":    u.toggleShowOffline,
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
+		"on_preferences_signal":                        u.showGlobalPreferences,
 	})
 
 	win, err := builder.GetObject("mainWindow")
@@ -331,11 +343,9 @@ func (u *gtkUI) mainWindow() {
 	vbox := obj.(gtki.Box)
 	vbox.PackStart(u.roster.widget, true, true, 0)
 
-	if *config.SingleWindowFlag {
-		obj, _ := builder.GetObject("Hbox")
-		hbox := obj.(gtki.Box)
-		u.unified = newUnifiedLayout(u, vbox, hbox)
-	}
+	obj, _ = builder.GetObject("Hbox")
+	hbox := obj.(gtki.Box)
+	u.unified = newUnifiedLayout(u, vbox, hbox)
 
 	u.notificationArea = builder.getObj("notification-area").(gtki.Box)
 

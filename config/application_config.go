@@ -86,16 +86,24 @@ func (a *ApplicationConfig) onAfterSave() {
 	}
 }
 
-// GenUniqueID will generate and set a new unique ID fro this application config
-func (a *ApplicationConfig) GenUniqueID() {
+// genUniqueID will generate and set a new unique ID fro this application config
+func (a *ApplicationConfig) genUniqueID() {
 	s := [32]byte{}
 	randomString(s[:])
 	a.UniqueConfigurationID = hex.EncodeToString(s[:])
 }
 
+// GetUniqueID returns a unique id for this application config
+func (a *ApplicationConfig) GetUniqueID() string {
+	if a.UniqueConfigurationID == "" {
+		a.genUniqueID()
+	}
+	return a.UniqueConfigurationID
+}
+
 func (a *ApplicationConfig) onBeforeSave() {
 	if a.UniqueConfigurationID == "" {
-		a.GenUniqueID()
+		a.genUniqueID()
 	}
 }
 

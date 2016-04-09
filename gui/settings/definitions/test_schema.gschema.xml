@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<schemalist>
-  <schema id="im.coy.coyim.MainSettings">
-    <key name="hello" type="s">
-      <default>"Test value"</default>
-    </key>
-  </schema>
-</schemalist>

@@ -56,6 +56,7 @@ type conversationPane struct {
 	sync.Mutex
 	marks           []*timedMark
 	hidden          bool
+	shiftEnterSends bool
 	afterNewMessage func()
 	currentPeer     func() (*rosters.Peer, bool)
 }
@@ -230,6 +231,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		to:              uid,
 		account:         account,
 		transientParent: transientParent,
+		shiftEnterSends: ui.settings.GetShiftEnterForSend(),
 		afterNewMessage: func() {},
 		currentPeer: func() (*rosters.Peer, bool) {
 			return ui.getPeer(account, uid)
@@ -278,10 +280,10 @@ func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
 		evk := g.gdk.EventKeyFrom(ev)
 		ret := false
 
-		if conv.account.isInsertEnter(evk) {
+		if conv.account.isInsertEnter(evk, conv.shiftEnterSends) {
 			insertEnter(conv.entry)
 			ret = true
-		} else if conv.account.isSend(evk) {
+		} else if conv.account.isSend(evk, conv.shiftEnterSends) {
 			conv.onSendMessageSignal()
 			ret = true
 		}
@@ -290,12 +292,26 @@ func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
 	})
 }
 
-func (a *account) isInsertEnter(evk gdki.EventKey) bool {
+func isShiftEnter(evk gdki.EventKey) bool {
 	return hasShift(evk) && hasEnter(evk)
 }
 
-func (a *account) isSend(evk gdki.EventKey) bool {
+func isNormalEnter(evk gdki.EventKey) bool {
 	return !hasControlingModifier(evk) && hasEnter(evk)
+}
+
+func (a *account) isInsertEnter(evk gdki.EventKey, shiftEnterSends bool) bool {
+	if shiftEnterSends {
+		return isNormalEnter(evk)
+	}
+	return isShiftEnter(evk)
+}
+
+func (a *account) isSend(evk gdki.EventKey, shiftEnterSends bool) bool {
+	if !shiftEnterSends {
+		return isNormalEnter(evk)
+	}
+	return isShiftEnter(evk)
 }
 
 func newConversationWindow(account *account, uid string, ui *gtkUI) *conversationWindow {

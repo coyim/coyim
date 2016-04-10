@@ -12,6 +12,7 @@ type settingsPanel struct {
 	notebook                 gtki.Notebook
 	singleWindow             gtki.CheckButton
 	renderSlashMe            gtki.CheckButton
+	showEmptyGroups          gtki.CheckButton
 	sendWithShiftEnter       gtki.CheckButton
 	notificationsType        gtki.ComboBox
 	urgentNotifications      gtki.CheckButton
@@ -41,6 +42,7 @@ func createSettingsPanel() *settingsPanel {
 		"notificationCommandLabel", &p.notificationCommandLabel,
 		"notificationTimeoutLabel", &p.notificationTimeoutLabel,
 		"rawLogFileLabel", &p.rawLogFileLabel,
+		"showEmptyGroups", &p.showEmptyGroups,
 	)
 
 	return p
@@ -88,6 +90,9 @@ func (u *gtkUI) showGlobalPreferences() {
 	orgShiftEnter := settings.GetShiftEnterForSend()
 	panel.sendWithShiftEnter.SetActive(orgShiftEnter)
 
+	orgShowEmptyGroups := settings.GetShowEmptyGroups()
+	panel.showEmptyGroups.SetActive(orgShowEmptyGroups)
+
 	orgUrgentNot := settings.GetNotificationUrgency()
 	panel.urgentNotifications.SetActive(orgUrgentNot)
 
@@ -124,6 +129,10 @@ func (u *gtkUI) showGlobalPreferences() {
 				settings.SetShiftEnterForSend(newShiftEnter)
 			}
 
+			if newShowEmptyGroups := panel.showEmptyGroups.GetActive(); newShowEmptyGroups != orgShowEmptyGroups {
+				settings.SetShowEmptyGroups(newShowEmptyGroups)
+			}
+
 			if newUrgentNot := panel.urgentNotifications.GetActive(); newUrgentNot != orgUrgentNot {
 				settings.SetNotificationUrgency(newUrgentNot)
 			}
@@ -154,8 +163,9 @@ func (u *gtkUI) showGlobalPreferences() {
 				tx = strings.TrimSpace(tx)
 				config.RawLogFile = tx
 				u.saveConfigOnly()
-				panel.dialog.Destroy()
 			}
+			panel.dialog.Destroy()
+			u.roster.redraw()
 		},
 		"on_cancel_signal": func() {
 			panel.dialog.Destroy()

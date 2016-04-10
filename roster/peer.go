@@ -29,6 +29,7 @@ type Peer struct {
 	resources     map[string]bool
 	resourcesLock sync.RWMutex
 	lastResource  string
+	HasConfigData bool
 }
 
 // PeerError contains information about an error for this peer
@@ -64,18 +65,21 @@ func (p *Peer) Dump() string {
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given
 func PeerFrom(e data.RosterEntry, belongsTo, nickname string, groups []string) *Peer {
 	// merge remote and local groups
-	allGroups := toSet(append(groups, e.Group...)...)
-
-	// TODO: resources, get the one here
+	g := groups
+	if g == nil || len(g) == 0 {
+		g = e.Group
+	}
+	allGroups := toSet(g...)
 
 	return &Peer{
-		Jid:          xutils.RemoveResourceFromJid(e.Jid),
-		Subscription: e.Subscription,
-		Name:         e.Name,
-		Nickname:     nickname,
-		Groups:       allGroups,
-		BelongsTo:    belongsTo,
-		resources:    toSet(),
+		Jid:           xutils.RemoveResourceFromJid(e.Jid),
+		Subscription:  e.Subscription,
+		Name:          e.Name,
+		Nickname:      nickname,
+		Groups:        allGroups,
+		HasConfigData: groups != nil && len(groups) > 0,
+		BelongsTo:     belongsTo,
+		resources:     toSet(),
 	}
 }
 
@@ -145,10 +149,12 @@ func (p *Peer) MergeWith(p2 *Peer) *Peer {
 	pNew.PendingSubscribeID = merge(p.PendingSubscribeID, p2.PendingSubscribeID)
 	pNew.Groups = make(map[string]bool)
 	pNew.BelongsTo = merge(p.BelongsTo, p2.BelongsTo)
-	if len(p2.Groups) > 0 {
-		pNew.Groups = p2.Groups
-	} else {
+	if p.HasConfigData || len(p2.Groups) == 0 {
 		pNew.Groups = p.Groups
+		pNew.HasConfigData = p.HasConfigData
+	} else {
+		pNew.Groups = p2.Groups
+		pNew.HasConfigData = p2.HasConfigData
 	}
 
 	pNew.resources = union(p.resources, p2.resources)

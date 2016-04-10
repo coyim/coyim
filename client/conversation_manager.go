@@ -59,7 +59,7 @@ func (m *conversationManager) GetConversationWith(peer, resource string) (Conver
 	m.RLock()
 	defer m.RUnlock()
 	c, ok := m.conversations[peer]
-	if ok && c.resource != "" && c.resource != resource {
+	if ok && c.resource != "" && resource != "" && c.resource != resource {
 		return c, false
 	}
 	if ok {
@@ -85,13 +85,13 @@ func (m *conversationManager) EnsureConversationWith(peer, resource string) (Con
 	defer m.Unlock()
 
 	c, ok := m.conversations[peer]
-	if ok && (c.resource == "" || c.resource == resource) {
+	if ok && (c.resource == "" || resource == "" || c.resource == resource) {
 		c.resource = resource
 		return c, true
 	}
 
 	if ok {
-		m.terminateConversationWith(peer)
+		m.terminateConversationWith(peer, c.resource)
 	}
 
 	c = &conversation{
@@ -109,13 +109,13 @@ func (m *conversationManager) TerminateAll() {
 	defer m.RUnlock()
 
 	for peer := range m.conversations {
-		m.terminateConversationWith(peer)
+		m.terminateConversationWith(peer, "")
 	}
 }
 
-func (m *conversationManager) terminateConversationWith(peer string) error {
+func (m *conversationManager) terminateConversationWith(peer, resource string) error {
 	if c, ok := m.conversations[peer]; ok {
-		return c.EndEncryptedChat(m.sender, "")
+		return c.EndEncryptedChat(m.sender, resource)
 	}
 
 	return nil

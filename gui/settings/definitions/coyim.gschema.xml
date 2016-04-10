@@ -80,6 +80,34 @@
       <default>false</default>
     </key>
 
-    <!-- Other things to add later: font size, window positions, folding of groups - maybe also things like show offline people etc -->
+
+    <key name="show-empty-groups" type="b">
+      <default>false</default>
+      <summary>Should we display empty groups?</summary>
+    </key>
+
+    <key name="has-set-show-empty-groups" type="b">
+      <default>false</default>
+    </key>
+
+    <key name="show-advanced-options" type="b">
+      <default>false</default>
+      <summary>Should we display advanced options?</summary>
+    </key>
+
+    <key name="has-set-show-advanced-options" type="b">
+      <default>false</default>
+    </key>
+
+    <key name="connect-automatically" type="b">
+      <default>false</default>
+      <summary>Should we connect automatically?</summary>
+    </key>
+
+    <key name="has-set-connect-automatically" type="b">
+      <default>false</default>
+    </key>
+    
+    <!-- Other things to add later: font size, window positions, folding of group -->
   </schema>
 </schemalist>

@@ -155,3 +155,33 @@ func (s *Settings) GetShiftEnterForSend() bool {
 func (s *Settings) SetShiftEnterForSend(val bool) {
 	s.setBooleanSetting("shift-enter-for-send", val)
 }
+
+// GetShowEmptyGroups returns the show-empty-groups setting
+func (s *Settings) GetShowEmptyGroups() bool {
+	return s.getBooleanSetting("show-empty-groups")
+}
+
+// SetShowEmptyGroups sets the show-empty-groups setting
+func (s *Settings) SetShowEmptyGroups(val bool) {
+	s.setBooleanSetting("show-empty-groups", val)
+}
+
+// GetShowAdvancedOptions returns the show-advanced-options setting
+func (s *Settings) GetShowAdvancedOptions() bool {
+	return s.getBooleanSetting("show-advanced-options")
+}
+
+// SetShowAdvancedOptions sets the show-advanced-options setting
+func (s *Settings) SetShowAdvancedOptions(val bool) {
+	s.setBooleanSetting("show-advanced-options", val)
+}
+
+// GetConnectAutomatically returns the connect-automatically setting
+func (s *Settings) GetConnectAutomatically() bool {
+	return s.getBooleanSetting("connect-automatically")
+}
+
+// SetConnectAutomatically sets the connect-automatically setting
+func (s *Settings) SetConnectAutomatically(val bool) {
+	s.setBooleanSetting("connect-automatically", val)
+}

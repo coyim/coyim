@@ -607,7 +607,7 @@ func (r *roster) sortedAccounts() []*account {
 }
 
 func (r *roster) showEmptyGroups() bool {
-	return false
+	return r.ui.settings.GetShowEmptyGroups()
 }
 
 func (r *roster) redrawSeparate() {

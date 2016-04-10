@@ -594,7 +594,7 @@ type taggableText struct {
 	text string
 }
 
-func (conv *conversationPane) appendToHistory(timestamp time.Time, entries ...taggableText) {
+func (conv *conversationPane) appendToHistory(timestamp time.Time, attention bool, entries ...taggableText) {
 	conv.markNow()
 	doInUIThread(func() {
 		conv.Lock()
@@ -616,16 +616,18 @@ func (conv *conversationPane) appendToHistory(timestamp time.Time, entries ...ta
 				insertAtEnd(buff, entry.text)
 			}
 		}
-		conv.afterNewMessage()
+		if attention {
+			conv.afterNewMessage()
+		}
 	})
 }
 
 func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
-	conv.appendToHistory(timestamp, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
+	conv.appendToHistory(timestamp, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
 
 func (conv *conversationPane) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
-	conv.appendToHistory(timestamp,
+	conv.appendToHistory(timestamp, true,
 		taggableText{
 			is(outgoing, "outgoingUser", "incomingUser"),
 			from,
@@ -640,7 +642,7 @@ func (conv *conversationPane) appendMessage(from string, timestamp time.Time, en
 }
 
 func (conv *conversationPane) displayNotification(notification string) {
-	conv.appendToHistory(time.Now(), taggableText{"statusText", notification})
+	conv.appendToHistory(time.Now(), false, taggableText{"statusText", notification})
 }
 
 func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, notificationNV string) {

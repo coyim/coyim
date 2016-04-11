@@ -27,7 +27,7 @@ check-ui-defs:
 coveralls:
 	make run-cover -C ../
 	go get github.com/mattn/goveralls
-	goveralls -coverprofile=../gover.coverprofile -service=travis-ci || true
+	goveralls -coverprofile=../.coverprofiles/gover.coverprofile -service=travis-ci || true
 
 clean-release:
 	$(RM) bin/*

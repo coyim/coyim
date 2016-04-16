@@ -1,7 +1,7 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 GIT_VERSION=$(shell git rev-parse HEAD)
-VERSION=$(shell git tag -l --contains $$GIT_VERSION)
+TAG_VERSION=$(shell git tag -l --contains $$GIT_VERSION)
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
 BUILD_DIR=bin
@@ -64,7 +64,7 @@ ifeq ($(shell uname), Linux)
 endif
 
 generate-version-file:
-	./gen_version_file.sh $(VERSION)
+	./gen_version_file.sh $(GIT_VERSION) $(TAG_VERSION)
 
 run-cover: clean-cover
 	mkdir -p .coverprofiles

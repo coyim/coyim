@@ -9,68 +9,71 @@ msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-02-16 14:02-0500\n"
-"PO-Revision-Date: 2016-02-16 14:02-0500\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2016-04-17 16:23+0100\n"
+"Last-Translator: Åke Engelbrektson <eson@svenskasprakfiler.se>\n"
+"Language-Team: https://svenskasprakfiler.se\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: ../gui/definitions/AccountDetails.xml:12
 msgid "Account Details"
-msgstr ""
+msgstr "Kontouppgifter"
 
 #: ../gui/definitions/AccountDetails.xml:41
 msgid ""
 "Your account\n"
 "(example: kim42@dukgo.com)"
 msgstr ""
+"Ditt konto\n"
+"(exempel: eson@domain.se)"
 
 #: ../gui/definitions/AccountDetails.xml:60
 #: ../gui/definitions/AskForPassword.xml:36
 msgid "Password"
-msgstr ""
+msgstr "Lösenord"
 
 #: ../gui/definitions/AccountDetails.xml:81
 msgid "Display all settings"
-msgstr ""
+msgstr "Visa alla inställningar"
 
 #: ../gui/definitions/AccountDetails.xml:105
 #: ../gui/definitions/AddContact.xml:22
 #: ../gui/definitions/AskForPassword.xml:15
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: ../gui/definitions/AccountDetails.xml:124
 msgid "Server (leave empty for default)"
-msgstr ""
+msgstr "Server (lämnas tom för standard)"
 
 #: ../gui/definitions/AccountDetails.xml:143
 msgid "Port (leave empty for default)"
-msgstr ""
+msgstr "Port (lämnas tom för standard)"
 
 #: ../gui/definitions/AccountDetails.xml:165
 #: ../gui/definitions/AccountRegistration.xml:29
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: ../gui/definitions/AccountDetails.xml:239 ../gui/accounts_menu.go:45
 msgid "_Add..."
-msgstr ""
+msgstr "_Lägg till..."
 
 #: ../gui/definitions/AccountDetails.xml:254 ../gui/account.go:207
 msgid "_Remove"
-msgstr ""
+msgstr "_Ta bort"
 
 #: ../gui/definitions/AccountDetails.xml:269 ../gui/account.go:204
 msgid "_Edit..."
-msgstr ""
+msgstr "_Redigera..."
 
 #: ../gui/definitions/AccountDetails.xml:299
 msgid "Proxies"
-msgstr ""
+msgstr "Proxy"
 
 #: ../gui/definitions/AccountDetails.xml:329
 msgid ""
@@ -79,14 +82,18 @@ msgid ""
 "existing private keys will be deleted, since current there is no way to "
 "choose which key to use for encrypted chat."
 msgstr ""
+"Nedanstående knappar låter dig importera nycklar och fingeravtryck. Bägge "
+"skall vara i Pidgin/libotr-format. Om du importerar privata nycklar, kommer "
+"dina befintliga nycklar att tas bort. För närvarande finns det inget sätt "
+"att välja vilken nyckel som skall användas för krypterad chatt."
 
 #: ../gui/definitions/AccountDetails.xml:342
 msgid "Import Private _Keys..."
-msgstr ""
+msgstr "Importera privata _nycklar..."
 
 #: ../gui/definitions/AccountDetails.xml:356
 msgid "Import _Fingerprints..."
-msgstr ""
+msgstr "Importera ­_fingeravtryck..."
 
 #: ../gui/definitions/AccountDetails.xml:370
 msgid ""
@@ -94,18 +101,22 @@ msgid ""
 "careful with the files that come out of this process, since they contain "
 "potentially sensitive data. The export will be in Pidgin/libotr format."
 msgstr ""
+"Nedanstående knappar låter dig exportera nycklar och fingeravtryck. Var "
+"försiktig med de filer som genereras av den är processen, eftersom de "
+"innehåller potentiellt känslig data. Filerna exporteras i Pidgin/libotr-"
+"format."
 
 #: ../gui/definitions/AccountDetails.xml:383
 msgid "Export Private Keys..."
-msgstr ""
+msgstr "Exportera privata nycklar..."
 
 #: ../gui/definitions/AccountDetails.xml:396
 msgid "Export Fingerprints..."
-msgstr ""
+msgstr "Exportera fingeravtryck..."
 
 #: ../gui/definitions/AccountDetails.xml:414
 msgid "Encryption"
-msgstr ""
+msgstr "Kryptering"
 
 #: ../gui/definitions/AccountDetails.xml:430
 #: ../gui/definitions/AccountRegistration.xml:60
@@ -115,58 +126,58 @@ msgstr ""
 #: ../gui/definitions/RegistrationForm.xml:38
 #: ../gui/definitions/VerifyFingerprint.xml:18
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: ../gui/definitions/AccountDetails.xml:436
 #: ../gui/definitions/EditProxy.xml:131
 msgid "Save"
-msgstr ""
+msgstr "Spara"
 
 #: ../gui/definitions/AccountPopupMenu.xml:5
 #: ../gui/definitions/AskForPassword.xml:67
 msgid "Connect"
-msgstr ""
+msgstr "Anslut"
 
 #: ../gui/definitions/AccountPopupMenu.xml:11
 msgid "Disconnect"
-msgstr ""
+msgstr "Koppla ifrån"
 
 #: ../gui/definitions/AccountPopupMenu.xml:20
 msgid "Edit..."
-msgstr ""
+msgstr "Redigera..."
 
 #: ../gui/definitions/AccountPopupMenu.xml:29
 #: ../gui/definitions/ContactPopupMenu.xml:50
 msgid "Dump info"
-msgstr ""
+msgstr "Dumpa info"
 
 #: ../gui/definitions/AccountRegistration.xml:15
 msgid "Choose a server to register your account"
-msgstr ""
+msgstr "Välj en server för att registrera ditt konto"
 
 #: ../gui/definitions/AccountRegistration.xml:65
 msgid "Apply"
-msgstr ""
+msgstr "Tillämpa"
 
 #: ../gui/definitions/AddContact.xml:4 ../gui/definitions/RenameContact.xml:4
 msgid "Add contact"
-msgstr ""
+msgstr "Lägg till kontakt"
 
 #: ../gui/definitions/AddContact.xml:41
 msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
-msgstr ""
+msgstr "Kontakt att lägga till (exempel: eson@jabber.calyxinstitute.org)"
 
 #: ../gui/definitions/AddContact.xml:62
 msgid "Add"
-msgstr ""
+msgstr "Lägg till"
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
-msgstr ""
+msgstr "Ange ditt lösenord"
 
 #: ../gui/definitions/AskToEncrypt.xml:5
 msgid "Encrypt configuration file"
-msgstr ""
+msgstr "Kryptera konfigurationsfilen"
 
 #: ../gui/definitions/AskToEncrypt.xml:6
 msgid ""
@@ -175,108 +186,111 @@ msgid ""
 "configuration if you lose the password. You will only be asked for your "
 "password when CoyIM starts."
 msgstr ""
+"Vill du spara din inställningsfil i krypterat format? Det kan vara betydligt "
+"mer säkert, men du kan inte komma åt dina inställningar om du förlorar "
+"lösenordet. Du blir bara tillfrågad om lösenord när CoyIM startar."
 
 #: ../gui/definitions/AuthorizeSubscription.xml:3
 msgid "Subscription request"
-msgstr ""
+msgstr "Prenumerationsbegäran"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:4
 msgid "Configure master password"
-msgstr ""
+msgstr "Konfigurationslösenord"
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:15
 msgid "Please enter the master password for the configuration file, two times."
-msgstr ""
+msgstr "Ange lösenord för inställningsfilen, två gånger."
 
 #: ../gui/definitions/CaptureInitialMasterPassword.xml:60
 #: ../gui/definitions/MasterPassword.xml:49
 #: ../gui/definitions/VerifyFingerprintUnknown.xml:19
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:3
 msgid "Confirm account removal"
-msgstr ""
+msgstr "Bekräfta kontoborttagning"
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:4
 msgid "Are you sure you want to remove this account?"
-msgstr ""
+msgstr "Vill du verkligen ta bort det här kontot?"
 
 #: ../gui/definitions/ContactPopupMenu.xml:5
 msgid "Fingerprints..."
-msgstr ""
+msgstr "Fingeravtryck..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:14
 msgid "Remove"
-msgstr ""
+msgstr "Ta bort"
 
 #: ../gui/definitions/ContactPopupMenu.xml:20
 msgid "Rename..."
-msgstr ""
+msgstr "Byt namn..."
 
 #: ../gui/definitions/ContactPopupMenu.xml:29
 msgid "Ask contact to see their status"
-msgstr ""
+msgstr "Fråga kontakten om status"
 
 #: ../gui/definitions/ContactPopupMenu.xml:35
 msgid "Allow contact to see my status"
-msgstr ""
+msgstr "Tillåt kontakten att se min status"
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
 msgid "Forbid contact to see my status"
-msgstr ""
+msgstr "Neka kontakten att se min status"
 
 #: ../gui/definitions/ConversationPane.xml:12
 msgid "Developer options"
-msgstr ""
+msgstr "Utvecklaralternativ"
 
 #: ../gui/definitions/ConversationPane.xml:19
 msgid "Start encrypted chat"
-msgstr ""
+msgstr "Starta krypterad chatt"
 
 #: ../gui/definitions/ConversationPane.xml:26
 msgid "End encrypted chat"
-msgstr ""
+msgstr "Avsluta krypterad chatt"
 
 #: ../gui/definitions/ConversationPane.xml:33
 msgid "Verify fingerprint"
-msgstr ""
+msgstr "Verifiera fingeravtryck"
 
 #: ../gui/definitions/ConversationPane.xml:66
 msgid "You are talking over an unprotected channel"
-msgstr ""
+msgstr "Du pratar över en oskyddad kanal"
 
 #: ../gui/definitions/ConversationPane.xml:78
 msgid "Secure chat"
-msgstr ""
+msgstr "Säker chatt"
 
 #: ../gui/definitions/EditProxy.xml:3
 msgid "Edit Proxy"
-msgstr ""
+msgstr "Redigera proxy"
 
 #: ../gui/definitions/EditProxy.xml:17
 msgid "Proxy type:"
-msgstr ""
+msgstr "Proxytyp:"
 
 #: ../gui/definitions/EditProxy.xml:38
 msgid "User:"
-msgstr ""
+msgstr "Användare:"
 
 #: ../gui/definitions/EditProxy.xml:58
 msgid "Password:"
-msgstr ""
+msgstr "Lösenord:"
 
 #: ../gui/definitions/EditProxy.xml:79
 msgid "Server:"
-msgstr ""
+msgstr "Server:"
 
 #: ../gui/definitions/EditProxy.xml:99
 msgid "Port:"
-msgstr ""
+msgstr "Port:"
 
 #: ../gui/definitions/Feedback.xml:3
 msgid "We would like to receive your feedback"
-msgstr ""
+msgstr "Vi vill gärna ha din återkoppling"
 
 #: ../gui/definitions/Feedback.xml:4
 msgid ""
@@ -284,147 +298,152 @@ msgid ""
 "This is the only way we can create a better tool to keep your conversations "
 "private."
 msgstr ""
+"Berätta för oss hur det fungerar för dig, att använda CoyIM.\n"
+"Det är enda sättet för oss att skapa ett bättre verktyg, som håller dina "
+"konversationer privata."
 
 #: ../gui/definitions/Feedback.xml:5
 msgid "https://coy.im/feedback"
-msgstr ""
+msgstr "https://coy.im/feedback"
 
 #: ../gui/definitions/FeedbackInfo.xml:12
 msgid "Are you liking it?"
-msgstr ""
+msgstr "Gillar du det?"
 
 #: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:78
 msgid "Feedback"
-msgstr ""
+msgstr "Återkoppling"
 
 #: ../gui/definitions/Importer.xml:12
 msgid "Import Accounts"
-msgstr ""
+msgstr "Importera konton"
 
 #: ../gui/definitions/Importer.xml:21
 msgid ""
 "Choose the accounts you would like to import and start using from CoyIM."
-msgstr ""
+msgstr "Välj de konton du vill importera och börja använda i CoyIM."
 
 #: ../gui/definitions/Importer.xml:40
 msgid "Import this"
-msgstr ""
+msgstr "Importera detta"
 
 #: ../gui/definitions/Importer.xml:54
 msgid "From application"
-msgstr ""
+msgstr "Från program"
 
 #: ../gui/definitions/Importer.xml:66
 msgid "Account name"
-msgstr ""
+msgstr "Kontonamn"
 
 #: ../gui/definitions/Importer.xml:96
 msgid "Import"
-msgstr ""
+msgstr "Importera"
 
 #: ../gui/definitions/Main.xml:22
 msgid "Contacts"
-msgstr ""
+msgstr "Kontakter"
 
 #: ../gui/definitions/Main.xml:29
 msgid "Add..."
-msgstr ""
+msgstr "Lägg till..."
 
 #: ../gui/definitions/Main.xml:40
 msgid "Accounts"
-msgstr ""
+msgstr "Konton"
 
 #: ../gui/definitions/Main.xml:46
 msgid "View"
-msgstr ""
+msgstr "Visa"
 
 #: ../gui/definitions/Main.xml:53
 msgid "Merge Accounts"
-msgstr ""
+msgstr "Slå samman konton"
 
 #: ../gui/definitions/Main.xml:60
 msgid "Show Offline Contacts"
-msgstr ""
+msgstr "Visa nedkopplade kontakter"
 
 #: ../gui/definitions/Main.xml:71
 msgid "Help"
-msgstr ""
+msgstr "Hjälp"
 
 #: ../gui/definitions/Main.xml:85
 msgid "About"
-msgstr ""
+msgstr "Om"
 
 #: ../gui/definitions/MasterPassword.xml:4
 msgid "Enter master password"
-msgstr ""
+msgstr "Ange huvudlösenord"
 
 #: ../gui/definitions/MasterPassword.xml:15
 msgid ""
 "Please enter the master password for the configuration file. You will not be "
 "asked for this password again until you restart CoyIM."
 msgstr ""
+"Ange lösenordet för inställningsfilen. Du kommer inte att tillfrågas om "
+"detta lösenord igen, förrän du startar om CoyIM."
 
 #: ../gui/definitions/PeerFingerprints.xml:3
 msgid "Peer fingerprints"
-msgstr ""
+msgstr "Användares fingeravtryck"
 
 #: ../gui/definitions/PeerFingerprints.xml:28
 msgid "_OK"
-msgstr ""
+msgstr "_OK"
 
 #: ../gui/definitions/RegistrationForm.xml:44
 msgid "Register"
-msgstr ""
+msgstr "Registrera"
 
 #: ../gui/definitions/RenameContact.xml:22
 msgid "Contact's new name"
-msgstr ""
+msgstr "Kontaktens nya namn"
 
 #: ../gui/definitions/RenameContact.xml:43
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #: ../gui/definitions/UnifiedLayout.xml:135
 msgid "Conversations"
-msgstr ""
+msgstr "Konversationer"
 
 #: ../gui/definitions/UnifiedLayout.xml:161
 msgid "icon"
-msgstr ""
+msgstr "ikon"
 
 #: ../gui/definitions/UnifiedLayout.xml:175
 msgid "column"
-msgstr ""
+msgstr "kolumn"
 
 #: ../gui/definitions/VerifyFingerprint.xml:23
 #: ../gui/definitions/VerifyIdentityNotification.xml:20
 msgid "Verify"
-msgstr ""
+msgstr "Verifiera"
 
 #: ../gui/account.go:151
 msgid "Account added"
-msgstr ""
+msgstr "Konto tillagt"
 
 #: ../gui/account.go:151
 #, python-format
 msgid "The account %s was added successfully."
-msgstr ""
+msgstr "Kontot %s lades till."
 
 #: ../gui/account.go:198
 msgid "_Connect"
-msgstr ""
+msgstr "_Anslut"
 
 #: ../gui/account.go:201
 msgid "_Disconnect"
-msgstr ""
+msgstr "_Koppla ifrån"
 
 #: ../gui/account.go:210
 msgid "Connect _Automatically"
-msgstr ""
+msgstr "Anslut _Automatiskt"
 
 #: ../gui/account.go:214
 msgid "Always Encrypt Conversation"
-msgstr ""
+msgstr "Kryptera alltid konversation"
 
 #: ../gui/account.go:296
 #, python-format
@@ -432,6 +451,8 @@ msgid ""
 "Connecting account\n"
 "%s"
 msgstr ""
+"Ansluter kontot\n"
+"%s"
 
 #: ../gui/account.go:300
 #, python-format
@@ -439,10 +460,12 @@ msgid ""
 "Connection failure\n"
 "%s"
 msgstr ""
+"Anslutningsfel\n"
+"%s"
 
 #: ../gui/account.go:304
 msgid "Tor is not currently running"
-msgstr ""
+msgstr "Tor är för närvarande inte igång"
 
 #: ../gui/account_details.go:95
 #, python-format
@@ -450,84 +473,86 @@ msgid ""
 "Your fingerprints for %s:\n"
 "%s"
 msgstr ""
+"Dina fingeravtryck för %s:\n"
+"%s"
 
 #: ../gui/account_events.go:144
 msgid "Private conversation lost."
-msgstr ""
+msgstr "Privat konversation avslutades."
 
 #: ../gui/account_events.go:152
 msgid "Private conversation started."
-msgstr ""
+msgstr "Privat konversation startad."
 
 #: ../gui/account_events.go:152
 msgid "Unverified conversation started."
-msgstr ""
+msgstr "Overifierad konversation startad."
 
 #: ../gui/account_events.go:160
 msgid "Successfully refreshed the private conversation."
-msgstr ""
+msgstr "Lyckad uppdatering av den privata konversationen."
 
 #: ../gui/account_events.go:160
 msgid "Successfully refreshed the unverified private conversation."
-msgstr ""
+msgstr "Lyckad uppdatering av den overifierade konversationen."
 
 #: ../gui/accounts_menu.go:28
 msgid "Connect On _Startup"
-msgstr ""
+msgstr "Anslut vid _uppstart"
 
 #: ../gui/accounts_menu.go:38
 msgid "_Connect All"
-msgstr ""
+msgstr "_Anslut alla"
 
 #: ../gui/accounts_menu.go:49
 msgid "_Import..."
-msgstr ""
+msgstr "_Importera"
 
 #: ../gui/accounts_menu.go:53
 msgid "_Register..."
-msgstr ""
+msgstr "_Registrera..."
 
 #: ../gui/conversation.go:145
 #, python-format
 msgid "Failed to generate OTR message: %s\n"
-msgstr ""
+msgstr "Kunde inte generera OTR-meddelande: %s\n"
 
 #: ../gui/conversation.go:171
 #, python-format
 msgid "Failed to terminate the encrypted chat: %s\n"
-msgstr ""
+msgstr "Kunde inte avsluta den krypterade chatten: %s\n"
 
 #: ../gui/conversation.go:379
 msgid "Available"
-msgstr ""
+msgstr "Tillgänglig"
 
 #: ../gui/conversation.go:381
 msgid "Not Available"
-msgstr ""
+msgstr "Ej tillgänglig"
 
 #: ../gui/conversation.go:383
 msgid "Away"
-msgstr ""
+msgstr "Borta"
 
 #: ../gui/conversation.go:385
 msgid "Busy"
-msgstr ""
+msgstr "Upptagen"
 
 #: ../gui/conversation.go:387
 msgid "Free for Chat"
-msgstr ""
+msgstr "Ledig för chatt"
 
 #: ../gui/conversation.go:389
 msgid "Invisible"
-msgstr ""
+msgstr "Osynlig"
 
 #: ../gui/conversation.go:424
 msgid "Offline"
-msgstr ""
+msgstr "Bortkopplad"
 
 #: ../gui/conversation.go:430
 msgid " is now "
-msgstr ""
+msgstr "är nu"
 
 #: ../gui/fingerprint_verification.go:19
 #, python-format
@@ -535,163 +560,165 @@ msgid ""
 "You can't verify the fingerprint for %s yet.\n"
 "You first have to start an encrypted conversation with them."
 msgstr ""
+"Du kan inte verifiera fingeravtrycket för %s än.\n"
+"Du måste först starta en krypterad konversation med dem."
 
 #: ../gui/fingerprint_verification.go:54
 #, python-format
 msgid "Verify fingerprint for %s"
-msgstr ""
+msgstr "Verifiera fingeravtryck för %s"
 
 #: ../gui/importer.go:198
 msgid "Import private keys"
-msgstr ""
+msgstr "Importera privata nycklar"
 
 #: ../gui/importer.go:201 ../gui/importer.go:223 ../gui/importer.go:247
 #: ../gui/importer.go:269
 msgid "_Cancel"
-msgstr ""
+msgstr "_Avbryt"
 
 #: ../gui/importer.go:203 ../gui/importer.go:249
 msgid "_Import"
-msgstr ""
+msgstr "_Importera"
 
 #: ../gui/importer.go:210
 msgid "Keys imported"
-msgstr ""
+msgstr "Nycklar importerade"
 
 #: ../gui/importer.go:210
 #, python-format
 msgid "%d key(s) were imported correctly."
-msgstr ""
+msgstr "%d nyckel/nycklar importerades."
 
 #: ../gui/importer.go:212
 msgid "Failure importing keys"
-msgstr ""
+msgstr "Kunde inte importera nycklar"
 
 #: ../gui/importer.go:212
 #, python-format
 msgid "Couldn't import any keys from %s."
-msgstr ""
+msgstr "Kunde inte importera nycklar från %s."
 
 #: ../gui/importer.go:220
 msgid "Export private keys"
-msgstr ""
+msgstr "Exportera privata nycklar"
 
 #: ../gui/importer.go:225 ../gui/importer.go:271
 msgid "_Export"
-msgstr ""
+msgstr "_Exportera"
 
 #: ../gui/importer.go:234
 msgid "Keys exported"
-msgstr ""
+msgstr "Nycklar exporterade"
 
 #: ../gui/importer.go:234
 msgid "Keys were exported correctly."
-msgstr ""
+msgstr "Nycklar exporterades korrekt."
 
 #: ../gui/importer.go:236
 msgid "Failure exporting keys"
-msgstr ""
+msgstr "Kunde inte exportera nycklar"
 
 #: ../gui/importer.go:236
 #, python-format
 msgid "Couldn't export keys to %s."
-msgstr ""
+msgstr "Kunde inte exportera nycklar till %s."
 
 #: ../gui/importer.go:244
 msgid "Import fingerprints"
-msgstr ""
+msgstr "Importera fingeravtryck"
 
 #: ../gui/importer.go:256
 msgid "Fingerprints imported"
-msgstr ""
+msgstr "Fingeravtryck importerade"
 
 #: ../gui/importer.go:256
 #, python-format
 msgid "%d fingerprint(s) were imported correctly."
-msgstr ""
+msgstr "%d fingeravtryck importerades korrekt."
 
 #: ../gui/importer.go:258
 msgid "Failure importing fingerprints"
-msgstr ""
+msgstr "Kunde inte importera fingeravtryck"
 
 #: ../gui/importer.go:258
 #, python-format
 msgid "Couldn't import any fingerprints from %s."
-msgstr ""
+msgstr "Kunde inte importera fingeravtryck från %s"
 
 #: ../gui/importer.go:266
 msgid "Export fingerprints"
-msgstr ""
+msgstr "Exportera fingeravtryck"
 
 #: ../gui/importer.go:280
 msgid "Fingerprints exported"
-msgstr ""
+msgstr "Fingeravtryck exporterade"
 
 #: ../gui/importer.go:280
 msgid "Fingerprints were exported correctly."
-msgstr ""
+msgstr "Fingeravtryck exporterades korrekt."
 
 #: ../gui/importer.go:282
 msgid "Failure exporting fingerprints"
-msgstr ""
+msgstr "Kunde inte exportera fingeravtryck"
 
 #: ../gui/importer.go:282
 #, python-format
 msgid "Couldn't export fingerprints to %s."
-msgstr ""
+msgstr "Kunde inte exportera fingeravtryck till %s"
 
 #: ../gui/master_password.go:30
 msgid "Password can not be empty - please try again"
-msgstr ""
+msgstr "Lösenordet kan inte lämnas tomt. Försök igen!"
 
 #: ../gui/master_password.go:33
 msgid "Passwords have to be the same - please try again"
-msgstr ""
+msgstr "Lösenorden måste vara samma. Försök igen!"
 
 #: ../gui/master_password.go:114
 msgid "Incorrect password entered, please try again."
-msgstr ""
+msgstr "Felaktigt lösenord angivet. Försök igen!"
 
 #: ../gui/master_password.go:121
 msgid "Checking password..."
-msgstr ""
+msgstr "Kontrollerar lösenord..."
 
 #: ../gui/notifications.go:49
 #, python-format
 msgid "You have not verified the identity of %s"
-msgstr ""
+msgstr "Du har inte verifierat identiteten för %s"
 
 #: ../gui/peer_information.go:26
 #, python-format
 msgid "There are no known fingerprints for %s"
-msgstr ""
+msgstr "Det finns inga kända fingeravtryck för %s"
 
 #: ../gui/peer_information.go:28
 #, python-format
 msgid "These are the fingerprints known for %s:"
-msgstr ""
+msgstr "Detta är de kända fingeravtrycken för %s:"
 
 #: ../gui/peer_information.go:34
 msgid "not trusted"
-msgstr ""
+msgstr "Ej betrodd"
 
 #: ../gui/peer_information.go:36
 msgid "trusted"
-msgstr ""
+msgstr "Betrodd"
 
 #: ../gui/subscription.go:18
 #, python-format
 msgid "%s wants to talk to you. Is that ok?"
-msgstr ""
+msgstr "%s vill prata med dig. Är det okay?"
 
 #: ../gui/ui.go:427
 msgid "Coy IM!"
-msgstr ""
+msgstr "Coy IM!"
 
 #: ../gui/ui.go:453
 msgid "There is no account with the id %q"
-msgstr ""
+msgstr "Det finns inget konto med ID %q"
 
 #: ../gui/ui.go:457
 msgid "Can't send a contact request from an offline account"
-msgstr ""
+msgstr "Det går inte att skicka en begäran från ett nedkopplat konto"

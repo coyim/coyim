@@ -138,9 +138,10 @@ func (s *session) ReloadKeys() {
 
 // Send will send the given message to the receiver given
 func (s *session) Send(to, resource string, msg string) error {
-	if s.IsConnected() {
+	conn, ok := s.connection()
+	if ok {
 		log.Printf("<- to=%v {%v}\n", utils.ComposeFullJid(to, resource), msg)
-		return s.conn.Send(utils.ComposeFullJid(to, resource), msg)
+		return conn.Send(utils.ComposeFullJid(to, resource), msg)
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }
@@ -737,19 +738,20 @@ func (s *session) watchRoster() {
 }
 
 func (s *session) requestRoster() bool {
-	if !s.IsConnected() {
+	conn, ok := s.connection()
+	if !ok {
 		return false
 	}
 
 	s.info("Fetching roster")
 
-	delim, err := s.conn.GetRosterDelimiter()
+	delim, err := conn.GetRosterDelimiter()
 	if err != nil || delim == "" {
 		delim = defaultDelimiter
 	}
 	s.groupDelimiter = delim
 
-	rosterReply, _, err := s.conn.RequestRoster()
+	rosterReply, _, err := conn.RequestRoster()
 	if err != nil {
 		s.alert("Failed to request roster: " + err.Error())
 		return true
@@ -785,6 +787,10 @@ func (s *session) IsDisconnected() bool {
 // IsConnected returns true if this account is connected and is not in the process of connecting
 func (s *session) IsConnected() bool {
 	return s.connStatus == CONNECTED
+}
+
+func (s *session) connection() (xi.Conn, bool) {
+	return s.conn, s.connStatus == CONNECTED
 }
 
 func (s *session) setStatus(status connStatus) {
@@ -826,7 +832,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		s.conn = conn
 		s.setStatus(CONNECTED)
 
-		s.conn.SignalPresence("")
+		conn.SignalPresence("")
 		go s.watchRoster()
 		go s.watchTimeout()
 		go s.watchStanzas()
@@ -870,11 +876,12 @@ func (s *session) Close() {
 
 	s.setStatus(DISCONNECTED)
 
-	if s.conn != nil {
+	conn := s.conn
+	if conn != nil {
 		if !s.wantToBeOnline {
 			s.terminateConversations()
 		}
-		s.conn.Close()
+		conn.Close()
 		s.conn = nil
 	}
 }

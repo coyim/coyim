@@ -8,7 +8,7 @@ import (
 
 func (u *gtkUI) captureInitialMasterPassword(k func()) {
 	dialogID := "CaptureInitialMasterPassword"
-	builder := builderForDefinition(dialogID)
+	builder := newBuilder(dialogID)
 	dialogOb, _ := builder.GetObject(dialogID)
 	pwdDialog := dialogOb.(gtki.Dialog)
 
@@ -54,7 +54,7 @@ func (u *gtkUI) captureInitialMasterPassword(k func()) {
 
 func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 	dialogID := "AskToEncrypt"
-	builder := builderForDefinition(dialogID)
+	builder := newBuilder(dialogID)
 
 	dialogOb, _ := builder.GetObject(dialogID)
 	encryptDialog := dialogOb.(gtki.MessageDialog)
@@ -97,7 +97,7 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 	var cleanup func()
 
 	doInUIThread(func() {
-		builder := builderForDefinition(dialogID)
+		builder := newBuilder(dialogID)
 		dialogOb, _ := builder.GetObject(dialogID)
 		dialog := dialogOb.(gtki.Dialog)
 

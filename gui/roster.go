@@ -43,7 +43,7 @@ const (
 )
 
 func (u *gtkUI) newRoster() *roster {
-	builder := builderForDefinition("Roster")
+	builder := newBuilder("Roster")
 
 	r := &roster{
 		isCollapsed: make(map[string]bool),

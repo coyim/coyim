@@ -132,7 +132,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 }
 
 func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc func(*config.Account)) {
-	builder := builderForDefinition("ConfirmAccountRemoval")
+	builder := newBuilder("ConfirmAccountRemoval")
 
 	obj, _ := builder.GetObject("RemoveAccount")
 	dialog := obj.(gtki.MessageDialog)
@@ -372,7 +372,7 @@ func (u *gtkUI) addInitialAccountsToRoster() {
 }
 
 func (u *gtkUI) addFeedbackInfoBar() {
-	builder := builderForDefinition("FeedbackInfo")
+	builder := newBuilder("FeedbackInfo")
 
 	obj, _ := builder.GetObject("feedbackInfo")
 	infobar := obj.(gtki.InfoBar)
@@ -409,7 +409,7 @@ func (u *gtkUI) quit() {
 func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(string) error) {
 	dialogTemplate := "AskForPassword"
 
-	builder := builderForDefinition(dialogTemplate)
+	builder := newBuilder(dialogTemplate)
 
 	obj, _ := builder.GetObject(dialogTemplate)
 	dialog := obj.(gtki.Dialog)
@@ -441,7 +441,7 @@ func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(s
 }
 
 func (u *gtkUI) feedbackDialog() {
-	builder := builderForDefinition("Feedback")
+	builder := newBuilder("Feedback")
 
 	obj, _ := builder.GetObject("dialog")
 	dialog := obj.(gtki.MessageDialog)

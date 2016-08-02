@@ -51,6 +51,7 @@ func builderForDefinition(uiName string) gtki.Builder {
 		panic(err)
 	}
 
+	//XXX Why are we using AddFromString rather than NewFromString
 	err = builder.AddFromString(template)
 	if err != nil {
 		//This is a programming error
@@ -83,7 +84,11 @@ type builder struct {
 	gtki.Builder
 }
 
-func newBuilder(uiName string) *builder {
+func newBuilder(filename string) *builder {
+	return newBuilderFromString(filename)
+}
+
+func newBuilderFromString(uiName string) *builder {
 	return &builder{builderForDefinition(uiName)}
 }
 

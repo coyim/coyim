@@ -58,7 +58,7 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	doInUIThread(func() {
 		f.addFields(fields)
 
-		builder := builderForDefinition("RegistrationForm")
+		builder := newBuilder("RegistrationForm")
 
 		obj, _ := builder.GetObject("dialog")
 		dialog := obj.(gtki.Dialog)

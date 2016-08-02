@@ -41,7 +41,7 @@ Purported fingerprint for %[1]s:
 		builderName = "VerifyFingerprint"
 	}
 
-	builder := builderForDefinition(builderName)
+	builder := newBuilder(builderName)
 
 	obj, _ := builder.GetObject("dialog")
 	dialog := obj.(gtki.Dialog)

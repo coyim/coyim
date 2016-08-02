@@ -37,7 +37,7 @@ func (u *gtkUI) notifyConnectionFailure(account *account, moreInfo func()) {
 }
 
 func buildVerifyIdentityNotification(acc *account, peer, resource string, win gtki.Window) gtki.InfoBar {
-	builder := builderForDefinition("VerifyIdentityNotification")
+	builder := newBuilder("VerifyIdentityNotification")
 
 	obj, _ := builder.GetObject("infobar")
 	infoBar := obj.(gtki.InfoBar)
@@ -67,7 +67,7 @@ func buildVerifyIdentityNotification(acc *account, peer, resource string, win gt
 }
 
 func (u *gtkUI) notify(title, message string) {
-	builder := builderForDefinition("SimpleNotification")
+	builder := newBuilder("SimpleNotification")
 	obj, _ := builder.GetObject("dialog")
 	dlg := obj.(gtki.MessageDialog)
 

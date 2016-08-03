@@ -38,6 +38,10 @@ func (*RealGtk) BuilderNew() (gtki.Builder, error) {
 	return wrapBuilder(gtk.BuilderNew())
 }
 
+func (*RealGtk) BuilderNewFromResource(s string) (gtki.Builder, error) {
+	return wrapBuilder(gtk.BuilderNewFromResource(s))
+}
+
 func (*RealGtk) CellRendererTextNew() (gtki.CellRendererText, error) {
 	return wrapCellRendererText(gtk.CellRendererTextNew())
 }

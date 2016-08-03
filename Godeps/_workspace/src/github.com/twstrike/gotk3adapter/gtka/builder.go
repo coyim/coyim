@@ -34,6 +34,10 @@ func (v *builder) AddFromString(v1 string) error {
 	return v.internal.AddFromString(v1)
 }
 
+func (v *builder) AddFromResource(v1 string) error {
+	return v.internal.AddFromResource(v1)
+}
+
 func (v *builder) GetObject(v1 string) (glibi.Object, error) {
 	vx1, vx2 := v.internal.GetObject(v1)
 	return Wrap(vx1).(glibi.Object), vx2

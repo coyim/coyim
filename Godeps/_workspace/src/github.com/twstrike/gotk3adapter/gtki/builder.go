@@ -5,6 +5,7 @@ import "github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk
 type Builder interface {
 	glibi.Object
 
+	AddFromResource(string) error
 	AddFromString(string) error
 	ConnectSignals(map[string]interface{})
 	GetObject(string) (glibi.Object, error)

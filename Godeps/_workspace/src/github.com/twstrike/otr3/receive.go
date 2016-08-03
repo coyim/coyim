@@ -177,16 +177,13 @@ func (c *Conversation) notifyDataMessageError(err error) {
 	var e ErrorCode
 
 	if err == errMessageNotInPrivate {
-		return
-	}
-
-	if isConflict(err) {
+		e = ErrorCodeMessageNotInPrivate
+	} else if isConflict(err) {
 		c.messageEvent(MessageEventReceivedMessageUnreadable)
 		e = ErrorCodeMessageUnreadable
 	} else {
 		c.messageEvent(MessageEventReceivedMessageMalformed)
 		e = ErrorCodeMessageMalformed
 	}
-
 	c.generatePotentialErrorMessage(e)
 }

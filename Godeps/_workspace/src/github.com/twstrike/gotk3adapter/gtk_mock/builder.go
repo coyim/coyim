@@ -13,6 +13,10 @@ func (*MockBuilder) AddFromString(v1 string) error {
 	return nil
 }
 
+func (*MockBuilder) AddFromResource(v1 string) error {
+	return nil
+}
+
 func (*MockBuilder) GetObject(v1 string) (glibi.Object, error) {
 	return nil, nil
 }

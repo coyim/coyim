@@ -31,6 +31,10 @@ func (*Mock) BuilderNew() (gtki.Builder, error) {
 	return nil, nil
 }
 
+func (*Mock) BuilderNewFromResource(string) (gtki.Builder, error) {
+	return nil, nil
+}
+
 func (*Mock) CellRendererTextNew() (gtki.CellRendererText, error) {
 	return nil, nil
 }

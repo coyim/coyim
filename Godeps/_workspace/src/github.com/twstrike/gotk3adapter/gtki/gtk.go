@@ -12,6 +12,7 @@ type Gtk interface {
 	AddProviderForScreen(gdki.Screen, StyleProvider, uint)
 	ApplicationNew(string, glibi.ApplicationFlags) (Application, error)
 	BuilderNew() (Builder, error)
+	BuilderNewFromResource(string) (Builder, error)
 	CellRendererTextNew() (CellRendererText, error)
 	CheckButtonNewWithMnemonic(string) (CheckButton, error)
 	CheckMenuItemNewWithMnemonic(string) (CheckMenuItem, error)

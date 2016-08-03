@@ -1077,6 +1077,29 @@ func (v *EventScroll) Type() EventType {
 	return EventType(c)
 }
 
+func (v *EventScroll) Direction() ScrollDirection {
+	c := v.native().direction
+	return ScrollDirection(c)
+}
+
+/*
+ * GdkGravity
+ */
+type GdkGravity int
+
+const (
+	GDK_GRAVITY_NORTH_WEST = C.GDK_GRAVITY_NORTH_WEST
+	GDK_GRAVITY_NORTH      = C.GDK_GRAVITY_NORTH
+	GDK_GRAVITY_NORTH_EAST = C.GDK_GRAVITY_NORTH_EAST
+	GDK_GRAVITY_WEST       = C.GDK_GRAVITY_WEST
+	GDK_GRAVITY_CENTER     = C.GDK_GRAVITY_CENTER
+	GDK_GRAVITY_EAST       = C.GDK_GRAVITY_EAST
+	GDK_GRAVITY_SOUTH_WEST = C.GDK_GRAVITY_SOUTH_WEST
+	GDK_GRAVITY_SOUTH      = C.GDK_GRAVITY_SOUTH
+	GDK_GRAVITY_SOUTH_EAST = C.GDK_GRAVITY_SOUTH_EAST
+	GDK_GRAVITY_STATIC     = C.GDK_GRAVITY_STATIC
+)
+
 /*
  * GdkPixbuf
  */

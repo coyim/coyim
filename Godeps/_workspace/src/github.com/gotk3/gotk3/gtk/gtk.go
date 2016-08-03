@@ -1247,6 +1247,20 @@ func BuilderNew() (*Builder, error) {
 	return &Builder{obj}, nil
 }
 
+// BuilderNewFromResource is a wrapper around gtk_builder_new_from_resource().
+func BuilderNewFromResource(resourcePath string) (*Builder, error) {
+	cstr := C.CString(resourcePath)
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gtk_builder_new_from_resource((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := wrapObject(unsafe.Pointer(c))
+	return &Builder{obj}, nil
+}
+
 // AddFromFile is a wrapper around gtk_builder_add_from_file().
 func (b *Builder) AddFromFile(filename string) error {
 	cstr := C.CString(filename)
@@ -8148,6 +8162,12 @@ func (v *TreeModel) IterPrevious(iter *TreeIter) bool {
 	return gobool(c)
 }
 
+// IterNthChild is a wrapper around gtk_tree_model_iter_nth_child().
+func (v *TreeModel) IterNthChild(iter *TreeIter, parent *TreeIter, n int) bool {
+	c := C.gtk_tree_model_iter_nth_child(v.native(), iter.native(), parent.native(), C.gint(n))
+	return gobool(c)
+}
+
 // IterChildren is a wrapper around gtk_tree_model_iter_children().
 func (v *TreeModel) IterChildren(iter, child *TreeIter) bool {
 	var cIter, cChild *C.GtkTreeIter
@@ -8201,6 +8221,21 @@ func marshalTreePath(p uintptr) (interface{}, error) {
 
 func (v *TreePath) free() {
 	C.gtk_tree_path_free(v.native())
+}
+
+// GetIndices is a wrapper around gtk_tree_path_get_indices_with_depth
+func (v *TreePath) GetIndices() []int {
+	var depth C.gint
+	var goindices []int
+	var ginthelp C.gint
+	indices := uintptr(unsafe.Pointer(C.gtk_tree_path_get_indices_with_depth(v.native(), &depth)))
+	size := unsafe.Sizeof(ginthelp)
+	for i := 0; i < int(depth); i++ {
+		goind := int(*((*C.gint)(unsafe.Pointer(indices))))
+		goindices = append(goindices, goind)
+		indices += size
+	}
+	return goindices
 }
 
 // String is a wrapper around gtk_tree_path_to_string().
@@ -8296,7 +8331,7 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
 		glist.FreeFull(func(item interface{}) {
-			path := item.(TreePath)
+			path := item.(*TreePath)
 			C.gtk_tree_path_free(path.GtkTreePath)
 		})
 	})
@@ -8564,6 +8599,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkCheckButton":         wrapCheckButton,
 	"GtkCheckMenuItem":       wrapCheckMenuItem,
 	"GtkClipboard":           wrapClipboard,
+	"GtkColorButton":         wrapColorButton,
 	"GtkContainer":           wrapContainer,
 	"GtkDialog":              wrapDialog,
 	"GtkDrawingArea":         wrapDrawingArea,

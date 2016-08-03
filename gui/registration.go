@@ -60,16 +60,16 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 
 		builder := newBuilder("RegistrationForm")
 
-		obj, _ := builder.GetObject("dialog")
+		obj := builder.getObj("dialog")
 		dialog := obj.(gtki.Dialog)
 		dialog.SetTitle(title)
 
-		obj, _ = builder.GetObject("instructions")
+		obj = builder.getObj("instructions")
 		label := obj.(gtki.Label)
 		label.SetText(instructions)
 		label.SetSelectable(true)
 
-		obj, _ = builder.GetObject("grid")
+		obj = builder.getObj("grid")
 		grid := obj.(gtki.Grid)
 
 		for i, field := range f.fields {

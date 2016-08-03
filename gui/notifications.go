@@ -39,17 +39,17 @@ func (u *gtkUI) notifyConnectionFailure(account *account, moreInfo func()) {
 func buildVerifyIdentityNotification(acc *account, peer, resource string, win gtki.Window) gtki.InfoBar {
 	builder := newBuilder("VerifyIdentityNotification")
 
-	obj, _ := builder.GetObject("infobar")
+	obj := builder.getObj("infobar")
 	infoBar := obj.(gtki.InfoBar)
 
-	obj, _ = builder.GetObject("message")
+	obj = builder.getObj("message")
 	message := obj.(gtki.Label)
 	message.SetSelectable(true)
 
 	text := fmt.Sprintf(i18n.Local("You have not verified the identity of %s"), peer)
 	message.SetText(text)
 
-	obj, _ = builder.GetObject("button_verify")
+	obj = builder.getObj("button_verify")
 	button := obj.(gtki.Button)
 	button.Connect("clicked", func() {
 		doInUIThread(func() {
@@ -68,7 +68,7 @@ func buildVerifyIdentityNotification(acc *account, peer, resource string, win gt
 
 func (u *gtkUI) notify(title, message string) {
 	builder := newBuilder("SimpleNotification")
-	obj, _ := builder.GetObject("dialog")
+	obj := builder.getObj("dialog")
 	dlg := obj.(gtki.MessageDialog)
 
 	dlg.SetProperty("title", title)

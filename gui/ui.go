@@ -134,7 +134,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc func(*config.Account)) {
 	builder := newBuilder("ConfirmAccountRemoval")
 
-	obj, _ := builder.GetObject("RemoveAccount")
+	obj := builder.getObj("RemoveAccount")
 	dialog := obj.(gtki.MessageDialog)
 	dialog.SetTransientFor(u.window)
 	dialog.SetProperty("text", acc.Account)
@@ -339,11 +339,11 @@ func (u *gtkUI) mainWindow() {
 	u.displaySettings.defaultSettingsOn(u.optionsMenu.encryptConfig)
 
 	u.initMenuBar()
-	obj, _ := builder.GetObject("Vbox")
+	obj := builder.getObj("Vbox")
 	vbox := obj.(gtki.Box)
 	vbox.PackStart(u.roster.widget, true, true, 0)
 
-	obj, _ = builder.GetObject("Hbox")
+	obj = builder.getObj("Hbox")
 	hbox := obj.(gtki.Box)
 	u.unified = newUnifiedLayout(u, vbox, hbox)
 
@@ -374,7 +374,7 @@ func (u *gtkUI) addInitialAccountsToRoster() {
 func (u *gtkUI) addFeedbackInfoBar() {
 	builder := newBuilder("FeedbackInfo")
 
-	obj, _ := builder.GetObject("feedbackInfo")
+	obj := builder.getObj("feedbackInfo")
 	infobar := obj.(gtki.InfoBar)
 
 	u.notificationArea.PackEnd(infobar, true, true, 0)
@@ -394,7 +394,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 		},
 	})
 
-	obj, _ = builder.GetObject("feedbackButton")
+	obj = builder.getObj("feedbackButton")
 	button := obj.(gtki.Button)
 	button.Connect("clicked", func() {
 		doInUIThread(u.feedbackDialog)
@@ -411,17 +411,17 @@ func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(s
 
 	builder := newBuilder(dialogTemplate)
 
-	obj, _ := builder.GetObject(dialogTemplate)
+	obj := builder.getObj(dialogTemplate)
 	dialog := obj.(gtki.Dialog)
 
-	obj, _ = builder.GetObject("accountName")
+	obj = builder.getObj("accountName")
 	label := obj.(gtki.Label)
 	label.SetText(accountName)
 	label.SetSelectable(true)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_entered_password_signal": func() {
-			passwordObj, _ := builder.GetObject("password")
+			passwordObj := builder.getObj("password")
 			passwordEntry := passwordObj.(gtki.Entry)
 			password, _ := passwordEntry.GetText()
 
@@ -443,7 +443,7 @@ func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(s
 func (u *gtkUI) feedbackDialog() {
 	builder := newBuilder("Feedback")
 
-	obj, _ := builder.GetObject("dialog")
+	obj := builder.getObj("dialog")
 	dialog := obj.(gtki.MessageDialog)
 	dialog.SetTransientFor(u.window)
 

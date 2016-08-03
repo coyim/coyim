@@ -71,10 +71,10 @@ func (u *gtkUI) runImporter() {
 
 	builder := newBuilder("Importer")
 
-	win, _ := builder.GetObject("importerWindow")
+	win := builder.getObj("importerWindow")
 	w := win.(gtki.Dialog)
 
-	store, _ := builder.GetObject("importAccountsStore")
+	store := builder.getObj("importAccountsStore")
 	s := store.(gtki.ListStore)
 
 	for appName, v := range allImports {
@@ -88,7 +88,7 @@ func (u *gtkUI) runImporter() {
 		}
 	}
 
-	rend, _ := builder.GetObject("import-this-account-renderer")
+	rend := builder.getObj("import-this-account-renderer")
 	rr := rend.(gtki.CellRendererToggle)
 
 	rr.Connect("toggled", func(_ interface{}, path string) {

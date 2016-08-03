@@ -9,16 +9,16 @@ import (
 func (u *gtkUI) captureInitialMasterPassword(k func()) {
 	dialogID := "CaptureInitialMasterPassword"
 	builder := newBuilder(dialogID)
-	dialogOb, _ := builder.GetObject(dialogID)
+	dialogOb := builder.getObj(dialogID)
 	pwdDialog := dialogOb.(gtki.Dialog)
 
-	passObj, _ := builder.GetObject("password")
+	passObj := builder.getObj("password")
 	password := passObj.(gtki.Entry)
 
-	pass2Obj, _ := builder.GetObject("password2")
+	pass2Obj := builder.getObj("password2")
 	password2 := pass2Obj.(gtki.Entry)
 
-	msgObj, _ := builder.GetObject("passMessage")
+	msgObj := builder.getObj("passMessage")
 	messageObj := msgObj.(gtki.Label)
 	messageObj.SetSelectable(true)
 
@@ -56,7 +56,7 @@ func (u *gtkUI) wouldYouLikeToEncryptYourFile(k func(bool)) {
 	dialogID := "AskToEncrypt"
 	builder := newBuilder(dialogID)
 
-	dialogOb, _ := builder.GetObject(dialogID)
+	dialogOb := builder.getObj(dialogID)
 	encryptDialog := dialogOb.(gtki.MessageDialog)
 	encryptDialog.SetDefaultResponse(gtki.RESPONSE_YES)
 	encryptDialog.SetTransientFor(u.window)
@@ -98,15 +98,15 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 
 	doInUIThread(func() {
 		builder := newBuilder(dialogID)
-		dialogOb, _ := builder.GetObject(dialogID)
+		dialogOb := builder.getObj(dialogID)
 		dialog := dialogOb.(gtki.Dialog)
 
 		cleanup = dialog.Destroy
 
-		passObj, _ := builder.GetObject("password")
+		passObj := builder.getObj("password")
 		password := passObj.(gtki.Entry)
 
-		msgObj, _ := builder.GetObject("passMessage")
+		msgObj := builder.getObj("passMessage")
 		messageObj := msgObj.(gtki.Label)
 		messageObj.SetSelectable(true)
 

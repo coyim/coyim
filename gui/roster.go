@@ -56,13 +56,13 @@ func (u *gtkUI) newRoster() *roster {
 		"on_activate_buddy": r.onActivateBuddy,
 	})
 
-	obj, _ := builder.GetObject("roster")
+	obj := builder.getObj("roster")
 	r.widget = obj.(gtki.ScrolledWindow)
 
-	obj, _ = builder.GetObject("roster-view")
+	obj = builder.getObj("roster-view")
 	r.view = obj.(gtki.TreeView)
 
-	obj, _ = builder.GetObject("roster-model")
+	obj = builder.getObj("roster-model")
 	r.model = obj.(gtki.TreeStore)
 
 	u.displaySettings.update()

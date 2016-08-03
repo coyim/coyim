@@ -43,10 +43,10 @@ Purported fingerprint for %[1]s:
 
 	builder := newBuilder(builderName)
 
-	obj, _ := builder.GetObject("dialog")
+	obj := builder.getObj("dialog")
 	dialog := obj.(gtki.Dialog)
 
-	obj, _ = builder.GetObject("message")
+	obj = builder.getObj("message")
 	l := obj.(gtki.Label)
 	l.SetText(message)
 	l.SetSelectable(true)

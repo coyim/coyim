@@ -270,21 +270,22 @@ func (u *gtkUI) saveConfigOnly() {
 	}()
 }
 
+func (u *gtkUI) onActivate() {
+	if activeWindow := u.app.GetActiveWindow(); activeWindow != nil {
+		activeWindow.Present()
+		return
+	}
+
+	applyHacks()
+	u.mainWindow()
+
+	go u.watchCommands()
+	go u.observeAccountEvents()
+	go u.loadConfig(*config.ConfigFile)
+}
+
 func (u *gtkUI) Loop() {
-	u.app.Connect("activate", func() {
-		activeWindow := u.app.GetActiveWindow()
-		if activeWindow == nil {
-			go u.watchCommands()
-			go u.observeAccountEvents()
-
-			applyHacks()
-			u.mainWindow()
-			go u.loadConfig(*config.ConfigFile)
-		} else {
-			activeWindow.Present()
-		}
-	})
-
+	u.app.Connect("activate", u.onActivate)
 	u.app.Run([]string{})
 }
 

@@ -30,7 +30,7 @@ func (c disconnectAccountCmd) execute(u *gtkUI) {
 
 func (c connectionInfoCmd) execute(u *gtkUI) {
 	doInUIThread(func() {
-		u.connectionInfo(c.a)
+		u.connectionInfoDialog(c.a)
 	})
 }
 

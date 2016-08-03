@@ -162,9 +162,7 @@ func (u *gtkUI) initialSetupWindow() {
 }
 
 func (u *gtkUI) loadConfig(configFile string) {
-	u.config.WhenLoaded(func(c *config.ApplicationConfig) {
-		u.configLoaded(c)
-	})
+	u.config.WhenLoaded(u.configLoaded)
 
 	ok := false
 	var conf *config.ApplicationConfig
@@ -187,6 +185,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 		doInUIThread(u.initialSetupWindow)
 		return
 	}
+
 	if u.config.UpdateToLatestVersion() {
 		u.saveConfigOnlyInternal()
 	}
@@ -559,10 +558,6 @@ func (u *gtkUI) rosterUpdated() {
 	if u.unified != nil {
 		doInUIThread(u.unified.update)
 	}
-}
-
-func (u *gtkUI) connectionInfo(account *account) {
-	u.connectionInfoDialog(account)
 }
 
 func (u *gtkUI) editAccount(account *account) {

@@ -102,19 +102,19 @@
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/pbkdf2",
-			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
+			"Rev": "0c565bf13221fb55497d7ae2bb95694db1fd1bff"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/scrypt",
-			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
+			"Rev": "0c565bf13221fb55497d7ae2bb95694db1fd1bff"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/sha3",
-			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
+			"Rev": "0c565bf13221fb55497d7ae2bb95694db1fd1bff"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
-			"Rev": "5dc8cb4b8a8eb076cbb5a06bc3b8682c15bdbbd3"
+			"Rev": "0c565bf13221fb55497d7ae2bb95694db1fd1bff"
 		},
 		{
 			"ImportPath": "golang.org/x/net/html",

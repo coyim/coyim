@@ -307,10 +307,7 @@ func (u *gtkUI) mainWindow() {
 		"on_preferences_signal":                        u.showGlobalPreferences,
 	})
 
-	win, err := builder.GetObject("mainWindow")
-	if err != nil {
-		panic(err)
-	}
+	win := builder.get("mainWindow")
 
 	u.window = win.(gtki.ApplicationWindow)
 	u.window.SetApplication(u.app)
@@ -320,8 +317,6 @@ func (u *gtkUI) mainWindow() {
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow
 	u.initRoster()
-
-	g.gtk.LabelNew("hello")
 
 	// AccountsMenu
 	u.accountsMenu = builder.getObj("AccountsMenu").(gtki.MenuItem)

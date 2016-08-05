@@ -12,10 +12,10 @@ go:
 
 matrix:
   include:
-    - go: 1.5.3
+    - go: 1.6.3
       env: RELEASE=true
       os: linux
-    - go: 1.5.3
+    - go: 1.6.3
       env: RELEASE=true
       os: osx
   allow_failures:

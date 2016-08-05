@@ -39,12 +39,11 @@ i18n:
 .PHONY: i18n
 
 lint:
-	echo $(GO_VERSION)
 ifeq ($(GO_VERSION), go1.3)
-	echo "Your version of Go is too old for running lint"
+	echo "Your version of Go is too old for running lint. Skipping."
 else
 ifeq ($(GO_VERSION), go1.4)
-	echo "Your version of Go is too old for running lint"
+	echo "Your version of Go is too old for running lint. Skipping."
 else
 	golint ./...
 endif

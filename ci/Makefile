@@ -1,5 +1,4 @@
-#GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
-#GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
+GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
 ci: deps lint doctor test coveralls
 
@@ -15,9 +14,17 @@ test:
 doctor: check-go-imports check-ui-defs
 
 check-go-imports:
+ifeq ($(GO_VERSION), go1.3)
+	echo "Your version of Go is too old for running goimports. Skipping."
+else
+ifeq ($(GO_VERSION), go1.4)
+	echo "Your version of Go is too old for running goimports. Skipping."
+else
 	go get golang.org/x/tools/cmd/goimports
 	goimports -w .
 	git diff --exit-code .
+endif
+endif
 
 # make sure the ui definitions checked in are in sync
 check-ui-defs:

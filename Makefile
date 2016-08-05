@@ -39,6 +39,7 @@ i18n:
 .PHONY: i18n
 
 lint:
+	echo $(GO_VERSION)
 ifeq ($(GO_VERSION), go1.3)
 	echo "Your version of Go is too old for running lint"
 else

@@ -1,9 +1,6 @@
 package client
 
-import (
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
-	"github.com/twstrike/coyim/i18n"
-)
+import "github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
 
 // Conversation represents a conversation with encryption capabilities
 type Conversation interface {
@@ -31,9 +28,7 @@ type conversation struct {
 }
 
 func (c *conversation) StartEncryptedChat(s Sender, resource string) error {
-	//TODO: review whether it should create a conversation
-	//conversation, _ := m.EnsureConversationWith(peer)
-	return s.Send(c.to, resource, string(c.QueryMessage())+" "+i18n.Local("Your peer has requested a private conversation with you, but your client doesn't seem to support the OTR protocol."))
+	return s.Send(c.to, resource, string(c.QueryMessage()))
 }
 
 func (c *conversation) sendAll(s Sender, resource string, toSend []otr3.ValidMessage) error {

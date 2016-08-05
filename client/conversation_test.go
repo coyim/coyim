@@ -14,6 +14,8 @@ var _ = Suite(&ConversationSuite{})
 func (s *ConversationSuite) Test_StartEncryptedChat_startsAnEncryptedChat(c *C) {
 	cb := &conversation{"foo@bar.com", "", &otr3.Conversation{}}
 	ts := &testSender{err: nil}
+
+	cb.SetFriendlyQueryMessage("Your peer has requested a private conversation with you, but your client doesn't seem to support the OTR protocol.")
 	e := cb.StartEncryptedChat(ts, "")
 
 	c.Assert(e, IsNil)

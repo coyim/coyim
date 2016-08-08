@@ -474,6 +474,9 @@ func (s *session) listenToNotifications(c <-chan string, peer string) {
 // NewConversation will create a new OTR conversation with the given peer
 //TODO: why creating a conversation is coupled to the account config and the session
 //TODO: does the creation of the OTR event handler need to be guarded with a lock?
+//TODO: Why starting a conversation requires being able to translate a message?
+//This also assumes it's useful to send friendly message to another person in
+//the same language configured on your app.
 func (s *session) NewConversation(peer string) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.privateKeys)

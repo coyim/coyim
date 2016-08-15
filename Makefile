@@ -102,13 +102,14 @@ get:
 
 deps-dev:
 ifeq ($(GO_VERSION), go1.3)
+	go get -a golang.org/x/tools/cmd/cover
 else
 ifeq ($(GO_VERSION), go1.4)
+	go get -a golang.org/x/tools/cmd/cover
 else
 	go get github.com/golang/lint/golint
 endif
 endif
-	go get golang.org/x/tools/cmd/cover
 	go get github.com/modocache/gover
 	go get github.com/tools/godep
 

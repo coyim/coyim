@@ -96,6 +96,26 @@ func (*defAccountDetails) String() string {
                   </packing>
                 </child>
 
+               <child>
+                  <object class="GtkLabel" id="DisplayNameLabel">
+                    <property name="label" translatable="yes">Display name</property>
+                    <property name="halign">GTK_ALIGN_END</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="displayName">
+                    <signal name="activate" handler="on_save_signal" />
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">2</property>
+                  </packing>
+                </child>
+                
                 <child>
                   <object class="GtkLabel" id="showOtherSettings">
                     <property name="label" translatable="yes">Display all settings</property>
@@ -104,7 +124,7 @@ func (*defAccountDetails) String() string {
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">2</property>
+                    <property name="top-attach">3</property>
                   </packing>
                 </child>
                 <child>
@@ -114,7 +134,7 @@ func (*defAccountDetails) String() string {
                   
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">2</property>
+                    <property name="top-attach">3</property>
                   </packing>
                 </child>
               </object>

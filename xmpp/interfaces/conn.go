@@ -28,6 +28,7 @@ type Conn interface {
 	ReadStanzas(chan<- data.Stanza) error
 	RegisterAccount(string, string) (bool, error)
 	RequestRoster() (<-chan data.Stanza, data.Cookie, error)
+	RequestVCard() (<-chan data.Stanza, data.Cookie, error)
 	Send(string, string) error
 	SendIQ(string, string, interface{}) (chan data.Stanza, data.Cookie, error)
 	SendIQReply(string, string, string, interface{}) error

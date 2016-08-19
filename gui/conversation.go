@@ -325,7 +325,7 @@ func newConversationWindow(account *account, uid string, ui *gtkUI) *conversatio
 	}
 
 	// TODO: Can we put the security rating here, maybe?
-	title := fmt.Sprintf("%s <-> %s", account.session.GetConfig().Account, otherName)
+	title := fmt.Sprintf("%s <-> %s", account.session.DisplayName(), otherName)
 	win.SetTitle(title)
 
 	winBox := builder.getObj("box").(gtki.Box)
@@ -487,7 +487,7 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
 		conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
-		conv.appendMessage(conv.account.session.GetConfig().Account, time.Now(), conversation.IsEncrypted(), ui.StripSomeHTML([]byte(message)), true)
+		conv.appendMessage(conv.account.session.DisplayName(), time.Now(), conversation.IsEncrypted(), ui.StripSomeHTML([]byte(message)), true)
 	}
 	return nil
 }

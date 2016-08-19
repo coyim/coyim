@@ -63,6 +63,11 @@ func (*SessionMock) DenyPresenceSubscription(string, string) error {
 	return nil
 }
 
+// DisplayName is the implementation for Session interface
+func (*SessionMock) DisplayName() string {
+	return ""
+}
+
 // EncryptAndSendTo is the implementation for Session interface
 func (*SessionMock) EncryptAndSendTo(string, string, string) error {
 	return nil

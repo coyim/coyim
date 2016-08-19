@@ -79,6 +79,8 @@ type session struct {
 	dialerFactory func(tls.Verifier) xi.Dialer
 
 	autoApproves map[string]bool
+
+	nicknames []string
 }
 
 // GetConfig returns the current account configuration
@@ -200,6 +202,15 @@ func either(l, r string) string {
 		return r
 	}
 	return l
+}
+
+func firstNonEmpty(ss ...string) string {
+	for _, s := range ss {
+		if s != "" {
+			return s
+		}
+	}
+	return ""
 }
 
 func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
@@ -740,6 +751,41 @@ func (s *session) watchRoster() {
 	}
 }
 
+func (s *session) getVCard() {
+	conn, ok := s.connection()
+	if !ok {
+		return
+	}
+
+	s.info("Fetching VCard")
+
+	vcardReply, _, err := conn.RequestVCard()
+	if err != nil {
+		s.alert("Failed to request vcard: " + err.Error())
+		return
+	}
+
+	vcardStanza, ok := <-vcardReply
+	if !ok {
+		log.Println("session: vcard request cancelled or timedout")
+		return
+	}
+
+	vc, err := data.ParseVCard(vcardStanza)
+	if err != nil {
+		s.alert("Failed to parse vcard: " + err.Error())
+		return
+	}
+
+	s.nicknames = []string{vc.Nickname, vc.FullName}
+
+	return
+}
+
+func (s *session) DisplayName() string {
+	return either(either(s.accountConfig.Nickname, firstNonEmpty(s.nicknames...)), s.accountConfig.Account)
+}
+
 func (s *session) requestRoster() bool {
 	conn, ok := s.connection()
 	if !ok {
@@ -837,6 +883,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 
 		conn.SignalPresence("")
 		go s.watchRoster()
+		go s.getVCard()
 		go s.watchTimeout()
 		go s.watchStanzas()
 	} else {

@@ -247,7 +247,7 @@ func (csi *conversationStackItem) bringToFront() {
 	csi.needsAttention = false
 	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
-	title := fmt.Sprintf("%s <-> %s", csi.account.session.GetConfig().Account, csi.to)
+	title := fmt.Sprintf("%s <-> %s", csi.account.session.DisplayName(), csi.to)
 	csi.layout.header.SetText(title)
 	csi.layout.headerBar.SetSubtitle(title)
 	csi.entry.GrabFocus()

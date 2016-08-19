@@ -24,6 +24,7 @@ type accountDetailsData struct {
 	otherSettings       gtki.CheckButton
 	acc                 gtki.Entry
 	pass                gtki.Entry
+	displayName         gtki.Entry
 	server              gtki.Entry
 	port                gtki.Entry
 	proxies             gtki.ListStore
@@ -47,6 +48,7 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 		"otherSettings", &data.otherSettings,
 		"account", &data.acc,
 		"password", &data.pass,
+		"displayName", &data.displayName,
 		"server", &data.server,
 		"port", &data.port,
 		"proxies-model", &data.proxies,
@@ -178,6 +180,13 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 
 	data.otherSettings.SetActive(u.config.AdvancedOptions)
 	data.acc.SetText(account.Account)
+
+	data.displayName.SetProperty("placeholder-text", s.DisplayName())
+	nick := s.GetConfig().Nickname
+	if nick != "" {
+		data.displayName.SetText(nick)
+	}
+
 	data.server.SetText(account.Server)
 	if account.Port == 0 {
 		account.Port = 5222
@@ -238,6 +247,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		"on_save_signal": func() {
 			accTxt, _ := data.acc.GetText()
 			passTxt, _ := data.pass.GetText()
+			dispTxt, _ := data.displayName.GetText()
 			servTxt, _ := data.server.GetText()
 			portTxt, _ := data.port.GetText()
 
@@ -262,6 +272,8 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			if passTxt != "" {
 				account.Password = passTxt
 			}
+
+			account.Nickname = dispTxt
 
 			convertedPort, e := strconv.Atoi(portTxt)
 			if len(strings.TrimSpace(portTxt)) == 0 || e != nil {

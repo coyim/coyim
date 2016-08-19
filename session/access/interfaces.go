@@ -38,6 +38,7 @@ type Session interface {
 	Connect(string, tls.Verifier) error
 	ConversationManager() client.ConversationManager
 	DenyPresenceSubscription(string, string) error
+	DisplayName() string
 	EncryptAndSendTo(string, string, string) error
 	GetConfig() *config.Account
 	GroupDelimiter() string

@@ -16,6 +16,7 @@ type Account struct {
 
 	//TODO: this should be JID
 	Account              string
+	Nickname             string   `json:",omitempty"`
 	Server               string   `json:",omitempty"`
 	Proxies              []string `json:",omitempty"`
 	Password             string   `json:",omitempty"`

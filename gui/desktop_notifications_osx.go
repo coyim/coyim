@@ -5,9 +5,9 @@ package gui
 import (
 	"log"
 
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gosx-notifier"
 	"github.com/twstrike/coyim/gui/settings"
 )
-import "github.com/twstrike/gosx-notifier"
 
 type desktopNotifications struct {
 	notificationStyle   string

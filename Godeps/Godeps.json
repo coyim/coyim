@@ -1,9 +1,8 @@
 {
 	"ImportPath": "github.com/twstrike/coyim",
 	"GoVersion": "go1.5",
-	"GodepVersion": "v74",
 	"Packages": [
-		"./..."
+		"."
 	],
 	"Deps": [
 		{
@@ -53,6 +52,10 @@
 			"Rev": "cce6c130cdb92c752850880fd285bea1d64439dd"
 		},
 		{
+			"ImportPath": "github.com/twstrike/gosx-notifier",
+			"Rev": "494129068b612c6d07d0223696a5f27f22f5f28d"
+		},
+		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdka",
 			"Rev": "3f634b2e9dbed4aa2710a14b47f82aec4d947856"
 		},
@@ -70,10 +73,6 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glibi",
-			"Rev": "3f634b2e9dbed4aa2710a14b47f82aec4d947856"
-		},
-		{
-			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
 			"Rev": "3f634b2e9dbed4aa2710a14b47f82aec4d947856"
 		},
 		{

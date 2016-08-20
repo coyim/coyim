@@ -2,7 +2,7 @@
 	"ImportPath": "github.com/twstrike/coyim",
 	"GoVersion": "go1.5",
 	"Packages": [
-		"."
+		"./..."
 	],
 	"Deps": [
 		{
@@ -73,6 +73,10 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glibi",
+			"Rev": "3f634b2e9dbed4aa2710a14b47f82aec4d947856"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
 			"Rev": "3f634b2e9dbed4aa2710a14b47f82aec4d947856"
 		},
 		{

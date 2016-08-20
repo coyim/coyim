@@ -115,3 +115,6 @@ endif
 
 deps: deps-dev
 	godep restore
+
+fixup-deps:
+	godep save -r -t -v ./...

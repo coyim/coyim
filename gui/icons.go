@@ -2,6 +2,11 @@ package gui
 
 import (
 	"encoding/hex"
+	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gdki"
 )
@@ -11,9 +16,13 @@ type icon struct {
 	size    string
 	decoded []byte
 	cached  gdki.Pixbuf
+	path    string
+	name    string
 }
 
 var coyimIcon = &icon{
+	name: "coyimIcon_256x256.png",
+	path: "build/mac-bundle/coy.iconset/icon_256x256.png",
 	size: "256x256",
 	encoded: "" +
 		"89504e470d0a1a0a0000000d49484452000001000000010008060000005c72a86600000004734249" +
@@ -1037,6 +1046,27 @@ func (i *icon) get() []byte {
 		i.decoded, _ = hex.DecodeString(i.encoded)
 	}
 	return i.decoded
+}
+
+func getActualRootFolder() string {
+	wd, _ := os.Getwd()
+	if strings.HasSuffix(wd, "/gui") {
+		return filepath.Join(wd, "../")
+	}
+	return wd
+}
+
+func (i *icon) getPath() string {
+	iconPath := filepath.Join(getActualRootFolder(), i.path)
+	if fileNotFound(iconPath) {
+		tmpIconPath := filepath.Join(filepath.Join(os.TempDir(), "coyim"), i.name)
+		if fileNotFound(tmpIconPath) {
+			ioutil.WriteFile(tmpIconPath, i.get(), 0664)
+			log.Printf("gui/icons: wrote %s to %\n", i.name, tmpIconPath)
+		}
+		return tmpIconPath
+	}
+	return iconPath
 }
 
 func (i *icon) getPixbuf() gdki.Pixbuf {

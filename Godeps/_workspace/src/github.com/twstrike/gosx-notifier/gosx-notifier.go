@@ -33,6 +33,7 @@ type Notification struct {
 	Subtitle     string //optional
 	Sound        Sound  //optional
 	Link         string //optional
+	Activate     string //optional
 	Sender       string //optional
 	Group        string //optional
 	AppIcon      string //optional
@@ -108,6 +109,11 @@ func (n *Notification) Push() error {
 		//add bundle id if specified
 		if strings.HasPrefix(strings.ToLower(n.Link), "com.") {
 			commandTuples = append(commandTuples, []string{"-activate", n.Link}...)
+		}
+
+		//add bundle id if specified
+		if n.Activate != "" {
+			commandTuples = append(commandTuples, []string{"-activate", n.Activate}...)
 		}
 
 		//add sender if specified

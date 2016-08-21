@@ -6,6 +6,11 @@ import (
 	"io"
 )
 
+// The binary data below is created directly by gzipping the 1.6.3 .zip file
+// of terminal-notifier, and then converting it to Golang format.
+// The sha256sum of the original zip file is:
+// 41e0d8290d658a12cdad591834d6ab9614f62bef9fda2f6056e70c6e1f2c93f0
+
 // terminalnotifier returns raw, uncompressed file data.
 func terminalnotifier() []byte {
 	gz, err := gzip.NewReader(bytes.NewBuffer([]byte{

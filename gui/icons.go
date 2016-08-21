@@ -1062,7 +1062,7 @@ func (i *icon) getPath() string {
 		tmpIconPath := filepath.Join(filepath.Join(os.TempDir(), "coyim"), i.name)
 		if fileNotFound(tmpIconPath) {
 			ioutil.WriteFile(tmpIconPath, i.get(), 0664)
-			log.Printf("gui/icons: wrote %s to %\n", i.name, tmpIconPath)
+			log.Printf("gui/icons: wrote %s to %s\n", i.name, tmpIconPath)
 		}
 		return tmpIconPath
 	}

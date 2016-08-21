@@ -117,7 +117,7 @@ func (n *Notification) Push() error {
 		}
 
 		//add sender if specified
-		if strings.HasPrefix(strings.ToLower(n.Sender), "com.") {
+		if n.Sender != "" {
 			commandTuples = append(commandTuples, []string{"-sender", n.Sender}...)
 		}
 

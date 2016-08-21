@@ -66,7 +66,7 @@ func (dn *desktopNotifications) show(jid, from, message string) error {
 	}
 
 	from = ui.EscapeAllHTMLTags(string(ui.StripSomeHTML([]byte(from))))
-	notification.Summary, notification.Body = dn.format(from, message)
+	notification.Summary, notification.Body = dn.format(from, message, true)
 
 	nid, err := notification.Show()
 	if err != nil {

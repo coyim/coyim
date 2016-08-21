@@ -30,12 +30,15 @@ func (dn *desktopNotifications) updateWith(s *settings.Settings) {
 	dn.notificationExpires = s.GetNotificationExpires()
 }
 
-func (dn *desktopNotifications) format(from, message string) (summary, body string) {
+func (dn *desktopNotifications) format(from, message string, withHTML bool) (summary, body string) {
 	switch dn.notificationStyle {
 	case "only-presence-of-new-information":
 		return "New message!", ""
 	case "with-author-but-no-content":
-		return "New message!", "From: <b>" + from + "</b>"
+		if withHTML {
+			return "New message!", "From: <b>" + from + "</b>"
+		}
+		return "New message!", "From: " + from
 	case "with-content":
 		smsg := strings.Split(message, "\n")[0]
 		smsg = ui.EscapeAllHTMLTags(smsg)

@@ -53,7 +53,7 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/gosx-notifier",
-			"Rev": "c0581461f3e3377b2414f8ff1ae388de1bb169ce"
+			"Rev": "212122c146749dec34818e09cbbd9b19cb69d211"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdka",

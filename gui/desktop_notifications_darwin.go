@@ -23,7 +23,7 @@ func (dn *desktopNotifications) show(jid, from, message string) error {
 	}
 
 	from = ui.EscapeAllHTMLTags(string(ui.StripSomeHTML([]byte(from))))
-	summary, body = dn.format(from, message)
+	summary, body := dn.format(from, message)
 	note := gosxnotifier.NewNotification(body)
 	note.Title = summary
 

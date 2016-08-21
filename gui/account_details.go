@@ -181,10 +181,12 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 	data.otherSettings.SetActive(u.config.AdvancedOptions)
 	data.acc.SetText(account.Account)
 
-	data.displayName.SetProperty("placeholder-text", s.DisplayName())
-	nick := s.GetConfig().Nickname
-	if nick != "" {
-		data.displayName.SetText(nick)
+	if s != nil {
+		data.displayName.SetProperty("placeholder-text", s.DisplayName())
+		nick := s.GetConfig().Nickname
+		if nick != "" {
+			data.displayName.SetText(nick)
+		}
 	}
 
 	data.server.SetText(account.Server)

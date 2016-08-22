@@ -174,5 +174,22 @@ func (u *gtkUI) showGlobalPreferences() {
 
 	panel.dialog.SetTransientFor(u.window)
 	panel.dialog.ShowAll()
+
+	if notificationFeaturesSupported&notificationUrgency == 0 {
+		panel.b.get("notificationUrgencyInstructions").(gtki.Widget).SetVisible(false)
+		panel.b.get("notificationUrgentLabel").(gtki.Widget).SetVisible(false)
+		panel.urgentNotifications.SetVisible(false)
+	}
+	if notificationFeaturesSupported&notificationExpiry == 0 {
+		panel.b.get("notificationExpiryInstructions").(gtki.Widget).SetVisible(false)
+		panel.b.get("notificationExpiresLabel").(gtki.Widget).SetVisible(false)
+		panel.expireNotifications.SetVisible(false)
+	}
+	if notificationFeaturesSupported&notificationStyles == 0 {
+		panel.b.get("notificationTypeLabel").(gtki.Widget).SetVisible(false)
+		panel.b.get("notificationTypeInstructions").(gtki.Widget).SetVisible(false)
+		panel.notificationsType.SetVisible(false)
+	}
+
 	panel.notebook.SetCurrentPage(0)
 }

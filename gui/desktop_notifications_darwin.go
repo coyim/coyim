@@ -9,6 +9,8 @@ import (
 
 var hasBundle = false
 
+const notificationFeaturesSupported = notificationStyles
+
 func init() {
 	hasBundle = !fileNotFound("/Applications/CoyIM.app/Contents/Info.plist")
 }

@@ -14,6 +14,17 @@ import (
 //     notificationUrgent  bool
 //     notificationExpires bool
 
+// All platform dependent desktop notifications files should also
+// contain a notificationFeaturesSupported constant that specifies what features are available
+
+type notificationFeature int
+
+const (
+	notificationStyles notificationFeature = 2 << iota
+	notificationUrgency
+	notificationExpiry
+)
+
 func createDesktopNotifications() *desktopNotifications {
 	dn := new(desktopNotifications)
 

@@ -9,6 +9,8 @@ type desktopNotifications struct {
 	notificationExpires bool
 }
 
+const notificationFeaturesSupported = 0
+
 func newDesktopNotifications() *desktopNotifications {
 	return createDesktopNotifications()
 }

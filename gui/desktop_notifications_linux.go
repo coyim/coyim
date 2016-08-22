@@ -10,6 +10,8 @@ import (
 	"github.com/twstrike/coyim/ui"
 )
 
+const notificationFeaturesSupported = notificationStyles | notificationUrgency | notificationExpiry
+
 type desktopNotifications struct {
 	notifications       map[string]uint32
 	notification        notify.Notification

@@ -401,27 +401,30 @@ func (u *gtkUI) quit() {
 	u.app.Quit()
 }
 
-func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(string) error) {
+func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(string) error, savePass func(string)) {
 	dialogTemplate := "AskForPassword"
 
 	builder := newBuilder(dialogTemplate)
 
-	obj := builder.getObj(dialogTemplate)
-	dialog := obj.(gtki.Dialog)
+	dialog := builder.getObj(dialogTemplate).(gtki.Dialog)
 
-	obj = builder.getObj("accountName")
-	label := obj.(gtki.Label)
+	label := builder.getObj("accountName").(gtki.Label)
 	label.SetText(accountName)
 	label.SetSelectable(true)
 
+	passwordEntry := builder.getObj("password").(gtki.Entry)
+	savePassword := builder.getObj("savePassword").(gtki.CheckButton)
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_entered_password_signal": func() {
-			passwordObj := builder.getObj("password")
-			passwordEntry := passwordObj.(gtki.Entry)
 			password, _ := passwordEntry.GetText()
+			shouldSave := savePassword.GetActive()
 
 			if len(password) > 0 {
 				go connect(password)
+				if shouldSave {
+					go savePass(password)
+				}
 				dialog.Destroy()
 			}
 		},

@@ -80,7 +80,12 @@ func (u *gtkUI) askForPasswordAndConnect(account *account) {
 				func(password string) error {
 					account.AskedForPassword()
 					return u.connectWithPassword(account, password)
-				})
+				},
+				func(password string) {
+					account.session.GetConfig().Password = password
+					u.SaveConfig()
+				},
+			)
 		})
 	}
 }

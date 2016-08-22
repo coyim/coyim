@@ -23,6 +23,8 @@ func (*defAskForPassword) String() string {
             <child>
               <object class="GtkLabel" id="accountMessage" >
                 <property name="label" translatable="yes">Account</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
@@ -44,6 +46,8 @@ func (*defAskForPassword) String() string {
             <child>
               <object class="GtkLabel" id="passMessage" >
                 <property name="label" translatable="yes">Password</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -61,6 +65,26 @@ func (*defAskForPassword) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
+
+            <child>
+              <object class="GtkLabel" id="savePasswordLabel">
+                <property name="label" translatable="yes">Save password</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="savePassword"/>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            
           </object>
         </child>
         <child internal-child="action_area">

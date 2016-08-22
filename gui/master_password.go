@@ -121,6 +121,8 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 					messageObj.SetLabel(i18n.Local("Checking password..."))
 					pwdResultChan <- passText
 					close(pwdResultChan)
+
+					doInUIThread(cleanup)
 				}
 			},
 			"on_cancel_signal": func() {
@@ -141,6 +143,5 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 	}
 
 	l, r := config.GenerateKeys(pwd, params)
-	doInUIThread(cleanup)
 	return l, r, true
 }

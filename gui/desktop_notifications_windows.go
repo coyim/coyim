@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/nu7hatch/gouuid"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/gosx-notifier"
 )
 
 type desktopNotifications struct {
@@ -27,8 +27,6 @@ func newDesktopNotifications() *desktopNotifications {
 func (dn *desktopNotifications) show(jid, from, message string) error {
 	from = ui.EscapeAllHTMLTags(string(ui.StripSomeHTML([]byte(from))))
 	summary, body := dn.format(from, message, false)
-	note := gosxnotifier.NewNotification(body)
-	note.Title = summary
 
 	notification := Notification{
 		AppID:   "im.coy.coyim",

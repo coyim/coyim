@@ -114,20 +114,26 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 			messageObj.SetLabel(i18n.Local("Incorrect password entered, please try again."))
 		}
 
+		hadSubmission := false
+
 		builder.ConnectSignals(map[string]interface{}{
 			"on_save_signal": func() {
-				passText, _ := password.GetText()
-				if len(passText) > 0 {
-					messageObj.SetLabel(i18n.Local("Checking password..."))
-					pwdResultChan <- passText
-					close(pwdResultChan)
-
-					doInUIThread(cleanup)
+				if !hadSubmission {
+					passText, _ := password.GetText()
+					if len(passText) > 0 {
+						hadSubmission = true
+						messageObj.SetLabel(i18n.Local("Checking password..."))
+						pwdResultChan <- passText
+						close(pwdResultChan)
+					}
 				}
 			},
 			"on_cancel_signal": func() {
-				close(pwdResultChan)
-				u.quit()
+				if !hadSubmission {
+					hadSubmission = true
+					close(pwdResultChan)
+					u.quit()
+				}
 			},
 		})
 
@@ -143,5 +149,6 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 	}
 
 	l, r := config.GenerateKeys(pwd, params)
+	doInUIThread(cleanup)
 	return l, r, true
 }

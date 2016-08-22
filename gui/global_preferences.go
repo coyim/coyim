@@ -166,6 +166,7 @@ func (u *gtkUI) showGlobalPreferences() {
 			}
 			panel.dialog.Destroy()
 			u.roster.redraw()
+			u.roster.deNotify.updateWith(settings)
 		},
 		"on_cancel_signal": func() {
 			panel.dialog.Destroy()

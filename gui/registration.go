@@ -98,6 +98,7 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 	policy := config.ConnectionPolicy{DialerFactory: df}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
+	//TODO: we should give the choice of using Tor to the user
 	conf := &config.Account{
 		Account: "@" + server,
 		Proxies: []string{"tor-auto://"},

@@ -161,7 +161,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 			errorFn := func(err error) {
 				log.Printf("Error when trying to get registration form: %v", err)
 				doInUIThread(func() {
-					message.SetLabel(i18n.Local("We had an error when trying to contact the server. Please correct your server choice and try again."))
+					message.SetLabel(i18n.Local("We had an error when trying to contact the server. Please correct your server choice and try again. The registration process currently requires Tor in order to ensure your safety. If you don't have Tor turned on, make sure to do so."))
 					applyBtn.SetSensitive(true)
 					serverBox.SetSensitive(true)
 				})

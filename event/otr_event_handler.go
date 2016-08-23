@@ -112,7 +112,7 @@ func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []
 	case otr3.MessageEventReceivedMessageUnrecognized:
 		log.Printf("[%s] Unrecognized OTR message received from %s.", e.Account, e.Peer)
 	case otr3.MessageEventEncryptionRequired:
-		e.notify("Attempting to start a private conversation...")
+		e.notify("Attempting to start a private conversation (no messages have been sent unencrypted)...")
 	case otr3.MessageEventEncryptionError:
 		// This happens when something goes wrong putting together a new data packet in OTR
 		e.notify("An error occurred when encrypting your message. The message was not sent.")

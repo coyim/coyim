@@ -163,7 +163,7 @@ func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_notifiesOnSeveralMessageE
 
 	handler := &OtrEventHandler{Account: "me2@foo.bar", Peer: "them2@somewhere.com", Notifications: nn}
 	handler.HandleMessageEvent(otr3.MessageEventEncryptionRequired, nil, nil)
-	c.Assert(<-nn, Equals, "Attempting to start a private conversation...")
+	c.Assert(<-nn, Equals, "Attempting to start a private conversation (no messages have been sent unencrypted)...")
 
 	handler.HandleMessageEvent(otr3.MessageEventEncryptionError, nil, nil)
 	c.Assert(<-nn, Equals, "An error occurred when encrypting your message. The message was not sent.")

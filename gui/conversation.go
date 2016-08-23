@@ -177,6 +177,9 @@ func (conv *conversationPane) onEndOtrSignal() {
 	err := c.EndEncryptedChat(session, conv.currentResource())
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
+	} else {
+		conv.displayNotification(i18n.Local("Private conversation has ended."))
+		conv.updateSecurityWarning()
 	}
 }
 

@@ -141,7 +141,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, func(cv conversationView) {
-			cv.displayNotification(i18n.Local("Private conversation lost."))
+			cv.displayNotification(i18n.Local("Private conversation has ended."))
 			cv.updateSecurityWarning()
 		})
 

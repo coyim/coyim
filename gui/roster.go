@@ -24,8 +24,9 @@ type roster struct {
 	isCollapsed map[string]bool
 	toCollapse  []gtki.TreePath
 
-	ui       *gtkUI
-	deNotify *desktopNotifications
+	ui          *gtkUI
+	deNotify    *desktopNotifications
+	actionTimes map[string]time.Time
 }
 
 const (
@@ -47,6 +48,7 @@ func (u *gtkUI) newRoster() *roster {
 
 	r := &roster{
 		isCollapsed: make(map[string]bool),
+		actionTimes: make(map[string]time.Time),
 		deNotify:    newDesktopNotifications(),
 
 		ui: u,
@@ -340,6 +342,30 @@ func (r *roster) presenceUpdated(account *account, from, show, showStatus string
 	})
 }
 
+const mergeNotificationsThreshold = 7
+
+func (r *roster) lastActionTimeFor(f string) time.Time {
+	return r.actionTimes[f]
+}
+
+func (r *roster) registerLastActionTimeFor(f string, t time.Time) {
+	r.actionTimes[f] = t
+}
+
+func (r *roster) maybeNotify(timestamp time.Time, jid, from, message string) {
+	if timestamp.Before(r.lastActionTimeFor(from).Add(time.Duration(mergeNotificationsThreshold) * time.Second)) {
+		fmt.Println("Decided to not show notification, since the time is not ready")
+		return
+	}
+
+	r.registerLastActionTimeFor(from, timestamp)
+
+	err := r.deNotify.show(from, jid, message)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
 func (r *roster) messageReceived(account *account, from, resource string, timestamp time.Time, encrypted bool, message []byte) {
 	p, ok := r.ui.getPeer(account, from)
 	if ok {
@@ -355,10 +381,7 @@ func (r *roster) messageReceived(account *account, from, resource string, timest
 		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripSomeHTML(message), false)
 
 		if !conv.isVisible() && r.deNotify != nil {
-			err := r.deNotify.show(from, r.displayNameFor(account, from), string(ui.StripSomeHTML(message)))
-			if err != nil {
-				log.Println(err)
-			}
+			r.maybeNotify(timestamp, from, r.displayNameFor(account, from), string(ui.StripSomeHTML(message)))
 		}
 	})
 }

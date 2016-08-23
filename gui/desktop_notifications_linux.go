@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/TheCreeper/go-notify"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/godbus/dbus"
@@ -47,9 +48,11 @@ func newDesktopNotifications() *desktopNotifications {
 	return dn
 }
 
+const defaultExpirationMs = 5000
+
 func (dn *desktopNotifications) expiration() int32 {
 	if dn.notificationExpires {
-		return notify.ExpiresDefault
+		return defaultExpirationMs
 	}
 	return notify.ExpiresNever
 }
@@ -74,7 +77,17 @@ func (dn *desktopNotifications) show(jid, from, message string) error {
 	if err != nil {
 		return fmt.Errorf("Error showing notification: %v", err)
 	}
+
+	if dn.notificationExpires {
+		go expireNotification(nid, defaultExpirationMs)
+	}
+
 	dn.notifications[jid] = nid
 	dn.notification = notification
 	return nil
+}
+
+func expireNotification(id uint32, expiry int) {
+	time.Sleep(time.Duration(expiry) * time.Millisecond)
+	notify.CloseNotification(id)
 }

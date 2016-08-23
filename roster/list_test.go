@@ -267,12 +267,14 @@ func (s *ListSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *
 	c.Assert(l.peers["foo@bar.com"].StatusMsg, g.Equals, "goodbye")
 
 	res = l.PeerPresenceUpdate("foo2@bar.com/hmm", "xa", "goodbye", "")
-	c.Assert(res, g.Equals, false)
-	c.Assert(l.peers["foo2@bar.com"], g.IsNil)
+	c.Assert(res, g.Equals, true)
+	c.Assert(l.peers["foo2@bar.com"].Status, g.Equals, "xa")
+	c.Assert(l.peers["foo2@bar.com"].StatusMsg, g.Equals, "goodbye")
 
 	res = l.PeerPresenceUpdate("foo3@bar.com/hmm", "away", "goodbye", "")
-	c.Assert(res, g.Equals, false)
-	c.Assert(l.peers["foo3@bar.com"], g.IsNil)
+	c.Assert(res, g.Equals, true)
+	c.Assert(l.peers["foo3@bar.com"].Status, g.Equals, "away")
+	c.Assert(l.peers["foo3@bar.com"].StatusMsg, g.Equals, "goodbye")
 
 }
 

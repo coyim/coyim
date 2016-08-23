@@ -191,13 +191,9 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
 	peer := ev.Peer
 	account := u.findAccountForSession(ev.Session)
-	convWin, ok := account.getConversationWith(peer)
-	if !ok {
-		account.afterConversationWindowCreated(peer, func(cv conversationView) {
-			cv.displayNotification(i18n.Local(ev.Notification))
-		})
+	convWin, err := u.roster.openConversationView(account, peer, false)
+	if err != nil {
 		return
 	}
-
-	convWin.displayNotification(ev.Notification)
+	convWin.displayNotification(i18n.Local(ev.Notification))
 }

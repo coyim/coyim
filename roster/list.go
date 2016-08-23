@@ -122,12 +122,8 @@ func (l *List) PeerPresenceUpdate(jid, status, statusMsg, belongsTo string) bool
 		return !oldOnline
 	}
 
-	if status != "away" && status != "xa" {
-		l.AddOrMerge(PeerWithState(jid, status, statusMsg, belongsTo, resource))
-		return true
-	}
-
-	return false
+	l.AddOrMerge(PeerWithState(jid, status, statusMsg, belongsTo, resource))
+	return true
 }
 
 // StateOf returns the status and status msg of the peer if it exists. It returns not ok if the peer doesn't exist.

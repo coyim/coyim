@@ -754,44 +754,6 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresInitialAway(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<client:presence xmlns:client='jabber:client' from='some2@one.org/balcony' to='some@one.org'><client:show>away</client:show></client:presence>")}
-	conn := xmpp.NewConn(
-		xml.NewDecoder(mockIn),
-		mockIn,
-		"some@one.org/foo",
-	)
-
-	sess := &session{
-		config:        &config.ApplicationConfig{},
-		accountConfig: &config.Account{},
-		r:             roster.New(),
-		connStatus:    DISCONNECTED,
-	}
-	sess.conn = conn
-
-	observer := make(chan interface{}, 1)
-	sess.Subscribe(observer)
-
-	sess.watchStanzas()
-
-	st, _, _ := sess.r.StateOf("some2@one.org")
-	c.Assert(st, Equals, "")
-
-	select {
-	case ev := <-observer:
-		switch ev.(type) {
-		case events.Presence:
-			c.Error("Received presence event")
-			return
-		default:
-			// ignore
-		}
-	case <-time.After(1 * time.Millisecond):
-		return
-	}
-}
-
 func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:presence xmlns:client='jabber:client' from='some2@one.org/balcony' to='some@one.org'><client:show>dnd</client:show></client:presence>")}
 	conn := xmpp.NewConn(

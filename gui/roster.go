@@ -352,7 +352,9 @@ func (r *roster) registerLastActionTimeFor(f string, t time.Time) {
 	r.actionTimes[f] = t
 }
 
-func (r *roster) maybeNotify(timestamp time.Time, jid, from, message string) {
+func (r *roster) maybeNotify(timestamp time.Time, account *account, from, message string) {
+	dname := r.displayNameFor(account, from)
+
 	if timestamp.Before(r.lastActionTimeFor(from).Add(time.Duration(mergeNotificationsThreshold) * time.Second)) {
 		fmt.Println("Decided to not show notification, since the time is not ready")
 		return
@@ -360,7 +362,7 @@ func (r *roster) maybeNotify(timestamp time.Time, jid, from, message string) {
 
 	r.registerLastActionTimeFor(from, timestamp)
 
-	err := r.deNotify.show(from, jid, message)
+	err := r.deNotify.show(from, dname, message)
 	if err != nil {
 		log.Println(err)
 	}
@@ -381,7 +383,7 @@ func (r *roster) messageReceived(account *account, from, resource string, timest
 		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripSomeHTML(message), false)
 
 		if !conv.isVisible() && r.deNotify != nil {
-			r.maybeNotify(timestamp, from, r.displayNameFor(account, from), string(ui.StripSomeHTML(message)))
+			r.maybeNotify(timestamp, account, from, string(ui.StripSomeHTML(message)))
 		}
 	})
 }

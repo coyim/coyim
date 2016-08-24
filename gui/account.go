@@ -260,10 +260,10 @@ func (account *account) createCheckConnectionItem() gtki.MenuItem {
 	checkConnectionItem.Connect("activate", func() {
 		account.session.SendPing()
 	})
-	checkConnectionItem.SetSensitive(!account.session.IsDisconnected())
+	checkConnectionItem.SetSensitive(account.session.IsConnected())
 
 	account.observeConnectionEvents(func() {
-		checkConnectionItem.SetSensitive(!account.session.IsDisconnected())
+		checkConnectionItem.SetSensitive(account.session.IsConnected())
 	})
 	return checkConnectionItem
 }

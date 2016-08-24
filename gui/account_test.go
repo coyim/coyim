@@ -321,12 +321,17 @@ type accountMockSession struct {
 	smock.SessionMock
 
 	isDisconnected bool
+	isConnected    bool
 	config         *config.Account
 	events         []chan<- interface{}
 }
 
 func (v *accountMockSession) IsDisconnected() bool {
 	return v.isDisconnected
+}
+
+func (v *accountMockSession) IsConnected() bool {
+	return v.isConnected
 }
 
 func (v *accountMockSession) GetConfig() *config.Account {
@@ -351,6 +356,7 @@ func (*AccountSuite) Test_account_createSubmenu_setsConnectAndDisconnectSensitiv
 	c.Assert(createdMenu.GetMenuItemByName("Disconnect").sensitive, Equals, false)
 
 	sess.isDisconnected = false
+	sess.isConnected = true
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
 	c.Assert(createdMenu.GetMenuItemByName("Check Connection").sensitive, Equals, true)

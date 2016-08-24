@@ -215,20 +215,21 @@ func (*AccountSuite) Test_account_createSubmenu_createsTheGeneralStructure(c *C)
 	createdMenu := menu.(*accountMockMenu)
 
 	c.Assert(createdMenu.menuItems, Not(IsNil))
-	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Connect")
-	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Disconnect")
+	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Check Connection")
+	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Connect")
+	c.Assert(createdMenu.menuItems[2].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Disconnect")
 
-	_, ok := createdMenu.menuItems[2].(*accountMockSeparatorMenuItem)
+	_, ok := createdMenu.menuItems[3].(*accountMockSeparatorMenuItem)
 	c.Assert(ok, Equals, true)
 
-	c.Assert(createdMenu.menuItems[4].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Edit...")
-	c.Assert(createdMenu.menuItems[5].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Remove")
+	c.Assert(createdMenu.menuItems[5].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Edit...")
+	c.Assert(createdMenu.menuItems[6].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Remove")
 
-	_, ok = createdMenu.menuItems[6].(*accountMockSeparatorMenuItem)
+	_, ok = createdMenu.menuItems[7].(*accountMockSeparatorMenuItem)
 	c.Assert(ok, Equals, true)
 
-	c.Assert(createdMenu.menuItems[7].(*accountMockCheckMenuItem).mnemonic, Equals, "[localized] Connect _Automatically")
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).mnemonic, Equals, "[localized] Always Encrypt Conversation")
+	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).mnemonic, Equals, "[localized] Connect _Automatically")
+	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).mnemonic, Equals, "[localized] Always Encrypt Conversation")
 }
 
 func (*AccountSuite) Test_account_createSubmenu_setsTheCheckboxesCorrectly(c *C) {
@@ -241,26 +242,26 @@ func (*AccountSuite) Test_account_createSubmenu_setsTheCheckboxesCorrectly(c *C)
 
 	menu := a.createSubmenu()
 	createdMenu := menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[7].(*accountMockCheckMenuItem).active, Equals, true)
 	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, true)
+	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).active, Equals, true)
 
 	conf.AlwaysEncrypt = false
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[7].(*accountMockCheckMenuItem).active, Equals, true)
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, false)
+	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, true)
+	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).active, Equals, false)
 
 	conf.ConnectAutomatically = false
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[7].(*accountMockCheckMenuItem).active, Equals, false)
 	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, false)
+	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).active, Equals, false)
 
 	conf.AlwaysEncrypt = true
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[7].(*accountMockCheckMenuItem).active, Equals, false)
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, true)
+	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, false)
+	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).active, Equals, true)
 }
 
 func (*AccountSuite) Test_account_createSubmenu_setsActivationCorrectly(c *C) {
@@ -279,12 +280,13 @@ func (*AccountSuite) Test_account_createSubmenu_setsActivationCorrectly(c *C) {
 
 	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).onActivate, Not(IsNil))
 	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).onActivate, Not(IsNil))
+	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).onActivate, Not(IsNil))
 
-	c.Assert(createdMenu.menuItems[4].(*accountMockMenuItem).onActivate, Not(IsNil))
 	c.Assert(createdMenu.menuItems[5].(*accountMockMenuItem).onActivate, Not(IsNil))
+	c.Assert(createdMenu.menuItems[6].(*accountMockMenuItem).onActivate, Not(IsNil))
 
-	c.Assert(createdMenu.menuItems[7].(*accountMockCheckMenuItem).onActivate, Not(IsNil))
 	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).onActivate, Not(IsNil))
+	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).onActivate, Not(IsNil))
 }
 
 type accountMockSession struct {
@@ -316,14 +318,16 @@ func (*AccountSuite) Test_account_createSubmenu_setsConnectAndDisconnectSensitiv
 
 	menu := a.createSubmenu()
 	createdMenu := menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).sensitive, Equals, true)
-	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).sensitive, Equals, false)
+	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).sensitive, Equals, false)
+	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).sensitive, Equals, true)
+	c.Assert(createdMenu.menuItems[2].(*accountMockMenuItem).sensitive, Equals, false)
 
 	sess.isDisconnected = false
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).sensitive, Equals, false)
-	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).sensitive, Equals, true)
+	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).sensitive, Equals, true)
+	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).sensitive, Equals, false)
+	c.Assert(createdMenu.menuItems[2].(*accountMockMenuItem).sensitive, Equals, true)
 }
 
 func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheConnectSensitivity(c *C) {
@@ -334,7 +338,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheCon
 	a := &account{session: sess}
 
 	menu := a.createSubmenu()
-	connectItem := menu.(*accountMockMenu).menuItems[0].(*accountMockMenuItem)
+	connectItem := menu.(*accountMockMenu).menuItems[1].(*accountMockMenuItem)
 
 	c.Assert(connectItem.sensitive, Equals, true)
 
@@ -392,7 +396,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDis
 	a := &account{session: sess}
 
 	menu := a.createSubmenu()
-	disconnectItem := menu.(*accountMockMenu).menuItems[1].(*accountMockMenuItem)
+	disconnectItem := menu.(*accountMockMenu).menuItems[2].(*accountMockMenuItem)
 
 	c.Assert(disconnectItem.sensitive, Equals, false)
 

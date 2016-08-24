@@ -127,6 +127,11 @@ func (*SessionMock) Send(string, string, string) error {
 	return nil
 }
 
+// SendPing is the implementation for Session interface
+func (*SessionMock) SendPing() error {
+	return nil
+}
+
 // SetCommandManager is the implementation for Session interface
 func (*SessionMock) SetCommandManager(client.CommandManager) {}
 

@@ -7,6 +7,8 @@ import (
 	"github.com/twstrike/coyim/ui"
 )
 
+const notificationFeaturesSupported = notificationStyles
+
 type desktopNotifications struct {
 	notificationStyle   string
 	notificationUrgent  bool
@@ -21,11 +23,11 @@ func newDesktopNotifications() *desktopNotifications {
 
 func (dn *desktopNotifications) show(jid, from, message string) error {
 	from = ui.EscapeAllHTMLTags(string(ui.StripSomeHTML([]byte(from))))
-	summary, _ := dn.format(from, message, false)
+	summary, body := dn.format(from, message, false)
 
 	notification := Notification{
 		Title:   "CoyIM",
-		Message: summary,
+		Message: summary + body,
 		Icon:    coyimIcon.getPath(),
 	}
 	return notification.Popup()
@@ -37,10 +39,8 @@ type Notification struct {
 	Icon    string
 }
 
-
 func (n *Notification) Popup() error {
 	cmd := exec.Command("toast.exe", "-t", n.Title, "-m", n.Message, "-p", n.Icon)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	return cmd.Run()
-
 }

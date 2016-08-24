@@ -19,10 +19,3 @@ func (s *session) DenyPresenceSubscription(jid, id string) error {
 func (s *session) RequestPresenceSubscription(jid, msg string) error {
 	return s.conn.SendPresence(jid, "subscribe", "" /* generate id */, msg)
 }
-
-// SendPing is called to checks if account's connection still alive
-func (s *session) SendPing() error {
-	_, _, error := s.conn.SendPing()
-
-	return error
-}

@@ -991,3 +991,31 @@ func (s *session) OtrEventHandler() map[string]*event.OtrEventHandler {
 func (s *session) SetLastActionTime(t time.Time) {
 	s.lastActionTime = t
 }
+
+// SendPing is called to checks if account's connection still alive
+func (s *session) SendPing() {
+	reply, _, err := s.conn.SendPing()
+	if err != nil {
+		s.warn(fmt.Sprintf("Failure to ping server: %#v\n", err))
+		return
+	}
+
+	pingTimeout := 30 * time.Second
+
+	go func() {
+		select {
+		case <-time.After(pingTimeout):
+			s.info("Ping timeout. Disconnecting...")
+			s.setStatus(DISCONNECTED)
+		case stanza, _ := <-reply:
+			iq, ok := stanza.Value.(*data.ClientIQ)
+			if !ok {
+				return
+			}
+			if iq.Type == "error" {
+				s.warn("Server does not support Ping")
+				return
+			}
+		}
+	}()
+}

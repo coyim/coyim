@@ -52,6 +52,7 @@ type Session interface {
 	RemoveContact(string)
 	RequestPresenceSubscription(string, string) error
 	Send(string, string, string) error
+	SendPing() error
 	SetCommandManager(client.CommandManager)
 	SetConnectionLogger(io.Writer)
 	SetConnector(Connector)

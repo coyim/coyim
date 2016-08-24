@@ -255,6 +255,19 @@ func (account *account) observeConnectionEvents(f func()) {
 	account.connectionEventHandlers = append(account.connectionEventHandlers, f)
 }
 
+func (account *account) createCheckConnectionItem() gtki.MenuItem {
+	checkConnectionItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Check Connection"))
+	checkConnectionItem.Connect("activate", func() {
+		account.session.SendPing()
+	})
+	checkConnectionItem.SetSensitive(!account.session.IsDisconnected())
+
+	account.observeConnectionEvents(func() {
+		checkConnectionItem.SetSensitive(!account.session.IsDisconnected())
+	})
+	return checkConnectionItem
+}
+
 func (account *account) createConnectItem() gtki.MenuItem {
 	connectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect"))
 	connectItem.Connect("activate", func() {
@@ -333,6 +346,7 @@ func (account *account) createDumpInfoItem(r *roster) gtki.MenuItem {
 func (account *account) createSubmenu() gtki.Menu {
 	m, _ := g.gtk.MenuNew()
 
+	m.Append(account.createCheckConnectionItem())
 	m.Append(account.createConnectItem())
 	m.Append(account.createDisconnectItem())
 	m.Append(account.createSeparatorItem())

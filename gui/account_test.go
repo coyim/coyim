@@ -149,6 +149,34 @@ func (v *accountMockMenu) Append(v1 gtki.MenuItem) {
 	v.menuItems = append(v.menuItems, v1)
 }
 
+func (v *accountMockMenu) GetMenuItemByName(name string) *accountMockMenuItem {
+	switch name {
+	case "Check Connection":
+		return v.menuItems[0].(*accountMockMenuItem)
+	case "Connect":
+		return v.menuItems[1].(*accountMockMenuItem)
+	case "Disconnect":
+		return v.menuItems[2].(*accountMockMenuItem)
+	case "Edit":
+		return v.menuItems[5].(*accountMockMenuItem)
+	case "Remove":
+		return v.menuItems[6].(*accountMockMenuItem)
+	default:
+		return nil
+	}
+}
+
+func (v *accountMockMenu) GetCheckMenuItemByName(name string) *accountMockCheckMenuItem {
+	switch name {
+	case "Connect Automatically":
+		return v.menuItems[8].(*accountMockCheckMenuItem)
+	case "Always Encrypt Conversation":
+		return v.menuItems[9].(*accountMockCheckMenuItem)
+	default:
+		return nil
+	}
+}
+
 type accountMockMenuItem struct {
 	gtk_mock.MockMenuItem
 
@@ -215,21 +243,21 @@ func (*AccountSuite) Test_account_createSubmenu_createsTheGeneralStructure(c *C)
 	createdMenu := menu.(*accountMockMenu)
 
 	c.Assert(createdMenu.menuItems, Not(IsNil))
-	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Check Connection")
-	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Connect")
-	c.Assert(createdMenu.menuItems[2].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Disconnect")
+	c.Assert(createdMenu.GetMenuItemByName("Check Connection").mnemonic, Equals, "[localized] _Check Connection")
+	c.Assert(createdMenu.GetMenuItemByName("Connect").mnemonic, Equals, "[localized] _Connect")
+	c.Assert(createdMenu.GetMenuItemByName("Disconnect").mnemonic, Equals, "[localized] _Disconnect")
 
 	_, ok := createdMenu.menuItems[3].(*accountMockSeparatorMenuItem)
 	c.Assert(ok, Equals, true)
 
-	c.Assert(createdMenu.menuItems[5].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Edit...")
-	c.Assert(createdMenu.menuItems[6].(*accountMockMenuItem).mnemonic, Equals, "[localized] _Remove")
+	c.Assert(createdMenu.GetMenuItemByName("Edit").mnemonic, Equals, "[localized] _Edit...")
+	c.Assert(createdMenu.GetMenuItemByName("Remove").mnemonic, Equals, "[localized] _Remove")
 
 	_, ok = createdMenu.menuItems[7].(*accountMockSeparatorMenuItem)
 	c.Assert(ok, Equals, true)
 
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).mnemonic, Equals, "[localized] Connect _Automatically")
-	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).mnemonic, Equals, "[localized] Always Encrypt Conversation")
+	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").mnemonic, Equals, "[localized] Connect _Automatically")
+	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").mnemonic, Equals, "[localized] Always Encrypt Conversation")
 }
 
 func (*AccountSuite) Test_account_createSubmenu_setsTheCheckboxesCorrectly(c *C) {
@@ -242,26 +270,26 @@ func (*AccountSuite) Test_account_createSubmenu_setsTheCheckboxesCorrectly(c *C)
 
 	menu := a.createSubmenu()
 	createdMenu := menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, true)
-	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).active, Equals, true)
+	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").active, Equals, true)
+	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").active, Equals, true)
 
 	conf.AlwaysEncrypt = false
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, true)
-	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).active, Equals, false)
+	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").active, Equals, true)
+	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").active, Equals, false)
 
 	conf.ConnectAutomatically = false
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, false)
-	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).active, Equals, false)
+	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").active, Equals, false)
+	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").active, Equals, false)
 
 	conf.AlwaysEncrypt = true
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).active, Equals, false)
-	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).active, Equals, true)
+	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").active, Equals, false)
+	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").active, Equals, true)
 }
 
 func (*AccountSuite) Test_account_createSubmenu_setsActivationCorrectly(c *C) {
@@ -278,15 +306,15 @@ func (*AccountSuite) Test_account_createSubmenu_setsActivationCorrectly(c *C) {
 	// It might be possible to try invoking them and see that they do the right things, at some point
 	// For now, too much bother.
 
-	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).onActivate, Not(IsNil))
-	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).onActivate, Not(IsNil))
-	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).onActivate, Not(IsNil))
+	c.Assert(createdMenu.GetMenuItemByName("Check Connection").onActivate, Not(IsNil))
+	c.Assert(createdMenu.GetMenuItemByName("Connect").onActivate, Not(IsNil))
+	c.Assert(createdMenu.GetMenuItemByName("Disconnect").onActivate, Not(IsNil))
 
-	c.Assert(createdMenu.menuItems[5].(*accountMockMenuItem).onActivate, Not(IsNil))
-	c.Assert(createdMenu.menuItems[6].(*accountMockMenuItem).onActivate, Not(IsNil))
+	c.Assert(createdMenu.GetMenuItemByName("Edit").onActivate, Not(IsNil))
+	c.Assert(createdMenu.GetMenuItemByName("Remove").onActivate, Not(IsNil))
 
-	c.Assert(createdMenu.menuItems[8].(*accountMockCheckMenuItem).onActivate, Not(IsNil))
-	c.Assert(createdMenu.menuItems[9].(*accountMockCheckMenuItem).onActivate, Not(IsNil))
+	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").onActivate, Not(IsNil))
+	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").onActivate, Not(IsNil))
 }
 
 type accountMockSession struct {
@@ -318,16 +346,16 @@ func (*AccountSuite) Test_account_createSubmenu_setsConnectAndDisconnectSensitiv
 
 	menu := a.createSubmenu()
 	createdMenu := menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).sensitive, Equals, false)
-	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).sensitive, Equals, true)
-	c.Assert(createdMenu.menuItems[2].(*accountMockMenuItem).sensitive, Equals, false)
+	c.Assert(createdMenu.GetMenuItemByName("Check Connection").sensitive, Equals, false)
+	c.Assert(createdMenu.GetMenuItemByName("Connect").sensitive, Equals, true)
+	c.Assert(createdMenu.GetMenuItemByName("Disconnect").sensitive, Equals, false)
 
 	sess.isDisconnected = false
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.menuItems[0].(*accountMockMenuItem).sensitive, Equals, true)
-	c.Assert(createdMenu.menuItems[1].(*accountMockMenuItem).sensitive, Equals, false)
-	c.Assert(createdMenu.menuItems[2].(*accountMockMenuItem).sensitive, Equals, true)
+	c.Assert(createdMenu.GetMenuItemByName("Check Connection").sensitive, Equals, true)
+	c.Assert(createdMenu.GetMenuItemByName("Connect").sensitive, Equals, false)
+	c.Assert(createdMenu.GetMenuItemByName("Disconnect").sensitive, Equals, true)
 }
 
 func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheConnectSensitivity(c *C) {

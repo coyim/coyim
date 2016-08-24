@@ -1000,7 +1000,7 @@ func (s *session) SendPing() {
 		return
 	}
 
-	pingTimeout := 30 * time.Second
+	pingTimeout := 10 * time.Second
 
 	go func() {
 		select {

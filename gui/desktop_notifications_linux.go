@@ -19,9 +19,14 @@ type desktopNotifications struct {
 	notificationStyle   string
 	notificationUrgent  bool
 	notificationExpires bool
+	supported           bool
 }
 
 func (dn *desktopNotifications) hints() map[string]interface{} {
+	if !dn.supported {
+		return nil
+	}
+
 	hints := make(map[string]interface{})
 
 	hints[notify.HintTransient] = false
@@ -40,10 +45,11 @@ func (dn *desktopNotifications) hints() map[string]interface{} {
 func newDesktopNotifications() *desktopNotifications {
 	if _, err := dbus.SessionBus(); err != nil {
 		log.Printf("Error enabling dbus based notifications! %+v\n", err)
-		return nil
+		return createDesktopNotifications()
 	}
 
 	dn := createDesktopNotifications()
+	dn.supported = true
 	dn.notifications = make(map[string]uint32)
 	return dn
 }
@@ -58,7 +64,7 @@ func (dn *desktopNotifications) expiration() int32 {
 }
 
 func (dn *desktopNotifications) show(jid, from, message string) error {
-	if dn.notificationStyle == "off" {
+	if dn.notificationStyle == "off" || !dn.supported {
 		return nil
 	}
 

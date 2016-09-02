@@ -23,6 +23,10 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}) {
 		doInUIThread(func() {
 			u.handleNotificationEvent(t)
 		})
+	case events.DelayedMessageSent:
+		doInUIThread(func() {
+			u.handleDelayedMessageSentEvent(t)
+		})
 	case events.Presence:
 		doInUIThread(func() {
 			u.handlePresenceEvent(t)
@@ -150,6 +154,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, func(cv conversationView) {
 			cv.displayNotificationVerifiedOrNot(i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
+			cv.appendPendingDelayed()
 			identityWarning(cv)
 		})
 
@@ -196,4 +201,13 @@ func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
 		return
 	}
 	convWin.displayNotification(i18n.Local(ev.Notification))
+}
+
+func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent) {
+	account := u.findAccountForSession(ev.Session)
+	convWin, err := u.roster.openConversationView(account, ev.Peer, false)
+	if err != nil {
+		return
+	}
+	convWin.delayedMessageSent(ev.Tracer)
 }

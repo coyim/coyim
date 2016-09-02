@@ -482,6 +482,16 @@ func (s *session) listenToNotifications(c <-chan string, peer string) {
 	}
 }
 
+func (s *session) listenToDelayedMessageDelivery(c <-chan int, peer string) {
+	for t := range c {
+		s.publishEvent(events.DelayedMessageSent{
+			Session: s,
+			Peer:    peer,
+			Tracer:  t,
+		})
+	}
+}
+
 // NewConversation will create a new OTR conversation with the given peer
 //TODO: why creating a conversation is coupled to the account config and the session
 //TODO: does the creation of the OTR event handler need to be guarded with a lock?
@@ -507,11 +517,15 @@ func (s *session) NewConversation(peer string) *otr3.Conversation {
 	eh, ok := s.otrEventHandler[peer]
 	if !ok {
 		eh = new(event.OtrEventHandler)
+		eh.Delays = make(map[int]bool)
 		eh.Account = s.GetConfig().Account
 		eh.Peer = peer
 		notificationsChan := make(chan string)
 		eh.Notifications = notificationsChan
 		go s.listenToNotifications(notificationsChan, peer)
+		delayedChan := make(chan int)
+		eh.DelayedMessageSent = delayedChan
+		go s.listenToDelayedMessageDelivery(delayedChan, peer)
 		conversation.SetSMPEventHandler(eh)
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)
@@ -896,13 +910,16 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 }
 
 // EncryptAndSendTo encrypts and sends the message to the given peer
-func (s *session) EncryptAndSendTo(peer, resource string, message string) error {
+func (s *session) EncryptAndSendTo(peer, resource string, message string) (trace int, delayed bool, err error) {
 	//TODO: review whether it should create a conversation
 	if s.IsConnected() {
 		conversation, _ := s.convManager.EnsureConversationWith(peer, resource)
-		return conversation.Send(s, resource, []byte(message))
+		trace, err = conversation.Send(s, resource, []byte(message))
+		eh := s.otrEventHandler[peer]
+		delayed = eh.ConsumeDelayedState(trace)
+		return
 	}
-	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
+	return 0, false, &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }
 
 func (s *session) terminateConversations() {

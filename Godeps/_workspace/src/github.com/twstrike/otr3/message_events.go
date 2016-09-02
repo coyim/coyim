@@ -22,6 +22,9 @@ const (
 	// MessageEventMessageReflected will be signaled if we received our own OTR messages.
 	MessageEventMessageReflected
 
+	// MessageEventMessageSent is signaled when a message is sent after having been queued
+	MessageEventMessageSent
+
 	// MessageEventMessageResent is signaled when a message is resent
 	MessageEventMessageResent
 
@@ -58,20 +61,20 @@ const (
 // MessageEventHandler handles MessageEvents
 type MessageEventHandler interface {
 	// HandleMessageEvent should handle and send the appropriate message(s) to the sender/recipient depending on the message events
-	HandleMessageEvent(event MessageEvent, message []byte, err error)
+	HandleMessageEvent(event MessageEvent, message []byte, err error, trace ...interface{})
 }
 
 type dynamicMessageEventHandler struct {
-	eh func(event MessageEvent, message []byte, err error)
+	eh func(event MessageEvent, message []byte, err error, trace ...interface{})
 }
 
-func (d dynamicMessageEventHandler) HandleMessageEvent(event MessageEvent, message []byte, err error) {
-	d.eh(event, message, err)
+func (d dynamicMessageEventHandler) HandleMessageEvent(event MessageEvent, message []byte, err error, trace ...interface{}) {
+	d.eh(event, message, err, trace...)
 }
 
-func (c *Conversation) messageEvent(e MessageEvent) {
+func (c *Conversation) messageEvent(e MessageEvent, trace ...interface{}) {
 	if c.messageEventHandler != nil {
-		c.messageEventHandler.HandleMessageEvent(e, nil, nil)
+		c.messageEventHandler.HandleMessageEvent(e, nil, nil, trace...)
 	}
 }
 
@@ -100,6 +103,8 @@ func (s MessageEvent) String() string {
 		return "MessageEventSetupError"
 	case MessageEventMessageReflected:
 		return "MessageEventMessageReflected"
+	case MessageEventMessageSent:
+		return "MessageEventMessageSent"
 	case MessageEventMessageResent:
 		return "MessageEventMessageResent"
 	case MessageEventReceivedMessageNotInPrivate:
@@ -129,10 +134,10 @@ type combinedMessageEventHandler struct {
 	handlers []MessageEventHandler
 }
 
-func (c combinedMessageEventHandler) HandleMessageEvent(event MessageEvent, message []byte, err error) {
+func (c combinedMessageEventHandler) HandleMessageEvent(event MessageEvent, message []byte, err error, trace ...interface{}) {
 	for _, h := range c.handlers {
 		if h != nil {
-			h.HandleMessageEvent(event, message, err)
+			h.HandleMessageEvent(event, message, err, trace...)
 		}
 	}
 }
@@ -147,6 +152,6 @@ func CombineMessageEventHandlers(handlers ...MessageEventHandler) MessageEventHa
 type DebugMessageEventHandler struct{}
 
 // HandleMessageEvent dumps all message events
-func (DebugMessageEventHandler) HandleMessageEvent(event MessageEvent, message []byte, err error) {
-	fmt.Fprintf(standardErrorOutput, "%sHandleMessageEvent(%s, message: %#v, error: %v)\n", debugPrefix, event, string(message), err)
+func (DebugMessageEventHandler) HandleMessageEvent(event MessageEvent, message []byte, err error, trace ...interface{}) {
+	fmt.Fprintf(standardErrorOutput, "%sHandleMessageEvent(%s, message: %#v, error: %v, trace: %v)\n", debugPrefix, event, string(message), err, trace)
 }

@@ -1,10 +1,14 @@
 package client
 
-import "github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
+import (
+	"math/rand"
+
+	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
+)
 
 // Conversation represents a conversation with encryption capabilities
 type Conversation interface {
-	Send(Sender, string, []byte) error
+	Send(Sender, string, []byte) (trace int, err error)
 	Receive(Sender, string, []byte) ([]byte, error)
 
 	StartEncryptedChat(Sender, string) error
@@ -51,13 +55,14 @@ func (c *conversation) EndEncryptedChat(s Sender, resource string) error {
 	return c.sendAll(s, resource, toSend)
 }
 
-func (c *conversation) Send(s Sender, resource string, m []byte) error {
-	toSend, err := c.Conversation.Send(m)
+func (c *conversation) Send(s Sender, resource string, m []byte) (trace int, err error) {
+	trace = rand.Int()
+	toSend, err := c.Conversation.Send(m, trace)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return c.sendAll(s, resource, toSend)
+	return trace, c.sendAll(s, resource, toSend)
 }
 
 func (c *conversation) Receive(s Sender, resource string, m []byte) ([]byte, error) {

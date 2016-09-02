@@ -44,7 +44,7 @@ func (s *ConversationSuite) Test_sendAll_sendsTheMessageGiven(c *C) {
 func (s *ConversationSuite) Test_Send_(c *C) {
 	cb := &conversation{"foo@bar.com", "", &otr3.Conversation{}}
 	ts := &testSender{err: nil}
-	e := cb.Send(ts, "", []byte("Hello there"))
+	_, e := cb.Send(ts, "", []byte("Hello there"))
 
 	c.Assert(e, IsNil)
 	c.Assert(ts.peer, Equals, "foo@bar.com")

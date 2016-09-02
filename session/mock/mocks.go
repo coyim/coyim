@@ -69,8 +69,8 @@ func (*SessionMock) DisplayName() string {
 }
 
 // EncryptAndSendTo is the implementation for Session interface
-func (*SessionMock) EncryptAndSendTo(string, string, string) error {
-	return nil
+func (*SessionMock) EncryptAndSendTo(string, string, string) (int, bool, error) {
+	return 0, false, nil
 }
 
 // GetConfig is the implementation for Session interface

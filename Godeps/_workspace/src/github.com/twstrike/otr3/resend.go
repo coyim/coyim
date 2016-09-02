@@ -17,32 +17,42 @@ const (
 	retransmitExact
 )
 
+type messageToResend struct {
+	m      MessagePlaintext
+	opaque []interface{}
+}
+
 type resendContext struct {
 	mayRetransmit    retransmitFlag
 	messageTransform func([]byte) []byte
+	retransmitting   bool
 
 	messages struct {
-		m []MessagePlaintext
+		m []messageToResend
 		sync.RWMutex
 	}
 }
 
-func (r *resendContext) later(msg MessagePlaintext) {
+func (r *resendContext) later(msg MessagePlaintext, opaque ...interface{}) {
+	if r.retransmitting {
+		return
+	}
+
 	r.messages.Lock()
 	defer r.messages.Unlock()
 
 	if r.messages.m == nil {
-		r.messages.m = make([]MessagePlaintext, 0, 5)
+		r.messages.m = make([]messageToResend, 0, 5)
 	}
 
-	r.messages.m = append(r.messages.m, msg)
+	r.messages.m = append(r.messages.m, messageToResend{msg, opaque})
 }
 
-func (r *resendContext) pending() []MessagePlaintext {
+func (r *resendContext) pending() []messageToResend {
 	r.messages.RLock()
 	defer r.messages.RUnlock()
 
-	ret := make([]MessagePlaintext, len(r.messages.m))
+	ret := make([]messageToResend, len(r.messages.m))
 	copy(ret, r.messages.m)
 
 	return ret
@@ -59,6 +69,14 @@ func (r *resendContext) shouldRetransmit() bool {
 	return len(r.messages.m) > 0 && r.mayRetransmit != noRetransmit
 }
 
+func (r *resendContext) startRetransmitting() {
+	r.retransmitting = true
+}
+
+func (r *resendContext) endRetransmitting() {
+	r.retransmitting = false
+}
+
 func defaultResendMessageTransform(msg []byte) []byte {
 	return append(defaultResentPrefix, msg...)
 }
@@ -70,8 +88,8 @@ func (c *Conversation) resendMessageTransformer() func([]byte) []byte {
 	return c.resend.messageTransform
 }
 
-func (c *Conversation) lastMessage(msg MessagePlaintext) {
-	c.resend.later(msg)
+func (c *Conversation) lastMessage(msg MessagePlaintext, opaque ...interface{}) {
+	c.resend.later(msg, opaque...)
 }
 
 func (c *Conversation) updateMayRetransmitTo(f retransmitFlag) {
@@ -98,7 +116,11 @@ func (c *Conversation) retransmit() ([]messageWithHeader, error) {
 
 	resending := c.resend.mayRetransmit == retransmitWithPrefix
 
-	for _, msg := range msgs {
+	c.resend.startRetransmitting()
+	defer c.resend.endRetransmitting()
+
+	for _, msgx := range msgs {
+		msg := msgx.m
 		if resending {
 			msg = c.resendMessageTransformer()(msg)
 		}
@@ -114,8 +136,12 @@ func (c *Conversation) retransmit() ([]messageWithHeader, error) {
 		ret = append(ret, toSend)
 	}
 
+	ev := MessageEventMessageSent
 	if resending {
-		c.messageEvent(MessageEventMessageResent)
+		ev = MessageEventMessageResent
+	}
+	for _, msgx := range msgs {
+		c.messageEvent(ev, msgx.opaque...)
 	}
 
 	c.updateLastSent()

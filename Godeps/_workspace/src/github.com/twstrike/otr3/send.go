@@ -7,7 +7,7 @@ import (
 
 // Send takes a human readable message from the local user, possibly encrypts
 // it and returns zero or more messages to send to the peer.
-func (c *Conversation) Send(m ValidMessage) ([]ValidMessage, error) {
+func (c *Conversation) Send(m ValidMessage, trace ...interface{}) ([]ValidMessage, error) {
 	message := makeCopy(m)
 	defer wipeBytes(message)
 
@@ -22,7 +22,7 @@ func (c *Conversation) Send(m ValidMessage) ([]ValidMessage, error) {
 
 	switch c.msgState {
 	case plainText:
-		return c.withInjections(c.sendMessageOnPlaintext(message))
+		return c.withInjections(c.sendMessageOnPlaintext(message, trace...))
 	case encrypted:
 		return c.withInjections(c.sendMessageOnEncrypted(message))
 	case finished:
@@ -33,12 +33,12 @@ func (c *Conversation) Send(m ValidMessage) ([]ValidMessage, error) {
 	return c.withInjections(nil, newOtrError("cannot send message in current state"))
 }
 
-func (c *Conversation) sendMessageOnPlaintext(message ValidMessage) ([]ValidMessage, error) {
+func (c *Conversation) sendMessageOnPlaintext(message ValidMessage, trace ...interface{}) ([]ValidMessage, error) {
 	if c.Policies.has(requireEncryption) {
-		c.messageEvent(MessageEventEncryptionRequired)
+		c.messageEvent(MessageEventEncryptionRequired, trace...)
 		c.updateLastSent()
 		c.updateMayRetransmitTo(retransmitExact)
-		c.lastMessage(MessagePlaintext(makeCopy(message)))
+		c.lastMessage(MessagePlaintext(makeCopy(message)), trace...)
 		return []ValidMessage{c.QueryMessage()}, nil
 	}
 

@@ -42,6 +42,13 @@ type Notification struct {
 	Notification string
 }
 
+// DelayedMessageSent represents the event that a delayed message is sent
+type DelayedMessageSent struct {
+	Session access.Session
+	Peer    string
+	Tracer  int
+}
+
 // PeerType represents the type of Peer event
 type PeerType int
 

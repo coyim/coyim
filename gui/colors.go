@@ -6,17 +6,19 @@ import (
 )
 
 type colorSet struct {
-	rosterPeerBackground               string
-	rosterPeerOfflineForeground        string
-	rosterPeerOnlineForeground         string
-	rosterGroupBackground              string
-	rosterAccountOnlineBackground      string
-	rosterAccountOfflineBackground     string
-	conversationOutgoingUserForeground string
-	conversationIncomingUserForeground string
-	conversationOutgoingTextForeground string
-	conversationIncomingTextForeground string
-	conversationStatusTextForeground   string
+	rosterPeerBackground                      string
+	rosterPeerOfflineForeground               string
+	rosterPeerOnlineForeground                string
+	rosterGroupBackground                     string
+	rosterAccountOnlineBackground             string
+	rosterAccountOfflineBackground            string
+	conversationOutgoingUserForeground        string
+	conversationIncomingUserForeground        string
+	conversationOutgoingTextForeground        string
+	conversationIncomingTextForeground        string
+	conversationStatusTextForeground          string
+	conversationOutgoingDelayedUserForeground string
+	conversationOutgoingDelayedTextForeground string
 }
 
 var themeVariant string
@@ -56,32 +58,36 @@ func (u *gtkUI) currentColorSet() colorSet {
 
 func (u *gtkUI) defaultLightColorSet() colorSet {
 	return colorSet{
-		rosterPeerBackground:               "#ffffff",
-		rosterPeerOfflineForeground:        "#aaaaaa",
-		rosterPeerOnlineForeground:         "#000000",
-		rosterGroupBackground:              "#e9e7f3",
-		rosterAccountOnlineBackground:      "#918caa",
-		rosterAccountOfflineBackground:     "#d5d3de",
-		conversationOutgoingUserForeground: "#3465a4",
-		conversationIncomingUserForeground: "#a40000",
-		conversationOutgoingTextForeground: "#555753",
-		conversationIncomingTextForeground: "#000000",
-		conversationStatusTextForeground:   "#4e9a06",
+		rosterPeerBackground:                      "#ffffff",
+		rosterPeerOfflineForeground:               "#aaaaaa",
+		rosterPeerOnlineForeground:                "#000000",
+		rosterGroupBackground:                     "#e9e7f3",
+		rosterAccountOnlineBackground:             "#918caa",
+		rosterAccountOfflineBackground:            "#d5d3de",
+		conversationOutgoingUserForeground:        "#3465a4",
+		conversationIncomingUserForeground:        "#a40000",
+		conversationOutgoingTextForeground:        "#555753",
+		conversationIncomingTextForeground:        "#000000",
+		conversationStatusTextForeground:          "#4e9a06",
+		conversationOutgoingDelayedUserForeground: "#aaaaaa",
+		conversationOutgoingDelayedTextForeground: "#aaaaaa",
 	}
 }
 
 func (u *gtkUI) defaultDarkColorSet() colorSet {
 	return colorSet{
-		rosterPeerBackground:               "#7f7f7f",
-		rosterPeerOfflineForeground:        "#aaaaaa",
-		rosterPeerOnlineForeground:         "#e5e5e5",
-		rosterGroupBackground:              "#b8b6bf",
-		rosterAccountOnlineBackground:      "#d5d3de",
-		rosterAccountOfflineBackground:     "#918caa",
-		conversationOutgoingUserForeground: "#3465a4",
-		conversationIncomingUserForeground: "#a40000",
-		conversationOutgoingTextForeground: "#f3f3f3",
-		conversationIncomingTextForeground: "#7f7f7f",
-		conversationStatusTextForeground:   "#4e9a06",
+		rosterPeerBackground:                      "#7f7f7f",
+		rosterPeerOfflineForeground:               "#aaaaaa",
+		rosterPeerOnlineForeground:                "#e5e5e5",
+		rosterGroupBackground:                     "#b8b6bf",
+		rosterAccountOnlineBackground:             "#d5d3de",
+		rosterAccountOfflineBackground:            "#918caa",
+		conversationOutgoingUserForeground:        "#3465a4",
+		conversationIncomingUserForeground:        "#a40000",
+		conversationOutgoingTextForeground:        "#f3f3f3",
+		conversationIncomingTextForeground:        "#7f7f7f",
+		conversationStatusTextForeground:          "#4e9a06",
+		conversationOutgoingDelayedUserForeground: "#444444",
+		conversationOutgoingDelayedTextForeground: "#444444",
 	}
 }

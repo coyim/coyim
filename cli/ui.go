@@ -703,7 +703,7 @@ CommandLoop:
 					}
 				}
 
-				err := conversation.Send(s, "", message)
+				_, err := conversation.Send(s, "", message)
 				if err != nil {
 					c.alert(err.Error())
 					break

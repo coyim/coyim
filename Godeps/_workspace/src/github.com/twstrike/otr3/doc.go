@@ -13,14 +13,14 @@
 // Getting Started
 //
 // OTR library provides a Conversation API for Receiving and Sending messages
-//  import otr3
+//  import "otr3"
 //
 //  c := &otr3.Conversation{}
 //
 //  // You will need to prepare a long-term PrivateKey for otr conversation handshakes.
-//  var priv otr3.DSAPrivateKey
+//  var priv *otr3.DSAPrivateKey
 //  priv.Generate(rand.Reader)
-//  c.SetKeys(priv, nil)
+//  c.SetOurKeys([]otr3.PrivateKey{priv})
 //
 //  // set the Policies.
 //  c.Policies.RequireEncryption()
@@ -34,7 +34,7 @@
 //
 //  // Use Send and Receive for messages exchange
 //  toSend, err := c.Send(otr3.ValidMessage("hello"))
-//  plain, toSend, err := c.Receive(toSend)
+//  plain, toSend, err := c.Receive(toSend[0])
 //
 //  // Use Authenticate to start a SMP process
 //  toSend, err := c.StartAuthenticate([]byte{"My pet's name?"},[]byte{"Gopher"})

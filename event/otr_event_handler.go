@@ -42,12 +42,21 @@ var (
 
 // OtrEventHandler is used to contain information pertaining to the events of a specific OTR interaction
 type OtrEventHandler struct {
-	SmpQuestion      string
-	securityChange   SecurityChange
-	WaitingForSecret bool
-	Account          string
-	Peer             string
-	Notifications    chan<- string
+	SmpQuestion        string
+	securityChange     SecurityChange
+	WaitingForSecret   bool
+	Account            string
+	Peer               string
+	Notifications      chan<- string
+	DelayedMessageSent chan<- int
+	Delays             map[int]bool
+}
+
+// ConsumeDelayedState returns whether the given trace has been delayed or not, blanking out that status as a side effect
+func (e *OtrEventHandler) ConsumeDelayedState(trace int) bool {
+	val, ok := e.Delays[trace]
+	delete(e.Delays, trace)
+	return ok && val
 }
 
 func (e *OtrEventHandler) notify(s string) {
@@ -103,7 +112,7 @@ func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent in
 }
 
 // HandleMessageEvent is called to handle a specific message event
-func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error) {
+func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error, trace ...interface{}) {
 	switch event {
 	case otr3.MessageEventLogHeartbeatReceived:
 		log.Printf("[%s] Heartbeat received from %s.", e.Account, e.Peer)
@@ -112,7 +121,10 @@ func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []
 	case otr3.MessageEventReceivedMessageUnrecognized:
 		log.Printf("[%s] Unrecognized OTR message received from %s.", e.Account, e.Peer)
 	case otr3.MessageEventEncryptionRequired:
-		e.notify("Attempting to start a private conversation (no messages have been sent unencrypted)...")
+		e.Delays[trace[0].(int)] = true
+		if len(e.Delays) == 1 {
+			e.notify("Attempting to start a private conversation...")
+		}
 	case otr3.MessageEventEncryptionError:
 		// This happens when something goes wrong putting together a new data packet in OTR
 		e.notify("An error occurred when encrypting your message. The message was not sent.")
@@ -125,6 +137,10 @@ func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []
 		e.notify("Error setting up private conversation.")
 		if err != nil {
 			log.Printf("[%s] Error setting up private conversation with %s: %s.", e.Account, e.Peer, err.Error())
+		}
+	case otr3.MessageEventMessageSent:
+		if len(trace) > 0 {
+			e.DelayedMessageSent <- trace[0].(int)
 		}
 	case otr3.MessageEventMessageResent:
 		e.notify("The last message to the other person was resent, since we couldn't deliver the message previously.")

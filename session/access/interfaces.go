@@ -39,7 +39,7 @@ type Session interface {
 	ConversationManager() client.ConversationManager
 	DenyPresenceSubscription(string, string) error
 	DisplayName() string
-	EncryptAndSendTo(string, string, string) error
+	EncryptAndSendTo(string, string, string) (int, bool, error)
 	GetConfig() *config.Account
 	GroupDelimiter() string
 	HandleConfirmOrDeny(string, bool)

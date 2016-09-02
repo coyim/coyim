@@ -45,6 +45,7 @@ type Session interface {
 	HandleConfirmOrDeny(string, bool)
 	IsConnected() bool
 	IsDisconnected() bool
+	ManuallyEndEncryptedChat(string, string) error
 	OtrEventHandler() map[string]*event.OtrEventHandler
 	PrivateKeys() []otr3.PrivateKey
 	R() *roster.List

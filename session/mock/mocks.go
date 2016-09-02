@@ -96,6 +96,11 @@ func (*SessionMock) IsDisconnected() bool {
 	return false
 }
 
+// ManuallyEndEncryptedChat is the implementation for Session interface
+func (*SessionMock) ManuallyEndEncryptedChat(string, string) error {
+	return nil
+}
+
 // OtrEventHandler is the implementation for Session interface
 func (*SessionMock) OtrEventHandler() map[string]*event.OtrEventHandler {
 	return nil

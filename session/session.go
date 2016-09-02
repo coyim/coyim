@@ -572,6 +572,17 @@ func (s *session) processClientMessage(stanza *data.ClientMessage) {
 	s.receiveClientMessage(from, resource, messageTime, stanza.Body)
 }
 
+// ManuallyEndEncryptedChat allows a user to end the encrypted chat from this side
+func (s *session) ManuallyEndEncryptedChat(peer, resource string) error {
+	c, ok := s.ConversationManager().GetConversationWith(peer, resource)
+	if !ok {
+		return fmt.Errorf("couldn't find conversation with %s / %s", peer, resource)
+	}
+
+	defer s.otrEventHandler[peer].ConsumeSecurityChange()
+	return c.EndEncryptedChat(s, resource)
+}
+
 func (s *session) receiveClientMessage(from, resource string, when time.Time, body string) {
 	// TODO: do we want to have different conversation instances for different resources?
 	conversation, _ := s.convManager.EnsureConversationWith(from, resource)

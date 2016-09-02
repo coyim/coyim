@@ -176,20 +176,15 @@ func (conv *conversationPane) onStartOtrSignal() {
 	c, _ := session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
 	err := c.StartEncryptedChat(session, conv.currentResource())
 	if err != nil {
-		//TODO: notify failure
+		log.Printf(i18n.Local("Failed to start encrypted chat: %s\n"), err.Error())
 	}
 }
 
 func (conv *conversationPane) onEndOtrSignal() {
-	//TODO: errors
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	c, ok := session.ConversationManager().GetConversationWith(conv.to, conv.currentResource())
-	if !ok {
-		return
-	}
+	err := session.ManuallyEndEncryptedChat(conv.to, conv.currentResource())
 
-	err := c.EndEncryptedChat(session, conv.currentResource())
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 	} else {

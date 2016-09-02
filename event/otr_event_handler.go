@@ -50,6 +50,7 @@ type OtrEventHandler struct {
 	Notifications      chan<- string
 	DelayedMessageSent chan<- int
 	Delays             map[int]bool
+	PendingDelays      int
 }
 
 // ConsumeDelayedState returns whether the given trace has been delayed or not, blanking out that status as a side effect
@@ -86,6 +87,7 @@ func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 	log.Printf("[%s] HandleSecurityEvent(%s)", e.Account, event.String())
 	switch event {
 	case otr3.GoneSecure:
+		e.PendingDelays = 0
 		e.securityChange = NewKeys
 	case otr3.StillSecure:
 		e.securityChange = RenewedKeys
@@ -122,7 +124,8 @@ func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []
 		log.Printf("[%s] Unrecognized OTR message received from %s.", e.Account, e.Peer)
 	case otr3.MessageEventEncryptionRequired:
 		e.Delays[trace[0].(int)] = true
-		if len(e.Delays) == 1 {
+		e.PendingDelays++
+		if e.PendingDelays == 1 {
 			e.notify("Attempting to start a private conversation...")
 		}
 	case otr3.MessageEventEncryptionError:

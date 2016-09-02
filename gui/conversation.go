@@ -93,7 +93,7 @@ func (u *gtkUI) newTags() *tags {
 	outgoingText.SetProperty("foreground", cs.conversationOutgoingTextForeground)
 
 	incomingText, _ := g.gtk.TextTagNew("incomingText")
-	outgoingText.SetProperty("foreground", cs.conversationIncomingTextForeground)
+	incomingText.SetProperty("foreground", cs.conversationIncomingTextForeground)
 
 	statusText, _ := g.gtk.TextTagNew("statusText")
 	statusText.SetProperty("foreground", cs.conversationStatusTextForeground)

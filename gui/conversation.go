@@ -33,6 +33,8 @@ type conversationView interface {
 	isVisible() bool
 	delayedMessageSent(int)
 	appendPendingDelayed()
+	haveShownPrivateEndedNotification()
+	haveShownPrivateNotification()
 }
 
 type conversationWindow struct {
@@ -64,6 +66,7 @@ type conversationPane struct {
 	delayed            map[int]delayedMessage
 	pendingDelayed     []int
 	pendingDelayedLock sync.Mutex
+	shownPrivate       bool
 }
 
 type tags struct {
@@ -500,6 +503,14 @@ func (conv *conversationPane) storeDelayedMessage(trace int, to, resource, messa
 	conv.delayed[trace] = delayedMessage{trace, to, resource, message}
 }
 
+func (conv *conversationPane) haveShownPrivateNotification() {
+	conv.shownPrivate = true
+}
+
+func (conv *conversationPane) haveShownPrivateEndedNotification() {
+	conv.shownPrivate = false
+}
+
 func (conv *conversationPane) appendPendingDelayed() {
 	conv.pendingDelayedLock.Lock()
 	defer conv.pendingDelayedLock.Unlock()
@@ -519,9 +530,12 @@ func (conv *conversationPane) appendPendingDelayed() {
 
 func (conv *conversationPane) delayedMessageSent(trace int) {
 	conv.pendingDelayedLock.Lock()
-	defer conv.pendingDelayedLock.Unlock()
-
 	conv.pendingDelayed = append(conv.pendingDelayed, trace)
+	conv.pendingDelayedLock.Unlock()
+
+	if conv.shownPrivate {
+		conv.appendPendingDelayed()
+	}
 }
 
 func (conv *conversationPane) sendMessage(message string) error {

@@ -147,6 +147,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		convWindowNowOrLater(account, peer, func(cv conversationView) {
 			cv.displayNotification(i18n.Local("Private conversation has ended."))
 			cv.updateSecurityWarning()
+			cv.haveShownPrivateEndedNotification()
 		})
 
 	case events.OTRNewKeys:
@@ -156,6 +157,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 			cv.displayNotificationVerifiedOrNot(i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
 			cv.appendPendingDelayed()
 			identityWarning(cv)
+			cv.haveShownPrivateNotification()
 		})
 
 	case events.OTRRenewedKeys:

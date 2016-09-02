@@ -151,11 +151,11 @@ func (v *accountMockMenu) Append(v1 gtki.MenuItem) {
 
 func (v *accountMockMenu) GetMenuItemByName(name string) *accountMockMenuItem {
 	switch name {
-	case "Check Connection":
-		return v.menuItems[0].(*accountMockMenuItem)
 	case "Connect":
-		return v.menuItems[1].(*accountMockMenuItem)
+		return v.menuItems[0].(*accountMockMenuItem)
 	case "Disconnect":
+		return v.menuItems[1].(*accountMockMenuItem)
+	case "Check Connection":
 		return v.menuItems[2].(*accountMockMenuItem)
 	case "Edit":
 		return v.menuItems[5].(*accountMockMenuItem)
@@ -372,7 +372,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheCon
 	a := &account{session: sess}
 
 	menu := a.createSubmenu()
-	connectItem := menu.(*accountMockMenu).menuItems[1].(*accountMockMenuItem)
+	connectItem := menu.(*accountMockMenu).menuItems[0].(*accountMockMenuItem)
 
 	c.Assert(connectItem.sensitive, Equals, true)
 
@@ -430,7 +430,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDis
 	a := &account{session: sess}
 
 	menu := a.createSubmenu()
-	disconnectItem := menu.(*accountMockMenu).menuItems[2].(*accountMockMenuItem)
+	disconnectItem := menu.(*accountMockMenu).menuItems[1].(*accountMockMenuItem)
 
 	c.Assert(disconnectItem.sensitive, Equals, false)
 

@@ -346,9 +346,9 @@ func (account *account) createDumpInfoItem(r *roster) gtki.MenuItem {
 func (account *account) createSubmenu() gtki.Menu {
 	m, _ := g.gtk.MenuNew()
 
-	m.Append(account.createCheckConnectionItem())
 	m.Append(account.createConnectItem())
 	m.Append(account.createDisconnectItem())
+	m.Append(account.createCheckConnectionItem())
 	m.Append(account.createSeparatorItem())
 	m.Append(account.createConnectionItem())
 	m.Append(account.createEditItem())

@@ -3,6 +3,7 @@ package otr3
 import (
 	"bytes"
 	"strconv"
+	"time"
 )
 
 func isQueryMessage(msg ValidMessage) bool {
@@ -46,11 +47,23 @@ func extractVersionsFromQueryMessage(p policies, msg ValidMessage) int {
 	return versions
 }
 
+var timeoutLength = time.Duration(1) * time.Minute
+
+func isWithinTimeToIgnoreQueryMessage(t time.Time) bool {
+	return t.Add(timeoutLength).After(time.Now())
+
+}
+
 func (c *Conversation) receiveQueryMessage(msg ValidMessage) ([]messageWithHeader, error) {
 	versions := extractVersionsFromQueryMessage(c.Policies, msg)
 	err := c.commitToVersionFrom(versions)
 	if err != nil {
 		return nil, err
+	}
+
+	if (c.msgState == encrypted && isWithinTimeToIgnoreQueryMessage(c.lastMessageStateChange)) ||
+		(c.ake != nil && isWithinTimeToIgnoreQueryMessage(c.ake.lastStateChange)) {
+		return nil, nil
 	}
 
 	ts, err := c.sendDHCommit()

@@ -1,6 +1,9 @@
 package otr3
 
-import "bytes"
+import (
+	"bytes"
+	"time"
+)
 
 const minimumMessageLength = 3 // length of protocol version (SHORT) and message type (BYTE)
 
@@ -14,6 +17,7 @@ func (c *Conversation) akeHasFinished() error {
 	c.ake.wipe(false)
 
 	previousMsgState := c.msgState
+	c.lastMessageStateChange = time.Now()
 	c.msgState = encrypted
 	defer c.signalSecurityEventIf(previousMsgState != encrypted, GoneSecure)
 	defer c.signalSecurityEventIf(previousMsgState == encrypted, StillSecure)
@@ -45,6 +49,8 @@ func (c *Conversation) processAKE(msgType byte, msg []byte) (toSend []messageWit
 	default:
 		err = newOtrErrorf("unknown message type 0x%X", msgType)
 	}
+
+	c.ake.lastStateChange = time.Now()
 
 	messages := append([]messageWithHeader{toSendSingle}, toSendExtra...)
 	toSend = compactMessagesWithHeader(messages...)

@@ -1,6 +1,9 @@
 package otr3
 
-import "io"
+import (
+	"io"
+	"time"
+)
 
 type msgState int
 
@@ -24,6 +27,8 @@ type Conversation struct {
 
 	msgState        msgState
 	whitespaceState whitespaceState
+
+	lastMessageStateChange time.Time
 
 	ourInstanceTag   uint32
 	theirInstanceTag uint32
@@ -113,6 +118,7 @@ func (c *Conversation) End() (toSend []ValidMessage, err error) {
 		// Error can only happen when Rand reader is broken
 		toSend, _, err = c.createSerializedDataMessage(nil, messageFlagIgnoreUnreadable, []tlv{tlv{tlvType: tlvTypeDisconnected}})
 	}
+	c.lastMessageStateChange = time.Now()
 	c.msgState = plainText
 	defer c.signalSecurityEventIf(previousMsgState == encrypted, GoneInsecure)
 

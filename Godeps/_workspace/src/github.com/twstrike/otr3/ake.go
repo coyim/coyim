@@ -5,6 +5,7 @@ import (
 	"crypto/subtle"
 	"io"
 	"math/big"
+	"time"
 )
 
 type ake struct {
@@ -25,6 +26,8 @@ type ake struct {
 
 	state authState
 	keys  keyManagementContext
+
+	lastStateChange time.Time
 }
 
 func (c *Conversation) ensureAKE() {
@@ -119,6 +122,7 @@ func (c *Conversation) dhCommitMessage() ([]byte, error) {
 
 	// this can't return an error, since ake.r is of a fixed size that is always correct
 	c.ake.encryptedGx, _ = encrypt(c.ake.r[:], appendMPI(nil, c.ake.ourPublicValue))
+
 	return c.serializeDHCommit(c.ake.ourPublicValue), nil
 }
 

@@ -454,6 +454,11 @@ func (conv *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
 		return
 	}
 
+	// TODO: we need to separate out the action of EnsureHasFingerprint
+	// from the checking if something is verified - we want it to be idempotent
+	// Also, We can't do the EnsureHasFingerprint exactly, since we want to warn on a new fingerprint
+	// For #275
+
 	if conv.isVerified() {
 		log.Println("We have a peer and a trusted fingerprint already, so no reason to warn")
 		return

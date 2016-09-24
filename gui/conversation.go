@@ -180,6 +180,8 @@ func (conv *conversationPane) onStartOtrSignal() {
 	err := c.StartEncryptedChat(session, conv.currentResource())
 	if err != nil {
 		log.Printf(i18n.Local("Failed to start encrypted chat: %s\n"), err.Error())
+	} else {
+		conv.displayNotification(i18n.Local("Attempting to start a private conversation..."))
 	}
 }
 
@@ -481,11 +483,7 @@ func (conv *conversationPane) removeIdentityVerificationWarning() {
 
 func (conv *conversationPane) updateSecurityWarning() {
 	conversation, ok := conv.getConversation()
-	if !ok {
-		return
-	}
-
-	conv.securityWarning.SetVisible(!conversation.IsEncrypted())
+	conv.securityWarning.SetVisible(!ok || !conversation.IsEncrypted())
 }
 
 func (conv *conversationWindow) show(userInitiated bool) {

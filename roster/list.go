@@ -90,6 +90,8 @@ func (l *List) AddOrReplace(p *Peer) bool {
 // Returns true if they existed, otherwise false
 func (l *List) PeerBecameUnavailable(jid string) bool {
 	if p, exist := l.Get(jid); exist {
+		oldOnline := p.Online
+
 		resource := utils.ResourceFromJid(jid)
 		if resource != "" {
 			p.RemoveResource(resource)
@@ -99,7 +101,7 @@ func (l *List) PeerBecameUnavailable(jid string) bool {
 			p.Online = false
 		}
 
-		return true
+		return oldOnline != p.Online
 	}
 
 	return false

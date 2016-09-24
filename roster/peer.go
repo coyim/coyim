@@ -59,7 +59,7 @@ func fromSet(vs map[string]bool) []string {
 
 // Dump will dump all info in the peer in a very verbose format
 func (p *Peer) Dump() string {
-	return fmt.Sprintf("Peer{%s[%s (%s)], subscription='%s', status='%s'('%s') online=%v, asked=%v, pendingSubscribe='%s', belongsTo='%s'}", p.Jid, p.Name, p.Nickname, p.Subscription, p.Status, p.StatusMsg, p.Online, p.Asked, p.PendingSubscribeID, p.BelongsTo)
+	return fmt.Sprintf("Peer{%s[%s (%s)], subscription='%s', status='%s'('%s') online=%v, asked=%v, pendingSubscribe='%s', belongsTo='%s', resources=%v, lastResource='%s'}", p.Jid, p.Name, p.Nickname, p.Subscription, p.Status, p.StatusMsg, p.Online, p.Asked, p.PendingSubscribeID, p.BelongsTo, p.resources, p.lastResource)
 }
 
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given

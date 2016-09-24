@@ -118,7 +118,8 @@ func (c *Conversation) End() (toSend []ValidMessage, err error) {
 		// Error can only happen when Rand reader is broken
 		toSend, _, err = c.createSerializedDataMessage(nil, messageFlagIgnoreUnreadable, []tlv{tlv{tlvType: tlvTypeDisconnected}})
 	}
-	c.lastMessageStateChange = time.Now()
+	c.lastMessageStateChange = time.Time{}
+	c.ake = nil
 	c.msgState = plainText
 	defer c.signalSecurityEventIf(previousMsgState == encrypted, GoneInsecure)
 

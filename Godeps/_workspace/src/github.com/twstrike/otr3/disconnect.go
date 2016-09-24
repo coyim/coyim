@@ -6,9 +6,10 @@ func (c *Conversation) processDisconnectedTLV(t tlv, x dataMessageExtra) (toSend
 	previousMsgState := c.msgState
 
 	defer c.signalSecurityEventIf(previousMsgState == encrypted, GoneInsecure)
-	c.lastMessageStateChange = time.Now()
+	c.lastMessageStateChange = time.Time{}
 	c.msgState = finished
 	c.smp.wipe()
+	c.ake = nil
 
 	c.keys = keyManagementContext{}
 

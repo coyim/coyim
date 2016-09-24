@@ -34,7 +34,8 @@ type gtkUI struct {
 	viewMenu         *viewMenu
 	optionsMenu      *optionsMenu
 
-	unified *unifiedLayout
+	unified       *unifiedLayout
+	unifiedCached *unifiedLayout
 
 	config *config.ApplicationConfig
 
@@ -191,12 +192,19 @@ func (u *gtkUI) loadConfig(configFile string) {
 	}
 }
 
-func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
-	u.settings = settings.For(c.GetUniqueID())
-	u.roster.deNotify.updateWith(u.settings)
+func (u *gtkUI) updateUnifiedOrNot() {
+	if u.settings.GetSingleWindow() && u.unified == nil {
+		u.unified = u.unifiedCached
+	}
 	if !u.settings.GetSingleWindow() {
 		u.unified = nil
 	}
+}
+
+func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
+	u.settings = settings.For(c.GetUniqueID())
+	u.roster.deNotify.updateWith(u.settings)
+	u.updateUnifiedOrNot()
 
 	u.buildAccounts(c, u.sessionFactory, u.dialerFactory)
 
@@ -341,6 +349,7 @@ func (u *gtkUI) mainWindow() {
 	obj = builder.getObj("Hbox")
 	hbox := obj.(gtki.Box)
 	u.unified = newUnifiedLayout(u, vbox, hbox)
+	u.unifiedCached = u.unified
 
 	u.notificationArea = builder.getObj("notification-area").(gtki.Box)
 

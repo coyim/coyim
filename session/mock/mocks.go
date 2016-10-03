@@ -1,6 +1,7 @@
 package mocks
 
 import (
+	"bytes"
 	"io"
 	"time"
 
@@ -75,6 +76,11 @@ func (*SessionMock) EncryptAndSendTo(string, string, string) (int, bool, error) 
 
 // GetConfig is the implementation for Session interface
 func (*SessionMock) GetConfig() *config.Account {
+	return nil
+}
+
+// GetInMemoryLog is the implementation for Session interface
+func (*SessionMock) GetInMemoryLog() *bytes.Buffer {
 	return nil
 }
 

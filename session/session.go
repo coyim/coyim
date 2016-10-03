@@ -69,7 +69,8 @@ type session struct {
 
 	groupDelimiter string
 
-	xmppLogger io.Writer
+	inMemoryLog *bytes.Buffer
+	xmppLogger  io.Writer
 
 	connector access.Connector
 
@@ -81,6 +82,11 @@ type session struct {
 	autoApproves map[string]bool
 
 	nicknames []string
+}
+
+// GetInMemoryLog returns the in memory log or nil
+func (s *session) GetInMemoryLog() *bytes.Buffer {
+	return s.inMemoryLog
 }
 
 // GetConfig returns the current account configuration
@@ -105,8 +111,29 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 	return result
 }
 
+func createXmppLogger(rawLog string) (*bytes.Buffer, io.Writer) {
+	log := openLogFile(rawLog)
+
+	var inMemory *bytes.Buffer
+	if *config.DebugFlag {
+		inMemory = new(bytes.Buffer)
+
+		if log != nil {
+			log = io.MultiWriter(log, inMemory)
+		} else {
+			log = inMemory
+		}
+	}
+
+	return inMemory, log
+}
+
 // Factory creates a new session from the given config
 func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifier) xi.Dialer) access.Session {
+	// Make xmppLogger go to in memory STRING and/or the log file
+
+	inMemoryLog, xmppLogger := createXmppLogger(c.RawLogFile)
+
 	s := &session{
 		config:        c,
 		accountConfig: cu,
@@ -119,7 +146,8 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 
 		autoApproves: make(map[string]bool),
 
-		xmppLogger:       openLogFile(c.RawLogFile),
+		inMemoryLog:      inMemoryLog,
+		xmppLogger:       xmppLogger,
 		connectionLogger: logToDebugLog(),
 		dialerFactory:    df,
 	}

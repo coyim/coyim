@@ -1,6 +1,7 @@
 package access
 
 import (
+	"bytes"
 	"io"
 	"time"
 
@@ -41,6 +42,7 @@ type Session interface {
 	DisplayName() string
 	EncryptAndSendTo(string, string, string) (int, bool, error)
 	GetConfig() *config.Account
+	GetInMemoryLog() *bytes.Buffer
 	GroupDelimiter() string
 	HandleConfirmOrDeny(string, bool)
 	IsConnected() bool

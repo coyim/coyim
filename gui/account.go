@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
@@ -341,6 +342,38 @@ func (account *account) createDumpInfoItem(r *roster) gtki.MenuItem {
 		r.debugPrintRosterFor(account.session.GetConfig().Account)
 	})
 	return dumpInfoItem
+}
+
+func (account *account) createXMLConsoleItem(r *roster) gtki.MenuItem {
+	consoleItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("XML Console"))
+	consoleItem.Connect("activate", func() {
+		builder := newBuilder("XMLConsole")
+		console := builder.getObj("XMLConsole").(gtki.Dialog)
+		buf := builder.getObj("consoleContent").(gtki.TextBuffer)
+		console.SetTransientFor(r.ui.window)
+		console.SetTitle(strings.Replace(console.GetTitle(), "ACCOUNT_NAME", account.session.GetConfig().Account, -1))
+		log := account.session.GetInMemoryLog()
+
+		buf.Delete(buf.GetStartIter(), buf.GetEndIter())
+		if log != nil {
+			buf.Insert(buf.GetEndIter(), log.String())
+		}
+
+		builder.ConnectSignals(map[string]interface{}{
+			"on_refresh_signal": func() {
+				buf.Delete(buf.GetStartIter(), buf.GetEndIter())
+				if log != nil {
+					buf.Insert(buf.GetEndIter(), log.String())
+				}
+			},
+			"on_close_signal": func() {
+				console.Destroy()
+			},
+		})
+
+		console.ShowAll()
+	})
+	return consoleItem
 }
 
 func (account *account) createSubmenu() gtki.Menu {

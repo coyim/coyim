@@ -9,6 +9,7 @@ import (
 
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gdki"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
+	"github.com/twstrike/coyim/config"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
 )
@@ -261,8 +262,11 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 
 func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventButton) {
 	mn := account.createSubmenu()
-	mn.Append(account.createSeparatorItem())
-	mn.Append(account.createDumpInfoItem(r))
+	if *config.DebugFlag {
+		mn.Append(account.createSeparatorItem())
+		mn.Append(account.createDumpInfoItem(r))
+		mn.Append(account.createXMLConsoleItem(r))
+	}
 	mn.ShowAll()
 	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
 }

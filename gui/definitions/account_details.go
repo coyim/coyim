@@ -27,7 +27,7 @@ func (*defAccountDetails) String() string {
       <column type="gchararray"/>
     </columns>
   </object>
-  
+
   <object class="GtkDialog" id="AccountDetails">
     <property name="title" translatable="yes">Account Details</property>
     <signal name="close" handler="on_cancel_signal" />
@@ -115,7 +115,7 @@ func (*defAccountDetails) String() string {
                     <property name="top-attach">2</property>
                   </packing>
                 </child>
-                
+
                 <child>
                   <object class="GtkLabel" id="showOtherSettings">
                     <property name="label" translatable="yes">Display all settings</property>
@@ -131,7 +131,7 @@ func (*defAccountDetails) String() string {
                   <object class="GtkCheckButton" id="otherSettings">
                     <signal name="toggled" handler="on_toggle_other_settings" />
                   </object>
-                  
+
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">3</property>
@@ -222,7 +222,7 @@ func (*defAccountDetails) String() string {
                     <property name="top-attach">3</property>
                   </packing>
                 </child>
-                
+
                 <child>
                   <object class="GtkComboBoxText" id="pinningPolicyValue">
                     <items>
@@ -514,7 +514,9 @@ func (*defAccountDetails) String() string {
                     <property name="column-spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="encryptionImportInstructions">
-                        <property name="label" translatable="yes">The below buttons allow you to import private keys and fingerprints. Both of them should be in the Pidgin/libotr format. If you import private keys, your existing private keys will be deleted, since current there is no way to choose which key to use for encrypted chat.</property>
+                        <property name="label" translatable="yes">The below buttons allow you to import private keys and fingerprints. Both of them should be in the Pidgin/libotr format. If you import private keys, your existing private keys will be deleted, since currently there is no way to choose which key to use for encrypted chat.
+
+There are several applications that use the libotr format - Pidgin, Adium and Tor Messenger are most well known ones. Depending on your platform, these files can be found in several different places. Refer to the documentation for the application in question to find out where the files are located for your platform. The filenames to look for are "otr.fingerprints" and "otr.private_key".</property>
                         <property name="visible">true</property>
                         <property name="wrap">true</property>
                         <property name="max-width-chars">50</property>
@@ -592,7 +594,7 @@ func (*defAccountDetails) String() string {
                         <property name="top-attach">3</property>
                       </packing>
                     </child>
-                    
+
                   </object>
                 </child>
               </object>

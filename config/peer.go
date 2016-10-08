@@ -102,7 +102,7 @@ func (a *Account) updateFingerprintsToLatestVersion() bool {
 
 	for _, kfpr := range a.LegacyKnownFingerprints {
 		if len(kfpr.Fingerprint) > 0 {
-			fpr := a.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
+			fpr, _ := a.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
 			if !kfpr.Untrusted {
 				fpr.Trusted = true
 			}
@@ -137,15 +137,15 @@ func (a *Account) GetPeer(uid string) (*Peer, bool) {
 }
 
 // EnsureHasFingerprint ensures that the peer has the given fingerprint and returns the Fingerprint instance
-func (p *Peer) EnsureHasFingerprint(fpr []byte) *Fingerprint {
+func (p *Peer) EnsureHasFingerprint(fpr []byte) (*Fingerprint, bool) {
 	for _, f := range p.Fingerprints {
 		if bytes.Equal(f.Fingerprint, fpr) {
-			return f
+			return f, false
 		}
 	}
 	f := &Fingerprint{Fingerprint: fpr, Trusted: false}
 	p.Fingerprints = append(p.Fingerprints, f)
-	return f
+	return f, true
 }
 
 // HasTrustedFingerprint returns true if the peer has the given fingerprint and it is trusted
@@ -160,7 +160,7 @@ func (p *Peer) HasTrustedFingerprint(fpr []byte) bool {
 
 // AddTrustedFingerprint adds a new fingerprint for the given user
 func (a *Account) AddTrustedFingerprint(fpr []byte, uid string) {
-	f := a.EnsurePeer(uid).EnsureHasFingerprint(fpr)
+	f, _ := a.EnsurePeer(uid).EnsureHasFingerprint(fpr)
 	f.Trusted = true
 }
 

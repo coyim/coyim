@@ -126,7 +126,7 @@ func (u *gtkUI) importFingerprintsFor(account *config.Account, file string) (int
 	for _, kfprs := range fprs {
 		for _, kfpr := range kfprs {
 			log.Printf("Importing fingerprint %X for %s", kfpr.Fingerprint, kfpr.UserID)
-			fpr := account.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
+			fpr, _ := account.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
 			num = num + 1
 			if !kfpr.Untrusted {
 				fpr.Trusted = true

@@ -154,7 +154,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, func(cv conversationView) {
-			cv.displayNotificationVerifiedOrNot(i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
+			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
 			cv.appendPendingDelayed()
 			identityWarning(cv)
 			cv.haveShownPrivateNotification()
@@ -164,7 +164,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, func(cv conversationView) {
-			cv.displayNotificationVerifiedOrNot(i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
+			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
 			identityWarning(cv)
 		})
 

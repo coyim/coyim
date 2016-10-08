@@ -28,7 +28,7 @@ type conversationView interface {
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool)
 	displayNotification(notification string)
-	displayNotificationVerifiedOrNot(notificationV, notificationNV string)
+	displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string)
 	setEnabled(enabled bool)
 	isVisible() bool
 	delayedMessageSent(int)
@@ -58,15 +58,17 @@ type conversationPane struct {
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
-	marks              []*timedMark
-	hidden             bool
-	shiftEnterSends    bool
-	afterNewMessage    func()
-	currentPeer        func() (*rosters.Peer, bool)
-	delayed            map[int]delayedMessage
-	pendingDelayed     []int
-	pendingDelayedLock sync.Mutex
-	shownPrivate       bool
+	marks                []*timedMark
+	hidden               bool
+	shiftEnterSends      bool
+	afterNewMessage      func()
+	currentPeer          func() (*rosters.Peer, bool)
+	delayed              map[int]delayedMessage
+	pendingDelayed       []int
+	pendingDelayedLock   sync.Mutex
+	shownPrivate         bool
+	isNewFingerprint     bool
+	hasSetNewFingerprint bool
 }
 
 type tags struct {
@@ -428,7 +430,7 @@ func (conv *conversationPane) withCurrentPeer(f func(*rosters.Peer)) {
 	}
 }
 
-func (conv *conversationPane) isVerified() bool {
+func (conv *conversationPane) isVerified(u *gtkUI) bool {
 	conversation, exists := conv.getConversation()
 	if !exists {
 		log.Println("Conversation does not exist - this shouldn't happen")
@@ -439,9 +441,20 @@ func (conv *conversationPane) isVerified() bool {
 	conf := conv.account.session.GetConfig()
 
 	p, hasPeer := conf.GetPeer(conv.to)
+	isNew := false
 
 	if hasPeer {
-		p.EnsureHasFingerprint(fingerprint)
+		_, isNew = p.EnsureHasFingerprint(fingerprint)
+
+		err := u.saveConfigInternal()
+		if err != nil {
+			log.Println("Failed to save config:", err)
+		}
+	}
+
+	if !conv.hasSetNewFingerprint {
+		conv.isNewFingerprint = isNew
+		conv.hasSetNewFingerprint = true
 	}
 
 	return hasPeer && p.HasTrustedFingerprint(fingerprint)
@@ -456,12 +469,7 @@ func (conv *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
 		return
 	}
 
-	// TODO: we need to separate out the action of EnsureHasFingerprint
-	// from the checking if something is verified - we want it to be idempotent
-	// Also, We can't do the EnsureHasFingerprint exactly, since we want to warn on a new fingerprint
-	// For #275
-
-	if conv.isVerified() {
+	if conv.isVerified(u) {
 		log.Println("We have a peer and a trusted fingerprint already, so no reason to warn")
 		return
 	}
@@ -731,11 +739,17 @@ func (conv *conversationPane) displayNotification(notification string) {
 	conv.appendToHistory(time.Now(), false, taggableText{"statusText", notification})
 }
 
-func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, notificationNV string) {
-	if conv.isVerified() {
+func (conv *conversationPane) displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string) {
+	isVerified := conv.isVerified(u)
+
+	if isVerified {
 		conv.displayNotification(notificationV)
 	} else {
 		conv.displayNotification(notificationNV)
+	}
+
+	if conv.isNewFingerprint {
+		conv.displayNotification(i18n.Local("The peer is using a key we haven't seen before!"))
 	}
 }
 

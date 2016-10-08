@@ -70,7 +70,7 @@ func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bo
 	ac.Peers = nil
 	for _, kfpr := range c.KnownFingerprints {
 		fp, _ := hex.DecodeString(kfpr.FingerprintHex)
-		fpr := ac.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(fp)
+		fpr, _ := ac.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(fp)
 		fpr.Trusted = true
 	}
 	a.NotifyCommand = c.NotifyCommand

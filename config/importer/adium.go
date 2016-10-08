@@ -131,7 +131,7 @@ func (p *adiumImporter) importAllFrom(accountMappingsFile, accountsFile, prefsFi
 				ac.Peers = nil
 				sort.Sort(config.LegacyByNaturalOrder(fprs))
 				for _, kfpr := range fprs {
-					fpr := ac.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
+					fpr, _ := ac.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
 					if !kfpr.Untrusted {
 						fpr.Trusted = true
 					}

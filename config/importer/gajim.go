@@ -314,7 +314,7 @@ func mergeAccountInformation(ac gajimAccountInfo, s gajimOTRSettings, s2 map[str
 		res.Peers = nil
 		sort.Sort(config.LegacyByNaturalOrder(fprs))
 		for _, kfpr := range fprs {
-			fpr := res.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
+			fpr, _ := res.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
 			if !kfpr.Untrusted {
 				fpr.Trusted = true
 			}

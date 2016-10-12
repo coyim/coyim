@@ -31,6 +31,10 @@ func (u *gtkUI) buildStaticAccountsMenu(submenu gtki.Menu) {
 	connectAllMenu.Connect("activate", func() { u.connectAllAutomatics(true) })
 	submenu.Append(connectAllMenu)
 
+	disconnectAllMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect All"))
+	disconnectAllMenu.Connect("activate", u.disconnectAll)
+	submenu.Append(disconnectAllMenu)
+
 	sep2, _ := g.gtk.SeparatorMenuItemNew()
 	submenu.Append(sep2)
 

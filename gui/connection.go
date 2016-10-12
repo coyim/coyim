@@ -13,7 +13,7 @@ import (
 func (u *gtkUI) connectAccount(account *account) {
 	switch p := account.session.GetConfig().Password; p {
 	case "":
-		u.askForPasswordAndConnect(account)
+		u.askForPasswordAndConnect(account, false)
 	default:
 		go u.connectWithPassword(account, p)
 	}
@@ -53,7 +53,9 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 	case errors.ErrTCPBindingFailed:
 		u.notifyConnectionFailure(account, u.connectionFailureMoreInfoTCPBindingFailed)
 	case errors.ErrAuthenticationFailed:
-		u.askForPasswordAndConnect(account)
+		u.askForPasswordAndConnect(account, false)
+	case errors.ErrGoogleAuthenticationFailed:
+		u.askForPasswordAndConnect(account, true)
 	case errors.ErrConnectionFailed:
 		u.notifyConnectionFailure(account, u.connectionFailureMoreInfoConnectionFailedGeneric)
 	default:
@@ -66,12 +68,12 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 	return err
 }
 
-func (u *gtkUI) askForPasswordAndConnect(account *account) {
+func (u *gtkUI) askForPasswordAndConnect(account *account, addGoogleWarning bool) {
 	if !account.IsAskingForPassword() {
 		accountName := account.session.GetConfig().Account
 		doInUIThread(func() {
 			account.AskForPassword()
-			u.askForPassword(accountName,
+			u.askForPassword(accountName, addGoogleWarning,
 				func() {
 					account.session.SetWantToBeOnline(false)
 					account.AskedForPassword()

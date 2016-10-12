@@ -12,6 +12,7 @@ import (
 // Conn represents a connection to an XMPP server.
 type Conn interface {
 	Authenticate(string, string) error
+	AuthenticationFailure() error
 	BindResource() error
 	Cancel(data.Cookie) bool
 	Close() error

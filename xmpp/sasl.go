@@ -39,7 +39,7 @@ func (d *dialer) negotiateSASL(c interfaces.Conn) error {
 	password := d.password
 
 	if err := c.Authenticate(user, password); err != nil {
-		return xe.ErrAuthenticationFailed
+		return c.AuthenticationFailure()
 	}
 
 	// RFC 6120, section 6.3.2. Restart the stream
@@ -51,6 +51,13 @@ func (d *dialer) negotiateSASL(c interfaces.Conn) error {
 	return c.BindResource()
 }
 
+func (c *conn) AuthenticationFailure() error {
+	if c.isGoogle() {
+		return xe.ErrGoogleAuthenticationFailed
+	}
+	return xe.ErrAuthenticationFailed
+}
+
 func (c *conn) Authenticate(user, password string) error {
 	// TODO: Google accounts with 2-step auth MUST use app-specific passwords:
 	// https://security.google.com/settings/security/apppasswords
@@ -60,6 +67,15 @@ func (c *conn) Authenticate(user, password string) error {
 	// - X-GOOGLE-TOKEN: seems to be this https://developers.google.com/identity/protocols/AuthForInstalledApps
 
 	return c.authenticateWithPreferedMethod(user, password)
+}
+
+func (c *conn) isGoogle() bool {
+	for _, m := range c.features.Mechanisms.Mechanism {
+		if "X-GOOGLE-TOKEN" == m {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *conn) authenticateWithPreferedMethod(user, password string) error {
@@ -76,7 +92,7 @@ func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 		for _, m := range c.features.Mechanisms.Mechanism {
 			if prefered == m {
 				log.Println("sasl: authenticating via", m)
-				return c.authenticatWith(prefered, user, password)
+				return c.authenticateWith(prefered, user, password)
 			}
 		}
 	}
@@ -96,7 +112,7 @@ func clientNonce(r io.Reader) (string, error) {
 	return hex.EncodeToString(conceRand), nil
 }
 
-func (c *conn) authenticatWith(mechanism string, user string, password string) error {
+func (c *conn) authenticateWith(mechanism string, user string, password string) error {
 	clientAuth, err := sasl.NewClient(mechanism)
 	if err != nil {
 		return err

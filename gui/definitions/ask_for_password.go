@@ -16,6 +16,17 @@ func (*defAskForPassword) String() string {
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
         <child>
+          <object class="GtkLabel" id="message">
+            <property name="label" translatable="yes"></property>
+            <property name="halign">GTK_ALIGN_START</property>
+            <property name="justify">GTK_JUSTIFY_LEFT</property>
+            <property name="wrap">true</property>
+            <property name="max-width-chars">50</property>
+            <property name="selectable">TRUE</property>
+            <property name="margin-bottom">10</property>
+          </object>
+        </child>
+        <child>
           <object class="GtkGrid" id="grid">
             <property name="margin-bottom">10</property>
             <property name="row-spacing">12</property>
@@ -84,7 +95,7 @@ func (*defAskForPassword) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
-            
+
           </object>
         </child>
         <child internal-child="action_area">

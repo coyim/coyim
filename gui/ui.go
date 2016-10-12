@@ -410,7 +410,7 @@ func (u *gtkUI) quit() {
 	u.app.Quit()
 }
 
-func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(string) error, savePass func(string)) {
+func (u *gtkUI) askForPassword(accountName string, addGoogleWarning bool, cancel func(), connect func(string) error, savePass func(string)) {
 	dialogTemplate := "AskForPassword"
 
 	builder := newBuilder(dialogTemplate)
@@ -420,6 +420,12 @@ func (u *gtkUI) askForPassword(accountName string, cancel func(), connect func(s
 	label := builder.getObj("accountName").(gtki.Label)
 	label.SetText(accountName)
 	label.SetSelectable(true)
+
+	if addGoogleWarning {
+		msg := builder.getObj("message").(gtki.Label)
+		msg.SetText(i18n.Local("You are trying to connect to a Google account - sometimes Google will not allow connections even if you have entered the correct password. Try turning on App specific password, or if that fails allow less secure applications to access the account (don't worry, CoyIM is plenty secure)."))
+		msg.SetSelectable(true)
+	}
 
 	passwordEntry := builder.getObj("password").(gtki.Entry)
 	savePassword := builder.getObj("savePassword").(gtki.CheckButton)

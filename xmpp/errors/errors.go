@@ -9,6 +9,9 @@ var (
 	// ErrAuthenticationFailed indicates a failure to authenticate to the server with the user and password provided.
 	ErrAuthenticationFailed = errors.New("could not authenticate to the XMPP server")
 
+	// ErrGoogleAuthenticationFailed indicates a failure to authenticate to the server with the user and password provided.
+	ErrGoogleAuthenticationFailed = errors.New("could not authenticate to the Google XMPP server")
+
 	//ErrConnectionFailed indicates a failure to connect to the server provided.
 	ErrConnectionFailed = errors.New("could not connect to XMPP server")
 

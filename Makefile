@@ -51,6 +51,7 @@ else
 	golint ./...
 endif
 endif
+endif
 
 test:
 	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
@@ -114,6 +115,7 @@ ifeq ($(GO_VERSION), go1.5)
 	go get -a golang.org/x/tools/cmd/cover
 else
 	go get github.com/golang/lint/golint
+endif
 endif
 endif
 	go get github.com/modocache/gover

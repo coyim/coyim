@@ -18,6 +18,32 @@ func (u *gtkUI) closeWindow(w gtki.Window) {
 	w.Hide()
 }
 
+func (u *gtkUI) closeApplicationOrConversation(w gtki.Window) {
+	if u.settings.GetSingleWindow() {
+		page := u.unified.notebook.GetCurrentPage()
+		if page < 0 {
+			u.quit()
+		} else {
+			u.unified.onCloseClicked()
+		}
+	} else {
+		u.quit()
+	}
+}
+
+func (u *gtkUI) closeWindowOrConversation(w gtki.Window) {
+	if u.settings.GetSingleWindow() {
+		page := u.unified.notebook.GetCurrentPage()
+		if page < 0 {
+			w.Hide()
+		} else {
+			u.unified.onCloseClicked()
+		}
+	} else {
+		w.Hide()
+	}
+}
+
 func connectShortcut(accel string, w gtki.Window, action func(gtki.Window)) {
 	gr, _ := g.gtk.AccelGroupNew()
 	key, mod := g.gtk.AcceleratorParse(accel)
@@ -34,14 +60,14 @@ func connectShortcut(accel string, w gtki.Window, action func(gtki.Window)) {
 func (u *gtkUI) connectShortcutsMainWindow(w gtki.Window) {
 	// <Primary> maps to Command on OS X, but Control on other platforms
 	connectShortcut("<Primary>q", w, u.closeApplication)
-	connectShortcut("<Primary>w", w, u.closeApplication)
+	connectShortcut("<Primary>w", w, u.closeApplicationOrConversation)
 	connectShortcut("<Alt>F4", w, u.closeApplication)
 }
 
 func (u *gtkUI) connectShortcutsChildWindow(w gtki.Window) {
 	// <Primary> maps to Command on OS X, but Control on other platforms
 	connectShortcut("<Primary>q", w, u.closeApplication)
-	connectShortcut("<Primary>w", w, u.closeWindow)
+	connectShortcut("<Primary>w", w, u.closeWindowOrConversation)
 	connectShortcut("<Primary>F4", w, u.closeWindow)
 	connectShortcut("<Alt>F4", w, u.closeApplication)
 	connectShortcut("Escape", w, u.closeWindow)

@@ -114,6 +114,19 @@ func readPotentialString(r *bufio.Reader) (string, bool) {
 	return "", false
 }
 
+func readPotentialStringOrSymbol(r *bufio.Reader) (string, bool) {
+	res, _ := sexp.ReadValue(r)
+	if res != nil {
+		if tres, ok := res.(sexp.Sstring); ok {
+			return tres.Value().(string), true
+		}
+		if tres, ok := res.(sexp.Symbol); ok {
+			return tres.Value().(string), true
+		}
+	}
+	return "", false
+}
+
 // ImportKeysFromFile will read the libotr formatted file given and return all accounts defined in it
 func ImportKeysFromFile(fname string) ([]*Account, error) {
 	f, err := os.Open(fname)
@@ -182,7 +195,7 @@ func readAccounts(r *bufio.Reader) ([]*Account, bool) {
 func readAccountName(r *bufio.Reader) (string, bool) {
 	sexp.ReadListStart(r)
 	ok1 := readSymbolAndExpect(r, "name")
-	nm, ok2 := readPotentialString(r)
+	nm, ok2 := readPotentialStringOrSymbol(r)
 	ok3 := sexp.ReadListEnd(r)
 	return nm, ok1 && ok2 && ok3
 }

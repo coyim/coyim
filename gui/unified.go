@@ -86,7 +86,6 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	parent.PackStart(ul.rightPane, false, true, 0)
 	parent.SetChildPacking(ul.leftPane, false, true, 0, gtki.PACK_START)
 
-	ul.notebook.SetSizeRequest(500, -1)
 	ul.rightPane.Hide()
 
 	ul.ui.window.SetTitlebar(ul.headerBar)
@@ -173,7 +172,11 @@ func (ul *unifiedLayout) showConversations() {
 
 	ul.leftPane.SetHExpand(false)
 	ul.rightPane.SetHExpand(true)
+
+	ul.ui.window.Resize(934, 600)
+
 	ul.rightPane.Show()
+
 	ul.convsVisible = true
 }
 
@@ -181,6 +184,7 @@ func (ul *unifiedLayout) hideConversations() {
 	if !ul.convsVisible {
 		return
 	}
+
 	width := ul.leftPane.GetAllocatedWidth()
 	height := ul.ui.window.GetAllocatedHeight()
 	ul.rightPane.SetHExpand(false)

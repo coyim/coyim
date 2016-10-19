@@ -29,7 +29,7 @@ func (*defUnifiedLayout) String() string {
     </columns>
   </object>
   <object class="GtkHeaderBar" id="headerbar">
-    <property name="visible">1</property>
+    <property name="visible">True</property>
     <property name="title">CoyIM</property>
     <property name="show_close_button">True</property>
   </object>
@@ -186,7 +186,7 @@ func (*defUnifiedLayout) String() string {
             <child>
               <object class="GtkTreeViewColumn" id="treeviewcolumn1">
                 <property name="spacing">8</property>
-                <property name="min_width">160</property>
+                <property name="min_width">120</property>
                 <property name="title" translatable="yes">column</property>
                 <property name="expand">True</property>
                 <child>

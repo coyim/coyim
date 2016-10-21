@@ -6,6 +6,7 @@ AccelGroup
 Adjustment
 Application
 ApplicationWindow
+Assistant
 Box
 Builder
 Button

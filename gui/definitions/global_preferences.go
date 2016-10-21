@@ -149,6 +149,26 @@ func (*defGlobalPreferences) String() string {
                     <property name="top-attach">3</property>
                   </packing>
                 </child>
+
+                <child>
+                  <object class="GtkLabel" id="emacsKeyboardLabel">
+                    <property name="label" translatable="yes">Use Emacs key bindings</property>
+                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                    <property name="halign">GTK_ALIGN_END</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="emacsKeyboard">
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">4</property>
+                  </packing>
+                </child>
               </object>
             </child>
 

@@ -55,6 +55,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.Assistant:
+		val := wrapAssistantSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.Bin:
 		val := wrapBinSimple(oo)
 		if val == nil {
@@ -328,6 +334,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *applicationWindow:
 		val := unwrapApplicationWindow(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *assistant:
+		val := unwrapAssistant(oo)
 		if val == nil {
 			return nil, true
 		}

@@ -14,6 +14,7 @@ type settingsPanel struct {
 	renderSlashMe            gtki.CheckButton
 	showEmptyGroups          gtki.CheckButton
 	sendWithShiftEnter       gtki.CheckButton
+	emacsKeyboard            gtki.CheckButton
 	notificationsType        gtki.ComboBox
 	urgentNotifications      gtki.CheckButton
 	expireNotifications      gtki.CheckButton
@@ -33,6 +34,7 @@ func createSettingsPanel() *settingsPanel {
 		"singleWindow", &p.singleWindow,
 		"slashMe", &p.renderSlashMe,
 		"sendWithShiftEnter", &p.sendWithShiftEnter,
+		"emacsKeyboard", &p.emacsKeyboard,
 		"notificationsType", &p.notificationsType,
 		"notificationUrgent", &p.urgentNotifications,
 		"notificationExpires", &p.expireNotifications,
@@ -90,6 +92,9 @@ func (u *gtkUI) showGlobalPreferences() {
 	orgShiftEnter := settings.GetShiftEnterForSend()
 	panel.sendWithShiftEnter.SetActive(orgShiftEnter)
 
+	emacsKeyBindings := settings.GetEmacsKeyBindings()
+	panel.emacsKeyboard.SetActive(emacsKeyBindings)
+
 	orgShowEmptyGroups := settings.GetShowEmptyGroups()
 	panel.showEmptyGroups.SetActive(orgShowEmptyGroups)
 
@@ -127,6 +132,12 @@ func (u *gtkUI) showGlobalPreferences() {
 
 			if newShiftEnter := panel.sendWithShiftEnter.GetActive(); newShiftEnter != orgShiftEnter {
 				settings.SetShiftEnterForSend(newShiftEnter)
+			}
+
+			if newEmacsKeyBindings := panel.emacsKeyboard.GetActive(); newEmacsKeyBindings != emacsKeyBindings {
+				settings.SetEmacsKeyBindings(newEmacsKeyBindings)
+				u.keyboardSettings.emacs = settings.GetEmacsKeyBindings()
+				u.keyboardSettings.update()
 			}
 
 			if newShowEmptyGroups := panel.showEmptyGroups.GetActive(); newShowEmptyGroups != orgShowEmptyGroups {

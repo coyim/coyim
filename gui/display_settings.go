@@ -49,10 +49,6 @@ func (ds *displaySettings) decreaseFontSize() {
 
 func (ds *displaySettings) update() {
 	css := fmt.Sprintf(`
-* {
-  -GtkCheckMenuItem-indicator-size: 16;
-}
-
 .currentFontSetting {
   font-size: %dpx;
 }

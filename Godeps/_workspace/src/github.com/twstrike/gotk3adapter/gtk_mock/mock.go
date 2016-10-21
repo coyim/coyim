@@ -27,6 +27,10 @@ func (*Mock) ApplicationNew(appId string, flags glibi.ApplicationFlags) (gtki.Ap
 	return nil, nil
 }
 
+func (*Mock) AssistantNew() (gtki.Assistant, error) {
+	return nil, nil
+}
+
 func (*Mock) BuilderNew() (gtki.Builder, error) {
 	return nil, nil
 }
@@ -48,6 +52,14 @@ func (*Mock) CheckMenuItemNewWithMnemonic(label string) (gtki.CheckMenuItem, err
 }
 
 func (*Mock) CssProviderNew() (gtki.CssProvider, error) {
+	return nil, nil
+}
+
+func (*Mock) CssProviderGetDefault() (gtki.CssProvider, error) {
+	return nil, nil
+}
+
+func (*Mock) CssProviderGetNamed(string, string) (gtki.CssProvider, error) {
 	return nil, nil
 }
 

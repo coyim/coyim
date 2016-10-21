@@ -41,7 +41,8 @@ type gtkUI struct {
 
 	*accountManager
 
-	displaySettings *displaySettings
+	displaySettings  *displaySettings
+	keyboardSettings *keyboardSettings
 
 	keySupplier config.KeySupplier
 
@@ -320,6 +321,7 @@ func (u *gtkUI) mainWindow() {
 	u.window.SetApplication(u.app)
 
 	u.displaySettings = detectCurrentDisplaySettingsFrom(u.window)
+	u.keyboardSettings = newKeyboardSettings()
 
 	// This must happen after u.displaySettings is initialized
 	// So now, roster depends on displaySettings which depends on mainWindow

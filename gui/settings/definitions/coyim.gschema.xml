@@ -38,6 +38,18 @@
       <default>false</default>
     </key>
 
+    <key name="emacs-keyboard" type="b">
+      <default>false</default>
+      <summary>Use Emacs keyboard bindings</summary>
+      <description>
+        Use Emacs keyboard bindings instead of the default
+      </description>
+    </key>
+
+    <key name="has-set-emacs-keyboard" type="b">
+      <default>false</default>
+    </key>
+    
     <key name="notification-style" type="s">
       <choices>
         <choice value='off'/>

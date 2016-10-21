@@ -9,6 +9,7 @@ func init() {
 	gtki.AssertAdjustment(&adjustment{})
 	gtki.AssertApplication(&application{})
 	gtki.AssertApplicationWindow(&applicationWindow{})
+	gtki.AssertAssistant(&assistant{})
 	gtki.AssertBox(&box{})
 	gtki.AssertBuilder(&builder{})
 	gtki.AssertButton(&button{})

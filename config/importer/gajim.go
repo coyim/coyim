@@ -41,7 +41,7 @@ func (g *gajimImporter) findFiles() (configFile string, pluginFile string, keyFi
 		dataRoot = configRoot
 	} else {
 		configRoot = filepath.Join(config.XdgConfigHome(), "gajim")
-		dataRoot = filepath.Join(config.XdgDataDir(), "gajim")
+		dataRoot = filepath.Join(config.XdgDataHome(), "gajim")
 	}
 
 	configFile = filepath.Join(configRoot, "config")

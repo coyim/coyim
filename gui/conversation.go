@@ -288,6 +288,8 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 
 	ui.displaySettings.control(cp.history)
 	ui.displaySettings.control(cp.entry)
+	ui.keyboardSettings.control(cp.entry)
+	ui.keyboardSettings.update()
 
 	return cp
 }

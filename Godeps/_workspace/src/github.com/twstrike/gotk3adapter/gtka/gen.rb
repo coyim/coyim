@@ -5,6 +5,7 @@ AboutDialog
 AccelGroup
 Application
 ApplicationWindow
+Assistant
 Box
 Builder
 Button

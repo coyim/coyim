@@ -290,6 +290,13 @@ const (
 	DEVICE_TYPE_FLOATING DeviceType = C.GDK_DEVICE_TYPE_FLOATING
 )
 
+// EventPropagation constants
+
+const (
+	GDK_EVENT_PROPAGATE bool = C.GDK_EVENT_PROPAGATE != 0
+	GDK_EVENT_STOP      bool = C.GDK_EVENT_STOP != 0
+)
+
 /*
  * GdkAtom
  */
@@ -981,6 +988,19 @@ type EventKey struct {
 
 func EventKeyNew() *EventKey {
 	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventKey{}))
+	ev := Event{ee}
+	return &EventKey{&ev}
+}
+
+// EventKeyNewFromEvent returns an EventKey from an Event.
+//
+// Using widget.Connect() for a key related signal such as
+// "key-press-event" results in a *Event being passed as
+// the callback's second argument. The argument is actually a
+// *EventKey. EventKeyNewFromEvent provides a means of creating
+// an EventKey from the Event.
+func EventKeyNewFromEvent(event *Event) *EventKey {
+	ee := (*C.GdkEvent)(unsafe.Pointer(event.native()))
 	ev := Event{ee}
 	return &EventKey{&ev}
 }

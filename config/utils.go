@@ -54,7 +54,7 @@ func WithHome(file string) string {
 	return filepath.Join(os.Getenv("HOME"), file)
 }
 
-func xdgOr(env, or string) string {
+func xdgOrWithHome(env, or string) string {
 	x := os.Getenv(env)
 	if x == "" {
 		x = WithHome(or)
@@ -62,17 +62,33 @@ func xdgOr(env, or string) string {
 	return x
 }
 
+// FindFile will check each path and if that file exists return the file name and true
+func FindFile(places []string) (string, bool) {
+	for _, p := range places {
+		if fileExists(p) {
+			return p, true
+		}
+	}
+	return "", false
+}
+
 // XdgConfigHome returns the standardized XDG Configuration directory
 func XdgConfigHome() string {
-	return xdgOr("XDG_CONFIG_HOME", ".config")
+	return xdgOrWithHome("XDG_CONFIG_HOME", ".config")
 }
 
 // XdgCacheDir returns the standardized XDG Cache directory
 func XdgCacheDir() string {
-	return xdgOr("XDG_CACHE_HOME", ".cache")
+	return xdgOrWithHome("XDG_CACHE_HOME", ".cache")
 }
 
-// XdgDataDir returns the standardized XDG Data directory
-func XdgDataDir() string {
-	return xdgOr("XDG_DATA_HOME", ".local/share")
+// XdgDataHome returns the standardized XDG Data directory
+func XdgDataHome() string {
+	return xdgOrWithHome("XDG_DATA_HOME", ".local/share")
+}
+
+// XdgDataDirs returns the standardized XDG Data directory
+func XdgDataDirs() []string {
+	x := os.Getenv("XDG_DATA_DIRS")
+	return strings.Split(x, ":")
 }

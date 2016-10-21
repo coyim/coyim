@@ -156,6 +156,16 @@ func (s *Settings) SetShiftEnterForSend(val bool) {
 	s.setBooleanSetting("shift-enter-for-send", val)
 }
 
+// GetEmacsKeyBindings returns the emacs-keyboard setting
+func (s *Settings) GetEmacsKeyBindings() bool {
+	return s.getBooleanSetting("emacs-keyboard")
+}
+
+// SetEmacsKeyBindings sets the emacs-keyboard setting
+func (s *Settings) SetEmacsKeyBindings(val bool) {
+	s.setBooleanSetting("emacs-keyboard", val)
+}
+
 // GetShowEmptyGroups returns the show-empty-groups setting
 func (s *Settings) GetShowEmptyGroups() bool {
 	return s.getBooleanSetting("show-empty-groups")

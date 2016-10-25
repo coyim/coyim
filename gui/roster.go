@@ -10,6 +10,7 @@ import (
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gdki"
 	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/i18n"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
 )
@@ -436,7 +437,7 @@ func isOnline(p *rosters.Peer) bool {
 }
 
 func decideStatusFor(p *rosters.Peer) string {
-	if p.PendingSubscribeID != "" {
+	if p.PendingSubscribeID != "" || p.Asked {
 		return "unknown"
 	}
 
@@ -483,9 +484,13 @@ func createTooltipFor(item *rosters.Peer) string {
 func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent string) {
 	cs := r.ui.currentColorSet()
 	iter := r.model.Append(parentIter)
+	potentialExtra := ""
+	if item.Asked {
+		potentialExtra = i18n.Local(" (waiting for approval)")
+	}
 	setAll(r.model, iter,
 		item.Jid,
-		fmt.Sprintf("%s %s", indent, item.NameForPresentation()),
+		fmt.Sprintf("%s %s%s", indent, item.NameForPresentation(), potentialExtra),
 		item.BelongsTo,
 		decideColorFor(cs, item),
 		cs.rosterPeerBackground,

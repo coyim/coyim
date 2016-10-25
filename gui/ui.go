@@ -519,6 +519,8 @@ func (u *gtkUI) addContactWindow() {
 		}
 
 		err := account.session.RequestPresenceSubscription(peer, msg)
+		rl := u.accountManager.getContacts(account)
+		rl.SubscribeRequest(peer, "", accountID)
 
 		if nick != "" {
 			account.session.GetConfig().SavePeerDetails(peer, nick, []string{})

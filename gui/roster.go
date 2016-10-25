@@ -416,11 +416,11 @@ func (r *roster) debugPrintRosterFor(nm string) {
 }
 
 func isNominallyVisible(p *rosters.Peer) bool {
-	return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != ""
+	return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != "" || p.Asked
 }
 
 func shouldDisplay(p *rosters.Peer, showOffline bool) bool {
-	return isNominallyVisible(p) && (showOffline || p.Online)
+	return isNominallyVisible(p) && (showOffline || p.Online || p.Asked)
 }
 
 func isAway(p *rosters.Peer) bool {

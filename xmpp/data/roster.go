@@ -19,6 +19,7 @@ type RosterEntry struct {
 	Subscription string   `xml:"subscription,attr"`
 	Name         string   `xml:"name,attr"`
 	Group        []string `xml:"group"`
+	Ask          string   `xml:"ask,attr"`
 }
 
 // RosterRequest is used to request that the server update the user's roster.

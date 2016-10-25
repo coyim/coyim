@@ -79,6 +79,7 @@ func PeerFrom(e data.RosterEntry, belongsTo, nickname string, groups []string) *
 		Groups:        allGroups,
 		HasConfigData: groups != nil && len(groups) > 0,
 		BelongsTo:     belongsTo,
+		Asked:         e.Ask == "subscribe",
 		resources:     toSet(),
 	}
 }
@@ -111,6 +112,7 @@ func peerWithPendingSubscribe(jid, id, belongsTo string) *Peer {
 	return &Peer{
 		Jid:                xutils.RemoveResourceFromJid(jid),
 		PendingSubscribeID: id,
+		Asked:              true,
 		BelongsTo:          belongsTo,
 		resources:          toSet(),
 	}

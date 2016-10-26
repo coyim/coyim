@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
@@ -722,19 +723,28 @@ func (conv *conversationPane) appendStatus(from string, timestamp time.Time, sho
 	conv.appendToHistory(timestamp, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
 
+const mePrefix = "/me "
+
 func (conv *conversationPane) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
-	conv.appendToHistory(timestamp, true,
-		taggableText{
-			is(outgoing, "outgoingUser", "incomingUser"),
-			from,
-		},
-		taggableText{
-			text: ":  ",
-		},
-		taggableText{
-			is(outgoing, "outgoingText", "incomingText"),
-			string(message),
-		})
+	smessage := string(message)
+
+	if strings.HasPrefix(strings.TrimSpace(smessage), mePrefix) {
+		smessage = strings.TrimPrefix(strings.TrimSpace(smessage), mePrefix)
+		conv.appendToHistory(timestamp, false, taggableText{is(outgoing, "outgoingUser", "incomingUser"), from + " " + smessage})
+	} else {
+		conv.appendToHistory(timestamp, true,
+			taggableText{
+				is(outgoing, "outgoingUser", "incomingUser"),
+				from,
+			},
+			taggableText{
+				text: ":  ",
+			},
+			taggableText{
+				is(outgoing, "outgoingText", "incomingText"),
+				smessage,
+			})
+	}
 }
 
 func (conv *conversationPane) displayNotification(notification string) {

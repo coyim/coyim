@@ -338,7 +338,7 @@ func (a *account) isSend(evk gdki.EventKey, shiftEnterSends bool) bool {
 	return isShiftEnter(evk)
 }
 
-func newConversationWindow(account *account, uid string, ui *gtkUI) *conversationWindow {
+func newConversationWindow(account *account, uid string, ui *gtkUI, existing *conversationPane) *conversationWindow {
 	builder := newBuilder("Conversation")
 	win := builder.getObj("conversation").(gtki.Window)
 
@@ -355,6 +355,12 @@ func newConversationWindow(account *account, uid string, ui *gtkUI) *conversatio
 	winBox := builder.getObj("box").(gtki.Box)
 
 	cp := createConversationPane(account, uid, ui, win)
+	if existing != nil {
+		b, _ := existing.history.GetBuffer()
+		cp.history.SetBuffer(b)
+	}
+
+	cp.menubar.Show()
 	winBox.PackStart(cp.widget, true, true, 0)
 
 	conv := &conversationWindow{

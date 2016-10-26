@@ -106,16 +106,6 @@ func (s *Settings) SetSingleWindow(val bool) {
 	s.setBooleanSetting("single-window", val)
 }
 
-// GetSlashMe returns the slash-me setting
-func (s *Settings) GetSlashMe() bool {
-	return s.getBooleanSetting("slash-me")
-}
-
-// SetSlashMe sets the slash-me setting
-func (s *Settings) SetSlashMe(val bool) {
-	s.setBooleanSetting("slash-me", val)
-}
-
 // GetNotificationUrgency returns the notification-urgency setting
 func (s *Settings) GetNotificationUrgency() bool {
 	return s.getBooleanSetting("notification-urgency")

@@ -57,17 +57,32 @@ func (account *account) ID() string {
 	return account.session.GetConfig().ID()
 }
 
-func (account *account) getConversationWith(to string) (conversationView, bool) {
+func (account *account) getConversationWith(to string, ui *gtkUI) (conversationView, bool) {
 	c, ok := account.conversations[to]
+
+	if ok {
+		_, unifiedType := c.(*conversationStackItem)
+
+		if ui.settings.GetSingleWindow() && !unifiedType {
+			cv1 := c.(*conversationWindow)
+			c = ui.unified.createConversation(account, to, cv1.conversationPane)
+			account.conversations[to] = c
+		} else if !ui.settings.GetSingleWindow() && unifiedType {
+			cv1 := c.(*conversationStackItem)
+			c = newConversationWindow(account, to, ui, cv1.conversationPane)
+			account.conversations[to] = c
+		}
+	}
+
 	return c, ok
 }
 
 func (account *account) createConversationView(to string, ui *gtkUI) conversationView {
 	var cv conversationView
 	if ui.settings.GetSingleWindow() {
-		cv = ui.unified.createConversation(account, to)
+		cv = ui.unified.createConversation(account, to, nil)
 	} else {
-		cv = newConversationWindow(account, to, ui)
+		cv = newConversationWindow(account, to, ui, nil)
 	}
 	account.conversations[to] = cv
 

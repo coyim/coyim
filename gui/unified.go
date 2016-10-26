@@ -95,8 +95,12 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	return ul
 }
 
-func (ul *unifiedLayout) createConversation(account *account, uid string) conversationView {
+func (ul *unifiedLayout) createConversation(account *account, uid string, existing *conversationPane) conversationView {
 	cp := createConversationPane(account, uid, ul.ui, ul.ui.window)
+	if existing != nil {
+		b, _ := existing.history.GetBuffer()
+		cp.history.SetBuffer(b)
+	}
 	cp.connectEnterHandler(nil)
 	cp.menubar.Hide()
 	idx := ul.notebook.AppendPage(cp.widget, nil)

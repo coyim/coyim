@@ -317,7 +317,7 @@ func (r *roster) onActivateBuddy(v gtki.TreeView, path gtki.TreePath) {
 }
 
 func (r *roster) openConversationView(account *account, to string, userInitiated bool) (conversationView, error) {
-	c, ok := account.getConversationWith(to)
+	c, ok := account.getConversationWith(to, r.ui)
 
 	if !ok {
 		c = account.createConversationView(to, r.ui)
@@ -337,7 +337,7 @@ func (r *roster) displayNameFor(account *account, from string) string {
 }
 
 func (r *roster) presenceUpdated(account *account, from, show, showStatus string, gone bool) {
-	c, ok := account.getConversationWith(from)
+	c, ok := account.getConversationWith(from, r.ui)
 	if !ok {
 		return
 	}

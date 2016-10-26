@@ -11,7 +11,6 @@ type settingsPanel struct {
 	dialog                   gtki.Dialog
 	notebook                 gtki.Notebook
 	singleWindow             gtki.CheckButton
-	renderSlashMe            gtki.CheckButton
 	showEmptyGroups          gtki.CheckButton
 	sendWithShiftEnter       gtki.CheckButton
 	emacsKeyboard            gtki.CheckButton
@@ -32,7 +31,6 @@ func createSettingsPanel() *settingsPanel {
 		"GlobalPreferences", &p.dialog,
 		"notebook1", &p.notebook,
 		"singleWindow", &p.singleWindow,
-		"slashMe", &p.renderSlashMe,
 		"sendWithShiftEnter", &p.sendWithShiftEnter,
 		"emacsKeyboard", &p.emacsKeyboard,
 		"notificationsType", &p.notificationsType,
@@ -86,9 +84,6 @@ func (u *gtkUI) showGlobalPreferences() {
 	orgSingleWindow := settings.GetSingleWindow()
 	panel.singleWindow.SetActive(orgSingleWindow)
 
-	orgSlashMe := settings.GetSlashMe()
-	panel.renderSlashMe.SetActive(orgSlashMe)
-
 	orgShiftEnter := settings.GetShiftEnterForSend()
 	panel.sendWithShiftEnter.SetActive(orgShiftEnter)
 
@@ -124,10 +119,6 @@ func (u *gtkUI) showGlobalPreferences() {
 		"on_save_signal": func() {
 			if newSingleWindow := panel.singleWindow.GetActive(); newSingleWindow != orgSingleWindow {
 				settings.SetSingleWindow(newSingleWindow)
-			}
-
-			if newSlashMe := panel.renderSlashMe.GetActive(); newSlashMe != orgSlashMe {
-				settings.SetSlashMe(newSlashMe)
 			}
 
 			if newShiftEnter := panel.sendWithShiftEnter.GetActive(); newShiftEnter != orgShiftEnter {

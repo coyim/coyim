@@ -122,8 +122,8 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 	)
 }
 
-func convWindowNowOrLater(account *account, peer string, f func(conversationView)) {
-	convWin, ok := account.getConversationWith(peer)
+func convWindowNowOrLater(account *account, peer string, ui *gtkUI, f func(conversationView)) {
+	convWin, ok := account.getConversationWith(peer, ui)
 	if !ok {
 		account.afterConversationWindowCreated(peer, f)
 	} else {
@@ -144,7 +144,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 	case events.OTREnded:
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, peer, func(cv conversationView) {
+		convWindowNowOrLater(account, peer, u, func(cv conversationView) {
 			cv.displayNotification(i18n.Local("Private conversation has ended."))
 			cv.updateSecurityWarning()
 			cv.haveShownPrivateEndedNotification()
@@ -153,7 +153,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 	case events.OTRNewKeys:
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, peer, func(cv conversationView) {
+		convWindowNowOrLater(account, peer, u, func(cv conversationView) {
 			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
 			cv.appendPendingDelayed()
 			identityWarning(cv)
@@ -163,7 +163,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 	case events.OTRRenewedKeys:
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, peer, func(cv conversationView) {
+		convWindowNowOrLater(account, peer, u, func(cv conversationView) {
 			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
 			identityWarning(cv)
 		})

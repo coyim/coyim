@@ -91,26 +91,6 @@ func (*defGlobalPreferences) String() string {
                 </child>
 
                 <child>
-                  <object class="GtkLabel" id="slashMeLabel">
-                    <property name="label" translatable="yes">Render /me commands</property>
-                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
-                    <property name="halign">GTK_ALIGN_END</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="slashMe">
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">1</property>
-                  </packing>
-                </child>
-
-                <child>
                   <object class="GtkLabel" id="sendWithShiftEnterLabel">
                     <property name="label" translatable="yes">Send messages with Shift-Enter</property>
                     <property name="justify">GTK_JUSTIFY_RIGHT</property>
@@ -118,7 +98,7 @@ func (*defGlobalPreferences) String() string {
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">2</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -126,7 +106,7 @@ func (*defGlobalPreferences) String() string {
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">2</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
 
@@ -138,7 +118,7 @@ func (*defGlobalPreferences) String() string {
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">3</property>
+                    <property name="top-attach">2</property>
                   </packing>
                 </child>
                 <child>
@@ -146,7 +126,7 @@ func (*defGlobalPreferences) String() string {
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">3</property>
+                    <property name="top-attach">2</property>
                   </packing>
                 </child>
 
@@ -158,7 +138,7 @@ func (*defGlobalPreferences) String() string {
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">4</property>
+                    <property name="top-attach">3</property>
                   </packing>
                 </child>
                 <child>
@@ -166,7 +146,7 @@ func (*defGlobalPreferences) String() string {
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">4</property>
+                    <property name="top-attach">3</property>
                   </packing>
                 </child>
               </object>

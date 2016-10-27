@@ -24,7 +24,7 @@ import (
 )
 
 var (
-	errUnsupportedSASLMechanism = errors.New("xmpp: server does not support any of the prefered SASL mechanism")
+	errUnsupportedSASLMechanism = errors.New("xmpp: server does not support any of the preferred SASL mechanism")
 )
 
 func init() {

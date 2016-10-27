@@ -3,8 +3,8 @@ package config
 import (
 	"net/url"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
 	ournet "github.com/twstrike/coyim/net"
+	"golang.org/x/net/proxy"
 )
 
 func socks5UnixProxy(u *url.URL, d proxy.Dialer) (proxy.Dialer, error) {

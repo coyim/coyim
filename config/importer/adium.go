@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	plist "github.com/twstrike/coyim/Godeps/_workspace/src/github.com/DHowett/go-plist"
+	plist "github.com/DHowett/go-plist"
 	"github.com/twstrike/coyim/config"
 )
 

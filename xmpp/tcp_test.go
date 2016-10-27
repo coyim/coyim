@@ -8,12 +8,12 @@ import (
 	"net"
 	"os"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glib_mock"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/errors"
+	"github.com/twstrike/gotk3adapter/glib_mock"
 
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	. "gopkg.in/check.v1"
 )
 
 type TCPSuite struct{}

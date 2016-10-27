@@ -5,9 +5,9 @@ import (
 	"net"
 	"time"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
 	ourNet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/xmpp/errors"
+	"golang.org/x/net/proxy"
 )
 
 const defaultDialTimeout = 60 * time.Second

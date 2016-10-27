@@ -7,14 +7,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gdki"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/gotk3adapter/gdki"
+	"github.com/twstrike/gotk3adapter/glibi"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 var (

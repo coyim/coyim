@@ -3,9 +3,9 @@ package client
 import (
 	"errors"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
+	"github.com/twstrike/otr3"
 )
-import . "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+import . "gopkg.in/check.v1"
 
 type ConversationSuite struct{}
 

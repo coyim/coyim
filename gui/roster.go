@@ -7,12 +7,12 @@ import (
 	"sort"
 	"time"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gdki"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/gotk3adapter/gdki"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 type roster struct {

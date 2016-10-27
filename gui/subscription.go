@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 func authorizePresenceSubscriptionDialog(parent gtki.Window, from string) gtki.MessageDialog {

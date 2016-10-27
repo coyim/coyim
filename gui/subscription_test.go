@@ -1,10 +1,10 @@
 package gui
 
 import (
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtk_mock"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	"github.com/twstrike/gotk3adapter/glibi"
+	"github.com/twstrike/gotk3adapter/gtk_mock"
+	"github.com/twstrike/gotk3adapter/gtki"
+	. "gopkg.in/check.v1"
 )
 
 type SubscriptionSuite struct{}

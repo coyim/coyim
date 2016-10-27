@@ -5,7 +5,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	. "gopkg.in/check.v1"
 )
 
 type TLSXmppSuite struct{}

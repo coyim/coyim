@@ -1,9 +1,9 @@
 package config
 
 import (
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
+	"github.com/twstrike/otr3"
 
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	. "gopkg.in/check.v1"
 )
 
 type AccountXmppSuite struct{}

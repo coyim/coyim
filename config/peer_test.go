@@ -1,7 +1,7 @@
 package config
 
 import (
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	. "gopkg.in/check.v1"
 )
 
 type AccountPeerSuite struct{}

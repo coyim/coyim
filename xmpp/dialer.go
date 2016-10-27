@@ -10,7 +10,7 @@ import (
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/interfaces"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
+	"golang.org/x/net/proxy"
 )
 
 // A dialer connects and authenticates to an XMPP server

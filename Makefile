@@ -39,7 +39,9 @@ i18n:
 .PHONY: i18n
 
 lint:
-	golint ./...
+	for pkg in $$(go list ./... |grep -v /vendor/) ; do \
+		golint $$pkg ; \
+    done
 
 test:
 	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
@@ -90,7 +92,7 @@ cover: run-cover
 	go tool cover -html=.coverprofiles/gover.coverprofile
 
 get:
-	go get -t -tags $(GTK_BUILD_TAG) ./...
+	go get -t -tags $(GTK_BUILD_TAG) $(go list ./... | grep -v /vendor/)
 
 deps-dev:
 	go get github.com/golang/lint/golint
@@ -99,6 +101,3 @@ deps-dev:
 
 deps: deps-dev
 	godep restore
-
-fixup-deps:
-	godep save -r -t -v ./...

@@ -14,7 +14,7 @@ import (
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
+	"github.com/twstrike/otr3"
 )
 
 // SessionMock is a mock of the Session interface

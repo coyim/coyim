@@ -3,10 +3,10 @@ package gui
 import (
 	"log"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp/utils"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) handleOneAccountEvent(ev interface{}) {

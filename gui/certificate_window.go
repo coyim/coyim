@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/digests"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) certificateFailedToVerify(a *account, certs []*x509.Certificate) <-chan bool {

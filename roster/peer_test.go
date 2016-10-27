@@ -1,8 +1,8 @@
 package roster
 
 import (
-	g "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 	"github.com/twstrike/coyim/xmpp/data"
+	g "gopkg.in/check.v1"
 )
 
 type PeerXmppSuite struct{}

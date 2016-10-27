@@ -11,8 +11,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/crypto/pbkdf2"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/text/transform"
+	"golang.org/x/crypto/pbkdf2"
+	"golang.org/x/text/transform"
 
 	"github.com/twstrike/coyim/sasl"
 )

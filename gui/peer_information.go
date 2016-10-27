@@ -3,9 +3,9 @@ package gui
 import (
 	"fmt"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) showFingerprintsForPeer(jid string, account *account) {

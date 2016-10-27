@@ -6,8 +6,8 @@ import (
 	"crypto/tls"
 	"io"
 
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 	"github.com/twstrike/coyim/xmpp/data"
+	. "gopkg.in/check.v1"
 )
 
 func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {

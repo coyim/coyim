@@ -1,9 +1,9 @@
 package gui
 
 import (
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glib_mock"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	"github.com/twstrike/gotk3adapter/glib_mock"
+	"github.com/twstrike/gotk3adapter/glibi"
+	. "gopkg.in/check.v1"
 )
 
 type SignalsSuite struct{}

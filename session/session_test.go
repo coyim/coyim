@@ -8,15 +8,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glib_mock"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/twstrike/gotk3adapter/glib_mock"
 
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	. "gopkg.in/check.v1"
 )
 
 func init() {

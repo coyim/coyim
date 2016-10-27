@@ -3,7 +3,7 @@ package gui
 import (
 	"strings"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 type settingsPanel struct {

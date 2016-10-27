@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/coyim/gui/settings/definitions"
+	"github.com/twstrike/gotk3adapter/glibi"
 )
 
 var g glibi.Glib

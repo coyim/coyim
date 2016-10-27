@@ -3,7 +3,7 @@ package xmpp
 import (
 	"errors"
 
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	. "gopkg.in/check.v1"
 )
 
 type PresenceXmppSuite struct{}

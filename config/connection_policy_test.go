@@ -5,11 +5,11 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
+	"golang.org/x/net/proxy"
 
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 	ournet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/xmpp"
+	. "gopkg.in/check.v1"
 )
 
 type ConnectionPolicySuite struct{}

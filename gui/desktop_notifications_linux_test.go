@@ -2,7 +2,7 @@
 
 package gui
 
-import . "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+import . "gopkg.in/check.v1"
 
 type desktopNotificationsSuite struct{}
 

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/proxy"
+	"golang.org/x/net/proxy"
 )
 
 var (

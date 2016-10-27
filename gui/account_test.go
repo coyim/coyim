@@ -4,15 +4,15 @@ import (
 	"sort"
 	"time"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glib_mock"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/glibi"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtk_mock"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/events"
 	smock "github.com/twstrike/coyim/session/mock"
+	"github.com/twstrike/gotk3adapter/glib_mock"
+	"github.com/twstrike/gotk3adapter/glibi"
+	"github.com/twstrike/gotk3adapter/gtk_mock"
+	"github.com/twstrike/gotk3adapter/gtki"
+	. "gopkg.in/check.v1"
 )
 
 type AccountSuite struct{}

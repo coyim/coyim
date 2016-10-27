@@ -9,7 +9,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/crypto/scrypt"
+	"golang.org/x/crypto/scrypt"
 )
 
 const encryptedFileEnding = ".enc"

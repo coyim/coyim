@@ -5,7 +5,7 @@ import (
 
 	"github.com/twstrike/coyim/session/events"
 
-	. "github.com/twstrike/coyim/Godeps/_workspace/src/gopkg.in/check.v1"
+	. "gopkg.in/check.v1"
 )
 
 type SessionEventSuite struct{}

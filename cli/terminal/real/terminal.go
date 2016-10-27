@@ -3,8 +3,8 @@ package real
 import (
 	"io"
 
-	ssh_terminal "github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/crypto/ssh/terminal"
 	"github.com/twstrike/coyim/cli/terminal"
+	ssh_terminal "golang.org/x/crypto/ssh/terminal"
 )
 
 type realTerminalControl struct{}

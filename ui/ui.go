@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/golang.org/x/net/html"
+	"golang.org/x/net/html"
 )
 
 var tagsToAvoid = make(map[string]bool)

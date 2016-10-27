@@ -4,11 +4,11 @@ import (
 	"errors"
 	"log"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/interfaces"
+	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 var (

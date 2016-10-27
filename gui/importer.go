@@ -7,11 +7,11 @@ import (
 	"os"
 	"sort"
 
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/gotk3adapter/gtki"
-	"github.com/twstrike/coyim/Godeps/_workspace/src/github.com/twstrike/otr3"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/config/importer"
 	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/twstrike/otr3"
 )
 
 func valAt(s gtki.ListStore, iter gtki.TreeIter, col int) interface{} {

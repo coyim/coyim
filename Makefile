@@ -39,19 +39,7 @@ i18n:
 .PHONY: i18n
 
 lint:
-ifeq ($(GO_VERSION), go1.3)
-	echo "Your version of Go is too old for running lint. Skipping."
-else
-ifeq ($(GO_VERSION), go1.4)
-	echo "Your version of Go is too old for running lint. Skipping."
-else
-ifeq ($(GO_VERSION), go1.5)
-	echo "Your version of Go is too old for running lint. Skipping."
-else
 	golint ./...
-endif
-endif
-endif
 
 test:
 	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
@@ -105,19 +93,7 @@ get:
 	go get -t -tags $(GTK_BUILD_TAG) ./...
 
 deps-dev:
-ifeq ($(GO_VERSION), go1.3)
-	go get -a golang.org/x/tools/cmd/cover
-else
-ifeq ($(GO_VERSION), go1.4)
-	go get -a golang.org/x/tools/cmd/cover
-else
-ifeq ($(GO_VERSION), go1.5)
-	go get -a golang.org/x/tools/cmd/cover
-else
 	go get github.com/golang/lint/golint
-endif
-endif
-endif
 	go get github.com/modocache/gover
 	go get github.com/tools/godep
 

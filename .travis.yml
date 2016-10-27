@@ -6,9 +6,8 @@ branches:
     - windows
 go:
   - tip
+  - 1.7.3
   - 1.6.3
-  - 1.5.4
-  - 1.4.3 # for Tails
 
 matrix:
   include:

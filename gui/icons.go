@@ -1084,12 +1084,26 @@ func (i *icon) getPath() string {
 }
 
 func (i *icon) getPixbuf() gdki.Pixbuf {
+	var err error
+
 	if i.cached == nil {
-		pl, _ := g.gdk.PixbufLoaderNew()
-		pl.Write(i.get())
-		pl.Close()
-		pixbuf, _ := pl.GetPixbuf()
-		i.cached = pixbuf
+		i.cached, err = i.createPixBuf()
+		if err != nil {
+			panic(err)
+		}
 	}
+
 	return i.cached
+}
+
+func (i *icon) createPixBuf() (gdki.Pixbuf, error) {
+	pl, err := g.gdk.PixbufLoaderNew()
+	if err != nil {
+		return nil, err
+	}
+
+	pl.Write(i.get())
+	pl.Close()
+
+	return pl.GetPixbuf()
 }

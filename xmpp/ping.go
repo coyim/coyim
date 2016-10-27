@@ -96,7 +96,7 @@ func (c *conn) watchPings() {
 			continue
 		}
 
-		log.Println("xmpp: ping failures reached treshold of", maxPingFailures)
+		log.Println("xmpp: ping failures reached threshold of", maxPingFailures)
 		go c.sendStreamError(data.StreamError{
 			DefinedCondition: data.ConnectionTimeout,
 		})

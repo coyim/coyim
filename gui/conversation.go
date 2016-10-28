@@ -104,6 +104,9 @@ func (u *gtkUI) newTags() *tags {
 	statusText, _ := g.gtk.TextTagNew("statusText")
 	statusText.SetProperty("foreground", cs.conversationStatusTextForeground)
 
+	timestampText, _ := g.gtk.TextTagNew("timestamp")
+	timestampText.SetProperty("foreground", cs.timestampForeground)
+
 	outgoingDelayedUser, _ := g.gtk.TextTagNew("outgoingDelayedUser")
 	outgoingDelayedUser.SetProperty("foreground", cs.conversationOutgoingDelayedUserForeground)
 	outgoingDelayedUser.SetProperty("strikethrough", true)
@@ -119,6 +122,7 @@ func (u *gtkUI) newTags() *tags {
 	t.table.Add(statusText)
 	t.table.Add(outgoingDelayedUser)
 	t.table.Add(outgoingDelayedText)
+	t.table.Add(timestampText)
 
 	return t
 }
@@ -697,9 +701,9 @@ func (conv *conversationPane) appendToHistory(timestamp time.Time, attention boo
 			insertAtEnd(buff, "\n")
 		}
 
-		insertAtEnd(buff, "[")
-		insertAtEnd(buff, timestamp.Format(timeDisplay))
-		insertAtEnd(buff, "] ")
+		insertWithTag(buff, "timestamp", "[")
+		insertWithTag(buff, "timestamp", timestamp.Format(timeDisplay))
+		insertWithTag(buff, "timestamp", "] ")
 
 		for _, entry := range entries {
 			if entry.tag != "" {

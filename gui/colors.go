@@ -19,6 +19,7 @@ type colorSet struct {
 	conversationStatusTextForeground          string
 	conversationOutgoingDelayedUserForeground string
 	conversationOutgoingDelayedTextForeground string
+	timestampForeground                       string
 }
 
 var themeVariant string
@@ -68,9 +69,10 @@ func (u *gtkUI) defaultLightColorSet() colorSet {
 		conversationIncomingUserForeground:        "#a40000",
 		conversationOutgoingTextForeground:        "#000000",
 		conversationIncomingTextForeground:        "#000000",
-		conversationStatusTextForeground:          "#4e9a06",
+		conversationStatusTextForeground:          "#aaaaaa",
 		conversationOutgoingDelayedUserForeground: "#aaaaaa",
 		conversationOutgoingDelayedTextForeground: "#aaaaaa",
+		timestampForeground:                       "#aaaaaa",
 	}
 }
 
@@ -89,5 +91,6 @@ func (u *gtkUI) defaultDarkColorSet() colorSet {
 		conversationStatusTextForeground:          "#4e9a06",
 		conversationOutgoingDelayedUserForeground: "#444444",
 		conversationOutgoingDelayedTextForeground: "#444444",
+		timestampForeground:                       "#444444",
 	}
 }

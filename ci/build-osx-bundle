@@ -119,10 +119,15 @@ cat > $resources/etc/gtk-3.0/settings.ini << EOF
 gtk-theme-name=Adwaita
 EOF
 
-echo "** Copying locale files"
+echo "** Copying locale files and mime database"
 
 # Copy locales from our app
 cp -av i18n $macos/
+
+# Copy mime database
+mkdir -p $resources/share/mime
+cp -av $(pkg-config shared-mime-info --variable=prefix)/share/mime/mime.cache \
+  $resources/share/mime
 
 #TODO: copy GTK/GLIB/* locales
 #mkdir -p $resources/share/locale

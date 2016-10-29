@@ -1,0 +1,3 @@
+Package: puppet-server
+Pin: version 2.7*
+Pin-Priority: 550

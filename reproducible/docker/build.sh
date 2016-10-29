@@ -13,5 +13,5 @@ ls -l
 make build-cli BUILD_DIR=/builds
 make build-gui BUILD_DIR=/builds
 
-shasum /builds/*
+sha256sum /builds/*
 

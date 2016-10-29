@@ -15,7 +15,7 @@ RUN update-alternatives --set go /usr/bin/go-5
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD setup-reproducible.sh /root/setup-reproducible
-ADD download-golang-1.5.sh /root/download-golang
+ADD download-golang-1.6.sh /root/download-golang
 ADD build-golang.sh /root/build-golang
 
 # Build golang as part of the image

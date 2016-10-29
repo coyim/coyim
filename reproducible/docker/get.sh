@@ -20,7 +20,7 @@ git checkout $REVISION
 #  ln -s /src "${GOPATH}/src/${PACKAGE}"
 
 # Fetch dependencies (this should not build dependencies)
-make deps
+# make deps
 
 # Prepare the reproducible environment
 cd $GOPATH/src && source /root/setup-reproducible

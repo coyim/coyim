@@ -35,7 +35,7 @@ rewrite_library() {
   for lib in $(otool -L $1 | grep "^\t$(brew --prefix)" | sed -e 's/^[^\/]*//' -e 's/ .*//'); do
     base=$(basename $lib)
     if [ ! -f $frameworks/$base ] ; then
-      cp $lib $frameworks
+      cp -v $lib $frameworks
     fi
     chmod u+w $1
     install_name_tool -change $lib @executable_path/../F/$base $1
@@ -45,27 +45,33 @@ rewrite_library() {
   done
 }
 
+echo "** Copying dependencies for the binary"
+
 for lib in $(otool -L $binary | grep "^\t$(brew --prefix)" | sed -e 's/^[^\/]*//' -e 's/ .*//'); do
   base=$(basename $lib)
-  cp $lib $frameworks
-  install_name_tool -change $lib @executable_path/../F/$base $binary
+  cp -v $lib $frameworks
+  install_name_tool -change $lib "@executable_path/../F/$base" $binary
   rewrite_library $frameworks/$base
 done
 
-# Why resources?
+echo "** Copying libpango modules"
+
+# FIXME Why in resources?
 pango_lib=$(strings $frameworks/libpango-1.0.0.dylib | grep usr/local | grep lib)
-cp -a $(dirname $pango_lib) $resources
+cp -av $(dirname $pango_lib) $resources
 
 # There is no pango modules anymore
 #pango_etc=$(strings $frameworks/libpango-1.0.0.dylib  | grep usr/local | grep etc)
 #cp -a $(dirname $pango_etc) $resources
 #sed -i".bak" -e 's![^ ]*/\([^/ ]*\) !\1 !' $(find $resources -name pango.modules)
 
+echo "** Copying gdk-pixbuf modules"
+
 # We neeed pixbuf loaders to support different types of images (it is used for
 # rendering icons, for instance)
 pixbuf_moddir=$(pkg-config gdk-pixbuf-2.0 --variable=gdk_pixbuf_moduledir)
 for loader in $pixbuf_moddir/*.so; do
-  cp $loader $frameworks
+  cp -v $loader $frameworks
   rewrite_library $frameworks/$(basename $loader)
 done
 
@@ -76,10 +82,12 @@ mkdir -p $resources/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version
 gdk-pixbuf-query-loaders | sed "s|$gdk_pixbuf_prefix/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version/loaders/|../F/|g" \
   > $resources/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version/loaders.cache 
 
+echo "** Copying input method modules"
+
 # input methods modules
 immodules_dir=$gtk_prefix/lib/gtk-3.0/$gtk_version/immodules/
 for module in $immodules_dir/*.so; do
-  cp $module $frameworks
+  cp -v $module $frameworks
   rewrite_library $frameworks/$(basename $module)
 done
 
@@ -89,28 +97,29 @@ gtk-query-immodules-3.0 \
   | sed "s|$gtk_prefix/share/locale|@executable_path/../Resources/share/locale|g" \
   > $resources/etc/gtk-3.0/gtk.immodules 
 
+echo "** Copying icons and themes"
+
 # Icons and themes
 mkdir -p $resources/share/icons
-cp -a $(brew --prefix gnome-icon-theme)/share/icons/* $resources/share/icons
-cp -a $(brew --prefix hicolor-icon-theme)/share/icons/* $resources/share/icons
+cp -av $(brew --prefix gnome-icon-theme)/share/icons/* $resources/share/icons
+cp -av $(brew --prefix hicolor-icon-theme)/share/icons/* $resources/share/icons
 
 mkdir -p $resources/share/themes/Mac
-cp -a $(brew --prefix gtk+3)/share/themes/Mac/* $resources/share/themes/Mac
+cp -av $(brew --prefix gtk+3)/share/themes/Mac/* $resources/share/themes/Mac
 
 # GSetting Schemas
+# FIXME this will include schemas with org.gnome.* prefix which I think are
+# not relevant to our application in this bundle (see the schemas folder below)
 mkdir -p $resources/share/glib-2.0/schemas
-cp -a $(brew --prefix)/share/glib-2.0/schemas/gschemas.compiled $resources/share/glib-2.0/schemas
+cp -av $(brew --prefix)/share/glib-2.0/schemas/gschemas.compiled $resources/share/glib-2.0/schemas
 
 mkdir -p $resources/etc/gtk-3.0
 cat > $resources/etc/gtk-3.0/settings.ini << EOF
 [Settings]
 gtk-theme-name=Adwaita
 EOF
-# copy pango etcs
-mkdir -p $resources/etc/pango
-if [ -d $(brew --prefix pango)/etc/ ] ; then
-    cp -a $(brew --prefix pango)/etc/* $resources/etc/pango
-fi
+
+echo "** Copying locale files"
 
 # Copy locales from our app
 cp -av i18n $macos/

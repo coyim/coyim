@@ -21,6 +21,24 @@ func (*RealGdk) PixbufLoaderNew() (gdki.PixbufLoader, error) {
 	return wrapPixbufLoader(gdk.PixbufLoaderNew())
 }
 
+func (*RealGdk) PixbufLoaderNewWithType(t string) (gdki.PixbufLoader, error) {
+	return wrapPixbufLoader(gdk.PixbufLoaderNewWithType(t))
+}
+
+func (*RealGdk) PixbufGetFormats() []gdki.PixbufFormat {
+	formats := gdk.PixbufGetFormats()
+	if formats == nil {
+		return nil
+	}
+
+	ret := make([]gdki.PixbufFormat, len(formats))
+	for i, f := range formats {
+		ret[i] = f
+	}
+
+	return ret
+}
+
 func (*RealGdk) ScreenGetDefault() (gdki.Screen, error) {
 	return wrapScreen(gdk.ScreenGetDefault())
 }

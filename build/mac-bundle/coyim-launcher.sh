@@ -102,7 +102,7 @@ if test -f "$I18NDIR/${APPLELOCALE:0:5}/LC_MESSAGES/$APP.mo"; then
     export LANG="${APPLELOCALE:0:5}"
   fi
 
-elif test -z $LANG -a -f "$I18NDIR/${APPLELOCALE:0:2}/LC_MESSAGES/$APP.mo"; then
+elif test -z "$LANG" -a -f "$I18NDIR/${APPLELOCALE:0:2}/LC_MESSAGES/$APP.mo"; then
   export LANG="${APPLELOCALE:0:2}"
 fi
 
@@ -110,20 +110,20 @@ fi
 #5-character locale to avoid the "Locale not supported by C library"
 #warning from Gtk -- even though Gtk will translate with a
 #two-character code.
-if test -n $LANG; then 
+if test -n "$LANG"; then 
   #If the language code matches the applelocale, then that's the message
   #locale; otherwise, if it's longer than two characters, then it's
   #probably a good message locale and we'll go with it.
-  if test $LANG == ${APPLELOCALE:0:5} -o $LANG != ${LANG:0:2}; then
+  if test "$LANG" == "${APPLELOCALE:0:5}" -o "$LANG" != "${LANG:0:2}"; then
     export LC_MESSAGES=$LANG
     #Next try if the Applelocale is longer than 2 chars and the language
     #bit matches $LANG
-  elif test $LANG == ${APPLELOCALE:0:2} -a $APPLELOCALE > ${APPLELOCALE:0:2}; then
+  elif test "$LANG" == "${APPLELOCALE:0:2}" -a "$APPLELOCALE" > "${APPLELOCALE:0:2}"; then
     export LC_MESSAGES=${APPLELOCALE:0:5}
     #Fail. Get a list of the locales in $PREFIX/share/locale that match
     #our two letter language code and pick the first one, special casing
     #english to set en_US
-  elif test $LANG == "en"; then
+  elif test "$LANG" == "en"; then
     export LC_MESSAGES="en_US"
   else
     LOC=`find $PREFIX/share/locale -name $LANG???`

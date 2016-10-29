@@ -100,4 +100,4 @@ deps-dev:
 	go get github.com/tools/godep
 
 deps: deps-dev
-	godep restore
+

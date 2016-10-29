@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/twstrike/gotk3adapter/gdki"
 )
@@ -1054,11 +1055,14 @@ var statusIcons = map[string]*icon{
 	},
 }
 
-func (i *icon) get() []byte {
+func (i *icon) get() ([]byte, error) {
+	var err error
+
 	if i.decoded == nil {
-		i.decoded, _ = hex.DecodeString(i.encoded)
+		i.decoded, err = hex.DecodeString(i.encoded)
 	}
-	return i.decoded
+
+	return i.decoded, err
 }
 
 func getActualRootFolder() string {
@@ -1075,7 +1079,8 @@ func (i *icon) getPath() string {
 		tmpIconPath := filepath.Join(filepath.Join(os.TempDir(), "coyim"), i.name)
 		if fileNotFound(tmpIconPath) {
 			os.MkdirAll(filepath.Join(os.TempDir(), "coyim"), 0755)
-			ioutil.WriteFile(tmpIconPath, i.get(), 0644)
+			bytes, _ := i.get()
+			ioutil.WriteFile(tmpIconPath, bytes, 0644)
 			log.Printf("gui/icons: wrote %s to %s\n", i.name, tmpIconPath)
 		}
 		return tmpIconPath
@@ -1097,13 +1102,30 @@ func (i *icon) getPixbuf() gdki.Pixbuf {
 }
 
 func (i *icon) createPixBuf() (gdki.Pixbuf, error) {
+	var w sync.WaitGroup
 	pl, err := g.gdk.PixbufLoaderNew()
 	if err != nil {
 		return nil, err
 	}
 
-	pl.Write(i.get())
-	pl.Close()
+	w.Add(1)
+	pl.Connect("area-prepared", func() {
+		defer w.Done()
+	})
 
+	bytes, err := i.get()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := pl.Write(bytes); err != nil {
+		return nil, err
+	}
+
+	if err := pl.Close(); err != nil {
+		return nil, err
+	}
+
+	w.Wait() // should not use the buffer until the event has happened
 	return pl.GetPixbuf()
 }

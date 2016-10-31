@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/twstrike/coyim",
-	"GoVersion": "go1.6",
+	"GoVersion": "go1.7",
 	"GodepVersion": "v74",
 	"Packages": [
 		"./..."
@@ -106,19 +106,19 @@
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/pbkdf2",
-			"Rev": "0c565bf13221fb55497d7ae2bb95694db1fd1bff"
+			"Rev": "351dc6a5bf92a5f2ae22fadeee08eb6a45aa2d93"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/scrypt",
-			"Rev": "0c565bf13221fb55497d7ae2bb95694db1fd1bff"
+			"Rev": "351dc6a5bf92a5f2ae22fadeee08eb6a45aa2d93"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/sha3",
-			"Rev": "0c565bf13221fb55497d7ae2bb95694db1fd1bff"
+			"Rev": "351dc6a5bf92a5f2ae22fadeee08eb6a45aa2d93"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
-			"Rev": "0c565bf13221fb55497d7ae2bb95694db1fd1bff"
+			"Rev": "351dc6a5bf92a5f2ae22fadeee08eb6a45aa2d93"
 		},
 		{
 			"ImportPath": "golang.org/x/net/html",
@@ -143,26 +143,6 @@
 		{
 			"ImportPath": "gopkg.in/check.v1",
 			"Rev": "4f90aeace3a26ad7021961c297b22c42160c7b25"
-		},
-		{
-			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/gdk",
-			"Rev": "b8ea4069ef3b37a46841ddd2df8725827f9211a6"
-		},
-		{
-			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/glib",
-			"Rev": "b8ea4069ef3b37a46841ddd2df8725827f9211a6"
-		},
-		{
-			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/gtk",
-			"Rev": "b8ea4069ef3b37a46841ddd2df8725827f9211a6"
-		},
-		{
-			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/cairo",
-			"Rev": "b8ea4069ef3b37a46841ddd2df8725827f9211a6"
-		},
-		{
-			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/pango",
-			"Rev": "b8ea4069ef3b37a46841ddd2df8725827f9211a6"
 		}
 	]
 }

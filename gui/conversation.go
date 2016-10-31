@@ -52,7 +52,9 @@ type conversationPane struct {
 	entry              gtki.TextView
 	entryScroll        gtki.ScrolledWindow
 	history            gtki.TextView
+	pending            gtki.TextView
 	scrollHistory      gtki.ScrolledWindow
+	scrollPending      gtki.ScrolledWindow
 	notificationArea   gtki.Box
 	securityWarning    gtki.InfoBar
 	fingerprintWarning gtki.InfoBar
@@ -267,7 +269,9 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 	builder.getItems(
 		"box", &cp.widget,
 		"history", &cp.history,
+		"pending", &cp.pending,
 		"historyScroll", &cp.scrollHistory,
+		"pendingScroll", &cp.scrollPending,
 		"message", &cp.entry,
 		"notification-area", &cp.notificationArea,
 		"security-warning", &cp.securityWarning,

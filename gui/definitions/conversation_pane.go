@@ -129,9 +129,35 @@ func (*defConversationPane) String() string {
         <property name="expand">true</property>
         <property name="fill">true</property>
         <property name="pack-type">GTK_PACK_END</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+    
+    <child>
+      <object class="GtkScrolledWindow" id="pendingScroll">
+        <property name="visible">true</property>
+        <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+        <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+        <child>
+          <object class="GtkTextView" id="pending">
+            <property name="visible">true</property>
+            <property name="wrap-mode">2</property>
+            <property name="editable">false</property>
+            <property name="cursor-visible">false</property>
+            <property name="pixels-below-lines">5</property>
+            <property name="left-margin">5</property>
+            <property name="right-margin">5</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">false</property>
+        <property name="fill">true</property>
+        <property name="pack-type">GTK_PACK_END</property>
         <property name="position">1</property>
       </packing>
     </child>
+
     <child>
       <object class="GtkScrolledWindow" id="messageScroll">
         <property name="visible">true</property>

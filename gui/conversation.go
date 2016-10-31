@@ -730,9 +730,36 @@ func (conv *conversationPane) appendToHistory(timestamp time.Time, attention boo
 	})
 }
 
+func (conv *conversationPane) appendToPending(timestamp time.Time, attention bool, entries ...taggableText) {
+	conv.markNow()
+	doInUIThread(func() {
+		conv.Lock()
+		defer conv.Unlock()
+
+		buff, _ := conv.pending.GetBuffer()
+		if buff.GetCharCount() != 0 {
+			insertAtEnd(buff, "\n")
+		}
+
+		insertWithTag(buff, "timestamp", "[")
+		insertWithTag(buff, "timestamp", timestamp.Format(timeDisplay))
+		insertWithTag(buff, "timestamp", "] ")
+
+		for _, entry := range entries {
+			if entry.tag != "" {
+				insertWithTag(buff, entry.tag, entry.text)
+			} else {
+				insertAtEnd(buff, entry.text)
+			}
+		}
+		if attention {
+			conv.afterNewMessage()
+		}
+	})
+}
+
 func (conv *conversationPane) appendDelayed(from string, timestamp time.Time, message []byte) {
-	conv.appendToHistory(timestamp, false,
-		taggableText{"outgoingUser", i18n.Local("(Not sent yet) ")},
+	conv.appendToPending(timestamp, false,
 		taggableText{"outgoingDelayedUser", from},
 		taggableText{
 			text: ":  ",

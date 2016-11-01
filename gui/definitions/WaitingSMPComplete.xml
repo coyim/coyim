@@ -1,0 +1,29 @@
+<interface>
+  <object class="GtkInfoBar" id="smp_waiting_infobar">
+    <property name="message-type">GTK_MESSAGE_WARNING</property>
+    <child internal-child="content_area">
+      <object class="GtkBox" id="box">
+        <property name="homogeneous">false</property>
+        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+        <child>
+          <object class="GtkLabel" id="message">
+            <property name="wrap">true</property>
+          </object>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="button_box">
+            <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+            <child>
+              <object class="GtkButton" id="cancel_button">
+                <property name="label" translatable="yes">Cancel</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="pack-type">GTK_PACK_END</property>
+      </packing>
+    </child>
+  </object>
+</interface>

@@ -16,6 +16,7 @@ type Conversation interface {
 
 	ProvideAuthenticationSecret(Sender, string, []byte) error
 	StartAuthenticate(Sender, string, string, []byte) error
+	AbortAuthentication(Sender, string) error
 
 	GetSSID() [8]byte
 	IsEncrypted() bool
@@ -91,6 +92,14 @@ func (c *conversation) StartAuthenticate(s Sender, resource string, q string, m 
 		return err
 	}
 
+	return c.sendAll(s, resource, toSend)
+}
+
+func (c *conversation) AbortAuthentication(s Sender, resource string) error {
+	toSend, err := c.Conversation.AbortAuthentication()
+	if err != nil {
+		return err
+	}
 	return c.sendAll(s, resource, toSend)
 }
 

@@ -1,12 +1,14 @@
-//go:generate esc -o definitions.go -modtime 1489449600 -pkg gui -include ".xml$" definitions/
+//go:generate esc -o definitions.go -modtime 1489449600 -pkg gui -ignore "Makefile" definitions/
 
 package gui
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 	"strings"
+	"sync"
 
 	"reflect"
 
@@ -15,8 +17,8 @@ import (
 )
 
 const (
-	defsFolder   = "gui/definitions"
 	xmlExtension = ".xml"
+	imagesFolder = "/definitions/images/"
 )
 
 func getActualDefsFolder() string {
@@ -110,4 +112,39 @@ func (b *builder) get(name string) glibi.Object {
 		panic("builder.GetObject() failed: " + err.Error())
 	}
 	return obj
+}
+
+func mustGetImageBytes(filename string) []byte {
+	bs, err := FSByte(false, imagesFolder+filename)
+	if err != nil {
+		panic("Developer error: getting the image " + filename + " but it does not exist")
+	}
+	return bs
+}
+
+func setImageFromFile(i gtki.Image, filename string) {
+	pl, err := g.gdk.PixbufLoaderNew()
+
+	var w sync.WaitGroup
+	w.Add(1)
+	pl.Connect("area-prepared", w.Done)
+
+	if _, err := pl.Write(mustGetImageBytes(filename)); err != nil {
+		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
+		return
+	}
+	if err := pl.Close(); err != nil {
+		log.Println(">> WARN - cannot close PixbufLoader: " + err.Error())
+		return
+	}
+
+	w.Wait() //Waiting for Pixbuf to load before using it
+
+	pb, err := pl.GetPixbuf()
+	if err != nil {
+		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
+		return
+	}
+	i.SetFromPixbuf(pb)
+	return
 }

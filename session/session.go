@@ -679,21 +679,17 @@ func (s *session) receiveClientMessage(from, resource string, when time.Time, bo
 			s.info(fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", from, from))
 		}
 	case event.SMPSecretNeeded:
-		s.info(fmt.Sprintf("%s is attempting to authenticate. Please supply mutual shared secret with /otr-auth user secret", from))
-		if question := eh.SmpQuestion; len(question) > 0 {
-			s.info(fmt.Sprintf("%s asks: %s", from, question))
-		}
+		s.publishSMPEvent(events.SecretNeeded, from, resource, eh.SmpQuestion)
 	case event.SMPComplete:
-		s.info(fmt.Sprintf("Authentication with %s successful", from))
-		fpr := conversation.TheirFingerprint()
+		s.publishSMPEvent(events.Success, from, resource, "")
 		s.cmdManager.ExecuteCmd(client.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
 			Session:     s,
 			Peer:        from,
-			Fingerprint: fpr,
+			Fingerprint: conversation.TheirFingerprint(),
 		})
 	case event.SMPFailed:
-		s.alert(fmt.Sprintf("Authentication with %s failed", from))
+		s.publishSMPEvent(events.Failure, from, resource, "")
 	}
 
 	if len(out) == 0 {
@@ -1110,4 +1106,34 @@ func (s *session) SendPing() {
 			}
 		}
 	}()
+}
+
+// StartSMP begins the SMP interactions for a conversation
+func (s *session) StartSMP(peer, resource, question, answer string) {
+	conv, ok := s.convManager.GetConversationWith(peer, resource)
+	if !ok {
+		s.alert("error: tried to start SMP when a conversation does not exist")
+		return
+	}
+	conv.StartAuthenticate(s, resource, question, []byte(answer))
+}
+
+// FinishSMP takes a user's SMP answer and finishes the protocol
+func (s *session) FinishSMP(peer, resource, answer string) {
+	conv, ok := s.convManager.GetConversationWith(peer, resource)
+	if !ok {
+		s.alert("error: tried to finish SMP when a conversation does not exist")
+		return
+	}
+	conv.ProvideAuthenticationSecret(s, resource, []byte(answer))
+}
+
+// AbortSMP will abort the current SMP interaction for a conversation
+func (s *session) AbortSMP(peer, resource string) {
+	conv, ok := s.convManager.GetConversationWith(peer, resource)
+	if !ok {
+		s.alert("error: tried to abort SMP when a conversation does not exist")
+		return
+	}
+	conv.AbortAuthentication(s, resource)
 }

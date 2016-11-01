@@ -39,3 +39,11 @@ func (v *box) PackStart(v1 gtki.Widget, v2, v3 bool, v4 uint) {
 func (v *box) SetChildPacking(v1 gtki.Widget, v2, v3 bool, v4 uint, v5 gtki.PackType) {
 	v.internal.SetChildPacking(unwrapWidget(v1), v2, v3, v4, gtk.PackType(v5))
 }
+
+func (v *box) GetOrientation() gtki.Orientation {
+	return wrapOrientation(v.internal.GetOrientation())
+}
+
+func (v *box) SetOrientation(o gtki.Orientation) {
+	v.internal.SetOrientation(unwrapOrientation(o))
+}

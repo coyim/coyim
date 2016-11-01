@@ -94,3 +94,16 @@ func detectCurrentDisplaySettingsFrom(w gtki.Widget) *displaySettings {
 	ds.fontSize = getFontSizeFrom(w)
 	return ds
 }
+
+func addBoldHeaderStyle(l gtki.Label) {
+	doInUIThread(func() {
+		c, _ := l.GetStyleContext()
+		ds := newDisplaySettings()
+		c.AddClass("bold-header-style")
+		c.AddProvider(ds.provider, 9999)
+		ds.provider.LoadFromData(`.bold-header-style {
+			font-size: 200%;
+			font-weight: 800;
+		}`)
+	})
+}

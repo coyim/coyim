@@ -24,7 +24,7 @@ var (
 )
 
 type conversationView interface {
-	showIdentityVerificationWarning(u *gtkUI)
+	showIdentityVerificationWarning(*gtkUI)
 	removeIdentityVerificationWarning()
 	updateSecurityWarning()
 	show(userInitiated bool)
@@ -38,6 +38,24 @@ type conversationView interface {
 	appendPendingDelayed()
 	haveShownPrivateEndedNotification()
 	haveShownPrivateNotification()
+	showSMPRequestForSecret(string)
+	showSMPSuccess()
+	showSMPFailure()
+}
+
+func (conv *conversationPane) showSMPRequestForSecret(question string) {
+	conv.verifier.removeInProgressDialogs()
+	conv.verifier.displayRequestForSecret(question)
+}
+
+func (conv *conversationPane) showSMPSuccess() {
+	conv.verifier.removeInProgressDialogs()
+	conv.verifier.displayVerificationSuccess()
+}
+
+func (conv *conversationPane) showSMPFailure() {
+	conv.verifier.removeInProgressDialogs()
+	conv.verifier.displayVerificationFailure()
 }
 
 type conversationWindow struct {
@@ -47,20 +65,20 @@ type conversationWindow struct {
 }
 
 type conversationPane struct {
-	to                 string
-	account            *account
-	widget             gtki.Box
-	menubar            gtki.MenuBar
-	menuLabel          gtki.Label
-	entry              gtki.TextView
-	entryScroll        gtki.ScrolledWindow
-	history            gtki.TextView
-	pending            gtki.TextView
-	scrollHistory      gtki.ScrolledWindow
-	scrollPending      gtki.ScrolledWindow
-	notificationArea   gtki.Box
-	securityWarning    gtki.InfoBar
-	fingerprintWarning gtki.InfoBar
+	to                  string
+	account             *account
+	widget              gtki.Box
+	menubar             gtki.MenuBar
+	menuLabel           gtki.Label
+	entry               gtki.TextView
+	entryScroll         gtki.ScrolledWindow
+	history             gtki.TextView
+	pending             gtki.TextView
+	scrollHistory       gtki.ScrolledWindow
+	scrollPending       gtki.ScrolledWindow
+	notificationArea    gtki.Box
+	securityWarning     gtki.InfoBar
+	verificationWarning gtki.InfoBar
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
@@ -75,6 +93,7 @@ type conversationPane struct {
 	shownPrivate         bool
 	isNewFingerprint     bool
 	hasSetNewFingerprint bool
+	verifier             *verifier
 }
 
 type tags struct {
@@ -201,6 +220,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 	} else {
+		conv.removeIdentityVerificationWarning()
 		conv.displayNotification(i18n.Local("Private conversation has ended."))
 		conv.updateSecurityWarning()
 		conv.haveShownPrivateEndedNotification()
@@ -222,6 +242,15 @@ func (conv *conversationPane) onConnect() {
 func (conv *conversationPane) onDisconnect() {
 	conv.entry.SetEditable(false)
 	conv.entry.SetSensitive(false)
+}
+
+func (conv *conversationPane) onWindowChange() {
+	w, _ := conv.transientParent.GetSize()
+	if w > 500 {
+		conv.verifier.layoutForNotificationsInWiderWindow()
+	} else {
+		conv.verifier.defaultLayoutForNotifications()
+	}
 }
 
 func countVisibleLines(v gtki.TextView) uint {
@@ -280,6 +309,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		"messageScroll", &cp.entryScroll,
 	)
 
+	transientParent.Connect("configure-event", cp.onWindowChange)
 	builder.ConnectSignals(map[string]interface{}{
 		"on_start_otr_signal": cp.onStartOtrSignal,
 		"on_end_otr_signal":   cp.onEndOtrSignal,
@@ -307,6 +337,8 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 	ui.displaySettings.control(cp.entry)
 	ui.keyboardSettings.control(cp.entry)
 	ui.keyboardSettings.update()
+
+	cp.verifier = newVerifier(ui, cp)
 
 	return cp
 }
@@ -497,29 +529,15 @@ func (conv *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
 	conv.Lock()
 	defer conv.Unlock()
 
-	if conv.fingerprintWarning != nil {
-		log.Println("we are already showing a fingerprint warning, so not doing it again")
-		return
-	}
-
-	if conv.isVerified(u) {
-		log.Println("We have a peer and a trusted fingerprint already, so no reason to warn")
-		return
-	}
-
-	conv.fingerprintWarning = buildVerifyIdentityNotification(conv.account, conv.to, conv.currentResource(), conv.transientParent)
-	conv.addNotification(conv.fingerprintWarning)
+	conv.verifier.showUnverifiedWarning()
 }
 
 func (conv *conversationPane) removeIdentityVerificationWarning() {
 	conv.Lock()
 	defer conv.Unlock()
 
-	if conv.fingerprintWarning != nil {
-		conv.fingerprintWarning.Hide()
-		conv.fingerprintWarning.Destroy()
-		conv.fingerprintWarning = nil
-	}
+	conv.verifier.removeInProgressDialogs()
+	conv.verifier.hideUnverifiedWarning()
 }
 
 func (conv *conversationPane) updateSecurityWarning() {

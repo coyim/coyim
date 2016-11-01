@@ -15,6 +15,7 @@ var errUnexpectedMessage = newOtrError("unexpected SMP message")
 var errUnsupportedOTRVersion = newOtrError("unsupported OTR version")
 var errWrongProtocolVersion = newOtrError("wrong protocol version")
 var errMessageNotInPrivate = newOtrError("message not in private")
+var errCannotSendUnencrypted = newOtrConflictError("cannot send message in unencrypted state")
 
 // OtrError is an error in the OTR library
 type OtrError struct {

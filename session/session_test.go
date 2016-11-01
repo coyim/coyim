@@ -1002,6 +1002,10 @@ func (mc *mockConv) StartAuthenticate(client.Sender, string, string, []byte) err
 	return nil
 }
 
+func (mc *mockConv) AbortAuthentication(client.Sender, string) error {
+	return nil
+}
+
 func (mc *mockConv) GetSSID() [8]byte {
 	return [8]byte{}
 }
@@ -1082,6 +1086,85 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 		t := ev.(events.Message)
 		c.Assert(string(t.Body), Equals, "hello\nola\n\nwazup?")
 		c.Assert(t.Encrypted, Equals, true)
+	case <-time.After(10 * time.Millisecond):
+		c.Errorf("did not receive event")
+	}
+}
+
+type convManagerWithoutConversation struct{}
+
+func (ncm *convManagerWithoutConversation) GetConversationWith(peer, resource string) (client.Conversation, bool) {
+	return nil, false
+}
+
+func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer, resource string) (client.Conversation, bool) {
+	return nil, false
+}
+
+func (ncm *convManagerWithoutConversation) Conversations() map[string]client.Conversation {
+	return nil
+}
+
+func (ncm *convManagerWithoutConversation) TerminateAll() {
+}
+
+func sessionWithConvMngrWithoutConvs() *session {
+	return &session{
+		connStatus:  CONNECTED,
+		convManager: &convManagerWithoutConversation{},
+		otrEventHandler: map[string]*event.OtrEventHandler{
+			"someone@some.org": &event.OtrEventHandler{},
+		},
+		config: &config.ApplicationConfig{},
+	}
+}
+
+func (s *SessionSuite) Test_logsError_whenWeStartSMPWithoutAConversation(c *C) {
+	sess := sessionWithConvMngrWithoutConvs()
+	observer := make(chan interface{}, 1)
+	sess.Subscribe(observer)
+
+	go sess.StartSMP("someone's peer", "resource", "Im a question", "im an answer")
+
+	select {
+	case ev := <-observer:
+		t := ev.(events.Log)
+		c.Assert(t.Level, Equals, events.Alert)
+		c.Assert(t.Message, Equals, "error: tried to start SMP when a conversation does not exist")
+	case <-time.After(10 * time.Millisecond):
+		c.Errorf("did not receive event")
+	}
+}
+
+func (s *SessionSuite) Test_logsError_whenWeFinishSMPWithoutAConversation(c *C) {
+	sess := sessionWithConvMngrWithoutConvs()
+	observer := make(chan interface{}, 1)
+	sess.Subscribe(observer)
+
+	go sess.FinishSMP("someone's peer", "resource", "im an answer")
+
+	select {
+	case ev := <-observer:
+		t := ev.(events.Log)
+		c.Assert(t.Level, Equals, events.Alert)
+		c.Assert(t.Message, Equals, "error: tried to finish SMP when a conversation does not exist")
+	case <-time.After(10 * time.Millisecond):
+		c.Errorf("did not receive event")
+	}
+}
+
+func (s *SessionSuite) Test_logsError_whenWeAbortSMPWithoutAConversation(c *C) {
+	sess := sessionWithConvMngrWithoutConvs()
+	observer := make(chan interface{}, 1)
+	sess.Subscribe(observer)
+
+	go sess.AbortSMP("someone's peer", "resource")
+
+	select {
+	case ev := <-observer:
+		t := ev.(events.Log)
+		c.Assert(t.Level, Equals, events.Alert)
+		c.Assert(t.Message, Equals, "error: tried to abort SMP when a conversation does not exist")
 	case <-time.After(10 * time.Millisecond):
 		c.Errorf("did not receive event")
 	}

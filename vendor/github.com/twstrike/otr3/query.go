@@ -61,8 +61,8 @@ func (c *Conversation) receiveQueryMessage(msg ValidMessage) ([]messageWithHeade
 		return nil, err
 	}
 
-	if (c.msgState == encrypted && isWithinTimeToIgnoreQueryMessage(c.lastMessageStateChange)) ||
-		(c.ake != nil && isWithinTimeToIgnoreQueryMessage(c.ake.lastStateChange)) {
+	if dontIgnoreFastRepeatQueryMessage != "true" && ((c.msgState == encrypted && isWithinTimeToIgnoreQueryMessage(c.lastMessageStateChange)) ||
+		(c.ake != nil && isWithinTimeToIgnoreQueryMessage(c.ake.lastStateChange))) {
 		return nil, nil
 	}
 

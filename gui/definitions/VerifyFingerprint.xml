@@ -15,12 +15,12 @@
             <child>
               <object class="GtkButton" id="button_cancel">
                 <property name="can-default">true</property>
-                <property name="label" translatable="yes">Cancel</property>
+                <property name="label" translatable="yes">No</property>
               </object>
             </child>
             <child>
               <object class="GtkButton" id="button_verify">
-                <property name="label" translatable="yes">Verify</property>
+                <property name="label" translatable="yes">Yes</property>
               </object>
             </child>
           </object>

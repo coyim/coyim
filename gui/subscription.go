@@ -110,7 +110,7 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 	acd.initAccounts(accounts)
 
 	acd.builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": func() {
+		"on_cancel_signal": func() {
 			acd.dialog.Destroy()
 		},
 		"on_save_signal": func() {
@@ -130,7 +130,6 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 				log.Printf("Error encountered when sending subscription: %v", err)
 				return
 			}
-
 			acd.dialog.Destroy()
 		},
 	})

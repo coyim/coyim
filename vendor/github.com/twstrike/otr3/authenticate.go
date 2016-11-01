@@ -28,6 +28,15 @@ func (c *Conversation) ProvideAuthenticationSecret(mutualSecret []byte) ([]Valid
 	return msgs, err
 }
 
+// AbortAuthentication should be called when the user wants to abort authentication with a peer.
+// It will return an SMP abort message to send.
+func (c *Conversation) AbortAuthentication() ([]ValidMessage, error) {
+	t := c.restartSMP()
+
+	msgs, _, err := c.createSerializedDataMessage(nil, messageFlagIgnoreUnreadable, []tlv{t})
+	return msgs, err
+}
+
 func (c *Conversation) potentialAuthError(toSend []messageWithHeader, err error) ([]messageWithHeader, error) {
 	if err != nil {
 		c.messageEventWithError(MessageEventSetupError, err)

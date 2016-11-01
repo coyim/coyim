@@ -106,6 +106,20 @@ func (c *cliUI) handleLogEvent(ev events.Log) {
 	}
 }
 
+func (c *cliUI) handleSMPEvent(ev events.SMP) {
+	switch ev.Type {
+	case events.SecretNeeded:
+		info(c.term, c.termControl, fmt.Sprintf("%s is attempting to authenticate. Please supply mutual shared secret with /otr-auth user secret", ev.From))
+		if question := ev.Body; len(question) > 0 {
+			info(c.term, c.termControl, fmt.Sprintf("%s asks: %s", ev.From, question))
+		}
+	case events.Success:
+		info(c.term, c.termControl, fmt.Sprintf("Authentication with %s successful", ev.From))
+	case events.Failure:
+		alert(c.term, c.termControl, fmt.Sprintf("Authentication with %s failed", ev.From))
+	}
+}
+
 func (c *cliUI) observeSessionEvents() {
 	for ev := range c.events {
 		switch t := ev.(type) {
@@ -117,6 +131,8 @@ func (c *cliUI) observeSessionEvents() {
 			c.handlePresenceEvent(t)
 		case events.Message:
 			c.handleMessageEvent(t)
+		case events.SMP:
+			c.handleSMPEvent(t)
 		default:
 			log.Printf("unsupported event %#v\n", t)
 		}

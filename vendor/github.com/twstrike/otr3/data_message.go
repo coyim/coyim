@@ -12,7 +12,7 @@ func (c *Conversation) genDataMsg(message []byte, tlvs ...tlv) (dataMsg, dataMes
 
 func (c *Conversation) genDataMsgWithFlag(message []byte, flag byte, tlvs ...tlv) (dataMsg, dataMessageExtra, error) {
 	if c.msgState != encrypted {
-		return dataMsg{}, dataMessageExtra{}, newOtrConflictError("cannot send message in unencrypted state")
+		return dataMsg{}, dataMessageExtra{}, errCannotSendUnencrypted
 	}
 
 	keys, err := c.keys.calculateDHSessionKeys(c.keys.ourKeyID-1, c.keys.theirKeyID, c.version)

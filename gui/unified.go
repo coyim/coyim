@@ -104,7 +104,6 @@ func (ul *unifiedLayout) createConversation(account *account, uid string, existi
 		cp.history.SetBuffer(b)
 	}
 	cp.connectEnterHandler(nil)
-	cp.menubar.Hide()
 	idx := ul.notebook.AppendPage(cp.widget, nil)
 	if idx < 0 {
 		panic("Failed to append page to notebook")

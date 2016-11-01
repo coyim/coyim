@@ -1,9 +1,8 @@
 <interface>
-  <object class="GtkInfoBar" id="infobar">
+  <object class="GtkInfoBar" id="error_verifying_smp">
     <property name="message-type">GTK_MESSAGE_WARNING</property>
     <child internal-child="content_area">
       <object class="GtkBox" id="box">
-        <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
         <child>
           <object class="GtkLabel" id="message">
@@ -16,8 +15,8 @@
       <object class="GtkBox" id="button_box">
         <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
         <child>
-          <object class="GtkButton" id="button_verify">
-            <property name="label" translatable="yes">Verify</property>
+          <object class="GtkButton" id="try_later_button">
+            <property name="label" translatable="yes">Try again later</property>
             <property name="can-default">true</property>
           </object>
         </child>

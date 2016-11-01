@@ -10,7 +10,11 @@ else
 ifeq ($(GO_VERSION), go1.4)
 	echo "Your version of Go is too old for running lint"
 else
+ifeq ($(GO_VERSION), go1.5)
+	echo "Your version of Go is too old for running lint"
+else
 	golint ./...
+endif
 endif
 endif
 
@@ -27,7 +31,10 @@ ifeq ($(GO_VERSION), go1.3)
 else
 ifeq ($(GO_VERSION), go1.4)
 else
+ifeq ($(GO_VERSION), go1.5)
+else
 	go get github.com/golang/lint/golint
+endif
 endif
 endif
 	go get golang.org/x/tools/cmd/cover

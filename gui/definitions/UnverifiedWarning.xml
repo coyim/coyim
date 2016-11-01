@@ -1,0 +1,34 @@
+<interface>
+  <object class="GtkInfoBar" id="infobar">
+    <property name="message-type">GTK_MESSAGE_WARNING</property>
+    <property name="show-close-button">true</property>
+    <signal name="response" handler="close_verification"/>
+    <child internal-child="content_area">
+      <object class="GtkBox" id="box">
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+          <child>
+            <object class="GtkBox">
+              <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+              <child>
+                <object class="GtkImage" id="alert_image"/>
+              </child>
+              <child>
+                <object class="GtkLabel" id="message">
+                  <property name="wrap">true</property>
+                </object>
+              </child>
+            </object>
+          </child>
+          <child>
+            <object  class= "GtkButton" id="button_verify">
+              <property name="label" translatable="yes">Validate secure channel</property>
+              <property name="can-default">true</property>
+            </object>
+          </child>
+      </object>
+      <packing>
+        <property name="pack-type">GTK_PACK_END</property>
+      </packing>
+    </child>
+  </object>
+</interface>

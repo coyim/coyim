@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+var dontIgnoreFastRepeatQueryMessage = "false"
+
 type ake struct {
 	secretExponent   *big.Int
 	ourPublicValue   *big.Int

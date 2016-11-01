@@ -26,10 +26,10 @@ type smpState interface {
 	identityString() string
 }
 
-func (c *Conversation) restart() []byte {
+func (c *Conversation) restartSMP() tlv {
 	var ret smpMessage
 	c.smp.state, ret, _ = sendSMPAbortAndRestartStateMachine()
-	return ret.tlv().serialize()
+	return ret.tlv()
 }
 
 func abortState(e error) (smpState, smpMessage, error) {

@@ -44,6 +44,10 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}) {
 		doInUIThread(func() {
 			u.handleFileTransfer(t)
 		})
+	case events.SMP:
+		doInUIThread(func() {
+			u.handleSMPEvent(t)
+		})
 	default:
 		log.Printf("unsupported event %#v\n", t)
 	}
@@ -139,6 +143,7 @@ func convWindowNowOrLater(account *account, peer string, ui *gtkUI, f func(conve
 func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 	identityWarning := func(cv conversationView) {
 		cv.updateSecurityWarning()
+		cv.removeIdentityVerificationWarning()
 		cv.showIdentityVerificationWarning(u)
 	}
 
@@ -251,4 +256,21 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	ev.Answer <- result
 
 	// for more fancy use, we should allow people a choice in where to save it, but that's for later.
+}
+
+func (u *gtkUI) handleSMPEvent(ev events.SMP) {
+	account := u.findAccountForSession(ev.Session)
+	convWin, err := u.roster.openConversationView(account, ev.From, false)
+	if err != nil {
+		return
+	}
+
+	switch ev.Type {
+	case events.SecretNeeded:
+		convWin.showSMPRequestForSecret(ev.Body)
+	case events.Success:
+		convWin.showSMPSuccess()
+	case events.Failure:
+		convWin.showSMPFailure()
+	}
 }

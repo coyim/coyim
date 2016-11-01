@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
 
@@ -32,36 +31,6 @@ func (u *gtkUI) notifyConnectionFailure(account *account, moreInfo func()) {
 		notification := account.buildConnectionFailureNotification(moreInfo)
 		account.setCurrentNotification(notification, u.notificationArea)
 	})
-}
-
-func buildVerifyIdentityNotification(acc *account, peer, resource string, win gtki.Window) gtki.InfoBar {
-	builder := newBuilder("VerifyIdentityNotification")
-
-	obj := builder.getObj("infobar")
-	infoBar := obj.(gtki.InfoBar)
-
-	obj = builder.getObj("message")
-	message := obj.(gtki.Label)
-	message.SetSelectable(true)
-
-	text := i18n.Localf("You have not verified the identity of %s", peer)
-	message.SetText(text)
-
-	obj = builder.getObj("button_verify")
-	button := obj.(gtki.Button)
-	button.Connect("clicked", func() {
-		doInUIThread(func() {
-			resp := verifyFingerprintDialog(acc, peer, resource, win)
-			if resp == gtki.RESPONSE_YES {
-				infoBar.Hide()
-				infoBar.Destroy()
-			}
-		})
-	})
-
-	infoBar.ShowAll()
-
-	return infoBar
 }
 
 func (u *gtkUI) notify(title, message string) {

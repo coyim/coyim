@@ -68,9 +68,18 @@ release-dmg: clean-mac-bundle mac-bundle
 ../bin/coyim:
 	make -C ../ build-gui
 
+build-linux:
+	make -C ../ reproducible-linux-build
+
 release-gui: ../bin/coyim
 	mkdir -p ../release
 	cp ../bin/coyim ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
+	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/checksum
+
+release-gui-linux: build-linux
+	mkdir -p ../release
+	cp ../bin/coyim ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
+	cp ../bin/build_info ../release/build_info
 	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/checksum
 
 ../bin/coyim.exe:

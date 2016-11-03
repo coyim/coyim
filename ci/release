@@ -17,7 +17,7 @@ OS=${APPVEYOR_OS_NAME:-${TRAVIS_OS_NAME:-linux}}
 if [[ $OS = "windows" ]]; then
     make -C "${CI_DIR}" release-gui-win
 elif [[ $OS = "linux" ]]; then
-    make -C "${CI_DIR}" cross-compile release-gui
+    make -C "${CI_DIR}" cross-compile release-gui-linux
 elif [[ $OS = "osx" ]]; then
     # gettext is not linked on OSX
     export PATH="$PATH:$(brew --prefix gettext)/bin"

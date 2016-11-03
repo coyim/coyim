@@ -1,0 +1,1855 @@
+Package: acl
+Pin: version 2.2.52-2
+Pin-Priority: 9999
+
+Package: adduser
+Pin: version 3.113+nmu3ubuntu3
+Pin-Priority: 9999
+
+Package: apt
+Pin: version 1.0.9.7ubuntu4.2
+Pin-Priority: 9999
+
+Package: at-spi2-core
+Pin: version 2.14.0-1ubuntu2
+Pin-Priority: 9999
+
+Package: base-files
+Pin: version 7.2ubuntu9
+Pin-Priority: 9999
+
+Package: base-passwd
+Pin: version 3.5.37
+Pin-Priority: 9999
+
+Package: bash
+Pin: version 4.3-11ubuntu2
+Pin-Priority: 9999
+
+Package: binutils
+Pin: version 2.25-5ubuntu7
+Pin-Priority: 9999
+
+Package: bsdmainutils
+Pin: version 9.0.6ubuntu1
+Pin-Priority: 9999
+
+Package: bsdutils
+Pin: version 1:2.25.2-4ubuntu3
+Pin-Priority: 9999
+
+Package: build-essential
+Pin: version 11.6ubuntu6
+Pin-Priority: 9999
+
+Package: bzip2
+Pin: version 1.0.6-7
+Pin-Priority: 9999
+
+Package: ca-certificates
+Pin: version 20141019ubuntu0.15.04.1
+Pin-Priority: 9999
+
+Package: colord
+Pin: version 1.2.8-0ubuntu1
+Pin-Priority: 9999
+
+Package: colord-data
+Pin: version 1.2.8-0ubuntu1
+Pin-Priority: 9999
+
+Package: coreutils
+Pin: version 8.23-3ubuntu1.1
+Pin-Priority: 9999
+
+Package: cpp
+Pin: version 4:4.9.2-2ubuntu2
+Pin-Priority: 9999
+
+Package: cpp-4.9
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: curl
+Pin: version 7.38.0-3ubuntu2.3
+Pin-Priority: 9999
+
+Package: dash
+Pin: version 0.5.7-4ubuntu1
+Pin-Priority: 9999
+
+Package: dbus
+Pin: version 1.8.12-1ubuntu5
+Pin-Priority: 9999
+
+Package: dconf-gsettings-backend
+Pin: version 0.22.0-1
+Pin-Priority: 9999
+
+Package: dconf-service
+Pin: version 0.22.0-1
+Pin-Priority: 9999
+
+Package: debconf
+Pin: version 1.5.55ubuntu2
+Pin-Priority: 9999
+
+Package: debhelper
+Pin: version 9.20150101ubuntu1
+Pin-Priority: 9999
+
+Package: debianutils
+Pin: version 4.4
+Pin-Priority: 9999
+
+Package: dh-apparmor
+Pin: version 2.9.1-0ubuntu9
+Pin-Priority: 9999
+
+Package: diffutils
+Pin: version 1:3.3-1
+Pin-Priority: 9999
+
+Package: dmsetup
+Pin: version 2:1.02.90-2ubuntu1
+Pin-Priority: 9999
+
+Package: dpkg
+Pin: version 1.17.25ubuntu1.1
+Pin-Priority: 9999
+
+Package: dpkg-dev
+Pin: version 1.17.25ubuntu1.1
+Pin-Priority: 9999
+
+Package: e2fslibs
+Pin: version 1.42.12-1ubuntu2
+Pin-Priority: 9999
+
+Package: e2fsprogs
+Pin: version 1.42.12-1ubuntu2
+Pin-Priority: 9999
+
+Package: fakeroot
+Pin: version 1.20.2-1ubuntu1
+Pin-Priority: 9999
+
+Package: faketime
+Pin: version 0.9.6-4
+Pin-Priority: 9999
+
+Package: file
+Pin: version 1:5.20-1ubuntu2
+Pin-Priority: 9999
+
+Package: findutils
+Pin: version 4.4.2-9build1
+Pin-Priority: 9999
+
+Package: fontconfig
+Pin: version 2.11.1-0ubuntu6
+Pin-Priority: 9999
+
+Package: fontconfig-config
+Pin: version 2.11.1-0ubuntu6
+Pin-Priority: 9999
+
+Package: fonts-dejavu-core
+Pin: version 2.34-1ubuntu1
+Pin-Priority: 9999
+
+Package: g++
+Pin: version 4:4.9.2-2ubuntu2
+Pin-Priority: 9999
+
+Package: g++-4.9
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: gcc
+Pin: version 4:4.9.2-2ubuntu2
+Pin-Priority: 9999
+
+Package: gcc-4.9
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: gcc-4.9-base
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: gcc-5-base
+Pin: version 5.1~rc1-0ubuntu1.1
+Pin-Priority: 9999
+
+Package: gccgo
+Pin: version 4:5-2ubuntu2
+Pin-Priority: 9999
+
+Package: gccgo-5
+Pin: version 5.1~rc1-0ubuntu1.1
+Pin-Priority: 9999
+
+Package: gettext
+Pin: version 0.19.2-2ubuntu1
+Pin-Priority: 9999
+
+Package: gettext-base
+Pin: version 0.19.2-2ubuntu1
+Pin-Priority: 9999
+
+Package: gir1.2-atk-1.0
+Pin: version 2.14.0-1ubuntu1
+Pin-Priority: 9999
+
+Package: gir1.2-atspi-2.0
+Pin: version 2.14.0-1ubuntu2
+Pin-Priority: 9999
+
+Package: gir1.2-freedesktop
+Pin: version 1.42.0-2.2
+Pin-Priority: 9999
+
+Package: gir1.2-gdkpixbuf-2.0
+Pin: version 2.31.3-1ubuntu0.2
+Pin-Priority: 9999
+
+Package: gir1.2-glib-2.0
+Pin: version 1.42.0-2.2
+Pin-Priority: 9999
+
+Package: gir1.2-gtk-3.0
+Pin: version 3.14.13-0ubuntu1
+Pin-Priority: 9999
+
+Package: gir1.2-pango-1.0
+Pin: version 1.36.8-3
+Pin-Priority: 9999
+
+Package: git
+Pin: version 1:2.1.4-2.1ubuntu0.1
+Pin-Priority: 9999
+
+Package: git-man
+Pin: version 1:2.1.4-2.1ubuntu0.1
+Pin-Priority: 9999
+
+Package: glib-networking
+Pin: version 2.44.0-1
+Pin-Priority: 9999
+
+Package: glib-networking-common
+Pin: version 2.44.0-1
+Pin-Priority: 9999
+
+Package: glib-networking-services
+Pin: version 2.44.0-1
+Pin-Priority: 9999
+
+Package: gnupg
+Pin: version 1.4.18-7ubuntu1
+Pin-Priority: 9999
+
+Package: gpgv
+Pin: version 1.4.18-7ubuntu1
+Pin-Priority: 9999
+
+Package: grep
+Pin: version 2.20-4.1
+Pin-Priority: 9999
+
+Package: groff-base
+Pin: version 1.22.3-1
+Pin-Priority: 9999
+
+Package: gsettings-desktop-schemas
+Pin: version 3.14.1-1ubuntu2
+Pin-Priority: 9999
+
+Package: gzip
+Pin: version 1.6-4ubuntu1
+Pin-Priority: 9999
+
+Package: hicolor-icon-theme
+Pin: version 0.14-0ubuntu1
+Pin-Priority: 9999
+
+Package: hostname
+Pin: version 3.15ubuntu2
+Pin-Priority: 9999
+
+Package: ifupdown
+Pin: version 0.7.48.1ubuntu10
+Pin-Priority: 9999
+
+Package: init
+Pin: version 1.22ubuntu11
+Pin-Priority: 9999
+
+Package: initscripts
+Pin: version 2.88dsf-53.2ubuntu12
+Pin-Priority: 9999
+
+Package: insserv
+Pin: version 1.14.0-5ubuntu3
+Pin-Priority: 9999
+
+Package: intltool-debian
+Pin: version 0.35.0+20060710.1
+Pin-Priority: 9999
+
+Package: iproute2
+Pin: version 3.16.0-2ubuntu1.1
+Pin-Priority: 9999
+
+Package: isc-dhcp-client
+Pin: version 4.3.1-5ubuntu2.3
+Pin-Priority: 9999
+
+Package: isc-dhcp-common
+Pin: version 4.3.1-5ubuntu2.3
+Pin-Priority: 9999
+
+Package: krb5-locales
+Pin: version 1.12.1+dfsg-18ubuntu0.1
+Pin-Priority: 9999
+
+Package: less
+Pin: version 458-3
+Pin-Priority: 9999
+
+Package: libacl1
+Pin: version 2.2.52-2
+Pin-Priority: 9999
+
+Package: libalgorithm-c3-perl
+Pin: version 0.09-1
+Pin-Priority: 9999
+
+Package: libalgorithm-diff-perl
+Pin: version 1.19.02-3
+Pin-Priority: 9999
+
+Package: libalgorithm-diff-xs-perl
+Pin: version 0.04-3build1
+Pin-Priority: 9999
+
+Package: libalgorithm-merge-perl
+Pin: version 0.08-2
+Pin-Priority: 9999
+
+Package: libapparmor1
+Pin: version 2.9.1-0ubuntu9
+Pin-Priority: 9999
+
+Package: libapt-pkg4.12
+Pin: version 1.0.9.7ubuntu4.2
+Pin-Priority: 9999
+
+Package: libarchive-extract-perl
+Pin: version 0.72-1
+Pin-Priority: 9999
+
+Package: libasan1
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libasn1-8-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: libasprintf-dev
+Pin: version 0.19.2-2ubuntu1
+Pin-Priority: 9999
+
+Package: libasprintf0c2
+Pin: version 0.19.2-2ubuntu1
+Pin-Priority: 9999
+
+Package: libatk-bridge2.0-0
+Pin: version 2.14.0-2ubuntu1
+Pin-Priority: 9999
+
+Package: libatk-bridge2.0-dev
+Pin: version 2.14.0-2ubuntu1
+Pin-Priority: 9999
+
+Package: libatk1.0-0
+Pin: version 2.14.0-1ubuntu1
+Pin-Priority: 9999
+
+Package: libatk1.0-data
+Pin: version 2.14.0-1ubuntu1
+Pin-Priority: 9999
+
+Package: libatk1.0-dev
+Pin: version 2.14.0-1ubuntu1
+Pin-Priority: 9999
+
+Package: libatm1
+Pin: version 1:2.5.1-1.5
+Pin-Priority: 9999
+
+Package: libatomic1
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libatspi2.0-0
+Pin: version 2.14.0-1ubuntu2
+Pin-Priority: 9999
+
+Package: libatspi2.0-dev
+Pin: version 2.14.0-1ubuntu2
+Pin-Priority: 9999
+
+Package: libattr1
+Pin: version 1:2.4.47-2
+Pin-Priority: 9999
+
+Package: libaudit-common
+Pin: version 1:2.3.7-1ubuntu2
+Pin-Priority: 9999
+
+Package: libaudit1
+Pin: version 1:2.3.7-1ubuntu2
+Pin-Priority: 9999
+
+Package: libavahi-client3
+Pin: version 0.6.31-4ubuntu4
+Pin-Priority: 9999
+
+Package: libavahi-common-data
+Pin: version 0.6.31-4ubuntu4
+Pin-Priority: 9999
+
+Package: libavahi-common3
+Pin: version 0.6.31-4ubuntu4
+Pin-Priority: 9999
+
+Package: libblkid1
+Pin: version 2.25.2-4ubuntu3
+Pin-Priority: 9999
+
+Package: libboost-filesystem1.55.0
+Pin: version 1.55.0+dfsg-3ubuntu2
+Pin-Priority: 9999
+
+Package: libboost-system1.55.0
+Pin: version 1.55.0+dfsg-3ubuntu2
+Pin-Priority: 9999
+
+Package: libbz2-1.0
+Pin: version 1.0.6-7
+Pin-Priority: 9999
+
+Package: libc-bin
+Pin: version 2.21-0ubuntu4
+Pin-Priority: 9999
+
+Package: libc-dev-bin
+Pin: version 2.21-0ubuntu4
+Pin-Priority: 9999
+
+Package: libc6
+Pin: version 2.21-0ubuntu4
+Pin-Priority: 9999
+
+Package: libc6-dev
+Pin: version 2.21-0ubuntu4
+Pin-Priority: 9999
+
+Package: libcairo-gobject2
+Pin: version 1.14.2-1ubuntu1
+Pin-Priority: 9999
+
+Package: libcairo-script-interpreter2
+Pin: version 1.14.2-1ubuntu1
+Pin-Priority: 9999
+
+Package: libcairo2
+Pin: version 1.14.2-1ubuntu1
+Pin-Priority: 9999
+
+Package: libcairo2-dev
+Pin: version 1.14.2-1ubuntu1
+Pin-Priority: 9999
+
+Package: libcap-ng0
+Pin: version 0.7.4-2
+Pin-Priority: 9999
+
+Package: libcap2
+Pin: version 1:2.24-6
+Pin-Priority: 9999
+
+Package: libcap2-bin
+Pin: version 1:2.24-6
+Pin-Priority: 9999
+
+Package: libcc1-0
+Pin: version 5.1~rc1-0ubuntu1.1
+Pin-Priority: 9999
+
+Package: libcgi-fast-perl
+Pin: version 1:2.04-1
+Pin-Priority: 9999
+
+Package: libcgi-pm-perl
+Pin: version 4.09-2
+Pin-Priority: 9999
+
+Package: libcilkrts5
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libclass-c3-perl
+Pin: version 0.26-1
+Pin-Priority: 9999
+
+Package: libclass-c3-xs-perl
+Pin: version 0.13-2build1
+Pin-Priority: 9999
+
+Package: libcloog-isl4
+Pin: version 0.18.2-3
+Pin-Priority: 9999
+
+Package: libcolord2
+Pin: version 1.2.8-0ubuntu1
+Pin-Priority: 9999
+
+Package: libcolorhug2
+Pin: version 1.2.8-0ubuntu1
+Pin-Priority: 9999
+
+Package: libcomerr2
+Pin: version 1.42.12-1ubuntu2
+Pin-Priority: 9999
+
+Package: libcpan-meta-perl
+Pin: version 2.142690-1
+Pin-Priority: 9999
+
+Package: libcroco3
+Pin: version 0.6.8-3
+Pin-Priority: 9999
+
+Package: libcryptsetup4
+Pin: version 2:1.6.1-1ubuntu7
+Pin-Priority: 9999
+
+Package: libcups2
+Pin: version 2.0.2-1ubuntu3.2
+Pin-Priority: 9999
+
+Package: libcurl3
+Pin: version 7.38.0-3ubuntu2.3
+Pin-Priority: 9999
+
+Package: libcurl3-gnutls
+Pin: version 7.38.0-3ubuntu2.3
+Pin-Priority: 9999
+
+Package: libdata-optlist-perl
+Pin: version 0.109-1
+Pin-Priority: 9999
+
+Package: libdata-section-perl
+Pin: version 0.200006-1
+Pin-Priority: 9999
+
+Package: libdatrie1
+Pin: version 0.2.8-1
+Pin-Priority: 9999
+
+Package: libdb5.3
+Pin: version 5.3.28-9
+Pin-Priority: 9999
+
+Package: libdbus-1-3
+Pin: version 1.8.12-1ubuntu5
+Pin-Priority: 9999
+
+Package: libdbus-1-dev
+Pin: version 1.8.12-1ubuntu5
+Pin-Priority: 9999
+
+Package: libdbus-glib-1-2
+Pin: version 0.102-1
+Pin-Priority: 9999
+
+Package: libdbus-glib-1-dev
+Pin: version 0.102-1
+Pin-Priority: 9999
+
+Package: libdconf1
+Pin: version 0.22.0-1
+Pin-Priority: 9999
+
+Package: libdebconfclient0
+Pin: version 0.192ubuntu1
+Pin-Priority: 9999
+
+Package: libdevmapper1.02.1
+Pin: version 2:1.02.90-2ubuntu1
+Pin-Priority: 9999
+
+Package: libdns-export100
+Pin: version 1:9.9.5.dfsg-9ubuntu0.5
+Pin-Priority: 9999
+
+Package: libdpkg-perl
+Pin: version 1.17.25ubuntu1.1
+Pin-Priority: 9999
+
+Package: libedit2
+Pin: version 3.1-20140620-2
+Pin-Priority: 9999
+
+Package: libelf1
+Pin: version 0.160-0ubuntu3
+Pin-Priority: 9999
+
+Package: liberror-perl
+Pin: version 0.17-1.1
+Pin-Priority: 9999
+
+Package: libexif12
+Pin: version 0.6.21-2
+Pin-Priority: 9999
+
+Package: libexpat1
+Pin: version 2.1.0-6ubuntu1.1
+Pin-Priority: 9999
+
+Package: libexpat1-dev
+Pin: version 2.1.0-6ubuntu1.1
+Pin-Priority: 9999
+
+Package: libfakeroot
+Pin: version 1.20.2-1ubuntu1
+Pin-Priority: 9999
+
+Package: libfaketime
+Pin: version 0.9.6-4
+Pin-Priority: 9999
+
+Package: libfcgi-perl
+Pin: version 0.77-1
+Pin-Priority: 9999
+
+Package: libffi6
+Pin: version 3.2.1-2
+Pin-Priority: 9999
+
+Package: libfile-fcntllock-perl
+Pin: version 0.22-1build1
+Pin-Priority: 9999
+
+Package: libfontconfig1
+Pin: version 2.11.1-0ubuntu6
+Pin-Priority: 9999
+
+Package: libfontconfig1-dev
+Pin: version 2.11.1-0ubuntu6
+Pin-Priority: 9999
+
+Package: libfreetype6
+Pin: version 2.5.2-2ubuntu3.1
+Pin-Priority: 9999
+
+Package: libfreetype6-dev
+Pin: version 2.5.2-2ubuntu3.1
+Pin-Priority: 9999
+
+Package: libgcc-4.9-dev
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libgcc1
+Pin: version 1:5.1~rc1-0ubuntu1.1
+Pin-Priority: 9999
+
+Package: libgcrypt20
+Pin: version 1.6.2-4ubuntu2
+Pin-Priority: 9999
+
+Package: libgd3
+Pin: version 2.1.0-5
+Pin-Priority: 9999
+
+Package: libgdbm3
+Pin: version 1.8.3-13.1
+Pin-Priority: 9999
+
+Package: libgdk-pixbuf2.0-0
+Pin: version 2.31.3-1ubuntu0.2
+Pin-Priority: 9999
+
+Package: libgdk-pixbuf2.0-common
+Pin: version 2.31.3-1ubuntu0.2
+Pin-Priority: 9999
+
+Package: libgdk-pixbuf2.0-dev
+Pin: version 2.31.3-1ubuntu0.2
+Pin-Priority: 9999
+
+Package: libgettextpo-dev
+Pin: version 0.19.2-2ubuntu1
+Pin-Priority: 9999
+
+Package: libgettextpo0
+Pin: version 0.19.2-2ubuntu1
+Pin-Priority: 9999
+
+Package: libgirepository-1.0-1
+Pin: version 1.42.0-2.2
+Pin-Priority: 9999
+
+Package: libglib2.0-0
+Pin: version 2.44.1-1ubuntu1
+Pin-Priority: 9999
+
+Package: libglib2.0-bin
+Pin: version 2.44.1-1ubuntu1
+Pin-Priority: 9999
+
+Package: libglib2.0-data
+Pin: version 2.44.1-1ubuntu1
+Pin-Priority: 9999
+
+Package: libglib2.0-dev
+Pin: version 2.44.1-1ubuntu1
+Pin-Priority: 9999
+
+Package: libgmp10
+Pin: version 2:6.0.0+dfsg-6ubuntu1
+Pin-Priority: 9999
+
+Package: libgnutls-deb0-28
+Pin: version 3.3.8-3ubuntu3.2
+Pin-Priority: 9999
+
+Package: libgo7
+Pin: version 5.1~rc1-0ubuntu1.1
+Pin-Priority: 9999
+
+Package: libgomp1
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libgpg-error0
+Pin: version 1.17-3ubuntu1
+Pin-Priority: 9999
+
+Package: libgphoto2-6
+Pin: version 2.5.4-1.1ubuntu1
+Pin-Priority: 9999
+
+Package: libgphoto2-l10n
+Pin: version 2.5.4-1.1ubuntu1
+Pin-Priority: 9999
+
+Package: libgphoto2-port10
+Pin: version 2.5.4-1.1ubuntu1
+Pin-Priority: 9999
+
+Package: libgraphite2-3
+Pin: version 1.2.4-3ubuntu1
+Pin-Priority: 9999
+
+Package: libgssapi-krb5-2
+Pin: version 1.12.1+dfsg-18ubuntu0.1
+Pin-Priority: 9999
+
+Package: libgssapi3-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: libgtk-3-0
+Pin: version 3.14.13-0ubuntu1
+Pin-Priority: 9999
+
+Package: libgtk-3-bin
+Pin: version 3.14.13-0ubuntu1
+Pin-Priority: 9999
+
+Package: libgtk-3-common
+Pin: version 3.14.13-0ubuntu1
+Pin-Priority: 9999
+
+Package: libgtk-3-dev
+Pin: version 3.14.13-0ubuntu1
+Pin-Priority: 9999
+
+Package: libgudev-1.0-0
+Pin: version 1:219-7ubuntu6
+Pin-Priority: 9999
+
+Package: libgusb2
+Pin: version 0.2.2-1
+Pin-Priority: 9999
+
+Package: libharfbuzz-dev
+Pin: version 0.9.37-1
+Pin-Priority: 9999
+
+Package: libharfbuzz-gobject0
+Pin: version 0.9.37-1
+Pin-Priority: 9999
+
+Package: libharfbuzz-icu0
+Pin: version 0.9.37-1
+Pin-Priority: 9999
+
+Package: libharfbuzz0b
+Pin: version 0.9.37-1
+Pin-Priority: 9999
+
+Package: libhcrypto4-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: libheimbase1-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: libheimntlm0-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: libhogweed2
+Pin: version 2.7.1-5
+Pin-Priority: 9999
+
+Package: libhx509-5-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: libice-dev
+Pin: version 2:1.0.9-1
+Pin-Priority: 9999
+
+Package: libice6
+Pin: version 2:1.0.9-1
+Pin-Priority: 9999
+
+Package: libicu52
+Pin: version 52.1-8ubuntu0.2
+Pin-Priority: 9999
+
+Package: libidn11
+Pin: version 1.28-1ubuntu2
+Pin-Priority: 9999
+
+Package: libieee1284-3
+Pin: version 0.2.11-12
+Pin-Priority: 9999
+
+Package: libirs-export91
+Pin: version 1:9.9.5.dfsg-9ubuntu0.5
+Pin-Priority: 9999
+
+Package: libisc-export95
+Pin: version 1:9.9.5.dfsg-9ubuntu0.5
+Pin-Priority: 9999
+
+Package: libisccfg-export90
+Pin: version 1:9.9.5.dfsg-9ubuntu0.5
+Pin-Priority: 9999
+
+Package: libisl13
+Pin: version 0.14-1
+Pin-Priority: 9999
+
+Package: libitm1
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libjasper1
+Pin: version 1.900.1-debian1-2.4
+Pin-Priority: 9999
+
+Package: libjbig0
+Pin: version 2.1-3.1
+Pin-Priority: 9999
+
+Package: libjpeg-turbo8
+Pin: version 1.3.0-0ubuntu2
+Pin-Priority: 9999
+
+Package: libjpeg8
+Pin: version 8c-2ubuntu8
+Pin-Priority: 9999
+
+Package: libjs-jquery
+Pin: version 1.7.2+dfsg-3ubuntu2
+Pin-Priority: 9999
+
+Package: libjson-glib-1.0-0
+Pin: version 1.0.2-1
+Pin-Priority: 9999
+
+Package: libjson-glib-1.0-common
+Pin: version 1.0.2-1
+Pin-Priority: 9999
+
+Package: libk5crypto3
+Pin: version 1.12.1+dfsg-18ubuntu0.1
+Pin-Priority: 9999
+
+Package: libkeyutils1
+Pin: version 1.5.9-5ubuntu1
+Pin-Priority: 9999
+
+Package: libkmod2
+Pin: version 18-3ubuntu1
+Pin-Priority: 9999
+
+Package: libkrb5-26-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: libkrb5-3
+Pin: version 1.12.1+dfsg-18ubuntu0.1
+Pin-Priority: 9999
+
+Package: libkrb5support0
+Pin: version 1.12.1+dfsg-18ubuntu0.1
+Pin-Priority: 9999
+
+Package: liblcms2-2
+Pin: version 2.6-3ubuntu2
+Pin-Priority: 9999
+
+Package: libldap-2.4-2
+Pin: version 2.4.31-1+nmu2ubuntu12.3
+Pin-Priority: 9999
+
+Package: liblog-message-perl
+Pin: version 0.8-1
+Pin-Priority: 9999
+
+Package: liblog-message-simple-perl
+Pin: version 0.10-2
+Pin-Priority: 9999
+
+Package: liblsan0
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libltdl7
+Pin: version 2.4.2-1.11
+Pin-Priority: 9999
+
+Package: liblzma5
+Pin: version 5.1.1alpha+20120614-2ubuntu2
+Pin-Priority: 9999
+
+Package: liblzo2-2
+Pin: version 2.08-1.2
+Pin-Priority: 9999
+
+Package: libmagic1
+Pin: version 1:5.20-1ubuntu2
+Pin-Priority: 9999
+
+Package: libmail-sendmail-perl
+Pin: version 0.79.16-1
+Pin-Priority: 9999
+
+Package: libmirclient-dev
+Pin: version 0.12.1+15.04.20150324-0ubuntu1
+Pin-Priority: 9999
+
+Package: libmirclient8
+Pin: version 0.12.1+15.04.20150324-0ubuntu1
+Pin-Priority: 9999
+
+Package: libmircommon-dev
+Pin: version 0.12.1+15.04.20150324-0ubuntu1
+Pin-Priority: 9999
+
+Package: libmircommon3
+Pin: version 0.12.1+15.04.20150324-0ubuntu1
+Pin-Priority: 9999
+
+Package: libmirprotobuf0
+Pin: version 0.12.1+15.04.20150324-0ubuntu1
+Pin-Priority: 9999
+
+Package: libmodule-build-perl
+Pin: version 0.421000-2
+Pin-Priority: 9999
+
+Package: libmodule-pluggable-perl
+Pin: version 5.1-1
+Pin-Priority: 9999
+
+Package: libmodule-signature-perl
+Pin: version 0.73-1ubuntu0.15.04.1
+Pin-Priority: 9999
+
+Package: libmount1
+Pin: version 2.25.2-4ubuntu3
+Pin-Priority: 9999
+
+Package: libmpc3
+Pin: version 1.0.3-1
+Pin-Priority: 9999
+
+Package: libmpfr4
+Pin: version 3.1.2-3
+Pin-Priority: 9999
+
+Package: libmro-compat-perl
+Pin: version 0.12-1
+Pin-Priority: 9999
+
+Package: libncurses5
+Pin: version 5.9+20140712-2ubuntu2
+Pin-Priority: 9999
+
+Package: libncursesw5
+Pin: version 5.9+20140712-2ubuntu2
+Pin-Priority: 9999
+
+Package: libnettle4
+Pin: version 2.7.1-5
+Pin-Priority: 9999
+
+Package: libp11-kit0
+Pin: version 0.20.7-1
+Pin-Priority: 9999
+
+Package: libpackage-constants-perl
+Pin: version 0.04-1
+Pin-Priority: 9999
+
+Package: libpam-modules
+Pin: version 1.1.8-3.1ubuntu3
+Pin-Priority: 9999
+
+Package: libpam-modules-bin
+Pin: version 1.1.8-3.1ubuntu3
+Pin-Priority: 9999
+
+Package: libpam-runtime
+Pin: version 1.1.8-3.1ubuntu3
+Pin-Priority: 9999
+
+Package: libpam-systemd
+Pin: version 219-7ubuntu6
+Pin-Priority: 9999
+
+Package: libpam0g
+Pin: version 1.1.8-3.1ubuntu3
+Pin-Priority: 9999
+
+Package: libpango-1.0-0
+Pin: version 1.36.8-3
+Pin-Priority: 9999
+
+Package: libpango1.0-dev
+Pin: version 1.36.8-3
+Pin-Priority: 9999
+
+Package: libpangocairo-1.0-0
+Pin: version 1.36.8-3
+Pin-Priority: 9999
+
+Package: libpangoft2-1.0-0
+Pin: version 1.36.8-3
+Pin-Priority: 9999
+
+Package: libpangoxft-1.0-0
+Pin: version 1.36.8-3
+Pin-Priority: 9999
+
+Package: libparams-util-perl
+Pin: version 1.07-2build1
+Pin-Priority: 9999
+
+Package: libpcre3
+Pin: version 2:8.35-3.3ubuntu1.1
+Pin-Priority: 9999
+
+Package: libpcre3-dev
+Pin: version 2:8.35-3.3ubuntu1.1
+Pin-Priority: 9999
+
+Package: libpcrecpp0
+Pin: version 2:8.35-3.3ubuntu1.1
+Pin-Priority: 9999
+
+Package: libpipeline1
+Pin: version 1.4.0-1
+Pin-Priority: 9999
+
+Package: libpixman-1-0
+Pin: version 0.32.6-3
+Pin-Priority: 9999
+
+Package: libpixman-1-dev
+Pin: version 0.32.6-3
+Pin-Priority: 9999
+
+Package: libpng12-0
+Pin: version 1.2.51-0ubuntu3.15.04.2
+Pin-Priority: 9999
+
+Package: libpng12-dev
+Pin: version 1.2.51-0ubuntu3.15.04.2
+Pin-Priority: 9999
+
+Package: libpod-latex-perl
+Pin: version 0.61-1
+Pin-Priority: 9999
+
+Package: libpod-readme-perl
+Pin: version 0.11-1
+Pin-Priority: 9999
+
+Package: libpolkit-agent-1-0
+Pin: version 0.105-8ubuntu5
+Pin-Priority: 9999
+
+Package: libpolkit-backend-1-0
+Pin: version 0.105-8ubuntu5
+Pin-Priority: 9999
+
+Package: libpolkit-gobject-1-0
+Pin: version 0.105-8ubuntu5
+Pin-Priority: 9999
+
+Package: libpopt0
+Pin: version 1.16-10
+Pin-Priority: 9999
+
+Package: libprocps3
+Pin: version 1:3.3.9-1ubuntu8
+Pin-Priority: 9999
+
+Package: libprotobuf-dev
+Pin: version 2.6.1-1
+Pin-Priority: 9999
+
+Package: libprotobuf-lite9
+Pin: version 2.6.1-1
+Pin-Priority: 9999
+
+Package: libprotobuf9
+Pin: version 2.6.1-1
+Pin-Priority: 9999
+
+Package: libproxy1
+Pin: version 0.4.11-4ubuntu2
+Pin-Priority: 9999
+
+Package: libpthread-stubs0-dev
+Pin: version 0.3-4
+Pin-Priority: 9999
+
+Package: libpython-stdlib
+Pin: version 2.7.9-1
+Pin-Priority: 9999
+
+Package: libpython2.7-minimal
+Pin: version 2.7.9-2ubuntu3
+Pin-Priority: 9999
+
+Package: libpython2.7-stdlib
+Pin: version 2.7.9-2ubuntu3
+Pin-Priority: 9999
+
+Package: libquadmath0
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libreadline6
+Pin: version 6.3-8ubuntu1
+Pin-Priority: 9999
+
+Package: libregexp-common-perl
+Pin: version 2013031301-1
+Pin-Priority: 9999
+
+Package: librest-0.7-0
+Pin: version 0.7.92-3
+Pin-Priority: 9999
+
+Package: libroken18-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: librtmp1
+Pin: version 2.4+20131018.git79459a2-5
+Pin-Priority: 9999
+
+Package: libruby2.1
+Pin: version 2.1.2-2ubuntu3
+Pin-Priority: 9999
+
+Package: libsane
+Pin: version 1.0.24-4ubuntu1
+Pin-Priority: 9999
+
+Package: libsane-common
+Pin: version 1.0.24-4ubuntu1
+Pin-Priority: 9999
+
+Package: libsasl2-2
+Pin: version 2.1.26.dfsg1-13ubuntu0.1
+Pin-Priority: 9999
+
+Package: libsasl2-modules
+Pin: version 2.1.26.dfsg1-13ubuntu0.1
+Pin-Priority: 9999
+
+Package: libsasl2-modules-db
+Pin: version 2.1.26.dfsg1-13ubuntu0.1
+Pin-Priority: 9999
+
+Package: libselinux1
+Pin: version 2.3-2
+Pin-Priority: 9999
+
+Package: libsemanage-common
+Pin: version 2.3-1build1
+Pin-Priority: 9999
+
+Package: libsemanage1
+Pin: version 2.3-1build1
+Pin-Priority: 9999
+
+Package: libsepol1
+Pin: version 2.3-2
+Pin-Priority: 9999
+
+Package: libslang2
+Pin: version 2.3.0-2ubuntu1
+Pin-Priority: 9999
+
+Package: libsm-dev
+Pin: version 2:1.2.2-1
+Pin-Priority: 9999
+
+Package: libsm6
+Pin: version 2:1.2.2-1
+Pin-Priority: 9999
+
+Package: libsmartcols1
+Pin: version 2.25.2-4ubuntu3
+Pin-Priority: 9999
+
+Package: libsoftware-license-perl
+Pin: version 0.103010-3
+Pin-Priority: 9999
+
+Package: libsoup-gnome2.4-1
+Pin: version 2.49.92-1
+Pin-Priority: 9999
+
+Package: libsoup2.4-1
+Pin: version 2.49.92-1
+Pin-Priority: 9999
+
+Package: libsqlite3-0
+Pin: version 3.8.7.4-1ubuntu0.1
+Pin-Priority: 9999
+
+Package: libss2
+Pin: version 1.42.12-1ubuntu2
+Pin-Priority: 9999
+
+Package: libssl1.0.0
+Pin: version 1.0.1f-1ubuntu11.5
+Pin-Priority: 9999
+
+Package: libstdc++-4.9-dev
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libstdc++6
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libsub-exporter-perl
+Pin: version 0.986-1
+Pin-Priority: 9999
+
+Package: libsub-install-perl
+Pin: version 0.928-1
+Pin-Priority: 9999
+
+Package: libsys-hostname-long-perl
+Pin: version 1.4-3
+Pin-Priority: 9999
+
+Package: libsystemd0
+Pin: version 219-7ubuntu6
+Pin-Priority: 9999
+
+Package: libtasn1-6
+Pin: version 4.2-2ubuntu1.1
+Pin-Priority: 9999
+
+Package: libterm-ui-perl
+Pin: version 0.42-1
+Pin-Priority: 9999
+
+Package: libtext-soundex-perl
+Pin: version 3.4-1build2
+Pin-Priority: 9999
+
+Package: libtext-template-perl
+Pin: version 1.46-1
+Pin-Priority: 9999
+
+Package: libthai-data
+Pin: version 0.1.21-1
+Pin-Priority: 9999
+
+Package: libthai0
+Pin: version 0.1.21-1
+Pin-Priority: 9999
+
+Package: libtiff5
+Pin: version 4.0.3-12.3ubuntu2
+Pin-Priority: 9999
+
+Package: libtimedate-perl
+Pin: version 2.3000-2
+Pin-Priority: 9999
+
+Package: libtinfo5
+Pin: version 5.9+20140712-2ubuntu2
+Pin-Priority: 9999
+
+Package: libtsan0
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libubsan0
+Pin: version 4.9.2-10ubuntu13
+Pin-Priority: 9999
+
+Package: libudev1
+Pin: version 219-7ubuntu6
+Pin-Priority: 9999
+
+Package: libunistring0
+Pin: version 0.9.3-5.2ubuntu1
+Pin-Priority: 9999
+
+Package: libusb-0.1-4
+Pin: version 2:0.1.12-25
+Pin-Priority: 9999
+
+Package: libusb-1.0-0
+Pin: version 2:1.0.19-1
+Pin-Priority: 9999
+
+Package: libustr-1.0-1
+Pin: version 1.0.4-3ubuntu2
+Pin-Priority: 9999
+
+Package: libuuid1
+Pin: version 2.25.2-4ubuntu3
+Pin-Priority: 9999
+
+Package: libv4l-0
+Pin: version 1.6.0-2
+Pin-Priority: 9999
+
+Package: libv4lconvert0
+Pin: version 1.6.0-2
+Pin-Priority: 9999
+
+Package: libvpx1
+Pin: version 1.3.0-3ubuntu1
+Pin-Priority: 9999
+
+Package: libwayland-client0
+Pin: version 1.7.0-0ubuntu1
+Pin-Priority: 9999
+
+Package: libwayland-cursor0
+Pin: version 1.7.0-0ubuntu1
+Pin-Priority: 9999
+
+Package: libwayland-dev
+Pin: version 1.7.0-0ubuntu1
+Pin-Priority: 9999
+
+Package: libwayland-server0
+Pin: version 1.7.0-0ubuntu1
+Pin-Priority: 9999
+
+Package: libwind0-heimdal
+Pin: version 1.6~rc2+dfsg-9
+Pin-Priority: 9999
+
+Package: libx11-6
+Pin: version 2:1.6.2-2ubuntu2
+Pin-Priority: 9999
+
+Package: libx11-data
+Pin: version 2:1.6.2-2ubuntu2
+Pin-Priority: 9999
+
+Package: libx11-dev
+Pin: version 2:1.6.2-2ubuntu2
+Pin-Priority: 9999
+
+Package: libx11-doc
+Pin: version 2:1.6.2-2ubuntu2
+Pin-Priority: 9999
+
+Package: libxau-dev
+Pin: version 1:1.0.8-1
+Pin-Priority: 9999
+
+Package: libxau6
+Pin: version 1:1.0.8-1
+Pin-Priority: 9999
+
+Package: libxcb-render0
+Pin: version 1.10-2ubuntu1
+Pin-Priority: 9999
+
+Package: libxcb-render0-dev
+Pin: version 1.10-2ubuntu1
+Pin-Priority: 9999
+
+Package: libxcb-shm0
+Pin: version 1.10-2ubuntu1
+Pin-Priority: 9999
+
+Package: libxcb-shm0-dev
+Pin: version 1.10-2ubuntu1
+Pin-Priority: 9999
+
+Package: libxcb1
+Pin: version 1.10-2ubuntu1
+Pin-Priority: 9999
+
+Package: libxcb1-dev
+Pin: version 1.10-2ubuntu1
+Pin-Priority: 9999
+
+Package: libxcomposite-dev
+Pin: version 1:0.4.4-1
+Pin-Priority: 9999
+
+Package: libxcomposite1
+Pin: version 1:0.4.4-1
+Pin-Priority: 9999
+
+Package: libxcursor-dev
+Pin: version 1:1.1.14-1
+Pin-Priority: 9999
+
+Package: libxcursor1
+Pin: version 1:1.1.14-1
+Pin-Priority: 9999
+
+Package: libxdamage-dev
+Pin: version 1:1.1.4-2
+Pin-Priority: 9999
+
+Package: libxdamage1
+Pin: version 1:1.1.4-2
+Pin-Priority: 9999
+
+Package: libxdmcp-dev
+Pin: version 1:1.1.1-1build1
+Pin-Priority: 9999
+
+Package: libxdmcp6
+Pin: version 1:1.1.1-1build1
+Pin-Priority: 9999
+
+Package: libxext-dev
+Pin: version 2:1.3.3-1
+Pin-Priority: 9999
+
+Package: libxext6
+Pin: version 2:1.3.3-1
+Pin-Priority: 9999
+
+Package: libxfixes-dev
+Pin: version 1:5.0.1-2
+Pin-Priority: 9999
+
+Package: libxfixes3
+Pin: version 1:5.0.1-2
+Pin-Priority: 9999
+
+Package: libxft-dev
+Pin: version 2.3.2-1
+Pin-Priority: 9999
+
+Package: libxft2
+Pin: version 2.3.2-1
+Pin-Priority: 9999
+
+Package: libxi-dev
+Pin: version 2:1.7.4-1
+Pin-Priority: 9999
+
+Package: libxi6
+Pin: version 2:1.7.4-1
+Pin-Priority: 9999
+
+Package: libxinerama-dev
+Pin: version 2:1.1.3-1
+Pin-Priority: 9999
+
+Package: libxinerama1
+Pin: version 2:1.1.3-1
+Pin-Priority: 9999
+
+Package: libxkbcommon-dev
+Pin: version 0.4.3-2
+Pin-Priority: 9999
+
+Package: libxkbcommon0
+Pin: version 0.4.3-2
+Pin-Priority: 9999
+
+Package: libxml2
+Pin: version 2.9.2+dfsg1-3ubuntu0.3
+Pin-Priority: 9999
+
+Package: libxmuu1
+Pin: version 2:1.1.2-1
+Pin-Priority: 9999
+
+Package: libxpm4
+Pin: version 1:3.5.11-1
+Pin-Priority: 9999
+
+Package: libxrandr-dev
+Pin: version 2:1.4.2-1
+Pin-Priority: 9999
+
+Package: libxrandr2
+Pin: version 2:1.4.2-1
+Pin-Priority: 9999
+
+Package: libxrender-dev
+Pin: version 1:0.9.8-1build1
+Pin-Priority: 9999
+
+Package: libxrender1
+Pin: version 1:0.9.8-1build1
+Pin-Priority: 9999
+
+Package: libxtables10
+Pin: version 1.4.21-2ubuntu2
+Pin-Priority: 9999
+
+Package: libxtst-dev
+Pin: version 2:1.2.2-1
+Pin-Priority: 9999
+
+Package: libxtst6
+Pin: version 2:1.2.2-1
+Pin-Priority: 9999
+
+Package: libyaml-0-2
+Pin: version 0.1.6-3
+Pin-Priority: 9999
+
+Package: linux-libc-dev
+Pin: version 3.19.0-73.81
+Pin-Priority: 9999
+
+Package: locales
+Pin: version 2.13+git20120306-19
+Pin-Priority: 9999
+
+Package: login
+Pin: version 1:4.1.5.1-1.1ubuntu4.1
+Pin-Priority: 9999
+
+Package: lsb-base
+Pin: version 4.1+Debian11ubuntu8
+Pin-Priority: 9999
+
+Package: make
+Pin: version 4.0-8.1
+Pin-Priority: 9999
+
+Package: makedev
+Pin: version 2.3.1-93ubuntu1
+Pin-Priority: 9999
+
+Package: man-db
+Pin: version 2.7.0.2-5
+Pin-Priority: 9999
+
+Package: manpages
+Pin: version 3.74-1ubuntu1
+Pin-Priority: 9999
+
+Package: manpages-dev
+Pin: version 3.74-1ubuntu1
+Pin-Priority: 9999
+
+Package: mawk
+Pin: version 1.3.3-17ubuntu2
+Pin-Priority: 9999
+
+Package: mime-support
+Pin: version 3.58ubuntu1
+Pin-Priority: 9999
+
+Package: mir-client-platform-mesa2
+Pin: version 0.12.1+15.04.20150324-0ubuntu1
+Pin-Priority: 9999
+
+Package: mount
+Pin: version 2.25.2-4ubuntu3
+Pin-Priority: 9999
+
+Package: multiarch-support
+Pin: version 2.21-0ubuntu4
+Pin-Priority: 9999
+
+Package: ncurses-base
+Pin: version 5.9+20140712-2ubuntu2
+Pin-Priority: 9999
+
+Package: ncurses-bin
+Pin: version 5.9+20140712-2ubuntu2
+Pin-Priority: 9999
+
+Package: netbase
+Pin: version 5.3
+Pin-Priority: 9999
+
+Package: openssh-client
+Pin: version 1:6.7p1-5ubuntu1.4
+Pin-Priority: 9999
+
+Package: openssl
+Pin: version 1.0.1f-1ubuntu11.5
+Pin-Priority: 9999
+
+Package: passwd
+Pin: version 1:4.1.5.1-1.1ubuntu4.1
+Pin-Priority: 9999
+
+Package: patch
+Pin: version 2.7.5-1
+Pin-Priority: 9999
+
+Package: perl
+Pin: version 5.20.2-2ubuntu0.1
+Pin-Priority: 9999
+
+Package: perl-base
+Pin: version 5.20.2-2ubuntu0.1
+Pin-Priority: 9999
+
+Package: perl-modules
+Pin: version 5.20.2-2ubuntu0.1
+Pin-Priority: 9999
+
+Package: pkg-config
+Pin: version 0.28-1ubuntu1
+Pin-Priority: 9999
+
+Package: po-debconf
+Pin: version 1.0.16+nmu3
+Pin-Priority: 9999
+
+Package: policykit-1
+Pin: version 0.105-8ubuntu5
+Pin-Priority: 9999
+
+Package: procps
+Pin: version 1:3.3.9-1ubuntu8
+Pin-Priority: 9999
+
+Package: python
+Pin: version 2.7.9-1
+Pin-Priority: 9999
+
+Package: python-minimal
+Pin: version 2.7.9-1
+Pin-Priority: 9999
+
+Package: python2.7
+Pin: version 2.7.9-2ubuntu3
+Pin-Priority: 9999
+
+Package: python2.7-minimal
+Pin: version 2.7.9-2ubuntu3
+Pin-Priority: 9999
+
+Package: readline-common
+Pin: version 6.3-8ubuntu1
+Pin-Priority: 9999
+
+Package: rename
+Pin: version 0.20-3
+Pin-Priority: 9999
+
+Package: rsync
+Pin: version 3.1.1-3ubuntu0.15.04.1
+Pin-Priority: 9999
+
+Package: ruby
+Pin: version 1:2.1.0.4ubuntu1
+Pin-Priority: 9999
+
+Package: ruby2.1
+Pin: version 2.1.2-2ubuntu3
+Pin-Priority: 9999
+
+Package: rubygems-integration
+Pin: version 1.8
+Pin-Priority: 9999
+
+Package: sed
+Pin: version 4.2.2-4ubuntu1
+Pin-Priority: 9999
+
+Package: sensible-utils
+Pin: version 0.0.9
+Pin-Priority: 9999
+
+Package: sgml-base
+Pin: version 1.26+nmu4ubuntu1
+Pin-Priority: 9999
+
+Package: shared-mime-info
+Pin: version 1.3-1
+Pin-Priority: 9999
+
+Package: systemd
+Pin: version 219-7ubuntu6
+Pin-Priority: 9999
+
+Package: systemd-sysv
+Pin: version 219-7ubuntu6
+Pin-Priority: 9999
+
+Package: sysv-rc
+Pin: version 2.88dsf-53.2ubuntu12
+Pin-Priority: 9999
+
+Package: sysvinit-utils
+Pin: version 2.88dsf-53.2ubuntu12
+Pin-Priority: 9999
+
+Package: tar
+Pin: version 1.27.1-2
+Pin-Priority: 9999
+
+Package: tzdata
+Pin: version 2015g-0ubuntu0.15.04
+Pin-Priority: 9999
+
+Package: ubuntu-keyring
+Pin: version 2012.05.19
+Pin-Priority: 9999
+
+Package: ucf
+Pin: version 3.0030
+Pin-Priority: 9999
+
+Package: udev
+Pin: version 219-7ubuntu6
+Pin-Priority: 9999
+
+Package: util-linux
+Pin: version 2.25.2-4ubuntu3
+Pin-Priority: 9999
+
+Package: x11-common
+Pin: version 1:7.7+7ubuntu4
+Pin-Priority: 9999
+
+Package: x11proto-composite-dev
+Pin: version 1:0.4.2-2
+Pin-Priority: 9999
+
+Package: x11proto-core-dev
+Pin: version 7.0.26-1
+Pin-Priority: 9999
+
+Package: x11proto-damage-dev
+Pin: version 1:1.2.1-2
+Pin-Priority: 9999
+
+Package: x11proto-fixes-dev
+Pin: version 1:5.0-2ubuntu2
+Pin-Priority: 9999
+
+Package: x11proto-input-dev
+Pin: version 2.3.1-1
+Pin-Priority: 9999
+
+Package: x11proto-kb-dev
+Pin: version 1.0.6-2
+Pin-Priority: 9999
+
+Package: x11proto-randr-dev
+Pin: version 1.4.0+git20120101.is.really.1.4.0-0ubuntu1
+Pin-Priority: 9999
+
+Package: x11proto-record-dev
+Pin: version 1.14.2-1
+Pin-Priority: 9999
+
+Package: x11proto-render-dev
+Pin: version 2:0.11.1-2
+Pin-Priority: 9999
+
+Package: x11proto-xext-dev
+Pin: version 7.3.0-1
+Pin-Priority: 9999
+
+Package: x11proto-xinerama-dev
+Pin: version 1.2.1-2
+Pin-Priority: 9999
+
+Package: xauth
+Pin: version 1:1.0.9-1ubuntu2
+Pin-Priority: 9999
+
+Package: xdg-user-dirs
+Pin: version 0.15-2ubuntu4
+Pin-Priority: 9999
+
+Package: xkb-data
+Pin: version 2.12-1ubuntu1
+Pin-Priority: 9999
+
+Package: xml-core
+Pin: version 0.13+nmu2
+Pin-Priority: 9999
+
+Package: xorg-sgml-doctools
+Pin: version 1:1.11-1
+Pin-Priority: 9999
+
+Package: xtrans-dev
+Pin: version 1.3.5-1
+Pin-Priority: 9999
+
+Package: xz-utils
+Pin: version 5.1.1alpha+20120614-2ubuntu2
+Pin-Priority: 9999
+
+Package: zlib1g
+Pin: version 1:1.2.8.dfsg-2ubuntu1
+Pin-Priority: 9999
+
+Package: zlib1g-dev
+Pin: version 1:1.2.8.dfsg-2ubuntu1
+Pin-Priority: 9999

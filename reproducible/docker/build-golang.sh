@@ -10,4 +10,3 @@ source /root/setup-reproducible
 
 cd src
 ./make.bash
-

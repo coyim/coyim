@@ -101,3 +101,9 @@ deps-dev:
 
 deps: deps-dev
 	godep restore
+
+reproducible-linux-create-image:
+	make -C ./reproducible/docker create-image
+
+reproducible-linux-build: reproducible-linux-create-image
+	make -C ./reproducible/docker build

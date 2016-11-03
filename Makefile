@@ -100,7 +100,6 @@ deps-dev:
 	go get -u github.com/tools/godep
 
 deps: deps-dev
-	godep restore
 
 reproducible-linux-create-image:
 	make -C ./reproducible/docker create-image

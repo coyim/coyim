@@ -26,6 +26,9 @@ export SRCGID=`stat -c"%g" /src`
 make build-cli BUILD_DIR=/builds
 make build-gui BUILD_DIR=/builds
 
+mkdir -p /src/bin
+chown $SRCUID:$SRCGID /src/bin
+
 cp /builds/coyim-cli /src/bin
 cp /builds/coyim /src/bin
 

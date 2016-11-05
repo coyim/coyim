@@ -46,7 +46,7 @@ export SUM2=`sha256sum /builds/coyim`
 cat <<EOF > /src/bin/build_info
 CoyIM buildinfo
 Revision: $GIT_VERSION
-Tag: $Tag_VERSION
+Tag: $TAG_VERSION
 
 GTK: $GTK_VERSION
 Go: $GO_VERSION

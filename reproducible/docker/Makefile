@@ -12,3 +12,4 @@ console:
 
 build:
 	docker run -v $(PWD)/../..:/src -e REFERENCE_DATETIME="$(REFERENCE_DATETIME)" -t $(IMAGE_NAME) /root/build
+	IMAGE_ID=$(shell docker images --format="{{.ID}}" coyim/reproducible | head -1)

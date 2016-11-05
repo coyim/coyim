@@ -4,8 +4,6 @@ GIT_VERSION=$(shell git rev-parse HEAD)
 TAG_VERSION=$(shell git tag -l --contains $$GIT_VERSION)
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 KEYID=$(shell gpg2 -K | grep '^sec' | head -1 | cut -d\  -f4 | cut -d\/ -f2)
-BINTRAY_API_USER=$(shell cat ~/.bintray_api_user)
-BINTRAY_API_KEY=$(shell cat ~/.bintray_api_key)
 
 BUILD_DIR=bin
 
@@ -111,8 +109,7 @@ reproducible-linux-build: reproducible-linux-create-image
 	make -C ./reproducible/docker build
 
 sign-reproducible:
-	gpg2 --armor --detach-sign --output bin/build_info.$(KEYID).asc bin/build_info
+	./sign_build_info_with_key.sh $(KEYID)
 
 upload-reproducible-signature:
-    # ensure that it's valid before doing it
-	curl -T bin/build_info.$(KEYID).asc -u$(BINTRAY_API_USER):$(BINTRAY_API_KEY) -H X-Bintray-Package:coyim-bin -H X-Bintray-Version:$(TAG_VERSION) https://api.bintray.com/content/twstrike/coyim/$(TAG_VERSION)/linux/amd64/build_info.$(KEYID).asc\?override=1\&publish=1
+	./push_build_info.sh bin/build_info.$(KEYID).asc $(TAG_VERSION)

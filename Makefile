@@ -116,3 +116,6 @@ upload-reproducible-signature:
 
 send-reproducible-signature:
 	./mail_build_info.sh bin/build_info.$(KEYID).asc $(TAG_VERSION)
+
+check-reproducible-signatures:
+	./check_build_info_signatures.rb $(TAG_VERSION)

@@ -113,3 +113,6 @@ sign-reproducible:
 
 upload-reproducible-signature:
 	./push_build_info.sh bin/build_info.$(KEYID).asc $(TAG_VERSION) build_info.$(KEYID).asc
+
+send-reproducible-signature:
+	./mail_build_info.sh bin/build_info.$(KEYID).asc $(TAG_VERSION)

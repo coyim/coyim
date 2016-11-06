@@ -59,4 +59,7 @@ go get -u -tags cli github.com/twstrike/coyim
 We have instructions to help you [get started contributing to
 CoyIM](CONTRIBUTING.md).
 
+## Reproducibility
+
+CoyIM supports reproducible builds for Linux on AMD64. See [REPRODUCIBILITY](REPRODUCIBILITY) for instructions on how to build or verify these builds.
 

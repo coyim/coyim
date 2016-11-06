@@ -37,7 +37,7 @@ chown $SRCUID:$SRCGID /src/bin/coyim
 
 export GTK_VERSION=`pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2`
 export GIT_VERSION=`git rev-parse HEAD`
-export TAG_VERSION=`git tag -l --contains $GIT_VERSION`
+export TAG_VERSION=`git tag -l --contains $GIT_VERSION | tail -1`
 export GO_VERSION=$(go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 export SUM1=`sha256sum /builds/coyim-cli`
 export SUM2=`sha256sum /builds/coyim`

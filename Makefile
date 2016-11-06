@@ -1,7 +1,7 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 GIT_VERSION=$(shell git rev-parse HEAD)
-TAG_VERSION=$(shell git tag -l --contains $$GIT_VERSION)
+TAG_VERSION=$(shell git tag -l --contains $$GIT_VERSION | tail -1)
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 KEYID=$(shell gpg2 -K | grep '^sec' | head -1 | cut -d\  -f4 | cut -d\/ -f2)
 
@@ -112,4 +112,4 @@ sign-reproducible:
 	./sign_build_info_with_key.sh $(KEYID)
 
 upload-reproducible-signature:
-	./push_build_info.sh bin/build_info.$(KEYID).asc $(TAG_VERSION)
+	./push_build_info.sh bin/build_info.$(KEYID).asc $(TAG_VERSION) build_info.$(KEYID).asc

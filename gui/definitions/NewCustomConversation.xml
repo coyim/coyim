@@ -1,0 +1,116 @@
+<interface>
+  <object class="GtkListStore" id="accounts-model">
+    <columns>
+      <!-- account name -->
+      <column type="gchararray"/>
+      <!-- account id -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+
+  <object class="GtkDialog" id="NewCustomConversation">
+    <property name="window-position">GTK_WIN_POS_CENTER</property>
+    <property name="border_width">6</property>
+    <property name="title" translatable="yes">Start new conversation</property>
+    <property name="resizable">True</property>
+    <property name="default-height">200</property>
+    <property name="default-width">500</property>
+    <property name="destroy-with-parent">true</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="Vbox">
+        <property name="homogeneous">false</property>
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <property name="spacing">6</property>
+
+        <child>
+          <object class="GtkGrid" id="grid">
+            <property name="margin-top">15</property>
+            <property name="margin-bottom">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="row-spacing">12</property>
+            <property name="column-spacing">6</property>
+
+            <child>
+              <object class="GtkLabel" id="accountsLabel" >
+                <property name="label" translatable="yes">From:</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="accounts">
+                <property name="model">accounts-model</property>
+                <property name="has-focus">true</property>
+                <property name="hexpand">True</property>
+                <child>
+                  <object class="GtkCellRendererText" id="account-name-rendered"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="peerLabel" >
+                <property name="label" translatable="yes">With:</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="address">
+                <property name="placeholder-text">someone@jabber.org</property>
+                <property name="hexpand">True</property>
+                <signal name="activate" handler="on_start_signal" />
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">true</property>
+            <property name="fill">true</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="button_box">
+            <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+            <child>
+              <object class="GtkButton" id="button_cancel">
+                <property name="label">_Cancel</property>
+                <property name="use-underline">True</property>
+                <signal name="clicked" handler="on_close_signal" />
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_ok">
+                <property name="label" translatable="yes">Start</property>
+                <property name="use-underline">True</property>
+                <property name="can-default">true</property>
+                <signal name="clicked" handler="on_start_signal" />
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

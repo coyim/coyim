@@ -307,6 +307,7 @@ func (u *gtkUI) mainWindow() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window_signal":                       u.quit,
 		"on_add_contact_window_signal":                 u.addContactWindow,
+		"on_new_conversation_signal":                   u.newCustomConversation,
 		"on_about_dialog_signal":                       u.aboutDialog,
 		"on_feedback_dialog_signal":                    u.feedbackDialog,
 		"on_toggled_check_Item_Merge_signal":           u.toggleMergeAccounts,
@@ -486,6 +487,71 @@ func (u *gtkUI) aboutDialog() {
 	dialog.SetTransientFor(u.window)
 	dialog.Run()
 	dialog.Destroy()
+}
+
+func (u *gtkUI) newCustomConversation() {
+	accounts := make([]*account, 0, len(u.accounts))
+
+	for i := range u.accounts {
+		acc := u.accounts[i]
+		if acc.connected() {
+			accounts = append(accounts, acc)
+		}
+	}
+
+	var dialog gtki.Window
+	var model gtki.ListStore
+	var accountInput gtki.ComboBox
+	var peerInput gtki.Entry
+
+	builder := newBuilder("NewCustomConversation")
+	builder.getItems(
+		"NewCustomConversation", &dialog,
+		"accounts-model", &model,
+		"accounts", &accountInput,
+		"address", &peerInput,
+	)
+
+	for _, acc := range accounts {
+		iter := model.Append()
+		model.SetValue(iter, 0, acc.session.GetConfig().Account)
+		model.SetValue(iter, 1, acc.session.GetConfig().ID())
+	}
+
+	if len(accounts) > 0 {
+		accountInput.SetActive(0)
+	}
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_signal": func() {
+			dialog.Destroy()
+		},
+		"on_start_signal": func() {
+			iter, err := accountInput.GetActiveIter()
+			if err != nil {
+				log.Printf("Error encountered when getting account: %v", err)
+				return
+			}
+			val, err := model.GetValue(iter, 1)
+			if err != nil {
+				log.Printf("Error encountered when getting account: %v", err)
+				return
+			}
+			accountID, _ := val.GetString()
+
+			account, ok := u.roster.getAccount(accountID)
+			if !ok {
+				return
+			}
+			jid, _ := peerInput.GetText()
+			u.roster.openConversationView(account, jid, true)
+
+			dialog.Destroy()
+		},
+	})
+
+	dialog.SetTransientFor(u.window)
+	dialog.ShowAll()
 }
 
 func (u *gtkUI) addContactWindow() {

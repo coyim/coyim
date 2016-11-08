@@ -40,6 +40,13 @@ func (*defMain) String() string {
                             <signal name="activate" handler="on_add_contact_window_signal" swapped="no"/>
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkMenuItem" id="newConvMenu">
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">New Conversation...</property>
+                            <signal name="activate" handler="on_new_conversation_signal" swapped="no"/>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>

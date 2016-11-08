@@ -72,6 +72,7 @@ func verifyFingerprintDialog(account *account, uid, resource string, parent gtki
 	case gtki.RESPONSE_YES:
 		account.executeCmd(client.AuthorizeFingerprintCmd{
 			Account:     accountConfig,
+			Session:     account.session,
 			Peer:        uid,
 			Fingerprint: theirFp,
 		})

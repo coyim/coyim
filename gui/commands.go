@@ -1,6 +1,12 @@
 package gui
 
-import "github.com/twstrike/coyim/client"
+import (
+	"fmt"
+
+	"github.com/twstrike/coyim/client"
+	"github.com/twstrike/coyim/i18n"
+	"github.com/twstrike/coyim/session/access"
+)
 
 type executable interface {
 	execute(u *gtkUI)
@@ -68,6 +74,14 @@ func (u *gtkUI) watchCommands() {
 			//find the account by ID()
 			account.AuthorizeFingerprint(uid, fpr)
 			u.ExecuteCmd(client.SaveApplicationConfigCmd{})
+
+			ac := u.findAccountForSession(c.Session.(access.Session))
+			if ac != nil {
+				peer := c.Peer
+				convWindowNowOrLater(ac, peer, u, func(cv conversationView) {
+					cv.displayNotification(fmt.Sprintf(i18n.Local("You have verified the identity of %s."), peer))
+				})
+			}
 		case client.SaveInstanceTagCmd:
 			account := c.Account
 			account.InstanceTag = c.InstanceTag

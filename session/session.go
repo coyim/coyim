@@ -670,6 +670,7 @@ func (s *session) receiveClientMessage(from, resource string, when time.Time, bo
 		fpr := conversation.TheirFingerprint()
 		s.cmdManager.ExecuteCmd(client.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
+			Session:     s,
 			Peer:        from,
 			Fingerprint: fpr,
 		})

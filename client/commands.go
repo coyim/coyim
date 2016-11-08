@@ -5,6 +5,7 @@ import "github.com/twstrike/coyim/config"
 // AuthorizeFingerprintCmd is a command that represents a request to authorize a fingerprint
 type AuthorizeFingerprintCmd struct {
 	Account     *config.Account
+	Session     interface{}
 	Peer        string
 	Fingerprint []byte
 }

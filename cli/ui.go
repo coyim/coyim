@@ -773,6 +773,7 @@ CommandLoop:
 
 				s.CommandManager().ExecuteCmd(client.AuthorizeFingerprintCmd{
 					Account:     s.GetConfig(),
+					Session:     s,
 					Peer:        cmd.User,
 					Fingerprint: fpr,
 				})

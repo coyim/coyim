@@ -463,6 +463,14 @@ func (conv *conversationPane) isVerified(u *gtkUI) bool {
 		if err != nil {
 			log.Println("Failed to save config:", err)
 		}
+	} else {
+		p = conf.EnsurePeer(conv.to)
+		p.EnsureHasFingerprint(fingerprint)
+
+		err := u.saveConfigInternal()
+		if err != nil {
+			log.Println("Failed to save config:", err)
+		}
 	}
 
 	if !conv.hasSetNewFingerprint {

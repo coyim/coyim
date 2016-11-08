@@ -474,20 +474,6 @@ func (u *gtkUI) shouldViewAccounts() bool {
 	return !u.config.Display.MergeAccounts
 }
 
-func authors() []string {
-	return []string{
-		"Fan Jiang  -  fan.torchz@gmail.com",
-		"Iván Pazmiño  -  iapazmino@gmail.com",
-		"Ola Bini  -  ola@olabini.se",
-		"Reinaldo de Souza Jr  -  juniorz@gmail.com",
-		"Tania Silva  -  tsilva@thoughtworks.com",
-		"Adam Langley",
-		"Gray Leonard - gl7039a@american.edu",
-		"Bruce Leidl - bruce@subgraph.com",
-		"xSmurf - matth@subgraph.com",
-	}
-}
-
 func (u *gtkUI) aboutDialog() {
 	dialog, _ := g.gtk.AboutDialogNew()
 	dialog.SetName(i18n.Local("Coy IM!"))

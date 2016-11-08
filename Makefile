@@ -119,3 +119,7 @@ send-reproducible-signature:
 
 check-reproducible-signatures:
 	./check_build_info_signatures.rb $(TAG_VERSION)
+
+gen-authors:
+	rm -rf gui/authors.go
+	./authors.rb > gui/authors.go

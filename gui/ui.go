@@ -311,6 +311,7 @@ func (u *gtkUI) mainWindow() {
 		"on_feedback_dialog_signal":                    u.feedbackDialog,
 		"on_toggled_check_Item_Merge_signal":           u.toggleMergeAccounts,
 		"on_toggled_check_Item_Show_Offline_signal":    u.toggleShowOffline,
+		"on_toggled_check_Item_Show_Waiting_signal":    u.toggleShowWaiting,
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 		"on_preferences_signal":                        u.showGlobalPreferences,
 	})
@@ -337,6 +338,9 @@ func (u *gtkUI) mainWindow() {
 
 	u.viewMenu.offline = builder.getObj("CheckItemShowOffline").(gtki.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(u.viewMenu.offline)
+
+	u.viewMenu.waiting = builder.getObj("CheckItemShowWaiting").(gtki.CheckMenuItem)
+	u.displaySettings.defaultSettingsOn(u.viewMenu.waiting)
 
 	// OptionsMenu
 	u.optionsMenu = new(optionsMenu)

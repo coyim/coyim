@@ -68,7 +68,8 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 	"Display": {
 		"MergeAccounts": false,
 		"ShowOnlyOnline": false,
-		"HideFeedbackBar": false
+		"HideFeedbackBar": false,
+		"ShowOnlyConfirmed": false
 	},
 	"AdvancedOptions": false,
 	"UniqueConfigurationID": ""

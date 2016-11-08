@@ -73,6 +73,13 @@ func (*defMain) String() string {
                             <signal name="toggled" handler="on_toggled_check_Item_Show_Offline_signal" swapped="no"/>
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkCheckMenuItem" id="CheckItemShowWaiting">
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Show Waiting Contacts</property>
+                            <signal name="toggled" handler="on_toggled_check_Item_Show_Waiting_signal" swapped="no"/>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>

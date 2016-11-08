@@ -416,12 +416,12 @@ func (r *roster) debugPrintRosterFor(nm string) {
 	fmt.Println()
 }
 
-func isNominallyVisible(p *rosters.Peer) bool {
-	return (p.Subscription != "none" && p.Subscription != "") || p.PendingSubscribeID != "" || p.Asked
+func isNominallyVisible(p *rosters.Peer, showWaiting bool) bool {
+	return (p.Subscription != "none" && p.Subscription != "") || (showWaiting && (p.PendingSubscribeID != "" || p.Asked))
 }
 
-func shouldDisplay(p *rosters.Peer, showOffline bool) bool {
-	return isNominallyVisible(p) && (showOffline || p.Online || p.Asked)
+func shouldDisplay(p *rosters.Peer, showOffline, showWaiting bool) bool {
+	return isNominallyVisible(p, showWaiting) && (showOffline || p.Online || p.Asked)
 }
 
 func isAway(p *rosters.Peer) bool {
@@ -504,6 +504,7 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 
 func (r *roster) redrawMerged() {
 	showOffline := !r.ui.config.Display.ShowOnlyOnline
+	showWaiting := !r.ui.config.Display.ShowOnlyConfirmed
 
 	r.ui.accountManager.RLock()
 	defer r.ui.accountManager.RUnlock()
@@ -516,7 +517,7 @@ func (r *roster) redrawMerged() {
 	}
 
 	accountCounter := &counter{}
-	r.displayGroup(grp, nil, accountCounter, showOffline, "")
+	r.displayGroup(grp, nil, accountCounter, showOffline, showWaiting, "")
 
 	r.view.ExpandAll()
 	for _, path := range r.toCollapse {
@@ -538,14 +539,14 @@ func (c *counter) inc(total, online bool) {
 	}
 }
 
-func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accountCounter *counter, showOffline bool, accountName string) {
+func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accountCounter *counter, showOffline, showWaiting bool, accountName string) {
 	pi := parentIter
 	groupCounter := &counter{}
 	groupID := accountName + "//" + g.FullGroupName()
 
 	isEmpty := true
 	for _, item := range g.Peers() {
-		if shouldDisplay(item, showOffline) {
+		if shouldDisplay(item, showOffline, showWaiting) {
 			isEmpty = false
 		}
 	}
@@ -559,18 +560,18 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 	}
 
 	for _, item := range g.Peers() {
-		vs := isNominallyVisible(item)
+		vs := isNominallyVisible(item, showWaiting)
 		o := isOnline(item)
 		accountCounter.inc(vs, vs && o)
 		groupCounter.inc(vs, vs && o)
 
-		if shouldDisplay(item, showOffline) {
+		if shouldDisplay(item, showOffline, showWaiting) {
 			r.addItem(item, pi, "")
 		}
 	}
 
 	for _, gr := range g.Groups() {
-		r.displayGroup(gr, pi, accountCounter, showOffline, accountName)
+		r.displayGroup(gr, pi, accountCounter, showOffline, showWaiting, accountName)
 	}
 
 	if g.GroupName != "" {
@@ -586,7 +587,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 	}
 }
 
-func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List, showOffline bool) {
+func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List, showOffline, showWaiting bool) {
 	cs := r.ui.currentColorSet()
 	parentIter := r.model.Append(nil)
 
@@ -594,7 +595,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 
 	grp := contacts.Grouped(account.session.GroupDelimiter())
 	parentName := account.session.GetConfig().Account
-	r.displayGroup(grp, parentIter, accountCounter, showOffline, parentName)
+	r.displayGroup(grp, parentIter, accountCounter, showOffline, showWaiting, parentName)
 
 	r.model.SetValue(parentIter, indexParentJid, parentName)
 	r.model.SetValue(parentIter, indexAccountID, account.session.GetConfig().ID())
@@ -646,6 +647,7 @@ func (r *roster) showEmptyGroups() bool {
 
 func (r *roster) redrawSeparate() {
 	showOffline := !r.ui.config.Display.ShowOnlyOnline
+	showWaiting := !r.ui.config.Display.ShowOnlyConfirmed
 
 	r.ui.accountManager.RLock()
 	defer r.ui.accountManager.RUnlock()
@@ -653,7 +655,7 @@ func (r *roster) redrawSeparate() {
 	r.toCollapse = nil
 
 	for _, account := range r.sortedAccounts() {
-		r.redrawSeparateAccount(account, r.ui.accountManager.getContacts(account), showOffline)
+		r.redrawSeparateAccount(account, r.ui.accountManager.getContacts(account), showOffline, showWaiting)
 	}
 
 	r.view.ExpandAll()

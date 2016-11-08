@@ -21,11 +21,11 @@ func init() {
 	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
-type XmppSuite struct{}
+type XMPPSuite struct{}
 
-var _ = Suite(&XmppSuite{})
+var _ = Suite(&XMPPSuite{})
 
-func (s *XmppSuite) TestDiscoReplyVerSimple(c *C) {
+func (s *XMPPSuite) TestDiscoReplyVerSimple(c *C) {
 	expect := "QgayPKawpkPSDYmwT/WM94uAlu0="
 	input := []byte(`
   <query xmlns='http://jabber.org/protocol/disco#info'
@@ -44,7 +44,7 @@ func (s *XmppSuite) TestDiscoReplyVerSimple(c *C) {
 	c.Assert(hash, Equals, expect)
 }
 
-func (s *XmppSuite) TestDiscoReplyVerComplex(c *C) {
+func (s *XMPPSuite) TestDiscoReplyVerComplex(c *C) {
 	expect := "q07IKJEyjvHSyhy//CH0CxmKi8w="
 	input := []byte(`
   <query xmlns='http://jabber.org/protocol/disco#info'
@@ -85,7 +85,7 @@ func (s *XmppSuite) TestDiscoReplyVerComplex(c *C) {
 	c.Assert(hash, Equals, expect)
 }
 
-func (s *XmppSuite) TestConnClose(c *C) {
+func (s *XMPPSuite) TestConnClose(c *C) {
 	mockIn := &mockConnIOReaderWriter{
 		read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'></str:stream>"),
 	}
@@ -102,7 +102,7 @@ func (s *XmppSuite) TestConnClose(c *C) {
 	c.Assert(mockCloser.write, DeepEquals, []byte("</stream:stream>"))
 }
 
-func (s *XmppSuite) TestConnNextEOF(c *C) {
+func (s *XMPPSuite) TestConnNextEOF(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: io.EOF}
 	conn := conn{
 		in: xml.NewDecoder(mockIn),
@@ -113,7 +113,7 @@ func (s *XmppSuite) TestConnNextEOF(c *C) {
 	c.Assert(err, Equals, io.EOF)
 }
 
-func (s *XmppSuite) TestConnNextErr(c *C) {
+func (s *XMPPSuite) TestConnNextErr(c *C) {
 	mockIn := &mockConnIOReaderWriter{
 		read: []byte(`
       <field var='os'>
@@ -130,7 +130,7 @@ func (s *XmppSuite) TestConnNextErr(c *C) {
 	c.Assert(err.Error(), Equals, "unexpected XMPP message  <field/>")
 }
 
-func (s *XmppSuite) TestConnNextIQSet(c *C) {
+func (s *XMPPSuite) TestConnNextIQSet(c *C) {
 	mockIn := &mockConnIOReaderWriter{
 		read: []byte(`
 <iq to='example.com'
@@ -153,7 +153,7 @@ func (s *XmppSuite) TestConnNextIQSet(c *C) {
 	c.Assert(err, IsNil)
 }
 
-func (s *XmppSuite) TestConnNextIQResult(c *C) {
+func (s *XMPPSuite) TestConnNextIQResult(c *C) {
 	mockIn := &mockConnIOReaderWriter{
 		read: []byte(`
 <iq from='example.com'
@@ -174,13 +174,13 @@ func (s *XmppSuite) TestConnNextIQResult(c *C) {
 	c.Assert(err, ErrorMatches, "xmpp: failed to parse id from iq: .*")
 }
 
-func (s *XmppSuite) TestConnCancelError(c *C) {
+func (s *XMPPSuite) TestConnCancelError(c *C) {
 	conn := conn{}
 	ok := conn.Cancel(conn.getCookie())
 	c.Assert(ok, Equals, false)
 }
 
-func (s *XmppSuite) TestConnCancelOK(c *C) {
+func (s *XMPPSuite) TestConnCancelOK(c *C) {
 	conn := conn{}
 	cookie := conn.getCookie()
 	ch := make(chan data.Stanza, 1)
@@ -192,7 +192,7 @@ func (s *XmppSuite) TestConnCancelOK(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func (s *XmppSuite) TestConnRequestRoster(c *C) {
+func (s *XMPPSuite) TestConnRequestRoster(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
 		out: &mockOut,
@@ -205,7 +205,7 @@ func (s *XmppSuite) TestConnRequestRoster(c *C) {
 	c.Assert(err, IsNil)
 }
 
-func (s *XmppSuite) TestConnRequestRosterErr(c *C) {
+func (s *XMPPSuite) TestConnRequestRosterErr(c *C) {
 	mockOut := mockConnIOReaderWriter{err: io.EOF}
 	conn := conn{
 		out: &mockOut,
@@ -218,7 +218,7 @@ func (s *XmppSuite) TestConnRequestRosterErr(c *C) {
 	c.Assert(err, Equals, io.EOF)
 }
 
-func (s *XmppSuite) TestParseRoster(c *C) {
+func (s *XMPPSuite) TestParseRoster(c *C) {
 	iq := data.ClientIQ{}
 	iq.Query = []byte(`
   <query xmlns='jabber:iq:roster'>
@@ -247,7 +247,7 @@ func (s *XmppSuite) TestParseRoster(c *C) {
 	c.Assert(err, IsNil)
 }
 
-func (s *XmppSuite) TestConnSend(c *C) {
+func (s *XMPPSuite) TestConnSend(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
 		out: &mockOut,

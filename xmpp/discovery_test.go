@@ -5,11 +5,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type DiscoveryXmppSuite struct{}
+type DiscoveryXMPPSuite struct{}
 
-var _ = Suite(&DiscoveryXmppSuite{})
+var _ = Suite(&DiscoveryXMPPSuite{})
 
-func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateIdentities(c *C) {
+func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateIdentities(c *C) {
 	reply := &data.DiscoveryReply{
 		Identities: []data.DiscoveryIdentity{
 			data.DiscoveryIdentity{
@@ -31,7 +31,7 @@ func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateIde
 	c.Assert(err.Error(), Equals, "duplicate discovery identity")
 }
 
-func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateFeatures(c *C) {
+func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFeatures(c *C) {
 	reply := &data.DiscoveryReply{
 		Features: []data.DiscoveryFeature{
 			data.DiscoveryFeature{
@@ -47,7 +47,7 @@ func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateFea
 	c.Assert(err.Error(), Equals, "duplicate discovery feature")
 }
 
-func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateFormTypes(c *C) {
+func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFormTypes(c *C) {
 	reply := &data.DiscoveryReply{
 		Forms: []data.Form{
 			data.Form{
@@ -77,7 +77,7 @@ func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreDuplicateFor
 	c.Assert(err.Error(), Equals, "multiple forms of the same type")
 }
 
-func (s *DiscoveryXmppSuite) Test_VerificationString_failsIfThereAreNoValues(c *C) {
+func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreNoValues(c *C) {
 	reply := &data.DiscoveryReply{
 		Forms: []data.Form{
 			data.Form{

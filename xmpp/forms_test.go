@@ -9,11 +9,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type FormsXmppSuite struct{}
+type FormsXMPPSuite struct{}
 
-var _ = Suite(&FormsXmppSuite{})
+var _ = Suite(&FormsXMPPSuite{})
 
-func (s *FormsXmppSuite) Test_processForm_returnsErrorFromCallback(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsErrorFromCallback(c *C) {
 	e := errors.New("some kind of error")
 	f := &data.Form{}
 	_, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
@@ -23,7 +23,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsErrorFromCallback(c *C) {
 	c.Assert(err, Equals, e)
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsEmptySubmitFormForEmptyForm(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsEmptySubmitFormForEmptyForm(c *C) {
 	f := &data.Form{}
 	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
 		return nil
@@ -33,7 +33,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsEmptySubmitFormForEmptyForm(c *
 	c.Assert(*f2, DeepEquals, data.Form{Type: "submit"})
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsFixedFields(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsFixedFields(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -59,7 +59,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsFixedFields(c *C) {
 		Fields:       nil})
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsBooleanFields(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsBooleanFields(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -90,7 +90,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsBooleanFields(c *C) {
 				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsMultiFields(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsMultiFields(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -135,7 +135,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsMultiFields(c *C) {
 				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsListSingle(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsListSingle(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -169,7 +169,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsListSingle(c *C) {
 				Options:  []data.FormFieldOptionX(nil), Media: []data.FormFieldMediaX(nil)}}})
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsListMulti(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsListMulti(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -204,7 +204,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsListMulti(c *C) {
 				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsHidden(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsHidden(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -235,7 +235,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsHidden(c *C) {
 				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsUnknown(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsUnknown(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -283,7 +283,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsUnknown(c *C) {
 
 type testOtherFormType struct{}
 
-func (s *FormsXmppSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -299,7 +299,7 @@ func (s *FormsXmppSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
 	}, PanicMatches, "unknown field type in result from callback: xmpp.testOtherFormType")
 }
 
-func (s *FormsXmppSuite) Test_processForm_setsAValidBooleanReturnValue(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_setsAValidBooleanReturnValue(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -329,7 +329,7 @@ func (s *FormsXmppSuite) Test_processForm_setsAValidBooleanReturnValue(c *C) {
 				Media:    []data.FormFieldMediaX(nil)}}})
 }
 
-func (s *FormsXmppSuite) Test_processForm_returnsListMultiWithResults(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_returnsListMultiWithResults(c *C) {
 	f := &data.Form{}
 	f.Fields = []data.FormFieldX{
 		data.FormFieldX{
@@ -364,7 +364,7 @@ func (s *FormsXmppSuite) Test_processForm_returnsListMultiWithResults(c *C) {
 				Options:  []data.FormFieldOptionX(nil), Media: []data.FormFieldMediaX(nil)}}})
 }
 
-func (s *FormsXmppSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
+func (s *FormsXMPPSuite) Test_processForm_dealsWithMediaCorrectly(c *C) {
 	f := &data.Form{}
 	datas := []data.BobData{
 		data.BobData{

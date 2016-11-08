@@ -10,7 +10,7 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -47,7 +47,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	var tlsC tls.Config
@@ -81,7 +81,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 		"b\x06\x82fy]\xb9\xf83\xea6\x1d\x03\xafT[\xe7\x92\x14\x03\x03\x00\x01\x01\x16\x03\x03\x00(\x00\x00\x00\x00\x00\x00\x00\x00j\xc9\xd4\xef'\xc2ڲ6e\x88JD$\x9d\x15O\x80\x15\u0099-.(T\x99\xb3\xbf\x869~\x11\x17\x03\x03\x00\xa5\x00\x00\x00\x00\x00\x00\x00\x01W'*.\vz\x85%%E\xee\x119\x82\xe4\xfe\xf5o\x111m|\x8d\xbb ģ\x06\xf2a_M\xd3\xebޤ:\xe3\x00\x92A\xd6\\\xa7\xce<\"F?tr\xbc1gȮD\\ՎG\xe7\x9e\xc8\u007f\x9e\x1eD\xdbJ&\xe5T2b\xa5J\xc9\xc99\"Ek\xc0\x0fa\xf4\x9b*\xb1\x9a\x10^^(\x8f\x1b\x8b\xdd\x04\xe8\xe6\xf5\xb6+V\x1d\xd7\xeb512\xc0*\x8e7\x15\xdd\t\x04\x1d-#\xf8\x9d^\x16k\xa4\x1d\xe0s\x90E\x8cNG\x93\xb0\xd5]\x1d\x01B\xe9\x18T\xc7@\x11\x1a\x17\xe3\xb9b\x19\x1a")
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInvalidCertHash(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInvalidCertHash(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	var tlsC tls.Config
@@ -107,7 +107,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 	c.Assert(err.Error(), Equals, "tls: server certificate does not match expected hash (got: 82454418cb04854aa721bb0596528ff802b1e18a4e3a7767412ac9f108c9d3a7, want: 6161616161)")
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	var tlsC tls.Config

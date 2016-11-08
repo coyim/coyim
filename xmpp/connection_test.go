@@ -17,9 +17,9 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type ConnectionXmppSuite struct{}
+type ConnectionXMPPSuite struct{}
 
-var _ = Suite(&ConnectionXmppSuite{})
+var _ = Suite(&ConnectionXMPPSuite{})
 
 type basicTLSVerifier struct {
 	shaSum []byte
@@ -84,7 +84,7 @@ func (v *basicTLSVerifier) Verify(state tls.ConnectionState, conf tls.Config, or
 	return nil
 }
 
-func (s *ConnectionXmppSuite) Test_Next_returnsErrorIfOneIsEncountered(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_returnsErrorIfOneIsEncountered(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams' to='hello'></stream:foo>")}
 	conn := conn{
 		in: xml.NewDecoder(mockIn),
@@ -94,7 +94,7 @@ func (s *ConnectionXmppSuite) Test_Next_returnsErrorIfOneIsEncountered(c *C) {
 	c.Assert(err.Error(), Equals, "unexpected XMPP message http://etherx.jabber.org/streams <foo/>")
 }
 
-func (s *ConnectionXmppSuite) Test_Next_returnsErrorIfFailingToParseIQID(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_returnsErrorIfFailingToParseIQID(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='abczzzz'></client:iq>")}
 	conn := conn{
 		in: xml.NewDecoder(mockIn),
@@ -104,7 +104,7 @@ func (s *ConnectionXmppSuite) Test_Next_returnsErrorIfFailingToParseIQID(c *C) {
 	c.Assert(err.Error(), Equals, "xmpp: failed to parse id from iq: strconv.ParseUint: parsing \"abczzzz\": invalid syntax")
 }
 
-func (s *ConnectionXmppSuite) Test_Next_returnsNothingIfThereIsNoInflightMatching(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_returnsNothingIfThereIsNoInflightMatching(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000'></client:iq>")}
 	conn := conn{
 		in: xml.NewDecoder(mockIn),
@@ -114,7 +114,7 @@ func (s *ConnectionXmppSuite) Test_Next_returnsNothingIfThereIsNoInflightMatchin
 	c.Assert(err, Equals, io.EOF)
 }
 
-func (s *ConnectionXmppSuite) Test_Next_returnsNothingIfTheInflightIsToAnotherReceiver(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_returnsNothingIfTheInflightIsToAnotherReceiver(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='bar@somewhere.com'></client:iq>")}
 	conn := conn{
 		in:        xml.NewDecoder(mockIn),
@@ -126,7 +126,7 @@ func (s *ConnectionXmppSuite) Test_Next_returnsNothingIfTheInflightIsToAnotherRe
 	c.Assert(err, Equals, io.EOF)
 }
 
-func (s *ConnectionXmppSuite) Test_Next_removesInflightIfItMatches(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_removesInflightIfItMatches(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='foo@somewhere.com'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
@@ -151,7 +151,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesInflightIfItMatches(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func (s *ConnectionXmppSuite) Test_Next_continuesIfIqFromIsNotSimilarToJid(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_continuesIfIqFromIsNotSimilarToJid(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='foo@somewhere.com'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
@@ -167,7 +167,7 @@ func (s *ConnectionXmppSuite) Test_Next_continuesIfIqFromIsNotSimilarToJid(c *C)
 	c.Assert(ok, Equals, true)
 }
 
-func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsNoFrom(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsNoFrom(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
@@ -191,7 +191,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsNoFrom(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJid(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsTheFromIsSameAsJid(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='some@one.org/foo'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
@@ -216,7 +216,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJid(c *C)
 	c.Assert(ok, Equals, false)
 }
 
-func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidWithoutResource(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidWithoutResource(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='some@one.org'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
@@ -241,7 +241,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidWithou
 	c.Assert(ok, Equals, false)
 }
 
-func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidDomain(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidDomain(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='one.org'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
@@ -266,7 +266,7 @@ func (s *ConnectionXmppSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidDomain
 	c.Assert(ok, Equals, false)
 }
 
-func (s *ConnectionXmppSuite) Test_Next_returnsNonIQMessage(c *C) {
+func (s *ConnectionXMPPSuite) Test_Next_returnsNonIQMessage(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
 	conn := conn{
 		in:  xml.NewDecoder(mockIn),
@@ -280,13 +280,13 @@ func (s *ConnectionXmppSuite) Test_Next_returnsNonIQMessage(c *C) {
 	c.Assert(v.Value.(*data.ClientMessage).Body, Equals, "something")
 }
 
-func (s *ConnectionXmppSuite) Test_makeInOut_returnsANewDecoderAndOriginalWriterWhenNoConfigIsGiven(c *C) {
+func (s *ConnectionXMPPSuite) Test_makeInOut_returnsANewDecoderAndOriginalWriterWhenNoConfigIsGiven(c *C) {
 	mockBoth := &mockConnIOReaderWriter{}
 	_, rout := makeInOut(mockBoth, data.Config{})
 	c.Assert(rout, Equals, mockBoth)
 }
 
-func (s *ConnectionXmppSuite) Test_makeInOut_returnsANewDecoderAndWrappedWriterWhenConfigIsGiven(c *C) {
+func (s *ConnectionXMPPSuite) Test_makeInOut_returnsANewDecoderAndWrappedWriterWhenConfigIsGiven(c *C) {
 	mockBoth := &mockConnIOReaderWriter{}
 	mockInLog := &mockConnIOReaderWriter{}
 	config := data.Config{InLog: mockInLog, OutLog: mockInLog}
@@ -294,7 +294,7 @@ func (s *ConnectionXmppSuite) Test_makeInOut_returnsANewDecoderAndWrappedWriterW
 	c.Assert(rout, Not(Equals), mockBoth)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromGetFeatures(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromGetFeatures(c *C) {
 	rw := &mockConnIOReaderWriter{}
 	conn := &fullMockedConn{rw: rw}
 
@@ -307,7 +307,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromGetFeatures(c *C) {
 	c.Assert(err, Equals, io.EOF)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromAuthenticateIfSkipTLS(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromAuthenticateIfSkipTLS(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'><str:features></str:features>")}
 	conn := &fullMockedConn{rw: rw}
 
@@ -321,7 +321,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromAuthenticateIfSkipTLS(c 
 	c.Assert(err, Equals, errors.ErrAuthenticationFailed)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -350,7 +350,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C)
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n")
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromIQReturn(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromIQReturn(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -385,7 +385,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsErrorFromIQReturn(c *C) {
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_returnsWorkingConnIfEverythingPasses(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_returnsWorkingConnIfEverythingPasses(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -421,7 +421,7 @@ func (s *ConnectionXmppSuite) Test_Dial_returnsWorkingConnIfEverythingPasses(c *
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsIfTheServerDoesntSupportTLS(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsIfTheServerDoesntSupportTLS(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -443,7 +443,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfTheServerDoesntSupportTLS(c *C) {
 	c.Assert(err.Error(), Equals, "xmpp: server doesn't support TLS")
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingEOFAfterStartingTLS(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingEOFAfterStartingTLS(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -466,7 +466,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingEOFAfterStartingTLS(c *C
 	c.Assert(err.Error(), Matches, "(XML syntax error on line 1: unexpected )?EOF")
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterStarttls(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterStarttls(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -490,7 +490,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongNamespaceAfterSt
 	c.Assert(err.Error(), Equals, "xmpp: expected <proceed> after <starttls> but got <proceed> in http://etherx.jabber.org/streams")
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -514,7 +514,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
 	c.Assert(err.Error(), Equals, "xmpp: expected <proceed> after <starttls> but got <things> in urn:ietf:params:xml:ns:xmpp-tls")
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_setsServerNameOnTLSContext(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_setsServerNameOnTLSContext(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -542,7 +542,7 @@ func (s *ConnectionXmppSuite) Test_Dial_setsServerNameOnTLSContext(c *C) {
 	c.Assert(err, Equals, io.EOF)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -575,7 +575,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -609,7 +609,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -643,7 +643,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtNextIQ(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtNextIQ(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -679,7 +679,7 @@ func (s *ConnectionXmppSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorElement(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorElement(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -716,7 +716,7 @@ func (s *ConnectionXmppSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -755,7 +755,7 @@ func (s *ConnectionXmppSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_runsForm(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_runsForm(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -804,7 +804,7 @@ func (s *ConnectionXmppSuite) Test_Dial_runsForm(c *C) {
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_setsLog(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_setsLog(c *C) {
 	l := &mockConnIOReaderWriter{}
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
@@ -840,7 +840,7 @@ func (s *ConnectionXmppSuite) Test_Dial_setsLog(c *C) {
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSession(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsWhenTryingToEstablishSession(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -881,7 +881,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSession(c *C) 
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSessionAndGetsTheWrongIQBack(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsWhenTryingToEstablishSessionAndGetsTheWrongIQBack(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -922,7 +922,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenTryingToEstablishSessionAndGets
 	)
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_succeedsEstablishingASession(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -963,7 +963,7 @@ func (s *ConnectionXmppSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 	)
 }
 
-// func (s *ConnectionXmppSuite) Test_blaData(c *C) {
+// func (s *ConnectionXMPPSuite) Test_blaData(c *C) {
 // 	println("Trying!")
 // 	var tlsC tls.Config
 // 	tlsC.ServerName = "www.olabini.se"
@@ -983,7 +983,7 @@ func (s *ConnectionXmppSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 // 	}
 // }
 
-func (s *ConnectionXmppSuite) Test_readMessages_passesStanzaToChannel(c *C) {
+func (s *ConnectionXMPPSuite) Test_readMessages_passesStanzaToChannel(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
 
 	conn := &conn{
@@ -1001,7 +1001,7 @@ func (s *ConnectionXmppSuite) Test_readMessages_passesStanzaToChannel(c *C) {
 	}
 }
 
-func (s *ConnectionXmppSuite) Test_readMessages_alertsOnError(c *C) {
+func (s *ConnectionXMPPSuite) Test_readMessages_alertsOnError(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<clientx:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
 
 	conn := &conn{

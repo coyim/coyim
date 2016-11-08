@@ -6,18 +6,18 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type AccountXmppSuite struct{}
+type AccountXMPPSuite struct{}
 
-var _ = Suite(&AccountXmppSuite{})
+var _ = Suite(&AccountXMPPSuite{})
 
-func (s *AccountXmppSuite) Test_Account_Is_recognizesJids(c *C) {
+func (s *AccountXMPPSuite) Test_Account_Is_recognizesJids(c *C) {
 	a := &Account{Account: "hello@bar.com"}
 	c.Check(a.Is("foo"), Equals, false)
 	c.Check(a.Is("hello@bar.com"), Equals, true)
 	c.Check(a.Is("hello@bar.com/foo"), Equals, true)
 }
 
-func (s *AccountXmppSuite) Test_Account_ShouldEncryptTo(c *C) {
+func (s *AccountXMPPSuite) Test_Account_ShouldEncryptTo(c *C) {
 	a := &Account{Account: "hello@bar.com", AlwaysEncrypt: false, AlwaysEncryptWith: []string{"one@foo.com", "two@foo.com"}}
 	a2 := &Account{Account: "hello@bar.com", AlwaysEncrypt: true, AlwaysEncryptWith: []string{"one@foo.com", "two@foo.com"}}
 	c.Check(a.ShouldEncryptTo("foo"), Equals, false)
@@ -29,7 +29,7 @@ func (s *AccountXmppSuite) Test_Account_ShouldEncryptTo(c *C) {
 	c.Check(a2.ShouldEncryptTo("hello@bar.com"), Equals, true)
 }
 
-func (s *AccountXmppSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *C) {
+func (s *AccountXMPPSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *C) {
 	a, err := NewAccount()
 
 	c.Check(err, IsNil)
@@ -40,7 +40,7 @@ func (s *AccountXmppSuite) Test_NewAccount_ReturnsNewAccountWithSafeDefaults(c *
 	c.Check(a.Proxies, DeepEquals, []string{"tor-auto://"})
 }
 
-func (s *AccountXmppSuite) Test_SetOTRPoliciesFor_SetupOTRPolicies(c *C) {
+func (s *AccountXMPPSuite) Test_SetOTRPoliciesFor_SetupOTRPolicies(c *C) {
 	a, _ := NewAccount()
 	conv := &otr3.Conversation{}
 
@@ -57,7 +57,7 @@ func (s *AccountXmppSuite) Test_SetOTRPoliciesFor_SetupOTRPolicies(c *C) {
 	c.Check(conv.Policies, Equals, expectedPolicies)
 }
 
-func (s *AccountXmppSuite) Test_SetOTRPoliciesFor_SetupOTRPoliciesWithOptionalEncription(c *C) {
+func (s *AccountXMPPSuite) Test_SetOTRPoliciesFor_SetupOTRPoliciesWithOptionalEncription(c *C) {
 	a, _ := NewAccount()
 	a.AlwaysEncrypt = false
 	conv := &otr3.Conversation{}
@@ -73,7 +73,7 @@ func (s *AccountXmppSuite) Test_SetOTRPoliciesFor_SetupOTRPoliciesWithOptionalEn
 	c.Check(conv.Policies, Equals, expectedPolicies)
 }
 
-func (s *AccountXmppSuite) Test_EnsurePrivateKey_DoesNotUpdateIfKeyExists(c *C) {
+func (s *AccountXMPPSuite) Test_EnsurePrivateKey_DoesNotUpdateIfKeyExists(c *C) {
 	a, _ := NewAccount()
 	changed, err := a.EnsurePrivateKey()
 
@@ -81,7 +81,7 @@ func (s *AccountXmppSuite) Test_EnsurePrivateKey_DoesNotUpdateIfKeyExists(c *C) 
 	c.Check(changed, Equals, false)
 }
 
-func (s *AccountXmppSuite) Test_EnsurePrivateKey_GeneratePrivateKeyIfMissing(c *C) {
+func (s *AccountXMPPSuite) Test_EnsurePrivateKey_GeneratePrivateKeyIfMissing(c *C) {
 	a := &Account{}
 	changed, err := a.EnsurePrivateKey()
 
@@ -90,12 +90,12 @@ func (s *AccountXmppSuite) Test_EnsurePrivateKey_GeneratePrivateKeyIfMissing(c *
 	c.Check(len(a.PrivateKeys), Equals, 1)
 }
 
-func (s *AccountXmppSuite) Test_ID_generatesID(c *C) {
+func (s *AccountXMPPSuite) Test_ID_generatesID(c *C) {
 	a := &Account{}
 	c.Check(a.ID(), Not(HasLen), 0)
 }
 
-func (s *AccountXmppSuite) Test_ID_doesNotChangeID(c *C) {
+func (s *AccountXMPPSuite) Test_ID_doesNotChangeID(c *C) {
 	a := &Account{
 		id: "existing",
 	}

@@ -6,9 +6,9 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type EncryptedConfigXmppSuite struct{}
+type EncryptedConfigXMPPSuite struct{}
 
-var _ = Suite(&EncryptedConfigXmppSuite{})
+var _ = Suite(&EncryptedConfigXMPPSuite{})
 
 func bytesFromHex(s string) []byte {
 	val, _ := hex.DecodeString(s)
@@ -38,7 +38,7 @@ var testNonceWrong = bytesFromHex("dcd8f7642b05349123d59d1b")
 var testEncryptedData = bytesFromHex("2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d2a61e79b8671f85a27505cb9c5477ed75")
 var testEncryptedDataFlip = bytesFromHex("2b356e6939d1ff771eaa9f9f8866e2aa3732c96913e0d7fa6b4a05d54667c44f78c714af73152b52e2d2a61e79b8671f85a27505cb9c5477ed76")
 
-func (s *EncryptedConfigXmppSuite) Test_generateKeys(c *C) {
+func (s *EncryptedConfigXMPPSuite) Test_generateKeys(c *C) {
 	params := EncryptionParameters{
 		saltInternal: testSalt,
 		N:            testN,
@@ -53,12 +53,12 @@ func (s *EncryptedConfigXmppSuite) Test_generateKeys(c *C) {
 	c.Assert(len(res2), Equals, macKeyLen)
 }
 
-func (s *EncryptedConfigXmppSuite) Test_encryptData(c *C) {
+func (s *EncryptedConfigXMPPSuite) Test_encryptData(c *C) {
 	res := encryptData(testKey, testMacKey, testNonce, "this is some data I want to have encrypted")
 	c.Assert(res, DeepEquals, testEncryptedData)
 }
 
-func (s *EncryptedConfigXmppSuite) Test_decryptData(c *C) {
+func (s *EncryptedConfigXMPPSuite) Test_decryptData(c *C) {
 	res, e := decryptData(testKey, testMacKey, testNonce, testEncryptedData)
 	c.Assert(e, IsNil)
 	c.Assert(string(res), DeepEquals, "this is some data I want to have encrypted")
@@ -90,7 +90,7 @@ var encryptedDataContent = []byte(`
 }
 `)
 
-func (s *EncryptedConfigXmppSuite) Test_decryptConfiguration(c *C) {
+func (s *EncryptedConfigXMPPSuite) Test_decryptConfiguration(c *C) {
 	res, _, e := decryptConfiguration(encryptedDataContent, FunctionKeySupplier(func(params EncryptionParameters, _ bool) ([]byte, []byte, bool) {
 		return testKey, testMacKey, true
 	}))
@@ -98,7 +98,7 @@ func (s *EncryptedConfigXmppSuite) Test_decryptConfiguration(c *C) {
 	c.Assert(string(res), Equals, "this is some data I want to have encrypted")
 }
 
-func (s *EncryptedConfigXmppSuite) Test_encryptConfiguration(c *C) {
+func (s *EncryptedConfigXMPPSuite) Test_encryptConfiguration(c *C) {
 	p := &EncryptionParameters{
 		Nonce: "dbd8f7642b05349123d59d1b",
 		Salt:  "E18CB93A823465D2797539EBC5F3C0FD",
@@ -124,7 +124,7 @@ func (s *EncryptedConfigXmppSuite) Test_encryptConfiguration(c *C) {
 }`)
 }
 
-func (s *EncryptedConfigXmppSuite) Test_deserializeConfigurationEmptyErr(c *C) {
+func (s *EncryptedConfigXMPPSuite) Test_deserializeConfigurationEmptyErr(c *C) {
 	p := &EncryptionParameters{
 		Nonce: "",
 		Salt:  "",

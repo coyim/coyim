@@ -21,11 +21,11 @@ func init() {
 	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
-type ConfigXmppSuite struct{}
+type ConfigXMPPSuite struct{}
 
-var _ = Suite(&ConfigXmppSuite{})
+var _ = Suite(&ConfigXMPPSuite{})
 
-func (s *ConfigXmppSuite) TestParseYes(c *C) {
+func (s *ConfigXMPPSuite) TestParseYes(c *C) {
 	c.Assert(ParseYes("Y"), Equals, true)
 	c.Assert(ParseYes("y"), Equals, true)
 	c.Assert(ParseYes("YES"), Equals, true)
@@ -34,7 +34,7 @@ func (s *ConfigXmppSuite) TestParseYes(c *C) {
 	c.Assert(ParseYes("anything"), Equals, false)
 }
 
-func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
+func (s *ConfigXMPPSuite) TestSerializeAccountsConfig(c *C) {
 	expected := `{
 	"Accounts": [
 		{
@@ -98,7 +98,7 @@ func (s *ConfigXmppSuite) TestSerializeAccountsConfig(c *C) {
 	c.Assert(string(contents), Equals, expected)
 }
 
-func (s *ConfigXmppSuite) TestFindConfigFile(c *C) {
+func (s *ConfigXMPPSuite) TestFindConfigFile(c *C) {
 	conf := findConfigFile("")
 	if strings.HasSuffix(conf, ".enc") {
 		c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json.enc")

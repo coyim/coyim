@@ -5,11 +5,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type CapabilitiesXmppSuite struct{}
+type CapabilitiesXMPPSuite struct{}
 
-var _ = Suite(&CapabilitiesXmppSuite{})
+var _ = Suite(&CapabilitiesXMPPSuite{})
 
-func (s *CapabilitiesXmppSuite) Test_DiscoveryIdentity_xep0115Less_comparesCategory(c *C) {
+func (s *CapabilitiesXMPPSuite) Test_DiscoveryIdentity_xep0115Less_comparesCategory(c *C) {
 	left := &data.DiscoveryIdentity{}
 	right := &data.DiscoveryIdentity{}
 
@@ -24,7 +24,7 @@ func (s *CapabilitiesXmppSuite) Test_DiscoveryIdentity_xep0115Less_comparesCateg
 	c.Assert(xep0115Less(right, left), Equals, true)
 }
 
-func (s *CapabilitiesXmppSuite) Test_DiscoveryIdentity_xep0115Less_comparesType(c *C) {
+func (s *CapabilitiesXMPPSuite) Test_DiscoveryIdentity_xep0115Less_comparesType(c *C) {
 	left := &data.DiscoveryIdentity{Category: "A"}
 	right := &data.DiscoveryIdentity{Category: "A"}
 
@@ -39,7 +39,7 @@ func (s *CapabilitiesXmppSuite) Test_DiscoveryIdentity_xep0115Less_comparesType(
 	c.Assert(xep0115Less(right, left), Equals, true)
 }
 
-func (s *CapabilitiesXmppSuite) Test_DiscoveryIdentity_xep0115Less_comparesLang(c *C) {
+func (s *CapabilitiesXMPPSuite) Test_DiscoveryIdentity_xep0115Less_comparesLang(c *C) {
 	left := &data.DiscoveryIdentity{Category: "A", Type: "B"}
 	right := &data.DiscoveryIdentity{Category: "A", Type: "B"}
 
@@ -54,7 +54,7 @@ func (s *CapabilitiesXmppSuite) Test_DiscoveryIdentity_xep0115Less_comparesLang(
 	c.Assert(xep0115Less(right, left), Equals, true)
 }
 
-func (s *CapabilitiesXmppSuite) Test_formField_xep0115Less_comparesVar(c *C) {
+func (s *CapabilitiesXMPPSuite) Test_formField_xep0115Less_comparesVar(c *C) {
 	left := &data.FormFieldX{}
 	right := &data.FormFieldX{}
 

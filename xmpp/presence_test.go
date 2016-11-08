@@ -6,11 +6,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type PresenceXmppSuite struct{}
+type PresenceXMPPSuite struct{}
 
-var _ = Suite(&PresenceXmppSuite{})
+var _ = Suite(&PresenceXMPPSuite{})
 
-func (s *PresenceXmppSuite) Test_SignalPresence_sendsPresenceInformation(c *C) {
+func (s *PresenceXMPPSuite) Test_SignalPresence_sendsPresenceInformation(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
 		out: mockOut,
@@ -21,7 +21,7 @@ func (s *PresenceXmppSuite) Test_SignalPresence_sendsPresenceInformation(c *C) {
 	c.Assert(string(mockOut.write), Equals, "<presence><show>fo&apos;o</show></presence>")
 }
 
-func (s *PresenceXmppSuite) Test_SignalPresence_returnsWriterError(c *C) {
+func (s *PresenceXMPPSuite) Test_SignalPresence_returnsWriterError(c *C) {
 	mockOut := &mockConnIOReaderWriter{err: errors.New("foo bar")}
 	conn := conn{
 		out: mockOut,
@@ -31,7 +31,7 @@ func (s *PresenceXmppSuite) Test_SignalPresence_returnsWriterError(c *C) {
 	c.Assert(err.Error(), Equals, "foo bar")
 }
 
-func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) {
+func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
 		out: mockOut,
@@ -42,7 +42,7 @@ func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) 
 	c.Assert(string(mockOut.write), Equals, "<presence id='123456&amp;' to='someone&lt;strange&gt;@foo.com' type='subsc&apos;ribe'/>")
 }
 
-func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
+func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
 		out:  mockOut,
@@ -54,7 +54,7 @@ func (s *PresenceXmppSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 	c.Assert(string(mockOut.write), Equals, "<presence id='3544672884359377457' to='someone&lt;strange&gt;@foo.com' type='subsc&apos;ribe'/>")
 }
 
-func (s *PresenceXmppSuite) Test_SendPresence_returnsWriterError(c *C) {
+func (s *PresenceXMPPSuite) Test_SendPresence_returnsWriterError(c *C) {
 	mockOut := &mockConnIOReaderWriter{err: errors.New("bar foo")}
 	conn := conn{
 		out: mockOut,
@@ -64,7 +64,7 @@ func (s *PresenceXmppSuite) Test_SendPresence_returnsWriterError(c *C) {
 	c.Assert(err.Error(), Equals, "bar foo")
 }
 
-func (s *PresenceXmppSuite) Test_SendPresence_addsStatusToSubscribeMessage(c *C) {
+func (s *PresenceXMPPSuite) Test_SendPresence_addsStatusToSubscribeMessage(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
 		out: mockOut,

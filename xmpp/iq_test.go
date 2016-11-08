@@ -10,11 +10,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type IqXmppSuite struct{}
+type IqXMPPSuite struct{}
 
-var _ = Suite(&IqXmppSuite{})
+var _ = Suite(&IqXMPPSuite{})
 
-func (s *IqXmppSuite) Test_SendIQReply_returnsErrorIfOneIsEncounteredWhenWriting(c *C) {
+func (s *IqXMPPSuite) Test_SendIQReply_returnsErrorIfOneIsEncounteredWhenWriting(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: errors.New("some error")}
 	conn := conn{
 		out: mockIn,
@@ -25,7 +25,7 @@ func (s *IqXmppSuite) Test_SendIQReply_returnsErrorIfOneIsEncounteredWhenWriting
 	c.Assert(err.Error(), Equals, "some error")
 }
 
-func (s *IqXmppSuite) Test_SendIQReply_writesAnEmptyReplyIfEmptyIsGiven(c *C) {
+func (s *IqXMPPSuite) Test_SendIQReply_writesAnEmptyReplyIfEmptyIsGiven(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := conn{
 		out: mockIn,
@@ -37,7 +37,7 @@ func (s *IqXmppSuite) Test_SendIQReply_writesAnEmptyReplyIfEmptyIsGiven(c *C) {
 	c.Assert(string(mockIn.write), Equals, "<iq to='f&amp;o' from='som&apos;ewhat@foo.com/somewhere' type='b&quot;ar' id='b&lt;az'></iq>")
 }
 
-func (s *IqXmppSuite) Test_SendIQReply_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
+func (s *IqXMPPSuite) Test_SendIQReply_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := conn{
 		out: mockIn,
@@ -47,7 +47,7 @@ func (s *IqXmppSuite) Test_SendIQReply_returnsErrorIfAnUnXMLableEntryIsGiven(c *
 	c.Assert(err.Error(), Equals, "xml: unsupported type: func() int")
 }
 
-func (s *IqXmppSuite) Test_SendIQ_returnsErrorIfWritingDataFails(c *C) {
+func (s *IqXMPPSuite) Test_SendIQ_returnsErrorIfWritingDataFails(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails")}
 	conn := conn{
 		out: mockIn,
@@ -57,7 +57,7 @@ func (s *IqXmppSuite) Test_SendIQ_returnsErrorIfWritingDataFails(c *C) {
 	c.Assert(err.Error(), Equals, "this also fails")
 }
 
-func (s *IqXmppSuite) Test_Send_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
+func (s *IqXMPPSuite) Test_Send_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := conn{
 		out: mockIn,
@@ -67,7 +67,7 @@ func (s *IqXmppSuite) Test_Send_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 	c.Assert(err.Error(), Equals, "xml: unsupported type: func() int")
 }
 
-func (s *IqXmppSuite) Test_SendIQ_returnsErrorIfWritingDataFailsTheSecondTime(c *C) {
+func (s *IqXMPPSuite) Test_SendIQ_returnsErrorIfWritingDataFailsTheSecondTime(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails again"), errCount: 1}
 	conn := conn{
 		out: mockIn,
@@ -78,7 +78,7 @@ func (s *IqXmppSuite) Test_SendIQ_returnsErrorIfWritingDataFailsTheSecondTime(c 
 	c.Assert(string(mockIn.write), Matches, "<iq  from='som&apos;ewhat@foo.com/somewhere' type='' id='.*?'></iq>")
 }
 
-func (s *IqXmppSuite) TestConnSendIQReplyAndTyp(c *C) {
+func (s *IqXMPPSuite) TestConnSendIQReplyAndTyp(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
 		out: &mockOut,
@@ -92,7 +92,7 @@ func (s *IqXmppSuite) TestConnSendIQReplyAndTyp(c *C) {
 	c.Assert(err, IsNil)
 }
 
-func (s *IqXmppSuite) TestConnSendIQRaw(c *C) {
+func (s *IqXMPPSuite) TestConnSendIQRaw(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
 		out: &mockOut,
@@ -107,7 +107,7 @@ func (s *IqXmppSuite) TestConnSendIQRaw(c *C) {
 	c.Assert(err, IsNil)
 }
 
-func (s *IqXmppSuite) TestConnSendIQErr(c *C) {
+func (s *IqXMPPSuite) TestConnSendIQErr(c *C) {
 	mockOut := mockConnIOReaderWriter{err: io.EOF}
 	conn := conn{
 		out: &mockOut,
@@ -120,7 +120,7 @@ func (s *IqXmppSuite) TestConnSendIQErr(c *C) {
 	c.Assert(err, Equals, io.EOF)
 }
 
-func (s *IqXmppSuite) TestConnSendIQEmptyReply(c *C) {
+func (s *IqXMPPSuite) TestConnSendIQEmptyReply(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
 		out: &mockOut,
@@ -134,7 +134,7 @@ func (s *IqXmppSuite) TestConnSendIQEmptyReply(c *C) {
 	c.Assert(err, IsNil)
 }
 
-func (s *IqXmppSuite) TestConnSendIQReply(c *C) {
+func (s *IqXMPPSuite) TestConnSendIQReply(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
 		out: &mockOut,

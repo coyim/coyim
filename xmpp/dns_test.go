@@ -7,9 +7,9 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type DNSXmppSuite struct{}
+type DNSXMPPSuite struct{}
 
-var _ = Suite(&DNSXmppSuite{})
+var _ = Suite(&DNSXMPPSuite{})
 
 func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 	fakeResolver, _ := net.Listen("tcp", "127.0.0.1:0")
@@ -26,7 +26,7 @@ func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 	return net.Dial("tcp", fakeResolver.Addr().String())
 }
 
-func (s *DNSXmppSuite) Test_Resolve_resolvesCorrectly(c *C) {
+func (s *DNSXMPPSuite) Test_Resolve_resolvesCorrectly(c *C) {
 	dec, _ := hex.DecodeString("00511eea818000010001000000000c5f786d70702d636c69656e74045f746370076f6c6162696e690273650000210001c00c0021000100000258001700000005146604786d7070076f6c6162696e6902736500")
 
 	p := &mockProxy{}
@@ -44,7 +44,7 @@ func (s *DNSXmppSuite) Test_Resolve_resolvesCorrectly(c *C) {
 }
 
 // WARNING: this test requires a real live connection to the Internet. Not so good...
-func (s *DNSXmppSuite) Test_Resolve_handlesErrors(c *C) {
+func (s *DNSXMPPSuite) Test_Resolve_handlesErrors(c *C) {
 	_, err := Resolve("doesntexist.olabini.se")
 
 	//It only happens when using golang resolver

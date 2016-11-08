@@ -26,16 +26,16 @@ func init() {
 
 func Test(t *testing.T) { TestingT(t) }
 
-type SessionXmppSuite struct{}
+type SessionSuite struct{}
 
-var _ = Suite(&SessionXmppSuite{})
+var _ = Suite(&SessionSuite{})
 
-func (s *SessionXmppSuite) Test_NewSession_returnsANewSession(c *C) {
+func (s *SessionSuite) Test_NewSession_returnsANewSession(c *C) {
 	sess := Factory(&config.ApplicationConfig{}, &config.Account{}, xmpp.DialerFactory)
 	c.Assert(sess, Not(IsNil))
 }
 
-func (s *SessionXmppSuite) Test_info_publishesInfoEvent(c *C) {
+func (s *SessionSuite) Test_info_publishesInfoEvent(c *C) {
 	sess := &session{}
 
 	observer := make(chan interface{}, 1)
@@ -53,7 +53,7 @@ func (s *SessionXmppSuite) Test_info_publishesInfoEvent(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_warn_publishesWarnEvent(c *C) {
+func (s *SessionSuite) Test_warn_publishesWarnEvent(c *C) {
 	sess := &session{}
 
 	observer := make(chan interface{}, 1)
@@ -71,7 +71,7 @@ func (s *SessionXmppSuite) Test_warn_publishesWarnEvent(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_alert_publishedAlertEvent(c *C) {
+func (s *SessionSuite) Test_alert_publishedAlertEvent(c *C) {
 	sess := &session{}
 
 	observer := make(chan interface{}, 1)
@@ -89,7 +89,7 @@ func (s *SessionXmppSuite) Test_alert_publishedAlertEvent(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
+func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	sess := &session{}
 
 	observer := make(chan interface{}, 1)
@@ -109,7 +109,7 @@ func (s *SessionXmppSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<clientx:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -136,7 +136,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<bind:bind xmlns:bind='urn:ietf:params:xml:ns:xmpp-bind'></bind:bind>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -172,7 +172,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:error xmlns:stream='http://etherx.jabber.org/streams'><stream:text>bad horse showed up</stream:text></stream:error>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -196,7 +196,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	})
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:error xmlns:stream='http://etherx.jabber.org/streams'><not-well-formed xmlns='urn:ietf:params:xml:ns:xmpp-streams'/></stream:error>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -220,7 +220,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(
 	})
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' type='chat' to='some@one.org/foo' from='bla@hmm.org/somewhere'><client:body>well, hello there</client:body></client:message>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -261,7 +261,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='something'></client:iq>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -297,7 +297,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' from='abc' to='cde'><query xmlns='http://jabber.org/protocol/disco#info'/></client:iq>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -329,7 +329,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 		"</iq>")
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' from='abc' to='cde'><query xmlns='jabber:iq:version'/></client:iq>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -362,7 +362,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 		"</iq>")
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' from='abc' to='cde'><query xmlns='jabber:iq:somethingStrange'/></client:iq>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -402,7 +402,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' from='some2@one.org' to='cde'><query xmlns='jabber:iq:roster'/></client:iq>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -436,7 +436,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	c.Assert(string(mockIn.write), Equals, "")
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' from='some@one.org/foo' to='cde'><query xmlns='jabber:iq:roster'/></client:iq>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -464,7 +464,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid
 	})
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' to='cde'><query xmlns='jabber:iq:roster'>" +
 		"<item jid='romeo@example.net' name='Romeo' subscription='both'>" +
 		"<group>Friends</group>" +
@@ -492,7 +492,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c 
 		peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Romeo", Group: []string{"Friends"}}, sess.GetConfig())})
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterItem(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterItem(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' to='cde'><query xmlns='jabber:iq:roster'>" +
 		"<item jid='romeo@example.net' name='Romeo' subscription='both'>" +
 		"<group>Friends</group>" +
@@ -528,7 +528,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterIte
 	})
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='set' to='cde'><query xmlns='jabber:iq:roster'>" +
 		"<item jid='romeo@example.net' name='Romeo' subscription='remove'>" +
 		"<group>Friends</group>" +
@@ -577,7 +577,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c 
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUser(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUser(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:presence xmlns:client='jabber:client' from='some2@one.org/balcony' to='some@one.org' type='unavailable'><client:status>going on vacation</client:status></client:presence>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -610,7 +610,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUs
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:presence xmlns:client='jabber:client' from='some2@one.org/balcony' to='some@one.org' type='unavailable'><client:status>going on vacation</client:status></client:presence>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -652,7 +652,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c
 
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:presence xmlns:client='jabber:client' from='some2@one.org/balcony' to='some@one.org' type='subscribe' id='adf12112'/>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -674,7 +674,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	c.Assert(v, Equals, "adf12112")
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:presence xmlns:client='jabber:client' from='some2@one.org/balcony' to='some@one.org' type='weird'/>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -713,7 +713,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:presence xmlns:client='jabber:client' from='some2@one.org/balcony' to='some@one.org'><client:show>dnd</client:show></client:presence>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -754,7 +754,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *
 	}
 }
 
-func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
+func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:presence xmlns:client='jabber:client' from='some2@one.org/balcony' to='some@one.org'><client:show>dnd</client:show></client:presence>")}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -793,7 +793,7 @@ func (s *SessionXmppSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	}
 }
 
-func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWaiting(c *C) {
+func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWaiting(c *C) {
 	sess := &session{
 		r: roster.New(),
 	}
@@ -812,7 +812,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeI
 	}
 }
 
-func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
+func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -841,7 +841,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	c.Assert(inMap, Equals, false)
 }
 
-func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C) {
+func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -870,7 +870,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(
 	c.Assert(inMap, Equals, false)
 }
 
-func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
+func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
@@ -907,7 +907,7 @@ func (s *SessionXmppSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *
 	}
 }
 
-func (s *SessionXmppSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAboutThem(c *C) {
+func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAboutThem(c *C) {
 	now := time.Now()
 	timeouts := map[data.Cookie]time.Time{
 		data.Cookie(1): now.Add(-1 * time.Second),

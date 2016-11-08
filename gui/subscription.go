@@ -34,7 +34,7 @@ type addContactDialog struct {
 
 func (acd *addContactDialog) getVerifiedContact() (string, bool) {
 	contact, _ := acd.contactInput.GetText()
-	isJid, errmsg := verifyXmppAddress(contact)
+	isJid, errmsg := verifyXMPPAddress(contact)
 
 	if !isJid {
 		if acd.notification != nil {

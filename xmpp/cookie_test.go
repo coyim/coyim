@@ -6,11 +6,11 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type CookieXmppSuite struct{}
+type CookieXMPPSuite struct{}
 
-var _ = Suite(&CookieXmppSuite{})
+var _ = Suite(&CookieXMPPSuite{})
 
-func (s *CookieXmppSuite) Test_getCookie_panicsOnReadFailure(c *C) {
+func (s *CookieXMPPSuite) Test_getCookie_panicsOnReadFailure(c *C) {
 	mockReader := &mockConnIOReaderWriter{err: errors.New("stuff")}
 	conn := conn{
 		rand: mockReader,

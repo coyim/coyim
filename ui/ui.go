@@ -83,6 +83,7 @@ loop:
 	return
 }
 
+// EscapeAllHTMLTags will escape all html tags in the text
 func EscapeAllHTMLTags(in string) string {
 	in = strings.Replace(in, "<", "&lt;", -1)
 	in = strings.Replace(in, ">", "&gt;", -1)

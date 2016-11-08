@@ -2,6 +2,6 @@ package xmpp
 
 import . "gopkg.in/check.v1"
 
-type StanzaXmppSuite struct{}
+type StanzaXMPPSuite struct{}
 
-var _ = Suite(&StanzaXmppSuite{})
+var _ = Suite(&StanzaXMPPSuite{})

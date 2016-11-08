@@ -9,18 +9,18 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type SaslXmppSuite struct{}
+type SaslXMPPSuite struct{}
 
-var _ = Suite(&SaslXmppSuite{})
+var _ = Suite(&SaslXMPPSuite{})
 
-func (s *SaslXmppSuite) Test_authenticate_failsIfPlainIsNotAnOption(c *C) {
+func (s *SaslXMPPSuite) Test_authenticate_failsIfPlainIsNotAnOption(c *C) {
 	conn := conn{}
 
 	err := conn.Authenticate("", "")
 	c.Assert(err, Equals, errUnsupportedSASLMechanism)
 }
 
-func (s *SaslXmppSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c *C) {
+func (s *SaslXMPPSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:success xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:success>")}
 	conn := conn{
@@ -38,7 +38,7 @@ func (s *SaslXmppSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c
 	c.Assert(string(out.write), Equals, "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>AGZvbwBiYXI=</auth>\n")
 }
 
-func (s *SaslXmppSuite) Test_authenticate_handlesFailure(c *C) {
+func (s *SaslXMPPSuite) Test_authenticate_handlesFailure(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:failure xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'><foobar></foobar></sasl:failure>")}
 	conn := conn{
@@ -55,7 +55,7 @@ func (s *SaslXmppSuite) Test_authenticate_handlesFailure(c *C) {
 	c.Assert(e.Error(), Equals, "xmpp: authentication failure: foobar")
 }
 
-func (s *SaslXmppSuite) Test_authenticate_handlesWrongResponses(c *C) {
+func (s *SaslXMPPSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:something xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:something>")}
 	conn := conn{
@@ -72,7 +72,7 @@ func (s *SaslXmppSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	c.Assert(e, Equals, errors.ErrAuthenticationFailed)
 }
 
-func (s *SaslXmppSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C) {
+func (s *SaslXMPPSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte(
 		"<challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>cmVhbG09ImNveS5pbSIsbm9uY2U9Ik9BNk1HOXRFUUdtMmhoIixxb3A9ImF1dGgiLGNoYXJzZXQ9dXRmLTgsYWxnb3JpdGhtPW1kNS1zZXNz</challenge>\n" +
@@ -104,7 +104,7 @@ func (s *SaslXmppSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C
 	c.Assert(string(out.write), Equals, expectedOut)
 }
 
-func (s *SaslXmppSuite) Test_digestMD5_serverFailsToVerifyChallenge(c *C) {
+func (s *SaslXMPPSuite) Test_digestMD5_serverFailsToVerifyChallenge(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte(
 		"<challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>cmVhbG09ImNveS5pbSIsbm9uY2U9Ik9BNk1HOXRFUUdtMmhoIixxb3A9ImF1dGgiLGNoYXJzZXQ9dXRmLTgsYWxnb3JpdGhtPW1kNS1zZXNz</challenge>\n" +
@@ -134,7 +134,7 @@ func (s *SaslXmppSuite) Test_digestMD5_serverFailsToVerifyChallenge(c *C) {
 	c.Assert(string(out.write), Equals, expectedOut)
 }
 
-func (s *SaslXmppSuite) Test_scramSHA1Auth_authenticatesWithUsernameAndPassword(c *C) {
+func (s *SaslXMPPSuite) Test_scramSHA1Auth_authenticatesWithUsernameAndPassword(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte(
 		"<challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>cj03ZjI5MjhmOWRkYTU2ZDNyZmNOSFlKWTFaVnZXVnM3aixzPVFTWENSK1E2c2VrOGJmOTIsaT00MDk2</challenge>\n" +

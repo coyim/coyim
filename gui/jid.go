@@ -7,7 +7,7 @@ import (
 // Method to validate a jabber id is correct according to the RFC-6122
 // on Address Format
 // TODO: verify the resource part
-func verifyXmppAddress(address string) (bool, string) {
+func verifyXMPPAddress(address string) (bool, string) {
 	var err string
 
 	tldIndex := strings.LastIndex(address, ".")

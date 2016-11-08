@@ -255,7 +255,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			servTxt, _ := data.server.GetText()
 			portTxt, _ := data.port.GetText()
 
-			isJid, err := verifyXmppAddress(accTxt)
+			isJid, err := verifyXMPPAddress(accTxt)
 			if !isJid && failures > 0 {
 				failures++
 				return

@@ -19,16 +19,16 @@ func init() {
 	i18n.InitLocalization(&glib_mock.Mock{})
 }
 
-type XmppClientXmppSuite struct{}
+type XMPPClientXMPPSuite struct{}
 
-var _ = Suite(&XmppClientXmppSuite{})
+var _ = Suite(&XMPPClientXMPPSuite{})
 
 func decode(in string) []byte {
 	ret, _ := hex.DecodeString(in)
 	return ret
 }
 
-func (s *XmppClientXmppSuite) Test_XmppClient_canImportXmppClientConfiguration(c *C) {
+func (s *XMPPClientXMPPSuite) Test_XmppClient_canImportXmppClientConfiguration(c *C) {
 	importer := xmppClientImporter{}
 	res, ok := importer.importFrom(testResourceFilename("xmpp_client_test_conf.json"))
 	c.Assert(ok, Equals, true)

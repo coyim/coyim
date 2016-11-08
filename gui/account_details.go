@@ -210,10 +210,12 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 
 	data.pinningPolicy.SetActive(findPinningPolicyFor(account.PinningPolicy))
 
-	data.fingerprintsMessage.SetSelectable(true)
-	m := i18n.Local("Your fingerprints for %s:\n%s")
-	message := fmt.Sprintf(m, account.Account, formattedFingerprintsFor(s))
-	data.fingerprintsMessage.SetText(message)
+	if s != nil && s.PrivateKeys() != nil && len(s.PrivateKeys()) > 0 {
+		data.fingerprintsMessage.SetSelectable(true)
+		m := i18n.Local("Your fingerprints for %s:\n%s")
+		message := fmt.Sprintf(m, account.Account, formattedFingerprintsFor(s))
+		data.fingerprintsMessage.SetText(message)
+	}
 
 	p2, _ := data.notebook.GetNthPage(1)
 	p3, _ := data.notebook.GetNthPage(2)

@@ -250,7 +250,7 @@ func (*defAccountDetails) String() string {
                         <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
                         <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
                         <property name="width-request">170</property>
-                        <property name="height-request">230</property>
+                        <property name="height-request">150</property>
                         <property name="margin">5</property>
                         <property name="visible">True</property>
                         <property name="hexpand">True</property>

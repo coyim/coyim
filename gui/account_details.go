@@ -189,6 +189,10 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		}
 	}
 
+	if account.Password != "" {
+		data.pass.SetProperty("placeholder-text", "(saved in configuration file)")
+	}
+
 	data.server.SetText(account.Server)
 	if account.Port == 0 {
 		account.Port = 5222

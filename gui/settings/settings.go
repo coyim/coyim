@@ -185,3 +185,13 @@ func (s *Settings) GetConnectAutomatically() bool {
 func (s *Settings) SetConnectAutomatically(val bool) {
 	s.setBooleanSetting("connect-automatically", val)
 }
+
+// GetCollapsed returns the collapsed setting
+func (s *Settings) GetCollapsed() string {
+	return s.getStringSetting("collapsed")
+}
+
+// SetCollapsed sets the collapsed setting
+func (s *Settings) SetCollapsed(val string) {
+	s.setStringSetting("collapsed", val)
+}

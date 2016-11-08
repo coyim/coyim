@@ -49,7 +49,7 @@
     <key name="has-set-emacs-keyboard" type="b">
       <default>false</default>
     </key>
-    
+
     <key name="notification-style" type="s">
       <choices>
         <choice value='off'/>
@@ -119,7 +119,19 @@
     <key name="has-set-connect-automatically" type="b">
       <default>false</default>
     </key>
-    
+
+    <key name="collapsed" type="s">
+      <default>''</default>
+      <summary>Which groups are collapsed</summary>
+      <description>
+        This setting contains information about what groups are collapsed
+      </description>
+    </key>
+
+    <key name="has-set-collapsed" type="b">
+      <default>false</default>
+    </key>
+
     <!-- Other things to add later: font size, window positions, folding of group -->
   </schema>
 </schemalist>

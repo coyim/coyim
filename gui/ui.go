@@ -204,6 +204,7 @@ func (u *gtkUI) updateUnifiedOrNot() {
 
 func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 	u.settings = settings.For(c.GetUniqueID())
+	u.roster.restoreCollapseStatus()
 	u.roster.deNotify.updateWith(u.settings)
 	u.updateUnifiedOrNot()
 

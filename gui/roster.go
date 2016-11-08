@@ -1,10 +1,13 @@
 package gui
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"html"
 	"log"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/twstrike/coyim/config"
@@ -289,6 +292,30 @@ func (r *roster) onButtonPress(view gtki.TreeView, ev gdki.Event) bool {
 	return false
 }
 
+func collapseTransform(s string) string {
+	res := sha256.Sum256([]byte(s))
+	return hex.EncodeToString(res[:])
+}
+
+func (r *roster) restoreCollapseStatus() {
+	pieces := strings.Split(r.ui.settings.GetCollapsed(), ":")
+	for _, p := range pieces {
+		if p != "" {
+			r.isCollapsed[p] = true
+		}
+	}
+}
+
+func (r *roster) saveCollapseStatus() {
+	var vals []string
+	for e, v := range r.isCollapsed {
+		if v {
+			vals = append(vals, e)
+		}
+	}
+	r.ui.settings.SetCollapsed(strings.Join(vals, ":"))
+}
+
 func (r *roster) onActivateBuddy(v gtki.TreeView, path gtki.TreePath) {
 	selection, _ := v.GetSelection()
 	defer selection.UnselectPath(path)
@@ -303,7 +330,9 @@ func (r *roster) onActivateBuddy(v gtki.TreeView, path gtki.TreePath) {
 	rowType := getFromModelIter(r.model, iter, indexRowType)
 
 	if rowType != "peer" {
-		r.isCollapsed[jid] = !r.isCollapsed[jid]
+		ix := collapseTransform(jid)
+		r.isCollapsed[ix] = !r.isCollapsed[ix]
+		r.saveCollapseStatus()
 		r.redraw()
 		return
 	}
@@ -576,7 +605,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 
 	if g.GroupName != "" {
 		parentPath, _ := r.model.GetPath(pi)
-		shouldCollapse, ok := r.isCollapsed[groupID]
+		shouldCollapse, ok := r.isCollapsed[collapseTransform(groupID)]
 		isExpanded := true
 		if ok && shouldCollapse {
 			isExpanded = false
@@ -609,7 +638,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	r.model.SetValue(parentIter, indexBackgroundColor, bgcolor)
 
 	parentPath, _ := r.model.GetPath(parentIter)
-	shouldCollapse, ok := r.isCollapsed[parentName]
+	shouldCollapse, ok := r.isCollapsed[collapseTransform(parentName)]
 	isExpanded := true
 	if ok && shouldCollapse {
 		isExpanded = false

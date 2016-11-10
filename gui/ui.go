@@ -156,7 +156,7 @@ func (u *gtkUI) initialSetupWindow() {
 			go u.showFirstAccountWindow()
 		}
 		if res {
-			u.captureInitialMasterPassword(k)
+			u.captureInitialMasterPassword(k, func() {})
 		} else {
 			k()
 		}

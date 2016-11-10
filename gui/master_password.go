@@ -6,7 +6,7 @@ import (
 	"github.com/twstrike/gotk3adapter/gtki"
 )
 
-func (u *gtkUI) captureInitialMasterPassword(k func()) {
+func (u *gtkUI) captureInitialMasterPassword(k func(), onCancel func()) {
 	dialogID := "CaptureInitialMasterPassword"
 	builder := newBuilder(dialogID)
 	dialogOb := builder.getObj(dialogID)
@@ -43,6 +43,7 @@ func (u *gtkUI) captureInitialMasterPassword(k func()) {
 		},
 		"on_cancel_signal": func() {
 			pwdDialog.Destroy()
+			onCancel()
 		},
 	})
 

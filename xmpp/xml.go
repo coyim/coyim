@@ -53,7 +53,10 @@ func nextElement(p *xml.Decoder) (xml.Token, error) {
 			return t, nil
 		case xml.CharData:
 			// https://xmpp.org/rfcs/rfc6120.html#xml-whitespace
-			if string(elem) == " " {
+			// rfc6120, section 1.4: "whitespace" is used to refer to any character
+			// or characters matching [...] SP, HTAB, CR, or LF.
+			switch string(elem) {
+			case " ", "\t", "\r", "\n": //TODO: consider more than one whitespace
 				log.Println("xmpp: received whitespace ping")
 			}
 		case xml.ProcInst:

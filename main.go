@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/tor"
 )
 
 var coyimVersion = "<UNSET>"
@@ -23,12 +24,19 @@ func initLog() {
 }
 
 func main() {
+	useBundledTor := flag.Bool("tor", true, "use bundled tor")
+
 	flag.Parse()
 
 	if *config.VersionFlag {
 		var versionMessage = "CoyIM version " + coyimVersion + "\n"
 		os.Stdout.WriteString(versionMessage)
 		return
+	}
+
+	if *useBundledTor {
+		or := tor.Exec()
+		defer or.Process.Release()
 	}
 
 	initLog()

@@ -2,6 +2,8 @@ package gtka
 
 import (
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/gotk3adapter/gdka"
+	"github.com/twstrike/gotk3adapter/gdki"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
 
@@ -37,4 +39,8 @@ func unwrapMenuToIMenu(v gtki.Menu) gtk.IMenu {
 
 func (v *menu) PopupAtMouseCursor(v1 gtki.Menu, v2 gtki.MenuItem, v3 int, v4 uint32) {
 	v.internal.PopupAtMouseCursor(unwrapMenuToIMenu(v1), unwrapMenuItemToIMenuItem(v2), v3, v4)
+}
+
+func (v *menu) PopupAtPointer(v1 gdki.Event) {
+	v.internal.PopupAtPointer(gdka.UnwrapEvent(v1))
 }

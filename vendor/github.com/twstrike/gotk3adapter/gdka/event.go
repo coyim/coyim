@@ -26,3 +26,28 @@ func unwrapEvent(v gdki.Event) *gdk.Event {
 	}
 	return v.(*event).Event
 }
+
+func UnwrapEvent(v gdki.Event) *gdk.Event {
+	switch oo := v.(type) {
+	case *eventButton:
+		val := unwrapEventButton(oo)
+		if val == nil {
+			return nil
+		}
+		return val.Event
+	case *eventKey:
+		val := unwrapEventKey(oo)
+		if val == nil {
+			return nil
+		}
+		return val.Event
+	case *event:
+		val := unwrapEvent(oo)
+		if val == nil {
+			return nil
+		}
+		return val
+	default:
+		return nil
+	}
+}

@@ -261,7 +261,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 	})
 
 	mn.ShowAll()
-	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
+	mn.PopupAtPointer(bt)
 }
 
 func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventButton) {
@@ -272,7 +272,7 @@ func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventB
 		mn.Append(account.createXMLConsoleItem(r))
 	}
 	mn.ShowAll()
-	mn.PopupAtMouseCursor(nil, nil, int(bt.Button()), bt.Time())
+	mn.PopupAtPointer(bt)
 }
 
 func (r *roster) onButtonPress(view gtki.TreeView, ev gdki.Event) bool {

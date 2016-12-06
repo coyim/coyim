@@ -27,3 +27,35 @@ func unwrapAssistant(v gtki.Assistant) *gtk.Assistant {
 	}
 	return v.(*assistant).internal
 }
+
+func (a *assistant) Commit() {
+	a.internal.Commit()
+}
+
+func (a *assistant) NextPage() {
+	a.internal.NextPage()
+}
+
+func (a *assistant) PreviousPage() {
+	a.internal.PreviousPage()
+}
+
+func (a *assistant) AppendPage(page gtki.Widget) int {
+	return a.internal.AppendPage(unwrapWidget(page))
+}
+
+func (a *assistant) SetPageComplete(page gtki.Widget, complete bool) {
+	a.internal.SetPageComplete(unwrapWidget(page), complete)
+}
+
+func (a *assistant) GetPageComplete(page gtki.Widget) bool {
+	return a.internal.GetPageComplete(unwrapWidget(page))
+}
+
+func (a *assistant) GetCurrentPage() int {
+	return a.internal.GetCurrentPage()
+}
+
+func (a *assistant) GetNthPage(pageNum int) (gtki.Widget, error) {
+	return wrapWidget(a.internal.GetNthPage(pageNum))
+}

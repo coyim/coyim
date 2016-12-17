@@ -57,6 +57,10 @@ func (v *textBuffer) Insert(v1 gtki.TextIter, v2 string) {
 	v.internal.Insert(unwrapTextIter(v1), v2)
 }
 
+func (v *textBuffer) InsertAtCursor(v1 string) {
+	v.internal.InsertAtCursor(v1)
+}
+
 func (v *textBuffer) GetText(v1, v2 gtki.TextIter, v3 bool) string {
 	vx1, _ := v.internal.GetText(unwrapTextIter(v1), unwrapTextIter(v2), v3)
 	return vx1

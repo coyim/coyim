@@ -144,7 +144,7 @@ func getTextFrom(e gtki.TextView) string {
 
 func insertEnter(e gtki.TextView) {
 	tb := getTextBufferFrom(e)
-	tb.Insert(tb.GetEndIter(), "\n")
+	tb.InsertAtCursor("\n")
 }
 
 func clearIn(e gtki.TextView) {

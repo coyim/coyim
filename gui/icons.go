@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"io/ioutil"
 	"log"
@@ -13,18 +14,21 @@ import (
 )
 
 type icon struct {
-	encoded string
-	size    string
-	decoded []byte
-	cached  gdki.Pixbuf
-	path    string
-	name    string
+	encoded       string
+	size          string
+	width, height int
+	decoded       []byte
+	cached        gdki.Pixbuf
+	path          string
+	name          string
 }
 
 var coyimIcon = &icon{
-	name: "coyimIcon_256x256.png",
-	path: "build/mac-bundle/coy.iconset/icon_256x256.png",
-	size: "256x256",
+	name:   "coyimIcon_256x256.png",
+	path:   "build/mac-bundle/coy.iconset/icon_256x256.png",
+	size:   "256x256",
+	width:  256,
+	height: 256,
 	encoded: "" +
 		"89504e470d0a1a0a0000000d49484452000001000000010008060000005c72a86600000004734249" +
 		"54080808087c08648800000009704859730000037600000376017dd582cc0000001974455874536f" +
@@ -232,7 +236,9 @@ var coyimIcon = &icon{
 
 var statusIcons = map[string]*icon{
 	"unknown2": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"89504E470D0A1A0A0000000D49484452000000100000001008060000001F" +
 			"F3FF61000000097048597300000B1300000B1301009A9C1800000A4F6943" +
@@ -345,7 +351,9 @@ var statusIcons = map[string]*icon{
 			"44AE426082",
 	},
 	"busy": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"" +
 			"89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff6100000009704859" +
@@ -432,7 +440,9 @@ var statusIcons = map[string]*icon{
 	},
 
 	"chat": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"" +
 			"89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff6100000009704859" +
@@ -520,7 +530,9 @@ var statusIcons = map[string]*icon{
 	},
 
 	"extended-away": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"" +
 			"89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff6100000009704859" +
@@ -607,7 +619,9 @@ var statusIcons = map[string]*icon{
 	},
 
 	"invisible": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"" +
 			"89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff6100000009704859" +
@@ -694,7 +708,9 @@ var statusIcons = map[string]*icon{
 	},
 
 	"offline": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"" +
 			"89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff6100000009704859" +
@@ -781,7 +797,9 @@ var statusIcons = map[string]*icon{
 	},
 
 	"unknown": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"89504e470d0a1a0a0000000d49484452000000100000000b080600000076e20d3900000004734249" +
 			"54080808087c0864880000000970485973000001060000010601cdd333bc0000001974455874536f" +
@@ -794,7 +812,9 @@ var statusIcons = map[string]*icon{
 	},
 
 	"available": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"" +
 			"89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff6100000009704859" +
@@ -882,7 +902,9 @@ var statusIcons = map[string]*icon{
 	},
 
 	"away": &icon{
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"" +
 			"89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff6100000009704859" +
@@ -969,7 +991,9 @@ var statusIcons = map[string]*icon{
 			"0000000049454e44ae426082",
 	},
 	"connecting": &icon{ //animation
-		size: "16x16",
+		size:   "16x16",
+		width:  16,
+		height: 16,
 		encoded: "" +
 			"89504e470d0a1a0a0000000d49484452000000100000001008060000001ff3ff6100000009704859" +
 			"7300000b1300000b1301009a9c1800000a4f6943435050686f746f73686f70204943432070726f66" +
@@ -1101,7 +1125,13 @@ func (i *icon) getPixbuf() gdki.Pixbuf {
 	return i.cached
 }
 
-func (i *icon) createPixBuf() (gdki.Pixbuf, error) {
+func (i *icon) hash() string {
+	bytes, _ := i.get()
+	res := sha256.Sum256(bytes)
+	return hex.EncodeToString(res[:])
+}
+
+func (i *icon) createPixBufWithSize(width, height int) (gdki.Pixbuf, error) {
 	var w sync.WaitGroup
 	pl, err := g.gdk.PixbufLoaderNew()
 	if err != nil {
@@ -1111,6 +1141,10 @@ func (i *icon) createPixBuf() (gdki.Pixbuf, error) {
 	w.Add(1)
 	pl.Connect("area-prepared", func() {
 		defer w.Done()
+	})
+
+	pl.Connect("size-prepared", func() {
+		pl.SetSize(width, height)
 	})
 
 	bytes, err := i.get()
@@ -1128,4 +1162,8 @@ func (i *icon) createPixBuf() (gdki.Pixbuf, error) {
 
 	w.Wait() // should not use the buffer until the event has happened
 	return pl.GetPixbuf()
+}
+
+func (i *icon) createPixBuf() (gdki.Pixbuf, error) {
+	return i.createPixBufWithSize(i.width, i.height)
 }

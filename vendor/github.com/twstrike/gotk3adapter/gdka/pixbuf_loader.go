@@ -37,6 +37,10 @@ func (v *pixbufLoader) GetPixbuf() (gdki.Pixbuf, error) {
 	return wrapPixbuf(v.internal.GetPixbuf())
 }
 
+func (v *pixbufLoader) SetSize(width, height int) {
+	v.internal.SetSize(width, height)
+}
+
 func (v *pixbufLoader) Write(b []byte) (int, error) {
 	return v.internal.Write(b)
 }

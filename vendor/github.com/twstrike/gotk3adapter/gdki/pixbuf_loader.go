@@ -7,6 +7,7 @@ type PixbufLoader interface {
 
 	Close() error
 	GetPixbuf() (Pixbuf, error)
+	SetSize(int, int)
 	Write([]byte) (int, error)
 }
 

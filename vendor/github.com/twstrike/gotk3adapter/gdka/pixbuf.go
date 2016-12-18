@@ -6,7 +6,7 @@ import (
 )
 
 type pixbuf struct {
-	*gdk.Pixbuf
+	internal *gdk.Pixbuf
 }
 
 func wrapPixbufSimple(v *gdk.Pixbuf) *pixbuf {
@@ -24,5 +24,9 @@ func UnwrapPixbuf(v gdki.Pixbuf) *gdk.Pixbuf {
 	if v == nil {
 		return nil
 	}
-	return v.(*pixbuf).Pixbuf
+	return v.(*pixbuf).internal
+}
+
+func (v *pixbuf) SavePNG(filename string, compression int) error {
+	return v.internal.SavePNG(filename, compression)
 }

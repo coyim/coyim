@@ -253,7 +253,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 			account.session.RequestPresenceSubscription(jid, "")
 		},
 		"on_peer_fingerprints": func() {
-			r.ui.showFingerprintsForPeer(jid, account)
+			doInUIThread(func() { r.ui.showFingerprintsForPeer(jid, account) })
 		},
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.GetConfig().Account)

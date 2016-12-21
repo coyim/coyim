@@ -44,6 +44,7 @@ func (*defPeerDetails) String() string {
               <object class="GtkLabel" id="account-label">
                 <property name="label" translatable="yes">Account</property>
                 <property name="halign">GTK_ALIGN_END</property>
+                <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -53,6 +54,7 @@ func (*defPeerDetails) String() string {
             <child>
               <object class="GtkLabel" id="account-name">
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -64,6 +66,7 @@ func (*defPeerDetails) String() string {
               <object class="GtkLabel" id="jid-label">
                 <property name="label" translatable="yes">Contact</property>
                 <property name="halign">GTK_ALIGN_END</property>
+                <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -73,6 +76,7 @@ func (*defPeerDetails) String() string {
             <child>
               <object class="GtkLabel" id="jid">
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -104,6 +108,7 @@ func (*defPeerDetails) String() string {
               <object class="GtkLabel" id="require-encryption-label">
                 <property name="label" translatable="yes">Require encryption with this peer</property>
                 <property name="halign">GTK_ALIGN_END</property>
+                <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -123,6 +128,7 @@ func (*defPeerDetails) String() string {
               <object class="GtkLabel" id="groups">
                 <property name="label" translatable="yes">Groups</property>
                 <property name="halign">GTK_ALIGN_START</property>
+                <property name="selectable">TRUE</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>

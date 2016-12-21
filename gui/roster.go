@@ -603,7 +603,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 		r.displayGroup(gr, pi, accountCounter, showOffline, showWaiting, accountName)
 	}
 
-	if g.GroupName != "" {
+	if g.GroupName != "" && (!isEmpty || r.showEmptyGroups()) {
 		parentPath, _ := r.model.GetPath(pi)
 		shouldCollapse, ok := r.isCollapsed[collapseTransform(groupID)]
 		isExpanded := true

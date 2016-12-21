@@ -11,10 +11,10 @@ import (
 )
 
 func (u *gtkUI) connectAccount(account *account) {
-	switch p := account.session.GetConfig().Password; p {
-	case "":
+	p := account.session.GetConfig().Password
+	if p == "" {
 		u.askForPasswordAndConnect(account, false)
-	default:
+	} else {
 		go u.connectWithPassword(account, p)
 	}
 }
@@ -53,8 +53,10 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 	case errors.ErrTCPBindingFailed:
 		u.notifyConnectionFailure(account, u.connectionFailureMoreInfoTCPBindingFailed)
 	case errors.ErrAuthenticationFailed:
+		account.cachedPassword = ""
 		u.askForPasswordAndConnect(account, false)
 	case errors.ErrGoogleAuthenticationFailed:
+		account.cachedPassword = ""
 		u.askForPasswordAndConnect(account, true)
 	case errors.ErrConnectionFailed:
 		u.notifyConnectionFailure(account, u.connectionFailureMoreInfoConnectionFailedGeneric)
@@ -71,6 +73,11 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 func (u *gtkUI) askForPasswordAndConnect(account *account, addGoogleWarning bool) {
 	if !account.IsAskingForPassword() {
 		accountName := account.session.GetConfig().Account
+		if account.cachedPassword != "" {
+			u.connectWithPassword(account, account.cachedPassword)
+			return
+		}
+
 		doInUIThread(func() {
 			account.AskForPassword()
 			u.askForPassword(accountName, addGoogleWarning,
@@ -79,6 +86,7 @@ func (u *gtkUI) askForPasswordAndConnect(account *account, addGoogleWarning bool
 					account.AskedForPassword()
 				},
 				func(password string) error {
+					account.cachedPassword = password
 					account.AskedForPassword()
 					return u.connectWithPassword(account, password)
 				},

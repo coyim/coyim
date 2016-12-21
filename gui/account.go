@@ -33,6 +33,7 @@ type account struct {
 	delayedConversationsLock sync.Mutex
 
 	askingForPassword bool
+	cachedPassword    string
 
 	sync.Mutex
 }

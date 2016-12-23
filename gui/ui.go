@@ -315,6 +315,7 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Merge_signal":           u.toggleMergeAccounts,
 		"on_toggled_check_Item_Show_Offline_signal":    u.toggleShowOffline,
 		"on_toggled_check_Item_Show_Waiting_signal":    u.toggleShowWaiting,
+		"on_toggled_check_Item_Sort_By_Status_signal":  u.toggleSortByStatus,
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 		"on_preferences_signal":                        u.showGlobalPreferences,
 	})
@@ -344,6 +345,9 @@ func (u *gtkUI) mainWindow() {
 
 	u.viewMenu.waiting = builder.getObj("CheckItemShowWaiting").(gtki.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(u.viewMenu.waiting)
+
+	u.viewMenu.sortStatus = builder.getObj("CheckItemSortStatus").(gtki.CheckMenuItem)
+	u.displaySettings.defaultSettingsOn(u.viewMenu.sortStatus)
 
 	// OptionsMenu
 	u.optionsMenu = new(optionsMenu)

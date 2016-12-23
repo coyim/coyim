@@ -78,6 +78,11 @@ func (g *Group) Peers() []*Peer {
 	return g.peers
 }
 
+// UnsortedPeers returns an unsorted list of all the peers in this group
+func (g *Group) UnsortedPeers() []*Peer {
+	return g.peers
+}
+
 type byGroupNameAlphabetic []*Group
 
 func (s byGroupNameAlphabetic) Len() int           { return len(s) }

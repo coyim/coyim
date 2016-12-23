@@ -6,9 +6,10 @@ import (
 )
 
 type viewMenu struct {
-	merge   gtki.CheckMenuItem
-	offline gtki.CheckMenuItem
-	waiting gtki.CheckMenuItem
+	merge      gtki.CheckMenuItem
+	offline    gtki.CheckMenuItem
+	waiting    gtki.CheckMenuItem
+	sortStatus gtki.CheckMenuItem
 }
 
 func (v *viewMenu) setFromConfig(c *config.ApplicationConfig) {
@@ -16,6 +17,7 @@ func (v *viewMenu) setFromConfig(c *config.ApplicationConfig) {
 		v.merge.SetActive(c.Display.MergeAccounts)
 		v.offline.SetActive(!c.Display.ShowOnlyOnline)
 		v.waiting.SetActive(!c.Display.ShowOnlyConfirmed)
+		v.sortStatus.SetActive(c.Display.SortByStatus)
 	})
 }
 
@@ -40,6 +42,15 @@ func (u *gtkUI) toggleShowOffline() {
 func (u *gtkUI) toggleShowWaiting() {
 	if u.config != nil {
 		u.config.Display.ShowOnlyConfirmed = !u.viewMenu.waiting.GetActive()
+		u.saveConfigOnly()
+	}
+
+	u.roster.redraw()
+}
+
+func (u *gtkUI) toggleSortByStatus() {
+	if u.config != nil {
+		u.config.Display.SortByStatus = u.viewMenu.sortStatus.GetActive()
 		u.saveConfigOnly()
 	}
 

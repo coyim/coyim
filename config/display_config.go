@@ -6,4 +6,5 @@ type DisplayConfig struct {
 	ShowOnlyOnline    bool
 	HideFeedbackBar   bool
 	ShowOnlyConfirmed bool
+	SortByStatus      bool
 }

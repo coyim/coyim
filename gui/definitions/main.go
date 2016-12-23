@@ -87,6 +87,13 @@ func (*defMain) String() string {
                             <signal name="toggled" handler="on_toggled_check_Item_Show_Waiting_signal" swapped="no"/>
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkCheckMenuItem" id="CheckItemSortStatus">
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Sort By Status</property>
+                            <signal name="toggled" handler="on_toggled_check_Item_Sort_By_Status_signal" swapped="no"/>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>

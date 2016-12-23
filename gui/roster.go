@@ -568,13 +568,56 @@ func (c *counter) inc(total, online bool) {
 	}
 }
 
+func (r *roster) sortedPeers(ps []*rosters.Peer) []*rosters.Peer {
+	if r.ui.config.Display.SortByStatus {
+		sort.Sort(byStatus(ps))
+	} else {
+		sort.Sort(byNameForPresentation(ps))
+	}
+	return ps
+}
+
+type byNameForPresentation []*rosters.Peer
+
+func (s byNameForPresentation) Len() int { return len(s) }
+func (s byNameForPresentation) Less(i, j int) bool {
+	return s[i].NameForPresentation() < s[j].NameForPresentation()
+}
+func (s byNameForPresentation) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+func statusValueFor(s string) int {
+	switch s {
+	case "available":
+		return 0
+	case "away":
+		return 1
+	case "extended-away":
+		return 2
+	case "busy":
+		return 3
+	case "offline":
+		return 4
+	case "unknown":
+		return 5
+	}
+	return -1
+}
+
+type byStatus []*rosters.Peer
+
+func (s byStatus) Len() int { return len(s) }
+func (s byStatus) Less(i, j int) bool {
+	return statusValueFor(decideStatusFor(s[i])) < statusValueFor(decideStatusFor(s[j]))
+}
+func (s byStatus) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
 func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accountCounter *counter, showOffline, showWaiting bool, accountName string) {
 	pi := parentIter
 	groupCounter := &counter{}
 	groupID := accountName + "//" + g.FullGroupName()
 
 	isEmpty := true
-	for _, item := range g.Peers() {
+	for _, item := range g.UnsortedPeers() {
 		if shouldDisplay(item, showOffline, showWaiting) {
 			isEmpty = false
 		}
@@ -588,7 +631,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 		r.model.SetValue(pi, indexBackgroundColor, r.ui.currentColorSet().rosterGroupBackground)
 	}
 
-	for _, item := range g.Peers() {
+	for _, item := range r.sortedPeers(g.UnsortedPeers()) {
 		vs := isNominallyVisible(item, showWaiting)
 		o := isOnline(item)
 		accountCounter.inc(vs, vs && o)

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/twstrike/gotk3adapter/pangoi"
 )
 
 const (
@@ -16,10 +17,11 @@ const (
 	ulIndexBackground  = 4
 	ulIndexWeight      = 5
 	ulIndexTooltip     = 6
-	ulStatusIcon       = 7
+	ulIndexStatusIcon  = 7
+	ulIndexUnderline   = 8
 )
 
-var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7}
+var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
 
 type unifiedLayout struct {
 	ui           *gtkUI
@@ -128,7 +130,7 @@ func (ul *unifiedLayout) createConversation(account *account, uid string, existi
 }
 
 func (ul *unifiedLayout) onConversationChanged(csi *conversationStackItem) {
-	if ul.notebook.GetCurrentPage() != csi.pageIndex {
+	if !csi.isCurrent() {
 		csi.needsAttention = true
 		csi.applyTextWeight()
 	}
@@ -165,6 +167,7 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 		csi.getTextWeight(),
 		createTooltipFor(peer),
 		statusIcons[decideStatusFor(peer)].getPixbuf(),
+		csi.getUnderline(),
 	},
 	)
 }
@@ -182,6 +185,7 @@ func (ul *unifiedLayout) showConversations() {
 	ul.rightPane.Show()
 
 	ul.convsVisible = true
+	ul.update()
 }
 
 func (ul *unifiedLayout) hideConversations() {
@@ -200,8 +204,7 @@ func (ul *unifiedLayout) hideConversations() {
 }
 
 func (csi *conversationStackItem) isVisible() bool {
-	convoFrontMost := (csi.layout.notebook.GetCurrentPage() == csi.pageIndex)
-	return (convoFrontMost && csi.layout.ui.window.HasToplevelFocus())
+	return csi.isCurrent() && csi.layout.ui.window.HasToplevelFocus()
 }
 
 func (csi *conversationStackItem) setEnabled(enabled bool) {
@@ -218,6 +221,20 @@ func (csi *conversationStackItem) shortName() string {
 	}
 
 	return uiName
+}
+
+func (csi *conversationStackItem) isCurrent() bool {
+	if csi == nil {
+		return false
+	}
+	return csi.layout.notebook.GetCurrentPage() == csi.pageIndex
+}
+
+func (csi *conversationStackItem) getUnderline() int {
+	if csi.isCurrent() {
+		return pangoi.UNDERLINE_SINGLE
+	}
+	return pangoi.UNDERLINE_NONE
 }
 
 func (csi *conversationStackItem) getTextWeight() int {
@@ -244,7 +261,7 @@ func (csi *conversationStackItem) show(userInitiated bool) {
 		csi.bringToFront()
 		return
 	}
-	if csi.layout.notebook.GetCurrentPage() != csi.pageIndex {
+	if !csi.isCurrent() {
 		csi.needsAttention = true
 		csi.applyTextWeight()
 	}
@@ -259,6 +276,7 @@ func (csi *conversationStackItem) bringToFront() {
 	csi.layout.header.SetText(title)
 	csi.layout.headerBar.SetSubtitle(title)
 	csi.entry.GrabFocus()
+	csi.layout.update()
 }
 
 func (csi *conversationStackItem) remove() {
@@ -289,6 +307,7 @@ func (cl *conversationList) onActivate(v gtki.TreeView, path gtki.TreePath) {
 	csi := cl.getItemForIter(iter)
 	if csi != nil {
 		csi.bringToFront()
+		cl.removeSelection()
 	}
 }
 
@@ -303,6 +322,7 @@ func (cl *conversationList) removeSelection() {
 func (ul *unifiedLayout) setCurrentPage(csi *conversationStackItem) {
 	ul.inPageSet = true
 	ul.notebook.SetCurrentPage(csi.pageIndex)
+	ul.update()
 	ul.inPageSet = false
 }
 
@@ -353,6 +373,7 @@ func (ul *unifiedLayout) nextTab(gtki.Window) {
 	} else {
 		ul.notebook.NextPage()
 	}
+	ul.update()
 }
 
 func (ul *unifiedLayout) previousTab(gtki.Window) {
@@ -366,6 +387,7 @@ func (ul *unifiedLayout) previousTab(gtki.Window) {
 	} else {
 		ul.notebook.SetCurrentPage(np)
 	}
+	ul.update()
 }
 
 func (ul *unifiedLayout) toggleFullscreen(gtki.Window) {

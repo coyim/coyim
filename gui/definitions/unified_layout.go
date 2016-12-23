@@ -26,6 +26,8 @@ func (*defUnifiedLayout) String() string {
       <column type="gchararray"/>
       <!-- column-name status -->
       <column type="GdkPixbuf"/>
+      <!-- column-name underline -->
+      <column type="gint"/>
     </columns>
   </object>
   <object class="GtkHeaderBar" id="headerbar">
@@ -190,12 +192,13 @@ func (*defUnifiedLayout) String() string {
                 <property name="title" translatable="yes">column</property>
                 <property name="expand">True</property>
                 <child>
-                  <object class="GtkCellRendererText" id="uid-column-renderer"/>
+a                  <object class="GtkCellRendererText" id="uid-column-renderer"/>
                   <attributes>
                     <attribute name="background">4</attribute>
                     <attribute name="foreground">3</attribute>
                     <attribute name="text">1</attribute>
                     <attribute name="weight">5</attribute>
+                    <attribute name="underline">8</attribute>
                   </attributes>
                 </child>
               </object>

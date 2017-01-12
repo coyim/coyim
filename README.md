@@ -1,7 +1,3 @@
-<p align="center">
-<img src="logo.png" alt="CoyIM Logo"/>
-</p>
-
 # CoyIM - a safe and secure chat client
 
 [![Build Status](https://travis-ci.org/twstrike/coyim.svg?branch=master)](https://travis-ci.org/twstrike/coyim)

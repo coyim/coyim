@@ -1,4 +1,8 @@
-# coyim - a safe and secure chat client
+<p align="center">
+<img src="logo.png" alt="CoyIM Logo"/>
+</p>
+
+# CoyIM - a safe and secure chat client
 
 [![Build Status](https://travis-ci.org/twstrike/coyim.svg?branch=master)](https://travis-ci.org/twstrike/coyim)
 [![Build status](https://ci.appveyor.com/api/projects/status/hcmdu0qtlcljq19v?svg=true)](https://ci.appveyor.com/project/tcz001/coyim)
@@ -21,7 +25,7 @@ When you first launch CoyIM, a wizard will appear. If you already have a Jabber 
 
 If you don't import your account settings, keys and fingerprints through the wizard that opens at the first launch, you can still import them by going to Accounts -> Import at a later stage.
 
-If the client you have been using so far is Pidgin, you will find the files you need to import in the .purple directory in your home.
+If the client you have been using so far is Pidgin, you will find the files you need to import in the `.purple` directory in your home.
 
 If you want to know more about the features you will and will not find in CoyIM, read [this page](https://coy.im/about/).
 
@@ -35,31 +39,34 @@ The GUI version requires GTK+ >= 3.6.16, which installation depends on your OS:
 
 **Ubuntu:**
 
-	sudo apt-get install gtk+3.0 libgtk-3-dev
-
-**Mac:**
-
-	brew install gtk+3
-
-Then install coyim:
-
+```sh
+sudo apt-get install gtk+3.0 libgtk-3-dev
 ```
+
+**MacOS:**
+
+```sh
+brew install gtk+3
+```
+
+Then install CoyIM:
+
+```sh
 export GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 go get -u -tags "gtk_${GTK_VERSION}" github.com/twstrike/coyim
 ```
 
 ### CLI version (xmpp-client)
 
-```
+```sh
 go get -u -tags cli github.com/twstrike/coyim
 ```
 
-## Contributing to Coy
+## Contributing to CoyIM
 
-We have instructions to help you [get started contributing to
-CoyIM](CONTRIBUTING.md).
+We have instructions to help you [get started contributing to CoyIM](CONTRIBUTING.md).
 
 ## Reproducibility
 
-CoyIM supports reproducible builds for Linux on AMD64. See [REPRODUCIBILITY](REPRODUCIBILITY) for instructions on how to build or verify these builds.
+CoyIM supports reproducible builds for Linux on AMD64. See [REPRODUCIBILITY](REPRODUCIBILITY.md) for instructions on how to build or verify these builds.
 

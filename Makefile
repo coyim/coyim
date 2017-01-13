@@ -3,7 +3,7 @@ GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 GIT_VERSION=$(shell git rev-parse HEAD)
 TAG_VERSION=$(shell git tag -l --contains $$GIT_VERSION | tail -1)
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
-KEYID=$(shell gpg2 -K | grep '^sec' | head -1 | cut -d\  -f4 | cut -d\/ -f2)
+KEYID=$(shell gpg2 --keyid-format 0xlong -K | grep '^sec' | head -1 | cut -d\  -f4 | cut -d\/ -f2)
 
 BUILD_DIR=bin
 

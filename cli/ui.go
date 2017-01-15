@@ -161,7 +161,7 @@ func (c *cliUI) loadConfig(configFile string) error {
 	c.session = c.sessionFactory(accounts, account, c.dialerFactory)
 	c.session.SetSessionEventHandler(c)
 	c.session.Subscribe(c.events)
-
+	c.session.SetCommandManager(c)
 	c.session.SetConnectionLogger(logger)
 	// TODO: this nil is incorrect and will cause failures when trying to use it.
 	if err := c.session.Connect(password, c.verifier()); err != nil {
@@ -595,7 +595,6 @@ func (c *cliUI) watchInputCommands() {
 	c.term.SetPrompt("> ")
 
 	s := c.session
-	s.SetCommandManager(c)
 	conf := s.GetConfig()
 
 	var err error

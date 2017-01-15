@@ -595,6 +595,7 @@ func (c *cliUI) watchInputCommands() {
 	c.term.SetPrompt("> ")
 
 	s := c.session
+	s.SetCommandManager(c)
 	conf := s.GetConfig()
 
 	var err error

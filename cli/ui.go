@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/url"
 	"os"
 	"os/signal"
@@ -151,6 +152,9 @@ func (c *cliUI) loadConfig(configFile string) error {
 	}
 
 	logger := &lineLogger{c.term, c.termControl, nil}
+	if *config.DebugFlag {
+		log.SetOutput(logger)
+	}
 
 	//TODO: call session.ConnectAndRegister() in this case
 	//var registerCallback xmpp.FormCallback

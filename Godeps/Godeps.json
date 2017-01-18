@@ -21,28 +21,28 @@
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/cairo",
-			"Comment": "GOTK3_0_2_0-507-gd894a80",
-			"Rev": "d894a809f8eef7609dd81d2ef7d850911da6bf40"
+			"Comment": "GOTK3_0_2_0-517-g3732904",
+			"Rev": "37329043822dea00ae853ce824c3360b0cdf9391"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/gdk",
-			"Comment": "GOTK3_0_2_0-507-gd894a80",
-			"Rev": "d894a809f8eef7609dd81d2ef7d850911da6bf40"
+			"Comment": "GOTK3_0_2_0-517-g3732904",
+			"Rev": "37329043822dea00ae853ce824c3360b0cdf9391"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/glib",
-			"Comment": "GOTK3_0_2_0-507-gd894a80",
-			"Rev": "d894a809f8eef7609dd81d2ef7d850911da6bf40"
+			"Comment": "GOTK3_0_2_0-517-g3732904",
+			"Rev": "37329043822dea00ae853ce824c3360b0cdf9391"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/gtk",
-			"Comment": "GOTK3_0_2_0-507-gd894a80",
-			"Rev": "d894a809f8eef7609dd81d2ef7d850911da6bf40"
+			"Comment": "GOTK3_0_2_0-517-g3732904",
+			"Rev": "37329043822dea00ae853ce824c3360b0cdf9391"
 		},
 		{
 			"ImportPath": "github.com/gotk3/gotk3/pango",
-			"Comment": "GOTK3_0_2_0-507-gd894a80",
-			"Rev": "d894a809f8eef7609dd81d2ef7d850911da6bf40"
+			"Comment": "GOTK3_0_2_0-517-g3732904",
+			"Rev": "37329043822dea00ae853ce824c3360b0cdf9391"
 		},
 		{
 			"ImportPath": "github.com/hydrogen18/stalecucumber",
@@ -62,43 +62,43 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdka",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gdki",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glib_mock",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gliba",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/glibi",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtk_mock",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtka",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/gtki",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/pangoa",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/gotk3adapter/pangoi",
-			"Rev": "0652cec6f3fe372bd79b68b060cbbd2c5d2e95f2"
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		},
 		{
 			"ImportPath": "github.com/twstrike/otr3",
@@ -151,6 +151,26 @@
 		{
 			"ImportPath": "gopkg.in/check.v1",
 			"Rev": "4f90aeace3a26ad7021961c297b22c42160c7b25"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/gdk",
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/glib",
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/gtk",
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/cairo",
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
+		},
+		{
+			"ImportPath": "github.com/twstrike/gotk3adapter/vendor/github.com/gotk3/gotk3/pango",
+			"Rev": "8c62f820c55c5911cb9098680fc1f3554673dc76"
 		}
 	]
 }

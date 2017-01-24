@@ -44,8 +44,7 @@ func (r *resendContext) later(msg MessagePlaintext, opaque ...interface{}) {
 	if r.messages.m == nil {
 		r.messages.m = make([]messageToResend, 0, 5)
 	}
-
-	r.messages.m = append(r.messages.m, messageToResend{msg, opaque})
+	r.messages.m = append(r.messages.m, messageToResend{makeCopy(msg), opaque})
 }
 
 func (r *resendContext) pending() []messageToResend {

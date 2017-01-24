@@ -102,11 +102,11 @@
 		},
 		{
 			"ImportPath": "github.com/twstrike/otr3",
-			"Rev": "744856d0487a1d9c1162aaee691af37778f65b3e"
+			"Rev": "feddfd721eda1d0d9891f0ce5aa33a4e7b8794bd"
 		},
 		{
 			"ImportPath": "github.com/twstrike/otr3/sexp",
-			"Rev": "744856d0487a1d9c1162aaee691af37778f65b3e"
+			"Rev": "feddfd721eda1d0d9891f0ce5aa33a4e7b8794bd"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/pbkdf2",

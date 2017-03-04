@@ -8,7 +8,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/event"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/session/events"
@@ -930,4 +932,145 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 
 	_, ok := sess.timeouts[data.Cookie(2)]
 	c.Check(ok, Equals, true)
+}
+
+type mockConvManager struct {
+	getConversationWith    func(string, string) (client.Conversation, bool)
+	ensureConversationWith func(string, string) (client.Conversation, bool)
+	conversations          func() map[string]client.Conversation
+	terminateAll           func()
+}
+
+func (mcm *mockConvManager) GetConversationWith(peer, resource string) (client.Conversation, bool) {
+	return mcm.getConversationWith(peer, resource)
+}
+
+func (mcm *mockConvManager) EnsureConversationWith(peer, resource string) (client.Conversation, bool) {
+	return mcm.ensureConversationWith(peer, resource)
+}
+
+func (mcm *mockConvManager) Conversations() map[string]client.Conversation {
+	return mcm.conversations()
+}
+
+func (mcm *mockConvManager) TerminateAll() {
+	mcm.terminateAll()
+}
+
+type mockConv struct {
+	receive     func(client.Sender, string, []byte) ([]byte, error)
+	isEncrypted func() bool
+}
+
+func (mc *mockConv) Receive(s client.Sender, s2 string, s3 []byte) ([]byte, error) {
+	return mc.receive(s, s2, s3)
+}
+
+func (mc *mockConv) IsEncrypted() bool {
+	return mc.isEncrypted()
+}
+
+func (mc *mockConv) Send(client.Sender, string, []byte) (trace int, err error) {
+	return 0, nil
+}
+
+func (mc *mockConv) StartEncryptedChat(client.Sender, string) error {
+	return nil
+}
+
+func (mc *mockConv) EndEncryptedChat(client.Sender, string) error {
+	return nil
+}
+
+func (mc *mockConv) ProvideAuthenticationSecret(client.Sender, string, []byte) error {
+	return nil
+}
+
+func (mc *mockConv) StartAuthenticate(client.Sender, string, string, []byte) error {
+	return nil
+}
+
+func (mc *mockConv) GetSSID() [8]byte {
+	return [8]byte{}
+}
+
+func (mc *mockConv) OurFingerprint() []byte {
+	return nil
+}
+
+func (mc *mockConv) TheirFingerprint() []byte {
+	return nil
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncrypted(c *C) {
+	mcm := &mockConvManager{}
+	sess := &session{
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		otrEventHandler: map[string]*event.OtrEventHandler{
+			"someone@some.org": &event.OtrEventHandler{},
+		},
+		config: &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+
+	mc.receive = func(s1 client.Sender, s2 string, s3 []byte) ([]byte, error) {
+		return s3, nil
+	}
+
+	mc.isEncrypted = func() bool {
+		return false
+	}
+
+	mcm.ensureConversationWith = func(string, string) (client.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1)
+	sess.Subscribe(observer)
+
+	go sess.receiveClientMessage("someone@some.org", "something", time.Now(), "hello<br>ola<BR/>wazup?")
+
+	select {
+	case ev := <-observer:
+		t := ev.(events.Message)
+		c.Assert(string(t.Body), Equals, "hello<br>ola<BR/>wazup?")
+		c.Assert(t.Encrypted, Equals, false)
+	case <-time.After(10 * time.Millisecond):
+		c.Errorf("did not receive event")
+	}
+}
+
+func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(c *C) {
+	mcm := &mockConvManager{}
+	sess := &session{
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		otrEventHandler: map[string]*event.OtrEventHandler{
+			"someone@some.org": &event.OtrEventHandler{},
+		},
+		config: &config.ApplicationConfig{},
+	}
+
+	mc := &mockConv{}
+	mc.receive = func(s1 client.Sender, s2 string, s3 []byte) ([]byte, error) { return s3, nil }
+	mc.isEncrypted = func() bool { return true }
+	mcm.ensureConversationWith = func(string, string) (client.Conversation, bool) {
+		return mc, false
+	}
+
+	observer := make(chan interface{}, 1)
+	sess.Subscribe(observer)
+
+	go sess.receiveClientMessage("someone@some.org", "something", time.Now(), "hello<br>ola<br/><BR/>wazup?")
+
+	select {
+	case ev := <-observer:
+		t := ev.(events.Message)
+		c.Assert(string(t.Body), Equals, "hello\nola\n\nwazup?")
+		c.Assert(t.Encrypted, Equals, true)
+	case <-time.After(10 * time.Millisecond):
+		c.Errorf("did not receive event")
+	}
 }

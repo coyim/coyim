@@ -19,6 +19,7 @@ import (
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/tls"
+	"github.com/twstrike/coyim/ui"
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 	"github.com/twstrike/coyim/xmpp/utils"
@@ -680,6 +681,10 @@ func (s *session) receiveClientMessage(from, resource string, when time.Time, bo
 
 	if len(out) == 0 {
 		return
+	}
+
+	if encrypted {
+		out = ui.UnescapeNewlineTags(out)
 	}
 
 	s.messageReceived(from, resource, when, encrypted, out)

@@ -1,24 +1,29 @@
 package gui
 
 import (
+	"fmt"
 	"log"
 
+	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
 
 type editContactDialog struct {
-	builder           *builder
-	dialog            gtki.Dialog
-	accountName       gtki.Label
-	contactJID        gtki.Label
-	nickname          gtki.Entry
-	requireEncryption gtki.CheckButton
-	currentGroups     gtki.ListStore
-	existingGroups    gtki.Menu
-	addGroup          gtki.MenuItem
-	removeGroup       gtki.Button
-	currentGroupsView gtki.TreeView
-	save              gtki.Button
+	builder                 *builder
+	dialog                  gtki.Dialog
+	accountName             gtki.Label
+	contactJID              gtki.Label
+	nickname                gtki.Entry
+	requireEncryption       gtki.CheckButton
+	currentGroups           gtki.ListStore
+	existingGroups          gtki.Menu
+	addGroup                gtki.MenuItem
+	removeGroup             gtki.Button
+	currentGroupsView       gtki.TreeView
+	fingerprintsInformation gtki.Label
+	fingerprintsGrid        gtki.Grid
+	save                    gtki.Button
 }
 
 func (ecd *editContactDialog) init() {
@@ -34,6 +39,8 @@ func (ecd *editContactDialog) init() {
 		"addGroup", &ecd.addGroup,
 		"remove-btn", &ecd.removeGroup,
 		"groups-view", &ecd.currentGroupsView,
+		"fingerprintsInformation", &ecd.fingerprintsInformation,
+		"fingerprintsGrid", &ecd.fingerprintsGrid,
 		"btn-save", &ecd.save,
 	)
 }
@@ -68,6 +75,43 @@ func (ecd *editContactDialog) initCurrentGroups(groups []string) {
 	}
 }
 
+func (ecd *editContactDialog) showFingerprintsForPeer(jid string, account *account) {
+	info := ecd.fingerprintsInformation
+	grid := ecd.fingerprintsGrid
+
+	fprs := []*config.Fingerprint{}
+	p, ok := account.session.GetConfig().GetPeer(jid)
+	if ok {
+		fprs = p.Fingerprints
+	}
+
+	if len(fprs) == 0 {
+		info.SetText(fmt.Sprintf(i18n.Local("There are no known fingerprints for %s"), jid))
+	} else {
+		info.SetText(fmt.Sprintf(i18n.Local("These are the fingerprints known for %s:"), jid))
+	}
+
+	for ix, fpr := range fprs {
+		flabel, _ := g.gtk.LabelNew(config.FormatFingerprint(fpr.Fingerprint))
+		flabel.SetSelectable(true)
+		trusted := i18n.Local("not trusted")
+		if fpr.Trusted {
+			trusted = i18n.Local("trusted")
+		}
+
+		ftrusted, _ := g.gtk.LabelNew(trusted)
+		ftrusted.SetSelectable(true)
+
+		grid.Attach(flabel, 0, ix, 1, 1)
+		grid.Attach(ftrusted, 1, ix, 1, 1)
+	}
+}
+
+func (r *roster) openPeerFingerprintDialog(jid string, acc *account) {
+	assertInUIThread()
+	r.ui.showFingerprintsForPeer(jid, acc)
+}
+
 func (r *roster) openEditContactDialog(jid string, acc *account) {
 	assertInUIThread()
 	peer, ok := r.ui.accountManager.getPeer(acc, jid)
@@ -96,6 +140,7 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 
 	ecd.existingGroups.Add(ecd.addGroup)
 	ecd.removeGroup.SetSensitive(false)
+	ecd.showFingerprintsForPeer(jid, acc)
 
 	ecd.builder.ConnectSignals(map[string]interface{}{
 		"on-add-new-group": func() {

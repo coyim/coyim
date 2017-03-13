@@ -106,6 +106,7 @@ func (b *builder) getItem(name string, target interface{}) {
 	elem.Set(reflect.ValueOf(b.get(name)))
 }
 
+//TODO: Why not a map[string]interface{}?
 func (b *builder) getItems(args ...interface{}) {
 	for len(args) >= 2 {
 		name, ok := args[0].(string)

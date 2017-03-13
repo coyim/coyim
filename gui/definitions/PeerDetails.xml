@@ -217,6 +217,31 @@
           </object>
         </child>
 
+       <!-- TODO: This should be in a scrolled window with min/max size  -->
+       <child>
+        <object class="GtkBox" id="box">
+          <property name="border-width">10</property>
+          <property name="homogeneous">false</property>
+          <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+          <child>
+            <object class="GtkLabel" id="fingerprintsInformation">
+              <property name="selectable">true</property>
+            </object>
+          </child>
+          <child>
+            <object class="GtkGrid" id="fingerprintsGrid">
+              <property name="margin-top">15</property>
+              <property name="margin-bottom">10</property>
+              <property name="margin-start">10</property>
+              <property name="margin-end">10</property>
+              <property name="row-spacing">12</property>
+              <property name="column-spacing">6</property>
+            </object>
+          </child>
+        </object>
+        </child>
+    
+
       </object>
     </child>
   </object>

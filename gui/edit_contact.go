@@ -43,6 +43,48 @@ func (ecd *editContactDialog) init() {
 		"fingerprintsGrid", &ecd.fingerprintsGrid,
 		"btn-save", &ecd.save,
 	)
+
+}
+
+func (ecd *editContactDialog) closeDialog() {
+	ecd.dialog.Destroy()
+}
+
+func (ecd *editContactDialog) enableRemoveButton() {
+	ts, _ := ecd.currentGroupsView.GetSelection()
+	_, _, ok := ts.GetSelected()
+	ecd.removeGroup.SetSensitive(ok)
+}
+
+func (ecd *editContactDialog) removeSelectedGroup() {
+	ts, _ := ecd.currentGroupsView.GetSelection()
+	if _, iter, ok := ts.GetSelected(); ok {
+		ecd.currentGroups.Remove(iter)
+	}
+}
+
+func (ecd *editContactDialog) openAddGroupDialog() {
+	groupList := ecd.currentGroups
+	builder := newBuilder("GroupDetails")
+	dialog := builder.getObj("dialog").(gtki.Dialog)
+
+	nameEntry := builder.getObj("group-name").(gtki.Entry)
+
+	defaultBtn := builder.getObj("btn-ok").(gtki.Button)
+	defaultBtn.GrabDefault()
+
+	dialog.SetTransientFor(ecd.dialog)
+	dialog.ShowAll()
+
+	response := dialog.Run()
+	defer dialog.Destroy()
+
+	if gtki.ResponseType(response) != gtki.RESPONSE_OK {
+		return
+	}
+
+	groupName, _ := nameEntry.GetText()
+	groupList.SetValue(groupList.Append(), 0, groupName)
 }
 
 func (ecd *editContactDialog) addCurrentGroup(g string) {
@@ -115,10 +157,10 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 		return
 	}
 
-	ecd := &editContactDialog{}
-	ecd.init()
 	conf := acc.session.GetConfig()
 
+	ecd := &editContactDialog{}
+	ecd.init()
 	ecd.accountName.SetText(conf.Account)
 	ecd.contactJID.SetText(jid)
 
@@ -137,22 +179,13 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 	ecd.removeGroup.SetSensitive(false)
 	ecd.showFingerprintsForPeer(jid, acc)
 
+	//TODO: Move to editContactDialog
 	ecd.builder.ConnectSignals(map[string]interface{}{
-		"on-add-new-group": func() {
-			r.addGroupDialog(ecd.currentGroups)
-		},
-		"on-group-selection-changed": func() {
-			ts, _ := ecd.currentGroupsView.GetSelection()
-			_, _, ok := ts.GetSelected()
-			ecd.removeGroup.SetSensitive(ok)
-		},
-		"on-remove-group": func() {
-			ts, _ := ecd.currentGroupsView.GetSelection()
-			if _, iter, ok := ts.GetSelected(); ok {
-				ecd.currentGroups.Remove(iter)
-			}
-		},
-		"on-cancel": ecd.dialog.Destroy,
+		"on-add-new-group":           ecd.openAddGroupDialog,
+		"on-group-selection-changed": ecd.enableRemoveButton,
+		"on-remove-group":            ecd.removeSelectedGroup,
+		"on-cancel":                  ecd.closeDialog,
+
 		"on-save": func() {
 			assertInUIThread()
 			defer ecd.dialog.Destroy()

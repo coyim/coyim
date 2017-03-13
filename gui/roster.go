@@ -252,9 +252,6 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 		"on_ask_contact_to_see_status": func() {
 			account.session.RequestPresenceSubscription(jid, "")
 		},
-		"on_peer_fingerprints": func() {
-			doInUIThread(func() { r.openPeerFingerprintDialog(jid, account) })
-		},
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
 		},

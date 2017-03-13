@@ -10,15 +10,6 @@ func (*defContactPopupMenu) String() string {
 	return `<interface>
   <object class="GtkMenu" id="contactMenu">
     <child>
-      <object class="GtkMenuItem" id="peerFingerprintsMenuItem">
-        <property name="label" translatable="yes">Fingerprints...</property>
-        <signal name="activate" handler="on_peer_fingerprints" />
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem" id="sep1"/>
-    </child>
-    <child>
       <object class="GtkMenuItem" id="editContactMenuItem">
         <property name="label" translatable="yes">Edit...</property>
         <signal name="activate" handler="on_edit_contact" />

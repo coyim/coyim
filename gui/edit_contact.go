@@ -107,11 +107,6 @@ func (ecd *editContactDialog) showFingerprintsForPeer(jid string, account *accou
 	}
 }
 
-func (r *roster) openPeerFingerprintDialog(jid string, acc *account) {
-	assertInUIThread()
-	r.ui.showFingerprintsForPeer(jid, acc)
-}
-
 func (r *roster) openEditContactDialog(jid string, acc *account) {
 	assertInUIThread()
 	peer, ok := r.ui.accountManager.getPeer(acc, jid)

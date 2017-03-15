@@ -6,18 +6,19 @@ branches:
     - windows
 go:
   - tip
-  - 1.7.3
-  - 1.6.3
+  - 1.8
+  - 1.7.5
+  - 1.6.4
 
 services:
   - docker
 
 matrix:
   include:
-    - go: 1.6.3
+    - go: 1.7.5
       env: RELEASE=true
       os: linux
-    - go: 1.6.3
+    - go: 1.7.5
       env: RELEASE=true
       os: osx
   allow_failures:

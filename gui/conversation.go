@@ -609,26 +609,23 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
 		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
-		now := time.Now()
-			sent := sentMessage{
-				message: message,
-				strippedMessage: ui.StripSomeHTML([]byte(message)),
-				from: conv.account.session.DisplayName(),
-				to: conv.to,
-				resource: conv.currentResource(),
-				timestamp: now,
-				isEncrypted: conversation.IsEncrypted(),
-				isDelayed: delayed,
-				isOutgoing: true,
-				trace: trace,
-			}
 
-		if delayed {
-			conv.appendDelayed(sent)
-		} else {
-			conv.appendMessage(sent)
+		sent := sentMessage{
+			message: message,
+			strippedMessage: ui.StripSomeHTML([]byte(message)),
+			from: conv.account.session.DisplayName(),
+			to: conv.to,
+			resource: conv.currentResource(),
+			timestamp: time.Now(),
+			isEncrypted: conversation.IsEncrypted(),
+			isDelayed: delayed,
+			isOutgoing: true,
+			trace: trace,
 		}
+
+		conv.appendMessage(sent)
 	}
+
 	return nil
 }
 
@@ -837,16 +834,6 @@ func (conv *conversationPane) appendToPending(timestamp time.Time, attention boo
 	return
 }
 
-func (conv *conversationPane) appendDelayed(delayed sentMessage) {
-	conv.appendToPending(delayed.timestamp, false, delayed.trace, delayed,
-		taggableText{"outgoingDelayedUser", delayed.from},
-		taggableText{
-			text: ":  ",
-		},
-		taggableText{"outgoingDelayedText", string(delayed.strippedMessage)},
-	)
-}
-
 func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
 	conv.appendToHistory(timestamp, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
@@ -854,29 +841,28 @@ func (conv *conversationPane) appendStatus(from string, timestamp time.Time, sho
 const mePrefix = "/me "
 
 func (conv *conversationPane) appendMessage(sent sentMessage) {
-	smessage := string(sent.strippedMessage)
+	msgTxt := string(sent.strippedMessage)
+	userTag := is(sent.isOutgoing, "outgoingUser", "incomingUser")
+	userTag = is(sent.isDelayed, "outgoingDelayedUser", userTag)
+	textTag := is(sent.isOutgoing, "outgoingText", "incomingText")
 
-	if strings.HasPrefix(strings.TrimSpace(smessage), mePrefix) {
-		smessage = strings.TrimPrefix(strings.TrimSpace(smessage), mePrefix)
+	if sent.isDelayed {
+		conv.appendToPending(sent.timestamp, false, sent.trace, sent,
+			taggableText{ userTag, sent.from },
+			taggableText{ text: ":  ", },
+			taggableText{ userTag, msgTxt },
+		)
+	} else if strings.HasPrefix(strings.TrimSpace(msgTxt), mePrefix) {
+		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
 		conv.appendToHistory(sent.timestamp, false,
-			taggableText{
-				is(sent.isOutgoing, "outgoingUser", "incomingUser"),
-				sent.from + " " + smessage,
-			},
+			taggableText{ userTag, sent.from + " " + msgTxt, },
 		)
 	} else {
 		conv.appendToHistory(sent.timestamp, true,
-			taggableText{
-				is(sent.isOutgoing, "outgoingUser", "incomingUser"),
-				sent.from,
-			},
-			taggableText{
-				text: ":  ",
-			},
-			taggableText{
-				is(sent.isOutgoing, "outgoingText", "incomingText"),
-				smessage,
-			})
+			taggableText{ userTag, sent.from, },
+			taggableText{ text: ":  ", },
+			taggableText{ textTag, msgTxt, },
+		)
 	}
 }
 

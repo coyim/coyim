@@ -735,27 +735,47 @@ type bufferSlice struct {
 	start, end gtki.TextMark
 }
 
-func (conv *conversationPane) appendToHistory(timestamp time.Time, attention bool, entries ...taggableText) {
+func (conv *conversationPane) appendToHistory(sent sentMessage, attention bool, entries ...taggableText) {
 	conv.markNow()
 	doInUIThread(func() {
 		conv.Lock()
 		defer conv.Unlock()
 
-		buff, _ := conv.history.GetBuffer()
-		if buff.GetCharCount() != 0 {
+		var buff gtki.TextBuffer
+		if sent.isDelayed {
+			buff, _ = conv.pending.GetBuffer()
+		} else {
+			buff, _ = conv.history.GetBuffer()
+		}
+		
+		start := buff.GetCharCount()
+		if start != 0 {
 			insertAtEnd(buff, "\n")
 		}
 
-		insertTimestamp(buff, timestamp)
+		insertTimestamp(buff, sent.timestamp)
 
 		for _, entry := range entries {
 			insertEntry(buff, entry)
+		}
+
+		if sent.isDelayed {
+		  sent.coordinates.start, sent.coordinates.end = markInsertion(buff, sent.trace, start)
+		  conv.storeDelayedMessage(sent.trace, sent)
 		}
 		
 		if attention {
 			conv.afterNewMessage()
 		}
 	})
+}
+
+func markInsertion(buff gtki.TextBuffer, trace, startOffset int) (start, end gtki.TextMark) {
+	insert := "insert" + strconv.Itoa(trace)
+	selBound := "selection_bound" + strconv.Itoa(trace)
+	start = buff.CreateMark(insert, buff.GetIterAtOffset(startOffset), false)
+	end = buff.CreateMark(selBound, buff.GetEndIter(), false)
+	return
 }
 
 func (conv *conversationPane) appendDelayedToHistory(queued, sent time.Time, attention bool, entries ...taggableText) {
@@ -796,74 +816,44 @@ func insertEntry(buff gtki.TextBuffer, entry taggableText) {
 			}
 }
 
-func (conv *conversationPane) appendToPending(timestamp time.Time, attention bool, trace int, delayed sentMessage, entries ...taggableText) {
-	conv.markNow()	
-	doInUIThread(func() {
-		conv.Lock()
-		defer conv.Unlock()
-
-		buff, _ := conv.pending.GetBuffer()
-		start := buff.GetCharCount()
-		if start != 0 {
-			insertAtEnd(buff, "\n")
-		}
-
-		insertWithTag(buff, "timestamp", "[")
-		insertWithTag(buff, "timestamp", timestamp.Format(timeDisplay))
-		insertWithTag(buff, "timestamp", "] ")
-
-		for _, entry := range entries {
-			if entry.tag != "" {
-				insertWithTag(buff, entry.tag, entry.text)
-			} else {
-				insertAtEnd(buff, entry.text)
-			}
-		}
-
-		insert := "insert" + strconv.Itoa(trace)
-		selBound := "selection_bound" + strconv.Itoa(trace)
-		delayed.coordinates.start = buff.CreateMark(insert, buff.GetIterAtOffset(start), false)
-		delayed.coordinates.end = buff.CreateMark(selBound, buff.GetEndIter(), false)
-		conv.storeDelayedMessage(trace, delayed)
-
-		if attention {
-			conv.afterNewMessage()
-		}
-	})
-
-	return
-}
-
 func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
-	conv.appendToHistory(timestamp, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
+	conv.appendToHistory(sentMessage { timestamp: timestamp }, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
 
 const mePrefix = "/me "
 
 func (conv *conversationPane) appendMessage(sent sentMessage) {
 	msgTxt := string(sent.strippedMessage)
+	msgHasMePrefix := strings.HasPrefix(strings.TrimSpace(msgTxt), mePrefix)
+	attention := !sent.isDelayed && !msgHasMePrefix
 	userTag := is(sent.isOutgoing, "outgoingUser", "incomingUser")
 	userTag = is(sent.isDelayed, "outgoingDelayedUser", userTag)
 	textTag := is(sent.isOutgoing, "outgoingText", "incomingText")
+	entries := make([]taggableText, 0)
 
 	if sent.isDelayed {
-		conv.appendToPending(sent.timestamp, false, sent.trace, sent,
+		entries = append(
+			entries,
 			taggableText{ userTag, sent.from },
 			taggableText{ text: ":  ", },
 			taggableText{ userTag, msgTxt },
 		)
-	} else if strings.HasPrefix(strings.TrimSpace(msgTxt), mePrefix) {
+	} else if msgHasMePrefix {
 		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
-		conv.appendToHistory(sent.timestamp, false,
+		entries = append(
+			entries,
 			taggableText{ userTag, sent.from + " " + msgTxt, },
 		)
 	} else {
-		conv.appendToHistory(sent.timestamp, true,
+		entries = append(
+			entries,
 			taggableText{ userTag, sent.from, },
 			taggableText{ text: ":  ", },
 			taggableText{ textTag, msgTxt, },
 		)
 	}
+
+	conv.appendToHistory(sent, attention, entries...)
 }
 
 func (conv *conversationPane) appendDelayedMessage(from string, queued, sent time.Time, encrypted bool, message []byte, outgoing bool) {
@@ -889,7 +879,7 @@ func (conv *conversationPane) appendDelayedMessage(from string, queued, sent tim
 }
 
 func (conv *conversationPane) displayNotification(notification string) {
-	conv.appendToHistory(time.Now(), false, taggableText{"statusText", notification})
+	conv.appendToHistory(sentMessage { timestamp: time.Now() }, false, taggableText{"statusText", notification})
 }
 
 func (conv *conversationPane) displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string) {

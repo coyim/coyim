@@ -28,7 +28,7 @@ type conversationView interface {
 	updateSecurityWarning()
 	show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
-	appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool)
+	appendMessage(sent sentMessage)
 	displayNotification(notification string)
 	displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string)
 	setEnabled(enabled bool)
@@ -67,7 +67,7 @@ type conversationPane struct {
 	shiftEnterSends      bool
 	afterNewMessage      func()
 	currentPeer          func() (*rosters.Peer, bool)
-	delayed              map[int]delayedMessage
+	delayed              map[int]sentMessage
 	pendingDelayed       []int
 	pendingDelayedLock   sync.Mutex
 	shownPrivate         bool
@@ -261,7 +261,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		transientParent: transientParent,
 		shiftEnterSends: ui.settings.GetShiftEnterForSend(),
 		afterNewMessage: func() {},
-		delayed:         make(map[int]delayedMessage),
+		delayed:         make(map[int]sentMessage),
 		currentPeer: func() (*rosters.Peer, bool) {
 			return ui.getPeer(account, uid)
 		},
@@ -528,16 +528,21 @@ func (conv *conversationWindow) show(userInitiated bool) {
 	conv.tryEnsureCorrectWorkspace()
 }
 
-type delayedMessage struct {
-	trace    int
-	to       string
-	resource string
-	message  string
-	timestamp time.Time
-	coordinates bufferSlice
+type sentMessage struct {
+	message         string
+	strippedMessage []byte
+	from            string
+	to              string
+	resource        string
+	timestamp       time.Time
+	isEncrypted     bool
+	isDelayed       bool
+	isOutgoing      bool
+	trace           int
+	coordinates     bufferSlice
 }
 
-func (conv *conversationPane) storeDelayedMessage(trace int, message delayedMessage) {
+func (conv *conversationPane) storeDelayedMessage(trace int, message sentMessage) {
 	conv.pendingDelayedLock.Lock()
 	defer conv.pendingDelayedLock.Unlock()
 
@@ -589,7 +594,8 @@ func (conv *conversationPane) delayedMessageSent(trace int) {
 }
 
 func (conv *conversationPane) sendMessage(message string) error {
-	trace, delayed, err := conv.account.session.EncryptAndSendTo(conv.to, conv.currentResource(), message)
+	session := conv.account.session
+	trace, delayed, err := session.EncryptAndSendTo(conv.to, conv.currentResource(), message)
 
 	if err != nil {
 		oerr, isoff := err.(*access.OfflineError)
@@ -602,15 +608,25 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: review whether it should create a conversation
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
-		conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
+		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
 		now := time.Now()
+			sent := sentMessage{
+				message: message,
+				strippedMessage: ui.StripSomeHTML([]byte(message)),
+				from: conv.account.session.DisplayName(),
+				to: conv.to,
+				resource: conv.currentResource(),
+				timestamp: now,
+				isEncrypted: conversation.IsEncrypted(),
+				isDelayed: delayed,
+				isOutgoing: true,
+				trace: trace,
+			}
 
 		if delayed {
-			msgBytes := ui.StripSomeHTML([]byte(message))
-			delayedMessage := delayedMessage{trace: trace, to: conv.to, resource: conv.currentResource(), message: message, timestamp: now }
-			conv.appendDelayed(conv.account.session.DisplayName(), now, msgBytes, trace, delayedMessage)
+			conv.appendDelayed(sent)
 		} else {
-			conv.appendMessage(conv.account.session.DisplayName(), now, conversation.IsEncrypted(), ui.StripSomeHTML([]byte(message)), true)
+			conv.appendMessage(sent)
 		}
 	}
 	return nil
@@ -783,7 +799,7 @@ func insertEntry(buff gtki.TextBuffer, entry taggableText) {
 			}
 }
 
-func (conv *conversationPane) appendToPending(timestamp time.Time, attention bool, trace int, delayed delayedMessage, entries ...taggableText) {
+func (conv *conversationPane) appendToPending(timestamp time.Time, attention bool, trace int, delayed sentMessage, entries ...taggableText) {
 	conv.markNow()	
 	doInUIThread(func() {
 		conv.Lock()
@@ -821,13 +837,13 @@ func (conv *conversationPane) appendToPending(timestamp time.Time, attention boo
 	return
 }
 
-func (conv *conversationPane) appendDelayed(from string, timestamp time.Time, message []byte, trace int, delayed delayedMessage) {
-	conv.appendToPending(timestamp, false, trace, delayed,
-		taggableText{"outgoingDelayedUser", from},
+func (conv *conversationPane) appendDelayed(delayed sentMessage) {
+	conv.appendToPending(delayed.timestamp, false, delayed.trace, delayed,
+		taggableText{"outgoingDelayedUser", delayed.from},
 		taggableText{
 			text: ":  ",
 		},
-		taggableText{"outgoingDelayedText", string(message)},
+		taggableText{"outgoingDelayedText", string(delayed.strippedMessage)},
 	)
 }
 
@@ -837,23 +853,28 @@ func (conv *conversationPane) appendStatus(from string, timestamp time.Time, sho
 
 const mePrefix = "/me "
 
-func (conv *conversationPane) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
-	smessage := string(message)
+func (conv *conversationPane) appendMessage(sent sentMessage) {
+	smessage := string(sent.strippedMessage)
 
 	if strings.HasPrefix(strings.TrimSpace(smessage), mePrefix) {
 		smessage = strings.TrimPrefix(strings.TrimSpace(smessage), mePrefix)
-		conv.appendToHistory(timestamp, false, taggableText{is(outgoing, "outgoingUser", "incomingUser"), from + " " + smessage})
-	} else {
-		conv.appendToHistory(timestamp, true,
+		conv.appendToHistory(sent.timestamp, false,
 			taggableText{
-				is(outgoing, "outgoingUser", "incomingUser"),
-				from,
+				is(sent.isOutgoing, "outgoingUser", "incomingUser"),
+				sent.from + " " + smessage,
+			},
+		)
+	} else {
+		conv.appendToHistory(sent.timestamp, true,
+			taggableText{
+				is(sent.isOutgoing, "outgoingUser", "incomingUser"),
+				sent.from,
 			},
 			taggableText{
 				text: ":  ",
 			},
 			taggableText{
-				is(outgoing, "outgoingText", "incomingText"),
+				is(sent.isOutgoing, "outgoingText", "incomingText"),
 				smessage,
 			})
 	}

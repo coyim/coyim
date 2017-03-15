@@ -411,7 +411,14 @@ func (r *roster) messageReceived(account *account, from, resource string, timest
 			return
 		}
 
-		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripSomeHTML(message), false)
+		sent := sentMessage {
+			from: r.displayNameFor(account, from),
+			timestamp: timestamp,
+			isEncrypted: encrypted,
+			isOutgoing: false,
+			strippedMessage: ui.StripSomeHTML(message),
+		}
+		conv.appendMessage(sent)
 
 		if !conv.isVisible() && r.deNotify != nil {
 			r.maybeNotify(timestamp, account, from, string(ui.StripSomeHTML(message)))

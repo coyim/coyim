@@ -30,7 +30,7 @@ func (c *conn) SendIQ(to, typ string, value interface{}) (reply chan data.Stanza
 		toAttr = "to='" + xmlEscape(to) + "'"
 	}
 
-	if _, err = fmt.Fprintf(c.out, "<iq %s from='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), cookie); err != nil {
+	if _, err = fmt.Fprintf(c.out, "<iq xmlns='jabber:client' %s from='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), cookie); err != nil {
 		return
 	}
 

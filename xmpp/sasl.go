@@ -202,6 +202,7 @@ func (c *conn) BindResource() error {
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
 		return errors.New("unmarshal <iq>: " + err.Error())
 	}
+
 	c.jid = iq.Bind.Jid // our local id
 
 	return c.establishSession()

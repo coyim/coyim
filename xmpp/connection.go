@@ -213,8 +213,10 @@ func (c *conn) Next() (stanza data.Stanza, err error) {
 			c.lock.Unlock()
 
 			if !ok {
+				log.Println("xmpp: received reply to unknown iq. id:", iq.ID)
 				continue
 			}
+
 			if len(inflight.to) > 0 {
 				// The reply must come from the address to
 				// which we sent the request.

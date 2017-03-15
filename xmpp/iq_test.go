@@ -75,7 +75,7 @@ func (s *IqXMPPSuite) Test_SendIQ_returnsErrorIfWritingDataFailsTheSecondTime(c 
 	}
 	_, _, err := conn.SendIQ("", "", nil)
 	c.Assert(err.Error(), Equals, "this also fails again")
-	c.Assert(string(mockIn.write), Matches, "<iq  from='som&apos;ewhat@foo.com/somewhere' type='' id='.*?'></iq>")
+	c.Assert(string(mockIn.write), Matches, "<iq xmlns='jabber:client'  from='som&apos;ewhat@foo.com/somewhere' type='' id='.+'></iq>")
 }
 
 func (s *IqXMPPSuite) TestConnSendIQReplyAndTyp(c *C) {
@@ -86,7 +86,7 @@ func (s *IqXMPPSuite) TestConnSendIQReplyAndTyp(c *C) {
 	}
 	conn.inflights = make(map[data.Cookie]inflight)
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'></iq>")
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='.+'></iq>")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, IsNil)
@@ -101,7 +101,7 @@ func (s *IqXMPPSuite) TestConnSendIQRaw(c *C) {
 
 	conn.inflights = make(map[data.Cookie]inflight)
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", rawXML("<foo param='bar' />"))
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'><foo param='bar' /></iq>")
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='.*'><foo param='bar' /></iq>")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, IsNil)
@@ -114,7 +114,7 @@ func (s *IqXMPPSuite) TestConnSendIQErr(c *C) {
 		jid: "jid",
 	}
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'>$")
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='.*'>$")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, Equals, io.EOF)
@@ -128,7 +128,7 @@ func (s *IqXMPPSuite) TestConnSendIQEmptyReply(c *C) {
 	}
 	conn.inflights = make(map[data.Cookie]inflight)
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", reflect.ValueOf(data.EmptyReply{}))
-	c.Assert(string(mockOut.write), Matches, "<iq to='example@xmpp.com' from='jid' type='typ' id='.*'><Value><flag>.*</flag></Value></iq>")
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='.+'><Value><flag>153</flag></Value></iq>")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
 	c.Assert(err, IsNil)

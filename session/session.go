@@ -20,6 +20,7 @@ import (
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 	"github.com/twstrike/coyim/xmpp/utils"
@@ -370,18 +371,6 @@ func (s *session) iqReceived(uid string) {
 	s.publishPeerEvent(events.IQReceived, uid)
 }
 
-func (s *session) receivedIQDiscoInfo() data.DiscoveryReply {
-	return data.DiscoveryReply{
-		Identities: []data.DiscoveryIdentity{
-			{
-				Category: "client",
-				Type:     "pc",
-				Name:     s.GetConfig().Account,
-			},
-		},
-	}
-}
-
 func (s *session) receivedIQVersion() data.VersionReply {
 	return data.VersionReply{
 		Name:    "testing",
@@ -445,9 +434,11 @@ func (s *session) processIQ(stanza *data.ClientIQ) (ret interface{}, ignore bool
 	}
 
 	switch startElem.Name.Space + " " + startElem.Name.Local {
+	//NOTE: This is the minimum for XEP-0030 and/or XEP-0115
+	//See: XEP-0030, Section: 3.1 Basic Protocol
 	case "http://jabber.org/protocol/disco#info query":
 		if isGet {
-			return s.receivedIQDiscoInfo(), false
+			return xmpp.MinimumEntityDiscoveryReply(s.GetConfig().Account), false
 		}
 	case "jabber:iq:version query":
 		if isGet {

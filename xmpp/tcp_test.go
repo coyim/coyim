@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
-	"os"
 
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/xmpp/data"
@@ -21,10 +20,6 @@ type TCPSuite struct{}
 func (*TCPSuite) SetUpSuite(c *C) {
 	log.SetOutput(ioutil.Discard)
 	i18n.InitLocalization(&glib_mock.Mock{})
-}
-
-func (*TCPSuite) TearDownSuite(c *C) {
-	log.SetOutput(os.Stderr)
 }
 
 var _ = Suite(&TCPSuite{})

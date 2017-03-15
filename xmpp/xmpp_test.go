@@ -85,21 +85,66 @@ func (s *XMPPSuite) TestDiscoReplyVerComplex(c *C) {
 	c.Assert(hash, Equals, expect)
 }
 
-func (s *XMPPSuite) TestConnClose(c *C) {
+func (s *XMPPSuite) TestConnClose_sendsAStreamCloseTagWhenWeCloseFirst(c *C) {
 	mockIn := &mockConnIOReaderWriter{
 		read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'></str:stream>"),
 	}
 	mockCloser := &mockConnIOReaderWriter{}
-	conn := NewConn(xml.NewDecoder(mockIn), mockCloser, "").(*conn)
 
-	// consumes the opening stream
-	nextElement(conn.in)
-	go conn.Next()
+	conn := newConn()
+	conn.in = xml.NewDecoder(mockIn)
+	conn.out = mockCloser
+	conn.rawOut = mockCloser
+
+	nextElement(conn.in) // Reads the opening tag and make the unmarshaller happy
+
+	done := make(chan bool)
+	go func() {
+		stanza, err := conn.Next() // Reads the closing tag
+
+		c.Assert(err, IsNil)
+		c.Assert(stanza, DeepEquals, data.Stanza{
+			Name:  xml.Name{Space: "http://etherx.jabber.org/streams", Local: "stream"},
+			Value: &data.StreamClose{},
+		})
+
+		done <- true
+	}()
 
 	// blocks until it receives the </stream> or timeouts
 	c.Assert(conn.Close(), IsNil)
 	c.Assert(mockCloser.calledClose, Equals, 1)
 	c.Assert(mockCloser.write, DeepEquals, []byte("</stream:stream>"))
+
+	<-done
+}
+
+func (s *XMPPSuite) TestConnNext_replyWithAStreamCloseTagWhenTheyCloseFirst(c *C) {
+	mockIn := &mockConnIOReaderWriter{
+		read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'></str:stream>"),
+	}
+	mockCloser := &mockConnIOReaderWriter{}
+
+	conn := newConn()
+	conn.in = xml.NewDecoder(mockIn)
+	conn.out = mockCloser
+	conn.rawOut = mockCloser
+
+	nextElement(conn.in)       // Reads the opening tag and make the unmarshaller happy
+	stanza, err := conn.Next() // Reads the closing tag
+
+	c.Assert(err, IsNil)
+	c.Assert(stanza, DeepEquals, data.Stanza{
+		Name:  xml.Name{Space: "http://etherx.jabber.org/streams", Local: "stream"},
+		Value: &data.StreamClose{},
+	})
+
+	c.Assert(mockCloser.calledClose, Equals, 1)
+	c.Assert(mockCloser.write, DeepEquals, []byte("</stream:stream>"))
+
+	err = conn.Close()
+	c.Assert(err, NotNil)
+	c.Assert(err.Error(), Equals, "xmpp: the connection is already closed")
 }
 
 func (s *XMPPSuite) TestConnNextEOF(c *C) {

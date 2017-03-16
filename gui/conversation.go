@@ -744,7 +744,7 @@ type bufferSlice struct {
 	start, end gtki.TextMark
 }
 
-func (conv *conversationPane) appendToHistory(sent sentMessage, attention bool, entries ...taggableText) {
+func (conv *conversationPane) appendSentMessage(sent sentMessage, attention bool, entries ...taggableText) {
 	conv.markNow()
 	doInUIThread(func() {
 		conv.Lock()
@@ -805,7 +805,7 @@ func insertEntry(buff gtki.TextBuffer, entry taggableText) {
 }
 
 func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
-	conv.appendToHistory(sentMessage { timestamp: timestamp }, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
+	conv.appendSentMessage(sentMessage { timestamp: timestamp }, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
 
 const mePrefix = "/me "
@@ -842,11 +842,11 @@ func (conv *conversationPane) appendMessage(sent sentMessage) {
 		)
 	}
 
-	conv.appendToHistory(sent, attention, entries...)
+	conv.appendSentMessage(sent, attention, entries...)
 }
 
 func (conv *conversationPane) displayNotification(notification string) {
-	conv.appendToHistory(sentMessage { timestamp: time.Now() }, false, taggableText{"statusText", notification})
+	conv.appendSentMessage(sentMessage { timestamp: time.Now() }, false, taggableText{"statusText", notification})
 }
 
 func (conv *conversationPane) displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string) {

@@ -535,9 +535,11 @@ type sentMessage struct {
 	to              string
 	resource        string
 	timestamp       time.Time
+	queuedTimestamp time.Time
 	isEncrypted     bool
 	isDelayed       bool
 	isOutgoing      bool
+	isResent        bool
 	trace           int
 	coordinates     bufferSlice
 }
@@ -569,7 +571,14 @@ func (conv *conversationPane) appendPendingDelayed() {
 		if ok {
 			delete(conv.delayed, ctrace)
 			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(dm.to, dm.resource)
-			conv.appendDelayedMessage(conv.account.session.DisplayName(), dm.timestamp, time.Now(), conversation.IsEncrypted(), ui.StripSomeHTML([]byte(dm.message)), true)
+
+			dm.isEncrypted = conversation.IsEncrypted()
+	    dm.queuedTimestamp = dm.timestamp
+			dm.timestamp = time.Now()
+	    dm.isDelayed = false
+			dm.isResent = true
+			
+			conv.appendDelayedMessage(dm)
 			
 	conv.markNow()
 	doInUIThread(func() {
@@ -753,6 +762,9 @@ func (conv *conversationPane) appendToHistory(sent sentMessage, attention bool, 
 			insertAtEnd(buff, "\n")
 		}
 
+		if sent.isResent {
+			insertTimestamp(buff, sent.queuedTimestamp)
+		}
 		insertTimestamp(buff, sent.timestamp)
 
 		for _, entry := range entries {
@@ -829,6 +841,7 @@ func (conv *conversationPane) appendMessage(sent sentMessage) {
 	userTag := is(sent.isOutgoing, "outgoingUser", "incomingUser")
 	userTag = is(sent.isDelayed, "outgoingDelayedUser", userTag)
 	textTag := is(sent.isOutgoing, "outgoingText", "incomingText")
+	textTag = is(sent.isDelayed, "outgoingDelayedText", textTag)
 	entries := make([]taggableText, 0)
 
 	if sent.isDelayed {
@@ -856,24 +869,29 @@ func (conv *conversationPane) appendMessage(sent sentMessage) {
 	conv.appendToHistory(sent, attention, entries...)
 }
 
-func (conv *conversationPane) appendDelayedMessage(from string, queued, sent time.Time, encrypted bool, message []byte, outgoing bool) {
-	smessage := string(message)
-
-	if strings.HasPrefix(strings.TrimSpace(smessage), mePrefix) {
-		smessage = strings.TrimPrefix(strings.TrimSpace(smessage), mePrefix)
-		conv.appendDelayedToHistory(queued, sent, false, taggableText{is(outgoing, "outgoingUser", "incomingUser"), from + " " + smessage})
-	} else {
-		conv.appendDelayedToHistory(queued, sent, true,
+func (conv *conversationPane) appendDelayedMessage(resent sentMessage) {
+	msgText := string(resent.strippedMessage)
+	
+	if strings.HasPrefix(strings.TrimSpace(msgText), mePrefix) {
+		fmt.Printf("appending a delayed message from myself does happen\n")
+		msgText = strings.TrimPrefix(strings.TrimSpace(msgText), mePrefix)
+		conv.appendToHistory(resent, false,
 			taggableText{
-				is(outgoing, "outgoingUser", "incomingUser"),
-				from,
+				is(resent.isOutgoing, "outgoingUser", "incomingUser"),
+				resent.from + " " + msgText,
+			})
+	} else {
+		conv.appendToHistory(resent, true,
+			taggableText{
+				is(resent.isOutgoing, "outgoingUser", "incomingUser"),
+				resent.from,
 			},
 			taggableText{
 				text: ":  ",
 			},
 			taggableText{
-				is(outgoing, "outgoingText", "incomingText"),
-				smessage,
+				is(resent.isOutgoing, "outgoingText", "incomingText"),
+				msgText,
 			})
 	}
 }

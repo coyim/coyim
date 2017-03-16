@@ -790,30 +790,6 @@ func markInsertion(buff gtki.TextBuffer, trace, startOffset int) (start, end gtk
 	return
 }
 
-func (conv *conversationPane) appendDelayedToHistory(queued, sent time.Time, attention bool, entries ...taggableText) {
-	conv.markNow()
-	doInUIThread(func() {
-		conv.Lock()
-		defer conv.Unlock()
-
-		buff, _ := conv.history.GetBuffer()
-		if buff.GetCharCount() != 0 {
-			insertAtEnd(buff, "\n")
-		}
-
-		insertTimestamp(buff, queued)
-		insertTimestamp(buff, sent)
-
-		for _, entry := range entries {
-			insertEntry(buff, entry)
-		}
-		
-		if attention {
-			conv.afterNewMessage()
-		}
-	})
-}
-
 func insertTimestamp(buff gtki.TextBuffer, timestamp time.Time) {
 	insertWithTag(buff, "timestamp", "[")
 	insertWithTag(buff, "timestamp", timestamp.Format(timeDisplay))

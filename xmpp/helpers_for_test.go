@@ -208,7 +208,7 @@ type mockProxy struct {
 
 func (p *mockProxy) Dial(network, addr string) (net.Conn, error) {
 	if len(p.calls)-1 < p.called {
-		return nil, fmt.Errorf("unexpected call to Dial: %s, %s \n", network, addr)
+		return nil, fmt.Errorf("unexpected call to Dial: %s, %s", network, addr)
 	}
 
 	p.Lock()

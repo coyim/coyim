@@ -578,7 +578,7 @@ func (conv *conversationPane) appendPendingDelayed() {
 	    dm.isDelayed = false
 			dm.isResent = true
 			
-			conv.appendDelayedMessage(dm)
+			conv.appendMessage(dm)
 			
 	conv.markNow()
 	doInUIThread(func() {
@@ -849,7 +849,7 @@ func (conv *conversationPane) appendMessage(sent sentMessage) {
 			entries,
 			taggableText{ userTag, sent.from },
 			taggableText{ text: ":  ", },
-			taggableText{ userTag, msgTxt },
+			taggableText{ textTag, msgTxt },
 		)
 	} else if msgHasMePrefix {
 		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
@@ -867,33 +867,6 @@ func (conv *conversationPane) appendMessage(sent sentMessage) {
 	}
 
 	conv.appendToHistory(sent, attention, entries...)
-}
-
-func (conv *conversationPane) appendDelayedMessage(resent sentMessage) {
-	msgText := string(resent.strippedMessage)
-	
-	if strings.HasPrefix(strings.TrimSpace(msgText), mePrefix) {
-		fmt.Printf("appending a delayed message from myself does happen\n")
-		msgText = strings.TrimPrefix(strings.TrimSpace(msgText), mePrefix)
-		conv.appendToHistory(resent, false,
-			taggableText{
-				is(resent.isOutgoing, "outgoingUser", "incomingUser"),
-				resent.from + " " + msgText,
-			})
-	} else {
-		conv.appendToHistory(resent, true,
-			taggableText{
-				is(resent.isOutgoing, "outgoingUser", "incomingUser"),
-				resent.from,
-			},
-			taggableText{
-				text: ":  ",
-			},
-			taggableText{
-				is(resent.isOutgoing, "outgoingText", "incomingText"),
-				msgText,
-			})
-	}
 }
 
 func (conv *conversationPane) displayNotification(notification string) {

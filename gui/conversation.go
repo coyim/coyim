@@ -3,10 +3,10 @@ package gui
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
-	"strconv"
 
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
@@ -573,21 +573,21 @@ func (conv *conversationPane) appendPendingDelayed() {
 			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(dm.to, dm.resource)
 
 			dm.isEncrypted = conversation.IsEncrypted()
-	    dm.queuedTimestamp = dm.timestamp
+			dm.queuedTimestamp = dm.timestamp
 			dm.timestamp = time.Now()
-	    dm.isDelayed = false
+			dm.isDelayed = false
 			dm.isResent = true
-			
-			conv.appendMessage(dm)
-			
-	conv.markNow()
-	doInUIThread(func() {
-		conv.Lock()
-		defer conv.Unlock()
 
-		buff, _ := conv.pending.GetBuffer()
-		buff.Delete(buff.GetIterAtMark(dm.coordinates.start), buff.GetIterAtMark(dm.coordinates.end))
-	})
+			conv.appendMessage(dm)
+
+			conv.markNow()
+			doInUIThread(func() {
+				conv.Lock()
+				defer conv.Unlock()
+
+				buff, _ := conv.pending.GetBuffer()
+				buff.Delete(buff.GetIterAtMark(dm.coordinates.start), buff.GetIterAtMark(dm.coordinates.end))
+			})
 		}
 	}
 }
@@ -620,16 +620,16 @@ func (conv *conversationPane) sendMessage(message string) error {
 		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
 
 		sent := sentMessage{
-			message: message,
+			message:         message,
 			strippedMessage: ui.StripSomeHTML([]byte(message)),
-			from: conv.account.session.DisplayName(),
-			to: conv.to,
-			resource: conv.currentResource(),
-			timestamp: time.Now(),
-			isEncrypted: conversation.IsEncrypted(),
-			isDelayed: delayed,
-			isOutgoing: true,
-			trace: trace,
+			from:            conv.account.session.DisplayName(),
+			to:              conv.to,
+			resource:        conv.currentResource(),
+			timestamp:       time.Now(),
+			isEncrypted:     conversation.IsEncrypted(),
+			isDelayed:       delayed,
+			isOutgoing:      true,
+			trace:           trace,
 		}
 
 		conv.appendMessage(sent)
@@ -756,7 +756,7 @@ func (conv *conversationPane) appendSentMessage(sent sentMessage, attention bool
 		} else {
 			buff, _ = conv.history.GetBuffer()
 		}
-		
+
 		start := buff.GetCharCount()
 		if start != 0 {
 			insertAtEnd(buff, "\n")
@@ -772,10 +772,10 @@ func (conv *conversationPane) appendSentMessage(sent sentMessage, attention bool
 		}
 
 		if sent.isDelayed {
-		  sent.coordinates.start, sent.coordinates.end = markInsertion(buff, sent.trace, start)
-		  conv.storeDelayedMessage(sent.trace, sent)
+			sent.coordinates.start, sent.coordinates.end = markInsertion(buff, sent.trace, start)
+			conv.storeDelayedMessage(sent.trace, sent)
 		}
-		
+
 		if attention {
 			conv.afterNewMessage()
 		}
@@ -797,15 +797,15 @@ func insertTimestamp(buff gtki.TextBuffer, timestamp time.Time) {
 }
 
 func insertEntry(buff gtki.TextBuffer, entry taggableText) {
-			if entry.tag != "" {
-				insertWithTag(buff, entry.tag, entry.text)
-			} else {
-				insertAtEnd(buff, entry.text)
-			}
+	if entry.tag != "" {
+		insertWithTag(buff, entry.tag, entry.text)
+	} else {
+		insertAtEnd(buff, entry.text)
+	}
 }
 
 func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
-	conv.appendSentMessage(sentMessage { timestamp: timestamp }, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
+	conv.appendSentMessage(sentMessage{timestamp: timestamp}, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
 
 const mePrefix = "/me "
@@ -823,22 +823,22 @@ func (conv *conversationPane) appendMessage(sent sentMessage) {
 	if sent.isDelayed {
 		entries = append(
 			entries,
-			taggableText{ userTag, sent.from },
-			taggableText{ text: ":  ", },
-			taggableText{ textTag, msgTxt },
+			taggableText{userTag, sent.from},
+			taggableText{text: ":  "},
+			taggableText{textTag, msgTxt},
 		)
 	} else if msgHasMePrefix {
 		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
 		entries = append(
 			entries,
-			taggableText{ userTag, sent.from + " " + msgTxt, },
+			taggableText{userTag, sent.from + " " + msgTxt},
 		)
 	} else {
 		entries = append(
 			entries,
-			taggableText{ userTag, sent.from, },
-			taggableText{ text: ":  ", },
-			taggableText{ textTag, msgTxt, },
+			taggableText{userTag, sent.from},
+			taggableText{text: ":  "},
+			taggableText{textTag, msgTxt},
 		)
 	}
 
@@ -846,7 +846,7 @@ func (conv *conversationPane) appendMessage(sent sentMessage) {
 }
 
 func (conv *conversationPane) displayNotification(notification string) {
-	conv.appendSentMessage(sentMessage { timestamp: time.Now() }, false, taggableText{"statusText", notification})
+	conv.appendSentMessage(sentMessage{timestamp: time.Now()}, false, taggableText{"statusText", notification})
 }
 
 func (conv *conversationPane) displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string) {

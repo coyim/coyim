@@ -99,7 +99,7 @@ deps-dev:
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/modocache/gover
 	go get -u github.com/tools/godep
-	go get -u github.com/mjibson/esc
+	go get -u github.com/rosatolen/esc
 
 deps: deps-dev
 

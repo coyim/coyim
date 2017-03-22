@@ -123,3 +123,5 @@ check-reproducible-signatures:
 gen-authors:
 	rm -rf gui/authors.go
 	./authors.rb > gui/authors.go
+	gofmt -w gui/authors.go
+

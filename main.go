@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"runtime/pprof"
 
 	"github.com/twstrike/coyim/config"
 )
@@ -29,6 +30,17 @@ func main() {
 		var versionMessage = "CoyIM version " + coyimVersion + "\n"
 		os.Stdout.WriteString(versionMessage)
 		return
+	}
+
+	if *config.CpuProfile != "" {
+		f, err := os.Create(*config.CpuProfile)
+		if err != nil {
+			log.Fatal("could not create CPU profile: ", err)
+		}
+		if err := pprof.StartCPUProfile(f); err != nil {
+			log.Fatal("could not start CPU profile: ", err)
+		}
+		defer pprof.StopCPUProfile()
 	}
 
 	initLog()

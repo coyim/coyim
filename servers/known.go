@@ -26,7 +26,6 @@ func init() {
 	Server{"darkness.su", "darknesswn664fcx.onion", false}.register()
 
 	// https://www.cryptoparty.in/connect/contact/jabber
-	Server{"dukgo.com", "wlcpmruglhxp6quz.onion", true}.register()
 	Server{"jabber.calyxinstitute.org", "ijeeynrc6x2uy5ob.onion", true}.register()
 	Server{"jabber.ccc.de", "okj7xc6j2szr2y75.onion", true}.register()
 	Server{"jabber.cryptoparty.is", "cryjabkbdljzohnp.onion", false}.register()

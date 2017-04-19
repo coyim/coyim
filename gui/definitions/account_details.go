@@ -58,7 +58,7 @@ func (*defAccountDetails) String() string {
                 <property name="column-spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="AccountMessageLabel">
-                    <property name="label" translatable="yes">Your account&#xA;(example: kim42@dukgo.com)</property>
+                    <property name="label" translatable="yes">Your account&#xA;(example: kim42@jabber.otr.im)</property>
                     <property name="justify">GTK_JUSTIFY_RIGHT</property>
                   </object>
                   <packing>

@@ -112,11 +112,9 @@ func (u *gtkUI) newTags() *tags {
 
 	outgoingDelayedUser, _ := g.gtk.TextTagNew("outgoingDelayedUser")
 	outgoingDelayedUser.SetProperty("foreground", cs.conversationOutgoingDelayedUserForeground)
-	outgoingDelayedUser.SetProperty("strikethrough", true)
 
 	outgoingDelayedText, _ := g.gtk.TextTagNew("outgoingDelayedText")
 	outgoingDelayedText.SetProperty("foreground", cs.conversationOutgoingDelayedTextForeground)
-	outgoingDelayedText.SetProperty("strikethrough", true)
 
 	t.table.Add(outgoingUser)
 	t.table.Add(incomingUser)

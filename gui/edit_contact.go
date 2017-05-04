@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/twstrike/coyim/config"
@@ -128,9 +127,9 @@ func (ecd *editContactDialog) showFingerprintsForPeer(jid string, account *accou
 	}
 
 	if len(fprs) == 0 {
-		info.SetText(fmt.Sprintf(i18n.Local("There are no known fingerprints for %s"), jid))
+		info.SetText(i18n.Localf("There are no known fingerprints for %s", jid))
 	} else {
-		info.SetText(fmt.Sprintf(i18n.Local("These are the fingerprints known for %s:"), jid))
+		info.SetText(i18n.Localf("These are the fingerprints known for %s:", jid))
 	}
 
 	for ix, fpr := range fprs {

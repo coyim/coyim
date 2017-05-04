@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -200,7 +199,7 @@ func (u *gtkUI) showAddAccountWindow() {
 
 	u.accountDialog(nil, c, func() {
 		u.addAndSaveAccountConfig(c)
-		u.notify(i18n.Local("Account added"), fmt.Sprintf(i18n.Local("The account %s was added successfully."), c.Account))
+		u.notify(i18n.Local("Account added"), i18n.Localf("The account %s was added successfully.", c.Account))
 	})
 }
 
@@ -477,11 +476,11 @@ func (account *account) buildNotification(template, msg string, u *gtkUI, moreIn
 }
 
 func (account *account) buildConnectionNotification(u *gtkUI) gtki.InfoBar {
-	return account.buildNotification("ConnectingAccountInfo", fmt.Sprintf(i18n.Local("Connecting account\n%s"), account.session.GetConfig().Account), u, nil)
+	return account.buildNotification("ConnectingAccountInfo", i18n.Localf("Connecting account\n%s", account.session.GetConfig().Account), u, nil)
 }
 
 func (account *account) buildConnectionFailureNotification(u *gtkUI, moreInfo func()) gtki.InfoBar {
-	return account.buildNotification("ConnectionFailureNotification", fmt.Sprintf(i18n.Local("Connection failure\n%s"), account.session.GetConfig().Account), u, moreInfo)
+	return account.buildNotification("ConnectionFailureNotification", i18n.Localf("Connection failure\n%s", account.session.GetConfig().Account), u, moreInfo)
 }
 
 func (account *account) buildTorNotRunningNotification(u *gtkUI) gtki.InfoBar {

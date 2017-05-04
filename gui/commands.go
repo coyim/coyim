@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"fmt"
-
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/access"
@@ -79,7 +77,7 @@ func (u *gtkUI) watchCommands() {
 			if ac != nil {
 				peer := c.Peer
 				convWindowNowOrLater(ac, peer, u, func(cv conversationView) {
-					cv.displayNotification(fmt.Sprintf(i18n.Local("You have verified the identity of %s."), peer))
+					cv.displayNotification(i18n.Localf("You have verified the identity of %s.", peer))
 				})
 			}
 		case client.SaveInstanceTagCmd:

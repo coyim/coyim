@@ -288,7 +288,7 @@ func (u *gtkUI) importKeysForDialog(account *config.Account, w gtki.Dialog) {
 			if ok {
 				u.notify(i18n.Local("Keys imported"), i18n.Local("The key was imported correctly."))
 			} else {
-				u.notify(i18n.Local("Failure importing keys"), fmt.Sprintf(i18n.Local("Couldn't import any keys from %s."), fname))
+				u.notify(i18n.Local("Failure importing keys"), i18n.Localf("Couldn't import any keys from %s.", fname))
 			}
 		}()
 	}
@@ -313,7 +313,7 @@ func (u *gtkUI) exportKeysForDialog(account *config.Account, w gtki.Dialog) {
 		if ok {
 			u.notify(i18n.Local("Keys exported"), i18n.Local("Keys were exported correctly."))
 		} else {
-			u.notify(i18n.Local("Failure exporting keys"), fmt.Sprintf(i18n.Local("Couldn't export keys to %s."), dialog.GetFilename()))
+			u.notify(i18n.Local("Failure exporting keys"), i18n.Localf("Couldn't export keys to %s.", dialog.GetFilename()))
 		}
 	}
 	dialog.Destroy()
@@ -333,9 +333,9 @@ func (u *gtkUI) importFingerprintsForDialog(account *config.Account, w gtki.Dial
 	if gtki.ResponseType(dialog.Run()) == gtki.RESPONSE_OK {
 		num, ok := u.importFingerprintsFor(account, dialog.GetFilename())
 		if ok {
-			u.notify(i18n.Local("Fingerprints imported"), fmt.Sprintf(i18n.Local("%d fingerprint(s) were imported correctly."), num))
+			u.notify(i18n.Local("Fingerprints imported"), i18n.Localf("%d fingerprint(s) were imported correctly.", num))
 		} else {
-			u.notify(i18n.Local("Failure importing fingerprints"), fmt.Sprintf(i18n.Local("Couldn't import any fingerprints from %s."), dialog.GetFilename()))
+			u.notify(i18n.Local("Failure importing fingerprints"), i18n.Localf("Couldn't import any fingerprints from %s.", dialog.GetFilename()))
 		}
 	}
 	dialog.Destroy()
@@ -359,7 +359,7 @@ func (u *gtkUI) exportFingerprintsForDialog(account *config.Account, w gtki.Dial
 		if ok {
 			u.notify(i18n.Local("Fingerprints exported"), i18n.Local("Fingerprints were exported correctly."))
 		} else {
-			u.notify(i18n.Local("Failure exporting fingerprints"), fmt.Sprintf(i18n.Local("Couldn't export fingerprints to %s."), dialog.GetFilename()))
+			u.notify(i18n.Local("Failure exporting fingerprints"), i18n.Localf("Couldn't export fingerprints to %s.", dialog.GetFilename()))
 		}
 	}
 	dialog.Destroy()

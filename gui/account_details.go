@@ -379,7 +379,7 @@ func buildBadUsernameNotification(msg string) gtki.InfoBar {
 	message := b.getObj("message").(gtki.Label)
 
 	message.SetSelectable(true)
-	message.SetText(fmt.Sprintf(i18n.Local(msg)))
+	message.SetText(i18n.Local(msg))
 
 	return infoBar
 }

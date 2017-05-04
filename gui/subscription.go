@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/twstrike/coyim/i18n"
@@ -12,7 +11,7 @@ func authorizePresenceSubscriptionDialog(parent gtki.Window, from string) gtki.M
 	builder := newBuilder("AuthorizeSubscription")
 
 	confirmDialog := builder.getObj("dialog").(gtki.MessageDialog)
-	text := fmt.Sprintf(i18n.Local("%s wants to talk to you. Is that ok?"), from)
+	text := i18n.Localf("%s wants to talk to you. Is that ok?", from)
 	confirmDialog.SetProperty("text", text)
 	confirmDialog.SetTransientFor(parent)
 

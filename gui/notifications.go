@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"fmt"
-
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
@@ -46,7 +44,7 @@ func buildVerifyIdentityNotification(acc *account, peer, resource string, win gt
 	message := obj.(gtki.Label)
 	message.SetSelectable(true)
 
-	text := fmt.Sprintf(i18n.Local("You have not verified the identity of %s"), peer)
+	text := i18n.Localf("You have not verified the identity of %s", peer)
 	message.SetText(text)
 
 	obj = builder.getObj("button_verify")

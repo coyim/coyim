@@ -37,6 +37,14 @@ func (ds *displaySettings) control(w gtki.Widget) {
 	})
 }
 
+func (ds *displaySettings) shadeBackground(w gtki.Widget) {
+	doInUIThread(func() {
+		styleContext, _ := w.GetStyleContext()
+		styleContext.AddProvider(ds.provider, 9999)
+		styleContext.AddClass("shadedBackgroundColor")
+	})
+}
+
 func (ds *displaySettings) increaseFontSize() {
 	ds.fontSize++
 	ds.update()
@@ -55,6 +63,10 @@ func (ds *displaySettings) update() {
 
 .currentBackgroundColor {
   background-color: #fff;
+}
+
+.shadedBackgroundColor {
+  background-color: #fafafa;
 }
 `, ds.defaultFontSize, ds.fontSize)
 	doInUIThread(func() {

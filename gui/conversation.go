@@ -297,7 +297,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 	cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
 
 	ui.displaySettings.control(cp.history)
-	ui.displaySettings.control(cp.pending)
+	ui.displaySettings.shadeBackground(cp.pending)
 	ui.displaySettings.control(cp.entry)
 	ui.keyboardSettings.control(cp.entry)
 	ui.keyboardSettings.update()

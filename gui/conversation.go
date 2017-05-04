@@ -203,6 +203,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 	} else {
 		conv.displayNotification(i18n.Local("Private conversation has ended."))
 		conv.updateSecurityWarning()
+		conv.haveShownPrivateEndedNotification()
 	}
 }
 

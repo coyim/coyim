@@ -589,13 +589,13 @@ func (conv *conversationPane) appendPendingDelayed() {
 			})
 		}
 	}
-	conv.scrollPending.SetVisible(false)
+
+	conv.hideDelayedMessagesWindow()
 }
 
 func (conv *conversationPane) delayedMessageSent(trace int) {
 	conv.pendingDelayedLock.Lock()
 	conv.pendingDelayed = append(conv.pendingDelayed, trace)
-	conv.scrollPending.SetVisible(true)
 	conv.pendingDelayedLock.Unlock()
 
 	if conv.shownPrivate {
@@ -634,6 +634,9 @@ func (conv *conversationPane) sendMessage(message string) error {
 			trace:           trace,
 		}
 
+		if delayed {
+			conv.showDelayedMessagesWindow()
+		}
 		conv.appendMessage(sent)
 	}
 
@@ -848,7 +851,11 @@ func (conv *conversationPane) appendMessage(sent sentMessage) {
 }
 
 func (conv *conversationPane) displayNotification(notification string) {
-	conv.appendSentMessage(sentMessage{timestamp: time.Now()}, false, taggableText{"statusText", notification})
+	conv.appendSentMessage(
+		sentMessage{timestamp: time.Now()},
+		false,
+		taggableText{"statusText", notification},
+	)
 }
 
 func (conv *conversationPane) displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string) {
@@ -940,6 +947,14 @@ func (conv *conversationPane) onShow() {
 		conv.reapOlderThan(time.Now().Add(-reapInterval))
 		conv.hidden = false
 	}
+}
+
+func (conv *conversationPane) showDelayedMessagesWindow() {
+	conv.scrollPending.SetVisible(true)
+}
+
+func (conv *conversationPane) hideDelayedMessagesWindow() {
+	conv.scrollPending.SetVisible(false)
 }
 
 func (conv *conversationWindow) potentiallySetUrgent() {

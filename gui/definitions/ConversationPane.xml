@@ -126,10 +126,10 @@
     
     <child>
       <object class="GtkScrolledWindow" id="pendingScroll">
-        <property name="visible">true</property>
         <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
         <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
 	<property name="min-content-height">60</property>
+        <property name="shadow-type">in</property>
         <child>
           <object class="GtkTextView" id="pending">
             <property name="visible">true</property>

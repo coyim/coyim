@@ -3,7 +3,7 @@ package gtki
 type Assistant interface {
 	Window
 	GetCurrentPage() int
-	// SetCurrentPage(pageNum int)
+	SetCurrentPage(pageNum int)
 	// GetNPages() int
 	GetNthPage(pageNum int) (Widget, error)
 	// PrependPage(page Widget) int

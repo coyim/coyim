@@ -30,6 +30,9 @@ func (a *MockAssistant) GetCurrentPage() int {
 	return 0
 }
 
+func (a *MockAssistant) SetCurrentPage(pageNum int) {
+}
+
 func (a *MockAssistant) GetNthPage(pageNum int) (gtki.Widget, error) {
 	return nil, nil
 }

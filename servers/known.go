@@ -37,15 +37,29 @@ func init() {
 	Server{"securejabber.me", "giyvshdnojeivkom.onion", false}.register()
 	Server{"wtfismyip.com", "ofkztxcohimx34la.onion", false}.register()
 	Server{"xmpp.rows.io", "yz6yiv2hxyagvwy6.onion", false}.register()
+	Server{"patchcord.be", "xsydhi3dnbjuatpz.onion", true}.register()
+	Server{"xmpp.is", "y2qmqomqpszzryei.onion", true}.register()
+	Server{"jabber.s7t.de", "jabberip5hpbrafx.onion", false}.register()
+	Server{"jabber.frozenstar.info", "potu7aaoitlajnxc.onion", false}.register()
+	for _, s := range []string{"draugr.de", "deshalbfrei.org", "ubuntu-jabber.de", "ubuntu-jabber.net", "verdammung.org", "xabber.de"} {
+		Server{s, "jfel5icoxf3nmftl.onion", false}.register()
+	}
+
+	for _, s := range []string{"planetjabber.de", "jabjab.de", "jabberwiki.de", "jabberforum.de", "ybgood.de", "lethyro.net", "pad7.de", "pad7.net"} {
+		Server{s, "jabjabdevfoob7hl.onion", false}.register()
+	}
+
+	for _, s := range []string{"wallstreetjabber.biz, wallstreetjabber.com, jidhad.biz, securetalks.biz, methamphetamine.ru"} {
+		Server{s, "wsjabberhzuots2e.onion", false}.register()
+	}
+
+	Server{"jabber.lqdn.fr", "jabber63t4r2qi57.onion", false}.register()
 
 	// http://kode.im
 	Server{"kode.im", "ihkw7qy3tok45dun.onion", false}.register()
 
 	// https://space.koderoot.net/
 	Server{"im.koderoot.net", "ihkw7qy3tok45dun.onion", false}.register()
-
-	// https://jabber.lqdn.fr/
-	Server{"jabber.lqdn.fr", "jabber63t4r2qi57.onion", false}.register()
 
 	// https://www.kjabber.de/onion.htm
 	Server{"kjabber.de", "JABBERthelv5p7qv.onion", false}.register()

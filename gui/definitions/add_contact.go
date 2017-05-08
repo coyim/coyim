@@ -20,7 +20,7 @@ func (*defAddContact) String() string {
   <object class="GtkTextBuffer" id="subscriptionAskMessage">
     <property name="text" translatable="yes">I would like to add you to my contact list.</property>
   </object>
-  
+
   <object class="GtkDialog" id="AddContact">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border_width">6</property>
@@ -56,20 +56,6 @@ func (*defAddContact) String() string {
             <property name="column-spacing">6</property>
 
             <child>
-              <object class="GtkLabel" id="subscriptionInstructions">
-                <property name="label" translatable="yes">Please fill in the information for the peer you would like to add. If you have more than one account, ensure you choose the account you would like to add this peer to. You can optionally choose to save a nickname for this peer. You can also choose to automatically allow the peer to see you, without them having to ask permission first. Finally, you can also customize the message the peer will see when asking to see them. Remember that this message will not be end-to-end encrypted, so do not reveal any sensitive information in this message.</property>
-                <property name="visible">true</property>
-                <property name="wrap">true</property>
-                <property name="max-width-chars">65</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
-                <property name="width">2</property>
-              </packing>
-            </child>
-
-            <child>
               <object class="GtkLabel" id="accountsLabel" >
                 <property name="label" translatable="yes">Account:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
@@ -100,7 +86,7 @@ func (*defAddContact) String() string {
 
             <child>
               <object class="GtkLabel" id="accountLabel" >
-                <property name="label" translatable="yes">Contact to add:</property>
+                <property name="label" translatable="yes">Email:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
               </object>
@@ -123,7 +109,7 @@ func (*defAddContact) String() string {
 
             <child>
               <object class="GtkLabel" id="nicknameLabel" >
-                <property name="label" translatable="yes">Nickname:</property>
+                <property name="label" translatable="yes">Name:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
               </object>
@@ -193,7 +179,21 @@ func (*defAddContact) String() string {
             <property name="position">3</property>
           </packing>
         </child>
-        
+
+        <child>
+          <object class="GtkLabel" id="subscriptionInstructions">
+          <property name="label" translatable="yes">Warning: This message will not be end-to-end encrypted. Do not reveal any sensitive information in it.</property>
+          <property name="visible">true</property>
+          <property name="wrap">true</property>
+          <property name="max-width-chars">65</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+            <property name="width">2</property>
+          </packing>
+        </child>
+
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>

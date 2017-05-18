@@ -35,11 +35,27 @@ func (g *Group) findOrCreateInside(path, pathTilNow []string) *Group {
 	return gg.findOrCreateInside(path[1:], nowPath)
 }
 
+func peersCopy(inp map[string]*Peer) map[string]*Peer {
+	outp := make(map[string]*Peer)
+	for k, v := range inp {
+		outp[k] = v
+	}
+	return outp
+}
+
+func groupsCopy(inp map[string]bool) map[string]bool {
+	outp := make(map[string]bool)
+	for k, v := range inp {
+		outp[k] = v
+	}
+	return outp
+}
+
 // AddTo will add the peers in the receiver to the given group top level
 func (l *List) AddTo(topLevel *Group, delim string) {
-	for _, p := range l.peers {
+	for _, p := range peersCopy(l.peers) {
 		hadGroup := false
-		for g, b := range p.Groups {
+		for g, b := range groupsCopy(p.Groups) {
 			if b {
 				hadGroup = true
 				gs := strings.Split(g, delim)

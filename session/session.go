@@ -40,7 +40,9 @@ type session struct {
 	conn             xi.Conn
 	connectionLogger io.Writer
 	r                *roster.List
-	connStatus       connStatus
+
+	connStatus     connStatus
+	connStatusLock sync.RWMutex
 
 	otrEventHandler map[string]*event.OtrEventHandler
 
@@ -878,22 +880,34 @@ func (s *session) requestRoster() bool {
 	return true
 }
 
+func (s *session) getConnStatus() connStatus {
+	s.connStatusLock.RLock()
+	defer s.connStatusLock.RUnlock()
+	return s.connStatus
+}
+
+func (s *session) setConnStatus(v connStatus) {
+	s.connStatusLock.Lock()
+	defer s.connStatusLock.Unlock()
+	s.connStatus = v
+}
+
 // IsDisconnected returns true if this account is disconnected and is not in the process of connecting
 func (s *session) IsDisconnected() bool {
-	return s.connStatus == DISCONNECTED
+	return s.getConnStatus() == DISCONNECTED
 }
 
 // IsConnected returns true if this account is connected and is not in the process of connecting
 func (s *session) IsConnected() bool {
-	return s.connStatus == CONNECTED
+	return s.getConnStatus() == CONNECTED
 }
 
 func (s *session) connection() (xi.Conn, bool) {
-	return s.conn, s.connStatus == CONNECTED
+	return s.conn, s.getConnStatus() == CONNECTED
 }
 
 func (s *session) setStatus(status connStatus) {
-	s.connStatus = status
+	s.setConnStatus(status)
 
 	switch status {
 	case CONNECTED:
@@ -927,7 +941,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		return err
 	}
 
-	if s.connStatus == CONNECTING {
+	if s.getConnStatus() == CONNECTING {
 		s.conn = conn
 		s.setStatus(CONNECTED)
 

@@ -48,6 +48,19 @@ type conn struct {
 
 	streamCloseReceived chan bool
 	closed              bool
+	closedLock          sync.Mutex
+}
+
+func (c *conn) isClosed() bool {
+	c.closedLock.Lock()
+	defer c.closedLock.Unlock()
+	return c.closed
+}
+
+func (c *conn) setClosed(v bool) {
+	c.closedLock.Lock()
+	defer c.closedLock.Unlock()
+	c.closed = v
 }
 
 func (c *conn) CustomStorage() map[xml.Name]reflect.Type {
@@ -118,7 +131,7 @@ func NewConn(in *xml.Decoder, out io.WriteCloser, jid string) interfaces.Conn {
 		rand: rand.Reader,
 	}
 
-	conn.closed = true
+	conn.setClosed(true)
 	close(conn.streamCloseReceived) // closes immediately
 	return conn
 }
@@ -134,16 +147,19 @@ func newConn() *conn {
 
 // Close closes the underlying connection
 func (c *conn) Close() error {
-	if c.closed {
+	if c.isClosed() {
 		return errors.New("xmpp: the connection is already closed")
 	}
 
 	// RFC 6120, Section 4.4 and 9.1.5
 	log.Println("xmpp: sending closing stream tag")
+
+	c.closedLock.Lock()
 	_, err := fmt.Fprint(c.out, "</stream:stream>")
 
 	//TODO: find a better way to prevent sending message.
 	c.out = ioutil.Discard
+	c.closedLock.Unlock()
 
 	if err != nil {
 		return c.closeTCP()
@@ -165,7 +181,7 @@ func (c *conn) receivedStreamClose() error {
 }
 
 func (c *conn) closeImmediately() error {
-	if c.closed {
+	if c.isClosed() {
 		return nil
 	}
 
@@ -174,7 +190,7 @@ func (c *conn) closeImmediately() error {
 }
 
 func (c *conn) closeTCP() error {
-	if c.closed {
+	if c.isClosed() {
 		return nil
 	}
 
@@ -182,7 +198,7 @@ func (c *conn) closeTCP() error {
 	c.cancelInflights()
 
 	log.Println("xmpp: TCP closed")
-	c.closed = true
+	c.setClosed(true)
 	return c.rawOut.Close()
 }
 

@@ -927,7 +927,7 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 
 	go func() {
 		<-time.After(1 * time.Second)
-		sess.connStatus = DISCONNECTED
+		sess.setConnStatus(DISCONNECTED)
 	}()
 
 	sess.watchTimeout()

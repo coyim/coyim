@@ -113,8 +113,8 @@ func (s *XMPPSuite) TestConnClose_sendsAStreamCloseTagWhenWeCloseFirst(c *C) {
 
 	// blocks until it receives the </stream> or timeouts
 	c.Assert(conn.Close(), IsNil)
-	c.Assert(mockCloser.calledClose, Equals, 1)
-	c.Assert(mockCloser.write, DeepEquals, []byte("</stream:stream>"))
+	c.Assert(mockCloser.CalledClose(), Equals, 1)
+	c.Assert(mockCloser.Written(), DeepEquals, []byte("</stream:stream>"))
 
 	<-done
 }

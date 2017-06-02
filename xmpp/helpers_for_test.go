@@ -29,9 +29,31 @@ type mockConnIOReaderWriter struct {
 	err       error
 
 	calledClose int
+
+	lock sync.Mutex
+}
+
+func (iom *mockConnIOReaderWriter) CalledClose() int {
+	iom.lock.Lock()
+	defer iom.lock.Unlock()
+	return iom.calledClose
+}
+
+func (iom *mockConnIOReaderWriter) Written() []byte {
+	iom.lock.Lock()
+	defer iom.lock.Unlock()
+
+	var res []byte
+	l := len(iom.write)
+	res = make([]byte, l, l)
+	copy(res, iom.write)
+	return res
 }
 
 func (iom *mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
+	iom.lock.Lock()
+	defer iom.lock.Unlock()
+
 	if iom.readIndex >= len(iom.read) {
 		return 0, io.EOF
 	}
@@ -46,6 +68,9 @@ func (iom *mockConnIOReaderWriter) Read(p []byte) (n int, err error) {
 }
 
 func (iom *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
+	iom.lock.Lock()
+	defer iom.lock.Unlock()
+
 	iom.write = append(iom.write, p...)
 	var e error
 	if iom.errCount == 0 {
@@ -56,6 +81,9 @@ func (iom *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
 }
 
 func (iom *mockConnIOReaderWriter) Close() error {
+	iom.lock.Lock()
+	defer iom.lock.Unlock()
+
 	iom.calledClose++
 	return nil
 }

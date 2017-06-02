@@ -134,9 +134,9 @@ func (s *DiscoveryXMPPSuite) Test_HasSupportTo(c *C) {
 	<-time.After(1 * time.Millisecond)
 
 	var iq data.ClientIQ
-	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='plays.shakespeare.lit' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
+	c.Assert(string(mockOut.Written()), Matches, "<iq xmlns='jabber:client' to='plays.shakespeare.lit' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
 
-	err := xml.Unmarshal(mockOut.write, &iq)
+	err := xml.Unmarshal(mockOut.Written(), &iq)
 	c.Assert(err, IsNil)
 
 	mockIn := &mockConnIOReaderWriter{read: []byte(fmt.Sprintf(fromServer, iq.ID))}

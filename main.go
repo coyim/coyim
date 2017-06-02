@@ -32,8 +32,8 @@ func main() {
 		return
 	}
 
-	if *config.CpuProfile != "" {
-		f, err := os.Create(*config.CpuProfile)
+	if *config.CPUProfile != "" {
+		f, err := os.Create(*config.CPUProfile)
 		if err != nil {
 			log.Fatal("could not create CPU profile: ", err)
 		}

@@ -45,7 +45,7 @@ lint:
     done
 
 test:
-	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
+	go test -race -cover -v -tags $(GTK_BUILD_TAG) ./...
 
 clean-gui-test:
 	$(RM) gui-test/*

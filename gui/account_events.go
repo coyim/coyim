@@ -147,6 +147,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		convWindowNowOrLater(account, peer, u, func(cv conversationView) {
 			cv.displayNotification(i18n.Local("Private conversation has ended."))
 			cv.updateSecurityWarning()
+			cv.removeIdentityVerificationWarning()
 			cv.haveShownPrivateEndedNotification()
 		})
 

@@ -25,6 +25,7 @@ var (
 
 type conversationView interface {
 	showIdentityVerificationWarning(u *gtkUI)
+	removeIdentityVerificationWarning()
 	updateSecurityWarning()
 	show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)

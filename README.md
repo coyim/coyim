@@ -58,7 +58,6 @@ go get -u -tags "gtk_${GTK_VERSION}" github.com/twstrike/coyim
 go get -u -tags cli github.com/twstrike/coyim
 ```
 
-
 ## Contributing to CoyIM
 
 We have instructions to help you [get started contributing to CoyIM](CONTRIBUTING.md).

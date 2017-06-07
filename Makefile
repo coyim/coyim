@@ -45,7 +45,10 @@ lint:
     done
 
 test:
-	go test -race -cover -v -tags $(GTK_BUILD_TAG) ./...
+	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
+
+test-named:
+	go test -v -tags $(GTK_BUILD_TAG) ./cli ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
 
 clean-gui-test:
 	$(RM) gui-test/*
@@ -124,4 +127,3 @@ gen-authors:
 	rm -rf gui/authors.go
 	./authors.rb > gui/authors.go
 	gofmt -w gui/authors.go
-

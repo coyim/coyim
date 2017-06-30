@@ -98,7 +98,7 @@ func (*defAccountDetails) String() string {
 
                <child>
                   <object class="GtkLabel" id="DisplayNameLabel">
-                    <property name="label" translatable="yes">Display name</property>
+                    <property name="label" translatable="yes">Account name</property>
                     <property name="halign">GTK_ALIGN_END</property>
                   </object>
                   <packing>

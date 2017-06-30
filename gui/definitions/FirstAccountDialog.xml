@@ -8,9 +8,9 @@
         <property name="margin">10</property>
         <child>
           <object class="GtkLabel" id="message">
-            <property name="label" translatable="yes">Since you do not have a configured account, we need to set you up with one.
+            <property name="label" translatable="yes">Since you do not have a configured account, we need to set up one.
 
-You can choose to import an existing one, register a new one or manually configure an existing account.
+You can choose to import an existing one, create a new one or manually configure an existing one.
 
             </property>
             <property name="wrap">true</property>
@@ -32,19 +32,19 @@ You can choose to import an existing one, register a new one or manually configu
             </child>
             <child>
               <object class="GtkButton" id="button_import">
-                <property name="label" translatable="yes">Import account...</property>
+                <property name="label" translatable="yes">Import account</property>
                 <signal name="clicked" handler="on_import_signal" />
               </object>
             </child>
             <child>
               <object class="GtkButton" id="button_register">
-                <property name="label" translatable="yes">Register account...</property>
+                <property name="label" translatable="yes">Create account</property>
                 <signal name="clicked" handler="on_register_signal" />
               </object>
             </child>
             <child>
               <object class="GtkButton" id="button_existing">
-                <property name="label" translatable="yes">Existing account...</property>
+                <property name="label" translatable="yes">Add existing account</property>
                 <signal name="clicked" handler="on_existing_signal" />
               </object>
             </child>

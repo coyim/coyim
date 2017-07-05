@@ -187,6 +187,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 
 					switch err {
 					case config.ErrTorNotRunning:
+						// TODO: this takes a lot of time.
 						doneMessage.SetLabel(i18n.Local("We had an error when trying to use Tor.\nThe registration process currently requires Tor in order to ensure your safety but you don't have Tor turned on.\nMake sure to do so."))
 					case xmpp.ErrMissingRequiredRegistrationInfo:
 						doneMessage.SetLabel(i18n.Local("We had an error when trying to register your account: some required fields are missing."))

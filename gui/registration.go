@@ -80,7 +80,9 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 
 	//TODO: this should receive only a JID domainpart
 	conn, err := policy.RegisterAccount(formHandler, conf, verifier)
-	defer conn.Close()
+	if conn != nil {
+		defer conn.Close()
+	}
 
 	return err
 }

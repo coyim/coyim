@@ -44,6 +44,10 @@ Build and run the tests
 
 `make`
 
+Build interface
+
+`make build-gui`
+
 ## Contributions steps
 
 This is the lifecycle of a contribution. We follow a simplified fork + pull request workflow:

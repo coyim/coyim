@@ -36,6 +36,10 @@ git clone https://github.com/twstrike/coyim.git
 cd coyim
 ```
 
+Download go dependencies 
+
+`make deps-dev`
+
 Build and run the tests
 
 `make`

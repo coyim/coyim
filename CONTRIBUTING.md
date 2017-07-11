@@ -23,6 +23,7 @@ Coy is written in [Golang](https://golang.org/) and uses
 - `golang` with `cgo` support.
 - `gtk`
 - `make`
+- `ruby`
 
 Installing these requirements differs on each system.
 

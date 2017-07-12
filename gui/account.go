@@ -167,7 +167,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 
 				formMessage.SetLabel(i18n.Local("Connecting to server for registration..."))
 				go func() {
-					err := requestAndRenderRegistrationForm(form.server, renderFn, u.dialerFactory, u.unassociatedVerifier())
+					err := requestAndRenderRegistrationForm(form.server, renderFn, u.dialerFactory, u.unassociatedVerifier(), u.config)
 
 					//check for errors that happened before the form is shown
 					if err != nil && assistant.GetCurrentPage() != 2 {

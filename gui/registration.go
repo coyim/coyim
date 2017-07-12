@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/twstrike/coyim/config"
+	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/interfaces"
@@ -68,8 +69,9 @@ func (f *registrationForm) renderForm(title, instructions string, fields []inter
 	return nil
 }
 
-func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, df interfaces.DialerFactory, verifier tls.Verifier) error {
-	policy := config.ConnectionPolicy{DialerFactory: df}
+func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, df interfaces.DialerFactory, verifier tls.Verifier, c *config.ApplicationConfig) error {
+	_, xmppLog := session.CreateXMPPLogger(c.RawLogFile)
+	policy := config.ConnectionPolicy{DialerFactory: df, XMPPLogger: xmppLog, Logger: session.LogToDebugLog()}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
 	//TODO: we should give the choice of using Tor to the user

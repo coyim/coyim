@@ -295,7 +295,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		// Ignore
 	case "error":
 		s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
-		s.r.LatestError(stanza.From, stanza.Error.Code, stanza.Error.Type, stanza.Error.Any.Space+" "+stanza.Error.Any.Local)
+		s.r.LatestError(stanza.From, stanza.Error.Code, stanza.Error.Type, stanza.Error.Any.XMLName.Space+" "+stanza.Error.Any.XMLName.Local)
 	default:
 		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
 	}

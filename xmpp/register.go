@@ -86,7 +86,7 @@ func (c *conn) createAccount(user, password string) error {
 	}
 
 	if iq2.Type == "error" {
-		switch iq2.Error.Any.Local {
+		switch iq2.Error.Any.XMLName.Local {
 		case "conflict":
 			// <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrUsernameConflict

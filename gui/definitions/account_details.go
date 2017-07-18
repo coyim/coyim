@@ -16,7 +16,6 @@ func (*defAccountDetails) String() string {
       <column type="gchararray"/>
     </columns>
   </object>
-
   <object class="GtkListStore" id="pins-model">
     <columns>
       <!-- Subject -->
@@ -27,21 +26,18 @@ func (*defAccountDetails) String() string {
       <column type="gchararray"/>
     </columns>
   </object>
-
   <object class="GtkDialog" id="AccountDetails">
     <property name="title" translatable="yes">Account Details</property>
     <signal name="close" handler="on_cancel_signal" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
-
         <child>
           <object class="GtkBox" id="notification-area">
             <property name="visible">true</property>
             <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
           </object>
         </child>
-
         <child>
           <object class="GtkNotebook" id="notebook1">
             <property name="visible">True</property>
@@ -95,7 +91,6 @@ func (*defAccountDetails) String() string {
                     <property name="top-attach">1</property>
                   </packing>
                 </child>
-
                <child>
                   <object class="GtkLabel" id="DisplayNameLabel">
                     <property name="label" translatable="yes">Account name</property>
@@ -115,7 +110,6 @@ func (*defAccountDetails) String() string {
                     <property name="top-attach">2</property>
                   </packing>
                 </child>
-
                 <child>
                   <object class="GtkLabel" id="showOtherSettings">
                     <property name="label" translatable="yes">Display all settings</property>
@@ -131,7 +125,6 @@ func (*defAccountDetails) String() string {
                   <object class="GtkCheckButton" id="otherSettings">
                     <signal name="toggled" handler="on_toggle_other_settings" />
                   </object>
-
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">3</property>
@@ -139,7 +132,6 @@ func (*defAccountDetails) String() string {
                 </child>
               </object>
             </child>
-
             <child type="tab">
               <object class="GtkLabel" id="label-tab1">
                 <property name="label" translatable="yes">Account</property>
@@ -150,7 +142,6 @@ func (*defAccountDetails) String() string {
                 <property name="tab-fill">False</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkGrid" id="otherOptionsGrid">
                 <property name="margin-top">15</property>
@@ -211,7 +202,6 @@ func (*defAccountDetails) String() string {
                     <property name="width">2</property>
                   </packing>
                 </child>
-
                 <child>
                   <object class="GtkLabel" id="pinningPolicyLabel">
                     <property name="label" translatable="yes">Pinning policy</property>
@@ -222,7 +212,6 @@ func (*defAccountDetails) String() string {
                     <property name="top-attach">3</property>
                   </packing>
                 </child>
-
                 <child>
                   <object class="GtkComboBoxText" id="pinningPolicyValue">
                     <items>
@@ -239,7 +228,6 @@ func (*defAccountDetails) String() string {
                     <property name="top-attach">3</property>
                   </packing>
                 </child>
-
                 <child>
                   <object class="GtkPaned" id="hpanedPins">
                     <property name="visible">True</property>
@@ -594,7 +582,6 @@ There are several applications that use the libotr format - Pidgin, Adium and To
                         <property name="top-attach">3</property>
                       </packing>
                     </child>
-
                   </object>
                 </child>
               </object>
@@ -611,7 +598,6 @@ There are several applications that use the libotr format - Pidgin, Adium and To
             </child>
           </object>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
@@ -630,7 +616,6 @@ There are several applications that use the libotr format - Pidgin, Adium and To
             </child>
           </object>
         </child>
-
       </object>
     </child>
   </object>

@@ -115,6 +115,7 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 	return result
 }
 
+// CreateXMPPLogger creates a XMPP log.
 func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer) {
 	log := openLogFile(rawLog)
 

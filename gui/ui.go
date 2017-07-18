@@ -470,11 +470,18 @@ func (u *gtkUI) feedbackDialog() {
 	builder := newBuilder("Feedback")
 
 	obj := builder.getObj("dialog")
-	dialog := obj.(gtki.MessageDialog)
-	dialog.SetTransientFor(u.window)
+	dialog := obj.(gtki.Dialog)
 
-	dialog.Run()
-	dialog.Destroy()
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_signal": func() {
+			dialog.Destroy()
+		},
+	})
+
+	doInUIThread(func() {
+		dialog.SetTransientFor(u.window)
+		dialog.ShowAll()
+	})
 }
 
 func (u *gtkUI) shouldViewAccounts() bool {

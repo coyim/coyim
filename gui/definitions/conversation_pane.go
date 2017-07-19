@@ -132,7 +132,6 @@ func (*defConversationPane) String() string {
         <property name="position">2</property>
       </packing>
     </child>
-    
     <child>
       <object class="GtkScrolledWindow" id="pendingScroll">
         <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
@@ -158,7 +157,6 @@ func (*defConversationPane) String() string {
         <property name="position">1</property>
       </packing>
     </child>
-
     <child>
       <object class="GtkScrolledWindow" id="messageScroll">
         <property name="visible">true</property>
@@ -176,7 +174,6 @@ func (*defConversationPane) String() string {
           </object>
         </child>
       </object>
-
       <packing>
         <property name="expand">false</property>
         <property name="fill">true</property>

@@ -13,7 +13,6 @@ func (*defCertificateDialog) String() string {
     <property name="modal">true</property>
     <property name="width_request">480</property>
     <property name="border_width">10</property>
-
     <child internal-child="vbox">
       <object class="GtkBox" id="box">
         <property name="border-width">10</property>
@@ -30,7 +29,6 @@ func (*defCertificateDialog) String() string {
             <property name="margin-bottom">10</property>
           </object>
         </child>
-
         <child>
           <object class="GtkLabel" id="issuedToMessage">
             <property name="label" translatable="yes">Issued to:</property>
@@ -42,7 +40,6 @@ func (*defCertificateDialog) String() string {
             </attributes>
           </object>
         </child>
-
         <child>
           <object class="GtkGrid" id="issuedToGrid">
             <property name="margin-top">2</property>
@@ -75,7 +72,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">0</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="snisLabel">
                 <property name="label" translatable="yes">Other names:</property>
@@ -102,7 +98,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="issuedToOLabel">
                 <property name="label" translatable="yes">Organization (O):</property>
@@ -127,7 +122,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="issuedToOULabel">
                 <property name="label" translatable="yes">Organizational Unit (OU):</property>
@@ -152,7 +146,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">3</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="SNLabel">
                 <property name="label" translatable="yes">Serial Number:</property>
@@ -177,9 +170,8 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">4</property>
               </packing>
             </child>
-          </object>          
+          </object>
         </child>
-
         <child>
           <object class="GtkLabel" id="issuedByMessage">
             <property name="label" translatable="yes">Issued by:</property>
@@ -191,7 +183,6 @@ func (*defCertificateDialog) String() string {
             </attributes>
           </object>
         </child>
-
         <child>
           <object class="GtkGrid" id="issuedByGrid">
             <property name="margin-top">2</property>
@@ -224,7 +215,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">0</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="issuedByOLabel">
                 <property name="label" translatable="yes">Organization (O):</property>
@@ -249,7 +239,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="issuedByOULabel">
                 <property name="label" translatable="yes">Organizational Unit (OU):</property>
@@ -274,9 +263,8 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
-          </object>          
+          </object>
         </child>
-        
         <child>
           <object class="GtkLabel" id="validityMessage">
             <property name="label" translatable="yes">Validity:</property>
@@ -288,7 +276,6 @@ func (*defCertificateDialog) String() string {
             </attributes>
           </object>
         </child>
-
         <child>
           <object class="GtkGrid" id="validityGrid">
             <property name="margin-top">2</property>
@@ -321,7 +308,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">0</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="expiresOnLabel">
                 <property name="label" translatable="yes">Expires on:</property>
@@ -346,9 +332,8 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-          </object>          
+          </object>
         </child>
-
         <child>
           <object class="GtkGrid" id="fingerprintsGrid">
             <property name="margin-top">2</property>
@@ -384,7 +369,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">0</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="sha256FingerprintLabel">
                 <property name="label" translatable="yes">SHA-256 fingerprint:</property>
@@ -412,7 +396,6 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="sha3_256FingerprintLabel">
                 <property name="label" translatable="yes">SHA3-256 fingerprint:</property>
@@ -440,9 +423,8 @@ func (*defCertificateDialog) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
-          </object>          
+          </object>
         </child>
-
         <child>
           <object class="GtkLabel" id="buttonInstructionsMessage">
             <property name="label" translatable="yes">Depending on whether you judge the above information correct, or how much risk you are willing to take, you have three choices: Decide to not connect, connect using this information this time but request that we ask again next time, or connect using this information and remember it for the future.</property>
@@ -454,7 +436,6 @@ func (*defCertificateDialog) String() string {
             <property name="margin-bottom">10</property>
           </object>
         </child>
-        
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
@@ -478,7 +459,6 @@ func (*defCertificateDialog) String() string {
         </child>
       </object>
     </child>
-
     <action-widgets>
       <action-widget response="cancel" default="true">button_dont</action-widget>
       <action-widget response="ok">button_temp_ok</action-widget>

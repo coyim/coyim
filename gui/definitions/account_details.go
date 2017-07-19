@@ -480,7 +480,6 @@ func (*defAccountDetails) String() string {
                 <property name="tab-fill">False</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkBox" id="encryptionOptionsBox">
                 <property name="border-width">10</property>

@@ -146,7 +146,6 @@ func (*defEditProxy) String() string {
             </child>
           </object>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>

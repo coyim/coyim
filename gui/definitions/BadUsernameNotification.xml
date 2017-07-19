@@ -1,7 +1,6 @@
 <interface>
   <object class="GtkInfoBar" id="infobar">
     <property name="message-type">GTK_MESSAGE_WARNING</property>
-
     <child internal-child="content_area">
       <object class="GtkBox" id="box">
         <property name="homogeneous">false</property>
@@ -13,6 +12,5 @@
         </child>
       </object>
     </child>
-
   </object>
 </interface>

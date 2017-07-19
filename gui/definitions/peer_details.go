@@ -13,24 +13,20 @@ func (*defPeerDetails) String() string {
       <column type="gchararray"/>
     </columns>
   </object>
-
   <object class="GtkMenuItem" id="addGroup">
     <property name="visible">True</property>
     <property name="label" translatable="yes">New Group...</property>
     <signal name="activate" handler="on-add-new-group" />
   </object>
-
   <object class="GtkMenu" id="groups-menu">
     <property name="visible">True</property>
   </object>
-
   <object class="GtkDialog" id="dialog">
     <property name="title" translatable="yes">Edit contact</property>
     <signal name="close" handler="on-cancel" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
-
         <child>
           <object class="GtkGrid" id="grid">
             <property name="margin-top">15</property>
@@ -39,7 +35,6 @@ func (*defPeerDetails) String() string {
             <property name="margin-end">10</property>
             <property name="row-spacing">12</property>
             <property name="column-spacing">6</property>
-
             <child>
               <object class="GtkLabel" id="account-label">
                 <property name="label" translatable="yes">Account</property>
@@ -61,7 +56,6 @@ func (*defPeerDetails) String() string {
                 <property name="top-attach">0</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="jid-label">
                 <property name="label" translatable="yes">Contact</property>
@@ -83,7 +77,6 @@ func (*defPeerDetails) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="nickname-label">
                 <property name="label" translatable="yes">Nickname</property>
@@ -103,7 +96,6 @@ func (*defPeerDetails) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="require-encryption-label">
                 <property name="label" translatable="yes">Require encryption with this peer</property>
@@ -122,8 +114,6 @@ func (*defPeerDetails) String() string {
                 <property name="top-attach">3</property>
               </packing>
             </child>
-
-
             <child>
               <object class="GtkLabel" id="groups">
                 <property name="label" translatable="yes">Groups</property>
@@ -163,14 +153,12 @@ func (*defPeerDetails) String() string {
                   </object>
                 </child>
               </object>
-
               <packing>
                 <property name="left-attach">0</property>
                 <property name="top-attach">5</property>
                 <property name="width">2</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkButtonBox" id="groups-buttons">
                 <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
@@ -178,7 +166,6 @@ func (*defPeerDetails) String() string {
                   <object class="GtkMenuButton" id="add-btn">
                     <property name="visible">true</property>
                     <property name="popup">groups-menu</property>
-
                     <property name="direction">GTK_ARROW_DOWN</property>
                     <child>
                       <object class="GtkImage" id="add-btn-img">
@@ -198,7 +185,6 @@ func (*defPeerDetails) String() string {
                   </object>
                 </child>
               </object>
-
               <packing>
                 <property name="left-attach">0</property>
                 <property name="top-attach">6</property>
@@ -206,7 +192,6 @@ func (*defPeerDetails) String() string {
             </child>
           </object>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
@@ -225,7 +210,6 @@ func (*defPeerDetails) String() string {
             </child>
           </object>
         </child>
-
        <!-- TODO: This should be in a scrolled window with min/max size  -->
        <child>
         <object class="GtkBox" id="box">
@@ -249,8 +233,6 @@ func (*defPeerDetails) String() string {
           </child>
         </object>
         </child>
-    
-
       </object>
     </child>
   </object>

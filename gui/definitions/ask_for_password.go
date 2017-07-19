@@ -76,7 +76,6 @@ func (*defAskForPassword) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="savePasswordLabel">
                 <property name="label" translatable="yes">Save password</property>
@@ -95,7 +94,6 @@ func (*defAskForPassword) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
-
           </object>
         </child>
         <child internal-child="action_area">

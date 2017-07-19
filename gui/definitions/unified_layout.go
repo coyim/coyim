@@ -192,7 +192,7 @@ func (*defUnifiedLayout) String() string {
                 <property name="title" translatable="yes">column</property>
                 <property name="expand">True</property>
                 <child>
-a                  <object class="GtkCellRendererText" id="uid-column-renderer"/>
+                  <object class="GtkCellRendererText" id="uid-column-renderer"/>
                   <attributes>
                     <attribute name="background">4</attribute>
                     <attribute name="foreground">3</attribute>

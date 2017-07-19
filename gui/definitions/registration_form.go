@@ -11,13 +11,11 @@ func (*defRegistrationForm) String() string {
   <object class="GtkDialog" id="dialog">
     <signal name="response" handler="response-handler" />
     <signal name="close" handler="close-handler" />
-
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="visible">true</property>
         <property name="margin-bottom">10</property>
         <property name="margin">10</property>
-
         <child>
           <object class="GtkGrid" id="grid">
             <property name="visible">true</property>
@@ -36,7 +34,6 @@ func (*defRegistrationForm) String() string {
             </child>
           </object>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="bbox">
             <property name="visible">true</property>
@@ -58,7 +55,6 @@ func (*defRegistrationForm) String() string {
         </child>
       </object>
     </child>
-
     <action-widgets>
       <action-widget response="cancel">btn-cancel</action-widget>
       <action-widget response="apply" default="true">btn-register</action-widget>

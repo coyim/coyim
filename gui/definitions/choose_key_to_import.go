@@ -12,7 +12,6 @@ func (*defChooseKeyToImport) String() string {
     <property name="title" translatable="yes">Choose a key to import</property>
     <signal name="close" handler="on_cancel_signal" />
     <signal name="delete-event" handler="on_cancel_signal" />
-
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
@@ -27,12 +26,10 @@ func (*defChooseKeyToImport) String() string {
             <property name="fill">true</property>
           </packing>
         </child>
-
         <child>
           <object class="GtkComboBoxText" id="keys">
           </object>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="bbox">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
@@ -53,7 +50,6 @@ func (*defChooseKeyToImport) String() string {
         </child>
       </object>
     </child>
-
     <action-widgets>
       <action-widget response="cancel">btn-cancel</action-widget>
       <action-widget response="ok" default="true">btn-import</action-widget>

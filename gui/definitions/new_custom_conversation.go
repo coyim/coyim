@@ -16,7 +16,6 @@ func (*defNewCustomConversation) String() string {
       <column type="gchararray"/>
     </columns>
   </object>
-
   <object class="GtkDialog" id="NewCustomConversation">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border_width">6</property>
@@ -30,7 +29,6 @@ func (*defNewCustomConversation) String() string {
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <property name="spacing">6</property>
-
         <child>
           <object class="GtkGrid" id="grid">
             <property name="margin-top">15</property>
@@ -39,7 +37,6 @@ func (*defNewCustomConversation) String() string {
             <property name="margin-end">10</property>
             <property name="row-spacing">12</property>
             <property name="column-spacing">6</property>
-
             <child>
               <object class="GtkLabel" id="accountsLabel" >
                 <property name="label" translatable="yes">From:</property>
@@ -68,7 +65,6 @@ func (*defNewCustomConversation) String() string {
                 <property name="top-attach">0</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="peerLabel" >
                 <property name="label" translatable="yes">With:</property>
@@ -98,7 +94,6 @@ func (*defNewCustomConversation) String() string {
             <property name="position">1</property>
           </packing>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>

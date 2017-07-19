@@ -36,7 +36,6 @@ func (*defGroupDetails) String() string {
             <property name="position">2</property>
           </packing>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="bbox">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
@@ -55,12 +54,10 @@ func (*defGroupDetails) String() string {
         </child>
       </object>
     </child>
-
     <action-widgets>
       <action-widget response="cancel">btn-cancel</action-widget>
       <action-widget response="ok" default="true">btn-ok</action-widget>
     </action-widgets>
-
   </object>
 </interface>`
 }

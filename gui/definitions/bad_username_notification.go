@@ -10,7 +10,6 @@ func (*defBadUsernameNotification) String() string {
 	return `<interface>
   <object class="GtkInfoBar" id="infobar">
     <property name="message-type">GTK_MESSAGE_WARNING</property>
-
     <child internal-child="content_area">
       <object class="GtkBox" id="box">
         <property name="homogeneous">false</property>
@@ -22,7 +21,6 @@ func (*defBadUsernameNotification) String() string {
         </child>
       </object>
     </child>
-
   </object>
 </interface>
 `

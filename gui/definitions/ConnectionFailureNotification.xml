@@ -2,7 +2,6 @@
   <object class="GtkInfoBar" id="infobar">
     <property name="message-type">GTK_MESSAGE_ERROR</property>
     <property name="show-close-button">false</property>
-
     <child internal-child="content_area">
       <object class="GtkBox" id="box">
         <property name="spacing">0</property>

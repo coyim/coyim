@@ -16,11 +16,9 @@ func (*defAddContact) String() string {
       <column type="gchararray"/>
     </columns>
   </object>
-
   <object class="GtkTextBuffer" id="subscriptionAskMessage">
     <property name="text" translatable="yes">I would like to add you to my contact list.</property>
   </object>
-
   <object class="GtkDialog" id="AddContact">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border_width">6</property>
@@ -45,7 +43,6 @@ func (*defAddContact) String() string {
             <property name="position">0</property>
           </packing>
         </child>
-
         <child>
           <object class="GtkGrid" id="grid">
             <property name="margin-top">15</property>
@@ -54,7 +51,6 @@ func (*defAddContact) String() string {
             <property name="margin-end">10</property>
             <property name="row-spacing">12</property>
             <property name="column-spacing">6</property>
-
             <child>
               <object class="GtkLabel" id="accountsLabel" >
                 <property name="label" translatable="yes">Account:</property>
@@ -83,7 +79,6 @@ func (*defAddContact) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="accountLabel" >
                 <property name="label" translatable="yes">Email:</property>
@@ -106,7 +101,6 @@ func (*defAddContact) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="nicknameLabel" >
                 <property name="label" translatable="yes">Name:</property>
@@ -128,7 +122,6 @@ func (*defAddContact) String() string {
                 <property name="top-attach">3</property>
               </packing>
             </child>
-
           </object>
           <packing>
             <property name="expand">true</property>
@@ -136,7 +129,6 @@ func (*defAddContact) String() string {
             <property name="position">1</property>
           </packing>
         </child>
-
         <child>
           <object class="GtkCheckButton" id="auto_authorize_checkbutton">
             <property name="label" translatable="yes">A_llow this contact to view my status</property>
@@ -179,7 +171,6 @@ func (*defAddContact) String() string {
             <property name="position">3</property>
           </packing>
         </child>
-
         <child>
           <object class="GtkLabel" id="subscriptionInstructions">
           <property name="label" translatable="yes">Warning: This message will not be end-to-end encrypted. Do not reveal any sensitive information in it.</property>
@@ -193,7 +184,6 @@ func (*defAddContact) String() string {
             <property name="width">2</property>
           </packing>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>

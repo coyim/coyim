@@ -14,7 +14,6 @@ func (*defConnectionInformation) String() string {
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
-
         <child>
           <object class="GtkGrid" id="connectionInfoGrid">
             <property name="margin-top">2</property>
@@ -47,7 +46,6 @@ func (*defConnectionInformation) String() string {
                 <property name="top-attach">0</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="tlsVersionLabel">
                 <property name="label" translatable="yes">Secure connection version:</property>
@@ -72,7 +70,6 @@ func (*defConnectionInformation) String() string {
                 <property name="top-attach">1</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="tlsAlgoLabel">
                 <property name="label" translatable="yes">Secure connection algorithm:</property>
@@ -97,7 +94,6 @@ func (*defConnectionInformation) String() string {
                 <property name="top-attach">2</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkLabel" id="tlsFingerprintLabel">
                 <property name="label" translatable="yes">Secure connection fingerprint:</property>
@@ -126,7 +122,6 @@ func (*defConnectionInformation) String() string {
                 <property name="top-attach">3</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkButton" id="pin-cert">
                 <property name="label" translatable="yes">Pin certificate</property>
@@ -141,7 +136,6 @@ func (*defConnectionInformation) String() string {
         </child>
       </object>
     </child>
-    
     <child internal-child="action_area">
       <object class="GtkButtonBox" id="button_box">
         <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>

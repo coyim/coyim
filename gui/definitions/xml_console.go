@@ -12,7 +12,6 @@ func (*defXMLConsole) String() string {
   <object class="GtkTextBuffer" id="consoleContent">
     <property name="text" translatable="yes">Hello world</property>
   </object>
-
   <object class="GtkDialog" id="XMLConsole">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border_width">6</property>
@@ -26,7 +25,6 @@ func (*defXMLConsole) String() string {
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <property name="spacing">6</property>
-
         <child>
           <object class="GtkScrolledWindow" id="message_scrolledwindow">
             <property name="visible">True</property>
@@ -53,7 +51,6 @@ func (*defXMLConsole) String() string {
             <property name="fill">True</property>
           </packing>
         </child>
-
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>

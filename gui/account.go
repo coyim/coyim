@@ -150,64 +150,82 @@ func renderTorError(assistant gtki.Assistant, pg gtki.Widget, formMessage gtki.L
 	//formImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
 }
 
-func (u *gtkUI) showServerSelectionWindow() {
-	builder := newBuilder("AccountRegistration")
-	assistant := builder.getObj("assistant").(gtki.Assistant)
-	assistant.SetTransientFor(u.window)
-	formMessage := builder.getObj("formMessage").(gtki.Label)
-	doneMessage := builder.getObj("doneMessage").(gtki.Label)
-	serverBox := builder.getObj("server").(gtki.ComboBoxText)
+type serverSelectionWindow struct {
+	b           *builder
+	assistant   gtki.Assistant
+	formMessage gtki.Label
+	doneMessage gtki.Label
+	serverBox   gtki.ComboBoxText
+	spinner     gtki.Spinner
+	grid        gtki.Grid
 	// formImage := builder.getObj("formImage").(gtki.Image)
 	// doneImage := builder.getObj("doneImage").(gtki.Image)
-	spinner := builder.getObj("spinner").(gtki.Spinner)
+}
+
+func createServerSelectionWindow() *serverSelectionWindow {
+	w := &serverSelectionWindow{b: newBuilder("AccountRegistration")}
+
+	w.b.getItems(
+		"assistant", &w.assistant,
+		"formMessage", &w.formMessage,
+		"doneMessage", &w.doneMessage,
+		"server", &w.serverBox,
+		"spinner", &w.spinner,
+		"formGrid", &w.grid,
+	)
+
+	return w
+}
+
+func (u *gtkUI) showServerSelectionWindow() {
+	w := createServerSelectionWindow()
+	w.assistant.SetTransientFor(u.window)
 
 	for _, s := range servers.GetServersForRegistration() {
-		serverBox.AppendText(s.Name)
+		w.serverBox.AppendText(s.Name)
 	}
+	w.serverBox.SetActive(0)
 
-	form := &registrationForm{
-		grid: builder.getObj("formGrid").(gtki.Grid),
-	}
+	form := &registrationForm{grid: w.grid}
 
-	serverBox.SetActive(0)
 	formSubmitted := make(chan error)
 	done := make(chan error)
 
-	builder.ConnectSignals(map[string]interface{}{
+	w.b.ConnectSignals(map[string]interface{}{
 		"on_prepare": func(_ gtki.Assistant, pg gtki.Widget) {
-			switch assistant.GetCurrentPage() {
+			switch w.assistant.GetCurrentPage() {
 			case 0:
-				serverBox.SetSensitive(true)
+				w.serverBox.SetSensitive(true)
 				form.server = ""
 
 				//TODO: Destroy everything in the grid on page 1?
 			case 1:
-				serverBox.SetSensitive(false)
-				form.server = serverBox.GetActiveText()
+				w.serverBox.SetSensitive(false)
+				form.server = w.serverBox.GetActiveText()
 
 				renderFn := func(title, instructions string, fields []interface{}) error {
-					spinner.Stop()
-					formMessage.SetLabel("")
-					doneMessage.SetLabel("")
+					w.spinner.Stop()
+					w.formMessage.SetLabel("")
+					w.doneMessage.SetLabel("")
 
 					form.renderForm(title, fields)
-					assistant.SetPageComplete(pg, true)
+					w.assistant.SetPageComplete(pg, true)
 
 					return <-formSubmitted
 				}
 
-				spinner.Start()
-				formMessage.SetLabel(i18n.Local("Connecting to server for registration... \n\n " +
+				w.spinner.Start()
+				w.formMessage.SetLabel(i18n.Local("Connecting to server for registration... \n\n " +
 					"This might take a while."))
 
 				go func() {
 					err := requestAndRenderRegistrationForm(form.server, renderFn, u.dialerFactory, u.unassociatedVerifier(), u.config)
-					if err != nil && assistant.GetCurrentPage() != 2 {
+					if err != nil && w.assistant.GetCurrentPage() != 2 {
 						if err != config.ErrTorNotRunning {
-							go assistant.SetCurrentPage(2)
+							go w.assistant.SetCurrentPage(2)
 						}
-						spinner.Stop()
-						renderTorError(assistant, pg, formMessage, err)
+						w.spinner.Stop()
+						renderTorError(w.assistant, pg, w.formMessage, err)
 						return
 					}
 
@@ -216,14 +234,14 @@ func (u *gtkUI) showServerSelectionWindow() {
 			case 2:
 				formSubmitted <- form.accepted()
 				err := <-done
-				spinner.Stop()
+				w.spinner.Stop()
 
 				if err != nil {
 					if err != xmpp.ErrMissingRequiredRegistrationInfo {
-						renderError(doneMessage, contactServerError, contactServerLog, err)
-						return
+						renderError(w.doneMessage, contactServerError, contactServerLog, err)
+					} else {
+						renderError(w.doneMessage, requiredFieldsError, requiredFieldsLog, err)
 					}
-					renderError(doneMessage, requiredFieldsError, requiredFieldsLog, err)
 
 					return
 				}
@@ -232,7 +250,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 				err = u.addAndSaveAccountConfig(form.conf)
 
 				if err != nil {
-					renderError(doneMessage, storeAccountInfoError, storeAccountInfoLog, err)
+					renderError(w.doneMessage, storeAccountInfoError, storeAccountInfoLog, err)
 					return
 				}
 
@@ -242,13 +260,13 @@ func (u *gtkUI) showServerSelectionWindow() {
 				}
 
 				// doneImage.SetFromIconName("emblem-default", gtki.ICON_SIZE_DIALOG)
-				doneMessage.SetLabel(i18n.Localf("%s successfully created.", form.conf.Account))
+				w.doneMessage.SetLabel(i18n.Localf("%s successfully created.", form.conf.Account))
 			}
 		},
-		"on_cancel_signal": assistant.Destroy,
+		"on_cancel_signal": w.assistant.Destroy,
 	})
 
-	assistant.ShowAll()
+	w.assistant.ShowAll()
 }
 
 func (u *gtkUI) showAddAccountWindow() {

@@ -157,6 +157,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.Image:
+		val := wrapImageSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.InfoBar:
 		val := wrapInfoBarSimple(oo)
 		if val == nil {
@@ -211,6 +217,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.ProgressBar:
+		val := wrapProgressBarSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.Revealer:
 		val := wrapRevealerSimple(oo)
 		if val == nil {
@@ -231,6 +243,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *gtk.SpinButton:
 		val := wrapSpinButtonSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *gtk.Spinner:
+		val := wrapSpinnerSimple(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -440,6 +458,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *image:
+		val := unwrapImage(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *infoBar:
 		val := unwrapInfoBar(oo)
 		if val == nil {
@@ -494,6 +518,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *progressBar:
+		val := unwrapProgressBar(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *revealer:
 		val := unwrapRevealer(oo)
 		if val == nil {
@@ -514,6 +544,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *spinButton:
 		val := unwrapSpinButton(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *spinner:
+		val := unwrapSpinner(oo)
 		if val == nil {
 			return nil, true
 		}

@@ -163,6 +163,8 @@ type serverSelectionWindow struct {
 
 	formSubmitted chan error
 	done          chan error
+
+	form *registrationForm
 }
 
 func createServerSelectionWindow() *serverSelectionWindow {
@@ -180,6 +182,8 @@ func createServerSelectionWindow() *serverSelectionWindow {
 	w.formSubmitted = make(chan error)
 	w.done = make(chan error)
 
+	w.form = &registrationForm{grid: w.grid}
+
 	return w
 }
 
@@ -195,26 +199,24 @@ func (u *gtkUI) showServerSelectionWindow() {
 	w.assistant.SetTransientFor(u.window)
 	w.initializeServers()
 
-	form := &registrationForm{grid: w.grid}
-
 	w.b.ConnectSignals(map[string]interface{}{
 		"on_prepare": func(_ gtki.Assistant, pg gtki.Widget) {
 			switch w.assistant.GetCurrentPage() {
 			case 0:
 				w.serverBox.SetSensitive(true)
-				form.server = ""
+				w.form.server = ""
 
 				//TODO: Destroy everything in the grid on page 1?
 			case 1:
 				w.serverBox.SetSensitive(false)
-				form.server = w.serverBox.GetActiveText()
+				w.form.server = w.serverBox.GetActiveText()
 
 				renderFn := func(title, instructions string, fields []interface{}) error {
 					w.spinner.Stop()
 					w.formMessage.SetLabel("")
 					w.doneMessage.SetLabel("")
 
-					form.renderForm(title, fields)
+					w.form.renderForm(title, fields)
 					w.assistant.SetPageComplete(pg, true)
 
 					return <-w.formSubmitted
@@ -225,7 +227,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 					"This might take a while."))
 
 				go func() {
-					err := requestAndRenderRegistrationForm(form.server, renderFn, u.dialerFactory, u.unassociatedVerifier(), u.config)
+					err := requestAndRenderRegistrationForm(w.form.server, renderFn, u.dialerFactory, u.unassociatedVerifier(), u.config)
 					if err != nil && w.assistant.GetCurrentPage() != 2 {
 						if err != config.ErrTorNotRunning {
 							go w.assistant.SetCurrentPage(2)
@@ -238,7 +240,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 					w.done <- err
 				}()
 			case 2:
-				w.formSubmitted <- form.accepted()
+				w.formSubmitted <- w.form.accepted()
 				err := <-w.done
 				w.spinner.Stop()
 
@@ -253,20 +255,20 @@ func (u *gtkUI) showServerSelectionWindow() {
 				}
 
 				//Save the account
-				err = u.addAndSaveAccountConfig(form.conf)
+				err = u.addAndSaveAccountConfig(w.form.conf)
 
 				if err != nil {
 					renderError(w.doneMessage, storeAccountInfoError, storeAccountInfoLog, err)
 					return
 				}
 
-				if acc, ok := u.getAccountByID(form.conf.ID()); ok {
+				if acc, ok := u.getAccountByID(w.form.conf.ID()); ok {
 					acc.session.SetWantToBeOnline(true)
 					acc.Connect()
 				}
 
 				// doneImage.SetFromIconName("emblem-default", gtki.ICON_SIZE_DIALOG)
-				w.doneMessage.SetLabel(i18n.Localf("%s successfully created.", form.conf.Account))
+				w.doneMessage.SetLabel(i18n.Localf("%s successfully created.", w.form.conf.Account))
 			}
 		},
 		"on_cancel_signal": w.assistant.Destroy,

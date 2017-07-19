@@ -148,6 +148,14 @@ func renderTorError(assistant gtki.Assistant, pg gtki.Widget, formMessage gtki.L
 	//formImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
 }
 
+func (w *serverSelectionWindow) renderErrorFor(err error) {
+	if err != xmpp.ErrMissingRequiredRegistrationInfo {
+		renderError(w.doneMessage, contactServerError, contactServerLog, err)
+	} else {
+		renderError(w.doneMessage, requiredFieldsError, requiredFieldsLog, err)
+	}
+}
+
 type serverSelectionWindow struct {
 	b           *builder
 	assistant   gtki.Assistant
@@ -203,11 +211,8 @@ func (w *serverSelectionWindow) initialPage() {
 	//TODO: Destroy everything in the grid on page 1?
 }
 
-func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
-	w.serverBox.SetSensitive(false)
-	w.form.server = w.serverBox.GetActiveText()
-
-	renderFn := func(title, instructions string, fields []interface{}) error {
+func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, []interface{}) error {
+	return func(title, instructions string, fields []interface{}) error {
 		w.spinner.Stop()
 		w.formMessage.SetLabel("")
 		w.doneMessage.SetLabel("")
@@ -217,24 +222,30 @@ func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 
 		return <-w.formSubmitted
 	}
+}
 
+func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
+	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config)
+	if err != nil && w.assistant.GetCurrentPage() != 2 {
+		if err != config.ErrTorNotRunning {
+			go w.assistant.SetCurrentPage(2)
+		}
+		w.spinner.Stop()
+		renderTorError(w.assistant, pg, w.formMessage, err)
+		return
+	}
+
+	w.done <- err
+}
+
+func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
+	w.serverBox.SetSensitive(false)
+	w.form.server = w.serverBox.GetActiveText()
 	w.spinner.Start()
-	w.formMessage.SetLabel(i18n.Local("Connecting to server for registration... \n\n " +
+	w.formMessage.SetLabel(i18n.Local("Connecting to server for registration... \n\n" +
 		"This might take a while."))
 
-	go func() {
-		err := requestAndRenderRegistrationForm(w.form.server, renderFn, w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config)
-		if err != nil && w.assistant.GetCurrentPage() != 2 {
-			if err != config.ErrTorNotRunning {
-				go w.assistant.SetCurrentPage(2)
-			}
-			w.spinner.Stop()
-			renderTorError(w.assistant, pg, w.formMessage, err)
-			return
-		}
-
-		w.done <- err
-	}()
+	go w.doRendering(pg)
 }
 
 func (w *serverSelectionWindow) formSubmittedPage() {
@@ -243,12 +254,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 	w.spinner.Stop()
 
 	if err != nil {
-		if err != xmpp.ErrMissingRequiredRegistrationInfo {
-			renderError(w.doneMessage, contactServerError, contactServerLog, err)
-		} else {
-			renderError(w.doneMessage, requiredFieldsError, requiredFieldsLog, err)
-		}
-
+		w.renderErrorFor(err)
 		return
 	}
 

@@ -54,7 +54,7 @@ func (f *registrationForm) addFields(fields []interface{}) {
 	f.fields = buildWidgetsForFields(fields)
 }
 
-func (f *registrationForm) renderForm(title, instructions string, fields []interface{}) error {
+func (f *registrationForm) renderForm(title string, fields []interface{}) error {
 	doInUIThread(func() {
 		f.addFields(fields)
 

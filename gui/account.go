@@ -160,6 +160,9 @@ type serverSelectionWindow struct {
 	grid        gtki.Grid
 	// formImage := builder.getObj("formImage").(gtki.Image)
 	// doneImage := builder.getObj("doneImage").(gtki.Image)
+
+	formSubmitted chan error
+	done          chan error
 }
 
 func createServerSelectionWindow() *serverSelectionWindow {
@@ -174,22 +177,25 @@ func createServerSelectionWindow() *serverSelectionWindow {
 		"formGrid", &w.grid,
 	)
 
+	w.formSubmitted = make(chan error)
+	w.done = make(chan error)
+
 	return w
+}
+
+func (w *serverSelectionWindow) initializeServers() {
+	for _, s := range servers.GetServersForRegistration() {
+		w.serverBox.AppendText(s.Name)
+	}
+	w.serverBox.SetActive(0)
 }
 
 func (u *gtkUI) showServerSelectionWindow() {
 	w := createServerSelectionWindow()
 	w.assistant.SetTransientFor(u.window)
-
-	for _, s := range servers.GetServersForRegistration() {
-		w.serverBox.AppendText(s.Name)
-	}
-	w.serverBox.SetActive(0)
+	w.initializeServers()
 
 	form := &registrationForm{grid: w.grid}
-
-	formSubmitted := make(chan error)
-	done := make(chan error)
 
 	w.b.ConnectSignals(map[string]interface{}{
 		"on_prepare": func(_ gtki.Assistant, pg gtki.Widget) {
@@ -211,7 +217,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 					form.renderForm(title, fields)
 					w.assistant.SetPageComplete(pg, true)
 
-					return <-formSubmitted
+					return <-w.formSubmitted
 				}
 
 				w.spinner.Start()
@@ -229,11 +235,11 @@ func (u *gtkUI) showServerSelectionWindow() {
 						return
 					}
 
-					done <- err
+					w.done <- err
 				}()
 			case 2:
-				formSubmitted <- form.accepted()
-				err := <-done
+				w.formSubmitted <- form.accepted()
+				err := <-w.done
 				w.spinner.Stop()
 
 				if err != nil {

@@ -210,7 +210,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 					acc.Connect()
 				}
 
-				doneMessage.SetLabel(i18n.Localf("The account %s was successfully created.", form.conf.Account))
+				doneMessage.SetLabel(i18n.Localf("%s was successfully created.", form.conf.Account))
 			}
 		},
 
@@ -225,7 +225,7 @@ func (u *gtkUI) showAddAccountWindow() {
 
 	u.accountDialog(nil, c, func() {
 		u.addAndSaveAccountConfig(c)
-		u.notify(i18n.Local("Account added"), i18n.Localf("The account %s was added successfully.", c.Account))
+		u.notify(i18n.Local("Account added"), i18n.Localf("%s was added successfully.", c.Account))
 	})
 }
 

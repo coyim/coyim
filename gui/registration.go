@@ -140,6 +140,8 @@ func renderError(doneMessage gtki.Label, errorMessage, logMessage string, err er
 	doneMessage.SetLabel(i18n.Local(errorMessage))
 }
 
+// TODO: currently this shows up even when Tor is running but either:
+// a timeout occured, xmpp: account creation failed, or could not authenticate to the XMPP server
 func renderTorError(assistant gtki.Assistant, pg gtki.Widget, formMessage gtki.Label, err error) {
 	log.Printf(torLogMessage, err)
 	assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)

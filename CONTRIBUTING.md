@@ -17,7 +17,7 @@ Here's the brief:
 Coy is written in [Golang](https://golang.org/) and uses
 [GTK+3](http://www.gtk.org/) as its UI toolkit.
 
-### Requirements
+### Requirements
 
 - `git`
 - `golang` with `cgo` support.
@@ -36,7 +36,7 @@ git clone https://github.com/twstrike/coyim.git
 cd coyim
 ```
 
-Download go dependencies 
+Download go dependencies
 
 `make deps-dev`
 

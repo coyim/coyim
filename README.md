@@ -43,6 +43,7 @@ sudo apt-get install gtk+3.0 libgtk-3-dev
 
 ```sh
 brew install gtk+3
+brew install gnome-icon-theme
 ```
 
 Then install CoyIM:

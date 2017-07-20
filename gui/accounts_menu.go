@@ -38,17 +38,18 @@ func (u *gtkUI) buildStaticAccountsMenu(submenu gtki.Menu) {
 	sep2, _ := g.gtk.SeparatorMenuItemNew()
 	submenu.Append(sep2)
 
-	addAccMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Add..."))
+	registerAccMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Register Account"))
+	registerAccMenu.Connect("activate", u.showServerSelectionWindow)
+	submenu.Append(registerAccMenu)
+
+	addAccMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Add Account"))
 	addAccMenu.Connect("activate", u.showAddAccountWindow)
 	submenu.Append(addAccMenu)
 
-	importMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Import..."))
+	importMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Import Account"))
 	importMenu.Connect("activate", u.runImporter)
 	submenu.Append(importMenu)
 
-	registerAccMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Register..."))
-	registerAccMenu.Connect("activate", u.showServerSelectionWindow)
-	submenu.Append(registerAccMenu)
 }
 
 func (u *gtkUI) buildAccountsMenu() {

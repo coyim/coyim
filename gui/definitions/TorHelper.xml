@@ -5,7 +5,7 @@
     <property name="border_width">7</property>
     <property name="text" translatable="yes">Welcome!</property>
     <property name="secondary_text" translatable="yes">
-We tried and could not check if Tor is installed.
+We could not check if Tor is installed.
 
 In order to have the safest experience, we reccommend you to install it.
 

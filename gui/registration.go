@@ -11,6 +11,7 @@ import (
 	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
+	xmppErr "github.com/twstrike/coyim/xmpp/errors"
 	"github.com/twstrike/coyim/xmpp/interfaces"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
@@ -127,7 +128,7 @@ const (
 	torLogMessage         = "We had an error when trying to register your account: Tor is not running. %v"
 	storeAccountInfoError = "We had an error when trying to store your account information."
 	storeAccountInfoLog   = "We had an error when trying to store your account information. %v"
-	contactServerError    = "Could not contact the server.\n\n Please correct your server choice and try again."
+	contactServerError    = "Could not contact the server.\n\nPlease correct your server choice and try again."
 	contactServerLog      = "Error when trying to get registration form: %v"
 	requiredFieldsError   = "We had an error:\n\nSome required fields are missing."
 	requiredFieldsLog     = "Error when trying to get registration form: %v"
@@ -141,11 +142,23 @@ func renderError(doneMessage gtki.Label, errorMessage, logMessage string, err er
 }
 
 // TODO: currently this shows up even when Tor is running but either:
-// a timeout occured, xmpp: account creation failed, or could not authenticate to the XMPP server
-func renderTorError(assistant gtki.Assistant, pg gtki.Widget, formMessage gtki.Label, err error) {
-	log.Printf(torLogMessage, err)
+// a timeout occured
+func renderConnectionErrorFor(assistant gtki.Assistant, pg gtki.Widget, formMessage gtki.Label, spinner gtki.Spinner, err error) {
+	spinner.Stop()
 	assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
-	formMessage.SetLabel(i18n.Local(torErrorMessage))
+	assistant.SetPageComplete(pg, true)
+
+	if err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed {
+		log.Printf(contactServerLog, err)
+		formMessage.SetLabel(i18n.Local(contactServerError))
+	} else if err == config.ErrTorNotRunning {
+		log.Printf(torLogMessage, err)
+		formMessage.SetLabel(i18n.Local(torErrorMessage))
+	} else {
+		log.Printf(torLogMessage, err)
+		formMessage.SetLabel(i18n.Local(torErrorMessage))
+	}
+
 	//formImage.Clear()
 	//formImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
 }
@@ -229,14 +242,14 @@ func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, 
 func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config)
 	if err != nil && w.assistant.GetCurrentPage() != 2 {
-		if err != config.ErrTorNotRunning {
-			go w.assistant.SetCurrentPage(2)
+		// TODO: refactor me!
+		if err == config.ErrTorNotRunning || err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed {
+			renderConnectionErrorFor(w.assistant, pg, w.formMessage, w.spinner, err)
+			return
 		}
-		w.spinner.Stop()
-		renderTorError(w.assistant, pg, w.formMessage, err)
-		return
 	}
 
+	go w.assistant.SetCurrentPage(2)
 	w.done <- err
 }
 

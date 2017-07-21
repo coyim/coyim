@@ -56,7 +56,7 @@ func (c *conn) createAccount(user, password string) error {
 	}
 
 	if iq.Type != "result" {
-		return errors.New("xmpp: account creation failed")
+		return ErrRegistrationFailed
 	}
 	var register data.RegisterQuery
 	if err := xml.NewDecoder(bytes.NewBuffer(iq.Query)).Decode(&register); err != nil {

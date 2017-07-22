@@ -128,12 +128,12 @@ const (
 		"You don't have Tor running. Please, start it.\n\n"
 	torLogMessage         = "We had an error when trying to register your account: Tor is not running. %v"
 	storeAccountInfoError = "We had an error when trying to store your account information."
-	storeAccountInfoLog   = "We had an error when trying to store your account information. %v"
-	contactServerError    = "Could not contact the server.\n\nPlease correct your server choice and try again."
+	storeAccountInfoLog   = "We had an error when trying to store your account information. Please, try again.%v"
+	contactServerError    = "Could not contact the server.\n\nPlease, correct your server choice and try again."
 	contactServerLog      = "Error when trying to get registration form: %v"
 	timeOutError          = "We had an error:\n\nTimeout."
 	timeOutLog            = "Error when trying to get registration form: %v"
-	requiredFieldsError   = "We had an error:\n\nSome required fields are missing."
+	requiredFieldsError   = "We had an error:\n\nSome required fields are missing. Please, try again and fill all fields."
 	requiredFieldsLog     = "Error when trying to get registration form: %v"
 )
 

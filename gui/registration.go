@@ -6,6 +6,7 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
+	ourNet "github.com/twstrike/coyim/net"
 	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/session"
 	"github.com/twstrike/coyim/tls"
@@ -130,6 +131,8 @@ const (
 	storeAccountInfoLog   = "We had an error when trying to store your account information. %v"
 	contactServerError    = "Could not contact the server.\n\nPlease correct your server choice and try again."
 	contactServerLog      = "Error when trying to get registration form: %v"
+	timeOutError          = "We had an error:\n\nTimeout."
+	timeOutLog            = "Error when trying to get registration form: %v"
 	requiredFieldsError   = "We had an error:\n\nSome required fields are missing."
 	requiredFieldsLog     = "Error when trying to get registration form: %v"
 )
@@ -141,24 +144,21 @@ func renderError(doneMessage gtki.Label, errorMessage, logMessage string, err er
 	doneMessage.SetLabel(i18n.Local(errorMessage))
 }
 
-// TODO: currently this shows up even when Tor is running but either:
-// a timeout occured
 func renderConnectionErrorFor(assistant gtki.Assistant, pg gtki.Widget, formMessage gtki.Label, spinner gtki.Spinner, err error) {
 	spinner.Stop()
 	assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
 	assistant.SetPageComplete(pg, true)
 
-	if err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed {
-		log.Printf(contactServerLog, err)
-		formMessage.SetLabel(i18n.Local(contactServerError))
+	if err == ourNet.ErrTimeout {
+		log.Printf(timeOutLog, err)
+		formMessage.SetLabel(i18n.Local(timeOutError))
 	} else if err == config.ErrTorNotRunning {
 		log.Printf(torLogMessage, err)
 		formMessage.SetLabel(i18n.Local(torErrorMessage))
 	} else {
-		log.Printf(torLogMessage, err)
-		formMessage.SetLabel(i18n.Local(torErrorMessage))
+		log.Printf(contactServerLog, err)
+		formMessage.SetLabel(i18n.Local(contactServerError))
 	}
-
 	//formImage.Clear()
 	//formImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
 }
@@ -243,7 +243,7 @@ func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config)
 	if err != nil && w.assistant.GetCurrentPage() != 2 {
 		// TODO: refactor me!
-		if err == config.ErrTorNotRunning || err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed {
+		if err == config.ErrTorNotRunning || err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed || err == ourNet.ErrTimeout {
 			renderConnectionErrorFor(w.assistant, pg, w.formMessage, w.spinner, err)
 			return
 		}

@@ -206,7 +206,12 @@ func (p *ConnectionPolicy) RegisterAccount(createCallback data.FormCallback, con
 		return nil, err
 	}
 
-	return dialer.RegisterAccount(createCallback)
+	conn, err := dialer.RegisterAccount(createCallback)
+	if err != nil {
+		return nil, err
+	}
+
+	return conn, nil
 }
 
 func newTLSConfig() *tls.Config {

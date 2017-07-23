@@ -1,0 +1,725 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the coy package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: coy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-23 10:19+0200\n"
+"PO-Revision-Date: 2017-07-23 10:56+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.2\n"
+"Last-Translator: Martijn de Boer <translations@sexybiggetje.nl>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl\n"
+
+#: ../gui/definitions/AccountDetails.xml:12
+msgid "Account Details"
+msgstr "Account details"
+
+#: ../gui/definitions/AccountDetails.xml:41
+msgid ""
+"Your account\n"
+"(example: kim42@dukgo.com)"
+msgstr ""
+"Jouw account\n"
+"(bijvoorbeeld: kim42@dukgo.com)"
+
+#: ../gui/definitions/AccountDetails.xml:60
+#: ../gui/definitions/AskForPassword.xml:36
+msgid "Password"
+msgstr "Wachtwoord"
+
+#: ../gui/definitions/AccountDetails.xml:81
+msgid "Display all settings"
+msgstr "Toon alle instellingen"
+
+#: ../gui/definitions/AccountDetails.xml:105
+#: ../gui/definitions/AddContact.xml:22
+#: ../gui/definitions/AskForPassword.xml:15
+msgid "Account"
+msgstr "Account"
+
+#: ../gui/definitions/AccountDetails.xml:124
+msgid "Server (leave empty for default)"
+msgstr "Server (leeg laten voor standaard)"
+
+#: ../gui/definitions/AccountDetails.xml:143
+msgid "Port (leave empty for default)"
+msgstr "Poort (leeg laten voor standaard)"
+
+#: ../gui/definitions/AccountDetails.xml:165
+#: ../gui/definitions/AccountRegistration.xml:29
+msgid "Server"
+msgstr "Server"
+
+#: ../gui/definitions/AccountDetails.xml:239 ../gui/accounts_menu.go:45
+msgid "_Add..."
+msgstr "_Toevoegen…"
+
+#: ../gui/definitions/AccountDetails.xml:254 ../gui/account.go:207
+msgid "_Remove"
+msgstr "_Verwijderen"
+
+#: ../gui/definitions/AccountDetails.xml:269 ../gui/account.go:204
+msgid "_Edit..."
+msgstr "_Bewerken…"
+
+#: ../gui/definitions/AccountDetails.xml:299
+msgid "Proxies"
+msgstr "Proxy’s"
+
+#: ../gui/definitions/AccountDetails.xml:329
+msgid ""
+"The below buttons allow you to import private keys and fingerprints. Both of "
+"them should be in the Pidgin/libotr format. If you import private keys, your "
+"existing private keys will be deleted, since current there is no way to "
+"choose which key to use for encrypted chat."
+msgstr ""
+"De knoppen aan de onderkant maken het mogelijk om privé sleutels en "
+"vingerafdrukken te importeren. Beide zouden in het Pidgin/libotr formaat "
+"moeten zijn. Als je privé sleutels importeert zullen je huidige sleutels "
+"worden verwijderd, omdat er momenteel geen manier is om te kiezen welke "
+"sleutel voor veilige chat gebruikt moet worden."
+
+#: ../gui/definitions/AccountDetails.xml:342
+msgid "Import Private _Keys..."
+msgstr "Importeer privé sleutels…"
+
+#: ../gui/definitions/AccountDetails.xml:356
+msgid "Import _Fingerprints..."
+msgstr "Importeert vingerafdrukken…"
+
+#: ../gui/definitions/AccountDetails.xml:370
+msgid ""
+"The below buttons allow you to export private keys and fingerprints. Be "
+"careful with the files that come out of this process, since they contain "
+"potentially sensitive data. The export will be in Pidgin/libotr format."
+msgstr ""
+"De knoppen onderaan maken het mogelijk om privé sleutels en vingerafdrukken "
+"te exporteren. Pas op met de bestanden die hier uit voort komen, zij "
+"bevatten gevoelige informatie. De export zal in Pidgin/libotr formaat zijn."
+
+#: ../gui/definitions/AccountDetails.xml:383
+msgid "Export Private Keys..."
+msgstr "Exporteer privé sleutels…"
+
+#: ../gui/definitions/AccountDetails.xml:396
+msgid "Export Fingerprints..."
+msgstr "Exporteer vingerafdrukken…"
+
+#: ../gui/definitions/AccountDetails.xml:414
+msgid "Encryption"
+msgstr "Versleuteling"
+
+#: ../gui/definitions/AccountDetails.xml:430
+#: ../gui/definitions/AccountRegistration.xml:60
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:54
+#: ../gui/definitions/EditProxy.xml:125 ../gui/definitions/Importer.xml:91
+#: ../gui/definitions/MasterPassword.xml:43
+#: ../gui/definitions/RegistrationForm.xml:38
+#: ../gui/definitions/VerifyFingerprint.xml:18
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: ../gui/definitions/AccountDetails.xml:436
+#: ../gui/definitions/EditProxy.xml:131
+msgid "Save"
+msgstr "Opslaan"
+
+#: ../gui/definitions/AccountPopupMenu.xml:5
+#: ../gui/definitions/AskForPassword.xml:67
+msgid "Connect"
+msgstr "Verbinden"
+
+#: ../gui/definitions/AccountPopupMenu.xml:11
+msgid "Disconnect"
+msgstr "Verbinding verbreken"
+
+#: ../gui/definitions/AccountPopupMenu.xml:20
+msgid "Edit..."
+msgstr "Bewerk..."
+
+#: ../gui/definitions/AccountPopupMenu.xml:29
+#: ../gui/definitions/ContactPopupMenu.xml:50
+msgid "Dump info"
+msgstr "Dump informatie"
+
+#: ../gui/definitions/AccountRegistration.xml:15
+msgid "Choose a server to register your account"
+msgstr "Kies een nieuwe server om een account op te registreren"
+
+#: ../gui/definitions/AccountRegistration.xml:65
+msgid "Apply"
+msgstr "Toepassen"
+
+#: ../gui/definitions/AddContact.xml:4 ../gui/definitions/RenameContact.xml:4
+msgid "Add contact"
+msgstr "Contact toevoegen"
+
+#: ../gui/definitions/AddContact.xml:41
+msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
+msgstr "Contact om toe te voegen (bijvoorbeeld: arnoldsPub@jabber.ccc.de)"
+
+#: ../gui/definitions/AddContact.xml:62
+msgid "Add"
+msgstr "Toevoegen"
+
+#: ../gui/definitions/AskForPassword.xml:4
+msgid "Enter your password"
+msgstr "Voer uw wachtwoord in"
+
+#: ../gui/definitions/AskToEncrypt.xml:5
+msgid "Encrypt configuration file"
+msgstr "Versleutel configuratie bestand"
+
+#: ../gui/definitions/AskToEncrypt.xml:6
+msgid ""
+"Would you like to save your configuration file in an encrypted format? This "
+"can be significantly more secure, but you will not be able to access your "
+"configuration if you lose the password. You will only be asked for your "
+"password when CoyIM starts."
+msgstr ""
+"Wil je je configuratie bestand versleuteld opslaan? Dit kan aanzienlijk "
+"veiliger zijn, maar je kan niet meer bij je configuratie als je je "
+"wachtwoord kwijt bent. Je zult enkel om je wachtwoord worden gevraagd als "
+"CoyIM opstart."
+
+#: ../gui/definitions/AuthorizeSubscription.xml:3
+msgid "Subscription request"
+msgstr "Aanmeldingsverzoek"
+
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:4
+msgid "Configure master password"
+msgstr "Configureer hoofd wachtwoord"
+
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:15
+msgid "Please enter the master password for the configuration file, two times."
+msgstr "Geef het hoofd wachtwoord op voor het configuratie bestand, twee keer."
+
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:60
+#: ../gui/definitions/MasterPassword.xml:49
+#: ../gui/definitions/VerifyFingerprintUnknown.xml:19
+msgid "OK"
+msgstr "Ok"
+
+#: ../gui/definitions/ConfirmAccountRemoval.xml:3
+msgid "Confirm account removal"
+msgstr "Bevestig verwijderen van account"
+
+#: ../gui/definitions/ConfirmAccountRemoval.xml:4
+msgid "Are you sure you want to remove this account?"
+msgstr "Weet je zeker dat u dit account wilt verwijderen?"
+
+#: ../gui/definitions/ContactPopupMenu.xml:5
+msgid "Fingerprints..."
+msgstr "Vingerafdrukken…"
+
+#: ../gui/definitions/ContactPopupMenu.xml:14
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: ../gui/definitions/ContactPopupMenu.xml:20
+msgid "Rename..."
+msgstr "Naam wijzigen..."
+
+#: ../gui/definitions/ContactPopupMenu.xml:29
+msgid "Ask contact to see their status"
+msgstr "Vraag contact om hun status te mogen bekijken"
+
+#: ../gui/definitions/ContactPopupMenu.xml:35
+msgid "Allow contact to see my status"
+msgstr "Sta contact toe om mijn status te bekijken"
+
+#: ../gui/definitions/ContactPopupMenu.xml:41
+msgid "Forbid contact to see my status"
+msgstr "Verbied contact om mijn status te bekijken"
+
+#: ../gui/definitions/ConversationPane.xml:12
+msgid "Developer options"
+msgstr "Ontwikkelaars opties"
+
+#: ../gui/definitions/ConversationPane.xml:19
+msgid "Start encrypted chat"
+msgstr "Start versleutelde chat"
+
+#: ../gui/definitions/ConversationPane.xml:26
+msgid "End encrypted chat"
+msgstr "Beëindig versleutelde chat"
+
+#: ../gui/definitions/ConversationPane.xml:33
+msgid "Verify fingerprint"
+msgstr "Verifieer vingerafdruk"
+
+#: ../gui/definitions/ConversationPane.xml:66
+msgid "You are talking over an unprotected channel"
+msgstr "Je bent aan het chatten op een onveilig kanaal"
+
+#: ../gui/definitions/ConversationPane.xml:78
+msgid "Secure chat"
+msgstr "Veilige chat"
+
+#: ../gui/definitions/EditProxy.xml:3
+msgid "Edit Proxy"
+msgstr "Bewerk proxy"
+
+#: ../gui/definitions/EditProxy.xml:17
+msgid "Proxy type:"
+msgstr "Proxy type:"
+
+#: ../gui/definitions/EditProxy.xml:38
+msgid "User:"
+msgstr "Gebruiker:"
+
+#: ../gui/definitions/EditProxy.xml:58
+msgid "Password:"
+msgstr "Wachtwoord:"
+
+#: ../gui/definitions/EditProxy.xml:79
+msgid "Server:"
+msgstr "Server:"
+
+#: ../gui/definitions/EditProxy.xml:99
+msgid "Port:"
+msgstr "Poort:"
+
+#: ../gui/definitions/Feedback.xml:3
+msgid "We would like to receive your feedback"
+msgstr "We zouden het fijn vinden om terugkoppeling te krijgen van je"
+
+#: ../gui/definitions/Feedback.xml:4
+msgid ""
+"Please, tell us how is going for you to use CoyIM.\n"
+"This is the only way we can create a better tool to keep your conversations "
+"private."
+msgstr ""
+"Vertel ons alsjeblieft hoe CoyIM je bevalt.\n"
+"Dit is de enige manier waarop wij een betere applicatie kunnen maken om je "
+"gesprekken privé te houden."
+
+#: ../gui/definitions/Feedback.xml:5
+msgid "https://coy.im/feedback"
+msgstr "https://coy.im/feedback"
+
+#: ../gui/definitions/FeedbackInfo.xml:12
+msgid "Are you liking it?"
+msgstr "Bevalt het je?"
+
+#: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:78
+msgid "Feedback"
+msgstr "Terugkoppeling"
+
+#: ../gui/definitions/Importer.xml:12
+msgid "Import Accounts"
+msgstr "Accounts importeren"
+
+#: ../gui/definitions/Importer.xml:21
+msgid ""
+"Choose the accounts you would like to import and start using from CoyIM."
+msgstr ""
+"Kies de accounts die je wilt importeren en begin met het gebruik van CoyIM."
+
+#: ../gui/definitions/Importer.xml:40
+msgid "Import this"
+msgstr "Importeer dit"
+
+#: ../gui/definitions/Importer.xml:54
+msgid "From application"
+msgstr "Vanuit applicatie"
+
+#: ../gui/definitions/Importer.xml:66
+msgid "Account name"
+msgstr "Accountnaam"
+
+#: ../gui/definitions/Importer.xml:96
+msgid "Import"
+msgstr "Importeer"
+
+#: ../gui/definitions/Main.xml:22
+msgid "Contacts"
+msgstr "Contacten"
+
+#: ../gui/definitions/Main.xml:29
+msgid "Add..."
+msgstr "Toevoegen..."
+
+#: ../gui/definitions/Main.xml:40
+msgid "Accounts"
+msgstr "Accounts"
+
+#: ../gui/definitions/Main.xml:46
+msgid "View"
+msgstr "Bekijk"
+
+#: ../gui/definitions/Main.xml:53
+msgid "Merge Accounts"
+msgstr "Accounts samenvoegen"
+
+#: ../gui/definitions/Main.xml:60
+msgid "Show Offline Contacts"
+msgstr "Toon offline contacten"
+
+#: ../gui/definitions/Main.xml:71
+msgid "Help"
+msgstr "Help"
+
+#: ../gui/definitions/Main.xml:85
+msgid "About"
+msgstr "Over"
+
+#: ../gui/definitions/MasterPassword.xml:4
+msgid "Enter master password"
+msgstr "Voer hoofd wachtwoord in"
+
+#: ../gui/definitions/MasterPassword.xml:15
+msgid ""
+"Please enter the master password for the configuration file. You will not be "
+"asked for this password again until you restart CoyIM."
+msgstr ""
+"Voer het hoofd wachtwoord voor het configuratie bestand in. Je zult niet "
+"nogmaals om het wachtwoord worden gevraagd totdat je CoyIM herstart."
+
+#: ../gui/definitions/PeerFingerprints.xml:3
+msgid "Peer fingerprints"
+msgstr "Peer vingerafdrukken"
+
+#: ../gui/definitions/PeerFingerprints.xml:28
+msgid "_OK"
+msgstr "_OK"
+
+#: ../gui/definitions/RegistrationForm.xml:44
+msgid "Register"
+msgstr "Registreer"
+
+#: ../gui/definitions/RenameContact.xml:22
+msgid "Contact's new name"
+msgstr "Contact’s nieuwe naam"
+
+#: ../gui/definitions/RenameContact.xml:43
+msgid "Ok"
+msgstr "Ok"
+
+#: ../gui/definitions/UnifiedLayout.xml:135
+msgid "Conversations"
+msgstr "Gesprekken"
+
+#: ../gui/definitions/UnifiedLayout.xml:161
+msgid "icon"
+msgstr "icoon"
+
+#: ../gui/definitions/UnifiedLayout.xml:175
+msgid "column"
+msgstr "kolom"
+
+#: ../gui/definitions/VerifyFingerprint.xml:23
+#: ../gui/definitions/VerifyIdentityNotification.xml:20
+msgid "Verify"
+msgstr "Verifiëren"
+
+#: ../gui/account.go:151
+msgid "Account added"
+msgstr "Account toegevoegd"
+
+#: ../gui/account.go:151
+#, python-format
+msgid "The account %s was added successfully."
+msgstr "Het account %s was succesvol toegevoegd."
+
+#: ../gui/account.go:198
+msgid "_Connect"
+msgstr "_Verbinden"
+
+#: ../gui/account.go:201
+msgid "_Disconnect"
+msgstr "Ver_breken"
+
+#: ../gui/account.go:210
+msgid "Connect _Automatically"
+msgstr "_Automatisch verbinden"
+
+#: ../gui/account.go:214
+msgid "Always Encrypt Conversation"
+msgstr "Altijd het gesprek versleutelen"
+
+#: ../gui/account.go:296
+#, python-format
+msgid ""
+"Connecting account\n"
+"%s"
+msgstr ""
+"Verbinden van account\n"
+"%s"
+
+#: ../gui/account.go:300
+#, python-format
+msgid ""
+"Connection failure\n"
+"%s"
+msgstr ""
+"Fout bij verbinden\n"
+"%s"
+
+#: ../gui/account.go:304
+msgid "Tor is not currently running"
+msgstr "Tor is niet opgestart"
+
+#: ../gui/account_details.go:95
+#, python-format
+msgid ""
+"Your fingerprints for %s:\n"
+"%s"
+msgstr ""
+"Jouw vingerafdruk voor %s:\n"
+"%s"
+
+#: ../gui/account_events.go:144
+msgid "Private conversation lost."
+msgstr "Priveé gesprek verloren."
+
+#: ../gui/account_events.go:152
+msgid "Private conversation started."
+msgstr "Privé gesprek gestart."
+
+#: ../gui/account_events.go:152
+msgid "Unverified conversation started."
+msgstr "Ongeverifieerd gesprek begonnen."
+
+#: ../gui/account_events.go:160
+msgid "Successfully refreshed the private conversation."
+msgstr "Succesvol het privé gesprek ververst."
+
+#: ../gui/account_events.go:160
+msgid "Successfully refreshed the unverified private conversation."
+msgstr "Succesvol het ongeverifieerde gesprek ververst."
+
+#: ../gui/accounts_menu.go:28
+msgid "Connect On _Startup"
+msgstr "Verbind bij _Opstarten"
+
+#: ../gui/accounts_menu.go:38
+msgid "_Connect All"
+msgstr "_Verbind alles"
+
+#: ../gui/accounts_menu.go:49
+msgid "_Import..."
+msgstr "_Importeren…"
+
+#: ../gui/accounts_menu.go:53
+msgid "_Register..."
+msgstr "_Registreer…"
+
+#: ../gui/conversation.go:145
+#, python-format
+msgid "Failed to generate OTR message: %s\n"
+msgstr "Fout bij het aanmaken van OTR bericht: %s\n"
+
+#: ../gui/conversation.go:171
+#, python-format
+msgid "Failed to terminate the encrypted chat: %s\n"
+msgstr "Fout bij het sluiten van versleuteld gesprek: %s\n"
+
+#: ../gui/conversation.go:379
+msgid "Available"
+msgstr "Beschikbaar"
+
+#: ../gui/conversation.go:381
+msgid "Not Available"
+msgstr "Niet beschikbaar"
+
+#: ../gui/conversation.go:383
+msgid "Away"
+msgstr "Weg"
+
+#: ../gui/conversation.go:385
+msgid "Busy"
+msgstr "Bezet"
+
+#: ../gui/conversation.go:387
+msgid "Free for Chat"
+msgstr "Beschikbaar voor gesprek"
+
+#: ../gui/conversation.go:389
+msgid "Invisible"
+msgstr "Onzichtbaar"
+
+#: ../gui/conversation.go:424
+msgid "Offline"
+msgstr "Offline"
+
+#: ../gui/conversation.go:430
+msgid " is now "
+msgstr " maakt nu deel uit van "
+
+#: ../gui/fingerprint_verification.go:19
+#, python-format
+msgid ""
+"You can't verify the fingerprint for %s yet.\n"
+"You first have to start an encrypted conversation with them."
+msgstr ""
+"Je kunt de vingerafdruk voor %s nog niet verifiëren.\n"
+"Je moet eerst een versleuteld gesprek met hem/haar starten."
+
+#: ../gui/fingerprint_verification.go:54
+#, python-format
+msgid "Verify fingerprint for %s"
+msgstr "Verifieer vingerafdruk voor %s"
+
+#: ../gui/importer.go:198
+msgid "Import private keys"
+msgstr "Importeer privé sleutels"
+
+#: ../gui/importer.go:201 ../gui/importer.go:223 ../gui/importer.go:247
+#: ../gui/importer.go:269
+msgid "_Cancel"
+msgstr "_Annuleren"
+
+#: ../gui/importer.go:203 ../gui/importer.go:249
+msgid "_Import"
+msgstr "_Importeren"
+
+#: ../gui/importer.go:210
+msgid "Keys imported"
+msgstr "Sleutels geïmporteerd"
+
+#: ../gui/importer.go:210
+#, python-format
+msgid "%d key(s) were imported correctly."
+msgstr "%d sleutel(s) zijn geïmporteerd."
+
+#: ../gui/importer.go:212
+msgid "Failure importing keys"
+msgstr "Fout bij importeren van sleutels"
+
+#: ../gui/importer.go:212
+#, python-format
+msgid "Couldn't import any keys from %s."
+msgstr "Kan geen sleutels importeren uit %s."
+
+#: ../gui/importer.go:220
+msgid "Export private keys"
+msgstr "Exporteer privé sleutels"
+
+#: ../gui/importer.go:225 ../gui/importer.go:271
+msgid "_Export"
+msgstr "_Exporteren"
+
+#: ../gui/importer.go:234
+msgid "Keys exported"
+msgstr "Sleutels geexporteerd"
+
+#: ../gui/importer.go:234
+msgid "Keys were exported correctly."
+msgstr "Sleutels zijn met succes geexporteerd."
+
+#: ../gui/importer.go:236
+msgid "Failure exporting keys"
+msgstr "Fout bij exporteren van sleutels"
+
+#: ../gui/importer.go:236
+#, python-format
+msgid "Couldn't export keys to %s."
+msgstr "Kan de sleutels niet exporteren naar %s."
+
+#: ../gui/importer.go:244
+msgid "Import fingerprints"
+msgstr "Importeer vingerafdrukken"
+
+#: ../gui/importer.go:256
+msgid "Fingerprints imported"
+msgstr "Vingerafdrukken geïmporteerd"
+
+#: ../gui/importer.go:256
+#, python-format
+msgid "%d fingerprint(s) were imported correctly."
+msgstr "%d vinger afdruk(ken) met succes geïmporteerd."
+
+#: ../gui/importer.go:258
+msgid "Failure importing fingerprints"
+msgstr "Fout bij importeren van vingerafdrukken"
+
+#: ../gui/importer.go:258
+#, python-format
+msgid "Couldn't import any fingerprints from %s."
+msgstr "Kan geen vingerafdrukken importeren uit %s."
+
+#: ../gui/importer.go:266
+msgid "Export fingerprints"
+msgstr "Exporteer vingerafdrukken"
+
+#: ../gui/importer.go:280
+msgid "Fingerprints exported"
+msgstr "Vingerafdrukken geexporteerd"
+
+#: ../gui/importer.go:280
+msgid "Fingerprints were exported correctly."
+msgstr "Vingerafdrukken met succes geexporteerd."
+
+#: ../gui/importer.go:282
+msgid "Failure exporting fingerprints"
+msgstr "Fout bij exporteren vingerafdrukken"
+
+#: ../gui/importer.go:282
+#, python-format
+msgid "Couldn't export fingerprints to %s."
+msgstr "Kan geen vingerafdrukken exporteren naar %s."
+
+#: ../gui/master_password.go:30
+msgid "Password can not be empty - please try again"
+msgstr "Wachtwoord mag niet leeg zijn - probeer het nog een keer"
+
+#: ../gui/master_password.go:33
+msgid "Passwords have to be the same - please try again"
+msgstr "Wachtwoorden moeten overeenkomen - probeer het nog een keer"
+
+#: ../gui/master_password.go:114
+msgid "Incorrect password entered, please try again."
+msgstr "Foutief wachtwoord, probeer het nog een keer."
+
+#: ../gui/master_password.go:121
+msgid "Checking password..."
+msgstr "Wachtwoord controleren..."
+
+#: ../gui/notifications.go:49
+#, python-format
+msgid "You have not verified the identity of %s"
+msgstr "Je hebt de indentiteit van %s nog niet geverifieerd"
+
+#: ../gui/peer_information.go:26
+#, python-format
+msgid "There are no known fingerprints for %s"
+msgstr "Er zijn geen bekende vingerafdrukken voor %s"
+
+#: ../gui/peer_information.go:28
+#, python-format
+msgid "These are the fingerprints known for %s:"
+msgstr "Dit zijn de bekende vingerafdrukken voor %s:"
+
+#: ../gui/peer_information.go:34
+msgid "not trusted"
+msgstr "niet vertrouwd"
+
+#: ../gui/peer_information.go:36
+msgid "trusted"
+msgstr "vertrouwd"
+
+#: ../gui/subscription.go:18
+#, python-format
+msgid "%s wants to talk to you. Is that ok?"
+msgstr "%s wil een gesprek met je beginnen. Is dat ok?"
+
+#: ../gui/ui.go:427
+msgid "Coy IM!"
+msgstr "Coy IM!"
+
+#: ../gui/ui.go:453
+msgid "There is no account with the id %q"
+msgstr "Er is geen account met het id %q"
+
+#: ../gui/ui.go:457
+msgid "Can't send a contact request from an offline account"
+msgstr "Kan geen contact verzoek versturen van een offline account"

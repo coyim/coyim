@@ -49,7 +49,7 @@ func init() {
 		Server{s, "jabjabdevfoob7hl.onion", false}.register()
 	}
 
-	for _, s := range []string{"wallstreetjabber.biz, wallstreetjabber.com, jidhad.biz, securetalks.biz, methamphetamine.ru"} {
+	for _, s := range []string{"wallstreetjabber.biz", "wallstreetjabber.com", "jidhad.biz", "securetalks.biz", "methamphetamine.ru"} {
 		Server{s, "wsjabberhzuots2e.onion", false}.register()
 	}
 

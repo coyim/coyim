@@ -250,6 +250,7 @@ func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 	}
 
 	go w.assistant.SetCurrentPage(2)
+
 	w.done <- err
 }
 
@@ -265,6 +266,7 @@ func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 
 func (w *serverSelectionWindow) formSubmittedPage() {
 	w.formSubmitted <- w.form.accepted()
+
 	err := <-w.done
 	w.spinner.Stop()
 

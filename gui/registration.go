@@ -135,6 +135,8 @@ const (
 	timeOutLog            = "Error when trying to get registration form: %v"
 	requiredFieldsError   = "We had an error:\n\nSome required fields are missing. Please, try again and fill all fields."
 	requiredFieldsLog     = "Error when trying to get registration form: %v"
+	wrongCaptchaError     = "We had an error:\n\nThe captcha entered is wrong"
+	wrongCaptchaLog       = "We had an error when trying to create your account: %v"
 )
 
 // TODO: check rendering of images
@@ -164,10 +166,12 @@ func renderConnectionErrorFor(assistant gtki.Assistant, pg gtki.Widget, formMess
 }
 
 func (w *serverSelectionWindow) renderErrorFor(err error) {
-	if err != xmpp.ErrMissingRequiredRegistrationInfo {
-		renderError(w.doneMessage, contactServerError, contactServerLog, err)
-	} else {
+	if err == xmpp.ErrMissingRequiredRegistrationInfo {
 		renderError(w.doneMessage, requiredFieldsError, requiredFieldsLog, err)
+	} else if err == xmpp.ErrWrongCaptcha {
+		renderError(w.doneMessage, wrongCaptchaError, wrongCaptchaLog, err)
+	} else {
+		renderError(w.doneMessage, contactServerError, contactServerLog, err)
 	}
 }
 

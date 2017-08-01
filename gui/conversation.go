@@ -3,10 +3,10 @@ package gui
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
-	"strconv"
 
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/i18n"
@@ -25,10 +25,11 @@ var (
 
 type conversationView interface {
 	showIdentityVerificationWarning(u *gtkUI)
+	removeIdentityVerificationWarning()
 	updateSecurityWarning()
 	show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
-	appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool)
+	appendMessage(sent sentMessage)
 	displayNotification(notification string)
 	displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string)
 	setEnabled(enabled bool)
@@ -67,7 +68,7 @@ type conversationPane struct {
 	shiftEnterSends      bool
 	afterNewMessage      func()
 	currentPeer          func() (*rosters.Peer, bool)
-	delayed              map[int]delayedMessage
+	delayed              map[int]sentMessage
 	pendingDelayed       []int
 	pendingDelayedLock   sync.Mutex
 	shownPrivate         bool
@@ -112,11 +113,9 @@ func (u *gtkUI) newTags() *tags {
 
 	outgoingDelayedUser, _ := g.gtk.TextTagNew("outgoingDelayedUser")
 	outgoingDelayedUser.SetProperty("foreground", cs.conversationOutgoingDelayedUserForeground)
-	outgoingDelayedUser.SetProperty("strikethrough", true)
 
 	outgoingDelayedText, _ := g.gtk.TextTagNew("outgoingDelayedText")
 	outgoingDelayedText.SetProperty("foreground", cs.conversationOutgoingDelayedTextForeground)
-	outgoingDelayedText.SetProperty("strikethrough", true)
 
 	t.table.Add(outgoingUser)
 	t.table.Add(incomingUser)
@@ -205,6 +204,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 	} else {
 		conv.displayNotification(i18n.Local("Private conversation has ended."))
 		conv.updateSecurityWarning()
+		conv.haveShownPrivateEndedNotification()
 	}
 }
 
@@ -261,7 +261,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		transientParent: transientParent,
 		shiftEnterSends: ui.settings.GetShiftEnterForSend(),
 		afterNewMessage: func() {},
-		delayed:         make(map[int]delayedMessage),
+		delayed:         make(map[int]sentMessage),
 		currentPeer: func() (*rosters.Peer, bool) {
 			return ui.getPeer(account, uid)
 		},
@@ -299,6 +299,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 	cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
 
 	ui.displaySettings.control(cp.history)
+	ui.displaySettings.shadeBackground(cp.pending)
 	ui.displaySettings.control(cp.entry)
 	ui.keyboardSettings.control(cp.entry)
 	ui.keyboardSettings.update()
@@ -528,16 +529,23 @@ func (conv *conversationWindow) show(userInitiated bool) {
 	conv.tryEnsureCorrectWorkspace()
 }
 
-type delayedMessage struct {
-	trace    int
-	to       string
-	resource string
-	message  string
-	timestamp time.Time
-	coordinates bufferSlice
+type sentMessage struct {
+	message         string
+	strippedMessage []byte
+	from            string
+	to              string
+	resource        string
+	timestamp       time.Time
+	queuedTimestamp time.Time
+	isEncrypted     bool
+	isDelayed       bool
+	isOutgoing      bool
+	isResent        bool
+	trace           int
+	coordinates     bufferSlice
 }
 
-func (conv *conversationPane) storeDelayedMessage(trace int, message delayedMessage) {
+func (conv *conversationPane) storeDelayedMessage(trace int, message sentMessage) {
 	conv.pendingDelayedLock.Lock()
 	defer conv.pendingDelayedLock.Unlock()
 
@@ -564,18 +572,27 @@ func (conv *conversationPane) appendPendingDelayed() {
 		if ok {
 			delete(conv.delayed, ctrace)
 			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(dm.to, dm.resource)
-			conv.appendDelayedMessage(conv.account.session.DisplayName(), dm.timestamp, time.Now(), conversation.IsEncrypted(), ui.StripSomeHTML([]byte(dm.message)), true)
-			
-	conv.markNow()
-	doInUIThread(func() {
-		conv.Lock()
-		defer conv.Unlock()
 
-		buff, _ := conv.pending.GetBuffer()
-		buff.Delete(buff.GetIterAtMark(dm.coordinates.start), buff.GetIterAtMark(dm.coordinates.end))
-	})
+			dm.isEncrypted = conversation.IsEncrypted()
+			dm.queuedTimestamp = dm.timestamp
+			dm.timestamp = time.Now()
+			dm.isDelayed = false
+			dm.isResent = true
+
+			conv.appendMessage(dm)
+
+			conv.markNow()
+			doInUIThread(func() {
+				conv.Lock()
+				defer conv.Unlock()
+
+				buff, _ := conv.pending.GetBuffer()
+				buff.Delete(buff.GetIterAtMark(dm.coordinates.start), buff.GetIterAtMark(dm.coordinates.end))
+			})
 		}
 	}
+
+	conv.hideDelayedMessagesWindow()
 }
 
 func (conv *conversationPane) delayedMessageSent(trace int) {
@@ -586,10 +603,12 @@ func (conv *conversationPane) delayedMessageSent(trace int) {
 	if conv.shownPrivate {
 		conv.appendPendingDelayed()
 	}
+
 }
 
 func (conv *conversationPane) sendMessage(message string) error {
-	trace, delayed, err := conv.account.session.EncryptAndSendTo(conv.to, conv.currentResource(), message)
+	session := conv.account.session
+	trace, delayed, err := session.EncryptAndSendTo(conv.to, conv.currentResource(), message)
 
 	if err != nil {
 		oerr, isoff := err.(*access.OfflineError)
@@ -602,17 +621,27 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: review whether it should create a conversation
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
-		conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
-		now := time.Now()
+		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.to, conv.currentResource())
+
+		sent := sentMessage{
+			message:         message,
+			strippedMessage: ui.StripSomeHTML([]byte(message)),
+			from:            conv.account.session.DisplayName(),
+			to:              conv.to,
+			resource:        conv.currentResource(),
+			timestamp:       time.Now(),
+			isEncrypted:     conversation.IsEncrypted(),
+			isDelayed:       delayed,
+			isOutgoing:      true,
+			trace:           trace,
+		}
 
 		if delayed {
-			msgBytes := ui.StripSomeHTML([]byte(message))
-			delayedMessage := delayedMessage{trace: trace, to: conv.to, resource: conv.currentResource(), message: message, timestamp: now }
-			conv.appendDelayed(conv.account.session.DisplayName(), now, msgBytes, trace, delayedMessage)
-		} else {
-			conv.appendMessage(conv.account.session.DisplayName(), now, conversation.IsEncrypted(), ui.StripSomeHTML([]byte(message)), true)
+			conv.showDelayedMessagesWindow()
 		}
+		conv.appendMessage(sent)
 	}
+
 	return nil
 }
 
@@ -722,51 +751,50 @@ type bufferSlice struct {
 	start, end gtki.TextMark
 }
 
-func (conv *conversationPane) appendToHistory(timestamp time.Time, attention bool, entries ...taggableText) {
+func (conv *conversationPane) appendSentMessage(sent sentMessage, attention bool, entries ...taggableText) {
 	conv.markNow()
 	doInUIThread(func() {
 		conv.Lock()
 		defer conv.Unlock()
 
-		buff, _ := conv.history.GetBuffer()
-		if buff.GetCharCount() != 0 {
+		var buff gtki.TextBuffer
+		if sent.isDelayed {
+			buff, _ = conv.pending.GetBuffer()
+		} else {
+			buff, _ = conv.history.GetBuffer()
+		}
+
+		start := buff.GetCharCount()
+		if start != 0 {
 			insertAtEnd(buff, "\n")
 		}
 
-		insertTimestamp(buff, timestamp)
+		if sent.isResent {
+			insertTimestamp(buff, sent.queuedTimestamp)
+		}
+		insertTimestamp(buff, sent.timestamp)
 
 		for _, entry := range entries {
 			insertEntry(buff, entry)
 		}
-		
+
+		if sent.isDelayed {
+			sent.coordinates.start, sent.coordinates.end = markInsertion(buff, sent.trace, start)
+			conv.storeDelayedMessage(sent.trace, sent)
+		}
+
 		if attention {
 			conv.afterNewMessage()
 		}
 	})
 }
 
-func (conv *conversationPane) appendDelayedToHistory(queued, sent time.Time, attention bool, entries ...taggableText) {
-	conv.markNow()
-	doInUIThread(func() {
-		conv.Lock()
-		defer conv.Unlock()
-
-		buff, _ := conv.history.GetBuffer()
-		if buff.GetCharCount() != 0 {
-			insertAtEnd(buff, "\n")
-		}
-
-		insertTimestamp(buff, queued)
-		insertTimestamp(buff, sent)
-
-		for _, entry := range entries {
-			insertEntry(buff, entry)
-		}
-		
-		if attention {
-			conv.afterNewMessage()
-		}
-	})
+func markInsertion(buff gtki.TextBuffer, trace, startOffset int) (start, end gtki.TextMark) {
+	insert := "insert" + strconv.Itoa(trace)
+	selBound := "selection_bound" + strconv.Itoa(trace)
+	start = buff.CreateMark(insert, buff.GetIterAtOffset(startOffset), false)
+	end = buff.CreateMark(selBound, buff.GetEndIter(), false)
+	return
 }
 
 func insertTimestamp(buff gtki.TextBuffer, timestamp time.Time) {
@@ -776,113 +804,60 @@ func insertTimestamp(buff gtki.TextBuffer, timestamp time.Time) {
 }
 
 func insertEntry(buff gtki.TextBuffer, entry taggableText) {
-			if entry.tag != "" {
-				insertWithTag(buff, entry.tag, entry.text)
-			} else {
-				insertAtEnd(buff, entry.text)
-			}
-}
-
-func (conv *conversationPane) appendToPending(timestamp time.Time, attention bool, trace int, delayed delayedMessage, entries ...taggableText) {
-	conv.markNow()	
-	doInUIThread(func() {
-		conv.Lock()
-		defer conv.Unlock()
-
-		buff, _ := conv.pending.GetBuffer()
-		start := buff.GetCharCount()
-		if start != 0 {
-			insertAtEnd(buff, "\n")
-		}
-
-		insertWithTag(buff, "timestamp", "[")
-		insertWithTag(buff, "timestamp", timestamp.Format(timeDisplay))
-		insertWithTag(buff, "timestamp", "] ")
-
-		for _, entry := range entries {
-			if entry.tag != "" {
-				insertWithTag(buff, entry.tag, entry.text)
-			} else {
-				insertAtEnd(buff, entry.text)
-			}
-		}
-
-		insert := "insert" + strconv.Itoa(trace)
-		selBound := "selection_bound" + strconv.Itoa(trace)
-		delayed.coordinates.start = buff.CreateMark(insert, buff.GetIterAtOffset(start), false)
-		delayed.coordinates.end = buff.CreateMark(selBound, buff.GetEndIter(), false)
-		conv.storeDelayedMessage(trace, delayed)
-
-		if attention {
-			conv.afterNewMessage()
-		}
-	})
-
-	return
-}
-
-func (conv *conversationPane) appendDelayed(from string, timestamp time.Time, message []byte, trace int, delayed delayedMessage) {
-	conv.appendToPending(timestamp, false, trace, delayed,
-		taggableText{"outgoingDelayedUser", from},
-		taggableText{
-			text: ":  ",
-		},
-		taggableText{"outgoingDelayedText", string(message)},
-	)
+	if entry.tag != "" {
+		insertWithTag(buff, entry.tag, entry.text)
+	} else {
+		insertAtEnd(buff, entry.text)
+	}
 }
 
 func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
-	conv.appendToHistory(timestamp, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
+	conv.appendSentMessage(sentMessage{timestamp: timestamp}, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
 }
 
 const mePrefix = "/me "
 
-func (conv *conversationPane) appendMessage(from string, timestamp time.Time, encrypted bool, message []byte, outgoing bool) {
-	smessage := string(message)
+func (conv *conversationPane) appendMessage(sent sentMessage) {
+	msgTxt := string(sent.strippedMessage)
+	msgHasMePrefix := strings.HasPrefix(strings.TrimSpace(msgTxt), mePrefix)
+	attention := !sent.isDelayed && !msgHasMePrefix
+	userTag := is(sent.isOutgoing, "outgoingUser", "incomingUser")
+	userTag = is(sent.isDelayed, "outgoingDelayedUser", userTag)
+	textTag := is(sent.isOutgoing, "outgoingText", "incomingText")
+	textTag = is(sent.isDelayed, "outgoingDelayedText", textTag)
+	entries := make([]taggableText, 0)
 
-	if strings.HasPrefix(strings.TrimSpace(smessage), mePrefix) {
-		smessage = strings.TrimPrefix(strings.TrimSpace(smessage), mePrefix)
-		conv.appendToHistory(timestamp, false, taggableText{is(outgoing, "outgoingUser", "incomingUser"), from + " " + smessage})
+	if sent.isDelayed {
+		entries = append(
+			entries,
+			taggableText{userTag, sent.from},
+			taggableText{text: ":  "},
+			taggableText{textTag, msgTxt},
+		)
+	} else if msgHasMePrefix {
+		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
+		entries = append(
+			entries,
+			taggableText{userTag, sent.from + " " + msgTxt},
+		)
 	} else {
-		conv.appendToHistory(timestamp, true,
-			taggableText{
-				is(outgoing, "outgoingUser", "incomingUser"),
-				from,
-			},
-			taggableText{
-				text: ":  ",
-			},
-			taggableText{
-				is(outgoing, "outgoingText", "incomingText"),
-				smessage,
-			})
+		entries = append(
+			entries,
+			taggableText{userTag, sent.from},
+			taggableText{text: ":  "},
+			taggableText{textTag, msgTxt},
+		)
 	}
-}
 
-func (conv *conversationPane) appendDelayedMessage(from string, queued, sent time.Time, encrypted bool, message []byte, outgoing bool) {
-	smessage := string(message)
-
-	if strings.HasPrefix(strings.TrimSpace(smessage), mePrefix) {
-		smessage = strings.TrimPrefix(strings.TrimSpace(smessage), mePrefix)
-		conv.appendDelayedToHistory(queued, sent, false, taggableText{is(outgoing, "outgoingUser", "incomingUser"), from + " " + smessage})
-	} else {
-		conv.appendDelayedToHistory(queued, sent, true,
-			taggableText{
-				is(outgoing, "outgoingUser", "incomingUser"),
-				from,
-			},
-			taggableText{
-				text: ":  ",
-			},
-			taggableText{
-				is(outgoing, "outgoingText", "incomingText"),
-				smessage,
-			})
-	}
+	conv.appendSentMessage(sent, attention, entries...)
 }
 
 func (conv *conversationPane) displayNotification(notification string) {
-	conv.appendToHistory(time.Now(), false, taggableText{"statusText", notification})
+	conv.appendSentMessage(
+		sentMessage{timestamp: time.Now()},
+		false,
+		taggableText{"statusText", notification},
+	)
 }
 
 func (conv *conversationPane) displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string) {
@@ -974,6 +949,14 @@ func (conv *conversationPane) onShow() {
 		conv.reapOlderThan(time.Now().Add(-reapInterval))
 		conv.hidden = false
 	}
+}
+
+func (conv *conversationPane) showDelayedMessagesWindow() {
+	conv.scrollPending.SetVisible(true)
+}
+
+func (conv *conversationPane) hideDelayedMessagesWindow() {
+	conv.scrollPending.SetVisible(false)
 }
 
 func (conv *conversationWindow) potentiallySetUrgent() {

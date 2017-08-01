@@ -300,7 +300,11 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 }
 
 func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
-	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='get' from='abc' to='cde'><query xmlns='http://jabber.org/protocol/disco#info'/></client:iq>")}
+	mockIn := &mockConnIOReaderWriter{read: []byte(
+		"<client:iq xmlns:client='jabber:client' type='get' from='abc' to='cde'>" +
+			"<query xmlns='http://jabber.org/protocol/disco#info'/>" +
+			"</client:iq>",
+	)}
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
 		mockIn,
@@ -325,7 +329,6 @@ func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	c.Assert(string(mockIn.write), Equals, ""+
 		"<iq to='abc' from='some@one.org/foo' type='result' id=''>"+
 		"<query xmlns=\"http://jabber.org/protocol/disco#info\">"+
-		"<node></node>"+
 		"<identity xmlns=\"http://jabber.org/protocol/disco#info\" category=\"client\" type=\"pc\" name=\"foo.bar@somewhere.org\"></identity>"+
 		"</query>"+
 		"</iq>")
@@ -924,7 +927,7 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 
 	go func() {
 		<-time.After(1 * time.Second)
-		sess.connStatus = DISCONNECTED
+		sess.setConnStatus(DISCONNECTED)
 	}()
 
 	sess.watchTimeout()

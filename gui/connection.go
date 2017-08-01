@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -34,7 +33,7 @@ func (u *gtkUI) connectionFailureMoreInfoConnectionFailedGeneric() {
 func (u *gtkUI) connectionFailureMoreInfoConnectionFailed(ee error) func() {
 	return func() {
 		u.notify(i18n.Local("Connection failure"),
-			fmt.Sprintf(i18n.Local("We couldn't connect to the server - verify that the server address is correct and that you are actually connected to the internet.\n\nThis is the error we got: %s\n\nWe will try to reconnect."), ee.Error()))
+			i18n.Localf("We couldn't connect to the server - verify that the server address is correct and that you are actually connected to the internet.\n\nThis is the error we got: %s\n\nWe will try to reconnect.", ee.Error()))
 	}
 }
 

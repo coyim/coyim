@@ -2,6 +2,7 @@ package gui
 
 import (
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/twstrike/coyim/config"
@@ -183,6 +184,8 @@ type accountMockMenuItem struct {
 	mnemonic  string
 	sensitive bool
 
+	lock sync.Mutex
+
 	onActivate interface{}
 }
 
@@ -193,6 +196,12 @@ type accountMockCheckMenuItem struct {
 	active   bool
 
 	onActivate interface{}
+}
+
+func (v *accountMockMenuItem) isSensitive() bool {
+	v.lock.Lock()
+	defer v.lock.Unlock()
+	return v.sensitive
 }
 
 func (v *accountMockCheckMenuItem) SetActive(v1 bool) {
@@ -208,6 +217,8 @@ func (v *accountMockMenuItem) Connect(p string, v1 interface{}, v2 ...interface{
 }
 
 func (v *accountMockMenuItem) SetSensitive(v1 bool) {
+	v.lock.Lock()
+	defer v.lock.Unlock()
 	v.sensitive = v1
 }
 
@@ -324,10 +335,20 @@ type accountMockSession struct {
 	isConnected    bool
 	config         *config.Account
 	events         []chan<- interface{}
+
+	lock sync.Mutex
 }
 
 func (v *accountMockSession) IsDisconnected() bool {
+	v.lock.Lock()
+	defer v.lock.Unlock()
 	return v.isDisconnected
+}
+
+func (v *accountMockSession) setIsDisconnected(val bool) {
+	v.lock.Lock()
+	defer v.lock.Unlock()
+	v.isDisconnected = val
 }
 
 func (v *accountMockSession) IsConnected() bool {
@@ -351,17 +372,17 @@ func (*AccountSuite) Test_account_createSubmenu_setsConnectAndDisconnectSensitiv
 
 	menu := a.createSubmenu()
 	createdMenu := menu.(*accountMockMenu)
-	c.Assert(createdMenu.GetMenuItemByName("Check Connection").sensitive, Equals, false)
-	c.Assert(createdMenu.GetMenuItemByName("Connect").sensitive, Equals, true)
-	c.Assert(createdMenu.GetMenuItemByName("Disconnect").sensitive, Equals, false)
+	c.Assert(createdMenu.GetMenuItemByName("Check Connection").isSensitive(), Equals, false)
+	c.Assert(createdMenu.GetMenuItemByName("Connect").isSensitive(), Equals, true)
+	c.Assert(createdMenu.GetMenuItemByName("Disconnect").isSensitive(), Equals, false)
 
-	sess.isDisconnected = false
+	sess.setIsDisconnected(false)
 	sess.isConnected = true
 	menu = a.createSubmenu()
 	createdMenu = menu.(*accountMockMenu)
-	c.Assert(createdMenu.GetMenuItemByName("Check Connection").sensitive, Equals, true)
-	c.Assert(createdMenu.GetMenuItemByName("Connect").sensitive, Equals, false)
-	c.Assert(createdMenu.GetMenuItemByName("Disconnect").sensitive, Equals, true)
+	c.Assert(createdMenu.GetMenuItemByName("Check Connection").isSensitive(), Equals, true)
+	c.Assert(createdMenu.GetMenuItemByName("Connect").isSensitive(), Equals, false)
+	c.Assert(createdMenu.GetMenuItemByName("Disconnect").isSensitive(), Equals, true)
 }
 
 func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheConnectSensitivity(c *C) {
@@ -374,34 +395,34 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheCon
 	menu := a.createSubmenu()
 	connectItem := menu.(*accountMockMenu).menuItems[0].(*accountMockMenuItem)
 
-	c.Assert(connectItem.sensitive, Equals, true)
+	c.Assert(connectItem.isSensitive(), Equals, true)
 
-	sess.isDisconnected = false
+	sess.setIsDisconnected(false)
 	for _, cc := range sess.events {
 		cc <- events.Event{
 			Type: events.Connecting,
 		}
 	}
 
-	waitFor(c, func() bool { return !connectItem.sensitive })
+	waitFor(c, func() bool { return !connectItem.isSensitive() })
 
-	sess.isDisconnected = false
+	sess.setIsDisconnected(false)
 	for _, cc := range sess.events {
 		cc <- events.Event{
 			Type: events.Connected,
 		}
 	}
 
-	waitFor(c, func() bool { return !connectItem.sensitive })
+	waitFor(c, func() bool { return !connectItem.isSensitive() })
 
-	sess.isDisconnected = true
+	sess.setIsDisconnected(true)
 	for _, cc := range sess.events {
 		cc <- events.Event{
 			Type: events.Disconnected,
 		}
 	}
 
-	waitFor(c, func() bool { return connectItem.sensitive })
+	waitFor(c, func() bool { return connectItem.isSensitive() })
 }
 
 func waitFor(c *C, f func() bool) {
@@ -432,32 +453,32 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDis
 	menu := a.createSubmenu()
 	disconnectItem := menu.(*accountMockMenu).menuItems[1].(*accountMockMenuItem)
 
-	c.Assert(disconnectItem.sensitive, Equals, false)
+	c.Assert(disconnectItem.isSensitive(), Equals, false)
 
-	sess.isDisconnected = false
+	sess.setIsDisconnected(false)
 	for _, cc := range sess.events {
 		cc <- events.Event{
 			Type: events.Connecting,
 		}
 	}
 
-	waitFor(c, func() bool { return disconnectItem.sensitive })
+	waitFor(c, func() bool { return disconnectItem.isSensitive() })
 
-	sess.isDisconnected = false
+	sess.setIsDisconnected(false)
 	for _, cc := range sess.events {
 		cc <- events.Event{
 			Type: events.Connected,
 		}
 	}
 
-	waitFor(c, func() bool { return disconnectItem.sensitive })
+	waitFor(c, func() bool { return disconnectItem.isSensitive() })
 
-	sess.isDisconnected = true
+	sess.setIsDisconnected(true)
 	for _, cc := range sess.events {
 		cc <- events.Event{
 			Type: events.Disconnected,
 		}
 	}
 
-	waitFor(c, func() bool { return !disconnectItem.sensitive })
+	waitFor(c, func() bool { return !disconnectItem.isSensitive() })
 }

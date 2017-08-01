@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -11,6 +10,7 @@ import (
 	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
+	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/interfaces"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
@@ -125,74 +125,99 @@ func (account *account) connected() bool {
 
 func (u *gtkUI) showServerSelectionWindow() {
 	builder := newBuilder("AccountRegistration")
-	d := builder.getObj("dialog").(gtki.Dialog)
-	d.SetTransientFor(u.window)
-	message := builder.getObj("message").(gtki.Label)
+	assistant := builder.getObj("assistant").(gtki.Assistant)
+	assistant.SetTransientFor(u.window)
+	formMessage := builder.getObj("formMessage").(gtki.Label)
+	doneMessage := builder.getObj("doneMessage").(gtki.Label)
 	serverBox := builder.getObj("server").(gtki.ComboBoxText)
-	applyBtn := builder.getObj("btn-apply").(gtki.Button)
 
 	for _, s := range servers.GetServersForRegistration() {
 		serverBox.AppendText(s.Name)
 	}
 
+	form := &registrationForm{
+		grid: builder.getObj("formGrid").(gtki.Grid),
+	}
+
 	serverBox.SetActive(0)
-	destroyed := false
+	formSubmitted := make(chan error)
+	done := make(chan error)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_save_signal": func() {
-			message.SetLabel(i18n.Local("Connecting to server for registration..."))
-			applyBtn.SetSensitive(false)
-			serverBox.SetSensitive(false)
+		"on_prepare": func(_ gtki.Assistant, pg gtki.Widget) {
+			switch assistant.GetCurrentPage() {
+			case 0:
+				serverBox.SetSensitive(true)
+				form.server = ""
 
-			server := serverBox.GetActiveText()
+				//TODO: Destroy everything in the grid on page 1?
+			case 1:
+				serverBox.SetSensitive(false)
+				form.server = serverBox.GetActiveText()
 
-			form := &registrationForm{
-				parent: u.window,
-				server: server,
-			}
+				renderFn := func(title, instructions string, fields []interface{}) error {
+					formMessage.SetLabel("")
+					doneMessage.SetLabel("")
 
-			saveFn := func() {
-				doInUIThread(func() {
-					if !destroyed {
-						d.Destroy()
-						destroyed = true
+					form.renderForm(title, instructions, fields)
+					assistant.SetPageComplete(pg, true)
+
+					return <-formSubmitted
+				}
+
+				formMessage.SetLabel(i18n.Local("Connecting to server for registration..."))
+				go func() {
+					err := requestAndRenderRegistrationForm(form.server, renderFn, u.dialerFactory, u.unassociatedVerifier())
+
+					//check for errors that happened before the form is shown
+					if err != nil && assistant.GetCurrentPage() != 2 {
+						go assistant.SetCurrentPage(2)
 					}
-				})
-				u.addAndSaveAccountConfig(form.conf)
+
+					done <- err
+				}()
+			case 2:
+				//TODO: this page feels like it "hangs" until the registration finishes.
+				//We probably want to give faster feedback by introducing a spinner.
+				formSubmitted <- form.accepted()
+				err := <-done
+
+				if err != nil {
+					log.Printf("Error when trying to get registration form: %v", err)
+
+					switch err {
+					case config.ErrTorNotRunning:
+						// TODO: this takes a lot of time.
+						doneMessage.SetLabel(i18n.Local("We had an error when trying to use Tor.\nThe registration process currently requires Tor in order to ensure your safety but you don't have Tor turned on.\nMake sure to do so."))
+					case xmpp.ErrMissingRequiredRegistrationInfo:
+						doneMessage.SetLabel(i18n.Local("We had an error when trying to register your account: some required fields are missing."))
+					default:
+						doneMessage.SetLabel(i18n.Local("We had an error when trying to contact the server.\nPlease correct your server choice and try again."))
+					}
+
+					return
+				}
+
+				//Save the account
+				err = u.addAndSaveAccountConfig(form.conf)
+				if err != nil {
+					doneMessage.SetLabel(i18n.Local("We had an error when trying to store your configuration file."))
+					return
+				}
+
 				if acc, ok := u.getAccountByID(form.conf.ID()); ok {
 					acc.session.SetWantToBeOnline(true)
 					acc.Connect()
 				}
-			}
 
-			renderFn := func(title, instructions string, fields []interface{}) error {
-				doInUIThread(func() {
-					if !destroyed {
-						d.Destroy()
-						destroyed = true
-					}
-				})
-				return form.renderForm(title, instructions, fields)
+				doneMessage.SetLabel(i18n.Localf("The account %s was successfully created.", form.conf.Account))
 			}
-
-			errorFn := func(err error) {
-				log.Printf("Error when trying to get registration form: %v", err)
-				doInUIThread(func() {
-					message.SetLabel(i18n.Local("We had an error when trying to contact the server. Please correct your server choice and try again. The registration process currently requires Tor in order to ensure your safety. If you don't have Tor turned on, make sure to do so."))
-					applyBtn.SetSensitive(true)
-					serverBox.SetSensitive(true)
-				})
-			}
-
-			go requestAndRenderRegistrationForm(form.server, renderFn, saveFn, errorFn, u.dialerFactory, u.unassociatedVerifier())
 		},
 
-		"on_cancel_signal": func() {
-			d.Destroy()
-		},
+		"on_cancel_signal": assistant.Destroy,
 	})
 
-	d.ShowAll()
+	assistant.ShowAll()
 }
 
 func (u *gtkUI) showAddAccountWindow() {
@@ -200,11 +225,11 @@ func (u *gtkUI) showAddAccountWindow() {
 
 	u.accountDialog(nil, c, func() {
 		u.addAndSaveAccountConfig(c)
-		u.notify(i18n.Local("Account added"), fmt.Sprintf(i18n.Local("The account %s was added successfully."), c.Account))
+		u.notify(i18n.Local("Account added"), i18n.Localf("The account %s was added successfully.", c.Account))
 	})
 }
 
-func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
+func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) error {
 	accountsLock.Lock()
 	u.config.Add(c)
 	accountsLock.Unlock()
@@ -213,11 +238,14 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) {
 	if err != nil {
 		log.Println("Failed to save config:", err)
 	}
+
 	doInUIThread(func() {
 		if u.window != nil {
 			u.window.Emit(accountChangedSignal.String())
 		}
 	})
+
+	return err
 }
 
 func (account *account) destroyMenu() {
@@ -477,11 +505,11 @@ func (account *account) buildNotification(template, msg string, u *gtkUI, moreIn
 }
 
 func (account *account) buildConnectionNotification(u *gtkUI) gtki.InfoBar {
-	return account.buildNotification("ConnectingAccountInfo", fmt.Sprintf(i18n.Local("Connecting account\n%s"), account.session.GetConfig().Account), u, nil)
+	return account.buildNotification("ConnectingAccountInfo", i18n.Localf("Connecting account\n%s", account.session.GetConfig().Account), u, nil)
 }
 
 func (account *account) buildConnectionFailureNotification(u *gtkUI, moreInfo func()) gtki.InfoBar {
-	return account.buildNotification("ConnectionFailureNotification", fmt.Sprintf(i18n.Local("Connection failure\n%s"), account.session.GetConfig().Account), u, moreInfo)
+	return account.buildNotification("ConnectionFailureNotification", i18n.Localf("Connection failure\n%s", account.session.GetConfig().Account), u, moreInfo)
 }
 
 func (account *account) buildTorNotRunningNotification(u *gtkUI) gtki.InfoBar {

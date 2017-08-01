@@ -792,6 +792,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_runsForm(c *C) {
 			},
 		},
 	}
+
 	_, err := d.setupStream(conn)
 
 	c.Assert(err, IsNil)

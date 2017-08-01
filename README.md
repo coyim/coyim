@@ -23,7 +23,7 @@ If you don't import your account settings, keys and fingerprints through the wiz
 
 If the client you have been using so far is Pidgin, you will find the files you need to import in the `.purple` directory in your home.
 
-If you want to know more about the features you will and will not find in CoyIM, read [this page](https://coy.im/about/).
+If you want to know more about the features you will and will not find in CoyIM, read [this page](https://coy.im/what-is-coyim/).
 
 ## Building CoyIM
 

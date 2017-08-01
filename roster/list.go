@@ -212,6 +212,7 @@ func (s byNameForPresentation) Less(i, j int) bool {
 }
 func (s byNameForPresentation) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
+// this function expects that peers has already acquired the read lock for the peers
 func (l *List) intoSlice(res []*Peer) []*Peer {
 	for _, v := range l.peers {
 		res = append(res, v)

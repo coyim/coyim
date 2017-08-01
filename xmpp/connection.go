@@ -46,8 +46,21 @@ type conn struct {
 	lastPingRequest  time.Time
 	lastPongResponse time.Time
 
-	delayedClose chan bool
-	closed       bool
+	streamCloseReceived chan bool
+	closed              bool
+	closedLock          sync.Mutex
+}
+
+func (c *conn) isClosed() bool {
+	c.closedLock.Lock()
+	defer c.closedLock.Unlock()
+	return c.closed
+}
+
+func (c *conn) setClosed(v bool) {
+	c.closedLock.Lock()
+	defer c.closedLock.Unlock()
+	c.closed = v
 }
 
 func (c *conn) CustomStorage() map[xml.Name]reflect.Type {
@@ -112,20 +125,21 @@ func NewConn(in *xml.Decoder, out io.WriteCloser, jid string) interfaces.Conn {
 		rawOut: out,
 		jid:    jid,
 
-		inflights:    make(map[data.Cookie]inflight),
-		delayedClose: make(chan bool, 1),
+		inflights:           make(map[data.Cookie]inflight),
+		streamCloseReceived: make(chan bool),
 
 		rand: rand.Reader,
 	}
 
-	conn.delayedClose <- true // closes immediately
+	conn.setClosed(true)
+	close(conn.streamCloseReceived) // closes immediately
 	return conn
 }
 
 func newConn() *conn {
 	return &conn{
-		inflights:    make(map[data.Cookie]inflight),
-		delayedClose: make(chan bool),
+		inflights:           make(map[data.Cookie]inflight),
+		streamCloseReceived: make(chan bool),
 
 		rand: rand.Reader,
 	}
@@ -133,27 +147,27 @@ func newConn() *conn {
 
 // Close closes the underlying connection
 func (c *conn) Close() error {
-	if c.closed {
+	if c.isClosed() {
 		return errors.New("xmpp: the connection is already closed")
 	}
 
-	c.closed = true
-
-	//Close all pending requests at this moment. It will include pending pings
-	defer c.cancelInflights()
-
 	// RFC 6120, Section 4.4 and 9.1.5
 	log.Println("xmpp: sending closing stream tag")
+
+	c.closedLock.Lock()
 	_, err := fmt.Fprint(c.out, "</stream:stream>")
-	if err != nil {
-		return err
-	}
 
 	//TODO: find a better way to prevent sending message.
 	c.out = ioutil.Discard
+	c.closedLock.Unlock()
 
+	if err != nil {
+		return c.closeTCP()
+	}
+
+	// Wait for </stream:stream>
 	select {
-	case <-c.delayedClose:
+	case <-c.streamCloseReceived:
 	case <-time.After(30 * time.Second):
 		log.Println("xmpp: timed out waiting for closing stream")
 	}
@@ -161,16 +175,30 @@ func (c *conn) Close() error {
 	return c.closeTCP()
 }
 
-func (c *conn) closeImmediately() error {
-	go func() {
-		c.delayedClose <- true
-	}()
+func (c *conn) receivedStreamClose() error {
+	log.Println("xmpp: received closing stream tag")
+	return c.closeImmediately()
+}
 
+func (c *conn) closeImmediately() error {
+	if c.isClosed() {
+		return nil
+	}
+
+	close(c.streamCloseReceived)
 	return c.Close()
 }
 
 func (c *conn) closeTCP() error {
+	if c.isClosed() {
+		return nil
+	}
+
+	//Close all pending requests at this moment. It will include pending pings
+	c.cancelInflights()
+
 	log.Println("xmpp: TCP closed")
+	c.setClosed(true)
 	return c.rawOut.Close()
 }
 
@@ -184,8 +212,7 @@ func (c *conn) Next() (stanza data.Stanza, err error) {
 		}
 
 		if _, ok := stanza.Value.(*data.StreamClose); ok {
-			log.Println("xmpp: received closing stream tag")
-			go c.closeImmediately()
+			err = c.receivedStreamClose()
 			return
 		}
 
@@ -202,8 +229,10 @@ func (c *conn) Next() (stanza data.Stanza, err error) {
 			c.lock.Unlock()
 
 			if !ok {
+				log.Println("xmpp: received reply to unknown iq. id:", iq.ID)
 				continue
 			}
+
 			if len(inflight.to) > 0 {
 				// The reply must come from the address to
 				// which we sent the request.

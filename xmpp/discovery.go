@@ -9,12 +9,71 @@ package xmpp
 import (
 	"crypto/sha1"
 	"encoding/base64"
+	"encoding/xml"
 	"errors"
 	"io"
 	"sort"
 
 	"github.com/twstrike/coyim/xmpp/data"
 )
+
+// HasSupportTo uses XEP-0030 to checks if an entity supports a feature.
+// The entity is identified by its JID and the feature by its XML namespace.
+// It returns true if the feaure is reported to be supported and false
+// otherwise (including if any error happened).
+func (c *conn) HasSupportTo(entity string, feature string) bool {
+	reply, _, err := c.sendDiscoveryInfo(entity)
+	if err != nil {
+		return false
+	}
+
+	stanza, ok := <-reply
+	if !ok {
+		return false //timeout
+	}
+
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return false
+	}
+
+	discoveryReply, err := parseDiscoveryReply(iq)
+	if err != nil {
+		return false
+	}
+
+	for _, f := range discoveryReply.Features {
+		if f.Var == feature {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (c *conn) sendDiscoveryInfo(to string) (reply chan data.Stanza, cookie data.Cookie, err error) {
+	return c.SendIQ(to, "get", &data.DiscoveryReply{})
+}
+
+func parseDiscoveryReply(iq *data.ClientIQ) (reply data.DiscoveryReply, err error) {
+	err = xml.Unmarshal(iq.Query, &reply)
+	return
+}
+
+//MinimumEntityDiscoveryReply returns a minimum reply to a http://jabber.org/protocol/disco#info query
+func MinimumEntityDiscoveryReply(name string) data.DiscoveryReply {
+	return data.DiscoveryReply{
+		Identities: []data.DiscoveryIdentity{
+			{
+				Category: "client",
+				Type:     "pc",
+
+				//NOTE: this is optional as per XEP-0030
+				Name: name,
+			},
+		},
+	}
+}
 
 // VerificationString returns a SHA-1 verification string as defined in XEP-0115.
 // See http://xmpp.org/extensions/xep-0115.html#ver

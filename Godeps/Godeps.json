@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/twstrike/coyim",
-	"GoVersion": "go1.7",
-	"GodepVersion": "v75",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
 	"Packages": [
 		"./..."
 	],
@@ -110,35 +110,31 @@
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/pbkdf2",
-			"Rev": "2f8be38b9a7533b8763d48273737ff6e90428a96"
+			"Rev": "351dc6a5bf92a5f2ae22fadeee08eb6a45aa2d93"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/scrypt",
-			"Rev": "2f8be38b9a7533b8763d48273737ff6e90428a96"
+			"Rev": "351dc6a5bf92a5f2ae22fadeee08eb6a45aa2d93"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/sha3",
-			"Rev": "2f8be38b9a7533b8763d48273737ff6e90428a96"
+			"Rev": "351dc6a5bf92a5f2ae22fadeee08eb6a45aa2d93"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
-			"Rev": "2f8be38b9a7533b8763d48273737ff6e90428a96"
+			"Rev": "351dc6a5bf92a5f2ae22fadeee08eb6a45aa2d93"
 		},
 		{
 			"ImportPath": "golang.org/x/net/html",
-			"Rev": "6acef71eb69611914f7a30939ea9f6e194c78172"
+			"Rev": "a6577fac2d73be281a500b310739095313165611"
 		},
 		{
 			"ImportPath": "golang.org/x/net/html/atom",
-			"Rev": "6acef71eb69611914f7a30939ea9f6e194c78172"
+			"Rev": "a6577fac2d73be281a500b310739095313165611"
 		},
 		{
 			"ImportPath": "golang.org/x/net/proxy",
-			"Rev": "6acef71eb69611914f7a30939ea9f6e194c78172"
-		},
-		{
-			"ImportPath": "golang.org/x/sys/unix",
-			"Rev": "d75a52659825e75fff6158388dddc6a5b04f9ba5"
+			"Rev": "a6577fac2d73be281a500b310739095313165611"
 		},
 		{
 			"ImportPath": "golang.org/x/text/transform",

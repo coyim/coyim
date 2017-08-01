@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"fmt"
-
 	"github.com/twstrike/coyim/client"
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
@@ -15,13 +13,12 @@ func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, 
 
 	if theirFp == nil {
 		builderName = "VerifyFingerprintUnknown"
-		message = fmt.Sprintf(i18n.Local(
+		message = i18n.Localf(
 			"You can't verify the fingerprint for %s yet.\n"+
-				"You first have to start an encrypted conversation with them.",
-		), uid)
+				"You first have to start an encrypted conversation with them.", uid)
 
 	} else {
-		m := i18n.Local(`
+		m := `
 Is this the correct fingerprint for %[1]s?
 
 Fingerprint for you (%[3]s):
@@ -29,9 +26,9 @@ Fingerprint for you (%[3]s):
 
 Purported fingerprint for %[1]s:
   %[2]s
-	`)
+	`
 
-		message = fmt.Sprintf(m,
+		message = i18n.Localf(m,
 			uid,
 			config.FormatFingerprint(theirFp),
 			accountName,
@@ -51,7 +48,7 @@ Purported fingerprint for %[1]s:
 	l.SetText(message)
 	l.SetSelectable(true)
 
-	dialog.SetTitle(fmt.Sprintf(i18n.Local("Verify fingerprint for %s"), uid))
+	dialog.SetTitle(i18n.Localf("Verify fingerprint for %s", uid))
 	return dialog
 }
 

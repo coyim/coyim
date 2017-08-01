@@ -16,7 +16,7 @@ var (
 )
 
 type registrationForm struct {
-	parent gtki.Window
+	grid gtki.Grid
 
 	server string
 	conf   *config.Account
@@ -54,47 +54,21 @@ func (f *registrationForm) addFields(fields []interface{}) {
 }
 
 func (f *registrationForm) renderForm(title, instructions string, fields []interface{}) error {
-	wait := make(chan error)
 	doInUIThread(func() {
 		f.addFields(fields)
 
-		builder := newBuilder("RegistrationForm")
-
-		obj := builder.getObj("dialog")
-		dialog := obj.(gtki.Dialog)
-		dialog.SetTitle(title)
-
-		obj = builder.getObj("instructions")
-		label := obj.(gtki.Label)
-		label.SetText(instructions)
-		label.SetSelectable(true)
-
-		obj = builder.getObj("grid")
-		grid := obj.(gtki.Grid)
-
 		for i, field := range f.fields {
-			grid.Attach(field.label, 0, i+1, 1, 1)
-			grid.Attach(field.widget, 1, i+1, 1, 1)
-		}
-		grid.ShowAll()
-
-		dialog.SetTransientFor(f.parent)
-
-		resp := gtki.ResponseType(dialog.Run())
-		switch resp {
-		case gtki.RESPONSE_APPLY:
-			wait <- f.accepted()
-		default:
-			wait <- errRegistrationAborted
+			f.grid.Attach(field.label, 0, i+1, 1, 1)
+			f.grid.Attach(field.widget, 1, i+1, 1, 1)
 		}
 
-		dialog.Destroy()
+		f.grid.ShowAll()
 	})
 
-	return <-wait
+	return nil
 }
 
-func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, saveFn func(), errorFn func(error), df interfaces.DialerFactory, verifier tls.Verifier) {
+func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, df interfaces.DialerFactory, verifier tls.Verifier) error {
 	policy := config.ConnectionPolicy{DialerFactory: df}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
@@ -105,14 +79,12 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 	}
 
 	//TODO: this should receive only a JID domainpart
-	_, err := policy.RegisterAccount(formHandler, conf, verifier)
-
-	if err != nil {
-		errorFn(err)
-		return
+	conn, err := policy.RegisterAccount(formHandler, conf, verifier)
+	if conn != nil {
+		defer conn.Close()
 	}
 
-	go saveFn()
+	return err
 }
 
 type formField struct {

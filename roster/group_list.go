@@ -37,6 +37,9 @@ func (g *Group) findOrCreateInside(path, pathTilNow []string) *Group {
 
 // AddTo will add the peers in the receiver to the given group top level
 func (l *List) AddTo(topLevel *Group, delim string) {
+	l.peersLock.RLock()
+	defer l.peersLock.RUnlock()
+
 	for _, p := range l.peers {
 		hadGroup := false
 		for g, b := range p.Groups {

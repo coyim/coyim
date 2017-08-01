@@ -5,10 +5,10 @@ import "encoding/xml"
 // DiscoveryReply contains the deserialized information about a discovery reply
 type DiscoveryReply struct {
 	XMLName    xml.Name            `xml:"http://jabber.org/protocol/disco#info query"`
-	Node       string              `xml:"node"`
-	Identities []DiscoveryIdentity `xml:"identity"`
-	Features   []DiscoveryFeature  `xml:"feature"`
-	Forms      []Form              `xml:"jabber:x:data x"`
+	Node       string              `xml:"node,omitempty"`
+	Identities []DiscoveryIdentity `xml:"identity,omitempty"`
+	Features   []DiscoveryFeature  `xml:"feature,omitempty"`
+	Forms      []Form              `xml:"jabber:x:data x,omitempty"`
 }
 
 // DiscoveryIdentity contains identity information for a specific discovery

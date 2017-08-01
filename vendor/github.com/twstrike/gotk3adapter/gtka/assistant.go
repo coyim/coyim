@@ -56,6 +56,10 @@ func (a *assistant) GetCurrentPage() int {
 	return a.internal.GetCurrentPage()
 }
 
+func (a *assistant) SetCurrentPage(pageNum int) {
+	a.internal.SetCurrentPage(pageNum)
+}
+
 func (a *assistant) GetNthPage(pageNum int) (gtki.Widget, error) {
 	return wrapWidget(a.internal.GetNthPage(pageNum))
 }

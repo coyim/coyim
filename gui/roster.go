@@ -208,28 +208,6 @@ func toArray(groupList gtki.ListStore) []string {
 	return groups
 }
 
-func (r *roster) addGroupDialog(groupList gtki.ListStore) {
-	builder := newBuilder("GroupDetails")
-	dialog := builder.getObj("dialog").(gtki.Dialog)
-
-	nameEntry := builder.getObj("group-name").(gtki.Entry)
-
-	defaultBtn := builder.getObj("btn-ok").(gtki.Button)
-	defaultBtn.GrabDefault()
-	dialog.SetTransientFor(r.ui.window)
-	dialog.ShowAll()
-
-	response := dialog.Run()
-	defer dialog.Destroy()
-
-	if gtki.ResponseType(response) != gtki.RESPONSE_OK {
-		return
-	}
-
-	groupName, _ := nameEntry.GetText()
-	groupList.SetValue(groupList.Append(), 0, groupName)
-}
-
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.EventButton) {
 	builder := newBuilder("ContactPopupMenu")
 	mn := builder.getObj("contactMenu").(gtki.Menu)
@@ -411,7 +389,14 @@ func (r *roster) messageReceived(account *account, from, resource string, timest
 			return
 		}
 
-		conv.appendMessage(r.displayNameFor(account, from), timestamp, encrypted, ui.StripSomeHTML(message), false)
+		sent := sentMessage{
+			from:            r.displayNameFor(account, from),
+			timestamp:       timestamp,
+			isEncrypted:     encrypted,
+			isOutgoing:      false,
+			strippedMessage: ui.StripSomeHTML(message),
+		}
+		conv.appendMessage(sent)
 
 		if !conv.isVisible() && r.deNotify != nil {
 			r.maybeNotify(timestamp, account, from, string(ui.StripSomeHTML(message)))

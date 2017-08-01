@@ -23,6 +23,5 @@ if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > nul
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pango" > nul
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gtk3" > nul
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pkg-config" > nul
-%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy curl" > nul
 %MSYS_PATH%\usr\bin\bash -lc "yes|pacman --noconfirm -Sc" > nul
 if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > nul

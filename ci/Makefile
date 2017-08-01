@@ -28,7 +28,7 @@ endif
 
 # make sure the ui definitions checked in are in sync
 check-ui-defs:
-	make doctor -C ../gui/definitions
+	make doctor -C ../gui
 
 # send coverage data to coveralls
 coveralls:

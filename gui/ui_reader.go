@@ -1,16 +1,15 @@
+//go:generate esc -o definitions.go -modtime 1489449600 -pkg gui definitions/
+
 package gui
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"os"
-	"path/filepath"
+	"path"
 	"strings"
 
 	"reflect"
 
-	"github.com/twstrike/coyim/gui/definitions"
 	"github.com/twstrike/gotk3adapter/glibi"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
@@ -29,16 +28,17 @@ func getActualDefsFolder() string {
 }
 
 func getDefinitionWithFileFallback(uiName string) string {
-	// this makes sure a missing definition wont break only when the app is released
-	uiDef := getDefinition(uiName)
-
-	fileName := filepath.Join(getActualDefsFolder(), uiName+xmlExtension)
-	if fileNotFound(fileName) {
-		log.Printf("gui: loading compiled definition %q\n", uiName)
-		return uiDef.String()
+	fname := path.Join("/definitions", uiName+xmlExtension)
+	embeddedFile, err := FSString(false, fname)
+	if err != nil {
+		panic(fmt.Sprintf("No definition found for %s", uiName))
 	}
 
-	return readFile(fileName)
+	if localFile, err := FSString(true, fname); err == nil {
+		return localFile
+	}
+
+	return embeddedFile
 }
 
 // This must be called from the UI thread - otherwise bad things will happen sooner or later
@@ -64,20 +64,6 @@ func builderForDefinition(uiName string) gtki.Builder {
 func fileNotFound(fileName string) bool {
 	_, fnf := os.Stat(fileName)
 	return os.IsNotExist(fnf)
-}
-
-func readFile(fileName string) string {
-	data, _ := ioutil.ReadFile(fileName)
-	return string(data)
-}
-
-func getDefinition(uiName string) fmt.Stringer {
-	def, ok := definitions.Get(uiName)
-	if !ok {
-		panic(fmt.Sprintf("No definition found for %s", uiName))
-	}
-
-	return def
 }
 
 type builder struct {

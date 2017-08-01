@@ -22,6 +22,7 @@ var (
 	ErrUsernameConflict                = errors.New("xmpp: the username is not available for registration")
 	ErrMissingRequiredRegistrationInfo = errors.New("xmpp: missing required registration information")
 	ErrRegistrationFailed              = errors.New("xmpp: account creation failed")
+	ErrWrongCaptcha                    = errors.New("xmpp: the captcha entered is wrong")
 )
 
 // XEP-0077
@@ -56,9 +57,11 @@ func (c *conn) createAccount(user, password string) error {
 	}
 
 	if iq.Type != "result" {
-		return errors.New("xmpp: account creation failed")
+		return ErrRegistrationFailed
 	}
+
 	var register data.RegisterQuery
+
 	if err := xml.NewDecoder(bytes.NewBuffer(iq.Query)).Decode(&register); err != nil {
 		return err
 	}
@@ -86,13 +89,20 @@ func (c *conn) createAccount(user, password string) error {
 	}
 
 	if iq2.Type == "error" {
-		switch iq2.Error.Any.Local {
+		switch iq2.Error.Any.XMLName.Local {
 		case "conflict":
 			// <conflict xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrUsernameConflict
 		case "not-acceptable":
 			// <not-acceptable xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrMissingRequiredRegistrationInfo
+		// TODO: this case shouldn't happen
+		case "bad-request":
+			//<bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrRegistrationFailed
+		case "not-allowed":
+			//<not-allowed xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrWrongCaptcha
 		default:
 			return ErrRegistrationFailed
 		}

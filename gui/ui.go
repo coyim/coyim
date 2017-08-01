@@ -150,7 +150,50 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 	dialog.Destroy()
 }
 
+func (u *gtkUI) installTor() {
+	builder := newBuilder("TorInstallHelper")
+
+	obj := builder.getObj("dialog")
+	dialog := obj.(gtki.MessageDialog)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_signal": func() {
+			dialog.Destroy()
+		},
+	})
+
+	doInUIThread(func() {
+		dialog.SetTransientFor(u.window)
+		dialog.ShowAll()
+	})
+}
+
+func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {
+	dialog := "TorHelper"
+	builder := newBuilder(dialog)
+
+	dialogOb := builder.getObj(dialog)
+	torHelper := dialogOb.(gtki.MessageDialog)
+	torHelper.SetDefaultResponse(gtki.RESPONSE_YES)
+	torHelper.SetTransientFor(u.window)
+
+	responseType := gtki.ResponseType(torHelper.Run())
+	result := responseType == gtki.RESPONSE_YES
+	torHelper.Destroy()
+	k(result)
+}
+
 func (u *gtkUI) initialSetupWindow() {
+	u.wouldYouLikeToInstallTor(func(res bool) {
+		if res {
+			u.installTor()
+		} else {
+			u.setUp()
+		}
+	})
+}
+
+func (u *gtkUI) setUp() {
 	u.wouldYouLikeToEncryptYourFile(func(res bool) {
 		u.config.SetShouldSaveFileEncrypted(res)
 		k := func() {
@@ -470,11 +513,18 @@ func (u *gtkUI) feedbackDialog() {
 	builder := newBuilder("Feedback")
 
 	obj := builder.getObj("dialog")
-	dialog := obj.(gtki.MessageDialog)
-	dialog.SetTransientFor(u.window)
+	dialog := obj.(gtki.Dialog)
 
-	dialog.Run()
-	dialog.Destroy()
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_signal": func() {
+			dialog.Destroy()
+		},
+	})
+
+	doInUIThread(func() {
+		dialog.SetTransientFor(u.window)
+		dialog.ShowAll()
+	})
 }
 
 func (u *gtkUI) shouldViewAccounts() bool {

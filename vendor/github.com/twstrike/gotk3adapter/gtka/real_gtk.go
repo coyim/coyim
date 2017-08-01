@@ -78,6 +78,22 @@ func (*RealGtk) FileChooserDialogNewWith2Buttons(title string, parent gtki.Windo
 	return wrapFileChooserDialog(gtk.FileChooserDialogNewWith2Buttons(title, unwrapWindow(parent), gtk.FileChooserAction(action), first_button_text, gtk.ResponseType(first_button_id), second_button_text, gtk.ResponseType(second_button_id)))
 }
 
+func (*RealGtk) ImageNewFromFile(filename string) (gtki.Image, error) {
+	return wrapImage(gtk.ImageNewFromFile(filename))
+}
+
+func (*RealGtk) ImageNewFromResource(path string) (gtki.Image, error) {
+	return wrapImage(gtk.ImageNewFromResource(path))
+}
+
+func (*RealGtk) ImageNewFromPixbuf(v1 gdki.Pixbuf) (gtki.Image, error) {
+	return wrapImage(gtk.ImageNewFromPixbuf(gdka.UnwrapPixbuf(v1)))
+}
+
+func (*RealGtk) ImageNewFromIconName(name string, v2 gtki.IconSize) (gtki.Image, error) {
+	return wrapImage(gtk.ImageNewFromIconName(name, gtk.IconSize(v2)))
+}
+
 func (*RealGtk) Init(args *[]string) {
 	gtk.Init(args)
 }

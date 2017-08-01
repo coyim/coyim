@@ -7,10 +7,8 @@ import (
 
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/servers"
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/interfaces"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
@@ -123,109 +121,12 @@ func (account *account) connected() bool {
 	return account.session.IsConnected()
 }
 
-func (u *gtkUI) showServerSelectionWindow() {
-	builder := newBuilder("AccountRegistration")
-	assistant := builder.getObj("assistant").(gtki.Assistant)
-	assistant.SetTransientFor(u.window)
-	formMessage := builder.getObj("formMessage").(gtki.Label)
-	doneMessage := builder.getObj("doneMessage").(gtki.Label)
-	serverBox := builder.getObj("server").(gtki.ComboBoxText)
-
-	for _, s := range servers.GetServersForRegistration() {
-		serverBox.AppendText(s.Name)
-	}
-
-	form := &registrationForm{
-		grid: builder.getObj("formGrid").(gtki.Grid),
-	}
-
-	serverBox.SetActive(0)
-	formSubmitted := make(chan error)
-	done := make(chan error)
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_prepare": func(_ gtki.Assistant, pg gtki.Widget) {
-			switch assistant.GetCurrentPage() {
-			case 0:
-				serverBox.SetSensitive(true)
-				form.server = ""
-
-				//TODO: Destroy everything in the grid on page 1?
-			case 1:
-				serverBox.SetSensitive(false)
-				form.server = serverBox.GetActiveText()
-
-				renderFn := func(title, instructions string, fields []interface{}) error {
-					formMessage.SetLabel("")
-					doneMessage.SetLabel("")
-
-					form.renderForm(title, instructions, fields)
-					assistant.SetPageComplete(pg, true)
-
-					return <-formSubmitted
-				}
-
-				formMessage.SetLabel(i18n.Local("Connecting to server for registration..."))
-				go func() {
-					err := requestAndRenderRegistrationForm(form.server, renderFn, u.dialerFactory, u.unassociatedVerifier())
-
-					//check for errors that happened before the form is shown
-					if err != nil && assistant.GetCurrentPage() != 2 {
-						go assistant.SetCurrentPage(2)
-					}
-
-					done <- err
-				}()
-			case 2:
-				//TODO: this page feels like it "hangs" until the registration finishes.
-				//We probably want to give faster feedback by introducing a spinner.
-				formSubmitted <- form.accepted()
-				err := <-done
-
-				if err != nil {
-					log.Printf("Error when trying to get registration form: %v", err)
-
-					switch err {
-					case config.ErrTorNotRunning:
-						// TODO: this takes a lot of time.
-						doneMessage.SetLabel(i18n.Local("We had an error when trying to use Tor.\nThe registration process currently requires Tor in order to ensure your safety but you don't have Tor turned on.\nMake sure to do so."))
-					case xmpp.ErrMissingRequiredRegistrationInfo:
-						doneMessage.SetLabel(i18n.Local("We had an error when trying to register your account: some required fields are missing."))
-					default:
-						doneMessage.SetLabel(i18n.Local("We had an error when trying to contact the server.\nPlease correct your server choice and try again."))
-					}
-
-					return
-				}
-
-				//Save the account
-				err = u.addAndSaveAccountConfig(form.conf)
-				if err != nil {
-					doneMessage.SetLabel(i18n.Local("We had an error when trying to store your configuration file."))
-					return
-				}
-
-				if acc, ok := u.getAccountByID(form.conf.ID()); ok {
-					acc.session.SetWantToBeOnline(true)
-					acc.Connect()
-				}
-
-				doneMessage.SetLabel(i18n.Localf("The account %s was successfully created.", form.conf.Account))
-			}
-		},
-
-		"on_cancel_signal": assistant.Destroy,
-	})
-
-	assistant.ShowAll()
-}
-
 func (u *gtkUI) showAddAccountWindow() {
 	c, _ := config.NewAccount()
 
 	u.accountDialog(nil, c, func() {
 		u.addAndSaveAccountConfig(c)
-		u.notify(i18n.Local("Account added"), i18n.Localf("The account %s was added successfully.", c.Account))
+		u.notify(i18n.Local("Account added"), i18n.Localf("%s was added successfully.", c.Account))
 	})
 }
 

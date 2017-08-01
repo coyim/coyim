@@ -1,7 +1,6 @@
 <interface>
   <object class="GtkDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
-    <property name="title" translatable="yes">We would like to receive your feedback</property>
     <property name="border_width">7</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="box">
@@ -10,10 +9,14 @@
 	<child>
           <object class="GtkLabel">
             <property name="can_focus">False</property>
-            <property name="margin-bottom">3</property>
+            <property name="margin-top">5</property>
 	    <property name="label" translatable="yes">
-Visit the website to get in touch with us:
+Install Tor:
             </property>
+            <attributes>
+              <attribute name="font-desc" value="&lt;Enter Value&gt; 14"/>
+	      <attribute name="weight" value="semibold"/>
+            </attributes>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -24,13 +27,9 @@ Visit the website to get in touch with us:
 	<child>
           <object class="GtkLabel" id="message">
             <property name="can_focus">False</property>
-            <property name="margin-top">10</property>
-	    <property name="label" translatable="yes">https://coy.im</property>
-            <property name="selectable">True</property>
-            <attributes>
-              <attribute name="font-desc" value="&lt;Enter Value&gt; 14"/>
-	      <attribute name="weight" value="semibold"/>
-            </attributes>
+	    <property name="label" translatable="yes">
+    This should be easy:
+            </property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -41,14 +40,22 @@ Visit the website to get in touch with us:
         <child>
           <object class="GtkLabel">
             <property name="can_focus">False</property>
-            <property name="margin-top">10</property>
             <property name="margin-bottom">10</property>
 	    <property name="label" translatable="yes">
-Let us know what you think of CoyIM.
+    1. Go to https://www.torproject.org/
 
-This is the only way we can create a better privacy tool.
+    2. Download and install Tor
+
+    3. Start Tor or open Tor Browser
+
+    4. Close CoyIM
+
+    5. Reopen CoyIM
+
+    6. Enjoy!
             </property>
-          </object>
+            <property name="selectable">True</property>
+	  </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>

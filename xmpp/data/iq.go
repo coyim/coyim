@@ -14,6 +14,6 @@ type ClientIQ struct { // info/query
 	Query   []byte      `xml:",innerxml"`
 }
 
-// An EmptyReply results in in no XML.
+// An EmptyReply results is in no XML.
 type EmptyReply struct {
 }

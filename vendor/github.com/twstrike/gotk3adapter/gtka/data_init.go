@@ -15,6 +15,21 @@ func init() {
 	gtki.ALIGN_END = gtki.Align(gtk.ALIGN_END)
 	gtki.ALIGN_CENTER = gtki.Align(gtk.ALIGN_CENTER)
 
+	gtki.ASSISTANT_PAGE_CONTENT = gtki.AssistantPageType(gtk.ASSISTANT_PAGE_CONTENT)
+	gtki.ASSISTANT_PAGE_INTRO = gtki.AssistantPageType(gtk.ASSISTANT_PAGE_INTRO)
+	gtki.ASSISTANT_PAGE_CONFIRM = gtki.AssistantPageType(gtk.ASSISTANT_PAGE_CONFIRM)
+	gtki.ASSISTANT_PAGE_SUMMARY = gtki.AssistantPageType(gtk.ASSISTANT_PAGE_SUMMARY)
+	gtki.ASSISTANT_PAGE_PROGRESS = gtki.AssistantPageType(gtk.ASSISTANT_PAGE_PROGRESS)
+	gtki.ASSISTANT_PAGE_CUSTOM = gtki.AssistantPageType(gtk.ASSISTANT_PAGE_CUSTOM)
+
+	gtki.ICON_SIZE_INVALID = gtki.IconSize(gtk.ICON_SIZE_INVALID)
+	gtki.ICON_SIZE_MENU = gtki.IconSize(gtk.ICON_SIZE_MENU)
+	gtki.ICON_SIZE_SMALL_TOOLBAR = gtki.IconSize(gtk.ICON_SIZE_SMALL_TOOLBAR)
+	gtki.ICON_SIZE_LARGE_TOOLBAR = gtki.IconSize(gtk.ICON_SIZE_LARGE_TOOLBAR)
+	gtki.ICON_SIZE_BUTTON = gtki.IconSize(gtk.ICON_SIZE_BUTTON)
+	gtki.ICON_SIZE_DND = gtki.IconSize(gtk.ICON_SIZE_DND)
+	gtki.ICON_SIZE_DIALOG = gtki.IconSize(gtk.ICON_SIZE_DIALOG)
+
 	gtki.FILE_CHOOSER_ACTION_OPEN = gtki.FileChooserAction(gtk.FILE_CHOOSER_ACTION_OPEN)
 	gtki.FILE_CHOOSER_ACTION_SAVE = gtki.FileChooserAction(gtk.FILE_CHOOSER_ACTION_SAVE)
 	gtki.FILE_CHOOSER_ACTION_SELECT_FOLDER = gtki.FileChooserAction(gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER)

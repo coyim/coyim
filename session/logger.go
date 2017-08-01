@@ -10,7 +10,8 @@ type logger struct {
 	*log.Logger
 }
 
-func logToDebugLog() io.Writer {
+// LogToDebugLog return the log for debugging purposes.
+func LogToDebugLog() io.Writer {
 	return &logger{}
 }
 

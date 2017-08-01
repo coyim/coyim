@@ -40,8 +40,29 @@ func (a *assistant) PreviousPage() {
 	a.internal.PreviousPage()
 }
 
+func (a *assistant) SetCurrentPage(pageNum int) {
+	a.internal.SetCurrentPage(pageNum)
+}
+
+func (a *assistant) GetCurrentPage() int {
+	return a.internal.GetCurrentPage()
+}
+
+func (a *assistant) GetNthPage(pageNum int) (gtki.Widget, error) {
+	return wrapWidget(a.internal.GetNthPage(pageNum))
+}
+
 func (a *assistant) AppendPage(page gtki.Widget) int {
 	return a.internal.AppendPage(unwrapWidget(page))
+}
+
+func (a *assistant) SetPageType(page gtki.Widget, ptype gtki.AssistantPageType) {
+	a.internal.SetPageType(unwrapWidget(page), gtk.AssistantPageType(ptype))
+}
+
+func (a *assistant) GetPageType(page gtki.Widget) gtki.AssistantPageType {
+	ptype := a.internal.GetPageType(unwrapWidget(page))
+	return gtki.AssistantPageType(ptype)
 }
 
 func (a *assistant) SetPageComplete(page gtki.Widget, complete bool) {
@@ -50,16 +71,4 @@ func (a *assistant) SetPageComplete(page gtki.Widget, complete bool) {
 
 func (a *assistant) GetPageComplete(page gtki.Widget) bool {
 	return a.internal.GetPageComplete(unwrapWidget(page))
-}
-
-func (a *assistant) GetCurrentPage() int {
-	return a.internal.GetCurrentPage()
-}
-
-func (a *assistant) SetCurrentPage(pageNum int) {
-	a.internal.SetCurrentPage(pageNum)
-}
-
-func (a *assistant) GetNthPage(pageNum int) (gtki.Widget, error) {
-	return wrapWidget(a.internal.GetNthPage(pageNum))
 }

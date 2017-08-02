@@ -12,9 +12,12 @@ default: gen-ui-defs gen-schema-defs lint test
 
 build: build-cli build-gui
 
+check-deps:
+	@type esc >/dev/null 2>&1 || (echo "The program 'esc' is required but not available. Please install it by running 'make deps-dev'." && exit 1)
+
 # This should not be added as a requirement to build-gui because it may hide
 # build problems. build-gui is exactly what `go get` will do on a clean repo
-gen-ui-defs:
+gen-ui-defs: check-deps
 	make -C ./gui
 
 gen-schema-defs:

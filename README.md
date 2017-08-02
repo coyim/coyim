@@ -42,8 +42,8 @@ sudo apt-get install gtk+3.0 libgtk-3-dev
 **MacOS:**
 
 ```sh
-brew install gtk+3
 brew install gnome-icon-theme
+brew install gtk+3
 ```
 
 Then install CoyIM:

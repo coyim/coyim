@@ -126,17 +126,19 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 const (
 	torErrorMessage = "The registration process currently requires Tor in order to ensure your safety.\n\n" +
 		"You don't have Tor running. Please, start it.\n\n"
-	torLogMessage         = "We had an error when trying to register your account: Tor is not running. %v"
-	storeAccountInfoError = "We had an error when trying to store your account information."
-	storeAccountInfoLog   = "We had an error when trying to store your account information. Please, try again.%v"
-	contactServerError    = "Could not contact the server.\n\nPlease, correct your server choice and try again."
-	contactServerLog      = "Error when trying to get registration form: %v"
-	timeOutError          = "We had an error:\n\nTimeout."
-	timeOutLog            = "Error when trying to get registration form: %v"
-	requiredFieldsError   = "We had an error:\n\nSome required fields are missing. Please, try again and fill all fields."
-	requiredFieldsLog     = "Error when trying to get registration form: %v"
-	wrongCaptchaError     = "We had an error:\n\nThe captcha entered is wrong"
-	wrongCaptchaLog       = "We had an error when trying to create your account: %v"
+	torLogMessage            = "We had an error when trying to register your account: Tor is not running. %v"
+	storeAccountInfoError    = "We had an error when trying to store your account information."
+	storeAccountInfoLog      = "We had an error when trying to store your account information. Please, try again.%v"
+	contactServerError       = "Could not contact the server.\n\nPlease, correct your server choice and try again."
+	contactServerLog         = "Error when trying to get registration form: %v"
+	timeOutError             = "We had an error:\n\nTimeout."
+	timeOutLog               = "Error when trying to get registration form: %v"
+	requiredFieldsError      = "We had an error:\n\nSome required fields are missing. Please, try again and fill all fields."
+	requiredFieldsLog        = "Error when trying to get registration form: %v"
+	wrongCaptchaError        = "We had an error:\n\nThe captcha entered is wrong"
+	wrongCaptchaLog          = "We had an error when trying to create your account: %v"
+	conflictingUserNameError = "We had an error:\n\nIncorrect Username"
+	conflictingUserNameLog   = "We had an error when trying to create your account: %v"
 )
 
 // TODO: check rendering of images
@@ -166,11 +168,14 @@ func renderConnectionErrorFor(assistant gtki.Assistant, pg gtki.Widget, formMess
 }
 
 func (w *serverSelectionWindow) renderErrorFor(err error) {
-	if err == xmpp.ErrMissingRequiredRegistrationInfo {
+	switch err {
+	case xmpp.ErrMissingRequiredRegistrationInfo:
 		renderError(w.doneMessage, requiredFieldsError, requiredFieldsLog, err)
-	} else if err == xmpp.ErrWrongCaptcha {
+	case xmpp.ErrUsernameConflict:
+		renderError(w.doneMessage, conflictingUserNameError, conflictingUserNameLog, err)
+	case xmpp.ErrWrongCaptcha:
 		renderError(w.doneMessage, wrongCaptchaError, wrongCaptchaLog, err)
-	} else {
+	default:
 		renderError(w.doneMessage, contactServerError, contactServerLog, err)
 	}
 }

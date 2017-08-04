@@ -23,6 +23,7 @@ var (
 	ErrMissingRequiredRegistrationInfo = errors.New("xmpp: missing required registration information")
 	ErrRegistrationFailed              = errors.New("xmpp: account creation failed")
 	ErrWrongCaptcha                    = errors.New("xmpp: the captcha entered is wrong")
+	ErrResourceConstraint              = errors.New("xmpp: already reached the configured number of allowable resources")
 )
 
 // XEP-0077
@@ -103,6 +104,9 @@ func (c *conn) createAccount(user, password string) error {
 		case "not-allowed":
 			//<not-allowed xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return ErrWrongCaptcha
+		case "resource-constraint":
+			//<resource-constraint xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrResourceConstraint
 		default:
 			return ErrRegistrationFailed
 		}

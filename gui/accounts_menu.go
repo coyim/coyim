@@ -38,7 +38,7 @@ func (u *gtkUI) buildStaticAccountsMenu(submenu gtki.Menu) {
 	sep2, _ := g.gtk.SeparatorMenuItemNew()
 	submenu.Append(sep2)
 
-	registerAccMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Register Account"))
+	registerAccMenu, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_New Account"))
 	registerAccMenu.Connect("activate", u.showServerSelectionWindow)
 	submenu.Append(registerAccMenu)
 

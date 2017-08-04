@@ -139,6 +139,8 @@ const (
 	wrongCaptchaLog          = "We had an error when trying to create your account: %v"
 	conflictingUserNameError = "We had an error:\n\nIncorrect Username"
 	conflictingUserNameLog   = "We had an error when trying to create your account: %v"
+	resourceConstraintError  = "We had an error:\n\ntoo many requests for creating account."
+	resourceConstraintLog    = "We had an error when trying to create your account: %v"
 )
 
 // TODO: check rendering of images
@@ -175,6 +177,8 @@ func (w *serverSelectionWindow) renderErrorFor(err error) {
 		renderError(w.doneMessage, conflictingUserNameError, conflictingUserNameLog, err)
 	case xmpp.ErrWrongCaptcha:
 		renderError(w.doneMessage, wrongCaptchaError, wrongCaptchaLog, err)
+	case xmpp.ErrResourceConstraint:
+		renderError(w.doneMessage, resourceConstraintError, resourceConstraintLog, err)
 	default:
 		renderError(w.doneMessage, contactServerError, contactServerLog, err)
 	}

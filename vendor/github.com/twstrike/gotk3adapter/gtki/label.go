@@ -7,6 +7,7 @@ type Label interface {
 	SetLabel(string)
 	SetSelectable(bool)
 	SetText(string)
+	SetMarkup(string)
 }
 
 func AssertLabel(_ Label) {}

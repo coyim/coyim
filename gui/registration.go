@@ -302,7 +302,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 	}
 
 	// doneImage.SetFromIconName("emblem-default", gtki.ICON_SIZE_DIALOG)
-	w.doneMessage.SetLabel(i18n.Localf("%s successfully created.", w.form.conf.Account))
+	w.doneMessage.SetMarkup(i18n.Localf("<b>%s</b> successfully created.", w.form.conf.Account))
 }
 
 func (w *serverSelectionWindow) onPageChange(_ gtki.Assistant, pg gtki.Widget) {

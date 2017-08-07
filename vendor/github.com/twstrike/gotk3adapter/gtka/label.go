@@ -40,6 +40,10 @@ func (v *label) SetText(v1 string) {
 	v.internal.SetText(v1)
 }
 
+func (v *label) SetMarkup(v1 string) {
+	v.internal.SetMarkup(v1)
+}
+
 func (v *label) SetSelectable(v1 bool) {
 	v.internal.SetSelectable(v1)
 }

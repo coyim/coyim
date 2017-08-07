@@ -27,7 +27,7 @@ func (u *gtkUI) captureInitialMasterPassword(k func(), onCancel func()) {
 			passText1, _ := password.GetText()
 			passText2, _ := password2.GetText()
 			if len(passText1) == 0 {
-				messageObj.SetLabel(i18n.Local("Password can not be empty - please try again"))
+				messageObj.SetMarkup(i18n.Local("<b>Password can not be empty</b> - please try again"))
 				password.GrabFocus()
 			} else if passText1 != passText2 {
 				messageObj.SetLabel(i18n.Local("Passwords have to be the same - please try again"))

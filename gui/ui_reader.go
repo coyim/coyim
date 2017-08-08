@@ -1,4 +1,4 @@
-//go:generate esc -o definitions.go -modtime 1489449600 -pkg gui definitions/
+//go:generate esc -o definitions.go -modtime 1489449600 -pkg gui -include ".xml$" definitions/
 
 package gui
 

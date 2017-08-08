@@ -2865,17 +2865,6 @@ ICAgPC9vYmplY3Q+CiAgICA8L2NoaWxkPgogIDwvb2JqZWN0Pgo8L2ludGVyZmFjZT4K
 `,
 	},
 
-	"/definitions/Makefile": {
-		local:   "definitions/Makefile",
-		size:    125,
-		modtime: 1489449600,
-		compressed: `
-Z2VuZXJhdGU6CglydWJ5IC4vZ2VuZXJhdGUucmIKCWdvZm10IC13IC4KCnRvdWNoOgoJbHMgKi54bWwg
-fCB4YXJncyAtbjEgdG91Y2gKCmRvY3RvcjogdG91Y2ggZ2VuZXJhdGUKCWdpdCBkaWZmIC0tZXhpdC1j
-b2RlIC4=
-`,
-	},
-
 	"/definitions/MasterPassword.xml": {
 		local:   "definitions/MasterPassword.xml",
 		size:    2357,

@@ -140,7 +140,7 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 	obj := builder.getObj("RemoveAccount")
 	dialog := obj.(gtki.MessageDialog)
 	dialog.SetTransientFor(u.window)
-	dialog.SetProperty("text", acc.Account)
+	dialog.SetProperty("secondary-text", acc.Account)
 
 	response := dialog.Run()
 	if gtki.ResponseType(response) == gtki.RESPONSE_YES {

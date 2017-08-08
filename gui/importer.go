@@ -25,6 +25,7 @@ type applicationAndAccount struct {
 	acc string
 }
 
+// TODO: refactor
 func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potential map[string][]*config.ApplicationConfig) {
 	for k, v := range choices {
 		if !v {
@@ -35,12 +36,14 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 			for _, a := range accs.Accounts {
 				if a.Account == k.acc {
 					log.Printf("[import] Doing import of %s from %s", k.acc, k.app)
-					accountToImport := a
 					u.config.WhenLoaded(func(conf *config.ApplicationConfig) {
 						_, exists := conf.GetAccount(k.acc)
 						if exists {
-							// TODO: view message
-							log.Printf("[import] Can't import account %s since you already have an account configured with the same name. Remove that account and import again if you really want to overwrite it.", k.acc)
+							u.notify(i18n.Local("Unable to Import Account"), i18n.Localf("Can't import account:\n\n"+
+								"You already have an account with this name."))
+							log.Printf("[import] Can't import account %s since you already have an account"+
+								"configured with the same name. Remove that account and import again if you"+
+								"really want to overwrite it.", k.acc)
 							return
 						}
 
@@ -57,7 +60,12 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 							conf.Bell = accs.Bell
 						}
 
-						u.addAndSaveAccountConfig(accountToImport)
+						err := u.addAndSaveAccountConfig(a)
+						if err != nil {
+							// TODO: maybe show a message with error
+							return
+						}
+						u.notify(i18n.Local("Account Imported"), i18n.Localf("%s successfully imported.", k.acc))
 					})
 				}
 			}

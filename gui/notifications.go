@@ -9,7 +9,7 @@ func (u *gtkUI) showConnectAccountNotification(account *account) func() {
 	var notification gtki.InfoBar
 
 	doInUIThread(func() {
-		notification = account.buildConnectionNotification(u)
+		notification = account.buildConnectionNotification()
 		account.setCurrentNotification(notification, u.notificationArea)
 	})
 

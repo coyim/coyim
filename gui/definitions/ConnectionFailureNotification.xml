@@ -37,7 +37,7 @@
             <signal name="clicked" handler="on_more_info_signal" />
             <child>
               <object class="GtkImage" id="more-info-btn">
-                <property name="icon-name">info</property>
+                <property name="icon-name">help-faq</property>
               </object>
             </child>
           </object>

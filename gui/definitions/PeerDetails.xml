@@ -28,7 +28,7 @@
             <property name="column-spacing">6</property>
             <child>
               <object class="GtkLabel" id="account-label">
-                <property name="label" translatable="yes">Account</property>
+                <property name="label" translatable="yes">Account:</property>
                 <property name="halign">GTK_ALIGN_END</property>
                 <property name="selectable">TRUE</property>
               </object>
@@ -49,7 +49,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="jid-label">
-                <property name="label" translatable="yes">Contact</property>
+                <property name="label" translatable="yes">Contact:</property>
                 <property name="halign">GTK_ALIGN_END</property>
                 <property name="selectable">TRUE</property>
               </object>
@@ -70,7 +70,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="nickname-label">
-                <property name="label" translatable="yes">Nickname</property>
+                <property name="label" translatable="yes">Nickname:</property>
                 <property name="halign">GTK_ALIGN_END</property>
               </object>
               <packing>
@@ -107,7 +107,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="groups">
-                <property name="label" translatable="yes">Groups</property>
+                <property name="label" translatable="yes">Groups:</property>
                 <property name="halign">GTK_ALIGN_START</property>
                 <property name="selectable">TRUE</property>
               </object>

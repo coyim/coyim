@@ -65,7 +65,6 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 							// TODO: maybe show a message with error
 							return
 						}
-						u.notify(i18n.Local("Account Imported"), i18n.Localf("%s successfully imported.", k.acc))
 					})
 				}
 			}

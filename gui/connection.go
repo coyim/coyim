@@ -18,6 +18,10 @@ func (u *gtkUI) connectAccount(account *account) {
 	}
 }
 
+func (u *gtkUI) torIsNotRunning() {
+	u.installTor()
+}
+
 func (u *gtkUI) connectionFailureMoreInfoConnectionLost() {
 	u.notify(i18n.Local("Connection lost"), i18n.Local("We lost connection to the server for unknown reasons.\n\nWe will try to reconnect."))
 }
@@ -48,7 +52,7 @@ func (u *gtkUI) connectWithPassword(account *account, password string) error {
 	err := account.session.Connect(password, u.verifierFor(account))
 	switch err {
 	case config.ErrTorNotRunning:
-		u.notifyTorIsNotRunning(account)
+		u.notifyTorIsNotRunning(account, u.torIsNotRunning)
 	case errors.ErrTCPBindingFailed:
 		u.notifyConnectionFailure(account, u.connectionFailureMoreInfoTCPBindingFailed)
 	case errors.ErrAuthenticationFailed:

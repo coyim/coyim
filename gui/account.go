@@ -409,12 +409,12 @@ func (account *account) buildConnectionNotification() gtki.InfoBar {
 	return account.buildNotification("ConnectingAccountInfo", i18n.Localf("Connecting account\n%s", account.session.GetConfig().Account), nil)
 }
 
-func (account *account) buildConnectionFailureNotification(u *gtkUI, moreInfo func()) gtki.InfoBar {
+func (account *account) buildConnectionFailureNotification(moreInfo func()) gtki.InfoBar {
 	return account.buildNotification("ConnectionFailureNotification", i18n.Localf("Connection failure\n%s", account.session.GetConfig().Account), moreInfo)
 }
 
-func (account *account) buildTorNotRunningNotification(u *gtkUI) gtki.InfoBar {
-	return account.buildNotification("TorNotRunningNotification", i18n.Local("Tor is not currently running"), nil)
+func (account *account) buildTorNotRunningNotification(moreInfo func()) gtki.InfoBar {
+	return account.buildNotification("TorNotRunningNotification", i18n.Local("Tor is not currently running"), moreInfo)
 }
 
 func (account *account) removeCurrentNotification() {

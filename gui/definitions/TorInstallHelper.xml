@@ -2,6 +2,7 @@
   <object class="GtkDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border_width">7</property>
+    <property name="title" translatable="yes">How to install Tor</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="box">
         <property name="border-width">10</property>

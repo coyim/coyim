@@ -143,33 +143,32 @@ const (
 	resourceConstraintLog    = "We had an error when trying to create your account: %v"
 )
 
-// TODO: check rendering of images
-func renderError(doneMessage gtki.Label, errorMessage, logMessage string, err error) {
+func renderError(message gtki.Label, errorMessage, logMessage string, err error) {
 	log.Printf(logMessage, err)
-	//doneImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
-	doneMessage.SetLabel(i18n.Local(errorMessage))
+	message.SetLabel(i18n.Local(errorMessage))
 }
 
-func renderConnectionErrorFor(assistant gtki.Assistant, pg gtki.Widget, formMessage gtki.Label, spinner gtki.Spinner, err error) {
-	spinner.Stop()
-	assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
-	assistant.SetPageComplete(pg, true)
+func (w *serverSelectionWindow) renderConnectionErrorFor(pg gtki.Widget, err error) {
+	w.spinner.Stop()
+	w.assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
+	w.assistant.SetPageComplete(pg, true)
 
-	if err == ourNet.ErrTimeout {
-		log.Printf(timeOutLog, err)
-		formMessage.SetLabel(i18n.Local(timeOutError))
-	} else if err == config.ErrTorNotRunning {
-		log.Printf(torLogMessage, err)
-		formMessage.SetLabel(i18n.Local(torErrorMessage))
-	} else {
-		log.Printf(contactServerLog, err)
-		formMessage.SetLabel(i18n.Local(contactServerError))
+	w.formImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
+
+	switch err {
+
+	case ourNet.ErrTimeout:
+		renderError(w.formMessage, timeOutError, timeOutLog, err)
+	case config.ErrTorNotRunning:
+		renderError(w.formMessage, torErrorMessage, torLogMessage, err)
+	default:
+		renderError(w.formMessage, contactServerError, contactServerLog, err)
 	}
-	//formImage.Clear()
-	//formImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
 }
 
 func (w *serverSelectionWindow) renderErrorFor(err error) {
+	w.doneImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
+
 	switch err {
 	case xmpp.ErrMissingRequiredRegistrationInfo:
 		renderError(w.doneMessage, requiredFieldsError, requiredFieldsLog, err)
@@ -192,8 +191,8 @@ type serverSelectionWindow struct {
 	serverBox   gtki.ComboBoxText
 	spinner     gtki.Spinner
 	grid        gtki.Grid
-	// formImage := builder.getObj("formImage").(gtki.Image)
-	// doneImage := builder.getObj("doneImage").(gtki.Image)
+	formImage   gtki.Image
+	doneImage   gtki.Image
 
 	formSubmitted chan error
 	done          chan error
@@ -213,6 +212,8 @@ func createServerSelectionWindow(u *gtkUI) *serverSelectionWindow {
 		"server", &w.serverBox,
 		"spinner", &w.spinner,
 		"formGrid", &w.grid,
+		"formImage", &w.formImage,
+		"doneImage", &w.doneImage,
 	)
 
 	w.assistant.SetTransientFor(u.window)
@@ -257,7 +258,7 @@ func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 	if err != nil && w.assistant.GetCurrentPage() != 2 {
 		// TODO: refactor me!
 		if err == config.ErrTorNotRunning || err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed || err == ourNet.ErrTimeout {
-			renderConnectionErrorFor(w.assistant, pg, w.formMessage, w.spinner, err)
+			w.renderConnectionErrorFor(pg, err)
 			return
 		}
 	}
@@ -301,7 +302,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 		acc.Connect()
 	}
 
-	// doneImage.SetFromIconName("emblem-default", gtki.ICON_SIZE_DIALOG)
+	w.doneImage.SetFromIconName("emblem-default", gtki.ICON_SIZE_DIALOG)
 	w.doneMessage.SetMarkup(i18n.Localf("<b>%s</b> successfully created.", w.form.conf.Account))
 }
 

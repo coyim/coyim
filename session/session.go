@@ -992,15 +992,16 @@ func (s *session) Close() {
 		return
 	}
 
-	s.setStatus(DISCONNECTED)
-
 	conn := s.conn
 	if conn != nil {
 		if !s.wantToBeOnline {
 			s.terminateConversations()
 		}
+		s.setStatus(DISCONNECTED)
 		conn.Close()
 		s.conn = nil
+	} else {
+		s.setStatus(DISCONNECTED)
 	}
 }
 

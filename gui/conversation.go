@@ -175,11 +175,9 @@ func (conv *conversationPane) onSendMessageSignal() {
 }
 
 func (conv *conversationPane) currentResource() string {
-	resource := ""
-	conv.withCurrentPeer(func(p *rosters.Peer) {
-		resource = p.ResourceToUse()
+	return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
+		return p.ResourceToUse()
 	})
-	return resource
 }
 
 func (conv *conversationPane) onStartOtrSignal() {
@@ -444,11 +442,11 @@ func (conv *conversationPane) getConversation() (client.Conversation, bool) {
 	return conv.account.session.ConversationManager().GetConversationWith(conv.to, conv.currentResource())
 }
 
-func (conv *conversationPane) withCurrentPeer(f func(*rosters.Peer)) {
-	p, ok := conv.currentPeer()
-	if ok {
-		f(p)
+func (conv *conversationPane) mapCurrentPeer(def string, f func(*rosters.Peer) string) string {
+	if p, ok := conv.currentPeer(); ok {
+		return f(p)
 	}
+	return def
 }
 
 func (conv *conversationPane) isVerified(u *gtkUI) bool {

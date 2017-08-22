@@ -173,22 +173,48 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 	dialog.ShowAll()
 }
 
-func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFunction func()) {
-	assertInUIThread()
+type accountDetails struct {
+	accTxt  string
+	passTxt string
+	dispTxt string
+	servTxt string
+	portTxt string
+}
 
-	data := getBuilderAndAccountDialogDetails()
+func getAccountDetails(data *accountDetailsData) *accountDetails {
+	accTxt, _ := data.acc.GetText()
+	passTxt, _ := data.pass.GetText()
+	dispTxt, _ := data.displayName.GetText()
+	servTxt, _ := data.server.GetText()
+	portTxt, _ := data.port.GetText()
 
-	data.otherSettings.SetActive(u.config.AdvancedOptions)
-	data.acc.SetText(account.Account)
-
-	if s != nil {
-		data.displayName.SetProperty("placeholder-text", s.DisplayName())
-		nick := s.GetConfig().Nickname
-		if nick != "" {
-			data.displayName.SetText(nick)
-		}
+	details := &accountDetails{
+		accTxt,
+		passTxt,
+		dispTxt,
+		servTxt,
+		portTxt,
 	}
 
+	return details
+}
+
+func renderSessionDetails(s access.Session, data *accountDetailsData, account string) {
+	data.displayName.SetProperty("placeholder-text", s.DisplayName())
+	nick := s.GetConfig().Nickname
+	if nick != "" {
+		data.displayName.SetText(nick)
+	}
+
+	if s.PrivateKeys() != nil && len(s.PrivateKeys()) > 0 {
+		data.fingerprintsMessage.SetSelectable(true)
+		m := i18n.Local("The fingerprints for %s:\n%s")
+		message := fmt.Sprintf(m, account, formattedFingerprintsFor(s))
+		data.fingerprintsMessage.SetText(message)
+	}
+}
+
+func renderAccountDetails(account *config.Account, data *accountDetailsData) {
 	if account.Password != "" {
 		data.pass.SetProperty("placeholder-text", "(saved in configuration file)")
 	}
@@ -213,13 +239,53 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 	}
 
 	data.pinningPolicy.SetActive(findPinningPolicyFor(account.PinningPolicy))
+}
 
-	if s != nil && s.PrivateKeys() != nil && len(s.PrivateKeys()) > 0 {
-		data.fingerprintsMessage.SetSelectable(true)
-		m := i18n.Local("Your fingerprints for %s:\n%s")
-		message := fmt.Sprintf(m, account.Account, formattedFingerprintsFor(s))
-		data.fingerprintsMessage.SetText(message)
+func addAccount(account *config.Account, accDtails *accountDetails, data *accountDetailsData) {
+	account.Account = accDtails.accTxt
+	account.Server = accDtails.servTxt
+
+	if accDtails.passTxt != "" {
+		account.Password = accDtails.passTxt
 	}
+
+	account.Nickname = accDtails.dispTxt
+
+	convertedPort, e := strconv.Atoi(accDtails.portTxt)
+	if len(strings.TrimSpace(accDtails.portTxt)) == 0 || e != nil {
+		convertedPort = 5222
+	}
+
+	account.Port = convertedPort
+
+	newProxies := []string{}
+	iter, ok := data.proxies.GetIterFirst()
+	for ok {
+		vv, _ := data.proxies.GetValue(iter, 1)
+		newProxy, _ := vv.GetString()
+		newProxies = append(newProxies, newProxy)
+		ok = data.proxies.IterNext(iter)
+	}
+
+	account.Proxies = newProxies
+
+	account.Certificates = filterCertificates(account.Certificates, data.pins)
+	account.PinningPolicy = data.pinningPolicy.GetActiveID()
+}
+
+func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFunction func()) {
+	assertInUIThread()
+
+	data := getBuilderAndAccountDialogDetails()
+
+	data.otherSettings.SetActive(u.config.AdvancedOptions)
+	data.acc.SetText(account.Account)
+
+	if s != nil {
+		renderSessionDetails(s, data, account.Account)
+	}
+
+	renderAccountDetails(account, data)
 
 	p2, _ := data.notebook.GetNthPage(1)
 	p3, _ := data.notebook.GetNthPage(2)
@@ -242,26 +308,21 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			otherSettings := data.otherSettings.GetActive()
 			u.setShowAdvancedSettings(otherSettings)
 			data.notebook.SetShowTabs(otherSettings)
-			if otherSettings {
-				p2.Show()
-				p3.Show()
-				p4.Show()
-			} else {
+			if !otherSettings {
 				p2.Hide()
 				p3.Hide()
 				p4.Hide()
 			}
+
+			p2.Show()
+			p3.Show()
+			p4.Show()
 		},
 		"on_save_signal": func() {
 			var err string
+			accDtails := getAccountDetails(data)
 
-			accTxt, _ := data.acc.GetText()
-			passTxt, _ := data.pass.GetText()
-			dispTxt, _ := data.displayName.GetText()
-			servTxt, _ := data.server.GetText()
-			portTxt, _ := data.port.GetText()
-
-			if len(accTxt) == 0 || (len(passTxt) == 0 && account.Password == "") {
+			if len(accDtails.accTxt) == 0 || (len(accDtails.passTxt) == 0 && account.Password == "") {
 				err = "  Cannot add the account:\n\n" +
 					"  Please, fill out the mandatory fields."
 				renderAccountAddError(data, err)
@@ -269,7 +330,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 				return
 			}
 
-			isJid, err := verifyXMPPAddress(accTxt)
+			isJid, err := verifyXMPPAddress(accDtails.accTxt)
 			if !isJid && failures > 0 {
 				failures++
 				return
@@ -282,35 +343,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 				return
 			}
 
-			account.Account = accTxt
-			account.Server = servTxt
-
-			if passTxt != "" {
-				account.Password = passTxt
-			}
-
-			account.Nickname = dispTxt
-
-			convertedPort, e := strconv.Atoi(portTxt)
-			if len(strings.TrimSpace(portTxt)) == 0 || e != nil {
-				convertedPort = 5222
-			}
-
-			account.Port = convertedPort
-
-			newProxies := []string{}
-			iter, ok := data.proxies.GetIterFirst()
-			for ok {
-				vv, _ := data.proxies.GetValue(iter, 1)
-				newProxy, _ := vv.GetString()
-				newProxies = append(newProxies, newProxy)
-				ok = data.proxies.IterNext(iter)
-			}
-
-			account.Proxies = newProxies
-
-			account.Certificates = filterCertificates(account.Certificates, data.pins)
-			account.PinningPolicy = data.pinningPolicy.GetActiveID()
+			addAccount(account, accDtails, data)
 
 			go saveFunction()
 			data.dialog.Destroy()

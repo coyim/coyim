@@ -83,8 +83,8 @@
                   </packing>
                 </child>
                <child>
-                  <object class="GtkLabel" id="DisplayNameLabel">
-                    <property name="label" translatable="yes">Account name</property>
+                  <object class="GtkLabel" id="displayNameLabel">
+                    <property name="label" translatable="yes">Account name (optional)</property>
                     <property name="halign">GTK_ALIGN_END</property>
                   </object>
                   <packing>

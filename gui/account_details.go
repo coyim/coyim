@@ -253,11 +253,20 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			}
 		},
 		"on_save_signal": func() {
+			var err string
+
 			accTxt, _ := data.acc.GetText()
 			passTxt, _ := data.pass.GetText()
 			dispTxt, _ := data.displayName.GetText()
 			servTxt, _ := data.server.GetText()
 			portTxt, _ := data.port.GetText()
+
+			if len(accTxt) == 0 || len(passTxt) == 0 {
+				err = "  Cannot add the account:\n\n" +
+					"  Please, fill out the mandatory fields."
+				renderAccountAddError(data, err)
+				return
+			}
 
 			isJid, err := verifyXMPPAddress(accTxt)
 			if !isJid && failures > 0 {
@@ -266,11 +275,8 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			}
 
 			if !isJid {
-				notification := buildBadUsernameNotification(err)
-				data.notificationArea.Add(notification)
-				notification.ShowAll()
+				renderAccountAddError(data, err)
 				failures++
-				log.Printf(err)
 				return
 			}
 
@@ -369,6 +375,13 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		p3.Hide()
 		p4.Hide()
 	}
+}
+
+func renderAccountAddError(data *accountDetailsData, err string) {
+	notification := buildBadUsernameNotification(err)
+	data.notificationArea.Add(notification)
+	notification.ShowAll()
+	log.Printf(err)
 }
 
 func buildBadUsernameNotification(msg string) gtki.InfoBar {

@@ -148,11 +148,8 @@ func renderError(message gtki.Label, errorMessage, logMessage string, err error)
 	message.SetLabel(i18n.Local(errorMessage))
 }
 
-func (w *serverSelectionWindow) renderConnectionErrorFor(pg gtki.Widget, err error) {
+func (w *serverSelectionWindow) renderConnectionErrorFor(err error) {
 	w.spinner.Stop()
-	w.assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
-	w.assistant.SetPageComplete(pg, true)
-
 	w.formImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
 
 	switch err {
@@ -255,10 +252,12 @@ func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, 
 
 func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config)
-	if err != nil && w.assistant.GetCurrentPage() != 2 {
+	if err != nil {
 		// TODO: refactor me!
 		if err == config.ErrTorNotRunning || err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed || err == ourNet.ErrTimeout {
-			w.renderConnectionErrorFor(pg, err)
+			w.assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
+			w.assistant.SetPageComplete(pg, true)
+			w.renderConnectionErrorFor(err)
 			return
 		}
 	}

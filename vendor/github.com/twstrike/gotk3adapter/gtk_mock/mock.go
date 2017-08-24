@@ -90,6 +90,10 @@ func (*Mock) ImageNewFromIconName(name string, v2 gtki.IconSize) (gtki.Image, er
 func (*Mock) Init(args *[]string) {
 }
 
+func (*Mock) InfoBarNew() (gtki.InfoBar, error) {
+	return nil, nil
+}
+
 func (*Mock) LabelNew(str string) (gtki.Label, error) {
 	return nil, nil
 }

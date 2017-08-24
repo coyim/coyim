@@ -94,6 +94,10 @@ func (*RealGtk) ImageNewFromIconName(name string, v2 gtki.IconSize) (gtki.Image,
 	return wrapImage(gtk.ImageNewFromIconName(name, gtk.IconSize(v2)))
 }
 
+func (*RealGtk) InfoBarNew() (gtki.InfoBar, error) {
+	return wrapInfoBar(gtk.InfoBarNew())
+}
+
 func (*RealGtk) Init(args *[]string) {
 	gtk.Init(args)
 }

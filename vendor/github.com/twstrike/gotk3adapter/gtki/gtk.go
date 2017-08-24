@@ -27,6 +27,7 @@ type Gtk interface {
 	ImageNewFromPixbuf(gdki.Pixbuf) (Image, error)
 	ImageNewFromIconName(string, IconSize) (Image, error)
 	Init(*[]string)
+	InfoBarNew() (InfoBar, error)
 	LabelNew(string) (Label, error)
 	ListStoreNew(...glibi.Type) (ListStore, error)
 	MenuItemNew() (MenuItem, error)

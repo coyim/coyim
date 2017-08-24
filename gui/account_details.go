@@ -325,7 +325,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			if len(accDtails.accTxt) == 0 || (len(accDtails.passTxt) == 0 && account.Password == "") {
 				err = "  Cannot add the account:\n\n" +
 					"  Please, fill out the mandatory fields."
-				renderAccountAddError(data, err)
+				renderAddAccountError(data, err)
 				log.Printf("Cannot add account: mandatory fields missing.")
 				return
 			}
@@ -337,7 +337,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			}
 
 			if !isJid {
-				renderAccountAddError(data, err)
+				renderAddAccountError(data, err)
 				log.Printf(err)
 				failures++
 				return
@@ -412,7 +412,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 	}
 }
 
-func renderAccountAddError(data *accountDetailsData, err string) {
+func renderAddAccountError(data *accountDetailsData, err string) {
 	notification := buildBadUsernameNotification(err)
 	data.notificationArea.Add(notification)
 	notification.ShowAll()

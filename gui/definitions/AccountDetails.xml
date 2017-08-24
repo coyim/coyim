@@ -484,7 +484,6 @@
                 </child>
                 <child>
                   <object class="GtkGrid" id="encryptionGrid">
-                    <property name="margin-top">15</property>
                     <property name="margin-bottom">10</property>
                     <property name="margin-start">10</property>
                     <property name="margin-end">10</property>
@@ -494,7 +493,7 @@
                       <object class="GtkLabel" id="encryptionImportInstructions">
                         <property name="label" translatable="yes">The below buttons allow you to import private keys and fingerprints. Both of them should be in the Pidgin/libotr format. If you import private keys, your existing private keys will be deleted, since currently there is no way to choose which key to use for encrypted chat.
 
-There are several applications that use the libotr format - Pidgin, Adium and Tor Messenger are most well known ones. Depending on your platform, these files can be found in several different places. Refer to the documentation for the application in question to find out where the files are located for your platform. The filenames to look for are "otr.fingerprints" and "otr.private_key".</property>
+There are several applications that use the libotr format, such as Pidgin, Adium or Tor Messenger. Depending on your platform, these files can be found in several different places. Refer to the documentation for the application in question to find out where the files are located for your platform. The filenames to look for are "otr.fingerprints" and "otr.private_key".</property>
                         <property name="visible">true</property>
                         <property name="wrap">true</property>
                         <property name="max-width-chars">50</property>
@@ -535,7 +534,7 @@ There are several applications that use the libotr format - Pidgin, Adium and To
                     </child>
                     <child>
                       <object class="GtkLabel" id="encryptionExportInstructions">
-                        <property name="label" translatable="yes">The below buttons allow you to export private keys and fingerprints. Be careful with the files that come out of this process, since they contain potentially sensitive data. The export will be in Pidgin/libotr format.</property>
+                        <property name="label" translatable="yes">The below buttons allow you to export private keys and fingerprints. Be careful with the files that come out of this process as they contain potentially sensitive data. The export will be in the Pidgin/libotr format.</property>
                         <property name="visible">true</property>
                         <property name="wrap">true</property>
                         <property name="max-width-chars">50</property>

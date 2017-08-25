@@ -49,10 +49,6 @@ func (*MockTextIter) BackwardVisibleLines(int) bool {
 	return false
 }
 
-func (*MockTextIter) BeginsTag(gtki.TextTag) bool {
-	return false
-}
-
 func (*MockTextIter) CanInsert(bool) bool {
 	return false
 }

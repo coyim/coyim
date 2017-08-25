@@ -71,10 +71,6 @@ func (v *textIter) BackwardVisibleLines(v1 int) bool {
 	return v.internal.BackwardVisibleLines(v1)
 }
 
-func (v *textIter) BeginsTag(v1 gtki.TextTag) bool {
-	return v.internal.BeginsTag(unwrapTextTag(v1))
-}
-
 func (v *textIter) CanInsert(v1 bool) bool {
 	return v.internal.CanInsert(v1)
 }

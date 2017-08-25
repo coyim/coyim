@@ -105,12 +105,6 @@ func (v *Window) SetDefaultSize(width, height int) {
 	C.gtk_window_set_default_size(v.native(), C.gint(width), C.gint(height))
 }
 
-// SetDefaultGeometry is a wrapper around gtk_window_set_default_geometry().
-func (v *Window) SetDefaultGeometry(width, height int) {
-	C.gtk_window_set_default_geometry(v.native(), C.gint(width),
-		C.gint(height))
-}
-
 // GetScreen is a wrapper around gtk_window_get_screen().
 func (v *Window) GetScreen() (*gdk.Screen, error) {
 	c := C.gtk_window_get_screen(v.native())
@@ -328,15 +322,6 @@ func (v *Window) SetRole(s string) {
 	C.gtk_window_set_role(v.native(), cstr)
 }
 
-// SetWMClass is a wrapper around gtk_window_set_wmclass().
-func (v *Window) SetWMClass(name, class string) {
-	cName := C.CString(name)
-	defer C.free(unsafe.Pointer(cName))
-	cClass := C.CString(class)
-	defer C.free(unsafe.Pointer(cClass))
-	C.gtk_window_set_wmclass(v.native(), (*C.gchar)(cName), (*C.gchar)(cClass))
-}
-
 // GetDecorated is a wrapper around gtk_window_get_decorated().
 func (v *Window) GetDecorated() bool {
 	c := C.gtk_window_get_decorated(v.native())
@@ -492,11 +477,6 @@ func (v *Window) Resize(width, height int) {
 	C.gtk_window_resize(v.native(), C.gint(width), C.gint(height))
 }
 
-// ResizeToGeometry is a wrapper around gtk_window_resize_to_geometry().
-func (v *Window) ResizeToGeometry(width, height int) {
-	C.gtk_window_resize_to_geometry(v.native(), C.gint(width), C.gint(height))
-}
-
 // WindowSetDefaultIconFromFile is a wrapper around gtk_window_set_default_icon_from_file().
 func WindowSetDefaultIconFromFile(file string) error {
 	cstr := C.CString(file)
@@ -585,8 +565,17 @@ func (v *Window) SetApplication(a *Application) {
 	C.gtk_window_set_application(v.native(), a.native())
 }
 
-// TODO gtk_window_activate_key().
-// TODO gtk_window_add_mnemonic().
+// ActivateKey is a wrapper around gtk_window_activate_key().
+func (v *Window) ActivateKey(event *gdk.EventKey) bool {
+	c := C.gtk_window_activate_key(v.native(), (*C.GdkEventKey)(unsafe.Pointer(event.Native())))
+	return gobool(c)
+}
+
+// AddMnemonic is a wrapper around gtk_window_add_mnemonic().
+func (v *Window) AddMnemonic(keyval uint, target *Widget) {
+	C.gtk_window_add_mnemonic(v.native(), C.guint(keyval), target.native())
+}
+
 // TODO gtk_window_begin_move_drag().
 // TODO gtk_window_begin_resize_drag().
 // TODO gtk_window_get_default_icon_list().

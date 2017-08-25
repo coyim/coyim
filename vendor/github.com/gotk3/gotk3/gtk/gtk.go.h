@@ -16,8 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __GTK_GO_H__
-#define __GTK_GO_H__
+#pragma once
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -125,10 +124,40 @@ toGtkOverlay(void *p)
 	return (GTK_OVERLAY(p));
 }
 
+static GtkPageSetup *
+toGtkPageSetup(void *p)
+{
+	return (GTK_PAGE_SETUP(p));
+}
+
 static GtkPaned *
 toGtkPaned(void *p)
 {
 	return (GTK_PANED(p));
+}
+
+static GtkPrintContext *
+toGtkPrintContext(void *p)
+{
+	return (GTK_PRINT_CONTEXT(p));
+}
+
+static GtkPrintOperation *
+toGtkPrintOperation(void *p)
+{
+	return (GTK_PRINT_OPERATION(p));
+}
+
+static GtkPrintOperationPreview *
+toGtkPrintOperationPreview(void *p)
+{
+	return (GTK_PRINT_OPERATION_PREVIEW(p));
+}
+
+static GtkPrintSettings *
+toGtkPrintSettings(void *p)
+{
+	return (GTK_PRINT_SETTINGS(p));
 }
 
 static GtkProgressBar *
@@ -822,4 +851,19 @@ static inline void _gtk_builder_connect_signals_full(GtkBuilder *builder) {
 	gtk_builder_connect_signals_full(builder, (GtkBuilderConnectFunc)(goBuilderConnect), NULL);
 }
 
-#endif
+extern void goPrintSettings (gchar *key,
+	                     gchar *value,
+                         gpointer user_data);
+
+static inline void _gtk_print_settings_foreach(GtkPrintSettings *ps, gpointer user_data) {
+	gtk_print_settings_foreach(ps, (GtkPrintSettingsFunc)(goPrintSettings), user_data);
+}
+
+extern void goPageSetupDone (GtkPageSetup *setup,
+                         gpointer data);
+
+static inline void _gtk_print_run_page_setup_dialog_async(GtkWindow *parent, GtkPageSetup *setup,
+	GtkPrintSettings *settings, gpointer data) {
+	gtk_print_run_page_setup_dialog_async(parent, setup, settings, 
+		(GtkPageSetupDoneFunc)(goPageSetupDone), data);
+}

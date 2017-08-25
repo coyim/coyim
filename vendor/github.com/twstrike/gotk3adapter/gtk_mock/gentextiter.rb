@@ -12,7 +12,6 @@ all = [
     "BackwardVisibleCursorPositions(int) bool",
 	"BackwardVisibleLine() bool",
     "BackwardVisibleLines(int) bool",
-	"BeginsTag(TextTag) bool",
     "CanInsert(bool) bool",
 	"Compare(TextIter) int",
     "Editable(bool) bool",

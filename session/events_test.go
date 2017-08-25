@@ -25,7 +25,7 @@ func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
 			Type:    events.Disconnected,
 			Session: session,
 		})
-	case <-time.After(1 * time.Millisecond):
+	case <-time.After(100 * time.Millisecond):
 		c.Error("Did not receive expected notification")
 	}
 }

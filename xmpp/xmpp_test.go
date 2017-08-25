@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"testing"
+	"time"
 
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/xmpp/data"
@@ -100,6 +101,11 @@ func (s *XMPPSuite) TestConnClose_sendsAStreamCloseTagWhenWeCloseFirst(c *C) {
 
 	done := make(chan bool)
 	go func() {
+		// This is sadly necessary, since the call to conn.Next() needs to happen AFTER the first few lines of conn.Close()
+		// has executed. Otherwise there will be a racecondition where conn.Close() sometimes will report that
+		// the connection has already been executed.
+		time.Sleep(time.Duration(2) * time.Second)
+
 		stanza, err := conn.Next() // Reads the closing tag
 
 		c.Assert(err, IsNil)

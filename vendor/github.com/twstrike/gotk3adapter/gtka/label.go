@@ -47,3 +47,7 @@ func (v *label) SetMarkup(v1 string) {
 func (v *label) SetSelectable(v1 bool) {
 	v.internal.SetSelectable(v1)
 }
+
+func (v *label) GetMnemonicKeyval() uint {
+	return v.internal.GetMnemonicKeyval()
+}

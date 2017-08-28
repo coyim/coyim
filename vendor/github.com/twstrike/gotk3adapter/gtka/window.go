@@ -1,6 +1,7 @@
 package gtka
 
 import (
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/twstrike/gotk3adapter/gdka"
 	"github.com/twstrike/gotk3adapter/gdki"
@@ -96,4 +97,24 @@ func (v *window) Unfullscreen() {
 
 func (v *window) SetUrgencyHint(v1 bool) {
 	v.internal.SetUrgencyHint(v1)
+}
+
+func (v *window) AddMnemonic(v1 uint, v2 gtki.Widget) {
+	v.internal.AddMnemonic(v1, unwrapWidget(v2))
+}
+
+func (v *window) RemoveMnemonic(v1 uint, v2 gtki.Widget) {
+	v.internal.RemoveMnemonic(v1, unwrapWidget(v2))
+}
+
+func (v *window) ActivateMnemonic(v1 uint, v2 gdki.ModifierType) bool {
+	return v.internal.ActivateMnemonic(v1, gdk.ModifierType(v2))
+}
+
+func (v *window) GetMnemonicModifier() gdk.ModifierType {
+	return v.internal.GetMnemonicModifier()
+}
+
+func (v *window) SetMnemonicModifier(v1 gdki.ModifierType) {
+	v.internal.SetMnemonicModifier(gdk.ModifierType(v1))
 }

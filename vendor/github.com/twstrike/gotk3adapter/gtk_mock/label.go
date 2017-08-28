@@ -19,3 +19,7 @@ func (*MockLabel) SetMarkup(v1 string) {
 
 func (*MockLabel) SetSelectable(v1 bool) {
 }
+
+func (*MockLabel) GetMnemonicKeyval() uint {
+	return 0
+}

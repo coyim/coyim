@@ -9,8 +9,12 @@
         <child>
           <object class="GtkMenuItem" id="conversationMenu">
             <property name="visible">true</property>
-            <property name="label" translatable="yes">Encryption</property>
-            <property name="use-underline">True</property>
+	    <child>
+              <object class="GtkLabel" id="menuTag">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Encryption</property>
+              </object>
+            </child>
             <child type="submenu">
               <object class="GtkMenu" id="menu">
                 <property name="visible">true</property>

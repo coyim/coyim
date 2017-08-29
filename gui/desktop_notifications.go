@@ -44,7 +44,7 @@ func (dn *desktopNotifications) updateWith(s *settings.Settings) {
 func (dn *desktopNotifications) format(from, message string, withHTML bool) (summary, body string) {
 	switch dn.notificationStyle {
 	case "only-presence-of-new-information":
-		return "New message!", ""
+		return "New message!", "You have a new message"
 	case "with-author-but-no-content":
 		if withHTML {
 			return "New message!", "From: <b>" + from + "</b>"

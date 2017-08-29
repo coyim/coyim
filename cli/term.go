@@ -47,7 +47,7 @@ func terminalMessage(term terminal.Terminal, tc terminal.Control, color []byte, 
 	if critical {
 		line = append(line, tc.Escape(term).Reset...)
 	}
-	line = append(line, '\n')
+	line = append(line, '\r', '\n')
 	term.Write(line)
 }
 

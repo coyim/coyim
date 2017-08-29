@@ -71,7 +71,7 @@ func (c *cliUI) handlePresenceEvent(ev events.Presence) {
 	}
 	line = append(line, ' ')
 	line = append(line, []byte(ev.Status)...)
-	line = append(line, '\n')
+	line = append(line, '\r', '\n')
 	c.term.Write(line)
 }
 

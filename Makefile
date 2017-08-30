@@ -26,6 +26,9 @@ gen-schema-defs:
 build-gui: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
 
+build-gui-sanitize-address: generate-version-file
+	CC="clang -fno-omit-frame-pointer" go build -msan -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-msan
+
 build-gui-win: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o $(BUILD_DIR)/coyim.exe
 

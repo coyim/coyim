@@ -322,11 +322,11 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			var err string
 			accDtails := getAccountDetails(data)
 
-			if len(accDtails.accTxt) == 0 || (len(accDtails.passTxt) == 0 && account.Password == "") {
-				err = "  Cannot add the account:\n\n" +
-					"  Please, fill out the mandatory fields."
+			if len(accDtails.accTxt) == 0 {
+				err = "  Cannot add the account:\n" +
+					"  Account field missing."
 				renderAddAccountError(data, err)
-				log.Printf("Cannot add account: mandatory fields missing.")
+				log.Printf("Cannot add account: account field missing.")
 				return
 			}
 

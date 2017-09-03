@@ -55,6 +55,9 @@ func (*MockWidget) Hide() {
 func (*MockWidget) HideOnDelete() {
 }
 
+func (*MockWidget) SetCanFocus(v1 bool) {
+}
+
 func (*MockWidget) Show() {
 }
 

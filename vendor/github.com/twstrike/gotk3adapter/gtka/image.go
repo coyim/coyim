@@ -2,6 +2,8 @@ package gtka
 
 import (
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/twstrike/gotk3adapter/gdka"
+	"github.com/twstrike/gotk3adapter/gdki"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
 
@@ -35,4 +37,8 @@ func (v *image) SetFromIconName(v1 string, v2 gtki.IconSize) {
 
 func (v *image) Clear() {
 	v.internal.Clear()
+}
+
+func (v *image) SetFromPixbuf(pb gdki.Pixbuf) {
+	v.internal.SetFromPixbuf(gdka.UnwrapPixbuf(pb))
 }

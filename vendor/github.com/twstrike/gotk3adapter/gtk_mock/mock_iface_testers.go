@@ -38,6 +38,8 @@ func init() {
 	gtki.AssertProgressBar(&MockProgressBar{})
 	gtki.AssertRevealer(&MockRevealer{})
 	gtki.AssertScrolledWindow(&MockScrolledWindow{})
+	gtki.AssertSearchBar(&MockSearchBar{})
+	gtki.AssertSearchEntry(&MockSearchEntry{})
 	gtki.AssertSeparatorMenuItem(&MockSeparatorMenuItem{})
 	gtki.AssertSettings(&MockSettings{})
 	gtki.AssertSpinButton(&MockSpinButton{})

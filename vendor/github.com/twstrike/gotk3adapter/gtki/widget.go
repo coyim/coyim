@@ -13,6 +13,7 @@ type Widget interface {
 	GetAllocatedWidth() int
 	GetStyleContext() (StyleContext, error)
 	GrabDefault()
+	SetCanFocus(bool)
 	HasFocus() bool
 	Hide()
 	HideOnDelete()

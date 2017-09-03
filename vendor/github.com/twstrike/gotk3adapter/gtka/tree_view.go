@@ -48,3 +48,27 @@ func (v *treeView) GetSelection() (gtki.TreeSelection, error) {
 func (v *treeView) GetPathAtPos(v1 int, v2 int, v3 gtki.TreePath, v4 gtki.TreeViewColumn, v5 *int, v6 *int) bool {
 	return v.internal.GetPathAtPos(v1, v2, unwrapTreePath(v3), unwrapTreeViewColumn(v4), v5, v6)
 }
+
+func (v *treeView) SetEnableSearch(v1 bool) {
+	v.internal.SetEnableSearch(v1)
+}
+
+func (v *treeView) GetEnableSearch() bool {
+	return v.internal.GetEnableSearch()
+}
+
+func (v *treeView) SetSearchColumn(v1 int) {
+	v.internal.SetSearchColumn(v1)
+}
+
+func (v *treeView) GetSearchColumn() int {
+	return v.internal.GetSearchColumn()
+}
+
+func (v *treeView) GetSearchEntry() gtki.Entry {
+	return wrapEntrySimple(v.internal.GetSearchEntry())
+}
+
+func (v *treeView) SetSearchEntry(v1 gtki.Entry) {
+	v.internal.SetSearchEntry(unwrapEntry(v1))
+}

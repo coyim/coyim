@@ -118,3 +118,7 @@ func (v *window) GetMnemonicModifier() gdk.ModifierType {
 func (v *window) SetMnemonicModifier(v1 gdki.ModifierType) {
 	v.internal.SetMnemonicModifier(gdk.ModifierType(v1))
 }
+
+func (v *window) GetSize() (int, int) {
+	return v.internal.GetSize()
+}

@@ -71,3 +71,7 @@ func (*MockWindow) GetMnemonicModifier() gdk.ModifierType {
 
 func (*MockWindow) SetMnemonicModifier(v1 gdki.ModifierType) {
 }
+
+func (*MockWindow) GetSize() (int, int) {
+	return 0, 0
+}

@@ -10,6 +10,7 @@ type Window interface {
 
 	AddAccelGroup(AccelGroup)
 	GetTitle() string
+	GetSize() (int, int)
 	HasToplevelFocus() bool
 	IsActive() bool
 	Fullscreen()

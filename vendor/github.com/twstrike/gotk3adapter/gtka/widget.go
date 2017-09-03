@@ -83,6 +83,10 @@ func (v *widget) GrabDefault() {
 	v.internal.GrabDefault()
 }
 
+func (v *widget) SetCanFocus(v1 bool) {
+	v.internal.SetCanFocus(v1)
+}
+
 func (v *widget) Hide() {
 	v.internal.Hide()
 }

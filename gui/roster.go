@@ -68,6 +68,7 @@ func (u *gtkUI) newRoster() *roster {
 
 	obj = builder.getObj("roster-view")
 	r.view = obj.(gtki.TreeView)
+	r.view.SetEnableSearch(true)
 
 	obj = builder.getObj("roster-model")
 	r.model = obj.(gtki.TreeStore)

@@ -68,6 +68,11 @@ func (u *gtkUI) decreaseFontSize(w gtki.Window) {
 	u.displaySettings.decreaseFontSize()
 }
 
+func (u *gtkUI) showSearchBar(w gtki.Window) {
+	u.search.SetSearchMode(true)
+	u.searchEntry.SetCanFocus(true)
+}
+
 func (u *gtkUI) closeApplication(w gtki.Window) {
 	u.quit()
 }
@@ -117,6 +122,8 @@ func connectShortcut(accel string, w gtki.Window, action func(gtki.Window)) {
 
 func (u *gtkUI) connectShortcutsMainWindow(w gtki.Window) {
 	// <Primary> maps to Command on OS X, but Control on other platforms
+	connectShortcut("<Primary>F", w, u.showSearchBar)
+	connectShortcut("<Primary>f", w, u.showSearchBar)
 	connectShortcut("<Primary>q", w, u.closeApplication)
 	connectShortcut("<Primary>w", w, u.closeApplicationOrConversation)
 	connectShortcut("<Alt>F4", w, u.closeApplication)

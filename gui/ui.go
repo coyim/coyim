@@ -30,6 +30,8 @@ type gtkUI struct {
 	app              gtki.Application
 	window           gtki.ApplicationWindow
 	accountsMenu     gtki.MenuItem
+	search           gtki.SearchBar
+	searchEntry      gtki.Entry
 	notificationArea gtki.Box
 	viewMenu         *viewMenu
 	optionsMenu      *optionsMenu
@@ -417,6 +419,10 @@ func (u *gtkUI) mainWindow() {
 		doInUIThread(u.addFeedbackInfoBar)
 	})
 
+	u.search = builder.getObj("search-area").(gtki.SearchBar)
+	u.searchEntry = builder.getObj("search-entry").(gtki.Entry)
+	u.initSearchBar()
+
 	u.connectShortcutsMainWindow(u.window)
 
 	u.window.SetIcon(coyimIcon.getPixbuf())
@@ -685,6 +691,25 @@ func (u *gtkUI) initMenuBar() {
 
 	u.buildAccountsMenu()
 	u.accountsMenu.ShowAll()
+}
+
+func (u *gtkUI) initSearchBar() {
+	u.searchEntry.SetCanFocus(false)
+	u.searchEntry.SetWidthChars(35)
+
+	u.search.ConnectEntry(u.searchEntry)
+	u.roster.view.SetSearchEntry(u.searchEntry)
+
+	prov, _ := g.gtk.CssProviderNew()
+
+	css := fmt.Sprintf(`
+	searchbar { background-color: #e8e8e7;
+	            border: none;}
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ := u.search.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
 }
 
 func (u *gtkUI) rosterUpdated() {

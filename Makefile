@@ -26,8 +26,12 @@ gen-schema-defs:
 build-gui: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
 
-build-gui-sanitize-address: generate-version-file
-	CC="clang -fno-omit-frame-pointer" go build -msan -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-msan
+build-gui-memory-analyzer: generate-version-file
+	go build -x -msan -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-ma
+
+# run with: export ASAN_OPTIONS=detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:verbosity=1:handle_segv=0
+build-gui-address-san: generate-version-file
+	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" go build -x -i -ldflags '-extldflags "-fsanitize=address"' -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-aa
 
 build-gui-win: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o $(BUILD_DIR)/coyim.exe

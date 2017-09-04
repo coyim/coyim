@@ -3,7 +3,7 @@ FROM ubuntu:zesty
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold"
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \
-  build-essential curl gccgo git clang llvm pkg-config libxml-parser-perl flex bison
+  build-essential curl gccgo git pkg-config libxml-parser-perl flex bison cmake llvm clang
 
 RUN update-alternatives --install "/usr/bin/go" "go" "/usr/bin/go-6" 0
 RUN update-alternatives --set go /usr/bin/go-6
@@ -13,14 +13,14 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p /usr/repackaged /root/installers
 
-ENV CC=clang CXX=clang++ PKG_CONFIG_PATH="/usr/repackaged/lib/pkgconfig:/usr/repackaged/share/pkgconfig" STANDARD_CFLAGS="-I/usr/repackaged/include -fno-omit-frame-pointer -fPIE" PIC_CFLAGS="-I/usr/repackaged/include -fno-omit-frame-pointer -fPIC" MSAN_CFLAGS="-I/usr/repackaged/include -fno-omit-frame-pointer -fPIE -fsanitize=memory -fsanitize-memory-track-origins -fsanitize-recover=all" LDFLAGS="-L/usr/repackaged/lib" PATH="/usr/repackaged/bin:${PATH}" LD_LIBRARY_PATH="/usr/repackaged/lib" MSAN_OPTIONS=halt_on_error=0,exitcode=0 MSAN_PIC_CFLAGS="-I/usr/repackaged/include -fno-omit-frame-pointer -fPIE -fsanitize=memory -fsanitize-memory-track-origins -fsanitize-recover=all"
+ENV CC=clang CXX=clang++ PKG_CONFIG_PATH="/usr/repackaged/lib/pkgconfig:/usr/repackaged/share/pkgconfig" STANDARD_CFLAGS="-I/usr/repackaged/include -fno-omit-frame-pointer -fPIE" PIC_CFLAGS="-I/usr/repackaged/include -fno-omit-frame-pointer -fPIC" MSAN_CFLAGS="-I/usr/repackaged/include -fno-omit-frame-pointer -fPIE -fsanitize=memory -fsanitize-memory-track-origins -fsanitize-recover=all" LDFLAGS="-L/usr/repackaged/lib" PATH="/usr/repackaged/bin:${PATH}" LD_LIBRARY_PATH="/usr/repackaged/lib" MSAN_OPTIONS=halt_on_error=0,exitcode=0 MSAN_PIC_CFLAGS="-I/usr/repackaged/include -fno-omit-frame-pointer -fPIE -fsanitize=memory -fsanitize-memory-track-origins -fsanitize-recover=all" MSAN_LDFLAGS="-L/usr/repackaged/lib -fno-omit-frame-pointer -fPIE -fsanitize=memory -fsanitize-memory-track-origins -fsanitize-recover=all"
 
 ADD standard-download.sh standard-verified-download.sh standard-build.sh download-and-build.sh download-verified-and-build.sh clean-binaries.sh standard-rebuild.sh /root/installers/
 
 RUN /root/installers/download-verified-and-build.sh zlib    https://zlib.net/zlib-1.2.11.tar.gz c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1 &&\
  /root/installers/download-and-build.sh          libffi  ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz &&\
- /root/installers/download-and-build.sh          gettext https://ftp.gnu.org/pub/gnu/gettext/gettext-0.19.8.tar.xz &&\
- /root/installers/download-and-build.sh          ncurses https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.0.tar.gz
+ /root/installers/download-and-build.sh          gettext https://ftp.gnu.org/pub/gnu/gettext/gettext-0.19.8.tar.xz
+RUN /root/installers/download-and-build.sh       ncurses-6.0 https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.0.tar.gz "--with-termlib --with-shared --without-tests"
 RUN /root/installers/download-and-build.sh          util-linux https://www.kernel.org/pub/linux/utils/util-linux/v2.29/util-linux-2.29.1.tar.xz "" "-I/usr/repackaged/include/ncurses" &&\
  /root/installers/download-and-build.sh          pcre ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.39.tar.bz2 "--enable-utf --enable-unicode-properties" &&\
  /root/installers/download-and-build.sh          libpng ftp://ftp-osl.osuosl.org/pub/libpng/src/libpng16/libpng-1.6.32.tar.xz &&\
@@ -83,7 +83,7 @@ RUN ln -s /usr/bin/llvm-symbolizer-4.0 /usr/bin/llvm-symbolizer
 RUN /root/installers/standard-rebuild.sh  zlib
 RUN /root/installers/standard-rebuild.sh  libffi
 RUN /root/installers/standard-rebuild.sh  gettext
-RUN /root/installers/standard-rebuild.sh  ncurses
+RUN /root/installers/standard-rebuild.sh  ncurses-6.0
 RUN /root/installers/standard-rebuild.sh  util-linux "-I/usr/repackaged/include/ncurses"
 RUN /root/installers/standard-rebuild.sh  pcre
 RUN /root/installers/standard-rebuild.sh  libpng
@@ -125,31 +125,22 @@ RUN /root/installers/standard-rebuild.sh  libXdamage
 RUN /root/installers/standard-rebuild.sh  mesa
 RUN /root/installers/standard-rebuild.sh  libepoxy
 RUN /root/installers/standard-rebuild.sh  Python "-I/usr/repackaged/include/ncurses" "true"
+RUN /root/installers/standard-rebuild.sh  gobject-introspection
+RUN /root/installers/standard-rebuild.sh  pixman
+RUN /root/installers/standard-rebuild.sh  cairo
+RUN /root/installers/standard-rebuild.sh  libxml2 "" "true"
+RUN /root/installers/standard-rebuild.sh  libcroco
+RUN /root/installers/standard-rebuild.sh  tiff
+RUN /root/installers/standard-rebuild.sh  jpeg
+RUN /root/installers/standard-rebuild.sh  pango
+RUN /root/installers/standard-rebuild.sh  gdk-pixbuf
+RUN /root/installers/standard-rebuild.sh  librsvg
+RUN /root/installers/standard-rebuild.sh  gtk
 
+ADD download-golang-1.9.sh /root/download-golang
+ADD build-golang.sh /root/build-golang
+RUN /root/download-golang && /root/build-golang
 
+ADD build-coyim.sh /root/build-coyim
 
-# ADD rebuild-gtk-glib.sh /root/rebuild-gtk-glib
-# RUN /root/rebuild-gtk-glib
-
-# ADD rebuild-gtk-pixman.sh /root/rebuild-gtk-pixman
-# RUN /root/rebuild-gtk-pixman
-
-# ADD rebuild-gtk-cairo.sh /root/rebuild-gtk-cairo
-# RUN /root/rebuild-gtk-cairo
-
-# ADD rebuild-gtk-pango.sh /root/rebuild-gtk-pango
-# RUN /root/rebuild-gtk-pango
-
-# ADD rebuild-gtk-gtk.sh /root/rebuild-gtk-gtk
-# RUN /root/rebuild-gtk-gtk
-
-
-
-# ADD download-golang-1.9.sh /root/download-golang
-# ADD build-golang.sh /root/build-golang
-# RUN /root/download-golang && /root/build-golang
-
-
-# ADD build-coyim.sh /root/build-coyim
-
-# VOLUME /src
+VOLUME /src

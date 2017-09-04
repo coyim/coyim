@@ -12,3 +12,6 @@ console:
 
 build:
 	docker run -v $(PWD)/..:/src -t $(IMAGE_NAME) /root/build-coyim
+
+run:
+	./x11docker --verbose --stdout --stderr -- "-v $(PWD)/..:/src" $(IMAGE_NAME) /src/bin/coyim-ma

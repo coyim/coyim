@@ -18,6 +18,7 @@ fi
 
 export CFLAGS="$CFLAGS_TO_USE $EXTRA_CFLAGS"
 export CPPFLAGS="$CFLAGS_TO_USE $EXTRA_CFLAGS"
+export LDFLAGS="$MSAN_LDFLAGS"
 ldconfig
 
 cd /root/deps/$BUILD_NAME*

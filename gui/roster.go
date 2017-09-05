@@ -245,28 +245,24 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 
 func (r *roster) appendResourcesAsMenuItems(jid string, account *account, menuItem gtki.MenuItem) {
 	peer, ok := r.ui.getPeer(account, jid)
-	innerMenu, _ := g.gtk.MenuNew()
 
-	if !ok {
-		innerMenu.SetVisible(false)
-		menuItem.SetSubmenu(innerMenu)
-		return
-	}
+	if ok && peer.HasResources() {
+		innerMenu, _ := g.gtk.MenuNew()
 
-	for _, resource := range peer.Resources() {
-		fullJid := jid + "/" + resource
-		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
-		item.Connect("activate",
-			func() {
-				doInUIThread(func() {
-					r.openConversationView(account, fullJid, true)
+		for _, resource := range peer.Resources() {
+			fullJid := jid + "/" + resource
+			item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
+			item.Connect("activate",
+				func() {
+					doInUIThread(func() {
+						r.openConversationView(account, fullJid, true)
+					})
 				})
-			})
-		innerMenu.Append(item)
-	}
+			innerMenu.Append(item)
+		}
 
-	innerMenu.SetVisible(peer.HasResources())
-	menuItem.SetSubmenu(innerMenu)
+		menuItem.SetSubmenu(innerMenu)
+	}
 }
 
 func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventButton) {

@@ -212,6 +212,22 @@ func toArray(groupList gtki.ListStore) []string {
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.EventButton) {
 	builder := newBuilder("ContactPopupMenu")
 	mn := builder.getObj("contactMenu").(gtki.Menu)
+	menuItem := builder.getObj("resourcesoMenuItem").(gtki.MenuItem)
+	innerMenu, _ := g.gtk.MenuNew()
+
+	peer, _ := r.ui.getPeer(account, jid)
+	for _, resource := range peer.Resources() {
+		fullJid := jid + "/" + resource
+		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
+		item.Connect("activate",
+			func() {
+				doInUIThread(func() {
+					r.openConversationView(account, fullJid, true)
+				})
+			})
+		innerMenu.Append(item)
+	}
+	menuItem.SetSubmenu(innerMenu)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {

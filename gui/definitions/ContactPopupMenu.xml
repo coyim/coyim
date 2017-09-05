@@ -13,7 +13,16 @@
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="sep2"/>
+      <object class="GtkSeparatorMenuItem" />
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="resourcesoMenuItem">
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Talk to...</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" />
     </child>
     <child>
       <object class="GtkMenuItem" id="askContactToSeeStatusMenuItem">
@@ -34,7 +43,7 @@
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="sep3"/>
+      <object class="GtkSeparatorMenuItem" />
     </child>
     <child>
       <object class="GtkMenuItem" id="dumpInfoMenuItem">

@@ -75,6 +75,25 @@ func (s *ListSuite) Test_AddOrReplace_replacesTheEntryIfInTheList(c *g.C) {
 	c.Assert(l.peers["somewhere"], g.Equals, p2)
 }
 
+func (s *ListSuite) Test_AddOrReplace_addsEntryWithResources(c *g.C) {
+	l := New()
+	p1 := &Peer{Jid: "somewhere", Name: "something"}
+	p2 := &Peer{Jid: "somewhere/else", Name: "something"}
+	p3 := &Peer{Jid: "somewhere/nearby", Name: "something"}
+
+	res := l.AddOrMerge(p1)
+	c.Assert(res, g.Equals, true)
+	res = l.AddOrMerge(p2)
+	c.Assert(res, g.Equals, true)
+	res = l.AddOrMerge(p3)
+	c.Assert(res, g.Equals, true)
+
+	c.Assert(len(l.peers), g.Equals, 3)
+
+	c.Assert(l.peers["somewhere"].resources["else"], g.Equals, false)
+	c.Assert(l.peers["somewhere"].resources["nearby"], g.Equals, false)
+}
+
 func (s *ListSuite) Test_AddOrMerge_addsTheEntryIfNotInTheList(c *g.C) {
 	l := New()
 	p := &Peer{Jid: "somewhere", Name: "something"}

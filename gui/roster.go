@@ -212,22 +212,9 @@ func toArray(groupList gtki.ListStore) []string {
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.EventButton) {
 	builder := newBuilder("ContactPopupMenu")
 	mn := builder.getObj("contactMenu").(gtki.Menu)
-	menuItem := builder.getObj("resourcesoMenuItem").(gtki.MenuItem)
-	innerMenu, _ := g.gtk.MenuNew()
 
-	peer, _ := r.ui.getPeer(account, jid)
-	for _, resource := range peer.Resources() {
-		fullJid := jid + "/" + resource
-		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
-		item.Connect("activate",
-			func() {
-				doInUIThread(func() {
-					r.openConversationView(account, fullJid, true)
-				})
-			})
-		innerMenu.Append(item)
-	}
-	menuItem.SetSubmenu(innerMenu)
+	menuItem := builder.getObj("resourcesoMenuItem").(gtki.MenuItem)
+	r.appendResourcesAsMenuItems(jid, account, menuItem)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
@@ -254,6 +241,32 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 
 	mn.ShowAll()
 	mn.PopupAtPointer(bt)
+}
+
+func (r *roster) appendResourcesAsMenuItems(jid string, account *account, menuItem gtki.MenuItem) {
+	peer, ok := r.ui.getPeer(account, jid)
+	innerMenu, _ := g.gtk.MenuNew()
+
+	if !ok {
+		innerMenu.SetVisible(false)
+		menuItem.SetSubmenu(innerMenu)
+		return
+	}
+
+	for _, resource := range peer.Resources() {
+		fullJid := jid + "/" + resource
+		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
+		item.Connect("activate",
+			func() {
+				doInUIThread(func() {
+					r.openConversationView(account, fullJid, true)
+				})
+			})
+		innerMenu.Append(item)
+	}
+
+	innerMenu.SetVisible(peer.HasResources())
+	menuItem.SetSubmenu(innerMenu)
 }
 
 func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventButton) {

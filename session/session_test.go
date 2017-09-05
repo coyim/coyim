@@ -331,6 +331,12 @@ func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 		"<query xmlns=\"http://jabber.org/protocol/disco#info\">"+
 		"<identity xmlns=\"http://jabber.org/protocol/disco#info\" category=\"client\" type=\"pc\" name=\"foo.bar@somewhere.org\"></identity>"+
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/disco#info\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"urn:xmpp:bob\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"urn:xmpp:ping\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/caps\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"jabber:iq:version\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"vcard-temp\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"jabber:x:data\"></feature>"+
 		"</query>"+
 		"</iq>")
 }

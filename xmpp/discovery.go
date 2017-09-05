@@ -74,6 +74,12 @@ func DiscoveryReply(name string) data.DiscoveryReply {
 		},
 		Features: []data.DiscoveryFeature{
 			{Var: "http://jabber.org/protocol/disco#info"},
+			{Var: "urn:xmpp:bob"},
+			{Var: "urn:xmpp:ping"},
+			{Var: "http://jabber.org/protocol/caps"},
+			{Var: "jabber:iq:version"},
+			{Var: "vcard-temp"},
+			{Var: "jabber:x:data"},
 		},
 	}
 }

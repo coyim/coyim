@@ -437,9 +437,9 @@ func (s *session) processIQ(stanza *data.ClientIQ) (ret interface{}, ignore bool
 	}
 
 	switch startElem.Name.Space + " " + startElem.Name.Local {
-	//NOTE: This is the minimum for XEP-0030 and/or XEP-0115
-	//See: XEP-0030, Section: 3.1 Basic Protocol
 	case "http://jabber.org/protocol/disco#info query":
+		// TODO: We should ensure that there is no "node" entity on this query, since we don't support that.
+		// In the case of a "node", we should return  <service-unavailable/>
 		if isGet {
 			s.info("IQ: http://jabber.org/protocol/disco#info query")
 			return xmpp.DiscoveryReply(s.GetConfig().Account), false

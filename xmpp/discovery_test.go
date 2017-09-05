@@ -14,7 +14,7 @@ type DiscoveryXMPPSuite struct{}
 
 var _ = Suite(&DiscoveryXMPPSuite{})
 
-func (s *DiscoveryXMPPSuite) Test_SendDiscoveryInfo(c *C) {
+func (s *DiscoveryXMPPSuite) Test_SendDiscoveryInfoRequest(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := conn{
 		out: mockIn,
@@ -253,4 +253,23 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreNoValues(c *
 
 	_, err := VerificationString(reply)
 	c.Assert(err.Error(), Equals, "form does not have a single FORM_TYPE value")
+}
+
+func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
+	rep := DiscoveryReply("foo@bar.com")
+	c.Assert(rep, DeepEquals,
+		data.DiscoveryReply{
+			XMLName: xml.Name{Space: "", Local: ""},
+			Node:    "",
+			Identities: []data.DiscoveryIdentity{
+				data.DiscoveryIdentity{
+					XMLName:  xml.Name{Space: "", Local: ""},
+					Lang:     "",
+					Category: "client",
+					Type:     "pc",
+					Name:     "foo@bar.com"}},
+			Features: []data.DiscoveryFeature{
+				{Var: "http://jabber.org/protocol/disco#info"},
+			},
+			Forms: []data.Form(nil)})
 }

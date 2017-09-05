@@ -441,14 +441,17 @@ func (s *session) processIQ(stanza *data.ClientIQ) (ret interface{}, ignore bool
 	//See: XEP-0030, Section: 3.1 Basic Protocol
 	case "http://jabber.org/protocol/disco#info query":
 		if isGet {
-			return xmpp.MinimumEntityDiscoveryReply(s.GetConfig().Account), false
+			s.info("IQ: http://jabber.org/protocol/disco#info query")
+			return xmpp.DiscoveryReply(s.GetConfig().Account), false
 		}
 	case "jabber:iq:version query":
 		if isGet {
+			s.info("IQ: jabber:iq:version query")
 			return s.receivedIQVersion(), false
 		}
 	case "jabber:iq:roster query":
 		if !isGet {
+			s.info("IQ: jabber:iq:roster query")
 			return s.receivedIQRosterQuery(stanza)
 		}
 	}

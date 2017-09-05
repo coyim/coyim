@@ -60,8 +60,8 @@ func parseDiscoveryReply(iq *data.ClientIQ) (reply data.DiscoveryReply, err erro
 	return
 }
 
-//MinimumEntityDiscoveryReply returns a minimum reply to a http://jabber.org/protocol/disco#info query
-func MinimumEntityDiscoveryReply(name string) data.DiscoveryReply {
+//DiscoveryReply returns a minimum reply to a http://jabber.org/protocol/disco#info query
+func DiscoveryReply(name string) data.DiscoveryReply {
 	return data.DiscoveryReply{
 		Identities: []data.DiscoveryIdentity{
 			{
@@ -71,6 +71,9 @@ func MinimumEntityDiscoveryReply(name string) data.DiscoveryReply {
 				//NOTE: this is optional as per XEP-0030
 				Name: name,
 			},
+		},
+		Features: []data.DiscoveryFeature{
+			{Var: "http://jabber.org/protocol/disco#info"},
 		},
 	}
 }

@@ -330,6 +330,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 		"<iq to='abc' from='some@one.org/foo' type='result' id=''>"+
 		"<query xmlns=\"http://jabber.org/protocol/disco#info\">"+
 		"<identity xmlns=\"http://jabber.org/protocol/disco#info\" category=\"client\" type=\"pc\" name=\"foo.bar@somewhere.org\"></identity>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/disco#info\"></feature>"+
 		"</query>"+
 		"</iq>")
 }

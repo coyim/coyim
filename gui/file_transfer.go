@@ -1,11 +1,37 @@
 package gui
 
 import (
+	"log"
+
 	"github.com/twstrike/coyim/i18n"
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/xmpp/utils"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
+
+func (u *gtkUI) startAllListenersFor(ev events.FileTransfer) {
+	go func() {
+		err, ok := <-ev.ErrorOccurred
+		if ok {
+			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
+			close(ev.CancelTransfer)
+		}
+	}()
+
+	go func() {
+		_, ok := <-ev.TransferFinished
+		if ok {
+			log.Printf("File transfer of file %s finished with success", ev.Name)
+			close(ev.CancelTransfer)
+		}
+	}()
+
+	go func() {
+		for upd := range ev.Update {
+			log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
+		}
+	}()
+}
 
 func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	dialogID := "FileTransferAskToReceive"
@@ -36,6 +62,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	d.Destroy()
 	fname := "bogus"
 	if result {
+		u.startAllListenersFor(ev)
 		ev.Answer <- &fname
 	} else {
 		ev.Answer <- nil

@@ -1,6 +1,7 @@
 package session
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -11,6 +12,10 @@ import (
 var supportedFileTransferMethods = map[string]int{
 	"http://jabber.org/protocol/bytestreams": 0,
 	"http://jabber.org/protocol/ibb":         100, //TODO: this should never be the case in real life, but we use it while developing ibb and bytestreams
+}
+
+var fileTransferCancelListeners = map[string]func(*session, inflightFileTransfer){
+	"http://jabber.org/protocol/ibb": fileTransferIbbWaitForCancel,
 }
 
 type inflightFileTransferStatus struct {
@@ -31,6 +36,7 @@ type inflightFileTransfer struct {
 		length *int
 		offset *int
 	}
+	peer            string
 	status          *inflightFileTransferStatus
 	cancelChannel   <-chan bool
 	errorChannel    chan<- error
@@ -123,18 +129,33 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 	}
 }
 
-func waitForFileTransferUserAcceptance(s *session, stanza *data.ClientIQ, si data.SI, acceptResult <-chan *string, options []string) {
+func (ift inflightFileTransfer) reportError(e error) {
+	close(ift.finishedChannel)
+	close(ift.updateChannel)
+	ift.errorChannel <- e
+	close(ift.errorChannel)
+}
+
+func (ift inflightFileTransfer) reportFinished() {
+	close(ift.errorChannel)
+	close(ift.updateChannel)
+	ift.finishedChannel <- true
+	close(ift.finishedChannel)
+}
+
+func waitForFileTransferUserAcceptance(s *session, stanza *data.ClientIQ, si data.SI, acceptResult <-chan *string, ift inflightFileTransfer) {
 	result := <-acceptResult
 
 	var error *data.ErrorReply
 	if result != nil {
-		opt, ok := chooseAppropriateFileTransferOptionFrom(options)
+		opt, ok := chooseAppropriateFileTransferOptionFrom(ift.options)
 		if ok {
 			setInflightFileTransferDestination(si.ID, *result)
 			s.sendIQResult(stanza, iqResultChosenStreamMethod(opt))
+			go fileTransferCancelListeners[opt](s, ift)
 			return
 		}
-		// TODO: here we need to notify the user
+		ift.reportError(errors.New("No mutually acceptable file transfer methods available"))
 		error = &iqErrorBadRequest
 	} else {
 		error = &iqErrorForbidden
@@ -143,7 +164,7 @@ func waitForFileTransferUserAcceptance(s *session, stanza *data.ClientIQ, si dat
 	s.sendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(si data.SI, options []string, f *data.File, cc <-chan bool, ec chan<- error, uc chan<- int64, fc chan<- bool) {
+func registerNewFileTransfer(si data.SI, options []string, stanza *data.ClientIQ, f *data.File, cc <-chan bool, ec chan<- error, uc chan<- int64, fc chan<- bool) inflightFileTransfer {
 	ift := inflightFileTransfer{
 		id:              si.ID,
 		mime:            si.MIMEType,
@@ -153,6 +174,7 @@ func registerNewFileTransfer(si data.SI, options []string, f *data.File, cc <-ch
 		name:            f.Name,
 		size:            f.Size,
 		desc:            f.Desc,
+		peer:            stanza.From,
 		status:          &inflightFileTransferStatus{},
 		cancelChannel:   cc,
 		errorChannel:    ec,
@@ -168,9 +190,8 @@ func registerNewFileTransfer(si data.SI, options []string, f *data.File, cc <-ch
 	inflightFileTransfers.Lock()
 	defer inflightFileTransfers.Unlock()
 	inflightFileTransfers.transfers[si.ID] = ift
+	return ift
 }
-
-// TODO: we need to have a profile specific listener for the cancel event
 
 func fileStreamInitIQ(s *session, stanza *data.ClientIQ, si data.SI) (ret interface{}, ignore bool) {
 	var options []string
@@ -186,10 +207,10 @@ func fileStreamInitIQ(s *session, stanza *data.ClientIQ, si data.SI) (ret interf
 	errorChannel := make(chan error)
 	updateChannel := make(chan int64, 1000)
 	finishedChannel := make(chan bool)
-	registerNewFileTransfer(si, options, f, cancelChannel, errorChannel, updateChannel, finishedChannel)
+	ift := registerNewFileTransfer(si, options, stanza, f, cancelChannel, errorChannel, updateChannel, finishedChannel)
 
 	acceptResult := make(chan *string)
-	go waitForFileTransferUserAcceptance(s, stanza, si, acceptResult, options)
+	go waitForFileTransferUserAcceptance(s, stanza, si, acceptResult, ift)
 
 	s.publishEvent(events.FileTransfer{
 		Session:          s,

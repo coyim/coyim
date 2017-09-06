@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -50,6 +51,30 @@ var iqErrorIBBBadRequest = data.ErrorReply{
 	Error: data.ErrorBadRequest{},
 }
 
+func (ift inflightFileTransfer) fileTransferIbbCleanup() {
+	ctx, ok := ift.status.opaque.(*ibbContext)
+	if ok {
+		ctx.Lock()
+		defer ctx.Unlock()
+
+		if ctx.f != nil {
+			ctx.f.Close() // we ignore any errors here - if the file is already closed, that's OK
+			os.Remove(ctx.f.Name())
+		}
+	}
+}
+
+func fileTransferIbbWaitForCancel(s *session, ift inflightFileTransfer) {
+	if cancel, ok := <-ift.cancelChannel; ok && cancel {
+		ift.fileTransferIbbCleanup()
+		close(ift.finishedChannel)
+		close(ift.updateChannel)
+		close(ift.errorChannel)
+		removeInflightFileTransfer(ift.id)
+		s.conn.SendIQ(ift.peer, "set", data.IBBClose{Sid: ift.id})
+	}
+}
+
 func fileTransferIbbOpen(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
 	var tag data.IBBOpen
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
@@ -79,9 +104,9 @@ func fileTransferIbbOpen(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	ff, err := ioutil.TempFile("", "coyim_file_transfer")
 	if err != nil {
 		inflight.status.opaque = nil
-		// TODO: we need to kill the inflight as well
-		// TODO: here we need to notify the user
 		s.warn(fmt.Sprintf("Failed to open temporary file: %v", err))
+		inflight.reportError(errors.New("Couldn't open local temporary file"))
+		removeInflightFileTransfer(tag.Sid)
 		return nil, false
 	}
 	c.f = ff
@@ -122,7 +147,8 @@ func fileTransferIbbData(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	if tag.Sequence != ctx.expectingSequence {
 		s.warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
 		s.sendIQError(stanza, iqErrorUnexpectedRequest)
-		// TODO: here we need to notify the user
+		inflight.reportError(errors.New("Unexpected data sent from the peer"))
+		inflight.fileTransferIbbCleanup()
 		return nil, true
 	}
 
@@ -132,7 +158,8 @@ func fileTransferIbbData(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	if err != nil {
 		s.warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
 		s.sendIQError(stanza, iqErrorIBBBadRequest)
-		// TODO: here we need to notify the user
+		inflight.reportError(errors.New("Corrupt data sent by the peer"))
+		inflight.fileTransferIbbCleanup()
 		return nil, true
 
 	}
@@ -140,10 +167,12 @@ func fileTransferIbbData(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	var n int
 	if n, err = ctx.f.Write(result); err != nil {
 		s.warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
-		// TODO: here we need to notify the user
+		inflight.reportError(errors.New("Couldn't write data to the file system"))
+		inflight.fileTransferIbbCleanup()
 		return nil, false
 	}
 	ctx.currentSize += int64(n)
+	inflight.updateChannel <- ctx.currentSize
 
 	return nil, false
 }
@@ -176,23 +205,21 @@ func fileTransferIbbClose(s *session, stanza *data.ClientIQ) (ret interface{}, i
 	defer ctx.f.Close()
 	fstat, _ := ctx.f.Stat()
 
-	// TODO: These checks ignore the range flags - we should think about how that would fit
+	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
 	if ctx.currentSize != inflight.size || fstat.Size() != ctx.currentSize {
 		s.warn(fmt.Sprintf("Expected sze of file to be %d, but was %d", inflight.size, fstat.Size()))
-		// TODO: here we need to notify the user
+		inflight.reportError(errors.New("Incorrect final size of file"))
+		inflight.fileTransferIbbCleanup()
 		return data.EmptyReply{}, false
 	}
 
-	// TODO: if there's a hash of the file in the inflight, we should calculate it on the file and check it
+	// TODO[LATER]: if there's a hash of the file in the inflight, we should calculate it on the file and check it
+	// TODO[LATER]: move the file to its final name
 
-	// TODO: here we need to notify the user
 	fmt.Printf("WE HAVE A FILE AT: %s\n", ctx.f.Name())
-
-	// TODO: move the file to its final name
+	inflight.reportFinished()
 
 	removeInflightFileTransfer(tag.Sid)
 
 	return data.EmptyReply{}, false
 }
-
-// TODO: we need to send the cancel=false event as well

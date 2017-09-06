@@ -14,8 +14,8 @@ var supportedFileTransferMethods = map[string]int{
 }
 
 type inflightFileTransferStatus struct {
-	state  string
-	opaque interface{}
+	destination string
+	opaque      interface{}
 }
 
 type inflightFileTransfer struct {
@@ -31,7 +31,11 @@ type inflightFileTransfer struct {
 		length *int
 		offset *int
 	}
-	status *inflightFileTransferStatus
+	status          *inflightFileTransferStatus
+	cancelChannel   <-chan bool
+	errorChannel    chan<- error
+	updateChannel   chan<- int64
+	finishedChannel chan<- bool
 }
 
 var inflightFileTransfers struct {
@@ -79,10 +83,10 @@ func getInflightFileTransfer(id string) (result inflightFileTransfer, ok bool) {
 	return
 }
 
-func setInflightFileTransferState(id, state string) {
+func setInflightFileTransferDestination(id, destination string) {
 	inflightFileTransfers.RLock()
 	defer inflightFileTransfers.RUnlock()
-	inflightFileTransfers.transfers[id].status.state = state
+	inflightFileTransfers.transfers[id].status.destination = destination
 }
 
 func removeInflightFileTransfer(id string) {
@@ -119,18 +123,18 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 	}
 }
 
-func waitForFileTransferUserAcceptance(s *session, stanza *data.ClientIQ, si data.SI, acceptResult chan bool, options []string) {
+func waitForFileTransferUserAcceptance(s *session, stanza *data.ClientIQ, si data.SI, acceptResult <-chan *string, options []string) {
 	result := <-acceptResult
-	close(acceptResult)
-	var error *data.ErrorReply
 
-	if result {
+	var error *data.ErrorReply
+	if result != nil {
 		opt, ok := chooseAppropriateFileTransferOptionFrom(options)
 		if ok {
-			setInflightFileTransferState(si.ID, "accepted")
+			setInflightFileTransferDestination(si.ID, *result)
 			s.sendIQResult(stanza, iqResultChosenStreamMethod(opt))
 			return
 		}
+		// TODO: here we need to notify the user
 		error = &iqErrorBadRequest
 	} else {
 		error = &iqErrorForbidden
@@ -139,17 +143,21 @@ func waitForFileTransferUserAcceptance(s *session, stanza *data.ClientIQ, si dat
 	s.sendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(si data.SI, options []string, f *data.File) {
+func registerNewFileTransfer(si data.SI, options []string, f *data.File, cc <-chan bool, ec chan<- error, uc chan<- int64, fc chan<- bool) {
 	ift := inflightFileTransfer{
-		id:      si.ID,
-		mime:    si.MIMEType,
-		options: options,
-		date:    f.Date,
-		hash:    f.Hash,
-		name:    f.Name,
-		size:    f.Size,
-		desc:    f.Desc,
-		status:  &inflightFileTransferStatus{},
+		id:              si.ID,
+		mime:            si.MIMEType,
+		options:         options,
+		date:            f.Date,
+		hash:            f.Hash,
+		name:            f.Name,
+		size:            f.Size,
+		desc:            f.Desc,
+		status:          &inflightFileTransferStatus{},
+		cancelChannel:   cc,
+		errorChannel:    ec,
+		updateChannel:   uc,
+		finishedChannel: fc,
 	}
 
 	if f.Range != nil {
@@ -162,6 +170,8 @@ func registerNewFileTransfer(si data.SI, options []string, f *data.File) {
 	inflightFileTransfers.transfers[si.ID] = ift
 }
 
+// TODO: we need to have a profile specific listener for the cancel event
+
 func fileStreamInitIQ(s *session, stanza *data.ClientIQ, si data.SI) (ret interface{}, ignore bool) {
 	var options []string
 	var err error
@@ -171,9 +181,14 @@ func fileStreamInitIQ(s *session, stanza *data.ClientIQ, si data.SI) (ret interf
 	}
 
 	f := si.File
-	registerNewFileTransfer(si, options, f)
 
-	acceptResult := make(chan bool, 1)
+	cancelChannel := make(chan bool)
+	errorChannel := make(chan error)
+	updateChannel := make(chan int64, 1000)
+	finishedChannel := make(chan bool)
+	registerNewFileTransfer(si, options, f, cancelChannel, errorChannel, updateChannel, finishedChannel)
+
+	acceptResult := make(chan *string)
 	go waitForFileTransferUserAcceptance(s, stanza, si, acceptResult, options)
 
 	s.publishEvent(events.FileTransfer{
@@ -185,6 +200,10 @@ func fileStreamInitIQ(s *session, stanza *data.ClientIQ, si data.SI) (ret interf
 		Size:             f.Size,
 		Description:      f.Desc,
 		Answer:           acceptResult,
+		CancelTransfer:   cancelChannel,
+		ErrorOccurred:    errorChannel,
+		Update:           updateChannel,
+		TransferFinished: finishedChannel,
 	})
 
 	return nil, true

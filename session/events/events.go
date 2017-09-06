@@ -109,7 +109,11 @@ type FileTransfer struct {
 	Size             int64
 	Description      string
 
-	Answer chan<- bool
+	Answer           chan<- *string // one time use
+	CancelTransfer   chan<- bool    // one time use
+	ErrorOccurred    <-chan error   // one time use
+	Update           <-chan int64   // will be called many times
+	TransferFinished <-chan bool    // one time use
 }
 
 // SMP is an event related to SMP

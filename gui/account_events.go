@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/twstrike/coyim/i18n"
@@ -223,39 +222,6 @@ func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent) {
 		return
 	}
 	convWin.delayedMessageSent(ev.Tracer)
-}
-
-func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
-	dialogID := "FileTransferAskToReceive"
-	builder := newBuilder(dialogID)
-	dialogOb := builder.getObj(dialogID)
-
-	d := dialogOb.(gtki.MessageDialog)
-	d.SetDefaultResponse(gtki.RESPONSE_YES)
-	d.SetTransientFor(u.window)
-
-	message := fmt.Sprintf("%s wants to send you a file - do you want to receive it?", ev.Peer)
-	secondary := fmt.Sprintf("File name: %s", ev.Name)
-	if ev.Description != "" {
-		secondary = fmt.Sprintf("%s\nDescription: %s", secondary, ev.Description)
-	}
-	if ev.DateLastModified != "" {
-		secondary = fmt.Sprintf("%s\nLast modified: %s", secondary, ev.DateLastModified)
-	}
-	if ev.Size != 0 {
-		secondary = fmt.Sprintf("%s\nSize: %d bytes", secondary, ev.Size)
-	}
-
-	d.SetProperty("text", message)
-	d.SetProperty("secondary_text", secondary)
-
-	responseType := gtki.ResponseType(d.Run())
-	result := responseType == gtki.RESPONSE_YES
-	d.Destroy()
-
-	ev.Answer <- result
-
-	// for more fancy use, we should allow people a choice in where to save it, but that's for later.
 }
 
 func (u *gtkUI) handleSMPEvent(ev events.SMP) {

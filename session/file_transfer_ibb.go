@@ -14,6 +14,7 @@ import (
 )
 
 // TODO: receiving packets via messages
+// TODO: Check what happens if I cancel from the Pidgin side
 
 func init() {
 	registerKnownIQ("set", "http://jabber.org/protocol/ibb open", fileTransferIbbOpen)

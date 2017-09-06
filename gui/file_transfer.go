@@ -9,6 +9,22 @@ import (
 	"github.com/twstrike/gotk3adapter/gtki"
 )
 
+// OK, so from the user interface, for now, we need a few things:
+//  - A way of choosing where the file should be put
+//  - A way of displaying errors that happened during the transfer
+//  - A way for the user to cancel the transfer
+//  - A way to notify the user when the transfer is done
+//  - A way to update the user interface about progress
+//  In general, hopefully these methods are completely independent of transport. Once we get to encrypted transfer we might want to highlight that (and say something about the file being transmitted in the clear otherwise)
+
+// Actual user interface:
+//   First - ask if you want the file
+//   Second - choose where to put the file using standard file chooser/saver
+//   Third - one status bar per file with percentages etc.
+//       This will get a checkbox and a message when done
+//       Or it will get an error message when failed
+//       There will be a cancel button there, that will cancel the file receipt
+
 func (u *gtkUI) startAllListenersFor(ev events.FileTransfer) {
 	go func() {
 		err, ok := <-ev.ErrorOccurred

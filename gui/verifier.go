@@ -111,13 +111,11 @@ type unverifiedWarning struct {
 	msg            gtki.Label
 	verifyButton   gtki.Button
 	alertImage     gtki.Image
-	notifier       *notifier
 	peerIsVerified func() bool
 }
 
 func (u *unverifiedWarning) show() {
 	if !u.peerIsVerified() {
-		u.notifier.notify(u.infobar)
 		u.infobar.ShowAll()
 	} else {
 		log.Println("We have a peer and a trusted fingerprint already, so no reason to show the unverified warning")
@@ -127,7 +125,6 @@ func (u *unverifiedWarning) show() {
 func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	v.unverifiedWarning = &unverifiedWarning{b: newBuilder("UnverifiedWarning")}
 	v.unverifiedWarning.peerIsVerified = peerIsVerified
-	v.unverifiedWarning.notifier = v.notifier
 	v.unverifiedWarning.b.getItems(
 		"infobar", &v.unverifiedWarning.infobar,
 		"box", &v.unverifiedWarning.box,
@@ -143,6 +140,7 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	})
 	v.unverifiedWarning.msg.SetText(i18n.Local("Make sure no one else is reading your messages"))
 	v.unverifiedWarning.verifyButton.Connect("clicked", v.showPINDialog)
+	v.notifier.notify(v.unverifiedWarning.infobar)
 }
 
 func (v *verifier) smpError(err error) {
@@ -191,12 +189,12 @@ func (v *verifier) buildWaitingForPeerNotification() {
 		v.removeInProgressDialogs()
 		v.unverifiedWarning.show()
 	})
+	v.notifier.notify(v.waitingForPeer.bar)
 }
 
 func (v *verifier) showWaitingForPeerToCompleteSMPDialog() {
 	v.unverifiedWarning.infobar.Hide()
 	v.waitingForPeer.bar.ShowAll()
-	v.notifier.notify(v.waitingForPeer.bar)
 }
 
 func (v *verifier) showNotificationWhenWeCannotGeneratePINForSMP(err error) {
@@ -298,6 +296,7 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 		v.unverifiedWarning.show()
 	})
 	v.peerRequestsSMP.msg.SetText(i18n.Localf("%s is waiting for you to finish verifying the security of this channel...", v.peerName))
+	v.notifier.notify(v.peerRequestsSMP.infobar)
 }
 
 func (v *verifier) displayRequestForSecret(question string) {
@@ -306,7 +305,6 @@ func (v *verifier) displayRequestForSecret(question string) {
 		v.showAnswerSMPDialog(question)
 	})
 	v.peerRequestsSMP.infobar.ShowAll()
-	v.notifier.notify(v.peerRequestsSMP.infobar)
 }
 
 func (v *verifier) displayVerificationSuccess() {

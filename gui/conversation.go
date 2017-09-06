@@ -290,7 +290,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 
 	mnemonic := uint(101)
 	transientParent.AddMnemonic(mnemonic, cp.menuLabel)
-	transientParent.SetMnemonicModifier(gdki.GDK_SHIFT_MASK)
+	transientParent.SetMnemonicModifier(gdki.GDK_CONTROL_MASK)
 
 	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
 	cp.history.SetBuffer(ui.getTags().createTextBuffer())

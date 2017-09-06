@@ -97,3 +97,17 @@ type Log struct {
 	Level   LogLevel
 	Message string
 }
+
+// FileTransfer represents an event associated with file transfers
+type FileTransfer struct {
+	Session access.Session
+	Peer    string
+
+	Mime             string
+	DateLastModified string
+	Name             string
+	Size             int64
+	Description      string
+
+	Answer chan<- bool
+}

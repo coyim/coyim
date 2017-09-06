@@ -10,13 +10,42 @@ import (
 type ErrorReply struct {
 	XMLName xml.Name    `xml:"error"`
 	Type    string      `xml:"type,attr"`
+	Code    int         `xml:"code,attr,omitempty"`
 	Error   interface{} `xml:"error"`
+	Error2  interface{} `xml:"error2,omitempty"`
+	Text    string      `xml:"urn:ietf:params:xml:ns:xmpp-stanzas text,omitempty"`
 }
 
 // ErrorBadRequest reflects a bad-request stanza. See
 // http://xmpp.org/rfcs/rfc6120.html#stanzas-error-conditions-bad-request
 type ErrorBadRequest struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas bad-request"`
+}
+
+// ErrorForbidden reflects a forbidden stanza.
+type ErrorForbidden struct {
+	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas forbidden"`
+}
+
+// ErrorNotAcceptable reflects a not acceptable stanza
+type ErrorNotAcceptable struct {
+	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas not-acceptable"`
+}
+
+// ErrorItemNotFound reflects an item not found stanza
+type ErrorItemNotFound struct {
+	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas item-not-found"`
+}
+
+// ErrorUnexpectedRequest reflects an unexpected request stanza
+type ErrorUnexpectedRequest struct {
+	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas unexpected-request"`
+}
+
+// ErrorNoValidStreams reflects an error when no stream types offered were acceptable
+// Ref: XEP-0095
+type ErrorNoValidStreams struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/si no-valid-streams"`
 }
 
 // StreamError represents an XMPP Stream Error as defined in RFC 6120, section 4.9

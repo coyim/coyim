@@ -276,6 +276,8 @@ func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
 				{Var: "jabber:iq:version"},
 				{Var: "vcard-temp"},
 				{Var: "jabber:x:data"},
+				{Var: "http://jabber.org/protocol/si"},
+				{Var: "http://jabber.org/protocol/si/profile/file-transfer"},
 			},
 			Forms: []data.Form(nil)})
 }

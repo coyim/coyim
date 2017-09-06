@@ -2184,6 +2184,24 @@ PC9vYmplY3Q+CiAgICA8L2NoaWxkPgogIDwvb2JqZWN0Pgo8L2ludGVyZmFjZT4K
 `,
 	},
 
+	"/definitions/FileTransferAskToReceive.xml": {
+		local:   "definitions/FileTransferAskToReceive.xml",
+		size:    551,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtNZXNzYWdlRGlhbG9nIiBpZD0iRmlsZVRyYW5z
+ZmVyQXNrVG9SZWNlaXZlIj4KICAgIDxwcm9wZXJ0eSBuYW1lPSJ3aW5kb3ctcG9zaXRpb24iPkdUS19X
+SU5fUE9TX0NFTlRFUjwvcHJvcGVydHk+CiAgICA8cHJvcGVydHkgbmFtZT0ibW9kYWwiPmZhbHNlPC9w
+cm9wZXJ0eT4KICAgIDxwcm9wZXJ0eSBuYW1lPSJib3JkZXJfd2lkdGgiPjc8L3Byb3BlcnR5PgogICAg
+PHByb3BlcnR5IG5hbWU9InRpdGxlIiB0cmFuc2xhdGFibGU9InllcyI+RmlsZSB0cmFuc2ZlcjwvcHJv
+cGVydHk+CiAgICA8cHJvcGVydHkgbmFtZT0idGV4dCIgdHJhbnNsYXRhYmxlPSJ5ZXMiPkEgcGVlciBp
+cyB0cnlpbmcgdG8gc2VuZCB5b3UgYSBmaWxlLjwvcHJvcGVydHk+CiAgICA8cHJvcGVydHkgbmFtZT0i
+c2Vjb25kYXJ5X3RleHQiIHRyYW5zbGF0YWJsZT0ieWVzIj48L3Byb3BlcnR5PgogICAgPHByb3BlcnR5
+IG5hbWU9ImJ1dHRvbnMiPkdUS19CVVRUT05TX1lFU19OTzwvcHJvcGVydHk+CiAgPC9vYmplY3Q+Cjwv
+aW50ZXJmYWNlPgo=
+`,
+	},
+
 	"/definitions/FirstAccountDialog.xml": {
 		local:   "definitions/FirstAccountDialog.xml",
 		size:    2919,

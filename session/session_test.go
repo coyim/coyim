@@ -337,6 +337,8 @@ func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"jabber:iq:version\"></feature>"+
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"vcard-temp\"></feature>"+
 		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"jabber:x:data\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/si\"></feature>"+
+		"<feature xmlns=\"http://jabber.org/protocol/disco#info\" var=\"http://jabber.org/protocol/si/profile/file-transfer\"></feature>"+
 		"</query>"+
 		"</iq>")
 }
@@ -404,7 +406,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 				continue
 			}
 
-			c.Assert(t.Message, Equals, "Unknown IQ: jabber:iq:somethingStrange query")
+			c.Assert(t.Message, Equals, "Unknown IQ: <query xmlns='jabber:iq:somethingStrange'/>")
 			return
 
 		case <-time.After(1 * time.Millisecond):

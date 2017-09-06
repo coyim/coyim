@@ -80,6 +80,8 @@ func DiscoveryReply(name string) data.DiscoveryReply {
 			{Var: "jabber:iq:version"},
 			{Var: "vcard-temp"},
 			{Var: "jabber:x:data"},
+			{Var: "http://jabber.org/protocol/si"},
+			{Var: "http://jabber.org/protocol/si/profile/file-transfer"},
 		},
 	}
 }

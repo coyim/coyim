@@ -25,3 +25,16 @@ type DiscoveryFeature struct {
 	XMLName xml.Name `xml:"http://jabber.org/protocol/disco#info feature"`
 	Var     string   `xml:"var,attr"`
 }
+
+// DiscoveryItemsQuery contains a query for discovery items
+type DiscoveryItemsQuery struct {
+	XMLName        xml.Name `xml:"http://jabber.org/protocol/disco#items query"`
+	DiscoveryItems []DiscoveryItem
+}
+
+// DiscoveryItem contains one discovery item
+type DiscoveryItem struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/disco#items item"`
+	Jid     string   `xml:"jid,attr"`
+	Name    string   `xml:"name,attr"`
+}

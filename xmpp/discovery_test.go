@@ -278,6 +278,7 @@ func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
 				{Var: "jabber:x:data"},
 				{Var: "http://jabber.org/protocol/si"},
 				{Var: "http://jabber.org/protocol/si/profile/file-transfer"},
+				{Var: "http://jabber.org/protocol/bytestreams"},
 			},
 			Forms: []data.Form(nil)})
 }

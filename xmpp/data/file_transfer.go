@@ -41,3 +41,28 @@ type IBBData struct {
 	Sequence uint16   `xml:"seq,attr"`
 	Base64   string   `xml:",chardata"`
 }
+
+// BytestreamQuery is an element from http://xmpp.org/extensions/xep-0065.html.
+type BytestreamQuery struct {
+	XMLName            xml.Name                  `xml:"http://jabber.org/protocol/bytestreams query"`
+	Sid                string                    `xml:"sid,attr"`
+	DestinationAddress string                    `xml:"dstaddr,attr,omitempty"`
+	Mode               string                    `xml:"mode,attr,omitempty"`
+	Activate           string                    `xml:"activate,omitempty"`
+	Streamhosts        []BytestreamStreamhost    `xml:"streamhost"`
+	StreamhostUsed     *BytestreamStreamhostUsed `xml:"streamhost-used,omitempty"`
+}
+
+// BytestreamStreamhost is an element from http://xmpp.org/extensions/xep-0065.html.
+type BytestreamStreamhost struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/bytestreams streamhost"`
+	Jid     string   `xml:"jid,attr"`
+	Host    string   `xml:"host,attr"`
+	Port    int      `xml:"port,attr,omitempty"` // default 1080
+}
+
+// BytestreamStreamhostUsed is an element from http://xmpp.org/extensions/xep-0065.html.
+type BytestreamStreamhostUsed struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/bytestreams streamhost-used"`
+	Jid     string   `xml:"jid,attr"`
+}

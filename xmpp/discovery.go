@@ -82,6 +82,7 @@ func DiscoveryReply(name string) data.DiscoveryReply {
 			{Var: "jabber:x:data"},
 			{Var: "http://jabber.org/protocol/si"},
 			{Var: "http://jabber.org/protocol/si/profile/file-transfer"},
+			{Var: "http://jabber.org/protocol/bytestreams"},
 		},
 	}
 }

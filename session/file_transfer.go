@@ -12,12 +12,13 @@ import (
 // TODO: implement http://jabber.org/protocol/bytestreams
 
 var supportedFileTransferMethods = map[string]int{
-	"http://jabber.org/protocol/bytestreams": 0,
-	"http://jabber.org/protocol/ibb":         100, //TODO: this should never be the case in real life, but we use it while developing ibb and bytestreams
+	"http://jabber.org/protocol/bytestreams": 1,
+	"http://jabber.org/protocol/ibb":         0,
 }
 
 var fileTransferCancelListeners = map[string]func(*session, inflightFileTransfer){
-	"http://jabber.org/protocol/ibb": fileTransferIbbWaitForCancel,
+	"http://jabber.org/protocol/ibb":         fileTransferIbbWaitForCancel,
+	"http://jabber.org/protocol/bytestreams": fileTransferBytestreamWaitForCancel,
 }
 
 type inflightFileTransferStatus struct {

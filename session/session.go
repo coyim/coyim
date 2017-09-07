@@ -1054,7 +1054,9 @@ func (s *session) StartSMP(peer, resource, question, answer string) {
 		s.alert("error: tried to start SMP when a conversation does not exist")
 		return
 	}
-	conv.StartAuthenticate(s, resource, question, []byte(answer))
+	if err := conv.StartAuthenticate(s, resource, question, []byte(answer)); err != nil {
+		s.alert("error: cannot start SMP: " + err.Error())
+	}
 }
 
 // FinishSMP takes a user's SMP answer and finishes the protocol
@@ -1064,7 +1066,9 @@ func (s *session) FinishSMP(peer, resource, answer string) {
 		s.alert("error: tried to finish SMP when a conversation does not exist")
 		return
 	}
-	conv.ProvideAuthenticationSecret(s, resource, []byte(answer))
+	if err := conv.ProvideAuthenticationSecret(s, resource, []byte(answer)); err != nil {
+		s.alert("error: cannot provide an authentication secret for SMP: " + err.Error())
+	}
 }
 
 // AbortSMP will abort the current SMP interaction for a conversation
@@ -1074,5 +1078,7 @@ func (s *session) AbortSMP(peer, resource string) {
 		s.alert("error: tried to abort SMP when a conversation does not exist")
 		return
 	}
-	conv.AbortAuthentication(s, resource)
+	if err := conv.AbortAuthentication(s, resource); err != nil {
+		s.alert("error: cannot abort SMP: " + err.Error())
+	}
 }

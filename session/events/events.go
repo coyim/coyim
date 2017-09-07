@@ -122,7 +122,6 @@ type SMP struct {
 	Session  access.Session
 	From     string
 	Resource string
-	When     time.Time
 	Body     string
 }
 

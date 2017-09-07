@@ -377,7 +377,7 @@ func (v *verifier) defaultLayoutForNotifications() {
 	c.AddClass("alert-icon")
 	c.AddProvider(ds.provider, 9999)
 	ds.provider.LoadFromData(`.alert-icon {
-			margin-left: 0.5em;
+			margin-left: 1em;
 			margin-right: 0.5em;
 		}`)
 }

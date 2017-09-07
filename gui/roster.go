@@ -213,7 +213,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 	builder := newBuilder("ContactPopupMenu")
 	mn := builder.getObj("contactMenu").(gtki.Menu)
 
-	menuItem := builder.getObj("resourcesoMenuItem").(gtki.MenuItem)
+	menuItem := builder.getObj("resourcesMenuItem").(gtki.MenuItem)
 	r.appendResourcesAsMenuItems(jid, account, menuItem)
 
 	builder.ConnectSignals(map[string]interface{}{

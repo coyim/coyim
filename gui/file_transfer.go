@@ -76,13 +76,32 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	responseType := gtki.ResponseType(d.Run())
 	result := responseType == gtki.RESPONSE_YES
 	d.Destroy()
-	fname := "bogus"
+
+	var name string
+
 	if result {
+		fdialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
+			i18n.Local("Choose where to save file"),
+			u.window,
+			gtki.FILE_CHOOSER_ACTION_SAVE,
+			i18n.Local("_Cancel"),
+			gtki.RESPONSE_CANCEL,
+			i18n.Local("_Save"),
+			gtki.RESPONSE_OK,
+		)
+
+		fdialog.SetCurrentName(ev.Name)
+
+		if gtki.ResponseType(fdialog.Run()) == gtki.RESPONSE_OK {
+			name = fdialog.GetFilename()
+		}
+		fdialog.Destroy()
+	}
+
+	if result && name != "" {
 		u.startAllListenersFor(ev)
-		ev.Answer <- &fname
+		ev.Answer <- &name
 	} else {
 		ev.Answer <- nil
 	}
-
-	// for more fancy use, we should allow people a choice in where to save it, but that's for later.
 }

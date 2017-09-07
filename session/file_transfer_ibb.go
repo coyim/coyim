@@ -8,13 +8,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
 // TODO: receiving packets via messages
-// TODO: Check what happens if I cancel from the Pidgin side
+// TODO: check what happens if I cancel from the Pidgin side
 
 func init() {
 	registerKnownIQ("set", "http://jabber.org/protocol/ibb open", fileTransferIbbOpen)
@@ -63,6 +64,7 @@ func (ift inflightFileTransfer) fileTransferIbbCleanup() {
 			os.Remove(ctx.f.Name())
 		}
 	}
+	removeInflightFileTransfer(ift.id)
 }
 
 func fileTransferIbbWaitForCancel(s *session, ift inflightFileTransfer) {
@@ -102,7 +104,11 @@ func fileTransferIbbOpen(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	}
 	inflight.status.opaque = c
 
-	ff, err := ioutil.TempFile("", "coyim_file_transfer")
+	// By creating a temp file next to the place where the real file should be saved
+	// we avoid problems on linux when trying to os.Rename later - if tmp filesystem is different
+	// than the destination file system. It also serves as an early permissions check.
+	dest := inflight.status.destination
+	ff, err := ioutil.TempFile(filepath.Dir(dest), filepath.Base(dest))
 	if err != nil {
 		inflight.status.opaque = nil
 		s.warn(fmt.Sprintf("Failed to open temporary file: %v", err))
@@ -208,19 +214,26 @@ func fileTransferIbbClose(s *session, stanza *data.ClientIQ) (ret interface{}, i
 
 	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
 	if ctx.currentSize != inflight.size || fstat.Size() != ctx.currentSize {
-		s.warn(fmt.Sprintf("Expected sze of file to be %d, but was %d", inflight.size, fstat.Size()))
+		s.warn(fmt.Sprintf("Expected size of file to be %d, but was %d", inflight.size, fstat.Size()))
 		inflight.reportError(errors.New("Incorrect final size of file"))
 		inflight.fileTransferIbbCleanup()
 		return data.EmptyReply{}, false
 	}
 
 	// TODO[LATER]: if there's a hash of the file in the inflight, we should calculate it on the file and check it
-	// TODO[LATER]: move the file to its final name
 
-	fmt.Printf("WE HAVE A FILE AT: %s\n", ctx.f.Name())
+	if err := os.Rename(ctx.f.Name(), inflight.status.destination); err != nil {
+		s.warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
+		inflight.reportError(errors.New("Couldn't save final file"))
+		inflight.fileTransferIbbCleanup()
+		return data.EmptyReply{}, false
+	}
+
 	inflight.reportFinished()
 
 	removeInflightFileTransfer(tag.Sid)
 
 	return data.EmptyReply{}, false
 }
+
+// TODO: send back better failures to all the bad cases, since return nil, false actually returns type=result, not error.

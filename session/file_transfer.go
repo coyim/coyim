@@ -9,6 +9,8 @@ import (
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
+// TODO: implement http://jabber.org/protocol/bytestreams
+
 var supportedFileTransferMethods = map[string]int{
 	"http://jabber.org/protocol/bytestreams": 0,
 	"http://jabber.org/protocol/ibb":         100, //TODO: this should never be the case in real life, but we use it while developing ibb and bytestreams

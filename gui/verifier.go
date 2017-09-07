@@ -311,12 +311,12 @@ func (v *verifier) displayVerificationSuccess() {
 	builder := newBuilder("VerificationSucceeded")
 	d := builder.getObj("dialog").(gtki.Dialog)
 	msg := builder.getObj("verification_message").(gtki.Label)
-	sucessImg := builder.getObj("sucessImage").(gtki.Image)
+	successImg := builder.getObj("successImage").(gtki.Image)
 	button := builder.getObj("button_ok").(gtki.Button)
 
 	msg.SetText(i18n.Localf("Hooray! No one is listening in on your conversations with %s", v.peerName))
 	button.Connect("clicked", d.Destroy)
-	setImageFromFile(sucessImg, "success.svg")
+	setImageFromFile(successImg, "success.svg")
 
 	d.SetTransientFor(v.parentWindow)
 	d.ShowAll()

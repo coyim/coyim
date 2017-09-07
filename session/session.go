@@ -20,7 +20,6 @@ import (
 	"github.com/twstrike/coyim/session/events"
 	"github.com/twstrike/coyim/tls"
 	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
 	xi "github.com/twstrike/coyim/xmpp/interfaces"
 	"github.com/twstrike/coyim/xmpp/utils"
@@ -421,65 +420,6 @@ func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{},
 	return data.EmptyReply{}, false
 }
 
-func discoIQ(s *session, _ *data.ClientIQ) (ret interface{}, ignore bool) {
-	// TODO: We should ensure that there is no "node" entity on this query, since we don't support that.
-	// In the case of a "node", we should return  <service-unavailable/>
-	s.info("IQ: http://jabber.org/protocol/disco#info query")
-	return xmpp.DiscoveryReply(s.GetConfig().Account), false
-}
-
-func versionIQ(s *session, _ *data.ClientIQ) (ret interface{}, ignore bool) {
-	s.info("IQ: jabber:iq:version query")
-	return s.receivedIQVersion(), false
-}
-
-func rosterIQ(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
-	s.info("IQ: jabber:iq:roster query")
-	return s.receivedIQRosterQuery(stanza)
-}
-
-func unknownIQ(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
-	s.info(fmt.Sprintf("Unknown IQ: %s", bytes.NewBuffer(stanza.Query)))
-	return nil, false
-}
-
-type iqFunction func(*session, *data.ClientIQ) (interface{}, bool)
-
-var knownIQs = map[string]iqFunction{}
-
-func registerKnownIQ(stanzaType, fullName string, f iqFunction) {
-	knownIQs[stanzaType+" "+fullName] = f
-}
-
-func getIQHandler(stanzaType, namespace, local string) iqFunction {
-	f, ok := knownIQs[fmt.Sprintf("%s %s %s", stanzaType, namespace, local)]
-	if ok {
-		return f
-	}
-	return unknownIQ
-}
-
-func init() {
-	registerKnownIQ("get", "http://jabber.org/protocol/disco#info query", discoIQ)
-	registerKnownIQ("get", "jabber:iq:version query", versionIQ)
-	registerKnownIQ("set", "jabber:iq:roster query", rosterIQ)
-	registerKnownIQ("result", "jabber:iq:roster query", rosterIQ)
-}
-
-func (s *session) processIQ(stanza *data.ClientIQ) (ret interface{}, ignore bool) {
-	token, _ := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Token()
-	if token == nil {
-		return nil, false
-	}
-
-	startElem, ok := token.(xml.StartElement)
-	if !ok {
-		return nil, false
-	}
-
-	return getIQHandler(stanza.Type, startElem.Name.Space, startElem.Name.Local)(s, stanza)
-}
-
 // HandleConfirmOrDeny is used to handle a users response to a subscription request
 func (s *session) HandleConfirmOrDeny(jid string, isConfirm bool) {
 	id, ok := s.r.RemovePendingSubscribe(jid)
@@ -594,9 +534,8 @@ func (s *session) processClientMessage(stanza *data.ClientMessage) {
 		return
 	}
 
-	//TODO: Add a more general solution to XEP's
 	if len(stanza.Body) == 0 && len(stanza.Extensions) > 0 {
-		//Extension only stanza
+		s.processExtensions(stanza)
 		return
 	}
 

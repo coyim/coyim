@@ -14,13 +14,11 @@ import (
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
-// TODO: receiving packets via messages
-// TODO: check what happens if I cancel from the Pidgin side
-
 func init() {
 	registerKnownIQ("set", "http://jabber.org/protocol/ibb open", fileTransferIbbOpen)
 	registerKnownIQ("set", "http://jabber.org/protocol/ibb data", fileTransferIbbData)
 	registerKnownIQ("set", "http://jabber.org/protocol/ibb close", fileTransferIbbClose)
+	registerKnownExtension("http://jabber.org/protocol/ibb data", fileTransferIbbMessageData)
 }
 
 type ibbContext struct {
@@ -82,7 +80,8 @@ func fileTransferIbbOpen(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	var tag data.IBBOpen
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
 		s.warn(fmt.Sprintf("Failed to parse IBB open: %v", err))
-		return nil, false
+		s.sendIQError(stanza, iqErrorNotAcceptable)
+		return nil, true
 	}
 
 	inflight, ok := getInflightFileTransfer(tag.Sid)
@@ -114,7 +113,8 @@ func fileTransferIbbOpen(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 		s.warn(fmt.Sprintf("Failed to open temporary file: %v", err))
 		inflight.reportError(errors.New("Couldn't open local temporary file"))
 		removeInflightFileTransfer(tag.Sid)
-		return nil, false
+		s.sendIQError(stanza, iqErrorNotAcceptable)
+		return nil, true
 	}
 	c.f = ff
 
@@ -125,7 +125,8 @@ func fileTransferIbbData(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	var tag data.IBBData
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
 		s.warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
-		return nil, false
+		s.sendIQError(stanza, iqErrorNotAcceptable)
+		return nil, true
 	}
 
 	inflight, ok := getInflightFileTransfer(tag.Sid)
@@ -176,19 +177,82 @@ func fileTransferIbbData(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 		s.warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
 		inflight.reportError(errors.New("Couldn't write data to the file system"))
 		inflight.fileTransferIbbCleanup()
-		return nil, false
+		s.sendIQError(stanza, iqErrorNotAcceptable)
+		return nil, true
 	}
 	ctx.currentSize += int64(n)
 	inflight.updateChannel <- ctx.currentSize
 
-	return nil, false
+	return data.EmptyReply{}, false
+}
+
+func fileTransferIbbMessageData(s *session, stanza *data.ClientMessage, ext *data.Extension) {
+	var tag data.IBBData
+	if err := xml.NewDecoder(bytes.NewBuffer([]byte(ext.Body))).Decode(&tag); err != nil {
+		s.warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
+		return
+	}
+
+	inflight, ok := getInflightFileTransfer(tag.Sid)
+
+	if !ok || inflight.status.opaque == nil {
+		s.warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		// we can't actually send anything back to indicate this problem...
+		return
+	}
+
+	ctx, ok := inflight.status.opaque.(*ibbContext)
+	if !ok {
+		s.warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
+		// we can't actually send anything back to indicate this problem...
+		return
+	}
+
+	ctx.Lock()
+	defer ctx.Unlock()
+
+	// XEP-0047 wants us to keep track of previously used sequence numbers, and only do this error
+	// when a sequence number is reused - otherwise we should immediately close the stream.
+	// However, because of the wraparound behavior of "seq" - also specified in XEP-0047, for large
+	// files we can't actually tell the difference between a reused sequence number or a number that
+	// has just been wrapped around. Thus, we do this deviation from the spec here.
+	if tag.Sequence != ctx.expectingSequence {
+		s.warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
+		// we can't actually send anything back to indicate this problem...
+		inflight.reportError(errors.New("Unexpected data sent from the peer"))
+		inflight.fileTransferIbbCleanup()
+		return
+	}
+
+	ctx.expectingSequence++ // wraparound on purpose, to match uint16 spec behavior of the seq field
+
+	result, err := base64.StdEncoding.DecodeString(tag.Base64)
+	if err != nil {
+		s.warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
+		// we can't actually send anything back to indicate this problem...
+		inflight.reportError(errors.New("Corrupt data sent by the peer"))
+		inflight.fileTransferIbbCleanup()
+		return
+
+	}
+
+	var n int
+	if n, err = ctx.f.Write(result); err != nil {
+		s.warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
+		inflight.reportError(errors.New("Couldn't write data to the file system"))
+		inflight.fileTransferIbbCleanup()
+		return
+	}
+	ctx.currentSize += int64(n)
+	inflight.updateChannel <- ctx.currentSize
 }
 
 func fileTransferIbbClose(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
 	var tag data.IBBClose
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
 		s.warn(fmt.Sprintf("Failed to parse IBB close: %v", err))
-		return nil, false
+		s.sendIQError(stanza, iqErrorNotAcceptable)
+		return nil, true
 	}
 
 	inflight, ok := getInflightFileTransfer(tag.Sid)
@@ -214,8 +278,8 @@ func fileTransferIbbClose(s *session, stanza *data.ClientIQ) (ret interface{}, i
 
 	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
 	if ctx.currentSize != inflight.size || fstat.Size() != ctx.currentSize {
-		s.warn(fmt.Sprintf("Expected size of file to be %d, but was %d", inflight.size, fstat.Size()))
-		inflight.reportError(errors.New("Incorrect final size of file"))
+		s.warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", inflight.size, fstat.Size()))
+		inflight.reportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
 		inflight.fileTransferIbbCleanup()
 		return data.EmptyReply{}, false
 	}
@@ -235,5 +299,3 @@ func fileTransferIbbClose(s *session, stanza *data.ClientIQ) (ret interface{}, i
 
 	return data.EmptyReply{}, false
 }
-
-// TODO: send back better failures to all the bad cases, since return nil, false actually returns type=result, not error.

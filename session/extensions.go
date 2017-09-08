@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
-type extensionFunction func(*session, *data.ClientMessage, *data.Extension)
+type extensionFunction func(access.Session, *data.ClientMessage, *data.Extension)
 
 var knownExtensions = map[string]extensionFunction{}
 
-func unknownExtension(s *session, stanza *data.ClientMessage, ext *data.Extension) {
-	s.info(fmt.Sprintf("Unknown extension: %s", bytes.NewBuffer([]byte(ext.Body))))
+func unknownExtension(s access.Session, stanza *data.ClientMessage, ext *data.Extension) {
+	s.Info(fmt.Sprintf("Unknown extension: %s", bytes.NewBuffer([]byte(ext.Body))))
 }
 
 func registerKnownExtension(fullName string, f extensionFunction) {

@@ -64,6 +64,10 @@ func (s *session) publishEvent(e interface{}) {
 	}
 }
 
+func (s *session) PublishEvent(e interface{}) {
+	s.publishEvent(e)
+}
+
 func (s *session) publishSMPEvent(t events.SMPType, from, r, body string) {
 	s.publishEvent(events.SMP{
 		Type:     t,

@@ -138,6 +138,17 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 	return dialer, nil
 }
 
+// CreateTorProxy returns a dialer that uses the Tor connection if available
+func (a *Account) CreateTorProxy() (proxy.Dialer, error) {
+	if a.HasTorAuto() {
+		if !ournet.Tor.Detect() {
+			return nil, ErrTorNotRunning
+		}
+	}
+
+	return buildProxyChain(a.Proxies)
+}
+
 func buildProxyChain(proxies []string) (dialer proxy.Dialer, err error) {
 	for i := len(proxies) - 1; i >= 0; i-- {
 		u, e := url.Parse(proxies[i])

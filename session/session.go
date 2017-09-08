@@ -205,6 +205,14 @@ func (s *session) info(m string) {
 	})
 }
 
+func (s *session) Warn(m string) {
+	s.warn(m)
+}
+
+func (s *session) Info(m string) {
+	s.info(m)
+}
+
 func (s *session) warn(m string) {
 	s.publishEvent(events.Log{
 		Level:   events.Warn,
@@ -304,9 +312,13 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 
 func (s *session) receivedClientIQ(stanza *data.ClientIQ) bool {
 	if stanza.Type == "get" || stanza.Type == "set" {
-		reply, ignore := s.processIQ(stanza)
+		reply, iqtype, ignore := s.processIQ(stanza)
 		if ignore {
 			return true
+		}
+
+		if iqtype == "" {
+			iqtype = "result"
 		}
 
 		if reply == nil {
@@ -316,7 +328,7 @@ func (s *session) receivedClientIQ(stanza *data.ClientIQ) bool {
 			}
 		}
 
-		s.sendIQResult(stanza, reply)
+		s.sendIQReply(stanza, iqtype, reply)
 		return true
 	}
 	s.info(fmt.Sprintf("unrecognized iq: %#v", stanza))
@@ -396,17 +408,17 @@ func (s *session) addOrMergeNewPeer(entry data.RosterEntry, c *config.Account) b
 	return s.r.AddOrMerge(peerFrom(entry, c))
 }
 
-func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{}, ignore bool) {
+func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	// TODO: we should deal with "ask" attributes here
 
 	if len(stanza.From) > 0 && !s.GetConfig().Is(stanza.From) {
 		s.warn("Ignoring roster IQ from bad address: " + stanza.From)
-		return nil, true
+		return nil, "", true
 	}
 	var rst data.Roster
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&rst); err != nil || len(rst.Item) == 0 {
 		s.warn("Failed to parse roster push IQ")
-		return nil, false
+		return nil, "", false
 	}
 
 	for _, entry := range rst.Item {
@@ -417,7 +429,7 @@ func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{},
 		}
 	}
 
-	return data.EmptyReply{}, false
+	return data.EmptyReply{}, "", false
 }
 
 // HandleConfirmOrDeny is used to handle a users response to a subscription request

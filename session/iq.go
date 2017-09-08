@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/xmpp"
 	"github.com/twstrike/coyim/xmpp/data"
 )
@@ -12,8 +13,16 @@ func (s *session) sendIQError(stanza *data.ClientIQ, reply interface{}) {
 	s.sendIQReply(stanza, "error", reply)
 }
 
+func (s *session) SendIQError(stanza *data.ClientIQ, reply interface{}) {
+	s.sendIQError(stanza, reply)
+}
+
 func (s *session) sendIQResult(stanza *data.ClientIQ, reply interface{}) {
 	s.sendIQReply(stanza, "result", reply)
+}
+
+func (s *session) SendIQResult(stanza *data.ClientIQ, reply interface{}) {
+	s.sendIQResult(stanza, reply)
 }
 
 func (s *session) sendIQReply(stanza *data.ClientIQ, tp string, reply interface{}) {
@@ -22,29 +31,29 @@ func (s *session) sendIQReply(stanza *data.ClientIQ, tp string, reply interface{
 	}
 }
 
-func discoIQ(s *session, _ *data.ClientIQ) (ret interface{}, ignore bool) {
+func discoIQ(s access.Session, _ *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	// TODO: We should ensure that there is no "node" entity on this query, since we don't support that.
 	// In the case of a "node", we should return  <service-unavailable/>
-	s.info("IQ: http://jabber.org/protocol/disco#info query")
-	return xmpp.DiscoveryReply(s.GetConfig().Account), false
+	s.Info("IQ: http://jabber.org/protocol/disco#info query")
+	return xmpp.DiscoveryReply(s.GetConfig().Account), "", false
 }
 
-func versionIQ(s *session, _ *data.ClientIQ) (ret interface{}, ignore bool) {
-	s.info("IQ: jabber:iq:version query")
-	return s.receivedIQVersion(), false
+func versionIQ(s access.Session, _ *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
+	s.Info("IQ: jabber:iq:version query")
+	return s.(*session).receivedIQVersion(), "", false
 }
 
-func rosterIQ(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
-	s.info("IQ: jabber:iq:roster query")
-	return s.receivedIQRosterQuery(stanza)
+func rosterIQ(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
+	s.Info("IQ: jabber:iq:roster query")
+	return s.(*session).receivedIQRosterQuery(stanza)
 }
 
-func unknownIQ(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
-	s.info(fmt.Sprintf("Unknown IQ: %s", bytes.NewBuffer(stanza.Query)))
-	return nil, false
+func unknownIQ(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
+	s.Info(fmt.Sprintf("Unknown IQ: %s", bytes.NewBuffer(stanza.Query)))
+	return nil, "", false
 }
 
-type iqFunction func(*session, *data.ClientIQ) (interface{}, bool)
+type iqFunction func(access.Session, *data.ClientIQ) (interface{}, string, bool)
 
 var knownIQs = map[string]iqFunction{}
 
@@ -67,9 +76,9 @@ func init() {
 	registerKnownIQ("result", "jabber:iq:roster query", rosterIQ)
 }
 
-func (s *session) processIQ(stanza *data.ClientIQ) (ret interface{}, ignore bool) {
+func (s *session) processIQ(stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	if nspace, local, ok := tryDecodeXML(stanza.Query); ok {
 		return getIQHandler(stanza.Type, nspace, local)(s, stanza)
 	}
-	return nil, false
+	return nil, "", false
 }

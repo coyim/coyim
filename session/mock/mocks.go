@@ -165,6 +165,12 @@ func (*SessionMock) Subscribe(chan<- interface{}) {}
 // Timeout is the implementation for Session interface
 func (*SessionMock) Timeout(data.Cookie, time.Time) {}
 
+// Warn is the implementation for Session interface
+func (*SessionMock) Warn(string) {}
+
+// Info is the implementation for Session interface
+func (*SessionMock) Info(string) {}
+
 // StartSMP is the implementation for Session interface
 func (*SessionMock) StartSMP(string, string, string, string) {}
 
@@ -173,3 +179,12 @@ func (*SessionMock) FinishSMP(string, string, string) {}
 
 // AbortSMP is the implementation for Session interface
 func (*SessionMock) AbortSMP(string, string) {}
+
+// PublishEvent is the implementation for Session interface
+func (*SessionMock) PublishEvent(interface{}) {}
+
+// SendIQError is the implementation for Session interface
+func (*SessionMock) SendIQError(*data.ClientIQ, interface{}) {}
+
+// SendIQResult is the implementation for Session interface
+func (*SessionMock) SendIQResult(*data.ClientIQ, interface{}) {}

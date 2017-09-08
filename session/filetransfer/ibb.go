@@ -1,4 +1,4 @@
-package session
+package filetransfer
 
 import (
 	"bytes"
@@ -6,20 +6,12 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"sync"
 
+	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/xmpp/data"
 )
-
-func init() {
-	registerKnownIQ("set", "http://jabber.org/protocol/ibb open", fileTransferIbbOpen)
-	registerKnownIQ("set", "http://jabber.org/protocol/ibb data", fileTransferIbbData)
-	registerKnownIQ("set", "http://jabber.org/protocol/ibb close", fileTransferIbbClose)
-	registerKnownExtension("http://jabber.org/protocol/ibb data", fileTransferIbbMessageData)
-}
 
 type ibbContext struct {
 	sync.Mutex
@@ -51,7 +43,7 @@ var iqErrorIBBBadRequest = data.ErrorReply{
 	Error: data.ErrorBadRequest{},
 }
 
-func (ift inflightFileTransfer) fileTransferIbbCleanup() {
+func (ift inflight) ibbCleanup() {
 	ctx, ok := ift.status.opaque.(*ibbContext)
 	if ok {
 		ctx.Lock()
@@ -62,34 +54,32 @@ func (ift inflightFileTransfer) fileTransferIbbCleanup() {
 			os.Remove(ctx.f.Name())
 		}
 	}
-	removeInflightFileTransfer(ift.id)
+	removeInflight(ift.id)
 }
 
-func fileTransferIbbWaitForCancel(s *session, ift inflightFileTransfer) {
+func ibbWaitForCancel(s access.Session, ift inflight) {
 	if cancel, ok := <-ift.cancelChannel; ok && cancel {
-		ift.fileTransferIbbCleanup()
+		ift.ibbCleanup()
 		close(ift.finishedChannel)
 		close(ift.updateChannel)
 		close(ift.errorChannel)
-		removeInflightFileTransfer(ift.id)
-		s.conn.SendIQ(ift.peer, "set", data.IBBClose{Sid: ift.id})
+		s.Conn().SendIQ(ift.peer, "set", data.IBBClose{Sid: ift.id})
 	}
 }
 
-func fileTransferIbbOpen(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
+// IbbOpen is the hook function that will be called when we receive an ibb open IQ
+func IbbOpen(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	var tag data.IBBOpen
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
-		s.warn(fmt.Sprintf("Failed to parse IBB open: %v", err))
-		s.sendIQError(stanza, iqErrorNotAcceptable)
-		return nil, true
+		s.Warn(fmt.Sprintf("Failed to parse IBB open: %v", err))
+		return iqErrorNotAcceptable, "error", false
 	}
 
-	inflight, ok := getInflightFileTransfer(tag.Sid)
+	inflight, ok := getInflight(tag.Sid)
 
 	if !ok || inflight.status.opaque != nil {
-		s.warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
-		s.sendIQError(stanza, iqErrorNotAcceptable)
-		return nil, true
+		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		return iqErrorNotAcceptable, "error", false
 	}
 
 	c := &ibbContext{
@@ -103,45 +93,35 @@ func fileTransferIbbOpen(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	}
 	inflight.status.opaque = c
 
-	// By creating a temp file next to the place where the real file should be saved
-	// we avoid problems on linux when trying to os.Rename later - if tmp filesystem is different
-	// than the destination file system. It also serves as an early permissions check.
-	dest := inflight.status.destination
-	ff, err := ioutil.TempFile(filepath.Dir(dest), filepath.Base(dest))
+	ff, err := inflight.openDestinationTempFile()
 	if err != nil {
-		inflight.status.opaque = nil
-		s.warn(fmt.Sprintf("Failed to open temporary file: %v", err))
-		inflight.reportError(errors.New("Couldn't open local temporary file"))
-		removeInflightFileTransfer(tag.Sid)
-		s.sendIQError(stanza, iqErrorNotAcceptable)
-		return nil, true
+		s.Warn(fmt.Sprintf("Failed to open temporary file: %v", err))
+		return iqErrorNotAcceptable, "error", false
 	}
 	c.f = ff
 
-	return data.EmptyReply{}, false
+	return data.EmptyReply{}, "", false
 }
 
-func fileTransferIbbData(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
+// IbbData is the hook function that will be called when we receive an ibb data IQ
+func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	var tag data.IBBData
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
-		s.warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
-		s.sendIQError(stanza, iqErrorNotAcceptable)
-		return nil, true
+		s.Warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
+		return iqErrorNotAcceptable, "error", false
 	}
 
-	inflight, ok := getInflightFileTransfer(tag.Sid)
+	inflight, ok := getInflight(tag.Sid)
 
 	if !ok || inflight.status.opaque == nil {
-		s.warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
-		s.sendIQError(stanza, iqErrorItemNotFound)
-		return nil, true
+		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		return iqErrorItemNotFound, "error", false
 	}
 
 	ctx, ok := inflight.status.opaque.(*ibbContext)
 	if !ok {
-		s.warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
-		s.sendIQError(stanza, iqErrorItemNotFound)
-		return nil, true
+		s.Warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
+		return iqErrorItemNotFound, "error", false
 	}
 
 	ctx.Lock()
@@ -153,57 +133,55 @@ func fileTransferIbbData(s *session, stanza *data.ClientIQ) (ret interface{}, ig
 	// files we can't actually tell the difference between a reused sequence number or a number that
 	// has just been wrapped around. Thus, we do this deviation from the spec here.
 	if tag.Sequence != ctx.expectingSequence {
-		s.warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
-		s.sendIQError(stanza, iqErrorUnexpectedRequest)
+		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
 		inflight.reportError(errors.New("Unexpected data sent from the peer"))
-		inflight.fileTransferIbbCleanup()
-		return nil, true
+		inflight.ibbCleanup()
+		return iqErrorUnexpectedRequest, "error", false
 	}
 
 	ctx.expectingSequence++ // wraparound on purpose, to match uint16 spec behavior of the seq field
 
 	result, err := base64.StdEncoding.DecodeString(tag.Base64)
 	if err != nil {
-		s.warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
-		s.sendIQError(stanza, iqErrorIBBBadRequest)
+		s.Warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
 		inflight.reportError(errors.New("Corrupt data sent by the peer"))
-		inflight.fileTransferIbbCleanup()
-		return nil, true
+		inflight.ibbCleanup()
+		return iqErrorIBBBadRequest, "error", false
 
 	}
 
 	var n int
 	if n, err = ctx.f.Write(result); err != nil {
-		s.warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
+		s.Warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
 		inflight.reportError(errors.New("Couldn't write data to the file system"))
-		inflight.fileTransferIbbCleanup()
-		s.sendIQError(stanza, iqErrorNotAcceptable)
-		return nil, true
+		inflight.ibbCleanup()
+		return iqErrorNotAcceptable, "error", false
 	}
 	ctx.currentSize += int64(n)
 	inflight.updateChannel <- ctx.currentSize
 
-	return data.EmptyReply{}, false
+	return data.EmptyReply{}, "", false
 }
 
-func fileTransferIbbMessageData(s *session, stanza *data.ClientMessage, ext *data.Extension) {
+// IbbMessageData is the hook function that will be called when we receive a message containing an ibb data
+func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Extension) {
 	var tag data.IBBData
 	if err := xml.NewDecoder(bytes.NewBuffer([]byte(ext.Body))).Decode(&tag); err != nil {
-		s.warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
+		s.Warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
 		return
 	}
 
-	inflight, ok := getInflightFileTransfer(tag.Sid)
+	inflight, ok := getInflight(tag.Sid)
 
 	if !ok || inflight.status.opaque == nil {
-		s.warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
 		// we can't actually send anything back to indicate this problem...
 		return
 	}
 
 	ctx, ok := inflight.status.opaque.(*ibbContext)
 	if !ok {
-		s.warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
+		s.Warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
 		// we can't actually send anything back to indicate this problem...
 		return
 	}
@@ -217,10 +195,10 @@ func fileTransferIbbMessageData(s *session, stanza *data.ClientMessage, ext *dat
 	// files we can't actually tell the difference between a reused sequence number or a number that
 	// has just been wrapped around. Thus, we do this deviation from the spec here.
 	if tag.Sequence != ctx.expectingSequence {
-		s.warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
+		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
 		// we can't actually send anything back to indicate this problem...
 		inflight.reportError(errors.New("Unexpected data sent from the peer"))
-		inflight.fileTransferIbbCleanup()
+		inflight.ibbCleanup()
 		return
 	}
 
@@ -228,46 +206,44 @@ func fileTransferIbbMessageData(s *session, stanza *data.ClientMessage, ext *dat
 
 	result, err := base64.StdEncoding.DecodeString(tag.Base64)
 	if err != nil {
-		s.warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
+		s.Warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
 		// we can't actually send anything back to indicate this problem...
 		inflight.reportError(errors.New("Corrupt data sent by the peer"))
-		inflight.fileTransferIbbCleanup()
+		inflight.ibbCleanup()
 		return
 
 	}
 
 	var n int
 	if n, err = ctx.f.Write(result); err != nil {
-		s.warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
+		s.Warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
 		inflight.reportError(errors.New("Couldn't write data to the file system"))
-		inflight.fileTransferIbbCleanup()
+		inflight.ibbCleanup()
 		return
 	}
 	ctx.currentSize += int64(n)
 	inflight.updateChannel <- ctx.currentSize
 }
 
-func fileTransferIbbClose(s *session, stanza *data.ClientIQ) (ret interface{}, ignore bool) {
+// IbbClose is the hook function that will be called when we receive an ibb close IQ
+func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	var tag data.IBBClose
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
-		s.warn(fmt.Sprintf("Failed to parse IBB close: %v", err))
-		s.sendIQError(stanza, iqErrorNotAcceptable)
-		return nil, true
+		s.Warn(fmt.Sprintf("Failed to parse IBB close: %v", err))
+		return iqErrorNotAcceptable, "error", false
 	}
 
-	inflight, ok := getInflightFileTransfer(tag.Sid)
+	inflight, ok := getInflight(tag.Sid)
 
 	if !ok || inflight.status.opaque == nil {
-		s.warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
-		s.sendIQError(stanza, iqErrorItemNotFound)
-		return nil, true
+		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		return iqErrorItemNotFound, "error", false
 	}
 
 	ctx, ok := inflight.status.opaque.(*ibbContext)
 	if !ok {
-		s.warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
-		s.sendIQError(stanza, iqErrorItemNotFound)
-		return nil, true
+		s.Warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
+		return iqErrorItemNotFound, "error", false
 	}
 
 	ctx.Lock()
@@ -278,24 +254,18 @@ func fileTransferIbbClose(s *session, stanza *data.ClientIQ) (ret interface{}, i
 
 	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
 	if ctx.currentSize != inflight.size || fstat.Size() != ctx.currentSize {
-		s.warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", inflight.size, fstat.Size()))
+		s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", inflight.size, fstat.Size()))
 		inflight.reportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
-		inflight.fileTransferIbbCleanup()
-		return data.EmptyReply{}, false
+		inflight.ibbCleanup()
+		return data.EmptyReply{}, "", false
 	}
 
 	// TODO[LATER]: if there's a hash of the file in the inflight, we should calculate it on the file and check it
 
-	if err := os.Rename(ctx.f.Name(), inflight.status.destination); err != nil {
-		s.warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
-		inflight.reportError(errors.New("Couldn't save final file"))
-		inflight.fileTransferIbbCleanup()
-		return data.EmptyReply{}, false
+	if err := inflight.finalizeFileTransfer(ctx.f.Name()); err != nil {
+		s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
+		inflight.ibbCleanup()
 	}
 
-	inflight.reportFinished()
-
-	removeInflightFileTransfer(tag.Sid)
-
-	return data.EmptyReply{}, false
+	return data.EmptyReply{}, "", false
 }

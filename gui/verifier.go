@@ -165,6 +165,8 @@ func (v *verifier) showPINDialog() {
 	}
 	v.pinWindow.pin.SetText(pin)
 	v.session.StartSMP(v.peerJid, v.currentResource, question, pin)
+	v.unverifiedWarning.infobar.Hide()
+	v.waitingForPeer.bar.ShowAll()
 	v.pinWindow.d.ShowAll()
 }
 

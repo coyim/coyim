@@ -15,7 +15,9 @@ import (
 //  - A way for the user to cancel the transfer
 //  - A way to notify the user when the transfer is done
 //  - A way to update the user interface about progress
-//  In general, hopefully these methods are completely independent of transport. Once we get to encrypted transfer we might want to highlight that (and say something about the file being transmitted in the clear otherwise)
+//  In general, hopefully these methods are completely independent of transport.
+// Once we get to encrypted transfer we might want to highlight that (and say
+// something about the file being transmitted in the clear otherwise)
 
 // Actual user interface:
 //   First - ask if you want the file
@@ -24,6 +26,8 @@ import (
 //       This will get a checkbox and a message when done
 //       Or it will get an error message when failed
 //       There will be a cancel button there, that will cancel the file receipt
+// Due to some latest changes: cancel button will enter a strange loop and transfer
+// without tor does not work. It will prob be solved once the second thing is fixed
 
 func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView) {
 	go func() {
@@ -51,6 +55,7 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 
 			if cv.isFileTransferCanceled() {
 				log.Printf("File transfer of file canceled")
+				// XXX: failing due to latest changes
 				ev.CancelTransfer <- true
 				return
 			}

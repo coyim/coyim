@@ -349,7 +349,7 @@ func (v *verifier) displayVerificationSuccess() {
 	)
 	v.verificationSuccess.msg.SetText(i18n.Localf("Hooray! No one is listening in on your conversations with %s", v.peerName))
 	v.verificationSuccess.button.Connect("clicked", v.verificationSuccess.d.Destroy)
-	setImageFromFile(v.verificationSuccess.img, "success.svg")
+	setImageFromFile(v.verificationSuccess.img, "smpsuccess.svg")
 
 	v.verificationSuccess.d.SetTransientFor(v.parentWindow)
 	v.verificationSuccess.d.ShowAll()

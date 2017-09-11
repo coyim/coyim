@@ -25,10 +25,11 @@ import (
 //       Or it will get an error message when failed
 //       There will be a cancel button there, that will cancel the file receipt
 
-func (u *gtkUI) startAllListenersFor(ev events.FileTransfer) {
+func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView) {
 	go func() {
 		err, ok := <-ev.ErrorOccurred
 		if ok {
+			cv.failFileTransfer()
 			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
 			close(ev.CancelTransfer)
 		}
@@ -37,6 +38,7 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer) {
 	go func() {
 		_, ok := <-ev.TransferFinished
 		if ok {
+			cv.successFileTransfer()
 			log.Printf("File transfer of file %s finished with success", ev.Name)
 			close(ev.CancelTransfer)
 		}
@@ -44,7 +46,14 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer) {
 
 	go func() {
 		for upd := range ev.Update {
+			cv.startFileTransfer(float64((upd*100)/ev.Size) / 100)
 			log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
+
+			if cv.isFileTransferCanceled() {
+				log.Printf("File transfer of file canceled")
+				ev.CancelTransfer <- true
+				return
+			}
 		}
 	}()
 }
@@ -53,12 +62,13 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	dialogID := "FileTransferAskToReceive"
 	builder := newBuilder(dialogID)
 	dialogOb := builder.getObj(dialogID)
+	account := u.findAccountForSession(ev.Session)
 
 	d := dialogOb.(gtki.MessageDialog)
 	d.SetDefaultResponse(gtki.RESPONSE_YES)
 	d.SetTransientFor(u.window)
 
-	message := i18n.Localf("%s wants to send you a file - do you want to receive it?", utils.RemoveResourceFromJid(ev.Peer))
+	message := i18n.Localf("%s wants to send you a file: do you want to receive it?", utils.RemoveResourceFromJid(ev.Peer))
 	secondary := i18n.Localf("File name: %s", ev.Name)
 	if ev.Description != "" {
 		secondary = i18n.Localf("%s\nDescription: %s", secondary, ev.Description)
@@ -99,7 +109,11 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	}
 
 	if result && name != "" {
-		u.startAllListenersFor(ev)
+		cv, _ := u.roster.openConversationView(account, ev.Peer, true)
+
+		cv.showFileTransferNotification()
+
+		u.startAllListenersFor(ev, cv)
 		ev.Answer <- &name
 	} else {
 		ev.Answer <- nil

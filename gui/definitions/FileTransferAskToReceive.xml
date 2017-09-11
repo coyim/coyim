@@ -1,10 +1,9 @@
 <interface>
   <object class="GtkMessageDialog" id="FileTransferAskToReceive">
-    <property name="window-position">GTK_WIN_POS_CENTER</property>
+    <property name="window-position">GTK_WIN_POS_CENTER_ALWAYS</property>
     <property name="modal">false</property>
     <property name="border_width">7</property>
     <property name="title" translatable="yes">File transfer</property>
-    <property name="text" translatable="yes">A peer is trying to send you a file.</property>
     <property name="secondary_text" translatable="yes"></property>
     <property name="buttons">GTK_BUTTONS_YES_NO</property>
   </object>

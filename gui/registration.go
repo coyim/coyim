@@ -150,7 +150,7 @@ func renderError(message gtki.Label, errorMessage, logMessage string, err error)
 
 func (w *serverSelectionWindow) renderConnectionErrorFor(err error) {
 	w.spinner.Stop()
-	w.formImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
+	setImageFromFile(w.formImage, "failure.svg")
 
 	switch err {
 
@@ -164,7 +164,7 @@ func (w *serverSelectionWindow) renderConnectionErrorFor(err error) {
 }
 
 func (w *serverSelectionWindow) renderErrorFor(err error) {
-	w.doneImage.SetFromIconName("software-update-urgent", gtki.ICON_SIZE_DIALOG)
+	setImageFromFile(w.doneImage, "failure.svg")
 
 	switch err {
 	case xmpp.ErrMissingRequiredRegistrationInfo:
@@ -301,7 +301,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 		acc.Connect()
 	}
 
-	w.doneImage.SetFromIconName("emblem-default", gtki.ICON_SIZE_DIALOG)
+	setImageFromFile(w.doneImage, "success.svg")
 	w.doneMessage.SetMarkup(i18n.Localf("<b>%s</b> successfully created.", w.form.conf.Account))
 }
 

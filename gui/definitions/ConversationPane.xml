@@ -55,7 +55,7 @@
       <object class="GtkBox" id="notification-area">
         <property name="visible">true</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-        <child>
+	<child>
           <object class="GtkInfoBar" id="security-warning">
             <property name="visible">false</property>
             <property name="message-type">GTK_MESSAGE_WARNING</property>
@@ -94,6 +94,92 @@
             <property name="pack-type">GTK_PACK_START</property>
             <property name="position">0</property>
           </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="file-transfer">
+            <property name="visible">False</property>
+            <property name="can_focus">False</property>
+            <property name="spacing">37</property>
+            <child>
+              <object class="GtkImage" id="image-file-transfer">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">10</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_top">14</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="label-file-transfer">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkProgressBar" id="bar-file-transfer">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_top">6</property>
+                    <property name="fraction">0.0</property>
+                    <property name="show_text">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="margin_right">10</property>
+                <property name="margin_top">14</property>
+                <property name="margin_bottom">12</property>
+                <child>
+                  <object class="GtkLabel" id="button-label-file-transfer">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">25</property>
+                    <property name="margin_right">25</property>
+                  </object>
+                </child>
+                <signal name="clicked" handler="on_destroy_file_transfer" />
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="pack_type">end</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
         </child>
       </object>
       <packing>

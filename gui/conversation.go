@@ -245,12 +245,7 @@ func (conv *conversationPane) onDisconnect() {
 }
 
 func (conv *conversationPane) onWindowChange() {
-	w, _ := conv.transientParent.GetSize()
-	if w > 500 {
-		conv.verifier.layoutForNotificationsInWiderWindow()
-	} else {
-		conv.verifier.defaultLayoutForNotifications()
-	}
+	conv.verifier.chooseBestLayout(conv.transientParent)
 }
 
 func countVisibleLines(v gtki.TextView) uint {

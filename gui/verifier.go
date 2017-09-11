@@ -14,19 +14,21 @@ import (
 )
 
 type verifier struct {
-	parentWindow        gtki.Window
-	currentResource     string
-	session             access.Session
-	notifier            *notifier
-	peerName            string
-	peerJid             string
-	pinWindow           *pinWindow
-	answerSMPWindow     *answerSMPWindow
-	smpFailed           gtki.Dialog
-	waitingForPeer      *waitingForPeerNotification
-	peerRequestsSMP     *peerRequestsSMPNotification
-	unverifiedWarning   *unverifiedWarning
-	verificationSuccess *verificationSuccessNotification
+	parentWindow                        gtki.Window
+	currentResource                     string
+	session                             access.Session
+	notifier                            *notifier
+	peerName                            string
+	peerJid                             string
+	pinWindow                           *pinWindow
+	answerSMPWindow                     *answerSMPWindow
+	smpFailed                           gtki.Dialog
+	waitingForPeer                      *waitingForPeerNotification
+	peerRequestsSMP                     *peerRequestsSMPNotification
+	unverifiedWarning                   *unverifiedWarning
+	verificationSuccess                 *verificationSuccessNotification
+	showingUnverifiedWarning            bool
+	widthBeforeShowingUnverifiedWarning int
 }
 
 type notifier struct {
@@ -38,6 +40,7 @@ func (n *notifier) notify(i gtki.InfoBar) {
 }
 
 func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
+	w, _ := conv.transientParent.GetSize()
 	v := &verifier{
 		parentWindow:    conv.transientParent,
 		currentResource: conv.currentResource(),
@@ -49,6 +52,8 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 		peerJid: conv.mapCurrentPeer("", func(p *rosters.Peer) string {
 			return p.Jid
 		}),
+		showingUnverifiedWarning:            false,
+		widthBeforeShowingUnverifiedWarning: w,
 	}
 	v.buildPinWindow()
 	v.buildAnswerSMPDialog()
@@ -103,16 +108,19 @@ func (v *verifier) buildPinWindow() {
 
 func (v *verifier) showUnverifiedWarning() {
 	v.unverifiedWarning.show()
+	v.showingUnverifiedWarning = true
+	v.widthBeforeShowingUnverifiedWarning, _ = v.parentWindow.GetSize()
 }
 
 type unverifiedWarning struct {
-	b              *builder
-	box            gtki.Box
-	infobar        gtki.InfoBar
-	msg            gtki.Label
-	verifyButton   gtki.Button
-	alertImage     gtki.Image
-	peerIsVerified func() bool
+	b                 *builder
+	box               gtki.Box
+	infobar           gtki.InfoBar
+	msg               gtki.Label
+	verifyButtonVert  gtki.Button
+	verifyButtonHoriz gtki.Button
+	alertImage        gtki.Image
+	peerIsVerified    func() bool
 }
 
 func (u *unverifiedWarning) show() {
@@ -130,7 +138,8 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 		"infobar", &v.unverifiedWarning.infobar,
 		"box", &v.unverifiedWarning.box,
 		"message", &v.unverifiedWarning.msg,
-		"button_verify", &v.unverifiedWarning.verifyButton,
+		"button_verify_vertical", &v.unverifiedWarning.verifyButtonVert,
+		"button_verify_horizontal", &v.unverifiedWarning.verifyButtonHoriz,
 		"alert_image", &v.unverifiedWarning.alertImage,
 	)
 	setImageFromFile(v.unverifiedWarning.alertImage, "alert.svg")
@@ -140,7 +149,8 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 		},
 	})
 	v.unverifiedWarning.msg.SetText(i18n.Local("Make sure no one else is reading your messages"))
-	v.unverifiedWarning.verifyButton.Connect("clicked", v.showPINDialog)
+	v.unverifiedWarning.verifyButtonVert.Connect("clicked", v.showPINDialog)
+	v.unverifiedWarning.verifyButtonHoriz.Connect("clicked", v.showPINDialog)
 	v.notifier.notify(v.unverifiedWarning.infobar)
 }
 
@@ -272,37 +282,50 @@ func (v *verifier) showAnswerSMPDialog(question string) {
 }
 
 type peerRequestsSMPNotification struct {
-	b            *builder
-	box          gtki.Box
-	actionArea   gtki.Box
-	infobar      gtki.InfoBar
-	msg          gtki.Label
-	verifyButton gtki.Button
-	cancelButton gtki.Button
+	b                 *builder
+	box               gtki.Box
+	infobar           gtki.InfoBar
+	msg               gtki.Label
+	vertActionButtons gtki.Box
+	verifyButtonVert  gtki.Button
+	cancelButtonVert  gtki.Button
+	verifyButtonHoriz gtki.Button
+	cancelButtonHoriz gtki.Button
 }
 
 func (v *verifier) buildPeerRequestsSMPNotification() {
 	v.peerRequestsSMP = &peerRequestsSMPNotification{b: newBuilder("PeerRequestsSMP")}
 	v.peerRequestsSMP.b.getItems(
 		"box", &v.peerRequestsSMP.box,
-		"action_buttons", &v.peerRequestsSMP.actionArea,
+		"vert_action_buttons", &v.peerRequestsSMP.vertActionButtons,
 		"peer_requests_smp", &v.peerRequestsSMP.infobar,
 		"message", &v.peerRequestsSMP.msg,
-		"verification_button", &v.peerRequestsSMP.verifyButton,
-		"cancel_button", &v.peerRequestsSMP.cancelButton,
+		"verification_button_vertical", &v.peerRequestsSMP.verifyButtonVert,
+		"cancel_button_vertical", &v.peerRequestsSMP.cancelButtonVert,
+		"verification_button_horizontal", &v.peerRequestsSMP.verifyButtonHoriz,
+		"cancel_button_horizontal", &v.peerRequestsSMP.cancelButtonHoriz,
 	)
-	v.peerRequestsSMP.cancelButton.Connect("clicked", func() {
+	v.peerRequestsSMP.cancelButtonVert.Connect("clicked", func() {
+		v.removeInProgressDialogs()
+		v.session.AbortSMP(v.peerJid, v.currentResource)
+		v.unverifiedWarning.show()
+	})
+	v.peerRequestsSMP.cancelButtonHoriz.Connect("clicked", func() {
 		v.removeInProgressDialogs()
 		v.session.AbortSMP(v.peerJid, v.currentResource)
 		v.showUnverifiedWarning()
 	})
+
 	v.peerRequestsSMP.msg.SetText(i18n.Localf("%s is waiting for you to finish verifying the security of this channel...", v.peerName))
 	v.notifier.notify(v.peerRequestsSMP.infobar)
 }
 
 func (v *verifier) displayRequestForSecret(question string) {
 	v.hideUnverifiedWarning()
-	v.peerRequestsSMP.verifyButton.Connect("clicked", func() {
+	v.peerRequestsSMP.verifyButtonVert.Connect("clicked", func() {
+		v.showAnswerSMPDialog(question)
+	})
+	v.peerRequestsSMP.verifyButtonHoriz.Connect("clicked", func() {
 		v.showAnswerSMPDialog(question)
 	})
 	v.peerRequestsSMP.infobar.ShowAll()
@@ -366,15 +389,11 @@ func (v *verifier) hideUnverifiedWarning() {
 
 func (v *verifier) defaultLayoutForNotifications() {
 	v.peerRequestsSMP.box.SetOrientation(gtki.VerticalOrientation)
-	c, _ := v.peerRequestsSMP.actionArea.GetStyleContext()
+	v.peerRequestsSMP.vertActionButtons.Show()
+	v.peerRequestsSMP.verifyButtonHoriz.Hide()
+	v.peerRequestsSMP.cancelButtonHoriz.Hide()
+	c, _ := v.peerRequestsSMP.cancelButtonVert.GetStyleContext()
 	ds := newDisplaySettings()
-	c.AddProvider(ds.provider, 9999)
-	c.AddClass("buttons")
-	ds.provider.LoadFromData(`.buttons {
-			margin-right: 0.5em;
-		}`)
-	c, _ = v.peerRequestsSMP.cancelButton.GetStyleContext()
-	ds = newDisplaySettings()
 	c.AddProvider(ds.provider, 9999)
 	c.AddClass("cancelButton")
 	ds.provider.LoadFromData(`.cancelButton {
@@ -382,6 +401,8 @@ func (v *verifier) defaultLayoutForNotifications() {
 		}`)
 
 	v.unverifiedWarning.box.SetOrientation(gtki.VerticalOrientation)
+	v.unverifiedWarning.verifyButtonVert.Show()
+	v.unverifiedWarning.verifyButtonHoriz.Hide()
 	c, _ = v.unverifiedWarning.alertImage.GetStyleContext()
 	ds = newDisplaySettings()
 	c.AddClass("alert-icon")
@@ -394,15 +415,11 @@ func (v *verifier) defaultLayoutForNotifications() {
 
 func (v *verifier) layoutForNotificationsInWiderWindow() {
 	v.peerRequestsSMP.box.SetOrientation(gtki.HorizontalOrientation)
-	c, _ := v.peerRequestsSMP.actionArea.GetStyleContext()
+	v.peerRequestsSMP.vertActionButtons.Hide()
+	v.peerRequestsSMP.verifyButtonHoriz.Show()
+	v.peerRequestsSMP.cancelButtonHoriz.Show()
+	c, _ := v.peerRequestsSMP.cancelButtonHoriz.GetStyleContext()
 	ds := newDisplaySettings()
-	c.AddProvider(ds.provider, 9999)
-	c.AddClass("buttons")
-	ds.provider.LoadFromData(`.buttons {
-			margin-right: 0.5em;
-		}`)
-	c, _ = v.peerRequestsSMP.cancelButton.GetStyleContext()
-	ds = newDisplaySettings()
 	c.AddProvider(ds.provider, 9999)
 	c.AddClass("cancelButton")
 	ds.provider.LoadFromData(`.cancelButton {
@@ -410,6 +427,8 @@ func (v *verifier) layoutForNotificationsInWiderWindow() {
 		}`)
 
 	v.unverifiedWarning.box.SetOrientation(gtki.HorizontalOrientation)
+	v.unverifiedWarning.verifyButtonVert.Hide()
+	v.unverifiedWarning.verifyButtonHoriz.Show()
 	c, _ = v.unverifiedWarning.alertImage.GetStyleContext()
 	ds = newDisplaySettings()
 	c.AddClass("alert-icon")
@@ -418,5 +437,22 @@ func (v *verifier) layoutForNotificationsInWiderWindow() {
 			margin-left: 3em;
 			margin-right: 0.5em;
 		}`)
+}
 
+var bestTransitionWidth = 600
+
+func (v *verifier) chooseBestLayout(currentWindow gtki.Window) {
+	w, l := currentWindow.GetSize()
+
+	// This call to Resize() makes the first SMP notification display smoothly
+	if v.showingUnverifiedWarning {
+		currentWindow.Resize(v.widthBeforeShowingUnverifiedWarning, l)
+		v.showingUnverifiedWarning = false
+	}
+
+	if w > bestTransitionWidth {
+		v.layoutForNotificationsInWiderWindow()
+	} else {
+		v.defaultLayoutForNotifications()
+	}
 }

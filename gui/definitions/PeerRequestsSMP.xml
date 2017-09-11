@@ -9,16 +9,30 @@
           </object>
         </child>
         <child>
-          <object class="GtkBox" id="action_buttons">
+          <object class="GtkBox" id="vert_action_buttons">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
             <property name="homogeneous">true</property>
             <child>
-              <object class="GtkButton" id="verification_button">
+              <object class="GtkButton" id="verification_button_vertical">
                 <property name="label" translatable="yes">Finish verification</property>
               </object>
             </child>
             <child>
-              <object class="GtkButton" id="cancel_button">
+              <object class="GtkButton" id="cancel_button_vertical">
+                <property name="label" translatable="yes">Cancel</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <child>
+              <object class="GtkButton" id="verification_button_horizontal">
+                <property name="label" translatable="yes">Finish verification</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="cancel_button_horizontal">
                 <property name="label" translatable="yes">Cancel</property>
               </object>
             </child>

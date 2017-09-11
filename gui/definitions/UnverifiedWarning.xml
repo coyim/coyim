@@ -20,9 +20,19 @@
             </object>
           </child>
           <child>
-            <object  class= "GtkButton" id="button_verify">
+            <object  class= "GtkButton" id="button_verify_vertical">
               <property name="label" translatable="yes">Validate secure channel</property>
               <property name="can-default">true</property>
+            </object>
+          </child>
+          <child internal-child="action_area">
+            <object class="GtkButtonBox">
+              <child>
+                <object class="GtkButton" id="button_verify_horizontal">
+                  <property name="label" translatable="yes">Validate secure channel</property>
+                  <property name="can-default">true</property>
+                </object>
+              </child>
             </object>
           </child>
       </object>

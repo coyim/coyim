@@ -14,21 +14,20 @@ import (
 )
 
 type verifier struct {
-	parentWindow                        gtki.Window
-	currentResource                     string
-	session                             access.Session
-	notifier                            *notifier
-	peerName                            string
-	peerJid                             string
-	pinWindow                           *pinWindow
-	answerSMPWindow                     *answerSMPWindow
-	smpFailed                           gtki.Dialog
-	waitingForPeer                      *waitingForPeerNotification
-	peerRequestsSMP                     *peerRequestsSMPNotification
-	unverifiedWarning                   *unverifiedWarning
-	verificationSuccess                 *verificationSuccessNotification
-	showingUnverifiedWarning            bool
-	widthBeforeShowingUnverifiedWarning int
+	parentWindow        gtki.Window
+	currentResource     string
+	session             access.Session
+	notifier            *notifier
+	peerName            string
+	peerJid             string
+	pinWindow           *pinWindow
+	answerSMPWindow     *answerSMPWindow
+	smpFailed           gtki.Dialog
+	waitingForPeer      *waitingForPeerNotification
+	peerRequestsSMP     *peerRequestsSMPNotification
+	unverifiedWarning   *unverifiedWarning
+	verificationSuccess *verificationSuccessNotification
+	shouldResize        bool
 }
 
 type notifier struct {
@@ -40,7 +39,6 @@ func (n *notifier) notify(i gtki.InfoBar) {
 }
 
 func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
-	w, _ := conv.transientParent.GetSize()
 	v := &verifier{
 		parentWindow:    conv.transientParent,
 		currentResource: conv.currentResource(),
@@ -52,8 +50,7 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 		peerJid: conv.mapCurrentPeer("", func(p *rosters.Peer) string {
 			return p.Jid
 		}),
-		showingUnverifiedWarning:            false,
-		widthBeforeShowingUnverifiedWarning: w,
+		shouldResize: false,
 	}
 	v.buildPinWindow()
 	v.buildAnswerSMPDialog()
@@ -107,9 +104,9 @@ func (v *verifier) buildPinWindow() {
 }
 
 func (v *verifier) showUnverifiedWarning() {
+	v.shouldResize = true
 	v.unverifiedWarning.show()
-	v.showingUnverifiedWarning = true
-	v.widthBeforeShowingUnverifiedWarning, _ = v.parentWindow.GetSize()
+	v.chooseBestLayout()
 }
 
 type unverifiedWarning struct {
@@ -308,7 +305,7 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 	v.peerRequestsSMP.cancelButtonVert.Connect("clicked", func() {
 		v.removeInProgressDialogs()
 		v.session.AbortSMP(v.peerJid, v.currentResource)
-		v.unverifiedWarning.show()
+		v.showUnverifiedWarning()
 	})
 	v.peerRequestsSMP.cancelButtonHoriz.Connect("clicked", func() {
 		v.removeInProgressDialogs()
@@ -321,6 +318,7 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 }
 
 func (v *verifier) displayRequestForSecret(question string) {
+	v.shouldResize = true
 	v.hideUnverifiedWarning()
 	v.peerRequestsSMP.verifyButtonVert.Connect("clicked", func() {
 		v.showAnswerSMPDialog(question)
@@ -362,6 +360,10 @@ func (v *verifier) buildSMPFailedDialog() {
 	v.smpFailed = builder.getObj("dialog").(gtki.Dialog)
 	v.smpFailed.SetTransientFor(v.parentWindow)
 	v.smpFailed.HideOnDelete()
+	v.smpFailed.Connect("response", func() {
+		v.showUnverifiedWarning()
+		v.smpFailed.Hide()
+	})
 	addBoldHeaderStyle(builder.getObj("header").(gtki.Label))
 	msg := builder.getObj("verification_message").(gtki.Label)
 	msg.SetText(i18n.Localf("We could not verify this channel with %s.", v.peerName))
@@ -373,6 +375,7 @@ func (v *verifier) buildSMPFailedDialog() {
 }
 
 func (v *verifier) displayVerificationFailure() {
+	v.chooseBestLayout()
 	v.smpFailed.ShowAll()
 }
 
@@ -392,7 +395,7 @@ func (v *verifier) defaultLayoutForNotifications() {
 	v.peerRequestsSMP.vertActionButtons.Show()
 	v.peerRequestsSMP.verifyButtonHoriz.Hide()
 	v.peerRequestsSMP.cancelButtonHoriz.Hide()
-	addStyle(v.peerRequestsSMP.cancelButtonHoriz, "cancelButton", `.cancelButton {
+	addStyle(v.peerRequestsSMP.cancelButtonVert, "cancelButton", `.cancelButton {
 		margin-left: 0.5em;
 	}`)
 
@@ -425,18 +428,16 @@ func (v *verifier) layoutForNotificationsInWiderWindow() {
 
 var bestTransitionWidth = 600
 
-func (v *verifier) chooseBestLayout(currentWindow gtki.Window) {
-	w, l := currentWindow.GetSize()
-
-	// This call to Resize() makes the first SMP notification display smoothly
-	if v.showingUnverifiedWarning {
-		currentWindow.Resize(v.widthBeforeShowingUnverifiedWarning, l)
-		v.showingUnverifiedWarning = false
-	}
-
+func (v *verifier) chooseBestLayout() {
+	w, l := v.parentWindow.GetSize()
 	if w > bestTransitionWidth {
 		v.layoutForNotificationsInWiderWindow()
 	} else {
+		if v.shouldResize {
+			// TODO: 400 is a magic number. Assign it to a variable
+			v.parentWindow.Resize(400, l)
+			v.shouldResize = false
+		}
 		v.defaultLayoutForNotifications()
 	}
 }

@@ -272,7 +272,7 @@ func (conv *conversationPane) onDestroyFileTransfer() {
 }
 
 func (conv *conversationPane) onWindowChange() {
-	conv.verifier.chooseBestLayout(conv.transientParent)
+	conv.verifier.chooseBestLayout()
 }
 
 func countVisibleLines(v gtki.TextView) uint {

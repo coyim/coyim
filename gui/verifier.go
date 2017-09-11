@@ -392,25 +392,17 @@ func (v *verifier) defaultLayoutForNotifications() {
 	v.peerRequestsSMP.vertActionButtons.Show()
 	v.peerRequestsSMP.verifyButtonHoriz.Hide()
 	v.peerRequestsSMP.cancelButtonHoriz.Hide()
-	c, _ := v.peerRequestsSMP.cancelButtonVert.GetStyleContext()
-	ds := newDisplaySettings()
-	c.AddProvider(ds.provider, 9999)
-	c.AddClass("cancelButton")
-	ds.provider.LoadFromData(`.cancelButton {
-			margin-left: 0.5em;
-		}`)
+	addStyle(v.peerRequestsSMP.cancelButtonHoriz, "cancelButton", `.cancelButton {
+		margin-left: 0.5em;
+	}`)
 
 	v.unverifiedWarning.box.SetOrientation(gtki.VerticalOrientation)
 	v.unverifiedWarning.verifyButtonVert.Show()
 	v.unverifiedWarning.verifyButtonHoriz.Hide()
-	c, _ = v.unverifiedWarning.alertImage.GetStyleContext()
-	ds = newDisplaySettings()
-	c.AddClass("alert-icon")
-	c.AddProvider(ds.provider, 9999)
-	ds.provider.LoadFromData(`.alert-icon {
-			margin-left: 1em;
-			margin-right: 0.5em;
-		}`)
+	addStyle(v.unverifiedWarning.alertImage, "alert-icon", `.alert-icon {
+		margin-left: 1em;
+		margin-right: 0.5em;
+	}`)
 }
 
 func (v *verifier) layoutForNotificationsInWiderWindow() {
@@ -418,22 +410,14 @@ func (v *verifier) layoutForNotificationsInWiderWindow() {
 	v.peerRequestsSMP.vertActionButtons.Hide()
 	v.peerRequestsSMP.verifyButtonHoriz.Show()
 	v.peerRequestsSMP.cancelButtonHoriz.Show()
-	c, _ := v.peerRequestsSMP.cancelButtonHoriz.GetStyleContext()
-	ds := newDisplaySettings()
-	c.AddProvider(ds.provider, 9999)
-	c.AddClass("cancelButton")
-	ds.provider.LoadFromData(`.cancelButton {
-			margin-left: 0.5em;
-		}`)
+	addStyle(v.peerRequestsSMP.cancelButtonHoriz, "cancelButton", `.cancelButton {
+		margin-left: 0.5em;
+	}`)
 
 	v.unverifiedWarning.box.SetOrientation(gtki.HorizontalOrientation)
 	v.unverifiedWarning.verifyButtonVert.Hide()
 	v.unverifiedWarning.verifyButtonHoriz.Show()
-	c, _ = v.unverifiedWarning.alertImage.GetStyleContext()
-	ds = newDisplaySettings()
-	c.AddClass("alert-icon")
-	c.AddProvider(ds.provider, 9999)
-	ds.provider.LoadFromData(`.alert-icon {
+	addStyle(v.unverifiedWarning.alertImage, "alert-icon", `.alert-icon {
 			margin-left: 3em;
 			margin-right: 0.5em;
 		}`)

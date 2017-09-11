@@ -107,3 +107,13 @@ func addBoldHeaderStyle(l gtki.Label) {
 		}`)
 	})
 }
+
+func addStyle(w gtki.Widget, className string, css string) {
+	doInUIThread(func() {
+		c, _ := w.GetStyleContext()
+		ds := newDisplaySettings()
+		c.AddProvider(ds.provider, 9999)
+		c.AddClass(className)
+		ds.provider.LoadFromData(css)
+	})
+}

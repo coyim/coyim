@@ -112,7 +112,6 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 	if result && name != "" {
 		cv, _ := u.roster.openConversationView(account, ev.Peer, true)
-
 		cv.showFileTransferNotification()
 
 		u.startAllListenersFor(ev, cv)

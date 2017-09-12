@@ -70,12 +70,12 @@ type conversationWindow struct {
 }
 
 type fileTransferNotification struct {
-	notificationArea        gtki.Box
-	notificationImage       gtki.Image
-	notificationLabel       gtki.Label
-	notificationBar         gtki.ProgressBar
-	notificationLabelButton gtki.Label
-	canceled                bool
+	area        gtki.Box
+	image       gtki.Image
+	label       gtki.Label
+	progressBar gtki.ProgressBar
+	labelButton gtki.Label
+	canceled    bool
 }
 
 type conversationPane struct {
@@ -91,7 +91,7 @@ type conversationPane struct {
 	scrollHistory       gtki.ScrolledWindow
 	scrollPending       gtki.ScrolledWindow
 	notificationArea    gtki.Box
-	fileTransferNot     *fileTransferNotification
+	fileTransferNotif   *fileTransferNotification
 	securityWarning     gtki.InfoBar
 	verificationWarning gtki.InfoBar
 	// The window to set dialogs transient for
@@ -260,14 +260,14 @@ func (conv *conversationPane) onDisconnect() {
 }
 
 func (conv *conversationPane) onDestroyFileTransfer() {
-	label := conv.fileTransferNot.notificationLabelButton.GetLabel()
+	label := conv.fileTransferNotif.labelButton.GetLabel()
 	if label == "Cancel" {
-		conv.fileTransferNot.canceled = true
+		conv.fileTransferNotif.canceled = true
 		label := "File transfer canceled"
 		conv.updateFileTransferNotification(label, "Close", "failure.svg")
 	} else {
-		conv.fileTransferNot.canceled = false
-		conv.fileTransferNot.notificationArea.SetVisible(false)
+		conv.fileTransferNotif.canceled = false
+		conv.fileTransferNotif.area.SetVisible(false)
 	}
 }
 
@@ -302,31 +302,17 @@ func (conv *conversationPane) doPotentialEntryResize() {
 	}
 }
 
-func (b *builder) fileTransferInit() *fileTransferNotification {
-	ft := &fileTransferNotification{}
-
-	b.getItems(
-		"file-transfer", &ft.notificationArea,
-		"image-file-transfer", &ft.notificationImage,
-		"label-file-transfer", &ft.notificationLabel,
-		"bar-file-transfer", &ft.notificationBar,
-		"button-label-file-transfer", &ft.notificationLabelButton,
-	)
-
-	return ft
-}
-
 func createConversationPane(account *account, uid string, ui *gtkUI, transientParent gtki.Window) *conversationPane {
 	builder := newBuilder("ConversationPane")
 
 	cp := &conversationPane{
-		to:              uid,
-		account:         account,
-		fileTransferNot: builder.fileTransferInit(),
-		transientParent: transientParent,
-		shiftEnterSends: ui.settings.GetShiftEnterForSend(),
-		afterNewMessage: func() {},
-		delayed:         make(map[int]sentMessage),
+		to:                uid,
+		account:           account,
+		fileTransferNotif: builder.fileTransferNotifInit(),
+		transientParent:   transientParent,
+		shiftEnterSends:   ui.settings.GetShiftEnterForSend(),
+		afterNewMessage:   func() {},
+		delayed:           make(map[int]sentMessage),
 		currentPeer: func() (*rosters.Peer, bool) {
 			return ui.getPeer(account, uid)
 		},
@@ -379,6 +365,20 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 	cp.verifier = newVerifier(ui, cp)
 
 	return cp
+}
+
+func (b *builder) fileTransferNotifInit() *fileTransferNotification {
+	fileTransferNotif := &fileTransferNotification{}
+
+	b.getItems(
+		"file-transfer", &fileTransferNotif.area,
+		"image-file-transfer", &fileTransferNotif.image,
+		"label-file-transfer", &fileTransferNotif.label,
+		"bar-file-transfer", &fileTransferNotif.progressBar,
+		"button-label-file-transfer", &fileTransferNotif.labelButton,
+	)
+
+	return fileTransferNotif
 }
 
 func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
@@ -580,9 +580,9 @@ func (conv *conversationPane) updateSecurityWarning() {
 }
 
 func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel, image string) {
-	conv.fileTransferNot.notificationLabel.SetLabel(label)
-	conv.fileTransferNot.notificationLabelButton.SetLabel(buttonLabel)
-	setImageFromFile(conv.fileTransferNot.notificationImage, image)
+	conv.fileTransferNotif.label.SetLabel(label)
+	conv.fileTransferNotif.labelButton.SetLabel(buttonLabel)
+	setImageFromFile(conv.fileTransferNotif.image, image)
 }
 
 func (conv *conversationPane) showFileTransferNotification() {
@@ -596,19 +596,19 @@ func (conv *conversationPane) showFileTransferNotification() {
 	`)
 	_ = prov.LoadFromData(css)
 
-	styleContext, _ := conv.fileTransferNot.notificationArea.GetStyleContext()
+	styleContext, _ := conv.fileTransferNotif.area.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
 	label := "File transfer started"
 	conv.updateFileTransferNotification(label, "Cancel", "filetransfer.svg")
-	conv.fileTransferNot.notificationBar.SetFraction(0.0)
-	conv.fileTransferNot.canceled = false
+	conv.fileTransferNotif.progressBar.SetFraction(0.0)
+	conv.fileTransferNotif.canceled = false
 
-	conv.fileTransferNot.notificationArea.SetVisible(true)
+	conv.fileTransferNotif.area.SetVisible(true)
 }
 
 func (conv *conversationPane) startFileTransfer(upd float64) {
-	conv.fileTransferNot.notificationBar.SetFraction(upd)
+	conv.fileTransferNotif.progressBar.SetFraction(upd)
 }
 
 func (conv *conversationPane) successFileTransfer() {
@@ -622,7 +622,7 @@ func (conv *conversationPane) failFileTransfer() {
 }
 
 func (conv *conversationPane) isFileTransferCanceled() bool {
-	return conv.fileTransferNot.canceled
+	return conv.fileTransferNotif.canceled
 }
 
 func (conv *conversationWindow) show(userInitiated bool) {

@@ -497,10 +497,6 @@ func newConversationWindow(account *account, uid string, ui *gtkUI, existing *co
 	return conv
 }
 
-//func (conv *conversationPane) addNotification(notification gtki.InfoBar) {
-//	conv.notificationArea.Add(notification)
-//}
-
 func (conv *conversationWindow) Hide() {
 	conv.win.Hide()
 }

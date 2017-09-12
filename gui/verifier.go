@@ -162,6 +162,7 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 		"button_verify_horizontal", &v.unverifiedWarning.verifyButtonHoriz,
 		"alert_image", &v.unverifiedWarning.alertImage,
 	)
+	v.unverifiedWarning.alertBox.SetHAlign(gtki.ALIGN_CENTER)
 	setImageFromFile(v.unverifiedWarning.alertImage, "alert.svg")
 	v.unverifiedWarning.b.ConnectSignals(map[string]interface{}{
 		"close_verification": func() {

@@ -11,7 +11,6 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"io"
 	"sort"
 
@@ -57,7 +56,7 @@ func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
 	if !ok {
 		return nil, false
 	}
-	fmt.Printf("blarg: %s\n", string(iq.Query))
+	//	fmt.Printf("blarg: %s\n", string(iq.Query))
 
 	discoveryReply, err := parseDiscoveryReply(iq)
 	if err != nil {
@@ -69,23 +68,23 @@ func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
 		result = append(result, f.Var)
 	}
 
-	if stringArrayContains(result, "http://jabber.org/protocol/rsm") {
-		reply, _, err = c.SendIQ(entity, "get", &data.DiscoveryReply{ResultSet: data.ResultSet{Max: 0}})
-		if err != nil {
-			return nil, false
-		}
+	// if stringArrayContains(result, "http://jabber.org/protocol/rsm") {
+	// 	reply, _, err = c.SendIQ(entity, "get", &data.DiscoveryReply{ResultSet: &data.ResultSet{Max: 0}})
+	// 	if err != nil {
+	// 		return nil, false
+	// 	}
 
-		stanza, ok = <-reply
-		if !ok {
-			return nil, false //timeout
-		}
+	// 	stanza, ok = <-reply
+	// 	if !ok {
+	// 		return nil, false //timeout
+	// 	}
 
-		iq, ok = stanza.Value.(*data.ClientIQ)
-		if !ok {
-			return nil, false
-		}
-		fmt.Printf("blarg2: %s\n", string(iq.Query))
-	}
+	// 	iq, ok = stanza.Value.(*data.ClientIQ)
+	// 	if !ok {
+	// 		return nil, false
+	// 	}
+	// 	fmt.Printf("blarg2: %s\n", string(iq.Query))
+	// }
 
 	return result, true
 }

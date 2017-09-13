@@ -15,6 +15,7 @@ import (
 	"github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/xmpp/data"
 	"github.com/twstrike/coyim/xmpp/socks5"
+	"golang.org/x/net/proxy"
 )
 
 // TOOD: at some point this should be refactored away into a pure socks5 bytestream implementation and a small piece that is file transfer specific
@@ -156,6 +157,10 @@ func (ift inflight) tryStreamhost(s access.Session, sh data.BytestreamStreamhost
 	if err != nil {
 		s.Warn(fmt.Sprintf("Had error when trying to connect: %v", err))
 		return false
+	}
+
+	if p == nil {
+		p = proxy.Direct
 	}
 
 	dialer, e := socks5.XMPP("tcp", net.JoinHostPort(sh.Host, strconv.Itoa(port)), nil, p)

@@ -9,7 +9,7 @@ type DiscoveryReply struct {
 	Identities []DiscoveryIdentity `xml:"identity,omitempty"`
 	Features   []DiscoveryFeature  `xml:"feature,omitempty"`
 	Forms      []Form              `xml:"jabber:x:data x,omitempty"`
-	ResultSet  ResultSet           `xml:"set,omitempty"`
+	ResultSet  *ResultSet          `xml:"set,omitempty"`
 }
 
 // DiscoveryIdentity contains identity information for a specific discovery

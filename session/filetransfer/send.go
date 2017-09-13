@@ -33,7 +33,7 @@ func discoverSupport(s access.Session, peer string) (profiles []string, err erro
 
 // InitSend starts the process of sending a file to a peer
 func InitSend(s access.Session, peer string, file string) error {
-	profiles, err := discoverSupport(s, peer)
+	_, err := discoverSupport(s, peer)
 	if err != nil {
 		return err
 	}

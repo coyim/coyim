@@ -2,7 +2,6 @@ package filetransfer
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/twstrike/coyim/session/access"
@@ -10,10 +9,9 @@ import (
 
 func discoverSupport(s access.Session, peer string) (profiles []string, err error) {
 	if res, ok := s.Conn().DiscoveryFeatures(peer); ok {
-		fmt.Printf("FEATURES: %v\n", res)
 		foundSI := false
 		for _, feature := range res {
-			if feature == "http://jabber.org/protocol/si" {
+			if feature == "http://jabber.org/protocolx/si" {
 				foundSI = true
 			} else if strings.HasPrefix(feature, "http://jabber.org/protocolx/si/profile/") {
 				profiles = append(profiles, feature)
@@ -39,6 +37,5 @@ func InitSend(s access.Session, peer string, file string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("HAVE PROFILES: %v\n", profiles)
 	return nil
 }

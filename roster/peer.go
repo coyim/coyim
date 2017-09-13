@@ -249,3 +249,22 @@ func (p *Peer) ResourceToUse() string {
 
 	return ""
 }
+
+// MustHaveResource always returns a valid resource, assuming the user is online
+func (p *Peer) MustHaveResource() string {
+	toReturn := ""
+	if p.lastResource != "" {
+		p.resourcesLock.RLock()
+		defer p.resourcesLock.RUnlock()
+
+		if p.resources[p.lastResource] {
+			toReturn = p.lastResource
+		}
+	}
+
+	if toReturn == "" && p.HasResources() {
+		toReturn = p.Resources()[0]
+	}
+
+	return toReturn
+}

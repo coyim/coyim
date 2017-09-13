@@ -11,6 +11,7 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io"
 	"sort"
 
@@ -22,33 +23,71 @@ import (
 // It returns true if the feaure is reported to be supported and false
 // otherwise (including if any error happened).
 func (c *conn) HasSupportTo(entity string, feature string) bool {
-	reply, _, err := c.sendDiscoveryInfo(entity)
-	if err != nil {
-		return false
+	if res, ok := c.DiscoveryFeatures(entity); ok {
+		return stringArrayContains(res, feature)
 	}
 
-	stanza, ok := <-reply
-	if !ok {
-		return false //timeout
-	}
+	return false
+}
 
-	iq, ok := stanza.Value.(*data.ClientIQ)
-	if !ok {
-		return false
-	}
-
-	discoveryReply, err := parseDiscoveryReply(iq)
-	if err != nil {
-		return false
-	}
-
-	for _, f := range discoveryReply.Features {
-		if f.Var == feature {
+func stringArrayContains(r []string, a string) bool {
+	for _, f := range r {
+		if f == a {
 			return true
 		}
 	}
 
 	return false
+}
+
+// TODO: at some point we need to cache these values somewhere
+
+func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
+	reply, _, err := c.sendDiscoveryInfo(entity)
+	if err != nil {
+		return nil, false
+	}
+
+	stanza, ok := <-reply
+	if !ok {
+		return nil, false //timeout
+	}
+
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return nil, false
+	}
+	fmt.Printf("blarg: %s\n", string(iq.Query))
+
+	discoveryReply, err := parseDiscoveryReply(iq)
+	if err != nil {
+		return nil, false
+	}
+
+	var result []string
+	for _, f := range discoveryReply.Features {
+		result = append(result, f.Var)
+	}
+
+	if stringArrayContains(result, "http://jabber.org/protocol/rsm") {
+		reply, _, err = c.SendIQ(entity, "get", &data.DiscoveryReply{ResultSet: data.ResultSet{Max: 0}})
+		if err != nil {
+			return nil, false
+		}
+
+		stanza, ok = <-reply
+		if !ok {
+			return nil, false //timeout
+		}
+
+		iq, ok = stanza.Value.(*data.ClientIQ)
+		if !ok {
+			return nil, false
+		}
+		fmt.Printf("blarg2: %s\n", string(iq.Query))
+	}
+
+	return result, true
 }
 
 func (c *conn) sendDiscoveryInfo(to string) (reply chan data.Stanza, cookie data.Cookie, err error) {

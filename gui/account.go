@@ -446,9 +446,35 @@ func (account *account) setCurrentNotification(ib gtki.InfoBar, notificationArea
 func (account *account) IsAskingForPassword() bool {
 	return account.askingForPassword
 }
+
 func (account *account) AskForPassword() {
 	account.askingForPassword = true
 }
+
 func (account *account) AskedForPassword() {
 	account.askingForPassword = false
+}
+
+func (account *account) sendFileTo(peer string, ui *gtkUI) {
+	if file, ok := chooseFileToSend(ui.window); ok {
+		account.session.SendFileTo(peer, file)
+	}
+}
+
+func chooseFileToSend(w gtki.Window) (string, bool) {
+	dialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
+		i18n.Local("Choose file to send"),
+		w,
+		gtki.FILE_CHOOSER_ACTION_OPEN,
+		i18n.Local("_Cancel"),
+		gtki.RESPONSE_CANCEL,
+		i18n.Local("Send"),
+		gtki.RESPONSE_OK,
+	)
+	defer dialog.Destroy()
+
+	if gtki.ResponseType(dialog.Run()) == gtki.RESPONSE_OK {
+		return dialog.GetFilename(), true
+	}
+	return "", false
 }

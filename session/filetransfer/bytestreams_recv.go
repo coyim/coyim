@@ -17,6 +17,8 @@ import (
 	"github.com/twstrike/coyim/xmpp/socks5"
 )
 
+// TOOD: at some point this should be refactored away into a pure socks5 bytestream implementation and a small piece that is file transfer specific
+
 type bytestreamContext struct {
 	sid    string
 	cancel chan bool

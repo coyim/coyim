@@ -188,3 +188,6 @@ func (*SessionMock) SendIQError(*data.ClientIQ, interface{}) {}
 
 // SendIQResult is the implementation for Session interface
 func (*SessionMock) SendIQResult(*data.ClientIQ, interface{}) {}
+
+// SendFileTo is the implementation for Session interface
+func (*SessionMock) SendFileTo(string, string) {}

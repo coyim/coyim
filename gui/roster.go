@@ -14,6 +14,7 @@ import (
 	"github.com/twstrike/coyim/i18n"
 	rosters "github.com/twstrike/coyim/roster"
 	"github.com/twstrike/coyim/ui"
+	"github.com/twstrike/coyim/xmpp/utils"
 	"github.com/twstrike/gotk3adapter/gdki"
 	"github.com/twstrike/gotk3adapter/gtki"
 )
@@ -236,6 +237,11 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 		},
 		"on_dump_info": func() {
 			r.debugPrintRosterFor(account.session.GetConfig().Account)
+		},
+		"on_send_file_to_contact": func() {
+			if peer, ok := r.ui.getPeer(account, jid); ok {
+				doInUIThread(func() { account.sendFileTo(utils.ComposeFullJid(jid, peer.ResourceToUse()), r.ui) })
+			}
 		},
 	})
 

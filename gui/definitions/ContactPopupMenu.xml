@@ -22,6 +22,12 @@
       </object>
     </child>
     <child>
+      <object class="GtkMenuItem" id="sendFileMenuItem">
+        <property name="label" translatable="yes">Send file...</property>
+        <signal name="activate" handler="on_send_file_to_contact" />
+      </object>
+    </child>
+    <child>
       <object class="GtkSeparatorMenuItem" />
     </child>
     <child>

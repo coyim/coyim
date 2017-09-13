@@ -13,6 +13,8 @@ import (
 	"github.com/twstrike/coyim/xmpp/data"
 )
 
+// TOOD: at some point this should be refactored away into a pure IBB implementation and a small piece that is file transfer specific
+
 type ibbContext struct {
 	sync.Mutex
 	sid               string

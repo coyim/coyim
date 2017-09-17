@@ -354,7 +354,7 @@ func (r *roster) onActivateBuddy(v gtki.TreeView, path gtki.TreePath) {
 	r.openConversationView(account, jid, true)
 }
 
-func (r *roster) openConversationView(account *account, to string, userInitiated bool) (conversationView, error) {
+func (r *roster) openConversationView(account *account, to string, userInitiated bool) conversationView {
 	c, ok := account.getConversationWith(to, r.ui)
 
 	if !ok {
@@ -362,7 +362,7 @@ func (r *roster) openConversationView(account *account, to string, userInitiated
 	}
 
 	c.show(userInitiated)
-	return c, nil
+	return c
 }
 
 func (r *roster) displayNameFor(account *account, from string) string {
@@ -418,10 +418,7 @@ func (r *roster) messageReceived(account *account, from, resource string, timest
 	}
 
 	doInUIThread(func() {
-		conv, err := r.openConversationView(account, from, false)
-		if err != nil {
-			return
-		}
+		conv := r.openConversationView(account, from, false)
 
 		sent := sentMessage{
 			from:            r.displayNameFor(account, from),

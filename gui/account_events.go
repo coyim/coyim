@@ -208,28 +208,21 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
 	peer := ev.Peer
 	account := u.findAccountForSession(ev.Session)
-	convWin, err := u.roster.openConversationView(account, peer, false)
-	if err != nil {
-		return
-	}
+	convWin := u.roster.openConversationView(account, peer, false)
+
 	convWin.displayNotification(i18n.Local(ev.Notification))
 }
 
 func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent) {
 	account := u.findAccountForSession(ev.Session)
-	convWin, err := u.roster.openConversationView(account, ev.Peer, false)
-	if err != nil {
-		return
-	}
+	convWin := u.roster.openConversationView(account, ev.Peer, false)
+
 	convWin.delayedMessageSent(ev.Tracer)
 }
 
 func (u *gtkUI) handleSMPEvent(ev events.SMP) {
 	account := u.findAccountForSession(ev.Session)
-	convWin, err := u.roster.openConversationView(account, ev.From, false)
-	if err != nil {
-		return
-	}
+	convWin := u.roster.openConversationView(account, ev.From, false)
 
 	switch ev.Type {
 	case events.SecretNeeded:

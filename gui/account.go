@@ -125,13 +125,25 @@ func (u *gtkUI) showAddAccountWindow() {
 	c, _ := config.NewAccount()
 
 	u.accountDialog(nil, c, func() {
+		_, exists := u.config.GetAccount(c.Account)
+		if exists {
+			log.Printf("[add account] Can't add account %s since you already have an account "+
+				"configured with the same name. Remove that account and add it again if you "+
+				"really want to overwrite it.", c.Account)
+			u.notify(i18n.Local("Unable to Add Account"), i18n.Localf("Can't add account:\n\n"+
+				"You already have an account with this name."))
+			return
+		}
+
 		u.addAndSaveAccountConfig(c)
+		log.Printf("[add account] Account sucessfully added.")
 		u.notify(i18n.Local("Account added"), i18n.Localf("%s successfully added.", c.Account))
 	})
 }
 
 func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) error {
 	accountsLock.Lock()
+
 	u.config.Add(c)
 	accountsLock.Unlock()
 

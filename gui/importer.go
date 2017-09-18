@@ -39,11 +39,11 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 					u.config.WhenLoaded(func(conf *config.ApplicationConfig) {
 						_, exists := conf.GetAccount(k.acc)
 						if exists {
+							log.Printf("[import] Can't import account %s since you already have an account "+
+								"configured with the same name. Remove that account and import again if you "+
+								"really want to overwrite it.", k.acc)
 							u.notify(i18n.Local("Unable to Import Account"), i18n.Localf("Can't import account:\n\n"+
 								"You already have an account with this name."))
-							log.Printf("[import] Can't import account %s since you already have an account"+
-								"configured with the same name. Remove that account and import again if you"+
-								"really want to overwrite it.", k.acc)
 							return
 						}
 

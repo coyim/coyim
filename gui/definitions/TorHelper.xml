@@ -6,6 +6,7 @@
     <property name="text" translatable="yes">Is Tor installed?</property>
     <property name="secondary_text" translatable="yes">
 CoyIM uses Tor, an anonymity network.
+
     </property>
     <property name="buttons">GTK_BUTTONS_YES_NO</property>
   </object>

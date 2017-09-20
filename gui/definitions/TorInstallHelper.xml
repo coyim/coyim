@@ -2,7 +2,7 @@
   <object class="GtkDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border_width">7</property>
-    <property name="title" translatable="yes">How to install Tor</property>
+    <property name="title" translatable="yes">Installing Tor for CoyIM</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="box">
         <property name="border-width">10</property>
@@ -12,7 +12,7 @@
             <property name="can_focus">False</property>
             <property name="margin-top">5</property>
 	    <property name="label" translatable="yes">
-Install Tor:
+Installing Tor for CoyIM:
             </property>
             <attributes>
               <attribute name="font-desc" value="&lt;Enter Value&gt; 14"/>
@@ -25,35 +25,22 @@ Install Tor:
             <property name="position">0</property>
           </packing>
         </child>
-	<child>
-          <object class="GtkLabel" id="message">
-            <property name="can_focus">False</property>
-	    <property name="label" translatable="yes">
-    This should be easy:
-            </property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkLabel">
             <property name="can_focus">False</property>
             <property name="margin-bottom">10</property>
 	    <property name="label" translatable="yes">
+    We recommend that you install Tor for the safest messaging experience.
+
     1. Go to https://www.torproject.org/
 
-    2. Download and install Tor
+    2. Download and Install Tor (or the Tor Browser Bundle)
 
-    3. Start Tor or open Tor Browser
+    3. Start Tor (or Tor Browser)
 
     4. Close CoyIM
 
     5. Reopen CoyIM
-
-    6. Enjoy!
             </property>
             <property name="selectable">True</property>
 	  </object>

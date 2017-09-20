@@ -170,12 +170,11 @@ func (u *gtkUI) installTor() {
 	})
 }
 
-func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {
-	dialog := "TorHelper"
-	builder := newBuilder(dialog)
+func (u *gtkUI) askIfTorIsInstalled(k func(bool)) {
+	builder := newBuilder("TorHelper")
 
-	dialogOb := builder.getObj(dialog)
-	torHelper := dialogOb.(gtki.MessageDialog)
+	dialog := builder.getObj("TorHelper")
+	torHelper := dialog.(gtki.MessageDialog)
 	torHelper.SetDefaultResponse(gtki.RESPONSE_YES)
 	torHelper.SetTransientFor(u.window)
 
@@ -186,16 +185,16 @@ func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {
 }
 
 func (u *gtkUI) initialSetupWindow() {
-	u.wouldYouLikeToInstallTor(func(res bool) {
+	u.askIfTorIsInstalled(func(res bool) {
 		if res {
-			u.installTor()
+			u.initialSetupForConfigFile()
 		} else {
-			u.setUp()
+			u.installTor()
 		}
 	})
 }
 
-func (u *gtkUI) setUp() {
+func (u *gtkUI) initialSetupForConfigFile() {
 	u.wouldYouLikeToEncryptYourFile(func(res bool) {
 		u.config.SetShouldSaveFileEncrypted(res)
 		k := func() {

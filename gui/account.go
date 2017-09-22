@@ -56,41 +56,53 @@ func (account *account) ID() string {
 	return account.session.GetConfig().ID()
 }
 
-func (account *account) getConversationWith(to string, ui *gtkUI) (conversationView, bool) {
-	c, ok := account.conversations[to]
+func (account *account) getConversationWith(to, resource string, ui *gtkUI) (conversationView, bool) {
+	peer, _ := ui.getPeer(account, to)
+	resourceId := to
+	if "" != resource {
+		resourceId = to + "/" + resource
+	}
+
+	c, ok := account.conversations[resourceId]
 
 	if ok {
 		_, unifiedType := c.(*conversationStackItem)
 
 		if ui.settings.GetSingleWindow() && !unifiedType {
 			cv1 := c.(*conversationWindow)
-			c = ui.unified.createConversation(account, to, cv1.conversationPane)
-			account.conversations[to] = c
+			c = ui.unified.createConversation(account, resourceId, cv1.conversationPane)
+			account.conversations[resourceId] = c
 		} else if !ui.settings.GetSingleWindow() && unifiedType {
 			cv1 := c.(*conversationStackItem)
-			c = newConversationWindow(account, to, ui, cv1.conversationPane)
-			account.conversations[to] = c
+			c = newConversationWindow(account, peer.NameForPresentation(), ui, cv1.conversationPane)
+			account.conversations[resourceId] = c
 		}
 	}
 
 	return c, ok
 }
 
-func (account *account) createConversationView(to string, ui *gtkUI) conversationView {
+func (account *account) createConversationView(to, resource string, ui *gtkUI) conversationView {
+	peer, _ := ui.getPeer(account, to)
+
 	var cv conversationView
 	if ui.settings.GetSingleWindow() {
-		cv = ui.unified.createConversation(account, to, nil)
+		cv = ui.unified.createConversation(account, peer.Jid, nil)
 	} else {
-		cv = newConversationWindow(account, to, ui, nil)
+		cv = newConversationWindow(account, peer.NameForPresentation(), ui, nil)
 	}
-	account.conversations[to] = cv
+	resourceId := to
+	if "" != resource {
+		resourceId = to + "/" + resource
+	}
+	account.conversations[resourceId] = cv
 
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
-	for _, f := range account.delayedConversations[to] {
+	for _, f := range account.delayedConversations[resourceId] {
 		f(cv)
 	}
-	delete(account.delayedConversations, to)
+	delete(account.delayedConversations, resourceId)
 
 	return cv
 }

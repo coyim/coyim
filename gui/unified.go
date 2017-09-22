@@ -152,7 +152,7 @@ func (cl *conversationList) remove(csi *conversationStackItem) {
 
 func (cl *conversationList) updateItem(csi *conversationStackItem) {
 	cs := cl.layout.ui.currentColorSet()
-	peer, ok := cl.layout.ui.getPeer(csi.account, csi.to)
+	peer, ok := csi.currentPeer()
 	if !ok {
 		log.Printf("No peer found for %s", csi.to)
 		return
@@ -267,11 +267,12 @@ func (csi *conversationStackItem) show(userInitiated bool) {
 }
 
 func (csi *conversationStackItem) bringToFront() {
+	peer, _ := csi.currentPeer()
 	csi.layout.showConversations()
 	csi.needsAttention = false
 	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
-	title := fmt.Sprintf("%s <-> %s", csi.account.session.DisplayName(), csi.to)
+	title := fmt.Sprintf("%s <-> %s", csi.account.session.DisplayName(), peer.NameForPresentation())
 	csi.layout.header.SetText(title)
 	csi.layout.headerBar.SetSubtitle(title)
 	csi.entry.GrabFocus()

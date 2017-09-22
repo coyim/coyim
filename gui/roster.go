@@ -258,12 +258,11 @@ func (r *roster) appendResourcesAsMenuItems(jid string, account *account, menuIt
 		innerMenu, _ := g.gtk.MenuNew()
 
 		for _, resource := range peer.Resources() {
-			fullJid := jid + "/" + resource
 			item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
 			item.Connect("activate",
 				func() {
 					doInUIThread(func() {
-						r.openConversationView(account, fullJid, true)
+						r.openConversationView(account, jid, true, resource)
 					})
 				})
 			innerMenu.Append(item)
@@ -351,14 +350,14 @@ func (r *roster) onActivateBuddy(v gtki.TreeView, path gtki.TreePath) {
 		return
 	}
 
-	r.openConversationView(account, jid, true)
+	r.openConversationView(account, jid, true, "")
 }
 
-func (r *roster) openConversationView(account *account, to string, userInitiated bool) conversationView {
-	c, ok := account.getConversationWith(to, r.ui)
+func (r *roster) openConversationView(account *account, to string, userInitiated bool, resource string) conversationView {
+	c, ok := account.getConversationWith(to, resource, r.ui)
 
 	if !ok {
-		c = account.createConversationView(to, r.ui)
+		c = account.createConversationView(to, resource, r.ui)
 	}
 
 	c.show(userInitiated)
@@ -375,7 +374,7 @@ func (r *roster) displayNameFor(account *account, from string) string {
 }
 
 func (r *roster) presenceUpdated(account *account, from, show, showStatus string, gone bool) {
-	c, ok := account.getConversationWith(from, r.ui)
+	c, ok := account.getConversationWith(from, "", r.ui)
 	if !ok {
 		return
 	}
@@ -418,7 +417,7 @@ func (r *roster) messageReceived(account *account, from, resource string, timest
 	}
 
 	doInUIThread(func() {
-		conv := r.openConversationView(account, from, false)
+		conv := r.openConversationView(account, from, false, "")
 
 		sent := sentMessage{
 			from:            r.displayNameFor(account, from),

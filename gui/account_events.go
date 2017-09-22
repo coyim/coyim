@@ -131,7 +131,7 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 }
 
 func convWindowNowOrLater(account *account, peer string, ui *gtkUI, f func(conversationView)) {
-	convWin, ok := account.getConversationWith(peer, ui)
+	convWin, ok := account.getConversationWith(peer, "", ui)
 	if !ok {
 		account.afterConversationWindowCreated(peer, f)
 	} else {
@@ -206,23 +206,22 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 }
 
 func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
-	peer := ev.Peer
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.roster.openConversationView(account, peer, false)
+	convWin := u.roster.openConversationView(account, ev.Peer, false, "")
 
 	convWin.displayNotification(i18n.Local(ev.Notification))
 }
 
 func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.roster.openConversationView(account, ev.Peer, false)
+	convWin := u.roster.openConversationView(account, ev.Peer, false, "")
 
 	convWin.delayedMessageSent(ev.Tracer)
 }
 
 func (u *gtkUI) handleSMPEvent(ev events.SMP) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.roster.openConversationView(account, ev.From, false)
+	convWin := u.roster.openConversationView(account, ev.From, false, "")
 
 	switch ev.Type {
 	case events.SecretNeeded:

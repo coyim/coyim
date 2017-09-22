@@ -605,7 +605,7 @@ func (u *gtkUI) newCustomConversation() {
 				return
 			}
 			jid, _ := peerInput.GetText()
-			u.roster.openConversationView(account, jid, true)
+			u.roster.openConversationView(account, jid, true, "")
 
 			dialog.Destroy()
 		},

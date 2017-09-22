@@ -70,7 +70,7 @@ func (account *account) getConversationWith(to, resource string, ui *gtkUI) (con
 
 		if ui.settings.GetSingleWindow() && !unifiedType {
 			cv1 := c.(*conversationWindow)
-			c = ui.unified.createConversation(account, resourceId, cv1.conversationPane)
+			c = ui.unified.createConversation(account, to, resource, cv1.conversationPane)
 			account.conversations[resourceId] = c
 		} else if !ui.settings.GetSingleWindow() && unifiedType {
 			cv1 := c.(*conversationStackItem)
@@ -87,7 +87,7 @@ func (account *account) createConversationView(to, resource string, ui *gtkUI) c
 
 	var cv conversationView
 	if ui.settings.GetSingleWindow() {
-		cv = ui.unified.createConversation(account, peer.Jid, nil)
+		cv = ui.unified.createConversation(account, peer.Jid, resource, nil)
 	} else {
 		cv = newConversationWindow(account, peer.NameForPresentation(), ui, nil)
 	}

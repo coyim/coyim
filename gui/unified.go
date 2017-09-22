@@ -97,7 +97,7 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	return ul
 }
 
-func (ul *unifiedLayout) createConversation(account *account, uid string, existing *conversationPane) conversationView {
+func (ul *unifiedLayout) createConversation(account *account, uid, resource string, existing *conversationPane) conversationView {
 	cp := createConversationPane(account, uid, ul.ui, ul.ui.window)
 	if existing != nil {
 		b, _ := existing.history.GetBuffer()
@@ -119,7 +119,11 @@ func (ul *unifiedLayout) createConversation(account *account, uid string, existi
 	csi.entryScroll.SetMarginTop(5)
 	csi.entryScroll.SetMarginBottom(5)
 
-	ul.notebook.SetTabLabelText(cp.widget, csi.shortName())
+	tabLabel := csi.shortName()
+	if resource != "" {
+		tabLabel = tabLabel + " [at] " + resource
+	}
+	ul.notebook.SetTabLabelText(cp.widget, tabLabel)
 	ul.itemMap[idx] = csi
 	buffer, _ := csi.history.GetBuffer()
 	buffer.Connect("changed", func() {

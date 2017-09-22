@@ -30,19 +30,17 @@ Installing Tor for CoyIM:
             <property name="can_focus">False</property>
             <property name="margin-bottom">10</property>
 	    <property name="label" translatable="yes">
-    We recommend that you install Tor for the safest
-    messaging experience.
-
 
     1. Go to https://www.torproject.org/
 
-    2. Download and Install Tor (or the Tor Browser Bundle)
+    2. Download and install Tor (or the Tor Browser Bundle)
 
-    3. Start Tor (or Tor Browser)
+    3. Start Tor (or the Tor Browser)
 
     4. Close CoyIM
 
     5. Reopen CoyIM
+
             </property>
             <property name="selectable">True</property>
 	  </object>

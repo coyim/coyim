@@ -187,9 +187,9 @@ func (u *gtkUI) askIfTorIsInstalled(k func(bool)) {
 func (u *gtkUI) initialSetupWindow() {
 	u.askIfTorIsInstalled(func(res bool) {
 		if res {
-			u.initialSetupForConfigFile()
-		} else {
 			u.installTor()
+		} else {
+			u.initialSetupForConfigFile()
 		}
 	})
 }

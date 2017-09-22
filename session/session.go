@@ -1061,6 +1061,10 @@ func (s *session) SendPing() {
 
 // StartSMP begins the SMP interactions for a conversation
 func (s *session) StartSMP(peer, resource, question, answer string) {
+	if peer == "" {
+		s.alert("error: tried to start SMP with a nameless peer")
+		return
+	}
 	conv, ok := s.convManager.GetConversationWith(peer, resource)
 	if !ok {
 		s.alert("error: tried to start SMP when a conversation does not exist")

@@ -1120,6 +1120,23 @@ func sessionWithConvMngrWithoutConvs() *session {
 	}
 }
 
+func (s *SessionSuite) Test_logsError_whenWeStartSMPWithAnEmptyPeerName(c *C) {
+	sess := sessionWithConvMngrWithoutConvs()
+	observer := make(chan interface{}, 1)
+	sess.Subscribe(observer)
+
+	go sess.StartSMP("", "resource", "Im a question", "im an answer")
+
+	select {
+	case ev := <-observer:
+		t := ev.(events.Log)
+		c.Assert(t.Level, Equals, events.Alert)
+		c.Assert(t.Message, Equals, "error: tried to start SMP with a nameless peer")
+	case <-time.After(10 * time.Millisecond):
+		c.Errorf("did not receive event")
+	}
+}
+
 func (s *SessionSuite) Test_logsError_whenWeStartSMPWithoutAConversation(c *C) {
 	sess := sessionWithConvMngrWithoutConvs()
 	observer := make(chan interface{}, 1)

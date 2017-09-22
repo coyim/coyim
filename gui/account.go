@@ -58,12 +58,12 @@ func (account *account) ID() string {
 
 func (account *account) getConversationWith(to, resource string, ui *gtkUI) (conversationView, bool) {
 	peer, _ := ui.getPeer(account, to)
-	resourceId := to
+	resourceID := to
 	if "" != resource {
-		resourceId = to + "/" + resource
+		resourceID = to + "/" + resource
 	}
 
-	c, ok := account.conversations[resourceId]
+	c, ok := account.conversations[resourceID]
 
 	if ok {
 		_, unifiedType := c.(*conversationStackItem)
@@ -71,11 +71,11 @@ func (account *account) getConversationWith(to, resource string, ui *gtkUI) (con
 		if ui.settings.GetSingleWindow() && !unifiedType {
 			cv1 := c.(*conversationWindow)
 			c = ui.unified.createConversation(account, to, resource, cv1.conversationPane)
-			account.conversations[resourceId] = c
+			account.conversations[resourceID] = c
 		} else if !ui.settings.GetSingleWindow() && unifiedType {
 			cv1 := c.(*conversationStackItem)
 			c = newConversationWindow(account, peer.NameForPresentation(), ui, cv1.conversationPane)
-			account.conversations[resourceId] = c
+			account.conversations[resourceID] = c
 		}
 	}
 
@@ -91,18 +91,18 @@ func (account *account) createConversationView(to, resource string, ui *gtkUI) c
 	} else {
 		cv = newConversationWindow(account, peer.NameForPresentation(), ui, nil)
 	}
-	resourceId := to
+	resourceID := to
 	if "" != resource {
-		resourceId = to + "/" + resource
+		resourceID = to + "/" + resource
 	}
-	account.conversations[resourceId] = cv
+	account.conversations[resourceID] = cv
 
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
-	for _, f := range account.delayedConversations[resourceId] {
+	for _, f := range account.delayedConversations[resourceID] {
 		f(cv)
 	}
-	delete(account.delayedConversations, resourceId)
+	delete(account.delayedConversations, resourceID)
 
 	return cv
 }

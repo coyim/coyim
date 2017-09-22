@@ -10,6 +10,7 @@ import (
 	"github.com/twstrike/coyim/config"
 	"github.com/twstrike/coyim/gui/settings"
 	"github.com/twstrike/coyim/i18n"
+	ournet "github.com/twstrike/coyim/net"
 	rosters "github.com/twstrike/coyim/roster"
 	sessions "github.com/twstrike/coyim/session/access"
 	"github.com/twstrike/coyim/xmpp/interfaces"
@@ -185,13 +186,17 @@ func (u *gtkUI) askIfTorIsInstalled(k func(bool)) {
 }
 
 func (u *gtkUI) initialSetupWindow() {
-	u.askIfTorIsInstalled(func(res bool) {
-		if res {
-			u.installTor()
-		} else {
-			u.initialSetupForConfigFile()
-		}
-	})
+	if !ournet.Tor.Detect() {
+		u.askIfTorIsInstalled(func(res bool) {
+			if res {
+				u.installTor()
+			} else {
+				u.initialSetupForConfigFile()
+			}
+		})
+	} else {
+		u.initialSetupForConfigFile()
+	}
 }
 
 func (u *gtkUI) initialSetupForConfigFile() {

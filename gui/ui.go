@@ -171,7 +171,7 @@ func (u *gtkUI) installTor() {
 	})
 }
 
-func (u *gtkUI) askIfTorIsInstalled(k func(bool)) {
+func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {
 	builder := newBuilder("TorHelper")
 
 	dialog := builder.getObj("TorHelper")
@@ -187,7 +187,7 @@ func (u *gtkUI) askIfTorIsInstalled(k func(bool)) {
 
 func (u *gtkUI) initialSetupWindow() {
 	if !ournet.Tor.Detect() {
-		u.askIfTorIsInstalled(func(res bool) {
+		u.wouldYouLikeToInstallTor(func(res bool) {
 			if res {
 				u.installTor()
 			} else {

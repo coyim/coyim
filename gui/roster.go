@@ -253,8 +253,11 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 
 func (r *roster) appendResourcesAsMenuItems(jid string, account *account, menuItem gtki.MenuItem) {
 	peer, ok := r.ui.getPeer(account, jid)
+	hasResources := peer.HasResources()
 
-	if ok && peer.HasResources() {
+	menuItem.SetSensitive(hasResources)
+
+	if ok && hasResources {
 		innerMenu, _ := g.gtk.MenuNew()
 
 		for _, resource := range peer.Resources() {
@@ -269,18 +272,6 @@ func (r *roster) appendResourcesAsMenuItems(jid string, account *account, menuIt
 		}
 
 		menuItem.SetSubmenu(innerMenu)
-	} else if !peer.HasResources() {
-		prov, _ := g.gtk.CssProviderNew()
-
-		css := fmt.Sprintf(`
-	menuitem { color: #b5b5b4;
-	     }
-	`)
-		_ = prov.LoadFromData(css)
-
-		styleContext, _ := menuItem.GetStyleContext()
-		styleContext.AddProvider(prov, 9999)
-
 	}
 }
 

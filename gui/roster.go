@@ -269,6 +269,18 @@ func (r *roster) appendResourcesAsMenuItems(jid string, account *account, menuIt
 		}
 
 		menuItem.SetSubmenu(innerMenu)
+	} else if !peer.HasResources() {
+		prov, _ := g.gtk.CssProviderNew()
+
+		css := fmt.Sprintf(`
+	menuitem { color: #b5b5b4;
+	     }
+	`)
+		_ = prov.LoadFromData(css)
+
+		styleContext, _ := menuItem.GetStyleContext()
+		styleContext.AddProvider(prov, 9999)
+
 	}
 }
 

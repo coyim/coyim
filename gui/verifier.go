@@ -160,7 +160,7 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	`)
 	_ = prov.LoadFromData(css)
 
-	styleContext, _ := v.unverifiedWarning.notification.GetStyleContext()
+	styleContext, _ := v.unverifiedWarning.infobar.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
 	prov1, _ := g.gtk.CssProviderNew()
@@ -174,7 +174,6 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	styleContext1, _ := v.unverifiedWarning.closeInfobar.GetStyleContext()
 	styleContext1.AddProvider(prov1, 9999)
 
-	//v.unverifiedWarning.alertBox.SetHAlign(gtki.ALIGN_CENTER)
 	setImageFromFile(v.unverifiedWarning.image, "warning.svg")
 	v.unverifiedWarning.label.SetLabel(i18n.Local("Make sure no one else\nis reading your messages"))
 	v.unverifiedWarning.button.Connect("clicked", v.showPINDialog)
@@ -198,8 +197,8 @@ func (v *verifier) showPINDialog() {
 	v.pinWindow.prompt.SetText(i18n.Localf("Share the one-time PIN below with %s", v.peerName()))
 	v.session.StartSMP(v.peerJid(), v.currentResource, question, pin)
 	v.unverifiedWarning.infobar.Hide()
-	v.waitingForPeer.msg.SetText(i18n.Localf("Waiting for %s to finish securing the channel...", v.peerName()))
-	v.waitingForPeer.bar.ShowAll()
+	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName()))
+	v.waitingForPeer.infobar.ShowAll()
 	v.pinWindow.d.ShowAll()
 }
 
@@ -213,31 +212,51 @@ func createPIN() (string, error) {
 }
 
 type waitingForPeerNotification struct {
-	b            *builder
-	bar          gtki.InfoBar
-	msg          gtki.Label
-	cancelButton gtki.Button
+	b       *builder
+	infobar gtki.InfoBar
+	label   gtki.Label
+	image   gtki.Image
+	button  gtki.Button
 }
 
 func (v *verifier) buildWaitingForPeerNotification() {
 	v.waitingForPeer = &waitingForPeerNotification{b: newBuilder("WaitingSMPComplete")}
+
 	v.waitingForPeer.b.getItems(
-		"smp_waiting_infobar", &v.waitingForPeer.bar,
-		"message", &v.waitingForPeer.msg,
-		"cancel_button", &v.waitingForPeer.cancelButton,
+		"smp-waiting-infobar", &v.waitingForPeer.infobar,
+		"smp-waiting-label", &v.waitingForPeer.label,
+		"smp-waiting-image", &v.waitingForPeer.image,
+		"smp-waiting-button", &v.waitingForPeer.button,
 	)
-	v.waitingForPeer.cancelButton.Connect("clicked", func() {
+
+	prov, _ := g.gtk.CssProviderNew()
+
+	css := fmt.Sprintf(`
+	box { background-color: #fbe9e7;
+	      border: 2px;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ := v.waitingForPeer.infobar.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName))
+
+	setImageFromFile(v.waitingForPeer.image, "waiting.svg")
+
+	v.waitingForPeer.button.Connect("clicked", func() {
 		v.session.AbortSMP(v.peerJid(), v.currentResource)
 		v.removeInProgressDialogs()
 		v.showUnverifiedWarning()
 	})
-	v.notifier.notify(v.waitingForPeer.bar)
+	v.notifier.notify(v.waitingForPeer.infobar)
 }
 
 func (v *verifier) showWaitingForPeerToCompleteSMPDialog() {
-	v.waitingForPeer.msg.SetText(i18n.Localf("Waiting for %s to finish securing the channel...", v.peerName()))
+	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName()))
 	v.hideUnverifiedWarning()
-	v.waitingForPeer.bar.ShowAll()
+	v.waitingForPeer.infobar.ShowAll()
 }
 
 func (v *verifier) showNotificationWhenWeCannotGeneratePINForSMP(err error) {
@@ -451,7 +470,7 @@ func (v *verifier) displayVerificationFailure() {
 
 func (v *verifier) removeInProgressDialogs() {
 	v.peerRequestsSMP.infobar.Hide()
-	v.waitingForPeer.bar.Hide()
+	v.waitingForPeer.infobar.Hide()
 	v.pinWindow.d.Hide()
 	v.answerSMPWindow.d.Hide()
 }

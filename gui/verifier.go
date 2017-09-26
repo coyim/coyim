@@ -132,14 +132,6 @@ func (u *unverifiedWarning) show(showBestLayout func()) {
 	}
 }
 
-func (u *unverifiedWarning) showVerticalView() {
-}
-
-// TODO: set or make everything packed to end
-func (u *unverifiedWarning) showHorizontalView() {
-	u.button.Hide()
-}
-
 func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	v.unverifiedWarning = &unverifiedWarning{b: newBuilder("UnverifiedWarning")}
 
@@ -474,9 +466,7 @@ func (v *verifier) chooseBestLayout() {
 	currentWidth, _ := v.parentWindow.GetSize()
 	if currentWidth > bestHorizontalTransitionWidth {
 		v.peerRequestsSMP.showHorizontalView()
-		v.unverifiedWarning.showHorizontalView()
 	} else {
 		v.peerRequestsSMP.showVerticalView()
-		v.unverifiedWarning.showVerticalView()
 	}
 }

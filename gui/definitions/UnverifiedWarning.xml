@@ -89,7 +89,8 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="pack_type">end</property>
+	    <property name="position">2</property>
           </packing>
         </child>
       </object>

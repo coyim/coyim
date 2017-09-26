@@ -21,6 +21,7 @@ type Gtk interface {
 	CssProviderGetDefault() (CssProvider, error)
 	CssProviderGetNamed(string, string) (CssProvider, error)
 	EntryNew() (Entry, error)
+	EventBoxNew() (EventBox, error)
 	FileChooserDialogNewWith2Buttons(string, Window, FileChooserAction, string, ResponseType, string, ResponseType) (FileChooserDialog, error)
 	ImageNewFromFile(string) (Image, error)
 	ImageNewFromResource(string) (Image, error)

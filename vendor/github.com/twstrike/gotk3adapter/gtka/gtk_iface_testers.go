@@ -23,6 +23,7 @@ func init() {
 	gtki.AssertCssProvider(&cssProvider{})
 	gtki.AssertDialog(&dialog{})
 	gtki.AssertEntry(&entry{})
+	gtki.AssertEventBox(&eventBox{})
 	gtki.AssertFileChooserDialog(&fileChooserDialog{})
 	gtki.AssertGrid(&grid{})
 	gtki.AssertHeaderBar(&headerBar{})

@@ -74,6 +74,10 @@ func (*RealGtk) EntryNew() (gtki.Entry, error) {
 	return wrapEntry(gtk.EntryNew())
 }
 
+func (*RealGtk) EventBoxNew() (gtki.EventBox, error) {
+	return wrapEventBox(gtk.EventBoxNew())
+}
+
 func (*RealGtk) FileChooserDialogNewWith2Buttons(title string, parent gtki.Window, action gtki.FileChooserAction, first_button_text string, first_button_id gtki.ResponseType, second_button_text string, second_button_id gtki.ResponseType) (gtki.FileChooserDialog, error) {
 	return wrapFileChooserDialog(gtk.FileChooserDialogNewWith2Buttons(title, unwrapWindow(parent), gtk.FileChooserAction(action), first_button_text, gtk.ResponseType(first_button_id), second_button_text, gtk.ResponseType(second_button_id)))
 }

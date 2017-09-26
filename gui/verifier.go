@@ -108,25 +108,24 @@ func (v *verifier) showUnverifiedWarning() {
 	v.unverifiedWarning.show(v.chooseBestLayout)
 }
 
-// TODO: change names
 // TODO: check colors and sizes
 // TODO: check on linux
 type unverifiedWarning struct {
-	b                *builder
-	infobar          gtki.Box
-	infoone          gtki.Box
-	infotwo          gtki.Box
-	msg              gtki.Label
-	alertImage       gtki.Image
-	verifyButtonVert gtki.Button
-	peerIsVerified   func() bool
+	b              *builder
+	infobar        gtki.Box
+	closeInfobar   gtki.Box
+	notification   gtki.Box
+	label          gtki.Label
+	image          gtki.Image
+	button         gtki.Button
+	peerIsVerified func() bool
 }
 
 func (u *unverifiedWarning) show(showBestLayout func()) {
 	if !u.peerIsVerified() {
 		u.infobar.Show()
-		u.msg.Show()
-		u.alertImage.ShowAll()
+		u.label.Show()
+		u.image.ShowAll()
 		showBestLayout()
 	} else {
 		log.Println("We have a peer and a trusted fingerprint already, so no reason to show the unverified warning")
@@ -138,7 +137,7 @@ func (u *unverifiedWarning) showVerticalView() {
 
 // TODO: set or make everything packed to end
 func (u *unverifiedWarning) showHorizontalView() {
-	u.verifyButtonVert.Hide()
+	u.button.Hide()
 }
 
 func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
@@ -147,12 +146,12 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	v.unverifiedWarning.peerIsVerified = peerIsVerified
 
 	v.unverifiedWarning.b.getItems(
-		"infobar", &v.unverifiedWarning.infobar,
-		"info-one", &v.unverifiedWarning.infoone,
-		"info-two", &v.unverifiedWarning.infotwo,
-		"message", &v.unverifiedWarning.msg,
-		"alert_image", &v.unverifiedWarning.alertImage,
-		"button_verify_vertical", &v.unverifiedWarning.verifyButtonVert,
+		"verify-infobar", &v.unverifiedWarning.infobar,
+		"verify-close-infobar", &v.unverifiedWarning.closeInfobar,
+		"verify-notification", &v.unverifiedWarning.notification,
+		"verify-message", &v.unverifiedWarning.label,
+		"verify-image", &v.unverifiedWarning.image,
+		"verify-button", &v.unverifiedWarning.button,
 	)
 
 	v.unverifiedWarning.b.ConnectSignals(map[string]interface{}{
@@ -169,7 +168,7 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	`)
 	_ = prov.LoadFromData(css)
 
-	styleContext, _ := v.unverifiedWarning.infotwo.GetStyleContext()
+	styleContext, _ := v.unverifiedWarning.notification.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
 	prov1, _ := g.gtk.CssProviderNew()
@@ -180,13 +179,13 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	`)
 	_ = prov1.LoadFromData(css1)
 
-	styleContext1, _ := v.unverifiedWarning.infoone.GetStyleContext()
+	styleContext1, _ := v.unverifiedWarning.closeInfobar.GetStyleContext()
 	styleContext1.AddProvider(prov1, 9999)
 
 	//v.unverifiedWarning.alertBox.SetHAlign(gtki.ALIGN_CENTER)
-	setImageFromFile(v.unverifiedWarning.alertImage, "warning.svg")
-	v.unverifiedWarning.msg.SetLabel(i18n.Local("Make sure no one else\nis reading your messages"))
-	v.unverifiedWarning.verifyButtonVert.Connect("clicked", v.showPINDialog)
+	setImageFromFile(v.unverifiedWarning.image, "warning.svg")
+	v.unverifiedWarning.label.SetLabel(i18n.Local("Make sure no one else\nis reading your messages"))
+	v.unverifiedWarning.button.Connect("clicked", v.showPINDialog)
 
 	v.notifier.notify(v.unverifiedWarning.infobar)
 }

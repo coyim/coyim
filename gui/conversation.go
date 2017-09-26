@@ -78,22 +78,29 @@ type fileTransferNotification struct {
 	canceled    bool
 }
 
+type securityWarningNotification struct {
+	area        gtki.Box
+	image       gtki.Image
+	label       gtki.Label
+	labelButton gtki.Label
+}
+
 type conversationPane struct {
-	to                  string
-	account             *account
-	widget              gtki.Box
-	menubar             gtki.MenuBar
-	menuLabel           gtki.Label
-	entry               gtki.TextView
-	entryScroll         gtki.ScrolledWindow
-	history             gtki.TextView
-	pending             gtki.TextView
-	scrollHistory       gtki.ScrolledWindow
-	scrollPending       gtki.ScrolledWindow
-	notificationArea    gtki.Box
-	fileTransferNotif   *fileTransferNotification
-	securityWarning     gtki.InfoBar
-	verificationWarning gtki.InfoBar
+	to                   string
+	account              *account
+	widget               gtki.Box
+	menubar              gtki.MenuBar
+	menuLabel            gtki.Label
+	entry                gtki.TextView
+	entryScroll          gtki.ScrolledWindow
+	history              gtki.TextView
+	pending              gtki.TextView
+	scrollHistory        gtki.ScrolledWindow
+	scrollPending        gtki.ScrolledWindow
+	notificationArea     gtki.Box
+	fileTransferNotif    *fileTransferNotification
+	securityWarningNotif *securityWarningNotification
+	verificationWarning  gtki.InfoBar
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
@@ -306,13 +313,14 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 	builder := newBuilder("ConversationPane")
 
 	cp := &conversationPane{
-		to:                uid,
-		account:           account,
-		fileTransferNotif: builder.fileTransferNotifInit(),
-		transientParent:   transientParent,
-		shiftEnterSends:   ui.settings.GetShiftEnterForSend(),
-		afterNewMessage:   func() {},
-		delayed:           make(map[int]sentMessage),
+		to:                   uid,
+		account:              account,
+		fileTransferNotif:    builder.fileTransferNotifInit(),
+		securityWarningNotif: builder.securityWarningNotifInit(),
+		transientParent:      transientParent,
+		shiftEnterSends:      ui.settings.GetShiftEnterForSend(),
+		afterNewMessage:      func() {},
+		delayed:              make(map[int]sentMessage),
 		currentPeer: func() (*rosters.Peer, bool) {
 			return ui.getPeer(account, uid)
 		},
@@ -327,7 +335,6 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		"pendingScroll", &cp.scrollPending,
 		"message", &cp.entry,
 		"notification-area", &cp.notificationArea,
-		"security-warning", &cp.securityWarning,
 		"menubar", &cp.menubar,
 		"messageScroll", &cp.entryScroll,
 	)
@@ -365,6 +372,18 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 	cp.verifier = newVerifier(ui, cp)
 
 	return cp
+}
+func (b *builder) securityWarningNotifInit() *securityWarningNotification {
+	securityWarningNotif := &securityWarningNotification{}
+
+	b.getItems(
+		"security-warning", &securityWarningNotif.area,
+		"image-security-warning", &securityWarningNotif.image,
+		"label-security-warning", &securityWarningNotif.label,
+		"button-label-security-warning", &securityWarningNotif.labelButton,
+	)
+
+	return securityWarningNotif
 }
 
 func (b *builder) fileTransferNotifInit() *fileTransferNotification {
@@ -576,7 +595,21 @@ func (conv *conversationPane) removeIdentityVerificationWarning() {
 
 func (conv *conversationPane) updateSecurityWarning() {
 	conversation, ok := conv.getConversation()
-	conv.securityWarning.SetVisible(!ok || !conversation.IsEncrypted())
+	prov, _ := g.gtk.CssProviderNew()
+
+	css := fmt.Sprintf(`
+	box { background-color: #fbe9e7;
+	      border: 3px;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ := conv.securityWarningNotif.area.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	conv.securityWarningNotif.label.SetLabel("You are talking over an \nunprotected chat")
+	setImageFromFile(conv.securityWarningNotif.image, "secure.svg")
+	conv.securityWarningNotif.area.SetVisible(!ok || !conversation.IsEncrypted())
 }
 
 func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel, image string) {
@@ -589,7 +622,7 @@ func (conv *conversationPane) showFileTransferNotification() {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
-	box { background-color: #fff4e6;
+	box { background-color: #fff9f3;
 	      border: 3px;
               border-radius: 5px;
 	     }

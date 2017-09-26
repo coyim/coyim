@@ -108,23 +108,23 @@ func (v *verifier) showUnverifiedWarning() {
 	v.unverifiedWarning.show(v.chooseBestLayout)
 }
 
+// TODO: change names
+// TODO: check colors and sizes
+// TODO: check on linux
 type unverifiedWarning struct {
-	b                 *builder
-	box               gtki.Box
-	alertBox          gtki.Box
-	infobar           gtki.InfoBar
-	msg               gtki.Label
-	verifyButtonVert  gtki.Button
-	verifyButtonHoriz gtki.Button
-	alertImage        gtki.Image
-	peerIsVerified    func() bool
+	b                *builder
+	infobar          gtki.Box
+	infoone          gtki.Box
+	infotwo          gtki.Box
+	msg              gtki.Label
+	alertImage       gtki.Image
+	verifyButtonVert gtki.Button
+	peerIsVerified   func() bool
 }
 
 func (u *unverifiedWarning) show(showBestLayout func()) {
 	if !u.peerIsVerified() {
 		u.infobar.Show()
-		u.box.Show()
-		u.alertBox.Show()
 		u.msg.Show()
 		u.alertImage.ShowAll()
 		showBestLayout()
@@ -134,48 +134,60 @@ func (u *unverifiedWarning) show(showBestLayout func()) {
 }
 
 func (u *unverifiedWarning) showVerticalView() {
-	u.box.SetOrientation(gtki.VerticalOrientation)
-	u.verifyButtonVert.Show()
-	u.verifyButtonHoriz.Hide()
-	addStyle(u.alertImage, "alert-icon", `.alert-icon {
-		margin-left: 1em;
-		margin-right: 0.5em;
-	}`)
 }
 
+// TODO: set or make everything packed to end
 func (u *unverifiedWarning) showHorizontalView() {
-	u.box.SetOrientation(gtki.HorizontalOrientation)
 	u.verifyButtonVert.Hide()
-	u.verifyButtonHoriz.Show()
-	addStyle(u.alertImage, "alert-icon", `.alert-icon {
-			margin-left: 3em;
-			margin-right: 0.5em;
-		}`)
 }
 
 func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	v.unverifiedWarning = &unverifiedWarning{b: newBuilder("UnverifiedWarning")}
+
 	v.unverifiedWarning.peerIsVerified = peerIsVerified
+
 	v.unverifiedWarning.b.getItems(
 		"infobar", &v.unverifiedWarning.infobar,
-		"box", &v.unverifiedWarning.box,
-		"alert", &v.unverifiedWarning.alertBox,
+		"info-one", &v.unverifiedWarning.infoone,
+		"info-two", &v.unverifiedWarning.infotwo,
 		"message", &v.unverifiedWarning.msg,
-		"button_verify_vertical", &v.unverifiedWarning.verifyButtonVert,
-		"button_verify_horizontal", &v.unverifiedWarning.verifyButtonHoriz,
 		"alert_image", &v.unverifiedWarning.alertImage,
+		"button_verify_vertical", &v.unverifiedWarning.verifyButtonVert,
 	)
-	v.unverifiedWarning.alertBox.SetHAlign(gtki.ALIGN_CENTER)
-	setImageFromFile(v.unverifiedWarning.alertImage, "alert.svg")
+
 	v.unverifiedWarning.b.ConnectSignals(map[string]interface{}{
-		"close_verification": func() {
-			v.hideUnverifiedWarning()
-		},
+		"on_press_image": v.hideUnverifiedWarning,
 	})
-	v.unverifiedWarning.msg.SetText(i18n.Local("Make sure no one else is reading your messages"))
+
+	// TODO: unify css
+	prov, _ := g.gtk.CssProviderNew()
+
+	css := fmt.Sprintf(`
+	box { background-color: #fbe9e7;
+	      border: 2px;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ := v.unverifiedWarning.infotwo.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	prov1, _ := g.gtk.CssProviderNew()
+
+	css1 := fmt.Sprintf(`
+	box { background-color: #e5d7d6;
+	     }
+	`)
+	_ = prov1.LoadFromData(css1)
+
+	styleContext1, _ := v.unverifiedWarning.infoone.GetStyleContext()
+	styleContext1.AddProvider(prov1, 9999)
+
+	//v.unverifiedWarning.alertBox.SetHAlign(gtki.ALIGN_CENTER)
+	setImageFromFile(v.unverifiedWarning.alertImage, "warning.svg")
+	v.unverifiedWarning.msg.SetLabel(i18n.Local("Make sure no one else\nis reading your messages"))
 	v.unverifiedWarning.verifyButtonVert.Connect("clicked", v.showPINDialog)
-	v.unverifiedWarning.verifyButtonHoriz.Connect("clicked", v.showPINDialog)
-	v.unverifiedWarning.verifyButtonHoriz.Hide()
+
 	v.notifier.notify(v.unverifiedWarning.infobar)
 }
 

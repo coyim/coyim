@@ -54,6 +54,7 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 			})
 		},
 	}
+
 	v.buildPinWindow()
 	v.buildAnswerSMPDialog()
 	// A function is used below because we cannot check whether a contact is verified
@@ -64,6 +65,7 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 	v.buildWaitingForPeerNotification()
 	v.buildPeerRequestsSMPNotification()
 	v.buildSMPFailedDialog()
+
 	return v
 }
 
@@ -89,6 +91,7 @@ func (v *verifier) buildPinWindow() {
 		"padlock_image2", &v.pinWindow.padlockImage2,
 		"alert_image", &v.pinWindow.alertImage,
 	)
+
 	v.pinWindow.d.HideOnDelete()
 	v.pinWindow.d.SetTransientFor(v.parentWindow)
 	addBoldHeaderStyle(v.pinWindow.pin)
@@ -98,6 +101,7 @@ func (v *verifier) buildPinWindow() {
 			v.pinWindow.d.Hide()
 		},
 	})
+
 	setImageFromFile(v.pinWindow.smpImage, "smp.svg")
 	setImageFromFile(v.pinWindow.padlockImage1, "padlock.svg")
 	setImageFromFile(v.pinWindow.padlockImage2, "padlock.svg")
@@ -134,7 +138,6 @@ func (u *unverifiedWarning) show(showBestLayout func()) {
 
 func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	v.unverifiedWarning = &unverifiedWarning{b: newBuilder("UnverifiedWarning")}
-
 	v.unverifiedWarning.peerIsVerified = peerIsVerified
 
 	v.unverifiedWarning.b.getItems(
@@ -193,11 +196,13 @@ func (v *verifier) showPINDialog() {
 		v.smpError(err)
 		return
 	}
+
 	v.pinWindow.pin.SetText(pin)
 	v.pinWindow.prompt.SetText(i18n.Localf("Share the one-time PIN below with %s", v.peerName()))
 	v.session.StartSMP(v.peerJid(), v.currentResource, question, pin)
 	v.unverifiedWarning.infobar.Hide()
-	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName()))
+	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName()))
+
 	v.waitingForPeer.infobar.ShowAll()
 	v.pinWindow.d.ShowAll()
 }
@@ -208,6 +213,7 @@ func createPIN() (string, error) {
 		log.Printf("Error encountered when creating a new PIN: %v", err)
 		return "", err
 	}
+
 	return fmt.Sprintf("%06d", val), nil
 }
 
@@ -242,7 +248,6 @@ func (v *verifier) buildWaitingForPeerNotification() {
 	styleContext.AddProvider(prov, 9999)
 
 	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName))
-
 	setImageFromFile(v.waitingForPeer.image, "waiting.svg")
 
 	v.waitingForPeer.button.Connect("clicked", func() {
@@ -250,11 +255,12 @@ func (v *verifier) buildWaitingForPeerNotification() {
 		v.removeInProgressDialogs()
 		v.showUnverifiedWarning()
 	})
+
 	v.notifier.notify(v.waitingForPeer.infobar)
 }
 
 func (v *verifier) showWaitingForPeerToCompleteSMPDialog() {
-	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName()))
+	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName()))
 	v.hideUnverifiedWarning()
 	v.waitingForPeer.infobar.ShowAll()
 }
@@ -263,11 +269,15 @@ func (v *verifier) showNotificationWhenWeCannotGeneratePINForSMP(err error) {
 	log.Printf("Cannot recover from error: %v. Quitting verification using SMP.", err)
 	errBuilder := newBuilder("CannotVerifyWithSMP")
 	errInfoBar := errBuilder.getObj("error_verifying_smp").(gtki.InfoBar)
+
 	message := errBuilder.getObj("message").(gtki.Label)
 	message.SetText(i18n.Local("Unable to verify the channel at this time."))
+
 	button := errBuilder.getObj("try_later_button").(gtki.Button)
 	button.Connect("clicked", errInfoBar.Destroy)
+
 	errInfoBar.ShowAll()
+
 	v.notifier.notify(errInfoBar)
 }
 
@@ -295,13 +305,16 @@ func (v *verifier) buildAnswerSMPDialog() {
 		"padlock_image2", &v.answerSMPWindow.padlockImage2,
 		"alert_image", &v.answerSMPWindow.alertImage,
 	)
+
 	v.answerSMPWindow.d.SetTransientFor(v.parentWindow)
 	v.answerSMPWindow.d.HideOnDelete()
 	v.answerSMPWindow.submitButton.SetSensitive(false)
+
 	setImageFromFile(v.answerSMPWindow.smpImage, "smp.svg")
 	setImageFromFile(v.answerSMPWindow.padlockImage1, "padlock.svg")
 	setImageFromFile(v.answerSMPWindow.padlockImage2, "padlock.svg")
 	setImageFromFile(v.answerSMPWindow.alertImage, "alert.svg")
+
 	v.answerSMPWindow.b.ConnectSignals(map[string]interface{}{
 		"text_changing": func() {
 			answer, _ := v.answerSMPWindow.answer.GetText()
@@ -328,6 +341,7 @@ func (v *verifier) showAnswerSMPDialog(question string) {
 	} else {
 		v.answerSMPWindow.question.SetText(question)
 	}
+
 	v.answerSMPWindow.answer.SetText("")
 	v.answerSMPWindow.d.ShowAll()
 }
@@ -353,9 +367,12 @@ func (p *peerRequestsSMPNotification) show(showBestLayout func()) {
 
 func (p *peerRequestsSMPNotification) showVerticalView() {
 	p.box.SetOrientation(gtki.VerticalOrientation)
+
 	p.vertActionButtons.ShowAll()
+
 	p.verifyButtonHoriz.Hide()
 	p.cancelButtonHoriz.Hide()
+
 	addStyle(p.cancelButtonVert, "cancelButton", `.cancelButton {
 		margin-left: 0.5em;
 	}`)
@@ -363,9 +380,11 @@ func (p *peerRequestsSMPNotification) showVerticalView() {
 
 func (p *peerRequestsSMPNotification) showHorizontalView() {
 	p.box.SetOrientation(gtki.HorizontalOrientation)
+
 	p.vertActionButtons.Hide()
 	p.verifyButtonHoriz.Show()
 	p.cancelButtonHoriz.Show()
+
 	addStyle(p.cancelButtonHoriz, "cancelButton", `.cancelButton {
 		margin-left: 0.5em;
 	}`)
@@ -383,29 +402,35 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 		"verification_button_horizontal", &v.peerRequestsSMP.verifyButtonHoriz,
 		"cancel_button_horizontal", &v.peerRequestsSMP.cancelButtonHoriz,
 	)
+
 	v.peerRequestsSMP.cancelButtonVert.Connect("clicked", func() {
 		v.removeInProgressDialogs()
 		v.session.AbortSMP(v.peerJid(), v.currentResource)
 		v.showUnverifiedWarning()
 	})
+
 	v.peerRequestsSMP.cancelButtonHoriz.Connect("clicked", func() {
 		v.removeInProgressDialogs()
 		v.session.AbortSMP(v.peerJid(), v.currentResource)
 		v.showUnverifiedWarning()
 	})
+
 	v.peerRequestsSMP.cancelButtonHoriz.Hide()
+
 	v.notifier.notify(v.peerRequestsSMP.infobar)
 }
 
 func (v *verifier) displayRequestForSecret(question string) {
 	v.peerRequestsSMP.msg.SetText(i18n.Localf("%s is waiting for you to finish verifying the security of this channel...", v.peerName()))
-	v.hideUnverifiedWarning()
+
 	v.peerRequestsSMP.verifyButtonVert.Connect("clicked", func() {
 		v.showAnswerSMPDialog(question)
 	})
 	v.peerRequestsSMP.verifyButtonHoriz.Connect("clicked", func() {
 		v.showAnswerSMPDialog(question)
 	})
+
+	v.hideUnverifiedWarning()
 	v.peerRequestsSMP.show(v.chooseBestLayout)
 }
 
@@ -419,19 +444,21 @@ type verificationSuccessNotification struct {
 
 func (v *verifier) displayVerificationSuccess() {
 	v.verificationSuccess = &verificationSuccessNotification{b: newBuilder("VerificationSucceeded")}
+
 	v.verificationSuccess.b.getItems(
 		"dialog", &v.verificationSuccess.d,
 		"verification_message", &v.verificationSuccess.msg,
 		"success_image", &v.verificationSuccess.img,
 		"button_ok", &v.verificationSuccess.button,
 	)
+
 	v.verificationSuccess.msg.SetText(i18n.Localf("Hooray! No one is listening in on your conversations with %s", v.peerName()))
-	v.verificationSuccess.button.Connect("clicked", v.verificationSuccess.d.Destroy)
 	setImageFromFile(v.verificationSuccess.img, "smpsuccess.svg")
+
+	v.verificationSuccess.button.Connect("clicked", v.verificationSuccess.d.Destroy)
 
 	v.verificationSuccess.d.SetTransientFor(v.parentWindow)
 	v.verificationSuccess.d.ShowAll()
-
 	v.hideUnverifiedWarning()
 }
 
@@ -449,17 +476,20 @@ func (v *verifier) buildSMPFailedDialog() {
 		msg:            builder.getObj("verification_message").(gtki.Label),
 		tryLaterButton: builder.getObj("try_later").(gtki.Button),
 	}
+
 	v.smpFailed.d.SetTransientFor(v.parentWindow)
 	v.smpFailed.d.HideOnDelete()
+
 	v.smpFailed.d.Connect("response", func() {
 		v.showUnverifiedWarning()
 		v.smpFailed.d.Hide()
 	})
-	addBoldHeaderStyle(builder.getObj("header").(gtki.Label))
 	v.smpFailed.tryLaterButton.Connect("clicked", func() {
 		v.showUnverifiedWarning()
 		v.smpFailed.d.Hide()
 	})
+
+	addBoldHeaderStyle(builder.getObj("header").(gtki.Label))
 }
 
 func (v *verifier) displayVerificationFailure() {

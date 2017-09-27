@@ -647,8 +647,8 @@ func (conv *conversationPane) startFileTransfer(upd float64) {
 func (conv *conversationPane) successFileTransfer() {
 	label := "File successfuly received"
 	conv.updateFileTransferNotification(label, "Close", "success.svg")
-	conv.fileTransferNotif.labelButton.SetMarginStart(41.0)
-	conv.fileTransferNotif.labelButton.SetMarginEnd(41.0)
+	conv.fileTransferNotif.labelButton.SetMarginStart(41)
+	conv.fileTransferNotif.labelButton.SetMarginEnd(41)
 }
 
 func (conv *conversationPane) failFileTransfer() {

@@ -95,6 +95,7 @@ func (v *verifier) buildPinWindow() {
 	v.pinWindow.d.HideOnDelete()
 	v.pinWindow.d.SetTransientFor(v.parentWindow)
 	addBoldHeaderStyle(v.pinWindow.pin)
+
 	v.pinWindow.b.ConnectSignals(map[string]interface{}{
 		"close_share_pin": func() {
 			v.showWaitingForPeerToCompleteSMPDialog()
@@ -132,7 +133,7 @@ func (u *unverifiedWarning) show(showBestLayout func()) {
 		u.image.ShowAll()
 		showBestLayout()
 	} else {
-		log.Println("We have a peer and a trusted fingerprint already, so no reason to show the unverified warning")
+		log.Println("We already have a peer and a trusted fingerprint. No reason to show the unverified warning")
 	}
 }
 
@@ -153,7 +154,6 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 		"on_press_image": v.hideUnverifiedWarning,
 	})
 
-	// TODO: unify css
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -166,16 +166,16 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 	styleContext, _ := v.unverifiedWarning.infobar.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	prov1, _ := g.gtk.CssProviderNew()
+	prov, _ = g.gtk.CssProviderNew()
 
-	css1 := fmt.Sprintf(`
+	css = fmt.Sprintf(`
 	box { background-color: #e5d7d6;
 	     }
 	`)
-	_ = prov1.LoadFromData(css1)
+	_ = prov.LoadFromData(css)
 
-	styleContext1, _ := v.unverifiedWarning.closeInfobar.GetStyleContext()
-	styleContext1.AddProvider(prov1, 9999)
+	styleContext, _ = v.unverifiedWarning.closeInfobar.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
 
 	setImageFromFile(v.unverifiedWarning.image, "warning.svg")
 	v.unverifiedWarning.label.SetLabel(i18n.Local("Make sure no one else\nis reading your messages"))
@@ -190,21 +190,22 @@ func (v *verifier) smpError(err error) {
 }
 
 func (v *verifier) showPINDialog() {
+	v.unverifiedWarning.infobar.Hide()
+
 	pin, err := createPIN()
 	if err != nil {
 		v.pinWindow.d.Hide()
 		v.smpError(err)
 		return
 	}
-
 	v.pinWindow.pin.SetText(pin)
-	v.pinWindow.prompt.SetText(i18n.Localf("Share the one-time PIN below with %s", v.peerName()))
-	v.session.StartSMP(v.peerJid(), v.currentResource, question, pin)
-	v.unverifiedWarning.infobar.Hide()
-	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
+	v.pinWindow.prompt.SetText(i18n.Localf("Share this one-time PIN with %s", v.peerName()))
 
-	v.waitingForPeer.infobar.ShowAll()
+	v.session.StartSMP(v.peerJid(), v.currentResource, question, pin)
 	v.pinWindow.d.ShowAll()
+
+	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
+	v.waitingForPeer.infobar.ShowAll()
 }
 
 func createPIN() (string, error) {
@@ -421,6 +422,8 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 }
 
 func (v *verifier) displayRequestForSecret(question string) {
+	v.hideUnverifiedWarning()
+
 	v.peerRequestsSMP.msg.SetText(i18n.Localf("%s is waiting for you to finish verifying the security of this channel...", v.peerName()))
 
 	v.peerRequestsSMP.verifyButtonVert.Connect("clicked", func() {
@@ -430,7 +433,6 @@ func (v *verifier) displayRequestForSecret(question string) {
 		v.showAnswerSMPDialog(question)
 	})
 
-	v.hideUnverifiedWarning()
 	v.peerRequestsSMP.show(v.chooseBestLayout)
 }
 

@@ -3,20 +3,23 @@
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <child internal-child="vbox">
         <object class="GtkBox" id="notification-area">
-          <property name="border-width">10</property>
+          <property name="border_width">10</property>
           <property name="homogeneous">false</property>
           <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
           <child>
             <object class="GtkBox">
               <property name="homogeneous">false</property>
               <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-              <property name="spacing">6</property>
+              <property name="spacing">10</property>
               <child>
-                  <object class="GtkImage" id="smp_image"/>
-              </child>
+                  <object class="GtkImage" id="smp_image">
+                    <property name="margin_top">10</property>
+		  </object>
+	      </child>
               <child>
                   <object class="GtkLabel" id="prompt">
-                      <property name="label" translatable="yes"></property>
+                      <property name="margin-top">5</property>
+		      <property name="label" translatable="yes"></property>
                   </object>
               </child>
               <child>

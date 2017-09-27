@@ -110,7 +110,7 @@ func (v *verifier) buildPinWindow() {
 }
 
 func (v *verifier) showUnverifiedWarning() {
-	v.unverifiedWarning.show(v.chooseBestLayout)
+	v.unverifiedWarning.show()
 }
 
 // TODO: check colors and sizes
@@ -126,12 +126,11 @@ type unverifiedWarning struct {
 	peerIsVerified func() bool
 }
 
-func (u *unverifiedWarning) show(showBestLayout func()) {
+func (u *unverifiedWarning) show() {
 	if !u.peerIsVerified() {
 		u.infobar.Show()
 		u.label.Show()
 		u.image.ShowAll()
-		showBestLayout()
 	} else {
 		log.Println("We already have a peer and a trusted fingerprint. No reason to show the unverified warning")
 	}
@@ -252,9 +251,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 	setImageFromFile(v.waitingForPeer.image, "waiting.svg")
 
 	v.waitingForPeer.button.Connect("clicked", func() {
-		v.session.AbortSMP(v.peerJid(), v.currentResource)
-		v.removeInProgressDialogs()
-		v.showUnverifiedWarning()
+		v.cancelSMP()
 	})
 
 	v.notifier.notify(v.waitingForPeer.infobar)
@@ -324,8 +321,8 @@ func (v *verifier) buildAnswerSMPDialog() {
 		"close_share_pin": func() {
 			answer, _ := v.answerSMPWindow.answer.GetText()
 			v.removeInProgressDialogs()
-			v.showWaitingForPeerToCompleteSMPDialog()
 			v.session.FinishSMP(v.peerJid(), v.currentResource, answer)
+			v.showWaitingForPeerToCompleteSMPDialog()
 		},
 	})
 
@@ -348,75 +345,60 @@ func (v *verifier) showAnswerSMPDialog(question string) {
 }
 
 type peerRequestsSMPNotification struct {
-	b                 *builder
-	box               gtki.Box
-	infobar           gtki.InfoBar
-	msg               gtki.Label
-	vertActionButtons gtki.Box
-	verifyButtonVert  gtki.Button
-	cancelButtonVert  gtki.Button
-	verifyButtonHoriz gtki.Button
-	cancelButtonHoriz gtki.Button
+	b            *builder
+	infobar      gtki.Box
+	closeInfobar gtki.Box
+	notification gtki.Box
+	label        gtki.Label
+	image        gtki.Image
+	button       gtki.Button
 }
 
-func (p *peerRequestsSMPNotification) show(showBestLayout func()) {
+func (p *peerRequestsSMPNotification) show() {
 	p.infobar.Show()
-	p.box.Show()
-	p.msg.Show()
-	showBestLayout()
-}
-
-func (p *peerRequestsSMPNotification) showVerticalView() {
-	p.box.SetOrientation(gtki.VerticalOrientation)
-
-	p.vertActionButtons.ShowAll()
-
-	p.verifyButtonHoriz.Hide()
-	p.cancelButtonHoriz.Hide()
-
-	addStyle(p.cancelButtonVert, "cancelButton", `.cancelButton {
-		margin-left: 0.5em;
-	}`)
-}
-
-func (p *peerRequestsSMPNotification) showHorizontalView() {
-	p.box.SetOrientation(gtki.HorizontalOrientation)
-
-	p.vertActionButtons.Hide()
-	p.verifyButtonHoriz.Show()
-	p.cancelButtonHoriz.Show()
-
-	addStyle(p.cancelButtonHoriz, "cancelButton", `.cancelButton {
-		margin-left: 0.5em;
-	}`)
+	p.closeInfobar.Show()
+	p.label.Show()
 }
 
 func (v *verifier) buildPeerRequestsSMPNotification() {
 	v.peerRequestsSMP = &peerRequestsSMPNotification{b: newBuilder("PeerRequestsSMP")}
 	v.peerRequestsSMP.b.getItems(
-		"box", &v.peerRequestsSMP.box,
-		"vert_action_buttons", &v.peerRequestsSMP.vertActionButtons,
-		"peer_requests_smp", &v.peerRequestsSMP.infobar,
-		"message", &v.peerRequestsSMP.msg,
-		"verification_button_vertical", &v.peerRequestsSMP.verifyButtonVert,
-		"cancel_button_vertical", &v.peerRequestsSMP.cancelButtonVert,
-		"verification_button_horizontal", &v.peerRequestsSMP.verifyButtonHoriz,
-		"cancel_button_horizontal", &v.peerRequestsSMP.cancelButtonHoriz,
+		"smp-requested-infobar", &v.peerRequestsSMP.infobar,
+		"smp-requested-close-infobar", &v.peerRequestsSMP.closeInfobar,
+		"smp-requested-notification", &v.peerRequestsSMP.notification,
+		"smp-requested-message", &v.peerRequestsSMP.label,
+		"smp-requested-image", &v.peerRequestsSMP.image,
+		"smp-requested-button", &v.peerRequestsSMP.button,
 	)
 
-	v.peerRequestsSMP.cancelButtonVert.Connect("clicked", func() {
-		v.removeInProgressDialogs()
-		v.session.AbortSMP(v.peerJid(), v.currentResource)
-		v.showUnverifiedWarning()
+	v.peerRequestsSMP.b.ConnectSignals(map[string]interface{}{
+		"on_press_smp_image": v.cancelSMP,
 	})
 
-	v.peerRequestsSMP.cancelButtonHoriz.Connect("clicked", func() {
-		v.removeInProgressDialogs()
-		v.session.AbortSMP(v.peerJid(), v.currentResource)
-		v.showUnverifiedWarning()
-	})
+	prov, _ := g.gtk.CssProviderNew()
 
-	v.peerRequestsSMP.cancelButtonHoriz.Hide()
+	css := fmt.Sprintf(`
+	box { background-color: #fbe9e7;
+	      border: 2px;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ := v.peerRequestsSMP.infobar.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	prov, _ = g.gtk.CssProviderNew()
+
+	css = fmt.Sprintf(`
+	box { background-color: #e5d7d6;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ = v.peerRequestsSMP.closeInfobar.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	setImageFromFile(v.peerRequestsSMP.image, "waiting.svg")
 
 	v.notifier.notify(v.peerRequestsSMP.infobar)
 }
@@ -424,16 +406,13 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 func (v *verifier) displayRequestForSecret(question string) {
 	v.hideUnverifiedWarning()
 
-	v.peerRequestsSMP.msg.SetText(i18n.Localf("%s is waiting for you to finish verifying the security of this channel...", v.peerName()))
+	v.peerRequestsSMP.label.SetLabel(i18n.Localf("Finish verifying the \nsecurity of this channel..."))
 
-	v.peerRequestsSMP.verifyButtonVert.Connect("clicked", func() {
-		v.showAnswerSMPDialog(question)
-	})
-	v.peerRequestsSMP.verifyButtonHoriz.Connect("clicked", func() {
+	v.peerRequestsSMP.button.Connect("clicked", func() {
 		v.showAnswerSMPDialog(question)
 	})
 
-	v.peerRequestsSMP.show(v.chooseBestLayout)
+	v.peerRequestsSMP.show()
 }
 
 type verificationSuccessNotification struct {
@@ -496,7 +475,6 @@ func (v *verifier) buildSMPFailedDialog() {
 
 func (v *verifier) displayVerificationFailure() {
 	v.smpFailed.msg.SetText(i18n.Localf("We could not verify this channel with %s.", v.peerName()))
-	v.chooseBestLayout()
 	v.smpFailed.d.ShowAll()
 }
 
@@ -511,13 +489,8 @@ func (v *verifier) hideUnverifiedWarning() {
 	v.unverifiedWarning.infobar.Hide()
 }
 
-var bestHorizontalTransitionWidth = 800
-
-func (v *verifier) chooseBestLayout() {
-	currentWidth, _ := v.parentWindow.GetSize()
-	if currentWidth > bestHorizontalTransitionWidth {
-		v.peerRequestsSMP.showHorizontalView()
-	} else {
-		v.peerRequestsSMP.showVerticalView()
-	}
+func (v *verifier) cancelSMP() {
+	v.removeInProgressDialogs()
+	v.session.AbortSMP(v.peerJid(), v.currentResource)
+	v.showUnverifiedWarning()
 }

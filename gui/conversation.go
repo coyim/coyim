@@ -278,10 +278,6 @@ func (conv *conversationPane) onDestroyFileTransfer() {
 	}
 }
 
-func (conv *conversationPane) onWindowChange() {
-	conv.verifier.chooseBestLayout()
-}
-
 func countVisibleLines(v gtki.TextView) uint {
 	lines := uint(1)
 	iter := getTextBufferFrom(v).GetStartIter()
@@ -339,7 +335,6 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		"messageScroll", &cp.entryScroll,
 	)
 
-	transientParent.Connect("configure-event", cp.onWindowChange)
 	builder.ConnectSignals(map[string]interface{}{
 		"on_start_otr_signal":      cp.onStartOtrSignal,
 		"on_end_otr_signal":        cp.onEndOtrSignal,

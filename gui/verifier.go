@@ -333,7 +333,7 @@ var coyIMQuestion = regexp.MustCompile("Please enter the PIN that I shared with 
 
 func (v *verifier) showAnswerSMPDialog(question string) {
 	if "" == question {
-		v.answerSMPWindow.question.SetText(i18n.Localf("Enter the secret that %s has shared with you", v.peerName()))
+		v.answerSMPWindow.question.SetText(i18n.Localf("Enter the secret that %s shared with you", v.peerName()))
 	} else if coyIMQuestion.MatchString(question) {
 		v.answerSMPWindow.question.SetText(i18n.Localf("Type the PIN that %s sent you. It can be used only once.", v.peerName()))
 	} else {

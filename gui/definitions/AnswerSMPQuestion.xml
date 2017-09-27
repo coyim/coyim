@@ -7,7 +7,7 @@
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="box">
-        <property name="border-width">10</property>
+        <property name="border_width">10</property>
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
@@ -22,7 +22,8 @@
         </child>
         <child>
           <object  class="GtkImage" id="smp_image">
-            <property name="margin-bottom">10</property>
+            <property name="margin_bottom">10</property>
+            <property name="margin_top">10</property>
           </object>
         </child>
         <child>
@@ -31,7 +32,7 @@
             <child>
               <object class="GtkLabel" id="question_from_peer">
                 <property name="label" translatable="yes"/>
-                <property name="margin-bottom">10</property>
+                <property name="margin-bottom">12</property>
               </object>
             </child>
            </object>
@@ -63,8 +64,9 @@
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="label" translatable="yes">Your contact must have shared it with you previously. If not, try to:</property>
-            <property name="margin-bottom">5</property>
+            <property name="label" translatable="yes">Your peer must have previously shared it with you. If not, try to:</property>
+            <property name="margin-top">5</property>
+            <property name="margin-bottom">10</property>
           </object>
         </child>
         <child>

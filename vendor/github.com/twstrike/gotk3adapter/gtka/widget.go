@@ -63,6 +63,14 @@ func (v *widget) SetMarginBottom(v1 int) {
 	v.internal.SetMarginBottom(v1)
 }
 
+func (v *widget) SetMarginStart(v1 int) {
+	v.internal.SetMarginStart(v1)
+}
+
+func (v *widget) SetMarginEnd(v1 int) {
+	v.internal.SetMarginEnd(v1)
+}
+
 func (v *widget) SetSizeRequest(v1, v2 int) {
 	v.internal.SetSizeRequest(v1, v2)
 }

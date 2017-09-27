@@ -28,6 +28,12 @@ func (*MockWidget) SetMarginTop(v1 int) {
 func (*MockWidget) SetMarginBottom(v1 int) {
 }
 
+func (*MockWidget) SetMarginStart(v1 int) {
+}
+
+func (*MockWidget) SetMarginEnd(v1 int) {
+}
+
 func (*MockWidget) SetSizeRequest(v1, v2 int) {
 }
 

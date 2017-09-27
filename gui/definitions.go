@@ -1983,7 +1983,7 @@ Y2U+Cg==
 
 	"/definitions/ConversationPane.xml": {
 		local:   "definitions/ConversationPane.xml",
-		size:    12554,
+		size:    12599,
 		modtime: 1489449600,
 		compressed: `
 PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtCb3giIGlkPSJib3giPgogICAgPHByb3BlcnR5

@@ -201,7 +201,7 @@ func (v *verifier) showPINDialog() {
 	v.pinWindow.prompt.SetText(i18n.Localf("Share the one-time PIN below with %s", v.peerName()))
 	v.session.StartSMP(v.peerJid(), v.currentResource, question, pin)
 	v.unverifiedWarning.infobar.Hide()
-	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName()))
+	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
 
 	v.waitingForPeer.infobar.ShowAll()
 	v.pinWindow.d.ShowAll()
@@ -247,7 +247,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 	styleContext, _ := v.waitingForPeer.infobar.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName))
+	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
 	setImageFromFile(v.waitingForPeer.image, "waiting.svg")
 
 	v.waitingForPeer.button.Connect("clicked", func() {
@@ -260,7 +260,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 }
 
 func (v *verifier) showWaitingForPeerToCompleteSMPDialog() {
-	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for \n%s \nto finish securing the channel...", v.peerName()))
+	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
 	v.hideUnverifiedWarning()
 	v.waitingForPeer.infobar.ShowAll()
 }

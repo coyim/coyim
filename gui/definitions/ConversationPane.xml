@@ -53,7 +53,8 @@
     </child>
     <child>
       <object class="GtkBox" id="notification-area">
-        <property name="visible">true</property>
+        <property name="can_focus">False</property>
+	<property name="visible">true</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
 	<child>
           <object class="GtkBox" id="security-warning">
@@ -98,8 +99,8 @@
                   <object class="GtkLabel" id="button-label-security-warning">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">17</property>
-                    <property name="margin_right">17</property>
+                    <property name="margin_left">23</property>
+                    <property name="margin_right">23</property>
                     <property name="label" translatable="yes">Secure Chat</property>
                   </object>
                 </child>
@@ -185,8 +186,8 @@
                   <object class="GtkLabel" id="button-label-file-transfer">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">25</property>
-                    <property name="margin_right">25</property>
+                    <property name="margin_left">37</property>
+                    <property name="margin_right">37</property>
                   </object>
                 </child>
                 <signal name="clicked" handler="on_destroy_file_transfer" />

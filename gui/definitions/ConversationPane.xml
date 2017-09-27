@@ -186,8 +186,8 @@
                   <object class="GtkLabel" id="button-label-file-transfer">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">37</property>
-                    <property name="margin_right">37</property>
+                    <property name="margin_left">38</property>
+                    <property name="margin_right">38</property>
                   </object>
                 </child>
                 <signal name="clicked" handler="on_destroy_file_transfer" />

@@ -51,6 +51,10 @@ func (v *widget) SetVisible(v1 bool) {
 	v.internal.SetVisible(v1)
 }
 
+func (v *widget) IsVisible() bool {
+	return v.internal.IsVisible()
+}
+
 func (v *widget) SetName(v1 string) {
 	v.internal.SetName(v1)
 }
@@ -61,14 +65,6 @@ func (v *widget) SetMarginTop(v1 int) {
 
 func (v *widget) SetMarginBottom(v1 int) {
 	v.internal.SetMarginBottom(v1)
-}
-
-func (v *widget) SetMarginStart(v1 int) {
-	v.internal.SetMarginStart(v1)
-}
-
-func (v *widget) SetMarginEnd(v1 int) {
-	v.internal.SetMarginEnd(v1)
 }
 
 func (v *widget) SetSizeRequest(v1, v2 int) {

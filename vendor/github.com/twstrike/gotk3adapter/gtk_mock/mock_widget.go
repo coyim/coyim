@@ -19,6 +19,10 @@ func (*MockWidget) SetSensitive(v1 bool) {
 func (*MockWidget) SetVisible(v1 bool) {
 }
 
+func (*MockWidget) IsVisible() bool {
+	return false
+}
+
 func (*MockWidget) SetName(v1 string) {
 }
 
@@ -26,12 +30,6 @@ func (*MockWidget) SetMarginTop(v1 int) {
 }
 
 func (*MockWidget) SetMarginBottom(v1 int) {
-}
-
-func (*MockWidget) SetMarginStart(v1 int) {
-}
-
-func (*MockWidget) SetMarginEnd(v1 int) {
 }
 
 func (*MockWidget) SetSizeRequest(v1, v2 int) {

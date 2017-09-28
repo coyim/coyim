@@ -418,8 +418,8 @@ func (v *verifier) displayRequestForSecret(question string) {
 type verificationSuccessNotification struct {
 	b      *builder
 	d      gtki.Dialog
-	msg    gtki.Label
-	img    gtki.Image
+	label  gtki.Label
+	image  gtki.Image
 	button gtki.Button
 }
 
@@ -428,15 +428,15 @@ func (v *verifier) displayVerificationSuccess() {
 
 	v.verificationSuccess.b.getItems(
 		"dialog", &v.verificationSuccess.d,
-		"verification_message", &v.verificationSuccess.msg,
-		"success_image", &v.verificationSuccess.img,
+		"verification_message", &v.verificationSuccess.label,
+		"success_image", &v.verificationSuccess.image,
 		"button_ok", &v.verificationSuccess.button,
 	)
 
-	v.verificationSuccess.msg.SetText(i18n.Localf("Hooray! No one is listening in on your conversations with %s", v.peerName()))
-	setImageFromFile(v.verificationSuccess.img, "smpsuccess.svg")
-
 	v.verificationSuccess.button.Connect("clicked", v.verificationSuccess.d.Destroy)
+
+	v.verificationSuccess.label.SetMarkup(i18n.Localf("Hooray! No one is listening in on your conversations with <b>%s</b>", v.peerName()))
+	setImageFromFile(v.verificationSuccess.image, "smpsuccess.svg")
 
 	v.verificationSuccess.d.SetTransientFor(v.parentWindow)
 	v.verificationSuccess.d.ShowAll()
@@ -446,7 +446,6 @@ func (v *verifier) displayVerificationSuccess() {
 type smpFailedNotification struct {
 	d              gtki.Dialog
 	msg            gtki.Label
-	header         gtki.Label
 	tryLaterButton gtki.Button
 }
 
@@ -469,12 +468,10 @@ func (v *verifier) buildSMPFailedDialog() {
 		v.showUnverifiedWarning()
 		v.smpFailed.d.Hide()
 	})
-
-	addBoldHeaderStyle(builder.getObj("header").(gtki.Label))
 }
 
 func (v *verifier) displayVerificationFailure() {
-	v.smpFailed.msg.SetText(i18n.Localf("We could not verify this channel with %s.", v.peerName()))
+	v.smpFailed.msg.SetMarkup(i18n.Localf("We could not verify this channel with <b>%s</b>.", v.peerName()))
 	v.smpFailed.d.ShowAll()
 }
 

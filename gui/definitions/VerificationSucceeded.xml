@@ -22,7 +22,8 @@
             <child>
               <object class="GtkButton" id="button_ok">
                 <property name="label" translatable="yes">OK</property>
-              </object>
+                <property name="margin-top">10</property>
+	      </object>
             </child>
           </object>
         </child>

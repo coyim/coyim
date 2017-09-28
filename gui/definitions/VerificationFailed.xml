@@ -10,10 +10,14 @@
           <object class="GtkGrid">
             <property name="halign">GTK_ALIGN_CENTER</property>
             <child>
-              <object class="GtkLabel" id="header">
-                <property name="label" translatable="yes">Verification Failed</property>
-                <property name="margin-bottom">10</property>
-              </object>
+              <object class="GtkLabel">
+                <property name="margin-bottom">15</property>
+		<property name="label" translatable="yes">Verification Failed</property>
+            <attributes>
+              <attribute name="font-desc" value="&lt;Enter Value&gt; 16"/>
+	      <attribute name="weight" value="semibold"/>
+            </attributes>
+	      </object>
               <packing>
                 <property name="left-attach">0</property>
                 <property name="top-attach">1</property>
@@ -37,7 +41,7 @@
                 <child>
                   <object class="GtkButton" id="try_later">
                     <property name="can-default">true</property>
-                    <property name="label" translatable="yes">Do this later</property>
+                    <property name="label" translatable="yes">Try again later</property>
                   </object>
                 </child>
               </object>

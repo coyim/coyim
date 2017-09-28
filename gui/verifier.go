@@ -198,7 +198,7 @@ func (v *verifier) showPINDialog() {
 		return
 	}
 	v.pinWindow.pin.SetText(pin)
-	v.pinWindow.prompt.SetText(i18n.Localf("Share this one-time PIN with %s", v.peerName()))
+	v.pinWindow.prompt.SetMarkup(i18n.Localf("Share this one-time PIN with <b>%s</b>", v.peerName()))
 
 	v.session.StartSMP(v.peerJid(), v.currentResource, question, pin)
 	v.pinWindow.d.ShowAll()
@@ -333,9 +333,9 @@ var coyIMQuestion = regexp.MustCompile("Please enter the PIN that I shared with 
 
 func (v *verifier) showAnswerSMPDialog(question string) {
 	if "" == question {
-		v.answerSMPWindow.question.SetText(i18n.Localf("Enter the secret that %s shared with you", v.peerName()))
+		v.answerSMPWindow.question.SetMarkup(i18n.Localf("Enter the secret that <b>%s</b> shared with you", v.peerName()))
 	} else if coyIMQuestion.MatchString(question) {
-		v.answerSMPWindow.question.SetText(i18n.Localf("Type the PIN that %s sent you. It can be used only once.", v.peerName()))
+		v.answerSMPWindow.question.SetMarkup(i18n.Localf("Type the PIN that <b>%s</b> sent you. It can be used only once.", v.peerName()))
 	} else {
 		v.answerSMPWindow.question.SetText(question)
 	}

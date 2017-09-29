@@ -7,7 +7,7 @@ Here's the brief:
 * Write automated tests, ideally using TDD. CI needs to be green in order to merge.
 * Contact us for questions & suggestions:
   * IRC: #coyim @ irc.oftc.net ([join via webchat](https://webchat.oftc.net))
-  * Email: [coyim@thoughtworks.com](mailto:coyim@thoughtworks.com)
+  * Email: [coyim@olabini.se](mailto:coyim@olabini.se)
   * Twitter: [@coyproject](https://twitter.com/coyproject)
 
   This document outlines our way of working, gives hints and outlines the steps to make your contribution to Coy IM as smooth as possible. You're not required to read this before getting started. We're explaining the way we work to make sure you're having a good experience and can make best use of the time you're contributing to our project.

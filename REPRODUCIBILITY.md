@@ -50,7 +50,7 @@ If not, you can run
   make send-reproducible-signature
 ```
 
-which will mail the signed `build_info` file to [coyim@thoughtworks.com](mailto:coyim@thoughtworks.com). You can also manually mail the this file of course.
+which will mail the signed `build_info` file to [coyim@olabini.se](mailto:coyim@olabini.se). You can also manually mail the this file of course.
 
 
 ## Verifying reproducible binaries

@@ -285,7 +285,7 @@ func (p *Pickler) dump(input interface{}) error {
 		p.pushOpcode(OPCODE_APPENDS)
 		return nil
 	case reflect.Struct:
-		return p.dumpStruct(input)
+		return p.dumpStruct(v, false)
 	}
 
 	return PicklingError{V: input, Err: ErrTypeNotPickleable}
@@ -299,19 +299,26 @@ func (p *Pickler) dumpBool(v bool) {
 	}
 }
 
-func (p *Pickler) dumpStruct(input interface{}) error {
-	vType := reflect.TypeOf(input)
-	v := reflect.ValueOf(input)
-
-	p.pushOpcode(OPCODE_EMPTY_DICT)
-	p.pushOpcode(OPCODE_MARK)
+func (p *Pickler) dumpStruct(v reflect.Value,  nested bool) error {
+	vType := v.Type()
+        if !nested {
+		p.pushOpcode(OPCODE_EMPTY_DICT)
+		p.pushOpcode(OPCODE_MARK)
+	}
 
 	for i := 0; i != v.NumField(); i++ {
 		field := vType.Field(i)
 		//Never attempt to write
 		//unexported names
 		if len(field.PkgPath) != 0 {
-			continue
+                        //Check for embedded field, which can possibly be dumped 
+                        if field.Anonymous {
+                          err := p.dumpStruct(v.Field(i), true)
+                          if err != nil { 
+                            return err
+                          }
+                        } 
+                        continue
 		}
 
 		//Prefer the tagged name of the
@@ -329,7 +336,9 @@ func (p *Pickler) dumpStruct(input interface{}) error {
 		}
 
 	}
-	p.pushOpcode(OPCODE_SETITEMS)
+	if !nested {
+		p.pushOpcode(OPCODE_SETITEMS)
+	}
 	return nil
 }
 
@@ -379,7 +388,7 @@ func (proxy bigIntProxy) WriteTo(w io.Writer) (int, error) {
 
 	var pad []byte
 	var padL int
-	var highBitSet = (raw[0] & 0x80) != 0
+	var highBitSet = (len(raw) > 0 && (raw[0] & 0x80) == 0x80)
 
 	if negative && !highBitSet {
 		pad = maxPad

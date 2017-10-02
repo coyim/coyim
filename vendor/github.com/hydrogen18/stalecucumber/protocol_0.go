@@ -119,12 +119,12 @@ func (pm *PickleMachine) opcode_STRING() error {
 	}
 
 	//For whatever reason, the string is quoted. So the first and last character
-	//should always be the single quote
+	//should always be the single quote, unless the string contains a single quote, then it is double quoted
 	if len(str) < 2 {
 		return fmt.Errorf("For STRING opcode, argument has invalid length %d", len(str))
 	}
 
-	if str[0] != '\'' || str[len(str)-1] != '\'' {
+	if (str[0] != '\'' || str[len(str)-1] != '\'') && (str[0] != '"' || str[len(str)-1] != '"') {
 		return fmt.Errorf("For STRING opcode, argument has poorly formed value %q", str)
 	}
 

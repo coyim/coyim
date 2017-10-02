@@ -12,7 +12,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 // SendPing sends a Ping request.

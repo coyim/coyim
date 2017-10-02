@@ -7,7 +7,7 @@ import (
 	"crypto/tls"
 	"io"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 	. "gopkg.in/check.v1"
 )
 

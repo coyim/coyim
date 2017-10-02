@@ -7,8 +7,8 @@ import (
 
 	"golang.org/x/net/proxy"
 
-	ournet "github.com/twstrike/coyim/net"
-	"github.com/twstrike/coyim/xmpp"
+	ournet "github.com/coyim/coyim/net"
+	"github.com/coyim/coyim/xmpp"
 	. "gopkg.in/check.v1"
 )
 

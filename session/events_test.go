@@ -3,7 +3,7 @@ package session
 import (
 	"time"
 
-	"github.com/twstrike/coyim/session/events"
+	"github.com/coyim/coyim/session/events"
 
 	. "gopkg.in/check.v1"
 )

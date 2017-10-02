@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/digests"
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/net"
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/digests"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/net"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type accountDetailsData struct {

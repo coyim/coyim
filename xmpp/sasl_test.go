@@ -3,8 +3,8 @@ package xmpp
 import (
 	"encoding/xml"
 
-	"github.com/twstrike/coyim/xmpp/data"
-	"github.com/twstrike/coyim/xmpp/errors"
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/errors"
 
 	. "gopkg.in/check.v1"
 )

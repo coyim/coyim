@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) showConnectAccountNotification(account *account) func() {

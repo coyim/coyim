@@ -14,7 +14,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/twstrike/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
 var tlsVersionStrings = map[uint16]string{

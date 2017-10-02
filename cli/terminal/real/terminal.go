@@ -3,7 +3,7 @@ package real
 import (
 	"io"
 
-	"github.com/twstrike/coyim/cli/terminal"
+	"github.com/coyim/coyim/cli/terminal"
 	ssh_terminal "golang.org/x/crypto/ssh/terminal"
 )
 

@@ -13,11 +13,11 @@ import (
 
 	"golang.org/x/net/proxy"
 
-	ournet "github.com/twstrike/coyim/net"
-	"github.com/twstrike/coyim/servers"
-	ourtls "github.com/twstrike/coyim/tls"
-	"github.com/twstrike/coyim/xmpp/data"
-	"github.com/twstrike/coyim/xmpp/interfaces"
+	ournet "github.com/coyim/coyim/net"
+	"github.com/coyim/coyim/servers"
+	ourtls "github.com/coyim/coyim/tls"
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
 var (

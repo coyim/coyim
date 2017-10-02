@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/url"
 
-	"github.com/twstrike/coyim/i18n"
+	"github.com/coyim/coyim/i18n"
 )
 
 // Proxy contains information about a proxy specification

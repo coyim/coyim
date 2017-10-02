@@ -1,9 +1,9 @@
 package gui
 
 import (
-	"github.com/twstrike/coyim/client"
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session/access"
+	"github.com/coyim/coyim/client"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/access"
 )
 
 type executable interface {

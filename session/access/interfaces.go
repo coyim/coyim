@@ -5,15 +5,15 @@ import (
 	"io"
 	"time"
 
-	"github.com/twstrike/coyim/client"
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/event"
-	"github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/tls"
-	"github.com/twstrike/coyim/xmpp/data"
-	xi "github.com/twstrike/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/client"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/event"
+	"github.com/coyim/coyim/roster"
+	"github.com/coyim/coyim/tls"
+	"github.com/coyim/coyim/xmpp/data"
+	xi "github.com/coyim/coyim/xmpp/interfaces"
 
-	"github.com/twstrike/otr3"
+	"github.com/coyim/otr3"
 )
 
 // EventHandler represents the main notifications that the session can emit

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/twstrike/gotk3adapter/gdki"
+	"github.com/coyim/gotk3adapter/gdki"
 )
 
 type icon struct {

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 // Conn represents a connection to an XMPP server.

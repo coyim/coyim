@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/twstrike/coyim/session/access"
+	"github.com/coyim/coyim/session/access"
 )
 
 func discoverSupport(s access.Session, peer string) (profiles []string, err error) {

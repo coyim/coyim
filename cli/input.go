@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/twstrike/coyim/cli/terminal"
+	"github.com/coyim/coyim/cli/terminal"
 )
 
 type uiCommand struct {

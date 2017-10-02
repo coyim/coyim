@@ -1,6 +1,6 @@
 package session
 
-import "github.com/twstrike/coyim/session/events"
+import "github.com/coyim/coyim/session/events"
 
 // Subscribe subscribes the observer to XMPP events
 func (s *session) Subscribe(c chan<- interface{}) {

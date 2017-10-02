@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 const requestDelimiterXML = `

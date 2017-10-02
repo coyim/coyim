@@ -3,8 +3,8 @@ package gui
 import (
 	"strings"
 
-	"github.com/twstrike/coyim/gui/settings"
-	"github.com/twstrike/coyim/ui"
+	"github.com/coyim/coyim/gui/settings"
+	"github.com/coyim/coyim/ui"
 )
 
 // This file contains the generic functionality for desktop notifications.

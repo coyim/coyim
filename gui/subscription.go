@@ -3,8 +3,8 @@ package gui
 import (
 	"log"
 
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 func authorizePresenceSubscriptionDialog(parent gtki.Window, from string) gtki.MessageDialog {

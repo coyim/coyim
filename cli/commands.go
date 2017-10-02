@@ -1,6 +1,6 @@
 package cli
 
-import "github.com/twstrike/coyim/client"
+import "github.com/coyim/coyim/client"
 
 func (c *cliUI) ExecuteCmd(comm interface{}) {
 	c.commands <- comm

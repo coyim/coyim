@@ -5,8 +5,8 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/twstrike/coyim/xmpp/data"
-	xutils "github.com/twstrike/coyim/xmpp/utils"
+	"github.com/coyim/coyim/xmpp/data"
+	xutils "github.com/coyim/coyim/xmpp/utils"
 )
 
 // Peer represents and contains all the information you have about a specific peer.

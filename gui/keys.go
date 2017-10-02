@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/twstrike/gotk3adapter/gdki"
+import "github.com/coyim/gotk3adapter/gdki"
 
 // shift, control, super, hyper, meta,
 

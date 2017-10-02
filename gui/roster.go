@@ -10,13 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
-	rosters "github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp/utils"
-	"github.com/twstrike/gotk3adapter/gdki"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/i18n"
+	rosters "github.com/coyim/coyim/roster"
+	"github.com/coyim/coyim/ui"
+	"github.com/coyim/coyim/xmpp/utils"
+	"github.com/coyim/gotk3adapter/gdki"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roster struct {

@@ -1,9 +1,9 @@
 package gui
 
 import (
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) captureInitialMasterPassword(k func(), onCancel func()) {

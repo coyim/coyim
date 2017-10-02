@@ -5,12 +5,12 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/coyim/xmpp/interfaces"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 // account wraps a Session with GUI functionality

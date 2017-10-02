@@ -10,9 +10,9 @@ import (
 
 	goerr "errors"
 
-	"github.com/twstrike/coyim/digests"
-	"github.com/twstrike/coyim/xmpp/data"
-	"github.com/twstrike/coyim/xmpp/errors"
+	"github.com/coyim/coyim/digests"
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/errors"
 
 	. "gopkg.in/check.v1"
 )

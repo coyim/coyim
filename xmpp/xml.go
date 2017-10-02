@@ -15,8 +15,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/twstrike/coyim/xmpp/data"
-	"github.com/twstrike/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
 var xmlSpecial = map[byte]string{

@@ -1,8 +1,8 @@
 package gui
 
 import (
-	"github.com/twstrike/gotk3adapter/glib_mock"
-	"github.com/twstrike/gotk3adapter/glibi"
+	"github.com/coyim/gotk3adapter/glib_mock"
+	"github.com/coyim/gotk3adapter/glibi"
 	. "gopkg.in/check.v1"
 )
 

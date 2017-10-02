@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/twstrike/coyim/xmpp/utils"
-	"github.com/twstrike/otr3"
+	"github.com/coyim/coyim/xmpp/utils"
+	"github.com/coyim/otr3"
 )
 
 // Account contains the configuration for one account

@@ -13,14 +13,14 @@ import (
 	"io"
 	"log"
 
-	"github.com/twstrike/coyim/xmpp/data"
-	xe "github.com/twstrike/coyim/xmpp/errors"
-	"github.com/twstrike/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/data"
+	xe "github.com/coyim/coyim/xmpp/errors"
+	"github.com/coyim/coyim/xmpp/interfaces"
 
-	"github.com/twstrike/coyim/sasl"
-	"github.com/twstrike/coyim/sasl/digestmd5"
-	"github.com/twstrike/coyim/sasl/plain"
-	"github.com/twstrike/coyim/sasl/scram"
+	"github.com/coyim/coyim/sasl"
+	"github.com/coyim/coyim/sasl/digestmd5"
+	"github.com/coyim/coyim/sasl/plain"
+	"github.com/coyim/coyim/sasl/scram"
 )
 
 var (

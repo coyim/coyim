@@ -3,7 +3,7 @@ package client
 import (
 	"math/rand"
 
-	"github.com/twstrike/otr3"
+	"github.com/coyim/otr3"
 )
 
 // Conversation represents a conversation with encryption capabilities

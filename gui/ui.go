@@ -7,17 +7,17 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/gui/settings"
-	"github.com/twstrike/coyim/i18n"
-	ournet "github.com/twstrike/coyim/net"
-	rosters "github.com/twstrike/coyim/roster"
-	sessions "github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp/interfaces"
-	"github.com/twstrike/gotk3adapter/gdki"
-	"github.com/twstrike/gotk3adapter/glibi"
-	"github.com/twstrike/gotk3adapter/gtki"
-	"github.com/twstrike/gotk3adapter/pangoi"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/gui/settings"
+	"github.com/coyim/coyim/i18n"
+	ournet "github.com/coyim/coyim/net"
+	rosters "github.com/coyim/coyim/roster"
+	sessions "github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/gotk3adapter/gdki"
+	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/coyim/gotk3adapter/pangoi"
 )
 
 const (

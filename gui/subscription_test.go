@@ -1,9 +1,9 @@
 package gui
 
 import (
-	"github.com/twstrike/gotk3adapter/glibi"
-	"github.com/twstrike/gotk3adapter/gtk_mock"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/coyim/gotk3adapter/gtk_mock"
+	"github.com/coyim/gotk3adapter/gtki"
 	. "gopkg.in/check.v1"
 )
 

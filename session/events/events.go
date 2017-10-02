@@ -3,8 +3,8 @@ package events
 import (
 	"time"
 
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 // Event represents a Session event

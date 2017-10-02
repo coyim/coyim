@@ -5,9 +5,9 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/session/filetransfer"
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/session/filetransfer"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 func init() {

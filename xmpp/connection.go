@@ -19,9 +19,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/twstrike/coyim/xmpp/data"
-	"github.com/twstrike/coyim/xmpp/interfaces"
-	"github.com/twstrike/coyim/xmpp/utils"
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/utils"
 )
 
 // conn represents a connection to an XMPP server.

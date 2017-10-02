@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 type extensionFunction func(access.Session, *data.ClientMessage, *data.Extension)

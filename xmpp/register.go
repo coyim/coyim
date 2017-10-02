@@ -13,8 +13,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/twstrike/coyim/xmpp/data"
-	"github.com/twstrike/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
 // Various errors signalled by the registration component

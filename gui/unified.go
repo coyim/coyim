@@ -5,8 +5,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/twstrike/gotk3adapter/gtki"
-	"github.com/twstrike/gotk3adapter/pangoi"
+	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/coyim/gotk3adapter/pangoi"
 )
 
 const (

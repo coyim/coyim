@@ -11,19 +11,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/twstrike/coyim/client"
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/event"
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/coyim/tls"
-	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp/data"
-	xi "github.com/twstrike/coyim/xmpp/interfaces"
-	"github.com/twstrike/coyim/xmpp/utils"
-	"github.com/twstrike/otr3"
+	"github.com/coyim/coyim/client"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/event"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/roster"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/tls"
+	"github.com/coyim/coyim/ui"
+	"github.com/coyim/coyim/xmpp/data"
+	xi "github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/utils"
+	"github.com/coyim/otr3"
 )
 
 type connStatus int
@@ -603,7 +603,7 @@ func (s *session) receiveClientMessage(from, resource string, when time.Time, bo
 		// TODO: all this stuff is very CLI specific, we should move it out and create good interaction
 		// for the gui
 
-		// TODO: twstrike/otr3 does not allow sending messages after the channel has
+		// TODO: coyim/otr3 does not allow sending messages after the channel has
 		// been terminated, so this should not be a problem.
 		// This is probably unsafe without a policy that _forces_ crypto to
 		// _everyone_ by default and refuses plaintext. Users might not notice

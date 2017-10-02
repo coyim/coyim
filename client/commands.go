@@ -1,6 +1,6 @@
 package client
 
-import "github.com/twstrike/coyim/config"
+import "github.com/coyim/coyim/config"
 
 // AuthorizeFingerprintCmd is a command that represents a request to authorize a fingerprint
 type AuthorizeFingerprintCmd struct {

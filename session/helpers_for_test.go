@@ -7,9 +7,9 @@ import (
 
 	gocheck "gopkg.in/check.v1"
 
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/otr3"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/otr3"
 )
 
 type mockSessionEventHandler struct {

@@ -9,7 +9,7 @@ package xmpp
 import (
 	"fmt"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 // RequestRoster requests the user's roster from the server. It returns a

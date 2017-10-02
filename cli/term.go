@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/twstrike/coyim/cli/terminal"
+	"github.com/coyim/coyim/cli/terminal"
 )
 
 func updateTerminalSize(term terminal.Terminal, tc terminal.Control) {

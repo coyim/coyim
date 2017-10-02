@@ -14,7 +14,7 @@ import (
 	"io"
 	"sort"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 // HasSupportTo uses XEP-0030 to checks if an entity supports a feature.

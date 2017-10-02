@@ -1,6 +1,6 @@
 package gui
 
-import "github.com/twstrike/gotk3adapter/gtki"
+import "github.com/coyim/gotk3adapter/gtki"
 
 func (u *gtkUI) showFirstAccountWindow() {
 	result := make(chan func())

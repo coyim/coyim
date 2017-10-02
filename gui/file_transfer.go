@@ -3,10 +3,10 @@ package gui
 import (
 	"log"
 
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/coyim/xmpp/utils"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/xmpp/utils"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 // OK, so from the user interface, for now, we need a few things:

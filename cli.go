@@ -3,11 +3,11 @@
 package main
 
 import (
-	"github.com/twstrike/coyim/cli"
-	"github.com/twstrike/coyim/cli/terminal/real"
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/xmpp"
+	"github.com/coyim/coyim/cli"
+	"github.com/coyim/coyim/cli/terminal/real"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
+	"github.com/coyim/coyim/xmpp"
 )
 
 func runClient() {

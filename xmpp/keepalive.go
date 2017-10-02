@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 var (

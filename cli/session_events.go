@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/coyim/xmpp/utils"
+	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/ui"
+	"github.com/coyim/coyim/xmpp/utils"
 )
 
 func (c *cliUI) handleSessionEvent(ev events.Event) {

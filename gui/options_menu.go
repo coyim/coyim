@@ -1,8 +1,8 @@
 package gui
 
 import (
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type optionsMenu struct {

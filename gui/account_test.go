@@ -5,14 +5,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session/events"
-	smock "github.com/twstrike/coyim/session/mock"
-	"github.com/twstrike/gotk3adapter/glib_mock"
-	"github.com/twstrike/gotk3adapter/glibi"
-	"github.com/twstrike/gotk3adapter/gtk_mock"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/events"
+	smock "github.com/coyim/coyim/session/mock"
+	"github.com/coyim/gotk3adapter/glib_mock"
+	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/coyim/gotk3adapter/gtk_mock"
+	"github.com/coyim/gotk3adapter/gtki"
 	. "gopkg.in/check.v1"
 )
 

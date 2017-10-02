@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/twstrike/otr3"
+	"github.com/coyim/otr3"
 
 	. "gopkg.in/check.v1"
 )

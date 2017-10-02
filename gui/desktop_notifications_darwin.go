@@ -3,8 +3,8 @@ package gui
 import (
 	"fmt"
 
-	"github.com/twstrike/coyim/ui"
-	"github.com/twstrike/gosx-notifier"
+	"github.com/coyim/coyim/ui"
+	"github.com/coyim/gosx-notifier"
 )
 
 var hasBundle = false

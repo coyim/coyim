@@ -1,6 +1,6 @@
 package session
 
-import "github.com/twstrike/coyim/xmpp/data"
+import "github.com/coyim/coyim/xmpp/data"
 
 // RemoveContact is used to remove a contact
 //TODO: double check how the RFC calls this

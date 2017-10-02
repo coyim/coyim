@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/twstrike/coyim/config"
+	"github.com/coyim/coyim/config"
 )
 
 // In $HOME or $APPDATA

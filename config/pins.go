@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"sort"
 
-	"github.com/twstrike/coyim/digests"
+	"github.com/coyim/coyim/digests"
 )
 
 // CertificatePinForSerialization represents a certificate pin in its serialized form

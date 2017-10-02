@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/gotk3adapter/glib_mock"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/gotk3adapter/glib_mock"
 
 	. "gopkg.in/check.v1"
 )

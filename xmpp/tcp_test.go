@@ -7,10 +7,10 @@ import (
 	"log"
 	"net"
 
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/xmpp/data"
-	"github.com/twstrike/coyim/xmpp/errors"
-	"github.com/twstrike/gotk3adapter/glib_mock"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/errors"
+	"github.com/coyim/gotk3adapter/glib_mock"
 
 	. "gopkg.in/check.v1"
 )

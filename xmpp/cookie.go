@@ -9,7 +9,7 @@ package xmpp
 import (
 	"encoding/binary"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 func (c *conn) getCookie() data.Cookie {

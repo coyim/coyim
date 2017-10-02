@@ -3,8 +3,8 @@ package importer
 import (
 	"fmt"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/otr3"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/otr3"
 	. "gopkg.in/check.v1"
 )
 

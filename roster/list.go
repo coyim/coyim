@@ -4,7 +4,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/twstrike/coyim/xmpp/utils"
+	"github.com/coyim/coyim/xmpp/utils"
 )
 
 // List represent a list of peers. It takes care of both roster and presence information

@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/hydrogen18/stalecucumber"
-	"github.com/twstrike/coyim/config"
+	"github.com/coyim/coyim/config"
 )
 
 const gajimOtrDataKeyExtension = ".key3"

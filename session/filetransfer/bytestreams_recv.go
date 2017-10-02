@@ -11,10 +11,10 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/twstrike/coyim/digests"
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp/data"
-	"github.com/twstrike/coyim/xmpp/socks5"
+	"github.com/coyim/coyim/digests"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/socks5"
 	"golang.org/x/net/proxy"
 )
 

@@ -5,8 +5,8 @@ import (
 	"net"
 	"time"
 
-	ourNet "github.com/twstrike/coyim/net"
-	"github.com/twstrike/coyim/xmpp/errors"
+	ourNet "github.com/coyim/coyim/net"
+	"github.com/coyim/coyim/xmpp/errors"
 	"golang.org/x/net/proxy"
 )
 

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	plist "github.com/DHowett/go-plist"
-	"github.com/twstrike/coyim/config"
+	"github.com/coyim/coyim/config"
 )
 
 // In $HOME

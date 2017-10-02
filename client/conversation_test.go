@@ -3,7 +3,7 @@ package client
 import (
 	"errors"
 
-	"github.com/twstrike/otr3"
+	"github.com/coyim/otr3"
 )
 import . "gopkg.in/check.v1"
 

@@ -3,15 +3,15 @@
 package main
 
 import (
-	"github.com/twstrike/coyim/gui"
-	"github.com/twstrike/coyim/gui/settings"
-	"github.com/twstrike/coyim/i18n"
-	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/gotk3adapter/gdka"
-	"github.com/twstrike/gotk3adapter/gliba"
-	"github.com/twstrike/gotk3adapter/gtka"
-	"github.com/twstrike/gotk3adapter/pangoa"
+	"github.com/coyim/coyim/gui"
+	"github.com/coyim/coyim/gui/settings"
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
+	"github.com/coyim/coyim/xmpp"
+	"github.com/coyim/gotk3adapter/gdka"
+	"github.com/coyim/gotk3adapter/gliba"
+	"github.com/coyim/gotk3adapter/gtka"
+	"github.com/coyim/gotk3adapter/pangoa"
 )
 
 func runClient() {

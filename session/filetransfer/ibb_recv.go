@@ -9,8 +9,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 // TOOD: at some point this should be refactored away into a pure IBB implementation and a small piece that is file transfer specific

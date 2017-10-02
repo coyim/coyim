@@ -1,8 +1,8 @@
 package interfaces
 
 import (
-	"github.com/twstrike/coyim/tls"
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/tls"
+	"github.com/coyim/coyim/xmpp/data"
 	"golang.org/x/net/proxy"
 )
 

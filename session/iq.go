@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 func (s *session) sendIQError(stanza *data.ClientIQ, reply interface{}) {

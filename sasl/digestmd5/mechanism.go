@@ -2,7 +2,7 @@
 // according to RFC 2831.
 package digestmd5
 
-import "github.com/twstrike/coyim/sasl"
+import "github.com/coyim/coyim/sasl"
 
 var (
 	// Mechanism is the DIGEST-MD5 SASL mechanism

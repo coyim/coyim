@@ -7,7 +7,7 @@ import (
 	"os"
 	"runtime/pprof"
 
-	"github.com/twstrike/coyim/config"
+	"github.com/coyim/coyim/config"
 )
 
 var coyimVersion = "<UNSET>"

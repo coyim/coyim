@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/session/events"
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 var supportedFileTransferMethods = map[string]int{

@@ -7,10 +7,10 @@ import (
 	"math/big"
 	"regexp"
 
-	"github.com/twstrike/coyim/i18n"
-	rosters "github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/i18n"
+	rosters "github.com/coyim/coyim/roster"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type verifier struct {

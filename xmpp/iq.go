@@ -10,7 +10,7 @@ import (
 	"encoding/xml"
 	"fmt"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 type rawXML []byte

@@ -4,17 +4,17 @@ import (
 	"errors"
 	"log"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/i18n"
-	ourNet "github.com/twstrike/coyim/net"
-	"github.com/twstrike/coyim/servers"
-	"github.com/twstrike/coyim/session"
-	"github.com/twstrike/coyim/tls"
-	"github.com/twstrike/coyim/xmpp"
-	"github.com/twstrike/coyim/xmpp/data"
-	xmppErr "github.com/twstrike/coyim/xmpp/errors"
-	"github.com/twstrike/coyim/xmpp/interfaces"
-	"github.com/twstrike/gotk3adapter/gtki"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/i18n"
+	ourNet "github.com/coyim/coyim/net"
+	"github.com/coyim/coyim/servers"
+	"github.com/coyim/coyim/session"
+	"github.com/coyim/coyim/tls"
+	"github.com/coyim/coyim/xmpp"
+	"github.com/coyim/coyim/xmpp/data"
+	xmppErr "github.com/coyim/coyim/xmpp/errors"
+	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 var (

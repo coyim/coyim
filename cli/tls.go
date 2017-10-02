@@ -4,9 +4,9 @@ import (
 	"crypto/x509"
 	"errors"
 
-	"github.com/twstrike/coyim/config"
-	"github.com/twstrike/coyim/digests"
-	ourtls "github.com/twstrike/coyim/tls"
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/digests"
+	ourtls "github.com/coyim/coyim/tls"
 )
 
 func (c *cliUI) verifier() ourtls.Verifier {

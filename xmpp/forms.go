@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/twstrike/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 // processForm calls the callback with the given XMPP form and returns the

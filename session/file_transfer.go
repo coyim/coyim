@@ -3,7 +3,7 @@ package session
 import (
 	"fmt"
 
-	"github.com/twstrike/coyim/session/filetransfer"
+	"github.com/coyim/coyim/session/filetransfer"
 )
 
 func init() {

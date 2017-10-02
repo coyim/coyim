@@ -3,11 +3,11 @@ package gui
 import (
 	"sync"
 
-	"github.com/twstrike/coyim/client"
-	"github.com/twstrike/coyim/config"
-	rosters "github.com/twstrike/coyim/roster"
-	"github.com/twstrike/coyim/session/access"
-	"github.com/twstrike/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/client"
+	"github.com/coyim/coyim/config"
+	rosters "github.com/coyim/coyim/roster"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
 type accountManager struct {

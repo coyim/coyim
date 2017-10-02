@@ -1,6 +1,6 @@
 package session
 
-import "github.com/twstrike/coyim/session/events"
+import "github.com/coyim/coyim/session/events"
 
 func observe(s *session) {
 	observer := make(chan interface{})

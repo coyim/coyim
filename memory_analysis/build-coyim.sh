@@ -16,10 +16,10 @@ export MSAN_OPTIONS=""
 export TZ=UTC
 export LC_ALL=C
 
-mkdir -p /gopath/src/github.com/twstrike/coyim
-cp -r /src/* /gopath/src/github.com/twstrike/coyim
-cp -r /src/.git /gopath/src/github.com/twstrike/coyim
+mkdir -p /gopath/src/github.com/coyim/coyim
+cp -r /src/* /gopath/src/github.com/coyim/coyim
+cp -r /src/.git /gopath/src/github.com/coyim/coyim
 
-cd /gopath/src/github.com/twstrike/coyim
+cd /gopath/src/github.com/coyim/coyim
 
 make build-gui-memory-analyzer BUILD_DIR=/src/bin

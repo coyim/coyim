@@ -3,7 +3,7 @@
 set -x
 
 # We could build on any GTK+3 version we want
-# brew tap twstrike/gtk-versions
+# brew tap coyim/gtk-versions
 
 brew update
 for dep in gtk+3 gettext gnome-icon-theme hicolor-icon-theme; do

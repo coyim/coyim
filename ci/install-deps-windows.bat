@@ -1,7 +1,7 @@
-mkdir %GOPATH%\src\github.com\twstrike\
-xcopy %APPVEYOR_BUILD_FOLDER%\* %GOPATH%\src\github.com\twstrike\coyim /e /i /s /EXCLUDE:%MSYS_PATH% > nul
-xcopy %APPVEYOR_BUILD_FOLDER%\.git %GOPATH%\src\github.com\twstrike\coyim\ /e /i /s
-dir %GOPATH%\src\github.com\twstrike\coyim
+mkdir %GOPATH%\src\github.com\coyim\
+xcopy %APPVEYOR_BUILD_FOLDER%\* %GOPATH%\src\github.com\coyim\coyim /e /i /s /EXCLUDE:%MSYS_PATH% > nul
+xcopy %APPVEYOR_BUILD_FOLDER%\.git %GOPATH%\src\github.com\coyim\coyim\ /e /i /s
+dir %GOPATH%\src\github.com\coyim\coyim
 if "%METHOD%"=="ci" SET MSYS_PATH=c:\msys64
 if "%METHOD%"=="cross" SET MSYS_PATH=%APPVEYOR_BUILD_FOLDER%\msys%MSYS2_BITS%
 SET PATH=%MSYS_PATH%\usr\bin;%PATH%

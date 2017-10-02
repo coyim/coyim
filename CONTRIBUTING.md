@@ -32,7 +32,7 @@ Installing these requirements differs on each system.
 Get the code
 
 ```sh
-git clone https://github.com/twstrike/coyim.git
+git clone https://github.com/coyim/coyim.git
 cd coyim
 ```
 

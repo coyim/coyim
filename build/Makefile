@@ -1,4 +1,4 @@
-IMAGE_NAME=twstrike/coyim-ci
+IMAGE_NAME=coyim/coyim-ci
 
 default: image build
 

@@ -15,7 +15,7 @@ Terminal=false
 Type=Application
 # Optional:
 # To enable the correct CoyIM icon, you can download Coy.icns from:
-# https://github.com/twstrike/coyim
+# https://github.com/coyim/coyim
 # It is in the directory build/mac-bundle.
 # You may place Coy.icns anywhere, but a better place would be either
 # ~/.local/share/icons/ (if .local is set up) or /usr/share/icons/

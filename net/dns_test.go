@@ -5,9 +5,9 @@ import (
 	"log"
 	"testing"
 
-	"github.com/miekg/dns"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/glib_mock"
+	"github.com/miekg/dns"
 
 	. "gopkg.in/check.v1"
 )

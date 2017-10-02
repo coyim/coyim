@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kardianos/osext"
 	"github.com/coyim/coyim/config"
+	"github.com/kardianos/osext"
 )
 
 func ensureInstalled() {

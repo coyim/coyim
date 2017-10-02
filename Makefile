@@ -138,3 +138,10 @@ gen-authors:
 	rm -rf gui/authors.go
 	./authors.rb > gui/authors.go
 	gofmt -w gui/authors.go
+
+update-vendor:
+	$(RM) -r Godeps vendor
+	go get -u ./...
+	go get -u -t ./...
+	godep save -v -t github.com/coyim/coyim/...
+

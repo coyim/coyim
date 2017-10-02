@@ -122,7 +122,10 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 
 	c.Assert(len(rw.write), Equals, len(expectedXmppHeader)+len(expected))
 	c.Assert(string(rw.write[:len(expectedXmppHeader)]), Equals, expectedXmppHeader)
-	c.Assert(rw.write[len(expectedXmppHeader):], DeepEquals, expected)
+	// I know first 46 are OK
+	c.Assert(rw.write[len(expectedXmppHeader):][:46], DeepEquals, expected[:46])
+	// Skips 12
+	c.Assert(rw.write[len(expectedXmppHeader):][46:][12:], DeepEquals, expected[46:][12:])
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInvalidCertHash(c *C) {

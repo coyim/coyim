@@ -6,6 +6,8 @@ GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 KEYID=$(shell gpg2 --keyid-format 0xlong -K | grep '^sec' | head -1 | cut -d\  -f4 | cut -d\/ -f2)
 
 BUILD_DIR=bin
+GOTEST=govendor test +local
+GOLIST=govendor list -no-status +local
 
 default: gen-ui-defs gen-schema-defs lint test
 .PHONY: test
@@ -50,15 +52,15 @@ i18n:
 .PHONY: i18n
 
 lint:
-	for pkg in $$(go list ./... |grep -v /vendor/) ; do \
+	for pkg in $$($(GOLIST) ./...) ; do \
 		golint $$pkg ; \
     done
 
 test:
-	go test -cover -v -tags $(GTK_BUILD_TAG) ./...
+	$(GOTEST) -cover -v -tags $(GTK_BUILD_TAG) ./...
 
 test-named:
-	go test -v -tags $(GTK_BUILD_TAG) ./cli ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
+	$(GOTEST) -v -tags $(GTK_BUILD_TAG) ./cli ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
 
 clean-gui-test:
 	$(RM) gui-test/*

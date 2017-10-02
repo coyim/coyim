@@ -111,7 +111,7 @@ get:
 deps-dev:
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/modocache/gover
-	go get -u github.com/tools/godep
+	go get -u github.com/kardianos/govendor
 	go get -u github.com/rosatolen/esc
 
 deps: deps-dev
@@ -140,8 +140,7 @@ gen-authors:
 	gofmt -w gui/authors.go
 
 update-vendor:
-	$(RM) -r Godeps vendor
 	go get -u ./...
 	go get -u -t ./...
-	godep save -v -t github.com/coyim/coyim/...
+	govendor update
 

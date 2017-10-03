@@ -1,19 +1,18 @@
 <interface>
-  <object class="GtkDialog" id="dialog">
+  <object class="GtkDialog" id="verif-failure-dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
-    <property name="border_width">7</property>
+    <property name="border-width">7</property>
     <property name="title" translatable="yes"></property>
     <child internal-child="vbox">
-      <object class="GtkBox" id="box">
-        <property name="border_width">10</property>
-        <property name="homogeneous">false</property>
+      <object class="GtkBox">
+        <property name="border-width">10</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <object class="GtkGrid">
             <property name="halign">GTK_ALIGN_CENTER</property>
             <child>
               <object class="GtkLabel">
-                <property name="margin-top">10</property>
+                <property name="margin-top">5</property>
                 <property name="margin-bottom">15</property>
 		<property name="label" translatable="yes">Verification Failed</property>
             <attributes>
@@ -29,7 +28,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkLabel" id="verification_message">
+          <object class="GtkLabel" id="verif-failure-label">
             <property name="label" translatable="yes"></property>
             <property name="margin-bottom">10</property>
           </object>
@@ -42,9 +41,10 @@
               <object class="GtkButtonBox" id="button_box">
                 <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
                 <child>
-                  <object class="GtkButton" id="try_later">
+                  <object class="GtkButton" id="verif-failure-button">
                     <property name="can-default">true</property>
-                    <property name="label" translatable="yes">Try again later</property>
+                    <property name="margin-top">5</property>
+<property name="label" translatable="yes">Try again later</property>
                   </object>
                 </child>
               </object>

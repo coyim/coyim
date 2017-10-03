@@ -37,6 +37,7 @@ func (n *notifier) notify(i gtki.InfoBar) {
 	n.notificationArea.Add(i)
 }
 
+// TODO: unify repeated stuff
 func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 	v := &verifier{
 		parentWindow:    conv.transientParent,
@@ -113,7 +114,6 @@ func (v *verifier) showUnverifiedWarning() {
 	v.unverifiedWarning.show()
 }
 
-// TODO: check colors and sizes
 // TODO: check on linux
 type unverifiedWarning struct {
 	b              *builder
@@ -214,7 +214,7 @@ func createPIN() (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("%06d", val), nil
+	return fmt.Sprintf("%06d", val), err
 }
 
 type waitingForPeerNotification struct {
@@ -263,13 +263,14 @@ func (v *verifier) showWaitingForPeerToCompleteSMPDialog() {
 	v.waitingForPeer.infobar.ShowAll()
 }
 
+// TODO: change this infobar
 func (v *verifier) showNotificationWhenWeCannotGeneratePINForSMP(err error) {
 	log.Printf("Cannot recover from error: %v. Quitting verification using SMP.", err)
 	errBuilder := newBuilder("CannotVerifyWithSMP")
 	errInfoBar := errBuilder.getObj("error_verifying_smp").(gtki.InfoBar)
 
 	message := errBuilder.getObj("message").(gtki.Label)
-	message.SetText(i18n.Local("Unable to verify the channel at this time."))
+	message.SetText(i18n.Local("Unable to verify at this time."))
 
 	button := errBuilder.getObj("try_later_button").(gtki.Button)
 	button.Connect("clicked", errInfoBar.Destroy)
@@ -331,12 +332,14 @@ func (v *verifier) buildAnswerSMPDialog() {
 var question = "Please enter the PIN that I shared with you."
 var coyIMQuestion = regexp.MustCompile("Please enter the PIN that I shared with you.")
 
+// TODO: check this
 func (v *verifier) showAnswerSMPDialog(question string) {
 	if "" == question {
 		v.answerSMPWindow.question.SetMarkup(i18n.Localf("Enter the secret that <b>%s</b> shared with you", v.peerName()))
 	} else if coyIMQuestion.MatchString(question) {
 		v.answerSMPWindow.question.SetMarkup(i18n.Localf("Type the PIN that <b>%s</b> sent you. It can be used only once.", v.peerName()))
 	} else {
+		// TODO: check this case
 		v.answerSMPWindow.question.SetText(question)
 	}
 
@@ -427,34 +430,35 @@ func (v *verifier) displayVerificationSuccess() {
 	v.verificationSuccess = &verificationSuccessNotification{b: newBuilder("VerificationSucceeded")}
 
 	v.verificationSuccess.b.getItems(
-		"dialog", &v.verificationSuccess.d,
-		"verification_message", &v.verificationSuccess.label,
-		"success_image", &v.verificationSuccess.image,
-		"button_ok", &v.verificationSuccess.button,
+		"verif-success-dialog", &v.verificationSuccess.d,
+		"verif-success-label", &v.verificationSuccess.label,
+		"verif-success-image", &v.verificationSuccess.image,
+		"verif-success-button", &v.verificationSuccess.button,
 	)
 
 	v.verificationSuccess.button.Connect("clicked", v.verificationSuccess.d.Destroy)
 
-	v.verificationSuccess.label.SetMarkup(i18n.Localf("Hooray! No one is listening in on your conversations with <b>%s</b>", v.peerName()))
+	v.verificationSuccess.label.SetMarkup(i18n.Localf("Hooray! No one is listening to your conversations with <b>%s</b>", v.peerName()))
 	setImageFromFile(v.verificationSuccess.image, "smpsuccess.svg")
 
+	v.hideUnverifiedWarning()
 	v.verificationSuccess.d.SetTransientFor(v.parentWindow)
 	v.verificationSuccess.d.ShowAll()
-	v.hideUnverifiedWarning()
 }
 
 type smpFailedNotification struct {
-	d              gtki.Dialog
-	msg            gtki.Label
-	tryLaterButton gtki.Button
+	d      gtki.Dialog
+	label  gtki.Label
+	button gtki.Button
 }
 
+// TODO: make this consistent
 func (v *verifier) buildSMPFailedDialog() {
 	builder := newBuilder("VerificationFailed")
 	v.smpFailed = &smpFailedNotification{
-		d:              builder.getObj("dialog").(gtki.Dialog),
-		msg:            builder.getObj("verification_message").(gtki.Label),
-		tryLaterButton: builder.getObj("try_later").(gtki.Button),
+		d:      builder.getObj("verif-failure-dialog").(gtki.Dialog),
+		label:  builder.getObj("verif-failure-label").(gtki.Label),
+		button: builder.getObj("verif-failure-button").(gtki.Button),
 	}
 
 	v.smpFailed.d.SetTransientFor(v.parentWindow)
@@ -464,14 +468,14 @@ func (v *verifier) buildSMPFailedDialog() {
 		v.showUnverifiedWarning()
 		v.smpFailed.d.Hide()
 	})
-	v.smpFailed.tryLaterButton.Connect("clicked", func() {
+	v.smpFailed.button.Connect("clicked", func() {
 		v.showUnverifiedWarning()
 		v.smpFailed.d.Hide()
 	})
 }
 
 func (v *verifier) displayVerificationFailure() {
-	v.smpFailed.msg.SetMarkup(i18n.Localf("We could not verify this channel with <b>%s</b>.", v.peerName()))
+	v.smpFailed.label.SetMarkup(i18n.Localf("We could not verify this channel with <b>%s</b>.", v.peerName()))
 	v.smpFailed.d.ShowAll()
 }
 

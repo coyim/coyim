@@ -1,14 +1,14 @@
 <interface>
   <object class="GtkDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
+    <property name="border-width">7</property>
+    <property name="title" translatable="yes"></property>
     <child internal-child="vbox">
         <object class="GtkBox" id="notification-area">
-          <property name="border_width">10</property>
-          <property name="homogeneous">false</property>
+          <property name="border-width">10</property>
           <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
           <child>
             <object class="GtkBox">
-              <property name="homogeneous">false</property>
               <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
               <property name="spacing">10</property>
               <child>

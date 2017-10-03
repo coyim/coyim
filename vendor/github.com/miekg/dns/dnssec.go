@@ -13,7 +13,6 @@ import (
 	_ "crypto/sha256"
 	_ "crypto/sha512"
 	"encoding/asn1"
-	"encoding/binary"
 	"encoding/hex"
 	"math/big"
 	"sort"
@@ -43,7 +42,7 @@ const (
 	PRIVATEOID uint8 = 254
 )
 
-// AlgorithmToString is a map of algorithm IDs to algorithm names.
+// Map for algorithm names.
 var AlgorithmToString = map[uint8]string{
 	RSAMD5:           "RSAMD5",
 	DH:               "DH",
@@ -61,10 +60,10 @@ var AlgorithmToString = map[uint8]string{
 	PRIVATEOID:       "PRIVATEOID",
 }
 
-// StringToAlgorithm is the reverse of AlgorithmToString.
+// Map of algorithm strings.
 var StringToAlgorithm = reverseInt8(AlgorithmToString)
 
-// AlgorithmToHash is a map of algorithm crypto hash IDs to crypto.Hash's.
+// Map of algorithm crypto hashes.
 var AlgorithmToHash = map[uint8]crypto.Hash{
 	RSAMD5:           crypto.MD5, // Deprecated in RFC 6725
 	RSASHA1:          crypto.SHA1,
@@ -85,7 +84,7 @@ const (
 	SHA512       // Experimental
 )
 
-// HashToString is a map of hash IDs to names.
+// Map for hash names.
 var HashToString = map[uint8]string{
 	SHA1:   "SHA1",
 	SHA256: "SHA256",
@@ -94,7 +93,7 @@ var HashToString = map[uint8]string{
 	SHA512: "SHA512",
 }
 
-// StringToHash is a map of names to hash IDs.
+// Map of hash strings.
 var StringToHash = reverseInt8(HashToString)
 
 // DNSKEY flag values.
@@ -104,7 +103,9 @@ const (
 	ZONE   = 1 << 8
 )
 
-// The RRSIG needs to be converted to wireformat with some of the rdata (the signature) missing.
+// The RRSIG needs to be converted to wireformat with some of
+// the rdata (the signature) missing. Use this struct to ease
+// the conversion (and re-use the pack/unpack functions).
 type rrsigWireFmt struct {
 	TypeCovered uint16
 	Algorithm   uint8
@@ -143,7 +144,7 @@ func (k *DNSKEY) KeyTag() uint16 {
 		// at the base64 values. But I'm lazy.
 		modulus, _ := fromBase64([]byte(k.PublicKey))
 		if len(modulus) > 1 {
-			x := binary.BigEndian.Uint16(modulus[len(modulus)-2:])
+			x, _ := unpackUint16(modulus, len(modulus)-2)
 			keytag = int(x)
 		}
 	default:
@@ -153,7 +154,7 @@ func (k *DNSKEY) KeyTag() uint16 {
 		keywire.Algorithm = k.Algorithm
 		keywire.PublicKey = k.PublicKey
 		wire := make([]byte, DefaultMsgSize)
-		n, err := packKeyWire(keywire, wire)
+		n, err := PackStruct(keywire, wire, 0)
 		if err != nil {
 			return 0
 		}
@@ -191,7 +192,7 @@ func (k *DNSKEY) ToDS(h uint8) *DS {
 	keywire.Algorithm = k.Algorithm
 	keywire.PublicKey = k.PublicKey
 	wire := make([]byte, DefaultMsgSize)
-	n, err := packKeyWire(keywire, wire)
+	n, err := PackStruct(keywire, wire, 0)
 	if err != nil {
 		return nil
 	}
@@ -208,6 +209,9 @@ func (k *DNSKEY) ToDS(h uint8) *DS {
 	// "|" denotes concatenation
 	// DNSKEY RDATA = Flags | Protocol | Algorithm | Public Key.
 
+	// digest buffer
+	digest := append(owner, wire...) // another copy
+
 	var hash crypto.Hash
 	switch h {
 	case SHA1:
@@ -223,8 +227,7 @@ func (k *DNSKEY) ToDS(h uint8) *DS {
 	}
 
 	s := hash.New()
-	s.Write(owner)
-	s.Write(wire)
+	s.Write(digest)
 	ds.Digest = hex.EncodeToString(s.Sum(nil))
 	return ds
 }
@@ -286,7 +289,7 @@ func (rr *RRSIG) Sign(k crypto.Signer, rrset []RR) error {
 
 	// Create the desired binary blob
 	signdata := make([]byte, DefaultMsgSize)
-	n, err := packSigWire(sigwire, signdata)
+	n, err := PackStruct(sigwire, signdata, 0)
 	if err != nil {
 		return err
 	}
@@ -295,6 +298,7 @@ func (rr *RRSIG) Sign(k crypto.Signer, rrset []RR) error {
 	if err != nil {
 		return err
 	}
+	signdata = append(signdata, wire...)
 
 	hash, ok := AlgorithmToHash[rr.Algorithm]
 	if !ok {
@@ -303,7 +307,6 @@ func (rr *RRSIG) Sign(k crypto.Signer, rrset []RR) error {
 
 	h := hash.New()
 	h.Write(signdata)
-	h.Write(wire)
 
 	signature, err := sign(k, h.Sum(nil), hash, rr.Algorithm)
 	if err != nil {
@@ -404,7 +407,7 @@ func (rr *RRSIG) Verify(k *DNSKEY, rrset []RR) error {
 	sigwire.SignerName = strings.ToLower(rr.SignerName)
 	// Create the desired binary blob
 	signeddata := make([]byte, DefaultMsgSize)
-	n, err := packSigWire(sigwire, signeddata)
+	n, err := PackStruct(sigwire, signeddata, 0)
 	if err != nil {
 		return err
 	}
@@ -413,6 +416,7 @@ func (rr *RRSIG) Verify(k *DNSKEY, rrset []RR) error {
 	if err != nil {
 		return err
 	}
+	signeddata = append(signeddata, wire...)
 
 	sigbuf := rr.sigBuf()           // Get the binary signature data
 	if rr.Algorithm == PRIVATEDNS { // PRIVATEOID
@@ -435,7 +439,6 @@ func (rr *RRSIG) Verify(k *DNSKEY, rrset []RR) error {
 
 		h := hash.New()
 		h.Write(signeddata)
-		h.Write(wire)
 		return rsa.VerifyPKCS1v15(pubkey, hash, h.Sum(nil), sigbuf)
 
 	case ECDSAP256SHA256, ECDSAP384SHA384:
@@ -450,7 +453,6 @@ func (rr *RRSIG) Verify(k *DNSKEY, rrset []RR) error {
 
 		h := hash.New()
 		h.Write(signeddata)
-		h.Write(wire)
 		if ecdsa.Verify(pubkey, h.Sum(nil), r, s) {
 			return nil
 		}
@@ -515,7 +517,7 @@ func (k *DNSKEY) publicKeyRSA() *rsa.PublicKey {
 	}
 	// Remainder
 	expo += uint64(keybuf[keyoff])
-	if expo > (2<<31)+1 {
+	if expo > 2<<31 {
 		// Larger expo than supported.
 		// println("dns: F5 primes (or larger) are not supported")
 		return nil
@@ -659,62 +661,4 @@ func rawSignatureData(rrset []RR, s *RRSIG) (buf []byte, err error) {
 		buf = append(buf, wire...)
 	}
 	return buf, nil
-}
-
-func packSigWire(sw *rrsigWireFmt, msg []byte) (int, error) {
-	// copied from zmsg.go RRSIG packing
-	off, err := packUint16(sw.TypeCovered, msg, 0)
-	if err != nil {
-		return off, err
-	}
-	off, err = packUint8(sw.Algorithm, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = packUint8(sw.Labels, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = packUint32(sw.OrigTtl, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = packUint32(sw.Expiration, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = packUint32(sw.Inception, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = packUint16(sw.KeyTag, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = PackDomainName(sw.SignerName, msg, off, nil, false)
-	if err != nil {
-		return off, err
-	}
-	return off, nil
-}
-
-func packKeyWire(dw *dnskeyWireFmt, msg []byte) (int, error) {
-	// copied from zmsg.go DNSKEY packing
-	off, err := packUint16(dw.Flags, msg, 0)
-	if err != nil {
-		return off, err
-	}
-	off, err = packUint8(dw.Protocol, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = packUint8(dw.Algorithm, msg, off)
-	if err != nil {
-		return off, err
-	}
-	off, err = packStringBase64(dw.PublicKey, msg, off)
-	if err != nil {
-		return off, err
-	}
-	return off, nil
 }

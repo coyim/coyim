@@ -5,7 +5,6 @@ import (
 	"crypto/dsa"
 	"crypto/ecdsa"
 	"crypto/rsa"
-	"encoding/binary"
 	"math/big"
 	"strings"
 	"time"
@@ -60,20 +59,21 @@ func (rr *SIG) Sign(k crypto.Signer, m *Msg) ([]byte, error) {
 	}
 
 	rr.Signature = toBase64(signature)
+	sig := string(signature)
 
-	buf = append(buf, signature...)
+	buf = append(buf, sig...)
 	if len(buf) > int(^uint16(0)) {
 		return nil, ErrBuf
 	}
 	// Adjust sig data length
 	rdoff := len(mbuf) + 1 + 2 + 2 + 4
-	rdlen := binary.BigEndian.Uint16(buf[rdoff:])
-	rdlen += uint16(len(signature))
-	binary.BigEndian.PutUint16(buf[rdoff:], rdlen)
+	rdlen, _ := unpackUint16(buf, rdoff)
+	rdlen += uint16(len(sig))
+	buf[rdoff], buf[rdoff+1] = packUint16(rdlen)
 	// Adjust additional count
-	adc := binary.BigEndian.Uint16(buf[10:])
+	adc, _ := unpackUint16(buf, 10)
 	adc++
-	binary.BigEndian.PutUint16(buf[10:], adc)
+	buf[10], buf[11] = packUint16(adc)
 	return buf, nil
 }
 
@@ -103,11 +103,10 @@ func (rr *SIG) Verify(k *KEY, buf []byte) error {
 	hasher := hash.New()
 
 	buflen := len(buf)
-	qdc := binary.BigEndian.Uint16(buf[4:])
-	anc := binary.BigEndian.Uint16(buf[6:])
-	auc := binary.BigEndian.Uint16(buf[8:])
-	adc := binary.BigEndian.Uint16(buf[10:])
-	offset := 12
+	qdc, _ := unpackUint16(buf, 4)
+	anc, _ := unpackUint16(buf, 6)
+	auc, _ := unpackUint16(buf, 8)
+	adc, offset := unpackUint16(buf, 10)
 	var err error
 	for i := uint16(0); i < qdc && offset < buflen; i++ {
 		_, offset, err = UnpackDomainName(buf, offset)
@@ -128,8 +127,7 @@ func (rr *SIG) Verify(k *KEY, buf []byte) error {
 			continue
 		}
 		var rdlen uint16
-		rdlen = binary.BigEndian.Uint16(buf[offset:])
-		offset += 2
+		rdlen, offset = unpackUint16(buf, offset)
 		offset += int(rdlen)
 	}
 	if offset >= buflen {
@@ -151,9 +149,9 @@ func (rr *SIG) Verify(k *KEY, buf []byte) error {
 	if offset+4+4 >= buflen {
 		return &Error{err: "overflow unpacking signed message"}
 	}
-	expire := binary.BigEndian.Uint32(buf[offset:])
+	expire := uint32(buf[offset])<<24 | uint32(buf[offset+1])<<16 | uint32(buf[offset+2])<<8 | uint32(buf[offset+3])
 	offset += 4
-	incept := binary.BigEndian.Uint32(buf[offset:])
+	incept := uint32(buf[offset])<<24 | uint32(buf[offset+1])<<16 | uint32(buf[offset+2])<<8 | uint32(buf[offset+3])
 	offset += 4
 	now := uint32(time.Now().Unix())
 	if now < incept || now > expire {

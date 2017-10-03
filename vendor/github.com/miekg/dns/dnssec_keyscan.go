@@ -14,7 +14,7 @@ import (
 // NewPrivateKey returns a PrivateKey by parsing the string s.
 // s should be in the same form of the BIND private key files.
 func (k *DNSKEY) NewPrivateKey(s string) (crypto.PrivateKey, error) {
-	if s == "" || s[len(s)-1] != '\n' { // We need a closing newline
+	if s[len(s)-1] != '\n' { // We need a closing newline
 		return k.ReadPrivateKey(strings.NewReader(s+"\n"), "")
 	}
 	return k.ReadPrivateKey(strings.NewReader(s), "")
@@ -25,9 +25,9 @@ func (k *DNSKEY) NewPrivateKey(s string) (crypto.PrivateKey, error) {
 // The public key must be known, because some cryptographic algorithms embed
 // the public inside the privatekey.
 func (k *DNSKEY) ReadPrivateKey(q io.Reader, file string) (crypto.PrivateKey, error) {
-	m, err := parseKey(q, file)
+	m, e := parseKey(q, file)
 	if m == nil {
-		return nil, err
+		return nil, e
 	}
 	if _, ok := m["private-key-format"]; !ok {
 		return nil, ErrPrivKey
@@ -36,22 +36,22 @@ func (k *DNSKEY) ReadPrivateKey(q io.Reader, file string) (crypto.PrivateKey, er
 		return nil, ErrPrivKey
 	}
 	// TODO(mg): check if the pubkey matches the private key
-	algo, err := strconv.ParseUint(strings.SplitN(m["algorithm"], " ", 2)[0], 10, 8)
+	algo, err := strconv.Atoi(strings.SplitN(m["algorithm"], " ", 2)[0])
 	if err != nil {
 		return nil, ErrPrivKey
 	}
 	switch uint8(algo) {
 	case DSA:
-		priv, err := readPrivateKeyDSA(m)
-		if err != nil {
-			return nil, err
+		priv, e := readPrivateKeyDSA(m)
+		if e != nil {
+			return nil, e
 		}
 		pub := k.publicKeyDSA()
 		if pub == nil {
 			return nil, ErrKey
 		}
 		priv.PublicKey = *pub
-		return priv, nil
+		return priv, e
 	case RSAMD5:
 		fallthrough
 	case RSASHA1:
@@ -61,31 +61,31 @@ func (k *DNSKEY) ReadPrivateKey(q io.Reader, file string) (crypto.PrivateKey, er
 	case RSASHA256:
 		fallthrough
 	case RSASHA512:
-		priv, err := readPrivateKeyRSA(m)
-		if err != nil {
-			return nil, err
+		priv, e := readPrivateKeyRSA(m)
+		if e != nil {
+			return nil, e
 		}
 		pub := k.publicKeyRSA()
 		if pub == nil {
 			return nil, ErrKey
 		}
 		priv.PublicKey = *pub
-		return priv, nil
+		return priv, e
 	case ECCGOST:
 		return nil, ErrPrivKey
 	case ECDSAP256SHA256:
 		fallthrough
 	case ECDSAP384SHA384:
-		priv, err := readPrivateKeyECDSA(m)
-		if err != nil {
-			return nil, err
+		priv, e := readPrivateKeyECDSA(m)
+		if e != nil {
+			return nil, e
 		}
 		pub := k.publicKeyECDSA()
 		if pub == nil {
 			return nil, ErrKey
 		}
 		priv.PublicKey = *pub
-		return priv, nil
+		return priv, e
 	default:
 		return nil, ErrPrivKey
 	}

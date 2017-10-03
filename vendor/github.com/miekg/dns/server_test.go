@@ -20,23 +20,13 @@ func HelloServer(w ResponseWriter, req *Msg) {
 	w.WriteMsg(m)
 }
 
-func HelloServerBadID(w ResponseWriter, req *Msg) {
+func HelloServerBadId(w ResponseWriter, req *Msg) {
 	m := new(Msg)
 	m.SetReply(req)
 	m.Id++
 
 	m.Extra = make([]RR, 1)
 	m.Extra[0] = &TXT{Hdr: RR_Header{Name: m.Question[0].Name, Rrtype: TypeTXT, Class: ClassINET, Ttl: 0}, Txt: []string{"Hello world"}}
-	w.WriteMsg(m)
-}
-
-func HelloServerEchoAddrPort(w ResponseWriter, req *Msg) {
-	m := new(Msg)
-	m.SetReply(req)
-
-	remoteAddr := w.RemoteAddr().String()
-	m.Extra = make([]RR, 1)
-	m.Extra[0] = &TXT{Hdr: RR_Header{Name: m.Question[0].Name, Rrtype: TypeTXT, Class: ClassINET, Ttl: 0}, Txt: []string{remoteAddr}}
 	w.WriteMsg(m)
 }
 
@@ -558,7 +548,7 @@ func TestHandlerCloseTCP(t *testing.T) {
 				return
 			}
 			time.Sleep(time.Second / 10)
-			tries++
+			tries += 1
 			goto exchange
 		}
 	}()
@@ -687,43 +677,3 @@ zDCJkckCgYEAndqM5KXGk5xYo+MAA1paZcbTUXwaWwjLU+XSRSSoyBEi5xMtfvUb
 kFsxKCqxAnBVGEWAvVZAiiTOxleQFjz5RnL0BQp9Lg2cQe+dvuUmIAA=
 -----END RSA PRIVATE KEY-----`)
 )
-
-func testShutdownBindPort(t *testing.T, protocol string, port string) {
-	handler := NewServeMux()
-	handler.HandleFunc(".", func(w ResponseWriter, r *Msg) {})
-	startedCh := make(chan struct{})
-	s := &Server{
-		Addr:    net.JoinHostPort("127.0.0.1", port),
-		Net:     protocol,
-		Handler: handler,
-		NotifyStartedFunc: func() {
-			startedCh <- struct{}{}
-		},
-	}
-	go func() {
-		if err := s.ListenAndServe(); err != nil {
-			t.Log(err)
-		}
-	}()
-	<-startedCh
-	t.Logf("DNS server is started on: %s", s.Addr)
-	if err := s.Shutdown(); err != nil {
-		t.Fatal(err)
-	}
-	time.Sleep(100 * time.Millisecond)
-	go func() {
-		if err := s.ListenAndServe(); err != nil {
-			t.Fatal(err)
-		}
-	}()
-	<-startedCh
-	t.Logf("DNS server is started on: %s", s.Addr)
-}
-
-func TestShutdownBindPortUDP(t *testing.T) {
-	testShutdownBindPort(t, "udp", "1153")
-}
-
-func TestShutdownBindPortTCP(t *testing.T) {
-	testShutdownBindPort(t, "tcp", "1154")
-}

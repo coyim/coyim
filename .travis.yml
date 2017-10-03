@@ -6,7 +6,7 @@ branches:
     - windows
 go:
   - tip
-  - 1.9.0
+  - 1.9
   - 1.8.3
   - 1.7.6
   - 1.6.4
@@ -16,7 +16,7 @@ services:
 
 matrix:
   include:
-    - go: 1.9.0
+    - go: 1.9
       os: osx
     - go: 1.7.6
       env: RELEASE=true

@@ -33,7 +33,6 @@ matrix:
 cache:
   directories:
     - $HOME/Library/Caches/Homebrew
-    - /usr/local/Homebrew
 
 before_install:
   - "export DISPLAY=:99.0"

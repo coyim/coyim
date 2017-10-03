@@ -349,6 +349,19 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 	transientParent.SetMnemonicModifier(gdki.GDK_CONTROL_MASK)
 
 	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
+
+	prov, _ := g.gtk.CssProviderNew()
+
+	css := fmt.Sprintf(`
+	scrolledwindow {
+	      border-top: 2px solid #d3d3d3;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ := cp.entryScroll.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
 	cp.history.SetBuffer(ui.getTags().createTextBuffer())
 	cp.history.Connect("size-allocate", func() {
 		scrollToBottom(cp.scrollHistory)

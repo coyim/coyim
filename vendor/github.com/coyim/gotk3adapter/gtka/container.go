@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type container struct {
@@ -34,4 +34,8 @@ func (v *container) Add(v2 gtki.Widget) {
 
 func (v *container) Remove(v2 gtki.Widget) {
 	v.Container.Remove(unwrapWidget(v2))
+}
+
+func (v *container) SetBorderWidth(v1 uint) {
+	v.Container.SetBorderWidth(v1)
 }

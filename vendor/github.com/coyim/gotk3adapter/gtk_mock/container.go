@@ -11,3 +11,6 @@ func (*MockContainer) Add(v2 gtki.Widget) {
 
 func (*MockContainer) Remove(v2 gtki.Widget) {
 }
+
+func (*MockContainer) SetBorderWidth(v1 uint) {
+}

@@ -82,7 +82,10 @@ type pinWindow struct {
 }
 
 func (v *verifier) buildPinWindow() {
-	v.pinWindow = &pinWindow{b: newBuilder("GeneratePIN")}
+	v.pinWindow = &pinWindow{
+		b: newBuilder("GeneratePIN"),
+	}
+
 	v.pinWindow.b.getItems(
 		"dialog", &v.pinWindow.d,
 		"prompt", &v.pinWindow.prompt,
@@ -137,7 +140,10 @@ func (u *unverifiedWarning) show() {
 }
 
 func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
-	v.unverifiedWarning = &unverifiedWarning{b: newBuilder("UnverifiedWarning")}
+	v.unverifiedWarning = &unverifiedWarning{
+		b: newBuilder("UnverifiedWarning"),
+	}
+
 	v.unverifiedWarning.peerIsVerified = peerIsVerified
 
 	v.unverifiedWarning.b.getItems(
@@ -186,7 +192,7 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 
 func (v *verifier) smpError(err error) {
 	v.hideUnverifiedWarning()
-	v.showNotificationWhenWeCannotGeneratePINForSMP(err)
+	v.showCannotGeneratePINDialog(err)
 }
 
 func (v *verifier) showPINDialog() {
@@ -265,21 +271,35 @@ func (v *verifier) showWaitingForPeerToCompleteSMPDialog() {
 	v.waitingForPeer.infobar.ShowAll()
 }
 
-// TODO: change this infobar
-func (v *verifier) showNotificationWhenWeCannotGeneratePINForSMP(err error) {
-	log.Printf("Cannot recover from error: %v. Quitting verification using SMP.", err)
-	errBuilder := newBuilder("CannotVerifyWithSMP")
-	errInfoBar := errBuilder.getObj("error_verifying_smp").(gtki.InfoBar)
+func (v *verifier) showCannotGeneratePINDialog(err error) {
+	b := newBuilder("CannotVerifyWithSMP")
 
-	message := errBuilder.getObj("message").(gtki.Label)
-	message.SetText(i18n.Local("Unable to verify at this time."))
+	infobar := b.getObj("smp-error-infobar").(gtki.InfoBar)
+	label := b.getObj("smp-error-label").(gtki.Label)
+	image := b.getObj("smp-error-image").(gtki.Image)
+	button := b.getObj("smp-error-button").(gtki.Button)
 
-	button := errBuilder.getObj("try_later_button").(gtki.Button)
-	button.Connect("clicked", errInfoBar.Destroy)
+	prov, _ := g.gtk.CssProviderNew()
 
-	errInfoBar.ShowAll()
+	css := fmt.Sprintf(`
+	box { background-color: #fbe9e7;
+	      color: #000000;
+	      border: 2px;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
 
-	v.notifier.notify(errInfoBar)
+	styleContext, _ := infobar.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	label.SetText(i18n.Local("Unable to verify at this time."))
+	log.Printf("Cannot recover from error: %v. Quitting SMP verification.", err)
+	setImageFromFile(image, "failure.svg")
+	button.Connect("clicked", infobar.Destroy)
+
+	infobar.ShowAll()
+
+	v.notifier.notify(infobar)
 }
 
 type answerSMPWindow struct {

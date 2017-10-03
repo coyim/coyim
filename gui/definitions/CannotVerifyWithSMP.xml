@@ -1,26 +1,58 @@
 <interface>
-  <object class="GtkInfoBar" id="error_verifying_smp">
-    <property name="message-type">GTK_MESSAGE_WARNING</property>
-    <child internal-child="content_area">
-      <object class="GtkBox" id="box">
-        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-        <child>
-          <object class="GtkLabel" id="message">
-            <property name="wrap">true</property>
-          </object>
-        </child>
+  <object class="GtkBox" id="smp-error-infobar">
+    <property name="can_focus">False</property>
+    <property name="spacing">27</property>
+    <child>
+      <object class="GtkImage" id="smp-error-image">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">10</property>
       </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
     </child>
-    <child internal-child="action_area">
-      <object class="GtkBox" id="button_box">
-        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+    <child>
+      <object class="GtkLabel" id="smp-error-label">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">start</property>
+        <attributes>
+          <attribute name="weight" value="bold"/>
+        </attributes>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkButton" id="smp-error-button">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="margin_right">10</property>
+        <property name="margin_top">14</property>
+        <property name="margin_bottom">12</property>
         <child>
-          <object class="GtkButton" id="try_later_button">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">15</property>
+            <property name="margin_right">15</property>
             <property name="label" translatable="yes">Try again later</property>
-            <property name="can-default">true</property>
           </object>
         </child>
       </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="pack_type">end</property>
+        <property name="position">2</property>
+      </packing>
     </child>
   </object>
 </interface>

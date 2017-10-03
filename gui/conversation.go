@@ -594,6 +594,7 @@ func (conv *conversationPane) updateSecurityWarning() {
 
 	css := fmt.Sprintf(`
 	box { background-color: #fbe9e7;
+	      color: #000000;
 	      border: 3px;
 	     }
 	`)
@@ -618,8 +619,8 @@ func (conv *conversationPane) showFileTransferNotification() {
 
 	css := fmt.Sprintf(`
 	box { background-color: #fff9f3;
+	      color: #000000;
 	      border: 3px;
-              border-radius: 5px;
 	     }
 	`)
 	_ = prov.LoadFromData(css)

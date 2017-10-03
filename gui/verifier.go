@@ -157,6 +157,7 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 
 	css := fmt.Sprintf(`
 	box { background-color: #fbe9e7;
+	      color: #000000;
 	      border: 2px;
 	     }
 	`)
@@ -239,6 +240,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 
 	css := fmt.Sprintf(`
 	box { background-color: #fbe9e7;
+	      color: #000000;
 	      border: 2px;
 	     }
 	`)
@@ -382,6 +384,7 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 
 	css := fmt.Sprintf(`
 	box { background-color: #fbe9e7;
+	      color: #000000;
 	      border: 2px;
 	     }
 	`)

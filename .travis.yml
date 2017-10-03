@@ -16,6 +16,8 @@ services:
 
 matrix:
   include:
+    - go: 1.9.0
+      os: osx
     - go: 1.7.6
       env: RELEASE=true
       os: linux

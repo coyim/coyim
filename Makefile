@@ -144,5 +144,5 @@ gen-authors:
 update-vendor:
 	go get -u ./...
 	go get -u -t ./...
-	govendor update
+	govendor update +v
 

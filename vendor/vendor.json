@@ -114,36 +114,36 @@
 			"checksumSHA1": "zHlruvkmVEcfPchI6CrSUQIppWc=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/cairo",
 			"path": "github.com/gotk3/gotk3/cairo",
-			"revision": "d32f5311c8146ace351ab339376345bb1c9e3555",
-			"revisionTime": "2017-10-03T05:33:33Z"
+			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
+			"revisionTime": "2017-10-04T19:57:50Z"
 		},
 		{
 			"checksumSHA1": "iTNo2Jp9griVHZZ0DjIDMt8wII0=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/gdk",
 			"path": "github.com/gotk3/gotk3/gdk",
-			"revision": "d32f5311c8146ace351ab339376345bb1c9e3555",
-			"revisionTime": "2017-10-03T05:33:33Z"
+			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
+			"revisionTime": "2017-10-04T19:57:50Z"
 		},
 		{
 			"checksumSHA1": "/KfqwGrKIb5ddLiYBVPKkJtBwbs=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/glib",
 			"path": "github.com/gotk3/gotk3/glib",
-			"revision": "d32f5311c8146ace351ab339376345bb1c9e3555",
-			"revisionTime": "2017-10-03T05:33:33Z"
+			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
+			"revisionTime": "2017-10-04T19:57:50Z"
 		},
 		{
-			"checksumSHA1": "sr4zRnHvqCCku5kcQwmgoqucTyg=",
+			"checksumSHA1": "fIm9ncsA54lNBHRAewpzQjR+vHA=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/gtk",
 			"path": "github.com/gotk3/gotk3/gtk",
-			"revision": "d32f5311c8146ace351ab339376345bb1c9e3555",
-			"revisionTime": "2017-10-03T05:33:33Z"
+			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
+			"revisionTime": "2017-10-04T19:57:50Z"
 		},
 		{
 			"checksumSHA1": "JTL0Dy1hTMetlebMpgOLmiIv2hg=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/pango",
 			"path": "github.com/gotk3/gotk3/pango",
-			"revision": "d32f5311c8146ace351ab339376345bb1c9e3555",
-			"revisionTime": "2017-10-03T05:33:33Z"
+			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
+			"revisionTime": "2017-10-04T19:57:50Z"
 		},
 		{
 			"checksumSHA1": "fyTEblZu7c+L8/VWhYSAcSzqCtI=",

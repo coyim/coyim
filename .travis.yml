@@ -17,8 +17,10 @@ services:
 matrix:
   include:
     - go: 1.8.3
+      env: HOMEBREW_NO_AUTO_UPDATE=1
       os: osx
     - go: 1.9
+      env: HOMEBREW_NO_AUTO_UPDATE=1
       os: osx
     - go: 1.7.6
       env: RELEASE=true
@@ -30,11 +32,6 @@ matrix:
     - go: tip
     - env: RELEASE=true
   fast_finish: true
-
-# Maybe cache /usr/local instead ?
-cache:
-  directories:
-    - $HOME/Library/Caches/Homebrew
 
 before_install:
   - "export DISPLAY=:99.0"

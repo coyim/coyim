@@ -706,6 +706,7 @@ func (u *gtkUI) initSearchBar() {
 
 	prov, _ := g.gtk.CssProviderNew()
 
+	// TODO: make consistent with dark themes
 	css := fmt.Sprintf(`
 	searchbar { background-color: #e8e8e7;
 	            border: none;}

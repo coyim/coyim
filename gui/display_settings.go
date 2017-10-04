@@ -57,18 +57,18 @@ func (ds *displaySettings) decreaseFontSize() {
 
 func (ds *displaySettings) update() {
 	css := fmt.Sprintf(`
-.currentFontSetting {
-  font-size: %dpx;
-}
+        .currentFontSetting {
+          font-size: %dpx;
+        }
 
-.currentBackgroundColor {
-  background-color: #fff;
-}
+        .currentBackgroundColor {
+          background-color: #fff;
+        }
 
-.shadedBackgroundColor {
-  background-color: #fafafa;
-}
-`, ds.defaultFontSize, ds.fontSize)
+        .shadedBackgroundColor {
+          background-color: #fafafa;
+        }
+        `, ds.defaultFontSize, ds.fontSize)
 	doInUIThread(func() {
 		ds.provider.LoadFromData(css)
 	})
@@ -107,15 +107,5 @@ func addBoldHeaderStyle(l gtki.Label) {
 			font-size: 200%;
 			font-weight: 800;
 		}`)
-	})
-}
-
-func addStyle(w gtki.Widget, className string, css string) {
-	doInUIThread(func() {
-		c, _ := w.GetStyleContext()
-		ds := newDisplaySettings()
-		c.AddProvider(ds.provider, 9999)
-		c.AddClass(className)
-		ds.provider.LoadFromData(css)
 	})
 }

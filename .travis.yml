@@ -16,6 +16,8 @@ services:
 
 matrix:
   include:
+    - go: 1.8.3
+      os: osx
     - go: 1.9
       os: osx
     - go: 1.7.6

@@ -10,7 +10,7 @@
           <object class="GtkEventBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <signal name="button-press-event" handler="on_press_smp_image" swapped="no"/>
+            <signal name="button-press-event" handler="on_press_close_image" swapped="no"/>
 	    <child>
               <object class="GtkImage">
                 <property name="visible">True</property>

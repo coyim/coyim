@@ -129,6 +129,9 @@ type unverifiedWarning struct {
 	peerIsVerified func() bool
 }
 
+var question = "Please enter the PIN that I shared with you."
+var coyIMQuestion = regexp.MustCompile("Please enter the PIN that I shared with you.")
+
 func (u *unverifiedWarning) show() {
 	if !u.peerIsVerified() {
 		u.infobar.Show()
@@ -233,7 +236,9 @@ type waitingForPeerNotification struct {
 }
 
 func (v *verifier) buildWaitingForPeerNotification() {
-	v.waitingForPeer = &waitingForPeerNotification{b: newBuilder("WaitingSMPComplete")}
+	v.waitingForPeer = &waitingForPeerNotification{
+		b: newBuilder("WaitingSMPComplete"),
+	}
 
 	v.waitingForPeer.b.getItems(
 		"smp-waiting-infobar", &v.waitingForPeer.infobar,
@@ -315,7 +320,10 @@ type answerSMPWindow struct {
 }
 
 func (v *verifier) buildAnswerSMPDialog() {
-	v.answerSMPWindow = &answerSMPWindow{b: newBuilder("AnswerSMPQuestion")}
+	v.answerSMPWindow = &answerSMPWindow{
+		b: newBuilder("AnswerSMPQuestion"),
+	}
+
 	v.answerSMPWindow.b.getItems(
 		"dialog", &v.answerSMPWindow.d,
 		"question_from_peer", &v.answerSMPWindow.question,
@@ -327,8 +335,8 @@ func (v *verifier) buildAnswerSMPDialog() {
 		"alert_image", &v.answerSMPWindow.alertImage,
 	)
 
-	v.answerSMPWindow.d.SetTransientFor(v.parentWindow)
 	v.answerSMPWindow.d.HideOnDelete()
+	v.answerSMPWindow.d.SetTransientFor(v.parentWindow)
 	v.answerSMPWindow.submitButton.SetSensitive(false)
 
 	setImageFromFile(v.answerSMPWindow.smpImage, "smp.svg")
@@ -351,18 +359,13 @@ func (v *verifier) buildAnswerSMPDialog() {
 
 }
 
-var question = "Please enter the PIN that I shared with you."
-var coyIMQuestion = regexp.MustCompile("Please enter the PIN that I shared with you.")
-
-// TODO: check this
 func (v *verifier) showAnswerSMPDialog(question string) {
 	if "" == question {
 		v.answerSMPWindow.question.SetMarkup(i18n.Localf("Enter the secret that <b>%s</b> shared with you", v.peerName()))
 	} else if coyIMQuestion.MatchString(question) {
 		v.answerSMPWindow.question.SetMarkup(i18n.Localf("Type the PIN that <b>%s</b> sent you. It can be used only once.", v.peerName()))
 	} else {
-		// TODO: check this case
-		v.answerSMPWindow.question.SetText(question)
+		v.answerSMPWindow.question.SetMarkup(i18n.Localf("Enter the answer to\n<b>%s</b>", question))
 	}
 
 	v.answerSMPWindow.answer.SetText("")
@@ -386,7 +389,10 @@ func (p *peerRequestsSMPNotification) show() {
 }
 
 func (v *verifier) buildPeerRequestsSMPNotification() {
-	v.peerRequestsSMP = &peerRequestsSMPNotification{b: newBuilder("PeerRequestsSMP")}
+	v.peerRequestsSMP = &peerRequestsSMPNotification{
+		b: newBuilder("PeerRequestsSMP"),
+	}
+
 	v.peerRequestsSMP.b.getItems(
 		"smp-requested-infobar", &v.peerRequestsSMP.infobar,
 		"smp-requested-close-infobar", &v.peerRequestsSMP.closeInfobar,
@@ -395,10 +401,6 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 		"smp-requested-image", &v.peerRequestsSMP.image,
 		"smp-requested-button", &v.peerRequestsSMP.button,
 	)
-
-	v.peerRequestsSMP.b.ConnectSignals(map[string]interface{}{
-		"on_press_smp_image": v.cancelSMP,
-	})
 
 	prov, _ := g.gtk.CssProviderNew()
 
@@ -424,6 +426,10 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 	styleContext, _ = v.peerRequestsSMP.closeInfobar.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
+	v.peerRequestsSMP.b.ConnectSignals(map[string]interface{}{
+		"on_press_close_image": v.cancelSMP,
+	})
+
 	setImageFromFile(v.peerRequestsSMP.image, "waiting.svg")
 
 	v.notifier.notify(v.peerRequestsSMP.infobar)
@@ -433,7 +439,6 @@ func (v *verifier) displayRequestForSecret(question string) {
 	v.hideUnverifiedWarning()
 
 	v.peerRequestsSMP.label.SetLabel(i18n.Localf("Finish verifying the \nsecurity of this channel..."))
-
 	v.peerRequestsSMP.button.Connect("clicked", func() {
 		v.showAnswerSMPDialog(question)
 	})
@@ -450,7 +455,9 @@ type verificationSuccessNotification struct {
 }
 
 func (v *verifier) displayVerificationSuccess() {
-	v.verificationSuccess = &verificationSuccessNotification{b: newBuilder("VerificationSucceeded")}
+	v.verificationSuccess = &verificationSuccessNotification{
+		b: newBuilder("VerificationSucceeded"),
+	}
 
 	v.verificationSuccess.b.getItems(
 		"verif-success-dialog", &v.verificationSuccess.d,

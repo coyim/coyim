@@ -37,6 +37,11 @@ matrix:
     - env: RELEASE=true
   fast_finish: true
 
+# Maybe cache /usr/local instead ?
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+
 before_install:
   - "export DISPLAY=:99.0"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}

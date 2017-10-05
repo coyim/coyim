@@ -37,12 +37,10 @@ matrix:
     - env: RELEASE=true
   fast_finish: true
 
-# Maybe cache /usr/local instead ?
 cache:
   directories:
-    - $HOME/Library/Caches/Homebrew
-    - /usr/local/Homebrew/Library/Taps/homebrew
     - /usr/local/Cellar/gtk+3
+    - /usr/local/Homebrew/Library/Taps/homebrew
 
 before_install:
   - "export DISPLAY=:99.0"

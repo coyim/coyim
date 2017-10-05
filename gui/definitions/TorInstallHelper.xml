@@ -7,7 +7,7 @@
       <object class="GtkBox" id="box">
         <property name="border-width">10</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-	<child>
+        <child>
           <object class="GtkLabel">
             <property name="can_focus">False</property>
             <property name="margin-top">5</property>
@@ -28,7 +28,6 @@ Installing Tor for CoyIM:
         <child>
           <object class="GtkLabel">
             <property name="can_focus">False</property>
-            <property name="margin-bottom">10</property>
 	    <property name="label" translatable="yes">
 
     1. Go to https://www.torproject.org/
@@ -36,18 +35,50 @@ Installing Tor for CoyIM:
     2. Download and install Tor (or the Tor Browser Bundle)
 
     3. Start Tor (or the Tor Browser)
-
-    4. Close CoyIM
-
-    5. Reopen CoyIM
-
             </property>
             <property name="selectable">True</property>
 	  </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+	<child>
+          <object class="GtkEventBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <signal name="button-press-event" handler="on_press_label_signal" swapped="no"/>
+            <child>
+              <object class="GtkLabel">
+                <property name="can_focus">False</property>
+                <property name="margin-top">0</property>
+                <property name="margin-bottom">10</property>
+                <property name="margin-right">60</property>
+                <property name="label" translatable="yes">4. Click here to check if Tor is now running</property>
+                <attributes>
+                  <attribute name="underline" value="True"/>
+                </attributes>
+	      </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="tor-running-notification">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <property name="margin-bottom">10</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>

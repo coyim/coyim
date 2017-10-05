@@ -158,10 +158,25 @@ func (u *gtkUI) installTor() {
 
 	obj := builder.getObj("dialog")
 	dialog := obj.(gtki.MessageDialog)
+	info := builder.getObj("tor-running-notification").(gtki.Box)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_signal": func() {
 			dialog.Destroy()
+		},
+		// TODO: don't stack errors
+		// TODO: change logos
+		"on_press_label_signal": func() {
+			if !ournet.Tor.Detect() {
+				err := "Tor is still not running"
+				renderTorNotification(info, err, "software-update-urgent")
+				log.Printf("Tor is still not running")
+				return
+			}
+			err := "Tor is now running"
+			renderTorNotification(info, err, "emblem-default")
+			log.Printf("Tor is now not running")
+			return
 		},
 	})
 
@@ -169,6 +184,40 @@ func (u *gtkUI) installTor() {
 		dialog.SetTransientFor(u.window)
 		dialog.ShowAll()
 	})
+}
+
+func renderTorNotification(info gtki.Box, label, imgName string) {
+	notification := buildTorNotification(label, imgName)
+	info.Add(notification)
+	notification.ShowAll()
+}
+
+func buildTorNotification(label, imgName string) gtki.Box {
+	assertInUIThread()
+	b := newBuilder("TorRunningNotification")
+
+	infoBar := b.getObj("infobar").(gtki.InfoBar)
+	image := b.getObj("image").(gtki.Image)
+	message := b.getObj("message").(gtki.Label)
+
+	prov, _ := g.gtk.CssProviderNew()
+
+	css := fmt.Sprintf(`
+	box { background-color: #f1f1f1;
+	      color: #000000;
+	      border: 1px solid #d3d3d3;
+	      border-radius: 2px;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ := infoBar.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	message.SetText(i18n.Local(label))
+	image.SetFromIconName(imgName, gtki.ICON_SIZE_BUTTON)
+
+	return infoBar
 }
 
 func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {

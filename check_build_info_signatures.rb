@@ -9,9 +9,9 @@ TAG = ARGV[0]
 
 def tag_exists?(t)
   begin
-    open("https://dl.bintray.com/twstrike/coyim/#{TAG}") { |f| }
-    open("https://dl.bintray.com/twstrike/coyim/#{TAG}/linux") { |f| }
-    open("https://dl.bintray.com/twstrike/coyim/#{TAG}/linux/amd64") { |f| }
+    open("https://dl.bintray.com/coyim/coyim-bin/#{TAG}") { |f| }
+    open("https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux") { |f| }
+    open("https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64") { |f| }
     return true
   rescue OpenURI::HTTPError
     return false
@@ -24,7 +24,7 @@ Dir.mktmpdir { |dir|
     exit
   end
   entries = []
-  open("https://dl.bintray.com/twstrike/coyim/#{TAG}/linux/amd64") { |f|
+  open("https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64") { |f|
     entries = Nokogiri(f).xpath("//pre/a").map(&:content)
   }
 
@@ -45,14 +45,14 @@ Dir.mktmpdir { |dir|
 
   $stdout.print "Downloading files "; $stdout.flush
   $stdout.print "."; $stdout.flush
-  `curl -L -s https://dl.bintray.com/twstrike/coyim/#{TAG}/linux/amd64/coyim -o #{dir}/coyim`
+  `curl -L -s https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64/coyim -o #{dir}/coyim`
   $stdout.print "."; $stdout.flush
-  `curl -L -s https://dl.bintray.com/twstrike/coyim/#{TAG}/linux/amd64/coyim-cli -o #{dir}/coyim-cli`
+  `curl -L -s https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64/coyim-cli -o #{dir}/coyim-cli`
   $stdout.print "."; $stdout.flush
-  `curl -L -s https://dl.bintray.com/twstrike/coyim/#{TAG}/linux/amd64/build_info -o #{dir}/build_info`
+  `curl -L -s https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64/build_info -o #{dir}/build_info`
   $stdout.print "."; $stdout.flush
   entries.select{|x| x.start_with?("build_info.")}.each do |xx|
-    `curl -L -s https://dl.bintray.com/twstrike/coyim/#{TAG}/linux/amd64/#{xx} -o #{dir}/#{xx}`
+    `curl -L -s https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64/#{xx} -o #{dir}/#{xx}`
     $stdout.print "."; $stdout.flush
   end
   puts

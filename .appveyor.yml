@@ -4,7 +4,7 @@ environment:
   global:
     APPVEYOR_OS_NAME: windows
     GOPATH: c:\gopath
-    BINTRAY_PATH: twstrike/coyim/coyim-bin/windows
+    BINTRAY_PATH: coyim/coyim-bin/coyim-bin/windows
     BINTRAY_USER:
       secure: HvXDg/3xn3Du2GPXPyf1tQ==
     BINTRAY_APIKEY:
@@ -26,8 +26,8 @@ environment:
 install:
   - .\ci\install-deps-windows.bat
 build_script:
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make deps-dev"'
-  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/twstrike/coyim && make build-gui-win"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/coyim/coyim && make deps-dev"'
+  - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/coyim/coyim && make build-gui-win"'
 after_build:
   - .\ci\build-windows-bundle.bat
 artifacts:
@@ -36,4 +36,4 @@ artifacts:
 deploy_script:
   - SET APPVEYOR_BUILD_VERSION=%APPVEYOR_REPO_BRANCH%
   - if "%APPVEYOR_REPO_TAG%" == "true" set APPVEYOR_BUILD_VERSION=%APPVEYOR_REPO_TAG_NAME%
-  - curl -T coyim.zip -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" "https://api.bintray.com/content/twstrike/coyim/coyim-bin/%APPVEYOR_BUILD_VERSION%/%APPVEYOR_BUILD_VERSION%/windows/CoyIM.zip?override=1&publish=1"
+  - curl -T coyim.zip -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/%APPVEYOR_BUILD_VERSION%/%APPVEYOR_BUILD_VERSION%/windows/CoyIM.zip?override=1&publish=1"

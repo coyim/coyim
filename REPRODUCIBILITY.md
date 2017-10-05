@@ -38,7 +38,7 @@ This will generate
 
 where `0xAAAAAAAAAAAAAAAA` is the long-form key ID of your GPG key.
 
-If you have access to the `twstrike/coyim` Bintray account, you can put your bintray username in `~/.bintray_api_user` and your API key in `~/.bintray_api_key` and then simply run:
+If you have access to the `coyim/coyim-bin` Bintray account, you can put your bintray username in `~/.bintray_api_user` and your API key in `~/.bintray_api_key` and then simply run:
 
 ```sh
   make upload-reproducible-signature

@@ -3,7 +3,7 @@
 For convenience, we generate binaries as part of our automated build
 environment in the following URL:
 
-`https://dl.bintray.com/twstrike/coyim/master`
+`https://dl.bintray.com/coyim/coyim-bin/master`
 
 All binaries are signed using Bintray's GPG key:
 
@@ -17,4 +17,5 @@ Keep in mind this is an automated service provided by Bintray. For any
 sensitive use cases you should considering building coy by yourself.
 
 You can find the release history on our Bintray page:
-`https://bintray.com/twstrike/coyim/coyim-bin`
+`https://bintray.com/coyim/coyim-bin/coyim-bin`
+

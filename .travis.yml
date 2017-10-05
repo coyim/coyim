@@ -19,11 +19,13 @@ matrix:
     - go: 1.8.3
       env:
       - HOMEBREW_NO_AUTO_UPDATE=1
+      - HOMEBREW_FONTCONFIG_CACHE_SKIP = "yes"
       - DEPTESTBYPASS501=1
       os: osx
     - go: 1.9
       env:
       - HOMEBREW_NO_AUTO_UPDATE=1
+      - HOMEBREW_FONTCONFIG_CACHE_SKIP = "yes"
       - DEPTESTBYPASS501=1
       os: osx
     - go: 1.7.6

@@ -153,52 +153,23 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 	dialog.Destroy()
 }
 
-func (u *gtkUI) installTor() {
-	builder := newBuilder("TorInstallHelper")
-
-	obj := builder.getObj("dialog")
-	dialog := obj.(gtki.MessageDialog)
-	info := builder.getObj("tor-running-notification").(gtki.Box)
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": func() {
-			dialog.Destroy()
-		},
-		// TODO: don't stack errors
-		// TODO: change logos
-		"on_press_label_signal": func() {
-			if !ournet.Tor.Detect() {
-				err := "Tor is still not running"
-				renderTorNotification(info, err, "software-update-urgent")
-				log.Printf("Tor is still not running")
-				return
-			}
-			err := "Tor is now running"
-			renderTorNotification(info, err, "emblem-default")
-			log.Printf("Tor is now not running")
-			return
-		},
-	})
-
-	doInUIThread(func() {
-		dialog.SetTransientFor(u.window)
-		dialog.ShowAll()
-	})
+type torRunningNotification struct {
+	area  gtki.Box
+	image gtki.Image
+	label gtki.Label
 }
 
-func renderTorNotification(info gtki.Box, label, imgName string) {
-	notification := buildTorNotification(label, imgName)
-	info.Add(notification)
-	notification.ShowAll()
-}
-
-func buildTorNotification(label, imgName string) gtki.Box {
-	assertInUIThread()
+// TODO: add a spinner
+func torRunningNotificationInit() *torRunningNotification {
 	b := newBuilder("TorRunningNotification")
 
-	infoBar := b.getObj("infobar").(gtki.InfoBar)
-	image := b.getObj("image").(gtki.Image)
-	message := b.getObj("message").(gtki.Label)
+	torRunningNotif := &torRunningNotification{}
+
+	b.getItems(
+		"infobar", &torRunningNotif.area,
+		"image", &torRunningNotif.image,
+		"message", &torRunningNotif.label,
+	)
 
 	prov, _ := g.gtk.CssProviderNew()
 
@@ -211,13 +182,50 @@ func buildTorNotification(label, imgName string) gtki.Box {
 	`)
 	_ = prov.LoadFromData(css)
 
-	styleContext, _ := infoBar.GetStyleContext()
+	styleContext, _ := torRunningNotif.area.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	message.SetText(i18n.Local(label))
-	image.SetFromIconName(imgName, gtki.ICON_SIZE_BUTTON)
+	return torRunningNotif
+}
 
-	return infoBar
+func (n *torRunningNotification) renderTorNotification(info gtki.Box, label, imgName string) {
+	n.label.SetText(i18n.Local(label))
+	n.image.SetFromIconName(imgName, gtki.ICON_SIZE_BUTTON)
+
+	info.Add(n.area)
+	n.area.ShowAll()
+}
+
+func (u *gtkUI) installTor() {
+	builder := newBuilder("TorInstallHelper")
+
+	obj := builder.getObj("dialog")
+	dialog := obj.(gtki.MessageDialog)
+	info := builder.getObj("tor-running-notification").(gtki.Box)
+	torNotif := torRunningNotificationInit()
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_signal": func() {
+			dialog.Destroy()
+		},
+		// TODO: change logos
+		"on_press_label_signal": func() {
+			if !ournet.Tor.Detect() {
+				err := "Tor is still not running"
+				torNotif.renderTorNotification(info, err, "software-update-urgent")
+				log.Printf("Tor is still not running")
+			} else {
+				err := "Tor is now running"
+				torNotif.renderTorNotification(info, err, "emblem-default")
+				log.Printf("Tor is now not running")
+			}
+		},
+	})
+
+	doInUIThread(func() {
+		dialog.SetTransientFor(u.window)
+		dialog.ShowAll()
+	})
 }
 
 func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {

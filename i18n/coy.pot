@@ -684,7 +684,7 @@ msgid "%s wants to talk to you. Is that ok?"
 msgstr ""
 
 #: ../gui/ui.go:427
-msgid "Coy IM!"
+msgid "CoyIM!"
 msgstr ""
 
 #: ../gui/ui.go:453

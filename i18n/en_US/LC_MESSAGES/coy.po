@@ -712,8 +712,8 @@ msgid "%s wants to talk to you. Is that ok?"
 msgstr "%s wants to talk to you. Is that ok?"
 
 #: ../gui/ui.go:427
-msgid "Coy IM!"
-msgstr "Coy IM!"
+msgid "CoyIM!"
+msgstr "CoyIM!"
 
 #: ../gui/ui.go:453
 msgid "There is no account with the id %q"

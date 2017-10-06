@@ -35,6 +35,7 @@ func (s *GUIXmppSuite) Test_createStatusMessage_createsStatusMessages(c *C) {
 
 	c.Assert(createStatusMessage("Foo2", "dnd", "", false), Equals, "Foo2 is now Busy")
 	c.Assert(createStatusMessage("Foo2", "dnd", "some stuff", false), Equals, "Foo2 is now Busy (some stuff)")
+	c.Assert(createStatusMessage("Foo2", "some state", "", false), Equals, "Foo2 is now some state")
 
 	c.Assert(createStatusMessage("Foo2", "chat", "", false), Equals, "Foo2 is now Free for Chat")
 	c.Assert(createStatusMessage("Foo2", "chat", "really!", false), Equals, "Foo2 is now Free for Chat (really!)")

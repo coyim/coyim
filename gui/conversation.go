@@ -873,7 +873,7 @@ func extraOfflineStatus(show, showStatus string) string {
 	return " (" + sshow + ")"
 }
 
-func createStatusMessage(from string, show, showStatus string, gone bool) string {
+func createStatusMessage(from, show, showStatus string, gone bool) string {
 	tail := ""
 	if gone {
 		tail = i18n.Local("Offline") + extraOfflineStatus(show, showStatus)

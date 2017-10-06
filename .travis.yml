@@ -37,11 +37,6 @@ matrix:
     - env: RELEASE=true
   fast_finish: true
 
-cache:
-  directories:
-    - /usr/local/Cellar/gtk+3
-    - /usr/local/Homebrew/Library/Taps/homebrew
-
 before_install:
   - "export DISPLAY=:99.0"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}

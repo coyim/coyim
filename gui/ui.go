@@ -160,7 +160,7 @@ type torRunningNotification struct {
 }
 
 // TODO: add a spinner
-func torRunningNotificationInit() *torRunningNotification {
+func torRunningNotificationInit(info gtki.Box) *torRunningNotification {
 	b := newBuilder("TorRunningNotification")
 
 	torRunningNotif := &torRunningNotification{}
@@ -171,6 +171,13 @@ func torRunningNotificationInit() *torRunningNotification {
 		"message", &torRunningNotif.label,
 	)
 
+	info.Add(torRunningNotif.area)
+	torRunningNotif.area.ShowAll()
+
+	return torRunningNotif
+}
+
+func (n *torRunningNotification) renderTorNotification(label, imgName string) {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -182,18 +189,11 @@ func torRunningNotificationInit() *torRunningNotification {
 	`)
 	_ = prov.LoadFromData(css)
 
-	styleContext, _ := torRunningNotif.area.GetStyleContext()
+	styleContext, _ := n.area.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	return torRunningNotif
-}
-
-func (n *torRunningNotification) renderTorNotification(info gtki.Box, label, imgName string) {
 	n.label.SetText(i18n.Local(label))
 	n.image.SetFromIconName(imgName, gtki.ICON_SIZE_BUTTON)
-
-	info.Add(n.area)
-	n.area.ShowAll()
 }
 
 func (u *gtkUI) installTor() {
@@ -202,7 +202,7 @@ func (u *gtkUI) installTor() {
 	obj := builder.getObj("dialog")
 	dialog := obj.(gtki.MessageDialog)
 	info := builder.getObj("tor-running-notification").(gtki.Box)
-	torNotif := torRunningNotificationInit()
+	torNotif := torRunningNotificationInit(info)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_signal": func() {
@@ -212,11 +212,11 @@ func (u *gtkUI) installTor() {
 		"on_press_label_signal": func() {
 			if !ournet.Tor.Detect() {
 				err := "Tor is still not running"
-				torNotif.renderTorNotification(info, err, "software-update-urgent")
+				torNotif.renderTorNotification(err, "software-update-urgent")
 				log.Printf("Tor is still not running")
 			} else {
 				err := "Tor is now running"
-				torNotif.renderTorNotification(info, err, "emblem-default")
+				torNotif.renderTorNotification(err, "emblem-default")
 				log.Printf("Tor is now not running")
 			}
 		},
@@ -244,6 +244,7 @@ func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {
 
 func (u *gtkUI) initialSetupWindow() {
 	if !ournet.Tor.Detect() {
+		log.Printf("Tor is not running")
 		u.wouldYouLikeToInstallTor(func(res bool) {
 			if res {
 				u.installTor()

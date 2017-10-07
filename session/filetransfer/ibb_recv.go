@@ -235,6 +235,12 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 		return iqErrorNotAcceptable, "error", false
 	}
 
+	inflightSend, ok := getInflightSend(tag.Sid)
+	if ok {
+		inflightSend.ibbReceivedClose(s)
+		return data.EmptyReply{}, "", false
+	}
+
 	inflight, ok := getInflight(tag.Sid)
 
 	if !ok || inflight.status.opaque == nil {

@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
@@ -101,10 +102,13 @@ var supportedSendingMechanisms = map[string]func(access.Session, *sendContext){
 }
 
 type sendContext struct {
-	peer    string
-	file    string
-	sid     string
-	control sdata.FileTransferControl
+	peer             string
+	file             string
+	sid              string
+	weWantToCancel   bool
+	theyWantToCancel bool
+	totalSent        int64
+	control          sdata.FileTransferControl
 }
 
 func (ctx *sendContext) notifyUserThatSendStarted(s access.Session) {
@@ -116,6 +120,15 @@ func isValidSubmitForm(siq data.SI) bool {
 		len(siq.Feature.Form.Fields) == 1 &&
 		siq.Feature.Form.Fields[0].Var == "stream-method" &&
 		len(siq.Feature.Form.Fields[0].Values) == 1
+}
+
+func (ctx *sendContext) listenForCancellation() {
+	if cancel, ok := <-ctx.control.CancelTransfer; ok && cancel {
+		ctx.weWantToCancel = true
+		close(ctx.control.TransferFinished)
+		close(ctx.control.Update)
+		close(ctx.control.ErrorOccurred)
+	}
 }
 
 func (ctx *sendContext) waitForResultToStartFileSend(s access.Session, reply <-chan data.Stanza) {
@@ -140,6 +153,7 @@ func (ctx *sendContext) waitForResultToStartFileSend(s access.Session, reply <-c
 			prof := siq.Feature.Form.Fields[0].Values[0]
 			if f, ok := supportedSendingMechanisms[prof]; ok {
 				ctx.notifyUserThatSendStarted(s)
+				addInflightSend(ctx)
 				f(s, ctx)
 				return
 			}
@@ -176,6 +190,35 @@ func InitSend(s access.Session, peer string, file string) sdata.FileTransferCont
 		return ctx.control
 	}
 
+	go ctx.listenForCancellation()
 	ctx.offerSend(s)
 	return ctx.control
+}
+
+var inflightSends struct {
+	sync.RWMutex
+	transfers map[string]*sendContext
+}
+
+func init() {
+	inflightSends.transfers = make(map[string]*sendContext)
+}
+
+func addInflightSend(ctx *sendContext) {
+	inflightSends.Lock()
+	defer inflightSends.Unlock()
+	inflightSends.transfers[ctx.sid] = ctx
+}
+
+func getInflightSend(id string) (result *sendContext, ok bool) {
+	inflightSends.RLock()
+	defer inflightSends.RUnlock()
+	result, ok = inflightSends.transfers[id]
+	return
+}
+
+func removeInflightSend(ctx *sendContext) {
+	inflightSends.Lock()
+	defer inflightSends.Unlock()
+	delete(inflightSends.transfers, ctx.sid)
 }

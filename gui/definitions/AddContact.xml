@@ -12,7 +12,7 @@
   </object>
   <object class="GtkDialog" id="AddContact">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
-    <property name="border_width">6</property>
+    <property name="border_width">7</property>
     <property name="title" translatable="yes">Add new contact</property>
     <property name="resizable">True</property>
     <property name="default-height">400</property>
@@ -27,10 +27,15 @@
           <!--TODO: this seems to render weirdly -->
            <object class="GtkBox" id="notification-area">
             <property name="visible">true</property>
-            <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+            <property name="margin-top">5</property>
+            <property name="margin-left">5</property>
+            <property name="margin-right">5</property>
+            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
           </object>
           <packing>
-            <property name="position">0</property>
+             <property name="expand">False</property>
+             <property name="fill">True</property>
+             <property name="position">0</property>
           </packing>
         </child>
         <child>

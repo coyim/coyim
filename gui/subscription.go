@@ -31,18 +31,18 @@ type addContactDialog struct {
 	autoAuth               gtki.CheckButton
 }
 
-func (acd *addContactDialog) getVerifiedContact() (string, bool) {
+func (acd *addContactDialog) getVerifiedContact(errorNotif *errorNotification) (string, bool) {
 	contact, _ := acd.contactInput.GetText()
-	isJid, errmsg := verifyXMPPAddress(contact)
+	isJid, err := verifyXMPPAddress(contact)
 
 	if !isJid {
 		if acd.notification != nil {
 			acd.notificationArea.Remove(acd.notification)
 		}
-		acd.notification = buildBadUsernameNotification(errmsg)
-		acd.notificationArea.Add(acd.notification)
-		acd.notification.ShowAll()
-		log.Printf(errmsg)
+
+		errorNotif.renderAccountError(err)
+		log.Printf(err)
+
 		return "", false
 	}
 
@@ -109,12 +109,14 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 	acd.init()
 	acd.initAccounts(accounts)
 
+	errorNotif := errorNotificationInit(acd.notificationArea)
+
 	acd.builder.ConnectSignals(map[string]interface{}{
 		"on_cancel_signal": func() {
 			acd.dialog.Destroy()
 		},
 		"on_save_signal": func() {
-			contact, ok := acd.getVerifiedContact()
+			contact, ok := acd.getVerifiedContact(errorNotif)
 			if !ok {
 				return
 			}

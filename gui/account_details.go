@@ -291,8 +291,6 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 	p3, _ := data.notebook.GetNthPage(2)
 	p4, _ := data.notebook.GetNthPage(3)
 
-	failures := 0
-
 	editProxy := func(iter gtki.TreeIter, onCancel func()) {
 		val, _ := data.proxies.GetValue(iter, 1)
 		realProxyData, _ := val.GetString()
@@ -302,6 +300,8 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 				data.proxies.SetValue(iter, 1, p.ForProcessing())
 			}, onCancel)
 	}
+
+	errorNotif := errorNotificationInit(data.notificationArea)
 
 	data.builder.ConnectSignals(map[string]interface{}{
 		"on_toggle_other_settings": func() {
@@ -323,30 +323,21 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			accDtails := getAccountDetails(data)
 
 			if len(accDtails.accTxt) == 0 {
-				err = "  Cannot add the account:\n" +
-					"  Account field missing."
-				renderAddAccountError(data, err)
+				err = "Cannot add the account:\n" +
+					"Account field missing."
+				errorNotif.renderAccountError(err)
 				log.Printf("Cannot add account: account field missing.")
-				return
+			} else {
+				isJid, err := verifyXMPPAddress(accDtails.accTxt)
+				if !isJid {
+					errorNotif.renderAccountError(err)
+					log.Printf(err)
+				} else {
+					addAccount(account, accDtails, data)
+					go saveFunction()
+					data.dialog.Destroy()
+				}
 			}
-
-			isJid, err := verifyXMPPAddress(accDtails.accTxt)
-			if !isJid && failures > 0 {
-				failures++
-				return
-			}
-
-			if !isJid {
-				renderAddAccountError(data, err)
-				log.Printf(err)
-				failures++
-				return
-			}
-
-			addAccount(account, accDtails, data)
-
-			go saveFunction()
-			data.dialog.Destroy()
 		},
 		"on_edit_proxy_signal": func() {
 			ts, _ := data.proxiesView.GetSelection()
@@ -412,21 +403,43 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 	}
 }
 
-func renderAddAccountError(data *accountDetailsData, err string) {
-	notification := buildBadUsernameNotification(err)
-	data.notificationArea.Add(notification)
-	notification.ShowAll()
+type errorNotification struct {
+	area  gtki.Box
+	label gtki.Label
 }
 
-func buildBadUsernameNotification(msg string) gtki.InfoBar {
-	assertInUIThread()
+func errorNotificationInit(info gtki.Box) *errorNotification {
 	b := newBuilder("BadUsernameNotification")
 
-	infoBar := b.getObj("infobar").(gtki.InfoBar)
-	message := b.getObj("message").(gtki.Label)
+	errorNotif := &errorNotification{}
 
-	message.SetSelectable(true)
-	message.SetText(i18n.Local(msg))
+	b.getItems(
+		"infobar", &errorNotif.area,
+		"message", &errorNotif.label,
+	)
 
-	return infoBar
+	info.Add(errorNotif.area)
+	errorNotif.area.ShowAll()
+
+	return errorNotif
+}
+
+func (n *errorNotification) renderAccountError(label string) {
+	prov, _ := g.gtk.CssProviderNew()
+
+	css := fmt.Sprintf(`
+	box { background-color: #4a8fd9;
+	      color: #ffffff;
+	      border-radius: 2px;
+	     }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ := n.area.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	n.label.SetSelectable(true)
+	n.label.SetMarginTop(10)
+	n.label.SetMarginBottom(10)
+	n.label.SetText(i18n.Local(label))
 }

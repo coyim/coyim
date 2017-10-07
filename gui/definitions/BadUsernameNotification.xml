@@ -1,15 +1,10 @@
 <interface>
-  <object class="GtkInfoBar" id="infobar">
-    <property name="message-type">GTK_MESSAGE_WARNING</property>
-    <child internal-child="content_area">
-      <object class="GtkBox" id="box">
-        <property name="homogeneous">false</property>
-        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-        <child>
-          <object class="GtkLabel" id="message">
-            <property name="wrap">true</property>
-          </object>
-        </child>
+  <object class="GtkBox" id="infobar">
+    <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+    <child>
+      <object class="GtkLabel" id="message">
+        <property name="wrap">true</property>
+        <property name="margin-left">10</property>
       </object>
     </child>
   </object>

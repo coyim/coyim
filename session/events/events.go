@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/session/access"
+	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -109,11 +110,8 @@ type FileTransfer struct {
 	Size             int64
 	Description      string
 
-	Answer           chan<- *string // one time use
-	CancelTransfer   chan<- bool    // one time use
-	ErrorOccurred    <-chan error   // one time use
-	Update           <-chan int64   // will be called many times
-	TransferFinished <-chan bool    // one time use
+	Answer  chan<- *string // one time use
+	Control sdata.FileTransferControl
 }
 
 // SMP is an event related to SMP

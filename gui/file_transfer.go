@@ -2,8 +2,10 @@ package gui
 
 import (
 	"log"
+	"os"
 
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -29,31 +31,31 @@ import (
 
 func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView) {
 	go func() {
-		err, ok := <-ev.ErrorOccurred
+		err, ok := <-ev.Control.ErrorOccurred
 		if ok {
 			cv.failFileTransfer()
 			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
-			close(ev.CancelTransfer)
+			close(ev.Control.CancelTransfer)
 		}
 	}()
 
 	go func() {
-		_, ok := <-ev.TransferFinished
+		_, ok := <-ev.Control.TransferFinished
 		if ok {
 			cv.successFileTransfer()
 			log.Printf("File transfer of file %s finished with success", ev.Name)
-			close(ev.CancelTransfer)
+			close(ev.Control.CancelTransfer)
 		}
 	}()
 
 	go func() {
-		for upd := range ev.Update {
+		for upd := range ev.Control.Update {
 			cv.startFileTransfer(float64((upd*100)/ev.Size) / 100)
 			log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
 
 			if cv.isFileTransferCanceled() {
 				log.Printf("File transfer of file canceled")
-				ev.CancelTransfer <- true
+				ev.Control.CancelTransfer <- true
 				return
 			}
 		}
@@ -119,4 +121,54 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	} else {
 		ev.Answer <- nil
 	}
+}
+
+func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, name string, size int64) {
+	go func() {
+		err, ok := <-ctl.ErrorOccurred
+		if ok {
+			log.Printf("File transfer of file %s failed with %v", name, err)
+			close(ctl.CancelTransfer)
+		}
+	}()
+
+	go func() {
+		_, ok := <-ctl.TransferFinished
+		if ok {
+			log.Printf("File transfer of file %s finished with success", name)
+			close(ctl.CancelTransfer)
+		}
+	}()
+
+	go func() {
+		for upd := range ctl.Update {
+			log.Printf("File transfer of file %s: %d/%d done", name, upd, size)
+		}
+	}()
+}
+
+func (account *account) sendFileTo(peer string, ui *gtkUI) {
+	if file, ok := chooseFileToSend(ui.window); ok {
+		ctl := account.session.SendFileTo(peer, file)
+		fstat, _ := os.Stat(file)
+		ui.startAllListenersForFileSending(ctl, file, fstat.Size())
+	}
+}
+
+func chooseFileToSend(w gtki.Window) (string, bool) {
+	dialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
+		i18n.Local("Choose file to send"),
+		w,
+		gtki.FILE_CHOOSER_ACTION_OPEN,
+		i18n.Local("_Cancel"),
+		gtki.RESPONSE_CANCEL,
+		i18n.Local("Send"),
+		gtki.RESPONSE_OK,
+	)
+	defer dialog.Destroy()
+
+	if gtki.ResponseType(dialog.Run()) == gtki.RESPONSE_OK {
+		return dialog.GetFilename(), true
+	}
+	return "", false
 }

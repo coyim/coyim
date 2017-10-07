@@ -26,6 +26,7 @@ type Conn interface {
 	Next() (data.Stanza, error)
 	OriginDomain() string
 	Out() io.Writer
+	Rand() io.Reader
 	RawOut() io.WriteCloser
 	ReadStanzas(chan<- data.Stanza) error
 	RegisterAccount(string, string) (bool, error)

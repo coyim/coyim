@@ -10,6 +10,7 @@ import (
 	"github.com/coyim/coyim/event"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
+	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
@@ -190,4 +191,6 @@ func (*SessionMock) SendIQError(*data.ClientIQ, interface{}) {}
 func (*SessionMock) SendIQResult(*data.ClientIQ, interface{}) {}
 
 // SendFileTo is the implementation for Session interface
-func (*SessionMock) SendFileTo(string, string) {}
+func (*SessionMock) SendFileTo(string, string) sdata.FileTransferControl {
+	return sdata.FileTransferControl{}
+}

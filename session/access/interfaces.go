@@ -9,6 +9,7 @@ import (
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/event"
 	"github.com/coyim/coyim/roster"
+	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
@@ -69,7 +70,7 @@ type Session interface {
 	SendIQError(*data.ClientIQ, interface{})
 	SendIQResult(*data.ClientIQ, interface{})
 	PublishEvent(interface{})
-	SendFileTo(string, string)
+	SendFileTo(string, string) sdata.FileTransferControl
 	StartSMP(string, string, string, string)
 	FinishSMP(string, string, string)
 	AbortSMP(string, string)

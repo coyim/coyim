@@ -3,6 +3,7 @@ package session
 import (
 	"fmt"
 
+	"github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/filetransfer"
 )
 
@@ -15,9 +16,7 @@ func init() {
 	registerKnownExtension("http://jabber.org/protocol/ibb data", filetransfer.IbbMessageData)
 }
 
-func (s *session) SendFileTo(peer, filename string) {
+func (s *session) SendFileTo(peer, filename string) data.FileTransferControl {
 	s.info(fmt.Sprintf("SendFileTo(%s, %s)", peer, filename))
-	if err := filetransfer.InitSend(s, peer, filename); err != nil {
-		s.warn(fmt.Sprintf("Failed to send file to %s: %v", peer, err))
-	}
+	return filetransfer.InitSend(s, peer, filename)
 }

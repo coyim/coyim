@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/session/access"
+	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
 )
@@ -252,10 +253,12 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 		Size:             f.Size,
 		Description:      f.Desc,
 		Answer:           acceptResult,
-		CancelTransfer:   cancelChannel,
-		ErrorOccurred:    errorChannel,
-		Update:           updateChannel,
-		TransferFinished: finishedChannel,
+		Control: sdata.FileTransferControl{
+			CancelTransfer:   cancelChannel,
+			ErrorOccurred:    errorChannel,
+			Update:           updateChannel,
+			TransferFinished: finishedChannel,
+		},
 	})
 
 	return nil, "", true

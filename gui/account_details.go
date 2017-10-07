@@ -322,22 +322,16 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			var err string
 			accDtails := getAccountDetails(data)
 
-			if len(accDtails.accTxt) == 0 {
-				err = "Cannot add the account:\n" +
-					"Account field missing."
+			isJid, err := verifyXMPPAddress(accDtails.accTxt)
+			if !isJid {
 				errorNotif.renderAccountError(err)
-				log.Printf("Cannot add account: account field missing.")
+				log.Printf(err)
 			} else {
-				isJid, err := verifyXMPPAddress(accDtails.accTxt)
-				if !isJid {
-					errorNotif.renderAccountError(err)
-					log.Printf(err)
-				} else {
-					addAccount(account, accDtails, data)
-					go saveFunction()
-					data.dialog.Destroy()
-				}
+				addAccount(account, accDtails, data)
+				go saveFunction()
+				data.dialog.Destroy()
 			}
+
 		},
 		"on_edit_proxy_signal": func() {
 			ts, _ := data.proxiesView.GetSelection()
@@ -438,7 +432,6 @@ func (n *errorNotification) renderAccountError(label string) {
 	styleContext, _ := n.area.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	n.label.SetSelectable(true)
 	n.label.SetMarginTop(10)
 	n.label.SetMarginBottom(10)
 	n.label.SetText(i18n.Local(label))

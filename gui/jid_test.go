@@ -10,6 +10,19 @@ type JidSuite struct{}
 
 var _ = Suite(&JidSuite{})
 
+func (s *JidSuite) Test_verify_addressFieldisEmpty(c *C) {
+	valid, err := verifyXMPPAddress("")
+	c.Assert(strings.Contains(err, "Invalid"), Equals, true)
+	c.Assert(valid, Equals, false)
+}
+
+func (s *JidSuite) Test_verify_addressWithoutAt(c *C) {
+	address := "domain.com"
+	valid, err := verifyXMPPAddress(address)
+	c.Assert(strings.Contains(err, "Invalid"), Equals, true)
+	c.Assert(valid, Equals, false)
+}
+
 func (s *JidSuite) Test_verify_addressWithSimpleDomainPart(c *C) {
 	address := "local@domain.com"
 	valid, err := verifyXMPPAddress(address)

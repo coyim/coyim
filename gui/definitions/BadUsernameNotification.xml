@@ -5,6 +5,7 @@
       <object class="GtkLabel" id="message">
         <property name="wrap">true</property>
         <property name="margin-left">10</property>
+        <property name="margin-right">10</property>
       </object>
     </child>
   </object>

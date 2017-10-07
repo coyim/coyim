@@ -24,7 +24,7 @@
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <property name="spacing">6</property>
         <child>
-          <!--TODO: this seems to render weirdly--!>
+          <!--TODO: this seems to render weirdly -->
            <object class="GtkBox" id="notification-area">
             <property name="visible">true</property>
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>

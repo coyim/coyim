@@ -27,7 +27,7 @@ type conversationView interface {
 	showIdentityVerificationWarning(*gtkUI)
 	removeIdentityVerificationWarning()
 	updateSecurityWarning()
-	showFileTransferNotification()
+	showFileTransferNotification(name string)
 	startFileTransfer(upd float64)
 	successFileTransfer()
 	failFileTransfer()
@@ -73,6 +73,7 @@ type fileTransferNotification struct {
 	area        gtki.Box
 	image       gtki.Image
 	label       gtki.Label
+	name        gtki.Label
 	progressBar gtki.ProgressBar
 	labelButton gtki.Label
 	canceled    bool
@@ -401,6 +402,7 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 		"file-transfer", &fileTransferNotif.area,
 		"image-file-transfer", &fileTransferNotif.image,
 		"label-file-transfer", &fileTransferNotif.label,
+		"name-file-transfer", &fileTransferNotif.name,
 		"bar-file-transfer", &fileTransferNotif.progressBar,
 		"button-label-file-transfer", &fileTransferNotif.labelButton,
 	)
@@ -627,7 +629,7 @@ func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel,
 	setImageFromFile(conv.fileTransferNotif.image, image)
 }
 
-func (conv *conversationPane) showFileTransferNotification() {
+func (conv *conversationPane) showFileTransferNotification(fileName string) {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -644,6 +646,7 @@ func (conv *conversationPane) showFileTransferNotification() {
 	label := "File transfer started"
 	conv.updateFileTransferNotification(label, "Cancel", "filetransfer.svg")
 	conv.fileTransferNotif.progressBar.SetFraction(0.0)
+	conv.fileTransferNotif.name.SetLabel(fileName)
 	conv.fileTransferNotif.canceled = false
 
 	conv.fileTransferNotif.area.SetVisible(true)

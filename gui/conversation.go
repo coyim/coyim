@@ -629,6 +629,7 @@ func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel,
 	setImageFromFile(conv.fileTransferNotif.image, image)
 }
 
+// TODO: an info bar area or something, then add and return on the other side
 func (conv *conversationPane) showFileTransferNotification(fileName string) {
 	prov, _ := g.gtk.CssProviderNew()
 

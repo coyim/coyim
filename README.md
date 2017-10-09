@@ -5,9 +5,9 @@
 [![Coverage Status](https://coveralls.io/repos/coyim/coyim/badge.svg?branch=master&service=github)](https://coveralls.io/github/coyim/coyim?branch=master)
 [![Download](https://api.bintray.com/packages/coyim/coyim-bin/coyim-bin/images/download.svg)](https://bintray.com/coyim/coyim-bin/coyim-bin/_latestVersion#files)
 
-CoyIM is a new client for the XMPP protocol. It is built upon https://github.com/agl/xmpp-client and https://github.com/coyim/otr3. It adds a graphical user interface and tries to be safe and secure by default. Our ambition is that it should be possible for even the most high-risk people on the planet to safely use CoyIM, without having to make any configuration changes.
+CoyIM is a new client for the XMPP protocol. It is built upon https://github.com/agl/xmpp-client and https://github.com/coyim/otr3. It adds a graphical user interface and implies safe and secure options by default. Our ambition is that it should be possible for even the most high-risk people on the planet to safely use CoyIM, without having to make any configuration changes.
 
-To do this, we enable OTR by default, we default to use Tor and we will use the Tor Onion Service for a server if we know it, and also to use TLS and TLS certificates to verify the connection - no configuration necessary. The implementation is written in the Go language, to avoid many common types of vulnerabilities that come from using unsafe languages.
+To do this, CoyIM has OTR enabled and uses Tor by default. Besides that, it will only use the Tor Onion Service for a known server and also uses TLS and TLS certificates to verify the connection - no configuration required. The implementation is written in the Go language, to avoid many common types of vulnerabilities that come from using unsafe languages.
 
 ## Security warning
 
@@ -66,4 +66,3 @@ We have instructions to help you [get started contributing to CoyIM](CONTRIBUTIN
 ## Reproducibility
 
 CoyIM supports reproducible builds for Linux on AMD64. See [REPRODUCIBILITY](REPRODUCIBILITY.md) for instructions on how to build or verify these builds.
-

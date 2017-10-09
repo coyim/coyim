@@ -601,7 +601,7 @@ func (u *gtkUI) shouldViewAccounts() bool {
 
 func (u *gtkUI) aboutDialog() {
 	dialog, _ := g.gtk.AboutDialogNew()
-	dialog.SetName(i18n.Local("Coy IM!"))
+	dialog.SetName(i18n.Local("CoyIM!"))
 	dialog.SetProgramName(programName)
 	dialog.SetAuthors(authors())
 	dialog.SetVersion(coyimVersion)

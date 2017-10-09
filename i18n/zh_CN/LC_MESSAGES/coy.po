@@ -697,7 +697,7 @@ msgid "%s wants to talk to you. Is that ok?"
 msgstr "%s想要与您建立联系，是否同意？"
 
 #: ../gui/ui.go:427
-msgid "Coy IM!"
+msgid "CoyIM!"
 msgstr ""
 
 #: ../gui/ui.go:453

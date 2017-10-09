@@ -289,7 +289,7 @@
 		</statuses>
 		<userinfo></userinfo>
 		<settings>
-			<setting name='display-name' type='string'>Coy IM</setting>
+			<setting name='display-name' type='string'>CoyIM</setting>
 			<setting name='buddy_icon_timestamp' type='int'>12312312312</setting>
 			<setting name='endpoint-name' type='string'>Adium</setting>
 			<setting name='custom_smileys' type='bool'>1</setting>

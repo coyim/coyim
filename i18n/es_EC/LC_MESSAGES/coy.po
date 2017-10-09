@@ -427,7 +427,7 @@ msgid "trusted"
 msgstr ""
 
 #: ../gui/ui.go:427
-msgid "Coy IM!"
+msgid "CoyIM!"
 msgstr ""
 
 #: ../gui/ui.go:453

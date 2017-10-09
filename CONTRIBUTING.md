@@ -10,7 +10,7 @@ Here's the brief:
   * Email: [coyim@olabini.se](mailto:coyim@olabini.se)
   * Twitter: [@coyproject](https://twitter.com/coyproject)
 
-  This document outlines our way of working, gives hints and outlines the steps to make your contribution to Coy IM as smooth as possible. You're not required to read this before getting started. We're explaining the way we work to make sure you're having a good experience and can make best use of the time you're contributing to our project.
+  This document outlines our way of working, gives hints and outlines the steps to make your contribution to CoyIM as smooth as possible. You're not required to read this before getting started. We're explaining the way we work to make sure you're having a good experience and can make best use of the time you're contributing to our project.
 
 ## Getting started
 
@@ -86,9 +86,6 @@ https://github.com/discourse/discourse/blob/master/docs/code-of-conduct.md ?
 
 ## ThoughtWork's role
 
-ThoughtWorks seeds the community that builds Coy IM. We seed the development, investing our own resources: We provide a team of software delivery experts to lay the foundation for the project. We use our network and contacts to approach customers and users.
+ThoughtWorks started the development of CoyIM on October 2015. The company invested its own resources and provided a team of software delivery experts to lay the foundation for the project.
 
-ThoughtWorks started building Coy IM because it is right. In combining our passion for defending a free internet and our capability to deliver software, we build software to counter widespread mass surveillance of email communication.
-
-It is not ThoughWork's goal to make money from Coy IM. The reasons are multiple, but at the end of the day, we believe that our goals of ensuring digital privacy and anonymity for every person on the planet can best be achieved if Coy IM puts end users before a revenue stream.
-
+ThoughtWork's goal wasn't to make money from CoyIM, but to combine their capability to deliver software and passion for defending a free Internet. Since then, we wanted to build software to counter the widespread of mass surveillance, and ensure digital privacy and anonymity for every person on the planet.

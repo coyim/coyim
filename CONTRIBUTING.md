@@ -29,24 +29,41 @@ Installing these requirements differs on each system.
 
 ### Instructions
 
-Get the code
-
+1. Make sure you have created your `GOPATH` directory (default to `$HOME/go`). You can also set a different path, like:
 ```sh
-git clone https://github.com/coyim/coyim.git
-cd coyim
+export GOPATH=$HOME/code
 ```
 
-Download go dependencies
+2. Also, append `$GOPATH/bin` to your path, like this:
+```sh
+export PATH=$PATH:$GOPATH/bin
+```
 
-`make deps-dev`
+3. Export an environment variable with your GTK version:
+```sh
+export GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+```
 
-Build and run the tests
+4. Install the code inside go workspace:
+```sh
+go get -u -tags "gtk_${GTK_VERSION}" github.com/coyim/coyim
+```
+This will clone the repo inside the `$GOPATH/src/github.com/coyim/coyim` directory. For further instructions, check https://golang.org/doc/code.html#Workspaces.
 
-`make`
+5. Download go dependencies:
+```
+make deps-dev
+```
 
-Build interface
+6. Build and run the tests:
+```
+make
+```
 
-`make build-gui`
+7. Build user interface:
+```
+make build-gui
+```
 
 ## Contributions steps
 

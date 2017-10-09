@@ -113,6 +113,12 @@
               </packing>
             </child>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">start</property>
+            <property name="position">0</property>
+          </packing>
         </child>
 	<child>
           <object class="GtkBox" id="file-transfer">
@@ -203,8 +209,8 @@
                   <object class="GtkLabel" id="button-label-file-transfer">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">38</property>
-                    <property name="margin_right">38</property>
+                    <property name="margin_left">37</property>
+                    <property name="margin_right">37</property>
                   </object>
                 </child>
                 <signal name="clicked" handler="on_destroy_file_transfer" />
@@ -217,6 +223,12 @@
               </packing>
             </child>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
       <packing>

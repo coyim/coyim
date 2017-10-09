@@ -113,7 +113,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	}
 
 	if result && name != "" {
-		cv := u.roster.openConversationView(account, ev.Peer, true, "")
+		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
 
 		s := ev.Name
 		if len(s) > 20 {
@@ -123,7 +123,6 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 		// TODO: render here
 		cv.showFileTransferNotification(s)
-
 		u.startAllListenersFor(ev, cv)
 		ev.Answer <- &name
 	} else {

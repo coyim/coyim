@@ -88,4 +88,4 @@ https://github.com/discourse/discourse/blob/master/docs/code-of-conduct.md ?
 
 ThoughtWorks started the development of CoyIM on October 2015. The company invested its own resources and provided a team of software delivery experts to lay the foundation for the project.
 
-The goal wasn't to make money from CoyIM, but to combine our capability to deliver software and our passion for defending a free Internet. We want to build software to counter widespread mass surveillance and ensure digital privacy and anonymity for every person on the planet.
+ThoughtWork's goal wasn't to make money from CoyIM, but to combine their capability to deliver software and passion for defending a free Internet. Since then, we wanted to build software to counter the widespread of mass surveillance, and ensure digital privacy and anonymity for every person on the planet.

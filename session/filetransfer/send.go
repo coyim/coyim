@@ -17,6 +17,12 @@ import (
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
+func registerSendFileTransferMethod(name string, dispatch func(access.Session, *sendContext)) {
+	supportedSendingMechanisms[name] = dispatch
+}
+
+var supportedSendingMechanisms = map[string]func(access.Session, *sendContext){}
+
 func (ctx *sendContext) discoverSupport(s access.Session) (profiles []string, err error) {
 	if res, ok := s.Conn().DiscoveryFeatures(ctx.peer); ok {
 		foundSI := false
@@ -52,10 +58,11 @@ func genSid(c interfaces.Conn) string {
 const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
 
 func calculateAvailableSendOptions() []data.FormFieldOptionX {
-	// TODO: this will have to be generated dynamically later... Much later
-	return []data.FormFieldOptionX{
-		{Value: "http://jabber.org/protocol/ibb"},
+	res := []data.FormFieldOptionX{}
+	for k, _ := range supportedSendingMechanisms {
+		res = append(res, data.FormFieldOptionX{Value: k})
 	}
+	return res
 }
 
 func (ctx *sendContext) offerSend(s access.Session) error {
@@ -94,11 +101,6 @@ func (ctx *sendContext) offerSend(s access.Session) error {
 	go ctx.waitForResultToStartFileSend(s, res)
 
 	return nil
-}
-
-// TODO: this should be generated from the different files instead, to separate things
-var supportedSendingMechanisms = map[string]func(access.Session, *sendContext){
-	"http://jabber.org/protocol/ibb": ibbSendDo,
 }
 
 type sendContext struct {

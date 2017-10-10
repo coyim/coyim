@@ -70,6 +70,35 @@ func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
 	return result, true
 }
 
+func (c *conn) DiscoveryFeaturesAndIdentities(entity string) ([]data.DiscoveryIdentity, []string, bool) {
+	reply, _, err := c.sendDiscoveryInfo(entity)
+	if err != nil {
+		return nil, nil, false
+	}
+
+	stanza, ok := <-reply
+	if !ok {
+		return nil, nil, false //timeout
+	}
+
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return nil, nil, false
+	}
+
+	discoveryReply, err := parseDiscoveryReply(iq)
+	if err != nil {
+		return nil, nil, false
+	}
+
+	var result []string
+	for _, f := range discoveryReply.Features {
+		result = append(result, f.Var)
+	}
+
+	return discoveryReply.Identities, result, true
+}
+
 func (c *conn) sendDiscoveryInfo(to string) (reply chan data.Stanza, cookie data.Cookie, err error) {
 	return c.SendIQ(to, "get", &data.DiscoveryReply{})
 }

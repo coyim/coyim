@@ -19,6 +19,7 @@ type Conn interface {
 	Config() *data.Config
 	CustomStorage() map[xml.Name]reflect.Type
 	DiscoveryFeatures(string) ([]string, bool)
+	DiscoveryFeaturesAndIdentities(string) ([]data.DiscoveryIdentity, []string, bool)
 	Features() data.StreamFeatures
 	GetRosterDelimiter() (string, error)
 	In() *xml.Decoder

@@ -12,6 +12,10 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
+func init() {
+	registerSendFileTransferMethod("http://jabber.org/protocol/ibb", ibbSendDo)
+}
+
 const ibbDefaultBlockSize = 4096
 
 func ibbSendDo(s access.Session, ctx *sendContext) {

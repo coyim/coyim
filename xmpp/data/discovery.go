@@ -29,8 +29,8 @@ type DiscoveryFeature struct {
 
 // DiscoveryItemsQuery contains a query for discovery items
 type DiscoveryItemsQuery struct {
-	XMLName        xml.Name `xml:"http://jabber.org/protocol/disco#items query"`
-	DiscoveryItems []DiscoveryItem
+	XMLName        xml.Name        `xml:"http://jabber.org/protocol/disco#items query"`
+	DiscoveryItems []DiscoveryItem `xml:"item"`
 }
 
 // DiscoveryItem contains one discovery item

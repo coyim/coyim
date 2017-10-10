@@ -18,7 +18,7 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-// TOOD: at some point this should be refactored away into a pure socks5 bytestream implementation and a small piece that is file transfer specific
+// TODO: at some point this should be refactored away into a pure socks5 bytestream implementation and a small piece that is file transfer specific
 
 type bytestreamContext struct {
 	sid    string

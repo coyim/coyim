@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-16 14:02-0500\n"
+"POT-Creation-Date: 2017-10-11 12:49-0300\n"
 "PO-Revision-Date: 2016-02-16 14:02-0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,236 +18,478 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../gui/definitions/AccountDetails.xml:12
+#: ../gui/definitions/AccountDetails.xml:21
+#: ../gui/definitions/GlobalPreferences.xml:35
 msgid "Account Details"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:41
+#: ../gui/definitions/AccountDetails.xml:61
 msgid ""
 "Your account\n"
-"(example: kim42@dukgo.com)"
+"(example: kim42@jabber.otr.im)"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:60
-#: ../gui/definitions/AskForPassword.xml:36
+#: ../gui/definitions/AccountDetails.xml:80
+#: ../gui/definitions/AskForPassword.xml:50
 msgid "Password"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:81
+#: ../gui/definitions/AccountDetails.xml:100
+msgid "Account name (optional)"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:119
 msgid "Display all settings"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:105
-#: ../gui/definitions/AddContact.xml:22
-#: ../gui/definitions/AskForPassword.xml:15
+#: ../gui/definitions/AccountDetails.xml:148
+#: ../gui/definitions/AskForPassword.xml:27
 msgid "Account"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:124
+#: ../gui/definitions/AccountDetails.xml:166
 msgid "Server (leave empty for default)"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:143
+#: ../gui/definitions/AccountDetails.xml:185
 msgid "Port (leave empty for default)"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:165
-#: ../gui/definitions/AccountRegistration.xml:29
-msgid "Server"
+#: ../gui/definitions/AccountDetails.xml:205
+msgid ""
+"The pinning policy governs whether we will consider saving information about "
+"certificates we have seen before, and how we will react in these cases. The "
+"none policy turns off this behavior. Deny will try to use the pins we "
+"already have, but will never connect to a server that has another "
+"certificate. The add policy will always add new pins - by itself, this is "
+"not so useful, but if you turn it off or change it to deny, you will have a "
+"list of pins that you can curate later. The add first and ask after policy "
+"will pin the first certificate we ever see, and then let the user know if we "
+"encounter other certifacates. The add first and deny policy does the same "
+"thing except it doesn't ever ask after the first certificate. Finally, the "
+"ask policy will always ask what to do when seeing certificates we haven't "
+"added."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:239 ../gui/accounts_menu.go:45
-msgid "_Add..."
+#: ../gui/definitions/AccountDetails.xml:218
+msgid "Pinning policy"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:254 ../gui/account.go:207
+#: ../gui/definitions/AccountDetails.xml:229
+msgid "None"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:230
+msgid "Deny"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:231
+msgid "Always add"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:232
+msgid "Add the first, ask for the rest"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:233
+msgid "Add the first, deny the rest"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:234
+msgid "Always ask"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:322 ../gui/account.go:289
 msgid "_Remove"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:269 ../gui/account.go:204
+#: ../gui/definitions/AccountDetails.xml:352
+msgid "Server"
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:426
+msgid "_Add..."
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:441
+msgid "_Remove..."
+msgstr ""
+
+#: ../gui/definitions/AccountDetails.xml:456 ../gui/account.go:283
 msgid "_Edit..."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:299
+#: ../gui/definitions/AccountDetails.xml:486
 msgid "Proxies"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:329
+#: ../gui/definitions/AccountDetails.xml:514
 msgid ""
 "The below buttons allow you to import private keys and fingerprints. Both of "
 "them should be in the Pidgin/libotr format. If you import private keys, your "
-"existing private keys will be deleted, since current there is no way to "
-"choose which key to use for encrypted chat."
+"existing private keys will be deleted, since currently there is no way to "
+"choose which key to use for encrypted chat.\n"
+"\n"
+"There are several applications that use the libotr format, such as Pidgin, "
+"Adium or Tor Messenger. Depending on your platform, these files can be found "
+"in several different places. Refer to the documentation for the application "
+"in question to find out where the files are located for your platform. The "
+"filenames to look for are \"otr.fingerprints\" and \"otr.private_key\"."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:342
+#: ../gui/definitions/AccountDetails.xml:529
 msgid "Import Private _Keys..."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:356
+#: ../gui/definitions/AccountDetails.xml:543
 msgid "Import _Fingerprints..."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:370
+#: ../gui/definitions/AccountDetails.xml:557
 msgid ""
 "The below buttons allow you to export private keys and fingerprints. Be "
-"careful with the files that come out of this process, since they contain "
-"potentially sensitive data. The export will be in Pidgin/libotr format."
+"careful with the files that come out of this process as they contain "
+"potentially sensitive data. The export will be in the Pidgin/libotr format."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:383
+#: ../gui/definitions/AccountDetails.xml:570
 msgid "Export Private Keys..."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:396
+#: ../gui/definitions/AccountDetails.xml:583
 msgid "Export Fingerprints..."
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:414
+#: ../gui/definitions/AccountDetails.xml:600
+#: ../gui/definitions/ConversationPane.xml:15
 msgid "Encryption"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:430
-#: ../gui/definitions/AccountRegistration.xml:60
-#: ../gui/definitions/CaptureInitialMasterPassword.xml:54
-#: ../gui/definitions/EditProxy.xml:125 ../gui/definitions/Importer.xml:91
+#: ../gui/definitions/AccountDetails.xml:615
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:55
+#: ../gui/definitions/ChooseKeyToImport.xml:29
+#: ../gui/definitions/EditProxy.xml:145
+#: ../gui/definitions/GlobalPreferences.xml:388
+#: ../gui/definitions/GroupDetails.xml:35 ../gui/definitions/Importer.xml:91
 #: ../gui/definitions/MasterPassword.xml:43
-#: ../gui/definitions/RegistrationForm.xml:38
-#: ../gui/definitions/VerifyFingerprint.xml:18
+#: ../gui/definitions/PeerDetails.xml:191
+#: ../gui/definitions/RegistrationForm.xml:35
+#: ../gui/definitions/WaitingSMPComplete.xml:46
 msgid "Cancel"
 msgstr ""
 
-#: ../gui/definitions/AccountDetails.xml:436
-#: ../gui/definitions/EditProxy.xml:131
+#: ../gui/definitions/AccountDetails.xml:621
+#: ../gui/definitions/EditProxy.xml:151
+#: ../gui/definitions/GlobalPreferences.xml:394
+#: ../gui/definitions/PeerDetails.xml:197
 msgid "Save"
 msgstr ""
 
-#: ../gui/definitions/AccountPopupMenu.xml:5
-#: ../gui/definitions/AskForPassword.xml:67
-msgid "Connect"
+#: ../gui/definitions/AccountRegistration.xml:17
+msgid "Recommended servers: "
 msgstr ""
 
-#: ../gui/definitions/AccountPopupMenu.xml:11
-msgid "Disconnect"
+#: ../gui/definitions/AccountRegistration.xml:38
+msgid "1. Choose a server"
 msgstr ""
 
-#: ../gui/definitions/AccountPopupMenu.xml:20
-msgid "Edit..."
+#: ../gui/definitions/AccountRegistration.xml:72
+msgid "2. Create account"
 msgstr ""
 
-#: ../gui/definitions/AccountPopupMenu.xml:29
-#: ../gui/definitions/ContactPopupMenu.xml:50
-msgid "Dump info"
+#: ../gui/definitions/AddContact.xml:11
+msgid "I would like to add you to my contact list."
 msgstr ""
 
-#: ../gui/definitions/AccountRegistration.xml:15
-msgid "Choose a server to register your account"
+#: ../gui/definitions/AddContact.xml:16
+msgid "Add new contact"
 msgstr ""
 
-#: ../gui/definitions/AccountRegistration.xml:65
-msgid "Apply"
+#: ../gui/definitions/AddContact.xml:51 ../gui/definitions/PeerDetails.xml:31
+msgid "Account:"
 msgstr ""
 
-#: ../gui/definitions/AddContact.xml:4 ../gui/definitions/RenameContact.xml:4
-msgid "Add contact"
+#: ../gui/definitions/AddContact.xml:79
+msgid "Email:"
 msgstr ""
 
-#: ../gui/definitions/AddContact.xml:41
-msgid "Contact to add (for example: arnoldsPub@jabber.ccc.de)"
+#: ../gui/definitions/AddContact.xml:101
+msgid "Name:"
 msgstr ""
 
-#: ../gui/definitions/AddContact.xml:62
+#: ../gui/definitions/AddContact.xml:129
+msgid "A_llow this contact to view my status"
+msgstr ""
+
+#: ../gui/definitions/AddContact.xml:171
+msgid ""
+"Warning: This message will not be end-to-end encrypted. Do not reveal any "
+"sensitive information in it."
+msgstr ""
+
+#: ../gui/definitions/AddContact.xml:194
 msgid "Add"
+msgstr ""
+
+#: ../gui/definitions/AnswerSMPQuestion.xml:46
+msgid "Answer: "
+msgstr ""
+
+#: ../gui/definitions/AnswerSMPQuestion.xml:68
+msgid "Your peer must have previously shared it with you. If not, try to:"
+msgstr ""
+
+#: ../gui/definitions/AnswerSMPQuestion.xml:87
+msgid "Ask them in person"
+msgstr ""
+
+#: ../gui/definitions/AnswerSMPQuestion.xml:106
+msgid "Ask them in a different encrypted channel"
+msgstr ""
+
+#: ../gui/definitions/AnswerSMPQuestion.xml:125
+msgid "Ask them over the phone"
+msgstr ""
+
+#: ../gui/definitions/AnswerSMPQuestion.xml:141
+msgid "Verify Answer"
 msgstr ""
 
 #: ../gui/definitions/AskForPassword.xml:4
 msgid "Enter your password"
 msgstr ""
 
-#: ../gui/definitions/AskToEncrypt.xml:5
-msgid "Encrypt configuration file"
+#: ../gui/definitions/AskForPassword.xml:72
+msgid "Save password"
+msgstr ""
+
+#: ../gui/definitions/AskForPassword.xml:101
+msgid "Connect"
 msgstr ""
 
 #: ../gui/definitions/AskToEncrypt.xml:6
+msgid "Encrypt your account's information"
+msgstr ""
+
+#: ../gui/definitions/AskToEncrypt.xml:7
 msgid ""
-"Would you like to save your configuration file in an encrypted format? This "
-"can be significantly more secure, but you will not be able to access your "
-"configuration if you lose the password. You will only be asked for your "
-"password when CoyIM starts."
+"\n"
+"Would you like to encrypt your account's information?\n"
+"    "
+msgstr ""
+
+#: ../gui/definitions/AskToEncrypt.xml:10
+msgid ""
+"You will not be able to access your account's information file if you lose "
+"the\n"
+"\n"
+"password. You will only be asked for it when CoyIM starts.\n"
+"    "
 msgstr ""
 
 #: ../gui/definitions/AuthorizeSubscription.xml:3
 msgid "Subscription request"
 msgstr ""
 
-#: ../gui/definitions/CaptureInitialMasterPassword.xml:4
-msgid "Configure master password"
+#: ../gui/definitions/CannotVerifyWithSMP.xml:46
+#: ../gui/definitions/VerificationFailed.xml:47
+msgid "Try again later"
 msgstr ""
 
-#: ../gui/definitions/CaptureInitialMasterPassword.xml:15
-msgid "Please enter the master password for the configuration file, two times."
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:5
+msgid "Configure your master password"
 msgstr ""
 
-#: ../gui/definitions/CaptureInitialMasterPassword.xml:60
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:16
+msgid "Please enter the master password for the configuration file twice."
+msgstr ""
+
+#: ../gui/definitions/CaptureInitialMasterPassword.xml:61
+#: ../gui/definitions/GroupDetails.xml:40
 #: ../gui/definitions/MasterPassword.xml:49
-#: ../gui/definitions/VerifyFingerprintUnknown.xml:19
+#: ../gui/definitions/VerificationSucceeded.xml:25
+#: ../gui/definitions/VerifyFingerprintUnknown.xml:18
 msgid "OK"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:3
+msgid "Problem with secure connection for ACCOUNT_NAME"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:25
+msgid "Issued to:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:44
+#: ../gui/definitions/CertificateDialog.xml:187
+msgid "Common Name (CN):"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:68
+msgid "Other names:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:94
+#: ../gui/definitions/CertificateDialog.xml:211
+msgid "Organization (O):"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:118
+#: ../gui/definitions/CertificateDialog.xml:235
+msgid "Organizational Unit (OU):"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:142
+msgid "Serial Number:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:168
+msgid "Issued by:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:261
+msgid "Validity:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:280
+msgid "Issued on:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:304
+msgid "Expires on:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:338
+msgid "SHA-1 fingerprint:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:365
+msgid "SHA-256 fingerprint:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:392
+msgid "SHA3-256 fingerprint:"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:421
+msgid ""
+"Depending on whether you judge the above information correct, or how much "
+"risk you are willing to take, you have three choices: Decide to not connect, "
+"connect using this information this time but request that we ask again next "
+"time, or connect using this information and remember it for the future."
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:436
+msgid "Don't connect"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:441
+msgid "Accept temporarily"
+msgstr ""
+
+#: ../gui/definitions/CertificateDialog.xml:446
+msgid "Accept permanently"
+msgstr ""
+
+#: ../gui/definitions/ChooseKeyToImport.xml:3
+msgid "Choose a key to import"
+msgstr ""
+
+#: ../gui/definitions/ChooseKeyToImport.xml:12
+msgid ""
+"The file you choose contains more than one private key. Choose from the list "
+"below the key you would like to import."
+msgstr ""
+
+#: ../gui/definitions/ChooseKeyToImport.xml:35
+#: ../gui/definitions/Importer.xml:96
+msgid "Import"
 msgstr ""
 
 #: ../gui/definitions/ConfirmAccountRemoval.xml:3
 msgid "Confirm account removal"
 msgstr ""
 
-#: ../gui/definitions/ConfirmAccountRemoval.xml:4
+#: ../gui/definitions/ConfirmAccountRemoval.xml:5
 msgid "Are you sure you want to remove this account?"
 msgstr ""
 
-#: ../gui/definitions/ContactPopupMenu.xml:5
-msgid "Fingerprints..."
+#: ../gui/definitions/ConnectionInformation.xml:3
+msgid "Connection Information"
 msgstr ""
 
-#: ../gui/definitions/ContactPopupMenu.xml:14
+#: ../gui/definitions/ConnectionInformation.xml:18
+msgid "Server connected to:"
+msgstr ""
+
+#: ../gui/definitions/ConnectionInformation.xml:42
+msgid "Secure connection version:"
+msgstr ""
+
+#: ../gui/definitions/ConnectionInformation.xml:66
+msgid "Secure connection algorithm:"
+msgstr ""
+
+#: ../gui/definitions/ConnectionInformation.xml:90
+msgid "Secure connection fingerprint:"
+msgstr ""
+
+#: ../gui/definitions/ConnectionInformation.xml:118
+msgid "Pin certificate"
+msgstr ""
+
+#: ../gui/definitions/ConnectionInformation.xml:135
+#: ../gui/definitions/Feedback.xml:65 ../gui/definitions/GeneratePIN.xml:102
+#: ../gui/definitions/TorInstallHelper.xml:91
+msgid "Close"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:5
+msgid "Edit..."
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:11
 msgid "Remove"
 msgstr ""
 
-#: ../gui/definitions/ContactPopupMenu.xml:20
-msgid "Rename..."
+#: ../gui/definitions/ContactPopupMenu.xml:21
+msgid "Talk to..."
 msgstr ""
 
-#: ../gui/definitions/ContactPopupMenu.xml:29
-msgid "Ask contact to see their status"
+#: ../gui/definitions/ContactPopupMenu.xml:26
+msgid "Send file..."
 msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:35
-msgid "Allow contact to see my status"
+msgid "Ask contact to see their status"
 msgstr ""
 
 #: ../gui/definitions/ContactPopupMenu.xml:41
+msgid "Allow contact to see my status"
+msgstr ""
+
+#: ../gui/definitions/ContactPopupMenu.xml:47
 msgid "Forbid contact to see my status"
 msgstr ""
 
-#: ../gui/definitions/ConversationPane.xml:12
-msgid "Developer options"
+#: ../gui/definitions/ContactPopupMenu.xml:56 ../gui/account.go:309
+msgid "Dump info"
 msgstr ""
 
-#: ../gui/definitions/ConversationPane.xml:19
+#: ../gui/definitions/ConversationPane.xml:24
 msgid "Start encrypted chat"
 msgstr ""
 
-#: ../gui/definitions/ConversationPane.xml:26
+#: ../gui/definitions/ConversationPane.xml:31
 msgid "End encrypted chat"
 msgstr ""
 
-#: ../gui/definitions/ConversationPane.xml:33
+#: ../gui/definitions/ConversationPane.xml:38
 msgid "Verify fingerprint"
 msgstr ""
 
-#: ../gui/definitions/ConversationPane.xml:66
-msgid "You are talking over an unprotected channel"
-msgstr ""
-
-#: ../gui/definitions/ConversationPane.xml:78
-msgid "Secure chat"
+#: ../gui/definitions/ConversationPane.xml:103
+msgid "Secure Chat"
 msgstr ""
 
 #: ../gui/definitions/EditProxy.xml:3
@@ -258,43 +500,208 @@ msgstr ""
 msgid "Proxy type:"
 msgstr ""
 
-#: ../gui/definitions/EditProxy.xml:38
+#: ../gui/definitions/EditProxy.xml:39
 msgid "User:"
 msgstr ""
 
-#: ../gui/definitions/EditProxy.xml:58
+#: ../gui/definitions/EditProxy.xml:59
 msgid "Password:"
 msgstr ""
 
-#: ../gui/definitions/EditProxy.xml:79
+#: ../gui/definitions/EditProxy.xml:80
 msgid "Server:"
 msgstr ""
 
-#: ../gui/definitions/EditProxy.xml:99
+#: ../gui/definitions/EditProxy.xml:100
 msgid "Port:"
 msgstr ""
 
-#: ../gui/definitions/Feedback.xml:3
-msgid "We would like to receive your feedback"
-msgstr ""
-
-#: ../gui/definitions/Feedback.xml:4
-msgid ""
-"Please, tell us how is going for you to use CoyIM.\n"
-"This is the only way we can create a better tool to keep your conversations "
-"private."
-msgstr ""
-
-#: ../gui/definitions/Feedback.xml:5
-msgid "https://coy.im/feedback"
+#: ../gui/definitions/EditProxy.xml:120
+msgid "Path:"
 msgstr ""
 
 #: ../gui/definitions/FeedbackInfo.xml:12
 msgid "Are you liking it?"
 msgstr ""
 
-#: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:78
+#: ../gui/definitions/FeedbackInfo.xml:22 ../gui/definitions/Main.xml:130
 msgid "Feedback"
+msgstr ""
+
+#: ../gui/definitions/Feedback.xml:4
+msgid "We would like to receive your feedback"
+msgstr ""
+
+#: ../gui/definitions/Feedback.xml:14
+msgid ""
+"\n"
+"Visit the website to get in touch with us:\n"
+"            "
+msgstr ""
+
+#: ../gui/definitions/Feedback.xml:28
+msgid "https://coy.im"
+msgstr ""
+
+#: ../gui/definitions/Feedback.xml:46
+msgid ""
+"\n"
+"Let us know what you think of CoyIM.\n"
+"\n"
+"This is the only way we can create a better privacy tool.\n"
+"            "
+msgstr ""
+
+#: ../gui/definitions/FileTransferAskToReceive.xml:6
+msgid "File transfer"
+msgstr ""
+
+#: ../gui/definitions/FirstAccountDialog.xml:4
+msgid "Setup your first account"
+msgstr ""
+
+#: ../gui/definitions/FirstAccountDialog.xml:15
+msgid "Welcome to CoyIM!"
+msgstr ""
+
+#: ../gui/definitions/FirstAccountDialog.xml:36
+msgid "Create a new account"
+msgstr ""
+
+#: ../gui/definitions/FirstAccountDialog.xml:43
+msgid "Add an existing account"
+msgstr ""
+
+#: ../gui/definitions/FirstAccountDialog.xml:50
+msgid "Import account from your computer"
+msgstr ""
+
+#: ../gui/definitions/GeneratePIN.xml:45
+msgid "Share in person"
+msgstr ""
+
+#: ../gui/definitions/GeneratePIN.xml:64
+msgid "Share through a different encrypted channel"
+msgstr ""
+
+#: ../gui/definitions/GeneratePIN.xml:83
+msgid "Share in a phone call"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:11
+msgid "No notifications"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:15
+msgid "Only show that a new message arrived"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:19
+msgid "Show who sent the message"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:23
+msgid "Show message"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:62
+msgid "Unify conversations in one window"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:81
+msgid "Send messages with Shift-Enter"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:100
+msgid "Display empty groups"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:119
+msgid "Use Emacs key bindings"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:140
+msgid "General"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:158
+msgid ""
+"CoyIM supports notifying you when a new message arrives - these "
+"notifications can be turned off, or set to show different amounts of "
+"information. It's important to remember that showing the text of the "
+"message, or even the author, could potentially be a privacy leak if you're "
+"ever in settings where someone can see your screen."
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:171
+msgid "Notification type"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:199
+msgid ""
+"Notifications can be set to display urgently - this is useful if you work in "
+"fullscreen mode. If the notification is not urgent, it will not display over "
+"a fullscreen window."
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:212
+msgid "Should notifications be displayed urgently?"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:231
+msgid ""
+"Notifications can stay on the screen until you've gone back to CoyIM, or "
+"they can expire after a while. The below setting changes this behavior."
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:244
+msgid "Should notifications expire?"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:263
+msgid ""
+"You can specify a custom command to run whenever a message is received. If "
+"specificed, this command will run on every messages except it will wait for "
+"a timeout period before running the next time. The command and timeout is "
+"specified below. "
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:276
+msgid "Notification command"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:296
+msgid "Minimum time between notifications in seconds"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:320
+msgid "Notifications"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:338
+msgid ""
+"If you set this property to a file name, low level information will be "
+"logged there. Be very careful - this information is sensitive and could "
+"potentially contain very private information. Only turn this setting on if "
+"you absolutely need it for debugging. This file will specifically log XMPP "
+"traffic information. This setting will only take effect after a restart of "
+"CoyIM."
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:351
+msgid "Raw log file"
+msgstr ""
+
+#: ../gui/definitions/GlobalPreferences.xml:373
+msgid "Debugging"
+msgstr ""
+
+#: ../gui/definitions/GroupDetails.xml:4
+msgid "Add Group"
+msgstr ""
+
+#: ../gui/definitions/GroupDetails.xml:11
+msgid "Group name"
 msgstr ""
 
 #: ../gui/definitions/Importer.xml:12
@@ -318,40 +725,64 @@ msgstr ""
 msgid "Account name"
 msgstr ""
 
-#: ../gui/definitions/Importer.xml:96
-msgid "Import"
-msgstr ""
-
 #: ../gui/definitions/Main.xml:22
-msgid "Contacts"
+msgid "_Contacts"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:29
+#: ../gui/definitions/Main.xml:30
 msgid "Add..."
 msgstr ""
 
-#: ../gui/definitions/Main.xml:40
-msgid "Accounts"
+#: ../gui/definitions/Main.xml:37
+msgid "New Conversation..."
 msgstr ""
 
-#: ../gui/definitions/Main.xml:46
-msgid "View"
+#: ../gui/definitions/Main.xml:48
+msgid "_Accounts"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:53
+#: ../gui/definitions/Main.xml:55
+msgid "_View"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:63
 msgid "Merge Accounts"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:60
+#: ../gui/definitions/Main.xml:70
 msgid "Show Offline Contacts"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:71
-msgid "Help"
+#: ../gui/definitions/Main.xml:77
+msgid "Show Waiting Contacts"
 msgstr ""
 
-#: ../gui/definitions/Main.xml:85
+#: ../gui/definitions/Main.xml:84
+msgid "Sort By Status"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:95
+msgid "_Options"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:103
+msgid "Encrypt configuration file"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:110
+msgid "Preferences..."
+msgstr ""
+
+#: ../gui/definitions/Main.xml:122
+msgid "_Help"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:137
 msgid "About"
+msgstr ""
+
+#: ../gui/definitions/Main.xml:183
+msgid "Search..."
 msgstr ""
 
 #: ../gui/definitions/MasterPassword.xml:4
@@ -364,334 +795,466 @@ msgid ""
 "asked for this password again until you restart CoyIM."
 msgstr ""
 
-#: ../gui/definitions/PeerFingerprints.xml:3
-msgid "Peer fingerprints"
+#: ../gui/definitions/NewCustomConversation.xml:13
+msgid "Start new conversation"
 msgstr ""
 
-#: ../gui/definitions/PeerFingerprints.xml:28
-msgid "_OK"
+#: ../gui/definitions/NewCustomConversation.xml:33
+msgid "From:"
 msgstr ""
 
-#: ../gui/definitions/RegistrationForm.xml:44
+#: ../gui/definitions/NewCustomConversation.xml:61
+msgid "With:"
+msgstr ""
+
+#: ../gui/definitions/NewCustomConversation.xml:100
+msgid "Start"
+msgstr ""
+
+#: ../gui/definitions/PeerDetails.xml:9
+msgid "New Group..."
+msgstr ""
+
+#: ../gui/definitions/PeerDetails.xml:16
+msgid "Edit contact"
+msgstr ""
+
+#: ../gui/definitions/PeerDetails.xml:52
+msgid "Contact:"
+msgstr ""
+
+#: ../gui/definitions/PeerDetails.xml:73
+msgid "Nickname:"
+msgstr ""
+
+#: ../gui/definitions/PeerDetails.xml:92
+msgid "Require encryption with this peer"
+msgstr ""
+
+#: ../gui/definitions/PeerDetails.xml:110
+msgid "Groups:"
+msgstr ""
+
+#: ../gui/definitions/PeerRequestsSMP.xml:87
+msgid "Finish Verification"
+msgstr ""
+
+#: ../gui/definitions/RegistrationForm.xml:41
 msgid "Register"
 msgstr ""
 
-#: ../gui/definitions/RenameContact.xml:22
-msgid "Contact's new name"
+#: ../gui/definitions/TorHelper.xml:6
+msgid "Warning!"
 msgstr ""
 
-#: ../gui/definitions/RenameContact.xml:43
-msgid "Ok"
+#: ../gui/definitions/TorHelper.xml:7
+msgid ""
+"\n"
+"We could not found a running installation of Tor.\n"
+"\n"
+"In order to have the safest experience, we reccommend you to install it.\n"
+"\n"
+"Tor is a tool for anonymity.\n"
+"\n"
+"Would you like to install it?\n"
+"    "
 msgstr ""
 
-#: ../gui/definitions/UnifiedLayout.xml:135
+#: ../gui/definitions/TorInstallHelper.xml:14
+msgid ""
+"\n"
+"Installing Tor for CoyIM:\n"
+"            "
+msgstr ""
+
+#: ../gui/definitions/TorInstallHelper.xml:31
+msgid ""
+"\n"
+"\n"
+"    1. Go to https://www.torproject.org/\n"
+"\n"
+"    2. Download and install Tor (or the Tor Browser Bundle)\n"
+"\n"
+"    3. Start Tor (or the Tor Browser)\n"
+"            "
+msgstr ""
+
+#: ../gui/definitions/TorInstallHelper.xml:58
+msgid "4. Click here to check if Tor is now running"
+msgstr ""
+
+#: ../gui/definitions/UnifiedLayout.xml:143
 msgid "Conversations"
 msgstr ""
 
-#: ../gui/definitions/UnifiedLayout.xml:161
+#: ../gui/definitions/UnifiedLayout.xml:169
 msgid "icon"
 msgstr ""
 
-#: ../gui/definitions/UnifiedLayout.xml:175
+#: ../gui/definitions/UnifiedLayout.xml:183
 msgid "column"
 msgstr ""
 
+#: ../gui/definitions/UnverifiedWarning.xml:87
+msgid "Validate Channel"
+msgstr ""
+
+#: ../gui/definitions/VerificationFailed.xml:17
+msgid "Verification Failed"
+msgstr ""
+
+#: ../gui/definitions/VerifyFingerprint.xml:18
+msgid "No"
+msgstr ""
+
 #: ../gui/definitions/VerifyFingerprint.xml:23
-#: ../gui/definitions/VerifyIdentityNotification.xml:20
-msgid "Verify"
+msgid "Yes"
 msgstr ""
 
-#: ../gui/account.go:151
-msgid "Account added"
+#: ../gui/definitions/XMLConsole.xml:4
+msgid "Hello world"
 msgstr ""
 
-#: ../gui/account.go:151
-#, python-format
-msgid "The account %s was added successfully."
+#: ../gui/definitions/XMLConsole.xml:9
+msgid "XMPP Console: ACCOUNT_NAME"
 msgstr ""
 
-#: ../gui/account.go:198
-msgid "_Connect"
-msgstr ""
-
-#: ../gui/account.go:201
-msgid "_Disconnect"
-msgstr ""
-
-#: ../gui/account.go:210
-msgid "Connect _Automatically"
-msgstr ""
-
-#: ../gui/account.go:214
-msgid "Always Encrypt Conversation"
-msgstr ""
-
-#: ../gui/account.go:296
-#, python-format
-msgid ""
-"Connecting account\n"
-"%s"
-msgstr ""
-
-#: ../gui/account.go:300
-#, python-format
-msgid ""
-"Connection failure\n"
-"%s"
-msgstr ""
-
-#: ../gui/account.go:304
-msgid "Tor is not currently running"
-msgstr ""
-
-#: ../gui/account_details.go:95
-#, python-format
-msgid ""
-"Your fingerprints for %s:\n"
-"%s"
-msgstr ""
-
-#: ../gui/account_events.go:144
-msgid "Private conversation lost."
-msgstr ""
-
-#: ../gui/account_events.go:152
-msgid "Private conversation started."
-msgstr ""
-
-#: ../gui/account_events.go:152
-msgid "Unverified conversation started."
-msgstr ""
-
-#: ../gui/account_events.go:160
-msgid "Successfully refreshed the private conversation."
-msgstr ""
-
-#: ../gui/account_events.go:160
-msgid "Successfully refreshed the unverified private conversation."
-msgstr ""
-
-#: ../gui/accounts_menu.go:28
-msgid "Connect On _Startup"
-msgstr ""
-
-#: ../gui/accounts_menu.go:38
-msgid "_Connect All"
-msgstr ""
-
-#: ../gui/accounts_menu.go:49
-msgid "_Import..."
-msgstr ""
-
-#: ../gui/accounts_menu.go:53
-msgid "_Register..."
-msgstr ""
-
-#: ../gui/conversation.go:145
-#, python-format
-msgid "Failed to generate OTR message: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:171
-#, python-format
-msgid "Failed to terminate the encrypted chat: %s\n"
-msgstr ""
-
-#: ../gui/conversation.go:379
-msgid "Available"
-msgstr ""
-
-#: ../gui/conversation.go:381
-msgid "Not Available"
-msgstr ""
-
-#: ../gui/conversation.go:383
-msgid "Away"
-msgstr ""
-
-#: ../gui/conversation.go:385
-msgid "Busy"
-msgstr ""
-
-#: ../gui/conversation.go:387
-msgid "Free for Chat"
-msgstr ""
-
-#: ../gui/conversation.go:389
-msgid "Invisible"
-msgstr ""
-
-#: ../gui/conversation.go:424
-msgid "Offline"
-msgstr ""
-
-#: ../gui/conversation.go:430
-msgid " is now "
-msgstr ""
-
-#: ../gui/fingerprint_verification.go:19
-#, python-format
-msgid ""
-"You can't verify the fingerprint for %s yet.\n"
-"You first have to start an encrypted conversation with them."
-msgstr ""
-
-#: ../gui/fingerprint_verification.go:54
-#, python-format
-msgid "Verify fingerprint for %s"
-msgstr ""
-
-#: ../gui/importer.go:198
-msgid "Import private keys"
-msgstr ""
-
-#: ../gui/importer.go:201 ../gui/importer.go:223 ../gui/importer.go:247
-#: ../gui/importer.go:269
-msgid "_Cancel"
-msgstr ""
-
-#: ../gui/importer.go:203 ../gui/importer.go:249
-msgid "_Import"
-msgstr ""
-
-#: ../gui/importer.go:210
-msgid "Keys imported"
-msgstr ""
-
-#: ../gui/importer.go:210
-#, python-format
-msgid "%d key(s) were imported correctly."
-msgstr ""
-
-#: ../gui/importer.go:212
-msgid "Failure importing keys"
-msgstr ""
-
-#: ../gui/importer.go:212
-#, python-format
-msgid "Couldn't import any keys from %s."
-msgstr ""
-
-#: ../gui/importer.go:220
-msgid "Export private keys"
-msgstr ""
-
-#: ../gui/importer.go:225 ../gui/importer.go:271
-msgid "_Export"
-msgstr ""
-
-#: ../gui/importer.go:234
-msgid "Keys exported"
-msgstr ""
-
-#: ../gui/importer.go:234
-msgid "Keys were exported correctly."
-msgstr ""
-
-#: ../gui/importer.go:236
-msgid "Failure exporting keys"
-msgstr ""
-
-#: ../gui/importer.go:236
-#, python-format
-msgid "Couldn't export keys to %s."
-msgstr ""
-
-#: ../gui/importer.go:244
-msgid "Import fingerprints"
-msgstr ""
-
-#: ../gui/importer.go:256
-msgid "Fingerprints imported"
-msgstr ""
-
-#: ../gui/importer.go:256
-#, python-format
-msgid "%d fingerprint(s) were imported correctly."
-msgstr ""
-
-#: ../gui/importer.go:258
-msgid "Failure importing fingerprints"
-msgstr ""
-
-#: ../gui/importer.go:258
-#, python-format
-msgid "Couldn't import any fingerprints from %s."
-msgstr ""
-
-#: ../gui/importer.go:266
-msgid "Export fingerprints"
-msgstr ""
-
-#: ../gui/importer.go:280
-msgid "Fingerprints exported"
-msgstr ""
-
-#: ../gui/importer.go:280
-msgid "Fingerprints were exported correctly."
-msgstr ""
-
-#: ../gui/importer.go:282
-msgid "Failure exporting fingerprints"
-msgstr ""
-
-#: ../gui/importer.go:282
-#, python-format
-msgid "Couldn't export fingerprints to %s."
+#: ../gui/definitions/XMLConsole.xml:57
+msgid "_Close"
 msgstr ""
 
 #: ../gui/master_password.go:30
-msgid "Password can not be empty - please try again"
+msgid "<b>Password can not be empty</b> - please try again"
 msgstr ""
 
 #: ../gui/master_password.go:33
 msgid "Passwords have to be the same - please try again"
 msgstr ""
 
-#: ../gui/master_password.go:114
+#: ../gui/master_password.go:115
 msgid "Incorrect password entered, please try again."
 msgstr ""
 
-#: ../gui/master_password.go:121
+#: ../gui/master_password.go:126
 msgid "Checking password..."
 msgstr ""
 
-#: ../gui/notifications.go:49
+#: ../gui/account_details.go:211
 #, python-format
-msgid "You have not verified the identity of %s"
+msgid ""
+"The fingerprints for %s:\n"
+"%s"
 msgstr ""
 
-#: ../gui/peer_information.go:26
-#, python-format
-msgid "There are no known fingerprints for %s"
+#: ../gui/account.go:145
+msgid "Unable to Add Account"
 msgstr ""
 
-#: ../gui/peer_information.go:28
-#, python-format
-msgid "These are the fingerprints known for %s:"
+#: ../gui/account.go:152
+msgid "Account added"
 msgstr ""
 
-#: ../gui/peer_information.go:34
-msgid "not trusted"
+#: ../gui/account.go:229
+msgid "_Check Connection"
 msgstr ""
 
-#: ../gui/peer_information.go:36
-msgid "trusted"
+#: ../gui/account.go:242
+msgid "_Connect"
 msgstr ""
 
-#: ../gui/subscription.go:18
-#, python-format
-msgid "%s wants to talk to you. Is that ok?"
+#: ../gui/account.go:255
+msgid "_Disconnect"
 msgstr ""
 
-#: ../gui/ui.go:427
+#: ../gui/account.go:273
+msgid "Connection _information..."
+msgstr ""
+
+#: ../gui/account.go:295
+msgid "Connect _Automatically"
+msgstr ""
+
+#: ../gui/account.go:302
+msgid "Always Encrypt Conversation"
+msgstr ""
+
+#: ../gui/account.go:317
+msgid "XML Console"
+msgstr ""
+
+#: ../gui/account.go:441
+msgid "Tor is not currently running"
+msgstr ""
+
+#: ../gui/connection.go:26
+msgid "Connection lost"
+msgstr ""
+
+#: ../gui/connection.go:26
+msgid ""
+"We lost connection to the server for unknown reasons.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+
+#: ../gui/connection.go:30 ../gui/connection.go:34 ../gui/connection.go:39
+msgid "Connection failure"
+msgstr ""
+
+#: ../gui/connection.go:30
+msgid ""
+"We couldn't connect to the server because we couldn't determine a server "
+"address for the given domain.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+
+#: ../gui/connection.go:34
+msgid ""
+"We couldn't connect to the server for some reason - verify that the server "
+"address is correct and that you are actually connected to the internet.\n"
+"\n"
+"We will try to reconnect."
+msgstr ""
+
+#: ../gui/roster.go:533
+msgid " (waiting for approval)"
+msgstr ""
+
+#: ../gui/ui.go:550
+msgid ""
+"You are trying to connect to a Google account - sometimes Google will not "
+"allow connections even if you have entered the correct password. Try turning "
+"on App specific password, or if that fails allow less secure applications to "
+"access the account (don't worry, CoyIM is plenty secure)."
+msgstr ""
+
+#: ../gui/ui.go:604
 msgid "CoyIM!"
 msgstr ""
 
-#: ../gui/ui.go:453
+#: ../gui/ui.go:694
 msgid "There is no account with the id %q"
 msgstr ""
 
-#: ../gui/ui.go:457
+#: ../gui/ui.go:698
 msgid "Can't send a contact request from an offline account"
+msgstr ""
+
+#: ../gui/accounts_menu.go:20
+msgid "Connect On _Startup"
+msgstr ""
+
+#: ../gui/accounts_menu.go:30
+msgid "_Connect All"
+msgstr ""
+
+#: ../gui/accounts_menu.go:34
+msgid "_Disconnect All"
+msgstr ""
+
+#: ../gui/accounts_menu.go:41
+msgid "_New Account"
+msgstr ""
+
+#: ../gui/accounts_menu.go:45
+msgid "_Add Account"
+msgstr ""
+
+#: ../gui/accounts_menu.go:49
+msgid "_Import Account"
+msgstr ""
+
+#: ../gui/importer.go:45
+msgid "Unable to Import Account"
+msgstr ""
+
+#: ../gui/importer.go:282
+msgid "Import private keys"
+msgstr ""
+
+#: ../gui/importer.go:285 ../gui/importer.go:310 ../gui/importer.go:334
+#: ../gui/importer.go:356 ../gui/file_transfer.go:101
+#: ../gui/file_transfer.go:170
+msgid "_Cancel"
+msgstr ""
+
+#: ../gui/importer.go:287 ../gui/importer.go:336
+msgid "_Import"
+msgstr ""
+
+#: ../gui/importer.go:296
+msgid "Keys imported"
+msgstr ""
+
+#: ../gui/importer.go:296
+msgid "The key was imported correctly."
+msgstr ""
+
+#: ../gui/importer.go:298
+msgid "Failure importing keys"
+msgstr ""
+
+#: ../gui/importer.go:307
+msgid "Export private keys"
+msgstr ""
+
+#: ../gui/importer.go:312 ../gui/importer.go:358
+msgid "_Export"
+msgstr ""
+
+#: ../gui/importer.go:321
+msgid "Keys exported"
+msgstr ""
+
+#: ../gui/importer.go:321
+msgid "Keys were exported correctly."
+msgstr ""
+
+#: ../gui/importer.go:323
+msgid "Failure exporting keys"
+msgstr ""
+
+#: ../gui/importer.go:331
+msgid "Import fingerprints"
+msgstr ""
+
+#: ../gui/importer.go:343
+msgid "Fingerprints imported"
+msgstr ""
+
+#: ../gui/importer.go:345
+msgid "Failure importing fingerprints"
+msgstr ""
+
+#: ../gui/importer.go:353
+msgid "Export fingerprints"
+msgstr ""
+
+#: ../gui/importer.go:367
+msgid "Fingerprints exported"
+msgstr ""
+
+#: ../gui/importer.go:367
+msgid "Fingerprints were exported correctly."
+msgstr ""
+
+#: ../gui/importer.go:369
+msgid "Failure exporting fingerprints"
+msgstr ""
+
+#: ../gui/conversation.go:214
+#, python-format
+msgid "Failed to generate OTR message: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:232
+#, python-format
+msgid "Failed to start encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:234
+msgid "Attempting to start a private conversation..."
+msgstr ""
+
+#: ../gui/conversation.go:244
+#, python-format
+msgid "Failed to terminate the encrypted chat: %s\n"
+msgstr ""
+
+#: ../gui/conversation.go:247 ../gui/account_events.go:157
+msgid "Private conversation has ended."
+msgstr ""
+
+#: ../gui/conversation.go:838
+msgid "Available"
+msgstr ""
+
+#: ../gui/conversation.go:840
+msgid "Not Available"
+msgstr ""
+
+#: ../gui/conversation.go:842
+msgid "Away"
+msgstr ""
+
+#: ../gui/conversation.go:844
+msgid "Busy"
+msgstr ""
+
+#: ../gui/conversation.go:846
+msgid "Free for Chat"
+msgstr ""
+
+#: ../gui/conversation.go:848
+msgid "Invisible"
+msgstr ""
+
+#: ../gui/conversation.go:883
+msgid "Offline"
+msgstr ""
+
+#: ../gui/conversation.go:889
+msgid " is now "
+msgstr ""
+
+#: ../gui/conversation.go:1032
+msgid "The peer is using a key we haven't seen before!"
+msgstr ""
+
+#: ../gui/edit_contact.go:138
+msgid "not trusted"
+msgstr ""
+
+#: ../gui/edit_contact.go:140
+msgid "trusted"
+msgstr ""
+
+#: ../gui/account_events.go:167
+msgid "Private conversation started."
+msgstr ""
+
+#: ../gui/account_events.go:167
+msgid "Unverified conversation started."
+msgstr ""
+
+#: ../gui/account_events.go:177
+msgid "Successfully refreshed the private conversation."
+msgstr ""
+
+#: ../gui/account_events.go:177
+msgid "Successfully refreshed the unverified private conversation."
+msgstr ""
+
+#: ../gui/verifier.go:190
+msgid ""
+"Make sure no one else\n"
+"is reading your messages"
+msgstr ""
+
+#: ../gui/verifier.go:300
+msgid "Unable to verify at this time."
+msgstr ""
+
+#: ../gui/file_transfer.go:98
+msgid "Choose where to save file"
+msgstr ""
+
+#: ../gui/file_transfer.go:103
+msgid "_Save"
+msgstr ""
+
+#: ../gui/file_transfer.go:167
+msgid "Choose file to send"
+msgstr ""
+
+#: ../gui/file_transfer.go:172
+msgid "Send"
+msgstr ""
+
+#: ../gui/registration.go:274
+msgid ""
+"Connecting to server for registration... \n"
+"\n"
+"This might take a while."
 msgstr ""

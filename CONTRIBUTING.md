@@ -29,12 +29,12 @@ Installing these requirements differs on each system.
 
 ### Instructions
 
-1. Make sure you have created your `GOPATH` directory (default to `$HOME/go`). You can also set a different path, like:
+1. Make sure you have created your `GOPATH` directory (default to `$HOME/go`). You can also set a different path using:
 ```sh
-export GOPATH=$HOME/code
+export GOPATH=$HOME/<your-go-directory>
 ```
 
-2. Also, append `$GOPATH/bin` to your path, like this:
+2. Also, make sure you have appended `$GOPATH/bin` to your path, like this:
 ```sh
 export PATH=$PATH:$GOPATH/bin
 ```
@@ -50,7 +50,7 @@ go get -u -tags "gtk_${GTK_VERSION}" github.com/coyim/coyim
 ```
 This will clone the repo inside the `$GOPATH/src/github.com/coyim/coyim` directory. For further instructions, check https://golang.org/doc/code.html#Workspaces.
 
-5. Download go dependencies:
+5. Download the project dependencies:
 ```
 make deps-dev
 ```

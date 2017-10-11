@@ -3,4 +3,5 @@
 FILE=$1
 TAG=$2
 
+#TODO: Should this have olabini.se hardcoded?
 echo "Hello, attached is a signed build info for tag: $TAG" | mail -a $FILE -s "Signed build info for tag: $TAG" coyim@olabini.se

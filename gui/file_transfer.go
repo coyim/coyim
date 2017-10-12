@@ -29,14 +29,12 @@ import (
 //       Or it will get an error message when failed
 //       There will be a cancel button there, that will cancel the file receipt
 
-// TODO: update logs
 func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView, file *fileNotification) {
 	fileName := resizeFileName(ev.Name)
 
 	go func() {
 		_, ok := <-ev.Control.TransferFinished
 		if ok {
-			// TODO: use SetSizeRequest on button
 			cv.successFileTransfer(fileName, file)
 			log.Printf("File transfer of file %s finished with success", ev.Name)
 			close(ev.Control.CancelTransfer)
@@ -72,7 +70,6 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 		}
 
 	}()
-
 }
 
 func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {

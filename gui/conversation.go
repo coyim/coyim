@@ -27,11 +27,14 @@ type conversationView interface {
 	showIdentityVerificationWarning(*gtkUI)
 	removeIdentityVerificationWarning()
 	updateSecurityWarning()
-	showFileTransferNotification(name string)
-	startFileTransfer(upd float64)
-	successFileTransfer()
-	failFileTransfer()
-	isFileTransferCanceled() bool
+	showFileTransferNotification(name string) *fileNotification
+	startFileTransfer(file *fileNotification)
+	successFileTransfer(fileName string, file *fileNotification)
+	updateFileTransferInfo(fileName string) *fileNotification
+	failFileTransfer(fileName string, file *fileNotification)
+	isFileTransferNotifCanceled() bool
+	cancelFileTransfer(fileName string, file *fileNotification)
+	getFileTransferNotification() bool
 	show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	appendMessage(sent sentMessage)
@@ -67,16 +70,6 @@ type conversationWindow struct {
 	*conversationPane
 	win       gtki.Window
 	parentWin gtki.Window
-}
-
-type fileTransferNotification struct {
-	area        gtki.Box
-	image       gtki.Image
-	label       gtki.Label
-	name        gtki.Label
-	progressBar gtki.ProgressBar
-	labelButton gtki.Label
-	canceled    bool
 }
 
 type securityWarningNotification struct {
@@ -267,18 +260,6 @@ func (conv *conversationPane) onDisconnect() {
 	conv.entry.SetSensitive(false)
 }
 
-func (conv *conversationPane) onDestroyFileTransfer() {
-	label := conv.fileTransferNotif.labelButton.GetLabel()
-	if label == "Cancel" {
-		conv.fileTransferNotif.canceled = true
-		label := "File transfer canceled"
-		conv.updateFileTransferNotification(label, "Close", "failure.svg")
-	} else {
-		conv.fileTransferNotif.canceled = false
-		conv.fileTransferNotif.area.SetVisible(false)
-	}
-}
-
 func countVisibleLines(v gtki.TextView) uint {
 	lines := uint(1)
 	iter := getTextBufferFrom(v).GetStartIter()
@@ -342,7 +323,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		"on_verify_fp_signal":      cp.onVerifyFpSignal,
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
-		"on_destroy_file_transfer": cp.onDestroyFileTransfer,
+		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
 	})
 
 	mnemonic := uint(101)
@@ -393,21 +374,6 @@ func (b *builder) securityWarningNotifInit() *securityWarningNotification {
 	)
 
 	return securityWarningNotif
-}
-
-func (b *builder) fileTransferNotifInit() *fileTransferNotification {
-	fileTransferNotif := &fileTransferNotification{}
-
-	b.getItems(
-		"file-transfer", &fileTransferNotif.area,
-		"image-file-transfer", &fileTransferNotif.image,
-		"label-file-transfer", &fileTransferNotif.label,
-		"name-file-transfer", &fileTransferNotif.name,
-		"bar-file-transfer", &fileTransferNotif.progressBar,
-		"button-label-file-transfer", &fileTransferNotif.labelButton,
-	)
-
-	return fileTransferNotif
 }
 
 func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
@@ -621,65 +587,6 @@ func (conv *conversationPane) updateSecurityWarning() {
 	conv.securityWarningNotif.label.SetLabel("You are talking over an \nunprotected chat")
 	setImageFromFile(conv.securityWarningNotif.image, "secure.svg")
 	conv.securityWarningNotif.area.SetVisible(!ok || !conversation.IsEncrypted())
-}
-
-func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel, image string) {
-	conv.fileTransferNotif.label.SetLabel(label)
-	conv.fileTransferNotif.labelButton.SetLabel(buttonLabel)
-	setImageFromFile(conv.fileTransferNotif.image, image)
-}
-
-// TODO: an info bar area or something, then add and return on the other side
-func (conv *conversationPane) showFileTransferNotification(fileName string) {
-	prov, _ := g.gtk.CssProviderNew()
-
-	css := fmt.Sprintf(`
-	box { background-color: #fff9f3;
-	      color: #000000;
-	      border: 3px;
-	     }
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ := conv.fileTransferNotif.area.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
-
-	label := "File transfer started"
-	conv.updateFileTransferNotification(label, "Cancel", "filetransfer.svg")
-	conv.fileTransferNotif.progressBar.SetFraction(0.0)
-	conv.fileTransferNotif.name.SetLabel(fileName)
-	conv.fileTransferNotif.canceled = false
-
-	conv.fileTransferNotif.area.SetVisible(true)
-}
-
-func (conv *conversationPane) startFileTransfer(upd float64) {
-	conv.fileTransferNotif.progressBar.SetFraction(upd)
-}
-
-func (conv *conversationPane) successFileTransfer() {
-	label := "File successfuly received"
-	conv.updateFileTransferNotification(label, "Close", "success.svg")
-	prov, _ := g.gtk.CssProviderNew()
-
-	css := fmt.Sprintf(`
-	label { margin-right: 3px;
-	        margin-left: 3px;
-	     }
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ := conv.fileTransferNotif.labelButton.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
-}
-
-func (conv *conversationPane) failFileTransfer() {
-	label := "File could not be received"
-	conv.updateFileTransferNotification(label, "Close", "failure.svg")
-}
-
-func (conv *conversationPane) isFileTransferCanceled() bool {
-	return conv.fileTransferNotif.canceled
 }
 
 func (conv *conversationWindow) show(userInitiated bool) {

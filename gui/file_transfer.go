@@ -29,20 +29,15 @@ import (
 //       Or it will get an error message when failed
 //       There will be a cancel button there, that will cancel the file receipt
 
-func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView) {
-	go func() {
-		err, ok := <-ev.Control.ErrorOccurred
-		if ok {
-			cv.failFileTransfer()
-			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
-			close(ev.Control.CancelTransfer)
-		}
-	}()
+// TODO: update logs
+func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView, file *fileNotification) {
+	fileName := resizeFileName(ev.Name)
 
 	go func() {
 		_, ok := <-ev.Control.TransferFinished
 		if ok {
-			cv.successFileTransfer()
+			// TODO: use SetSizeRequest on button
+			cv.successFileTransfer(fileName, file)
 			log.Printf("File transfer of file %s finished with success", ev.Name)
 			close(ev.Control.CancelTransfer)
 		}
@@ -50,16 +45,34 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 
 	go func() {
 		for upd := range ev.Control.Update {
-			cv.startFileTransfer(float64((upd*100)/ev.Size) / 100)
+			file.progress = float64((upd*100)/ev.Size) / 100
+			cv.startFileTransfer(file)
 			log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
 
-			if cv.isFileTransferCanceled() {
+			if file.canceled {
+				cv.cancelFileTransfer(fileName, file)
+				ev.Control.CancelTransfer <- true
+				return
+			}
+
+			if cv.isFileTransferNotifCanceled() {
 				log.Printf("File transfer of file canceled")
 				ev.Control.CancelTransfer <- true
 				return
 			}
 		}
 	}()
+
+	go func() {
+		err, ok := <-ev.Control.ErrorOccurred
+		if ok {
+			cv.failFileTransfer(fileName, file)
+			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
+			close(ev.Control.CancelTransfer)
+		}
+
+	}()
+
 }
 
 func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
@@ -113,18 +126,24 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	}
 
 	if result && name != "" {
-		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
-
 		s := ev.Name
 		if len(s) > 20 {
 			s = s[:21] + "..."
 		}
 		s = "Receiving: " + s
 
-		// TODO: render here
-		cv.showFileTransferNotification(s)
-		u.startAllListenersFor(ev, cv)
-		ev.Answer <- &name
+		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
+
+		var currentFile *fileNotification
+		if !cv.getFileTransferNotification() {
+			currentFile = cv.showFileTransferNotification(s)
+			u.startAllListenersFor(ev, cv, currentFile)
+			ev.Answer <- &name
+		} else {
+			currentFile = cv.updateFileTransferInfo(s)
+			u.startAllListenersFor(ev, cv, currentFile)
+			ev.Answer <- &name
+		}
 	} else {
 		ev.Answer <- nil
 	}

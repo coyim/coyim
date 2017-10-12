@@ -28,14 +28,14 @@ build-gui-address-san: generate-version-file
 build-gui-win: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o $(BUILD_DIR)/coyim.exe
 
-build-cli: generate-version-file
+buil$(BUILD_DIR)/coyim-debugd-cli: generate-version-file
 	go build -i -tags cli -o $(BUILD_DIR)/coyim-cli
 
 build-debug:
-	go build -i -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug
+	go build -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug
 
 debug: build-debug
-	gdb $(BUILD_DIR)/coyim-debug -d $(shell go env GOROOT) -x build/debug
+	GDK_DEBUG=nograbs gdb -d $(shell go env GOROOT) --args $(BUILD_DIR)/coyim-debug -debug
 
 # TODO: We can replace this by `go build -ldflags "-X main.Version=$(TAG_VERSION)"`.
 generate-version-file:

@@ -32,7 +32,7 @@ check-ui-defs:
 
 # send coverage data to coveralls
 coveralls:
-	make run-cover -C ../
+	make run-cover -C ../development
 	go get github.com/mattn/goveralls
 	goveralls -coverprofile=../.coverprofiles/gover.coverprofile -service=travis-ci || true
 

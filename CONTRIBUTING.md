@@ -32,8 +32,8 @@ Installing these requirements differs on each system.
 Get the code
 
 ```sh
-git clone https://github.com/coyim/coyim.git
-cd coyim
+go get -d -u github.com/coyim/coyim
+cd $(go env GOPATH)
 ```
 
 Download go dependencies

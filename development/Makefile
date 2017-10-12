@@ -4,11 +4,11 @@ GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
 GOTEST=govendor test +local
 GOLIST=govendor list -no-status +local
 
-default: build check
+default: autogen check
 check: lint test
 
 # TODO: include i18n?
-build: gen-ui-defs gen-schema-defs
+autogen: gen-ui-defs gen-schema-defs
 
 check-deps:
 	@type esc >/dev/null 2>&1 || (echo "The program 'esc' is required but not available. Please install it by running 'make deps-dev'." && exit 1)
@@ -31,7 +31,6 @@ lint:
 test:
 	$(GOTEST) -cover -v -tags $(GTK_BUILD_TAG) ./...
 .PHONY: test
-test:
 
 test-named:
 	$(GOTEST) -v -tags $(GTK_BUILD_TAG) ./cli ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
@@ -41,7 +40,6 @@ deps:
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/modocache/gover
 	go get -u github.com/rosatolen/esc
-
 
 run-cover: clean-cover
 	mkdir -p ../.coverprofiles
@@ -73,3 +71,4 @@ clean-cover:
 # generats an HTML report with coverage information
 cover: run-cover
 	go tool cover -html=../.coverprofiles/gover.coverprofile
+

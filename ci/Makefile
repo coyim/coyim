@@ -1,15 +1,13 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
-ci: deps lint doctor test coveralls
+default: doctor test coveralls
 
 deps:
-	make deps -C ../
-
-lint:
-	make lint -C ../
+	make -C ../development deps
+	go get -u github.com/mattn/goveralls
 
 test:
-	make test -C ../
+	make check -C ../development
 
 doctor: check-go-imports check-ui-defs
 
@@ -33,7 +31,6 @@ check-ui-defs:
 # send coverage data to coveralls
 coveralls:
 	make run-cover -C ../development
-	go get github.com/mattn/goveralls
 	goveralls -coverprofile=../.coverprofiles/gover.coverprofile -service=travis-ci || true
 
 clean-release:
@@ -54,7 +51,6 @@ clean-mac-bundle:
 
 mac-bundle:
 	make -C ../ build-gui
-
 	iconutil -c icns -o ../build/mac-bundle/coy.icns ../build/mac-bundle/coy.iconset
 	cd .. && ci/build-osx-bundle bin/mac-bundle/CoyIM.app
 
@@ -69,7 +65,8 @@ release-dmg: clean-mac-bundle mac-bundle
 	make -C ../ build-gui
 
 build-linux:
-	make -C ../ reproducible-linux-build
+	make -C ../reproducible/docker create-image
+	make -C ../reproducible/docker build
 
 release-gui: ../bin/coyim
 	mkdir -p ../release

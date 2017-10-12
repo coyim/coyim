@@ -41,13 +41,13 @@ debug: build-debug
 generate-version-file:
 	./gen_version_file.sh $(GIT_VERSION) $(TAG_VERSION)
 
-lint:
-	make -C ./development lint
-
 # Convenience
 test:
 	make -C ./development test
 .PHONY: test
+
+lint:
+	make -C ./development lint
 
 deps:
 	make -C ./development deps

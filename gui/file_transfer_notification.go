@@ -11,6 +11,7 @@ type fileNotification struct {
 	area     gtki.Box
 	label    gtki.Label
 	image    gtki.Image
+	success  bool
 	failed   bool
 	canceled bool
 	progress float64
@@ -41,7 +42,6 @@ func resizeFileName(name string) string {
 
 }
 
-// TODO: destroy everything when len goes 0
 func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	fileTransferNotif := &fileTransferNotification{}
 
@@ -98,6 +98,11 @@ func (conv *conversationPane) showFileTransferInfo(fileName string) *fileNotific
 	b.ConnectSignals(map[string]interface{}{
 		"on_destroy_single_file_transfer": file.destroy,
 	})
+
+	// TODO: set progress to zero everytime?
+	label := "File transfer started"
+	conv.updateFileTransferNotification(label, "Cancel", "filetransfer.svg")
+	conv.fileTransferNotif.canceled = false
 
 	file.label.SetLabel(fileName)
 
@@ -159,6 +164,7 @@ func (conv *conversationPane) successFileTransfer(fileName string, file *fileNot
 
 	fileName = "Received: " + fileName
 	file.update(fileName)
+	file.success = true
 
 	var label string
 	count := float64(len(conv.fileTransferNotif.files))
@@ -170,6 +176,7 @@ func (conv *conversationPane) successFileTransfer(fileName string, file *fileNot
 		}
 
 		conv.updateFileTransferNotification(label, "Close", "success.svg")
+
 	}
 }
 
@@ -214,13 +221,21 @@ func (conv *conversationPane) onDestroyFileTransferNotif() {
 		label := "File transfer canceled"
 		conv.updateFileTransferNotification(label, "Close", "failure.svg")
 
-		file := conv.fileTransferNotif.files
-		for i := range file {
-			file[i].update("Canceled")
+		files := conv.fileTransferNotif.files
+		for i, f := range files {
+			if f.success {
+				break
+			}
+
+			files[i].update("Canceled")
 		}
 	} else {
 		conv.fileTransferNotif.canceled = false
 		conv.fileTransferNotif.area.SetVisible(false)
+		conv.fileTransferNotif.progress = 0.0
+		for i := range conv.fileTransferNotif.files {
+			conv.fileTransferNotif.files[i].area.Destroy()
+		}
 	}
 }
 

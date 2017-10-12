@@ -6,7 +6,11 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
+)
 
 /*
  * GtkTextIter
@@ -34,7 +38,7 @@ func (v *TextIter) GetBuffer() *TextBuffer {
 	if c == nil {
 		return nil
 	}
-	return wrapTextBuffer(wrapObject(unsafe.Pointer(c)))
+	return wrapTextBuffer(glib.Take(unsafe.Pointer(c)))
 }
 
 // GetOffset is a wrapper around gtk_text_iter_get_offset().

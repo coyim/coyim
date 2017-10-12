@@ -111,39 +111,39 @@
 			"revisionTime": "2017-10-04T19:41:53Z"
 		},
 		{
-			"checksumSHA1": "zHlruvkmVEcfPchI6CrSUQIppWc=",
+			"checksumSHA1": "Wi2/ZnLbDnAI5gBZFUCSJQyN82g=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/cairo",
 			"path": "github.com/gotk3/gotk3/cairo",
-			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
-			"revisionTime": "2017-10-04T19:57:50Z"
+			"revision": "05663709640197a011adae46ef74c195962fb865",
+			"revisionTime": "2017-10-12T22:26:13Z"
 		},
 		{
-			"checksumSHA1": "iTNo2Jp9griVHZZ0DjIDMt8wII0=",
+			"checksumSHA1": "txZ2ZtlviKlYVmU5/gGlXp1lguc=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/gdk",
 			"path": "github.com/gotk3/gotk3/gdk",
-			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
-			"revisionTime": "2017-10-04T19:57:50Z"
+			"revision": "05663709640197a011adae46ef74c195962fb865",
+			"revisionTime": "2017-10-12T22:26:13Z"
 		},
 		{
-			"checksumSHA1": "/KfqwGrKIb5ddLiYBVPKkJtBwbs=",
+			"checksumSHA1": "C6DB14cbjbKOu4q/NZRzMgraLq4=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/glib",
 			"path": "github.com/gotk3/gotk3/glib",
-			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
-			"revisionTime": "2017-10-04T19:57:50Z"
+			"revision": "05663709640197a011adae46ef74c195962fb865",
+			"revisionTime": "2017-10-12T22:26:13Z"
 		},
 		{
-			"checksumSHA1": "fIm9ncsA54lNBHRAewpzQjR+vHA=",
+			"checksumSHA1": "T5Y/NE/NM+bzxyzni0Z0ykRLK0c=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/gtk",
 			"path": "github.com/gotk3/gotk3/gtk",
-			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
-			"revisionTime": "2017-10-04T19:57:50Z"
+			"revision": "05663709640197a011adae46ef74c195962fb865",
+			"revisionTime": "2017-10-12T22:26:13Z"
 		},
 		{
-			"checksumSHA1": "JTL0Dy1hTMetlebMpgOLmiIv2hg=",
+			"checksumSHA1": "aLCsKWqv8/Rs8C2M8TjP9GXnaXM=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/pango",
 			"path": "github.com/gotk3/gotk3/pango",
-			"revision": "3bf47b4c9ad52e2181f119f49ce34a857f6b6498",
-			"revisionTime": "2017-10-04T19:57:50Z"
+			"revision": "05663709640197a011adae46ef74c195962fb865",
+			"revisionTime": "2017-10-12T22:26:13Z"
 		},
 		{
 			"checksumSHA1": "fyTEblZu7c+L8/VWhYSAcSzqCtI=",

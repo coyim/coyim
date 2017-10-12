@@ -13,6 +13,8 @@ package gtk
 import "C"
 import (
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
 )
 
 // GetChildByName is a wrapper around gtk_stack_get_child_by_name().
@@ -23,5 +25,5 @@ func (v *Stack) GetChildByName(name string) *Widget {
 	if c == nil {
 		return nil
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c)))
+	return wrapWidget(glib.Take(unsafe.Pointer(c)))
 }

@@ -140,7 +140,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 			u.startAllListenersFor(ev, cv, currentFile)
 			ev.Answer <- &name
 		} else {
-			currentFile = cv.updateFileTransferInfo(s)
+			currentFile = cv.showFileTransferInfo(s)
 			u.startAllListenersFor(ev, cv, currentFile)
 			ev.Answer <- &name
 		}

@@ -10,7 +10,6 @@ type fileNotification struct {
 	area     gtki.Box
 	label    gtki.Label
 	image    gtki.Image
-	success  bool
 	failed   bool
 	canceled bool
 	progress float64
@@ -40,6 +39,7 @@ func resizeFileName(name string) string {
 
 }
 
+// TODO: destroy everything when len goes 0
 // TODO: update labels to plural when needed
 func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	fileTransferNotif := &fileTransferNotification{}
@@ -75,14 +75,14 @@ func (conv *conversationPane) showFileTransferNotification(fileName string) *fil
 	conv.fileTransferNotif.progressBar.SetFraction(0.0)
 	conv.fileTransferNotif.canceled = false
 
-	info := conv.updateFileTransferInfo(fileName)
+	info := conv.showFileTransferInfo(fileName)
 
 	conv.fileTransferNotif.area.SetVisible(true)
 
 	return info
 }
 
-func (conv *conversationPane) updateFileTransferInfo(fileName string) *fileNotification {
+func (conv *conversationPane) showFileTransferInfo(fileName string) *fileNotification {
 	b := newBuilder("FileTransferNotification")
 
 	file := &fileNotification{}
@@ -97,10 +97,6 @@ func (conv *conversationPane) updateFileTransferInfo(fileName string) *fileNotif
 		"on_destroy_single_file_transfer": file.destroy,
 	})
 
-	// TODO: prob unneccessary
-	file.canceled = false
-	file.success = false
-	file.failed = false
 	file.label.SetLabel(fileName)
 
 	conv.fileTransferNotif.box.Add(file.area)
@@ -115,10 +111,14 @@ func (file *fileNotification) destroy() {
 	file.canceled = true
 }
 
+func (file *fileNotification) update(fileName string) {
+	file.label.SetLabel(fileName)
+	file.image.Hide()
+}
+
 // TODO: for some reason this does not handle the success of others,
 // it gets frozen when one fails
 func (conv *conversationPane) failFileTransfer(fileName string, file *fileNotification) {
-	// TODO: prob repeated
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -131,8 +131,7 @@ func (conv *conversationPane) failFileTransfer(fileName string, file *fileNotifi
 	styleContext.AddProvider(prov, 9999)
 
 	fileName = "Failed: " + fileName
-	file.label.SetLabel(fileName)
-	file.image.Hide()
+	file.update(fileName)
 	file.failed = true
 
 	files := conv.fileTransferNotif.files
@@ -140,19 +139,6 @@ func (conv *conversationPane) failFileTransfer(fileName string, file *fileNotifi
 		if files[i].failed {
 			label := "Files could not be received"
 			conv.updateFileTransferNotification(label, "Close", "failure.svg")
-			// TODO: check if repeated
-			prov, _ = g.gtk.CssProviderNew()
-
-			css = fmt.Sprintf(`
-	label { margin-right: 3px;
-	        margin-left: 3px;
-	     }
-	`)
-			_ = prov.LoadFromData(css)
-
-			styleContext, _ = conv.fileTransferNotif.labelButton.GetStyleContext()
-			styleContext.AddProvider(prov, 9999)
-
 		}
 	}
 }
@@ -170,25 +156,11 @@ func (conv *conversationPane) successFileTransfer(fileName string, file *fileNot
 	styleContext.AddProvider(prov, 9999)
 
 	fileName = "Received: " + fileName
-	file.label.SetLabel(fileName)
-	file.image.Hide()
-	file.success = true
+	file.update(fileName)
 
-	files := conv.fileTransferNotif.files
-	if files[len(files)-1].success {
+	if conv.fileTransferNotif.progress == float64(len(conv.fileTransferNotif.files)) {
 		label := "Files successfuly received"
 		conv.updateFileTransferNotification(label, "Close", "success.svg")
-		prov, _ = g.gtk.CssProviderNew()
-
-		css = fmt.Sprintf(`
-	          label { margin-right: 3px;
-	                  margin-left: 3px;
-	               }
-	          `)
-		_ = prov.LoadFromData(css)
-
-		styleContext, _ = conv.fileTransferNotif.labelButton.GetStyleContext()
-		styleContext.AddProvider(prov, 9999)
 	}
 }
 
@@ -205,8 +177,8 @@ func (conv *conversationPane) cancelFileTransfer(fileName string, file *fileNoti
 	styleContext.AddProvider(prov, 9999)
 
 	fileName = "Canceled: " + fileName
-	file.label.SetLabel(fileName)
-	file.image.Hide()
+	file.update(fileName)
+	file.canceled = true
 
 	for i, f := range conv.fileTransferNotif.files {
 		if f == file {
@@ -233,10 +205,9 @@ func (conv *conversationPane) onDestroyFileTransferNotif() {
 		label := "File transfer canceled"
 		conv.updateFileTransferNotification(label, "Close", "failure.svg")
 
-		lol := conv.fileTransferNotif.files
-		for i := range lol {
-			lol[i].image.Hide()
-			lol[i].label.SetLabel("Cancelled")
+		file := conv.fileTransferNotif.files
+		for i := range file {
+			file[i].update("Canceled")
 		}
 	} else {
 		conv.fileTransferNotif.canceled = false
@@ -245,6 +216,21 @@ func (conv *conversationPane) onDestroyFileTransferNotif() {
 }
 
 func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel, image string) {
+	if buttonLabel == "Close" {
+		prov, _ := g.gtk.CssProviderNew()
+
+		css := fmt.Sprintf(`
+	                  label {
+			  margin-right: 3px;
+	                  margin-left: 3px;
+	                  }
+	                `)
+		_ = prov.LoadFromData(css)
+
+		styleContext, _ := conv.fileTransferNotif.labelButton.GetStyleContext()
+		styleContext.AddProvider(prov, 9999)
+	}
+
 	conv.fileTransferNotif.label.SetLabel(label)
 	conv.fileTransferNotif.labelButton.SetLabel(buttonLabel)
 	setImageFromFile(conv.fileTransferNotif.image, image)
@@ -256,7 +242,8 @@ func (conv *conversationPane) startFileTransfer(file *fileNotification) {
 		conv.fileTransferNotif.progress += conv.fileTransferNotif.files[i].progress
 	}
 
-	conv.fileTransferNotif.progressBar.SetFraction(conv.fileTransferNotif.progress / float64(len(conv.fileTransferNotif.files)))
+	upd := conv.fileTransferNotif.progress / float64(len(conv.fileTransferNotif.files))
+	conv.fileTransferNotif.progressBar.SetFraction(upd)
 }
 
 func (conv *conversationPane) getFileTransferNotification() bool {

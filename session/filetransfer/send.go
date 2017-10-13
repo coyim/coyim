@@ -17,11 +17,13 @@ import (
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
-func registerSendFileTransferMethod(name string, dispatch func(access.Session, *sendContext)) {
+func registerSendFileTransferMethod(name string, dispatch func(access.Session, *sendContext), isCurrentlyValid func(string, access.Session, *sendContext) bool) {
 	supportedSendingMechanisms[name] = dispatch
+	isSendingMechanismCurrentlyValid[name] = isCurrentlyValid
 }
 
 var supportedSendingMechanisms = map[string]func(access.Session, *sendContext){}
+var isSendingMechanismCurrentlyValid = map[string]func(string, access.Session, *sendContext) bool{}
 
 func (ctx *sendContext) discoverSupport(s access.Session) (profiles []string, err error) {
 	if res, ok := s.Conn().DiscoveryFeatures(ctx.peer); ok {
@@ -57,10 +59,12 @@ func genSid(c interfaces.Conn) string {
 
 const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
 
-func calculateAvailableSendOptions() []data.FormFieldOptionX {
+func (ctx *sendContext) calculateAvailableSendOptions(s access.Session) []data.FormFieldOptionX {
 	res := []data.FormFieldOptionX{}
 	for k, _ := range supportedSendingMechanisms {
-		res = append(res, data.FormFieldOptionX{Value: k})
+		if isSendingMechanismCurrentlyValid[k](k, s, ctx) {
+			res = append(res, data.FormFieldOptionX{Value: k})
+		}
 	}
 	return res
 }
@@ -87,7 +91,7 @@ func (ctx *sendContext) offerSend(s access.Session) error {
 					{
 						Var:     "stream-method",
 						Type:    "list-single",
-						Options: calculateAvailableSendOptions(),
+						Options: ctx.calculateAvailableSendOptions(s),
 					},
 				},
 			},
@@ -178,6 +182,17 @@ func createNewFileTransferControl() sdata.FileTransferControl {
 	}
 }
 
+func (ctx *sendContext) initSend(s access.Session) {
+	_, err := ctx.discoverSupport(s)
+	if err != nil {
+		ctx.control.ReportErrorNonblocking(err)
+		return
+	}
+
+	go ctx.listenForCancellation()
+	ctx.offerSend(s)
+}
+
 // InitSend starts the process of sending a file to a peer
 func InitSend(s access.Session, peer string, file string) sdata.FileTransferControl {
 	ctx := &sendContext{
@@ -185,15 +200,7 @@ func InitSend(s access.Session, peer string, file string) sdata.FileTransferCont
 		file:    file,
 		control: createNewFileTransferControl(),
 	}
-
-	_, err := ctx.discoverSupport(s)
-	if err != nil {
-		ctx.control.ReportErrorNonblocking(err)
-		return ctx.control
-	}
-
-	go ctx.listenForCancellation()
-	ctx.offerSend(s)
+	go ctx.initSend(s)
 	return ctx.control
 }
 

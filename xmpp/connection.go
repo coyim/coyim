@@ -19,6 +19,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/coyim/coyim/cache"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/utils"
@@ -49,6 +50,12 @@ type conn struct {
 	streamCloseReceived chan bool
 	closed              bool
 	closedLock          sync.Mutex
+
+	c cache.WithExpiry
+}
+
+func (c *conn) Cache() cache.WithExpiry {
+	return c.c
 }
 
 func (c *conn) isClosed() bool {
@@ -129,6 +136,7 @@ func NewConn(in *xml.Decoder, out io.WriteCloser, jid string) interfaces.Conn {
 		streamCloseReceived: make(chan bool),
 
 		rand: rand.Reader,
+		c:    cache.NewWithExpiry(),
 	}
 
 	conn.setClosed(true)
@@ -140,6 +148,7 @@ func newConn() *conn {
 	return &conn{
 		inflights:           make(map[data.Cookie]inflight),
 		streamCloseReceived: make(chan bool),
+		c:                   cache.NewWithExpiry(),
 
 		rand: rand.Reader,
 	}

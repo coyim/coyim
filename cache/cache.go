@@ -62,6 +62,17 @@ func (c *cache) Get(key string) (result interface{}, found bool) {
 	return nil, false
 }
 
+func (c *cache) GetOrCompute(key string, creator func(key string) interface{}) (result interface{}, found bool) {
+	c.Lock()
+	defer c.Unlock()
+	if e, ok := c.data[key]; ok {
+		return e.value, true
+	}
+	res := creator(key)
+	c.data[key] = &entry{key: key, value: res}
+	return res, false
+}
+
 func (c *cache) Put(key string, value interface{}) bool {
 	c.Lock()
 	defer c.Unlock()
@@ -136,4 +147,16 @@ func (c *cache) PutTimedIfAbsent(key string, lifetime time.Duration, creator fun
 		return true
 	}
 	return false
+}
+
+func (c *cache) GetOrComputeTimed(key string, lifetime time.Duration, creator func(key string) interface{}) (result interface{}, found bool) {
+	c.Lock()
+	defer c.Unlock()
+	if e, ok := c.data[key]; ok {
+		return e.value, true
+	}
+	e := &entry{key: key, value: creator(key)}
+	c.setExpiry(e, lifetime)
+	c.data[key] = e
+	return e.value, false
 }

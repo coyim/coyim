@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"sync"
 
+	"github.com/coyim/coyim/cache"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -15,6 +16,7 @@ type Conn interface {
 	AuthenticationFailure() error
 	BindResource() error
 	Cancel(data.Cookie) bool
+	Cache() cache.WithExpiry
 	Close() error
 	Config() *data.Config
 	CustomStorage() map[xml.Name]reflect.Type

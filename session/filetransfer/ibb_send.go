@@ -13,7 +13,11 @@ import (
 )
 
 func init() {
-	registerSendFileTransferMethod("http://jabber.org/protocol/ibb", ibbSendDo)
+	registerSendFileTransferMethod("http://jabber.org/protocol/ibb", ibbSendDo, ibbSendCurrentlyValid)
+}
+
+func ibbSendCurrentlyValid(string, access.Session, *sendContext) bool {
+	return true
 }
 
 const ibbDefaultBlockSize = 4096

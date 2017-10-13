@@ -51,9 +51,7 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 				cv.cancelFileTransfer(fileName, file)
 				ev.Control.CancelTransfer <- true
 				return
-			}
-
-			if cv.isFileTransferNotifCanceled() {
+			} else if cv.isFileTransferNotifCanceled() {
 				log.Printf("File transfer of file canceled")
 				ev.Control.CancelTransfer <- true
 				return

@@ -27,14 +27,14 @@ type conversationView interface {
 	showIdentityVerificationWarning(*gtkUI)
 	removeIdentityVerificationWarning()
 	updateSecurityWarning()
+	showFileTransferInfo(fileName string) *fileNotification
 	showFileTransferNotification(name string) *fileNotification
+	getFileTransferNotification() bool
 	startFileTransfer(file *fileNotification)
 	successFileTransfer(fileName string, file *fileNotification)
-	showFileTransferInfo(fileName string) *fileNotification
 	failFileTransfer(fileName string, file *fileNotification)
-	isFileTransferNotifCanceled() bool
 	cancelFileTransfer(fileName string, file *fileNotification)
-	getFileTransferNotification() bool
+	isFileTransferNotifCanceled() bool
 	show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	appendMessage(sent sentMessage)

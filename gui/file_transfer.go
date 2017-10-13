@@ -68,7 +68,6 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
 			close(ev.Control.CancelTransfer)
 		}
-
 	}()
 }
 

@@ -48,9 +48,6 @@ var iqErrorIBBBadRequest = data.ErrorReply{
 func (ift inflight) ibbCleanup() {
 	ctx, ok := ift.status.opaque.(*ibbContext)
 	if ok {
-		ctx.Lock()
-		defer ctx.Unlock()
-
 		if ctx.f != nil {
 			ctx.f.Close() // we ignore any errors here - if the file is already closed, that's OK
 			os.Remove(ctx.f.Name())

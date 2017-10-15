@@ -133,7 +133,7 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -163,19 +163,18 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_top">6</property>
-                    <property name="fraction">0.0</property>
                     <property name="show_text">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
+                    <property name="fill">False</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -189,7 +188,6 @@
                   <object class="GtkButton" id="button-file-transfer">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
                     <property name="margin_right">10</property>
                     <property name="margin_top">7</property>
                     <property name="margin_bottom">20</property>
@@ -199,8 +197,8 @@
                         <property name="can_focus">False</property>
                         <property name="margin_left">37</property>
                         <property name="margin_right">37</property>
-                    <property name="margin_top">5</property>
-                    <property name="margin_bottom">5</property>
+                        <property name="margin_top">5</property>
+                        <property name="margin_bottom">5</property>
                   </object>
                 </child>
                 <signal name="clicked" handler="on_destroy_file_transfer" />

@@ -150,6 +150,7 @@ func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel,
 	conv.fileTransferNotif.labelButton.SetLabel(buttonLabel)
 	setImageFromFile(conv.fileTransferNotif.image, image)
 }
+
 func (conv *conversationPane) startFileTransfer(file *fileNotification) {
 	conv.fileTransferNotif.progress = 0
 	for i := range conv.fileTransferNotif.files {
@@ -157,7 +158,10 @@ func (conv *conversationPane) startFileTransfer(file *fileNotification) {
 	}
 
 	upd := conv.fileTransferNotif.progress / float64(len(conv.fileTransferNotif.files))
-	conv.fileTransferNotif.progressBar.SetFraction(upd)
+
+	doInUIThread(func() {
+		conv.fileTransferNotif.progressBar.SetFraction(upd)
+	})
 }
 
 func (conv *conversationPane) successFileTransfer(fileName string, file *fileNotification) {

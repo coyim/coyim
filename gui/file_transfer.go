@@ -120,21 +120,18 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	}
 
 	if result && name != "" {
-		s := ev.Name
-		if len(s) > 20 {
-			s = s[:21] + "..."
-		}
-		s = "Receiving: " + s
+		fileName := resizeFileName(ev.Name)
+		fileName = "Receiving: " + fileName
 
 		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
-			currentFile = cv.showFileTransferNotification(s)
+			currentFile = cv.showFileTransferNotification(fileName)
 			u.startAllListenersFor(ev, cv, currentFile)
 			ev.Answer <- &name
 		} else {
-			currentFile = cv.showFileTransferInfo(s)
+			currentFile = cv.showFileTransferInfo(fileName)
 			u.startAllListenersFor(ev, cv, currentFile)
 			ev.Answer <- &name
 		}

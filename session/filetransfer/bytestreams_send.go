@@ -2,11 +2,13 @@ package filetransfer
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/xml"
 	"fmt"
 	"sync"
 	"time"
 
+	"github.com/coyim/coyim/digests"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/utils"
@@ -32,7 +34,7 @@ func bytestreamsGetStreamhostDataFor(s access.Session, ctx *sendContext, jid str
 		return nil
 	}
 	var q data.BytestreamQuery
-	if ctx.unpackIQData(s, r, &q) {
+	if _, ok := ctx.unpackIQData(s, r, &q); ok {
 		for _, s := range q.Streamhosts {
 			return &s
 		}
@@ -71,8 +73,10 @@ func bytestreamsSendDo(s access.Session, ctx *sendContext) {
 	go func() {
 		proxies := bytestreamsGetCurrentValidProxies(s, ctx)
 		proxiesToSend := make([]data.BytestreamStreamhost, len(proxies))
+		proxyMap := make(map[string]data.BytestreamStreamhost)
 		for ix, p := range proxies {
 			proxiesToSend[ix] = *p
+			proxyMap[p.Jid] = *p
 		}
 
 		rp, _, err := s.Conn().SendIQ(ctx.peer, "set", &data.BytestreamQuery{
@@ -90,8 +94,24 @@ func bytestreamsSendDo(s access.Session, ctx *sendContext) {
 		}
 
 		var bq data.BytestreamQuery
-		if ctx.unpackIQData(s, r, &bq) {
+		ciq, ok := ctx.unpackIQData(s, r, &bq)
+		if ok {
 			fmt.Printf("Got streamhost to use: %#v\n", *bq.StreamhostUsed)
+			sh, ok := proxyMap[bq.StreamhostUsed.Jid]
+			if !ok {
+				// TODO: report error
+				return
+			}
+			dstAddr := hex.EncodeToString(digests.Sha1([]byte(ctx.sid + ciq.To + ciq.From)))
+			dstAddr = dstAddr
+			sh = sh
+
+			// Do direct connection to the streamhost
+			// Send XMPP activate to streamhost
+			// Wait for confirmation
+			// Send data
+			// Close TCPconnection
+
 			// TODO: Continue HERE to send data - I get the JID here, and have to use that to lookup the date
 			return
 		}
@@ -100,18 +120,18 @@ func bytestreamsSendDo(s access.Session, ctx *sendContext) {
 	}()
 }
 
-func (ctx *sendContext) unpackIQData(s access.Session, d data.Stanza, res interface{}) bool {
+func (ctx *sendContext) unpackIQData(s access.Session, d data.Stanza, res interface{}) (*data.ClientIQ, bool) {
 	switch ciq := d.Value.(type) {
 	case *data.ClientIQ:
 		if ciq.Type == "result" {
 			if err := xml.NewDecoder(bytes.NewBuffer(ciq.Query)).Decode(res); err != nil {
 				// TODO: blah
-				return false
+				return nil, false
 			}
-			return true
+			return ciq, true
 		}
 	}
-	return false
+	return nil, false
 }
 
 func (ctx *sendContext) bytestreamsWaitForDiscoveryItems(s access.Session, reply <-chan data.Stanza) []string {
@@ -120,7 +140,7 @@ func (ctx *sendContext) bytestreamsWaitForDiscoveryItems(s access.Session, reply
 		return []string{}
 	}
 	var ditems data.DiscoveryItemsQuery
-	if ctx.unpackIQData(s, r, &ditems) {
+	if _, ok := ctx.unpackIQData(s, r, &ditems); ok {
 		possibleProxies := []string{}
 		for _, di := range ditems.DiscoveryItems {
 			ids, feats, _ := s.Conn().DiscoveryFeaturesAndIdentities(di.Jid)

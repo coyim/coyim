@@ -147,7 +147,7 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 	}
 }
 
-func (ift inflight) tryStreamhost(s access.Session, sh data.BytestreamStreamhost, dstAddr string) bool {
+func tryStreamhost(s access.Session, sh data.BytestreamStreamhost, dstAddr string, k func(net.Conn)) bool {
 	port := sh.Port
 	if port == 0 {
 		port = 1080
@@ -175,7 +175,7 @@ func (ift inflight) tryStreamhost(s access.Session, sh data.BytestreamStreamhost
 		return false
 	}
 
-	go ift.bytestreamDoReceive(s, conn)
+	k(conn)
 	return true
 }
 
@@ -188,8 +188,12 @@ func BytestreamQuery(s access.Session, stanza *data.ClientIQ) (ret interface{}, 
 
 	dstAddr := bytestreamCalculateDestinationAddress(tag, stanza)
 
+	k := func(c net.Conn) {
+		go inflight.bytestreamDoReceive(s, c)
+	}
+
 	for _, sh := range tag.Streamhosts {
-		if inflight.tryStreamhost(s, sh, dstAddr) {
+		if tryStreamhost(s, sh, dstAddr, k) {
 			return data.BytestreamQuery{
 				Sid:            tag.Sid,
 				StreamhostUsed: &data.BytestreamStreamhostUsed{Jid: sh.Jid},

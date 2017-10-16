@@ -28,7 +28,7 @@ build-gui-address-san: generate-version-file
 build-gui-win: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o $(BUILD_DIR)/coyim.exe
 
-buil$(BUILD_DIR)/coyim-debugd-cli: generate-version-file
+build-cli: generate-version-file
 	go build -i -tags cli -o $(BUILD_DIR)/coyim-cli
 
 build-debug:

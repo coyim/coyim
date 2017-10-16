@@ -3,8 +3,8 @@ package gliba
 import (
 	"reflect"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/gotk3/gotk3/glib"
 )
 
 type Object struct {
@@ -170,4 +170,12 @@ func (v *Object) GetProperty(v1 string) (interface{}, error) {
 
 func (v *Object) SetProperty(v1 string, v2 interface{}) error {
 	return v.Object.SetProperty(v1, WrapAllGuard(v2))
+}
+
+func (v *Object) Ref() {
+	v.Object.Ref()
+}
+
+func (v *Object) Unref() {
+	v.Object.Unref()
 }

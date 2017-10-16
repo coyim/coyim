@@ -3,8 +3,8 @@ package gtka
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 func init() {

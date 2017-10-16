@@ -45,9 +45,14 @@ var iqErrorIBBBadRequest = data.ErrorReply{
 	Error: data.ErrorBadRequest{},
 }
 
-func (ift inflight) ibbCleanup() {
+func (ift inflight) ibbCleanup(lock bool) {
 	ctx, ok := ift.status.opaque.(*ibbContext)
 	if ok {
+		if lock {
+			ctx.Lock()
+			defer ctx.Unlock()
+		}
+
 		if ctx.f != nil {
 			ctx.f.Close() // we ignore any errors here - if the file is already closed, that's OK
 			os.Remove(ctx.f.Name())
@@ -58,7 +63,7 @@ func (ift inflight) ibbCleanup() {
 
 func ibbWaitForCancel(s access.Session, ift inflight) {
 	if cancel, ok := <-ift.cancelChannel; ok && cancel {
-		ift.ibbCleanup()
+		ift.ibbCleanup(true)
 		close(ift.finishedChannel)
 		close(ift.updateChannel)
 		close(ift.errorChannel)
@@ -134,7 +139,7 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	if tag.Sequence != ctx.expectingSequence {
 		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
 		inflight.reportError(errors.New("Unexpected data sent from the peer"))
-		inflight.ibbCleanup()
+		inflight.ibbCleanup(false)
 		return iqErrorUnexpectedRequest, "error", false
 	}
 
@@ -144,7 +149,7 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	if err != nil {
 		s.Warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
 		inflight.reportError(errors.New("Corrupt data sent by the peer"))
-		inflight.ibbCleanup()
+		inflight.ibbCleanup(false)
 		return iqErrorIBBBadRequest, "error", false
 
 	}
@@ -153,7 +158,7 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	if n, err = ctx.f.Write(result); err != nil {
 		s.Warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
 		inflight.reportError(errors.New("Couldn't write data to the file system"))
-		inflight.ibbCleanup()
+		inflight.ibbCleanup(false)
 		return iqErrorNotAcceptable, "error", false
 	}
 	ctx.currentSize += int64(n)
@@ -197,7 +202,7 @@ func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Exte
 		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
 		// we can't actually send anything back to indicate this problem...
 		inflight.reportError(errors.New("Unexpected data sent from the peer"))
-		inflight.ibbCleanup()
+		inflight.ibbCleanup(false)
 		return
 	}
 
@@ -208,7 +213,7 @@ func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Exte
 		s.Warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
 		// we can't actually send anything back to indicate this problem...
 		inflight.reportError(errors.New("Corrupt data sent by the peer"))
-		inflight.ibbCleanup()
+		inflight.ibbCleanup(false)
 		return
 
 	}
@@ -217,7 +222,7 @@ func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Exte
 	if n, err = ctx.f.Write(result); err != nil {
 		s.Warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
 		inflight.reportError(errors.New("Couldn't write data to the file system"))
-		inflight.ibbCleanup()
+		inflight.ibbCleanup(false)
 		return
 	}
 	ctx.currentSize += int64(n)
@@ -261,7 +266,7 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 	if ctx.currentSize != inflight.size || fstat.Size() != ctx.currentSize {
 		s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", inflight.size, fstat.Size()))
 		inflight.reportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
-		inflight.ibbCleanup()
+		inflight.ibbCleanup(false)
 		return data.EmptyReply{}, "", false
 	}
 
@@ -269,7 +274,7 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 
 	if err := inflight.finalizeFileTransfer(ctx.f.Name()); err != nil {
 		s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
-		inflight.ibbCleanup()
+		inflight.ibbCleanup(false)
 	}
 
 	return data.EmptyReply{}, "", false

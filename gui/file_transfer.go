@@ -35,7 +35,10 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 	go func() {
 		_, ok := <-ev.Control.TransferFinished
 		if ok {
-			cv.successFileTransfer(fileName, file)
+
+			doInUIThread(func() {
+				cv.successFileTransfer(fileName, file)
+			})
 			log.Printf("File transfer of file %s finished with success", ev.Name)
 			close(ev.Control.CancelTransfer)
 		}
@@ -44,11 +47,16 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 	go func() {
 		for upd := range ev.Control.Update {
 			file.progress = float64((upd*100)/ev.Size) / 100
-			cv.startFileTransfer(file)
+
+			doInUIThread(func() {
+				cv.startFileTransfer(file)
+			})
 			log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
 
 			if file.canceled {
-				cv.cancelFileTransfer(fileName, file)
+				doInUIThread(func() {
+					cv.cancelFileTransfer(fileName, file)
+				})
 				ev.Control.CancelTransfer <- true
 				return
 			} else if cv.isFileTransferNotifCanceled() {
@@ -62,7 +70,9 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 	go func() {
 		err, ok := <-ev.Control.ErrorOccurred
 		if ok {
-			cv.failFileTransfer(fileName, file)
+			doInUIThread(func() {
+				cv.failFileTransfer(fileName, file)
+			})
 			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
 			close(ev.Control.CancelTransfer)
 		}
@@ -121,7 +131,6 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 	if result && name != "" {
 		fileName := resizeFileName(ev.Name)
-		fileName = "Receiving: " + fileName
 
 		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
 

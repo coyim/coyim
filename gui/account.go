@@ -10,6 +10,7 @@ import (
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -57,13 +58,8 @@ func (account *account) ID() string {
 }
 
 func (account *account) getConversationWith(to, resource string, ui *gtkUI) (conversationView, bool) {
-	peer, _ := ui.getPeer(account, to)
-	resourceID := to
-	if "" != resource {
-		resourceID = to + "/" + resource
-	}
-
-	c, ok := account.conversations[resourceID]
+	fullJid := utils.ComposeFullJid(to, resource)
+	c, ok := account.conversations[fullJid]
 
 	if ok {
 		_, unifiedType := c.(*conversationStackItem)
@@ -71,11 +67,11 @@ func (account *account) getConversationWith(to, resource string, ui *gtkUI) (con
 		if ui.settings.GetSingleWindow() && !unifiedType {
 			cv1 := c.(*conversationWindow)
 			c = ui.unified.createConversation(account, to, resource, cv1.conversationPane)
-			account.conversations[resourceID] = c
+			account.conversations[fullJid] = c
 		} else if !ui.settings.GetSingleWindow() && unifiedType {
 			cv1 := c.(*conversationStackItem)
-			c = newConversationWindow(account, peer.NameForPresentation(), ui, cv1.conversationPane)
-			account.conversations[resourceID] = c
+			c = newConversationWindow(account, fullJid, ui, cv1.conversationPane)
+			account.conversations[fullJid] = c
 		}
 	}
 
@@ -84,25 +80,22 @@ func (account *account) getConversationWith(to, resource string, ui *gtkUI) (con
 
 func (account *account) createConversationView(to, resource string, ui *gtkUI) conversationView {
 	peer, _ := ui.getPeer(account, to)
+	fullJid := utils.ComposeFullJid(to, resource)
 
 	var cv conversationView
 	if ui.settings.GetSingleWindow() {
 		cv = ui.unified.createConversation(account, peer.Jid, resource, nil)
 	} else {
-		cv = newConversationWindow(account, peer.NameForPresentation(), ui, nil)
+		cv = newConversationWindow(account, fullJid, ui, nil)
 	}
-	resourceID := to
-	if "" != resource {
-		resourceID = to + "/" + resource
-	}
-	account.conversations[resourceID] = cv
+	account.conversations[fullJid] = cv
 
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
-	for _, f := range account.delayedConversations[resourceID] {
+	for _, f := range account.delayedConversations[fullJid] {
 		f(cv)
 	}
-	delete(account.delayedConversations, resourceID)
+	delete(account.delayedConversations, fullJid)
 
 	return cv
 }

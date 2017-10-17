@@ -53,7 +53,7 @@ func builderForDefinition(uiName string) gtki.Builder {
 		panic(err)
 	}
 
-	//XXX Why are we using AddFromString rather than NewFromString
+	//We dont use NewFromString because it doesnt give us an error message
 	err = builder.AddFromString(template)
 	if err != nil {
 		//This is a programming error
@@ -124,6 +124,9 @@ func mustGetImageBytes(filename string) []byte {
 
 func setImageFromFile(i gtki.Image, filename string) {
 	pl, err := g.gdk.PixbufLoaderNew()
+	if err != nil {
+		panic("Developer error: setting the image from " + filename)
+	}
 
 	var w sync.WaitGroup
 	w.Add(1)

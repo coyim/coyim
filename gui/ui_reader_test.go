@@ -22,7 +22,9 @@ const testFile string = `
     <property name="default-height">600</property>
     <property name="default-width">500</property>
     <child>
-      <object class="GtkVBox" id="vbox"></object>
+	  <object class="GtkBox" id="vbox">
+	    <property name="orientation">GTK_ORIENTATION_VERTICAL</property>  
+	  </object>
     </child>
   </object>
 </interface>

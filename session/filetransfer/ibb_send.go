@@ -2,7 +2,6 @@ package filetransfer
 
 import (
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -27,17 +26,24 @@ func ibbSendDo(s access.Session, ctx *sendContext) {
 }
 
 func (ctx *sendContext) ibbSendDoWithBlockSize(s access.Session, blocksize int) {
-	res, _, e := s.Conn().SendIQ(ctx.peer, "set", data.IBBOpen{
+	nonblockIQ(s, ctx.peer, "set", data.IBBOpen{
 		BlockSize: ibbDefaultBlockSize,
 		Sid:       ctx.sid,
 		Stanza:    "iq",
-	})
-	if e != nil {
+	}, nil, func(*data.ClientIQ) {
+		go ctx.ibbSendStartTransfer(s, blocksize)
+	}, func(ciq *data.ClientIQ, e error) {
+		if ciq != nil &&
+			ciq.Type == "error" &&
+			ciq.Error.Type == "modify" &&
+			ciq.Error.Any.XMLName.Local == "resource-constraint" &&
+			ciq.Error.Any.XMLName.Space == "urn:ietf:params:xml:ns:xmpp-stanzas" {
+			ctx.ibbSendDoWithBlockSize(s, blocksize/2)
+			return
+		}
 		ctx.control.ReportError(e)
 		removeInflightSend(ctx)
-		return
-	}
-	go ctx.ibbSendWaitForConfirmationOfOpen(s, res, blocksize)
+	})
 }
 
 func (ctx *sendContext) ibbSendChunk(s access.Session, r io.ReadCloser, buffer []byte, seq uint16) bool {
@@ -132,38 +138,6 @@ func (ctx *sendContext) ibbSendStartTransfer(s access.Session, blockSize int) {
 		return
 	}
 	ctx.ibbSendChunks(s, f, buffer, seq)
-}
-
-func (ctx *sendContext) ibbSendWaitForConfirmationOfOpen(s access.Session, reply <-chan data.Stanza, blockSize int) {
-	r, ok := <-reply
-	if !ok {
-		ctx.control.ReportError(errors.New("We didn't receive a response when trying to open IBB file transfer with peer"))
-		removeInflightSend(ctx)
-		return
-	}
-
-	switch ciq := r.Value.(type) {
-	case *data.ClientIQ:
-		if ciq.Type == "result" {
-			go ctx.ibbSendStartTransfer(s, blockSize)
-			return
-		} else if ciq.Type == "error" {
-			if ciq.Error.Type == "cancel" {
-				ctx.control.ReportErrorNonblocking(errors.New("The peer canceled the file transfer"))
-			} else if ciq.Error.Type == "modify" &&
-				ciq.Error.Any.XMLName.Local == "resource-constraint" &&
-				ciq.Error.Any.XMLName.Space == "urn:ietf:params:xml:ns:xmpp-stanzas" {
-				ctx.ibbSendDoWithBlockSize(s, blockSize/2)
-			} else {
-				ctx.control.ReportErrorNonblocking(errors.New("Invalid error type - this shouldn't happen"))
-			}
-		} else {
-			ctx.control.ReportErrorNonblocking(errors.New("Invalid IQ type - this shouldn't happen"))
-		}
-	default:
-		ctx.control.ReportErrorNonblocking(errors.New("Invalid stanza type - this shouldn't happen"))
-	}
-	removeInflightSend(ctx)
 }
 
 func (ctx *sendContext) ibbReceivedClose(s access.Session) {

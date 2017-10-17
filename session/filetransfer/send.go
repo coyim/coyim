@@ -1,9 +1,7 @@
 package filetransfer
 
 import (
-	"bytes"
 	"encoding/binary"
-	"encoding/xml"
 	"errors"
 	"fmt"
 	"os"
@@ -98,11 +96,23 @@ func (ctx *sendContext) offerSend(s access.Session) error {
 		},
 	}
 
-	res, _, e2 := s.Conn().SendIQ(ctx.peer, "set", toSend)
-	if e2 != nil {
-		return e2
-	}
-	go ctx.waitForResultToStartFileSend(s, res)
+	var siq data.SI
+	nonblockIQ(s, ctx.peer, "set", toSend, &siq, func(*data.ClientIQ) {
+		if !isValidSubmitForm(siq) {
+			ctx.control.ReportErrorNonblocking(errors.New("Invalid data sent from peer for file sending"))
+			return
+		}
+		prof := siq.Feature.Form.Fields[0].Values[0]
+		if f, ok := supportedSendingMechanisms[prof]; ok {
+			ctx.notifyUserThatSendStarted(s, prof)
+			addInflightSend(ctx)
+			f(s, ctx)
+			return
+		}
+		ctx.control.ReportErrorNonblocking(errors.New("Invalid sending mechanism sent from peer for file sending"))
+	}, func(_ *data.ClientIQ, e error) {
+		ctx.control.ReportErrorNonblocking(e)
+	})
 
 	return nil
 }
@@ -117,8 +127,8 @@ type sendContext struct {
 	control          sdata.FileTransferControl
 }
 
-func (ctx *sendContext) notifyUserThatSendStarted(s access.Session) {
-	s.Info(fmt.Sprintf("Started sending of %v to %v", ctx.file, ctx.peer))
+func (ctx *sendContext) notifyUserThatSendStarted(s access.Session, method string) {
+	s.Info(fmt.Sprintf("Started sending of %v to %v using %v", ctx.file, ctx.peer, method))
 }
 
 func isValidSubmitForm(siq data.SI) bool {
@@ -135,42 +145,6 @@ func (ctx *sendContext) listenForCancellation() {
 		close(ctx.control.Update)
 		close(ctx.control.ErrorOccurred)
 	}
-}
-
-func (ctx *sendContext) waitForResultToStartFileSend(s access.Session, reply <-chan data.Stanza) {
-	r, ok := <-reply
-	if ok {
-		switch ciq := r.Value.(type) {
-		case *data.ClientIQ:
-			if ciq.Type != "result" {
-				ctx.control.ReportErrorNonblocking(errors.New("Received error from peer when offering to send file"))
-				return
-			}
-
-			var siq data.SI
-			if err := xml.NewDecoder(bytes.NewBuffer(ciq.Query)).Decode(&siq); err != nil {
-				ctx.control.ReportErrorNonblocking(err)
-				return
-			}
-			if !isValidSubmitForm(siq) {
-				ctx.control.ReportErrorNonblocking(errors.New("Invalid data sent from peer for file sending"))
-				return
-			}
-			prof := siq.Feature.Form.Fields[0].Values[0]
-			if f, ok := supportedSendingMechanisms[prof]; ok {
-				ctx.notifyUserThatSendStarted(s)
-				addInflightSend(ctx)
-				f(s, ctx)
-				return
-			}
-			ctx.control.ReportErrorNonblocking(errors.New("Invalid sending mechanism sent from peer for file sending"))
-			return
-		default:
-			ctx.control.ReportErrorNonblocking(errors.New("Invalid stanza type - this shouldn't happen"))
-			return
-		}
-	}
-	ctx.control.ReportErrorNonblocking(errors.New("No response received to offer of sending a file"))
 }
 
 func createNewFileTransferControl() sdata.FileTransferControl {

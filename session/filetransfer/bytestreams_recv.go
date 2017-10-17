@@ -9,13 +9,10 @@ import (
 	"io"
 	"net"
 	"os"
-	"strconv"
 
 	"github.com/coyim/coyim/digests"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
-	"github.com/coyim/coyim/xmpp/socks5"
-	"golang.org/x/net/proxy"
 )
 
 // TODO: at some point this should be refactored away into a pure socks5 bytestream implementation and a small piece that is file transfer specific
@@ -145,38 +142,6 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 		s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
 		ift.bytestreamCleanup(conn, ff)
 	}
-}
-
-func tryStreamhost(s access.Session, sh data.BytestreamStreamhost, dstAddr string, k func(net.Conn)) bool {
-	port := sh.Port
-	if port == 0 {
-		port = 1080
-	}
-
-	p, err := s.GetConfig().CreateTorProxy()
-	if err != nil {
-		s.Warn(fmt.Sprintf("Had error when trying to connect: %v", err))
-		return false
-	}
-
-	if p == nil {
-		p = proxy.Direct
-	}
-
-	dialer, e := socks5.XMPP("tcp", net.JoinHostPort(sh.Host, strconv.Itoa(port)), nil, p)
-	if e != nil {
-		s.Info(fmt.Sprintf("Error setting up socks5 for %v: %v", sh, e))
-		return false
-	}
-
-	conn, e2 := dialer.Dial("tcp", net.JoinHostPort(dstAddr, "0"))
-	if e2 != nil {
-		s.Info(fmt.Sprintf("Error connecting socks5 for %v: %v", sh, e2))
-		return false
-	}
-
-	k(conn)
-	return true
 }
 
 // BytestreamQuery is the hook function that will be called when we receive a bytestream query IQ

@@ -31,9 +31,9 @@ type conversationView interface {
 	showFileTransferNotification(name string) *fileNotification
 	getFileTransferNotification() bool
 	startFileTransfer(file *fileNotification)
-	successFileTransfer(fileName string, file *fileNotification)
-	failFileTransfer(fileName string, file *fileNotification)
-	cancelFileTransfer(fileName string, file *fileNotification)
+	successFileTransfer(file *fileNotification)
+	failFileTransfer(file *fileNotification)
+	cancelFileTransfer(file *fileNotification)
 	isFileTransferNotifCanceled() bool
 	show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)

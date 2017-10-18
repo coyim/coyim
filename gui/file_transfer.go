@@ -30,14 +30,12 @@ import (
 //       There will be a cancel button there, that will cancel the file receipt
 
 func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView, file *fileNotification) {
-	fileName := resizeFileName(ev.Name)
-
 	go func() {
 		_, ok := <-ev.Control.TransferFinished
 		if ok {
 
 			doInUIThread(func() {
-				cv.successFileTransfer(fileName, file)
+				cv.successFileTransfer(file)
 			})
 			log.Printf("File transfer of file %s finished with success", ev.Name)
 			close(ev.Control.CancelTransfer)
@@ -55,7 +53,7 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 
 			if file.canceled {
 				doInUIThread(func() {
-					cv.cancelFileTransfer(fileName, file)
+					cv.cancelFileTransfer(file)
 				})
 				ev.Control.CancelTransfer <- true
 				return
@@ -71,7 +69,7 @@ func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView
 		err, ok := <-ev.Control.ErrorOccurred
 		if ok {
 			doInUIThread(func() {
-				cv.failFileTransfer(fileName, file)
+				cv.failFileTransfer(file)
 			})
 			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
 			close(ev.Control.CancelTransfer)

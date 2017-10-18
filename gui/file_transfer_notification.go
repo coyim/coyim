@@ -104,10 +104,10 @@ func (conv *conversationPane) showFileTransferInfo(fileName string) *fileNotific
 	label := "File transfer started"
 	conv.updateFileTransferNotification(label, "Cancel", "filetransfer.svg")
 
-	// TODO: use this name
 	file.name = fileName
 	fileName = "Receiving: " + fileName
 	file.label.SetLabel(fileName)
+	conv.fileTransferNotif.canceled = false
 
 	conv.fileTransferNotif.box.Add(file.area)
 	file.area.ShowAll()
@@ -181,8 +181,7 @@ func (conv *conversationPane) startFileTransfer(file *fileNotification) {
 	conv.fileTransferNotif.progressBar.SetFraction(upd)
 }
 
-// TODO: think on other label
-func (conv *conversationPane) successFileTransfer(fileName string, file *fileNotification) {
+func (conv *conversationPane) successFileTransfer(file *fileNotification) {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -194,7 +193,7 @@ func (conv *conversationPane) successFileTransfer(fileName string, file *fileNot
 	styleContext, _ := file.label.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	fileName = "Received: " + fileName
+	fileName := "Received: " + file.name
 	file.update(fileName)
 	file.success = true
 	file.completed = true
@@ -205,14 +204,14 @@ func (conv *conversationPane) successFileTransfer(fileName string, file *fileNot
 		if any(conv.fileTransferNotif.files, func(f *fileNotification) bool {
 			return f.success
 		}) {
-			label := "File transfer success"
+			label := "File transfer successful"
 			conv.updateFileTransferNotification(label, "Close", "success.svg")
 		}
 	}
 }
 
 // TODO: remove progress on fail
-func (conv *conversationPane) failFileTransfer(fileName string, file *fileNotification) {
+func (conv *conversationPane) failFileTransfer(file *fileNotification) {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -224,21 +223,25 @@ func (conv *conversationPane) failFileTransfer(fileName string, file *fileNotifi
 	styleContext, _ := file.label.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	fileName = "Failed: " + fileName
+	fileName := "Failed: " + file.name
 	file.update(fileName)
 	file.failed = true
 	file.completed = true
 
 	if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {
-		return f.canceled || f.failed
+		return f.completed
 	}) {
-		label := "File transfer failed"
-		conv.updateFileTransferNotification(label, "Close", "failure.svg")
+		if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {
+			return f.canceled || f.failed
+		}) {
+			label := "File transfer failed"
+			conv.updateFileTransferNotification(label, "Close", "failure.svg")
+		}
 	}
 }
 
 // TODO: remove progress on cancel
-func (conv *conversationPane) cancelFileTransfer(fileName string, file *fileNotification) {
+func (conv *conversationPane) cancelFileTransfer(file *fileNotification) {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -250,17 +253,21 @@ func (conv *conversationPane) cancelFileTransfer(fileName string, file *fileNoti
 	styleContext, _ := file.label.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	fileName = "Canceled: " + fileName
+	fileName := "Canceled: " + file.name
 	file.update(fileName)
 	file.canceled = true
 	file.completed = true
 
 	if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {
-		return f.canceled || f.failed
+		return f.completed
 	}) {
-		conv.fileTransferNotif.canceled = true
-		label := "File transfer canceled"
-		conv.updateFileTransferNotification(label, "Close", "failure.svg")
+		if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {
+			return f.canceled || f.failed
+		}) {
+			conv.fileTransferNotif.canceled = true
+			label := "File transfer canceled"
+			conv.updateFileTransferNotification(label, "Close", "failure.svg")
+		}
 	}
 }
 
@@ -268,19 +275,29 @@ func (conv *conversationPane) isFileTransferNotifCanceled() bool {
 	return conv.fileTransferNotif.canceled
 }
 
-// TODO: add name of file
-// TODO: make label red
 func (conv *conversationPane) onDestroyFileTransferNotif() {
 	label := conv.fileTransferNotif.labelButton.GetLabel()
 	if label == "Cancel" {
 		conv.fileTransferNotif.canceled = true
+
+		prov, _ := g.gtk.CssProviderNew()
+
+		css := fmt.Sprintf(`
+	        label { color: #cc3636;
+	             }
+	        `)
+		_ = prov.LoadFromData(css)
+
 		label := "File transfer canceled"
 		conv.updateFileTransferNotification(label, "Close", "failure.svg")
+
 		files := conv.fileTransferNotif.files
 		for i, f := range files {
 			if f.success {
 				break
 			}
+			styleContext, _ := files[i].label.GetStyleContext()
+			styleContext.AddProvider(prov, 9999)
 			files[i].update("Canceled: " + f.name)
 		}
 	} else {

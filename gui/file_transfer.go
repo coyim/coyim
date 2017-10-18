@@ -29,7 +29,7 @@ import (
 //       Or it will get an error message when failed
 //       There will be a cancel button there, that will cancel the file receipt
 
-func (u *gtkUI) startAllListenersFor(ev events.FileTransfer, cv conversationView, file *fileNotification) {
+func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv conversationView, file *fileNotification) {
 	go func() {
 		_, ok := <-ev.Control.TransferFinished
 		if ok {
@@ -135,11 +135,11 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
 			currentFile = cv.showFileTransferNotification(fileName)
-			u.startAllListenersFor(ev, cv, currentFile)
+			u.startAllListenersForFileReceiving(ev, cv, currentFile)
 			ev.Answer <- &name
 		} else {
 			currentFile = cv.showFileTransferInfo(fileName)
-			u.startAllListenersFor(ev, cv, currentFile)
+			u.startAllListenersForFileReceiving(ev, cv, currentFile)
 			ev.Answer <- &name
 		}
 	} else {
@@ -171,11 +171,22 @@ func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, na
 	}()
 }
 
-func (account *account) sendFileTo(peer string, ui *gtkUI) {
-	if file, ok := chooseFileToSend(ui.window); ok {
+func (account *account) sendFileTo(peer string, u *gtkUI) {
+	if file, ok := chooseFileToSend(u.window); ok {
 		ctl := account.session.SendFileTo(peer, file)
 		fstat, _ := os.Stat(file)
-		ui.startAllListenersForFileSending(ctl, file, fstat.Size())
+
+		fileName := resizeFileName(file)
+
+		cv := u.roster.openConversationView(account, peer, true, "")
+
+		if !cv.getFileTransferNotification() {
+			cv.showFileTransferNotification(fileName)
+			u.startAllListenersForFileSending(ctl, file, fstat.Size())
+		} else {
+			cv.showFileTransferInfo(fileName)
+			u.startAllListenersForFileSending(ctl, file, fstat.Size())
+		}
 	}
 }
 

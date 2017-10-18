@@ -28,10 +28,13 @@ type fileTransferNotification struct {
 	button        gtki.Button
 	labelButton   gtki.Label
 	totalProgress float64
+	count         int
 	canceled      bool
 	files         []*fileNotification
 }
 
+// TODO: there is still some issues around more than
+// two transfers on cancel and failed
 func any(vs []*fileNotification, f func(*fileNotification) bool) bool {
 	for _, v := range vs {
 		if f(v) {
@@ -107,6 +110,7 @@ func (conv *conversationPane) showFileTransferInfo(fileName string) *fileNotific
 	file.name = fileName
 	fileName = "Receiving: " + fileName
 	file.label.SetLabel(fileName)
+	conv.fileTransferNotif.count++
 	conv.fileTransferNotif.canceled = false
 
 	conv.fileTransferNotif.box.Add(file.area)
@@ -172,12 +176,13 @@ func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel,
 }
 
 func (conv *conversationPane) startFileTransfer(file *fileNotification) {
-	conv.fileTransferNotif.totalProgress = 0
+	conv.fileTransferNotif.totalProgress = 0.0
 	for i := range conv.fileTransferNotif.files {
+		fmt.Println("THE PROGRESS %d", conv.fileTransferNotif.files[i].progress)
 		conv.fileTransferNotif.totalProgress += conv.fileTransferNotif.files[i].progress
 	}
 
-	upd := conv.fileTransferNotif.totalProgress / float64(len(conv.fileTransferNotif.files))
+	upd := conv.fileTransferNotif.totalProgress / float64(conv.fileTransferNotif.count)
 	conv.fileTransferNotif.progressBar.SetFraction(upd)
 }
 
@@ -210,7 +215,6 @@ func (conv *conversationPane) successFileTransfer(file *fileNotification) {
 	}
 }
 
-// TODO: remove progress on fail
 func (conv *conversationPane) failFileTransfer(file *fileNotification) {
 	prov, _ := g.gtk.CssProviderNew()
 
@@ -227,6 +231,8 @@ func (conv *conversationPane) failFileTransfer(file *fileNotification) {
 	file.update(fileName)
 	file.failed = true
 	file.completed = true
+	file.progress = 0.0
+	conv.fileTransferNotif.count--
 
 	if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {
 		return f.completed
@@ -240,7 +246,6 @@ func (conv *conversationPane) failFileTransfer(file *fileNotification) {
 	}
 }
 
-// TODO: remove progress on cancel
 func (conv *conversationPane) cancelFileTransfer(file *fileNotification) {
 	prov, _ := g.gtk.CssProviderNew()
 
@@ -257,6 +262,8 @@ func (conv *conversationPane) cancelFileTransfer(file *fileNotification) {
 	file.update(fileName)
 	file.canceled = true
 	file.completed = true
+	file.progress = 0.0
+	conv.fileTransferNotif.count--
 
 	if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {
 		return f.completed

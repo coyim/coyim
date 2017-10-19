@@ -27,8 +27,8 @@ type conversationView interface {
 	showIdentityVerificationWarning(*gtkUI)
 	removeIdentityVerificationWarning()
 	updateSecurityWarning()
-	showFileTransferInfo(fileName string) *fileNotification
-	showFileTransferNotification(name string) *fileNotification
+	showFileTransferInfo(fileName, purpose string) *fileNotification
+	showFileTransferNotification(name, purpose string) *fileNotification
 	getFileTransferNotification() bool
 	startFileTransfer(file *fileNotification)
 	successFileTransfer(file *fileNotification)

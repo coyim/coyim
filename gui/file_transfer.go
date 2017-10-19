@@ -3,6 +3,7 @@ package gui
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/data"
@@ -33,7 +34,6 @@ func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv con
 	go func() {
 		_, ok := <-ev.Control.TransferFinished
 		if ok {
-
 			doInUIThread(func() {
 				cv.successFileTransfer(file)
 			})
@@ -51,6 +51,7 @@ func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv con
 			})
 			log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
 
+			// TODO: behaves weirdly on bytestreams
 			if file.canceled {
 				doInUIThread(func() {
 					cv.cancelFileTransfer(file)
@@ -134,11 +135,11 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
-			currentFile = cv.showFileTransferNotification(fileName)
+			currentFile = cv.showFileTransferNotification(fileName, "receive")
 			u.startAllListenersForFileReceiving(ev, cv, currentFile)
 			ev.Answer <- &name
 		} else {
-			currentFile = cv.showFileTransferInfo(fileName)
+			currentFile = cv.showFileTransferInfo(fileName, "receive")
 			u.startAllListenersForFileReceiving(ev, cv, currentFile)
 			ev.Answer <- &name
 		}
@@ -147,10 +148,13 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	}
 }
 
-func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, name string, size int64) {
+func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, cv conversationView, file *fileNotification, name string, size int64) {
 	go func() {
 		err, ok := <-ctl.ErrorOccurred
 		if ok {
+			doInUIThread(func() {
+				cv.failFileTransfer(file)
+			})
 			log.Printf("File transfer of file %s failed with %v", name, err)
 			close(ctl.CancelTransfer)
 		}
@@ -159,6 +163,10 @@ func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, na
 	go func() {
 		_, ok := <-ctl.TransferFinished
 		if ok {
+			doInUIThread(func() {
+				// TODO: change label
+				cv.successFileTransfer(file)
+			})
 			log.Printf("File transfer of file %s finished with success", name)
 			close(ctl.CancelTransfer)
 		}
@@ -166,7 +174,25 @@ func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, na
 
 	go func() {
 		for upd := range ctl.Update {
+			// TODO: check this
+			file.progress = float64((upd*100)/size) / 100
+			doInUIThread(func() {
+				cv.startFileTransfer(file)
+			})
 			log.Printf("File transfer of file %s: %d/%d done", name, upd, size)
+
+			// TODO: this will panic: send on closed channel
+			//if file.canceled {
+			//	doInUIThread(func() {
+			//		cv.cancelFileTransfer(file)
+			//	})
+			//	ctl.CancelTransfer <- true
+			//	return
+			//} else if cv.isFileTransferNotifCanceled() {
+			//	log.Printf("File transfer of file canceled")
+			//	ctl.CancelTransfer <- true
+			//	return
+			//}
 		}
 	}()
 }
@@ -176,16 +202,19 @@ func (account *account) sendFileTo(peer string, u *gtkUI) {
 		ctl := account.session.SendFileTo(peer, file)
 		fstat, _ := os.Stat(file)
 
-		fileName := resizeFileName(file)
+		base := filepath.Base(file)
+		fileName := resizeFileName(base)
 
+		// TODO: open on same window
 		cv := u.roster.openConversationView(account, peer, true, "")
 
+		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
-			cv.showFileTransferNotification(fileName)
-			u.startAllListenersForFileSending(ctl, file, fstat.Size())
+			currentFile = cv.showFileTransferNotification(fileName, "send")
+			u.startAllListenersForFileSending(ctl, cv, currentFile, file, fstat.Size())
 		} else {
-			cv.showFileTransferInfo(fileName)
-			u.startAllListenersForFileSending(ctl, file, fstat.Size())
+			currentFile = cv.showFileTransferInfo(fileName, "send")
+			u.startAllListenersForFileSending(ctl, cv, currentFile, file, fstat.Size())
 		}
 	}
 }

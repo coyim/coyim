@@ -89,7 +89,7 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	return fileTransferNotif
 }
 
-func (conv *conversationPane) showFileTransferInfo(fileName string) *fileNotification {
+func (conv *conversationPane) showFileTransferInfo(fileName, purpose string) *fileNotification {
 	b := newBuilder("FileTransferNotification")
 
 	file := &fileNotification{}
@@ -105,10 +105,16 @@ func (conv *conversationPane) showFileTransferInfo(fileName string) *fileNotific
 	})
 
 	label := "File transfer started"
-	conv.updateFileTransferNotification(label, "Cancel", "filetransfer.svg")
 
 	file.name = fileName
-	fileName = "Receiving: " + fileName
+	if purpose == "send" {
+		fileName = "Sending: " + fileName
+		conv.updateFileTransferNotification(label, "Cancel", "filetransfer_send.svg")
+	} else {
+		fileName = "Receiving: " + fileName
+		conv.updateFileTransferNotification(label, "Cancel", "filetransfer_receive.svg")
+	}
+
 	file.label.SetLabel(fileName)
 	conv.fileTransferNotif.count++
 	conv.fileTransferNotif.canceled = false
@@ -121,7 +127,7 @@ func (conv *conversationPane) showFileTransferInfo(fileName string) *fileNotific
 	return file
 }
 
-func (conv *conversationPane) showFileTransferNotification(fileName string) *fileNotification {
+func (conv *conversationPane) showFileTransferNotification(fileName, purpose string) *fileNotification {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -135,12 +141,10 @@ func (conv *conversationPane) showFileTransferNotification(fileName string) *fil
 	styleContext, _ := conv.fileTransferNotif.area.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	label := "File transfer started"
-	conv.updateFileTransferNotification(label, "Cancel", "filetransfer.svg")
 	conv.fileTransferNotif.progressBar.SetFraction(0.0)
 	conv.fileTransferNotif.canceled = false
 
-	info := conv.showFileTransferInfo(fileName)
+	info := conv.showFileTransferInfo(fileName, purpose)
 
 	conv.fileTransferNotif.area.SetVisible(true)
 
@@ -178,7 +182,6 @@ func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel,
 func (conv *conversationPane) startFileTransfer(file *fileNotification) {
 	conv.fileTransferNotif.totalProgress = 0.0
 	for i := range conv.fileTransferNotif.files {
-		fmt.Println("THE PROGRESS %d", conv.fileTransferNotif.files[i].progress)
 		conv.fileTransferNotif.totalProgress += conv.fileTransferNotif.files[i].progress
 	}
 

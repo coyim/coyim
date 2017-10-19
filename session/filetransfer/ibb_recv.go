@@ -62,13 +62,10 @@ func (ift inflight) ibbCleanup(lock bool) {
 }
 
 func ibbWaitForCancel(s access.Session, ift inflight) {
-	if cancel, ok := <-ift.cancelChannel; ok && cancel {
+	ift.control.WaitForCancel(func() {
 		ift.ibbCleanup(true)
-		close(ift.finishedChannel)
-		close(ift.updateChannel)
-		close(ift.errorChannel)
 		s.Conn().SendIQ(ift.peer, "set", data.IBBClose{Sid: ift.id})
-	}
+	})
 }
 
 // IbbOpen is the hook function that will be called when we receive an ibb open IQ
@@ -138,7 +135,7 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	// has just been wrapped around. Thus, we do this deviation from the spec here.
 	if tag.Sequence != ctx.expectingSequence {
 		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
-		inflight.reportError(errors.New("Unexpected data sent from the peer"))
+		inflight.control.ReportError(errors.New("Unexpected data sent from the peer"))
 		inflight.ibbCleanup(false)
 		return iqErrorUnexpectedRequest, "error", false
 	}
@@ -148,7 +145,7 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	result, err := base64.StdEncoding.DecodeString(tag.Base64)
 	if err != nil {
 		s.Warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
-		inflight.reportError(errors.New("Corrupt data sent by the peer"))
+		inflight.control.ReportError(errors.New("Corrupt data sent by the peer"))
 		inflight.ibbCleanup(false)
 		return iqErrorIBBBadRequest, "error", false
 
@@ -157,12 +154,12 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	var n int
 	if n, err = ctx.f.Write(result); err != nil {
 		s.Warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
-		inflight.reportError(errors.New("Couldn't write data to the file system"))
+		inflight.control.ReportError(errors.New("Couldn't write data to the file system"))
 		inflight.ibbCleanup(false)
 		return iqErrorNotAcceptable, "error", false
 	}
 	ctx.currentSize += int64(n)
-	inflight.updateChannel <- ctx.currentSize
+	inflight.control.SendUpdate(ctx.currentSize)
 
 	return data.EmptyReply{}, "", false
 }
@@ -201,7 +198,7 @@ func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Exte
 	if tag.Sequence != ctx.expectingSequence {
 		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ctx.expectingSequence, tag.Sequence))
 		// we can't actually send anything back to indicate this problem...
-		inflight.reportError(errors.New("Unexpected data sent from the peer"))
+		inflight.control.ReportError(errors.New("Unexpected data sent from the peer"))
 		inflight.ibbCleanup(false)
 		return
 	}
@@ -212,7 +209,7 @@ func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Exte
 	if err != nil {
 		s.Warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
 		// we can't actually send anything back to indicate this problem...
-		inflight.reportError(errors.New("Corrupt data sent by the peer"))
+		inflight.control.ReportError(errors.New("Corrupt data sent by the peer"))
 		inflight.ibbCleanup(false)
 		return
 
@@ -221,12 +218,12 @@ func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Exte
 	var n int
 	if n, err = ctx.f.Write(result); err != nil {
 		s.Warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
-		inflight.reportError(errors.New("Couldn't write data to the file system"))
+		inflight.control.ReportError(errors.New("Couldn't write data to the file system"))
 		inflight.ibbCleanup(false)
 		return
 	}
 	ctx.currentSize += int64(n)
-	inflight.updateChannel <- ctx.currentSize
+	inflight.control.SendUpdate(ctx.currentSize)
 }
 
 // IbbClose is the hook function that will be called when we receive an ibb close IQ
@@ -265,7 +262,7 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
 	if ctx.currentSize != inflight.size || fstat.Size() != ctx.currentSize {
 		s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", inflight.size, fstat.Size()))
-		inflight.reportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
+		inflight.control.ReportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
 		inflight.ibbCleanup(false)
 		return data.EmptyReply{}, "", false
 	}

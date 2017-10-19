@@ -8,12 +8,12 @@ type FileTransferControl struct {
 	transferFinished chan bool  // one time use
 }
 
-func NewFileTransferControl(c chan bool, e chan error, u chan int64, t chan bool) FileTransferControl {
+func newFileTransferControl(c chan bool, e chan error, u chan int64, t chan bool) FileTransferControl {
 	return FileTransferControl{cancelTransfer: c, errorOccurred: e, update: u, transferFinished: t}
 }
 
 func CreateFileTransferControl() FileTransferControl {
-	return NewFileTransferControl(make(chan bool), make(chan error), make(chan int64, 1000), make(chan bool))
+	return newFileTransferControl(make(chan bool), make(chan error), make(chan int64, 1000), make(chan bool))
 }
 
 func (ctl FileTransferControl) WaitForFinish(k func()) {

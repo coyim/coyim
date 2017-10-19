@@ -42,12 +42,9 @@ type inflight struct {
 		length *int
 		offset *int
 	}
-	peer            string
-	status          *inflightStatus
-	cancelChannel   <-chan bool
-	errorChannel    chan<- error
-	updateChannel   chan<- int64
-	finishedChannel chan<- bool
+	peer    string
+	status  *inflightStatus
+	control sdata.FileTransferControl
 }
 
 var inflights struct {
@@ -137,11 +134,11 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 
 func (ift inflight) finalizeFileTransfer(tempName string) error {
 	if err := os.Rename(tempName, ift.status.destination); err != nil {
-		ift.reportError(errors.New("Couldn't save final file"))
+		ift.control.ReportError(errors.New("Couldn't save final file"))
 		return err
 	}
 
-	ift.reportFinished()
+	ift.control.ReportFinished()
 	removeInflight(ift.id)
 
 	return nil
@@ -154,25 +151,10 @@ func (ift inflight) openDestinationTempFile() (f *os.File, err error) {
 	f, err = ioutil.TempFile(filepath.Dir(ift.status.destination), filepath.Base(ift.status.destination))
 	if err != nil {
 		ift.status.opaque = nil
-		ift.reportError(errors.New("Couldn't open local temporary file"))
+		ift.control.ReportError(errors.New("Couldn't open local temporary file"))
 		removeInflight(ift.id)
 	}
 	return
-}
-
-// TODO: these needs to be fixed to use FileTransferControl for safety
-func (ift inflight) reportError(e error) {
-	close(ift.finishedChannel)
-	close(ift.updateChannel)
-	ift.errorChannel <- e
-	close(ift.errorChannel)
-}
-
-func (ift inflight) reportFinished() {
-	close(ift.errorChannel)
-	close(ift.updateChannel)
-	ift.finishedChannel <- true
-	close(ift.finishedChannel)
 }
 
 func waitForFileTransferUserAcceptance(s access.Session, stanza *data.ClientIQ, si data.SI, acceptResult <-chan *string, ift inflight) {
@@ -187,7 +169,7 @@ func waitForFileTransferUserAcceptance(s access.Session, stanza *data.ClientIQ, 
 			go fileTransferCancelListeners[opt](s, ift)
 			return
 		}
-		ift.reportError(errors.New("No mutually acceptable file transfer methods available"))
+		ift.control.ReportError(errors.New("No mutually acceptable file transfer methods available"))
 		error = &iqErrorBadRequest
 	} else {
 		error = &iqErrorForbidden
@@ -196,22 +178,19 @@ func waitForFileTransferUserAcceptance(s access.Session, stanza *data.ClientIQ, 
 	s.SendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(si data.SI, options []string, stanza *data.ClientIQ, f *data.File, cc <-chan bool, ec chan<- error, uc chan<- int64, fc chan<- bool) inflight {
+func registerNewFileTransfer(si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl sdata.FileTransferControl) inflight {
 	ift := inflight{
-		id:              si.ID,
-		mime:            si.MIMEType,
-		options:         options,
-		date:            f.Date,
-		hash:            f.Hash,
-		name:            f.Name,
-		size:            f.Size,
-		desc:            f.Desc,
-		peer:            stanza.From,
-		status:          &inflightStatus{},
-		cancelChannel:   cc,
-		errorChannel:    ec,
-		updateChannel:   uc,
-		finishedChannel: fc,
+		id:      si.ID,
+		mime:    si.MIMEType,
+		options: options,
+		date:    f.Date,
+		hash:    f.Hash,
+		name:    f.Name,
+		size:    f.Size,
+		desc:    f.Desc,
+		peer:    stanza.From,
+		status:  &inflightStatus{},
+		control: ctl,
 	}
 
 	if f.Range != nil {
@@ -236,11 +215,8 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 
 	f := si.File
 
-	cancelChannel := make(chan bool)
-	errorChannel := make(chan error)
-	updateChannel := make(chan int64, 1000)
-	finishedChannel := make(chan bool)
-	ift := registerNewFileTransfer(si, options, stanza, f, cancelChannel, errorChannel, updateChannel, finishedChannel)
+	ctl := sdata.CreateFileTransferControl()
+	ift := registerNewFileTransfer(si, options, stanza, f, ctl)
 
 	acceptResult := make(chan *string)
 	go waitForFileTransferUserAcceptance(s, stanza, si, acceptResult, ift)
@@ -254,7 +230,7 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 		Size:             f.Size,
 		Description:      f.Desc,
 		Answer:           acceptResult,
-		Control:          sdata.NewFileTransferControl(cancelChannel, errorChannel, updateChannel, finishedChannel),
+		Control:          ctl,
 	})
 
 	return nil, "", true

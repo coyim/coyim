@@ -23,13 +23,10 @@ type bytestreamContext struct {
 }
 
 func bytestreamWaitForCancel(s access.Session, ift inflight) {
-	if cancel, ok := <-ift.cancelChannel; ok && cancel {
+	ift.control.WaitForCancel(func() {
 		ift.status.opaque.(*bytestreamContext).cancel <- true
 		removeInflight(ift.id)
-		close(ift.finishedChannel)
-		close(ift.updateChannel)
-		close(ift.errorChannel)
-	}
+	})
 }
 
 func bytestreamInitialSetup(s access.Session, stanza *data.ClientIQ) (tag data.BytestreamQuery, inflight inflight, earlyReturn bool) {
@@ -109,7 +106,7 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 		if err != nil {
 			if err != io.EOF {
 				s.Warn(fmt.Sprintf("Had error when trying to read from connection: %v", err))
-				ift.reportError(errors.New("Error reading from peer"))
+				ift.control.ReportError(errors.New("Error reading from peer"))
 				ift.bytestreamCleanup(conn, ff)
 				return
 			}
@@ -118,14 +115,13 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 		_, err = ff.Write(buf[:n])
 		if err != nil {
 			s.Warn(fmt.Sprintf("Had error when trying to write to file: %v", err))
-			ift.reportError(errors.New("Error writing to file"))
+			ift.control.ReportError(errors.New("Error writing to file"))
 			ift.bytestreamCleanup(conn, ff)
 			return
 		}
 		totalWritten += int64(n)
 		writes++
-		// TODO: this needs to be fixed to be safe
-		ift.updateChannel <- totalWritten
+		ift.control.SendUpdate(totalWritten)
 	}
 
 	fstat, _ := ff.Stat()
@@ -133,7 +129,7 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
 	if totalWritten != ift.size || fstat.Size() != totalWritten {
 		s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", ift.size, fstat.Size()))
-		ift.reportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
+		ift.control.ReportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
 		ift.bytestreamCleanup(conn, ff)
 		return
 	}

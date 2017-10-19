@@ -16,6 +16,8 @@ import (
 	"github.com/coyim/coyim/xmpp/utils"
 )
 
+// TODO: increase buffer size to something larger.
+
 func init() {
 	registerSendFileTransferMethod("http://jabber.org/protocol/bytestreams", bytestreamsSendDo, bytestreamsSendCurrentlyValid)
 }

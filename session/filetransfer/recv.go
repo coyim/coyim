@@ -44,7 +44,7 @@ type inflight struct {
 	}
 	peer    string
 	status  *inflightStatus
-	control sdata.FileTransferControl
+	control *sdata.FileTransferControl
 }
 
 var inflights struct {
@@ -178,7 +178,7 @@ func waitForFileTransferUserAcceptance(s access.Session, stanza *data.ClientIQ, 
 	s.SendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl sdata.FileTransferControl) inflight {
+func registerNewFileTransfer(si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl *sdata.FileTransferControl) inflight {
 	ift := inflight{
 		id:      si.ID,
 		mime:    si.MIMEType,

@@ -136,7 +136,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	}
 }
 
-func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, cv conversationView, file *fileNotification, name string, size int64) {
+func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, cv conversationView, file *fileNotification, name string, size int64) {
 	go ctl.WaitForError(func(err error) {
 		doInUIThread(func() {
 			cv.failFileTransfer(file)
@@ -161,17 +161,15 @@ func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, cv
 		log.Printf("File transfer of file %s: %d/%d done", name, upd, size)
 
 		// TODO: this will panic: send on closed channel
-		//if file.canceled {
-		//	doInUIThread(func() {
-		//		cv.cancelFileTransfer(file)
-		//	})
-		//	ctl.CancelTransfer <- true
-		//	return
-		//} else if cv.isFileTransferNotifCanceled() {
-		//	log.Printf("File transfer of file canceled")
-		//	ctl.CancelTransfer <- true
-		//	return
-		//}
+		// if file.canceled {
+		// 	doInUIThread(func() {
+		// 		cv.cancelFileTransfer(file)
+		// 	})
+		// 	ctl.Cancel()
+		// } else if cv.isFileTransferNotifCanceled() {
+		// 	log.Printf("File transfer of file canceled")
+		// 	ctl.Cancel()
+		// }
 	})
 }
 

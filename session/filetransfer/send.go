@@ -124,7 +124,7 @@ type sendContext struct {
 	weWantToCancel   bool
 	theyWantToCancel bool
 	totalSent        int64
-	control          sdata.FileTransferControl
+	control          *sdata.FileTransferControl
 }
 
 func (ctx *sendContext) notifyUserThatSendStarted(s access.Session, method string) {
@@ -156,7 +156,7 @@ func (ctx *sendContext) initSend(s access.Session) {
 }
 
 // InitSend starts the process of sending a file to a peer
-func InitSend(s access.Session, peer string, file string) sdata.FileTransferControl {
+func InitSend(s access.Session, peer string, file string) *sdata.FileTransferControl {
 	ctx := &sendContext{
 		peer:    peer,
 		file:    file,

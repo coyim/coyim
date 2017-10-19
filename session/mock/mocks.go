@@ -191,6 +191,6 @@ func (*SessionMock) SendIQError(*data.ClientIQ, interface{}) {}
 func (*SessionMock) SendIQResult(*data.ClientIQ, interface{}) {}
 
 // SendFileTo is the implementation for Session interface
-func (*SessionMock) SendFileTo(string, string) sdata.FileTransferControl {
-	return sdata.FileTransferControl{}
+func (*SessionMock) SendFileTo(string, string) *sdata.FileTransferControl {
+	return nil
 }

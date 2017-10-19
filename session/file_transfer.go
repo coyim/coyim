@@ -16,7 +16,7 @@ func init() {
 	registerKnownExtension("http://jabber.org/protocol/ibb data", filetransfer.IbbMessageData)
 }
 
-func (s *session) SendFileTo(peer, filename string) data.FileTransferControl {
+func (s *session) SendFileTo(peer, filename string) *data.FileTransferControl {
 	s.info(fmt.Sprintf("SendFileTo(%s, %s)", peer, filename))
 	return filetransfer.InitSend(s, peer, filename)
 }

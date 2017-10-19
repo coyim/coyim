@@ -111,7 +111,7 @@ type FileTransfer struct {
 	Description      string
 
 	Answer  chan<- *string // one time use
-	Control sdata.FileTransferControl
+	Control *sdata.FileTransferControl
 }
 
 // SMP is an event related to SMP

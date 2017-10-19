@@ -31,51 +31,39 @@ import (
 //       There will be a cancel button there, that will cancel the file receipt
 
 func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv conversationView, file *fileNotification) {
-	go func() {
-		_, ok := <-ev.Control.TransferFinished
-		if ok {
+	go ev.Control.WaitForFinish(func() {
+		doInUIThread(func() {
+			cv.successFileTransfer(file)
+		})
+		log.Printf("File transfer of file %s finished with success", ev.Name)
+	})
+
+	go ev.Control.WaitForUpdate(func(upd int64) {
+		file.progress = float64((upd*100)/ev.Size) / 100
+
+		doInUIThread(func() {
+			cv.startFileTransfer(file)
+		})
+		log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
+
+		// TODO: behaves weirdly on bytestreams
+		if file.canceled {
 			doInUIThread(func() {
-				cv.successFileTransfer(file)
+				cv.cancelFileTransfer(file)
 			})
-			log.Printf("File transfer of file %s finished with success", ev.Name)
-			close(ev.Control.CancelTransfer)
+			ev.Control.Cancel()
+		} else if cv.isFileTransferNotifCanceled() {
+			log.Printf("File transfer of file canceled")
+			ev.Control.Cancel()
 		}
-	}()
+	})
 
-	go func() {
-		for upd := range ev.Control.Update {
-			file.progress = float64((upd*100)/ev.Size) / 100
-
-			doInUIThread(func() {
-				cv.startFileTransfer(file)
-			})
-			log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
-
-			// TODO: behaves weirdly on bytestreams
-			if file.canceled {
-				doInUIThread(func() {
-					cv.cancelFileTransfer(file)
-				})
-				ev.Control.CancelTransfer <- true
-				return
-			} else if cv.isFileTransferNotifCanceled() {
-				log.Printf("File transfer of file canceled")
-				ev.Control.CancelTransfer <- true
-				return
-			}
-		}
-	}()
-
-	go func() {
-		err, ok := <-ev.Control.ErrorOccurred
-		if ok {
-			doInUIThread(func() {
-				cv.failFileTransfer(file)
-			})
-			log.Printf("File transfer of file %s failed with %v", ev.Name, err)
-			close(ev.Control.CancelTransfer)
-		}
-	}()
+	go ev.Control.WaitForError(func(err error) {
+		doInUIThread(func() {
+			cv.failFileTransfer(file)
+		})
+		log.Printf("File transfer of file %s failed with %v", ev.Name, err)
+	})
 }
 
 func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
@@ -149,52 +137,42 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 }
 
 func (u *gtkUI) startAllListenersForFileSending(ctl data.FileTransferControl, cv conversationView, file *fileNotification, name string, size int64) {
-	go func() {
-		err, ok := <-ctl.ErrorOccurred
-		if ok {
-			doInUIThread(func() {
-				cv.failFileTransfer(file)
-			})
-			log.Printf("File transfer of file %s failed with %v", name, err)
-			close(ctl.CancelTransfer)
-		}
-	}()
+	go ctl.WaitForError(func(err error) {
+		doInUIThread(func() {
+			cv.failFileTransfer(file)
+		})
+		log.Printf("File transfer of file %s failed with %v", name, err)
+	})
 
-	go func() {
-		_, ok := <-ctl.TransferFinished
-		if ok {
-			doInUIThread(func() {
-				// TODO: change label
-				cv.successFileTransfer(file)
-			})
-			log.Printf("File transfer of file %s finished with success", name)
-			close(ctl.CancelTransfer)
-		}
-	}()
+	go ctl.WaitForFinish(func() {
+		doInUIThread(func() {
+			// TODO: change label
+			cv.successFileTransfer(file)
+		})
+		log.Printf("File transfer of file %s finished with success", name)
+	})
 
-	go func() {
-		for upd := range ctl.Update {
-			// TODO: check this
-			file.progress = float64((upd*100)/size) / 100
-			doInUIThread(func() {
-				cv.startFileTransfer(file)
-			})
-			log.Printf("File transfer of file %s: %d/%d done", name, upd, size)
+	go ctl.WaitForUpdate(func(upd int64) {
+		// TODO: check this
+		file.progress = float64((upd*100)/size) / 100
+		doInUIThread(func() {
+			cv.startFileTransfer(file)
+		})
+		log.Printf("File transfer of file %s: %d/%d done", name, upd, size)
 
-			// TODO: this will panic: send on closed channel
-			//if file.canceled {
-			//	doInUIThread(func() {
-			//		cv.cancelFileTransfer(file)
-			//	})
-			//	ctl.CancelTransfer <- true
-			//	return
-			//} else if cv.isFileTransferNotifCanceled() {
-			//	log.Printf("File transfer of file canceled")
-			//	ctl.CancelTransfer <- true
-			//	return
-			//}
-		}
-	}()
+		// TODO: this will panic: send on closed channel
+		//if file.canceled {
+		//	doInUIThread(func() {
+		//		cv.cancelFileTransfer(file)
+		//	})
+		//	ctl.CancelTransfer <- true
+		//	return
+		//} else if cv.isFileTransferNotifCanceled() {
+		//	log.Printf("File transfer of file canceled")
+		//	ctl.CancelTransfer <- true
+		//	return
+		//}
+	})
 }
 
 func (account *account) sendFileTo(peer string, u *gtkUI) {

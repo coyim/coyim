@@ -2,61 +2,120 @@ package data
 
 // FileTransferControl supplies the capabilities to control the file transfer
 type FileTransferControl struct {
-	CancelTransfer   chan bool  // one time use
-	ErrorOccurred    chan error // one time use
-	Update           chan int64 // will be called many times
-	TransferFinished chan bool  // one time use
+	cancelTransfer   chan bool  // one time use
+	errorOccurred    chan error // one time use
+	update           chan int64 // will be called many times
+	transferFinished chan bool  // one time use
+}
+
+func NewFileTransferControl(c chan bool, e chan error, u chan int64, t chan bool) FileTransferControl {
+	return FileTransferControl{cancelTransfer: c, errorOccurred: e, update: u, transferFinished: t}
+}
+
+func CreateFileTransferControl() FileTransferControl {
+	return NewFileTransferControl(make(chan bool), make(chan error), make(chan int64, 1000), make(chan bool))
+}
+
+func (ctl FileTransferControl) WaitForFinish(k func()) {
+	_, ok := <-ctl.transferFinished
+	if ok {
+		k()
+		close(ctl.cancelTransfer)
+	}
+}
+
+func (ctl FileTransferControl) WaitForError(k func(error)) {
+	e, ok := <-ctl.errorOccurred
+	if ok {
+		k(e)
+		close(ctl.cancelTransfer)
+	}
+}
+
+func (ctl FileTransferControl) WaitForCancel(k func()) {
+	if cancel, ok := <-ctl.cancelTransfer; ok && cancel {
+		k()
+		ctl.CloseAll()
+	}
+}
+
+func (ctl FileTransferControl) WaitForUpdate(k func(int64)) {
+	for upd := range ctl.update {
+		k(upd)
+	}
+}
+
+func (ctl FileTransferControl) Cancel() {
+	ctl.cancelTransfer <- true
 }
 
 func (ctl FileTransferControl) ReportError(e error) {
-	one := ctl.TransferFinished
-	ctl.TransferFinished = nil
-	if one != nil {
-		close(one)
-	}
+	ctl.closeTransferFinished()
+	ctl.closeUpdate()
+	ctl.sendAndCloseErrorOccurred(e)
+}
 
-	two := ctl.Update
-	ctl.Update = nil
-	if two != nil {
-		close(two)
-	}
-
-	three := ctl.ErrorOccurred
-	ctl.ErrorOccurred = nil
-	if three != nil {
-		three <- e
-		close(three)
-	}
+func (ctl FileTransferControl) ReportErrorNonblocking(e error) {
+	go ctl.ReportError(e)
 }
 
 func (ctl FileTransferControl) ReportFinished() {
-	one := ctl.ErrorOccurred
-	ctl.ErrorOccurred = nil
-	if one != nil {
-		close(one)
-	}
-
-	two := ctl.Update
-	ctl.Update = nil
-	if two != nil {
-		close(two)
-	}
-
-	three := ctl.TransferFinished
-	ctl.TransferFinished = nil
-	if three != nil {
-		three <- true
-		close(three)
-	}
+	ctl.closeErrorOccurred()
+	ctl.closeUpdate()
+	ctl.sendAndCloseTransferFinished(true)
 }
 
 func (ctl FileTransferControl) SendUpdate(v int64) {
-	one := ctl.Update
+	one := ctl.update
 	if one != nil {
 		one <- v
 	}
 }
 
-func (ctl FileTransferControl) ReportErrorNonblocking(e error) {
-	go ctl.ReportError(e)
+func (ctl FileTransferControl) CloseAll() {
+	ctl.closeTransferFinished()
+	ctl.closeUpdate()
+	ctl.closeErrorOccurred()
+}
+
+func (ctl FileTransferControl) closeTransferFinished() {
+	c := ctl.transferFinished
+	ctl.transferFinished = nil
+	if c != nil {
+		close(c)
+	}
+}
+
+func (ctl FileTransferControl) closeUpdate() {
+	c := ctl.update
+	ctl.update = nil
+	if c != nil {
+		close(c)
+	}
+}
+
+func (ctl FileTransferControl) closeErrorOccurred() {
+	c := ctl.errorOccurred
+	ctl.errorOccurred = nil
+	if c != nil {
+		close(c)
+	}
+}
+
+func (ctl FileTransferControl) sendAndCloseErrorOccurred(e error) {
+	c := ctl.errorOccurred
+	ctl.errorOccurred = nil
+	if c != nil {
+		c <- e
+		close(c)
+	}
+}
+
+func (ctl FileTransferControl) sendAndCloseTransferFinished(v bool) {
+	c := ctl.transferFinished
+	ctl.transferFinished = nil
+	if c != nil {
+		c <- v
+		close(c)
+	}
 }

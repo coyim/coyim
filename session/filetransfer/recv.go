@@ -254,12 +254,7 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 		Size:             f.Size,
 		Description:      f.Desc,
 		Answer:           acceptResult,
-		Control: sdata.FileTransferControl{
-			CancelTransfer:   cancelChannel,
-			ErrorOccurred:    errorChannel,
-			Update:           updateChannel,
-			TransferFinished: finishedChannel,
-		},
+		Control:          sdata.NewFileTransferControl(cancelChannel, errorChannel, updateChannel, finishedChannel),
 	})
 
 	return nil, "", true

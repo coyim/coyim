@@ -52,9 +52,7 @@ func (ctx *sendContext) ibbSendChunk(s access.Session, r io.ReadCloser, buffer [
 		removeInflightSend(ctx)
 		return false
 	} else if ctx.theyWantToCancel {
-		close(ctx.control.TransferFinished)
-		close(ctx.control.Update)
-		close(ctx.control.ErrorOccurred)
+		ctx.control.CloseAll()
 		removeInflightSend(ctx)
 		return false
 	}

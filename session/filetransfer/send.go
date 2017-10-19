@@ -139,21 +139,9 @@ func isValidSubmitForm(siq data.SI) bool {
 }
 
 func (ctx *sendContext) listenForCancellation() {
-	if cancel, ok := <-ctx.control.CancelTransfer; ok && cancel {
+	ctx.control.WaitForCancel(func() {
 		ctx.weWantToCancel = true
-		close(ctx.control.TransferFinished)
-		close(ctx.control.Update)
-		close(ctx.control.ErrorOccurred)
-	}
-}
-
-func createNewFileTransferControl() sdata.FileTransferControl {
-	return sdata.FileTransferControl{
-		CancelTransfer:   make(chan bool),
-		ErrorOccurred:    make(chan error),
-		Update:           make(chan int64, 1000),
-		TransferFinished: make(chan bool),
-	}
+	})
 }
 
 func (ctx *sendContext) initSend(s access.Session) {
@@ -172,7 +160,7 @@ func InitSend(s access.Session, peer string, file string) sdata.FileTransferCont
 	ctx := &sendContext{
 		peer:    peer,
 		file:    file,
-		control: createNewFileTransferControl(),
+		control: sdata.CreateFileTransferControl(),
 	}
 	go ctx.initSend(s)
 	return ctx.control

@@ -16,7 +16,7 @@ import (
 	"github.com/coyim/coyim/xmpp/utils"
 )
 
-// TODO: increase buffer size to something larger.
+const bufSize = 64 * 4096
 
 func init() {
 	registerSendFileTransferMethod("http://jabber.org/protocol/bytestreams", bytestreamsSendDo, bytestreamsSendCurrentlyValid)
@@ -94,7 +94,7 @@ func bytestreamsGetCurrentValidProxies(s access.Session, ctx *sendContext) []*da
 func (ctx *sendContext) bytestreamsSendData(s access.Session, c net.Conn) {
 	defer c.Close()
 
-	buffer := make([]byte, 4096)
+	buffer := make([]byte, bufSize)
 	r, err := os.Open(ctx.file)
 	if err != nil {
 		ctx.control.ReportError(err)

@@ -85,7 +85,7 @@ func (ctx *sendContext) ibbSendChunk(s access.Session, r io.ReadCloser, buffer [
 		return false
 	}
 	ctx.totalSent += int64(n)
-	ctx.control.Update <- ctx.totalSent
+	ctx.control.SendUpdate(ctx.totalSent)
 
 	go ctx.trackResultOfSend(s, rpl)
 

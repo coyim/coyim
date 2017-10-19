@@ -124,7 +124,7 @@ func (ctx *sendContext) bytestreamsSendData(s access.Session, c net.Conn) {
 			return
 		}
 		ctx.totalSent += int64(n)
-		ctx.control.Update <- ctx.totalSent
+		ctx.control.SendUpdate(ctx.totalSent)
 	}
 }
 

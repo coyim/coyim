@@ -160,6 +160,7 @@ func (ift inflight) openDestinationTempFile() (f *os.File, err error) {
 	return
 }
 
+// TODO: these needs to be fixed to use FileTransferControl for safety
 func (ift inflight) reportError(e error) {
 	close(ift.finishedChannel)
 	close(ift.updateChannel)

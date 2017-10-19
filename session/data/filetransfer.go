@@ -9,17 +9,52 @@ type FileTransferControl struct {
 }
 
 func (ctl FileTransferControl) ReportError(e error) {
-	close(ctl.TransferFinished)
-	close(ctl.Update)
-	ctl.ErrorOccurred <- e
-	close(ctl.ErrorOccurred)
+	one := ctl.TransferFinished
+	ctl.TransferFinished = nil
+	if one != nil {
+		close(one)
+	}
+
+	two := ctl.Update
+	ctl.Update = nil
+	if two != nil {
+		close(two)
+	}
+
+	three := ctl.ErrorOccurred
+	ctl.ErrorOccurred = nil
+	if three != nil {
+		three <- e
+		close(three)
+	}
 }
 
 func (ctl FileTransferControl) ReportFinished() {
-	close(ctl.ErrorOccurred)
-	close(ctl.Update)
-	ctl.TransferFinished <- true
-	close(ctl.TransferFinished)
+	one := ctl.ErrorOccurred
+	ctl.ErrorOccurred = nil
+	if one != nil {
+		close(one)
+	}
+
+	two := ctl.Update
+	ctl.Update = nil
+	if two != nil {
+		close(two)
+	}
+
+	three := ctl.TransferFinished
+	ctl.TransferFinished = nil
+	if three != nil {
+		three <- true
+		close(three)
+	}
+}
+
+func (ctl FileTransferControl) SendUpdate(v int64) {
+	one := ctl.Update
+	if one != nil {
+		one <- v
+	}
 }
 
 func (ctl FileTransferControl) ReportErrorNonblocking(e error) {

@@ -124,6 +124,7 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 		}
 		totalWritten += int64(n)
 		writes++
+		// TODO: this needs to be fixed to be safe
 		ift.updateChannel <- totalWritten
 	}
 

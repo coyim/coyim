@@ -31,7 +31,7 @@ type conversationView interface {
 	showFileTransferNotification(name, purpose string) *fileNotification
 	getFileTransferNotification() bool
 	startFileTransfer(file *fileNotification)
-	successFileTransfer(file *fileNotification)
+	successFileTransfer(file *fileNotification, purpose string)
 	failFileTransfer(file *fileNotification)
 	cancelFileTransfer(file *fileNotification)
 	isFileTransferNotifCanceled() bool

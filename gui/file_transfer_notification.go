@@ -66,6 +66,7 @@ func resizeFileName(name string) string {
 
 func (file *fileNotification) destroy() {
 	file.canceled = true
+	file.progress = 0.0
 }
 
 func (file *fileNotification) update(fileName string) {
@@ -118,6 +119,7 @@ func (conv *conversationPane) showFileTransferInfo(fileName, purpose string) *fi
 	file.label.SetLabel(fileName)
 	conv.fileTransferNotif.count++
 	conv.fileTransferNotif.canceled = false
+	conv.fileTransferNotif.totalProgress = 0.0
 
 	conv.fileTransferNotif.box.Add(file.area)
 	file.area.ShowAll()
@@ -184,12 +186,18 @@ func (conv *conversationPane) startFileTransfer(file *fileNotification) {
 	for i := range conv.fileTransferNotif.files {
 		conv.fileTransferNotif.totalProgress += conv.fileTransferNotif.files[i].progress
 	}
+	// TODO: stupid floating point
+	var upd float64
+	if conv.fileTransferNotif.count == 0 {
+		upd = conv.fileTransferNotif.totalProgress / 1.0
+	} else {
+		upd = conv.fileTransferNotif.totalProgress / float64(conv.fileTransferNotif.count)
+	}
 
-	upd := conv.fileTransferNotif.totalProgress / float64(conv.fileTransferNotif.count)
 	conv.fileTransferNotif.progressBar.SetFraction(upd)
 }
 
-func (conv *conversationPane) successFileTransfer(file *fileNotification) {
+func (conv *conversationPane) successFileTransfer(file *fileNotification, purpose string) {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -201,7 +209,13 @@ func (conv *conversationPane) successFileTransfer(file *fileNotification) {
 	styleContext, _ := file.label.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 
-	fileName := "Received: " + file.name
+	var fileName string
+	if purpose == "send" {
+		fileName = "Sent: " + fileName
+	} else {
+		fileName = "Received: " + fileName
+	}
+
 	file.update(fileName)
 	file.success = true
 	file.completed = true

@@ -28,9 +28,9 @@ type fileTransferNotification struct {
 	button        gtki.Button
 	labelButton   gtki.Label
 	totalProgress float64
+	files         []*fileNotification
 	count         int
 	canceled      bool
-	files         []*fileNotification
 }
 
 // TODO: there is still some issues around more than
@@ -66,7 +66,7 @@ func resizeFileName(name string) string {
 
 func (file *fileNotification) destroy() {
 	file.canceled = true
-	file.progress = 0.0
+	file.progress = 0
 }
 
 func (file *fileNotification) update(fileName string) {
@@ -119,7 +119,7 @@ func (conv *conversationPane) showFileTransferInfo(fileName, purpose string) *fi
 	file.label.SetLabel(fileName)
 	conv.fileTransferNotif.count++
 	conv.fileTransferNotif.canceled = false
-	conv.fileTransferNotif.totalProgress = 0.0
+	conv.fileTransferNotif.totalProgress = 0
 
 	conv.fileTransferNotif.box.Add(file.area)
 	file.area.ShowAll()
@@ -182,14 +182,14 @@ func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel,
 }
 
 func (conv *conversationPane) startFileTransfer(file *fileNotification) {
-	conv.fileTransferNotif.totalProgress = 0.0
+	conv.fileTransferNotif.totalProgress = 0
 	for i := range conv.fileTransferNotif.files {
 		conv.fileTransferNotif.totalProgress += conv.fileTransferNotif.files[i].progress
 	}
-	// TODO: stupid floating point
+
 	var upd float64
 	if conv.fileTransferNotif.count == 0 {
-		upd = conv.fileTransferNotif.totalProgress / 1.0
+		upd = conv.fileTransferNotif.totalProgress
 	} else {
 		upd = conv.fileTransferNotif.totalProgress / float64(conv.fileTransferNotif.count)
 	}
@@ -248,7 +248,7 @@ func (conv *conversationPane) failFileTransfer(file *fileNotification) {
 	file.update(fileName)
 	file.failed = true
 	file.completed = true
-	file.progress = 0.0
+	file.progress = 0
 	conv.fileTransferNotif.count--
 
 	if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {
@@ -279,7 +279,7 @@ func (conv *conversationPane) cancelFileTransfer(file *fileNotification) {
 	file.update(fileName)
 	file.canceled = true
 	file.completed = true
-	file.progress = 0.0
+	file.progress = 0
 	conv.fileTransferNotif.count--
 
 	if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {
@@ -332,5 +332,6 @@ func (conv *conversationPane) onDestroyFileTransferNotif() {
 			conv.fileTransferNotif.files[i].area.Destroy()
 		}
 		conv.fileTransferNotif.files = conv.fileTransferNotif.files[:0]
+		conv.fileTransferNotif.count = 0
 	}
 }

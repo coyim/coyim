@@ -137,6 +137,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 }
 
 func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, cv conversationView, file *fileNotification, name string, size int64) {
+	// TODO: this updates slowly
 	go ctl.WaitForError(func(err error) {
 		doInUIThread(func() {
 			cv.failFileTransfer(file)
@@ -152,14 +153,12 @@ func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, c
 	})
 
 	go ctl.WaitForUpdate(func(upd int64) {
-		// TODO: check this
 		file.progress = float64((upd*100)/size) / 100
 		doInUIThread(func() {
 			cv.startFileTransfer(file)
 		})
 		log.Printf("File transfer of file %s: %d/%d done", name, upd, size)
 
-		// TODO: not working
 		if file.canceled {
 			doInUIThread(func() {
 				cv.cancelFileTransfer(file)

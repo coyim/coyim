@@ -245,6 +245,13 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 				doInUIThread(func() { account.sendFileTo(utils.ComposeFullJid(jid, peer.MustHaveResource()), r.ui) })
 			}
 		},
+		"on_send_directory_to_contact": func() {
+			if peer, ok := r.ui.getPeer(account, jid); ok {
+				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
+				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
+				doInUIThread(func() { account.sendDirectoryTo(utils.ComposeFullJid(jid, peer.MustHaveResource()), r.ui) })
+			}
+		},
 	})
 
 	mn.ShowAll()

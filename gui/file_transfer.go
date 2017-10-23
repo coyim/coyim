@@ -173,6 +173,13 @@ func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, c
 	})
 }
 
+func (account *account) sendDirectoryTo(peer string, u *gtkUI) {
+	if dir, ok := chooseDirToSend(u.window); ok {
+		ctl := account.session.SendDirTo(peer, dir)
+		ctl = ctl
+	}
+}
+
 func (account *account) sendFileTo(peer string, u *gtkUI) {
 	if file, ok := chooseFileToSend(u.window); ok {
 		ctl := account.session.SendFileTo(peer, file)
@@ -194,11 +201,11 @@ func (account *account) sendFileTo(peer string, u *gtkUI) {
 	}
 }
 
-func chooseFileToSend(w gtki.Window) (string, bool) {
+func chooseItemToSend(w gtki.Window, action gtki.FileChooserAction, title string) (string, bool) {
 	dialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
 		i18n.Local("Choose file to send"),
 		w,
-		gtki.FILE_CHOOSER_ACTION_OPEN,
+		action,
 		i18n.Local("_Cancel"),
 		gtki.RESPONSE_CANCEL,
 		i18n.Local("Send"),
@@ -210,4 +217,12 @@ func chooseFileToSend(w gtki.Window) (string, bool) {
 		return dialog.GetFilename(), true
 	}
 	return "", false
+}
+
+func chooseFileToSend(w gtki.Window) (string, bool) {
+	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_OPEN, "Chose file to send")
+}
+
+func chooseDirToSend(w gtki.Window) (string, bool) {
+	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_SELECT_FOLDER, "Chose directory to send")
 }

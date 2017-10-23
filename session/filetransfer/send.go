@@ -15,16 +15,16 @@ import (
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
-func registerSendFileTransferMethod(name string, dispatch func(access.Session, *sendContext), isCurrentlyValid func(string, access.Session, *sendContext) bool) {
+func registerSendFileTransferMethod(name string, dispatch func(*sendContext), isCurrentlyValid func(string, *sendContext) bool) {
 	supportedSendingMechanisms[name] = dispatch
 	isSendingMechanismCurrentlyValid[name] = isCurrentlyValid
 }
 
-var supportedSendingMechanisms = map[string]func(access.Session, *sendContext){}
-var isSendingMechanismCurrentlyValid = map[string]func(string, access.Session, *sendContext) bool{}
+var supportedSendingMechanisms = map[string]func(*sendContext){}
+var isSendingMechanismCurrentlyValid = map[string]func(string, *sendContext) bool{}
 
-func (ctx *sendContext) discoverSupport(s access.Session) (profiles []string, err error) {
-	if res, ok := s.Conn().DiscoveryFeatures(ctx.peer); ok {
+func discoverSupport(s access.Session, p string) (profiles []string, err error) {
+	if res, ok := s.Conn().DiscoveryFeatures(p); ok {
 		foundSI := false
 		for _, feature := range res {
 			if feature == "http://jabber.org/protocol/si" {
@@ -57,22 +57,22 @@ func genSid(c interfaces.Conn) string {
 
 const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
 
-func (ctx *sendContext) calculateAvailableSendOptions(s access.Session) []data.FormFieldOptionX {
+func (ctx *sendContext) calculateAvailableSendOptions() []data.FormFieldOptionX {
 	res := []data.FormFieldOptionX{}
 	for k, _ := range supportedSendingMechanisms {
-		if isSendingMechanismCurrentlyValid[k](k, s, ctx) {
+		if isSendingMechanismCurrentlyValid[k](k, ctx) {
 			res = append(res, data.FormFieldOptionX{Value: k})
 		}
 	}
 	return res
 }
 
-func (ctx *sendContext) offerSend(s access.Session) error {
+func (ctx *sendContext) offerSend() error {
 	fstat, e := os.Stat(ctx.file)
 	if e != nil {
 		return e
 	}
-	ctx.sid = genSid(s.Conn())
+	ctx.sid = genSid(ctx.s.Conn())
 
 	// TODO: Add Date and Hash here later?
 	toSend := data.SI{
@@ -89,7 +89,7 @@ func (ctx *sendContext) offerSend(s access.Session) error {
 					{
 						Var:     "stream-method",
 						Type:    "list-single",
-						Options: ctx.calculateAvailableSendOptions(s),
+						Options: ctx.calculateAvailableSendOptions(),
 					},
 				},
 			},
@@ -97,16 +97,16 @@ func (ctx *sendContext) offerSend(s access.Session) error {
 	}
 
 	var siq data.SI
-	nonblockIQ(s, ctx.peer, "set", toSend, &siq, func(*data.ClientIQ) {
+	nonblockIQ(ctx.s, ctx.peer, "set", toSend, &siq, func(*data.ClientIQ) {
 		if !isValidSubmitForm(siq) {
 			ctx.control.ReportErrorNonblocking(errors.New("Invalid data sent from peer for file sending"))
 			return
 		}
 		prof := siq.Feature.Form.Fields[0].Values[0]
 		if f, ok := supportedSendingMechanisms[prof]; ok {
-			ctx.notifyUserThatSendStarted(s, prof)
+			ctx.notifyUserThatSendStarted(prof)
 			addInflightSend(ctx)
-			f(s, ctx)
+			f(ctx)
 			return
 		}
 		ctx.control.ReportErrorNonblocking(errors.New("Invalid sending mechanism sent from peer for file sending"))
@@ -118,6 +118,7 @@ func (ctx *sendContext) offerSend(s access.Session) error {
 }
 
 type sendContext struct {
+	s                access.Session
 	peer             string
 	file             string
 	sid              string
@@ -127,8 +128,8 @@ type sendContext struct {
 	control          *sdata.FileTransferControl
 }
 
-func (ctx *sendContext) notifyUserThatSendStarted(s access.Session, method string) {
-	s.Info(fmt.Sprintf("Started sending of %v to %v using %v", ctx.file, ctx.peer, method))
+func (ctx *sendContext) notifyUserThatSendStarted(method string) {
+	ctx.s.Info(fmt.Sprintf("Started sending of %v to %v using %v", ctx.file, ctx.peer, method))
 }
 
 func isValidSubmitForm(siq data.SI) bool {
@@ -144,15 +145,15 @@ func (ctx *sendContext) listenForCancellation() {
 	})
 }
 
-func (ctx *sendContext) initSend(s access.Session) {
-	_, err := ctx.discoverSupport(s)
+func (ctx *sendContext) initSend() {
+	_, err := discoverSupport(ctx.s, ctx.peer)
 	if err != nil {
 		ctx.control.ReportErrorNonblocking(err)
 		return
 	}
 
 	go ctx.listenForCancellation()
-	ctx.offerSend(s)
+	ctx.offerSend()
 }
 
 // InitSend starts the process of sending a file to a peer
@@ -161,8 +162,9 @@ func InitSend(s access.Session, peer string, file string) *sdata.FileTransferCon
 		peer:    peer,
 		file:    file,
 		control: sdata.CreateFileTransferControl(),
+		s:       s,
 	}
-	go ctx.initSend(s)
+	go ctx.initSend()
 	return ctx.control
 }
 

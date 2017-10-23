@@ -28,6 +28,12 @@
       </object>
     </child>
     <child>
+      <object class="GtkMenuItem" id="sendDirectoryMenuItem">
+        <property name="label" translatable="yes">Send directory...</property>
+        <signal name="activate" handler="on_send_directory_to_contact" />
+      </object>
+    </child>
+    <child>
       <object class="GtkSeparatorMenuItem" />
     </child>
     <child>

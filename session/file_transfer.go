@@ -20,3 +20,8 @@ func (s *session) SendFileTo(peer, filename string) *data.FileTransferControl {
 	s.info(fmt.Sprintf("SendFileTo(%s, %s)", peer, filename))
 	return filetransfer.InitSend(s, peer, filename)
 }
+
+func (s *session) SendDirTo(peer, dirname string) *data.FileTransferControl {
+	s.info(fmt.Sprintf("SendDirTo(%s, %s)", peer, dirname))
+	return filetransfer.InitSendDir(s, peer, dirname)
+}

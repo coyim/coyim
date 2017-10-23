@@ -45,7 +45,7 @@ var iqErrorIBBBadRequest = data.ErrorReply{
 	Error: data.ErrorBadRequest{},
 }
 
-func (ift inflight) ibbCleanup(lock bool) {
+func (ift *inflight) ibbCleanup(lock bool) {
 	ctx, ok := ift.status.opaque.(*ibbContext)
 	if ok {
 		if lock {
@@ -61,10 +61,10 @@ func (ift inflight) ibbCleanup(lock bool) {
 	removeInflight(ift.id)
 }
 
-func ibbWaitForCancel(s access.Session, ift inflight) {
+func ibbWaitForCancel(ift *inflight) {
 	ift.control.WaitForCancel(func() {
 		ift.ibbCleanup(true)
-		s.Conn().SendIQ(ift.peer, "set", data.IBBClose{Sid: ift.id})
+		ift.s.Conn().SendIQ(ift.peer, "set", data.IBBClose{Sid: ift.id})
 	})
 }
 
@@ -236,7 +236,7 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 
 	inflightSend, ok := getInflightSend(tag.Sid)
 	if ok {
-		inflightSend.ibbReceivedClose(s)
+		inflightSend.ibbReceivedClose()
 		return data.EmptyReply{}, "", false
 	}
 

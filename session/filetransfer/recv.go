@@ -19,7 +19,7 @@ var supportedFileTransferMethods = map[string]int{
 	"http://jabber.org/protocol/ibb":         0,
 }
 
-var fileTransferCancelListeners = map[string]func(access.Session, inflight){
+var fileTransferCancelListeners = map[string]func(*inflight){
 	"http://jabber.org/protocol/ibb":         ibbWaitForCancel,
 	"http://jabber.org/protocol/bytestreams": bytestreamWaitForCancel,
 }
@@ -30,6 +30,7 @@ type inflightStatus struct {
 }
 
 type inflight struct {
+	s       access.Session
 	id      string
 	mime    string
 	options []string
@@ -49,11 +50,11 @@ type inflight struct {
 
 var inflights struct {
 	sync.RWMutex
-	transfers map[string]inflight
+	transfers map[string]*inflight
 }
 
 func init() {
-	inflights.transfers = make(map[string]inflight)
+	inflights.transfers = make(map[string]*inflight)
 }
 
 func extractFileTransferOptions(f data.Form) ([]string, error) {
@@ -85,7 +86,7 @@ func chooseAppropriateFileTransferOptionFrom(options []string) (best string, ok 
 	return
 }
 
-func getInflight(id string) (result inflight, ok bool) {
+func getInflight(id string) (result *inflight, ok bool) {
 	inflights.RLock()
 	defer inflights.RUnlock()
 	result, ok = inflights.transfers[id]
@@ -132,7 +133,7 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 	}
 }
 
-func (ift inflight) finalizeFileTransfer(tempName string) error {
+func (ift *inflight) finalizeFileTransfer(tempName string) error {
 	if err := os.Rename(tempName, ift.status.destination); err != nil {
 		ift.control.ReportError(errors.New("Couldn't save final file"))
 		return err
@@ -144,7 +145,7 @@ func (ift inflight) finalizeFileTransfer(tempName string) error {
 	return nil
 }
 
-func (ift inflight) openDestinationTempFile() (f *os.File, err error) {
+func (ift *inflight) openDestinationTempFile() (f *os.File, err error) {
 	// By creating a temp file next to the place where the real file should be saved
 	// we avoid problems on linux when trying to os.Rename later - if tmp filesystem is different
 	// than the destination file system. It also serves as an early permissions check.
@@ -157,7 +158,7 @@ func (ift inflight) openDestinationTempFile() (f *os.File, err error) {
 	return
 }
 
-func waitForFileTransferUserAcceptance(s access.Session, stanza *data.ClientIQ, si data.SI, acceptResult <-chan *string, ift inflight) {
+func waitForFileTransferUserAcceptance(stanza *data.ClientIQ, si data.SI, acceptResult <-chan *string, ift *inflight) {
 	result := <-acceptResult
 
 	var error *data.ErrorReply
@@ -165,8 +166,8 @@ func waitForFileTransferUserAcceptance(s access.Session, stanza *data.ClientIQ, 
 		opt, ok := chooseAppropriateFileTransferOptionFrom(ift.options)
 		if ok {
 			setInflightDestination(si.ID, *result)
-			s.SendIQResult(stanza, iqResultChosenStreamMethod(opt))
-			go fileTransferCancelListeners[opt](s, ift)
+			ift.s.SendIQResult(stanza, iqResultChosenStreamMethod(opt))
+			go fileTransferCancelListeners[opt](ift)
 			return
 		}
 		ift.control.ReportError(errors.New("No mutually acceptable file transfer methods available"))
@@ -175,11 +176,12 @@ func waitForFileTransferUserAcceptance(s access.Session, stanza *data.ClientIQ, 
 		error = &iqErrorForbidden
 	}
 	removeInflight(si.ID)
-	s.SendIQError(stanza, *error)
+	ift.s.SendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl *sdata.FileTransferControl) inflight {
-	ift := inflight{
+func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl *sdata.FileTransferControl) *inflight {
+	ift := &inflight{
+		s:       s,
 		id:      si.ID,
 		mime:    si.MIMEType,
 		options: options,
@@ -216,10 +218,10 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 	f := si.File
 
 	ctl := sdata.CreateFileTransferControl()
-	ift := registerNewFileTransfer(si, options, stanza, f, ctl)
+	ift := registerNewFileTransfer(s, si, options, stanza, f, ctl)
 
 	acceptResult := make(chan *string)
-	go waitForFileTransferUserAcceptance(s, stanza, si, acceptResult, ift)
+	go waitForFileTransferUserAcceptance(stanza, si, acceptResult, ift)
 
 	s.PublishEvent(events.FileTransfer{
 		Session:          s,

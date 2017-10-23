@@ -22,14 +22,14 @@ type bytestreamContext struct {
 	cancel chan bool
 }
 
-func bytestreamWaitForCancel(s access.Session, ift inflight) {
+func bytestreamWaitForCancel(ift *inflight) {
 	ift.control.WaitForCancel(func() {
 		ift.status.opaque.(*bytestreamContext).cancel <- true
 		removeInflight(ift.id)
 	})
 }
 
-func bytestreamInitialSetup(s access.Session, stanza *data.ClientIQ) (tag data.BytestreamQuery, inflight inflight, earlyReturn bool) {
+func bytestreamInitialSetup(s access.Session, stanza *data.ClientIQ) (tag data.BytestreamQuery, inflight *inflight, earlyReturn bool) {
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil || tag.Sid == "" {
 		s.Warn(fmt.Sprintf("Failed to parse bytestream open: %v", err))
 		s.SendIQError(stanza, iqErrorIBBBadRequest)
@@ -71,16 +71,16 @@ func bytestreamCalculateDestinationAddress(tag data.BytestreamQuery, stanza *dat
 const chunkSize = 4096
 const cancelCheckFrequency = 100
 
-func (ift inflight) bytestreamCleanup(conn net.Conn, ff *os.File) {
+func (ift *inflight) bytestreamCleanup(conn net.Conn, ff *os.File) {
 	conn.Close()
 	os.Remove(ff.Name())
 	removeInflight(ift.id)
 }
 
-func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
+func (ift *inflight) bytestreamDoReceive(conn net.Conn) {
 	ff, err := ift.openDestinationTempFile()
 	if err != nil {
-		s.Warn(fmt.Sprintf("Failed to open temporary file: %v", err))
+		ift.s.Warn(fmt.Sprintf("Failed to open temporary file: %v", err))
 		return
 	}
 
@@ -105,7 +105,7 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 		n, err := conn.Read(buf)
 		if err != nil {
 			if err != io.EOF {
-				s.Warn(fmt.Sprintf("Had error when trying to read from connection: %v", err))
+				ift.s.Warn(fmt.Sprintf("Had error when trying to read from connection: %v", err))
 				ift.control.ReportError(errors.New("Error reading from peer"))
 				ift.bytestreamCleanup(conn, ff)
 				return
@@ -114,7 +114,7 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 		}
 		_, err = ff.Write(buf[:n])
 		if err != nil {
-			s.Warn(fmt.Sprintf("Had error when trying to write to file: %v", err))
+			ift.s.Warn(fmt.Sprintf("Had error when trying to write to file: %v", err))
 			ift.control.ReportError(errors.New("Error writing to file"))
 			ift.bytestreamCleanup(conn, ff)
 			return
@@ -128,7 +128,7 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 
 	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
 	if totalWritten != ift.size || fstat.Size() != totalWritten {
-		s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", ift.size, fstat.Size()))
+		ift.s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", ift.size, fstat.Size()))
 		ift.control.ReportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
 		ift.bytestreamCleanup(conn, ff)
 		return
@@ -136,7 +136,7 @@ func (ift inflight) bytestreamDoReceive(s access.Session, conn net.Conn) {
 
 	// TODO[LATER]: if there's a hash of the file in the inflight, we should calculate it on the file and check it
 	if err := ift.finalizeFileTransfer(ff.Name()); err != nil {
-		s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
+		ift.s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
 		ift.bytestreamCleanup(conn, ff)
 	}
 }
@@ -151,7 +151,7 @@ func BytestreamQuery(s access.Session, stanza *data.ClientIQ) (ret interface{}, 
 	dstAddr := bytestreamCalculateDestinationAddress(tag, stanza)
 
 	k := func(c net.Conn) {
-		go inflight.bytestreamDoReceive(s, c)
+		go inflight.bytestreamDoReceive(c)
 	}
 
 	for _, sh := range tag.Streamhosts {

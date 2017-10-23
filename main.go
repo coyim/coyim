@@ -10,7 +10,7 @@ import (
 	"github.com/coyim/coyim/config"
 )
 
-var coyimVersion = "<UNSET>"
+var coyimVersion = "&lt;UNSET&gt;"
 
 func initLog() {
 	if !*config.DebugFlag {

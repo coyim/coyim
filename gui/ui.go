@@ -600,6 +600,8 @@ func (u *gtkUI) shouldViewAccounts() bool {
 }
 
 func (u *gtkUI) aboutDialog() {
+	//TODO: This dialog automatically parses HTML and display clickable links.
+	//We may need to use  g_markup_escape_text().
 	dialog, _ := g.gtk.AboutDialogNew()
 	dialog.SetName(i18n.Local("CoyIM!"))
 	dialog.SetProgramName(programName)

@@ -13,6 +13,7 @@ import (
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/ui"
+	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -324,6 +325,14 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
+		"on_send_file_to_contact": func() {
+			if peer, ok := ui.getPeer(account, uid); ok {
+				// TODO: this needs two clicks to work
+				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
+				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
+				doInUIThread(func() { account.sendFileTo(utils.ComposeFullJid(uid, peer.MustHaveResource()), ui) })
+			}
+		},
 	})
 
 	mnemonic := uint(101)

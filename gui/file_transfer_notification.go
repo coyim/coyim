@@ -33,6 +33,8 @@ type fileTransferNotification struct {
 	canceled      bool
 }
 
+// TODO: while sending and receiving: show on the
+// same notification or on separate ones?
 // TODO: there is still some issues around more than
 // two transfers on cancel and failed
 func any(vs []*fileNotification, f func(*fileNotification) bool) bool {
@@ -211,9 +213,9 @@ func (conv *conversationPane) successFileTransfer(file *fileNotification, purpos
 
 	var fileName string
 	if purpose == "send" {
-		fileName = "Sent: " + fileName
+		fileName = "Sent: " + file.name
 	} else {
-		fileName = "Received: " + fileName
+		fileName = "Received: " + file.name
 	}
 
 	file.update(fileName)

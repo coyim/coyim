@@ -35,7 +35,7 @@ func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv con
 		doInUIThread(func() {
 			cv.successFileTransfer(file, "receive")
 		})
-		log.Printf("File transfer of file %s finished with success", ev.Name)
+		log.Printf("Receiving file transfer of file %s finished with success", ev.Name)
 	})
 
 	go ev.Control.WaitForUpdate(func(upd int64) {
@@ -44,7 +44,7 @@ func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv con
 		doInUIThread(func() {
 			cv.startFileTransfer(file)
 		})
-		log.Printf("File transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
+		log.Printf("Receiving file transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
 
 		// TODO: behaves weirdly on bytestreams
 		if file.canceled {
@@ -53,7 +53,7 @@ func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv con
 			})
 			ev.Control.Cancel()
 		} else if cv.isFileTransferNotifCanceled() {
-			log.Printf("File transfer of file canceled")
+			log.Printf("Receiving file transfer of file canceled")
 			ev.Control.Cancel()
 		}
 	})
@@ -62,7 +62,7 @@ func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv con
 		doInUIThread(func() {
 			cv.failFileTransfer(file)
 		})
-		log.Printf("File transfer of file %s failed with %v", ev.Name, err)
+		log.Printf("Receiving file transfer of file %s failed with %v", ev.Name, err)
 	})
 }
 
@@ -142,14 +142,14 @@ func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, c
 		doInUIThread(func() {
 			cv.failFileTransfer(file)
 		})
-		log.Printf("File transfer of file %s failed with %v", name, err)
+		log.Printf("Sending file transfer of file %s failed with %v", name, err)
 	})
 
 	go ctl.WaitForFinish(func() {
 		doInUIThread(func() {
 			cv.successFileTransfer(file, "send")
 		})
-		log.Printf("File transfer of file %s finished with success", name)
+		log.Printf("Sending file transfer of file %s finished with success", name)
 	})
 
 	go ctl.WaitForUpdate(func(upd int64) {
@@ -157,7 +157,7 @@ func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, c
 		doInUIThread(func() {
 			cv.startFileTransfer(file)
 		})
-		log.Printf("File transfer of file %s: %d/%d done", name, upd, size)
+		log.Printf("Sending file transfer of file %s: %d/%d done", name, upd, size)
 
 		if file.canceled {
 			doInUIThread(func() {
@@ -166,7 +166,7 @@ func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, c
 			ctl.Cancel()
 			return
 		} else if cv.isFileTransferNotifCanceled() {
-			log.Printf("File transfer of file canceled")
+			log.Printf("Sending file transfer of file canceled")
 			ctl.Cancel()
 			return
 		}

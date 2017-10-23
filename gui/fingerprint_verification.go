@@ -14,7 +14,7 @@ func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, 
 	if theirFp == nil {
 		builderName = "VerifyFingerprintUnknown"
 		message = i18n.Localf(
-			"You can't verify the fingerprint for %s yet.\n"+
+			"You can't verify the fingerprint for %s yet.\n\n"+
 				"You first have to start an encrypted conversation with them.", uid)
 
 	} else {

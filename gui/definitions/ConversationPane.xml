@@ -12,7 +12,7 @@
 	    <child>
               <object class="GtkLabel" id="menuTag">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Encryption</property>
+                <property name="label" translatable="yes">Secure Chat</property>
               </object>
             </child>
             <child type="submenu">
@@ -43,6 +43,13 @@
             </child>
           </object>
         </child>
+        <child>
+          <object class="GtkMenuItem" id="sendFileMenuItem">
+            <property name="visible">true</property>
+            <property name="label" translatable="yes">Send File</property>
+            <signal name="activate" handler="on_send_file_to_contact" />
+          </object>
+      </child>
       </object>
       <packing>
         <property name="expand">false</property>

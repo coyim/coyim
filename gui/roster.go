@@ -210,12 +210,22 @@ func toArray(groupList gtki.ListStore) []string {
 	return groups
 }
 
+func (r *roster) setSensitive(menuItem gtki.MenuItem, account *account, jid string) {
+	peer, _ := r.ui.getPeer(account, jid)
+	hasResources := peer.HasResources()
+
+	menuItem.SetSensitive(hasResources)
+}
+
 func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.EventButton) {
 	builder := newBuilder("ContactPopupMenu")
 	mn := builder.getObj("contactMenu").(gtki.Menu)
 
-	menuItem := builder.getObj("resourcesMenuItem").(gtki.MenuItem)
-	r.appendResourcesAsMenuItems(jid, account, menuItem)
+	resourcesMenuItem := builder.getObj("resourcesMenuItem").(gtki.MenuItem)
+	r.appendResourcesAsMenuItems(jid, account, resourcesMenuItem)
+
+	sendFileMenuItem := builder.getObj("sendFileMenuItem").(gtki.MenuItem)
+	r.setSensitive(sendFileMenuItem, account, jid)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {

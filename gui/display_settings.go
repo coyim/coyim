@@ -68,7 +68,7 @@ func (ds *displaySettings) update() {
         .shadedBackgroundColor {
           background-color: #fafafa;
         }
-        `, ds.defaultFontSize, ds.fontSize)
+        `, ds.fontSize)
 	doInUIThread(func() {
 		ds.provider.LoadFromData(css)
 	})

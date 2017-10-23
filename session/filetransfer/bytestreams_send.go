@@ -65,8 +65,7 @@ func bytestreamsCalculateValidProxies(ctx *sendContext) func(key string) interfa
 		})
 
 		if e != nil {
-			ctx.control.ReportError(e)
-			removeInflightSend(ctx)
+			ctx.onError(e)
 			return nil
 		}
 
@@ -96,8 +95,7 @@ func (ctx *sendContext) bytestreamsSendData(c net.Conn) {
 	buffer := make([]byte, bufSize)
 	r, err := os.Open(ctx.file)
 	if err != nil {
-		ctx.control.ReportError(err)
-		removeInflightSend(ctx)
+		ctx.onError(err)
 		return
 	}
 	defer r.Close()
@@ -110,22 +108,18 @@ func (ctx *sendContext) bytestreamsSendData(c net.Conn) {
 		}
 		n, err := r.Read(buffer)
 		if err == io.EOF && n == 0 {
-			ctx.control.ReportFinished()
-			removeInflightSend(ctx)
+			ctx.onFinish()
 			return
 		} else if err != nil {
-			ctx.control.ReportError(err)
-			removeInflightSend(ctx)
+			ctx.onError(err)
 			return
 		}
 		_, err = c.Write(buffer[0:n])
 		if err != nil {
-			ctx.control.ReportError(err)
-			removeInflightSend(ctx)
+			ctx.onError(err)
 			return
 		}
-		ctx.totalSent += int64(n)
-		ctx.control.SendUpdate(ctx.totalSent)
+		ctx.onUpdate(n)
 	}
 }
 
@@ -146,8 +140,7 @@ func bytestreamsSendDo(ctx *sendContext) {
 		}, &bq, func(ciq *data.ClientIQ) {
 			sh, ok := proxyMap[bq.StreamhostUsed.Jid]
 			if !ok {
-				ctx.control.ReportError(errors.New("Invalid streamhost to use - this is likely a developer error from the peers side"))
-				removeInflightSend(ctx)
+				ctx.onError(errors.New("Invalid streamhost to use - this is likely a developer error from the peers side"))
 				return
 			}
 			dstAddr := hex.EncodeToString(digests.Sha1([]byte(ctx.sid + ciq.To + ciq.From)))
@@ -159,16 +152,13 @@ func bytestreamsSendDo(ctx *sendContext) {
 					go ctx.bytestreamsSendData(c)
 				})
 				if e != nil {
-					ctx.control.ReportError(e)
-					removeInflightSend(ctx)
+					ctx.onError(e)
 				}
 			}) {
-				ctx.control.ReportError(fmt.Errorf("Failed at connecting to streamhost: %#v", sh))
-				removeInflightSend(ctx)
+				ctx.onError(fmt.Errorf("Failed at connecting to streamhost: %#v", sh))
 			}
 		}); err != nil {
-			ctx.control.ReportError(err)
-			removeInflightSend(ctx)
+			ctx.onError(err)
 		}
 	}()
 }

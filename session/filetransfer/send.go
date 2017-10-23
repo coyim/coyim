@@ -15,6 +15,8 @@ import (
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
+const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
+
 func registerSendFileTransferMethod(name string, dispatch func(*sendContext), isCurrentlyValid func(string, *sendContext) bool) {
 	supportedSendingMechanisms[name] = dispatch
 	isSendingMechanismCurrentlyValid[name] = isCurrentlyValid
@@ -23,14 +25,15 @@ func registerSendFileTransferMethod(name string, dispatch func(*sendContext), is
 var supportedSendingMechanisms = map[string]func(*sendContext){}
 var isSendingMechanismCurrentlyValid = map[string]func(string, *sendContext) bool{}
 
-func discoverSupport(s access.Session, p string) (profiles []string, err error) {
+func discoverSupport(s access.Session, p string) (profiles map[string]bool, err error) {
+	profiles = make(map[string]bool)
 	if res, ok := s.Conn().DiscoveryFeatures(p); ok {
 		foundSI := false
 		for _, feature := range res {
 			if feature == "http://jabber.org/protocol/si" {
 				foundSI = true
 			} else if strings.HasPrefix(feature, "http://jabber.org/protocol/si/profile/") {
-				profiles = append(profiles, feature)
+				profiles[feature] = true
 			}
 		}
 
@@ -42,9 +45,9 @@ func discoverSupport(s access.Session, p string) (profiles []string, err error) 
 			return nil, errors.New("Peer doesn't support any stream initiation profiles")
 		}
 
-		return profiles, nil
+		return
 	}
-	return nil, errors.New("Problem discovering the features of the peer")
+	return profiles, errors.New("Problem discovering the features of the peer")
 }
 
 func genSid(c interfaces.Conn) string {
@@ -54,8 +57,6 @@ func genSid(c interfaces.Conn) string {
 	}
 	return fmt.Sprintf("sid%d", binary.LittleEndian.Uint64(buf[:]))
 }
-
-const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
 
 func (ctx *sendContext) calculateAvailableSendOptions() []data.FormFieldOptionX {
 	res := []data.FormFieldOptionX{}
@@ -99,7 +100,7 @@ func (ctx *sendContext) offerSend() error {
 	var siq data.SI
 	nonblockIQ(ctx.s, ctx.peer, "set", toSend, &siq, func(*data.ClientIQ) {
 		if !isValidSubmitForm(siq) {
-			ctx.control.ReportErrorNonblocking(errors.New("Invalid data sent from peer for file sending"))
+			ctx.onError(errors.New("Invalid data sent from peer for file sending"))
 			return
 		}
 		prof := siq.Feature.Form.Fields[0].Values[0]
@@ -109,9 +110,9 @@ func (ctx *sendContext) offerSend() error {
 			f(ctx)
 			return
 		}
-		ctx.control.ReportErrorNonblocking(errors.New("Invalid sending mechanism sent from peer for file sending"))
+		ctx.onError(errors.New("Invalid sending mechanism sent from peer for file sending"))
 	}, func(_ *data.ClientIQ, e error) {
-		ctx.control.ReportErrorNonblocking(e)
+		ctx.onError(e)
 	})
 
 	return nil
@@ -126,6 +127,31 @@ type sendContext struct {
 	theyWantToCancel bool
 	totalSent        int64
 	control          *sdata.FileTransferControl
+	onFinishHook     func(*sendContext)
+	onErrorHook      func(*sendContext, error)
+	onUpdateHook     func(*sendContext, int64)
+}
+
+func (ctx *sendContext) onFinish() {
+	ctx.control.ReportFinished()
+	removeInflightSend(ctx)
+	if ctx.onFinishHook != nil {
+		ctx.onFinishHook(ctx)
+	}
+}
+func (ctx *sendContext) onError(e error) {
+	ctx.control.ReportErrorNonblocking(e)
+	removeInflightSend(ctx)
+	if ctx.onErrorHook != nil {
+		ctx.onErrorHook(ctx, e)
+	}
+}
+func (ctx *sendContext) onUpdate(v int) {
+	ctx.totalSent += int64(v)
+	ctx.control.SendUpdate(ctx.totalSent)
+	if ctx.onUpdateHook != nil {
+		ctx.onUpdateHook(ctx, ctx.totalSent)
+	}
 }
 
 func (ctx *sendContext) notifyUserThatSendStarted(method string) {
@@ -148,7 +174,7 @@ func (ctx *sendContext) listenForCancellation() {
 func (ctx *sendContext) initSend() {
 	_, err := discoverSupport(ctx.s, ctx.peer)
 	if err != nil {
-		ctx.control.ReportErrorNonblocking(err)
+		ctx.onError(err)
 		return
 	}
 

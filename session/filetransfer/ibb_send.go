@@ -40,8 +40,7 @@ func (ctx *sendContext) ibbSendDoWithBlockSize(blocksize int) {
 			ctx.ibbSendDoWithBlockSize(blocksize / 2)
 			return
 		}
-		ctx.control.ReportError(e)
-		removeInflightSend(ctx)
+		ctx.onError(e)
 	})
 }
 
@@ -61,12 +60,10 @@ func (ctx *sendContext) ibbSendChunk(r io.ReadCloser, buffer []byte, seq uint16)
 		r.Close()
 		// TODO[LATER]: we ignore the result of this close - maybe we should react to it in some way, if it reports failure from the other side
 		ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
-		ctx.control.ReportFinished()
-		removeInflightSend(ctx)
+		ctx.onFinish()
 		return false
 	} else if err != nil {
-		ctx.control.ReportError(err)
-		removeInflightSend(ctx)
+		ctx.onError(err)
 		return false
 	}
 	encdata := base64.StdEncoding.EncodeToString(buffer[:n])
@@ -77,12 +74,10 @@ func (ctx *sendContext) ibbSendChunk(r io.ReadCloser, buffer []byte, seq uint16)
 		Base64:   encdata,
 	})
 	if e != nil {
-		ctx.control.ReportError(e)
-		removeInflightSend(ctx)
+		ctx.onError(e)
 		return false
 	}
-	ctx.totalSent += int64(n)
-	ctx.control.SendUpdate(ctx.totalSent)
+	ctx.onUpdate(n)
 
 	go ctx.trackResultOfSend(rpl)
 
@@ -130,8 +125,7 @@ func (ctx *sendContext) ibbSendStartTransfer(blockSize int) {
 	buffer := make([]byte, blockSize)
 	f, err := os.Open(ctx.file)
 	if err != nil {
-		ctx.control.ReportError(err)
-		removeInflightSend(ctx)
+		ctx.onError(err)
 		return
 	}
 	ctx.ibbSendChunks(f, buffer, seq)

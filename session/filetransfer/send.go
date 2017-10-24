@@ -5,9 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
-	"sync"
 
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
@@ -17,13 +15,13 @@ import (
 
 const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
 
-func registerSendFileTransferMethod(name string, dispatch func(*sendContext), isCurrentlyValid func(string, *sendContext) bool) {
+func registerSendFileTransferMethod(name string, dispatch func(*sendContext), isCurrentlyValid func(string, access.Session) bool) {
 	supportedSendingMechanisms[name] = dispatch
 	isSendingMechanismCurrentlyValid[name] = isCurrentlyValid
 }
 
 var supportedSendingMechanisms = map[string]func(*sendContext){}
-var isSendingMechanismCurrentlyValid = map[string]func(string, *sendContext) bool{}
+var isSendingMechanismCurrentlyValid = map[string]func(string, access.Session) bool{}
 
 func discoverSupport(s access.Session, p string) (profiles map[string]bool, err error) {
 	profiles = make(map[string]bool)
@@ -58,10 +56,10 @@ func genSid(c interfaces.Conn) string {
 	return fmt.Sprintf("sid%d", binary.LittleEndian.Uint64(buf[:]))
 }
 
-func (ctx *sendContext) calculateAvailableSendOptions() []data.FormFieldOptionX {
+func calculateAvailableSendOptions(s access.Session) []data.FormFieldOptionX {
 	res := []data.FormFieldOptionX{}
 	for k, _ := range supportedSendingMechanisms {
-		if isSendingMechanismCurrentlyValid[k](k, ctx) {
+		if isSendingMechanismCurrentlyValid[k](k, s) {
 			res = append(res, data.FormFieldOptionX{Value: k})
 		}
 	}
@@ -75,27 +73,7 @@ func (ctx *sendContext) offerSend() error {
 	}
 	ctx.sid = genSid(ctx.s.Conn())
 
-	// TODO: Add Date and Hash here later?
-	toSend := data.SI{
-		ID:      ctx.sid,
-		Profile: fileTransferProfile,
-		File: &data.File{
-			Name: filepath.Base(ctx.file),
-			Size: fstat.Size(),
-		},
-		Feature: data.FeatureNegotation{
-			Form: data.Form{
-				Type: "form",
-				Fields: []data.FormFieldX{
-					{
-						Var:     "stream-method",
-						Type:    "list-single",
-						Options: ctx.calculateAvailableSendOptions(),
-					},
-				},
-			},
-		},
-	}
+	toSend := sendSIData(ctx.sid, fileTransferProfile, ctx.file, fstat.Size(), ctx.s)
 
 	var siq data.SI
 	nonblockIQ(ctx.s, ctx.peer, "set", toSend, &siq, func(*data.ClientIQ) {
@@ -105,7 +83,7 @@ func (ctx *sendContext) offerSend() error {
 		}
 		prof := siq.Feature.Form.Fields[0].Values[0]
 		if f, ok := supportedSendingMechanisms[prof]; ok {
-			ctx.notifyUserThatSendStarted(prof)
+			notifyUserThatSendStarted(prof, ctx.s, ctx.file, ctx.peer)
 			addInflightSend(ctx)
 			f(ctx)
 			return
@@ -154,8 +132,8 @@ func (ctx *sendContext) onUpdate(v int) {
 	}
 }
 
-func (ctx *sendContext) notifyUserThatSendStarted(method string) {
-	ctx.s.Info(fmt.Sprintf("Started sending of %v to %v using %v", ctx.file, ctx.peer, method))
+func notifyUserThatSendStarted(method string, s access.Session, file, peer string) {
+	s.Info(fmt.Sprintf("Started sending of %v to %v using %v", file, peer, method))
 }
 
 func isValidSubmitForm(siq data.SI) bool {
@@ -192,32 +170,4 @@ func InitSend(s access.Session, peer string, file string) *sdata.FileTransferCon
 	}
 	go ctx.initSend()
 	return ctx.control
-}
-
-var inflightSends struct {
-	sync.RWMutex
-	transfers map[string]*sendContext
-}
-
-func init() {
-	inflightSends.transfers = make(map[string]*sendContext)
-}
-
-func addInflightSend(ctx *sendContext) {
-	inflightSends.Lock()
-	defer inflightSends.Unlock()
-	inflightSends.transfers[ctx.sid] = ctx
-}
-
-func getInflightSend(id string) (result *sendContext, ok bool) {
-	inflightSends.RLock()
-	defer inflightSends.RUnlock()
-	result, ok = inflightSends.transfers[id]
-	return
-}
-
-func removeInflightSend(ctx *sendContext) {
-	inflightSends.Lock()
-	defer inflightSends.Unlock()
-	delete(inflightSends.transfers, ctx.sid)
 }

@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -14,37 +15,37 @@ func init() {
 	registerSendFileTransferMethod("http://jabber.org/protocol/ibb", ibbSendDo, ibbSendCurrentlyValid)
 }
 
-func ibbSendCurrentlyValid(string, *sendContext) bool {
+func ibbSendCurrentlyValid(string, access.Session) bool {
 	return true
 }
 
 const ibbDefaultBlockSize = 4096
 
 func ibbSendDo(ctx *sendContext) {
-	ctx.ibbSendDoWithBlockSize(ibbDefaultBlockSize)
+	ibbSendDoWithBlockSize(ctx, ibbDefaultBlockSize)
 }
 
-func (ctx *sendContext) ibbSendDoWithBlockSize(blocksize int) {
+func ibbSendDoWithBlockSize(ctx *sendContext, blocksize int) {
 	nonblockIQ(ctx.s, ctx.peer, "set", data.IBBOpen{
 		BlockSize: ibbDefaultBlockSize,
 		Sid:       ctx.sid,
 		Stanza:    "iq",
 	}, nil, func(*data.ClientIQ) {
-		go ctx.ibbSendStartTransfer(blocksize)
+		go ibbSendStartTransfer(ctx, blocksize)
 	}, func(ciq *data.ClientIQ, e error) {
 		if ciq != nil &&
 			ciq.Type == "error" &&
 			ciq.Error.Type == "modify" &&
 			ciq.Error.Any.XMLName.Local == "resource-constraint" &&
 			ciq.Error.Any.XMLName.Space == "urn:ietf:params:xml:ns:xmpp-stanzas" {
-			ctx.ibbSendDoWithBlockSize(blocksize / 2)
+			ibbSendDoWithBlockSize(ctx, blocksize/2)
 			return
 		}
 		ctx.onError(e)
 	})
 }
 
-func (ctx *sendContext) ibbSendChunk(r io.ReadCloser, buffer []byte, seq uint16) bool {
+func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) bool {
 	if ctx.weWantToCancel {
 		ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 		removeInflightSend(ctx)
@@ -79,12 +80,12 @@ func (ctx *sendContext) ibbSendChunk(r io.ReadCloser, buffer []byte, seq uint16)
 	}
 	ctx.onUpdate(n)
 
-	go ctx.trackResultOfSend(rpl)
+	go trackResultOfSend(ctx, rpl)
 
 	return true
 }
 
-func (ctx *sendContext) trackResultOfSend(reply <-chan data.Stanza) {
+func trackResultOfSend(ctx *sendContext, reply <-chan data.Stanza) {
 	select {
 	case r := <-reply:
 		switch ciq := r.Value.(type) {
@@ -100,28 +101,26 @@ func (ctx *sendContext) trackResultOfSend(reply <-chan data.Stanza) {
 	}
 }
 
-func (ctx *sendContext) ibbScheduleNextSend(r io.ReadCloser, buffer []byte, seq uint16) bool {
+func ibbScheduleNextSend(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) bool {
 	time.AfterFunc(time.Duration(200)*time.Millisecond, func() {
-		ctx.ibbSendChunks(r, buffer, seq)
+		ibbSendChunks(ctx, r, buffer, seq)
 	})
 
 	return true
 }
 
-func (ctx *sendContext) ibbSendChunks(r io.ReadCloser, buffer []byte, seq uint16) {
+func ibbSendChunks(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) {
 	// The seq variable can wrap around here - THAT IS ON PURPOSE
 	// See XEP-0047 for details
-	ignore := ctx.ibbSendChunk(r, buffer, seq) &&
-		ctx.ibbSendChunk(r, buffer, seq+1) &&
-		ctx.ibbSendChunk(r, buffer, seq+2) &&
-		ctx.ibbSendChunk(r, buffer, seq+3) &&
-		ctx.ibbSendChunk(r, buffer, seq+4) &&
-		ctx.ibbScheduleNextSend(r, buffer, seq+5)
-
-	_ = ignore
+	_ := ibbSendChunk(ctx, r, buffer, seq) &&
+		ibbSendChunk(ctx, r, buffer, seq+1) &&
+		ibbSendChunk(ctx, r, buffer, seq+2) &&
+		ibbSendChunk(ctx, r, buffer, seq+3) &&
+		ibbSendChunk(ctx, r, buffer, seq+4) &&
+		ibbScheduleNextSend(ctx, r, buffer, seq+5)
 }
 
-func (ctx *sendContext) ibbSendStartTransfer(blockSize int) {
+func ibbSendStartTransfer(ctx *sendContext, blockSize int) {
 	seq := uint16(0)
 	buffer := make([]byte, blockSize)
 	f, err := os.Open(ctx.file)
@@ -129,9 +128,9 @@ func (ctx *sendContext) ibbSendStartTransfer(blockSize int) {
 		ctx.onError(err)
 		return
 	}
-	ctx.ibbSendChunks(f, buffer, seq)
+	ibbSendChunks(ctx, f, buffer, seq)
 }
 
-func (ctx *sendContext) ibbReceivedClose() {
+func ibbReceivedClose(ctx *sendContext) {
 	ctx.theyWantToCancel = true
 }

@@ -1,6 +1,7 @@
 package filetransfer
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,28 +9,14 @@ import (
 
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 const dirTransferProfile = "http://jabber.org/protocol/si/profile/directory-transfer"
 
 type dirSendContext struct {
-	s                access.Session
-	peer             string
-	dir              string
-	sid              string
-	weWantToCancel   bool
-	theyWantToCancel bool
-	totalSent        int64
-	control          *sdata.FileTransferControl
-	fallback         *sendContext
-	onErrorHook      func(*dirSendContext, error)
-}
-
-func (ctx *dirSendContext) onError(e error) {
-	ctx.control.ReportErrorNonblocking(e)
-	if ctx.onErrorHook != nil {
-		ctx.onErrorHook(ctx, e)
-	}
+	dir string
+	sc  *sendContext
 }
 
 func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error) {
@@ -60,9 +47,9 @@ func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error)
 func (ctx *dirSendContext) initSend() {
 	result, errorResult := ctx.startPackingDirectory()
 
-	supported, err := discoverSupport(ctx.s, ctx.peer)
+	supported, err := discoverSupport(ctx.sc.s, ctx.sc.peer)
 	if err != nil {
-		ctx.onError(err)
+		ctx.sc.onError(err)
 		return
 	}
 
@@ -72,58 +59,95 @@ func (ctx *dirSendContext) initSend() {
 	case tmpFile := <-result:
 		ctx.offerSend(tmpFile, supported)
 	case e := <-errorResult:
-		ctx.onError(e)
+		ctx.sc.onError(e)
 	}
 }
 
 func (ctx *dirSendContext) listenForCancellation() {
-	ctx.control.WaitForCancel(func() {
-		ctx.weWantToCancel = true
-		if ctx.fallback != nil {
-			ctx.fallback.weWantToCancel = true
-		}
-	})
+	ctx.sc.listenForCancellation()
 }
 
-func (ctx *dirSendContext) offerSendDirectory(file string) error {
-	// TODO: for now, only supported on CoyIM
-	ctx.sid = genSid(ctx.s.Conn())
+func sendSIData(sid, profile, file string, size int64, s access.Session) data.SI {
+	// TODO: Add Date and Hash here later?
+	return data.SI{
+		ID:      sid,
+		Profile: profile,
+		File: &data.File{
+			Name: filepath.Base(file),
+			Size: size,
+		},
+		Feature: data.FeatureNegotation{
+			Form: data.Form{
+				Type: "form",
+				Fields: []data.FormFieldX{
+					{
+						Var:     "stream-method",
+						Type:    "list-single",
+						Options: calculateAvailableSendOptions(s),
+					},
+				},
+			},
+		},
+	}
+}
+
+// we assume that ctx.sc.file points to a valid file, since it's generated in previous code. thus, we don't check for existance.
+func (ctx *dirSendContext) offerSendDirectory() error {
+	fstat, _ := os.Stat(ctx.sc.file)
+	ctx.sc.sid = genSid(ctx.sc.s.Conn())
+
+	toSend := sendSIData(ctx.sc.sid, dirTransferProfile, ctx.dir, fstat.Size(), ctx.sc.s)
+
+	var siq data.SI
+	nonblockIQ(ctx.sc.s, ctx.sc.peer, "set", toSend, &siq, func(*data.ClientIQ) {
+		if !isValidSubmitForm(siq) {
+			ctx.sc.onError(errors.New("Invalid data sent from peer for directory sending"))
+			return
+		}
+		prof := siq.Feature.Form.Fields[0].Values[0]
+		if f, ok := supportedSendingMechanisms[prof]; ok {
+			notifyUserThatSendStarted(prof, ctx.sc.s, ctx.sc.file, ctx.sc.peer)
+			addInflightSend(ctx.sc)
+			f(ctx.sc)
+			return
+		}
+		ctx.sc.onError(errors.New("Invalid sending mechanism sent from peer for directory sending"))
+	}, func(_ *data.ClientIQ, e error) {
+		ctx.sc.onError(e)
+	})
+
 	return nil
 }
 
-func (ctx *dirSendContext) offerSendDirectoryFallback(file string) error {
-	// This one is a fallback for sending to clients that don't support directory sending, but do support file sending. We will simply send the packaged .zip file to them.
-	fctx := &sendContext{
-		s:       ctx.s,
-		peer:    ctx.peer,
-		file:    file,
-		control: ctx.control,
-		onFinishHook: func(_ *sendContext) {
-			os.Remove(file)
-		},
-		onErrorHook: func(_ *sendContext, _ error) {
-			os.Remove(file)
-		},
-	}
-	ctx.fallback = fctx
-	return fctx.offerSend()
+// This one is a fallback for sending to clients that don't support directory sending, but do support file sending. We will simply send the packaged .zip file to them.
+func (ctx *dirSendContext) offerSendDirectoryFallback() error {
+	return ctx.sc.offerSend()
 }
 
 func (ctx *dirSendContext) offerSend(file string, availableProfiles map[string]bool) error {
+	ctx.sc.file = file
 	if availableProfiles[dirTransferProfile] {
-		return ctx.offerSendDirectory(file)
+		return ctx.offerSendDirectory()
 	}
-	return ctx.offerSendDirectoryFallback(file)
+	return ctx.offerSendDirectoryFallback()
 }
 
 // InitSendDir starts the process of sending a directory to a peer
 func InitSendDir(s access.Session, peer string, dir string) *sdata.FileTransferControl {
 	ctx := &dirSendContext{
-		s:       s,
-		peer:    peer,
-		dir:     dir,
-		control: sdata.CreateFileTransferControl(),
+		sc: &sendContext{
+			s:       s,
+			peer:    peer,
+			control: sdata.CreateFileTransferControl(),
+			onFinishHook: func(ctx *sendContext) {
+				os.Remove(ctx.file)
+			},
+			onErrorHook: func(ctx *sendContext, _ error) {
+				os.Remove(ctx.file)
+			},
+		},
+		dir: dir,
 	}
 	go ctx.initSend()
-	return ctx.control
+	return ctx.sc.control
 }

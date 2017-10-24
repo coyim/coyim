@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/digests"
+	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/utils"
 )
@@ -21,30 +22,30 @@ func init() {
 	registerSendFileTransferMethod("http://jabber.org/protocol/bytestreams", bytestreamsSendDo, bytestreamsSendCurrentlyValid)
 }
 
-func bytestreamsSendCurrentlyValid(_ string, ctx *sendContext) bool {
-	return len(bytestreamsGetCurrentValidProxies(ctx)) > 0
+func bytestreamsSendCurrentlyValid(_ string, s access.Session) bool {
+	return len(bytestreamsGetCurrentValidProxies(s)) > 0
 }
 
 var defaultBytestreamProxyTimeout = 2 * time.Hour
 
-func bytestreamsGetStreamhostDataFor(ctx *sendContext, jid string) (result *data.BytestreamStreamhost) {
+func bytestreamsGetStreamhostDataFor(s access.Session, jid string) (result *data.BytestreamStreamhost) {
 	var q data.BytestreamQuery
-	basicIQ(ctx.s, jid, "get", &data.BytestreamQuery{}, &q, func(*data.ClientIQ) {
-		for _, s := range q.Streamhosts {
-			result = &s
+	basicIQ(s, jid, "get", &data.BytestreamQuery{}, &q, func(*data.ClientIQ) {
+		for _, sh := range q.Streamhosts {
+			result = &sh
 			return
 		}
 	})
 	return
 }
 
-func bytestreamsCalculateValidProxies(ctx *sendContext) func(key string) interface{} {
+func bytestreamsCalculateValidProxies(s access.Session) func(key string) interface{} {
 	return func(key string) interface{} {
 		var ditems data.DiscoveryItemsQuery
 		possibleProxies := []string{}
-		e := basicIQ(ctx.s, utils.DomainFromJid(ctx.s.GetConfig().Account), "get", &data.DiscoveryItemsQuery{}, &ditems, func(*data.ClientIQ) {
+		e := basicIQ(s, utils.DomainFromJid(s.GetConfig().Account), "get", &data.DiscoveryItemsQuery{}, &ditems, func(*data.ClientIQ) {
 			for _, di := range ditems.DiscoveryItems {
-				ids, feats, _ := ctx.s.Conn().DiscoveryFeaturesAndIdentities(di.Jid)
+				ids, feats, _ := s.Conn().DiscoveryFeaturesAndIdentities(di.Jid)
 				hasCorrectIdentity := false
 				hasBytestreamsFeature := false
 				for _, id := range ids {
@@ -65,7 +66,6 @@ func bytestreamsCalculateValidProxies(ctx *sendContext) func(key string) interfa
 		})
 
 		if e != nil {
-			ctx.onError(e)
 			return nil
 		}
 
@@ -83,13 +83,13 @@ func bytestreamsCalculateValidProxies(ctx *sendContext) func(key string) interfa
 	}
 }
 
-func bytestreamsGetCurrentValidProxies(ctx *sendContext) []*data.BytestreamStreamhost {
-	proxies, _ := ctx.s.Conn().Cache().GetOrComputeTimed("http://jabber.org/protocol/bytestreams . proxies", defaultBytestreamProxyTimeout, bytestreamsCalculateValidProxies(ctx))
+func bytestreamsGetCurrentValidProxies(s access.Session) []*data.BytestreamStreamhost {
+	proxies, _ := s.Conn().Cache().GetOrComputeTimed("http://jabber.org/protocol/bytestreams . proxies", defaultBytestreamProxyTimeout, bytestreamsCalculateValidProxies(s))
 	return proxies.([]*data.BytestreamStreamhost)
 
 }
 
-func (ctx *sendContext) bytestreamsSendData(c net.Conn) {
+func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 	defer c.Close()
 
 	buffer := make([]byte, bufSize)
@@ -101,10 +101,8 @@ func (ctx *sendContext) bytestreamsSendData(c net.Conn) {
 	defer r.Close()
 	for {
 		if ctx.weWantToCancel {
-			if ctx.weWantToCancel {
-				removeInflightSend(ctx)
-				return
-			}
+			removeInflightSend(ctx)
+			return
 		}
 		n, err := r.Read(buffer)
 		if err == io.EOF && n == 0 {
@@ -125,7 +123,7 @@ func (ctx *sendContext) bytestreamsSendData(c net.Conn) {
 
 func bytestreamsSendDo(ctx *sendContext) {
 	go func() {
-		proxies := bytestreamsGetCurrentValidProxies(ctx)
+		proxies := bytestreamsGetCurrentValidProxies(ctx.s)
 		proxiesToSend := make([]data.BytestreamStreamhost, len(proxies))
 		proxyMap := make(map[string]data.BytestreamStreamhost)
 		for ix, p := range proxies {
@@ -149,7 +147,7 @@ func bytestreamsSendDo(ctx *sendContext) {
 					Sid:      ctx.sid,
 					Activate: ciq.From,
 				}, nil, func(*data.ClientIQ) {
-					go ctx.bytestreamsSendData(c)
+					go bytestreamsSendData(ctx, c)
 				})
 				if e != nil {
 					ctx.onError(e)

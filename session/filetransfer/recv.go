@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
@@ -19,19 +18,15 @@ var supportedFileTransferMethods = map[string]int{
 	"http://jabber.org/protocol/ibb":         0,
 }
 
-var fileTransferCancelListeners = map[string]func(*inflight){
+var fileTransferCancelListeners = map[string]func(*recvContext){
 	"http://jabber.org/protocol/ibb":         ibbWaitForCancel,
 	"http://jabber.org/protocol/bytestreams": bytestreamWaitForCancel,
 }
 
-type inflightStatus struct {
-	destination string
-	opaque      interface{}
-}
-
-type inflight struct {
+type recvContext struct {
 	s       access.Session
-	id      string
+	sid     string
+	peer    string
 	mime    string
 	options []string
 	date    string
@@ -43,18 +38,9 @@ type inflight struct {
 		length *int
 		offset *int
 	}
-	peer    string
-	status  *inflightStatus
-	control *sdata.FileTransferControl
-}
-
-var inflights struct {
-	sync.RWMutex
-	transfers map[string]*inflight
-}
-
-func init() {
-	inflights.transfers = make(map[string]*inflight)
+	destination string
+	opaque      interface{}
+	control     *sdata.FileTransferControl
 }
 
 func extractFileTransferOptions(f data.Form) ([]string, error) {
@@ -86,39 +72,6 @@ func chooseAppropriateFileTransferOptionFrom(options []string) (best string, ok 
 	return
 }
 
-func getInflight(id string) (result *inflight, ok bool) {
-	inflights.RLock()
-	defer inflights.RUnlock()
-	result, ok = inflights.transfers[id]
-	return
-}
-
-func setInflightDestination(id, destination string) {
-	inflights.RLock()
-	defer inflights.RUnlock()
-	inflights.transfers[id].status.destination = destination
-}
-
-func removeInflight(id string) {
-	inflights.Lock()
-	defer inflights.Unlock()
-	delete(inflights.transfers, id)
-}
-
-var iqErrorBadRequest = data.ErrorReply{
-	Type:   "cancel",
-	Code:   400,
-	Error:  data.ErrorBadRequest{},
-	Error2: data.ErrorNoValidStreams{},
-}
-
-var iqErrorForbidden = data.ErrorReply{
-	Type:  "cancel",
-	Code:  403,
-	Error: data.ErrorForbidden{},
-	Text:  "Offer Declined",
-}
-
 func iqResultChosenStreamMethod(opt string) data.SI {
 	return data.SI{
 		File: &data.File{},
@@ -133,56 +86,56 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 	}
 }
 
-func (ift *inflight) finalizeFileTransfer(tempName string) error {
-	if err := os.Rename(tempName, ift.status.destination); err != nil {
-		ift.control.ReportError(errors.New("Couldn't save final file"))
+func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
+	if err := os.Rename(tempName, ctx.destination); err != nil {
+		ctx.control.ReportError(errors.New("Couldn't save final file"))
 		return err
 	}
 
-	ift.control.ReportFinished()
-	removeInflight(ift.id)
+	ctx.control.ReportFinished()
+	removeInflightRecv(ctx.sid)
 
 	return nil
 }
 
-func (ift *inflight) openDestinationTempFile() (f *os.File, err error) {
+func (ctx *recvContext) openDestinationTempFile() (f *os.File, err error) {
 	// By creating a temp file next to the place where the real file should be saved
 	// we avoid problems on linux when trying to os.Rename later - if tmp filesystem is different
 	// than the destination file system. It also serves as an early permissions check.
-	f, err = ioutil.TempFile(filepath.Dir(ift.status.destination), filepath.Base(ift.status.destination))
+	f, err = ioutil.TempFile(filepath.Dir(ctx.destination), filepath.Base(ctx.destination))
 	if err != nil {
-		ift.status.opaque = nil
-		ift.control.ReportError(errors.New("Couldn't open local temporary file"))
-		removeInflight(ift.id)
+		ctx.opaque = nil
+		ctx.control.ReportError(errors.New("Couldn't open local temporary file"))
+		removeInflightRecv(ctx.sid)
 	}
 	return
 }
 
-func waitForFileTransferUserAcceptance(stanza *data.ClientIQ, si data.SI, acceptResult <-chan *string, ift *inflight) {
+func waitForFileTransferUserAcceptance(stanza *data.ClientIQ, si data.SI, acceptResult <-chan *string, ctx *recvContext) {
 	result := <-acceptResult
 
 	var error *data.ErrorReply
 	if result != nil {
-		opt, ok := chooseAppropriateFileTransferOptionFrom(ift.options)
+		opt, ok := chooseAppropriateFileTransferOptionFrom(ctx.options)
 		if ok {
-			setInflightDestination(si.ID, *result)
-			ift.s.SendIQResult(stanza, iqResultChosenStreamMethod(opt))
-			go fileTransferCancelListeners[opt](ift)
+			setInflightRecvDestination(si.ID, *result)
+			ctx.s.SendIQResult(stanza, iqResultChosenStreamMethod(opt))
+			go fileTransferCancelListeners[opt](ctx)
 			return
 		}
-		ift.control.ReportError(errors.New("No mutually acceptable file transfer methods available"))
+		ctx.control.ReportError(errors.New("No mutually acceptable file transfer methods available"))
 		error = &iqErrorBadRequest
 	} else {
 		error = &iqErrorForbidden
 	}
-	removeInflight(si.ID)
-	ift.s.SendIQError(stanza, *error)
+	removeInflightRecv(si.ID)
+	ctx.s.SendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl *sdata.FileTransferControl) *inflight {
-	ift := &inflight{
+func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl *sdata.FileTransferControl) *recvContext {
+	ctx := &recvContext{
 		s:       s,
-		id:      si.ID,
+		sid:     si.ID,
 		mime:    si.MIMEType,
 		options: options,
 		date:    f.Date,
@@ -191,19 +144,16 @@ func registerNewFileTransfer(s access.Session, si data.SI, options []string, sta
 		size:    f.Size,
 		desc:    f.Desc,
 		peer:    stanza.From,
-		status:  &inflightStatus{},
 		control: ctl,
 	}
 
 	if f.Range != nil {
-		ift.rng.length = f.Range.Length
-		ift.rng.offset = f.Range.Offset
+		ctx.rng.length = f.Range.Length
+		ctx.rng.offset = f.Range.Offset
 	}
 
-	inflights.Lock()
-	defer inflights.Unlock()
-	inflights.transfers[si.ID] = ift
-	return ift
+	addInflightRecv(ctx)
+	return ctx
 }
 
 // InitIQ is the hook function that will be called when we receive a file transfer stream initiation IQ

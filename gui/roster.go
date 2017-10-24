@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html"
 	"log"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -74,6 +75,13 @@ func (u *gtkUI) newRoster() *roster {
 
 	obj = builder.getObj("roster-model")
 	r.model = obj.(gtki.TreeStore)
+
+	//r.model needs to be ketp beyond the lifespan of the builder.
+	r.model.Ref()
+	runtime.SetFinalizer(r, func(ros interface{}) {
+		ros.(*roster).model.Unref()
+		ros.(*roster).model = nil
+	})
 
 	u.displaySettings.update()
 

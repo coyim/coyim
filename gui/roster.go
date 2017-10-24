@@ -277,26 +277,30 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 
 func (r *roster) appendResourcesAsMenuItems(jid string, account *account, menuItem gtki.MenuItem) {
 	peer, ok := r.ui.getPeer(account, jid)
-	hasResources := peer.HasResources()
+	if !ok {
+		return
+	}
 
+	hasResources := peer.HasResources()
 	menuItem.SetSensitive(hasResources)
 
-	if ok && hasResources {
-		innerMenu, _ := g.gtk.MenuNew()
-
-		for _, resource := range peer.Resources() {
-			item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
-			item.Connect("activate",
-				func() {
-					doInUIThread(func() {
-						r.openConversationView(account, jid, true, resource)
-					})
-				})
-			innerMenu.Append(item)
-		}
-
-		menuItem.SetSubmenu(innerMenu)
+	if !hasResources {
+		return
 	}
+
+	innerMenu, _ := g.gtk.MenuNew()
+	for _, resource := range peer.Resources() {
+		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
+		item.Connect("activate",
+			func() {
+				doInUIThread(func() {
+					r.openConversationView(account, jid, true, resource)
+				})
+			})
+		innerMenu.Append(item)
+	}
+
+	menuItem.SetSubmenu(innerMenu)
 }
 
 func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventButton) {

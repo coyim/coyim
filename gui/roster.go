@@ -62,12 +62,13 @@ func (u *gtkUI) newRoster() *roster {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_activate_buddy": r.onActivateBuddy,
+		"on_button_press":   r.onButtonPress,
 	})
 
 	obj := builder.getObj("roster")
 	r.widget = obj.(gtki.ScrolledWindow)
 
-	obj = builder.getObj("roster-view")
+	obj = builder.getObj("roster-tree")
 	r.view = obj.(gtki.TreeView)
 	r.view.SetEnableSearch(true)
 
@@ -75,8 +76,6 @@ func (u *gtkUI) newRoster() *roster {
 	r.model = obj.(gtki.TreeStore)
 
 	u.displaySettings.update()
-
-	r.view.Connect("button-press-event", r.onButtonPress)
 
 	return r
 }

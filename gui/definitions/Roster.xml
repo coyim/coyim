@@ -25,7 +25,7 @@
     <property name="hscrollbar-policy">GTK_POLICY_NEVER</property>
     <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
     <child>
-      <object class="GtkTreeView" id="roster-view">
+      <object class="GtkTreeView" id="roster-tree">
         <property name="model">roster-model</property>
         <property name="headers-visible">false</property>
         <property name="show-expanders">false</property>
@@ -33,6 +33,7 @@
         <!-- TODO remove magic number -->
         <property name="tooltip-column">6</property>
         <signal name="row-activated" handler="on_activate_buddy" />
+        <signal name="button-press-event" handler="on_button_press" />
         <child internal-child="selection">
           <object class="GtkTreeSelection" id="selection">
             <property name="mode">GTK_SELECTION_SINGLE</property>

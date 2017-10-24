@@ -25,7 +25,7 @@ type basicTLSVerifier struct {
 	shaSum []byte
 }
 
-func (v *basicTLSVerifier) verifyCert(state tls.ConnectionState, conf tls.Config) ([][]*x509.Certificate, error) {
+func (v *basicTLSVerifier) verifyCert(state tls.ConnectionState, conf *tls.Config) ([][]*x509.Certificate, error) {
 	opts := x509.VerifyOptions{
 		Intermediates: x509.NewCertPool(),
 		Roots:         conf.RootCAs,
@@ -63,7 +63,7 @@ func (v *basicTLSVerifier) hasPinned(certs []*x509.Certificate) error {
 	return nil
 }
 
-func (v *basicTLSVerifier) Verify(state tls.ConnectionState, conf tls.Config, originDomain string) error {
+func (v *basicTLSVerifier) Verify(state tls.ConnectionState, conf *tls.Config, originDomain string) error {
 	if len(state.PeerCertificates) == 0 {
 		return goerr.New("tls: server has no certificates")
 	}
@@ -963,26 +963,6 @@ func (s *ConnectionXMPPSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 		"<iq to='domain' type='set' id='sess_1'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>",
 	)
 }
-
-// func (s *ConnectionXMPPSuite) Test_blaData(c *C) {
-// 	println("Trying!")
-// 	var tlsC tls.Config
-// 	tlsC.ServerName = "www.olabini.se"
-// 	tlsC.InsecureSkipVerify = true
-// 	tlsC.Rand = fixedRand([]string{
-// 		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-// 		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-// 		"000102030405060708090A0B0C0D0E0F",
-// 		"000102030405060708090A0B0C0D0E0F",
-// 	})
-// 	conn, _ := net.Dial("tcp", "www.olabini.se:443")
-// 	tee := createTeeConn(conn, os.Stdout)
-// 	tlsConn := tls.Client(tee, &tlsC)
-// 	err := tlsConn.Handshake()
-// 	if err != nil {
-// 		println("Error: ", err.Error())
-// 	}
-// }
 
 func (s *ConnectionXMPPSuite) Test_readMessages_passesStanzaToChannel(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}

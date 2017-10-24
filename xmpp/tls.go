@@ -116,14 +116,14 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 	l := c.Config().GetLog()
 	io.WriteString(l, "Starting TLS handshake\n")
 
-	var tlsConfig tls.Config
+	tlsConfig := &tls.Config{}
 	if c.Config().TLSConfig != nil {
-		tlsConfig = *c.Config().TLSConfig
+		tlsConfig = c.Config().TLSConfig.Clone()
 	}
 	tlsConfig.ServerName = c.OriginDomain()
 	tlsConfig.InsecureSkipVerify = true
 
-	tlsConn := tls.Client(conn, &tlsConfig)
+	tlsConn := tls.Client(conn, tlsConfig)
 	if err := tlsConn.Handshake(); err != nil {
 		return err
 	}

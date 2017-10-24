@@ -24,7 +24,7 @@ func verifyHostName(leafCert *x509.Certificate, originDomain string) error {
 	return leafCert.VerifyHostname(originDomain)
 }
 
-func (v *BasicVerifier) verifyCert(certs []*x509.Certificate, conf tls.Config) ([][]*x509.Certificate, error) {
+func (v *BasicVerifier) verifyCert(certs []*x509.Certificate, conf *tls.Config) ([][]*x509.Certificate, error) {
 	opts := x509.VerifyOptions{
 		Intermediates: x509.NewCertPool(),
 		Roots:         conf.RootCAs,
@@ -69,7 +69,7 @@ func (v *BasicVerifier) canConnectInPresenceOfPins(certs []*x509.Certificate) er
 }
 
 // Verify implements tls.Verifier
-func (v *BasicVerifier) Verify(state tls.ConnectionState, conf tls.Config, originDomain string) error {
+func (v *BasicVerifier) Verify(state tls.ConnectionState, conf *tls.Config, originDomain string) error {
 	if len(state.PeerCertificates) == 0 {
 		v.OnNoPeerCertificates()
 		return errors.New("tls: server has no certificates")

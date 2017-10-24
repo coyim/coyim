@@ -59,8 +59,8 @@ func bytestreamCalculateDestinationAddress(tag data.BytestreamQuery, stanza *dat
 	return hex.EncodeToString(digests.Sha1([]byte(tag.Sid + stanza.From + stanza.To)))
 }
 
-const chunkSize = 4096
-const cancelCheckFrequency = 100
+const chunkSize = 16 * 4096
+const cancelCheckFrequency = 10
 
 func (ctx *recvContext) bytestreamCleanup(conn net.Conn, ff *os.File) {
 	conn.Close()
@@ -95,13 +95,13 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 
 		n, err := conn.Read(buf)
 		if err != nil {
-			if err != io.EOF {
-				ctx.s.Warn(fmt.Sprintf("Had error when trying to read from connection: %v", err))
-				ctx.control.ReportError(errors.New("Error reading from peer"))
-				ctx.bytestreamCleanup(conn, ff)
-				return
+			if err == io.EOF {
+				break
 			}
-			break
+			ctx.s.Warn(fmt.Sprintf("Had error when trying to read from connection: %v", err))
+			ctx.control.ReportError(errors.New("Error reading from peer"))
+			ctx.bytestreamCleanup(conn, ff)
+			return
 		}
 		_, err = ff.Write(buf[:n])
 		if err != nil {

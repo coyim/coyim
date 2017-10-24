@@ -17,8 +17,6 @@ import (
 
 type ibbContext struct {
 	sync.Mutex
-	blockSize         int
-	stanza            string
 	expectingSequence uint16
 	currentSize       int64
 	f                 *os.File
@@ -62,14 +60,7 @@ func IbbOpen(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 		return iqErrorNotAcceptable, "error", false
 	}
 
-	c := &ibbContext{
-		blockSize:         tag.BlockSize,
-		stanza:            tag.Stanza,
-		expectingSequence: 0,
-	}
-	if c.stanza == "" {
-		c.stanza = "iq"
-	}
+	c := &ibbContext{}
 	ctx.opaque = c
 
 	ff, err := ctx.openDestinationTempFile()
@@ -82,28 +73,37 @@ func IbbOpen(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	return data.EmptyReply{}, "", false
 }
 
-// IbbData is the hook function that will be called when we receive an ibb data IQ
-func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	var tag data.IBBData
-	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
+// TODO: continue refactoring the handling of data to be generic for all
+
+func ibbHandleData(s access.Session, data []byte) (tag data.IBBData, ctx *recvContext, ictx *ibbContext, ret interface{}, iqtype string, ignore bool) {
+	if err := xml.NewDecoder(bytes.NewBuffer(data)).Decode(&tag); err != nil {
 		s.Warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
-		return iqErrorNotAcceptable, "error", false
+		return tag, nil, nil, iqErrorNotAcceptable, "error", false
 	}
 
 	ctx, ok := getInflightRecv(tag.Sid)
 
 	if !ok || ctx.opaque == nil {
 		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
-		return iqErrorItemNotFound, "error", false
+		return tag, nil, nil, iqErrorItemNotFound, "error", false
 	}
 
-	ictx, ok := ctx.opaque.(*ibbContext)
+	ictx, ok = ctx.opaque.(*ibbContext)
 	if !ok {
 		s.Warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
-		return iqErrorItemNotFound, "error", false
+		return tag, nil, nil, iqErrorItemNotFound, "error", false
 	}
 
 	ictx.Lock()
+	return tag, ctx, ictx, nil, "", false
+}
+
+// IbbData is the hook function that will be called when we receive an ibb data IQ
+func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
+	tag, ctx, ictx, ret, iqtype, ignore := ibbHandleData(s, stanza.Query)
+	if ret != nil {
+		return ret, iqtype, ignore
+	}
 	defer ictx.Unlock()
 
 	// XEP-0047 wants us to keep track of previously used sequence numbers, and only do this error
@@ -144,28 +144,10 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 
 // IbbMessageData is the hook function that will be called when we receive a message containing an ibb data
 func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Extension) {
-	var tag data.IBBData
-	if err := xml.NewDecoder(bytes.NewBuffer([]byte(ext.Body))).Decode(&tag); err != nil {
-		s.Warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
+	tag, ctx, ictx, ret, _, _ := ibbHandleData(s, []byte(ext.Body))
+	if ret != nil {
 		return
 	}
-
-	ctx, ok := getInflightRecv(tag.Sid)
-
-	if !ok || ctx.opaque == nil {
-		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
-		// we can't actually send anything back to indicate this problem...
-		return
-	}
-
-	ictx, ok := ctx.opaque.(*ibbContext)
-	if !ok {
-		s.Warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
-		// we can't actually send anything back to indicate this problem...
-		return
-	}
-
-	ictx.Lock()
 	defer ictx.Unlock()
 
 	// XEP-0047 wants us to keep track of previously used sequence numbers, and only do this error

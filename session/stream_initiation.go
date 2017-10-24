@@ -15,7 +15,8 @@ func init() {
 }
 
 var supportedSIProfiles = map[string]func(access.Session, *data.ClientIQ, data.SI) (interface{}, string, bool){
-	"http://jabber.org/protocol/si/profile/file-transfer": filetransfer.InitIQ,
+	"http://jabber.org/protocol/si/profile/file-transfer":      filetransfer.InitIQ,
+	"http://jabber.org/protocol/si/profile/directory-transfer": filetransfer.InitIQ,
 }
 
 func streamInitIQ(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {

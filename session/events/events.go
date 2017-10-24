@@ -109,6 +109,7 @@ type FileTransfer struct {
 	Name             string
 	Size             int64
 	Description      string
+	IsDirectory      bool
 
 	Answer  chan<- *string // one time use
 	Control *sdata.FileTransferControl

@@ -9,10 +9,10 @@ import (
 
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
-	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
+// This contains all valid file transfer methods. A higher value is better, and if possible, we will choose the method with the highest value
 var supportedFileTransferMethods = map[string]int{
 	"http://jabber.org/protocol/bytestreams": 1,
 	"http://jabber.org/protocol/ibb":         0,
@@ -24,17 +24,18 @@ var fileTransferCancelListeners = map[string]func(*recvContext){
 }
 
 type recvContext struct {
-	s       access.Session
-	sid     string
-	peer    string
-	mime    string
-	options []string
-	date    string
-	hash    string
-	name    string
-	size    int64
-	desc    string
-	rng     struct {
+	s         access.Session
+	sid       string
+	peer      string
+	mime      string
+	options   []string
+	date      string
+	hash      string
+	name      string
+	size      int64
+	desc      string
+	directory bool
+	rng       struct {
 		length *int
 		offset *int
 	}
@@ -87,6 +88,13 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 }
 
 func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
+	// TODO[dir]: here, we need to do different things depending on if it's a directory or not
+	// TODO[dir]: we should remember to remove the downloaded file as well.
+	if ctx.directory {
+		ctx.control.ReportError(errors.New("We don't supports directories right now"))
+		return errors.New("We don't supports directories right now")
+	}
+
 	if err := os.Rename(tempName, ctx.destination); err != nil {
 		ctx.control.ReportError(errors.New("Couldn't save final file"))
 		return err
@@ -102,6 +110,7 @@ func (ctx *recvContext) openDestinationTempFile() (f *os.File, err error) {
 	// By creating a temp file next to the place where the real file should be saved
 	// we avoid problems on linux when trying to os.Rename later - if tmp filesystem is different
 	// than the destination file system. It also serves as an early permissions check.
+	// If the transfer is a directory, we will save the zip file here, instead of the actual file. But it should have the same result
 	f, err = ioutil.TempFile(filepath.Dir(ctx.destination), filepath.Base(ctx.destination))
 	if err != nil {
 		ctx.opaque = nil
@@ -132,19 +141,20 @@ func waitForFileTransferUserAcceptance(stanza *data.ClientIQ, si data.SI, accept
 	ctx.s.SendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl *sdata.FileTransferControl) *recvContext {
+func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl *sdata.FileTransferControl, isDir bool) *recvContext {
 	ctx := &recvContext{
-		s:       s,
-		sid:     si.ID,
-		mime:    si.MIMEType,
-		options: options,
-		date:    f.Date,
-		hash:    f.Hash,
-		name:    f.Name,
-		size:    f.Size,
-		desc:    f.Desc,
-		peer:    stanza.From,
-		control: ctl,
+		s:         s,
+		sid:       si.ID,
+		mime:      si.MIMEType,
+		options:   options,
+		date:      f.Date,
+		hash:      f.Hash,
+		name:      f.Name,
+		size:      f.Size,
+		desc:      f.Desc,
+		peer:      stanza.From,
+		directory: isDir,
+		control:   ctl,
 	}
 
 	if f.Range != nil {
@@ -154,36 +164,4 @@ func registerNewFileTransfer(s access.Session, si data.SI, options []string, sta
 
 	addInflightRecv(ctx)
 	return ctx
-}
-
-// InitIQ is the hook function that will be called when we receive a file transfer stream initiation IQ
-func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{}, iqtype string, ignore bool) {
-	var options []string
-	var err error
-	if options, err = extractFileTransferOptions(si.Feature.Form); err != nil {
-		s.Warn(fmt.Sprintf("Failed to parse stream initiation: %v", err))
-		return nil, "", false
-	}
-
-	f := si.File
-
-	ctl := sdata.CreateFileTransferControl()
-	ift := registerNewFileTransfer(s, si, options, stanza, f, ctl)
-
-	acceptResult := make(chan *string)
-	go waitForFileTransferUserAcceptance(stanza, si, acceptResult, ift)
-
-	s.PublishEvent(events.FileTransfer{
-		Session:          s,
-		Peer:             stanza.From,
-		Mime:             f.Hash,
-		DateLastModified: f.Date,
-		Name:             f.Name,
-		Size:             f.Size,
-		Description:      f.Desc,
-		Answer:           acceptResult,
-		Control:          ctl,
-	})
-
-	return nil, "", true
 }

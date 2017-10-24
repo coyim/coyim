@@ -12,7 +12,8 @@
 	    <child>
               <object class="GtkLabel" id="menuTag">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Secure Chat</property>
+                <property name="label" translatable="yes">Encrypted Chat</property>
+                <property name="use-underline">True</property>
               </object>
             </child>
             <child type="submenu">
@@ -46,8 +47,14 @@
         <child>
           <object class="GtkMenuItem" id="sendFileMenuItem">
             <property name="visible">true</property>
-            <property name="label" translatable="yes">Send File</property>
-            <signal name="activate" handler="on_send_file_to_contact" />
+	    <child>
+              <object class="GtkLabel" id="sendFileTag">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Send File</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <signal name="select" handler="on_send_file_to_contact" />
           </object>
       </child>
       </object>

@@ -85,7 +85,7 @@ type conversationPane struct {
 	account              *account
 	widget               gtki.Box
 	menubar              gtki.MenuBar
-	menuLabel            gtki.Label
+	encryptedLabel       gtki.Label
 	entry                gtki.TextView
 	entryScroll          gtki.ScrolledWindow
 	history              gtki.TextView
@@ -307,7 +307,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 
 	builder.getItems(
 		"box", &cp.widget,
-		"menuTag", &cp.menuLabel,
+		"menuTag", &cp.encryptedLabel,
 		"history", &cp.history,
 		"pending", &cp.pending,
 		"historyScroll", &cp.scrollHistory,
@@ -335,8 +335,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		},
 	})
 
-	mnemonic := uint(101)
-	transientParent.AddMnemonic(mnemonic, cp.menuLabel)
+	transientParent.AddMnemonic(uint(101), cp.encryptedLabel)
 	transientParent.SetMnemonicModifier(gdki.GDK_CONTROL_MASK)
 
 	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))

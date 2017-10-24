@@ -25,6 +25,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	)}
 	conn := &fullMockedConn{rw: rw}
 	tlsC := &tls.Config{
+		SessionTicketKey: [32]byte{1},
 		Rand:             fixedRand([]string{"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F"}),
 	}
 
@@ -64,6 +65,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	tlsC := &tls.Config{
+		SessionTicketKey: [32]byte{1},
 		Rand: fixedRand([]string{
 			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
 			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
@@ -116,6 +118,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	tlsC := &tls.Config{
+		SessionTicketKey: [32]byte{1},
 		Rand: fixedRand([]string{
 			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
 			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
@@ -143,6 +146,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	tlsC := &tls.Config{
+		SessionTicketKey: [32]byte{1},
 		Rand: fixedRand([]string{
 			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
 			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",

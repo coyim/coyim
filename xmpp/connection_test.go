@@ -527,7 +527,9 @@ func (s *ConnectionXMPPSuite) Test_Dial_setsServerNameOnTLSContext(c *C) {
 			"</str:features>" +
 			"<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>",
 	)}
-	tlsC := &tls.Config{}
+	tlsC := &tls.Config{
+		SessionTicketKey: [32]byte{1},
+	}
 	conn := &fullMockedConn{rw: rw}
 
 	d := &dialer{

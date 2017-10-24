@@ -25,14 +25,15 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 			"<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>",
 	)}
 	conn := &fullMockedConn{rw: rw}
-	var tlsC tls.Config
-	tlsC.Rand = fixedRand([]string{"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F"})
+	tlsC := &tls.Config{
+		Rand:             fixedRand([]string{"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F"}),
+	}
 
 	d := &dialer{
 		JID:      "user@domain",
 		password: "pass",
 		config: data.Config{
-			TLSConfig: &tlsC,
+			TLSConfig: tlsC,
 		},
 	}
 	_, err := d.setupStream(conn)
@@ -51,13 +52,14 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
-	var tlsC tls.Config
-	tlsC.Rand = fixedRand([]string{
-		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-		"000102030405060708090A0B0C0D0E0F",
-		"000102030405060708090A0B0C0D0E0F",
-	})
+	tlsC := &tls.Config{
+		Rand: fixedRand([]string{
+			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+			"000102030405060708090A0B0C0D0E0F",
+			"000102030405060708090A0B0C0D0E0F",
+		}),
+	}
 
 	d := &dialer{
 		JID:           "user@www.olabini.se",
@@ -66,7 +68,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 		verifier:      &basicTLSVerifier{},
 
 		config: data.Config{
-			TLSConfig: &tlsC,
+			TLSConfig: tlsC,
 		},
 	}
 	_, err := d.setupStream(conn)
@@ -85,13 +87,14 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInvalidCertHash(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
-	var tlsC tls.Config
-	tlsC.Rand = fixedRand([]string{
-		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-		"000102030405060708090A0B0C0D0E0F",
-		"000102030405060708090A0B0C0D0E0F",
-	})
+	tlsC := &tls.Config{
+		Rand: fixedRand([]string{
+			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+			"000102030405060708090A0B0C0D0E0F",
+			"000102030405060708090A0B0C0D0E0F",
+		}),
+	}
 
 	d := &dialer{
 		JID:           "user@www.olabini.se",
@@ -100,7 +103,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 		verifier:      &basicTLSVerifier{[]byte("aaaaa")},
 
 		config: data.Config{
-			TLSConfig: &tlsC,
+			TLSConfig: tlsC,
 		},
 	}
 	_, err := d.setupStream(conn)
@@ -111,13 +114,14 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
-	var tlsC tls.Config
-	tlsC.Rand = fixedRand([]string{
-		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-		"000102030405060708090A0B0C0D0E0F",
-		"000102030405060708090A0B0C0D0E0F",
-	})
+	tlsC := &tls.Config{
+		Rand: fixedRand([]string{
+			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+			"000102030405060708090A0B0C0D0E0F",
+			"000102030405060708090A0B0C0D0E0F",
+		}),
+	}
 
 	d := &dialer{
 		JID:           "user@www.olabini.se",
@@ -126,7 +130,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 		verifier:      &basicTLSVerifier{bytesFromHex("82454418cb04854aa721bb0596528ff802b1e18a4e3a7767412ac9f108c9d3a7")},
 
 		config: data.Config{
-			TLSConfig: &tlsC,
+			TLSConfig: tlsC,
 		},
 	}
 	_, err := d.setupStream(conn)

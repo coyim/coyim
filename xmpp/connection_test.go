@@ -527,14 +527,14 @@ func (s *ConnectionXMPPSuite) Test_Dial_setsServerNameOnTLSContext(c *C) {
 			"</str:features>" +
 			"<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>",
 	)}
-	var tlsC tls.Config
+	tlsC := &tls.Config{}
 	conn := &fullMockedConn{rw: rw}
 
 	d := &dialer{
 		JID:      "user@domain",
 		password: "pass",
 		config: data.Config{
-			TLSConfig: &tlsC,
+			TLSConfig: tlsC,
 		},
 	}
 	_, err := d.setupStream(conn)

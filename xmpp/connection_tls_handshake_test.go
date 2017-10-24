@@ -39,14 +39,15 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake_Proposed(c *
 		Rand:       fixedRand(r),
 	})
 
-	var tlsC tls.Config
-	tlsC.Rand = fixedRand(r)
+	tlsC := &tls.Config{
+		Rand:             fixedRand(r),
+	}
 
 	d := &dialer{
 		JID:      "user@domain",
 		password: "pass",
 		config: data.Config{
-			TLSConfig: &tlsC,
+			TLSConfig: tlsC,
 		},
 	}
 	conn := &fullMockedConn{rw: rw}
@@ -82,8 +83,9 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds_Proposed(c *
 		Rand:       fixedRand(r),
 	})
 
-	var tlsC tls.Config
-	tlsC.Rand = fixedRand(r)
+	tlsC := &tls.Config{
+		Rand:             fixedRand(r),
+	}
 
 	d := &dialer{
 		JID:           "user@www.olabini.se",
@@ -92,7 +94,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds_Proposed(c *
 		verifier:      &basicTLSVerifier{},
 
 		config: data.Config{
-			TLSConfig: &tlsC,
+			TLSConfig: tlsC,
 		},
 	}
 

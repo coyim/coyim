@@ -1,8 +1,8 @@
 package gliba
 
 import (
-	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/coyim/gotk3adapter/glibi"
 )
 
 type Application struct {

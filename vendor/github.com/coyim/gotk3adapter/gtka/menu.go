@@ -1,10 +1,10 @@
 package gtka
 
 import (
+	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gdka"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
-	"github.com/gotk3/gotk3/gtk"
 )
 
 type menu struct {

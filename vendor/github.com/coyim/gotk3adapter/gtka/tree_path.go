@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type treePath struct {

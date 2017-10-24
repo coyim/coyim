@@ -3,8 +3,8 @@ package gliba
 import (
 	"reflect"
 
-	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/coyim/gotk3adapter/glibi"
 )
 
 type Object struct {

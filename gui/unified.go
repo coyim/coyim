@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 	"log"
+	"runtime"
 	"strings"
 
 	"github.com/coyim/gotk3adapter/gtki"
@@ -75,6 +76,14 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 		"header_box", &ul.headerBox,
 		"close_button", &ul.close,
 	)
+
+	//ul.cl.model needs to be kept beyond the lifespan of the builder.
+	ul.cl.model.Ref()
+	runtime.SetFinalizer(ul.cl, func(cl interface{}) {
+		cl.(*conversationList).model.Unref()
+		cl.(*conversationList).model = nil
+	})
+
 	builder.ConnectSignals(map[string]interface{}{
 		"on_activate":    ul.cl.onActivate,
 		"on_clicked":     ul.onCloseClicked,

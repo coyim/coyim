@@ -42,6 +42,9 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 	dialogID := "AccountDetails"
 	data.builder = newBuilder(dialogID)
 
+	//data.proxies needs to be kept beyond the lifespan of the builder.
+	//Because this also holds a reference to the builder, we should be fine.
+
 	data.builder.getItems(
 		dialogID, &data.dialog,
 		"notebook1", &data.notebook,

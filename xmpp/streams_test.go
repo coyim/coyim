@@ -141,7 +141,9 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_receiveResponseStreamHea
 			XMLName:   xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-sasl", Local: "mechanisms"},
 			Mechanism: []string{"PLAIN", "X-OAUTH2", "X-GOOGLE-TOKEN"},
 		},
-		InBandRegistration: &data.InBandRegistration{xml.Name{Space: "http://jabber.org/features/iq-register", Local: "register"}},
+		InBandRegistration: &data.InBandRegistration{
+			XMLName: xml.Name{Space: "http://jabber.org/features/iq-register", Local: "register"},
+		},
 	}
 
 	c.Assert(conn.features, DeepEquals, expected)

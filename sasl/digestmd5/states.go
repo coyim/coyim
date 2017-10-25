@@ -27,12 +27,12 @@ func (c digestChallenge) challenge(props sasl.Properties, pairs sasl.AttributeVa
 
 	user, ok := props[sasl.AuthID]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.AuthID}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.AuthID}
 	}
 
 	password, ok := props[sasl.Password]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.Password}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.Password}
 	}
 
 	authorizationID := props[sasl.AuthZID]
@@ -49,17 +49,17 @@ func (c digestChallenge) challenge(props sasl.Properties, pairs sasl.AttributeVa
 
 	service, ok := props[sasl.Service]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.Service}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.Service}
 	}
 
 	clientNonce, ok := props[sasl.ClientNonce]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.ClientNonce}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.ClientNonce}
 	}
 
 	qop, ok := props[sasl.QOP]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.QOP}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.QOP}
 	}
 
 	serverNonce, ok := pairs["nonce"]

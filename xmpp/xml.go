@@ -128,7 +128,7 @@ func decodeStartElement(c interfaces.Conn, se xml.StartElement) (xml.Name, inter
 
 func decodeEndElement(ce xml.EndElement) (xml.Name, interface{}, error) {
 	switch ce.Name {
-	case xml.Name{NsStream, "stream"}:
+	case xml.Name{Space: NsStream, Local: "stream"}:
 		return ce.Name, &data.StreamClose{}, nil
 	}
 

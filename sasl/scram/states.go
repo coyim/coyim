@@ -28,12 +28,12 @@ type firstMessage struct{}
 func (c firstMessage) challenge(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
 	user, ok := props[sasl.AuthID]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.AuthID}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.AuthID}
 	}
 
 	clientNonce, ok := props[sasl.ClientNonce]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.ClientNonce}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.ClientNonce}
 	}
 
 	bare := fmt.Sprintf("n=%s,r=%s", user, clientNonce)
@@ -74,12 +74,12 @@ func (c clientFinalMessage) challenge(serverMessage sasl.Token, props sasl.Prope
 
 	password, ok := props[sasl.Password]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.Password}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.Password}
 	}
 
 	clientNonce, ok := props[sasl.ClientNonce]
 	if !ok {
-		return c, nil, sasl.PropertyMissingError{sasl.ClientNonce}
+		return c, nil, sasl.PropertyMissingError{Property: sasl.ClientNonce}
 	}
 
 	if !strings.HasPrefix(serverNonce, clientNonce) {

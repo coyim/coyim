@@ -77,7 +77,7 @@ type StreamErrorCondition string
 func (c StreamErrorCondition) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	t := xml.StartElement{
 		Name: xml.Name{
-			"urn:ietf:params:xml:ns:xmpp-streams", string(c),
+			Space: "urn:ietf:params:xml:ns:xmpp-streams", Local: string(c),
 		},
 	}
 

@@ -20,27 +20,27 @@ find /gopath/src/github.com/coyim/coyim -type f -print0 | xargs -0 touch --date=
 
 cd /gopath/src/github.com/coyim/coyim
 
-export SRCUID=`stat -c"%u" /src`
-export SRCGID=`stat -c"%g" /src`
+export SRCUID; SRCUID=$(stat -c"%u" /src)
+export SRCGID; SRCGID=$(stat -c"%g" /src)
 
 make build-cli BUILD_DIR=/builds
 make build-gui BUILD_DIR=/builds
 
 mkdir -p /src/bin
-chown $SRCUID:$SRCGID /src/bin
+chown "$SRCUID:$SRCGID" /src/bin
 
 cp /builds/coyim-cli /src/bin
 cp /builds/coyim /src/bin
 
-chown $SRCUID:$SRCGID /src/bin/coyim-cli
-chown $SRCUID:$SRCGID /src/bin/coyim
+chown "$SRCUID:$SRCGID" /src/bin/coyim-cli
+chown "$SRCUID:$SRCGID" /src/bin/coyim
 
-export GTK_VERSION=`pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2`
-export GIT_VERSION=`git rev-parse HEAD`
-export TAG_VERSION=`git tag -l --contains $GIT_VERSION | tail -1`
-export GO_VERSION=$(go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
-export SUM1=`sha256sum /builds/coyim-cli`
-export SUM2=`sha256sum /builds/coyim`
+export GTK_VERSION; GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
+export GIT_VERSION; GIT_VERSION=$(git rev-parse HEAD)
+export TAG_VERSION; TAG_VERSION=$(git tag -l --contains "$GIT_VERSION" | tail -1)
+export GO_VERSION;   GO_VERSION=$(go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
+export SUM1; SUM1=$(sha256sum /builds/coyim-cli)
+export SUM2; SUM2=$(sha256sum /builds/coyim)
 
 
 cat <<EOF > /src/bin/build_info
@@ -55,4 +55,4 @@ $SUM1
 $SUM2
 EOF
 
-chown $SRCUID:$SRCGID /src/bin/build_info
+chown "$SRCUID:$SRCGID" /src/bin/build_info

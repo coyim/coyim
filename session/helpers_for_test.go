@@ -166,8 +166,6 @@ func captureLogsEvents(c <-chan interface{}) (ret []events.Log) {
 			return
 		}
 	}
-
-	return
 }
 
 func assertLogContains(c *gocheck.C, ch <-chan interface{}, exp events.Log) {

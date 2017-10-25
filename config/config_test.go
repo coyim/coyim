@@ -94,7 +94,7 @@ func (s *ConfigXMPPSuite) TestSerializeAccountsConfig(c *C) {
 		},
 	}
 
-	contents, err := json.MarshalIndent(conf, "", "\t")
+	contents, err := json.MarshalIndent(&conf, "", "\t")
 	c.Assert(err, IsNil)
 	c.Assert(string(contents), Equals, expected)
 }

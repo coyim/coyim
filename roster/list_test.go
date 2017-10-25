@@ -115,7 +115,7 @@ func (s *ListSuite) Test_AddOrReplace_mergesTheEntriesIfInTheList(c *g.C) {
 
 	c.Assert(res, g.Equals, false)
 	c.Assert(len(l.peers), g.Equals, 1)
-	c.Assert(*l.peers["somewhere"], g.DeepEquals, Peer{Jid: "somewhere", Name: "something2", Groups: toSet("goodbye"), Subscription: "from", resources: toSet()})
+	c.Assert(l.peers["somewhere"], g.DeepEquals, &Peer{Jid: "somewhere", Name: "something2", Groups: toSet("goodbye"), Subscription: "from", resources: toSet()})
 }
 
 func (s *ListSuite) Test_ToSlice_createsASliceOfTheContentSortedAlphabetically(c *g.C) {

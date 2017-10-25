@@ -73,10 +73,10 @@ func bytestreamsCalculateValidProxies(ctx *sendContext) func(key string) interfa
 		wg := &sync.WaitGroup{}
 		wg.Add(len(possibleProxies))
 		for ix, pp := range possibleProxies {
-			go func() {
-				results[ix] = bytestreamsGetStreamhostDataFor(ctx, pp)
+			go func(index int, proxy string) {
+				results[index] = bytestreamsGetStreamhostDataFor(ctx, proxy)
 				wg.Done()
-			}()
+			}(ix, pp)
 		}
 		wg.Wait()
 		return results

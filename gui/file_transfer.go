@@ -176,7 +176,7 @@ func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, c
 func (account *account) sendDirectoryTo(peer string, u *gtkUI) {
 	if dir, ok := chooseDirToSend(u.window); ok {
 		ctl := account.session.SendDirTo(peer, dir)
-		ctl = ctl
+		_ = ctl
 	}
 }
 

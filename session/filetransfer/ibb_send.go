@@ -117,7 +117,8 @@ func (ctx *sendContext) ibbSendChunks(r io.ReadCloser, buffer []byte, seq uint16
 		ctx.ibbSendChunk(r, buffer, seq+3) &&
 		ctx.ibbSendChunk(r, buffer, seq+4) &&
 		ctx.ibbScheduleNextSend(r, buffer, seq+5)
-	ignore = ignore
+
+	_ = ignore
 }
 
 func (ctx *sendContext) ibbSendStartTransfer(blockSize int) {

@@ -88,16 +88,18 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 }
 
 func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
-	// TODO[dir]: here, we need to do different things depending on if it's a directory or not
-	// TODO[dir]: we should remember to remove the downloaded file as well.
 	if ctx.directory {
-		ctx.control.ReportError(errors.New("We don't supports directories right now"))
-		return errors.New("We don't supports directories right now")
-	}
+		defer os.Remove(tempName)
 
-	if err := os.Rename(tempName, ctx.destination); err != nil {
-		ctx.control.ReportError(errors.New("Couldn't save final file"))
-		return err
+		if err := unpack(tempName, ctx.destination); err != nil {
+			ctx.control.ReportError(errors.New("Couldn't unpack final file"))
+			return err
+		}
+	} else {
+		if err := os.Rename(tempName, ctx.destination); err != nil {
+			ctx.control.ReportError(errors.New("Couldn't save final file"))
+			return err
+		}
 	}
 
 	ctx.control.ReportFinished()

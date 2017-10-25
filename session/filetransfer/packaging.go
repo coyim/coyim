@@ -50,3 +50,40 @@ func pack(dir string, zf *os.File) error {
 		return err
 	})
 }
+
+func unpack(file string, intoDir string) error {
+	reader, err := zip.OpenReader(file)
+	if err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(intoDir, 0755); err != nil {
+		return err
+	}
+
+	for _, file := range reader.File {
+		path := filepath.Join(intoDir, file.Name)
+		if file.FileInfo().IsDir() {
+			os.MkdirAll(path, file.Mode())
+			continue
+		}
+
+		fileReader, err := file.Open()
+		if err != nil {
+			return err
+		}
+		defer fileReader.Close()
+
+		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+		if err != nil {
+			return err
+		}
+		defer targetFile.Close()
+
+		if _, err := io.Copy(targetFile, fileReader); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

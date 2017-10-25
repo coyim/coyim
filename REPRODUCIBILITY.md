@@ -1,6 +1,6 @@
 # Reproducibility
 
-CoyIM currently only supports reproducible builds on Linux with AMD64. This document describes both how to do this, but also how to verify the existing signatures. The CoyIM reproducibility process generates a file called build_file that contains the SHA256 sum of both the GUI and the CLI binaries of CoyIM. Anyone that generates the same file can then generate a detached armored signature and make that available for others to verify.
+CoyIM currently only supports reproducible builds on Linux with AMD64. This document describes both how to do this, but also how to verify the existing signatures. The CoyIM reproducibility process generates a file called `build_info` that contains the SHA256 sum of both the GUI and the CLI binaries of CoyIM. Anyone that generates the same file can then generate a detached armored signature and make that available for others to verify.
 
 ## Generating reproducible binaries
 
@@ -10,7 +10,7 @@ In order to generate reproducible binaries, you need to have docker installed. F
   chcon -Rt svirt_sandbox_file_t $DIR
 ```
 
-In order to build CoyIM reproducibilly, you simply do
+In order to build CoyIM reproducibly, you simply do
 
 ```sh
   make reproducible-linux-build
@@ -24,7 +24,7 @@ inside of the CoyIM directory. This will create a new Docker image and then use 
   bin/build_info
 ```
 
-If you want to sign the build\_info file using your default GPG key, you can simply run
+If you want to sign the `build_info` file using your default GPG key, you can simply run
 
 ```sh
   make sign-reproducible
@@ -55,7 +55,7 @@ which will mail the signed `build_info` file to [coyim@olabini.se](mailto:coyim@
 
 ## Verifying reproducible binaries
 
-From v0.4 each release of CoyIM will have several signatures for build\_info files available. You can of course download and verify each one of those signatures manually, but we also provide a simple way of verifying it using a small Ruby script. It can be invoked like this:
+From v0.4 each release of CoyIM will have several signatures for `build_info` files available. You can of course download and verify each one of those signatures manually, but we also provide a simple way of verifying it using a small Ruby script. It can be invoked like this:
 
 ```sh
   make check-reproducible-signatures

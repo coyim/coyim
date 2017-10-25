@@ -1,6 +1,6 @@
 FROM ubuntu:vivid
 
-ADD apt_preferences /etc/apt/preferences
+ADD vivid/apt_preferences /etc/apt/preferences
 
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold"
 

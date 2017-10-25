@@ -88,7 +88,7 @@ type aCommand struct {
 
 type bCommand struct {
 	A string
-	B string "uid"
+	B string `xmppclient:"uid"`
 	C string
 }
 

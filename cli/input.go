@@ -44,21 +44,21 @@ var uiCommands = []uiCommand{
 }
 
 type addCommand struct {
-	User string "uid"
+	User string `xmppclient:"uid"`
 }
 
 type authCommand struct {
-	User   string "uid"
+	User   string `xmppclient:"uid"`
 	Secret string
 }
 
 type authOobCommand struct {
-	User        string "uid"
+	User        string `xmppclient:"uid"`
 	Fingerprint string
 }
 
 type authQACommand struct {
-	User     string "uid"
+	User     string `xmppclient:"uid"`
 	Question string
 	Secret   string
 }
@@ -68,17 +68,17 @@ type chatCommand struct{}
 type closeCommand struct{}
 
 type confirmCommand struct {
-	User string "uid"
+	User string `xmppclient:"uid"`
 }
 
 type denyCommand struct {
-	User string "uid"
+	User string `xmppclient:"uid"`
 }
 
 type dndCommand struct{}
 
 type endOTRCommand struct {
-	User string "uid"
+	User string `xmppclient:"uid"`
 }
 
 type helpCommand struct{}
@@ -97,7 +97,7 @@ type noPasteCommand struct{}
 type onlineCommand struct{}
 
 type otrCommand struct {
-	User string "uid"
+	User string `xmppclient:"uid"`
 }
 
 type otrInfoCommand struct{}
@@ -114,7 +114,7 @@ type rosterEditDoneCommand struct{}
 type toggleStatusUpdatesCommand struct{}
 
 type versionCommand struct {
-	User string "uid"
+	User string `xmppclient:"uid"`
 }
 
 type xaCommand struct{}
@@ -200,7 +200,7 @@ func parseCommandForCompletion(commands []uiCommand, line string) (before, prefi
 		return
 	}
 	f := t.Field(fieldNum)
-	if f.Tag != "uid" {
+	if f.Tag != `xmppclient:"uid"` {
 		return
 	}
 	ok = true

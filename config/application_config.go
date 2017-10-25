@@ -9,14 +9,20 @@ import (
 	"sync"
 )
 
+type unexportedApplicationConfig struct {
+	filename      string
+	shouldEncrypt bool
+	params        *EncryptionParameters
+	ioLock        sync.Mutex
+	afterSave     []func()
+}
+
 // ApplicationConfig contains the configuration for the application, including
 // account information.
 type ApplicationConfig struct {
-	filename      string                `json:"-"`
-	shouldEncrypt bool                  `json:"-"`
-	params        *EncryptionParameters `json:"-"`
-	ioLock        sync.Mutex            `json:"-"`
-	afterSave     []func()              `json:"-"`
+	//TODO: This should be in another place.
+	//ApplicationConfig is just a JSON representation of whatever we use internally to represent application configuration.
+	unexportedApplicationConfig
 
 	Accounts                      []*Account
 	RawLogFile                    string   `json:",omitempty"`
@@ -288,6 +294,8 @@ func (a *ApplicationConfig) UpdateToLatestVersion() bool {
 	return res
 }
 
+//TODO: This is where we generate a new JSON representation and serialize it.
+//We are currently serializing our internal representation (ApplicationConfig) directly.
 func (a *ApplicationConfig) serialize() ([]byte, error) {
 	return json.MarshalIndent(a, "", "\t")
 }

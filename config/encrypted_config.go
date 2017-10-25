@@ -21,6 +21,11 @@ type encryptedData struct {
 
 // We will generate a new nonce every time we encrypt, but we will keep the salt the same. This way we can cache the scrypted password
 
+type internalEncryptionParameters struct {
+	nonceInternal []byte
+	saltInternal  []byte
+}
+
 // EncryptionParameters contains the parameters used for scrypting the password and encrypting the configuration file
 type EncryptionParameters struct {
 	Nonce string
@@ -29,8 +34,8 @@ type EncryptionParameters struct {
 	R     int
 	P     int
 
-	nonceInternal []byte `json:"-"`
-	saltInternal  []byte `json:"-"`
+	//Similarly to ApplicationConfig, EncryptionParameters should be just a JSON representation of whatever we use internally to represent application configuration.
+	internalEncryptionParameters
 }
 
 func genRand(size int) []byte {
@@ -101,6 +106,7 @@ func (p *EncryptionParameters) deserialize() (e error) {
 	return nil
 }
 
+//TODO: Similarly to ApplicationConfig, this should be where we generate a new JSON representation and serialize it.
 func (p *EncryptionParameters) serialize() {
 	p.Nonce = hex.EncodeToString(p.nonceInternal)
 	p.Salt = hex.EncodeToString(p.saltInternal)

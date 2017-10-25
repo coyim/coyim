@@ -40,11 +40,11 @@ var testEncryptedDataFlip = bytesFromHex("2b356e6939d1ff771eaa9f9f8866e2aa3732c9
 
 func (s *EncryptedConfigXMPPSuite) Test_generateKeys(c *C) {
 	params := EncryptionParameters{
-		saltInternal: testSalt,
-		N:            testN,
-		R:            testR,
-		P:            testP,
+		N: testN,
+		R: testR,
+		P: testP,
 	}
+	params.saltInternal = testSalt
 
 	res, res2 := GenerateKeys(testPassword, params)
 	c.Assert(res, DeepEquals, testKey)

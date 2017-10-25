@@ -35,14 +35,12 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake_Proposed(c *
 
 	//The server did not send its part of the handshake (see rw above), so there's nothing to be read
 	recordedHandshake, recordedErr := recordTLSHandshake(&mockConnIOReaderWriter{}, &tls.Config{
-		ServerName:       "domain",
-		SessionTicketKey: [32]byte{1},
-		Rand:             fixedRand(r),
+		ServerName: "domain",
+		Rand:       fixedRand(r),
 	})
 
 	tlsC := &tls.Config{
-		SessionTicketKey: [32]byte{1},
-		Rand:             fixedRand(r),
+		Rand: fixedRand(r),
 	}
 
 	d := &dialer{
@@ -81,14 +79,12 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds_Proposed(c *
 	}
 	recordedServerReply := &mockConnIOReaderWriter{read: reply}
 	recordedHandshake, recordedErr := recordTLSHandshake(recordedServerReply, &tls.Config{
-		ServerName:       "www.olabini.se",
-		SessionTicketKey: [32]byte{1},
-		Rand:             fixedRand(r),
+		ServerName: "www.olabini.se",
+		Rand:       fixedRand(r),
 	})
 
 	tlsC := &tls.Config{
-		SessionTicketKey: [32]byte{1},
-		Rand:             fixedRand(r),
+		Rand: fixedRand(r),
 	}
 
 	d := &dialer{

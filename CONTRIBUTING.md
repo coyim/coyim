@@ -38,7 +38,7 @@ cd $(go env GOPATH)
 
 Download go dependencies
 
-`make deps-dev`
+`make deps`
 
 Build and run the tests
 

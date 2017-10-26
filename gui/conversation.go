@@ -327,7 +327,6 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
 		"on_send_file_to_contact": func() {
 			if peer, ok := ui.getPeer(account, uid); ok {
-				// TODO: this needs two clicks to work
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
 				doInUIThread(func() { account.sendFileTo(utils.ComposeFullJid(uid, peer.MustHaveResource()), ui) })
@@ -335,7 +334,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		},
 	})
 
-	transientParent.AddMnemonic(uint(101), cp.encryptedLabel)
+	transientParent.AddMnemonic(uint(115), cp.encryptedLabel)
 	transientParent.SetMnemonicModifier(gdki.GDK_CONTROL_MASK)
 
 	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))

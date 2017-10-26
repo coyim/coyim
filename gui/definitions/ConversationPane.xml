@@ -12,7 +12,7 @@
 	    <child>
               <object class="GtkLabel" id="menuTag">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Encrypted Chat</property>
+                <property name="label" translatable="yes">Secure Chat</property>
                 <property name="use-underline">True</property>
               </object>
             </child>

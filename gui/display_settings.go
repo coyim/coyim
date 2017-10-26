@@ -51,6 +51,11 @@ func (ds *displaySettings) increaseFontSize() {
 }
 
 func (ds *displaySettings) decreaseFontSize() {
+	if ds.fontSize == 0 {
+		ds.fontSize = 12
+		ds.update()
+		return
+	}
 	ds.fontSize--
 	ds.update()
 }
@@ -82,6 +87,8 @@ func newDisplaySettings() *displaySettings {
 	return ds
 }
 
+// TODO: currently, while using the shortcuts, the font
+// changes to 6 and the cursor moves around the pane.
 func getFontSizeFrom(w gtki.Widget) uint {
 	styleContext, _ := w.GetStyleContext()
 	property, _ := styleContext.GetProperty2("font", gtki.STATE_FLAG_NORMAL)

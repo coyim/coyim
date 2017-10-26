@@ -83,8 +83,6 @@ func (u *gtkUI) newRoster() *roster {
 		ros.(*roster).model = nil
 	})
 
-	u.displaySettings.update()
-
 	return r
 }
 

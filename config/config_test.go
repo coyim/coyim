@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -102,8 +103,8 @@ func (s *ConfigXMPPSuite) TestSerializeAccountsConfig(c *C) {
 func (s *ConfigXMPPSuite) TestFindConfigFile(c *C) {
 	conf := findConfigFile("")
 	if strings.HasSuffix(conf, ".enc") {
-		c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json.enc")
+		c.Assert(conf, Equals, filepath.Join(os.Getenv("HOME"), ".config/coyim/accounts.json.enc"))
 	} else {
-		c.Assert(conf, Equals, os.Getenv("HOME")+"/.config/coyim/accounts.json")
+		c.Assert(conf, Equals, filepath.Join(os.Getenv("HOME"), ".config/coyim/accounts.json"))
 	}
 }

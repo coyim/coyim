@@ -9,11 +9,23 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   libgtk-3-dev ruby
 
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
+  # Needed to run reprotest
+  apt-src reprotest disorderfs sudo \
+  # coyim deb package build deps
+  debhelper dh-golang golang-dbus-dev golang-github-gotk3-gotk3-dev golang-github-hydrogen18-stalecucumber-dev golang-github-thecreeper-go-notify-dev golang-github-twstrike-gotk3adapter-dev golang-github-twstrike-otr3-dev golang-github-dhowett-go-plist-dev golang-golang-x-crypto-dev golang-gopkg-check.v1-dev golang-github-miekg-dns-dev golang-github-kardianos-osext-dev asciidoctor
+
+RUN echo 'deb-src http://deb.debian.org/debian buster main' >> /etc/apt/sources.list
+
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD setup-reproducible.sh /root/setup-reproducible
 
 ADD build.sh /root/build
+
+# Run reprotest (https://packages.debian.org/sid/reprotest)
+# to test if debian packages build reproducibly
+ADD reprotest.sh /root/reprotest.sh
 
 VOLUME /src

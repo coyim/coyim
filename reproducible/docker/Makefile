@@ -26,4 +26,7 @@ build-buster:
 build-vivid:
 	docker run -v $(PWD)/../..:/src -e REFERENCE_DATETIME="$(REFERENCE_DATETIME)" -t $(IMAGE_NAME):vivid /root/build
 
+reprotest-buster:
+	docker run --privileged -v $(PWD)/../..:/src -t $(IMAGE_NAME):buster /root/reprotest.sh
+
 build: build-vivid

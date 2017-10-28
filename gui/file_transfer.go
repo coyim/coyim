@@ -118,16 +118,17 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 	if result && name != "" {
 		fileName := resizeFileName(ev.Name)
+		purpose := "receive"
 
 		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
-			currentFile = cv.showFileTransferNotification(fileName, "receive")
+			currentFile = cv.showFileTransferNotification(fileName, purpose)
 			u.startAllListenersForFileReceiving(ev, cv, currentFile)
 			ev.Answer <- &name
 		} else {
-			currentFile = cv.showFileTransferInfo(fileName, "receive")
+			currentFile = cv.showFileTransferInfo(fileName, purpose)
 			u.startAllListenersForFileReceiving(ev, cv, currentFile)
 			ev.Answer <- &name
 		}
@@ -187,16 +188,18 @@ func (account *account) sendFileTo(peer string, u *gtkUI) {
 
 		base := filepath.Base(file)
 		fileName := resizeFileName(base)
+		purpose := "send"
 
 		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(peer), true, "")
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
-			currentFile = cv.showFileTransferNotification(fileName, "send")
+			currentFile = cv.showFileTransferNotification(fileName, purpose)
 			u.startAllListenersForFileSending(ctl, cv, currentFile, file, fstat.Size())
 		} else {
-			currentFile = cv.showFileTransferInfo(fileName, "send")
+			currentFile = cv.showFileTransferInfo(fileName, purpose)
 			u.startAllListenersForFileSending(ctl, cv, currentFile, file, fstat.Size())
+
 		}
 	}
 }

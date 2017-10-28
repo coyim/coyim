@@ -33,8 +33,8 @@ type fileTransferNotification struct {
 	canceled      bool
 }
 
-// TODO: while sending and receiving: show on the
-// same notification or on separate ones?
+// TODO: change ui when sending and receiving. No
+// more file infobars, but something else
 // TODO: there is still some issues around more than
 // two transfers on cancel and failed
 func any(vs []*fileNotification, f func(*fileNotification) bool) bool {

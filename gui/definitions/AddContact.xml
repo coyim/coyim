@@ -76,7 +76,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="accountLabel" >
-                <property name="label" translatable="yes">Email:</property>
+                <property name="label" translatable="yes">Contact to add:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
               </object>
@@ -98,7 +98,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="nicknameLabel" >
-                <property name="label" translatable="yes">Name:</property>
+                <property name="label" translatable="yes">Nickname:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
               </object>

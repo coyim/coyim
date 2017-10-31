@@ -74,7 +74,7 @@ func bytestreamsCalculateValidProxies(s access.Session) func(key string) interfa
 		wg.Add(len(possibleProxies))
 		for ix, pp := range possibleProxies {
 			go func(index int, proxy string) {
-				results[index] = bytestreamsGetStreamhostDataFor(ctx, proxy)
+				results[index] = bytestreamsGetStreamhostDataFor(s, proxy)
 				wg.Done()
 			}(ix, pp)
 		}

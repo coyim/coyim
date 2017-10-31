@@ -114,7 +114,7 @@ func ibbScheduleNextSend(ctx *sendContext, r io.ReadCloser, buffer []byte, seq u
 func ibbSendChunks(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) {
 	// The seq variable can wrap around here - THAT IS ON PURPOSE
 	// See XEP-0047 for details
-	_ := ibbSendChunk(ctx, r, buffer, seq) &&
+	_ = ibbSendChunk(ctx, r, buffer, seq) &&
 		ibbSendChunk(ctx, r, buffer, seq+1) &&
 		ibbSendChunk(ctx, r, buffer, seq+2) &&
 		ibbSendChunk(ctx, r, buffer, seq+3) &&

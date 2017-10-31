@@ -57,7 +57,23 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 	}
 
 	n, err := r.Read(buffer)
-	if err == io.EOF && n == 0 {
+	if n > 0 {
+		encdata := base64.StdEncoding.EncodeToString(buffer[:n])
+
+		rpl, _, e := ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBData{
+			Sid:      ctx.sid,
+			Sequence: seq,
+			Base64:   encdata,
+		})
+		if e != nil {
+			ctx.onError(e)
+			return false
+		}
+		ctx.onUpdate(n)
+
+		go trackResultOfSend(ctx, rpl)
+	}
+	if err == io.EOF {
 		r.Close()
 		// TODO[LATER]: we ignore the result of this close - maybe we should react to it in some way, if it reports failure from the other side
 		ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
@@ -67,20 +83,6 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 		ctx.onError(err)
 		return false
 	}
-	encdata := base64.StdEncoding.EncodeToString(buffer[:n])
-
-	rpl, _, e := ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBData{
-		Sid:      ctx.sid,
-		Sequence: seq,
-		Base64:   encdata,
-	})
-	if e != nil {
-		ctx.onError(e)
-		return false
-	}
-	ctx.onUpdate(n)
-
-	go trackResultOfSend(ctx, rpl)
 
 	return true
 }

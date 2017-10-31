@@ -16,7 +16,7 @@ import (
 	"github.com/coyim/coyim/xmpp/utils"
 )
 
-const bufSize = 64 * 4096
+const bufSize = 16 * 4096
 
 func init() {
 	registerSendFileTransferMethod("http://jabber.org/protocol/bytestreams", bytestreamsSendDo, bytestreamsSendCurrentlyValid)
@@ -90,7 +90,12 @@ func bytestreamsGetCurrentValidProxies(s access.Session) []*data.BytestreamStrea
 }
 
 func bytestreamsSendData(ctx *sendContext, c net.Conn) {
-	defer c.Close()
+	fmt.Printf("bytestreamsSendData()\n")
+	defer func() {
+		fmt.Printf("  bytestreamsSendData()-before c.Close()\n")
+		c.Close()
+		fmt.Printf("  bytestreamsSendData()-c.Close()\n")
+	}()
 
 	buffer := make([]byte, bufSize)
 	r, err := os.Open(ctx.file)
@@ -98,26 +103,45 @@ func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 		ctx.onError(err)
 		return
 	}
-	defer r.Close()
+	defer func() {
+		fmt.Printf("  bytestreamsSendData()-before r.Close()\n")
+		r.Close()
+		fmt.Printf("  bytestreamsSendData()-r.Close()\n")
+	}()
 	for {
 		if ctx.weWantToCancel {
+			fmt.Printf("  bytestreamsSendData()-we want to cancel\n")
 			removeInflightSend(ctx)
+			fmt.Printf("  bytestreamsSendData()-after removing inflight send\n")
 			return
 		}
-		n, err := r.Read(buffer)
-		if err == io.EOF && n == 0 {
+
+		fmt.Printf("  bytestreamsSendData()-r.read\n")
+		n, rerr := r.Read(buffer)
+		fmt.Printf("  bytestreamsSendData()-  have read %d\n", n)
+		if n > 0 {
+			fmt.Printf("  bytestreamsSendData()-  writing\n")
+			n2, err := c.Write(buffer[:n])
+			fmt.Printf("  bytestreamsSendData()-  have written: %d\n", n2)
+			if err != nil {
+				fmt.Printf("  bytestreamsSendData()-  had an error writing\n")
+				ctx.onError(err)
+				return
+			}
+			fmt.Printf("  bytestreamsSendData()-  sending on update\n")
+			ctx.onUpdate(n)
+		}
+
+		if rerr == io.EOF {
+			fmt.Printf("  bytestreamsSendData()-  finishing up\n")
 			ctx.onFinish()
+			fmt.Printf("  bytestreamsSendData()-  done finishing  up\n")
 			return
-		} else if err != nil {
-			ctx.onError(err)
-			return
-		}
-		_, err = c.Write(buffer[0:n])
-		if err != nil {
-			ctx.onError(err)
+		} else if rerr != nil {
+			fmt.Printf("  bytestreamsSendData()-  had sending error\n")
+			ctx.onError(rerr)
 			return
 		}
-		ctx.onUpdate(n)
 	}
 }
 

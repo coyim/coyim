@@ -72,8 +72,9 @@ func (ctx *sendContext) offerSend() error {
 		return e
 	}
 	ctx.sid = genSid(ctx.s.Conn())
+	ctx.size = fstat.Size()
 
-	toSend := sendSIData(ctx.sid, fileTransferProfile, ctx.file, fstat.Size(), ctx.s)
+	toSend := sendSIData(ctx.sid, fileTransferProfile, ctx.file, ctx.size, ctx.s)
 
 	var siq data.SI
 	nonblockIQ(ctx.s, ctx.peer, "set", toSend, &siq, func(*data.ClientIQ) {
@@ -101,6 +102,7 @@ type sendContext struct {
 	peer             string
 	file             string
 	sid              string
+	size             int64
 	weWantToCancel   bool
 	theyWantToCancel bool
 	totalSent        int64
@@ -111,13 +113,21 @@ type sendContext struct {
 }
 
 func (ctx *sendContext) onFinish() {
+	fmt.Printf("onFinish()\n")
+	fmt.Printf("  onFinish()-reportFinished\n")
 	ctx.control.ReportFinished()
+	fmt.Printf("  onFinish()-after reportFinished\n")
+	fmt.Printf("  onFinish()-remove inflight send\n")
 	removeInflightSend(ctx)
+	fmt.Printf("  onFinish()-after remove inflight send\n")
 	if ctx.onFinishHook != nil {
+		fmt.Printf("  onFinish()-onfinishhook\n")
 		ctx.onFinishHook(ctx)
+		fmt.Printf("  onFinish()-after onfinishhook\n")
 	}
 }
 func (ctx *sendContext) onError(e error) {
+	fmt.Printf("sendContext.onError(%#v)\n", e)
 	ctx.control.ReportErrorNonblocking(e)
 	removeInflightSend(ctx)
 	if ctx.onErrorHook != nil {
@@ -126,7 +136,7 @@ func (ctx *sendContext) onError(e error) {
 }
 func (ctx *sendContext) onUpdate(v int) {
 	ctx.totalSent += int64(v)
-	ctx.control.SendUpdate(ctx.totalSent)
+	ctx.control.SendUpdate(ctx.totalSent, ctx.size)
 	if ctx.onUpdateHook != nil {
 		ctx.onUpdateHook(ctx, ctx.totalSent)
 	}

@@ -17,6 +17,7 @@ type fileNotification struct {
 	failed    bool
 	canceled  bool
 	completed bool
+	directory bool
 }
 
 type fileTransferNotification struct {
@@ -92,10 +93,10 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	return fileTransferNotif
 }
 
-func (conv *conversationPane) showFileTransferInfo(fileName, purpose string) *fileNotification {
+func (conv *conversationPane) showFileTransferInfo(fileName, purpose string, dir bool) *fileNotification {
 	b := newBuilder("FileTransferNotification")
 
-	file := &fileNotification{}
+	file := &fileNotification{directory: dir}
 
 	b.getItems(
 		"area-file-transfer-info", &file.area,
@@ -108,6 +109,9 @@ func (conv *conversationPane) showFileTransferInfo(fileName, purpose string) *fi
 	})
 
 	label := "File transfer started"
+	if dir {
+		label = "Directory transfer started"
+	}
 
 	file.name = fileName
 	if purpose == "send" {
@@ -131,7 +135,7 @@ func (conv *conversationPane) showFileTransferInfo(fileName, purpose string) *fi
 	return file
 }
 
-func (conv *conversationPane) showFileTransferNotification(fileName, purpose string) *fileNotification {
+func (conv *conversationPane) showFileTransferNotification(fileName, purpose string, dir bool) *fileNotification {
 	prov, _ := g.gtk.CssProviderNew()
 
 	css := fmt.Sprintf(`
@@ -148,7 +152,7 @@ func (conv *conversationPane) showFileTransferNotification(fileName, purpose str
 	conv.fileTransferNotif.progressBar.SetFraction(0.0)
 	conv.fileTransferNotif.canceled = false
 
-	info := conv.showFileTransferInfo(fileName, purpose)
+	info := conv.showFileTransferInfo(fileName, purpose, dir)
 
 	conv.fileTransferNotif.area.SetVisible(true)
 
@@ -229,6 +233,9 @@ func (conv *conversationPane) successFileTransfer(file *fileNotification, purpos
 			return f.success
 		}) {
 			label := "File transfer successful"
+			if file.directory {
+				label = "Directory transfer successful"
+			}
 			conv.updateFileTransferNotification(label, "Close", "success.svg")
 		}
 	}
@@ -260,6 +267,9 @@ func (conv *conversationPane) failFileTransfer(file *fileNotification) {
 			return f.canceled || f.failed
 		}) {
 			label := "File transfer failed"
+			if file.directory {
+				label = "Directory transfer failed"
+			}
 			conv.updateFileTransferNotification(label, "Close", "failure.svg")
 		}
 	}
@@ -292,6 +302,9 @@ func (conv *conversationPane) cancelFileTransfer(file *fileNotification) {
 		}) {
 			conv.fileTransferNotif.canceled = true
 			label := "File transfer canceled"
+			if file.directory {
+				label = "Directory transfer canceled"
+			}
 			conv.updateFileTransferNotification(label, "Close", "failure.svg")
 		}
 	}

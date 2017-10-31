@@ -2,7 +2,6 @@ package gui
 
 import (
 	"log"
-	"os"
 	"path/filepath"
 
 	"github.com/coyim/coyim/i18n"
@@ -38,13 +37,13 @@ func (u *gtkUI) startAllListenersForFileReceiving(ev events.FileTransfer, cv con
 		log.Printf("Receiving file transfer of file %s finished with success", ev.Name)
 	})
 
-	go ev.Control.WaitForUpdate(func(upd int64) {
-		file.progress = float64((upd*100)/ev.Size) / 100
+	go ev.Control.WaitForUpdate(func(upd, total int64) {
+		file.progress = float64((upd*100)/total) / 100
 
 		doInUIThread(func() {
 			cv.startFileTransfer(file)
 		})
-		log.Printf("Receiving file transfer of file %s: %d/%d done", ev.Name, upd, ev.Size)
+		log.Printf("Receiving file transfer of file %s: %d/%d done", ev.Name, upd, total)
 
 		// TODO: behaves weirdly on bytestreams
 		if file.canceled {
@@ -76,8 +75,16 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	d.SetDefaultResponse(gtki.RESPONSE_YES)
 	d.SetTransientFor(u.window)
 
-	message := i18n.Localf("%s wants to send you a file: do you want to receive it?", utils.RemoveResourceFromJid(ev.Peer))
-	secondary := i18n.Localf("File name: %s", ev.Name)
+	var message, secondary string
+
+	if ev.IsDirectory {
+		message = i18n.Localf("%s wants to send you a directory: do you want to receive it?", utils.RemoveResourceFromJid(ev.Peer))
+		secondary = i18n.Localf("Directory name: %s", ev.Name)
+	} else {
+		message = i18n.Localf("%s wants to send you a file: do you want to receive it?", utils.RemoveResourceFromJid(ev.Peer))
+		secondary = i18n.Localf("File name: %s", ev.Name)
+	}
+
 	if ev.Description != "" {
 		secondary = i18n.Localf("%s\nDescription: %s", secondary, ev.Description)
 	}
@@ -98,10 +105,17 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	var name string
 
 	if result {
+		label := "Choose where to save file"
+		action := gtki.FILE_CHOOSER_ACTION_SAVE
+		if ev.IsDirectory {
+			label = "Choose where to save folder"
+			action = gtki.FILE_CHOOSER_ACTION_CREATE_FOLDER
+		}
+
 		fdialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
-			i18n.Local("Choose where to save file"),
+			i18n.Local(label),
 			u.window,
-			gtki.FILE_CHOOSER_ACTION_SAVE,
+			action,
 			i18n.Local("_Cancel"),
 			gtki.RESPONSE_CANCEL,
 			i18n.Local("_Save"),
@@ -124,11 +138,11 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
-			currentFile = cv.showFileTransferNotification(fileName, purpose)
+			currentFile = cv.showFileTransferNotification(fileName, purpose, ev.IsDirectory)
 			u.startAllListenersForFileReceiving(ev, cv, currentFile)
 			ev.Answer <- &name
 		} else {
-			currentFile = cv.showFileTransferInfo(fileName, purpose)
+			currentFile = cv.showFileTransferInfo(fileName, purpose, ev.IsDirectory)
 			u.startAllListenersForFileReceiving(ev, cv, currentFile)
 			ev.Answer <- &name
 		}
@@ -137,7 +151,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	}
 }
 
-func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, cv conversationView, file *fileNotification, name string, size int64) {
+func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, cv conversationView, file *fileNotification, name string) {
 	// TODO: this updates slowly
 	go ctl.WaitForError(func(err error) {
 		doInUIThread(func() {
@@ -153,12 +167,12 @@ func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, c
 		log.Printf("Sending file transfer of file %s finished with success", name)
 	})
 
-	go ctl.WaitForUpdate(func(upd int64) {
-		file.progress = float64((upd*100)/size) / 100
+	go ctl.WaitForUpdate(func(upd, total int64) {
+		file.progress = float64((upd*100)/total) / 100
 		doInUIThread(func() {
 			cv.startFileTransfer(file)
 		})
-		log.Printf("Sending file transfer of file %s: %d/%d done", name, upd, size)
+		log.Printf("Sending file transfer of file %s: %d/%d done", name, upd, total)
 
 		if file.canceled {
 			doInUIThread(func() {
@@ -177,14 +191,26 @@ func (u *gtkUI) startAllListenersForFileSending(ctl *data.FileTransferControl, c
 func (account *account) sendDirectoryTo(peer string, u *gtkUI) {
 	if dir, ok := chooseDirToSend(u.window); ok {
 		ctl := account.session.SendDirTo(peer, dir)
-		_ = ctl
+
+		base := filepath.Base(dir)
+		dirName := resizeFileName(base)
+
+		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(peer), true, "")
+
+		var currentFile *fileNotification
+		if !cv.getFileTransferNotification() {
+			currentFile = cv.showFileTransferNotification(dirName, "send", true)
+			u.startAllListenersForFileSending(ctl, cv, currentFile, dir)
+		} else {
+			currentFile = cv.showFileTransferInfo(dirName, "send", true)
+			u.startAllListenersForFileSending(ctl, cv, currentFile, dir)
+		}
 	}
 }
 
 func (account *account) sendFileTo(peer string, u *gtkUI) {
 	if file, ok := chooseFileToSend(u.window); ok {
 		ctl := account.session.SendFileTo(peer, file)
-		fstat, _ := os.Stat(file)
 
 		base := filepath.Base(file)
 		fileName := resizeFileName(base)
@@ -194,19 +220,18 @@ func (account *account) sendFileTo(peer string, u *gtkUI) {
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
-			currentFile = cv.showFileTransferNotification(fileName, purpose)
-			u.startAllListenersForFileSending(ctl, cv, currentFile, file, fstat.Size())
+			currentFile = cv.showFileTransferNotification(fileName, purpose, false)
+			u.startAllListenersForFileSending(ctl, cv, currentFile, file)
 		} else {
-			currentFile = cv.showFileTransferInfo(fileName, purpose)
-			u.startAllListenersForFileSending(ctl, cv, currentFile, file, fstat.Size())
-
+			currentFile = cv.showFileTransferInfo(fileName, purpose, false)
+			u.startAllListenersForFileSending(ctl, cv, currentFile, file)
 		}
 	}
 }
 
 func chooseItemToSend(w gtki.Window, action gtki.FileChooserAction, title string) (string, bool) {
 	dialog, _ := g.gtk.FileChooserDialogNewWith2Buttons(
-		i18n.Local("Choose file to send"),
+		i18n.Local(title),
 		w,
 		action,
 		i18n.Local("_Cancel"),

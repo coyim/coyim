@@ -137,7 +137,7 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 		return iqErrorNotAcceptable, "error", false
 	}
 	ictx.currentSize += int64(n)
-	ctx.control.SendUpdate(ictx.currentSize)
+	ctx.control.SendUpdate(ictx.currentSize, ctx.size)
 
 	return data.EmptyReply{}, "", false
 }
@@ -183,7 +183,7 @@ func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Exte
 		return
 	}
 	ictx.currentSize += int64(n)
-	ctx.control.SendUpdate(ictx.currentSize)
+	ctx.control.SendUpdate(ictx.currentSize, ctx.size)
 }
 
 // IbbClose is the hook function that will be called when we receive an ibb close IQ

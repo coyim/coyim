@@ -95,8 +95,9 @@ func sendSIData(sid, profile, file string, size int64, s access.Session) data.SI
 func (ctx *dirSendContext) offerSendDirectory() error {
 	fstat, _ := os.Stat(ctx.sc.file)
 	ctx.sc.sid = genSid(ctx.sc.s.Conn())
+	ctx.sc.size = fstat.Size()
 
-	toSend := sendSIData(ctx.sc.sid, dirTransferProfile, ctx.dir, fstat.Size(), ctx.sc.s)
+	toSend := sendSIData(ctx.sc.sid, dirTransferProfile, ctx.dir, ctx.sc.size, ctx.sc.s)
 
 	var siq data.SI
 	nonblockIQ(ctx.sc.s, ctx.sc.peer, "set", toSend, &siq, func(*data.ClientIQ) {

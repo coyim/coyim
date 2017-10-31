@@ -1,19 +1,25 @@
 package data
 
-// FileTransferControl supplies the capabilities to control the file transfer
-type FileTransferControl struct {
-	cancelTransfer   chan bool  // one time use
-	errorOccurred    chan error // one time use
-	update           chan int64 // will be called many times
-	transferFinished chan bool  // one time use
+import "fmt"
+
+type transferUpdate struct {
+	current, total int64
 }
 
-func newFileTransferControl(c chan bool, e chan error, u chan int64, t chan bool) *FileTransferControl {
+// FileTransferControl supplies the capabilities to control the file transfer
+type FileTransferControl struct {
+	cancelTransfer   chan bool           // one time use
+	errorOccurred    chan error          // one time use
+	update           chan transferUpdate // will be called many times
+	transferFinished chan bool           // one time use
+}
+
+func newFileTransferControl(c chan bool, e chan error, u chan transferUpdate, t chan bool) *FileTransferControl {
 	return &FileTransferControl{cancelTransfer: c, errorOccurred: e, update: u, transferFinished: t}
 }
 
 func CreateFileTransferControl() *FileTransferControl {
-	return newFileTransferControl(make(chan bool), make(chan error), make(chan int64, 1000), make(chan bool))
+	return newFileTransferControl(make(chan bool), make(chan error), make(chan transferUpdate, 1000), make(chan bool))
 }
 
 func (ctl *FileTransferControl) WaitForFinish(k func()) {
@@ -39,9 +45,9 @@ func (ctl *FileTransferControl) WaitForCancel(k func()) {
 	}
 }
 
-func (ctl *FileTransferControl) WaitForUpdate(k func(int64)) {
+func (ctl *FileTransferControl) WaitForUpdate(k func(int64, int64)) {
 	for upd := range ctl.update {
-		k(upd)
+		k(upd.current, upd.total)
 	}
 }
 
@@ -60,15 +66,22 @@ func (ctl *FileTransferControl) ReportErrorNonblocking(e error) {
 }
 
 func (ctl *FileTransferControl) ReportFinished() {
+	fmt.Printf("ReportFinished()\n")
+	fmt.Printf("  ReportFinished  - closeErrorOccurred\n")
 	ctl.closeErrorOccurred()
+	fmt.Printf("  ReportFinished  - after closeErrorOccurred\n")
+	fmt.Printf("  ReportFinished  - closeUpdate\n")
 	ctl.closeUpdate()
+	fmt.Printf("  ReportFinished  - after closeUpdate\n")
+	fmt.Printf("  ReportFinished  - sendAndCloseTransferFinished\n")
 	ctl.sendAndCloseTransferFinished(true)
+	fmt.Printf("  ReportFinished  - after sendAndCloseTransferFinished\n")
 }
 
-func (ctl *FileTransferControl) SendUpdate(v int64) {
+func (ctl *FileTransferControl) SendUpdate(current, total int64) {
 	one := ctl.update
 	if one != nil {
-		one <- v
+		one <- transferUpdate{current, total}
 	}
 }
 

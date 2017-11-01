@@ -106,7 +106,7 @@ type pasteCommand struct{}
 type quitCommand struct{}
 
 type rosterCommand struct {
-	OnlineOnly bool "flag:online"
+	OnlineOnly bool `flag:"online"`
 }
 
 type rosterEditCommand struct{}

@@ -32,6 +32,7 @@
         <property name="level-indentation">3</property>
         <!-- TODO remove magic number -->
         <property name="tooltip-column">6</property>
+        <property name="search-column">6</property>
         <signal name="row-activated" handler="on_activate_buddy" />
         <signal name="button-press-event" handler="on_button_press" />
         <child internal-child="selection">

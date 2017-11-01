@@ -24,3 +24,20 @@ func (s *MUCSuite) Test_CanJoinRoom(c *C) {
 		"<x xmlns='http://jabber.org/protocol/muc'/>"+
 		"</presence>")
 }
+
+func (s *MUCSuite) Test_CanLeaveRoom(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+	conn := conn{
+		out:  mockOut,
+		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
+	}
+
+	err := conn.leaveRoom("coyim", "chat.coy.im", "i_am_coy")
+	c.Assert(err, IsNil)
+	c.Assert(string(mockOut.write), Equals, "<presence "+
+		"id='3544672884359377457' "+
+		"to='coyim@chat.coy.im/i_am_coy' "+
+		"type='unavailable'>"+
+		"<x xmlns='http://jabber.org/protocol/muc'/>"+
+		"</presence>")
+}

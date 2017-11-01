@@ -11,18 +11,29 @@ import (
 	"strconv"
 )
 
-// SendPresence sends a presence stanza. If id is empty, a unique id is
-// generated.
-func (c *conn) SendPresence(to, typ, id, status string) error {
+func (c *conn) sendPresenceWithChildren(to, typ, id, children string) error {
 	if len(id) == 0 {
 		id = strconv.FormatUint(uint64(c.getCookie()), 10)
 	}
 	end := "/>"
-	if typ == "subscribe" && status != "" {
-		end = fmt.Sprintf("><status>%s</status></presence>", xmlEscape(status))
+
+	if children != "" {
+		end = fmt.Sprintf(">%s</presence>", children)
 	}
+
 	_, err := fmt.Fprintf(c.out, "<presence id='%s' to='%s' type='%s'%s", xmlEscape(id), xmlEscape(to), xmlEscape(typ), end)
 	return err
+}
+
+// SendPresence sends a presence stanza. If id is empty, a unique id is
+// generated.
+func (c *conn) SendPresence(to, typ, id, status string) error {
+	statusTag := ""
+	if typ == "subscribe" && status != "" {
+		statusTag = fmt.Sprintf("<status>%s</status>", xmlEscape(status))
+	}
+
+	return c.sendPresenceWithChildren(to, typ, id, statusTag)
 }
 
 // SignalPresence will signal the current presence

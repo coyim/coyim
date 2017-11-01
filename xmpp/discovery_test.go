@@ -15,16 +15,16 @@ type DiscoveryXMPPSuite struct{}
 var _ = Suite(&DiscoveryXMPPSuite{})
 
 func (s *DiscoveryXMPPSuite) Test_SendDiscoveryInfoRequest(c *C) {
-	mockIn := &mockConnIOReaderWriter{}
+	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
-		out: mockIn,
+		out: mockOut,
 		jid: "juliet@example.com/chamber",
 	}
 	conn.inflights = make(map[data.Cookie]inflight)
 
 	reply, cookie, err := conn.sendDiscoveryInfo("example.com")
 	c.Assert(err, IsNil)
-	c.Assert(string(mockIn.write), Matches, "<iq xmlns='jabber:client' to='example.com' from='juliet@example.com/chamber' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example.com' from='juliet@example.com/chamber' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
 	c.Assert(reply, NotNil)
 	c.Assert(cookie, NotNil)
 }

@@ -35,7 +35,22 @@ type account struct {
 	askingForPassword bool
 	cachedPassword    string
 
-	sync.Mutex
+	sync.RWMutex
+}
+
+func (account *account) getConversationView(fullJID string) (conversationView, bool) {
+	account.RLock()
+	defer account.RUnlock()
+
+	c, ok := account.conversations[fullJID]
+	return c, ok
+}
+
+func (account *account) setConversationView(fullJID string, c conversationView) {
+	account.Lock()
+	defer account.Unlock()
+
+	account.conversations[fullJID] = c
 }
 
 type byAccountNameAlphabetic []*account
@@ -58,25 +73,30 @@ func (account *account) ID() string {
 	return account.session.GetConfig().ID()
 }
 
-func (account *account) getConversationWith(to, resource string, ui *gtkUI) (conversationView, bool) {
+func (account *account) getConversationWith(to, resource string, ui *gtkUI) (c conversationView, ok bool) {
 	fullJid := utils.ComposeFullJid(to, resource)
-	c, ok := account.conversations[fullJid]
-
-	if ok {
-		_, unifiedType := c.(*conversationStackItem)
-
-		if ui.settings.GetSingleWindow() && !unifiedType {
-			cv1 := c.(*conversationWindow)
-			c = ui.unified.createConversation(account, to, resource, cv1.conversationPane)
-			account.conversations[fullJid] = c
-		} else if !ui.settings.GetSingleWindow() && unifiedType {
-			cv1 := c.(*conversationStackItem)
-			c = newConversationWindow(account, fullJid, ui, cv1.conversationPane)
-			account.conversations[fullJid] = c
-		}
+	c, ok = account.getConversationView(fullJid)
+	if !ok {
+		return
 	}
 
-	return c, ok
+	_, unifiedType := c.(*conversationStackItem)
+	if ui.settings.GetSingleWindow() == unifiedType {
+		//This is only true when c is nil
+		return
+	}
+
+	// Why not a simple type switch?
+	if !unifiedType {
+		cv1 := c.(*conversationWindow)
+		c = ui.unified.createConversation(account, to, resource, cv1.conversationPane)
+	} else {
+		cv1 := c.(*conversationStackItem)
+		c = newConversationWindow(account, fullJid, ui, cv1.conversationPane)
+	}
+
+	account.setConversationView(fullJid, c)
+	return
 }
 
 func (account *account) createConversationView(to, resource string, ui *gtkUI) conversationView {
@@ -89,7 +109,7 @@ func (account *account) createConversationView(to, resource string, ui *gtkUI) c
 	} else {
 		cv = newConversationWindow(account, fullJid, ui, nil)
 	}
-	account.conversations[fullJid] = cv
+	account.setConversationView(fullJid, cv)
 
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
@@ -109,13 +129,15 @@ func (account *account) afterConversationWindowCreated(to string, f func(convers
 }
 
 func (account *account) enableExistingConversationWindows(enable bool) {
-	if account != nil {
-		account.Lock()
-		defer account.Unlock()
+	if account == nil {
+		return
+	}
 
-		for _, cv := range account.conversations {
-			cv.setEnabled(enable)
-		}
+	account.RLock()
+	defer account.RUnlock()
+
+	for _, cv := range account.conversations {
+		cv.setEnabled(enable)
 	}
 }
 

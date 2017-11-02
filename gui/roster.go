@@ -402,15 +402,9 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 	}
 }
 
+//This has no dependency on the roster
 func (r *roster) openConversationView(account *account, to string, userInitiated bool, resource string) conversationView {
-	c, ok := account.getConversationWith(to, resource, r.ui)
-
-	if !ok {
-		c = account.createConversationView(to, resource, r.ui)
-	}
-
-	c.show(userInitiated)
-	return c
+	return r.ui.openConversationView(account, to, userInitiated, resource)
 }
 
 func (r *roster) displayNameFor(account *account, from string) string {

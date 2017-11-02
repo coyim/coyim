@@ -821,3 +821,14 @@ func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
 	account.session.GetConfig().ToggleAlwaysEncrypt()
 	u.saveConfigOnly()
 }
+
+func (u *gtkUI) openConversationView(account *account, to string, userInitiated bool, resource string) conversationView {
+	c, ok := account.getConversationWith(to, resource, u)
+
+	if !ok {
+		c = account.createConversationView(to, resource, u)
+	}
+
+	c.show(userInitiated)
+	return c
+}

@@ -51,26 +51,21 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
+	tlsC, v := tlsConfigForRecordedHandshake()
+	tlsC.Rand = fixedRand([]string{
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F",
+		"000102030405060708090A0B0C0D0E0F",
+	})
+
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
-	tlsC := &tls.Config{
-		Rand: fixedRand([]string{
-			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-			"000102030405060708090A0B0C0D0E0F",
-			"000102030405060708090A0B0C0D0E0F",
-		}),
-		CipherSuites: []uint16{
-			0xc02f, 0xc02b, 0xc030, 0xc02c, 0xc013, 0xc009, 0xc014, 0xc00a, 0x9c, 0x9d, 0x2f, 0x35, 0xc012, 0xa,
-		},
-	}
-
 	d := &dialer{
 		JID:           "user@www.olabini.se",
 		password:      "pass",
 		serverAddress: "www.olabini.se:443",
-		verifier:      &basicTLSVerifier{},
-
+		verifier:      v,
 		config: data.Config{
 			TLSConfig: tlsC,
 		},

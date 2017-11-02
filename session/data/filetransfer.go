@@ -1,7 +1,5 @@
 package data
 
-import "fmt"
-
 type transferUpdate struct {
 	current, total int64
 }
@@ -66,16 +64,9 @@ func (ctl *FileTransferControl) ReportErrorNonblocking(e error) {
 }
 
 func (ctl *FileTransferControl) ReportFinished() {
-	fmt.Printf("ReportFinished()\n")
-	fmt.Printf("  ReportFinished  - closeErrorOccurred\n")
 	ctl.closeErrorOccurred()
-	fmt.Printf("  ReportFinished  - after closeErrorOccurred\n")
-	fmt.Printf("  ReportFinished  - closeUpdate\n")
 	ctl.closeUpdate()
-	fmt.Printf("  ReportFinished  - after closeUpdate\n")
-	fmt.Printf("  ReportFinished  - sendAndCloseTransferFinished\n")
 	ctl.sendAndCloseTransferFinished(true)
-	fmt.Printf("  ReportFinished  - after sendAndCloseTransferFinished\n")
 }
 
 func (ctl *FileTransferControl) SendUpdate(current, total int64) {

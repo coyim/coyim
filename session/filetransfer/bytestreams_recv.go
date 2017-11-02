@@ -15,8 +15,6 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
-// TODO: at some point this should be refactored away into a pure socks5 bytestream implementation and a small piece that is file transfer specific
-
 func bytestreamWaitForCancel(ctx *recvContext) {
 	ctx.control.WaitForCancel(func() {
 		ctx.opaque.(chan bool) <- true
@@ -78,57 +76,35 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 	defer ff.Close()
 
 	cancel := ctx.opaque.(chan bool)
-
-	buf := make([]byte, chunkSize)
 	totalWritten := int64(0)
 	writes := 0
-	for {
+
+	reporting := func(v int) error {
 		if writes%cancelCheckFrequency == 0 {
 			select {
 			case <-cancel:
 				ctx.bytestreamCleanup(conn, ff)
-				return
+				return localCancel
 			default:
 				// Fall through, since we are not going to cancel
 			}
 		}
-
-		fmt.Printf("  bytestreamDoReceive()-  preparing to read\n")
-		n, rerr := conn.Read(buf)
-		fmt.Printf("  bytestreamDoReceive()-  have read %d\n", n)
-		if n > 0 {
-			fmt.Printf("  bytestreamDoReceive()-  preparing to write to file\n")
-			_, err = ff.Write(buf[:n])
-			fmt.Printf("  bytestreamDoReceive()-  have written to file\n")
-			if err != nil {
-				ctx.s.Warn(fmt.Sprintf("Had error when trying to write to file: %v", err))
-				ctx.control.ReportError(errors.New("Error writing to file"))
-				ctx.bytestreamCleanup(conn, ff)
-				return
-			}
-			totalWritten += int64(n)
-			writes++
-			fmt.Printf("  bytestreamDoReceive()-  sending update\n")
-			ctx.control.SendUpdate(totalWritten, ctx.size)
-			fmt.Printf("  bytestreamDoReceive()-  have sent update\n")
-			fmt.Printf("received one chunk...\n")
-		}
-
-		if rerr != nil {
-			if rerr == io.EOF {
-				break
-			}
-			ctx.s.Warn(fmt.Sprintf("Had error when trying to read from connection: %v", rerr))
-			ctx.control.ReportError(errors.New("Error reading from peer"))
-			ctx.bytestreamCleanup(conn, ff)
-			return
-		}
+		totalWritten += int64(v)
+		writes++
+		ctx.control.SendUpdate(totalWritten, ctx.size)
+		return nil
 	}
-	fmt.Printf("done receiving all...\n")
+
+	_, err = io.Copy(io.MultiWriter(ff, &reportingWriter{report: reporting}), conn)
+	if err != nil && err != localCancel {
+		ctx.s.Warn(fmt.Sprintf("Had error when trying to write to file: %v", err))
+		ctx.control.ReportError(errors.New("Error writing to file"))
+		ctx.bytestreamCleanup(conn, ff)
+		return
+	}
 
 	fstat, _ := ff.Stat()
 
-	fmt.Printf("checking size...\n")
 	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
 	if totalWritten != ctx.size || fstat.Size() != totalWritten {
 		ctx.s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", ctx.size, fstat.Size()))
@@ -137,7 +113,6 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 		return
 	}
 
-	fmt.Printf("finalizing file transfer...\n")
 	// TODO[LATER]: if there's a hash of the file in the inflight, we should calculate it on the file and check it
 	if err := ctx.finalizeFileTransfer(ff.Name()); err != nil {
 		ctx.s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))

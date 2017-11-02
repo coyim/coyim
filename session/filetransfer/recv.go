@@ -88,19 +88,14 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 }
 
 func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
-	fmt.Printf("finalizeFileTransfer(%s)\n", tempName)
 	if ctx.directory {
-		fmt.Printf(" - isdirectory\n")
 		defer os.Remove(tempName)
 
-		fmt.Printf("    starting unpack\n")
 		if err := unpack(tempName, ctx.destination); err != nil {
-			fmt.Printf("    have error: %#v\n", err)
 			ctx.control.ReportError(errors.New("Couldn't unpack final file"))
 			return err
 		}
 	} else {
-		fmt.Printf(" - isnotdirectory\n")
 		if err := os.Rename(tempName, ctx.destination); err != nil {
 			ctx.control.ReportError(errors.New("Couldn't save final file"))
 			return err

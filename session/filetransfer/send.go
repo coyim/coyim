@@ -113,21 +113,13 @@ type sendContext struct {
 }
 
 func (ctx *sendContext) onFinish() {
-	fmt.Printf("onFinish()\n")
-	fmt.Printf("  onFinish()-reportFinished\n")
 	ctx.control.ReportFinished()
-	fmt.Printf("  onFinish()-after reportFinished\n")
-	fmt.Printf("  onFinish()-remove inflight send\n")
 	removeInflightSend(ctx)
-	fmt.Printf("  onFinish()-after remove inflight send\n")
 	if ctx.onFinishHook != nil {
-		fmt.Printf("  onFinish()-onfinishhook\n")
 		ctx.onFinishHook(ctx)
-		fmt.Printf("  onFinish()-after onfinishhook\n")
 	}
 }
 func (ctx *sendContext) onError(e error) {
-	fmt.Printf("sendContext.onError(%#v)\n", e)
 	ctx.control.ReportErrorNonblocking(e)
 	removeInflightSend(ctx)
 	if ctx.onErrorHook != nil {

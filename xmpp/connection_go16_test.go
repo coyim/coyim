@@ -4,7 +4,6 @@
 package xmpp
 
 import (
-	"crypto/tls"
 	"io"
 
 	"github.com/coyim/coyim/xmpp/data"
@@ -12,6 +11,9 @@ import (
 )
 
 func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
+	tlsC, v := tlsConfigForRecordedHandshake()
+	tlsC.Rand = fixedRand([]string{"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F"})
+
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -24,21 +26,17 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 			"</str:features>" +
 			"<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>",
 	)}
-	conn := &fullMockedConn{rw: rw}
-	tlsC := &tls.Config{
-		Rand: fixedRand([]string{"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F"}),
-		CipherSuites: []uint16{
-			0xc02f, 0xc02b, 0xc030, 0xc02c, 0xc013, 0xc009, 0xc014, 0xc00a, 0x9c, 0x9d, 0x2f, 0x35, 0xc012, 0xa,
-		},
-	}
-
 	d := &dialer{
 		JID:      "user@domain",
 		password: "pass",
+
+		verifier: v,
 		config: data.Config{
 			TLSConfig: tlsC,
 		},
 	}
+
+	conn := &fullMockedConn{rw: rw}
 	_, err := d.setupStream(conn)
 
 	c.Assert(err, Equals, io.EOF)
@@ -91,20 +89,16 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInvalidCertHash(c *C) {
+	tlsC, _ := tlsConfigForRecordedHandshake()
+	tlsC.Rand = fixedRand([]string{
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F",
+		"000102030405060708090A0B0C0D0E0F",
+	})
+
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
-	tlsC := &tls.Config{
-		Rand: fixedRand([]string{
-			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-			"000102030405060708090A0B0C0D0E0F",
-			"000102030405060708090A0B0C0D0E0F",
-		}),
-		CipherSuites: []uint16{
-			0xc02f, 0xc02b, 0xc030, 0xc02c, 0xc013, 0xc009, 0xc014, 0xc00a, 0x9c, 0x9d, 0x2f, 0x35, 0xc012, 0xa,
-		},
-	}
-
 	d := &dialer{
 		JID:           "user@www.olabini.se",
 		password:      "pass",
@@ -121,20 +115,16 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 }
 
 func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {
+	tlsC, _ := tlsConfigForRecordedHandshake()
+	tlsC.Rand = fixedRand([]string{
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F",
+		"000102030405060708090A0B0C0D0E0F",
+	})
+
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
-	tlsC := &tls.Config{
-		Rand: fixedRand([]string{
-			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-			"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
-			"000102030405060708090A0B0C0D0E0F",
-			"000102030405060708090A0B0C0D0E0F",
-		}),
-		CipherSuites: []uint16{
-			0xc02f, 0xc02b, 0xc030, 0xc02c, 0xc013, 0xc009, 0xc014, 0xc00a, 0x9c, 0x9d, 0x2f, 0x35, 0xc012, 0xa,
-		},
-	}
-
 	d := &dialer{
 		JID:           "user@www.olabini.se",
 		password:      "pass",

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/pem"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -20,6 +21,70 @@ import (
 type ConnectionXMPPSuite struct{}
 
 var _ = Suite(&ConnectionXMPPSuite{})
+
+func tlsConfigForRecordedHandshake() (*tls.Config, *basicTLSVerifier) {
+	//This is the certificate in the recorded handshake
+	peerCertificatePEM := []byte(`
+-----BEGIN CERTIFICATE-----
+MIIF5TCCA82gAwIBAgIQJkO7MqFmSHrhnWx5xD/iZjANBgkqhkiG9w0BAQsFADB9
+MQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMi
+U2VjdXJlIERpZ2l0YWwgQ2VydGlmaWNhdGUgU2lnbmluZzEpMCcGA1UEAxMgU3Rh
+cnRDb20gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTUxMjE2MDEwMDA1WhcN
+MzAxMjE2MDEwMDA1WjB4MQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20g
+THRkLjEpMCcGA1UECxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkx
+JjAkBgNVBAMTHVN0YXJ0Q29tIENsYXNzIDIgSVYgU2VydmVyIENBMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnL29gjx6E467y4OsHo42TCn1rC7JXUnv
+epzPE9KLbJiQi63JSLTr/QVGjhWFQBhqwXKlyTyBNGoOuV+yRoimqkPDdV6ZdnIn
+RwmKAnVhvMVd2WXeqSJtq5STa2nuOnLTwYBnyVsOIo9YdnvFhDXAGjQ3hXWQIq00
+f43XE8Fik+9EUG/oF7VLlIACAJnhotAj2dR2TvQmyBbEEN2PhLH3WANZklMbao2c
+sASqSwyOmAB5+35nSagpMYuuVa4ZSnm2EaF8emLxiiFK5InCBZjRG4u+YLrEv7+m
+KrnHOMVWkOE7mzKxtuHFYW2LRB++eJGLUdn1KiviZDS/ofOhIhfstwIDAQABo4IB
+ZDCCAWAwDgYDVR0PAQH/BAQDAgEGMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDATASBgNVHRMBAf8ECDAGAQH/AgEAMDIGA1UdHwQrMCkwJ6AloCOGIWh0dHA6
+Ly9jcmwuc3RhcnRzc2wuY29tL3Nmc2NhLmNybDBmBggrBgEFBQcBAQRaMFgwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLnN0YXJ0c3NsLmNvbTAwBggrBgEFBQcwAoYk
+aHR0cDovL2FpYS5zdGFydHNzbC5jb20vY2VydHMvY2EuY3J0MB0GA1UdDgQWBBSU
+3oVBKqXZRfZgLC5MkwmmLCN+PjAfBgNVHSMEGDAWgBROC+8apEBbpRdphzDKNGhD
+0EGu8jA/BgNVHSAEODA2MDQGBFUdIAAwLDAqBggrBgEFBQcCARYeaHR0cDovL3d3
+dy5zdGFydHNzbC5jb20vcG9saWN5MA0GCSqGSIb3DQEBCwUAA4ICAQC16kMuZh8h
+lVsgzybaIix2qySQFU+rPgqSqeyrDSmJwpDbaKjwakm6LJ2DLX5MRFjNPCh+ArQf
+CU1UUJa65n7UaQWt6q8kUwifHcIn+fFJdNV3N4zdvlKxwveqBSQZiXeIUO/hHr1U
+i7Gw6s0On+K0fD9oNcgCRR3vPicB2frK7BhOFje6xowsWexxPfJHI69lCq73O7Ke
+xXqp/V8f8uGF8L4KU3xW6RDG57RrXh5+LNxUQmZ2tIAaPyHTND5zbxff8Z/ZbgGG
+HKbsuPkAUIG+bHpq5b6bf2x2NxMhqYSMI+GJJ9FmmiCV+P3+0ywBYGNhJkcFUYvo
+SUduHz+/RXd6G/ejrvKp58rbZ9iCISLZjpo5gYEfLIl6IQJcZPM8FIWKLKhtIoKX
+5ctNL3epV4DzIDZxLaSruEBQFeDQj6p/74pUYLQBP523anf6StXBtYgbfImRoIh4
+I8L85aB/TUyLOJA/sKx/WFrXOxE9K4q+Pf5tq3gzZEchM/btMYn1cw1GPUt4nHya
+zS52LrP0+Q77ao1Gza9svd8HE1NZ9NIVJO71QskqjxvGiTt048r4gLSXaM1zP2w9
+nMsIw1IpxXE8h9UHAllgh8oNHno5I9nLfynbEhXxGy9RlfcLN/J8iOqyagfgxrUy
+DPKMh5xGeLKMQSzjyQ1bV0WGC1JmJp+QDQ==
+-----END CERTIFICATE-----
+	`)
+
+	pool := x509.NewCertPool()
+	if !pool.AppendCertsFromPEM(peerCertificatePEM) {
+		panic("Bad PEM")
+	}
+
+	c := &tls.Config{
+		RootCAs: pool,
+		CipherSuites: []uint16{
+			0xc02f, 0xc02b, 0xc030, 0xc02c, 0xc013, 0xc009, 0xc014,
+			0xc00a, 0x009c, 0x009d, 0x002f, 0x0035, 0xc012, 0x000a,
+		},
+	}
+
+	v := &basicTLSVerifier{
+		shaSum: []byte{
+			0x82, 0x45, 0x44, 0x18, 0xcb, 0x04, 0x85, 0x4a,
+			0xa7, 0x21, 0xbb, 0x05, 0x96, 0x52, 0x8f, 0xf8,
+			0x02, 0xb1, 0xe1, 0x8a, 0x4e, 0x3a, 0x77, 0x67,
+			0x41, 0x2a, 0xc9, 0xf1, 0x08, 0xc9, 0xd3, 0xa7,
+		},
+	}
+
+	return c, v
+}
 
 type basicTLSVerifier struct {
 	shaSum []byte

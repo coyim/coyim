@@ -62,7 +62,7 @@ func (u *gtkUI) newRoster() *roster {
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_activate_buddy": r.onActivateBuddy,
+		"on_activate_buddy": r.onActivateRosterRow,
 		"on_button_press":   r.onButtonPress,
 	})
 
@@ -360,33 +360,46 @@ func (r *roster) saveCollapseStatus() {
 	r.ui.settings.SetCollapsed(strings.Join(vals, ":"))
 }
 
-func (r *roster) onActivateBuddy(v gtki.TreeView, path gtki.TreePath) {
-	selection, _ := v.GetSelection()
-	defer selection.UnselectPath(path)
-
-	iter, err := r.model.GetIter(path)
-	if err != nil {
-		return
-	}
-
-	jid := getFromModelIter(r.model, iter, indexJid)
-	accountID := getFromModelIter(r.model, iter, indexAccountID)
-	rowType := getFromModelIter(r.model, iter, indexRowType)
-
-	if rowType != "peer" {
-		ix := collapseTransform(jid)
-		r.isCollapsed[ix] = !r.isCollapsed[ix]
-		r.saveCollapseStatus()
-		r.redraw()
-		return
-	}
-
+func (r *roster) activateBuddyRow(jid, accountID string) {
 	account, ok := r.getAccount(accountID)
 	if !ok {
 		return
 	}
 
 	r.openConversationView(account, jid, true, "")
+}
+
+func (r *roster) activateAccountRow(jid string) {
+	ix := collapseTransform(jid)
+	r.isCollapsed[ix] = !r.isCollapsed[ix]
+	r.saveCollapseStatus()
+	r.redraw()
+}
+
+func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
+	iter, err := r.model.GetIter(path)
+	if err != nil {
+		return
+	}
+
+	jid := getFromModelIter(r.model, iter, indexJid)
+	rowType := getFromModelIter(r.model, iter, indexRowType)
+
+	switch rowType {
+	case "peer":
+		selection, err := v.GetSelection()
+		if err != nil {
+			return
+		}
+
+		defer selection.UnselectPath(path)
+		accountID := getFromModelIter(r.model, iter, indexAccountID)
+		r.activateBuddyRow(jid, accountID)
+	case "account":
+		r.activateAccountRow(jid)
+	default:
+		panic(fmt.Sprintf("unknown roster row type: %s", rowType))
+	}
 }
 
 func (r *roster) openConversationView(account *account, to string, userInitiated bool, resource string) conversationView {

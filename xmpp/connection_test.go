@@ -71,6 +71,9 @@ DPKMh5xGeLKMQSzjyQ1bV0WGC1JmJp+QDQ==
 			0xc02f, 0xc02b, 0xc030, 0xc02c, 0xc013, 0xc009, 0xc014,
 			0xc00a, 0x009c, 0x009d, 0x002f, 0x0035, 0xc012, 0x000a,
 		},
+		//0x1d appears as preffered since go1.8
+		//Manually inform what was used when the handshake for 1.6 was recorded
+		CurvePreferences: []tls.CurveID{0x17, 0x18, 0x19},
 	}
 
 	v := &basicTLSVerifier{

@@ -138,19 +138,7 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 
 	log.Printf("[%s] Presence from %v: show: %v status: %v gone: %v\n", ev.To, ev.From, ev.Show, ev.Status, ev.Gone)
 	u.rosterUpdated()
-
-	account := u.findAccountForSession(ev.Session)
-	if account == nil {
-		return
-	}
-
-	u.roster.presenceUpdated(
-		account,
-		utils.RemoveResourceFromJid(ev.From),
-		ev.Show,
-		ev.Status,
-		ev.Gone,
-	)
+	u.presenceUpdated(ev)
 }
 
 func convWindowNowOrLater(account *account, peer string, ui *gtkUI, f func(conversationView)) {

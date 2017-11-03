@@ -14,6 +14,7 @@ import (
 	ournet "github.com/coyim/coyim/net"
 	rosters "github.com/coyim/coyim/roster"
 	sessions "github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gdki"
@@ -824,6 +825,30 @@ func (u *gtkUI) removeAccount(account *account) {
 func (u *gtkUI) toggleAutoConnectAccount(account *account) {
 	account.session.GetConfig().ToggleConnectAutomatically()
 	u.saveConfigOnly()
+}
+
+func (u *gtkUI) presenceUpdated(ev events.Presence) {
+	//TODO: Ignore presence updates for yourself.
+	account := u.accountManager.findAccountForSession(ev.Session)
+	if account == nil {
+		return
+	}
+
+	from := ev.From
+	show := ev.Show
+	showStatus := ev.Status
+	gone := ev.Gone
+
+	//Note this won't create a conversation window.
+	//It's OK since we dont want to append a status in this case.
+	c, ok := u.getConversationView(account, from)
+	if !ok {
+		return
+	}
+
+	doInUIThread(func() {
+		c.appendStatus(u.accountManager.displayNameFor(account, from), time.Now(), show, showStatus, gone)
+	})
 }
 
 func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {

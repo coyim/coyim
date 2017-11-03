@@ -599,7 +599,11 @@ func (conv *conversationPane) updateSecurityWarning() {
 
 func (conv *conversationWindow) show(userInitiated bool) {
 	conv.updateSecurityWarning()
-	conv.win.Show()
+	if userInitiated {
+		conv.win.Present() // Raises the window
+	} else {
+		conv.win.Show()
+	}
 	conv.tryEnsureCorrectWorkspace()
 }
 

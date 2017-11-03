@@ -249,7 +249,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 			account.session.RequestPresenceSubscription(jid, "")
 		},
 		"on_dump_info": func() {
-			r.debugPrintRosterFor(account.session.GetConfig().Account)
+			r.ui.accountManager.debugPeersFor(account)
 		},
 		"on_send_file_to_contact": func() {
 			if peer, ok := r.ui.getPeer(account, jid); ok {
@@ -414,22 +414,6 @@ func (r *roster) update(account *account, entries *rosters.List) {
 	defer r.ui.accountManager.Unlock()
 
 	r.ui.accountManager.setContacts(account, entries)
-}
-
-func (r *roster) debugPrintRosterFor(nm string) {
-	r.ui.accountManager.RLock()
-	defer r.ui.accountManager.RUnlock()
-
-	for account, rs := range r.ui.accountManager.getAllContacts() {
-		if account.session.GetConfig().Is(nm) {
-			rs.Iter(func(_ int, item *rosters.Peer) {
-				fmt.Printf("->   %s\n", item.Dump())
-			})
-		}
-	}
-
-	fmt.Printf(" ************************************** \n")
-	fmt.Println()
 }
 
 func isNominallyVisible(p *rosters.Peer, showWaiting bool) bool {

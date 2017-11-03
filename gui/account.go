@@ -323,7 +323,7 @@ func (account *account) createAlwaysEncryptItem() gtki.MenuItem {
 func (account *account) createDumpInfoItem(r *roster) gtki.MenuItem {
 	dumpInfoItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("Dump info"))
 	dumpInfoItem.Connect("activate", func() {
-		r.debugPrintRosterFor(account.session.GetConfig().Account)
+		r.ui.accountManager.debugPeersFor(account)
 	})
 	return dumpInfoItem
 }

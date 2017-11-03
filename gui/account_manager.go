@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/coyim/coyim/client"
@@ -168,4 +169,19 @@ func (m *accountManager) displayNameFor(account *account, from string) string {
 	}
 
 	return p.NameForPresentation()
+}
+
+func (m *accountManager) debugPeersFor(account *account) {
+	m.RLock()
+	defer m.RUnlock()
+
+	rs, ok := m.getAllContacts()[account]
+	if ok {
+		rs.Iter(func(_ int, item *rosters.Peer) {
+			fmt.Printf("->   %s\n", item.Dump())
+		})
+	}
+
+	fmt.Printf(" ************************************** \n")
+	fmt.Println()
 }

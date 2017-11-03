@@ -292,6 +292,7 @@ func (conv *conversationPane) cancelFileTransfer(file *fileNotification) {
 	file.canceled = true
 	file.completed = true
 	file.progress = 0
+	conv.fileTransferNotif.totalProgress = 0
 	conv.fileTransferNotif.count--
 
 	if all(conv.fileTransferNotif.files, func(f *fileNotification) bool {

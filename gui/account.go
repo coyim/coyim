@@ -19,6 +19,7 @@ import (
 type account struct {
 	menu                gtki.MenuItem
 	currentNotification gtki.InfoBar
+	xmlConsole          gtki.Dialog
 
 	//TODO: Should this be a map of roster.Peer and conversationView?
 	conversations map[string]conversationView
@@ -327,35 +328,16 @@ func (account *account) createDumpInfoItem(r *roster) gtki.MenuItem {
 	return dumpInfoItem
 }
 
-func (account *account) createXMLConsoleItem(r *roster) gtki.MenuItem {
+func (account *account) createXMLConsoleItem(parent gtki.Window) gtki.MenuItem {
+	if account.xmlConsole == nil {
+		account.xmlConsole = newXMLConsoleView(account.session.GetInMemoryLog())
+		account.xmlConsole.SetTransientFor(parent)
+		account.xmlConsole.SetTitle(strings.Replace(account.xmlConsole.GetTitle(), "ACCOUNT_NAME", account.session.GetConfig().Account, -1))
+	}
+
 	consoleItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("XML Console"))
-	consoleItem.Connect("activate", func() {
-		builder := newBuilder("XMLConsole")
-		console := builder.getObj("XMLConsole").(gtki.Dialog)
-		buf := builder.getObj("consoleContent").(gtki.TextBuffer)
-		console.SetTransientFor(r.ui.window)
-		console.SetTitle(strings.Replace(console.GetTitle(), "ACCOUNT_NAME", account.session.GetConfig().Account, -1))
-		log := account.session.GetInMemoryLog()
+	consoleItem.Connect("activate", account.xmlConsole.ShowAll)
 
-		buf.Delete(buf.GetStartIter(), buf.GetEndIter())
-		if log != nil {
-			buf.Insert(buf.GetEndIter(), log.String())
-		}
-
-		builder.ConnectSignals(map[string]interface{}{
-			"on_refresh_signal": func() {
-				buf.Delete(buf.GetStartIter(), buf.GetEndIter())
-				if log != nil {
-					buf.Insert(buf.GetEndIter(), log.String())
-				}
-			},
-			"on_close_signal": func() {
-				console.Destroy()
-			},
-		})
-
-		console.ShowAll()
-	})
 	return consoleItem
 }
 

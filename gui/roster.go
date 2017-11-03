@@ -304,7 +304,7 @@ func (r *roster) createAccountPopup(jid string, account *account, bt gdki.EventB
 	if *config.DebugFlag {
 		mn.Append(account.createSeparatorItem())
 		mn.Append(account.createDumpInfoItem(r))
-		mn.Append(account.createXMLConsoleItem(r))
+		mn.Append(account.createXMLConsoleItem(r.ui.window))
 	}
 	mn.ShowAll()
 	mn.PopupAtPointer(bt)

@@ -50,6 +50,10 @@ func (account *account) setConversationView(fullJID string, c conversationView) 
 	account.Lock()
 	defer account.Unlock()
 
+	if c, ok := account.conversations[fullJID]; ok {
+		c.destroy() // We dont want the previous conversation to be visible after this moment
+	}
+
 	account.conversations[fullJID] = c
 }
 

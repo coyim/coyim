@@ -36,7 +36,6 @@ type conversationView interface {
 	failFileTransfer(file *fileNotification)
 	cancelFileTransfer(file *fileNotification)
 	isFileTransferNotifCanceled() bool
-	show(userInitiated bool)
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	appendMessage(sent sentMessage)
 	displayNotification(notification string)
@@ -50,6 +49,9 @@ type conversationView interface {
 	showSMPRequestForSecret(string)
 	showSMPSuccess()
 	showSMPFailure()
+
+	show(userInitiated bool)
+	destroy()
 }
 
 func (conv *conversationPane) showSMPRequestForSecret(question string) {
@@ -500,8 +502,8 @@ func newConversationWindow(account *account, uid string, ui *gtkUI, existing *co
 	return conv
 }
 
-func (conv *conversationWindow) Hide() {
-	conv.win.Hide()
+func (conv *conversationWindow) destroy() {
+	conv.win.Destroy()
 }
 
 func (conv *conversationWindow) tryEnsureCorrectWorkspace() {

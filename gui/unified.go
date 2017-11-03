@@ -297,6 +297,11 @@ func (csi *conversationStackItem) remove() {
 	csi.widget.Hide()
 }
 
+func (csi *conversationStackItem) destroy() {
+	csi.layout.closeNthConversation(csi.pageIndex)
+	csi.widget.Destroy()
+}
+
 func (cl *conversationList) getItemForIter(iter gtki.TreeIter) *conversationStackItem {
 	val, err := cl.model.GetValue(iter, ulIndexID)
 	if err != nil {
@@ -339,20 +344,23 @@ func (ul *unifiedLayout) setCurrentPage(csi *conversationStackItem) {
 	ul.inPageSet = false
 }
 
-func (ul *unifiedLayout) onCloseClicked() {
-	page := ul.notebook.GetCurrentPage()
-	if page < 0 {
-		return
-	}
-	item := ul.itemMap[page]
-	if item != nil {
-		item.remove()
+func (ul *unifiedLayout) closeNthConversation(n int) {
+	if n >= 0 {
+		item := ul.itemMap[n]
+		if item != nil {
+			item.remove()
+		}
 	}
 
 	if !ul.displayFirstConvo() {
 		ul.header.SetText("")
 		ul.hideConversations()
 	}
+}
+
+func (ul *unifiedLayout) onCloseClicked() {
+	page := ul.notebook.GetCurrentPage()
+	ul.closeNthConversation(page)
 }
 
 func (ul *unifiedLayout) onSwitchPage(notebook gtki.Notebook, page gtki.Widget, idx int) {

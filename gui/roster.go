@@ -81,10 +81,6 @@ func (u *gtkUI) newRoster() *roster {
 	return r
 }
 
-func (r *roster) getAccount(id string) (*account, bool) {
-	return r.ui.accountManager.getAccountByID(id)
-}
-
 func getFromModelIter(m gtki.TreeStore, iter gtki.TreeIter, index int) string {
 	val, _ := m.GetValue(iter, index)
 	v, _ := val.GetString()
@@ -106,7 +102,7 @@ func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (jid string, acc
 	jid = getFromModelIter(r.model, iter, indexJid)
 	accountID := getFromModelIter(r.model, iter, indexAccountID)
 	rowType = getFromModelIter(r.model, iter, indexRowType)
-	account, ok = r.getAccount(accountID)
+	account, ok = r.ui.accountManager.getAccountByID(accountID)
 	return jid, account, rowType, ok
 }
 
@@ -355,15 +351,6 @@ func (r *roster) saveCollapseStatus() {
 	r.ui.settings.SetCollapsed(strings.Join(vals, ":"))
 }
 
-func (r *roster) activateBuddyRow(jid, accountID string) {
-	account, ok := r.getAccount(accountID)
-	if !ok {
-		return
-	}
-
-	r.openConversationView(account, jid, true, "")
-}
-
 func (r *roster) activateAccountRow(jid string) {
 	ix := collapseTransform(jid)
 	r.isCollapsed[ix] = !r.isCollapsed[ix]
@@ -389,7 +376,7 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 
 		defer selection.UnselectPath(path)
 		accountID := getFromModelIter(r.model, iter, indexAccountID)
-		r.activateBuddyRow(jid, accountID)
+		r.ui.openConversationViewByAccountID(jid, accountID)
 	case "account":
 		r.activateAccountRow(jid)
 	default:

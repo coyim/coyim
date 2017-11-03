@@ -677,7 +677,7 @@ func (u *gtkUI) newCustomConversation() {
 			}
 			accountID, _ := val.GetString()
 
-			account, ok := u.roster.getAccount(accountID)
+			account, ok := u.accountManager.getAccountByID(accountID)
 			if !ok {
 				return
 			}
@@ -703,7 +703,7 @@ func (u *gtkUI) addContactWindow() {
 	}
 
 	dialog := presenceSubscriptionDialog(accounts, func(accountID, peer, msg, nick string, autoAuth bool) error {
-		account, ok := u.roster.getAccount(accountID)
+		account, ok := u.accountManager.getAccountByID(accountID)
 		if !ok {
 			return fmt.Errorf(i18n.Local("There is no account with the id %q"), accountID)
 		}
@@ -854,6 +854,16 @@ func (u *gtkUI) presenceUpdated(ev events.Presence) {
 func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
 	account.session.GetConfig().ToggleAlwaysEncrypt()
 	u.saveConfigOnly()
+}
+
+//TODO: merge these 2 functions
+func (u *gtkUI) openConversationViewByAccountID(jid, accountID string) {
+	account, ok := u.accountManager.getAccountByID(accountID)
+	if !ok {
+		return
+	}
+
+	u.openConversationView(account, jid, true, "")
 }
 
 //TODO: should receive fullJID?

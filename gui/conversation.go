@@ -503,12 +503,14 @@ func (conv *conversationWindow) destroy() {
 }
 
 func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
-	if g.gdk.WorkspaceControlSupported() {
-		wi, _ := conv.parentWin.GetWindow()
-		parentPlace := wi.GetDesktop()
-		cwi, _ := conv.win.GetWindow()
-		cwi.MoveToDesktop(parentPlace)
+	if !g.gdk.WorkspaceControlSupported() {
+		return
 	}
+
+	wi, _ := conv.parentWin.GetWindow()
+	parentPlace := wi.GetDesktop()
+	cwi, _ := conv.win.GetWindow()
+	cwi.MoveToDesktop(parentPlace)
 }
 
 func (conv *conversationPane) getConversation() (client.Conversation, bool) {

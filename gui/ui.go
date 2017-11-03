@@ -14,6 +14,7 @@ import (
 	rosters "github.com/coyim/coyim/roster"
 	sessions "github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -826,9 +827,28 @@ func (u *gtkUI) openConversationView(account *account, to string, userInitiated 
 	c, ok := account.getConversationWith(to, resource, u)
 
 	if !ok {
-		c = account.createConversationView(to, resource, u)
+		fullJID := utils.ComposeFullJid(to, resource)
+		c = u.createConversationView(account, fullJID)
 	}
 
 	c.show(userInitiated)
 	return c
+}
+
+func (u *gtkUI) createConversationViewBasedOnWindowLayout(account *account, fullJID string, existing *conversationPane) conversationView {
+	var cv conversationView
+
+	if u.settings.GetSingleWindow() {
+		to, resource := utils.SplitJid(fullJID) //TODO: argh
+		cv = u.unified.createConversation(account, to, resource, existing)
+	} else {
+		cv = newConversationWindow(account, fullJID, u, existing) //TODO: Why it has gtkUI?
+	}
+	account.setConversationView(fullJID, cv)
+
+	return cv
+}
+
+func (u *gtkUI) createConversationView(account *account, fullJID string) conversationView {
+	return u.createConversationViewBasedOnWindowLayout(account, fullJID, nil)
 }

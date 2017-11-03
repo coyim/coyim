@@ -46,15 +46,32 @@ func (account *account) getConversationView(fullJID string) (conversationView, b
 	return c, ok
 }
 
-func (account *account) setConversationView(fullJID string, c conversationView) {
-	account.Lock()
-	defer account.Unlock()
+func (account *account) executeDelayed(fullJID string) {
+	account.delayedConversationsLock.Lock()
+	defer account.delayedConversationsLock.Unlock()
 
+	cv, ok := account.getConversationView(fullJID)
+	if !ok {
+		panic("race condition")
+	}
+
+	for _, f := range account.delayedConversations[fullJID] {
+		f(cv)
+	}
+
+	delete(account.delayedConversations, fullJID)
+}
+
+func (account *account) setConversationView(fullJID string, c conversationView) {
+	defer account.executeDelayed(fullJID)
+
+	account.Lock()
 	if c, ok := account.conversations[fullJID]; ok {
 		c.destroy() // We dont want the previous conversation to be visible after this moment
 	}
 
 	account.conversations[fullJID] = c
+	account.Unlock()
 }
 
 type byAccountNameAlphabetic []*account
@@ -102,29 +119,6 @@ func (account *account) getConversationWith(to, resource string, ui *gtkUI) (c c
 	account.setConversationView(fullJid, c)
 	return
 }
-
-func (account *account) createConversationView(to, resource string, ui *gtkUI) conversationView {
-	peer, _ := ui.getPeer(account, to)
-	fullJid := utils.ComposeFullJid(to, resource)
-
-	var cv conversationView
-	if ui.settings.GetSingleWindow() {
-		cv = ui.unified.createConversation(account, peer.Jid, resource, nil)
-	} else {
-		cv = newConversationWindow(account, fullJid, ui, nil)
-	}
-	account.setConversationView(fullJid, cv)
-
-	account.delayedConversationsLock.Lock()
-	defer account.delayedConversationsLock.Unlock()
-	for _, f := range account.delayedConversations[fullJid] {
-		f(cv)
-	}
-	delete(account.delayedConversations, fullJid)
-
-	return cv
-}
-
 func (account *account) afterConversationWindowCreated(to string, f func(conversationView)) {
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()

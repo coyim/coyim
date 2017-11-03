@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"time"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/gui/settings"
@@ -63,6 +64,10 @@ type gtkUI struct {
 	dialerFactory interfaces.DialerFactory
 
 	settings *settings.Settings
+
+	//Desktop notifications
+	deNotify    *desktopNotifications
+	actionTimes map[string]time.Time
 }
 
 // Graphics represent the graphic configuration
@@ -116,6 +121,9 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
 		setShowAdvancedSettingsRequest:       make(chan bool, 100),
 		dialerFactory:                        df,
+
+		actionTimes: make(map[string]time.Time),
+		deNotify:    newDesktopNotifications(),
 	}
 
 	var err error
@@ -315,7 +323,7 @@ func (u *gtkUI) updateUnifiedOrNot() {
 func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 	u.settings = settings.For(c.GetUniqueID())
 	u.roster.restoreCollapseStatus()
-	u.roster.deNotify.updateWith(u.settings)
+	u.deNotify.updateWith(u.settings)
 	u.updateUnifiedOrNot()
 
 	u.buildAccounts(c, u.sessionFactory, u.dialerFactory)

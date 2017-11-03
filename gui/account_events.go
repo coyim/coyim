@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -78,14 +79,36 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 		return
 	}
 
-	u.roster.messageReceived(
-		account,
-		ev.From,
-		ev.Resource,
-		ev.When,
-		ev.Encrypted,
-		ev.Body,
-	)
+	from := ev.From
+	resource := ev.Resource
+	timestamp := ev.When
+	encrypted := ev.Encrypted
+	message := ev.Body
+
+	p, ok := u.getPeer(account, from)
+	if ok {
+		p.LastResource(resource)
+	}
+
+	doInUIThread(func() {
+		//TODO: here we dont want to open, only findOrCreate
+		//this is what the false means
+		conv := u.openConversationView(account, from, false, "")
+
+		sent := sentMessage{
+			from:            u.displayNameFor(account, from),
+			timestamp:       timestamp,
+			isEncrypted:     encrypted,
+			isOutgoing:      false,
+			strippedMessage: ui.StripSomeHTML(message),
+		}
+		conv.appendMessage(sent)
+
+		if !conv.isVisible() {
+			u.maybeNotify(timestamp, account, from, string(ui.StripSomeHTML(message)))
+		}
+	})
+
 }
 
 func (u *gtkUI) handleSessionEvent(ev events.Event) {

@@ -14,7 +14,6 @@ import (
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
 	rosters "github.com/coyim/coyim/roster"
-	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -31,9 +30,7 @@ type roster struct {
 	isCollapsed map[string]bool
 	toCollapse  []gtki.TreePath
 
-	ui          *gtkUI
-	deNotify    *desktopNotifications
-	actionTimes map[string]time.Time
+	ui *gtkUI
 }
 
 const (
@@ -55,8 +52,6 @@ func (u *gtkUI) newRoster() *roster {
 
 	r := &roster{
 		isCollapsed: make(map[string]bool),
-		actionTimes: make(map[string]time.Time),
-		deNotify:    newDesktopNotifications(),
 
 		ui: u,
 	}
@@ -424,56 +419,6 @@ func (r *roster) presenceUpdated(account *account, from, show, showStatus string
 
 	doInUIThread(func() {
 		c.appendStatus(r.displayNameFor(account, from), time.Now(), show, showStatus, gone)
-	})
-}
-
-const mergeNotificationsThreshold = 7
-
-func (r *roster) lastActionTimeFor(f string) time.Time {
-	return r.actionTimes[f]
-}
-
-func (r *roster) registerLastActionTimeFor(f string, t time.Time) {
-	r.actionTimes[f] = t
-}
-
-func (r *roster) maybeNotify(timestamp time.Time, account *account, from, message string) {
-	dname := r.displayNameFor(account, from)
-
-	if timestamp.Before(r.lastActionTimeFor(from).Add(time.Duration(mergeNotificationsThreshold) * time.Second)) {
-		fmt.Println("Decided to not show notification, since the time is not ready")
-		return
-	}
-
-	r.registerLastActionTimeFor(from, timestamp)
-
-	err := r.deNotify.show(from, dname, message)
-	if err != nil {
-		log.Println(err)
-	}
-}
-
-func (r *roster) messageReceived(account *account, from, resource string, timestamp time.Time, encrypted bool, message []byte) {
-	p, ok := r.ui.getPeer(account, from)
-	if ok {
-		p.LastResource(resource)
-	}
-
-	doInUIThread(func() {
-		conv := r.openConversationView(account, from, false, "")
-
-		sent := sentMessage{
-			from:            r.displayNameFor(account, from),
-			timestamp:       timestamp,
-			isEncrypted:     encrypted,
-			isOutgoing:      false,
-			strippedMessage: ui.StripSomeHTML(message),
-		}
-		conv.appendMessage(sent)
-
-		if !conv.isVisible() && r.deNotify != nil {
-			r.maybeNotify(timestamp, account, from, string(ui.StripSomeHTML(message)))
-		}
 	})
 }
 

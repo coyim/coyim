@@ -160,3 +160,12 @@ func (m *accountManager) getPeer(account *account, peer string) (*rosters.Peer, 
 
 	return l.Get(peer)
 }
+
+func (m *accountManager) displayNameFor(account *account, from string) string {
+	p, ok := m.getPeer(account, from)
+	if !ok {
+		return from
+	}
+
+	return p.NameForPresentation()
+}

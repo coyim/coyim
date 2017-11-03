@@ -134,7 +134,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 		fileName := resizeFileName(ev.Name)
 		purpose := "receive"
 
-		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
+		cv := u.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
@@ -195,7 +195,7 @@ func (account *account) sendDirectoryTo(peer string, u *gtkUI) {
 		base := filepath.Base(dir)
 		dirName := resizeFileName(base)
 
-		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(peer), true, "")
+		cv := u.openConversationView(account, utils.RemoveResourceFromJid(peer), true, "")
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {
@@ -216,7 +216,7 @@ func (account *account) sendFileTo(peer string, u *gtkUI) {
 		fileName := resizeFileName(base)
 		purpose := "send"
 
-		cv := u.roster.openConversationView(account, utils.RemoveResourceFromJid(peer), true, "")
+		cv := u.openConversationView(account, utils.RemoveResourceFromJid(peer), true, "")
 
 		var currentFile *fileNotification
 		if !cv.getFileTransferNotification() {

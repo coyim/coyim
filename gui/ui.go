@@ -31,6 +31,7 @@ type gtkUI struct {
 	app              gtki.Application
 	window           gtki.ApplicationWindow
 	accountsMenu     gtki.MenuItem
+	searchBox        gtki.Box
 	search           gtki.SearchBar
 	searchEntry      gtki.Entry
 	notificationArea gtki.Box
@@ -481,6 +482,7 @@ func (u *gtkUI) mainWindow() {
 		doInUIThread(u.addFeedbackInfoBar)
 	})
 
+	u.searchBox = builder.getObj("search-box").(gtki.Box)
 	u.search = builder.getObj("search-area").(gtki.SearchBar)
 	u.searchEntry = builder.getObj("search-entry").(gtki.Entry)
 	u.initSearchBar()
@@ -766,14 +768,25 @@ func (u *gtkUI) initSearchBar() {
 
 	prov, _ := g.gtk.CssProviderNew()
 
-	// TODO: make consistent with dark themes
 	css := fmt.Sprintf(`
-	searchbar { background-color: #e8e8e7;
-	            border: none;}
+	box {
+	     border: none;}
 	`)
 	_ = prov.LoadFromData(css)
 
-	styleContext, _ := u.search.GetStyleContext()
+	styleContext, _ := u.searchBox.GetStyleContext()
+	styleContext.AddProvider(prov, 9999)
+
+	prov, _ = g.gtk.CssProviderNew()
+
+	// TODO: unify with datk themes
+	css = fmt.Sprintf(`
+	searchbar { background-color: #e8e8e7;
+	          }
+	`)
+	_ = prov.LoadFromData(css)
+
+	styleContext, _ = u.search.GetStyleContext()
 	styleContext.AddProvider(prov, 9999)
 }
 

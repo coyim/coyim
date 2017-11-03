@@ -370,6 +370,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 
 	return cp
 }
+
 func (b *builder) securityWarningNotifInit() *securityWarningNotification {
 	securityWarningNotif := &securityWarningNotification{}
 

@@ -131,7 +131,8 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 }
 
 func convWindowNowOrLater(account *account, peer string, ui *gtkUI, f func(conversationView)) {
-	convWin, ok := account.getConversationWith(peer, "", ui)
+	fullJID := utils.ComposeFullJid(peer, "")
+	convWin, ok := ui.getConversationView(account, fullJID)
 	if !ok {
 		account.afterConversationWindowCreated(peer, f)
 	} else {

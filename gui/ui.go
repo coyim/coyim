@@ -823,16 +823,44 @@ func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
 	u.saveConfigOnly()
 }
 
+//TODO: should receive fullJID?
 func (u *gtkUI) openConversationView(account *account, to string, userInitiated bool, resource string) conversationView {
-	c, ok := account.getConversationWith(to, resource, u)
-
+	fullJID := utils.ComposeFullJid(to, resource)
+	c, ok := u.getConversationView(account, fullJID)
 	if !ok {
-		fullJID := utils.ComposeFullJid(to, resource)
 		c = u.createConversationView(account, fullJID)
 	}
 
 	c.show(userInitiated)
 	return c
+}
+
+// Get a conversationView and converts beween unified/single window.
+func (u *gtkUI) getConversationView(account *account, fullJID string) (c conversationView, ok bool) {
+	c, ok = account.getConversationView(fullJID)
+	if c == nil {
+		return
+	}
+
+	unifiedWindow := u.settings.GetSingleWindow()
+	if _, unifiedType := c.(*conversationStackItem); unifiedWindow == unifiedType {
+		//window and conversation are consistent
+		return
+	}
+
+	//We dont want to have windows on diffe
+	defer c.destroy()
+
+	var pane *conversationPane
+	switch v := c.(type) {
+	case *conversationWindow:
+		pane = v.conversationPane
+	case *conversationStackItem:
+		pane = v.conversationPane
+	}
+
+	c = u.createConversationViewBasedOnWindowLayout(account, fullJID, pane)
+	return
 }
 
 func (u *gtkUI) createConversationViewBasedOnWindowLayout(account *account, fullJID string, existing *conversationPane) conversationView {

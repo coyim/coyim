@@ -85,13 +85,14 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	return fileTransferNotif
 }
 
+// StyleContextable is an interface to assing css style
 type StyleContextable interface {
 	GetStyleContext() (gtki.StyleContext, error)
 }
 
 func (conv *conversationPane) newFileTransfer(fileName, purpose string, dir bool) *fileNotification {
 	if !conv.fileTransferNotif.area.IsVisible() {
-		prov := providerWithCss("box { background-color: #fff9f3;  color: #000000; border: 3px; }")
+		prov := providerWithCSS("box { background-color: #fff9f3;  color: #000000; border: 3px; }")
 		updateWithStyle(conv.fileTransferNotif.area, prov)
 
 		conv.fileTransferNotif.progressBar.SetFraction(0.0)
@@ -147,7 +148,7 @@ func (conv *conversationPane) createFileTransferNotification(fileName, purpose s
 
 func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel, image string) {
 	if buttonLabel == "Close" {
-		prov := providerWithCss("label { margin-right: 3px;  margin-left: 3px; }")
+		prov := providerWithCSS("label { margin-right: 3px;  margin-left: 3px; }")
 		updateWithStyle(conv.fileTransferNotif.labelButton, prov)
 	}
 	log.Printf(label)
@@ -250,14 +251,15 @@ func (conv *conversationPane) isFileTransferNotifCanceled() bool {
 }
 
 func canceledProvider() gtki.CssProvider {
-	return providerWithCss("label { color: #cc3636; }")
+	return providerWithCSS("label { color: #cc3636; }")
 }
 
 func successProvider() gtki.CssProvider {
-	return providerWithCss("label { color: #89AF8F; }")
+	return providerWithCSS("label { color: #89AF8F; }")
 }
 
-func providerWithCss(s string) gtki.CssProvider {
+// TODO: move these two funcs to other file
+func providerWithCSS(s string) gtki.CssProvider {
 	p, _ := g.gtk.CssProviderNew()
 	_ = p.LoadFromData(s)
 	return p

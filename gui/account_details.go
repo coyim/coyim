@@ -422,18 +422,8 @@ func errorNotificationInit(info gtki.Box) *errorNotification {
 }
 
 func (n *errorNotification) renderAccountError(label string) {
-	prov, _ := g.gtk.CssProviderNew()
-
-	css := fmt.Sprintf(`
-	box { background-color: #4a8fd9;
-	      color: #ffffff;
-	      border-radius: 2px;
-	     }
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ := n.area.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
+	prov := providerWithCSS("box { background-color: #4a8fd9;  color: #ffffff; border-radius: 2px; }")
+	updateWithStyle(n.area, prov)
 
 	n.label.SetMarginTop(10)
 	n.label.SetMarginBottom(10)

@@ -776,28 +776,12 @@ func (u *gtkUI) initSearchBar() {
 	u.search.ConnectEntry(u.searchEntry)
 	u.roster.view.SetSearchEntry(u.searchEntry)
 
-	prov, _ := g.gtk.CssProviderNew()
+	prov := providerWithCSS("box { border: none; }")
+	updateWithStyle(u.searchBox, prov)
 
-	css := fmt.Sprintf(`
-	box {
-	     border: none;}
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ := u.searchBox.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
-
-	prov, _ = g.gtk.CssProviderNew()
-
-	// TODO: unify with datk themes
-	css = fmt.Sprintf(`
-	searchbar { background-color: #e8e8e7;
-	          }
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ = u.search.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
+	// TODO: unify with dark themes
+	prov = providerWithCSS("searchbar {background-color: #e8e8e7;; }")
+	updateWithStyle(u.search, prov)
 }
 
 func (u *gtkUI) rosterUpdated() {

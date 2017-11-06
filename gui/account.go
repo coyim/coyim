@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -400,16 +399,8 @@ func (account *account) buildNotification(template, msg string, moreInfo func())
 	infoBar := builder.getObj("infobar").(gtki.InfoBar)
 	box := builder.getObj("box").(gtki.InfoBar)
 
-	prov, _ := g.gtk.CssProviderNew()
-
-	css := fmt.Sprintf(`
-	box {
-	     border: none;}
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ := box.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
+	prov := providerWithCSS("box { border: none; }")
+	updateWithStyle(box, prov)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_more_info_signal": func() {

@@ -116,3 +116,19 @@ func addBoldHeaderStyle(l gtki.Label) {
 		}`)
 	})
 }
+
+// StyleContextable is an interface to assing css style
+type StyleContextable interface {
+	GetStyleContext() (gtki.StyleContext, error)
+}
+
+func providerWithCSS(s string) gtki.CssProvider {
+	p, _ := g.gtk.CssProviderNew()
+	_ = p.LoadFromData(s)
+	return p
+}
+
+func updateWithStyle(l StyleContextable, p gtki.CssProvider) {
+	sc, _ := l.GetStyleContext()
+	sc.AddProvider(p, 9999)
+}

@@ -337,17 +337,8 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 
 	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
 
-	prov, _ := g.gtk.CssProviderNew()
-
-	css := fmt.Sprintf(`
-	scrolledwindow {
-	      border-top: 2px solid #d3d3d3;
-	     }
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ := cp.entryScroll.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
+	prov := providerWithCSS("scrolledwindow { border-top: 2px solid #d3d3d3; } ")
+	updateWithStyle(cp.entryScroll, prov)
 
 	cp.history.SetBuffer(ui.getTags().createTextBuffer())
 	cp.history.Connect("size-allocate", func() {
@@ -579,18 +570,9 @@ func (conv *conversationPane) removeIdentityVerificationWarning() {
 
 func (conv *conversationPane) updateSecurityWarning() {
 	conversation, ok := conv.getConversation()
-	prov, _ := g.gtk.CssProviderNew()
 
-	css := fmt.Sprintf(`
-	box { background-color: #fbe9e7;
-	      color: #000000;
-	      border: 3px;
-	     }
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ := conv.securityWarningNotif.area.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
+	prov := providerWithCSS("box { background-color: #fbe9e7;  color: #000000; border: 3px; }")
+	updateWithStyle(conv.securityWarningNotif.area, prov)
 
 	conv.securityWarningNotif.label.SetLabel("You are talking over an \nunprotected chat")
 	setImageFromFile(conv.securityWarningNotif.image, "secure.svg")

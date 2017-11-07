@@ -436,6 +436,8 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Sort_By_Status_signal":  u.toggleSortByStatus,
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 		"on_preferences_signal":                        u.showGlobalPreferences,
+
+		"on_open_chat_mockup": u.openMUCMockup,
 	})
 
 	win := builder.get("mainWindow")
@@ -502,7 +504,14 @@ func (u *gtkUI) mainWindow() {
 	u.window.SetIcon(coyimIcon.getPixbuf())
 	g.gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
 
+	//Ideally, this should respect widgets initial value for "display",
+	//and only call window.Show()
 	u.window.ShowAll()
+
+	//Enable MUC
+	_, enableMUC := os.LookupEnv("COYIM_ENABLE_MUC")
+	builder.get("muc-mockup-menu").(gtki.MenuItem).SetVisible(enableMUC)
+
 }
 
 func (u *gtkUI) addInitialAccountsToRoster() {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<interface>
+  <object class="GtkDialog" id="muc-dialog">
+    <property name="window-position">GTK_WIN_POS_CENTER</property>
+    <property name="border_width">6</property>
+    <property name="title" translatable="yes">Chat Mockup</property>
+    <property name="resizable">True</property>
+    <property name="default-height">400</property>
+    <property name="default-width">500</property>
+    <property name="destroy-with-parent">true</property>
+  </object>
+</interface>

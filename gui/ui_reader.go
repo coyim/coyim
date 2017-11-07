@@ -4,9 +4,11 @@ package gui
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -31,16 +33,25 @@ func getActualDefsFolder() string {
 
 func getDefinitionWithFileFallback(uiName string) string {
 	fname := path.Join("/definitions", uiName+xmlExtension)
+
 	embeddedFile, err := FSString(false, fname)
 	if err != nil {
+		//Enforce the file is embedded, but dont use it.
 		panic(fmt.Sprintf("No definition found for %s", uiName))
 	}
 
-	if localFile, err := FSString(true, fname); err == nil {
-		return localFile
+	fileName := filepath.Join(getActualDefsFolder(), uiName+xmlExtension)
+	if fileNotFound(fileName) {
+		return embeddedFile
 	}
 
-	return embeddedFile
+	log.Printf("Loading definition from local file: %q\n", fileName)
+	return readFile(fileName)
+}
+
+func readFile(fileName string) string {
+	data, _ := ioutil.ReadFile(fileName)
+	return string(data)
 }
 
 // This must be called from the UI thread - otherwise bad things will happen sooner or later

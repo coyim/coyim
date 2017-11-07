@@ -11,7 +11,7 @@ check: lint test
 autogen: gen-ui-defs gen-schema-defs
 
 check-deps:
-	@type esc >/dev/null 2>&1 || (echo "The program 'esc' is required but not available. Please install it by running 'make deps-dev'." && exit 1)
+	@type esc >/dev/null 2>&1 || (echo "The program 'esc' is required but not available. Please install it by running 'make deps'." && exit 1)
 
 gen-ui-defs: check-deps
 	make -C ../gui

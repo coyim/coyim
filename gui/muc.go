@@ -5,14 +5,14 @@ import (
 )
 
 type mucMockupView struct {
-	gtki.Dialog
+	gtki.Window
 }
 
 func (u *gtkUI) openMUCMockup() {
 	builder := newBuilder("MUCMockup")
 
 	mockup := &mucMockupView{
-		Dialog: builder.get("muc-dialog").(gtki.Dialog),
+		Window: builder.get("muc-window").(gtki.Window),
 	}
 
 	mockup.SetTransientFor(u.window)

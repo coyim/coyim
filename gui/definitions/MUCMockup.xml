@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interface>
-  <object class="GtkDialog" id="muc-dialog">
+  <object class="GtkTextBuffer" id="chat-buffer">
+    <property name="text"> [giovane] Hello
+ [kingnaldo] Hey!
+ [tdruiva] Hi everyone
+    </property>
+  </object>
+  <object class="GtkListStore" id="users">
+    <columns>
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">[A] giovane</col>
+      </row>
+      <row>
+        <col id="0">kingnaldo</col>
+      </row>
+      <row>
+        <col id="0">tdruiva</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkWindow" id="muc-window">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border_width">6</property>
     <property name="title" translatable="yes">Chat Mockup</property>
@@ -8,5 +30,75 @@
     <property name="default-height">400</property>
     <property name="default-width">500</property>
     <property name="destroy-with-parent">true</property>
+    <child>
+      <object class="GtkGrid">
+        <property name="visible">True</property>
+        <property name="column-homogeneous">True</property>
+        <property name="row-homogeneous">True</property>
+        <child>
+          <object class="GtkScrolledWindow" id="chat-box">
+            <property name="expand">True</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkTextView">
+                <property name="visible">True</property>
+                <property name="wrap-mode">GTK_WRAP_WORD_CHAR</property>
+                <property name="editable">False</property>
+                <property name="cursor-visible">False</property>
+                <property name="buffer">chat-buffer</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+            <property name="height">3</property>
+            <property name="width">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="user-list">
+            <property name="expand">True</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkTreeView">
+                <property name="visible">True</property>
+                <property name="model">users</property>
+                <child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title">Users</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="left-attach">3</property>
+            <property name="top-attach">0</property>
+            <property name="height">3</property>
+            <property name="width">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="text-box">
+            <property name="hexpand">True</property>
+            <property name="valign">GTK_ALIGN_END</property>
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">3</property>
+            <property name="height">1</property>
+            <property name="width">4</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
 </interface>

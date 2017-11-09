@@ -333,9 +333,18 @@ func (v *TreeView) GetSearchEntry() *Entry {
 	return wrapEntry(glib.Take(unsafe.Pointer(c)))
 }
 
-// SetSearchEntry() is a wrapper around gtk_tree_view_set_search_entry().
+// SetSearchEntry is a wrapper around gtk_tree_view_set_search_entry().
 func (v *TreeView) SetSearchEntry(e *Entry) {
 	C.gtk_tree_view_set_search_entry(v.native(), e.native())
+}
+
+// SetSearchByStringMatch sets TreeView to search by string match.
+func (v *TreeView) SetSearchByStringMatch() {
+	C.gtk_tree_view_set_search_equal_func(
+		v.native(),
+		(C.GtkTreeViewSearchEqualFunc)(unsafe.Pointer(C.goStringMatch)),
+		nil,
+		nil)
 }
 
 // SetFixedHeightMode is a wrapper around gtk_tree_view_set_fixed_height_mode().
@@ -343,7 +352,7 @@ func (v *TreeView) SetFixedHeightMode(b bool) {
 	C.gtk_tree_view_set_fixed_height_mode(v.native(), gbool(b))
 }
 
-// GetFixedHeightMode() is a wrapper around gtk_tree_view_get_fixed_height_mode().
+// GetFixedHeightMode is a wrapper around gtk_tree_view_get_fixed_height_mode().
 func (v *TreeView) GetFixedHeightMode() bool {
 	return gobool(C.gtk_tree_view_get_fixed_height_mode(v.native()))
 }

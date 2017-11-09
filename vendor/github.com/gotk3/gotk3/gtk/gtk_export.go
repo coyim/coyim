@@ -1,13 +1,33 @@
 package gtk
 
-// #cgo pkg-config: gtk+-3.0
-// #include <gtk/gtk.h>
+/*
+ #cgo pkg-config: gtk+-3.0
+ #include <gtk/gtk.h>
+*/
 import "C"
 import (
+	"strings"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
 )
+
+//export goStringMatch
+func goStringMatch(model *C.GtkTreeModel,
+	column C.gint,
+	key *C.gchar,
+	iter *C.GtkTreeIter,
+	data C.gpointer) C.gboolean {
+
+	var gvalue *C.GValue
+	C.gtk_tree_model_get_value(model, iter, column, gvalue)
+
+	str := C.GoString((*C.char)(C.g_value_get_object(gvalue)))
+	subStr := C.GoString((*C.char)(key))
+
+	res := strings.Contains(str, subStr)
+	return gbool(!res)
+}
 
 //export goBuilderConnect
 func goBuilderConnect(builder *C.GtkBuilder,

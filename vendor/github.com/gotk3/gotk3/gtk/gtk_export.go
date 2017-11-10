@@ -28,11 +28,12 @@ func goStringMatch(model *C.GtkTreeModel,
 	}
 
 	str, err := value.GetString()
-	if err != nil {
+	if str == "" {
 		return gbool(true)
 	}
 
 	subStr := C.GoString((*C.char)(key))
+
 	res := strings.Contains(str, subStr)
 	return gbool(!res)
 }

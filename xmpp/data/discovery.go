@@ -2,8 +2,9 @@ package data
 
 import "encoding/xml"
 
-// DiscoveryReply contains the deserialized information about a discovery reply
-type DiscoveryReply struct {
+// DiscoveryInfoQuery contains the deserialized information about a service discovery info query
+// See: XEP-0030, Section 3
+type DiscoveryInfoQuery struct {
 	XMLName    xml.Name            `xml:"http://jabber.org/protocol/disco#info query"`
 	Node       string              `xml:"node,omitempty"`
 	Identities []DiscoveryIdentity `xml:"identity,omitempty"`

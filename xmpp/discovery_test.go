@@ -71,7 +71,7 @@ func (s *DiscoveryXMPPSuite) Test_ReceiveDiscoveryResult(c *C) {
 	discoveryReply, err := parseDiscoveryReply(iq)
 	c.Assert(err, IsNil)
 
-	c.Assert(discoveryReply, DeepEquals, data.DiscoveryReply{
+	c.Assert(discoveryReply, DeepEquals, &data.DiscoveryInfoQuery{
 		XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "query"},
 		Identities: []data.DiscoveryIdentity{
 			data.DiscoveryIdentity{
@@ -148,7 +148,7 @@ func (s *DiscoveryXMPPSuite) Test_HasSupportTo(c *C) {
 }
 
 func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateIdentities(c *C) {
-	reply := &data.DiscoveryReply{
+	reply := &data.DiscoveryInfoQuery{
 		Identities: []data.DiscoveryIdentity{
 			data.DiscoveryIdentity{
 				Lang:     "en",
@@ -170,7 +170,7 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateIde
 }
 
 func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFeatures(c *C) {
-	reply := &data.DiscoveryReply{
+	reply := &data.DiscoveryInfoQuery{
 		Features: []data.DiscoveryFeature{
 			data.DiscoveryFeature{
 				Var: "foo",
@@ -186,7 +186,7 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFea
 }
 
 func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFormTypes(c *C) {
-	reply := &data.DiscoveryReply{
+	reply := &data.DiscoveryInfoQuery{
 		Forms: []data.Form{
 			data.Form{
 				Type: "foo",
@@ -216,7 +216,7 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreDuplicateFor
 }
 
 func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreNoValues(c *C) {
-	reply := &data.DiscoveryReply{
+	reply := &data.DiscoveryInfoQuery{
 		Forms: []data.Form{
 			data.Form{
 				Type: "foo",
@@ -258,7 +258,7 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreNoValues(c *
 func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
 	rep := DiscoveryReply("foo@bar.com")
 	c.Assert(rep, DeepEquals,
-		data.DiscoveryReply{
+		data.DiscoveryInfoQuery{
 			XMLName: xml.Name{Space: "", Local: ""},
 			Node:    "",
 			Identities: []data.DiscoveryIdentity{

@@ -39,25 +39,42 @@ func stringArrayContains(r []string, a string) bool {
 	return false
 }
 
-// TODO: at some point we need to cache these values somewhere
+func (c *conn) sendDiscoveryInfo(to string) (reply chan data.Stanza, cookie data.Cookie, err error) {
+	return c.SendIQ(to, "get", &data.DiscoveryInfoQuery{})
+}
 
-func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
+func parseDiscoveryReply(iq *data.ClientIQ) (*data.DiscoveryInfoQuery, error) {
+	reply := &data.DiscoveryInfoQuery{}
+	err := xml.Unmarshal(iq.Query, reply)
+	return reply, err
+}
+
+// TODO: at some point we need to cache these features somewhere
+
+// QueryServiceInformation sends a service discovery information ("disco#info") query.
+// See XEP-0030, Section 3.1.
+// This method blocks until conn#Next() receives the response to the IQ.
+func (c *conn) QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error) {
 	reply, _, err := c.sendDiscoveryInfo(entity)
 	if err != nil {
-		return nil, false
+		return nil, err
 	}
 
 	stanza, ok := <-reply
 	if !ok {
-		return nil, false //timeout
+		return nil, errors.New("xmpp: failed to receive response")
 	}
 
 	iq, ok := stanza.Value.(*data.ClientIQ)
 	if !ok {
-		return nil, false
+		return nil, errors.New("xmpp: failed to parse response")
 	}
 
-	discoveryReply, err := parseDiscoveryReply(iq)
+	return parseDiscoveryReply(iq)
+}
+
+func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
+	discoveryReply, err := c.QueryServiceInformation(entity)
 	if err != nil {
 		return nil, false
 	}
@@ -71,22 +88,7 @@ func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
 }
 
 func (c *conn) DiscoveryFeaturesAndIdentities(entity string) ([]data.DiscoveryIdentity, []string, bool) {
-	reply, _, err := c.sendDiscoveryInfo(entity)
-	if err != nil {
-		return nil, nil, false
-	}
-
-	stanza, ok := <-reply
-	if !ok {
-		return nil, nil, false //timeout
-	}
-
-	iq, ok := stanza.Value.(*data.ClientIQ)
-	if !ok {
-		return nil, nil, false
-	}
-
-	discoveryReply, err := parseDiscoveryReply(iq)
+	discoveryReply, err := c.QueryServiceInformation(entity)
 	if err != nil {
 		return nil, nil, false
 	}
@@ -99,18 +101,9 @@ func (c *conn) DiscoveryFeaturesAndIdentities(entity string) ([]data.DiscoveryId
 	return discoveryReply.Identities, result, true
 }
 
-func (c *conn) sendDiscoveryInfo(to string) (reply chan data.Stanza, cookie data.Cookie, err error) {
-	return c.SendIQ(to, "get", &data.DiscoveryReply{})
-}
-
-func parseDiscoveryReply(iq *data.ClientIQ) (reply data.DiscoveryReply, err error) {
-	err = xml.Unmarshal(iq.Query, &reply)
-	return
-}
-
 //DiscoveryReply returns a minimum reply to a http://jabber.org/protocol/disco#info query
-func DiscoveryReply(name string) data.DiscoveryReply {
-	return data.DiscoveryReply{
+func DiscoveryReply(name string) data.DiscoveryInfoQuery {
+	return data.DiscoveryInfoQuery{
 		Identities: []data.DiscoveryIdentity{
 			{
 				Category: "client",
@@ -138,7 +131,7 @@ func DiscoveryReply(name string) data.DiscoveryReply {
 
 // VerificationString returns a SHA-1 verification string as defined in XEP-0115.
 // See http://xmpp.org/extensions/xep-0115.html#ver
-func VerificationString(r *data.DiscoveryReply) (string, error) {
+func VerificationString(r *data.DiscoveryInfoQuery) (string, error) {
 	h := sha1.New()
 
 	seen := make(map[string]bool)

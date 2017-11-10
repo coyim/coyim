@@ -38,7 +38,7 @@ func (s *XMPPSuite) TestDiscoReplyVerSimple(c *C) {
     <feature var='http://jabber.org/protocol/muc'/>
   </query>
   `)
-	var dr data.DiscoveryReply
+	var dr data.DiscoveryInfoQuery
 	c.Assert(xml.Unmarshal(input, &dr), IsNil)
 	hash, err := VerificationString(&dr)
 	c.Assert(err, IsNil)
@@ -79,7 +79,7 @@ func (s *XMPPSuite) TestDiscoReplyVerComplex(c *C) {
     </x>
   </query>
 `)
-	var dr data.DiscoveryReply
+	var dr data.DiscoveryInfoQuery
 	c.Assert(xml.Unmarshal(input, &dr), IsNil)
 	hash, err := VerificationString(&dr)
 	c.Assert(err, IsNil)

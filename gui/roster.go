@@ -67,7 +67,6 @@ func (u *gtkUI) newRoster() *roster {
 	obj = builder.getObj("roster-tree")
 	r.view = obj.(gtki.TreeView)
 	r.view.SetEnableSearch(true)
-	r.view.SetSearchByStringMatch()
 
 	obj = builder.getObj("roster-model")
 	r.model = obj.(gtki.TreeStore)

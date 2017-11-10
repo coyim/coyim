@@ -45,6 +45,3 @@ func (*MockTreeView) SetSearchEntry(v1 gtki.Entry) {
 func (*MockTreeView) GetSearchEntry() gtki.Entry {
 	return nil
 }
-
-func (*MockTreeView) SetSearchByStringMatch() {
-}

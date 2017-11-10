@@ -555,6 +555,14 @@ func (u *gtkUI) quit() {
 	u.app.Quit()
 }
 
+func (u *gtkUI) minimize() {
+	u.window.Iconify()
+}
+
+func (u *gtkUI) maximize() {
+	u.window.Maximize()
+}
+
 func (u *gtkUI) askForPassword(accountName string, addGoogleWarning bool, cancel func(), connect func(string) error, savePass func(string)) {
 	dialogTemplate := "AskForPassword"
 

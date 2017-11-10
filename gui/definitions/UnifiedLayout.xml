@@ -24,7 +24,45 @@
   <object class="GtkHeaderBar" id="headerbar">
     <property name="visible">True</property>
     <property name="title">CoyIM</property>
-    <property name="show_close_button">True</property>
+    <child>
+      <object class="GtkButton" id="close-button">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="always_show_image">True</property>
+        <property name="relief">none</property>
+        <signal name="clicked" handler="on_close_button" swapped="no"/>
+      </object>
+     <packing>
+       <property name="pack-type">end</property>
+     </packing>
+    </child>
+    <child>
+      <object class="GtkButton" id="minimize-button">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="always_show_image">True</property>
+        <property name="relief">none</property>
+        <signal name="clicked" handler="on_minimize_button" swapped="no"/>
+      </object>
+     <packing>
+       <property name="pack-type">end</property>
+     </packing>
+    </child>
+    <child>
+      <object class="GtkButton" id="maximize-button">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="always_show_image">True</property>
+        <property name="relief">none</property>
+        <signal name="clicked" handler="on_maximize_button" swapped="no"/>
+      </object>
+     <packing>
+       <property name="pack-type">end</property>
+     </packing>
+    </child>
   </object>
   <object class="GtkBox" id="right">
     <property name="visible">True</property>

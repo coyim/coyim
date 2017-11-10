@@ -8,26 +8,30 @@ import (
 type Window interface {
 	Bin
 
+	ActivateMnemonic(uint, gdki.ModifierType) bool
 	AddAccelGroup(AccelGroup)
+	AddMnemonic(uint, Widget)
+	Deiconify()
+	Fullscreen()
+	GetMnemonicModifier() gdk.ModifierType
 	GetTitle() string
 	GetSize() (int, int)
 	HasToplevelFocus() bool
+	Iconify()
 	IsActive() bool
-	Fullscreen()
-	Unfullscreen()
+	Maximize()
 	Present()
 	Resize(int, int)
+	RemoveMnemonic(uint, Widget)
 	SetApplication(Application)
 	SetIcon(gdki.Pixbuf)
+	SetMnemonicModifier(gdki.ModifierType)
 	SetTitle(string)
 	SetTitlebar(Widget) // Since 3.10
 	SetTransientFor(Window)
 	SetUrgencyHint(bool)
-	AddMnemonic(uint, Widget)
-	RemoveMnemonic(uint, Widget)
-	ActivateMnemonic(uint, gdki.ModifierType) bool
-	GetMnemonicModifier() gdk.ModifierType
-	SetMnemonicModifier(gdki.ModifierType)
+	Unfullscreen()
+	Unmaximize()
 }
 
 func AssertWindow(_ Window) {}

@@ -55,6 +55,18 @@ func (*MockWindow) SetUrgencyHint(v2 bool) {
 func (*MockWindow) Present() {
 }
 
+func (*MockWindow) Iconify() {
+}
+
+func (*MockWindow) Deiconify() {
+}
+
+func (*MockWindow) Maximize() {
+}
+
+func (*MockWindow) Unmaximize() {
+}
+
 func (*MockWindow) AddMnemonic(v1 uint, v2 gtki.Widget) {
 }
 

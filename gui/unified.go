@@ -25,19 +25,22 @@ const (
 var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
 
 type unifiedLayout struct {
-	ui           *gtkUI
-	cl           *conversationList
-	headerBar    gtki.HeaderBar
-	leftPane     gtki.Box
-	rightPane    gtki.Box
-	notebook     gtki.Notebook
-	header       gtki.Label
-	headerBox    gtki.Box
-	close        gtki.Button
-	convsVisible bool
-	inPageSet    bool
-	isFullscreen bool
-	itemMap      map[int]*conversationStackItem
+	ui             *gtkUI
+	cl             *conversationList
+	headerBar      gtki.HeaderBar
+	closeButton    gtki.Button
+	minimizeButton gtki.Button
+	maximizeButton gtki.Button
+	leftPane       gtki.Box
+	rightPane      gtki.Box
+	notebook       gtki.Notebook
+	header         gtki.Label
+	headerBox      gtki.Box
+	close          gtki.Button
+	convsVisible   bool
+	inPageSet      bool
+	isFullscreen   bool
+	itemMap        map[int]*conversationStackItem
 }
 
 type conversationList struct {
@@ -69,7 +72,9 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 		"treeview", &ul.cl.view,
 		"liststore", &ul.cl.model,
 		"headerbar", &ul.headerBar,
-
+		"close-button", &ul.closeButton,
+		"minimize-button", &ul.minimizeButton,
+		"maximize-button", &ul.maximizeButton,
 		"right", &ul.rightPane,
 		"notebook", &ul.notebook,
 		"header_label", &ul.header,
@@ -85,9 +90,12 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	})
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_activate":    ul.cl.onActivate,
-		"on_clicked":     ul.onCloseClicked,
-		"on_switch_page": ul.onSwitchPage,
+		"on_activate":        ul.cl.onActivate,
+		"on_clicked":         ul.onCloseClicked,
+		"on_close_button":    ui.quit,
+		"on_minimize_button": ui.minimize,
+		"on_maximize_button": ui.maximize,
+		"on_switch_page":     ul.onSwitchPage,
 	})
 
 	connectShortcut("<Primary>Page_Down", ul.ui.window, ul.nextTab)
@@ -98,6 +106,14 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	parent.SetChildPacking(ul.leftPane, false, true, 0, gtki.PACK_START)
 
 	ul.rightPane.Hide()
+
+	ul.headerBar.SetShowCloseButton(false)
+	closeImg, _ := g.gtk.ImageNewFromIconName("window-close-symbolic", gtki.ICON_SIZE_MENU)
+	ul.closeButton.SetImage(closeImg)
+	minImg, _ := g.gtk.ImageNewFromIconName("window-minimize-symbolic", gtki.ICON_SIZE_MENU)
+	ul.minimizeButton.SetImage(minImg)
+	maxImg, _ := g.gtk.ImageNewFromIconName("window-maximize-symbolic", gtki.ICON_SIZE_MENU)
+	ul.maximizeButton.SetImage(maxImg)
 
 	ul.ui.window.SetTitlebar(ul.headerBar)
 

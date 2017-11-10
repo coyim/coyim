@@ -19,12 +19,18 @@ func goStringMatch(model *C.GtkTreeModel,
 	iter *C.GtkTreeIter,
 	data C.gpointer) C.gboolean {
 
-	var gvalue *C.GValue
-	C.gtk_tree_model_get_value(model, iter, column, gvalue)
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(model)))
+	obj := glib.Take(unsafe.Pointer(c))
+	goModel := &TreeModel{obj}
 
-	str := C.GoString((*C.char)(C.g_value_get_object(gvalue)))
+	c = C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(iter)))
+	goIter := (*TreeIter)(c)
+
+	value, _ := goModel.GetValue(goIter, int(column))
+	//TODO: what aout err?
+
+	str, _ := value.GetString()
 	subStr := C.GoString((*C.char)(key))
-
 	res := strings.Contains(str, subStr)
 	return gbool(!res)
 }

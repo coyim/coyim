@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type treeView struct {
@@ -71,4 +71,8 @@ func (v *treeView) GetSearchEntry() gtki.Entry {
 
 func (v *treeView) SetSearchEntry(v1 gtki.Entry) {
 	v.internal.SetSearchEntry(unwrapEntry(v1))
+}
+
+func (v *treeView) SetSearchEqualSubstringMatch() {
+	v.internal.SetSearchEqualSubstringMatch()
 }

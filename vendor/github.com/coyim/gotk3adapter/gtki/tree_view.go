@@ -14,6 +14,7 @@ type TreeView interface {
 	GetSearchColumn() int
 	SetSearchEntry(Entry)
 	GetSearchEntry() Entry
+	SetSearchEqualSubstringMatch()
 }
 
 func AssertTreeView(_ TreeView) {}

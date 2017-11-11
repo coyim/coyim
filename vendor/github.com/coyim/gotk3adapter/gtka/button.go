@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type button struct {
@@ -26,4 +26,8 @@ func unwrapButton(v gtki.Button) *gtk.Button {
 		return nil
 	}
 	return v.(*button).internal
+}
+
+func (v *button) SetImage(v1 gtki.Widget) {
+	v.internal.SetImage(unwrapWidget(v1))
 }

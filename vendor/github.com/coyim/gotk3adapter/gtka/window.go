@@ -1,11 +1,11 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gdka"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type window struct {
@@ -79,12 +79,28 @@ func (v *window) SetTransientFor(v2 gtki.Window) {
 	v.internal.SetTransientFor(unwrapWindow(v2))
 }
 
+func (v *window) HasToplevelFocus() bool {
+	return v.internal.HasToplevelFocus()
+}
+
 func (v *window) Present() {
 	v.internal.Present()
 }
 
-func (v *window) HasToplevelFocus() bool {
-	return v.internal.HasToplevelFocus()
+func (v *window) Iconify() {
+	v.internal.Iconify()
+}
+
+func (v *window) Deiconify() {
+	v.internal.Deiconify()
+}
+
+func (v *window) Maximize() {
+	v.internal.Maximize()
+}
+
+func (v *window) Unmaximize() {
+	v.internal.Unmaximize()
 }
 
 func (v *window) Fullscreen() {
@@ -117,6 +133,10 @@ func (v *window) GetMnemonicModifier() gdk.ModifierType {
 
 func (v *window) SetMnemonicModifier(v1 gdki.ModifierType) {
 	v.internal.SetMnemonicModifier(gdk.ModifierType(v1))
+}
+
+func (v *window) SetDecorated(v1 bool) {
+	v.internal.SetDecorated(v1)
 }
 
 func (v *window) GetSize() (int, int) {

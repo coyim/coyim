@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type headerBar struct {
@@ -30,4 +30,12 @@ func unwrapHeaderBar(v gtki.HeaderBar) *gtk.HeaderBar {
 
 func (v *headerBar) SetSubtitle(v1 string) {
 	v.internal.SetSubtitle(v1)
+}
+
+func (v *headerBar) SetShowCloseButton(v1 bool) {
+	v.internal.SetShowCloseButton(v1)
+}
+
+func (v *headerBar) GetShowCloseButton() bool {
+	return v.internal.GetShowCloseButton()
 }

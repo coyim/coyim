@@ -14,6 +14,8 @@ type fileNotification struct {
 	progress         float64
 	state            string
 	directory        bool
+	sending          bool
+	receiving        bool
 	afterCancelHook  func()
 	afterFailHook    func()
 	afterSucceedHook func()
@@ -32,9 +34,6 @@ type fileTransferNotification struct {
 	count         int
 	canceled      bool
 }
-
-// TODO: change ui when sending and receiving. No
-// more file infobars, but something else
 
 func resizeFileName(name string) string {
 	var fileName string
@@ -85,7 +84,13 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	return fileTransferNotif
 }
 
-func (conv *conversationPane) newFileTransfer(fileName, purpose string, dir bool) *fileNotification {
+// TODO: the logic here is not clear. This should only update the
+// inside notification
+// TODO: check ibb: receive on pidgin first and cancelling receiving from the
+// coyim side
+// TODO: send file menu stays clicked and does not allow to click on close
+// TODO: first file transfer dialog stays when all coyim is closed
+func (conv *conversationPane) newFileTransfer(fileName, purpose string, dir, send, receive bool) *fileNotification {
 	if !conv.fileTransferNotif.area.IsVisible() {
 		prov := providerWithCSS("box { background-color: #fff9f3;  color: #000000; border: 3px; }")
 		updateWithStyle(conv.fileTransferNotif.area, prov)
@@ -94,15 +99,35 @@ func (conv *conversationPane) newFileTransfer(fileName, purpose string, dir bool
 		conv.fileTransferNotif.canceled = false
 	}
 
-	info := conv.createFileTransferNotification(fileName, purpose, dir)
+	info := conv.createFileTransferNotification(fileName, purpose, dir, send, receive)
 	conv.fileTransferNotif.area.SetVisible(true)
+
+	countSending := 0
+	countReceiving := 0
+
+	// TODO: check for dir
+	label := "File transfer started"
+	for _, f := range conv.fileTransferNotif.files {
+		if f.sending {
+			countSending++
+		}
+		if f.receiving {
+			countReceiving++
+		}
+	}
+
+	if countSending > 0 && countReceiving > 0 {
+		doInUIThread(func() {
+			conv.updateFileTransferNotification(label, "Close", "filetransfer_receive_send.svg")
+		})
+	}
 	return info
 }
 
-func (conv *conversationPane) createFileTransferNotification(fileName, purpose string, dir bool) *fileNotification {
+func (conv *conversationPane) createFileTransferNotification(fileName, purpose string, dir, send, receive bool) *fileNotification {
 	b := newBuilder("FileTransferNotification")
 
-	file := &fileNotification{directory: dir, state: stateInProgress}
+	file := &fileNotification{directory: dir, sending: send, receiving: receive, state: stateInProgress}
 
 	b.getItems(
 		"area-file-transfer-info", &file.area,
@@ -231,6 +256,7 @@ func (conv *conversationPane) updateFileTransferNotificationCounts() {
 		}
 		countTotal++
 	}
+
 	conv.fileTransferNotif.count = countTotal - countCompleted
 	if countCompleted == countTotal {
 		label, image, c := fileTransferCalculateStates(countCompleted, countCanceled, countFailed, countDirs, countTotal, conv.fileTransferNotif.canceled)

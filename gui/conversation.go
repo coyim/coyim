@@ -571,7 +571,7 @@ func (conv *conversationPane) removeIdentityVerificationWarning() {
 func (conv *conversationPane) updateSecurityWarning() {
 	conversation, ok := conv.getConversation()
 
-	prov := providerWithCSS("box { background-color: #fbe9e7;  color: #000000; border: 3px; }")
+	prov := providerWithCSS("box { background-color: #fff3f3;  color: #000000; border: 3px; }")
 	updateWithStyle(conv.securityWarningNotif.area, prov)
 
 	conv.securityWarningNotif.label.SetLabel("You are talking over an \nunprotected chat")

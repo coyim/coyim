@@ -84,7 +84,6 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	return fileTransferNotif
 }
 
-// TODO: align icons to top notification
 func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receive bool) *fileNotification {
 	if !conv.fileTransferNotif.area.IsVisible() {
 		prov := providerWithCSS("box { background-color: #fff9f3;  color: #000000; border: 3px; }")

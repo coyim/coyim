@@ -115,7 +115,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	if result && name != "" {
 		fileName := resizeFileName(ev.Name)
 		cv := u.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
-		f := createNewFileTransferWithDefaults(fileName, "receive", ev.IsDirectory, false, true, ev.Control, cv)
+		f := createNewFileTransferWithDefaults(fileName, ev.IsDirectory, false, true, ev.Control, cv)
 		u.startAllListenersForFile(ev.Control, cv, f, ev.Name, "Receiving", "receive")
 		ev.Answer <- &name
 	} else {
@@ -123,8 +123,8 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	}
 }
 
-func createNewFileTransferWithDefaults(fileName, purpose string, dir bool, sending bool, receiving bool, ctl *data.FileTransferControl, cv conversationView) *fileNotification {
-	f := cv.newFileTransfer(fileName, purpose, dir, sending, receiving)
+func createNewFileTransferWithDefaults(fileName string, dir bool, sending bool, receiving bool, ctl *data.FileTransferControl, cv conversationView) *fileNotification {
+	f := cv.newFileTransfer(fileName, dir, sending, receiving)
 	f.afterCancel(func() {
 		cv.updateFileTransferNotificationCounts()
 		ctl.Cancel()
@@ -137,7 +137,7 @@ func createNewFileTransferWithDefaults(fileName, purpose string, dir bool, sendi
 func (account *account) sendThingTo(peer string, u *gtkUI, name string, dir bool, ctl *data.FileTransferControl) {
 	nm := resizeFileName(filepath.Base(name))
 	cv := u.openConversationView(account, utils.RemoveResourceFromJid(peer), true, "")
-	f := createNewFileTransferWithDefaults(nm, "send", dir, true, false, ctl, cv)
+	f := createNewFileTransferWithDefaults(nm, dir, true, false, ctl, cv)
 	u.startAllListenersForFile(ctl, cv, f, nm, "Sending", "send")
 }
 

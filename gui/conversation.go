@@ -28,7 +28,7 @@ type conversationView interface {
 	showIdentityVerificationWarning(*gtkUI)
 	removeIdentityVerificationWarning()
 	updateSecurityWarning()
-	newFileTransfer(fileName, purpose string, dir, send, receive bool) *fileNotification
+	newFileTransfer(fileName string, dir, send, receive bool) *fileNotification
 	updateFileTransfer(file *fileNotification)
 	updateFileTransferNotificationCounts()
 	isFileTransferNotifCanceled() bool
@@ -323,6 +323,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
+		// TODO: this stays clicked longer than it should
 		"on_send_file_to_contact": func() {
 			if peer, ok := ui.getPeer(account, uid); ok {
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here

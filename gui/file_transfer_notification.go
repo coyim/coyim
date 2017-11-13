@@ -84,13 +84,8 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	return fileTransferNotif
 }
 
-// TODO: the logic here is not clear. This should only update the
-// inside notification
-// TODO: check ibb: receive on pidgin first and cancelling receiving from the
-// coyim side
-// TODO: send file menu stays clicked and does not allow to click on close
-// TODO: first file transfer dialog stays when all coyim is closed
-func (conv *conversationPane) newFileTransfer(fileName, purpose string, dir, send, receive bool) *fileNotification {
+// TODO: align icons to top notification
+func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receive bool) *fileNotification {
 	if !conv.fileTransferNotif.area.IsVisible() {
 		prov := providerWithCSS("box { background-color: #fff9f3;  color: #000000; border: 3px; }")
 		updateWithStyle(conv.fileTransferNotif.area, prov)
@@ -99,14 +94,18 @@ func (conv *conversationPane) newFileTransfer(fileName, purpose string, dir, sen
 		conv.fileTransferNotif.canceled = false
 	}
 
-	info := conv.createFileTransferNotification(fileName, purpose, dir, send, receive)
+	info := conv.createFileTransferNotification(fileName, dir, send, receive)
 	conv.fileTransferNotif.area.SetVisible(true)
 
 	countSending := 0
 	countReceiving := 0
 
-	// TODO: check for dir
 	label := "File transfer started"
+	if dir {
+		label = "Directory transfer started"
+	}
+
+	// TODO: this can be updated by the inside file transfer function
 	for _, f := range conv.fileTransferNotif.files {
 		if f.sending {
 			countSending++
@@ -116,15 +115,24 @@ func (conv *conversationPane) newFileTransfer(fileName, purpose string, dir, sen
 		}
 	}
 
-	if countSending > 0 && countReceiving > 0 {
+	if countSending > 0 && countReceiving == 0 {
 		doInUIThread(func() {
-			conv.updateFileTransferNotification(label, "Close", "filetransfer_receive_send.svg")
+			conv.updateFileTransferNotification(label, "Cancel", "filetransfer_send.svg")
+		})
+	} else if countSending == 0 && countReceiving > 0 {
+		doInUIThread(func() {
+			conv.updateFileTransferNotification(label, "Cancel", "filetransfer_receive.svg")
+		})
+	} else if countSending > 0 && countReceiving > 0 {
+		doInUIThread(func() {
+			conv.updateFileTransferNotification(label, "Cancel", "filetransfer_receive_send.svg")
 		})
 	}
+
 	return info
 }
 
-func (conv *conversationPane) createFileTransferNotification(fileName, purpose string, dir, send, receive bool) *fileNotification {
+func (conv *conversationPane) createFileTransferNotification(fileName string, dir, send, receive bool) *fileNotification {
 	b := newBuilder("FileTransferNotification")
 
 	file := &fileNotification{directory: dir, sending: send, receiving: receive, state: stateInProgress}
@@ -139,18 +147,12 @@ func (conv *conversationPane) createFileTransferNotification(fileName, purpose s
 		"on_destroy_single_file_transfer": file.destroy,
 	})
 
-	label := "File transfer started"
-	if dir {
-		label = "Directory transfer started"
-	}
-
 	file.name = fileName
-	if purpose == "send" {
+
+	if send {
 		fileName = "Sending: " + fileName
-		conv.updateFileTransferNotification(label, "Cancel", "filetransfer_send.svg")
 	} else {
 		fileName = "Receiving: " + fileName
-		conv.updateFileTransferNotification(label, "Cancel", "filetransfer_receive.svg")
 	}
 
 	file.label.SetLabel(fileName)
@@ -307,6 +309,7 @@ func (file *fileNotification) fail() {
 	}
 }
 
+// TODO: this can be replaced with the same bool
 func (file *fileNotification) succeed(purpose string) {
 	if file.state != stateInProgress {
 		return

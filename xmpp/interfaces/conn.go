@@ -47,4 +47,6 @@ type Conn interface {
 	SetRawOut(io.WriteCloser)
 	SetServerAddress(string)
 	SignalPresence(string) error
+
+	GetChatContext() Chat
 }

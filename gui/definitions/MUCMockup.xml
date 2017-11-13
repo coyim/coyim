@@ -90,6 +90,7 @@
             <property name="hexpand">True</property>
             <property name="valign">GTK_ALIGN_END</property>
             <property name="visible">True</property>
+	    <signal name="activate" handler="on_send_message" />
           </object>
           <packing>
             <property name="left-attach">0</property>

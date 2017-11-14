@@ -161,10 +161,7 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": func() {
-			dialog.Destroy()
-		},
-
+		"on_close_signal": dialog.Destroy,
 		"on_pin_signal": func() {
 			account.session.GetConfig().SaveCert(certs[0].Subject.CommonName, certs[0].Issuer.CommonName, digests.Sha3_256(certs[0].Raw))
 			u.SaveConfig()
@@ -322,18 +319,16 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			p4.Show()
 		},
 		"on_save_signal": func() {
-			var err string
 			accDtails := getAccountDetails(data)
-
-			isJid, err := verifyXMPPAddress(accDtails.accTxt)
-			if !isJid {
+			if isJid, err := verifyXMPPAddress(accDtails.accTxt); !isJid {
 				errorNotif.renderAccountError(err)
 				log.Printf(err)
-			} else {
-				addAccount(account, accDtails, data)
-				go saveFunction()
-				data.dialog.Destroy()
+				return
 			}
+
+			addAccount(account, accDtails, data)
+			go saveFunction()
+			data.dialog.Destroy()
 
 		},
 		"on_edit_proxy_signal": func() {
@@ -388,14 +383,14 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		},
 	})
 
-	data.dialog.SetTransientFor(u.window)
-	data.dialog.ShowAll()
 	data.notebook.SetCurrentPage(0)
-
 	data.notebook.SetShowTabs(u.config.AdvancedOptions)
 	if !u.config.AdvancedOptions {
 		p2.Hide()
 		p3.Hide()
 		p4.Hide()
 	}
+
+	data.dialog.SetTransientFor(u.window)
+	data.dialog.ShowAll()
 }

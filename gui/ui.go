@@ -670,9 +670,7 @@ func (u *gtkUI) newCustomConversation() {
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": func() {
-			dialog.Destroy()
-		},
+		"on_close_signal": dialog.Destroy,
 		"on_start_signal": func() {
 			iter, err := accountInput.GetActiveIter()
 			if err != nil {

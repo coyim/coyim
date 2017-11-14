@@ -112,9 +112,33 @@ func parseRoomInfoForm(forms []data.Form) RoomInfoForm {
 	return ret
 }
 
+func parseRoomType(features []data.DiscoveryFeature) RoomType {
+	ret := RoomType{}
+
+	for _, f := range features {
+		switch f.Var {
+		case "muc_public":
+			ret.Public = true
+		case "muc_open":
+			ret.Open = true
+		case "muc_moderated":
+			ret.Moderated = true
+		case "muc_semianonymous":
+			ret.SemiAnonymous = true
+		case "muc_passwordprotected":
+			ret.PasswordProtected = true
+		case "muc_persistenc":
+			ret.Persistent = true
+		}
+	}
+
+	return ret
+}
+
 func parseRoomInformation(query *data.DiscoveryInfoQuery) *RoomInfo {
 	return &RoomInfo{
 		RoomInfoForm: parseRoomInfoForm(query.Forms[:]),
+		RoomType:     parseRoomType(query.Features),
 	}
 }
 

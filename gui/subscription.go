@@ -112,7 +112,7 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 	acd.init()
 	acd.initAccounts(accounts)
 
-	errorNotif := errorNotificationInit(acd.notificationArea)
+	errorNotif := newErrorNotification(acd.notificationArea)
 
 	acd.builder.ConnectSignals(map[string]interface{}{
 		"on_cancel_signal": acd.dialog.Destroy,

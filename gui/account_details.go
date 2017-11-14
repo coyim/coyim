@@ -304,7 +304,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			}, onCancel)
 	}
 
-	errorNotif := errorNotificationInit(data.notificationArea)
+	errorNotif := newErrorNotification(data.notificationArea)
 
 	data.builder.ConnectSignals(map[string]interface{}{
 		"on_toggle_other_settings": func() {
@@ -398,35 +398,4 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		p3.Hide()
 		p4.Hide()
 	}
-}
-
-type errorNotification struct {
-	gtki.Box //the container
-
-	area  gtki.Box
-	label gtki.Label
-}
-
-func errorNotificationInit(info gtki.Box) *errorNotification {
-	errorNotif := &errorNotification{Box: info}
-
-	b := newBuilder("BadUsernameNotification")
-	b.getItems(
-		"infobar", &errorNotif.area,
-		"message", &errorNotif.label,
-	)
-
-	info.Add(errorNotif.area)
-	return errorNotif
-}
-
-func (n *errorNotification) renderAccountError(label string) {
-	prov := providerWithCSS("box { background-color: #4a8fd9;  color: #ffffff; border-radius: 2px; }")
-	updateWithStyle(n.area, prov)
-
-	n.label.SetMarginTop(10)
-	n.label.SetMarginBottom(10)
-	n.label.SetText(i18n.Local(label))
-
-	n.Box.ShowAll()
 }

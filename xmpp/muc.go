@@ -50,11 +50,22 @@ type muc struct {
 	*conn
 }
 
-//See: Section 6.2
+//See: Section "6.2 Discovering the Features Supported by a MUC Service"
 func (m *muc) CheckForSupport(entity string) bool {
 	return m.HasSupportTo(entity, mucNS)
 }
 
+//See: Section "6.3 Discovering Rooms"
+func (m *muc) QueryRooms(entity string) ([]data.DiscoveryItem, error) {
+	query, err := m.QueryServiceItems(entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return query.DiscoveryItems, nil
+}
+
+//See: Section "6.4 Querying for Room Information"
 func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
 	r := parseRoomJID(room)
 	query, err := m.queryRoomInformation(r)
@@ -101,7 +112,6 @@ func parseRoomInformation(query *data.DiscoveryInfoQuery) *data.RoomInfo {
 	}
 }
 
-//See: Section 6.4
 func (m *muc) queryRoomInformation(room *Room) (*data.DiscoveryInfoQuery, error) {
 	if room == nil {
 		return nil, errors.New("invalid room")

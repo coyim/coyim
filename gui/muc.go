@@ -24,6 +24,16 @@ func (v *mucMockupView) connectOrSendMessage(msg string) {
 		log.Println("MUC is supported")
 	}
 
+	rooms, err := v.chat.QueryRooms(msg)
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Printf("%s has rooms:", msg)
+	for _, i := range rooms {
+		log.Printf("- %s\t%s", i.Jid, i.Name)
+	}
+
 	response, err := v.chat.QueryRoomInformation(msg)
 	if err != nil {
 		log.Println(err)

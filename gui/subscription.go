@@ -46,6 +46,7 @@ func (acd *addContactDialog) getVerifiedContact(errorNotif *errorNotification) (
 		return "", false
 	}
 
+	errorNotif.Hide() // no errors
 	return contact, true
 }
 
@@ -105,6 +106,8 @@ func (acd *addContactDialog) init() {
 }
 
 func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer, msg, nick string, autoauth bool) error) gtki.Window {
+	//TODO: this can be opened before a account is connected.
+	//In this case the window is useless: cant add a contact and cant see an error
 	acd := &addContactDialog{}
 	acd.init()
 	acd.initAccounts(accounts)
@@ -112,9 +115,7 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 	errorNotif := errorNotificationInit(acd.notificationArea)
 
 	acd.builder.ConnectSignals(map[string]interface{}{
-		"on_cancel_signal": func() {
-			acd.dialog.Destroy()
-		},
+		"on_cancel_signal": acd.dialog.Destroy,
 		"on_save_signal": func() {
 			contact, ok := acd.getVerifiedContact(errorNotif)
 			if !ok {
@@ -123,15 +124,18 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 
 			accountID, err := acd.getCurrentAccount()
 			if err != nil {
+				//TODO: report error, and close?
 				log.Printf("Error encountered when getting account: %v", err)
 				return
 			}
 
 			err = sendSubscription(accountID, contact, acd.getCurrentMessage(), acd.getCurrentNickname(), acd.getAutoAuthorize())
 			if err != nil {
+				//TODO: report error
 				log.Printf("Error encountered when sending subscription: %v", err)
 				return
 			}
+
 			acd.dialog.Destroy()
 		},
 	})

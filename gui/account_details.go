@@ -401,23 +401,22 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 }
 
 type errorNotification struct {
+	gtki.Box //the container
+
 	area  gtki.Box
 	label gtki.Label
 }
 
 func errorNotificationInit(info gtki.Box) *errorNotification {
+	errorNotif := &errorNotification{Box: info}
+
 	b := newBuilder("BadUsernameNotification")
-
-	errorNotif := &errorNotification{}
-
 	b.getItems(
 		"infobar", &errorNotif.area,
 		"message", &errorNotif.label,
 	)
 
 	info.Add(errorNotif.area)
-	errorNotif.area.ShowAll()
-
 	return errorNotif
 }
 
@@ -428,4 +427,6 @@ func (n *errorNotification) renderAccountError(label string) {
 	n.label.SetMarginTop(10)
 	n.label.SetMarginBottom(10)
 	n.label.SetText(i18n.Local(label))
+
+	n.Box.ShowAll()
 }

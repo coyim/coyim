@@ -57,6 +57,15 @@ func (v *mucMockupView) onSendMessage(_ glibi.Object) {
 	go v.connectOrSendMessage(msg)
 }
 
+func (u *gtkUI) addChatRoom() {
+	//TODO open an add Chat window
+	builder := newBuilder("AddChat")
+	dialog := builder.get("add-chat-dialog").(gtki.Dialog)
+
+	dialog.SetTransientFor(u.window)
+	dialog.Show()
+}
+
 func (u *gtkUI) openMUCMockup() {
 	if u.accounts[0].session.Conn() == nil {
 		return

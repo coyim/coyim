@@ -42,52 +42,6 @@ func (o *Occupant) JID() string {
 	return fmt.Sprintf("%s/%s", o.Room.JID(), o.Nick)
 }
 
-//See: Section 4.2
-type RoomType struct {
-	Public bool
-	//vs Hidden bool
-
-	Open bool
-	//vs MembersOnly bool
-
-	Moderated bool
-	//vs Unmoderated bool
-
-	SemiAnonymous bool
-	//vs NonAnonymous bool
-
-	PasswordProtected bool
-	//vs Unsecured bool
-
-	Persistent bool
-	//vs Temporary bool
-}
-
-//See: Section 15.3 Service Discovery Features
-type MUCFeatures struct {
-	Rooms []string
-	RoomType
-}
-
-// See: Section 15.5.4 muc#roominfo FORM_TYPE
-type RoomInfoForm struct {
-	MaxHistoryFetch string   `form-field:"muc#maxhistoryfetch"`
-	ContactJID      []string `form-field:"muc#roominfo_contactjid"`
-	Description     string   `form-field:"muc#roominfo_description"`
-	Language        string   `form-field:"muc#roominfo_language"`
-	LDAPGroup       string   `form-field:"muc#roominfo_ldapgroup"`
-	Logs            string   `form-field:"muc#roominfo_logs"`
-	Occupants       int      `form-field:"muc#roominfo_occupants"`
-	Subject         string   `form-field:"muc#roominfo_subject"`
-	SubjectMod      bool     `form-field:"muc#roominfo_subjectmod"`
-}
-
-//TODO: Ahh, naming
-type RoomInfo struct {
-	RoomInfoForm `form-type:"http://jabber.org/protocol/muc#roominfo"`
-	RoomType
-}
-
 func (c *conn) GetChatContext() interfaces.Chat {
 	return &muc{c}
 }
@@ -101,19 +55,24 @@ func (m *muc) CheckForSupport(entity string) bool {
 	return m.HasSupportTo(entity, mucNS)
 }
 
-func (m *muc) QueryRoomInformation(room string) (*data.DiscoveryInfoQuery, error) {
+func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
 	r := parseRoomJID(room)
-	return m.queryRoomInformation(r)
+	query, err := m.queryRoomInformation(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseRoomInformation(query), nil
 }
 
-func parseRoomInfoForm(forms []data.Form) RoomInfoForm {
-	ret := RoomInfoForm{}
+func parseRoomInfoForm(forms []data.Form) data.RoomInfoForm {
+	ret := data.RoomInfoForm{}
 	parseForms(&ret, forms)
 	return ret
 }
 
-func parseRoomType(features []data.DiscoveryFeature) RoomType {
-	ret := RoomType{}
+func parseRoomType(features []data.DiscoveryFeature) data.RoomType {
+	ret := data.RoomType{}
 
 	for _, f := range features {
 		switch f.Var {
@@ -135,8 +94,8 @@ func parseRoomType(features []data.DiscoveryFeature) RoomType {
 	return ret
 }
 
-func parseRoomInformation(query *data.DiscoveryInfoQuery) *RoomInfo {
-	return &RoomInfo{
+func parseRoomInformation(query *data.DiscoveryInfoQuery) *data.RoomInfo {
+	return &data.RoomInfo{
 		RoomInfoForm: parseRoomInfoForm(query.Forms[:]),
 		RoomType:     parseRoomType(query.Features),
 	}

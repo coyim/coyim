@@ -58,7 +58,6 @@ func (v *mucMockupView) onSendMessage(_ glibi.Object) {
 }
 
 func (u *gtkUI) addChatRoom() {
-	//TODO open an add Chat window
 	builder := newBuilder("AddChat")
 	dialog := builder.get("add-chat-dialog").(gtki.Dialog)
 
@@ -67,14 +66,16 @@ func (u *gtkUI) addChatRoom() {
 }
 
 func (u *gtkUI) openMUCMockup() {
-	if u.accounts[0].session.Conn() == nil {
+	accounts := u.getAllConnectedAccounts()
+	conn := accounts[0].session.Conn()
+	if conn == nil {
 		return
 	}
 
 	builder := newBuilder("MUCMockup")
 
 	mockup := &mucMockupView{
-		chat: u.accounts[0].session.Conn().GetChatContext(), //TODO: hackish
+		chat: conn.GetChatContext(), //TODO: hackish
 
 		Window: builder.get("muc-window").(gtki.Window),
 		entry:  builder.get("text-box").(gtki.Entry),

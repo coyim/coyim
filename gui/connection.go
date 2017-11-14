@@ -110,23 +110,26 @@ func (u *gtkUI) connectWithRandomDelay(a *account) {
 }
 
 func (u *gtkUI) connectAllAutomatics(all bool) {
-	var acc []*account
-	for _, a := range u.accounts {
+	allAccounts := u.getAllAccounts()
+	acc := make([]*account, 0, len(allAccounts))
+
+	for _, a := range allAccounts {
 		if (all || a.session.GetConfig().ConnectAutomatically) && a.session.IsDisconnected() {
 			acc = append(acc, a)
 		}
 	}
 
 	for _, a := range acc {
-		go u.connectWithRandomDelay(a)
+		go func(ca *account) {
+			u.connectWithRandomDelay(ca)
+		}(a)
 	}
 }
 
 func (u *gtkUI) disconnectAll() {
-	for _, a := range u.accounts {
-		ca := a
-		go func() {
+	for _, a := range u.getAllConnectedAccounts() {
+		go func(ca *account) {
 			ca.disconnect()
-		}()
+		}(a)
 	}
 }

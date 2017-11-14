@@ -30,7 +30,33 @@ func newAccountManager(c client.CommandManager) *accountManager {
 	}
 }
 
+func (m *accountManager) getAllAccounts() []*account {
+	m.RLock()
+	defer m.RUnlock()
+
+	return append([]*account(nil), m.accounts...)
+}
+
+func (m *accountManager) getAllConnectedAccounts() []*account {
+	m.RLock()
+	defer m.RUnlock()
+
+	accounts := make([]*account, 0, len(m.accounts))
+	for _, acc := range m.accounts {
+		if !acc.connected() {
+			continue
+		}
+
+		accounts = append(accounts, acc)
+	}
+
+	return accounts
+}
+
 func (m *accountManager) disconnectAll() {
+	m.RLock()
+	defer m.RUnlock()
+
 	for _, acc := range m.accounts {
 		acc.disconnect()
 	}

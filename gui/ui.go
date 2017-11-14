@@ -516,7 +516,7 @@ func (u *gtkUI) mainWindow() {
 }
 
 func (u *gtkUI) addInitialAccountsToRoster() {
-	for _, account := range u.accounts {
+	for _, account := range u.getAllAccounts() {
 		u.roster.update(account, rosters.New())
 	}
 }
@@ -638,14 +638,7 @@ func (u *gtkUI) aboutDialog() {
 }
 
 func (u *gtkUI) newCustomConversation() {
-	accounts := make([]*account, 0, len(u.accounts))
-
-	for i := range u.accounts {
-		acc := u.accounts[i]
-		if acc.connected() {
-			accounts = append(accounts, acc)
-		}
-	}
+	accounts := u.getAllConnectedAccounts()
 
 	var dialog gtki.Window
 	var model gtki.ListStore
@@ -701,15 +694,7 @@ func (u *gtkUI) newCustomConversation() {
 }
 
 func (u *gtkUI) addContactWindow() {
-	accounts := make([]*account, 0, len(u.accounts))
-
-	for i := range u.accounts {
-		acc := u.accounts[i]
-		if acc.connected() {
-			accounts = append(accounts, acc)
-		}
-	}
-
+	accounts := u.getAllConnectedAccounts()
 	dialog := presenceSubscriptionDialog(accounts, func(accountID, peer, msg, nick string, autoAuth bool) error {
 		account, ok := u.accountManager.getAccountByID(accountID)
 		if !ok {

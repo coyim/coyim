@@ -58,11 +58,12 @@ func (u *gtkUI) buildAccountsMenu() {
 
 	submenu, _ := g.gtk.MenuNew()
 
-	for _, account := range u.accounts {
+	allAccounts := u.getAllAccounts()
+	for _, account := range allAccounts {
 		account.appendMenuTo(submenu)
 	}
 
-	if len(u.accounts) > 0 {
+	if len(allAccounts) > 0 {
 		sep, _ := g.gtk.SeparatorMenuItemNew()
 		submenu.Append(sep)
 	}

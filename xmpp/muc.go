@@ -69,6 +69,25 @@ type MUCFeatures struct {
 	RoomType
 }
 
+// See: Section 15.5.4 muc#roominfo FORM_TYPE
+type RoomInfoForm struct {
+	MaxHistoryFetch string   `form-field:"muc#maxhistoryfetch"`
+	ContactJID      []string `form-field:"muc#roominfo_contactjid"`
+	Description     string   `form-field:"muc#roominfo_description"`
+	Language        string   `form-field:"muc#roominfo_language"`
+	LDAPGroup       string   `form-field:"muc#roominfo_ldapgroup"`
+	Logs            string   `form-field:"muc#roominfo_logs"`
+	Occupants       int      `form-field:"muc#roominfo_occupants"`
+	Subject         string   `form-field:"muc#roominfo_subject"`
+	SubjectMod      bool     `form-field:"muc#roominfo_subjectmod"`
+}
+
+//TODO: Ahh, naming
+type RoomInfo struct {
+	RoomInfoForm `form-type:"http://jabber.org/protocol/muc#roominfo"`
+	RoomType
+}
+
 func (c *conn) GetChatContext() interfaces.Chat {
 	return &muc{c}
 }
@@ -87,80 +106,23 @@ func (m *muc) QueryRoomInformation(room string) (*data.DiscoveryInfoQuery, error
 	return m.queryRoomInformation(r)
 }
 
+func parseRoomInfoForm(forms []data.Form) RoomInfoForm {
+	ret := RoomInfoForm{}
+	parseForms(&ret, forms)
+	return ret
+}
+
+func parseRoomInformation(query *data.DiscoveryInfoQuery) *RoomInfo {
+	return &RoomInfo{
+		RoomInfoForm: parseRoomInfoForm(query.Forms[:]),
+	}
+}
+
 //See: Section 6.4
 func (m *muc) queryRoomInformation(room *Room) (*data.DiscoveryInfoQuery, error) {
 	if room == nil {
 		return nil, errors.New("invalid room")
 	}
-
-	//Sample data.DiscoveryInfoQuery: We need to parse Forms[], RoomType, Rooms[],
-	//info := &data.DiscoveryInfoQuery{
-	//	XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "query"},
-	//	Node:    "",
-	//	Identities: []data.DiscoveryIdentity{
-	//		data.DiscoveryIdentity{
-	//			XMLName:  xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "identity"},
-	//			Lang:     "",
-	//			Category: "conference",
-	//			Type:     "text",
-	//			Name:     "coyim-test",
-	//		},
-	//	},
-	//	Features: []data.DiscoveryFeature{
-	//		data.DiscoveryFeature{XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
-	//			Var: "http://jabber.org/protocol/muc",
-	//		},
-	//		data.DiscoveryFeature{XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
-	//			Var: "muc_unsecured",
-	//		},
-	//		data.DiscoveryFeature{XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
-	//			Var: "muc_unmoderated",
-	//		},
-	//		data.DiscoveryFeature{XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
-	//			Var: "muc_open",
-	//		},
-	//		data.DiscoveryFeature{XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
-	//			Var: "muc_temporary",
-	//		},
-	//		data.DiscoveryFeature{XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
-	//			Var: "muc_public",
-	//		},
-	//		data.DiscoveryFeature{XMLName: xml.Name{Space: "http://jabber.org/protocol/disco#info", Local: "feature"},
-	//			Var: "muc_semianonymous",
-	//		},
-	//	},
-	//	Forms: []data.Form{
-	//		data.Form{XMLName: xml.Name{Space: "jabber:x:data", Local: "x"},
-	//			Type:         "result",
-	//			Title:        "",
-	//			Instructions: "",
-	//			Fields: []data.FormFieldX{
-	//				data.FormFieldX{XMLName: xml.Name{Space: "jabber:x:data", Local: "field"},
-	//					Desc: "", Var: "FORM_TYPE", Type: "hidden", Label: "",
-	//					Required: (*data.FormFieldRequiredX)(nil),
-	//					Values:   []string{"http://jabber.org/protocol/muc#roominfo"},
-	//					Options:  []data.FormFieldOptionX(nil),
-	//					Media:    []data.FormFieldMediaX(nil),
-	//				},
-	//				data.FormFieldX{XMLName: xml.Name{Space: "jabber:x:data", Local: "field"},
-	//					Desc: "", Var: "muc#roominfo_description", Type: "text-single", Label: "Description",
-	//					Required: (*data.FormFieldRequiredX)(nil),
-	//					Values:   []string{""},
-	//					Options:  []data.FormFieldOptionX(nil),
-	//					Media:    []data.FormFieldMediaX(nil),
-	//				},
-	//				data.FormFieldX{XMLName: xml.Name{Space: "jabber:x:data", Local: "field"},
-	//					Desc: "", Var: "muc#roominfo_occupants", Type: "text-single", Label: "Number of occupants",
-	//					Required: (*data.FormFieldRequiredX)(nil),
-	//					Values:   []string{"1"},
-	//					Options:  []data.FormFieldOptionX(nil),
-	//					Media:    []data.FormFieldMediaX(nil),
-	//				},
-	//			},
-	//		},
-	//	},
-	//	ResultSet: (*data.ResultSet)(nil),
-	//}
 
 	return m.QueryServiceInformation(room.JID())
 }

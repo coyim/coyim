@@ -738,7 +738,7 @@ func (u *gtkUI) addContactWindow() {
 	})
 
 	dialog.SetTransientFor(u.window)
-	dialog.ShowAll()
+	dialog.Show()
 }
 
 func (u *gtkUI) listenToToggleConnectAllAutomatically() {

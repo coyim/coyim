@@ -11,6 +11,7 @@
     <property name="text" translatable="yes">I would like to add you to my contact list.</property>
   </object>
   <object class="GtkDialog" id="AddContact">
+    <property name="visible">false</property>
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border_width">7</property>
     <property name="title" translatable="yes">Add new contact</property>
@@ -20,6 +21,7 @@
     <property name="destroy-with-parent">true</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
+        <property name="visible">true</property>
         <property name="homogeneous">false</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <property name="spacing">6</property>
@@ -40,6 +42,7 @@
         </child>
         <child>
           <object class="GtkGrid" id="grid">
+            <property name="visible">true</property>
             <property name="margin-top">15</property>
             <property name="margin-bottom">10</property>
             <property name="margin-start">10</property>
@@ -48,6 +51,7 @@
             <property name="column-spacing">6</property>
             <child>
               <object class="GtkLabel" id="accountsLabel" >
+		<property name="visible">true</property>
                 <property name="label" translatable="yes">Account:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -59,6 +63,7 @@
             </child>
             <child>
               <object class="GtkComboBox" id="accounts">
+		<property name="visible">true</property>
                 <property name="model">accounts-model</property>
                 <property name="has-focus">true</property>
                 <property name="hexpand">True</property>
@@ -76,6 +81,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="accountLabel" >
+		<property name="visible">true</property>
                 <property name="label" translatable="yes">Contact to add:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -87,6 +93,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="address">
+		<property name="visible">true</property>
                 <property name="placeholder-text">someone@jabber.org</property>
                 <property name="hexpand">True</property>
                 <signal name="activate" handler="on_save_signal" />
@@ -98,6 +105,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="nicknameLabel" >
+		<property name="visible">true</property>
                 <property name="label" translatable="yes">Nickname:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -109,6 +117,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="nickname">
+		<property name="visible">true</property>
                 <property name="hexpand">True</property>
                 <signal name="activate" handler="on_save_signal" />
               </object>
@@ -126,9 +135,9 @@
         </child>
         <child>
           <object class="GtkCheckButton" id="auto_authorize_checkbutton">
+            <property name="visible">True</property>
             <property name="label" translatable="yes">A_llow this contact to view my status</property>
             <property name="use_action_appearance">False</property>
-            <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
             <property name="no_show_all">True</property>
@@ -168,8 +177,8 @@
         </child>
         <child>
           <object class="GtkLabel" id="subscriptionInstructions">
-          <property name="label" translatable="yes">Warning: This message will not be end-to-end encrypted. Do not reveal any sensitive information in it.</property>
           <property name="visible">true</property>
+          <property name="label" translatable="yes">Warning: This message will not be end-to-end encrypted. Do not reveal any sensitive information in it.</property>
           <property name="wrap">true</property>
           <property name="max-width-chars">65</property>
           </object>
@@ -178,9 +187,11 @@
     </child>
     <child internal-child="action_area">
       <object class="GtkButtonBox" id="button_box">
+        <property name="visible">true</property>
         <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
         <child>
           <object class="GtkButton" id="button_cancel">
+            <property name="visible">true</property>
             <property name="label">_Cancel</property>
             <property name="use-underline">True</property>
             <signal name="clicked" handler="on_cancel_signal" />
@@ -188,6 +199,7 @@
         </child>
         <child>
           <object class="GtkButton" id="button_ok">
+            <property name="visible">true</property>
             <property name="label" translatable="yes">Add</property>
             <property name="use-underline">True</property>
             <property name="can-default">true</property>

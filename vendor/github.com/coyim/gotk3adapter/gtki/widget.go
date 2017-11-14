@@ -17,6 +17,7 @@ type Widget interface {
 	HasFocus() bool
 	Hide()
 	HideOnDelete()
+	Map()
 	SetHAlign(Align)
 	SetHExpand(bool)
 	SetMarginBottom(int)

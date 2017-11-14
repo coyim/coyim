@@ -10,6 +10,9 @@ type MockWidget struct {
 	glib_mock.MockObject
 }
 
+func (*MockWidget) Map() {
+}
+
 func (*MockWidget) SetHExpand(v1 bool) {
 }
 

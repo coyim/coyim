@@ -17,8 +17,8 @@ func parseForm(dstStructElementValue reflect.Value, form data.Form) error {
 
 	for i := 0; i < dstType.NumField(); i++ {
 		field := dstType.Field(i)
-		tag, ok := field.Tag.Lookup("form-field")
-		if !ok {
+		tag := field.Tag.Get("form-field")
+		if tag == "" {
 			continue
 		}
 
@@ -85,8 +85,8 @@ func parseForms(dst interface{}, forms []data.Form) error {
 		formType := f.Fields[0].Values[0]
 
 		for i := 0; i < dstType.NumField(); i++ {
-			tag, ok := dstType.Field(i).Tag.Lookup("form-type")
-			if !ok {
+			tag := dstType.Field(i).Tag.Get("form-type")
+			if tag == "" {
 				continue
 			}
 

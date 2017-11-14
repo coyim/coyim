@@ -68,7 +68,7 @@ func (s *DiscoveryXMPPSuite) Test_ReceiveDiscoveryResult(c *C) {
 	iq, ok := (<-reply).Value.(*data.ClientIQ)
 	c.Assert(ok, Equals, true)
 
-	discoveryReply, err := parseDiscoveryReply(iq)
+	discoveryReply, err := parseDiscoveryInfoReply(iq)
 	c.Assert(err, IsNil)
 
 	c.Assert(discoveryReply, DeepEquals, &data.DiscoveryInfoQuery{

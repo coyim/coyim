@@ -43,8 +43,18 @@ func (c *conn) sendDiscoveryInfo(to string) (reply chan data.Stanza, cookie data
 	return c.SendIQ(to, "get", &data.DiscoveryInfoQuery{})
 }
 
-func parseDiscoveryReply(iq *data.ClientIQ) (*data.DiscoveryInfoQuery, error) {
+func parseDiscoveryInfoReply(iq *data.ClientIQ) (*data.DiscoveryInfoQuery, error) {
 	reply := &data.DiscoveryInfoQuery{}
+	err := xml.Unmarshal(iq.Query, reply)
+	return reply, err
+}
+
+func (c *conn) sendDiscoveryItems(to string) (reply chan data.Stanza, cookie data.Cookie, err error) {
+	return c.SendIQ(to, "get", &data.DiscoveryItemsQuery{})
+}
+
+func parseDiscoveryItemsReply(iq *data.ClientIQ) (*data.DiscoveryItemsQuery, error) {
+	reply := &data.DiscoveryItemsQuery{}
 	err := xml.Unmarshal(iq.Query, reply)
 	return reply, err
 }
@@ -52,7 +62,7 @@ func parseDiscoveryReply(iq *data.ClientIQ) (*data.DiscoveryInfoQuery, error) {
 // TODO: at some point we need to cache these features somewhere
 
 // QueryServiceInformation sends a service discovery information ("disco#info") query.
-// See XEP-0030, Section 3.1.
+// See XEP-0030, Section "3. Discovering Information About a Jabber Entity"
 // This method blocks until conn#Next() receives the response to the IQ.
 func (c *conn) QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error) {
 	reply, _, err := c.sendDiscoveryInfo(entity)
@@ -70,7 +80,29 @@ func (c *conn) QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery,
 		return nil, errors.New("xmpp: failed to parse response")
 	}
 
-	return parseDiscoveryReply(iq)
+	return parseDiscoveryInfoReply(iq)
+}
+
+// QueryServiceItems sends a Service Discovery items ("disco#items") query.
+// See XEP-0030, Section "4. Discovering the Items Associated with a Jabber Entity"
+// This method blocks until conn#Next() receives the response to the IQ.
+func (c *conn) QueryServiceItems(entity string) (*data.DiscoveryItemsQuery, error) {
+	reply, _, err := c.sendDiscoveryItems(entity)
+	if err != nil {
+		return nil, err
+	}
+
+	stanza, ok := <-reply
+	if !ok {
+		return nil, errors.New("xmpp: failed to receive response")
+	}
+
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return nil, errors.New("xmpp: failed to parse response")
+	}
+
+	return parseDiscoveryItemsReply(iq)
 }
 
 func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
@@ -115,17 +147,17 @@ func DiscoveryReply(name string) data.DiscoveryInfoQuery {
 		},
 		//TODO: extract constants that document which XEPs are supported
 		Features: []data.DiscoveryFeature{
-			{Var: "http://jabber.org/protocol/disco#info"}, //XEP-0030
-			{Var: "urn:xmpp:bob"}, //XEP-0231
-			{Var: "urn:xmpp:ping"}, //XEP-0199
-			{Var: "http://jabber.org/protocol/caps"}, //XEP-0115
-			{Var: "jabber:iq:version"}, //XEP-0092
-			{Var: "vcard-temp"}, //XEP-0054
-			{Var: "jabber:x:data"}, //XEP-004
-			{Var: "http://jabber.org/protocol/si"}, //XEP-0096
-			{Var: "http://jabber.org/protocol/si/profile/file-transfer"}, //XEP-0096
+			{Var: "http://jabber.org/protocol/disco#info"},                    //XEP-0030
+			{Var: "urn:xmpp:bob"},                                             //XEP-0231
+			{Var: "urn:xmpp:ping"},                                            //XEP-0199
+			{Var: "http://jabber.org/protocol/caps"},                          //XEP-0115
+			{Var: "jabber:iq:version"},                                        //XEP-0092
+			{Var: "vcard-temp"},                                               //XEP-0054
+			{Var: "jabber:x:data"},                                            //XEP-004
+			{Var: "http://jabber.org/protocol/si"},                            //XEP-0096
+			{Var: "http://jabber.org/protocol/si/profile/file-transfer"},      //XEP-0096
 			{Var: "http://jabber.org/protocol/si/profile/directory-transfer"}, //XEP-xxxx: SI Directory Transfer
-			{Var: "http://jabber.org/protocol/bytestreams"}, //XEP-0047
+			{Var: "http://jabber.org/protocol/bytestreams"},                   //XEP-0047
 		},
 	}
 }

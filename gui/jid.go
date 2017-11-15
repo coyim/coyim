@@ -15,7 +15,7 @@ func verifyXMPPAddress(address string) (bool, string) {
 	atIndex := strings.Index(address, "@")
 
 	if !isValidAccount(address, atIndex) {
-		err = "Invalid account address: An XMPP address should look like this: local@domain.com. "
+		err = "Validation failed: \nThe XMPP address is invalid. An XMPP address should look like this: local@domain.com."
 		return isValid, err
 	}
 

@@ -3,6 +3,7 @@
 package gui
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"unsafe"
 
 	"reflect"
 
@@ -94,6 +96,47 @@ func newBuilderFromString(uiName string) *builder {
 func (b *builder) getObj(name string) glibi.Object {
 	obj, _ := b.GetObject(name)
 	return obj
+}
+
+func (b *builder) bindObjects(view interface{}) error {
+	if reflect.TypeOf(view).Kind() != reflect.Ptr {
+		return errors.New("view must be a pointer")
+	}
+
+	elem := reflect.ValueOf(view).Elem()
+
+	dstType := elem.Type()
+	if dstType.Kind() != reflect.Struct {
+		return errors.New("view must be a pointer to a struct value")
+	}
+
+	for i := 0; i < dstType.NumField(); i++ {
+		objectID := dstType.Field(i).Tag.Get("gtk-widget")
+		if objectID == "" {
+			continue
+		}
+
+		dstValue := elem.Field(i)
+
+		if !dstValue.CanSet() {
+			//Unexported field. This is fine by unsafe pkg documentation
+			dstValue = reflect.NewAt(dstValue.Type(), unsafe.Pointer(dstValue.UnsafeAddr())).Elem()
+		}
+
+		if !dstValue.CanSet() {
+			return errors.New("cant set value")
+		}
+
+		object := b.get(objectID)
+		v := reflect.ValueOf(object)
+		//if dstValue.Type() != v.Type() {
+		//	return errors.New("types do not match")
+		//}
+
+		dstValue.Set(v)
+	}
+
+	return nil
 }
 
 func (b *builder) getItem(name string, target interface{}) {

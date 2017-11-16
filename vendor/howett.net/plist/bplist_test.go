@@ -66,7 +66,7 @@ func TestBplistLatin1ToUTF16(t *testing.T) {
 	}
 
 	if !bytes.Equal(buf.Bytes(), expectedBuf.Bytes()) {
-		t.Errorf("Expected", expectedBuf.Bytes(), "received", buf.Bytes())
+		t.Error("Expected", expectedBuf.Bytes(), "received", buf.Bytes())
 		return
 	}
 }

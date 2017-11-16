@@ -3,12 +3,6 @@
 	"ignore": "",
 	"package": [
 		{
-			"checksumSHA1": "CVcUyeLCwSidLlIoI5mK9lPkreI=",
-			"path": "github.com/DHowett/go-plist",
-			"revision": "2f847ea62b17703c861484a09f0e5841328a2cb9",
-			"revisionTime": "2017-04-24T18:37:31Z"
-		},
-		{
 			"checksumSHA1": "w8UV8kgYB8ykfAMeXNUgKmYxlsA=",
 			"path": "github.com/TheCreeper/go-notify",
 			"revision": "b5cd14745a5c675c08f7d5c3203cf5f0324e85f3",
@@ -264,6 +258,12 @@
 			"path": "gopkg.in/check.v1",
 			"revision": "20d25e2804050c1cd24a7eea1e7a6447dd0e74ec",
 			"revisionTime": "2016-12-08T18:13:25Z"
+		},
+		{
+			"checksumSHA1": "2BWOBVD5K/aL7aPMW4tXm4lavP4=",
+			"path": "howett.net/plist",
+			"revision": "233df3c4f07b0c562da0e8a6fb850681ac49bb90",
+			"revisionTime": "2017-11-05T00:43:39Z"
 		}
 	],
 	"rootPath": "github.com/coyim/coyim"

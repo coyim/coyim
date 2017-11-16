@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	plist "github.com/DHowett/go-plist"
 	"github.com/coyim/coyim/config"
+	"howett.net/plist"
 )
 
 // In $HOME

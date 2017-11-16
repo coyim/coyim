@@ -9,22 +9,53 @@ import (
 )
 
 type mucMockupView struct {
-	gtki.Window
-	entry gtki.Entry
+	gtki.Window `gtk-widget:"muc-window"`
+	entry       gtki.Entry `gtk-widget:"text-box"`
 
-	chat interfaces.Chat
+	chat     interfaces.Chat
+	occupant *xmpp.Occupant
+}
+
+func newMockupView(account *account, occupant *xmpp.Occupant) *mucMockupView {
+	conn := account.session.Conn()
+	if conn == nil {
+		return nil
+	}
+
+	builder := newBuilder("MUCMockup")
+	mockup := &mucMockupView{
+		chat:     conn.GetChatContext(),
+		occupant: occupant,
+	}
+
+	err := builder.bindObjects(mockup)
+	if err != nil {
+		panic(err)
+	}
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_send_message": mockup.onSendMessage,
+	})
+
+	mockup.SetTitle(occupant.JID())
+
+	return mockup
 }
 
 func (v *mucMockupView) connectOrSendMessage(msg string) {
 	log.Printf("--> %q", msg)
 
-	if !v.chat.CheckForSupport(msg) {
+	if v.occupant == nil {
+		return
+	}
+
+	if !v.chat.CheckForSupport(v.occupant.Service) {
 		log.Println("No support to MUC")
 	} else {
 		log.Println("MUC is supported")
 	}
 
-	rooms, err := v.chat.QueryRooms(msg)
+	rooms, err := v.chat.QueryRooms(v.occupant.Service)
 	if err != nil {
 		log.Println(err)
 	}
@@ -34,13 +65,13 @@ func (v *mucMockupView) connectOrSendMessage(msg string) {
 		log.Printf("- %s\t%s", i.Jid, i.Name)
 	}
 
-	response, err := v.chat.QueryRoomInformation(msg)
+	response, err := v.chat.QueryRoomInformation(v.occupant.Room.JID())
 	if err != nil {
+		log.Println("Error to query room information")
 		log.Println(err)
 	}
 
 	log.Printf("RoomInfo: %#v", response)
-
 }
 
 func (v *mucMockupView) onSendMessage(_ glibi.Object) {
@@ -67,24 +98,7 @@ func (u *gtkUI) addChatRoom() {
 
 func (u *gtkUI) openMUCMockup() {
 	accounts := u.getAllConnectedAccounts()
-	conn := accounts[0].session.Conn()
-	if conn == nil {
-		return
-	}
-
-	builder := newBuilder("MUCMockup")
-
-	mockup := &mucMockupView{
-		chat: conn.GetChatContext(), //TODO: hackish
-
-		Window: builder.get("muc-window").(gtki.Window),
-		entry:  builder.get("text-box").(gtki.Entry),
-	}
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_send_message": mockup.onSendMessage,
-	})
-
+	mockup := newMockupView(accounts[0], nil)
 	mockup.SetTransientFor(u.window)
 	mockup.Show()
 }

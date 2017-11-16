@@ -108,36 +108,36 @@
 			"checksumSHA1": "Wi2/ZnLbDnAI5gBZFUCSJQyN82g=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/cairo",
 			"path": "github.com/gotk3/gotk3/cairo",
-			"revision": "49dc6e383d905f8577d449a47c8367daad9a8402",
-			"revisionTime": "2017-11-16T13:47:34Z"
+			"revision": "2482158e886015cda962b4d66ad39da0dbb25bc3",
+			"revisionTime": "2017-11-16T20:58:04Z"
 		},
 		{
 			"checksumSHA1": "txZ2ZtlviKlYVmU5/gGlXp1lguc=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/gdk",
 			"path": "github.com/gotk3/gotk3/gdk",
-			"revision": "49dc6e383d905f8577d449a47c8367daad9a8402",
-			"revisionTime": "2017-11-16T13:47:34Z"
+			"revision": "2482158e886015cda962b4d66ad39da0dbb25bc3",
+			"revisionTime": "2017-11-16T20:58:04Z"
 		},
 		{
-			"checksumSHA1": "lvfEbKkEutZPgmhtXerTBBfQwAA=",
+			"checksumSHA1": "0zIFtkag4jqZmbxr4hN8pyycqp0=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/glib",
 			"path": "github.com/gotk3/gotk3/glib",
-			"revision": "49dc6e383d905f8577d449a47c8367daad9a8402",
-			"revisionTime": "2017-11-16T13:47:34Z"
+			"revision": "2482158e886015cda962b4d66ad39da0dbb25bc3",
+			"revisionTime": "2017-11-16T20:58:04Z"
 		},
 		{
-			"checksumSHA1": "S7VzO45zpy6/8MxEgcQiTMLFImk=",
+			"checksumSHA1": "plyQtmG4/QIY9pjFMPs9Y8DaJ8E=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/gtk",
 			"path": "github.com/gotk3/gotk3/gtk",
-			"revision": "49dc6e383d905f8577d449a47c8367daad9a8402",
-			"revisionTime": "2017-11-16T13:47:34Z"
+			"revision": "2482158e886015cda962b4d66ad39da0dbb25bc3",
+			"revisionTime": "2017-11-16T20:58:04Z"
 		},
 		{
 			"checksumSHA1": "aLCsKWqv8/Rs8C2M8TjP9GXnaXM=",
 			"origin": "github.com/coyim/gotk3adapter/vendor/github.com/gotk3/gotk3/pango",
 			"path": "github.com/gotk3/gotk3/pango",
-			"revision": "49dc6e383d905f8577d449a47c8367daad9a8402",
-			"revisionTime": "2017-11-16T13:47:34Z"
+			"revision": "2482158e886015cda962b4d66ad39da0dbb25bc3",
+			"revisionTime": "2017-11-16T20:58:04Z"
 		},
 		{
 			"checksumSHA1": "fyTEblZu7c+L8/VWhYSAcSzqCtI=",

@@ -79,6 +79,10 @@ func (v *window) SetTransientFor(v2 gtki.Window) {
 	v.internal.SetTransientFor(unwrapWindow(v2))
 }
 
+func (v *window) GetTransientFor() (gtki.Window, error) {
+	return wrapWindow(v.internal.GetTransientFor())
+}
+
 func (v *window) HasToplevelFocus() bool {
 	return v.internal.HasToplevelFocus()
 }

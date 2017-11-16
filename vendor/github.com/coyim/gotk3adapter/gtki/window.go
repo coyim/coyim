@@ -30,6 +30,7 @@ type Window interface {
 	SetTitle(string)
 	SetTitlebar(Widget) // Since 3.10
 	SetTransientFor(Window)
+	GetTransientFor() (Window, error)
 	SetUrgencyHint(bool)
 	Unfullscreen()
 	Unmaximize()

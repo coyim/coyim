@@ -49,6 +49,10 @@ func (*MockWindow) SetTitlebar(v2 gtki.Widget) {
 func (*MockWindow) SetTransientFor(v2 gtki.Window) {
 }
 
+func (*MockWindow) GetTransientFor() (gtki.Window, error) {
+	return nil, nil
+}
+
 func (*MockWindow) SetUrgencyHint(v2 bool) {
 }
 

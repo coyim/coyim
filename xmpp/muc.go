@@ -68,6 +68,9 @@ func (m *muc) QueryRooms(entity string) ([]data.DiscoveryItem, error) {
 //See: Section "6.4 Querying for Room Information"
 func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
 	r := parseRoomJID(room)
+
+	//TODO: this error is useless when it says ("expected query, got error")
+	//It should give us a OTR error
 	query, err := m.queryRoomInformation(r)
 	if err != nil {
 		return nil, err

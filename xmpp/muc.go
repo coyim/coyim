@@ -103,13 +103,23 @@ func (m *muc) queryRoomInformation(room *data.Room) (*data.DiscoveryInfoQuery, e
 	return m.QueryServiceInformation(room.JID())
 }
 
+//See: Section "7.2.2 Basic MUC Protocol"
 func (m *muc) EnterRoom(occupant *data.Occupant) error {
-	return m.sendPresenceWithChildren(occupant.JID(), "", "", mucSupport)
+	//TODO: Implement section "7.2.1 Groupchat 1.0 Protocol"?
+	return m.sendPresence(&data.ClientPresence{
+		To:    occupant.JID(),
+		Extra: mucSupport,
+	})
 }
 
+//See: Section "7.14 Exiting a Room"
 func (c *conn) leaveRoom(roomID, service, nickname string) error {
 	occupant := data.Occupant{Room: data.Room{ID: roomID, Service: service}, Handle: nickname}
-	return c.sendPresenceWithChildren(occupant.JID(), "unavailable", "", mucSupport)
+	return c.sendPresence(&data.ClientPresence{
+		To:    occupant.JID(),
+		Type:  "unavailable",
+		Extra: mucSupport,
+	})
 }
 
 //See: Section "7.4 Sending a Message to All Occupants"

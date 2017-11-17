@@ -7,37 +7,41 @@
 package xmpp
 
 import (
+	"encoding/xml"
 	"fmt"
 	"strconv"
+
+	"github.com/coyim/coyim/xmpp/data"
 )
 
-func (c *conn) sendPresenceWithChildren(to, typ, id, children string) error {
-	if len(id) == 0 {
-		id = strconv.FormatUint(uint64(c.getCookie()), 10)
-	}
-	end := "/>"
-
-	if children != "" {
-		end = fmt.Sprintf(">%s</presence>", children)
+func (c *conn) sendPresence(presence *data.ClientPresence) error {
+	if len(presence.ID) == 0 {
+		presence.ID = strconv.FormatUint(uint64(c.getCookie()), 10)
 	}
 
-	_, err := fmt.Fprintf(c.out, "<presence id='%s' to='%s' type='%s'%s", xmlEscape(id), xmlEscape(to), xmlEscape(typ), end)
-	return err
+	//TODO: do we have a method for this?
+	return xml.NewEncoder(c.out).Encode(presence)
 }
 
 // SendPresence sends a presence stanza. If id is empty, a unique id is
 // generated.
 func (c *conn) SendPresence(to, typ, id, status string) error {
-	statusTag := ""
-	if typ == "subscribe" && status != "" {
-		statusTag = fmt.Sprintf("<status>%s</status>", xmlEscape(status))
+	p := &data.ClientPresence{
+		ID:   id,
+		To:   to,
+		Type: typ,
 	}
 
-	return c.sendPresenceWithChildren(to, typ, id, statusTag)
+	if typ == "subscribe" && status != "" {
+		p.Status = status
+	}
+
+	return c.sendPresence(p)
 }
 
 // SignalPresence will signal the current presence
 func (c *conn) SignalPresence(state string) error {
+	//We dont use c.sendPresence() because this presence does not have `id` (why?)
 	_, err := fmt.Fprintf(c.out, "<presence><show>%s</show></presence>", xmlEscape(state))
 	return err
 }

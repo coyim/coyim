@@ -839,6 +839,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	called := 0
 
 	sess := &session{
+		conn:                conn,
 		r:                   roster.New(),
 		sessionEventHandler: &mockSessionEventHandler{
 		//warn: func(v string) {
@@ -846,13 +847,14 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 		//},
 		},
 	}
-	sess.conn = conn
+
+	expectedPresence := `<presence xmlns="jabber:client" id="123" to="foo@bar.com" type="unsubscribed"></presence>`
 	sess.r.SubscribeRequest("foo@bar.com", "123", "")
 
 	sess.HandleConfirmOrDeny("foo@bar.com", false)
 
 	c.Assert(called, Equals, 0)
-	c.Assert(string(mockIn.write), Equals, "<presence id='123' to='foo@bar.com' type='unsubscribed'/>")
+	c.Assert(string(mockIn.write), Equals, expectedPresence)
 	_, inMap := sess.r.GetPendingSubscribe("foo@bar.com")
 	c.Assert(inMap, Equals, false)
 }
@@ -868,6 +870,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C
 	called := 0
 
 	sess := &session{
+		conn:                conn,
 		r:                   roster.New(),
 		sessionEventHandler: &mockSessionEventHandler{
 		//warn: func(v string) {
@@ -875,13 +878,15 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C
 		//},
 		},
 	}
-	sess.conn = conn
-	sess.r.SubscribeRequest("foo@bar.com", "123", "")
 
+	expectedPresence := `<presence xmlns="jabber:client" id="123" to="foo@bar.com" type="subscribed"></presence>` +
+		`<presence xmlns="jabber:client" id="[0-9]+" to="foo@bar.com" type="subscribe"></presence>`
+
+	sess.r.SubscribeRequest("foo@bar.com", "123", "")
 	sess.HandleConfirmOrDeny("foo@bar.com", true)
 
 	c.Assert(called, Equals, 0)
-	c.Assert(string(mockIn.write), Matches, "<presence id='123' to='foo@bar.com' type='subscribed'/><presence id='[0-9]+' to='foo@bar.com' type='subscribe'/>")
+	c.Assert(string(mockIn.write), Matches, expectedPresence)
 	_, inMap := sess.r.GetPendingSubscribe("foo@bar.com")
 	c.Assert(inMap, Equals, false)
 }

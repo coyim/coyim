@@ -16,5 +16,7 @@ type ClientPresence struct {
 	Priority string       `xml:"priority,omitempty"`
 	Caps     *ClientCaps  `xml:"c"`
 	Error    *ClientError `xml:"error"`
-	Delay    Delay        `xml:"delay"`
+	Delay    *Delay       `xml:"delay,omitempty"`
+
+	Extra string `xml:",innerxml"`
 }

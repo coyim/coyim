@@ -23,12 +23,11 @@ func (s *MUCSuite) Test_CanJoinRoom(c *C) {
 		Handle: "i_am_coy",
 	})
 	c.Assert(err, IsNil)
-	c.Assert(string(mockOut.write), Equals, "<presence "+
-		"id='3544672884359377457' "+
-		"to='coyim@chat.coy.im/i_am_coy' "+
-		"type=''>"+
-		"<x xmlns='http://jabber.org/protocol/muc'/>"+
-		"</presence>")
+	c.Assert(string(mockOut.write), Equals, `<presence xmlns="jabber:client" `+
+		`id="3544672884359377457" `+
+		`to="coyim@chat.coy.im/i_am_coy">`+
+		`<x xmlns='http://jabber.org/protocol/muc'/>`+
+		`</presence>`)
 }
 
 func (s *MUCSuite) Test_CanLeaveRoom(c *C) {
@@ -40,12 +39,12 @@ func (s *MUCSuite) Test_CanLeaveRoom(c *C) {
 
 	err := conn.leaveRoom("coyim", "chat.coy.im", "i_am_coy")
 	c.Assert(err, IsNil)
-	c.Assert(string(mockOut.write), Equals, "<presence "+
-		"id='3544672884359377457' "+
-		"to='coyim@chat.coy.im/i_am_coy' "+
-		"type='unavailable'>"+
-		"<x xmlns='http://jabber.org/protocol/muc'/>"+
-		"</presence>")
+	c.Assert(string(mockOut.write), Equals, `<presence xmlns="jabber:client" `+
+		`id="3544672884359377457" `+
+		`to="coyim@chat.coy.im/i_am_coy" `+
+		`type="unavailable">`+
+		`<x xmlns='http://jabber.org/protocol/muc'/>`+
+		`</presence>`)
 }
 
 func (s *MUCSuite) Test_parseRoomInfo(c *C) {

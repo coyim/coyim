@@ -37,9 +37,11 @@ func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) 
 		out: mockOut,
 	}
 
+	expectedPresence := `<presence xmlns="jabber:client" id="123456&amp;" to="someone&lt;strange&gt;@foo.com" type="subsc&#39;ribe"></presence>`
+
 	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "123456&", "")
 	c.Assert(err, IsNil)
-	c.Assert(string(mockOut.write), Equals, "<presence id='123456&amp;' to='someone&lt;strange&gt;@foo.com' type='subsc&apos;ribe'/>")
+	c.Assert(string(mockOut.write), Equals, expectedPresence)
 }
 
 func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
@@ -49,9 +51,10 @@ func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
 
+	expectedPresence := `<presence xmlns="jabber:client" id="3544672884359377457" to="someone&lt;strange&gt;@foo.com" type="subsc&#39;ribe"></presence>`
 	err := conn.SendPresence("someone<strange>@foo.com", "subsc'ribe", "", "")
 	c.Assert(err, IsNil)
-	c.Assert(string(mockOut.write), Equals, "<presence id='3544672884359377457' to='someone&lt;strange&gt;@foo.com' type='subsc&apos;ribe'/>")
+	c.Assert(string(mockOut.write), Equals, expectedPresence)
 }
 
 func (s *PresenceXMPPSuite) Test_SendPresence_returnsWriterError(c *C) {
@@ -70,7 +73,8 @@ func (s *PresenceXMPPSuite) Test_SendPresence_addsStatusToSubscribeMessage(c *C)
 		out: mockOut,
 	}
 
+	expectedPresence := `<presence xmlns="jabber:client" id="123" to="someone&lt;strange&gt;@foo.com" type="subscribe"><status>do you want &lt;to&gt;?</status></presence>`
 	err := conn.SendPresence("someone<strange>@foo.com", "subscribe", "123", "do you want <to>?")
 	c.Assert(err, IsNil)
-	c.Assert(string(mockOut.write), Equals, "<presence id='123' to='someone&lt;strange&gt;@foo.com' type='subscribe'><status>do you want &lt;to&gt;?</status></presence>")
+	c.Assert(string(mockOut.write), Equals, expectedPresence)
 }

@@ -28,6 +28,7 @@ var xmlSpecial = map[byte]string{
 }
 
 func xmlEscape(s string) string {
+	//TODO: Why not using xml.EscapeText(), from stdlib?
 	var b bytes.Buffer
 	for i := 0; i < len(s); i++ {
 		c := s[i]

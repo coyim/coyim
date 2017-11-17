@@ -10,6 +10,9 @@ type MockWidget struct {
 	glib_mock.MockObject
 }
 
+func (*MockWidget) Map() {
+}
+
 func (*MockWidget) SetHExpand(v1 bool) {
 }
 
@@ -41,6 +44,10 @@ func (*MockWidget) GetAllocatedHeight() int {
 
 func (*MockWidget) GetAllocatedWidth() int {
 	return 0
+}
+
+func (*MockWidget) GetParent() (gtki.Widget, error) {
+	return nil, nil
 }
 
 func (*MockWidget) GrabFocus() {

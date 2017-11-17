@@ -765,7 +765,7 @@ func (u *gtkUI) initMenuBar() {
 func (u *gtkUI) initSearchBar() {
 	u.searchEntry.SetWidthChars(35)
 	u.searchEntry.SetCanFocus(true)
-	//u.searchEntry.Map()
+	u.searchEntry.Map()
 
 	u.search.ConnectEntry(u.searchEntry)
 	u.roster.view.SetSearchEntry(u.searchEntry)

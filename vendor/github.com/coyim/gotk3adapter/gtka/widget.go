@@ -1,11 +1,11 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gdka"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type widget struct {
@@ -37,6 +37,10 @@ func unwrapWidget(v gtki.Widget) *gtk.Widget {
 		return nil
 	}
 	return v.(asWidget).toWidget().internal
+}
+
+func (v *widget) Map() {
+	v.internal.Map()
 }
 
 func (v *widget) SetHExpand(v1 bool) {
@@ -77,6 +81,11 @@ func (v *widget) GetAllocatedHeight() int {
 
 func (v *widget) GetAllocatedWidth() int {
 	return v.internal.GetAllocatedWidth()
+}
+
+func (v *widget) GetParent() (gtki.Widget, error) {
+	parent, err := v.internal.GetParent()
+	return wrapWidget(parent, err)
 }
 
 func (v *widget) GrabFocus() {

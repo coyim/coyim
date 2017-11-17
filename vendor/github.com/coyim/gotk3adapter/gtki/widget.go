@@ -11,12 +11,14 @@ type Widget interface {
 	GrabFocus()
 	GetAllocatedHeight() int
 	GetAllocatedWidth() int
+	GetParent() (Widget, error)
 	GetStyleContext() (StyleContext, error)
 	GrabDefault()
 	SetCanFocus(bool)
 	HasFocus() bool
 	Hide()
 	HideOnDelete()
+	Map()
 	SetHAlign(Align)
 	SetHExpand(bool)
 	SetMarginBottom(int)

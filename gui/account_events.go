@@ -113,19 +113,20 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 
 func (u *gtkUI) handleSessionEvent(ev events.Event) {
 	account := u.findAccountForSession(ev.Session)
+	if account == nil {
+		return
+	}
 
-	if account != nil {
-		switch ev.Type {
-		case events.Connected:
-			account.enableExistingConversationWindows(true)
-		case events.Disconnected:
-			account.enableExistingConversationWindows(false)
-		case events.ConnectionLost:
-			u.notifyConnectionFailure(account, u.connectionFailureMoreInfoConnectionLost)
-			go u.connectWithRandomDelay(account)
-		case events.RosterReceived:
-			u.roster.update(account, ev.Session.R())
-		}
+	switch ev.Type {
+	case events.Connected:
+		account.enableExistingConversationWindows(true)
+	case events.Disconnected:
+		account.enableExistingConversationWindows(false)
+	case events.ConnectionLost:
+		u.notifyConnectionFailure(account, u.connectionFailureMoreInfoConnectionLost)
+		go u.connectWithRandomDelay(account)
+	case events.RosterReceived:
+		u.roster.update(account, ev.Session.R())
 	}
 
 	u.rosterUpdated()

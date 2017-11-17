@@ -193,31 +193,26 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
-	        <child>
+                <child>
                   <object class="GtkSearchBar" id="search-area">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="show-close-button">False</property>
                     <property name="search-mode-enabled">False</property>
-                    <property name="halign">end</property>
-	            <property name="hexpand">True</property>
-	            <child>
+                    <child>
                       <object class="GtkEntry" id="search-entry">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="max_length">65</property>
                         <property name="shadow_type">etched-in</property>
                         <property name="secondary_icon_name">edit-find</property>
                         <property name="placeholder_text" translatable="yes">Search...</property>
-	              </object>
+                      </object>
                     </child>
                   </object>
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
                 <property name="pack_type">end</property>
-		<property name="position">1</property>
+                <property name="position">1</property>
               </packing>
 	    </child>
 	  </object>

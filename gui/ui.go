@@ -763,10 +763,17 @@ func (u *gtkUI) initMenuBar() {
 }
 
 func (u *gtkUI) initSearchBar() {
-	u.searchEntry.SetWidthChars(35)
 	u.searchEntry.SetCanFocus(true)
 	u.searchEntry.Map()
+	u.searchEntry.SetHAlign(gtki.ALIGN_FILL)
+	u.searchEntry.SetHExpand(true)
 
+	boxCenter, _ := u.searchEntry.GetParent()
+	boxCenter.SetHAlign(gtki.ALIGN_FILL)
+	boxCenter.SetHExpand(true)
+
+	u.search.SetHAlign(gtki.ALIGN_FILL)
+	u.search.SetHExpand(true)
 	u.search.ConnectEntry(u.searchEntry)
 	u.roster.view.SetSearchEntry(u.searchEntry)
 

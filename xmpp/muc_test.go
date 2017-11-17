@@ -18,7 +18,10 @@ func (s *MUCSuite) Test_CanJoinRoom(c *C) {
 		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
 
-	err := conn.enterRoom("coyim", "chat.coy.im", "i_am_coy")
+	err := conn.GetChatContext().EnterRoom(&data.Occupant{
+		Room:   data.Room{ID: "coyim", Service: "chat.coy.im"},
+		Handle: "i_am_coy",
+	})
 	c.Assert(err, IsNil)
 	c.Assert(string(mockOut.write), Equals, "<presence "+
 		"id='3544672884359377457' "+

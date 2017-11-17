@@ -2,7 +2,6 @@ package xmpp
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/coyim/coyim/xmpp/data"
@@ -14,32 +13,13 @@ const (
 	mucNS      = "http://jabber.org/protocol/muc"
 )
 
-//See: Section 4.1
-type Room struct {
-	ID, Service string
-}
-
-func (o *Room) JID() string {
-	return fmt.Sprintf("%s@%s", o.ID, o.Service)
-}
-
-func parseRoomJID(roomJID string) *Room {
+func parseRoomJID(roomJID string) *data.Room {
 	parts := strings.SplitN(roomJID, "@", 2)
 	if len(parts) < 2 {
 		return nil
 	}
 
-	return &Room{ID: parts[0], Service: parts[1]}
-}
-
-//See: Section 4.1
-type Occupant struct {
-	Room
-	Nick string
-}
-
-func (o *Occupant) JID() string {
-	return fmt.Sprintf("%s/%s", o.Room.JID(), o.Nick)
+	return &data.Room{ID: parts[0], Service: parts[1]}
 }
 
 func (c *conn) GetChatContext() interfaces.Chat {
@@ -68,6 +48,9 @@ func (m *muc) QueryRooms(entity string) ([]data.DiscoveryItem, error) {
 //See: Section "6.4 Querying for Room Information"
 func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
 	r := parseRoomJID(room)
+	if r == nil {
+		return nil, errors.New("invalid room")
+	}
 
 	//TODO: this error is useless when it says ("expected query, got error")
 	//It should give us a OTR error
@@ -115,20 +98,15 @@ func parseRoomInformation(query *data.DiscoveryInfoQuery) *data.RoomInfo {
 	}
 }
 
-func (m *muc) queryRoomInformation(room *Room) (*data.DiscoveryInfoQuery, error) {
-	if room == nil {
-		return nil, errors.New("invalid room")
-	}
-
+func (m *muc) queryRoomInformation(room *data.Room) (*data.DiscoveryInfoQuery, error) {
 	return m.QueryServiceInformation(room.JID())
 }
 
-func (c *conn) enterRoom(roomID, service, nickname string) error {
-	occupant := Occupant{Room: Room{ID: roomID, Service: service}, Nick: nickname}
-	return c.sendPresenceWithChildren(occupant.JID(), "", "", mucSupport)
+func (m *muc) EnterRoom(occupant *data.Occupant) error {
+	return m.sendPresenceWithChildren(occupant.JID(), "", "", mucSupport)
 }
 
 func (c *conn) leaveRoom(roomID, service, nickname string) error {
-	occupant := Occupant{Room: Room{ID: roomID, Service: service}, Nick: nickname}
+	occupant := data.Occupant{Room: data.Room{ID: roomID, Service: service}, Handle: nickname}
 	return c.sendPresenceWithChildren(occupant.JID(), "unavailable", "", mucSupport)
 }

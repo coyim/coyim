@@ -1,5 +1,26 @@
 package data
 
+import "fmt"
+
+//See: Section 4.1
+type Room struct {
+	ID, Service string
+}
+
+func (o *Room) JID() string {
+	return fmt.Sprintf("%s@%s", o.ID, o.Service)
+}
+
+//See: Section 4.1
+type Occupant struct {
+	Room
+	Handle string
+}
+
+func (o *Occupant) JID() string {
+	return fmt.Sprintf("%s/%s", o.Room.JID(), o.Handle)
+}
+
 //See: Section 4.2
 type RoomType struct {
 	Public bool

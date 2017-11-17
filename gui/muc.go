@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/coyim/coyim/xmpp"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -76,12 +76,13 @@ func (v *addChatView) getAccount() (*account, bool) {
 	return v.accountManager.getAccountByID(id)
 }
 
-func (v *addChatView) validateForm() (*account, *xmpp.Occupant, error) {
+func (v *addChatView) validateForm() (*account, *data.Occupant, error) {
 	account, ok := v.getAccount()
 	if !ok {
 		return nil, nil, errors.New("could not find account")
 	}
 
+	//TODO: If service is empty, should get it from account's JID
 	service, err := v.service.GetText()
 	if err != nil {
 		return nil, nil, err
@@ -99,12 +100,12 @@ func (v *addChatView) validateForm() (*account, *xmpp.Occupant, error) {
 
 	//TODO: VALIDATE!
 
-	occ := &xmpp.Occupant{
-		Room: xmpp.Room{
+	occ := &data.Occupant{
+		Room: data.Room{
 			ID:      room,
 			Service: service,
 		},
-		Nick: handle,
+		Handle: handle,
 	}
 
 	return account, occ, nil
@@ -130,7 +131,7 @@ func (v *addChatView) joinRoomHandler() {
 		}
 
 		v.Destroy()
-		chatRoom.Show()
+		chatRoom.openWindow()
 	})
 }
 
@@ -145,10 +146,10 @@ type mucMockupView struct {
 	entry       gtki.Entry `gtk-widget:"text-box"`
 
 	chat     interfaces.Chat
-	occupant *xmpp.Occupant
+	occupant *data.Occupant
 }
 
-func newMockupView(account *account, occupant *xmpp.Occupant) *mucMockupView {
+func newMockupView(account *account, occupant *data.Occupant) *mucMockupView {
 	conn := account.session.Conn()
 	if conn == nil {
 		return nil
@@ -174,9 +175,8 @@ func newMockupView(account *account, occupant *xmpp.Occupant) *mucMockupView {
 	return mockup
 }
 
-func (v *mucMockupView) connectOrSendMessage(msg string) {
-	log.Printf("--> %q", msg)
-
+func (v *mucMockupView) showDebugInfo() {
+	//TODO Remove this. It is only for debugging
 	if v.occupant == nil {
 		return
 	}
@@ -192,7 +192,7 @@ func (v *mucMockupView) connectOrSendMessage(msg string) {
 		log.Println(err)
 	}
 
-	log.Printf("%s has rooms:", msg)
+	log.Printf("%s has rooms:", v.occupant.Service)
 	for _, i := range rooms {
 		log.Printf("- %s\t%s", i.Jid, i.Name)
 	}
@@ -204,6 +204,29 @@ func (v *mucMockupView) connectOrSendMessage(msg string) {
 	}
 
 	log.Printf("RoomInfo: %#v", response)
+}
+
+func (v *mucMockupView) openWindow() {
+	//TODO: show error
+	go func() {
+		//TODO: Why does this return an error?
+		//Got a presence error from coyim-test@conference.riseup.net: &data.ClientError{XMLName:xml.Name{Space:"jabber:client", Local:"error"}, Code:"", Type:"modify", Any:data.Any{XMLName:xml.Name{Space:"urn:ietf:params:xml:ns:xmpp-stanzas", Local:"bad-request"}, Body:""}, Text:"Invalid presence type"}
+		err := v.chat.EnterRoom(v.occupant)
+		if err != nil {
+			log.Println("Error joining room:", err)
+		}
+	}()
+
+	//TODO: show messages on history
+	//TODO: show and update list of members
+
+	go v.showDebugInfo()
+
+	v.Show()
+}
+
+func (v *mucMockupView) connectOrSendMessage(msg string) {
+	log.Printf("--> %q", msg)
 }
 
 func (v *mucMockupView) onSendMessage(_ glibi.Object) {

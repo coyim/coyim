@@ -232,8 +232,48 @@ func (s *session) receivedStreamError(stanza *data.StreamError) bool {
 	return false
 }
 
+func recoverMessageTime(stanza *data.ClientMessage) time.Time {
+	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {
+		// An XEP-0203 Delayed Delivery <delay/> element exists for
+		// this message, meaning that someone sent it while we were
+		// offline. Let's show the timestamp for when the message was
+		// sent, rather than time.Now().
+		messageTime, err := time.Parse(time.RFC3339, stanza.Delay.Stamp)
+		if err != nil {
+			//TODO: use quoted string instead of timstamp.
+			//s.alert("Can not parse Delayed Delivery timestamp, using quoted string instead.")
+		} else {
+			return messageTime
+		}
+	}
+
+	return time.Now()
+}
+
 func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
-	s.processClientMessage(stanza)
+	log.Printf("-> Stanza %#v\n", stanza)
+
+	if len(stanza.Body) == 0 && len(stanza.Extensions) > 0 {
+		s.processExtensions(stanza)
+		return true
+	}
+
+	from, resource := utils.SplitJid(stanza.From)
+
+	switch stanza.Type {
+	case "error":
+		//TODO: investigate which errors are NOT recoverable, and return false
+		//to close the connection
+		//https://xmpp.org/rfcs/rfc3920.html#stanzas-error
+		if stanza.Error != nil {
+			s.alert(fmt.Sprintf("Error reported from %s: %#v", from, stanza.Error))
+			return true
+		}
+	}
+
+	messageTime := recoverMessageTime(stanza)
+	s.receiveClientMessage(from, resource, messageTime, stanza.Body)
+
 	return true
 }
 
@@ -532,41 +572,6 @@ func (s *session) NewConversation(peer string) *otr3.Conversation {
 	}
 
 	return conversation
-}
-
-func (s *session) processClientMessage(stanza *data.ClientMessage) {
-	log.Printf("-> Stanza %#v\n", stanza)
-
-	from, resource := utils.SplitJid(stanza.From)
-
-	//TODO: investigate which errors are recoverable
-	//https://xmpp.org/rfcs/rfc3920.html#stanzas-error
-	if stanza.Type == "error" && stanza.Error != nil {
-		s.alert(fmt.Sprintf("Error reported from %s: %#v", from, stanza.Error))
-		return
-	}
-
-	if len(stanza.Body) == 0 && len(stanza.Extensions) > 0 {
-		s.processExtensions(stanza)
-		return
-	}
-
-	var err error
-	var messageTime time.Time
-	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {
-		// An XEP-0203 Delayed Delivery <delay/> element exists for
-		// this message, meaning that someone sent it while we were
-		// offline. Let's show the timestamp for when the message was
-		// sent, rather than time.Now().
-		messageTime, err = time.Parse(time.RFC3339, stanza.Delay.Stamp)
-		if err != nil {
-			s.alert("Can not parse Delayed Delivery timestamp, using quoted string instead.")
-		}
-	} else {
-		messageTime = time.Now()
-	}
-
-	s.receiveClientMessage(from, resource, messageTime, stanza.Body)
 }
 
 // ManuallyEndEncryptedChat allows a user to end the encrypted chat from this side

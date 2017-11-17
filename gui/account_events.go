@@ -133,13 +133,12 @@ func (u *gtkUI) handleSessionEvent(ev events.Event) {
 }
 
 func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
-	if ev.Session.GetConfig().HideStatusUpdates {
-		return
+	if !ev.Session.GetConfig().HideStatusUpdates {
+		u.presenceUpdated(ev)
 	}
 
 	log.Printf("[%s] Presence from %v: show: %v status: %v gone: %v\n", ev.To, ev.From, ev.Show, ev.Status, ev.Gone)
 	u.rosterUpdated()
-	u.presenceUpdated(ev)
 }
 
 func convWindowNowOrLater(account *account, peer string, ui *gtkUI, f func(conversationView)) {

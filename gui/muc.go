@@ -226,7 +226,8 @@ func (v *mucMockupView) openWindow() {
 }
 
 func (v *mucMockupView) connectOrSendMessage(msg string) {
-	log.Printf("--> %q", msg)
+	//TODO: append message to the message view
+	v.chat.SendChatMessage(msg, &v.occupant.Room)
 }
 
 func (v *mucMockupView) onSendMessage(_ glibi.Object) {

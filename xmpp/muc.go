@@ -2,6 +2,7 @@ package xmpp
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/coyim/coyim/xmpp/data"
@@ -109,4 +110,18 @@ func (m *muc) EnterRoom(occupant *data.Occupant) error {
 func (c *conn) leaveRoom(roomID, service, nickname string) error {
 	occupant := data.Occupant{Room: data.Room{ID: roomID, Service: service}, Handle: nickname}
 	return c.sendPresenceWithChildren(occupant.JID(), "unavailable", "", mucSupport)
+}
+
+//See: Section "7.4 Sending a Message to All Occupants"
+func (m *muc) SendChatMessage(msg string, to *data.Room) error {
+	//TODO: How to disable archive for chat messages?
+	//TODO: Can we just use the same conn.Send() with a different type?
+	_, err := fmt.Fprintf(m.out, "<message "+
+		"to='%s' "+
+		"from='%s' "+
+		"type='groupchat'>"+
+		"<body>%s</body>"+
+		"</message>",
+		xmlEscape(to.JID()), xmlEscape(m.conn.jid), xmlEscape(msg))
+	return err
 }

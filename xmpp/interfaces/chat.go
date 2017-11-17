@@ -9,4 +9,5 @@ type Chat interface {
 	QueryRooms(entity string) ([]data.DiscoveryItem, error)
 	QueryRoomInformation(room string) (*data.RoomInfo, error)
 	EnterRoom(*data.Occupant) error
+	SendChatMessage(msg string, to *data.Room) error
 }

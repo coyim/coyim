@@ -269,6 +269,21 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 			s.alert(fmt.Sprintf("Error reported from %s: %#v", from, stanza.Error))
 			return true
 		}
+	case "groupchat":
+		//TODO: should be something like
+		//s.receiveGroupChatMessage(from, resource, messageTime, stanza.Body).
+		//which will publish an event, similar to this:
+		//  s.publishEvent(events.Message{
+		//  	Session:   s,
+		//  	From:      from,
+		//  	Resource:  resource,
+		//  	When:      timestamp,
+		//  	Body:      message,
+		//  	Encrypted: encrypted,
+		//  })
+		//and maybe notify:
+		//  s.maybeNotify()
+		return true
 	}
 
 	messageTime := recoverMessageTime(stanza)

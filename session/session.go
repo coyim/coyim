@@ -232,7 +232,7 @@ func (s *session) receivedStreamError(stanza *data.StreamError) bool {
 	return false
 }
 
-func recoverMessageTime(stanza *data.ClientMessage) time.Time {
+func retrieveMessageTime(stanza *data.ClientMessage) time.Time {
 	if stanza.Delay != nil && len(stanza.Delay.Stamp) > 0 {
 		// An XEP-0203 Delayed Delivery <delay/> element exists for
 		// this message, meaning that someone sent it while we were
@@ -270,21 +270,16 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 			return true
 		}
 	case "groupchat":
-		messageTime := recoverMessageTime(stanza)
 		s.publishEvent(events.ChatMessage{
-			Session:       s,
-			From:          from,
-			Resource:      resource,
-			When:          messageTime,
+			From:          stanza.From,
+			When:          retrieveMessageTime(stanza),
 			Body:          stanza.Body,
 			ClientMessage: stanza,
 		})
-		//and maybe notify:
-		//  s.maybeNotify()
 		return true
 	}
 
-	messageTime := recoverMessageTime(stanza)
+	messageTime := retrieveMessageTime(stanza)
 	s.receiveClientMessage(from, resource, messageTime, stanza.Body)
 
 	return true

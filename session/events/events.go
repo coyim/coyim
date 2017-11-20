@@ -91,11 +91,9 @@ type ChatPresence struct {
 
 // ChatMessage represents a message event in a chat room
 type ChatMessage struct {
-	Session  access.Session
-	From     string
-	Resource string
-	When     time.Time
-	Body     string
+	From string
+	When time.Time
+	Body string
 
 	*data.ClientMessage // TODO: remove me
 }

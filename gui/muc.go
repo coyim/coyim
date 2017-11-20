@@ -3,8 +3,10 @@ package gui
 import (
 	"errors"
 	"log"
+	"sync"
 
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/gotk3adapter/glibi"
@@ -153,6 +155,9 @@ type mucMockupView struct {
 	gtki.Window `gtk-widget:"muc-window"`
 	entry       gtki.Entry `gtk-widget:"text-box"`
 
+	historyMutex  sync.Mutex
+	historyBuffer gtki.TextBuffer `gtk-widget:"chat-buffer"`
+
 	eventsChan chan interface{}
 	chat       interfaces.Chat
 	occupant   *data.Occupant
@@ -263,8 +268,6 @@ func (v *mucMockupView) watchEvents(evs <-chan interface{}) {
 			log.Printf("chat view got event: %#v", e)
 		}
 	}
-
-	//
 }
 
 func (v *mucMockupView) updatePresence(presence *events.ChatPresence) {
@@ -273,8 +276,36 @@ func (v *mucMockupView) updatePresence(presence *events.ChatPresence) {
 }
 
 func (v *mucMockupView) displayReceivedMessage(message *events.ChatMessage) {
-	//TODO:
-	log.Printf("Chat message received: %#v", message)
+	v.appendToHistory(message)
+	//TODO: maybe notify?
+}
+
+func (v *mucMockupView) appendToHistory(message *events.ChatMessage) {
+	v.historyMutex.Lock()
+	defer v.historyMutex.Unlock()
+
+	start := v.historyBuffer.GetCharCount()
+	if start != 0 {
+		insertAtEnd(v.historyBuffer, "\n")
+	}
+
+	sent := sentMessage{
+		//TODO: Why both?
+		message:         message.Body,
+		strippedMessage: ui.StripSomeHTML([]byte(message.Body)),
+
+		from:      message.From,
+		to:        message.To,
+		timestamp: message.When,
+	}
+
+	//TODO: use attention?
+	entries, _ := sent.Tagged()
+
+	insertTimestamp(v.historyBuffer, message.When)
+	for _, e := range entries {
+		insertEntry(v.historyBuffer, e)
+	}
 }
 
 func (v *mucMockupView) connectOrSendMessage(msg string) {

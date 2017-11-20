@@ -113,8 +113,7 @@ func (m *muc) EnterRoom(occupant *data.Occupant) error {
 }
 
 //See: Section "7.14 Exiting a Room"
-func (c *conn) leaveRoom(roomID, service, nickname string) error {
-	occupant := data.Occupant{Room: data.Room{ID: roomID, Service: service}, Handle: nickname}
+func (c *muc) LeaveRoom(occupant *data.Occupant) error {
 	return c.sendPresence(&data.ClientPresence{
 		To:    occupant.JID(),
 		Type:  "unavailable",

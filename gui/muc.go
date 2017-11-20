@@ -187,7 +187,7 @@ func newMockupView(account *account, occupant *data.Occupant) *mucMockupView {
 		"on_send_message": mockup.onSendMessage,
 	})
 
-	mockup.SetTitle(occupant.JID())
+	mockup.SetTitle(occupant.Room.JID())
 
 	return mockup
 }
@@ -294,7 +294,7 @@ func (v *mucMockupView) appendToHistory(message *events.ChatMessage) {
 		message:         message.Body,
 		strippedMessage: ui.StripSomeHTML([]byte(message.Body)),
 
-		from:      message.From,
+		from:      utils.ResourceFromJid(message.From),
 		to:        message.To,
 		timestamp: message.When,
 	}

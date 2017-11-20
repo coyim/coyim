@@ -3,7 +3,6 @@ package xmpp
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -13,15 +12,6 @@ const (
 	mucSupport = "<x xmlns='http://jabber.org/protocol/muc'/>"
 	mucNS      = "http://jabber.org/protocol/muc"
 )
-
-func parseRoomJID(roomJID string) *data.Room {
-	parts := strings.SplitN(roomJID, "@", 2)
-	if len(parts) < 2 {
-		return nil
-	}
-
-	return &data.Room{ID: parts[0], Service: parts[1]}
-}
 
 func (c *conn) GetChatContext() interfaces.Chat {
 	return &muc{c}
@@ -48,14 +38,18 @@ func (m *muc) QueryRooms(entity string) ([]data.DiscoveryItem, error) {
 
 //See: Section "6.4 Querying for Room Information"
 func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
-	r := parseRoomJID(room)
-	if r == nil {
+	jid := ParseJID(room)
+	if jid.LocalPart == "" || jid.DomainPart == "" {
 		return nil, errors.New("invalid room")
 	}
 
 	//TODO: this error is useless when it says ("expected query, got error")
-	//It should give us a OTR error
-	query, err := m.queryRoomInformation(r)
+	//It should give us a xmpp error
+	query, err := m.queryRoomInformation(&data.Room{
+		ID:      jid.LocalPart,
+		Service: jid.DomainPart,
+	})
+
 	if err != nil {
 		return nil, err
 	}

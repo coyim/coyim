@@ -140,7 +140,7 @@ func (u *gtkUI) addChatRoom() {
 	view.Show()
 }
 
-type mucMockupView struct {
+type chatRoomView struct {
 	gtki.Window `gtk-widget:"muc-window"`
 	entry       gtki.Entry `gtk-widget:"text-box"`
 
@@ -153,14 +153,14 @@ type mucMockupView struct {
 	occupant   *data.Occupant
 }
 
-func newMockupView(account *account, occupant *data.Occupant) *mucMockupView {
+func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
 	conn := account.session.Conn()
 	if conn == nil {
 		return nil
 	}
 
 	builder := newBuilder("MUCMockup")
-	mockup := &mucMockupView{
+	mockup := &chatRoomView{
 		chat: conn.GetChatContext(),
 
 		//TODO: This could go somewhere else (account maybe?)
@@ -187,7 +187,7 @@ func newMockupView(account *account, occupant *data.Occupant) *mucMockupView {
 	return mockup
 }
 
-func (v *mucMockupView) showDebugInfo() {
+func (v *chatRoomView) showDebugInfo() {
 	//TODO Remove this. It is only for debugging
 	if v.occupant == nil {
 		return
@@ -218,29 +218,25 @@ func (v *mucMockupView) showDebugInfo() {
 	log.Printf("RoomInfo: %#v", response)
 }
 
-func (v *mucMockupView) openWindow() {
+func (v *chatRoomView) openWindow() {
 	//TODO: show error
-	go func() {
-		//TODO: we could make enterRoom to return these channels
-		err := v.chat.EnterRoom(v.occupant)
-		if err != nil {
-			log.Println("Error joining room:", err)
-		}
-	}()
+	go v.chat.EnterRoom(v.occupant)
 
 	go v.watchEvents(v.eventsChan)
+
+	//TODO: remove me
 	go v.showDebugInfo()
 
 	v.Show()
 }
 
-func (v *mucMockupView) leaveRoom() {
+func (v *chatRoomView) leaveRoom() {
 	v.chat.LeaveRoom(v.occupant)
 	close(v.eventsChan)
 	v.eventsChan = nil
 }
 
-func (v *mucMockupView) watchEvents(evs <-chan interface{}) {
+func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 	for {
 		ev, ok := <-evs
 		if !ok {
@@ -278,17 +274,17 @@ func (v *mucMockupView) watchEvents(evs <-chan interface{}) {
 	}
 }
 
-func (v *mucMockupView) updatePresence(presence *events.ChatPresence) {
+func (v *chatRoomView) updatePresence(presence *events.ChatPresence) {
 	//TODO
 	log.Printf("Chat presence update: %#v", presence)
 }
 
-func (v *mucMockupView) displayReceivedMessage(message *events.ChatMessage) {
+func (v *chatRoomView) displayReceivedMessage(message *events.ChatMessage) {
 	v.appendToHistory(message)
 	//TODO: maybe notify?
 }
 
-func (v *mucMockupView) appendToHistory(message *events.ChatMessage) {
+func (v *chatRoomView) appendToHistory(message *events.ChatMessage) {
 	v.historyMutex.Lock()
 	defer v.historyMutex.Unlock()
 
@@ -318,16 +314,16 @@ func (v *mucMockupView) appendToHistory(message *events.ChatMessage) {
 	v.scrollHistoryToBottom()
 }
 
-func (v *mucMockupView) scrollHistoryToBottom() {
+func (v *chatRoomView) scrollHistoryToBottom() {
 	scrollToBottom(v.historyScroll)
 }
 
-func (v *mucMockupView) connectOrSendMessage(msg string) {
+func (v *chatRoomView) connectOrSendMessage(msg string) {
 	//TODO: append message to the message view
 	v.chat.SendChatMessage(msg, &v.occupant.Room)
 }
 
-func (v *mucMockupView) onSendMessage(_ glibi.Object) {
+func (v *chatRoomView) onSendMessage(_ glibi.Object) {
 	//TODO: Why cant I use entry as gtki.Entry?
 	//TODO: File a bug againt gotkadapter
 
@@ -343,7 +339,7 @@ func (v *mucMockupView) onSendMessage(_ glibi.Object) {
 
 func (u *gtkUI) openMUCMockup() {
 	accounts := u.getAllConnectedAccounts()
-	mockup := newMockupView(accounts[0], nil)
+	mockup := newChatRoomView(accounts[0], nil)
 	mockup.SetTransientFor(u.window)
 	mockup.Show()
 }

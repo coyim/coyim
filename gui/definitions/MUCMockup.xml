@@ -63,6 +63,7 @@
                 <property name="editable">False</property>
                 <property name="cursor-visible">False</property>
                 <property name="buffer">chat-buffer</property>
+		<signal name="size-allocate" handler="scroll_history_to_bottom_handler" />
               </object>
             </child>
           </object>
@@ -107,7 +108,7 @@
             <property name="hexpand">True</property>
             <property name="valign">GTK_ALIGN_END</property>
             <property name="visible">True</property>
-	    <signal name="activate" handler="on_send_message" />
+	    <signal name="activate" handler="send_message_handler" />
           </object>
           <packing>
             <property name="left-attach">0</property>

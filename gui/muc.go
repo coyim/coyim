@@ -9,6 +9,7 @@ import (
 	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -156,7 +157,8 @@ type mucMockupView struct {
 	entry       gtki.Entry `gtk-widget:"text-box"`
 
 	historyMutex  sync.Mutex
-	historyBuffer gtki.TextBuffer `gtk-widget:"chat-buffer"`
+	historyBuffer gtki.TextBuffer     `gtk-widget:"chat-buffer"`
+	historyScroll gtki.ScrolledWindow `gtk-widget:"chat-box"`
 
 	eventsChan chan interface{}
 	chat       interfaces.Chat
@@ -184,7 +186,8 @@ func newMockupView(account *account, occupant *data.Occupant) *mucMockupView {
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_send_message": mockup.onSendMessage,
+		"send_message_handler":             mockup.onSendMessage,
+		"scroll_history_to_bottom_handler": mockup.scrollHistoryToBottom,
 	})
 
 	mockup.SetTitle(occupant.Room.JID())
@@ -260,6 +263,7 @@ func (v *mucMockupView) watchEvents(evs <-chan interface{}) {
 				v.updatePresence(&e)
 			})
 		case events.ChatMessage:
+			//TODO: ignore messages not for this room
 			doInUIThread(func() {
 				v.displayReceivedMessage(&e)
 			})
@@ -306,6 +310,12 @@ func (v *mucMockupView) appendToHistory(message *events.ChatMessage) {
 	for _, e := range entries {
 		insertEntry(v.historyBuffer, e)
 	}
+
+	v.scrollHistoryToBottom()
+}
+
+func (v *mucMockupView) scrollHistoryToBottom() {
+	scrollToBottom(v.historyScroll)
 }
 
 func (v *mucMockupView) connectOrSendMessage(msg string) {

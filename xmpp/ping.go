@@ -17,6 +17,8 @@ import (
 
 // SendPing sends a Ping request.
 func (c *conn) SendPing() (reply chan data.Stanza, cookie data.Cookie, err error) {
+	//TODO: should not this be set when we send any message? Why would I send a ping
+	//just after sending a message?
 	c.lastPingRequest = time.Now() //TODO: this seems should not belong to Conn
 	return c.SendIQ("", "get", data.PingRequest{})
 }

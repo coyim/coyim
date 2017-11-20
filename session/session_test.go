@@ -164,7 +164,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 				continue
 			}
 
-			c.Assert(t.Message, Equals, "RECEIVED {urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
+			c.Assert(t.Message, Equals, "unhandled stanza: {urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
 			return
 
 		case <-time.After(1 * time.Millisecond):

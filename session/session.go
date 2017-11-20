@@ -337,6 +337,11 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			return true
 		}
 
+		//TODO: If to == "" this is our own presence confirmation.
+		//"From" is how we are identified (will be JID/"some-id")
+		//Same thing happens for the group-chat, but in this case it tell us also what are our affiliations and roles.
+		//Thats why I'm worried about handling this as a regular peer presence - which is not.
+
 		s.publishEvent(events.Presence{
 			Session:        s,
 			ClientPresence: stanza,
@@ -407,7 +412,7 @@ func (s *session) receiveStanza(stanzaChan chan data.Stanza) bool {
 		case *data.ClientIQ:
 			return s.receivedClientIQ(stanza)
 		default:
-			s.info(fmt.Sprintf("RECEIVED %s %s", rawStanza.Name, rawStanza.Value))
+			s.info(fmt.Sprintf("unhandled stanza: %s %s", rawStanza.Name, rawStanza.Value))
 			return true
 		}
 	}

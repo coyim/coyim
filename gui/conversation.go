@@ -590,6 +590,8 @@ func (conv *conversationWindow) show(userInitiated bool) {
 	conv.tryEnsureCorrectWorkspace()
 }
 
+const mePrefix = "/me "
+
 type sentMessage struct {
 	message         string
 	strippedMessage []byte
@@ -604,6 +606,37 @@ type sentMessage struct {
 	isResent        bool
 	trace           int
 	coordinates     bufferSlice
+}
+
+func (sent *sentMessage) Tagged() ([]*taggableText, bool) {
+	msgTxt := string(sent.strippedMessage)
+	msgHasMePrefix := strings.HasPrefix(strings.TrimSpace(msgTxt), mePrefix)
+	attention := !sent.isDelayed && !msgHasMePrefix
+	userTag := is(sent.isOutgoing, "outgoingUser", "incomingUser")
+	userTag = is(sent.isDelayed, "outgoingDelayedUser", userTag)
+	textTag := is(sent.isOutgoing, "outgoingText", "incomingText")
+	textTag = is(sent.isDelayed, "outgoingDelayedText", textTag)
+
+	if sent.isDelayed {
+		return []*taggableText{
+			&taggableText{userTag, sent.from},
+			&taggableText{text: ":  "},
+			&taggableText{textTag, msgTxt},
+		}, attention
+	}
+
+	if msgHasMePrefix {
+		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
+		return []*taggableText{
+			&taggableText{userTag, sent.from + " " + msgTxt},
+		}, attention
+	}
+
+	return []*taggableText{
+		&taggableText{userTag, sent.from},
+		&taggableText{text: ":  "},
+		&taggableText{textTag, msgTxt},
+	}, attention
 }
 
 func (conv *conversationPane) storeDelayedMessage(trace int, message sentMessage) {
@@ -812,7 +845,7 @@ type bufferSlice struct {
 	start, end gtki.TextMark
 }
 
-func (conv *conversationPane) appendSentMessage(sent sentMessage, attention bool, entries ...taggableText) {
+func (conv *conversationPane) appendSentMessage(sent sentMessage, attention bool, entries ...*taggableText) {
 	conv.markNow()
 	doInUIThread(func() {
 		conv.Lock()
@@ -864,7 +897,7 @@ func insertTimestamp(buff gtki.TextBuffer, timestamp time.Time) {
 	insertWithTag(buff, "timestamp", "] ")
 }
 
-func insertEntry(buff gtki.TextBuffer, entry taggableText) {
+func insertEntry(buff gtki.TextBuffer, entry *taggableText) {
 	if entry.tag != "" {
 		insertWithTag(buff, entry.tag, entry.text)
 	} else {
@@ -873,43 +906,13 @@ func insertEntry(buff gtki.TextBuffer, entry taggableText) {
 }
 
 func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
-	conv.appendSentMessage(sentMessage{timestamp: timestamp}, false, taggableText{"statusText", createStatusMessage(from, show, showStatus, gone)})
+	conv.appendSentMessage(sentMessage{timestamp: timestamp}, false, &taggableText{
+		"statusText", createStatusMessage(from, show, showStatus, gone),
+	})
 }
 
-const mePrefix = "/me "
-
 func (conv *conversationPane) appendMessage(sent sentMessage) {
-	msgTxt := string(sent.strippedMessage)
-	msgHasMePrefix := strings.HasPrefix(strings.TrimSpace(msgTxt), mePrefix)
-	attention := !sent.isDelayed && !msgHasMePrefix
-	userTag := is(sent.isOutgoing, "outgoingUser", "incomingUser")
-	userTag = is(sent.isDelayed, "outgoingDelayedUser", userTag)
-	textTag := is(sent.isOutgoing, "outgoingText", "incomingText")
-	textTag = is(sent.isDelayed, "outgoingDelayedText", textTag)
-	entries := make([]taggableText, 0)
-
-	if sent.isDelayed {
-		entries = append(
-			entries,
-			taggableText{userTag, sent.from},
-			taggableText{text: ":  "},
-			taggableText{textTag, msgTxt},
-		)
-	} else if msgHasMePrefix {
-		msgTxt = strings.TrimPrefix(strings.TrimSpace(msgTxt), mePrefix)
-		entries = append(
-			entries,
-			taggableText{userTag, sent.from + " " + msgTxt},
-		)
-	} else {
-		entries = append(
-			entries,
-			taggableText{userTag, sent.from},
-			taggableText{text: ":  "},
-			taggableText{textTag, msgTxt},
-		)
-	}
-
+	entries, attention := sent.Tagged()
 	conv.appendSentMessage(sent, attention, entries...)
 }
 
@@ -917,7 +920,7 @@ func (conv *conversationPane) displayNotification(notification string) {
 	conv.appendSentMessage(
 		sentMessage{timestamp: time.Now()},
 		false,
-		taggableText{"statusText", notification},
+		&taggableText{"statusText", notification},
 	)
 }
 

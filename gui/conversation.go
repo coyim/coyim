@@ -827,6 +827,7 @@ func createStatusMessage(from, show, showStatus string, gone bool) string {
 }
 
 func scrollToBottom(sw gtki.ScrolledWindow) {
+	//TODO: Should only scroll if is at the end.
 	adj := sw.GetVAdjustment()
 	adj.SetValue(adj.GetUpper() - adj.GetPageSize())
 }

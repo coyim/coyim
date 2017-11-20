@@ -270,17 +270,15 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 			return true
 		}
 	case "groupchat":
-		//TODO: should be something like
-		//s.receiveGroupChatMessage(from, resource, messageTime, stanza.Body).
-		//which will publish an event, similar to this:
-		//  s.publishEvent(events.Message{
-		//  	Session:   s,
-		//  	From:      from,
-		//  	Resource:  resource,
-		//  	When:      timestamp,
-		//  	Body:      message,
-		//  	Encrypted: encrypted,
-		//  })
+		messageTime := recoverMessageTime(stanza)
+		s.publishEvent(events.ChatMessage{
+			Session:       s,
+			From:          from,
+			Resource:      resource,
+			When:          messageTime,
+			Body:          stanza.Body,
+			ClientMessage: stanza,
+		})
 		//and maybe notify:
 		//  s.maybeNotify()
 		return true
@@ -361,6 +359,11 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		)
 	case "unsubscribed":
 		// Ignore
+	case "groupchat":
+		s.publishEvent(events.ChatPresence{
+			Session:        s,
+			ClientPresence: stanza,
+		})
 	case "error":
 		s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
 		s.r.LatestError(stanza.From, stanza.Error.Code, stanza.Error.Type, stanza.Error.Any.XMLName.Space+" "+stanza.Error.Any.XMLName.Local)

@@ -83,6 +83,23 @@ type Message struct {
 	Encrypted bool
 }
 
+// ChatPresence represents a presence event in a chat room
+type ChatPresence struct {
+	Session access.Session
+	*data.ClientPresence
+}
+
+// ChatMessage represents a message event in a chat room
+type ChatMessage struct {
+	Session  access.Session
+	From     string
+	Resource string
+	When     time.Time
+	Body     string
+
+	*data.ClientMessage // TODO: remove me
+}
+
 // LogLevel is the current log level
 type LogLevel int
 

@@ -122,27 +122,14 @@ func (v *addChatView) joinRoomHandler() {
 		return
 	}
 
-	doInUIThread(func() {
-		//TODO: the reference to this object should be kept
-		//otherwise it will be garbage collected before we are done
-		//with the window. We cant keep this goroutine blocked to avoid
-		//the view from leaving the scope, because it would block the
-		//glib main thread.
-		//It probably works because glib.IdleAdd never releases this fn
-		chatRoom := newMockupView(account, occupant)
-		if parent, err := v.GetTransientFor(); err != nil {
-			chatRoom.SetTransientFor(parent)
-		}
+	chatRoom := newChatRoomView(account, occupant)
+	if parent, err := v.GetTransientFor(); err == nil {
+		chatRoom.SetTransientFor(parent)
+	}
+	v.Destroy()
 
-		account.session.Subscribe(chatRoom.eventsChan)
-
-		//TODO: A closed window will leave the room
-		//Probably not what we want
-		chatRoom.Connect("destroy", chatRoom.leaveRoom)
-
-		v.Destroy()
-		chatRoom.openWindow()
-	})
+	account.session.Subscribe(chatRoom.eventsChan)
+	chatRoom.openWindow()
 }
 
 func (u *gtkUI) addChatRoom() {
@@ -188,6 +175,10 @@ func newMockupView(account *account, occupant *data.Occupant) *mucMockupView {
 	builder.ConnectSignals(map[string]interface{}{
 		"send_message_handler":             mockup.onSendMessage,
 		"scroll_history_to_bottom_handler": mockup.scrollHistoryToBottom,
+
+		//TODO: A closed window will leave the room
+		//Probably not what we want for the final version
+		"leave_room_handler": mockup.leaveRoom,
 	})
 
 	mockup.SetTitle(occupant.Room.JID())

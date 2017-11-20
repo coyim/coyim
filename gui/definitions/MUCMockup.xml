@@ -47,6 +47,7 @@
     <property name="default-height">400</property>
     <property name="default-width">500</property>
     <property name="destroy-with-parent">true</property>
+    <signal name="destroy" handler="leave_room_handler" />
     <child>
       <object class="GtkGrid">
         <property name="visible">True</property>

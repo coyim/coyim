@@ -3,32 +3,32 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 61.5 63.7" style="enable-background:new 0 0 61.5 63.7;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:none;stroke:#8980A0;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
-	.st1{fill:#FFE5D4;}
-	.st2{fill:#FFFBF8;}
-	.st3{fill:#F0E9FF;stroke:#8980A0;stroke-width:1.25;stroke-linecap:round;stroke-miterlimit:10;}
-	.st4{fill:#F0E9FF;stroke:#8980A0;stroke-linecap:round;stroke-miterlimit:10;}
+	.st0{fill:#FFE5D4;}
+	.st1{fill:#FFFBF8;}
+	.st2{fill:#F0E9FF;stroke:#8980A0;stroke-width:1.25;stroke-linecap:round;stroke-miterlimit:10;}
+	.st3{fill:#F0E9FF;stroke:#8980A0;stroke-linecap:round;stroke-miterlimit:10;}
+	.st4{fill:none;stroke:#8980A0;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st5{fill:none;stroke:#8980A0;stroke-width:0.75;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st6{fill:#F0E9FF;stroke:#8980A0;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 </style>
-<line id="XMLID_1188_" class="st0" x1="52" y1="48.4" x2="58.2" y2="48.4"/>
-<rect id="Rectangle-4-Copy-9" x="52.1" y="35.3" class="st1" width="2.4" height="3.7"/>
-<circle id="XMLID_1176_" class="st2" cx="31.5" cy="32.3" r="27"/>
-<path class="st3" d="M24.8,22h-5.4c-0.4,0-0.7,0.5-0.7,1.2l-0.1,1.3c-0.1,0.7-0.3,1.2-0.7,1.2h-0.1c-0.5,0-1,0.7-1,1.6l-0.1,1"/>
-<path class="st3" d="M47.2,44.6L49.9,26c0.1-1-1.1-1.9-3.1-1.9H33.7"/>
-<polyline class="st4" points="41,29.5 46.3,29.5 45.6,37.1 "/>
-<polyline class="st4" points="21.1,29.8 21.4,27 29.9,27 "/>
-<line id="XMLID_1189_" class="st0" x1="3.6" y1="48.4" x2="10.8" y2="48.4"/>
-<line id="XMLID_1187_" class="st0" x1="13.6" y1="48.4" x2="50.5" y2="48.4"/>
+<rect id="Rectangle-4-Copy-9" x="52.1" y="35.3" class="st0" width="2.4" height="3.7"/>
+<circle id="XMLID_1176_" class="st1" cx="31.5" cy="32.3" r="27"/>
+<path class="st2" d="M24.8,22h-5.4c-0.4,0-0.7,0.5-0.7,1.2l-0.1,1.3c-0.1,0.7-0.3,1.2-0.7,1.2h-0.1c-0.5,0-1,0.7-1,1.6l-0.1,1"/>
+<path class="st2" d="M47.2,44.6L49.9,26c0.1-1-1.1-1.9-3.1-1.9H33.7"/>
+<polyline class="st3" points="41,29.5 46.3,29.5 45.6,37.1 "/>
+<polyline class="st3" points="21.1,29.8 21.4,27 29.9,27 "/>
+<line id="XMLID_1189_" class="st4" x1="3.6" y1="48.4" x2="10.8" y2="48.4"/>
+<line id="XMLID_1187_" class="st4" x1="13.6" y1="48.4" x2="50.5" y2="48.4"/>
 <line id="XMLID_1183_" class="st5" x1="11.8" y1="51.5" x2="17.7" y2="51.5"/>
 <line id="XMLID_1182_" class="st5" x1="21.3" y1="51.5" x2="27.2" y2="51.5"/>
 <line id="XMLID_1181_" class="st5" x1="30.6" y1="51.5" x2="42.8" y2="51.5"/>
 <line id="XMLID_1180_" class="st5" x1="46.4" y1="51.5" x2="53.3" y2="51.5"/>
 <path class="st6" d="M21.1,32.2H42c0.8,0,1.5,0.5,1.7,1.3l4,14.9H15.4c-0.6,0-1.1-0.4-1.3-1L9.4,30c-0.2-0.8,0.4-1.7,1.3-1.7h7
 	c0.8,0,1.5,0.5,1.7,1.3l0.4,1.6C20,31.8,20.5,32.2,21.1,32.2z"/>
-<polyline id="Rectangle-4-Copy-2" class="st1" points="47.6,14.3 42.2,14.3 42.2,19.7 47.6,19.7 "/>
-<polyline id="Rectangle-4-Copy-16" class="st1" points="13.9,23.7 13.9,21.3 11.6,21.3 11.6,23.7 "/>
-<rect id="Rectangle-4-Copy-19" x="18" y="15.8" class="st1" width="2.4" height="2.4"/>
+<polyline id="Rectangle-4-Copy-2" class="st0" points="47.6,14.3 42.2,14.3 42.2,19.7 47.6,19.7 "/>
+<polyline id="Rectangle-4-Copy-16" class="st0" points="13.9,23.7 13.9,21.3 11.6,21.3 11.6,23.7 "/>
+<rect id="Rectangle-4-Copy-19" x="18" y="15.8" class="st0" width="2.4" height="2.4"/>
 <path class="st6" d="M23.9,17c-0.1,2.6,0.5,5.2,1.9,7.4c3.4,4.9,10.1,6.2,15.7,3.3c-4.2,0.4-8.3-1.2-10.7-4.8
 	c-1.2-1.6-1.7-3.4-1.9-5.4l3.9,0.5l-4.5-7.8l-7.5,6.5L23.9,17z"/>
+<line id="XMLID_1188_" class="st4" x1="54.5" y1="48.4" x2="58.2" y2="48.4"/>
 </svg>

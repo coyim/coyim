@@ -80,7 +80,7 @@ gdk_pixbuf_prefix=$(pkg-config gdk-pixbuf-2.0 --variable prefix)
 gdk_pixbuf_version=$(pkg-config gdk-pixbuf-2.0 --variable gdk_pixbuf_binary_version)
 mkdir -p $resources/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version
 gdk-pixbuf-query-loaders | sed "s|$gdk_pixbuf_prefix/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version/loaders/|../F/|g" \
-  > $resources/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version/loaders.cache 
+  > $resources/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version/loaders.cache
 # We set environment variable GDK_PIXBUF_MODULEDIR to query the loaders for svg
 # /usr/local/Cellar/librsvg/2.40.18/lib/gdk-pixbuf-2.0/2.10.0/loaders
 librsvg_loaders=$(pkg-config librsvg-2.0 --variable prefix)/lib/gdk-pixbuf-2.0/$gdk_pixbuf_version/loaders
@@ -101,13 +101,13 @@ mkdir -p $resources/etc/gtk-3.0
 gtk-query-immodules-3.0 \
   | sed "s|$gtk_prefix/lib/gtk-3.0/$gtk_version/immodules/|@executable_path/../F/|g" \
   | sed "s|$gtk_prefix/share/locale|@executable_path/../Resources/share/locale|g" \
-  > $resources/etc/gtk-3.0/gtk.immodules 
+  > $resources/etc/gtk-3.0/gtk.immodules
 
 echo "** Copying icons and themes"
 
 # Icons and themes
 mkdir -p $resources/share/icons
-cp -av $(brew --prefix gnome-icon-theme)/share/icons/* $resources/share/icons
+cp -av $(brew --prefix adwaita-icon-theme)/share/icons/* $resources/share/icons
 cp -av $(brew --prefix hicolor-icon-theme)/share/icons/* $resources/share/icons
 
 mkdir -p $resources/share/themes/Mac

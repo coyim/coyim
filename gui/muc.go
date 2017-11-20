@@ -7,6 +7,7 @@ import (
 
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
+	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/utils"
@@ -250,10 +251,22 @@ func (v *mucMockupView) watchEvents(evs <-chan interface{}) {
 
 		switch e := ev.(type) {
 		case events.ChatPresence:
+			destination := xmpp.ParseJID(e.ClientPresence.From)
+			if v.occupant.Room.ID != destination.LocalPart ||
+				v.occupant.Room.Service != destination.DomainPart {
+				continue
+			}
+
 			doInUIThread(func() {
 				v.updatePresence(&e)
 			})
 		case events.ChatMessage:
+			destination := xmpp.ParseJID(e.ClientMessage.From)
+			if v.occupant.Room.ID != destination.LocalPart ||
+				v.occupant.Room.Service != destination.DomainPart {
+				continue
+			}
+
 			//TODO: ignore messages not for this room
 			doInUIThread(func() {
 				v.displayReceivedMessage(&e)

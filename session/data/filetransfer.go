@@ -1,11 +1,14 @@
 package data
 
+import "sync"
+
 type transferUpdate struct {
 	current, total int64
 }
 
 // FileTransferControl supplies the capabilities to control the file transfer
 type FileTransferControl struct {
+	sync.RWMutex                         // all updates to the channels need to be protected by this mutex
 	cancelTransfer   chan bool           // one time use
 	errorOccurred    chan error          // one time use
 	update           chan transferUpdate // will be called many times
@@ -20,11 +23,20 @@ func CreateFileTransferControl() *FileTransferControl {
 	return newFileTransferControl(make(chan bool), make(chan error), make(chan transferUpdate, 1000), make(chan bool))
 }
 
+func (ctl *FileTransferControl) closeCancel() {
+	ctl.Lock()
+	defer ctl.Unlock()
+	if ctl.cancelTransfer != nil {
+		close(ctl.cancelTransfer)
+		ctl.cancelTransfer = nil
+	}
+}
+
 func (ctl *FileTransferControl) WaitForFinish(k func()) {
 	_, ok := <-ctl.transferFinished
 	if ok {
 		k()
-		close(ctl.cancelTransfer)
+		ctl.closeCancel()
 	}
 }
 
@@ -32,7 +44,7 @@ func (ctl *FileTransferControl) WaitForError(k func(error)) {
 	e, ok := <-ctl.errorOccurred
 	if ok {
 		k(e)
-		close(ctl.cancelTransfer)
+		ctl.closeCancel()
 	}
 }
 
@@ -50,7 +62,11 @@ func (ctl *FileTransferControl) WaitForUpdate(k func(int64, int64)) {
 }
 
 func (ctl *FileTransferControl) Cancel() {
-	ctl.cancelTransfer <- true
+	ctl.Lock()
+	defer ctl.Unlock()
+	if ctl.cancelTransfer != nil {
+		ctl.cancelTransfer <- true
+	}
 }
 
 func (ctl *FileTransferControl) ReportError(e error) {
@@ -70,9 +86,10 @@ func (ctl *FileTransferControl) ReportFinished() {
 }
 
 func (ctl *FileTransferControl) SendUpdate(current, total int64) {
-	one := ctl.update
-	if one != nil {
-		one <- transferUpdate{current, total}
+	ctl.RLock()
+	defer ctl.RUnlock()
+	if ctl.update != nil {
+		ctl.update <- transferUpdate{current, total}
 	}
 }
 
@@ -83,43 +100,48 @@ func (ctl *FileTransferControl) CloseAll() {
 }
 
 func (ctl *FileTransferControl) closeTransferFinished() {
-	c := ctl.transferFinished
-	ctl.transferFinished = nil
-	if c != nil {
-		close(c)
+	ctl.Lock()
+	defer ctl.Unlock()
+	if ctl.transferFinished != nil {
+		close(ctl.transferFinished)
+		ctl.transferFinished = nil
 	}
 }
 
 func (ctl *FileTransferControl) closeUpdate() {
-	c := ctl.update
-	ctl.update = nil
-	if c != nil {
-		close(c)
+	ctl.Lock()
+	defer ctl.Unlock()
+	if ctl.update != nil {
+		close(ctl.update)
+		ctl.update = nil
 	}
 }
 
 func (ctl *FileTransferControl) closeErrorOccurred() {
-	c := ctl.errorOccurred
-	ctl.errorOccurred = nil
-	if c != nil {
-		close(c)
+	ctl.Lock()
+	defer ctl.Unlock()
+	if ctl.errorOccurred != nil {
+		close(ctl.errorOccurred)
+		ctl.errorOccurred = nil
 	}
 }
 
 func (ctl *FileTransferControl) sendAndCloseErrorOccurred(e error) {
-	c := ctl.errorOccurred
-	ctl.errorOccurred = nil
-	if c != nil {
-		c <- e
-		close(c)
+	ctl.Lock()
+	defer ctl.Unlock()
+	if ctl.errorOccurred != nil {
+		ctl.errorOccurred <- e
+		close(ctl.errorOccurred)
+		ctl.errorOccurred = nil
 	}
 }
 
 func (ctl *FileTransferControl) sendAndCloseTransferFinished(v bool) {
-	c := ctl.transferFinished
-	ctl.transferFinished = nil
-	if c != nil {
-		c <- v
-		close(c)
+	ctl.Lock()
+	defer ctl.Unlock()
+	if ctl.transferFinished != nil {
+		ctl.transferFinished <- v
+		close(ctl.transferFinished)
+		ctl.transferFinished = nil
 	}
 }

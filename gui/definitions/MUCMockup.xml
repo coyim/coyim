@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <interface>
+  <object class="GtkTextTagTable" id="chat-buffer-tags">
+    <child type="tag">
+      <object class="GtkTextTag">
+	  <property name="name">timestamp</property>
+	  <property name="foreground">#aaaaaa</property>
+      </object>
+    </child>
+    <child type="tag">
+      <object class="GtkTextTag">
+	  <property name="name">incomingUser</property>
+	  <property name="foreground">blue</property>
+      </object>
+    </child>
+    <child type="tag">
+      <object class="GtkTextTag">
+	  <property name="name">incomingText</property>
+	  <property name="foreground">black</property>
+      </object>
+    </child>
+  </object>
   <object class="GtkTextBuffer" id="chat-buffer">
-    <property name="text"> [giovane] Hello
- [kingnaldo] Hey!
- [tdruiva] Hi everyone
-    </property>
+    <property name="tag-table">chat-buffer-tags</property>
   </object>
   <object class="GtkListStore" id="users">
     <columns>

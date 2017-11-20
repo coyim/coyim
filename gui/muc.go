@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 
+	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/gotk3adapter/glibi"
@@ -38,7 +39,7 @@ func newChatView(accountManager *accountManager) gtki.Dialog {
 		"cancel_handler":    view.Destroy,
 	})
 
-	view.populateModel()
+	doInUIThread(view.populateModel)
 
 	return view
 }
@@ -130,12 +131,19 @@ func (v *addChatView) joinRoomHandler() {
 			chatRoom.SetTransientFor(parent)
 		}
 
+		account.session.Subscribe(chatRoom.eventsChan)
+
+		//TODO: A closed window will leave the room
+		//Probably not what we want
+		chatRoom.Connect("destroy", chatRoom.leaveRoom)
+
 		v.Destroy()
 		chatRoom.openWindow()
 	})
 }
 
 func (u *gtkUI) addChatRoom() {
+	//pass message and presence channels
 	view := newChatView(u.accountManager)
 	view.SetTransientFor(u.window)
 	view.Show()
@@ -145,8 +153,9 @@ type mucMockupView struct {
 	gtki.Window `gtk-widget:"muc-window"`
 	entry       gtki.Entry `gtk-widget:"text-box"`
 
-	chat     interfaces.Chat
-	occupant *data.Occupant
+	eventsChan chan interface{}
+	chat       interfaces.Chat
+	occupant   *data.Occupant
 }
 
 func newMockupView(account *account, occupant *data.Occupant) *mucMockupView {
@@ -157,8 +166,11 @@ func newMockupView(account *account, occupant *data.Occupant) *mucMockupView {
 
 	builder := newBuilder("MUCMockup")
 	mockup := &mucMockupView{
-		chat:     conn.GetChatContext(),
-		occupant: occupant,
+		chat: conn.GetChatContext(),
+
+		//TODO: This could go somewhere else (account maybe?)
+		eventsChan: make(chan interface{}),
+		occupant:   occupant,
 	}
 
 	err := builder.bindObjects(mockup)
@@ -209,20 +221,60 @@ func (v *mucMockupView) showDebugInfo() {
 func (v *mucMockupView) openWindow() {
 	//TODO: show error
 	go func() {
-		//TODO: Why does this return an error?
-		//Got a presence error from coyim-test@conference.riseup.net: &data.ClientError{XMLName:xml.Name{Space:"jabber:client", Local:"error"}, Code:"", Type:"modify", Any:data.Any{XMLName:xml.Name{Space:"urn:ietf:params:xml:ns:xmpp-stanzas", Local:"bad-request"}, Body:""}, Text:"Invalid presence type"}
+		//TODO: we could make enterRoom to return these channels
 		err := v.chat.EnterRoom(v.occupant)
 		if err != nil {
 			log.Println("Error joining room:", err)
 		}
 	}()
 
-	//TODO: show messages on history
-	//TODO: show and update list of members
-
+	go v.watchEvents(v.eventsChan)
 	go v.showDebugInfo()
 
 	v.Show()
+}
+
+func (v *mucMockupView) leaveRoom() {
+	v.chat.LeaveRoom(v.occupant)
+	close(v.eventsChan)
+	v.eventsChan = nil
+}
+
+func (v *mucMockupView) watchEvents(evs <-chan interface{}) {
+	for {
+		ev, ok := <-evs
+		if !ok {
+			return
+		}
+
+		//TODO: Disable controls when the session disconnects
+
+		switch e := ev.(type) {
+		case events.ChatPresence:
+			doInUIThread(func() {
+				v.updatePresence(&e)
+			})
+		case events.ChatMessage:
+			doInUIThread(func() {
+				v.displayReceivedMessage(&e)
+			})
+		default:
+			//Ignore
+			log.Printf("chat view got event: %#v", e)
+		}
+	}
+
+	//
+}
+
+func (v *mucMockupView) updatePresence(presence *events.ChatPresence) {
+	//TODO
+	log.Printf("Chat presence update: %#v", presence)
+}
+
+func (v *mucMockupView) displayReceivedMessage(message *events.ChatMessage) {
+	//TODO:
+	log.Printf("Chat message received: %#v", message)
 }
 
 func (v *mucMockupView) connectOrSendMessage(msg string) {

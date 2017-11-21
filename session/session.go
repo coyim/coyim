@@ -302,6 +302,13 @@ func firstNonEmpty(ss ...string) string {
 }
 
 func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
+	//MUC is interested in every presence, so we publish regardless.
+	//It is sad that not every presence stanza triggers a presence event.
+	s.publishEvent(events.ChatPresence{
+		Session:        s,
+		ClientPresence: stanza,
+	})
+
 	switch stanza.Type {
 	case "subscribe":
 		jj := utils.RemoveResourceFromJid(stanza.From)
@@ -354,17 +361,13 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		)
 	case "unsubscribed":
 		// Ignore
-	case "groupchat":
-		s.publishEvent(events.ChatPresence{
-			Session:        s,
-			ClientPresence: stanza,
-		})
 	case "error":
 		s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
 		s.r.LatestError(stanza.From, stanza.Error.Code, stanza.Error.Type, stanza.Error.Any.XMLName.Space+" "+stanza.Error.Any.XMLName.Local)
 	default:
 		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
 	}
+
 	return true
 }
 

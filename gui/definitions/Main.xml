@@ -126,16 +126,9 @@
                         <property name="can_focus">False</property>
                         <child>
                           <object class="GtkMenuItem" id="muc-add-chat-room-menu">
-                            <property name="label" translatable="yes">Add Chat...</property>
+                            <property name="label" translatable="yes">Join Chat Room...</property>
                             <property name="use-underline">True</property>
                             <signal name="activate" handler="on_add_chat_room" swapped="no"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkMenuItem" id="muc-open-mockup-window">
-                            <property name="label" translatable="yes">Open Chat Mockup</property>
-                            <property name="use-underline">True</property>
-                            <signal name="activate" handler="on_open_chat_mockup" swapped="no"/>
                           </object>
                         </child>
                       </object>

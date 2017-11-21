@@ -190,12 +190,10 @@
             </child>
             <child>
               <object class="GtkBox" id="search-box">
-                <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkSearchBar" id="search-area">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="show-close-button">False</property>
                     <property name="search-mode-enabled">False</property>

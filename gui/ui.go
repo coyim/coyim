@@ -765,23 +765,20 @@ func (u *gtkUI) initMenuBar() {
 func (u *gtkUI) initSearchBar() {
 	u.searchEntry.SetCanFocus(true)
 	u.searchEntry.Map()
-	u.searchEntry.SetHAlign(gtki.ALIGN_FILL)
-	u.searchEntry.SetHExpand(true)
-
-	boxCenter, _ := u.searchEntry.GetParent()
-	boxCenter.SetHAlign(gtki.ALIGN_FILL)
-	boxCenter.SetHExpand(true)
 
 	u.search.SetHAlign(gtki.ALIGN_FILL)
 	u.search.SetHExpand(true)
 	u.search.ConnectEntry(u.searchEntry)
 	u.roster.view.SetSearchEntry(u.searchEntry)
 
-	prov := providerWithCSS("box { border: none; }")
+	prov := providerWithCSS("entry { min-width: 300px; }")
+	updateWithStyle(u.searchEntry, prov)
+
+	prov = providerWithCSS("box { border: none; }")
 	updateWithStyle(u.searchBox, prov)
 
 	// TODO: unify with dark themes
-	prov = providerWithCSS("searchbar {background-color: #e8e8e7;; }")
+	prov = providerWithCSS("searchbar {background-color: #e8e8e7; }")
 	updateWithStyle(u.search, prov)
 }
 

@@ -104,6 +104,9 @@ func (v *addChatView) validateForm() (*account, *data.Occupant, error) {
 	}
 
 	//TODO: VALIDATE!
+	if handle == "" {
+		handle = xmpp.ParseJID(account.session.GetConfig().Account).LocalPart
+	}
 
 	occ := &data.Occupant{
 		Room: data.Room{

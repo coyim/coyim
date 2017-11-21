@@ -93,6 +93,7 @@
 		<property name="visible">true</property>
                 <property name="placeholder-text">leave empty to use your server</property>
                 <property name="hexpand">True</property>
+                <property name="text">conference.riseup.net</property>
                 <signal name="activate" handler="join_room_handler" />
               </object>
               <packing>
@@ -116,6 +117,7 @@
               <object class="GtkEntry" id="room">
 		<property name="visible">true</property>
                 <property name="hexpand">True</property>
+                <property name="text">coyim-dev</property>
                 <signal name="activate" handler="join_room_handler" />
               </object>
               <packing>

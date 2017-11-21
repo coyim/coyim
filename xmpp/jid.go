@@ -1,12 +1,17 @@
 package xmpp
 
 import (
+	"fmt"
 	"strings"
 )
 
 //JID represents a Jabber Identifier as specified in RFC 7622
 type JID struct {
 	LocalPart, DomainPart, ResourcePart string
+}
+
+func (j *JID) Bare() string {
+	return fmt.Sprintf("%s@%s", j.LocalPart, j.DomainPart)
 }
 
 //ParseJID parses a JID according to RFC 7622.

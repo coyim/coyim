@@ -23,21 +23,10 @@
   <object class="GtkTextBuffer" id="chat-buffer">
     <property name="tag-table">chat-buffer-tags</property>
   </object>
-  <object class="GtkListStore" id="users">
+  <object class="GtkListStore" id="occupants">
     <columns>
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0">[A] giovane</col>
-      </row>
-      <row>
-        <col id="0">kingnaldo</col>
-      </row>
-      <row>
-        <col id="0">tdruiva</col>
-      </row>
-    </data>
   </object>
   <object class="GtkWindow" id="muc-window">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
@@ -76,13 +65,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkScrolledWindow" id="user-list">
+          <object class="GtkScrolledWindow" id="occupants-list">
             <property name="expand">True</property>
             <property name="visible">True</property>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkTreeView" id="occupants-view">
                 <property name="visible">True</property>
-                <property name="model">users</property>
+                <property name="model">occupants</property>
                 <child>
                   <object class="GtkTreeViewColumn">
                     <property name="title">Users</property>

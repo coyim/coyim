@@ -140,6 +140,11 @@ func (u *gtkUI) addChatRoom() {
 	view.Show()
 }
 
+type roomOccupant struct {
+	Role        string
+	Affiliation string
+}
+
 type chatRoomView struct {
 	gtki.Window `gtk-widget:"muc-window"`
 	entry       gtki.Entry `gtk-widget:"text-box"`
@@ -147,6 +152,15 @@ type chatRoomView struct {
 	historyMutex  sync.Mutex
 	historyBuffer gtki.TextBuffer     `gtk-widget:"chat-buffer"`
 	historyScroll gtki.ScrolledWindow `gtk-widget:"chat-box"`
+
+	occupantsList struct {
+		sync.Mutex
+
+		dirty bool
+		m     map[string]*roomOccupant
+	}
+	occupantsView  gtki.TreeView  `gtk-widget:"occupants-view"`
+	occupantsModel gtki.ListStore `gtk-widget:"occupants"`
 
 	eventsChan chan interface{}
 	chat       interfaces.Chat
@@ -161,12 +175,14 @@ func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
 
 	builder := newBuilder("MUCMockup")
 	mockup := &chatRoomView{
-		chat: conn.GetChatContext(),
+		chat:     conn.GetChatContext(),
+		occupant: occupant,
 
 		//TODO: This could go somewhere else (account maybe?)
 		eventsChan: make(chan interface{}),
-		occupant:   occupant,
 	}
+
+	mockup.occupantsList.m = make(map[string]*roomOccupant, 5)
 
 	err := builder.bindObjects(mockup)
 	if err != nil {
@@ -225,7 +241,7 @@ func (v *chatRoomView) openWindow() {
 	go v.watchEvents(v.eventsChan)
 
 	//TODO: remove me
-	go v.showDebugInfo()
+	//go v.showDebugInfo()
 
 	v.Show()
 }
@@ -238,6 +254,8 @@ func (v *chatRoomView) leaveRoom() {
 
 func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 	for {
+		v.redrawOccupantsList()
+
 		ev, ok := <-evs
 		if !ok {
 			return
@@ -247,15 +265,13 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 
 		switch e := ev.(type) {
 		case events.ChatPresence:
-			destination := xmpp.ParseJID(e.ClientPresence.From)
-			if v.occupant.Room.ID != destination.LocalPart ||
-				v.occupant.Room.Service != destination.DomainPart {
+			from := xmpp.ParseJID(e.ClientPresence.From)
+			if from.Bare() != v.occupant.Room.JID() {
+				log.Println("muc: presence not for this room. %#v", e.ClientPresence)
 				continue
 			}
 
-			doInUIThread(func() {
-				v.updatePresence(&e)
-			})
+			v.updatePresence(e.ClientPresence)
 		case events.ChatMessage:
 			destination := xmpp.ParseJID(e.ClientMessage.From)
 			if v.occupant.Room.ID != destination.LocalPart ||
@@ -274,9 +290,40 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 	}
 }
 
-func (v *chatRoomView) updatePresence(presence *events.ChatPresence) {
-	//TODO
-	log.Printf("Chat presence update: %#v", presence)
+func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
+	v.occupantsList.Lock()
+	defer v.occupantsList.Unlock()
+
+	log.Println("muc: update presence status for: %#v", presence)
+	v.occupantsList.dirty = true
+	v.occupantsList.m[presence.From] = &roomOccupant{} //TODO: parse from presence <x />
+}
+
+func (v *chatRoomView) redrawOccupantsList() {
+	if !v.occupantsList.dirty {
+		return
+	}
+
+	v.occupantsList.Lock()
+	defer v.occupantsList.Unlock()
+	v.occupantsList.dirty = false
+
+	doInUIThread(func() {
+		//TODO
+		//See: https://en.wikibooks.org/wiki/GTK%2B_By_Example/Tree_View/Tree_Models#Speed_Issues_when_Adding_a_Lot_of_Rows
+		//v.occupantsView.SetModel(nil)
+		v.occupantsModel.Clear()
+
+		for jid, occupant := range v.occupantsList.m {
+			iter := v.occupantsModel.Append()
+			//Set other values from occupant
+			_ = occupant
+			v.occupantsModel.SetValue(iter, 0, xmpp.ParseJID(jid).ResourcePart)
+		}
+
+		//TODO
+		//v.occupantsList.SetModel(v.users)
+	})
 }
 
 func (v *chatRoomView) displayReceivedMessage(message *events.ChatMessage) {

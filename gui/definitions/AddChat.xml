@@ -13,8 +13,6 @@
     <property name="border_width">7</property>
     <property name="title" translatable="yes">Join chat room</property>
     <property name="resizable">True</property>
-    <property name="default-height">250</property>
-    <property name="default-width">500</property>
     <property name="destroy-with-parent">true</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
@@ -74,17 +72,42 @@
               <packing>
                 <property name="left-attach">1</property>
                 <property name="top-attach">1</property>
+                <property name="width">3</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="service-label" >
+              <object class="GtkLabel" id="room-label" >
 		<property name="visible">true</property>
-                <property name="label" translatable="yes">Server</property>
+                <property name="label" translatable="yes">Room:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="room">
+		<property name="visible">true</property>
+                <property name="hexpand">True</property>
+                <property name="text">coyim-dev</property>
+                <signal name="activate" handler="join_room_handler" />
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="service-label" >
+		<property name="visible">true</property>
+                <property name="label" translatable="yes">@</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
                 <property name="top-attach">2</property>
               </packing>
             </child>
@@ -97,32 +120,8 @@
                 <signal name="activate" handler="join_room_handler" />
               </object>
               <packing>
-                <property name="left-attach">1</property>
+                <property name="left-attach">3</property>
                 <property name="top-attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="room-label" >
-		<property name="visible">true</property>
-                <property name="label" translatable="yes">Room:</property>
-                <property name="justify">GTK_JUSTIFY_RIGHT</property>
-                <property name="halign">GTK_ALIGN_END</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="room">
-		<property name="visible">true</property>
-                <property name="hexpand">True</property>
-                <property name="text">coyim-dev</property>
-                <signal name="activate" handler="join_room_handler" />
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">3</property>
               </packing>
             </child>
             <child>
@@ -134,7 +133,7 @@
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">4</property>
+                <property name="top-attach">3</property>
               </packing>
             </child>
             <child>
@@ -145,7 +144,8 @@
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">4</property>
+                <property name="top-attach">3</property>
+                <property name="width">3</property>
               </packing>
             </child>
           </object>
@@ -172,7 +172,7 @@
         <child>
           <object class="GtkButton" id="button-ok">
             <property name="visible">true</property>
-            <property name="label" translatable="yes">Add</property>
+            <property name="label" translatable="yes">Join room</property>
             <property name="use-underline">True</property>
             <property name="can-default">true</property>
             <signal name="clicked" handler="join_room_handler" />

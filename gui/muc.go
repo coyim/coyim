@@ -176,7 +176,7 @@ func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
 		return nil
 	}
 
-	builder := newBuilder("MUCMockup")
+	builder := newBuilder("chatRoom")
 	mockup := &chatRoomView{
 		chat:     conn.GetChatContext(),
 		occupant: occupant,

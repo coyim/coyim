@@ -255,6 +255,10 @@ func (v *chatRoomView) leaveRoom() {
 	v.eventsChan = nil
 }
 
+func (v *chatRoomView) sameRoom(from string) bool {
+	return xmpp.ParseJID(from).Bare() == v.occupant.Room.JID()
+}
+
 func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 	for {
 		v.redrawOccupantsList()
@@ -268,24 +272,23 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 
 		switch e := ev.(type) {
 		case events.ChatPresence:
-			from := xmpp.ParseJID(e.ClientPresence.From)
-			if from.Bare() != v.occupant.Room.JID() {
+			if !v.sameRoom(e.ClientPresence.From) {
 				log.Println("muc: presence not for this room. %#v", e.ClientPresence)
 				continue
 			}
 
 			v.updatePresence(e.ClientPresence)
 		case events.ChatMessage:
-			destination := xmpp.ParseJID(e.ClientMessage.From)
-			if v.occupant.Room.ID != destination.LocalPart ||
-				v.occupant.Room.Service != destination.DomainPart {
+			if !v.sameRoom(e.ClientMessage.From) {
 				continue
 			}
 
-			//TODO: ignore messages not for this room
-			doInUIThread(func() {
-				v.displayReceivedMessage(&e)
-			})
+			if e.ClientMessage.Subject != nil {
+				v.displaySubjectChange(*e.ClientMessage.Subject)
+				continue
+			}
+
+			v.displayReceivedMessage(&e)
 		default:
 			//Ignore
 			log.Printf("chat view got event: %#v", e)
@@ -329,9 +332,15 @@ func (v *chatRoomView) redrawOccupantsList() {
 	})
 }
 
+func (v *chatRoomView) displaySubjectChange(subject string) {
+	log.Printf("Room subject: %q", subject)
+}
+
 func (v *chatRoomView) displayReceivedMessage(message *events.ChatMessage) {
-	v.appendToHistory(message)
 	//TODO: maybe notify?
+	doInUIThread(func() {
+		v.appendToHistory(message)
+	})
 }
 
 func (v *chatRoomView) appendToHistory(message *events.ChatMessage) {

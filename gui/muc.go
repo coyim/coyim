@@ -302,7 +302,11 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 
 	log.Println("muc: update presence status for: %#v", presence)
 	v.occupantsList.dirty = true
-	v.occupantsList.m[presence.From] = &roomOccupant{} //TODO: parse from presence <x />
+	if presence.Type == "unavailable" {
+		delete(v.occupantsList.m, presence.From)
+	} else {
+		v.occupantsList.m[presence.From] = &roomOccupant{} //TODO: parse from presence <x />
+	}
 }
 
 func (v *chatRoomView) redrawOccupantsList() {

@@ -147,17 +147,18 @@ func DiscoveryReply(name string) data.DiscoveryInfoQuery {
 		},
 		//TODO: extract constants that document which XEPs are supported
 		Features: []data.DiscoveryFeature{
-			{Var: "http://jabber.org/protocol/disco#info"},                    //XEP-0030
-			{Var: "urn:xmpp:bob"},                                             //XEP-0231
-			{Var: "urn:xmpp:ping"},                                            //XEP-0199
-			{Var: "http://jabber.org/protocol/caps"},                          //XEP-0115
-			{Var: "jabber:iq:version"},                                        //XEP-0092
-			{Var: "vcard-temp"},                                               //XEP-0054
-			{Var: "jabber:x:data"},                                            //XEP-004
-			{Var: "http://jabber.org/protocol/si"},                            //XEP-0096
-			{Var: "http://jabber.org/protocol/si/profile/file-transfer"},      //XEP-0096
-			{Var: "http://jabber.org/protocol/si/profile/directory-transfer"}, //XEP-xxxx: SI Directory Transfer
-			{Var: "http://jabber.org/protocol/bytestreams"},                   //XEP-0047
+			{Var: "http://jabber.org/protocol/disco#info"},                         //XEP-0030
+			{Var: "urn:xmpp:bob"},                                                  //XEP-0231
+			{Var: "urn:xmpp:ping"},                                                 //XEP-0199
+			{Var: "http://jabber.org/protocol/caps"},                               //XEP-0115
+			{Var: "jabber:iq:version"},                                             //XEP-0092
+			{Var: "vcard-temp"},                                                    //XEP-0054
+			{Var: "jabber:x:data"},                                                 //XEP-004
+			{Var: "http://jabber.org/protocol/si"},                                 //XEP-0096
+			{Var: "http://jabber.org/protocol/si/profile/file-transfer"},           //XEP-0096
+			{Var: "http://jabber.org/protocol/si/profile/directory-transfer"},      //XEP-xxxx: SI Directory Transfer
+			{Var: "http://jabber.org/protocol/si/profile/encrypted-data-transfer"}, //XEP-xxxx: SI Encrypted Data Transfer
+			{Var: "http://jabber.org/protocol/bytestreams"},                        //XEP-0047
 		},
 	}
 }

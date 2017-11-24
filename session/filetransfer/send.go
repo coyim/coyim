@@ -14,6 +14,7 @@ import (
 )
 
 const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
+const encryptedTransferProfile = "http://jabber.org/protocol/si/profile/encrypted-data-transfer"
 
 func registerSendFileTransferMethod(name string, dispatch func(*sendContext), isCurrentlyValid func(string, access.Session) bool) {
 	supportedSendingMechanisms[name] = dispatch

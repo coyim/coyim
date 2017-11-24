@@ -70,8 +70,8 @@ type Session interface {
 	SendIQError(*data.ClientIQ, interface{})
 	SendIQResult(*data.ClientIQ, interface{})
 	PublishEvent(interface{})
-	SendFileTo(string, string) *sdata.FileTransferControl
-	SendDirTo(string, string) *sdata.FileTransferControl
+	SendFileTo(string, string, bool, []byte) *sdata.FileTransferControl
+	SendDirTo(string, string, bool, []byte) *sdata.FileTransferControl
 	StartSMP(string, string, string, string)
 	FinishSMP(string, string, string)
 	AbortSMP(string, string)

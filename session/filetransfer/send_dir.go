@@ -134,7 +134,7 @@ func (ctx *dirSendContext) offerSend(file string, availableProfiles map[string]b
 }
 
 // InitSendDir starts the process of sending a directory to a peer
-func InitSendDir(s access.Session, peer string, dir string) *sdata.FileTransferControl {
+func InitSendDir(s access.Session, peer string, dir string, encrypted bool, key []byte) *sdata.FileTransferControl {
 	ctx := &dirSendContext{
 		sc: &sendContext{
 			s:       s,

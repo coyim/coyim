@@ -284,7 +284,9 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 				continue
 			}
 
-			if e.ClientMessage.Subject != nil {
+			//TODO: should check if body is not present, and not if it is empty
+			//TODO: check if thread is also not present
+			if e.ClientMessage.Subject != nil && e.ClientMessage.Body == "" {
 				v.displaySubjectChange(*e.ClientMessage.Subject)
 				continue
 			}

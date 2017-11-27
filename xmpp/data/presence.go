@@ -18,5 +18,7 @@ type ClientPresence struct {
 	Error    *ClientError `xml:"error"`
 	Delay    *Delay       `xml:"delay,omitempty"`
 
+	ExtendedPresence *ExtendedPresenceInformation `xml:"x>item,omitempty"`
+
 	Extra string `xml:",innerxml"`
 }

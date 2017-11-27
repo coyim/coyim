@@ -303,12 +303,14 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 	v.occupantsList.Lock()
 	defer v.occupantsList.Unlock()
 
-	log.Println("muc: update presence status for: %#v", presence)
 	v.occupantsList.dirty = true
 	if presence.Type == "unavailable" {
 		delete(v.occupantsList.m, presence.From)
 	} else {
-		v.occupantsList.m[presence.From] = &roomOccupant{} //TODO: parse from presence <x />
+		v.occupantsList.m[presence.From] = &roomOccupant{
+			Role:        presence.ExtendedPresence.Role,
+			Affiliation: presence.ExtendedPresence.Affiliation,
+		}
 	}
 }
 
@@ -329,9 +331,9 @@ func (v *chatRoomView) redrawOccupantsList() {
 
 		for jid, occupant := range v.occupantsList.m {
 			iter := v.occupantsModel.Append()
-			//Set other values from occupant
-			_ = occupant
 			v.occupantsModel.SetValue(iter, 0, xmpp.ParseJID(jid).ResourcePart)
+			v.occupantsModel.SetValue(iter, 1, occupant.Role)
+			v.occupantsModel.SetValue(iter, 2, occupant.Affiliation)
 		}
 
 		//TODO

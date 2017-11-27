@@ -25,6 +25,11 @@
   </object>
   <object class="GtkListStore" id="occupants">
     <columns>
+      <!-- handle -->
+      <column type="gchararray"/>
+      <!-- role -->
+      <column type="gchararray"/>
+      <!-- affiliation -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -88,7 +93,7 @@
                     <property name="model">occupants</property>
                     <child>
                       <object class="GtkTreeViewColumn">
-                        <property name="title">Users</property>
+                        <property name="title">User</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
@@ -97,6 +102,32 @@
                         </child>
                       </object>
                     </child>
+
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title">Role</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+
+
+                    <child>
+                      <object class="GtkTreeViewColumn">
+                        <property name="title">Affiliation</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+
                   </object>
                 </child>
               </object>

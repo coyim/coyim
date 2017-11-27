@@ -60,3 +60,9 @@ type RoomInfo struct {
 	RoomInfoForm `form-type:"http://jabber.org/protocol/muc#roominfo"`
 	RoomType
 }
+
+type ExtendedPresenceInformation struct {
+	JID         string `xml:"jid,attr,omitempty"`
+	Affiliation string `xml:"affiliation,attr,omitempty"`
+	Role        string `xml:"role,attr,omitempty"`
+}

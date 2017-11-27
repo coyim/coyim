@@ -47,4 +47,12 @@ func (*MockTreeView) GetSearchEntry() gtki.Entry {
 }
 
 func (*MockTreeView) SetSearchEqualSubstringMatch() {
+
+}
+
+func (*MockTreeView) GetModel() (gtki.TreeModel, error) {
+	return nil, nil
+}
+
+func (*MockTreeView) SetModel(gtki.TreeModel) {
 }

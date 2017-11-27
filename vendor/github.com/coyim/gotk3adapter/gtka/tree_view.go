@@ -76,3 +76,16 @@ func (v *treeView) SetSearchEntry(v1 gtki.Entry) {
 func (v *treeView) SetSearchEqualSubstringMatch() {
 	v.internal.SetSearchEqualSubstringMatch()
 }
+
+func (v *treeView) SetModel(m gtki.TreeModel) {
+	v.internal.SetModel(unwrapTreeModel(m))
+}
+
+func (v *treeView) GetModel() (gtki.TreeModel, error) {
+	m, err := v.internal.GetModel()
+	if err != nil {
+		return nil, err
+	}
+
+	return wrapTreeModelSimple(m), nil
+}

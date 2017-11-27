@@ -63,6 +63,10 @@ func (v *widget) SetName(v1 string) {
 	v.internal.SetName(v1)
 }
 
+func (v *widget) SetNoShowAll(noShow bool) {
+	v.internal.SetNoShowAll(noShow)
+}
+
 func (v *widget) SetMarginTop(v1 int) {
 	v.internal.SetMarginTop(v1)
 }

@@ -29,6 +29,9 @@ func (*MockWidget) IsVisible() bool {
 func (*MockWidget) SetName(v1 string) {
 }
 
+func (*MockWidget) SetNoShowAll(noShow bool) {
+}
+
 func (*MockWidget) SetMarginTop(v1 int) {
 }
 

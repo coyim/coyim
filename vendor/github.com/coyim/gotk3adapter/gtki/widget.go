@@ -24,6 +24,7 @@ type Widget interface {
 	SetMarginBottom(int)
 	SetMarginTop(int)
 	SetName(string)
+	SetNoShowAll(bool)
 	SetSensitive(bool)
 	SetSizeRequest(int, int)
 	SetVisible(bool)

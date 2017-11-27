@@ -150,6 +150,7 @@ type roomOccupant struct {
 
 type chatRoomView struct {
 	gtki.Window `gtk-widget:"muc-window"`
+	subject     gtki.Label `gtk-widget:"subject"`
 	entry       gtki.Entry `gtk-widget:"text-box"`
 
 	historyMutex  sync.Mutex
@@ -337,7 +338,8 @@ func (v *chatRoomView) redrawOccupantsList() {
 }
 
 func (v *chatRoomView) displaySubjectChange(subject string) {
-	log.Printf("Room subject: %q", subject)
+	v.subject.SetVisible(true)
+	v.subject.SetText(subject)
 }
 
 func (v *chatRoomView) displayReceivedMessage(message *events.ChatMessage) {

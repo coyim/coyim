@@ -42,6 +42,15 @@
       <object class="GtkBox">
 	<property name="visible">true</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <child>
+          <object class="GtkLabel" id="subject">
+            <property name="visible">false</property>
+            <property name="hexpand">true</property>
+            <property name="margin-bottom">6</property>
+          </object>
+          <packing>
+          </packing>
+        </child>
 	<child>
           <object class="GtkGrid">
             <property name="hexpand">true</property>

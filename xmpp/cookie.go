@@ -8,13 +8,14 @@ package xmpp
 
 import (
 	"encoding/binary"
+	"io"
 
 	"github.com/coyim/coyim/xmpp/data"
 )
 
 func (c *conn) getCookie() data.Cookie {
 	var buf [8]byte
-	if _, err := c.Rand().Read(buf[:]); err != nil {
+	if _, err := io.ReadFull(c.Rand(), buf[:]); err != nil {
 		panic("Failed to read random bytes: " + err.Error())
 	}
 	return data.Cookie(binary.LittleEndian.Uint64(buf[:]))

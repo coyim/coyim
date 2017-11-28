@@ -324,9 +324,7 @@ func (v *chatRoomView) redrawOccupantsList() {
 	v.occupantsList.dirty = false
 
 	doInUIThread(func() {
-		//TODO
-		//See: https://en.wikibooks.org/wiki/GTK%2B_By_Example/Tree_View/Tree_Models#Speed_Issues_when_Adding_a_Lot_of_Rows
-		//v.occupantsView.SetModel(nil)
+		v.occupantsView.SetModel(nil)
 		v.occupantsModel.Clear()
 
 		for jid, occupant := range v.occupantsList.m {
@@ -336,8 +334,7 @@ func (v *chatRoomView) redrawOccupantsList() {
 			v.occupantsModel.SetValue(iter, 2, occupant.Affiliation)
 		}
 
-		//TODO
-		//v.occupantsList.SetModel(v.users)
+		v.occupantsView.SetModel(v.occupantsModel)
 	})
 }
 

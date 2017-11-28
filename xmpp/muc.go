@@ -128,3 +128,9 @@ func (m *muc) SendChatMessage(msg string, to *data.Room) error {
 		xmlEscape(to.JID()), xmlEscape(m.conn.jid), xmlEscape(msg))
 	return err
 }
+
+//See: Section "10.2 Subsequent Room Configuration"
+func (m *muc) RequestRoomConfigForm(room *data.Room) error {
+	_, _, err := m.SendIQ(room.JID(), "get", &data.RoomConfigurationQuery{})
+	return err
+}

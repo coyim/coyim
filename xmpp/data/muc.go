@@ -1,6 +1,9 @@
 package data
 
-import "fmt"
+import (
+	"encoding/xml"
+	"fmt"
+)
 
 //See: Section 4.1
 type Room struct {
@@ -40,6 +43,12 @@ type RoomType struct {
 
 	Persistent bool
 	//vs Temporary bool
+}
+
+// RoomConfigurationQuery contains the deserialized information about a room configuration query
+// See: Section "10.2 Subsequent Room Configuration"
+type RoomConfigurationQuery struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#owner query"`
 }
 
 // See: Section 15.5.4 muc#roominfo FORM_TYPE

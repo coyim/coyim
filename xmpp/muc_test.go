@@ -1,6 +1,7 @@
 package xmpp
 
 import (
+	"bytes"
 	"encoding/xml"
 
 	"github.com/coyim/coyim/xmpp/data"
@@ -48,6 +49,31 @@ func (s *MUCSuite) Test_CanLeaveRoom(c *C) {
 		`type="unavailable">`+
 		`<x xmlns='http://jabber.org/protocol/muc'/>`+
 		`</presence>`)
+}
+
+func (s *MUCSuite) Test_CanRequestRoomConfigForm(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+	conn := conn{
+		out: mockOut,
+
+		jid: "crone1@shakespeare.lit/desktop",
+
+		inflights: make(map[data.Cookie]inflight, 1),
+		rand:      bytes.NewBuffer([]byte{1, 0, 0, 0, 0, 0, 0, 0}),
+	}
+
+	err := conn.GetChatContext().RequestRoomConfigForm(&data.Room{ID: "coven", Service: "chat.shakespeare.lit"})
+	c.Assert(err, IsNil)
+	c.Assert(string(mockOut.write), Equals,
+		`<iq xmlns='jabber:client' `+
+			`to='coven@chat.shakespeare.lit' `+
+			`from='crone1@shakespeare.lit/desktop' `+
+			`type='get' `+
+			`id='1'`+
+			`>`+
+			`<query xmlns="http://jabber.org/protocol/muc#owner"></query>`+
+			`</iq>`)
+
 }
 
 func (s *MUCSuite) Test_parseRoomInfo(c *C) {

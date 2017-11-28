@@ -148,3 +148,12 @@ func (m *muc) RequestRoomConfigForm(room *data.Room) (*data.Form, error) {
 	err = xml.Unmarshal(iq.Query, r)
 	return r.Form, err
 }
+
+//See: Section "10.2 Subsequent Room Configuration"
+func (m *muc) UpdateRoomConfig(room *data.Room, form *data.Form) error {
+	_, _, err := m.SendIQ(room.JID(), "set", &data.RoomConfigurationQuery{
+		Form: form,
+	})
+
+	return err
+}

@@ -312,8 +312,8 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 		v.notifyUserLeftRoom(presence)
 	} else {
 		v.occupantsList.m[presence.From] = &roomOccupant{
-			Role:        presence.ExtendedPresence.Role,
-			Affiliation: presence.ExtendedPresence.Affiliation,
+			Role:        presence.Chat.Item.Role,
+			Affiliation: presence.Chat.Item.Affiliation,
 		}
 		v.notifyUserEnteredRoom(presence)
 	}

@@ -18,7 +18,16 @@ type ClientPresence struct {
 	Error    *ClientError `xml:"error"`
 	Delay    *Delay       `xml:"delay,omitempty"`
 
-	ExtendedPresence *ExtendedPresenceInformation `xml:"x>item,omitempty"`
+	Chat *struct {
+		Item struct {
+			JID         string `xml:"jid,attr,omitempty"`
+			Affiliation string `xml:"affiliation,attr,omitempty"`
+			Role        string `xml:"role,attr,omitempty"`
+		} `xml:"item,omitempty"`
+		Status struct {
+			Code int `xml:"code,attr,omitempty"`
+		} `xml:"status,omitempty"`
+	} `xml:"http://jabber.org/protocol/muc#user x, omitempty"`
 
 	Extra string `xml:",innerxml"`
 }

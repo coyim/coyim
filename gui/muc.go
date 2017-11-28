@@ -2,8 +2,10 @@ package gui
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
@@ -288,6 +290,7 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 			//TODO: check if thread is also not present
 			if e.ClientMessage.Subject != nil && e.ClientMessage.Body == "" {
 				v.displaySubjectChange(*e.ClientMessage.Subject)
+				v.notifySubjectChange(e.ClientMessage.From, *e.ClientMessage.Subject)
 				continue
 			}
 
@@ -306,12 +309,32 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 	v.occupantsList.dirty = true
 	if presence.Type == "unavailable" {
 		delete(v.occupantsList.m, presence.From)
+		v.notifyUserLeftRoom(presence)
 	} else {
 		v.occupantsList.m[presence.From] = &roomOccupant{
 			Role:        presence.ExtendedPresence.Role,
 			Affiliation: presence.ExtendedPresence.Affiliation,
 		}
+		v.notifyUserEnteredRoom(presence)
 	}
+}
+
+func (v *chatRoomView) notifyUserLeftRoom(presence *data.ClientPresence) {
+	message := fmt.Sprintf("%v left the room", utils.ResourceFromJid(presence.From))
+	v.notifyStatusChange(message)
+}
+
+func (v *chatRoomView) notifyUserEnteredRoom(presence *data.ClientPresence) {
+	message := fmt.Sprintf("%v entered the room", utils.ResourceFromJid(presence.From))
+	v.notifyStatusChange(message)
+}
+
+func (v *chatRoomView) notifyStatusChange(message string) {
+	doInUIThread(func() {
+		v.insertNewLine()
+		insertTimestamp(v.historyBuffer, time.Now())
+		insertAtEnd(v.historyBuffer, message)
+	})
 }
 
 func (v *chatRoomView) redrawOccupantsList() {
@@ -343,6 +366,12 @@ func (v *chatRoomView) displaySubjectChange(subject string) {
 	v.subject.SetText(subject)
 }
 
+func (v *chatRoomView) notifySubjectChange(from, subject string) {
+	from = utils.ResourceFromJid(from)
+	message := fmt.Sprintf("%s has set the topic to \"%s\"", from, subject)
+	v.notifyStatusChange(message)
+}
+
 func (v *chatRoomView) displayReceivedMessage(message *events.ChatMessage) {
 	//TODO: maybe notify?
 	doInUIThread(func() {
@@ -354,10 +383,7 @@ func (v *chatRoomView) appendToHistory(message *events.ChatMessage) {
 	v.historyMutex.Lock()
 	defer v.historyMutex.Unlock()
 
-	start := v.historyBuffer.GetCharCount()
-	if start != 0 {
-		insertAtEnd(v.historyBuffer, "\n")
-	}
+	v.insertNewLine()
 
 	sent := sentMessage{
 		//TODO: Why both?
@@ -378,6 +404,13 @@ func (v *chatRoomView) appendToHistory(message *events.ChatMessage) {
 	}
 
 	v.scrollHistoryToBottom()
+}
+
+func (v *chatRoomView) insertNewLine() {
+	start := v.historyBuffer.GetCharCount()
+	if start != 0 {
+		insertAtEnd(v.historyBuffer, "\n")
+	}
 }
 
 func (v *chatRoomView) scrollHistoryToBottom() {

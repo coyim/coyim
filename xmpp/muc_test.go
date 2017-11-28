@@ -3,6 +3,7 @@ package xmpp
 import (
 	"bytes"
 	"encoding/xml"
+	"strings"
 
 	"github.com/coyim/coyim/xmpp/data"
 	. "gopkg.in/check.v1"
@@ -52,18 +53,95 @@ func (s *MUCSuite) Test_CanLeaveRoom(c *C) {
 }
 
 func (s *MUCSuite) Test_CanRequestRoomConfigForm(c *C) {
+
+	//See Example 165. Service Sends Configuration Form to Owner
+	expectedResponse := `<iq xmlns='jabber:client' from='coven@chat.shakespeare.lit'
+    id='1'
+    to='crone1@shakespeare.lit/desktop'
+    type='result'>
+  <query xmlns='http://jabber.org/protocol/muc#owner'>
+    <x xmlns='jabber:x:data' type='form'>
+      <title>Configuration for "coven" Room</title>
+      <instructions>
+        Complete this form to modify the
+        configuration of your room.
+      </instructions>
+      <field
+          type='hidden'
+          var='FORM_TYPE'>
+        <value>http://jabber.org/protocol/muc#roomconfig</value>
+      </field>
+      <field
+          label='Natural-Language Room Name'
+          type='text-single'
+          var='muc#roomconfig_roomname'>
+        <value>A Dark Cave</value>
+      </field>
+      <field
+          label='Short Description of Room'
+          type='text-single'
+          var='muc#roomconfig_roomdesc'>
+        <value>The place for all good witches!</value>
+      </field>
+      <!-- There is more in the example, but we removed in favor of brevity -->
+    </x>
+  </query>
+</iq>`
+
+	mockIn := xml.NewDecoder(strings.NewReader(expectedResponse))
 	mockOut := &mockConnIOReaderWriter{}
+
 	conn := conn{
+		in:  mockIn,
 		out: mockOut,
 
 		jid: "crone1@shakespeare.lit/desktop",
 
-		inflights: make(map[data.Cookie]inflight, 1),
+		inflights: make(map[data.Cookie]inflight),
 		rand:      bytes.NewBuffer([]byte{1, 0, 0, 0, 0, 0, 0, 0}),
 	}
 
-	err := conn.GetChatContext().RequestRoomConfigForm(&data.Room{ID: "coven", Service: "chat.shakespeare.lit"})
+	go func() {
+		for len(conn.inflights) == 0 {
+		}
+		conn.Next()
+	}()
+
+	result, err := conn.GetChatContext().RequestRoomConfigForm(&data.Room{ID: "coven", Service: "chat.shakespeare.lit"})
+
 	c.Assert(err, IsNil)
+
+	c.Assert(result, DeepEquals, &data.Form{
+		XMLName:      xml.Name{Space: "jabber:x:data", Local: "x"},
+		Type:         "form",
+		Title:        "Configuration for \"coven\" Room",
+		Instructions: "\n        Complete this form to modify the\n        configuration of your room.\n      ",
+		Fields: []data.FormFieldX{
+			data.FormFieldX{
+				XMLName: xml.Name{
+					Space: "jabber:x:data", Local: "field",
+				},
+				Var:    "FORM_TYPE",
+				Type:   "hidden",
+				Values: []string{"http://jabber.org/protocol/muc#roomconfig"},
+			},
+			data.FormFieldX{
+				XMLName: xml.Name{Space: "jabber:x:data", Local: "field"},
+				Var:     "muc#roomconfig_roomname",
+				Type:    "text-single",
+				Label:   "Natural-Language Room Name",
+				Values:  []string{"A Dark Cave"},
+			},
+			data.FormFieldX{
+				XMLName: xml.Name{Space: "jabber:x:data", Local: "field"},
+				Var:     "muc#roomconfig_roomdesc",
+				Type:    "text-single",
+				Label:   "Short Description of Room",
+				Values:  []string{"The place for all good witches!"},
+			},
+		},
+	})
+
 	c.Assert(string(mockOut.write), Equals,
 		`<iq xmlns='jabber:client' `+
 			`to='coven@chat.shakespeare.lit' `+

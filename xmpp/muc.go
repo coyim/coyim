@@ -1,6 +1,7 @@
 package xmpp
 
 import (
+	"encoding/xml"
 	"errors"
 	"fmt"
 
@@ -130,7 +131,20 @@ func (m *muc) SendChatMessage(msg string, to *data.Room) error {
 }
 
 //See: Section "10.2 Subsequent Room Configuration"
-func (m *muc) RequestRoomConfigForm(room *data.Room) error {
-	_, _, err := m.SendIQ(room.JID(), "get", &data.RoomConfigurationQuery{})
-	return err
+func (m *muc) RequestRoomConfigForm(room *data.Room) (*data.Form, error) {
+	reply, _, err := m.SendIQ(room.JID(), "get", &data.RoomConfigurationQuery{})
+
+	stanza, ok := <-reply
+	if !ok {
+		return nil, errors.New("xmpp: failed to receive response")
+	}
+
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return nil, errors.New("xmpp: failed to parse response")
+	}
+
+	r := &data.RoomConfigurationQuery{}
+	err = xml.Unmarshal(iq.Query, r)
+	return r.Form, err
 }

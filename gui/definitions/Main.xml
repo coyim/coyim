@@ -128,7 +128,7 @@
                           <object class="GtkMenuItem" id="muc-add-chat-room-menu">
                             <property name="label" translatable="yes">Join Chat Room...</property>
                             <property name="use-underline">True</property>
-                            <signal name="activate" handler="on_add_chat_room" swapped="no"/>
+                            <signal name="activate" handler="on_join_chat_room" swapped="no"/>
                           </object>
                         </child>
                       </object>

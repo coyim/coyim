@@ -34,7 +34,7 @@ func newChatView(accountManager *accountManager) gtki.Dialog {
 		accountManager: accountManager,
 	}
 
-	builder := newBuilder("AddChat")
+	builder := newBuilder("AddMUCChat")
 	err := builder.bindObjects(view)
 	if err != nil {
 		panic(err)
@@ -138,7 +138,7 @@ func (v *addChatView) joinRoomHandler() {
 	chatRoom.openWindow()
 }
 
-func (u *gtkUI) addChatRoom() {
+func (u *gtkUI) joinChatRoom() {
 	//pass message and presence channels
 	view := newChatView(u.accountManager)
 	view.SetTransientFor(u.window)
@@ -179,7 +179,7 @@ func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
 		return nil
 	}
 
-	builder := newBuilder("chatRoom")
+	builder := newBuilder("MUCRoom")
 	mockup := &chatRoomView{
 		chat:     conn.GetChatContext(),
 		occupant: occupant,

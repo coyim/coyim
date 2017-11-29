@@ -1366,21 +1366,6 @@ TzwvcHJvcGVydHk+CiAgPC9vYmplY3Q+CjwvaW50ZXJmYWNlPgo=
 `,
 	},
 
-	"/definitions/BadUsernameNotification.xml": {
-		local:   "definitions/BadUsernameNotification.xml",
-		size:    382,
-		modtime: 1489449600,
-		compressed: `
-PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtCb3giIGlkPSJpbmZvYmFyIj4KICAgIDxwcm9w
-ZXJ0eSBuYW1lPSJvcmllbnRhdGlvbiI+R1RLX09SSUVOVEFUSU9OX0hPUklaT05UQUw8L3Byb3BlcnR5
-PgogICAgPGNoaWxkPgogICAgICA8b2JqZWN0IGNsYXNzPSJHdGtMYWJlbCIgaWQ9Im1lc3NhZ2UiPgog
-ICAgICAgIDxwcm9wZXJ0eSBuYW1lPSJ3cmFwIj50cnVlPC9wcm9wZXJ0eT4KICAgICAgICA8cHJvcGVy
-dHkgbmFtZT0ibWFyZ2luLWxlZnQiPjEwPC9wcm9wZXJ0eT4KICAgICAgICA8cHJvcGVydHkgbmFtZT0i
-bWFyZ2luLXJpZ2h0Ij4xMDwvcHJvcGVydHk+CiAgICAgIDwvb2JqZWN0PgogICAgPC9jaGlsZD4KICA8
-L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
-`,
-	},
-
 	"/definitions/CannotVerifyWithSMP.xml": {
 		local:   "definitions/CannotVerifyWithSMP.xml",
 		size:    2134,
@@ -2672,6 +2657,21 @@ aWduYWwgbmFtZT0iY2xpY2tlZCIgaGFuZGxlcj0ib25fc2F2ZV9zaWduYWwiLz4KICAgICAgICAgICAg
 ICA8L29iamVjdD4KICAgICAgICAgICAgPC9jaGlsZD4KICAgICAgICAgIDwvb2JqZWN0PgogICAgICAg
 IDwvY2hpbGQ+CiAgICAgIDwvb2JqZWN0PgogICAgPC9jaGlsZD4KICA8L29iamVjdD4KPC9pbnRlcmZh
 Y2U+Cg==
+`,
+	},
+
+	"/definitions/ErrorNotification.xml": {
+		local:   "definitions/ErrorNotification.xml",
+		size:    382,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtCb3giIGlkPSJpbmZvYmFyIj4KICAgIDxwcm9w
+ZXJ0eSBuYW1lPSJvcmllbnRhdGlvbiI+R1RLX09SSUVOVEFUSU9OX0hPUklaT05UQUw8L3Byb3BlcnR5
+PgogICAgPGNoaWxkPgogICAgICA8b2JqZWN0IGNsYXNzPSJHdGtMYWJlbCIgaWQ9Im1lc3NhZ2UiPgog
+ICAgICAgIDxwcm9wZXJ0eSBuYW1lPSJ3cmFwIj50cnVlPC9wcm9wZXJ0eT4KICAgICAgICA8cHJvcGVy
+dHkgbmFtZT0ibWFyZ2luLWxlZnQiPjEwPC9wcm9wZXJ0eT4KICAgICAgICA8cHJvcGVydHkgbmFtZT0i
+bWFyZ2luLXJpZ2h0Ij4xMDwvcHJvcGVydHk+CiAgICAgIDwvb2JqZWN0PgogICAgPC9jaGlsZD4KICA8
+L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
 `,
 	},
 

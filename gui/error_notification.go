@@ -15,7 +15,7 @@ type errorNotification struct {
 func newErrorNotification(info gtki.Box) *errorNotification {
 	errorNotif := &errorNotification{Box: info}
 
-	b := newBuilder("BadUsernameNotification")
+	b := newBuilder("ErrorNotification")
 	b.getItems(
 		"infobar", &errorNotif.area,
 		"message", &errorNotif.label,

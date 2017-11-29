@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp"
@@ -19,14 +20,17 @@ import (
 
 type addChatView struct {
 	accountManager *accountManager
+	errorBox       *errorNotification
 
 	gtki.Dialog `gtk-widget:"add-chat-dialog"`
 
-	model   gtki.ListStore `gtk-widget:"accounts-model"`
-	account gtki.ComboBox  `gtk-widget:"accounts"`
-	service gtki.Entry     `gtk-widget:"service"`
-	room    gtki.Entry     `gtk-widget:"room"`
-	handle  gtki.Entry     `gtk-widget:"handle"`
+	notification gtki.Box      `gtk-widget:"notification-area"`
+	account      gtki.ComboBox `gtk-widget:"accounts"`
+	service      gtki.Entry    `gtk-widget:"service"`
+	room         gtki.Entry    `gtk-widget:"room"`
+	handle       gtki.Entry    `gtk-widget:"handle"`
+
+	model gtki.ListStore `gtk-widget:"accounts-model"`
 }
 
 func newChatView(accountManager *accountManager) gtki.Dialog {
@@ -45,6 +49,7 @@ func newChatView(accountManager *accountManager) gtki.Dialog {
 		"cancel_handler":    view.Destroy,
 	})
 
+	view.errorBox = newErrorNotification(view.notification)
 	doInUIThread(view.populateModel)
 
 	return view
@@ -64,50 +69,61 @@ func (v *addChatView) populateModel() {
 }
 
 //TODO: This is repeated on AddAccount logic, for example.
-func (v *addChatView) getAccount() (*account, bool) {
+func (v *addChatView) getAccount() (string, string, error) {
 	iter, err := v.account.GetActiveIter()
 	if err != nil {
-		return nil, false
+		return "", "", err
 	}
 
-	val, err := v.model.GetValue(iter, 1)
+	val, err := v.model.GetValue(iter, 0)
 	if err != nil {
-		return nil, false
+		return "", "", err
+	}
+
+	bareJID, err := val.GetString()
+	if err != nil {
+		return "", "", err
+	}
+
+	val, err = v.model.GetValue(iter, 1)
+	if err != nil {
+		return "", "", err
 	}
 
 	id, err := val.GetString()
 	if err != nil {
-		return nil, false
+		return "", "", err
 	}
 
-	return v.accountManager.getAccountByID(id)
+	return id, bareJID, nil
 }
 
-func (v *addChatView) validateForm() (*account, *data.Occupant, error) {
-	account, ok := v.getAccount()
-	if !ok {
-		return nil, nil, errors.New("could not find account")
+func (v *addChatView) validateForm() (string, *data.Occupant, error) {
+	accountID, bareJID, err := v.getAccount()
+	if err != nil {
+		panic(err)
 	}
 
-	//TODO: If service is empty, should get it from account's JID
 	service, err := v.service.GetText()
 	if err != nil {
-		return nil, nil, err
+		panic(err)
 	}
 
 	room, err := v.room.GetText()
 	if err != nil {
-		return nil, nil, err
+		panic(err)
 	}
 
 	handle, err := v.handle.GetText()
 	if err != nil {
-		return nil, nil, err
+		panic(err)
 	}
 
-	//TODO: VALIDATE!
+	//TODO: If service is empty, should get it from account's JID?
+
+	//Validate
 	if handle == "" {
-		handle = xmpp.ParseJID(account.session.GetConfig().Account).LocalPart
+		handle = xmpp.ParseJID(bareJID).LocalPart
 	}
 
 	occ := &data.Occupant{
@@ -118,28 +134,43 @@ func (v *addChatView) validateForm() (*account, *data.Occupant, error) {
 		Handle: handle,
 	}
 
-	return account, occ, nil
+	return accountID, occ, nil
 }
 
-func (v *addChatView) joinRoomHandler() {
-	account, occupant, err := v.validateForm()
-	if err != nil {
-		//TODO: show error
-		return
+//TODO: This couples the view with the object hierarchy. This should be provided by a "service".
+func (v *addChatView) getChatContextForAccount(accountID string, chatEvents chan<- interface{}) (interfaces.Chat, error) {
+	account, ok := v.accountManager.getAccountByID(accountID)
+	if !ok {
+		return nil, errors.New(i18n.Local("The selected account could not be found."))
 	}
 
 	conn := account.session.Conn()
 	if conn == nil {
-		//TODO: show error
+		return nil, errors.New(i18n.Local("The selected account is not connected."))
+	}
+
+	account.session.Subscribe(chatEvents)
+	return conn.GetChatContext(), nil
+}
+
+func (v *addChatView) validateFormAndOpenRoomWindow() {
+	accountID, occupant, err := v.validateForm()
+	if err != nil {
+		v.errorBox.ShowMessage(err.Error())
+		return
+	}
+
+	eventsChan := make(chan interface{})
+	chat, err := v.getChatContextForAccount(accountID, eventsChan)
+	if err != nil {
+		v.errorBox.ShowMessage(err.Error())
 		return
 	}
 
 	//TODO: This should notify the user about what is happening (bc it blocks)
-	//and also notify when a failure occurs.
-	chat := conn.GetChatContext()
 	if !chat.CheckForSupport(occupant.Service) {
-		//TODO: show error
-		log.Println("No support to MUC")
+		v.errorBox.ShowMessage(i18n.Local("The service does not support chat."))
+		close(eventsChan)
 		return
 	}
 
@@ -149,8 +180,12 @@ func (v *addChatView) joinRoomHandler() {
 	}
 	v.Destroy()
 
-	account.session.Subscribe(chatRoom.eventsChan)
-	chatRoom.openWindow()
+	chatRoom.openWindow(eventsChan)
+}
+
+func (v *addChatView) joinRoomHandler() {
+	v.errorBox.Hide()
+	doInUIThread(v.validateFormAndOpenRoomWindow)
 }
 
 func (v *chatRoomView) updateRoomConfig() {
@@ -216,9 +251,6 @@ func newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomVie
 	v := &chatRoomView{
 		chat:     chat,
 		occupant: occupant,
-
-		//TODO: This could go somewhere else (account maybe?)
-		eventsChan: make(chan interface{}),
 	}
 
 	v.occupantsList.m = make(map[string]*roomOccupant, 5)
@@ -274,10 +306,11 @@ func (v *chatRoomView) showDebugInfo() {
 	log.Printf("RoomInfo: %#v", response)
 }
 
-func (v *chatRoomView) openWindow() {
+func (v *chatRoomView) openWindow(evs chan interface{}) {
+	v.eventsChan = evs
+
 	//TODO: show error
 	go v.chat.EnterRoom(v.occupant)
-
 	go v.watchEvents(v.eventsChan)
 
 	v.Show()

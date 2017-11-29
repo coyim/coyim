@@ -1026,6 +1026,10 @@ func (mc *mockConv) TheirFingerprint() []byte {
 	return nil
 }
 
+func (mc *mockConv) CreateExtraSymmetricKey(client.Sender, string) ([]byte, error) {
+	return nil, nil
+}
+
 func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncrypted(c *C) {
 	mcm := &mockConvManager{}
 	sess := &session{

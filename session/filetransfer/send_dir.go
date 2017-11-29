@@ -1,6 +1,7 @@
 package filetransfer
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -67,15 +68,15 @@ func (ctx *dirSendContext) listenForCancellation() {
 	ctx.sc.listenForCancellation()
 }
 
-func sendSIData(sid, profile, file string, size int64, s access.Session) data.SI {
+func (ctx *sendContext) sendSIData(profile, file string, isDir bool) data.SI {
+	if ctx.enc != nil {
+		profile = encryptedTransferProfile
+	}
+
 	// TODO: Add Date and Hash here later?
-	return data.SI{
-		ID:      sid,
+	si := data.SI{
+		ID:      ctx.sid,
 		Profile: profile,
-		File: &data.File{
-			Name: filepath.Base(file),
-			Size: size,
-		},
 		Feature: data.FeatureNegotation{
 			Form: data.Form{
 				Type: "form",
@@ -83,12 +84,38 @@ func sendSIData(sid, profile, file string, size int64, s access.Session) data.SI
 					{
 						Var:     "stream-method",
 						Type:    "list-single",
-						Options: calculateAvailableSendOptions(s),
+						Options: calculateAvailableSendOptions(ctx.s),
 					},
 				},
 			},
 		},
 	}
+
+	if ctx.enc != nil {
+		si.EncryptedData = &data.EncryptedData{
+			Name: filepath.Base(file),
+			Size: ctx.size,
+			EncryptionParameters: &data.EncryptionParameters{
+				Type:          "aes128-ctr",
+				IV:            base64.StdEncoding.EncodeToString(ctx.enc.iv),
+				MAC:           "hmac-sha256",
+				EncryptionKey: &data.EncryptionKeyParameter{Type: ctx.enc.keyType},
+				MACKey:        &data.EncryptionKeyParameter{Type: ctx.enc.keyType},
+			},
+		}
+		if isDir {
+			si.EncryptedData.Type = "directory"
+		} else {
+			si.EncryptedData.Type = "file"
+		}
+	} else {
+		si.File = &data.File{
+			Name: filepath.Base(file),
+			Size: ctx.size,
+		}
+	}
+
+	return si
 }
 
 // we assume that ctx.sc.file points to a valid file, since it's generated in previous code. thus, we don't check for existance.
@@ -97,7 +124,7 @@ func (ctx *dirSendContext) offerSendDirectory() error {
 	ctx.sc.sid = genSid(ctx.sc.s.Conn())
 	ctx.sc.size = fstat.Size()
 
-	toSend := sendSIData(ctx.sc.sid, dirTransferProfile, ctx.dir, ctx.sc.size, ctx.sc.s)
+	toSend := ctx.sc.sendSIData(dirTransferProfile, ctx.dir, true)
 
 	var siq data.SI
 	nonblockIQ(ctx.sc.s, ctx.sc.peer, "set", toSend, &siq, func(*data.ClientIQ) {
@@ -134,10 +161,11 @@ func (ctx *dirSendContext) offerSend(file string, availableProfiles map[string]b
 }
 
 // InitSendDir starts the process of sending a directory to a peer
-func InitSendDir(s access.Session, peer string, dir string, encrypted bool, key []byte) *sdata.FileTransferControl {
+func InitSendDir(s access.Session, peer string, dir string, encrypted bool) *sdata.FileTransferControl {
 	ctx := &dirSendContext{
 		sc: &sendContext{
 			s:       s,
+			enc:     generateEncryptionParameters(encrypted, func() []byte { return s.CreateSymmetricKeyFor(peer) }, "external"),
 			peer:    peer,
 			control: sdata.CreateFileTransferControl(),
 			onFinishHook: func(ctx *sendContext) {

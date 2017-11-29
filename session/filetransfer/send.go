@@ -75,7 +75,7 @@ func (ctx *sendContext) offerSend() error {
 	ctx.sid = genSid(ctx.s.Conn())
 	ctx.size = fstat.Size()
 
-	toSend := sendSIData(ctx.sid, fileTransferProfile, ctx.file, ctx.size, ctx.s)
+	toSend := ctx.sendSIData(fileTransferProfile, ctx.file, false)
 
 	var siq data.SI
 	nonblockIQ(ctx.s, ctx.peer, "set", toSend, &siq, func(*data.ClientIQ) {
@@ -104,6 +104,7 @@ type sendContext struct {
 	file             string
 	sid              string
 	size             int64
+	enc              *encryptionParameters
 	weWantToCancel   bool
 	theyWantToCancel bool
 	totalSent        int64
@@ -164,12 +165,13 @@ func (ctx *sendContext) initSend() {
 }
 
 // InitSend starts the process of sending a file to a peer
-func InitSend(s access.Session, peer string, file string, encrypted bool, key []byte) *sdata.FileTransferControl {
+func InitSend(s access.Session, peer string, file string, encrypted bool) *sdata.FileTransferControl {
 	ctx := &sendContext{
 		peer:    peer,
 		file:    file,
 		control: sdata.CreateFileTransferControl(),
 		s:       s,
+		enc:     generateEncryptionParameters(encrypted, func() []byte { return s.CreateSymmetricKeyFor(peer) }, "external"),
 	}
 	go ctx.initSend()
 	return ctx.control

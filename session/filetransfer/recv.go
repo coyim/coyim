@@ -42,6 +42,7 @@ type recvContext struct {
 	destination string
 	opaque      interface{}
 	control     *sdata.FileTransferControl
+	enc         *encryptionParameters
 }
 
 func extractFileTransferOptions(f data.Form) ([]string, error) {
@@ -87,6 +88,7 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 	}
 }
 
+// TODO: do we need to do something about encryption here?
 func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
 	if ctx.directory {
 		defer os.Remove(tempName)
@@ -143,25 +145,26 @@ func waitForFileTransferUserAcceptance(stanza *data.ClientIQ, si data.SI, accept
 	ctx.s.SendIQError(stanza, *error)
 }
 
-func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, f *data.File, ctl *sdata.FileTransferControl, isDir bool) *recvContext {
+// TODO: here we need to figure out the encryption parameters
+func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, ctl *sdata.FileTransferControl, isDir bool) *recvContext {
 	ctx := &recvContext{
 		s:         s,
 		sid:       si.ID,
 		mime:      si.MIMEType,
 		options:   options,
-		date:      f.Date,
-		hash:      f.Hash,
-		name:      f.Name,
-		size:      f.Size,
-		desc:      f.Desc,
+		date:      si.File.Date,
+		hash:      si.File.Hash,
+		name:      si.File.Name,
+		size:      si.File.Size,
+		desc:      si.File.Desc,
 		peer:      stanza.From,
 		directory: isDir,
 		control:   ctl,
 	}
 
-	if f.Range != nil {
-		ctx.rng.length = f.Range.Length
-		ctx.rng.offset = f.Range.Offset
+	if si.File.Range != nil {
+		ctx.rng.length = si.File.Range.Length
+		ctx.rng.offset = si.File.Range.Offset
 	}
 
 	addInflightRecv(ctx)

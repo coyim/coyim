@@ -143,14 +143,14 @@ func (account *account) sendThingTo(peer string, u *gtkUI, name string, dir bool
 
 func (account *account) sendDirectoryTo(peer string, u *gtkUI) {
 	if dir, ok := chooseDirToSend(u.window); ok {
-		ctl := account.session.SendDirTo(peer, dir, false, nil)
+		ctl := account.session.SendDirTo(peer, dir, false)
 		account.sendThingTo(peer, u, dir, true, ctl)
 	}
 }
 
 func (account *account) sendFileTo(peer string, u *gtkUI) {
 	if file, ok := chooseFileToSend(u.window); ok {
-		ctl := account.session.SendFileTo(peer, file, false, nil)
+		ctl := account.session.SendFileTo(peer, file, false)
 		account.sendThingTo(peer, u, file, false, ctl)
 	}
 }

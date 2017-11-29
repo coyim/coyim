@@ -11,7 +11,16 @@ import (
 
 // InitIQ is the hook function that will be called when we receive a file or directory transfer stream initiation IQ
 func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{}, iqtype string, ignore bool) {
-	isDir := si.Profile == dirTransferProfile
+	isDir := false
+	isEnc := false
+	switch si.Profile {
+	case dirTransferProfile:
+		isDir = true
+	case encryptedTransferProfile:
+		isEnc = true
+		isDir = si.EncryptedData.Type == "directory"
+	}
+	isEnc = isEnc
 
 	var options []string
 	var err error
@@ -20,10 +29,10 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 		return nil, "", false
 	}
 
-	f := si.File
-
 	ctl := sdata.CreateFileTransferControl()
-	ctx := registerNewFileTransfer(s, si, options, stanza, f, ctl, isDir)
+
+	// TODO: here until the end we need to figure out what to do with encryption
+	ctx := registerNewFileTransfer(s, si, options, stanza, ctl, isDir)
 
 	acceptResult := make(chan *string)
 	go waitForFileTransferUserAcceptance(stanza, si, acceptResult, ctx)
@@ -31,11 +40,11 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 	s.PublishEvent(events.FileTransfer{
 		Session:          s,
 		Peer:             stanza.From,
-		Mime:             f.Hash,
-		DateLastModified: f.Date,
-		Name:             f.Name,
-		Size:             f.Size,
-		Description:      f.Desc,
+		Mime:             si.File.Hash,
+		DateLastModified: si.File.Date,
+		Name:             si.File.Name,
+		Size:             si.File.Size,
+		Description:      si.File.Desc,
 		Answer:           acceptResult,
 		Control:          ctl,
 		IsDirectory:      isDir,

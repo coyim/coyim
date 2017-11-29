@@ -23,6 +23,7 @@ type Conversation interface {
 	OurFingerprint() []byte
 	TheirFingerprint() []byte
 
+	CreateExtraSymmetricKey(s Sender, resource string) ([]byte, error)
 	//TODO: should we expose TO and remove this from gui.ConversationWindow?
 }
 
@@ -124,4 +125,15 @@ func (c *conversation) TheirFingerprint() []byte {
 	}
 
 	return pk.Fingerprint()
+}
+
+const usageFileTransfer = uint32(123)
+
+func (c *conversation) CreateExtraSymmetricKey(s Sender, resource string) ([]byte, error) {
+	key, toSend, err := c.Conversation.UseExtraSymmetricKey(usageFileTransfer, nil)
+	if err != nil {
+		return nil, err
+	}
+	err = c.sendAll(s, resource, toSend)
+	return key, err
 }

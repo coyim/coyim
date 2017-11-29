@@ -1124,3 +1124,21 @@ func (s *session) AbortSMP(peer, resource string) {
 		s.alert("error: cannot abort SMP: " + err.Error())
 	}
 }
+
+// TODO: we also need a way to deal with when the TLV is received.
+
+func (s *session) CreateSymmetricKeyFor(peer string) []byte {
+	b, r := utils.SplitJid(peer)
+
+	conv, ok := s.convManager.GetConversationWith(b, r)
+	if !ok {
+		return nil
+	}
+
+	key, err := conv.CreateExtraSymmetricKey(s, r)
+	if err != nil {
+		return nil
+	}
+
+	return key
+}

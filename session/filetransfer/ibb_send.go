@@ -58,6 +58,7 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 
 	n, err := r.Read(buffer)
 	if n > 0 {
+		// TODO: here, we need to optionally do the encryption etc
 		encdata := base64.StdEncoding.EncodeToString(buffer[:n])
 
 		rpl, _, e := ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBData{
@@ -74,6 +75,7 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 		go trackResultOfSend(ctx, rpl)
 	}
 	if err == io.EOF {
+		// TODO: here, for encryption, we need to send the mac key and wait for result of mac key write
 		r.Close()
 		// TODO[LATER]: we ignore the result of this close - maybe we should react to it in some way, if it reports failure from the other side
 		ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
@@ -123,6 +125,7 @@ func ibbSendChunks(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16)
 }
 
 func ibbSendStartTransfer(ctx *sendContext, blockSize int) {
+	// TODO: for encryption, this is probably the right place to create the MAC and AES thingies
 	seq := uint16(0)
 	buffer := make([]byte, blockSize)
 	f, err := os.Open(ctx.file)

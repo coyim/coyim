@@ -39,6 +39,7 @@ type Session interface {
 	Conn() xi.Conn
 	Connect(string, tls.Verifier) error
 	ConversationManager() client.ConversationManager
+	CreateSymmetricKeyFor(string) []byte
 	DenyPresenceSubscription(string, string) error
 	DisplayName() string
 	EncryptAndSendTo(string, string, string) (int, bool, error)
@@ -70,8 +71,8 @@ type Session interface {
 	SendIQError(*data.ClientIQ, interface{})
 	SendIQResult(*data.ClientIQ, interface{})
 	PublishEvent(interface{})
-	SendFileTo(string, string, bool, []byte) *sdata.FileTransferControl
-	SendDirTo(string, string, bool, []byte) *sdata.FileTransferControl
+	SendFileTo(string, string, bool) *sdata.FileTransferControl
+	SendDirTo(string, string, bool) *sdata.FileTransferControl
 	StartSMP(string, string, string, string)
 	FinishSMP(string, string, string)
 	AbortSMP(string, string)

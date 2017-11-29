@@ -40,7 +40,7 @@ func (acd *addContactDialog) getVerifiedContact(errorNotif *errorNotification) (
 			acd.notificationArea.Remove(acd.notification)
 		}
 
-		errorNotif.renderAccountError(err)
+		errorNotif.ShowMessage(err)
 		log.Printf(err)
 
 		return "", false

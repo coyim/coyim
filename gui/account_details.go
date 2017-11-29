@@ -321,7 +321,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		"on_save_signal": func() {
 			accDtails := getAccountDetails(data)
 			if isJid, err := verifyXMPPAddress(accDtails.accTxt); !isJid {
-				errorNotif.renderAccountError(err)
+				errorNotif.ShowMessage(err)
 				log.Printf(err)
 				return
 			}

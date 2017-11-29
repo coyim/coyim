@@ -6,26 +6,24 @@ import (
 )
 
 type errorNotification struct {
-	gtki.Box //the container
-
-	area  gtki.Box
-	label gtki.Label
+	area  gtki.Box   `gtk-widget:"infobar"`
+	label gtki.Label `gtk-widget:"message"`
 }
 
 func newErrorNotification(info gtki.Box) *errorNotification {
-	errorNotif := &errorNotification{Box: info}
+	view := &errorNotification{}
 
 	b := newBuilder("ErrorNotification")
-	b.getItems(
-		"infobar", &errorNotif.area,
-		"message", &errorNotif.label,
-	)
+	err := b.bindObjects(view)
+	if err != nil {
+		panic(err)
+	}
 
-	info.Add(errorNotif.area)
-	return errorNotif
+	info.Add(view.area)
+	return view
 }
 
-func (n *errorNotification) renderAccountError(label string) {
+func (n *errorNotification) ShowMessage(label string) {
 	prov := providerWithCSS("box { background-color: #4a8fd9;  color: #ffffff; border-radius: 2px; }")
 	updateWithStyle(n.area, prov)
 
@@ -33,5 +31,11 @@ func (n *errorNotification) renderAccountError(label string) {
 	n.label.SetMarginBottom(10)
 	n.label.SetText(i18n.Local(label))
 
-	n.Box.ShowAll()
+	parent, _ := n.area.GetParent()
+	parent.ShowAll()
+}
+
+func (n *errorNotification) Hide() {
+	parent, _ := n.area.GetParent()
+	parent.Hide()
 }

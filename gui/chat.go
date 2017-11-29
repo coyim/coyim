@@ -153,6 +153,27 @@ func (v *addChatView) joinRoomHandler() {
 	chatRoom.openWindow()
 }
 
+func (v *chatRoomView) updateRoomConfig() {
+	builder := newBuilder("ConfigureRoom")
+
+	obj := builder.getObj("dialog")
+	dialog := obj.(gtki.MessageDialog)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_signal": func() {
+			dialog.Destroy()
+		},
+	})
+
+	if parent, err := v.GetTransientFor(); err == nil {
+		dialog.SetTransientFor(parent)
+	}
+
+	doInUIThread(func() {
+		dialog.ShowAll()
+	})
+}
+
 func (u *gtkUI) joinChatRoom() {
 	//pass message and presence channels
 	view := newChatView(u.accountManager)
@@ -211,6 +232,7 @@ func newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomVie
 		"send_message_handler":             v.onSendMessage,
 		"scroll_history_to_bottom_handler": v.scrollHistoryToBottom,
 
+		"on_change_room_config": v.updateRoomConfig, // TODO: prob move this to another place
 		//TODO: A closed window will leave the room
 		//Probably not what we want for the final version
 		"leave_room_handler": v.leaveRoom,

@@ -34,7 +34,7 @@ func newChatView(accountManager *accountManager) gtki.Dialog {
 		accountManager: accountManager,
 	}
 
-	builder := newBuilder("AddMUCChat")
+	builder := newBuilder("AddChat")
 	err := builder.bindObjects(view)
 	if err != nil {
 		panic(err)
@@ -179,7 +179,7 @@ func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
 		return nil
 	}
 
-	builder := newBuilder("MUCRoom")
+	builder := newBuilder("ChatRoom")
 	v := &chatRoomView{
 		chat:     conn.GetChatContext(),
 		occupant: occupant,

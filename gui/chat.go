@@ -128,7 +128,22 @@ func (v *addChatView) joinRoomHandler() {
 		return
 	}
 
-	chatRoom := newChatRoomView(account, occupant)
+	conn := account.session.Conn()
+	if conn == nil {
+		//TODO: show error
+		return
+	}
+
+	//TODO: This should notify the user about what is happening (bc it blocks)
+	//and also notify when a failure occurs.
+	chat := conn.GetChatContext()
+	if !chat.CheckForSupport(occupant.Service) {
+		//TODO: show error
+		log.Println("No support to MUC")
+		return
+	}
+
+	chatRoom := newChatRoomView(chat, occupant)
 	if parent, err := v.GetTransientFor(); err == nil {
 		chatRoom.SetTransientFor(parent)
 	}
@@ -175,17 +190,11 @@ type chatRoomView struct {
 	receivedSelfPresence bool
 }
 
-func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
-	conn := account.session.Conn()
-	if conn == nil {
-		return nil
-	}
-
+func newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomView {
 	builder := newBuilder("ChatRoom")
 	v := &chatRoomView{
-		chat:                 conn.GetChatContext(),
-		occupant:             occupant,
-		receivedSelfPresence: false,
+		chat:     chat,
+		occupant: occupant,
 
 		//TODO: This could go somewhere else (account maybe?)
 		eventsChan: make(chan interface{}),
@@ -248,9 +257,6 @@ func (v *chatRoomView) openWindow() {
 	go v.chat.EnterRoom(v.occupant)
 
 	go v.watchEvents(v.eventsChan)
-
-	//TODO: remove me
-	//go v.showDebugInfo()
 
 	v.Show()
 }
@@ -435,11 +441,6 @@ func (v *chatRoomView) scrollHistoryToBottom() {
 	scrollToBottom(v.historyScroll)
 }
 
-func (v *chatRoomView) connectOrSendMessage(msg string) {
-	//TODO: append message to the message view
-	v.chat.SendChatMessage(msg, &v.occupant.Room)
-}
-
 func (v *chatRoomView) onSendMessage(_ glibi.Object) {
 	//TODO: Why cant I use entry as gtki.Entry?
 	//TODO: File a bug againt gotkadapter
@@ -451,12 +452,6 @@ func (v *chatRoomView) onSendMessage(_ glibi.Object) {
 
 	v.entry.SetText("")
 
-	go v.connectOrSendMessage(msg)
-}
-
-func (u *gtkUI) openMUCMockup() {
-	accounts := u.getAllConnectedAccounts()
-	v := newChatRoomView(accounts[0], nil)
-	v.SetTransientFor(u.window)
-	v.Show()
+	//TODO: error?
+	go v.chat.SendChatMessage(msg, &v.occupant.Room)
 }

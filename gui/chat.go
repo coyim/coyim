@@ -171,6 +171,8 @@ type chatRoomView struct {
 	eventsChan chan interface{}
 	chat       interfaces.Chat
 	occupant   *data.Occupant
+
+	receivedSelfPresence bool
 }
 
 func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
@@ -181,8 +183,9 @@ func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
 
 	builder := newBuilder("ChatRoom")
 	v := &chatRoomView{
-		chat:     conn.GetChatContext(),
-		occupant: occupant,
+		chat:                 conn.GetChatContext(),
+		occupant:             occupant,
+		receivedSelfPresence: false,
 
 		//TODO: This could go somewhere else (account maybe?)
 		eventsChan: make(chan interface{}),
@@ -307,6 +310,11 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 	defer v.occupantsList.Unlock()
 
 	v.occupantsList.dirty = true
+
+	if isSelfPresence(presence) {
+		v.receivedSelfPresence = true
+	}
+
 	if presence.Type == "unavailable" {
 		delete(v.occupantsList.m, presence.From)
 		v.notifyUserLeftRoom(presence)
@@ -320,13 +328,23 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 }
 
 func (v *chatRoomView) notifyUserLeftRoom(presence *data.ClientPresence) {
+	if !v.receivedSelfPresence {
+		return
+	}
 	message := fmt.Sprintf("%v left the room", utils.ResourceFromJid(presence.From))
 	v.notifyStatusChange(message)
 }
 
 func (v *chatRoomView) notifyUserEnteredRoom(presence *data.ClientPresence) {
+	if !v.receivedSelfPresence {
+		return
+	}
 	message := fmt.Sprintf("%v entered the room", utils.ResourceFromJid(presence.From))
 	v.notifyStatusChange(message)
+}
+
+func isSelfPresence(presence *data.ClientPresence) bool {
+	return presence.Chat.Status.Code == 110
 }
 
 func (v *chatRoomView) notifyStatusChange(message string) {

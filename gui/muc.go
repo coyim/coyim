@@ -180,7 +180,7 @@ func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
 	}
 
 	builder := newBuilder("MUCRoom")
-	mockup := &chatRoomView{
+	v := &chatRoomView{
 		chat:     conn.GetChatContext(),
 		occupant: occupant,
 
@@ -188,25 +188,25 @@ func newChatRoomView(account *account, occupant *data.Occupant) *chatRoomView {
 		eventsChan: make(chan interface{}),
 	}
 
-	mockup.occupantsList.m = make(map[string]*roomOccupant, 5)
+	v.occupantsList.m = make(map[string]*roomOccupant, 5)
 
-	err := builder.bindObjects(mockup)
+	err := builder.bindObjects(v)
 	if err != nil {
 		panic(err)
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"send_message_handler":             mockup.onSendMessage,
-		"scroll_history_to_bottom_handler": mockup.scrollHistoryToBottom,
+		"send_message_handler":             v.onSendMessage,
+		"scroll_history_to_bottom_handler": v.scrollHistoryToBottom,
 
 		//TODO: A closed window will leave the room
 		//Probably not what we want for the final version
-		"leave_room_handler": mockup.leaveRoom,
+		"leave_room_handler": v.leaveRoom,
 	})
 
-	mockup.SetTitle(occupant.Room.JID())
+	v.SetTitle(occupant.Room.JID())
 
-	return mockup
+	return v
 }
 
 func (v *chatRoomView) showDebugInfo() {
@@ -438,7 +438,7 @@ func (v *chatRoomView) onSendMessage(_ glibi.Object) {
 
 func (u *gtkUI) openMUCMockup() {
 	accounts := u.getAllConnectedAccounts()
-	mockup := newChatRoomView(accounts[0], nil)
-	mockup.SetTransientFor(u.window)
-	mockup.Show()
+	v := newChatRoomView(accounts[0], nil)
+	v.SetTransientFor(u.window)
+	v.Show()
 }

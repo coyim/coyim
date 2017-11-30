@@ -57,38 +57,43 @@
           </packing>
         </child>
         <child>
-          <object class="GtkMenuBar">
-            <property name="visible">true</property>
-            <child>
-              <object class="GtkMenuItem">
-                <property name="visible">true</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Settings</property>
-                    <property name="use-underline">True</property>
-                  </object>
-                </child>
-                <child type="submenu">
-                  <object class="GtkMenu">
-                    <property name="visible">true</property>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">true</property>
-                        <property name="label" translatable="yes">Configure Room</property>
-                        <signal name="activate" handler="on_change_room_config" />
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem">
-                        <property name="visible">true</property>
-                        <property name="label" translatable="yes">Enable logging</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
+          <object class="GtkBox" id="menu-box">
+	  <property name="visible">true</property>
+          <child>
+            <object class="GtkMenuBar">
+              <property name="visible">true</property>
+              <child>
+                <object class="GtkMenuItem">
+                  <property name="visible">true</property>
+                  <child>
+                    <object class="GtkLabel">
+                      <property name="visible">True</property>
+                      <property name="label" translatable="yes">Settings</property>
+                      <property name="use-underline">True</property>
+                    </object>
+                  </child>
+                  <child type="submenu">
+                    <object class="GtkMenu">
+                      <property name="visible">true</property>
+                      <child>
+                        <object class="GtkMenuItem">
+                          <property name="visible">true</property>
+                          <property name="label" translatable="yes">Configure Room</property>
+                          <signal name="activate" handler="on_change_room_config" />
+                        </object>
+                      </child>
+                      <child>
+                        <object class="GtkMenuItem">
+                          <property name="visible">true</property>
+                          <property name="label" translatable="yes">Enable logging</property>
+                        </object>
+                      </child>
+                    </object>
+                  </child>
+                </object>
+              </child>
+            </object>
+          </child>
           </object>
           <packing>
             <property name="expand">false</property>

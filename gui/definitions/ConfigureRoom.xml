@@ -9,7 +9,7 @@
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <object class="GtkLabel" id="label">
-            <property name="label" translatable="yes">Configure some room specific settings</property>
+            <property name="label" translatable="yes">Configure some room specific settings:</property>
             <property name="justify">GTK_JUSTIFY_RIGHT</property>
             <attributes>
               <attribute name="weight" value="semilight"/>
@@ -23,16 +23,17 @@
         </child>
         <child>
           <object class="GtkGrid" id="grid">
-            <property name="margin-top">15</property>
-            <property name="margin-bottom">10</property>
+            <property name="margin-top">20</property>
+            <property name="margin-bottom">20</property>
             <property name="margin-start">10</property>
             <property name="margin-end">10</property>
-            <property name="row-spacing">12</property>
-            <property name="column-spacing">6</property>
+            <property name="row-spacing">20</property>
+            <property name="column-spacing">10</property>
             <child>
               <object class="GtkLabel" id="room-name-label">
                 <property name="label" translatable="yes">Room Name</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -69,7 +70,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="allow-password">
+              <object class="GtkLabel" id="password">
                 <property name="label" translatable="yes">Require Password</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -80,7 +81,8 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="otherSettings">
+              <object class="GtkCheckButton" id="allow-password">
+              <signal name="toggled" handler="on_toggle_password" />
               </object>
               <packing>
                 <property name="left-attach">1</property>

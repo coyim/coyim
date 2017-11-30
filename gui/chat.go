@@ -227,6 +227,7 @@ type chatRoomView struct {
 	entry       gtki.Entry `gtk-widget:"text-box"`
 
 	historyMutex  sync.Mutex
+	menuBox       gtki.Box            `gtk-widget:"menu-box"`
 	historyBuffer gtki.TextBuffer     `gtk-widget:"chat-buffer"`
 	historyScroll gtki.ScrolledWindow `gtk-widget:"chat-box"`
 
@@ -259,6 +260,11 @@ func newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomVie
 	if err != nil {
 		panic(err)
 	}
+
+	doInUIThread(func() {
+		prov := providerWithCSS("box { border-top: 1px solid #d3d3d3; }")
+		updateWithStyle(v.menuBox, prov)
+	})
 
 	builder.ConnectSignals(map[string]interface{}{
 		"send_message_handler":             v.onSendMessage,

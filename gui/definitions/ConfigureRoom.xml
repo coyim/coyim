@@ -2,21 +2,17 @@
   <object class="GtkDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="border-width">7</property>
-    <property name="title" translatable="yes"></property>
+    <property name="title" translatable="yes">Configure Room</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="box">
         <property name="border-width">10</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkLabel">
-            <property name="can_focus">False</property>
-            <property name="margin-top">5</property>
-	    <property name="label" translatable="yes">
-Configure Room:
-            </property>
+          <object class="GtkLabel" id="label">
+            <property name="label" translatable="yes">Configure some room specific settings</property>
+            <property name="justify">GTK_JUSTIFY_RIGHT</property>
             <attributes>
-              <attribute name="font-desc" value="&lt;Enter Value&gt; 14"/>
-	      <attribute name="weight" value="semibold"/>
+              <attribute name="weight" value="semilight"/>
             </attributes>
           </object>
           <packing>
@@ -26,40 +22,87 @@ Configure Room:
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
-            <property name="can_focus">False</property>
-	    <property name="label" translatable="yes">
-
-    1. Password
-
-    2. Room Name
-
-    3. Room Description
-
-    4. Enable Logging
-
-    5. Allow private messages
-
-    6. Maximum number of occupants
-
-            </property>
-            <property name="selectable">True</property>
-	  </object>
+          <object class="GtkGrid" id="grid">
+            <property name="margin-top">15</property>
+            <property name="margin-bottom">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="row-spacing">12</property>
+            <property name="column-spacing">6</property>
+            <child>
+              <object class="GtkLabel" id="room-name-label">
+                <property name="label" translatable="yes">Room Name</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="room-name">
+                <signal name="activate" handler="on_save_signal" />
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="description-label">
+                <property name="label" translatable="yes">Room Description</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="description">
+                <property name="visibility">false</property>
+                <signal name="activate" handler="on_save_signal" />
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="allow-password">
+                <property name="label" translatable="yes">Require Password</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="otherSettings">
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+          </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
-      </object>
-    </child>
-    <child internal-child="action_area">
-      <object class="GtkButtonBox" id="button_box">
-        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-        <child>
-          <object class="GtkButton" id="close">
-            <property name="label" translatable="yes">Close</property>
-            <signal name="clicked" handler="on_close_signal" />
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="button_box">
+            <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+            <child>
+              <object class="GtkButton" id="close">
+                <property name="label" translatable="yes">Close</property>
+                <signal name="clicked" handler="on_close_signal" />
+              </object>
+            </child>
           </object>
         </child>
       </object>

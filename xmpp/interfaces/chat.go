@@ -11,6 +11,9 @@ type Chat interface {
 	EnterRoom(*data.Occupant) error
 	LeaveRoom(*data.Occupant) error
 	SendChatMessage(msg string, to *data.Room) error
+	RoomConfigForm(*data.Room, data.FormCallback) error
+
+	//TODO: Remove me
 	RequestRoomConfigForm(*data.Room) (*data.Form, error)
 	UpdateRoomConfig(*data.Room, *data.Form) error
 }

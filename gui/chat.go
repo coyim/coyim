@@ -189,56 +189,65 @@ func (v *addChatView) joinRoomHandler() {
 }
 
 type roomConfigData struct {
-	dialog   gtki.Dialog `gtk-widget:"dialog"`
-	roomName gtki.Entry  `gtk-widget:"room-name"`
-	roomDesc gtki.Entry  `gtk-widget:"description"`
+	dialog gtki.Dialog `gtk-widget:"dialog"`
+	grid   gtki.Grid   `gtk-widget:"grid"`
 }
 
-type roomConfigDetails struct {
-	roomNameTxt string
-	roomDescTxt string
+func (v *chatRoomView) renderForm(title, instructions string, fields []interface{}) error {
+	roomConfigDialog := &roomConfigData{}
+	submit := make(chan bool)
+
+	doInUIThread(func() {
+		builder := newBuilder("ConfigureRoom")
+		err := builder.bindObjects(roomConfigDialog)
+		if err != nil {
+			panic(err)
+		}
+
+		formFields := buildWidgetsForFields(fields)
+		for i, field := range formFields {
+			roomConfigDialog.grid.Attach(field.label, 0, i+1, 1, 1)
+			roomConfigDialog.grid.Attach(field.widget, 1, i+1, 1, 1)
+		}
+
+		if parent, err := v.GetTransientFor(); err == nil {
+			roomConfigDialog.dialog.SetTransientFor(parent)
+		}
+		roomConfigDialog.dialog.ShowAll()
+
+		builder.ConnectSignals(map[string]interface{}{
+			"on_cancel_signal": roomConfigDialog.dialog.Destroy,
+			"on_save_signal": func() {
+				//Find the fields we need to copy from the form to the account
+				for _, field := range formFields {
+					switch ff := field.field.(type) {
+					case *data.TextFormField:
+						w := field.widget.(gtki.Entry)
+						ff.Result, _ = w.GetText()
+					default:
+						log.Printf("We need to implement %#v", ff)
+					}
+				}
+
+				roomConfigDialog.dialog.Destroy()
+				submit <- true
+			},
+		})
+
+	})
+
+	<-submit
+	return nil
 }
 
 func (v *chatRoomView) updateRoomConfig() {
-	data := &roomConfigData{}
-
-	builder := newBuilder("ConfigureRoom")
-	err := builder.bindObjects(data)
-	if err != nil {
-		panic(err)
-	}
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_cancel_signal": func() {
-			data.dialog.Destroy()
-		},
-		"on_save_signal": func() {
-			_ = getRoomConfigurationDetails(data)
-			//go saveFunction()
-			//fmt.Println(roomConfigDetails.roomNameTxt)
-			data.dialog.Destroy()
-
-		},
-	})
-
-	doInUIThread(func() {
-		if parent, err := v.GetTransientFor(); err == nil {
-			data.dialog.SetTransientFor(parent)
+	go func() {
+		err := v.chat.RoomConfigForm(&v.occupant.Room, v.renderForm)
+		if err != nil {
+			log.Println("Something bad happened when we asked for room config form")
+			return
 		}
-		data.dialog.ShowAll()
-	})
-}
-
-func getRoomConfigurationDetails(data *roomConfigData) *roomConfigDetails {
-	roomNameTxt, _ := data.roomName.GetText()
-	roomDescTxt, _ := data.roomDesc.GetText()
-
-	details := &roomConfigDetails{
-		roomNameTxt,
-		roomDescTxt,
-	}
-
-	return details
+	}()
 }
 
 func (u *gtkUI) joinChatRoom() {

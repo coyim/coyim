@@ -149,6 +149,21 @@ func (m *muc) RequestRoomConfigForm(room *data.Room) (*data.Form, error) {
 	return r.Form, err
 }
 
+func (m *muc) RoomConfigForm(room *data.Room, formCallback data.FormCallback) error {
+	form, err := m.RequestRoomConfigForm(room)
+	if err != nil {
+		return err
+	}
+
+	var datas []data.BobData
+	roomConfig, err := processForm(form, datas, formCallback)
+	if err != nil {
+		return err
+	}
+
+	return m.UpdateRoomConfig(room, roomConfig)
+}
+
 //See: Section "10.2 Subsequent Room Configuration"
 func (m *muc) UpdateRoomConfig(room *data.Room, form *data.Form) error {
 	_, _, err := m.SendIQ(room.JID(), "set", &data.RoomConfigurationQuery{

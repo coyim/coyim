@@ -188,25 +188,57 @@ func (v *addChatView) joinRoomHandler() {
 	doInUIThread(v.validateFormAndOpenRoomWindow)
 }
 
-func (v *chatRoomView) updateRoomConfig() {
-	builder := newBuilder("ConfigureRoom")
+type roomConfigData struct {
+	dialog   gtki.Dialog `gtk-widget:"dialog"`
+	roomName gtki.Entry  `gtk-widget:"room-name"`
+	roomDesc gtki.Entry  `gtk-widget:"description"`
+}
 
-	obj := builder.getObj("dialog")
-	dialog := obj.(gtki.MessageDialog)
+type roomConfigDetails struct {
+	roomNameTxt string
+	roomDescTxt string
+}
+
+func (v *chatRoomView) updateRoomConfig() {
+	data := &roomConfigData{}
+
+	builder := newBuilder("ConfigureRoom")
+	err := builder.bindObjects(data)
+	if err != nil {
+		panic(err)
+	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": func() {
-			dialog.Destroy()
+		"on_cancel_signal": func() {
+			data.dialog.Destroy()
+		},
+		"on_save_signal": func() {
+			_ = getRoomConfigurationDetails(data)
+			//go saveFunction()
+			//fmt.Println(roomConfigDetails.roomNameTxt)
+			data.dialog.Destroy()
+
 		},
 	})
 
-	if parent, err := v.GetTransientFor(); err == nil {
-		dialog.SetTransientFor(parent)
+	doInUIThread(func() {
+		if parent, err := v.GetTransientFor(); err == nil {
+			data.dialog.SetTransientFor(parent)
+		}
+		data.dialog.ShowAll()
+	})
+}
+
+func getRoomConfigurationDetails(data *roomConfigData) *roomConfigDetails {
+	roomNameTxt, _ := data.roomName.GetText()
+	roomDescTxt, _ := data.roomDesc.GetText()
+
+	details := &roomConfigDetails{
+		roomNameTxt,
+		roomDescTxt,
 	}
 
-	doInUIThread(func() {
-		dialog.ShowAll()
-	})
+	return details
 }
 
 func (u *gtkUI) joinChatRoom() {

@@ -100,9 +100,16 @@
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
             <child>
-              <object class="GtkButton" id="close">
-                <property name="label" translatable="yes">Close</property>
-                <signal name="clicked" handler="on_close_signal" />
+              <object class="GtkButton" id="cancel">
+                <property name="label" translatable="yes">Cancel</property>
+                <signal name="clicked" handler="on_cancel_signal" />
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="save">
+                <property name="label" translatable="yes">Save</property>
+                <property name="can-default">true</property>
+                <signal name="clicked" handler="on_save_signal"/>
               </object>
             </child>
           </object>

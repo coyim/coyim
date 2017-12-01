@@ -211,7 +211,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMulti(c *C) {
 				data.FormFieldOptionX{Label: "Seven", Value: "Eight"},
 			},
 
-			Values: []string{"Six", "Two"}, //FIXME: This is not used to set FormField.Results
+			Values: []string{"Six", "Two"},
 		},
 	}
 	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
@@ -225,19 +225,19 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListMulti(c *C) {
 			},
 			Values:  []string{"One", "Three", "Five", "Seven"},
 			Ids:     []string{"Two", "Four", "Six", "Eight"},
-			Results: []int(nil),
+			Results: []int{0, 2},
 		})
 
 		return nil
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, data.Form{
+	c.Assert(f2, DeepEquals, &data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
 			data.FormFieldX{
 				Var:    "hello_field1o7",
-				Values: []string(nil), //No result set by the UI
+				Values: []string{"Two", "Six"},
 			}}})
 }
 

@@ -88,12 +88,6 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 	case "list-single":
 		f := &data.SelectionFormField{
 			FormField: base,
-
-			//FIXME: If Result represents the selected index, it should be initialized
-			//with index of the Option with opt.Value == base.Value[0] (and not 0).
-			//See: XEP-0004, Section "3.2 The Field Element"
-			// and "Example 2. Service Returns Bot Creation Form
-			//Using "Value (string)" as XEP-0040 does may be simpler.
 		}
 
 		for i, opt := range field.Options {
@@ -108,12 +102,19 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 	case "list-multi":
 		f := &data.MultiSelectionFormField{
 			FormField: base,
-
-			//FIXME: Same as SelectionFormField in regard to Result.
 		}
-		for _, opt := range field.Options {
+		for i, opt := range field.Options {
 			f.Ids = append(f.Ids, opt.Value)
 			f.Values = append(f.Values, opt.Label)
+
+			if len(f.Results) < len(field.Values) {
+				for _, v := range field.Values {
+					if v == opt.Value {
+						f.Results = append(f.Results, i)
+						break
+					}
+				}
+			}
 		}
 		return f
 	case "hidden":

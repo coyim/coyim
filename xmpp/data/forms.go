@@ -123,7 +123,7 @@ type SelectionFormField struct {
 
 	Values []string
 	Ids    []string
-	Result int // TODO: this might need to be a string
+	Result int
 }
 
 // MultiSelectionFormField asks the user to pick a subset of possible choices.

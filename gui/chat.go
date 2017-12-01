@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"sync"
 	"time"
 
@@ -227,10 +228,9 @@ func (v *chatRoomView) renderForm(title, instructions string, fields []interface
 					case *data.BooleanFormField:
 						w := field.widget.(gtki.CheckButton)
 						ff.Result = w.GetActive()
-
 					case *data.SelectionFormField:
-						_ = field.widget.(gtki.ComboBoxText)
-						//ff.Result = w.GetActiveText()
+						w := field.widget.(gtki.ComboBoxText)
+						ff.Result, _ = strconv.Atoi(w.GetActiveText())
 					default:
 						log.Printf("We need to implement %#v", ff)
 					}

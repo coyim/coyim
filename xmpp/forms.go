@@ -95,9 +95,14 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 			// and "Example 2. Service Returns Bot Creation Form
 			//Using "Value (string)" as XEP-0040 does may be simpler.
 		}
-		for _, opt := range field.Options {
+
+		for i, opt := range field.Options {
 			f.Ids = append(f.Ids, opt.Value)
 			f.Values = append(f.Values, opt.Label)
+
+			if field.Values[0] == opt.Value {
+				f.Result = i
+			}
 		}
 		return f
 	case "list-multi":

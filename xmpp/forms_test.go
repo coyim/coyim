@@ -166,7 +166,7 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListSingle(c *C) {
 				data.FormFieldOptionX{Label: "Three", Value: "Four"},
 			},
 
-			Values: []string{"Four"}, //FIXME: This is not used to set FormField.Result
+			Values: []string{"Four"},
 		},
 	}
 	f2, err := processForm(f, nil, func(title, instructions string, fields []interface{}) error {
@@ -180,18 +180,19 @@ func (s *FormsXMPPSuite) Test_processForm_returnsListSingle(c *C) {
 			},
 			Values: []string{"One", "Three"},
 			Ids:    []string{"Two", "Four"},
+			Result: 1,
 		})
 
 		return nil
 	})
 
 	c.Assert(err, IsNil)
-	c.Assert(*f2, DeepEquals, data.Form{
+	c.Assert(f2, DeepEquals, &data.Form{
 		Type: "submit",
 		Fields: []data.FormFieldX{
 			data.FormFieldX{
 				Var:    "hello_field7",
-				Values: []string{"Two"},
+				Values: []string{"Four"},
 			},
 		}})
 }

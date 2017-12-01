@@ -43,11 +43,19 @@ func (*Mock) CellRendererTextNew() (gtki.CellRendererText, error) {
 	return nil, nil
 }
 
+func (*Mock) CheckButtonNew() (gtki.CheckButton, error) {
+	return nil, nil
+}
+
 func (*Mock) CheckButtonNewWithMnemonic(label string) (gtki.CheckButton, error) {
 	return nil, nil
 }
 
 func (*Mock) CheckMenuItemNewWithMnemonic(label string) (gtki.CheckMenuItem, error) {
+	return nil, nil
+}
+
+func (*Mock) ComboBoxTextNew() (gtki.ComboBoxText, error) {
 	return nil, nil
 }
 

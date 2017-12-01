@@ -63,7 +63,8 @@ type FormField struct {
 	// rather than inspect this.
 	Type string
 	// Name gives the internal name of the field.
-	Name     string
+	Name string
+	// Required specifies is the field is required.
 	Required bool
 	// Media contains one of more items of media associated with this
 	// field and, for each item, one or more representations of it.
@@ -122,7 +123,7 @@ type SelectionFormField struct {
 
 	Values []string
 	Ids    []string
-	Result int
+	Result int // TODO: this might need to be a string
 }
 
 // MultiSelectionFormField asks the user to pick a subset of possible choices.

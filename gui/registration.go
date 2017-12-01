@@ -115,6 +115,26 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 			w.SetVisibility(!field.Private)
 
 			ret = append(ret, formField{field, l, w})
+		case *data.BooleanFormField:
+			//TODO: notify if it is required
+			l, _ := g.gtk.LabelNew(field.Label)
+			l.SetSelectable(true)
+
+			w, _ := g.gtk.CheckButtonNew()
+			w.SetActive(field.Result)
+
+			ret = append(ret, formField{field, l, w})
+		case *data.SelectionFormField:
+			//TODO: notify if it is required
+			l, _ := g.gtk.LabelNew(field.Label)
+			l.SetSelectable(true)
+
+			w, _ := g.gtk.ComboBoxTextNew()
+			for _, opt := range field.Ids {
+				w.AppendText(opt)
+			}
+
+			ret = append(ret, formField{field, l, w})
 		default:
 			log.Println("Missing to implement form field:", field)
 		}

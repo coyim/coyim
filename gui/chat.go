@@ -224,6 +224,13 @@ func (v *chatRoomView) renderForm(title, instructions string, fields []interface
 					case *data.TextFormField:
 						w := field.widget.(gtki.Entry)
 						ff.Result, _ = w.GetText()
+					case *data.BooleanFormField:
+						w := field.widget.(gtki.CheckButton)
+						ff.Result = w.GetActive()
+
+					case *data.SelectionFormField:
+						_ = field.widget.(gtki.ComboBoxText)
+						//ff.Result = w.GetActiveText()
 					default:
 						log.Printf("We need to implement %#v", ff)
 					}
@@ -311,7 +318,7 @@ func newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomVie
 		"send_message_handler":             v.onSendMessage,
 		"scroll_history_to_bottom_handler": v.scrollHistoryToBottom,
 
-		"on_change_room_config": v.updateRoomConfig, // TODO: prob move this to another place
+		"on_change_room_config": v.updateRoomConfig,
 		//TODO: A closed window will leave the room
 		//Probably not what we want for the final version
 		"leave_room_handler": v.leaveRoom,

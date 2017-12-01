@@ -1,13 +1,13 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type toggleButton struct {
 	*button
-	*gtk.ToggleButton
+	internal *gtk.ToggleButton
 }
 
 func wrapToggleButtonSimple(v *gtk.ToggleButton) *toggleButton {
@@ -25,5 +25,13 @@ func unwrapToggleButton(v gtki.ToggleButton) *gtk.ToggleButton {
 	if v == nil {
 		return nil
 	}
-	return v.(*toggleButton).ToggleButton
+	return v.(*toggleButton).internal
+}
+
+func (v *toggleButton) SetActive(v1 bool) {
+	v.internal.SetActive(v1)
+}
+
+func (v *toggleButton) GetActive() bool {
+	return v.internal.GetActive()
 }

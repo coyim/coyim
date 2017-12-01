@@ -1,12 +1,12 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gdka"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type RealGtk struct{}
@@ -50,12 +50,20 @@ func (*RealGtk) CellRendererTextNew() (gtki.CellRendererText, error) {
 	return wrapCellRendererText(gtk.CellRendererTextNew())
 }
 
+func (*RealGtk) CheckButtonNew() (gtki.CheckButton, error) {
+	return wrapCheckButton(gtk.CheckButtonNew())
+}
+
 func (*RealGtk) CheckButtonNewWithMnemonic(label string) (gtki.CheckButton, error) {
 	return wrapCheckButton(gtk.CheckButtonNewWithMnemonic(label))
 }
 
 func (*RealGtk) CheckMenuItemNewWithMnemonic(label string) (gtki.CheckMenuItem, error) {
 	return wrapCheckMenuItem(gtk.CheckMenuItemNewWithMnemonic(label))
+}
+
+func (*RealGtk) ComboBoxTextNew() (gtki.ComboBoxText, error) {
+	return wrapComboBoxText(gtk.ComboBoxTextNew())
 }
 
 func (*RealGtk) CssProviderNew() (gtki.CssProvider, error) {

@@ -189,72 +189,92 @@ func (v *addChatView) joinRoomHandler() {
 	doInUIThread(v.validateFormAndOpenRoomWindow)
 }
 
-type roomConfigData struct {
+type roomConfigView struct {
 	dialog gtki.Dialog `gtk-widget:"dialog"`
 	grid   gtki.Grid   `gtk-widget:"grid"`
+
+	formFields []formField
+	done       chan<- interface{}
 }
 
-func (v *chatRoomView) renderForm(title, instructions string, fields []interface{}) error {
-	roomConfigDialog := &roomConfigData{}
-	submit := make(chan bool)
+func newRoomConfigDialog(done chan<- interface{}, fields []formField) *roomConfigView {
+	view := &roomConfigView{
+		formFields: fields,
+		done:       done,
+	}
 
-	doInUIThread(func() {
-		builder := newBuilder("ConfigureRoom")
-		err := builder.bindObjects(roomConfigDialog)
-		if err != nil {
-			panic(err)
-		}
+	builder := newBuilder("ConfigureRoom")
+	err := builder.bindObjects(view)
+	if err != nil {
+		panic(err)
+	}
 
-		formFields := buildWidgetsForFields(fields)
-		for i, field := range formFields {
-			roomConfigDialog.grid.Attach(field.label, 0, i+1, 1, 1)
-			roomConfigDialog.grid.Attach(field.widget, 1, i+1, 1, 1)
-		}
-
-		if parent, err := v.GetTransientFor(); err == nil {
-			roomConfigDialog.dialog.SetTransientFor(parent)
-		}
-		roomConfigDialog.dialog.ShowAll()
-
-		builder.ConnectSignals(map[string]interface{}{
-			"on_cancel_signal": roomConfigDialog.dialog.Destroy,
-			"on_save_signal": func() {
-				//Find the fields we need to copy from the form to the account
-				for _, field := range formFields {
-					switch ff := field.field.(type) {
-					case *data.TextFormField:
-						w := field.widget.(gtki.Entry)
-						ff.Result, _ = w.GetText()
-					case *data.BooleanFormField:
-						w := field.widget.(gtki.CheckButton)
-						ff.Result = w.GetActive()
-					case *data.SelectionFormField:
-						w := field.widget.(gtki.ComboBoxText)
-						ff.Result, _ = strconv.Atoi(w.GetActiveText())
-					default:
-						log.Printf("We need to implement %#v", ff)
-					}
-				}
-
-				roomConfigDialog.dialog.Destroy()
-				submit <- true
-			},
-		})
-
+	builder.ConnectSignals(map[string]interface{}{
+		"on_cancel_signal": view.close,
+		"on_save_signal":   view.updateFormWithValuesFromFormFields,
 	})
 
-	<-submit
+	view.attachFormFields()
+
+	return view
+}
+
+func (v *roomConfigView) close() {
+	v.dialog.Destroy()
+	v.done <- true
+}
+
+func (v *roomConfigView) updateFormWithValuesFromFormFields() {
+	//Find the fields we need to copy from the form to the account
+	for _, field := range v.formFields {
+		switch ff := field.field.(type) {
+		case *data.TextFormField:
+			w := field.widget.(gtki.Entry)
+			ff.Result, _ = w.GetText()
+		case *data.BooleanFormField:
+			w := field.widget.(gtki.CheckButton)
+			ff.Result = w.GetActive()
+		case *data.SelectionFormField:
+			_ = field.widget.(gtki.ComboBoxText)
+			ff.Result, _ = strconv.Atoi(w.GetActiveText())
+		default:
+			log.Printf("We need to implement %#v", ff)
+		}
+	}
+
+	v.close()
+}
+
+func (v *roomConfigView) attachFormFields() {
+	for i, field := range v.formFields {
+		v.grid.Attach(field.label, 0, i+1, 1, 1)
+		v.grid.Attach(field.widget, 1, i+1, 1, 1)
+	}
+}
+
+//This will be called from a goroutine because otherwise it would block the gtk event loop
+//Thats why we need to do everything GTK-related inUIThread
+func (v *chatRoomView) renderForm(title, instructions string, fields []interface{}) error {
+	done := make(chan interface{})
+
+	doInUIThread(func() {
+		formFields := buildWidgetsForFields(fields)
+		dialog := newRoomConfigDialog(done, formFields)
+
+		if parent, err := v.GetTransientFor(); err == nil {
+			dialog.dialog.SetTransientFor(parent)
+		}
+	})
+
+	<-done
+	close(done)
 	return nil
 }
 
-func (v *chatRoomView) updateRoomConfig() {
-	go func() {
-		err := v.chat.RoomConfigForm(&v.occupant.Room, v.renderForm)
-		if err != nil {
-			log.Println("Something bad happened when we asked for room config form")
-			return
-		}
-	}()
+func (v *chatRoomView) showRoomConfigDialog() {
+	//Run in a goroutine to not block the GTK event loop
+	//TODO: Display error
+	go v.chat.RoomConfigForm(&v.occupant.Room, v.renderForm)
 }
 
 func (u *gtkUI) joinChatRoom() {
@@ -317,8 +337,8 @@ func newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomVie
 	builder.ConnectSignals(map[string]interface{}{
 		"send_message_handler":             v.onSendMessage,
 		"scroll_history_to_bottom_handler": v.scrollHistoryToBottom,
+		"on_change_room_config":            v.showRoomConfigDialog,
 
-		"on_change_room_config": v.updateRoomConfig,
 		//TODO: A closed window will leave the room
 		//Probably not what we want for the final version
 		"leave_room_handler": v.leaveRoom,

@@ -35,7 +35,11 @@ type addChatView struct {
 }
 
 type listRoomsView struct {
+	accountManager *accountManager
+
 	gtki.Dialog `gtk-widget:"list-chat-rooms"`
+
+	service gtki.Entry `gtk-widget:"service"`
 }
 
 func newChatView(accountManager *accountManager) gtki.Dialog {
@@ -60,15 +64,34 @@ func newChatView(accountManager *accountManager) gtki.Dialog {
 	return view
 }
 
-func newListRoomsView() gtki.Dialog {
-	view := &listRoomsView{}
+func newListRoomsView(accountManager *accountManager) gtki.Dialog {
+	view := &listRoomsView{
+		accountManager: accountManager,
+	}
+
 	builder := newBuilder("ListChatRooms")
 	err := builder.bindObjects(view)
 	if err != nil {
 		panic(err)
 	}
 
+	builder.ConnectSignals(map[string]interface{}{
+		"cancel_handler":      view.Destroy,
+		"fetch_rooms_handler": view.fetchRoomsFromService,
+	})
+
 	return view
+}
+
+func (v *listRoomsView) fetchRoomsFromService() {
+	service, _ := v.service.GetText()
+	//TODO: Be able to select account
+	account := v.accountManager.getAllAccounts()[0]
+
+	conn := account.session.Conn()
+	result, _ := conn.GetChatContext().QueryRooms(service)
+
+	log.Println(result)
 }
 
 func (v *addChatView) populateModel() {
@@ -300,7 +323,7 @@ func (u *gtkUI) joinChatRoom() {
 }
 
 func (u *gtkUI) listChatRooms() {
-	view := newListRoomsView()
+	view := newListRoomsView(u.accountManager)
 	view.SetTransientFor(u.window)
 	view.Show()
 }

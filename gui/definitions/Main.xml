@@ -131,6 +131,13 @@
                             <signal name="activate" handler="on_join_chat_room" swapped="no"/>
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkMenuItem" id="muc-list-chat-rooms-menu">
+                            <property name="label" translatable="yes">List Chat Rooms...</property>
+                            <property name="use-underline">True</property>
+                            <signal name="activate" handler="on_list_chat_rooms" swapped="no"/>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>

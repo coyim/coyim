@@ -437,7 +437,8 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 		"on_preferences_signal":                        u.showGlobalPreferences,
 
-		"on_join_chat_room": u.joinChatRoom,
+		"on_join_chat_room":  u.joinChatRoom,
+		"on_list_chat_rooms": u.listChatRooms,
 	})
 
 	win := builder.get("mainWindow")

@@ -34,6 +34,10 @@ type addChatView struct {
 	model gtki.ListStore `gtk-widget:"accounts-model"`
 }
 
+type listRoomsView struct {
+	gtki.Dialog `gtk-widget:"list-chat-rooms"`
+}
+
 func newChatView(accountManager *accountManager) gtki.Dialog {
 	view := &addChatView{
 		accountManager: accountManager,
@@ -52,6 +56,17 @@ func newChatView(accountManager *accountManager) gtki.Dialog {
 
 	view.errorBox = newErrorNotification(view.notification)
 	doInUIThread(view.populateModel)
+
+	return view
+}
+
+func newListRoomsView() gtki.Dialog {
+	view := &listRoomsView{}
+	builder := newBuilder("ListChatRooms")
+	err := builder.bindObjects(view)
+	if err != nil {
+		panic(err)
+	}
 
 	return view
 }
@@ -280,6 +295,12 @@ func (v *chatRoomView) showRoomConfigDialog() {
 func (u *gtkUI) joinChatRoom() {
 	//pass message and presence channels
 	view := newChatView(u.accountManager)
+	view.SetTransientFor(u.window)
+	view.Show()
+}
+
+func (u *gtkUI) listChatRooms() {
+	view := newListRoomsView()
 	view.SetTransientFor(u.window)
 	view.Show()
 }

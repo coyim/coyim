@@ -18,6 +18,7 @@ type Gtk interface {
 	CheckButtonNew() (CheckButton, error)
 	CheckButtonNewWithMnemonic(string) (CheckButton, error)
 	CheckMenuItemNewWithMnemonic(string) (CheckMenuItem, error)
+	ComboBoxNew() (ComboBox, error)
 	ComboBoxTextNew() (ComboBoxText, error)
 	CssProviderNew() (CssProvider, error)
 	CssProviderGetDefault() (CssProvider, error)

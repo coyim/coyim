@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strconv"
 	"sync"
 	"time"
 
@@ -274,7 +273,7 @@ func (v *roomConfigView) updateFormWithValuesFromFormFields() {
 			ff.Result = w.GetActive()
 		case *data.SelectionFormField:
 			w := field.widget.(gtki.ComboBoxText)
-			ff.Result, _ = strconv.Atoi(w.GetActiveText())
+			ff.Result = w.GetActive()
 		default:
 			log.Printf("We need to implement %#v", ff)
 		}
@@ -302,6 +301,7 @@ func (v *chatRoomView) renderForm(title, instructions string, fields []interface
 		if parent, err := v.GetTransientFor(); err == nil {
 			dialog.dialog.SetTransientFor(parent)
 		}
+		dialog.dialog.ShowAll()
 	})
 
 	<-done

@@ -62,6 +62,10 @@ func (*RealGtk) CheckMenuItemNewWithMnemonic(label string) (gtki.CheckMenuItem, 
 	return wrapCheckMenuItem(gtk.CheckMenuItemNewWithMnemonic(label))
 }
 
+func (*RealGtk) ComboBoxNew() (gtki.ComboBox, error) {
+	return wrapComboBox(gtk.ComboBoxNew())
+}
+
 func (*RealGtk) ComboBoxTextNew() (gtki.ComboBoxText, error) {
 	return wrapComboBoxText(gtk.ComboBoxTextNew())
 }

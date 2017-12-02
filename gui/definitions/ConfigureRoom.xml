@@ -12,7 +12,7 @@
             <property name="label" translatable="yes">Configure some room specific settings:</property>
             <property name="justify">GTK_JUSTIFY_RIGHT</property>
             <attributes>
-              <attribute name="weight" value="semilight"/>
+              <attribute name="weight" value="semibold"/>
             </attributes>
           </object>
           <packing>
@@ -28,7 +28,7 @@
             <property name="margin-start">10</property>
             <property name="margin-end">10</property>
             <property name="row-spacing">10</property>
-            <property name="column-spacing">5</property>
+            <property name="column-spacing">30</property>
           </object>
           <packing>
             <property name="expand">False</property>

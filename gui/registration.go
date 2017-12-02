@@ -107,7 +107,13 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 		switch field := f.(type) {
 		case *data.TextFormField:
 			//TODO: notify if it is required
-			l, _ := g.gtk.LabelNew(field.Label)
+			name := field.Label
+			if len(name) > 18 {
+				name = name[:18] + "\n" + name[18:]
+			}
+
+			l, _ := g.gtk.LabelNew(name)
+			l.SetHAlign(gtki.ALIGN_START)
 			l.SetSelectable(true)
 
 			w, _ := g.gtk.EntryNew()
@@ -118,6 +124,7 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 		case *data.BooleanFormField:
 			//TODO: notify if it is required
 			l, _ := g.gtk.LabelNew(field.Label)
+			l.SetHAlign(gtki.ALIGN_START)
 			l.SetSelectable(true)
 
 			w, _ := g.gtk.CheckButtonNew()
@@ -127,6 +134,7 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 		case *data.SelectionFormField:
 			//TODO: notify if it is required
 			l, _ := g.gtk.LabelNew(field.Label)
+			l.SetHAlign(gtki.ALIGN_START)
 			l.SetSelectable(true)
 
 			w, _ := g.gtk.ComboBoxTextNew()

@@ -106,13 +106,7 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 	for _, f := range fields {
 		switch field := f.(type) {
 		case *data.TextFormField:
-			//TODO: notify if it is required
-			name := field.Label
-			if len(name) > 18 {
-				name = name[:18] + "\n" + name[18:]
-			}
-
-			l, _ := g.gtk.LabelNew(name)
+			l, _ := g.gtk.LabelNew(field.Label)
 			l.SetHAlign(gtki.ALIGN_START)
 			l.SetSelectable(true)
 
@@ -141,6 +135,13 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 			for _, opt := range field.Ids {
 				w.AppendText(opt)
 			}
+
+			ret = append(ret, formField{field, l, w})
+		case *data.FixedFormField:
+			l, _ := g.gtk.LabelNew(field.Label)
+
+			w, _ := g.gtk.LabelNew(field.Text)
+			w.SetHAlign(gtki.ALIGN_START)
 
 			ret = append(ret, formField{field, l, w})
 		default:
@@ -299,6 +300,7 @@ func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 	w.serverBox.SetSensitive(false)
 	w.form.server = w.serverBox.GetActiveText()
 	w.spinner.Start()
+
 	w.formMessage.SetLabel(i18n.Local("Connecting to server for registration... \n\n" +
 		"This might take a while."))
 

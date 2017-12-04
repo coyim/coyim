@@ -75,8 +75,15 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 		}
 		return f
 	case "boolean":
+		result := false
+		if len(field.Values) > 0 {
+			//See: XEP-0040, Appendix G, item 10.
+			result = field.Values[0] == "true" || field.Values[0] == "1"
+		}
+
 		f := &data.BooleanFormField{
 			FormField: base,
+			Result:    result,
 		}
 		return f
 	case "jid-multi", "text-multi":

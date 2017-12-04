@@ -103,6 +103,7 @@ type TextFormField struct {
 
 	Default string
 	Result  string
+
 	// Private is true if this is a password or other sensitive entry.
 	Private bool
 }

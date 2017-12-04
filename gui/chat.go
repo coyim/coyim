@@ -38,7 +38,8 @@ type listRoomsView struct {
 
 	gtki.Dialog `gtk-widget:"list-chat-rooms"`
 
-	service gtki.Entry `gtk-widget:"service"`
+	service    gtki.Entry     `gtk-widget:"service"`
+	roomsModel gtki.ListStore `gtk-widget:"rooms"`
 }
 
 func newChatView(accountManager *accountManager) gtki.Dialog {
@@ -83,14 +84,23 @@ func newListRoomsView(accountManager *accountManager) gtki.Dialog {
 }
 
 func (v *listRoomsView) fetchRoomsFromService() {
+	v.roomsModel.Clear()
 	service, _ := v.service.GetText()
+
 	//TODO: Be able to select account
 	account := v.accountManager.getAllAccounts()[0]
 
 	conn := account.session.Conn()
 	result, _ := conn.GetChatContext().QueryRooms(service)
+	//TODO: deal with empty results
 
-	log.Println(result)
+	doInUIThread(func() {
+		for _, room := range result {
+			iter := v.roomsModel.Append()
+			v.roomsModel.SetValue(iter, 0, room.Name)
+			v.roomsModel.SetValue(iter, 1, room.Name)
+		}
+	})
 }
 
 func (v *addChatView) populateModel() {

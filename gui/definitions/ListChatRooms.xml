@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
-  <object class="GtkTreeStore" id="room-list-model">
+  <object class="GtkListStore" id="rooms">
     <columns>
-      <!-- column-name room-name -->
       <column type="gchararray"/>
-      <!-- column-name room-description -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -70,6 +67,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="width_chars">52</property>
+                    <property name="text">conference.riseup.net</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -98,12 +96,34 @@
               </packing>
             </child>
             <child>
-              <object class="GtkTreeView" id="treeview1">
+              <object class="GtkTreeView" id="room-list-view">
                 <property name="visible">True</property>
+                <property name="model">rooms</property>
                 <property name="can_focus">True</property>
                 <property name="margin_top">20</property>
-                <property name="model">room-list-model</property>
                 <property name="enable_tree_lines">True</property>
+                <child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title">Room Name</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title">Description</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="treeview-selection1"/>
                 </child>

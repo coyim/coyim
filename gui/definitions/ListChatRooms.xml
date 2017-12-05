@@ -5,6 +5,7 @@
     <columns>
       <column type="gchararray"/>
       <column type="gchararray"/>
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkDialog" id="list-chat-rooms">
@@ -39,6 +40,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="join_selected_room_handler" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -111,7 +113,8 @@
                     <property name="enable_grid_lines">both</property>
                     <child>
                       <object class="GtkTreeViewColumn">
-                        <property name="title">Room Name</property>
+                        <property name="title">JID</property>
+                        <property name="visible">False</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
@@ -122,17 +125,28 @@
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn">
+                        <property name="title">Room Name</property>
+                        <child>
+                          <object class="GtkCellRendererText"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn">
                         <property name="title">Description</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="text">0</attribute>
+                            <attribute name="text">2</attribute>
                           </attributes>
                         </child>
                       </object>
                     </child>
                     <child internal-child="selection">
-                      <object class="GtkTreeSelection" id="treeview-selection"/>
+                      <object class="GtkTreeSelection" id="room-selection"/>
                     </child>
                   </object>
                 </child>

@@ -38,8 +38,9 @@ type listRoomsView struct {
 
 	gtki.Dialog `gtk-widget:"list-chat-rooms"`
 
-	service    gtki.Entry     `gtk-widget:"service"`
-	roomsModel gtki.ListStore `gtk-widget:"rooms"`
+	service       gtki.Entry     `gtk-widget:"service"`
+	roomsModel    gtki.ListStore `gtk-widget:"rooms"`
+	roomsTreeView gtki.TreeView  `gtk-widget:"rooms-list-view"`
 }
 
 func newChatView(accountManager *accountManager) gtki.Dialog {
@@ -76,8 +77,9 @@ func newListRoomsView(accountManager *accountManager) gtki.Dialog {
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"cancel_handler":      view.Destroy,
-		"fetch_rooms_handler": view.fetchRoomsFromService,
+		"cancel_handler":             view.Destroy,
+		"join_selected_room_handler": view.joinSelectedRoom,
+		"fetch_rooms_handler":        view.fetchRoomsFromService,
 	})
 
 	return view
@@ -97,10 +99,21 @@ func (v *listRoomsView) fetchRoomsFromService() {
 	doInUIThread(func() {
 		for _, room := range result {
 			iter := v.roomsModel.Append()
-			v.roomsModel.SetValue(iter, 0, room.Name)
+			v.roomsModel.SetValue(iter, 0, room.Jid)
 			v.roomsModel.SetValue(iter, 1, room.Name)
+			v.roomsModel.SetValue(iter, 2, room.Name)
 		}
 	})
+}
+
+func (v *listRoomsView) joinSelectedRoom() {
+	ts, _ := v.roomsTreeView.GetSelection()
+	if _, iter, ok := ts.GetSelected(); ok {
+		value, _ := v.roomsModel.GetValue(iter, 0)
+		roomJid, _ := value.GetString()
+		log.Print("ROOM: ")
+		log.Print(roomJid)
+	}
 }
 
 func (v *addChatView) populateModel() {

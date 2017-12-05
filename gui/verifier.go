@@ -162,7 +162,7 @@ func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
 		"on_press_image": v.hideUnverifiedWarning,
 	})
 
-	prov := providerWithCSS("box { background-color: #fff3f3;  color: #000000; border: 2px; }")
+	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(v.unverifiedWarning.infobar, prov)
 
 	prov = providerWithCSS("box { background-color: #e5d7d6; }")
@@ -229,7 +229,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 		"smp-waiting-button", &v.waitingForPeer.button,
 	)
 
-	prov := providerWithCSS("box { background-color: #fff3f3;  color: #000000; border: 2px; }")
+	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(v.waitingForPeer.infobar, prov)
 
 	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
@@ -256,7 +256,7 @@ func (v *verifier) showCannotGeneratePINDialog(err error) {
 	image := b.getObj("smp-error-image").(gtki.Image)
 	button := b.getObj("smp-error-button").(gtki.Button)
 
-	prov := providerWithCSS("box { background-color: #fff3f3;  color: #000000; border: 2px; }")
+	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(infobar, prov)
 
 	label.SetText(i18n.Local("Unable to verify at this time."))
@@ -364,7 +364,7 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 		"smp-requested-button", &v.peerRequestsSMP.button,
 	)
 
-	prov := providerWithCSS("box { background-color: #fff3f3;  color: #000000; border: 2px; }")
+	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(v.peerRequestsSMP.infobar, prov)
 
 	prov = providerWithCSS("box { background-color: #e5d7d6; }")

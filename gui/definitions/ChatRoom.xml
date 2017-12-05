@@ -82,12 +82,6 @@
                           <signal name="activate" handler="on_change_room_config" />
                         </object>
                       </child>
-                      <child>
-                        <object class="GtkMenuItem">
-                          <property name="visible">true</property>
-                          <property name="label" translatable="yes">Enable logging</property>
-                        </object>
-                      </child>
                     </object>
                   </child>
                 </object>

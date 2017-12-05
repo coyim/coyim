@@ -189,19 +189,11 @@ func torRunningNotificationInit(info gtki.Box) *torRunningNotification {
 }
 
 func (n *torRunningNotification) renderTorNotification(label, imgName string) {
-	prov, _ := g.gtk.CssProviderNew()
 
-	css := fmt.Sprintf(`
-	box { background-color: #f1f1f1;
-	      color: #000000;
-	      border: 1px solid #d3d3d3;
-	      border-radius: 2px;
-	     }
-	`)
-	_ = prov.LoadFromData(css)
-
-	styleContext, _ := n.area.GetStyleContext()
-	styleContext.AddProvider(prov, 9999)
+	doInUIThread(func() {
+		prov := providerWithCSS("box { background-color: #f1f1f1; color: #000000; border: 1px solid #d3d3d3; border-radius: 2px;}")
+		updateWithStyle(n.area, prov)
+	})
 
 	n.label.SetText(i18n.Local(label))
 	n.image.SetFromIconName(imgName, gtki.ICON_SIZE_BUTTON)

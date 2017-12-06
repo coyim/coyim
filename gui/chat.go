@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"sync"
@@ -20,6 +19,7 @@ import (
 
 type addChatView struct {
 	accountManager *accountManager
+	chatManager    *chatManager
 	errorBox       *errorNotification
 
 	gtki.Dialog `gtk-widget:"add-chat-dialog"`
@@ -33,9 +33,10 @@ type addChatView struct {
 	model gtki.ListStore `gtk-widget:"accounts-model"`
 }
 
-func newChatView(accountManager *accountManager) gtki.Dialog {
+func newChatView(accountManager *accountManager, chatManager *chatManager) gtki.Dialog {
 	view := &addChatView{
 		accountManager: accountManager,
+		chatManager:    chatManager,
 	}
 
 	builder := newBuilder("AddChat")
@@ -137,22 +138,6 @@ func (v *addChatView) validateForm() (string, *data.Occupant, error) {
 	return accountID, occ, nil
 }
 
-//TODO: This couples the view with the object hierarchy. This should be provided by a "service".
-func (v *addChatView) getChatContextForAccount(accountID string, chatEvents chan<- interface{}) (interfaces.Chat, error) {
-	account, ok := v.accountManager.getAccountByID(accountID)
-	if !ok {
-		return nil, errors.New(i18n.Local("The selected account could not be found."))
-	}
-
-	conn := account.session.Conn()
-	if conn == nil {
-		return nil, errors.New(i18n.Local("The selected account is not connected."))
-	}
-
-	account.session.Subscribe(chatEvents)
-	return conn.GetChatContext(), nil
-}
-
 func (v *addChatView) validateFormAndOpenRoomWindow() {
 	accountID, occupant, err := v.validateForm()
 	if err != nil {
@@ -161,7 +146,7 @@ func (v *addChatView) validateFormAndOpenRoomWindow() {
 	}
 
 	eventsChan := make(chan interface{})
-	chat, err := v.getChatContextForAccount(accountID, eventsChan)
+	chat, err := v.chatManager.getChatContextForAccount(accountID, eventsChan)
 	if err != nil {
 		v.errorBox.ShowMessage(err.Error())
 		return
@@ -279,7 +264,7 @@ func (v *chatRoomView) showRoomConfigDialog() {
 
 func (u *gtkUI) joinChatRoom() {
 	//pass message and presence channels
-	view := newChatView(u.accountManager)
+	view := newChatView(u.accountManager, u.chatManager)
 	view.SetTransientFor(u.window)
 	view.Show()
 }

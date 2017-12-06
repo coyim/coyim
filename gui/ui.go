@@ -47,6 +47,7 @@ type gtkUI struct {
 	config *config.ApplicationConfig
 
 	*accountManager
+	*chatManager
 
 	displaySettings  *displaySettings
 	keyboardSettings *keyboardSettings
@@ -140,6 +141,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
 	ret.accountManager = newAccountManager(ret)
+
+	ret.chatManager = newChatManager(ret.accountManager)
 
 	ret.sessionFactory = sf
 

@@ -13,9 +13,11 @@ type listRoomsView struct {
 
 	gtki.Dialog `gtk-widget:"list-chat-rooms"`
 
-	service       gtki.Entry     `gtk-widget:"service"`
-	roomsModel    gtki.ListStore `gtk-widget:"rooms"`
-	roomsTreeView gtki.TreeView  `gtk-widget:"rooms-list-view"`
+	service            gtki.Entry          `gtk-widget:"service"`
+	roomsModel         gtki.ListStore      `gtk-widget:"rooms"`
+	roomsTreeView      gtki.TreeView       `gtk-widget:"rooms-list-view"`
+	roomsTreeContainer gtki.ScrolledWindow `gtk-widget:"room-list-scroll"`
+	emptyListLabel     gtki.Label          `gtk-widget:"empty-list-label"`
 }
 
 func (u *gtkUI) listChatRooms() {
@@ -54,9 +56,15 @@ func (v *listRoomsView) fetchRoomsFromService() {
 
 	conn := account.session.Conn()
 	result, _ := conn.GetChatContext().QueryRooms(service)
-	//TODO: deal with empty results
 
 	doInUIThread(func() {
+		if len(result) == 0 {
+			v.emptyListLabel.SetLabel("No rooms found from service " + service)
+			v.showLabel()
+			return
+		}
+
+		v.showTreeView()
 		for _, room := range result {
 			iter := v.roomsModel.Append()
 			v.roomsModel.SetValue(iter, 0, room.Jid)
@@ -64,6 +72,16 @@ func (v *listRoomsView) fetchRoomsFromService() {
 			v.roomsModel.SetValue(iter, 2, room.Name)
 		}
 	})
+}
+
+func (v *listRoomsView) showLabel() {
+	v.emptyListLabel.SetVisible(true)
+	v.roomsTreeContainer.SetVisible(false)
+}
+
+func (v *listRoomsView) showTreeView() {
+	v.emptyListLabel.SetVisible(false)
+	v.roomsTreeContainer.SetVisible(true)
 }
 
 func (v *listRoomsView) joinSelectedRoom() {

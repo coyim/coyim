@@ -99,6 +99,13 @@
               </packing>
             </child>
             <child>
+              <object class="GtkLabel" id="empty-list-label">
+                <property name="label"></property>
+                <property name="visible">False</property>
+                <property name="margin-top">40</property>
+              </object>
+            </child>
+            <child>
               <object class="GtkScrolledWindow" id="room-list-scroll">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>

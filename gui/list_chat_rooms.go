@@ -1,13 +1,15 @@
 package gui
 
 import (
-	"log"
-
+	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type listRoomsView struct {
 	accountManager *accountManager
+	chatManager    *chatManager
+	errorBox       *errorNotification
 
 	gtki.Dialog `gtk-widget:"list-chat-rooms"`
 
@@ -17,14 +19,15 @@ type listRoomsView struct {
 }
 
 func (u *gtkUI) listChatRooms() {
-	view := newListRoomsView(u.accountManager)
+	view := newListRoomsView(u.accountManager, u.chatManager)
 	view.SetTransientFor(u.window)
 	view.Show()
 }
 
-func newListRoomsView(accountManager *accountManager) gtki.Dialog {
+func newListRoomsView(accountManager *accountManager, chatManager *chatManager) gtki.Dialog {
 	view := &listRoomsView{
 		accountManager: accountManager,
+		chatManager:    chatManager,
 	}
 
 	builder := newBuilder("ListChatRooms")
@@ -64,11 +67,55 @@ func (v *listRoomsView) fetchRoomsFromService() {
 }
 
 func (v *listRoomsView) joinSelectedRoom() {
+	room := v.getSelectedRoomName()
+	service, _ := v.service.GetText()
+
+	addChatView := newChatView(v.accountManager, v.chatManager)
+	if parent, err := v.GetTransientFor(); err == nil {
+		addChatView.SetTransientFor(parent)
+	}
+
+	addChatView.service.SetText(service)
+	addChatView.room.SetText(room)
+
+	v.Destroy()
+	addChatView.Show()
+}
+
+func (v *listRoomsView) getChatContext(eventsChan chan interface{}) interfaces.Chat {
+	chat, err := v.chatManager.getChatContextForAccount(v.getHandle(), eventsChan)
+	if err != nil {
+		v.errorBox.ShowMessage(err.Error())
+		return nil
+	}
+	return chat
+}
+
+func (v *listRoomsView) getSelectedRoomName() string {
 	ts, _ := v.roomsTreeView.GetSelection()
-	if _, iter, ok := ts.GetSelected(); ok {
-		value, _ := v.roomsModel.GetValue(iter, 0)
-		roomJid, _ := value.GetString()
-		log.Print("ROOM: ")
-		log.Print(roomJid)
+	_, iter, selected := ts.GetSelected()
+
+	if !selected {
+		//TODO: Error handling
+		return ""
+	}
+
+	value, _ := v.roomsModel.GetValue(iter, 1)
+	roomJid, _ := value.GetString()
+	return roomJid
+}
+
+func (v *listRoomsView) getHandle() string {
+	return v.accountManager.getAllAccounts()[0].ID()
+}
+
+func (v *listRoomsView) buildOccupant(room, service, handle string) *data.Occupant {
+
+	return &data.Occupant{
+		Room: data.Room{
+			ID:      room,
+			Service: service,
+		},
+		Handle: handle,
 	}
 }

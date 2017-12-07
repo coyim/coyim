@@ -33,7 +33,7 @@ type addChatView struct {
 	model gtki.ListStore `gtk-widget:"accounts-model"`
 }
 
-func newChatView(accountManager *accountManager, chatManager *chatManager) gtki.Dialog {
+func newChatView(accountManager *accountManager, chatManager *chatManager) *addChatView {
 	view := &addChatView{
 		accountManager: accountManager,
 		chatManager:    chatManager,

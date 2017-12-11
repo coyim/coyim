@@ -375,10 +375,24 @@ func (v *chatRoomView) openWindow(evs chan interface{}) {
 	v.Show()
 }
 
-func (v *chatRoomView) leaveRoom() {
-	v.chat.LeaveRoom(v.occupant)
+func (v *chatRoomView) authenticationError() {
+	//TODO: Go to "join chat room" dialog and show error message
+	v.destroy()
+	doInUIThread(v.Destroy)
+}
+
+func (v *chatRoomView) destroy() {
+	if v.eventsChan == nil {
+		return
+	}
+
 	close(v.eventsChan)
 	v.eventsChan = nil
+}
+
+func (v *chatRoomView) leaveRoom() {
+	v.chat.LeaveRoom(v.occupant)
+	v.destroy()
 }
 
 func (v *chatRoomView) sameRoom(from string) bool {
@@ -399,8 +413,18 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 		switch e := ev.(type) {
 		case events.ChatPresence:
 			if !v.sameRoom(e.ClientPresence.From) {
-				log.Println("muc: presence not for this room. %#v", e.ClientPresence)
+				log.Printf("muc: presence not for this room. %#v", e.ClientPresence)
 				continue
+			}
+
+			//See: XEP-0045, section "7.2.6 Password-Protected Rooms"
+			if e.ClientPresence.Type == "error" && e.ClientPresence.Chat == nil {
+				presenceError := e.ClientPresence.Error
+				specificError := e.ClientPresence.Error.Any.XMLName
+				if presenceError.Type == "auth" && specificError.Local == "not-authorized" && specificError.Space == "urn:ietf:params:xml:ns:xmpp-stanzas" {
+					v.authenticationError()
+					continue
+				}
 			}
 
 			v.updatePresence(e.ClientPresence)

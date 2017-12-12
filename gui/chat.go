@@ -99,6 +99,12 @@ func (v *addChatView) getAccount() (string, string, error) {
 	return id, bareJID, nil
 }
 
+func (v *addChatView) setActiveAccount(accIndex int) {
+	doInUIThread(func() {
+		v.account.SetActive(accIndex)
+	})
+}
+
 func (v *addChatView) validateForm() (string, *data.Occupant, error) {
 	accountID, bareJID, err := v.getAccount()
 	if err != nil {

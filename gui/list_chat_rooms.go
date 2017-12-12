@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -18,6 +17,8 @@ type listRoomsView struct {
 	roomsTreeView      gtki.TreeView       `gtk-widget:"rooms-list-view"`
 	roomsTreeContainer gtki.ScrolledWindow `gtk-widget:"room-list-scroll"`
 	emptyListLabel     gtki.Label          `gtk-widget:"empty-list-label"`
+	account            gtki.ComboBox       `gtk-widget:"accounts"`
+	accountsModel      gtki.ListStore      `gtk-widget:"accounts-model"`
 }
 
 func (u *gtkUI) listChatRooms() {
@@ -44,23 +45,25 @@ func newListRoomsView(accountManager *accountManager, chatManager *chatManager) 
 		"fetch_rooms_handler":        view.fetchRoomsFromService,
 	})
 
+	doInUIThread(view.populateAccountsModel)
+
 	return view
 }
 
 func (v *listRoomsView) fetchRoomsFromService() {
 	v.roomsModel.Clear()
 	service, _ := v.service.GetText()
-
-	//TODO: Be able to select account
-	account := v.accountManager.getAllAccounts()[0]
+	account, found := v.accountManager.getAccountByID(v.getSelectedAccountID())
+	if !found {
+		return
+	}
 
 	conn := account.session.Conn()
 	result, _ := conn.GetChatContext().QueryRooms(service)
 
 	doInUIThread(func() {
 		if len(result) == 0 {
-			v.emptyListLabel.SetLabel("No rooms found from service " + service)
-			v.showLabel()
+			v.showLabel(service)
 			return
 		}
 
@@ -69,12 +72,27 @@ func (v *listRoomsView) fetchRoomsFromService() {
 			iter := v.roomsModel.Append()
 			v.roomsModel.SetValue(iter, 0, room.Jid)
 			v.roomsModel.SetValue(iter, 1, room.Name)
+			// TODO: parse description?
 			v.roomsModel.SetValue(iter, 2, room.Name)
 		}
 	})
 }
 
-func (v *listRoomsView) showLabel() {
+func (v *listRoomsView) populateAccountsModel() {
+	accs := v.accountManager.getAllConnectedAccounts()
+	for _, acc := range accs {
+		iter := v.accountsModel.Append()
+		v.accountsModel.SetValue(iter, 0, acc.session.GetConfig().Account)
+		v.accountsModel.SetValue(iter, 1, acc.session.GetConfig().ID())
+	}
+
+	if len(accs) > 0 {
+		v.account.SetActive(0)
+	}
+}
+
+func (v *listRoomsView) showLabel(service string) {
+	v.emptyListLabel.SetLabel("No rooms found from service " + service)
 	v.emptyListLabel.SetVisible(true)
 	v.roomsTreeContainer.SetVisible(false)
 }
@@ -95,13 +113,15 @@ func (v *listRoomsView) joinSelectedRoom() {
 
 	addChatView.service.SetText(service)
 	addChatView.room.SetText(room)
+	index := v.getSelectedAccountIndex()
+	addChatView.setActiveAccount(index)
 
 	v.Destroy()
 	addChatView.Show()
 }
 
 func (v *listRoomsView) getChatContext(eventsChan chan interface{}) interfaces.Chat {
-	chat, err := v.chatManager.getChatContextForAccount(v.getHandle(), eventsChan)
+	chat, err := v.chatManager.getChatContextForAccount(v.getSelectedAccountJID(), eventsChan)
 	if err != nil {
 		v.errorBox.ShowMessage(err.Error())
 		return nil
@@ -123,17 +143,36 @@ func (v *listRoomsView) getSelectedRoomName() string {
 	return roomJid
 }
 
-func (v *listRoomsView) getHandle() string {
-	return v.accountManager.getAllAccounts()[0].ID()
+func (v *listRoomsView) getSelectedAccountID() string {
+	iter, _ := v.account.GetActiveIter()
+
+	val, err := v.accountsModel.GetValue(iter, 1)
+	if err != nil {
+		return ""
+	}
+
+	account, err := val.GetString()
+	if err != nil {
+		return ""
+	}
+	return account
 }
 
-func (v *listRoomsView) buildOccupant(room, service, handle string) *data.Occupant {
+func (v *listRoomsView) getSelectedAccountJID() string {
+	iter, _ := v.account.GetActiveIter()
 
-	return &data.Occupant{
-		Room: data.Room{
-			ID:      room,
-			Service: service,
-		},
-		Handle: handle,
+	val, err := v.accountsModel.GetValue(iter, 0)
+	if err != nil {
+		return ""
 	}
+
+	account, err := val.GetString()
+	if err != nil {
+		return ""
+	}
+	return account
+}
+
+func (v *listRoomsView) getSelectedAccountIndex() int {
+	return v.account.GetActive()
 }

@@ -8,6 +8,14 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="accounts-model">
+    <columns>
+      <!-- account name -->
+      <column type="gchararray"/>
+      <!-- account id -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkDialog" id="list-chat-rooms">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
@@ -15,46 +23,7 @@
       <object class="GtkBox">
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area1">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="cancel-button">
-                <property name="label" translatable="yes">Cancel</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="cancel_handler" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="join-room">
-                <property name="label" translatable="yes">Join room</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="join_selected_room_handler" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
+        <property name="spacing">3</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
@@ -65,16 +34,68 @@
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin-top">15</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="column-spacing">10</property>
+                <property name="row-spacing">12</property>
+                <child>
+                  <object class="GtkLabel" id="accounts-label" >
+    		            <property name="visible">true</property>
+                    <property name="label" translatable="yes">Account:</property>
+                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                    <property name="halign">GTK_ALIGN_START</property>
+                  </object>
+                  <packing>
+                    <property name="top-attach">0</property>
+                    <property name="left-attach">0</property>
+                    <property name="width">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="accounts">
+                    <property name="visible">true</property>
+                    <property name="model">accounts-model</property>
+                    <property name="has-focus">true</property>
+                    <property name="hexpand">True</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="account-name-rendered"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="top-attach">0</property>
+                    <property name="left-attach">1</property>
+                    <property name="width">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="service-label" >
+                    <property name="visible">true</property>
+                    <property name="label" translatable="yes">Service:</property>
+                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                    <property name="halign">GTK_ALIGN_START</property>
+                  </object>
+                  <packing>
+                    <property name="top-attach">1</property>
+                    <property name="left-attach">0</property>
+                    <property name="width">1</property>
+                  </packing>
+                </child>
                 <child>
                   <object class="GtkEntry" id="service">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="width_chars">52</property>
+                    <property name="width_chars">40</property>
                     <property name="text">conference.riseup.net</property>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
+                    <property name="top_attach">1</property>
+                    <property name="left_attach">1</property>
+                    <property name="width">3</property>
                   </packing>
                 </child>
                 <child>
@@ -83,12 +104,11 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="margin_left">9</property>
                     <signal name="clicked" handler="fetch_rooms_handler" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
-                    <property name="top_attach">0</property>
+                    <property name="top_attach">1</property>
+                    <property name="left_attach">4</property>
                   </packing>
                 </child>
               </object>
@@ -170,6 +190,45 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">0</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="cancel-button">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="cancel_handler" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="join-room">
+                <property name="label" translatable="yes">Join room</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="join_selected_room_handler" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

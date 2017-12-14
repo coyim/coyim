@@ -70,10 +70,9 @@ func (v *listRoomsView) fetchRoomsFromService() {
 		v.showTreeView()
 		for _, room := range result {
 			iter := v.roomsModel.Append()
-			v.roomsModel.SetValue(iter, 0, room.Jid)
-			v.roomsModel.SetValue(iter, 1, room.Name)
+			v.roomsModel.SetValue(iter, 0, room.Name)
 			// TODO: parse description?
-			v.roomsModel.SetValue(iter, 2, room.Name)
+			v.roomsModel.SetValue(iter, 1, room.Name)
 		}
 	})
 }
@@ -135,7 +134,6 @@ func (v *listRoomsView) getSelectedRoomName() string {
 	_, iter, selected := ts.GetSelected()
 
 	if !selected {
-		//TODO: Error handling
 		return ""
 	}
 

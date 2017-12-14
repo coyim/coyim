@@ -5,7 +5,6 @@
     <columns>
       <column type="gchararray"/>
       <column type="gchararray"/>
-      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkListStore" id="accounts-model">
@@ -140,8 +139,7 @@
                     <property name="enable_grid_lines">both</property>
                     <child>
                       <object class="GtkTreeViewColumn">
-                        <property name="title">JID</property>
-                        <property name="visible">False</property>
+                        <property name="title">Room Name</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
@@ -152,22 +150,11 @@
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn">
-                        <property name="title">Room Name</property>
-                        <child>
-                          <object class="GtkCellRendererText"/>
-                          <attributes>
-                            <attribute name="text">1</attribute>
-                          </attributes>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn">
                         <property name="title">Description</property>
                         <child>
                           <object class="GtkCellRendererText"/>
                           <attributes>
-                            <attribute name="text">2</attribute>
+                            <attribute name="text">1</attribute>
                           </attributes>
                         </child>
                       </object>

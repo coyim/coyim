@@ -144,6 +144,34 @@ func (v *addChatView) validateForm() (string, *data.Occupant, error) {
 	return accountID, occ, nil
 }
 
+//openRoomDialog blocks to do networking and should be called in a goroutine
+func (v *addChatView) openRoomDialog(chat interfaces.Chat, occupant *data.Occupant) {
+	if !chat.CheckForSupport(occupant.Service) {
+		doInUIThread(func() {
+			v.errorBox.ShowMessage(i18n.Local("The service does not support chat."))
+		})
+
+		return
+	}
+
+	if err := chat.EnterRoom(occupant); err != nil {
+		doInUIThread(func() {
+			v.errorBox.ShowMessage(i18n.Local(err.Error()))
+		})
+		return
+	}
+
+	doInUIThread(func() {
+		defer v.Destroy()
+
+		chatRoom := newChatRoomView(chat, occupant)
+		if parent, err := v.GetTransientFor(); err == nil {
+			chatRoom.SetTransientFor(parent)
+		}
+		chatRoom.openWindow()
+	})
+}
+
 func (v *addChatView) validateFormAndOpenRoomWindow() {
 	accountID, occupant, err := v.validateForm()
 	if err != nil {
@@ -151,32 +179,20 @@ func (v *addChatView) validateFormAndOpenRoomWindow() {
 		return
 	}
 
-	eventsChan := make(chan interface{})
-	chat, err := v.chatManager.getChatContextForAccount(accountID, eventsChan)
+	chat, err := v.chatManager.getChatContextForAccount(accountID)
 	if err != nil {
 		v.errorBox.ShowMessage(err.Error())
 		return
 	}
 
-	//TODO: This should notify the user about what is happening (bc it blocks)
-	if !chat.CheckForSupport(occupant.Service) {
-		v.errorBox.ShowMessage(i18n.Local("The service does not support chat."))
-		close(eventsChan)
-		return
-	}
-
-	chatRoom := newChatRoomView(chat, occupant)
-	if parent, err := v.GetTransientFor(); err == nil {
-		chatRoom.SetTransientFor(parent)
-	}
-	v.Destroy()
-
-	chatRoom.openWindow(eventsChan)
+	//TODO: Block/hide form fields and show spinner?
+	v.errorBox.ShowMessage(i18n.Localf("Joining #%s", occupant.Room.ID))
+	go v.openRoomDialog(chat, occupant)
 }
 
 func (v *addChatView) joinRoomHandler() {
 	v.errorBox.Hide()
-	doInUIThread(v.validateFormAndOpenRoomWindow)
+	v.validateFormAndOpenRoomWindow()
 }
 
 type roomConfigView struct {
@@ -299,9 +315,8 @@ type chatRoomView struct {
 	occupantsView  gtki.TreeView  `gtk-widget:"occupants-view"`
 	occupantsModel gtki.ListStore `gtk-widget:"occupants"`
 
-	eventsChan chan interface{}
-	chat       interfaces.Chat
-	occupant   *data.Occupant
+	chat     interfaces.Chat
+	occupant *data.Occupant
 
 	receivedSelfPresence bool
 }
@@ -371,34 +386,21 @@ func (v *chatRoomView) showDebugInfo() {
 	log.Printf("RoomInfo: %#v", response)
 }
 
-func (v *chatRoomView) openWindow(evs chan interface{}) {
-	v.eventsChan = evs
-
+func (v *chatRoomView) openWindow() {
 	//TODO: show error
 	go v.chat.EnterRoom(v.occupant)
-	go v.watchEvents(v.eventsChan)
+	go v.watchEvents(v.chat.Events())
 
 	v.Show()
 }
 
 func (v *chatRoomView) authenticationError() {
 	//TODO: Go to "join chat room" dialog and show error message
-	v.destroy()
 	doInUIThread(v.Destroy)
-}
-
-func (v *chatRoomView) destroy() {
-	if v.eventsChan == nil {
-		return
-	}
-
-	close(v.eventsChan)
-	v.eventsChan = nil
 }
 
 func (v *chatRoomView) leaveRoom() {
 	v.chat.LeaveRoom(v.occupant)
-	v.destroy()
 }
 
 func (v *chatRoomView) sameRoom(from string) bool {

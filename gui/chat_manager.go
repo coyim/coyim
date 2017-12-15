@@ -18,7 +18,7 @@ func newChatManager(m *accountManager) *chatManager {
 	}
 }
 
-func (m *chatManager) getChatContextForAccount(accountID string, chatEvents chan<- interface{}) (interfaces.Chat, error) {
+func (m *chatManager) getChatContextForAccount(accountID string) (interfaces.Chat, error) {
 	account, ok := m.accountManager.getAccountByID(accountID)
 	if !ok {
 		return nil, errors.New(i18n.Local("The selected account could not be found."))
@@ -29,6 +29,7 @@ func (m *chatManager) getChatContextForAccount(accountID string, chatEvents chan
 		return nil, errors.New(i18n.Local("The selected account is not connected."))
 	}
 
-	account.session.Subscribe(chatEvents)
-	return conn.GetChatContext(), nil
+	chat := conn.GetChatContext()
+	account.session.Subscribe(chat.Events())
+	return chat, nil
 }

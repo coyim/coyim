@@ -120,8 +120,9 @@ func (v *listRoomsView) joinSelectedRoom() {
 	addChatView.Show()
 }
 
-func (v *listRoomsView) getChatContext(eventsChan chan interface{}) interfaces.Chat {
-	chat, err := v.chatManager.getChatContextForAccount(v.getSelectedAccountJID(), eventsChan)
+//TODO: remove unused
+func (v *listRoomsView) getChatContext() interfaces.Chat {
+	chat, err := v.chatManager.getChatContextForAccount(v.getSelectedAccountJID())
 	if err != nil {
 		v.errorBox.ShowMessage(err.Error())
 		return nil

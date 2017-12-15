@@ -5,6 +5,7 @@ import (
 )
 
 type Chat interface {
+	Events() chan interface{}
 	CheckForSupport(service string) bool
 	QueryRooms(entity string) ([]data.DiscoveryItem, error)
 	QueryRoomInformation(room string) (*data.RoomInfo, error)

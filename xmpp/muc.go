@@ -108,7 +108,6 @@ func (m *muc) queryRoomInformation(room *data.Room) (*data.DiscoveryInfoQuery, e
 
 //See: Section "7.2.2 Basic MUC Protocol"
 func (m *muc) EnterRoom(occupant *data.Occupant) error {
-	//TODO: Should wait for the presence reply
 	//TODO: Implement section "7.2.1 Groupchat 1.0 Protocol"?
 	return m.sendPresence(&data.ClientPresence{
 		To:    occupant.JID(),

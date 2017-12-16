@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"sync"
@@ -25,6 +26,7 @@ type addChatView struct {
 	gtki.Dialog `gtk-widget:"add-chat-dialog"`
 
 	notification gtki.Box      `gtk-widget:"notification-area"`
+	form         gtki.Grid     `gtk-widget:"form"`
 	account      gtki.ComboBox `gtk-widget:"accounts"`
 	service      gtki.Entry    `gtk-widget:"service"`
 	room         gtki.Entry    `gtk-widget:"room"`
@@ -144,18 +146,63 @@ func (v *addChatView) validateForm() (string, *data.Occupant, error) {
 	return accountID, occ, nil
 }
 
-//openRoomDialog blocks to do networking and should be called in a goroutine
-func (v *addChatView) openRoomDialog(chat interfaces.Chat, occupant *data.Occupant) {
-	if !chat.CheckForSupport(occupant.Service) {
-		doInUIThread(func() {
-			v.errorBox.ShowMessage(i18n.Local("The service does not support chat."))
-		})
+func (v *addChatView) waitForSelfPresence(chat interfaces.Chat, occupant *data.Occupant) ([]*roomOccupant, error) {
+	var ret []*roomOccupant
 
-		return
+	//TODO: this should timeout
+	//TODO: this should have a cancelation mechanism
+	for ev := range chat.Events() {
+		switch e := ev.(type) {
+		case events.ChatPresence:
+			presence := e.ClientPresence
+			if xmpp.ParseJID(presence.From).Bare() != occupant.Room.JID() {
+				continue
+			}
+
+			if presence.Type == "error" {
+				//TODO: Return error constants?
+				return ret, fmt.Errorf("Error %s: %s", presence.Error.Code, presence.Error.Text)
+			}
+
+			if presence.Chat == nil {
+				continue //TODO: this is a broken server
+			}
+
+			ret = append(ret, &roomOccupant{
+				OccupantJID: presence.From,
+				Role:        presence.Chat.Item.Role,
+				Affiliation: presence.Chat.Item.Affiliation,
+			})
+
+			if presence.Chat.Status.Code == 110 {
+				return ret, nil
+			}
+		}
 	}
 
-	if err := chat.EnterRoom(occupant); err != nil {
+	return ret, errors.New("Did not receive a presence response")
+}
+
+//TODO: This could all go to the interfaces.Chat
+func (v *addChatView) enterRoom(chat interfaces.Chat, occupant *data.Occupant) ([]*roomOccupant, error) {
+	if !chat.CheckForSupport(occupant.Service) {
+		return nil, errors.New("The service does not support chat.")
+	}
+
+	err := chat.EnterRoom(occupant)
+	if err != nil {
+		return nil, err
+	}
+
+	return v.waitForSelfPresence(chat, occupant)
+}
+
+//openRoomDialog blocks to do networking and should be called in a goroutine
+func (v *addChatView) openRoomDialog(chat interfaces.Chat, occupant *data.Occupant) {
+	occupantsInRoom, err := v.enterRoom(chat, occupant)
+	if err != nil {
 		doInUIThread(func() {
+			v.form.Show()
 			v.errorBox.ShowMessage(i18n.Local(err.Error()))
 		})
 		return
@@ -165,6 +212,7 @@ func (v *addChatView) openRoomDialog(chat interfaces.Chat, occupant *data.Occupa
 		defer v.Destroy()
 
 		chatRoom := newChatRoomView(chat, occupant)
+		chatRoom.setOccupantList(occupantsInRoom)
 		if parent, err := v.GetTransientFor(); err == nil {
 			chatRoom.SetTransientFor(parent)
 		}
@@ -172,27 +220,33 @@ func (v *addChatView) openRoomDialog(chat interfaces.Chat, occupant *data.Occupa
 	})
 }
 
-func (v *addChatView) validateFormAndOpenRoomWindow() {
+func (v *addChatView) getChatAndOccupantFromForm() (interfaces.Chat, *data.Occupant, error) {
 	accountID, occupant, err := v.validateForm()
 	if err != nil {
-		v.errorBox.ShowMessage(err.Error())
-		return
+		return nil, nil, err
 	}
 
 	chat, err := v.chatManager.getChatContextForAccount(accountID)
 	if err != nil {
-		v.errorBox.ShowMessage(err.Error())
-		return
+		return nil, nil, err
 	}
 
-	//TODO: Block/hide form fields and show spinner?
-	v.errorBox.ShowMessage(i18n.Localf("Joining #%s", occupant.Room.ID))
-	go v.openRoomDialog(chat, occupant)
+	return chat, occupant, nil
 }
 
 func (v *addChatView) joinRoomHandler() {
 	v.errorBox.Hide()
-	v.validateFormAndOpenRoomWindow()
+
+	chat, occupant, err := v.getChatAndOccupantFromForm()
+	if err != nil {
+		v.form.Show()
+		v.errorBox.ShowMessage(err.Error())
+		return
+	}
+
+	v.form.Hide()
+	v.errorBox.ShowMessage(i18n.Localf("Joining #%s", occupant.Room.ID))
+	go v.openRoomDialog(chat, occupant)
 }
 
 type roomConfigView struct {
@@ -292,6 +346,7 @@ func (u *gtkUI) joinChatRoom() {
 }
 
 type roomOccupant struct {
+	OccupantJID string
 	Role        string
 	Affiliation string
 }
@@ -317,8 +372,6 @@ type chatRoomView struct {
 
 	chat     interfaces.Chat
 	occupant *data.Occupant
-
-	receivedSelfPresence bool
 }
 
 func newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomView {
@@ -387,10 +440,7 @@ func (v *chatRoomView) showDebugInfo() {
 }
 
 func (v *chatRoomView) openWindow() {
-	//TODO: show error
-	go v.chat.EnterRoom(v.occupant)
 	go v.watchEvents(v.chat.Events())
-
 	v.Show()
 }
 
@@ -463,15 +513,12 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 
 	v.occupantsList.dirty = true
 
-	if isSelfPresence(presence) {
-		v.receivedSelfPresence = true
-	}
-
 	if presence.Type == "unavailable" {
 		delete(v.occupantsList.m, presence.From)
 		v.notifyUserLeftRoom(presence)
 	} else {
 		v.occupantsList.m[presence.From] = &roomOccupant{
+			OccupantJID: presence.From,
 			Role:        presence.Chat.Item.Role,
 			Affiliation: presence.Chat.Item.Affiliation,
 		}
@@ -480,17 +527,11 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 }
 
 func (v *chatRoomView) notifyUserLeftRoom(presence *data.ClientPresence) {
-	if !v.receivedSelfPresence {
-		return
-	}
 	message := fmt.Sprintf("%v left the room", utils.ResourceFromJid(presence.From))
 	v.notifyStatusChange(message)
 }
 
 func (v *chatRoomView) notifyUserEnteredRoom(presence *data.ClientPresence) {
-	if !v.receivedSelfPresence {
-		return
-	}
 	message := fmt.Sprintf("%v entered the room", utils.ResourceFromJid(presence.From))
 	v.notifyStatusChange(message)
 }
@@ -505,6 +546,16 @@ func (v *chatRoomView) notifyStatusChange(message string) {
 		insertTimestamp(v.historyBuffer, time.Now())
 		insertAtEnd(v.historyBuffer, message)
 	})
+}
+
+func (v *chatRoomView) setOccupantList(occupants []*roomOccupant) {
+	v.occupantsList.Lock()
+	defer v.occupantsList.Unlock()
+	v.occupantsList.dirty = true
+
+	for _, occ := range occupants {
+		v.occupantsList.m[occ.OccupantJID] = occ
+	}
 }
 
 func (v *chatRoomView) redrawOccupantsList() {

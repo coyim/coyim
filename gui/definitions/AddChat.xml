@@ -36,7 +36,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkGrid" id="grid">
+          <object class="GtkGrid" id="form">
             <property name="visible">true</property>
             <property name="margin-top">15</property>
             <property name="margin-bottom">10</property>

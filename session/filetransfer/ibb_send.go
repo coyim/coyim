@@ -36,8 +36,8 @@ func ibbSendDoWithBlockSize(ctx *sendContext, blocksize int) {
 		if ciq != nil &&
 			ciq.Type == "error" &&
 			ciq.Error.Type == "modify" &&
-			ciq.Error.Any.XMLName.Local == "resource-constraint" &&
-			ciq.Error.Any.XMLName.Space == "urn:ietf:params:xml:ns:xmpp-stanzas" {
+			ciq.Error.Condition.XMLName.Local == "resource-constraint" &&
+			ciq.Error.Condition.XMLName.Space == "urn:ietf:params:xml:ns:xmpp-stanzas" {
 			ibbSendDoWithBlockSize(ctx, blocksize/2)
 			return
 		}

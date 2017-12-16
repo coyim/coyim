@@ -9,7 +9,7 @@ type ClientIQ struct { // info/query
 	ID      string      `xml:"id,attr"`
 	To      string      `xml:"to,attr"`
 	Type    string      `xml:"type,attr"` // error, get, result, set
-	Error   ClientError `xml:"error"`
+	Error   StanzaError `xml:"jabber:client error"`
 	Bind    BindBind    `xml:"bind"`
 	Query   []byte      `xml:",innerxml"`
 }

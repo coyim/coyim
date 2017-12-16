@@ -11,12 +11,13 @@ type ClientPresence struct {
 	Type    string   `xml:"type,attr,omitempty"` // error, probe, subscribe, subscribed, unavailable, unsubscribe, unsubscribed
 	Lang    string   `xml:"lang,attr,omitempty"`
 
-	Show     string       `xml:"show,omitempty"`   // away, chat, dnd, xa
-	Status   string       `xml:"status,omitempty"` // sb []clientText
-	Priority string       `xml:"priority,omitempty"`
-	Caps     *ClientCaps  `xml:"c"`
-	Error    *ClientError `xml:"error"`
-	Delay    *Delay       `xml:"delay,omitempty"`
+	Show     string      `xml:"show,omitempty"`   // away, chat, dnd, xa
+	Status   string      `xml:"status,omitempty"` // sb []clientText
+	Priority string      `xml:"priority,omitempty"`
+	Caps     *ClientCaps `xml:"c"`
+
+	Error *StanzaError `xml:"jabber:client error"`
+	Delay *Delay       `xml:"delay,omitempty"`
 
 	Chat *struct {
 		Item struct {

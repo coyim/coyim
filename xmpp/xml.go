@@ -152,5 +152,5 @@ var defaultStorage = map[xml.Name]reflect.Type{
 	xml.Name{Space: NsClient, Local: "message"}:  reflect.TypeOf(data.ClientMessage{}),
 	xml.Name{Space: NsClient, Local: "presence"}: reflect.TypeOf(data.ClientPresence{}),
 	xml.Name{Space: NsClient, Local: "iq"}:       reflect.TypeOf(data.ClientIQ{}),
-	xml.Name{Space: NsClient, Local: "error"}:    reflect.TypeOf(data.ClientError{}),
+	xml.Name{Space: NsClient, Local: "error"}:    reflect.TypeOf(data.StanzaError{}),
 }

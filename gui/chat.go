@@ -428,8 +428,8 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 			//See: XEP-0045, section "7.2.6 Password-Protected Rooms"
 			if e.ClientPresence.Type == "error" && e.ClientPresence.Chat == nil {
 				presenceError := e.ClientPresence.Error
-				specificError := e.ClientPresence.Error.Any.XMLName
-				if presenceError.Type == "auth" && specificError.Local == "not-authorized" && specificError.Space == "urn:ietf:params:xml:ns:xmpp-stanzas" {
+				errorCondition := e.ClientPresence.Error.Condition.XMLName
+				if presenceError.Type == "auth" && errorCondition.Local == "not-authorized" && errorCondition.Space == "urn:ietf:params:xml:ns:xmpp-stanzas" {
 					v.authenticationError()
 					continue
 				}

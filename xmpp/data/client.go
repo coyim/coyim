@@ -15,19 +15,26 @@ type Extensions []*Extension
 type Extension Any
 
 // StanzaError implements RFC 3920, section 9.3.
-//TODO RFC 6120 obsoletes RFC 3920
+//TODO RFC 6120 obsoletes RFC 3920, section "8.3.2. Syntax"
 type StanzaError struct {
+	By   string `xml:"by,attr"`
+	Code string `xml:"code,attr"` // NOTE: I could not find this in the spec
+
 	// cancel -- do not retry (the error is unrecoverable)
 	// continue -- proceed (the condition was only a warning)
 	// modify -- retry after changing the data sent
 	// auth -- retry after providing credentials
 	// wait -- retry after waiting (the error is temporary)
 	Type string `xml:"type,attr"`
+	Text string `xml:"urn:ietf:params:xml:ns:xmpp-stanzas text"`
 
+	//TODO: Replace references by a function call
 	Condition struct {
 		XMLName xml.Name
 		Body    string `xml:",innerxml"`
 	} `xml:",any"`
+
+	ApplicationCondition *Any `xml:",any,ommitempty"`
 }
 
 // ClientMessage implements RFC 3921  B.1  jabber:client
@@ -57,13 +64,4 @@ type ClientCaps struct {
 	Hash    string   `xml:"hash,attr"`
 	Node    string   `xml:"node,attr"`
 	Ver     string   `xml:"ver,attr"`
-}
-
-// ClientError represents a client error
-type ClientError struct {
-	XMLName xml.Name `xml:"jabber:client error"`
-	Code    string   `xml:"code,attr"`
-	Type    string   `xml:"type,attr"`
-	Any     Any      `xml:",any"`
-	Text    string   `xml:"text"`
 }

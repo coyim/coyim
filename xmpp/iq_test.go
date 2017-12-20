@@ -115,8 +115,8 @@ func (s *IqXMPPSuite) TestConnSendIQErr(c *C) {
 	}
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
 	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='.*'>$")
-	c.Assert(reply, NotNil)
-	c.Assert(cookie, NotNil)
+	c.Assert(reply, IsNil)
+	c.Assert(cookie, Equals, data.Cookie(0))
 	c.Assert(err, Equals, io.EOF)
 }
 

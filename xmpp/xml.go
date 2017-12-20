@@ -93,6 +93,7 @@ func next(c interfaces.Conn) (xml.Name, interface{}, error) {
 		return xml.Name{}, nil, err
 	}
 
+	//FIXME: Why? It does not seem to do anything on a critical section
 	c.Lock().Lock()
 	defer c.Lock().Unlock()
 

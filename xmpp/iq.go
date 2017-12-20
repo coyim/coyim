@@ -18,19 +18,14 @@ type rawXML []byte
 // SendIQ sends an info/query message to the given user. It returns a channel
 // on which the reply can be read when received and a Cookie that can be used
 // to cancel the request.
-func (c *conn) SendIQ(to, typ string, value interface{}) (reply chan data.Stanza, cookie data.Cookie, err error) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
-	cookie = c.getCookie()
-	reply = make(chan data.Stanza, 1)
-
+func (c *conn) SendIQ(to, typ string, value interface{}) (reply <-chan data.Stanza, cookie data.Cookie, err error) {
+	nextCookie := c.getCookie()
 	toAttr := ""
 	if len(to) > 0 {
 		toAttr = "to='" + xmlEscape(to) + "'"
 	}
 
-	if _, err = fmt.Fprintf(c.out, "<iq xmlns='jabber:client' %s from='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), cookie); err != nil {
+	if _, err = fmt.Fprintf(c.out, "<iq xmlns='jabber:client' %s from='%s' type='%s' id='%x'>", toAttr, xmlEscape(c.jid), xmlEscape(typ), nextCookie); err != nil {
 		return
 	}
 
@@ -51,8 +46,7 @@ func (c *conn) SendIQ(to, typ string, value interface{}) (reply chan data.Stanza
 		return
 	}
 
-	c.inflights[cookie] = inflight{reply, to}
-	return
+	return c.createInflight(nextCookie, to)
 }
 
 // SendIQReply sends a reply to an IQ query.

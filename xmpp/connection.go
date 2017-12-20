@@ -39,10 +39,12 @@ type conn struct {
 	features      data.StreamFeatures
 	serverAddress string
 
-	rand          io.Reader
-	lock          sync.Mutex
-	inflights     map[data.Cookie]inflight
-	customStorage map[xml.Name]reflect.Type
+	rand io.Reader
+	lock sync.Mutex
+
+	inflightsMutex sync.Mutex
+	inflights      map[data.Cookie]inflight
+	customStorage  map[xml.Name]reflect.Type
 
 	lastPingRequest  time.Time
 	lastPongResponse time.Time
@@ -211,6 +213,57 @@ func (c *conn) closeTCP() error {
 	return c.rawOut.Close()
 }
 
+func (c *conn) createInflight(cookie data.Cookie, to string) (<-chan data.Stanza, data.Cookie, error) {
+	c.inflightsMutex.Lock()
+	defer c.inflightsMutex.Unlock()
+
+	ch := make(chan data.Stanza, 1)
+	c.inflights[cookie] = inflight{ch, to}
+	return ch, cookie, nil
+}
+
+func (c *conn) asyncReturnIQResponse(stanza data.Stanza) error {
+	iq := stanza.Value.(*data.ClientIQ)
+	cookieValue, err := strconv.ParseUint(iq.ID, 16, 64)
+	if err != nil {
+		return errors.New("xmpp: failed to parse id from iq: " + err.Error())
+	}
+
+	cookie := data.Cookie(cookieValue)
+	c.inflightsMutex.Lock()
+	inflight, ok := c.inflights[cookie]
+	c.inflightsMutex.Unlock()
+
+	if !ok {
+		log.Println("xmpp: received reply to unknown iq. id:", iq.ID)
+		return nil
+	}
+
+	if len(inflight.to) > 0 {
+		// The reply must come from the address to
+		// which we sent the request.
+		if inflight.to != iq.From {
+			return nil
+		}
+	} else {
+		// If there was no destination on the request
+		// then the matching is more complex because
+		// servers differ in how they construct the
+		// reply.
+		if len(iq.From) > 0 && iq.From != c.jid && iq.From != utils.RemoveResourceFromJid(c.jid) && iq.From != utils.DomainFromJid(c.jid) {
+			return nil
+		}
+	}
+
+	c.inflightsMutex.Lock()
+	delete(c.inflights, cookie)
+	c.inflightsMutex.Unlock()
+
+	//replyChan is buffered with size 1
+	inflight.replyChan <- stanza
+	return nil
+}
+
 // Next reads stanzas from the server. If the stanza is a reply, it dispatches
 // it to the correct channel and reads the next message. Otherwise it returns
 // the stanza for processing.
@@ -225,55 +278,28 @@ func (c *conn) Next() (stanza data.Stanza, err error) {
 			return
 		}
 
-		if iq, ok := stanza.Value.(*data.ClientIQ); ok && (iq.Type == "result" || iq.Type == "error") {
-			var cookieValue uint64
-			if cookieValue, err = strconv.ParseUint(iq.ID, 16, 64); err != nil {
-				err = errors.New("xmpp: failed to parse id from iq: " + err.Error())
+		switch v := stanza.Value.(type) {
+		case *data.ClientIQ:
+			switch v.Type {
+			case "result", "error":
+				if err = c.asyncReturnIQResponse(stanza); err != nil {
+					return
+				}
+			default:
 				return
 			}
-			cookie := data.Cookie(cookieValue)
 
-			c.lock.Lock()
-			inflight, ok := c.inflights[cookie]
-			c.lock.Unlock()
-
-			if !ok {
-				log.Println("xmpp: received reply to unknown iq. id:", iq.ID)
-				continue
-			}
-
-			if len(inflight.to) > 0 {
-				// The reply must come from the address to
-				// which we sent the request.
-				if inflight.to != iq.From {
-					continue
-				}
-			} else {
-				// If there was no destination on the request
-				// then the matching is more complex because
-				// servers differ in how they construct the
-				// reply.
-				if len(iq.From) > 0 && iq.From != c.jid && iq.From != utils.RemoveResourceFromJid(c.jid) && iq.From != utils.DomainFromJid(c.jid) {
-					continue
-				}
-			}
-
-			c.lock.Lock()
-			delete(c.inflights, cookie)
-			c.lock.Unlock()
-
-			inflight.replyChan <- stanza
-			continue
+		default:
+			return
 		}
 
-		return
 	}
 }
 
 // Cancel cancels and outstanding request. The request's channel is closed.
 func (c *conn) Cancel(cookie data.Cookie) bool {
-	c.lock.Lock()
-	defer c.lock.Unlock()
+	c.inflightsMutex.Lock()
+	defer c.inflightsMutex.Unlock()
 
 	inflight, ok := c.inflights[cookie]
 	if !ok {

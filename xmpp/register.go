@@ -116,7 +116,7 @@ func (c *conn) createAccount(user, password string) error {
 }
 
 // CancelRegistration cancels the account registration with the server
-func (c *conn) CancelRegistration() (reply chan data.Stanza, cookie data.Cookie, err error) {
+func (c *conn) CancelRegistration() (reply <-chan data.Stanza, cookie data.Cookie, err error) {
 	// https://xmpp.org/extensions/xep-0077.html#usecases-cancel
 	registrationCancel := rawXML(`
 	<query xmlns='jabber:iq:register'>

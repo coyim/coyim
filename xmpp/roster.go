@@ -21,10 +21,5 @@ func (c *conn) RequestRoster() (<-chan data.Stanza, data.Cookie, error) {
 		return nil, 0, err
 	}
 
-	c.lock.Lock()
-	defer c.lock.Unlock()
-
-	ch := make(chan data.Stanza, 1)
-	c.inflights[cookie] = inflight{ch, ""}
-	return ch, cookie, nil
+	return c.createInflight(cookie, "")
 }

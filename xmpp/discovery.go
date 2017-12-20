@@ -39,7 +39,7 @@ func stringArrayContains(r []string, a string) bool {
 	return false
 }
 
-func (c *conn) sendDiscoveryInfo(to string) (reply chan data.Stanza, cookie data.Cookie, err error) {
+func (c *conn) sendDiscoveryInfo(to string) (reply <-chan data.Stanza, cookie data.Cookie, err error) {
 	return c.SendIQ(to, "get", &data.DiscoveryInfoQuery{})
 }
 
@@ -49,7 +49,7 @@ func parseDiscoveryInfoReply(iq *data.ClientIQ) (*data.DiscoveryInfoQuery, error
 	return reply, err
 }
 
-func (c *conn) sendDiscoveryItems(to string) (reply chan data.Stanza, cookie data.Cookie, err error) {
+func (c *conn) sendDiscoveryItems(to string) (reply <-chan data.Stanza, cookie data.Cookie, err error) {
 	return c.SendIQ(to, "get", &data.DiscoveryItemsQuery{})
 }
 

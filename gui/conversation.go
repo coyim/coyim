@@ -25,26 +25,29 @@ var (
 )
 
 type conversationView interface {
-	showIdentityVerificationWarning(*gtkUI)
-	removeIdentityVerificationWarning()
-	updateSecurityWarning()
-	newFileTransfer(fileName string, dir, send, receive bool) *fileNotification
-	updateFileTransfer(file *fileNotification)
-	updateFileTransferNotificationCounts()
-	isFileTransferNotifCanceled() bool
-	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	appendMessage(sent sentMessage)
+	appendPendingDelayed()
+	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
+	delayedMessageSent(int)
 	displayNotification(notification string)
 	displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string)
-	setEnabled(enabled bool)
+	ensureIsEncrypted()
+	isFileTransferNotifCanceled() bool
 	isVisible() bool
-	delayedMessageSent(int)
-	appendPendingDelayed()
 	haveShownPrivateEndedNotification()
 	haveShownPrivateNotification()
+	lockTyping()
+	newFileTransfer(fileName string, dir, send, receive bool) *fileNotification
+	removeIdentityVerificationWarning()
+	setEnabled(enabled bool)
+	showIdentityVerificationWarning(*gtkUI)
 	showSMPRequestForSecret(string)
 	showSMPSuccess()
 	showSMPFailure()
+	unlockTyping()
+	updateFileTransfer(file *fileNotification)
+	updateFileTransferNotificationCounts()
+	updateSecurityWarning()
 
 	show(userInitiated bool)
 	destroy()
@@ -578,6 +581,38 @@ func (conv *conversationPane) updateSecurityWarning() {
 	conv.securityWarningNotif.label.SetLabel("You are talking over an \nunprotected chat")
 	setImageFromFile(conv.securityWarningNotif.image, "secure.svg")
 	conv.securityWarningNotif.area.SetVisible(!ok || !conversation.IsEncrypted())
+}
+
+func (conv *conversationPane) unlockTyping() {
+	//precisa expor essa funcao
+	//conv.entry.SetText("")
+	conv.entry.SetCursorVisible(true)
+	conv.entry.SetEditable(true)
+	conv.entry.SetCanFocus(true)
+	conv.entry.GrabFocus()
+	//mudar background
+}
+
+func (conv *conversationPane) lockTyping() {
+	prov := providerWithCSS("message { background-color: #f1f1f1; }")
+	updateWithStyle(conv.entry, prov)
+	conv.entry.SetCursorVisible(false)
+	conv.entry.SetCanFocus(false)
+	//precisa expor essa funcao
+	//conv.entry.SetText("Encryption in progress...")
+	conv.entry.SetEditable(false)
+	//mudar background
+}
+
+func (conv *conversationPane) ensureIsEncrypted() {
+	if c, exist := conv.getConversation(); exist && c.IsEncrypted() {
+		return
+	}
+
+	log.Printf("Starts Mandatory OTR")
+
+	conv.lockTyping()
+	conv.onStartOtrSignal()
 }
 
 func (conv *conversationWindow) show(userInitiated bool) {

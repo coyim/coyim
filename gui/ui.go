@@ -852,6 +852,7 @@ func (u *gtkUI) openConversationView(account *account, to string, userInitiated 
 	}
 
 	c.show(userInitiated)
+	c.ensureIsEncrypted()
 	return c
 }
 

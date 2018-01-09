@@ -300,9 +300,7 @@
         <child>
           <object class="GtkTextView" id="message">
             <property name="visible">true</property>
-            <property name="has-focus">true</property>
             <property name="wrap-mode">GTK_WRAP_WORD_CHAR</property>
-            <property name="editable">true</property>
             <property name="left-margin">3</property>
             <property name="right-margin">3</property>
           </object>

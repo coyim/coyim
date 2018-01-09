@@ -166,6 +166,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, u, func(cv conversationView) {
+			cv.lockTyping()
 			cv.displayNotification(i18n.Local("Private conversation has ended."))
 			cv.updateSecurityWarning()
 			cv.removeIdentityVerificationWarning()
@@ -176,6 +177,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		peer := ev.From
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, peer, u, func(cv conversationView) {
+			cv.unlockTyping()
 			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
 			cv.appendPendingDelayed()
 			identityWarning(cv)

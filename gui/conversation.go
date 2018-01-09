@@ -606,6 +606,7 @@ func (conv *conversationPane) lockTyping() {
 
 func (conv *conversationPane) ensureIsEncrypted() {
 	if c, exist := conv.getConversation(); exist && c.IsEncrypted() {
+		conv.unlockTyping()
 		return
 	}
 

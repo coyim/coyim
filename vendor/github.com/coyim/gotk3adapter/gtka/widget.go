@@ -51,6 +51,10 @@ func (v *widget) SetSensitive(v1 bool) {
 	v.internal.SetSensitive(v1)
 }
 
+func (v *widget) SetTooltipText(text string) {
+	v.internal.SetTooltipText(text)
+}
+
 func (v *widget) SetVisible(v1 bool) {
 	v.internal.SetVisible(v1)
 }

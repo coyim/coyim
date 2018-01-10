@@ -98,6 +98,7 @@ type conversationPane struct {
 	fileTransferNotif    *fileTransferNotification
 	securityWarningNotif *securityWarningNotification
 	verificationWarning  gtki.InfoBar
+	colorSet             colorSet
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
@@ -309,6 +310,7 @@ func createConversationPane(account *account, uid string, ui *gtkUI, transientPa
 		currentPeer: func() (*rosters.Peer, bool) {
 			return ui.getPeer(account, uid)
 		},
+		colorSet: ui.currentColorSet(),
 	}
 
 	builder.getItems(
@@ -588,25 +590,35 @@ func (conv *conversationPane) updateSecurityWarning() {
 	conv.securityWarningNotif.area.SetVisible(!ok || !conversation.IsEncrypted())
 }
 
+func updateEntryBackground(entry gtki.TextView, color string) {
+	css := fmt.Sprintf("text { background-color: %s; }", color)
+	prov := providerWithCSS(css)
+	updateWithStyle(entry, prov)
+}
+
+func setCursor(entry gtki.TextView, hasCursor bool) {
+	entry.SetCursorVisible(hasCursor)
+	entry.SetEditable(hasCursor)
+	entry.SetCanFocus(hasCursor)
+}
+
 func (conv *conversationPane) unlockTyping() {
-	//precisa expor essa funcao
-	//conv.entry.SetText("")
-	conv.entry.SetCursorVisible(true)
-	conv.entry.SetEditable(true)
-	conv.entry.SetCanFocus(true)
-	conv.entry.GrabFocus()
+	color := conv.colorSet.conversationUnlockTypingBackground
+	log.Printf("Minhas cores \n %+v", conv.colorSet)
+	updateEntryBackground(conv.entry, color)
+	// #F9F9F9
 	//mudar background
+	conv.entry.SetTooltipText(i18n.Local("Type here to send messages"))
+	setCursor(conv.entry, true)
+	conv.entry.GrabFocus()
 }
 
 func (conv *conversationPane) lockTyping() {
-	prov := providerWithCSS("message { background-color: #f1f1f1; }")
-	updateWithStyle(conv.entry, prov)
-	conv.entry.SetCursorVisible(false)
-	conv.entry.SetCanFocus(false)
-	//precisa expor essa funcao
-	//conv.entry.SetText("Encryption in progress...")
-	conv.entry.SetEditable(false)
-	//mudar background
+	color := conv.colorSet.conversationLockTypingBackground
+	updateEntryBackground(conv.entry, color)
+
+	conv.entry.SetTooltipText(i18n.Local("Typing not allowed, conversation should be encrypted first"))
+	setCursor(conv.entry, false)
 }
 
 func (conv *conversationPane) ensureIsEncrypted() {

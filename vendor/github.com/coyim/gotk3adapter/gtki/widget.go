@@ -27,6 +27,7 @@ type Widget interface {
 	SetNoShowAll(bool)
 	SetSensitive(bool)
 	SetSizeRequest(int, int)
+	SetTooltipText(string)
 	SetVisible(bool)
 	IsVisible() bool
 	Show()

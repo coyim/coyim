@@ -850,9 +850,15 @@ func (u *gtkUI) openConversationView(account *account, to string, userInitiated 
 	if !ok {
 		c = u.createConversationView(account, fullJID)
 	}
+	c.lockTyping()
+
+	if *config.OTRMandatoryFlag {
+		c.ensureIsEncrypted()
+	} else {
+		c.unlockTyping()
+	}
 
 	c.show(userInitiated)
-	c.ensureIsEncrypted()
 	return c
 }
 

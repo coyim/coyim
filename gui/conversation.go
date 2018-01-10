@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/client"
+	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
@@ -238,6 +239,10 @@ func (conv *conversationPane) onEndOtrSignal() {
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 	} else {
+
+		if *config.OTRMandatoryFlag {
+			conv.lockTyping()
+		}
 		conv.removeIdentityVerificationWarning()
 		conv.displayNotification(i18n.Local("Private conversation has ended."))
 		conv.updateSecurityWarning()
@@ -611,8 +616,6 @@ func (conv *conversationPane) ensureIsEncrypted() {
 	}
 
 	log.Printf("Starts Mandatory OTR")
-
-	conv.lockTyping()
 	conv.onStartOtrSignal()
 }
 

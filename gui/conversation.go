@@ -604,10 +604,7 @@ func setCursor(entry gtki.TextView, hasCursor bool) {
 
 func (conv *conversationPane) unlockTyping() {
 	color := conv.colorSet.conversationUnlockTypingBackground
-	log.Printf("Minhas cores \n %+v", conv.colorSet)
 	updateEntryBackground(conv.entry, color)
-	// #F9F9F9
-	//mudar background
 	conv.entry.SetTooltipText(i18n.Local("Type here to send messages"))
 	setCursor(conv.entry, true)
 	conv.entry.GrabFocus()
@@ -616,7 +613,6 @@ func (conv *conversationPane) unlockTyping() {
 func (conv *conversationPane) lockTyping() {
 	color := conv.colorSet.conversationLockTypingBackground
 	updateEntryBackground(conv.entry, color)
-
 	conv.entry.SetTooltipText(i18n.Local("Typing not allowed, conversation should be encrypted first"))
 	setCursor(conv.entry, false)
 }

@@ -19,6 +19,9 @@ func (*MockWidget) SetHExpand(v1 bool) {
 func (*MockWidget) SetSensitive(v1 bool) {
 }
 
+func (*MockWidget) SetTooltipText(v1 string) {
+}
+
 func (*MockWidget) SetVisible(v1 bool) {
 }
 

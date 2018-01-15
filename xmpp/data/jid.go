@@ -46,6 +46,14 @@ type FullJID interface {
 	Local() JIDLocal
 }
 
+func JIDNR(s string) JIDWithoutResource {
+	return ParseJID(s).EnsureNoResource()
+}
+
+func JIDR(s string) JIDWithResource {
+	return ParseJID(s).(JIDWithResource)
+}
+
 func ParseJID(j string) JID {
 	local := ""
 	resource := ""

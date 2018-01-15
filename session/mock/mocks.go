@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/event"
 	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otr_event"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
@@ -109,7 +109,7 @@ func (*SessionMock) ManuallyEndEncryptedChat(data.JIDWithoutResource, data.JIDRe
 }
 
 // OtrEventHandler is the implementation for Session interface
-func (*SessionMock) OtrEventHandler() map[string]*event.OtrEventHandler {
+func (*SessionMock) OtrEventHandler() map[string]*otr_event.OtrEventHandler {
 	return nil
 }
 

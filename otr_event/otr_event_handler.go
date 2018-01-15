@@ -1,4 +1,4 @@
-package event
+package otr_event
 
 import (
 	"fmt"

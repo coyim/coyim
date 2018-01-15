@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/event"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otr_event"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp"
@@ -1035,8 +1035,8 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 	sess := &session{
 		connStatus:  CONNECTED,
 		convManager: mcm,
-		otrEventHandler: map[string]*event.OtrEventHandler{
-			"someone@some.org": &event.OtrEventHandler{},
+		otrEventHandler: map[string]*otr_event.OtrEventHandler{
+			"someone@some.org": &otr_event.OtrEventHandler{},
 		},
 		config: &config.ApplicationConfig{},
 	}
@@ -1075,8 +1075,8 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 	sess := &session{
 		connStatus:  CONNECTED,
 		convManager: mcm,
-		otrEventHandler: map[string]*event.OtrEventHandler{
-			"someone@some.org": &event.OtrEventHandler{},
+		otrEventHandler: map[string]*otr_event.OtrEventHandler{
+			"someone@some.org": &otr_event.OtrEventHandler{},
 		},
 		config: &config.ApplicationConfig{},
 	}
@@ -1124,8 +1124,8 @@ func sessionWithConvMngrWithoutConvs() *session {
 	return &session{
 		connStatus:  CONNECTED,
 		convManager: &convManagerWithoutConversation{},
-		otrEventHandler: map[string]*event.OtrEventHandler{
-			"someone@some.org": &event.OtrEventHandler{},
+		otrEventHandler: map[string]*otr_event.OtrEventHandler{
+			"someone@some.org": &otr_event.OtrEventHandler{},
 		},
 		config: &config.ApplicationConfig{},
 	}

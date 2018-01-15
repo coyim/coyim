@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/event"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otr_event"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
@@ -42,7 +42,7 @@ type session struct {
 	connStatus     connStatus
 	connStatusLock sync.RWMutex
 
-	otrEventHandler map[string]*event.OtrEventHandler
+	otrEventHandler map[string]*otr_event.OtrEventHandler
 
 	privateKeys []otr3.PrivateKey
 
@@ -142,7 +142,7 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 		accountConfig: cu,
 
 		r:               roster.New(),
-		otrEventHandler: make(map[string]*event.OtrEventHandler),
+		otrEventHandler: make(map[string]*otr_event.OtrEventHandler),
 		lastActionTime:  time.Now(),
 
 		timeouts: make(map[data.Cookie]time.Time),
@@ -582,7 +582,7 @@ func (s *session) NewConversation(peer data.JID) *otr3.Conversation {
 
 	eh, ok := s.otrEventHandler[peer.Representation()]
 	if !ok {
-		eh = new(event.OtrEventHandler)
+		eh = new(otr_event.OtrEventHandler)
 		eh.Delays = make(map[int]bool)
 		eh.Account = s.GetConfig().Account
 		eh.Peer = peer.Representation()
@@ -633,11 +633,11 @@ func (s *session) receiveClientMessage(peer data.JID, when time.Time, body strin
 	eh, _ := s.otrEventHandler[fr]
 	change := eh.ConsumeSecurityChange()
 	switch change {
-	case event.NewKeys:
+	case otr_event.NewKeys:
 		s.newOTRKeys(from, conversation)
-	case event.RenewedKeys:
+	case otr_event.RenewedKeys:
 		s.renewedOTRKeys(from, conversation)
-	case event.ConversationEnded:
+	case otr_event.ConversationEnded:
 		s.otrEnded(from)
 
 		// TODO: all this stuff is very CLI specific, we should move it out and create good interaction
@@ -669,9 +669,9 @@ func (s *session) receiveClientMessage(peer data.JID, when time.Time, body strin
 		} else {
 			s.info(fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", fr, fr))
 		}
-	case event.SMPSecretNeeded:
+	case otr_event.SMPSecretNeeded:
 		s.publishSMPEvent(events.SecretNeeded, peer, eh.SmpQuestion)
-	case event.SMPComplete:
+	case otr_event.SMPComplete:
 		s.publishSMPEvent(events.Success, peer, "")
 		s.cmdManager.ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
@@ -679,7 +679,7 @@ func (s *session) receiveClientMessage(peer data.JID, when time.Time, body strin
 			Peer:        from,
 			Fingerprint: conversation.TheirFingerprint(),
 		})
-	case event.SMPFailed:
+	case otr_event.SMPFailed:
 		s.publishSMPEvent(events.Failure, peer, "")
 	}
 
@@ -1062,7 +1062,7 @@ func (s *session) SetConnectionLogger(l io.Writer) {
 	s.connectionLogger = l
 }
 
-func (s *session) OtrEventHandler() map[string]*event.OtrEventHandler {
+func (s *session) OtrEventHandler() map[string]*otr_event.OtrEventHandler {
 	return s.otrEventHandler
 }
 

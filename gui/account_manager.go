@@ -8,6 +8,7 @@ import (
 	"github.com/coyim/coyim/config"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
@@ -173,7 +174,7 @@ func (m *accountManager) removePeer(account *account, peer string) {
 		return
 	}
 
-	l.Remove(peer)
+	l.Remove(data.JIDNR(peer))
 }
 
 func (m *accountManager) getPeer(account *account, peer string) (*rosters.Peer, bool) {
@@ -185,7 +186,7 @@ func (m *accountManager) getPeer(account *account, peer string) (*rosters.Peer, 
 		return nil, false
 	}
 
-	return l.Get(peer)
+	return l.Get(data.JIDNR(peer))
 }
 
 func (m *accountManager) displayNameFor(account *account, from string) string {

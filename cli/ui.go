@@ -576,7 +576,7 @@ func (c *cliUI) watchRosterEdits() {
 }
 
 func (c *cliUI) withCurrentPeer(peer string, f func(*roster.Peer)) {
-	p, ok := c.session.R().Get(peer)
+	p, ok := c.session.R().Get(data.JIDNR(peer))
 
 	if ok {
 		f(p)
@@ -629,8 +629,8 @@ CommandLoop:
 				c.info("Current roster:")
 				maxLen := 0
 				for _, item := range s.R().ToSlice() {
-					if maxLen < len(item.Jid) {
-						maxLen = len(item.Jid)
+					if maxLen < len(item.Jid.Representation()) {
+						maxLen = len(item.Jid.Representation())
 					}
 				}
 
@@ -646,8 +646,8 @@ CommandLoop:
 						line += "[ ] "
 					}
 
-					line += item.Jid
-					numSpaces := 1 + (maxLen - len(item.Jid))
+					line += item.Jid.Representation()
+					numSpaces := 1 + (maxLen - len(item.Jid.Representation()))
 					for i := 0; i < numSpaces; i++ {
 						line += " "
 					}

@@ -20,7 +20,7 @@ func (c *cliUI) handleSessionEvent(ev events.Event) {
 		c.terminate <- true
 	case events.RosterReceived:
 		for _, entry := range ev.Session.R().ToSlice() {
-			c.input.addUser(entry.Jid)
+			c.input.addUser(entry.Jid.Representation())
 		}
 	}
 }

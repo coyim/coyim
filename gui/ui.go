@@ -15,6 +15,7 @@ import (
 	rosters "github.com/coyim/coyim/roster"
 	sessions "github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gdki"
@@ -702,7 +703,7 @@ func (u *gtkUI) addContactWindow() {
 
 		err := account.session.RequestPresenceSubscription(peer, msg)
 		rl := u.accountManager.getContacts(account)
-		rl.SubscribeRequest(peer, "", accountID)
+		rl.SubscribeRequest(data.JIDNR(peer), "", accountID)
 
 		if nick != "" {
 			account.session.GetConfig().SavePeerDetails(peer, nick, []string{})

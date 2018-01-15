@@ -51,7 +51,7 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 		},
 		peerJid: func() string {
 			return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
-				return p.Jid
+				return p.Jid.Representation()
 			})
 		},
 	}

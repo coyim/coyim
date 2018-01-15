@@ -31,6 +31,7 @@ type JIDWithResource interface {
 // JIDWithoutResource represents any valid JID that does not have a resource part
 type JIDWithoutResource interface {
 	JID
+	WithResource(JIDResource) JIDWithResource
 	__forcedToNotHaveResource()
 }
 
@@ -119,6 +120,11 @@ func (j bareJID) WithoutResource() JIDWithoutResource {
 	return j
 }
 
+// WithResource implements JIDWithoutResource
+func (j bareJID) WithResource(r JIDResource) JIDWithResource {
+	return JIDR(j.Representation() + "/" + string(r))
+}
+
 // Host implements JID
 func (j fullJID) Host() JIDDomain {
 	return j.WithoutResource().Host()
@@ -188,6 +194,11 @@ func (j JIDDomain) __forcedToNotHaveResource() {}
 // EnsureNoResource implements JID
 func (j JIDDomain) EnsureNoResource() JIDWithoutResource {
 	return j
+}
+
+// WithResource implements JIDWithoutResource
+func (j JIDDomain) WithResource(r JIDResource) JIDWithResource {
+	return JIDR(j.Representation() + "/" + string(r))
 }
 
 // EnsureNoResource implements JID

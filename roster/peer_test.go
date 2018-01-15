@@ -22,7 +22,7 @@ func (s *PeerSuite) Test_PeerFrom_returnsANewPeerWithTheSameInformation(c *g.C) 
 
 	p := PeerFrom(re, "", "", nil)
 
-	c.Assert(p.Jid, g.Equals, "foo@bar.com")
+	c.Assert(p.Jid, g.Equals, tj("foo@bar.com"))
 	c.Assert(p.Subscription, g.Equals, "from")
 	c.Assert(p.Name, g.Equals, "someone")
 	c.Assert(p.Groups, g.DeepEquals, toSet("onegroup", "twogroup"))
@@ -36,7 +36,7 @@ func (s *PeerSuite) Test_fromSet_returnsTheKeysInTheSet(c *g.C) {
 
 func (s *PeerSuite) Test_toEntry_ReturnsAnEntryWithTheInformation(c *g.C) {
 	p := &Peer{
-		Jid:          "foo@bar.com",
+		Jid:          tj("foo@bar.com"),
 		Name:         "something",
 		Subscription: "from",
 		Groups:       toSet("hello::bar"),
@@ -51,7 +51,7 @@ func (s *PeerSuite) Test_toEntry_ReturnsAnEntryWithTheInformation(c *g.C) {
 
 func (s *PeerSuite) Test_Dump_willDumpAllInfo(c *g.C) {
 	p := &Peer{
-		Jid:          "foo@bar.com",
+		Jid:          tj("foo@bar.com"),
 		Name:         "something",
 		Subscription: "from",
 		Groups:       toSet("hello::bar"),
@@ -62,24 +62,24 @@ func (s *PeerSuite) Test_Dump_willDumpAllInfo(c *g.C) {
 }
 
 func (s *PeerSuite) Test_PeerWithState_createsANewPeer(c *g.C) {
-	p := PeerWithState("bla@foo.com/1234", "hmm", "no", "", "")
-	c.Assert(p.Jid, g.Equals, "bla@foo.com")
+	p := PeerWithState(tj("bla@foo.com/1234"), "hmm", "no", "", "")
+	c.Assert(p.Jid, g.Equals, tj("bla@foo.com"))
 	c.Assert(p.Name, g.Equals, "")
 	c.Assert(p.Status, g.Equals, "hmm")
 	c.Assert(p.StatusMsg, g.Equals, "no")
 }
 
 func (s *PeerSuite) Test_PeerWithPendingSubscribe_createsNewPeer(c *g.C) {
-	p := peerWithPendingSubscribe("bla@foo.com/1234", "223434", "")
-	c.Assert(p.Jid, g.Equals, "bla@foo.com")
+	p := peerWithPendingSubscribe(tj("bla@foo.com/1234"), "223434", "")
+	c.Assert(p.Jid, g.Equals, tj("bla@foo.com"))
 	c.Assert(p.Name, g.Equals, "")
 	c.Assert(p.PendingSubscribeID, g.Equals, "223434")
 }
 
 func (s *PeerSuite) Test_NameForPresentation_returnsTheNameIfItExistsButJidOtherwise(c *g.C) {
-	c.Assert((&Peer{Name: "foo", Jid: "foo@bar.com"}).NameForPresentation(), g.Equals, "foo")
-	c.Assert((&Peer{Jid: "foo@bar.com"}).NameForPresentation(), g.Equals, "foo@bar.com")
-	c.Assert((&Peer{Jid: "jid@coy.im", Name: "Name", Nickname: "Nick"}).NameForPresentation(), g.Equals, "Nick")
+	c.Assert((&Peer{Name: "foo", Jid: tj("foo@bar.com")}).NameForPresentation(), g.Equals, "foo")
+	c.Assert((&Peer{Jid: tj("foo@bar.com")}).NameForPresentation(), g.Equals, "foo@bar.com")
+	c.Assert((&Peer{Jid: tj("jid@coy.im"), Name: "Name", Nickname: "Nick"}).NameForPresentation(), g.Equals, "Nick")
 }
 
 func (s *PeerSuite) Test_MergeWith_takesTheFirstGroupsIfExists(c *g.C) {

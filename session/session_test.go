@@ -642,13 +642,13 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState("some2@one.org", "somewhere", "", "", ""))
+	sess.r.AddOrReplace(roster.PeerWithState(data.JIDNR("some2@one.org"), "somewhere", "", "", ""))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 	sess.watchStanzas()
 
-	p, _ := sess.r.Get("some2@one.org")
+	p, _ := sess.r.Get(data.JIDNR("some2@one.org"))
 	c.Assert(p.Online, Equals, false)
 
 	for {
@@ -687,7 +687,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 
 	sess.watchStanzas()
 
-	v, _ := sess.r.GetPendingSubscribe("some2@one.org")
+	v, _ := sess.r.GetPendingSubscribe(data.JIDNR("some2@one.org"))
 	c.Assert(v, Equals, "adf12112")
 }
 
@@ -751,7 +751,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.r.StateOf("some2@one.org")
+	st, _, _ := sess.r.StateOf(data.JIDNR("some2@one.org"))
 	c.Assert(st, Equals, "dnd")
 
 	for {
@@ -786,14 +786,14 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState("some2@one.org", "dnd", "", "", ""))
+	sess.r.AddOrReplace(roster.PeerWithState(data.JIDNR("some2@one.org"), "dnd", "", "", ""))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.r.StateOf("some2@one.org")
+	st, _, _ := sess.r.StateOf(data.JIDNR("some2@one.org"))
 	c.Assert(st, Equals, "dnd")
 
 	select {
@@ -850,13 +850,13 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	}
 
 	expectedPresence := `<presence xmlns="jabber:client" id="123" to="foo@bar.com" type="unsubscribed"></presence>`
-	sess.r.SubscribeRequest("foo@bar.com", "123", "")
+	sess.r.SubscribeRequest(data.JIDNR("foo@bar.com"), "123", "")
 
 	sess.HandleConfirmOrDeny("foo@bar.com", false)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Equals, expectedPresence)
-	_, inMap := sess.r.GetPendingSubscribe("foo@bar.com")
+	_, inMap := sess.r.GetPendingSubscribe(data.JIDNR("foo@bar.com"))
 	c.Assert(inMap, Equals, false)
 }
 
@@ -883,12 +883,12 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C
 	expectedPresence := `<presence xmlns="jabber:client" id="123" to="foo@bar.com" type="subscribed"></presence>` +
 		`<presence xmlns="jabber:client" id="[0-9]+" to="foo@bar.com" type="subscribe"></presence>`
 
-	sess.r.SubscribeRequest("foo@bar.com", "123", "")
+	sess.r.SubscribeRequest(data.JIDNR("foo@bar.com"), "123", "")
 	sess.HandleConfirmOrDeny("foo@bar.com", true)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Matches, expectedPresence)
-	_, inMap := sess.r.GetPendingSubscribe("foo@bar.com")
+	_, inMap := sess.r.GetPendingSubscribe(data.JIDNR("foo@bar.com"))
 	c.Assert(inMap, Equals, false)
 }
 
@@ -904,7 +904,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 		r: roster.New(),
 	}
 	sess.conn = conn
-	sess.r.SubscribeRequest("foo@bar.com", "123", "")
+	sess.r.SubscribeRequest(data.JIDNR("foo@bar.com"), "123", "")
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)

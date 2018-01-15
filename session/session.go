@@ -316,14 +316,14 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			delete(s.autoApproves, jj)
 			s.ApprovePresenceSubscription(jj, stanza.ID)
 		} else {
-			s.r.SubscribeRequest(jj, either(stanza.ID, "0000"), s.GetConfig().ID())
+			s.r.SubscribeRequest(data.JIDNR(jj), either(stanza.ID, "0000"), s.GetConfig().ID())
 			s.publishPeerEvent(
 				events.SubscriptionRequest,
 				jj,
 			)
 		}
 	case "unavailable":
-		if !s.r.PeerBecameUnavailable(stanza.From) {
+		if !s.r.PeerBecameUnavailable(data.ParseJID(stanza.From)) {
 			return true
 		}
 
@@ -333,7 +333,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			Gone:           true,
 		})
 	case "":
-		if !s.r.PeerPresenceUpdate(stanza.From, stanza.Show, stanza.Status, s.GetConfig().ID()) {
+		if !s.r.PeerPresenceUpdate(data.JIDR(stanza.From), stanza.Show, stanza.Status, s.GetConfig().ID()) {
 			return true
 		}
 
@@ -348,13 +348,13 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			Gone:           false,
 		})
 	case "subscribed":
-		s.r.Subscribed(stanza.From)
+		s.r.Subscribed(data.JIDNR(stanza.From))
 		s.publishPeerEvent(
 			events.Subscribed,
 			utils.RemoveResourceFromJid(stanza.From),
 		)
 	case "unsubscribe":
-		s.r.Unsubscribed(stanza.From)
+		s.r.Unsubscribed(data.JIDNR(stanza.From))
 		s.publishPeerEvent(
 			events.Unsubscribe,
 			utils.RemoveResourceFromJid(stanza.From),
@@ -363,7 +363,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		// Ignore
 	case "error":
 		s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
-		s.r.LatestError(stanza.From, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
+		s.r.LatestError(data.JIDNR(stanza.From), stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 	default:
 		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
 	}
@@ -484,7 +484,7 @@ func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{},
 
 	for _, entry := range rst.Item {
 		if entry.Subscription == "remove" {
-			s.r.Remove(entry.Jid)
+			s.r.Remove(data.JIDNR(entry.Jid))
 		} else if s.addOrMergeNewPeer(entry, s.GetConfig()) {
 			s.iqReceived(entry.Jid)
 		}
@@ -495,7 +495,7 @@ func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{},
 
 // HandleConfirmOrDeny is used to handle a users response to a subscription request
 func (s *session) HandleConfirmOrDeny(jid string, isConfirm bool) {
-	id, ok := s.r.RemovePendingSubscribe(jid)
+	id, ok := s.r.RemovePendingSubscribe(data.JIDNR(jid))
 	if !ok {
 		s.warn("No pending subscription from " + jid)
 		return

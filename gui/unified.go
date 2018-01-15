@@ -228,7 +228,8 @@ func (csi *conversationStackItem) shortName() string {
 	uiName := ss[0]
 
 	peer, ok := csi.layout.ui.getPeer(csi.account, csi.to)
-	if ok && peer.NameForPresentation() != peer.Jid {
+	// TODO: this logic is definitely a bit iffy, and should be fixed.
+	if ok && peer.NameForPresentation() != peer.Jid.Representation() {
 		uiName = peer.NameForPresentation()
 	}
 

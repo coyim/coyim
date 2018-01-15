@@ -14,7 +14,7 @@ import (
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
 	rosters "github.com/coyim/coyim/roster"
-	"github.com/coyim/coyim/xmpp/utils"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -254,16 +254,22 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 		},
 		"on_send_file_to_contact": func() {
 			if peer, ok := r.ui.getPeer(account, jid); ok {
+				// TODO: jid fix - this is clearly wrong, but backwards compatible
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
-				doInUIThread(func() { account.sendFileTo(utils.ComposeFullJid(jid, peer.MustHaveResource()), r.ui) })
+				doInUIThread(func() {
+					account.sendFileTo(data.JIDNR(jid).WithResource(peer.MustHaveResource()).Representation(), r.ui)
+				})
 			}
 		},
 		"on_send_directory_to_contact": func() {
 			if peer, ok := r.ui.getPeer(account, jid); ok {
+				// TODO: jid fix - this is clearly wrong, but backwards compatible
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
-				doInUIThread(func() { account.sendDirectoryTo(utils.ComposeFullJid(jid, peer.MustHaveResource()), r.ui) })
+				doInUIThread(func() {
+					account.sendDirectoryTo(data.JIDNR(jid).WithResource(peer.MustHaveResource()).Representation(), r.ui)
+				})
 			}
 		},
 	})
@@ -287,11 +293,11 @@ func (r *roster) appendResourcesAsMenuItems(jid string, account *account, menuIt
 
 	innerMenu, _ := g.gtk.MenuNew()
 	for _, resource := range peer.Resources() {
-		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource)
+		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(string(resource))
 		item.Connect("activate",
 			func() {
 				doInUIThread(func() {
-					r.openConversationView(account, jid, true, resource)
+					r.openConversationView(account, jid, true, string(resource))
 				})
 			})
 		innerMenu.Append(item)
@@ -475,7 +481,7 @@ func createGroupDisplayName(parentName string, counter *counter, isExpanded bool
 
 func createTooltipFor(item *rosters.Peer) string {
 	pname := html.EscapeString(item.NameForPresentation())
-	jid := html.EscapeString(item.Jid)
+	jid := html.EscapeString(item.Jid.Representation())
 	if pname != jid {
 		return fmt.Sprintf("%s (%s)", pname, jid)
 	}
@@ -490,7 +496,7 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 		potentialExtra = i18n.Local(" (waiting for approval)")
 	}
 	setAll(r.model, iter,
-		item.Jid,
+		item.Jid.Representation(),
 		fmt.Sprintf("%s %s%s", indent, item.NameForPresentation(), potentialExtra),
 		item.BelongsTo,
 		decideColorFor(cs, item),

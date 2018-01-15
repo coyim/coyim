@@ -1,6 +1,9 @@
 package roster
 
-import g "gopkg.in/check.v1"
+import (
+	"github.com/coyim/coyim/xmpp/data"
+	g "gopkg.in/check.v1"
+)
 
 type GroupListSuite struct{}
 
@@ -14,11 +17,19 @@ func (s *GroupListSuite) Test_TopLevelGroup_returnsATopLevelGroup(c *g.C) {
 	c.Check(result.groups, g.DeepEquals, map[string]*Group{})
 }
 
+func tj(s string) data.JIDWithoutResource {
+	return data.JIDNR(s)
+}
+
+func tjr(s string) data.JIDWithResource {
+	return data.JIDR(s)
+}
+
 func (s *GroupListSuite) Test_Grouped_WillGroupPeersInAList(c *g.C) {
 	l := New()
-	p1 := &Peer{Jid: "somewhere", Name: "something", Groups: toSet("hello"), Subscription: "from"}
-	p2 := &Peer{Jid: "somewhere2", Name: "something2", Groups: toSet("hello", "goodbye::foo::bar"), Subscription: "from"}
-	p3 := &Peer{Jid: "somewhere3", Name: "something3", Groups: toSet(), Subscription: "from"}
+	p1 := &Peer{Jid: tj("somewhere"), Name: "something", Groups: toSet("hello"), Subscription: "from"}
+	p2 := &Peer{Jid: tj("somewhere2"), Name: "something2", Groups: toSet("hello", "goodbye::foo::bar"), Subscription: "from"}
+	p3 := &Peer{Jid: tj("somewhere3"), Name: "something3", Groups: toSet(), Subscription: "from"}
 	l.AddOrMerge(p1)
 	l.AddOrMerge(p2)
 	l.AddOrMerge(p3)
@@ -56,9 +67,9 @@ func (s *GroupListSuite) Test_Grouped_WillGroupPeersInAList(c *g.C) {
 
 func (s *GroupListSuite) Test_Groups_willReturnTheGroups(c *g.C) {
 	l := New()
-	p1 := &Peer{Jid: "somewhere", Name: "something", Groups: toSet("hello"), Subscription: "from"}
-	p2 := &Peer{Jid: "somewhere2", Name: "something2", Groups: toSet("hello", "goodbye::foo::bar"), Subscription: "from"}
-	p3 := &Peer{Jid: "somewhere3", Name: "something3", Groups: toSet(), Subscription: "from"}
+	p1 := &Peer{Jid: tj("somewhere"), Name: "something", Groups: toSet("hello"), Subscription: "from"}
+	p2 := &Peer{Jid: tj("somewhere2"), Name: "something2", Groups: toSet("hello", "goodbye::foo::bar"), Subscription: "from"}
+	p3 := &Peer{Jid: tj("somewhere3"), Name: "something3", Groups: toSet(), Subscription: "from"}
 	l.AddOrMerge(p1)
 	l.AddOrMerge(p2)
 	l.AddOrMerge(p3)

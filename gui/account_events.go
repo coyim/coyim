@@ -6,6 +6,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -87,7 +88,7 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 
 	p, ok := u.getPeer(account, from)
 	if ok {
-		p.LastResource(resource)
+		p.LastResource(data.JIDResource(resource))
 	}
 
 	doInUIThread(func() {

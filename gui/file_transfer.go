@@ -7,7 +7,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/events"
-	"github.com/coyim/coyim/xmpp/utils"
+	xdata "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -114,7 +114,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 	if result && name != "" {
 		fileName := resizeFileName(ev.Name)
-		cv := u.openConversationView(account, ev.Peer.EnsureNoResource().Representation(), true, "")
+		cv := u.openConversationView(account, ev.Peer.EnsureNoResource(), true, xdata.JIDResource(""))
 		f := createNewFileTransferWithDefaults(fileName, ev.IsDirectory, false, true, ev.Control, cv)
 		u.startAllListenersForFile(ev.Control, cv, f, ev.Name, "Receiving", "receive")
 		ev.Answer <- &name
@@ -134,21 +134,21 @@ func createNewFileTransferWithDefaults(fileName string, dir bool, sending bool, 
 	return f
 }
 
-func (account *account) sendThingTo(peer string, u *gtkUI, name string, dir bool, ctl *data.FileTransferControl) {
+func (account *account) sendThingTo(peer xdata.JID, u *gtkUI, name string, dir bool, ctl *data.FileTransferControl) {
 	nm := resizeFileName(filepath.Base(name))
-	cv := u.openConversationView(account, utils.RemoveResourceFromJid(peer), true, "")
+	cv := u.openConversationView(account, peer.EnsureNoResource(), true, xdata.JIDResource(""))
 	f := createNewFileTransferWithDefaults(nm, dir, true, false, ctl, cv)
 	u.startAllListenersForFile(ctl, cv, f, nm, "Sending", "send")
 }
 
-func (account *account) sendDirectoryTo(peer string, u *gtkUI) {
+func (account *account) sendDirectoryTo(peer xdata.JID, u *gtkUI) {
 	if dir, ok := chooseDirToSend(u.window); ok {
 		ctl := account.session.SendDirTo(peer, dir, false)
 		account.sendThingTo(peer, u, dir, true, ctl)
 	}
 }
 
-func (account *account) sendFileTo(peer string, u *gtkUI) {
+func (account *account) sendFileTo(peer xdata.JID, u *gtkUI) {
 	if file, ok := chooseFileToSend(u.window); ok {
 		ctl := account.session.SendFileTo(peer, file, false)
 		account.sendThingTo(peer, u, file, false, ctl)

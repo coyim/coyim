@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -150,7 +151,7 @@ func (ecd *editContactDialog) showFingerprintsForPeer(jid string, account *accou
 
 func (r *roster) openEditContactDialog(jid string, acc *account) {
 	assertInUIThread()
-	peer, ok := r.ui.accountManager.getPeer(acc, jid)
+	peer, ok := r.ui.accountManager.getPeer(acc, data.JIDNR(jid))
 	if !ok {
 		log.Printf("Couldn't find peer %s in account %v", jid, acc)
 		return
@@ -164,7 +165,7 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 	ecd.contactJID.SetText(jid)
 
 	//nickNameEntry.SetText(peer.Name)
-	if peer, ok := r.ui.getPeer(acc, jid); ok {
+	if peer, ok := r.ui.getPeer(acc, data.JIDNR(jid)); ok {
 		ecd.nickname.SetText(peer.Nickname)
 	}
 
@@ -192,7 +193,7 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 			groups := toArray(ecd.currentGroups)
 			nickname, _ := ecd.nickname.GetText()
 
-			err := r.updatePeer(acc, jid, nickname, groups, ecd.requireEncryption.GetActive() != shouldEncryptTo, ecd.requireEncryption.GetActive())
+			err := r.updatePeer(acc, data.JIDNR(jid), nickname, groups, ecd.requireEncryption.GetActive() != shouldEncryptTo, ecd.requireEncryption.GetActive())
 			if err != nil {
 				log.Println(err)
 			}

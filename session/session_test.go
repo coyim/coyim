@@ -955,17 +955,17 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 }
 
 type mockConvManager struct {
-	getConversationWith    func(string, string) (otr_client.Conversation, bool)
-	ensureConversationWith func(string, string) (otr_client.Conversation, bool)
+	getConversationWith    func(data.JIDWithoutResource, data.JIDResource) (otr_client.Conversation, bool)
+	ensureConversationWith func(data.JIDWithoutResource, data.JIDResource) (otr_client.Conversation, bool)
 	conversations          func() map[string]otr_client.Conversation
 	terminateAll           func()
 }
 
-func (mcm *mockConvManager) GetConversationWith(peer, resource string) (otr_client.Conversation, bool) {
+func (mcm *mockConvManager) GetConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (otr_client.Conversation, bool) {
 	return mcm.getConversationWith(peer, resource)
 }
 
-func (mcm *mockConvManager) EnsureConversationWith(peer, resource string) (otr_client.Conversation, bool) {
+func (mcm *mockConvManager) EnsureConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (otr_client.Conversation, bool) {
 	return mcm.ensureConversationWith(peer, resource)
 }
 
@@ -978,11 +978,11 @@ func (mcm *mockConvManager) TerminateAll() {
 }
 
 type mockConv struct {
-	receive     func(otr_client.Sender, string, []byte) ([]byte, error)
+	receive     func(otr_client.Sender, data.JIDResource, []byte) ([]byte, error)
 	isEncrypted func() bool
 }
 
-func (mc *mockConv) Receive(s otr_client.Sender, s2 string, s3 []byte) ([]byte, error) {
+func (mc *mockConv) Receive(s otr_client.Sender, s2 data.JIDResource, s3 []byte) ([]byte, error) {
 	return mc.receive(s, s2, s3)
 }
 
@@ -990,27 +990,27 @@ func (mc *mockConv) IsEncrypted() bool {
 	return mc.isEncrypted()
 }
 
-func (mc *mockConv) Send(otr_client.Sender, string, []byte) (trace int, err error) {
+func (mc *mockConv) Send(otr_client.Sender, data.JIDResource, []byte) (trace int, err error) {
 	return 0, nil
 }
 
-func (mc *mockConv) StartEncryptedChat(otr_client.Sender, string) error {
+func (mc *mockConv) StartEncryptedChat(otr_client.Sender, data.JIDResource) error {
 	return nil
 }
 
-func (mc *mockConv) EndEncryptedChat(otr_client.Sender, string) error {
+func (mc *mockConv) EndEncryptedChat(otr_client.Sender, data.JIDResource) error {
 	return nil
 }
 
-func (mc *mockConv) ProvideAuthenticationSecret(otr_client.Sender, string, []byte) error {
+func (mc *mockConv) ProvideAuthenticationSecret(otr_client.Sender, data.JIDResource, []byte) error {
 	return nil
 }
 
-func (mc *mockConv) StartAuthenticate(otr_client.Sender, string, string, []byte) error {
+func (mc *mockConv) StartAuthenticate(otr_client.Sender, data.JIDResource, string, []byte) error {
 	return nil
 }
 
-func (mc *mockConv) AbortAuthentication(otr_client.Sender, string) error {
+func (mc *mockConv) AbortAuthentication(otr_client.Sender, data.JIDResource) error {
 	return nil
 }
 
@@ -1026,7 +1026,7 @@ func (mc *mockConv) TheirFingerprint() []byte {
 	return nil
 }
 
-func (mc *mockConv) CreateExtraSymmetricKey(otr_client.Sender, string) ([]byte, error) {
+func (mc *mockConv) CreateExtraSymmetricKey(otr_client.Sender, data.JIDResource) ([]byte, error) {
 	return nil, nil
 }
 
@@ -1043,7 +1043,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 
 	mc := &mockConv{}
 
-	mc.receive = func(s1 otr_client.Sender, s2 string, s3 []byte) ([]byte, error) {
+	mc.receive = func(s1 otr_client.Sender, s2 data.JIDResource, s3 []byte) ([]byte, error) {
 		return s3, nil
 	}
 
@@ -1051,7 +1051,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 		return false
 	}
 
-	mcm.ensureConversationWith = func(string, string) (otr_client.Conversation, bool) {
+	mcm.ensureConversationWith = func(data.JIDWithoutResource, data.JIDResource) (otr_client.Conversation, bool) {
 		return mc, false
 	}
 
@@ -1082,9 +1082,9 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 	}
 
 	mc := &mockConv{}
-	mc.receive = func(s1 otr_client.Sender, s2 string, s3 []byte) ([]byte, error) { return s3, nil }
+	mc.receive = func(s1 otr_client.Sender, s2 data.JIDResource, s3 []byte) ([]byte, error) { return s3, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(string, string) (otr_client.Conversation, bool) {
+	mcm.ensureConversationWith = func(data.JIDWithoutResource, data.JIDResource) (otr_client.Conversation, bool) {
 		return mc, false
 	}
 
@@ -1105,11 +1105,11 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 
 type convManagerWithoutConversation struct{}
 
-func (ncm *convManagerWithoutConversation) GetConversationWith(peer, resource string) (otr_client.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) GetConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (otr_client.Conversation, bool) {
 	return nil, false
 }
 
-func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer, resource string) (otr_client.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (otr_client.Conversation, bool) {
 	return nil, false
 }
 
@@ -1136,7 +1136,7 @@ func (s *SessionSuite) Test_logsError_whenWeStartSMPWithAnEmptyPeerName(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.StartSMP("", "resource", "Im a question", "im an answer")
+	go sess.StartSMP(nil, data.JIDResource("resource"), "Im a question", "im an answer")
 
 	select {
 	case ev := <-observer:
@@ -1153,7 +1153,7 @@ func (s *SessionSuite) Test_logsError_whenWeStartSMPWithoutAConversation(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.StartSMP("someone's peer", "resource", "Im a question", "im an answer")
+	go sess.StartSMP(data.JIDNR("someone's peer"), data.JIDResource("resource"), "Im a question", "im an answer")
 
 	select {
 	case ev := <-observer:
@@ -1170,7 +1170,7 @@ func (s *SessionSuite) Test_logsError_whenWeFinishSMPWithoutAConversation(c *C) 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.FinishSMP("someone's peer", "resource", "im an answer")
+	go sess.FinishSMP(data.JIDNR("someone's peer"), data.JIDResource("resource"), "im an answer")
 
 	select {
 	case ev := <-observer:
@@ -1187,7 +1187,7 @@ func (s *SessionSuite) Test_logsError_whenWeAbortSMPWithoutAConversation(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.AbortSMP("someone's peer", "resource")
+	go sess.AbortSMP(data.JIDNR("someone's peer"), data.JIDResource("resource"))
 
 	select {
 	case ev := <-observer:

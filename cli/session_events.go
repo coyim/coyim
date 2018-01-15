@@ -7,6 +7,7 @@ import (
 
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/utils"
 )
 
@@ -35,7 +36,7 @@ func (c *cliUI) handlePeerEvent(ev events.Peer) {
 		uid := ev.From
 		info(c.term, c.termControl, fmt.Sprintf("New OTR session with %s established", uid.Representation()))
 		//TODO: review whether it should create conversations
-		conversation, _ := ev.Session.ConversationManager().EnsureConversationWith(uid.Representation(), "")
+		conversation, _ := ev.Session.ConversationManager().EnsureConversationWith(uid.EnsureNoResource(), data.JIDResource(""))
 
 		c.input.SetPromptForTarget(uid, true)
 		c.printConversationInfo(uid, conversation)

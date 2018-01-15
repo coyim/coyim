@@ -679,7 +679,7 @@ func (u *gtkUI) newCustomConversation() {
 				return
 			}
 			jid, _ := peerInput.GetText()
-			u.openConversationView(account, jid, true, "")
+			u.openConversationView(account, data.JIDNR(jid), true, "")
 
 			dialog.Destroy()
 		},
@@ -826,7 +826,7 @@ func (u *gtkUI) presenceUpdated(ev events.Presence) {
 	}
 
 	doInUIThread(func() {
-		c.appendStatus(u.accountManager.displayNameFor(account, from), time.Now(), show, showStatus, gone)
+		c.appendStatus(u.accountManager.displayNameFor(account, data.JIDNR(from)), time.Now(), show, showStatus, gone)
 	})
 }
 
@@ -842,15 +842,16 @@ func (u *gtkUI) openConversationViewByAccountID(jid, accountID string) {
 		return
 	}
 
-	u.openConversationView(account, jid, true, "")
+	u.openConversationView(account, data.JIDNR(jid), true, "")
 }
 
 //TODO: should receive fullJID?
-func (u *gtkUI) openConversationView(account *account, to string, userInitiated bool, resource string) conversationView {
-	fullJID := utils.ComposeFullJid(to, resource)
-	c, ok := u.getConversationView(account, fullJID)
+//TODO: as mentioned above, this signature is a bit messed up
+func (u *gtkUI) openConversationView(account *account, to data.JIDWithoutResource, userInitiated bool, resource data.JIDResource) conversationView {
+	fullJID := to.MaybeWithResource(resource)
+	c, ok := u.getConversationView(account, fullJID.Representation())
 	if !ok {
-		c = u.createConversationView(account, fullJID)
+		c = u.createConversationView(account, fullJID.Representation())
 	}
 
 	c.show(userInitiated)
@@ -892,7 +893,7 @@ func (u *gtkUI) createConversationViewBasedOnWindowLayout(account *account, full
 		to, resource := utils.SplitJid(fullJID) //TODO: argh
 		cv = u.unified.createConversation(account, to, resource, existing)
 	} else {
-		cv = newConversationWindow(account, fullJID, u, existing) //TODO: Why it has gtkUI?
+		cv = newConversationWindow(account, data.ParseJID(fullJID), u, existing) //TODO: Why it has gtkUI?
 	}
 	account.setConversationView(fullJID, cv)
 

@@ -9,6 +9,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -113,7 +114,7 @@ func (account *account) getConversationWith(to, resource string, ui *gtkUI) (c c
 		c = ui.unified.createConversation(account, to, resource, cv1.conversationPane)
 	} else {
 		cv1 := c.(*conversationStackItem)
-		c = newConversationWindow(account, fullJid, ui, cv1.conversationPane)
+		c = newConversationWindow(account, data.ParseJID(fullJid), ui, cv1.conversationPane)
 	}
 
 	account.setConversationView(fullJid, c)

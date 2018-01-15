@@ -10,12 +10,13 @@ import (
 	"github.com/coyim/coyim/i18n"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type verifier struct {
 	parentWindow        gtki.Window
-	currentResource     string
+	currentResource     data.JIDResource
 	session             access.Session
 	notifier            *notifier
 	pinWindow           *pinWindow
@@ -192,7 +193,7 @@ func (v *verifier) showPINDialog() {
 	v.pinWindow.pin.SetText(pin)
 	v.pinWindow.prompt.SetMarkup(i18n.Localf("Share this one-time PIN with <b>%s</b>", v.peerName()))
 
-	v.session.StartSMP(v.peerJid(), v.currentResource, question, pin)
+	v.session.StartSMP(data.JIDNR(v.peerJid()), v.currentResource, question, pin)
 	v.pinWindow.dialog.ShowAll()
 
 	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
@@ -314,7 +315,7 @@ func (v *verifier) buildAnswerSMPDialog() {
 		"close_share_pin": func() {
 			answer, _ := v.answerSMPWindow.answer.GetText()
 			v.removeInProgressDialogs()
-			v.session.FinishSMP(v.peerJid(), v.currentResource, answer)
+			v.session.FinishSMP(data.JIDNR(v.peerJid()), v.currentResource, answer)
 			v.showWaitingForPeerToCompleteSMPDialog()
 		},
 	})
@@ -466,6 +467,6 @@ func (v *verifier) hideUnverifiedWarning() {
 
 func (v *verifier) cancelSMP() {
 	v.removeInProgressDialogs()
-	v.session.AbortSMP(v.peerJid(), v.currentResource)
+	v.session.AbortSMP(data.JIDNR(v.peerJid()), v.currentResource)
 	v.showUnverifiedWarning()
 }

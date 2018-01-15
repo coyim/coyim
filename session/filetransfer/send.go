@@ -165,9 +165,9 @@ func (ctx *sendContext) initSend() {
 }
 
 // InitSend starts the process of sending a file to a peer
-func InitSend(s access.Session, peer string, file string, encrypted bool) *sdata.FileTransferControl {
+func InitSend(s access.Session, peer data.JID, file string, encrypted bool) *sdata.FileTransferControl {
 	ctx := &sendContext{
-		peer:    peer,
+		peer:    peer.Representation(),
 		file:    file,
 		control: sdata.CreateFileTransferControl(),
 		s:       s,

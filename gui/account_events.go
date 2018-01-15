@@ -7,7 +7,6 @@ import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/data"
-	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -73,13 +72,6 @@ func (u *gtkUI) handleLogEvent(ev events.Log) {
 	}
 }
 
-func potentialResource(d data.JID) string {
-	if rr, ok := d.(data.JIDWithResource); ok {
-		return string(rr.Resource())
-	}
-	return ""
-}
-
 func (u *gtkUI) handleMessageEvent(ev events.Message) {
 	account := u.findAccountForSession(ev.Session)
 	if account == nil {
@@ -87,15 +79,15 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 		return
 	}
 
-	resource := potentialResource(ev.From)
-	from := ev.From.EnsureNoResource().Representation()
+	resource := data.PotentialResource(ev.From)
+	from := ev.From.EnsureNoResource()
 	timestamp := ev.When
 	encrypted := ev.Encrypted
 	message := ev.Body
 
 	p, ok := u.getPeer(account, from)
 	if ok {
-		p.LastResource(data.JIDResource(resource))
+		p.LastResource(resource)
 	}
 
 	doInUIThread(func() {
@@ -149,11 +141,12 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 	u.rosterUpdated()
 }
 
-func convWindowNowOrLater(account *account, peer string, ui *gtkUI, f func(conversationView)) {
-	fullJID := utils.ComposeFullJid(peer, "")
+func convWindowNowOrLater(account *account, peer data.JID, ui *gtkUI, f func(conversationView)) {
+	// TODO: this is clearly wrong
+	fullJID := peer.EnsureNoResource().Representation()
 	convWin, ok := ui.getConversationView(account, fullJID)
 	if !ok {
-		account.afterConversationWindowCreated(peer, f)
+		account.afterConversationWindowCreated(peer.Representation(), f)
 	} else {
 		f(convWin)
 	}
@@ -172,7 +165,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		log.Printf("received iq: %v\n", ev.From)
 	case events.OTREnded:
 		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, ev.From.Representation(), u, func(cv conversationView) {
+		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
 			cv.displayNotification(i18n.Local("Private conversation has ended."))
 			cv.updateSecurityWarning()
 			cv.removeIdentityVerificationWarning()
@@ -181,7 +174,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 
 	case events.OTRNewKeys:
 		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, ev.From.Representation(), u, func(cv conversationView) {
+		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
 			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
 			cv.appendPendingDelayed()
 			identityWarning(cv)
@@ -190,7 +183,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 
 	case events.OTRRenewedKeys:
 		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, ev.From.Representation(), u, func(cv conversationView) {
+		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
 			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
 			identityWarning(cv)
 		})
@@ -224,21 +217,21 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 
 func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.Peer.Representation(), false, "")
+	convWin := u.openConversationView(account, ev.Peer.EnsureNoResource(), false, data.JIDResource(""))
 
 	convWin.displayNotification(i18n.Local(ev.Notification))
 }
 
 func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.Peer.Representation(), false, "")
+	convWin := u.openConversationView(account, ev.Peer.EnsureNoResource(), false, data.JIDResource(""))
 
 	convWin.delayedMessageSent(ev.Tracer)
 }
 
 func (u *gtkUI) handleSMPEvent(ev events.SMP) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.From.Representation(), false, "")
+	convWin := u.openConversationView(account, ev.From.EnsureNoResource(), false, data.JIDResource(""))
 
 	switch ev.Type {
 	case events.SecretNeeded:

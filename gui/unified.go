@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
 )
@@ -107,7 +108,7 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 }
 
 func (ul *unifiedLayout) createConversation(account *account, uid, resource string, existing *conversationPane) conversationView {
-	cp := createConversationPane(account, uid, ul.ui, ul.ui.window)
+	cp := createConversationPane(account, data.ParseJID(uid), ul.ui, ul.ui.window)
 	if existing != nil {
 		b, _ := existing.history.GetBuffer()
 		cp.history.SetBuffer(b)
@@ -224,10 +225,10 @@ func (csi *conversationStackItem) setEnabled(enabled bool) {
 }
 
 func (csi *conversationStackItem) shortName() string {
-	ss := strings.Split(csi.to, "@")
+	ss := strings.Split(csi.to.Representation(), "@")
 	uiName := ss[0]
 
-	peer, ok := csi.layout.ui.getPeer(csi.account, csi.to)
+	peer, ok := csi.layout.ui.getPeer(csi.account, csi.to.EnsureNoResource())
 	// TODO: this logic is definitely a bit iffy, and should be fixed.
 	if ok && peer.NameForPresentation() != peer.Jid.Representation() {
 		uiName = peer.NameForPresentation()

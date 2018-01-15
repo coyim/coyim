@@ -32,6 +32,7 @@ type JIDWithResource interface {
 type JIDWithoutResource interface {
 	JID
 	WithResource(JIDResource) JIDWithResource
+	MaybeWithResource(JIDResource) JID
 	__forcedToNotHaveResource()
 }
 
@@ -125,6 +126,11 @@ func (j bareJID) WithResource(r JIDResource) JIDWithResource {
 	return JIDR(j.Representation() + "/" + string(r))
 }
 
+// MaybeWithResource implements JIDWithoutResource
+func (j bareJID) MaybeWithResource(r JIDResource) JID {
+	return ParseJID(j.Representation() + "/" + string(r))
+}
+
 // Host implements JID
 func (j fullJID) Host() JIDDomain {
 	return j.WithoutResource().Host()
@@ -201,6 +207,11 @@ func (j JIDDomain) WithResource(r JIDResource) JIDWithResource {
 	return JIDR(j.Representation() + "/" + string(r))
 }
 
+// MaybeWithResource implements JIDWithoutResource
+func (j JIDDomain) MaybeWithResource(r JIDResource) JID {
+	return ParseJID(j.Representation() + "/" + string(r))
+}
+
 // EnsureNoResource implements JID
 func (j bareJID) EnsureNoResource() JIDWithoutResource {
 	return j
@@ -214,4 +225,12 @@ func (j fullJID) EnsureNoResource() JIDWithoutResource {
 // EnsureNoResource implements JID
 func (j domainWithResource) EnsureNoResource() JIDWithoutResource {
 	return j.WithoutResource()
+}
+
+// PotentialResource returns the resource of the JID or empty string
+func PotentialResource(d JID) JIDResource {
+	if rr, ok := d.(JIDWithResource); ok {
+		return rr.Resource()
+	}
+	return ""
 }

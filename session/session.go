@@ -22,7 +22,6 @@ import (
 	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
-	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/otr3"
 )
 
@@ -171,11 +170,11 @@ func (s *session) ReloadKeys() {
 }
 
 // Send will send the given message to the receiver given
-func (s *session) Send(to, resource string, msg string) error {
+func (s *session) Send(to data.JIDWithoutResource, resource data.JIDResource, msg string) error {
 	conn, ok := s.connection()
 	if ok {
-		log.Printf("<- to=%v {%v}\n", utils.ComposeFullJid(to, resource), msg)
-		return conn.Send(utils.ComposeFullJid(to, resource), msg)
+		log.Printf("<- to=%v {%v}\n", to.MaybeWithResource(resource).Representation(), msg)
+		return conn.Send(to.MaybeWithResource(resource).Representation(), msg)
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }
@@ -565,8 +564,7 @@ func (s *session) listenToDelayedMessageDelivery(c <-chan int, peer data.JID) {
 //TODO: we are not taking a proper JID type here. This is to stop leakage into other packages for now, but should be fixed.
 //This also assumes it's useful to send friendly message to another person in
 //the same language configured on your app.
-func (s *session) NewConversation(_peer string) *otr3.Conversation {
-	peer := data.ParseJID(_peer)
+func (s *session) NewConversation(peer data.JID) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.privateKeys)
 	conversation.SetFriendlyQueryMessage(i18n.Local("Your peer has requested a private conversation with you, but your client doesn't seem to support the OTR protocol."))
@@ -605,13 +603,13 @@ func (s *session) NewConversation(_peer string) *otr3.Conversation {
 }
 
 // ManuallyEndEncryptedChat allows a user to end the encrypted chat from this side
-func (s *session) ManuallyEndEncryptedChat(peer, resource string) error {
+func (s *session) ManuallyEndEncryptedChat(peer data.JIDWithoutResource, resource data.JIDResource) error {
 	c, ok := s.ConversationManager().GetConversationWith(peer, resource)
 	if !ok {
-		return fmt.Errorf("couldn't find conversation with %s / %s", peer, resource)
+		return fmt.Errorf("couldn't find conversation with %s / %s", peer.Representation(), string(resource))
 	}
 
-	defer s.otrEventHandler[peer].ConsumeSecurityChange()
+	defer s.otrEventHandler[peer.Representation()].ConsumeSecurityChange()
 	return c.EndEncryptedChat(s, resource)
 }
 
@@ -624,8 +622,8 @@ func (s *session) receiveClientMessage(peer data.JID, when time.Time, body strin
 	}
 
 	// TODO: do we want to have different conversation instances for different resources?
-	conversation, _ := s.convManager.EnsureConversationWith(fr, string(resource))
-	out, err := conversation.Receive(s, string(resource), []byte(body))
+	conversation, _ := s.convManager.EnsureConversationWith(from, resource)
+	out, err := conversation.Receive(s, resource, []byte(body))
 	encrypted := conversation.IsEncrypted()
 
 	if err != nil {
@@ -653,14 +651,14 @@ func (s *session) receiveClientMessage(peer data.JID, when time.Time, body strin
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
 		if s.GetConfig().OTRAutoTearDown {
-			c, existing := s.convManager.GetConversationWith(fr, string(resource))
+			c, existing := s.convManager.GetConversationWith(from, resource)
 			if !existing {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", fr))
 				break
 			} else {
 				s.info(fmt.Sprintf("%s has ended the secure conversation.", fr))
 
-				err := c.EndEncryptedChat(s, string(resource))
+				err := c.EndEncryptedChat(s, resource)
 				if err != nil {
 					s.info(fmt.Sprintf("Unable to automatically tear down OTR conversation with %s: %s\n", fr, err.Error()))
 					break
@@ -678,7 +676,7 @@ func (s *session) receiveClientMessage(peer data.JID, when time.Time, body strin
 		s.cmdManager.ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
 			Session:     s,
-			Peer:        from.Representation(),
+			Peer:        from,
 			Fingerprint: conversation.TheirFingerprint(),
 		})
 	case event.SMPFailed:
@@ -972,12 +970,12 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 }
 
 // EncryptAndSendTo encrypts and sends the message to the given peer
-func (s *session) EncryptAndSendTo(peer, resource string, message string) (trace int, delayed bool, err error) {
+func (s *session) EncryptAndSendTo(peer data.JIDWithoutResource, resource data.JIDResource, message string) (trace int, delayed bool, err error) {
 	//TODO: review whether it should create a conversation
 	if s.IsConnected() {
 		conversation, _ := s.convManager.EnsureConversationWith(peer, resource)
 		trace, err = conversation.Send(s, resource, []byte(message))
-		eh := s.otrEventHandler[peer]
+		eh := s.otrEventHandler[peer.Representation()]
 		delayed = eh.ConsumeDelayedState(trace)
 		return
 	}
@@ -1101,8 +1099,9 @@ func (s *session) SendPing() {
 }
 
 // StartSMP begins the SMP interactions for a conversation
-func (s *session) StartSMP(peer, resource, question, answer string) {
-	if peer == "" {
+func (s *session) StartSMP(peer data.JIDWithoutResource, resource data.JIDResource, question, answer string) {
+	// TODO: probably not possible.
+	if peer == nil {
 		s.alert("error: tried to start SMP with a nameless peer")
 		return
 	}
@@ -1117,7 +1116,7 @@ func (s *session) StartSMP(peer, resource, question, answer string) {
 }
 
 // FinishSMP takes a user's SMP answer and finishes the protocol
-func (s *session) FinishSMP(peer, resource, answer string) {
+func (s *session) FinishSMP(peer data.JIDWithoutResource, resource data.JIDResource, answer string) {
 	conv, ok := s.convManager.GetConversationWith(peer, resource)
 	if !ok {
 		s.alert("error: tried to finish SMP when a conversation does not exist")
@@ -1129,7 +1128,7 @@ func (s *session) FinishSMP(peer, resource, answer string) {
 }
 
 // AbortSMP will abort the current SMP interaction for a conversation
-func (s *session) AbortSMP(peer, resource string) {
+func (s *session) AbortSMP(peer data.JIDWithoutResource, resource data.JIDResource) {
 	conv, ok := s.convManager.GetConversationWith(peer, resource)
 	if !ok {
 		s.alert("error: tried to abort SMP when a conversation does not exist")
@@ -1142,10 +1141,9 @@ func (s *session) AbortSMP(peer, resource string) {
 
 // TODO: we also need a way to deal with when the TLV is received.
 
-func (s *session) CreateSymmetricKeyFor(peer string) []byte {
-	b, r := utils.SplitJid(peer)
-
-	conv, ok := s.convManager.GetConversationWith(b, r)
+func (s *session) CreateSymmetricKeyFor(peer data.JID) []byte {
+	r := data.PotentialResource(peer)
+	conv, ok := s.convManager.GetConversationWith(peer.EnsureNoResource(), r)
 	if !ok {
 		return nil
 	}

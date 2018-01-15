@@ -613,7 +613,7 @@ func (v *chatRoomView) appendToHistory(message *events.ChatMessage) {
 
 		// TODO: this is clearly completely incorrect
 		from:      string(message.From.Resource()),
-		to:        message.To,
+		to:        data.JIDNR(message.To),
 		timestamp: message.When,
 	}
 

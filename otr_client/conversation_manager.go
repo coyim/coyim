@@ -3,32 +3,33 @@ package otr_client
 import (
 	"sync"
 
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/otr3"
 )
 
 // ConversationBuilder represents an entity capable of building Conversations
 type ConversationBuilder interface {
 	// NewConversation returns a new conversation to a peer
-	NewConversation(peer string) *otr3.Conversation
+	NewConversation(peer data.JID) *otr3.Conversation
 }
 
 // Sender represents an entity capable of sending messages to peers
 //TODO: this assumes there is no more than one simultaneous conversations with a given peer
 type Sender interface {
 	// Send sends a message to a peer
-	Send(peer, resource, msg string) error
+	Send(peer data.JIDWithoutResource, resource data.JIDResource, msg string) error
 }
 
 // ConversationManager represents an entity capable of managing Conversations
 type ConversationManager interface {
 	// GetConversationWith returns the conversation for the given peer, and
 	// whether the Conversation exists
-	GetConversationWith(peer, resource string) (Conversation, bool)
+	GetConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (Conversation, bool)
 
 	// GetConversationWith returns the conversation for the given peer, and
 	// creates the conversation if none exists. Additionally, returns whether the
 	// conversation was created.
-	EnsureConversationWith(peer, resource string) (Conversation, bool)
+	EnsureConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (Conversation, bool)
 
 	// Conversations return all conversations currently managed
 	Conversations() map[string]Conversation
@@ -55,11 +56,11 @@ func NewConversationManager(builder ConversationBuilder, sender Sender) Conversa
 	}
 }
 
-func (m *conversationManager) GetConversationWith(peer, resource string) (Conversation, bool) {
+func (m *conversationManager) GetConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (Conversation, bool) {
 	m.RLock()
 	defer m.RUnlock()
-	c, ok := m.conversations[peer]
-	if ok && c.resource != "" && resource != "" && c.resource != resource {
+	c, ok := m.conversations[peer.Representation()]
+	if ok && c.resource != data.JIDResource("") && resource != data.JIDResource("") && c.resource != resource {
 		return c, false
 	}
 	if ok {
@@ -68,6 +69,7 @@ func (m *conversationManager) GetConversationWith(peer, resource string) (Conver
 	return c, ok
 }
 
+// TODO: why do we even have this? It probably should go.
 func (m *conversationManager) Conversations() map[string]Conversation {
 	m.RLock()
 	defer m.RUnlock()
@@ -80,12 +82,12 @@ func (m *conversationManager) Conversations() map[string]Conversation {
 	return ret
 }
 
-func (m *conversationManager) EnsureConversationWith(peer, resource string) (Conversation, bool) {
+func (m *conversationManager) EnsureConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (Conversation, bool) {
 	m.Lock()
 	defer m.Unlock()
 
-	c, ok := m.conversations[peer]
-	if ok && (c.resource == "" || resource == "" || c.resource == resource) {
+	c, ok := m.conversations[peer.Representation()]
+	if ok && (c.resource == data.JIDResource("") || resource == data.JIDResource("") || c.resource == resource) {
 		c.resource = resource
 		return c, true
 	}
@@ -99,7 +101,7 @@ func (m *conversationManager) EnsureConversationWith(peer, resource string) (Con
 		resource:     resource,
 		Conversation: m.builder.NewConversation(peer),
 	}
-	m.conversations[peer] = c
+	m.conversations[peer.Representation()] = c
 
 	return c, true
 }
@@ -109,12 +111,12 @@ func (m *conversationManager) TerminateAll() {
 	defer m.RUnlock()
 
 	for peer := range m.conversations {
-		m.terminateConversationWith(peer, "")
+		m.terminateConversationWith(data.JIDNR(peer), data.JIDResource(""))
 	}
 }
 
-func (m *conversationManager) terminateConversationWith(peer, resource string) error {
-	if c, ok := m.conversations[peer]; ok {
+func (m *conversationManager) terminateConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) error {
+	if c, ok := m.conversations[peer.Representation()]; ok {
 		return c.EndEncryptedChat(m.sender, resource)
 	}
 

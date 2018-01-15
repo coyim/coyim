@@ -71,7 +71,7 @@ func (*SessionMock) DisplayName() string {
 }
 
 // EncryptAndSendTo is the implementation for Session interface
-func (*SessionMock) EncryptAndSendTo(string, string, string) (int, bool, error) {
+func (*SessionMock) EncryptAndSendTo(data.JIDWithoutResource, data.JIDResource, string) (int, bool, error) {
 	return 0, false, nil
 }
 
@@ -104,7 +104,7 @@ func (*SessionMock) IsDisconnected() bool {
 }
 
 // ManuallyEndEncryptedChat is the implementation for Session interface
-func (*SessionMock) ManuallyEndEncryptedChat(string, string) error {
+func (*SessionMock) ManuallyEndEncryptedChat(data.JIDWithoutResource, data.JIDResource) error {
 	return nil
 }
 
@@ -135,7 +135,7 @@ func (*SessionMock) RequestPresenceSubscription(data.JIDWithoutResource, string)
 }
 
 // Send is the implementation for Session interface
-func (*SessionMock) Send(string, string, string) error {
+func (*SessionMock) Send(data.JIDWithoutResource, data.JIDResource, string) error {
 	return nil
 }
 
@@ -173,13 +173,13 @@ func (*SessionMock) Warn(string) {}
 func (*SessionMock) Info(string) {}
 
 // StartSMP is the implementation for Session interface
-func (*SessionMock) StartSMP(string, string, string, string) {}
+func (*SessionMock) StartSMP(data.JIDWithoutResource, data.JIDResource, string, string) {}
 
 // FinishSMP is the implementation for Session interface
-func (*SessionMock) FinishSMP(string, string, string) {}
+func (*SessionMock) FinishSMP(data.JIDWithoutResource, data.JIDResource, string) {}
 
 // AbortSMP is the implementation for Session interface
-func (*SessionMock) AbortSMP(string, string) {}
+func (*SessionMock) AbortSMP(data.JIDWithoutResource, data.JIDResource) {}
 
 // PublishEvent is the implementation for Session interface
 func (*SessionMock) PublishEvent(interface{}) {}
@@ -191,16 +191,16 @@ func (*SessionMock) SendIQError(*data.ClientIQ, interface{}) {}
 func (*SessionMock) SendIQResult(*data.ClientIQ, interface{}) {}
 
 // SendFileTo is the implementation for Session interface
-func (*SessionMock) SendFileTo(string, string, bool) *sdata.FileTransferControl {
+func (*SessionMock) SendFileTo(data.JID, string, bool) *sdata.FileTransferControl {
 	return nil
 }
 
 // SendDirTo is the implementation for Session interface
-func (*SessionMock) SendDirTo(string, string, bool) *sdata.FileTransferControl {
+func (*SessionMock) SendDirTo(data.JID, string, bool) *sdata.FileTransferControl {
 	return nil
 }
 
 // CurrentSymmetricKeyFor is the implementation for Session interface
-func (*SessionMock) CreateSymmetricKeyFor(string) []byte {
+func (*SessionMock) CreateSymmetricKeyFor(data.JID) []byte {
 	return nil
 }

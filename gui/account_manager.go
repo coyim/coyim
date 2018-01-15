@@ -177,7 +177,7 @@ func (m *accountManager) removePeer(account *account, peer string) {
 	l.Remove(data.JIDNR(peer))
 }
 
-func (m *accountManager) getPeer(account *account, peer string) (*rosters.Peer, bool) {
+func (m *accountManager) getPeer(account *account, peer data.JIDWithoutResource) (*rosters.Peer, bool) {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -186,13 +186,13 @@ func (m *accountManager) getPeer(account *account, peer string) (*rosters.Peer, 
 		return nil, false
 	}
 
-	return l.Get(data.JIDNR(peer))
+	return l.Get(peer)
 }
 
-func (m *accountManager) displayNameFor(account *account, from string) string {
+func (m *accountManager) displayNameFor(account *account, from data.JIDWithoutResource) string {
 	p, ok := m.getPeer(account, from)
 	if !ok {
-		return from
+		return from.Representation()
 	}
 
 	return p.NameForPresentation()

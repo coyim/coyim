@@ -704,7 +704,7 @@ CommandLoop:
 				s.RequestPresenceSubscription(data.JIDNR(cmd.User), "") // second argument is the potential message
 			case msgCommand:
 				message := []byte(cmd.msg)
-				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to.Representation(), string(c.currentResourceFor(cmd.to)))
+				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to.EnsureNoResource(), c.currentResourceFor(cmd.to))
 				isEncrypted := conversation.IsEncrypted()
 				if cmd.setPromptIsEncrypted != nil {
 					cmd.setPromptIsEncrypted <- isEncrypted
@@ -715,7 +715,7 @@ CommandLoop:
 					continue
 				}
 
-				_, err := conversation.Send(s, string(c.currentResourceFor(cmd.to)), message)
+				_, err := conversation.Send(s, c.currentResourceFor(cmd.to), message)
 				if err != nil {
 					c.alert(err.Error())
 					break
@@ -723,8 +723,8 @@ CommandLoop:
 
 			case otrCommand:
 				resource := c.currentResourceFor(data.ParseJID(cmd.User))
-				conversation, _ := s.ConversationManager().EnsureConversationWith(string(cmd.User), string(resource))
-				conversation.StartEncryptedChat(s, string(resource))
+				conversation, _ := s.ConversationManager().EnsureConversationWith(data.JIDNR(cmd.User), resource)
+				conversation.StartEncryptedChat(s, resource)
 			case otrInfoCommand:
 				for _, pk := range s.PrivateKeys() {
 					c.info(fmt.Sprintf("Your OTR fingerprint is %x", pk.PublicKey().Fingerprint()))
@@ -738,14 +738,14 @@ CommandLoop:
 			case endOTRCommand:
 				to := data.ParseJID(cmd.User)
 				resource := c.currentResourceFor(to)
-				conversation, exists := s.ConversationManager().GetConversationWith(to.Representation(), string(resource))
+				conversation, exists := s.ConversationManager().GetConversationWith(to.EnsureNoResource(), resource)
 
 				if !exists {
 					c.alert("No secure session established")
 					break
 				}
 
-				err := conversation.EndEncryptedChat(s, string(resource))
+				err := conversation.EndEncryptedChat(s, resource)
 				if err != nil {
 					c.alert("Can't end the conversation - it seems there is no randomness in your system. This could be a significant problem.")
 					break
@@ -756,7 +756,7 @@ CommandLoop:
 			case authQACommand:
 				to := data.ParseJID(cmd.User)
 				resource := c.currentResourceFor(to)
-				conversation, exists := s.ConversationManager().GetConversationWith(to.Representation(), string(resource))
+				conversation, exists := s.ConversationManager().GetConversationWith(to.EnsureNoResource(), resource)
 				if !exists {
 					c.alert("Can't authenticate without a secure conversation established")
 					break
@@ -764,9 +764,9 @@ CommandLoop:
 
 				if s.OtrEventHandler()[to.Representation()].WaitingForSecret {
 					s.OtrEventHandler()[to.Representation()].WaitingForSecret = false
-					err = conversation.ProvideAuthenticationSecret(s, string(resource), []byte(cmd.Secret))
+					err = conversation.ProvideAuthenticationSecret(s, resource, []byte(cmd.Secret))
 				} else {
-					err = conversation.StartAuthenticate(s, string(resource), cmd.Question, []byte(cmd.Secret))
+					err = conversation.StartAuthenticate(s, resource, cmd.Question, []byte(cmd.Secret))
 				}
 
 				if err != nil {
@@ -789,7 +789,7 @@ CommandLoop:
 				s.CommandManager().ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
 					Account:     s.GetConfig(),
 					Session:     s,
-					Peer:        cmd.User,
+					Peer:        data.JIDNR(cmd.User),
 					Fingerprint: fpr,
 				})
 

@@ -1,12 +1,15 @@
 package otr_client
 
-import "github.com/coyim/coyim/config"
+import (
+	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/xmpp/data"
+)
 
 // AuthorizeFingerprintCmd is a command that represents a request to authorize a fingerprint
 type AuthorizeFingerprintCmd struct {
 	Account     *config.Account
 	Session     interface{}
-	Peer        string
+	Peer        data.JIDWithoutResource
 	Fingerprint []byte
 }
 

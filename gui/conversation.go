@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/client"
-	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
@@ -32,12 +31,10 @@ type conversationView interface {
 	delayedMessageSent(int)
 	displayNotification(notification string)
 	displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string)
-	ensureIsEncrypted()
 	isFileTransferNotifCanceled() bool
 	isVisible() bool
 	haveShownPrivateEndedNotification()
 	haveShownPrivateNotification()
-	lockTyping()
 	newFileTransfer(fileName string, dir, send, receive bool) *fileNotification
 	removeIdentityVerificationWarning()
 	setEnabled(enabled bool)
@@ -45,7 +42,6 @@ type conversationView interface {
 	showSMPRequestForSecret(string)
 	showSMPSuccess()
 	showSMPFailure()
-	unlockTyping()
 	updateFileTransfer(file *fileNotification)
 	updateFileTransferNotificationCounts()
 	updateSecurityWarning()
@@ -241,9 +237,6 @@ func (conv *conversationPane) onEndOtrSignal() {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 	} else {
 
-		if *config.OTRMandatoryFlag {
-			conv.lockTyping()
-		}
 		conv.removeIdentityVerificationWarning()
 		conv.displayNotification(i18n.Local("Private conversation has ended."))
 		conv.updateSecurityWarning()
@@ -600,31 +593,6 @@ func setCursor(entry gtki.TextView, hasCursor bool) {
 	entry.SetCursorVisible(hasCursor)
 	entry.SetEditable(hasCursor)
 	entry.SetCanFocus(hasCursor)
-}
-
-func (conv *conversationPane) unlockTyping() {
-	color := conv.colorSet.conversationUnlockTypingBackground
-	updateEntryBackground(conv.entry, color)
-	conv.entry.SetTooltipText(i18n.Local("Type here to send messages"))
-	setCursor(conv.entry, true)
-	conv.entry.GrabFocus()
-}
-
-func (conv *conversationPane) lockTyping() {
-	color := conv.colorSet.conversationLockTypingBackground
-	updateEntryBackground(conv.entry, color)
-	conv.entry.SetTooltipText(i18n.Local("Typing not allowed, conversation should be encrypted first"))
-	setCursor(conv.entry, false)
-}
-
-func (conv *conversationPane) ensureIsEncrypted() {
-	if c, exist := conv.getConversation(); exist && c.IsEncrypted() {
-		conv.unlockTyping()
-		return
-	}
-
-	log.Printf("Starts Mandatory OTR")
-	conv.onStartOtrSignal()
 }
 
 func (conv *conversationWindow) show(userInitiated bool) {

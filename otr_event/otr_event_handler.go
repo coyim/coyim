@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/otr3"
 )
 
@@ -46,7 +47,7 @@ type OtrEventHandler struct {
 	securityChange     SecurityChange
 	WaitingForSecret   bool
 	Account            string
-	Peer               string
+	Peer               data.JID
 	Notifications      chan<- string
 	DelayedMessageSent chan<- int
 	Delays             map[int]bool
@@ -117,11 +118,11 @@ func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent in
 func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error, trace ...interface{}) {
 	switch event {
 	case otr3.MessageEventLogHeartbeatReceived:
-		log.Printf("[%s] Heartbeat received from %s.", e.Account, e.Peer)
+		log.Printf("[%s] Heartbeat received from %s.", e.Account, e.Peer.Representation())
 	case otr3.MessageEventLogHeartbeatSent:
-		log.Printf("[%s] Heartbeat sent to %s.", e.Account, e.Peer)
+		log.Printf("[%s] Heartbeat sent to %s.", e.Account, e.Peer.Representation())
 	case otr3.MessageEventReceivedMessageUnrecognized:
-		log.Printf("[%s] Unrecognized OTR message received from %s.", e.Account, e.Peer)
+		log.Printf("[%s] Unrecognized OTR message received from %s.", e.Account, e.Peer.Representation())
 	case otr3.MessageEventEncryptionRequired:
 		e.Delays[trace[0].(int)] = true
 		e.PendingDelays++
@@ -139,7 +140,7 @@ func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []
 	case otr3.MessageEventSetupError:
 		e.notify("Error setting up private conversation.")
 		if err != nil {
-			log.Printf("[%s] Error setting up private conversation with %s: %s.", e.Account, e.Peer, err.Error())
+			log.Printf("[%s] Error setting up private conversation with %s: %s.", e.Account, e.Peer.Representation(), err.Error())
 		}
 	case otr3.MessageEventMessageSent:
 		if len(trace) > 0 {

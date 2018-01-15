@@ -585,7 +585,7 @@ func (s *session) NewConversation(peer data.JID) *otr3.Conversation {
 		eh = new(otr_event.OtrEventHandler)
 		eh.Delays = make(map[int]bool)
 		eh.Account = s.GetConfig().Account
-		eh.Peer = peer.Representation()
+		eh.Peer = peer
 		notificationsChan := make(chan string)
 		eh.Notifications = notificationsChan
 		go s.listenToNotifications(notificationsChan, peer)

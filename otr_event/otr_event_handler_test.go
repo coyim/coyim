@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/gotk3adapter/glib_mock"
 	"github.com/coyim/otr3"
 
@@ -112,7 +113,7 @@ func captureLog(f func()) string {
 }
 
 func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_logsHeartbeatEvents(c *C) {
-	handler := &OtrEventHandler{Account: "me1@foo.bar", Peer: "them1@somewhere.com"}
+	handler := &OtrEventHandler{Account: "me1@foo.bar", Peer: data.JIDNR("them1@somewhere.com")}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventLogHeartbeatReceived, nil, nil)
 	})
@@ -129,7 +130,7 @@ func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_logsHeartbeatEvents(c *C)
 }
 
 func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_logsUnrecognizedMessage(c *C) {
-	handler := &OtrEventHandler{Account: "me1@foo.bar", Peer: "them1@somewhere.com"}
+	handler := &OtrEventHandler{Account: "me1@foo.bar", Peer: data.JIDNR("them1@somewhere.com")}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventReceivedMessageUnrecognized, nil, nil)
 	})
@@ -138,7 +139,7 @@ func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_logsUnrecognizedMessage(c
 }
 
 func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_logsUnhandledEvent(c *C) {
-	handler := &OtrEventHandler{Account: "me1@foo.bar", Peer: "them1@somewhere.com"}
+	handler := &OtrEventHandler{Account: "me1@foo.bar", Peer: data.JIDNR("them1@somewhere.com")}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEvent(44422), nil, nil)
 	})
@@ -147,7 +148,7 @@ func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_logsUnhandledEvent(c *C) 
 }
 
 func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_ignoresMessageForOtherInstance(c *C) {
-	handler := &OtrEventHandler{Account: "me1@foo.bar", Peer: "them1@somewhere.com"}
+	handler := &OtrEventHandler{Account: "me1@foo.bar", Peer: data.JIDNR("them1@somewhere.com")}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventReceivedMessageForOtherInstance, nil, nil)
 	})
@@ -161,7 +162,7 @@ func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_notifiesOnSeveralMessageE
 		close(nn)
 	}()
 
-	handler := &OtrEventHandler{Account: "me2@foo.bar", Peer: "them2@somewhere.com", Notifications: nn, Delays: make(map[int]bool)}
+	handler := &OtrEventHandler{Account: "me2@foo.bar", Peer: data.JIDNR("them2@somewhere.com"), Notifications: nn, Delays: make(map[int]bool)}
 	handler.HandleMessageEvent(otr3.MessageEventEncryptionRequired, nil, nil, 123)
 	c.Assert(<-nn, Equals, "Attempting to start a private conversation...")
 
@@ -199,7 +200,7 @@ func (s *OtrEventHandlerSuite) Test_HandleMessageEvent_handlesMessageEventSetupC
 		close(nn)
 	}()
 
-	handler := &OtrEventHandler{Account: "me2@foo.bar", Peer: "them2@somewhere.com", Notifications: nn}
+	handler := &OtrEventHandler{Account: "me2@foo.bar", Peer: data.JIDNR("them2@somewhere.com"), Notifications: nn}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventSetupError, nil, nil)
 	})

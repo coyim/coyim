@@ -11,10 +11,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coyim/coyim/client"
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/event"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/otr_client"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
@@ -77,8 +77,8 @@ type session struct {
 
 	connector access.Connector
 
-	cmdManager  client.CommandManager
-	convManager client.ConversationManager
+	cmdManager  otr_client.CommandManager
+	convManager otr_client.ConversationManager
 
 	dialerFactory func(tls.Verifier) xi.Dialer
 
@@ -157,7 +157,7 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 	}
 
 	s.ReloadKeys()
-	s.convManager = client.NewConversationManager(s, s)
+	s.convManager = otr_client.NewConversationManager(s, s)
 
 	go observe(s)
 	go checkReconnect(s)
@@ -526,11 +526,11 @@ func (s *session) HandleConfirmOrDeny(jid data.JIDWithoutResource, isConfirm boo
 	}
 }
 
-func (s *session) newOTRKeys(peer data.JIDWithoutResource, conversation client.Conversation) {
+func (s *session) newOTRKeys(peer data.JIDWithoutResource, conversation otr_client.Conversation) {
 	s.publishPeerEvent(events.OTRNewKeys, peer)
 }
 
-func (s *session) renewedOTRKeys(peer data.JIDWithoutResource, conversation client.Conversation) {
+func (s *session) renewedOTRKeys(peer data.JIDWithoutResource, conversation otr_client.Conversation) {
 	s.publishPeerEvent(events.OTRRenewedKeys, peer)
 }
 
@@ -574,7 +574,7 @@ func (s *session) NewConversation(_peer string) *otr3.Conversation {
 	instanceTag := conversation.InitializeInstanceTag(s.GetConfig().InstanceTag)
 
 	if s.GetConfig().InstanceTag != instanceTag {
-		s.cmdManager.ExecuteCmd(client.SaveInstanceTagCmd{
+		s.cmdManager.ExecuteCmd(otr_client.SaveInstanceTagCmd{
 			Account:     s.GetConfig(),
 			InstanceTag: instanceTag,
 		})
@@ -675,7 +675,7 @@ func (s *session) receiveClientMessage(peer data.JID, when time.Time, body strin
 		s.publishSMPEvent(events.SecretNeeded, peer, eh.SmpQuestion)
 	case event.SMPComplete:
 		s.publishSMPEvent(events.Success, peer, "")
-		s.cmdManager.ExecuteCmd(client.AuthorizeFingerprintCmd{
+		s.cmdManager.ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
 			Session:     s,
 			Peer:        from.Representation(),
@@ -1016,15 +1016,15 @@ func (s *session) Close() {
 	}
 }
 
-func (s *session) CommandManager() client.CommandManager {
+func (s *session) CommandManager() otr_client.CommandManager {
 	return s.cmdManager
 }
 
-func (s *session) SetCommandManager(c client.CommandManager) {
+func (s *session) SetCommandManager(c otr_client.CommandManager) {
 	s.cmdManager = c
 }
 
-func (s *session) ConversationManager() client.ConversationManager {
+func (s *session) ConversationManager() otr_client.ConversationManager {
 	return s.convManager
 }
 

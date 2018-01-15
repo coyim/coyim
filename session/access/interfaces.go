@@ -5,9 +5,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/coyim/coyim/client"
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/event"
+	"github.com/coyim/coyim/otr_client"
 	"github.com/coyim/coyim/roster"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/tls"
@@ -34,11 +34,11 @@ type Session interface {
 	AutoApprove(string)
 	AwaitVersionReply(<-chan data.Stanza, string)
 	Close()
-	CommandManager() client.CommandManager
+	CommandManager() otr_client.CommandManager
 	Config() *config.ApplicationConfig
 	Conn() xi.Conn
 	Connect(string, tls.Verifier) error
-	ConversationManager() client.ConversationManager
+	ConversationManager() otr_client.ConversationManager
 	CreateSymmetricKeyFor(string) []byte
 	DenyPresenceSubscription(data.JIDWithoutResource, string) error
 	DisplayName() string
@@ -58,7 +58,7 @@ type Session interface {
 	RequestPresenceSubscription(data.JIDWithoutResource, string) error
 	Send(string, string, string) error
 	SendPing()
-	SetCommandManager(client.CommandManager)
+	SetCommandManager(otr_client.CommandManager)
 	SetConnectionLogger(io.Writer)
 	SetConnector(Connector)
 	SetLastActionTime(time.Time)

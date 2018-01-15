@@ -1,4 +1,4 @@
-package client
+package otr_client
 
 import "github.com/coyim/coyim/config"
 

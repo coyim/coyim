@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coyim/coyim/client"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/otr_client"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/ui"
@@ -509,7 +509,7 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 	cwi.MoveToDesktop(parentPlace)
 }
 
-func (conv *conversationPane) getConversation() (client.Conversation, bool) {
+func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) {
 	return conv.account.session.ConversationManager().GetConversationWith(conv.to, conv.currentResource())
 }
 

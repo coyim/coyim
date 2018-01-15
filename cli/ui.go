@@ -16,8 +16,8 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/cli/terminal"
-	"github.com/coyim/coyim/client"
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/otr_client"
 	"github.com/coyim/coyim/servers"
 	sessions "github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/tls"
@@ -230,7 +230,7 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 	return c.promptForForm(user, c.password, title, instructions, fields)
 }
 
-func (c *cliUI) printConversationInfo(peer data.JID, conversation client.Conversation) {
+func (c *cliUI) printConversationInfo(peer data.JID, conversation otr_client.Conversation) {
 	uidr := peer.Representation()
 	s := c.session
 
@@ -537,7 +537,7 @@ func (c *cliUI) watchRosterEdits() {
 			}
 
 			c.session.GetConfig().RemovePeer(jid)
-			c.session.CommandManager().ExecuteCmd(client.SaveApplicationConfigCmd{})
+			c.session.CommandManager().ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
 		}
 
 		//EDIT
@@ -688,7 +688,7 @@ CommandLoop:
 
 			case toggleStatusUpdatesCommand:
 				s.GetConfig().HideStatusUpdates = !s.GetConfig().HideStatusUpdates
-				s.CommandManager().ExecuteCmd(client.SaveApplicationConfigCmd{})
+				s.CommandManager().ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
 
 				// Tell the user the current state of the statuses
 				if s.GetConfig().HideStatusUpdates {
@@ -786,7 +786,7 @@ CommandLoop:
 					break
 				}
 
-				s.CommandManager().ExecuteCmd(client.AuthorizeFingerprintCmd{
+				s.CommandManager().ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
 					Account:     s.GetConfig(),
 					Session:     s,
 					Peer:        cmd.User,

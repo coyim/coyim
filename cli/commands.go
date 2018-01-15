@@ -1,6 +1,6 @@
 package cli
 
-import "github.com/coyim/coyim/client"
+import "github.com/coyim/coyim/otr_client"
 
 func (c *cliUI) ExecuteCmd(comm interface{}) {
 	c.commands <- comm
@@ -9,7 +9,7 @@ func (c *cliUI) ExecuteCmd(comm interface{}) {
 func (c *cliUI) watchClientCommands() {
 	for command := range c.commands {
 		switch comm := command.(type) {
-		case client.AuthorizeFingerprintCmd:
+		case otr_client.AuthorizeFingerprintCmd:
 			account := comm.Account
 			uid := comm.Peer
 			fpr := comm.Fingerprint
@@ -17,12 +17,12 @@ func (c *cliUI) watchClientCommands() {
 			//TODO: it could be a different pointer,
 			//find the account by ID()
 			account.AuthorizeFingerprint(uid, fpr)
-			c.ExecuteCmd(client.SaveApplicationConfigCmd{})
-		case client.SaveInstanceTagCmd:
+			c.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
+		case otr_client.SaveInstanceTagCmd:
 			account := comm.Account
 			account.InstanceTag = comm.InstanceTag
-			c.ExecuteCmd(client.SaveApplicationConfigCmd{})
-		case client.SaveApplicationConfigCmd:
+			c.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
+		case otr_client.SaveApplicationConfigCmd:
 			c.SaveConf()
 		}
 	}

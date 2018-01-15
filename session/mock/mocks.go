@@ -5,9 +5,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/coyim/coyim/client"
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/event"
+	"github.com/coyim/coyim/otr_client"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
@@ -36,7 +36,7 @@ func (*SessionMock) Close() {}
 func (*SessionMock) AutoApprove(string) {}
 
 // CommandManager is the implementation for Session interface
-func (*SessionMock) CommandManager() client.CommandManager {
+func (*SessionMock) CommandManager() otr_client.CommandManager {
 	return nil
 }
 
@@ -56,7 +56,7 @@ func (*SessionMock) Connect(string, tls.Verifier) error {
 }
 
 // ConversationManager is the implementation for Session interface
-func (*SessionMock) ConversationManager() client.ConversationManager {
+func (*SessionMock) ConversationManager() otr_client.ConversationManager {
 	return nil
 }
 
@@ -143,7 +143,7 @@ func (*SessionMock) Send(string, string, string) error {
 func (*SessionMock) SendPing() {}
 
 // SetCommandManager is the implementation for Session interface
-func (*SessionMock) SetCommandManager(client.CommandManager) {}
+func (*SessionMock) SetCommandManager(otr_client.CommandManager) {}
 
 // SetConnectionLogger is the implementation for Session interface
 func (*SessionMock) SetConnectionLogger(io.Writer) {}

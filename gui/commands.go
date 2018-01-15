@@ -1,8 +1,8 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/client"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/otr_client"
 	"github.com/coyim/coyim/session/access"
 )
 
@@ -63,7 +63,7 @@ func (u *gtkUI) watchCommands() {
 		switch c := command.(type) {
 		case executable:
 			c.execute(u)
-		case client.AuthorizeFingerprintCmd:
+		case otr_client.AuthorizeFingerprintCmd:
 			account := c.Account
 			uid := c.Peer
 			fpr := c.Fingerprint
@@ -71,7 +71,7 @@ func (u *gtkUI) watchCommands() {
 			//TODO: it could be a different pointer,
 			//find the account by ID()
 			account.AuthorizeFingerprint(uid, fpr)
-			u.ExecuteCmd(client.SaveApplicationConfigCmd{})
+			u.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
 
 			ac := u.findAccountForSession(c.Session.(access.Session))
 			if ac != nil {
@@ -80,11 +80,11 @@ func (u *gtkUI) watchCommands() {
 					cv.displayNotification(i18n.Localf("You have verified the identity of %s.", peer))
 				})
 			}
-		case client.SaveInstanceTagCmd:
+		case otr_client.SaveInstanceTagCmd:
 			account := c.Account
 			account.InstanceTag = c.InstanceTag
-			u.ExecuteCmd(client.SaveApplicationConfigCmd{})
-		case client.SaveApplicationConfigCmd:
+			u.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
+		case otr_client.SaveApplicationConfigCmd:
 			u.SaveConfig()
 		}
 	}

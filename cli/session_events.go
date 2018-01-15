@@ -7,6 +7,7 @@ import (
 
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/utils"
 )
 
@@ -20,7 +21,7 @@ func (c *cliUI) handleSessionEvent(ev events.Event) {
 		c.terminate <- true
 	case events.RosterReceived:
 		for _, entry := range ev.Session.R().ToSlice() {
-			c.input.addUser(entry.Jid.Representation())
+			c.input.addUser(entry.Jid)
 		}
 	}
 }
@@ -28,22 +29,22 @@ func (c *cliUI) handleSessionEvent(ev events.Event) {
 func (c *cliUI) handlePeerEvent(ev events.Peer) {
 	switch ev.Type {
 	case events.IQReceived:
-		c.input.addUser(ev.From)
+		c.input.addUser(data.JIDNR(ev.From))
 	case events.OTREnded:
-		c.input.SetPromptForTarget(ev.From, false)
+		c.input.SetPromptForTarget(data.ParseJID(ev.From), false)
 	case events.OTRNewKeys, events.OTRRenewedKeys:
 		uid := ev.From
 		info(c.term, c.termControl, fmt.Sprintf("New OTR session with %s established", uid))
 		//TODO: review whether it should create conversations
 		conversation, _ := ev.Session.ConversationManager().EnsureConversationWith(uid, "")
 
-		c.input.SetPromptForTarget(uid, true)
+		c.input.SetPromptForTarget(data.ParseJID(uid), true)
 		c.printConversationInfo(uid, conversation)
 	case events.SubscriptionRequest:
 		msg := fmt.Sprintf("%[1]s wishes to see when you're online. Use '/confirm %[1]s' to confirm (or likewise with /deny to decline)", ev.From)
 
 		info(c.term, c.termControl, msg)
-		c.input.addUser(ev.From)
+		c.input.addUser(data.JIDNR(ev.From))
 	}
 }
 

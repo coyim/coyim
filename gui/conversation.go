@@ -212,7 +212,7 @@ func (conv *conversationPane) onSendMessageSignal() {
 
 func (conv *conversationPane) currentResource() string {
 	return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
-		return p.ResourceToUse()
+		return string(p.ResourceToUse())
 	})
 }
 

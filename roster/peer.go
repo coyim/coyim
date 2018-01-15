@@ -240,18 +240,18 @@ func (p *Peer) LastResource(r data.JIDResource) {
 }
 
 // ResourceToUse returns the resource to use for this peer
-func (p *Peer) ResourceToUse() string {
+func (p *Peer) ResourceToUse() data.JIDResource {
 	if p.lastResource == "" {
-		return ""
+		return data.JIDResource("")
 	}
 	p.resourcesLock.RLock()
 	defer p.resourcesLock.RUnlock()
 
 	if p.resources[p.lastResource] {
-		return p.lastResource
+		return data.JIDResource(p.lastResource)
 	}
 
-	return ""
+	return data.JIDResource("")
 }
 
 // MustHaveResource always returns a valid resource, assuming the user is online

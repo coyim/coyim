@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/cli/terminal"
+	"github.com/coyim/coyim/xmpp/data"
 )
 
 type uiCommand struct {
@@ -84,7 +85,7 @@ type endOTRCommand struct {
 type helpCommand struct{}
 
 type msgCommand struct {
-	to  string
+	to  data.JID
 	msg string
 	// setPromptIsEncrypted is used to synchonously indicate whether the
 	// prompt should show the contact as encrypted, before the prompt is
@@ -329,22 +330,23 @@ type input struct {
 
 	// lock protects uids, uidComplete and lastTarget.
 	lock        sync.Mutex
-	uids        []string
+	uids        []data.JID
 	uidComplete *priorityList
-	lastTarget  string
+	lastTarget  data.JID
 }
 
-func (i *input) addUser(uid string) {
+func (i *input) addUser(uid data.JIDWithoutResource) {
 	i.lock.Lock()
 	defer i.lock.Unlock()
 
+	uidr := uid.Representation()
 	for _, existingUID := range i.uids {
-		if existingUID == uid {
+		if existingUID.Representation() == uidr {
 			return
 		}
 	}
 
-	i.uidComplete.Insert(uid)
+	i.uidComplete.Insert(uidr)
 	i.uids = append(i.uids, uid)
 }
 
@@ -370,7 +372,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 
 		line, err := i.term.ReadLine()
 		if err == i.tc.ErrPasteIndicator() {
-			if len(i.lastTarget) == 0 {
+			if i.lastTarget == nil {
 				alert(i.term, i.tc, "Pasted line ignored. Send a message to someone to select the destination.")
 			} else {
 				commandsChan <- msgCommand{i.lastTarget, string(line), nil}
@@ -412,7 +414,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 				continue
 			}
 			if _, ok := cmd.(pasteCommand); ok {
-				if len(i.lastTarget) == 0 {
+				if i.lastTarget == nil {
 					alert(i.term, i.tc, "Can't enter paste mode without a destination. Send a message to someone to select the destination.")
 					continue
 				}
@@ -424,7 +426,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 				continue
 			}
 			if _, ok := cmd.(closeCommand); ok {
-				i.lastTarget = ""
+				i.lastTarget = nil
 				i.term.SetPrompt("> ")
 				continue
 			}
@@ -438,8 +440,8 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 		if pos := strings.Index(line, string(nameTerminator)); pos > 0 {
 			possibleName := line[:pos]
 			for _, uid := range i.uids {
-				if possibleName == uid {
-					i.lastTarget = possibleName
+				if possibleName == uid.Representation() {
+					i.lastTarget = data.ParseJID(possibleName)
 					line = line[pos+2:]
 					break
 				}
@@ -447,7 +449,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 		}
 		i.lock.Unlock()
 
-		if len(i.lastTarget) == 0 {
+		if i.lastTarget == nil {
 			warn(i.term, i.tc, "Start typing a Jabber address and hit tab to send a message to someone")
 			continue
 		}
@@ -457,7 +459,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 	}
 }
 
-func (i *input) SetPromptForTarget(target string, isEncrypted bool) {
+func (i *input) SetPromptForTarget(target data.JID, isEncrypted bool) {
 	i.lock.Lock()
 	isCurrent := i.lastTarget == target
 	i.lock.Unlock()
@@ -466,14 +468,14 @@ func (i *input) SetPromptForTarget(target string, isEncrypted bool) {
 		return
 	}
 
-	prompt := make([]byte, 0, len(target)+16)
+	prompt := make([]byte, 0, len(target.Representation())+16)
 	if isEncrypted {
 		prompt = append(prompt, i.tc.Escape(i.term).Green...)
 	} else {
 		prompt = append(prompt, i.tc.Escape(i.term).Red...)
 	}
 
-	prompt = append(prompt, target...)
+	prompt = append(prompt, target.Representation()...)
 	prompt = append(prompt, i.tc.Escape(i.term).Reset...)
 	prompt = append(prompt, '>', ' ')
 	i.term.SetPrompt(string(prompt))

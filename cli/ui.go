@@ -18,7 +18,6 @@ import (
 	"github.com/coyim/coyim/cli/terminal"
 	"github.com/coyim/coyim/client"
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/servers"
 	sessions "github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/tls"
@@ -575,20 +574,12 @@ func (c *cliUI) watchRosterEdits() {
 	}
 }
 
-func (c *cliUI) withCurrentPeer(peer string, f func(*roster.Peer)) {
-	p, ok := c.session.R().Get(data.JIDNR(peer))
-
+func (c *cliUI) currentResourceFor(peer data.JID) data.JIDResource {
+	p, ok := c.session.R().Get(peer.EnsureNoResource())
 	if ok {
-		f(p)
+		return p.ResourceToUse()
 	}
-}
-
-func (c *cliUI) currentResourceFor(peer string) string {
-	resource := ""
-	c.withCurrentPeer(peer, func(p *roster.Peer) {
-		resource = p.ResourceToUse()
-	})
-	return resource
+	return data.JIDResource("")
 }
 
 func (c *cliUI) watchInputCommands() {
@@ -627,14 +618,15 @@ CommandLoop:
 				go s.AwaitVersionReply(replyChan, cmd.User)
 			case rosterCommand:
 				c.info("Current roster:")
+				rs := s.R().ToSlice()
 				maxLen := 0
-				for _, item := range s.R().ToSlice() {
+				for _, item := range rs {
 					if maxLen < len(item.Jid.Representation()) {
 						maxLen = len(item.Jid.Representation())
 					}
 				}
 
-				for _, item := range s.R().ToSlice() {
+				for _, item := range rs {
 					state, _, ok := s.R().StateOf(item.Jid)
 
 					line := ""
@@ -710,27 +702,27 @@ CommandLoop:
 				s.RequestPresenceSubscription(cmd.User, "") // second argument is the potential message
 			case msgCommand:
 				message := []byte(cmd.msg)
-				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to, c.currentResourceFor(cmd.to))
+				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to.Representation(), string(c.currentResourceFor(cmd.to)))
 				isEncrypted := conversation.IsEncrypted()
 				if cmd.setPromptIsEncrypted != nil {
 					cmd.setPromptIsEncrypted <- isEncrypted
 				}
 
-				if !isEncrypted && conf.ShouldEncryptTo(cmd.to) {
+				if !isEncrypted && conf.ShouldEncryptTo(cmd.to.Representation()) {
 					c.warn(fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
 					continue
 				}
 
-				_, err := conversation.Send(s, c.currentResourceFor(cmd.to), message)
+				_, err := conversation.Send(s, string(c.currentResourceFor(cmd.to)), message)
 				if err != nil {
 					c.alert(err.Error())
 					break
 				}
 
 			case otrCommand:
-				resource := c.currentResourceFor(string(cmd.User))
-				conversation, _ := s.ConversationManager().EnsureConversationWith(string(cmd.User), resource)
-				conversation.StartEncryptedChat(s, resource)
+				resource := c.currentResourceFor(data.ParseJID(cmd.User))
+				conversation, _ := s.ConversationManager().EnsureConversationWith(string(cmd.User), string(resource))
+				conversation.StartEncryptedChat(s, string(resource))
 			case otrInfoCommand:
 				for _, pk := range s.PrivateKeys() {
 					c.info(fmt.Sprintf("Your OTR fingerprint is %x", pk.PublicKey().Fingerprint()))
@@ -742,41 +734,41 @@ CommandLoop:
 					}
 				}
 			case endOTRCommand:
-				to := string(cmd.User)
+				to := data.ParseJID(cmd.User)
 				resource := c.currentResourceFor(to)
-				conversation, exists := s.ConversationManager().GetConversationWith(to, resource)
+				conversation, exists := s.ConversationManager().GetConversationWith(to.Representation(), string(resource))
 
 				if !exists {
 					c.alert("No secure session established")
 					break
 				}
 
-				err := conversation.EndEncryptedChat(s, resource)
+				err := conversation.EndEncryptedChat(s, string(resource))
 				if err != nil {
 					c.alert("Can't end the conversation - it seems there is no randomness in your system. This could be a significant problem.")
 					break
 				}
 
-				c.input.SetPromptForTarget(cmd.User, false)
+				c.input.SetPromptForTarget(to, false)
 				c.warn("OTR conversation ended with " + cmd.User)
 			case authQACommand:
-				to := string(cmd.User)
+				to := data.ParseJID(cmd.User)
 				resource := c.currentResourceFor(to)
-				conversation, exists := s.ConversationManager().GetConversationWith(to, resource)
+				conversation, exists := s.ConversationManager().GetConversationWith(to.Representation(), string(resource))
 				if !exists {
 					c.alert("Can't authenticate without a secure conversation established")
 					break
 				}
 
-				if s.OtrEventHandler()[to].WaitingForSecret {
-					s.OtrEventHandler()[to].WaitingForSecret = false
-					err = conversation.ProvideAuthenticationSecret(s, resource, []byte(cmd.Secret))
+				if s.OtrEventHandler()[to.Representation()].WaitingForSecret {
+					s.OtrEventHandler()[to.Representation()].WaitingForSecret = false
+					err = conversation.ProvideAuthenticationSecret(s, string(resource), []byte(cmd.Secret))
 				} else {
-					err = conversation.StartAuthenticate(s, resource, cmd.Question, []byte(cmd.Secret))
+					err = conversation.StartAuthenticate(s, string(resource), cmd.Question, []byte(cmd.Secret))
 				}
 
 				if err != nil {
-					c.alert("Error while starting authentication with " + to + ": " + err.Error())
+					c.alert("Error while starting authentication with " + to.Representation() + ": " + err.Error())
 				}
 
 			case authOobCommand:

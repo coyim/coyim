@@ -97,14 +97,14 @@ func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.iqReceived("someone@somewhere")
+	sess.iqReceived(data.JIDNR("someone@somewhere"))
 
 	select {
 	case ev := <-observer:
 		c.Assert(ev, Equals, events.Peer{
 			Session: sess,
 			Type:    events.IQReceived,
-			From:    "someone@somewhere",
+			From:    data.JIDNR("someone@somewhere"),
 		})
 	case <-time.After(1 * time.Millisecond):
 		c.Error("did not receive event")
@@ -250,7 +250,7 @@ func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 			case events.Message:
 				c.Assert(t.Session, Equals, sess)
 				c.Assert(t.Encrypted, Equals, false)
-				c.Assert(t.From, Equals, "bla@hmm.org")
+				c.Assert(t.From, Equals, data.JIDR("bla@hmm.org/somewhere"))
 				c.Assert(string(t.Body), Equals, "well, hello there")
 				return
 			default:
@@ -818,7 +818,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWai
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.HandleConfirmOrDeny("foo@bar.com", true)
+	sess.HandleConfirmOrDeny(data.JIDNR("foo@bar.com"), true)
 
 	select {
 	case ev := <-observer:
@@ -852,7 +852,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	expectedPresence := `<presence xmlns="jabber:client" id="123" to="foo@bar.com" type="unsubscribed"></presence>`
 	sess.r.SubscribeRequest(data.JIDNR("foo@bar.com"), "123", "")
 
-	sess.HandleConfirmOrDeny("foo@bar.com", false)
+	sess.HandleConfirmOrDeny(data.JIDNR("foo@bar.com"), false)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Equals, expectedPresence)
@@ -884,7 +884,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C
 		`<presence xmlns="jabber:client" id="[0-9]+" to="foo@bar.com" type="subscribe"></presence>`
 
 	sess.r.SubscribeRequest(data.JIDNR("foo@bar.com"), "123", "")
-	sess.HandleConfirmOrDeny("foo@bar.com", true)
+	sess.HandleConfirmOrDeny(data.JIDNR("foo@bar.com"), true)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Matches, expectedPresence)
@@ -909,7 +909,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.HandleConfirmOrDeny("foo@bar.com", true)
+	sess.HandleConfirmOrDeny(data.JIDNR("foo@bar.com"), true)
 
 	for {
 		select {
@@ -1058,7 +1058,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.receiveClientMessage("someone@some.org", "something", time.Now(), "hello<br>ola<BR/>wazup?")
+	go sess.receiveClientMessage(data.JIDR("someone@some.org/something"), time.Now(), "hello<br>ola<BR/>wazup?")
 
 	select {
 	case ev := <-observer:
@@ -1091,7 +1091,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.receiveClientMessage("someone@some.org", "something", time.Now(), "hello<br>ola<br/><BR/>wazup?")
+	go sess.receiveClientMessage(data.JIDR("someone@some.org/something"), time.Now(), "hello<br>ola<br/><BR/>wazup?")
 
 	select {
 	case ev := <-observer:

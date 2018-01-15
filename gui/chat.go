@@ -611,7 +611,8 @@ func (v *chatRoomView) appendToHistory(message *events.ChatMessage) {
 		message:         message.Body,
 		strippedMessage: ui.StripSomeHTML([]byte(message.Body)),
 
-		from:      utils.ResourceFromJid(message.From),
+		// TODO: this is clearly completely incorrect
+		from:      string(message.From.Resource()),
 		to:        message.To,
 		timestamp: message.When,
 	}

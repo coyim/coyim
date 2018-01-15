@@ -1,6 +1,9 @@
 package session
 
-import "github.com/coyim/coyim/session/events"
+import (
+	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/xmpp/data"
+)
 
 // Subscribe subscribes the observer to XMPP events
 func (s *session) Subscribe(c chan<- interface{}) {
@@ -47,7 +50,7 @@ func (s *session) publish(e events.EventType) {
 	})
 }
 
-func (s *session) publishPeerEvent(e events.PeerType, peer string) {
+func (s *session) publishPeerEvent(e events.PeerType, peer data.JID) {
 	s.publishEvent(events.Peer{
 		Session: s,
 		Type:    e,
@@ -68,12 +71,11 @@ func (s *session) PublishEvent(e interface{}) {
 	s.publishEvent(e)
 }
 
-func (s *session) publishSMPEvent(t events.SMPType, from, r, body string) {
+func (s *session) publishSMPEvent(t events.SMPType, peer data.JID, body string) {
 	s.publishEvent(events.SMP{
-		Type:     t,
-		Session:  s,
-		From:     from,
-		Resource: r,
-		Body:     body,
+		Type:    t,
+		Session: s,
+		From:    peer,
+		Body:    body,
 	})
 }

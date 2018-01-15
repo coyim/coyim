@@ -33,21 +33,24 @@ const (
 type Peer struct {
 	Session access.Session
 	Type    PeerType
-	From    string
+	// This can be either with or without Resource depending on the peer type
+	From data.JID
 }
 
 // Notification represents a notification event
 type Notification struct {
-	Session      access.Session
-	Peer         string
+	Session access.Session
+	// TODO: it's unclear what type of JID is needed here. This is the most general type, but maybe we can constrain it later
+	Peer         data.JID
 	Notification string
 }
 
 // DelayedMessageSent represents the event that a delayed message is sent
 type DelayedMessageSent struct {
 	Session access.Session
-	Peer    string
-	Tracer  int
+	// TODO: it's unclear what type of JID is needed here. Maybe we can constrain it later
+	Peer   data.JID
+	Tracer int
 }
 
 // PeerType represents the type of Peer event
@@ -75,9 +78,10 @@ type Presence struct {
 
 // Message represents a message event
 type Message struct {
-	Session   access.Session
-	From      string
-	Resource  string
+	Session access.Session
+	// TODO: is it possible to get a message without a resource?
+	// Potentially - maybe from the server? We need to investigate this
+	From      data.JID
 	When      time.Time
 	Body      []byte
 	Encrypted bool
@@ -89,9 +93,13 @@ type ChatPresence struct {
 	*data.ClientPresence
 }
 
+// TODO: This feels like bad naming - it implies it's for any chat, but realistically should only be for group chats.
+// The event name should actually take that into account
 // ChatMessage represents a message event in a chat room
 type ChatMessage struct {
-	From string
+	// TODO: is it possible to get a message without a resource?
+	// Potentially - maybe from the server? We need to investigate this
+	From data.JIDWithResource
 	When time.Time
 	Body string
 
@@ -117,7 +125,8 @@ type Log struct {
 // FileTransfer represents an event associated with file transfers
 type FileTransfer struct {
 	Session access.Session
-	Peer    string
+	// TODO: it's unclear what type of JID is needed here. Let's make it WithResource, and then fix if tyhat fails
+	Peer data.JIDWithResource
 
 	Mime             string
 	DateLastModified string
@@ -132,9 +141,10 @@ type FileTransfer struct {
 
 // SMP is an event related to SMP
 type SMP struct {
-	Type     SMPType
-	Session  access.Session
-	From     string
+	Type    SMPType
+	Session access.Session
+	// TODO: it's unclear what type of JID is needed here.
+	From     data.JID
 	Resource string
 	Body     string
 }

@@ -60,10 +60,10 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	var message, secondary string
 
 	if ev.IsDirectory {
-		message = i18n.Localf("%s wants to send you a directory: do you want to receive it?", utils.RemoveResourceFromJid(ev.Peer))
+		message = i18n.Localf("%s wants to send you a directory: do you want to receive it?", ev.Peer.EnsureNoResource().Representation())
 		secondary = i18n.Localf("Directory name: %s", ev.Name)
 	} else {
-		message = i18n.Localf("%s wants to send you a file: do you want to receive it?", utils.RemoveResourceFromJid(ev.Peer))
+		message = i18n.Localf("%s wants to send you a file: do you want to receive it?", ev.Peer.EnsureNoResource().Representation())
 		secondary = i18n.Localf("File name: %s", ev.Name)
 	}
 
@@ -114,7 +114,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 	if result && name != "" {
 		fileName := resizeFileName(ev.Name)
-		cv := u.openConversationView(account, utils.RemoveResourceFromJid(ev.Peer), true, "")
+		cv := u.openConversationView(account, ev.Peer.EnsureNoResource().Representation(), true, "")
 		f := createNewFileTransferWithDefaults(fileName, ev.IsDirectory, false, true, ev.Control, cv)
 		u.startAllListenersForFile(ev.Control, cv, f, ev.Name, "Receiving", "receive")
 		ev.Answer <- &name

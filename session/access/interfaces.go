@@ -30,7 +30,7 @@ type Connector interface {
 
 // Session is an interface that defines the functionality of a Session
 type Session interface {
-	ApprovePresenceSubscription(string, string) error
+	ApprovePresenceSubscription(data.JIDWithoutResource, string) error
 	AutoApprove(string)
 	AwaitVersionReply(<-chan data.Stanza, string)
 	Close()
@@ -40,13 +40,13 @@ type Session interface {
 	Connect(string, tls.Verifier) error
 	ConversationManager() client.ConversationManager
 	CreateSymmetricKeyFor(string) []byte
-	DenyPresenceSubscription(string, string) error
+	DenyPresenceSubscription(data.JIDWithoutResource, string) error
 	DisplayName() string
 	EncryptAndSendTo(string, string, string) (int, bool, error)
 	GetConfig() *config.Account
 	GetInMemoryLog() *bytes.Buffer
 	GroupDelimiter() string
-	HandleConfirmOrDeny(string, bool)
+	HandleConfirmOrDeny(data.JIDWithoutResource, bool)
 	IsConnected() bool
 	IsDisconnected() bool
 	ManuallyEndEncryptedChat(string, string) error
@@ -55,7 +55,7 @@ type Session interface {
 	R() *roster.List
 	ReloadKeys()
 	RemoveContact(string)
-	RequestPresenceSubscription(string, string) error
+	RequestPresenceSubscription(data.JIDWithoutResource, string) error
 	Send(string, string, string) error
 	SendPing()
 	SetCommandManager(client.CommandManager)

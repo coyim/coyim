@@ -701,9 +701,10 @@ func (u *gtkUI) addContactWindow() {
 			return errors.New(i18n.Local("Can't send a contact request from an offline account"))
 		}
 
-		err := account.session.RequestPresenceSubscription(peer, msg)
+		peerj := data.JIDNR(peer)
+		err := account.session.RequestPresenceSubscription(peerj, msg)
 		rl := u.accountManager.getContacts(account)
-		rl.SubscribeRequest(data.JIDNR(peer), "", accountID)
+		rl.SubscribeRequest(peerj, "", accountID)
 
 		if nick != "" {
 			account.session.GetConfig().SavePeerDetails(peer, nick, []string{})

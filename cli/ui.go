@@ -230,21 +230,23 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 	return c.promptForForm(user, c.password, title, instructions, fields)
 }
 
-func (c *cliUI) printConversationInfo(uid string, conversation client.Conversation) {
+func (c *cliUI) printConversationInfo(peer data.JID, conversation client.Conversation) {
+	uidr := peer.Representation()
 	s := c.session
 
 	fpr := conversation.TheirFingerprint()
 	fprUID := s.GetConfig().UserIDForVerifiedFingerprint(fpr)
-	c.info(fmt.Sprintf("  Fingerprint  for %s: %X", uid, fpr))
-	c.info(fmt.Sprintf("  Session  ID  for %s: %X", uid, conversation.GetSSID()))
-	if fprUID == uid {
-		c.info(fmt.Sprintf("  Identity key for %s is verified", uid))
+	c.info(fmt.Sprintf("  Fingerprint  for %s: %X", uidr, fpr))
+	c.info(fmt.Sprintf("  Session  ID  for %s: %X", uidr, conversation.GetSSID()))
+	if fprUID == uidr {
+		c.info(fmt.Sprintf("  Identity key for %s is verified", uidr))
 	} else if len(fprUID) > 1 {
-		c.alert(fmt.Sprintf("  Warning: %s is using an identity key which was verified for %s", uid, fprUID))
-	} else if s.GetConfig().HasFingerprint(uid) {
-		c.critical(fmt.Sprintf("  Identity key for %s is incorrect", uid))
+		c.alert(fmt.Sprintf("  Warning: %s is using an identity key which was verified for %s", uidr, fprUID))
+		// TODO: I think the below might be incorrect, if we have a resource on the JID...
+	} else if s.GetConfig().HasFingerprint(uidr) {
+		c.critical(fmt.Sprintf("  Identity key for %s is incorrect", uidr))
 	} else {
-		c.alert(fmt.Sprintf("  Identity key for %s is not verified. You should use /otr-auth or /otr-authqa or /otr-authoob to verify their identity", uid))
+		c.alert(fmt.Sprintf("  Identity key for %s is not verified. You should use /otr-auth or /otr-authqa or /otr-authoob to verify their identity", uidr))
 	}
 }
 
@@ -695,11 +697,11 @@ CommandLoop:
 					c.info("Status updates enabled")
 				}
 			case confirmCommand:
-				s.HandleConfirmOrDeny(cmd.User, true /* confirm */)
+				s.HandleConfirmOrDeny(data.JIDNR(cmd.User), true /* confirm */)
 			case denyCommand:
-				s.HandleConfirmOrDeny(cmd.User, false /* deny */)
+				s.HandleConfirmOrDeny(data.JIDNR(cmd.User), false /* deny */)
 			case addCommand:
-				s.RequestPresenceSubscription(cmd.User, "") // second argument is the potential message
+				s.RequestPresenceSubscription(data.JIDNR(cmd.User), "") // second argument is the potential message
 			case msgCommand:
 				message := []byte(cmd.msg)
 				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to.Representation(), string(c.currentResourceFor(cmd.to)))
@@ -730,7 +732,7 @@ CommandLoop:
 				for to, conversation := range s.ConversationManager().Conversations() {
 					if conversation.IsEncrypted() {
 						c.info(fmt.Sprintf("Secure session with %s underway:", to))
-						c.printConversationInfo(to, conversation)
+						c.printConversationInfo(data.ParseJID(to), conversation)
 					}
 				}
 			case endOTRCommand:

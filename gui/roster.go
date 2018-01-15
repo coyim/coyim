@@ -231,6 +231,7 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 	sendDirMenuItem := builder.getObj("sendDirectoryMenuItem").(gtki.MenuItem)
 	r.setSensitive(sendDirMenuItem, account, jid)
 
+	peer := data.JIDNR(jid)
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
 			account.session.RemoveContact(jid)
@@ -241,13 +242,13 @@ func (r *roster) createAccountPeerPopup(jid string, account *account, bt gdki.Ev
 			doInUIThread(func() { r.openEditContactDialog(jid, account) })
 		},
 		"on_allow_contact_to_see_status": func() {
-			account.session.ApprovePresenceSubscription(jid, "" /* generate id */)
+			account.session.ApprovePresenceSubscription(peer, "" /* generate id */)
 		},
 		"on_forbid_contact_to_see_status": func() {
-			account.session.DenyPresenceSubscription(jid, "" /* generate id */)
+			account.session.DenyPresenceSubscription(peer, "" /* generate id */)
 		},
 		"on_ask_contact_to_see_status": func() {
-			account.session.RequestPresenceSubscription(jid, "")
+			account.session.RequestPresenceSubscription(peer, "")
 		},
 		"on_dump_info": func() {
 			r.ui.accountManager.debugPeersFor(account)

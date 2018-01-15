@@ -22,7 +22,7 @@ import (
 type SessionMock struct{}
 
 // ApprovePresenceSubscription is the implementation for Session interface
-func (*SessionMock) ApprovePresenceSubscription(string, string) error {
+func (*SessionMock) ApprovePresenceSubscription(data.JIDWithoutResource, string) error {
 	return nil
 }
 
@@ -61,7 +61,7 @@ func (*SessionMock) ConversationManager() client.ConversationManager {
 }
 
 // DenyPresenceSubscription is the implementation for Session interface
-func (*SessionMock) DenyPresenceSubscription(string, string) error {
+func (*SessionMock) DenyPresenceSubscription(data.JIDWithoutResource, string) error {
 	return nil
 }
 
@@ -91,7 +91,7 @@ func (*SessionMock) GroupDelimiter() string {
 }
 
 // HandleConfirmOrDeny is the implementation for Session interface
-func (*SessionMock) HandleConfirmOrDeny(string, bool) {}
+func (*SessionMock) HandleConfirmOrDeny(data.JIDWithoutResource, bool) {}
 
 // IsConnected is the implementation for Session interface
 func (*SessionMock) IsConnected() bool {
@@ -130,7 +130,7 @@ func (*SessionMock) ReloadKeys() {}
 func (*SessionMock) RemoveContact(string) {}
 
 // RequestPresenceSubscription is the implementation for Session interface
-func (*SessionMock) RequestPresenceSubscription(string, string) error {
+func (*SessionMock) RequestPresenceSubscription(data.JIDWithoutResource, string) error {
 	return nil
 }
 

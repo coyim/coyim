@@ -42,7 +42,7 @@ type session struct {
 	connStatus     connStatus
 	connStatusLock sync.RWMutex
 
-	otrEventHandler map[string]*otr_client.EventHandler
+	otrEventHandlers *otr_client.EventHandlers
 
 	privateKeys []otr3.PrivateKey
 
@@ -141,9 +141,8 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 		config:        c,
 		accountConfig: cu,
 
-		r:               roster.New(),
-		otrEventHandler: make(map[string]*otr_client.EventHandler),
-		lastActionTime:  time.Now(),
+		r:              roster.New(),
+		lastActionTime: time.Now(),
 
 		timeouts: make(map[data.Cookie]time.Time),
 
@@ -155,6 +154,8 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 		dialerFactory:    df,
 	}
 
+	s.otrEventHandlers = otr_client.NewEventHandlers(cu.Account, s.onOtrEventHandlerCreate)
+
 	s.ReloadKeys()
 	s.convManager = otr_client.NewConversationManager(s, s)
 
@@ -162,6 +163,11 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 	go checkReconnect(s)
 
 	return s
+}
+
+func (s *session) onOtrEventHandlerCreate(peer jid.Any, eh *otr_client.EventHandler, nots chan string, dels chan int) {
+	go s.listenToNotifications(nots, peer)
+	go s.listenToDelayedMessageDelivery(dels, peer)
 }
 
 // ReloadKeys will reload the keys from the configuration
@@ -579,25 +585,7 @@ func (s *session) NewConversation(peer jid.Any) *otr3.Conversation {
 	}
 
 	s.GetConfig().SetOTRPoliciesFor(peer.String(), conversation)
-
-	eh, ok := s.otrEventHandler[peer.String()]
-	if !ok {
-		eh = new(otr_client.EventHandler)
-		eh.Delays = make(map[int]bool)
-		eh.Account = s.GetConfig().Account
-		eh.Peer = peer
-		notificationsChan := make(chan string)
-		eh.Notifications = notificationsChan
-		go s.listenToNotifications(notificationsChan, peer)
-		delayedChan := make(chan int)
-		eh.DelayedMessageSent = delayedChan
-		go s.listenToDelayedMessageDelivery(delayedChan, peer)
-		conversation.SetSMPEventHandler(eh)
-		conversation.SetErrorMessageHandler(eh)
-		conversation.SetMessageEventHandler(eh)
-		conversation.SetSecurityEventHandler(eh)
-		s.otrEventHandler[peer.String()] = eh
-	}
+	s.otrEventHandlers.EnsureExists(peer, conversation)
 
 	return conversation
 }
@@ -609,7 +597,7 @@ func (s *session) ManuallyEndEncryptedChat(peer jid.WithoutResource, resource ji
 		return fmt.Errorf("couldn't find conversation with %s / %s", peer, string(resource))
 	}
 
-	defer s.otrEventHandler[peer.String()].ConsumeSecurityChange()
+	defer s.otrEventHandlers.Get(peer).ConsumeSecurityChange()
 	return c.EndEncryptedChat(s, resource)
 }
 
@@ -630,7 +618,7 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 		s.alert("While processing message from " + fr + ": " + err.Error())
 	}
 
-	eh, _ := s.otrEventHandler[fr]
+	eh := s.otrEventHandlers.Get(from)
 	change := eh.ConsumeSecurityChange()
 	switch change {
 	case otr_client.NewKeys:
@@ -975,8 +963,7 @@ func (s *session) EncryptAndSendTo(peer jid.WithoutResource, resource jid.Resour
 	if s.IsConnected() {
 		conversation, _ := s.convManager.EnsureConversationWith(peer, resource)
 		trace, err = conversation.Send(s, resource, []byte(message))
-		eh := s.otrEventHandler[peer.String()]
-		delayed = eh.ConsumeDelayedState(trace)
+		delayed = s.otrEventHandlers.Get(peer).ConsumeDelayedState(trace)
 		return
 	}
 	return 0, false, &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
@@ -1062,8 +1049,8 @@ func (s *session) SetConnectionLogger(l io.Writer) {
 	s.connectionLogger = l
 }
 
-func (s *session) OtrEventHandler() map[string]*otr_client.EventHandler {
-	return s.otrEventHandler
+func (s *session) OtrEventHandlers() *otr_client.EventHandlers {
+	return s.otrEventHandlers
 }
 
 func (s *session) SetLastActionTime(t time.Time) {

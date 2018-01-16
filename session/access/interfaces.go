@@ -50,7 +50,7 @@ type Session interface {
 	IsConnected() bool
 	IsDisconnected() bool
 	ManuallyEndEncryptedChat(jid.WithoutResource, jid.Resource) error
-	OtrEventHandler() map[string]*otr_client.EventHandler
+	OtrEventHandlers() *otr_client.EventHandlers
 	PrivateKeys() []otr3.PrivateKey
 	R() *roster.List
 	ReloadKeys()

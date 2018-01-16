@@ -110,7 +110,7 @@ func captureLog(f func()) string {
 }
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_logsHeartbeatEvents(c *C) {
-	handler := &EventHandler{Account: "me1@foo.bar", Peer: jid.NR("them1@somewhere.com")}
+	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com")}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventLogHeartbeatReceived, nil, nil)
 	})
@@ -127,7 +127,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsHeartbeatEvents(c *C) {
 }
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnrecognizedMessage(c *C) {
-	handler := &EventHandler{Account: "me1@foo.bar", Peer: jid.NR("them1@somewhere.com")}
+	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com")}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventReceivedMessageUnrecognized, nil, nil)
 	})
@@ -136,7 +136,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnrecognizedMessage(c *C
 }
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnhandledEvent(c *C) {
-	handler := &EventHandler{Account: "me1@foo.bar", Peer: jid.NR("them1@somewhere.com")}
+	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com")}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEvent(44422), nil, nil)
 	})
@@ -145,7 +145,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnhandledEvent(c *C) {
 }
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_ignoresMessageForOtherInstance(c *C) {
-	handler := &EventHandler{Account: "me1@foo.bar", Peer: jid.NR("them1@somewhere.com")}
+	handler := &EventHandler{account: "me1@foo.bar", peer: jid.NR("them1@somewhere.com")}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventReceivedMessageForOtherInstance, nil, nil)
 	})
@@ -159,7 +159,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_notifiesOnSeveralMessageEven
 		close(nn)
 	}()
 
-	handler := &EventHandler{Account: "me2@foo.bar", Peer: jid.NR("them2@somewhere.com"), Notifications: nn, Delays: make(map[int]bool)}
+	handler := &EventHandler{account: "me2@foo.bar", peer: jid.NR("them2@somewhere.com"), notifications: nn, delays: make(map[int]bool)}
 	handler.HandleMessageEvent(otr3.MessageEventEncryptionRequired, nil, nil, 123)
 	c.Assert(<-nn, Equals, "Attempting to start a private conversation...")
 
@@ -197,7 +197,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_handlesMessageEventSetupCorr
 		close(nn)
 	}()
 
-	handler := &EventHandler{Account: "me2@foo.bar", Peer: jid.NR("them2@somewhere.com"), Notifications: nn}
+	handler := &EventHandler{account: "me2@foo.bar", peer: jid.NR("them2@somewhere.com"), notifications: nn}
 	l := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventSetupError, nil, nil)
 	})

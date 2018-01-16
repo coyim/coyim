@@ -763,8 +763,8 @@ CommandLoop:
 					break
 				}
 
-				if s.OtrEventHandlers().Get(to).WaitingForSecret {
-					s.OtrEventHandlers().Get(to).WaitingForSecret = false
+				if conversation.EventHandler().WaitingForSecret {
+					conversation.EventHandler().WaitingForSecret = false
 					err = conversation.ProvideAuthenticationSecret([]byte(cmd.Secret))
 				} else {
 					err = conversation.StartAuthenticate(cmd.Question, []byte(cmd.Secret))

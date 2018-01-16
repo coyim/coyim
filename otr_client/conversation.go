@@ -25,6 +25,8 @@ type Conversation interface {
 	TheirFingerprint() []byte
 
 	CreateExtraSymmetricKey() ([]byte, error)
+
+	EventHandler() *EventHandler
 }
 
 // JID considerations:
@@ -39,11 +41,17 @@ type conversation struct {
 
 	s Sender
 
+	eh *EventHandler
+
 	*otr3.Conversation
 }
 
 func (c *conversation) StartEncryptedChat() error {
 	return c.s.Send(c.peer.NoResource(), c.peer.PotentialResource(), string(c.QueryMessage()))
+}
+
+func (c *conversation) EventHandler() *EventHandler {
+	return c.eh
 }
 
 func (c *conversation) sendAll(toSend []otr3.ValidMessage) error {

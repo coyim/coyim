@@ -8,6 +8,7 @@ import (
 )
 
 type ConversationBuilder func(jid.Any) *otr3.Conversation
+type OnEventHandlerCreation func(jid.Any, *EventHandler, chan string, chan int)
 
 // Sender represents an entity capable of sending messages to peers
 type Sender interface {
@@ -39,16 +40,21 @@ type conversationManager struct {
 	conversations map[string]*conversation
 	sync.RWMutex
 
-	builder ConversationBuilder
-	sender  Sender
+	builder    ConversationBuilder
+	sender     Sender
+	onCreateEH OnEventHandlerCreation
+
+	account string
 }
 
 // NewConversationManager returns a new ConversationManager
-func NewConversationManager(builder ConversationBuilder, sender Sender) ConversationManager {
+func NewConversationManager(builder ConversationBuilder, sender Sender, account string, onCreateEH OnEventHandlerCreation) ConversationManager {
 	return &conversationManager{
 		conversations: make(map[string]*conversation),
 		builder:       builder,
 		sender:        sender,
+		onCreateEH:    onCreateEH,
+		account:       account,
 	}
 }
 
@@ -99,6 +105,7 @@ func (m *conversationManager) EnsureConversationWith(peer jid.Any) (Conversation
 		s:            m.sender,
 		Conversation: m.builder(peer),
 	}
+	c.eh = m.createEventHandler(peer, c.Conversation)
 
 	m.conversations[peer.String()] = c
 
@@ -112,4 +119,22 @@ func (m *conversationManager) TerminateAll() {
 	for _, c := range m.conversations {
 		c.EndEncryptedChat()
 	}
+}
+
+func (m *conversationManager) createEventHandler(peer jid.Any, conversation *otr3.Conversation) *EventHandler {
+	notificationsChan := make(chan string)
+	delayedChan := make(chan int)
+	eh := &EventHandler{
+		delays:             make(map[int]bool),
+		peer:               peer,
+		account:            m.account,
+		notifications:      notificationsChan,
+		delayedMessageSent: delayedChan,
+	}
+	m.onCreateEH(peer, eh, notificationsChan, delayedChan)
+	conversation.SetSMPEventHandler(eh)
+	conversation.SetErrorMessageHandler(eh)
+	conversation.SetMessageEventHandler(eh)
+	conversation.SetSecurityEventHandler(eh)
+	return eh
 }

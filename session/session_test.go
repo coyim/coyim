@@ -1013,6 +1013,10 @@ func (mc *mockConv) GetSSID() [8]byte {
 	return [8]byte{}
 }
 
+func (mc *mockConv) EventHandler() *otr_client.EventHandler {
+	return &otr_client.EventHandler{}
+}
+
 func (mc *mockConv) OurFingerprint() []byte {
 	return nil
 }
@@ -1025,19 +1029,18 @@ func (mc *mockConv) CreateExtraSymmetricKey() ([]byte, error) {
 	return nil, nil
 }
 
-func otrEventHandlerWith(s string, eh *otr_client.EventHandler) *otr_client.EventHandlers {
-	ehs := otr_client.NewEventHandlers("one", func(jid.Any, *otr_client.EventHandler, chan string, chan int) {})
-	ehs.Add(jid.Parse(s), eh)
-	return ehs
-}
+// func otrEventHandlerWith(s string, eh *otr_client.EventHandler) *otr_client.EventHandlers {
+// 	ehs := otr_client.NewEventHandlers("one", func(jid.Any, *otr_client.EventHandler, chan string, chan int) {})
+// 	ehs.Add(jid.Parse(s), eh)
+// 	return ehs
+// }
 
 func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncrypted(c *C) {
 	mcm := &mockConvManager{}
 	sess := &session{
-		connStatus:       CONNECTED,
-		convManager:      mcm,
-		otrEventHandlers: otrEventHandlerWith("someone@some.org", &otr_client.EventHandler{}),
-		config:           &config.ApplicationConfig{},
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
 	}
 
 	mc := &mockConv{}
@@ -1072,10 +1075,9 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(c *C) {
 	mcm := &mockConvManager{}
 	sess := &session{
-		connStatus:       CONNECTED,
-		convManager:      mcm,
-		otrEventHandlers: otrEventHandlerWith("someone@some.org", &otr_client.EventHandler{}),
-		config:           &config.ApplicationConfig{},
+		connStatus:  CONNECTED,
+		convManager: mcm,
+		config:      &config.ApplicationConfig{},
 	}
 
 	mc := &mockConv{}
@@ -1115,10 +1117,9 @@ func (ncm *convManagerWithoutConversation) TerminateAll() {
 
 func sessionWithConvMngrWithoutConvs() *session {
 	return &session{
-		connStatus:       CONNECTED,
-		convManager:      &convManagerWithoutConversation{},
-		otrEventHandlers: otrEventHandlerWith("someone@some.org", &otr_client.EventHandler{}),
-		config:           &config.ApplicationConfig{},
+		connStatus:  CONNECTED,
+		convManager: &convManagerWithoutConversation{},
+		config:      &config.ApplicationConfig{},
 	}
 }
 

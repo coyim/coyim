@@ -108,11 +108,6 @@ func (*SessionMock) ManuallyEndEncryptedChat(jid.WithoutResource, jid.Resource) 
 	return nil
 }
 
-// OtrEventHandlers is the implementation for Session interface
-func (*SessionMock) OtrEventHandlers() *otr_client.EventHandlers {
-	return nil
-}
-
 // PrivateKeys is the implementation for Session interface
 func (*SessionMock) PrivateKeys() []otr3.PrivateKey {
 	return nil

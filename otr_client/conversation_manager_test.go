@@ -49,7 +49,7 @@ func (ts *testSender) Send(peer jid.WithoutResource, resource jid.Resource, msg 
 func (s *ConversationManagerSuite) Test_TerminateAll_willTerminate(c *C) {
 	cb := &testConvBuilder{&otr3.Conversation{}}
 	ts := &testSender{err: nil}
-	mgr := NewConversationManager(cb.NewConversation, ts)
+	mgr := NewConversationManager(cb.NewConversation, ts, "blarg", func(jid.Any, *EventHandler, chan string, chan int) {})
 	conv, created := mgr.EnsureConversationWith(jid.NR("someone@whitehouse.gov"))
 
 	c.Assert(created, Equals, true)

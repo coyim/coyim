@@ -71,7 +71,7 @@ func PeerFrom(e data.RosterEntry, belongsTo, nickname string, groups []string) *
 	allGroups := toSet(g...)
 
 	return &Peer{
-		Jid:           jid.Parse(e.Jid).NoResource(),
+		Jid:           jid.NR(e.Jid),
 		Subscription:  e.Subscription,
 		Name:          e.Name,
 		Nickname:      nickname,

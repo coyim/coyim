@@ -219,8 +219,8 @@ func (conv *conversationPane) currentResource() jid.Resource {
 func (conv *conversationPane) onStartOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	c, _ := session.ConversationManager().EnsureConversationWith(conv.to.NoResource(), conv.currentResource())
-	err := c.StartEncryptedChat(session, conv.currentResource())
+	c, _ := session.ConversationManager().EnsureConversationWith(conv.to.MaybeWithResource(conv.currentResource()))
+	err := c.StartEncryptedChat()
 	if err != nil {
 		log.Printf(i18n.Local("Failed to start encrypted chat: %s\n"), err.Error())
 	} else {
@@ -510,7 +510,7 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 }
 
 func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) {
-	return conv.account.session.ConversationManager().GetConversationWith(conv.to.NoResource(), conv.currentResource())
+	return conv.account.session.ConversationManager().GetConversationWith(conv.to.MaybeWithResource(conv.currentResource()))
 }
 
 func (conv *conversationPane) mapCurrentPeer(def string, f func(*rosters.Peer) string) string {
@@ -681,7 +681,7 @@ func (conv *conversationPane) appendPendingDelayed() {
 		dm, ok := conv.delayed[ctrace]
 		if ok {
 			delete(conv.delayed, ctrace)
-			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(dm.to, dm.resource)
+			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(dm.to.MaybeWithResource(dm.resource))
 
 			dm.isEncrypted = conversation.IsEncrypted()
 			dm.queuedTimestamp = dm.timestamp
@@ -731,7 +731,7 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: review whether it should create a conversation
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
-		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.to.NoResource(), conv.currentResource())
+		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.to.MaybeWithResource(conv.currentResource()))
 
 		sent := sentMessage{
 			message:         message,

@@ -1,6 +1,8 @@
 package otr_client
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
@@ -50,7 +52,20 @@ func (ehs *EventHandlers) EnsureExists(peer jid.Any, conversation *otr3.Conversa
 }
 
 func (ehs *EventHandlers) Get(peer jid.Any) *EventHandler {
-	return ehs.handlers[peer.String()]
+	pwr, pwor := peerWithAndWithout(peer)
+	if pwr != nil {
+		eh, ok := ehs.handlers[pwr.String()]
+		if ok {
+			return eh
+		}
+	}
+
+	ret := ehs.handlers[pwor.String()]
+	if ret == nil {
+		// TODO: this is temporary, to verify results of changes
+		fmt.Printf("Failed lookup of an event handler: %s with handlers: %#v\n", peer, ehs.handlers)
+	}
+	return ret
 }
 
 func (ehs *EventHandlers) Add(peer jid.Any, eh *EventHandler) {

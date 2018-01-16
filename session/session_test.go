@@ -955,22 +955,17 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 }
 
 type mockConvManager struct {
-	getConversationWith    func(jid.WithoutResource, jid.Resource) (otr_client.Conversation, bool)
-	ensureConversationWith func(jid.WithoutResource, jid.Resource) (otr_client.Conversation, bool)
-	conversations          func() map[string]otr_client.Conversation
+	getConversationWith    func(jid.Any) (otr_client.Conversation, bool)
+	ensureConversationWith func(jid.Any) (otr_client.Conversation, bool)
 	terminateAll           func()
 }
 
-func (mcm *mockConvManager) GetConversationWith(peer jid.WithoutResource, resource jid.Resource) (otr_client.Conversation, bool) {
-	return mcm.getConversationWith(peer, resource)
+func (mcm *mockConvManager) GetConversationWith(peer jid.Any) (otr_client.Conversation, bool) {
+	return mcm.getConversationWith(peer)
 }
 
-func (mcm *mockConvManager) EnsureConversationWith(peer jid.WithoutResource, resource jid.Resource) (otr_client.Conversation, bool) {
-	return mcm.ensureConversationWith(peer, resource)
-}
-
-func (mcm *mockConvManager) Conversations() map[string]otr_client.Conversation {
-	return mcm.conversations()
+func (mcm *mockConvManager) EnsureConversationWith(peer jid.Any) (otr_client.Conversation, bool) {
+	return mcm.ensureConversationWith(peer)
 }
 
 func (mcm *mockConvManager) TerminateAll() {
@@ -978,39 +973,39 @@ func (mcm *mockConvManager) TerminateAll() {
 }
 
 type mockConv struct {
-	receive     func(otr_client.Sender, jid.Resource, []byte) ([]byte, error)
+	receive     func([]byte) ([]byte, error)
 	isEncrypted func() bool
 }
 
-func (mc *mockConv) Receive(s otr_client.Sender, s2 jid.Resource, s3 []byte) ([]byte, error) {
-	return mc.receive(s, s2, s3)
+func (mc *mockConv) Receive(s []byte) ([]byte, error) {
+	return mc.receive(s)
 }
 
 func (mc *mockConv) IsEncrypted() bool {
 	return mc.isEncrypted()
 }
 
-func (mc *mockConv) Send(otr_client.Sender, jid.Resource, []byte) (trace int, err error) {
+func (mc *mockConv) Send([]byte) (trace int, err error) {
 	return 0, nil
 }
 
-func (mc *mockConv) StartEncryptedChat(otr_client.Sender, jid.Resource) error {
+func (mc *mockConv) StartEncryptedChat() error {
 	return nil
 }
 
-func (mc *mockConv) EndEncryptedChat(otr_client.Sender, jid.Resource) error {
+func (mc *mockConv) EndEncryptedChat() error {
 	return nil
 }
 
-func (mc *mockConv) ProvideAuthenticationSecret(otr_client.Sender, jid.Resource, []byte) error {
+func (mc *mockConv) ProvideAuthenticationSecret([]byte) error {
 	return nil
 }
 
-func (mc *mockConv) StartAuthenticate(otr_client.Sender, jid.Resource, string, []byte) error {
+func (mc *mockConv) StartAuthenticate(string, []byte) error {
 	return nil
 }
 
-func (mc *mockConv) AbortAuthentication(otr_client.Sender, jid.Resource) error {
+func (mc *mockConv) AbortAuthentication() error {
 	return nil
 }
 
@@ -1026,7 +1021,7 @@ func (mc *mockConv) TheirFingerprint() []byte {
 	return nil
 }
 
-func (mc *mockConv) CreateExtraSymmetricKey(otr_client.Sender, jid.Resource) ([]byte, error) {
+func (mc *mockConv) CreateExtraSymmetricKey() ([]byte, error) {
 	return nil, nil
 }
 
@@ -1047,7 +1042,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 
 	mc := &mockConv{}
 
-	mc.receive = func(s1 otr_client.Sender, s2 jid.Resource, s3 []byte) ([]byte, error) {
+	mc.receive = func(s3 []byte) ([]byte, error) {
 		return s3, nil
 	}
 
@@ -1055,7 +1050,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 		return false
 	}
 
-	mcm.ensureConversationWith = func(jid.WithoutResource, jid.Resource) (otr_client.Conversation, bool) {
+	mcm.ensureConversationWith = func(jid.Any) (otr_client.Conversation, bool) {
 		return mc, false
 	}
 
@@ -1084,9 +1079,9 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 	}
 
 	mc := &mockConv{}
-	mc.receive = func(s1 otr_client.Sender, s2 jid.Resource, s3 []byte) ([]byte, error) { return s3, nil }
+	mc.receive = func(s []byte) ([]byte, error) { return s, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.WithoutResource, jid.Resource) (otr_client.Conversation, bool) {
+	mcm.ensureConversationWith = func(jid.Any) (otr_client.Conversation, bool) {
 		return mc, false
 	}
 
@@ -1107,16 +1102,12 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 
 type convManagerWithoutConversation struct{}
 
-func (ncm *convManagerWithoutConversation) GetConversationWith(peer jid.WithoutResource, resource jid.Resource) (otr_client.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) GetConversationWith(peer jid.Any) (otr_client.Conversation, bool) {
 	return nil, false
 }
 
-func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer jid.WithoutResource, resource jid.Resource) (otr_client.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer jid.Any) (otr_client.Conversation, bool) {
 	return nil, false
-}
-
-func (ncm *convManagerWithoutConversation) Conversations() map[string]otr_client.Conversation {
-	return nil
 }
 
 func (ncm *convManagerWithoutConversation) TerminateAll() {

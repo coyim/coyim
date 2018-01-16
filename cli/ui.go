@@ -705,7 +705,7 @@ CommandLoop:
 				s.RequestPresenceSubscription(jid.NR(cmd.User), "") // second argument is the potential message
 			case msgCommand:
 				message := []byte(cmd.msg)
-				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to.NoResource(), c.currentResourceFor(cmd.to))
+				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to.MaybeWithResource(c.currentResourceFor(cmd.to)))
 				isEncrypted := conversation.IsEncrypted()
 				if cmd.setPromptIsEncrypted != nil {
 					cmd.setPromptIsEncrypted <- isEncrypted
@@ -716,7 +716,7 @@ CommandLoop:
 					continue
 				}
 
-				_, err := conversation.Send(s, c.currentResourceFor(cmd.to), message)
+				_, err := conversation.Send(message)
 				if err != nil {
 					c.alert(err.Error())
 					break
@@ -724,29 +724,29 @@ CommandLoop:
 
 			case otrCommand:
 				resource := c.currentResourceFor(jid.Parse(cmd.User))
-				conversation, _ := s.ConversationManager().EnsureConversationWith(jid.NR(cmd.User), resource)
-				conversation.StartEncryptedChat(s, resource)
+				conversation, _ := s.ConversationManager().EnsureConversationWith(jid.NR(cmd.User).MaybeWithResource(resource))
+				conversation.StartEncryptedChat()
 			case otrInfoCommand:
 				for _, pk := range s.PrivateKeys() {
 					c.info(fmt.Sprintf("Your OTR fingerprint is %x", pk.PublicKey().Fingerprint()))
 				}
-				for to, conversation := range s.ConversationManager().Conversations() {
-					if conversation.IsEncrypted() {
-						c.info(fmt.Sprintf("Secure session with %s underway:", to))
-						c.printConversationInfo(jid.Parse(to), conversation)
-					}
-				}
+				// for to, conversation := range s.ConversationManager().Conversations() {
+				// 	if conversation.IsEncrypted() {
+				// 		c.info(fmt.Sprintf("Secure session with %s underway:", to))
+				// 		c.printConversationInfo(jid.Parse(to), conversation)
+				// 	}
+				// }
 			case endOTRCommand:
 				to := jid.Parse(cmd.User)
 				resource := c.currentResourceFor(to)
-				conversation, exists := s.ConversationManager().GetConversationWith(to.NoResource(), resource)
+				conversation, exists := s.ConversationManager().GetConversationWith(to.MaybeWithResource(resource))
 
 				if !exists {
 					c.alert("No secure session established")
 					break
 				}
 
-				err := conversation.EndEncryptedChat(s, resource)
+				err := conversation.EndEncryptedChat()
 				if err != nil {
 					c.alert("Can't end the conversation - it seems there is no randomness in your system. This could be a significant problem.")
 					break
@@ -757,7 +757,7 @@ CommandLoop:
 			case authQACommand:
 				to := jid.Parse(cmd.User)
 				resource := c.currentResourceFor(to)
-				conversation, exists := s.ConversationManager().GetConversationWith(to.NoResource(), resource)
+				conversation, exists := s.ConversationManager().GetConversationWith(to.MaybeWithResource(resource))
 				if !exists {
 					c.alert("Can't authenticate without a secure conversation established")
 					break
@@ -765,9 +765,9 @@ CommandLoop:
 
 				if s.OtrEventHandlers().Get(to).WaitingForSecret {
 					s.OtrEventHandlers().Get(to).WaitingForSecret = false
-					err = conversation.ProvideAuthenticationSecret(s, resource, []byte(cmd.Secret))
+					err = conversation.ProvideAuthenticationSecret([]byte(cmd.Secret))
 				} else {
-					err = conversation.StartAuthenticate(s, resource, cmd.Question, []byte(cmd.Secret))
+					err = conversation.StartAuthenticate(cmd.Question, []byte(cmd.Secret))
 				}
 
 				if err != nil {

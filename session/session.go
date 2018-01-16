@@ -157,7 +157,7 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 	s.otrEventHandlers = otr_client.NewEventHandlers(cu.Account, s.onOtrEventHandlerCreate)
 
 	s.ReloadKeys()
-	s.convManager = otr_client.NewConversationManager(s, s)
+	s.convManager = otr_client.NewConversationManager(s.NewConversation, s)
 
 	go observe(s)
 	go checkReconnect(s)
@@ -592,33 +592,30 @@ func (s *session) NewConversation(peer jid.Any) *otr3.Conversation {
 
 // ManuallyEndEncryptedChat allows a user to end the encrypted chat from this side
 func (s *session) ManuallyEndEncryptedChat(peer jid.WithoutResource, resource jid.Resource) error {
-	c, ok := s.ConversationManager().GetConversationWith(peer, resource)
+	c, ok := s.ConversationManager().GetConversationWith(peer.MaybeWithResource(resource))
 	if !ok {
 		return fmt.Errorf("couldn't find conversation with %s / %s", peer, string(resource))
 	}
 
-	defer s.otrEventHandlers.Get(peer).ConsumeSecurityChange()
-	return c.EndEncryptedChat(s, resource)
+	defer s.otrEventHandlers.Get(peer.MaybeWithResource(resource)).ConsumeSecurityChange()
+	return c.EndEncryptedChat()
 }
 
 func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string) {
+	// TODO: this is definitely going to be problematic later, with jids
 	from := peer.NoResource()
 	fr := from.String()
-	resource := jid.Resource("")
-	if px, ok := peer.(jid.WithResource); ok {
-		resource = px.Resource()
-	}
 
 	// TODO: do we want to have different conversation instances for different resources?
-	conversation, _ := s.convManager.EnsureConversationWith(from, resource)
-	out, err := conversation.Receive(s, resource, []byte(body))
+	conversation, _ := s.convManager.EnsureConversationWith(peer)
+	out, err := conversation.Receive([]byte(body))
 	encrypted := conversation.IsEncrypted()
 
 	if err != nil {
 		s.alert("While processing message from " + fr + ": " + err.Error())
 	}
 
-	eh := s.otrEventHandlers.Get(from)
+	eh := s.otrEventHandlers.Get(peer)
 	change := eh.ConsumeSecurityChange()
 	switch change {
 	case otr_client.NewKeys:
@@ -639,14 +636,14 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
 		if s.GetConfig().OTRAutoTearDown {
-			c, existing := s.convManager.GetConversationWith(from, resource)
+			c, existing := s.convManager.GetConversationWith(peer)
 			if !existing {
 				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", fr))
 				break
 			} else {
 				s.info(fmt.Sprintf("%s has ended the secure conversation.", fr))
 
-				err := c.EndEncryptedChat(s, resource)
+				err := c.EndEncryptedChat()
 				if err != nil {
 					s.info(fmt.Sprintf("Unable to automatically tear down OTR conversation with %s: %s\n", fr, err.Error()))
 					break
@@ -961,9 +958,10 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 func (s *session) EncryptAndSendTo(peer jid.WithoutResource, resource jid.Resource, message string) (trace int, delayed bool, err error) {
 	//TODO: review whether it should create a conversation
 	if s.IsConnected() {
-		conversation, _ := s.convManager.EnsureConversationWith(peer, resource)
-		trace, err = conversation.Send(s, resource, []byte(message))
-		delayed = s.otrEventHandlers.Get(peer).ConsumeDelayedState(trace)
+		pp := peer.MaybeWithResource(resource)
+		conversation, _ := s.convManager.EnsureConversationWith(pp)
+		trace, err = conversation.Send([]byte(message))
+		delayed = s.otrEventHandlers.Get(pp).ConsumeDelayedState(trace)
 		return
 	}
 	return 0, false, &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
@@ -1092,36 +1090,36 @@ func (s *session) StartSMP(peer jid.WithoutResource, resource jid.Resource, ques
 		s.alert("error: tried to start SMP with a nameless peer")
 		return
 	}
-	conv, ok := s.convManager.GetConversationWith(peer, resource)
+	conv, ok := s.convManager.GetConversationWith(peer.MaybeWithResource(resource))
 	if !ok {
 		s.alert("error: tried to start SMP when a conversation does not exist")
 		return
 	}
-	if err := conv.StartAuthenticate(s, resource, question, []byte(answer)); err != nil {
+	if err := conv.StartAuthenticate(question, []byte(answer)); err != nil {
 		s.alert("error: cannot start SMP: " + err.Error())
 	}
 }
 
 // FinishSMP takes a user's SMP answer and finishes the protocol
 func (s *session) FinishSMP(peer jid.WithoutResource, resource jid.Resource, answer string) {
-	conv, ok := s.convManager.GetConversationWith(peer, resource)
+	conv, ok := s.convManager.GetConversationWith(peer.MaybeWithResource(resource))
 	if !ok {
 		s.alert("error: tried to finish SMP when a conversation does not exist")
 		return
 	}
-	if err := conv.ProvideAuthenticationSecret(s, resource, []byte(answer)); err != nil {
+	if err := conv.ProvideAuthenticationSecret([]byte(answer)); err != nil {
 		s.alert("error: cannot provide an authentication secret for SMP: " + err.Error())
 	}
 }
 
 // AbortSMP will abort the current SMP interaction for a conversation
 func (s *session) AbortSMP(peer jid.WithoutResource, resource jid.Resource) {
-	conv, ok := s.convManager.GetConversationWith(peer, resource)
+	conv, ok := s.convManager.GetConversationWith(peer.MaybeWithResource(resource))
 	if !ok {
 		s.alert("error: tried to abort SMP when a conversation does not exist")
 		return
 	}
-	if err := conv.AbortAuthentication(s, resource); err != nil {
+	if err := conv.AbortAuthentication(); err != nil {
 		s.alert("error: cannot abort SMP: " + err.Error())
 	}
 }
@@ -1129,13 +1127,12 @@ func (s *session) AbortSMP(peer jid.WithoutResource, resource jid.Resource) {
 // TODO: we also need a way to deal with when the TLV is received.
 
 func (s *session) CreateSymmetricKeyFor(peer jid.Any) []byte {
-	r := peer.PotentialResource()
-	conv, ok := s.convManager.GetConversationWith(peer.NoResource(), r)
+	conv, ok := s.convManager.GetConversationWith(peer)
 	if !ok {
 		return nil
 	}
 
-	key, err := conv.CreateExtraSymmetricKey(s, r)
+	key, err := conv.CreateExtraSymmetricKey()
 	if err != nil {
 		return nil
 	}

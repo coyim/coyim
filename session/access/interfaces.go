@@ -42,14 +42,14 @@ type Session interface {
 	CreateSymmetricKeyFor(jid.Any) []byte
 	DenyPresenceSubscription(jid.WithoutResource, string) error
 	DisplayName() string
-	EncryptAndSendTo(jid.WithoutResource, jid.Resource, string) (int, bool, error)
+	EncryptAndSendTo(jid.Any, string) (int, bool, error)
 	GetConfig() *config.Account
 	GetInMemoryLog() *bytes.Buffer
 	GroupDelimiter() string
 	HandleConfirmOrDeny(jid.WithoutResource, bool)
 	IsConnected() bool
 	IsDisconnected() bool
-	ManuallyEndEncryptedChat(jid.WithoutResource, jid.Resource) error
+	ManuallyEndEncryptedChat(jid.Any) error
 	PrivateKeys() []otr3.PrivateKey
 	R() *roster.List
 	ReloadKeys()
@@ -72,9 +72,9 @@ type Session interface {
 	PublishEvent(interface{})
 	SendFileTo(jid.Any, string, bool) *sdata.FileTransferControl
 	SendDirTo(jid.Any, string, bool) *sdata.FileTransferControl
-	StartSMP(jid.WithoutResource, jid.Resource, string, string)
-	FinishSMP(jid.WithoutResource, jid.Resource, string)
-	AbortSMP(jid.WithoutResource, jid.Resource)
+	StartSMP(jid.Any, string, string)
+	FinishSMP(jid.Any, string)
+	AbortSMP(jid.Any)
 }
 
 // Factory is a function that can create new Sessions

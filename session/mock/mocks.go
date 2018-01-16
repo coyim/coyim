@@ -71,7 +71,7 @@ func (*SessionMock) DisplayName() string {
 }
 
 // EncryptAndSendTo is the implementation for Session interface
-func (*SessionMock) EncryptAndSendTo(jid.WithoutResource, jid.Resource, string) (int, bool, error) {
+func (*SessionMock) EncryptAndSendTo(jid.Any, string) (int, bool, error) {
 	return 0, false, nil
 }
 
@@ -104,7 +104,7 @@ func (*SessionMock) IsDisconnected() bool {
 }
 
 // ManuallyEndEncryptedChat is the implementation for Session interface
-func (*SessionMock) ManuallyEndEncryptedChat(jid.WithoutResource, jid.Resource) error {
+func (*SessionMock) ManuallyEndEncryptedChat(jid.Any) error {
 	return nil
 }
 
@@ -168,13 +168,13 @@ func (*SessionMock) Warn(string) {}
 func (*SessionMock) Info(string) {}
 
 // StartSMP is the implementation for Session interface
-func (*SessionMock) StartSMP(jid.WithoutResource, jid.Resource, string, string) {}
+func (*SessionMock) StartSMP(jid.Any, string, string) {}
 
 // FinishSMP is the implementation for Session interface
-func (*SessionMock) FinishSMP(jid.WithoutResource, jid.Resource, string) {}
+func (*SessionMock) FinishSMP(jid.Any, string) {}
 
 // AbortSMP is the implementation for Session interface
-func (*SessionMock) AbortSMP(jid.WithoutResource, jid.Resource) {}
+func (*SessionMock) AbortSMP(jid.Any) {}
 
 // PublishEvent is the implementation for Session interface
 func (*SessionMock) PublishEvent(interface{}) {}

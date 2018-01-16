@@ -231,7 +231,7 @@ func (conv *conversationPane) onStartOtrSignal() {
 func (conv *conversationPane) onEndOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	err := session.ManuallyEndEncryptedChat(conv.to.NoResource(), conv.currentResource())
+	err := session.ManuallyEndEncryptedChat(conv.to.MaybeWithResource(conv.currentResource()))
 
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
@@ -718,7 +718,7 @@ func (conv *conversationPane) delayedMessageSent(trace int) {
 
 func (conv *conversationPane) sendMessage(message string) error {
 	session := conv.account.session
-	trace, delayed, err := session.EncryptAndSendTo(conv.to.NoResource(), conv.currentResource(), message)
+	trace, delayed, err := session.EncryptAndSendTo(conv.to.MaybeWithResource(conv.currentResource()), message)
 
 	if err != nil {
 		oerr, isoff := err.(*access.OfflineError)

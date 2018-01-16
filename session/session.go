@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
 	"os/exec"
 	"sync"
 	"time"
@@ -161,11 +160,6 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 	return s
 }
 
-func (s *session) onOtrEventHandlerCreate(peer jid.Any, eh *otr_client.EventHandler, nots chan string, dels chan int) {
-	go s.listenToNotifications(nots, peer)
-	go s.listenToDelayedMessageDelivery(dels, peer)
-}
-
 // ReloadKeys will reload the keys from the configuration
 func (s *session) ReloadKeys() {
 	s.privateKeys = parseFromConfig(s.accountConfig)
@@ -179,53 +173,6 @@ func (s *session) Send(peer jid.Any, msg string) error {
 		return conn.Send(peer.String(), msg)
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
-}
-
-//TODO: error
-func openLogFile(logFile string) io.Writer {
-	if len(logFile) == 0 {
-		return nil
-	}
-
-	log.Println("Logging XMPP messages to:", logFile)
-
-	rawLog, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
-	if err != nil {
-		log.Println("Failed to open log file.", err)
-		//return nil, errors.New("Failed to open raw log file: " + err.Error())
-		return nil
-	}
-
-	return rawLog
-}
-
-func (s *session) info(m string) {
-	s.publishEvent(events.Log{
-		Level:   events.Info,
-		Message: m,
-	})
-}
-
-func (s *session) Warn(m string) {
-	s.warn(m)
-}
-
-func (s *session) Info(m string) {
-	s.info(m)
-}
-
-func (s *session) warn(m string) {
-	s.publishEvent(events.Log{
-		Level:   events.Warn,
-		Message: m,
-	})
-}
-
-func (s *session) alert(m string) {
-	s.publishEvent(events.Log{
-		Level:   events.Alert,
-		Message: m,
-	})
 }
 
 func (s *session) receivedStreamError(stanza *data.StreamError) bool {
@@ -274,8 +221,7 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 		}
 	case "groupchat":
 		s.publishEvent(events.ChatMessage{
-			// TODO: unclear if the following line is correct
-			From:          jid.R(stanza.From),
+			From:          peer.(jid.WithResource),
 			When:          retrieveMessageTime(stanza),
 			Body:          stanza.Body,
 			ClientMessage: stanza,
@@ -289,22 +235,6 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	return true
 }
 
-func either(l, r string) string {
-	if l == "" {
-		return r
-	}
-	return l
-}
-
-func firstNonEmpty(ss ...string) string {
-	for _, s := range ss {
-		if s != "" {
-			return s
-		}
-	}
-	return ""
-}
-
 func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	//MUC is interested in every presence, so we publish regardless.
 	//It is sad that not every presence stanza triggers a presence event.
@@ -313,22 +243,24 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		ClientPresence: stanza,
 	})
 
+	jj := jid.Parse(stanza.From)
+	jjnr := jj.NoResource()
+
 	switch stanza.Type {
 	case "subscribe":
-		jj := jid.NR(stanza.From)
-		jjr := jj.String()
+		jjr := jjnr.String()
 		if s.autoApproves[jjr] {
 			delete(s.autoApproves, jjr)
-			s.ApprovePresenceSubscription(jj, stanza.ID)
+			s.ApprovePresenceSubscription(jjnr, stanza.ID)
 		} else {
-			s.r.SubscribeRequest(jj, either(stanza.ID, "0000"), s.GetConfig().ID())
+			s.r.SubscribeRequest(jjnr, either(stanza.ID, "0000"), s.GetConfig().ID())
 			s.publishPeerEvent(
 				events.SubscriptionRequest,
-				jj,
+				jjnr,
 			)
 		}
 	case "unavailable":
-		if !s.r.PeerBecameUnavailable(jid.Parse(stanza.From)) {
+		if !s.r.PeerBecameUnavailable(jj) {
 			return true
 		}
 
@@ -338,7 +270,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			Gone:           true,
 		})
 	case "":
-		if !s.r.PeerPresenceUpdate(jid.R(stanza.From), stanza.Show, stanza.Status, s.GetConfig().ID()) {
+		if !s.r.PeerPresenceUpdate(jj.(jid.WithResource), stanza.Show, stanza.Status, s.GetConfig().ID()) {
 			return true
 		}
 
@@ -347,30 +279,31 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		//Same thing happens for the group-chat, but in this case it tell us also what are our affiliations and roles.
 		//Thats why I'm worried about handling this as a regular peer presence - which is not.
 
+		// TODO: this entry seems weird - especially since it checks for _type_ == "", but the comment says _to_ should == "".
+		// It's unlikely this is correct.
+
 		s.publishEvent(events.Presence{
 			Session:        s,
 			ClientPresence: stanza,
 			Gone:           false,
 		})
 	case "subscribed":
-		jj := jid.NR(stanza.From)
-		s.r.Subscribed(jj)
+		s.r.Subscribed(jjnr)
 		s.publishPeerEvent(
 			events.Subscribed,
-			jj,
+			jjnr,
 		)
 	case "unsubscribe":
-		jj := jid.NR(stanza.From)
-		s.r.Unsubscribed(jj)
+		s.r.Unsubscribed(jjnr)
 		s.publishPeerEvent(
 			events.Unsubscribe,
-			jj,
+			jjnr,
 		)
 	case "unsubscribed":
 		// Ignore
 	case "error":
 		s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
-		s.r.LatestError(jid.NR(stanza.From), stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
+		s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 	default:
 		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
 	}
@@ -527,99 +460,24 @@ func (s *session) HandleConfirmOrDeny(jid jid.WithoutResource, isConfirm bool) {
 	}
 }
 
-func (s *session) newOTRKeys(peer jid.WithoutResource, conversation otr_client.Conversation) {
-	s.publishPeerEvent(events.OTRNewKeys, peer)
-}
-
-func (s *session) renewedOTRKeys(peer jid.WithoutResource, conversation otr_client.Conversation) {
-	s.publishPeerEvent(events.OTRRenewedKeys, peer)
-}
-
-func (s *session) otrEnded(peer jid.WithoutResource) {
-	s.publishPeerEvent(events.OTREnded, peer)
-}
-
-func (s *session) listenToNotifications(c <-chan string, peer jid.Any) {
-	for notification := range c {
-		s.publishEvent(events.Notification{
-			Session:      s,
-			Peer:         peer,
-			Notification: notification,
-		})
-	}
-}
-
-func (s *session) listenToDelayedMessageDelivery(c <-chan int, peer jid.Any) {
-	for t := range c {
-		s.publishEvent(events.DelayedMessageSent{
-			Session: s,
-			Peer:    peer,
-			Tracer:  t,
-		})
-	}
-}
-
-// newConversation will create a new OTR conversation with the given peer
-//TODO: why creating a conversation is coupled to the account config and the session
-//TODO: does the creation of the OTR event handler need to be guarded with a lock?
-//TODO: Why starting a conversation requires being able to translate a message?
-//TODO: we are not taking a proper JID type here. This is to stop leakage into other packages for now, but should be fixed.
-//This also assumes it's useful to send friendly message to another person in
-//the same language configured on your app.
-func (s *session) newConversation(peer jid.Any) *otr3.Conversation {
-	conversation := &otr3.Conversation{}
-	conversation.SetOurKeys(s.privateKeys)
-	conversation.SetFriendlyQueryMessage(i18n.Local("Your peer has requested a private conversation with you, but your client doesn't seem to support the OTR protocol."))
-
-	instanceTag := conversation.InitializeInstanceTag(s.GetConfig().InstanceTag)
-
-	if s.GetConfig().InstanceTag != instanceTag {
-		s.cmdManager.ExecuteCmd(otr_client.SaveInstanceTagCmd{
-			Account:     s.GetConfig(),
-			InstanceTag: instanceTag,
-		})
-	}
-
-	s.GetConfig().SetOTRPoliciesFor(peer.String(), conversation)
-
-	return conversation
-}
-
-// ManuallyEndEncryptedChat allows a user to end the encrypted chat from this side
-func (s *session) ManuallyEndEncryptedChat(peer jid.WithoutResource, resource jid.Resource) error {
-	c, ok := s.ConversationManager().GetConversationWith(peer.MaybeWithResource(resource))
-	if !ok {
-		return fmt.Errorf("couldn't find conversation with %s / %s", peer, string(resource))
-	}
-
-	defer c.EventHandler().ConsumeSecurityChange()
-	return c.EndEncryptedChat()
-}
-
 func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string) {
-	// TODO: this is definitely going to be problematic later, with jids
-	from := peer.NoResource()
-	fr := from.String()
-
-	// TODO: do we want to have different conversation instances for different resources?
 	conversation, _ := s.convManager.EnsureConversationWith(peer)
 	out, err := conversation.Receive([]byte(body))
 	encrypted := conversation.IsEncrypted()
 
 	if err != nil {
-		s.alert("While processing message from " + fr + ": " + err.Error())
+		s.alert("While processing message from " + peer.String() + ": " + err.Error())
 	}
 
 	eh := conversation.EventHandler()
 	change := eh.ConsumeSecurityChange()
 	switch change {
 	case otr_client.NewKeys:
-		s.newOTRKeys(from, conversation)
+		s.newOTRKeys(peer, conversation)
 	case otr_client.RenewedKeys:
-		s.renewedOTRKeys(from, conversation)
+		s.renewedOTRKeys(peer, conversation)
 	case otr_client.ConversationEnded:
-		s.otrEnded(from)
-
+		s.otrEnded(peer)
 		// TODO: all this stuff is very CLI specific, we should move it out and create good interaction
 		// for the gui
 
@@ -631,23 +489,16 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
 		if s.GetConfig().OTRAutoTearDown {
-			c, existing := s.convManager.GetConversationWith(peer)
-			if !existing {
-				s.alert(fmt.Sprintf("No secure session established; unable to automatically tear down OTR conversation with %s.", fr))
+			s.info(fmt.Sprintf("%s has ended the secure conversation.", peer))
+			err := conversation.EndEncryptedChat()
+			if err != nil {
+				s.info(fmt.Sprintf("Unable to automatically tear down OTR conversation with %s: %s\n", peer, err.Error()))
 				break
-			} else {
-				s.info(fmt.Sprintf("%s has ended the secure conversation.", fr))
-
-				err := c.EndEncryptedChat()
-				if err != nil {
-					s.info(fmt.Sprintf("Unable to automatically tear down OTR conversation with %s: %s\n", fr, err.Error()))
-					break
-				}
-
-				s.info(fmt.Sprintf("Secure session with %s has been automatically ended. Messages will be sent in the clear until another OTR session is established.", fr))
 			}
+
+			s.info(fmt.Sprintf("Secure session with %s has been automatically ended. Messages will be sent in the clear until another OTR session is established.", peer))
 		} else {
-			s.info(fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", fr, fr))
+			s.info(fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", peer, peer))
 		}
 	case otr_client.SMPSecretNeeded:
 		s.publishSMPEvent(events.SecretNeeded, peer, eh.SmpQuestion)
@@ -656,7 +507,7 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 		s.cmdManager.ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
 			Session:     s,
-			Peer:        from,
+			Peer:        peer.NoResource(),
 			Fingerprint: conversation.TheirFingerprint(),
 		})
 	case otr_client.SMPFailed:
@@ -950,20 +801,14 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 }
 
 // EncryptAndSendTo encrypts and sends the message to the given peer
-func (s *session) EncryptAndSendTo(peer jid.WithoutResource, resource jid.Resource, message string) (trace int, delayed bool, err error) {
-	//TODO: review whether it should create a conversation
+func (s *session) EncryptAndSendTo(peer jid.Any, message string) (trace int, delayed bool, err error) {
 	if s.IsConnected() {
-		pp := peer.MaybeWithResource(resource)
-		conversation, _ := s.convManager.EnsureConversationWith(pp)
-		trace, err = conversation.Send([]byte(message))
-		delayed = conversation.EventHandler().ConsumeDelayedState(trace)
+		c, _ := s.convManager.EnsureConversationWith(peer)
+		trace, err = c.Send([]byte(message))
+		delayed = c.EventHandler().ConsumeDelayedState(trace)
 		return
 	}
 	return 0, false, &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
-}
-
-func (s *session) terminateConversations() {
-	s.convManager.TerminateAll()
 }
 
 func (s *session) connectionLost() {
@@ -1072,61 +917,4 @@ func (s *session) SendPing() {
 			}
 		}
 	}()
-}
-
-// StartSMP begins the SMP interactions for a conversation
-func (s *session) StartSMP(peer jid.WithoutResource, resource jid.Resource, question, answer string) {
-	// TODO: probably not possible.
-	if peer == nil {
-		s.alert("error: tried to start SMP with a nameless peer")
-		return
-	}
-	conv, ok := s.convManager.GetConversationWith(peer.MaybeWithResource(resource))
-	if !ok {
-		s.alert("error: tried to start SMP when a conversation does not exist")
-		return
-	}
-	if err := conv.StartAuthenticate(question, []byte(answer)); err != nil {
-		s.alert("error: cannot start SMP: " + err.Error())
-	}
-}
-
-// FinishSMP takes a user's SMP answer and finishes the protocol
-func (s *session) FinishSMP(peer jid.WithoutResource, resource jid.Resource, answer string) {
-	conv, ok := s.convManager.GetConversationWith(peer.MaybeWithResource(resource))
-	if !ok {
-		s.alert("error: tried to finish SMP when a conversation does not exist")
-		return
-	}
-	if err := conv.ProvideAuthenticationSecret([]byte(answer)); err != nil {
-		s.alert("error: cannot provide an authentication secret for SMP: " + err.Error())
-	}
-}
-
-// AbortSMP will abort the current SMP interaction for a conversation
-func (s *session) AbortSMP(peer jid.WithoutResource, resource jid.Resource) {
-	conv, ok := s.convManager.GetConversationWith(peer.MaybeWithResource(resource))
-	if !ok {
-		s.alert("error: tried to abort SMP when a conversation does not exist")
-		return
-	}
-	if err := conv.AbortAuthentication(); err != nil {
-		s.alert("error: cannot abort SMP: " + err.Error())
-	}
-}
-
-// TODO: we also need a way to deal with when the TLV is received.
-
-func (s *session) CreateSymmetricKeyFor(peer jid.Any) []byte {
-	conv, ok := s.convManager.GetConversationWith(peer)
-	if !ok {
-		return nil
-	}
-
-	key, err := conv.CreateExtraSymmetricKey()
-	if err != nil {
-		return nil
-	}
-
-	return key
 }

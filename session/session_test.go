@@ -1123,29 +1123,12 @@ func sessionWithConvMngrWithoutConvs() *session {
 	}
 }
 
-func (s *SessionSuite) Test_logsError_whenWeStartSMPWithAnEmptyPeerName(c *C) {
-	sess := sessionWithConvMngrWithoutConvs()
-	observer := make(chan interface{}, 1)
-	sess.Subscribe(observer)
-
-	go sess.StartSMP(nil, jid.Resource("resource"), "Im a question", "im an answer")
-
-	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
-		c.Assert(t.Level, Equals, events.Alert)
-		c.Assert(t.Message, Equals, "error: tried to start SMP with a nameless peer")
-	case <-time.After(10 * time.Millisecond):
-		c.Errorf("did not receive event")
-	}
-}
-
 func (s *SessionSuite) Test_logsError_whenWeStartSMPWithoutAConversation(c *C) {
 	sess := sessionWithConvMngrWithoutConvs()
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.StartSMP(jid.NR("someone's peer"), jid.Resource("resource"), "Im a question", "im an answer")
+	go sess.StartSMP(jid.R("someone's peer/resource"), "Im a question", "im an answer")
 
 	select {
 	case ev := <-observer:
@@ -1162,7 +1145,7 @@ func (s *SessionSuite) Test_logsError_whenWeFinishSMPWithoutAConversation(c *C) 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.FinishSMP(jid.NR("someone's peer"), jid.Resource("resource"), "im an answer")
+	go sess.FinishSMP(jid.R("someone's peer/resource"), "im an answer")
 
 	select {
 	case ev := <-observer:
@@ -1179,7 +1162,7 @@ func (s *SessionSuite) Test_logsError_whenWeAbortSMPWithoutAConversation(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.AbortSMP(jid.NR("someone's peer"), jid.Resource("resource"))
+	go sess.AbortSMP(jid.R("someone's peer/resource"))
 
 	select {
 	case ev := <-observer:

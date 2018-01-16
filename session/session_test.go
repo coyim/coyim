@@ -16,6 +16,7 @@ import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glib_mock"
 
 	. "gopkg.in/check.v1"
@@ -97,14 +98,14 @@ func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.iqReceived(data.JIDNR("someone@somewhere"))
+	sess.iqReceived(jid.NR("someone@somewhere"))
 
 	select {
 	case ev := <-observer:
 		c.Assert(ev, Equals, events.Peer{
 			Session: sess,
 			Type:    events.IQReceived,
-			From:    data.JIDNR("someone@somewhere"),
+			From:    jid.NR("someone@somewhere"),
 		})
 	case <-time.After(1 * time.Millisecond):
 		c.Error("did not receive event")
@@ -250,7 +251,7 @@ func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 			case events.Message:
 				c.Assert(t.Session, Equals, sess)
 				c.Assert(t.Encrypted, Equals, false)
-				c.Assert(t.From, Equals, data.JIDR("bla@hmm.org/somewhere"))
+				c.Assert(t.From, Equals, jid.R("bla@hmm.org/somewhere"))
 				c.Assert(string(t.Body), Equals, "well, hello there")
 				return
 			default:
@@ -642,13 +643,13 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState(data.JIDNR("some2@one.org"), "somewhere", "", "", ""))
+	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "somewhere", "", "", ""))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 	sess.watchStanzas()
 
-	p, _ := sess.r.Get(data.JIDNR("some2@one.org"))
+	p, _ := sess.r.Get(jid.NR("some2@one.org"))
 	c.Assert(p.Online, Equals, false)
 
 	for {
@@ -687,7 +688,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 
 	sess.watchStanzas()
 
-	v, _ := sess.r.GetPendingSubscribe(data.JIDNR("some2@one.org"))
+	v, _ := sess.r.GetPendingSubscribe(jid.NR("some2@one.org"))
 	c.Assert(v, Equals, "adf12112")
 }
 
@@ -751,7 +752,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.r.StateOf(data.JIDNR("some2@one.org"))
+	st, _, _ := sess.r.StateOf(jid.NR("some2@one.org"))
 	c.Assert(st, Equals, "dnd")
 
 	for {
@@ -786,14 +787,14 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState(data.JIDNR("some2@one.org"), "dnd", "", "", ""))
+	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "dnd", "", "", ""))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.r.StateOf(data.JIDNR("some2@one.org"))
+	st, _, _ := sess.r.StateOf(jid.NR("some2@one.org"))
 	c.Assert(st, Equals, "dnd")
 
 	select {
@@ -818,7 +819,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWai
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.HandleConfirmOrDeny(data.JIDNR("foo@bar.com"), true)
+	sess.HandleConfirmOrDeny(jid.NR("foo@bar.com"), true)
 
 	select {
 	case ev := <-observer:
@@ -850,13 +851,13 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	}
 
 	expectedPresence := `<presence xmlns="jabber:client" id="123" to="foo@bar.com" type="unsubscribed"></presence>`
-	sess.r.SubscribeRequest(data.JIDNR("foo@bar.com"), "123", "")
+	sess.r.SubscribeRequest(jid.NR("foo@bar.com"), "123", "")
 
-	sess.HandleConfirmOrDeny(data.JIDNR("foo@bar.com"), false)
+	sess.HandleConfirmOrDeny(jid.NR("foo@bar.com"), false)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Equals, expectedPresence)
-	_, inMap := sess.r.GetPendingSubscribe(data.JIDNR("foo@bar.com"))
+	_, inMap := sess.r.GetPendingSubscribe(jid.NR("foo@bar.com"))
 	c.Assert(inMap, Equals, false)
 }
 
@@ -883,12 +884,12 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C
 	expectedPresence := `<presence xmlns="jabber:client" id="123" to="foo@bar.com" type="subscribed"></presence>` +
 		`<presence xmlns="jabber:client" id="[0-9]+" to="foo@bar.com" type="subscribe"></presence>`
 
-	sess.r.SubscribeRequest(data.JIDNR("foo@bar.com"), "123", "")
-	sess.HandleConfirmOrDeny(data.JIDNR("foo@bar.com"), true)
+	sess.r.SubscribeRequest(jid.NR("foo@bar.com"), "123", "")
+	sess.HandleConfirmOrDeny(jid.NR("foo@bar.com"), true)
 
 	c.Assert(called, Equals, 0)
 	c.Assert(string(mockIn.write), Matches, expectedPresence)
-	_, inMap := sess.r.GetPendingSubscribe(data.JIDNR("foo@bar.com"))
+	_, inMap := sess.r.GetPendingSubscribe(jid.NR("foo@bar.com"))
 	c.Assert(inMap, Equals, false)
 }
 
@@ -904,12 +905,12 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 		r: roster.New(),
 	}
 	sess.conn = conn
-	sess.r.SubscribeRequest(data.JIDNR("foo@bar.com"), "123", "")
+	sess.r.SubscribeRequest(jid.NR("foo@bar.com"), "123", "")
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	sess.HandleConfirmOrDeny(data.JIDNR("foo@bar.com"), true)
+	sess.HandleConfirmOrDeny(jid.NR("foo@bar.com"), true)
 
 	for {
 		select {
@@ -955,17 +956,17 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 }
 
 type mockConvManager struct {
-	getConversationWith    func(data.JIDWithoutResource, data.JIDResource) (otr_client.Conversation, bool)
-	ensureConversationWith func(data.JIDWithoutResource, data.JIDResource) (otr_client.Conversation, bool)
+	getConversationWith    func(jid.WithoutResource, jid.Resource) (otr_client.Conversation, bool)
+	ensureConversationWith func(jid.WithoutResource, jid.Resource) (otr_client.Conversation, bool)
 	conversations          func() map[string]otr_client.Conversation
 	terminateAll           func()
 }
 
-func (mcm *mockConvManager) GetConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (otr_client.Conversation, bool) {
+func (mcm *mockConvManager) GetConversationWith(peer jid.WithoutResource, resource jid.Resource) (otr_client.Conversation, bool) {
 	return mcm.getConversationWith(peer, resource)
 }
 
-func (mcm *mockConvManager) EnsureConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (otr_client.Conversation, bool) {
+func (mcm *mockConvManager) EnsureConversationWith(peer jid.WithoutResource, resource jid.Resource) (otr_client.Conversation, bool) {
 	return mcm.ensureConversationWith(peer, resource)
 }
 
@@ -978,11 +979,11 @@ func (mcm *mockConvManager) TerminateAll() {
 }
 
 type mockConv struct {
-	receive     func(otr_client.Sender, data.JIDResource, []byte) ([]byte, error)
+	receive     func(otr_client.Sender, jid.Resource, []byte) ([]byte, error)
 	isEncrypted func() bool
 }
 
-func (mc *mockConv) Receive(s otr_client.Sender, s2 data.JIDResource, s3 []byte) ([]byte, error) {
+func (mc *mockConv) Receive(s otr_client.Sender, s2 jid.Resource, s3 []byte) ([]byte, error) {
 	return mc.receive(s, s2, s3)
 }
 
@@ -990,27 +991,27 @@ func (mc *mockConv) IsEncrypted() bool {
 	return mc.isEncrypted()
 }
 
-func (mc *mockConv) Send(otr_client.Sender, data.JIDResource, []byte) (trace int, err error) {
+func (mc *mockConv) Send(otr_client.Sender, jid.Resource, []byte) (trace int, err error) {
 	return 0, nil
 }
 
-func (mc *mockConv) StartEncryptedChat(otr_client.Sender, data.JIDResource) error {
+func (mc *mockConv) StartEncryptedChat(otr_client.Sender, jid.Resource) error {
 	return nil
 }
 
-func (mc *mockConv) EndEncryptedChat(otr_client.Sender, data.JIDResource) error {
+func (mc *mockConv) EndEncryptedChat(otr_client.Sender, jid.Resource) error {
 	return nil
 }
 
-func (mc *mockConv) ProvideAuthenticationSecret(otr_client.Sender, data.JIDResource, []byte) error {
+func (mc *mockConv) ProvideAuthenticationSecret(otr_client.Sender, jid.Resource, []byte) error {
 	return nil
 }
 
-func (mc *mockConv) StartAuthenticate(otr_client.Sender, data.JIDResource, string, []byte) error {
+func (mc *mockConv) StartAuthenticate(otr_client.Sender, jid.Resource, string, []byte) error {
 	return nil
 }
 
-func (mc *mockConv) AbortAuthentication(otr_client.Sender, data.JIDResource) error {
+func (mc *mockConv) AbortAuthentication(otr_client.Sender, jid.Resource) error {
 	return nil
 }
 
@@ -1026,7 +1027,7 @@ func (mc *mockConv) TheirFingerprint() []byte {
 	return nil
 }
 
-func (mc *mockConv) CreateExtraSymmetricKey(otr_client.Sender, data.JIDResource) ([]byte, error) {
+func (mc *mockConv) CreateExtraSymmetricKey(otr_client.Sender, jid.Resource) ([]byte, error) {
 	return nil, nil
 }
 
@@ -1043,7 +1044,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 
 	mc := &mockConv{}
 
-	mc.receive = func(s1 otr_client.Sender, s2 data.JIDResource, s3 []byte) ([]byte, error) {
+	mc.receive = func(s1 otr_client.Sender, s2 jid.Resource, s3 []byte) ([]byte, error) {
 		return s3, nil
 	}
 
@@ -1051,14 +1052,14 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 		return false
 	}
 
-	mcm.ensureConversationWith = func(data.JIDWithoutResource, data.JIDResource) (otr_client.Conversation, bool) {
+	mcm.ensureConversationWith = func(jid.WithoutResource, jid.Resource) (otr_client.Conversation, bool) {
 		return mc, false
 	}
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.receiveClientMessage(data.JIDR("someone@some.org/something"), time.Now(), "hello<br>ola<BR/>wazup?")
+	go sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello<br>ola<BR/>wazup?")
 
 	select {
 	case ev := <-observer:
@@ -1082,16 +1083,16 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 	}
 
 	mc := &mockConv{}
-	mc.receive = func(s1 otr_client.Sender, s2 data.JIDResource, s3 []byte) ([]byte, error) { return s3, nil }
+	mc.receive = func(s1 otr_client.Sender, s2 jid.Resource, s3 []byte) ([]byte, error) { return s3, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(data.JIDWithoutResource, data.JIDResource) (otr_client.Conversation, bool) {
+	mcm.ensureConversationWith = func(jid.WithoutResource, jid.Resource) (otr_client.Conversation, bool) {
 		return mc, false
 	}
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.receiveClientMessage(data.JIDR("someone@some.org/something"), time.Now(), "hello<br>ola<br/><BR/>wazup?")
+	go sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello<br>ola<br/><BR/>wazup?")
 
 	select {
 	case ev := <-observer:
@@ -1105,11 +1106,11 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 
 type convManagerWithoutConversation struct{}
 
-func (ncm *convManagerWithoutConversation) GetConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (otr_client.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) GetConversationWith(peer jid.WithoutResource, resource jid.Resource) (otr_client.Conversation, bool) {
 	return nil, false
 }
 
-func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer data.JIDWithoutResource, resource data.JIDResource) (otr_client.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer jid.WithoutResource, resource jid.Resource) (otr_client.Conversation, bool) {
 	return nil, false
 }
 
@@ -1136,7 +1137,7 @@ func (s *SessionSuite) Test_logsError_whenWeStartSMPWithAnEmptyPeerName(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.StartSMP(nil, data.JIDResource("resource"), "Im a question", "im an answer")
+	go sess.StartSMP(nil, jid.Resource("resource"), "Im a question", "im an answer")
 
 	select {
 	case ev := <-observer:
@@ -1153,7 +1154,7 @@ func (s *SessionSuite) Test_logsError_whenWeStartSMPWithoutAConversation(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.StartSMP(data.JIDNR("someone's peer"), data.JIDResource("resource"), "Im a question", "im an answer")
+	go sess.StartSMP(jid.NR("someone's peer"), jid.Resource("resource"), "Im a question", "im an answer")
 
 	select {
 	case ev := <-observer:
@@ -1170,7 +1171,7 @@ func (s *SessionSuite) Test_logsError_whenWeFinishSMPWithoutAConversation(c *C) 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.FinishSMP(data.JIDNR("someone's peer"), data.JIDResource("resource"), "im an answer")
+	go sess.FinishSMP(jid.NR("someone's peer"), jid.Resource("resource"), "im an answer")
 
 	select {
 	case ev := <-observer:
@@ -1187,7 +1188,7 @@ func (s *SessionSuite) Test_logsError_whenWeAbortSMPWithoutAConversation(c *C) {
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 
-	go sess.AbortSMP(data.JIDNR("someone's peer"), data.JIDResource("resource"))
+	go sess.AbortSMP(jid.NR("someone's peer"), jid.Resource("resource"))
 
 	select {
 	case ev := <-observer:

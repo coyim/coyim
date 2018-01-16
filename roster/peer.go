@@ -6,12 +6,13 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 // Peer represents and contains all the information you have about a specific peer.
 // A Peer is always part of at least one roster.List, which is associated with an account.
 type Peer struct {
-	Jid                data.JIDWithoutResource
+	Jid                jid.WithoutResource
 	Subscription       string
 	Name               string
 	Nickname           string
@@ -70,7 +71,7 @@ func PeerFrom(e data.RosterEntry, belongsTo, nickname string, groups []string) *
 	allGroups := toSet(g...)
 
 	return &Peer{
-		Jid:           data.ParseJID(e.Jid).EnsureNoResource(),
+		Jid:           jid.Parse(e.Jid).NoResource(),
 		Subscription:  e.Subscription,
 		Name:          e.Name,
 		Nickname:      nickname,
@@ -85,7 +86,7 @@ func PeerFrom(e data.RosterEntry, belongsTo, nickname string, groups []string) *
 // ToEntry returns a new RosterEntry with the same values
 func (p *Peer) ToEntry() data.RosterEntry {
 	return data.RosterEntry{
-		Jid:          p.Jid.Representation(),
+		Jid:          p.Jid.String(),
 		Subscription: p.Subscription,
 		Name:         p.Name,
 		Group:        fromSet(p.Groups),
@@ -93,7 +94,7 @@ func (p *Peer) ToEntry() data.RosterEntry {
 }
 
 // PeerWithState returns a new Peer that contains the given state information
-func PeerWithState(jid data.JIDWithoutResource, status, statusMsg, belongsTo string, resource data.JIDResource) *Peer {
+func PeerWithState(jid jid.WithoutResource, status, statusMsg, belongsTo string, resource jid.Resource) *Peer {
 	res := &Peer{
 		Jid:       jid,
 		Status:    status,
@@ -106,7 +107,7 @@ func PeerWithState(jid data.JIDWithoutResource, status, statusMsg, belongsTo str
 	return res
 }
 
-func peerWithPendingSubscribe(jid data.JIDWithoutResource, id, belongsTo string) *Peer {
+func peerWithPendingSubscribe(jid jid.WithoutResource, id, belongsTo string) *Peer {
 	return &Peer{
 		Jid:                jid,
 		PendingSubscribeID: id,
@@ -165,7 +166,7 @@ func (p *Peer) MergeWith(p2 *Peer) *Peer {
 // NameForPresentation returns the name if it exists and otherwise the JID
 func (p *Peer) NameForPresentation() string {
 	name := merge(p.Name, p.Nickname)
-	return merge(p.Jid.Representation(), name)
+	return merge(p.Jid.String(), name)
 }
 
 // SetLatestError will set the latest error on the jid in question
@@ -179,7 +180,7 @@ func (p *Peer) SetGroups(groups []string) {
 }
 
 // AddResource adds the given resource if it isn't blank
-func (p *Peer) AddResource(ss data.JIDResource) {
+func (p *Peer) AddResource(ss jid.Resource) {
 	s := string(ss)
 	if s != "" {
 		p.resourcesLock.Lock()
@@ -190,7 +191,7 @@ func (p *Peer) AddResource(ss data.JIDResource) {
 }
 
 // RemoveResource removes the given resource
-func (p *Peer) RemoveResource(s data.JIDResource) {
+func (p *Peer) RemoveResource(s jid.Resource) {
 	p.resourcesLock.Lock()
 	defer p.resourcesLock.Unlock()
 
@@ -198,7 +199,7 @@ func (p *Peer) RemoveResource(s data.JIDResource) {
 }
 
 // Resources returns the resources for this peer
-func (p *Peer) Resources() []data.JIDResource {
+func (p *Peer) Resources() []jid.Resource {
 	p.resourcesLock.RLock()
 	defer p.resourcesLock.RUnlock()
 
@@ -208,9 +209,9 @@ func (p *Peer) Resources() []data.JIDResource {
 	}
 	sort.Strings(result1)
 
-	result2 := []data.JIDResource{}
+	result2 := []jid.Resource{}
 	for _, k := range result2 {
-		result2 = append(result2, data.JIDResource(k))
+		result2 = append(result2, jid.Resource(k))
 	}
 
 	return result2
@@ -233,29 +234,29 @@ func (p *Peer) ClearResources() {
 }
 
 // LastResource sets the last resource used, if not empty
-func (p *Peer) LastResource(r data.JIDResource) {
-	if r != data.JIDResource("") {
+func (p *Peer) LastResource(r jid.Resource) {
+	if r != jid.Resource("") {
 		p.lastResource = string(r)
 	}
 }
 
 // ResourceToUse returns the resource to use for this peer
-func (p *Peer) ResourceToUse() data.JIDResource {
+func (p *Peer) ResourceToUse() jid.Resource {
 	if p.lastResource == "" {
-		return data.JIDResource("")
+		return jid.Resource("")
 	}
 	p.resourcesLock.RLock()
 	defer p.resourcesLock.RUnlock()
 
 	if p.resources[p.lastResource] {
-		return data.JIDResource(p.lastResource)
+		return jid.Resource(p.lastResource)
 	}
 
-	return data.JIDResource("")
+	return jid.Resource("")
 }
 
 // MustHaveResource always returns a valid resource, assuming the user is online
-func (p *Peer) MustHaveResource() data.JIDResource {
+func (p *Peer) MustHaveResource() jid.Resource {
 	toReturn := ""
 	if p.lastResource != "" {
 		p.resourcesLock.RLock()
@@ -270,5 +271,5 @@ func (p *Peer) MustHaveResource() data.JIDResource {
 		toReturn = string(p.Resources()[0])
 	}
 
-	return data.JIDResource(toReturn)
+	return jid.Resource(toReturn)
 }

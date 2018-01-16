@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
 
@@ -81,13 +81,13 @@ func NewAccount() (*Account, error) {
 }
 
 // Is returns true if this account represents the same identity as the given JID
-func (a *Account) Is(jid string) bool {
-	return a.Account == data.ParseJID(jid).EnsureNoResource().Representation()
+func (a *Account) Is(j string) bool {
+	return a.Account == jid.Parse(j).NoResource().String()
 }
 
 // ShouldEncryptTo returns true if the connection with this peer should be encrypted
-func (a *Account) ShouldEncryptTo(jid string) bool {
-	p, ok := a.GetPeer(jid)
+func (a *Account) ShouldEncryptTo(j string) bool {
+	p, ok := a.GetPeer(j)
 
 	if ok && p.EncryptionSettings != Default && p.EncryptionSettings != "" {
 		return p.EncryptionSettings == AlwaysEncrypt
@@ -97,7 +97,7 @@ func (a *Account) ShouldEncryptTo(jid string) bool {
 		return true
 	}
 
-	bareJid := data.ParseJID(jid).EnsureNoResource().Representation()
+	bareJid := jid.Parse(j).NoResource().String()
 	for _, contact := range a.AlwaysEncryptWith {
 		if contact == bareJid {
 			return true

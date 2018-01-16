@@ -5,7 +5,7 @@ import (
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -149,11 +149,11 @@ func (ecd *editContactDialog) showFingerprintsForPeer(jid string, account *accou
 	}
 }
 
-func (r *roster) openEditContactDialog(jid string, acc *account) {
+func (r *roster) openEditContactDialog(j string, acc *account) {
 	assertInUIThread()
-	peer, ok := r.ui.accountManager.getPeer(acc, data.JIDNR(jid))
+	peer, ok := r.ui.accountManager.getPeer(acc, jid.NR(j))
 	if !ok {
-		log.Printf("Couldn't find peer %s in account %v", jid, acc)
+		log.Printf("Couldn't find peer %s in account %v", j, acc)
 		return
 	}
 
@@ -162,14 +162,14 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 	ecd := &editContactDialog{}
 	ecd.init()
 	ecd.accountName.SetText(conf.Account)
-	ecd.contactJID.SetText(jid)
+	ecd.contactJID.SetText(j)
 
 	//nickNameEntry.SetText(peer.Name)
-	if peer, ok := r.ui.getPeer(acc, data.JIDNR(jid)); ok {
+	if peer, ok := r.ui.getPeer(acc, jid.NR(j)); ok {
 		ecd.nickname.SetText(peer.Nickname)
 	}
 
-	shouldEncryptTo := conf.ShouldEncryptTo(jid)
+	shouldEncryptTo := conf.ShouldEncryptTo(j)
 	ecd.requireEncryption.SetActive(shouldEncryptTo)
 
 	ecd.initCurrentGroups(sortedGroupNames(peer.Groups))
@@ -177,7 +177,7 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 
 	ecd.existingGroups.Add(ecd.addGroup)
 	ecd.removeGroup.SetSensitive(false)
-	ecd.showFingerprintsForPeer(jid, acc)
+	ecd.showFingerprintsForPeer(j, acc)
 
 	//TODO: Move to editContactDialog
 	ecd.builder.ConnectSignals(map[string]interface{}{
@@ -193,7 +193,7 @@ func (r *roster) openEditContactDialog(jid string, acc *account) {
 			groups := toArray(ecd.currentGroups)
 			nickname, _ := ecd.nickname.GetText()
 
-			err := r.updatePeer(acc, data.JIDNR(jid), nickname, groups, ecd.requireEncryption.GetActive() != shouldEncryptTo, ecd.requireEncryption.GetActive())
+			err := r.updatePeer(acc, jid.NR(j), nickname, groups, ecd.requireEncryption.GetActive() != shouldEncryptTo, ecd.requireEncryption.GetActive())
 			if err != nil {
 				log.Println(err)
 			}

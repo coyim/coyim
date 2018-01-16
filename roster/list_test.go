@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glib_mock"
 
 	g "gopkg.in/check.v1"
@@ -251,10 +251,10 @@ func (s *ListSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 	l := New()
 	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), Online: true})
 
-	res := l.PeerBecameUnavailable(data.ParseJID("hmm@bar.com/foo"))
+	res := l.PeerBecameUnavailable(jid.Parse("hmm@bar.com/foo"))
 	c.Assert(res, g.Equals, false)
 
-	res = l.PeerBecameUnavailable(data.ParseJID("foo@bar.com/foo2"))
+	res = l.PeerBecameUnavailable(jid.Parse("foo@bar.com/foo2"))
 	c.Assert(res, g.Equals, true)
 	c.Assert(l.peers["foo@bar.com"].Online, g.Equals, false)
 }

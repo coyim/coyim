@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/cli/terminal"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 type uiCommand struct {
@@ -85,7 +85,7 @@ type endOTRCommand struct {
 type helpCommand struct{}
 
 type msgCommand struct {
-	to  data.JID
+	to  jid.Any
 	msg string
 	// setPromptIsEncrypted is used to synchonously indicate whether the
 	// prompt should show the contact as encrypted, before the prompt is
@@ -330,18 +330,18 @@ type input struct {
 
 	// lock protects uids, uidComplete and lastTarget.
 	lock        sync.Mutex
-	uids        []data.JID
+	uids        []jid.Any
 	uidComplete *priorityList
-	lastTarget  data.JID
+	lastTarget  jid.Any
 }
 
-func (i *input) addUser(uid data.JIDWithoutResource) {
+func (i *input) addUser(uid jid.WithoutResource) {
 	i.lock.Lock()
 	defer i.lock.Unlock()
 
-	uidr := uid.Representation()
+	uidr := uid.String()
 	for _, existingUID := range i.uids {
-		if existingUID.Representation() == uidr {
+		if existingUID.String() == uidr {
 			return
 		}
 	}
@@ -440,8 +440,8 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 		if pos := strings.Index(line, string(nameTerminator)); pos > 0 {
 			possibleName := line[:pos]
 			for _, uid := range i.uids {
-				if possibleName == uid.Representation() {
-					i.lastTarget = data.ParseJID(possibleName)
+				if possibleName == uid.String() {
+					i.lastTarget = jid.Parse(possibleName)
 					line = line[pos+2:]
 					break
 				}
@@ -459,7 +459,7 @@ func (i *input) processCommands(commandsChan chan<- interface{}) {
 	}
 }
 
-func (i *input) SetPromptForTarget(target data.JID, isEncrypted bool) {
+func (i *input) SetPromptForTarget(target jid.Any, isEncrypted bool) {
 	i.lock.Lock()
 	isCurrent := i.lastTarget == target
 	i.lock.Unlock()
@@ -468,14 +468,14 @@ func (i *input) SetPromptForTarget(target data.JID, isEncrypted bool) {
 		return
 	}
 
-	prompt := make([]byte, 0, len(target.Representation())+16)
+	prompt := make([]byte, 0, len(target.String())+16)
 	if isEncrypted {
 		prompt = append(prompt, i.tc.Escape(i.term).Green...)
 	} else {
 		prompt = append(prompt, i.tc.Escape(i.term).Red...)
 	}
 
-	prompt = append(prompt, target.Representation()...)
+	prompt = append(prompt, target.String()...)
 	prompt = append(prompt, i.tc.Escape(i.term).Reset...)
 	prompt = append(prompt, '>', ' ')
 	i.term.SetPrompt(string(prompt))

@@ -13,6 +13,7 @@ import (
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 
 	"github.com/coyim/otr3"
 )
@@ -30,7 +31,7 @@ type Connector interface {
 
 // Session is an interface that defines the functionality of a Session
 type Session interface {
-	ApprovePresenceSubscription(data.JIDWithoutResource, string) error
+	ApprovePresenceSubscription(jid.WithoutResource, string) error
 	AutoApprove(string)
 	AwaitVersionReply(<-chan data.Stanza, string)
 	Close()
@@ -39,24 +40,24 @@ type Session interface {
 	Conn() xi.Conn
 	Connect(string, tls.Verifier) error
 	ConversationManager() otr_client.ConversationManager
-	CreateSymmetricKeyFor(data.JID) []byte
-	DenyPresenceSubscription(data.JIDWithoutResource, string) error
+	CreateSymmetricKeyFor(jid.Any) []byte
+	DenyPresenceSubscription(jid.WithoutResource, string) error
 	DisplayName() string
-	EncryptAndSendTo(data.JIDWithoutResource, data.JIDResource, string) (int, bool, error)
+	EncryptAndSendTo(jid.WithoutResource, jid.Resource, string) (int, bool, error)
 	GetConfig() *config.Account
 	GetInMemoryLog() *bytes.Buffer
 	GroupDelimiter() string
-	HandleConfirmOrDeny(data.JIDWithoutResource, bool)
+	HandleConfirmOrDeny(jid.WithoutResource, bool)
 	IsConnected() bool
 	IsDisconnected() bool
-	ManuallyEndEncryptedChat(data.JIDWithoutResource, data.JIDResource) error
+	ManuallyEndEncryptedChat(jid.WithoutResource, jid.Resource) error
 	OtrEventHandler() map[string]*otr_event.OtrEventHandler
 	PrivateKeys() []otr3.PrivateKey
 	R() *roster.List
 	ReloadKeys()
 	RemoveContact(string)
-	RequestPresenceSubscription(data.JIDWithoutResource, string) error
-	Send(data.JIDWithoutResource, data.JIDResource, string) error
+	RequestPresenceSubscription(jid.WithoutResource, string) error
+	Send(jid.WithoutResource, jid.Resource, string) error
 	SendPing()
 	SetCommandManager(otr_client.CommandManager)
 	SetConnectionLogger(io.Writer)
@@ -71,11 +72,11 @@ type Session interface {
 	SendIQError(*data.ClientIQ, interface{})
 	SendIQResult(*data.ClientIQ, interface{})
 	PublishEvent(interface{})
-	SendFileTo(data.JID, string, bool) *sdata.FileTransferControl
-	SendDirTo(data.JID, string, bool) *sdata.FileTransferControl
-	StartSMP(data.JIDWithoutResource, data.JIDResource, string, string)
-	FinishSMP(data.JIDWithoutResource, data.JIDResource, string)
-	AbortSMP(data.JIDWithoutResource, data.JIDResource)
+	SendFileTo(jid.Any, string, bool) *sdata.FileTransferControl
+	SendDirTo(jid.Any, string, bool) *sdata.FileTransferControl
+	StartSMP(jid.WithoutResource, jid.Resource, string, string)
+	FinishSMP(jid.WithoutResource, jid.Resource, string)
+	AbortSMP(jid.WithoutResource, jid.Resource)
 }
 
 // Factory is a function that can create new Sessions

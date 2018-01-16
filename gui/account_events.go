@@ -6,7 +6,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -79,8 +79,7 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 		return
 	}
 
-	resource := data.PotentialResource(ev.From)
-	from := ev.From.EnsureNoResource()
+	from, resource := ev.From.PotentialSplit()
 	timestamp := ev.When
 	encrypted := ev.Encrypted
 	message := ev.Body
@@ -141,12 +140,12 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 	u.rosterUpdated()
 }
 
-func convWindowNowOrLater(account *account, peer data.JID, ui *gtkUI, f func(conversationView)) {
+func convWindowNowOrLater(account *account, peer jid.Any, ui *gtkUI, f func(conversationView)) {
 	// TODO: this is clearly wrong
-	fullJID := peer.EnsureNoResource().Representation()
+	fullJID := peer.NoResource().String()
 	convWin, ok := ui.getConversationView(account, fullJID)
 	if !ok {
-		account.afterConversationWindowCreated(peer.Representation(), f)
+		account.afterConversationWindowCreated(peer.String(), f)
 	} else {
 		f(convWin)
 	}
@@ -189,15 +188,15 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		})
 
 	case events.SubscriptionRequest:
-		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From.Representation())
+		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From.String())
 
 		doInUIThread(func() {
 			responseType := gtki.ResponseType(confirmDialog.Run())
 			switch responseType {
 			case gtki.RESPONSE_YES:
-				ev.Session.HandleConfirmOrDeny(ev.From.EnsureNoResource(), true)
+				ev.Session.HandleConfirmOrDeny(ev.From.NoResource(), true)
 			case gtki.RESPONSE_NO:
-				ev.Session.HandleConfirmOrDeny(ev.From.EnsureNoResource(), false)
+				ev.Session.HandleConfirmOrDeny(ev.From.NoResource(), false)
 			default:
 				// We got a different response, such as a close of the window. In this case we want
 				// to keep the subscription request open
@@ -206,32 +205,32 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		})
 	case events.Subscribed:
 		jid := ev.Session.GetConfig().Account
-		log.Printf("[%s] Subscribed to %s\n", jid, ev.From.Representation())
+		log.Printf("[%s] Subscribed to %s\n", jid, ev.From)
 		u.rosterUpdated()
 	case events.Unsubscribe:
 		jid := ev.Session.GetConfig().Account
-		log.Printf("[%s] Unsubscribed from %s\n", jid, ev.From.Representation())
+		log.Printf("[%s] Unsubscribed from %s\n", jid, ev.From)
 		u.rosterUpdated()
 	}
 }
 
 func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.Peer.EnsureNoResource(), false, data.JIDResource(""))
+	convWin := u.openConversationView(account, ev.Peer.NoResource(), false, jid.Resource(""))
 
 	convWin.displayNotification(i18n.Local(ev.Notification))
 }
 
 func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.Peer.EnsureNoResource(), false, data.JIDResource(""))
+	convWin := u.openConversationView(account, ev.Peer.NoResource(), false, jid.Resource(""))
 
 	convWin.delayedMessageSent(ev.Tracer)
 }
 
 func (u *gtkUI) handleSMPEvent(ev events.SMP) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.From.EnsureNoResource(), false, data.JIDResource(""))
+	convWin := u.openConversationView(account, ev.From.NoResource(), false, jid.Resource(""))
 
 	switch ev.Type {
 	case events.SecretNeeded:

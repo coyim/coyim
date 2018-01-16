@@ -7,7 +7,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/events"
-	xdata "github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -60,10 +60,10 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 	var message, secondary string
 
 	if ev.IsDirectory {
-		message = i18n.Localf("%s wants to send you a directory: do you want to receive it?", ev.Peer.EnsureNoResource().Representation())
+		message = i18n.Localf("%s wants to send you a directory: do you want to receive it?", ev.Peer.NoResource())
 		secondary = i18n.Localf("Directory name: %s", ev.Name)
 	} else {
-		message = i18n.Localf("%s wants to send you a file: do you want to receive it?", ev.Peer.EnsureNoResource().Representation())
+		message = i18n.Localf("%s wants to send you a file: do you want to receive it?", ev.Peer.NoResource())
 		secondary = i18n.Localf("File name: %s", ev.Name)
 	}
 
@@ -114,7 +114,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 	if result && name != "" {
 		fileName := resizeFileName(ev.Name)
-		cv := u.openConversationView(account, ev.Peer.EnsureNoResource(), true, xdata.JIDResource(""))
+		cv := u.openConversationView(account, ev.Peer.NoResource(), true, jid.Resource(""))
 		f := createNewFileTransferWithDefaults(fileName, ev.IsDirectory, false, true, ev.Control, cv)
 		u.startAllListenersForFile(ev.Control, cv, f, ev.Name, "Receiving", "receive")
 		ev.Answer <- &name
@@ -134,21 +134,21 @@ func createNewFileTransferWithDefaults(fileName string, dir bool, sending bool, 
 	return f
 }
 
-func (account *account) sendThingTo(peer xdata.JID, u *gtkUI, name string, dir bool, ctl *data.FileTransferControl) {
+func (account *account) sendThingTo(peer jid.Any, u *gtkUI, name string, dir bool, ctl *data.FileTransferControl) {
 	nm := resizeFileName(filepath.Base(name))
-	cv := u.openConversationView(account, peer.EnsureNoResource(), true, xdata.JIDResource(""))
+	cv := u.openConversationView(account, peer.NoResource(), true, jid.Resource(""))
 	f := createNewFileTransferWithDefaults(nm, dir, true, false, ctl, cv)
 	u.startAllListenersForFile(ctl, cv, f, nm, "Sending", "send")
 }
 
-func (account *account) sendDirectoryTo(peer xdata.JID, u *gtkUI) {
+func (account *account) sendDirectoryTo(peer jid.Any, u *gtkUI) {
 	if dir, ok := chooseDirToSend(u.window); ok {
 		ctl := account.session.SendDirTo(peer, dir, false)
 		account.sendThingTo(peer, u, dir, true, ctl)
 	}
 }
 
-func (account *account) sendFileTo(peer xdata.JID, u *gtkUI) {
+func (account *account) sendFileTo(peer jid.Any, u *gtkUI) {
 	if file, ok := chooseFileToSend(u.window); ok {
 		ctl := account.session.SendFileTo(peer, file, false)
 		account.sendThingTo(peer, u, file, false, ctl)

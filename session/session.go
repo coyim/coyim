@@ -22,6 +22,7 @@ import (
 	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
 
@@ -170,11 +171,11 @@ func (s *session) ReloadKeys() {
 }
 
 // Send will send the given message to the receiver given
-func (s *session) Send(to data.JIDWithoutResource, resource data.JIDResource, msg string) error {
+func (s *session) Send(to jid.WithoutResource, resource jid.Resource, msg string) error {
 	conn, ok := s.connection()
 	if ok {
-		log.Printf("<- to=%v {%v}\n", to.MaybeWithResource(resource).Representation(), msg)
-		return conn.Send(to.MaybeWithResource(resource).Representation(), msg)
+		log.Printf("<- to=%v {%v}\n", to.MaybeWithResource(resource), msg)
+		return conn.Send(to.MaybeWithResource(resource).String(), msg)
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }
@@ -257,7 +258,7 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 		return true
 	}
 
-	peer := data.ParseJID(stanza.From)
+	peer := jid.Parse(stanza.From)
 
 	// TODO: it feels iffy that we have error and groupchat special handled here
 	// But not checking on the "message" type.
@@ -267,13 +268,13 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 		//to close the connection
 		//https://xmpp.org/rfcs/rfc3920.html#stanzas-error
 		if stanza.Error != nil {
-			s.alert(fmt.Sprintf("Error reported from %s: %#v", peer.EnsureNoResource().Representation(), stanza.Error))
+			s.alert(fmt.Sprintf("Error reported from %s: %#v", peer.NoResource(), stanza.Error))
 			return true
 		}
 	case "groupchat":
 		s.publishEvent(events.ChatMessage{
 			// TODO: unclear if the following line is correct
-			From:          data.JIDR(stanza.From),
+			From:          jid.R(stanza.From),
 			When:          retrieveMessageTime(stanza),
 			Body:          stanza.Body,
 			ClientMessage: stanza,
@@ -313,8 +314,8 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 
 	switch stanza.Type {
 	case "subscribe":
-		jj := data.JIDNR(stanza.From)
-		jjr := jj.Representation()
+		jj := jid.NR(stanza.From)
+		jjr := jj.String()
 		if s.autoApproves[jjr] {
 			delete(s.autoApproves, jjr)
 			s.ApprovePresenceSubscription(jj, stanza.ID)
@@ -326,7 +327,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			)
 		}
 	case "unavailable":
-		if !s.r.PeerBecameUnavailable(data.ParseJID(stanza.From)) {
+		if !s.r.PeerBecameUnavailable(jid.Parse(stanza.From)) {
 			return true
 		}
 
@@ -336,7 +337,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			Gone:           true,
 		})
 	case "":
-		if !s.r.PeerPresenceUpdate(data.JIDR(stanza.From), stanza.Show, stanza.Status, s.GetConfig().ID()) {
+		if !s.r.PeerPresenceUpdate(jid.R(stanza.From), stanza.Show, stanza.Status, s.GetConfig().ID()) {
 			return true
 		}
 
@@ -351,14 +352,14 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			Gone:           false,
 		})
 	case "subscribed":
-		jj := data.JIDNR(stanza.From)
+		jj := jid.NR(stanza.From)
 		s.r.Subscribed(jj)
 		s.publishPeerEvent(
 			events.Subscribed,
 			jj,
 		)
 	case "unsubscribe":
-		jj := data.JIDNR(stanza.From)
+		jj := jid.NR(stanza.From)
 		s.r.Unsubscribed(jj)
 		s.publishPeerEvent(
 			events.Unsubscribe,
@@ -368,7 +369,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		// Ignore
 	case "error":
 		s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
-		s.r.LatestError(data.JIDNR(stanza.From), stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
+		s.r.LatestError(jid.NR(stanza.From), stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 	default:
 		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
 	}
@@ -445,7 +446,7 @@ func (s *session) rosterReceived() {
 	s.publish(events.RosterReceived)
 }
 
-func (s *session) iqReceived(peer data.JID) {
+func (s *session) iqReceived(peer jid.Any) {
 	s.publishPeerEvent(events.IQReceived, peer)
 }
 
@@ -488,9 +489,9 @@ func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{},
 	}
 
 	for _, entry := range rst.Item {
-		jj := data.ParseJID(entry.Jid)
+		jj := jid.Parse(entry.Jid)
 		if entry.Subscription == "remove" {
-			s.r.Remove(jj.EnsureNoResource())
+			s.r.Remove(jj.NoResource())
 		} else if s.addOrMergeNewPeer(entry, s.GetConfig()) {
 			s.iqReceived(jj)
 		}
@@ -500,10 +501,10 @@ func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{},
 }
 
 // HandleConfirmOrDeny is used to handle a users response to a subscription request
-func (s *session) HandleConfirmOrDeny(jid data.JIDWithoutResource, isConfirm bool) {
+func (s *session) HandleConfirmOrDeny(jid jid.WithoutResource, isConfirm bool) {
 	id, ok := s.r.RemovePendingSubscribe(jid)
 	if !ok {
-		s.warn("No pending subscription from " + jid.Representation())
+		s.warn("No pending subscription from " + jid.String())
 		return
 	}
 
@@ -525,19 +526,19 @@ func (s *session) HandleConfirmOrDeny(jid data.JIDWithoutResource, isConfirm boo
 	}
 }
 
-func (s *session) newOTRKeys(peer data.JIDWithoutResource, conversation otr_client.Conversation) {
+func (s *session) newOTRKeys(peer jid.WithoutResource, conversation otr_client.Conversation) {
 	s.publishPeerEvent(events.OTRNewKeys, peer)
 }
 
-func (s *session) renewedOTRKeys(peer data.JIDWithoutResource, conversation otr_client.Conversation) {
+func (s *session) renewedOTRKeys(peer jid.WithoutResource, conversation otr_client.Conversation) {
 	s.publishPeerEvent(events.OTRRenewedKeys, peer)
 }
 
-func (s *session) otrEnded(peer data.JIDWithoutResource) {
+func (s *session) otrEnded(peer jid.WithoutResource) {
 	s.publishPeerEvent(events.OTREnded, peer)
 }
 
-func (s *session) listenToNotifications(c <-chan string, peer data.JID) {
+func (s *session) listenToNotifications(c <-chan string, peer jid.Any) {
 	for notification := range c {
 		s.publishEvent(events.Notification{
 			Session:      s,
@@ -547,7 +548,7 @@ func (s *session) listenToNotifications(c <-chan string, peer data.JID) {
 	}
 }
 
-func (s *session) listenToDelayedMessageDelivery(c <-chan int, peer data.JID) {
+func (s *session) listenToDelayedMessageDelivery(c <-chan int, peer jid.Any) {
 	for t := range c {
 		s.publishEvent(events.DelayedMessageSent{
 			Session: s,
@@ -564,7 +565,7 @@ func (s *session) listenToDelayedMessageDelivery(c <-chan int, peer data.JID) {
 //TODO: we are not taking a proper JID type here. This is to stop leakage into other packages for now, but should be fixed.
 //This also assumes it's useful to send friendly message to another person in
 //the same language configured on your app.
-func (s *session) NewConversation(peer data.JID) *otr3.Conversation {
+func (s *session) NewConversation(peer jid.Any) *otr3.Conversation {
 	conversation := &otr3.Conversation{}
 	conversation.SetOurKeys(s.privateKeys)
 	conversation.SetFriendlyQueryMessage(i18n.Local("Your peer has requested a private conversation with you, but your client doesn't seem to support the OTR protocol."))
@@ -578,9 +579,9 @@ func (s *session) NewConversation(peer data.JID) *otr3.Conversation {
 		})
 	}
 
-	s.GetConfig().SetOTRPoliciesFor(peer.Representation(), conversation)
+	s.GetConfig().SetOTRPoliciesFor(peer.String(), conversation)
 
-	eh, ok := s.otrEventHandler[peer.Representation()]
+	eh, ok := s.otrEventHandler[peer.String()]
 	if !ok {
 		eh = new(otr_event.OtrEventHandler)
 		eh.Delays = make(map[int]bool)
@@ -596,28 +597,28 @@ func (s *session) NewConversation(peer data.JID) *otr3.Conversation {
 		conversation.SetErrorMessageHandler(eh)
 		conversation.SetMessageEventHandler(eh)
 		conversation.SetSecurityEventHandler(eh)
-		s.otrEventHandler[peer.Representation()] = eh
+		s.otrEventHandler[peer.String()] = eh
 	}
 
 	return conversation
 }
 
 // ManuallyEndEncryptedChat allows a user to end the encrypted chat from this side
-func (s *session) ManuallyEndEncryptedChat(peer data.JIDWithoutResource, resource data.JIDResource) error {
+func (s *session) ManuallyEndEncryptedChat(peer jid.WithoutResource, resource jid.Resource) error {
 	c, ok := s.ConversationManager().GetConversationWith(peer, resource)
 	if !ok {
-		return fmt.Errorf("couldn't find conversation with %s / %s", peer.Representation(), string(resource))
+		return fmt.Errorf("couldn't find conversation with %s / %s", peer, string(resource))
 	}
 
-	defer s.otrEventHandler[peer.Representation()].ConsumeSecurityChange()
+	defer s.otrEventHandler[peer.String()].ConsumeSecurityChange()
 	return c.EndEncryptedChat(s, resource)
 }
 
-func (s *session) receiveClientMessage(peer data.JID, when time.Time, body string) {
-	from := peer.EnsureNoResource()
-	fr := from.Representation()
-	resource := data.JIDResource("")
-	if px, ok := peer.(data.JIDWithResource); ok {
+func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string) {
+	from := peer.NoResource()
+	fr := from.String()
+	resource := jid.Resource("")
+	if px, ok := peer.(jid.WithResource); ok {
 		resource = px.Resource()
 	}
 
@@ -694,7 +695,7 @@ func (s *session) receiveClientMessage(peer data.JID, when time.Time, body strin
 	s.messageReceived(peer, when, encrypted, out)
 }
 
-func (s *session) messageReceived(peer data.JID, timestamp time.Time, encrypted bool, message []byte) {
+func (s *session) messageReceived(peer jid.Any, timestamp time.Time, encrypted bool, message []byte) {
 	s.publishEvent(events.Message{
 		Session:   s,
 		From:      peer,
@@ -970,12 +971,12 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 }
 
 // EncryptAndSendTo encrypts and sends the message to the given peer
-func (s *session) EncryptAndSendTo(peer data.JIDWithoutResource, resource data.JIDResource, message string) (trace int, delayed bool, err error) {
+func (s *session) EncryptAndSendTo(peer jid.WithoutResource, resource jid.Resource, message string) (trace int, delayed bool, err error) {
 	//TODO: review whether it should create a conversation
 	if s.IsConnected() {
 		conversation, _ := s.convManager.EnsureConversationWith(peer, resource)
 		trace, err = conversation.Send(s, resource, []byte(message))
-		eh := s.otrEventHandler[peer.Representation()]
+		eh := s.otrEventHandler[peer.String()]
 		delayed = eh.ConsumeDelayedState(trace)
 		return
 	}
@@ -1099,7 +1100,7 @@ func (s *session) SendPing() {
 }
 
 // StartSMP begins the SMP interactions for a conversation
-func (s *session) StartSMP(peer data.JIDWithoutResource, resource data.JIDResource, question, answer string) {
+func (s *session) StartSMP(peer jid.WithoutResource, resource jid.Resource, question, answer string) {
 	// TODO: probably not possible.
 	if peer == nil {
 		s.alert("error: tried to start SMP with a nameless peer")
@@ -1116,7 +1117,7 @@ func (s *session) StartSMP(peer data.JIDWithoutResource, resource data.JIDResour
 }
 
 // FinishSMP takes a user's SMP answer and finishes the protocol
-func (s *session) FinishSMP(peer data.JIDWithoutResource, resource data.JIDResource, answer string) {
+func (s *session) FinishSMP(peer jid.WithoutResource, resource jid.Resource, answer string) {
 	conv, ok := s.convManager.GetConversationWith(peer, resource)
 	if !ok {
 		s.alert("error: tried to finish SMP when a conversation does not exist")
@@ -1128,7 +1129,7 @@ func (s *session) FinishSMP(peer data.JIDWithoutResource, resource data.JIDResou
 }
 
 // AbortSMP will abort the current SMP interaction for a conversation
-func (s *session) AbortSMP(peer data.JIDWithoutResource, resource data.JIDResource) {
+func (s *session) AbortSMP(peer jid.WithoutResource, resource jid.Resource) {
 	conv, ok := s.convManager.GetConversationWith(peer, resource)
 	if !ok {
 		s.alert("error: tried to abort SMP when a conversation does not exist")
@@ -1141,9 +1142,9 @@ func (s *session) AbortSMP(peer data.JIDWithoutResource, resource data.JIDResour
 
 // TODO: we also need a way to deal with when the TLV is received.
 
-func (s *session) CreateSymmetricKeyFor(peer data.JID) []byte {
-	r := data.PotentialResource(peer)
-	conv, ok := s.convManager.GetConversationWith(peer.EnsureNoResource(), r)
+func (s *session) CreateSymmetricKeyFor(peer jid.Any) []byte {
+	r := peer.PotentialResource()
+	conv, ok := s.convManager.GetConversationWith(peer.NoResource(), r)
 	if !ok {
 		return nil
 	}

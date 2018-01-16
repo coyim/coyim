@@ -14,6 +14,7 @@ import (
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 
 	"github.com/coyim/otr3"
 )
@@ -22,7 +23,7 @@ import (
 type SessionMock struct{}
 
 // ApprovePresenceSubscription is the implementation for Session interface
-func (*SessionMock) ApprovePresenceSubscription(data.JIDWithoutResource, string) error {
+func (*SessionMock) ApprovePresenceSubscription(jid.WithoutResource, string) error {
 	return nil
 }
 
@@ -61,7 +62,7 @@ func (*SessionMock) ConversationManager() otr_client.ConversationManager {
 }
 
 // DenyPresenceSubscription is the implementation for Session interface
-func (*SessionMock) DenyPresenceSubscription(data.JIDWithoutResource, string) error {
+func (*SessionMock) DenyPresenceSubscription(jid.WithoutResource, string) error {
 	return nil
 }
 
@@ -71,7 +72,7 @@ func (*SessionMock) DisplayName() string {
 }
 
 // EncryptAndSendTo is the implementation for Session interface
-func (*SessionMock) EncryptAndSendTo(data.JIDWithoutResource, data.JIDResource, string) (int, bool, error) {
+func (*SessionMock) EncryptAndSendTo(jid.WithoutResource, jid.Resource, string) (int, bool, error) {
 	return 0, false, nil
 }
 
@@ -91,7 +92,7 @@ func (*SessionMock) GroupDelimiter() string {
 }
 
 // HandleConfirmOrDeny is the implementation for Session interface
-func (*SessionMock) HandleConfirmOrDeny(data.JIDWithoutResource, bool) {}
+func (*SessionMock) HandleConfirmOrDeny(jid.WithoutResource, bool) {}
 
 // IsConnected is the implementation for Session interface
 func (*SessionMock) IsConnected() bool {
@@ -104,7 +105,7 @@ func (*SessionMock) IsDisconnected() bool {
 }
 
 // ManuallyEndEncryptedChat is the implementation for Session interface
-func (*SessionMock) ManuallyEndEncryptedChat(data.JIDWithoutResource, data.JIDResource) error {
+func (*SessionMock) ManuallyEndEncryptedChat(jid.WithoutResource, jid.Resource) error {
 	return nil
 }
 
@@ -130,12 +131,12 @@ func (*SessionMock) ReloadKeys() {}
 func (*SessionMock) RemoveContact(string) {}
 
 // RequestPresenceSubscription is the implementation for Session interface
-func (*SessionMock) RequestPresenceSubscription(data.JIDWithoutResource, string) error {
+func (*SessionMock) RequestPresenceSubscription(jid.WithoutResource, string) error {
 	return nil
 }
 
 // Send is the implementation for Session interface
-func (*SessionMock) Send(data.JIDWithoutResource, data.JIDResource, string) error {
+func (*SessionMock) Send(jid.WithoutResource, jid.Resource, string) error {
 	return nil
 }
 
@@ -173,13 +174,13 @@ func (*SessionMock) Warn(string) {}
 func (*SessionMock) Info(string) {}
 
 // StartSMP is the implementation for Session interface
-func (*SessionMock) StartSMP(data.JIDWithoutResource, data.JIDResource, string, string) {}
+func (*SessionMock) StartSMP(jid.WithoutResource, jid.Resource, string, string) {}
 
 // FinishSMP is the implementation for Session interface
-func (*SessionMock) FinishSMP(data.JIDWithoutResource, data.JIDResource, string) {}
+func (*SessionMock) FinishSMP(jid.WithoutResource, jid.Resource, string) {}
 
 // AbortSMP is the implementation for Session interface
-func (*SessionMock) AbortSMP(data.JIDWithoutResource, data.JIDResource) {}
+func (*SessionMock) AbortSMP(jid.WithoutResource, jid.Resource) {}
 
 // PublishEvent is the implementation for Session interface
 func (*SessionMock) PublishEvent(interface{}) {}
@@ -191,16 +192,16 @@ func (*SessionMock) SendIQError(*data.ClientIQ, interface{}) {}
 func (*SessionMock) SendIQResult(*data.ClientIQ, interface{}) {}
 
 // SendFileTo is the implementation for Session interface
-func (*SessionMock) SendFileTo(data.JID, string, bool) *sdata.FileTransferControl {
+func (*SessionMock) SendFileTo(jid.Any, string, bool) *sdata.FileTransferControl {
 	return nil
 }
 
 // SendDirTo is the implementation for Session interface
-func (*SessionMock) SendDirTo(data.JID, string, bool) *sdata.FileTransferControl {
+func (*SessionMock) SendDirTo(jid.Any, string, bool) *sdata.FileTransferControl {
 	return nil
 }
 
 // CurrentSymmetricKeyFor is the implementation for Session interface
-func (*SessionMock) CreateSymmetricKeyFor(data.JID) []byte {
+func (*SessionMock) CreateSymmetricKeyFor(jid.Any) []byte {
 	return nil
 }

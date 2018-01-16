@@ -11,6 +11,7 @@ import (
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 const dirTransferProfile = "http://jabber.org/protocol/si/profile/directory-transfer"
@@ -161,12 +162,12 @@ func (ctx *dirSendContext) offerSend(file string, availableProfiles map[string]b
 }
 
 // InitSendDir starts the process of sending a directory to a peer
-func InitSendDir(s access.Session, peer data.JID, dir string, encrypted bool) *sdata.FileTransferControl {
+func InitSendDir(s access.Session, peer jid.Any, dir string, encrypted bool) *sdata.FileTransferControl {
 	ctx := &dirSendContext{
 		sc: &sendContext{
 			s:       s,
 			enc:     generateEncryptionParameters(encrypted, func() []byte { return s.CreateSymmetricKeyFor(peer) }, "external"),
-			peer:    peer.Representation(),
+			peer:    peer.String(),
 			control: sdata.CreateFileTransferControl(),
 			onFinishHook: func(ctx *sendContext) {
 				os.Remove(ctx.file)

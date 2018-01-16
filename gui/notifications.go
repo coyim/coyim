@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -19,21 +19,21 @@ func (u *gtkUI) registerLastActionTimeFor(f string, t time.Time) {
 	u.actionTimes[f] = t
 }
 
-func (u *gtkUI) maybeNotify(timestamp time.Time, account *account, from data.JIDWithoutResource, message string) {
+func (u *gtkUI) maybeNotify(timestamp time.Time, account *account, from jid.WithoutResource, message string) {
 	if u.deNotify == nil {
 		return
 	}
 
 	dname := u.displayNameFor(account, from)
 
-	if timestamp.Before(u.lastActionTimeFor(from.Representation()).Add(time.Duration(mergeNotificationsThreshold) * time.Second)) {
+	if timestamp.Before(u.lastActionTimeFor(from.String()).Add(time.Duration(mergeNotificationsThreshold) * time.Second)) {
 		fmt.Println("Decided to not show notification, since the time is not ready")
 		return
 	}
 
-	u.registerLastActionTimeFor(from.Representation(), timestamp)
+	u.registerLastActionTimeFor(from.String(), timestamp)
 
-	err := u.deNotify.show(from.Representation(), dname, message)
+	err := u.deNotify.show(from.String(), dname, message)
 	if err != nil {
 		log.Println(err)
 	}

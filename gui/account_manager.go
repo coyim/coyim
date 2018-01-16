@@ -8,8 +8,8 @@ import (
 	"github.com/coyim/coyim/otr_client"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
-	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 type accountManager struct {
@@ -174,10 +174,10 @@ func (m *accountManager) removePeer(account *account, peer string) {
 		return
 	}
 
-	l.Remove(data.JIDNR(peer))
+	l.Remove(jid.NR(peer))
 }
 
-func (m *accountManager) getPeer(account *account, peer data.JIDWithoutResource) (*rosters.Peer, bool) {
+func (m *accountManager) getPeer(account *account, peer jid.WithoutResource) (*rosters.Peer, bool) {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -189,10 +189,10 @@ func (m *accountManager) getPeer(account *account, peer data.JIDWithoutResource)
 	return l.Get(peer)
 }
 
-func (m *accountManager) displayNameFor(account *account, from data.JIDWithoutResource) string {
+func (m *accountManager) displayNameFor(account *account, from jid.WithoutResource) string {
 	p, ok := m.getPeer(account, from)
 	if !ok {
-		return from.Representation()
+		return from.String()
 	}
 
 	return p.NameForPresentation()

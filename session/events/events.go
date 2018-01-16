@@ -6,6 +6,7 @@ import (
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 // Event represents a Session event
@@ -34,14 +35,14 @@ type Peer struct {
 	Session access.Session
 	Type    PeerType
 	// This can be either with or without Resource depending on the peer type
-	From data.JID
+	From jid.Any
 }
 
 // Notification represents a notification event
 type Notification struct {
 	Session access.Session
 	// TODO: it's unclear what type of JID is needed here. This is the most general type, but maybe we can constrain it later
-	Peer         data.JID
+	Peer         jid.Any
 	Notification string
 }
 
@@ -49,7 +50,7 @@ type Notification struct {
 type DelayedMessageSent struct {
 	Session access.Session
 	// TODO: it's unclear what type of JID is needed here. Maybe we can constrain it later
-	Peer   data.JID
+	Peer   jid.Any
 	Tracer int
 }
 
@@ -81,7 +82,7 @@ type Message struct {
 	Session access.Session
 	// TODO: is it possible to get a message without a resource?
 	// Potentially - maybe from the server? We need to investigate this
-	From      data.JID
+	From      jid.Any
 	When      time.Time
 	Body      []byte
 	Encrypted bool
@@ -99,7 +100,7 @@ type ChatPresence struct {
 type ChatMessage struct {
 	// TODO: is it possible to get a message without a resource?
 	// Potentially - maybe from the server? We need to investigate this
-	From data.JIDWithResource
+	From jid.WithResource
 	When time.Time
 	Body string
 
@@ -126,7 +127,7 @@ type Log struct {
 type FileTransfer struct {
 	Session access.Session
 	// TODO: it's unclear what type of JID is needed here. Let's make it WithResource, and then fix if tyhat fails
-	Peer data.JIDWithResource
+	Peer jid.WithResource
 
 	Mime             string
 	DateLastModified string
@@ -144,7 +145,7 @@ type SMP struct {
 	Type    SMPType
 	Session access.Session
 	// TODO: it's unclear what type of JID is needed here.
-	From     data.JID
+	From     jid.Any
 	Resource string
 	Body     string
 }

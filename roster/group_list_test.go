@@ -1,7 +1,7 @@
 package roster
 
 import (
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	g "gopkg.in/check.v1"
 )
 
@@ -17,12 +17,12 @@ func (s *GroupListSuite) Test_TopLevelGroup_returnsATopLevelGroup(c *g.C) {
 	c.Check(result.groups, g.DeepEquals, map[string]*Group{})
 }
 
-func tj(s string) data.JIDWithoutResource {
-	return data.JIDNR(s)
+func tj(s string) jid.WithoutResource {
+	return jid.NR(s)
 }
 
-func tjr(s string) data.JIDWithResource {
-	return data.JIDR(s)
+func tjr(s string) jid.WithResource {
+	return jid.R(s)
 }
 
 func (s *GroupListSuite) Test_Grouped_WillGroupPeersInAList(c *g.C) {

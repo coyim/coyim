@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
 
@@ -91,7 +91,7 @@ func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
 	res := make(map[string]*config.Account)
 	for _, ac := range a.Accounts {
 		if ac.Protocol == "prpl-jabber" {
-			nm := data.ParseJID(ac.Name).EnsureNoResource().Representation()
+			nm := jid.Parse(ac.Name).NoResource().String()
 			a := &config.Account{}
 			a.Account = nm
 			a.Password = ac.Password
@@ -154,8 +154,8 @@ func importPeerPrefsPidginStyle(f string) (map[string]map[string]*pidginOTRSetti
 				}
 			}
 			if haveOTR {
-				pp := data.ParseJID(p.Account).EnsureNoResource().Representation()
-				pp2 := data.ParseJID(p.Name).EnsureNoResource().Representation()
+				pp := jid.NR(p.Account).String()
+				pp2 := jid.NR(p.Name).String()
 				getOrMake(res, pp)[pp2] = settings
 
 			}

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glib_mock"
 	"github.com/coyim/otr3"
 
@@ -25,8 +25,8 @@ type ConversationManagerSuite struct{}
 var _ = Suite(&ConversationManagerSuite{})
 
 type testSender struct {
-	peer     data.JIDWithoutResource
-	resource data.JIDResource
+	peer     jid.WithoutResource
+	resource jid.Resource
 	msg      string
 	err      error
 }
@@ -35,11 +35,11 @@ type testConvBuilder struct {
 	fake *otr3.Conversation
 }
 
-func (cb *testConvBuilder) NewConversation(peer data.JID) *otr3.Conversation {
+func (cb *testConvBuilder) NewConversation(peer jid.Any) *otr3.Conversation {
 	return cb.fake
 }
 
-func (ts *testSender) Send(peer data.JIDWithoutResource, resource data.JIDResource, msg string) error {
+func (ts *testSender) Send(peer jid.WithoutResource, resource jid.Resource, msg string) error {
 	ts.peer = peer
 	ts.msg = msg
 	ts.resource = resource
@@ -50,7 +50,7 @@ func (s *ConversationManagerSuite) Test_TerminateAll_willTerminate(c *C) {
 	cb := &testConvBuilder{&otr3.Conversation{}}
 	ts := &testSender{err: nil}
 	mgr := NewConversationManager(cb, ts)
-	conv, created := mgr.EnsureConversationWith(data.JIDNR("someone@whitehouse.gov"), data.JIDResource(""))
+	conv, created := mgr.EnsureConversationWith(jid.NR("someone@whitehouse.gov"), jid.Resource(""))
 
 	c.Assert(created, Equals, true)
 	c.Assert(conv, Not(IsNil))

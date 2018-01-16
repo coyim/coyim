@@ -23,6 +23,7 @@ import (
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 
 	"github.com/coyim/otr3"
 
@@ -230,8 +231,8 @@ func (c *cliUI) RegisterCallback(title, instructions string, fields []interface{
 	return c.promptForForm(user, c.password, title, instructions, fields)
 }
 
-func (c *cliUI) printConversationInfo(peer data.JID, conversation otr_client.Conversation) {
-	uidr := peer.Representation()
+func (c *cliUI) printConversationInfo(peer jid.Any, conversation otr_client.Conversation) {
+	uidr := peer.String()
 	s := c.session
 
 	fpr := conversation.TheirFingerprint()
@@ -576,12 +577,12 @@ func (c *cliUI) watchRosterEdits() {
 	}
 }
 
-func (c *cliUI) currentResourceFor(peer data.JID) data.JIDResource {
-	p, ok := c.session.R().Get(peer.EnsureNoResource())
+func (c *cliUI) currentResourceFor(peer jid.Any) jid.Resource {
+	p, ok := c.session.R().Get(peer.NoResource())
 	if ok {
 		return p.ResourceToUse()
 	}
-	return data.JIDResource("")
+	return jid.Resource("")
 }
 
 func (c *cliUI) watchInputCommands() {
@@ -623,8 +624,8 @@ CommandLoop:
 				rs := s.R().ToSlice()
 				maxLen := 0
 				for _, item := range rs {
-					if maxLen < len(item.Jid.Representation()) {
-						maxLen = len(item.Jid.Representation())
+					if maxLen < len(item.Jid.String()) {
+						maxLen = len(item.Jid.String())
 					}
 				}
 
@@ -640,8 +641,8 @@ CommandLoop:
 						line += "[ ] "
 					}
 
-					line += item.Jid.Representation()
-					numSpaces := 1 + (maxLen - len(item.Jid.Representation()))
+					line += item.Jid.String()
+					numSpaces := 1 + (maxLen - len(item.Jid.String()))
 					for i := 0; i < numSpaces; i++ {
 						line += " "
 					}
@@ -697,20 +698,20 @@ CommandLoop:
 					c.info("Status updates enabled")
 				}
 			case confirmCommand:
-				s.HandleConfirmOrDeny(data.JIDNR(cmd.User), true /* confirm */)
+				s.HandleConfirmOrDeny(jid.NR(cmd.User), true /* confirm */)
 			case denyCommand:
-				s.HandleConfirmOrDeny(data.JIDNR(cmd.User), false /* deny */)
+				s.HandleConfirmOrDeny(jid.NR(cmd.User), false /* deny */)
 			case addCommand:
-				s.RequestPresenceSubscription(data.JIDNR(cmd.User), "") // second argument is the potential message
+				s.RequestPresenceSubscription(jid.NR(cmd.User), "") // second argument is the potential message
 			case msgCommand:
 				message := []byte(cmd.msg)
-				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to.EnsureNoResource(), c.currentResourceFor(cmd.to))
+				conversation, _ := s.ConversationManager().EnsureConversationWith(cmd.to.NoResource(), c.currentResourceFor(cmd.to))
 				isEncrypted := conversation.IsEncrypted()
 				if cmd.setPromptIsEncrypted != nil {
 					cmd.setPromptIsEncrypted <- isEncrypted
 				}
 
-				if !isEncrypted && conf.ShouldEncryptTo(cmd.to.Representation()) {
+				if !isEncrypted && conf.ShouldEncryptTo(cmd.to.String()) {
 					c.warn(fmt.Sprintf("Did not send: no encryption established with %s", cmd.to))
 					continue
 				}
@@ -722,8 +723,8 @@ CommandLoop:
 				}
 
 			case otrCommand:
-				resource := c.currentResourceFor(data.ParseJID(cmd.User))
-				conversation, _ := s.ConversationManager().EnsureConversationWith(data.JIDNR(cmd.User), resource)
+				resource := c.currentResourceFor(jid.Parse(cmd.User))
+				conversation, _ := s.ConversationManager().EnsureConversationWith(jid.NR(cmd.User), resource)
 				conversation.StartEncryptedChat(s, resource)
 			case otrInfoCommand:
 				for _, pk := range s.PrivateKeys() {
@@ -732,13 +733,13 @@ CommandLoop:
 				for to, conversation := range s.ConversationManager().Conversations() {
 					if conversation.IsEncrypted() {
 						c.info(fmt.Sprintf("Secure session with %s underway:", to))
-						c.printConversationInfo(data.ParseJID(to), conversation)
+						c.printConversationInfo(jid.Parse(to), conversation)
 					}
 				}
 			case endOTRCommand:
-				to := data.ParseJID(cmd.User)
+				to := jid.Parse(cmd.User)
 				resource := c.currentResourceFor(to)
-				conversation, exists := s.ConversationManager().GetConversationWith(to.EnsureNoResource(), resource)
+				conversation, exists := s.ConversationManager().GetConversationWith(to.NoResource(), resource)
 
 				if !exists {
 					c.alert("No secure session established")
@@ -754,23 +755,23 @@ CommandLoop:
 				c.input.SetPromptForTarget(to, false)
 				c.warn("OTR conversation ended with " + cmd.User)
 			case authQACommand:
-				to := data.ParseJID(cmd.User)
+				to := jid.Parse(cmd.User)
 				resource := c.currentResourceFor(to)
-				conversation, exists := s.ConversationManager().GetConversationWith(to.EnsureNoResource(), resource)
+				conversation, exists := s.ConversationManager().GetConversationWith(to.NoResource(), resource)
 				if !exists {
 					c.alert("Can't authenticate without a secure conversation established")
 					break
 				}
 
-				if s.OtrEventHandler()[to.Representation()].WaitingForSecret {
-					s.OtrEventHandler()[to.Representation()].WaitingForSecret = false
+				if s.OtrEventHandler()[to.String()].WaitingForSecret {
+					s.OtrEventHandler()[to.String()].WaitingForSecret = false
 					err = conversation.ProvideAuthenticationSecret(s, resource, []byte(cmd.Secret))
 				} else {
 					err = conversation.StartAuthenticate(s, resource, cmd.Question, []byte(cmd.Secret))
 				}
 
 				if err != nil {
-					c.alert("Error while starting authentication with " + to.Representation() + ": " + err.Error())
+					c.alert("Error while starting authentication with " + to.String() + ": " + err.Error())
 				}
 
 			case authOobCommand:
@@ -789,7 +790,7 @@ CommandLoop:
 				s.CommandManager().ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
 					Account:     s.GetConfig(),
 					Session:     s,
-					Peer:        data.JIDNR(cmd.User),
+					Peer:        jid.NR(cmd.User),
 					Fingerprint: fpr,
 				})
 

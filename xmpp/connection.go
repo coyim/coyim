@@ -22,6 +22,7 @@ import (
 	"github.com/coyim/coyim/cache"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 // conn represents a connection to an XMPP server.
@@ -249,8 +250,8 @@ func (c *conn) asyncReturnIQResponse(stanza data.Stanza) error {
 		// then the matching is more complex because
 		// servers differ in how they construct the
 		// reply.
-		bare := data.ParseJID(c.jid).EnsureNoResource().Representation()
-		dm := string(data.ParseJID(c.jid).Host())
+		bare := jid.Parse(c.jid).NoResource().String()
+		dm := string(jid.Parse(c.jid).Host())
 		if len(iq.From) > 0 && iq.From != c.jid && iq.From != bare && iq.From != dm {
 			return nil
 		}

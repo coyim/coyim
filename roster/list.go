@@ -4,7 +4,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 // List represent a list of peers. It takes care of both roster and presence information
@@ -26,11 +26,11 @@ func New() *List {
 }
 
 // Get returns the peer if it's known and false otherwise
-func (l *List) Get(jid data.JIDWithoutResource) (*Peer, bool) {
+func (l *List) Get(jid jid.WithoutResource) (*Peer, bool) {
 	l.peersLock.RLock()
 	defer l.peersLock.RUnlock()
 
-	v, ok := l.peers[jid.Representation()]
+	v, ok := l.peers[jid.String()]
 	return v, ok
 }
 
@@ -44,8 +44,8 @@ func (l *List) Clear() {
 
 // Remove returns the Peer with the jid from the List
 // It returns true if it could remove the entry and false otherwise. It also returns the removed entry.
-func (l *List) Remove(jid data.JIDWithoutResource) (*Peer, bool) {
-	j := jid.Representation()
+func (l *List) Remove(jid jid.WithoutResource) (*Peer, bool) {
+	j := jid.String()
 	l.peersLock.Lock()
 	defer l.peersLock.Unlock()
 
@@ -63,12 +63,12 @@ func (l *List) AddOrMerge(p *Peer) bool {
 	l.peersLock.Lock()
 	defer l.peersLock.Unlock()
 
-	if v, existed := l.peers[p.Jid.Representation()]; existed {
-		l.peers[p.Jid.Representation()] = v.MergeWith(p)
+	if v, existed := l.peers[p.Jid.String()]; existed {
+		l.peers[p.Jid.String()] = v.MergeWith(p)
 		return false
 	}
 
-	l.peers[p.Jid.Representation()] = p
+	l.peers[p.Jid.String()] = p
 
 	return true
 }
@@ -80,18 +80,18 @@ func (l *List) AddOrReplace(p *Peer) bool {
 
 	l.peersLock.Lock()
 	defer l.peersLock.Unlock()
-	l.peers[p.Jid.Representation()] = p
+	l.peers[p.Jid.String()] = p
 
 	return !existed
 }
 
 // PeerBecameUnavailable marks the peer as unavailable if they exist
 // Returns true if they existed, otherwise false
-func (l *List) PeerBecameUnavailable(jid data.JID) bool {
-	if p, exist := l.Get(jid.EnsureNoResource()); exist {
+func (l *List) PeerBecameUnavailable(j jid.Any) bool {
+	if p, exist := l.Get(j.NoResource()); exist {
 		oldOnline := p.Online
 
-		jwr, ok := jid.(data.JIDWithResource)
+		jwr, ok := j.(jid.WithResource)
 		if ok {
 			p.RemoveResource(jwr.Resource())
 			p.Online = p.HasResources()
@@ -108,8 +108,8 @@ func (l *List) PeerBecameUnavailable(jid data.JID) bool {
 
 // PeerPresenceUpdate updates the status for the peer
 // It returns true if it actually updated the status of the user
-func (l *List) PeerPresenceUpdate(jid data.JIDWithResource, status, statusMsg, belongsTo string) bool {
-	if p, ok := l.Get(jid.WithoutResource()); ok {
+func (l *List) PeerPresenceUpdate(jid jid.WithResource, status, statusMsg, belongsTo string) bool {
+	if p, ok := l.Get(jid.NoResource()); ok {
 		oldOnline := p.Online
 		p.Online = true
 		p.AddResource(jid.Resource())
@@ -121,13 +121,13 @@ func (l *List) PeerPresenceUpdate(jid data.JIDWithResource, status, statusMsg, b
 		return !oldOnline
 	}
 
-	l.AddOrMerge(PeerWithState(jid.WithoutResource(), status, statusMsg, belongsTo, jid.Resource()))
+	l.AddOrMerge(PeerWithState(jid.NoResource(), status, statusMsg, belongsTo, jid.Resource()))
 	return true
 }
 
 // TODO: I wonder if this is correct - can there be different status for different resources?
 // StateOf returns the status and status msg of the peer if it exists. It returns not ok if the peer doesn't exist.
-func (l *List) StateOf(jid data.JIDWithoutResource) (status, statusMsg string, ok bool) {
+func (l *List) StateOf(jid jid.WithoutResource) (status, statusMsg string, ok bool) {
 	if p, existed := l.Get(jid); existed {
 		return p.Status, p.StatusMsg, true
 	}
@@ -136,13 +136,13 @@ func (l *List) StateOf(jid data.JIDWithoutResource) (status, statusMsg string, o
 }
 
 // SubscribeRequest adds a new pending subscribe request
-func (l *List) SubscribeRequest(jid data.JIDWithoutResource, id, belongsTo string) {
+func (l *List) SubscribeRequest(jid jid.WithoutResource, id, belongsTo string) {
 	l.AddOrMerge(peerWithPendingSubscribe(jid, id, belongsTo))
 }
 
 // RemovePendingSubscribe will return a subscribe id and remove the pending subscribe if it exists
 // It will return false if no such subscribe is in flight
-func (l *List) RemovePendingSubscribe(jid data.JIDWithoutResource) (string, bool) {
+func (l *List) RemovePendingSubscribe(jid jid.WithoutResource) (string, bool) {
 	if p, existed := l.Get(jid); existed {
 		s := p.PendingSubscribeID
 		p.PendingSubscribeID = ""
@@ -153,7 +153,7 @@ func (l *List) RemovePendingSubscribe(jid data.JIDWithoutResource) (string, bool
 }
 
 // GetPendingSubscribe will return a subscribe id without removing it
-func (l *List) GetPendingSubscribe(jid data.JIDWithoutResource) (string, bool) {
+func (l *List) GetPendingSubscribe(jid jid.WithoutResource) (string, bool) {
 	if p, existed := l.Get(jid); existed {
 		return p.PendingSubscribeID, p.PendingSubscribeID != ""
 	}
@@ -162,7 +162,7 @@ func (l *List) GetPendingSubscribe(jid data.JIDWithoutResource) (string, bool) {
 }
 
 // Subscribed will mark the jid as subscribed
-func (l *List) Subscribed(jid data.JIDWithoutResource) {
+func (l *List) Subscribed(jid jid.WithoutResource) {
 	if p, existed := l.Get(jid); existed {
 		switch p.Subscription {
 		case "from":
@@ -176,14 +176,14 @@ func (l *List) Subscribed(jid data.JIDWithoutResource) {
 }
 
 // LatestError will set the latest error on the jid in question
-func (l *List) LatestError(jid data.JIDWithoutResource, code, tp, more string) {
+func (l *List) LatestError(jid jid.WithoutResource, code, tp, more string) {
 	if p, existed := l.Get(jid); existed {
 		p.SetLatestError(code, tp, more)
 	}
 }
 
 // Unsubscribed will mark the jid as unsubscribed
-func (l *List) Unsubscribed(jid data.JIDWithoutResource) {
+func (l *List) Unsubscribed(jid jid.WithoutResource) {
 	if p, existed := l.Get(jid); existed {
 		switch p.Subscription {
 		case "both":
@@ -200,7 +200,7 @@ type byJidAlphabetic []*Peer
 
 func (s byJidAlphabetic) Len() int { return len(s) }
 func (s byJidAlphabetic) Less(i, j int) bool {
-	return s[i].Jid.Representation() < s[j].Jid.Representation()
+	return s[i].Jid.String() < s[j].Jid.String()
 }
 func (s byJidAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 

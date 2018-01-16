@@ -13,7 +13,7 @@ import (
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/ui"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -79,7 +79,7 @@ type securityWarningNotification struct {
 }
 
 type conversationPane struct {
-	to                   data.JID
+	to                   jid.Any
 	account              *account
 	widget               gtki.Box
 	menubar              gtki.MenuBar
@@ -210,8 +210,8 @@ func (conv *conversationPane) onSendMessageSignal() {
 	conv.entry.GrabFocus()
 }
 
-func (conv *conversationPane) currentResource() data.JIDResource {
-	return data.JIDResource(conv.mapCurrentPeer("", func(p *rosters.Peer) string {
+func (conv *conversationPane) currentResource() jid.Resource {
+	return jid.Resource(conv.mapCurrentPeer("", func(p *rosters.Peer) string {
 		return string(p.ResourceToUse())
 	}))
 }
@@ -219,7 +219,7 @@ func (conv *conversationPane) currentResource() data.JIDResource {
 func (conv *conversationPane) onStartOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	c, _ := session.ConversationManager().EnsureConversationWith(conv.to.EnsureNoResource(), conv.currentResource())
+	c, _ := session.ConversationManager().EnsureConversationWith(conv.to.NoResource(), conv.currentResource())
 	err := c.StartEncryptedChat(session, conv.currentResource())
 	if err != nil {
 		log.Printf(i18n.Local("Failed to start encrypted chat: %s\n"), err.Error())
@@ -231,7 +231,7 @@ func (conv *conversationPane) onStartOtrSignal() {
 func (conv *conversationPane) onEndOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	err := session.ManuallyEndEncryptedChat(conv.to.EnsureNoResource(), conv.currentResource())
+	err := session.ManuallyEndEncryptedChat(conv.to.NoResource(), conv.currentResource())
 
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
@@ -245,7 +245,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 }
 
 func (conv *conversationPane) onVerifyFpSignal() {
-	switch verifyFingerprintDialog(conv.account, conv.to.EnsureNoResource(), conv.currentResource(), conv.transientParent) {
+	switch verifyFingerprintDialog(conv.account, conv.to.NoResource(), conv.currentResource(), conv.transientParent) {
 	case gtki.RESPONSE_YES:
 		conv.removeIdentityVerificationWarning()
 	}
@@ -288,7 +288,7 @@ func (conv *conversationPane) doPotentialEntryResize() {
 	}
 }
 
-func createConversationPane(account *account, uid data.JID, ui *gtkUI, transientParent gtki.Window) *conversationPane {
+func createConversationPane(account *account, uid jid.Any, ui *gtkUI, transientParent gtki.Window) *conversationPane {
 	builder := newBuilder("ConversationPane")
 
 	cp := &conversationPane{
@@ -301,7 +301,7 @@ func createConversationPane(account *account, uid data.JID, ui *gtkUI, transient
 		afterNewMessage:      func() {},
 		delayed:              make(map[int]sentMessage),
 		currentPeer: func() (*rosters.Peer, bool) {
-			return ui.getPeer(account, uid.EnsureNoResource())
+			return ui.getPeer(account, uid.NoResource())
 		},
 		colorSet: ui.currentColorSet(),
 	}
@@ -328,11 +328,11 @@ func createConversationPane(account *account, uid data.JID, ui *gtkUI, transient
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
 		// TODO: this stays clicked longer than it should
 		"on_send_file_to_contact": func() {
-			if peer, ok := ui.getPeer(account, uid.EnsureNoResource()); ok {
+			if peer, ok := ui.getPeer(account, uid.NoResource()); ok {
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
 
-				doInUIThread(func() { account.sendFileTo(uid.EnsureNoResource().WithResource(peer.MustHaveResource()), ui) })
+				doInUIThread(func() { account.sendFileTo(uid.WithResource(peer.MustHaveResource()), ui) })
 			}
 		},
 	})
@@ -421,12 +421,12 @@ func (a *account) isSend(evk gdki.EventKey, shiftEnterSends bool) bool {
 	return isShiftEnter(evk)
 }
 
-func newConversationWindow(account *account, uid data.JID, ui *gtkUI, existing *conversationPane) *conversationWindow {
+func newConversationWindow(account *account, uid jid.Any, ui *gtkUI, existing *conversationPane) *conversationWindow {
 	builder := newBuilder("Conversation")
 	win := builder.getObj("conversation").(gtki.Window)
 
-	peer, ok := ui.accountManager.contacts[account].Get(uid.EnsureNoResource())
-	otherName := uid.Representation()
+	peer, ok := ui.accountManager.contacts[account].Get(uid.NoResource())
+	otherName := uid.String()
 	if ok {
 		otherName = peer.NameForPresentation()
 	}
@@ -510,7 +510,7 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 }
 
 func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) {
-	return conv.account.session.ConversationManager().GetConversationWith(conv.to.EnsureNoResource(), conv.currentResource())
+	return conv.account.session.ConversationManager().GetConversationWith(conv.to.NoResource(), conv.currentResource())
 }
 
 func (conv *conversationPane) mapCurrentPeer(def string, f func(*rosters.Peer) string) string {
@@ -530,7 +530,7 @@ func (conv *conversationPane) isVerified(u *gtkUI) bool {
 	fingerprint := conversation.TheirFingerprint()
 	conf := conv.account.session.GetConfig()
 
-	p, hasPeer := conf.GetPeer(conv.to.EnsureNoResource().Representation())
+	p, hasPeer := conf.GetPeer(conv.to.NoResource().String())
 	isNew := false
 
 	if hasPeer {
@@ -541,7 +541,7 @@ func (conv *conversationPane) isVerified(u *gtkUI) bool {
 			log.Println("Failed to save config:", err)
 		}
 	} else {
-		p = conf.EnsurePeer(conv.to.EnsureNoResource().Representation())
+		p = conf.EnsurePeer(conv.to.NoResource().String())
 		p.EnsureHasFingerprint(fingerprint)
 
 		err := u.saveConfigInternal()
@@ -612,8 +612,8 @@ type sentMessage struct {
 	message         string
 	strippedMessage []byte
 	from            string
-	to              data.JIDWithoutResource
-	resource        data.JIDResource
+	to              jid.WithoutResource
+	resource        jid.Resource
 	timestamp       time.Time
 	queuedTimestamp time.Time
 	isEncrypted     bool
@@ -718,7 +718,7 @@ func (conv *conversationPane) delayedMessageSent(trace int) {
 
 func (conv *conversationPane) sendMessage(message string) error {
 	session := conv.account.session
-	trace, delayed, err := session.EncryptAndSendTo(conv.to.EnsureNoResource(), conv.currentResource(), message)
+	trace, delayed, err := session.EncryptAndSendTo(conv.to.NoResource(), conv.currentResource(), message)
 
 	if err != nil {
 		oerr, isoff := err.(*access.OfflineError)
@@ -731,13 +731,13 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: review whether it should create a conversation
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
-		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.to.EnsureNoResource(), conv.currentResource())
+		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.to.NoResource(), conv.currentResource())
 
 		sent := sentMessage{
 			message:         message,
 			strippedMessage: ui.StripSomeHTML([]byte(message)),
 			from:            conv.account.session.DisplayName(),
-			to:              conv.to.EnsureNoResource(),
+			to:              conv.to.NoResource(),
 			resource:        conv.currentResource(),
 			timestamp:       time.Now(),
 			isEncrypted:     conversation.IsEncrypted(),

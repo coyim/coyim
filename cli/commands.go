@@ -16,7 +16,7 @@ func (c *cliUI) watchClientCommands() {
 
 			//TODO: it could be a different pointer,
 			//find the account by ID()
-			account.AuthorizeFingerprint(uid.Representation(), fpr)
+			account.AuthorizeFingerprint(uid.String(), fpr)
 			c.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
 		case otr_client.SaveInstanceTagCmd:
 			account := comm.Account

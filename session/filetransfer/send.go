@@ -11,6 +11,7 @@ import (
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
@@ -165,9 +166,9 @@ func (ctx *sendContext) initSend() {
 }
 
 // InitSend starts the process of sending a file to a peer
-func InitSend(s access.Session, peer data.JID, file string, encrypted bool) *sdata.FileTransferControl {
+func InitSend(s access.Session, peer jid.Any, file string, encrypted bool) *sdata.FileTransferControl {
 	ctx := &sendContext{
-		peer:    peer.Representation(),
+		peer:    peer.String(),
 		file:    file,
 		control: sdata.CreateFileTransferControl(),
 		s:       s,

@@ -17,6 +17,7 @@ import (
 	"github.com/coyim/coyim/digests"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 const bufSize = 1 * 4096
@@ -46,7 +47,7 @@ func bytestreamsCalculateValidProxies(s access.Session) func(key string) interfa
 	return func(key string) interface{} {
 		var ditems data.DiscoveryItemsQuery
 		possibleProxies := []string{}
-		dm := string(data.ParseJID(s.GetConfig().Account).Host())
+		dm := string(jid.Parse(s.GetConfig().Account).Host())
 		e := basicIQ(s, dm, "get", &data.DiscoveryItemsQuery{}, &ditems, func(*data.ClientIQ) {
 			for _, di := range ditems.DiscoveryItems {
 				ids, feats, _ := s.Conn().DiscoveryFeaturesAndIdentities(di.Jid)

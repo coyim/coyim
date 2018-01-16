@@ -15,8 +15,8 @@ import (
 	rosters "github.com/coyim/coyim/roster"
 	sessions "github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
-	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -677,8 +677,8 @@ func (u *gtkUI) newCustomConversation() {
 			if !ok {
 				return
 			}
-			jid, _ := peerInput.GetText()
-			u.openConversationView(account, data.JIDNR(jid), true, "")
+			j, _ := peerInput.GetText()
+			u.openConversationView(account, jid.NR(j), true, "")
 
 			dialog.Destroy()
 		},
@@ -700,7 +700,7 @@ func (u *gtkUI) addContactWindow() {
 			return errors.New(i18n.Local("Can't send a contact request from an offline account"))
 		}
 
-		peerj := data.JIDNR(peer)
+		peerj := jid.NR(peer)
 		err := account.session.RequestPresenceSubscription(peerj, msg)
 		rl := u.accountManager.getContacts(account)
 		rl.SubscribeRequest(peerj, "", accountID)
@@ -825,7 +825,7 @@ func (u *gtkUI) presenceUpdated(ev events.Presence) {
 	}
 
 	doInUIThread(func() {
-		c.appendStatus(u.accountManager.displayNameFor(account, data.JIDNR(from)), time.Now(), show, showStatus, gone)
+		c.appendStatus(u.accountManager.displayNameFor(account, jid.NR(from)), time.Now(), show, showStatus, gone)
 	})
 }
 
@@ -835,22 +835,22 @@ func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
 }
 
 //TODO: merge these 2 functions
-func (u *gtkUI) openConversationViewByAccountID(jid, accountID string) {
+func (u *gtkUI) openConversationViewByAccountID(j, accountID string) {
 	account, ok := u.accountManager.getAccountByID(accountID)
 	if !ok {
 		return
 	}
 
-	u.openConversationView(account, data.JIDNR(jid), true, "")
+	u.openConversationView(account, jid.NR(j), true, "")
 }
 
 //TODO: should receive fullJID?
 //TODO: as mentioned above, this signature is a bit messed up
-func (u *gtkUI) openConversationView(account *account, to data.JIDWithoutResource, userInitiated bool, resource data.JIDResource) conversationView {
+func (u *gtkUI) openConversationView(account *account, to jid.WithoutResource, userInitiated bool, resource jid.Resource) conversationView {
 	fullJID := to.MaybeWithResource(resource)
-	c, ok := u.getConversationView(account, fullJID.Representation())
+	c, ok := u.getConversationView(account, fullJID.String())
 	if !ok {
-		c = u.createConversationView(account, fullJID.Representation())
+		c = u.createConversationView(account, fullJID.String())
 	}
 
 	c.show(userInitiated)
@@ -889,10 +889,10 @@ func (u *gtkUI) createConversationViewBasedOnWindowLayout(account *account, full
 	var cv conversationView
 
 	if u.settings.GetSingleWindow() {
-		tt := data.ParseJID(fullJID)
-		cv = u.unified.createConversation(account, tt.EnsureNoResource().Representation(), string(data.PotentialResource(tt)), existing)
+		tt := jid.Parse(fullJID)
+		cv = u.unified.createConversation(account, tt.NoResource().String(), string(tt.PotentialResource()), existing)
 	} else {
-		cv = newConversationWindow(account, data.ParseJID(fullJID), u, existing) //TODO: Why it has gtkUI?
+		cv = newConversationWindow(account, jid.Parse(fullJID), u, existing) //TODO: Why it has gtkUI?
 	}
 	account.setConversationView(fullJID, cv)
 

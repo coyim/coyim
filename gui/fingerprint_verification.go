@@ -4,7 +4,7 @@ import (
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/otr_client"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -53,13 +53,13 @@ Purported fingerprint for %[1]s:
 	return dialog
 }
 
-func verifyFingerprintDialog(account *account, uid data.JIDWithoutResource, resource data.JIDResource, parent gtki.Window) gtki.ResponseType {
+func verifyFingerprintDialog(account *account, uid jid.WithoutResource, resource jid.Resource, parent gtki.Window) gtki.ResponseType {
 	accountConfig := account.session.GetConfig()
 	conversation, _ := account.session.ConversationManager().EnsureConversationWith(uid, resource)
 	ourFp := conversation.OurFingerprint()
 	theirFp := conversation.TheirFingerprint()
 
-	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, uid.Representation(), theirFp)
+	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, uid.String(), theirFp)
 	defer dialog.Destroy()
 
 	dialog.SetTransientFor(parent)

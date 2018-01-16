@@ -7,6 +7,7 @@ import (
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 // InitIQ is the hook function that will be called when we receive a file or directory transfer stream initiation IQ
@@ -43,7 +44,7 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 
 	s.PublishEvent(events.FileTransfer{
 		Session:          s,
-		Peer:             data.JIDR(stanza.From),
+		Peer:             jid.R(stanza.From),
 		Mime:             si.File.Hash,
 		DateLastModified: si.File.Date,
 		Name:             si.File.Name,

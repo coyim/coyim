@@ -70,7 +70,7 @@ func (u *gtkUI) watchCommands() {
 
 			//TODO: it could be a different pointer,
 			//find the account by ID()
-			account.AuthorizeFingerprint(uid.Representation(), fpr)
+			account.AuthorizeFingerprint(uid.String(), fpr)
 			u.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
 
 			ac := u.findAccountForSession(c.Session.(access.Session))

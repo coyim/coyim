@@ -13,6 +13,7 @@ import (
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -526,7 +527,7 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 }
 
 func resourceFromJid(j string) string {
-	return string(data.PotentialResource(data.ParseJID(j)))
+	return string(jid.Parse(j).PotentialResource())
 }
 
 func (v *chatRoomView) notifyUserLeftRoom(presence *data.ClientPresence) {
@@ -615,7 +616,7 @@ func (v *chatRoomView) appendToHistory(message *events.ChatMessage) {
 
 		// TODO: this is clearly completely incorrect
 		from:      string(message.From.Resource()),
-		to:        data.JIDNR(message.To),
+		to:        jid.NR(message.To),
 		timestamp: message.When,
 	}
 

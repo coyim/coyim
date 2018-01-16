@@ -17,7 +17,6 @@ import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
-	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -890,8 +889,8 @@ func (u *gtkUI) createConversationViewBasedOnWindowLayout(account *account, full
 	var cv conversationView
 
 	if u.settings.GetSingleWindow() {
-		to, resource := utils.SplitJid(fullJID) //TODO: argh
-		cv = u.unified.createConversation(account, to, resource, existing)
+		tt := data.ParseJID(fullJID)
+		cv = u.unified.createConversation(account, tt.EnsureNoResource().Representation(), string(data.PotentialResource(tt)), existing)
 	} else {
 		cv = newConversationWindow(account, data.ParseJID(fullJID), u, existing) //TODO: Why it has gtkUI?
 	}

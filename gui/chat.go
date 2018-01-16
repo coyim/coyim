@@ -13,7 +13,6 @@ import (
 	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
-	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -526,13 +525,17 @@ func (v *chatRoomView) updatePresence(presence *data.ClientPresence) {
 	}
 }
 
+func resourceFromJid(j string) string {
+	return string(data.PotentialResource(data.ParseJID(j)))
+}
+
 func (v *chatRoomView) notifyUserLeftRoom(presence *data.ClientPresence) {
-	message := fmt.Sprintf("%v left the room", utils.ResourceFromJid(presence.From))
+	message := fmt.Sprintf("%v left the room", resourceFromJid(presence.From))
 	v.notifyStatusChange(message)
 }
 
 func (v *chatRoomView) notifyUserEnteredRoom(presence *data.ClientPresence) {
-	message := fmt.Sprintf("%v entered the room", utils.ResourceFromJid(presence.From))
+	message := fmt.Sprintf("%v entered the room", resourceFromJid(presence.From))
 	v.notifyStatusChange(message)
 }
 
@@ -588,8 +591,7 @@ func (v *chatRoomView) displaySubjectChange(subject string) {
 }
 
 func (v *chatRoomView) notifySubjectChange(from, subject string) {
-	from = utils.ResourceFromJid(from)
-	message := fmt.Sprintf("%s has set the topic to \"%s\"", from, subject)
+	message := fmt.Sprintf("%s has set the topic to \"%s\"", resourceFromJid(from), subject)
 	v.notifyStatusChange(message)
 }
 

@@ -8,7 +8,6 @@ import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/data"
-	"github.com/coyim/coyim/xmpp/utils"
 )
 
 func (c *cliUI) handleSessionEvent(ev events.Event) {
@@ -53,7 +52,7 @@ func (c *cliUI) handlePresenceEvent(ev events.Presence) {
 		return
 	}
 
-	from := utils.RemoveResourceFromJid(ev.From)
+	from := data.ParseJID(ev.From).EnsureNoResource().Representation()
 
 	var line []byte
 	line = append(line, []byte(fmt.Sprintf("   (%s) ", time.Now().Format(time.Kitchen)))...)

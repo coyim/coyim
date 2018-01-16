@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -11,7 +12,6 @@ import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
-	"github.com/coyim/coyim/xmpp/utils"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -96,7 +96,10 @@ func (account *account) ID() string {
 }
 
 func (account *account) getConversationWith(to, resource string, ui *gtkUI) (c conversationView, ok bool) {
-	fullJid := utils.ComposeFullJid(to, resource)
+	fullJid := to
+	if resource != "" {
+		fullJid = fmt.Sprintf("%s/%s", to, resource)
+	}
 	c, ok = account.getConversationView(fullJid)
 	if !ok {
 		return

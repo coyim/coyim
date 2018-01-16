@@ -53,10 +53,7 @@ func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
 		return nil, errors.New("invalid room")
 	}
 
-	local := ""
-	if ll, ok := j.(jid.WithLocal); ok {
-		local = string(ll.Local())
-	}
+	local := string(jid.MaybeLocal(j))
 
 	//TODO: this error is useless when it says ("expected query, got error")
 	//It should give us a xmpp error

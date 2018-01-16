@@ -291,3 +291,11 @@ func (j Domain) WithResource(r Resource) WithResource {
 func (j Domain) MaybeWithResource(r Resource) Any {
 	return Parse(j.String() + "/" + string(r))
 }
+
+// MaybeLocal returns the local part of a JID if it has one, otherwise empty
+func MaybeLocal(j Any) Local {
+	if jj, ok := j.(WithLocal); ok {
+		return jj.Local()
+	}
+	return Local("")
+}

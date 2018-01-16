@@ -131,10 +131,7 @@ func (v *addChatView) validateForm() (string, *data.Occupant, error) {
 
 	//Validate
 	if handle == "" {
-		j := jid.Parse(bareJID)
-		if jj, ok := j.(jid.WithLocal); ok {
-			handle = string(jj.Local())
-		}
+		handle = string(jid.MaybeLocal(jid.Parse(bareJID)))
 	}
 
 	occ := &data.Occupant{

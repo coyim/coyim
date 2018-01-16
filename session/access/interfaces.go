@@ -7,7 +7,6 @@ import (
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/otr_client"
-	"github.com/coyim/coyim/otr_event"
 	"github.com/coyim/coyim/roster"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/tls"
@@ -51,7 +50,7 @@ type Session interface {
 	IsConnected() bool
 	IsDisconnected() bool
 	ManuallyEndEncryptedChat(jid.WithoutResource, jid.Resource) error
-	OtrEventHandler() map[string]*otr_event.OtrEventHandler
+	OtrEventHandler() map[string]*otr_client.EventHandler
 	PrivateKeys() []otr3.PrivateKey
 	R() *roster.List
 	ReloadKeys()

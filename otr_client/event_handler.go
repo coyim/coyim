@@ -1,4 +1,4 @@
-package otr_event
+package otr_client
 
 import (
 	"fmt"
@@ -41,8 +41,8 @@ var (
 	ErrorPrefix = "?OTR Error:"
 )
 
-// OtrEventHandler is used to contain information pertaining to the events of a specific OTR interaction
-type OtrEventHandler struct {
+// EventHandler is used to contain information pertaining to the events of a specific OTR interaction
+type EventHandler struct {
 	SmpQuestion        string
 	securityChange     SecurityChange
 	WaitingForSecret   bool
@@ -55,18 +55,18 @@ type OtrEventHandler struct {
 }
 
 // ConsumeDelayedState returns whether the given trace has been delayed or not, blanking out that status as a side effect
-func (e *OtrEventHandler) ConsumeDelayedState(trace int) bool {
+func (e *EventHandler) ConsumeDelayedState(trace int) bool {
 	val, ok := e.Delays[trace]
 	delete(e.Delays, trace)
 	return ok && val
 }
 
-func (e *OtrEventHandler) notify(s string) {
+func (e *EventHandler) notify(s string) {
 	e.Notifications <- s
 }
 
 // HandleErrorMessage is called when asked to handle a specific error message
-func (e *OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
+func (e *EventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
 	log.Printf("[%s] HandleErrorMessage(%s)", e.Account, error.String())
 
 	switch error {
@@ -84,7 +84,7 @@ func (e *OtrEventHandler) HandleErrorMessage(error otr3.ErrorCode) []byte {
 }
 
 // HandleSecurityEvent is called to handle a specific security event
-func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
+func (e *EventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 	log.Printf("[%s] HandleSecurityEvent(%s)", e.Account, event.String())
 	switch event {
 	case otr3.GoneSecure:
@@ -98,7 +98,7 @@ func (e *OtrEventHandler) HandleSecurityEvent(event otr3.SecurityEvent) {
 }
 
 // HandleSMPEvent is called to handle a specific SMP event
-func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
+func (e *EventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent int, question string) {
 	log.Printf("[%s] HandleSMPEvent(%s, %d, %s)", e.Account, event.String(), progressPercent, question)
 	switch event {
 	case otr3.SMPEventAskForSecret, otr3.SMPEventAskForAnswer:
@@ -115,7 +115,7 @@ func (e *OtrEventHandler) HandleSMPEvent(event otr3.SMPEvent, progressPercent in
 }
 
 // HandleMessageEvent is called to handle a specific message event
-func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error, trace ...interface{}) {
+func (e *EventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byte, err error, trace ...interface{}) {
 	switch event {
 	case otr3.MessageEventLogHeartbeatReceived:
 		log.Printf("[%s] Heartbeat received from %s.", e.Account, e.Peer)
@@ -173,7 +173,7 @@ func (e *OtrEventHandler) HandleMessageEvent(event otr3.MessageEvent, message []
 }
 
 // ConsumeSecurityChange is called to get the current security change and forget the old one
-func (e *OtrEventHandler) ConsumeSecurityChange() SecurityChange {
+func (e *EventHandler) ConsumeSecurityChange() SecurityChange {
 	ret := e.securityChange
 	e.securityChange = NoChange
 	return ret

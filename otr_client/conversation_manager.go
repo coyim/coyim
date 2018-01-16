@@ -1,6 +1,7 @@
 package otr_client
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/coyim/coyim/xmpp/jid"
@@ -13,7 +14,7 @@ type OnEventHandlerCreation func(jid.Any, *EventHandler, chan string, chan int)
 // Sender represents an entity capable of sending messages to peers
 type Sender interface {
 	// Send sends a message to a peer
-	Send(peer jid.WithoutResource, resource jid.Resource, msg string) error
+	Send(peer jid.Any, msg string) error
 }
 
 // ConversationManager represents an entity capable of managing Conversations
@@ -29,9 +30,6 @@ type ConversationManager interface {
 
 	// TerminateAll terminates all existing conversations
 	TerminateAll()
-
-	// LockJID Not sure about this one - we'll have to try it
-	//	LockJID(peer jid.WithResource)
 }
 
 type conversationManager struct {
@@ -75,18 +73,25 @@ func (m *conversationManager) getConversationWithUnlocked(peer jid.Any) (Convers
 	}
 
 	c, ok := m.conversations[pwor.String()]
+	if ok && pwr != nil {
+		if c.locked {
+			fmt.Printf("UNEXPECTED SITUATION OCCURRED - conversation with %s already locked to %s without saved correct - this shouldn't be possible\n", pwor, pwr)
+		}
+		c.locked = true
+		c.peer = pwr
+		c.eh.peer = pwr
+		delete(m.conversations, pwor.String())
+		m.conversations[pwr.String()] = c
+	}
+
 	return c, ok
 }
-
-// Should this lock the jid automatically? Make it manual for now...
 
 func (m *conversationManager) GetConversationWith(peer jid.Any) (Conversation, bool) {
 	m.RLock()
 	defer m.RUnlock()
 	return m.getConversationWithUnlocked(peer)
 }
-
-// Should this lock the jid automatically? Make it manual for now...
 
 func (m *conversationManager) EnsureConversationWith(peer jid.Any) (Conversation, bool) {
 	m.Lock()

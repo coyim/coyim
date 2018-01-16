@@ -47,7 +47,7 @@ type conversation struct {
 }
 
 func (c *conversation) StartEncryptedChat() error {
-	return c.s.Send(c.peer.NoResource(), c.peer.PotentialResource(), string(c.QueryMessage()))
+	return c.s.Send(c.peer, string(c.QueryMessage()))
 }
 
 func (c *conversation) EventHandler() *EventHandler {
@@ -56,7 +56,7 @@ func (c *conversation) EventHandler() *EventHandler {
 
 func (c *conversation) sendAll(toSend []otr3.ValidMessage) error {
 	for _, msg := range toSend {
-		err := c.s.Send(c.peer.NoResource(), c.peer.PotentialResource(), string(msg))
+		err := c.s.Send(c.peer, string(msg))
 		if err != nil {
 			return err
 		}

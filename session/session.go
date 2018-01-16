@@ -172,11 +172,11 @@ func (s *session) ReloadKeys() {
 }
 
 // Send will send the given message to the receiver given
-func (s *session) Send(to jid.WithoutResource, resource jid.Resource, msg string) error {
+func (s *session) Send(peer jid.Any, msg string) error {
 	conn, ok := s.connection()
 	if ok {
-		log.Printf("<- to=%v {%v}\n", to.MaybeWithResource(resource), msg)
-		return conn.Send(to.MaybeWithResource(resource).String(), msg)
+		log.Printf("<- to=%v {%v}\n", peer, msg)
+		return conn.Send(peer.String(), msg)
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }

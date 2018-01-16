@@ -55,7 +55,7 @@ type Session interface {
 	ReloadKeys()
 	RemoveContact(string)
 	RequestPresenceSubscription(jid.WithoutResource, string) error
-	Send(jid.WithoutResource, jid.Resource, string) error
+	Send(jid.Any, string) error
 	SendPing()
 	SetCommandManager(otr_client.CommandManager)
 	SetConnectionLogger(io.Writer)

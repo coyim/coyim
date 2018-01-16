@@ -10,7 +10,6 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
-	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -132,7 +131,10 @@ func (v *addChatView) validateForm() (string, *data.Occupant, error) {
 
 	//Validate
 	if handle == "" {
-		handle = xmpp.ParseJID(bareJID).LocalPart
+		j := jid.Parse(bareJID)
+		if jj, ok := j.(jid.WithLocal); ok {
+			handle = string(jj.Local())
+		}
 	}
 
 	occ := &data.Occupant{
@@ -155,7 +157,7 @@ func (v *addChatView) waitForSelfPresence(chat interfaces.Chat, occupant *data.O
 		switch e := ev.(type) {
 		case events.ChatPresence:
 			presence := e.ClientPresence
-			if xmpp.ParseJID(presence.From).Bare() != occupant.Room.JID() {
+			if jid.NR(presence.From).String() != occupant.Room.JID() {
 				continue
 			}
 
@@ -454,7 +456,7 @@ func (v *chatRoomView) leaveRoom() {
 }
 
 func (v *chatRoomView) sameRoom(from string) bool {
-	return xmpp.ParseJID(from).Bare() == v.occupant.Room.JID()
+	return jid.NR(from).String() == v.occupant.Room.JID()
 }
 
 func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
@@ -575,9 +577,9 @@ func (v *chatRoomView) redrawOccupantsList() {
 		v.occupantsView.SetModel(nil)
 		v.occupantsModel.Clear()
 
-		for jid, occupant := range v.occupantsList.m {
+		for j, occupant := range v.occupantsList.m {
 			iter := v.occupantsModel.Append()
-			v.occupantsModel.SetValue(iter, 0, xmpp.ParseJID(jid).ResourcePart)
+			v.occupantsModel.SetValue(iter, 0, string(jid.Parse(j).PotentialResource()))
 			v.occupantsModel.SetValue(iter, 1, occupant.Role)
 			v.occupantsModel.SetValue(iter, 2, occupant.Affiliation)
 		}

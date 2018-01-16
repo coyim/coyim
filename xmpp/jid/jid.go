@@ -50,13 +50,17 @@ type WithoutResource interface {
 // Bare represents a JID containing both a local component and a host component, but no resource component. A Bare is an Any
 type Bare interface {
 	WithoutResource
-	// Local returns the local part of the JID
-	Local() Local
+	WithLocal
 }
 
 // Full represents a JID containing a local, host and resource component. A Full is a Bare and an Any
 type Full interface {
 	WithResource
+	WithLocal
+}
+
+// Local represents a JID that has a Local port
+type WithLocal interface {
 	// Local returns the local part of the JID
 	Local() Local
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 const (
@@ -47,16 +48,21 @@ func (m *muc) QueryRooms(entity string) ([]data.DiscoveryItem, error) {
 
 //See: Section "6.4 Querying for Room Information"
 func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
-	jid := ParseJID(room)
-	if jid.LocalPart == "" || jid.DomainPart == "" {
+	j := jid.Parse(room)
+	if j == jid.Domain("") {
 		return nil, errors.New("invalid room")
+	}
+
+	local := ""
+	if ll, ok := j.(jid.WithLocal); ok {
+		local = string(ll.Local())
 	}
 
 	//TODO: this error is useless when it says ("expected query, got error")
 	//It should give us a xmpp error
 	query, err := m.queryRoomInformation(&data.Room{
-		ID:      jid.LocalPart,
-		Service: jid.DomainPart,
+		ID:      local,
+		Service: string(j.Host()),
 	})
 
 	if err != nil {

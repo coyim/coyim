@@ -4,14 +4,15 @@ import (
 	"log"
 
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func authorizePresenceSubscriptionDialog(parent gtki.Window, from string) gtki.MessageDialog {
+func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutResource) gtki.MessageDialog {
 	builder := newBuilder("AuthorizeSubscription")
 
 	confirmDialog := builder.getObj("dialog").(gtki.MessageDialog)
-	text := i18n.Localf("%s wants to talk to you. Is that ok?", from)
+	text := i18n.Localf("%s wants to talk to you. Is that ok?", peer)
 	confirmDialog.SetProperty("text", text)
 	confirmDialog.SetTransientFor(parent)
 
@@ -105,7 +106,7 @@ func (acd *addContactDialog) init() {
 	)
 }
 
-func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID, peer, msg, nick string, autoauth bool) error) gtki.Window {
+func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID string, peer jid.WithoutResource, msg, nick string, autoauth bool) error) gtki.Window {
 	//TODO: this can be opened before a account is connected.
 	//In this case the window is useless: cant add a contact and cant see an error
 	acd := &addContactDialog{}
@@ -129,7 +130,7 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 				return
 			}
 
-			err = sendSubscription(accountID, contact, acd.getCurrentMessage(), acd.getCurrentNickname(), acd.getAutoAuthorize())
+			err = sendSubscription(accountID, jid.NR(contact), acd.getCurrentMessage(), acd.getCurrentNickname(), acd.getAutoAuthorize())
 			if err != nil {
 				//TODO: report error
 				log.Printf("Error encountered when sending subscription: %v", err)

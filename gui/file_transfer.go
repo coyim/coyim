@@ -114,7 +114,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 	if result && name != "" {
 		fileName := resizeFileName(ev.Name)
-		cv := u.openConversationView(account, ev.Peer.NoResource(), true, jid.Resource(""))
+		cv := u.openConversationView(account, ev.Peer, true)
 		f := createNewFileTransferWithDefaults(fileName, ev.IsDirectory, false, true, ev.Control, cv)
 		u.startAllListenersForFile(ev.Control, cv, f, ev.Name, "Receiving", "receive")
 		ev.Answer <- &name
@@ -136,7 +136,7 @@ func createNewFileTransferWithDefaults(fileName string, dir bool, sending bool, 
 
 func (account *account) sendThingTo(peer jid.Any, u *gtkUI, name string, dir bool, ctl *data.FileTransferControl) {
 	nm := resizeFileName(filepath.Base(name))
-	cv := u.openConversationView(account, peer.NoResource(), true, jid.Resource(""))
+	cv := u.openConversationView(account, peer, true)
 	f := createNewFileTransferWithDefaults(nm, dir, true, false, ctl, cv)
 	u.startAllListenersForFile(ctl, cv, f, nm, "Sending", "send")
 }

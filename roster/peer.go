@@ -24,10 +24,11 @@ type Peer struct {
 	PendingSubscribeID string
 	BelongsTo          string
 	LatestError        *PeerError
-	// Instead of bool here, we should be able to use priority for the resource, when we want
-	resources     map[string]bool
-	resourcesLock sync.RWMutex
-	lastResource  string
+
+	resources      map[string]bool
+	resourcesLock  sync.RWMutex
+	lockedResource jid.Resource
+
 	HasConfigData bool
 }
 
@@ -58,7 +59,7 @@ func fromSet(vs map[string]bool) []string {
 
 // Dump will dump all info in the peer in a very verbose format
 func (p *Peer) Dump() string {
-	return fmt.Sprintf("Peer{%s[%s (%s)], subscription='%s', status='%s'('%s') online=%v, asked=%v, pendingSubscribe='%s', belongsTo='%s', resources=%v, lastResource='%s'}", p.Jid, p.Name, p.Nickname, p.Subscription, p.Status, p.StatusMsg, p.Online, p.Asked, p.PendingSubscribeID, p.BelongsTo, p.resources, p.lastResource)
+	return fmt.Sprintf("Peer{%s[%s (%s)], subscription='%s', status='%s'('%s') online=%v, asked=%v, pendingSubscribe='%s', belongsTo='%s', resources=%v, lockedResource='%s'}", p.Jid, p.Name, p.Nickname, p.Subscription, p.Status, p.StatusMsg, p.Online, p.Asked, p.PendingSubscribeID, p.BelongsTo, p.resources, p.lockedResource)
 }
 
 // PeerFrom returns a new Peer that contains the same information as the RosterEntry given
@@ -233,43 +234,18 @@ func (p *Peer) ClearResources() {
 	p.resources = toSet()
 }
 
-// LastResource sets the last resource used, if not empty
-func (p *Peer) LastResource(r jid.Resource) {
-	if r != jid.Resource("") {
-		p.lastResource = string(r)
-	}
+// LastResource sets the last resource used
+func (p *Peer) LastSeen(r jid.Any) {
+	p.lockedResource = r.PotentialResource()
+}
+
+// TODO: make sure this actually gets called
+// Presence unsets the locked resource status, no matter what presence update
+func (p *Peer) Presence() {
+	p.lockedResource = jid.Resource("")
 }
 
 // ResourceToUse returns the resource to use for this peer
 func (p *Peer) ResourceToUse() jid.Resource {
-	if p.lastResource == "" {
-		return jid.Resource("")
-	}
-	p.resourcesLock.RLock()
-	defer p.resourcesLock.RUnlock()
-
-	if p.resources[p.lastResource] {
-		return jid.Resource(p.lastResource)
-	}
-
-	return jid.Resource("")
-}
-
-// MustHaveResource always returns a valid resource, assuming the user is online
-func (p *Peer) MustHaveResource() jid.Resource {
-	toReturn := ""
-	if p.lastResource != "" {
-		p.resourcesLock.RLock()
-		defer p.resourcesLock.RUnlock()
-
-		if p.resources[p.lastResource] {
-			toReturn = p.lastResource
-		}
-	}
-
-	if toReturn == "" && p.HasResources() {
-		toReturn = string(p.Resources()[0])
-	}
-
-	return jid.Resource(toReturn)
+	return p.lockedResource
 }

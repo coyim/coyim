@@ -473,11 +473,11 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 	change := eh.ConsumeSecurityChange()
 	switch change {
 	case otr_client.NewKeys:
-		s.newOTRKeys(peer, conversation)
+		s.newOTRKeys(peer.(jid.WithResource), conversation)
 	case otr_client.RenewedKeys:
-		s.renewedOTRKeys(peer, conversation)
+		s.renewedOTRKeys(peer.(jid.WithResource), conversation)
 	case otr_client.ConversationEnded:
-		s.otrEnded(peer)
+		s.otrEnded(peer.(jid.WithResource))
 		// TODO: all this stuff is very CLI specific, we should move it out and create good interaction
 		// for the gui
 

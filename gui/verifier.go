@@ -8,15 +8,15 @@ import (
 	"regexp"
 
 	"github.com/coyim/coyim/i18n"
-	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+// TODO[jid] - fix up currentResource, peerName and peerJid
+
 type verifier struct {
 	parentWindow        gtki.Window
-	currentResource     jid.Resource
 	session             access.Session
 	notifier            *notifier
 	pinWindow           *pinWindow
@@ -27,7 +27,7 @@ type verifier struct {
 	unverifiedWarning   *unverifiedWarning
 	verificationSuccess *verificationSuccessNotification
 	peerName            func() string
-	peerJid             func() string
+	peerToSendTo        func() jid.WithResource
 }
 
 type notifier struct {
@@ -41,20 +41,20 @@ func (n *notifier) notify(i gtki.InfoBar) {
 // TODO: unify repeated stuff
 func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 	v := &verifier{
-		parentWindow:    conv.transientParent,
-		currentResource: conv.currentResource(),
-		session:         conv.account.session,
-		notifier:        &notifier{conv.notificationArea},
-		peerName: func() string {
-			return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
-				return p.NameForPresentation()
-			})
-		},
-		peerJid: func() string {
-			return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
-				return p.Jid.String()
-			})
-		},
+		parentWindow: conv.transientParent,
+		//		currentResource: conv.currentResource(),
+		session:  conv.account.session,
+		notifier: &notifier{conv.notificationArea},
+		// peerName: func() string {
+		// 	return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
+		// 		return p.NameForPresentation()
+		// 	})
+		// },
+		// peerJid: func() string {
+		// 	return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
+		// 		return p.Jid.String()
+		// 	})
+		// },
 	}
 
 	v.buildPinWindow()
@@ -130,6 +130,7 @@ type unverifiedWarning struct {
 	peerIsVerified func() bool
 }
 
+// TODO: how will this work with i18n?
 var question = "Please enter the PIN that I shared with you."
 var coyIMQuestion = regexp.MustCompile("Please enter the PIN that I shared with you.")
 
@@ -193,7 +194,7 @@ func (v *verifier) showPINDialog() {
 	v.pinWindow.pin.SetText(pin)
 	v.pinWindow.prompt.SetMarkup(i18n.Localf("Share this one-time PIN with <b>%s</b>", v.peerName()))
 
-	v.session.StartSMP(jid.NR(v.peerJid()).MaybeWithResource(v.currentResource), question, pin)
+	v.session.StartSMP(v.peerToSendTo(), question, pin)
 	v.pinWindow.dialog.ShowAll()
 
 	v.waitingForPeer.label.SetLabel(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
@@ -315,7 +316,7 @@ func (v *verifier) buildAnswerSMPDialog() {
 		"close_share_pin": func() {
 			answer, _ := v.answerSMPWindow.answer.GetText()
 			v.removeInProgressDialogs()
-			v.session.FinishSMP(jid.NR(v.peerJid()).MaybeWithResource(v.currentResource), answer)
+			v.session.FinishSMP(v.peerToSendTo(), answer)
 			v.showWaitingForPeerToCompleteSMPDialog()
 		},
 	})
@@ -467,6 +468,6 @@ func (v *verifier) hideUnverifiedWarning() {
 
 func (v *verifier) cancelSMP() {
 	v.removeInProgressDialogs()
-	v.session.AbortSMP(jid.NR(v.peerJid()).MaybeWithResource(v.currentResource))
+	v.session.AbortSMP(v.peerToSendTo())
 	v.showUnverifiedWarning()
 }

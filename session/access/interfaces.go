@@ -72,9 +72,9 @@ type Session interface {
 	PublishEvent(interface{})
 	SendFileTo(jid.Any, string, bool) *sdata.FileTransferControl
 	SendDirTo(jid.Any, string, bool) *sdata.FileTransferControl
-	StartSMP(jid.Any, string, string)
-	FinishSMP(jid.Any, string)
-	AbortSMP(jid.Any)
+	StartSMP(jid.WithResource, string, string)
+	FinishSMP(jid.WithResource, string)
+	AbortSMP(jid.WithResource)
 }
 
 // Factory is a function that can create new Sessions

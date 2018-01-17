@@ -7,6 +7,9 @@ import (
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
+// TODO: it would be awesome if we could name this something less ambigious than chatManager
+// Maybe groupChatManager?
+
 type chatManager struct {
 	//TODO: Shall we hide accountManager calls inside chatManager?
 	*accountManager

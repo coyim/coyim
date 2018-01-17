@@ -299,3 +299,10 @@ func MaybeLocal(j Any) Local {
 	}
 	return Local("")
 }
+
+func WithAndWithout(peer Any) (WithResource, WithoutResource) {
+	if pwr, ok := peer.(WithResource); ok {
+		return pwr, peer.NoResource()
+	}
+	return nil, peer.NoResource()
+}

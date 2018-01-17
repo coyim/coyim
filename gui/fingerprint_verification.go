@@ -8,7 +8,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, theirFp []byte) gtki.Dialog {
+func buildVerifyFingerprintDialog(accountName string, ourFp []byte, peer jid.WithoutResource, theirFp []byte) gtki.Dialog {
 	var message string
 	var builderName string
 
@@ -16,7 +16,7 @@ func buildVerifyFingerprintDialog(accountName string, ourFp []byte, uid string, 
 		builderName = "VerifyFingerprintUnknown"
 		message = i18n.Localf(
 			"You can't verify the fingerprint for %s yet.\n\n"+
-				"You first have to start an encrypted conversation with them.", uid)
+				"You first have to start an encrypted conversation with them.", peer)
 
 	} else {
 		m := `
@@ -30,7 +30,7 @@ Purported fingerprint for %[1]s:
 	`
 
 		message = i18n.Localf(m,
-			uid,
+			peer,
 			config.FormatFingerprint(theirFp),
 			accountName,
 			config.FormatFingerprint(ourFp),
@@ -49,17 +49,17 @@ Purported fingerprint for %[1]s:
 	l.SetText(message)
 	l.SetSelectable(true)
 
-	dialog.SetTitle(i18n.Localf("Verify fingerprint for %s", uid))
+	dialog.SetTitle(i18n.Localf("Verify fingerprint for %s", peer))
 	return dialog
 }
 
-func verifyFingerprintDialog(account *account, uid jid.WithoutResource, resource jid.Resource, parent gtki.Window) gtki.ResponseType {
+func verifyFingerprintDialog(account *account, peer jid.Any, parent gtki.Window) gtki.ResponseType {
 	accountConfig := account.session.GetConfig()
-	conversation, _ := account.session.ConversationManager().EnsureConversationWith(uid.MaybeWithResource(resource))
+	conversation, _ := account.session.ConversationManager().EnsureConversationWith(peer)
 	ourFp := conversation.OurFingerprint()
 	theirFp := conversation.TheirFingerprint()
 
-	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, uid.String(), theirFp)
+	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, peer.NoResource(), theirFp)
 	defer dialog.Destroy()
 
 	dialog.SetTransientFor(parent)
@@ -71,7 +71,7 @@ func verifyFingerprintDialog(account *account, uid jid.WithoutResource, resource
 		account.executeCmd(otr_client.AuthorizeFingerprintCmd{
 			Account:     accountConfig,
 			Session:     account.session,
-			Peer:        uid,
+			Peer:        peer.NoResource(),
 			Fingerprint: theirFp,
 		})
 	}

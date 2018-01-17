@@ -24,9 +24,6 @@ type roster struct {
 	model  gtki.TreeStore
 	view   gtki.TreeView
 
-	checkEncrypted func(to string) bool
-	sendMessage    func(to, message string)
-
 	isCollapsed map[string]bool
 	toCollapse  []gtki.TreePath
 
@@ -88,7 +85,7 @@ func getFromModelIter(m gtki.TreeStore, iter gtki.TreeIter, index int) string {
 	return v
 }
 
-func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (j jid.Any, account *account, rowType string, ok bool) {
+func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (j jid.WithoutResource, account *account, rowType string, ok bool) {
 	x := bt.X()
 	y := bt.Y()
 	path := g.gtk.TreePathNew()
@@ -100,7 +97,7 @@ func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (j jid.Any, acco
 	if err != nil {
 		return nil, nil, "", false
 	}
-	j = jid.Parse(getFromModelIter(r.model, iter, indexJid))
+	j = jid.NR(getFromModelIter(r.model, iter, indexJid))
 	accountID := getFromModelIter(r.model, iter, indexAccountID)
 	rowType = getFromModelIter(r.model, iter, indexRowType)
 	account, ok = r.ui.accountManager.getAccountByID(accountID)
@@ -172,14 +169,14 @@ func (r *roster) updatePeer(acc *account, jid jid.WithoutResource, nickname stri
 	return nil
 }
 
-func (r *roster) renamePeer(acc *account, jid jid.WithoutResource, nickname string) {
-	peer, ok := r.ui.getPeer(acc, jid)
+func (r *roster) renamePeer(acc *account, peer jid.WithoutResource, nickname string) {
+	p, ok := r.ui.getPeer(acc, peer)
 	if !ok {
 		return
 	}
 
 	// This updates what is displayed in the roster
-	peer.Nickname = nickname
+	p.Nickname = nickname
 
 	// This saves the nickname to the config file
 	// NOTE: This requires the account to be connected in order to rename peers,
@@ -207,15 +204,13 @@ func toArray(groupList gtki.ListStore) []string {
 	return groups
 }
 
-func (r *roster) setSensitive(menuItem gtki.MenuItem, account *account, jid jid.WithoutResource) {
-	peer, ok := r.ui.getPeer(account, jid)
+func (r *roster) setSensitive(menuItem gtki.MenuItem, account *account, peer jid.WithoutResource) {
+	p, ok := r.ui.getPeer(account, peer)
 	if !ok {
 		return
 	}
 
-	hasResources := peer.HasResources()
-
-	menuItem.SetSensitive(hasResources)
+	menuItem.SetSensitive(p.HasResources())
 }
 
 func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *account, bt gdki.EventButton) {
@@ -234,11 +229,11 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 	builder.ConnectSignals(map[string]interface{}{
 		"on_remove_contact": func() {
 			account.session.RemoveContact(jid.String())
-			r.ui.removePeer(account, jid.String())
+			r.ui.removePeer(account, jid)
 			r.redraw()
 		},
 		"on_edit_contact": func() {
-			doInUIThread(func() { r.openEditContactDialog(jid.String(), account) })
+			doInUIThread(func() { r.openEditContactDialog(jid, account) })
 		},
 		"on_allow_contact_to_see_status": func() {
 			account.session.ApprovePresenceSubscription(jid, "" /* generate id */)
@@ -254,21 +249,21 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 		},
 		"on_send_file_to_contact": func() {
 			if peer, ok := r.ui.getPeer(account, jid); ok {
-				// TODO: jid fix - this is clearly wrong, but backwards compatible
+				// TODO[jid] - this is clearly wrong, but backwards compatible
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
 				doInUIThread(func() {
-					account.sendFileTo(jid.WithResource(peer.MustHaveResource()), r.ui)
+					account.sendFileTo(jid.WithResource(peer.ResourceToUse()), r.ui)
 				})
 			}
 		},
 		"on_send_directory_to_contact": func() {
 			if peer, ok := r.ui.getPeer(account, jid); ok {
-				// TODO: jid fix - this is clearly wrong, but backwards compatible
+				// TODO[jid] - this is clearly wrong, but backwards compatible
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
 				doInUIThread(func() {
-					account.sendDirectoryTo(jid.WithResource(peer.MustHaveResource()), r.ui)
+					account.sendDirectoryTo(jid.WithResource(peer.ResourceToUse()), r.ui)
 				})
 			}
 		},
@@ -297,7 +292,7 @@ func (r *roster) appendResourcesAsMenuItems(jid jid.WithoutResource, account *ac
 		item.Connect("activate",
 			func() {
 				doInUIThread(func() {
-					r.openConversationView(account, jid, true, resource)
+					r.ui.openTargetedConversationView(account, jid.WithResource(resource), true)
 				})
 			})
 		innerMenu.Append(item)
@@ -371,7 +366,7 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 		return
 	}
 
-	jid := getFromModelIter(r.model, iter, indexJid)
+	peer := getFromModelIter(r.model, iter, indexJid)
 	rowType := getFromModelIter(r.model, iter, indexRowType)
 
 	switch rowType {
@@ -383,17 +378,16 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 
 		defer selection.UnselectPath(path)
 		accountID := getFromModelIter(r.model, iter, indexAccountID)
-		r.ui.openConversationViewByAccountID(jid, accountID)
+		account, ok := r.ui.accountManager.getAccountByID(accountID)
+		if !ok {
+			return
+		}
+		r.ui.openConversationView(account, jid.NR(peer), true)
 	case "account":
-		r.activateAccountRow(jid)
+		r.activateAccountRow(peer)
 	default:
 		panic(fmt.Sprintf("unknown roster row type: %s", rowType))
 	}
-}
-
-//This has no dependency on the roster
-func (r *roster) openConversationView(account *account, to jid.WithoutResource, userInitiated bool, resource jid.Resource) conversationView {
-	return r.ui.openConversationView(account, to, userInitiated, resource)
 }
 
 func (r *roster) displayNameFor(account *account, from jid.WithoutResource) string {
@@ -405,15 +399,12 @@ func (r *roster) displayNameFor(account *account, from jid.WithoutResource) stri
 	return p.NameForPresentation()
 }
 
-func (r *roster) presenceUpdated(account *account, from, show, showStatus string, gone bool) {
-	c, ok := account.getConversationWith(from, "", r.ui)
-	if !ok {
-		return
-	}
-
-	doInUIThread(func() {
-		c.appendStatus(r.displayNameFor(account, jid.NR(from)), time.Now(), show, showStatus, gone)
-	})
+func (r *roster) presenceUpdated(account *account, peer jid.WithResource, show, showStatus string, gone bool) {
+	r.ui.NewConversationViewFactory(account, peer, false).IfConversationView(func(c conversationView) {
+		doInUIThread(func() {
+			c.appendStatus(r.displayNameFor(account, peer.NoResource()), time.Now(), show, showStatus, gone)
+		})
+	}, func() {})
 }
 
 func (r *roster) update(account *account, entries *rosters.List) {

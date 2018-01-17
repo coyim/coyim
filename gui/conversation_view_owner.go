@@ -1,0 +1,324 @@
+package gui
+
+import (
+	"fmt"
+
+	rosters "github.com/coyim/coyim/roster"
+	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/gdki"
+	"github.com/coyim/gotk3adapter/gtki"
+)
+
+// All of our management of conversation views are spread all over the place.
+// From now on, all of this code will be in this kind of object, that will
+// be temporarily created to provide all the functionality needed
+// all the ACTUAL functionality will be exposed on gtkUI or in the correct place
+// GUI code should never need to use this code - it's purely an implementation
+// strategy for the "public" methods
+
+type ConversationViewFactory interface {
+	OpenConversationView(userInitiated bool) conversationView
+	IfConversationView(whenExists func(conversationView), whenDoesntExist func())
+}
+
+type conversationViewFactory struct {
+	account  *account
+	peer     jid.Any
+	ui       *gtkUI
+	ul       *unifiedLayout
+	targeted bool
+}
+
+func (u *gtkUI) NewConversationViewFactory(account *account, peer jid.Any, targeted bool) ConversationViewFactory {
+	return &conversationViewFactory{
+		ui:       u,
+		ul:       u.unified,
+		account:  account,
+		peer:     peer,
+		targeted: targeted,
+	}
+}
+
+func (cvf *conversationViewFactory) OpenConversationView(userInitiated bool) conversationView {
+	c, ok := cvf.getConversationViewSafely()
+	if !ok {
+		c = cvf.createConversationView(nil)
+	}
+
+	c.show(userInitiated)
+	return c
+}
+
+func (cvf *conversationViewFactory) IfConversationView(whenExists func(conversationView), whenDoesntExist func()) {
+	c, ok := cvf.getConversationViewSafely()
+	if ok {
+		whenExists(c)
+	} else {
+		whenDoesntExist()
+	}
+}
+
+func (cvf *conversationViewFactory) createConversationView(existing *conversationPane) conversationView {
+	var cv conversationView
+
+	if cvf.ui.settings.GetSingleWindow() {
+		cv = cvf.createUnifiedConversationView(existing)
+	} else {
+		cv = cvf.createWindowedConversationView(existing)
+	}
+	cvf.setConversationView(cv)
+
+	return cv
+}
+
+func (cvf *conversationViewFactory) createWindowedConversationView(existing *conversationPane) *conversationWindow {
+	builder := newBuilder("Conversation")
+	win := builder.getObj("conversation").(gtki.Window)
+
+	p, ok := cvf.ui.accountManager.getPeer(cvf.account, cvf.peer.NoResource())
+	otherName := cvf.peer.String()
+	if ok {
+		otherName = p.NameForPresentation()
+	}
+
+	// TODO: Can we put the security rating here, maybe?
+	win.SetTitle(fmt.Sprintf("%s <-> %s", cvf.account.session.DisplayName(), otherName))
+	winBox := builder.getObj("box").(gtki.Box)
+
+	cp := cvf.createConversationPane(win)
+	if existing != nil {
+		b, _ := existing.history.GetBuffer()
+		cp.history.SetBuffer(b)
+	}
+
+	cp.menubar.Show()
+	winBox.PackStart(cp.widget, true, true, 0)
+
+	conv := &conversationWindow{
+		conversationPane: cp,
+		win:              win,
+	}
+
+	cp.connectEnterHandler(conv.win)
+	cp.afterNewMessage = conv.potentiallySetUrgent
+
+	// Unlike the GTK version, this is not supposed to be used as a callback but
+	// it attaches the callback to the widget
+	conv.win.HideOnDelete()
+
+	inEventHandler := false
+	conv.win.Connect("set-focus", func() {
+		if !inEventHandler {
+			inEventHandler = true
+			conv.entry.GrabFocus()
+			inEventHandler = false
+		}
+	})
+
+	conv.win.Connect("focus-in-event", func() {
+		conv.unsetUrgent()
+	})
+
+	conv.win.Connect("notify::is-active", func() {
+		if conv.win.IsActive() {
+			inEventHandler = true
+			conv.entry.GrabFocus()
+			inEventHandler = false
+		}
+	})
+
+	conv.win.Connect("hide", func() {
+		conv.onHide()
+	})
+
+	conv.win.Connect("show", func() {
+		conv.onShow()
+	})
+
+	cvf.ui.connectShortcutsChildWindow(conv.win)
+	cvf.ui.connectShortcutsConversationWindow(conv)
+	conv.parentWin = cvf.ui.window
+	return conv
+}
+
+func (cvf *conversationViewFactory) createUnifiedConversationView(existing *conversationPane) conversationView {
+	cp := cvf.createConversationPane(cvf.ui.window)
+
+	if existing != nil {
+		b, _ := existing.history.GetBuffer()
+		cp.history.SetBuffer(b)
+	}
+
+	cp.connectEnterHandler(nil)
+
+	idx := cvf.ul.notebook.AppendPage(cp.widget, nil)
+	if idx < 0 {
+		panic("Failed to append page to notebook")
+	}
+
+	csi := &conversationStackItem{
+		conversationPane: cp,
+		pageIndex:        idx,
+		layout:           cvf.ul,
+	}
+
+	//	csi.entry.SetHasFrame(true)
+	csi.entryScroll.SetMarginTop(5)
+	csi.entryScroll.SetMarginBottom(5)
+
+	tabLabel := csi.shortName()
+	resource := string(cvf.peer.PotentialResource())
+	if resource != "" {
+		tabLabel = tabLabel + " [at] " + resource
+	}
+	cvf.ul.notebook.SetTabLabelText(cp.widget, tabLabel)
+	cvf.ul.itemMap[idx] = csi
+	buffer, _ := csi.history.GetBuffer()
+	buffer.Connect("changed", func() {
+		cvf.ul.onConversationChanged(csi)
+	})
+	return csi
+}
+
+func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *conversationPane {
+	builder := newBuilder("ConversationPane")
+
+	var target jid.Any = cvf.peer.NoResource()
+	if cvf.targeted {
+		target = cvf.peer.(jid.WithResource)
+	}
+
+	cp := &conversationPane{
+		isTargeted: cvf.targeted,
+		target:     target,
+		otrLock:    nil,
+
+		account:              cvf.account,
+		fileTransferNotif:    builder.fileTransferNotifInit(),
+		securityWarningNotif: builder.securityWarningNotifInit(),
+		transientParent:      win,
+		shiftEnterSends:      cvf.ui.settings.GetShiftEnterForSend(),
+		afterNewMessage:      func() {},
+		delayed:              make(map[int]sentMessage),
+		currentPeer: func() (*rosters.Peer, bool) {
+			return cvf.ui.getPeer(cvf.account, cvf.peer.NoResource())
+		},
+		colorSet: cvf.ui.currentColorSet(),
+	}
+
+	builder.getItems(
+		"box", &cp.widget,
+		"menuTag", &cp.encryptedLabel,
+		"history", &cp.history,
+		"pending", &cp.pending,
+		"historyScroll", &cp.scrollHistory,
+		"pendingScroll", &cp.scrollPending,
+		"message", &cp.entry,
+		"notification-area", &cp.notificationArea,
+		"menubar", &cp.menubar,
+		"messageScroll", &cp.entryScroll,
+	)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_start_otr_signal":      cp.onStartOtrSignal,
+		"on_end_otr_signal":        cp.onEndOtrSignal,
+		"on_verify_fp_signal":      cp.onVerifyFpSignal,
+		"on_connect":               cp.onConnect,
+		"on_disconnect":            cp.onDisconnect,
+		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
+		// TODO: this stays clicked longer than it should
+		"on_send_file_to_contact": func() {
+			// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
+			// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
+			// TODO[jid] - double check this
+			doInUIThread(func() { cvf.account.sendFileTo(cp.peerToSendTo(), cvf.ui) })
+		},
+	})
+
+	// TODO: why 115 here?
+	win.AddMnemonic(uint(115), cp.encryptedLabel)
+	win.SetMnemonicModifier(gdki.GDK_CONTROL_MASK)
+
+	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
+
+	prov := providerWithCSS("scrolledwindow { border-top: 2px solid #d3d3d3; } ")
+	updateWithStyle(cp.entryScroll, prov)
+
+	cp.history.SetBuffer(cvf.ui.getTags().createTextBuffer())
+	cp.history.Connect("size-allocate", func() {
+		scrollToBottom(cp.scrollHistory)
+	})
+
+	cp.pending.SetBuffer(cvf.ui.getTags().createTextBuffer())
+
+	cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
+
+	cvf.ui.displaySettings.control(cp.history)
+	cvf.ui.displaySettings.shadeBackground(cp.pending)
+	cvf.ui.displaySettings.control(cp.entry)
+	cvf.ui.keyboardSettings.control(cp.entry)
+	cvf.ui.keyboardSettings.update()
+
+	cp.verifier = newVerifier(cvf.ui, cp)
+
+	return cp
+}
+
+func (cvf *conversationViewFactory) setConversationView(c conversationView) {
+	defer cvf.account.executeDelayed(cvf.peer)
+	cvf.account.cvs.Lock()
+	defer cvf.account.cvs.Unlock()
+
+	if cold, ok := cvf.account.cvs.c[c.getTarget().String()]; ok {
+		cold.destroy()
+	}
+
+	cvf.account.cvs.c[c.getTarget().String()] = c
+}
+
+func (cvf *conversationViewFactory) isWindowingStyleConsistent(c conversationView) bool {
+	unifiedLayout := cvf.ui.settings.GetSingleWindow()
+	_, windowUnifiedLayout := c.(*conversationStackItem)
+	return unifiedLayout == windowUnifiedLayout
+}
+
+func (cvf *conversationViewFactory) getConversationViewSafely() (conversationView, bool) {
+	c, ok := cvf.basicGetConversationView()
+	if !ok || cvf.isWindowingStyleConsistent(c) {
+		return nil, false
+	}
+
+	defer c.destroy()
+
+	var pane *conversationPane
+	switch v := c.(type) {
+	case *conversationWindow:
+		pane = v.conversationPane
+	case *conversationStackItem:
+		pane = v.conversationPane
+	}
+
+	return cvf.createConversationView(pane), true
+}
+
+func (cvf *conversationViewFactory) basicGetConversationView() (conversationView, bool) {
+	cvf.account.cvs.RLock()
+	defer cvf.account.cvs.RUnlock()
+
+	pw, pwo := jid.WithAndWithout(cvf.peer)
+
+	if pw != nil {
+		if c, ok := cvf.account.cvs.c[pw.String()]; ok {
+			// This check is not strictly necessary - something should go VERY wrong if it triggers
+			if c.isOtrLockedTo(cvf.peer) {
+				return c, true
+			}
+		}
+	}
+
+	if c, ok := cvf.account.cvs.c[pwo.String()]; ok && c.isOtrLockedTo(cvf.peer) {
+		return c, true
+	}
+
+	return nil, false
+}

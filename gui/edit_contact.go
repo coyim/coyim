@@ -117,20 +117,20 @@ func (ecd *editContactDialog) initCurrentGroups(groups []string) {
 	}
 }
 
-func (ecd *editContactDialog) showFingerprintsForPeer(jid string, account *account) {
+func (ecd *editContactDialog) showFingerprintsForPeer(peer jid.WithoutResource, account *account) {
 	info := ecd.fingerprintsInformation
 	grid := ecd.fingerprintsGrid
 
 	fprs := []*config.Fingerprint{}
-	p, ok := account.session.GetConfig().GetPeer(jid)
+	p, ok := account.session.GetConfig().GetPeer(peer.String())
 	if ok {
 		fprs = p.Fingerprints
 	}
 
 	if len(fprs) == 0 {
-		info.SetText(i18n.Localf("There are no known fingerprints for %s", jid))
+		info.SetText(i18n.Localf("There are no known fingerprints for %s", peer))
 	} else {
-		info.SetText(i18n.Localf("These are the fingerprints known for %s:", jid))
+		info.SetText(i18n.Localf("These are the fingerprints known for %s:", peer))
 	}
 
 	for ix, fpr := range fprs {
@@ -149,11 +149,11 @@ func (ecd *editContactDialog) showFingerprintsForPeer(jid string, account *accou
 	}
 }
 
-func (r *roster) openEditContactDialog(j string, acc *account) {
+func (r *roster) openEditContactDialog(peer jid.WithoutResource, acc *account) {
 	assertInUIThread()
-	peer, ok := r.ui.accountManager.getPeer(acc, jid.NR(j))
+	p, ok := r.ui.accountManager.getPeer(acc, peer)
 	if !ok {
-		log.Printf("Couldn't find peer %s in account %v", j, acc)
+		log.Printf("Couldn't find peer %s in account %v", peer, acc)
 		return
 	}
 
@@ -162,22 +162,22 @@ func (r *roster) openEditContactDialog(j string, acc *account) {
 	ecd := &editContactDialog{}
 	ecd.init()
 	ecd.accountName.SetText(conf.Account)
-	ecd.contactJID.SetText(j)
+	ecd.contactJID.SetText(peer.String())
 
 	//nickNameEntry.SetText(peer.Name)
-	if peer, ok := r.ui.getPeer(acc, jid.NR(j)); ok {
-		ecd.nickname.SetText(peer.Nickname)
+	if p, ok := r.ui.getPeer(acc, peer); ok {
+		ecd.nickname.SetText(p.Nickname)
 	}
 
-	shouldEncryptTo := conf.ShouldEncryptTo(j)
+	shouldEncryptTo := conf.ShouldEncryptTo(peer.String())
 	ecd.requireEncryption.SetActive(shouldEncryptTo)
 
-	ecd.initCurrentGroups(sortedGroupNames(peer.Groups))
+	ecd.initCurrentGroups(sortedGroupNames(p.Groups))
 	ecd.initAllGroups(r.getGroupNamesFor(acc))
 
 	ecd.existingGroups.Add(ecd.addGroup)
 	ecd.removeGroup.SetSensitive(false)
-	ecd.showFingerprintsForPeer(j, acc)
+	ecd.showFingerprintsForPeer(peer, acc)
 
 	//TODO: Move to editContactDialog
 	ecd.builder.ConnectSignals(map[string]interface{}{
@@ -193,7 +193,7 @@ func (r *roster) openEditContactDialog(j string, acc *account) {
 			groups := toArray(ecd.currentGroups)
 			nickname, _ := ecd.nickname.GetText()
 
-			err := r.updatePeer(acc, jid.NR(j), nickname, groups, ecd.requireEncryption.GetActive() != shouldEncryptTo, ecd.requireEncryption.GetActive())
+			err := r.updatePeer(acc, peer, nickname, groups, ecd.requireEncryption.GetActive() != shouldEncryptTo, ecd.requireEncryption.GetActive())
 			if err != nil {
 				log.Println(err)
 			}

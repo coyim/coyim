@@ -168,13 +168,13 @@ func (*SessionMock) Warn(string) {}
 func (*SessionMock) Info(string) {}
 
 // StartSMP is the implementation for Session interface
-func (*SessionMock) StartSMP(jid.Any, string, string) {}
+func (*SessionMock) StartSMP(jid.WithResource, string, string) {}
 
 // FinishSMP is the implementation for Session interface
-func (*SessionMock) FinishSMP(jid.Any, string) {}
+func (*SessionMock) FinishSMP(jid.WithResource, string) {}
 
 // AbortSMP is the implementation for Session interface
-func (*SessionMock) AbortSMP(jid.Any) {}
+func (*SessionMock) AbortSMP(jid.WithResource) {}
 
 // PublishEvent is the implementation for Session interface
 func (*SessionMock) PublishEvent(interface{}) {}

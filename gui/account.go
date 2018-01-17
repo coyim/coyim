@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -21,8 +20,7 @@ type account struct {
 	currentNotification gtki.InfoBar
 	xmlConsole          gtki.Dialog
 
-	//TODO: Should this be a map of roster.Peer and conversationView?
-	conversations map[string]conversationView
+	cvs *conversationViews
 
 	session access.Session
 
@@ -39,40 +37,21 @@ type account struct {
 	sync.RWMutex
 }
 
-func (account *account) getConversationView(fullJID string) (conversationView, bool) {
-	account.RLock()
-	defer account.RUnlock()
-
-	c, ok := account.conversations[fullJID]
-	return c, ok
-}
-
-func (account *account) executeDelayed(fullJID string) {
+func (account *account) executeDelayed(peer jid.Any) {
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 
-	cv, ok := account.getConversationView(fullJID)
-	if !ok {
-		panic("race condition")
-	}
+	// TODO[jid] - Fix later
+	// cv, ok := account.getConversationView(peer)
+	// if !ok {
+	// 	panic("race condition")
+	// }
 
-	for _, f := range account.delayedConversations[fullJID] {
-		f(cv)
-	}
+	// for _, f := range account.delayedConversations[peer.String()] {
+	// 	f(cv)
+	// }
 
-	delete(account.delayedConversations, fullJID)
-}
-
-func (account *account) setConversationView(fullJID string, c conversationView) {
-	defer account.executeDelayed(fullJID)
-
-	account.Lock()
-	if c, ok := account.conversations[fullJID]; ok {
-		c.destroy() // We dont want the previous conversation to be visible after this moment
-	}
-
-	account.conversations[fullJID] = c
-	account.Unlock()
+	// delete(account.delayedConversations, peer.String())
 }
 
 type byAccountNameAlphabetic []*account
@@ -86,7 +65,7 @@ func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf access.Factory, df interfaces.DialerFactory) *account {
 	return &account{
 		session:              sf(conf, currentConf, df),
-		conversations:        make(map[string]conversationView),
+		cvs:                  newConversationViews(),
 		delayedConversations: make(map[string][]func(conversationView)),
 	}
 }
@@ -95,34 +74,7 @@ func (account *account) ID() string {
 	return account.session.GetConfig().ID()
 }
 
-func (account *account) getConversationWith(to, resource string, ui *gtkUI) (c conversationView, ok bool) {
-	fullJid := to
-	if resource != "" {
-		fullJid = fmt.Sprintf("%s/%s", to, resource)
-	}
-	c, ok = account.getConversationView(fullJid)
-	if !ok {
-		return
-	}
-
-	_, unifiedType := c.(*conversationStackItem)
-	if ui.settings.GetSingleWindow() == unifiedType {
-		//This is only true when c is nil
-		return
-	}
-
-	// Why not a simple type switch?
-	if !unifiedType {
-		cv1 := c.(*conversationWindow)
-		c = ui.unified.createConversation(account, to, resource, cv1.conversationPane)
-	} else {
-		cv1 := c.(*conversationStackItem)
-		c = newConversationWindow(account, jid.Parse(fullJid), ui, cv1.conversationPane)
-	}
-
-	account.setConversationView(fullJid, c)
-	return
-}
+// TODO[jid] - this argument should be a jid argument
 func (account *account) afterConversationWindowCreated(to string, f func(conversationView)) {
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
@@ -134,13 +86,7 @@ func (account *account) enableExistingConversationWindows(enable bool) {
 	if account == nil {
 		return
 	}
-
-	account.RLock()
-	defer account.RUnlock()
-
-	for _, cv := range account.conversations {
-		cv.setEnabled(enable)
-	}
+	account.cvs.enableExistingConversationWindows(enable)
 }
 
 func (account *account) executeCmd(c interface{}) {
@@ -221,10 +167,11 @@ func (account *account) runSessionObserver() {
 			case events.Connected, events.Disconnected, events.Connecting:
 				doInUIThread(func() {
 					account.sessionObserverLock.RLock()
+					defer account.sessionObserverLock.RUnlock()
+
 					for _, ff := range account.connectionEventHandlers {
 						ff()
 					}
-					account.sessionObserverLock.RUnlock()
 				})
 			}
 		}

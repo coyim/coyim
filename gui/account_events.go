@@ -79,23 +79,20 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 		return
 	}
 
-	from, resource := ev.From.PotentialSplit()
 	timestamp := ev.When
 	encrypted := ev.Encrypted
 	message := ev.Body
 
-	p, ok := u.getPeer(account, from)
+	p, ok := u.getPeer(account, ev.From.NoResource())
 	if ok {
-		p.LastResource(resource)
+		p.LastSeen(ev.From)
 	}
 
 	doInUIThread(func() {
-		//TODO: here we dont want to open, only findOrCreate
-		//this is what the false means
-		conv := u.openConversationView(account, from, false, "")
+		conv := u.openConversationView(account, ev.From, false)
 
 		sent := sentMessage{
-			from:            u.displayNameFor(account, from),
+			from:            u.displayNameFor(account, ev.From.NoResource()),
 			timestamp:       timestamp,
 			isEncrypted:     encrypted,
 			isOutgoing:      false,
@@ -104,7 +101,7 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 		conv.appendMessage(sent)
 
 		if !conv.isVisible() {
-			u.maybeNotify(timestamp, account, from, string(ui.StripSomeHTML(message)))
+			u.maybeNotify(timestamp, account, ev.From.NoResource(), string(ui.StripSomeHTML(message)))
 		}
 	})
 
@@ -141,14 +138,9 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 }
 
 func convWindowNowOrLater(account *account, peer jid.Any, ui *gtkUI, f func(conversationView)) {
-	// TODO: this is clearly wrong
-	fullJID := peer.NoResource().String()
-	convWin, ok := ui.getConversationView(account, fullJID)
-	if !ok {
+	ui.NewConversationViewFactory(account, peer, false).IfConversationView(f, func() {
 		account.afterConversationWindowCreated(peer.String(), f)
-	} else {
-		f(convWin)
-	}
+	})
 }
 
 func (u *gtkUI) handlePeerEvent(ev events.Peer) {
@@ -161,10 +153,12 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 	switch ev.Type {
 	case events.IQReceived:
 		//TODO
+		// TODO WHAT?
 		log.Printf("received iq: %v\n", ev.From)
 	case events.OTREnded:
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
+			cv.removeOtrLock()
 			cv.displayNotification(i18n.Local("Private conversation has ended."))
 			cv.updateSecurityWarning()
 			cv.removeIdentityVerificationWarning()
@@ -174,6 +168,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 	case events.OTRNewKeys:
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
+			cv.setOtrLock(ev.From.(jid.WithResource))
 			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
 			cv.appendPendingDelayed()
 			identityWarning(cv)
@@ -188,7 +183,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		})
 
 	case events.SubscriptionRequest:
-		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From.String())
+		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From.NoResource())
 
 		doInUIThread(func() {
 			responseType := gtki.ResponseType(confirmDialog.Run())
@@ -216,21 +211,19 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 
 func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.Peer.NoResource(), false, jid.Resource(""))
-
+	convWin := u.openConversationView(account, ev.Peer, false)
 	convWin.displayNotification(i18n.Local(ev.Notification))
 }
 
 func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.Peer.NoResource(), false, jid.Resource(""))
-
+	convWin := u.openConversationView(account, ev.Peer, false)
 	convWin.delayedMessageSent(ev.Tracer)
 }
 
 func (u *gtkUI) handleSMPEvent(ev events.SMP) {
 	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.From.NoResource(), false, jid.Resource(""))
+	convWin := u.openConversationView(account, ev.From, false)
 
 	switch ev.Type {
 	case events.SecretNeeded:

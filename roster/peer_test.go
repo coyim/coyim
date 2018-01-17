@@ -58,7 +58,7 @@ func (s *PeerSuite) Test_Dump_willDumpAllInfo(c *g.C) {
 		resources:    toSet(),
 	}
 
-	c.Assert(p.Dump(), g.Equals, "Peer{foo@bar.com[something ()], subscription='from', status=''('') online=false, asked=false, pendingSubscribe='', belongsTo='', resources=map[], lastResource=''}")
+	c.Assert(p.Dump(), g.Equals, "Peer{foo@bar.com[something ()], subscription='from', status=''('') online=false, asked=false, pendingSubscribe='', belongsTo='', resources=map[], lockedResource=''}")
 }
 
 func (s *PeerSuite) Test_PeerWithState_createsANewPeer(c *g.C) {

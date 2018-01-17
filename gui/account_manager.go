@@ -165,7 +165,7 @@ func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationC
 	}
 }
 
-func (m *accountManager) removePeer(account *account, peer string) {
+func (m *accountManager) removePeer(account *account, peer jid.WithoutResource) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -174,7 +174,7 @@ func (m *accountManager) removePeer(account *account, peer string) {
 		return
 	}
 
-	l.Remove(jid.NR(peer))
+	l.Remove(peer)
 }
 
 func (m *accountManager) getPeer(account *account, peer jid.WithoutResource) (*rosters.Peer, bool) {
@@ -189,10 +189,10 @@ func (m *accountManager) getPeer(account *account, peer jid.WithoutResource) (*r
 	return l.Get(peer)
 }
 
-func (m *accountManager) displayNameFor(account *account, from jid.WithoutResource) string {
-	p, ok := m.getPeer(account, from)
+func (m *accountManager) displayNameFor(account *account, peer jid.WithoutResource) string {
+	p, ok := m.getPeer(account, peer)
 	if !ok {
-		return from.String()
+		return peer.String()
 	}
 
 	return p.NameForPresentation()

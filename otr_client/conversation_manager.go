@@ -56,15 +56,8 @@ func NewConversationManager(builder ConversationBuilder, sender Sender, account 
 	}
 }
 
-func peerWithAndWithout(peer jid.Any) (jid.WithResource, jid.WithoutResource) {
-	if pwr, ok := peer.(jid.WithResource); ok {
-		return pwr, peer.NoResource()
-	}
-	return nil, peer.NoResource()
-}
-
 func (m *conversationManager) getConversationWithUnlocked(peer jid.Any) (Conversation, bool) {
-	pwr, pwor := peerWithAndWithout(peer)
+	pwr, pwor := jid.WithAndWithout(peer)
 	if pwr != nil {
 		c, ok := m.conversations[pwr.String()]
 		if ok {

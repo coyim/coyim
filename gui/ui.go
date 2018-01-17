@@ -192,7 +192,6 @@ func torRunningNotificationInit(info gtki.Box) *torRunningNotification {
 }
 
 func (n *torRunningNotification) renderTorNotification(label, imgName string) {
-
 	doInUIThread(func() {
 		prov := providerWithCSS("box { background-color: #f1f1f1; color: #000000; border: 1px solid #d3d3d3; border-radius: 2px;}")
 		updateWithStyle(n.area, prov)
@@ -678,7 +677,13 @@ func (u *gtkUI) newCustomConversation() {
 				return
 			}
 			j, _ := peerInput.GetText()
-			u.openConversationView(account, jid.NR(j), true, "")
+			jj := jid.Parse(j)
+			switch jjj := jj.(type) {
+			case jid.WithResource:
+				u.openTargetedConversationView(account, jjj, true)
+			default:
+				u.openConversationView(account, jj, true)
+			}
 
 			dialog.Destroy()
 		},
@@ -690,7 +695,7 @@ func (u *gtkUI) newCustomConversation() {
 
 func (u *gtkUI) addContactWindow() {
 	accounts := u.getAllConnectedAccounts()
-	dialog := presenceSubscriptionDialog(accounts, func(accountID, peer, msg, nick string, autoAuth bool) error {
+	dialog := presenceSubscriptionDialog(accounts, func(accountID string, peer jid.WithoutResource, msg, nick string, autoAuth bool) error {
 		account, ok := u.accountManager.getAccountByID(accountID)
 		if !ok {
 			return fmt.Errorf(i18n.Local("There is no account with the id %q"), accountID)
@@ -700,18 +705,17 @@ func (u *gtkUI) addContactWindow() {
 			return errors.New(i18n.Local("Can't send a contact request from an offline account"))
 		}
 
-		peerj := jid.NR(peer)
-		err := account.session.RequestPresenceSubscription(peerj, msg)
+		err := account.session.RequestPresenceSubscription(peer, msg)
 		rl := u.accountManager.getContacts(account)
-		rl.SubscribeRequest(peerj, "", accountID)
+		rl.SubscribeRequest(peer, "", accountID)
 
 		if nick != "" {
-			account.session.GetConfig().SavePeerDetails(peer, nick, []string{})
+			account.session.GetConfig().SavePeerDetails(peer.String(), nick, []string{})
 			u.SaveConfig()
 		}
 
 		if autoAuth {
-			account.session.AutoApprove(peer)
+			account.session.AutoApprove(peer.String())
 		}
 
 		return err
@@ -812,21 +816,8 @@ func (u *gtkUI) presenceUpdated(ev events.Presence) {
 		return
 	}
 
-	from := ev.From
-	show := ev.Show
-	showStatus := ev.Status
-	gone := ev.Gone
-
-	//Note this won't create a conversation window.
-	//It's OK since we dont want to append a status in this case.
-	c, ok := u.getConversationView(account, from)
-	if !ok {
-		return
-	}
-
-	doInUIThread(func() {
-		c.appendStatus(u.accountManager.displayNameFor(account, jid.NR(from)), time.Now(), show, showStatus, gone)
-	})
+	// TODO[jid] - this is probably the right place to change the rosters.Peer stuff
+	u.roster.presenceUpdated(account, jid.R(ev.From), ev.Show, ev.Status, ev.Gone)
 }
 
 func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
@@ -834,71 +825,10 @@ func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {
 	u.saveConfigOnly()
 }
 
-//TODO: merge these 2 functions
-func (u *gtkUI) openConversationViewByAccountID(j, accountID string) {
-	account, ok := u.accountManager.getAccountByID(accountID)
-	if !ok {
-		return
-	}
-
-	u.openConversationView(account, jid.NR(j), true, "")
+func (u *gtkUI) openConversationView(account *account, peer jid.Any, userInitiated bool) conversationView {
+	return u.NewConversationViewFactory(account, peer, false).OpenConversationView(userInitiated)
 }
 
-//TODO: should receive fullJID?
-//TODO: as mentioned above, this signature is a bit messed up
-func (u *gtkUI) openConversationView(account *account, to jid.WithoutResource, userInitiated bool, resource jid.Resource) conversationView {
-	fullJID := to.MaybeWithResource(resource)
-	c, ok := u.getConversationView(account, fullJID.String())
-	if !ok {
-		c = u.createConversationView(account, fullJID.String())
-	}
-
-	c.show(userInitiated)
-	return c
-}
-
-// Get a conversationView and converts beween unified/single window.
-func (u *gtkUI) getConversationView(account *account, fullJID string) (c conversationView, ok bool) {
-	c, ok = account.getConversationView(fullJID)
-	if c == nil {
-		return
-	}
-
-	unifiedWindow := u.settings.GetSingleWindow()
-	if _, unifiedType := c.(*conversationStackItem); unifiedWindow == unifiedType {
-		//window and conversation are consistent
-		return
-	}
-
-	//We dont want to have windows on diffe
-	defer c.destroy()
-
-	var pane *conversationPane
-	switch v := c.(type) {
-	case *conversationWindow:
-		pane = v.conversationPane
-	case *conversationStackItem:
-		pane = v.conversationPane
-	}
-
-	c = u.createConversationViewBasedOnWindowLayout(account, fullJID, pane)
-	return
-}
-
-func (u *gtkUI) createConversationViewBasedOnWindowLayout(account *account, fullJID string, existing *conversationPane) conversationView {
-	var cv conversationView
-
-	if u.settings.GetSingleWindow() {
-		tt := jid.Parse(fullJID)
-		cv = u.unified.createConversation(account, tt.NoResource().String(), string(tt.PotentialResource()), existing)
-	} else {
-		cv = newConversationWindow(account, jid.Parse(fullJID), u, existing) //TODO: Why it has gtkUI?
-	}
-	account.setConversationView(fullJID, cv)
-
-	return cv
-}
-
-func (u *gtkUI) createConversationView(account *account, fullJID string) conversationView {
-	return u.createConversationViewBasedOnWindowLayout(account, fullJID, nil)
+func (u *gtkUI) openTargetedConversationView(account *account, peer jid.Any, userInitiated bool) conversationView {
+	return u.NewConversationViewFactory(account, peer, true).OpenConversationView(userInitiated)
 }

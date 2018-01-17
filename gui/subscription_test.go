@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtk_mock"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -54,7 +55,7 @@ func (v *subscriptionMessageDialogMock) SetTransientFor(v2 gtki.Window) {
 func (*SubscriptionSuite) Test_authorizePresenceSubscriptionDialog_setsTextPropertyCorrectly(c *C) {
 	sm := &subscriptionGtkMock{}
 	g = Graphics{gtk: sm}
-	authorizePresenceSubscriptionDialog(nil, "hello@world.org")
+	authorizePresenceSubscriptionDialog(nil, jid.NR("hello@world.org"))
 	c.Assert(sm.builder.dialog.propertyType, Equals, "text")
 	c.Assert(sm.builder.dialog.propertyValue, Equals, "hello@world.org wants to talk to you. Is that ok?")
 }
@@ -63,7 +64,7 @@ func (*SubscriptionSuite) Test_authorizePresenceSubscriptionDialog_setsTransient
 	sm := &subscriptionGtkMock{}
 	g = Graphics{gtk: sm}
 	w := &gtk_mock.MockWindow{}
-	authorizePresenceSubscriptionDialog(w, "hello@world.org")
+	authorizePresenceSubscriptionDialog(w, jid.NR("hello@world.org"))
 	c.Assert(sm.builder.dialog.transientFor, Equals, w)
 }
 
@@ -71,6 +72,6 @@ func (*SubscriptionSuite) Test_authorizePresenceSubscriptionDialog_returnsTheDia
 	sm := &subscriptionGtkMock{}
 	g = Graphics{gtk: sm}
 	w := &gtk_mock.MockWindow{}
-	ret := authorizePresenceSubscriptionDialog(w, "hello@world.org")
+	ret := authorizePresenceSubscriptionDialog(w, jid.NR("hello@world.org"))
 	c.Assert(sm.builder.dialog, Equals, ret)
 }

@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
 )
@@ -107,41 +106,6 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	return ul
 }
 
-func (ul *unifiedLayout) createConversation(account *account, uid, resource string, existing *conversationPane) conversationView {
-	cp := createConversationPane(account, jid.Parse(uid), ul.ui, ul.ui.window)
-	if existing != nil {
-		b, _ := existing.history.GetBuffer()
-		cp.history.SetBuffer(b)
-	}
-	cp.connectEnterHandler(nil)
-	idx := ul.notebook.AppendPage(cp.widget, nil)
-	if idx < 0 {
-		panic("Failed to append page to notebook")
-	}
-
-	csi := &conversationStackItem{
-		conversationPane: cp,
-		pageIndex:        idx,
-		layout:           ul,
-	}
-
-	//	csi.entry.SetHasFrame(true)
-	csi.entryScroll.SetMarginTop(5)
-	csi.entryScroll.SetMarginBottom(5)
-
-	tabLabel := csi.shortName()
-	if resource != "" {
-		tabLabel = tabLabel + " [at] " + resource
-	}
-	ul.notebook.SetTabLabelText(cp.widget, tabLabel)
-	ul.itemMap[idx] = csi
-	buffer, _ := csi.history.GetBuffer()
-	buffer.Connect("changed", func() {
-		ul.onConversationChanged(csi)
-	})
-	return csi
-}
-
 func (ul *unifiedLayout) onConversationChanged(csi *conversationStackItem) {
 	if !csi.isCurrent() {
 		csi.needsAttention = true
@@ -168,13 +132,13 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 	cs := cl.layout.ui.currentColorSet()
 	peer, ok := csi.currentPeer()
 	if !ok {
-		log.Printf("No peer found for %s", csi.to)
+		log.Printf("No peer found for %s", csi.target.NoResource())
 		return
 	}
 	cl.model.Set2(csi.iter, ulAllIndexValues, []interface{}{
 		csi.pageIndex,
 		csi.shortName(),
-		peer.Jid,
+		peer.Jid.String(),
 		decideColorFor(cs, peer),
 		cs.rosterPeerBackground,
 		csi.getTextWeight(),
@@ -226,10 +190,10 @@ func (csi *conversationStackItem) setEnabled(enabled bool) {
 
 func (csi *conversationStackItem) shortName() string {
 	// TODO: this might be unsafe - it should use the JID methods
-	ss := strings.Split(csi.to.String(), "@")
+	ss := strings.Split(csi.target.NoResource().String(), "@")
 	uiName := ss[0]
 
-	peer, ok := csi.layout.ui.getPeer(csi.account, csi.to.NoResource())
+	peer, ok := csi.currentPeer()
 	// TODO: this logic is definitely a bit iffy, and should be fixed.
 	if ok && peer.NameForPresentation() != peer.Jid.String() {
 		uiName = peer.NameForPresentation()

@@ -35,15 +35,15 @@ func (s *session) listenToOtrDelayedMessageDelivery(c <-chan int, peer jid.Any) 
 	}
 }
 
-func (s *session) newOTRKeys(peer jid.Any, conversation otr_client.Conversation) {
+func (s *session) newOTRKeys(peer jid.WithResource, conversation otr_client.Conversation) {
 	s.publishPeerEvent(events.OTRNewKeys, peer)
 }
 
-func (s *session) renewedOTRKeys(peer jid.Any, conversation otr_client.Conversation) {
+func (s *session) renewedOTRKeys(peer jid.WithResource, conversation otr_client.Conversation) {
 	s.publishPeerEvent(events.OTRRenewedKeys, peer)
 }
 
-func (s *session) otrEnded(peer jid.Any) {
+func (s *session) otrEnded(peer jid.WithResource) {
 	s.publishPeerEvent(events.OTREnded, peer)
 }
 
@@ -86,7 +86,7 @@ func (s *session) terminateConversations() {
 }
 
 // StartSMP begins the SMP interactions for a conversation
-func (s *session) StartSMP(peer jid.Any, question, answer string) {
+func (s *session) StartSMP(peer jid.WithResource, question, answer string) {
 	conv, ok := s.convManager.GetConversationWith(peer)
 	if !ok {
 		s.alert("error: tried to start SMP when a conversation does not exist")
@@ -98,7 +98,7 @@ func (s *session) StartSMP(peer jid.Any, question, answer string) {
 }
 
 // FinishSMP takes a user's SMP answer and finishes the protocol
-func (s *session) FinishSMP(peer jid.Any, answer string) {
+func (s *session) FinishSMP(peer jid.WithResource, answer string) {
 	conv, ok := s.convManager.GetConversationWith(peer)
 	if !ok {
 		s.alert("error: tried to finish SMP when a conversation does not exist")
@@ -110,7 +110,7 @@ func (s *session) FinishSMP(peer jid.Any, answer string) {
 }
 
 // AbortSMP will abort the current SMP interaction for a conversation
-func (s *session) AbortSMP(peer jid.Any) {
+func (s *session) AbortSMP(peer jid.WithResource) {
 	conv, ok := s.convManager.GetConversationWith(peer)
 	if !ok {
 		s.alert("error: tried to abort SMP when a conversation does not exist")

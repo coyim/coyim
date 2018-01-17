@@ -45,3 +45,25 @@ func hasEnter(evk gdki.EventKey) bool {
 	return evk.KeyVal() == gdki.KEY_Return ||
 		evk.KeyVal() == gdki.KEY_KP_Enter
 }
+
+func isShiftEnter(evk gdki.EventKey) bool {
+	return hasShift(evk) && hasEnter(evk)
+}
+
+func isNormalEnter(evk gdki.EventKey) bool {
+	return !hasControlingModifier(evk) && hasEnter(evk)
+}
+
+func isInsertEnter(evk gdki.EventKey, shiftEnterSends bool) bool {
+	if shiftEnterSends {
+		return isNormalEnter(evk)
+	}
+	return isShiftEnter(evk)
+}
+
+func isSend(evk gdki.EventKey, shiftEnterSends bool) bool {
+	if !shiftEnterSends {
+		return isNormalEnter(evk)
+	}
+	return isShiftEnter(evk)
+}

@@ -239,7 +239,7 @@ func (p *Peer) LastSeen(r jid.Any) {
 	p.lockedResource = r.PotentialResource()
 }
 
-// TODO: make sure this actually gets called
+// TODO[jid]: make sure this actually gets called
 // Presence unsets the locked resource status, no matter what presence update
 func (p *Peer) Presence() {
 	p.lockedResource = jid.Resource("")

@@ -125,7 +125,7 @@ func (l *List) PeerPresenceUpdate(jid jid.WithResource, status, statusMsg, belon
 	return true
 }
 
-// TODO: I wonder if this is correct - can there be different status for different resources?
+// TODO[jid]: I wonder if this is correct - can there be different status for different resources?
 // StateOf returns the status and status msg of the peer if it exists. It returns not ok if the peer doesn't exist.
 func (l *List) StateOf(jid jid.WithoutResource) (status, statusMsg string, ok bool) {
 	if p, existed := l.Get(jid); existed {

@@ -6,7 +6,7 @@ import (
 
 // Method to validate a jabber id is correct according to the RFC-6122
 // on Address Format
-// TODO: verify the resource part
+// TODO[jid]: verify the resource part
 func verifyXMPPAddress(address string) (bool, string) {
 	var err string
 	var isValid bool

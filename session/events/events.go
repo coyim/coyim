@@ -40,8 +40,7 @@ type Peer struct {
 
 // Notification represents a notification event
 type Notification struct {
-	Session access.Session
-	// TODO: it's unclear what type of JID is needed here. This is the most general type, but maybe we can constrain it later
+	Session      access.Session
 	Peer         jid.Any
 	Notification string
 }
@@ -49,9 +48,8 @@ type Notification struct {
 // DelayedMessageSent represents the event that a delayed message is sent
 type DelayedMessageSent struct {
 	Session access.Session
-	// TODO: it's unclear what type of JID is needed here. Maybe we can constrain it later
-	Peer   jid.Any
-	Tracer int
+	Peer    jid.Any
+	Tracer  int
 }
 
 // PeerType represents the type of Peer event
@@ -79,9 +77,7 @@ type Presence struct {
 
 // Message represents a message event
 type Message struct {
-	Session access.Session
-	// TODO: is it possible to get a message without a resource?
-	// Potentially - maybe from the server? We need to investigate this
+	Session   access.Session
 	From      jid.Any
 	When      time.Time
 	Body      []byte
@@ -98,8 +94,6 @@ type ChatPresence struct {
 // The event name should actually take that into account
 // ChatMessage represents a message event in a chat room
 type ChatMessage struct {
-	// TODO: is it possible to get a message without a resource?
-	// Potentially - maybe from the server? We need to investigate this
 	From jid.WithResource
 	When time.Time
 	Body string
@@ -126,8 +120,7 @@ type Log struct {
 // FileTransfer represents an event associated with file transfers
 type FileTransfer struct {
 	Session access.Session
-	// TODO: it's unclear what type of JID is needed here. Let's make it WithResource, and then fix if tyhat fails
-	Peer jid.WithResource
+	Peer    jid.WithResource
 
 	Mime             string
 	DateLastModified string
@@ -142,10 +135,9 @@ type FileTransfer struct {
 
 // SMP is an event related to SMP
 type SMP struct {
-	Type    SMPType
-	Session access.Session
-	// TODO: it's unclear what type of JID is needed here.
-	From     jid.Any
+	Type     SMPType
+	Session  access.Session
+	From     jid.WithResource
 	Resource string
 	Body     string
 }

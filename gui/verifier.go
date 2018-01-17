@@ -13,8 +13,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// TODO[jid] - fix up currentResource, peerName and peerJid
-
 type verifier struct {
 	parentWindow        gtki.Window
 	session             access.Session
@@ -42,19 +40,18 @@ func (n *notifier) notify(i gtki.InfoBar) {
 func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 	v := &verifier{
 		parentWindow: conv.transientParent,
-		//		currentResource: conv.currentResource(),
-		session:  conv.account.session,
-		notifier: &notifier{conv.notificationArea},
-		// peerName: func() string {
-		// 	return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
-		// 		return p.NameForPresentation()
-		// 	})
-		// },
-		// peerJid: func() string {
-		// 	return conv.mapCurrentPeer("", func(p *rosters.Peer) string {
-		// 		return p.Jid.String()
-		// 	})
-		// },
+		session:      conv.account.session,
+		notifier:     &notifier{conv.notificationArea},
+		peerName: func() string {
+			p, ok := conv.currentPeer()
+			if !ok {
+				return ""
+			}
+			return p.NameForPresentation()
+		},
+		peerToSendTo: func() jid.WithResource {
+			return conv.peerToSendTo().(jid.WithResource)
+		},
 	}
 
 	v.buildPinWindow()

@@ -139,7 +139,7 @@ func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
 
 func convWindowNowOrLater(account *account, peer jid.Any, ui *gtkUI, f func(conversationView)) {
 	ui.NewConversationViewFactory(account, peer, false).IfConversationView(f, func() {
-		account.afterConversationWindowCreated(peer.String(), f)
+		account.afterConversationWindowCreated(peer, f)
 	})
 }
 

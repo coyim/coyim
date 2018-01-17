@@ -26,7 +26,6 @@ var (
 type conversationView interface {
 	appendMessage(sent sentMessage)
 	appendPendingDelayed()
-	// TODO[jid] - this from should probably be a jid
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	delayedMessageSent(int)
 	displayNotification(notification string)
@@ -111,11 +110,10 @@ type conversationPane struct {
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
-	marks           []*timedMark
-	hidden          bool
-	shiftEnterSends bool
-	afterNewMessage func()
-	// TODO[jid]- do we need this?
+	marks                []*timedMark
+	hidden               bool
+	shiftEnterSends      bool
+	afterNewMessage      func()
 	currentPeer          func() (*rosters.Peer, bool)
 	delayed              map[int]sentMessage
 	pendingDelayed       []int
@@ -223,12 +221,6 @@ func (conv *conversationPane) onSendMessageSignal() {
 	conv.entry.GrabFocus()
 }
 
-// func (conv *conversationPane) currentResource() jid.Resource {
-// 	return jid.Resource(conv.mapCurrentPeer("", func(p *rosters.Peer) string {
-// 		return string(p.ResourceToUse())
-// 	}))
-// }
-
 func (conv *conversationPane) onStartOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
@@ -257,7 +249,6 @@ func (conv *conversationPane) onEndOtrSignal() {
 }
 
 func (conv *conversationPane) onVerifyFpSignal() {
-	// TODO[jid] - this needs to be thought about...
 	switch verifyFingerprintDialog(conv.account, conv.peerToSendTo(), conv.transientParent) {
 	case gtki.RESPONSE_YES:
 		conv.removeIdentityVerificationWarning()
@@ -365,7 +356,6 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 	cwi.MoveToDesktop(parentPlace)
 }
 
-// TODO[jid] - why do we directly access the otr client conversation here?
 func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) {
 	return conv.account.session.ConversationManager().GetConversationWith(conv.peerToSendTo())
 }
@@ -758,7 +748,6 @@ func insertEntry(buff gtki.TextBuffer, entry *taggableText) {
 	}
 }
 
-// TODO[jid] - this from string here, unclear what it is
 func (conv *conversationPane) appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool) {
 	conv.appendSentMessage(sentMessage{timestamp: timestamp}, false, &taggableText{
 		"statusText", createStatusMessage(from, show, showStatus, gone),

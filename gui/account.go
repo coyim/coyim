@@ -37,21 +37,19 @@ type account struct {
 	sync.RWMutex
 }
 
-func (account *account) executeDelayed(peer jid.Any) {
+func (account *account) executeDelayed(ui *gtkUI, peer jid.Any) {
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 
-	// TODO[jid] - Fix later
-	// cv, ok := account.getConversationView(peer)
-	// if !ok {
-	// 	panic("race condition")
-	// }
+	ui.NewConversationViewFactory(account, peer, false).IfConversationView(func(cv conversationView) {
+		for _, f := range account.delayedConversations[peer.String()] {
+			f(cv)
+		}
 
-	// for _, f := range account.delayedConversations[peer.String()] {
-	// 	f(cv)
-	// }
-
-	// delete(account.delayedConversations, peer.String())
+		delete(account.delayedConversations, peer.String())
+	}, func() {
+		panic("race condition")
+	})
 }
 
 type byAccountNameAlphabetic []*account
@@ -74,12 +72,11 @@ func (account *account) ID() string {
 	return account.session.GetConfig().ID()
 }
 
-// TODO[jid] - this argument should be a jid argument
-func (account *account) afterConversationWindowCreated(to string, f func(conversationView)) {
+func (account *account) afterConversationWindowCreated(peer jid.Any, f func(conversationView)) {
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 
-	account.delayedConversations[to] = append(account.delayedConversations[to], f)
+	account.delayedConversations[peer.String()] = append(account.delayedConversations[peer.String()], f)
 }
 
 func (account *account) enableExistingConversationWindows(enable bool) {

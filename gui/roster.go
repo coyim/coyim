@@ -249,7 +249,6 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 		},
 		"on_send_file_to_contact": func() {
 			if peer, ok := r.ui.getPeer(account, jid); ok {
-				// TODO[jid] - this is clearly wrong, but backwards compatible
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
 				doInUIThread(func() {
@@ -259,7 +258,6 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 		},
 		"on_send_directory_to_contact": func() {
 			if peer, ok := r.ui.getPeer(account, jid); ok {
-				// TODO[jid] - this is clearly wrong, but backwards compatible
 				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
 				doInUIThread(func() {

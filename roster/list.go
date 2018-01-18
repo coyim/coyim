@@ -107,22 +107,22 @@ func (l *List) PeerBecameUnavailable(j jid.Any) bool {
 
 // PeerPresenceUpdate updates the status for the peer
 // It returns true if it actually updated the status of the user
-func (l *List) PeerPresenceUpdate(jid jid.WithResource, status, statusMsg, belongsTo string) bool {
-	fmt.Printf("[%s] - PeerPresenceUpdate(jid=%s, status=%s, msg=%s)\n", belongsTo, jid, status, statusMsg)
-	// TODO[jid] - we need to do stuff here
-	if p, ok := l.Get(jid.NoResource()); ok {
+func (l *List) PeerPresenceUpdate(peer jid.WithResource, status, statusMsg, belongsTo string) bool {
+	fmt.Printf("[%s] - PeerPresenceUpdate(jid=%s, status=%s, msg=%s)\n", belongsTo, peer, status, statusMsg)
+	if p, ok := l.Get(peer.NoResource()); ok {
 		oldOnline := p.IsOnline()
 		mainStatus := p.MainStatus()
 		mainStatusMsg := p.MainStatusMsg()
+		p.lockedResource = jid.Resource("")
 
-		p.AddResource(jid.Resource(), status, statusMsg)
+		p.AddResource(peer.Resource(), status, statusMsg)
 		if mainStatus != status || mainStatusMsg != statusMsg {
 			return true
 		}
 		return !oldOnline
 	}
 
-	l.AddOrMerge(PeerWithState(jid.NoResource(), status, statusMsg, belongsTo, jid.Resource()))
+	l.AddOrMerge(PeerWithState(peer.NoResource(), status, statusMsg, belongsTo, peer.Resource()))
 	return true
 }
 

@@ -9,13 +9,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// All of our management of conversation views are spread all over the place.
-// From now on, all of this code will be in this kind of object, that will
-// be temporarily created to provide all the functionality needed
-// all the ACTUAL functionality will be exposed on gtkUI or in the correct place
-// GUI code should never need to use this code - it's purely an implementation
-// strategy for the "public" methods
-
 type ConversationViewFactory interface {
 	OpenConversationView(userInitiated bool) conversationView
 	IfConversationView(whenExists func(conversationView), whenDoesntExist func())

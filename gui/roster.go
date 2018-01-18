@@ -286,10 +286,11 @@ func (r *roster) appendResourcesAsMenuItems(jid jid.WithoutResource, account *ac
 	innerMenu, _ := g.gtk.MenuNew()
 	for _, resource := range peer.Resources() {
 		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(string(resource))
+		rs := resource
 		item.Connect("activate",
 			func() {
 				doInUIThread(func() {
-					r.ui.openTargetedConversationView(account, jid.WithResource(resource), true)
+					r.ui.openTargetedConversationView(account, jid.WithResource(rs), true)
 				})
 			})
 		innerMenu.Append(item)

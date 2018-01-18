@@ -1,7 +1,6 @@
 package roster
 
 import (
-	"fmt"
 	"sort"
 	"sync"
 
@@ -108,7 +107,7 @@ func (l *List) PeerBecameUnavailable(j jid.Any) bool {
 // PeerPresenceUpdate updates the status for the peer
 // It returns true if it actually updated the status of the user
 func (l *List) PeerPresenceUpdate(peer jid.WithResource, status, statusMsg, belongsTo string) bool {
-	fmt.Printf("[%s] - PeerPresenceUpdate(jid=%s, status=%s, msg=%s)\n", belongsTo, peer, status, statusMsg)
+	//	fmt.Printf("[%s] - PeerPresenceUpdate(jid=%s, status=%s, msg=%s)\n", belongsTo, peer, status, statusMsg)
 	if p, ok := l.Get(peer.NoResource()); ok {
 		oldOnline := p.IsOnline()
 		mainStatus := p.MainStatus()

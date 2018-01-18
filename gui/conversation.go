@@ -294,14 +294,14 @@ func (conv *conversationPane) doPotentialEntryResize() {
 }
 
 func (conv *conversationPane) peerToSendTo() jid.Any {
-	fmt.Printf("peerToSendTo()\n")
+	//	fmt.Printf("peerToSendTo()\n")
 	if conv.otrLock != nil {
-		fmt.Printf("  peerToSendTo() - otrLock: %s\n", conv.otrLock)
+		//		fmt.Printf("  peerToSendTo() - otrLock: %s\n", conv.otrLock)
 		return conv.otrLock
 	}
 
 	if _, ok := conv.target.(jid.WithResource); ok {
-		fmt.Printf("  peerToSendTo() - target: %s\n", conv.target)
+		//		fmt.Printf("  peerToSendTo() - target: %s\n", conv.target)
 		return conv.target
 	}
 
@@ -310,7 +310,7 @@ func (conv *conversationPane) peerToSendTo() jid.Any {
 		panic("something went very wrong with peer handling...")
 	}
 
-	fmt.Printf("  peerToSendTo() - result: %s\n", conv.target.MaybeWithResource(p.ResourceToUse()))
+	//	fmt.Printf("  peerToSendTo() - result: %s\n", conv.target.MaybeWithResource(p.ResourceToUse()))
 	return conv.target.MaybeWithResource(p.ResourceToUse())
 }
 

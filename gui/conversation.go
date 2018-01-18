@@ -94,7 +94,6 @@ type conversationPane struct {
 	fileTransferNotif    *fileTransferNotification
 	securityWarningNotif *securityWarningNotification
 	verificationWarning  gtki.InfoBar
-	colorSet             colorSet
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
@@ -236,7 +235,6 @@ func (conv *conversationPane) onEndOtrSignal() {
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 	} else {
-
 		conv.removeIdentityVerificationWarning()
 		conv.displayNotification(i18n.Local("Private conversation has ended."))
 		conv.updateSecurityWarning()
@@ -303,7 +301,6 @@ func createConversationPane(account *account, uid jid.Any, ui *gtkUI, transientP
 		currentPeer: func() (*rosters.Peer, bool) {
 			return ui.getPeer(account, uid.NoResource())
 		},
-		colorSet: ui.currentColorSet(),
 	}
 
 	builder.getItems(
@@ -582,18 +579,6 @@ func (conv *conversationPane) updateSecurityWarning() {
 	conv.securityWarningNotif.label.SetLabel("You are talking over an \nunprotected chat")
 	setImageFromFile(conv.securityWarningNotif.image, "secure.svg")
 	conv.securityWarningNotif.area.SetVisible(!ok || !conversation.IsEncrypted())
-}
-
-func updateEntryBackground(entry gtki.TextView, color string) {
-	css := fmt.Sprintf("text { background-color: %s; }", color)
-	prov := providerWithCSS(css)
-	updateWithStyle(entry, prov)
-}
-
-func setCursor(entry gtki.TextView, hasCursor bool) {
-	entry.SetCursorVisible(hasCursor)
-	entry.SetEditable(hasCursor)
-	entry.SetCanFocus(hasCursor)
 }
 
 func (conv *conversationWindow) show(userInitiated bool) {

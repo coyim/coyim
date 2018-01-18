@@ -21,7 +21,9 @@ type account struct {
 	currentNotification gtki.InfoBar
 	xmlConsole          gtki.Dialog
 
-	cvs *conversationViews
+	// c contains all conversations. the ones indexed with a "resourced" JID will be locked to that view
+	// everything else will be indexed with a bare jid
+	c map[string]conversationView
 
 	session access.Session
 
@@ -65,7 +67,7 @@ func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf access.Factory, df interfaces.DialerFactory) *account {
 	return &account{
 		session:              sf(conf, currentConf, df),
-		cvs:                  newConversationViews(),
+		c:                    make(map[string]conversationView),
 		delayedConversations: make(map[string][]func(conversationView)),
 	}
 }
@@ -85,7 +87,12 @@ func (account *account) enableExistingConversationWindows(enable bool) {
 	if account == nil {
 		return
 	}
-	account.cvs.enableExistingConversationWindows(enable)
+	account.RLock()
+	defer account.RUnlock()
+
+	for _, cv := range account.c {
+		cv.setEnabled(enable)
+	}
 }
 
 func (account *account) executeCmd(c interface{}) {

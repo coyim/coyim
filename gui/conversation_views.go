@@ -1,9 +1,5 @@
 package gui
 
-import (
-	"sync"
-)
-
 // : fix the place where we can open to a specific resource, roster.go:296
 // -- Make sure that the resources actually show up in the list!!!!!!!!!! I must have broke that functionality.
 // : find all the ways and places and differences in how conversationViews can be created and gotten
@@ -52,26 +48,3 @@ import (
 
 // There is some weirdness here about what happens when you have an OTR conversation locked to someone
 // and then want to open another window... No. You can't do that.
-
-type conversationViews struct {
-	// c contains all conversations. the ones indexed with a "resourced" JID will be locked to that view
-	// everything else will be indexed with a bare jid
-	c map[string]conversationView
-
-	sync.RWMutex
-}
-
-func newConversationViews() *conversationViews {
-	return &conversationViews{
-		c: make(map[string]conversationView),
-	}
-}
-
-func (cvs *conversationViews) enableExistingConversationWindows(enable bool) {
-	cvs.RLock()
-	defer cvs.RUnlock()
-
-	for _, cv := range cvs.c {
-		cv.setEnabled(enable)
-	}
-}

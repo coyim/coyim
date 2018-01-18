@@ -75,6 +75,14 @@ func (cvf *conversationViewFactory) createConversationView(existing *conversatio
 	return cv
 }
 
+func (cvf *conversationViewFactory) potentialTarget() string {
+	p := string(cvf.peer.PotentialResource())
+	if cvf.targeted && p != "" {
+		return fmt.Sprintf(" (%s)", p)
+	}
+	return ""
+}
+
 func (cvf *conversationViewFactory) createWindowedConversationView(existing *conversationPane) *conversationWindow {
 	fmt.Printf("createWindowedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("Conversation")
@@ -87,7 +95,7 @@ func (cvf *conversationViewFactory) createWindowedConversationView(existing *con
 	}
 
 	// TODO: Can we put the security rating here, maybe?
-	win.SetTitle(fmt.Sprintf("%s <-> %s", cvf.account.session.DisplayName(), otherName))
+	win.SetTitle(fmt.Sprintf("%s <-> %s%s", cvf.account.session.DisplayName(), otherName, cvf.potentialTarget()))
 	winBox := builder.getObj("box").(gtki.Box)
 
 	cp := cvf.createConversationPane(win)
@@ -273,15 +281,15 @@ func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *con
 func (cvf *conversationViewFactory) setConversationView(c conversationView) {
 	fmt.Printf("setConversationView(peer=%s)\n", cvf.peer)
 	defer cvf.account.executeDelayed(cvf.ui, cvf.peer)
-	cvf.account.cvs.Lock()
-	defer cvf.account.cvs.Unlock()
+	cvf.account.Lock()
+	defer cvf.account.Unlock()
 
-	if cold, ok := cvf.account.cvs.c[c.getTarget().String()]; ok {
+	if cold, ok := cvf.account.c[c.getTarget().String()]; ok {
 		cold.destroy()
 	}
 
 	fmt.Printf("setConversationView(target=%s)\n", c.getTarget())
-	cvf.account.cvs.c[c.getTarget().String()] = c
+	cvf.account.c[c.getTarget().String()] = c
 }
 
 func (cvf *conversationViewFactory) isWindowingStyleConsistent(c conversationView) bool {
@@ -316,14 +324,14 @@ func (cvf *conversationViewFactory) getConversationViewSafely() (conversationVie
 
 func (cvf *conversationViewFactory) basicGetConversationView() (conversationView, bool) {
 	fmt.Printf("basicGetConversationView(peer=%s)\n", cvf.peer)
-	cvf.account.cvs.RLock()
-	defer cvf.account.cvs.RUnlock()
+	cvf.account.RLock()
+	defer cvf.account.RUnlock()
 
 	pw, pwo := jid.WithAndWithout(cvf.peer)
 	fmt.Printf("    basicGetConversationView(peer=%s) with=%v without=%v\n", cvf.peer, pw, pwo)
 
 	if pw != nil {
-		if c, ok := cvf.account.cvs.c[pw.String()]; ok {
+		if c, ok := cvf.account.c[pw.String()]; ok {
 			// This check is not strictly necessary - something should go VERY wrong if it triggers
 			if !c.isOtrLocked() || c.isOtrLockedTo(cvf.peer) {
 				return c, true
@@ -331,7 +339,7 @@ func (cvf *conversationViewFactory) basicGetConversationView() (conversationView
 		}
 	}
 
-	if c, ok := cvf.account.cvs.c[pwo.String()]; ok && (!c.isOtrLocked() || c.isOtrLockedTo(cvf.peer)) {
+	if c, ok := cvf.account.c[pwo.String()]; ok && (!c.isOtrLocked() || c.isOtrLockedTo(cvf.peer)) {
 		return c, true
 	}
 

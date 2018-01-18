@@ -246,13 +246,21 @@ func (csi *conversationStackItem) show(userInitiated bool) {
 	}
 }
 
+func (csi *conversationStackItem) potentialTarget() string {
+	p := string(csi.target.PotentialResource())
+	if p != "" {
+		return fmt.Sprintf(" (%s)", p)
+	}
+	return ""
+}
+
 func (csi *conversationStackItem) bringToFront() {
 	peer, _ := csi.currentPeer()
 	csi.layout.showConversations()
 	csi.needsAttention = false
 	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
-	title := fmt.Sprintf("%s <-> %s", csi.account.session.DisplayName(), peer.NameForPresentation())
+	title := fmt.Sprintf("%s <-> %s%s", csi.account.session.DisplayName(), peer.NameForPresentation(), csi.potentialTarget())
 	csi.layout.header.SetText(title)
 	csi.layout.headerBar.SetSubtitle(title)
 	csi.entry.GrabFocus()

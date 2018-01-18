@@ -279,9 +279,6 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		//Same thing happens for the group-chat, but in this case it tell us also what are our affiliations and roles.
 		//Thats why I'm worried about handling this as a regular peer presence - which is not.
 
-		// TODO: this entry seems weird - especially since it checks for _type_ == "", but the comment says _to_ should == "".
-		// It's unlikely this is correct.
-
 		s.publishEvent(events.Presence{
 			Session:        s,
 			ClientPresence: stanza,
@@ -501,9 +498,9 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 			s.info(fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", peer, peer))
 		}
 	case otr_client.SMPSecretNeeded:
-		s.publishSMPEvent(events.SecretNeeded, peer, eh.SmpQuestion)
+		s.publishSMPEvent(events.SecretNeeded, peer.(jid.WithResource), eh.SmpQuestion)
 	case otr_client.SMPComplete:
-		s.publishSMPEvent(events.Success, peer, "")
+		s.publishSMPEvent(events.Success, peer.(jid.WithResource), "")
 		s.cmdManager.ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
 			Session:     s,
@@ -511,7 +508,7 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 			Fingerprint: conversation.TheirFingerprint(),
 		})
 	case otr_client.SMPFailed:
-		s.publishSMPEvent(events.Failure, peer, "")
+		s.publishSMPEvent(events.Failure, peer.(jid.WithResource), "")
 	}
 
 	if len(out) == 0 {

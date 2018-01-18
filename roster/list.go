@@ -1,6 +1,7 @@
 package roster
 
 import (
+	"fmt"
 	"sort"
 	"sync"
 
@@ -89,18 +90,16 @@ func (l *List) AddOrReplace(p *Peer) bool {
 // Returns true if they existed, otherwise false
 func (l *List) PeerBecameUnavailable(j jid.Any) bool {
 	if p, exist := l.Get(j.NoResource()); exist {
-		oldOnline := p.Online
+		oldOnline := p.IsOnline()
 
 		jwr, ok := j.(jid.WithResource)
 		if ok {
 			p.RemoveResource(jwr.Resource())
-			p.Online = p.HasResources()
 		} else {
 			p.ClearResources()
-			p.Online = false
 		}
 
-		return oldOnline != p.Online
+		return oldOnline != p.IsOnline()
 	}
 
 	return false
@@ -109,13 +108,15 @@ func (l *List) PeerBecameUnavailable(j jid.Any) bool {
 // PeerPresenceUpdate updates the status for the peer
 // It returns true if it actually updated the status of the user
 func (l *List) PeerPresenceUpdate(jid jid.WithResource, status, statusMsg, belongsTo string) bool {
+	fmt.Printf("[%s] - PeerPresenceUpdate(jid=%s, status=%s, msg=%s)\n", belongsTo, jid, status, statusMsg)
+	// TODO[jid] - we need to do stuff here
 	if p, ok := l.Get(jid.NoResource()); ok {
-		oldOnline := p.Online
-		p.Online = true
-		p.AddResource(jid.Resource())
-		if p.Status != status || p.StatusMsg != statusMsg {
-			p.Status = status
-			p.StatusMsg = statusMsg
+		oldOnline := p.IsOnline()
+		mainStatus := p.MainStatus()
+		mainStatusMsg := p.MainStatusMsg()
+
+		p.AddResource(jid.Resource(), status, statusMsg)
+		if mainStatus != status || mainStatusMsg != statusMsg {
 			return true
 		}
 		return !oldOnline
@@ -123,16 +124,6 @@ func (l *List) PeerPresenceUpdate(jid jid.WithResource, status, statusMsg, belon
 
 	l.AddOrMerge(PeerWithState(jid.NoResource(), status, statusMsg, belongsTo, jid.Resource()))
 	return true
-}
-
-// TODO[jid]: I wonder if this is correct - can there be different status for different resources?
-// StateOf returns the status and status msg of the peer if it exists. It returns not ok if the peer doesn't exist.
-func (l *List) StateOf(jid jid.WithoutResource) (status, statusMsg string, ok bool) {
-	if p, existed := l.Get(jid); existed {
-		return p.Status, p.StatusMsg, true
-	}
-
-	return "", "", false
 }
 
 // SubscribeRequest adds a new pending subscribe request

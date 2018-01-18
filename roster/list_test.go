@@ -97,7 +97,7 @@ func (s *ListSuite) Test_AddOrReplace_mergesTheEntriesIfInTheList(c *g.C) {
 
 	c.Assert(res, g.Equals, false)
 	c.Assert(len(l.peers), g.Equals, 1)
-	c.Assert(l.peers["somewhere"], g.DeepEquals, &Peer{Jid: tj("somewhere"), Name: "something2", Groups: toSet("goodbye"), Subscription: "from", resources: toSet()})
+	c.Assert(l.peers["somewhere"], g.DeepEquals, &Peer{Jid: tj("somewhere"), Name: "something2", Groups: toSet("goodbye"), Subscription: "from", resources: make(map[string]Status)})
 }
 
 func (s *ListSuite) Test_ToSlice_createsASliceOfTheContentSortedAlphabetically(c *g.C) {
@@ -234,29 +234,16 @@ func (s *ListSuite) Test_SubscribeRequest_addsTheSubscribeID(c *g.C) {
 	c.Assert(l.peers["foo@bar.com"].PendingSubscribeID, g.Equals, "something3")
 }
 
-func (s *ListSuite) Test_StateOf_returnsState(c *g.C) {
-	l := New()
-	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), Status: "bla", StatusMsg: "hmm"})
-
-	st, sm, k := l.StateOf(tj("hmm.bar@bar.com"))
-	c.Assert(k, g.Equals, false)
-
-	st, sm, k = l.StateOf(tj("foo@bar.com/aha"))
-	c.Assert(k, g.Equals, true)
-	c.Assert(st, g.Equals, "bla")
-	c.Assert(sm, g.Equals, "hmm")
-}
-
 func (s *ListSuite) Test_PeerBecameUnavailable_setsTheOfflineState(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), Online: true})
+	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: map[string]Status{"foo2": Status{"a", "b"}}})
 
 	res := l.PeerBecameUnavailable(jid.Parse("hmm@bar.com/foo"))
 	c.Assert(res, g.Equals, false)
 
 	res = l.PeerBecameUnavailable(jid.Parse("foo@bar.com/foo2"))
 	c.Assert(res, g.Equals, true)
-	c.Assert(l.peers["foo@bar.com"].Online, g.Equals, false)
+	c.Assert(l.peers["foo@bar.com"].IsOnline(), g.Equals, false)
 }
 
 func (s *ListSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *g.C) {
@@ -264,37 +251,37 @@ func (s *ListSuite) Test_PeerPresenceUpdate_sometimesUpdatesNonExistantPeers(c *
 
 	res := l.PeerPresenceUpdate(tjr("foo@bar.com/hmm"), "hello", "goodbye", "")
 	c.Assert(res, g.Equals, true)
-	c.Assert(l.peers["foo@bar.com"].Status, g.Equals, "hello")
-	c.Assert(l.peers["foo@bar.com"].StatusMsg, g.Equals, "goodbye")
+	c.Assert(l.peers["foo@bar.com"].MainStatus(), g.Equals, "hello")
+	c.Assert(l.peers["foo@bar.com"].MainStatusMsg(), g.Equals, "goodbye")
 
 	res = l.PeerPresenceUpdate(tjr("foo2@bar.com/hmm"), "xa", "goodbye", "")
 	c.Assert(res, g.Equals, true)
-	c.Assert(l.peers["foo2@bar.com"].Status, g.Equals, "xa")
-	c.Assert(l.peers["foo2@bar.com"].StatusMsg, g.Equals, "goodbye")
+	c.Assert(l.peers["foo2@bar.com"].MainStatus(), g.Equals, "xa")
+	c.Assert(l.peers["foo2@bar.com"].MainStatusMsg(), g.Equals, "goodbye")
 
 	res = l.PeerPresenceUpdate(tjr("foo3@bar.com/hmm"), "away", "goodbye", "")
 	c.Assert(res, g.Equals, true)
-	c.Assert(l.peers["foo3@bar.com"].Status, g.Equals, "away")
-	c.Assert(l.peers["foo3@bar.com"].StatusMsg, g.Equals, "goodbye")
+	c.Assert(l.peers["foo3@bar.com"].MainStatus(), g.Equals, "away")
+	c.Assert(l.peers["foo3@bar.com"].MainStatusMsg(), g.Equals, "goodbye")
 
 }
 
 func (s *ListSuite) Test_PeerPresenceUpdate_updatesPreviouslyKnownPeer(c *g.C) {
 	l := New()
-	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), Online: false, resources: toSet()})
-	l.AddOrMerge(&Peer{Jid: tj("foo2@bar.com"), Online: true, Status: "dnd", StatusMsg: "working", resources: toSet()})
+	l.AddOrMerge(&Peer{Jid: tj("foo@bar.com"), resources: make(map[string]Status)})
+	l.AddOrMerge(&Peer{Jid: tj("foo2@bar.com"), resources: map[string]Status{"hmm": Status{"dnd", "working"}}})
 
 	res := l.PeerPresenceUpdate(tjr("foo@bar.com/hmm"), "hello", "goodbye", "")
 	c.Assert(res, g.Equals, true)
-	c.Assert(l.peers["foo@bar.com"].Status, g.Equals, "hello")
-	c.Assert(l.peers["foo@bar.com"].StatusMsg, g.Equals, "goodbye")
-	c.Assert(l.peers["foo@bar.com"].Online, g.Equals, true)
+	c.Assert(l.peers["foo@bar.com"].MainStatus(), g.Equals, "hello")
+	c.Assert(l.peers["foo@bar.com"].MainStatusMsg(), g.Equals, "goodbye")
+	c.Assert(l.peers["foo@bar.com"].IsOnline(), g.Equals, true)
 
 	res = l.PeerPresenceUpdate(tjr("foo2@bar.com/hmm"), "dnd", "working", "")
 	c.Assert(res, g.Equals, false)
-	c.Assert(l.peers["foo2@bar.com"].Status, g.Equals, "dnd")
-	c.Assert(l.peers["foo2@bar.com"].StatusMsg, g.Equals, "working")
-	c.Assert(l.peers["foo2@bar.com"].Online, g.Equals, true)
+	c.Assert(l.peers["foo2@bar.com"].MainStatus(), g.Equals, "dnd")
+	c.Assert(l.peers["foo2@bar.com"].MainStatusMsg(), g.Equals, "working")
+	c.Assert(l.peers["foo2@bar.com"].IsOnline(), g.Equals, true)
 }
 
 func (s *ListSuite) Test_Clear_clearsTheList(c *g.C) {

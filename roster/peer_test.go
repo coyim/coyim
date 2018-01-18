@@ -2,6 +2,7 @@ package roster
 
 import (
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	g "gopkg.in/check.v1"
 )
 
@@ -40,7 +41,7 @@ func (s *PeerSuite) Test_toEntry_ReturnsAnEntryWithTheInformation(c *g.C) {
 		Name:         "something",
 		Subscription: "from",
 		Groups:       toSet("hello::bar"),
-		resources:    toSet(),
+		resources:    make(map[string]Status),
 	}
 
 	c.Assert(p.ToEntry().Jid, g.Equals, "foo@bar.com")
@@ -55,18 +56,23 @@ func (s *PeerSuite) Test_Dump_willDumpAllInfo(c *g.C) {
 		Name:         "something",
 		Subscription: "from",
 		Groups:       toSet("hello::bar"),
-		resources:    toSet(),
+		resources:    make(map[string]Status),
 	}
 
 	c.Assert(p.Dump(), g.Equals, "Peer{foo@bar.com[something ()], subscription='from', status=''('') online=false, asked=false, pendingSubscribe='', belongsTo='', resources=map[], lockedResource=''}")
 }
 
 func (s *PeerSuite) Test_PeerWithState_createsANewPeer(c *g.C) {
-	p := PeerWithState(tj("bla@foo.com/1234"), "hmm", "no", "", "")
+	p := PeerWithState(tj("bla@foo.com"), "hmm", "no", "", "1234")
 	c.Assert(p.Jid, g.Equals, tj("bla@foo.com"))
 	c.Assert(p.Name, g.Equals, "")
-	c.Assert(p.Status, g.Equals, "hmm")
-	c.Assert(p.StatusMsg, g.Equals, "no")
+	c.Assert(p.MainStatus(), g.Equals, "hmm")
+	c.Assert(p.MainStatusMsg(), g.Equals, "no")
+}
+
+func (s *PeerSuite) Test_PeerWithState_hasWorkingResources(c *g.C) {
+	p := PeerWithState(tj("bla@foo.com"), "hmm", "no", "", "1234")
+	c.Assert(p.Resources(), g.DeepEquals, []jid.Resource{"1234"})
 }
 
 func (s *PeerSuite) Test_PeerWithPendingSubscribe_createsNewPeer(c *g.C) {
@@ -85,7 +91,7 @@ func (s *PeerSuite) Test_NameForPresentation_returnsTheNameIfItExistsButJidOther
 func (s *PeerSuite) Test_MergeWith_takesTheFirstGroupsIfExists(c *g.C) {
 	p1 := &Peer{
 		Groups:    toSet("one"),
-		resources: toSet(),
+		resources: make(map[string]Status),
 	}
 	p2 := &Peer{}
 
@@ -95,7 +101,7 @@ func (s *PeerSuite) Test_MergeWith_takesTheFirstGroupsIfExists(c *g.C) {
 func (s *PeerSuite) Test_SetLatestError_setsLatestError(c *g.C) {
 	p1 := &Peer{
 		Groups:    toSet("one"),
-		resources: toSet(),
+		resources: make(map[string]Status),
 	}
 	p1.SetLatestError("oen", "tow", "there")
 

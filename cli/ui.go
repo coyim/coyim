@@ -630,7 +630,11 @@ CommandLoop:
 				}
 
 				for _, item := range rs {
-					state, _, ok := s.R().StateOf(item.Jid)
+					state := ""
+					pp, ok := s.R().Get(jid.NR("item.Jid"))
+					if ok {
+						state = pp.MainStatus()
+					}
 
 					line := ""
 					if ok {

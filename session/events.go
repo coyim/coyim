@@ -71,7 +71,7 @@ func (s *session) PublishEvent(e interface{}) {
 	s.publishEvent(e)
 }
 
-func (s *session) publishSMPEvent(t events.SMPType, peer jid.Any, body string) {
+func (s *session) publishSMPEvent(t events.SMPType, peer jid.WithResource, body string) {
 	s.publishEvent(events.SMP{
 		Type:    t,
 		Session: s,

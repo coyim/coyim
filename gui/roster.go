@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
@@ -397,14 +396,6 @@ func (r *roster) displayNameFor(account *account, from jid.WithoutResource) stri
 	return p.NameForPresentation()
 }
 
-func (r *roster) presenceUpdated(account *account, peer jid.WithResource, show, showStatus string, gone bool) {
-	r.ui.NewConversationViewFactory(account, peer, false).IfConversationView(func(c conversationView) {
-		doInUIThread(func() {
-			c.appendStatus(r.displayNameFor(account, peer.NoResource()), time.Now(), show, showStatus, gone)
-		})
-	}, func() {})
-}
-
 func (r *roster) update(account *account, entries *rosters.List) {
 	r.ui.accountManager.Lock()
 	defer r.ui.accountManager.Unlock()
@@ -417,11 +408,11 @@ func isNominallyVisible(p *rosters.Peer, showWaiting bool) bool {
 }
 
 func shouldDisplay(p *rosters.Peer, showOffline, showWaiting bool) bool {
-	return isNominallyVisible(p, showWaiting) && (showOffline || p.Online || p.Asked)
+	return isNominallyVisible(p, showWaiting) && (showOffline || p.IsOnline() || p.Asked)
 }
 
 func isAway(p *rosters.Peer) bool {
-	switch p.Status {
+	switch p.MainStatus() {
 	case "dnd", "xa", "away":
 		return true
 	}
@@ -429,7 +420,7 @@ func isAway(p *rosters.Peer) bool {
 }
 
 func isOnline(p *rosters.Peer) bool {
-	return p.PendingSubscribeID == "" && p.Online
+	return p.PendingSubscribeID == "" && p.IsOnline()
 }
 
 func decideStatusFor(p *rosters.Peer) string {
@@ -437,11 +428,11 @@ func decideStatusFor(p *rosters.Peer) string {
 		return "unknown"
 	}
 
-	if !p.Online {
+	if !p.IsOnline() {
 		return "offline"
 	}
 
-	switch p.Status {
+	switch p.MainStatus() {
 	case "dnd":
 		return "busy"
 	case "xa":
@@ -454,7 +445,7 @@ func decideStatusFor(p *rosters.Peer) string {
 }
 
 func decideColorFor(cs colorSet, p *rosters.Peer) string {
-	if !p.Online {
+	if !p.IsOnline() {
 		return cs.rosterPeerOfflineForeground
 	}
 	return cs.rosterPeerOnlineForeground

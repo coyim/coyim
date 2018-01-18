@@ -809,15 +809,17 @@ func (u *gtkUI) toggleAutoConnectAccount(account *account) {
 	u.saveConfigOnly()
 }
 
-func (u *gtkUI) presenceUpdated(ev events.Presence) {
+func (u *gtkUI) presenceUpdated(account *account, peer jid.WithResource, ev events.Presence) {
 	//TODO: Ignore presence updates for yourself.
-	account := u.accountManager.findAccountForSession(ev.Session)
 	if account == nil {
 		return
 	}
 
-	// TODO[jid] - this is probably the right place to change the rosters.Peer stuff
-	u.roster.presenceUpdated(account, jid.R(ev.From), ev.Show, ev.Status, ev.Gone)
+	u.NewConversationViewFactory(account, peer, false).IfConversationView(func(c conversationView) {
+		doInUIThread(func() {
+			c.appendStatus(u.roster.displayNameFor(account, peer.NoResource()), time.Now(), ev.Show, ev.Status, ev.Gone)
+		})
+	}, func() {})
 }
 
 func (u *gtkUI) toggleAlwaysEncryptAccount(account *account) {

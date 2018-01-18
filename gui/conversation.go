@@ -33,6 +33,7 @@ type conversationView interface {
 	getTarget() jid.Any
 	isFileTransferNotifCanceled() bool
 	isOtrLockedTo(jid.Any) bool
+	isOtrLocked() bool
 	isVisible() bool
 	haveShownPrivateEndedNotification()
 	haveShownPrivateNotification()
@@ -293,9 +294,14 @@ func (conv *conversationPane) doPotentialEntryResize() {
 }
 
 func (conv *conversationPane) peerToSendTo() jid.Any {
-	// TODO[jid]: we need to have otr lock here too, of course
+	fmt.Printf("peerToSendTo()\n")
+	if conv.otrLock != nil {
+		fmt.Printf("  peerToSendTo() - otrLock: %s\n", conv.otrLock)
+		return conv.otrLock
+	}
 
 	if _, ok := conv.target.(jid.WithResource); ok {
+		fmt.Printf("  peerToSendTo() - target: %s\n", conv.target)
 		return conv.target
 	}
 
@@ -304,7 +310,8 @@ func (conv *conversationPane) peerToSendTo() jid.Any {
 		panic("something went very wrong with peer handling...")
 	}
 
-	return conv.target.WithResource(p.ResourceToUse())
+	fmt.Printf("  peerToSendTo() - result: %s\n", conv.target.MaybeWithResource(p.ResourceToUse()))
+	return conv.target.MaybeWithResource(p.ResourceToUse())
 }
 
 func (b *builder) securityWarningNotifInit() *securityWarningNotification {
@@ -894,4 +901,8 @@ func (conv *conversationPane) isOtrLockedTo(peer jid.Any) bool {
 		return false
 	}
 	return jj == conv.otrLock
+}
+
+func (conv *conversationPane) isOtrLocked() bool {
+	return conv.otrLock != nil
 }

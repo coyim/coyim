@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"sync"
@@ -38,6 +39,7 @@ type account struct {
 }
 
 func (account *account) executeDelayed(ui *gtkUI, peer jid.Any) {
+	fmt.Printf("executeDelayed(peer=%s)\n", peer)
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 

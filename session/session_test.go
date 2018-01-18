@@ -642,14 +642,14 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "somewhere", "", "", ""))
+	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "somewhere", "", "", "balcony"))
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
 	sess.watchStanzas()
 
 	p, _ := sess.r.Get(jid.NR("some2@one.org"))
-	c.Assert(p.Online, Equals, false)
+	c.Assert(p.IsOnline(), Equals, false)
 
 	for {
 		select {
@@ -751,7 +751,8 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.r.StateOf(jid.NR("some2@one.org"))
+	pp, _ := sess.r.Get(jid.NR("some2@one.org"))
+	st := pp.MainStatus()
 	c.Assert(st, Equals, "dnd")
 
 	for {
@@ -793,7 +794,8 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 
 	sess.watchStanzas()
 
-	st, _, _ := sess.r.StateOf(jid.NR("some2@one.org"))
+	pp, _ := sess.r.Get(jid.NR("some2@one.org"))
+	st := pp.MainStatus()
 	c.Assert(st, Equals, "dnd")
 
 	select {

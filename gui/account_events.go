@@ -129,11 +129,17 @@ func (u *gtkUI) handleSessionEvent(ev events.Event) {
 }
 
 func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
+	account := u.accountManager.findAccountForSession(ev.Session)
+	peer := jid.R(ev.From)
+	// if p, ok := u.getPeer(account, peer.NoResource()); ok {
+	// 	p.Presence(peer, ev.Show, ev.Status, ev.Gone)
+	// }
+
 	if !ev.Session.GetConfig().HideStatusUpdates {
-		u.presenceUpdated(ev)
+		u.presenceUpdated(account, peer, ev)
 	}
 
-	log.Printf("[%s] Presence from %v: show: %v status: %v gone: %v\n", ev.To, ev.From, ev.Show, ev.Status, ev.Gone)
+	log.Printf("[%s] Presence from %v: show: %v status: %v gone: %v\n", ev.To, peer, ev.Show, ev.Status, ev.Gone)
 	u.rosterUpdated()
 }
 

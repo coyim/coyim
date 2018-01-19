@@ -44,13 +44,12 @@ deps:
 run-cover: clean-cover
 	mkdir -p ../.coverprofiles
 	go test -coverprofile=../.coverprofiles/cli.coverprofile     ./../cli
-	go test -coverprofile=../.coverprofiles/client.coverprofile  ./../client
 	go test -coverprofile=../.coverprofiles/config.coverprofile  ./../config
 	go test -coverprofile=../.coverprofiles/config_importer.coverprofile  ./../config/importer
-	go test -coverprofile=../.coverprofiles/event.coverprofile   ./../event
 	go test -coverprofile=../.coverprofiles/gui.coverprofile  ./../gui
 	go test -coverprofile=../.coverprofiles/i18n.coverprofile    ./../i18n
 	go test -coverprofile=../.coverprofiles/net.coverprofile     ./../net
+	go test -coverprofile=../.coverprofiles/otr_client.coverprofile  ./../otr_client
 	go test -coverprofile=../.coverprofiles/roster.coverprofile  ./../roster
 	go test -coverprofile=../.coverprofiles/sasl.coverprofile    ./../sasl
 	go test -coverprofile=../.coverprofiles/sasl_digestmd5.coverprofile    ./../sasl/digestmd5

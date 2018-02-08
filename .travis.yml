@@ -18,8 +18,10 @@ matrix:
   include:
     - go: 1.8.7
       os: osx
+      env: CGO_CFLAGS_ALLOW="-Wl,-framework"
     - go: 1.9.4
       os: osx
+      env: CGO_CFLAGS_ALLOW="-Wl,-framework"
     - go: 1.7.6
       env: RELEASE=true
       os: linux

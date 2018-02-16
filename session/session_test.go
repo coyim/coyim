@@ -845,9 +845,9 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 		conn:                conn,
 		r:                   roster.New(),
 		sessionEventHandler: &mockSessionEventHandler{
-		//warn: func(v string) {
-		//	called++
-		//},
+			//warn: func(v string) {
+			//	called++
+			//},
 		},
 	}
 
@@ -876,9 +876,9 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C
 		conn:                conn,
 		r:                   roster.New(),
 		sessionEventHandler: &mockSessionEventHandler{
-		//warn: func(v string) {
-		//	called++
-		//},
+			//warn: func(v string) {
+			//	called++
+			//},
 		},
 	}
 

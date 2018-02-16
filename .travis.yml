@@ -4,6 +4,10 @@ language: go
 branches:
   except:
     - windows
+
+env:
+  - CGO_CFLAGS_ALLOW="-Wl,(-framework|CoreFoundation)"
+
 go:
   - tip
   - "1.10"
@@ -19,10 +23,8 @@ matrix:
   include:
     - go: "1.10"
       os: osx
-      env: CGO_CFLAGS_ALLOW="-Wl,(-framework|CoreFoundation)"
     - go: 1.9.4
       os: osx
-      env: CGO_CFLAGS_ALLOW="-Wl,(-framework|CoreFoundation)"
     - go: "1.10"
       env: RELEASE=true
       os: linux

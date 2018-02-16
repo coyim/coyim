@@ -18,7 +18,7 @@ else
 ifeq ($(GO_VERSION), go1.4)
 	echo "Your version of Go is too old for running goimports. Skipping."
 else
-	go get golang.org/x/tools/cmd/goimports
+	go get -u golang.org/x/tools/cmd/goimports
 	goimports -w .
 	git diff --exit-code .
 endif

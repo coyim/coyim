@@ -6,7 +6,7 @@ branches:
     - windows
 go:
   - tip
-  - 1.10
+  - "1.10"
   - 1.9.4
   - 1.8.7
   - 1.7.6
@@ -17,16 +17,16 @@ services:
 
 matrix:
   include:
-    - go: 1.10
+    - go: "1.10"
       os: osx
       env: CGO_CFLAGS_ALLOW="-Wl,(-framework|CoreFoundation)"
     - go: 1.9.4
       os: osx
       env: CGO_CFLAGS_ALLOW="-Wl,(-framework|CoreFoundation)"
-    - go: 1.10
+    - go: "1.10"
       env: RELEASE=true
       os: linux
-    - go: 1.10
+    - go: "1.10"
       env: RELEASE=true
       os: osx
   allow_failures:

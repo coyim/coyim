@@ -10,7 +10,7 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
 			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
@@ -38,6 +38,8 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	_, err := d.setupStream(conn)
 
 	c.Assert(err, Equals, io.EOF)
+
+	// if go1.3 OR go1.4
 	if isVersionOldish() {
 		c.Assert(string(rw.write), Equals, ""+
 			"<?xml version='1.0'?><stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
@@ -48,7 +50,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 			"\x00\b\x00\x06\x00\x17\x00\x18\x00\x19\x00\v\x00\x02\x01\x00\x00\r\x00\n"+
 			"\x00\b\x04\x01\x04\x03\x02\x01\x02\x03\xff\x01\x00\x01\x00",
 		)
-	} else {
+	} else { // If go1.5
 		c.Assert(string(rw.write), Equals, ""+
 			"<?xml version='1.0'?><stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
 			"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>\x16\x03\x01\x00\x8a\x01\x00\x00\x86\x03\x03\x00\x01\x02\x03\x04\x05\x06\a\b\t\n"+
@@ -60,7 +62,7 @@ func (s *ConnectionXmppSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	}
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	tlsC := &tls.Config{
@@ -112,7 +114,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 	}
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInvalidCertHash(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInvalidCertHash(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	tlsC := &tls.Config{
@@ -139,7 +141,7 @@ func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 	c.Assert(err.Error(), Equals, "tls: server certificate does not match expected hash (got: 82454418cb04854aa721bb0596528ff802b1e18a4e3a7767412ac9f108c9d3a7, want: 6161616161)")
 }
 
-func (s *ConnectionXmppSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {
 	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
 	conn := &fullMockedConn{rw: rw}
 	tlsC := &tls.Config{

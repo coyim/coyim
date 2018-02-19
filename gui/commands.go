@@ -1,9 +1,7 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/otr_client"
-	"github.com/coyim/coyim/session/access"
 )
 
 type executable interface {
@@ -64,22 +62,8 @@ func (u *gtkUI) watchCommands() {
 		case executable:
 			c.execute(u)
 		case otr_client.AuthorizeFingerprintCmd:
-			account := c.Account
-			uid := c.Peer
-			fpr := c.Fingerprint
-
-			//TODO: it could be a different pointer,
-			//find the account by ID()
-			account.AuthorizeFingerprint(uid.String(), fpr)
+			c.Account.AuthorizeFingerprint(c.Peer.String(), c.Fingerprint)
 			u.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
-
-			ac := u.findAccountForSession(c.Session.(access.Session))
-			if ac != nil {
-				peer := c.Peer
-				convWindowNowOrLater(ac, peer, u, func(cv conversationView) {
-					cv.displayNotification(i18n.Localf("You have verified the identity of %s.", peer))
-				})
-			}
 		case otr_client.SaveInstanceTagCmd:
 			account := c.Account
 			account.InstanceTag = c.InstanceTag

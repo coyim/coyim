@@ -44,9 +44,9 @@ func (cvf *conversationViewFactory) OpenConversationView(userInitiated bool) con
 }
 
 func (cvf *conversationViewFactory) IfConversationView(whenExists func(conversationView), whenDoesntExist func()) {
-	//	fmt.Printf("IfConversationView(peer=%s)\n", cvf.peer)
+	// fmt.Printf("IfConversationView(peer=%s)\n", cvf.peer)
 	c, ok := cvf.getConversationViewSafely()
-	//	fmt.Printf("    IfConversationView(peer=%s) ok=%v\n", cvf.peer, ok)
+	// fmt.Printf("    IfConversationView(peer=%s) ok=%v\n", cvf.peer, ok)
 	if ok {
 		whenExists(c)
 	} else {
@@ -291,9 +291,9 @@ func (cvf *conversationViewFactory) isWindowingStyleConsistent(c conversationVie
 }
 
 func (cvf *conversationViewFactory) getConversationViewSafely() (conversationView, bool) {
-	//	fmt.Printf("getConversationViewSafely(peer=%s)\n", cvf.peer)
+	// fmt.Printf("getConversationViewSafely(peer=%s)\n", cvf.peer)
 	c, ok := cvf.basicGetConversationView()
-	//	fmt.Printf("    getConversationViewSafely(peer=%s) ok=%v\n", cvf.peer, ok)
+	// fmt.Printf("    getConversationViewSafely(peer=%s) ok=%v\n", cvf.peer, ok)
 	if !ok {
 		return nil, false
 	}
@@ -315,12 +315,12 @@ func (cvf *conversationViewFactory) getConversationViewSafely() (conversationVie
 }
 
 func (cvf *conversationViewFactory) basicGetConversationView() (conversationView, bool) {
-	//	fmt.Printf("basicGetConversationView(peer=%s)\n", cvf.peer)
+	// fmt.Printf("basicGetConversationView(peer=%s)\n", cvf.peer)
 	cvf.account.RLock()
 	defer cvf.account.RUnlock()
 
 	pw, pwo := jid.WithAndWithout(cvf.peer)
-	fmt.Printf("    basicGetConversationView(peer=%s) with=%v without=%v\n", cvf.peer, pw, pwo)
+	// fmt.Printf("    basicGetConversationView(peer=%s) with=%v without=%v\n", cvf.peer, pw, pwo)
 
 	if pw != nil {
 		if c, ok := cvf.account.c[pw.String()]; ok {

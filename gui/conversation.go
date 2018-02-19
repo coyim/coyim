@@ -250,9 +250,11 @@ func (conv *conversationPane) onEndOtrSignal() {
 }
 
 func (conv *conversationPane) onVerifyFpSignal() {
-	switch verifyFingerprintDialog(conv.account, conv.peerToSendTo(), conv.transientParent) {
+	peer := conv.peerToSendTo()
+	switch verifyFingerprintDialog(conv.account, peer, conv.transientParent) {
 	case gtki.RESPONSE_YES:
 		conv.removeIdentityVerificationWarning()
+		conv.displayNotification(i18n.Localf("You have verified the identity of %s.", peer.NoResource()))
 	}
 }
 

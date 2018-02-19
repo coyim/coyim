@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"strings"
 
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -33,7 +34,7 @@ func (u *gtkUI) NewConversationViewFactory(account *account, peer jid.Any, targe
 }
 
 func (cvf *conversationViewFactory) OpenConversationView(userInitiated bool) conversationView {
-	//	fmt.Printf("OpenConversationView(peer=%s, user=%v, targeted=%v)\n", cvf.peer, userInitiated, cvf.targeted)
+	// fmt.Printf("OpenConversationView(peer=%s, user=%v, targeted=%v)\n", cvf.peer, userInitiated, cvf.targeted)
 	c, ok := cvf.getConversationViewSafely()
 	if !ok {
 		c = cvf.createConversationView(nil)
@@ -55,7 +56,7 @@ func (cvf *conversationViewFactory) IfConversationView(whenExists func(conversat
 }
 
 func (cvf *conversationViewFactory) createConversationView(existing *conversationPane) conversationView {
-	//	fmt.Printf("createConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
+	// fmt.Printf("createConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	var cv conversationView
 
 	if cvf.ui.settings.GetSingleWindow() {
@@ -77,7 +78,7 @@ func (cvf *conversationViewFactory) potentialTarget() string {
 }
 
 func (cvf *conversationViewFactory) createWindowedConversationView(existing *conversationPane) *conversationWindow {
-	//	fmt.Printf("createWindowedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
+	// fmt.Printf("createWindowedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("Conversation")
 	win := builder.getObj("conversation").(gtki.Window)
 
@@ -148,7 +149,7 @@ func (cvf *conversationViewFactory) createWindowedConversationView(existing *con
 }
 
 func (cvf *conversationViewFactory) createUnifiedConversationView(existing *conversationPane) conversationView {
-	//	fmt.Printf("createUnifiedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
+	// fmt.Printf("createUnifiedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	cp := cvf.createConversationPane(cvf.ui.window)
 
 	if existing != nil {
@@ -188,7 +189,7 @@ func (cvf *conversationViewFactory) createUnifiedConversationView(existing *conv
 }
 
 func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *conversationPane {
-	//	fmt.Printf("createConversationPane(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
+	// fmt.Printf("createConversationPane(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("ConversationPane")
 
 	var target jid.Any = cvf.peer.NoResource()
@@ -271,8 +272,8 @@ func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *con
 }
 
 func (cvf *conversationViewFactory) setConversationView(c conversationView) {
-	//	fmt.Printf("setConversationView(peer=%s)\n", cvf.peer)
-	defer cvf.account.executeDelayed(cvf.ui, cvf.peer)
+	// fmt.Printf("setConversationView(peer=%s)\n", cvf.peer)
+	defer cvf.account.executeDelayed(cvf.ui, cvf.peer, cvf.targeted)
 	cvf.account.Lock()
 	defer cvf.account.Unlock()
 
@@ -280,7 +281,7 @@ func (cvf *conversationViewFactory) setConversationView(c conversationView) {
 		cold.destroy()
 	}
 
-	//	fmt.Printf("setConversationView(target=%s)\n", c.getTarget())
+	// fmt.Printf("setConversationView(target=%s)\n", c.getTarget())
 	cvf.account.c[c.getTarget().String()] = c
 }
 
@@ -314,6 +315,17 @@ func (cvf *conversationViewFactory) getConversationViewSafely() (conversationVie
 	return cvf.createConversationView(pane), true
 }
 
+func (cvf *conversationViewFactory) countPeerWindows(peer jid.Any) int {
+	prefix := peer.NoResource().String()
+	c := 0
+	for k, _ := range cvf.account.c {
+		if k == prefix || strings.HasPrefix(k, prefix+"/") {
+			c++
+		}
+	}
+	return c
+}
+
 func (cvf *conversationViewFactory) basicGetConversationView() (conversationView, bool) {
 	// fmt.Printf("basicGetConversationView(peer=%s)\n", cvf.peer)
 	cvf.account.RLock()
@@ -331,7 +343,7 @@ func (cvf *conversationViewFactory) basicGetConversationView() (conversationView
 		}
 	}
 
-	if c, ok := cvf.account.c[pwo.String()]; !cvf.targeted && ok && (!c.isOtrLocked() || c.isOtrLockedTo(cvf.peer)) {
+	if c, ok := cvf.account.c[pwo.String()]; ok && !cvf.targeted && (!c.isOtrLocked() || c.isOtrLockedTo(cvf.peer) || cvf.countPeerWindows(pwo) == 1) {
 		return c, true
 	}
 

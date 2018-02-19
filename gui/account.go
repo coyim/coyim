@@ -39,17 +39,37 @@ type account struct {
 	sync.RWMutex
 }
 
-func (account *account) executeDelayed(ui *gtkUI, peer jid.Any) {
-	//	fmt.Printf("executeDelayed(peer=%s)\n", peer)
+func (account *account) executeOneDelayed(ui *gtkUI, p string, cv conversationView) {
+	for _, f := range account.delayedConversations[p] {
+		f(cv)
+	}
+
+	delete(account.delayedConversations, p)
+}
+
+func keysOfMap(mm map[string][]func(conversationView)) []string {
+	k := make([]string, len(mm))
+
+	for kk, _ := range mm {
+		k = append(k, kk)
+	}
+
+	return k
+}
+
+func (account *account) executeDelayed(ui *gtkUI, peer jid.Any, targeted bool) {
 	account.delayedConversationsLock.Lock()
 	defer account.delayedConversationsLock.Unlock()
 
-	ui.NewConversationViewFactory(account, peer, false).IfConversationView(func(cv conversationView) {
-		for _, f := range account.delayedConversations[peer.String()] {
-			f(cv)
+	ui.NewConversationViewFactory(account, peer, targeted).IfConversationView(func(cv conversationView) {
+		if targeted {
+			account.executeOneDelayed(ui, peer.String(), cv)
+		} else {
+			for _, s := range keysOfMap(account.delayedConversations) {
+				account.executeOneDelayed(ui, s, cv)
+			}
 		}
 
-		delete(account.delayedConversations, peer.String())
 	}, func() {
 		panic("race condition")
 	})

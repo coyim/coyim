@@ -309,7 +309,7 @@ func (conv *conversationPane) peerToSendTo() jid.Any {
 
 	p, ok := conv.currentPeer()
 	if !ok {
-		panic("something went very wrong with peer handling...")
+		return jid.Parse("")
 	}
 
 	//	fmt.Printf("  peerToSendTo() - result: %s\n", conv.target.MaybeWithResource(p.ResourceToUse()))
@@ -366,7 +366,11 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 }
 
 func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) {
-	return conv.account.session.ConversationManager().GetConversationWith(conv.peerToSendTo())
+	p := conv.peerToSendTo()
+	if p.String() == "" {
+		return nil, false
+	}
+	return conv.account.session.ConversationManager().GetConversationWith(p)
 }
 
 func (conv *conversationPane) isVerified(u *gtkUI) bool {

@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	rosters "github.com/coyim/coyim/roster"
@@ -210,7 +211,11 @@ func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *con
 		afterNewMessage:      func() {},
 		delayed:              make(map[int]sentMessage),
 		currentPeer: func() (*rosters.Peer, bool) {
-			return cvf.ui.getPeer(cvf.account, cvf.peer.NoResource())
+			p, ok := cvf.ui.getPeer(cvf.account, cvf.peer.NoResource())
+			if !ok {
+				log.Println("Failure to look up peer %v from account", cvf.peer.NoResource().String())
+			}
+			return p, ok
 		},
 	}
 

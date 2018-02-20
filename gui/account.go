@@ -71,7 +71,7 @@ func (account *account) executeDelayed(ui *gtkUI, peer jid.Any, targeted bool) {
 		}
 
 	}, func() {
-		panic("race condition")
+		log.Println("Race condition in executeDelayed(%v, %v) - this shouldn't happen", peer, targeted)
 	})
 }
 

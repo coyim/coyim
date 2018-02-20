@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/coyim/coyim/config"
@@ -183,6 +184,7 @@ func (m *accountManager) getPeer(account *account, peer jid.WithoutResource) (*r
 
 	l, ok := m.contacts[account]
 	if !ok {
+		log.Println("Failure to look up account %v from account manager", account.session.GetConfig().Account)
 		return nil, false
 	}
 

@@ -71,7 +71,7 @@ func (account *account) executeDelayed(ui *gtkUI, peer jid.Any, targeted bool) {
 		}
 
 	}, func() {
-		log.Println("Race condition in executeDelayed(%v, %v) - this shouldn't happen", peer, targeted)
+		log.Printf("Race condition in executeDelayed(%v, %v) - this shouldn't happen", peer, targeted)
 	})
 }
 

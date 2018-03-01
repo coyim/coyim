@@ -243,7 +243,7 @@ func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *con
 		"on_send_file_to_contact": func() {
 			// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
 			// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
-			doInUIThread(func() { cvf.account.sendFileTo(cp.peerToSendTo(), cvf.ui) })
+			doInUIThread(func() { cvf.account.sendFileTo(cp.currentPeerForSending(), cvf.ui) })
 		},
 	})
 

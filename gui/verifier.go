@@ -50,7 +50,7 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 			return p.NameForPresentation()
 		},
 		peerToSendTo: func() jid.WithResource {
-			return conv.peerToSendTo().(jid.WithResource)
+			return conv.currentPeerForSending().(jid.WithResource)
 		},
 	}
 

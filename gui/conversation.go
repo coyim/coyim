@@ -225,7 +225,7 @@ func (conv *conversationPane) onSendMessageSignal() {
 func (conv *conversationPane) onStartOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	c, _ := session.ConversationManager().EnsureConversationWith(conv.peerToSendTo())
+	c, _ := session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending())
 	err := c.StartEncryptedChat()
 	if err != nil {
 		log.Printf(i18n.Local("Failed to start encrypted chat: %s\n"), err.Error())
@@ -237,7 +237,7 @@ func (conv *conversationPane) onStartOtrSignal() {
 func (conv *conversationPane) onEndOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	err := session.ManuallyEndEncryptedChat(conv.peerToSendTo())
+	err := session.ManuallyEndEncryptedChat(conv.currentPeerForSending())
 
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
@@ -250,7 +250,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 }
 
 func (conv *conversationPane) onVerifyFpSignal() {
-	peer := conv.peerToSendTo()
+	peer := conv.currentPeerForSending()
 	switch verifyFingerprintDialog(conv.account, peer, conv.transientParent) {
 	case gtki.RESPONSE_YES:
 		conv.removeIdentityVerificationWarning()
@@ -295,25 +295,28 @@ func (conv *conversationPane) doPotentialEntryResize() {
 	}
 }
 
-func (conv *conversationPane) peerToSendTo() jid.Any {
-	//	fmt.Printf("peerToSendTo()\n")
+func (conv *conversationPane) potentialCurrentPeer() (jid.Any, bool) {
 	if conv.otrLock != nil {
-		//		fmt.Printf("  peerToSendTo() - otrLock: %s\n", conv.otrLock)
-		return conv.otrLock
+		return conv.otrLock, true
 	}
 
 	if _, ok := conv.target.(jid.WithResource); ok {
-		//		fmt.Printf("  peerToSendTo() - target: %s\n", conv.target)
-		return conv.target
+		return conv.target, true
 	}
 
 	p, ok := conv.currentPeer()
 	if !ok {
-		return jid.Parse("")
+		return nil, false
 	}
 
-	//	fmt.Printf("  peerToSendTo() - result: %s\n", conv.target.MaybeWithResource(p.ResourceToUse()))
-	return conv.target.MaybeWithResource(p.ResourceToUse())
+	return conv.target.MaybeWithResource(p.ResourceToUse()), true
+}
+
+func (conv *conversationPane) currentPeerForSending() jid.Any {
+	if f, ok := conv.potentialCurrentPeer(); ok {
+		return f
+	}
+	return jid.Parse("")
 }
 
 func (b *builder) securityWarningNotifInit() *securityWarningNotification {
@@ -366,11 +369,11 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 }
 
 func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) {
-	p := conv.peerToSendTo()
-	if p.String() == "" {
+	pm, ok := conv.potentialCurrentPeer()
+	if !ok {
 		return nil, false
 	}
-	return conv.account.session.ConversationManager().GetConversationWith(p)
+	return conv.account.session.ConversationManager().GetConversationWith(pm)
 }
 
 func (conv *conversationPane) isVerified(u *gtkUI) bool {
@@ -383,7 +386,9 @@ func (conv *conversationPane) isVerified(u *gtkUI) bool {
 	fingerprint := conversation.TheirFingerprint()
 	conf := conv.account.session.GetConfig()
 
-	p, hasPeer := conf.GetPeer(conv.peerToSendTo().NoResource().String())
+	strP := conv.currentPeerForSending().NoResource().String()
+
+	p, hasPeer := conf.GetPeer(strP)
 	isNew := false
 
 	if hasPeer {
@@ -394,7 +399,7 @@ func (conv *conversationPane) isVerified(u *gtkUI) bool {
 			log.Println("Failed to save config:", err)
 		}
 	} else {
-		p = conf.EnsurePeer(conv.peerToSendTo().NoResource().String())
+		p = conf.EnsurePeer(strP)
 		p.EnsureHasFingerprint(fingerprint)
 
 		err := u.saveConfigInternal()
@@ -521,7 +526,7 @@ func (conv *conversationPane) appendPendingDelayed() {
 		dm, ok := conv.delayed[ctrace]
 		if ok {
 			delete(conv.delayed, ctrace)
-			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.peerToSendTo())
+			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending())
 
 			dm.isEncrypted = conversation.IsEncrypted()
 			dm.queuedTimestamp = dm.timestamp
@@ -558,7 +563,7 @@ func (conv *conversationPane) delayedMessageSent(trace int) {
 
 func (conv *conversationPane) sendMessage(message string) error {
 	session := conv.account.session
-	trace, delayed, err := session.EncryptAndSendTo(conv.peerToSendTo(), message)
+	trace, delayed, err := session.EncryptAndSendTo(conv.currentPeerForSending(), message)
 
 	if err != nil {
 		oerr, isoff := err.(*access.OfflineError)
@@ -571,13 +576,13 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: review whether it should create a conversation
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
-		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.peerToSendTo())
+		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending())
 
 		sent := sentMessage{
 			message:         message,
 			strippedMessage: ui.StripSomeHTML([]byte(message)),
 			from:            conv.account.session.DisplayName(),
-			to:              conv.peerToSendTo().NoResource(),
+			to:              conv.currentPeerForSending().NoResource(),
 			timestamp:       time.Now(),
 			isEncrypted:     conversation.IsEncrypted(),
 			isDelayed:       delayed,

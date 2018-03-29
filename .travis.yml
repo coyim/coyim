@@ -10,8 +10,8 @@ env:
 
 go:
   - tip
-  - "1.10"
-  - 1.9.4
+  - "1.10.1"
+  - 1.9.5
   - 1.8.7
   - 1.7.6
   - 1.6.4
@@ -21,14 +21,14 @@ services:
 
 matrix:
   include:
-    - go: "1.10"
+    - go: "1.10.1"
       os: osx
     - go: 1.9.4
       os: osx
-    - go: "1.10"
+    - go: "1.10.1"
       env: RELEASE=true
       os: linux
-    - go: "1.10"
+    - go: "1.10.1"
       env: RELEASE=true
       os: osx
   allow_failures:

@@ -44,9 +44,19 @@ test:
 test-named:
 	$(GOTEST) -v -tags $(GTK_BUILD_TAG) ./cli ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
 
-deps:
-	go get -u github.com/kardianos/govendor
+dep-supported-only:
+ifeq ($(GO_VERSION), go1.6)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.7)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.8)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else
 	go get -u github.com/golang/lint/golint
+endif
+
+deps: dep-supported-only
+	go get -u github.com/kardianos/govendor
 	go get -u github.com/modocache/gover
 	go get -u github.com/rosatolen/esc
 

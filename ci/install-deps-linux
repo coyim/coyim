@@ -10,10 +10,10 @@ sh -e /etc/init.d/xvfb start
 sleep 3 # wait for xvfb
 
 # This is only for the GUI test
-sudo apt-get install -qq -y python-dogtail gsettings-desktop-schemas
-gsettings set org.gnome.desktop.interface toolkit-accessibility true
-sudo apt-get install -qq -y libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev g++-multilib
-sudo pip install --upgrade pip
-sudo pip install Pillow
-sudo pip install behave
+#sudo apt-get install -qq -y python-dogtail gsettings-desktop-schemas
+#gsettings set org.gnome.desktop.interface toolkit-accessibility true
+#sudo apt-get install -qq -y libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev g++-multilib
+#sudo pip install --upgrade pip
+#sudo pip install Pillow
+#sudo pip install behave
 

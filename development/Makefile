@@ -1,5 +1,6 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
+GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
 GOTEST=govendor test +local
 GOLIST=govendor list -no-status +local
@@ -24,9 +25,17 @@ i18n:
 .PHONY: i18n
 
 lint:
+ifeq ($(GO_VERSION), go1.6)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.7)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.8)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else
 	for pkg in $$($(GOLIST) ./...) ; do \
 		golint $$pkg ; \
-    done
+	done
+endif
 
 test:
 	$(GOTEST) -cover -v -tags $(GTK_BUILD_TAG) ./...

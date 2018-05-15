@@ -389,7 +389,7 @@ func (conv *conversationPane) isVerified(u *gtkUI) bool {
 	strP := conv.currentPeerForSending().NoResource().String()
 
 	p, hasPeer := conf.GetPeer(strP)
-	isNew := false
+	isNew := true
 
 	if hasPeer {
 		_, isNew = p.EnsureHasFingerprint(fingerprint)

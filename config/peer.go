@@ -148,6 +148,16 @@ func (p *Peer) EnsureHasFingerprint(fpr []byte) (*Fingerprint, bool) {
 	return f, true
 }
 
+// GetFingerprint returns the fingerprint of the peer, if it exists
+func (p *Peer) GetFingerprint(fpr []byte) (*Fingerprint, bool) {
+	for _, f := range p.Fingerprints {
+		if bytes.Equal(f.Fingerprint, fpr) {
+			return f, true
+		}
+	}
+	return nil, false
+}
+
 // HasTrustedFingerprint returns true if the peer has the given fingerprint and it is trusted
 func (p *Peer) HasTrustedFingerprint(fpr []byte) bool {
 	for _, ff := range p.Fingerprints {

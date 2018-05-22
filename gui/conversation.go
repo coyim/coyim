@@ -29,7 +29,7 @@ type conversationView interface {
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	delayedMessageSent(int)
 	displayNotification(notification string)
-	displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string)
+	displayNotificationVerifiedOrNot(notificationV, notificationNV string)
 	getTarget() jid.Any
 	isFileTransferNotifCanceled() bool
 	isOtrLockedTo(jid.Any) bool
@@ -38,11 +38,9 @@ type conversationView interface {
 	haveShownPrivateEndedNotification()
 	haveShownPrivateNotification()
 	newFileTransfer(fileName string, dir, send, receive bool) *fileNotification
-	removeIdentityVerificationWarning()
 	removeOtrLock()
 	setEnabled(enabled bool)
 	setOtrLock(jid.WithResource)
-	showIdentityVerificationWarning(*gtkUI)
 	showSMPRequestForSecret(string)
 	showSMPSuccess()
 	showSMPFailure()
@@ -52,6 +50,10 @@ type conversationView interface {
 
 	show(userInitiated bool)
 	destroy()
+
+	updateSecurityStatus()
+	calculateNewKeyStatus()
+	savePeerFingerprint(*gtkUI)
 }
 
 func (conv *conversationPane) showSMPRequestForSecret(question string) {
@@ -111,18 +113,18 @@ type conversationPane struct {
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
-	marks                []*timedMark
-	hidden               bool
-	shiftEnterSends      bool
-	afterNewMessage      func()
-	currentPeer          func() (*rosters.Peer, bool)
-	delayed              map[int]sentMessage
-	pendingDelayed       []int
-	pendingDelayedLock   sync.Mutex
-	shownPrivate         bool
-	isNewFingerprint     bool
-	hasSetNewFingerprint bool
-	verifier             *verifier
+	marks              []*timedMark
+	hidden             bool
+	shiftEnterSends    bool
+	afterNewMessage    func()
+	currentPeer        func() (*rosters.Peer, bool)
+	delayed            map[int]sentMessage
+	pendingDelayed     []int
+	pendingDelayedLock sync.Mutex
+	shownPrivate       bool
+	verifier           *verifier
+
+	encryptionStatus *encryptionStatus
 }
 
 type tags struct {
@@ -242,9 +244,8 @@ func (conv *conversationPane) onEndOtrSignal() {
 	if err != nil {
 		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
 	} else {
-		conv.removeIdentityVerificationWarning()
+		conv.updateSecurityStatus()
 		conv.displayNotification(i18n.Local("Private conversation has ended."))
-		conv.updateSecurityWarning()
 		conv.haveShownPrivateEndedNotification()
 	}
 }
@@ -253,7 +254,7 @@ func (conv *conversationPane) onVerifyFpSignal() {
 	peer := conv.currentPeerForSending()
 	switch verifyFingerprintDialog(conv.account, peer, conv.transientParent) {
 	case gtki.RESPONSE_YES:
-		conv.removeIdentityVerificationWarning()
+		conv.updateSecurityStatus()
 		conv.displayNotification(i18n.Localf("You have verified the identity of %s.", peer.NoResource()))
 	}
 }
@@ -376,70 +377,22 @@ func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) 
 	return conv.account.session.ConversationManager().GetConversationWith(pm)
 }
 
-func (conv *conversationPane) isVerified(u *gtkUI) bool {
-	conversation, exists := conv.getConversation()
-	if !exists {
-		log.Println("Conversation does not exist - this shouldn't happen")
-		return false
-	}
-
-	fingerprint := conversation.TheirFingerprint()
-	conf := conv.account.session.GetConfig()
-
-	strP := conv.currentPeerForSending().NoResource().String()
-
-	p, hasPeer := conf.GetPeer(strP)
-	isNew := true
-
-	if hasPeer {
-		_, isNew = p.EnsureHasFingerprint(fingerprint)
-
-		err := u.saveConfigInternal()
-		if err != nil {
-			log.Println("Failed to save config:", err)
-		}
-	} else {
-		p = conf.EnsurePeer(strP)
-		p.EnsureHasFingerprint(fingerprint)
-
-		err := u.saveConfigInternal()
-		if err != nil {
-			log.Println("Failed to save config:", err)
-		}
-	}
-
-	if !conv.hasSetNewFingerprint {
-		conv.isNewFingerprint = isNew
-		conv.hasSetNewFingerprint = true
-	}
-
-	return hasPeer && p.HasTrustedFingerprint(fingerprint)
-}
-
-func (conv *conversationPane) showIdentityVerificationWarning(u *gtkUI) {
+func (conv *conversationPane) updateIdentityVerificationWarning() {
 	conv.Lock()
 	defer conv.Unlock()
 
-	conv.verifier.showUnverifiedWarning()
-}
-
-func (conv *conversationPane) removeIdentityVerificationWarning() {
-	conv.Lock()
-	defer conv.Unlock()
-
-	conv.verifier.removeInProgressDialogs()
-	conv.verifier.hideUnverifiedWarning()
+	conv.verifier.updateInProgressDialogs(conv.isEncrypted())
+	conv.verifier.updateUnverifiedWarning()
 }
 
 func (conv *conversationPane) updateSecurityWarning() {
-	conversation, ok := conv.getConversation()
-
 	prov := providerWithCSS("box { background-color: #fff3f3;  color: #000000; border: 3px; }")
 	updateWithStyle(conv.securityWarningNotif.area, prov)
 
 	conv.securityWarningNotif.label.SetLabel("You are talking over an \nunprotected chat")
 	setImageFromFile(conv.securityWarningNotif.image, "secure.svg")
-	conv.securityWarningNotif.area.SetVisible(!ok || !conversation.IsEncrypted())
+
+	conv.securityWarningNotif.area.SetVisible(!conv.isEncrypted())
 }
 
 func (conv *conversationWindow) show(userInitiated bool) {
@@ -785,16 +738,14 @@ func (conv *conversationPane) displayNotification(notification string) {
 	)
 }
 
-func (conv *conversationPane) displayNotificationVerifiedOrNot(u *gtkUI, notificationV, notificationNV string) {
-	isVerified := conv.isVerified(u)
-
-	if isVerified {
+func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, notificationNV string) {
+	if conv.hasVerifiedKey() {
 		conv.displayNotification(notificationV)
 	} else {
 		conv.displayNotification(notificationNV)
 	}
 
-	if conv.isNewFingerprint {
+	if conv.hasNewKey() {
 		conv.displayNotification(i18n.Local("The peer is using a key we haven't seen before!"))
 	}
 }

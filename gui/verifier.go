@@ -59,7 +59,7 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 	// A function is used below because we cannot check whether a contact is verified
 	// when newVerifier is called.
 	v.buildUnverifiedWarning(func() bool {
-		return conv.isVerified(u)
+		return conv.isEncrypted() && !conv.hasVerifiedKey()
 	})
 	v.buildWaitingForPeerNotification()
 	v.buildPeerRequestsSMPNotification()
@@ -111,42 +111,46 @@ func (v *verifier) buildPinWindow() {
 	setImageFromFile(v.pinWindow.alertImage, "alert.svg")
 }
 
-func (v *verifier) showUnverifiedWarning() {
-	v.unverifiedWarning.show()
+func (v *verifier) updateUnverifiedWarning() {
+	v.unverifiedWarning.update()
+}
+
+func (v *verifier) hideUnverifiedWarning() {
+	v.unverifiedWarning.infobar.Hide()
 }
 
 // TODO: check on linux
 type unverifiedWarning struct {
-	b              *builder
-	infobar        gtki.Box
-	closeInfobar   gtki.Box
-	notification   gtki.Box
-	label          gtki.Label
-	image          gtki.Image
-	button         gtki.Button
-	peerIsVerified func() bool
+	b                         *builder
+	infobar                   gtki.Box
+	closeInfobar              gtki.Box
+	notification              gtki.Box
+	label                     gtki.Label
+	image                     gtki.Image
+	button                    gtki.Button
+	shouldShowVerificationBar func() bool
 }
 
 // TODO: how will this work with i18n?
 var question = "Please enter the PIN that I shared with you."
 var coyIMQuestion = regexp.MustCompile("Please enter the PIN that I shared with you.")
 
-func (u *unverifiedWarning) show() {
-	if !u.peerIsVerified() {
+func (u *unverifiedWarning) update() {
+	if u.shouldShowVerificationBar() {
 		u.infobar.Show()
 		u.label.Show()
 		u.image.ShowAll()
 	} else {
-		log.Println("We already have a peer and a trusted fingerprint. No reason to show the unverified warning")
+		u.infobar.Hide()
 	}
 }
 
-func (v *verifier) buildUnverifiedWarning(peerIsVerified func() bool) {
+func (v *verifier) buildUnverifiedWarning(shouldShowVerificationBar func() bool) {
 	v.unverifiedWarning = &unverifiedWarning{
 		b: newBuilder("UnverifiedWarning"),
 	}
 
-	v.unverifiedWarning.peerIsVerified = peerIsVerified
+	v.unverifiedWarning.shouldShowVerificationBar = shouldShowVerificationBar
 
 	v.unverifiedWarning.b.getItems(
 		"verify-infobar", &v.unverifiedWarning.infobar,
@@ -438,11 +442,11 @@ func (v *verifier) buildSMPFailedDialog() {
 	v.smpFailed.dialog.HideOnDelete()
 
 	v.smpFailed.dialog.Connect("response", func() {
-		v.showUnverifiedWarning()
+		v.updateUnverifiedWarning()
 		v.smpFailed.dialog.Hide()
 	})
 	v.smpFailed.button.Connect("clicked", func() {
-		v.showUnverifiedWarning()
+		v.updateUnverifiedWarning()
 		v.smpFailed.dialog.Hide()
 	})
 }
@@ -452,6 +456,12 @@ func (v *verifier) displayVerificationFailure() {
 	v.smpFailed.dialog.ShowAll()
 }
 
+func (v *verifier) updateInProgressDialogs(encrypted bool) {
+	if !encrypted {
+		v.removeInProgressDialogs()
+	}
+}
+
 func (v *verifier) removeInProgressDialogs() {
 	v.peerRequestsSMP.infobar.Hide()
 	v.waitingForPeer.infobar.Hide()
@@ -459,12 +469,8 @@ func (v *verifier) removeInProgressDialogs() {
 	v.answerSMPWindow.dialog.Hide()
 }
 
-func (v *verifier) hideUnverifiedWarning() {
-	v.unverifiedWarning.infobar.Hide()
-}
-
 func (v *verifier) cancelSMP() {
 	v.removeInProgressDialogs()
 	v.session.AbortSMP(v.peerToSendTo())
-	v.showUnverifiedWarning()
+	v.updateUnverifiedWarning()
 }

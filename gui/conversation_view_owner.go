@@ -272,6 +272,7 @@ func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *con
 	cvf.ui.keyboardSettings.update()
 
 	cp.verifier = newVerifier(cvf.ui, cp)
+	cp.encryptionStatus = &encryptionStatus{}
 
 	return cp
 }

@@ -150,12 +150,6 @@ func convWindowNowOrLater(account *account, peer jid.Any, ui *gtkUI, f func(conv
 }
 
 func (u *gtkUI) handlePeerEvent(ev events.Peer) {
-	identityWarning := func(cv conversationView) {
-		cv.updateSecurityWarning()
-		cv.removeIdentityVerificationWarning()
-		cv.showIdentityVerificationWarning(u)
-	}
-
 	switch ev.Type {
 	case events.IQReceived:
 		//TODO
@@ -164,10 +158,10 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 	case events.OTREnded:
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
+			cv.updateSecurityStatus()
+
 			cv.removeOtrLock()
 			cv.displayNotification(i18n.Local("Private conversation has ended."))
-			cv.updateSecurityWarning()
-			cv.removeIdentityVerificationWarning()
 			cv.haveShownPrivateEndedNotification()
 		})
 
@@ -175,17 +169,21 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
 			cv.setOtrLock(ev.From.(jid.WithResource))
-			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
+			cv.calculateNewKeyStatus()
+			cv.savePeerFingerprint(u)
+			cv.updateSecurityStatus()
+
+			cv.displayNotificationVerifiedOrNot(i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
 			cv.appendPendingDelayed()
-			identityWarning(cv)
 			cv.haveShownPrivateNotification()
 		})
 
 	case events.OTRRenewedKeys:
 		account := u.findAccountForSession(ev.Session)
 		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
-			cv.displayNotificationVerifiedOrNot(u, i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
-			identityWarning(cv)
+			cv.updateSecurityStatus()
+
+			cv.displayNotificationVerifiedOrNot(i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
 		})
 
 	case events.SubscriptionRequest:

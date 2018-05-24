@@ -581,34 +581,6 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfReceivingTheWrongTagName(c *C) {
 	c.Assert(err.Error(), Equals, "xmpp: expected <proceed> after <starttls> but got <things> in urn:ietf:params:xml:ns:xmpp-tls")
 }
 
-func (s *ConnectionXMPPSuite) Test_Dial_setsServerNameOnTLSContext(c *C) {
-	rw := &mockConnIOReaderWriter{read: []byte(
-		"<?xml version='1.0'?>" +
-			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
-			"<str:features>" +
-			"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'>" +
-			"</starttls>" +
-			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
-			"<mechanism>PLAIN</mechanism>" +
-			"</mechanisms>" +
-			"</str:features>" +
-			"<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>",
-	)}
-	tlsC := &tls.Config{}
-	conn := &fullMockedConn{rw: rw}
-
-	d := &dialer{
-		JID:      "user@domain",
-		password: "pass",
-		config: data.Config{
-			TLSConfig: tlsC,
-		},
-	}
-	_, err := d.setupStream(conn)
-
-	c.Assert(err, Equals, io.EOF)
-}
-
 func (s *ConnectionXMPPSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(
 		"<?xml version='1.0'?>" +
@@ -1066,4 +1038,144 @@ func (s *ConnectionXMPPSuite) Test_readMessages_alertsOnError(c *C) {
 	}
 
 	c.Assert(err.Error(), Equals, "unexpected XMPP message clientx <message/>")
+}
+
+func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
+	tlsC, v := tlsConfigForRecordedHandshake()
+
+	rw := &mockConnIOReaderWriter{read: []byte(
+		"<?xml version='1.0'?>" +
+			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
+			"<str:features>" +
+			"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'>" +
+			"</starttls>" +
+			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
+			"<mechanism>PLAIN</mechanism>" +
+			"</mechanisms>" +
+			"</str:features>" +
+			"<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>",
+	)}
+	t := &tlsMock1{returnFromHandshake: io.EOF}
+	d := &dialer{
+		JID:      "user@domain",
+		password: "pass",
+
+		verifier: v,
+		config: data.Config{
+			TLSConfig: tlsC,
+		},
+		tlsConnFactory: fixedTlsFactory(t),
+	}
+
+	conn := &fullMockedConn{rw: rw}
+	_, err := d.setupStream(conn)
+
+	c.Assert(err, Equals, io.EOF)
+}
+
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
+	tlsC, _ := tlsConfigForRecordedHandshake()
+
+	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
+	conn := &fullMockedConn{rw: rw}
+	connState := tls.ConnectionState{
+		Version:           tls.VersionTLS12,
+		HandshakeComplete: true,
+		CipherSuite:       tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+	}
+	t := &tlsMock1{
+		returnFromHandshake: nil,
+		returnFromConnState: connState,
+		returnFromRead1:     0,
+		returnFromRead2:     io.EOF,
+	}
+	v := &mockTLSVerifier{
+		toReturn: nil,
+	}
+	d := &dialer{
+		JID:           "user@www.olabini.se",
+		password:      "pass",
+		serverAddress: "www.olabini.se:443",
+		verifier:      v,
+		config: data.Config{
+			TLSConfig: tlsC,
+		},
+		tlsConnFactory: fixedTlsFactory(t),
+	}
+	_, err := d.setupStream(conn)
+
+	c.Assert(err, Equals, io.EOF)
+	c.Assert(v.verifyCalled, Equals, 1)
+	c.Assert(v.originDomain, Equals, "www.olabini.se")
+}
+
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInvalidCertHash(c *C) {
+	tlsC, _ := tlsConfigForRecordedHandshake()
+
+	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
+	conn := &fullMockedConn{rw: rw}
+	t := &tlsMock1{
+		returnFromHandshake: nil,
+		returnFromConnState: tls.ConnectionState{},
+	}
+	v := &mockTLSVerifier{
+		toReturn: goerr.New("tls: server certificate does not match expected hash (got: 82454418cb04854aa721bb0596528ff802b1e18a4e3a7767412ac9f108c9d3a7, want: 6161616161)"),
+	}
+	d := &dialer{
+		JID:           "user@www.olabini.se",
+		password:      "pass",
+		serverAddress: "www.olabini.se:443",
+		verifier:      v,
+
+		config: data.Config{
+			TLSConfig: tlsC,
+		},
+		tlsConnFactory: fixedTlsFactory(t),
+	}
+	_, err := d.setupStream(conn)
+
+	c.Assert(err.Error(), Equals, "tls: server certificate does not match expected hash (got: 82454418cb04854aa721bb0596528ff802b1e18a4e3a7767412ac9f108c9d3a7, want: 6161616161)")
+}
+
+func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOnValidCertHash(c *C) {
+	tlsC, _ := tlsConfigForRecordedHandshake()
+	tlsC.Rand = fixedRand([]string{
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F",
+		"000102030405060708090A0B0C0D0E0F",
+		"000102030405060708090A0B0C0D0E0F",
+	})
+
+	rw := &mockMultiConnIOReaderWriter{read: validTLSExchange}
+	conn := &fullMockedConn{rw: rw}
+	connState := tls.ConnectionState{
+		Version:           tls.VersionTLS12,
+		HandshakeComplete: true,
+		CipherSuite:       tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+	}
+	t := &tlsMock1{
+		returnFromHandshake: nil,
+		returnFromConnState: connState,
+		returnFromRead1:     0,
+		returnFromRead2:     io.EOF,
+	}
+	v := &mockTLSVerifier{
+		toReturn: nil,
+	}
+	d := &dialer{
+		JID:           "user@www.olabini.se",
+		password:      "pass",
+		serverAddress: "www.olabini.se:443",
+		verifier:      v,
+
+		config: data.Config{
+			TLSConfig: tlsC,
+		},
+		tlsConnFactory: fixedTlsFactory(t),
+	}
+	_, err := d.setupStream(conn)
+
+	c.Assert(err, Equals, io.EOF)
+	c.Assert(v.verifyCalled, Equals, 1)
+	c.Assert(v.originDomain, Equals, "www.olabini.se")
 }

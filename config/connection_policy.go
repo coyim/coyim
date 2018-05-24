@@ -110,7 +110,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 		return nil, err
 	}
 
-	dialer := p.DialerFactory(verifier)
+	dialer := p.DialerFactory(verifier, ourtls.Real)
 	dialer.SetJID(conf.Account)
 	dialer.SetProxy(proxy)
 	dialer.SetConfig(xmppConfig)

@@ -33,7 +33,7 @@ import (
 type cliUI struct {
 	session        sessions.Session
 	sessionFactory sessions.Factory
-	dialerFactory  func(tls.Verifier) xi.Dialer
+	dialerFactory  func(tls.Verifier, tls.Factory) xi.Dialer
 	events         chan interface{}
 	commands       chan interface{}
 
@@ -56,7 +56,7 @@ type UI interface {
 }
 
 // NewCLI creates a new cliUI instance
-func NewCLI(version string, cf terminal.ControlFactory, sf sessions.Factory, df func(tls.Verifier) xi.Dialer) UI {
+func NewCLI(version string, cf terminal.ControlFactory, sf sessions.Factory, df func(tls.Verifier, tls.Factory) xi.Dialer) UI {
 	termControl := cf()
 	oldState, err := termControl.MakeRaw(0)
 	if err != nil {

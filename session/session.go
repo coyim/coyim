@@ -76,7 +76,7 @@ type session struct {
 	cmdManager  otr_client.CommandManager
 	convManager otr_client.ConversationManager
 
-	dialerFactory func(tls.Verifier) xi.Dialer
+	dialerFactory func(tls.Verifier, tls.Factory) xi.Dialer
 
 	autoApproves map[string]bool
 
@@ -129,7 +129,7 @@ func CreateXMPPLogger(rawLog string) (*bytes.Buffer, io.Writer) {
 }
 
 // Factory creates a new session from the given config
-func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifier) xi.Dialer) access.Session {
+func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifier, tls.Factory) xi.Dialer) access.Session {
 	// Make xmppLogger go to in memory STRING and/or the log file
 
 	inMemoryLog, xmppLogger := CreateXMPPLogger(c.RawLogFile)

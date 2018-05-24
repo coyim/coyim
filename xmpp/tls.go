@@ -124,7 +124,7 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 	tlsConfig.ServerName = c.OriginDomain()
 	tlsConfig.InsecureSkipVerify = true
 
-	tlsConn := tls.Client(conn, tlsConfig)
+	tlsConn := d.tlsConnFactory(conn, tlsConfig)
 	if err := tlsConn.Handshake(); err != nil {
 		return err
 	}

@@ -21,4 +21,4 @@ type Dialer interface {
 }
 
 // DialerFactory represents a function that can create a Dialer
-type DialerFactory func(tls.Verifier) Dialer
+type DialerFactory func(tls.Verifier, tls.Factory) Dialer

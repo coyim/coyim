@@ -30,12 +30,13 @@ type dialer struct {
 	// config configures the XMPP protocol
 	config data.Config
 
-	verifier tls.Verifier
+	verifier       tls.Verifier
+	tlsConnFactory tls.Factory
 }
 
 // DialerFactory returns a new xmpp dialer
-func DialerFactory(verifier tls.Verifier) interfaces.Dialer {
-	return &dialer{verifier: verifier}
+func DialerFactory(verifier tls.Verifier, connFactory tls.Factory) interfaces.Dialer {
+	return &dialer{verifier: verifier, tlsConnFactory: connFactory}
 }
 
 func (d *dialer) SetJID(v string) {

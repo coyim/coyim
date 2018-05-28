@@ -12,16 +12,14 @@ test:
 doctor: check-go-imports check-ui-defs
 
 check-go-imports:
-ifeq ($(GO_VERSION), go1.3)
+ifeq ($(GO_VERSION), go1.6)
 	echo "Your version of Go is too old for running goimports. Skipping."
-else
-ifeq ($(GO_VERSION), go1.4)
+else ifeq ($(GO_VERSION), go1.7)
 	echo "Your version of Go is too old for running goimports. Skipping."
 else
 	go get -u golang.org/x/tools/cmd/goimports
 	goimports -w .
 	git diff --exit-code .
-endif
 endif
 
 # make sure the ui definitions checked in are in sync

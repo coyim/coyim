@@ -2,8 +2,7 @@
 
 set -xe
 
-# Requires gccgo-X to be installed
-export GOROOT_BOOTSTRAP=/usr
+export GOROOT_BOOTSTRAP=/usr/lib/go-1.10
 
 cd /root/go
 source /root/setup-reproducible

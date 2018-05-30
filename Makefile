@@ -53,7 +53,7 @@ deps:
 	make -C ./development deps
 
 reproducible-linux-create-image:
-	make -C ./reproducible/docker create-image-vivid
+	make -C ./reproducible/docker create-image
 
 reproducible-linux-build:
 	make -C ./reproducible/docker build

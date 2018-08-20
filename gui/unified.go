@@ -255,12 +255,11 @@ func (csi *conversationStackItem) potentialTarget() string {
 }
 
 func (csi *conversationStackItem) bringToFront() {
-	peer, _ := csi.currentPeer()
 	csi.layout.showConversations()
 	csi.needsAttention = false
 	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
-	title := fmt.Sprintf("%s <-> %s%s", csi.account.session.DisplayName(), peer.NameForPresentation(), csi.potentialTarget())
+	title := windowConversationTitle(csi.layout.ui, csi.currentPeerForSending(), csi.account, csi.potentialTarget())
 	csi.layout.header.SetText(title)
 	csi.layout.headerBar.SetSubtitle(title)
 	csi.entry.GrabFocus()

@@ -78,19 +78,23 @@ func (cvf *conversationViewFactory) potentialTarget() string {
 	return ""
 }
 
+func windowConversationTitle(ui *gtkUI, peer jid.Any, account *account, potentialTarget string) string {
+	// TODO: Can we put the security rating here, maybe?
+
+	otherName := peer.String()
+	if p, ok := ui.accountManager.getPeer(account, peer.NoResource()); ok {
+		otherName = p.NameForPresentation()
+	}
+
+	return fmt.Sprintf("%s%s (%s)", otherName, potentialTarget, account.session.DisplayName())
+}
+
 func (cvf *conversationViewFactory) createWindowedConversationView(existing *conversationPane) *conversationWindow {
 	// fmt.Printf("createWindowedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("Conversation")
 	win := builder.getObj("conversation").(gtki.Window)
 
-	p, ok := cvf.ui.accountManager.getPeer(cvf.account, cvf.peer.NoResource())
-	otherName := cvf.peer.String()
-	if ok {
-		otherName = p.NameForPresentation()
-	}
-
-	// TODO: Can we put the security rating here, maybe?
-	win.SetTitle(fmt.Sprintf("%s <-> %s%s", cvf.account.session.DisplayName(), otherName, cvf.potentialTarget()))
+	win.SetTitle(windowConversationTitle(cvf.ui, cvf.peer, cvf.account, cvf.potentialTarget()))
 	winBox := builder.getObj("box").(gtki.Box)
 
 	cp := cvf.createConversationPane(win)

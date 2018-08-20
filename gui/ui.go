@@ -447,6 +447,9 @@ func (u *gtkUI) mainWindow() {
 	// So now, roster depends on displaySettings which depends on mainWindow
 	u.initRoster()
 
+	addItemsThatShouldToggleOnGlobalMenuStatus(builder.getObj("newConvMenu").(isSensitive))
+	addItemsThatShouldToggleOnGlobalMenuStatus(builder.getObj("addMenu").(isSensitive))
+
 	// AccountsMenu
 	u.accountsMenu = builder.getObj("AccountsMenu").(gtki.MenuItem)
 
@@ -501,6 +504,7 @@ func (u *gtkUI) mainWindow() {
 
 	//Ideally, this should respect widgets initial value for "display",
 	//and only call window.Show()
+	u.updateGlobalMenuStatus()
 	u.window.ShowAll()
 
 	//Enable MUC

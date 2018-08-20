@@ -60,7 +60,7 @@ func (u *gtkUI) buildAccountsMenu() {
 
 	allAccounts := u.getAllAccounts()
 	for _, account := range allAccounts {
-		account.appendMenuTo(submenu)
+		account.appendMenuTo(u, submenu)
 	}
 
 	if len(allAccounts) > 0 {

@@ -248,7 +248,7 @@ func (*AccountSuite) Test_account_createSubmenu_createsTheGeneralStructure(c *C)
 
 	sess := &accountMockSession{config: &config.Account{}}
 	a := &account{session: sess}
-	menu := a.createSubmenu()
+	menu := a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	c.Assert(menu, Not(IsNil))
 
 	createdMenu := menu.(*accountMockMenu)
@@ -279,25 +279,25 @@ func (*AccountSuite) Test_account_createSubmenu_setsTheCheckboxesCorrectly(c *C)
 	sess := &accountMockSession{config: conf}
 	a := &account{session: sess}
 
-	menu := a.createSubmenu()
+	menu := a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	createdMenu := menu.(*accountMockMenu)
 	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").active, Equals, true)
 	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").active, Equals, true)
 
 	conf.AlwaysEncrypt = false
-	menu = a.createSubmenu()
+	menu = a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	createdMenu = menu.(*accountMockMenu)
 	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").active, Equals, true)
 	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").active, Equals, false)
 
 	conf.ConnectAutomatically = false
-	menu = a.createSubmenu()
+	menu = a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	createdMenu = menu.(*accountMockMenu)
 	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").active, Equals, false)
 	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").active, Equals, false)
 
 	conf.AlwaysEncrypt = true
-	menu = a.createSubmenu()
+	menu = a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	createdMenu = menu.(*accountMockMenu)
 	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").active, Equals, false)
 	c.Assert(createdMenu.GetCheckMenuItemByName("Always Encrypt Conversation").active, Equals, true)
@@ -310,7 +310,7 @@ func (*AccountSuite) Test_account_createSubmenu_setsActivationCorrectly(c *C) {
 	sess := &accountMockSession{config: &config.Account{}}
 	a := &account{session: sess}
 
-	menu := a.createSubmenu()
+	menu := a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	createdMenu := menu.(*accountMockMenu)
 
 	// We can't really check that these things are set to the correct functions, just that they are set
@@ -370,7 +370,7 @@ func (*AccountSuite) Test_account_createSubmenu_setsConnectAndDisconnectSensitiv
 	sess := &accountMockSession{isDisconnected: true, config: &config.Account{}}
 	a := &account{session: sess}
 
-	menu := a.createSubmenu()
+	menu := a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	createdMenu := menu.(*accountMockMenu)
 	c.Assert(createdMenu.GetMenuItemByName("Check Connection").isSensitive(), Equals, false)
 	c.Assert(createdMenu.GetMenuItemByName("Connect").isSensitive(), Equals, true)
@@ -378,7 +378,7 @@ func (*AccountSuite) Test_account_createSubmenu_setsConnectAndDisconnectSensitiv
 
 	sess.setIsDisconnected(false)
 	sess.isConnected = true
-	menu = a.createSubmenu()
+	menu = a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	createdMenu = menu.(*accountMockMenu)
 	c.Assert(createdMenu.GetMenuItemByName("Check Connection").isSensitive(), Equals, true)
 	c.Assert(createdMenu.GetMenuItemByName("Connect").isSensitive(), Equals, false)
@@ -392,7 +392,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheCon
 	sess := &accountMockSession{isDisconnected: true, config: &config.Account{}}
 	a := &account{session: sess}
 
-	menu := a.createSubmenu()
+	menu := a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	connectItem := menu.(*accountMockMenu).menuItems[0].(*accountMockMenuItem)
 
 	c.Assert(connectItem.isSensitive(), Equals, true)
@@ -450,7 +450,7 @@ func (*AccountSuite) Test_account_createSubmenu_willWatchForThingsToChangeTheDis
 	sess := &accountMockSession{isDisconnected: true, config: &config.Account{}}
 	a := &account{session: sess}
 
-	menu := a.createSubmenu()
+	menu := a.createSubmenu(&gtkUI{accountManager: &accountManager{accounts: []*account{a}}})
 	disconnectItem := menu.(*accountMockMenu).menuItems[1].(*accountMockMenuItem)
 
 	c.Assert(disconnectItem.isSensitive(), Equals, false)

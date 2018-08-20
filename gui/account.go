@@ -174,17 +174,17 @@ func (account *account) destroyMenu() {
 	account.menu = nil
 }
 
-func (account *account) appendMenuTo(submenu gtki.Menu) {
+func (account *account) appendMenuTo(u *gtkUI, submenu gtki.Menu) {
 	if account.menu != nil {
 		account.destroyMenu()
 	}
 
-	account.buildAccountSubmenu()
+	account.buildAccountSubmenu(u)
 	account.menu.Show()
 	submenu.Append(account.menu)
 }
 
-func (account *account) runSessionObserver() {
+func (account *account) runSessionObserver(u *gtkUI) {
 	for ev := range account.sessionObserver {
 		switch t := ev.(type) {
 		case events.Event:
@@ -193,7 +193,7 @@ func (account *account) runSessionObserver() {
 				doInUIThread(func() {
 					account.sessionObserverLock.RLock()
 					defer account.sessionObserverLock.RUnlock()
-
+					u.updateGlobalMenuStatus()
 					for _, ff := range account.connectionEventHandlers {
 						ff()
 					}
@@ -203,52 +203,52 @@ func (account *account) runSessionObserver() {
 	}
 }
 
-func (account *account) observeConnectionEvents(f func()) {
+func (account *account) observeConnectionEvents(u *gtkUI, f func()) {
 	account.sessionObserverLock.Lock()
 	defer account.sessionObserverLock.Unlock()
 
 	if account.sessionObserver == nil {
 		account.sessionObserver = make(chan interface{})
 		account.session.Subscribe(account.sessionObserver)
-		go account.runSessionObserver()
+		go account.runSessionObserver(u)
 	}
 	account.connectionEventHandlers = append(account.connectionEventHandlers, f)
 }
 
-func (account *account) createCheckConnectionItem() gtki.MenuItem {
+func (account *account) createCheckConnectionItem(u *gtkUI) gtki.MenuItem {
 	checkConnectionItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Check Connection"))
 	checkConnectionItem.Connect("activate", func() {
 		account.session.SendPing()
 	})
 	checkConnectionItem.SetSensitive(account.session.IsConnected())
 
-	account.observeConnectionEvents(func() {
+	account.observeConnectionEvents(u, func() {
 		checkConnectionItem.SetSensitive(account.session.IsConnected())
 	})
 	return checkConnectionItem
 }
 
-func (account *account) createConnectItem() gtki.MenuItem {
+func (account *account) createConnectItem(u *gtkUI) gtki.MenuItem {
 	connectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect"))
 	connectItem.Connect("activate", func() {
 		account.session.SetWantToBeOnline(true)
 		account.Connect()
 	})
 	connectItem.SetSensitive(account.session.IsDisconnected())
-	account.observeConnectionEvents(func() {
+	account.observeConnectionEvents(u, func() {
 		connectItem.SetSensitive(account.session.IsDisconnected())
 	})
 	return connectItem
 }
 
-func (account *account) createDisconnectItem() gtki.MenuItem {
+func (account *account) createDisconnectItem(u *gtkUI) gtki.MenuItem {
 	disconnectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Disconnect"))
 	disconnectItem.Connect("activate", func() {
 		account.session.SetWantToBeOnline(false)
 		account.disconnect()
 	})
 	disconnectItem.SetSensitive(!account.session.IsDisconnected())
-	account.observeConnectionEvents(func() {
+	account.observeConnectionEvents(u, func() {
 		disconnectItem.SetSensitive(!account.session.IsDisconnected())
 	})
 	return disconnectItem
@@ -259,11 +259,11 @@ func (account *account) createSeparatorItem() gtki.MenuItem {
 	return sep
 }
 
-func (account *account) createConnectionItem() gtki.MenuItem {
+func (account *account) createConnectionItem(u *gtkUI) gtki.MenuItem {
 	connInfoItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("Connection _information..."))
 	connInfoItem.Connect("activate", account.connectionInfo)
 	connInfoItem.SetSensitive(account.session.IsConnected())
-	account.observeConnectionEvents(func() {
+	account.observeConnectionEvents(u, func() {
 		connInfoItem.SetSensitive(account.session.IsConnected())
 	})
 	return connInfoItem
@@ -316,14 +316,14 @@ func (account *account) createXMLConsoleItem(parent gtki.Window) gtki.MenuItem {
 	return consoleItem
 }
 
-func (account *account) createSubmenu() gtki.Menu {
+func (account *account) createSubmenu(u *gtkUI) gtki.Menu {
 	m, _ := g.gtk.MenuNew()
 
-	m.Append(account.createConnectItem())
-	m.Append(account.createDisconnectItem())
-	m.Append(account.createCheckConnectionItem())
+	m.Append(account.createConnectItem(u))
+	m.Append(account.createDisconnectItem(u))
+	m.Append(account.createCheckConnectionItem(u))
 	m.Append(account.createSeparatorItem())
-	m.Append(account.createConnectionItem())
+	m.Append(account.createConnectionItem(u))
 	m.Append(account.createEditItem())
 	m.Append(account.createRemoveItem())
 	m.Append(account.createSeparatorItem())
@@ -333,10 +333,10 @@ func (account *account) createSubmenu() gtki.Menu {
 	return m
 }
 
-func (account *account) buildAccountSubmenu() {
+func (account *account) buildAccountSubmenu(u *gtkUI) {
 	menuitem, _ := g.gtk.MenuItemNew()
 	menuitem.SetLabel(account.session.GetConfig().Account)
-	menuitem.SetSubmenu(account.createSubmenu())
+	menuitem.SetSubmenu(account.createSubmenu(u))
 	account.menu = menuitem
 }
 

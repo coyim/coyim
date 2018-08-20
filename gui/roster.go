@@ -300,7 +300,7 @@ func (r *roster) appendResourcesAsMenuItems(jid jid.WithoutResource, account *ac
 }
 
 func (r *roster) createAccountPopup(account *account, bt gdki.EventButton) {
-	mn := account.createSubmenu()
+	mn := account.createSubmenu(r.ui)
 	if *config.DebugFlag {
 		mn.Append(account.createSeparatorItem())
 		mn.Append(account.createDumpInfoItem(r))

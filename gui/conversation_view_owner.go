@@ -7,7 +7,6 @@ import (
 
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/xmpp/jid"
-	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -251,9 +250,8 @@ func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *con
 		},
 	})
 
-	// TODO: why 115 here?
+	// This 115 is apparently for the letter "s"
 	win.AddMnemonic(uint(115), cp.encryptedLabel)
-	win.SetMnemonicModifier(gdki.GDK_CONTROL_MASK)
 
 	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
 

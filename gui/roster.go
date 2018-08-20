@@ -404,12 +404,25 @@ func (r *roster) update(account *account, entries *rosters.List) {
 	r.ui.accountManager.setContacts(account, entries)
 }
 
-func isNominallyVisible(p *rosters.Peer, showWaiting bool) bool {
-	return (p.Subscription != "none" && p.Subscription != "") || (showWaiting && (p.PendingSubscribeID != "" || p.Asked))
+func willDisplayTheirStatusToUs(p *rosters.Peer) bool {
+	return p.Subscription == "to" ||
+		p.Subscription == "both"
 }
 
-func shouldDisplay(p *rosters.Peer, showOffline, showWaiting bool) bool {
-	return isNominallyVisible(p, showWaiting) && (showOffline || p.IsOnline() || p.Asked)
+func isWaitingForResponse(p *rosters.Peer) bool {
+	return p.Subscription == "none" ||
+		p.Subscription == "" ||
+		p.Subscription == "from" ||
+		p.PendingSubscribeID != "" ||
+		p.Asked
+}
+
+func isNominallyVisible(accountName string, p *rosters.Peer, showWaiting bool) bool {
+	return accountName != p.Jid.String() && (willDisplayTheirStatusToUs(p) || (showWaiting && isWaitingForResponse(p)))
+}
+
+func shouldDisplay(accountName string, p *rosters.Peer, showOffline, showWaiting bool) bool {
+	return isNominallyVisible(accountName, p, showWaiting) && ((showOffline || p.IsOnline()) || (showWaiting && isWaitingForResponse(p)))
 }
 
 func isAway(p *rosters.Peer) bool {
@@ -473,9 +486,10 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 	cs := r.ui.currentColorSet()
 	iter := r.model.Append(parentIter)
 	potentialExtra := ""
-	if item.Asked {
+	if isWaitingForResponse(item) {
 		potentialExtra = i18n.Local(" (waiting for approval)")
 	}
+
 	setAll(r.model, iter,
 		item.Jid.String(),
 		fmt.Sprintf("%s %s%s", indent, item.NameForPresentation(), potentialExtra),
@@ -577,7 +591,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 
 	isEmpty := true
 	for _, item := range g.UnsortedPeers() {
-		if shouldDisplay(item, showOffline, showWaiting) {
+		if shouldDisplay(accountName, item, showOffline, showWaiting) {
 			isEmpty = false
 		}
 	}
@@ -591,12 +605,12 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 	}
 
 	for _, item := range r.sortedPeers(g.UnsortedPeers()) {
-		vs := isNominallyVisible(item, showWaiting)
+		vs := isNominallyVisible(accountName, item, showWaiting)
 		o := isOnline(item)
 		accountCounter.inc(vs, vs && o)
 		groupCounter.inc(vs, vs && o)
 
-		if shouldDisplay(item, showOffline, showWaiting) {
+		if shouldDisplay(accountName, item, showOffline, showWaiting) {
 			r.addItem(item, pi, "")
 		}
 	}

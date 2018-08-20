@@ -8,7 +8,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutResource) gtki.MessageDialog {
+func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutResource, f func(gtki.ResponseType)) {
 	builder := newBuilder("AuthorizeSubscription")
 
 	confirmDialog := builder.getObj("dialog").(gtki.MessageDialog)
@@ -16,7 +16,14 @@ func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutRes
 	confirmDialog.SetProperty("text", text)
 	confirmDialog.SetTransientFor(parent)
 
-	return confirmDialog
+	confirmDialog.Connect("response", func(_ interface{}, tp int) {
+		f(gtki.ResponseType(tp))
+		confirmDialog.Destroy()
+	})
+
+	doInUIThread(func() {
+		confirmDialog.ShowAll()
+	})
 }
 
 type addContactDialog struct {

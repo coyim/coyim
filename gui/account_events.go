@@ -187,11 +187,8 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		})
 
 	case events.SubscriptionRequest:
-		confirmDialog := authorizePresenceSubscriptionDialog(u.window, ev.From.NoResource())
-
-		doInUIThread(func() {
-			responseType := gtki.ResponseType(confirmDialog.Run())
-			switch responseType {
+		authorizePresenceSubscriptionDialog(u.window, ev.From.NoResource(), func(r gtki.ResponseType) {
+			switch r {
 			case gtki.RESPONSE_YES:
 				ev.Session.HandleConfirmOrDeny(ev.From.NoResource(), true)
 			case gtki.RESPONSE_NO:
@@ -200,7 +197,6 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 				// We got a different response, such as a close of the window. In this case we want
 				// to keep the subscription request open
 			}
-			confirmDialog.Destroy()
 		})
 	case events.Subscribed:
 		jid := ev.Session.GetConfig().Account

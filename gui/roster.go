@@ -383,6 +383,8 @@ func (r *roster) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 		r.ui.openConversationView(account, jid.NR(peer), true)
 	case "account":
 		r.activateAccountRow(peer)
+	case "group":
+		// We ignore this, since a double click on the group doesn't really have any effect
 	default:
 		panic(fmt.Sprintf("unknown roster row type: %s", rowType))
 	}

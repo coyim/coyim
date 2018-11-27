@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime"
 	"time"
+	"strconv"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/gui/settings"
@@ -38,13 +39,17 @@ type gtkUI struct {
 	search           gtki.SearchBar
 	searchEntry      gtki.Entry
 	notificationArea gtki.Box
+	ignoredCount     gtki.Label
+	ignoredLast      gtki.Label
 	viewMenu         *viewMenu
 	optionsMenu      *optionsMenu
+	ignoredArea      gtki.Grid
 
 	unified       *unifiedLayout
 	unifiedCached *unifiedLayout
 
 	config *config.ApplicationConfig
+	numIgnored int
 
 	*accountManager
 	*chatManager
@@ -224,6 +229,8 @@ func (u *gtkUI) installTor() {
 				torNotif.renderTorNotification(err, "emblem-default")
 				log.Printf("Tor is now not running")
 			}
+		},
+		"on_ignored_details": func() {
 		},
 	})
 
@@ -424,6 +431,7 @@ func (u *gtkUI) mainWindow() {
 		"on_new_conversation_signal":                   u.newCustomConversation,
 		"on_about_dialog_signal":                       u.aboutDialog,
 		"on_feedback_dialog_signal":                    u.feedbackDialog,
+		"on_ignored_details":                           u.ignoredDetailsDialog,
 		"on_toggled_check_Item_Merge_signal":           u.toggleMergeAccounts,
 		"on_toggled_check_Item_Show_Offline_signal":    u.toggleShowOffline,
 		"on_toggled_check_Item_Show_Waiting_signal":    u.toggleShowWaiting,
@@ -497,6 +505,12 @@ func (u *gtkUI) mainWindow() {
 	u.searchEntry = builder.getObj("search-entry").(gtki.Entry)
 	u.initSearchBar()
 
+	builder.getItems(
+		"ignoredCount", &u.ignoredCount,
+		"ignoredLast", &u.ignoredLast,
+		"ignored-info-area", &u.ignoredArea,
+	)
+
 	u.connectShortcutsMainWindow(u.window)
 
 	u.window.SetIcon(coyimIcon.getPixbuf())
@@ -506,6 +520,8 @@ func (u *gtkUI) mainWindow() {
 	//and only call window.Show()
 	u.updateGlobalMenuStatus()
 	u.window.ShowAll()
+
+	u.ignoredArea.Hide()
 
 	//Enable MUC
 	_, enableMUC := os.LookupEnv("COYIM_ENABLE_MUC")
@@ -602,6 +618,39 @@ func (u *gtkUI) feedbackDialog() {
 
 	obj := builder.getObj("dialog")
 	dialog := obj.(gtki.Dialog)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_signal": func() {
+			dialog.Destroy()
+		},
+	})
+
+	doInUIThread(func() {
+		dialog.SetTransientFor(u.window)
+		dialog.ShowAll()
+	})
+}
+
+func (u *gtkUI) ignoredDetailsDialog() {
+	builder := newBuilder("IgnoredDetails")
+
+	obj := builder.getObj("ignoredInfoDialog")
+	dialog := obj.(gtki.Dialog)
+
+	store := builder.getObj("ignoredStore")
+	s := store.(gtki.ListStore)
+
+	accounts := u.getAllConnectedAccounts()
+	for _, acc := range accounts {
+		aa := acc.session.GetConfig()
+		if aa.IgnoredSenders != nil {
+			for ign, _ := range aa.IgnoredSenders {
+				it := s.Append()
+				s.SetValue(it, 0, ign)
+				s.SetValue(it, 1, aa.Account)
+			}
+		}
+	}
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_signal": func() {
@@ -837,4 +886,13 @@ func (u *gtkUI) openConversationView(account *account, peer jid.Any, userInitiat
 
 func (u *gtkUI) openTargetedConversationView(account *account, peer jid.Any, userInitiated bool) conversationView {
 	return u.NewConversationViewFactory(account, peer, true).OpenConversationView(userInitiated)
+}
+
+func (u *gtkUI) updateIgnored(to string, from string) {
+	u.ignoredArea.Show()
+	u.numIgnored++
+	doInUIThread(func() {
+		u.ignoredCount.SetLabel(strconv.Itoa(u.numIgnored))
+		u.ignoredLast.SetLabel(from)
+	})
 }

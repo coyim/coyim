@@ -176,7 +176,7 @@
                 <property name="position">0</property>
               </packing>
             </child>
-	    <child>
+            <child>
               <object class="GtkBox" id="notification-area">
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -212,8 +212,70 @@
                 <property name="pack_type">end</property>
                 <property name="position">1</property>
               </packing>
-	    </child>
-	  </object>
+            </child>
+
+            <child>
+              <object class="GtkGrid" id="ignored-info-area">
+                <property name="can_focus">False</property>
+                <property name="margin-top">2</property>
+                <property name="margin-bottom">2</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="row-spacing">2</property>
+                <property name="column-spacing">6</property>
+
+                <child>
+                  <object class="GtkButton" id="ignoredDetails">
+                    <property name="visible">true</property>
+                    <property name="label" translatable="yes">Ignored...</property>
+                    <property name="halign">GTK_ALIGN_START</property>
+                    <signal name="clicked" handler="on_ignored_details" />
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkLabel" id="ignoredCountHeader" >
+                    <property name="visible">true</property>
+                    <property name="label" translatable="yes">Count:</property>
+                    <property name="hexpand">False</property>
+                    <property name="halign">GTK_ALIGN_END</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="ignoredCount">
+                    <property name="visible">true</property>
+                    <property name="label" translatable="yes">0</property>
+                    <property name="halign">GTK_ALIGN_START</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkLabel" id="ignoredLastHeader" >
+                    <property name="label" translatable="yes">Last:</property>
+                    <property name="hexpand">True</property>
+                    <property name="halign">GTK_ALIGN_END</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="ignoredLast">
+                    <property name="label" translatable="yes">-</property>
+                    <property name="hexpand">False</property>
+                    <property name="halign">GTK_ALIGN_END</property>
+                    <property name="selectable">TRUE</property>
+                  </object>
+                </child>
+
+
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">3</property>
+                <property name="pack_type">end</property>
+              </packing>
+            </child>
+
+          </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>

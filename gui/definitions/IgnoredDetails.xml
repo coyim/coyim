@@ -1,0 +1,86 @@
+<interface>
+  <object class="GtkListStore" id="ignoredStore">
+    <columns>
+      <column type="gchararray"/>
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkDialog" id="ignoredInfoDialog">
+    <property name="window-position">GTK_WIN_POS_CENTER</property>
+    <property name="title" translatable="yes">Ignored Messages</property>
+    <property name="border_width">7</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="box">
+        <property name="homogeneous">false</property>
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+
+        <child>
+          <object class="GtkLabel">
+            <property name="can_focus">False</property>
+            <property name="margin-bottom">3</property>
+            <property name="wrap">true</property>
+            <property name="wrap-mode">PANGO_WRAP_WORD_CHAR</property>
+            <property name="label" translatable="yes">
+Messages from the following senders were ignored:
+            </property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="ignoredScroll">
+            <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+            <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+            <child>
+              <object class="GtkTreeView" id="ignoredTreeView">
+                <property name="model">ignoredStore</property>
+                <child>
+                  <object class="GtkTreeViewColumn" id="from-ignored-column">
+                    <property name="title" translatable="yes">From</property>
+                    <property name="sort_column_id">0</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="from-ignored-renderer"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="to-ignored-column">
+                    <property name="title" translatable="yes">To account</property>
+                    <property name="sort_column_id">1</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="to-account-renderer"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">true</property>
+            <property name="fill">true</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child internal-child="action_area">
+      <object class="GtkButtonBox" id="button_box">
+        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+        <child>
+          <object class="GtkButton" id="close">
+            <property name="label" translatable="yes">Close</property>
+            <signal name="clicked" handler="on_close_signal" />
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

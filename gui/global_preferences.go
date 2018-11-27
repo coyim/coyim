@@ -12,6 +12,7 @@ type settingsPanel struct {
 	notebook                 gtki.Notebook
 	singleWindow             gtki.CheckButton
 	showEmptyGroups          gtki.CheckButton
+	ignoreNonRoster          gtki.CheckButton
 	sendWithShiftEnter       gtki.CheckButton
 	emacsKeyboard            gtki.CheckButton
 	notificationsType        gtki.ComboBox
@@ -43,6 +44,7 @@ func createSettingsPanel() *settingsPanel {
 		"notificationTimeoutLabel", &p.notificationTimeoutLabel,
 		"rawLogFileLabel", &p.rawLogFileLabel,
 		"showEmptyGroups", &p.showEmptyGroups,
+		"ignoreNonRoster", &p.ignoreNonRoster,
 	)
 
 	return p
@@ -93,6 +95,9 @@ func (u *gtkUI) showGlobalPreferences() {
 	orgShowEmptyGroups := settings.GetShowEmptyGroups()
 	panel.showEmptyGroups.SetActive(orgShowEmptyGroups)
 
+	orgIgnoreNonRoster := settings.GetIgnoreNonRoster()
+	panel.ignoreNonRoster.SetActive(orgIgnoreNonRoster)
+
 	orgUrgentNot := settings.GetNotificationUrgency()
 	panel.urgentNotifications.SetActive(orgUrgentNot)
 
@@ -133,6 +138,10 @@ func (u *gtkUI) showGlobalPreferences() {
 
 			if newShowEmptyGroups := panel.showEmptyGroups.GetActive(); newShowEmptyGroups != orgShowEmptyGroups {
 				settings.SetShowEmptyGroups(newShowEmptyGroups)
+			}
+
+			if newIgnoreNonRoster := panel.ignoreNonRoster.GetActive(); newIgnoreNonRoster != orgIgnoreNonRoster {
+				settings.SetIgnoreNonRoster(newIgnoreNonRoster)
 			}
 
 			if newUrgentNot := panel.urgentNotifications.GetActive(); newUrgentNot != orgUrgentNot {

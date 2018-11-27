@@ -83,6 +83,7 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 	conf := &config.Account{
 		Account: "@" + server,
 		Proxies: []string{"tor-auto://"},
+		IgnoredSenders: make(map[string]bool),
 	}
 
 	//TODO: this should receive only a JID domainpart

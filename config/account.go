@@ -40,6 +40,8 @@ type Account struct {
 	// AlwaysEncryptWith and DontEncryptWith should be promoted to legacy and replaced with the peer settings
 	AlwaysEncryptWith []string `json:",omitempty"`
 	DontEncryptWith   []string `json:",omitempty"`
+
+	IgnoredSenders    map[string]bool
 }
 
 // AllPrivateKeys returns all private keys for this account
@@ -77,6 +79,7 @@ func NewAccount() (*Account, error) {
 		Proxies: []string{
 			"tor-auto://",
 		},
+		IgnoredSenders: make(map[string]bool),
 	}, nil
 }
 

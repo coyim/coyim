@@ -82,10 +82,29 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 	timestamp := ev.When
 	encrypted := ev.Encrypted
 	message := ev.Body
+	fromSubscribedPeer := false
+
+	sender := ev.From.NoResource().String()
 
 	p, ok := u.getPeer(account, ev.From.NoResource())
 	if ok {
+		if p.Subscription != "" {
+			fromSubscribedPeer = true
+		}
 		p.LastSeen(ev.From)
+	}
+
+	if !fromSubscribedPeer && u.settings.GetIgnoreNonRoster() {
+		aa := account.session.GetConfig()
+		if aa.IgnoredSenders == nil {
+			// I couldn't figure out all construction paths of
+			// "Account" instances, so we'll init IgnoredSenders
+			// on demand
+			aa.IgnoredSenders = make(map[string]bool)
+		}
+		aa.IgnoredSenders[sender] = true
+		u.updateIgnored(aa.Account, sender)
+		return
 	}
 
 	doInUIThread(func() {

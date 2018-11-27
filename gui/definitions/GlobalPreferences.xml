@@ -115,8 +115,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="emacsKeyboardLabel">
-                    <property name="label" translatable="yes">Use Emacs key bindings</property>
+                  <object class="GtkLabel" id="ignoreNonRosterLabel">
+                    <property name="label" translatable="yes">Ignore senders not in contact list</property>
                     <property name="justify">GTK_JUSTIFY_RIGHT</property>
                     <property name="halign">GTK_ALIGN_END</property>
                   </object>
@@ -126,11 +126,30 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="emacsKeyboard">
+                  <object class="GtkCheckButton" id="ignoreNonRoster">
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="emacsKeyboardLabel">
+                    <property name="label" translatable="yes">Use Emacs key bindings</property>
+                    <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                    <property name="halign">GTK_ALIGN_END</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="emacsKeyboard">
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">4</property>
                   </packing>
                 </child>
               </object>

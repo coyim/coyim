@@ -166,6 +166,16 @@ func (s *Settings) SetShowEmptyGroups(val bool) {
 	s.setBooleanSetting("show-empty-groups", val)
 }
 
+// GetIgnoreUnknown returns the ignore-non-roster setting
+func (s *Settings) GetIgnoreNonRoster() bool {
+	return s.getBooleanSetting("ignore-non-roster")
+}
+
+// SetIgnoreUnknown sets the ignore-non-roster setting
+func (s *Settings) SetIgnoreNonRoster(val bool) {
+	s.setBooleanSetting("ignore-non-roster", val)
+}
+
 // GetShowAdvancedOptions returns the show-advanced-options setting
 func (s *Settings) GetShowAdvancedOptions() bool {
 	return s.getBooleanSetting("show-advanced-options")

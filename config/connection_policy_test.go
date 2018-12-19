@@ -1,9 +1,7 @@
 package config
 
 import (
-	"net"
-	"net/url"
-	"time"
+	"fmt"
 
 	"golang.org/x/net/proxy"
 
@@ -159,25 +157,20 @@ func (s *ConnectionPolicySuite) Test_buildProxyChain_ErrorsIfProxyIsNotCompatibl
 }
 
 func (s *ConnectionPolicySuite) Test_buildProxyChain_Returns(c *C) {
-	proxies := []string{
+	chain, err := buildProxyChain([]string{
 		"socks5://proxy.local",
 		"socks5://proxy.remote",
-	}
-
-	direct := &net.Dialer{Timeout: 60 * time.Second}
-	p1, _ := proxy.FromURL(
-		&url.URL{
-			Scheme: "socks5",
-			Host:   "proxy.remote",
-		}, direct)
-
-	expectedProxy, _ := proxy.FromURL(&url.URL{
-		Scheme: "socks5",
-		Host:   "proxy.local",
-	}, p1)
-
-	chain, err := buildProxyChain(proxies)
+	})
 	c.Check(err, IsNil)
-	c.Check(chain, DeepEquals, expectedProxy)
+	c.Check(fmt.Sprintf("%#v", chain), Matches, ".*socks\\.Dialer.*?proxy\\.local.*")
 
+	chain, err = buildProxyChain([]string{
+		"socks5://proxy.remote",
+	})
+	c.Check(err, IsNil)
+	c.Check(fmt.Sprintf("%#v", chain), Matches, ".*socks\\.Dialer.*?proxy\\.remote.*")
+
+	chain, err = buildProxyChain([]string{})
+	c.Check(err, IsNil)
+	c.Check(chain, IsNil)
 }

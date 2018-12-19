@@ -206,10 +206,16 @@
 			"revisionTime": "2017-11-10T09:49:23Z"
 		},
 		{
-			"checksumSHA1": "ShorZRjHwpAHv1kT/zeKkoPO3B8=",
+			"checksumSHA1": "XtaO68L2cr/fhNBB3k4c2xT+18A=",
+			"path": "golang.org/x/net/internal/socks",
+			"revision": "e147a9138326bc0e9d4e179541ffd8af41cff8a9",
+			"revisionTime": "2018-12-15T14:29:05Z"
+		},
+		{
+			"checksumSHA1": "aJWJLdZtqdTv/f17DBG0aFFXWrQ=",
 			"path": "golang.org/x/net/proxy",
-			"revision": "c7086645de248775cbf2373cf5ca4d2fa664b8c1",
-			"revisionTime": "2017-11-10T09:49:23Z"
+			"revision": "e147a9138326bc0e9d4e179541ffd8af41cff8a9",
+			"revisionTime": "2018-12-15T14:29:05Z"
 		},
 		{
 			"checksumSHA1": "nAu6H1ht5jC/20SD/H+l9HibKmw=",

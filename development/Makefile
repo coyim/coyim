@@ -25,9 +25,7 @@ i18n:
 .PHONY: i18n
 
 lint:
-ifeq ($(GO_VERSION), go1.6)
-	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
-else ifeq ($(GO_VERSION), go1.7)
+ifeq ($(GO_VERSION), go1.7)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else ifeq ($(GO_VERSION), go1.8)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
@@ -45,9 +43,7 @@ test-named:
 	$(GOTEST) -v -tags $(GTK_BUILD_TAG) ./cli ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
 
 dep-supported-only:
-ifeq ($(GO_VERSION), go1.6)
-	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
-else ifeq ($(GO_VERSION), go1.7)
+ifeq ($(GO_VERSION), go1.7)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else ifeq ($(GO_VERSION), go1.8)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."

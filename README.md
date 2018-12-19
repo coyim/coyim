@@ -29,7 +29,7 @@ If you want to know more about the features you will and will not find in CoyIM,
 
 ### GUI version
 
-**Please note**: Important requirements for building CoyIM are also git and golang (at least version 1.4).
+**Please note**: Important requirements for building CoyIM are also git and golang (at least version 1.7).
 
 The GUI version requires GTK+ >= 3.6.16, which installation depends on your OS:
 

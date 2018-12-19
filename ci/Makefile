@@ -12,9 +12,7 @@ test:
 doctor: check-go-imports check-ui-defs
 
 check-go-imports:
-ifeq ($(GO_VERSION), go1.6)
-	echo "Your version of Go is too old for running goimports. Skipping."
-else ifeq ($(GO_VERSION), go1.7)
+ifeq ($(GO_VERSION), go1.7)
 	echo "Your version of Go is too old for running goimports. Skipping."
 else ifeq ($(GO_VERSION), go1.8)
 	echo "Your version of Go is too old for running goimports. Skipping."

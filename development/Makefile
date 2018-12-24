@@ -40,7 +40,7 @@ test:
 .PHONY: test
 
 test-named:
-	$(GOTEST) -v -tags $(GTK_BUILD_TAG) ./cli ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
+	$(GOTEST) -v -tags $(GTK_BUILD_TAG) ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
 
 dep-supported-only:
 ifeq ($(GO_VERSION), go1.7)
@@ -58,7 +58,6 @@ deps: dep-supported-only
 
 run-cover: clean-cover
 	mkdir -p ../.coverprofiles
-	go test -coverprofile=../.coverprofiles/cli.coverprofile     ./../cli
 	go test -coverprofile=../.coverprofiles/config.coverprofile  ./../config
 	go test -coverprofile=../.coverprofiles/config_importer.coverprofile  ./../config/importer
 	go test -coverprofile=../.coverprofiles/gui.coverprofile  ./../gui

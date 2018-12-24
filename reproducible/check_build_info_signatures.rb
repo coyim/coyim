@@ -28,8 +28,8 @@ Dir.mktmpdir { |dir|
     entries = Nokogiri(f).xpath("//pre/a").map(&:content)
   }
 
-  if !entries.include?("coyim") || !entries.include?("coyim-cli")
-    puts "Tag #{TAG} doesn't contain coyim or coyim-cli"
+  if !entries.include?("coyim")
+    puts "Tag #{TAG} doesn't contain coyim
     exit
   end
 
@@ -47,8 +47,6 @@ Dir.mktmpdir { |dir|
   $stdout.print "."; $stdout.flush
   `curl -L -s https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64/coyim -o #{dir}/coyim`
   $stdout.print "."; $stdout.flush
-  `curl -L -s https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64/coyim-cli -o #{dir}/coyim-cli`
-  $stdout.print "."; $stdout.flush
   `curl -L -s https://dl.bintray.com/coyim/coyim-bin/#{TAG}/linux/amd64/build_info -o #{dir}/build_info`
   $stdout.print "."; $stdout.flush
   entries.select{|x| x.start_with?("build_info.")}.each do |xx|
@@ -57,19 +55,12 @@ Dir.mktmpdir { |dir|
   end
   puts
   puts "Download finished"
-  cli_hash, reg_hash = nil
+  reg_hash = nil
   open("#{dir}/build_info") { |ff|
     content = ff.read
-    cli_hash = content[/^([a-f0-9]{64})  \/builds\/coyim-cli$/, 1]
     reg_hash = content[/^([a-f0-9]{64})  \/builds\/coyim$/, 1]
   }
-  real_cli_sum = `sha256sum #{dir}/coyim-cli`[/^([a-f0-9]{64})/, 1]
   real_reg_sum = `sha256sum #{dir}/coyim`[/^([a-f0-9]{64})/, 1]
-
-  if cli_hash != real_cli_sum
-    puts "Hash for coyim-cli doesn't match - #{cli_hash} vs #{real_cli_sum}"
-    exit
-  end
 
   if reg_hash != real_reg_sum
     puts "Hash for coyim doesn't match - #{reg_hash} vs #{real_reg_sum}"

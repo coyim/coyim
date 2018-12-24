@@ -16,11 +16,10 @@ In order to build CoyIM reproducibly, you simply do
   make reproducible-linux-build
 ```
 
-inside of the CoyIM directory. This will create a new Docker image and then use it to build CoyIM. At the end of the process, it will generate three files:
+inside of the CoyIM directory. This will create a new Docker image and then use it to build CoyIM. At the end of the process, it will generate two files:
 
 ```sh
   bin/coyim
-  bin/coyim-cli
   bin/build_info
 ```
 
@@ -61,4 +60,4 @@ From v0.4 each release of CoyIM will have several signatures for `build_info` fi
   make check-reproducible-signatures
 ```
 
-This will download everything necessary for the current tag (so you should first check out the tag you want to verify), and then verify that the coyim and coyim-cli binaries match the hashes inside of the `build_info` file, and then verify that each signature checks out for the `build_info` file.
+This will download everything necessary for the current tag (so you should first check out the tag you want to verify), and then verify that the coyim binary match the hashes inside of the `build_info` file, and then verify that each signature checks out for the `build_info` file.

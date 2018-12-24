@@ -27,8 +27,6 @@ If you want to know more about the features you will and will not find in CoyIM,
 
 ## Building CoyIM
 
-### GUI version
-
 **Please note**: Important requirements for building CoyIM are also git and golang (at least version 1.7).
 
 The GUI version requires GTK+ >= 3.6.16, which installation depends on your OS:
@@ -51,12 +49,6 @@ Then install CoyIM:
 ```sh
 export GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 go get -u -tags "gtk_${GTK_VERSION}" github.com/coyim/coyim
-```
-
-### CLI version (xmpp-client)
-
-```sh
-go get -u -tags cli github.com/coyim/coyim
 ```
 
 ## Contributing to CoyIM

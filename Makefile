@@ -13,7 +13,7 @@ default: check
 check:
 	make -C ./development
 
-build: build-cli build-gui
+build: build-gui
 
 build-gui: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
@@ -27,9 +27,6 @@ build-gui-address-san: generate-version-file
 
 build-gui-win: generate-version-file
 	go build -i -tags $(GTK_BUILD_TAG) -ldflags -H=windowsgui -o $(BUILD_DIR)/coyim.exe
-
-build-cli: generate-version-file
-	go build -i -tags cli -o $(BUILD_DIR)/coyim-cli
 
 build-debug:
 	go build -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug

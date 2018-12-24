@@ -34,16 +34,6 @@ coveralls:
 clean-release:
 	$(RM) bin/*
 
-release-cli: cross-compile
-
-cross-compile:
-	mkdir -p ../release
-	go get github.com/mitchellh/gox
-	gox -build-toolchain || true
-
-	# windows does not have syscall.SIGWINCH
-	cd .. && gox -os "!windows" -tags "cli" -output "release/{{.Dir}}-cli_{{.OS}}_{{.Arch}}"
-
 clean-mac-bundle:
 	$(RM) -r ../bin/mac-bundle
 
@@ -74,7 +64,6 @@ release-gui: ../bin/coyim
 release-gui-linux: build-linux
 	mkdir -p ../release
 	cp ../bin/coyim ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH)
-	cp ../bin/coyim-cli ../release/coyim-cli_$(shell go env GOOS)_$(shell go env GOARCH)
 	cp ../bin/build_info ../release/build_info_$(shell go env GOOS)_$(shell go env GOARCH)
 	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH) >> ../release/checksum
 

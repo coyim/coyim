@@ -507,10 +507,7 @@ func (u *gtkUI) mainWindow() {
 	u.updateGlobalMenuStatus()
 	u.window.ShowAll()
 
-	//Enable MUC
-	_, enableMUC := os.LookupEnv("COYIM_ENABLE_MUC")
-	builder.get("muc-mockup-menu").(gtki.MenuItem).SetVisible(enableMUC)
-
+	builder.get("muc-mockup-menu").(gtki.MenuItem).SetVisible(config.MUCEnabled)
 }
 
 func (u *gtkUI) addInitialAccountsToRoster() {

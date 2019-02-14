@@ -27,7 +27,7 @@ build-gui-address-san: generate-version-file
 
 build-gui-win: generate-version-file
 	go version
-	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" go build -v -i -tags $(GTK_BUILD_TAG) -ldflags "-H windowsgui" -o $(BUILD_DIR)/coyim.exe
+	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" go build -x -v -i -tags $(GTK_BUILD_TAG) -ldflags "-H windowsgui" -o $(BUILD_DIR)/coyim.exe
 
 build-debug:
 	go build -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug

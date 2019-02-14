@@ -2,7 +2,6 @@ mkdir %GOPATH%\src\github.com\coyim\
 xcopy %APPVEYOR_BUILD_FOLDER%\* %GOPATH%\src\github.com\coyim\coyim /e /i /s /EXCLUDE:%MSYS_PATH% > nul
 xcopy %APPVEYOR_BUILD_FOLDER%\.git\* %GOPATH%\src\github.com\coyim\coyim\.git /e /i /s /r /h
 dir %GOPATH%\src\github.com\coyim\coyim
-dir C:\go19
 if "%METHOD%"=="ci" SET MSYS_PATH=c:\msys64
 if "%METHOD%"=="cross" SET MSYS_PATH=%APPVEYOR_BUILD_FOLDER%\msys%MSYS2_BITS%
 SET PATH=%MSYS_PATH%\usr\bin;%PATH%

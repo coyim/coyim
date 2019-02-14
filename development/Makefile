@@ -47,6 +47,8 @@ ifeq ($(GO_VERSION), go1.7)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else ifeq ($(GO_VERSION), go1.8)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.9)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else
 	go get -u github.com/golang/lint/golint
 endif

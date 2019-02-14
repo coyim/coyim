@@ -1,3 +1,4 @@
+dir %GOPATH%
 mkdir %GOPATH%\src\github.com\coyim\
 xcopy %APPVEYOR_BUILD_FOLDER%\* %GOPATH%\src\github.com\coyim\coyim /e /i /s /EXCLUDE:%MSYS_PATH% > nul
 xcopy %APPVEYOR_BUILD_FOLDER%\.git\* %GOPATH%\src\github.com\coyim\coyim\.git /e /i /s /r /h

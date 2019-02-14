@@ -23,6 +23,7 @@ environment:
       MSYSTEM: MINGW64
       METHOD: cross
       MSYS2_BASEVER: 20180531
+stack: go 1.9
 install:
   - .\ci\install-deps-windows.bat
 build_script:

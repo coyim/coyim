@@ -2,6 +2,7 @@ mkdir %GOPATH%\src\github.com\coyim\
 xcopy %APPVEYOR_BUILD_FOLDER%\* %GOPATH%\src\github.com\coyim\coyim /e /i /s /EXCLUDE:%MSYS_PATH% > nul
 xcopy %APPVEYOR_BUILD_FOLDER%\.git\* %GOPATH%\src\github.com\coyim\coyim\.git /e /i /s /r /h
 dir %GOPATH%\src\github.com\coyim\coyim
+dir C:\go19
 if "%METHOD%"=="ci" SET MSYS_PATH=c:\msys64
 if "%METHOD%"=="cross" SET MSYS_PATH=%APPVEYOR_BUILD_FOLDER%\msys%MSYS2_BITS%
 SET PATH=%MSYS_PATH%\usr\bin;%PATH%
@@ -20,8 +21,8 @@ if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > nul
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gdb" > nul
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-make" > nul
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy zlib-devel" > nul
-%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pango" > nul
-%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gtk3" > nul
+%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pango"
+%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gtk3"
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pkg-config" > nul
 %MSYS_PATH%\usr\bin\bash -lc "yes|pacman --noconfirm -Sc" > nul
 if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > nul

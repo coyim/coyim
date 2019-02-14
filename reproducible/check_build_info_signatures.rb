@@ -29,7 +29,7 @@ Dir.mktmpdir { |dir|
   }
 
   if !entries.include?("coyim")
-    puts "Tag #{TAG} doesn't contain coyim
+    puts "Tag #{TAG} doesn't contain coyim"
     exit
   end
 

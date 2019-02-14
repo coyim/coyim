@@ -27,7 +27,8 @@ stack: go 1.9
 install:
   - .\ci\install-deps-windows.bat
 build_script:
-  - SET PATH=C:\go19;%PATH%
+  - SET PATH=C:\go19\bin;%PATH%
+  - go version
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/coyim/coyim && make deps"'
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/coyim/coyim && make build-gui-win"'
 after_build:

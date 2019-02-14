@@ -50,6 +50,9 @@ lint:
 deps:
 	make -C ./development deps
 
+win-ci-deps:
+	go get -u github.com/rosatolen/esc
+
 reproducible-linux-create-image:
 	make -C ./reproducible/docker create-image
 

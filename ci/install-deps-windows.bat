@@ -10,9 +10,9 @@ if "%METHOD%"=="cross" appveyor DownloadFile http://kent.dl.sourceforge.net/proj
 if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz > nul
 if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > nul
 %MSYS_PATH%\usr\bin\bash -lc "echo update-core starting..." 2> nul
-%MSYS_PATH%\usr\bin\bash -lc "pacman -Sy pacman"
-%MSYS_PATH%\usr\bin\bash -lc "pacman -Syu"
-%MSYS_PATH%\usr\bin\bash -lc "pacman -Syu"
+%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy pacman"
+%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Syu"
+%MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Syu"
 %MSYS_PATH%\usr\bin\bash -lc "echo install-deps starting..."
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy autoconf" > nul
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy automake" > nul

@@ -18,7 +18,7 @@
 
 package pango
 
-// #cgo pkg-config: pango pangocairo
+// #cgo pkg-config: pango pangocairo glib-2.0 gobject-2.0
 // #include <pango/pango.h>
 // #include <cairo.h>
 // #include <pango/pangocairo.h>

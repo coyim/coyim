@@ -1,6 +1,5 @@
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0
 // #include <gio/gio.h>
 // #include <glib.h>
 // #include <glib-object.h>
@@ -230,6 +229,28 @@ func (v *Settings) GetEnum(name string) int {
 	defer C.free(unsafe.Pointer(cstr1))
 
 	return int(C.g_settings_get_enum(v.native(), cstr1))
+}
+
+// GetStrv is a wrapper around g_settings_get_strv().
+func (v *Settings) GetStrv(name string) []string {
+	cstr1 := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr1))
+	return toGoStringArray(C.g_settings_get_strv(v.native(), cstr1))
+}
+
+// SetStrv is a wrapper around g_settings_set_strv().
+func (v *Settings) SetStrv(name string, values []string) bool {
+	cstr1 := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	cvalues := make([]*C.gchar, len(values))
+	for i, accel := range values {
+		cvalues[i] = (*C.gchar)(C.CString(accel))
+		defer C.free(unsafe.Pointer(cvalues[i]))
+	}
+	cvalues = append(cvalues, nil)
+
+	return gobool(C.g_settings_set_strv(v.native(), cstr1, &cvalues[0]))
 }
 
 // SetEnum is a wrapper around g_settings_set_enum().

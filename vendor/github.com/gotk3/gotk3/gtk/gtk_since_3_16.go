@@ -4,7 +4,6 @@
 
 package gtk
 
-// #cgo pkg-config: gtk+-3.0
 // #include <gtk/gtk.h>
 // #include "gtk_since_3_16.go.h"
 import "C"
@@ -119,4 +118,9 @@ func (v *StackSidebar) GetStack() *Stack {
 		return nil
 	}
 	return wrapStack(glib.Take(unsafe.Pointer(c)))
+}
+
+// GrabFocusWithoutSelecting is a wrapper for gtk_entry_grab_focus_without_selecting()
+func (v *Entry) GrabFocusWithoutSelecting() {
+	C.gtk_entry_grab_focus_without_selecting(v.native())
 }

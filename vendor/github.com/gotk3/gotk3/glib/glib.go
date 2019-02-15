@@ -18,7 +18,7 @@
 // and later.
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0 gio-2.0
+// #cgo pkg-config: gio-2.0 glib-2.0 gobject-2.0
 // #include <gio/gio.h>
 // #include <glib.h>
 // #include <glib-object.h>
@@ -299,26 +299,7 @@ func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{})
 	// f returns false.  The error is ignored here, as this will
 	// always be a function.
 	var closure *C.GClosure
-	closure, _ = ClosureNew(func() {
-		// Create a slice of reflect.Values arguments to call the func.
-		rargs := make([]reflect.Value, len(args))
-		for i := range args {
-			rargs[i] = reflect.ValueOf(args[i])
-		}
-
-		// Call func with args. The callback will be removed, unless
-		// it returns exactly one return value of true.
-		rv := rf.Call(rargs)
-		if len(rv) == 1 {
-			if rv[0].Kind() == reflect.Bool {
-				if rv[0].Bool() {
-					return
-				}
-			}
-		}
-		C.g_closure_invalidate(closure)
-		C.g_source_destroy(src)
-	})
+	closure, _ = ClosureNew(rf.Interface(), args...)
 
 	// Remove closure context when closure is finalized.
 	C._g_closure_add_finalize_notifier(closure)
@@ -1064,7 +1045,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 }
 
 // GValueMarshaler is a marshal function to convert a GValue into an
-// appropiate Go type.  The uintptr parameter is a *C.GValue.
+// appropriate Go type.  The uintptr parameter is a *C.GValue.
 type GValueMarshaler func(uintptr) (interface{}, error)
 
 // TypeMarshaler represents an actual type and it's associated marshaler.

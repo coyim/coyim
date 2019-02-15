@@ -1,6 +1,5 @@
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
@@ -140,7 +139,7 @@ func (v *List) Data() interface{} {
 }
 
 // Foreach acts the same as g_list_foreach().
-// No user_data arguement is implemented because of Go clojure capabilities.
+// No user_data argument is implemented because of Go clojure capabilities.
 func (v *List) Foreach(fn func(item interface{})) {
 	for l := v; l != nil; l = l.Next() {
 		fn(l.Data())

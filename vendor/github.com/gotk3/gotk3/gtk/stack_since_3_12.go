@@ -6,7 +6,6 @@
 
 package gtk
 
-// #cgo pkg-config: gtk+-3.0
 // #include <stdlib.h>
 // #include <gtk/gtk.h>
 // #include "gtk_since_3_10.go.h"
@@ -26,4 +25,10 @@ func (v *Stack) GetChildByName(name string) *Widget {
 		return nil
 	}
 	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+}
+
+// GetTransitionRunning is a wrapper around gtk_stack_get_transition_running().
+func (v *Stack) GetTransitionRunning() bool {
+	c := C.gtk_stack_get_transition_running(v.native())
+	return gobool(c)
 }

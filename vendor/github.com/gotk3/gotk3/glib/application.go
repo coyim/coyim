@@ -1,6 +1,5 @@
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0
 // #include <gio/gio.h>
 // #include <glib.h>
 // #include <glib-object.h>
@@ -11,6 +10,10 @@ import "unsafe"
 // Application is a representation of GApplication.
 type Application struct {
 	*Object
+
+	// Interfaces
+	IActionMap
+	IActionGroup
 }
 
 // native() returns a pointer to the underlying GApplication.
@@ -31,7 +34,9 @@ func marshalApplication(p uintptr) (interface{}, error) {
 }
 
 func wrapApplication(obj *Object) *Application {
-	return &Application{obj}
+	am := wrapActionMap(obj)
+	ag := wrapActionGroup(obj)
+	return &Application{obj, am, ag}
 }
 
 // ApplicationIDIsValid is a wrapper around g_application_id_is_valid().

@@ -1,6 +1,5 @@
 package cairo
 
-// #cgo pkg-config: cairo cairo-gobject
 // #include <stdlib.h>
 // #include <cairo.h>
 // #include <cairo-gobject.h>
@@ -49,6 +48,11 @@ func WrapContext(p uintptr) *Context {
 	return wrapContext(context)
 }
 
+// Closes the context. The context must not be used afterwards.
+func (v *Context) Close() {
+	v.destroy()
+}
+
 // Create is a wrapper around cairo_create().
 func Create(target *Surface) *Context {
 	c := C.cairo_create(target.native())
@@ -64,7 +68,10 @@ func (v *Context) reference() {
 
 // destroy is a wrapper around cairo_destroy().
 func (v *Context) destroy() {
-	C.cairo_destroy(v.native())
+	if v.context != nil {
+		C.cairo_destroy(v.native())
+		v.context = nil
+	}
 }
 
 // Status is a wrapper around cairo_status().
@@ -116,6 +123,11 @@ func (v *Context) GetGroupTarget() *Surface {
 	s.reference()
 	runtime.SetFinalizer(s, (*Surface).destroy)
 	return s
+}
+
+// SetSource is a wrapper around cairo_set_source().
+func (v *Context) SetSource(p *Pattern) {
+	C.cairo_set_source(v.native(), p.native())
 }
 
 // SetSourceRGB is a wrapper around cairo_set_source_rgb().

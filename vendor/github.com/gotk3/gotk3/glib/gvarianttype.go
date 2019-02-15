@@ -5,7 +5,6 @@
 
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0
 // #include <glib.h>
 // #include "gvarianttype.go.h"
 import "C"
@@ -17,6 +16,9 @@ type VariantType struct {
 }
 
 func (v *VariantType) native() *C.GVariantType {
+	if v == nil {
+		return nil
+	}
 	return v.GVariantType
 }
 

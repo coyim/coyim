@@ -1,6 +1,5 @@
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
@@ -64,7 +63,7 @@ func (v *SList) Next() *SList {
 }
 
 // Foreach acts the same as g_slist_foreach().
-// No user_data arguement is implemented because of Go clojure capabilities.
+// No user_data argument is implemented because of Go clojure capabilities.
 func (v *SList) Foreach(fn func(ptr unsafe.Pointer)) {
 	for l := v; l != nil; l = l.Next() {
 		fn(unsafe.Pointer(l.native().data))

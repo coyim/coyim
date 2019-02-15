@@ -17,7 +17,7 @@
 // Go bindings for GDK 3.  Supports version 3.6 and later.
 package gdk
 
-// #cgo pkg-config: gdk-3.0
+// #cgo pkg-config: gdk-3.0 glib-2.0 gobject-2.0
 // #include <gdk/gdk.h>
 // #include "gdk.go.h"
 import "C"
@@ -1070,6 +1070,24 @@ func (v *EventMotion) MotionValRoot() (float64, float64) {
 	return float64(x), float64(y)
 }
 
+// Time returns the time of the event in milliseconds.
+func (v *EventMotion) Time() uint32 {
+	c := v.native().time
+	return uint32(c)
+}
+
+func (v *EventMotion) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+// A bit-mask representing the state of the modifier keys (e.g. Control, Shift
+// and Alt) and the pointer buttons. See gdk.ModifierType constants.
+func (v *EventMotion) State() ModifierType {
+	c := v.native().state
+	return ModifierType(c)
+}
+
 /*
  * GdkEventScroll
  */
@@ -1226,6 +1244,14 @@ func (v *Pixbuf) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
+func (v *Pixbuf) NativePrivate() *C.GdkPixbuf {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkPixbuf(p)
+}
+
 func marshalPixbuf(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
@@ -1319,7 +1345,11 @@ func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, heigh
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // PixbufCopy is a wrapper around gdk_pixbuf_copy().
@@ -1329,7 +1359,11 @@ func PixbufCopy(v *Pixbuf) (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // PixbufNewFromFile is a wrapper around gdk_pixbuf_new_from_file().
@@ -1338,13 +1372,17 @@ func PixbufNewFromFile(filename string) (*Pixbuf, error) {
 	defer C.free(unsafe.Pointer(cstr))
 
 	var err *C.GError
-	res := C.gdk_pixbuf_new_from_file((*C.char)(cstr), &err)
-	if res == nil {
+	c := C.gdk_pixbuf_new_from_file((*C.char)(cstr), &err)
+	if c == nil {
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(res))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // PixbufNewFromFileAtSize is a wrapper around gdk_pixbuf_new_from_file_at_size().
@@ -1353,17 +1391,21 @@ func PixbufNewFromFileAtSize(filename string, width, height int) (*Pixbuf, error
 	defer C.free(unsafe.Pointer(cstr))
 
 	var err *C.GError = nil
-	res := C.gdk_pixbuf_new_from_file_at_size(cstr, C.int(width), C.int(height), &err)
+	c := C.gdk_pixbuf_new_from_file_at_size(cstr, C.int(width), C.int(height), &err)
 	if err != nil {
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
 	}
 
-	if res == nil {
+	if c == nil {
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(res))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // PixbufNewFromFileAtScale is a wrapper around gdk_pixbuf_new_from_file_at_scale().
@@ -1372,18 +1414,22 @@ func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspect
 	defer C.free(unsafe.Pointer(cstr))
 
 	var err *C.GError = nil
-	res := C.gdk_pixbuf_new_from_file_at_scale(cstr, C.int(width), C.int(height),
+	c := C.gdk_pixbuf_new_from_file_at_scale(cstr, C.int(width), C.int(height),
 		gbool(preserveAspectRatio), &err)
 	if err != nil {
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
 	}
 
-	if res == nil {
+	if c == nil {
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(res))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // ScaleSimple is a wrapper around gdk_pixbuf_scale_simple().
@@ -1394,7 +1440,11 @@ func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // RotateSimple is a wrapper around gdk_pixbuf_rotate_simple().
@@ -1404,7 +1454,11 @@ func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // ApplyEmbeddedOrientation is a wrapper around gdk_pixbuf_apply_embedded_orientation().
@@ -1414,7 +1468,11 @@ func (v *Pixbuf) ApplyEmbeddedOrientation() (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // Flip is a wrapper around gdk_pixbuf_flip().
@@ -1424,7 +1482,11 @@ func (v *Pixbuf) Flip(horizontal bool) (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 // SaveJPEG is a wrapper around gdk_pixbuf_save().
@@ -1499,7 +1561,10 @@ func PixbufLoaderNew() (*PixbufLoader, error) {
 		return nil, nilPtrErr
 	}
 
-	p := &PixbufLoader{glib.Take(unsafe.Pointer(c))}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &PixbufLoader{obj}
+	obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 	return p, nil
 }
 
@@ -1549,6 +1614,35 @@ func (v *PixbufLoader) Write(data []byte) (int, error) {
 	return len(data), nil
 }
 
+func (v *PixbufLoader) WriteAndReturnPixbuf(data []byte) (*Pixbuf, error) {
+
+	if len(data) == 0 {
+		return nil, errors.New("no data")
+	}
+
+	var err *C.GError
+	c := C.gdk_pixbuf_loader_write(v.native(), (*C.guchar)(unsafe.Pointer(&data[0])), C.gsize(len(data)), &err)
+
+	if !gobool(c) {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	v.Close()
+
+	c2 := C.gdk_pixbuf_loader_get_pixbuf(v.native())
+	if c2 == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c2))}
+	p := &Pixbuf{obj}
+	//obj.Ref() // Don't call Ref here, gdk_pixbuf_loader_get_pixbuf already did that for us.
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
+	return p, nil
+}
+
 // Close is a wrapper around gdk_pixbuf_loader_close().  An error is
 // returned instead of a bool like the native C function to support the
 // io.Closer interface.
@@ -1574,7 +1668,11 @@ func (v *PixbufLoader) GetPixbuf() (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	return &Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref() // Don't call Ref here, gdk_pixbuf_loader_get_pixbuf already did that for us.
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 type RGBA struct {
@@ -1583,8 +1681,11 @@ type RGBA struct {
 
 func marshalRGBA(p uintptr) (interface{}, error) {
 	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
-	c2 := (*C.GdkRGBA)(unsafe.Pointer(c))
-	return wrapRGBA(c2), nil
+	return WrapRGBA(unsafe.Pointer(c)), nil
+}
+
+func WrapRGBA(p unsafe.Pointer) *RGBA {
+	return wrapRGBA((*C.GdkRGBA)(p))
 }
 
 func wrapRGBA(obj *C.GdkRGBA) *RGBA {
@@ -1611,6 +1712,14 @@ func NewRGBA(values ...float64) *RGBA {
 
 func (c *RGBA) Floats() []float64 {
 	return []float64{float64(c.rgba.red), float64(c.rgba.green), float64(c.rgba.blue), float64(c.rgba.alpha)}
+}
+
+// SetColors sets all colors values in the RGBA.
+func (c *RGBA) SetColors(r, g, b, a float64) {
+	c.rgba.red = C.gdouble(r)
+	c.rgba.green = C.gdouble(g)
+	c.rgba.blue = C.gdouble(b)
+	c.rgba.alpha = C.gdouble(a)
 }
 
 func (v *RGBA) Native() uintptr {

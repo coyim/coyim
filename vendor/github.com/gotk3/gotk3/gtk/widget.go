@@ -79,12 +79,9 @@ func (v *Widget) HideOnDelete() {
 	C._gtk_widget_hide_on_delete(v.native())
 }
 
-/* TODO
 func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions gdk.DragAction) {
-	C.gtk_drag_dest_set(v.native(), C.GtkDestDefaults(flags), (*C.GtkTargetEntry)(&targets[0]),
-		C.gint(len(targets)), C.GdkDragAction(actions))
+	C.gtk_drag_dest_set(v.native(), C.GtkDestDefaults(flags), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
 }
-*/
 
 // ResetStyle is a wrapper around gtk_widget_reset_style().
 func (v *Widget) ResetStyle() {
@@ -383,6 +380,16 @@ func (v *Widget) AddEvents(events int) {
 	C.gtk_widget_add_events(v.native(), C.gint(events))
 }
 
+// FreezeChildNotify is a wrapper around gtk_widget_freeze_child_notify().
+func (v *Widget) FreezeChildNotify() {
+	C.gtk_widget_freeze_child_notify(v.native())
+}
+
+// ThawChildNotify is a wrapper around gtk_widget_thaw_child_notify().
+func (v *Widget) ThawChildNotify() {
+	C.gtk_widget_thaw_child_notify(v.native())
+}
+
 // HasDefault is a wrapper around gtk_widget_has_default().
 func (v *Widget) HasDefault() bool {
 	c := C.gtk_widget_has_default(v.native())
@@ -623,4 +630,18 @@ func (v *Widget) GetPreferredWidth() (int, int) {
 	var minimum, natural C.gint
 	C.gtk_widget_get_preferred_width(v.native(), &minimum, &natural)
 	return int(minimum), int(natural)
+}
+
+func (v *Widget) InsertActionGroup(name string, group glib.IActionGroup) {
+	C.gtk_widget_insert_action_group(v.native(), (*C.gchar)(C.CString(name)), C.toGActionGroup(unsafe.Pointer(group.Native())))
+}
+
+// GetScreen is a wrapper around gtk_widget_get_screen().
+func (v *Widget) GetScreen() (*gdk.Screen, error) {
+	c := C.gtk_widget_get_screen(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	s := &gdk.Screen{glib.Take(unsafe.Pointer(c))}
+	return s, nil
 }

@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type dialog struct {
@@ -29,7 +29,7 @@ func unwrapDialog(v gtki.Dialog) *gtk.Dialog {
 }
 
 func (v *dialog) Run() int {
-	return v.internal.Run()
+	return int(v.internal.Run())
 }
 
 func (v *dialog) SetDefaultResponse(v1 gtki.ResponseType) {

@@ -532,6 +532,12 @@ toGtkFrame(void *p)
 	return (GTK_FRAME(p));
 }
 
+static GtkAspectFrame *
+toGtkAspectFrame(void *p)
+{
+	return (GTK_ASPECT_FRAME(p));
+}
+
 static GtkSeparator *
 toGtkSeparator(void *p)
 {
@@ -634,6 +640,12 @@ toGtkColorChooser(void *p)
 	return (GTK_COLOR_CHOOSER(p));
 }
 
+static GtkFontChooser *
+toGtkFontChooser(void *p)
+{
+	return (GTK_FONT_CHOOSER(p));
+}
+
 static GtkRecentFilter *
 toGtkRecentFilter(void *p)
 {
@@ -668,6 +680,12 @@ static GtkToolbar *
 toGtkToolbar(void *p)
 {
 	return (GTK_TOOLBAR(p));
+}
+
+static GtkTooltip *
+toGtkTooltip(void *p)
+{
+	return (GTK_TOOLTIP(p));
 }
 
 static GtkEditable *
@@ -710,6 +728,24 @@ static GtkInfoBar *
 toGtkInfoBar(void *p)
 {
 	return (GTK_INFO_BAR(p));
+}
+
+static GMenuModel *
+toGMenuModel(void *p)
+{
+	return (G_MENU_MODEL(p));
+}
+
+static GActionGroup *
+toGActionGroup(void *p)
+{
+	return (G_ACTION_GROUP(p));
+}
+
+static GdkPixbuf *
+toGdkPixbuf(void *p)
+{
+	return (GDK_PIXBUF(p));
 }
 
 static GType *

@@ -23,7 +23,6 @@
 
 package gtk
 
-// #cgo pkg-config: gtk+-3.0
 // #include <gtk/gtk.h>
 import "C"
 
@@ -35,4 +34,15 @@ import "C"
 func (v *Widget) IsVisible() bool {
 	c := C.gtk_widget_is_visible(v.native())
 	return gobool(c)
+}
+
+// SetOpacity is a wrapper around gtk_widget_set_opacity()
+func (v *Widget) SetOpacity(opacity float64) {
+	C.gtk_widget_set_opacity(v.native(), C.double(opacity))
+}
+
+// GetOpacity is a wrapper around gtk_widget_get_opacity()
+func (v *Widget) GetOpacity() float64 {
+	c := C.gtk_widget_get_opacity(v.native())
+	return float64(c)
 }

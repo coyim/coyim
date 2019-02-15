@@ -41,7 +41,7 @@ deploy:
   subject: coyim
   repo: coyim-bin
   package: windows
-  version: %APPVEYOR_REPO_TAG_NAME%
+  version: $(APPVEYOR_REPO_TAG_NAME)
   publish: true
   override: true
   explode: false

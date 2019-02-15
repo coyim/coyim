@@ -359,14 +359,16 @@ func (conv *conversationWindow) destroy() {
 }
 
 func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
-	if !g.gdk.WorkspaceControlSupported() {
-		return
-	}
+	// Disabled for now, for some reason this is not working anymore
+	//
+	// if !g.gdk.WorkspaceControlSupported() {
+	// 	return
+	// }
 
-	wi, _ := conv.parentWin.GetWindow()
-	parentPlace := wi.GetDesktop()
-	cwi, _ := conv.win.GetWindow()
-	cwi.MoveToDesktop(parentPlace)
+	// wi, _ := conv.parentWin.GetWindow()
+	// parentPlace := wi.GetDesktop()
+	// cwi, _ := conv.win.GetWindow()
+	// cwi.MoveToDesktop(parentPlace)
 }
 
 func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) {

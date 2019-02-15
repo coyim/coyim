@@ -23,16 +23,9 @@ environment:
       MSYSTEM: MINGW64
       METHOD: cross
       MSYS2_BASEVER: 20180531
-stack: go 1.9
 install:
   - .\ci\install-deps-windows.bat
 build_script:
-  - SET PATH=C:\go19\bin;%PATH%
-  - SET GOROOT=C:\go19
-  - go version
-  - go env
-  - echo %PATH%
-  - dir %GOPATH%
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/coyim/coyim && make win-ci-deps"'
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/coyim/coyim && make build-gui-win"'
 after_build:

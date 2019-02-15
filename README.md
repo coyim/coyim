@@ -1,7 +1,7 @@
 # CoyIM - a safe and secure chat client
 
 [![Build Status](https://travis-ci.org/coyim/coyim.svg?branch=master)](https://travis-ci.org/coyim/coyim)
-[![Build status](https://ci.appveyor.com/api/projects/status/hcmdu0qtlcljq19v?svg=true)](https://ci.appveyor.com/project/tcz001/coyim)
+[![Build status](https://ci.appveyor.com/api/projects/status/8jnqn0ocms99hr5v?svg=true)](https://ci.appveyor.com/project/olabini/coyim)
 [![Coverage Status](https://coveralls.io/repos/coyim/coyim/badge.svg?branch=master&service=github)](https://coveralls.io/github/coyim/coyim?branch=master)
 [![Download](https://api.bintray.com/packages/coyim/coyim-bin/coyim-bin/images/download.svg)](https://bintray.com/coyim/coyim-bin/coyim-bin/_latestVersion#files)
 

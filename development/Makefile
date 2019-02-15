@@ -60,7 +60,7 @@ run-cover: clean-cover
 	mkdir -p ../.coverprofiles
 	go test -coverprofile=../.coverprofiles/config.coverprofile  ./../config
 	go test -coverprofile=../.coverprofiles/config_importer.coverprofile  ./../config/importer
-	go test -coverprofile=../.coverprofiles/gui.coverprofile  ./../gui
+	go test -tags $(GTK_BUILD_TAG) -coverprofile=../.coverprofiles/gui.coverprofile  ./../gui
 	go test -coverprofile=../.coverprofiles/i18n.coverprofile    ./../i18n
 	go test -coverprofile=../.coverprofiles/net.coverprofile     ./../net
 	go test -coverprofile=../.coverprofiles/otr_client.coverprofile  ./../otr_client

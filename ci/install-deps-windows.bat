@@ -24,6 +24,16 @@ if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > nul
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-gtk3"
 %MSYS_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy mingw-w64-%MSYS2_ARCH%-pkg-config" > nul
 %MSYS_PATH%\usr\bin\bash -lc "yes|pacman --noconfirm -Sc" > nul
+%MSYS_PATH%\usr\bin\bash -lc "echo cflags glib..."
+%MSYS_PATH%\usr\bin\bash -lc "pkg-config --cflags glib-2.0"
+%MSYS_PATH%\usr\bin\bash -lc "echo ldflags glib..."
+%MSYS_PATH%\usr\bin\bash -lc "pkg-config --libs glib-2.0"
+%MSYS_PATH%\usr\bin\bash -lc "echo cflags gobject..."
+%MSYS_PATH%\usr\bin\bash -lc "pkg-config --cflags gobject-2.0"
+%MSYS_PATH%\usr\bin\bash -lc "echo ldflags gobject..."
+%MSYS_PATH%\usr\bin\bash -lc "pkg-config --libs gobject-2.0"
+%MSYS_PATH%\usr\bin\bash -lc "echo cflags pango..."
 %MSYS_PATH%\usr\bin\bash -lc "pkg-config --cflags pango"
+%MSYS_PATH%\usr\bin\bash -lc "echo ldflags pango..."
 %MSYS_PATH%\usr\bin\bash -lc "pkg-config --libs pango"
 if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > nul

@@ -6,7 +6,7 @@
 [![Download](https://api.bintray.com/packages/coyim/coyim-bin/coyim-bin/images/download.svg)](https://bintray.com/coyim/coyim-bin/coyim-bin/_latestVersion#files)
 
 <p align="center">
-  <img src="build/mac-bundle/coy.iconset/icon_128x128.png">
+  <img src="build/mac-bundle/coy.iconset/icon_256x256.png">
 </p>
 
 CoyIM is a new client for the XMPP protocol. It is built upon

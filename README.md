@@ -41,11 +41,19 @@ If you don't import your account settings, keys and fingerprints through the
 wizard that opens at the first launch, you can still import them by going to
 Accounts -> Import at a later stage.
 
+<p align="left">
+  <img src="images/wizard.png" height="242" width="242">
+</p>
+
 If the client you have been using so far is Pidgin, you will find the files you
 need to import in the `.purple` directory in your home.
 
 If you want to know more about the features you will and will not find in CoyIM,
 read [this page](https://coy.im/what-is-coyim/).
+
+<p align="left">
+  <img src="images/main_window.png">
+</p>
 
 ## Building CoyIM
 

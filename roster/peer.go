@@ -236,7 +236,7 @@ func (p *Peer) ClearResources() {
 	p.resources = make(map[string]Status)
 }
 
-// LastResource sets the last resource used
+// LastSeen sets the last resource used
 func (p *Peer) LastSeen(r jid.Any) {
 	p.lockedResource = r.PotentialResource()
 }

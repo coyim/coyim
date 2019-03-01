@@ -195,7 +195,7 @@ func (*SessionMock) SendDirTo(jid.Any, string, bool) *sdata.FileTransferControl 
 	return nil
 }
 
-// CurrentSymmetricKeyFor is the implementation for Session interface
+// CreateSymmetricKeyFor is the implementation for Session interface
 func (*SessionMock) CreateSymmetricKeyFor(jid.Any) []byte {
 	return nil
 }

@@ -8,10 +8,10 @@ sign-reproducible:
 	./sign_build_info_with_key.sh $(KEYID) $(BINDIR)
 
 upload-reproducible-signature:
-	./push_build_info.sh $(BINDIR)/build_info.$(KEYID).asc $(TAG_VERSION) build_info.$(KEYID).asc
+	./push_build_info.sh $(BINDIR)/build_info.$(KEYID).rasc $(TAG_VERSION) build_info.$(KEYID).rasc
 
 send-reproducible-signature:
-	./mail_build_info.sh $(BINDIR)/build_info.$(KEYID).asc $(TAG_VERSION)
+	./mail_build_info.sh $(BINDIR)/build_info.$(KEYID).rasc $(TAG_VERSION)
 
 check-reproducible-signatures:
 	./check_build_info_signatures.rb $(TAG_VERSION)

@@ -32,7 +32,7 @@ If you want to sign the `build_info` file using your default GPG key, you can si
 This will generate
 
 ```sh
-  bin/build_info.0xAAAAAAAAAAAAAAAA.asc
+  bin/build_info.0xAAAAAAAAAAAAAAAA.rasc
 ```
 
 where `0xAAAAAAAAAAAAAAAA` is the long-form key ID of your GPG key.

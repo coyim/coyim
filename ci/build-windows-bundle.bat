@@ -1,3 +1,6 @@
+echo "Path: %MSYS_PATH%\usr\bin\bash"
+%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/*"
+dir %MSYS_PATH%\mingw64\lib
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\share
 echo ONE

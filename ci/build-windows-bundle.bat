@@ -1,5 +1,7 @@
 echo "Path: %MSYS_PATH%\usr\bin\bash"
-%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/*"
+%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0"
+%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0"
+%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0/loaders"
 dir %MSYS_PATH%\mingw64\lib
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\share

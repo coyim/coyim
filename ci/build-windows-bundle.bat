@@ -1,25 +1,6 @@
-echo "LOCAL PATH"
-dir c:\projects\coyim\msys64\mingw64\lib
-dir c:\projects\coyim\msys64\mingw64\lib\gdk-pixbuf-2.0
-dir c:\projects\coyim\msys64\mingw64\lib\gdk-pixbuf-2.0\2.10.0
-dir c:\projects\coyim\msys64\mingw64\lib\gdk-pixbuf-2.0\2.10.0\loaders
-echo "GLOBAL PATH"
-dir c:\msys64\mingw64\lib
-dir c:\msys64\mingw64\lib\gdk-pixbuf-2.0
-dir c:\msys64\mingw64\lib\gdk-pixbuf-2.0\2.10.0
-dir c:\msys64\mingw64\lib\gdk-pixbuf-2.0\2.10.0\loaders
-echo "Path: %MSYS_PATH%\usr\bin\bash"
-%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0"
-%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0"
-%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0/loaders"
-dir %MSYS_PATH%\mingw64\lib
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\share
-echo ONE
-%MSYS_PATH%\usr\bin\bash -lc "ls /mingw%MSYS2_BITS%/**/*.dll"
-echo TWO
-%MSYS_PATH%\usr\bin\bash -lc "ls /mingw%MSYS2_BITS%/lib/gdk-pixbuf*/**/*.dll"
-echo THREE
+%MSYS_PATH%\usr\bin\bash -lc "find /mingw%MSYS2_BITS% -name '*.dll'"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v /mingw%MSYS2_BITS%/**/*.dll /c/gopath/src/github.com/coyim/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -r /mingw%MSYS2_BITS%/share/icons /c/gopath/src/github.com/coyim/coyim/release/share/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -r /mingw%MSYS2_BITS%/share/glib-2.0 /c/gopath/src/github.com/coyim/coyim/release/share/"

@@ -29,9 +29,3 @@ if "%METHOD%"=="cross" 7z x msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar > nul
 %MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0"
 %MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0/loaders"
 %MSYS_PATH%\usr\bin\bash -lc "echo RAAAAAAAG"
-if "%METHOD%"=="cross" %MSYS_PATH%\autorebase.bat > nul
-%MSYS_PATH%\usr\bin\bash -lc "echo ZGAAAAAAAAAAAAAAAAAAAR"
-%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0"
-%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0"
-%MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0/loaders"
-%MSYS_PATH%\usr\bin\bash -lc "echo XRAAAAAAAG"

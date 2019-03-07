@@ -1,3 +1,5 @@
+if "%METHOD%"=="ci" SET MSYS_PATH=c:\msys64
+if "%METHOD%"=="cross" SET MSYS_PATH=%APPVEYOR_BUILD_FOLDER%\msys%MSYS2_BITS%
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\share
 echo ONE

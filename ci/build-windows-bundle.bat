@@ -1,3 +1,13 @@
+echo "LOCAL PATH"
+dir c:\projects\coyim\msys64\mingw64\lib
+dir c:\projects\coyim\msys64\mingw64\lib\gdk-pixbuf-2.0
+dir c:\projects\coyim\msys64\mingw64\lib\gdk-pixbuf-2.0\2.10.0
+dir c:\projects\coyim\msys64\mingw64\lib\gdk-pixbuf-2.0\2.10.0\loaders
+echo "GLOBAL PATH"
+dir c:\msys64\mingw64\lib
+dir c:\msys64\mingw64\lib\gdk-pixbuf-2.0
+dir c:\msys64\mingw64\lib\gdk-pixbuf-2.0\2.10.0
+dir c:\msys64\mingw64\lib\gdk-pixbuf-2.0\2.10.0\loaders
 echo "Path: %MSYS_PATH%\usr\bin\bash"
 %MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0"
 %MSYS_PATH%\usr\bin\bash -lc "ls -alF /mingw%MSYS2_BITS%/lib/gdk-pixbuf-2.0/2.10.0"

@@ -1,10 +1,10 @@
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\share
-%MSYS_PATH%\usr\bin\bash -lc "echo ONE"
+echo ONE
 %MSYS_PATH%\usr\bin\bash -lc "ls /mingw%MSYS2_BITS%/**/*.dll"
-%MSYS_PATH%\usr\bin\bash -lc "echo TWO"
+echo TWO
 %MSYS_PATH%\usr\bin\bash -lc "ls /mingw%MSYS2_BITS%/lib/gdk-pixbuf*/**/*.dll"
-%MSYS_PATH%\usr\bin\bash -lc "echo THREE"
+echo THREE
 %MSYS_PATH%\usr\bin\bash -lc "cp -v /mingw%MSYS2_BITS%/**/*.dll /c/gopath/src/github.com/coyim/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -r /mingw%MSYS2_BITS%/share/icons /c/gopath/src/github.com/coyim/coyim/release/share/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -r /mingw%MSYS2_BITS%/share/glib-2.0 /c/gopath/src/github.com/coyim/coyim/release/share/"

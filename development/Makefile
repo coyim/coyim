@@ -29,6 +29,8 @@ ifeq ($(GO_VERSION), go1.7)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else ifeq ($(GO_VERSION), go1.8)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.12)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else
 	for pkg in $$($(GOLIST) ./...) ; do \
 		golint $$pkg ; \
@@ -47,8 +49,10 @@ ifeq ($(GO_VERSION), go1.7)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else ifeq ($(GO_VERSION), go1.8)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.12)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else
-	go get -u golang.org/x/lint/golint
+	go get -u github.com/golang/lint/golint
 endif
 
 deps: dep-supported-only

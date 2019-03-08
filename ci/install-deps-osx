@@ -6,8 +6,8 @@ set -x
 # brew tap coyim/gtk-versions
 
 ls -alF /usr/local/opt
-ls -alF /usr/local/opt/libffi
-find /usr/local/opt/libffi -name '*.pc'
+ls -alF /usr/local/opt/libffi/
+find /usr/local/opt/libffi/ -name '*.pc'
 
 time brew update
 brew analytics off || true

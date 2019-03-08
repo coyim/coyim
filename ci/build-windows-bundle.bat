@@ -2,7 +2,7 @@ mkdir %GOPATH%\src\github.com\coyim\coyim\release\
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\share
 mkdir %GOPATH%\src\github.com\coyim\coyim\release\lib
 
-set LIBDIR="/mingw%MSYS2_BITS%/lib"
+set LIBDIR="/mingw%MSYS2_BITS%/bin"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libatk-1.0-0.dll /c/gopath/src/github.com/coyim/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libbz2-1.dll /c/gopath/src/github.com/coyim/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libcairo-2.dll /c/gopath/src/github.com/coyim/coyim/release/"

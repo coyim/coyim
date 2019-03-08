@@ -26,7 +26,6 @@ environment:
 install:
   - .\ci\install-deps-windows.bat
 build_script:
-  - 'echo "path: %MSYS_PATH%"'
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/coyim/coyim && make win-ci-deps"'
   - '%MSYS_PATH%\usr\bin\bash -lc "cd /c/gopath/src/github.com/coyim/coyim && make build-gui-win"'
 after_build:

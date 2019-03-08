@@ -33,10 +33,10 @@ type mockConnIOReaderWriter struct {
 	lock sync.Mutex
 }
 
-func (iom *mockConnIOReaderWriter) CalledClose() int {
+func (iom *mockConnIOReaderWriter) CalledClose() bool {
 	iom.lock.Lock()
 	defer iom.lock.Unlock()
-	return iom.calledClose
+	return iom.calledClose > 0
 }
 
 func (iom *mockConnIOReaderWriter) Written() []byte {

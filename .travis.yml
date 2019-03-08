@@ -19,12 +19,12 @@ services:
 
 matrix:
   include:
-    - go: "1.11.4"
+    - go: "1.11.5"
       os: osx
-    - go: "1.11.4"
+    - go: "1.11.5"
       env: RELEASE=true
       os: linux
-    - go: "1.11.4"
+    - go: "1.11.5"
       env: RELEASE=true
       os: osx
   allow_failures:

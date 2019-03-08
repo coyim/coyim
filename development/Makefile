@@ -1,6 +1,6 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
-GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
+GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]*')
 
 GOTEST=govendor test +local
 GOLIST=govendor list -no-status +local

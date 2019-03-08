@@ -5,9 +5,11 @@ set -x
 # We could build on any GTK+3 version we want
 # brew tap coyim/gtk-versions
 
-ls -alF /usr/local/opt
-ls -alF /usr/local/opt/libffi/
-find /usr/local/opt/libffi/ -name '*.pc'
+# ls -alF /usr/local/opt
+# ls -alF /usr/local/opt/libffi/
+# find /usr/local/opt/libffi/ -name '*.pc'
+
+#/usr/local/opt/libffi/lib/pkgconfig/
 
 time brew update
 brew analytics off || true

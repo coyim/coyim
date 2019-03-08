@@ -16,7 +16,7 @@ check:
 build: build-gui
 
 build-gui: generate-version-file
-	go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
+	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
 
 build-gui-memory-analyzer: generate-version-file
 	go build -x -msan -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-ma

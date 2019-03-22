@@ -274,6 +274,13 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			Gone:           true,
 		})
 	case "":
+		if jj.NoResource().String() == jj.String() {
+			// This happens if a malfunctioning client/server is
+			// sending presence information without a resource.
+			// This is likely a bug
+			s.warn(fmt.Sprintf("Got a presence without resource in 'from' - this is likely an error: %s - %#v\n", stanza.From, stanza))
+			return true
+		}
 		if !s.r.PeerPresenceUpdate(jj.(jid.WithResource), stanza.Show, stanza.Status, s.GetConfig().ID()) {
 			return true
 		}

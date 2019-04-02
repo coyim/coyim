@@ -11,8 +11,9 @@ Instructions for creating a release
 ```sh
     git push origin v0.x.y
 ```
-- Add release notes to the tag on GitHub
 - Wait for Travis to finish building and publishing all binaries to Bintray
+- Add release notes to the tag on GitHub
+- Add binaries to GitHub release tag
 - Create a new blog post on coyim-pages with the release notes
 - Update the config on coyim-pages to make the new version the current release
 - Build and push reproducibility signatures from as many as possible (see [REPRODUCIBILITY](REPRODUCIBILITY.md) for instructions)

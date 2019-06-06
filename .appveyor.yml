@@ -50,4 +50,4 @@ artifacts:
 deploy_script:
   - SET APPVEYOR_BUILD_VERSION=%APPVEYOR_REPO_BRANCH%
   - if "%APPVEYOR_REPO_TAG%" == "true" set APPVEYOR_BUILD_VERSION=%APPVEYOR_REPO_TAG_NAME%
-  - curl -T coyim.zip -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/%APPVEYOR_BUILD_VERSION%/%APPVEYOR_BUILD_VERSION%/windows/CoyIM.zip?override=1&publish=1"
+  - curl -C -T coyim.zip -u "%BINTRAY_USER%:%BINTRAY_APIKEY%" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/%APPVEYOR_BUILD_VERSION%/%APPVEYOR_BUILD_VERSION%/windows/CoyIM.zip?override=1&publish=1"

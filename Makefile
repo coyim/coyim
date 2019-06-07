@@ -29,7 +29,7 @@ build-gui-win: generate-version-file
 	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" go build -i -tags $(GTK_BUILD_TAG) -ldflags "-H windowsgui" -o $(BUILD_DIR)/coyim.exe
 
 build-debug:
-	go build -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug
+	go build -v -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug
 
 debug: build-debug
 	GDK_DEBUG=nograbs gdb -d $(shell go env GOROOT) --args $(BUILD_DIR)/coyim-debug -debug
@@ -69,6 +69,14 @@ send-reproducible-signature:
 
 check-reproducible-signatures:
 	make -C ./reproducible check-reproducible-signatures
+
+clean:
+	go clean -i -x
+	rm -rf $(BUILD_DIR)
+
+clean-cache:
+	go clean -i -cache -x
+	rm -rf $(BUILD_DIR)
 
 # TODO: we can use `go generate` for this.
 gen-authors:

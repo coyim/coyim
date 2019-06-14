@@ -160,8 +160,10 @@ func (v *accountMockMenu) GetMenuItemByName(name string) *accountMockMenuItem {
 		return v.menuItems[2].(*accountMockMenuItem)
 	case "Edit":
 		return v.menuItems[5].(*accountMockMenuItem)
-	case "Remove":
+	case "Change Password":
 		return v.menuItems[6].(*accountMockMenuItem)
+	case "Remove":
+		return v.menuItems[7].(*accountMockMenuItem)
 	default:
 		return nil
 	}
@@ -170,9 +172,9 @@ func (v *accountMockMenu) GetMenuItemByName(name string) *accountMockMenuItem {
 func (v *accountMockMenu) GetCheckMenuItemByName(name string) *accountMockCheckMenuItem {
 	switch name {
 	case "Connect Automatically":
-		return v.menuItems[8].(*accountMockCheckMenuItem)
-	case "Always Encrypt Conversation":
 		return v.menuItems[9].(*accountMockCheckMenuItem)
+	case "Always Encrypt Conversation":
+		return v.menuItems[10].(*accountMockCheckMenuItem)
 	default:
 		return nil
 	}
@@ -262,9 +264,10 @@ func (*AccountSuite) Test_account_createSubmenu_createsTheGeneralStructure(c *C)
 	c.Assert(ok, Equals, true)
 
 	c.Assert(createdMenu.GetMenuItemByName("Edit").mnemonic, Equals, "[localized] _Edit...")
+	c.Assert(createdMenu.GetMenuItemByName("Change Password").mnemonic, Equals, "[localized] _Change Password...")
 	c.Assert(createdMenu.GetMenuItemByName("Remove").mnemonic, Equals, "[localized] _Remove")
 
-	_, ok = createdMenu.menuItems[7].(*accountMockSeparatorMenuItem)
+	_, ok = createdMenu.menuItems[8].(*accountMockSeparatorMenuItem)
 	c.Assert(ok, Equals, true)
 
 	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").mnemonic, Equals, "[localized] Connect _Automatically")
@@ -322,6 +325,7 @@ func (*AccountSuite) Test_account_createSubmenu_setsActivationCorrectly(c *C) {
 	c.Assert(createdMenu.GetMenuItemByName("Disconnect").onActivate, Not(IsNil))
 
 	c.Assert(createdMenu.GetMenuItemByName("Edit").onActivate, Not(IsNil))
+	c.Assert(createdMenu.GetMenuItemByName("Change Password").onActivate, Not(IsNil))
 	c.Assert(createdMenu.GetMenuItemByName("Remove").onActivate, Not(IsNil))
 
 	c.Assert(createdMenu.GetCheckMenuItemByName("Connect Automatically").onActivate, Not(IsNil))

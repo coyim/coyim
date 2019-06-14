@@ -969,6 +969,10 @@ msgstr ""
 msgid "Connection _information..."
 msgstr ""
 
+#: ../gui/account.go:279
+msgid "_Change Passowrd..."
+msgstr ""
+
 #: ../gui/account.go:295
 msgid "Connect _Automatically"
 msgstr ""

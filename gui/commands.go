@@ -12,6 +12,7 @@ type connectAccountCmd struct{ a *account }
 type disconnectAccountCmd struct{ a *account }
 type connectionInfoCmd struct{ a *account }
 type editAccountCmd struct{ a *account }
+type changePasswordAccountCmd struct{ a *account }
 type removeAccountCmd struct{ a *account }
 type toggleAutoConnectCmd struct{ a *account }
 type toggleAlwaysEncryptCmd struct{ a *account }
@@ -39,6 +40,12 @@ func (c connectionInfoCmd) execute(u *gtkUI) {
 func (c editAccountCmd) execute(u *gtkUI) {
 	doInUIThread(func() {
 		u.editAccount(c.a)
+	})
+}
+
+func (c changePasswordAccountCmd) execute(u *gtkUI) {
+	doInUIThread(func() {
+		u.changePasswordDialog(c.a)
 	})
 }
 

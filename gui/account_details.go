@@ -121,6 +121,25 @@ func filterCertificates(oldCerts []*config.CertificatePin, newList gtki.ListStor
 	return newCerts
 }
 
+func (u *gtkUI) changePasswordDialog(account *account) {
+	dialogID := "ChangePassword"
+	builder := newBuilder(dialogID)
+
+	var dialog gtki.Dialog
+
+	builder.getItems(
+		dialogID, &dialog,
+	)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_change_signal": dialog.Destroy,
+		"on_ok_change_signal":    dialog.Destroy,
+	})
+
+	dialog.SetTransientFor(u.window)
+	dialog.ShowAll()
+}
+
 func (u *gtkUI) connectionInfoDialog(account *account) {
 	assertInUIThread()
 

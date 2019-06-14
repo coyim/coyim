@@ -275,6 +275,16 @@ func (account *account) createEditItem() gtki.MenuItem {
 	return editItem
 }
 
+func (account *account) createChangePasswordItem(u *gtkUI) gtki.MenuItem {
+	changePasswordItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Change Password..."))
+	changePasswordItem.Connect("activate", account.changePassword)
+	changePasswordItem.SetSensitive(account.session.IsConnected())
+	account.observeConnectionEvents(u, func() {
+		changePasswordItem.SetSensitive(account.session.IsConnected())
+	})
+	return changePasswordItem
+}
+
 func (account *account) createRemoveItem() gtki.MenuItem {
 	removeItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Remove"))
 	removeItem.Connect("activate", account.remove)
@@ -325,6 +335,7 @@ func (account *account) createSubmenu(u *gtkUI) gtki.Menu {
 	m.Append(account.createSeparatorItem())
 	m.Append(account.createConnectionItem(u))
 	m.Append(account.createEditItem())
+	m.Append(account.createChangePasswordItem(u))
 	m.Append(account.createRemoveItem())
 	m.Append(account.createSeparatorItem())
 	m.Append(account.createConnectAutomaticallyItem())
@@ -359,6 +370,10 @@ func (account *account) toggleAlwaysEncrypt() {
 
 func (account *account) edit() {
 	account.executeCmd(editAccountCmd{account})
+}
+
+func (account *account) changePassword() {
+	account.executeCmd(changePasswordAccountCmd{account})
 }
 
 func (account *account) connectionInfo() {

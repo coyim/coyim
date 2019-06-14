@@ -132,8 +132,8 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 	)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_change_signal": dialog.Destroy,
-		"on_ok_change_signal":    dialog.Destroy,
+		"on_cancel_change_signal": dialog.Destroy,
+		"on_ok_change_signal":     dialog.Destroy,
 	})
 
 	dialog.SetTransientFor(u.window)

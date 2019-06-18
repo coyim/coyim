@@ -127,7 +127,7 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 
 	var dialog gtki.Dialog
 
-	passwordEntry := builder.getObj("newpassword").(gtki.Entry)
+	passwordEntry := builder.getObj("newPassword").(gtki.Entry)
 
 	builder.getItems(
 		dialogID, &dialog,

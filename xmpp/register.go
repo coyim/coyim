@@ -12,18 +12,28 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+
+	_ "runtime/debug"
 )
 
-// Various errors signalled by the registration component
 var (
+	// Various errors signalled by the registration component
 	ErrUsernameConflict                = errors.New("xmpp: the username is not available for registration")
 	ErrMissingRequiredRegistrationInfo = errors.New("xmpp: missing required registration information")
 	ErrRegistrationFailed              = errors.New("xmpp: account creation failed")
 	ErrWrongCaptcha                    = errors.New("xmpp: the captcha entered is wrong")
 	ErrResourceConstraint              = errors.New("xmpp: already reached the configured number of allowable resources")
+
+	// Various errors signalled by the change password component
+	// Reference: https://xmpp.org/extensions/xep-0077.html#table-2
+	ErrNotAllowed        = errors.New("xmpp: server does not allow password changes")
+	ErrNotAuthorized     = errors.New("xmpp: password change not authorized")
+	ErrBadRequest        = errors.New("xmpp: password change request was malformed")
+	ErrUnexpectedRequest = errors.New("xmpp: user is not registered with server")
 )
 
 // XEP-0077
@@ -125,4 +135,14 @@ func (c *conn) CancelRegistration() (reply <-chan data.Stanza, cookie data.Cooki
 	`)
 
 	return c.SendIQ("", "set", registrationCancel)
+}
+
+// ChangePassword changes the account password registered with the server.
+// Reference: https://xmpp.org/extensions/xep-0077.html#usecases-changepw
+// XXX: Stubbed implementation
+func (c *conn) ChangePassword(user, password string) (bool, error) {
+	time.Sleep(5000 * time.Millisecond)
+	fmt.Println("Called from xmpp/register.go, username + password", user, " + ", password)
+
+	return true, nil
 }

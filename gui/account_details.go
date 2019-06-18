@@ -127,17 +127,42 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 
 	var dialog gtki.Dialog
 
+	passwordEntry := builder.getObj("newpassword").(gtki.Entry)
+
 	builder.getItems(
 		dialogID, &dialog,
 	)
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_cancel_change_signal": dialog.Destroy,
-		"on_ok_change_signal":     dialog.Destroy,
+		"on_ok_change_signal": func() {
+			newPassword, _ := passwordEntry.GetText()
+
+			fmt.Println("Called from gui/account_details.go. Attempting password change.")
+			// XXX: Stubbed implementation
+			if status, err := changePassword(account, newPassword); status == true && err == nil {
+				// Do the things for successful change
+				fmt.Println("Called from gui/account_details.go. Password changed successfully.")
+			} else {
+				// Do the things for failed change
+				fmt.Println("Called from gui/account_details.go. Password change failed.")
+			}
+
+			dialog.Destroy()
+		},
 	})
 
 	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
+}
+
+// Calls the ChangePassword() in the conn object
+// XXX: Stubbed Implementation
+func changePassword(account *account, newPassword string) (bool, error) {
+	user := account.session.GetConfig().Account
+	conn := account.session.Conn()
+
+	return conn.ChangePassword(user, newPassword)
 }
 
 func (u *gtkUI) connectionInfoDialog(account *account) {

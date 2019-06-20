@@ -1,5 +1,4 @@
 <interface>
-  <requires lib="gtk+" version="3.0"/>
   <object class="GtkListStore" id="proxies-model">
     <columns>
       <!-- proxy -->
@@ -117,7 +116,6 @@
                     <child>
                       <object class="GtkEntry" id="account">
                         <signal name="activate" handler="on_save_signal" />
-                        <property name="can_focus">False</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -139,7 +137,6 @@
                       <object class="GtkEntry" id="password">
                         <property name="visibility">false</property>
                         <signal name="activate" handler="on_save_signal" />
-                        <property name="can_focus">False</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -160,7 +157,6 @@
                     <child>
                       <object class="GtkEntry" id="displayName">
                         <signal name="activate" handler="on_save_signal" />
-                        <property name="can_focus">False</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -182,9 +178,6 @@
                     <child>
                       <object class="GtkCheckButton" id="otherSettings">
                         <signal name="toggled" handler="on_toggle_other_settings" />
-                        <property name="can_focus">False</property>
-                        <property name="receives_default">False</property>
-                        <property name="draw_indicator">False</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -233,7 +226,6 @@
                 </child>
                 <child>
                   <object class="GtkEntry" id="server">
-                    <property name="can_focus">False</property>
                     <signal name="activate" handler="on_save_signal" swapped="no"/>
                   </object>
                   <packing>
@@ -255,7 +247,6 @@
                 <child>
                   <object class="GtkEntry" id="port">
                     <signal name="activate" handler="on_save_signal" />
-                    <property name="can_focus">False</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>

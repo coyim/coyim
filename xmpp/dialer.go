@@ -105,7 +105,7 @@ func (d *dialer) RegisterAccount(formCallback data.FormCallback) (interfaces.Con
 	return d.Dial()
 }
 
-// ChangePassword changes password an account on the server.
+// ChangePassword changes password of an account in the respective authenticated server.
 func (d *dialer) ChangePassword(newPassword string) (interfaces.Conn, error) {
 	d.newPassword = newPassword
 	return d.Dial()

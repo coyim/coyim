@@ -64,25 +64,50 @@ func (s *RegisterSuite) Test_setupStream_registerWithoutAuthenticating(c *C) {
 	)
 }
 
-// Test for ChangePassword, when a successful request is made.
-// XXX: Stubbed implementation
 func (s *RegisterSuite) Test_ChangePassword_SuccessfulChangePasswordRequest(c *C) {
-	// expectedoOut := ""
+	rw := &mockConnIOReaderWriter{read: []byte(
+		"<?xml version='1.0'?>" +
+			"<str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'>" +
+			"<str:features>" +
+			"<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>" +
+			"<mechanism>PLAIN</mechanism>" +
+			"</mechanisms>" +
+			"<register xmlns='http://jabber.org/features/iq-register'/>" +
+			"</str:features>" +
+			"<sasl:success xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:success>" +
+			"<?xml version='1.0'?>" +
+			"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>"+
+			"<stream:features />" +
+			"<iq type='set' to='domain' id='change1'>" +
+		        "<query xmlns='jabber:iq:register'>" +
+			"<username>user</username>" +
+			"<password>newpass</password>" +
+			"</query>" +
+			"</iq>"  +
+			"<iq xmlns='jabber:client' type='result'></iq>",
+	)}
 
-	// mockIn := &mockConnIOReaderWriter{}
-	// conn := newConn()
-	// conn.out = mockIn
-	// conn.jid = "user@xmpp.org"
-	// newPassword := "123"
+	conn := &fullMockedConn{rw: rw}
 
-	// server := "xmpp.org"
-	// user := "user"
+	d := &dialer{
+		JID:      "user@domain",
+		password: "pass",
+		newPassword: "newPass",
+		config:   data.Config{
+			SkipTLS: true,
+		},
+	}
+	_, err := d.setupStream(conn)
 
-	// status, err := conn.ChangePassword(user, server, newPassword)
 
-	// c.Assert(err, IsNil)
-	// c.Assert(status, Equals, true)
-	// c.Assert(string(mockIn.write), Matches, expectedoOut)
-
-	c.Assert(true, Equals, true)
+	c.Assert(err, IsNil)
+	c.Assert(string(rw.write), Equals, ""+
+		"<?xml version='1.0'?>"+
+		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
+		"<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>AHVzZXIAcGFzcw==</auth>\n"+
+		"<?xml version='1.0'?>"+
+		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+
+		"<iq type='set' id='bind_1'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/></iq><iq type='set' to='domain' id='change1'><query xmlns='jabber:iq:register'><username>user</username><password>newPass</password></query></iq>"+
+		"</stream:stream>",
+	)
 }

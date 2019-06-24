@@ -12,12 +12,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"time"
 
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
-
-	_ "runtime/debug"
 )
 
 var (
@@ -44,6 +41,16 @@ func (d *dialer) negotiateInBandRegistration(c interfaces.Conn) (bool, error) {
 
 	user := d.getJIDLocalpart()
 	return c.RegisterAccount(user, d.password)
+}
+
+func (d *dialer) negotiateInBandChangePassword(c interfaces.Conn) (bool, error) {
+	if d.newPassword == "" {
+		return false, nil
+	}
+
+	user := d.getJIDLocalpart()
+	server := d.getJIDDomainpart()
+	return c.ChangePassword(user, server, d.newPassword)
 }
 
 func (c *conn) RegisterAccount(user, password string) (bool, error) {
@@ -139,10 +146,27 @@ func (c *conn) CancelRegistration() (reply <-chan data.Stanza, cookie data.Cooki
 
 // ChangePassword changes the account password registered with the server.
 // Reference: https://xmpp.org/extensions/xep-0077.html#usecases-changepw
-// XXX: Stubbed implementation
-func (c *conn) ChangePassword(user, password string) (bool, error) {
-	time.Sleep(5000 * time.Millisecond)
-	fmt.Println("Called from xmpp/register.go, username + password", user, " + ", password)
+func (c *conn) ChangePassword(user, server, password string) (bool, error) {
+	io.WriteString(c.config.GetLog(), "Attempting to change account password\n")
+	changedPassword := false
 
-	return true, nil
+	changePasswordXML := "<iq type='set' to='%s' id='change1'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>"
+
+	fmt.Fprintf(c.out, changePasswordXML, server, user, password)
+
+	var iq data.ClientIQ
+	if err := c.in.DecodeElement(&iq, nil); err != nil {
+		return changedPassword, errors.New("unmarshal <iq>: " + err.Error())
+	}
+
+	fmt.Println(iq)
+
+	fmt.Println(iq.Type)
+
+	if iq.Type != "result" {
+		return changedPassword, ErrBadRequest
+	}
+
+	changedPassword = true
+	return true, c.closeImmediately()
 }

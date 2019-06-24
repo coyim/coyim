@@ -138,9 +138,9 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 		"on_ok_change_signal": func() {
 			newPassword, _ := passwordEntry.GetText()
 
-			fmt.Println("Called from gui/account_details.go. Attempting password change.")
-			// XXX: Stubbed implementation
-			if status, err := changePassword(account, newPassword); status == true && err == nil {
+			// TODO: Integrate with Sandy's changes
+			// TODO: Clear password caches, and save password in account cache if necessary
+			if err := changePassword(account, newPassword, u); err == nil {
 				// Do the things for successful change
 				fmt.Println("Called from gui/account_details.go. Password changed successfully.")
 			} else {
@@ -156,13 +156,14 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 	dialog.ShowAll()
 }
 
-// Calls the ChangePassword() in the conn object
-// XXX: Stubbed Implementation
-func changePassword(account *account, newPassword string) (bool, error) {
-	user := account.session.GetConfig().Account
-	conn := account.session.Conn()
+// Initiates the Change Password process
+// TODO: Save newPassword in the account on a successful change (if option enabled)
+func changePassword(account *account, newPassword string, u *gtkUI) error {
+	oldPassword := account.session.GetConfig().Password
 
-	return conn.ChangePassword(user, newPassword)
+	err := account.session.ChangePassword(oldPassword, newPassword, u.verifierFor(account))
+
+	return err
 }
 
 func (u *gtkUI) connectionInfoDialog(account *account) {

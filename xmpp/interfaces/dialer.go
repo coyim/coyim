@@ -12,6 +12,7 @@ type Dialer interface {
 	Dial() (Conn, error)
 	GetServer() string
 	RegisterAccount(data.FormCallback) (Conn, error)
+	ChangePassword(string) (Conn, error)
 	ServerAddress() string
 	SetConfig(data.Config)
 	SetJID(string)

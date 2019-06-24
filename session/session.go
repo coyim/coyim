@@ -818,7 +818,6 @@ func (s *session) ChangePassword(oldPassword string, newPassword string, verifie
 	}
 
 	conn, err := policy.ChangePassword(oldPassword, newPassword, conf, verifier)
-
 	if err != nil {
 		return err
 	}

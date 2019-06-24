@@ -201,7 +201,7 @@ func changePasswordResponse(message string) {
 func validatePasswords(newPassword, repeatedPassword string) error {
 
 	var err error
-	a := strings.ReplaceAll(newPassword, " ", "")
+	a := strings.Trim(newPassword, " ")
 
 	if len(a) == 0 {
 		err = errors.New("The password can't be empty")

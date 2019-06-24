@@ -970,7 +970,7 @@ msgid "Connection _information..."
 msgstr ""
 
 #: ../gui/account.go:279
-msgid "_Change Passowrd..."
+msgid "_Change Password..."
 msgstr ""
 
 #: ../gui/account.go:295

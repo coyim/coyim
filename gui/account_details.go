@@ -3,6 +3,7 @@ package gui
 import (
 	"crypto/tls"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -123,11 +124,15 @@ func filterCertificates(oldCerts []*config.CertificatePin, newList gtki.ListStor
 
 func (u *gtkUI) changePasswordDialog(account *account) {
 	dialogID := "ChangePassword"
+
 	builder := newBuilder(dialogID)
 
 	var dialog gtki.Dialog
 
 	passwordEntry := builder.getObj("newPassword").(gtki.Entry)
+	repeatPasswordEntry := builder.getObj("reEntryNewPassword").(gtki.Entry)
+	passwordMatchLabel := builder.getObj("passwordMatchMessage").(gtki.Label)
+	changePasswordSpinner := builder.getObj("spinner").(gtki.Spinner)
 
 	builder.getItems(
 		dialogID, &dialog,
@@ -136,24 +141,79 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_cancel_change_signal": dialog.Destroy,
 		"on_ok_change_signal": func() {
+
 			newPassword, _ := passwordEntry.GetText()
+			repeatedPassword, _ := repeatPasswordEntry.GetText()
+			passwordMatchLabel.SetText(i18n.Local(""))
 
-			// TODO: Integrate with Sandy's changes
-			// TODO: Clear password caches, and save password in account cache if necessary
-			if err := changePassword(account, newPassword, u); err == nil {
-				// Do the things for successful change
-				fmt.Println("Called from gui/account_details.go. Password changed successfully.")
+			fmt.Println("Called from gui/account_details.go. Attempting password change.")
+
+			//TODO: Check if the if condition works
+			if err := validatePasswords(newPassword, repeatedPassword); err != nil {
+				fmt.Errorf("Called from gui/account_details.go: %s", err)
+				passwordMatchLabel.SetText(i18n.Local(err.Error()))
 			} else {
-				// Do the things for failed change
-				fmt.Println("Called from gui/account_details.go. Password change failed.")
+				changePasswordSpinner.Start()
+				passwordMatchLabel.SetText(i18n.Local("Applying changes..."))
+				if err := changePassword(account, newPassword, u); err == nil {
+					fmt.Println("Called from gui/account_details.go. Password changed successfully.")
+					passwordEntry.SetVisibility(false)
+					changePasswordSpinner.Stop()
+					//dialog.Destroy()
+					changePasswordResponse("Password changed successfully")
+				} else {
+					fmt.Println("Called from gui/account_details.go.")
+					fmt.Println("Error: ", err)
+					changePasswordResponse(fmt.Sprintf("Password change failed.\n Error: %s", err.Error()))
+				}
 			}
-
-			dialog.Destroy()
 		},
 	})
 
 	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
+}
+
+/// Handler function for manage the response message dialog when the password was changed.
+///
+func changePasswordResponse(message string) {
+	dialogID := "ChangePasswordMessageResponse"
+	builder := newBuilder(dialogID)
+	var dialog gtki.Dialog
+
+	changePasswordMessageLabel := builder.getObj("changePasswordMessage").(gtki.Label)
+
+	builder.getItems(
+		dialogID, &dialog,
+	)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_ok_change_signal": dialog.Destroy,
+	})
+
+	changePasswordMessageLabel.SetText(i18n.Local(message))
+
+	dialog.ShowAll()
+}
+
+/// Validate rules for passwords inputs in change password option.
+/// TODO: Test the code.
+func validatePasswords(newPassword, repeatedPassword string) error {
+
+	var err error
+	a := strings.ReplaceAll(newPassword, " ", "")
+
+	if len(a) == 0 {
+		err = errors.New("The password can't be empty")
+	} else {
+		//TODO: Make a test for probe for all the cases
+		//GOLANG compare for test strings
+		//https://golang.org/pkg/strings/#Compare
+		if newPassword != repeatedPassword {
+			err = errors.New("The passwords do not match")
+		}
+	}
+	return err
 }
 
 // Initiates the Change Password process

@@ -27,10 +27,11 @@ var (
 
 	// Various errors signalled by the change password component
 	// Reference: https://xmpp.org/extensions/xep-0077.html#table-2
-	ErrNotAllowed        = errors.New("xmpp: server does not allow password changes")
-	ErrNotAuthorized     = errors.New("xmpp: password change not authorized")
-	ErrBadRequest        = errors.New("xmpp: password change request was malformed")
-	ErrUnexpectedRequest = errors.New("xmpp: user is not registered with server")
+	ErrNotAllowed           = errors.New("xmpp: server does not allow password changes")
+	ErrNotAuthorized        = errors.New("xmpp: password change not authorized")
+	ErrBadRequest           = errors.New("xmpp: password change request was malformed")
+	ErrUnexpectedRequest    = errors.New("xmpp: user is not registered with server")
+	ErrChangePasswordFailed = errors.New("xmpp: password change failed")
 )
 
 // XEP-0077
@@ -148,25 +149,40 @@ func (c *conn) CancelRegistration() (reply <-chan data.Stanza, cookie data.Cooki
 // Reference: https://xmpp.org/extensions/xep-0077.html#usecases-changepw
 func (c *conn) ChangePassword(user, server, password string) (bool, error) {
 	io.WriteString(c.config.GetLog(), "Attempting to change account password\n")
-	changedPassword := false
-
 	changePasswordXML := "<iq type='set' to='%s' id='change1'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>"
-
 	fmt.Fprintf(c.out, changePasswordXML, server, user, password)
-
 	var iq data.ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
-		return changedPassword, errors.New("unmarshal <iq>: " + err.Error())
+		return false, errors.New("unmarshal <iq>: " + err.Error())
 	}
 
-	fmt.Println(iq)
-
-	fmt.Println(iq.Type)
-
-	if iq.Type != "result" {
-		return changedPassword, ErrBadRequest
+	if iq.Type == "result" {
+		return true, c.closeImmediately()
 	}
 
-	changedPassword = true
-	return true, c.closeImmediately()
+	iq2 := &data.ClientIQ{}
+	if err := c.in.DecodeElement(iq2, nil); err != nil {
+		return false, errors.New("unmarshal <iq>: " + err.Error())
+	}
+	
+	if iq2.Type == "error" {
+		switch iq2.Error.Condition.XMLName.Local {
+		case "bad-request":
+			//<bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return false, ErrBadRequest
+		case "not-authorized":
+			//<not-authorized xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return false, ErrNotAuthorized
+		case "not-allowed":
+			//<not-allowed xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return false, ErrNotAllowed
+		case "unexpected-request":
+			//<unexpected-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return false, ErrUnexpectedRequest
+		default:
+			return false, ErrChangePasswordFailed
+		}
+	}
+
+	return false, c.closeImmediately()
 }

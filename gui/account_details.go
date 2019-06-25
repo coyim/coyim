@@ -159,7 +159,11 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 					fmt.Println("Called from gui/account_details.go. Password changed successfully.")
 					passwordEntry.SetVisibility(false)
 					changePasswordSpinner.Stop()
-					//dialog.Destroy()
+					// Clear old password and cached password on successful change.
+					// We only save new password, if the user wishes to save it at the re-login.
+					account.session.GetConfig().Password = ""
+					u.SaveConfig()
+					dialog.Destroy()
 					changePasswordResponse("Password changed successfully")
 				} else {
 					fmt.Println("Called from gui/account_details.go.")

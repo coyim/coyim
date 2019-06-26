@@ -160,13 +160,8 @@ func (c *conn) ChangePassword(user, server, password string) (bool, error) {
 		return true, c.closeImmediately()
 	}
 
-	iq2 := &data.ClientIQ{}
-	if err := c.in.DecodeElement(iq2, nil); err != nil {
-		return false, errors.New("unmarshal <iq>: " + err.Error())
-	}
-	
-	if iq2.Type == "error" {
-		switch iq2.Error.Condition.XMLName.Local {
+	if iq.Type == "error" {
+		switch iq.Error.Condition.XMLName.Local {
 		case "bad-request":
 			//<bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
 			return false, ErrBadRequest
@@ -184,5 +179,5 @@ func (c *conn) ChangePassword(user, server, password string) (bool, error) {
 		}
 	}
 
-	return false, c.closeImmediately()
+	return false, ErrChangePasswordFailed
 }

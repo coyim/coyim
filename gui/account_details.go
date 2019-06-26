@@ -221,9 +221,14 @@ func validatePasswords(newPassword, repeatedPassword string) error {
 }
 
 // Initiates the Change Password process
-// TODO: Save newPassword in the account on a successful change (if option enabled)
 func changePassword(account *account, newPassword string, u *gtkUI) error {
-	oldPassword := account.session.GetConfig().Password
+	var oldPassword string
+	// Prefer using cached password if present
+	if account.cachedPassword != "" {
+		oldPassword = account.cachedPassword
+	} else {
+		oldPassword = account.session.GetConfig().Password
+	}
 
 	err := account.session.ChangePassword(oldPassword, newPassword, u.verifierFor(account))
 

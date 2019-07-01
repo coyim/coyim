@@ -124,80 +124,70 @@ func filterCertificates(oldCerts []*config.CertificatePin, newList gtki.ListStor
 
 func (u *gtkUI) changePasswordDialog(account *account) {
 	dialogID := "ChangePassword"
-
 	builder := newBuilder(dialogID)
 
 	var dialog gtki.Dialog
 
 	passwordEntry := builder.getObj("newPassword").(gtki.Entry)
 	repeatPasswordEntry := builder.getObj("reEntryNewPassword").(gtki.Entry)
-	passwordMatchLabel := builder.getObj("passwordMatchMessage").(gtki.Label)
+	formBoxLabel := builder.getObj("passwordMatchMessage").(gtki.Label)
+	formImage := builder.getObj("formImage").(gtki.Image)
 	changePasswordSpinner := builder.getObj("spinner").(gtki.Spinner)
+	callbackGrid := builder.getObj("callbackGrid").(gtki.Grid)
+	buttonChange := builder.getObj("button_change").(gtki.Button)
+	buttonCancel := builder.getObj("button_cancel").(gtki.Button)
+	buttonOk := builder.getObj("button_ok").(gtki.Button)
 
 	builder.getItems(
 		dialogID, &dialog,
 	)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_cancel_change_signal": dialog.Destroy,
-		"on_ok_change_signal": func() {
+		"on_button_ok_clicked":     dialog.Destroy,
+		"on_button_cancel_clicked": dialog.Destroy,
+		"on_button_change_clicked": func() {
 
 			newPassword, _ := passwordEntry.GetText()
 			repeatedPassword, _ := repeatPasswordEntry.GetText()
-			passwordMatchLabel.SetText(i18n.Local(""))
 
-			fmt.Println("Called from gui/account_details.go. Attempting password change.")
+			passwordEntry.SetEditable(true)
+			passwordEntry.SetCanFocus(true)
 
-			//TODO: Check if the if condition works
+			repeatPasswordEntry.SetEditable(true)
+			repeatPasswordEntry.SetCanFocus(true)
+
+			formBoxLabel.SetText(i18n.Local(""))
+			formImage.Show()
+
 			if err := validatePasswords(newPassword, repeatedPassword); err != nil {
 				fmt.Errorf("Called from gui/account_details.go: %s", err)
-				passwordMatchLabel.SetText(i18n.Local(err.Error()))
+				formBoxLabel.Show()
+				formBoxLabel.SetText(i18n.Local(err.Error()))
+				setImageFromFile(formImage, "failure.svg")
 			} else {
 				changePasswordSpinner.Start()
-				passwordMatchLabel.SetText(i18n.Local("Applying changes..."))
-				if err := changePassword(account, newPassword, u); err == nil {
-					fmt.Println("Called from gui/account_details.go. Password changed successfully.")
-					passwordEntry.SetVisibility(false)
-					changePasswordSpinner.Stop()
-					// Clear old password and cached password on successful change.
-					// We only save new password, if the user wishes to save it at the re-login.
-					account.session.GetConfig().Password = ""
-					u.SaveConfig()
-					dialog.Destroy()
-					changePasswordResponse("Password changed successfully")
-				} else {
-					fmt.Println("Called from gui/account_details.go.")
-					fmt.Println("Error: ", err)
-					changePasswordResponse(fmt.Sprintf("Password change failed.\n Error: %s", err.Error()))
-				}
+				formBoxLabel.Show()
+				setImageFromFile(formImage, "blank.svg")
+				formBoxLabel.SetText(i18n.Local("Applying change..."))
+				// formImage.Hide()
+				buttonChange.Hide()
+				buttonCancel.Hide()
+				passwordEntry.SetEditable(false)
+				passwordEntry.SetCanFocus(false)
+
+				repeatPasswordEntry.SetEditable(false)
+				repeatPasswordEntry.SetCanFocus(false)
+				go changePassword(account, newPassword, u, builder)
 			}
 		},
 	})
 
 	dialog.SetTransientFor(u.window)
 	dialog.ShowAll()
-}
-
-/// Handler function for manage the response message dialog when the password was changed.
-///
-func changePasswordResponse(message string) {
-	dialogID := "ChangePasswordMessageResponse"
-	builder := newBuilder(dialogID)
-	var dialog gtki.Dialog
-
-	changePasswordMessageLabel := builder.getObj("changePasswordMessage").(gtki.Label)
-
-	builder.getItems(
-		dialogID, &dialog,
-	)
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_ok_change_signal": dialog.Destroy,
-	})
-
-	changePasswordMessageLabel.SetText(i18n.Local(message))
-
-	dialog.ShowAll()
+	callbackGrid.Hide()
+	formBoxLabel.Hide()
+	buttonOk.Hide()
+	dialog.SetHExpand(false)
 }
 
 /// Validate rules for passwords inputs in change password option.
@@ -221,8 +211,17 @@ func validatePasswords(newPassword, repeatedPassword string) error {
 }
 
 // Initiates the Change Password process
-func changePassword(account *account, newPassword string, u *gtkUI) error {
+func changePassword(account *account, newPassword string, u *gtkUI, builder *builder) {
+
 	var oldPassword string
+
+	formBox := builder.getObj("formBox").(gtki.Box)
+	changePasswordSpinner := builder.getObj("spinner").(gtki.Spinner)
+	callbackGrid := builder.getObj("callbackGrid").(gtki.Grid)
+	callbackLabel := builder.getObj("callbackLabel").(gtki.Label)
+	callbackImage := builder.getObj("callbackImage").(gtki.Image)
+	buttonOk := builder.getObj("button_ok").(gtki.Button)
+
 	// Prefer using cached password if present
 	if account.cachedPassword != "" {
 		oldPassword = account.cachedPassword
@@ -230,9 +229,25 @@ func changePassword(account *account, newPassword string, u *gtkUI) error {
 		oldPassword = account.session.GetConfig().Password
 	}
 
-	err := account.session.ChangePassword(oldPassword, newPassword, u.verifierFor(account))
+	if err := account.session.ChangePassword(oldPassword, newPassword, u.verifierFor(account)); err == nil {
+		changePasswordSpinner.Stop()
+		// Clear old password and cached password on successful change.
+		// We only save new password, if the user wishes to save it at the re-login.
+		account.session.GetConfig().Password = ""
+		u.SaveConfig()
+		formBox.Hide()
+		callbackGrid.Show()
+		callbackLabel.SetText("Password changed successfully")
+		setImageFromFile(callbackImage, "success.svg")
+		buttonOk.Show()
+		//dialog.Destroy()
+	} else {
+		formBox.Hide()
+		callbackGrid.Show()
+		callbackLabel.SetText(fmt.Sprintf("Password change failed.\n Error: %s", err.Error()))
+		setImageFromFile(callbackImage, "failure.svg")
+	}
 
-	return err
 }
 
 func (u *gtkUI) connectionInfoDialog(account *account) {

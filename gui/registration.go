@@ -3,6 +3,7 @@ package gui
 import (
 	"errors"
 	"log"
+	"reflect"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
@@ -37,17 +38,27 @@ func (f *registrationForm) accepted() error {
 
 	//Find the fields we need to copy from the form to the account
 	for _, field := range f.fields {
-		ff := field.field.(*data.TextFormField)
-		w := field.widget.(gtki.Entry)
-		ff.Result, _ = w.GetText()
+		if (reflect.TypeOf(field.field).String()) == "*data.FixedFormField" {
+			ff := field.field.(*data.FixedFormField)
+			switch ff.Label {
+			case "CAPTCHA web page":
+				log.Println("CAPTCHA", ff.Label)
+			default:
+				log.Println("Field", ff.Label)
+			}
+		} else {
+			ff := field.field.(*data.TextFormField)
+			w := field.widget.(gtki.Entry)
+			ff.Result, _ = w.GetText()
 
-		switch ff.Label {
-		case "User", "Username":
-			conf.Account = ff.Result + "@" + f.server
-		case "Password":
-			conf.Password = ff.Result
-		default:
-			log.Println("Field", ff.Label)
+			switch ff.Label {
+			case "User", "Username":
+				conf.Account = ff.Result + "@" + f.server
+			case "Password":
+				conf.Password = ff.Result
+			default:
+				log.Println("Field", ff.Label)
+			}
 		}
 	}
 

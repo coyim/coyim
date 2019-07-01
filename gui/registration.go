@@ -40,11 +40,11 @@ func (f *registrationForm) accepted() error {
 	for _, field := range f.fields {
 		if (reflect.TypeOf(field.field).String()) == "*data.FixedFormField" {
 			ff := field.field.(*data.FixedFormField)
-			switch ff.Label {
-			case "CAPTCHA web page":
-				log.Println("CAPTCHA", ff.Label)
+			switch ff.Name {
+			case "captcha-fallback-text":
+				log.Printf("Captcha fallback text %s", ff.Label)
 			default:
-				log.Println("Field", ff.Label)
+				log.Printf("Field %s", ff.Label)
 			}
 		} else {
 			ff := field.field.(*data.TextFormField)
@@ -56,8 +56,10 @@ func (f *registrationForm) accepted() error {
 				conf.Account = ff.Result + "@" + f.server
 			case "Password":
 				conf.Password = ff.Result
+			case "Enter the text you see":
+				conf.Password = ff.Result
 			default:
-				log.Println("Field", ff.Label)
+				log.Printf("Field %s", ff.Label)
 			}
 		}
 	}

@@ -184,11 +184,7 @@ func (c *conn) ChangePassword(user, server, password string) (bool, error) {
 
 func (c *conn) ChangePassword2(user, server, password string) error {
 	changePasswordXML := "<query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query>"
-
 	changePasswordXML = fmt.Sprintf(changePasswordXML, user, password)
-
-	fmt.Println(changePasswordXML)
-
 	reply, _, err := c.SendIQ(server, "set", rawXML(changePasswordXML))
 	if err != nil {
 		return errors.New("xmpp: failed to send request")

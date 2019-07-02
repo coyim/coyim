@@ -206,23 +206,26 @@ func validatePasswords(newPassword, repeatedPassword string) error {
 // Initiates the Change Password process
 func changePassword(account *account, newPassword string, u *gtkUI, builder *builder) {
 
-	var oldPassword string
+	// var oldPassword string
 
 	formBox := builder.getObj("formBox").(gtki.Box)
 	changePasswordSpinner := builder.getObj("spinner").(gtki.Spinner)
 	callbackGrid := builder.getObj("callbackGrid").(gtki.Grid)
 	callbackLabel := builder.getObj("callbackLabel").(gtki.Label)
 	callbackImage := builder.getObj("callbackImage").(gtki.Image)
-	buttonOk := builder.getObj("button_ok").(gtki.Button) //Defined here for hide the Close button on render the Password Change Dialog.
+	buttonOk := builder.getObj("button_ok").(gtki.Button) // Defined here for hide the Close button on render the Password Change Dialog.
 
 	// Prefer using cached password if present
-	if account.cachedPassword != "" {
-		oldPassword = account.cachedPassword
-	} else {
-		oldPassword = account.session.GetConfig().Password
-	}
+	// if account.cachedPassword != "" {
+	// 	oldPassword = account.cachedPassword
+	// } else {
+	// 	oldPassword = account.session.GetConfig().Password
+	// }
 
-	if err := account.session.ChangePassword(oldPassword, newPassword, u.verifierFor(account)); err == nil {
+	accountInfo := account.session.GetConfig().Account
+	accountInfoParts := strings.SplitN(accountInfo, "@", 2) // Get the username and server domain
+
+	if err := account.session.Conn().ChangePassword2(accountInfoParts[0], accountInfoParts[1], newPassword); err == nil {
 		changePasswordSpinner.Stop()
 		// Clear old password and cached password on successful change.
 		// We only save new password, if the user wishes to save it at the re-login.

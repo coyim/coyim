@@ -143,9 +143,9 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 	)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_button_ok_clicked":     dialog.Destroy,
-		"on_button_cancel_clicked": dialog.Destroy,
-		"on_button_change_clicked": func() {
+		"on_ok_signal":     dialog.Destroy,
+		"on_cancel_signal": dialog.Destroy,
+		"on_change_signal": func() {
 
 			newPassword, _ := passwordEntry.GetText()
 			repeatedPassword, _ := repeatPasswordEntry.GetText()
@@ -168,7 +168,7 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 				changePasswordSpinner.Start()
 				formBoxLabel.Show()
 				setImageFromFile(formImage, "blank.svg")
-				formBoxLabel.SetText(i18n.Local("Applying change..."))
+				formBoxLabel.SetText(i18n.Local("Attempting to password change"))
 				// formImage.Hide()
 				buttonChange.Hide()
 				buttonCancel.Hide()
@@ -191,19 +191,16 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 }
 
 /// Validate rules for passwords inputs in change password option.
-/// TODO: Test the code.
 func validatePasswords(newPassword, repeatedPassword string) error {
 
 	var err error
-	a := strings.Trim(newPassword, " ")
+	passwordTrimed := strings.Trim(newPassword, " ")
 
-	if len(a) == 0 {
+	if len(passwordTrimed) == 0 {
 		err = errors.New("The password can't be empty")
 	} else {
 		//TODO: Make a test for probe for all the cases
-		//GOLANG compare for test strings
-		//https://golang.org/pkg/strings/#Compare
-		if newPassword != repeatedPassword {
+		if passwordTrimed != repeatedPassword {
 			err = errors.New("The passwords do not match")
 		}
 	}

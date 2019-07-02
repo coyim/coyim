@@ -160,7 +160,6 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 			formImage.Show()
 
 			if err := validatePasswords(newPassword, repeatedPassword); err != nil {
-				fmt.Errorf("Called from gui/account_details.go: %s", err)
 				formBoxLabel.Show()
 				formBoxLabel.SetText(i18n.Local(err.Error()))
 				setImageFromFile(formImage, "failure.svg")
@@ -169,7 +168,6 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 				formBoxLabel.Show()
 				setImageFromFile(formImage, "blank.svg")
 				formBoxLabel.SetText(i18n.Local("Attempting to password change"))
-				// formImage.Hide()
 				buttonChange.Hide()
 				buttonCancel.Hide()
 				passwordEntry.SetEditable(false)
@@ -187,12 +185,10 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 	callbackGrid.Hide()
 	formBoxLabel.Hide()
 	buttonOk.Hide()
-	dialog.SetHExpand(false)
 }
 
 /// Validate rules for passwords inputs in change password option.
 func validatePasswords(newPassword, repeatedPassword string) error {
-
 	var err error
 	passwordTrimed := strings.Trim(newPassword, " ")
 
@@ -217,7 +213,7 @@ func changePassword(account *account, newPassword string, u *gtkUI, builder *bui
 	callbackGrid := builder.getObj("callbackGrid").(gtki.Grid)
 	callbackLabel := builder.getObj("callbackLabel").(gtki.Label)
 	callbackImage := builder.getObj("callbackImage").(gtki.Image)
-	buttonOk := builder.getObj("button_ok").(gtki.Button)
+	buttonOk := builder.getObj("button_ok").(gtki.Button) //Defined here for hide the Close button on render the Password Change Dialog.
 
 	// Prefer using cached password if present
 	if account.cachedPassword != "" {
@@ -237,7 +233,6 @@ func changePassword(account *account, newPassword string, u *gtkUI, builder *bui
 		callbackLabel.SetText("Password changed successfully")
 		setImageFromFile(callbackImage, "success.svg")
 		buttonOk.Show()
-		//dialog.Destroy()
 	} else {
 		formBox.Hide()
 		callbackGrid.Show()

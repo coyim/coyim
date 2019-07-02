@@ -189,7 +189,10 @@ func (c *conn) ChangePassword2(user, server, password string) error {
 
 	fmt.Println(changePasswordXML)
 
-	reply, cookie, err := c.SendIQ(server, "set", rawXML(changePasswordXML))
+	reply, _, err := c.SendIQ(server, "set", rawXML(changePasswordXML))
+	if err != nil {
+		return errors.New("xmpp: failed to send request")
+	}
 
 	stanza, ok := <-reply
 	if !ok {

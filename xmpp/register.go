@@ -181,3 +181,48 @@ func (c *conn) ChangePassword(user, server, password string) (bool, error) {
 
 	return false, ErrChangePasswordFailed
 }
+
+func (c *conn) ChangePassword2(user, server, password string) error {
+	changePasswordXML := "<query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query>"
+
+	changePasswordXML = fmt.Sprintf(changePasswordXML, user, password)
+
+	fmt.Println(changePasswordXML)
+
+	reply, cookie, err := c.SendIQ(server, "set", rawXML(changePasswordXML))
+
+	stanza, ok := <-reply
+	if !ok {
+		return errors.New("xmpp: failed to receive response")
+	}
+
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return errors.New("xmpp: failed to parse response")
+	}
+
+	if iq.Type == "result" {
+		return nil
+	}
+
+	if iq.Type == "error" {
+		switch iq.Error.Condition.XMLName.Local {
+		case "bad-request":
+			//<bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrBadRequest
+		case "not-authorized":
+			//<not-authorized xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrNotAuthorized
+		case "not-allowed":
+			//<not-allowed xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrNotAllowed
+		case "unexpected-request":
+			//<unexpected-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+			return ErrUnexpectedRequest
+		default:
+			return ErrChangePasswordFailed
+		}
+	}
+
+	return ErrChangePasswordFailed
+}

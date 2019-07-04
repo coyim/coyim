@@ -85,7 +85,6 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 }
 
 func getBuilderAndChangePasswordData() *changePasswordData {
-	assertInUIThread()
 	data := &changePasswordData{}
 
 	dialogID := "ChangePassword"
@@ -108,7 +107,6 @@ func getBuilderAndChangePasswordData() *changePasswordData {
 	)
 
 	return data
-
 }
 
 func formattedFingerprintsFor(s access.Session) string {
@@ -167,6 +165,7 @@ func filterCertificates(oldCerts []*config.CertificatePin, newList gtki.ListStor
 }
 
 func (u *gtkUI) changePasswordDialog(account *account) {
+	assertInUIThread()
 
 	data := getBuilderAndChangePasswordData()
 
@@ -174,7 +173,6 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 		"on_ok_signal":     data.dialog.Destroy,
 		"on_cancel_signal": data.dialog.Destroy,
 		"on_change_signal": func() {
-
 			newPassword, _ := data.passwordEntry.GetText()
 			repeatedPassword, _ := data.repeatPasswordEntry.GetText()
 
@@ -187,14 +185,14 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 			data.formBoxLabel.SetText(i18n.Local(""))
 			data.formImage.Show()
 
-			if err := validatePasswords(newPassword, repeatedPassword); err != nil {
+			if err := validateNewPassword(newPassword, repeatedPassword); err != nil {
 				data.formBoxLabel.Show()
 				data.formBoxLabel.SetText(i18n.Local(err.Error()))
 				setImageFromFile(data.formImage, "failure.svg")
 			} else {
 				data.changePasswordSpinner.Start()
 				data.formBoxLabel.Show()
-				setImageFromFile(data.formImage, "blank.svg")
+				//				setImageFromFile(data.formImage, "blank.svg")
 				data.formBoxLabel.SetText(i18n.Local("Attempting to password change"))
 				data.buttonChange.Hide()
 				data.buttonCancel.Hide()
@@ -215,18 +213,18 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 	data.buttonOk.Hide()
 }
 
-/// Validate rules for passwords inputs in change password option.
-func validatePasswords(newPassword, repeatedPassword string) error {
+// Validate rules for passwords inputs in change password option.
+func validateNewPassword(newPassword, repeatedPassword string) error {
 	var err error
-	passwordTrimed := strings.Trim(newPassword, " ")
 
-	if len(passwordTrimed) == 0 {
-		err = errors.New("The password can't be empty")
+	if newPassword == "" || repeatedPassword == "" {
+		err = errors.New("The field can't be empty")
 	} else {
-		if passwordTrimed != repeatedPassword {
+		if newPassword != repeatedPassword {
 			err = errors.New("The passwords do not match")
 		}
 	}
+
 	return err
 }
 

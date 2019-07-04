@@ -37,6 +37,22 @@ type accountDetailsData struct {
 	pinsView            gtki.TreeView
 }
 
+type changePasswordData struct {
+	builder               *builder
+	dialog                gtki.Dialog
+	passwordEntry         gtki.Entry
+	repeatPasswordEntry   gtki.Entry
+	formBoxLabel          gtki.Label
+	callbackLabel         gtki.Label
+	formImage             gtki.Image
+	callbackImage         gtki.Image
+	changePasswordSpinner gtki.Spinner
+	callbackGrid          gtki.Grid
+	buttonChange          gtki.Button
+	buttonCancel          gtki.Button
+	buttonOk              gtki.Button
+}
+
 func getBuilderAndAccountDialogDetails() *accountDetailsData {
 	data := &accountDetailsData{}
 
@@ -65,6 +81,31 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 	)
 
 	return data
+}
+
+func getBuilderAndChangePasswordData() *changePasswordData {
+	data := &changePasswordData{}
+
+	dialogID := "ChangePassword"
+	data.builder = newBuilder(dialogID)
+
+	data.builder.getItems(
+		dialogID, &data.dialog,
+		"new-password", &data.passwordEntry,
+		"repeat-password-entry", &data.repeatPasswordEntry,
+		"form-box-label", &data.formBoxLabel,
+		"callback-label", &data.callbackLabel,
+		"form-image", &data.formImage,
+		"callback-image", &data.callbackImage,
+		"change-password-spinner", &data.changePasswordSpinner,
+		"callback-grid", &data.callbackGrid,
+		"button-change", &data.buttonChange,
+		"button-cancel", &data.buttonCancel,
+		"button-ok", &data.buttonOk,
+	)
+
+	return data
+
 }
 
 func formattedFingerprintsFor(s access.Session) string {
@@ -123,68 +164,52 @@ func filterCertificates(oldCerts []*config.CertificatePin, newList gtki.ListStor
 }
 
 func (u *gtkUI) changePasswordDialog(account *account) {
-	dialogID := "ChangePassword"
-	builder := newBuilder(dialogID)
 
-	var dialog gtki.Dialog
+	data := getBuilderAndChangePasswordData()
 
-	passwordEntry := builder.getObj("newPassword").(gtki.Entry)
-	repeatPasswordEntry := builder.getObj("reEntryNewPassword").(gtki.Entry)
-	formBoxLabel := builder.getObj("passwordMatchMessage").(gtki.Label)
-	formImage := builder.getObj("formImage").(gtki.Image)
-	changePasswordSpinner := builder.getObj("spinner").(gtki.Spinner)
-	callbackGrid := builder.getObj("callbackGrid").(gtki.Grid)
-	buttonChange := builder.getObj("button_change").(gtki.Button)
-	buttonCancel := builder.getObj("button_cancel").(gtki.Button)
-	buttonOk := builder.getObj("button_ok").(gtki.Button)
-
-	builder.getItems(
-		dialogID, &dialog,
-	)
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_ok_signal":     dialog.Destroy,
-		"on_cancel_signal": dialog.Destroy,
+	data.builder.ConnectSignals(map[string]interface{}{
+		"on_ok_signal":     data.dialog.Destroy,
+		"on_cancel_signal": data.dialog.Destroy,
 		"on_change_signal": func() {
 
-			newPassword, _ := passwordEntry.GetText()
-			repeatedPassword, _ := repeatPasswordEntry.GetText()
+			newPassword, _ := data.passwordEntry.GetText()
+			repeatedPassword, _ := data.repeatPasswordEntry.GetText()
 
-			passwordEntry.SetEditable(true)
-			passwordEntry.SetCanFocus(true)
+			data.passwordEntry.SetEditable(true)
+			data.passwordEntry.SetCanFocus(true)
 
-			repeatPasswordEntry.SetEditable(true)
-			repeatPasswordEntry.SetCanFocus(true)
+			data.repeatPasswordEntry.SetEditable(true)
+			data.repeatPasswordEntry.SetCanFocus(true)
 
-			formBoxLabel.SetText(i18n.Local(""))
-			formImage.Show()
+			data.formBoxLabel.SetText(i18n.Local(""))
+			data.formImage.Show()
 
 			if err := validatePasswords(newPassword, repeatedPassword); err != nil {
-				formBoxLabel.Show()
-				formBoxLabel.SetText(i18n.Local(err.Error()))
-				setImageFromFile(formImage, "failure.svg")
+				data.formBoxLabel.Show()
+				data.formBoxLabel.SetText(i18n.Local(err.Error()))
+				setImageFromFile(data.formImage, "failure.svg")
 			} else {
-				changePasswordSpinner.Start()
-				formBoxLabel.Show()
-				setImageFromFile(formImage, "blank.svg")
-				formBoxLabel.SetText(i18n.Local("Attempting to password change"))
-				buttonChange.Hide()
-				buttonCancel.Hide()
-				passwordEntry.SetEditable(false)
-				passwordEntry.SetCanFocus(false)
+				data.changePasswordSpinner.Start()
+				data.formBoxLabel.Show()
+				setImageFromFile(data.formImage, "blank.svg")
+				data.formBoxLabel.SetText(i18n.Local("Attempting to password change"))
+				data.buttonChange.Hide()
+				data.buttonCancel.Hide()
+				data.passwordEntry.SetEditable(false)
+				data.passwordEntry.SetCanFocus(false)
 
-				repeatPasswordEntry.SetEditable(false)
-				repeatPasswordEntry.SetCanFocus(false)
-				go changePassword(account, newPassword, u, builder)
+				data.repeatPasswordEntry.SetEditable(false)
+				data.repeatPasswordEntry.SetCanFocus(false)
+				go changePassword(account, newPassword, u, data.builder)
 			}
 		},
 	})
 
-	dialog.SetTransientFor(u.window)
-	dialog.ShowAll()
-	callbackGrid.Hide()
-	formBoxLabel.Hide()
-	buttonOk.Hide()
+	data.dialog.SetTransientFor(u.window)
+	data.dialog.ShowAll()
+	data.callbackGrid.Hide()
+	data.formBoxLabel.Hide()
+	data.buttonOk.Hide()
 }
 
 /// Validate rules for passwords inputs in change password option.

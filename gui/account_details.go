@@ -40,6 +40,7 @@ type accountDetailsData struct {
 type changePasswordData struct {
 	builder               *builder
 	dialog                gtki.Dialog
+	formBox               gtki.Box
 	passwordEntry         gtki.Entry
 	repeatPasswordEntry   gtki.Entry
 	formBoxLabel          gtki.Label
@@ -84,6 +85,7 @@ func getBuilderAndAccountDialogDetails() *accountDetailsData {
 }
 
 func getBuilderAndChangePasswordData() *changePasswordData {
+	assertInUIThread()
 	data := &changePasswordData{}
 
 	dialogID := "ChangePassword"
@@ -91,7 +93,8 @@ func getBuilderAndChangePasswordData() *changePasswordData {
 
 	data.builder.getItems(
 		dialogID, &data.dialog,
-		"new-password", &data.passwordEntry,
+		"form-box", &data.formBox,
+		"new-password-entry", &data.passwordEntry,
 		"repeat-password-entry", &data.repeatPasswordEntry,
 		"form-box-label", &data.formBoxLabel,
 		"callback-label", &data.callbackLabel,
@@ -200,7 +203,7 @@ func (u *gtkUI) changePasswordDialog(account *account) {
 
 				data.repeatPasswordEntry.SetEditable(false)
 				data.repeatPasswordEntry.SetCanFocus(false)
-				go changePassword(account, newPassword, u, data.builder)
+				go changePassword(account, newPassword, u, data)
 			}
 		},
 	})
@@ -220,7 +223,6 @@ func validatePasswords(newPassword, repeatedPassword string) error {
 	if len(passwordTrimed) == 0 {
 		err = errors.New("The password can't be empty")
 	} else {
-		//TODO: Make a test for probe for all the cases
 		if passwordTrimed != repeatedPassword {
 			err = errors.New("The passwords do not match")
 		}
@@ -229,17 +231,9 @@ func validatePasswords(newPassword, repeatedPassword string) error {
 }
 
 // Initiates the Change Password process
-func changePassword(account *account, newPassword string, u *gtkUI, builder *builder) {
+func changePassword(account *account, newPassword string, u *gtkUI, data *changePasswordData) {
 
-	// var oldPassword string
-
-	formBox := builder.getObj("formBox").(gtki.Box)
-	changePasswordSpinner := builder.getObj("spinner").(gtki.Spinner)
-	callbackGrid := builder.getObj("callbackGrid").(gtki.Grid)
-	callbackLabel := builder.getObj("callbackLabel").(gtki.Label)
-	callbackImage := builder.getObj("callbackImage").(gtki.Image)
-	buttonOk := builder.getObj("button_ok").(gtki.Button) // Defined here for hide the Close button on render the Password Change Dialog.
-
+	//NOTE: This block is commented if we're using just one stream for change the password.
 	// Prefer using cached password if present
 	// if account.cachedPassword != "" {
 	// 	oldPassword = account.cachedPassword
@@ -251,21 +245,21 @@ func changePassword(account *account, newPassword string, u *gtkUI, builder *bui
 	accountInfoParts := strings.SplitN(accountInfo, "@", 2) // Get the username and server domain
 
 	if err := account.session.Conn().ChangePassword2(accountInfoParts[0], accountInfoParts[1], newPassword); err == nil {
-		changePasswordSpinner.Stop()
+		data.changePasswordSpinner.Stop()
 		// Clear old password and cached password on successful change.
 		// We only save new password, if the user wishes to save it at the re-login.
 		account.session.GetConfig().Password = ""
 		u.SaveConfig()
-		formBox.Hide()
-		callbackGrid.Show()
-		callbackLabel.SetText("Password changed successfully")
-		setImageFromFile(callbackImage, "success.svg")
-		buttonOk.Show()
+		data.formBox.Hide()
+		data.callbackGrid.Show()
+		data.callbackLabel.SetText("Password changed successfully")
+		setImageFromFile(data.callbackImage, "success.svg")
+		data.buttonOk.Show()
 	} else {
-		formBox.Hide()
-		callbackGrid.Show()
-		callbackLabel.SetText(fmt.Sprintf("Password change failed.\n Error: %s", err.Error()))
-		setImageFromFile(callbackImage, "failure.svg")
+		data.formBox.Hide()
+		data.callbackGrid.Show()
+		data.callbackLabel.SetText(fmt.Sprintf("Password change failed.\n Error: %s", err.Error()))
+		setImageFromFile(data.callbackImage, "failure.svg")
 	}
 
 }

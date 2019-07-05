@@ -99,7 +99,7 @@ func changePassword(account *account, newPassword string, u *gtkUI, data *change
 
 }
 
-func (u *gtkUI) changePasswordDialog(account *account) {
+func (u *gtkUI) buildChangePasswordDialog(account *account) {
 	assertInUIThread()
 
 	data := getBuilderAndChangePasswordData()

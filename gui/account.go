@@ -50,7 +50,7 @@ func (account *account) executeOneDelayed(ui *gtkUI, p string, cv conversationVi
 func keysOfMap(mm map[string][]func(conversationView)) []string {
 	k := make([]string, len(mm))
 
-	for kk, _ := range mm {
+	for kk := range mm {
 		k = append(k, kk)
 	}
 
@@ -279,9 +279,6 @@ func (account *account) createChangePasswordItem(u *gtkUI) gtki.MenuItem {
 	changePasswordItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Change Password..."))
 	changePasswordItem.Connect("activate", account.changePassword)
 	changePasswordItem.SetSensitive(account.session.IsConnected())
-	account.observeConnectionEvents(u, func() {
-		changePasswordItem.SetSensitive(account.session.IsConnected())
-	})
 	return changePasswordItem
 }
 

@@ -45,7 +45,7 @@ func (c editAccountCmd) execute(u *gtkUI) {
 
 func (c changePasswordAccountCmd) execute(u *gtkUI) {
 	doInUIThread(func() {
-		u.changePasswordDialog(c.a)
+		u.buildChangePasswordDialog(c.a)
 	})
 }
 

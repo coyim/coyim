@@ -64,6 +64,7 @@ func (s *RegisterSuite) Test_setupStream_registerWithoutAuthenticating(c *C) {
 	)
 }
 
+// TODO: move all of these tests
 // Tests ChangePassword() for a successful password change.
 func (s *RegisterSuite) Test_ChangePassword_SuccessfulChangePasswordRequest(c *C) {
 	rw := &mockConnIOReaderWriter{read: []byte(

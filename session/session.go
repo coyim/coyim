@@ -808,6 +808,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 	return nil
 }
 
+// TODO: why? refactor
 // ChangePassword sets up a parallel stream for changing user password
 func (s *session) ChangePassword(oldPassword string, newPassword string, verifier tls.Verifier) error {
 	conf := s.GetConfig()

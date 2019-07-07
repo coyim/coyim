@@ -33,7 +33,6 @@ type Session interface {
 	ApprovePresenceSubscription(jid.WithoutResource, string) error
 	AutoApprove(string)
 	AwaitVersionReply(<-chan data.Stanza, string)
-	ChangePassword(string, string, tls.Verifier) error
 	Close()
 	CommandManager() otr_client.CommandManager
 	Config() *config.ApplicationConfig

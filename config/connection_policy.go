@@ -225,24 +225,6 @@ func (p *ConnectionPolicy) RegisterAccount(createCallback data.FormCallback, con
 	return conn, nil
 }
 
-// ChangePassword changes the password of the account on the XMPP server.
-func (p *ConnectionPolicy) ChangePassword(oldPassword string, newPassword string, conf *Account, verifier ourtls.Verifier) (interfaces.Conn, error) {
-	dialer, err := p.buildDialerFor(conf, verifier)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: why?
-	dialer.SetPassword(oldPassword)
-
-	conn, err := dialer.ChangePassword(newPassword)
-	if err != nil {
-		return nil, err
-	}
-
-	return conn, nil
-}
-
 func newTLSConfig() *tls.Config {
 	return &tls.Config{
 		MinVersion: tls.VersionTLS10,

@@ -808,28 +808,6 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 	return nil
 }
 
-// TODO: why? refactor
-// ChangePassword sets up a parallel stream for changing user password
-func (s *session) ChangePassword(oldPassword string, newPassword string, verifier tls.Verifier) error {
-	conf := s.GetConfig()
-	policy := config.ConnectionPolicy{
-		Logger:        s.connectionLogger,
-		XMPPLogger:    s.xmppLogger,
-		DialerFactory: s.dialerFactory,
-	}
-
-	conn, err := policy.ChangePassword(oldPassword, newPassword, conf, verifier)
-	if err != nil {
-		return err
-	}
-
-	if conn != nil {
-		conn.Close()
-	}
-
-	return nil
-}
-
 // EncryptAndSendTo encrypts and sends the message to the given peer
 func (s *session) EncryptAndSendTo(peer jid.Any, message string) (trace int, delayed bool, err error) {
 	if s.IsConnected() {

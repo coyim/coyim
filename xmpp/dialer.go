@@ -106,12 +106,6 @@ func (d *dialer) RegisterAccount(formCallback data.FormCallback) (interfaces.Con
 	return d.Dial()
 }
 
-// ChangePassword changes password of an account in the respective authenticated server.
-func (d *dialer) ChangePassword(newPassword string) (interfaces.Conn, error) {
-	d.newPassword = newPassword
-	return d.Dial()
-}
-
 // Dial creates a new connection to an XMPP server with the given proxy
 // and authenticates as the given user.
 func (d *dialer) Dial() (interfaces.Conn, error) {
@@ -163,10 +157,6 @@ func (d *dialer) negotiateStreamFeatures(c interfaces.Conn, conn net.Conn) error
 
 	// SASL negotiation. RFC 6120, section 6
 	if err := d.negotiateSASL(c); err != nil {
-		return err
-	}
-
-	if changedPassword, err := d.negotiateInBandChangePassword(c); err != nil || changedPassword {
 		return err
 	}
 

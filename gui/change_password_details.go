@@ -67,12 +67,13 @@ func validateNewPassword(newPassword, repeatedPassword string) error {
 	return err
 }
 
-// TODO: refactor and change me
 func changePassword(account *account, newPassword string, u *gtkUI, data *changePasswordData) {
 	accountInfo := account.session.GetConfig().Account
-	accountInfoParts := strings.SplitN(accountInfo, "@", 2) // Get the username and server domain
+	accountInfoParts := strings.SplitN(accountInfo, "@", 2)
+	username := accountInfoParts[0]
+	server := accountInfoParts[1]
 
-	if err := account.session.Conn().ChangePassword2(accountInfoParts[0], accountInfoParts[1], newPassword); err == nil {
+	if err := account.session.Conn().ChangePassword(username, server, newPassword); err == nil {
 		data.changePasswordSpinner.Stop()
 
 		config := account.session.GetConfig()

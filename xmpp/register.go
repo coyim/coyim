@@ -54,16 +54,6 @@ func (d *dialer) negotiateInBandRegistration(c interfaces.Conn) (bool, error) {
 	return c.RegisterAccount(user, d.password)
 }
 
-func (d *dialer) negotiateInBandChangePassword(c interfaces.Conn) (bool, error) {
-	if d.newPassword == "" {
-		return false, nil
-	}
-
-	user := d.getJIDLocalpart()
-	server := d.getJIDDomainpart()
-	return c.ChangePassword(user, server, d.newPassword)
-}
-
 func (c *conn) RegisterAccount(user, password string) (bool, error) {
 	if c.config.CreateCallback == nil {
 		return false, nil
@@ -155,47 +145,11 @@ func (c *conn) CancelRegistration() (reply <-chan data.Stanza, cookie data.Cooki
 	return c.SendIQ("", "set", registrationCancel)
 }
 
-// TODO: refactor and change both of these functions
 // ChangePassword changes the account password registered in the server
 // Reference: https://xmpp.org/extensions/xep-0077.html#usecases-changepw
-func (c *conn) ChangePassword(user, server, password string) (bool, error) {
+func (c *conn) ChangePassword(username, server, password string) error {
 	io.WriteString(c.config.GetLog(), "Attempting to change account's password\n")
-	changePasswordXML := "<iq type='set' to='%s' id='change1'><query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query></iq>"
-	fmt.Fprintf(c.out, changePasswordXML, server, user, password)
-	var iq data.ClientIQ
-	if err := c.in.DecodeElement(&iq, nil); err != nil {
-		return false, errors.New("unmarshal <iq>: " + err.Error())
-	}
-
-	if iq.Type == "result" {
-		return true, c.closeImmediately()
-	}
-
-	if iq.Type == "error" {
-		switch iq.Error.Condition.XMLName.Local {
-		case "bad-request":
-			//<bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return false, ErrBadRequest
-		case "not-authorized":
-			//<not-authorized xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return false, ErrNotAuthorized
-		case "not-allowed":
-			//<not-allowed xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return false, ErrNotAllowed
-		case "unexpected-request":
-			//<unexpected-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-			return false, ErrUnexpectedRequest
-		default:
-			return false, ErrChangePasswordFailed
-		}
-	}
-
-	return false, ErrChangePasswordFailed
-}
-
-func (c *conn) ChangePassword2(user, server, password string) error {
-	changePasswordXML := "<query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query>"
-	changePasswordXML = fmt.Sprintf(changePasswordXML, user, password)
+	changePasswordXML := fmt.Sprintf("<query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query>", username, password)
 	reply, _, err := c.SendIQ(server, "set", rawXML(changePasswordXML))
 	if err != nil {
 		return errors.New("xmpp: failed to send request")
@@ -215,6 +169,7 @@ func (c *conn) ChangePassword2(user, server, password string) error {
 		return nil
 	}
 
+	// TODO: server can also return a form requiring more information from the user. This should be rendered.
 	if iq.Type == "error" {
 		switch iq.Error.Condition.XMLName.Local {
 		case "bad-request":

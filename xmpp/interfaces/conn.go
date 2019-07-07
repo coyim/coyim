@@ -17,8 +17,7 @@ type Conn interface {
 	BindResource() error
 	Cancel(data.Cookie) bool
 	Cache() cache.WithExpiry
-	ChangePassword(string, string, string) (bool, error)
-	ChangePassword2(string, string, string) error
+	ChangePassword(string, string, string) error
 	Close() error
 	Config() *data.Config
 	CustomStorage() map[xml.Name]reflect.Type

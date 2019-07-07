@@ -199,8 +199,3 @@ func (*SessionMock) SendDirTo(jid.Any, string, bool) *sdata.FileTransferControl 
 func (*SessionMock) CreateSymmetricKeyFor(jid.Any) []byte {
 	return nil
 }
-
-// ChangePassword is the implementation for Session interface
-func (*SessionMock) ChangePassword(oldPassword string, newPassword string, verifier tls.Verifier) error {
-	return nil
-}

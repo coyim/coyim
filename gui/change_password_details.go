@@ -54,7 +54,9 @@ func getBuilderAndChangePasswordData() *changePasswordData {
 func validateNewPassword(newPassword, repeatedPassword string) error {
 	var err error
 
-	if newPassword == "" || repeatedPassword == "" {
+	if newPassword == "" && repeatedPassword == "" {
+		err = errors.New("Fields can't be empty")
+	} else if newPassword == "" || repeatedPassword == "" {
 		err = errors.New("The field can't be empty")
 	} else {
 		if newPassword != repeatedPassword {
@@ -67,27 +69,20 @@ func validateNewPassword(newPassword, repeatedPassword string) error {
 
 // TODO: refactor and change me
 func changePassword(account *account, newPassword string, u *gtkUI, data *changePasswordData) {
-
-	//NOTE: This block is commented if we're using just one stream for change the password.
-	// Prefer using cached password if present
-	// if account.cachedPassword != "" {
-	// 	oldPassword = account.cachedPassword
-	// } else {
-	// 	oldPassword = account.session.GetConfig().Password
-	// }
-
 	accountInfo := account.session.GetConfig().Account
 	accountInfoParts := strings.SplitN(accountInfo, "@", 2) // Get the username and server domain
 
 	if err := account.session.Conn().ChangePassword2(accountInfoParts[0], accountInfoParts[1], newPassword); err == nil {
 		data.changePasswordSpinner.Stop()
-		// Clear old password and cached password on successful change.
-		// We only save new password, if the user wishes to save it at the re-login.
-		account.session.GetConfig().Password = ""
+
+		config := account.session.GetConfig()
+		config.Password = newPassword
 		u.SaveConfig()
+
 		data.formBox.Hide()
 		data.callbackGrid.Show()
-		data.callbackLabel.SetText("Password changed successfully")
+		data.callbackGrid.SetMarginTop(35)
+		data.callbackLabel.SetMarkup(i18n.Localf("Password changed successfully for <b>%s</b>.", config.Account))
 		setImageFromFile(data.callbackImage, "success.svg")
 		data.buttonOk.Show()
 	} else {
@@ -96,7 +91,6 @@ func changePassword(account *account, newPassword string, u *gtkUI, data *change
 		data.callbackLabel.SetText(fmt.Sprintf("Password change failed.\n Error: %s", err.Error()))
 		setImageFromFile(data.callbackImage, "failure.svg")
 	}
-
 }
 
 func (u *gtkUI) buildChangePasswordDialog(account *account) {
@@ -115,12 +109,13 @@ func (u *gtkUI) buildChangePasswordDialog(account *account) {
 
 			if err := validateNewPassword(newPassword, repeatedPassword); err != nil {
 				data.formBoxLabel.Show()
-				data.formBoxLabel.SetText(i18n.Local(err.Error()))
+				data.formBoxLabel.SetMarkup(i18n.Localf("<b>Error: %s</b>", err.Error()))
 				setImageFromFile(data.formImage, "failure.svg")
 			} else {
+				data.formImage.Hide()
 				data.changePasswordSpinner.Start()
 				data.formBoxLabel.Show()
-				data.formBoxLabel.SetText(i18n.Local("Attempting to password change"))
+				data.formBoxLabel.SetText(i18n.Local("Attempting to change password..."))
 				data.buttonChange.Hide()
 				data.buttonCancel.Hide()
 

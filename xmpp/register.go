@@ -145,12 +145,18 @@ func (c *conn) CancelRegistration() (reply <-chan data.Stanza, cookie data.Cooki
 	return c.SendIQ("", "set", registrationCancel)
 }
 
+func (c *conn) sendChangePasswordInfo(username, server, password string) (reply <-chan data.Stanza, cookie data.Cookie, err error) {
+	// TODO: we might be able to put this in a struct
+	changePasswordXML := fmt.Sprintf("<query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query>", username, password)
+	return c.SendIQ(server, "set", rawXML(changePasswordXML))
+}
+
 // ChangePassword changes the account password registered in the server
 // Reference: https://xmpp.org/extensions/xep-0077.html#usecases-changepw
 func (c *conn) ChangePassword(username, server, password string) error {
 	io.WriteString(c.config.GetLog(), "Attempting to change account's password\n")
-	changePasswordXML := fmt.Sprintf("<query xmlns='jabber:iq:register'><username>%s</username><password>%s</password></query>", username, password)
-	reply, _, err := c.SendIQ(server, "set", rawXML(changePasswordXML))
+
+	reply, _, err := c.sendChangePasswordInfo(username, server, password)
 	if err != nil {
 		return errors.New("xmpp: failed to send request")
 	}

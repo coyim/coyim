@@ -1,6 +1,8 @@
 package xmpp
 
 import (
+	"bytes"
+
 	"github.com/coyim/coyim/xmpp/data"
 	. "gopkg.in/check.v1"
 )
@@ -24,6 +26,24 @@ func (s *RegisterSuite) Test_CancelRegistration_SendCancelationRequest(c *C) {
 	_, _, err := conn.CancelRegistration()
 	c.Assert(err, IsNil)
 	c.Assert(string(mockIn.write), Matches, expectedoOut)
+}
+
+func (s *RegisterSuite) Test_SendChangePasswordInfo(c *C) {
+	mockOut := &mockConnIOReaderWriter{}
+	conn := conn{
+		out:  mockOut,
+		jid:  "crone1@shakespeare.lit",
+		rand: bytes.NewBuffer([]byte{1, 0, 0, 0, 0, 0, 0, 0}),
+	}
+
+	conn.inflights = make(map[data.Cookie]inflight)
+
+	reply, cookie, err := conn.sendChangePasswordInfo("crone1", "shakespeare.lit", "pass")
+
+	c.Assert(err, IsNil)
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='shakespeare.lit' from='crone1@shakespeare.lit' type='set' id='1'><query xmlns='jabber:iq:register'><username>crone1</username><password>pass</password></query></iq>")
+	c.Assert(reply, NotNil)
+	c.Assert(cookie, NotNil)
 }
 
 func (s *RegisterSuite) Test_setupStream_registerWithoutAuthenticating(c *C) {

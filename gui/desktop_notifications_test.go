@@ -99,8 +99,8 @@ func (dns *DesktopNotificationsSuite) Test_format_WithHTML_NoEscapeSummary_NoCon
 }
 
 func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithContent(c *C) {
-	expectedSummary := "New message!"
-	expectedBody := "From - user@domain.com: This is a message."
+	expectedSummary := "From: user@domain.com"
+	expectedBody := "This is a message."
 	from := "user@domain.com"
 	message := "This is a message."
 	withHTML := false
@@ -112,14 +112,13 @@ func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithContent(c *C) 
 
 	actualSummary, actualBody := dn.format(from, message, withHTML)
 
-	c.Skip("Failing test")
 	c.Assert(actualSummary, Equals, expectedSummary)
 	c.Assert(actualBody, Equals, expectedBody)
 }
 
 func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithHTMLTaggedContent(c *C) {
-	expectedSummary := "New message!"
-	expectedBody := "From - user@domain.com: &lt;b&gt;This&lt;/b&gt; &lt;i&gt;is&lt;/i&gt; a message."
+	expectedSummary := "From: user@domain.com"
+	expectedBody := "&lt;b&gt;This&lt;/b&gt; &lt;i&gt;is&lt;/i&gt; a message."
 	from := "user@domain.com"
 	message := "<b>This</b> <i>is</i> a message."
 	withHTML := false
@@ -131,14 +130,13 @@ func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithHTMLTaggedCont
 
 	actualSummary, actualBody := dn.format(from, message, withHTML)
 
-	c.Skip("Failing test")
 	c.Assert(actualSummary, Equals, expectedSummary)
 	c.Assert(actualBody, Equals, expectedBody)
 }
 
 func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithHTMLSingleWordGreaterThan254(c *C) {
-	expectedSummary := "New message!"
-	expectedBody := "From - user@domain.com: Loremipsumdolorsitamet,consecteturadipiscingelit.Donecsempertristiquetellus,inullamcorperfelis.Crasscelerisquenisisedtristiquesemper.Curabitureudictumnisl.Donecpharetrahendreritdiamegetlacinia.Vivamusauctorsemmi,atcrasamet.Nequeporroquisquamestquidolore..."
+	expectedSummary := "From: user@domain.com"
+	expectedBody := "Loremipsumdolorsitamet,consecteturadipiscingelit.Donecsempertristiquetellus,inullamcorperfelis.Crasscelerisquenisisedtristiquesemper.Curabitureudictumnisl.Donecpharetrahendreritdiamegetlacinia.Vivamusauctorsemmi,atcrasamet.Nequeporroquisquamestquidolore..."
 	from := "user@domain.com"
 	message := "Loremipsumdolorsitamet,consecteturadipiscingelit.Donecsempertristiquetellus,inullamcorperfelis.Crasscelerisquenisisedtristiquesemper.Curabitureudictumnisl.Donecpharetrahendreritdiamegetlacinia.Vivamusauctorsemmi,atcrasamet.Nequeporroquisquamestquidoloremipsumquiadolorsitamet,consectetur,adipiscivelit."
 	withHTML := false
@@ -150,14 +148,13 @@ func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithHTMLSingleWord
 
 	actualSummary, actualBody := dn.format(from, message, withHTML)
 
-	c.Skip("Failing test")
 	c.Assert(actualSummary, Equals, expectedSummary)
 	c.Assert(actualBody, Equals, expectedBody)
 }
 
 func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithContentGreaterThan254(c *C) {
-	expectedSummary := "New message!"
-	expectedBody := "From - user@domain.com: Lorem ipsum dolor sit amet, " +
+	expectedSummary := "From: user@domain.com"
+	expectedBody := "Lorem ipsum dolor sit amet, " +
 		"consectetur adipiscing elit. Nam consectetur elit leo, " +
 		"nec tincidunt velit ultrices vitae. Aenean aliquam massa at dapibus " +
 		"cursus. Mauris feugiat sed velit in porttitor. Fusce id nisi at leo " +
@@ -175,14 +172,13 @@ func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithContentGreater
 
 	actualSummary, actualBody := dn.format("user@domain.com", message, withHTML)
 
-	c.Skip("Failing test")
 	c.Assert(actualSummary, Equals, expectedSummary)
 	c.Assert(actualBody, Equals, expectedBody)
 }
 
 func (dns *DesktopNotificationsSuite) Test_format_WitHTML_WithContent(c *C) {
-	expectedSummary := "New message!"
-	expectedBody := "From - <b>user@domain.com</b>: This is a message."
+	expectedSummary := "From: user@domain.com"
+	expectedBody := "This is a message."
 	from := "user@domain.com"
 	message := "This is a message."
 	withHTML := true
@@ -194,14 +190,13 @@ func (dns *DesktopNotificationsSuite) Test_format_WitHTML_WithContent(c *C) {
 
 	actualSummary, actualBody := dn.format(from, message, withHTML)
 
-	c.Skip("Failing test")
 	c.Assert(actualSummary, Equals, expectedSummary)
 	c.Assert(actualBody, Equals, expectedBody)
 }
 
 func (dns *DesktopNotificationsSuite) Test_format_WithHTML_WithHTMLTaggedContent(c *C) {
-	expectedSummary := "New message!"
-	expectedBody := "From - <b>user@domain.com</b>: &lt;b&gt;This&lt;/b&gt; &lt;i&gt;is&lt;/i&gt; a message."
+	expectedSummary := "From: user@domain.com"
+	expectedBody := "&lt;b&gt;This&lt;/b&gt; &lt;i&gt;is&lt;/i&gt; a message."
 	from := "user@domain.com"
 	message := "<b>This</b> <i>is</i> a message."
 	withHTML := true
@@ -213,14 +208,13 @@ func (dns *DesktopNotificationsSuite) Test_format_WithHTML_WithHTMLTaggedContent
 
 	actualSummary, actualBody := dn.format(from, message, withHTML)
 
-	c.Skip("Failing test")
 	c.Assert(actualSummary, Equals, expectedSummary)
 	c.Assert(actualBody, Equals, expectedBody)
 }
 
 func (dns *DesktopNotificationsSuite) Test_format_WitHTML_NoEscapeBody_WithContent(c *C) {
-	expectedSummary := "New message!"
-	expectedBody := "From - <b>< user&name ></b>: This is a message."
+	expectedSummary := "From: < user&name >"
+	expectedBody := "This is a message."
 	from := "< user&name >"
 	message := "This is a message."
 	withHTML := true
@@ -232,7 +226,6 @@ func (dns *DesktopNotificationsSuite) Test_format_WitHTML_NoEscapeBody_WithConte
 
 	actualSummary, actualBody := dn.format(from, message, withHTML)
 
-	c.Skip("Failing test")
 	c.Assert(actualSummary, Equals, expectedSummary)
 	c.Assert(actualBody, Equals, expectedBody)
 }

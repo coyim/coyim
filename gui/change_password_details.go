@@ -76,6 +76,7 @@ func changePassword(account *account, newPassword string, u *gtkUI, data *change
 	if err := account.session.Conn().ChangePassword(username, server, newPassword); err == nil {
 		data.changePasswordSpinner.Stop()
 
+		// TODO: make this to be chosen bu user from the UI
 		config := account.session.GetConfig()
 		config.Password = newPassword
 		u.SaveConfig()

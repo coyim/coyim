@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"strconv"
-	"strings"
 
 	"golang.org/x/net/html"
 )
@@ -120,9 +119,29 @@ loop:
 
 // EscapeAllHTMLTags will escape all html tags in the text
 func EscapeAllHTMLTags(in string) string {
-	in = strings.Replace(in, "<", "&lt;", -1)
-	in = strings.Replace(in, ">", "&gt;", -1)
-	return in
+	var out []byte
+	msg := []byte(in)
+	z := html.NewTokenizer(bytes.NewReader(msg))
+
+loop:
+	for {
+		tt := z.Next()
+		switch tt {
+		case html.TextToken:
+			out = append(out, z.Text()...)
+		case html.ErrorToken:
+			if err := z.Err(); err != nil && err != io.EOF {
+				out = msg
+				return string(out)
+			}
+			break loop
+		case html.StartTagToken, html.EndTagToken, html.SelfClosingTagToken, html.CommentToken, html.DoctypeToken:
+			raw := z.Raw()
+			out = append(out, []byte((html.EscapeString((string(raw)))))...)
+		}
+	}
+
+	return string(out)
 }
 
 var (

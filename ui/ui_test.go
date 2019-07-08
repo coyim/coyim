@@ -59,3 +59,11 @@ func (s *UISuite) Test_StripSomeHTML(t *C) {
 
 	t.Check(string(res), DeepEquals, exp)
 }
+
+func (s *UISuite) Test_EscapeAllHTMLTags(t *C) {
+	raw := "<p><This> <!--is--> < walloftext >some</walloftext> <FONT color='green'>html</font><!DOCTYPE html><br />."
+	exp := "&lt;p&gt;&lt;This&gt; &lt;!--is--&gt; < walloftext >some&lt;/walloftext&gt; &lt;FONT color=&#39;green&#39;&gt;html&lt;/font&gt;&lt;!DOCTYPE html&gt;&lt;br /&gt;."
+	res := EscapeAllHTMLTags(raw)
+
+	t.Check(res, DeepEquals, exp)
+}

@@ -76,8 +76,7 @@ func (dn *desktopNotifications) show(jid, from, message string) error {
 		ReplacesID: dn.notifications[jid],
 	}
 
-//	from = ui.EscapeAllHTMLTags(string(ui.StripSomeHTML([]byte(from))))
-	from = string(ui.StripSomeHTML([]byte(from)))
+	from = ui.EscapeAllHTMLTags(string(ui.StripSomeHTML([]byte(from))))
 	notification.Summary, notification.Body = dn.format(from, message, true)
 
 	nid, err := notification.Show()

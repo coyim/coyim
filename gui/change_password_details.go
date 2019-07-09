@@ -13,6 +13,7 @@ type changePasswordData struct {
 	builder               *builder
 	dialog                gtki.Dialog
 	formBox               gtki.Box
+	messagesBox           gtki.Box
 	passwordEntry         gtki.Entry
 	repeatPasswordEntry   gtki.Entry
 	formBoxLabel          gtki.Label
@@ -24,6 +25,7 @@ type changePasswordData struct {
 	buttonChange          gtki.Button
 	buttonCancel          gtki.Button
 	buttonOk              gtki.Button
+	checkboxSavePassword  gtki.CheckButton
 }
 
 func getBuilderAndChangePasswordData() *changePasswordData {
@@ -35,6 +37,7 @@ func getBuilderAndChangePasswordData() *changePasswordData {
 	data.builder.getItems(
 		dialogID, &data.dialog,
 		"form-box", &data.formBox,
+		"messages-box", &data.messagesBox,
 		"new-password-entry", &data.passwordEntry,
 		"repeat-password-entry", &data.repeatPasswordEntry,
 		"form-box-label", &data.formBoxLabel,
@@ -46,6 +49,7 @@ func getBuilderAndChangePasswordData() *changePasswordData {
 		"button-change", &data.buttonChange,
 		"button-cancel", &data.buttonCancel,
 		"button-ok", &data.buttonOk,
+		"save-new-password-checkbox", &data.checkboxSavePassword,
 	)
 
 	return data
@@ -78,7 +82,12 @@ func changePassword(account *account, newPassword string, u *gtkUI, data *change
 
 		// TODO: make this to be chosen bu user from the UI
 		config := account.session.GetConfig()
-		config.Password = newPassword
+		saveNewPassword := data.checkboxSavePassword.GetActive()
+		config.Password = ""
+		if saveNewPassword {
+			config.Password = newPassword
+		}
+
 		u.SaveConfig()
 
 		data.formBox.Hide()
@@ -117,6 +126,7 @@ func (u *gtkUI) buildChangePasswordDialog(account *account) {
 				data.formImage.Hide()
 				data.changePasswordSpinner.Start()
 				data.formBoxLabel.Show()
+				data.messagesBox.SetMarginTop(35)
 				data.formBoxLabel.SetText(i18n.Local("Attempting to change password..."))
 				data.buttonChange.Hide()
 				data.buttonCancel.Hide()

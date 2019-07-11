@@ -176,7 +176,7 @@ func (dns *DesktopNotificationsSuite) Test_format_WithoutHTML_WithContentGreater
 	c.Assert(actualBody, Equals, expectedBody)
 }
 
-func (dns *DesktopNotificationsSuite) Test_format_WitHTML_WithContent(c *C) {
+func (dns *DesktopNotificationsSuite) Test_format_WithHTML_WithContent(c *C) {
 	expectedSummary := "From: user@domain.com"
 	expectedBody := "This is a message."
 	from := "user@domain.com"
@@ -212,7 +212,7 @@ func (dns *DesktopNotificationsSuite) Test_format_WithHTML_WithHTMLTaggedContent
 	c.Assert(actualBody, Equals, expectedBody)
 }
 
-func (dns *DesktopNotificationsSuite) Test_format_WitHTML_NoEscapeBody_WithContent(c *C) {
+func (dns *DesktopNotificationsSuite) Test_format_WithHTML_NoEscapeBody_WithContent(c *C) {
 	expectedSummary := "From: < user&name >"
 	expectedBody := "This is a message."
 	from := "< user&name >"

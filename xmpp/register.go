@@ -30,7 +30,6 @@ var (
 	ErrResourceConstraint = errors.New("xmpp: already reached the configured number of allowable resources")
 )
 
-// TODO: move me
 var (
 	// ErrNotAllowed is an error signaled during password change, when the server does not allow password change
 	ErrNotAllowed = errors.New("xmpp: server does not allow password changes")

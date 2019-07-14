@@ -32,13 +32,13 @@ var (
 
 var (
 	// ErrNotAllowed is an error signaled during password change, when the server does not allow password change
-	ErrNotAllowed = errors.New("xmpp: server does not allow password changes")
+	ErrNotAllowed = errors.New("xmpp: server does not allow password change")
 	// ErrNotAuthorized is an error signaled during password change, when password change is not authorized
 	ErrNotAuthorized = errors.New("xmpp: password change not authorized")
 	// ErrBadRequest is an error signaled during password change, when the request is malformed
-	ErrBadRequest = errors.New("xmpp: password change request was malformed")
+	ErrBadRequest = errors.New("xmpp: malformed password change request")
 	// ErrUnexpectedRequest is an error signaled during password change, when the user is not registered in the server
-	ErrUnexpectedRequest = errors.New("xmpp: user is not registered with server")
+	ErrUnexpectedRequest = errors.New("xmpp: user is not registered in the server")
 	// ErrChangePasswordFailed is an error signaled during password change, when it fails
 	ErrChangePasswordFailed = errors.New("xmpp: password change failed")
 )

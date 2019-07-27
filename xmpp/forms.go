@@ -50,6 +50,7 @@ func mediaForPresentation(field data.FormFieldX, datas []data.BobData) [][]data.
 		}
 
 		ret = append(ret, options)
+
 	}
 
 	return ret
@@ -127,14 +128,36 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 	case "hidden":
 		return nil
 	default:
-		f := &data.TextFormField{
-			FormField: base,
-			Private:   field.Type == "text-private",
+
+		//For validate the handle or not of CaptchaFormFields
+		if field.Var == "ocr" {
+
+			m := &data.Media{
+				MIMEType: media[0][0].MIMEType,
+				Data:     media[0][0].Data,
+			}
+
+			t := &data.TextFormField{
+				FormField: base,
+				Private:   field.Type == "text-private",
+			}
+
+			f := &data.CaptchaFormFields{
+				MediaForm: m,
+				TextForm:  t,
+			}
+			return f
+		} else {
+
+			f := &data.TextFormField{
+				FormField: base,
+				Private:   field.Type == "text-private",
+			}
+			if len(field.Values) > 0 {
+				f.Default = field.Values[0]
+			}
+			return f
 		}
-		if len(field.Values) > 0 {
-			f.Default = field.Values[0]
-		}
-		return f
 	}
 
 	return nil
@@ -178,10 +201,14 @@ func toFormFieldX(field interface{}) *data.FormFieldX {
 		}
 	case *data.FixedFormField:
 		return nil
+	case *data.CaptchaFormFields:
+		return &data.FormFieldX{
+			Var:    field.TextForm.Name,
+			Values: []string{field.TextForm.Result},
+		}
 	default:
 		panic(fmt.Sprintf("unknown field type in result from callback: %T", field))
 	}
-
 	return nil
 }
 
@@ -207,6 +234,7 @@ func processForm(form *data.Form, datas []data.BobData, callback data.FormCallba
 
 		media := mediaForPresentation(field, datas)
 		formField := toFormField(field, media)
+
 		if formField != nil {
 			fields = append(fields, formField)
 		}

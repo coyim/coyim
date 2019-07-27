@@ -16,6 +16,7 @@ import (
 
 	"reflect"
 
+	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -204,4 +205,65 @@ func setImageFromFile(i gtki.Image, filename string) {
 	}
 	i.SetFromPixbuf(pb)
 	return
+}
+
+//Put a image into a gtki.Image UI container from a binary array.
+func setImageFromBytes(i gtki.Image, bstream []byte) {
+	pl, err := g.gdk.PixbufLoaderNew()
+	if err != nil {
+		panic("Developer error: setting the image from >>>>>>>>")
+	}
+
+	var w sync.WaitGroup
+	w.Add(1)
+	pl.Connect("area-prepared", w.Done)
+
+	if _, err := pl.Write(bstream); err != nil {
+		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
+		return
+	}
+	if err := pl.Close(); err != nil {
+		log.Println(">> WARN - cannot close PixbufLoader: " + err.Error())
+		return
+	}
+
+	w.Wait() //Waiting for Pixbuf to load before using it
+
+	pb, err := pl.GetPixbuf()
+	if err != nil {
+		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
+		return
+	}
+	i.SetFromPixbuf(pb)
+	return
+}
+
+//Return a Pixbuf from a binary array.
+func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
+	pl, err := g.gdk.PixbufLoaderNew()
+	if err != nil {
+		panic("Developer error: setting the image from >>>>>>>>")
+	}
+
+	var w sync.WaitGroup
+	w.Add(1)
+	pl.Connect("area-prepared", w.Done)
+
+	if _, err := pl.Write(bstream); err != nil {
+		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
+		return nil
+	}
+	if err := pl.Close(); err != nil {
+		log.Println(">> WARN - cannot close PixbufLoader: " + err.Error())
+		return nil
+	}
+
+	w.Wait() //Waiting for Pixbuf to load before using it
+
+	pb, err := pl.GetPixbuf()
+	if err != nil {
+		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
+		return nil
+	}
+	return pb
 }

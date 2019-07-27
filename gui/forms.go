@@ -59,6 +59,26 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 			w.SetHAlign(gtki.ALIGN_START)
 
 			ret = append(ret, formField{field, l, w})
+		case *data.Media:
+			pb := getPixbufFromBytes(field.Data)
+			w, _ := g.gtk.ImageNewFromPixbuf(pb)
+			ret = append(ret, formField{field, nil, w})
+		case *data.CaptchaFormFields:
+			//Implemented for support Captcha Image and Input Text Form in the same thread.
+			pb := getPixbufFromBytes(field.MediaForm.Data)
+			wi, _ := g.gtk.ImageNewFromPixbuf(pb)
+			ret = append(ret, formField{field.MediaForm, nil, wi})
+
+			l, _ := g.gtk.LabelNew(field.TextForm.Label)
+			l.SetHAlign(gtki.ALIGN_START)
+			l.SetSelectable(true)
+
+			wt, _ := g.gtk.EntryNew()
+			wt.SetText(field.TextForm.Default)
+			wt.SetVisibility(!field.TextForm.Private)
+
+			ret = append(ret, formField{field.TextForm, l, wt})
+
 		default:
 			log.Println("Missing to implement form field:", field)
 		}

@@ -38,28 +38,30 @@ func (f *registrationForm) accepted() error {
 
 	//Find the fields we need to copy from the form to the account
 	for _, field := range f.fields {
-		if (reflect.TypeOf(field.field).String()) == "*data.FixedFormField" {
-			ff := field.field.(*data.FixedFormField)
-			switch ff.Name {
-			case "captcha-fallback-text":
-				log.Printf("Captcha fallback text %s", ff.Label)
-			default:
-				log.Printf("Field %s", ff.Label)
-			}
-		} else {
-			ff := field.field.(*data.TextFormField)
-			w := field.widget.(gtki.Entry)
-			ff.Result, _ = w.GetText()
+		if reflect.TypeOf(field.field).String() != "*data.Media" {
+			if (reflect.TypeOf(field.field).String()) == "*data.FixedFormField" {
+				ff := field.field.(*data.FixedFormField)
+				switch ff.Name {
+				case "captcha-fallback-text":
+					log.Printf("Captcha fallback text %s", ff.Label)
+				default:
+					log.Printf("Field %s", ff.Label)
+				}
+			} else {
+				ff := field.field.(*data.TextFormField)
+				w := field.widget.(gtki.Entry)
+				ff.Result, _ = w.GetText()
 
-			switch ff.Label {
-			case "User", "Username":
-				conf.Account = ff.Result + "@" + f.server
-			case "Password":
-				conf.Password = ff.Result
-			case "Enter the text you see":
-				conf.Password = ff.Result
-			default:
-				log.Printf("Field %s", ff.Label)
+				switch ff.Label {
+				case "User", "Username":
+					conf.Account = ff.Result + "@" + f.server
+				case "Password":
+					conf.Password = ff.Result
+				case "Enter the text you see":
+					conf.Password = ff.Result
+				default:
+					log.Printf("Field %s", ff.Label)
+				}
 			}
 		}
 	}

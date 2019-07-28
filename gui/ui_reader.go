@@ -207,7 +207,6 @@ func setImageFromFile(i gtki.Image, filename string) {
 	return
 }
 
-//Put a image into a gtki.Image UI container from a binary array.
 func setImageFromBytes(i gtki.Image, bstream []byte) {
 	pl, err := g.gdk.PixbufLoaderNew()
 	if err != nil {
@@ -238,7 +237,6 @@ func setImageFromBytes(i gtki.Image, bstream []byte) {
 	return
 }
 
-//Return a Pixbuf from a binary array.
 func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
 	pl, err := g.gdk.PixbufLoaderNew()
 	if err != nil {

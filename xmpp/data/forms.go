@@ -137,11 +137,11 @@ type MultiSelectionFormField struct {
 	Results []int
 }
 
-// CaptchaFormFields is for handle the Captcha image element. It has two elements inside
+// CaptchaFormField handles the Captcha image element. It has two elements inside
 // in order to contain the Media and TextForm. The first one contain the image to be
 // desplayed in the dialog box and the last one is for render the Input Text of
 // the captcha image displayed.
-type CaptchaFormFields struct {
+type CaptchaFormField struct {
 	MediaForm *Media
 	TextForm  *TextFormField
 }

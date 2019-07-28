@@ -62,9 +62,9 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 		case *data.Media:
 			pb := getPixbufFromBytes(field.Data)
 			w, _ := g.gtk.ImageNewFromPixbuf(pb)
+
 			ret = append(ret, formField{field, nil, w})
-		case *data.CaptchaFormFields:
-			//Implemented for support Captcha Image and Input Text Form in the same thread.
+		case *data.CaptchaFormField:
 			pb := getPixbufFromBytes(field.MediaForm.Data)
 			wi, _ := g.gtk.ImageNewFromPixbuf(pb)
 			ret = append(ret, formField{field.MediaForm, nil, wi})
@@ -78,9 +78,8 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 			wt.SetVisibility(!field.TextForm.Private)
 
 			ret = append(ret, formField{field.TextForm, l, wt})
-
 		default:
-			log.Println("Missing to implement form field:", field)
+			log.Println("Missing to implement form field of:", field)
 		}
 	}
 

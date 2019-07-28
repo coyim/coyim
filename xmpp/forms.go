@@ -128,8 +128,6 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 	case "hidden":
 		return nil
 	default:
-
-		//For validate the handle or not of CaptchaFormFields
 		if field.Var == "ocr" {
 
 			m := &data.Media{
@@ -142,22 +140,20 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 				Private:   field.Type == "text-private",
 			}
 
-			f := &data.CaptchaFormFields{
+			f := &data.CaptchaFormField{
 				MediaForm: m,
 				TextForm:  t,
 			}
 			return f
-		} else {
-
-			f := &data.TextFormField{
-				FormField: base,
-				Private:   field.Type == "text-private",
-			}
-			if len(field.Values) > 0 {
-				f.Default = field.Values[0]
-			}
-			return f
 		}
+		f := &data.TextFormField{
+			FormField: base,
+			Private:   field.Type == "text-private",
+		}
+		if len(field.Values) > 0 {
+			f.Default = field.Values[0]
+		}
+		return f
 	}
 
 	return nil
@@ -201,7 +197,7 @@ func toFormFieldX(field interface{}) *data.FormFieldX {
 		}
 	case *data.FixedFormField:
 		return nil
-	case *data.CaptchaFormFields:
+	case *data.CaptchaFormField:
 		return &data.FormFieldX{
 			Var:    field.TextForm.Name,
 			Values: []string{field.TextForm.Result},

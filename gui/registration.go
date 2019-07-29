@@ -78,10 +78,16 @@ func (f *registrationForm) renderForm(title string, fields []interface{}) error 
 	doInUIThread(func() {
 		f.addFields(fields)
 
-		for i, field := range f.fields {
+		var i int
+		for _, field := range f.fields {
 			f.grid.Attach(field.label, 0, i+1, 1, 1)
 			f.grid.Attach(field.widget, 1, i+1, 1, 1)
+			f.grid.Attach(field.required, 2, i+1, 1, 1)
+			i++
 		}
+
+		li, _ := g.gtk.LabelNew("* The field is required.")
+		f.grid.Attach(li, 0, i+1, 1, i+1)
 
 		f.grid.ShowAll()
 	})

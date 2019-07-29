@@ -8,9 +8,10 @@ import (
 )
 
 type formField struct {
-	field  interface{}
-	label  gtki.Label
-	widget gtki.Widget
+	field    interface{}
+	label    gtki.Label
+	widget   gtki.Widget
+	required gtki.Label
 }
 
 func buildWidgetsForFields(fields []interface{}) []formField {
@@ -27,9 +28,13 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 			w.SetText(field.Default)
 			w.SetVisibility(!field.Private)
 
-			ret = append(ret, formField{field, l, w})
+			li, _ := g.gtk.LabelNew("")
+			if field.Required {
+				li, _ = g.gtk.LabelNew("*")
+			}
+
+			ret = append(ret, formField{field, l, w, li})
 		case *data.BooleanFormField:
-			//TODO: notify if it is required
 			l, _ := g.gtk.LabelNew(field.Label)
 			l.SetHAlign(gtki.ALIGN_START)
 			l.SetSelectable(true)
@@ -37,9 +42,13 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 			w, _ := g.gtk.CheckButtonNew()
 			w.SetActive(field.Result)
 
-			ret = append(ret, formField{field, l, w})
+			li, _ := g.gtk.LabelNew("")
+			if field.Required {
+				li, _ = g.gtk.LabelNew("*")
+			}
+
+			ret = append(ret, formField{field, l, w, li})
 		case *data.SelectionFormField:
-			//TODO: notify if it is required
 			l, _ := g.gtk.LabelNew(field.Label)
 			l.SetHAlign(gtki.ALIGN_START)
 			l.SetSelectable(true)
@@ -51,23 +60,33 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 
 			w.SetActive(field.Result)
 
-			ret = append(ret, formField{field, l, w})
+			li, _ := g.gtk.LabelNew("")
+			if field.Required {
+				li, _ = g.gtk.LabelNew("*")
+			}
+
+			ret = append(ret, formField{field, l, w, li})
 		case *data.FixedFormField:
 			l, _ := g.gtk.LabelNew(field.Label)
 
 			w, _ := g.gtk.LabelNew(field.Text)
 			w.SetHAlign(gtki.ALIGN_START)
 
-			ret = append(ret, formField{field, l, w})
+			li, _ := g.gtk.LabelNew("")
+			if field.Required {
+				li, _ = g.gtk.LabelNew("*")
+			}
+			ret = append(ret, formField{field, l, w, li})
 		case *data.Media:
 			pb := getPixbufFromBytes(field.Data)
 			w, _ := g.gtk.ImageNewFromPixbuf(pb)
 
-			ret = append(ret, formField{field, nil, w})
+			ret = append(ret, formField{field, nil, w, nil})
 		case *data.CaptchaFormField:
 			pb := getPixbufFromBytes(field.MediaForm.Data)
 			wi, _ := g.gtk.ImageNewFromPixbuf(pb)
-			ret = append(ret, formField{field.MediaForm, nil, wi})
+
+			ret = append(ret, formField{field.MediaForm, nil, wi, nil})
 
 			l, _ := g.gtk.LabelNew(field.TextForm.Label)
 			l.SetHAlign(gtki.ALIGN_START)
@@ -77,7 +96,7 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 			wt.SetText(field.TextForm.Default)
 			wt.SetVisibility(!field.TextForm.Private)
 
-			ret = append(ret, formField{field.TextForm, l, wt})
+			ret = append(ret, formField{field.TextForm, l, wt, nil})
 		default:
 			log.Println("Missing to implement form field of:", field)
 		}

@@ -17,7 +17,7 @@ func (s Server) register() {
 
 func init() {
 	// https://adamas.ai/cgi-bin/wiki.pl/Services
-	Server{"testjabber.autonomia.digital", "6erjhwslm2ixmwqyjf6fldioogi7uuh5ryp3bxopww7npx6p6wtk5iqd.onion", true}.register()
+	Server{"testjabber.autonomia.digital", "6erjhwslm2ixmwqyjf6fldioogi7uuh5ryp3bxopww7npx6p6wtk5iqd.onion", false}.register()
 
 	// https://adamas.ai/cgi-bin/wiki.pl/Services
 	Server{"adamas.ai", "gujl27qb6saznwv4.onion", false}.register()

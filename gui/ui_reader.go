@@ -177,7 +177,7 @@ func mustGetImageBytes(filename string) []byte {
 	return bs
 }
 
-//Base function for display images from binary array.
+// getPixbufFromBytes returns the pixbuff from a byte array.
 func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
 	pl, err := g.gdk.PixbufLoaderNew()
 	if err != nil {
@@ -207,10 +207,11 @@ func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
 	return pb
 }
 
-//Refactored function for display image from file name.
+// setImageFromFile sets an image from a file name.
 func setImageFromFile(i gtki.Image, filename string) {
 	pb := getPixbufFromBytes(mustGetImageBytes(filename))
 
 	i.SetFromPixbuf(pb)
+
 	return
 }

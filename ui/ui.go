@@ -26,126 +26,6 @@ func init() {
 	tagsToAvoid["b"] = true
 	tagsToAvoid["u"] = true
 	tagsToAvoid["img"] = true
-
-	tagsHTMLToEscape["a"] = true
-	tagsHTMLToEscape["abbr"] = true
-	tagsHTMLToEscape["address"] = true
-	tagsHTMLToEscape["area"] = true
-	tagsHTMLToEscape["article"] = true
-	tagsHTMLToEscape["aside"] = true
-	tagsHTMLToEscape["audio"] = true
-	tagsHTMLToEscape["b"] = true
-	tagsHTMLToEscape["base"] = true
-	tagsHTMLToEscape["bdi"] = true
-	tagsHTMLToEscape["bdo"] = true
-	tagsHTMLToEscape["blockquote"] = true
-	tagsHTMLToEscape["body"] = true
-	tagsHTMLToEscape["br"] = true
-	tagsHTMLToEscape["button"] = true
-	tagsHTMLToEscape["canvas"] = true
-	tagsHTMLToEscape["caption"] = true
-	tagsHTMLToEscape["cite"] = true
-	tagsHTMLToEscape["code"] = true
-	tagsHTMLToEscape["col"] = true
-	tagsHTMLToEscape["colgroup"] = true
-	tagsHTMLToEscape["data"] = true
-	tagsHTMLToEscape["datalist"] = true
-	tagsHTMLToEscape["dd"] = true
-	tagsHTMLToEscape["del"] = true
-	tagsHTMLToEscape["details"] = true
-	tagsHTMLToEscape["dfn"] = true
-	tagsHTMLToEscape["dialog"] = true
-	tagsHTMLToEscape["div"] = true
-	tagsHTMLToEscape["dl"] = true
-	tagsHTMLToEscape["dt"] = true
-	tagsHTMLToEscape["em"] = true
-	tagsHTMLToEscape["embed"] = true
-	tagsHTMLToEscape["fieldset"] = true
-	tagsHTMLToEscape["figcaption"] = true
-	tagsHTMLToEscape["figure"] = true
-	tagsHTMLToEscape["font"] = true
-	tagsHTMLToEscape["footer"] = true
-	tagsHTMLToEscape["form"] = true
-	tagsHTMLToEscape["h1"] = true
-	tagsHTMLToEscape["h2"] = true
-	tagsHTMLToEscape["h3"] = true
-	tagsHTMLToEscape["h4"] = true
-	tagsHTMLToEscape["h5"] = true
-	tagsHTMLToEscape["h6"] = true
-	tagsHTMLToEscape["head"] = true
-	tagsHTMLToEscape["header"] = true
-	tagsHTMLToEscape["hgroup"] = true
-	tagsHTMLToEscape["hr"] = true
-	tagsHTMLToEscape["html"] = true
-	tagsHTMLToEscape["i"] = true
-	tagsHTMLToEscape["iframe"] = true
-	tagsHTMLToEscape["img"] = true
-	tagsHTMLToEscape["input"] = true
-	tagsHTMLToEscape["ins"] = true
-	tagsHTMLToEscape["kbd"] = true
-	tagsHTMLToEscape["keygen"] = true
-	tagsHTMLToEscape["label"] = true
-	tagsHTMLToEscape["legend"] = true
-	tagsHTMLToEscape["li"] = true
-	tagsHTMLToEscape["link"] = true
-	tagsHTMLToEscape["main"] = true
-	tagsHTMLToEscape["map"] = true
-	tagsHTMLToEscape["mark"] = true
-	tagsHTMLToEscape["math"] = true
-	tagsHTMLToEscape["menu"] = true
-	tagsHTMLToEscape["menuitem"] = true
-	tagsHTMLToEscape["meta"] = true
-	tagsHTMLToEscape["meter"] = true
-	tagsHTMLToEscape["nav"] = true
-	tagsHTMLToEscape["noscript"] = true
-	tagsHTMLToEscape["object"] = true
-	tagsHTMLToEscape["ol"] = true
-	tagsHTMLToEscape["optgroup"] = true
-	tagsHTMLToEscape["option"] = true
-	tagsHTMLToEscape["output"] = true
-	tagsHTMLToEscape["p"] = true
-	tagsHTMLToEscape["param"] = true
-	tagsHTMLToEscape["picture"] = true
-	tagsHTMLToEscape["pre"] = true
-	tagsHTMLToEscape["progress"] = true
-	tagsHTMLToEscape["q"] = true
-	tagsHTMLToEscape["rb"] = true
-	tagsHTMLToEscape["rp"] = true
-	tagsHTMLToEscape["rt"] = true
-	tagsHTMLToEscape["rtc"] = true
-	tagsHTMLToEscape["ruby"] = true
-	tagsHTMLToEscape["s"] = true
-	tagsHTMLToEscape["samp"] = true
-	tagsHTMLToEscape["script"] = true
-	tagsHTMLToEscape["section"] = true
-	tagsHTMLToEscape["select"] = true
-	tagsHTMLToEscape["slot"] = true
-	tagsHTMLToEscape["small"] = true
-	tagsHTMLToEscape["source"] = true
-	tagsHTMLToEscape["span"] = true
-	tagsHTMLToEscape["strong"] = true
-	tagsHTMLToEscape["style"] = true
-	tagsHTMLToEscape["sub"] = true
-	tagsHTMLToEscape["summary"] = true
-	tagsHTMLToEscape["sup"] = true
-	tagsHTMLToEscape["svg"] = true
-	tagsHTMLToEscape["table"] = true
-	tagsHTMLToEscape["tbody"] = true
-	tagsHTMLToEscape["td"] = true
-	tagsHTMLToEscape["template"] = true
-	tagsHTMLToEscape["textarea"] = true
-	tagsHTMLToEscape["tfoot"] = true
-	tagsHTMLToEscape["th"] = true
-	tagsHTMLToEscape["thead"] = true
-	tagsHTMLToEscape["time"] = true
-	tagsHTMLToEscape["title"] = true
-	tagsHTMLToEscape["tr"] = true
-	tagsHTMLToEscape["track"] = true
-	tagsHTMLToEscape["u"] = true
-	tagsHTMLToEscape["ul"] = true
-	tagsHTMLToEscape["var"] = true
-	tagsHTMLToEscape["video"] = true
-	tagsHTMLToEscape["wbr"] = true
 }
 
 // UnescapeNewlineTags will remove all newline tags and replace them with actual newlines
@@ -238,9 +118,9 @@ loop:
 	return
 }
 
-// EscapeAllHTMLTags will escape all html tags in the text
-func EscapeAllHTMLTags(in string) string {
-	var out []byte
+// EscapeAllHTMLTags escapes all html tags in the text
+func EscapeAllHTMLTags(in string) (out string) {
+	var b []byte
 	msg := []byte(in)
 	z := html.NewTokenizer(bytes.NewReader(msg))
 
@@ -249,28 +129,22 @@ loop:
 		tt := z.Next()
 		switch tt {
 		case html.TextToken:
-			out = append(out, z.Text()...)
+			b = append(b, z.Text()...)
 		case html.ErrorToken:
 			if err := z.Err(); err != nil && err != io.EOF {
-				out = msg
-				return string(out)
+				b = msg
+				out = string(b)
+				return
 			}
 			break loop
-		case html.StartTagToken, html.EndTagToken, html.SelfClosingTagToken:
+		case html.StartTagToken, html.EndTagToken, html.SelfClosingTagToken, html.CommentToken, html.DoctypeToken:
 			raw := z.Raw()
-			name, _ := z.TagName()
-			if tagsHTMLToEscape[string(name)] {
-				out = append(out, []byte((html.EscapeString((string(raw)))))...)
-			} else {
-				out = append(out, raw...)
-			}
-		case html.CommentToken, html.DoctypeToken:
-			raw := z.Raw()
-			out = append(out, []byte((html.EscapeString((string(raw)))))...)
+			b = append(b, []byte((html.EscapeString((string(raw)))))...)
 		}
 	}
 
-	return string(out)
+	out = string(b)
+	return
 }
 
 var (

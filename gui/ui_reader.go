@@ -177,66 +177,7 @@ func mustGetImageBytes(filename string) []byte {
 	return bs
 }
 
-func setImageFromFile(i gtki.Image, filename string) {
-	pl, err := g.gdk.PixbufLoaderNew()
-	if err != nil {
-		panic("Developer error: setting the image from " + filename)
-	}
-
-	var w sync.WaitGroup
-	w.Add(1)
-	pl.Connect("area-prepared", w.Done)
-
-	if _, err := pl.Write(mustGetImageBytes(filename)); err != nil {
-		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
-		return
-	}
-	if err := pl.Close(); err != nil {
-		log.Println(">> WARN - cannot close PixbufLoader: " + err.Error())
-		return
-	}
-
-	w.Wait() //Waiting for Pixbuf to load before using it
-
-	pb, err := pl.GetPixbuf()
-	if err != nil {
-		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
-		return
-	}
-	i.SetFromPixbuf(pb)
-	return
-}
-
-func setImageFromBytes(i gtki.Image, bstream []byte) {
-	pl, err := g.gdk.PixbufLoaderNew()
-	if err != nil {
-		panic("Developer error: setting the image from >>>>>>>>")
-	}
-
-	var w sync.WaitGroup
-	w.Add(1)
-	pl.Connect("area-prepared", w.Done)
-
-	if _, err := pl.Write(bstream); err != nil {
-		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
-		return
-	}
-	if err := pl.Close(); err != nil {
-		log.Println(">> WARN - cannot close PixbufLoader: " + err.Error())
-		return
-	}
-
-	w.Wait() //Waiting for Pixbuf to load before using it
-
-	pb, err := pl.GetPixbuf()
-	if err != nil {
-		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
-		return
-	}
-	i.SetFromPixbuf(pb)
-	return
-}
-
+//Base function for display images from binary array.
 func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
 	pl, err := g.gdk.PixbufLoaderNew()
 	if err != nil {
@@ -264,4 +205,12 @@ func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
 		return nil
 	}
 	return pb
+}
+
+//Refactored function for display image from file name.
+func setImageFromFile(i gtki.Image, filename string) {
+	pb := getPixbufFromBytes(mustGetImageBytes(filename))
+
+	i.SetFromPixbuf(pb)
+	return
 }

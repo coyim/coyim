@@ -41,8 +41,8 @@ func init() {
 	Server{"securejabber.me", "giyvshdnojeivkom.onion", false}.register()
 	Server{"wtfismyip.com", "ofkztxcohimx34la.onion", false}.register()
 	Server{"xmpp.rows.io", "yz6yiv2hxyagvwy6.onion", false}.register()
-	Server{"patchcord.be", "xsydhi3dnbjuatpz.onion", true}.register()
-	Server{"xmpp.is", "y2qmqomqpszzryei.onion", true}.register()
+	Server{"patchcord.be", "xsydhi3dnbjuatpz.onion", false}.register()
+	Server{"xmpp.is", "y2qmqomqpszzryei.onion", false}.register()
 	Server{"jabber.s7t.de", "jabberip5hpbrafx.onion", false}.register()
 	Server{"jabber.frozenstar.info", "potu7aaoitlajnxc.onion", false}.register()
 	for _, s := range []string{"draugr.de", "deshalbfrei.org", "ubuntu-jabber.de", "ubuntu-jabber.net", "verdammung.org", "xabber.de"} {

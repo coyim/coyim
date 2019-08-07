@@ -226,7 +226,7 @@ func (w *serverSelectionWindow) initialPage() {
 	w.serverBox.SetSensitive(true)
 	w.form.server = ""
 
-	//TODO: Destroy everything in the grid on page 1?
+	w.grid.Hide()
 }
 
 func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, []interface{}) error {
@@ -271,6 +271,7 @@ func (w *serverSelectionWindow) serverChosenPage(pg gtki.Widget) {
 }
 
 func (w *serverSelectionWindow) formSubmittedPage() {
+	w.grid.Show()
 	w.formSubmitted <- w.form.accepted()
 
 	err := <-w.done
@@ -281,7 +282,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 		return
 	}
 
-	//Save the account
+	// Save the account
 	err = w.u.addAndSaveAccountConfig(w.form.conf)
 
 	if err != nil {

@@ -37,7 +37,10 @@ func (s *SASLPlain) Test(c *C) {
 	c.Check(client.NeedsMore(), Equals, true)
 	c.Check(t, DeepEquals, expected)
 
+	expected = sasl.Token(nil)
+
 	t, err = client.Step(nil)
 	c.Check(err, IsNil)
 	c.Check(client.NeedsMore(), Equals, false)
+	c.Check(t, DeepEquals, expected)
 }

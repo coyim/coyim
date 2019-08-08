@@ -144,6 +144,9 @@ func (m *muc) SendChatMessage(msg string, to *data.Room) error {
 //See: Section "10.2 Subsequent Room Configuration"
 func (m *muc) RequestRoomConfigForm(room *data.Room) (*data.Form, error) {
 	reply, _, err := m.SendIQ(room.JID(), "get", &data.RoomConfigurationQuery{})
+	if err != nil {
+		return nil, err
+	}
 
 	stanza, ok := <-reply
 	if !ok {

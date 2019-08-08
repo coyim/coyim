@@ -86,6 +86,10 @@ func (c *conn) createAccount(user, password string) error {
 
 	if len(register.Form.Type) > 0 {
 		reply, err := processForm(&register.Form, register.Datas, c.config.CreateCallback)
+		if err != nil {
+			return err
+		}
+
 		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'>")
 		if err = xml.NewEncoder(c.rawOut).Encode(reply); err != nil {
 			return err

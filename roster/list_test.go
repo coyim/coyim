@@ -195,6 +195,7 @@ func (s *ListSuite) Test_GetPendingSubscribe_returnsThePendingSubscribeIfExists(
 
 	v, k := l.GetPendingSubscribe(tj("none@foo.com"))
 	c.Assert(k, g.Equals, false)
+	c.Assert(v, g.Equals, "")
 
 	v, k = l.GetPendingSubscribe(tj("foo@bar.com/bar"))
 	c.Assert(k, g.Equals, true)
@@ -212,6 +213,7 @@ func (s *ListSuite) Test_RemovePendingSubscribe_removesThePendingSubscribe(c *g.
 
 	v, k := l.RemovePendingSubscribe(tj("none@foo.com"))
 	c.Assert(k, g.Equals, false)
+	c.Assert(v, g.Equals, "")
 
 	v, k = l.RemovePendingSubscribe(tj("foo@bar.com/bar"))
 	c.Assert(k, g.Equals, true)

@@ -3,7 +3,6 @@ package filetransfer
 import (
 	"fmt"
 
-	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/events"
@@ -14,15 +13,15 @@ import (
 // InitIQ is the hook function that will be called when we receive a file or directory transfer stream initiation IQ
 func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{}, iqtype string, ignore bool) {
 	isDir := false
-	isEnc := false
+	//isEnc := false
 	switch si.Profile {
 	case dirTransferProfile:
 		isDir = true
 	case encryptedTransferProfile:
-		isEnc = true
+		//isEnc = true
 		isDir = si.EncryptedData.Type == "directory"
 	}
-	isEnc = isEnc && config.EncryptedFileTransferEnabled
+	//isEnc = isEnc && config.EncryptedFileTransferEnabled
 
 	var options []string
 	var err error

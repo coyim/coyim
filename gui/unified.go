@@ -25,19 +25,25 @@ const (
 var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
 
 type unifiedLayout struct {
-	ui           *gtkUI
-	cl           *conversationList
-	headerBar    gtki.HeaderBar
-	leftPane     gtki.Box
-	rightPane    gtki.Box
-	notebook     gtki.Notebook
-	header       gtki.Label
-	headerBox    gtki.Box
-	close        gtki.Button
-	convsVisible bool
-	inPageSet    bool
-	isFullscreen bool
-	itemMap      map[int]*conversationStackItem
+	ui            *gtkUI
+	cl            *conversationList
+	headerBar     gtki.HeaderBar
+	leftPane      gtki.Box
+	rightPane     gtki.Box
+	notebook      gtki.Notebook
+	header        gtki.Label
+	headerBox     gtki.Box
+	close         gtki.Button
+	convsVisible  bool
+	inPageSet     bool
+	isFullscreen  bool
+	stackPosition *windowPosition
+	itemMap       map[int]*conversationStackItem
+}
+
+type windowPosition struct {
+	posX int
+	posY int
 }
 
 type conversationList struct {
@@ -56,11 +62,12 @@ type conversationStackItem struct {
 
 func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	ul := &unifiedLayout{
-		ui:           ui,
-		cl:           &conversationList{},
-		leftPane:     left,
-		itemMap:      make(map[int]*conversationStackItem),
-		isFullscreen: false,
+		ui:            ui,
+		cl:            &conversationList{},
+		stackPosition: &windowPosition{0, 0},
+		leftPane:      left,
+		itemMap:       make(map[int]*conversationStackItem),
+		isFullscreen:  false,
 	}
 	ul.cl.layout = ul
 
@@ -154,6 +161,10 @@ func (ul *unifiedLayout) showConversations() {
 		return
 	}
 
+	posx, posy := ul.ui.window.GetPosition()
+	ul.stackPosition.posX = posx
+	ul.stackPosition.posY = posy
+
 	ul.leftPane.SetHExpand(false)
 	ul.rightPane.SetHExpand(true)
 
@@ -163,6 +174,7 @@ func (ul *unifiedLayout) showConversations() {
 
 	ul.convsVisible = true
 	ul.update()
+
 }
 
 func (ul *unifiedLayout) hideConversations() {
@@ -178,6 +190,7 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.ui.window.Resize(width, height)
 	ul.convsVisible = false
 	ul.headerBar.SetSubtitle("")
+	ul.ui.window.Move(ul.stackPosition.posX, ul.stackPosition.posY)
 }
 
 func (csi *conversationStackItem) isVisible() bool {
@@ -236,6 +249,7 @@ func (csi *conversationStackItem) show(userInitiated bool) {
 	csi.updateSecurityWarning()
 	csi.layout.cl.add(csi)
 	csi.widget.Show()
+
 	if userInitiated {
 		csi.bringToFront()
 		return

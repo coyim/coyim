@@ -34,6 +34,8 @@ type Window interface {
 	SetUrgencyHint(bool)
 	Unfullscreen()
 	Unmaximize()
+	GetPosition() (int, int)
+	Move(int, int)
 }
 
 func AssertWindow(_ Window) {}

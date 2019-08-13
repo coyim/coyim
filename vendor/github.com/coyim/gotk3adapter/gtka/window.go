@@ -146,3 +146,11 @@ func (v *window) SetDecorated(v1 bool) {
 func (v *window) GetSize() (int, int) {
 	return v.internal.GetSize()
 }
+
+func (v *window) GetPosition() (int, int) {
+	return v.internal.GetPosition()
+}
+
+func (v *window) Move(x, y int) {
+	v.internal.Move(x, y)
+}

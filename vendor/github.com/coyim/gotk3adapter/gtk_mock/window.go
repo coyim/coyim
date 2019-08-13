@@ -94,3 +94,10 @@ func (*MockWindow) SetDecorated(v1 bool) {
 func (*MockWindow) GetSize() (int, int) {
 	return 0, 0
 }
+
+func (*MockWindow) GetPosition() (int, int) {
+	return 0, 0
+}
+
+func (*MockWindow) Move(v1, v2 int) {
+}

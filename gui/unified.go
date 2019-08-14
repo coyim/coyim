@@ -174,7 +174,6 @@ func (ul *unifiedLayout) showConversations() {
 
 	ul.convsVisible = true
 	ul.update()
-
 }
 
 func (ul *unifiedLayout) hideConversations() {

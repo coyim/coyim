@@ -177,6 +177,11 @@ func (ul *unifiedLayout) showConversations() {
 	ul.update()
 }
 
+func moveTo(ul *unifiedLayout) {
+	time.Sleep(time.Duration(20) * time.Millisecond)
+	ul.ui.window.Move(ul.stackPosition.posX, ul.stackPosition.posY)
+}
+
 func (ul *unifiedLayout) hideConversations() {
 	if !ul.convsVisible {
 		return
@@ -190,12 +195,8 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.ui.window.Resize(width, height)
 	ul.convsVisible = false
 	ul.headerBar.SetSubtitle("")
-	go moveTo(ul)
-}
 
-func moveTo(ul *unifiedLayout) {
-	time.Sleep(time.Duration(20) * time.Millisecond)
-	ul.ui.window.Move(ul.stackPosition.posX, ul.stackPosition.posY)
+	go moveTo(ul)
 }
 
 func (csi *conversationStackItem) isVisible() bool {

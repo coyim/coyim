@@ -5,6 +5,7 @@ import (
 	"log"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
@@ -189,6 +190,11 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.ui.window.Resize(width, height)
 	ul.convsVisible = false
 	ul.headerBar.SetSubtitle("")
+	go moveTo(ul)
+}
+
+func moveTo(ul *unifiedLayout) {
+	time.Sleep(time.Duration(20) * time.Millisecond)
 	ul.ui.window.Move(ul.stackPosition.posX, ul.stackPosition.posY)
 }
 

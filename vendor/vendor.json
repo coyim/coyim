@@ -23,62 +23,62 @@
 		{
 			"checksumSHA1": "W6f4kGtXBIypC6dX31Xdt4sP1ZA=",
 			"path": "github.com/coyim/gotk3adapter/gdka",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
 			"checksumSHA1": "iUEYZRd1MuLU+CH0b98r93+YrxA=",
 			"path": "github.com/coyim/gotk3adapter/gdki",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
 			"checksumSHA1": "wcNbt7LtwQf0nWNmpGwXAJNX26U=",
 			"path": "github.com/coyim/gotk3adapter/glib_mock",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
 			"checksumSHA1": "huBB4LV0XM6zflUMwRxh/YP5mp8=",
 			"path": "github.com/coyim/gotk3adapter/gliba",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
 			"checksumSHA1": "+QeCiWaxTaH1srtUJeWigGHRLYM=",
 			"path": "github.com/coyim/gotk3adapter/glibi",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
-			"checksumSHA1": "Bp0z1xTPaICWR4ffxty8/3d2myM=",
+			"checksumSHA1": "3c0KkB+iB62SBPDulbkuFPT4/9M=",
 			"path": "github.com/coyim/gotk3adapter/gtk_mock",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
-			"checksumSHA1": "ZjNJT4JppGp15wBMVvRcNuY7UPo=",
+			"checksumSHA1": "J+130XYcbrU4jnDYREUDfJLOlsk=",
 			"path": "github.com/coyim/gotk3adapter/gtka",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
-			"checksumSHA1": "gWexsZs8Lx+2aGl8MyDAcyJ8wGI=",
+			"checksumSHA1": "ps4UJSS6BOnTehHJycc8GV+FF1Y=",
 			"path": "github.com/coyim/gotk3adapter/gtki",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
 			"checksumSHA1": "Pp0F5FnuZT6QN57WWYqnU3T1qss=",
 			"path": "github.com/coyim/gotk3adapter/pangoa",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
 			"checksumSHA1": "ot18p/82dIw6NFJiN6lfYOPwi2s=",
 			"path": "github.com/coyim/gotk3adapter/pangoi",
-			"revision": "a773847d6484c15685e8c888df4e32bf3f8f38a3",
-			"revisionTime": "2019-02-15T15:49:52Z"
+			"revision": "90facceb61f19bfef35ea0bbd82390f8c80e053a",
+			"revisionTime": "2019-08-14T20:48:25Z"
 		},
 		{
 			"checksumSHA1": "bTLsVoQn4tizjhNy687ryBEJFhs=",

@@ -2,7 +2,6 @@ package gui
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/coyim/coyim/i18n"
@@ -56,19 +55,13 @@ func getBuilderAndChangePasswordData() *changePasswordData {
 }
 
 func validateNewPassword(newPassword, repeatedPassword string) error {
-	var err error
-
-	if newPassword == "" && repeatedPassword == "" {
-		err = errors.New("Fields can't be empty")
-	} else if newPassword == "" || repeatedPassword == "" {
-		err = errors.New("The field can't be empty")
-	} else {
-		if newPassword != repeatedPassword {
-			err = errors.New("The passwords do not match")
-		}
+	if newPassword != repeatedPassword {
+		return errors.New(i18n.Local("The passwords do not match"))
+	} else if newPassword == "" {
+		return errors.New(i18n.Local("The password can't be empty"))
 	}
 
-	return err
+	return nil
 }
 
 func changePassword(account *account, newPassword string, u *gtkUI, data *changePasswordData) {
@@ -82,23 +75,21 @@ func changePassword(account *account, newPassword string, u *gtkUI, data *change
 
 		config := account.session.GetConfig()
 		saveNewPassword := data.checkboxSavePassword.GetActive()
-		config.Password = ""
 		if saveNewPassword {
 			config.Password = newPassword
+			u.SaveConfig()
 		}
-
-		u.SaveConfig()
 
 		data.formBox.Hide()
 		data.callbackGrid.Show()
 		data.callbackGrid.SetMarginTop(35)
-		data.callbackLabel.SetMarkup(i18n.Localf("Password changed successfully for <b>%s</b>.", config.Account))
+		data.callbackLabel.SetText(i18n.Localf("Password changed successfully for %s.", config.Account))
 		setImageFromFile(data.callbackImage, "success.svg")
 		data.buttonOk.Show()
 	} else {
 		data.formBox.Hide()
 		data.callbackGrid.Show()
-		data.callbackLabel.SetText(fmt.Sprintf("Password change failed.\n Error: %s", err.Error()))
+		data.callbackLabel.SetText(i18n.Localf("Password change failed.\n Error: %s", err.Error()))
 		setImageFromFile(data.callbackImage, "failure.svg")
 	}
 }
@@ -119,7 +110,7 @@ func (u *gtkUI) buildChangePasswordDialog(account *account) {
 
 			if err := validateNewPassword(newPassword, repeatedPassword); err != nil {
 				data.formBoxLabel.Show()
-				data.formBoxLabel.SetMarkup(i18n.Localf("<b>Error: %s</b>", err.Error()))
+				data.formBoxLabel.SetText(i18n.Localf("Error: %s", err.Error()))
 				setImageFromFile(data.formImage, "failure.svg")
 			} else {
 				data.formImage.Hide()

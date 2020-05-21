@@ -1,6 +1,7 @@
 package net
 
 import (
+	"fmt"
 	"net"
 
 	. "gopkg.in/check.v1"
@@ -11,7 +12,12 @@ type TorSuite struct{}
 var _ = Suite(&TorSuite{})
 
 func (s *TorSuite) TestDetectTor(c *C) {
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	host := "127.0.0.1"
+	if isTails() {
+		host = getLocalIP()
+	}
+
+	ln, err := net.Listen("tcp", fmt.Sprintf("%s:0", host))
 	c.Assert(err, IsNil)
 
 	_, port, err := net.SplitHostPort(ln.Addr().String())
@@ -19,6 +25,7 @@ func (s *TorSuite) TestDetectTor(c *C) {
 
 	tor := &defaultTorManager{
 		torPorts: []string{port},
+		torHost:  host,
 	}
 
 	torAddress := ln.Addr().String()
@@ -33,7 +40,12 @@ func (s *TorSuite) TestDetectTor(c *C) {
 }
 
 func (s *TorSuite) TestDetectTorConnectionRefused(c *C) {
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	host := "127.0.0.1"
+	if isTails() {
+		host = getLocalIP()
+	}
+
+	ln, err := net.Listen("tcp", fmt.Sprintf("%s:0", host))
 	c.Assert(err, IsNil)
 
 	_, port, err := net.SplitHostPort(ln.Addr().String())
@@ -43,6 +55,7 @@ func (s *TorSuite) TestDetectTorConnectionRefused(c *C) {
 
 	tor := &defaultTorManager{
 		torPorts: []string{port},
+		torHost:  host,
 	}
 
 	c.Assert(tor.Detect(), Equals, false)

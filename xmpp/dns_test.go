@@ -2,6 +2,7 @@ package xmpp
 
 import (
 	"encoding/hex"
+	"fmt"
 	"net"
 
 	. "gopkg.in/check.v1"
@@ -12,7 +13,12 @@ type DNSXMPPSuite struct{}
 var _ = Suite(&DNSXMPPSuite{})
 
 func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
-	fakeResolver, _ := net.Listen("tcp", "127.0.0.1:0")
+	host := "127.0.0.1"
+	if isTails() {
+		host = getLocalIP()
+	}
+
+	fakeResolver, _ := net.Listen("tcp", fmt.Sprintf("%s:0", host))
 	go func() {
 		conn, _ := fakeResolver.Accept()
 

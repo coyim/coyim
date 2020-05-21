@@ -16,7 +16,7 @@ check:
 build: build-gui
 
 build-gui: generate-version-file
-	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
+	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
 
 build-gui-memory-analyzer: generate-version-file
 	go build -x -msan -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-ma
@@ -29,7 +29,7 @@ build-gui-win: generate-version-file
 	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" go build -i -tags $(GTK_BUILD_TAG) -ldflags "-H windowsgui" -o $(BUILD_DIR)/coyim.exe
 
 build-debug: generate-version-file
-	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH go build -v -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug
+	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH go build -v -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug
 
 debug: build-debug
 	GDK_DEBUG=nograbs gdb -d $(shell go env GOROOT) --args $(BUILD_DIR)/coyim-debug -debug

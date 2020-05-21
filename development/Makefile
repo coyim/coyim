@@ -36,11 +36,11 @@ else
 endif
 
 test:
-	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH $(GOTEST) -cover -v -tags $(GTK_BUILD_TAG) ./...
+	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH $(GOTEST) -cover -v -tags $(GTK_BUILD_TAG) ./...
 .PHONY: test
 
 test-named:
-	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH $(GOTEST) -v -tags $(GTK_BUILD_TAG) ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
+	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH $(GOTEST) -v -tags $(GTK_BUILD_TAG) ./client ./config ./config/importer ./event ./gui ./i18n ./net ./roster ./sasl ./sasl/digestmd5 ./sasl/plain ./sasl/scram ./servers ./session ./xmpp ./xmpp/data ./xmpp/utils ./ui
 
 dep-supported-only:
 ifeq ($(GO_VERSION), go1.7)

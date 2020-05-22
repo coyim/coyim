@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"testing"
-	"time"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/data"
@@ -96,33 +95,37 @@ func (s *XMPPSuite) TestConnClose_sendsAStreamCloseTagWhenWeCloseFirst(c *C) {
 	conn.in = xml.NewDecoder(mockIn)
 	conn.out = mockCloser
 	conn.rawOut = mockCloser
+	su := make(chan string)
+	conn.statusUpdates = su
 
 	nextElement(conn.in) // Reads the opening tag and make the unmarshaller happy
 
+	var innerErr error
+	var innerStanza data.Stanza
+
 	done := make(chan bool)
 	go func() {
-		// This is sadly necessary, since the call to conn.Next() needs to happen AFTER the first few lines of conn.Close()
-		// has executed. Otherwise there will be a racecondition where conn.Close() sometimes will report that
-		// the connection has already been executed.
-		time.Sleep(time.Duration(2) * time.Second)
+		<-su
 
-		stanza, err := conn.Next() // Reads the closing tag
-
-		c.Assert(err, IsNil)
-		c.Assert(stanza, DeepEquals, data.Stanza{
-			Name:  xml.Name{Space: "http://etherx.jabber.org/streams", Local: "stream"},
-			Value: &data.StreamClose{},
-		})
+		innerStanza, innerErr = conn.Next() // Reads the closing tag
 
 		done <- true
 	}()
 
 	// blocks until it receives the </stream> or timeouts
 	c.Assert(conn.Close(), IsNil)
+	<-su
+
 	c.Assert(mockCloser.CalledClose(), Equals, true)
 	c.Assert(mockCloser.Written(), DeepEquals, []byte("</stream:stream>"))
 
 	<-done
+
+	c.Assert(innerErr, IsNil)
+	c.Assert(innerStanza, DeepEquals, data.Stanza{
+		Name:  xml.Name{Space: "http://etherx.jabber.org/streams", Local: "stream"},
+		Value: &data.StreamClose{},
+	})
 }
 
 func (s *XMPPSuite) TestConnNext_replyWithAStreamCloseTagWhenTheyCloseFirst(c *C) {

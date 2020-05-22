@@ -54,6 +54,8 @@ type conn struct {
 	closedLock          sync.Mutex
 
 	c cache.WithExpiry
+
+	statusUpdates chan<- string
 }
 
 func (c *conn) Cache() cache.WithExpiry {
@@ -176,8 +178,17 @@ func (c *conn) Close() error {
 		return c.closeTCP()
 	}
 
+	if c.statusUpdates != nil {
+		c.statusUpdates <- "waitingForClose"
+	}
+
 	// Wait for </stream:stream>
 	select {
+	// Since no-one ever writes to the streamCloseReceived
+	// channel, this select will wait not for a value, but for
+	// the channel to be closed. In golang, reading from a closed
+	// channel will immediately give you the zero-value for that
+	// channel...
 	case <-c.streamCloseReceived:
 	case <-time.After(30 * time.Second):
 		log.Println("xmpp: timed out waiting for closing stream")

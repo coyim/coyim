@@ -26,20 +26,21 @@ const (
 var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
 
 type unifiedLayout struct {
-	ui            *gtkUI
-	cl            *conversationList
-	headerBar     gtki.HeaderBar
-	leftPane      gtki.Box
-	rightPane     gtki.Box
-	notebook      gtki.Notebook
-	header        gtki.Label
-	headerBox     gtki.Box
-	close         gtki.Button
-	convsVisible  bool
-	inPageSet     bool
-	isFullscreen  bool
-	stackPosition *windowPosition
-	itemMap       map[int]*conversationStackItem
+	ui                       *gtkUI
+	cl                       *conversationList
+	headerBar                gtki.HeaderBar
+	leftPane                 gtki.Box
+	rightPane                gtki.Box
+	notebook                 gtki.Notebook
+	header                   gtki.Label
+	headerBox                gtki.Box
+	close                    gtki.Button
+	convsVisible             bool
+	inPageSet                bool
+	isFullscreen             bool
+	originalPosition         *windowPosition
+	originalExpandedPosition *windowPosition
+	itemMap                  map[int]*conversationStackItem
 }
 
 type windowPosition struct {
@@ -63,12 +64,13 @@ type conversationStackItem struct {
 
 func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	ul := &unifiedLayout{
-		ui:            ui,
-		cl:            &conversationList{},
-		stackPosition: &windowPosition{0, 0},
-		leftPane:      left,
-		itemMap:       make(map[int]*conversationStackItem),
-		isFullscreen:  false,
+		ui:                       ui,
+		cl:                       &conversationList{},
+		originalPosition:         &windowPosition{0, 0},
+		originalExpandedPosition: &windowPosition{0, 0},
+		leftPane:                 left,
+		itemMap:                  make(map[int]*conversationStackItem),
+		isFullscreen:             false,
 	}
 	ul.cl.layout = ul
 
@@ -157,19 +159,37 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 	)
 }
 
+func (u *gtkUI) setPositionFromCurrent(pos *windowPosition) {
+	posx, posy := u.window.GetPosition()
+	pos.posX = posx
+	pos.posY = posy
+}
+
+func (u *gtkUI) getPositionFromCurrent() *windowPosition {
+	posx, posy := u.window.GetPosition()
+	return &windowPosition{
+		posX: posx,
+		posY: posy,
+	}
+}
+
+func (pos *windowPosition) equals(other *windowPosition) bool {
+	return pos.posX == other.posX && pos.posY == other.posY
+}
+
 func (ul *unifiedLayout) showConversations() {
 	if ul.convsVisible {
 		return
 	}
 
-	posx, posy := ul.ui.window.GetPosition()
-	ul.stackPosition.posX = posx
-	ul.stackPosition.posY = posy
+	ul.originalPosition = ul.ui.getPositionFromCurrent()
 
 	ul.leftPane.SetHExpand(false)
 	ul.rightPane.SetHExpand(true)
 
 	ul.ui.window.Resize(934, 600)
+
+	ul.originalExpandedPosition = ul.ui.getPositionFromCurrent()
 
 	ul.rightPane.Show()
 
@@ -179,13 +199,15 @@ func (ul *unifiedLayout) showConversations() {
 
 func moveTo(ul *unifiedLayout) {
 	time.Sleep(time.Duration(20) * time.Millisecond)
-	ul.ui.window.Move(ul.stackPosition.posX, ul.stackPosition.posY)
+	ul.ui.window.Move(ul.originalPosition.posX, ul.originalPosition.posY)
 }
 
 func (ul *unifiedLayout) hideConversations() {
 	if !ul.convsVisible {
 		return
 	}
+
+	currentPos := ul.ui.getPositionFromCurrent()
 
 	width := ul.leftPane.GetAllocatedWidth()
 	height := ul.ui.window.GetAllocatedHeight()
@@ -196,10 +218,9 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.convsVisible = false
 	ul.headerBar.SetSubtitle("")
 
-	if ul.ui.currentWindowPosition.posX == ul.stackPosition.posX && ul.ui.currentWindowPosition.posY == ul.stackPosition.posY {
+	if currentPos.equals(ul.originalExpandedPosition) {
 		go moveTo(ul)
 	}
-
 }
 
 func (csi *conversationStackItem) isVisible() bool {

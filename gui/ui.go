@@ -68,9 +68,8 @@ type gtkUI struct {
 	settings *settings.Settings
 
 	//Desktop notifications
-	deNotify              *desktopNotifications
-	actionTimes           map[string]time.Time
-	currentWindowPosition *windowPosition
+	deNotify    *desktopNotifications
+	actionTimes map[string]time.Time
 }
 
 // Graphics represent the graphic configuration
@@ -125,9 +124,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		setShowAdvancedSettingsRequest:       make(chan bool, 100),
 		dialerFactory:                        df,
 
-		actionTimes:           make(map[string]time.Time),
-		deNotify:              newDesktopNotifications(),
-		currentWindowPosition: &windowPosition{0, 0},
+		actionTimes: make(map[string]time.Time),
+		deNotify:    newDesktopNotifications(),
 	}
 
 	var err error
@@ -432,10 +430,8 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Sort_By_Status_signal":  u.toggleSortByStatus,
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 		"on_preferences_signal":                        u.showGlobalPreferences,
-		"on_drangndrop_signal":                         u.handleDragAndDrop,
-
-		"on_join_chat_room":  u.joinChatRoom,
-		"on_list_chat_rooms": u.listChatRooms,
+		"on_join_chat_room":                            u.joinChatRoom,
+		"on_list_chat_rooms":                           u.listChatRooms,
 	})
 
 	win := builder.get("mainWindow")
@@ -552,12 +548,6 @@ func (u *gtkUI) addFeedbackInfoBar() {
 func (u *gtkUI) quit() {
 	u.accountManager.disconnectAll()
 	u.app.Quit()
-}
-
-func (u *gtkUI) handleDragAndDrop() {
-	posx, posy := u.window.GetPosition()
-	u.currentWindowPosition.posX = posx
-	u.currentWindowPosition.posY = posy
 }
 
 func (u *gtkUI) askForPassword(accountName string, addGoogleWarning bool, cancel func(), connect func(string) error, savePass func(string)) {

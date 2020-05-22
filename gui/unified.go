@@ -188,13 +188,16 @@ func (ul *unifiedLayout) showConversations() {
 	ul.rightPane.SetHExpand(true)
 
 	ul.ui.window.Resize(934, 600)
-
-	ul.originalExpandedPosition = ul.ui.getPositionFromCurrent()
-
 	ul.rightPane.Show()
 
 	ul.convsVisible = true
 	ul.update()
+	go func() {
+		time.Sleep(time.Duration(1) * time.Second)
+		doInUIThread(func() {
+			ul.originalExpandedPosition = ul.ui.getPositionFromCurrent()
+		})
+	}()
 }
 
 func moveTo(ul *unifiedLayout) {

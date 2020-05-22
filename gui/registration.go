@@ -2,8 +2,9 @@ package gui
 
 import (
 	"errors"
+	"fmt"
 	"log"
-	
+
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
 	ourNet "github.com/coyim/coyim/net"
@@ -315,5 +316,14 @@ func (u *gtkUI) showServerSelectionWindow() {
 		"on_cancel_signal": w.assistant.Destroy,
 	})
 
+	entry := w.serverBox.GetChild().(gtki.Widget)
+	entry.Connect("activate", func() {
+		w.assistant.SetCurrentPage(1)
+	})
+
 	w.assistant.ShowAll()
+}
+
+func handleActiveSignal() {
+	fmt.Printf("Activate signal connected")
 }

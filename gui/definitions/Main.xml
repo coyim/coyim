@@ -1,17 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
 <interface>
-  <requires lib="gtk+" version="3.10"/>
   <object class="GtkApplicationWindow" id="mainWindow">
     <property name="can_focus">False</property>
     <property name="title">CoyIM</property>
     <property name="default_width">200</property>
     <property name="default_height">600</property>
-    <signal name="button-press-event" handler="on_drangndrop_signal" swapped="no"/>
     <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child>
       <object class="GtkBox" id="Hbox">
         <property name="visible">True</property>
@@ -27,7 +20,7 @@
                   <object class="GtkMenuItem" id="ContactsMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Contacts</property>
-                    <property name="use_underline">True</property>
+                    <property name="use-underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="menu">
                         <property name="can_focus">False</property>
@@ -53,14 +46,14 @@
                   <object class="GtkMenuItem" id="AccountsMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Accounts</property>
-                    <property name="use_underline">True</property>
+                    <property name="use-underline">True</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkMenuItem" id="ViewMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_View</property>
-                    <property name="use_underline">True</property>
+                    <property name="use-underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="menu2">
                         <property name="can_focus">False</property>
@@ -98,9 +91,9 @@
                 </child>
                 <child>
                   <object class="GtkMenuItem" id="OptionsMenu">
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="label" translatable="yes">_Options</property>
-                    <property name="use_underline">True</property>
+                    <property name="use-underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="options_submenu">
                         <property name="can_focus">False</property>
@@ -115,7 +108,7 @@
                           <object class="GtkMenuItem" id="preferencesMenuItem">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Preferences...</property>
-                            <property name="use_underline">True</property>
+                            <property name="use-underline">True</property>
                             <signal name="activate" handler="on_preferences_signal" swapped="no"/>
                           </object>
                         </child>
@@ -123,26 +116,25 @@
                     </child>
                   </object>
                 </child>
+
                 <child>
                   <object class="GtkMenuItem" id="muc-mockup-menu">
-                    <property name="can_focus">False</property>
+                    <property name="visible">False</property>
                     <property name="label" translatable="yes">Chat</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="muc-mockup-menu-options">
                         <property name="can_focus">False</property>
                         <child>
                           <object class="GtkMenuItem" id="muc-add-chat-room-menu">
-                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Join Chat Room...</property>
-                            <property name="use_underline">True</property>
+                            <property name="use-underline">True</property>
                             <signal name="activate" handler="on_join_chat_room" swapped="no"/>
                           </object>
                         </child>
                         <child>
                           <object class="GtkMenuItem" id="muc-list-chat-rooms-menu">
-                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">List Chat Rooms...</property>
-                            <property name="use_underline">True</property>
+                            <property name="use-underline">True</property>
                             <signal name="activate" handler="on_list_chat_rooms" swapped="no"/>
                           </object>
                         </child>
@@ -150,11 +142,12 @@
                     </child>
                   </object>
                 </child>
+
                 <child>
                   <object class="GtkMenuItem" id="HelpMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Help</property>
-                    <property name="use_underline">True</property>
+                    <property name="use-underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="menu3">
                         <property name="can_focus">False</property>
@@ -183,38 +176,7 @@
                 <property name="position">0</property>
               </packing>
             </child>
-            <child>
-              <object class="GtkBox" id="search-box">
-                <property name="can_focus">False</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkSearchBar" id="search-area">
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkEntry" id="search-entry">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="shadow_type">etched-in</property>
-                        <property name="secondary_icon_name">edit-find</property>
-                        <property name="placeholder_text" translatable="yes">Search...</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="pack_type">end</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
+	    <child>
               <object class="GtkBox" id="notification-area">
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -226,7 +188,32 @@
                 <property name="position">2</property>
               </packing>
             </child>
-          </object>
+            <child>
+              <object class="GtkBox" id="search-box">
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkSearchBar" id="search-area">
+                    <property name="can_focus">False</property>
+                    <property name="show-close-button">False</property>
+                    <property name="search-mode-enabled">False</property>
+                    <child>
+                      <object class="GtkEntry" id="search-entry">
+                        <property name="visible">True</property>
+                        <property name="shadow_type">etched-in</property>
+                        <property name="secondary_icon_name">edit-find</property>
+                        <property name="placeholder_text" translatable="yes">Search...</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="pack_type">end</property>
+                <property name="position">1</property>
+              </packing>
+	    </child>
+	  </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>

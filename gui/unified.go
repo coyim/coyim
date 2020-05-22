@@ -196,7 +196,10 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.convsVisible = false
 	ul.headerBar.SetSubtitle("")
 
-	go moveTo(ul)
+	if ul.ui.currentWindowPosition.posX == ul.stackPosition.posX && ul.ui.currentWindowPosition.posY == ul.stackPosition.posY {
+		go moveTo(ul)
+	}
+
 }
 
 func (csi *conversationStackItem) isVisible() bool {

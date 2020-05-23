@@ -396,7 +396,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{})
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
@@ -411,8 +411,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 
 			c.Assert(t.Message, Equals, "Unknown IQ: <query xmlns='jabber:iq:somethingStrange'/>")
 			return
-
-		case <-time.After(1 * time.Millisecond):
+		case <-time.After(time.Duration(10) * time.Second):
 			c.Errorf("did not receive event")
 			return
 		}
@@ -787,9 +786,9 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "dnd", "", "", ""))
+	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "dnd", "", "", "main"))
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 100)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
@@ -798,17 +797,27 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	st := pp.MainStatus()
 	c.Assert(st, Equals, "dnd")
 
-	select {
-	case ev := <-observer:
-		switch ev.(type) {
-		case events.Presence:
-			c.Error("Received presence event")
-			return
+	// In this loop we will drain all events from the observer.
+	// If we ever get a presence event, we will fail the test
+	// However, if the observer channel is empty, we know that
+	// no presence events would be sent - since above we already
+	// checked that the update has happened. We don't need
+	// to do a timeout or anything like that.
+	for {
+		select {
+		case ev := <-observer:
+			switch ev.(type) {
+			case events.Presence:
+				c.Error("Received presence event")
+				return
+			default:
+				// ignore
+				continue
+			}
 		default:
-			// ignore
+			// Test succeded if we get here and no events happened
+			return
 		}
-	case <-time.After(1 * time.Millisecond):
-		return
 	}
 }
 
@@ -826,7 +835,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWai
 	case ev := <-observer:
 		t := ev.(events.Log)
 		c.Assert(t.Level, Equals, events.Warn)
-	case <-time.After(1 * time.Millisecond):
+	case <-time.After(time.Duration(5) * time.Second):
 		c.Errorf("did not receive event")
 	}
 }

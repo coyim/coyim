@@ -1,6 +1,8 @@
 package session
 
 import (
+	"sync"
+
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -32,8 +34,9 @@ func (s *session) unsubscribe(c chan<- interface{}) {
 	}
 }
 
-func (s *session) publishEventTo(subscriber chan<- interface{}, e interface{}) {
+func (s *session) publishEventTo(subscriber chan<- interface{}, e interface{}, subWait *sync.WaitGroup) {
 	defer func() {
+		subWait.Done()
 		if r := recover(); r != nil {
 			//published to a closed channel
 			s.unsubscribe(subscriber)
@@ -59,12 +62,32 @@ func (s *session) publishPeerEvent(e events.PeerType, peer jid.Any) {
 }
 
 func (s *session) publishEvent(e interface{}) {
+	s.pendingEventsLock.Lock()
+	s.pendingEvents++
+	s.pendingEventsLock.Unlock()
+
 	s.subscribers.RLock()
 	defer s.subscribers.RUnlock()
 
+	var allSubs sync.WaitGroup
+
+	allSubs.Add(len(s.subscribers.subs))
 	for _, c := range s.subscribers.subs {
-		go s.publishEventTo(c, e)
+		go s.publishEventTo(c, e, &allSubs)
 	}
+
+	go func() {
+		allSubs.Wait()
+
+		s.pendingEventsLock.Lock()
+
+		s.pendingEvents--
+		if s.pendingEvents == 0 && s.eventsReachedZero != nil {
+			s.eventsReachedZero <- true
+		}
+
+		s.pendingEventsLock.Unlock()
+	}()
 }
 
 func (s *session) PublishEvent(e interface{}) {

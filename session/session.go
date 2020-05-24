@@ -81,6 +81,10 @@ type session struct {
 	autoApproves map[string]bool
 
 	nicknames []string
+
+	pendingEvents     int
+	pendingEventsLock sync.Mutex
+	eventsReachedZero chan bool
 }
 
 // GetInMemoryLog returns the in memory log or nil
@@ -608,9 +612,9 @@ func (s *session) AwaitVersionReply(ch <-chan data.Stanza, user string) {
 	s.info(fmt.Sprintf("Version reply from %s: %#v", user, versionReply))
 }
 
-func (s *session) watchTimeout() {
-	tickInterval := time.Second
+var tickInterval = time.Second
 
+func (s *session) watchTimeout() {
 	for s.IsConnected() {
 		now := <-time.After(tickInterval)
 		haveExpired := false

@@ -37,77 +37,111 @@ func (s *SessionSuite) Test_NewSession_returnsANewSession(c *C) {
 	c.Assert(sess, Not(IsNil))
 }
 
+const testTimeout = time.Duration(5) * time.Second
+
 func (s *SessionSuite) Test_info_publishesInfoEvent(c *C) {
 	sess := &session{}
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 1)
+	sess.eventsReachedZero = eventsDone
 
 	sess.info("hello world")
 
 	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
-		c.Assert(t.Level, Equals, events.Info)
-		c.Assert(t.Message, Equals, "hello world")
-	case <-time.After(1 * time.Millisecond):
-		c.Errorf("did not receive event")
+	case <-eventsDone:
+		close(observer)
+		select {
+		case ev := <-observer:
+			t := ev.(events.Log)
+			c.Assert(t.Level, Equals, events.Info)
+			c.Assert(t.Message, Equals, "hello world")
+		default:
+			c.Errorf("did not receive event")
+		}
+	case <-time.After(testTimeout):
+		c.Errorf("test timed out")
 	}
 }
 
 func (s *SessionSuite) Test_warn_publishesWarnEvent(c *C) {
 	sess := &session{}
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 1)
+	sess.eventsReachedZero = eventsDone
 
 	sess.warn("hello world2")
 
 	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
-		c.Assert(t.Level, Equals, events.Warn)
-		c.Assert(t.Message, Equals, "hello world2")
-	case <-time.After(1 * time.Millisecond):
-		c.Errorf("did not receive event")
+	case <-eventsDone:
+		close(observer)
+		select {
+		case ev := <-observer:
+			t := ev.(events.Log)
+			c.Assert(t.Level, Equals, events.Warn)
+			c.Assert(t.Message, Equals, "hello world2")
+		default:
+			c.Errorf("did not receive event")
+		}
+	case <-time.After(testTimeout):
+		c.Errorf("test timed out")
 	}
 }
 
 func (s *SessionSuite) Test_alert_publishedAlertEvent(c *C) {
 	sess := &session{}
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 1)
+	sess.eventsReachedZero = eventsDone
 
 	sess.alert("hello world3")
 
 	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
-		c.Assert(t.Level, Equals, events.Alert)
-		c.Assert(t.Message, Equals, "hello world3")
-	case <-time.After(1 * time.Millisecond):
-		c.Errorf("did not receive event")
+	case <-eventsDone:
+		close(observer)
+		select {
+		case ev := <-observer:
+			t := ev.(events.Log)
+			c.Assert(t.Level, Equals, events.Alert)
+			c.Assert(t.Message, Equals, "hello world3")
+		default:
+			c.Errorf("did not receive event")
+		}
+	case <-time.After(testTimeout):
+		c.Errorf("test timed out")
 	}
 }
 
 func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	sess := &session{}
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 1)
+	sess.eventsReachedZero = eventsDone
 
 	sess.iqReceived(jid.NR("someone@somewhere"))
 
 	select {
-	case ev := <-observer:
-		c.Assert(ev, Equals, events.Peer{
-			Session: sess,
-			Type:    events.IQReceived,
-			From:    jid.NR("someone@somewhere"),
-		})
-	case <-time.After(1 * time.Millisecond):
-		c.Error("did not receive event")
+	case <-eventsDone:
+		close(observer)
+		select {
+		case ev := <-observer:
+			c.Assert(ev, Equals, events.Peer{
+				Session: sess,
+				Type:    events.IQReceived,
+				From:    jid.NR("someone@somewhere"),
+			})
+		default:
+			c.Errorf("did not receive event")
+		}
+	case <-time.After(testTimeout):
+		c.Errorf("test timed out")
 	}
 }
 
@@ -124,17 +158,25 @@ func (s *SessionSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 1)
+	sess.eventsReachedZero = eventsDone
 
 	sess.watchStanzas()
 
 	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
-		c.Assert(t.Message, Equals, "error reading XMPP message: unexpected XMPP message clientx <message/>")
-	case <-time.After(1 * time.Millisecond):
-		c.Errorf("did not receive event")
+	case <-eventsDone:
+		close(observer)
+		select {
+		case ev := <-observer:
+			t := ev.(events.Log)
+			c.Assert(t.Message, Equals, "error reading XMPP message: unexpected XMPP message clientx <message/>")
+		default:
+			c.Errorf("did not receive event")
+		}
+	case <-time.After(testTimeout):
+		c.Errorf("test timed out")
 	}
 }
 
@@ -151,26 +193,42 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	sess.watchStanzas()
 
-	for {
-		select {
-		case ev := <-observer:
-			t := ev.(events.Log)
-			if t.Level != events.Info {
-				continue
-			}
-
-			c.Assert(t.Message, Equals, "unhandled stanza: {urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
-			return
-
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-			return
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Log)
+		if !ok || t.Level != events.Info {
+			return false
 		}
+		c.Assert(t.Message, Equals, "unhandled stanza: {urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
+		return true
+	})
+}
+
+type checker func(interface{}) bool
+
+func assertReceivesEvent(c *C, eventsDone chan bool, observer <-chan interface{}, exp checker) {
+	select {
+	case <-eventsDone:
+		for {
+			select {
+			case ev := <-observer:
+				if exp(ev) {
+					return
+				}
+			case <-eventsDone:
+			case <-time.After(testTimeout):
+				c.Errorf("test timed out")
+				return
+			}
+		}
+	case <-time.After(testTimeout):
+		c.Errorf("test timed out")
 	}
 }
 
@@ -187,7 +245,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
@@ -211,7 +269,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 2)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
@@ -238,29 +296,24 @@ func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	sess.watchStanzas()
 
-	for {
-		select {
-		case ev := <-observer:
-			switch t := ev.(type) {
-			case events.Message:
-				c.Assert(t.Session, Equals, sess)
-				c.Assert(t.Encrypted, Equals, false)
-				c.Assert(t.From, Equals, jid.R("bla@hmm.org/somewhere"))
-				c.Assert(string(t.Body), Equals, "well, hello there")
-				return
-			default:
-				//ignore
-			}
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-			return
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Message)
+		if !ok {
+			return false
 		}
-	}
+		c.Assert(t.Session, Equals, sess)
+		c.Assert(t.Encrypted, Equals, false)
+		c.Assert(t.From, Equals, jid.R("bla@hmm.org/somewhere"))
+		c.Assert(string(t.Body), Equals, "well, hello there")
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
@@ -276,27 +329,22 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	sess.watchStanzas()
 
-	for {
-		select {
-		case ev := <-observer:
-			t := ev.(events.Log)
-			if t.Level != events.Info {
-				continue
-			}
-
-			c.Assert(t.Message, Equals, "unrecognized iq: &data.ClientIQ{XMLName:xml.Name{Space:\"jabber:client\", Local:\"iq\"}, From:\"\", ID:\"\", To:\"\", Type:\"something\", Error:data.StanzaError{By:\"\", Code:\"\", Type:\"\", Text:\"\", Condition:struct { XMLName xml.Name; Body string \"xml:\\\",innerxml\\\"\" }{XMLName:xml.Name{Space:\"\", Local:\"\"}, Body:\"\"}, ApplicationCondition:(*data.Any)(nil)}, Bind:data.BindBind{XMLName:xml.Name{Space:\"\", Local:\"\"}, Resource:\"\", Jid:\"\"}, Query:[]uint8{}}")
-			return
-
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-			return
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Log)
+		if !ok || t.Level != events.Info {
+			return false
 		}
-	}
+
+		c.Assert(t.Message, Equals, "unrecognized iq: &data.ClientIQ{XMLName:xml.Name{Space:\"jabber:client\", Local:\"iq\"}, From:\"\", ID:\"\", To:\"\", Type:\"something\", Error:data.StanzaError{By:\"\", Code:\"\", Type:\"\", Text:\"\", Condition:struct { XMLName xml.Name; Body string \"xml:\\\",innerxml\\\"\" }{XMLName:xml.Name{Space:\"\", Local:\"\"}, Body:\"\"}, ApplicationCondition:(*data.Any)(nil)}, Bind:data.BindBind{XMLName:xml.Name{Space:\"\", Local:\"\"}, Resource:\"\", Jid:\"\"}, Query:[]uint8{}}")
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
@@ -320,7 +368,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	}
 	sess.conn = conn
 
-	stanzaChan := make(chan data.Stanza, 1)
+	stanzaChan := make(chan data.Stanza, 1000)
 	stanza, _ := conn.Next()
 	stanzaChan <- stanza
 
@@ -363,7 +411,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	}
 	sess.conn = conn
 
-	stanzaChan := make(chan data.Stanza, 1)
+	stanzaChan := make(chan data.Stanza, 1000)
 	stanza, _ := conn.Next()
 	stanzaChan <- stanza
 
@@ -396,7 +444,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{})
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
@@ -435,10 +483,10 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
-	stanzaChan := make(chan data.Stanza, 1)
+	stanzaChan := make(chan data.Stanza, 1000)
 	stanza, _ := conn.Next()
 	stanzaChan <- stanza
 
@@ -469,7 +517,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
@@ -570,7 +618,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c *C) 
 	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()))
 	sess.r.AddOrReplace(peerFrom(data.RosterEntry{Jid: "romeo@example.net", Subscription: "both", Name: "Mo", Group: []string{"Foes"}}, sess.GetConfig()))
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
@@ -579,17 +627,21 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c *C) 
 		peerFrom(data.RosterEntry{Jid: "jill@example.net", Subscription: "both", Name: "Jill", Group: []string{"Foes"}}, sess.GetConfig()),
 	})
 
-	select {
-	case ev := <-observer:
-		switch ev.(type) {
-		case events.Peer:
-			c.Error("Received peer event")
-			return
+	for {
+		select {
+		case ev := <-observer:
+			switch ev.(type) {
+			case events.Peer:
+				c.Error("Received peer event")
+				return
+			default:
+				// ignore
+				continue
+			}
 		default:
-			// ignore
+			// Test succeded if we get here and no events happened
+			return
 		}
-	case <-time.After(1 * time.Millisecond):
-		return
 	}
 }
 
@@ -607,22 +659,26 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUser(c
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	select {
-	case ev := <-observer:
-		switch ev.(type) {
-		case events.Presence:
-			c.Error("Received presence event")
-			return
+	for {
+		select {
+		case ev := <-observer:
+			switch ev.(type) {
+			case events.Presence:
+				c.Error("Received presence event")
+				return
+			default:
+				// ignore
+				continue
+			}
 		default:
-			// ignore
+			// Test succeded if we get here and no events happened
+			return
 		}
-	case <-time.After(1 * time.Millisecond):
-		return
 	}
 }
 
@@ -643,29 +699,25 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 	sess.conn = conn
 	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "somewhere", "", "", "balcony"))
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
+
 	sess.watchStanzas()
 
 	p, _ := sess.r.Get(jid.NR("some2@one.org"))
 	c.Assert(p.IsOnline(), Equals, false)
 
-	for {
-		select {
-		case ev := <-observer:
-			switch t := ev.(type) {
-			case events.Presence:
-				c.Assert(t.Gone, Equals, true)
-				return
-			default:
-				//ignore
-			}
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-			return
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Presence)
+		if !ok {
+			return false
 		}
-	}
 
+		c.Assert(t.Gone, Equals, true)
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_WatchStanzas_presence_subscribe(c *C) {
@@ -705,27 +757,31 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
 
-	select {
-	case ev := <-observer:
-		switch t := ev.(type) {
-		case events.Presence:
-			c.Error("Received presence event")
-			return
-		case events.Peer:
-			if t.Type == events.SubscriptionRequest {
-				c.Error("Received subscription request event")
+	for {
+		select {
+		case ev := <-observer:
+			switch t := ev.(type) {
+			case events.Presence:
+				c.Error("Received presence event")
+				return
+			case events.Peer:
+				if t.Type == events.SubscriptionRequest {
+					c.Error("Received subscription request event")
+				}
+				return
+			default:
+				// ignore
+				continue
 			}
-			return
 		default:
-			// ignore
+			// Test succeded if we get here and no events happened
+			return
 		}
-	case <-time.After(1 * time.Millisecond):
-		return
 	}
 }
 
@@ -745,8 +801,10 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 	}
 	sess.conn = conn
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	sess.watchStanzas()
 
@@ -754,21 +812,15 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 	st := pp.MainStatus()
 	c.Assert(st, Equals, "dnd")
 
-	for {
-		select {
-		case ev := <-observer:
-			switch t := ev.(type) {
-			case events.Presence:
-				c.Assert(t.Gone, Equals, false)
-			default:
-				//ignore
-			}
-			return
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-			return
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Presence)
+		if !ok {
+			return false
 		}
-	}
+
+		c.Assert(t.Gone, Equals, false)
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
@@ -788,7 +840,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	sess.conn = conn
 	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "dnd", "", "", "main"))
 
-	observer := make(chan interface{}, 100)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 
 	sess.watchStanzas()
@@ -826,18 +878,22 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWai
 		r: roster.New(),
 	}
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	sess.HandleConfirmOrDeny(jid.NR("foo@bar.com"), true)
 
-	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Log)
+		if !ok {
+			return false
+		}
+
 		c.Assert(t.Level, Equals, events.Warn)
-	case <-time.After(time.Duration(5) * time.Second):
-		c.Errorf("did not receive event")
-	}
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
@@ -917,30 +973,30 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 	sess.conn = conn
 	sess.r.SubscribeRequest(jid.NR("foo@bar.com"), "123", "")
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	sess.HandleConfirmOrDeny(jid.NR("foo@bar.com"), true)
 
-	for {
-		select {
-		case ev := <-observer:
-			t := ev.(events.Log)
-			if t.Level != events.Warn {
-				continue
-			}
-
-			c.Assert(t.Message, Equals, "Error sending presence stanza: foo bar")
-			return
-
-		case <-time.After(1 * time.Millisecond):
-			c.Errorf("did not receive event")
-			return
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Log)
+		if !ok || t.Level != events.Warn {
+			return false
 		}
-	}
+
+		c.Assert(t.Message, Equals, "Error sending presence stanza: foo bar")
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAboutThem(c *C) {
+	tickInterval = time.Millisecond
+	defer func() {
+		tickInterval = time.Second
+	}()
+
 	now := time.Now()
 	timeouts := map[data.Cookie]time.Time{
 		data.Cookie(1): now.Add(-1 * time.Second),
@@ -954,15 +1010,15 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 	}
 
 	go func() {
-		<-time.After(1 * time.Second)
+		time.Sleep(time.Duration(100) * time.Millisecond)
 		sess.setConnStatus(DISCONNECTED)
 	}()
 
 	sess.watchTimeout()
-	c.Check(sess.timeouts, HasLen, 1)
+	c.Assert(sess.timeouts, HasLen, 1)
 
 	_, ok := sess.timeouts[data.Cookie(2)]
-	c.Check(ok, Equals, true)
+	c.Assert(ok, Equals, true)
 }
 
 type mockConvManager struct {
@@ -1068,19 +1124,23 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 		return mc, false
 	}
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	go sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello<br>ola<BR/>wazup?")
 
-	select {
-	case ev := <-observer:
-		t := ev.(events.Message)
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Message)
+		if !ok {
+			return false
+		}
+
 		c.Assert(string(t.Body), Equals, "hello<br>ola<BR/>wazup?")
 		c.Assert(t.Encrypted, Equals, false)
-	case <-time.After(10 * time.Millisecond):
-		c.Errorf("did not receive event")
-	}
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(c *C) {
@@ -1098,19 +1158,23 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 		return mc, false
 	}
 
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	go sess.receiveClientMessage(jid.R("someone@some.org/something"), time.Now(), "hello<br>ola<br/><BR/>wazup?")
 
-	select {
-	case ev := <-observer:
-		t := ev.(events.Message)
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Message)
+		if !ok {
+			return false
+		}
+
 		c.Assert(string(t.Body), Equals, "hello\nola\n\nwazup?")
 		c.Assert(t.Encrypted, Equals, true)
-	case <-time.After(10 * time.Millisecond):
-		c.Errorf("did not receive event")
-	}
+		return true
+	})
 }
 
 type convManagerWithoutConversation struct{}
@@ -1136,51 +1200,63 @@ func sessionWithConvMngrWithoutConvs() *session {
 
 func (s *SessionSuite) Test_logsError_whenWeStartSMPWithoutAConversation(c *C) {
 	sess := sessionWithConvMngrWithoutConvs()
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 1)
+	sess.eventsReachedZero = eventsDone
 
 	go sess.StartSMP(jid.R("someone's peer/resource"), "Im a question", "im an answer")
 
-	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Log)
+		if !ok || t.Level != events.Alert {
+			return false
+		}
+
 		c.Assert(t.Level, Equals, events.Alert)
 		c.Assert(t.Message, Equals, "error: tried to start SMP when a conversation does not exist")
-	case <-time.After(10 * time.Millisecond):
-		c.Errorf("did not receive event")
-	}
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_logsError_whenWeFinishSMPWithoutAConversation(c *C) {
 	sess := sessionWithConvMngrWithoutConvs()
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 1)
+	sess.eventsReachedZero = eventsDone
 
 	go sess.FinishSMP(jid.R("someone's peer/resource"), "im an answer")
 
-	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Log)
+		if !ok || t.Level != events.Alert {
+			return false
+		}
+
 		c.Assert(t.Level, Equals, events.Alert)
 		c.Assert(t.Message, Equals, "error: tried to finish SMP when a conversation does not exist")
-	case <-time.After(10 * time.Millisecond):
-		c.Errorf("did not receive event")
-	}
+		return true
+	})
 }
 
 func (s *SessionSuite) Test_logsError_whenWeAbortSMPWithoutAConversation(c *C) {
 	sess := sessionWithConvMngrWithoutConvs()
-	observer := make(chan interface{}, 1)
+	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 1)
+	sess.eventsReachedZero = eventsDone
 
 	go sess.AbortSMP(jid.R("someone's peer/resource"))
 
-	select {
-	case ev := <-observer:
-		t := ev.(events.Log)
+	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+		t, ok := ev.(events.Log)
+		if !ok || t.Level != events.Alert {
+			return false
+		}
+
 		c.Assert(t.Level, Equals, events.Alert)
 		c.Assert(t.Message, Equals, "error: tried to abort SMP when a conversation does not exist")
-	case <-time.After(10 * time.Millisecond):
-		c.Errorf("did not receive event")
-	}
+		return true
+	})
 }

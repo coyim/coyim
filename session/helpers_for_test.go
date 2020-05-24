@@ -152,7 +152,8 @@ func (iom *mockConnIOReaderWriter) Close() error {
 	return nil
 }
 
-func captureLogsEvents(c <-chan interface{}) (ret []events.Log) {
+// TODO: check and verify
+func captureLogEvents(c <-chan interface{}) (ret []events.Log) {
 	for {
 		select {
 		case ev := <-c:
@@ -162,14 +163,14 @@ func captureLogsEvents(c <-chan interface{}) (ret []events.Log) {
 			default:
 				//ignore
 			}
-		case <-time.After(1 * time.Millisecond):
+		case <-time.After(100 * time.Millisecond):
 			return
 		}
 	}
 }
 
 func assertLogContains(c *gocheck.C, ch <-chan interface{}, exp events.Log) {
-	logs := captureLogsEvents(ch)
+	logs := captureLogEvents(ch)
 
 	for _, l := range logs {
 		if reflect.DeepEqual(l, exp) {
@@ -177,5 +178,5 @@ func assertLogContains(c *gocheck.C, ch <-chan interface{}, exp events.Log) {
 		}
 	}
 
-	c.Errorf("Could not finr %#v in %#v", exp, logs)
+	c.Errorf("Could not find %#v in %#v", exp, logs)
 }

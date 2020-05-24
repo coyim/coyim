@@ -157,7 +157,9 @@ func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509
 			}
 			c <- false
 		default:
-			a.session.SetWantToBeOnline(false)
+			if a != nil {
+				a.session.SetWantToBeOnline(false)
+			}
 			c <- false
 		}
 

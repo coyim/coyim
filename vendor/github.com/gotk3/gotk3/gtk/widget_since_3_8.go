@@ -24,7 +24,14 @@
 package gtk
 
 // #include <gtk/gtk.h>
+// #include "widget_since_3_8.go.h"
 import "C"
+
+import ( 
+	"unsafe"
+
+	"github.com/gotk3/gotk3/gdk"
+)
 
 /*
  * GtkWidget
@@ -46,3 +53,30 @@ func (v *Widget) GetOpacity() float64 {
 	c := C.gtk_widget_get_opacity(v.native())
 	return float64(c)
 }
+
+// GetFrameClock is a wrapper around gtk_widget_get_frame_clock().
+func (v *Widget) GetFrameClock() *gdk.FrameClock {
+	c := C.gtk_widget_get_frame_clock(v.native())
+	return gdk.WrapFrameClock(unsafe.Pointer(c))
+}
+
+// AddTickCallback is a wrapper around gtk_widget_add_tick_callback().
+func (v *Widget) AddTickCallback(fn TickCallback, userData uintptr) int {
+	tickCallbackRegistry.Lock()
+	id := tickCallbackRegistry.next
+	tickCallbackRegistry.next++
+	tickCallbackRegistry.m[id] = tickCallbackData{fn: fn, userData: userData}
+	tickCallbackRegistry.Unlock()
+
+	return int(C._gtk_widget_add_tick_callback(v.native(), C.gpointer(uintptr(id))))
+}
+
+// RemoveTickCallback is a wrapper around gtk_widget_remove_tick_callback().
+func (v *Widget) RemoveTickCallback(id int) {
+	// TODO: remove callback from tickCallbackRegistry
+	C.gtk_widget_remove_tick_callback(v.native(), C.guint(id))
+}
+
+// TODO:
+// gtk_widget_register_window().
+// gtk_widget_unregister_window().

@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type entry struct {
@@ -57,4 +57,12 @@ func (v *entry) GetAlignment() float32 {
 }
 func (v *entry) SetAlignment(v1 float32) {
 	v.internal.SetAlignment(v1)
+}
+
+func (v *entry) SetPosition(p int) {
+	v.internal.SetPosition(p)
+}
+
+func (v *entry) GetPosition() int {
+	return v.internal.GetPosition()
 }

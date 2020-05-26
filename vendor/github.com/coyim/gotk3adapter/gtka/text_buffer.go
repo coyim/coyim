@@ -1,9 +1,9 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type textBuffer struct {
@@ -64,6 +64,10 @@ func (v *textBuffer) InsertAtCursor(v1 string) {
 func (v *textBuffer) GetText(v1, v2 gtki.TextIter, v3 bool) string {
 	vx1, _ := v.internal.GetText(unwrapTextIter(v1), unwrapTextIter(v2), v3)
 	return vx1
+}
+
+func (v *textBuffer) SetText(v1 string) {
+	v.internal.SetText(v1)
 }
 
 func (v *textBuffer) Delete(v1, v2 gtki.TextIter) {

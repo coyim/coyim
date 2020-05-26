@@ -6,7 +6,7 @@ type TreeView interface {
 	CollapseRow(TreePath) bool
 	ExpandAll()
 	GetCursor() (TreePath, TreeViewColumn)
-	GetPathAtPos(int, int, TreePath, TreeViewColumn, *int, *int) bool
+	GetPathAtPos(int, int) (TreePath, TreeViewColumn, int, int, bool)
 	GetSelection() (TreeSelection, error)
 	SetEnableSearch(bool)
 	GetEnableSearch() bool

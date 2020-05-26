@@ -3,8 +3,8 @@ package gtka
 import (
 	"fmt"
 
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 func init() {
@@ -75,6 +75,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *gtk.Button:
 		val := wrapButtonSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *gtk.LinkButton:
+		val := wrapLinkButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -343,6 +349,18 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.ToolItem:
+		val := wrapToolItemSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *gtk.ToolButton:
+		val := wrapToolButtonSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	default:
 		return nil, false
 	}
@@ -394,6 +412,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *button:
 		val := unwrapButton(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *linkButton:
+		val := unwrapLinkButton(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -658,6 +682,18 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *window:
 		val := unwrapWindow(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *toolItem:
+		val := unwrapToolItem(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *toolButton:
+		val := unwrapToolButton(oo)
 		if val == nil {
 			return nil, true
 		}

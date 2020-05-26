@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type fileChooserDialog struct {
@@ -34,4 +34,8 @@ func (v *fileChooserDialog) GetFilename() string {
 
 func (v *fileChooserDialog) SetCurrentName(v1 string) {
 	v.internal.SetCurrentName(v1)
+}
+
+func (v *fileChooserDialog) SetDoOverwriteConfirmation(v1 bool) {
+	v.internal.SetDoOverwriteConfirmation(v1)
 }

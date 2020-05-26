@@ -26,5 +26,13 @@ func (*MockEntry) SetWidthChars(v1 int) {
 func (*MockEntry) GetAlignment() float32 {
 	return 0.0
 }
+
 func (*MockEntry) SetAlignment(v1 float32) {
+}
+
+func (*MockEntry) SetPosition(p int) {
+}
+
+func (*MockEntry) GetPosition() int {
+	return 0
 }

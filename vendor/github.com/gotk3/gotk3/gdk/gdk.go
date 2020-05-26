@@ -41,6 +41,7 @@ func init() {
 		{glib.Type(C.gdk_modifier_type_get_type()), marshalModifierType},
 		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
 		{glib.Type(C.gdk_event_mask_get_type()), marshalEventMask},
+		{glib.Type(C.gdk_gravity_get_type()), marshalGravity},
 
 		// Objects/Interfaces
 		{glib.Type(C.gdk_device_get_type()), marshalDevice},
@@ -49,6 +50,7 @@ func init() {
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
 		{glib.Type(C.gdk_drag_context_get_type()), marshalDragContext},
 		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
+		{glib.Type(C.gdk_pixbuf_animation_get_type()), marshalPixbufAnimation},
 		{glib.Type(C.gdk_rgba_get_type()), marshalRGBA},
 		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
 		{glib.Type(C.gdk_visual_get_type()), marshalVisual},
@@ -252,6 +254,20 @@ const (
 	SCROLL_SMOOTH ScrollDirection = C.GDK_SCROLL_SMOOTH
 )
 
+// WindowEdge is a representation of GDK's GdkWindowEdge
+type WindowEdge int
+
+const (
+	WINDOW_EDGE_NORTH_WEST WindowEdge = C.GDK_WINDOW_EDGE_NORTH_WEST
+	WINDOW_EDGE_NORTH      WindowEdge = C.GDK_WINDOW_EDGE_NORTH
+	WINDOW_EDGE_NORTH_EAST WindowEdge = C.GDK_WINDOW_EDGE_NORTH_EAST
+	WINDOW_EDGE_WEST       WindowEdge = C.GDK_WINDOW_EDGE_WEST
+	WINDOW_EDGE_EAST       WindowEdge = C.GDK_WINDOW_EDGE_EAST
+	WINDOW_EDGE_SOUTH_WEST WindowEdge = C.GDK_WINDOW_EDGE_SOUTH_WEST
+	WINDOW_EDGE_SOUTH      WindowEdge = C.GDK_WINDOW_EDGE_SOUTH
+	WINDOW_EDGE_SOUTH_EAST WindowEdge = C.GDK_WINDOW_EDGE_SOUTH_EAST
+)
+
 // WindowState is a representation of GDK's GdkWindowState
 type WindowState int
 
@@ -287,6 +303,21 @@ const (
 	WINDOW_TYPE_HINT_DND           WindowTypeHint = C.GDK_WINDOW_TYPE_HINT_DND
 )
 
+// WindowHints is a representation of GDK's GdkWindowHints
+type WindowHints int
+
+const (
+	HINT_POS         WindowHints = C.GDK_HINT_POS
+	HINT_MIN_SIZE    WindowHints = C.GDK_HINT_MIN_SIZE
+	HINT_MAX_SIZE    WindowHints = C.GDK_HINT_MAX_SIZE
+	HINT_BASE_SIZE   WindowHints = C.GDK_HINT_BASE_SIZE
+	HINT_ASPECT      WindowHints = C.GDK_HINT_ASPECT
+	HINT_RESIZE_INC  WindowHints = C.GDK_HINT_RESIZE_INC
+	HINT_WIN_GRAVITY WindowHints = C.GDK_HINT_WIN_GRAVITY
+	HINT_USER_POS    WindowHints = C.GDK_HINT_USER_POS
+	HINT_USER_SIZE   WindowHints = C.GDK_HINT_USER_SIZE
+)
+
 // CURRENT_TIME is a representation of GDK_CURRENT_TIME
 
 const CURRENT_TIME = C.GDK_CURRENT_TIME
@@ -299,10 +330,8 @@ const (
 	GRAB_SUCCESS         GrabStatus = C.GDK_GRAB_SUCCESS
 	GRAB_ALREADY_GRABBED GrabStatus = C.GDK_GRAB_ALREADY_GRABBED
 	GRAB_INVALID_TIME    GrabStatus = C.GDK_GRAB_INVALID_TIME
+	GRAB_NOT_VIEWABLE    GrabStatus = C.GDK_GRAB_NOT_VIEWABLE
 	GRAB_FROZEN          GrabStatus = C.GDK_GRAB_FROZEN
-	// Only exists since 3.16
-	// GRAB_FAILED GrabStatus = C.GDK_GRAB_FAILED
-	GRAB_FAILED GrabStatus = 5
 )
 
 // GrabOwnership is a representation of GdkGrabOwnership
@@ -315,6 +344,13 @@ const (
 	OWNERSHIP_APPLICATION GrabOwnership = C.GDK_OWNERSHIP_APPLICATION
 )
 
+// TODO:
+// GdkInputSource
+// GdkInputMode
+// GdkAxisUse
+// GdkAxisFlags
+// GdkDeviceToolType
+
 // DeviceType is a representation of GdkDeviceType
 
 type DeviceType int
@@ -325,12 +361,128 @@ const (
 	DEVICE_TYPE_FLOATING DeviceType = C.GDK_DEVICE_TYPE_FLOATING
 )
 
+// TODO:
+// GdkPixbufError
+// GdkColorspace
+// GdkVisualType
+// GdkTimeCoord
+
 // EventPropagation constants
 
 const (
 	GDK_EVENT_PROPAGATE bool = C.GDK_EVENT_PROPAGATE != 0
 	GDK_EVENT_STOP      bool = C.GDK_EVENT_STOP != 0
 )
+
+// CrossingMode is a representation of GDK's GdkCrossingMode.
+
+type CrossingMode int
+
+const (
+	CROSSING_NORMAL        CrossingMode = C.GDK_CROSSING_NORMAL
+	CROSSING_GRAB          CrossingMode = C.GDK_CROSSING_GRAB
+	CROSSING_UNGRAB        CrossingMode = C.GDK_CROSSING_UNGRAB
+	CROSSING_GTK_GRAB      CrossingMode = C.GDK_CROSSING_GTK_GRAB
+	CROSSING_GTK_UNGRAB    CrossingMode = C.GDK_CROSSING_GTK_UNGRAB
+	CROSSING_STATE_CHANGED CrossingMode = C.GDK_CROSSING_STATE_CHANGED
+	CROSSING_TOUCH_BEGIN   CrossingMode = C.GDK_CROSSING_TOUCH_BEGIN
+	CROSSING_TOUCH_END     CrossingMode = C.GDK_CROSSING_TOUCH_END
+	CROSSING_DEVICE_SWITCH CrossingMode = C.GDK_CROSSING_DEVICE_SWITCH
+)
+
+// NotifyType is a representation of GDK's GdkNotifyType.
+
+type NotifyType int
+
+const (
+	NOTIFY_ANCESTOR          NotifyType = C.GDK_NOTIFY_ANCESTOR
+	NOTIFY_VIRTUAL           NotifyType = C.GDK_NOTIFY_VIRTUAL
+	NOTIFY_INFERIOR          NotifyType = C.GDK_NOTIFY_INFERIOR
+	NOTIFY_NONLINEAR         NotifyType = C.GDK_NOTIFY_NONLINEAR
+	NOTIFY_NONLINEAR_VIRTUAL NotifyType = C.GDK_NOTIFY_NONLINEAR_VIRTUAL
+	NOTIFY_UNKNOWN           NotifyType = C.GDK_NOTIFY_UNKNOWN
+)
+
+// EventType is a representation of GDK's GdkEventType.
+// Do not confuse these event types with the signals that GTK+ widgets emit
+type EventType int
+
+func marshalEventType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return EventType(c), nil
+}
+
+const (
+	EVENT_NOTHING             EventType = C.GDK_NOTHING
+	EVENT_DELETE              EventType = C.GDK_DELETE
+	EVENT_DESTROY             EventType = C.GDK_DESTROY
+	EVENT_EXPOSE              EventType = C.GDK_EXPOSE
+	EVENT_MOTION_NOTIFY       EventType = C.GDK_MOTION_NOTIFY
+	EVENT_BUTTON_PRESS        EventType = C.GDK_BUTTON_PRESS
+	EVENT_2BUTTON_PRESS       EventType = C.GDK_2BUTTON_PRESS
+	EVENT_DOUBLE_BUTTON_PRESS EventType = C.GDK_DOUBLE_BUTTON_PRESS
+	EVENT_3BUTTON_PRESS       EventType = C.GDK_3BUTTON_PRESS
+	EVENT_TRIPLE_BUTTON_PRESS EventType = C.GDK_TRIPLE_BUTTON_PRESS
+	EVENT_BUTTON_RELEASE      EventType = C.GDK_BUTTON_RELEASE
+	EVENT_KEY_PRESS           EventType = C.GDK_KEY_PRESS
+	EVENT_KEY_RELEASE         EventType = C.GDK_KEY_RELEASE
+	EVENT_LEAVE_NOTIFY        EventType = C.GDK_ENTER_NOTIFY
+	EVENT_FOCUS_CHANGE        EventType = C.GDK_FOCUS_CHANGE
+	EVENT_CONFIGURE           EventType = C.GDK_CONFIGURE
+	EVENT_MAP                 EventType = C.GDK_MAP
+	EVENT_UNMAP               EventType = C.GDK_UNMAP
+	EVENT_PROPERTY_NOTIFY     EventType = C.GDK_PROPERTY_NOTIFY
+	EVENT_SELECTION_CLEAR     EventType = C.GDK_SELECTION_CLEAR
+	EVENT_SELECTION_REQUEST   EventType = C.GDK_SELECTION_REQUEST
+	EVENT_SELECTION_NOTIFY    EventType = C.GDK_SELECTION_NOTIFY
+	EVENT_PROXIMITY_IN        EventType = C.GDK_PROXIMITY_IN
+	EVENT_PROXIMITY_OUT       EventType = C.GDK_PROXIMITY_OUT
+	EVENT_DRAG_ENTER          EventType = C.GDK_DRAG_ENTER
+	EVENT_DRAG_LEAVE          EventType = C.GDK_DRAG_LEAVE
+	EVENT_DRAG_MOTION         EventType = C.GDK_DRAG_MOTION
+	EVENT_DRAG_STATUS         EventType = C.GDK_DRAG_STATUS
+	EVENT_DROP_START          EventType = C.GDK_DROP_START
+	EVENT_DROP_FINISHED       EventType = C.GDK_DROP_FINISHED
+	EVENT_CLIENT_EVENT        EventType = C.GDK_CLIENT_EVENT
+	EVENT_VISIBILITY_NOTIFY   EventType = C.GDK_VISIBILITY_NOTIFY
+	EVENT_SCROLL              EventType = C.GDK_SCROLL
+	EVENT_WINDOW_STATE        EventType = C.GDK_WINDOW_STATE
+	EVENT_SETTING             EventType = C.GDK_SETTING
+	EVENT_OWNER_CHANGE        EventType = C.GDK_OWNER_CHANGE
+	EVENT_GRAB_BROKEN         EventType = C.GDK_GRAB_BROKEN
+	EVENT_DAMAGE              EventType = C.GDK_DAMAGE
+	EVENT_TOUCH_BEGIN         EventType = C.GDK_TOUCH_BEGIN
+	EVENT_TOUCH_UPDATE        EventType = C.GDK_TOUCH_UPDATE
+	EVENT_TOUCH_END           EventType = C.GDK_TOUCH_END
+	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
+	EVENT_LAST                EventType = C.GDK_EVENT_LAST
+)
+
+/*
+ * General
+ */
+
+// TODO:
+// gdk_init().
+// gdk_init_check().
+// gdk_parse_args().
+// gdk_get_display_arg_name().
+// gdk_notify_startup_complete().
+// gdk_notify_startup_complete_with_id().
+// gdk_set_allowed_backends().
+// gdk_get_program_class().
+// gdk_set_program_class().
+// gdk_get_display(). deprecated since version 3.8
+// gdk_flush(). deprecated
+// gdk_screen_width(). deprecated since version 3.22
+// gdk_screen_height(). deprecated since version 3.22
+// gdk_screen_width_mm(). deprecated since version 3.22
+// gdk_screen_height_mm(). deprecated since version 3.22
+// gdk_set_double_click_time(). deprecated
+// gdk_beep(). deprecated
+// gdk_error_trap_push(). deprecated
+// gdk_error_trap_pop(). deprecated
+// gdk_error_trap_pop_ignored(). deprecated
 
 /*
  * GdkAtom
@@ -386,6 +538,33 @@ func marshalDevice(p uintptr) (interface{}, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	return &Device{obj}, nil
 }
+
+// TODO:
+// gdk_device_get_name().
+// gdk_device_get_source().
+// gdk_device_set_mode().
+// gdk_device_get_mode().
+// gdk_device_set_key().
+// gdk_device_get_key().
+// gdk_device_set_axis_use().
+// gdk_device_get_axis_use().
+// gdk_device_get_associated_device().
+// gdk_device_list_slave_devices().
+// gdk_device_get_device_type().
+// gdk_device_get_display().
+// gdk_device_get_has_cursor().
+// gdk_device_get_n_axes().
+// gdk_device_get_n_keys().
+// gdk_device_warp().
+// gdk_device_get_state().
+// gdk_device_get_position().
+// gdk_device_get_window_at_position().
+// gdk_device_get_window_at_position_double().
+// gdk_device_get_history().
+// gdk_device_free_history().
+// gdk_device_get_axis().
+// gdk_device_list_axes().
+// gdk_device_get_axis_value().
 
 /*
  * GdkCursor
@@ -504,7 +683,7 @@ func toDisplay(s *C.GdkDisplay) (*Display, error) {
 	return &Display{obj}, nil
 }
 
-// DisplayOpen() is a wrapper around gdk_display_open().
+// DisplayOpen is a wrapper around gdk_display_open().
 func DisplayOpen(displayName string) (*Display, error) {
 	cstr := C.CString(displayName)
 	defer C.free(unsafe.Pointer(cstr))
@@ -516,7 +695,7 @@ func DisplayOpen(displayName string) (*Display, error) {
 	return &Display{glib.Take(unsafe.Pointer(c))}, nil
 }
 
-// DisplayGetDefault() is a wrapper around gdk_display_get_default().
+// DisplayGetDefault is a wrapper around gdk_display_get_default().
 func DisplayGetDefault() (*Display, error) {
 	c := C.gdk_display_get_default()
 	if c == nil {
@@ -526,7 +705,7 @@ func DisplayGetDefault() (*Display, error) {
 	return &Display{glib.Take(unsafe.Pointer(c))}, nil
 }
 
-// GetName() is a wrapper around gdk_display_get_name().
+// GetName is a wrapper around gdk_display_get_name().
 func (v *Display) GetName() (string, error) {
 	c := C.gdk_display_get_name(v.native())
 	if c == nil {
@@ -535,7 +714,7 @@ func (v *Display) GetName() (string, error) {
 	return C.GoString((*C.char)(c)), nil
 }
 
-// GetDefaultScreen() is a wrapper around gdk_display_get_default_screen().
+// GetDefaultScreen is a wrapper around gdk_display_get_default_screen().
 func (v *Display) GetDefaultScreen() (*Screen, error) {
 	c := C.gdk_display_get_default_screen(v.native())
 	if c == nil {
@@ -545,39 +724,39 @@ func (v *Display) GetDefaultScreen() (*Screen, error) {
 	return &Screen{glib.Take(unsafe.Pointer(c))}, nil
 }
 
-// DeviceIsGrabbed() is a wrapper around gdk_display_device_is_grabbed().
+// DeviceIsGrabbed is a wrapper around gdk_display_device_is_grabbed().
 func (v *Display) DeviceIsGrabbed(device *Device) bool {
 	c := C.gdk_display_device_is_grabbed(v.native(), device.native())
 	return gobool(c)
 }
 
-// Beep() is a wrapper around gdk_display_beep().
+// Beep is a wrapper around gdk_display_beep().
 func (v *Display) Beep() {
 	C.gdk_display_beep(v.native())
 }
 
-// Sync() is a wrapper around gdk_display_sync().
+// Sync is a wrapper around gdk_display_sync().
 func (v *Display) Sync() {
 	C.gdk_display_sync(v.native())
 }
 
-// Flush() is a wrapper around gdk_display_flush().
+// Flush is a wrapper around gdk_display_flush().
 func (v *Display) Flush() {
 	C.gdk_display_flush(v.native())
 }
 
-// Close() is a wrapper around gdk_display_close().
+// Close is a wrapper around gdk_display_close().
 func (v *Display) Close() {
 	C.gdk_display_close(v.native())
 }
 
-// IsClosed() is a wrapper around gdk_display_is_closed().
+// IsClosed is a wrapper around gdk_display_is_closed().
 func (v *Display) IsClosed() bool {
 	c := C.gdk_display_is_closed(v.native())
 	return gobool(c)
 }
 
-// GetEvent() is a wrapper around gdk_display_get_event().
+// GetEvent is a wrapper around gdk_display_get_event().
 func (v *Display) GetEvent() (*Event, error) {
 	c := C.gdk_display_get_event(v.native())
 	if c == nil {
@@ -590,7 +769,7 @@ func (v *Display) GetEvent() (*Event, error) {
 	return e, nil
 }
 
-// PeekEvent() is a wrapper around gdk_display_peek_event().
+// PeekEvent is a wrapper around gdk_display_peek_event().
 func (v *Display) PeekEvent() (*Event, error) {
 	c := C.gdk_display_peek_event(v.native())
 	if c == nil {
@@ -603,53 +782,53 @@ func (v *Display) PeekEvent() (*Event, error) {
 	return e, nil
 }
 
-// PutEvent() is a wrapper around gdk_display_put_event().
+// PutEvent is a wrapper around gdk_display_put_event().
 func (v *Display) PutEvent(event *Event) {
 	C.gdk_display_put_event(v.native(), event.native())
 }
 
-// HasPending() is a wrapper around gdk_display_has_pending().
+// HasPending is a wrapper around gdk_display_has_pending().
 func (v *Display) HasPending() bool {
 	c := C.gdk_display_has_pending(v.native())
 	return gobool(c)
 }
 
-// SetDoubleClickTime() is a wrapper around gdk_display_set_double_click_time().
+// SetDoubleClickTime is a wrapper around gdk_display_set_double_click_time().
 func (v *Display) SetDoubleClickTime(msec uint) {
 	C.gdk_display_set_double_click_time(v.native(), C.guint(msec))
 }
 
-// SetDoubleClickDistance() is a wrapper around gdk_display_set_double_click_distance().
+// SetDoubleClickDistance is a wrapper around gdk_display_set_double_click_distance().
 func (v *Display) SetDoubleClickDistance(distance uint) {
 	C.gdk_display_set_double_click_distance(v.native(), C.guint(distance))
 }
 
-// SupportsColorCursor() is a wrapper around gdk_display_supports_cursor_color().
+// SupportsColorCursor is a wrapper around gdk_display_supports_cursor_color().
 func (v *Display) SupportsColorCursor() bool {
 	c := C.gdk_display_supports_cursor_color(v.native())
 	return gobool(c)
 }
 
-// SupportsCursorAlpha() is a wrapper around gdk_display_supports_cursor_alpha().
+// SupportsCursorAlpha is a wrapper around gdk_display_supports_cursor_alpha().
 func (v *Display) SupportsCursorAlpha() bool {
 	c := C.gdk_display_supports_cursor_alpha(v.native())
 	return gobool(c)
 }
 
-// GetDefaultCursorSize() is a wrapper around gdk_display_get_default_cursor_size().
+// GetDefaultCursorSize is a wrapper around gdk_display_get_default_cursor_size().
 func (v *Display) GetDefaultCursorSize() uint {
 	c := C.gdk_display_get_default_cursor_size(v.native())
 	return uint(c)
 }
 
-// GetMaximalCursorSize() is a wrapper around gdk_display_get_maximal_cursor_size().
+// GetMaximalCursorSize is a wrapper around gdk_display_get_maximal_cursor_size().
 func (v *Display) GetMaximalCursorSize() (width, height uint) {
 	var w, h C.guint
 	C.gdk_display_get_maximal_cursor_size(v.native(), &w, &h)
 	return uint(w), uint(h)
 }
 
-// GetDefaultGroup() is a wrapper around gdk_display_get_default_group().
+// GetDefaultGroup is a wrapper around gdk_display_get_default_group().
 func (v *Display) GetDefaultGroup() (*Window, error) {
 	c := C.gdk_display_get_default_group(v.native())
 	if c == nil {
@@ -659,111 +838,66 @@ func (v *Display) GetDefaultGroup() (*Window, error) {
 	return &Window{glib.Take(unsafe.Pointer(c))}, nil
 }
 
-// SupportsSelectionNotification() is a wrapper around
-// gdk_display_supports_selection_notification().
+// SupportsSelectionNotification is a wrapper around gdk_display_supports_selection_notification().
 func (v *Display) SupportsSelectionNotification() bool {
 	c := C.gdk_display_supports_selection_notification(v.native())
 	return gobool(c)
 }
 
-// RequestSelectionNotification() is a wrapper around
-// gdk_display_request_selection_notification().
+// RequestSelectionNotification is a wrapper around gdk_display_request_selection_notification().
 func (v *Display) RequestSelectionNotification(selection Atom) bool {
 	c := C.gdk_display_request_selection_notification(v.native(),
 		selection.native())
 	return gobool(c)
 }
 
-// SupportsClipboardPersistence() is a wrapper around
-// gdk_display_supports_clipboard_persistence().
+// SupportsClipboardPersistence is a wrapper around gdk_display_supports_clipboard_persistence().
 func (v *Display) SupportsClipboardPersistence() bool {
 	c := C.gdk_display_supports_clipboard_persistence(v.native())
 	return gobool(c)
 }
 
-// TODO(jrick)
-func (v *Display) StoreClipboard(clipboardWindow *Window, time uint32, targets ...Atom) {
-	panic("Not implemented")
-}
+// TODO:
+// gdk_display_store_clipboard().
+// func (v *Display) StoreClipboard(clipboardWindow *Window, time uint32, targets ...Atom) {
+// 	panic("Not implemented")
+// }
 
-// SupportsShapes() is a wrapper around gdk_display_supports_shapes().
+// SupportsShapes is a wrapper around gdk_display_supports_shapes().
 func (v *Display) SupportsShapes() bool {
 	c := C.gdk_display_supports_shapes(v.native())
 	return gobool(c)
 }
 
-// SupportsInputShapes() is a wrapper around gdk_display_supports_input_shapes().
+// SupportsInputShapes is a wrapper around gdk_display_supports_input_shapes().
 func (v *Display) SupportsInputShapes() bool {
 	c := C.gdk_display_supports_input_shapes(v.native())
 	return gobool(c)
 }
 
-// TODO(jrick) glib.AppLaunchContext GdkAppLaunchContext
-func (v *Display) GetAppLaunchContext() {
-	panic("Not implemented")
-}
+// TODO:
+// gdk_display_get_app_launch_context().
+// func (v *Display) GetAppLaunchContext() {
+// 	panic("Not implemented")
+// }
 
-// NotifyStartupComplete() is a wrapper around gdk_display_notify_startup_complete().
+// NotifyStartupComplete is a wrapper around gdk_display_notify_startup_complete().
 func (v *Display) NotifyStartupComplete(startupID string) {
 	cstr := C.CString(startupID)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gdk_display_notify_startup_complete(v.native(), (*C.gchar)(cstr))
 }
 
-// EventType is a representation of GDK's GdkEventType.
-// Do not confuse these event types with the signals that GTK+ widgets emit
-type EventType int
+/*
+ * GdkDisplayManager
+ */
 
-func marshalEventType(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return EventType(c), nil
-}
-
-const (
-	EVENT_NOTHING             EventType = C.GDK_NOTHING
-	EVENT_DELETE              EventType = C.GDK_DELETE
-	EVENT_DESTROY             EventType = C.GDK_DESTROY
-	EVENT_EXPOSE              EventType = C.GDK_EXPOSE
-	EVENT_MOTION_NOTIFY       EventType = C.GDK_MOTION_NOTIFY
-	EVENT_BUTTON_PRESS        EventType = C.GDK_BUTTON_PRESS
-	EVENT_2BUTTON_PRESS       EventType = C.GDK_2BUTTON_PRESS
-	EVENT_DOUBLE_BUTTON_PRESS EventType = C.GDK_DOUBLE_BUTTON_PRESS
-	EVENT_3BUTTON_PRESS       EventType = C.GDK_3BUTTON_PRESS
-	EVENT_TRIPLE_BUTTON_PRESS EventType = C.GDK_TRIPLE_BUTTON_PRESS
-	EVENT_BUTTON_RELEASE      EventType = C.GDK_BUTTON_RELEASE
-	EVENT_KEY_PRESS           EventType = C.GDK_KEY_PRESS
-	EVENT_KEY_RELEASE         EventType = C.GDK_KEY_RELEASE
-	EVENT_LEAVE_NOTIFY        EventType = C.GDK_ENTER_NOTIFY
-	EVENT_FOCUS_CHANGE        EventType = C.GDK_FOCUS_CHANGE
-	EVENT_CONFIGURE           EventType = C.GDK_CONFIGURE
-	EVENT_MAP                 EventType = C.GDK_MAP
-	EVENT_UNMAP               EventType = C.GDK_UNMAP
-	EVENT_PROPERTY_NOTIFY     EventType = C.GDK_PROPERTY_NOTIFY
-	EVENT_SELECTION_CLEAR     EventType = C.GDK_SELECTION_CLEAR
-	EVENT_SELECTION_REQUEST   EventType = C.GDK_SELECTION_REQUEST
-	EVENT_SELECTION_NOTIFY    EventType = C.GDK_SELECTION_NOTIFY
-	EVENT_PROXIMITY_IN        EventType = C.GDK_PROXIMITY_IN
-	EVENT_PROXIMITY_OUT       EventType = C.GDK_PROXIMITY_OUT
-	EVENT_DRAG_ENTER          EventType = C.GDK_DRAG_ENTER
-	EVENT_DRAG_LEAVE          EventType = C.GDK_DRAG_LEAVE
-	EVENT_DRAG_MOTION         EventType = C.GDK_DRAG_MOTION
-	EVENT_DRAG_STATUS         EventType = C.GDK_DRAG_STATUS
-	EVENT_DROP_START          EventType = C.GDK_DROP_START
-	EVENT_DROP_FINISHED       EventType = C.GDK_DROP_FINISHED
-	EVENT_CLIENT_EVENT        EventType = C.GDK_CLIENT_EVENT
-	EVENT_VISIBILITY_NOTIFY   EventType = C.GDK_VISIBILITY_NOTIFY
-	EVENT_SCROLL              EventType = C.GDK_SCROLL
-	EVENT_WINDOW_STATE        EventType = C.GDK_WINDOW_STATE
-	EVENT_SETTING             EventType = C.GDK_SETTING
-	EVENT_OWNER_CHANGE        EventType = C.GDK_OWNER_CHANGE
-	EVENT_GRAB_BROKEN         EventType = C.GDK_GRAB_BROKEN
-	EVENT_DAMAGE              EventType = C.GDK_DAMAGE
-	EVENT_TOUCH_BEGIN         EventType = C.GDK_TOUCH_BEGIN
-	EVENT_TOUCH_UPDATE        EventType = C.GDK_TOUCH_UPDATE
-	EVENT_TOUCH_END           EventType = C.GDK_TOUCH_END
-	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
-	EVENT_LAST                EventType = C.GDK_EVENT_LAST
-)
+// TODO:
+// gdk_display_manager_get().
+// gdk_display_manager_get_default_display().
+// gdk_display_manager_set_default_display().
+// gdk_display_manager_list_displays().
+// gdk_display_manager_open_display().
 
 /*
  * GDK Keyval
@@ -1089,6 +1223,108 @@ func (v *EventMotion) State() ModifierType {
 }
 
 /*
+ * GdkEventCrossing
+ */
+
+// EventCrossing is a representation of GDK's GdkEventCrossing.
+type EventCrossing struct {
+	*Event
+}
+
+func EventCrossingNew() *EventCrossing {
+	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventCrossing{}))
+	ev := Event{ee}
+	return &EventCrossing{&ev}
+}
+
+// EventCrossingNewFromEvent returns an EventCrossing from an Event.
+//
+// Using widget.Connect() for a key related signal such as
+// "enter-notify-event" results in a *Event being passed as
+// the callback's second argument. The argument is actually a
+// *EventCrossing. EventCrossingNewFromEvent provides a means of creating
+// an EventCrossing from the Event.
+func EventCrossingNewFromEvent(event *Event) *EventCrossing {
+	ee := (*C.GdkEvent)(unsafe.Pointer(event.native()))
+	ev := Event{ee}
+	return &EventCrossing{&ev}
+}
+
+// Native returns a pointer to the underlying GdkEventCrossing.
+func (v *EventCrossing) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventCrossing) native() *C.GdkEventCrossing {
+	return (*C.GdkEventCrossing)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventCrossing) X() float64 {
+	c := v.native().x
+	return float64(c)
+}
+
+func (v *EventCrossing) Y() float64 {
+	c := v.native().y
+	return float64(c)
+}
+
+// XRoot returns the x coordinate of the pointer relative to the root of the screen.
+func (v *EventCrossing) XRoot() float64 {
+	c := v.native().x_root
+	return float64(c)
+}
+
+// YRoot returns the y coordinate of the pointer relative to the root of the screen.
+func (v *EventCrossing) YRoot() float64 {
+	c := v.native().y_root
+	return float64(c)
+}
+
+func (v *EventCrossing) State() uint {
+	c := v.native().state
+	return uint(c)
+}
+
+// Time returns the time of the event in milliseconds.
+func (v *EventCrossing) Time() uint32 {
+	c := v.native().time
+	return uint32(c)
+}
+
+func (v *EventCrossing) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+func (v *EventCrossing) MotionVal() (float64, float64) {
+	x := v.native().x
+	y := v.native().y
+	return float64(x), float64(y)
+}
+
+func (v *EventCrossing) MotionValRoot() (float64, float64) {
+	x := v.native().x_root
+	y := v.native().y_root
+	return float64(x), float64(y)
+}
+
+func (v *EventCrossing) Mode() CrossingMode {
+	c := v.native().mode
+	return CrossingMode(c)
+}
+
+func (v *EventCrossing) Detail() NotifyType {
+	c := v.native().detail
+	return NotifyType(c)
+}
+
+func (v *EventCrossing) Focus() bool {
+	c := v.native().focus
+	return gobool(c)
+}
+
+/*
  * GdkEventScroll
  */
 
@@ -1151,6 +1387,13 @@ func (v *EventScroll) Direction() ScrollDirection {
 	return ScrollDirection(c)
 }
 
+// A bit-mask representing the state of the modifier keys (e.g. Control, Shift
+// and Alt) and the pointer buttons. See gdk.ModifierType constants.
+func (v *EventScroll) State() ModifierType {
+	c := v.native().state
+	return ModifierType(c)
+}
+
 /*
  * GdkEventWindowState
  */
@@ -1204,9 +1447,71 @@ func (v *EventWindowState) NewWindowState() WindowState {
 }
 
 /*
+ * GdkEventConfigure
+ */
+
+// EventConfigure is a representation of GDK's GdkEventConfigure.
+type EventConfigure struct {
+	*Event
+}
+
+func EventConfigureNew() *EventConfigure {
+	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventConfigure{}))
+	ev := Event{ee}
+	return &EventConfigure{&ev}
+}
+
+// EventConfigureNewFromEvent returns an EventConfigure from an Event.
+//
+// Using widget.Connect() for the
+// "configure-event" signal results in a *Event being passed as
+// the callback's second argument. The argument is actually a
+// *EventConfigure. EventConfigureNewFromEvent provides a means of creating
+// an EventConfigure from the Event.
+func EventConfigureNewFromEvent(event *Event) *EventConfigure {
+	ee := (*C.GdkEvent)(unsafe.Pointer(event.native()))
+	ev := Event{ee}
+	return &EventConfigure{&ev}
+}
+
+// Native returns a pointer to the underlying GdkEventConfigure.
+func (v *EventConfigure) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventConfigure) native() *C.GdkEventConfigure {
+	return (*C.GdkEventConfigure)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventConfigure) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+func (v *EventConfigure) X() int {
+	c := v.native().x
+	return int(c)
+}
+
+func (v *EventConfigure) Y() int {
+	c := v.native().y
+	return int(c)
+}
+
+func (v *EventConfigure) Width() int {
+	c := v.native().width
+	return int(c)
+}
+
+func (v *EventConfigure) Height() int {
+	c := v.native().height
+	return int(c)
+}
+
+/*
  * GdkGravity
  */
-type GdkGravity int
+type Gravity int
 
 const (
 	GDK_GRAVITY_NORTH_WEST = C.GDK_GRAVITY_NORTH_WEST
@@ -1220,6 +1525,11 @@ const (
 	GDK_GRAVITY_SOUTH_EAST = C.GDK_GRAVITY_SOUTH_EAST
 	GDK_GRAVITY_STATIC     = C.GDK_GRAVITY_STATIC
 )
+
+func marshalGravity(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Gravity(c), nil
+}
 
 /*
  * GdkPixbuf
@@ -1336,6 +1646,13 @@ func (v *Pixbuf) GetOption(key string) (value string, ok bool) {
 	}
 	return C.GoString((*C.char)(c)), true
 }
+
+// TODO:
+// gdk_pixbuf_set_option().
+// gdk_pixbuf_remove_option().
+// gdk_pixbuf_get_options().
+// gdk_pixbuf_copy_options().
+// gdk_pixbuf_read_pixels().
 
 // PixbufNew is a wrapper around gdk_pixbuf_new().
 func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, height int) (*Pixbuf, error) {
@@ -1536,6 +1853,56 @@ func PixbufGetFileInfo(filename string) (format interface{}, width, height int) 
 }
 
 /*
+ * GdkPixbufAnimation
+ */
+
+// PixbufAnimation is a representation of GDK's GdkPixbufAnimation.
+type PixbufAnimation struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GdkPixbufAnimation.
+func (v *PixbufAnimation) native() *C.GdkPixbufAnimation {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkPixbufAnimation(p)
+}
+
+func (v *PixbufAnimation) NativePrivate() *C.GdkPixbufAnimation {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkPixbufAnimation(p)
+}
+
+func marshalPixbufAnimation(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &PixbufAnimation{obj}, nil
+}
+
+// PixbufAnimationNewFromFile is a wrapper around gdk_pixbuf_animation_new_from_file().
+func PixbufAnimationNewFromFile(filename string) (*PixbufAnimation, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+
+	var err *C.GError
+	c := C.gdk_pixbuf_animation_new_from_file((*C.char)(cstr), &err)
+	if c == nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &PixbufAnimation{obj}
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
+}
+
+/*
  * GdkPixbufLoader
  */
 
@@ -1675,6 +2042,52 @@ func (v *PixbufLoader) GetPixbuf() (*Pixbuf, error) {
 	return p, nil
 }
 
+// GetAnimation is a wrapper around gdk_pixbuf_loader_get_animation().
+func (v *PixbufLoader) GetAnimation() (*PixbufAnimation, error) {
+	c := C.gdk_pixbuf_loader_get_animation(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &PixbufAnimation{obj}
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
+}
+
+// Convenient function like above for Pixbuf. Write data, close loader and return PixbufAnimation.
+func (v *PixbufLoader) WriteAndReturnPixbufAnimation(data []byte) (*PixbufAnimation, error) {
+
+	if len(data) == 0 {
+		return nil, errors.New("no data")
+	}
+
+	var err *C.GError
+	c := C.gdk_pixbuf_loader_write(v.native(), (*C.guchar)(unsafe.Pointer(&data[0])), C.gsize(len(data)), &err)
+
+	if !gobool(c) {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	v.Close()
+
+	c2 := C.gdk_pixbuf_loader_get_animation(v.native())
+	if c2 == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c2))}
+	p := &PixbufAnimation{obj}
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
+	return p, nil
+}
+
+/*
+ * GdkRGBA
+ */
+
 type RGBA struct {
 	rgba *C.GdkRGBA
 }
@@ -1722,32 +2135,34 @@ func (c *RGBA) SetColors(r, g, b, a float64) {
 	c.rgba.alpha = C.gdouble(a)
 }
 
-func (v *RGBA) Native() uintptr {
-	return uintptr(unsafe.Pointer(v.rgba))
+func (c *RGBA) Native() uintptr {
+	return uintptr(unsafe.Pointer(c.rgba))
 }
 
 // Parse is a representation of gdk_rgba_parse().
-func (v *RGBA) Parse(spec string) bool {
+func (c *RGBA) Parse(spec string) bool {
 	cstr := (*C.gchar)(C.CString(spec))
 	defer C.free(unsafe.Pointer(cstr))
 
-	return gobool(C.gdk_rgba_parse(v.rgba, cstr))
+	return gobool(C.gdk_rgba_parse(c.rgba, cstr))
 }
 
 // String is a representation of gdk_rgba_to_string().
-func (v *RGBA) String() string {
-	return C.GoString((*C.char)(C.gdk_rgba_to_string(v.rgba)))
+func (c *RGBA) String() string {
+	return C.GoString((*C.char)(C.gdk_rgba_to_string(c.rgba)))
 }
 
+// TODO:
 // GdkRGBA * 	gdk_rgba_copy ()
 // void 	gdk_rgba_free ()
 // gboolean 	gdk_rgba_equal ()
 // guint 	gdk_rgba_hash ()
 
-// PixbufGetType is a wrapper around gdk_pixbuf_get_type().
-func PixbufGetType() glib.Type {
-	return glib.Type(C.gdk_pixbuf_get_type())
-}
+/*
+ * GdkRGBA
+ */
+
+
 
 /*
  * GdkRectangle
@@ -1779,9 +2194,19 @@ func (r *Rectangle) GetX() int {
 	return int(r.native().x)
 }
 
+// SetX sets x field of the underlying GdkRectangle.
+func (r *Rectangle) SetX(x int) {
+	r.native().x = C.int(x)
+}
+
 // GetY returns y field of the underlying GdkRectangle.
 func (r *Rectangle) GetY() int {
 	return int(r.native().y)
+}
+
+// SetY sets y field of the underlying GdkRectangle.
+func (r *Rectangle) SetY(y int) {
+	r.native().y = C.int(y)
 }
 
 // GetWidth returns width field of the underlying GdkRectangle.
@@ -1789,9 +2214,153 @@ func (r *Rectangle) GetWidth() int {
 	return int(r.native().width)
 }
 
+// SetWidth sets width field of the underlying GdkRectangle.
+func (r *Rectangle) SetWidth(width int) {
+	r.native().width = C.int(width)
+}
+
 // GetHeight returns height field of the underlying GdkRectangle.
 func (r *Rectangle) GetHeight() int {
 	return int(r.native().height)
+}
+
+// SetHeight sets height field of the underlying GdkRectangle.
+func (r *Rectangle) SetHeight(height int) {
+	r.native().height = C.int(height)
+}
+
+/*
+ * GdkGeometry
+ */
+
+type Geometry struct {
+	GdkGeometry C.GdkGeometry
+}
+
+func WrapGeometry(p uintptr) *Geometry {
+	return wrapGeometry((*C.GdkGeometry)(unsafe.Pointer(p)))
+}
+
+func wrapGeometry(obj *C.GdkGeometry) *Geometry {
+	if obj == nil {
+		return nil
+	}
+	return &Geometry{*obj}
+}
+
+// native returns a pointer to the underlying GdkGeometry.
+func (r *Geometry) native() *C.GdkGeometry {
+	return &r.GdkGeometry
+}
+
+// GetMinWidth returns min_width field of the underlying GdkGeometry.
+func (r *Geometry) GetMinWidth() int {
+	return int(r.native().min_width)
+}
+
+// SetMinWidth sets min_width field of the underlying GdkGeometry.
+func (r *Geometry) SetMinWidth(minWidth int) {
+	r.native().min_width = C.gint(minWidth)
+}
+
+// GetMinHeight returns min_height field of the underlying GdkGeometry.
+func (r *Geometry) GetMinHeight() int {
+	return int(r.native().min_height)
+}
+
+// SetMinHeight sets min_height field of the underlying GdkGeometry.
+func (r *Geometry) SetMinHeight(minHeight int) {
+	r.native().min_height = C.gint(minHeight)
+}
+
+// GetMaxWidth returns max_width field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxWidth() int {
+	return int(r.native().max_width)
+}
+
+// SetMaxWidth sets max_width field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxWidth(maxWidth int) {
+	r.native().max_width = C.gint(maxWidth)
+}
+
+// GetMaxHeight returns max_height field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxHeight() int {
+	return int(r.native().max_height)
+}
+
+// SetMaxHeight sets max_height field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxHeight(maxHeight int) {
+	r.native().max_height = C.gint(maxHeight)
+}
+
+// GetBaseWidth returns base_width field of the underlying GdkGeometry.
+func (r *Geometry) GetBaseWidth() int {
+	return int(r.native().base_width)
+}
+
+// SetBaseWidth sets base_width field of the underlying GdkGeometry.
+func (r *Geometry) SetBaseWidth(baseWidth int) {
+	r.native().base_width = C.gint(baseWidth)
+}
+
+// GetBaseHeight returns base_height field of the underlying GdkGeometry.
+func (r *Geometry) GetBaseHeight() int {
+	return int(r.native().base_height)
+}
+
+// SetBaseHeight sets base_height field of the underlying GdkGeometry.
+func (r *Geometry) SetBaseHeight(baseHeight int) {
+	r.native().base_height = C.gint(baseHeight)
+}
+
+// GetWidthInc returns width_inc field of the underlying GdkGeometry.
+func (r *Geometry) GetWidthInc() int {
+	return int(r.native().width_inc)
+}
+
+// SetWidthInc sets width_inc field of the underlying GdkGeometry.
+func (r *Geometry) SetWidthInc(widthInc int) {
+	r.native().width_inc = C.gint(widthInc)
+}
+
+// GetHeightInc returns height_inc field of the underlying GdkGeometry.
+func (r *Geometry) GetHeightInc() int {
+	return int(r.native().height_inc)
+}
+
+// SetHeightInc sets height_inc field of the underlying GdkGeometry.
+func (r *Geometry) SetHeightInc(heightInc int) {
+	r.native().height_inc = C.gint(heightInc)
+}
+
+// GetMinAspect returns min_aspect field of the underlying GdkGeometry.
+func (r *Geometry) GetMinAspect() float64 {
+	return float64(r.native().min_aspect)
+}
+
+// SetMinAspect sets min_aspect field of the underlying GdkGeometry.
+func (r *Geometry) SetMinAspect(minAspect float64) {
+	r.native().min_aspect = C.gdouble(minAspect)
+}
+
+// GetMaxAspect returns max_aspect field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxAspect() float64 {
+	return float64(r.native().max_aspect)
+}
+
+// SetMaxAspect sets max_aspect field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxAspect(maxAspect float64) {
+	r.native().max_aspect = C.gdouble(maxAspect)
+}
+
+// GetWinGravity returns win_gravity field of the underlying GdkGeometry.
+func (r *Geometry) GetWinGravity() Gravity {
+	return Gravity(r.native().win_gravity)
+}
+
+// SetWinGravity sets win_gravity field of the underlying GdkGeometry.
+func (r *Geometry) SetWinGravity(winGravity Gravity) {
+	r.native().win_gravity = C.GdkGravity(winGravity)
 }
 
 /*
@@ -1821,6 +2390,14 @@ func marshalVisual(p uintptr) (interface{}, error) {
 	return &Visual{obj}, nil
 }
 
+// TODO:
+// gdk_visual_get_blue_pixel_details().
+// gdk_visual_get_depth().
+// gdk_visual_get_green_pixel_details().
+// gdk_visual_get_red_pixel_details().
+// gdk_visual_get_visual_type().
+// gdk_visual_get_screen().
+
 /*
  * GdkWindow
  */
@@ -1848,6 +2425,33 @@ func (v *Window) native() *C.GdkWindow {
 func (v *Window) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
+
+// WindowGetWidth is a wrapper around gdk_window_get_width()
+func (v *Window) WindowGetWidth() (width int) {
+	return int(C.gdk_window_get_width(v.native()))
+}
+
+// WindowGetHeight is a wrapper around gdk_window_get_height()
+func (v *Window) WindowGetHeight() (height int) {
+	return int(C.gdk_window_get_height(v.native()))
+}
+
+//PixbufGetFromWindow is a wrapper around gdk_pixbuf_get_from_window()
+func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
+	c := C.gdk_pixbuf_get_from_window(v.native(), C.gint(x), C.gint(y), C.gint(w), C.gint(h))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
+}
+
+// TODO:
+// gdk_pixbuf_get_from_surface().
 
 func marshalWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))

@@ -62,6 +62,10 @@ func (*RealGtk) CheckMenuItemNewWithMnemonic(label string) (gtki.CheckMenuItem, 
 	return wrapCheckMenuItem(gtk.CheckMenuItemNewWithMnemonic(label))
 }
 
+func (*RealGtk) CheckVersion(major, minor, micro uint) error {
+	return gtk.CheckVersion(major, minor, micro)
+}
+
 func (*RealGtk) ComboBoxNew() (gtki.ComboBox, error) {
 	return wrapComboBox(gtk.ComboBoxNew())
 }
@@ -88,6 +92,18 @@ func (*RealGtk) EventBoxNew() (gtki.EventBox, error) {
 
 func (*RealGtk) FileChooserDialogNewWith2Buttons(title string, parent gtki.Window, action gtki.FileChooserAction, first_button_text string, first_button_id gtki.ResponseType, second_button_text string, second_button_id gtki.ResponseType) (gtki.FileChooserDialog, error) {
 	return wrapFileChooserDialog(gtk.FileChooserDialogNewWith2Buttons(title, unwrapWindow(parent), gtk.FileChooserAction(action), first_button_text, gtk.ResponseType(first_button_id), second_button_text, gtk.ResponseType(second_button_id)))
+}
+
+func (*RealGtk) GetMajorVersion() uint {
+	return gtk.GetMajorVersion()
+}
+
+func (*RealGtk) GetMinorVersion() uint {
+	return gtk.GetMinorVersion()
+}
+
+func (*RealGtk) GetMicroVersion() uint {
+	return gtk.GetMicroVersion()
 }
 
 func (*RealGtk) ImageNewFromFile(filename string) (gtki.Image, error) {

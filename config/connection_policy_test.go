@@ -162,13 +162,13 @@ func (s *ConnectionPolicySuite) Test_buildProxyChain_Returns(c *C) {
 		"socks5://proxy.remote",
 	})
 	c.Check(err, IsNil)
-	c.Check(fmt.Sprintf("%#v", chain), Matches, ".*socks\\.Dialer.*?proxy\\.local.*")
+	c.Check(fmt.Sprintf("%#v", chain), Matches, ".*socks.*?proxy\\.local.*")
 
 	chain, err = buildProxyChain([]string{
 		"socks5://proxy.remote",
 	})
 	c.Check(err, IsNil)
-	c.Check(fmt.Sprintf("%#v", chain), Matches, ".*socks\\.Dialer.*?proxy\\.remote.*")
+	c.Check(fmt.Sprintf("%#v", chain), Matches, ".*socks.*?proxy\\.remote.*")
 
 	chain, err = buildProxyChain([]string{})
 	c.Check(err, IsNil)

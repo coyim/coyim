@@ -25,7 +25,26 @@ func MainContextDefault() *MainContext {
 	return (*MainContext)(c)
 }
 
+// Iteration is a wrapper around g_main_context_iteration()
+func (v *MainContext) Iteration(mayBlock bool) bool {
+	return gobool(C.g_main_context_iteration(v.native(), gbool(mayBlock)))
+}
+
+// Pending is a wrapper around g_main_context_pending()
+func (v *MainContext) Pending() bool {
+	return gobool(C.g_main_context_pending(v.native()))
+}
+
 // MainDepth is a wrapper around g_main_depth().
 func MainDepth() int {
 	return int(C.g_main_depth())
+}
+
+// FindSourceById is a wrapper around g_main_context_find_source_by_id()
+func (v *MainContext) FindSourceById(hdlSrc SourceHandle) *Source {
+	c := C.g_main_context_find_source_by_id(v.native(), C.guint(hdlSrc))
+	if c == nil {
+		return nil
+	}
+	return (*Source)(c)
 }

@@ -18,6 +18,7 @@ type Gtk interface {
 	CheckButtonNew() (CheckButton, error)
 	CheckButtonNewWithMnemonic(string) (CheckButton, error)
 	CheckMenuItemNewWithMnemonic(string) (CheckMenuItem, error)
+	CheckVersion(major, minor, micro uint) error
 	ComboBoxNew() (ComboBox, error)
 	ComboBoxTextNew() (ComboBoxText, error)
 	CssProviderNew() (CssProvider, error)
@@ -26,6 +27,9 @@ type Gtk interface {
 	EntryNew() (Entry, error)
 	EventBoxNew() (EventBox, error)
 	FileChooserDialogNewWith2Buttons(string, Window, FileChooserAction, string, ResponseType, string, ResponseType) (FileChooserDialog, error)
+	GetMajorVersion() uint
+	GetMinorVersion() uint
+	GetMicroVersion() uint
 	ImageNewFromFile(string) (Image, error)
 	ImageNewFromResource(string) (Image, error)
 	ImageNewFromPixbuf(gdki.Pixbuf) (Image, error)

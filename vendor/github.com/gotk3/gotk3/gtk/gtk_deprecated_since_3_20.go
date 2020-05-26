@@ -5,6 +5,32 @@ package gtk
 // #include <gtk/gtk.h>
 // #include <stdlib.h>
 import "C"
+import (
+	"unsafe"
+)
+
+/*
+ * GtkRange
+ */
+
+// TODO:
+// gtk_range_get_min_slider_size().
+// gtk_range_set_min_slider_size().
+
+/*
+ * GtkToolbar
+ */
+
+// TODO:
+// GtkToolbarSpaceStyle
+
+/*
+ * GtkFileChooserButton
+ */
+
+// TODO:
+// gtk_file_chooser_button_get_focus_on_click().
+// gtk_file_chooser_button_set_focus_on_click().
 
 // GetFocusOnClick() is a wrapper around gtk_button_get_focus_on_click().
 func (v *Button) GetFocusOnClick() bool {
@@ -15,6 +41,14 @@ func (v *Button) GetFocusOnClick() bool {
 // BeginsTag is a wrapper around gtk_text_iter_begins_tag().
 func (v *TextIter) BeginsTag(v1 *TextTag) bool {
 	return gobool(C.gtk_text_iter_begins_tag(v.native(), v1.native()))
+}
+
+// ParseGeometry is a wrapper around gtk_window_parse_geometry().
+func (v *Window) ParseGeometry(geometry string) bool {
+	cstr := C.CString(geometry)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_window_parse_geometry(v.native(), (*C.gchar)(cstr))
+	return gobool(c)
 }
 
 // ResizeToGeometry is a wrapper around gtk_window_resize_to_geometry().

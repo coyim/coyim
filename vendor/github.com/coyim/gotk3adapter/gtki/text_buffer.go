@@ -17,6 +17,7 @@ type TextBuffer interface {
 	GetText(TextIter, TextIter, bool) string
 	Insert(TextIter, string)
 	InsertAtCursor(string)
+	SetText(string)
 }
 
 func AssertTextBuffer(_ TextBuffer) {}

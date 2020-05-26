@@ -121,6 +121,23 @@ func (t Type) Parent() Type {
 	return Type(C.g_type_parent(C.GType(t)))
 }
 
+// IsA is a wrapper around g_type_is_a().
+func (t Type) IsA(isAType Type) bool {
+	return gobool(C.g_type_is_a(C.GType(t), C.GType(isAType)))
+}
+
+// TypeFromName is a wrapper around g_type_from_name
+func TypeFromName(typeName string) Type {
+	cstr := (*C.gchar)(C.CString(typeName))
+	defer C.free(unsafe.Pointer(cstr))
+	return Type(C.g_type_from_name(cstr))
+}
+
+//TypeNextBase is a wrapper around g_type_next_base
+func TypeNextBase(leafType, rootType Type) Type {
+	return Type(C.g_type_next_base(C.GType(leafType), C.GType(rootType)))
+}
+
 // UserDirectory is a representation of GLib's GUserDirectory.
 type UserDirectory int
 
@@ -200,6 +217,23 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 			fmt.Fprintf(os.Stderr,
 				"no suitable Go value for arg %d: %v\n", i, err)
 			return
+		}
+		// Parameters that are descendants of GObject come wrapped in another GObject.
+		// For C applications, the default marshaller (g_cclosure_marshal_VOID__VOID in
+		// gmarshal.c in the GTK glib library) 'peeks' into the enclosing object and
+		// passes the wrapped object to the handler. Use the *Object.goValue function
+		// to emulate that for Go signal handlers.
+		switch objVal := val.(type) {
+		case *Object:
+			innerVal, err := objVal.goValue()
+			if err != nil {
+				// print warning and leave val unchanged to preserve old
+				// behavior
+				fmt.Fprintf(os.Stderr,
+					"warning: no suitable Go value from object for arg %d: %v\n", i, err)
+			} else {
+				val = innerVal
+			}
 		}
 		rv := reflect.ValueOf(val)
 		args = append(args, rv.Convert(cc.rf.Type().In(i)))
@@ -313,6 +347,35 @@ func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{})
 	return SourceHandle(cid), nil
 }
 
+// Destroy is a wrapper around g_source_destroy()
+func (v *Source) Destroy() {
+	C.g_source_destroy(v.native())
+}
+
+// IsDestroyed is a wrapper around g_source_is_destroyed()
+func (v *Source) IsDestroyed() bool {
+	return gobool(C.g_source_is_destroyed(v.native()))
+}
+
+// Unref is a wrapper around g_source_unref()
+func (v *Source) Unref() {
+	C.g_source_unref(v.native())
+}
+
+// Ref is a wrapper around g_source_ref()
+func (v *Source) Ref() *Source {
+	c := C.g_source_ref(v.native())
+	if c == nil {
+		return nil
+	}
+	return (*Source)(c)
+}
+
+// SourceRemove is a wrapper around g_source_remove()
+func SourceRemove(src SourceHandle) bool {
+	return gobool(C.g_source_remove(C.guint(src)))
+}
+
 /*
  * Miscellaneous Utility Functions
  */
@@ -398,6 +461,26 @@ func (v *Object) native() *C.GObject {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGObject(p)
+}
+
+// goValue converts a *Object to a Go type (e.g. *Object => *gtk.Entry).
+// It is used in goMarshal to convert generic GObject parameters to
+// signal handlers to the actual types expected by the signal handler.
+func (v *Object) goValue() (interface{}, error) {
+	objType := Type(C._g_type_from_instance(C.gpointer(v.native())))
+	f, err := gValueMarshalers.lookupType(objType)
+	if err != nil {
+		return nil, err
+	}
+
+	// The marshalers expect Values, not Objects
+	val, err := ValueInit(objType)
+	if err != nil {
+		return nil, err
+	}
+	val.SetInstance(uintptr(unsafe.Pointer(v.GObject)))
+	rv, err := f(uintptr(unsafe.Pointer(val.native())))
+	return rv, err
 }
 
 // Take wraps a unsafe.Pointer as a glib.Object, taking ownership of it.
@@ -1055,8 +1138,8 @@ type TypeMarshaler struct {
 }
 
 // RegisterGValueMarshalers adds marshalers for several types to the
-// internal marshalers map.  Once registered, calling GoValue on any
-// Value witha registered type will return the data returned by the
+// internal marshalers map. Once registered, calling GoValue on any
+// Value with a registered type will return the data returned by the
 // marshaler.
 func RegisterGValueMarshalers(tm []TypeMarshaler) {
 	gValueMarshalers.register(tm)
@@ -1106,6 +1189,13 @@ func (m marshalMap) lookup(v *Value) (GValueMarshaler, error) {
 		return f, nil
 	}
 	if f, ok := m[fundamental]; ok {
+		return f, nil
+	}
+	return nil, errors.New("missing marshaler for type")
+}
+
+func (m marshalMap) lookupType(t Type) (GValueMarshaler, error) {
+	if f, ok := m[Type(t)]; ok {
 		return f, nil
 	}
 	return nil, errors.New("missing marshaler for type")

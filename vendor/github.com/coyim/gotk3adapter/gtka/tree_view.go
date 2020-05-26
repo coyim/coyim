@@ -45,8 +45,9 @@ func (v *treeView) GetSelection() (gtki.TreeSelection, error) {
 	return wrapTreeSelection(v.internal.GetSelection())
 }
 
-func (v *treeView) GetPathAtPos(v1 int, v2 int, v3 gtki.TreePath, v4 gtki.TreeViewColumn, v5 *int, v6 *int) bool {
-	return v.internal.GetPathAtPos(v1, v2, unwrapTreePath(v3), unwrapTreeViewColumn(v4), v5, v6)
+func (v *treeView) GetPathAtPos(v1 int, v2 int) (gtki.TreePath, gtki.TreeViewColumn, int, int, bool) {
+	r1, r2, r3, r4, r5 := v.internal.GetPathAtPos(v1, v2)
+	return wrapTreePathSimple(r1), wrapTreeViewColumnSimple(r2), r3, r4, r5
 }
 
 func (v *treeView) SetEnableSearch(v1 bool) {

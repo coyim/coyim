@@ -55,6 +55,10 @@ func (*Mock) CheckMenuItemNewWithMnemonic(label string) (gtki.CheckMenuItem, err
 	return nil, nil
 }
 
+func (*Mock) CheckVersion(major, minor, micro uint) error {
+	return nil
+}
+
 func (*Mock) ComboBoxNew() (gtki.ComboBox, error) {
 	return nil, nil
 }
@@ -85,6 +89,18 @@ func (*Mock) EventBoxNew() (gtki.EventBox, error) {
 
 func (*Mock) FileChooserDialogNewWith2Buttons(title string, parent gtki.Window, action gtki.FileChooserAction, first_button_text string, first_button_id gtki.ResponseType, second_button_text string, second_button_id gtki.ResponseType) (gtki.FileChooserDialog, error) {
 	return nil, nil
+}
+
+func (*Mock) GetMajorVersion() uint {
+	return 0
+}
+
+func (*Mock) GetMinorVersion() uint {
+	return 0
+}
+
+func (*Mock) GetMicroVersion() uint {
+	return 0
 }
 
 func (*Mock) ImageNewFromFile(filename string) (gtki.Image, error) {

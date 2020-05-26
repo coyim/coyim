@@ -14,6 +14,35 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+func init() {
+	tm := []glib.TypeMarshaler{
+		// Enums
+		{glib.Type(C.gtk_popover_constraint_get_type()), marshalPopoverConstraint},
+	}
+	glib.RegisterGValueMarshalers(tm)
+}
+
+/*
+ * Constants
+ */
+
+// PopoverConstraint is a representation of GTK's GtkPopoverConstraint.
+type PopoverConstraint int
+
+const (
+	POPOVER_CONSTRAINT_NONE   PopoverConstraint = C.GTK_POPOVER_CONSTRAINT_NONE
+	POPOVER_CONSTRAINT_WINDOW PopoverConstraint = C.GTK_POPOVER_CONSTRAINT_WINDOW
+)
+
+func marshalPopoverConstraint(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return PopoverConstraint(c), nil
+}
+
+const (
+	STATE_FLAG_DROP_ACTIVE StateFlags = C.GTK_STATE_FLAG_DROP_ACTIVE
+)
+
 /*
  * GtkNativeDialog
  */
@@ -133,7 +162,7 @@ func wrapFileChooserNativeDialog(obj *glib.Object) *FileChooserNativeDialog {
 // FileChooserNativeDialogNew is a wrapper around gtk_file_chooser_native_new().
 func FileChooserNativeDialogNew(
 	title string,
-	parent *Window,
+	parent IWindow,
 	action FileChooserAction,
 	accept_label string,
 	cancel_label string) (*FileChooserNativeDialog, error) {
@@ -144,7 +173,7 @@ func FileChooserNativeDialogNew(
 	c_cancel_label := C.CString(cancel_label)
 	defer C.free(unsafe.Pointer(c_cancel_label))
 	c := C.gtk_file_chooser_native_new(
-		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_title), parent.toWindow(), C.GtkFileChooserAction(action),
 		(*C.gchar)(c_accept_label), (*C.gchar)(c_cancel_label))
 	if c == nil {
 		return nil, nilPtrErr
@@ -156,13 +185,13 @@ func FileChooserNativeDialogNew(
 /*
  * FileChooserNative
  */
-func OpenFileChooserNative(title string, parent_window *Window) *string {
+func OpenFileChooserNative(title string, parent_window IWindow) *string {
 	c_title := C.CString(title)
 
 	var native *C.GtkFileChooserNative
 
 	native = C.gtk_file_chooser_native_new((*C.gchar)(c_title),
-		parent_window.native(),
+		parent_window.toWindow(),
 		C.GtkFileChooserAction(FILE_CHOOSER_ACTION_OPEN),
 		(*C.gchar)(C.CString("_Open")),
 		(*C.gchar)(C.CString("_Cancel")))
@@ -204,4 +233,33 @@ func (v *FileChooserNativeDialog) SetCancelLabel(cancel_label string) {
 // GetCancelLabel() is a wrapper around gtk_file_chooser_native_get_cancel_label().
 func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
 	return stringReturn((*C.gchar)(C.gtk_file_chooser_native_get_cancel_label(v.native())))
+}
+
+/*
+ * GtkTextView
+ */
+
+// TODO:
+// gtk_text_view_reset_cursor_blink().
+
+/*
+ * GtkExpander
+ */
+
+// TODO:
+// gtk_expander_set_spacing().
+// gtk_expander_get_spacing().
+
+/*
+ * GtkPopover
+ */
+
+// SetConstrainTo is a wrapper gtk_popover_set_constrain_to().
+func (v *Popover) SetConstrainTo(constrain PopoverConstraint) {
+	C.gtk_popover_set_constrain_to(v.native(), C.GtkPopoverConstraint(constrain))
+}
+
+// GetConstrainTo is a wrapper gtk_popover_get_constrain_to().
+func (v *Popover) GetConstrainTo() PopoverConstraint {
+	return PopoverConstraint(C.gtk_popover_get_constrain_to(v.native()))
 }

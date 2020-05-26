@@ -42,6 +42,9 @@ func (*MockTextBuffer) GetText(gtki.TextIter, gtki.TextIter, bool) string {
 	return ""
 }
 
+func (*MockTextBuffer) SetText(string) {
+}
+
 func (*MockTextBuffer) Delete(gtki.TextIter, gtki.TextIter) {
 }
 

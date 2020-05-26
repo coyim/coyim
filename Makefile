@@ -22,8 +22,7 @@ SRC := $(filter-out $(SRC_TEST), $(SRC_ALL))
 PREF := PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH
 GO := $(PREF) go
 GOBUILD := $(GO) build
-GOTEST := $(PREF) govendor test +local
-GOLIST := $(PREF) govendor list -no-status +local
+GOTEST := $(GO) test
 TAGS := -tags $(GTK_BUILD_TAG)
 
 AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go
@@ -107,11 +106,6 @@ gui/authors.go: authors.rb
 	./authors.rb > gui/authors.go
 	gofmt -w gui/authors.go
 
-update-vendor:
-	go get -u ./...
-	go get -u -t ./...
-	govendor update +v
-
 gosec:
 	go get -u github.com/securego/gosec/cmd/gosec...
 	gosec ./...
@@ -135,7 +129,7 @@ ifeq ($(GO_VERSION), go1.7)
 else ifeq ($(GO_VERSION), go1.8)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else
-	for pkg in $$($(GOLIST) ./...) ; do \
+	for pkg in $(SRC_DIRS) ; do \
 		golint $$pkg ; \
 	done
 endif
@@ -156,14 +150,13 @@ else
 endif
 
 deps: dep-supported-only
-	go get -u github.com/kardianos/govendor
 	go get -u github.com/rosatolen/esc
 
 $(COVERPROFILES):
 	mkdir -p $@
 
 $(COVERPROFILES)/all.coverprofile: $(COVERPROFILES) $(SRC_ALL) $(AUTOGEN)
-	go test $(TAGS) -coverprofile=$@ $(SRC_DIRS)
+	$(GOTEST) $(TAGS) -coverprofile=$@ $(SRC_DIRS)
 
 run-cover: $(COVERPROFILES)/all.coverprofile
 

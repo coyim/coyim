@@ -269,9 +269,31 @@ func (v *TreeViewColumn) GetSizing() TreeViewColumnSizing {
 	return TreeViewColumnSizing(C.gtk_tree_view_column_get_sizing(v.native()))
 }
 
-// void 	gtk_tree_view_column_set_widget ()
-// GtkWidget * 	gtk_tree_view_column_get_widget ()
-// GtkWidget * 	gtk_tree_view_column_get_button ()
+// SetWidget() is a wrapper around gtk_tree_view_column_set_widget().
+func (v *TreeViewColumn) SetWidget(widget IWidget) {
+	C.gtk_tree_view_column_set_widget(v.native(), widget.toWidget())
+}
+
+// GetButton() is a wrapper around gtk_tree_view_column_get_button().
+func (v *TreeViewColumn) GetButton() (*Widget, error) {
+	widget := C.gtk_tree_view_column_get_button(v.native())
+	if widget == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(widget))
+	return wrapWidget(obj), nil
+}
+
+// GetWidget() is a wrapper around gtk_tree_view_column_get_widget().
+func (v *TreeViewColumn) GetWidget() (*Widget, error) {
+	widget := C.gtk_tree_view_column_get_widget(v.native())
+	if widget == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(widget))
+	return wrapWidget(obj), nil
+}
+
 // void 	gtk_tree_view_column_set_alignment ()
 // gfloat 	gtk_tree_view_column_get_alignment ()
 

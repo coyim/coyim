@@ -21,8 +21,8 @@ func (*MockTreeView) GetSelection() (gtki.TreeSelection, error) {
 	return nil, nil
 }
 
-func (*MockTreeView) GetPathAtPos(v1 int, v2 int, v3 gtki.TreePath, v4 gtki.TreeViewColumn, v5 *int, v6 *int) bool {
-	return false
+func (*MockTreeView) GetPathAtPos(v1 int, v2 int) (gtki.TreePath, gtki.TreeViewColumn, int, int, bool) {
+	return nil, nil, 0, 0, false
 }
 
 func (*MockTreeView) SetEnableSearch(v1 bool) {

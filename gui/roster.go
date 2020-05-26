@@ -87,8 +87,7 @@ func getFromModelIter(m gtki.TreeStore, iter gtki.TreeIter, index int) string {
 func (r *roster) getAccountAndJidFromEvent(bt gdki.EventButton) (j jid.WithoutResource, account *account, rowType string, ok bool) {
 	x := bt.X()
 	y := bt.Y()
-	path := g.gtk.TreePathNew()
-	found := r.view.GetPathAtPos(int(x), int(y), path, nil, nil, nil)
+	path, _, _, _, found := r.view.GetPathAtPos(int(x), int(y))
 	if !found {
 		return nil, nil, "", false
 	}

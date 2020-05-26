@@ -140,6 +140,11 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 		"pin-cert", &pinCertButton,
 	)
 
+	if account.session == nil || account.session.Conn() == nil || account.session.Conn().RawOut() == nil {
+		// If these are nil, we bug out early, since there's no connection to give information about yet
+		return
+	}
+
 	tlsConn := account.session.Conn().RawOut().(*tls.Conn)
 
 	serverAddress := account.session.Conn().ServerAddress()

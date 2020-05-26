@@ -1,53 +1,66 @@
 GTK_VERSION=$(shell pkg-config --modversion gtk+-3.0 | tr . _ | cut -d '_' -f 1-2)
 GTK_BUILD_TAG="gtk_$(GTK_VERSION)"
-GIT_VERSION=$(shell git rev-parse HEAD)
-TAG_VERSION=$(shell git tag -l --contains $$GIT_VERSION | tail -1)
 
-BUILD_DIR=bin
+GIT_VERSION := $(shell git rev-parse HEAD)
+GIT_SHORT_VERSION := $(shell git rev-parse --short HEAD)
+TAG_VERSION := $(shell git tag -l --contains $$GIT_VERSION | tail -1)
+CURRENT_DATE := $(shell date "+%Y-%m-%d")
 
-# This should be the default if we want to build the app when `go get`
-#default: build
+GO_VERSION := $(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]*')
+
+BUILD_DIR := bin
+BUILD_TOOLS_DIR := .build-tools
+COVERPROFILES := .coverprofiles
+
+PKGS := $(shell go list ./... | grep -v /vendor)
+SRC_DIRS := . $(addprefix .,$(subst github.com/coyim/coyim,,$(PKGS)))
+SRC_TEST := $(foreach sdir,$(SRC_DIRS),$(wildcard $(sdir)/*_test.go))
+SRC_ALL := $(foreach sdir,$(SRC_DIRS),$(wildcard $(sdir)/*.go))
+SRC := $(filter-out $(SRC_TEST), $(SRC_ALL))
+
+PREF := PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH
+GO := $(PREF) go
+GOBUILD := $(GO) build
+GOTEST := $(PREF) govendor test +local
+GOLIST := $(PREF) govendor list -no-status +local
+TAGS := -tags $(GTK_BUILD_TAG)
+
+AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go
+
+.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug generate-version-file win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all
 
 default: check
+check: lint test
 
-check:
-	make -C ./development
+$(BUILD_DIR)/coyim: generate-version-file $(AUTOGEN)
+	$(GOBUILD) -i $(TAGS) -o $@
 
-build: build-gui
-
-build-gui: generate-version-file
-	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH go build -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim
-
-build-gui-memory-analyzer: generate-version-file
-	go build -x -msan -i -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-ma
+$(BUILD_DIR)/coyim-ma: generate-version-file $(AUTOGEN)
+	$(GOBUILD) -x -msan -i $(TAGS) -o $@
 
 # run with: export ASAN_OPTIONS=detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:verbosity=1:handle_segv=0
-build-gui-address-san: generate-version-file
-	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" go build -x -i -ldflags '-extldflags "-fsanitize=address"' -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-aa
+$(BUILD_DIR)/coyim-aa: generate-version-file $(AUTOGEN)
+	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" $(GOBUILD) -x -i -ldflags '-extldflags "-fsanitize=address"' $(TAGS) -o $@
 
-build-gui-win: generate-version-file
-	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" go build -i -tags $(GTK_BUILD_TAG) -ldflags "-H windowsgui" -o $(BUILD_DIR)/coyim.exe
+$(BUILD_DIR)/coyim.exe: generate-version-file $(AUTOGEN)
+	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) -i $(TAGS) -ldflags "-H windowsgui" -o $@
 
-build-debug: generate-version-file
-	PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH go build -v -gcflags "-N -l" -tags $(GTK_BUILD_TAG) -o $(BUILD_DIR)/coyim-debug
+$(BUILD_DIR)/coyim-debug: generate-version-file $(AUTOGEN)
+	$(GOBUILD) -v -gcflags "-N -l" $(TAGS) -o $@
 
-debug: build-debug
+build: build-gui
+build-gui: $(BUILD_DIR)/coyim
+build-gui-memory-analyzer: $(BUILD_DIR)/coyim-ma
+build-gui-address-san: $(BUILD_DIR)/coyim-aa
+build-gui-win: $(BUILD_DIR)/coyim.exe
+build-debug: $(BUILD_DIR)/coyim-debug
+
+debug: $(BUILD_DIR)/coyim-debug
 	GDK_DEBUG=nograbs gdb -d $(shell go env GOROOT) --args $(BUILD_DIR)/coyim-debug -debug
 
 # TODO: We can replace this by `go build -ldflags "-X main.Version=$(TAG_VERSION)"`.
 generate-version-file:
 	./gen_version_file.sh $(GIT_VERSION) $(TAG_VERSION)
-
-# Convenience
-test:
-	make -C ./development test
-.PHONY: test
-
-lint:
-	make -C ./development lint
-
-deps:
-	make -C ./development deps
 
 win-ci-deps:
 	go get -u github.com/rosatolen/esc
@@ -72,14 +85,25 @@ check-reproducible-signatures:
 
 clean:
 	go clean -i -x
-	rm -rf $(BUILD_DIR)
+	$(RM) -rf $(BUILD_DIR)
+	$(RM) -rf $(BUILD_TOOLS_DIR)
 
 clean-cache:
 	go clean -i -cache -x
-	rm -rf $(BUILD_DIR)
+	$(RM) -rf $(BUILD_DIR)
+	$(RM) -rf $(BUILD_TOOLS_DIR)
 
-# TODO: we can use `go generate` for this.
-gen-authors:
+$(BUILD_TOOLS_DIR):
+	mkdir -p $@
+
+$(BUILD_TOOLS_DIR)/esc: $(BUILD_TOOLS_DIR)
+	@type esc >/dev/null 2>&1 || (echo "The program 'esc' is required but not available. Please install it by running 'make deps'." && exit 1)
+	@cp `which esc` $(BUILD_TOOLS_DIR)/esc
+
+gui/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/definitions/*.xml
+	(cd gui; go generate -x ui_reader.go)
+
+gui/authors.go: authors.rb
 	rm -rf gui/authors.go
 	./authors.rb > gui/authors.go
 	gofmt -w gui/authors.go
@@ -96,3 +120,57 @@ gosec:
 ineffassign:
 	go get -u github.com/gordonklaus/ineffassign/...
 	ineffassign .
+
+gui/settings/definitions/gschemas.compiled: gui/settings/definitions/*.xml
+	(cd gui/settings/definitions; glib-compile-schemas .)
+
+gui/settings/definitions/schemas.go: gui/settings/definitions/gschemas.compiled
+	(cd gui/settings/definitions; ruby ./generate.rb)
+
+i18n:
+	make -C ./i18n
+
+lint: $(AUTOGEN)
+ifeq ($(GO_VERSION), go1.7)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.8)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else
+	for pkg in $$($(GOLIST) ./...) ; do \
+		golint $$pkg ; \
+	done
+endif
+
+test: $(AUTOGEN)
+	$(GOTEST) -cover -v $(TAGS) ./...
+
+test-named: $(AUTOGEN)
+	$(GOTEST) -v $(TAGS) $(SRC_DIRS)
+
+dep-supported-only:
+ifeq ($(GO_VERSION), go1.7)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else ifeq ($(GO_VERSION), go1.8)
+	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
+else
+	go get -u golang.org/x/lint/golint
+endif
+
+deps: dep-supported-only
+	go get -u github.com/kardianos/govendor
+	go get -u github.com/rosatolen/esc
+
+$(COVERPROFILES):
+	mkdir -p $@
+
+$(COVERPROFILES)/all.coverprofile: $(COVERPROFILES) $(SRC_ALL) $(AUTOGEN)
+	go test $(TAGS) -coverprofile=$@ $(SRC_DIRS)
+
+run-cover: $(COVERPROFILES)/all.coverprofile
+
+clean-cover:
+	$(RM) -rf $(COVERPROFILES)
+
+# generats an HTML report with coverage information
+cover: run-cover
+	go tool cover -html=$(COVERPROFILES)/all.coverprofile

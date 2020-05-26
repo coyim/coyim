@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"github.com/coyim/gotk3adapter/gtk_mock"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -57,6 +58,11 @@ func (*mockWithBuilder) BuilderNew() (gtki.Builder, error) {
 }
 
 func (s *UIReaderSuite) Test_builderForDefinition_useXMLIfExists(c *C) {
+	orgMod := getModTime(getActualDefsFolder() + "/Test.xml")
+	defer func() {
+		setModTime(getActualDefsFolder()+"/Test.xml", orgMod)
+	}()
+
 	g = Graphics{gtk: &mockWithBuilder{}}
 	removeFile(getActualDefsFolder() + "/Test.xml")
 	writeTestFile(getActualDefsFolder()+"/Test.xml", testFile)
@@ -69,7 +75,22 @@ func (s *UIReaderSuite) Test_builderForDefinition_useXMLIfExists(c *C) {
 	c.Assert(str, Equals, testFile)
 }
 
+func getModTime(fn string) time.Time {
+	file, _ := os.Stat(fn)
+	return file.ModTime()
+}
+
+func setModTime(fn string, t time.Time) {
+	os.Chtimes(fn, t, t)
+}
+
 func (s *UIReaderSuite) Test_builderForDefinition_useGoFileIfXMLDoesntExists(c *C) {
+	orgMod := getModTime(getActualDefsFolder() + "/Test.xml")
+	defer func() {
+		writeTestFile(getActualDefsFolder()+"/Test.xml", testFile)
+		setModTime(getActualDefsFolder()+"/Test.xml", orgMod)
+	}()
+
 	g = Graphics{gtk: &mockWithBuilder{}}
 	removeFile(getActualDefsFolder() + "/Test.xml")
 	ui := "Test"

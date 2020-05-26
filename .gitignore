@@ -46,3 +46,5 @@ version_generated.go
 
 #Zanata - Translation platform
 .zanata
+
+.build-tools

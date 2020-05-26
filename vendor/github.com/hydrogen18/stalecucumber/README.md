@@ -1,4 +1,4 @@
-#stalecucumber
+# stalecucumber
 
 This package reads and writes pickled data. The format is the same
 as the Python "pickle" module.
@@ -9,7 +9,7 @@ protocol versions so they are readable by this package.
 
 [Full documentation is available here.](https://godoc.org/github.com/hydrogen18/stalecucumber)
 
-##TLDR
+## TLDR
 
 Read a pickled string or unicode object
 ```

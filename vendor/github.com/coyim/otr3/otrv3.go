@@ -93,10 +93,10 @@ func (v otrV3) messageHeader(c *Conversation, msgType byte) ([]byte, error) {
 		return nil, err
 	}
 
-	out := appendShort(nil, v.protocolVersion())
+	out := AppendShort(nil, v.protocolVersion())
 	out = append(out, msgType)
-	out = appendWord(out, c.ourInstanceTag)
-	out = appendWord(out, c.theirInstanceTag)
+	out = AppendWord(out, c.ourInstanceTag)
+	out = AppendWord(out, c.theirInstanceTag)
 	return out, nil
 }
 
@@ -157,8 +157,8 @@ func (v otrV3) parseMessageHeader(c *Conversation, msg []byte) ([]byte, []byte, 
 	}
 	header := msg[:otrv3HeaderLen]
 
-	msg, senderInstanceTag, _ := extractWord(msg[messageHeaderPrefix:])
-	msg, receiverInstanceTag, _ := extractWord(msg)
+	msg, senderInstanceTag, _ := ExtractWord(msg[messageHeaderPrefix:])
+	msg, receiverInstanceTag, _ := ExtractWord(msg)
 
 	if err := v.verifyInstanceTags(c, senderInstanceTag, receiverInstanceTag); err != nil {
 		return nil, nil, err

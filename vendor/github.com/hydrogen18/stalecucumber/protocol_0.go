@@ -1,12 +1,12 @@
 package stalecucumber
 
-import "strconv"
-import "fmt"
-import "math/big"
-import "errors"
-
-//import "unicode/utf8"
-import "unicode/utf16"
+import (
+	"errors"
+	"fmt"
+	"math/big"
+	"strconv"
+	"unicode/utf16"
+) //import "unicode/utf8"
 
 /**
 Opcode: INT
@@ -560,8 +560,27 @@ Stack before: []
 Stack after: [any]
 **/
 func (pm *PickleMachine) opcode_GLOBAL() error {
-	//TODO push an object that represents the result of this operation
-	return ErrOpcodeNotImplemented
+	str1, err := pm.readString()
+	if err != nil {
+		return err
+	}
+
+	str2, err := pm.readString()
+	if err != nil {
+		return err
+	}
+
+	// Push a sentinel object representing the type	
+	pm.push(globalSentinel{Package: str1, Name: str2})
+	return nil
+}
+
+type UnreducibleValueError struct{
+	Value interface{}
+}
+
+func (this UnreducibleValueError) Error() string{
+	return fmt.Sprintf("Cannot reduce (%T) %v", this.Value, this.Value)
 }
 
 /**
@@ -592,8 +611,34 @@ Stack before: [any, any]
 Stack after: [any]
 **/
 func (pm *PickleMachine) opcode_REDUCE() error {
-	//TODO push an object that represents the result result of this operation
-	return ErrOpcodeNotImplemented
+	obj, err := pm.pop()
+	if err != nil {
+		return err
+	}
+	funcName, err := pm.pop()
+	if err != nil {
+		return err
+	}
+
+	// Sentinel should have been placed on the stack by the opcode_GLOBAL function
+	sentinel, ok := funcName.(globalSentinel)
+	if !ok {	
+		return UnreducibleValueError{Value: funcName}
+	}
+
+	// Python docs say tuple on the stack, so should always be a slice here in Golang
+	args, ok := obj.([]interface{})
+	if !ok {
+		return UnreducibleValueError{Value: obj}
+	}
+
+	result, err := pm.resolver.Resolve(sentinel.Package, sentinel.Name, args)
+	if err != nil {
+		return err
+	} 
+	
+	pm.push(result)
+	return nil
 }
 
 /**
@@ -627,8 +672,43 @@ Stack before: [any, any]
 Stack after: [any]
 **/
 func (pm *PickleMachine) opcode_BUILD() error {
-	return ErrOpcodeNotImplemented
+	obj, err := pm.pop()
+	if err != nil {
+		return err
+	}
+	funcName, err := pm.pop()
+	if err != nil {
+		return err
+	}
+
+	// Sentinel should have been placed on the stack by the opcode_INST function
+	sentinel, ok := funcName.(instanceSentinel)
+	if !ok {	
+		return UnbuildableValueError{Value: funcName}
+	}
+
+	args := append(sentinel.Args, obj)
+	if !ok {
+		return UnbuildableValueError{Value: funcName}
+	}
+
+	result, err := pm.resolver.Resolve(sentinel.Package, sentinel.Name, args)
+	if err != nil {
+		return err
+	} 
+	
+	pm.push(result)
+	return nil
 }
+
+type UnbuildableValueError struct{
+	Value interface{}
+}
+
+func (this UnbuildableValueError) Error() string{
+	return fmt.Sprintf("Cannot build (%T) %v", this.Value, this.Value)
+}
+
 
 /**
 Opcode: INST
@@ -685,7 +765,37 @@ Stack before: [mark, stackslice]
 Stack after: [any]
 **/
 func (pm *PickleMachine) opcode_INST() error {
-	return ErrOpcodeNotImplemented
+	str1, err := pm.readString()
+	if err != nil {
+		return err
+	}
+
+	str2, err := pm.readString()
+	if err != nil {
+		return err
+	} 
+
+	sentinel := instanceSentinel{Package: str1, Name: str2}
+
+	markIndex, err := pm.findMark()
+	
+	if err != nil {
+		return err
+	}
+
+	args := make([]interface{}, 0, 1)
+	for i := markIndex + 1; i != len(pm.Stack); i++ {
+		args = append(args, pm.Stack[i])
+	}
+
+	//Pop the values off the stack
+	pm.popAfterIndex(markIndex)
+
+	sentinel.Args = args
+
+	// Push a sentinel object representing the type	
+	pm.push(sentinel)
+	return nil
 }
 
 /**

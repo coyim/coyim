@@ -37,14 +37,15 @@
   revision = "728d69a7102fc174d4d7ef16eaf527e2601f0c69"
 
 [[projects]]
-  digest = "1:2478e8b6f1e5dbf6333372189ddb8d7c4e367e790b944db0d378245f81047376"
+  branch = "master"
+  digest = "1:0a7d052496107bc0f6f8977c83c06ce9f99a92d9387c3f9bfdf14eb8e18d2545"
   name = "github.com/coyim/otr3"
   packages = [
     ".",
     "sexp",
   ]
   pruneopts = "UT"
-  revision = "46ec9c947dd33e64acdf35822e3ba1e4feb38d89"
+  revision = "e4ca4cc2fb0d95d19bcf1b1c022732839663cfc1"
 
 [[projects]]
   digest = "1:57fa4c058c21ce25d0b7272518dd746065117abf6cc706158b0d361202024520"
@@ -69,50 +70,92 @@
   version = "v0.4.0"
 
 [[projects]]
-  digest = "1:d7fd13925b9475ad6afb8af4cbfea8515124c6863daa0642dcdafc717350f55b"
+  branch = "master"
+  digest = "1:8c2d6d0b00c2b021a1560f1f8657ceb589ef0bbacabdefbd700979b51cdef2b8"
   name = "github.com/hydrogen18/stalecucumber"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0a94983f3e27967c69ba6bb92f9d5f0a68a97bc0"
+  revision = "6de214d141dda4b540da196a19a68228f0c8323d"
 
 [[projects]]
-  digest = "1:caf6db28595425c0e0f2301a00257d11712f65c1878e12cffc42f6b9a9cf3f23"
+  branch = "master"
+  digest = "1:f433da6fbabb0bd1bd730fd340782015c644123d02eb78c20c69ce03352daad1"
   name = "github.com/kardianos/osext"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ae77be60afb1dcacde03767a8c37337fad28ac14"
+  revision = "2bc1f35cddc0cc527b4bc3dce8578fc2a6c11384"
 
 [[projects]]
-  digest = "1:889c70c01b38274c8cd30edcceeb3ed77e641db711a4652e48f0f3606d640612"
+  digest = "1:7218fd69ff5436d016101bbc6183cdc289aa45ac37b48e78846318e4ef389bea"
+  name = "github.com/kr/text"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "702c74938df48b97370179f33ce2107bd7ff3b3e"
+  version = "v0.2.0"
+
+[[projects]]
+  digest = "1:3e2a07391c0756e06504dfa2fb6c52d55261c8d5a9d790ab316a1544bbe87b0d"
   name = "github.com/miekg/dns"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e78414ef75607394ad7d917824f07f381df2eafa"
+  revision = "f515aa579d28efa1af67d9a62cc57f2dfe59da76"
+  version = "v1.1.29"
 
 [[projects]]
-  digest = "1:800e06c1a98ec3c7e70e6c255b9536326b2325a9ce23e7585a3358f0e72eb50e"
+  branch = "master"
+  digest = "1:4454a22e87e1aacfb4c7e9550ab98c711a5285a0cc7f9ff8952c44a9b0dbbb05"
+  name = "github.com/niemeyer/pretty"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a10e7caefd8e0d600cea437f5c3613aeb1553d56"
+
+[[projects]]
+  branch = "master"
+  digest = "1:ad1e6784bae6c9a943f900dacf9bbc23968b59399a103acc043e08b1c50c5407"
   name = "golang.org/x/crypto"
   packages = [
+    "ed25519",
+    "ed25519/internal/edwards25519",
     "pbkdf2",
     "scrypt",
     "sha3",
   ]
   pruneopts = "UT"
-  revision = "b080dc9a8c480b08e698fb1219160d598526310f"
+  revision = "06a226fb4e3765ef3f48aa2852b401bc7b98e981"
 
 [[projects]]
-  digest = "1:7236bfdc23fcfbebfa27f3ec4957ad3f824fea048d53afd01cd2d122309733fc"
+  branch = "master"
+  digest = "1:c80d5bea5bd6fd358a75b78512aee4751e6b76d7376d57ea856b59516de54e49"
   name = "golang.org/x/net"
   packages = [
+    "bpf",
     "html",
     "html/atom",
+    "internal/iana",
+    "internal/socket",
+    "internal/socks",
+    "ipv4",
+    "ipv6",
     "proxy",
   ]
   pruneopts = "UT"
-  revision = "c7086645de248775cbf2373cf5ca4d2fa664b8c1"
+  revision = "0ba52f642ac2f9371a88bfdde41f4b4e195a37c0"
 
 [[projects]]
-  digest = "1:49f6e78e8498938f529f3e0fec4b007efd670ae2008295409421227044d2139e"
+  branch = "master"
+  digest = "1:6fdb20a35b444bf20ade4a96382a215b0260514d5ee3426dceb81e3505475be3"
+  name = "golang.org/x/sys"
+  packages = [
+    "cpu",
+    "internal/unsafeheader",
+    "unix",
+    "windows",
+  ]
+  pruneopts = "UT"
+  revision = "05986578812163b26672dabd9b425240ae2bb0ad"
+
+[[projects]]
+  digest = "1:1093f2eb4b344996604f7d8b29a16c5b22ab9e1b25652140d3fede39f640d5cd"
   name = "golang.org/x/text"
   packages = [
     "internal/gen",
@@ -123,21 +166,56 @@
     "unicode/norm",
   ]
   pruneopts = "UT"
-  revision = "88f656faf3f37f690df1a32515b479415e1a6769"
+  revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
+  version = "v0.3.2"
 
 [[projects]]
-  digest = "1:dcb51660fc1fd7bfa3f45305db912fa587c12c17658fd66b3ab55339b59ffbe6"
+  branch = "master"
+  digest = "1:e6cf9e91c2f1d3643cf68048ee3c1a7638198d8fd4c8637e8064477cc68dd045"
+  name = "golang.org/x/tools"
+  packages = [
+    "go/ast/astutil",
+    "go/gcexportdata",
+    "go/internal/gcimporter",
+    "go/internal/packagesdriver",
+    "go/packages",
+    "go/types/typeutil",
+    "internal/event",
+    "internal/event/core",
+    "internal/event/keys",
+    "internal/event/label",
+    "internal/gocommand",
+    "internal/packagesinternal",
+  ]
+  pruneopts = "UT"
+  revision = "cb1345f3a375367f8439bba882e90348348288d9"
+
+[[projects]]
+  branch = "master"
+  digest = "1:918a46e4a2fb83df33f668f5a6bd51b2996775d073fce1800d3ec01b0a5ddd2b"
+  name = "golang.org/x/xerrors"
+  packages = [
+    ".",
+    "internal",
+  ]
+  pruneopts = "UT"
+  revision = "9bdfabe68543c54f90421aeb9a60ef8061b5b544"
+
+[[projects]]
+  branch = "v1"
+  digest = "1:95c723aeb49b28a44330cd94e0272e23ad6ad6e3fb2945a556b72d71fd7b8c65"
   name = "gopkg.in/check.v1"
   packages = ["."]
   pruneopts = "UT"
-  revision = "20d25e2804050c1cd24a7eea1e7a6447dd0e74ec"
+  revision = "8fa46927fb4f5b54d48bde78c6c08db205b2298c"
 
 [[projects]]
-  digest = "1:da2e23675d581e6fbdeb743f177fa98d51cbb02983a5d280f9b3d56a5d541c22"
+  branch = "master"
+  digest = "1:b5ead2120cd278858a83be14ef551f54295da350033dbc3f227fe0298b880256"
   name = "howett.net/plist"
   packages = ["."]
   pruneopts = "UT"
-  revision = "233df3c4f07b0c562da0e8a6fb850681ac49bb90"
+  revision = "3b63eb3a43b59c776909681ed1fcb412b47d3c9a"
 
 [solve-meta]
   analyzer-name = "dep"

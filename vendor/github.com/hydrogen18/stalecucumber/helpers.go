@@ -169,6 +169,26 @@ func Dict(v interface{}, err error) (map[interface{}]interface{}, error) {
 }
 
 /*
+This helper attempts to convert the return value of Unpickle into a map[interface{}]bool.
+
+If Unpickle returns an error that error is returned immediately.
+
+If the value cannot be converted an error is returned.
+*/
+func Set(v interface{}, err error) (map[interface{}]bool, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	vd, ok := v.(map[interface{}]bool)
+	if ok {
+		return vd, nil
+	}
+
+	return nil, newWrongTypeError(v, vd)
+}
+
+/*
 This helper attempts to convert the return value of Unpickle into a map[string]interface{}.
 
 If Unpickle returns an error that error is returned immediately.

@@ -55,8 +55,6 @@ Pickle a struct
 
 	err := stalecucumber.NewPickler(buf).Pickle(mystruct)
 
-
-
 Recursive objects
 
 You can pickle recursive objects like so
@@ -76,6 +74,39 @@ a reference to itself.
 Attempting to unpack the result of the above python code into a structure
 with UnpackInto would either fail or recurse forever.
 
+Unpickling Python objects
+
+The Python Pickle module can pickle most Python objects. By default,
+some Python objects such as the set type and bytearray type are automatically
+supported by this library. 
+
+To support unpickling custom Python objects, you need to implement a 
+resolver. A resolver meets the PythonResolver interface, which is just this
+function
+
+	Resolve(module string, name string, args []interface{})
+	
+The module and name are the class name. So if you have a class called "Foo"
+in the module "bar" the first argument would be "bar" and the second would 
+be "Foo". You can pass in your custom resolver by calling
+
+	 UnpickleWithResolver(buf, yourCustomResolver)
+
+The third argument of the Resolve function is originally a Python tuple,
+so it is slice of anything. For most user defined objects this is just a Python 
+dictionary. However, if a Python object implements the __reduce__ method it 
+could be anything.
+
+If your resolver can't identify the type named by module & string, just return
+stalecucumber.ErrUnresolvablePythonGlobal. Otherwise convert the args into whatever
+you want and return that as the value from the function with nil for the error.
+	 
+To avoid reimplementing the same logic over and over, you can chain resolvers
+together. You can use your resolver in addition to the default resolver by doing the 
+following
+
+  UnpickleWithResolver(reader, MakePythonResolverChain(customResolver, PythonBuiltinResolver{}))
+
 Protocol Performance
 
 If the version of Python you are using supports protocol version 1 or 2,
@@ -93,32 +124,6 @@ another language.
 Each set of opcodes is listed below by protocol version with the impact.
 
 Protocol 0
-
-	GLOBAL
-
-This opcode is equivalent to calling "import foo; foo.bar" in python. It is
-generated whenever an object instance, class definition, or method definition
-is serialized. As long as the pickled data does not contain an instance
-of a python class or a reference to a python callable this opcode is not
-emitted by the "pickle" module.
-
-A few examples of what will definitely cause this opcode to be emitted
-
-	pickle.dumps(range) #Pickling the range function
-	pickle.dumps(Exception()) #Pickling an instance of a python class
-
-This opcode will be partially supported in a future revision to this package
-that allows the unpickling of instances of Python classes.
-
-	REDUCE
-	BUILD
-	INST
-
-These opcodes are used in recreating pickled python objects. That is currently
-not supported by this package.
-
-These opcodes will be supported in a future revision to this package
-that allows the unpickling of instances of Python classes.
 
 	PERSID
 
@@ -263,10 +268,19 @@ From.
 
 */
 func Unpickle(reader io.Reader) (interface{}, error) {
+	return UnpickleWithResolver(reader, nil)
+}
+
+func UnpickleWithResolver(reader io.Reader, resolver PythonResolver) (interface{}, error){
 	var pm PickleMachine
 	pm.buf = &bytes.Buffer{}
 	pm.Reader = reader
 	pm.lastMark = -1
+	if resolver == nil {
+		pm.resolver = PythonBuiltinResolver{} 
+	} else {
+		pm.resolver = resolver
+	}
 	//Pre allocate a small stack
 	pm.Stack = make([]interface{}, 0, 16)
 
@@ -280,7 +294,6 @@ func Unpickle(reader io.Reader) (interface{}, error) {
 	}
 
 	return pm.Stack[0], nil
-
 }
 
 var jumpList = buildEmptyJumpList()
@@ -307,7 +320,8 @@ type PickleMachine struct {
 	Stack  []interface{}
 	Memo   []interface{}
 	Reader io.Reader
-
+	
+	resolver PythonResolver
 	currentOpcode uint8
 	buf           *bytes.Buffer
 	lastMark      int

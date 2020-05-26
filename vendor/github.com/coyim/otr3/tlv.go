@@ -1,8 +1,8 @@
 package otr3
 
-import "bytes"
-
-const tlvHeaderLength = 4
+import (
+	"bytes"
+)
 
 const (
 	tlvTypePadding           = uint16(0x00)
@@ -64,18 +64,18 @@ type tlv struct {
 }
 
 func (c tlv) serialize() []byte {
-	out := appendShort([]byte{}, c.tlvType)
-	out = appendShort(out, c.tlvLength)
+	out := AppendShort([]byte{}, c.tlvType)
+	out = AppendShort(out, c.tlvLength)
 	return append(out, c.tlvValue...)
 }
 
 func (c *tlv) deserialize(tlvsBytes []byte) error {
 	var ok bool
-	tlvsBytes, c.tlvType, ok = extractShort(tlvsBytes)
+	tlvsBytes, c.tlvType, ok = ExtractShort(tlvsBytes)
 	if !ok {
 		return newOtrError("wrong tlv type")
 	}
-	tlvsBytes, c.tlvLength, ok = extractShort(tlvsBytes)
+	tlvsBytes, c.tlvLength, ok = ExtractShort(tlvsBytes)
 	if !ok {
 		return newOtrError("wrong tlv length")
 	}
@@ -110,7 +110,7 @@ func (c tlv) smpMessage() (smpMessage, bool) {
 }
 
 func toSmpMessage1(t tlv) (msg smp1Message, ok bool) {
-	_, mpis, ok := extractMPIs(t.tlvValue)
+	_, mpis, ok := ExtractMPIs(t.tlvValue)
 	if !ok || len(mpis) < 6 {
 		return msg, false
 	}
@@ -137,7 +137,7 @@ func toSmpMessage1Q(t tlv) (msg smp1Message, ok bool) {
 }
 
 func toSmpMessage2(t tlv) (msg smp2Message, ok bool) {
-	_, mpis, ok := extractMPIs(t.tlvValue)
+	_, mpis, ok := ExtractMPIs(t.tlvValue)
 	if !ok || len(mpis) < 11 {
 		return msg, false
 	}
@@ -156,7 +156,7 @@ func toSmpMessage2(t tlv) (msg smp2Message, ok bool) {
 }
 
 func toSmpMessage3(t tlv) (msg smp3Message, ok bool) {
-	_, mpis, ok := extractMPIs(t.tlvValue)
+	_, mpis, ok := ExtractMPIs(t.tlvValue)
 	if !ok || len(mpis) < 8 {
 		return msg, false
 	}
@@ -172,7 +172,7 @@ func toSmpMessage3(t tlv) (msg smp3Message, ok bool) {
 }
 
 func toSmpMessage4(t tlv) (msg smp4Message, ok bool) {
-	_, mpis, ok := extractMPIs(t.tlvValue)
+	_, mpis, ok := ExtractMPIs(t.tlvValue)
 	if !ok || len(mpis) < 3 {
 		return msg, false
 	}

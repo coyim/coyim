@@ -49,7 +49,7 @@ func (v otrV2) whitespaceTag() []byte {
 }
 
 func (v otrV2) messageHeader(c *Conversation, msgType byte) ([]byte, error) {
-	out := appendShort(nil, v.protocolVersion())
+	out := AppendShort(nil, v.protocolVersion())
 	out = append(out, msgType)
 	return out, nil
 }

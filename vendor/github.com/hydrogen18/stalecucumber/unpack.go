@@ -1,10 +1,12 @@
 package stalecucumber
 
+import "io"
 import "reflect"
 import "fmt"
 import "errors"
 import "strings"
 import "math/big"
+import "bytes"
 
 const PICKLE_TAG = "pickle"
 
@@ -189,6 +191,27 @@ func (u unpacker) from(srcI interface{}) error {
 				AllowMissingFields:    u.AllowMissingFields}.From(vi, nil)
 		}
 
+	case io.Reader:		
+		var readerType = reflect.TypeOf((*io.Reader)(nil)).Elem()
+		// Check for exact match
+		if vIndirect.Kind() == reflect.Interface && vIndirect.Type().Implements(readerType) { 
+			vIndirect.Set(reflect.ValueOf(s))
+			return nil
+		}
+
+		// Handle converting io.Reader to byte buffer if the caller passes that in
+		var byteBufferType = reflect.TypeOf((*bytes.Buffer)(nil)).Elem()
+		if vIndirect.Type() == byteBufferType {
+			buf := &bytes.Buffer{}
+			_, err := io.Copy(buf, s)
+			if err != nil {
+				return err
+			}
+
+			vIndirect.Set(reflect.ValueOf(*buf))
+			return nil
+		}		
+		
 	case []interface{}:
 		//Check that the destination is a slice
 		if vIndirect.Kind() != reflect.Slice {

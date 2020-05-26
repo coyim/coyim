@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-const minimumMessageLength = 3 // length of protocol version (SHORT) and message type (BYTE)
-
 func (c *Conversation) generateNewDHKeyPair() error {
 	return c.keys.generateNewDHKeyPair(c.rand())
 }
@@ -120,14 +118,13 @@ func (s authStateAwaitingRevealSig) receiveDHCommitMessage(c *Conversation, msg 
 }
 
 func (s authStateAwaitingDHKey) receiveDHCommitMessage(c *Conversation, msg []byte) (authState, messageWithHeader, error) {
-	newMsg, _, ok1 := extractData(msg)
-	_, theirHashedGx, ok2 := extractData(newMsg)
-
-	if !ok1 || !ok2 {
+	newMsg, _, ok := ExtractData(msg)
+	_, theirHashedGx, ok2 := ExtractData(newMsg)
+	if !(ok && ok2) {
 		return s, nil, errInvalidOTRMessage
 	}
 
-	gxMPI := appendMPI(nil, c.ake.ourPublicValue)
+	gxMPI := AppendMPI(nil, c.ake.ourPublicValue)
 	hashedGx := c.version.hash2(gxMPI)
 	//If yours is the higher hash value:
 	//Ignore the incoming D-H Commit message, but resend your D-H Commit message.

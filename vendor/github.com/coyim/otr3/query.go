@@ -23,6 +23,10 @@ func parseOTRQueryMessage(msg ValidMessage) []int {
 
 		if len(versions) > 0 && versions[0] == 'v' {
 			for _, c := range versions {
+				r := rune(c)
+				if r == '?' {
+					break
+				}
 				if v, err := strconv.Atoi(string(c)); err == nil {
 					ret = append(ret, v)
 				}
@@ -71,7 +75,7 @@ func (c *Conversation) receiveQueryMessage(msg ValidMessage) ([]messageWithHeade
 }
 
 //QueryMessage will return a QueryMessage determined by Conversation Policies
-func (c Conversation) QueryMessage() ValidMessage {
+func (c *Conversation) QueryMessage() ValidMessage {
 	queryMessage := []byte("?OTRv")
 
 	if c.Policies.has(allowV2) {
@@ -90,6 +94,7 @@ func (c Conversation) QueryMessage() ValidMessage {
 	return append(queryMessage, suffix...)
 }
 
+//SetFriendlyQueryMessage will set a new message as query message
 func (c *Conversation) SetFriendlyQueryMessage(msg string) {
 	c.friendlyQueryMessage = msg
 }

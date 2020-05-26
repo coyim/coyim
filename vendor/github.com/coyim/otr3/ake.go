@@ -16,6 +16,7 @@ type ake struct {
 	theirPublicValue *big.Int
 
 	// TODO: why this number here?
+	// A random value r of 128 bits (16 byte)
 	r [16]byte
 
 	encryptedGx []byte
@@ -69,10 +70,10 @@ func (c *Conversation) generateEncryptedSignature(key *akeKeys) ([]byte, error) 
 		return nil, err
 	}
 
-	return appendData(nil, xb), nil
+	return AppendData(nil, xb), nil
 }
 func appendAll(one, two *big.Int, publicKey PublicKey, keyID uint32) []byte {
-	return appendWord(append(appendMPI(appendMPI(nil, one), two), publicKey.serialize()...), keyID)
+	return AppendWord(append(AppendMPI(AppendMPI(nil, one), two), publicKey.serialize()...), keyID)
 }
 
 func fixedSize(s int, v []byte) []byte {
@@ -86,10 +87,10 @@ func fixedSize(s int, v []byte) []byte {
 
 func (c *Conversation) calcXb(key *akeKeys, mb []byte) ([]byte, error) {
 	xb := c.ourCurrentKey.PublicKey().serialize()
-	xb = appendWord(xb, c.ake.keys.ourKeyID)
+	xb = AppendWord(xb, c.ake.keys.ourKeyID)
 
 	sigb, err := c.ourCurrentKey.Sign(c.rand(), mb)
-	if err == io.ErrUnexpectedEOF {
+	if err == io.ErrUnexpectedEOF || err == io.EOF {
 		return nil, errShortRandomRead
 	}
 
@@ -109,7 +110,7 @@ func (c *Conversation) dhCommitMessage() ([]byte, error) {
 	c.initAKE()
 	c.ake.keys.ourKeyID = 0
 
-	// TODO: where does this 40 come from?
+	// A random value x of at least 320 bits (40 byte)
 	x, err := c.randMPI(make([]byte, 40))
 	if err != nil {
 		return nil, err
@@ -123,7 +124,7 @@ func (c *Conversation) dhCommitMessage() ([]byte, error) {
 	}
 
 	// this can't return an error, since ake.r is of a fixed size that is always correct
-	c.ake.encryptedGx, _ = encrypt(c.ake.r[:], appendMPI(nil, c.ake.ourPublicValue))
+	c.ake.encryptedGx, _ = encrypt(c.ake.r[:], AppendMPI(nil, c.ake.ourPublicValue))
 
 	return c.serializeDHCommit(c.ake.ourPublicValue), nil
 }
@@ -131,7 +132,7 @@ func (c *Conversation) dhCommitMessage() ([]byte, error) {
 func (c *Conversation) serializeDHCommit(public *big.Int) []byte {
 	dhCommitMsg := dhCommit{
 		encryptedGx: c.ake.encryptedGx,
-		yhashedGx:   c.version.hash2(appendMPI(nil, public)),
+		yhashedGx:   c.version.hash2(AppendMPI(nil, public)),
 	}
 	return dhCommitMsg.serialize()
 }
@@ -141,7 +142,7 @@ func (c *Conversation) serializeDHCommit(public *big.Int) []byte {
 func (c *Conversation) dhKeyMessage() ([]byte, error) {
 	c.initAKE()
 
-	// TODO: where does this 40 come from?
+	// A random value x of at least 320 bits (40 byte)
 	y, err := c.randMPI(make([]byte, 40)[:])
 
 	if err != nil {
@@ -307,7 +308,7 @@ func (c *Conversation) checkedSignatureVerification(mb, sig []byte) error {
 }
 
 func verifyEncryptedSignatureMAC(encryptedSig []byte, theirMAC []byte, keys *akeKeys, v otrVersion) error {
-	tomac := appendData(nil, encryptedSig)
+	tomac := AppendData(nil, encryptedSig)
 
 	myMAC := sumHMAC(keys.m2, tomac, v)[:v.truncateLength()]
 
@@ -320,11 +321,10 @@ func verifyEncryptedSignatureMAC(encryptedSig []byte, theirMAC []byte, keys *ake
 
 func (c *Conversation) parseTheirKey(key []byte) (sig []byte, keyID uint32, err error) {
 	var rest []byte
-	var ok1 bool
-	rest, ok1, c.theirKey = ParsePublicKey(key)
-	sig, keyID, ok2 := extractWord(rest)
-
-	if !ok1 || !ok2 {
+	var ok, ok2 bool
+	rest, ok, c.theirKey = ParsePublicKey(key)
+	sig, keyID, ok2 = ExtractWord(rest)
+	if !(ok && ok2) {
 		return nil, 0, errCorruptEncryptedSignature
 	}
 
@@ -362,7 +362,7 @@ func (c *Conversation) processEncryptedSig(encryptedSig []byte, theirMAC []byte,
 }
 
 func extractGx(decryptedGx []byte) (*big.Int, error) {
-	newData, gx, ok := extractMPI(decryptedGx)
+	newData, gx, ok := ExtractMPI(decryptedGx)
 	if !ok || len(newData) > 0 {
 		return gx, newOtrError("gx corrupt after decryption")
 	}

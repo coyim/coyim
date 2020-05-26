@@ -37,6 +37,6 @@
 //  plain, toSend, err := c.Receive(toSend[0])
 //
 //  // Use Authenticate to start a SMP process
-//  toSend, err := c.StartAuthenticate([]byte{"My pet's name?"},[]byte{"Gopher"})
+//  toSend, err := c.StartAuthenticate("My pet's name?",[]byte{"Gopher"})
 //  toSend, err := c.ProvideAuthenticationSecret([]byte{"Gopher"})
 package otr3

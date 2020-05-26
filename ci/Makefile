@@ -3,24 +3,18 @@ GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 default: doctor test coveralls
 
 deps:
-	make -C ../development deps
+	make -C ../ deps
 	go get -u github.com/mattn/goveralls
 
 test:
-	make check -C ../development
+	make check -C ../
 
 doctor: check-go-imports check-ui-defs
 
 check-go-imports:
-ifeq ($(GO_VERSION), go1.7)
-	echo "Your version of Go is too old for running goimports. Skipping."
-else ifeq ($(GO_VERSION), go1.8)
-	echo "Your version of Go is too old for running goimports. Skipping."
-else
 	go get -u golang.org/x/tools/cmd/goimports
 	goimports -w .
 	git diff --exit-code .
-endif
 
 # make sure the ui definitions checked in are in sync
 check-ui-defs:
@@ -28,8 +22,8 @@ check-ui-defs:
 
 # send coverage data to coveralls
 coveralls:
-	make run-cover -C ../development
-	goveralls -coverprofile=../.coverprofiles/gover.coverprofile -service=travis-ci || true
+	make run-cover -C ../
+	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci || true
 
 clean-release:
 	$(RM) bin/*

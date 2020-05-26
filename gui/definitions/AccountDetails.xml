@@ -406,6 +406,8 @@
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">&lt;b&gt;Certificate pinning policy&lt;/b&gt;
 
+The pinning policy governs whether we will consider saving information about certificates that we have seen before, and how we will react in different cases. A pinned certificate implies that we trust that certificate to secure the connection. The available options and their meaning are described below:
+
 &lt;b&gt;None&lt;/b&gt;: Disable certificate pinning.
 
 &lt;b&gt;Deny&lt;/b&gt;: Do not pin new certificates and only use the existing pinned certificates. In case a certificate offered by the server is not found, the connection is refused.

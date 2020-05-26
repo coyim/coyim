@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otrclient"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/ui"
@@ -371,7 +371,7 @@ func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
 	// cwi.MoveToDesktop(parentPlace)
 }
 
-func (conv *conversationPane) getConversation() (otr_client.Conversation, bool) {
+func (conv *conversationPane) getConversation() (otrclient.Conversation, bool) {
 	pm, ok := conv.potentialCurrentPeer()
 	if !ok {
 		return nil, false

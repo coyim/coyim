@@ -179,13 +179,13 @@ func (v *addChatView) waitForSelfPresence(chat interfaces.Chat, occupant *data.O
 		}
 	}
 
-	return ret, errors.New("Did not receive a presence response")
+	return ret, errors.New("did not receive a presence response")
 }
 
 //TODO: This could all go to the interfaces.Chat
 func (v *addChatView) enterRoom(chat interfaces.Chat, occupant *data.Occupant) ([]*roomOccupant, error) {
 	if !chat.CheckForSupport(occupant.Service) {
-		return nil, errors.New("The service does not support chat.")
+		return nil, errors.New("the service does not support chat")
 	}
 
 	err := chat.EnterRoom(occupant)

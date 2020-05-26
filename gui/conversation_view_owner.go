@@ -10,12 +10,12 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type ConversationViewFactory interface {
+type conversationViewFactory interface {
 	OpenConversationView(userInitiated bool) conversationView
 	IfConversationView(whenExists func(conversationView), whenDoesntExist func())
 }
 
-type conversationViewFactory struct {
+type ourConversationViewFactory struct {
 	account  *account
 	peer     jid.Any
 	ui       *gtkUI
@@ -23,8 +23,8 @@ type conversationViewFactory struct {
 	targeted bool
 }
 
-func (u *gtkUI) NewConversationViewFactory(account *account, peer jid.Any, targeted bool) ConversationViewFactory {
-	return &conversationViewFactory{
+func (u *gtkUI) NewConversationViewFactory(account *account, peer jid.Any, targeted bool) conversationViewFactory {
+	return &ourConversationViewFactory{
 		ui:       u,
 		ul:       u.unified,
 		account:  account,
@@ -33,7 +33,7 @@ func (u *gtkUI) NewConversationViewFactory(account *account, peer jid.Any, targe
 	}
 }
 
-func (cvf *conversationViewFactory) OpenConversationView(userInitiated bool) conversationView {
+func (cvf *ourConversationViewFactory) OpenConversationView(userInitiated bool) conversationView {
 	// fmt.Printf("OpenConversationView(peer=%s, user=%v, targeted=%v)\n", cvf.peer, userInitiated, cvf.targeted)
 	c, ok := cvf.getConversationViewSafely()
 	if !ok {
@@ -44,7 +44,7 @@ func (cvf *conversationViewFactory) OpenConversationView(userInitiated bool) con
 	return c
 }
 
-func (cvf *conversationViewFactory) IfConversationView(whenExists func(conversationView), whenDoesntExist func()) {
+func (cvf *ourConversationViewFactory) IfConversationView(whenExists func(conversationView), whenDoesntExist func()) {
 	// fmt.Printf("IfConversationView(peer=%s)\n", cvf.peer)
 	c, ok := cvf.getConversationViewSafely()
 	// fmt.Printf("    IfConversationView(peer=%s) ok=%v\n", cvf.peer, ok)
@@ -55,7 +55,7 @@ func (cvf *conversationViewFactory) IfConversationView(whenExists func(conversat
 	}
 }
 
-func (cvf *conversationViewFactory) createConversationView(existing *conversationPane) conversationView {
+func (cvf *ourConversationViewFactory) createConversationView(existing *conversationPane) conversationView {
 	// fmt.Printf("createConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	var cv conversationView
 
@@ -69,7 +69,7 @@ func (cvf *conversationViewFactory) createConversationView(existing *conversatio
 	return cv
 }
 
-func (cvf *conversationViewFactory) potentialTarget() string {
+func (cvf *ourConversationViewFactory) potentialTarget() string {
 	p := string(cvf.peer.PotentialResource())
 	if cvf.targeted && p != "" {
 		return fmt.Sprintf(" (%s)", p)
@@ -88,7 +88,7 @@ func windowConversationTitle(ui *gtkUI, peer jid.Any, account *account, potentia
 	return fmt.Sprintf("%s%s (%s)", otherName, potentialTarget, account.session.DisplayName())
 }
 
-func (cvf *conversationViewFactory) createWindowedConversationView(existing *conversationPane) *conversationWindow {
+func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *conversationPane) *conversationWindow {
 	// fmt.Printf("createWindowedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("Conversation")
 	win := builder.getObj("conversation").(gtki.Window)
@@ -152,7 +152,7 @@ func (cvf *conversationViewFactory) createWindowedConversationView(existing *con
 	return conv
 }
 
-func (cvf *conversationViewFactory) createUnifiedConversationView(existing *conversationPane) conversationView {
+func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *conversationPane) conversationView {
 	// fmt.Printf("createUnifiedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	cp := cvf.createConversationPane(cvf.ui.window)
 
@@ -192,7 +192,7 @@ func (cvf *conversationViewFactory) createUnifiedConversationView(existing *conv
 	return csi
 }
 
-func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *conversationPane {
+func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *conversationPane {
 	// fmt.Printf("createConversationPane(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("ConversationPane")
 
@@ -279,7 +279,7 @@ func (cvf *conversationViewFactory) createConversationPane(win gtki.Window) *con
 	return cp
 }
 
-func (cvf *conversationViewFactory) setConversationView(c conversationView) {
+func (cvf *ourConversationViewFactory) setConversationView(c conversationView) {
 	// fmt.Printf("setConversationView(peer=%s)\n", cvf.peer)
 	defer cvf.account.executeDelayed(cvf.ui, cvf.peer, cvf.targeted)
 	cvf.account.Lock()
@@ -293,13 +293,13 @@ func (cvf *conversationViewFactory) setConversationView(c conversationView) {
 	cvf.account.c[c.getTarget().String()] = c
 }
 
-func (cvf *conversationViewFactory) isWindowingStyleConsistent(c conversationView) bool {
+func (cvf *ourConversationViewFactory) isWindowingStyleConsistent(c conversationView) bool {
 	unifiedLayout := cvf.ui.settings.GetSingleWindow()
 	_, windowUnifiedLayout := c.(*conversationStackItem)
 	return unifiedLayout == windowUnifiedLayout
 }
 
-func (cvf *conversationViewFactory) getConversationViewSafely() (conversationView, bool) {
+func (cvf *ourConversationViewFactory) getConversationViewSafely() (conversationView, bool) {
 	// fmt.Printf("getConversationViewSafely(peer=%s)\n", cvf.peer)
 	c, ok := cvf.basicGetConversationView()
 	// fmt.Printf("    getConversationViewSafely(peer=%s) ok=%v\n", cvf.peer, ok)
@@ -323,10 +323,10 @@ func (cvf *conversationViewFactory) getConversationViewSafely() (conversationVie
 	return cvf.createConversationView(pane), true
 }
 
-func (cvf *conversationViewFactory) countPeerWindows(peer jid.Any) int {
+func (cvf *ourConversationViewFactory) countPeerWindows(peer jid.Any) int {
 	prefix := peer.NoResource().String()
 	c := 0
-	for k, _ := range cvf.account.c {
+	for k := range cvf.account.c {
 		if k == prefix || strings.HasPrefix(k, prefix+"/") {
 			c++
 		}
@@ -334,7 +334,7 @@ func (cvf *conversationViewFactory) countPeerWindows(peer jid.Any) int {
 	return c
 }
 
-func (cvf *conversationViewFactory) basicGetConversationView() (conversationView, bool) {
+func (cvf *ourConversationViewFactory) basicGetConversationView() (conversationView, bool) {
 	// fmt.Printf("basicGetConversationView(peer=%s)\n", cvf.peer)
 	cvf.account.RLock()
 	defer cvf.account.RUnlock()

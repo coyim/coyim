@@ -10,7 +10,7 @@ import (
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp"
@@ -1022,16 +1022,16 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 }
 
 type mockConvManager struct {
-	getConversationWith    func(jid.Any) (otr_client.Conversation, bool)
-	ensureConversationWith func(jid.Any) (otr_client.Conversation, bool)
+	getConversationWith    func(jid.Any) (otrclient.Conversation, bool)
+	ensureConversationWith func(jid.Any) (otrclient.Conversation, bool)
 	terminateAll           func()
 }
 
-func (mcm *mockConvManager) GetConversationWith(peer jid.Any) (otr_client.Conversation, bool) {
+func (mcm *mockConvManager) GetConversationWith(peer jid.Any) (otrclient.Conversation, bool) {
 	return mcm.getConversationWith(peer)
 }
 
-func (mcm *mockConvManager) EnsureConversationWith(peer jid.Any) (otr_client.Conversation, bool) {
+func (mcm *mockConvManager) EnsureConversationWith(peer jid.Any) (otrclient.Conversation, bool) {
 	return mcm.ensureConversationWith(peer)
 }
 
@@ -1080,8 +1080,8 @@ func (mc *mockConv) GetSSID() [8]byte {
 	return [8]byte{}
 }
 
-func (mc *mockConv) EventHandler() *otr_client.EventHandler {
-	return &otr_client.EventHandler{}
+func (mc *mockConv) EventHandler() *otrclient.EventHandler {
+	return &otrclient.EventHandler{}
 }
 
 func (mc *mockConv) OurFingerprint() []byte {
@@ -1096,8 +1096,8 @@ func (mc *mockConv) CreateExtraSymmetricKey() ([]byte, error) {
 	return nil, nil
 }
 
-// func otrEventHandlerWith(s string, eh *otr_client.EventHandler) *otr_client.EventHandlers {
-// 	ehs := otr_client.NewEventHandlers("one", func(jid.Any, *otr_client.EventHandler, chan string, chan int) {})
+// func otrEventHandlerWith(s string, eh *otrclient.EventHandler) *otrclient.EventHandlers {
+// 	ehs := otrclient.NewEventHandlers("one", func(jid.Any, *otrclient.EventHandler, chan string, chan int) {})
 // 	ehs.Add(jid.Parse(s), eh)
 // 	return ehs
 // }
@@ -1120,7 +1120,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 		return false
 	}
 
-	mcm.ensureConversationWith = func(jid.Any) (otr_client.Conversation, bool) {
+	mcm.ensureConversationWith = func(jid.Any) (otrclient.Conversation, bool) {
 		return mc, false
 	}
 
@@ -1154,7 +1154,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 	mc := &mockConv{}
 	mc.receive = func(s []byte) ([]byte, error) { return s, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any) (otr_client.Conversation, bool) {
+	mcm.ensureConversationWith = func(jid.Any) (otrclient.Conversation, bool) {
 		return mc, false
 	}
 
@@ -1179,11 +1179,11 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 
 type convManagerWithoutConversation struct{}
 
-func (ncm *convManagerWithoutConversation) GetConversationWith(peer jid.Any) (otr_client.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) GetConversationWith(peer jid.Any) (otrclient.Conversation, bool) {
 	return nil, false
 }
 
-func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer jid.Any) (otr_client.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer jid.Any) (otrclient.Conversation, bool) {
 	return nil, false
 }
 

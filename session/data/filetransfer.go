@@ -19,6 +19,7 @@ func newFileTransferControl(c chan bool, e chan error, u chan transferUpdate, t 
 	return &FileTransferControl{cancelTransfer: c, errorOccurred: e, update: u, transferFinished: t}
 }
 
+// CreateFileTransferControl will return a new control object for file transfers
 func CreateFileTransferControl() *FileTransferControl {
 	return newFileTransferControl(make(chan bool), make(chan error), make(chan transferUpdate, 1000), make(chan bool))
 }
@@ -32,6 +33,7 @@ func (ctl *FileTransferControl) closeCancel() {
 	}
 }
 
+// WaitForFinish will wait for a transfer to be finished and calls the function after it's done
 func (ctl *FileTransferControl) WaitForFinish(k func()) {
 	_, ok := <-ctl.transferFinished
 	if ok {
@@ -40,6 +42,7 @@ func (ctl *FileTransferControl) WaitForFinish(k func()) {
 	}
 }
 
+// WaitForError will wait for an error to occur and then call the function when it happens
 func (ctl *FileTransferControl) WaitForError(k func(error)) {
 	e, ok := <-ctl.errorOccurred
 	if ok {
@@ -48,6 +51,7 @@ func (ctl *FileTransferControl) WaitForError(k func(error)) {
 	}
 }
 
+// WaitForCancel will wait for a cancel event and call the given function when it happens
 func (ctl *FileTransferControl) WaitForCancel(k func()) {
 	if cancel, ok := <-ctl.cancelTransfer; ok && cancel {
 		k()
@@ -55,12 +59,14 @@ func (ctl *FileTransferControl) WaitForCancel(k func()) {
 	}
 }
 
+// WaitForUpdate will call the function on every update event
 func (ctl *FileTransferControl) WaitForUpdate(k func(int64, int64)) {
 	for upd := range ctl.update {
 		k(upd.current, upd.total)
 	}
 }
 
+// Cancel will cancel the file transfer
 func (ctl *FileTransferControl) Cancel() {
 	ctl.Lock()
 	defer ctl.Unlock()
@@ -69,22 +75,26 @@ func (ctl *FileTransferControl) Cancel() {
 	}
 }
 
+// ReportError will report an error
 func (ctl *FileTransferControl) ReportError(e error) {
 	ctl.closeTransferFinished()
 	ctl.closeUpdate()
 	ctl.sendAndCloseErrorOccurred(e)
 }
 
+// ReportErrorNonblocking will report an error to the file transfer in a non-blocking manner
 func (ctl *FileTransferControl) ReportErrorNonblocking(e error) {
 	go ctl.ReportError(e)
 }
 
+// ReportFinished will be called when the file transfer is finished
 func (ctl *FileTransferControl) ReportFinished() {
 	ctl.closeErrorOccurred()
 	ctl.closeUpdate()
 	ctl.sendAndCloseTransferFinished(true)
 }
 
+// SendUpdate sends update information
 func (ctl *FileTransferControl) SendUpdate(current, total int64) {
 	ctl.RLock()
 	defer ctl.RUnlock()
@@ -93,6 +103,7 @@ func (ctl *FileTransferControl) SendUpdate(current, total int64) {
 	}
 }
 
+// CloseAll closes all channels
 func (ctl *FileTransferControl) CloseAll() {
 	ctl.closeTransferFinished()
 	ctl.closeUpdate()

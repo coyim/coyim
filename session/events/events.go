@@ -92,6 +92,7 @@ type ChatPresence struct {
 
 // TODO: This feels like bad naming - it implies it's for any chat, but realistically should only be for group chats.
 // The event name should actually take that into account
+
 // ChatMessage represents a message event in a chat room
 type ChatMessage struct {
 	From jid.WithResource

@@ -60,7 +60,7 @@ func genSid(c interfaces.Conn) string {
 
 func calculateAvailableSendOptions(s access.Session) []data.FormFieldOptionX {
 	res := []data.FormFieldOptionX{}
-	for k, _ := range supportedSendingMechanisms {
+	for k := range supportedSendingMechanisms {
 		if isSendingMechanismCurrentlyValid[k](k, s) {
 			res = append(res, data.FormFieldOptionX{Value: k})
 		}

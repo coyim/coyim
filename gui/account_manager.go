@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otrclient"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -18,12 +18,12 @@ type accountManager struct {
 	events   chan interface{}
 	contacts map[*account]*rosters.List
 
-	otr_client.CommandManager
+	otrclient.CommandManager
 
 	sync.RWMutex
 }
 
-func newAccountManager(c otr_client.CommandManager) *accountManager {
+func newAccountManager(c otrclient.CommandManager) *accountManager {
 	return &accountManager{
 		events:         make(chan interface{}, 10),
 		accounts:       make([]*account, 0, 5),
@@ -151,7 +151,7 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf a
 	}
 
 	if hasConfUpdates {
-		m.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
+		m.ExecuteCmd(otrclient.SaveApplicationConfigCmd{})
 	}
 }
 

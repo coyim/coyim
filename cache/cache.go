@@ -5,10 +5,12 @@ import (
 	"time"
 )
 
+// New returns a new simple cache
 func New() Simple {
 	return NewWithExpiry()
 }
 
+// NewWithExpiry returns a new cache with expiry
 func NewWithExpiry() WithExpiry {
 	return &cache{data: make(map[string]*entry)}
 }

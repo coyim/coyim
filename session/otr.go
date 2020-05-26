@@ -4,13 +4,13 @@ import (
 	"fmt"
 
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
 
-func (s *session) onOtrEventHandlerCreate(peer jid.Any, eh *otr_client.EventHandler, nots chan string, dels chan int) {
+func (s *session) onOtrEventHandlerCreate(peer jid.Any, eh *otrclient.EventHandler, nots chan string, dels chan int) {
 	go s.listenToOtrNotifications(nots, peer)
 	go s.listenToOtrDelayedMessageDelivery(dels, peer)
 }
@@ -35,11 +35,11 @@ func (s *session) listenToOtrDelayedMessageDelivery(c <-chan int, peer jid.Any) 
 	}
 }
 
-func (s *session) newOTRKeys(peer jid.WithResource, conversation otr_client.Conversation) {
+func (s *session) newOTRKeys(peer jid.WithResource, conversation otrclient.Conversation) {
 	s.publishPeerEvent(events.OTRNewKeys, peer)
 }
 
-func (s *session) renewedOTRKeys(peer jid.WithResource, conversation otr_client.Conversation) {
+func (s *session) renewedOTRKeys(peer jid.WithResource, conversation otrclient.Conversation) {
 	s.publishPeerEvent(events.OTRRenewedKeys, peer)
 }
 
@@ -59,7 +59,7 @@ func (s *session) newConversation(peer jid.Any) *otr3.Conversation {
 	instanceTag := conversation.InitializeInstanceTag(s.GetConfig().InstanceTag)
 
 	if s.GetConfig().InstanceTag != instanceTag {
-		s.cmdManager.ExecuteCmd(otr_client.SaveInstanceTagCmd{
+		s.cmdManager.ExecuteCmd(otrclient.SaveInstanceTagCmd{
 			Account:     s.GetConfig(),
 			InstanceTag: instanceTag,
 		})

@@ -36,40 +36,40 @@ func (s *JidXMPPSuite) Test_ParseJID(c *C) {
 	c.Assert(Parse("ola@foo.bar3/baz").MaybeWithResource(""), DeepEquals, bare("ola@foo.bar3"))
 }
 
-func testInterface_Any(a Any) Any {
+func testInterfaceAny(a Any) Any {
 	return a
 }
 
-func testInterface_WithResource(a WithResource) WithResource {
+func testInterfaceWithResource(a WithResource) WithResource {
 	return a
 }
 
-func testInterface_WithoutResource(a WithoutResource) WithoutResource {
+func testInterfaceWithoutResource(a WithoutResource) WithoutResource {
 	return a
 }
 
-func testInterface_Bare(a Bare) Bare {
+func testInterfaceBare(a Bare) Bare {
 	return a
 }
 
-func testInterface_Full(a Full) Full {
+func testInterfaceFull(a Full) Full {
 	return a
 }
 
 func (s *JidXMPPSuite) Test_interfaceImplementations(c *C) {
 	// There are no assertions here - if it compiles, we are fine.
-	testInterface_Any(Domain("bla.com"))
-	testInterface_Any(bare("bla@bla.com"))
-	testInterface_Any(full("bla@bla.com/blu"))
-	testInterface_Any(domainWithResource("bla.com/blu"))
+	testInterfaceAny(Domain("bla.com"))
+	testInterfaceAny(bare("bla@bla.com"))
+	testInterfaceAny(full("bla@bla.com/blu"))
+	testInterfaceAny(domainWithResource("bla.com/blu"))
 
-	testInterface_WithResource(full("bla@bla.com/blu"))
-	testInterface_WithResource(domainWithResource("bla.com/blu"))
+	testInterfaceWithResource(full("bla@bla.com/blu"))
+	testInterfaceWithResource(domainWithResource("bla.com/blu"))
 
-	testInterface_WithoutResource(Domain("bla.com"))
-	testInterface_WithoutResource(bare("bla@bla.com"))
+	testInterfaceWithoutResource(Domain("bla.com"))
+	testInterfaceWithoutResource(bare("bla@bla.com"))
 
-	testInterface_Bare(bare("bla@bla.com"))
+	testInterfaceBare(bare("bla@bla.com"))
 
-	testInterface_Full(full("bla@bla.com/blu"))
+	testInterfaceFull(full("bla@bla.com/blu"))
 }

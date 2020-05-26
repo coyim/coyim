@@ -94,7 +94,7 @@ func bytestreamsGetCurrentValidProxies(s access.Session) []*data.BytestreamStrea
 
 }
 
-var localCancel = errors.New("local cancel")
+var errLocalCancel = errors.New("local cancel")
 
 func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 	defer c.Close()
@@ -109,7 +109,7 @@ func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 	reporting := func(v int) error {
 		if ctx.weWantToCancel {
 			removeInflightSend(ctx)
-			return localCancel
+			return errLocalCancel
 		}
 		ctx.onUpdate(v)
 		return nil
@@ -129,7 +129,7 @@ func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 	}
 
 	_, err = io.Copy(io.MultiWriter(ww, &reportingWriter{report: reporting}), r)
-	if err != nil && err != localCancel {
+	if err != nil && err != errLocalCancel {
 		ctx.onError(err)
 	} else {
 		beforeFinish()

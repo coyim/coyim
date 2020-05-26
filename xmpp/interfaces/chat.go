@@ -4,6 +4,7 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
+// Chat contains the basic functionality to do a chat in a room
 type Chat interface {
 	Events() chan interface{}
 	CheckForSupport(service string) bool

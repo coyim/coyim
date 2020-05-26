@@ -6,20 +6,26 @@ import (
 )
 
 //See: Section 4.1
+
+// Room represents a chat room
 type Room struct {
 	ID, Service string
 }
 
+// JID returns the JID for this room
 func (o *Room) JID() string {
 	return fmt.Sprintf("%s@%s", o.ID, o.Service)
 }
 
 //See: Section 4.1
+
+// Occupant represents a person in a chat room
 type Occupant struct {
 	Room
 	Handle string
 }
 
+// JID returns the JID for this occupant
 func (o *Occupant) JID() string {
 	return fmt.Sprintf("%s/%s", o.Room.JID(), o.Handle)
 }
@@ -32,6 +38,8 @@ type RoomConfigurationQuery struct {
 }
 
 // See: Section 15.5.4 muc#roominfo FORM_TYPE
+
+// RoomInfoForm contains the information about a room
 type RoomInfoForm struct {
 	MaxHistoryFetch string   `form-field:"muc#maxhistoryfetch"`
 	ContactJID      []string `form-field:"muc#roominfo_contactjid"`
@@ -45,6 +53,8 @@ type RoomInfoForm struct {
 }
 
 //See: Section 4.2
+
+// RoomType contains information about the different options for the room
 type RoomType struct {
 	Public bool
 	//vs Hidden bool
@@ -66,6 +76,8 @@ type RoomType struct {
 }
 
 //TODO: Ahh, naming
+
+// RoomInfo contains room information
 type RoomInfo struct {
 	RoomInfoForm `form-type:"http://jabber.org/protocol/muc#roominfo"`
 	RoomType

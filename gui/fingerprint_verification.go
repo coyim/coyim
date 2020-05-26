@@ -3,7 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -68,7 +68,7 @@ func verifyFingerprintDialog(account *account, peer jid.Any, parent gtki.Window)
 	responseType := gtki.ResponseType(dialog.Run())
 	switch responseType {
 	case gtki.RESPONSE_YES:
-		account.executeCmd(otr_client.AuthorizeFingerprintCmd{
+		account.executeCmd(otrclient.AuthorizeFingerprintCmd{
 			Account:     accountConfig,
 			Session:     account.session,
 			Peer:        peer.NoResource(),

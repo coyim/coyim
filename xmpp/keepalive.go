@@ -23,7 +23,7 @@ func (c *conn) watchKeepAlive(conn net.Conn) {
 	defer tick.Stop()
 	defer log.Println("xmpp: no more watching keepalives")
 
-	for _ = range tick.C {
+	for range tick.C {
 		if c.closed {
 			return
 		}

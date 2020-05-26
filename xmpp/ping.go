@@ -60,7 +60,7 @@ func (c *conn) watchPings() {
 	defer tick.Stop()
 	failures := 0
 
-	for _ = range tick.C {
+	for range tick.C {
 		if c.closed {
 			return
 		}

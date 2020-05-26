@@ -9,9 +9,9 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
-var channelClosedError = errors.New("Channel closed")
-var notResultIQ = errors.New("Expected result IQ")
-var notClientIQ = errors.New("Expected Client IQ")
+var errChannelClosed = errors.New("channel closed")
+var errNotResultIQ = errors.New("expected result IQ")
+var errNotClientIQ = errors.New("expected Client IQ")
 
 func basicIQ(s access.Session, to, tp string, toSend, unpackInto interface{}, onSuccess func(*data.ClientIQ)) error {
 	done := make(chan error)
@@ -35,14 +35,14 @@ func nonblockIQ(s access.Session, to, tp string, toSend, unpackInto interface{},
 	go func() {
 		r, ok := <-rp
 		if !ok {
-			onError(nil, channelClosedError)
+			onError(nil, errChannelClosed)
 			return
 		}
 
 		switch ciq := r.Value.(type) {
 		case *data.ClientIQ:
 			if ciq.Type != "result" {
-				onError(ciq, notResultIQ)
+				onError(ciq, errNotResultIQ)
 				return
 			}
 			if unpackInto != nil {
@@ -55,6 +55,6 @@ func nonblockIQ(s access.Session, to, tp string, toSend, unpackInto interface{},
 			onSuccess(ciq)
 			return
 		}
-		onError(nil, notClientIQ)
+		onError(nil, errNotClientIQ)
 	}()
 }

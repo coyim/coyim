@@ -1064,7 +1064,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 		config: data.Config{
 			TLSConfig: tlsC,
 		},
-		tlsConnFactory: fixedTlsFactory(t),
+		tlsConnFactory: fixedTLSFactory(t),
 	}
 
 	conn := &fullMockedConn{rw: rw}
@@ -1100,7 +1100,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 		config: data.Config{
 			TLSConfig: tlsC,
 		},
-		tlsConnFactory: fixedTlsFactory(t),
+		tlsConnFactory: fixedTLSFactory(t),
 	}
 	_, err := d.setupStream(conn)
 
@@ -1130,7 +1130,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 		config: data.Config{
 			TLSConfig: tlsC,
 		},
-		tlsConnFactory: fixedTlsFactory(t),
+		tlsConnFactory: fixedTLSFactory(t),
 	}
 	_, err := d.setupStream(conn)
 
@@ -1171,7 +1171,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 		config: data.Config{
 			TLSConfig: tlsC,
 		},
-		tlsConnFactory: fixedTlsFactory(t),
+		tlsConnFactory: fixedTLSFactory(t),
 	}
 	_, err := d.setupStream(conn)
 

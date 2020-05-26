@@ -1,4 +1,4 @@
-package otr_client
+package otrclient
 
 // SecurityChange describes a change in the security state of a Conversation.
 type SecurityChange int

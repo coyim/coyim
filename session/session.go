@@ -12,7 +12,7 @@ import (
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
@@ -73,8 +73,8 @@ type session struct {
 
 	connector access.Connector
 
-	cmdManager  otr_client.CommandManager
-	convManager otr_client.ConversationManager
+	cmdManager  otrclient.CommandManager
+	convManager otrclient.ConversationManager
 
 	dialerFactory func(tls.Verifier, tls.Factory) xi.Dialer
 
@@ -156,7 +156,7 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 	}
 
 	s.ReloadKeys()
-	s.convManager = otr_client.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate)
+	s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate)
 
 	go observe(s)
 	go checkReconnect(s)
@@ -484,11 +484,11 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 	eh := conversation.EventHandler()
 	change := eh.ConsumeSecurityChange()
 	switch change {
-	case otr_client.NewKeys:
+	case otrclient.NewKeys:
 		s.newOTRKeys(peer.(jid.WithResource), conversation)
-	case otr_client.RenewedKeys:
+	case otrclient.RenewedKeys:
 		s.renewedOTRKeys(peer.(jid.WithResource), conversation)
-	case otr_client.ConversationEnded:
+	case otrclient.ConversationEnded:
 		s.otrEnded(peer.(jid.WithResource))
 		// TODO: all this stuff is very CLI specific, we should move it out and create good interaction
 		// for the gui
@@ -512,17 +512,17 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 		} else {
 			s.info(fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", peer, peer))
 		}
-	case otr_client.SMPSecretNeeded:
+	case otrclient.SMPSecretNeeded:
 		s.publishSMPEvent(events.SecretNeeded, peer.(jid.WithResource), eh.SmpQuestion)
-	case otr_client.SMPComplete:
+	case otrclient.SMPComplete:
 		s.publishSMPEvent(events.Success, peer.(jid.WithResource), "")
-		s.cmdManager.ExecuteCmd(otr_client.AuthorizeFingerprintCmd{
+		s.cmdManager.ExecuteCmd(otrclient.AuthorizeFingerprintCmd{
 			Account:     s.GetConfig(),
 			Session:     s,
 			Peer:        peer.NoResource(),
 			Fingerprint: conversation.TheirFingerprint(),
 		})
-	case otr_client.SMPFailed:
+	case otrclient.SMPFailed:
 		s.publishSMPEvent(events.Failure, peer.(jid.WithResource), "")
 	}
 
@@ -851,15 +851,15 @@ func (s *session) Close() {
 	}
 }
 
-func (s *session) CommandManager() otr_client.CommandManager {
+func (s *session) CommandManager() otrclient.CommandManager {
 	return s.cmdManager
 }
 
-func (s *session) SetCommandManager(c otr_client.CommandManager) {
+func (s *session) SetCommandManager(c otrclient.CommandManager) {
 	s.cmdManager = c
 }
 
-func (s *session) ConversationManager() otr_client.ConversationManager {
+func (s *session) ConversationManager() otrclient.ConversationManager {
 	return s.convManager
 }
 

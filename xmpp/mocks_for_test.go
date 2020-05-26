@@ -55,7 +55,7 @@ func (t *tlsMock1) SetWriteDeadline(t2 time.Time) error {
 	return nil
 }
 
-func fixedTlsFactory(t tls.Conn) tls.Factory {
+func fixedTLSFactory(t tls.Conn) tls.Factory {
 	return func(net.Conn, *gotls.Config) tls.Conn {
 		return t
 	}

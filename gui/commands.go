@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otrclient"
 )
 
 type executable interface {
@@ -68,14 +68,14 @@ func (u *gtkUI) watchCommands() {
 		switch c := command.(type) {
 		case executable:
 			c.execute(u)
-		case otr_client.AuthorizeFingerprintCmd:
+		case otrclient.AuthorizeFingerprintCmd:
 			c.Account.AuthorizeFingerprint(c.Peer.String(), c.Fingerprint)
-			u.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
-		case otr_client.SaveInstanceTagCmd:
+			u.ExecuteCmd(otrclient.SaveApplicationConfigCmd{})
+		case otrclient.SaveInstanceTagCmd:
 			account := c.Account
 			account.InstanceTag = c.InstanceTag
-			u.ExecuteCmd(otr_client.SaveApplicationConfigCmd{})
-		case otr_client.SaveApplicationConfigCmd:
+			u.ExecuteCmd(otrclient.SaveApplicationConfigCmd{})
+		case otrclient.SaveApplicationConfigCmd:
 			u.SaveConfig()
 		}
 	}

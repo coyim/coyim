@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/config"
-	"github.com/coyim/coyim/otr_client"
+	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
@@ -36,7 +36,7 @@ func (*SessionMock) Close() {}
 func (*SessionMock) AutoApprove(string) {}
 
 // CommandManager is the implementation for Session interface
-func (*SessionMock) CommandManager() otr_client.CommandManager {
+func (*SessionMock) CommandManager() otrclient.CommandManager {
 	return nil
 }
 
@@ -56,7 +56,7 @@ func (*SessionMock) Connect(string, tls.Verifier) error {
 }
 
 // ConversationManager is the implementation for Session interface
-func (*SessionMock) ConversationManager() otr_client.ConversationManager {
+func (*SessionMock) ConversationManager() otrclient.ConversationManager {
 	return nil
 }
 
@@ -138,7 +138,7 @@ func (*SessionMock) Send(jid.Any, string) error {
 func (*SessionMock) SendPing() {}
 
 // SetCommandManager is the implementation for Session interface
-func (*SessionMock) SetCommandManager(otr_client.CommandManager) {}
+func (*SessionMock) SetCommandManager(otrclient.CommandManager) {}
 
 // SetConnectionLogger is the implementation for Session interface
 func (*SessionMock) SetConnectionLogger(io.Writer) {}

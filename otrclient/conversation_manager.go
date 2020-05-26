@@ -1,4 +1,4 @@
-package otr_client
+package otrclient
 
 import (
 	"fmt"
@@ -8,7 +8,10 @@ import (
 	"github.com/coyim/otr3"
 )
 
+// ConversationBuilder takes a JID and returns a new conversation
 type ConversationBuilder func(jid.Any) *otr3.Conversation
+
+// OnEventHandlerCreation is a callback for any kind of event
 type OnEventHandlerCreation func(jid.Any, *EventHandler, chan string, chan int)
 
 // Sender represents an entity capable of sending messages to peers

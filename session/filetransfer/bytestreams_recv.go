@@ -84,7 +84,7 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 			select {
 			case <-cancel:
 				ctx.bytestreamCleanup(conn, ff)
-				return localCancel
+				return errLocalCancel
 			default:
 				// Fall through, since we are not going to cancel
 			}
@@ -96,7 +96,7 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 	}
 
 	_, err = io.Copy(io.MultiWriter(ff, &reportingWriter{report: reporting}), conn)
-	if err != nil && err != localCancel {
+	if err != nil && err != errLocalCancel {
 		ctx.s.Warn(fmt.Sprintf("Had error when trying to write to file: %v", err))
 		ctx.control.ReportError(errors.New("Error writing to file"))
 		ctx.bytestreamCleanup(conn, ff)

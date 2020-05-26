@@ -1,4 +1,4 @@
-package otr_client
+package otrclient
 
 import (
 	"errors"

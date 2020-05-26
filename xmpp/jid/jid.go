@@ -5,8 +5,13 @@ import (
 	"strings"
 )
 
+// Local represents the local part of a JID
 type Local string
+
+// Domain represents the domain part of a JID
 type Domain string
+
+// Resource represents the resource part of a JID
 type Resource string
 
 type bare string
@@ -44,7 +49,7 @@ type WithResource interface {
 // WithoutResource represents any valid JID that does not have a resource part
 type WithoutResource interface {
 	Any
-	__forcedToNotHaveResource()
+	_ForcedToNotHaveResource()
 }
 
 // Bare represents a JID containing both a local component and a host component, but no resource component. A Bare is an Any
@@ -59,7 +64,7 @@ type Full interface {
 	WithLocal
 }
 
-// Local represents a JID that has a Local port
+// WithLocal represents a JID that has a Local port
 type WithLocal interface {
 	// Local returns the local part of the JID
 	Local() Local
@@ -274,8 +279,8 @@ func (j domainWithResource) Split() (WithoutResource, Resource) {
 	return j.NoResource(), j.Resource()
 }
 
-func (j bare) __forcedToNotHaveResource()   {}
-func (j Domain) __forcedToNotHaveResource() {}
+func (j bare) _ForcedToNotHaveResource()   {}
+func (j Domain) _ForcedToNotHaveResource() {}
 
 // NoResource implements Any
 func (j Domain) NoResource() WithoutResource {
@@ -300,6 +305,7 @@ func MaybeLocal(j Any) Local {
 	return Local("")
 }
 
+// WithAndWithout will return the JID with the resource, and without the resource
 func WithAndWithout(peer Any) (WithResource, WithoutResource) {
 	if pwr, ok := peer.(WithResource); ok {
 		return pwr, peer.NoResource()

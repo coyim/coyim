@@ -129,7 +129,7 @@ ifeq ($(GO_VERSION), go1.7)
 else ifeq ($(GO_VERSION), go1.8)
 	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
 else
-	golint $(SRC_DIRS)
+	golint -set_exit_status $(SRC_DIRS)
 endif
 
 test: $(AUTOGEN)

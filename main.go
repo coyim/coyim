@@ -21,6 +21,26 @@ import (
 
 var coyimVersion = "&lt;UNSET&gt;"
 
+// BuildCommit contains which commit the build was based on
+var BuildCommit = "UNKNOWN"
+
+// BuildShortCommit contains which commit in short format the build was based on
+var BuildShortCommit = "UNKNOWN"
+
+// BuildTag contains which tag - if any - the build was based on
+var BuildTag = "(no tag)"
+
+// BuildTimestamp contains the timestamp in GMT when the build was made
+var BuildTimestamp = "UNKNOWN"
+
+func init() {
+	if BuildTag == "(no tag)" || BuildTag == "" {
+		coyimVersion = BuildCommit
+	} else {
+		coyimVersion = BuildTag
+	}
+}
+
 func initLog() {
 	if !*config.DebugFlag {
 		log.SetOutput(ioutil.Discard)

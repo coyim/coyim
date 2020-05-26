@@ -5,6 +5,7 @@ GIT_VERSION := $(shell git rev-parse HEAD)
 GIT_SHORT_VERSION := $(shell git rev-parse --short HEAD)
 TAG_VERSION := $(shell git tag -l --contains $$GIT_VERSION | tail -1)
 CURRENT_DATE := $(shell date "+%Y-%m-%d")
+BUILD_TIMESTAMP := $(shell TZ='GMT' date '+%Y-%m-%d %H:%M:%S')
 
 GO_VERSION := $(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]*')
 
@@ -27,26 +28,28 @@ TAGS := -tags $(GTK_BUILD_TAG)
 
 AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go
 
-.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug generate-version-file win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all
+LDFLAGS := -ldflags "-X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit=$(GIT_VERSION)' -X 'main.BuildShortCommit=$(GIT_SHORT_VERSION)' -X 'main.BuildTag=$(TAG_VERSION)'"
+
+.PHONY: default check autogen build build-gui build-gui-memory-analyzer build-gui-address-san build-gui-win build-debug debug win-ci-deps reproducible-linux-create-image reproducible-linux-build sign-reproducible upload-reproducible-signature send-reproducible-signature check-reproducible-signatures clean clean-cache update-vendor gosec ineffassign i18n lint test test-named dep-supported-only deps run-cover clean-cover cover all
 
 default: check
 check: lint test
 
-$(BUILD_DIR)/coyim: generate-version-file $(AUTOGEN)
-	$(GOBUILD) -i $(TAGS) -o $@
+$(BUILD_DIR)/coyim: $(AUTOGEN)
+	$(GOBUILD) $(LDFLAGS) -i $(TAGS) -o $@
 
-$(BUILD_DIR)/coyim-ma: generate-version-file $(AUTOGEN)
-	$(GOBUILD) -x -msan -i $(TAGS) -o $@
+$(BUILD_DIR)/coyim-ma: $(AUTOGEN)
+	$(GOBUILD) $(LDFLAGS) -x -msan -i $(TAGS) -o $@
 
 # run with: export ASAN_OPTIONS=detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:verbosity=1:handle_segv=0
-$(BUILD_DIR)/coyim-aa: generate-version-file $(AUTOGEN)
-	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" $(GOBUILD) -x -i -ldflags '-extldflags "-fsanitize=address"' $(TAGS) -o $@
+$(BUILD_DIR)/coyim-aa: $(AUTOGEN)
+	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" $(GOBUILD) $(LDFLAGS) -x -i -ldflags '-extldflags "-fsanitize=address"' $(TAGS) -o $@
 
-$(BUILD_DIR)/coyim.exe: generate-version-file $(AUTOGEN)
-	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) -i $(TAGS) -ldflags "-H windowsgui" -o $@
+$(BUILD_DIR)/coyim.exe: $(AUTOGEN)
+	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) $(LDFLAGS) -i $(TAGS) -ldflags "-H windowsgui" -o $@
 
-$(BUILD_DIR)/coyim-debug: generate-version-file $(AUTOGEN)
-	$(GOBUILD) -v -gcflags "-N -l" $(TAGS) -o $@
+$(BUILD_DIR)/coyim-debug: $(AUTOGEN)
+	$(GOBUILD) $(LDFLAGS) -v -gcflags "-N -l" $(TAGS) -o $@
 
 build: build-gui
 build-gui: $(BUILD_DIR)/coyim
@@ -57,10 +60,6 @@ build-debug: $(BUILD_DIR)/coyim-debug
 
 debug: $(BUILD_DIR)/coyim-debug
 	GDK_DEBUG=nograbs gdb -d $(shell go env GOROOT) --args $(BUILD_DIR)/coyim-debug -debug
-
-# TODO: We can replace this by `go build -ldflags "-X main.Version=$(TAG_VERSION)"`.
-generate-version-file:
-	./gen_version_file.sh $(GIT_VERSION) $(TAG_VERSION)
 
 win-ci-deps:
 	go get -u github.com/rosatolen/esc

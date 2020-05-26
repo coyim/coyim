@@ -144,7 +144,7 @@ func (s *ConnectionPolicySuite) Test_buildProxyChain_ErrorsIfProxyIsMalformed(c 
 	}
 
 	_, err := buildProxyChain(proxies)
-	c.Check(err.Error(), Equals, `Failed to parse %gh&%ij as a URL: parse %gh&%ij: invalid URL escape "%gh"`)
+	c.Check(err, ErrorMatches, `Failed to parse %gh&%ij as a URL: parse "?%gh&%ij"?: invalid URL escape "%gh"`)
 }
 
 func (s *ConnectionPolicySuite) Test_buildProxyChain_ErrorsIfProxyIsNotCompatible(c *C) {

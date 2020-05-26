@@ -7,25 +7,22 @@ branches:
 
 go:
   - tip
-  - "1.13"
-  - "1.12"
-  - "1.11.5"
-  - "1.10.8"
-  - "1.9.7"
-  - "1.8.7"
-  - "1.7.6"
+  - "1.14.3"
+  - "1.13.11"
+  - "1.12.17"
+  - "1.11.13"
 
 services:
   - docker
 
 matrix:
   include:
-    - go: "1.11.5"
+    - go: "1.11.13"
       os: osx
-    - go: "1.11.5"
+    - go: "1.11.13"
       env: RELEASE=true
       os: linux
-    - go: "1.11.5"
+    - go: "1.11.13"
       env: RELEASE=true
       os: osx
   allow_failures:

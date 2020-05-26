@@ -124,13 +124,7 @@ i18n:
 	make -C ./i18n
 
 lint: $(AUTOGEN)
-ifeq ($(GO_VERSION), go1.7)
-	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
-else ifeq ($(GO_VERSION), go1.8)
-	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
-else
 	golint -set_exit_status $(SRC_DIRS)
-endif
 
 test: $(AUTOGEN)
 	$(GOTEST) -cover -v $(TAGS) ./...
@@ -138,16 +132,8 @@ test: $(AUTOGEN)
 test-named: $(AUTOGEN)
 	$(GOTEST) -v $(TAGS) $(SRC_DIRS)
 
-dep-supported-only:
-ifeq ($(GO_VERSION), go1.7)
-	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
-else ifeq ($(GO_VERSION), go1.8)
-	echo "$(GO_VERSION) is not a supported Go release. Skipping golint."
-else
+deps:
 	go get -u golang.org/x/lint/golint
-endif
-
-deps: dep-supported-only
 	go get -u github.com/rosatolen/esc
 
 $(COVERPROFILES):

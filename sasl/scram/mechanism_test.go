@@ -24,7 +24,7 @@ type ScramSuite struct{}
 var _ = Suite(&ScramSuite{})
 
 func (s *ScramSuite) TestScramWithRFC5802TestVector(c *C) {
-	client := Mechanism.NewClient()
+	client := sha1Mechanism.NewClient()
 
 	client.SetProperty(sasl.AuthID, "user")
 	client.SetProperty(sasl.Password, "pencil")

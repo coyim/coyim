@@ -5,6 +5,7 @@ package scram
 import (
 	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/sha512"
 	"hash"
 
 	"github.com/coyim/coyim/sasl"
@@ -12,17 +13,21 @@ import (
 
 var (
 	sha1Mechanism       sasl.Mechanism = &scramMechanism{sha1.New, sha1.Size, false, true}
-	sha256Mechanism     sasl.Mechanism = &scramMechanism{sha256.New, sha256.Size, false, true}
 	sha1PlusMechanism   sasl.Mechanism = &scramMechanism{sha1.New, sha1.Size, true, true}
+	sha256Mechanism     sasl.Mechanism = &scramMechanism{sha256.New, sha256.Size, false, true}
 	sha256PlusMechanism sasl.Mechanism = &scramMechanism{sha256.New, sha256.Size, true, true}
+	sha512Mechanism     sasl.Mechanism = &scramMechanism{sha512.New, sha512.Size, false, true}
+	sha512PlusMechanism sasl.Mechanism = &scramMechanism{sha512.New, sha512.Size, true, true}
 )
 
 const (
 	// Name is the authentication type associated with the SASL mechanism
 	sha1Name       = "SCRAM-SHA-1"
-	sha256Name     = "SCRAM-SHA-256"
 	sha1PlusName   = "SCRAM-SHA-1-PLUS"
+	sha256Name     = "SCRAM-SHA-256"
 	sha256PlusName = "SCRAM-SHA-256-PLUS"
+	sha512Name     = "SCRAM-SHA-512"
+	sha512PlusName = "SCRAM-SHA-512-PLUS"
 )
 
 type scramMechanism struct {

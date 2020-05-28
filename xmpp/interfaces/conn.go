@@ -50,4 +50,7 @@ type Conn interface {
 	SignalPresence(string) error
 
 	GetChatContext() Chat
+
+	SetChannelBinding([]byte)
+	GetChannelBinding() []byte
 }

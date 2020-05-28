@@ -47,3 +47,6 @@ func (p *digestMD5) Step(t sasl.Token) (ret sasl.Token, err error) {
 func (p *digestMD5) NeedsMore() bool {
 	return p.digestState != finished{}
 }
+
+func (p *digestMD5) SetChannelBinding(v []byte) {
+}

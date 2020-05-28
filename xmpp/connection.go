@@ -56,6 +56,8 @@ type conn struct {
 	c cache.WithExpiry
 
 	statusUpdates chan<- string
+
+	channelBinding []byte
 }
 
 func (c *conn) Cache() cache.WithExpiry {
@@ -359,4 +361,16 @@ func (c *conn) ReadStanzas(stanzaChan chan<- data.Stanza) error {
 
 		stanzaChan <- stanza
 	}
+}
+
+// SetChannelBinding sets the specific value to use for channel binding with authentication modes that
+// support this
+func (c *conn) SetChannelBinding(v []byte) {
+	c.channelBinding = v
+}
+
+// GetChannelBinding gets the specific value to use for channel binding with authentication modes that
+// support this
+func (c *conn) GetChannelBinding() []byte {
+	return c.channelBinding
 }

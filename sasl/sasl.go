@@ -16,6 +16,7 @@ type Session interface {
 	SetProperty(Property, string) error
 	Step(Token) (Token, error)
 	NeedsMore() bool
+	SetChannelBinding([]byte)
 }
 
 // Mechanism represents an SASL mechanism

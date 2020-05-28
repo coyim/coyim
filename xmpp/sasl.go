@@ -80,7 +80,7 @@ func (c *conn) isGoogle() bool {
 
 func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	//TODO: this should be configurable by the client
-	preferedMechanisms := []string{"SCRAM-SHA-256", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
+	preferedMechanisms := []string{"SCRAM-SHA-256-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
 
 	log.Println("sasl: server supports mechanisms", c.features.Mechanisms.Mechanism)
 
@@ -128,6 +128,8 @@ func (c *conn) authenticateWith(mechanism string, user string, password string) 
 
 	clientAuth.SetProperty(sasl.Service, "xmpp")
 	clientAuth.SetProperty(sasl.QOP, "auth")
+
+	clientAuth.SetChannelBinding(c.GetChannelBinding())
 
 	//TODO: this should come from username if it were a full JID
 	//clientAuth.SetProperty(sasl.Realm, "")

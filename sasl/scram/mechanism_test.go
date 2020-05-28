@@ -1,6 +1,8 @@
 package scram
 
 import (
+	"crypto/sha1"
+	"crypto/sha256"
 	"io/ioutil"
 	"log"
 	"testing"
@@ -24,7 +26,8 @@ type ScramSuite struct{}
 var _ = Suite(&ScramSuite{})
 
 func (s *ScramSuite) TestScramWithRFC5802TestVector(c *C) {
-	client := sha1Mechanism.NewClient()
+	mech := &scramMechanism{sha1.New, sha1.Size, false, false}
+	client := mech.NewClient()
 
 	client.SetProperty(sasl.AuthID, "user")
 	client.SetProperty(sasl.Password, "pencil")
@@ -51,8 +54,38 @@ func (s *ScramSuite) TestScramWithRFC5802TestVector(c *C) {
 	c.Check(t, IsNil)
 }
 
+func (s *ScramSuite) TestScramWithRFC5802TestVectorAndSupport(c *C) {
+	mech := &scramMechanism{sha1.New, sha1.Size, false, true}
+	client := mech.NewClient()
+
+	client.SetProperty(sasl.AuthID, "user")
+	client.SetProperty(sasl.Password, "pencil")
+	client.SetProperty(sasl.ClientNonce, "b5cff6190013e6")
+
+	t, err := client.Step(nil)
+
+	c.Check(err, IsNil)
+	c.Check(client.NeedsMore(), Equals, true)
+	c.Check(t, DeepEquals, sasl.Token(`y,,n=user,r=b5cff6190013e6`))
+
+	rec := sasl.Token("r=b5cff6190013e6kmua5DEmPAZjOMpq4THWJQ==,s=DkEWM20qE19suvrHhPr7HA==,i=4096")
+	t, err = client.Step(rec)
+
+	c.Check(err, IsNil)
+	c.Check(client.NeedsMore(), Equals, true)
+	c.Check(t, DeepEquals, sasl.Token(`c=eSws,r=b5cff6190013e6kmua5DEmPAZjOMpq4THWJQ==,p=Rfqg49jbBf1bGCkwFTbo/DvHmUI=`))
+
+	rec = sasl.Token("v=k5n595qW50TyE2q+J0cUf9yT8v4=")
+	t, err = client.Step(rec)
+
+	c.Check(err, IsNil)
+	c.Check(client.NeedsMore(), Equals, false)
+	c.Check(t, IsNil)
+}
+
 func (s *ScramSuite) TestScramSha256WithRFC7677TestVector(c *C) {
-	client := sha256Mechanism.NewClient()
+	mech := &scramMechanism{sha256.New, sha256.Size, false, false}
+	client := mech.NewClient()
 
 	client.SetProperty(sasl.AuthID, "user")
 	client.SetProperty(sasl.Password, "pencil")

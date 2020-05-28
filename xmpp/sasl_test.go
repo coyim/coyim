@@ -137,14 +137,12 @@ func (s *SaslXMPPSuite) Test_digestMD5_serverFailsToVerifyChallenge(c *C) {
 func (s *SaslXMPPSuite) Test_scramSHA1Auth_authenticatesWithUsernameAndPassword(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte(
-		"<challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>cj03ZjI5MjhmOWRkYTU2ZDNyZmNOSFlKWTFaVnZXVnM3aixzPVFTWENSK1E2c2VrOGJmOTIsaT00MDk2</challenge>\n" +
-			"<success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>dj1FL1E5T3BnUWhNd1hjWEhtNGU3N3Q4b2lIT0E9</success>\n",
+		"<challenge xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>cj1iNWNmZjYxOTAwMTNlNmttdWE1REVtUEFaak9NcHE0VEhXSlE9PSxzPURrRVdNMjBxRTE5c3V2ckhoUHI3SEE9PSxpPTQwOTY=</challenge>\n" +
+			"<success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>dj1rNW41OTVxVzUwVHlFMnErSjBjVWY5eVQ4djQ9</success>\n",
 	)}
 
 	mockRand := &mockConnIOReaderWriter{read: []byte{
-		0x7f, 0x29, 0x28, 0xf9, 0xdd, 0xa5, 0x6d, 0xb1,
-		0x60, 0x38, 0xd4, 0x6f, 0xf6, 0xa9, 0x31, 0x75,
-		0xac, 0xb,
+		0xb5, 0xcf, 0xf6, 0x19, 0x00, 0x13, 0xe6,
 	}}
 
 	conn := conn{
@@ -158,8 +156,8 @@ func (s *SaslXMPPSuite) Test_scramSHA1Auth_authenticatesWithUsernameAndPassword(
 		},
 	}
 
-	expectedOut := "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='SCRAM-SHA-1'>biwsbj11c2VyLHI9N2YyOTI4ZjlkZGE1NmQ=</auth>\n" +
-		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Yz1iaXdzLHI9N2YyOTI4ZjlkZGE1NmQzcmZjTkhZSlkxWlZ2V1ZzN2oscD1KbWYrcWVpSG5jTXRaSjZ3YnJ5ZFdOQ2N4V1E9</response>\n"
+	expectedOut := "<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='SCRAM-SHA-1'>eSwsbj11c2VyLHI9YjVjZmY2MTkwMDEzZTY=</auth>\n" +
+		"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>Yz1lU3dzLHI9YjVjZmY2MTkwMDEzZTZrbXVhNURFbVBBWmpPTXBxNFRIV0pRPT0scD1SZnFnNDlqYkJmMWJHQ2t3RlRiby9EdkhtVUk9</response>\n"
 
 	e := conn.Authenticate("user", "pencil")
 	c.Assert(e, IsNil)

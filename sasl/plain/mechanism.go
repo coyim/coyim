@@ -55,3 +55,6 @@ func (p *plain) Step(sasl.Token) (t sasl.Token, err error) {
 func (p *plain) NeedsMore() bool {
 	return p.state != finished{}
 }
+
+func (p *plain) SetChannelBinding(v []byte) {
+}

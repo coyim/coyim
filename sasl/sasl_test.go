@@ -68,6 +68,9 @@ func (*testSession) NeedsMore() bool {
 	return false
 }
 
+func (*testSession) SetChannelBinding([]byte) {
+}
+
 func (s *SASLSuite) Test_NewClient_returnsTheResultOfNewClientForSupportedMechanism(c *C) {
 	sess := &testSession{}
 	RegisterMechanism("foo5", &testMechanism{sess})

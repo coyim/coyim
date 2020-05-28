@@ -18,24 +18,29 @@ import (
 )
 
 type state interface {
-	next(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error)
+	next(sasl.Token, sasl.Properties, sasl.AttributeValuePairs, []byte) (state, sasl.Token, error)
 	finished() bool
 }
 
 // RFC 5802, section 5
 
 type start struct {
-	hash     func() hash.Hash
-	hashSize int
-	plus     bool
+	hash                  func() hash.Hash
+	hashSize              int
+	plus                  bool
+	supportChannelBinding bool
 }
 
 func (c start) finished() bool {
 	return false
 }
 
+func (c start) channelBindingPrefix() string {
+	return calculateChannelBindingPrefix(c.plus, c.supportChannelBinding)
+}
+
 // next for start will send the client-first-message to the server if successful
-func (c start) next(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (c start) next(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs, channelBinding []byte) (state, sasl.Token, error) {
 	user, ok := props[sasl.AuthID]
 	if !ok {
 		return c, nil, sasl.PropertyMissingError{Property: sasl.AuthID}
@@ -47,23 +52,24 @@ func (c start) next(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeVal
 	}
 
 	bare := fmt.Sprintf("n=%s,r=%s", user, clientNonce)
-	t := sasl.Token("n,," + bare)
+	t := sasl.Token(fmt.Sprintf("%s,,%s", c.channelBindingPrefix(), bare))
 
-	return expectingServerFirstMessage{[]byte(bare), c.hash, c.hashSize, c.plus}, t, nil
+	return expectingServerFirstMessage{[]byte(bare), c.hash, c.hashSize, c.plus, c.supportChannelBinding}, t, nil
 }
 
 type expectingServerFirstMessage struct {
-	firstMessageBare []byte
-	hash             func() hash.Hash
-	hashSize         int
-	plus             bool
+	firstMessageBare      []byte
+	hash                  func() hash.Hash
+	hashSize              int
+	plus                  bool
+	supportChannelBinding bool
 }
 
 func (c expectingServerFirstMessage) finished() bool {
 	return false
 }
 
-func (c expectingServerFirstMessage) next(serverMessage sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (c expectingServerFirstMessage) next(serverMessage sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs, channelBinding []byte) (state, sasl.Token, error) {
 	serverNonce, ok := pairs["r"]
 	if !ok {
 		return c, nil, sasl.ErrMissingParameter
@@ -103,11 +109,34 @@ func (c expectingServerFirstMessage) next(serverMessage sasl.Token, props sasl.P
 		return c, nil, errors.New("nonce mismatch")
 	}
 
-	finalMessageBare := []byte("c=biws,r=" + serverNonce)
+	finalMessageBare := []byte(fmt.Sprintf("c=%s,r=%s", c.calculateChannelBinding(channelBinding), serverNonce))
 	normPass, _ := c.normalizedPassword(password)
 	saltedPassword := pbkdf2.Key([]byte(normPass), saltToken, numIterations, c.hashSize, c.hash)
 
 	return c.compose(saltedPassword, finalMessageBare, serverMessage)
+}
+
+func calculateChannelBindingPrefix(plus, support bool) string {
+	if plus {
+		return "p=tls-unique"
+	}
+	if support {
+		return "y"
+	}
+	return "n"
+}
+
+func (c expectingServerFirstMessage) channelBindingPrefix() string {
+	return calculateChannelBindingPrefix(c.plus, c.supportChannelBinding)
+}
+
+func (c expectingServerFirstMessage) calculateChannelBinding(v []byte) string {
+	first := fmt.Sprintf("%s,,", c.channelBindingPrefix())
+	result := []byte(first)
+	if c.plus && v != nil {
+		result = append(result, v...)
+	}
+	return string(sasl.Token(result).Encode())
 }
 
 func (c expectingServerFirstMessage) compose(saltedPassword, finalMessageBare, serverFirstMessage []byte) (state, sasl.Token, error) {
@@ -172,7 +201,7 @@ func (c expectingServerFinalMessage) finished() bool {
 	return false
 }
 
-func (c expectingServerFinalMessage) next(t sasl.Token, _ sasl.Properties, _ sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (c expectingServerFinalMessage) next(t sasl.Token, _ sasl.Properties, _ sasl.AttributeValuePairs, channelBinding []byte) (state, sasl.Token, error) {
 	if subtle.ConstantTimeCompare(t, c.serverAuthentication) != 1 {
 		return c, nil, errors.New("server signature mismatch")
 	}
@@ -186,6 +215,6 @@ func (c finished) finished() bool {
 	return true
 }
 
-func (finished) next(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (finished) next(sasl.Token, sasl.Properties, sasl.AttributeValuePairs, []byte) (state, sasl.Token, error) {
 	return finished{}, nil, nil
 }

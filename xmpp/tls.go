@@ -136,6 +136,7 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 		return err
 	}
 
+	c.SetChannelBinding(tlsState.TLSUnique)
 	d.bindTransport(c, tlsConn)
 
 	return nil

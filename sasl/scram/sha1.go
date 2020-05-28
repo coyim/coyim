@@ -2,43 +2,53 @@
 // according to RFC 5802.
 package scram
 
-import "github.com/coyim/coyim/sasl"
+import (
+	"crypto/sha1"
+	"crypto/sha256"
+	"hash"
+
+	"github.com/coyim/coyim/sasl"
+)
 
 var (
-	// Mechanism is the SCRAM-SHA1 SASL mechanism
-	sha1Mechanism sasl.Mechanism = &scramSHA1Mechanism{}
+	sha1Mechanism   sasl.Mechanism = &scramMechanism{sha1.New, sha1.Size}
+	sha256Mechanism sasl.Mechanism = &scramMechanism{sha256.New, sha256.Size}
 )
 
 const (
 	// Name is the authentication type associated with the SASL mechanism
-	sha1Name = "SCRAM-SHA-1"
+	sha1Name   = "SCRAM-SHA-1"
+	sha256Name = "SCRAM-SHA-256"
 )
 
-type scramSHA1Mechanism struct{}
+type scramMechanism struct {
+	hash     func() hash.Hash
+	hashSize int
+}
 
-func (m *scramSHA1Mechanism) NewClient() sasl.Session {
-	return &scramSHA1{
-		state: sha1FirstMessage{},
+func (m *scramMechanism) NewClient() sasl.Session {
+	return &scram{
+		state: start{m.hash, m.hashSize},
 		props: make(sasl.Properties),
 	}
 }
 
-type scramSHA1 struct {
+type scram struct {
 	state
 	props sasl.Properties
 }
 
-func (p *scramSHA1) SetProperty(prop sasl.Property, v string) error {
+func (p *scram) SetProperty(prop sasl.Property, v string) error {
 	p.props[prop] = v
 	return nil
 }
 
-func (p *scramSHA1) Step(t sasl.Token) (ret sasl.Token, err error) {
+func (p *scram) Step(t sasl.Token) (ret sasl.Token, err error) {
 	pairs := sasl.ParseAttributeValuePairs(t)
-	p.state, ret, err = p.state.challenge(t, p.props, pairs)
+	p.state, ret, err = p.state.next(t, p.props, pairs)
 	return
 }
 
-func (p *scramSHA1) NeedsMore() bool {
+func (p *scram) NeedsMore() bool {
 	return !p.state.finished()
 }

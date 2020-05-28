@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/hmac"
-	"crypto/sha1"
 	"crypto/subtle"
 	"errors"
 	"fmt"
+	"hash"
 	"strconv"
 	"strings"
 
@@ -18,19 +18,23 @@ import (
 )
 
 type state interface {
-	challenge(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error)
+	next(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error)
 	finished() bool
 }
 
 // RFC 5802, section 5
 
-type sha1FirstMessage struct{}
+type start struct {
+	hash     func() hash.Hash
+	hashSize int
+}
 
-func (c sha1FirstMessage) finished() bool {
+func (c start) finished() bool {
 	return false
 }
 
-func (c sha1FirstMessage) challenge(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
+// next for start will send the client-first-message to the server if successful
+func (c start) next(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
 	user, ok := props[sasl.AuthID]
 	if !ok {
 		return c, nil, sasl.PropertyMissingError{Property: sasl.AuthID}
@@ -44,18 +48,20 @@ func (c sha1FirstMessage) challenge(_ sasl.Token, props sasl.Properties, pairs s
 	bare := fmt.Sprintf("n=%s,r=%s", user, clientNonce)
 	t := sasl.Token("n,," + bare)
 
-	return sha1ClientFinalMessage{[]byte(bare)}, t, nil
+	return expectingServerFirstMessage{[]byte(bare), c.hash, c.hashSize}, t, nil
 }
 
-type sha1ClientFinalMessage struct {
+type expectingServerFirstMessage struct {
 	firstMessageBare []byte
+	hash             func() hash.Hash
+	hashSize         int
 }
 
-func (c sha1ClientFinalMessage) finished() bool {
+func (c expectingServerFirstMessage) finished() bool {
 	return false
 }
 
-func (c sha1ClientFinalMessage) challenge(serverMessage sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (c expectingServerFirstMessage) next(serverMessage sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
 	serverNonce, ok := pairs["r"]
 	if !ok {
 		return c, nil, sasl.ErrMissingParameter
@@ -97,18 +103,20 @@ func (c sha1ClientFinalMessage) challenge(serverMessage sasl.Token, props sasl.P
 
 	finalMessageBare := []byte("c=biws,r=" + serverNonce)
 	normPass, _ := c.normalizedPassword(password)
-	saltedPassword := pbkdf2.Key([]byte(normPass), saltToken, numIterations, sha1.Size, sha1.New)
+	saltedPassword := pbkdf2.Key([]byte(normPass), saltToken, numIterations, c.hashSize, c.hash)
 
 	return c.compose(saltedPassword, finalMessageBare, serverMessage)
 }
 
-func (c sha1ClientFinalMessage) compose(saltedPassword, finalMessageBare, serverFirstMessage []byte) (state, sasl.Token, error) {
-	clientMAC := hmac.New(sha1.New, saltedPassword)
+func (c expectingServerFirstMessage) compose(saltedPassword, finalMessageBare, serverFirstMessage []byte) (state, sasl.Token, error) {
+	clientMAC := hmac.New(c.hash, saltedPassword)
 	clientMAC.Write([]byte("Client Key"))
 	clientKey := clientMAC.Sum(nil)
-	storedKey := sha1.Sum(clientKey)
+	storedKeyHash := c.hash()
+	storedKeyHash.Write(clientKey)
+	storedKey := storedKeyHash.Sum(nil)
 
-	serverMAC := hmac.New(sha1.New, saltedPassword)
+	serverMAC := hmac.New(c.hash, saltedPassword)
 	serverMAC.Write([]byte("Server Key"))
 	serverKey := serverMAC.Sum(nil)
 
@@ -118,16 +126,16 @@ func (c sha1ClientFinalMessage) compose(saltedPassword, finalMessageBare, server
 		finalMessageBare,
 	}, []byte(","))
 
-	clientSignatureMAC := hmac.New(sha1.New, storedKey[:])
+	clientSignatureMAC := hmac.New(c.hash, storedKey)
 	clientSignatureMAC.Write(authMessage)
 	clientSignature := clientSignatureMAC.Sum(nil)
 
-	clientProof := make([]byte, sha1.Size)
+	clientProof := make([]byte, c.hashSize)
 	for i := range clientProof {
 		clientProof[i] = clientKey[i] ^ clientSignature[i]
 	}
 
-	serverSignatureMAC := hmac.New(sha1.New, serverKey[:])
+	serverSignatureMAC := hmac.New(c.hash, serverKey[:])
 	serverSignatureMAC.Write(authMessage)
 	serverSignature := serverSignatureMAC.Sum(nil)
 
@@ -142,10 +150,10 @@ func (c sha1ClientFinalMessage) compose(saltedPassword, finalMessageBare, server
 	encodedServerSignature := sasl.Token(serverSignature).Encode()
 	serverAuthentication := append([]byte("v="), encodedServerSignature...)
 
-	return sha1AuthenticateServer{serverAuthentication}, sasl.Token(finalMessage), nil
+	return expectingServerFinalMessage{serverAuthentication}, sasl.Token(finalMessage), nil
 }
 
-func (c sha1ClientFinalMessage) normalizedPassword(password string) (string, error) {
+func (c expectingServerFirstMessage) normalizedPassword(password string) (string, error) {
 	t := transform.NewReader(
 		strings.NewReader(password), sasl.Stringprep)
 	r := bufio.NewReader(t)
@@ -154,28 +162,28 @@ func (c sha1ClientFinalMessage) normalizedPassword(password string) (string, err
 	return string(normalized), err
 }
 
-type sha1AuthenticateServer struct {
+type expectingServerFinalMessage struct {
 	serverAuthentication []byte
 }
 
-func (c sha1AuthenticateServer) finished() bool {
+func (c expectingServerFinalMessage) finished() bool {
 	return false
 }
 
-func (c sha1AuthenticateServer) challenge(t sasl.Token, _ sasl.Properties, _ sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (c expectingServerFinalMessage) next(t sasl.Token, _ sasl.Properties, _ sasl.AttributeValuePairs) (state, sasl.Token, error) {
 	if subtle.ConstantTimeCompare(t, c.serverAuthentication) != 1 {
 		return c, nil, errors.New("server signature mismatch")
 	}
 
-	return sha1Finished{}, nil, nil
+	return finished{}, nil, nil
 }
 
-type sha1Finished struct{}
+type finished struct{}
 
-func (c sha1Finished) finished() bool {
+func (c finished) finished() bool {
 	return true
 }
 
-func (sha1Finished) challenge(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error) {
-	return sha1Finished{}, nil, nil
+func (finished) next(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error) {
+	return finished{}, nil, nil
 }

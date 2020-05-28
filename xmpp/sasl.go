@@ -80,7 +80,7 @@ func (c *conn) isGoogle() bool {
 
 func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	//TODO: this should be configurable by the client
-	preferedMechanisms := []string{"SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
+	preferedMechanisms := []string{"SCRAM-SHA-256", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
 
 	log.Println("sasl: server supports mechanisms", c.features.Mechanisms.Mechanism)
 

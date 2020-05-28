@@ -27,6 +27,7 @@ type state interface {
 type start struct {
 	hash     func() hash.Hash
 	hashSize int
+	plus     bool
 }
 
 func (c start) finished() bool {
@@ -48,13 +49,14 @@ func (c start) next(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeVal
 	bare := fmt.Sprintf("n=%s,r=%s", user, clientNonce)
 	t := sasl.Token("n,," + bare)
 
-	return expectingServerFirstMessage{[]byte(bare), c.hash, c.hashSize}, t, nil
+	return expectingServerFirstMessage{[]byte(bare), c.hash, c.hashSize, c.plus}, t, nil
 }
 
 type expectingServerFirstMessage struct {
 	firstMessageBare []byte
 	hash             func() hash.Hash
 	hashSize         int
+	plus             bool
 }
 
 func (c expectingServerFirstMessage) finished() bool {

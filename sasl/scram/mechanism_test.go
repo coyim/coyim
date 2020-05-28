@@ -50,3 +50,31 @@ func (s *ScramSuite) TestScramWithRFC5802TestVector(c *C) {
 	c.Check(client.NeedsMore(), Equals, false)
 	c.Check(t, IsNil)
 }
+
+func (s *ScramSuite) TestScramSha256WithRFC7677TestVector(c *C) {
+	client := sha256Mechanism.NewClient()
+
+	client.SetProperty(sasl.AuthID, "user")
+	client.SetProperty(sasl.Password, "pencil")
+	client.SetProperty(sasl.ClientNonce, "rOprNGfwEbeRWgbNEkqO")
+
+	t, err := client.Step(nil)
+
+	c.Check(err, IsNil)
+	c.Check(client.NeedsMore(), Equals, true)
+	c.Check(t, DeepEquals, sasl.Token(`n,,n=user,r=rOprNGfwEbeRWgbNEkqO`))
+
+	rec := sasl.Token("r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,s=W22ZaJ0SNY7soEsUEjb6gQ==,i=4096")
+	t, err = client.Step(rec)
+
+	c.Check(err, IsNil)
+	c.Check(client.NeedsMore(), Equals, true)
+	c.Check(t, DeepEquals, sasl.Token(`c=biws,r=rOprNGfwEbeRWgbNEkqO%hvYDpWUa2RaTCAfuxFIlj)hNlF$k0,p=dHzbZapWIk4jUhN+Ute9ytag9zjfMHgsqmmiz7AndVQ=`))
+
+	rec = sasl.Token("v=6rriTRBi23WpRR/wtup+mMhUZUn/dB5nLTJRsjl95G4=")
+	t, err = client.Step(rec)
+
+	c.Check(err, IsNil)
+	c.Check(client.NeedsMore(), Equals, false)
+	c.Check(t, IsNil)
+}

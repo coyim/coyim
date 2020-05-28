@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	sha1Mechanism   sasl.Mechanism = &scramMechanism{sha1.New, sha1.Size}
-	sha256Mechanism sasl.Mechanism = &scramMechanism{sha256.New, sha256.Size}
+	sha1Mechanism   sasl.Mechanism = &scramMechanism{sha1.New, sha1.Size, false}
+	sha256Mechanism sasl.Mechanism = &scramMechanism{sha256.New, sha256.Size, false}
 )
 
 const (
@@ -24,11 +24,12 @@ const (
 type scramMechanism struct {
 	hash     func() hash.Hash
 	hashSize int
+	plus     bool
 }
 
 func (m *scramMechanism) NewClient() sasl.Session {
 	return &scram{
-		state: start{m.hash, m.hashSize},
+		state: start{m.hash, m.hashSize, m.plus},
 		props: make(sasl.Properties),
 	}
 }

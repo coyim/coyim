@@ -19,13 +19,18 @@ import (
 
 type state interface {
 	challenge(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error)
+	finished() bool
 }
 
 // RFC 5802, section 5
 
-type firstMessage struct{}
+type sha1FirstMessage struct{}
 
-func (c firstMessage) challenge(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (c sha1FirstMessage) finished() bool {
+	return false
+}
+
+func (c sha1FirstMessage) challenge(_ sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
 	user, ok := props[sasl.AuthID]
 	if !ok {
 		return c, nil, sasl.PropertyMissingError{Property: sasl.AuthID}
@@ -39,14 +44,18 @@ func (c firstMessage) challenge(_ sasl.Token, props sasl.Properties, pairs sasl.
 	bare := fmt.Sprintf("n=%s,r=%s", user, clientNonce)
 	t := sasl.Token("n,," + bare)
 
-	return clientFinalMessage{[]byte(bare)}, t, nil
+	return sha1ClientFinalMessage{[]byte(bare)}, t, nil
 }
 
-type clientFinalMessage struct {
+type sha1ClientFinalMessage struct {
 	firstMessageBare []byte
 }
 
-func (c clientFinalMessage) challenge(serverMessage sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (c sha1ClientFinalMessage) finished() bool {
+	return false
+}
+
+func (c sha1ClientFinalMessage) challenge(serverMessage sasl.Token, props sasl.Properties, pairs sasl.AttributeValuePairs) (state, sasl.Token, error) {
 	serverNonce, ok := pairs["r"]
 	if !ok {
 		return c, nil, sasl.ErrMissingParameter
@@ -93,7 +102,7 @@ func (c clientFinalMessage) challenge(serverMessage sasl.Token, props sasl.Prope
 	return c.compose(saltedPassword, finalMessageBare, serverMessage)
 }
 
-func (c clientFinalMessage) compose(saltedPassword, finalMessageBare, serverFirstMessage []byte) (state, sasl.Token, error) {
+func (c sha1ClientFinalMessage) compose(saltedPassword, finalMessageBare, serverFirstMessage []byte) (state, sasl.Token, error) {
 	clientMAC := hmac.New(sha1.New, saltedPassword)
 	clientMAC.Write([]byte("Client Key"))
 	clientKey := clientMAC.Sum(nil)
@@ -133,10 +142,10 @@ func (c clientFinalMessage) compose(saltedPassword, finalMessageBare, serverFirs
 	encodedServerSignature := sasl.Token(serverSignature).Encode()
 	serverAuthentication := append([]byte("v="), encodedServerSignature...)
 
-	return authenticateServer{serverAuthentication}, sasl.Token(finalMessage), nil
+	return sha1AuthenticateServer{serverAuthentication}, sasl.Token(finalMessage), nil
 }
 
-func (c clientFinalMessage) normalizedPassword(password string) (string, error) {
+func (c sha1ClientFinalMessage) normalizedPassword(password string) (string, error) {
 	t := transform.NewReader(
 		strings.NewReader(password), sasl.Stringprep)
 	r := bufio.NewReader(t)
@@ -145,20 +154,28 @@ func (c clientFinalMessage) normalizedPassword(password string) (string, error) 
 	return string(normalized), err
 }
 
-type authenticateServer struct {
+type sha1AuthenticateServer struct {
 	serverAuthentication []byte
 }
 
-func (c authenticateServer) challenge(t sasl.Token, _ sasl.Properties, _ sasl.AttributeValuePairs) (state, sasl.Token, error) {
+func (c sha1AuthenticateServer) finished() bool {
+	return false
+}
+
+func (c sha1AuthenticateServer) challenge(t sasl.Token, _ sasl.Properties, _ sasl.AttributeValuePairs) (state, sasl.Token, error) {
 	if subtle.ConstantTimeCompare(t, c.serverAuthentication) != 1 {
 		return c, nil, errors.New("server signature mismatch")
 	}
 
-	return finished{}, nil, nil
+	return sha1Finished{}, nil, nil
 }
 
-type finished struct{}
+type sha1Finished struct{}
 
-func (finished) challenge(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error) {
-	return finished{}, nil, nil
+func (c sha1Finished) finished() bool {
+	return true
+}
+
+func (sha1Finished) challenge(sasl.Token, sasl.Properties, sasl.AttributeValuePairs) (state, sasl.Token, error) {
+	return sha1Finished{}, nil, nil
 }

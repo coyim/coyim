@@ -18,7 +18,7 @@ type scramSHA1Mechanism struct{}
 
 func (m *scramSHA1Mechanism) NewClient() sasl.Session {
 	return &scramSHA1{
-		state: firstMessage{},
+		state: sha1FirstMessage{},
 		props: make(sasl.Properties),
 	}
 }
@@ -40,5 +40,5 @@ func (p *scramSHA1) Step(t sasl.Token) (ret sasl.Token, err error) {
 }
 
 func (p *scramSHA1) NeedsMore() bool {
-	return p.state != finished{}
+	return !p.state.finished()
 }

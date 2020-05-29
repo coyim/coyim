@@ -95,8 +95,7 @@ $(BUILD_TOOLS_DIR):
 	mkdir -p $@
 
 $(BUILD_TOOLS_DIR)/esc: $(BUILD_TOOLS_DIR)
-	@type esc >/dev/null 2>&1 || (echo "The program 'esc' is required but not available. Please install it by running 'make deps'." && exit 1)
-	@cp `which esc` $(BUILD_TOOLS_DIR)/esc
+	./find_esc.sh $(BUILD_TOOLS_DIR)
 
 gui/definitions.go: $(BUILD_TOOLS_DIR)/esc gui/definitions/*.xml
 	(cd gui; go generate -x ui_reader.go)

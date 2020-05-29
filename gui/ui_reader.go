@@ -1,4 +1,4 @@
-//go:generate esc -o definitions.go -modtime 1489449600 -pkg gui -ignore "Makefile" definitions/
+//go:generate ../.build-tools/esc -o definitions.go -modtime 1489449600 -pkg gui -ignore "Makefile" definitions/
 
 package gui
 

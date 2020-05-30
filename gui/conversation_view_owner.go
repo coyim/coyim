@@ -3,7 +3,6 @@ package gui
 import (
 	"fmt"
 	"log"
-	"strings"
 
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -282,6 +281,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 func (cvf *ourConversationViewFactory) setConversationView(c conversationView) {
 	// fmt.Printf("setConversationView(peer=%s)\n", cvf.peer)
 	defer cvf.account.executeDelayed(cvf.ui, cvf.peer, cvf.targeted)
+
 	cvf.account.Lock()
 	defer cvf.account.Unlock()
 
@@ -324,10 +324,9 @@ func (cvf *ourConversationViewFactory) getConversationViewSafely() (conversation
 }
 
 func (cvf *ourConversationViewFactory) countPeerWindows(peer jid.Any) int {
-	prefix := peer.NoResource().String()
 	c := 0
 	for k := range cvf.account.c {
-		if k == prefix || strings.HasPrefix(k, prefix+"/") {
+		if samePeer(peer, k) {
 			c++
 		}
 	}

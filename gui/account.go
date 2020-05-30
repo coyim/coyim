@@ -47,14 +47,9 @@ func (account *account) executeOneDelayed(ui *gtkUI, p string, cv conversationVi
 	delete(account.delayedConversations, p)
 }
 
-func keysOfMap(mm map[string][]func(conversationView)) []string {
-	k := make([]string, len(mm))
-
-	for kk := range mm {
-		k = append(k, kk)
-	}
-
-	return k
+func samePeer(peer jid.Any, s string) bool {
+	sp := jid.Parse(s)
+	return peer.NoResource().String() == sp.NoResource().String()
 }
 
 func (account *account) executeDelayed(ui *gtkUI, peer jid.Any, targeted bool) {
@@ -65,8 +60,10 @@ func (account *account) executeDelayed(ui *gtkUI, peer jid.Any, targeted bool) {
 		if targeted {
 			account.executeOneDelayed(ui, peer.String(), cv)
 		} else {
-			for _, s := range keysOfMap(account.delayedConversations) {
-				account.executeOneDelayed(ui, s, cv)
+			for s := range account.delayedConversations {
+				if samePeer(peer, s) {
+					account.executeOneDelayed(ui, s, cv)
+				}
 			}
 		}
 

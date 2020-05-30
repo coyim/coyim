@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"io/ioutil"
+	"fmt"
 	"os"
 	"runtime/pprof"
 
@@ -43,18 +43,21 @@ func init() {
 }
 
 func initLog() {
-	if !*config.DebugFlag {
-		log.SetOutput(ioutil.Discard)
-		return
+	log.SetLevel(log.InfoLevel)
+	if *config.DebugFlag {
+		log.SetLevel(log.DebugLevel)
 	}
+	if *config.TraceFlag {
+		log.SetLevel(log.TraceLevel)
+	}
+	log.SetReportCaller(*config.DebugFunctionCalls)
 }
 
 func main() {
 	flag.Parse()
 
 	if *config.VersionFlag {
-		var versionMessage = "CoyIM version " + coyimVersion + "\n"
-		os.Stdout.WriteString(versionMessage)
+		fmt.Printf("CoyIM version %s\n", coyimVersion)
 		return
 	}
 

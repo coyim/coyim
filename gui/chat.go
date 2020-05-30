@@ -3,9 +3,10 @@ package gui
 import (
 	"errors"
 	"fmt"
-	"log"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"

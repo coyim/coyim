@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"io/ioutil"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -100,11 +101,11 @@ func (s *EventHandlerSuite) Test_HandleSMPEvent_handlesSMPEventsAboutFailure(c *
 
 func captureLog(f func()) string {
 	buf := new(bytes.Buffer)
-	prevFlags := log.Flags()
-	log.SetFlags(0)
+	// prevFlags := log.Flags()
+	// log.SetFlags(0)
 	log.SetOutput(buf)
 	f()
-	log.SetFlags(prevFlags)
+	// log.SetFlags(prevFlags)
 	log.SetOutput(ioutil.Discard)
 	return buf.String()
 }
@@ -116,14 +117,14 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsHeartbeatEvents(c *C) {
 	})
 
 	c.Assert(handler.securityChange, Equals, NoChange)
-	c.Assert(l, Equals, "[me1@foo.bar] Heartbeat received from them1@somewhere.com.\n")
+	c.Assert(l, Matches, ".*?\\[me1@foo\\.bar\\] Heartbeat received from them1@somewhere.com\\..*?\n")
 
 	l2 := captureLog(func() {
 		handler.HandleMessageEvent(otr3.MessageEventLogHeartbeatSent, nil, nil)
 	})
 
 	c.Assert(handler.securityChange, Equals, NoChange)
-	c.Assert(l2, Equals, "[me1@foo.bar] Heartbeat sent to them1@somewhere.com.\n")
+	c.Assert(l2, Matches, ".*?\\[me1@foo\\.bar\\] Heartbeat sent to them1@somewhere.com\\..*?\n")
 }
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnrecognizedMessage(c *C) {
@@ -132,7 +133,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnrecognizedMessage(c *C
 		handler.HandleMessageEvent(otr3.MessageEventReceivedMessageUnrecognized, nil, nil)
 	})
 
-	c.Assert(l, Equals, "[me1@foo.bar] Unrecognized OTR message received from them1@somewhere.com.\n")
+	c.Assert(l, Matches, ".*?\\[me1@foo\\.bar\\] Unrecognized OTR message received from them1@somewhere\\.com\\..*?\n")
 }
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnhandledEvent(c *C) {
@@ -141,7 +142,7 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_logsUnhandledEvent(c *C) {
 		handler.HandleMessageEvent(otr3.MessageEvent(44422), nil, nil)
 	})
 
-	c.Assert(l, Equals, "[me1@foo.bar] Unhandled OTR3 Message Event(MESSAGE EVENT: (THIS SHOULD NEVER HAPPEN), , <nil>)\n")
+	c.Assert(l, Matches, ".*?\\[me1@foo\\.bar\\] Unhandled OTR3 Message Event\\(MESSAGE EVENT: \\(THIS SHOULD NEVER HAPPEN\\), , <nil>\\).*?\n")
 }
 
 func (s *EventHandlerSuite) Test_HandleMessageEvent_ignoresMessageForOtherInstance(c *C) {
@@ -208,5 +209,5 @@ func (s *EventHandlerSuite) Test_HandleMessageEvent_handlesMessageEventSetupCorr
 		handler.HandleMessageEvent(otr3.MessageEventSetupError, nil, errors.New("hmm bla bla"))
 	})
 	c.Assert(<-nn, Equals, "Error setting up private conversation.")
-	c.Assert(l, Equals, "[me2@foo.bar] Error setting up private conversation with them2@somewhere.com: hmm bla bla.\n")
+	c.Assert(l, Matches, ".*?\\[me2@foo\\.bar\\] Error setting up private conversation with them2@somewhere.com: hmm bla bla.*?\n")
 }

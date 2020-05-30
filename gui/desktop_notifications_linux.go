@@ -2,8 +2,9 @@ package gui
 
 import (
 	"fmt"
-	"log"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/TheCreeper/go-notify"
 	"github.com/godbus/dbus"

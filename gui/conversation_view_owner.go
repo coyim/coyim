@@ -2,7 +2,8 @@ package gui
 
 import (
 	"fmt"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/xmpp/jid"

@@ -2,8 +2,9 @@ package session
 
 import (
 	"io"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type logger struct {
@@ -16,9 +17,10 @@ func LogToDebugLog() io.Writer {
 }
 
 func newLogger() io.Writer {
-	return &logger{
-		log.New(os.Stderr, "", log.LstdFlags),
-	}
+	l := log.New()
+	l.SetOutput(os.Stderr)
+
+	return &logger{l}
 }
 
 func (l *logger) Write(m []byte) (int, error) {

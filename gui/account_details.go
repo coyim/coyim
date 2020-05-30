@@ -4,9 +4,10 @@ import (
 	"crypto/tls"
 	"encoding/hex"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/digests"

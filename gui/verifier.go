@@ -3,9 +3,10 @@ package gui
 import (
 	"crypto/rand"
 	"fmt"
-	"log"
 	"math/big"
 	"regexp"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/access"

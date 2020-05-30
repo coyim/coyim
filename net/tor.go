@@ -3,10 +3,11 @@ package net
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"golang.org/x/net/proxy"
 )

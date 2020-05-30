@@ -6,13 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"sync"
 	"unsafe"
+
+	log "github.com/sirupsen/logrus"
 
 	"reflect"
 

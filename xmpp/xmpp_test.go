@@ -4,8 +4,9 @@ import (
 	"encoding/xml"
 	"io"
 	"io/ioutil"
-	"log"
 	"testing"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/data"

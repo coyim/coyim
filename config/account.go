@@ -1,10 +1,11 @@
 package config
 
 import (
-	"log"
 	"sort"
 	"strconv"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"

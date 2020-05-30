@@ -2,7 +2,8 @@ package otrclient
 
 import (
 	"fmt"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"

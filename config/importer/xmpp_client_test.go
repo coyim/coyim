@@ -3,8 +3,9 @@ package importer
 import (
 	"encoding/hex"
 	"io/ioutil"
-	"log"
 	"testing"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/glib_mock"

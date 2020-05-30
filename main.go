@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"io/ioutil"
-	"log"
 	"os"
 	"runtime/pprof"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/gui"
@@ -46,10 +47,6 @@ func initLog() {
 		log.SetOutput(ioutil.Discard)
 		return
 	}
-
-	flags := log.Ldate | log.Ltime | log.Llongfile
-	log.SetFlags(flags)
-	log.SetPrefix("[CoyIM] ")
 }
 
 func main() {

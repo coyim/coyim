@@ -1,9 +1,10 @@
 package xmpp
 
 import (
-	"log"
 	"net"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	ourNet "github.com/coyim/coyim/net"
 	"github.com/coyim/coyim/xmpp/errors"

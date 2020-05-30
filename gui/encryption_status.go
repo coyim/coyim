@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 type encryptionStatus struct {

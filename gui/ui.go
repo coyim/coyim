@@ -3,10 +3,11 @@ package gui
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"runtime"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/gui/settings"

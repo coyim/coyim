@@ -4,11 +4,12 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/gotk3adapter/gdki"
 )

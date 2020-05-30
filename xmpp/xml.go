@@ -11,9 +11,10 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"

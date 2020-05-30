@@ -3,11 +3,12 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/glib_mock"

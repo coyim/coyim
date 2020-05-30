@@ -9,8 +9,9 @@ package xmpp
 
 import (
 	"errors"
-	"log"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/data"
 )

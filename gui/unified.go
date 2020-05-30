@@ -2,10 +2,11 @@ package gui
 
 import (
 	"fmt"
-	"log"
 	"runtime"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"

@@ -2,11 +2,12 @@ package net
 
 import (
 	"errors"
-	"log"
 	"net"
 	"sort"
 	"strconv"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/miekg/dns"
 	"golang.org/x/net/proxy"

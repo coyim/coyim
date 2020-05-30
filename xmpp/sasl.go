@@ -11,7 +11,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/data"
 	xe "github.com/coyim/coyim/xmpp/errors"

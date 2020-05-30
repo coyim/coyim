@@ -1,11 +1,12 @@
 package gui
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/otrclient"

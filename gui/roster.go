@@ -5,10 +5,11 @@ import (
 	"encoding/hex"
 	"fmt"
 	"html"
-	"log"
 	"runtime"
 	"sort"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"

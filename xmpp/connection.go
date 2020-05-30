@@ -13,11 +13,12 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"reflect"
 	"strconv"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/cache"
 	"github.com/coyim/coyim/xmpp/data"

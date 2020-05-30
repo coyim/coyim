@@ -3,7 +3,8 @@ package gui
 import (
 	"errors"
 	"fmt"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"

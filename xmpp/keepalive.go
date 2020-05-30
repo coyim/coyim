@@ -3,9 +3,10 @@ package xmpp
 import (
 	"encoding/xml"
 	"io"
-	"log"
 	"net"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/data"
 )

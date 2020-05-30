@@ -2,8 +2,9 @@ package gui
 
 import (
 	"fmt"
-	"log"
 	"sync"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/otrclient"

@@ -36,7 +36,7 @@ const (
 
 type session struct {
 	conn             xi.Conn
-	connectionLogger io.Writer
+	connectionLogger config.Logger
 	r                *roster.List
 
 	connStatus     connStatus
@@ -139,6 +139,10 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 
 	inMemoryLog, xmppLogger := CreateXMPPLogger(c.RawLogFile)
 
+	sessionLog := log.WithFields(log.Fields{
+		"account": cu.Account,
+	})
+
 	s := &session{
 		config:        c,
 		accountConfig: cu,
@@ -152,12 +156,12 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 
 		inMemoryLog:      inMemoryLog,
 		xmppLogger:       xmppLogger,
-		connectionLogger: LogToDebugLog(),
+		connectionLogger: sessionLog,
 		dialerFactory:    df,
 	}
 
 	s.ReloadKeys()
-	s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate)
+	s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate, sessionLog)
 
 	go observe(s)
 	go checkReconnect(s)
@@ -783,7 +787,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 
 	conf := s.GetConfig()
 	policy := config.ConnectionPolicy{
-		Logger:        s.connectionLogger,
+		// Logger:        s.connectionLogger,
 		XMPPLogger:    s.xmppLogger,
 		DialerFactory: s.dialerFactory,
 	}
@@ -894,10 +898,6 @@ func (s *session) Conn() xi.Conn {
 
 func (s *session) SetSessionEventHandler(eh access.EventHandler) {
 	s.sessionEventHandler = eh
-}
-
-func (s *session) SetConnectionLogger(l io.Writer) {
-	s.connectionLogger = l
 }
 
 func (s *session) SetLastActionTime(t time.Time) {

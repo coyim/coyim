@@ -2,7 +2,6 @@ package mocks
 
 import (
 	"bytes"
-	"io"
 	"time"
 
 	"github.com/coyim/coyim/config"
@@ -139,9 +138,6 @@ func (*SessionMock) SendPing() {}
 
 // SetCommandManager is the implementation for Session interface
 func (*SessionMock) SetCommandManager(otrclient.CommandManager) {}
-
-// SetConnectionLogger is the implementation for Session interface
-func (*SessionMock) SetConnectionLogger(io.Writer) {}
 
 // SetConnector is the implementation for Session interface
 func (*SessionMock) SetConnector(access.Connector) {}

@@ -48,7 +48,7 @@ func (ts *testSender) Send(peer jid.Any, msg string) error {
 func (s *ConversationManagerSuite) Test_TerminateAll_willTerminate(c *C) {
 	cb := &testConvBuilder{&otr3.Conversation{}}
 	ts := &testSender{err: nil}
-	mgr := NewConversationManager(cb.NewConversation, ts, "blarg", func(jid.Any, *EventHandler, chan string, chan int) {})
+	mgr := NewConversationManager(cb.NewConversation, ts, "blarg", func(jid.Any, *EventHandler, chan string, chan int) {}, log.New().WithFields(log.Fields{}))
 	conv, created := mgr.EnsureConversationWith(jid.NR("someone@whitehouse.gov"))
 
 	c.Assert(created, Equals, true)

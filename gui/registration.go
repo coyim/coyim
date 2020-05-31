@@ -95,7 +95,7 @@ func (f *registrationForm) renderForm(title string, fields []interface{}) error 
 
 func requestAndRenderRegistrationForm(server string, formHandler data.FormCallback, df interfaces.DialerFactory, verifier tls.Verifier, c *config.ApplicationConfig) error {
 	_, xmppLog := session.CreateXMPPLogger(c.RawLogFile)
-	policy := config.ConnectionPolicy{DialerFactory: df, XMPPLogger: xmppLog, Logger: session.LogToDebugLog()}
+	policy := config.ConnectionPolicy{DialerFactory: df, XMPPLogger: xmppLog, Logger: log.New().Writer()}
 
 	//TODO: this would not be necessary if RegisterAccount did not use it
 	//TODO: we should give the choice of using Tor to the user

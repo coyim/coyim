@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
@@ -46,16 +47,18 @@ type conversationManager struct {
 	onCreateEH OnEventHandlerCreation
 
 	account string
+	log     config.Logger
 }
 
 // NewConversationManager returns a new ConversationManager
-func NewConversationManager(builder ConversationBuilder, sender Sender, account string, onCreateEH OnEventHandlerCreation) ConversationManager {
+func NewConversationManager(builder ConversationBuilder, sender Sender, account string, onCreateEH OnEventHandlerCreation, l config.Logger) ConversationManager {
 	return &conversationManager{
 		conversations: make(map[string]*conversation),
 		builder:       builder,
 		sender:        sender,
 		onCreateEH:    onCreateEH,
 		account:       account,
+		log:           l,
 	}
 }
 
@@ -131,6 +134,7 @@ func (m *conversationManager) createEventHandler(peer jid.Any, conversation *otr
 		account:            m.account,
 		notifications:      notificationsChan,
 		delayedMessageSent: delayedChan,
+		log:                m.log,
 	}
 	m.onCreateEH(peer, eh, notificationsChan, delayedChan)
 	conversation.SetSMPEventHandler(eh)

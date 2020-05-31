@@ -2,7 +2,6 @@ package access
 
 import (
 	"bytes"
-	"io"
 	"time"
 
 	"github.com/coyim/coyim/config"
@@ -58,7 +57,6 @@ type Session interface {
 	Send(jid.Any, string) error
 	SendPing()
 	SetCommandManager(otrclient.CommandManager)
-	SetConnectionLogger(io.Writer)
 	SetConnector(Connector)
 	SetLastActionTime(time.Time)
 	SetSessionEventHandler(EventHandler)

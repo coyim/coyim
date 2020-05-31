@@ -1,10 +1,12 @@
 package xmpp
 
 import (
+	"bytes"
 	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
 
+	log "github.com/sirupsen/logrus"
 	. "gopkg.in/check.v1"
 )
 
@@ -30,30 +32,30 @@ func (s *TLSXmppSuite) Test_certName_usesNameInformation(c *C) {
 }
 
 func (s *TLSXmppSuite) Test_printTLSDetails_printsUnknownVersions(c *C) {
-	mockWriter := mockConnIOReaderWriter{}
 	state := tls.ConnectionState{
 		Version: 0x0200,
 	}
+	ll := log.New()
+	buf := new(bytes.Buffer)
+	ll.SetOutput(buf)
 
-	printTLSDetails(&mockWriter, state)
+	printTLSDetails(ll, state)
 
-	c.Assert(string(mockWriter.write), Equals, ""+
-		"  SSL/TLS version: unknown\n"+
-		"  Cipher suite: unknown\n",
-	)
+	c.Assert(buf.String(), Matches, "(?s).*?version=unknown.*?")
+	c.Assert(buf.String(), Matches, "(?s).*?cipherSuite=unknown.*?")
 }
 
 func (s *TLSXmppSuite) Test_printTLSDetails_printsCorrectVersions(c *C) {
-	mockWriter := mockConnIOReaderWriter{}
 	state := tls.ConnectionState{
 		Version:     tls.VersionTLS11,
 		CipherSuite: 0xc00a,
 	}
+	ll := log.New()
+	buf := new(bytes.Buffer)
+	ll.SetOutput(buf)
 
-	printTLSDetails(&mockWriter, state)
+	printTLSDetails(ll, state)
 
-	c.Assert(string(mockWriter.write), Equals, ""+
-		"  SSL/TLS version: TLS 1.1\n"+
-		"  Cipher suite: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA\n",
-	)
+	c.Assert(buf.String(), Matches, "(?s).*?version=\"TLS 1\\.1\".*?")
+	c.Assert(buf.String(), Matches, "(?s).*?cipherSuite=TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA.*?")
 }

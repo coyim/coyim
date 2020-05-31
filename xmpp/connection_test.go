@@ -1080,6 +1080,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenStartingAHandshake(c *C) {
 	)}
 	t := &tlsMock1{returnFromHandshake: io.EOF}
 	d := &dialer{
+		log:      testLogger(),
 		JID:      "user@domain",
 		password: "pass",
 
@@ -1116,6 +1117,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceeds(c *C) {
 		toReturn: nil,
 	}
 	d := &dialer{
+		log:           testLogger(),
 		JID:           "user@www.olabini.se",
 		password:      "pass",
 		serverAddress: "www.olabini.se:443",
@@ -1145,6 +1147,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButFailsOnInv
 		toReturn: goerr.New("tls: server certificate does not match expected hash (got: 82454418cb04854aa721bb0596528ff802b1e18a4e3a7767412ac9f108c9d3a7, want: 6161616161)"),
 	}
 	d := &dialer{
+		log:           testLogger(),
 		JID:           "user@www.olabini.se",
 		password:      "pass",
 		serverAddress: "www.olabini.se:443",
@@ -1186,6 +1189,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_worksIfTheHandshakeSucceedsButSucceedsOn
 		toReturn: nil,
 	}
 	d := &dialer{
+		log:           testLogger(),
 		JID:           "user@www.olabini.se",
 		password:      "pass",
 		serverAddress: "www.olabini.se:443",

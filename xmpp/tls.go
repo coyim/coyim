@@ -11,9 +11,9 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"io"
 	"net"
 
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/interfaces"
 )
 
@@ -75,9 +75,9 @@ func GetTLSVersion(tlsState tls.ConnectionState) string {
 	return version
 }
 
-func printTLSDetails(w io.Writer, tlsState tls.ConnectionState) {
-	fmt.Fprintf(w, "  SSL/TLS version: %s\n", GetTLSVersion(tlsState))
-	fmt.Fprintf(w, "  Cipher suite: %s\n", GetCipherSuiteName(tlsState))
+func printTLSDetails(ll coylog.Logger, tlsState tls.ConnectionState) {
+	ll.WithField("version", GetTLSVersion(tlsState)).Info("  SSL/TLS/version")
+	ll.WithField("cipherSuite", GetCipherSuiteName(tlsState)).Info("  Cipher suite")
 }
 
 // RFC 6120, section 5.4
@@ -113,8 +113,7 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 		return errors.New("xmpp: expected <proceed> after <starttls> but got <" + proceed.Name.Local + "> in " + proceed.Name.Space)
 	}
 
-	l := c.Config().GetLog()
-	io.WriteString(l, "Starting TLS handshake\n")
+	d.log.Info("Starting TLS handshake")
 
 	tlsConfig := c.Config().TLSConfig
 	if tlsConfig == nil {
@@ -130,7 +129,7 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 	}
 
 	tlsState := tlsConn.ConnectionState()
-	printTLSDetails(l, tlsState)
+	printTLSDetails(d.log, tlsState)
 
 	if err = d.verifier.Verify(tlsState, tlsConfig, c.OriginDomain()); err != nil {
 		return err

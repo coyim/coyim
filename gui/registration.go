@@ -29,6 +29,8 @@ type registrationForm struct {
 	server string
 	conf   *config.Account
 	fields []formField
+
+	l withLog
 }
 
 func (f *registrationForm) accepted() error {
@@ -43,9 +45,9 @@ func (f *registrationForm) accepted() error {
 		case *data.FixedFormField:
 			switch ff.Name {
 			case "captcha-fallback-text":
-				log.Printf("Captcha fallback text %s", ff.Label)
+				f.l.Log().WithField("text", ff.Label).Debug("Captcha fallback text")
 			default:
-				log.Printf("Field %s", ff.Label)
+				f.l.Log().WithField("text", ff.Label).Debug("A field")
 			}
 		case *data.TextFormField:
 			w := field.widget.(gtki.Entry)
@@ -59,7 +61,7 @@ func (f *registrationForm) accepted() error {
 			case "Enter the text you see":
 				conf.Password = ff.Result
 			default:
-				log.Printf("Field %s", ff.Label)
+				f.l.Log().WithField("text", ff.Label).Debug("A field")
 			}
 		}
 	}
@@ -116,25 +118,25 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 const (
 	torErrorMessage = "The registration process currently requires Tor in order to ensure your safety.\n\n" +
 		"You don't have Tor running. Please, start it.\n\n"
-	torLogMessage            = "We had an error when trying to register your account: Tor is not running. %v"
+	torLogMessage            = "We had an error when trying to register your account: Tor is not running."
 	storeAccountInfoError    = "We had an error when trying to store your account information."
-	storeAccountInfoLog      = "We had an error when trying to store your account information. Please, try again.%v"
+	storeAccountInfoLog      = "We had an error when trying to store your account information. Please, try again."
 	contactServerError       = "Could not contact the server.\n\nPlease, correct your server choice and try again."
-	contactServerLog         = "Error when trying to get registration form: %v"
+	contactServerLog         = "Error when trying to get registration form"
 	timeOutError             = "We had an error:\n\nTimeout."
-	timeOutLog               = "Error when trying to get registration form: %v"
+	timeOutLog               = "Error when trying to get registration form"
 	requiredFieldsError      = "We had an error:\n\nSome required fields are missing. Please, try again and fill all fields."
-	requiredFieldsLog        = "Error when trying to get registration form: %v"
+	requiredFieldsLog        = "Error when trying to get registration form"
 	wrongCaptchaError        = "We had an error:\n\nThe captcha entered is wrong"
-	wrongCaptchaLog          = "We had an error when trying to create your account: %v"
+	wrongCaptchaLog          = "We had an error when trying to create your account"
 	conflictingUserNameError = "We had an error:\n\nIncorrect Username"
-	conflictingUserNameLog   = "We had an error when trying to create your account: %v"
+	conflictingUserNameLog   = "We had an error when trying to create your account"
 	resourceConstraintError  = "We had an error:\n\ntoo many requests for creating account."
-	resourceConstraintLog    = "We had an error when trying to create your account: %v"
+	resourceConstraintLog    = "We had an error when trying to create your account"
 )
 
-func renderError(message gtki.Label, errorMessage, logMessage string, err error) {
-	log.Printf(logMessage, err)
+func renderError(message gtki.Label, errorMessage, logMessage string, err error, l withLog) {
+	l.Log().WithError(err).Warn(logMessage)
 	message.SetLabel(i18n.Local(errorMessage))
 }
 
@@ -145,11 +147,11 @@ func (w *serverSelectionWindow) renderConnectionErrorFor(err error) {
 	switch err {
 
 	case ourNet.ErrTimeout:
-		renderError(w.formMessage, timeOutError, timeOutLog, err)
+		renderError(w.formMessage, timeOutError, timeOutLog, err, w.u)
 	case config.ErrTorNotRunning:
-		renderError(w.formMessage, torErrorMessage, torLogMessage, err)
+		renderError(w.formMessage, torErrorMessage, torLogMessage, err, w.u)
 	default:
-		renderError(w.formMessage, contactServerError, contactServerLog, err)
+		renderError(w.formMessage, contactServerError, contactServerLog, err, w.u)
 	}
 }
 
@@ -158,15 +160,15 @@ func (w *serverSelectionWindow) renderErrorFor(err error) {
 
 	switch err {
 	case xmpp.ErrMissingRequiredRegistrationInfo:
-		renderError(w.doneMessage, requiredFieldsError, requiredFieldsLog, err)
+		renderError(w.doneMessage, requiredFieldsError, requiredFieldsLog, err, w.u)
 	case xmpp.ErrUsernameConflict:
-		renderError(w.doneMessage, conflictingUserNameError, conflictingUserNameLog, err)
+		renderError(w.doneMessage, conflictingUserNameError, conflictingUserNameLog, err, w.u)
 	case xmpp.ErrWrongCaptcha:
-		renderError(w.doneMessage, wrongCaptchaError, wrongCaptchaLog, err)
+		renderError(w.doneMessage, wrongCaptchaError, wrongCaptchaLog, err, w.u)
 	case xmpp.ErrResourceConstraint:
-		renderError(w.doneMessage, resourceConstraintError, resourceConstraintLog, err)
+		renderError(w.doneMessage, resourceConstraintError, resourceConstraintLog, err, w.u)
 	default:
-		renderError(w.doneMessage, contactServerError, contactServerLog, err)
+		renderError(w.doneMessage, contactServerError, contactServerLog, err, w.u)
 	}
 }
 
@@ -208,7 +210,7 @@ func createServerSelectionWindow(u *gtkUI) *serverSelectionWindow {
 	w.formSubmitted = make(chan error)
 	w.done = make(chan error)
 
-	w.form = &registrationForm{grid: w.grid}
+	w.form = &registrationForm{grid: w.grid, l: u}
 
 	return w
 }
@@ -284,7 +286,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 	err = w.u.addAndSaveAccountConfig(w.form.conf)
 
 	if err != nil {
-		renderError(w.doneMessage, storeAccountInfoError, storeAccountInfoLog, err)
+		renderError(w.doneMessage, storeAccountInfoError, storeAccountInfoLog, err, w.u)
 		return
 	}
 

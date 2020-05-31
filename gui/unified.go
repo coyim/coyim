@@ -143,7 +143,7 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 	cs := cl.layout.ui.currentColorSet()
 	peer, ok := csi.currentPeer()
 	if !ok {
-		log.Printf("No peer found for %s", csi.target.NoResource())
+		csi.Log().WithField("peer", csi.target.NoResource()).Warn("No peer found for")
 		return
 	}
 	cl.model.Set2(csi.iter, ulAllIndexValues, []interface{}{
@@ -232,7 +232,7 @@ func (csi *conversationStackItem) isVisible() bool {
 }
 
 func (csi *conversationStackItem) setEnabled(enabled bool) {
-	log.Printf("csi.SetEnabled(%v)", enabled)
+	csi.Log().WithField("enabled", enabled).Debug("csi.SetEnabled()")
 }
 
 func (csi *conversationStackItem) shortName() string {
@@ -327,12 +327,12 @@ func (csi *conversationStackItem) destroy() {
 func (cl *conversationList) getItemForIter(iter gtki.TreeIter) *conversationStackItem {
 	val, err := cl.model.GetValue(iter, ulIndexID)
 	if err != nil {
-		log.Printf("Error getting ulIndexID value: %v", err)
+		log.WithError(err).Warn("Error getting ulIndexID value")
 		return nil
 	}
 	gv, err := val.GoValue()
 	if err != nil {
-		log.Printf("Error getting GoValue for ulIndexID: %v", err)
+		log.WithError(err).Warn("Error getting GoValue for ulIndexID")
 		return nil
 	}
 	return cl.layout.itemMap[gv.(int)]
@@ -341,7 +341,7 @@ func (cl *conversationList) getItemForIter(iter gtki.TreeIter) *conversationStac
 func (cl *conversationList) onActivate(v gtki.TreeView, path gtki.TreePath) {
 	iter, err := cl.model.GetIter(path)
 	if err != nil {
-		log.Printf("Error converting path to iter: %v", err)
+		log.WithError(err).Warn("Error converting path to iter")
 		return
 	}
 	csi := cl.getItemForIter(iter)

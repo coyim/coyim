@@ -33,26 +33,36 @@ import (
 func (u *gtkUI) startAllListenersForFile(ctl *data.FileTransferControl, cv conversationView, file *fileNotification, name, verbing, purpose string) {
 	go ctl.WaitForError(func(err error) {
 		file.fail()
-		log.Printf("%s file transfer of file %s failed with %v", verbing, name, err)
+		cv.Log().WithError(err).WithFields(log.Fields{
+			"verbing": verbing,
+			"file":    name,
+		}).Warn("file transfer failed")
 	})
 
 	go ctl.WaitForFinish(func() {
 		file.succeed(purpose)
-		log.Printf("%s file transfer of file %s finished with success", verbing, name)
+		cv.Log().WithFields(log.Fields{
+			"verbing": verbing,
+			"file":    name,
+		}).Info("file transfer finished with success")
 	})
 
 	go ctl.WaitForUpdate(func(upd, total int64) {
 		file.progress = float64((upd*100)/total) / 100
 		cv.updateFileTransfer(file)
-		log.Printf("%s file transfer of file %s: %d/%d done", verbing, name, upd, total)
+		cv.Log().WithFields(log.Fields{
+			"verbing": verbing,
+			"file":    name,
+			"update":  upd,
+			"total":   total,
+		}).Info("file transfer partially done")
 	})
 }
 
-func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
+func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 	dialogID := "FileTransferAskToReceive"
 	builder := newBuilder(dialogID)
 	dialogOb := builder.getObj(dialogID)
-	account := u.findAccountForSession(ev.Session)
 
 	d := dialogOb.(gtki.MessageDialog)
 	d.SetDefaultResponse(gtki.RESPONSE_YES)
@@ -115,7 +125,7 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer) {
 
 	if result && name != "" {
 		fileName := resizeFileName(ev.Name)
-		cv := u.openConversationView(account, ev.Peer, true)
+		cv := u.openConversationView(a, ev.Peer, true)
 		f := createNewFileTransferWithDefaults(fileName, ev.IsDirectory, false, true, ev.Control, cv)
 		u.startAllListenersForFile(ev.Control, cv, f, ev.Name, "Receiving", "receive")
 		ev.Answer <- &name

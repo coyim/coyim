@@ -19,18 +19,21 @@ type listRoomsView struct {
 	emptyListLabel     gtki.Label          `gtk-widget:"empty-list-label"`
 	account            gtki.ComboBox       `gtk-widget:"accounts"`
 	accountsModel      gtki.ListStore      `gtk-widget:"accounts-model"`
+
+	ui *gtkUI
 }
 
 func (u *gtkUI) listChatRooms() {
-	view := newListRoomsView(u.accountManager, u.chatManager)
+	view := u.newListRoomsView(u.accountManager, u.chatManager)
 	view.SetTransientFor(u.window)
 	view.Show()
 }
 
-func newListRoomsView(accountManager *accountManager, chatManager *chatManager) gtki.Dialog {
+func (u *gtkUI) newListRoomsView(accountManager *accountManager, chatManager *chatManager) gtki.Dialog {
 	view := &listRoomsView{
 		accountManager: accountManager,
 		chatManager:    chatManager,
+		ui:             u,
 	}
 
 	builder := newBuilder("ListChatRooms")
@@ -105,7 +108,7 @@ func (v *listRoomsView) joinSelectedRoom() {
 	room := v.getSelectedRoomName()
 	service, _ := v.service.GetText()
 
-	addChatView := newChatView(v.accountManager, v.chatManager)
+	addChatView := v.ui.newChatView(v.accountManager, v.chatManager)
 	if parent, err := v.GetTransientFor(); err == nil {
 		addChatView.SetTransientFor(parent)
 	}

@@ -1,8 +1,6 @@
 package gui
 
 import (
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -172,7 +170,7 @@ func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel,
 		prov := providerWithCSS("label { margin-right: 3px;  margin-left: 3px; }")
 		updateWithStyle(conv.fileTransferNotif.labelButton, prov)
 	}
-	log.Printf(label)
+	conv.account.log.WithField("label", label).Info("Updating notification")
 
 	conv.fileTransferNotif.label.SetLabel(label)
 	conv.fileTransferNotif.labelButton.SetLabel(buttonLabel)

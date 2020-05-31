@@ -33,12 +33,15 @@ type addChatView struct {
 	handle       gtki.Entry    `gtk-widget:"handle"`
 
 	model gtki.ListStore `gtk-widget:"accounts-model"`
+
+	ui *gtkUI
 }
 
-func newChatView(accountManager *accountManager, chatManager *chatManager) *addChatView {
+func (u *gtkUI) newChatView(accountManager *accountManager, chatManager *chatManager) *addChatView {
 	view := &addChatView{
 		accountManager: accountManager,
 		chatManager:    chatManager,
+		ui:             u,
 	}
 
 	builder := newBuilder("AddChat")
@@ -211,7 +214,7 @@ func (v *addChatView) openRoomDialog(chat interfaces.Chat, occupant *data.Occupa
 	doInUIThread(func() {
 		defer v.Destroy()
 
-		chatRoom := newChatRoomView(chat, occupant)
+		chatRoom := v.ui.newChatRoomView(chat, occupant)
 		chatRoom.setOccupantList(occupantsInRoom)
 		if parent, err := v.GetTransientFor(); err == nil {
 			chatRoom.SetTransientFor(parent)
@@ -255,12 +258,15 @@ type roomConfigView struct {
 
 	formFields []formField
 	done       chan<- interface{}
+
+	ui *gtkUI
 }
 
-func newRoomConfigDialog(done chan<- interface{}, fields []formField) *roomConfigView {
+func (u *gtkUI) newRoomConfigDialog(done chan<- interface{}, fields []formField) *roomConfigView {
 	view := &roomConfigView{
 		formFields: fields,
 		done:       done,
+		ui:         u,
 	}
 
 	builder := newBuilder("ConfigureRoom")
@@ -298,7 +304,7 @@ func (v *roomConfigView) updateFormWithValuesFromFormFields() {
 			w := field.widget.(gtki.ComboBoxText)
 			ff.Result = w.GetActive()
 		default:
-			log.Printf("We need to implement %#v", ff)
+			v.ui.log.WithField("formfield", ff).Warn("We need to implement")
 		}
 	}
 
@@ -319,7 +325,7 @@ func (v *chatRoomView) renderForm(title, instructions string, fields []interface
 
 	doInUIThread(func() {
 		formFields := buildWidgetsForFields(fields)
-		dialog := newRoomConfigDialog(done, formFields)
+		dialog := v.ui.newRoomConfigDialog(done, formFields)
 
 		if parent, err := v.GetTransientFor(); err == nil {
 			dialog.dialog.SetTransientFor(parent)
@@ -340,7 +346,7 @@ func (v *chatRoomView) showRoomConfigDialog() {
 
 func (u *gtkUI) joinChatRoom() {
 	//pass message and presence channels
-	view := newChatView(u.accountManager, u.chatManager)
+	view := u.newChatView(u.accountManager, u.chatManager)
 	view.SetTransientFor(u.window)
 	view.Show()
 }
@@ -372,13 +378,16 @@ type chatRoomView struct {
 
 	chat     interfaces.Chat
 	occupant *data.Occupant
+
+	ui *gtkUI
 }
 
-func newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomView {
+func (u *gtkUI) newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomView {
 	builder := newBuilder("ChatRoom")
 	v := &chatRoomView{
 		chat:     chat,
 		occupant: occupant,
+		ui:       u,
 	}
 
 	v.occupantsList.m = make(map[string]*roomOccupant, 5)
@@ -415,28 +424,30 @@ func (v *chatRoomView) showDebugInfo() {
 	}
 
 	if !v.chat.CheckForSupport(v.occupant.Service) {
-		log.Println("No support to MUC")
+		v.ui.log.Warn("No support to MUC")
 	} else {
-		log.Println("MUC is supported")
+		v.ui.log.Info("MUC is supported")
 	}
 
 	rooms, err := v.chat.QueryRooms(v.occupant.Service)
 	if err != nil {
-		log.Println(err)
+		v.ui.log.WithError(err).Warn("Couldn't query rooms")
 	}
 
-	log.Printf("%s has rooms:", v.occupant.Service)
+	v.ui.log.WithField("occupant", v.occupant.Service).Info("Has rooms:")
 	for _, i := range rooms {
-		log.Printf("- %s\t%s", i.Jid, i.Name)
+		v.ui.log.WithFields(log.Fields{
+			"jid":  i.Jid,
+			"name": i.Name,
+		}).Info("Room")
 	}
 
 	response, err := v.chat.QueryRoomInformation(v.occupant.Room.JID())
 	if err != nil {
-		log.Println("Error to query room information")
-		log.Println(err)
+		v.ui.log.WithError(err).Warn("Error querying room information")
 	}
 
-	log.Printf("RoomInfo: %#v", response)
+	v.ui.log.WithField("room", response).Info("RoomInfo")
 }
 
 func (v *chatRoomView) openWindow() {
@@ -471,7 +482,7 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 		switch e := ev.(type) {
 		case events.ChatPresence:
 			if !v.sameRoom(e.ClientPresence.From) {
-				log.Printf("muc: presence not for this room. %#v", e.ClientPresence)
+				v.ui.log.WithField("presence", e.ClientPresence).Warn("muc: presence not for this room")
 				continue
 			}
 
@@ -502,7 +513,7 @@ func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
 			v.displayReceivedMessage(&e)
 		default:
 			//Ignore
-			log.Printf("chat view got event: %#v", e)
+			v.ui.log.WithField("event", e).Warn("chat view got event")
 		}
 	}
 }

@@ -10,89 +10,83 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func (u *gtkUI) handleOneAccountEvent(ev interface{}) {
+func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
 	switch t := ev.(type) {
 	case events.Event:
 		doInUIThread(func() {
-			u.handleSessionEvent(t)
+			u.handleSessionEvent(t, a)
 		})
 	case events.Peer:
 		doInUIThread(func() {
-			u.handlePeerEvent(t)
+			u.handlePeerEvent(t, a)
 		})
 	case events.Notification:
 		doInUIThread(func() {
-			u.handleNotificationEvent(t)
+			u.handleNotificationEvent(t, a)
 		})
 	case events.DelayedMessageSent:
 		doInUIThread(func() {
-			u.handleDelayedMessageSentEvent(t)
+			u.handleDelayedMessageSentEvent(t, a)
 		})
 	case events.Presence:
 		doInUIThread(func() {
-			u.handlePresenceEvent(t)
+			u.handlePresenceEvent(t, a)
 		})
 	case events.Message:
 		doInUIThread(func() {
-			u.handleMessageEvent(t)
+			u.handleMessageEvent(t, a)
 		})
 	case events.Log:
 		doInUIThread(func() {
-			u.handleLogEvent(t)
+			u.handleLogEvent(t, a)
 		})
 	case events.FileTransfer:
 		doInUIThread(func() {
-			u.handleFileTransfer(t)
+			u.handleFileTransfer(t, a)
 		})
 	case events.SMP:
 		doInUIThread(func() {
-			u.handleSMPEvent(t)
+			u.handleSMPEvent(t, a)
 		})
 	default:
-		log.Printf("unsupported event %#v\n", t)
+		a.log.WithField("event", t).Warn("unsupported event")
 	}
 }
 
-func (u *gtkUI) observeAccountEvents() {
-	for ev := range u.events {
-		u.handleOneAccountEvent(ev)
+func (u *gtkUI) observeAccountEvents(a *account) {
+	for ev := range a.events {
+		u.handleOneAccountEvent(ev, a)
 	}
 }
 
-func (u *gtkUI) handleLogEvent(ev events.Log) {
+func (u *gtkUI) handleLogEvent(ev events.Log, a *account) {
 	m := ev.Message
 
 	switch ev.Level {
 	case events.Info:
-		log.Println(">>> INFO", m)
+		a.log.Info(m)
 	case events.Warn:
-		log.Println(">>> WARN", m)
+		a.log.Warn(m)
 	case events.Alert:
-		log.Println(">>> ALERT", m)
+		a.log.Error(m)
 	}
 }
 
-func (u *gtkUI) handleMessageEvent(ev events.Message) {
-	account := u.findAccountForSession(ev.Session)
-	if account == nil {
-		//TODO error
-		return
-	}
-
+func (u *gtkUI) handleMessageEvent(ev events.Message, a *account) {
 	timestamp := ev.When
 	encrypted := ev.Encrypted
 	message := ev.Body
 
-	p, ok := u.getPeer(account, ev.From.NoResource())
+	p, ok := u.getPeer(a, ev.From.NoResource())
 	if ok {
 		p.LastSeen(ev.From)
 	}
 
 	doInUIThread(func() {
-		conv := u.openConversationView(account, ev.From, false)
+		conv := u.openConversationView(a, ev.From, false)
 
 		sent := sentMessage{
-			from:            u.displayNameFor(account, ev.From.NoResource()),
+			from:            u.displayNameFor(a, ev.From.NoResource()),
 			timestamp:       timestamp,
 			isEncrypted:     encrypted,
 			isOutgoing:      false,
@@ -101,45 +95,43 @@ func (u *gtkUI) handleMessageEvent(ev events.Message) {
 		conv.appendMessage(sent)
 
 		if !conv.isVisible() {
-			u.maybeNotify(timestamp, account, ev.From.NoResource(), string(ui.StripSomeHTML(message)))
+			u.maybeNotify(timestamp, a, ev.From.NoResource(), string(ui.StripSomeHTML(message)))
 		}
 	})
-
 }
 
-func (u *gtkUI) handleSessionEvent(ev events.Event) {
-	account := u.findAccountForSession(ev.Session)
-	if account == nil {
-		return
-	}
-
+func (u *gtkUI) handleSessionEvent(ev events.Event, a *account) {
 	switch ev.Type {
 	case events.Connected:
-		account.enableExistingConversationWindows(true)
+		a.enableExistingConversationWindows(true)
 	case events.Disconnected:
-		account.enableExistingConversationWindows(false)
+		a.enableExistingConversationWindows(false)
 	case events.ConnectionLost:
-		u.notifyConnectionFailure(account, u.connectionFailureMoreInfoConnectionLost)
-		go u.connectWithRandomDelay(account)
+		u.notifyConnectionFailure(a, u.connectionFailureMoreInfoConnectionLost)
+		go u.connectWithRandomDelay(a)
 	case events.RosterReceived:
-		u.roster.update(account, ev.Session.R())
+		u.roster.update(a, a.session.R())
 	}
 
 	u.rosterUpdated()
 }
 
-func (u *gtkUI) handlePresenceEvent(ev events.Presence) {
-	account := u.accountManager.findAccountForSession(ev.Session)
+func (u *gtkUI) handlePresenceEvent(ev events.Presence, a *account) {
 	peer := jid.R(ev.From)
 	// if p, ok := u.getPeer(account, peer.NoResource()); ok {
 	// 	p.Presence(peer, ev.Show, ev.Status, ev.Gone)
 	// }
 
-	if !ev.Session.GetConfig().HideStatusUpdates {
-		u.presenceUpdated(account, peer, ev)
+	if !a.session.GetConfig().HideStatusUpdates {
+		u.presenceUpdated(a, peer, ev)
 	}
 
-	log.Printf("[%s] Presence from %v: show: %v status: %v gone: %v\n", ev.To, peer, ev.Show, ev.Status, ev.Gone)
+	a.log.WithFields(log.Fields{
+		"from":   peer,
+		"show":   ev.Show,
+		"status": ev.Status,
+		"gone":   ev.Gone,
+	}).Info("Presence received")
 	u.rosterUpdated()
 }
 
@@ -149,15 +141,14 @@ func convWindowNowOrLater(account *account, peer jid.Any, ui *gtkUI, f func(conv
 	})
 }
 
-func (u *gtkUI) handlePeerEvent(ev events.Peer) {
+func (u *gtkUI) handlePeerEvent(ev events.Peer, a *account) {
 	switch ev.Type {
 	case events.IQReceived:
 		//TODO
 		// TODO WHAT?
-		log.Printf("received iq: %v\n", ev.From)
+		a.log.WithFields(log.Fields{"from": ev.From, "event": ev}).Info("received iq")
 	case events.OTREnded:
-		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
+		convWindowNowOrLater(a, ev.From, u, func(cv conversationView) {
 			cv.updateSecurityStatus()
 
 			cv.removeOtrLock()
@@ -166,8 +157,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		})
 
 	case events.OTRNewKeys:
-		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
+		convWindowNowOrLater(a, ev.From, u, func(cv conversationView) {
 			cv.setOtrLock(ev.From.(jid.WithResource))
 			cv.calculateNewKeyStatus()
 			cv.savePeerFingerprint(u)
@@ -179,8 +169,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		})
 
 	case events.OTRRenewedKeys:
-		account := u.findAccountForSession(ev.Session)
-		convWindowNowOrLater(account, ev.From, u, func(cv conversationView) {
+		convWindowNowOrLater(a, ev.From, u, func(cv conversationView) {
 			cv.updateSecurityStatus()
 
 			cv.displayNotificationVerifiedOrNot(i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
@@ -190,40 +179,35 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer) {
 		authorizePresenceSubscriptionDialog(u.window, ev.From.NoResource(), func(r gtki.ResponseType) {
 			switch r {
 			case gtki.RESPONSE_YES:
-				ev.Session.HandleConfirmOrDeny(ev.From.NoResource(), true)
+				a.session.HandleConfirmOrDeny(ev.From.NoResource(), true)
 			case gtki.RESPONSE_NO:
-				ev.Session.HandleConfirmOrDeny(ev.From.NoResource(), false)
+				a.session.HandleConfirmOrDeny(ev.From.NoResource(), false)
 			default:
 				// We got a different response, such as a close of the window. In this case we want
 				// to keep the subscription request open
 			}
 		})
 	case events.Subscribed:
-		jid := ev.Session.GetConfig().Account
-		log.Printf("[%s] Subscribed to %s\n", jid, ev.From)
+		a.log.WithField("to", ev.From).Info("Subscribed to peer")
 		u.rosterUpdated()
 	case events.Unsubscribe:
-		jid := ev.Session.GetConfig().Account
-		log.Printf("[%s] Unsubscribed from %s\n", jid, ev.From)
+		a.log.WithField("from", ev.From).Info("Unsubscribed from peer")
 		u.rosterUpdated()
 	}
 }
 
-func (u *gtkUI) handleNotificationEvent(ev events.Notification) {
-	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.Peer, false)
+func (u *gtkUI) handleNotificationEvent(ev events.Notification, a *account) {
+	convWin := u.openConversationView(a, ev.Peer, false)
 	convWin.displayNotification(i18n.Local(ev.Notification))
 }
 
-func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent) {
-	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.Peer, false)
+func (u *gtkUI) handleDelayedMessageSentEvent(ev events.DelayedMessageSent, a *account) {
+	convWin := u.openConversationView(a, ev.Peer, false)
 	convWin.delayedMessageSent(ev.Tracer)
 }
 
-func (u *gtkUI) handleSMPEvent(ev events.SMP) {
-	account := u.findAccountForSession(ev.Session)
-	convWin := u.openConversationView(account, ev.From, false)
+func (u *gtkUI) handleSMPEvent(ev events.SMP, a *account) {
+	convWin := u.openConversationView(a, ev.From, false)
 
 	switch ev.Type {
 	case events.SecretNeeded:

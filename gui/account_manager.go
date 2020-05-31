@@ -100,18 +100,19 @@ func (m *accountManager) setContacts(account *account, contacts *rosters.List) {
 	m.contacts[account] = contacts
 }
 
-func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory, df interfaces.DialerFactory) {
-	m.Lock()
-	defer m.Unlock()
+func (u *gtkUI) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory, df interfaces.DialerFactory) {
+	u.Lock()
+	defer u.Unlock()
 
 	acc := newAccount(appConfig, account, sf, df)
-	acc.log = m.log.WithField("account", account)
-	acc.session.Subscribe(m.events)
-	acc.session.SetCommandManager(m)
+	go u.observeAccountEvents(acc)
+	acc.log = u.log.WithField("account", account)
+	acc.session.Subscribe(acc.events)
+	acc.session.SetCommandManager(u)
 	acc.session.SetConnector(acc)
 
-	m.accounts = append(m.accounts, acc)
-	m.setContacts(acc, rosters.New())
+	u.accounts = append(u.accounts, acc)
+	u.setContacts(acc, rosters.New())
 }
 
 func (m *accountManager) removeAccount(conf *config.Account, k func()) {
@@ -138,10 +139,10 @@ func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 	k()
 }
 
-func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
+func (u *gtkUI) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
-		if _, ok := m.getAccountByID(accountConf.ID()); ok {
+		if _, ok := u.getAccountByID(accountConf.ID()); ok {
 			continue
 		}
 
@@ -151,22 +152,22 @@ func (m *accountManager) buildAccounts(appConfig *config.ApplicationConfig, sf a
 		}
 
 		hasConfUpdates = hasConfUpdates || hasUpdate
-		m.addAccount(appConfig, accountConf, sf, df)
+		u.addAccount(appConfig, accountConf, sf, df)
 	}
 
 	if hasConfUpdates {
-		m.ExecuteCmd(otrclient.SaveApplicationConfigCmd{})
+		u.ExecuteCmd(otrclient.SaveApplicationConfigCmd{})
 	}
 }
 
-func (m *accountManager) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
+func (u *gtkUI) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
 	for _, configAccount := range appConfig.Accounts {
-		_, found := m.getAccountByID(configAccount.ID())
+		_, found := u.getAccountByID(configAccount.ID())
 		if found {
 			continue
 		}
 
-		m.addAccount(appConfig, configAccount, sf, df)
+		u.addAccount(appConfig, configAccount, sf, df)
 	}
 }
 

@@ -48,16 +48,14 @@ func (s *session) publishEventTo(subscriber chan<- interface{}, e interface{}, s
 
 func (s *session) publish(e events.EventType) {
 	s.publishEvent(events.Event{
-		Session: s,
-		Type:    e,
+		Type: e,
 	})
 }
 
 func (s *session) publishPeerEvent(e events.PeerType, peer jid.Any) {
 	s.publishEvent(events.Peer{
-		Session: s,
-		Type:    e,
-		From:    peer,
+		Type: e,
+		From: peer,
 	})
 }
 
@@ -96,9 +94,8 @@ func (s *session) PublishEvent(e interface{}) {
 
 func (s *session) publishSMPEvent(t events.SMPType, peer jid.WithResource, body string) {
 	s.publishEvent(events.SMP{
-		Type:    t,
-		Session: s,
-		From:    peer,
-		Body:    body,
+		Type: t,
+		From: peer,
+		Body: body,
 	})
 }

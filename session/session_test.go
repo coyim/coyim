@@ -134,9 +134,8 @@ func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 		select {
 		case ev := <-observer:
 			c.Assert(ev, Equals, events.Peer{
-				Session: sess,
-				Type:    events.IQReceived,
-				From:    jid.NR("someone@somewhere"),
+				Type: events.IQReceived,
+				From: jid.NR("someone@somewhere"),
 			})
 		default:
 			c.Errorf("did not receive event")
@@ -309,7 +308,6 @@ func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
 		if !ok {
 			return false
 		}
-		c.Assert(t.Session, Equals, sess)
 		c.Assert(t.Encrypted, Equals, false)
 		c.Assert(t.From, Equals, jid.R("bla@hmm.org/somewhere"))
 		c.Assert(string(t.Body), Equals, "well, hello there")

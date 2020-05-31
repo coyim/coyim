@@ -37,6 +37,7 @@ type addContactDialog struct {
 	subscriptionAskMessage gtki.TextBuffer
 	nickname               gtki.Entry
 	autoAuth               gtki.CheckButton
+	accounts               map[string]*account
 }
 
 func (acd *addContactDialog) getVerifiedContact(errorNotif *errorNotification) (string, bool) {
@@ -49,7 +50,7 @@ func (acd *addContactDialog) getVerifiedContact(errorNotif *errorNotification) (
 		}
 
 		errorNotif.ShowMessage(err)
-		log.Printf(err)
+		log.WithField("error", err).Warn("Bad XMPP address entered")
 
 		return "", false
 	}
@@ -88,10 +89,12 @@ func (acd *addContactDialog) getAutoAuthorize() bool {
 }
 
 func (acd *addContactDialog) initAccounts(accounts []*account) {
+	acd.accounts = make(map[string]*account)
 	for _, acc := range accounts {
 		iter := acd.model.Append()
 		acd.model.SetValue(iter, 0, acc.session.GetConfig().Account)
 		acd.model.SetValue(iter, 1, acc.session.GetConfig().ID())
+		acd.accounts[acc.session.GetConfig().ID()] = acc
 	}
 
 	if len(accounts) > 0 {
@@ -133,14 +136,16 @@ func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accou
 			accountID, err := acd.getCurrentAccount()
 			if err != nil {
 				//TODO: report error, and close?
-				log.Printf("Error encountered when getting account: %v", err)
+				log.WithError(err).Warn("Error encountered when getting account")
 				return
 			}
+
+			acc := acd.accounts[accountID]
 
 			err = sendSubscription(accountID, jid.NR(contact), acd.getCurrentMessage(), acd.getCurrentNickname(), acd.getAutoAuthorize())
 			if err != nil {
 				//TODO: report error
-				log.Printf("Error encountered when sending subscription: %v", err)
+				acc.log.WithError(err).Warn("Error encountered when sending subscription")
 				return
 			}
 

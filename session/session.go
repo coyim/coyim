@@ -257,7 +257,6 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	//It is sad that not every presence stanza triggers a presence event.
 	if config.MUCEnabled {
 		s.publishEvent(events.ChatPresence{
-			Session:        s,
 			ClientPresence: stanza,
 		})
 	}
@@ -284,7 +283,6 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		}
 
 		s.publishEvent(events.Presence{
-			Session:        s,
 			ClientPresence: stanza,
 			Gone:           true,
 		})
@@ -306,7 +304,6 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		//Thats why I'm worried about handling this as a regular peer presence - which is not.
 
 		s.publishEvent(events.Presence{
-			Session:        s,
 			ClientPresence: stanza,
 			Gone:           false,
 		})
@@ -550,7 +547,6 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 
 func (s *session) messageReceived(peer jid.Any, timestamp time.Time, encrypted bool, message []byte) {
 	s.publishEvent(events.Message{
-		Session:   s,
 		From:      peer,
 		When:      timestamp,
 		Body:      message,

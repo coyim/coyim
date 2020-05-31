@@ -3,7 +3,6 @@ package events
 import (
 	"time"
 
-	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -11,8 +10,7 @@ import (
 
 // Event represents a Session event
 type Event struct {
-	Type    EventType
-	Session access.Session
+	Type EventType
 }
 
 // EventType represents the type of Session event
@@ -32,24 +30,21 @@ const (
 
 // Peer represents an event associated to a peer
 type Peer struct {
-	Session access.Session
-	Type    PeerType
+	Type PeerType
 	// This can be either with or without Resource depending on the peer type
 	From jid.Any
 }
 
 // Notification represents a notification event
 type Notification struct {
-	Session      access.Session
 	Peer         jid.Any
 	Notification string
 }
 
 // DelayedMessageSent represents the event that a delayed message is sent
 type DelayedMessageSent struct {
-	Session access.Session
-	Peer    jid.Any
-	Tracer  int
+	Peer   jid.Any
+	Tracer int
 }
 
 // PeerType represents the type of Peer event
@@ -70,14 +65,12 @@ const (
 
 // Presence represents a presence event
 type Presence struct {
-	Session access.Session
 	*data.ClientPresence
 	Gone bool
 }
 
 // Message represents a message event
 type Message struct {
-	Session   access.Session
 	From      jid.Any
 	When      time.Time
 	Body      []byte
@@ -86,7 +79,6 @@ type Message struct {
 
 // ChatPresence represents a presence event in a chat room
 type ChatPresence struct {
-	Session access.Session
 	*data.ClientPresence
 }
 
@@ -120,8 +112,7 @@ type Log struct {
 
 // FileTransfer represents an event associated with file transfers
 type FileTransfer struct {
-	Session access.Session
-	Peer    jid.WithResource
+	Peer jid.WithResource
 
 	Mime             string
 	DateLastModified string
@@ -137,7 +128,6 @@ type FileTransfer struct {
 // SMP is an event related to SMP
 type SMP struct {
 	Type     SMPType
-	Session  access.Session
 	From     jid.WithResource
 	Resource string
 	Body     string

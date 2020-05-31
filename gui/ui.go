@@ -407,7 +407,6 @@ func (u *gtkUI) onActivate() {
 	u.mainWindow()
 
 	go u.watchCommands()
-	go u.observeAccountEvents()
 	go u.loadConfig(*config.ConfigFile)
 }
 

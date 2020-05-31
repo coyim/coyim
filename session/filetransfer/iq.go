@@ -43,7 +43,6 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 	// However, we should probably still validate this somewhere, since the code right now will crash
 
 	s.PublishEvent(events.FileTransfer{
-		Session:          s,
 		Peer:             jid.R(stanza.From),
 		Mime:             si.File.Hash,
 		DateLastModified: si.File.Date,

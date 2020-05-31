@@ -6,8 +6,6 @@ import (
 	"math/big"
 	"regexp"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -27,6 +25,8 @@ type verifier struct {
 	verificationSuccess *verificationSuccessNotification
 	peerName            func() string
 	peerToSendTo        func() jid.WithResource
+
+	l withLog
 }
 
 type notifier struct {
@@ -40,6 +40,7 @@ func (n *notifier) notify(i gtki.InfoBar) {
 // TODO: unify repeated stuff
 func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 	v := &verifier{
+		l:            conv.account,
 		parentWindow: conv.transientParent,
 		session:      conv.account.session,
 		notifier:     &notifier{conv.notificationArea},
@@ -187,7 +188,7 @@ func (v *verifier) smpError(err error) {
 func (v *verifier) showPINDialog() {
 	v.unverifiedWarning.infobar.Hide()
 
-	pin, err := createPIN()
+	pin, err := v.createPIN()
 	if err != nil {
 		v.pinWindow.dialog.Hide()
 		v.smpError(err)
@@ -203,10 +204,10 @@ func (v *verifier) showPINDialog() {
 	v.waitingForPeer.infobar.ShowAll()
 }
 
-func createPIN() (string, error) {
+func (v *verifier) createPIN() (string, error) {
 	val, err := rand.Int(rand.Reader, big.NewInt(int64(1000000)))
 	if err != nil {
-		log.Printf("Error encountered when creating a new PIN: %v", err)
+		v.l.Log().WithError(err).Warn("Error encountered when creating a new PIN")
 		return "", err
 	}
 
@@ -264,7 +265,7 @@ func (v *verifier) showCannotGeneratePINDialog(err error) {
 	updateWithStyle(infobar, prov)
 
 	label.SetText(i18n.Local("Unable to verify at this time."))
-	log.Printf("Cannot recover from error: %v. Quitting SMP verification.", err)
+	v.l.Log().WithError(err).Warn("Cannot recover from error. Quitting SMP verification.")
 	setImageFromFile(image, "failure.svg")
 	button.Connect("clicked", infobar.Destroy)
 

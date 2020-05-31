@@ -22,8 +22,7 @@ func (s *SessionEventSuite) Test_publish_notifiesWithEvents(c *C) {
 	select {
 	case e := <-observer:
 		c.Assert(e, DeepEquals, events.Event{
-			Type:    events.Disconnected,
-			Session: session,
+			Type: events.Disconnected,
 		})
 	case <-time.After(100 * time.Millisecond):
 		c.Error("Did not receive expected notification")

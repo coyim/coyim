@@ -23,6 +23,8 @@ var (
 )
 
 type conversationView interface {
+	withLog
+
 	appendMessage(sent sentMessage)
 	appendPendingDelayed()
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)

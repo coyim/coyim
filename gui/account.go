@@ -40,6 +40,8 @@ type account struct {
 
 	log coylog.Logger
 
+	events chan interface{}
+
 	sync.RWMutex
 }
 
@@ -92,6 +94,7 @@ func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf 
 		session:              sf(conf, currentConf, df),
 		c:                    make(map[string]conversationView),
 		delayedConversations: make(map[string][]func(conversationView)),
+		events:               make(chan interface{}),
 	}
 }
 

@@ -13,6 +13,7 @@ import (
 
 	"golang.org/x/net/proxy"
 
+	"github.com/coyim/coyim/coylog"
 	ournet "github.com/coyim/coyim/net"
 	"github.com/coyim/coyim/servers"
 	ourtls "github.com/coyim/coyim/tls"
@@ -37,6 +38,8 @@ type ConnectionPolicy struct {
 	DialerFactory interfaces.DialerFactory
 
 	torState ournet.TorState
+
+	Log coylog.Logger
 }
 
 func (p *ConnectionPolicy) initTorState() {
@@ -111,6 +114,7 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 	}
 
 	dialer := p.DialerFactory(verifier, ourtls.Real)
+	dialer.SetLogger(p.Log)
 	dialer.SetJID(conf.Account)
 	dialer.SetProxy(proxy)
 	dialer.SetConfig(xmppConfig)

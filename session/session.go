@@ -12,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
@@ -36,7 +37,7 @@ const (
 
 type session struct {
 	conn             xi.Conn
-	connectionLogger config.Logger
+	connectionLogger coylog.Logger
 	r                *roster.List
 
 	connStatus     connStatus
@@ -103,12 +104,14 @@ func parseFromConfig(cu *config.Account) []otr3.PrivateKey {
 
 	allKeys := cu.AllPrivateKeys()
 
-	log.Printf("Loading %d configured keys", len(allKeys))
+	acc := cu.Account
+	l := log.WithField("account", acc)
+	l.WithField("numKeys", len(allKeys)).Info("Loading configured keys")
 	for _, pp := range allKeys {
 		_, ok, parsedKey := otr3.ParsePrivateKey(pp)
 		if ok {
 			result = append(result, parsedKey)
-			log.Printf("Loaded key: %s", config.FormatFingerprint(parsedKey.PublicKey().Fingerprint()))
+			l.WithField("key", config.FormatFingerprint(parsedKey.PublicKey().Fingerprint())).Info("Loaded key")
 		}
 	}
 
@@ -178,7 +181,10 @@ func (s *session) ReloadKeys() {
 func (s *session) Send(peer jid.Any, msg string) error {
 	conn, ok := s.connection()
 	if ok {
-		log.Printf("<- to=%v {%v}\n", peer, msg)
+		s.connectionLogger.WithFields(log.Fields{
+			"to":      peer,
+			"sentMsg": msg,
+		}).Debug("Send()")
 		return conn.Send(peer.String(), msg)
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
@@ -208,7 +214,7 @@ func retrieveMessageTime(stanza *data.ClientMessage) time.Time {
 }
 
 func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
-	log.Printf("-> Stanza %#v\n", stanza)
+	s.connectionLogger.WithField("stanza", fmt.Sprintf("%#v", stanza)).Debug("receivedClientMessage()")
 
 	if len(stanza.Body) == 0 && len(stanza.Extensions) > 0 {
 		s.processExtensions(stanza)
@@ -637,7 +643,7 @@ func (s *session) watchTimeout() {
 		newTimeouts := make(map[data.Cookie]time.Time)
 		for cookie, expiry := range s.timeouts {
 			if now.After(expiry) {
-				log.Println("session: cookie", cookie, "has expired")
+				s.connectionLogger.WithField("cookie", cookie).Debug("session: cookie has expired")
 				s.conn.Cancel(cookie)
 			} else {
 				newTimeouts[cookie] = expiry
@@ -677,7 +683,7 @@ func (s *session) getVCard() {
 
 	vcardStanza, ok := <-vcardReply
 	if !ok {
-		log.Println("session: vcard request cancelled or timedout")
+		s.connectionLogger.Debug("session: vcard request cancelled or timed out")
 		return
 	}
 
@@ -719,7 +725,7 @@ func (s *session) requestRoster() bool {
 	rosterStanza, ok := <-rosterReply
 	if !ok {
 		//TODO: should we retry the request in such case?
-		log.Println("session: roster request cancelled or timedout")
+		s.connectionLogger.Debug("session: roster request cancelled or timed out")
 		return true
 	}
 
@@ -787,7 +793,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 
 	conf := s.GetConfig()
 	policy := config.ConnectionPolicy{
-		// Logger:        s.connectionLogger,
+		Log:           s.connectionLogger,
 		XMPPLogger:    s.xmppLogger,
 		DialerFactory: s.dialerFactory,
 	}

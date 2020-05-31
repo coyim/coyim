@@ -33,7 +33,7 @@ func timingOutLookup(f func() (cname string, addrs []*net.SRV, err error), t tim
 
 	select {
 	case <-time.After(t):
-		log.Println("dns: lookup timed out")
+		log.Warn("dns: lookup timed out")
 		return "", nil, ErrTimeout
 	case <-result:
 		return

@@ -29,8 +29,8 @@ func (d *dialer) newTCPConn() (net.Conn, error) {
 	//RFC 6120, Section 3.2.3
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.config.SkipSRVLookup {
-		log.Println("Skipping SRV lookup")
-		return connectWithProxy(d.GetServer(), false, d.proxy)
+		d.log.Info("Skipping SRV lookup")
+		return d.connectWithProxy(d.GetServer(), false, d.proxy)
 	}
 
 	return d.srvLookupAndFallback()
@@ -72,7 +72,7 @@ func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
 		err = errors.ErrConnectionFailed
 	}
 
-	conn, _, e := connectToFirstAvailable(xmppAddrs, false, d.proxy)
+	conn, _, e := d.connectToFirstAvailable(xmppAddrs, false, d.proxy)
 	if e != nil {
 		return nil, err
 	}
@@ -80,9 +80,9 @@ func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
 	return conn, nil
 }
 
-func connectToFirstAvailable(xmppAddrs []string, tls bool, dialer proxy.Dialer) (net.Conn, string, error) {
+func (d *dialer) connectToFirstAvailable(xmppAddrs []string, tls bool, dialer proxy.Dialer) (net.Conn, string, error) {
 	for _, addr := range xmppAddrs {
-		conn, err := connectWithProxy(addr, tls, dialer)
+		conn, err := d.connectWithProxy(addr, tls, dialer)
 		if err == nil {
 			return conn, addr, nil
 		}
@@ -91,7 +91,7 @@ func connectToFirstAvailable(xmppAddrs []string, tls bool, dialer proxy.Dialer) 
 	return nil, "", errors.ErrConnectionFailed
 }
 
-func dialTimeout(network, addr string, dialer proxy.Dialer, t time.Duration) (c net.Conn, err error) {
+func (d *dialer) dialTimeout(network, addr string, dialer proxy.Dialer, t time.Duration) (c net.Conn, err error) {
 	result := make(chan bool, 1)
 
 	go func() {
@@ -101,20 +101,20 @@ func dialTimeout(network, addr string, dialer proxy.Dialer, t time.Duration) (c 
 
 	select {
 	case <-time.After(t):
-		log.Println("tcp: dial timed out")
+		d.log.Warn("tcp: dial timed out")
 		return nil, ourNet.ErrTimeout
 	case <-result:
 		return
 	}
 }
 
-func connectWithProxy(addr string, tls bool, dialer proxy.Dialer) (conn net.Conn, err error) {
-	log.Printf("Connecting to %s\n", addr)
+func (d *dialer) connectWithProxy(addr string, tls bool, dialer proxy.Dialer) (conn net.Conn, err error) {
+	d.log.WithField("addr", addr).Info("Connecting")
 
 	//TODO: It is not clear to me if this follows
 	//RFC 6120, Section 3.2.1, item 6
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution
-	conn, err = dialTimeout("tcp", addr, dialer, defaultDialTimeout)
+	conn, err = d.dialTimeout("tcp", addr, dialer, defaultDialTimeout)
 	if err != nil {
 		if err == ourNet.ErrTimeout {
 			return nil, err

@@ -164,7 +164,7 @@ func (a *Account) ID() string {
 
 // EnsurePrivateKey generates a private key for the account in case it's missing
 func (a *Account) EnsurePrivateKey() (hasUpdate bool, e error) {
-	log.Printf("[%s] ensureConfigHasKey()\n", a.Account)
+	log.WithField("account", a.Account).Debug("EnsurePrivateKey()")
 
 	prevKeys := a.AllPrivateKeys()
 	newKeys, err := otr3.GenerateMissingKeys(prevKeys)

@@ -13,6 +13,7 @@ var _ = Suite(&PresenceXMPPSuite{})
 func (s *PresenceXMPPSuite) Test_SignalPresence_sendsPresenceInformation(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: mockOut,
 	}
 
@@ -24,6 +25,7 @@ func (s *PresenceXMPPSuite) Test_SignalPresence_sendsPresenceInformation(c *C) {
 func (s *PresenceXMPPSuite) Test_SignalPresence_returnsWriterError(c *C) {
 	mockOut := &mockConnIOReaderWriter{err: errors.New("foo bar")}
 	conn := conn{
+		log: testLogger(),
 		out: mockOut,
 	}
 
@@ -34,6 +36,7 @@ func (s *PresenceXMPPSuite) Test_SignalPresence_returnsWriterError(c *C) {
 func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: mockOut,
 	}
 
@@ -47,6 +50,7 @@ func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithTheIdGiven(c *C) 
 func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
+		log:  testLogger(),
 		out:  mockOut,
 		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
@@ -60,6 +64,7 @@ func (s *PresenceXMPPSuite) Test_SendPresence_sendsPresenceWithRandomID(c *C) {
 func (s *PresenceXMPPSuite) Test_SendPresence_returnsWriterError(c *C) {
 	mockOut := &mockConnIOReaderWriter{err: errors.New("bar foo")}
 	conn := conn{
+		log: testLogger(),
 		out: mockOut,
 	}
 
@@ -70,6 +75,7 @@ func (s *PresenceXMPPSuite) Test_SendPresence_returnsWriterError(c *C) {
 func (s *PresenceXMPPSuite) Test_SendPresence_addsStatusToSubscribeMessage(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: mockOut,
 	}
 

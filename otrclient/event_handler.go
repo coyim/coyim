@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
@@ -27,7 +27,7 @@ type EventHandler struct {
 	delayedMessageSent chan<- int
 	delays             map[int]bool
 	pendingDelays      int
-	log                config.Logger
+	log                coylog.Logger
 }
 
 // ConsumeDelayedState returns whether the given trace has been delayed or not, blanking out that status as a side effect

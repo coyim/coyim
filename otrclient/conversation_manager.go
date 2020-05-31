@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
@@ -47,11 +47,11 @@ type conversationManager struct {
 	onCreateEH OnEventHandlerCreation
 
 	account string
-	log     config.Logger
+	log     coylog.Logger
 }
 
 // NewConversationManager returns a new ConversationManager
-func NewConversationManager(builder ConversationBuilder, sender Sender, account string, onCreateEH OnEventHandlerCreation, l config.Logger) ConversationManager {
+func NewConversationManager(builder ConversationBuilder, sender Sender, account string, onCreateEH OnEventHandlerCreation, l coylog.Logger) ConversationManager {
 	return &conversationManager{
 		conversations: make(map[string]*conversation),
 		builder:       builder,

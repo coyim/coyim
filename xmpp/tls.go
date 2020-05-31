@@ -104,7 +104,7 @@ func (d *dialer) negotiateSTARTTLS(c interfaces.Conn, conn net.Conn) error {
 func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 	fmt.Fprintf(c.Out(), "<starttls xmlns='%s'/>", NsTLS)
 
-	proceed, err := nextStart(c.In())
+	proceed, err := nextStart(c.In(), d.log)
 	if err != nil {
 		return err
 	}

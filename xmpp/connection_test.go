@@ -154,7 +154,8 @@ func (v *basicTLSVerifier) Verify(state tls.ConnectionState, conf *tls.Config, o
 func (s *ConnectionXMPPSuite) Test_Next_returnsErrorIfOneIsEncountered(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams' to='hello'></stream:foo>")}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 	}
 
 	_, err := conn.Next()
@@ -164,7 +165,8 @@ func (s *ConnectionXMPPSuite) Test_Next_returnsErrorIfOneIsEncountered(c *C) {
 func (s *ConnectionXMPPSuite) Test_Next_returnsErrorIfFailingToParseIQID(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='abczzzz'></client:iq>")}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 	}
 
 	_, err := conn.Next()
@@ -174,7 +176,8 @@ func (s *ConnectionXMPPSuite) Test_Next_returnsErrorIfFailingToParseIQID(c *C) {
 func (s *ConnectionXMPPSuite) Test_Next_returnsNothingIfThereIsNoInflightMatching(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000'></client:iq>")}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 	}
 
 	_, err := conn.Next()
@@ -184,6 +187,7 @@ func (s *ConnectionXMPPSuite) Test_Next_returnsNothingIfThereIsNoInflightMatchin
 func (s *ConnectionXMPPSuite) Test_Next_returnsNothingIfTheInflightIsToAnotherReceiver(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='bar@somewhere.com'></client:iq>")}
 	conn := conn{
+		log:       testLogger(),
 		in:        xml.NewDecoder(mockIn),
 		inflights: make(map[data.Cookie]inflight),
 	}
@@ -197,6 +201,7 @@ func (s *ConnectionXMPPSuite) Test_Next_removesInflightIfItMatches(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='foo@somewhere.com'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
+		log:       testLogger(),
 		in:        xml.NewDecoder(mockIn),
 		inflights: inflights,
 	}
@@ -222,6 +227,7 @@ func (s *ConnectionXMPPSuite) Test_Next_continuesIfIqFromIsNotSimilarToJid(c *C)
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='foo@somewhere.com'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
+		log:       testLogger(),
 		in:        xml.NewDecoder(mockIn),
 		inflights: inflights,
 		jid:       "foo@myjid.com/blah",
@@ -238,6 +244,7 @@ func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsNoFrom(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
+		log:       testLogger(),
 		in:        xml.NewDecoder(mockIn),
 		inflights: inflights,
 	}
@@ -262,6 +269,7 @@ func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsTheFromIsSameAsJid(c *C)
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='some@one.org/foo'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
+		log:       testLogger(),
 		in:        xml.NewDecoder(mockIn),
 		inflights: inflights,
 		jid:       "some@one.org/foo",
@@ -287,6 +295,7 @@ func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidWithou
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='some@one.org'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
+		log:       testLogger(),
 		in:        xml.NewDecoder(mockIn),
 		inflights: inflights,
 		jid:       "some@one.org/foo",
@@ -312,6 +321,7 @@ func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidDomain
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:iq xmlns:client='jabber:client' type='result' id='100000' from='one.org'></client:iq>")}
 	inflights := make(map[data.Cookie]inflight)
 	conn := conn{
+		log:       testLogger(),
 		in:        xml.NewDecoder(mockIn),
 		inflights: inflights,
 		jid:       "some@one.org/foo",
@@ -336,6 +346,7 @@ func (s *ConnectionXMPPSuite) Test_Next_removesIfThereIsTheFromIsSameAsJidDomain
 func (s *ConnectionXMPPSuite) Test_Next_returnsNonIQMessage(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
 	conn := conn{
+		log: testLogger(),
 		in:  xml.NewDecoder(mockIn),
 		jid: "some@one.org/foo",
 	}
@@ -382,6 +393,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromAuthenticateIfSkipTLS(c 
 		JID:      "user@domain",
 		password: "pass",
 		config:   data.Config{SkipTLS: true},
+		log:      testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -404,6 +416,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromSecondFeatureCheck(c *C)
 		JID:      "user@domain",
 		password: "pass",
 		config:   data.Config{SkipTLS: true},
+		log:      testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -438,6 +451,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_returnsErrorFromIQReturn(c *C) {
 		JID:      "user@domain",
 		password: "pass",
 		config:   data.Config{SkipTLS: true},
+		log:      testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -474,6 +488,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_returnsWorkingConnIfEverythingPasses(c *
 		JID:      "user@domain",
 		password: "pass",
 		config:   data.Config{SkipTLS: true},
+		log:      testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -781,6 +796,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_sendsBackUsernameAndPassword(c *C) {
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -830,6 +846,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_runsForm(c *C) {
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 
 	_, err := d.setupStream(conn)
@@ -868,6 +885,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_setsLog(c *C) {
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -905,6 +923,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenTryingToEstablishSession(c *C) 
 		config: data.Config{
 			SkipTLS: true,
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -947,6 +966,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsWhenTryingToEstablishSessionAndGets
 		config: data.Config{
 			SkipTLS: true,
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -988,6 +1008,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_succeedsEstablishingASession(c *C) {
 		config: data.Config{
 			SkipTLS: true,
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -1007,6 +1028,7 @@ func (s *ConnectionXMPPSuite) Test_readMessages_passesStanzaToChannel(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<client:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
 
 	conn := &conn{
+		log:    testLogger(),
 		in:     xml.NewDecoder(mockIn),
 		closed: true, //This avoids trying to close the connection after the EOF
 	}
@@ -1025,6 +1047,7 @@ func (s *ConnectionXMPPSuite) Test_readMessages_alertsOnError(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<clientx:message xmlns:client='jabber:client' to='fo@bar.com' from='bar@foo.com' type='chat'><client:body>something</client:body></client:message>")}
 
 	conn := &conn{
+		log:    testLogger(),
 		in:     xml.NewDecoder(mockIn),
 		closed: true, //This avoids trying to close the connection after the EOF
 	}

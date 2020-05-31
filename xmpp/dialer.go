@@ -6,6 +6,7 @@ import (
 	"net"
 	"strings"
 
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -36,6 +37,8 @@ type dialer struct {
 
 	verifier       tls.Verifier
 	tlsConnFactory tls.Factory
+
+	log coylog.Logger
 }
 
 // DialerFactory returns a new xmpp dialer
@@ -69,6 +72,10 @@ func (d *dialer) Config() data.Config {
 
 func (d *dialer) ServerAddress() string {
 	return d.serverAddress
+}
+
+func (d *dialer) SetLogger(l coylog.Logger) {
+	d.log = l
 }
 
 func (d *dialer) hasCustomServer() bool {
@@ -126,6 +133,7 @@ func (d *dialer) Dial() (interfaces.Conn, error) {
 // RFC 6120, Section 4.2
 func (d *dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
 	c := newConn()
+	c.log = d.log
 	c.config = d.config
 	c.originDomain = d.getJIDDomainpart()
 	d.bindTransport(c, conn)

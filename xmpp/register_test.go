@@ -20,6 +20,7 @@ func (s *RegisterSuite) Test_CancelRegistration_SendCancelationRequest(c *C) {
 
 	mockIn := &mockConnIOReaderWriter{}
 	conn := newConn()
+	conn.log = testLogger()
 	conn.out = mockIn
 	conn.jid = "user@xmpp.org"
 
@@ -31,6 +32,7 @@ func (s *RegisterSuite) Test_CancelRegistration_SendCancelationRequest(c *C) {
 func (s *RegisterSuite) Test_SendChangePasswordInfo(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
+		log:  testLogger(),
 		out:  mockOut,
 		jid:  "crone1@shakespeare.lit",
 		rand: bytes.NewBuffer([]byte{1, 0, 0, 0, 0, 0, 0, 0}),
@@ -72,6 +74,7 @@ func (s *RegisterSuite) Test_setupStream_registerWithoutAuthenticating(c *C) {
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 

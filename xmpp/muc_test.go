@@ -16,6 +16,7 @@ var _ = Suite(&MUCSuite{})
 func (s *MUCSuite) Test_CanJoinRoom(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
+		log:  testLogger(),
 		out:  mockOut,
 		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
@@ -35,6 +36,7 @@ func (s *MUCSuite) Test_CanJoinRoom(c *C) {
 func (s *MUCSuite) Test_CanLeaveRoom(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
+		log:  testLogger(),
 		out:  mockOut,
 		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
@@ -92,6 +94,7 @@ func (s *MUCSuite) Test_CanRequestRoomConfigForm(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 
 	conn := conn{
+		log: testLogger(),
 		in:  mockIn,
 		out: mockOut,
 
@@ -183,6 +186,7 @@ func (s *MUCSuite) Test_CanUpdateRoomConfig(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 
 	conn := conn{
+		log: testLogger(),
 		out: mockOut,
 
 		jid: "crone1@shakespeare.lit/desktop",

@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	"golang.org/x/net/proxy"
@@ -18,6 +19,7 @@ type Dialer interface {
 	SetPassword(string)
 	SetProxy(proxy.Dialer)
 	SetServerAddress(v string)
+	SetLogger(coylog.Logger)
 }
 
 // DialerFactory represents a function that can create a Dialer

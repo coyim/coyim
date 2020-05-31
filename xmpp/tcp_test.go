@@ -8,6 +8,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/errors"
@@ -34,6 +35,7 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToOriginDomain(c *C) {
 		config: data.Config{
 			SkipSRVLookup: true,
 		},
+		log: testLogger(),
 	}
 
 	expectedConn := &net.TCPConn{}
@@ -58,6 +60,7 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddress(
 		serverAddress: "jabber.im:5333",
 
 		proxy: p,
+		log:   testLogger(),
 	}
 
 	expectedConn := &net.TCPConn{}
@@ -99,12 +102,19 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 	c.Check(p, MatchesExpectations)
 }
 
+func testLogger() coylog.Logger {
+	l := log.New()
+	l.SetOutput(ioutil.Discard)
+	return l
+}
+
 func (s *TCPSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortAfterSRVFails(c *C) {
 	p := &mockProxy{}
 	d := &dialer{
 		JID: "foo@jabber.com",
 
 		proxy: p,
+		log:   testLogger(),
 	}
 
 	p.Expects(func(network, addr string) (net.Conn, error) {
@@ -135,6 +145,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingFails(c *C) {
 		JID: "foo@jabber.com",
 
 		proxy: p,
+		log:   testLogger(),
 	}
 
 	p.Expects(func(network, addr string) (net.Conn, error) {
@@ -165,6 +176,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 		JID: "foo@olabini.se",
 
 		proxy: p,
+		log:   testLogger(),
 	}
 
 	p.Expects(func(network, addr string) (net.Conn, error) {

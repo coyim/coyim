@@ -15,11 +15,11 @@ func openLogFile(logFile string) io.Writer {
 		return nil
 	}
 
-	log.Println("Logging XMPP messages to:", logFile)
+	log.WithField("file", logFile).Debug("Logging XMPP messages to file")
 
 	rawLog, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if err != nil {
-		log.Println("Failed to open log file.", err)
+		log.WithError(err).Warn("Failed to open log file.")
 		//return nil, errors.New("Failed to open raw log file: " + err.Error())
 		return nil
 	}

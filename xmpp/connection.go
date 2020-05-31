@@ -21,6 +21,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/cache"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -59,6 +60,8 @@ type conn struct {
 	statusUpdates chan<- string
 
 	channelBinding []byte
+
+	log coylog.Logger
 }
 
 func (c *conn) Cache() cache.WithExpiry {
@@ -133,6 +136,8 @@ func (c *conn) Out() io.Writer {
 // NewConn creates a new connection
 //TODO: this is used only for testing. Remove when we have a Conn interface
 func NewConn(in *xml.Decoder, out io.WriteCloser, jid string) interfaces.Conn {
+	l := log.New()
+	l.SetOutput(ioutil.Discard)
 	conn := &conn{
 		in:     in,
 		out:    out,
@@ -144,6 +149,7 @@ func NewConn(in *xml.Decoder, out io.WriteCloser, jid string) interfaces.Conn {
 
 		rand: rand.Reader,
 		c:    cache.NewWithExpiry(),
+		log:  l,
 	}
 
 	conn.setClosed(true)
@@ -168,7 +174,7 @@ func (c *conn) Close() error {
 	}
 
 	// RFC 6120, Section 4.4 and 9.1.5
-	log.Println("xmpp: sending closing stream tag")
+	c.log.Info("xmpp: sending closing stream tag")
 
 	c.closedLock.Lock()
 	_, err := fmt.Fprint(c.out, "</stream:stream>")
@@ -194,14 +200,14 @@ func (c *conn) Close() error {
 	// channel...
 	case <-c.streamCloseReceived:
 	case <-time.After(30 * time.Second):
-		log.Println("xmpp: timed out waiting for closing stream")
+		c.log.Info("xmpp: timed out waiting for closing stream")
 	}
 
 	return c.closeTCP()
 }
 
 func (c *conn) receivedStreamClose() error {
-	log.Println("xmpp: received closing stream tag")
+	c.log.Info("xmpp: received closing stream tag")
 	return c.closeImmediately()
 }
 
@@ -222,7 +228,7 @@ func (c *conn) closeTCP() error {
 	//Close all pending requests at this moment. It will include pending pings
 	c.cancelInflights()
 
-	log.Println("xmpp: TCP closed")
+	c.log.Info("xmpp: TCP closed")
 	c.setClosed(true)
 	return c.rawOut.Close()
 }
@@ -249,7 +255,7 @@ func (c *conn) asyncReturnIQResponse(stanza data.Stanza) error {
 	c.inflightsMutex.Unlock()
 
 	if !ok {
-		log.Println("xmpp: received reply to unknown iq. id:", iq.ID)
+		c.log.WithField("iq", iq).Warn("xmpp: received reply to unknown iq")
 		return nil
 	}
 
@@ -285,7 +291,7 @@ func (c *conn) asyncReturnIQResponse(stanza data.Stanza) error {
 // the stanza for processing.
 func (c *conn) Next() (stanza data.Stanza, err error) {
 	for {
-		if stanza.Name, stanza.Value, err = next(c); err != nil {
+		if stanza.Name, stanza.Value, err = next(c, c.log); err != nil {
 			return
 		}
 
@@ -351,7 +357,7 @@ func (c *conn) ReadStanzas(stanzaChan chan<- data.Stanza) error {
 	for {
 		stanza, err := c.Next()
 		if err != nil {
-			log.Printf("xmpp: error receiving stanza. %s\n", err)
+			c.log.WithError(err).Warn("xmpp: error receiving stanza")
 			return err
 		}
 

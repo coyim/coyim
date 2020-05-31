@@ -1,4 +1,4 @@
-package config
+package coylog
 
 import (
 	"context"

@@ -13,6 +13,7 @@ var _ = Suite(&CookieXMPPSuite{})
 func (s *CookieXMPPSuite) Test_getCookie_panicsOnReadFailure(c *C) {
 	mockReader := &mockConnIOReaderWriter{err: errors.New("stuff")}
 	conn := conn{
+		log:  testLogger(),
 		rand: mockReader,
 	}
 

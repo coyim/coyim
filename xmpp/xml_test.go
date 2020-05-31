@@ -26,13 +26,14 @@ type testFoo struct {
 func (s *XMLXMPPSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams' to='hello'></stream:foo>")}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 		customStorage: map[xml.Name]reflect.Type{
 			xml.Name{Space: NsStream, Local: "foo"}: reflect.TypeOf(testFoo{}),
 		},
 	}
 
-	nm, i, e := next(&conn)
+	nm, i, e := next(&conn, conn.log)
 	c.Assert(e, IsNil)
 	c.Assert(nm, Equals, xml.Name{Space: NsStream, Local: "foo"})
 	val, _ := i.(*testFoo)
@@ -42,13 +43,14 @@ func (s *XMLXMPPSuite) Test_next_usesCustomStorageIfAvailable(c *C) {
 func (s *XMLXMPPSuite) Test_next_causesErrorWhenTryingToDecodeWrong(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:foo xmlns:stream='http://etherx.jabber.org/streams'><something></foo></stream:foo>")}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 		customStorage: map[xml.Name]reflect.Type{
 			xml.Name{Space: NsStream, Local: "foo"}: reflect.TypeOf(testFoo{}),
 		},
 	}
 
-	_, _, e := next(&conn)
+	_, _, e := next(&conn, conn.log)
 	c.Assert(e.Error(), Equals, "XML syntax error on line 1: element <something> closed by </foo>")
 }
 

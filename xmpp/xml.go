@@ -14,10 +14,10 @@ import (
 	"reflect"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	log "github.com/sirupsen/logrus"
 )
 
 var xmlSpecial = map[byte]string{
@@ -43,7 +43,7 @@ func xmlEscape(s string) string {
 }
 
 // Scan XML token stream to finc next Element (start or end)
-func nextElement(p *xml.Decoder) (xml.Token, error) {
+func nextElement(p *xml.Decoder, ll coylog.Logger) (xml.Token, error) {
 	for {
 		t, err := p.Token()
 		if err != nil {
@@ -59,22 +59,22 @@ func nextElement(p *xml.Decoder) (xml.Token, error) {
 			// or characters matching [...] SP, HTAB, CR, or LF.
 			switch string(elem) {
 			case " ", "\t", "\r", "\n": //TODO: consider more than one whitespace
-				log.Println("xmpp: received whitespace ping")
+				ll.Info("xmpp: received whitespace ping")
 			}
 		case xml.ProcInst:
 			if !(elem.Target == "xml" && strings.HasPrefix(string(elem.Inst), "version=")) {
-				log.Printf("xmpp: received unhandled ProcInst element: target=%s inst=%s\n", elem.Target, string(elem.Inst))
+				ll.WithFields(log.Fields{"target": elem.Target, "inst": elem.Inst}).Warn("xmpp: received unhandled ProcInst element")
 			}
 		default:
-			log.Printf("xmpp: received unhandled element: %#v\n", elem)
+			ll.WithField("element", elem).Warn("xmpp: received unhandled element")
 		}
 	}
 }
 
 // Scan XML token stream to find next StartElement.
-func nextStart(p *xml.Decoder) (xml.StartElement, error) {
+func nextStart(p *xml.Decoder, log coylog.Logger) (xml.StartElement, error) {
 	for {
-		t, err := nextElement(p)
+		t, err := nextElement(p, log)
 		if err != nil {
 			return xml.StartElement{}, err
 		}
@@ -88,8 +88,8 @@ func nextStart(p *xml.Decoder) (xml.StartElement, error) {
 // Scan XML token stream for next element and save into val.
 // If val == nil, allocate new element based on proto map.
 // Either way, return val.
-func next(c interfaces.Conn) (xml.Name, interface{}, error) {
-	elem, err := nextElement(c.In())
+func next(c interfaces.Conn, log coylog.Logger) (xml.Name, interface{}, error) {
+	elem, err := nextElement(c.In(), log)
 	if err != nil {
 		return xml.Name{}, nil, err
 	}

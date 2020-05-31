@@ -6,8 +6,6 @@ import (
 	"net"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -22,7 +20,7 @@ const logKeepAlives = false
 func (c *conn) watchKeepAlive(conn net.Conn) {
 	tick := time.NewTicker(keepaliveInterval)
 	defer tick.Stop()
-	defer log.Println("xmpp: no more watching keepalives")
+	defer c.log.Info("xmpp: no more watching keepalives")
 
 	for range tick.C {
 		if c.closed {
@@ -31,12 +29,12 @@ func (c *conn) watchKeepAlive(conn net.Conn) {
 
 		if c.sendKeepalive() {
 			if logKeepAlives {
-				log.Println("xmpp: keepalive sent")
+				c.log.Info("xmpp: keepalive sent")
 			}
 			continue
 		}
 
-		log.Println("xmpp: keepalive failed")
+		c.log.Info("xmpp: keepalive failed")
 
 		go c.sendStreamError(data.StreamError{
 			DefinedCondition: data.ConnectionTimeout,

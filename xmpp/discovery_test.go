@@ -17,6 +17,7 @@ var _ = Suite(&DiscoveryXMPPSuite{})
 func (s *DiscoveryXMPPSuite) Test_SendDiscoveryInfoRequest(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: mockOut,
 		jid: "juliet@example.com/chamber",
 	}
@@ -53,7 +54,8 @@ func (s *DiscoveryXMPPSuite) Test_ReceiveDiscoveryResult(c *C) {
 	reply := make(chan data.Stanza, 1)
 	mockIn := &mockConnIOReaderWriter{read: []byte(fromServer)}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 		inflights: map[data.Cookie]inflight{
 			0x100000: inflight{
 				to:        "plays.shakespeare.lit",
@@ -117,6 +119,7 @@ func (s *DiscoveryXMPPSuite) Test_HasSupportTo(c *C) {
 	mockOut := &mockConnIOReaderWriter{}
 
 	conn := conn{
+		log:       testLogger(),
 		in:        xml.NewDecoder(nil),
 		out:       mockOut,
 		inflights: make(map[data.Cookie]inflight),

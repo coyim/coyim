@@ -15,6 +15,7 @@ var _ = Suite(&StreamsXMPPSuite{})
 
 func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_returnsErrorIfSomethingGoesWrongWithFmtPrintf(c *C) {
 	conn := conn{
+		log:          testLogger(),
 		out:          &mockConnIOReaderWriter{err: errors.New("Hello")},
 		originDomain: "foo.com",
 	}
@@ -26,6 +27,7 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_returnsErrorIfSomethingG
 func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_returnsErrorIfSomethingGoesWrongWithReadingAStream(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: errors.New("Hello")}
 	conn := conn{
+		log:          testLogger(),
 		out:          &mockConnIOReaderWriter{},
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "foo.com",
@@ -39,6 +41,7 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_sendsInitialStreamHeader
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{err: errors.New("Hello")}
 	conn := conn{
+		log:          testLogger(),
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhere.org",
@@ -51,6 +54,7 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_expectsResponseStreamHea
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><stream:stream xmlns:stream='http://etherx.jabber.org/streams' version='1.0'></stream:stream>")}
 	conn := conn{
+		log:          testLogger(),
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
@@ -64,6 +68,7 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_failsIfReturnedStreamIsN
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams2' version='1.0'>")}
 	conn := conn{
+		log:          testLogger(),
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
@@ -77,6 +82,7 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_failsIfReturnedElementIs
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:feature xmlns:str='http://etherx.jabber.org/streams' version='1.0'>")}
 	conn := conn{
+		log:          testLogger(),
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
@@ -90,6 +96,7 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_expectsFeaturesInReturn(
 	mockOut := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<?xml version='1.0'?><str:stream xmlns:str='http://etherx.jabber.org/streams' version='1.0'><str:features></str:features>")}
 	conn := conn{
+		log:          testLogger(),
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",
@@ -121,6 +128,7 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_receiveResponseStreamHea
 		</str:features>
 	`)}
 	conn := conn{
+		log:          testLogger(),
 		out:          mockOut,
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhereElse.org",

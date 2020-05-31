@@ -17,6 +17,7 @@ var _ = Suite(&IqXMPPSuite{})
 func (s *IqXMPPSuite) Test_SendIQReply_returnsErrorIfOneIsEncounteredWhenWriting(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: errors.New("some error")}
 	conn := conn{
+		log: testLogger(),
 		out: mockIn,
 		jid: "somewhat@foo.com/somewhere",
 	}
@@ -28,6 +29,7 @@ func (s *IqXMPPSuite) Test_SendIQReply_returnsErrorIfOneIsEncounteredWhenWriting
 func (s *IqXMPPSuite) Test_SendIQReply_writesAnEmptyReplyIfEmptyIsGiven(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: mockIn,
 		jid: "som'ewhat@foo.com/somewhere",
 	}
@@ -40,6 +42,7 @@ func (s *IqXMPPSuite) Test_SendIQReply_writesAnEmptyReplyIfEmptyIsGiven(c *C) {
 func (s *IqXMPPSuite) Test_SendIQReply_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: mockIn,
 		jid: "som'ewhat@foo.com/somewhere",
 	}
@@ -50,6 +53,7 @@ func (s *IqXMPPSuite) Test_SendIQReply_returnsErrorIfAnUnXMLableEntryIsGiven(c *
 func (s *IqXMPPSuite) Test_SendIQ_returnsErrorIfWritingDataFails(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails")}
 	conn := conn{
+		log: testLogger(),
 		out: mockIn,
 		jid: "som'ewhat@foo.com/somewhere",
 	}
@@ -60,6 +64,7 @@ func (s *IqXMPPSuite) Test_SendIQ_returnsErrorIfWritingDataFails(c *C) {
 func (s *IqXMPPSuite) Test_Send_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 	mockIn := &mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: mockIn,
 		jid: "som'ewhat@foo.com/somewhere",
 	}
@@ -70,6 +75,7 @@ func (s *IqXMPPSuite) Test_Send_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 func (s *IqXMPPSuite) Test_SendIQ_returnsErrorIfWritingDataFailsTheSecondTime(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails again"), errCount: 1}
 	conn := conn{
+		log: testLogger(),
 		out: mockIn,
 		jid: "som'ewhat@foo.com/somewhere",
 	}
@@ -81,6 +87,7 @@ func (s *IqXMPPSuite) Test_SendIQ_returnsErrorIfWritingDataFailsTheSecondTime(c 
 func (s *IqXMPPSuite) TestConnSendIQReplyAndTyp(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: &mockOut,
 		jid: "jid",
 	}
@@ -95,6 +102,7 @@ func (s *IqXMPPSuite) TestConnSendIQReplyAndTyp(c *C) {
 func (s *IqXMPPSuite) TestConnSendIQRaw(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: &mockOut,
 		jid: "jid",
 	}
@@ -110,6 +118,7 @@ func (s *IqXMPPSuite) TestConnSendIQRaw(c *C) {
 func (s *IqXMPPSuite) TestConnSendIQErr(c *C) {
 	mockOut := mockConnIOReaderWriter{err: io.EOF}
 	conn := conn{
+		log: testLogger(),
 		out: &mockOut,
 		jid: "jid",
 	}
@@ -123,6 +132,7 @@ func (s *IqXMPPSuite) TestConnSendIQErr(c *C) {
 func (s *IqXMPPSuite) TestConnSendIQEmptyReply(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: &mockOut,
 		jid: "jid",
 	}
@@ -137,6 +147,7 @@ func (s *IqXMPPSuite) TestConnSendIQEmptyReply(c *C) {
 func (s *IqXMPPSuite) TestConnSendIQReply(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: &mockOut,
 		jid: "jid",
 	}

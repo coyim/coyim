@@ -19,7 +19,7 @@ func (c *conn) SendInitialStreamHeader() error {
 		return err
 	}
 
-	se, err := nextStart(c.in)
+	se, err := nextStart(c.in, c.log)
 	if err != nil {
 		return err
 	}

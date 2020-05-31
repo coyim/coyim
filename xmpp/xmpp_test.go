@@ -93,13 +93,14 @@ func (s *XMPPSuite) TestConnClose_sendsAStreamCloseTagWhenWeCloseFirst(c *C) {
 	mockCloser := &mockConnIOReaderWriter{}
 
 	conn := newConn()
+	conn.log = testLogger()
 	conn.in = xml.NewDecoder(mockIn)
 	conn.out = mockCloser
 	conn.rawOut = mockCloser
 	su := make(chan string)
 	conn.statusUpdates = su
 
-	nextElement(conn.in) // Reads the opening tag and make the unmarshaller happy
+	nextElement(conn.in, conn.log) // Reads the opening tag and make the unmarshaller happy
 
 	var innerErr error
 	var innerStanza data.Stanza
@@ -136,12 +137,13 @@ func (s *XMPPSuite) TestConnNext_replyWithAStreamCloseTagWhenTheyCloseFirst(c *C
 	mockCloser := &mockConnIOReaderWriter{}
 
 	conn := newConn()
+	conn.log = testLogger()
 	conn.in = xml.NewDecoder(mockIn)
 	conn.out = mockCloser
 	conn.rawOut = mockCloser
 
-	nextElement(conn.in)       // Reads the opening tag and make the unmarshaller happy
-	stanza, err := conn.Next() // Reads the closing tag
+	nextElement(conn.in, conn.log) // Reads the opening tag and make the unmarshaller happy
+	stanza, err := conn.Next()     // Reads the closing tag
 
 	c.Assert(err, IsNil)
 	c.Assert(stanza, DeepEquals, data.Stanza{
@@ -160,7 +162,8 @@ func (s *XMPPSuite) TestConnNext_replyWithAStreamCloseTagWhenTheyCloseFirst(c *C
 func (s *XMPPSuite) TestConnNextEOF(c *C) {
 	mockIn := &mockConnIOReaderWriter{err: io.EOF}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 	}
 	stanza, err := conn.Next()
 	c.Assert(stanza.Name, Equals, xml.Name{})
@@ -177,7 +180,8 @@ func (s *XMPPSuite) TestConnNextErr(c *C) {
 		`),
 	}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 	}
 	stanza, err := conn.Next()
 	c.Assert(stanza.Name, Equals, xml.Name{})
@@ -197,7 +201,8 @@ func (s *XMPPSuite) TestConnNextIQSet(c *C) {
   `),
 	}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 	}
 	stanza, err := conn.Next()
 	c.Assert(stanza.Name, Equals, xml.Name{Space: NsClient, Local: "iq"})
@@ -218,7 +223,8 @@ func (s *XMPPSuite) TestConnNextIQResult(c *C) {
   `),
 	}
 	conn := conn{
-		in: xml.NewDecoder(mockIn),
+		log: testLogger(),
+		in:  xml.NewDecoder(mockIn),
 	}
 	stanza, err := conn.Next()
 	c.Assert(stanza.Name, Equals, xml.Name{Space: NsClient, Local: "iq"})
@@ -230,13 +236,13 @@ func (s *XMPPSuite) TestConnNextIQResult(c *C) {
 }
 
 func (s *XMPPSuite) TestConnCancelError(c *C) {
-	conn := conn{}
+	conn := conn{log: testLogger()}
 	ok := conn.Cancel(conn.getCookie())
 	c.Assert(ok, Equals, false)
 }
 
 func (s *XMPPSuite) TestConnCancelOK(c *C) {
-	conn := conn{}
+	conn := conn{log: testLogger()}
 	cookie := conn.getCookie()
 	ch := make(chan data.Stanza, 1)
 	conn.inflights = make(map[data.Cookie]inflight)
@@ -250,6 +256,7 @@ func (s *XMPPSuite) TestConnCancelOK(c *C) {
 func (s *XMPPSuite) TestConnRequestRoster(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: &mockOut,
 	}
 	conn.inflights = make(map[data.Cookie]inflight)
@@ -263,6 +270,7 @@ func (s *XMPPSuite) TestConnRequestRoster(c *C) {
 func (s *XMPPSuite) TestConnRequestRosterErr(c *C) {
 	mockOut := mockConnIOReaderWriter{err: io.EOF}
 	conn := conn{
+		log: testLogger(),
 		out: &mockOut,
 	}
 	conn.inflights = make(map[data.Cookie]inflight)
@@ -305,6 +313,7 @@ func (s *XMPPSuite) TestParseRoster(c *C) {
 func (s *XMPPSuite) TestConnSend(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
+		log: testLogger(),
 		out: &mockOut,
 		jid: "jid",
 	}

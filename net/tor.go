@@ -94,20 +94,20 @@ func (*defaultTorManager) IsConnectionOverTor(d proxy.Dialer) bool {
 
 	resp, err := c.Get("https://check.torproject.org/api/ip")
 	if err != nil {
-		log.Printf("Got error when trying to check tor: %v", err)
+		log.WithError(err).Warn("Got error when trying to check tor")
 		return false
 	}
 
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Printf("Got error when trying to check tor: %v", err)
+		log.WithError(err).Warn("Got error when trying to check tor")
 		return false
 	}
 
 	v := CheckTorResult{}
 	err = json.Unmarshal(content, &v)
 	if err != nil {
-		log.Printf("Got error when trying to check tor: %v", err)
+		log.WithError(err).Warn("Got error when trying to check tor")
 		return false
 	}
 

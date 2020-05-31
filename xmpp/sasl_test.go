@@ -14,7 +14,7 @@ type SaslXMPPSuite struct{}
 var _ = Suite(&SaslXMPPSuite{})
 
 func (s *SaslXMPPSuite) Test_authenticate_failsIfPlainIsNotAnOption(c *C) {
-	conn := conn{}
+	conn := conn{log: testLogger()}
 
 	err := conn.Authenticate("", "")
 	c.Assert(err, Equals, errUnsupportedSASLMechanism)
@@ -24,6 +24,7 @@ func (s *SaslXMPPSuite) Test_authenticate_authenticatesWithUsernameAndPassword(c
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:success xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:success>")}
 	conn := conn{
+		log:    testLogger(),
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		features: data.StreamFeatures{
@@ -42,6 +43,7 @@ func (s *SaslXMPPSuite) Test_authenticate_handlesFailure(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:failure xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'><foobar></foobar></sasl:failure>")}
 	conn := conn{
+		log:    testLogger(),
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		features: data.StreamFeatures{
@@ -59,6 +61,7 @@ func (s *SaslXMPPSuite) Test_authenticate_handlesWrongResponses(c *C) {
 	out := &mockConnIOReaderWriter{}
 	mockIn := &mockConnIOReaderWriter{read: []byte("<sasl:something xmlns:sasl='urn:ietf:params:xml:ns:xmpp-sasl'></sasl:something>")}
 	conn := conn{
+		log:    testLogger(),
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		features: data.StreamFeatures{
@@ -85,6 +88,7 @@ func (s *SaslXMPPSuite) Test_digestMD5_authenticatesWithUsernameAndPassword(c *C
 	}}
 
 	conn := conn{
+		log:    testLogger(),
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		rand:   mockRand,
@@ -116,6 +120,7 @@ func (s *SaslXMPPSuite) Test_digestMD5_serverFailsToVerifyChallenge(c *C) {
 	}}
 
 	conn := conn{
+		log:    testLogger(),
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		rand:   mockRand,
@@ -146,6 +151,7 @@ func (s *SaslXMPPSuite) Test_scramSHA1Auth_authenticatesWithUsernameAndPassword(
 	}}
 
 	conn := conn{
+		log:    testLogger(),
 		rawOut: out,
 		in:     xml.NewDecoder(mockIn),
 		rand:   mockRand,

@@ -12,8 +12,6 @@ import (
 	"fmt"
 	"io"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/xmpp/data"
 	xe "github.com/coyim/coyim/xmpp/errors"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -83,7 +81,7 @@ func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	//TODO: this should be configurable by the client
 	preferedMechanisms := []string{"SCRAM-SHA-512-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
 
-	log.Println("sasl: server supports mechanisms", c.features.Mechanisms.Mechanism)
+	c.log.WithField("mechanisms", c.features.Mechanisms.Mechanism).Info("sasl: server supports mechanisms")
 
 	for _, prefered := range preferedMechanisms {
 		if !sasl.ClientSupport(prefered) {
@@ -92,7 +90,7 @@ func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 
 		for _, m := range c.features.Mechanisms.Mechanism {
 			if prefered == m {
-				log.Println("sasl: authenticating via", m)
+				c.log.WithField("mechanism", m).Info("sasl: authenticating via")
 				return c.authenticateWith(prefered, user, password)
 			}
 		}
@@ -176,7 +174,7 @@ func (c *conn) challengeLoop(clientAuth sasl.Session) error {
 func (c *conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 	var encodedChallenge []byte
 
-	name, val, _ := next(c)
+	name, val, _ := next(c, c.log)
 	switch v := val.(type) {
 	case *data.SaslFailure:
 		err = errors.New("xmpp: authentication failure: " + v.String())

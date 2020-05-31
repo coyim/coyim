@@ -103,7 +103,7 @@ func (s byPriorityWeight) Less(i, j int) bool {
 	}
 
 	if s[i].Priority == s[j].Priority {
-		return s[i].Weight < s[j].Weight
+		return s[i].Weight > s[j].Weight
 	}
 
 	return s[i].Priority < s[j].Priority

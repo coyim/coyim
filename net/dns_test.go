@@ -133,8 +133,8 @@ func (s *DNSXmppSuite) Test_convertAnswersToSRV_sortsByWeightIfPriotityIsTheSame
 		srv4,
 	}
 	res := convertAnswersToSRV(in)
-	c.Assert(res[0].Target, Equals, "foo4.com")
-	c.Assert(res[1].Target, Equals, "foo2.com")
-	c.Assert(res[2].Target, Equals, "foo1.com")
-	c.Assert(res[3].Target, Equals, "foo3.com")
+	c.Assert(res[0].Target, Equals, "foo3.com")
+	c.Assert(res[1].Target, Equals, "foo1.com")
+	c.Assert(res[2].Target, Equals, "foo2.com")
+	c.Assert(res[3].Target, Equals, "foo4.com")
 }

@@ -30,7 +30,7 @@ func (d *dialer) newTCPConn() (net.Conn, error) {
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.config.SkipSRVLookup {
 		log.Println("Skipping SRV lookup")
-		return connectWithProxy(d.GetServer(), d.proxy)
+		return connectWithProxy(d.GetServer(), false, d.proxy)
 	}
 
 	return d.srvLookupAndFallback()
@@ -38,8 +38,17 @@ func (d *dialer) newTCPConn() (net.Conn, error) {
 
 func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
 	host := d.getJIDDomainpart()
-	log.Println("Make SRV lookup to:", host)
-	xmppAddrs, err := ResolveSRVWithProxy(d.proxy, host)
+
+	log.WithFields(log.Fields{
+		"host": host,
+	}).Info("Making SRV lookup")
+
+	xmppsAddrs, xmppAddrs, err := ResolveSRVWithProxy(d.proxy, host)
+
+	log.WithFields(log.Fields{
+		"xmpp":  xmppAddrs,
+		"xmpps": xmppsAddrs,
+	}).Info("Received SRV records")
 
 	//Every other error means
 	//"the initiating entity [did] not receive a response to its SRV query" and
@@ -52,7 +61,7 @@ func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
 	//RFC 6120, Section 3.2.1, item 9
 	//If the SRV has no response, we fallback to use the origin domain
 	//at default port.
-	if len(xmppAddrs) == 0 {
+	if len(xmppsAddrs) == 0 && len(xmppAddrs) == 0 {
 		err = errors.ErrTCPBindingFailed
 
 		//TODO: in this case, a failure to connect might be recovered using HTTP binding
@@ -63,7 +72,7 @@ func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
 		err = errors.ErrConnectionFailed
 	}
 
-	conn, _, e := connectToFirstAvailable(xmppAddrs, d.proxy)
+	conn, _, e := connectToFirstAvailable(xmppAddrs, false, d.proxy)
 	if e != nil {
 		return nil, err
 	}
@@ -71,9 +80,9 @@ func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
 	return conn, nil
 }
 
-func connectToFirstAvailable(xmppAddrs []string, dialer proxy.Dialer) (net.Conn, string, error) {
+func connectToFirstAvailable(xmppAddrs []string, tls bool, dialer proxy.Dialer) (net.Conn, string, error) {
 	for _, addr := range xmppAddrs {
-		conn, err := connectWithProxy(addr, dialer)
+		conn, err := connectWithProxy(addr, tls, dialer)
 		if err == nil {
 			return conn, addr, nil
 		}
@@ -99,7 +108,7 @@ func dialTimeout(network, addr string, dialer proxy.Dialer, t time.Duration) (c 
 	}
 }
 
-func connectWithProxy(addr string, dialer proxy.Dialer) (conn net.Conn, err error) {
+func connectWithProxy(addr string, tls bool, dialer proxy.Dialer) (conn net.Conn, err error) {
 	log.Printf("Connecting to %s\n", addr)
 
 	//TODO: It is not clear to me if this follows

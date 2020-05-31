@@ -23,20 +23,52 @@ var (
 
 // Resolve performs a DNS SRV lookup for the XMPP server that serves the given
 // domain.
-func Resolve(domain string) (hostport []string, err error) {
-	return massage(net.LookupSRV("xmpp-client", "tcp", domain))
+func Resolve(domain string) (hostporttls []string, hostport []string, err error) {
+	_, addrs, err := net.LookupSRV("xmpps-client", "tcp", domain)
+	if err != nil {
+		return nil, nil, err
+	}
+	hostporttls, err = massage(addrs)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	_, addrs, err = net.LookupSRV("xmpp-client", "tcp", domain)
+	if err != nil {
+		return nil, nil, err
+	}
+	hostport, err = massage(addrs)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return hostporttls, hostport, nil
 }
 
 // ResolveSRVWithProxy performs a DNS SRV lookup for the xmpp server that serves the given domain over the given proxy
-func ResolveSRVWithProxy(proxy proxy.Dialer, domain string) (hostport []string, err error) {
-	return massage(ourNet.LookupSRV(proxy, "xmpp-client", "tcp", domain))
-}
-
-func massage(cname string, addrs []*net.SRV, err error) ([]string, error) {
+func ResolveSRVWithProxy(proxy proxy.Dialer, domain string) (hostporttls []string, hostport []string, err error) {
+	_, addrs, err := ourNet.LookupSRV(proxy, "xmpps-client", "tcp", domain)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
+	}
+	hostporttls, err = massage(addrs)
+	if err != nil {
+		return nil, nil, err
 	}
 
+	_, addrs, err = ourNet.LookupSRV(proxy, "xmpp-client", "tcp", domain)
+	if err != nil {
+		return nil, nil, err
+	}
+	hostport, err = massage(addrs)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return hostporttls, hostport, nil
+}
+
+func massage(addrs []*net.SRV) ([]string, error) {
 	// https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-prefer
 	if len(addrs) == 1 && addrs[0].Target == "." {
 		return nil, ErrServiceNotAvailable

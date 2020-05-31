@@ -42,8 +42,14 @@ func (s *DNSXMPPSuite) Test_Resolve_resolvesCorrectly(c *C) {
 
 		return fakeTCPConnToDNS(dec)
 	})
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		c.Check(network, Equals, "tcp")
+		c.Check(addr, Equals, "208.67.222.222:53")
 
-	hostport, err := ResolveSRVWithProxy(p, "olabini.se")
+		return fakeTCPConnToDNS(dec)
+	})
+
+	_, hostport, err := ResolveSRVWithProxy(p, "olabini.se")
 	c.Assert(err, IsNil)
 	c.Assert(hostport[0], Equals, "xmpp.olabini.se:5222")
 	c.Check(p, MatchesExpectations)
@@ -51,10 +57,10 @@ func (s *DNSXMPPSuite) Test_Resolve_resolvesCorrectly(c *C) {
 
 // WARNING: this test requires a real live connection to the Internet. Not so good...
 func (s *DNSXMPPSuite) Test_Resolve_handlesErrors(c *C) {
-	_, err := Resolve("doesntexist.olabini.se")
+	_, _, err := Resolve("doesntexist.olabini.se")
 
 	//It only happens when using golang resolver
 	//ResolveSRVWithProxy will not return an error
 	c.Assert(err, NotNil)
-	c.Assert(err.Error(), Matches, "lookup _xmpp-client._tcp.doesntexist.olabini.se.*?")
+	c.Assert(err.Error(), Matches, "lookup _xmpps-client._tcp.doesntexist.olabini.se.*?")
 }

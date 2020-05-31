@@ -176,6 +176,13 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 
 	p.Expects(func(network, addr string) (net.Conn, error) {
 		c.Check(network, Equals, "tcp")
+		c.Check(addr, Equals, "208.67.222.222:53")
+
+		return fakeTCPConnToDNS(dec)
+	})
+
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		c.Check(network, Equals, "tcp")
 		c.Check(addr, Equals, "xmpp.olabini.se:5222")
 
 		return nil, io.EOF

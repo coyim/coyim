@@ -113,6 +113,10 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 		return errors.New("xmpp: expected <proceed> after <starttls> but got <" + proceed.Name.Local + "> in " + proceed.Name.Space)
 	}
 
+	return d.startRawTLS(c, conn)
+}
+
+func (d *dialer) startRawTLS(c interfaces.Conn, conn net.Conn) error {
 	d.log.Info("Starting TLS handshake")
 
 	tlsConfig := c.Config().TLSConfig
@@ -121,6 +125,9 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 	}
 
 	tlsConfig.ServerName = c.OriginDomain()
+	if d.sendALPN {
+		tlsConfig.NextProtos = []string{"xmpp-client"}
+	}
 	tlsConfig.InsecureSkipVerify = true
 
 	tlsConn := d.tlsConnFactory(conn, tlsConfig)
@@ -131,7 +138,7 @@ func (d *dialer) startTLS(c interfaces.Conn, conn net.Conn) error {
 	tlsState := tlsConn.ConnectionState()
 	printTLSDetails(d.log, tlsState)
 
-	if err = d.verifier.Verify(tlsState, tlsConfig, c.OriginDomain()); err != nil {
+	if err := d.verifier.Verify(tlsState, tlsConfig, c.OriginDomain()); err != nil {
 		return err
 	}
 

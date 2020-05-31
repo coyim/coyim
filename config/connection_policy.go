@@ -210,6 +210,8 @@ func (p *ConnectionPolicy) Connect(password string, conf *Account, verifier ourt
 	// We use password rather than conf.Password because the user might have not
 	// stored the password, and changing conf.Password in this case will store it.
 	dialer.SetPassword(password)
+	dialer.SetShouldConnectTLS(conf.ConnectTLS)
+	dialer.SetShouldSendALPN(conf.SetALPN)
 
 	return dialer.Dial()
 }

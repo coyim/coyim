@@ -39,6 +39,16 @@ type dialer struct {
 	tlsConnFactory tls.Factory
 
 	log coylog.Logger
+
+	// Have we dialed with Direct TLS or not
+	outerTLS bool
+
+	// If a server address is connected, should we connect with Direct TLS to it or not?
+	connectTLS bool
+
+	// Should we set the ALPN Next Protocol when connecting over Direct TLS?
+	// This might potentially leak information so we won't do it by default.
+	sendALPN bool
 }
 
 // DialerFactory returns a new xmpp dialer
@@ -52,6 +62,14 @@ func (d *dialer) SetJID(v string) {
 
 func (d *dialer) SetServerAddress(v string) {
 	d.serverAddress = v
+}
+
+func (d *dialer) SetShouldConnectTLS(v bool) {
+	d.connectTLS = v
+}
+
+func (d *dialer) SetShouldSendALPN(v bool) {
+	d.sendALPN = v
 }
 
 func (d *dialer) SetPassword(v string) {
@@ -119,12 +137,19 @@ func (d *dialer) Dial() (interfaces.Conn, error) {
 	// Starting an XMPP connection comprises two parts:
 	// - Opening a transport channel (TCP)
 	// - Opening an XML stream over the transport channel
+	// - Open STARTTLS stream
+
+	// If we have an SRV entry that prefers a TLS connection, we do these actions:
+	// - Opening a transport channel (TCP)
+	// - Open a TLS channel
+	// - Opening an XML stream over the transport channel
 
 	// RFC 6120, section 3
-	conn, err := d.newTCPConn()
+	conn, tls, err := d.newTCPConn()
 	if err != nil {
 		return nil, err
 	}
+	d.outerTLS = tls
 
 	// RFC 6120, section 4
 	return d.setupStream(conn)
@@ -136,13 +161,21 @@ func (d *dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
 	c.log = d.log
 	c.config = d.config
 	c.originDomain = d.getJIDDomainpart()
-	d.bindTransport(c, conn)
+	c.outerTLS = d.outerTLS
+
+	if c.outerTLS {
+		if err := d.startRawTLS(c, conn); err != nil {
+			return nil, err
+		}
+	} else {
+		d.bindTransport(c, conn)
+	}
 
 	if err := d.negotiateStreamFeatures(c, conn); err != nil {
 		return nil, err
 	}
 
-	go c.watchKeepAlive(conn)
+	go c.watchKeepAlive()
 	go c.watchPings()
 
 	return c, nil
@@ -154,9 +187,11 @@ func (d *dialer) negotiateStreamFeatures(c interfaces.Conn, conn net.Conn) error
 		return err
 	}
 
-	// STARTTLS MUST be the first feature to be negotiated
-	if err := d.negotiateSTARTTLS(c, conn); err != nil {
-		return err
+	if !d.outerTLS {
+		// STARTTLS MUST be the first feature to be negotiated
+		if err := d.negotiateSTARTTLS(c, conn); err != nil {
+			return err
+		}
 	}
 
 	if registered, err := d.negotiateInBandRegistration(c); err != nil || registered {

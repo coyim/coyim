@@ -19,6 +19,8 @@ type Dialer interface {
 	SetPassword(string)
 	SetProxy(proxy.Dialer)
 	SetServerAddress(v string)
+	SetShouldConnectTLS(bool)
+	SetShouldSendALPN(bool)
 	SetLogger(coylog.Logger)
 }
 

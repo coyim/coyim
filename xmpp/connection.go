@@ -62,6 +62,8 @@ type conn struct {
 	channelBinding []byte
 
 	log coylog.Logger
+
+	outerTLS bool
 }
 
 func (c *conn) Cache() cache.WithExpiry {

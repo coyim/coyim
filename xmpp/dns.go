@@ -9,6 +9,7 @@ package xmpp
 import (
 	"errors"
 	"net"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -21,65 +22,102 @@ var (
 	ErrServiceNotAvailable = errors.New("service not available")
 )
 
-// Resolve performs a DNS SRV lookup for the XMPP server that serves the given
+type connectEntry struct {
+	host     string
+	port     int
+	priority int
+	weight   int
+	tls      bool
+}
+
+func intoConnectEntry(s string) *connectEntry {
+	host, port, e := net.SplitHostPort(s)
+	if e != nil {
+		return nil
+	}
+	pp, _ := strconv.Atoi(port)
+	return &connectEntry{
+		host: host,
+		port: pp,
+		tls:  false,
+	}
+}
+
+type byPriorityWeight []*connectEntry
+
+func (s byPriorityWeight) Len() int { return len(s) }
+func (s byPriorityWeight) Less(i, j int) bool {
+	if s[i].priority == s[j].priority {
+		return s[i].weight > s[j].weight
+	}
+
+	return s[i].priority < s[j].priority
+}
+func (s byPriorityWeight) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+// resolve performs a DNS SRV lookup for the XMPP server that serves the given
 // domain.
-func Resolve(domain string) (hostporttls []string, hostport []string, err error) {
-	_, addrs, err := net.LookupSRV("xmpps-client", "tcp", domain)
-	if err != nil {
-		return nil, nil, err
-	}
-	hostporttls, err = massage(addrs)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	_, addrs, err = net.LookupSRV("xmpp-client", "tcp", domain)
-	if err != nil {
-		return nil, nil, err
-	}
-	hostport, err = massage(addrs)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return hostporttls, hostport, nil
+func resolve(domain string) (hosts []*connectEntry, err error) {
+	return resolveWithCustom(domain, net.LookupSRV)
 }
 
-// ResolveSRVWithProxy performs a DNS SRV lookup for the xmpp server that serves the given domain over the given proxy
-func ResolveSRVWithProxy(proxy proxy.Dialer, domain string) (hostporttls []string, hostport []string, err error) {
-	_, addrs, err := ourNet.LookupSRV(proxy, "xmpps-client", "tcp", domain)
-	if err != nil {
-		return nil, nil, err
-	}
-	hostporttls, err = massage(addrs)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	_, addrs, err = ourNet.LookupSRV(proxy, "xmpp-client", "tcp", domain)
-	if err != nil {
-		return nil, nil, err
-	}
-	hostport, err = massage(addrs)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return hostporttls, hostport, nil
+// resolveSRVWithProxy performs a DNS SRV lookup for the xmpp server that serves the given domain over the given proxy
+func resolveSRVWithProxy(proxy proxy.Dialer, domain string) (hosts []*connectEntry, err error) {
+	return resolveWithCustom(domain, resolverWithProxy(proxy))
 }
 
-func massage(addrs []*net.SRV) ([]string, error) {
+type resolver func(string, string, string) (string, []*net.SRV, error)
+
+func resolverWithProxy(p proxy.Dialer) resolver {
+	return func(serv string, proto string, domain string) (string, []*net.SRV, error) {
+		return ourNet.LookupSRV(p, serv, proto, domain)
+	}
+}
+
+func resolveWithCustom(domain string, fn resolver) (hosts []*connectEntry, err error) {
+	_, addrs, err := fn("xmpps-client", "tcp", domain)
+	if err != nil {
+		return nil, err
+	}
+	hostporttls, err := massage(addrs, true)
+	if err != nil {
+		return nil, err
+	}
+
+	_, addrs, err = fn("xmpp-client", "tcp", domain)
+	if err != nil {
+		return nil, err
+	}
+	hostport, err := massage(addrs, false)
+	if err != nil {
+		return nil, err
+	}
+
+	result := append(hostporttls, hostport...)
+	sort.Sort(byPriorityWeight(result))
+
+	return result, nil
+}
+
+func (c *connectEntry) String() string {
+	return net.JoinHostPort(c.host, strconv.Itoa(c.port))
+}
+
+func massage(addrs []*net.SRV, tls bool) ([]*connectEntry, error) {
 	// https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-prefer
 	if len(addrs) == 1 && addrs[0].Target == "." {
 		return nil, ErrServiceNotAvailable
 	}
 
-	ret := make([]string, 0, len(addrs))
+	ret := make([]*connectEntry, 0, len(addrs))
 	for _, addr := range addrs {
-		hostport := net.JoinHostPort(
-			strings.TrimSuffix(addr.Target, "."),
-			strconv.Itoa(int(addr.Port)),
-		)
+		hostport := &connectEntry{
+			host:     strings.TrimSuffix(addr.Target, "."),
+			port:     int(addr.Port),
+			priority: int(addr.Priority),
+			weight:   int(addr.Weight),
+			tls:      tls,
+		}
 
 		ret = append(ret, hostport)
 	}

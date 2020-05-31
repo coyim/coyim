@@ -3,7 +3,6 @@ package xmpp
 import (
 	"encoding/xml"
 	"io"
-	"net"
 	"time"
 
 	"github.com/coyim/coyim/xmpp/data"
@@ -17,7 +16,7 @@ var (
 const logKeepAlives = false
 
 // Manage whitespace keepalives as specified in RFC 6120, section 4.6.1
-func (c *conn) watchKeepAlive(conn net.Conn) {
+func (c *conn) watchKeepAlive() {
 	tick := time.NewTicker(keepaliveInterval)
 	defer tick.Stop()
 	defer c.log.Info("xmpp: no more watching keepalives")

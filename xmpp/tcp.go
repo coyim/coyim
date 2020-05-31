@@ -13,7 +13,7 @@ import (
 
 const defaultDialTimeout = 60 * time.Second
 
-func (d *dialer) newTCPConn() (net.Conn, error) {
+func (d *dialer) newTCPConn() (net.Conn, bool, error) {
 	if d.proxy == nil {
 		d.proxy = proxy.Direct
 	}
@@ -30,24 +30,27 @@ func (d *dialer) newTCPConn() (net.Conn, error) {
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution-srvnot
 	if d.config.SkipSRVLookup {
 		d.log.Info("Skipping SRV lookup")
-		return d.connectWithProxy(d.GetServer(), false, d.proxy)
+
+		ce := intoConnectEntry(d.GetServer())
+		ce.tls = d.connectTLS
+
+		return d.connectWithProxy(ce, d.proxy)
 	}
 
 	return d.srvLookupAndFallback()
 }
 
-func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
+func (d *dialer) srvLookupAndFallback() (net.Conn, bool, error) {
 	host := d.getJIDDomainpart()
 
 	log.WithFields(log.Fields{
 		"host": host,
 	}).Info("Making SRV lookup")
 
-	xmppsAddrs, xmppAddrs, err := ResolveSRVWithProxy(d.proxy, host)
+	addrs, err := resolveSRVWithProxy(d.proxy, host)
 
 	log.WithFields(log.Fields{
-		"xmpp":  xmppAddrs,
-		"xmpps": xmppsAddrs,
+		"xmpp": addrs,
 	}).Info("Received SRV records")
 
 	//Every other error means
@@ -55,40 +58,40 @@ func (d *dialer) srvLookupAndFallback() (net.Conn, error) {
 	//we should use the fallback method
 	//See RFC 6120, Section 3.2.1, item 9
 	if err == ErrServiceNotAvailable {
-		return nil, err
+		return nil, false, err
 	}
 
 	//RFC 6120, Section 3.2.1, item 9
 	//If the SRV has no response, we fallback to use the origin domain
 	//at default port.
-	if len(xmppsAddrs) == 0 && len(xmppAddrs) == 0 {
+	if len(addrs) == 0 {
 		err = errors.ErrTCPBindingFailed
 
 		//TODO: in this case, a failure to connect might be recovered using HTTP binding
 		//See: RFC 6120, Section 3.2.2
-		xmppAddrs = []string{d.getFallbackServer()}
+		addrs = []*connectEntry{intoConnectEntry(d.getFallbackServer())}
 	} else {
 		//The SRV lookup succeeded but we failed to connect
 		err = errors.ErrConnectionFailed
 	}
 
-	conn, _, e := d.connectToFirstAvailable(xmppAddrs, false, d.proxy)
+	conn, ce, e := d.connectToFirstAvailable(addrs, d.proxy)
 	if e != nil {
-		return nil, err
+		return nil, false, err
 	}
 
-	return conn, nil
+	return conn, ce.tls, nil
 }
 
-func (d *dialer) connectToFirstAvailable(xmppAddrs []string, tls bool, dialer proxy.Dialer) (net.Conn, string, error) {
+func (d *dialer) connectToFirstAvailable(xmppAddrs []*connectEntry, dialer proxy.Dialer) (net.Conn, *connectEntry, error) {
 	for _, addr := range xmppAddrs {
-		conn, err := d.connectWithProxy(addr, tls, dialer)
+		conn, _, err := d.connectWithProxy(addr, dialer)
 		if err == nil {
 			return conn, addr, nil
 		}
 	}
 
-	return nil, "", errors.ErrConnectionFailed
+	return nil, nil, errors.ErrConnectionFailed
 }
 
 func (d *dialer) dialTimeout(network, addr string, dialer proxy.Dialer, t time.Duration) (c net.Conn, err error) {
@@ -108,20 +111,22 @@ func (d *dialer) dialTimeout(network, addr string, dialer proxy.Dialer, t time.D
 	}
 }
 
-func (d *dialer) connectWithProxy(addr string, tls bool, dialer proxy.Dialer) (conn net.Conn, err error) {
+func (d *dialer) connectWithProxy(addr *connectEntry, dialer proxy.Dialer) (conn net.Conn, tls bool, err error) {
 	d.log.WithField("addr", addr).Info("Connecting")
 
 	//TODO: It is not clear to me if this follows
 	//RFC 6120, Section 3.2.1, item 6
 	//See: https://xmpp.org/rfcs/rfc6120.html#tcp-resolution
-	conn, err = d.dialTimeout("tcp", addr, dialer, defaultDialTimeout)
+	conn, err = d.dialTimeout("tcp", addr.String(), dialer, defaultDialTimeout)
 	if err != nil {
 		if err == ourNet.ErrTimeout {
-			return nil, err
+			return nil, false, err
 		}
 
-		return nil, errors.CreateErrFailedToConnect(addr, err)
+		return nil, false, errors.CreateErrFailedToConnect(addr.String(), err)
 	}
+
+	tls = addr.tls
 
 	return
 }

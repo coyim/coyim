@@ -22,6 +22,8 @@ type Account struct {
 	Proxies              []string `json:",omitempty"`
 	Password             string   `json:",omitempty"`
 	Port                 int      `json:",omitempty"`
+	ConnectTLS           bool     `json:",omitempty"`
+	SetALPN              bool     `json:",omitempty"`
 	PrivateKeys          [][]byte `json:",omitempty"`
 	Peers                []*Peer
 	HideStatusUpdates    bool

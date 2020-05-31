@@ -46,7 +46,7 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToOriginDomain(c *C) {
 		return expectedConn, nil
 	})
 
-	conn, err := d.newTCPConn()
+	conn, _, err := d.newTCPConn()
 	c.Check(err, IsNil)
 	c.Check(conn, Equals, expectedConn)
 
@@ -71,7 +71,7 @@ func (s *TCPSuite) Test_newTCPConn_SkipsSRVAndConnectsToConfiguredServerAddress(
 		return expectedConn, nil
 	})
 
-	conn, err := d.newTCPConn()
+	conn, _, err := d.newTCPConn()
 	c.Check(err, IsNil)
 	c.Check(conn, Equals, expectedConn)
 	c.Check(d.config.SkipSRVLookup, Equals, true)
@@ -87,7 +87,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 		proxy: p,
 	}
 
-	// We exploit ResolveSRVWithProxy forwarding conn errors
+	// We exploit resolveSRVWithProxy forwarding conn errors
 	// to fake an error it should generated.
 	p.Expects(func(network, addr string) (net.Conn, error) {
 		c.Check(network, Equals, "tcp")
@@ -96,7 +96,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 		return nil, ErrServiceNotAvailable
 	})
 
-	_, err := d.newTCPConn()
+	_, _, err := d.newTCPConn()
 	c.Check(err, Equals, ErrServiceNotAvailable)
 
 	c.Check(p, MatchesExpectations)
@@ -132,7 +132,7 @@ func (s *TCPSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortAfterSRVFa
 		return expectedConn, nil
 	})
 
-	conn, err := d.newTCPConn()
+	conn, _, err := d.newTCPConn()
 	c.Check(err, IsNil)
 	c.Check(conn, Equals, expectedConn)
 
@@ -162,7 +162,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingFails(c *C) {
 		return nil, io.EOF
 	})
 
-	_, err := d.newTCPConn()
+	_, _, err := d.newTCPConn()
 	c.Check(err, Equals, errors.ErrTCPBindingFailed)
 
 	c.Check(p, MatchesExpectations)
@@ -200,7 +200,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 		return nil, io.EOF
 	})
 
-	_, err := d.newTCPConn()
+	_, _, err := d.newTCPConn()
 	c.Check(err, Equals, errors.ErrConnectionFailed)
 	c.Check(p, MatchesExpectations)
 }

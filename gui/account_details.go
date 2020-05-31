@@ -328,7 +328,10 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			accDtails := getAccountDetails(data)
 			if isJid, err := verifyXMPPAddress(accDtails.accTxt); !isJid {
 				errorNotif.ShowMessage(err)
-				log.Printf(err)
+				log.WithFields(log.Fields{
+					"account": account.Account,
+					"error":   err,
+				}).Warn("Something went wrong")
 				return
 			}
 

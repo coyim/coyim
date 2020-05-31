@@ -6,8 +6,6 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/otrclient"
 	rosters "github.com/coyim/coyim/roster"
@@ -219,7 +217,7 @@ func (conv *conversationPane) onSendMessageSignal() {
 		sendError := conv.sendMessage(text)
 
 		if sendError != nil {
-			log.Printf(i18n.Local("Failed to generate OTR message: %s\n"), sendError.Error())
+			conv.account.log.WithError(sendError).Warn("Failed to generate OTR message")
 		}
 	}
 	conv.entry.GrabFocus()
@@ -231,7 +229,7 @@ func (conv *conversationPane) onStartOtrSignal() {
 	c, _ := session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending())
 	err := c.StartEncryptedChat()
 	if err != nil {
-		log.Printf(i18n.Local("Failed to start encrypted chat: %s\n"), err.Error())
+		conv.account.log.WithError(err).Warn("Failed to start encrypted chat")
 	} else {
 		conv.displayNotification(i18n.Local("Attempting to start a private conversation..."))
 	}
@@ -243,7 +241,7 @@ func (conv *conversationPane) onEndOtrSignal() {
 	err := session.ManuallyEndEncryptedChat(conv.currentPeerForSending())
 
 	if err != nil {
-		log.Printf(i18n.Local("Failed to terminate the encrypted chat: %s\n"), err.Error())
+		conv.account.log.WithError(err).Warn("Failed to terminate the encrypted chat")
 	} else {
 		conv.updateSecurityStatus()
 		conv.displayNotification(i18n.Local("Private conversation has ended."))

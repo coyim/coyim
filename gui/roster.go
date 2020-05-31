@@ -9,8 +9,6 @@ import (
 	"sort"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
 	rosters "github.com/coyim/coyim/roster"
@@ -679,7 +677,7 @@ func (r *roster) sortedAccounts() []*account {
 	var as []*account
 	for account := range r.ui.accountManager.getAllContacts() {
 		if account == nil {
-			log.Printf("adding an account that is nil...\n")
+			r.ui.log.Warn("adding an account that is nil...")
 		}
 		as = append(as, account)
 	}

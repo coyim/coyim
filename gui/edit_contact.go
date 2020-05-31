@@ -1,8 +1,6 @@
 package gui
 
 import (
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -153,7 +151,7 @@ func (r *roster) openEditContactDialog(peer jid.WithoutResource, acc *account) {
 	assertInUIThread()
 	p, ok := r.ui.accountManager.getPeer(acc, peer)
 	if !ok {
-		log.Printf("Couldn't find peer %s in account %v", peer, acc)
+		acc.log.WithField("peer", peer).Warn("Couldn't find peer in account")
 		return
 	}
 
@@ -195,7 +193,7 @@ func (r *roster) openEditContactDialog(peer jid.WithoutResource, acc *account) {
 
 			err := r.updatePeer(acc, peer, nickname, groups, ecd.requireEncryption.GetActive() != shouldEncryptTo, ecd.requireEncryption.GetActive())
 			if err != nil {
-				log.Println(err)
+				acc.log.WithError(err).Warn("Something went wrong")
 			}
 		},
 	})

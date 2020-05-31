@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/otrclient"
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
@@ -21,15 +20,18 @@ type accountManager struct {
 
 	otrclient.CommandManager
 
+	log coylog.Logger
+
 	sync.RWMutex
 }
 
-func newAccountManager(c otrclient.CommandManager) *accountManager {
+func newAccountManager(c otrclient.CommandManager, log coylog.Logger) *accountManager {
 	return &accountManager{
 		events:         make(chan interface{}, 10),
 		accounts:       make([]*account, 0, 5),
 		contacts:       make(map[*account]*rosters.List),
 		CommandManager: c,
+		log:            log,
 	}
 }
 
@@ -103,6 +105,7 @@ func (m *accountManager) addAccount(appConfig *config.ApplicationConfig, account
 	defer m.Unlock()
 
 	acc := newAccount(appConfig, account, sf, df)
+	acc.log = m.log.WithField("account", account)
 	acc.session.Subscribe(m.events)
 	acc.session.SetCommandManager(m)
 	acc.session.SetConnector(acc)
@@ -185,7 +188,7 @@ func (m *accountManager) getPeer(account *account, peer jid.WithoutResource) (*r
 
 	l, ok := m.contacts[account]
 	if !ok {
-		log.Printf("Failure to look up account %v from account manager", account.session.GetConfig().Account)
+		account.log.Warn("Failure to look up account from account manager")
 		return nil, false
 	}
 

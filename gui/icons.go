@@ -1106,7 +1106,10 @@ func (i *icon) getPath() string {
 			os.MkdirAll(filepath.Join(os.TempDir(), "coyim"), 0755)
 			bytes, _ := i.get()
 			ioutil.WriteFile(tmpIconPath, bytes, 0644)
-			log.Printf("gui/icons: wrote %s to %s\n", i.name, tmpIconPath)
+			log.WithFields(log.Fields{
+				"name": i.name,
+				"path": tmpIconPath,
+			}).Debug("gui/icons: wrote file")
 		}
 		return tmpIconPath
 	}

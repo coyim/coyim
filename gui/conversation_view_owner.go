@@ -3,8 +3,6 @@ package gui
 import (
 	"fmt"
 
-	log "github.com/sirupsen/logrus"
-
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -216,7 +214,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 		currentPeer: func() (*rosters.Peer, bool) {
 			p, ok := cvf.ui.getPeer(cvf.account, cvf.peer.NoResource())
 			if !ok {
-				log.Printf("Failure to look up peer %v from account", cvf.peer.NoResource().String())
+				cvf.ui.log.WithField("peer", cvf.peer.NoResource().String()).Warn("Failure to look up peer from account")
 			}
 			return p, ok
 		},

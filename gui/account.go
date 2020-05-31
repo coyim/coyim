@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
@@ -36,6 +37,8 @@ type account struct {
 
 	askingForPassword bool
 	cachedPassword    string
+
+	log coylog.Logger
 
 	sync.RWMutex
 }
@@ -69,7 +72,10 @@ func (account *account) executeDelayed(ui *gtkUI, peer jid.Any, targeted bool) {
 		}
 
 	}, func() {
-		log.Printf("Race condition in executeDelayed(%v, %v) - this shouldn't happen", peer, targeted)
+		account.log.WithFields(log.Fields{
+			"peer":     peer,
+			"targeted": targeted,
+		}).Warn("Race condition in executeDelayed() - this shouldn't happen")
 	})
 }
 
@@ -126,16 +132,22 @@ func (u *gtkUI) showAddAccountWindow() {
 	u.accountDialog(nil, c, func() {
 		_, exists := u.config.GetAccount(c.Account)
 		if exists {
-			log.Printf("[add account] Can't add account %s since you already have an account "+
-				"configured with the same name. Remove that account and add it again if you "+
-				"really want to overwrite it.", c.Account)
+			u.log.WithFields(log.Fields{
+				"feature": "addAccount",
+				"account": c.Account,
+			}).Warn("Can't add account since you already have an account " +
+				"configured with the same name. Remove that account and add it again if you " +
+				"really want to overwrite it.")
 			u.notify(i18n.Local("Unable to Add Account"), i18n.Localf("Can't add account:\n\n"+
 				"You already have an account with this name."))
 			return
 		}
 
 		u.addAndSaveAccountConfig(c)
-		log.Printf("[add account] Account sucessfully added.")
+		u.log.WithFields(log.Fields{
+			"feature": "addAccount",
+			"account": c.Account,
+		}).Info("Account sucessfully added")
 		u.notify(i18n.Local("Account added"), i18n.Localf("%s successfully added.", c.Account))
 	})
 }
@@ -148,7 +160,7 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) error {
 
 	err := u.saveConfigInternal()
 	if err != nil {
-		log.Println("Failed to save config:", err)
+		u.log.WithField("account", c.Account).WithError(err).Warn("Failed to save config")
 	}
 
 	doInUIThread(func() {

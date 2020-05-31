@@ -1,9 +1,5 @@
 package gui
 
-import (
-	log "github.com/sirupsen/logrus"
-)
-
 type encryptionStatus struct {
 	encrypted   bool
 	newKey      bool
@@ -13,7 +9,7 @@ type encryptionStatus struct {
 func (conv *conversationPane) savePeerFingerprint(u *gtkUI) {
 	conversation, exists := conv.getConversation()
 	if !exists {
-		log.Println("Conversation does not exist - this shouldn't happen")
+		conv.account.log.Warn("Conversation does not exist - this shouldn't happen")
 		return
 	}
 
@@ -29,14 +25,14 @@ func (conv *conversationPane) savePeerFingerprint(u *gtkUI) {
 
 	err := u.saveConfigInternal()
 	if err != nil {
-		log.Println("Failed to save config:", err)
+		conv.account.log.WithError(err).Warn("Failed to save config")
 	}
 }
 
 func (conv *conversationPane) calculateNewKeyStatus() {
 	conversation, exists := conv.getConversation()
 	if !exists {
-		log.Println("Conversation does not exist - this shouldn't happen")
+		conv.account.log.Warn("Conversation does not exist - this shouldn't happen")
 		return
 	}
 

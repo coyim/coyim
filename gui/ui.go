@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/gui/settings"
 	"github.com/coyim/coyim/i18n"
 	ournet "github.com/coyim/coyim/net"
@@ -71,6 +72,8 @@ type gtkUI struct {
 	//Desktop notifications
 	deNotify    *desktopNotifications
 	actionTimes map[string]time.Time
+
+	log coylog.Logger
 }
 
 // Graphics represent the graphic configuration
@@ -127,6 +130,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 		actionTimes: make(map[string]time.Time),
 		deNotify:    newDesktopNotifications(),
+		log:         log.New(),
 	}
 
 	var err error
@@ -141,7 +145,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
-	ret.accountManager = newAccountManager(ret)
+	ret.accountManager = newAccountManager(ret, ret.log)
 
 	ret.chatManager = newChatManager(ret.accountManager)
 
@@ -219,11 +223,11 @@ func (u *gtkUI) installTor() {
 			if !ournet.Tor.Detect() {
 				err := "Tor is still not running"
 				torNotif.renderTorNotification(err, "software-update-urgent")
-				log.Printf("Tor is still not running")
+				u.log.Info("Tor is still not running")
 			} else {
 				err := "Tor is now running"
 				torNotif.renderTorNotification(err, "emblem-default")
-				log.Printf("Tor is now not running")
+				u.log.Info("Tor is now running")
 			}
 		},
 	})
@@ -250,7 +254,7 @@ func (u *gtkUI) wouldYouLikeToInstallTor(k func(bool)) {
 
 func (u *gtkUI) initialSetupWindow() {
 	if !ournet.Tor.Detect() {
-		log.Printf("Tor is not running")
+		u.log.Info("Tor is not running")
 		u.wouldYouLikeToInstallTor(func(res bool) {
 			if res {
 				u.installTor()
@@ -286,7 +290,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 	for !ok {
 		conf, ok, err = config.LoadOrCreate(configFile, u.keySupplier)
 		if !ok {
-			log.Printf("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect: %v", err)
+			u.log.WithError(err).Warn("couldn't open encrypted file - either the user didn't supply a password, or the password was incorrect")
 			u.keySupplier.Invalidate()
 			u.keySupplier.LastAttemptFailed()
 		}
@@ -297,7 +301,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 	u.config = conf
 
 	if err != nil {
-		log.Printf(err.Error())
+		u.log.WithError(err).Warn("something went wrong")
 		doInUIThread(u.initialSetupWindow)
 		return
 	}
@@ -371,7 +375,7 @@ func (u *gtkUI) SaveConfig() {
 	go func() {
 		err := u.saveConfigInternal()
 		if err != nil {
-			log.Println("Failed to save config file:", err.Error())
+			u.log.WithError(err).Warn("Failed to save config file")
 		}
 	}()
 }
@@ -388,7 +392,7 @@ func (u *gtkUI) saveConfigOnly() {
 	go func() {
 		err := u.saveConfigOnlyInternal()
 		if err != nil {
-			log.Println("Failed to save config file:", err.Error())
+			u.log.WithError(err).Warn("Failed to save config file")
 		}
 	}()
 }
@@ -663,12 +667,12 @@ func (u *gtkUI) newCustomConversation() {
 		"on_start_signal": func() {
 			iter, err := accountInput.GetActiveIter()
 			if err != nil {
-				log.Printf("Error encountered when getting account: %v", err)
+				u.log.WithError(err).Warn("Error encountered when getting account")
 				return
 			}
 			val, err := model.GetValue(iter, 1)
 			if err != nil {
-				log.Printf("Error encountered when getting account: %v", err)
+				u.log.WithError(err).Warn("Error encountered when getting account")
 				return
 			}
 			accountID, _ := val.GetString()

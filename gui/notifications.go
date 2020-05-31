@@ -1,10 +1,7 @@
 package gui
 
 import (
-	"fmt"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -28,7 +25,7 @@ func (u *gtkUI) maybeNotify(timestamp time.Time, account *account, peer jid.With
 	dname := u.displayNameFor(account, peer)
 
 	if timestamp.Before(u.lastActionTimeFor(peer.String()).Add(time.Duration(mergeNotificationsThreshold) * time.Second)) {
-		fmt.Println("Decided to not show notification, since the time is not ready")
+		u.log.Debug("Decided to not show notification, since the time is not ready")
 		return
 	}
 
@@ -36,7 +33,7 @@ func (u *gtkUI) maybeNotify(timestamp time.Time, account *account, peer jid.With
 
 	err := u.deNotify.show(peer.String(), dname, message)
 	if err != nil {
-		log.Println(err)
+		u.log.WithError(err).Warn("Error when showing notification")
 	}
 }
 

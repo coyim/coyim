@@ -45,7 +45,7 @@ func (dn *desktopNotifications) hints() map[string]interface{} {
 
 func newDesktopNotifications() *desktopNotifications {
 	if _, err := dbus.SessionBus(); err != nil {
-		log.Printf("Error enabling dbus based notifications! %+v\n", err)
+		log.WithError(err).Error("Error enabling dbus based notifications!")
 		return createDesktopNotifications()
 	}
 

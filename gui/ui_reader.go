@@ -49,7 +49,7 @@ func getDefinitionWithFileFallback(uiName string) string {
 		return embeddedFile
 	}
 
-	log.Printf("Loading definition from local file: %q\n", fileName)
+	log.WithField("file", fileName).Info("Loading definition from local file")
 	return readFile(fileName)
 }
 
@@ -190,11 +190,11 @@ func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
 	pl.Connect("area-prepared", w.Done)
 
 	if _, err := pl.Write(bstream); err != nil {
-		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
+		log.WithError(err).Warn("cannot write to PixbufLoader")
 		return nil
 	}
 	if err := pl.Close(); err != nil {
-		log.Println(">> WARN - cannot close PixbufLoader: " + err.Error())
+		log.WithError(err).Warn("cannot close PixbufLoader")
 		return nil
 	}
 
@@ -202,7 +202,7 @@ func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
 
 	pb, err := pl.GetPixbuf()
 	if err != nil {
-		log.Println(">> WARN - cannot write to PixbufLoader: " + err.Error())
+		log.WithError(err).Warn("cannot write to PixbufLoader")
 		return nil
 	}
 	return pb

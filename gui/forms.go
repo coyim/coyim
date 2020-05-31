@@ -98,7 +98,7 @@ func buildWidgetsForFields(fields []interface{}) []formField {
 
 			ret = append(ret, formField{field.TextForm, l, wt, nil})
 		default:
-			log.Println("Missing to implement form field of:", field)
+			log.WithField("field", field).Error("Missing to implement form field")
 		}
 	}
 

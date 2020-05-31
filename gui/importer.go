@@ -36,13 +36,20 @@ func (u *gtkUI) doActualImportOf(choices map[applicationAndAccount]bool, potenti
 		for _, accs := range potential[k.app] {
 			for _, a := range accs.Accounts {
 				if a.Account == k.acc {
-					log.Printf("[import] Doing import of %s from %s", k.acc, k.app)
+					u.log.WithFields(log.Fields{
+						"feature":       "import",
+						"importAccount": k.acc,
+						"importApp":     k.app,
+					}).Info("Doing import")
 					u.config.WhenLoaded(func(conf *config.ApplicationConfig) {
 						_, exists := conf.GetAccount(k.acc)
 						if exists {
-							log.Printf("[import] Can't import account %s since you already have an account "+
-								"configured with the same name. Remove that account and import again if you "+
-								"really want to overwrite it.", k.acc)
+							u.log.WithFields(log.Fields{
+								"feature":       "import",
+								"importAccount": k.acc,
+							}).Warn("Can't import account since you already have an account " +
+								"configured with the same name. Remove that account and import again if you " +
+								"really want to overwrite it.")
 							u.notify(i18n.Local("Unable to Import Account"), i18n.Localf("Can't import account:\n\n"+
 								"You already have an account with this name."))
 							return
@@ -133,7 +140,11 @@ func (u *gtkUI) importFingerprintsFor(account *config.Account, file string) (int
 	num := 0
 	for _, kfprs := range fprs {
 		for _, kfpr := range kfprs {
-			log.Printf("Importing fingerprint %X for %s", kfpr.Fingerprint, kfpr.UserID)
+			u.log.WithFields(log.Fields{
+				"feature":     "import",
+				"fingerprint": fmt.Sprintf("%X", kfpr.Fingerprint),
+				"user":        kfpr.UserID,
+			}).Info("Importing fingerprint")
 			fpr, _ := account.EnsurePeer(kfpr.UserID).EnsureHasFingerprint(kfpr.Fingerprint)
 			num = num + 1
 			if !kfpr.Untrusted {

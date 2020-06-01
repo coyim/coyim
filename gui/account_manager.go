@@ -106,7 +106,7 @@ func (u *gtkUI) addAccount(appConfig *config.ApplicationConfig, account *config.
 
 	acc := newAccount(appConfig, account, sf, df)
 	go u.observeAccountEvents(acc)
-	acc.log = u.log.WithField("account", account)
+	acc.log = u.log.WithField("account", account.Account)
 	acc.session.Subscribe(acc.events)
 	acc.session.SetCommandManager(u)
 	acc.session.SetConnector(acc)

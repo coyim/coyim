@@ -17,10 +17,7 @@ func (s *session) onOtrEventHandlerCreate(peer jid.Any, eh *otrclient.EventHandl
 
 func (s *session) listenToOtrNotifications(c <-chan string, peer jid.Any) {
 	for notification := range c {
-		s.publishEvent(events.Notification{
-			Peer:         peer,
-			Notification: notification,
-		})
+		s.notify(peer, notification)
 	}
 }
 

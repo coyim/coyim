@@ -12,3 +12,4 @@ These XEPs are fully or partially supported by CoyIM:
 - XEP-0231 - Bits of Binary
 - XEP-0245 - The /me Command
 - XEP-0368 - SRV records for XMPP over TLS
+- XEP-0380 - Explicit Message Encryption

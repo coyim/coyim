@@ -39,7 +39,7 @@ func (cb *testConvBuilder) NewConversation(peer jid.Any) *otr3.Conversation {
 	return cb.fake
 }
 
-func (ts *testSender) Send(peer jid.Any, msg string) error {
+func (ts *testSender) Send(peer jid.Any, msg string, otr bool) error {
 	ts.peer = peer
 	ts.msg = msg
 	return ts.err

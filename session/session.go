@@ -178,14 +178,14 @@ func (s *session) ReloadKeys() {
 }
 
 // Send will send the given message to the receiver given
-func (s *session) Send(peer jid.Any, msg string) error {
+func (s *session) Send(peer jid.Any, msg string, otr bool) error {
 	conn, ok := s.connection()
 	if ok {
 		s.connectionLogger.WithFields(log.Fields{
 			"to":      peer,
 			"sentMsg": msg,
 		}).Debug("Send()")
-		return conn.Send(peer.String(), msg)
+		return conn.Send(peer.String(), msg, otr)
 	}
 	return &access.OfflineError{Msg: i18n.Local("Couldn't send message since we are not connected")}
 }
@@ -222,6 +222,10 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	}
 
 	peer := jid.Parse(stanza.From)
+
+	if stanza.Encryption != nil {
+		s.processEncryption(peer, stanza.Encryption)
+	}
 
 	// TODO: it feels iffy that we have error and groupchat special handled here
 	// But not checking on the "message" type.

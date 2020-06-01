@@ -284,6 +284,7 @@ func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
 				{Var: "http://jabber.org/protocol/si/profile/directory-transfer"},
 				//				{Var: "http://jabber.org/protocol/si/profile/encrypted-data-transfer"},
 				{Var: "http://jabber.org/protocol/bytestreams"},
+				{Var: "urn:xmpp:eme:0"},
 			},
 			Forms: []data.Form(nil)})
 }

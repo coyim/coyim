@@ -47,10 +47,11 @@ type ClientMessage struct {
 
 	// These should technically be []clientText,
 	// but string is much more convenient.
-	Subject *string `xml:"subject"`
-	Body    string  `xml:"body"`
-	Thread  string  `xml:"thread"`
-	Delay   *Delay  `xml:"delay,omitempty"`
+	Subject    *string     `xml:"subject"`
+	Body       string      `xml:"body"`
+	Thread     string      `xml:"thread"`
+	Delay      *Delay      `xml:"delay,omitempty"`
+	Encryption *Encryption `xml:"encryption,omitempty"`
 
 	Error *StanzaError `xml:"error"`
 

@@ -317,7 +317,19 @@ func (s *XMPPSuite) TestConnSend(c *C) {
 		out: &mockOut,
 		jid: "jid",
 	}
-	err := conn.Send("example@xmpp.com", "message")
+	err := conn.Send("example@xmpp.com", "message", false)
 	c.Assert(string(mockOut.write), Matches, "<message to='example@xmpp.com' from='jid' type='chat'><body>message</body><nos:x xmlns:nos='google:nosave' value='enabled'/><arc:record xmlns:arc='http://jabber.org/protocol/archive' otr='require'/><no-copy xmlns='urn:xmpp:hints'/><no-permanent-store xmlns='urn:xmpp:hints'/><private xmlns='urn:xmpp:carbons:2'/></message>")
+	c.Assert(err, IsNil)
+}
+
+func (s *XMPPSuite) TestConnSendWithOTR(c *C) {
+	mockOut := mockConnIOReaderWriter{}
+	conn := conn{
+		log: testLogger(),
+		out: &mockOut,
+		jid: "jid",
+	}
+	err := conn.Send("example@xmpp.com", "message", true)
+	c.Assert(string(mockOut.write), Matches, "<message to='example@xmpp.com' from='jid' type='chat'><body>message</body><nos:x xmlns:nos='google:nosave' value='enabled'/><arc:record xmlns:arc='http://jabber.org/protocol/archive' otr='require'/><no-copy xmlns='urn:xmpp:hints'/><no-permanent-store xmlns='urn:xmpp:hints'/><private xmlns='urn:xmpp:carbons:2'/><encryption xmlns='urn:xmpp:eme:0' namespace='urn:xmpp:otr:0'/></message>")
 	c.Assert(err, IsNil)
 }

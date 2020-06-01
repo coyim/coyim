@@ -1,6 +1,7 @@
 package otrclient
 
 import (
+	"bytes"
 	"math/rand"
 
 	"github.com/coyim/coyim/xmpp/jid"
@@ -47,16 +48,21 @@ type conversation struct {
 }
 
 func (c *conversation) StartEncryptedChat() error {
-	return c.s.Send(c.peer, string(c.QueryMessage()))
+	return c.s.Send(c.peer, string(c.QueryMessage()), true)
 }
 
 func (c *conversation) EventHandler() *EventHandler {
 	return c.eh
 }
 
+func isEncrypted(m otr3.ValidMessage) bool {
+	return bytes.HasPrefix(m, []byte("?OTR"))
+}
+
 func (c *conversation) sendAll(toSend []otr3.ValidMessage) error {
 	for _, msg := range toSend {
-		err := c.s.Send(c.peer, string(msg))
+		isEnc := isEncrypted(msg)
+		err := c.s.Send(c.peer, string(msg), isEnc)
 		if err != nil {
 			return err
 		}

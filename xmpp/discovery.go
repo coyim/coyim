@@ -159,6 +159,7 @@ func DiscoveryReply(name string) data.DiscoveryInfoQuery {
 			{Var: "http://jabber.org/protocol/si/profile/directory-transfer"}, //XEP-xxxx: SI Directory Transfer
 			//			{Var: "http://jabber.org/protocol/si/profile/encrypted-data-transfer"}, //XEP-xxxx: SI Encrypted Data Transfer
 			{Var: "http://jabber.org/protocol/bytestreams"}, //XEP-0047
+			{Var: "urn:xmpp:eme:0"},                         //XEP-0380
 		},
 	}
 }

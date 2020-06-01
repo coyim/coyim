@@ -129,7 +129,7 @@ func (*SessionMock) RequestPresenceSubscription(jid.WithoutResource, string) err
 }
 
 // Send is the implementation for Session interface
-func (*SessionMock) Send(jid.Any, string) error {
+func (*SessionMock) Send(jid.Any, string, bool) error {
 	return nil
 }
 

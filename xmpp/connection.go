@@ -336,7 +336,7 @@ func (c *conn) Cancel(cookie data.Cookie) bool {
 }
 
 // Send sends an IM message to the given user.
-func (c *conn) Send(to, msg string) error {
+func (c *conn) Send(to, msg string, otr bool) error {
 	archive := ""
 	if !c.config.Archive {
 		// The first part of archive is from google:
@@ -347,7 +347,11 @@ func (c *conn) Send(to, msg string) error {
 		archive = "<nos:x xmlns:nos='google:nosave' value='enabled'/><arc:record xmlns:arc='http://jabber.org/protocol/archive' otr='require'/>"
 	}
 	nocopy := "<no-copy xmlns='urn:xmpp:hints'/><no-permanent-store xmlns='urn:xmpp:hints'/><private xmlns='urn:xmpp:carbons:2'/>"
-	_, err := fmt.Fprintf(c.out, "<message to='%s' from='%s' type='chat'><body>%s</body>%s%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive, nocopy)
+	otrMsg := ""
+	if otr {
+		otrMsg = "<encryption xmlns='urn:xmpp:eme:0' namespace='urn:xmpp:otr:0'/>"
+	}
+	_, err := fmt.Fprintf(c.out, "<message to='%s' from='%s' type='chat'><body>%s</body>%s%s%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive, nocopy, otrMsg)
 	return err
 }
 

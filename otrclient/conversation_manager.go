@@ -18,7 +18,7 @@ type OnEventHandlerCreation func(jid.Any, *EventHandler, chan string, chan int)
 // Sender represents an entity capable of sending messages to peers
 type Sender interface {
 	// Send sends a message to a peer
-	Send(peer jid.Any, msg string) error
+	Send(peer jid.Any, msg string, otr bool) error
 }
 
 // ConversationManager represents an entity capable of managing Conversations

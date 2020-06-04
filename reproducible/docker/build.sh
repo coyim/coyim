@@ -23,6 +23,7 @@ cd /gopath/src/github.com/coyim/coyim
 export SRCUID; SRCUID=$(stat -c"%u" /src)
 export SRCGID; SRCGID=$(stat -c"%g" /src)
 
+make deps
 make build-gui BUILD_DIR=/builds
 
 mkdir -p /src/bin

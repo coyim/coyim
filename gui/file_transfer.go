@@ -88,8 +88,8 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 		secondary = i18n.Localf("%s\nSize: %d bytes", secondary, ev.Size)
 	}
 
-	d.SetProperty("text", message)
-	d.SetProperty("secondary_text", secondary)
+	_ = d.SetProperty("text", message)
+	_ = d.SetProperty("secondary_text", secondary)
 
 	responseType := gtki.ResponseType(d.Run())
 	result := responseType == gtki.RESPONSE_YES

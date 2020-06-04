@@ -91,7 +91,9 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 // TODO: do we need to do something about encryption here?
 func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
 	if ctx.directory {
-		defer os.Remove(tempName)
+		defer func() {
+			_ = os.Remove(tempName)
+		}()
 
 		if err := unpack(tempName, ctx.destination); err != nil {
 			ctx.control.ReportError(errors.New("Couldn't unpack final file"))

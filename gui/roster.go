@@ -285,7 +285,7 @@ func (r *roster) appendResourcesAsMenuItems(jid jid.WithoutResource, account *ac
 	for _, resource := range peer.Resources() {
 		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(string(resource))
 		rs := resource
-		item.Connect("activate",
+		_, _ = item.Connect("activate",
 			func() {
 				doInUIThread(func() {
 					r.ui.openTargetedConversationView(account, jid.WithResource(rs), true)
@@ -500,8 +500,8 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 		createTooltipFor(item),
 	)
 
-	r.model.SetValue(iter, indexRowType, "peer")
-	r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].getPixbuf())
+	_ = r.model.SetValue(iter, indexRowType, "peer")
+	_ = r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].getPixbuf())
 }
 
 func (r *roster) redrawMerged() {
@@ -598,10 +598,10 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 
 	if g.GroupName != "" && (!isEmpty || r.showEmptyGroups()) {
 		pi = r.model.Append(parentIter)
-		r.model.SetValue(pi, indexParentJid, groupID)
-		r.model.SetValue(pi, indexRowType, "group")
-		r.model.SetValue(pi, indexWeight, 500)
-		r.model.SetValue(pi, indexBackgroundColor, r.ui.currentColorSet().rosterGroupBackground)
+		_ = r.model.SetValue(pi, indexParentJid, groupID)
+		_ = r.model.SetValue(pi, indexRowType, "group")
+		_ = r.model.SetValue(pi, indexWeight, 500)
+		_ = r.model.SetValue(pi, indexBackgroundColor, r.ui.currentColorSet().rosterGroupBackground)
 	}
 
 	for _, item := range r.sortedPeers(g.UnsortedPeers()) {
@@ -628,7 +628,7 @@ func (r *roster) displayGroup(g *rosters.Group, parentIter gtki.TreeIter, accoun
 			r.toCollapse = append(r.toCollapse, parentPath)
 		}
 
-		r.model.SetValue(pi, indexParentDisplayName, createGroupDisplayName(g.FullGroupName(), groupCounter, isExpanded))
+		_ = r.model.SetValue(pi, indexParentDisplayName, createGroupDisplayName(g.FullGroupName(), groupCounter, isExpanded))
 	}
 }
 
@@ -642,16 +642,16 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	parentName := account.session.GetConfig().Account
 	r.displayGroup(grp, parentIter, accountCounter, showOffline, showWaiting, parentName)
 
-	r.model.SetValue(parentIter, indexParentJid, parentName)
-	r.model.SetValue(parentIter, indexAccountID, account.session.GetConfig().ID())
-	r.model.SetValue(parentIter, indexRowType, "account")
-	r.model.SetValue(parentIter, indexWeight, 700)
+	_ = r.model.SetValue(parentIter, indexParentJid, parentName)
+	_ = r.model.SetValue(parentIter, indexAccountID, account.session.GetConfig().ID())
+	_ = r.model.SetValue(parentIter, indexRowType, "account")
+	_ = r.model.SetValue(parentIter, indexWeight, 700)
 
 	bgcolor := cs.rosterAccountOnlineBackground
 	if account.session.IsDisconnected() {
 		bgcolor = cs.rosterAccountOfflineBackground
 	}
-	r.model.SetValue(parentIter, indexBackgroundColor, bgcolor)
+	_ = r.model.SetValue(parentIter, indexBackgroundColor, bgcolor)
 
 	parentPath, _ := r.model.GetPath(parentIter)
 	shouldCollapse, ok := r.isCollapsed[collapseTransform(parentName)]
@@ -669,8 +669,8 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 		stat = "connecting"
 	}
 
-	r.model.SetValue(parentIter, indexStatusIcon, statusIcons[stat].getPixbuf())
-	r.model.SetValue(parentIter, indexParentDisplayName, createGroupDisplayName(parentName, accountCounter, isExpanded))
+	_ = r.model.SetValue(parentIter, indexStatusIcon, statusIcons[stat].getPixbuf())
+	_ = r.model.SetValue(parentIter, indexParentDisplayName, createGroupDisplayName(parentName, accountCounter, isExpanded))
 }
 
 func (r *roster) sortedAccounts() []*account {
@@ -727,7 +727,7 @@ func (r *roster) redraw() {
 func setAll(v gtki.TreeStore, iter gtki.TreeIter, values ...interface{}) {
 	for i, val := range values {
 		if val != nil {
-			v.SetValue(iter, i, val)
+			_ = v.SetValue(iter, i, val)
 		}
 	}
 }

@@ -182,7 +182,7 @@ func VerificationString(r *data.DiscoveryInfoQuery) (string, error) {
 			return "", errors.New("duplicate discovery identity")
 		}
 		seen[c] = true
-		io.WriteString(h, c)
+		_, _ = io.WriteString(h, c)
 	}
 
 	seen = make(map[string]bool)
@@ -197,7 +197,7 @@ func VerificationString(r *data.DiscoveryInfoQuery) (string, error) {
 			return "", errors.New("duplicate discovery feature")
 		}
 		seen[f.Var] = true
-		io.WriteString(h, f.Var+"<")
+		_, _ = io.WriteString(h, f.Var+"<")
 	}
 
 	seen = make(map[string]bool)
@@ -224,14 +224,14 @@ func VerificationString(r *data.DiscoveryInfoQuery) (string, error) {
 		if formTypeField.Type != "hidden" {
 			continue
 		}
-		io.WriteString(h, formTypeField.Values[0]+"<")
+		_, _ = io.WriteString(h, formTypeField.Values[0]+"<")
 		for _, field := range fieldSorter.s[1:] {
 			field := field.(*data.FormFieldX)
-			io.WriteString(h, field.Var+"<")
+			_, _ = io.WriteString(h, field.Var+"<")
 			values := append([]string{}, field.Values...)
 			sort.Strings(values)
 			for _, v := range values {
-				io.WriteString(h, v+"<")
+				_, _ = io.WriteString(h, v+"<")
 			}
 		}
 	}

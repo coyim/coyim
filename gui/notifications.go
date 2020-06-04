@@ -71,8 +71,8 @@ func (u *gtkUI) notify(title, message string) {
 	obj := builder.getObj("dialog")
 	dlg := obj.(gtki.MessageDialog)
 
-	dlg.SetProperty("title", title)
-	dlg.SetProperty("text", message)
+	_ = dlg.SetProperty("title", title)
+	_ = dlg.SetProperty("text", message)
 	dlg.SetTransientFor(u.window)
 
 	doInUIThread(func() {

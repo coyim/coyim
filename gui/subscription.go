@@ -13,10 +13,10 @@ func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutRes
 
 	confirmDialog := builder.getObj("dialog").(gtki.MessageDialog)
 	text := i18n.Localf("%s wants to talk to you. Is that ok?", peer)
-	confirmDialog.SetProperty("text", text)
+	_ = confirmDialog.SetProperty("text", text)
 	confirmDialog.SetTransientFor(parent)
 
-	confirmDialog.Connect("response", func(_ interface{}, tp int) {
+	_, _ = confirmDialog.Connect("response", func(_ interface{}, tp int) {
 		f(gtki.ResponseType(tp))
 		confirmDialog.Destroy()
 	})
@@ -92,8 +92,8 @@ func (acd *addContactDialog) initAccounts(accounts []*account) {
 	acd.accounts = make(map[string]*account)
 	for _, acc := range accounts {
 		iter := acd.model.Append()
-		acd.model.SetValue(iter, 0, acc.session.GetConfig().Account)
-		acd.model.SetValue(iter, 1, acc.session.GetConfig().ID())
+		_ = acd.model.SetValue(iter, 0, acc.session.GetConfig().Account)
+		_ = acd.model.SetValue(iter, 1, acc.session.GetConfig().ID())
 		acd.accounts[acc.session.GetConfig().ID()] = acc
 	}
 

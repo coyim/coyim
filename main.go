@@ -80,7 +80,7 @@ func main() {
 
 	initLog()
 	runClient()
-	os.Stdout.Write([]byte("\n"))
+	_, _ = os.Stdout.Write([]byte("\n"))
 }
 
 func runClient() {

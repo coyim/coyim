@@ -82,18 +82,18 @@ func (ecd *editContactDialog) openAddGroupDialog() {
 	}
 
 	groupName, _ := nameEntry.GetText()
-	groupList.SetValue(groupList.Append(), 0, groupName)
+	_ = groupList.SetValue(groupList.Append(), 0, groupName)
 }
 
 func (ecd *editContactDialog) addCurrentGroup(g string) {
-	ecd.currentGroups.SetValue(ecd.currentGroups.Append(), 0, g)
+	_ = ecd.currentGroups.SetValue(ecd.currentGroups.Append(), 0, g)
 }
 
 func (ecd *editContactDialog) initAllGroups(allGroups []string) {
 	for _, gr := range allGroups {
 		menu, _ := g.gtk.MenuItemNewWithLabel(gr)
 		menu.SetVisible(true)
-		menu.Connect("activate", func(m gtki.MenuItem) {
+		_, _ = menu.Connect("activate", func(m gtki.MenuItem) {
 			ecd.addCurrentGroup(m.GetLabel())
 		})
 

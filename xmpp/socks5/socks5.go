@@ -73,7 +73,7 @@ func (s *socks5) Dial(network, addr string) (net.Conn, error) {
 		return nil, err
 	}
 	if err := s.connect(conn, addr); err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return nil, err
 	}
 	return conn, nil

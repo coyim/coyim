@@ -116,7 +116,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 	conv.win.HideOnDelete()
 
 	inEventHandler := false
-	conv.win.Connect("set-focus", func() {
+	_, _ = conv.win.Connect("set-focus", func() {
 		if !inEventHandler {
 			inEventHandler = true
 			conv.entry.GrabFocus()
@@ -124,11 +124,11 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 		}
 	})
 
-	conv.win.Connect("focus-in-event", func() {
+	_, _ = conv.win.Connect("focus-in-event", func() {
 		conv.unsetUrgent()
 	})
 
-	conv.win.Connect("notify::is-active", func() {
+	_, _ = conv.win.Connect("notify::is-active", func() {
 		if conv.win.IsActive() {
 			inEventHandler = true
 			conv.entry.GrabFocus()
@@ -136,11 +136,11 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 		}
 	})
 
-	conv.win.Connect("hide", func() {
+	_, _ = conv.win.Connect("hide", func() {
 		conv.onHide()
 	})
 
-	conv.win.Connect("show", func() {
+	_, _ = conv.win.Connect("show", func() {
 		conv.onShow()
 	})
 
@@ -184,7 +184,7 @@ func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *c
 	cvf.ul.notebook.SetTabLabelText(cp.widget, tabLabel)
 	cvf.ul.itemMap[idx] = csi
 	buffer, _ := csi.history.GetBuffer()
-	buffer.Connect("changed", func() {
+	_, _ = buffer.Connect("changed", func() {
 		cvf.ul.onConversationChanged(csi)
 	})
 	return csi
@@ -251,19 +251,19 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 	// This 115 is apparently for the letter "s"
 	win.AddMnemonic(uint(115), cp.encryptedLabel)
 
-	cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
+	_ = cp.entryScroll.SetProperty("height-request", cp.calculateHeight(1))
 
 	prov := providerWithCSS("scrolledwindow { border-top: 2px solid #d3d3d3; } ")
 	updateWithStyle(cp.entryScroll, prov)
 
 	cp.history.SetBuffer(cvf.ui.getTags().createTextBuffer())
-	cp.history.Connect("size-allocate", func() {
+	_, _ = cp.history.Connect("size-allocate", func() {
 		scrollToBottom(cp.scrollHistory)
 	})
 
 	cp.pending.SetBuffer(cvf.ui.getTags().createTextBuffer())
 
-	cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
+	_, _ = cp.entry.Connect("key-release-event", cp.doPotentialEntryResize)
 
 	cvf.ui.displaySettings.control(cp.history)
 	cvf.ui.displaySettings.shadeBackground(cp.pending)

@@ -16,7 +16,7 @@ const (
 
 // Register the SASL mechanism
 func Register() {
-	sasl.RegisterMechanism(Name, Mechanism)
+	_ = sasl.RegisterMechanism(Name, Mechanism)
 }
 
 type digestMD5Mechanism struct{}

@@ -44,7 +44,7 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 	}
 
 	if fileExists(name) {
-		os.Remove(name)
+		_ = os.Remove(name)
 	}
 
 	return os.Rename(tempName, name)

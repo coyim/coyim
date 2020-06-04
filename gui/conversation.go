@@ -146,28 +146,28 @@ func (u *gtkUI) newTags() *tags {
 	t.table, _ = g.gtk.TextTagTableNew()
 
 	outgoingUser, _ := g.gtk.TextTagNew("outgoingUser")
-	outgoingUser.SetProperty("foreground", cs.conversationOutgoingUserForeground)
+	_ = outgoingUser.SetProperty("foreground", cs.conversationOutgoingUserForeground)
 
 	incomingUser, _ := g.gtk.TextTagNew("incomingUser")
-	incomingUser.SetProperty("foreground", cs.conversationIncomingUserForeground)
+	_ = incomingUser.SetProperty("foreground", cs.conversationIncomingUserForeground)
 
 	outgoingText, _ := g.gtk.TextTagNew("outgoingText")
-	outgoingText.SetProperty("foreground", cs.conversationOutgoingTextForeground)
+	_ = outgoingText.SetProperty("foreground", cs.conversationOutgoingTextForeground)
 
 	incomingText, _ := g.gtk.TextTagNew("incomingText")
-	incomingText.SetProperty("foreground", cs.conversationIncomingTextForeground)
+	_ = incomingText.SetProperty("foreground", cs.conversationIncomingTextForeground)
 
 	statusText, _ := g.gtk.TextTagNew("statusText")
-	statusText.SetProperty("foreground", cs.conversationStatusTextForeground)
+	_ = statusText.SetProperty("foreground", cs.conversationStatusTextForeground)
 
 	timestampText, _ := g.gtk.TextTagNew("timestamp")
-	timestampText.SetProperty("foreground", cs.timestampForeground)
+	_ = timestampText.SetProperty("foreground", cs.timestampForeground)
 
 	outgoingDelayedUser, _ := g.gtk.TextTagNew("outgoingDelayedUser")
-	outgoingDelayedUser.SetProperty("foreground", cs.conversationOutgoingDelayedUserForeground)
+	_ = outgoingDelayedUser.SetProperty("foreground", cs.conversationOutgoingDelayedUserForeground)
 
 	outgoingDelayedText, _ := g.gtk.TextTagNew("outgoingDelayedText")
-	outgoingDelayedText.SetProperty("foreground", cs.conversationOutgoingDelayedTextForeground)
+	_ = outgoingDelayedText.SetProperty("foreground", cs.conversationOutgoingDelayedTextForeground)
 
 	t.table.Add(outgoingUser)
 	t.table.Add(incomingUser)
@@ -291,7 +291,7 @@ func (conv *conversationPane) doPotentialEntryResize() {
 		scroll = false
 		lines = 3
 	}
-	conv.entryScroll.SetProperty("height-request", conv.calculateHeight(lines))
+	_ = conv.entryScroll.SetProperty("height-request", conv.calculateHeight(lines))
 	if scroll {
 		scrollToTop(conv.entryScroll)
 	}
@@ -339,7 +339,7 @@ func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
 		target = conv.entry
 	}
 
-	target.Connect("key-press-event", func(_ gtki.Widget, ev gdki.Event) bool {
+	_, _ = target.Connect("key-press-event", func(_ gtki.Widget, ev gdki.Event) bool {
 		evk := g.gdk.EventKeyFrom(ev)
 		ret := false
 

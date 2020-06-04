@@ -31,8 +31,8 @@ func (ctx *recvContext) ibbCleanup(lock bool) {
 		}
 
 		if ictx.f != nil {
-			ictx.f.Close() // we ignore any errors here - if the file is already closed, that's OK
-			os.Remove(ictx.f.Name())
+			closeAndIgnore(ictx.f) // we ignore any errors here - if the file is already closed, that's OK
+			_ = os.Remove(ictx.f.Name())
 		}
 	}
 	removeInflightRecv(ctx.sid)
@@ -41,7 +41,7 @@ func (ctx *recvContext) ibbCleanup(lock bool) {
 func ibbWaitForCancel(ctx *recvContext) {
 	ctx.control.WaitForCancel(func() {
 		ctx.ibbCleanup(true)
-		ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
+		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 	})
 }
 
@@ -216,7 +216,7 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 	ictx.Lock()
 	defer ictx.Unlock()
 
-	defer ictx.f.Close()
+	defer closeAndIgnore(ictx.f)
 	fstat, _ := ictx.f.Stat()
 
 	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit

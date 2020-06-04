@@ -44,7 +44,7 @@ func (s *SASLSuite) Test_ClientSupport_returnsFalseForUnsupportedMechansim(c *C)
 }
 
 func (s *SASLSuite) Test_ClientSupport_returnsFalseForRegisteredMechanism(c *C) {
-	RegisterMechanism("foo3", &testMechanism{nil})
+	_ = RegisterMechanism("foo3", &testMechanism{nil})
 	val := ClientSupport("foo3")
 	c.Assert(val, Equals, true)
 }
@@ -74,7 +74,7 @@ func (*testSession) SetChannelBinding([]byte) {
 
 func (s *SASLSuite) Test_NewClient_returnsTheResultOfNewClientForSupportedMechanism(c *C) {
 	sess := &testSession{}
-	RegisterMechanism("foo5", &testMechanism{sess})
+	_ = RegisterMechanism("foo5", &testMechanism{sess})
 	ss, err := NewClient("foo5")
 	c.Assert(err, IsNil)
 	c.Assert(ss, Equals, sess)

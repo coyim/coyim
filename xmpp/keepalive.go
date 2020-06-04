@@ -55,7 +55,7 @@ func (c *conn) sendStreamError(streamError data.StreamError) error {
 	}
 
 	//This is expected to error since the connection may be unreliable at this moment
-	c.out.Write(enc)
+	_, _ = c.out.Write(enc)
 
 	return c.Close()
 }

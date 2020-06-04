@@ -96,15 +96,19 @@ func bytestreamsGetCurrentValidProxies(s access.Session) []*data.BytestreamStrea
 
 var errLocalCancel = errors.New("local cancel")
 
+func closeAndIgnore(c io.Closer) {
+	_ = c.Close()
+}
+
 func bytestreamsSendData(ctx *sendContext, c net.Conn) {
-	defer c.Close()
+	defer closeAndIgnore(c)
 
 	r, err := os.Open(ctx.file)
 	if err != nil {
 		ctx.onError(err)
 		return
 	}
-	defer r.Close()
+	defer closeAndIgnore(r)
 
 	reporting := func(v int) error {
 		if ctx.weWantToCancel {
@@ -124,7 +128,7 @@ func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 		blockc := cipher.NewCTR(aesc, ctx.enc.iv)
 		ww = &cipher.StreamWriter{S: blockc, W: io.MultiWriter(ww, mac)}
 		beforeFinish = func() {
-			c.Write(mac.Sum(nil))
+			_, _ = c.Write(mac.Sum(nil))
 		}
 	}
 

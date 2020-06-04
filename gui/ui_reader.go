@@ -187,7 +187,7 @@ func getPixbufFromBytes(bstream []byte) gdki.Pixbuf {
 
 	var w sync.WaitGroup
 	w.Add(1)
-	pl.Connect("area-prepared", w.Done)
+	_, _ = pl.Connect("area-prepared", w.Done)
 
 	if _, err := pl.Write(bstream); err != nil {
 		log.WithError(err).Warn("cannot write to PixbufLoader")

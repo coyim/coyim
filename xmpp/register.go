@@ -67,7 +67,7 @@ func (c *conn) RegisterAccount(user, password string) (bool, error) {
 }
 
 func (c *conn) createAccount(user, password string) error {
-	io.WriteString(c.config.GetLog(), "Attempting to create account\n")
+	_, _ = io.WriteString(c.config.GetLog(), "Attempting to create account\n")
 	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
 	var iq data.ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
@@ -157,7 +157,7 @@ func (c *conn) sendChangePasswordInfo(username, server, password string) (reply 
 // ChangePassword changes the account password registered in the server
 // Reference: https://xmpp.org/extensions/xep-0077.html#usecases-changepw
 func (c *conn) ChangePassword(username, server, password string) error {
-	io.WriteString(c.config.GetLog(), "Attempting to change account's password\n")
+	_, _ = io.WriteString(c.config.GetLog(), "Attempting to change account's password\n")
 
 	reply, _, err := c.sendChangePasswordInfo(username, server, password)
 	if err != nil {

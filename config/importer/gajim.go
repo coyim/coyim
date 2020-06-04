@@ -3,6 +3,7 @@ package importer
 import (
 	"bufio"
 	"encoding/hex"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
@@ -53,13 +54,17 @@ func (g *gajimImporter) findFiles() (configFile string, pluginFile string, keyFi
 	return
 }
 
+func closeAndIgnore(c io.Closer) {
+	_ = c.Close()
+}
+
 func (g *gajimImporter) importFingerprintsFrom(f string) (string, []*config.KnownFingerprint, bool) {
 	file, err := os.Open(f)
 	if err != nil {
 		return "", nil, false
 	}
 
-	defer file.Close()
+	defer closeAndIgnore(file)
 	sc := bufio.NewScanner(file)
 	var result []*config.KnownFingerprint
 	name := ""
@@ -129,7 +134,7 @@ func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings
 	if err != nil {
 		return nil, nil, false
 	}
-	defer file.Close()
+	defer closeAndIgnore(file)
 	res, err := stalecucumber.DictString(stalecucumber.Unpickle(file))
 	if err != nil {
 		return nil, nil, false
@@ -223,7 +228,7 @@ func (g *gajimImporter) importAccounts(f string) (map[string]gajimAccountInfo, b
 		return nil, false
 	}
 
-	defer file.Close()
+	defer closeAndIgnore(file)
 	sc := bufio.NewScanner(file)
 
 	accountSettings := make(map[string]map[string]string)

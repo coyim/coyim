@@ -96,9 +96,9 @@ func (u *gtkUI) runImporter() {
 		for _, vv := range v {
 			for _, a := range vv.Accounts {
 				it := s.Append()
-				s.SetValue(it, 0, appName)
-				s.SetValue(it, 1, a.Account)
-				s.SetValue(it, 2, false)
+				_ = s.SetValue(it, 0, appName)
+				_ = s.SetValue(it, 1, a.Account)
+				_ = s.SetValue(it, 2, false)
 			}
 		}
 	}
@@ -106,7 +106,7 @@ func (u *gtkUI) runImporter() {
 	rend := builder.getObj("import-this-account-renderer")
 	rr := rend.(gtki.CellRendererToggle)
 
-	rr.Connect("toggled", func(_ interface{}, path string) {
+	_, _ = rr.Connect("toggled", func(_ interface{}, path string) {
 		iter, _ := s.GetIterFromString(path)
 		current, _ := valAt(s, iter, 2).(bool)
 		app, _ := valAt(s, iter, 0).(string)
@@ -114,10 +114,10 @@ func (u *gtkUI) runImporter() {
 
 		importSettings[applicationAndAccount{app, acc}] = !current
 
-		s.SetValue(iter, 2, !current)
+		_ = s.SetValue(iter, 2, !current)
 	})
 
-	w.Connect("response", func(_ interface{}, rid int) {
+	_, _ = w.Connect("response", func(_ interface{}, rid int) {
 		if gtki.ResponseType(rid) == gtki.RESPONSE_OK {
 			u.doActualImportOf(importSettings, allImports)
 		}
@@ -252,7 +252,9 @@ func (u *gtkUI) exportFingerprintsFor(account *config.Account, file string) bool
 	if err != nil {
 		return false
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 	bw := bufio.NewWriter(f)
 
 	for _, p := range account.Peers {
@@ -261,7 +263,7 @@ func (u *gtkUI) exportFingerprintsFor(account *config.Account, file string) bool
 			if fpr.Trusted {
 				trusted = "\tverified"
 			}
-			bw.WriteString(fmt.Sprintf("%s\t%s/\tprpl-jabber\t%x%s\n", p.UserID, account.Account, fpr.Fingerprint, trusted))
+			_, _ = bw.WriteString(fmt.Sprintf("%s\t%s/\tprpl-jabber\t%x%s\n", p.UserID, account.Account, fpr.Fingerprint, trusted))
 		}
 	}
 

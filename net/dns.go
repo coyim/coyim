@@ -51,7 +51,9 @@ func LookupSRVWith(dialer proxy.Dialer, dnsServer, service, proto, name string) 
 		}
 
 		dnsConn := &dns.Conn{Conn: conn}
-		defer dnsConn.Close()
+		defer func() {
+			_ = dnsConn.Close()
+		}()
 
 		r, err := exchange(dnsConn, msgSRV(cname))
 		if err != nil {

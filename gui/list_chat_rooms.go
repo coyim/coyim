@@ -73,9 +73,9 @@ func (v *listRoomsView) fetchRoomsFromService() {
 		v.showTreeView()
 		for _, room := range result {
 			iter := v.roomsModel.Append()
-			v.roomsModel.SetValue(iter, 0, room.Name)
+			_ = v.roomsModel.SetValue(iter, 0, room.Name)
 			// TODO: parse description?
-			v.roomsModel.SetValue(iter, 1, room.Name)
+			_ = v.roomsModel.SetValue(iter, 1, room.Name)
 		}
 	})
 }
@@ -84,8 +84,8 @@ func (v *listRoomsView) populateAccountsModel() {
 	accs := v.accountManager.getAllConnectedAccounts()
 	for _, acc := range accs {
 		iter := v.accountsModel.Append()
-		v.accountsModel.SetValue(iter, 0, acc.session.GetConfig().Account)
-		v.accountsModel.SetValue(iter, 1, acc.session.GetConfig().ID())
+		_ = v.accountsModel.SetValue(iter, 0, acc.session.GetConfig().Account)
+		_ = v.accountsModel.SetValue(iter, 1, acc.session.GetConfig().ID())
 	}
 
 	if len(accs) > 0 {

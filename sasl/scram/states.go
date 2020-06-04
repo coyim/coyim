@@ -141,14 +141,14 @@ func (c expectingServerFirstMessage) calculateChannelBinding(v []byte) string {
 
 func (c expectingServerFirstMessage) compose(saltedPassword, finalMessageBare, serverFirstMessage []byte) (state, sasl.Token, error) {
 	clientMAC := hmac.New(c.hash, saltedPassword)
-	clientMAC.Write([]byte("Client Key"))
+	_, _ = clientMAC.Write([]byte("Client Key"))
 	clientKey := clientMAC.Sum(nil)
 	storedKeyHash := c.hash()
-	storedKeyHash.Write(clientKey)
+	_, _ = storedKeyHash.Write(clientKey)
 	storedKey := storedKeyHash.Sum(nil)
 
 	serverMAC := hmac.New(c.hash, saltedPassword)
-	serverMAC.Write([]byte("Server Key"))
+	_, _ = serverMAC.Write([]byte("Server Key"))
 	serverKey := serverMAC.Sum(nil)
 
 	authMessage := bytes.Join([][]byte{
@@ -158,7 +158,7 @@ func (c expectingServerFirstMessage) compose(saltedPassword, finalMessageBare, s
 	}, []byte(","))
 
 	clientSignatureMAC := hmac.New(c.hash, storedKey)
-	clientSignatureMAC.Write(authMessage)
+	_, _ = clientSignatureMAC.Write(authMessage)
 	clientSignature := clientSignatureMAC.Sum(nil)
 
 	clientProof := make([]byte, c.hashSize)
@@ -167,7 +167,7 @@ func (c expectingServerFirstMessage) compose(saltedPassword, finalMessageBare, s
 	}
 
 	serverSignatureMAC := hmac.New(c.hash, serverKey[:])
-	serverSignatureMAC.Write(authMessage)
+	_, _ = serverSignatureMAC.Write(authMessage)
 	serverSignature := serverSignatureMAC.Sum(nil)
 
 	p := []byte(",p=")

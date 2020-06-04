@@ -36,7 +36,7 @@ func writeTestFile(name, content string) {
 }
 
 func removeFile(name string) {
-	os.Remove(name)
+	_ = os.Remove(name)
 }
 
 type mockBuilder struct {

@@ -34,11 +34,11 @@ func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error)
 		e = pack(ctx.dir, tmpFile)
 		if e != nil {
 			errorResult <- e
-			tmpFile.Close()
+			defer closeAndIgnore(tmpFile)
 			return
 		}
 		newName := fmt.Sprintf("%v.zip", tmpFile.Name())
-		tmpFile.Close()
+		closeAndIgnore(tmpFile)
 		os.Rename(tmpFile.Name(), newName)
 		result <- newName
 	}()
@@ -170,10 +170,10 @@ func InitSendDir(s access.Session, peer jid.Any, dir string, encrypted bool) *sd
 			peer:    peer.String(),
 			control: sdata.CreateFileTransferControl(),
 			onFinishHook: func(ctx *sendContext) {
-				os.Remove(ctx.file)
+				_ = os.Remove(ctx.file)
 			},
 			onErrorHook: func(ctx *sendContext, _ error) {
-				os.Remove(ctx.file)
+				_ = os.Remove(ctx.file)
 			},
 		},
 		dir: dir,

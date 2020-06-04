@@ -20,7 +20,9 @@ var cachedSchema glibi.SettingsSchemaSource
 func getSchemaSource() glibi.SettingsSchemaSource {
 	if cachedSchema == nil {
 		dir := definitions.SchemaInTempDir()
-		defer os.Remove(dir)
+		defer func() {
+			_ = os.Remove(dir)
+		}()
 		cachedSchema = g.SettingsSchemaSourceNewFromDirectory(dir, nil, true)
 	}
 

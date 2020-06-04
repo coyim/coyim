@@ -34,9 +34,9 @@ func xmlEscape(s string) string {
 	for i := 0; i < len(s); i++ {
 		c := s[i]
 		if s, ok := xmlSpecial[c]; ok {
-			b.WriteString(s)
+			_, _ = b.WriteString(s)
 		} else {
-			b.WriteByte(c)
+			_ = b.WriteByte(c)
 		}
 	}
 	return b.String()

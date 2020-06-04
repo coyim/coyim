@@ -24,9 +24,9 @@ func fakeTCPConnToDNS(answer []byte) (net.Conn, error) {
 
 		var dest [46]byte
 		conn.Read(dest[:])
-		conn.Write(answer)
+		_, _ = conn.Write(answer)
 
-		conn.Close()
+		_ = conn.Close()
 	}()
 
 	return net.Dial("tcp", fakeResolver.Addr().String())

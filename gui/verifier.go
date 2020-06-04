@@ -175,7 +175,7 @@ func (v *verifier) buildUnverifiedWarning(shouldShowVerificationBar func() bool)
 
 	setImageFromFile(v.unverifiedWarning.image, "warning.svg")
 	v.unverifiedWarning.label.SetLabel(i18n.Local("Make sure no one else\nis reading your messages"))
-	v.unverifiedWarning.button.Connect("clicked", v.showPINDialog)
+	_, _ = v.unverifiedWarning.button.Connect("clicked", v.showPINDialog)
 
 	v.notifier.notify(v.unverifiedWarning.infobar)
 }
@@ -240,7 +240,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 	v.waitingForPeer.label.SetText(i18n.Localf("Waiting for peer to finish \nsecuring the channel..."))
 	setImageFromFile(v.waitingForPeer.image, "waiting.svg")
 
-	v.waitingForPeer.button.Connect("clicked", func() {
+	_, _ = v.waitingForPeer.button.Connect("clicked", func() {
 		v.cancelSMP()
 	})
 
@@ -267,7 +267,7 @@ func (v *verifier) showCannotGeneratePINDialog(err error) {
 	label.SetText(i18n.Local("Unable to verify at this time."))
 	v.l.Log().WithError(err).Warn("Cannot recover from error. Quitting SMP verification.")
 	setImageFromFile(image, "failure.svg")
-	button.Connect("clicked", infobar.Destroy)
+	_, _ = button.Connect("clicked", infobar.Destroy)
 
 	infobar.ShowAll()
 
@@ -388,7 +388,7 @@ func (v *verifier) displayRequestForSecret(question string) {
 	v.hideUnverifiedWarning()
 
 	v.peerRequestsSMP.label.SetLabel(i18n.Localf("Finish verifying the \nsecurity of this channel..."))
-	v.peerRequestsSMP.button.Connect("clicked", func() {
+	_, _ = v.peerRequestsSMP.button.Connect("clicked", func() {
 		v.showAnswerSMPDialog(question)
 	})
 
@@ -415,7 +415,7 @@ func (v *verifier) displayVerificationSuccess() {
 		"verif-success-button", &v.verificationSuccess.button,
 	)
 
-	v.verificationSuccess.button.Connect("clicked", v.verificationSuccess.dialog.Destroy)
+	_, _ = v.verificationSuccess.button.Connect("clicked", v.verificationSuccess.dialog.Destroy)
 
 	v.verificationSuccess.label.SetMarkup(i18n.Localf("Hooray! No one is listening to your conversations with <b>%s</b>", v.peerName()))
 	setImageFromFile(v.verificationSuccess.image, "smpsuccess.svg")
@@ -443,11 +443,11 @@ func (v *verifier) buildSMPFailedDialog() {
 	v.smpFailed.dialog.SetTransientFor(v.parentWindow)
 	v.smpFailed.dialog.HideOnDelete()
 
-	v.smpFailed.dialog.Connect("response", func() {
+	_, _ = v.smpFailed.dialog.Connect("response", func() {
 		v.updateUnverifiedWarning()
 		v.smpFailed.dialog.Hide()
 	})
-	v.smpFailed.button.Connect("clicked", func() {
+	_, _ = v.smpFailed.button.Connect("clicked", func() {
 		v.updateUnverifiedWarning()
 		v.smpFailed.dialog.Hide()
 	})

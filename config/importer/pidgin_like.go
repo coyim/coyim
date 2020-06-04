@@ -20,7 +20,7 @@ func ImportKeysFromPidginStyle(f string, protocolMatcher func(string) bool) (map
 	if err != nil {
 		return nil, false
 	}
-	defer file.Close()
+	defer closeAndIgnore(file)
 
 	acs, err := otr3.ImportKeys(file)
 	if err != nil {
@@ -44,7 +44,7 @@ func ImportFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bo
 		return nil, false
 	}
 
-	defer file.Close()
+	defer closeAndIgnore(file)
 	sc := bufio.NewScanner(file)
 	result := make(map[string][]*config.KnownFingerprint)
 	for sc.Scan() {

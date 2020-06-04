@@ -119,7 +119,7 @@ func (a *ApplicationConfig) removeOldFileOnNextSave() {
 	a.doAfterSave(func() {
 		if fileExists(oldFilename) && a.filename != oldFilename {
 			// TODO: Hmm, should we safe wipe this maybe? The old file can contain potentially sensitive things
-			os.Remove(oldFilename)
+			_ = os.Remove(oldFilename)
 		}
 	})
 }

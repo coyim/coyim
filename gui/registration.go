@@ -109,7 +109,9 @@ func requestAndRenderRegistrationForm(server string, formHandler data.FormCallba
 	//TODO: this should receive only a JID domainpart
 	conn, err := policy.RegisterAccount(formHandler, conf, verifier)
 	if conn != nil {
-		defer conn.Close()
+		defer func() {
+			_ = conn.Close()
+		}()
 	}
 
 	return err
@@ -320,7 +322,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 	})
 
 	entry := w.serverBox.GetChild().(gtki.Widget)
-	entry.Connect("activate", func() {
+	_, _ = entry.Connect("activate", func() {
 		w.assistant.SetCurrentPage(1)
 	})
 

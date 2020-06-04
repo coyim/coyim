@@ -275,7 +275,7 @@ func (csi *conversationStackItem) applyTextWeight() {
 		return
 	}
 	weight := csi.getTextWeight()
-	csi.layout.cl.model.SetValue(csi.iter, ulIndexWeight, weight)
+	_ = csi.layout.cl.model.SetValue(csi.iter, ulIndexWeight, weight)
 }
 
 func (csi *conversationStackItem) show(userInitiated bool) {

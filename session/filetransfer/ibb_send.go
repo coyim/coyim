@@ -47,7 +47,7 @@ func ibbSendDoWithBlockSize(ctx *sendContext, blocksize int) {
 
 func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) bool {
 	if ctx.weWantToCancel {
-		ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
+		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 		removeInflightSend(ctx)
 		return false
 	} else if ctx.theyWantToCancel {
@@ -76,9 +76,9 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 	}
 	if err == io.EOF {
 		// TODO: here, for encryption, we need to send the mac key and wait for result of mac key write
-		r.Close()
+		closeAndIgnore(r)
 		// TODO[LATER]: we ignore the result of this close - maybe we should react to it in some way, if it reports failure from the other side
-		ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
+		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 		ctx.onFinish()
 		return false
 	} else if err != nil {

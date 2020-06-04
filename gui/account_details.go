@@ -206,7 +206,7 @@ func getAccountDetails(data *accountDetailsData) *accountDetails {
 }
 
 func renderSessionDetails(s access.Session, data *accountDetailsData, account string) {
-	data.displayName.SetProperty("placeholder-text", s.DisplayName())
+	_ = data.displayName.SetProperty("placeholder-text", s.DisplayName())
 	nick := s.GetConfig().Nickname
 	if nick != "" {
 		data.displayName.SetText(nick)
@@ -222,7 +222,7 @@ func renderSessionDetails(s access.Session, data *accountDetailsData, account st
 
 func renderAccountDetails(account *config.Account, data *accountDetailsData) {
 	if account.Password != "" {
-		data.pass.SetProperty("placeholder-text", "(saved in configuration file)")
+		_ = data.pass.SetProperty("placeholder-text", "(saved in configuration file)")
 	}
 
 	data.server.SetText(account.Server)
@@ -233,15 +233,15 @@ func renderAccountDetails(account *config.Account, data *accountDetailsData) {
 
 	for _, px := range account.Proxies {
 		iter := data.proxies.Append()
-		data.proxies.SetValue(iter, 0, net.ParseProxy(px).ForPresentation())
-		data.proxies.SetValue(iter, 1, px)
+		_ = data.proxies.SetValue(iter, 0, net.ParseProxy(px).ForPresentation())
+		_ = data.proxies.SetValue(iter, 1, px)
 	}
 
 	for _, px := range account.Certificates {
 		iter := data.pins.Append()
-		data.pins.SetValue(iter, 0, px.Subject)
-		data.pins.SetValue(iter, 1, px.Issuer)
-		data.pins.SetValue(iter, 2, hex.EncodeToString(px.Fingerprint))
+		_ = data.pins.SetValue(iter, 0, px.Subject)
+		_ = data.pins.SetValue(iter, 1, px.Issuer)
+		_ = data.pins.SetValue(iter, 2, hex.EncodeToString(px.Fingerprint))
 	}
 
 	data.pinningPolicy.SetActive(findPinningPolicyFor(account.PinningPolicy))
@@ -302,8 +302,8 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		realProxyData, _ := val.GetString()
 		u.editProxy(realProxyData, data.dialog,
 			func(p net.Proxy) {
-				data.proxies.SetValue(iter, 0, p.ForPresentation())
-				data.proxies.SetValue(iter, 1, p.ForProcessing())
+				_ = data.proxies.SetValue(iter, 0, p.ForPresentation())
+				_ = data.proxies.SetValue(iter, 1, p.ForProcessing())
 			}, onCancel)
 	}
 
@@ -360,8 +360,8 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 		},
 		"on_add_proxy_signal": func() {
 			iter := data.proxies.Append()
-			data.proxies.SetValue(iter, 0, "tor-auto://")
-			data.proxies.SetValue(iter, 1, "tor-auto://")
+			_ = data.proxies.SetValue(iter, 0, "tor-auto://")
+			_ = data.proxies.SetValue(iter, 1, "tor-auto://")
 			ts, _ := data.proxiesView.GetSelection()
 			ts.SelectIter(iter)
 			editProxy(iter, func() {

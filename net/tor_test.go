@@ -31,7 +31,7 @@ func (s *TorSuite) TestDetectTor(c *C) {
 	torAddress := ln.Addr().String()
 	c.Assert(tor.Address(), Equals, torAddress)
 
-	ln.Close()
+	_ = ln.Close()
 
 	c.Assert(tor.Address(), Equals, torAddress)
 
@@ -51,7 +51,7 @@ func (s *TorSuite) TestDetectTorConnectionRefused(c *C) {
 	_, port, err := net.SplitHostPort(ln.Addr().String())
 	c.Assert(err, IsNil)
 
-	ln.Close()
+	_ = ln.Close()
 
 	tor := &defaultTorManager{
 		torPorts: []string{port},

@@ -61,8 +61,8 @@ const chunkSize = 16 * 4096
 const cancelCheckFrequency = 10
 
 func (ctx *recvContext) bytestreamCleanup(conn net.Conn, ff *os.File) {
-	conn.Close()
-	os.Remove(ff.Name())
+	closeAndIgnore(conn)
+	_ = os.Remove(ff.Name())
 	removeInflightRecv(ctx.sid)
 }
 
@@ -73,7 +73,7 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 		return
 	}
 
-	defer ff.Close()
+	defer closeAndIgnore(ff)
 
 	cancel := ctx.opaque.(chan bool)
 	totalWritten := int64(0)

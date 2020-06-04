@@ -65,8 +65,8 @@ func (v *addChatView) populateModel() {
 	accs := v.accountManager.getAllConnectedAccounts()
 	for _, acc := range accs {
 		iter := v.model.Append()
-		v.model.SetValue(iter, 0, acc.session.GetConfig().Account)
-		v.model.SetValue(iter, 1, acc.session.GetConfig().ID())
+		_ = v.model.SetValue(iter, 0, acc.session.GetConfig().Account)
+		_ = v.model.SetValue(iter, 1, acc.session.GetConfig().ID())
 	}
 
 	if len(accs) > 0 {
@@ -588,9 +588,9 @@ func (v *chatRoomView) redrawOccupantsList() {
 
 		for j, occupant := range v.occupantsList.m {
 			iter := v.occupantsModel.Append()
-			v.occupantsModel.SetValue(iter, 0, string(jid.Parse(j).PotentialResource()))
-			v.occupantsModel.SetValue(iter, 1, occupant.Role)
-			v.occupantsModel.SetValue(iter, 2, occupant.Affiliation)
+			_ = v.occupantsModel.SetValue(iter, 0, string(jid.Parse(j).PotentialResource()))
+			_ = v.occupantsModel.SetValue(iter, 1, occupant.Role)
+			_ = v.occupantsModel.SetValue(iter, 2, occupant.Affiliation)
 		}
 
 		v.occupantsView.SetModel(v.occupantsModel)

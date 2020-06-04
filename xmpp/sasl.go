@@ -122,11 +122,11 @@ func (c *conn) authenticateWith(mechanism string, user string, password string) 
 		return err
 	}
 
-	clientAuth.SetProperty(sasl.AuthID, user)
-	clientAuth.SetProperty(sasl.Password, password)
+	_ = clientAuth.SetProperty(sasl.AuthID, user)
+	_ = clientAuth.SetProperty(sasl.Password, password)
 
-	clientAuth.SetProperty(sasl.Service, "xmpp")
-	clientAuth.SetProperty(sasl.QOP, "auth")
+	_ = clientAuth.SetProperty(sasl.Service, "xmpp")
+	_ = clientAuth.SetProperty(sasl.QOP, "auth")
 
 	clientAuth.SetChannelBinding(c.GetChannelBinding())
 

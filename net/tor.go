@@ -69,7 +69,9 @@ func detectTor(host string, ports []string) (string, bool) {
 			continue
 		}
 
-		defer conn.Close()
+		defer func() {
+			_ = conn.Close()
+		}()
 		return addr, true
 	}
 

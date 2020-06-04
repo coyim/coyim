@@ -162,7 +162,7 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 	obj := builder.getObj("RemoveAccount")
 	dialog := obj.(gtki.MessageDialog)
 	dialog.SetTransientFor(u.window)
-	dialog.SetProperty("secondary-text", acc.Account)
+	_ = dialog.SetProperty("secondary-text", acc.Account)
 
 	response := dialog.Run()
 	if gtki.ResponseType(response) == gtki.RESPONSE_YES {
@@ -411,7 +411,7 @@ func (u *gtkUI) onActivate() {
 }
 
 func (u *gtkUI) Loop() {
-	u.app.Connect("activate", u.onActivate)
+	_, _ = u.app.Connect("activate", u.onActivate)
 	u.app.Run([]string{})
 }
 
@@ -544,7 +544,7 @@ func (u *gtkUI) addFeedbackInfoBar() {
 
 	obj = builder.getObj("feedbackButton")
 	button := obj.(gtki.Button)
-	button.Connect("clicked", func() {
+	_, _ = button.Connect("clicked", func() {
 		doInUIThread(u.feedbackDialog)
 	})
 }
@@ -653,8 +653,8 @@ func (u *gtkUI) newCustomConversation() {
 
 	for _, acc := range accounts {
 		iter := model.Append()
-		model.SetValue(iter, 0, acc.session.GetConfig().Account)
-		model.SetValue(iter, 1, acc.session.GetConfig().ID())
+		_ = model.SetValue(iter, 0, acc.session.GetConfig().Account)
+		_ = model.SetValue(iter, 1, acc.session.GetConfig().ID())
 	}
 
 	if len(accounts) > 0 {
@@ -754,7 +754,7 @@ func (u *gtkUI) listenToSetShowAdvancedSettings() {
 }
 
 func (u *gtkUI) initMenuBar() {
-	u.window.Connect(accountChangedSignal.String(), func() {
+	_, _ = u.window.Connect(accountChangedSignal.String(), func() {
 		doInUIThread(func() {
 			u.buildAccountsMenu()
 			u.accountsMenu.ShowAll()

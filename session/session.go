@@ -576,6 +576,7 @@ func (s *session) maybeNotify() {
 		return
 	}
 
+	/* #nosec G204 */
 	cmd := exec.Command(s.config.NotifyCommand[0], s.config.NotifyCommand[1:]...)
 	go func() {
 		if err := cmd.Run(); err != nil {

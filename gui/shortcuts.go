@@ -26,6 +26,7 @@ func init() {
 
 	ek, ok := config.FindFile(toLook)
 	if ok {
+		/* #nosec G304 */
 		content, _ := ioutil.ReadFile(ek)
 		emacsKeyConf = string(content)
 	}

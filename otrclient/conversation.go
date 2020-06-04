@@ -2,7 +2,9 @@ package otrclient
 
 import (
 	"bytes"
-	"math/rand"
+	"crypto/rand"
+	"math"
+	"math/big"
 
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
@@ -81,7 +83,9 @@ func (c *conversation) EndEncryptedChat() error {
 }
 
 func (c *conversation) Send(m []byte) (trace int, err error) {
-	trace = rand.Int()
+	nBig, _ := rand.Int(rand.Reader, big.NewInt(math.MaxInt32))
+	trace = int(nBig.Int64())
+
 	toSend, err := c.Conversation.Send(m, trace)
 	if err != nil {
 		return 0, err

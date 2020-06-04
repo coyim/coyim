@@ -34,7 +34,7 @@ type StanzaError struct {
 		Body    string `xml:",innerxml"`
 	} `xml:",any"`
 
-	ApplicationCondition *Any `xml:",any,ommitempty"`
+	ApplicationCondition *Any `xml:",any,omitempty"`
 }
 
 // ClientMessage implements RFC 3921  B.1  jabber:client

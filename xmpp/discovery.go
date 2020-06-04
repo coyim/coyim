@@ -7,6 +7,7 @@
 package xmpp
 
 import (
+	/* #nosec G505 */
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/xml"
@@ -167,6 +168,7 @@ func DiscoveryReply(name string) data.DiscoveryInfoQuery {
 // VerificationString returns a SHA-1 verification string as defined in XEP-0115.
 // See http://xmpp.org/extensions/xep-0115.html#ver
 func VerificationString(r *data.DiscoveryInfoQuery) (string, error) {
+	/* #nosec G401 */
 	h := sha1.New()
 
 	seen := make(map[string]bool)

@@ -1,6 +1,7 @@
 package digests
 
 import (
+	/* #nosec G505 */
 	"crypto/sha1"
 	"crypto/sha256"
 
@@ -9,6 +10,7 @@ import (
 
 // Sha1 will generate a SHA1 digest
 func Sha1(i []byte) []byte {
+	/* #nosec G401 */
 	h := sha1.New()
 	_, _ = h.Write(i)
 	return h.Sum(nil)

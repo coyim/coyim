@@ -36,7 +36,8 @@ func bytestreamsGetStreamhostDataFor(s access.Session, jid string) (result *data
 	var q data.BytestreamQuery
 	basicIQ(s, jid, "get", &data.BytestreamQuery{}, &q, func(*data.ClientIQ) {
 		for _, sh := range q.Streamhosts {
-			result = &sh
+			valsh := sh
+			result = &valsh
 			return
 		}
 	})

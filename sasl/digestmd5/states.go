@@ -1,6 +1,7 @@
 package digestmd5
 
 import (
+	/* #nosec G501 */
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -84,6 +85,7 @@ func (c digestChallenge) challenge(props sasl.Properties, pairs sasl.AttributeVa
 		hex.EncodeToString(a2[:]),
 	}, ":")
 
+	/* #nosec G401 */
 	mdKd := md5.Sum([]byte(kd))
 	responseValue := hex.EncodeToString(mdKd[:])
 
@@ -103,6 +105,7 @@ func (c digestChallenge) a1(user, realm, password, serverNonce, clientNonce, aut
 	x := strings.Join([]string{
 		user, realm, password,
 	}, ":")
+	/* #nosec G401 */
 	y := md5.Sum([]byte(x))
 
 	a1Values := []string{
@@ -116,6 +119,7 @@ func (c digestChallenge) a1(user, realm, password, serverNonce, clientNonce, aut
 	}
 
 	a1 := strings.Join(a1Values, ":")
+	/* #nosec G401 */
 	return md5.Sum([]byte(a1))
 }
 
@@ -133,6 +137,7 @@ func (c digestChallenge) a2(digestURI, qop string) [md5.Size]byte {
 		a2 = a2 + ":00000000000000000000000000000000"
 	}
 
+	/* #nosec G401 */
 	return md5.Sum([]byte(a2))
 }
 

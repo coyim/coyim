@@ -25,6 +25,7 @@ type adiumAccountMapping struct {
 }
 
 func (p *adiumImporter) readAccountMappings(s string) (map[string]adiumAccountMapping, bool) {
+	/* #nosec G304 */
 	contents, _ := ioutil.ReadFile(s)
 	var res map[string]interface{}
 	plist.Unmarshal(contents, &res)

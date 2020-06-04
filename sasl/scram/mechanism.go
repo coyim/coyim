@@ -3,6 +3,7 @@
 package scram
 
 import (
+	/* #nosec G505 */
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
@@ -12,7 +13,9 @@ import (
 )
 
 var (
-	sha1Mechanism       sasl.Mechanism = &scramMechanism{sha1.New, sha1.Size, false, true}
+	/* #nosec G401 */
+	sha1Mechanism sasl.Mechanism = &scramMechanism{sha1.New, sha1.Size, false, true}
+	/* #nosec G401 */
 	sha1PlusMechanism   sasl.Mechanism = &scramMechanism{sha1.New, sha1.Size, true, true}
 	sha256Mechanism     sasl.Mechanism = &scramMechanism{sha256.New, sha256.Size, false, true}
 	sha256PlusMechanism sasl.Mechanism = &scramMechanism{sha256.New, sha256.Size, true, true}

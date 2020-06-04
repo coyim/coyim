@@ -28,7 +28,7 @@ type ClientPresence struct {
 		Status struct {
 			Code int `xml:"code,attr,omitempty"`
 		} `xml:"status,omitempty"`
-	} `xml:"http://jabber.org/protocol/muc#user x, omitempty"`
+	} `xml:"http://jabber.org/protocol/muc#user x,omitempty"`
 
 	Extra string `xml:",innerxml"`
 }

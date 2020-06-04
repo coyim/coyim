@@ -38,6 +38,7 @@ type xmppClientKnownFingerprint struct {
 type xmppClientImporter struct{}
 
 func (x *xmppClientImporter) importFrom(f string) (*config.ApplicationConfig, bool) {
+	/* #nosec G304 */
 	contents, err := ioutil.ReadFile(f)
 	if err != nil {
 		return nil, false

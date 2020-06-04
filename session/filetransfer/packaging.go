@@ -41,6 +41,7 @@ func pack(dir string, zf *os.File) error {
 			return nil
 		}
 
+		/* #nosec G304 */
 		file, err := os.Open(path)
 		if err != nil {
 			return err
@@ -57,7 +58,7 @@ func unpack(file string, intoDir string) error {
 		return err
 	}
 
-	if err := os.MkdirAll(intoDir, 0755); err != nil {
+	if err := os.MkdirAll(intoDir, 0750); err != nil {
 		return err
 	}
 

@@ -12,7 +12,7 @@ func fileContent() []byte {
 }
 
 func writeSchemaToDir(dir string) {
-	ioutil.WriteFile(path.Join(dir, "gschemas.compiled"), fileContent(), 0664)
+	ioutil.WriteFile(path.Join(dir, "gschemas.compiled"), fileContent(), 0600)
 }
 
 // SchemaInTempDir will create a new temporary directory and put the gsettings schema file in there. It is the callers responsibility to remove the directory

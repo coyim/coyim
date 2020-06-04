@@ -1,6 +1,7 @@
 package scram
 
 import (
+	/* #nosec G501 */
 	"crypto/sha1"
 	"crypto/sha256"
 	"io/ioutil"

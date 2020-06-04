@@ -16,6 +16,7 @@ import (
 
 // ImportKeysFromPidginStyle will try to read keys in Pidgin style from the given file
 func ImportKeysFromPidginStyle(f string, protocolMatcher func(string) bool) (map[string][]byte, bool) {
+	/* #nosec G304 */
 	file, err := os.Open(f)
 	if err != nil {
 		return nil, false
@@ -39,6 +40,7 @@ func ImportKeysFromPidginStyle(f string, protocolMatcher func(string) bool) (map
 
 // ImportFingerprintsFromPidginStyle will try to read fingerprints in Pidgin style from the given file
 func ImportFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bool) (map[string][]*config.KnownFingerprint, bool) {
+	/* #nosec G304 */
 	file, err := os.Open(f)
 	if err != nil {
 		return nil, false
@@ -77,6 +79,7 @@ func ImportFingerprintsFromPidginStyle(f string, protocolMatcher func(string) bo
 }
 
 func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
+	/* #nosec G304 */
 	content, err := ioutil.ReadFile(f)
 	if err != nil {
 		return nil, false
@@ -120,6 +123,7 @@ func importAccountsPidginStyle(f string) (map[string]*config.Account, bool) {
 }
 
 func importPeerPrefsPidginStyle(f string) (map[string]map[string]*pidginOTRSettings, bool) {
+	/* #nosec G304 */
 	content, err := ioutil.ReadFile(f)
 	if err != nil {
 		return nil, false
@@ -166,6 +170,7 @@ func importPeerPrefsPidginStyle(f string) (map[string]map[string]*pidginOTRSetti
 }
 
 func importGlobalPrefsPidginStyle(f string) (*pidginOTRSettings, bool) {
+	/* #nosec G304 */
 	content, err := ioutil.ReadFile(f)
 	if err != nil {
 		return nil, false

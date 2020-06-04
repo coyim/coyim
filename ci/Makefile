@@ -9,16 +9,12 @@ deps:
 test:
 	make check -C ../
 
-doctor: check-go-imports check-ui-defs
+doctor: check-go-imports
 
 check-go-imports:
 	go get -u golang.org/x/tools/cmd/goimports
 	goimports -w .
 	git diff --exit-code .
-
-# make sure the ui definitions checked in are in sync
-check-ui-defs:
-	make doctor -C ../gui
 
 # send coverage data to coveralls
 coveralls:

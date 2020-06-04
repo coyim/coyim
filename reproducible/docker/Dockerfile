@@ -17,7 +17,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD setup-reproducible.sh /root/setup-reproducible
-ADD download-golang-1.9.sh /root/download-golang
+ADD download-golang-1.13.sh /root/download-golang
 ADD build-golang.sh /root/build-golang
 
 # Build golang as part of the image

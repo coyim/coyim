@@ -54,8 +54,7 @@ func getDefinitionWithFileFallback(uiName string) string {
 }
 
 func readFile(fileName string) string {
-	/* #nosec G304 */
-	data, _ := ioutil.ReadFile(fileName)
+	data, _ := ioutil.ReadFile(filepath.Clean(fileName))
 	return string(data)
 }
 

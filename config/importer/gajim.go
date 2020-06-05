@@ -59,8 +59,7 @@ func closeAndIgnore(c io.Closer) {
 }
 
 func (g *gajimImporter) importFingerprintsFrom(f string) (string, []*config.KnownFingerprint, bool) {
-	/* #nosec G304 */
-	file, err := os.Open(f)
+	file, err := os.Open(filepath.Clean(f))
 	if err != nil {
 		return "", nil, false
 	}
@@ -92,8 +91,7 @@ func (g *gajimImporter) importFingerprintsFrom(f string) (string, []*config.Know
 }
 
 func (g *gajimImporter) importKeyFrom(f string) (string, []byte, bool) {
-	/* #nosec G304 */
-	content, err := ioutil.ReadFile(f)
+	content, err := ioutil.ReadFile(filepath.Clean(f))
 	if err != nil {
 		return "", nil, false
 	}
@@ -132,8 +130,7 @@ func intoGajimOTRSettings(vv map[string]interface{}) gajimOTRSettings {
 }
 
 func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings, map[gajimAccountAndPeer]gajimOTRSettings, bool) {
-	/* #nosec G304 */
-	file, err := os.Open(f)
+	file, err := os.Open(filepath.Clean(f))
 	if err != nil {
 		return nil, nil, false
 	}
@@ -226,8 +223,7 @@ func transformSettingsIntoAccount(user string, settings map[string]string, proxi
 }
 
 func (g *gajimImporter) importAccounts(f string) (map[string]gajimAccountInfo, bool) {
-	/* #nosec G304 */
-	file, err := os.Open(f)
+	file, err := os.Open(filepath.Clean(f))
 	if err != nil {
 		return nil, false
 	}

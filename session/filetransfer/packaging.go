@@ -41,8 +41,7 @@ func pack(dir string, zf *os.File) error {
 			return nil
 		}
 
-		/* #nosec G304 */
-		file, err := os.Open(path)
+		file, err := os.Open(filepath.Clean(path))
 		if err != nil {
 			return err
 		}
@@ -77,13 +76,16 @@ func unpack(file string, intoDir string) error {
 		}
 		defer closeAndIgnore(fileReader)
 
+		// Limit each file to 2Gb
+		limReader := &io.LimitedReader{R: fileReader, N: 2 * 1024 * 1024 * 1024}
+
 		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
 		if err != nil {
 			return err
 		}
 		defer closeAndIgnore(targetFile)
 
-		if _, err := io.Copy(targetFile, fileReader); err != nil {
+		if _, err := io.Copy(targetFile, limReader); err != nil {
 			return err
 		}
 	}

@@ -52,16 +52,13 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 
 func readFileOrTemporaryBackup(name string) (data []byte, e error) {
 	if fileExists(name) {
-		/* #nosec G304 */
-		data, e = ioutil.ReadFile(name)
+		data, e = ioutil.ReadFile(filepath.Clean(name))
 		if len(data) == 0 && fileExists(name+tmpExtension) {
-			/* #nosec G304 */
-			data, e = ioutil.ReadFile(name + tmpExtension)
+			data, e = ioutil.ReadFile(filepath.Clean(name + tmpExtension))
 		}
 		return
 	}
-	/* #nosec G304 */
-	return ioutil.ReadFile(name + tmpExtension)
+	return ioutil.ReadFile(filepath.Clean(name + tmpExtension))
 }
 
 func configDir() string {

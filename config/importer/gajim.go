@@ -152,9 +152,9 @@ func (g *gajimImporter) importOTRSettings(f string) (map[string]gajimOTRSettings
 			for k2, v2 := range vv {
 				vv2, _ := stalecucumber.DictString(v2, nil)
 				settings := intoGajimOTRSettings(vv2)
-				switch k2.(type) {
+				switch k2 := k2.(type) {
 				case string:
-					resAccountToPeer[gajimAccountAndPeer{k, k2.(string)}] = settings
+					resAccountToPeer[gajimAccountAndPeer{k, k2}] = settings
 				default:
 					resAccount[k] = settings
 				}

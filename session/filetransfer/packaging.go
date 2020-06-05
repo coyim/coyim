@@ -2,6 +2,7 @@ package filetransfer
 
 import (
 	"archive/zip"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -93,6 +94,10 @@ func unpack(file string, intoDir string) error {
 
 		if _, err := io.Copy(targetFile, limReader); err != nil {
 			return err
+		}
+
+		if limReader.N <= 0 {
+			return errors.New("too large file in zip-archive - we won't expand it")
 		}
 	}
 

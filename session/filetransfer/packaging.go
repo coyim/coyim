@@ -2,6 +2,7 @@ package filetransfer
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -62,7 +63,12 @@ func unpack(file string, intoDir string) error {
 	}
 
 	for _, file := range reader.File {
-		path := filepath.Join(intoDir, file.Name)
+		path := filepath.Join(filepath.Clean(intoDir), filepath.Clean(file.Name))
+
+		if !strings.HasPrefix(path, filepath.Clean(intoDir)+string(os.PathSeparator)) {
+			return fmt.Errorf("%s: illegal file path", path)
+		}
+
 		if file.FileInfo().IsDir() {
 			if err := os.MkdirAll(path, file.Mode()); err != nil {
 				return err

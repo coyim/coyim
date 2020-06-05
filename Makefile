@@ -105,12 +105,13 @@ gui/authors.go: authors.rb
 	./authors.rb > gui/authors.go
 	gofmt -w gui/authors.go
 
+golangci:
+	golangci-lint run
+
 gosec:
-	go get -u github.com/securego/gosec/cmd/gosec...
-	gosec ./...
+	gosec -conf .gosec.config.json ./...
 
 ineffassign:
-	go get -u github.com/gordonklaus/ineffassign/...
 	ineffassign .
 
 gui/settings/definitions/gschemas.compiled: gui/settings/definitions/*.xml

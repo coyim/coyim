@@ -1,8 +1,7 @@
 package session
 
 import (
-	"fmt"
-
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -41,5 +40,5 @@ func (s *session) processEncryption(peer jid.Any, e *data.Encryption) {
 		"name":      name,
 	}).Info("got message marked with unknown encryption tag (XEP-0380)")
 
-	s.notify(peer, fmt.Sprintf("We received a message encrypted with %s - sadly CoyIM does not support this algorithm. Please let your contact know to encrypt using OTR, nothing else, to communicate with you.", name))
+	s.notify(peer, i18n.Localf("We received a message encrypted with %s - sadly CoyIM does not support this algorithm. Please let your contact know to encrypt using OTR, nothing else, to communicate with you.", name))
 }

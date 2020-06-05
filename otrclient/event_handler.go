@@ -1,11 +1,10 @@
 package otrclient
 
 import (
-	"fmt"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/otr3"
 )
@@ -116,18 +115,18 @@ func (e *EventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byt
 		e.delays[trace[0].(int)] = true
 		e.pendingDelays++
 		if e.pendingDelays == 1 {
-			e.notify("Attempting to start a private conversation...")
+			e.notify(i18n.Local("Attempting to start a private conversation..."))
 		}
 	case otr3.MessageEventEncryptionError:
 		// This happens when something goes wrong putting together a new data packet in OTR
-		e.notify("An error occurred when encrypting your message. The message was not sent.")
+		e.notify(i18n.Local("An error occurred when encrypting your message. The message was not sent."))
 	case otr3.MessageEventConnectionEnded:
 		// This happens when we have finished a conversation and tries to send a message afterwards
-		e.notify("Your message was not sent, since the other person has already closed their private connection to you.")
+		e.notify(i18n.Local("Your message was not sent, since the other person has already closed their private connection to you."))
 	case otr3.MessageEventMessageReflected:
-		e.notify("We are receiving our own OTR messages. You are either trying to talk to yourself, or someone is reflecting your messages back at you.")
+		e.notify(i18n.Local("We are receiving our own OTR messages. You are either trying to talk to yourself, or someone is reflecting your messages back at you."))
 	case otr3.MessageEventSetupError:
-		e.notify("Error setting up private conversation.")
+		e.notify(i18n.Local("Error setting up private conversation."))
 		if err != nil {
 			e.log.WithError(err).WithField("with", e.peer).
 				Warn("Error setting up private conversation")
@@ -137,24 +136,24 @@ func (e *EventHandler) HandleMessageEvent(event otr3.MessageEvent, message []byt
 			e.delayedMessageSent <- trace[0].(int)
 		}
 	case otr3.MessageEventMessageResent:
-		e.notify("The last message to the other person was resent, since we couldn't deliver the message previously.")
+		e.notify(i18n.Local("The last message to the other person was resent, since we couldn't deliver the message previously."))
 	case otr3.MessageEventReceivedMessageUnreadable:
 		// This happens when the authenticator is wrong, message counters are out of whack
 		// or several other things that indicate tampering or attack
-		e.notify("We received an unreadable encrypted message. It has probably been tampered with, or was sent from an older client.")
+		e.notify(i18n.Local("We received an unreadable encrypted message. It has probably been tampered with, or was sent from an older client."))
 	case otr3.MessageEventReceivedMessageMalformed:
 		// This happens when the OTR header is malformed, or different deserialization issues
-		e.notify("We received a malformed data message.")
+		e.notify(i18n.Local("We received a malformed data message."))
 	case otr3.MessageEventReceivedMessageGeneralError:
 		// This happens when we receive an error from the other party
-		e.notify(fmt.Sprintf("We received this error from the other person: %s.", string(message)))
+		e.notify(i18n.Localf("We received this error from the other person: %s.", string(message)))
 	case otr3.MessageEventReceivedMessageNotInPrivate:
 		// This happens when we receive what looks like a data message, but we're not in encrypted state
 		// TODO: this should open conversation window
-		e.notify("We received an encrypted message which can't be read, since private communication is not currently turned on. You should ask your peer to repeat what they said.")
+		e.notify(i18n.Local("We received an encrypted message which can't be read, since private communication is not currently turned on. You should ask your peer to repeat what they said."))
 	case otr3.MessageEventReceivedMessageUnencrypted:
 		// This happens when we receive a non-OTR message, even though we have require encryption turned on
-		e.notify("We received a message that was transferred without encryption")
+		e.notify(i18n.Local("We received a message that was transferred without encryption"))
 	case otr3.MessageEventReceivedMessageForOtherInstance:
 		// We ignore this message on purpose, for now it would be too noisy to notify about it
 	default:

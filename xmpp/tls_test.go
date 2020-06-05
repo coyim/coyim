@@ -48,7 +48,7 @@ func (s *TLSXmppSuite) Test_printTLSDetails_printsUnknownVersions(c *C) {
 func (s *TLSXmppSuite) Test_printTLSDetails_printsCorrectVersions(c *C) {
 	state := tls.ConnectionState{
 		Version:     tls.VersionTLS12,
-		CipherSuite: 0x1303,
+		CipherSuite: 0xc030,
 	}
 	ll := log.New()
 	buf := new(bytes.Buffer)
@@ -57,5 +57,5 @@ func (s *TLSXmppSuite) Test_printTLSDetails_printsCorrectVersions(c *C) {
 	printTLSDetails(ll, state)
 
 	c.Assert(buf.String(), Matches, "(?s).*?version=\"TLS 1\\.2\".*?")
-	c.Assert(buf.String(), Matches, "(?s).*?cipherSuite=TLS_CHACHA20_POLY1305_SHA256.*?")
+	c.Assert(buf.String(), Matches, "(?s).*?cipherSuite=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384.*?")
 }

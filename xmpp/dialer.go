@@ -22,10 +22,6 @@ type dialer struct {
 	// password used to authenticate to the server
 	password string
 
-	// TODO: move this
-	// newPassword is set when user wants to change password
-	newPassword string
-
 	// serverAddress associates a particular FQDN with the origin domain specified by the JID.
 	serverAddress string
 

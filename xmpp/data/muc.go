@@ -34,7 +34,7 @@ func (o *Occupant) JID() string {
 // See: Section "10.2 Subsequent Room Configuration"
 type RoomConfigurationQuery struct {
 	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#owner query"`
-	Form    *Form    `xml:,omitempty`
+	Form    *Form    `xml:",omitempty"`
 }
 
 // See: Section 15.5.4 muc#roominfo FORM_TYPE

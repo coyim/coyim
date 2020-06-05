@@ -171,12 +171,13 @@
   revision = "05986578812163b26672dabd9b425240ae2bb0ad"
 
 [[projects]]
-  digest = "1:1093f2eb4b344996604f7d8b29a16c5b22ab9e1b25652140d3fede39f640d5cd"
+  digest = "1:6699de003039f29dfe3b88956e6c84ad9f0f0ac69531732074c91981c9665bdd"
   name = "golang.org/x/text"
   packages = [
     "internal/gen",
     "internal/triegen",
     "internal/ucd",
+    "runes",
     "transform",
     "unicode/cldr",
     "unicode/norm",
@@ -260,6 +261,7 @@
     "golang.org/x/crypto/sha3",
     "golang.org/x/net/html",
     "golang.org/x/net/proxy",
+    "golang.org/x/text/runes",
     "golang.org/x/text/transform",
     "golang.org/x/text/unicode/norm",
     "gopkg.in/check.v1",

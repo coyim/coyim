@@ -101,7 +101,7 @@ func (s *EncryptedConfigXMPPSuite) Test_encryptConfiguration(c *C) {
 		R:     8,
 		P:     1,
 	}
-	p.deserialize()
+	_ = p.deserialize()
 
 	res, e := encryptConfiguration("this is some data I want to have encrypted", p, FunctionKeySupplier(func(params EncryptionParameters, _ bool) ([]byte, []byte, bool) {
 		return testKey, testMacKey, true

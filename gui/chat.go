@@ -339,7 +339,9 @@ func (v *chatRoomView) renderForm(title, instructions string, fields []interface
 func (v *chatRoomView) showRoomConfigDialog() {
 	//Run in a goroutine to not block the GTK event loop
 	//TODO: Display error
-	go v.chat.RoomConfigForm(&v.occupant.Room, v.renderForm)
+	go func() {
+		_ = v.chat.RoomConfigForm(&v.occupant.Room, v.renderForm)
+	}()
 }
 
 func (u *gtkUI) joinChatRoom() {
@@ -625,5 +627,7 @@ func (v *chatRoomView) onSendMessage(_ glibi.Object) {
 	v.entry.SetText("")
 
 	//TODO: error?
-	go v.chat.SendChatMessage(msg, &v.occupant.Room)
+	go func() {
+		_ = v.chat.SendChatMessage(msg, &v.occupant.Room)
+	}()
 }

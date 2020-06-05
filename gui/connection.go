@@ -14,7 +14,9 @@ func (u *gtkUI) connectAccount(account *account) {
 	if p == "" {
 		u.askForPasswordAndConnect(account, false)
 	} else {
-		go u.connectWithPassword(account, p)
+		go func() {
+			_ = u.connectWithPassword(account, p)
+		}()
 	}
 }
 

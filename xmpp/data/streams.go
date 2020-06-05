@@ -21,7 +21,7 @@ type StreamFeatures struct {
 	//Roster versioning: rfc6121 section 2.6
 	//and the features described here
 	//https://xmpp.org/registrar/stream-features.html
-	any []Any `xml:",any,omitempty"`
+	//	any []Any `xml:",any,omitempty"`
 }
 
 // StreamClose represents a request to close the stream

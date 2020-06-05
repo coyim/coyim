@@ -4,6 +4,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
@@ -57,41 +58,32 @@ var nonASCIISpaceTransformer = replaceTransformer(func(r rune) rune {
 	return r
 })
 
-var mappedToNothing = transform.RemoveFunc(func(r rune) bool {
-	//TODO: replace by a unicode.RangeTable
-	switch r {
-	case '\u00AD':
-	case '\u034F':
-	case '\u1806':
-	case '\u180B':
-	case '\u180C':
-	case '\u180D':
-	case '\u200C':
-	case '\u200D':
-	case '\u2060':
-	case '\uFE00':
-	case '\uFE01':
-	case '\uFE02':
-	case '\uFE03':
-	case '\uFE04':
-	case '\uFE05':
-	case '\uFE06':
-	case '\uFE07':
-	case '\uFE08':
-	case '\uFE09':
-	case '\uFE0A':
-	case '\uFE0B':
-	case '\uFE0C':
-	case '\uFE0D':
-	case '\uFE0E':
-	case '\uFE0F':
-	case '\uFEFF':
-	default:
-		return false
-	}
+func addRuneToRangeTable(rt *unicode.RangeTable, r rune) {
+	rt.R16 = append(rt.R16, unicode.Range16{Lo: uint16(r), Hi: uint16(r), Stride: 1})
+}
 
-	return true
-})
+func addRuneRangeToRangeTable(rt *unicode.RangeTable, rl, rh rune) {
+	rt.R16 = append(rt.R16, unicode.Range16{Lo: uint16(rl), Hi: uint16(rh), Stride: 1})
+}
+
+func createRangeTableToUnmap() *unicode.RangeTable {
+	rt := &unicode.RangeTable{}
+
+	addRuneToRangeTable(rt, '\u00AD')
+	addRuneToRangeTable(rt, '\u034F')
+	addRuneToRangeTable(rt, '\u1806')
+	addRuneRangeToRangeTable(rt, '\u180B', '\u180D')
+	addRuneToRangeTable(rt, '\u200C')
+	addRuneToRangeTable(rt, '\u200D')
+	addRuneToRangeTable(rt, '\u2060')
+	addRuneRangeToRangeTable(rt, '\uFE00', '\uFE0F')
+	addRuneToRangeTable(rt, '\uFEFF')
+
+	return rt
+}
+
+var unmappedRangeTable = createRangeTableToUnmap()
+var mappedToNothing = runes.Remove(runes.In(unmappedRangeTable))
 
 // Stringprep implements Stringprep Profile for User Names and Passwords (RFC 4013)
 // as a transform.Transformer

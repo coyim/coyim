@@ -42,7 +42,6 @@ type recvContext struct {
 	destination string
 	opaque      interface{}
 	control     *sdata.FileTransferControl
-	enc         *encryptionParameters
 }
 
 func extractFileTransferOptions(f data.Form) ([]string, error) {

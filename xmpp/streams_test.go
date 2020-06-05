@@ -46,7 +46,7 @@ func (s *StreamsXMPPSuite) Test_sendInitialStreamHeader_sendsInitialStreamHeader
 		in:           xml.NewDecoder(mockIn),
 		originDomain: "somewhere.org",
 	}
-	conn.SendInitialStreamHeader()
+	_ = conn.SendInitialStreamHeader()
 	c.Assert(string(mockOut.write), Equals, "<?xml version='1.0'?><stream:stream to='somewhere.org' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n")
 }
 

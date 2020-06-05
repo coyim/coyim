@@ -1033,7 +1033,9 @@ func (s *ConnectionXMPPSuite) Test_readMessages_passesStanzaToChannel(c *C) {
 		closed: true, //This avoids trying to close the connection after the EOF
 	}
 	stanzaChan := make(chan data.Stanza)
-	go conn.ReadStanzas(stanzaChan)
+	go func() {
+		_ = conn.ReadStanzas(stanzaChan)
+	}()
 
 	rawStanza, ok := <-stanzaChan
 	c.Assert(ok, Equals, true)

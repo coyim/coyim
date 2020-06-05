@@ -580,7 +580,9 @@ func (u *gtkUI) askForPassword(accountName string, addGoogleWarning bool, cancel
 			shouldSave := savePassword.GetActive()
 
 			if len(password) > 0 {
-				go connect(password)
+				go func() {
+					_ = connect(password)
+				}()
 				if shouldSave {
 					go savePass(password)
 				}

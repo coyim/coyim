@@ -21,11 +21,6 @@ type encryptedData struct {
 
 // We will generate a new nonce every time we encrypt, but we will keep the salt the same. This way we can cache the scrypted password
 
-type internalEncryptionParameters struct {
-	nonceInternal []byte
-	saltInternal  []byte
-}
-
 // EncryptionParameters contains the parameters used for scrypting the password and encrypting the configuration file
 type EncryptionParameters struct {
 	Nonce string
@@ -35,7 +30,8 @@ type EncryptionParameters struct {
 	P     int
 
 	//Similarly to ApplicationConfig, EncryptionParameters should be just a JSON representation of whatever we use internally to represent application configuration.
-	internalEncryptionParameters
+	nonceInternal []byte
+	saltInternal  []byte
 }
 
 func genRand(size int) []byte {

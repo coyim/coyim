@@ -358,7 +358,9 @@ func (c *conn) Send(to, msg string, otr bool) error {
 // ReadStanzas reads XMPP stanzas
 func (c *conn) ReadStanzas(stanzaChan chan<- data.Stanza) error {
 	defer close(stanzaChan)
-	defer c.closeImmediately()
+	defer func() {
+		_ = c.closeImmediately()
+	}()
 
 	for {
 		stanza, err := c.Next()

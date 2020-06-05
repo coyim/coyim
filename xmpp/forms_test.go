@@ -332,7 +332,7 @@ func (s *FormsXMPPSuite) Test_processForm_panicsWhenGivenAWeirdFormType(c *C) {
 		},
 	}
 	c.Assert(func() {
-		processForm(f, nil, func(title, instructions string, fields []interface{}) error {
+		_, _ = processForm(f, nil, func(title, instructions string, fields []interface{}) error {
 			fields[0] = testOtherFormType{}
 			return nil
 		})

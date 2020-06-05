@@ -9,20 +9,16 @@ import (
 	"sync"
 )
 
-type unexportedApplicationConfig struct {
-	filename      string
-	shouldEncrypt bool
-	params        *EncryptionParameters
-	ioLock        sync.Mutex
-	afterSave     []func()
-}
-
 // ApplicationConfig contains the configuration for the application, including
 // account information.
 type ApplicationConfig struct {
 	//TODO: This should be in another place.
 	//ApplicationConfig is just a JSON representation of whatever we use internally to represent application configuration.
-	unexportedApplicationConfig
+	filename      string
+	shouldEncrypt bool
+	params        *EncryptionParameters
+	ioLock        sync.Mutex
+	afterSave     []func()
 
 	Accounts                      []*Account
 	RawLogFile                    string   `json:",omitempty"`

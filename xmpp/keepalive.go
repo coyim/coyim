@@ -35,9 +35,11 @@ func (c *conn) watchKeepAlive() {
 
 		c.log.Info("xmpp: keepalive failed")
 
-		go c.sendStreamError(data.StreamError{
-			DefinedCondition: data.ConnectionTimeout,
-		})
+		go func() {
+			_ = c.sendStreamError(data.StreamError{
+				DefinedCondition: data.ConnectionTimeout,
+			})
+		}()
 
 		return
 	}

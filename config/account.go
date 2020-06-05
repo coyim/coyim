@@ -13,7 +13,7 @@ import (
 
 // Account contains the configuration for one account
 type Account struct {
-	id string `json:"-"`
+	id string
 
 	//TODO: this should be JID
 	Account              string

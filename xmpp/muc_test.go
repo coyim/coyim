@@ -107,7 +107,7 @@ func (s *MUCSuite) Test_CanRequestRoomConfigForm(c *C) {
 	go func() {
 		for len(conn.inflights) == 0 {
 		}
-		conn.Next()
+		_, _ = conn.Next()
 	}()
 
 	result, err := conn.GetChatContext().RequestRoomConfigForm(&data.Room{ID: "coven", Service: "chat.shakespeare.lit"})

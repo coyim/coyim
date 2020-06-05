@@ -50,15 +50,15 @@ func generateSMP4Message(s smp4State, s2 smp2State, msg3 smp3Message, v otrVersi
 
 	qaqb := divMod(msg3.qa, s2.qb, p)
 
-	m.rb = modExp(qaqb, s2.b3)
-	m.cr = hashMPIsBN(v.hash2Instance(), 8, modExp(g1, s.r7), modExp(qaqb, s.r7))
+	m.rb = modExpP(qaqb, s2.b3)
+	m.cr = hashMPIsBN(v.hash2Instance(), 8, modExpP(g1, s.r7), modExpP(qaqb, s.r7))
 	m.d7 = subMod(s.r7, mul(s2.b3, m.cr), q)
 
 	return m
 }
 
 func (c *Conversation) verifySMP4ProtocolSuccess(s1 *smp1State, s3 *smp3State, msg smp4Message) error {
-	rab := modExp(msg.rb, s1.a3)
+	rab := modExpP(msg.rb, s1.a3)
 	if !eq(rab, s3.papb) {
 		return newOtrError("protocol failed: x != y")
 	}

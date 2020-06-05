@@ -37,8 +37,8 @@ func (c *Conversation) generateSMP1Parameters() (s smp1State, err error) {
 }
 
 func generateSMP1Message(s smp1State, v otrVersion) (m smp1Message) {
-	m.g2a = modExp(g1, s.a2)
-	m.g3a = modExp(g1, s.a3)
+	m.g2a = modExpP(g1, s.a2)
+	m.g3a = modExpP(g1, s.a3)
 	m.c2, m.d2 = generateZKP(s.r2, s.a2, 1, v)
 	m.c3, m.d3 = generateZKP(s.r3, s.a3, 2, v)
 	return

@@ -5,11 +5,13 @@ import (
 	"hash"
 	"io"
 	"math/big"
+
+	"github.com/coyim/constbn"
 )
 
 type dhKeyPair struct {
 	pub  *big.Int
-	priv *big.Int
+	priv secretKeyValue
 }
 
 type akeKeys struct {
@@ -120,17 +122,12 @@ type keyManagementContext struct {
 	oldMACKeys     []macKey
 }
 
-func (k *keyManagementContext) incrementOurCounter(ourKeyID, theirKeyID uint32) {
-	counter := k.counterHistory.findCounterFor(ourKeyID, theirKeyID)
-	counter.ourCounter++
-}
-
 func (k *keyManagementContext) setTheirCurrentDHPubKey(key *big.Int) {
 	k.theirCurrentDHPubKey = setBigInt(k.theirCurrentDHPubKey, key)
 }
 
-func (k *keyManagementContext) setOurCurrentDHKeys(priv *big.Int, pub *big.Int) {
-	k.ourCurrentDHKeys.priv = setBigInt(k.ourCurrentDHKeys.priv, priv)
+func (k *keyManagementContext) setOurCurrentDHKeys(priv secretKeyValue, pub *big.Int) {
+	k.ourCurrentDHKeys.priv = setSecretKeyValue(k.ourCurrentDHKeys.priv, priv)
 	k.ourCurrentDHKeys.pub = setBigInt(k.ourCurrentDHKeys.pub, pub)
 }
 
@@ -153,17 +150,19 @@ func (k *keyManagementContext) revealMACKeys() []macKey {
 }
 
 func (k *keyManagementContext) generateNewDHKeyPair(randomness io.Reader) error {
-	newPrivKey, err := randSizedMPI(randomness, 40)
+	newPrivKey, err := randSizedSecret(randomness, 40)
 	if err != nil {
 		return err
 	}
+
+	tryLock(newPrivKey)
 
 	k.ourPreviousDHKeys.wipe()
 	k.ourPreviousDHKeys = k.ourCurrentDHKeys
 
 	k.ourCurrentDHKeys = dhKeyPair{
 		priv: newPrivKey,
-		pub:  modExp(g1, newPrivKey),
+		pub:  modExpPCT(g1ct, newPrivKey).GetBigInt(),
 	}
 	k.ourKeyID++
 	return nil
@@ -225,7 +224,7 @@ func (k *keyManagementContext) calculateDHSessionKeys(ourKeyID, theirKeyID uint3
 	return ret, nil
 }
 
-func calculateDHSessionKeys(ourPrivKey, ourPubKey, theirPubKey *big.Int, v otrVersion) sessionKeys {
+func calculateDHSessionKeys(ourPrivKey secretKeyValue, ourPubKey, theirPubKey *big.Int, v otrVersion) sessionKeys {
 	var ret sessionKeys
 	var sendbyte, recvbyte byte
 
@@ -237,7 +236,7 @@ func calculateDHSessionKeys(ourPrivKey, ourPubKey, theirPubKey *big.Int, v otrVe
 		sendbyte, recvbyte = 0x02, 0x01
 	}
 
-	s := new(big.Int).Exp(theirPubKey, ourPrivKey, p)
+	s := modExpCT(new(constbn.Int).SetBigInt(theirPubKey), ourPrivKey, pct).GetBigInt()
 	secbytes := AppendMPI(nil, s)
 
 	sha := v.hashInstance()
@@ -250,10 +249,12 @@ func calculateDHSessionKeys(ourPrivKey, ourPubKey, theirPubKey *big.Int, v otrVe
 
 	ret.extraKey = h(0xFF, secbytes, v.hash2Instance())
 
+	ret.lock()
+
 	return ret
 }
 
-func (k *keyManagementContext) pickOurKeys(ourKeyID uint32) (privKey, pubKey *big.Int, err error) {
+func (k *keyManagementContext) pickOurKeys(ourKeyID uint32) (privKey secretKeyValue, pubKey *big.Int, err error) {
 	if ourKeyID == 0 || k.ourKeyID == 0 {
 		return nil, nil, newOtrConflictError("invalid key id for local peer")
 	}
@@ -305,13 +306,16 @@ func calculateAKEKeys(s *big.Int, v otrVersion) (ssid [8]byte, revealSigKeys, si
 	signatureKeys.m1 = h(0x04, secbytes, sha)
 	signatureKeys.m2 = h(0x05, secbytes, sha)
 
+	revealSigKeys.lock()
+	signatureKeys.lock()
+
 	return
 }
 
 // h1() and h2() are the same
 func h(b byte, secbytes []byte, h hash.Hash) []byte {
 	h.Reset()
-	h.Write([]byte{b})
-	h.Write(secbytes[:])
+	_, _ = h.Write([]byte{b})
+	_, _ = h.Write(secbytes[:])
 	return h.Sum(nil)
 }

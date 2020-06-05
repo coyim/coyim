@@ -36,53 +36,53 @@ func (c *Conversation) otrOffer() string {
 }
 
 func (c *Conversation) dump(w *bufio.Writer) {
-	w.WriteString("Context:\n\n")
-	w.WriteString(fmt.Sprintf("  Our instance:   %08X\n", c.ourInstanceTag))
-	w.WriteString(fmt.Sprintf("  Their instance: %08X\n\n", c.theirInstanceTag))
-	w.WriteString(fmt.Sprintf("  Msgstate: %d (%s)\n\n", c.msgState, c.msgState.identityString()))
-	w.WriteString(fmt.Sprintf("  Protocol version: %d\n", c.version.protocolVersion()))
-	w.WriteString(fmt.Sprintf("  OTR offer: %s\n\n", c.otrOffer()))
+	_, _ = w.WriteString("Context:\n\n")
+	_, _ = w.WriteString(fmt.Sprintf("  Our instance:   %08X\n", c.ourInstanceTag))
+	_, _ = w.WriteString(fmt.Sprintf("  Their instance: %08X\n\n", c.theirInstanceTag))
+	_, _ = w.WriteString(fmt.Sprintf("  Msgstate: %d (%s)\n\n", c.msgState, c.msgState.identityString()))
+	_, _ = w.WriteString(fmt.Sprintf("  Protocol version: %d\n", c.version.protocolVersion()))
+	_, _ = w.WriteString(fmt.Sprintf("  OTR offer: %s\n\n", c.otrOffer()))
 	if c.ake == nil {
-		w.WriteString("  Auth info: NULL\n")
+		_, _ = w.WriteString("  Auth info: NULL\n")
 	} else {
 		c.dumpAKE(w)
 	}
-	w.WriteString("\n")
+	_, _ = w.WriteString("\n")
 
 	c.dumpSMP(w)
 
-	w.Flush()
+	_ = w.Flush()
 }
 
 // Will only be called if AKE is valid
 func (c *Conversation) dumpAKE(w *bufio.Writer) {
-	w.WriteString("  Auth info:\n")
+	_, _ = w.WriteString("  Auth info:\n")
 
 	if c.ake != nil {
-		w.WriteString(fmt.Sprintf("    State: %d (%s)\n", c.ake.state.identity(), c.ake.state.identityString()))
+		_, _ = w.WriteString(fmt.Sprintf("    State: %d (%s)\n", c.ake.state.identity(), c.ake.state.identityString()))
 	}
 
-	w.WriteString(fmt.Sprintf("    Our keyid:   %d\n", c.keys.ourKeyID))
-	w.WriteString(fmt.Sprintf("    Their keyid: %d\n", c.keys.theirKeyID))
-	w.WriteString(fmt.Sprintf("    Their fingerprint: %X\n", c.theirKey.Fingerprint()))
-	w.WriteString(fmt.Sprintf("    Proto version = %d\n", c.version.protocolVersion()))
-	w.Flush()
+	_, _ = w.WriteString(fmt.Sprintf("    Our keyid:   %d\n", c.keys.ourKeyID))
+	_, _ = w.WriteString(fmt.Sprintf("    Their keyid: %d\n", c.keys.theirKeyID))
+	_, _ = w.WriteString(fmt.Sprintf("    Their fingerprint: %X\n", c.theirKey.Fingerprint()))
+	_, _ = w.WriteString(fmt.Sprintf("    Proto version = %d\n", c.version.protocolVersion()))
+	_ = w.Flush()
 }
 
 func (c *Conversation) dumpSMP(w *bufio.Writer) {
-	w.WriteString("  SM state:\n")
+	_, _ = w.WriteString("  SM state:\n")
 
 	if c.smp.state != nil {
-		w.WriteString(fmt.Sprintf("    Next expected: %d (%s)\n", c.smp.state.identity(), c.smp.state.identityString()))
+		_, _ = w.WriteString(fmt.Sprintf("    Next expected: %d (%s)\n", c.smp.state.identity(), c.smp.state.identityString()))
 	}
 
 	receivedQ := 0
 	if c.smp.question != nil {
 		receivedQ = 1
 	}
-	w.WriteString(fmt.Sprintf("    Received_Q: %d\n", receivedQ))
+	_, _ = w.WriteString(fmt.Sprintf("    Received_Q: %d\n", receivedQ))
 
-	w.Flush()
+	_ = w.Flush()
 }
 
 func (smpStateExpect1) identity() int {

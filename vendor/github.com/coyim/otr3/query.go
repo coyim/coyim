@@ -6,10 +6,6 @@ import (
 	"time"
 )
 
-func isQueryMessage(msg ValidMessage) bool {
-	return bytes.HasPrefix(msg, queryMarker)
-}
-
 func parseOTRQueryMessage(msg ValidMessage) []int {
 	ret := []int{}
 

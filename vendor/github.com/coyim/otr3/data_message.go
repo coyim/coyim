@@ -34,7 +34,7 @@ func (c *Conversation) genDataMsgWithFlag(message []byte, flag byte, tlvs ...tlv
 		tlvs:    tlvs,
 	}
 
-	encrypted := plain.encrypt(keys.sendingAESKey[:], topHalfCtr)
+	encrypted := plain.encrypt(keys.sendingAESKey, topHalfCtr)
 
 	header, err := c.messageHeader(msgTypeData)
 	if err != nil {
@@ -57,7 +57,9 @@ func (c *Conversation) genDataMsgWithFlag(message []byte, flag byte, tlvs ...tlv
 	c.updateMayRetransmitTo(noRetransmit)
 	c.lastMessage(message)
 
-	x := dataMessageExtra{keys.extraKey[:]}
+	x := dataMessageExtra{keys.extraKey}
+
+	keys.unlock()
 
 	return dataMessage, x, nil
 }
@@ -132,7 +134,7 @@ func (c *Conversation) processDataMessageWithRawErrors(header, msg []byte) (plai
 
 	p := plainDataMsg{}
 	//this can't return an error since receivingAESKey is a AES-128 key
-	p.decrypt(sessionKeys.receivingAESKey[:], dataMessage.topHalfCtr, dataMessage.encryptedMsg)
+	_ = p.decrypt(sessionKeys.receivingAESKey, dataMessage.topHalfCtr, dataMessage.encryptedMsg)
 
 	plain = makeCopy(p.message)
 	if len(plain) == 0 {
@@ -144,6 +146,8 @@ func (c *Conversation) processDataMessageWithRawErrors(header, msg []byte) (plai
 	if err != nil {
 		return
 	}
+
+	sessionKeys.unlock()
 
 	var tlvs []tlv
 

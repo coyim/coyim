@@ -86,10 +86,6 @@ func (c *tlv) deserialize(tlvsBytes []byte) error {
 	return nil
 }
 
-func (c tlv) isSMPMessage() bool {
-	return c.tlvType >= tlvTypeSMP1 && c.tlvType <= tlvTypeSMP1WithQuestion
-}
-
 func (c tlv) smpMessage() (smpMessage, bool) {
 	switch c.tlvType {
 	case tlvTypeSMP1:

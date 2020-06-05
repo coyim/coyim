@@ -42,25 +42,25 @@ func (c *Conversation) generateSMP2Parameters() (s smp2State, err error) {
 func generateSMP2Message(s *smp2State, s1 smp1Message, v otrVersion) smp2Message {
 	var m smp2Message
 
-	m.g2b = modExp(g1, s.b2)
-	m.g3b = modExp(g1, s.b3)
+	m.g2b = modExpP(g1, s.b2)
+	m.g3b = modExpP(g1, s.b3)
 
 	m.c2, m.d2 = generateZKP(s.r2, s.b2, 3, v)
 	m.c3, m.d3 = generateZKP(s.r3, s.b3, 4, v)
 
 	s.g3a = s1.g3a
-	s.g2 = modExp(s1.g2a, s.b2)
-	s.g3 = modExp(s1.g3a, s.b3)
+	s.g2 = modExpP(s1.g2a, s.b2)
+	s.g3 = modExpP(s1.g3a, s.b3)
 
-	s.pb = modExp(s.g3, s.r4)
-	s.qb = mulMod(modExp(g1, s.r4), modExp(s.g2, s.y), p)
+	s.pb = modExpP(s.g3, s.r4)
+	s.qb = mulMod(modExpP(g1, s.r4), modExpP(s.g2, s.y), p)
 
 	m.pb = s.pb
 	m.qb = s.qb
 
 	m.cp = hashMPIsBN(v.hash2Instance(), 5,
-		modExp(s.g3, s.r5),
-		mulMod(modExp(g1, s.r5), modExp(s.g2, s.r6), p))
+		modExpP(s.g3, s.r5),
+		mulMod(modExpP(g1, s.r5), modExpP(s.g2, s.r6), p))
 
 	m.d5 = subMod(s.r5, mul(s.r4, m.cp), q)
 	m.d6 = subMod(s.r6, mul(s.y, m.cp), q)
@@ -103,8 +103,8 @@ func (c *Conversation) verifySMP2(s1 *smp1State, msg smp2Message) error {
 		return newOtrError("c3 is not a valid zero knowledge proof")
 	}
 
-	g2 := modExp(msg.g2b, s1.a2)
-	g3 := modExp(msg.g3b, s1.a3)
+	g2 := modExpP(msg.g2b, s1.a2)
+	g3 := modExpP(msg.g3b, s1.a3)
 
 	if !verifyZKP2(g2, g3, msg.d5, msg.d6, msg.pb, msg.qb, msg.cp, 5, c.version) {
 		return newOtrError("cP is not a valid zero knowledge proof")

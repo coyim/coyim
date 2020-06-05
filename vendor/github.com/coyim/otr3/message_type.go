@@ -67,7 +67,7 @@ func guessMessageType(msg []byte) messageTypeGuess {
 		}
 		return msgGuessUnknown
 	}
-	if bytes.Index(msg, whitespaceTagHeader) != -1 {
+	if bytes.Contains(msg, whitespaceTagHeader) {
 		return msgGuessTaggedPlaintext
 	}
 	return msgGuessNotOTR

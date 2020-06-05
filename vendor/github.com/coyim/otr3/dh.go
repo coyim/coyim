@@ -1,5 +1,7 @@
 package otr3
 
+import "github.com/coyim/constbn"
+
 import "math/big"
 
 var (
@@ -7,6 +9,9 @@ var (
 	pMinusTwo *big.Int
 	q         *big.Int // prime order
 	g1        *big.Int // group generator
+
+	pct  *constbn.Int // prime field, defined in RFC3526 as Diffie-Hellman Group 5, in struct for CT operations
+	g1ct *constbn.Int // group generator, in struct for CT operations
 )
 
 func init() {
@@ -32,6 +37,9 @@ func init() {
 
 	pMinusTwo = sub(p, big.NewInt(2))
 	g1 = big.NewInt(2)
+
+	pct = new(constbn.Int).SetBigInt(p)
+	g1ct = new(constbn.Int).SetBigInt(g1)
 
 	initTLVHandlers()
 }

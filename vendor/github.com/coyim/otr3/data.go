@@ -8,9 +8,9 @@ import (
 
 func hashMPIs(h hash.Hash, magic byte, mpis ...*big.Int) []byte {
 	h.Reset()
-	h.Write([]byte{magic})
+	_, _ = h.Write([]byte{magic})
 	for _, mpi := range mpis {
-		h.Write(AppendMPI(nil, mpi))
+		_, _ = h.Write(AppendMPI(nil, mpi))
 	}
 	return h.Sum(nil)
 }

@@ -11,6 +11,22 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:23b9850a220387962bae181bf0eaec5ae228cf3415ff365daa57de5e4820b33e"
+  name = "github.com/awnumar/memcall"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "73db50fd9f807b4e2811f9f0b33c92e9da6b2489"
+
+[[projects]]
+  branch = "master"
+  digest = "1:ed92efe00830105b4a9c18cc700c412104645a1980d588445b3c295b36847d07"
+  name = "github.com/coyim/constbn"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "016aa3f280ca9ded2d860ba438e3604363857a9a"
+
+[[projects]]
+  branch = "master"
   digest = "1:a72767f03b5c8f59d21ce79fca09a798eda6884abe43194b23e5a56633c301f1"
   name = "github.com/coyim/gosx-notifier"
   packages = ["."]
@@ -38,14 +54,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0a7d052496107bc0f6f8977c83c06ce9f99a92d9387c3f9bfdf14eb8e18d2545"
+  digest = "1:65ceb4ba5bf492ff2f3d7d00ae80ea65c1ca7ae15bde0e2a5d26877be0bb0d0d"
   name = "github.com/coyim/otr3"
   packages = [
     ".",
     "sexp",
   ]
   pruneopts = "UT"
-  revision = "e4ca4cc2fb0d95d19bcf1b1c022732839663cfc1"
+  revision = "e73defa61608a83d1d663dfeaafecada1f32c507"
 
 [[projects]]
   digest = "1:57fa4c058c21ce25d0b7272518dd746065117abf6cc706158b0d361202024520"

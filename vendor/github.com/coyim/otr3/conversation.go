@@ -178,7 +178,9 @@ func (c *Conversation) SetSecurityEventHandler(handler SecurityEventHandler) {
 // The instance tag created or set will be returned
 func (c *Conversation) InitializeInstanceTag(tag uint32) uint32 {
 	if tag == 0 {
-		c.generateInstanceTag()
+		if e := c.generateInstanceTag(); e != nil {
+			return 0
+		}
 	} else {
 		c.ourInstanceTag = tag
 	}

@@ -1,9 +1,25 @@
 package otr3
 
-import "math/big"
+import (
+	"math/big"
 
-func modExp(g, x *big.Int) *big.Int {
-	return new(big.Int).Exp(g, x, p)
+	"github.com/coyim/constbn"
+)
+
+func modExp(g, x, m *big.Int) *big.Int {
+	return new(big.Int).Exp(g, x, m)
+}
+
+func modExpP(g, x *big.Int) *big.Int {
+	return modExp(g, x, p)
+}
+
+func modExpCT(g *constbn.Int, x secretKeyValue, m *constbn.Int) *constbn.Int {
+	return new(constbn.Int).ExpB(g, []byte(x), m)
+}
+
+func modExpPCT(g *constbn.Int, x secretKeyValue) *constbn.Int {
+	return modExpCT(g, x, pct)
 }
 
 func modInverse(g, x *big.Int) *big.Int {

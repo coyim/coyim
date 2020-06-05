@@ -57,9 +57,9 @@ func (c *Conversation) processAKE(msgType byte, msg []byte) (toSend []messageWit
 }
 
 type authStateBase struct{}
-type authStateNone struct{ authStateBase }
-type authStateAwaitingDHKey struct{ authStateBase }
-type authStateAwaitingRevealSig struct{ authStateBase }
+type authStateNone struct{}
+type authStateAwaitingDHKey struct{}
+type authStateAwaitingRevealSig struct{}
 type authStateAwaitingSig struct {
 	authStateBase
 	// revealSigMsg is only used to store the message so we can re-transmit it if needed

@@ -15,7 +15,7 @@ func (c *Conversation) Send(m ValidMessage, trace ...interface{}) ([]ValidMessag
 		return []ValidMessage{makeCopy(message)}, nil
 	}
 
-	if c.debug && bytes.Index(message, []byte(debugString)) != -1 {
+	if c.debug && bytes.Contains(message, []byte(debugString)) {
 		c.dump(bufio.NewWriter(standardErrorOutput))
 		return nil, nil
 	}

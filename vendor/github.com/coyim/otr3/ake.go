@@ -6,12 +6,14 @@ import (
 	"io"
 	"math/big"
 	"time"
+
+	"github.com/coyim/constbn"
 )
 
 var dontIgnoreFastRepeatQueryMessage = "false"
 
 type ake struct {
-	secretExponent   *big.Int
+	secretExponent   secretKeyValue
 	ourPublicValue   *big.Int
 	theirPublicValue *big.Int
 
@@ -51,13 +53,13 @@ func (c *Conversation) calcAKEKeys(s *big.Int) {
 	c.ssid, c.ake.revealKey, c.ake.sigKey = calculateAKEKeys(s, c.version)
 }
 
-func (c *Conversation) setSecretExponent(val *big.Int) {
-	c.ake.secretExponent = new(big.Int).Set(val)
-	c.ake.ourPublicValue = modExp(g1, val)
+func (c *Conversation) setSecretExponent(val secretKeyValue) {
+	c.ake.secretExponent = createSecretKeyValue(val)
+	c.ake.ourPublicValue = modExpPCT(g1ct, val).GetBigInt()
 }
 
 func (c *Conversation) calcDHSharedSecret() *big.Int {
-	return modExp(c.ake.theirPublicValue, c.ake.secretExponent)
+	return modExpPCT(new(constbn.Int).SetBigInt(c.ake.theirPublicValue), c.ake.secretExponent).GetBigInt()
 }
 
 func (c *Conversation) generateEncryptedSignature(key *akeKeys) ([]byte, error) {
@@ -76,13 +78,10 @@ func appendAll(one, two *big.Int, publicKey PublicKey, keyID uint32) []byte {
 	return AppendWord(append(AppendMPI(AppendMPI(nil, one), two), publicKey.serialize()...), keyID)
 }
 
-func fixedSize(s int, v []byte) []byte {
-	if len(v) < s {
-		vv := make([]byte, s)
-		copy(vv, v)
-		return vv
-	}
-	return v
+func fixedSizeCopy(s int, v []byte) []byte {
+	vv := make([]byte, s)
+	copy(vv, v)
+	return vv
 }
 
 func (c *Conversation) calcXb(key *akeKeys, mb []byte) ([]byte, error) {
@@ -98,8 +97,18 @@ func (c *Conversation) calcXb(key *akeKeys, mb []byte) ([]byte, error) {
 		return nil, err
 	}
 
+	// We have to copy the key here, and expand it to the requisite length -
+	// not all c values will be long enough. We immediately clean the copy
+	// afterwards
+	ccopy := fixedSizeCopy(c.version.keyLength(), key.c)
+	tryLock(ccopy)
+	defer func() {
+		tryUnlock(ccopy)
+		wipeBytes(ccopy)
+	}()
+
 	// this error can't happen, since key.c is fixed to the correct size
-	xb, _ = encrypt(fixedSize(c.version.keyLength(), key.c), append(xb, sigb...))
+	xb, _ = encrypt(ccopy, append(xb, sigb...))
 
 	return xb, nil
 }
@@ -111,19 +120,21 @@ func (c *Conversation) dhCommitMessage() ([]byte, error) {
 	c.ake.keys.ourKeyID = 0
 
 	// A random value x of at least 320 bits (40 byte)
-	x, err := c.randMPI(make([]byte, 40))
+	x, err := c.randSecret(make([]byte, 40))
 	if err != nil {
 		return nil, err
 	}
 
 	c.setSecretExponent(x)
-	wipeBigInt(x)
+	wipeSecretKeyValue(x)
 
 	if err := c.randomInto(c.ake.r[:]); err != nil {
 		return nil, err
 	}
 
 	// this can't return an error, since ake.r is of a fixed size that is always correct
+	// we send in a slice here, since the original r is a fixed array. the slicing process
+	// does NOT create a copy of the data
 	c.ake.encryptedGx, _ = encrypt(c.ake.r[:], AppendMPI(nil, c.ake.ourPublicValue))
 
 	return c.serializeDHCommit(c.ake.ourPublicValue), nil
@@ -143,14 +154,14 @@ func (c *Conversation) dhKeyMessage() ([]byte, error) {
 	c.initAKE()
 
 	// A random value x of at least 320 bits (40 byte)
-	y, err := c.randMPI(make([]byte, 40)[:])
+	y, err := c.randSecret(make([]byte, 40)[:])
 
 	if err != nil {
 		return nil, err
 	}
 
 	c.setSecretExponent(y)
-	wipeBigInt(y)
+	wipeSecretKeyValue(y)
 
 	return c.serializeDHKey(), nil
 }
@@ -342,7 +353,18 @@ func (c *Conversation) processEncryptedSig(encryptedSig []byte, theirMAC []byte,
 	}
 
 	decryptedSig := encryptedSig
-	if err := decrypt(fixedSize(c.version.keyLength(), keys.c), decryptedSig, encryptedSig); err != nil {
+
+	// We have to copy the key here, and expand it to the requisite length -
+	// not all c values will be long enough. We immediately clean the copy
+	// afterwards
+	ccopy := fixedSizeCopy(c.version.keyLength(), keys.c)
+	tryLock(ccopy)
+	defer func() {
+		tryUnlock(ccopy)
+		wipeBytes(ccopy)
+	}()
+
+	if err := decrypt(ccopy, decryptedSig, encryptedSig); err != nil {
 		return err
 	}
 
@@ -376,7 +398,7 @@ func extractGx(decryptedGx []byte) (*big.Int, error) {
 
 func sumHMAC(key, data []byte, v otrVersion) []byte {
 	mac := hmac.New(v.hash2Instance, key)
-	mac.Write(data)
+	_, _ = mac.Write(data)
 	return mac.Sum(nil)
 }
 

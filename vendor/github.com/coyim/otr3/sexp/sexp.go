@@ -16,7 +16,7 @@ type Value interface {
 func peek(r *bufio.Reader) (c byte, e error) {
 	c, e = r.ReadByte()
 	if e != io.EOF {
-		r.UnreadByte()
+		_ = r.UnreadByte()
 	}
 	return
 }
@@ -31,7 +31,7 @@ func Read(r *bufio.Reader) Value {
 func ReadWhitespace(r *bufio.Reader) {
 	c, e := peek(r)
 	for e != io.EOF && isWhitespace(c) {
-		r.ReadByte()
+		_, _ = r.ReadByte()
 		c, e = peek(r)
 	}
 }
@@ -82,7 +82,7 @@ func expect(r *bufio.Reader, c byte) bool {
 	ReadWhitespace(r)
 	res, err := r.ReadByte()
 	if res != c {
-		r.UnreadByte()
+		_ = r.UnreadByte()
 	}
 
 	return res == c && err != io.EOF
@@ -99,7 +99,7 @@ func ReadDataUntil(r *bufio.Reader, until func(byte) bool) []byte {
 	result := make([]byte, 0, 10)
 	c, err := peek(r)
 	for err != io.EOF && !until(c) {
-		r.ReadByte()
+		_, _ = r.ReadByte()
 		result = append(result, c)
 		c, err = peek(r)
 	}

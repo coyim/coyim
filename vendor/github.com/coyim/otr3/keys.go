@@ -12,9 +12,22 @@ import (
 	"io"
 	"math/big"
 	"os"
+	"path/filepath"
+	"runtime"
 
+	"github.com/coyim/constbn"
 	"github.com/coyim/otr3/sexp"
 )
+
+// secretKeyValue contains the secret in big-endian byte representation
+type secretKeyValue []byte
+
+func createSecretKeyValue(v secretKeyValue) secretKeyValue {
+	res := make(secretKeyValue, len(v))
+	copy(res, v)
+	tryLock(res)
+	return res
+}
 
 // PublicKey is a public key used to verify signed messages
 type PublicKey interface {
@@ -54,6 +67,7 @@ func GenerateMissingKeys(existing [][]byte) ([]PrivateKey, error) {
 		if err := priv.Generate(rand.Reader); err != nil {
 			return nil, err
 		}
+		priv.lock()
 		result = append(result, &priv)
 	}
 
@@ -104,16 +118,6 @@ func readPotentialSymbol(r *bufio.Reader) (string, bool) {
 	return "", false
 }
 
-func readPotentialString(r *bufio.Reader) (string, bool) {
-	res, _ := sexp.ReadValue(r)
-	if res != nil {
-		if tres, ok := res.(sexp.Sstring); ok {
-			return tres.Value().(string), true
-		}
-	}
-	return "", false
-}
-
 func readPotentialStringOrSymbol(r *bufio.Reader) (string, bool) {
 	res, _ := sexp.ReadValue(r)
 	if res != nil {
@@ -129,23 +133,28 @@ func readPotentialStringOrSymbol(r *bufio.Reader) (string, bool) {
 
 // ImportKeysFromFile will read the libotr formatted file given and return all accounts defined in it
 func ImportKeysFromFile(fname string) ([]*Account, error) {
-	f, err := os.Open(fname)
+	f, err := os.Open(filepath.Clean(fname))
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
-	return ImportKeys(f)
+
+	res, e := ImportKeys(f)
+	if e != nil {
+		_ = f.Close()
+		return nil, e
+	}
+
+	return res, f.Close()
 }
 
 // ExportKeysToFile will create the named file (or truncate it) and write all the accounts to that file in libotr format.
 func ExportKeysToFile(acs []*Account, fname string) error {
-	f, err := os.Create(fname)
+	f, err := os.OpenFile(fname, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 	exportAccounts(acs, f)
-	return nil
+	return f.Close()
 }
 
 // ImportKeys will read the libotr formatted data given and return all accounts defined in it
@@ -230,6 +239,7 @@ func readPrivateKey(r *bufio.Reader) (PrivateKey, bool) {
 	if ok2 {
 		k.PrivateKey = *res
 		k.DSAPublicKey.PublicKey = k.PrivateKey.PublicKey
+		k.lock()
 	}
 	ok3 := sexp.ReadListEnd(r)
 	return k, ok1 && ok2 && ok3
@@ -283,7 +293,7 @@ func (pub *DSAPublicKey) IsSame(other PublicKey) bool {
 // ParsePrivateKey is an algorithm indepedent way of parsing private keys
 func ParsePrivateKey(in []byte) (index []byte, ok bool, key PrivateKey) {
 	var typeTag uint16
-	index, typeTag, ok = ExtractShort(in)
+	_, typeTag, ok = ExtractShort(in)
 	if !ok {
 		return in, false, nil
 	}
@@ -301,7 +311,7 @@ func ParsePrivateKey(in []byte) (index []byte, ok bool, key PrivateKey) {
 // ParsePublicKey is an algorithm independent way of parsing public keys
 func ParsePublicKey(in []byte) (index []byte, ok bool, key PublicKey) {
 	var typeTag uint16
-	index, typeTag, ok = ExtractShort(in)
+	_, typeTag, ok = ExtractShort(in)
 	if !ok {
 		return in, false, nil
 	}
@@ -346,6 +356,8 @@ func (priv *DSAPrivateKey) Parse(in []byte) (index []byte, ok bool) {
 	priv.PrivateKey.PublicKey = priv.DSAPublicKey.PublicKey
 	index, priv.X, ok = ExtractMPI(in)
 
+	priv.lock()
+
 	return index, ok
 }
 
@@ -384,7 +396,7 @@ func (pub *DSAPublicKey) Fingerprint() []byte {
 
 	h := fingerprintHashInstanceForVersion(3)
 
-	h.Write(b[2:]) // if public key is DSA, ignore the leading 0x00 0x00 for the key type (according to spec)
+	_, _ = h.Write(b[2:]) // if public key is DSA, ignore the leading 0x00 0x00 for the key type (according to spec)
 	return h.Sum(nil)
 }
 
@@ -423,6 +435,10 @@ func counterEncipher(key, iv, src, dst []byte) error {
 
 	ctr := cipher.NewCTR(aesCipher, iv)
 	ctr.XORKeyStream(dst, src)
+
+	unsafeWipe(aesCipher)
+
+	runtime.KeepAlive(aesCipher)
 
 	return nil
 }
@@ -475,8 +491,12 @@ func (priv *DSAPrivateKey) Import(in []byte) bool {
 	priv.PrivateKey.X = mpis[4]
 	priv.DSAPublicKey.PublicKey = priv.PrivateKey.PublicKey
 
-	a := new(big.Int).Exp(priv.PrivateKey.G, priv.PrivateKey.X, priv.PrivateKey.P)
-	return a.Cmp(priv.PrivateKey.Y) == 0
+	a := modExpCT(new(constbn.Int).SetBigInt(priv.PrivateKey.G),
+		secretKeyValue(priv.PrivateKey.X.Bytes()), new(constbn.Int).SetBigInt(priv.PrivateKey.P))
+
+	priv.lock()
+
+	return a.GetBigInt().Cmp(priv.PrivateKey.Y) == 0
 }
 
 // Generate will generate a new DSA Private Key with the randomness provided. The parameter size used is 1024 and 160.
@@ -488,6 +508,7 @@ func (priv *DSAPrivateKey) Generate(rand io.Reader) error {
 		return err
 	}
 	priv.DSAPublicKey.PublicKey = priv.PrivateKey.PublicKey
+	priv.lock()
 	return nil
 }
 
@@ -508,65 +529,65 @@ func notHex(r rune) bool {
 
 func exportName(n string, w *bufio.Writer) {
 	indent := "    "
-	w.WriteString(indent)
-	w.WriteString("(name \"")
-	w.WriteString(n)
-	w.WriteString("\")\n")
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString("(name \"")
+	_, _ = w.WriteString(n)
+	_, _ = w.WriteString("\")\n")
 }
 
 func exportProtocol(n string, w *bufio.Writer) {
 	indent := "    "
-	w.WriteString(indent)
-	w.WriteString("(protocol ")
-	w.WriteString(n)
-	w.WriteString(")\n")
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString("(protocol ")
+	_, _ = w.WriteString(n)
+	_, _ = w.WriteString(")\n")
 }
 
 func exportPrivateKey(key PrivateKey, w *bufio.Writer) {
 	indent := "    "
-	w.WriteString(indent)
-	w.WriteString("(private-key\n")
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString("(private-key\n")
 	exportDSAPrivateKey(key.(*DSAPrivateKey), w)
-	w.WriteString(indent)
-	w.WriteString(")\n")
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString(")\n")
 }
 
 func exportDSAPrivateKey(key *DSAPrivateKey, w *bufio.Writer) {
 	indent := "      "
-	w.WriteString(indent)
-	w.WriteString("(dsa\n")
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString("(dsa\n")
 	exportParameter("p", key.PrivateKey.P, w)
 	exportParameter("q", key.PrivateKey.Q, w)
 	exportParameter("g", key.PrivateKey.G, w)
 	exportParameter("y", key.PrivateKey.Y, w)
 	exportParameter("x", key.PrivateKey.X, w)
-	w.WriteString(indent)
-	w.WriteString(")\n")
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString(")\n")
 }
 
 func exportParameter(name string, val *big.Int, w *bufio.Writer) {
 	indent := "        "
-	w.WriteString(indent)
-	w.WriteString(fmt.Sprintf("(%s #%X#)\n", name, val))
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString(fmt.Sprintf("(%s #%X#)\n", name, val))
 }
 
 func exportAccount(a *Account, w *bufio.Writer) {
 	indent := "  "
-	w.WriteString(indent)
-	w.WriteString("(account\n")
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString("(account\n")
 	exportName(a.Name, w)
 	exportProtocol(a.Protocol, w)
 	exportPrivateKey(a.Key, w)
-	w.WriteString(indent)
-	w.WriteString(")\n")
+	_, _ = w.WriteString(indent)
+	_, _ = w.WriteString(")\n")
 }
 
 func exportAccounts(as []*Account, w io.Writer) {
 	bw := bufio.NewWriter(w)
-	bw.WriteString("(privkeys\n")
+	_, _ = bw.WriteString("(privkeys\n")
 	for _, a := range as {
 		exportAccount(a, bw)
 	}
-	bw.WriteString(")\n")
-	bw.Flush()
+	_, _ = bw.WriteString(")\n")
+	_ = bw.Flush()
 }

@@ -3,6 +3,8 @@ package otr3
 import (
 	"bytes"
 	"crypto/aes"
+
+	/* #nosec G505*/
 	"crypto/sha1"
 	"crypto/sha256"
 	"fmt"
@@ -62,11 +64,13 @@ func (v otrV2) parseMessageHeader(c *Conversation, msg []byte) ([]byte, []byte, 
 }
 
 func (v otrV2) hashInstance() hash.Hash {
+	/* #nosec G401*/
 	return sha1.New()
 	// return sha3.New256()
 }
 
 func (v otrV2) hash(val []byte) []byte {
+	/* #nosec G401*/
 	ret := sha1.Sum(val)
 	return ret[:]
 	// ret := sha3.Sum256(val)
@@ -74,6 +78,7 @@ func (v otrV2) hash(val []byte) []byte {
 }
 
 func (v otrV2) hashLength() int {
+	/* #nosec G401*/
 	return sha1.Size
 	// return 32
 }

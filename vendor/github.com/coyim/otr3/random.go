@@ -28,16 +28,24 @@ func randMPI(r io.Reader, b []byte) (*big.Int, error) {
 	return new(big.Int).SetBytes(b), nil
 }
 
-func randSizedMPI(r io.Reader, size int) (*big.Int, error) {
-	return randMPI(r, make([]byte, size))
+func randSecret(r io.Reader, b []byte) (secretKeyValue, error) {
+	if err := randomInto(r, b); err != nil {
+		return nil, err
+	}
+
+	return secretKeyValue(b), nil
 }
 
-func (c *Conversation) randSizedMPI(size int) (*big.Int, error) {
-	return randMPI(c.rand(), make([]byte, size))
+func randSizedSecret(r io.Reader, size int) (secretKeyValue, error) {
+	return randSecret(r, make([]byte, size))
 }
 
 func (c *Conversation) randMPI(buf []byte) (*big.Int, error) {
 	return randMPI(c.rand(), buf)
+}
+
+func (c *Conversation) randSecret(buf []byte) (secretKeyValue, error) {
+	return randSecret(c.rand(), buf)
 }
 
 func (c *Conversation) randomInto(b []byte) error {

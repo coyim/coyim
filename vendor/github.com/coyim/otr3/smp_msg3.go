@@ -37,23 +37,23 @@ func (c *Conversation) generateSMP3Parameters() (s smp3State, err error) {
 func generateSMP3Message(s *smp3State, s1 smp1State, m2 smp2Message, v otrVersion) smp3Message {
 	var m smp3Message
 
-	g2 := modExp(m2.g2b, s1.a2)
-	g3 := modExp(m2.g3b, s1.a3)
+	g2 := modExpP(m2.g2b, s1.a2)
+	g3 := modExpP(m2.g3b, s1.a3)
 
-	m.pa = modExp(g3, s.r4)
-	m.qa = mulMod(modExp(g1, s.r4), modExp(g2, s.x), p)
+	m.pa = modExpP(g3, s.r4)
+	m.qa = mulMod(modExpP(g1, s.r4), modExpP(g2, s.x), p)
 
 	s.g3b = m2.g3b
 	s.qaqb = divMod(m.qa, m2.qb, p)
 	s.papb = divMod(m.pa, m2.pb, p)
 
-	m.cp = hashMPIsBN(v.hash2Instance(), 6, modExp(g3, s.r5), mulMod(modExp(g1, s.r5), modExp(g2, s.r6), p))
+	m.cp = hashMPIsBN(v.hash2Instance(), 6, modExpP(g3, s.r5), mulMod(modExpP(g1, s.r5), modExpP(g2, s.r6), p))
 	m.d5 = generateDZKP(s.r5, s.r4, m.cp)
 	m.d6 = generateDZKP(s.r6, s.x, m.cp)
 
-	m.ra = modExp(s.qaqb, s1.a3)
+	m.ra = modExpP(s.qaqb, s1.a3)
 
-	m.cr = hashMPIsBN(v.hash2Instance(), 7, modExp(g1, s.r7), modExp(s.qaqb, s.r7))
+	m.cr = hashMPIsBN(v.hash2Instance(), 7, modExpP(g1, s.r7), modExpP(s.qaqb, s.r7))
 	m.d7 = subMod(s.r7, mul(s1.a3, m.cr), q)
 
 	return m
@@ -97,7 +97,7 @@ func (c *Conversation) verifySMP3(s2 *smp2State, msg smp3Message) error {
 func (c *Conversation) verifySMP3ProtocolSuccess(s2 *smp2State, msg smp3Message) error {
 	papb := divMod(msg.pa, s2.pb, p)
 
-	rab := modExp(msg.ra, s2.b3)
+	rab := modExpP(msg.ra, s2.b3)
 	if !eq(rab, papb) {
 		return newOtrError("protocol failed: x != y")
 	}

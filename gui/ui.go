@@ -307,7 +307,7 @@ func (u *gtkUI) loadConfig(configFile string) {
 	}
 
 	if u.config.UpdateToLatestVersion() {
-		u.saveConfigOnlyInternal()
+		_ = u.saveConfigOnlyInternal()
 	}
 }
 
@@ -338,7 +338,7 @@ func (u *gtkUI) configLoaded(c *config.ApplicationConfig) {
 		}
 
 		if u.window != nil {
-			u.window.Emit(accountChangedSignal.String())
+			_, _ = u.window.Emit(accountChangedSignal.String())
 		}
 	})
 
@@ -361,7 +361,7 @@ func (u *gtkUI) saveConfigInternal() error {
 	u.addNewAccountsFromConfig(u.config, u.sessionFactory, u.dialerFactory)
 
 	if u.window != nil {
-		u.window.Emit(accountChangedSignal.String())
+		_, _ = u.window.Emit(accountChangedSignal.String())
 	}
 
 	return nil

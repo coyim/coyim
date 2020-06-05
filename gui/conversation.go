@@ -110,7 +110,6 @@ type conversationPane struct {
 	notificationArea     gtki.Box
 	fileTransferNotif    *fileTransferNotification
 	securityWarningNotif *securityWarningNotification
-	verificationWarning  gtki.InfoBar
 	// The window to set dialogs transient for
 	transientParent gtki.Window
 	sync.Mutex
@@ -755,9 +754,9 @@ func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, no
 
 func (conv *conversationWindow) setEnabled(enabled bool) {
 	if enabled {
-		conv.win.Emit("enable")
+		_, _ = conv.win.Emit("enable")
 	} else {
-		conv.win.Emit("disable")
+		_, _ = conv.win.Emit("disable")
 	}
 }
 

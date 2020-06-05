@@ -146,7 +146,7 @@ func (u *gtkUI) showAddAccountWindow() {
 			return
 		}
 
-		u.addAndSaveAccountConfig(c)
+		_ = u.addAndSaveAccountConfig(c)
 		u.log.WithFields(log.Fields{
 			"feature": "addAccount",
 			"account": c.Account,
@@ -168,7 +168,7 @@ func (u *gtkUI) addAndSaveAccountConfig(c *config.Account) error {
 
 	doInUIThread(func() {
 		if u.window != nil {
-			u.window.Emit(accountChangedSignal.String())
+			_, _ = u.window.Emit(accountChangedSignal.String())
 		}
 	})
 

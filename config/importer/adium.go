@@ -28,7 +28,7 @@ func (p *adiumImporter) readAccountMappings(s string) (map[string]adiumAccountMa
 	/* #nosec G304 */
 	contents, _ := ioutil.ReadFile(s)
 	var res map[string]interface{}
-	plist.Unmarshal(contents, &res)
+	_, _ = plist.Unmarshal(contents, &res)
 
 	result := make(map[string]adiumAccountMapping)
 

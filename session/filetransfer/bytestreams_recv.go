@@ -57,7 +57,6 @@ func bytestreamCalculateDestinationAddress(tag data.BytestreamQuery, stanza *dat
 	return hex.EncodeToString(digests.Sha1([]byte(tag.Sid + stanza.From + stanza.To)))
 }
 
-const chunkSize = 16 * 4096
 const cancelCheckFrequency = 10
 
 func (ctx *recvContext) bytestreamCleanup(conn net.Conn, ff *os.File) {

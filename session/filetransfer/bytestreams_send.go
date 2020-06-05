@@ -20,8 +20,6 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-const bufSize = 1 * 4096
-
 func init() {
 	registerSendFileTransferMethod("http://jabber.org/protocol/bytestreams", bytestreamsSendDo, bytestreamsSendCurrentlyValid)
 }
@@ -34,7 +32,7 @@ var defaultBytestreamProxyTimeout = 2 * time.Hour
 
 func bytestreamsGetStreamhostDataFor(s access.Session, jid string) (result *data.BytestreamStreamhost) {
 	var q data.BytestreamQuery
-	basicIQ(s, jid, "get", &data.BytestreamQuery{}, &q, func(*data.ClientIQ) {
+	_ = basicIQ(s, jid, "get", &data.BytestreamQuery{}, &q, func(*data.ClientIQ) {
 		for _, sh := range q.Streamhosts {
 			valsh := sh
 			result = &valsh

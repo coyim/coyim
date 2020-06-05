@@ -273,7 +273,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		jjr := jjnr.String()
 		if s.autoApproves[jjr] {
 			delete(s.autoApproves, jjr)
-			s.ApprovePresenceSubscription(jjnr, stanza.ID)
+			_ = s.ApprovePresenceSubscription(jjnr, stanza.ID)
 		} else {
 			s.r.SubscribeRequest(jjnr, either(stanza.ID, "0000"), s.GetConfig().ID())
 			s.publishPeerEvent(
@@ -361,25 +361,23 @@ func (s *session) receivedClientIQ(stanza *data.ClientIQ) bool {
 }
 
 func (s *session) receiveStanza(stanzaChan chan data.Stanza) bool {
-	select {
-	case rawStanza, ok := <-stanzaChan:
-		if !ok {
-			return false
-		}
+	rawStanza, ok := <-stanzaChan
+	if !ok {
+		return false
+	}
 
-		switch stanza := rawStanza.Value.(type) {
-		case *data.StreamError:
-			return s.receivedStreamError(stanza)
-		case *data.ClientMessage:
-			return s.receivedClientMessage(stanza)
-		case *data.ClientPresence:
-			return s.receivedClientPresence(stanza)
-		case *data.ClientIQ:
-			return s.receivedClientIQ(stanza)
-		default:
-			s.info(fmt.Sprintf("unhandled stanza: %s %s", rawStanza.Name, rawStanza.Value))
-			return true
-		}
+	switch stanza := rawStanza.Value.(type) {
+	case *data.StreamError:
+		return s.receivedStreamError(stanza)
+	case *data.ClientMessage:
+		return s.receivedClientMessage(stanza)
+	case *data.ClientPresence:
+		return s.receivedClientPresence(stanza)
+	case *data.ClientIQ:
+		return s.receivedClientIQ(stanza)
+	default:
+		s.info(fmt.Sprintf("unhandled stanza: %s %s", rawStanza.Name, rawStanza.Value))
+		return true
 	}
 }
 
@@ -480,7 +478,7 @@ func (s *session) HandleConfirmOrDeny(jid jid.WithoutResource, isConfirm bool) {
 	}
 
 	if isConfirm {
-		s.RequestPresenceSubscription(jid, "")
+		_ = s.RequestPresenceSubscription(jid, "")
 	}
 }
 
@@ -585,14 +583,6 @@ func (s *session) maybeNotify() {
 	}()
 }
 
-func isAwayStatus(status string) bool {
-	switch status {
-	case "xa", "away":
-		return true
-	}
-	return false
-}
-
 // AwaitVersionReply listens on the channel and waits for the version reply
 func (s *session) AwaitVersionReply(ch <-chan data.Stanza, user string) {
 	stanza, ok := <-ch
@@ -695,8 +685,6 @@ func (s *session) getVCard() {
 	}
 
 	s.nicknames = []string{vc.Nickname, vc.FullName}
-
-	return
 }
 
 func (s *session) DisplayName() string {
@@ -810,14 +798,14 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		s.conn = conn
 		s.setStatus(CONNECTED)
 
-		conn.SignalPresence("")
+		_ = conn.SignalPresence("")
 		go s.watchRoster()
 		go s.getVCard()
 		go s.watchTimeout()
 		go s.watchStanzas()
 	} else {
 		if s.conn != nil {
-			s.conn.Close()
+			_ = s.conn.Close()
 		}
 	}
 
@@ -856,7 +844,7 @@ func (s *session) Close() {
 			s.terminateConversations()
 		}
 		s.setStatus(DISCONNECTED)
-		conn.Close()
+		_ = conn.Close()
 		s.conn = nil
 	} else {
 		s.setStatus(DISCONNECTED)
@@ -926,7 +914,7 @@ func (s *session) SendPing() {
 		case <-time.After(pingTimeout):
 			s.info("Ping timeout. Disconnecting...")
 			s.setStatus(DISCONNECTED)
-		case stanza, _ := <-reply:
+		case stanza := <-reply:
 			iq, ok := stanza.Value.(*data.ClientIQ)
 			if !ok {
 				return

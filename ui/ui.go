@@ -10,7 +10,6 @@ import (
 )
 
 var tagsToAvoid = make(map[string]bool)
-var tagsHTMLToEscape = make(map[string]bool)
 
 func init() {
 	tagsToAvoid["blockquote"] = true

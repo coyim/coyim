@@ -81,8 +81,8 @@ func (c StreamErrorCondition) MarshalXML(e *xml.Encoder, start xml.StartElement)
 		},
 	}
 
-	e.EncodeToken(t)
-	e.EncodeToken(t.End())
+	_ = e.EncodeToken(t)
+	_ = e.EncodeToken(t.End())
 
 	return nil
 }

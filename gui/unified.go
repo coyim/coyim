@@ -13,15 +13,8 @@ import (
 )
 
 const (
-	ulIndexID          = 0
-	ulIndexDisplayName = 1
-	ulIndexJid         = 2
-	ulIndexColor       = 3
-	ulIndexBackground  = 4
-	ulIndexWeight      = 5
-	ulIndexTooltip     = 6
-	ulIndexStatusIcon  = 7
-	ulIndexUnderline   = 8
+	ulIndexID     = 0
+	ulIndexWeight = 5
 )
 
 var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
@@ -146,7 +139,7 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 		csi.Log().WithField("peer", csi.target.NoResource()).Warn("No peer found for")
 		return
 	}
-	cl.model.Set2(csi.iter, ulAllIndexValues, []interface{}{
+	_ = cl.model.Set2(csi.iter, ulAllIndexValues, []interface{}{
 		csi.pageIndex,
 		csi.shortName(),
 		peer.Jid.String(),
@@ -158,12 +151,6 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 		csi.getUnderline(),
 	},
 	)
-}
-
-func (u *gtkUI) setPositionFromCurrent(pos *windowPosition) {
-	posx, posy := u.window.GetPosition()
-	pos.posX = posx
-	pos.posY = posy
 }
 
 func (u *gtkUI) getPositionFromCurrent() *windowPosition {

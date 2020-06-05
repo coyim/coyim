@@ -21,14 +21,6 @@ func (ds *displaySettings) defaultSettingsOn(w gtki.Widget) {
 	})
 }
 
-func (ds *displaySettings) unifiedBackgroundColor(w gtki.Widget) {
-	doInUIThread(func() {
-		styleContext, _ := w.GetStyleContext()
-		styleContext.AddProvider(ds.provider, 9999)
-		styleContext.AddClass("currentBackgroundColor")
-	})
-}
-
 func (ds *displaySettings) control(w gtki.Widget) {
 	doInUIThread(func() {
 		styleContext, _ := w.GetStyleContext()
@@ -75,7 +67,7 @@ func (ds *displaySettings) update() {
         }
         `, ds.fontSize)
 	doInUIThread(func() {
-		ds.provider.LoadFromData(css)
+		_ = ds.provider.LoadFromData(css)
 	})
 }
 
@@ -110,7 +102,7 @@ func addBoldHeaderStyle(l gtki.Label) {
 		styleContext.AddClass("bold-header-style")
 		styleContext.AddProvider(ds.provider, 9999)
 
-		ds.provider.LoadFromData(`.bold-header-style {
+		_ = ds.provider.LoadFromData(`.bold-header-style {
 			font-size: 200%;
 			font-weight: 800;
 		}`)

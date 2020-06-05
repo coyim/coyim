@@ -65,7 +65,9 @@ func unpack(file string, intoDir string) error {
 	for _, file := range reader.File {
 		path := filepath.Join(intoDir, file.Name)
 		if file.FileInfo().IsDir() {
-			os.MkdirAll(path, file.Mode())
+			if err := os.MkdirAll(path, file.Mode()); err != nil {
+				return err
+			}
 			continue
 		}
 

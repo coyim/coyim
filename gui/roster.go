@@ -30,14 +30,11 @@ type roster struct {
 
 const (
 	indexJid               = 0
-	indexDisplayName       = 1
 	indexAccountID         = 2
-	indexColor             = 3
 	indexBackgroundColor   = 4
 	indexWeight            = 5
 	indexParentJid         = 0
 	indexParentDisplayName = 1
-	indexTooltip           = 6
 	indexStatusIcon        = 7
 	indexRowType           = 8
 )
@@ -112,21 +109,6 @@ func sortedGroupNames(groups map[string]bool) []string {
 	return sortedNames
 }
 
-func (r *roster) allGroupNames() []string {
-	groups := map[string]bool{}
-	for _, contacts := range r.ui.accountManager.getAllContacts() {
-		for name := range contacts.GetGroupNames() {
-			if groups[name] {
-				continue
-			}
-
-			groups[name] = true
-		}
-	}
-
-	return sortedGroupNames(groups)
-}
-
 func (r *roster) getGroupNamesFor(a *account) []string {
 	groups := map[string]bool{}
 	contacts := r.ui.accountManager.getAllContacts()[a]
@@ -164,25 +146,6 @@ func (r *roster) updatePeer(acc *account, jid jid.WithoutResource, nickname stri
 	doInUIThread(r.redraw)
 
 	return nil
-}
-
-func (r *roster) renamePeer(acc *account, peer jid.WithoutResource, nickname string) {
-	p, ok := r.ui.getPeer(acc, peer)
-	if !ok {
-		return
-	}
-
-	// This updates what is displayed in the roster
-	p.Nickname = nickname
-
-	// This saves the nickname to the config file
-	// NOTE: This requires the account to be connected in order to rename peers,
-	// which should not be the case. This is one example of why gui.account should
-	// own the account config -  and not the session.
-	//acc.session.GetConfig().RenamePeer(jid, nickname)
-
-	doInUIThread(r.redraw)
-	r.ui.SaveConfig()
 }
 
 func toArray(groupList gtki.ListStore) []string {
@@ -233,13 +196,13 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 			doInUIThread(func() { r.openEditContactDialog(jid, account) })
 		},
 		"on_allow_contact_to_see_status": func() {
-			account.session.ApprovePresenceSubscription(jid, "" /* generate id */)
+			_ = account.session.ApprovePresenceSubscription(jid, "" /* generate id */)
 		},
 		"on_forbid_contact_to_see_status": func() {
-			account.session.DenyPresenceSubscription(jid, "" /* generate id */)
+			_ = account.session.DenyPresenceSubscription(jid, "" /* generate id */)
 		},
 		"on_ask_contact_to_see_status": func() {
-			account.session.RequestPresenceSubscription(jid, "")
+			_ = account.session.RequestPresenceSubscription(jid, "")
 		},
 		"on_dump_info": func() {
 			r.ui.accountManager.debugPeersFor(account)
@@ -423,14 +386,6 @@ func isNominallyVisible(accountName string, p *rosters.Peer, showWaiting bool) b
 
 func shouldDisplay(accountName string, p *rosters.Peer, showOffline, showWaiting bool) bool {
 	return isNominallyVisible(accountName, p, showWaiting) && ((showOffline || p.IsOnline()) || (showWaiting && isWaitingForResponse(p)))
-}
-
-func isAway(p *rosters.Peer) bool {
-	switch p.MainStatus() {
-	case "dnd", "xa", "away":
-		return true
-	}
-	return false
 }
 
 func isOnline(p *rosters.Peer) bool {
@@ -708,10 +663,6 @@ func (r *roster) redrawSeparate() {
 		r.view.CollapseRow(path)
 	}
 }
-
-const disconnectedPageIndex = 0
-const spinnerPageIndex = 1
-const rosterPageIndex = 2
 
 func (r *roster) redraw() {
 	//TODO: this should be behind a mutex

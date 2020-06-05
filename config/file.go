@@ -13,7 +13,7 @@ func fileExists(filename string) bool {
 
 func ensureDir(dirname string, perm os.FileMode) {
 	if !fileExists(dirname) {
-		os.MkdirAll(dirname, perm)
+		_ = os.MkdirAll(dirname, perm)
 	}
 }
 

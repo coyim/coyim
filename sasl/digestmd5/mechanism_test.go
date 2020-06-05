@@ -28,13 +28,13 @@ func (s *DigestMD5) Test(c *C) {
 	client := Mechanism.NewClient()
 	c.Check(client.NeedsMore(), Equals, true)
 
-	client.SetProperty(sasl.AuthID, "chris")
-	client.SetProperty(sasl.Password, "secret")
-	client.SetProperty(sasl.Service, "imap")
+	_ = client.SetProperty(sasl.AuthID, "chris")
+	_ = client.SetProperty(sasl.Password, "secret")
+	_ = client.SetProperty(sasl.Service, "imap")
 	//client.SetProperty(sasl.Realm, "elwood.innosoft.com")
-	client.SetProperty(sasl.QOP, "auth")
+	_ = client.SetProperty(sasl.QOP, "auth")
 
-	client.SetProperty(sasl.ClientNonce, "OA6MHXh6VqTrRk")
+	_ = client.SetProperty(sasl.ClientNonce, "OA6MHXh6VqTrRk")
 
 	t, err := client.Step(nil)
 	c.Check(err, IsNil)

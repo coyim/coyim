@@ -3,13 +3,7 @@ package gui
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
 	"sync"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/gotk3adapter/gdki"
 )
@@ -1088,32 +1082,6 @@ func (i *icon) get() ([]byte, error) {
 	}
 
 	return i.decoded, err
-}
-
-func getActualRootFolder() string {
-	wd, _ := os.Getwd()
-	if strings.HasSuffix(wd, "/gui") {
-		return filepath.Join(wd, "../")
-	}
-	return wd
-}
-
-func (i *icon) getPath() string {
-	iconPath := filepath.Join(getActualRootFolder(), i.path)
-	if fileNotFound(iconPath) {
-		tmpIconPath := filepath.Join(filepath.Join(os.TempDir(), "coyim"), i.name)
-		if fileNotFound(tmpIconPath) {
-			os.MkdirAll(filepath.Join(os.TempDir(), "coyim"), 0750)
-			bytes, _ := i.get()
-			ioutil.WriteFile(tmpIconPath, bytes, 0600)
-			log.WithFields(log.Fields{
-				"name": i.name,
-				"path": tmpIconPath,
-			}).Debug("gui/icons: wrote file")
-		}
-		return tmpIconPath
-	}
-	return iconPath
 }
 
 func (i *icon) getPixbuf() gdki.Pixbuf {

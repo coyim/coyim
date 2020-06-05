@@ -96,5 +96,5 @@ func (dn *desktopNotifications) show(jid, from, message string) error {
 
 func expireNotification(id uint32, expiry int) {
 	time.Sleep(time.Duration(expiry) * time.Millisecond)
-	notify.CloseNotification(id)
+	_ = notify.CloseNotification(id)
 }

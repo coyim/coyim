@@ -100,7 +100,7 @@ func (s *XMPPSuite) TestConnClose_sendsAStreamCloseTagWhenWeCloseFirst(c *C) {
 	su := make(chan string)
 	conn.statusUpdates = su
 
-	nextElement(conn.in, conn.log) // Reads the opening tag and make the unmarshaller happy
+	_, _ = nextElement(conn.in, conn.log) // Reads the opening tag and make the unmarshaller happy
 
 	var innerErr error
 	var innerStanza data.Stanza
@@ -142,8 +142,8 @@ func (s *XMPPSuite) TestConnNext_replyWithAStreamCloseTagWhenTheyCloseFirst(c *C
 	conn.out = mockCloser
 	conn.rawOut = mockCloser
 
-	nextElement(conn.in, conn.log) // Reads the opening tag and make the unmarshaller happy
-	stanza, err := conn.Next()     // Reads the closing tag
+	_, _ = nextElement(conn.in, conn.log) // Reads the opening tag and make the unmarshaller happy
+	stanza, err := conn.Next()            // Reads the closing tag
 
 	c.Assert(err, IsNil)
 	c.Assert(stanza, DeepEquals, data.Stanza{

@@ -32,7 +32,7 @@ const testFile string = `
 `
 
 func writeTestFile(name, content string) {
-	ioutil.WriteFile(name, []byte(content), 0700)
+	_ = ioutil.WriteFile(name, []byte(content), 0700)
 }
 
 func removeFile(name string) {
@@ -81,7 +81,7 @@ func getModTime(fn string) time.Time {
 }
 
 func setModTime(fn string, t time.Time) {
-	os.Chtimes(fn, t, t)
+	_ = os.Chtimes(fn, t, t)
 }
 
 func (s *UIReaderSuite) Test_builderForDefinition_useGoFileIfXMLDoesntExists(c *C) {

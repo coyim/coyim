@@ -1,14 +1,12 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type listRoomsView struct {
 	accountManager *accountManager
 	chatManager    *chatManager
-	errorBox       *errorNotification
 
 	gtki.Dialog `gtk-widget:"list-chat-rooms"`
 
@@ -122,16 +120,6 @@ func (v *listRoomsView) joinSelectedRoom() {
 	addChatView.Show()
 }
 
-//TODO: remove unused
-func (v *listRoomsView) getChatContext() interfaces.Chat {
-	chat, err := v.chatManager.getChatContextForAccount(v.getSelectedAccountJID())
-	if err != nil {
-		v.errorBox.ShowMessage(err.Error())
-		return nil
-	}
-	return chat
-}
-
 func (v *listRoomsView) getSelectedRoomName() string {
 	ts, _ := v.roomsTreeView.GetSelection()
 	_, iter, selected := ts.GetSelected()
@@ -149,21 +137,6 @@ func (v *listRoomsView) getSelectedAccountID() string {
 	iter, _ := v.account.GetActiveIter()
 
 	val, err := v.accountsModel.GetValue(iter, 1)
-	if err != nil {
-		return ""
-	}
-
-	account, err := val.GetString()
-	if err != nil {
-		return ""
-	}
-	return account
-}
-
-func (v *listRoomsView) getSelectedAccountJID() string {
-	iter, _ := v.account.GetActiveIter()
-
-	val, err := v.accountsModel.GetValue(iter, 0)
 	if err != nil {
 		return ""
 	}

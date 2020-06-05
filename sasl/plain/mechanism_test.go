@@ -29,8 +29,8 @@ func (s *SASLPlain) Test(c *C) {
 	client := Mechanism.NewClient()
 	c.Check(client.NeedsMore(), Equals, true)
 
-	client.SetProperty(sasl.AuthID, "foo")
-	client.SetProperty(sasl.Password, "bar")
+	_ = client.SetProperty(sasl.AuthID, "foo")
+	_ = client.SetProperty(sasl.Password, "bar")
 
 	t, err := client.Step(nil)
 

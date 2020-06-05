@@ -121,7 +121,7 @@ func (m *conversationManager) TerminateAll() {
 	defer m.RUnlock()
 
 	for _, c := range m.conversations {
-		c.EndEncryptedChat()
+		_ = c.EndEncryptedChat()
 	}
 }
 

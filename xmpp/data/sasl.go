@@ -13,15 +13,6 @@ type SaslMechanisms struct {
 	Mechanism []string `xml:"mechanism"`
 }
 
-type saslAuth struct {
-	XMLName   xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-sasl auth"`
-	Mechanism string   `xml:"mechanism,attr"`
-}
-
-type saslChallenge string
-
-type saslResponse string
-
 // SaslAbort signifies a SASL abort
 type SaslAbort struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-sasl abort"`

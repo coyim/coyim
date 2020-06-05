@@ -40,10 +40,6 @@ func getProxyTypeFor(act string) string {
 	return ""
 }
 
-func getScheme(s gtki.ComboBoxText) string {
-	return getProxyTypeFor(s.GetActiveText())
-}
-
 func orNil(s string) *string {
 	if s != "" {
 		return &s

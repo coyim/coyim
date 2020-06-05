@@ -80,11 +80,6 @@ func (m *accountManager) getAccountByID(ID string) (*account, bool) {
 	return nil, false
 }
 
-func (m *accountManager) findAccountForSession(s access.Session) *account {
-	acc, _ := m.getAccountByID(s.GetConfig().ID())
-	return acc
-}
-
 func (m *accountManager) getAllContacts() map[*account]*rosters.List {
 	return m.contacts
 }

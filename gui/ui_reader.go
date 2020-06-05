@@ -123,6 +123,7 @@ func (b *builder) bindObjects(view interface{}) error {
 
 		if !dstValue.CanSet() {
 			//Unexported field. This is fine by unsafe pkg documentation
+			/* #nosec G103 */
 			dstValue = reflect.NewAt(dstValue.Type(), unsafe.Pointer(dstValue.UnsafeAddr())).Elem()
 		}
 
@@ -214,6 +215,4 @@ func setImageFromFile(i gtki.Image, filename string) {
 	pb := getPixbufFromBytes(mustGetImageBytes(filename))
 
 	i.SetFromPixbuf(pb)
-
-	return
 }

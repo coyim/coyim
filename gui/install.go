@@ -32,27 +32,27 @@ func ensureIconsInstalled() {
 		icon128, _ := coyimIcon.createPixBufWithSize(128, 128)
 		icon256, _ := coyimIcon.createPixBufWithSize(256, 256)
 
-		os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/16x16/apps"), 0700)
-		os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/32x32/apps"), 0700)
-		os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/48x48/apps"), 0700)
-		os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/128x128/apps"), 0700)
-		os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/256x256/apps"), 0700)
+		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/16x16/apps"), 0700)
+		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/32x32/apps"), 0700)
+		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/48x48/apps"), 0700)
+		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/128x128/apps"), 0700)
+		_ = os.MkdirAll(filepath.Join(dataHome, "icons/hicolor/256x256/apps"), 0700)
 
 		fileName := iconFileName()
-		icon16.SavePNG(filepath.Join(dataHome, "icons/hicolor/16x16/apps", fileName), 9)
-		icon32.SavePNG(filepath.Join(dataHome, "icons/hicolor/32x32/apps", fileName), 9)
-		icon48.SavePNG(filepath.Join(dataHome, "icons/hicolor/48x48/apps", fileName), 9)
-		icon128.SavePNG(filepath.Join(dataHome, "icons/hicolor/128x128/apps", fileName), 9)
-		icon256.SavePNG(filepath.Join(dataHome, "icons/hicolor/256x256/apps", fileName), 9)
+		_ = icon16.SavePNG(filepath.Join(dataHome, "icons/hicolor/16x16/apps", fileName), 9)
+		_ = icon32.SavePNG(filepath.Join(dataHome, "icons/hicolor/32x32/apps", fileName), 9)
+		_ = icon48.SavePNG(filepath.Join(dataHome, "icons/hicolor/48x48/apps", fileName), 9)
+		_ = icon128.SavePNG(filepath.Join(dataHome, "icons/hicolor/128x128/apps", fileName), 9)
+		_ = icon256.SavePNG(filepath.Join(dataHome, "icons/hicolor/256x256/apps", fileName), 9)
 	}
 }
 
 func ensureDesktopFileInstalled() {
 	dataHome := config.XdgDataHome()
 	if dataHome != "" && fileExists(dataHome) {
-		os.MkdirAll(filepath.Join(dataHome, "applications"), 0700)
-		ioutil.WriteFile(filepath.Join(dataHome, "applications", "coyim.desktop"), []byte(generateDesktopFile(false)), 0600)
-		ioutil.WriteFile(filepath.Join(dataHome, "applications", "coyim-debug.desktop"), []byte(generateDesktopFile(true)), 0600)
+		_ = os.MkdirAll(filepath.Join(dataHome, "applications"), 0700)
+		_ = ioutil.WriteFile(filepath.Join(dataHome, "applications", "coyim.desktop"), []byte(generateDesktopFile(false)), 0600)
+		_ = ioutil.WriteFile(filepath.Join(dataHome, "applications", "coyim-debug.desktop"), []byte(generateDesktopFile(true)), 0600)
 	}
 }
 

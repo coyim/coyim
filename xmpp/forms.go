@@ -155,8 +155,6 @@ func toFormField(field data.FormFieldX, media [][]data.Media) interface{} {
 		}
 		return f
 	}
-
-	return nil
 }
 
 func toFormFieldX(field interface{}) *data.FormFieldX {
@@ -205,7 +203,6 @@ func toFormFieldX(field interface{}) *data.FormFieldX {
 	default:
 		panic(fmt.Sprintf("unknown field type in result from callback: %T", field))
 	}
-	return nil
 }
 
 // processForm calls the callback with the given XMPP form and returns the

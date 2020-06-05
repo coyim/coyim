@@ -47,9 +47,9 @@ func (ks *keyboardSettings) control(w gtki.Widget) {
 func (ks *keyboardSettings) update() {
 	doInUIThread(func() {
 		if ks.emacs {
-			ks.provider.LoadFromData(emacsKeyConf)
+			_ = ks.provider.LoadFromData(emacsKeyConf)
 		} else {
-			ks.provider.LoadFromData("")
+			_ = ks.provider.LoadFromData("")
 		}
 	})
 }

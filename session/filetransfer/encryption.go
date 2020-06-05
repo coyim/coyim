@@ -24,7 +24,7 @@ func deriveKeyWithPrefix(prefix, key []byte, l int) []byte {
 
 func generateSafeRandomBytes(l int) []byte {
 	b := make([]byte, l)
-	rand.Read(b)
+	_, _ = rand.Read(b)
 	return b
 }
 

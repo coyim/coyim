@@ -267,7 +267,7 @@ func (u *gtkUI) exportFingerprintsFor(account *config.Account, file string) bool
 		}
 	}
 
-	bw.Flush()
+	_ = bw.Flush()
 	return true
 }
 

@@ -69,7 +69,7 @@ func (p *Peer) Dump() string {
 func PeerFrom(e data.RosterEntry, belongsTo, nickname string, groups []string) *Peer {
 	// merge remote and local groups
 	g := groups
-	if g == nil || len(g) == 0 {
+	if len(g) == 0 {
 		g = e.Group
 	}
 	allGroups := toSet(g...)
@@ -80,7 +80,7 @@ func PeerFrom(e data.RosterEntry, belongsTo, nickname string, groups []string) *
 		Name:          e.Name,
 		Nickname:      nickname,
 		Groups:        allGroups,
-		HasConfigData: groups != nil && len(groups) > 0,
+		HasConfigData: len(groups) > 0,
 		BelongsTo:     belongsTo,
 		Asked:         e.Ask == "subscribe",
 		resources:     make(map[string]Status),

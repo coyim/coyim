@@ -123,10 +123,6 @@ func (c digestChallenge) a1(user, realm, password, serverNonce, clientNonce, aut
 	return md5.Sum([]byte(a1))
 }
 
-func (c digestChallenge) digestURI(service, realm string) string {
-	return service + "/" + realm
-}
-
 func (c digestChallenge) a2(digestURI, qop string) [md5.Size]byte {
 	a2 := strings.Join([]string{
 		"AUTHENTICATE",

@@ -39,7 +39,7 @@ func (ctx *dirSendContext) startPackingDirectory() (<-chan string, <-chan error)
 		}
 		newName := fmt.Sprintf("%v.zip", tmpFile.Name())
 		closeAndIgnore(tmpFile)
-		os.Rename(tmpFile.Name(), newName)
+		_ = os.Rename(tmpFile.Name(), newName)
 		result <- newName
 	}()
 
@@ -59,7 +59,7 @@ func (ctx *dirSendContext) initSend() {
 
 	select {
 	case tmpFile := <-result:
-		ctx.offerSend(tmpFile, supported)
+		_ = ctx.offerSend(tmpFile, supported)
 	case e := <-errorResult:
 		ctx.sc.onError(e)
 	}

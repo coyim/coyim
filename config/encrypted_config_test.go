@@ -15,11 +15,6 @@ func bytesFromHex(s string) []byte {
 	return val
 }
 
-func byteStringFromHex(s string) string {
-	val, _ := hex.DecodeString(s)
-	return string(val)
-}
-
 const testPassword = "vella extol bowel gnome 34th"
 
 var testSalt = bytesFromHex("E18CB93A823465D2797539EBC5F3C0FD")

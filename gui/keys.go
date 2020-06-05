@@ -12,11 +12,6 @@ func hasShift(evk gdki.EventKey) bool {
 	return hasState(evk, gdki.GDK_SHIFT_MASK)
 }
 
-// Used to indicate scroll lock or caps lock
-func hasLock(evk gdki.EventKey) bool {
-	return hasState(evk, gdki.GDK_LOCK_MASK)
-}
-
 func hasControl(evk gdki.EventKey) bool {
 	return hasState(evk, gdki.GDK_CONTROL_MASK)
 }

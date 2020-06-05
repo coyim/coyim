@@ -6,8 +6,6 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/ui"
@@ -417,39 +415,6 @@ func (u *gtkUI) newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *
 	return v
 }
 
-func (v *chatRoomView) showDebugInfo() {
-	//TODO Remove this. It is only for debugging
-	if v.occupant == nil {
-		return
-	}
-
-	if !v.chat.CheckForSupport(v.occupant.Service) {
-		v.ui.log.Warn("No support to MUC")
-	} else {
-		v.ui.log.Info("MUC is supported")
-	}
-
-	rooms, err := v.chat.QueryRooms(v.occupant.Service)
-	if err != nil {
-		v.ui.log.WithError(err).Warn("Couldn't query rooms")
-	}
-
-	v.ui.log.WithField("occupant", v.occupant.Service).Info("Has rooms:")
-	for _, i := range rooms {
-		v.ui.log.WithFields(log.Fields{
-			"jid":  i.Jid,
-			"name": i.Name,
-		}).Info("Room")
-	}
-
-	response, err := v.chat.QueryRoomInformation(v.occupant.Room.JID())
-	if err != nil {
-		v.ui.log.WithError(err).Warn("Error querying room information")
-	}
-
-	v.ui.log.WithField("room", response).Info("RoomInfo")
-}
-
 func (v *chatRoomView) openWindow() {
 	go v.watchEvents(v.chat.Events())
 	v.Show()
@@ -461,7 +426,7 @@ func (v *chatRoomView) authenticationError() {
 }
 
 func (v *chatRoomView) leaveRoom() {
-	v.chat.LeaveRoom(v.occupant)
+	_ = v.chat.LeaveRoom(v.occupant)
 }
 
 func (v *chatRoomView) sameRoom(from string) bool {
@@ -549,10 +514,6 @@ func (v *chatRoomView) notifyUserLeftRoom(presence *data.ClientPresence) {
 func (v *chatRoomView) notifyUserEnteredRoom(presence *data.ClientPresence) {
 	message := fmt.Sprintf("%v entered the room", resourceFromJid(presence.From))
 	v.notifyStatusChange(message)
-}
-
-func isSelfPresence(presence *data.ClientPresence) bool {
-	return presence.Chat.Status.Code == 110
 }
 
 func (v *chatRoomView) notifyStatusChange(message string) {

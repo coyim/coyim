@@ -57,7 +57,7 @@ func main() {
 	flag.Parse()
 
 	if *config.VersionFlag {
-		fmt.Printf("CoyIM version %s\n", coyimVersion)
+		fmt.Printf("CoyIM version %s (commit: %v built at: %v)\n", coyimVersion, BuildShortCommit, BuildTimestamp)
 		return
 	}
 

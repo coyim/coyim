@@ -71,7 +71,7 @@ func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
 
 func parseRoomInfoForm(forms []data.Form) data.RoomInfoForm {
 	ret := data.RoomInfoForm{}
-	parseForms(&ret, forms)
+	_ = parseForms(&ret, forms)
 	return ret
 }
 

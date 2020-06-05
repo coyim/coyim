@@ -133,7 +133,7 @@ func (c *conn) authenticateWith(mechanism string, user string, password string) 
 	//TODO: this should come from username if it were a full JID
 	//clientAuth.SetProperty(sasl.Realm, "")
 
-	clientAuth.SetProperty(sasl.ClientNonce, clientNonce)
+	_ = clientAuth.SetProperty(sasl.ClientNonce, clientNonce)
 
 	t, err := clientAuth.Step(nil)
 	if err != nil {

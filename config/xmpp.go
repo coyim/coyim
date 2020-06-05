@@ -24,7 +24,7 @@ func socks5UnixProxy(u *url.URL, d proxy.Dialer) (proxy.Dialer, error) {
 
 func genTorAutoString() string {
 	s := [10]byte{}
-	randomString(s[:])
+	_ = randomString(s[:])
 	return "randomTorAuto-" + string(s[:])
 }
 

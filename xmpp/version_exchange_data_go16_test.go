@@ -2,10 +2,6 @@
 
 package xmpp
 
-func isVersionOldish() bool {
-	return false
-}
-
 var validTLSExchange = [][]byte{
 	[]byte(
 		"<?xml version='1.0'?>" +

@@ -19,12 +19,12 @@ const requestDelimiterXML = `
 
 type rosterDelimiter struct {
 	XMLName   xml.Name `xml:"roster:delimiter roster"`
-	delimiter string   `xml:",chardata"`
+	Delimiter string   `xml:",chardata"`
 }
 
 type rosterQuery struct {
 	XMLName   xml.Name        `xml:"jabber:iq:private query"`
-	delimiter rosterDelimiter `xml:"roster:delimiter roster"`
+	Delimiter rosterDelimiter `xml:"roster:delimiter roster"`
 }
 
 // GetRosterDelimiter blocks and waits for the roster delimiter to be delivered
@@ -39,10 +39,10 @@ func (c *conn) GetRosterDelimiter() (string, error) {
 		stanza, ok := iqStanza.Value.(*data.ClientIQ)
 		if ok {
 			var rst rosterQuery
-			if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&rst); err != nil || len(rst.delimiter.delimiter) == 0 {
+			if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&rst); err != nil || len(rst.Delimiter.Delimiter) == 0 {
 				return "", nil
 			}
-			return rst.delimiter.delimiter, nil
+			return rst.Delimiter.Delimiter, nil
 		}
 	case <-time.After(5000 * time.Millisecond):
 	}

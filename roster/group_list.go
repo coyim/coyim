@@ -28,7 +28,7 @@ func (g *Group) findOrCreateInside(path, pathTilNow []string) *Group {
 		GroupName:     path[0],
 		fullGroupName: nowPath,
 		peers:         make([]*Peer, 0),
-		groups:        make(map[string]*Group, 0),
+		groups:        make(map[string]*Group),
 	}
 	g.groups[path[0]] = gg
 
@@ -62,7 +62,7 @@ func TopLevelGroup() *Group {
 		GroupName:     "",
 		fullGroupName: []string{},
 		peers:         make([]*Peer, 0),
-		groups:        make(map[string]*Group, 0),
+		groups:        make(map[string]*Group),
 	}
 }
 

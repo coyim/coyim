@@ -31,9 +31,9 @@ func (s *ScramSuite) TestScramWithRFC5802TestVector(c *C) {
 	mech := &scramMechanism{sha1.New, sha1.Size, false, false}
 	client := mech.NewClient()
 
-	client.SetProperty(sasl.AuthID, "user")
-	client.SetProperty(sasl.Password, "pencil")
-	client.SetProperty(sasl.ClientNonce, "fyko+d2lbbFgONRv9qkxdawL")
+	_ = client.SetProperty(sasl.AuthID, "user")
+	_ = client.SetProperty(sasl.Password, "pencil")
+	_ = client.SetProperty(sasl.ClientNonce, "fyko+d2lbbFgONRv9qkxdawL")
 
 	t, err := client.Step(nil)
 
@@ -60,9 +60,9 @@ func (s *ScramSuite) TestScramWithRFC5802TestVectorAndSupport(c *C) {
 	mech := &scramMechanism{sha1.New, sha1.Size, false, true}
 	client := mech.NewClient()
 
-	client.SetProperty(sasl.AuthID, "user")
-	client.SetProperty(sasl.Password, "pencil")
-	client.SetProperty(sasl.ClientNonce, "b5cff6190013e6")
+	_ = client.SetProperty(sasl.AuthID, "user")
+	_ = client.SetProperty(sasl.Password, "pencil")
+	_ = client.SetProperty(sasl.ClientNonce, "b5cff6190013e6")
 
 	t, err := client.Step(nil)
 
@@ -89,9 +89,9 @@ func (s *ScramSuite) TestScramSha256WithRFC7677TestVector(c *C) {
 	mech := &scramMechanism{sha256.New, sha256.Size, false, false}
 	client := mech.NewClient()
 
-	client.SetProperty(sasl.AuthID, "user")
-	client.SetProperty(sasl.Password, "pencil")
-	client.SetProperty(sasl.ClientNonce, "rOprNGfwEbeRWgbNEkqO")
+	_ = client.SetProperty(sasl.AuthID, "user")
+	_ = client.SetProperty(sasl.Password, "pencil")
+	_ = client.SetProperty(sasl.ClientNonce, "rOprNGfwEbeRWgbNEkqO")
 
 	t, err := client.Step(nil)
 

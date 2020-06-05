@@ -95,7 +95,7 @@ func (a *ApplicationConfig) onAfterSave() {
 // genUniqueID will generate and set a new unique ID fro this application config
 func (a *ApplicationConfig) genUniqueID() {
 	s := [32]byte{}
-	randomString(s[:])
+	_ = randomString(s[:])
 	a.UniqueConfigurationID = hex.EncodeToString(s[:])
 }
 

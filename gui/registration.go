@@ -1,9 +1,6 @@
 package gui
 
 import (
-	"errors"
-	"fmt"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/config"
@@ -17,10 +14,6 @@ import (
 	xmppErr "github.com/coyim/coyim/xmpp/errors"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/gotk3adapter/gtki"
-)
-
-var (
-	errRegistrationAborted = errors.New("registration cancelled")
 )
 
 type registrationForm struct {
@@ -237,7 +230,7 @@ func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, 
 		w.formMessage.SetLabel("")
 		w.doneMessage.SetLabel("")
 
-		w.form.renderForm(title, fields)
+		_ = w.form.renderForm(title, fields)
 		w.assistant.SetPageComplete(pg, true)
 
 		return <-w.formSubmitted
@@ -327,8 +320,4 @@ func (u *gtkUI) showServerSelectionWindow() {
 	})
 
 	w.assistant.ShowAll()
-}
-
-func handleActiveSignal() {
-	fmt.Printf("Activate signal connected")
 }

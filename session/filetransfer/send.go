@@ -162,7 +162,7 @@ func (ctx *sendContext) initSend() {
 	}
 
 	go ctx.listenForCancellation()
-	ctx.offerSend()
+	_ = ctx.offerSend()
 }
 
 // InitSend starts the process of sending a file to a peer

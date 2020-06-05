@@ -1035,12 +1035,10 @@ func (s *ConnectionXMPPSuite) Test_readMessages_passesStanzaToChannel(c *C) {
 	stanzaChan := make(chan data.Stanza)
 	go conn.ReadStanzas(stanzaChan)
 
-	select {
-	case rawStanza, ok := <-stanzaChan:
-		c.Assert(ok, Equals, true)
-		c.Assert(rawStanza.Name.Local, Equals, "message")
-		c.Assert(rawStanza.Value.(*data.ClientMessage).Body, Equals, "something")
-	}
+	rawStanza, ok := <-stanzaChan
+	c.Assert(ok, Equals, true)
+	c.Assert(rawStanza.Name.Local, Equals, "message")
+	c.Assert(rawStanza.Value.(*data.ClientMessage).Body, Equals, "something")
 }
 
 func (s *ConnectionXMPPSuite) Test_readMessages_alertsOnError(c *C) {
@@ -1055,11 +1053,8 @@ func (s *ConnectionXMPPSuite) Test_readMessages_alertsOnError(c *C) {
 	stanzaChan := make(chan data.Stanza, 1)
 	err := conn.ReadStanzas(stanzaChan)
 
-	select {
-	case _, ok := <-stanzaChan:
-		c.Assert(ok, Equals, false)
-	}
-
+	_, ok := <-stanzaChan
+	c.Assert(ok, Equals, false)
 	c.Assert(err.Error(), Equals, "unexpected XMPP message clientx <message/>")
 }
 

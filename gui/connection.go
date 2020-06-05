@@ -77,7 +77,7 @@ func (u *gtkUI) askForPasswordAndConnect(account *account, addGoogleWarning bool
 	if !account.IsAskingForPassword() {
 		accountName := account.session.GetConfig().Account
 		if account.cachedPassword != "" {
-			u.connectWithPassword(account, account.cachedPassword)
+			_ = u.connectWithPassword(account, account.cachedPassword)
 			return
 		}
 

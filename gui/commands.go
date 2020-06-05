@@ -69,7 +69,7 @@ func (u *gtkUI) watchCommands() {
 		case executable:
 			c.execute(u)
 		case otrclient.AuthorizeFingerprintCmd:
-			c.Account.AuthorizeFingerprint(c.Peer.String(), c.Fingerprint)
+			_ = c.Account.AuthorizeFingerprint(c.Peer.String(), c.Fingerprint)
 			u.ExecuteCmd(otrclient.SaveApplicationConfigCmd{})
 		case otrclient.SaveInstanceTagCmd:
 			account := c.Account

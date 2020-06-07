@@ -74,6 +74,8 @@ type gtkUI struct {
 	actionTimes map[string]time.Time
 
 	log coylog.Logger
+
+	hooks OSHooks
 }
 
 // Graphics represent the graphic configuration
@@ -111,7 +113,7 @@ func argsWithApplicationName() *[]string {
 }
 
 // NewGTK returns a new client for a GTK ui
-func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics) UI {
+func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx Graphics, hooks OSHooks) UI {
 	runtime.LockOSThread()
 	coyimVersion = version
 	g = gx
@@ -131,7 +133,10 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		actionTimes: make(map[string]time.Time),
 		deNotify:    newDesktopNotifications(),
 		log:         log.New(),
+		hooks:       hooks,
 	}
+
+	hooks.AfterInit()
 
 	var err error
 	flags := glibi.APPLICATION_FLAGS_NONE

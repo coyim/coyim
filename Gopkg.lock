@@ -54,6 +54,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:a065dc8ac3b12581cbebcb0d13336ed0bfb47dbb41f813fe6ed854e66a989424"
+  name = "github.com/coyim/gotk3osx"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9b156234f1e3b7d9047e5b5464c428d98b7f008c"
+
+[[projects]]
+  branch = "master"
   digest = "1:65ceb4ba5bf492ff2f3d7d00ae80ea65c1ca7ae15bde0e2a5d26877be0bb0d0d"
   name = "github.com/coyim/otr3"
   packages = [
@@ -266,6 +274,7 @@
     "github.com/coyim/gotk3adapter/gtki",
     "github.com/coyim/gotk3adapter/pangoa",
     "github.com/coyim/gotk3adapter/pangoi",
+    "github.com/coyim/gotk3osx",
     "github.com/coyim/otr3",
     "github.com/godbus/dbus",
     "github.com/hydrogen18/stalecucumber",

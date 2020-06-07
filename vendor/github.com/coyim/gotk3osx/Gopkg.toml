@@ -25,30 +25,14 @@
 #   unused-packages = true
 
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/TheCreeper/go-notify"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/coyim/gosx-notifier"
-
-[[constraint]]
-  name = "github.com/godbus/dbus"
-  version = "4.1.0"
-
 [prune]
   go-tests = true
   unused-packages = true
 
 [[constraint]]
-  name = "github.com/sirupsen/logrus"
-  version = "1.6.0"
-
-[[constraint]]
-  name = "golang.org/x/text"
-  version = "0.3.2"
+  name = "github.com/gotk3/gotk3"
+  version = "0.4.0"
 
 [[constraint]]
   branch = "master"
-  name = "github.com/coyim/gotk3osx"
+  name = "github.com/coyim/gotk3adapter"

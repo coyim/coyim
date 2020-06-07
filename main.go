@@ -94,5 +94,5 @@ func runClient() {
 	i18n.InitLocalization(gliba.Real)
 	settings.InitSettings(gliba.Real)
 
-	gui.NewGTK(coyimVersion, session.Factory, xmpp.DialerFactory, g).Loop()
+	gui.NewGTK(coyimVersion, session.Factory, xmpp.DialerFactory, g, hooks()).Loop()
 }

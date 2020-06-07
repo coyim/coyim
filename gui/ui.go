@@ -158,29 +158,9 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 	ret.settings = settings.For("")
 
-	ret.addAction(ret.app, "quit", func() {
-		fmt.Printf("quit on app triggered\n")
-	})
-
-	ret.addAction(ret.app, "about", func() {
-		fmt.Printf("about on app triggered\n")
-	})
-
-	ret.addAction(ret.app, "app.quit", func() {
-		fmt.Printf("app.quit on app triggered\n")
-	})
-
-	ret.addAction(ret.app, "app.about", func() {
-		fmt.Printf("app.about on app triggered\n")
-	})
-
-	ret.addAction(ret.app, "win.quit", func() {
-		fmt.Printf("win.quit on app triggered\n")
-	})
-
-	ret.addAction(ret.app, "win.about", func() {
-		fmt.Printf("win.about on app triggered\n")
-	})
+	ret.addAction(ret.app, "quit", ret.quit)
+	ret.addAction(ret.app, "about", ret.aboutDialog)
+	ret.addAction(ret.app, "preferences", ret.showGlobalPreferences)
 
 	return ret
 }

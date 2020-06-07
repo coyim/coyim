@@ -28,6 +28,11 @@ type Glib interface {
 	MenuItemNewSection(label string, section MenuModel) MenuItem
 	MenuItemNewSubmenu(label string, submenu MenuModel) MenuItem
 	MenuItemNewFromModel(model MenuModel, index int) MenuItem
+
+	ActionNameIsValid(actionName string) bool
+	SimpleActionNew(name string, parameterType VariantType) SimpleAction
+	SimpleActionNewStateful(name string, parameterType VariantType, state Variant) SimpleAction
+	PropertyActionNew(name string, object Object, propertyName string) PropertyAction
 } // end of Glib
 
 func AssertGlib(_ Glib) {}

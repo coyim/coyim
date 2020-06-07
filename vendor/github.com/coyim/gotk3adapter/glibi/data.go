@@ -41,3 +41,27 @@ var (
 	TYPE_OBJECT    Type
 	TYPE_VARIANT   Type
 )
+
+var (
+	VARIANT_TYPE_BOOLEAN           VariantType
+	VARIANT_TYPE_BYTE              VariantType
+	VARIANT_TYPE_INT16             VariantType
+	VARIANT_TYPE_UINT16            VariantType
+	VARIANT_TYPE_INT32             VariantType
+	VARIANT_TYPE_UINT32            VariantType
+	VARIANT_TYPE_INT64             VariantType
+	VARIANT_TYPE_UINT64            VariantType
+	VARIANT_TYPE_HANDLE            VariantType
+	VARIANT_TYPE_DOUBLE            VariantType
+	VARIANT_TYPE_STRING            VariantType
+	VARIANT_TYPE_ANY               VariantType
+	VARIANT_TYPE_BASIC             VariantType
+	VARIANT_TYPE_TUPLE             VariantType
+	VARIANT_TYPE_UNIT              VariantType
+	VARIANT_TYPE_DICTIONARY        VariantType
+	VARIANT_TYPE_STRING_ARRAY      VariantType
+	VARIANT_TYPE_OBJECT_PATH_ARRAY VariantType
+	VARIANT_TYPE_BYTESTRING        VariantType
+	VARIANT_TYPE_BYTESTRING_ARRAY  VariantType
+	VARIANT_TYPE_VARDICT           VariantType
+)

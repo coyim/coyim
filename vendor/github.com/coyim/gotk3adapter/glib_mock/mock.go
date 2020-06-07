@@ -89,3 +89,19 @@ func (*Mock) MenuItemNewSubmenu(label string, submenu glibi.MenuModel) glibi.Men
 func (*Mock) MenuItemNewFromModel(model glibi.MenuModel, index int) glibi.MenuItem {
 	return nil
 }
+
+func (*Mock) ActionNameIsValid(actionName string) bool {
+	return false
+}
+
+func (*Mock) SimpleActionNew(name string, parameterType glibi.VariantType) glibi.SimpleAction {
+	return nil
+}
+
+func (*Mock) SimpleActionNewStateful(name string, parameterType glibi.VariantType, state glibi.Variant) glibi.SimpleAction {
+	return nil
+}
+
+func (*Mock) PropertyActionNew(name string, object glibi.Object, propertyName string) glibi.PropertyAction {
+	return nil
+}

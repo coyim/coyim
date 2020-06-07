@@ -65,3 +65,47 @@ func (v *application) GetMenubar() glibi.MenuModel {
 func (v *application) SetMenubar(val glibi.MenuModel) {
 	v.internal.SetMenubar(gliba.UnwrapMenuModel(val))
 }
+
+func (v *application) LookupAction(actionName string) glibi.Action {
+	return gliba.WrapAction(v.internal.LookupAction(actionName))
+}
+
+func (v *application) AddAction(action glibi.Action) {
+	v.internal.AddAction(gliba.UnwrapAction(action))
+}
+
+func (v *application) RemoveAction(actionName string) {
+	v.internal.RemoveAction(actionName)
+}
+
+func (v *application) HasAction(actionName string) bool {
+	return v.internal.HasAction(actionName)
+}
+
+func (v *application) GetActionEnabled(actionName string) bool {
+	return v.internal.GetActionEnabled(actionName)
+}
+
+func (v *application) GetActionParameterType(actionName string) glibi.VariantType {
+	return gliba.WrapVariantType(v.internal.GetActionParameterType(actionName))
+}
+
+func (v *application) GetActionStateType(actionName string) glibi.VariantType {
+	return gliba.WrapVariantType(v.internal.GetActionStateType(actionName))
+}
+
+func (v *application) GetActionState(actionName string) glibi.Variant {
+	return gliba.WrapVariant(v.internal.GetActionState(actionName))
+}
+
+func (v *application) GetActionStateHint(actionName string) glibi.Variant {
+	return gliba.WrapVariant(v.internal.GetActionStateHint(actionName))
+}
+
+func (v *application) ChangeActionState(actionName string, value glibi.Variant) {
+	v.internal.ChangeActionState(actionName, gliba.UnwrapVariant(value))
+}
+
+func (v *application) Activate(actionName string, parameter glibi.Variant) {
+	v.internal.IActionGroup.Activate(actionName, gliba.UnwrapVariant(parameter))
+}

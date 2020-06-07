@@ -1,8 +1,8 @@
 package gliba
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/gotk3/gotk3/glib"
 )
 
 func init() {
@@ -35,4 +35,26 @@ func init() {
 	glibi.TYPE_PARAM = glibi.Type(glib.TYPE_PARAM)
 	glibi.TYPE_OBJECT = glibi.Type(glib.TYPE_OBJECT)
 	glibi.TYPE_VARIANT = glibi.Type(glib.TYPE_VARIANT)
+
+	glibi.VARIANT_TYPE_BOOLEAN = WrapVariantType(glib.VARIANT_TYPE_BOOLEAN)
+	glibi.VARIANT_TYPE_BYTE = WrapVariantType(glib.VARIANT_TYPE_BYTE)
+	glibi.VARIANT_TYPE_INT16 = WrapVariantType(glib.VARIANT_TYPE_INT16)
+	glibi.VARIANT_TYPE_UINT16 = WrapVariantType(glib.VARIANT_TYPE_UINT16)
+	glibi.VARIANT_TYPE_INT32 = WrapVariantType(glib.VARIANT_TYPE_INT32)
+	glibi.VARIANT_TYPE_UINT32 = WrapVariantType(glib.VARIANT_TYPE_UINT32)
+	glibi.VARIANT_TYPE_INT64 = WrapVariantType(glib.VARIANT_TYPE_INT64)
+	glibi.VARIANT_TYPE_UINT64 = WrapVariantType(glib.VARIANT_TYPE_UINT64)
+	glibi.VARIANT_TYPE_HANDLE = WrapVariantType(glib.VARIANT_TYPE_HANDLE)
+	glibi.VARIANT_TYPE_DOUBLE = WrapVariantType(glib.VARIANT_TYPE_DOUBLE)
+	glibi.VARIANT_TYPE_STRING = WrapVariantType(glib.VARIANT_TYPE_STRING)
+	glibi.VARIANT_TYPE_ANY = WrapVariantType(glib.VARIANT_TYPE_ANY)
+	glibi.VARIANT_TYPE_BASIC = WrapVariantType(glib.VARIANT_TYPE_BASIC)
+	glibi.VARIANT_TYPE_TUPLE = WrapVariantType(glib.VARIANT_TYPE_TUPLE)
+	glibi.VARIANT_TYPE_UNIT = WrapVariantType(glib.VARIANT_TYPE_UNIT)
+	glibi.VARIANT_TYPE_DICTIONARY = WrapVariantType(glib.VARIANT_TYPE_DICTIONARY)
+	glibi.VARIANT_TYPE_STRING_ARRAY = WrapVariantType(glib.VARIANT_TYPE_STRING_ARRAY)
+	glibi.VARIANT_TYPE_OBJECT_PATH_ARRAY = WrapVariantType(glib.VARIANT_TYPE_OBJECT_PATH_ARRAY)
+	glibi.VARIANT_TYPE_BYTESTRING = WrapVariantType(glib.VARIANT_TYPE_BYTESTRING)
+	glibi.VARIANT_TYPE_BYTESTRING_ARRAY = WrapVariantType(glib.VARIANT_TYPE_BYTESTRING_ARRAY)
+	glibi.VARIANT_TYPE_VARDICT = WrapVariantType(glib.VARIANT_TYPE_VARDICT)
 }

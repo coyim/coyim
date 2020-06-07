@@ -4,6 +4,8 @@ import "github.com/coyim/gotk3adapter/glibi"
 
 type Application interface {
 	glibi.Application
+	glibi.ActionGroup
+	glibi.ActionMap
 
 	GetActiveWindow() Window
 	AddWindow(Window)

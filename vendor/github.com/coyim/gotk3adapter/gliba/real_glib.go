@@ -96,3 +96,19 @@ func (*RealGlib) MenuItemNewSubmenu(label string, submenu glibi.MenuModel) glibi
 func (*RealGlib) MenuItemNewFromModel(model glibi.MenuModel, index int) glibi.MenuItem {
 	return WrapMenuItemSimple(glib.MenuItemNewFromModel(UnwrapMenuModel(model), index))
 }
+
+func (*RealGlib) ActionNameIsValid(actionName string) bool {
+	return glib.ActionNameIsValid(actionName)
+}
+
+func (*RealGlib) SimpleActionNew(name string, parameterType glibi.VariantType) glibi.SimpleAction {
+	return WrapSimpleAction(glib.SimpleActionNew(name, UnwrapVariantType(parameterType)))
+}
+
+func (*RealGlib) SimpleActionNewStateful(name string, parameterType glibi.VariantType, state glibi.Variant) glibi.SimpleAction {
+	return WrapSimpleAction(glib.SimpleActionNewStateful(name, UnwrapVariantType(parameterType), UnwrapVariant(state)))
+}
+
+func (*RealGlib) PropertyActionNew(name string, object glibi.Object, propertyName string) glibi.PropertyAction {
+	return WrapPropertyAction(glib.PropertyActionNew(name, UnwrapObject(object), propertyName))
+}

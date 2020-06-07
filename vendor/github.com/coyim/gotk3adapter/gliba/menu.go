@@ -19,11 +19,26 @@ func WrapMenuModel(v *glib.MenuModel, e error) (glibi.MenuModel, error) {
 	return WrapMenuModelSimple(v), e
 }
 
-func UnwrapMenuModel(v glibi.MenuModel) *glib.MenuModel {
+func UnwrapMenuModelOnly(v glibi.MenuModel) *glib.MenuModel {
 	if v == nil {
 		return nil
 	}
 	return v.(*menuModel).MenuModel
+}
+
+func UnwrapMenuModel(v glibi.MenuModel) *glib.MenuModel {
+	switch oo := v.(type) {
+	case *menu:
+		val := UnwrapMenu(oo)
+		if val == nil {
+			return nil
+		}
+		return &val.MenuModel
+	case *menuModel:
+		return UnwrapMenuModelOnly(oo)
+	default:
+		return nil
+	}
 }
 
 func (m *menuModel) IsMutable() bool {

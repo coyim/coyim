@@ -393,6 +393,8 @@ func (u *gtkUI) newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *
 	v.occupantsList.m = make(map[string]*roomOccupant, 5)
 
 	err := builder.bindObjects(v)
+	v.SetApplication(u.app)
+
 	if err != nil {
 		panic(err)
 	}

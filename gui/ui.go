@@ -653,6 +653,8 @@ func (u *gtkUI) newCustomConversation() {
 		"address", &peerInput,
 	)
 
+	dialog.SetApplication(u.app)
+
 	for _, acc := range accounts {
 		iter := model.Append()
 		_ = model.SetValue(iter, 0, acc.session.GetConfig().Account)

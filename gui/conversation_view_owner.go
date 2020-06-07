@@ -90,6 +90,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 	// fmt.Printf("createWindowedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("Conversation")
 	win := builder.getObj("conversation").(gtki.Window)
+	win.SetApplication(cvf.ui.app)
 
 	win.SetTitle(windowConversationTitle(cvf.ui, cvf.peer, cvf.account, cvf.potentialTarget()))
 	winBox := builder.getObj("box").(gtki.Box)

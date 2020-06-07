@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type notebook struct {
@@ -10,18 +10,18 @@ type notebook struct {
 	internal *gtk.Notebook
 }
 
-func wrapNotebookSimple(v *gtk.Notebook) *notebook {
+func WrapNotebookSimple(v *gtk.Notebook) gtki.Notebook {
 	if v == nil {
 		return nil
 	}
-	return &notebook{wrapContainerSimple(&v.Container), v}
+	return &notebook{WrapContainerSimple(&v.Container).(*container), v}
 }
 
-func wrapNotebook(v *gtk.Notebook, e error) (*notebook, error) {
-	return wrapNotebookSimple(v), e
+func WrapNotebook(v *gtk.Notebook, e error) (gtki.Notebook, error) {
+	return WrapNotebookSimple(v), e
 }
 
-func unwrapNotebook(v gtki.Notebook) *gtk.Notebook {
+func UnwrapNotebook(v gtki.Notebook) *gtk.Notebook {
 	if v == nil {
 		return nil
 	}
@@ -53,7 +53,7 @@ func (v *notebook) SetShowTabs(v1 bool) {
 }
 
 func (v *notebook) AppendPage(v1, v2 gtki.Widget) int {
-	return v.internal.AppendPage(unwrapWidget(v1), unwrapWidget(v2))
+	return v.internal.AppendPage(UnwrapWidget(v1), UnwrapWidget(v2))
 }
 
 func (v *notebook) GetNthPage(v1 int) (gtki.Widget, error) {
@@ -62,5 +62,5 @@ func (v *notebook) GetNthPage(v1 int) (gtki.Widget, error) {
 }
 
 func (v *notebook) SetTabLabelText(v1 gtki.Widget, v2 string) {
-	v.internal.SetTabLabelText(unwrapWidget(v1), v2)
+	v.internal.SetTabLabelText(UnwrapWidget(v1), v2)
 }

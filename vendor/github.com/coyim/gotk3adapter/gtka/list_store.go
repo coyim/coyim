@@ -1,10 +1,10 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type listStore struct {
@@ -12,18 +12,18 @@ type listStore struct {
 	internal *gtk.ListStore
 }
 
-func wrapListStoreSimple(v *gtk.ListStore) *listStore {
+func WrapListStoreSimple(v *gtk.ListStore) gtki.ListStore {
 	if v == nil {
 		return nil
 	}
 	return &listStore{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapListStore(v *gtk.ListStore, e error) (*listStore, error) {
-	return wrapListStoreSimple(v), e
+func WrapListStore(v *gtk.ListStore, e error) (gtki.ListStore, error) {
+	return WrapListStoreSimple(v), e
 }
 
-func unwrapListStore(v gtki.ListStore) *gtk.ListStore {
+func UnwrapListStore(v gtki.ListStore) *gtk.ListStore {
 	if v == nil {
 		return nil
 	}
@@ -35,42 +35,42 @@ func (v *listStore) Clear() {
 }
 
 func (v *listStore) Append() gtki.TreeIter {
-	return wrapTreeIterSimple(v.internal.Append())
+	return WrapTreeIterSimple(v.internal.Append())
 }
 
 func (v *listStore) Remove(v2 gtki.TreeIter) bool {
-	return v.internal.Remove(unwrapTreeIter(v2))
+	return v.internal.Remove(UnwrapTreeIter(v2))
 }
 
 func (v *listStore) Set2(v2 gtki.TreeIter, v3 []int, v4 []interface{}) error {
-	return v.internal.Set(unwrapTreeIter(v2), v3, gliba.FixupArray(v4))
+	return v.internal.Set(UnwrapTreeIter(v2), v3, gliba.FixupArray(v4))
 }
 
 func (v *listStore) SetValue(v1 gtki.TreeIter, v2 int, v3 interface{}) error {
-	return v.internal.SetValue(unwrapTreeIter(v1), v2, gliba.UnwrapAllGuard(v3))
+	return v.internal.SetValue(UnwrapTreeIter(v1), v2, gliba.UnwrapAllGuard(v3))
 }
 
 func (v *listStore) GetIter(v1 gtki.TreePath) (gtki.TreeIter, error) {
-	return wrapTreeIter(v.internal.GetIter(unwrapTreePath(v1)))
+	return WrapTreeIter(v.internal.GetIter(UnwrapTreePath(v1)))
 }
 
 func (v *listStore) GetIterFirst() (gtki.TreeIter, bool) {
 	v1, v2 := v.internal.GetIterFirst()
-	return wrapTreeIterSimple(v1), v2
+	return WrapTreeIterSimple(v1), v2
 }
 
 func (v *listStore) GetIterFromString(v1 string) (gtki.TreeIter, error) {
-	return wrapTreeIter(v.internal.GetIterFromString(v1))
+	return WrapTreeIter(v.internal.GetIterFromString(v1))
 }
 
 func (v *listStore) GetPath(v1 gtki.TreeIter) (gtki.TreePath, error) {
-	return wrapTreePath(v.internal.GetPath(unwrapTreeIter(v1)))
+	return WrapTreePath(v.internal.GetPath(UnwrapTreeIter(v1)))
 }
 
 func (v *listStore) GetValue(v1 gtki.TreeIter, v2 int) (glibi.Value, error) {
-	return gliba.WrapValue(v.internal.GetValue(unwrapTreeIter(v1), v2))
+	return gliba.WrapValue(v.internal.GetValue(UnwrapTreeIter(v1), v2))
 }
 
 func (v *listStore) IterNext(v1 gtki.TreeIter) bool {
-	return v.internal.IterNext(unwrapTreeIter(v1))
+	return v.internal.IterNext(UnwrapTreeIter(v1))
 }

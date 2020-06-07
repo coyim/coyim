@@ -3,30 +3,30 @@ package gtka
 import "github.com/coyim/gotk3adapter/gtki"
 import "github.com/gotk3/gotk3/gtk"
 
-func unwrapTreeModel(s gtki.TreeModel) gtk.ITreeModel {
+func UnwrapTreeModel(s gtki.TreeModel) gtk.ITreeModel {
 	if s == nil {
 		return nil
 	}
 
 	switch ss := s.(type) {
 	case *listStore:
-		return unwrapListStore(ss)
+		return UnwrapListStore(ss)
 	case *treeStore:
-		return unwrapTreeStore(ss)
+		return UnwrapTreeStore(ss)
 	}
 	return nil
 }
 
-func wrapTreeModelSimple(s gtk.ITreeModel) gtki.TreeModel {
+func WrapTreeModelSimple(s gtk.ITreeModel) gtki.TreeModel {
 	if s == nil {
 		return nil
 	}
 
 	switch ss := s.(type) {
 	case *gtk.ListStore:
-		return wrapListStoreSimple(ss)
+		return WrapListStoreSimple(ss)
 	case *gtk.TreeStore:
-		return wrapTreeStoreSimple(ss)
+		return WrapTreeStoreSimple(ss)
 	}
 	return nil
 }

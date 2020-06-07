@@ -1,8 +1,8 @@
 package gliba
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/gotk3/gotk3/glib"
 )
 
 type Application struct {
@@ -17,7 +17,7 @@ func WrapApplicationSimple(v *glib.Application) *Application {
 	return &Application{WrapObjectSimple(v.Object), v}
 }
 
-func unwrapApplication(v glibi.Application) *glib.Application {
+func UnwrapApplication(v glibi.Application) *glib.Application {
 	if v == nil {
 		return nil
 	}

@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type progressBar struct {
@@ -10,19 +10,19 @@ type progressBar struct {
 	internal *gtk.ProgressBar
 }
 
-func wrapProgressBarSimple(v *gtk.ProgressBar) *progressBar {
+func WrapProgressBarSimple(v *gtk.ProgressBar) gtki.ProgressBar {
 	if v == nil {
 		return nil
 	}
 
-	return &progressBar{wrapWidgetSimple(&v.Widget), v}
+	return &progressBar{WrapWidgetSimple(&v.Widget).(*widget), v}
 }
 
-func wrapProgressBar(v *gtk.ProgressBar, e error) (*progressBar, error) {
-	return wrapProgressBarSimple(v), e
+func WrapProgressBar(v *gtk.ProgressBar, e error) (gtki.ProgressBar, error) {
+	return WrapProgressBarSimple(v), e
 }
 
-func unwrapProgressBar(v gtki.ProgressBar) *gtk.ProgressBar {
+func UnwrapProgressBar(v gtki.ProgressBar) *gtk.ProgressBar {
 	if v == nil {
 		return nil
 	}

@@ -9,18 +9,18 @@ type event struct {
 	*gdk.Event
 }
 
-func wrapEventSimple(v *gdk.Event) *event {
+func WrapEventSimple(v *gdk.Event) gdki.Event {
 	if v == nil {
 		return nil
 	}
 	return &event{v}
 }
 
-func wrapEvent(v *gdk.Event, e error) (*event, error) {
-	return wrapEventSimple(v), e
+func WrapEvent(v *gdk.Event, e error) (gdki.Event, error) {
+	return WrapEventSimple(v), e
 }
 
-func unwrapEvent(v gdki.Event) *gdk.Event {
+func UnwrapEventOnly(v gdki.Event) *gdk.Event {
 	if v == nil {
 		return nil
 	}
@@ -30,19 +30,19 @@ func unwrapEvent(v gdki.Event) *gdk.Event {
 func UnwrapEvent(v gdki.Event) *gdk.Event {
 	switch oo := v.(type) {
 	case *eventButton:
-		val := unwrapEventButton(oo)
+		val := UnwrapEventButton(oo)
 		if val == nil {
 			return nil
 		}
 		return val.Event
 	case *eventKey:
-		val := unwrapEventKey(oo)
+		val := UnwrapEventKey(oo)
 		if val == nil {
 			return nil
 		}
 		return val.Event
 	case *event:
-		val := unwrapEvent(oo)
+		val := UnwrapEventOnly(oo)
 		if val == nil {
 			return nil
 		}

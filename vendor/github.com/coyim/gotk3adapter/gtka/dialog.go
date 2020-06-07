@@ -10,18 +10,18 @@ type dialog struct {
 	internal *gtk.Dialog
 }
 
-func wrapDialogSimple(v *gtk.Dialog) *dialog {
+func WrapDialogSimple(v *gtk.Dialog) gtki.Dialog {
 	if v == nil {
 		return nil
 	}
-	return &dialog{wrapWindowSimple(&v.Window), v}
+	return &dialog{WrapWindowSimple(&v.Window).(*window), v}
 }
 
-func wrapDialog(v *gtk.Dialog, e error) (*dialog, error) {
-	return wrapDialogSimple(v), e
+func WrapDialog(v *gtk.Dialog, e error) (gtki.Dialog, error) {
+	return WrapDialogSimple(v), e
 }
 
-func unwrapDialog(v gtki.Dialog) *gtk.Dialog {
+func UnwrapDialog(v gtki.Dialog) *gtk.Dialog {
 	if v == nil {
 		return nil
 	}

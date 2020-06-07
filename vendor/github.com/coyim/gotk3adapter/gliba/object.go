@@ -3,8 +3,8 @@ package gliba
 import (
 	"reflect"
 
-	"github.com/gotk3/gotk3/glib"
 	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/gotk3/gotk3/glib"
 )
 
 type Object struct {
@@ -18,7 +18,7 @@ func WrapObjectSimple(v *glib.Object) *Object {
 	return &Object{v}
 }
 
-func unwrapObject(v glibi.Object) *glib.Object {
+func UnwrapObject(v glibi.Object) *glib.Object {
 	if v == nil {
 		return nil
 	}

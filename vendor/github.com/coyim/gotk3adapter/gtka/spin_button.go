@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type spinButton struct {
@@ -10,18 +10,18 @@ type spinButton struct {
 	internal *gtk.SpinButton
 }
 
-func wrapSpinButtonSimple(v *gtk.SpinButton) *spinButton {
+func WrapSpinButtonSimple(v *gtk.SpinButton) gtki.SpinButton {
 	if v == nil {
 		return nil
 	}
-	return &spinButton{wrapEntrySimple(&v.Entry), v}
+	return &spinButton{WrapEntrySimple(&v.Entry).(*entry), v}
 }
 
-func wrapSpinButton(v *gtk.SpinButton, e error) (*spinButton, error) {
-	return wrapSpinButtonSimple(v), e
+func WrapSpinButton(v *gtk.SpinButton, e error) (gtki.SpinButton, error) {
+	return WrapSpinButtonSimple(v), e
 }
 
-func unwrapSpinButton(v gtki.SpinButton) *gtk.SpinButton {
+func UnwrapSpinButton(v gtki.SpinButton) *gtk.SpinButton {
 	if v == nil {
 		return nil
 	}
@@ -41,7 +41,7 @@ func (v *spinButton) GetValue() float64 {
 }
 
 func (v *spinButton) GetAdjustment() gtki.Adjustment {
-	return wrapAdjustmentSimple(v.internal.GetAdjustment())
+	return WrapAdjustmentSimple(v.internal.GetAdjustment())
 }
 
 func (v *spinButton) SetRange(v1 float64, v2 float64) {

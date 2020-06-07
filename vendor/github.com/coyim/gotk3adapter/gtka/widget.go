@@ -21,18 +21,18 @@ func (v *widget) toWidget() *widget {
 	return v
 }
 
-func wrapWidgetSimple(v *gtk.Widget) *widget {
+func WrapWidgetSimple(v *gtk.Widget) gtki.Widget {
 	if v == nil {
 		return nil
 	}
 	return &widget{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapWidget(v *gtk.Widget, e error) (*widget, error) {
-	return wrapWidgetSimple(v), e
+func WrapWidget(v *gtk.Widget, e error) (gtki.Widget, error) {
+	return WrapWidgetSimple(v), e
 }
 
-func unwrapWidget(v gtki.Widget) *gtk.Widget {
+func UnwrapWidget(v gtki.Widget) *gtk.Widget {
 	if v == nil {
 		return nil
 	}
@@ -93,7 +93,7 @@ func (v *widget) GetAllocatedWidth() int {
 
 func (v *widget) GetParent() (gtki.Widget, error) {
 	parent, err := v.internal.GetParent()
-	return wrapWidget(parent, err)
+	return WrapWidget(parent, err)
 }
 
 func (v *widget) GrabFocus() {
@@ -129,7 +129,7 @@ func (v *widget) GetWindow() (gdki.Window, error) {
 }
 
 func (v *widget) GetStyleContext() (gtki.StyleContext, error) {
-	return wrapStyleContext(v.internal.GetStyleContext())
+	return WrapStyleContext(v.internal.GetStyleContext())
 }
 
 func (v *widget) SetHAlign(v2 gtki.Align) {

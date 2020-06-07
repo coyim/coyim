@@ -1,10 +1,10 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gdka"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type menu struct {
@@ -12,18 +12,18 @@ type menu struct {
 	internal *gtk.Menu
 }
 
-func wrapMenuSimple(v *gtk.Menu) *menu {
+func WrapMenuSimple(v *gtk.Menu) gtki.Menu {
 	if v == nil {
 		return nil
 	}
-	return &menu{wrapMenuShellSimple(&v.MenuShell), v}
+	return &menu{WrapMenuShellSimple(&v.MenuShell).(*menuShell), v}
 }
 
-func wrapMenu(v *gtk.Menu, e error) (*menu, error) {
-	return wrapMenuSimple(v), e
+func WrapMenu(v *gtk.Menu, e error) (gtki.Menu, error) {
+	return WrapMenuSimple(v), e
 }
 
-func unwrapMenu(v gtki.Menu) *gtk.Menu {
+func UnwrapMenu(v gtki.Menu) *gtk.Menu {
 	if v == nil {
 		return nil
 	}

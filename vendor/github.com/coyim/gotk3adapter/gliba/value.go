@@ -1,26 +1,26 @@
 package gliba
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/gotk3/gotk3/glib"
 )
 
 type value struct {
 	*glib.Value
 }
 
-func wrapValueSimple(v *glib.Value) *value {
+func WrapValueSimple(v *glib.Value) glibi.Value {
 	if v == nil {
 		return nil
 	}
 	return &value{v}
 }
 
-func WrapValue(v *glib.Value, e error) (*value, error) {
-	return wrapValueSimple(v), e
+func WrapValue(v *glib.Value, e error) (glibi.Value, error) {
+	return WrapValueSimple(v), e
 }
 
-func unwrapValue(v glibi.Value) *glib.Value {
+func UnwrapValue(v glibi.Value) *glib.Value {
 	if v == nil {
 		return nil
 	}

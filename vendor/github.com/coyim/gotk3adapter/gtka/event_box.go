@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type eventBox struct {
@@ -18,18 +18,18 @@ func (v *eventBox) toEventBox() *eventBox {
 	return v
 }
 
-func wrapEventBoxSimple(v *gtk.EventBox) *eventBox {
+func WrapEventBoxSimple(v *gtk.EventBox) gtki.EventBox {
 	if v == nil {
 		return nil
 	}
-	return &eventBox{wrapBinSimple(&v.Bin), v}
+	return &eventBox{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapEventBox(v *gtk.EventBox, e error) (*eventBox, error) {
-	return wrapEventBoxSimple(v), e
+func WrapEventBox(v *gtk.EventBox, e error) (gtki.EventBox, error) {
+	return WrapEventBoxSimple(v), e
 }
 
-func unwrapEventBox(v gtki.EventBox) *gtk.EventBox {
+func UnwrapEventBox(v gtki.EventBox) *gtk.EventBox {
 	if v == nil {
 		return nil
 	}

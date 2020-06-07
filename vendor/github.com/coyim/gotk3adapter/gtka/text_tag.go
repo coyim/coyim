@@ -1,9 +1,9 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type textTag struct {
@@ -11,18 +11,18 @@ type textTag struct {
 	internal *gtk.TextTag
 }
 
-func wrapTextTagSimple(v *gtk.TextTag) *textTag {
+func WrapTextTagSimple(v *gtk.TextTag) gtki.TextTag {
 	if v == nil {
 		return nil
 	}
 	return &textTag{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapTextTag(v *gtk.TextTag, e error) (*textTag, error) {
-	return wrapTextTagSimple(v), e
+func WrapTextTag(v *gtk.TextTag, e error) (gtki.TextTag, error) {
+	return WrapTextTagSimple(v), e
 }
 
-func unwrapTextTag(v gtki.TextTag) *gtk.TextTag {
+func UnwrapTextTag(v gtki.TextTag) *gtk.TextTag {
 	if v == nil {
 		return nil
 	}

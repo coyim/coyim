@@ -1,22 +1,22 @@
 package gliba
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/gotk3/gotk3/glib"
 )
 
 type settingsSchema struct {
 	*glib.SettingsSchema
 }
 
-func wrapSettingsSchemaSimple(v *glib.SettingsSchema) *settingsSchema {
+func WrapSettingsSchemaSimple(v *glib.SettingsSchema) glibi.SettingsSchema {
 	if v == nil {
 		return nil
 	}
 	return &settingsSchema{v}
 }
 
-func unwrapSettingsSchema(v glibi.SettingsSchema) *glib.SettingsSchema {
+func UnwrapSettingsSchema(v glibi.SettingsSchema) *glib.SettingsSchema {
 	if v == nil {
 		return nil
 	}
@@ -24,7 +24,7 @@ func unwrapSettingsSchema(v glibi.SettingsSchema) *glib.SettingsSchema {
 }
 
 func (v *settingsSchema) Ref() glibi.SettingsSchema {
-	return wrapSettingsSchemaSimple(v.SettingsSchema.Ref())
+	return WrapSettingsSchemaSimple(v.SettingsSchema.Ref())
 }
 
 func (v *settingsSchema) Unref() {

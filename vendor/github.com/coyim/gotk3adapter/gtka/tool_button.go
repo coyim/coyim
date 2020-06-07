@@ -10,18 +10,18 @@ type toolButton struct {
 	internal *gtk.ToolButton
 }
 
-func wrapToolButtonSimple(v *gtk.ToolButton) *toolButton {
+func WrapToolButtonSimple(v *gtk.ToolButton) gtki.ToolButton {
 	if v == nil {
 		return nil
 	}
-	return &toolButton{wrapBinSimple(&v.Bin), v}
+	return &toolButton{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapToolButton(v *gtk.ToolButton, e error) (*toolButton, error) {
-	return wrapToolButtonSimple(v), e
+func WrapToolButton(v *gtk.ToolButton, e error) (gtki.ToolButton, error) {
+	return WrapToolButtonSimple(v), e
 }
 
-func unwrapToolButton(v gtki.ToolButton) *gtk.ToolButton {
+func UnwrapToolButton(v gtki.ToolButton) *gtk.ToolButton {
 	if v == nil {
 		return nil
 	}
@@ -29,5 +29,5 @@ func unwrapToolButton(v gtki.ToolButton) *gtk.ToolButton {
 }
 
 func (v *toolButton) Add(v1 gtki.Widget) {
-	v.internal.Add(unwrapWidget(v1))
+	v.internal.Add(UnwrapWidget(v1))
 }

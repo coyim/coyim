@@ -14,11 +14,11 @@ type RealGtk struct{}
 var Real = &RealGtk{}
 
 func (*RealGtk) AboutDialogNew() (gtki.AboutDialog, error) {
-	return wrapAboutDialog(gtk.AboutDialogNew())
+	return WrapAboutDialog(gtk.AboutDialogNew())
 }
 
 func (*RealGtk) AccelGroupNew() (gtki.AccelGroup, error) {
-	return wrapAccelGroup(gtk.AccelGroupNew())
+	return WrapAccelGroup(gtk.AccelGroupNew())
 }
 
 func (*RealGtk) AcceleratorParse(acc string) (uint, gdki.ModifierType) {
@@ -27,39 +27,39 @@ func (*RealGtk) AcceleratorParse(acc string) (uint, gdki.ModifierType) {
 }
 
 func (*RealGtk) AddProviderForScreen(s gdki.Screen, provider gtki.StyleProvider, prio uint) {
-	gtk.AddProviderForScreen(gdka.UnwrapScreen(s), unwrapStyleProvider(provider), prio)
+	gtk.AddProviderForScreen(gdka.UnwrapScreen(s), UnwrapStyleProvider(provider), prio)
 }
 
 func (*RealGtk) ApplicationNew(appId string, flags glibi.ApplicationFlags) (gtki.Application, error) {
-	return wrapApplication(gtk.ApplicationNew(appId, glib.ApplicationFlags(flags)))
+	return WrapApplication(gtk.ApplicationNew(appId, glib.ApplicationFlags(flags)))
 }
 
 func (*RealGtk) AssistantNew() (gtki.Assistant, error) {
-	return wrapAssistant(gtk.AssistantNew())
+	return WrapAssistant(gtk.AssistantNew())
 }
 
 func (*RealGtk) BuilderNew() (gtki.Builder, error) {
-	return wrapBuilder(gtk.BuilderNew())
+	return WrapBuilder(gtk.BuilderNew())
 }
 
 func (*RealGtk) BuilderNewFromResource(s string) (gtki.Builder, error) {
-	return wrapBuilder(gtk.BuilderNewFromResource(s))
+	return WrapBuilder(gtk.BuilderNewFromResource(s))
 }
 
 func (*RealGtk) CellRendererTextNew() (gtki.CellRendererText, error) {
-	return wrapCellRendererText(gtk.CellRendererTextNew())
+	return WrapCellRendererText(gtk.CellRendererTextNew())
 }
 
 func (*RealGtk) CheckButtonNew() (gtki.CheckButton, error) {
-	return wrapCheckButton(gtk.CheckButtonNew())
+	return WrapCheckButton(gtk.CheckButtonNew())
 }
 
 func (*RealGtk) CheckButtonNewWithMnemonic(label string) (gtki.CheckButton, error) {
-	return wrapCheckButton(gtk.CheckButtonNewWithMnemonic(label))
+	return WrapCheckButton(gtk.CheckButtonNewWithMnemonic(label))
 }
 
 func (*RealGtk) CheckMenuItemNewWithMnemonic(label string) (gtki.CheckMenuItem, error) {
-	return wrapCheckMenuItem(gtk.CheckMenuItemNewWithMnemonic(label))
+	return WrapCheckMenuItem(gtk.CheckMenuItemNewWithMnemonic(label))
 }
 
 func (*RealGtk) CheckVersion(major, minor, micro uint) error {
@@ -67,31 +67,31 @@ func (*RealGtk) CheckVersion(major, minor, micro uint) error {
 }
 
 func (*RealGtk) ComboBoxNew() (gtki.ComboBox, error) {
-	return wrapComboBox(gtk.ComboBoxNew())
+	return WrapComboBox(gtk.ComboBoxNew())
 }
 
 func (*RealGtk) ComboBoxTextNew() (gtki.ComboBoxText, error) {
-	return wrapComboBoxText(gtk.ComboBoxTextNew())
+	return WrapComboBoxText(gtk.ComboBoxTextNew())
 }
 
 func (*RealGtk) CssProviderNew() (gtki.CssProvider, error) {
-	return wrapCssProvider(gtk.CssProviderNew())
+	return WrapCssProvider(gtk.CssProviderNew())
 }
 
 func (*RealGtk) CssProviderGetNamed(name, variant string) (gtki.CssProvider, error) {
-	return wrapCssProvider(gtk.CssProviderGetNamed(name, variant))
+	return WrapCssProvider(gtk.CssProviderGetNamed(name, variant))
 }
 
 func (*RealGtk) EntryNew() (gtki.Entry, error) {
-	return wrapEntry(gtk.EntryNew())
+	return WrapEntry(gtk.EntryNew())
 }
 
 func (*RealGtk) EventBoxNew() (gtki.EventBox, error) {
-	return wrapEventBox(gtk.EventBoxNew())
+	return WrapEventBox(gtk.EventBoxNew())
 }
 
 func (*RealGtk) FileChooserDialogNewWith2Buttons(title string, parent gtki.Window, action gtki.FileChooserAction, first_button_text string, first_button_id gtki.ResponseType, second_button_text string, second_button_id gtki.ResponseType) (gtki.FileChooserDialog, error) {
-	return wrapFileChooserDialog(gtk.FileChooserDialogNewWith2Buttons(title, unwrapWindow(parent), gtk.FileChooserAction(action), first_button_text, gtk.ResponseType(first_button_id), second_button_text, gtk.ResponseType(second_button_id)))
+	return WrapFileChooserDialog(gtk.FileChooserDialogNewWith2Buttons(title, UnwrapWindow(parent), gtk.FileChooserAction(action), first_button_text, gtk.ResponseType(first_button_id), second_button_text, gtk.ResponseType(second_button_id)))
 }
 
 func (*RealGtk) GetMajorVersion() uint {
@@ -107,23 +107,23 @@ func (*RealGtk) GetMicroVersion() uint {
 }
 
 func (*RealGtk) ImageNewFromFile(filename string) (gtki.Image, error) {
-	return wrapImage(gtk.ImageNewFromFile(filename))
+	return WrapImage(gtk.ImageNewFromFile(filename))
 }
 
 func (*RealGtk) ImageNewFromResource(path string) (gtki.Image, error) {
-	return wrapImage(gtk.ImageNewFromResource(path))
+	return WrapImage(gtk.ImageNewFromResource(path))
 }
 
 func (*RealGtk) ImageNewFromPixbuf(v1 gdki.Pixbuf) (gtki.Image, error) {
-	return wrapImage(gtk.ImageNewFromPixbuf(gdka.UnwrapPixbuf(v1)))
+	return WrapImage(gtk.ImageNewFromPixbuf(gdka.UnwrapPixbuf(v1)))
 }
 
 func (*RealGtk) ImageNewFromIconName(name string, v2 gtki.IconSize) (gtki.Image, error) {
-	return wrapImage(gtk.ImageNewFromIconName(name, gtk.IconSize(v2)))
+	return WrapImage(gtk.ImageNewFromIconName(name, gtk.IconSize(v2)))
 }
 
 func (*RealGtk) InfoBarNew() (gtki.InfoBar, error) {
-	return wrapInfoBar(gtk.InfoBarNew())
+	return WrapInfoBar(gtk.InfoBarNew())
 }
 
 func (*RealGtk) Init(args *[]string) {
@@ -131,7 +131,7 @@ func (*RealGtk) Init(args *[]string) {
 }
 
 func (*RealGtk) LabelNew(str string) (gtki.Label, error) {
-	return wrapLabel(gtk.LabelNew(str))
+	return WrapLabel(gtk.LabelNew(str))
 }
 
 func unwrapTypes(ts []glibi.Type) []glib.Type {
@@ -143,56 +143,56 @@ func unwrapTypes(ts []glibi.Type) []glib.Type {
 }
 
 func (*RealGtk) ListStoreNew(types ...glibi.Type) (gtki.ListStore, error) {
-	return wrapListStore(gtk.ListStoreNew(unwrapTypes(types)...))
+	return WrapListStore(gtk.ListStoreNew(unwrapTypes(types)...))
 }
 
 func (*RealGtk) MenuItemNew() (gtki.MenuItem, error) {
-	return wrapMenuItem(gtk.MenuItemNew())
+	return WrapMenuItem(gtk.MenuItemNew())
 }
 
 func (*RealGtk) MenuItemNewWithMnemonic(label string) (gtki.MenuItem, error) {
-	return wrapMenuItem(gtk.MenuItemNewWithMnemonic(label))
+	return WrapMenuItem(gtk.MenuItemNewWithMnemonic(label))
 }
 
 func (*RealGtk) MenuItemNewWithLabel(label string) (gtki.MenuItem, error) {
-	return wrapMenuItem(gtk.MenuItemNewWithLabel(label))
+	return WrapMenuItem(gtk.MenuItemNewWithLabel(label))
 }
 
 func (*RealGtk) MenuNew() (gtki.Menu, error) {
-	return wrapMenu(gtk.MenuNew())
+	return WrapMenu(gtk.MenuNew())
 }
 
 func (*RealGtk) SeparatorMenuItemNew() (gtki.SeparatorMenuItem, error) {
-	return wrapSeparatorMenuItem(gtk.SeparatorMenuItemNew())
+	return WrapSeparatorMenuItem(gtk.SeparatorMenuItemNew())
 }
 
 func (*RealGtk) SearchBarNew() (gtki.SearchBar, error) {
-	return wrapSearchBar(gtk.SearchBarNew())
+	return WrapSearchBar(gtk.SearchBarNew())
 }
 
 func (*RealGtk) SearchEntryNew() (gtki.SearchEntry, error) {
-	return wrapSearchEntry(gtk.SearchEntryNew())
+	return WrapSearchEntry(gtk.SearchEntryNew())
 }
 
 func (*RealGtk) TextBufferNew(table gtki.TextTagTable) (gtki.TextBuffer, error) {
-	return wrapTextBuffer(gtk.TextBufferNew(unwrapTextTagTable(table)))
+	return WrapTextBuffer(gtk.TextBufferNew(UnwrapTextTagTable(table)))
 }
 
 func (*RealGtk) TextTagNew(name string) (gtki.TextTag, error) {
-	return wrapTextTag(gtk.TextTagNew(name))
+	return WrapTextTag(gtk.TextTagNew(name))
 }
 
 func (*RealGtk) TextTagTableNew() (gtki.TextTagTable, error) {
-	return wrapTextTagTable(gtk.TextTagTableNew())
+	return WrapTextTagTable(gtk.TextTagTableNew())
 }
 
 func (*RealGtk) TextViewNew() (gtki.TextView, error) {
-	return wrapTextView(gtk.TextViewNew())
+	return WrapTextView(gtk.TextViewNew())
 }
 
 func (*RealGtk) TreePathNew() gtki.TreePath {
 	var tp gtk.TreePath
-	return wrapTreePathSimple(&tp)
+	return WrapTreePathSimple(&tp)
 }
 
 func (*RealGtk) WindowSetDefaultIcon(icon gdki.Pixbuf) {
@@ -200,5 +200,5 @@ func (*RealGtk) WindowSetDefaultIcon(icon gdki.Pixbuf) {
 }
 
 func (*RealGtk) SettingsGetDefault() (gtki.Settings, error) {
-	return wrapSettings(gtk.SettingsGetDefault())
+	return WrapSettings(gtk.SettingsGetDefault())
 }

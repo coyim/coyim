@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type grid struct {
@@ -10,18 +10,18 @@ type grid struct {
 	internal *gtk.Grid
 }
 
-func wrapGridSimple(v *gtk.Grid) *grid {
+func WrapGridSimple(v *gtk.Grid) gtki.Grid {
 	if v == nil {
 		return nil
 	}
-	return &grid{wrapContainerSimple(&v.Container), v}
+	return &grid{WrapContainerSimple(&v.Container).(*container), v}
 }
 
-func wrapGrid(v *gtk.Grid, e error) (*grid, error) {
-	return wrapGridSimple(v), e
+func WrapGrid(v *gtk.Grid, e error) (gtki.Grid, error) {
+	return WrapGridSimple(v), e
 }
 
-func unwrapGrid(v gtki.Grid) *gtk.Grid {
+func UnwrapGrid(v gtki.Grid) *gtk.Grid {
 	if v == nil {
 		return nil
 	}
@@ -29,5 +29,5 @@ func unwrapGrid(v gtki.Grid) *gtk.Grid {
 }
 
 func (v *grid) Attach(v1 gtki.Widget, v2, v3, v4, v5 int) {
-	v.internal.Attach(unwrapWidget(v1), v2, v3, v4, v5)
+	v.internal.Attach(UnwrapWidget(v1), v2, v3, v4, v5)
 }

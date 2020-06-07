@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type menuItem struct {
@@ -18,18 +18,18 @@ func (v *menuItem) toMenuItem() *menuItem {
 	return v
 }
 
-func wrapMenuItemSimple(v *gtk.MenuItem) *menuItem {
+func WrapMenuItemSimple(v *gtk.MenuItem) gtki.MenuItem {
 	if v == nil {
 		return nil
 	}
-	return &menuItem{wrapBinSimple(&v.Bin), v}
+	return &menuItem{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapMenuItem(v *gtk.MenuItem, e error) (*menuItem, error) {
-	return wrapMenuItemSimple(v), e
+func WrapMenuItem(v *gtk.MenuItem, e error) (gtki.MenuItem, error) {
+	return WrapMenuItemSimple(v), e
 }
 
-func unwrapMenuItem(v gtki.MenuItem) *gtk.MenuItem {
+func UnwrapMenuItem(v gtki.MenuItem) *gtk.MenuItem {
 	if v == nil {
 		return nil
 	}
@@ -52,5 +52,5 @@ func (v *menuItem) SetLabel(v1 string) {
 }
 
 func (v *menuItem) SetSubmenu(v1 gtki.Widget) {
-	v.internal.SetSubmenu(unwrapWidget(v1))
+	v.internal.SetSubmenu(UnwrapWidget(v1))
 }

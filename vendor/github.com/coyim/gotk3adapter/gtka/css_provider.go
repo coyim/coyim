@@ -1,9 +1,9 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type cssProvider struct {
@@ -11,18 +11,18 @@ type cssProvider struct {
 	internal *gtk.CssProvider
 }
 
-func wrapCssProviderSimple(v *gtk.CssProvider) *cssProvider {
+func WrapCssProviderSimple(v *gtk.CssProvider) gtki.CssProvider {
 	if v == nil {
 		return nil
 	}
 	return &cssProvider{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapCssProvider(v *gtk.CssProvider, e error) (*cssProvider, error) {
-	return wrapCssProviderSimple(v), e
+func WrapCssProvider(v *gtk.CssProvider, e error) (gtki.CssProvider, error) {
+	return WrapCssProviderSimple(v), e
 }
 
-func unwrapCssProvider(v gtki.CssProvider) *gtk.CssProvider {
+func UnwrapCssProvider(v gtki.CssProvider) *gtk.CssProvider {
 	if v == nil {
 		return nil
 	}

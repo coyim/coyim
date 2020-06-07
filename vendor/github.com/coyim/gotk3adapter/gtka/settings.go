@@ -1,9 +1,9 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type settings struct {
@@ -11,18 +11,18 @@ type settings struct {
 	internal *gtk.Settings
 }
 
-func wrapSettingsSimple(v *gtk.Settings) *settings {
+func WrapSettingsSimple(v *gtk.Settings) gtki.Settings {
 	if v == nil {
 		return nil
 	}
 	return &settings{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapSettings(v *gtk.Settings, e error) (*settings, error) {
-	return wrapSettingsSimple(v), e
+func WrapSettings(v *gtk.Settings, e error) (gtki.Settings, error) {
+	return WrapSettingsSimple(v), e
 }
 
-func unwrapSettings(v gtki.Settings) *gtk.Settings {
+func UnwrapSettings(v gtki.Settings) *gtk.Settings {
 	if v == nil {
 		return nil
 	}

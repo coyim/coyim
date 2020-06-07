@@ -1,11 +1,11 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type accelGroup struct {
@@ -13,18 +13,18 @@ type accelGroup struct {
 	internal *gtk.AccelGroup
 }
 
-func wrapAccelGroupSimple(v *gtk.AccelGroup) *accelGroup {
+func WrapAccelGroupSimple(v *gtk.AccelGroup) gtki.AccelGroup {
 	if v == nil {
 		return nil
 	}
 	return &accelGroup{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapAccelGroup(v *gtk.AccelGroup, e error) (*accelGroup, error) {
-	return wrapAccelGroupSimple(v), e
+func WrapAccelGroup(v *gtk.AccelGroup, e error) (gtki.AccelGroup, error) {
+	return WrapAccelGroupSimple(v), e
 }
 
-func unwrapAccelGroup(v gtki.AccelGroup) *gtk.AccelGroup {
+func UnwrapAccelGroup(v gtki.AccelGroup) *gtk.AccelGroup {
 	if v == nil {
 		return nil
 	}

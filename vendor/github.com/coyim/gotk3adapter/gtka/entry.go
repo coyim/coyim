@@ -10,18 +10,18 @@ type entry struct {
 	internal *gtk.Entry
 }
 
-func wrapEntrySimple(v *gtk.Entry) *entry {
+func WrapEntrySimple(v *gtk.Entry) gtki.Entry {
 	if v == nil {
 		return nil
 	}
-	return &entry{wrapWidgetSimple(&v.Widget), v}
+	return &entry{WrapWidgetSimple(&v.Widget).(*widget), v}
 }
 
-func wrapEntry(v *gtk.Entry, e error) (*entry, error) {
-	return wrapEntrySimple(v), e
+func WrapEntry(v *gtk.Entry, e error) (gtki.Entry, error) {
+	return WrapEntrySimple(v), e
 }
 
-func unwrapEntry(v gtki.Entry) *gtk.Entry {
+func UnwrapEntry(v gtki.Entry) *gtk.Entry {
 	if v == nil {
 		return nil
 	}

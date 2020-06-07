@@ -1,10 +1,10 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gdka"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type searchBar struct {
@@ -12,18 +12,18 @@ type searchBar struct {
 	internal *gtk.SearchBar
 }
 
-func wrapSearchBarSimple(v *gtk.SearchBar) *searchBar {
+func WrapSearchBarSimple(v *gtk.SearchBar) gtki.SearchBar {
 	if v == nil {
 		return nil
 	}
-	return &searchBar{wrapBinSimple(&v.Bin), v}
+	return &searchBar{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapSearchBar(v *gtk.SearchBar, e error) (*searchBar, error) {
-	return wrapSearchBarSimple(v), e
+func WrapSearchBar(v *gtk.SearchBar, e error) (gtki.SearchBar, error) {
+	return WrapSearchBarSimple(v), e
 }
 
-func unwrapSearchBar(v gtki.SearchBar) *gtk.SearchBar {
+func UnwrapSearchBar(v gtki.SearchBar) *gtk.SearchBar {
 	if v == nil {
 		return nil
 	}
@@ -31,7 +31,7 @@ func unwrapSearchBar(v gtki.SearchBar) *gtk.SearchBar {
 }
 
 func (v *searchBar) ConnectEntry(v1 gtki.Entry) {
-	v.internal.ConnectEntry(unwrapEntry(v1))
+	v.internal.ConnectEntry(UnwrapEntry(v1))
 }
 
 func (v *searchBar) GetSearchMode() bool {

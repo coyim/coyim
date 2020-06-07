@@ -10,18 +10,18 @@ type toggleButton struct {
 	internal *gtk.ToggleButton
 }
 
-func wrapToggleButtonSimple(v *gtk.ToggleButton) *toggleButton {
+func WrapToggleButtonSimple(v *gtk.ToggleButton) gtki.ToggleButton {
 	if v == nil {
 		return nil
 	}
-	return &toggleButton{wrapButtonSimple(&v.Button), v}
+	return &toggleButton{WrapButtonSimple(&v.Button).(*button), v}
 }
 
-func wrapToggleButton(v *gtk.ToggleButton, e error) (*toggleButton, error) {
-	return wrapToggleButtonSimple(v), e
+func WrapToggleButton(v *gtk.ToggleButton, e error) (gtki.ToggleButton, error) {
+	return WrapToggleButtonSimple(v), e
 }
 
-func unwrapToggleButton(v gtki.ToggleButton) *gtk.ToggleButton {
+func UnwrapToggleButton(v gtki.ToggleButton) *gtk.ToggleButton {
 	if v == nil {
 		return nil
 	}

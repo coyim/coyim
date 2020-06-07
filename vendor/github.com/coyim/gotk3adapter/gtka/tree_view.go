@@ -10,18 +10,18 @@ type treeView struct {
 	internal *gtk.TreeView
 }
 
-func wrapTreeViewSimple(v *gtk.TreeView) *treeView {
+func WrapTreeViewSimple(v *gtk.TreeView) gtki.TreeView {
 	if v == nil {
 		return nil
 	}
-	return &treeView{wrapContainerSimple(&v.Container), v}
+	return &treeView{WrapContainerSimple(&v.Container).(*container), v}
 }
 
-func wrapTreeView(v *gtk.TreeView, e error) (*treeView, error) {
-	return wrapTreeViewSimple(v), e
+func WrapTreeView(v *gtk.TreeView, e error) (gtki.TreeView, error) {
+	return WrapTreeViewSimple(v), e
 }
 
-func unwrapTreeView(v gtki.TreeView) *gtk.TreeView {
+func UnwrapTreeView(v gtki.TreeView) *gtk.TreeView {
 	if v == nil {
 		return nil
 	}
@@ -29,7 +29,7 @@ func unwrapTreeView(v gtki.TreeView) *gtk.TreeView {
 }
 
 func (v *treeView) CollapseRow(v1 gtki.TreePath) bool {
-	return v.internal.CollapseRow(unwrapTreePath(v1))
+	return v.internal.CollapseRow(UnwrapTreePath(v1))
 }
 
 func (v *treeView) ExpandAll() {
@@ -38,16 +38,16 @@ func (v *treeView) ExpandAll() {
 
 func (v *treeView) GetCursor() (gtki.TreePath, gtki.TreeViewColumn) {
 	v1, v2 := v.internal.GetCursor()
-	return wrapTreePathSimple(v1), wrapTreeViewColumnSimple(v2)
+	return WrapTreePathSimple(v1), WrapTreeViewColumnSimple(v2)
 }
 
 func (v *treeView) GetSelection() (gtki.TreeSelection, error) {
-	return wrapTreeSelection(v.internal.GetSelection())
+	return WrapTreeSelection(v.internal.GetSelection())
 }
 
 func (v *treeView) GetPathAtPos(v1 int, v2 int) (gtki.TreePath, gtki.TreeViewColumn, int, int, bool) {
 	r1, r2, r3, r4, r5 := v.internal.GetPathAtPos(v1, v2)
-	return wrapTreePathSimple(r1), wrapTreeViewColumnSimple(r2), r3, r4, r5
+	return WrapTreePathSimple(r1), WrapTreeViewColumnSimple(r2), r3, r4, r5
 }
 
 func (v *treeView) SetEnableSearch(v1 bool) {
@@ -67,11 +67,11 @@ func (v *treeView) GetSearchColumn() int {
 }
 
 func (v *treeView) GetSearchEntry() gtki.Entry {
-	return wrapEntrySimple(v.internal.GetSearchEntry())
+	return WrapEntrySimple(v.internal.GetSearchEntry())
 }
 
 func (v *treeView) SetSearchEntry(v1 gtki.Entry) {
-	v.internal.SetSearchEntry(unwrapEntry(v1))
+	v.internal.SetSearchEntry(UnwrapEntry(v1))
 }
 
 func (v *treeView) SetSearchEqualSubstringMatch() {
@@ -79,7 +79,7 @@ func (v *treeView) SetSearchEqualSubstringMatch() {
 }
 
 func (v *treeView) SetModel(m gtki.TreeModel) {
-	v.internal.SetModel(unwrapTreeModel(m))
+	v.internal.SetModel(UnwrapTreeModel(m))
 }
 
 func (v *treeView) GetModel() (gtki.TreeModel, error) {
@@ -88,5 +88,5 @@ func (v *treeView) GetModel() (gtki.TreeModel, error) {
 		return nil, err
 	}
 
-	return wrapTreeModelSimple(m), nil
+	return WrapTreeModelSimple(m), nil
 }

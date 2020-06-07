@@ -1,8 +1,8 @@
 package gliba
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/gotk3/gotk3/glib"
 )
 
 type settingsBackend struct {
@@ -10,14 +10,14 @@ type settingsBackend struct {
 	*glib.SettingsBackend
 }
 
-func wrapSettingsBackendSimple(v *glib.SettingsBackend) *settingsBackend {
+func WrapSettingsBackendSimple(v *glib.SettingsBackend) glibi.SettingsBackend {
 	if v == nil {
 		return nil
 	}
 	return &settingsBackend{WrapObjectSimple(v.Object), v}
 }
 
-func unwrapSettingsBackend(v glibi.SettingsBackend) *glib.SettingsBackend {
+func UnwrapSettingsBackend(v glibi.SettingsBackend) *glib.SettingsBackend {
 	if v == nil {
 		return nil
 	}

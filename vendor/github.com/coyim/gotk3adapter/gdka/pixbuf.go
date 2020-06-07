@@ -9,15 +9,15 @@ type pixbuf struct {
 	internal *gdk.Pixbuf
 }
 
-func wrapPixbufSimple(v *gdk.Pixbuf) *pixbuf {
+func WrapPixbufSimple(v *gdk.Pixbuf) gdki.Pixbuf {
 	if v == nil {
 		return nil
 	}
 	return &pixbuf{v}
 }
 
-func wrapPixbuf(v *gdk.Pixbuf, e error) (*pixbuf, error) {
-	return wrapPixbufSimple(v), e
+func WrapPixbuf(v *gdk.Pixbuf, e error) (gdki.Pixbuf, error) {
+	return WrapPixbufSimple(v), e
 }
 
 func UnwrapPixbuf(v gdki.Pixbuf) *gdk.Pixbuf {

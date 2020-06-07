@@ -9,18 +9,18 @@ type treeViewColumn struct {
 	internal *gtk.TreeViewColumn
 }
 
-func wrapTreeViewColumnSimple(v *gtk.TreeViewColumn) *treeViewColumn {
+func WrapTreeViewColumnSimple(v *gtk.TreeViewColumn) gtki.TreeViewColumn {
 	if v == nil {
 		return nil
 	}
 	return &treeViewColumn{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapTreeViewColumn(v *gtk.TreeViewColumn, e error) (*treeViewColumn, error) {
-	return wrapTreeViewColumnSimple(v), e
+func WrapTreeViewColumn(v *gtk.TreeViewColumn, e error) (gtki.TreeViewColumn, error) {
+	return WrapTreeViewColumnSimple(v), e
 }
 
-func unwrapTreeViewColumn(v gtki.TreeViewColumn) *gtk.TreeViewColumn {
+func UnwrapTreeViewColumn(v gtki.TreeViewColumn) *gtk.TreeViewColumn {
 	if v == nil {
 		return nil
 	}

@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type assistant struct {
@@ -10,18 +10,18 @@ type assistant struct {
 	internal *gtk.Assistant
 }
 
-func wrapAssistantSimple(v *gtk.Assistant) *assistant {
+func WrapAssistantSimple(v *gtk.Assistant) gtki.Assistant {
 	if v == nil {
 		return nil
 	}
-	return &assistant{wrapWindowSimple(&v.Window), v}
+	return &assistant{WrapWindowSimple(&v.Window).(*window), v}
 }
 
-func wrapAssistant(v *gtk.Assistant, e error) (*assistant, error) {
-	return wrapAssistantSimple(v), e
+func WrapAssistant(v *gtk.Assistant, e error) (gtki.Assistant, error) {
+	return WrapAssistantSimple(v), e
 }
 
-func unwrapAssistant(v gtki.Assistant) *gtk.Assistant {
+func UnwrapAssistant(v gtki.Assistant) *gtk.Assistant {
 	if v == nil {
 		return nil
 	}
@@ -49,26 +49,26 @@ func (a *assistant) GetCurrentPage() int {
 }
 
 func (a *assistant) GetNthPage(pageNum int) (gtki.Widget, error) {
-	return wrapWidget(a.internal.GetNthPage(pageNum))
+	return WrapWidget(a.internal.GetNthPage(pageNum))
 }
 
 func (a *assistant) AppendPage(page gtki.Widget) int {
-	return a.internal.AppendPage(unwrapWidget(page))
+	return a.internal.AppendPage(UnwrapWidget(page))
 }
 
 func (a *assistant) SetPageType(page gtki.Widget, ptype gtki.AssistantPageType) {
-	a.internal.SetPageType(unwrapWidget(page), gtk.AssistantPageType(ptype))
+	a.internal.SetPageType(UnwrapWidget(page), gtk.AssistantPageType(ptype))
 }
 
 func (a *assistant) GetPageType(page gtki.Widget) gtki.AssistantPageType {
-	ptype := a.internal.GetPageType(unwrapWidget(page))
+	ptype := a.internal.GetPageType(UnwrapWidget(page))
 	return gtki.AssistantPageType(ptype)
 }
 
 func (a *assistant) SetPageComplete(page gtki.Widget, complete bool) {
-	a.internal.SetPageComplete(unwrapWidget(page), complete)
+	a.internal.SetPageComplete(UnwrapWidget(page), complete)
 }
 
 func (a *assistant) GetPageComplete(page gtki.Widget) bool {
-	return a.internal.GetPageComplete(unwrapWidget(page))
+	return a.internal.GetPageComplete(UnwrapWidget(page))
 }

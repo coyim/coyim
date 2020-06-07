@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type infoBar struct {
@@ -10,18 +10,18 @@ type infoBar struct {
 	internal *gtk.InfoBar
 }
 
-func wrapInfoBarSimple(v *gtk.InfoBar) *infoBar {
+func WrapInfoBarSimple(v *gtk.InfoBar) gtki.InfoBar {
 	if v == nil {
 		return nil
 	}
-	return &infoBar{wrapBoxSimple(&v.Box), v}
+	return &infoBar{WrapBoxSimple(&v.Box).(*box), v}
 }
 
-func wrapInfoBar(v *gtk.InfoBar, e error) (*infoBar, error) {
-	return wrapInfoBarSimple(v), e
+func WrapInfoBar(v *gtk.InfoBar, e error) (gtki.InfoBar, error) {
+	return WrapInfoBarSimple(v), e
 }
 
-func unwrapInfoBar(v gtki.InfoBar) *gtk.InfoBar {
+func UnwrapInfoBar(v gtki.InfoBar) *gtk.InfoBar {
 	if v == nil {
 		return nil
 	}

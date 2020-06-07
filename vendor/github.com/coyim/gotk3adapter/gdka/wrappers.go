@@ -14,31 +14,31 @@ func init() {
 func WrapLocal(o interface{}) (interface{}, bool) {
 	switch oo := o.(type) {
 	case *gdk.EventButton:
-		val := wrapEventButtonSimple(oo)
+		val := WrapEventButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gdk.Event:
-		val := wrapEventSimple(oo)
+		val := WrapEventSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gdk.Pixbuf:
-		val := wrapPixbufSimple(oo)
+		val := WrapPixbufSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gdk.PixbufLoader:
-		val := wrapPixbufLoaderSimple(oo)
+		val := WrapPixbufLoaderSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gdk.Screen:
-		val := wrapScreenSimple(oo)
+		val := WrapScreenSimple(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -57,13 +57,13 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 func UnwrapLocal(o interface{}) (interface{}, bool) {
 	switch oo := o.(type) {
 	case *eventButton:
-		val := unwrapEventButton(oo)
+		val := UnwrapEventButton(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *event:
-		val := unwrapEvent(oo)
+		val := UnwrapEvent(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -75,7 +75,7 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		}
 		return val, true
 	case *pixbufLoader:
-		val := unwrapPixbufLoader(oo)
+		val := UnwrapPixbufLoader(oo)
 		if val == nil {
 			return nil, true
 		}

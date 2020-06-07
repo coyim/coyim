@@ -1,10 +1,10 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gdka"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type image struct {
@@ -12,19 +12,19 @@ type image struct {
 	internal *gtk.Image
 }
 
-func wrapImageSimple(v *gtk.Image) *image {
+func WrapImageSimple(v *gtk.Image) gtki.Image {
 	if v == nil {
 		return nil
 	}
 
-	return &image{wrapWidgetSimple(&v.Widget), v}
+	return &image{WrapWidgetSimple(&v.Widget).(*widget), v}
 }
 
-func wrapImage(v *gtk.Image, e error) (*image, error) {
-	return wrapImageSimple(v), e
+func WrapImage(v *gtk.Image, e error) (gtki.Image, error) {
+	return WrapImageSimple(v), e
 }
 
-func unwrapImage(v gtki.Image) *gtk.Image {
+func UnwrapImage(v gtki.Image) *gtk.Image {
 	if v == nil {
 		return nil
 	}

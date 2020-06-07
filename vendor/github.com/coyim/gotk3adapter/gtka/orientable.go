@@ -5,7 +5,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func unwrapOrientation(o gtki.Orientation) gtk.Orientation {
+func UnwrapOrientation(o gtki.Orientation) gtk.Orientation {
 	switch o {
 	case gtki.HorizontalOrientation:
 		return gtk.ORIENTATION_HORIZONTAL
@@ -16,7 +16,7 @@ func unwrapOrientation(o gtki.Orientation) gtk.Orientation {
 	panic("This should not happen")
 }
 
-func wrapOrientation(o gtk.Orientation) gtki.Orientation {
+func WrapOrientation(o gtk.Orientation) gtki.Orientation {
 	switch o {
 	case gtk.ORIENTATION_HORIZONTAL:
 		return gtki.HorizontalOrientation

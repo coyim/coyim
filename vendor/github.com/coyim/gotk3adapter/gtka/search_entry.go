@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type searchEntry struct {
@@ -10,18 +10,18 @@ type searchEntry struct {
 	internal *gtk.SearchEntry
 }
 
-func wrapSearchEntrySimple(v *gtk.SearchEntry) *searchEntry {
+func WrapSearchEntrySimple(v *gtk.SearchEntry) gtki.SearchEntry {
 	if v == nil {
 		return nil
 	}
-	return &searchEntry{wrapEntrySimple(&v.Entry), v}
+	return &searchEntry{WrapEntrySimple(&v.Entry).(*entry), v}
 }
 
-func wrapSearchEntry(v *gtk.SearchEntry, e error) (*searchEntry, error) {
-	return wrapSearchEntrySimple(v), e
+func WrapSearchEntry(v *gtk.SearchEntry, e error) (gtki.SearchEntry, error) {
+	return WrapSearchEntrySimple(v), e
 }
 
-func unwrapSearchEntry(v gtki.SearchEntry) *gtk.SearchEntry {
+func UnwrapSearchEntry(v gtki.SearchEntry) *gtk.SearchEntry {
 	if v == nil {
 		return nil
 	}

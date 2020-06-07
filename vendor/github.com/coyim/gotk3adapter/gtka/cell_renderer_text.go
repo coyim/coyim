@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type cellRendererText struct {
@@ -10,18 +10,18 @@ type cellRendererText struct {
 	internal *gtk.CellRendererText
 }
 
-func wrapCellRendererTextSimple(v *gtk.CellRendererText) *cellRendererText {
+func WrapCellRendererTextSimple(v *gtk.CellRendererText) gtki.CellRendererText {
 	if v == nil {
 		return nil
 	}
-	return &cellRendererText{wrapCellRendererSimple(&v.CellRenderer), v}
+	return &cellRendererText{WrapCellRendererSimple(&v.CellRenderer).(*cellRenderer), v}
 }
 
-func wrapCellRendererText(v *gtk.CellRendererText, e error) (*cellRendererText, error) {
-	return wrapCellRendererTextSimple(v), e
+func WrapCellRendererText(v *gtk.CellRendererText, e error) (gtki.CellRendererText, error) {
+	return WrapCellRendererTextSimple(v), e
 }
 
-func unwrapCellRendererText(v gtki.CellRendererText) *gtk.CellRendererText {
+func UnwrapCellRendererText(v gtki.CellRendererText) *gtk.CellRendererText {
 	if v == nil {
 		return nil
 	}

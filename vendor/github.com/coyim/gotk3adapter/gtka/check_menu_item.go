@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type checkMenuItem struct {
@@ -10,18 +10,18 @@ type checkMenuItem struct {
 	internal *gtk.CheckMenuItem
 }
 
-func wrapCheckMenuItemSimple(v *gtk.CheckMenuItem) *checkMenuItem {
+func WrapCheckMenuItemSimple(v *gtk.CheckMenuItem) gtki.CheckMenuItem {
 	if v == nil {
 		return nil
 	}
-	return &checkMenuItem{wrapMenuItemSimple(&v.MenuItem), v}
+	return &checkMenuItem{WrapMenuItemSimple(&v.MenuItem).(*menuItem), v}
 }
 
-func wrapCheckMenuItem(v *gtk.CheckMenuItem, e error) (*checkMenuItem, error) {
-	return wrapCheckMenuItemSimple(v), e
+func WrapCheckMenuItem(v *gtk.CheckMenuItem, e error) (gtki.CheckMenuItem, error) {
+	return WrapCheckMenuItemSimple(v), e
 }
 
-func unwrapCheckMenuItem(v gtki.CheckMenuItem) *gtk.CheckMenuItem {
+func UnwrapCheckMenuItem(v gtki.CheckMenuItem) *gtk.CheckMenuItem {
 	if v == nil {
 		return nil
 	}

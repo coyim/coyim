@@ -10,18 +10,18 @@ type container struct {
 	*gtk.Container
 }
 
-func wrapContainerSimple(v *gtk.Container) *container {
+func WrapContainerSimple(v *gtk.Container) gtki.Container {
 	if v == nil {
 		return nil
 	}
-	return &container{wrapWidgetSimple(&v.Widget), v}
+	return &container{WrapWidgetSimple(&v.Widget).(*widget), v}
 }
 
-func wrapContainer(v *gtk.Container, e error) (*container, error) {
-	return wrapContainerSimple(v), e
+func WrapContainer(v *gtk.Container, e error) (gtki.Container, error) {
+	return WrapContainerSimple(v), e
 }
 
-func unwrapContainer(v gtki.Container) *gtk.Container {
+func UnwrapContainer(v gtki.Container) *gtk.Container {
 	if v == nil {
 		return nil
 	}
@@ -29,11 +29,11 @@ func unwrapContainer(v gtki.Container) *gtk.Container {
 }
 
 func (v *container) Add(v2 gtki.Widget) {
-	v.Container.Add(unwrapWidget(v2))
+	v.Container.Add(UnwrapWidget(v2))
 }
 
 func (v *container) Remove(v2 gtki.Widget) {
-	v.Container.Remove(unwrapWidget(v2))
+	v.Container.Remove(UnwrapWidget(v2))
 }
 
 func (v *container) SetBorderWidth(v1 uint) {

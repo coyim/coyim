@@ -10,18 +10,18 @@ type headerBar struct {
 	internal *gtk.HeaderBar
 }
 
-func wrapHeaderBarSimple(v *gtk.HeaderBar) *headerBar {
+func WrapHeaderBarSimple(v *gtk.HeaderBar) gtki.HeaderBar {
 	if v == nil {
 		return nil
 	}
-	return &headerBar{wrapContainerSimple(&v.Container), v}
+	return &headerBar{WrapContainerSimple(&v.Container).(*container), v}
 }
 
-func wrapHeaderBar(v *gtk.HeaderBar, e error) (*headerBar, error) {
-	return wrapHeaderBarSimple(v), e
+func WrapHeaderBar(v *gtk.HeaderBar, e error) (gtki.HeaderBar, error) {
+	return WrapHeaderBarSimple(v), e
 }
 
-func unwrapHeaderBar(v gtki.HeaderBar) *gtk.HeaderBar {
+func UnwrapHeaderBar(v gtki.HeaderBar) *gtk.HeaderBar {
 	if v == nil {
 		return nil
 	}

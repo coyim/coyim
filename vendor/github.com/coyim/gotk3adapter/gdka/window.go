@@ -11,14 +11,14 @@ type window struct {
 	internal *gdk.Window
 }
 
-func WrapWindowSimple(v *gdk.Window) *window {
+func WrapWindowSimple(v *gdk.Window) gdki.Window {
 	if v == nil {
 		return nil
 	}
 	return &window{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func WrapWindow(v *gdk.Window, e error) (*window, error) {
+func WrapWindow(v *gdk.Window, e error) (gdki.Window, error) {
 	return WrapWindowSimple(v), e
 }
 

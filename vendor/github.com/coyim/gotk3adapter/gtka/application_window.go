@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type applicationWindow struct {
@@ -10,18 +10,18 @@ type applicationWindow struct {
 	internal *gtk.ApplicationWindow
 }
 
-func wrapApplicationWindowSimple(v *gtk.ApplicationWindow) *applicationWindow {
+func WrapApplicationWindowSimple(v *gtk.ApplicationWindow) gtki.ApplicationWindow {
 	if v == nil {
 		return nil
 	}
-	return &applicationWindow{wrapWindowSimple(&v.Window), v}
+	return &applicationWindow{WrapWindowSimple(&v.Window).(*window), v}
 }
 
-func wrapApplicationWindow(v *gtk.ApplicationWindow, e error) (*applicationWindow, error) {
-	return wrapApplicationWindowSimple(v), e
+func WrapApplicationWindow(v *gtk.ApplicationWindow, e error) (gtki.ApplicationWindow, error) {
+	return WrapApplicationWindowSimple(v), e
 }
 
-func unwrapApplicationWindow(v gtki.ApplicationWindow) *gtk.ApplicationWindow {
+func UnwrapApplicationWindow(v gtki.ApplicationWindow) *gtk.ApplicationWindow {
 	if v == nil {
 		return nil
 	}

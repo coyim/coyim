@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type textView struct {
@@ -10,18 +10,18 @@ type textView struct {
 	internal *gtk.TextView
 }
 
-func wrapTextViewSimple(v *gtk.TextView) *textView {
+func WrapTextViewSimple(v *gtk.TextView) gtki.TextView {
 	if v == nil {
 		return nil
 	}
-	return &textView{wrapContainerSimple(&v.Container), v}
+	return &textView{WrapContainerSimple(&v.Container).(*container), v}
 }
 
-func wrapTextView(v *gtk.TextView, e error) (*textView, error) {
-	return wrapTextViewSimple(v), e
+func WrapTextView(v *gtk.TextView, e error) (gtki.TextView, error) {
+	return WrapTextViewSimple(v), e
 }
 
-func unwrapTextView(v gtki.TextView) *gtk.TextView {
+func UnwrapTextView(v gtki.TextView) *gtk.TextView {
 	if v == nil {
 		return nil
 	}
@@ -37,33 +37,33 @@ func (v *textView) SetCursorVisible(v1 bool) {
 }
 
 func (v *textView) SetBuffer(v1 gtki.TextBuffer) {
-	v.internal.SetBuffer(unwrapTextBuffer(v1))
+	v.internal.SetBuffer(UnwrapTextBuffer(v1))
 }
 
 func (v *textView) GetBuffer() (gtki.TextBuffer, error) {
-	return wrapTextBuffer(v.internal.GetBuffer())
+	return WrapTextBuffer(v.internal.GetBuffer())
 }
 
 func (v *textView) ForwardDisplayLine(iter gtki.TextIter) bool {
-	return v.internal.ForwardDisplayLine(unwrapTextIter(iter))
+	return v.internal.ForwardDisplayLine(UnwrapTextIter(iter))
 }
 
 func (v *textView) BackwardDisplayLine(iter gtki.TextIter) bool {
-	return v.internal.BackwardDisplayLine(unwrapTextIter(iter))
+	return v.internal.BackwardDisplayLine(UnwrapTextIter(iter))
 }
 
 func (v *textView) ForwardDisplayLineEnd(iter gtki.TextIter) bool {
-	return v.internal.ForwardDisplayLineEnd(unwrapTextIter(iter))
+	return v.internal.ForwardDisplayLineEnd(UnwrapTextIter(iter))
 }
 
 func (v *textView) BackwardDisplayLineStart(iter gtki.TextIter) bool {
-	return v.internal.BackwardDisplayLineStart(unwrapTextIter(iter))
+	return v.internal.BackwardDisplayLineStart(UnwrapTextIter(iter))
 }
 
 func (v *textView) StartsDisplayLine(iter gtki.TextIter) bool {
-	return v.internal.StartsDisplayLine(unwrapTextIter(iter))
+	return v.internal.StartsDisplayLine(UnwrapTextIter(iter))
 }
 
 func (v *textView) MoveVisually(iter gtki.TextIter, count int) bool {
-	return v.internal.MoveVisually(unwrapTextIter(iter), count)
+	return v.internal.MoveVisually(UnwrapTextIter(iter), count)
 }

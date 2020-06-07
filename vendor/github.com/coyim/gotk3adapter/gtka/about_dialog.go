@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type aboutDialog struct {
@@ -10,18 +10,18 @@ type aboutDialog struct {
 	internal *gtk.AboutDialog
 }
 
-func wrapAboutDialogSimple(v *gtk.AboutDialog) *aboutDialog {
+func WrapAboutDialogSimple(v *gtk.AboutDialog) gtki.AboutDialog {
 	if v == nil {
 		return nil
 	}
-	return &aboutDialog{wrapDialogSimple(&v.Dialog), v}
+	return &aboutDialog{WrapDialogSimple(&v.Dialog).(*dialog), v}
 }
 
-func wrapAboutDialog(v *gtk.AboutDialog, e error) (*aboutDialog, error) {
-	return wrapAboutDialogSimple(v), e
+func WrapAboutDialog(v *gtk.AboutDialog, e error) (gtki.AboutDialog, error) {
+	return WrapAboutDialogSimple(v), e
 }
 
-func unwrapAboutDialog(v gtki.AboutDialog) *gtk.AboutDialog {
+func UnwrapAboutDialog(v gtki.AboutDialog) *gtk.AboutDialog {
 	if v == nil {
 		return nil
 	}

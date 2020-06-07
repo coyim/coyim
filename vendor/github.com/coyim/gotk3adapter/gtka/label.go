@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type label struct {
@@ -10,18 +10,18 @@ type label struct {
 	internal *gtk.Label
 }
 
-func wrapLabelSimple(v *gtk.Label) *label {
+func WrapLabelSimple(v *gtk.Label) gtki.Label {
 	if v == nil {
 		return nil
 	}
-	return &label{wrapWidgetSimple(&v.Widget), v}
+	return &label{WrapWidgetSimple(&v.Widget).(*widget), v}
 }
 
-func wrapLabel(v *gtk.Label, e error) (*label, error) {
-	return wrapLabelSimple(v), e
+func WrapLabel(v *gtk.Label, e error) (gtki.Label, error) {
+	return WrapLabelSimple(v), e
 }
 
-func unwrapLabel(v gtki.Label) *gtk.Label {
+func UnwrapLabel(v gtki.Label) *gtk.Label {
 	if v == nil {
 		return nil
 	}

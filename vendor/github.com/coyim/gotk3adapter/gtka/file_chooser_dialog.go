@@ -10,18 +10,18 @@ type fileChooserDialog struct {
 	internal *gtk.FileChooserDialog
 }
 
-func wrapFileChooserDialogSimple(v *gtk.FileChooserDialog) *fileChooserDialog {
+func WrapFileChooserDialogSimple(v *gtk.FileChooserDialog) gtki.FileChooserDialog {
 	if v == nil {
 		return nil
 	}
-	return &fileChooserDialog{wrapDialogSimple(&v.Dialog), v}
+	return &fileChooserDialog{WrapDialogSimple(&v.Dialog).(*dialog), v}
 }
 
-func wrapFileChooserDialog(v *gtk.FileChooserDialog, e error) (*fileChooserDialog, error) {
-	return wrapFileChooserDialogSimple(v), e
+func WrapFileChooserDialog(v *gtk.FileChooserDialog, e error) (gtki.FileChooserDialog, error) {
+	return WrapFileChooserDialogSimple(v), e
 }
 
-func unwrapFileChooserDialog(v gtki.FileChooserDialog) *gtk.FileChooserDialog {
+func UnwrapFileChooserDialog(v gtki.FileChooserDialog) *gtk.FileChooserDialog {
 	if v == nil {
 		return nil
 	}

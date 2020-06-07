@@ -11,18 +11,18 @@ type pixbufLoader struct {
 	internal *gdk.PixbufLoader
 }
 
-func wrapPixbufLoaderSimple(v *gdk.PixbufLoader) *pixbufLoader {
+func WrapPixbufLoaderSimple(v *gdk.PixbufLoader) gdki.PixbufLoader {
 	if v == nil {
 		return nil
 	}
 	return &pixbufLoader{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapPixbufLoader(v *gdk.PixbufLoader, e error) (*pixbufLoader, error) {
-	return wrapPixbufLoaderSimple(v), e
+func WrapPixbufLoader(v *gdk.PixbufLoader, e error) (gdki.PixbufLoader, error) {
+	return WrapPixbufLoaderSimple(v), e
 }
 
-func unwrapPixbufLoader(v gdki.PixbufLoader) *gdk.PixbufLoader {
+func UnwrapPixbufLoader(v gdki.PixbufLoader) *gdk.PixbufLoader {
 	if v == nil {
 		return nil
 	}
@@ -34,7 +34,7 @@ func (v *pixbufLoader) Close() error {
 }
 
 func (v *pixbufLoader) GetPixbuf() (gdki.Pixbuf, error) {
-	return wrapPixbuf(v.internal.GetPixbuf())
+	return WrapPixbuf(v.internal.GetPixbuf())
 }
 
 func (v *pixbufLoader) SetSize(width, height int) {

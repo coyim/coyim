@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type checkButton struct {
@@ -10,18 +10,18 @@ type checkButton struct {
 	internal *gtk.CheckButton
 }
 
-func wrapCheckButtonSimple(v *gtk.CheckButton) *checkButton {
+func WrapCheckButtonSimple(v *gtk.CheckButton) gtki.CheckButton {
 	if v == nil {
 		return nil
 	}
-	return &checkButton{wrapToggleButtonSimple(&v.ToggleButton), v}
+	return &checkButton{WrapToggleButtonSimple(&v.ToggleButton).(*toggleButton), v}
 }
 
-func wrapCheckButton(v *gtk.CheckButton, e error) (*checkButton, error) {
-	return wrapCheckButtonSimple(v), e
+func WrapCheckButton(v *gtk.CheckButton, e error) (gtki.CheckButton, error) {
+	return WrapCheckButtonSimple(v), e
 }
 
-func unwrapCheckButton(v gtki.CheckButton) *gtk.CheckButton {
+func UnwrapCheckButton(v gtki.CheckButton) *gtk.CheckButton {
 	if v == nil {
 		return nil
 	}

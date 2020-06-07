@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type spinner struct {
@@ -10,19 +10,19 @@ type spinner struct {
 	internal *gtk.Spinner
 }
 
-func wrapSpinnerSimple(v *gtk.Spinner) *spinner {
+func WrapSpinnerSimple(v *gtk.Spinner) gtki.Spinner {
 	if v == nil {
 		return nil
 	}
 
-	return &spinner{wrapWidgetSimple(&v.Widget), v}
+	return &spinner{WrapWidgetSimple(&v.Widget).(*widget), v}
 }
 
-func wrapSpinner(v *gtk.Spinner, e error) (*spinner, error) {
-	return wrapSpinnerSimple(v), e
+func WrapSpinner(v *gtk.Spinner, e error) (gtki.Spinner, error) {
+	return WrapSpinnerSimple(v), e
 }
 
-func unwrapSpinner(v gtki.Spinner) *gtk.Spinner {
+func UnwrapSpinner(v gtki.Spinner) *gtk.Spinner {
 	if v == nil {
 		return nil
 	}

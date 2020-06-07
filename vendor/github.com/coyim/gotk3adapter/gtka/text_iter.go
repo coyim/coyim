@@ -1,26 +1,26 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type textIter struct {
 	internal *gtk.TextIter
 }
 
-func wrapTextIterSimple(v *gtk.TextIter) *textIter {
+func WrapTextIterSimple(v *gtk.TextIter) gtki.TextIter {
 	if v == nil {
 		return nil
 	}
 	return &textIter{v}
 }
 
-func wrapTextIter(v *gtk.TextIter, e error) (*textIter, error) {
-	return wrapTextIterSimple(v), e
+func WrapTextIter(v *gtk.TextIter, e error) (gtki.TextIter, error) {
+	return WrapTextIterSimple(v), e
 }
 
-func unwrapTextIter(v gtki.TextIter) *gtk.TextIter {
+func UnwrapTextIter(v gtki.TextIter) *gtk.TextIter {
 	if v == nil {
 		return nil
 	}
@@ -52,7 +52,7 @@ func (v *textIter) BackwardLines(v1 int) bool {
 }
 
 func (v *textIter) BackwardToTagToggle(v1 gtki.TextTag) bool {
-	return v.internal.BackwardToTagToggle(unwrapTextTag(v1))
+	return v.internal.BackwardToTagToggle(UnwrapTextTag(v1))
 }
 
 func (v *textIter) BackwardVisibleCursorPosition() bool {
@@ -76,7 +76,7 @@ func (v *textIter) CanInsert(v1 bool) bool {
 }
 
 func (v *textIter) Compare(v1 gtki.TextIter) int {
-	return v.internal.Compare(unwrapTextIter(v1))
+	return v.internal.Compare(UnwrapTextIter(v1))
 }
 
 func (v *textIter) Editable(v1 bool) bool {
@@ -92,7 +92,7 @@ func (v *textIter) EndsSentence() bool {
 }
 
 func (v *textIter) EndsTag(v1 gtki.TextTag) bool {
-	return v.internal.EndsTag(unwrapTextTag(v1))
+	return v.internal.EndsTag(UnwrapTextTag(v1))
 }
 
 func (v *textIter) EndsWord() bool {
@@ -100,7 +100,7 @@ func (v *textIter) EndsWord() bool {
 }
 
 func (v *textIter) Equal(v1 gtki.TextIter) bool {
-	return v.internal.Equal(unwrapTextIter(v1))
+	return v.internal.Equal(UnwrapTextIter(v1))
 }
 
 func (v *textIter) ForwardChar() bool {
@@ -144,7 +144,7 @@ func (v *textIter) ForwardToLineEnd() bool {
 }
 
 func (v *textIter) ForwardToTagToggle(v1 gtki.TextTag) bool {
-	return v.internal.ForwardToTagToggle(unwrapTextTag(v1))
+	return v.internal.ForwardToTagToggle(UnwrapTextTag(v1))
 }
 
 func (v *textIter) ForwardVisibleCursorPosition() bool {
@@ -180,7 +180,7 @@ func (v *textIter) ForwardWordEnds(v1 int) bool {
 }
 
 func (v *textIter) GetBuffer() gtki.TextBuffer {
-	return wrapTextBufferSimple(v.internal.GetBuffer())
+	return WrapTextBufferSimple(v.internal.GetBuffer())
 }
 
 func (v *textIter) GetBytesInLine() int {
@@ -212,11 +212,11 @@ func (v *textIter) GetOffset() int {
 }
 
 func (v *textIter) GetSlice(v1 gtki.TextIter) string {
-	return v.internal.GetSlice(unwrapTextIter(v1))
+	return v.internal.GetSlice(UnwrapTextIter(v1))
 }
 
 func (v *textIter) GetText(v1 gtki.TextIter) string {
-	return v.internal.GetText(unwrapTextIter(v1))
+	return v.internal.GetText(UnwrapTextIter(v1))
 }
 
 func (v *textIter) GetVisibleLineIndex() int {
@@ -228,19 +228,19 @@ func (v *textIter) GetVisibleLineOffset() int {
 }
 
 func (v *textIter) GetVisibleSlice(v1 gtki.TextIter) string {
-	return v.internal.GetVisibleSlice(unwrapTextIter(v1))
+	return v.internal.GetVisibleSlice(UnwrapTextIter(v1))
 }
 
 func (v *textIter) GetVisibleText(v1 gtki.TextIter) string {
-	return v.internal.GetVisibleText(unwrapTextIter(v1))
+	return v.internal.GetVisibleText(UnwrapTextIter(v1))
 }
 
 func (v *textIter) HasTag(v1 gtki.TextTag) bool {
-	return v.internal.HasTag(unwrapTextTag(v1))
+	return v.internal.HasTag(UnwrapTextTag(v1))
 }
 
 func (v *textIter) InRange(v1 gtki.TextIter, v2 gtki.TextIter) bool {
-	return v.internal.InRange(unwrapTextIter(v1), unwrapTextIter(v2))
+	return v.internal.InRange(UnwrapTextIter(v1), UnwrapTextIter(v2))
 }
 
 func (v *textIter) InsideSentence() bool {
@@ -300,5 +300,5 @@ func (v *textIter) StartsWord() bool {
 }
 
 func (v *textIter) TogglesTag(v1 gtki.TextTag) bool {
-	return v.internal.TogglesTag(unwrapTextTag(v1))
+	return v.internal.TogglesTag(UnwrapTextTag(v1))
 }

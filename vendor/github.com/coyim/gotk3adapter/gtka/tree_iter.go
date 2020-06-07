@@ -1,26 +1,26 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type treeIter struct {
 	*gtk.TreeIter
 }
 
-func wrapTreeIterSimple(v *gtk.TreeIter) *treeIter {
+func WrapTreeIterSimple(v *gtk.TreeIter) gtki.TreeIter {
 	if v == nil {
 		return nil
 	}
 	return &treeIter{v}
 }
 
-func wrapTreeIter(v *gtk.TreeIter, e error) (*treeIter, error) {
-	return wrapTreeIterSimple(v), e
+func WrapTreeIter(v *gtk.TreeIter, e error) (gtki.TreeIter, error) {
+	return WrapTreeIterSimple(v), e
 }
 
-func unwrapTreeIter(v gtki.TreeIter) *gtk.TreeIter {
+func UnwrapTreeIter(v gtki.TreeIter) *gtk.TreeIter {
 	if v == nil {
 		return nil
 	}

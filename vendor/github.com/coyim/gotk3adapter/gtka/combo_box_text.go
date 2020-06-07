@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type comboBoxText struct {
@@ -10,18 +10,18 @@ type comboBoxText struct {
 	internal *gtk.ComboBoxText
 }
 
-func wrapComboBoxTextSimple(v *gtk.ComboBoxText) *comboBoxText {
+func WrapComboBoxTextSimple(v *gtk.ComboBoxText) gtki.ComboBoxText {
 	if v == nil {
 		return nil
 	}
-	return &comboBoxText{wrapComboBoxSimple(&v.ComboBox), v}
+	return &comboBoxText{WrapComboBoxSimple(&v.ComboBox).(*comboBox), v}
 }
 
-func wrapComboBoxText(v *gtk.ComboBoxText, e error) (*comboBoxText, error) {
-	return wrapComboBoxTextSimple(v), e
+func WrapComboBoxText(v *gtk.ComboBoxText, e error) (gtki.ComboBoxText, error) {
+	return WrapComboBoxTextSimple(v), e
 }
 
-func unwrapComboBoxText(v gtki.ComboBoxText) *gtk.ComboBoxText {
+func UnwrapComboBoxText(v gtki.ComboBoxText) *gtk.ComboBoxText {
 	if v == nil {
 		return nil
 	}

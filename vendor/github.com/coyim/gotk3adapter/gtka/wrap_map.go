@@ -32,331 +32,331 @@ func Unwrap(o interface{}) interface{} {
 func WrapLocal(o interface{}) (interface{}, bool) {
 	switch oo := o.(type) {
 	case *gtk.AboutDialog:
-		val := wrapAboutDialogSimple(oo)
+		val := WrapAboutDialogSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.AccelGroup:
-		val := wrapAccelGroupSimple(oo)
+		val := WrapAccelGroupSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Adjustment:
-		val := wrapAdjustmentSimple(oo)
+		val := WrapAdjustmentSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ApplicationWindow:
-		val := wrapApplicationWindowSimple(oo)
+		val := WrapApplicationWindowSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Assistant:
-		val := wrapAssistantSimple(oo)
+		val := WrapAssistantSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Bin:
-		val := wrapBinSimple(oo)
+		val := WrapBinSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Box:
-		val := wrapBoxSimple(oo)
+		val := WrapBoxSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Button:
-		val := wrapButtonSimple(oo)
+		val := WrapButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.LinkButton:
-		val := wrapLinkButtonSimple(oo)
+		val := WrapLinkButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.CellRenderer:
-		val := wrapCellRendererSimple(oo)
+		val := WrapCellRendererSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.CellRendererText:
-		val := wrapCellRendererTextSimple(oo)
+		val := WrapCellRendererTextSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.CellRendererToggle:
-		val := wrapCellRendererToggleSimple(oo)
+		val := WrapCellRendererToggleSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.CheckButton:
-		val := wrapCheckButtonSimple(oo)
+		val := WrapCheckButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.CheckMenuItem:
-		val := wrapCheckMenuItemSimple(oo)
+		val := WrapCheckMenuItemSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ComboBox:
-		val := wrapComboBoxSimple(oo)
+		val := WrapComboBoxSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ComboBoxText:
-		val := wrapComboBoxTextSimple(oo)
+		val := WrapComboBoxTextSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Container:
-		val := wrapContainerSimple(oo)
+		val := WrapContainerSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Dialog:
-		val := wrapDialogSimple(oo)
+		val := WrapDialogSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Entry:
-		val := wrapEntrySimple(oo)
+		val := WrapEntrySimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.EventBox:
-		val := wrapEventBoxSimple(oo)
+		val := WrapEventBoxSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.FileChooserDialog:
-		val := wrapFileChooserDialogSimple(oo)
+		val := WrapFileChooserDialogSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Grid:
-		val := wrapGridSimple(oo)
+		val := WrapGridSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.HeaderBar:
-		val := wrapHeaderBarSimple(oo)
+		val := WrapHeaderBarSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Image:
-		val := wrapImageSimple(oo)
+		val := WrapImageSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.InfoBar:
-		val := wrapInfoBarSimple(oo)
+		val := WrapInfoBarSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Label:
-		val := wrapLabelSimple(oo)
+		val := WrapLabelSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ListStore:
-		val := wrapListStoreSimple(oo)
+		val := WrapListStoreSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Menu:
-		val := wrapMenuSimple(oo)
+		val := WrapMenuSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.MenuBar:
-		val := wrapMenuBarSimple(oo)
+		val := WrapMenuBarSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.MenuItem:
-		val := wrapMenuItemSimple(oo)
+		val := WrapMenuItemSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.MenuShell:
-		val := wrapMenuShellSimple(oo)
+		val := WrapMenuShellSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.MessageDialog:
-		val := wrapMessageDialogSimple(oo)
+		val := WrapMessageDialogSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Notebook:
-		val := wrapNotebookSimple(oo)
+		val := WrapNotebookSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ProgressBar:
-		val := wrapProgressBarSimple(oo)
+		val := WrapProgressBarSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Revealer:
-		val := wrapRevealerSimple(oo)
+		val := WrapRevealerSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ScrolledWindow:
-		val := wrapScrolledWindowSimple(oo)
+		val := WrapScrolledWindowSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.SearchBar:
-		val := wrapSearchBarSimple(oo)
+		val := WrapSearchBarSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.SearchEntry:
-		val := wrapSearchEntrySimple(oo)
+		val := WrapSearchEntrySimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.SeparatorMenuItem:
-		val := wrapSeparatorMenuItemSimple(oo)
+		val := WrapSeparatorMenuItemSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.SpinButton:
-		val := wrapSpinButtonSimple(oo)
+		val := WrapSpinButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Spinner:
-		val := wrapSpinnerSimple(oo)
+		val := WrapSpinnerSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TextBuffer:
-		val := wrapTextBufferSimple(oo)
+		val := WrapTextBufferSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TextTag:
-		val := wrapTextTagSimple(oo)
+		val := WrapTextTagSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TextTagTable:
-		val := wrapTextTagTableSimple(oo)
+		val := WrapTextTagTableSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TextView:
-		val := wrapTextViewSimple(oo)
+		val := WrapTextViewSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ToggleButton:
-		val := wrapToggleButtonSimple(oo)
+		val := WrapToggleButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TreePath:
-		val := wrapTreePathSimple(oo)
+		val := WrapTreePathSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TreeSelection:
-		val := wrapTreeSelectionSimple(oo)
+		val := WrapTreeSelectionSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TreeStore:
-		val := wrapTreeStoreSimple(oo)
+		val := WrapTreeStoreSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TreeView:
-		val := wrapTreeViewSimple(oo)
+		val := WrapTreeViewSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.TreeViewColumn:
-		val := wrapTreeViewColumnSimple(oo)
+		val := WrapTreeViewColumnSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Widget:
-		val := wrapWidgetSimple(oo)
+		val := WrapWidgetSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.Window:
-		val := wrapWindowSimple(oo)
+		val := WrapWindowSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ToolItem:
-		val := wrapToolItemSimple(oo)
+		val := WrapToolItemSimple(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *gtk.ToolButton:
-		val := wrapToolButtonSimple(oo)
+		val := WrapToolButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -369,331 +369,331 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 func UnwrapLocal(o interface{}) (interface{}, bool) {
 	switch oo := o.(type) {
 	case *aboutDialog:
-		val := unwrapAboutDialog(oo)
+		val := UnwrapAboutDialog(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *accelGroup:
-		val := unwrapAccelGroup(oo)
+		val := UnwrapAccelGroup(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *adjustment:
-		val := unwrapAdjustment(oo)
+		val := UnwrapAdjustment(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *applicationWindow:
-		val := unwrapApplicationWindow(oo)
+		val := UnwrapApplicationWindow(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *assistant:
-		val := unwrapAssistant(oo)
+		val := UnwrapAssistant(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *bin:
-		val := unwrapBin(oo)
+		val := UnwrapBin(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *box:
-		val := unwrapBox(oo)
+		val := UnwrapBox(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *button:
-		val := unwrapButton(oo)
+		val := UnwrapButton(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *linkButton:
-		val := unwrapLinkButton(oo)
+		val := UnwrapLinkButton(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *cellRenderer:
-		val := unwrapCellRenderer(oo)
+		val := UnwrapCellRenderer(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *cellRendererText:
-		val := unwrapCellRendererText(oo)
+		val := UnwrapCellRendererText(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *cellRendererToggle:
-		val := unwrapCellRendererToggle(oo)
+		val := UnwrapCellRendererToggle(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *checkButton:
-		val := unwrapCheckButton(oo)
+		val := UnwrapCheckButton(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *checkMenuItem:
-		val := unwrapCheckMenuItem(oo)
+		val := UnwrapCheckMenuItem(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *comboBox:
-		val := unwrapComboBox(oo)
+		val := UnwrapComboBox(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *comboBoxText:
-		val := unwrapComboBoxText(oo)
+		val := UnwrapComboBoxText(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *container:
-		val := unwrapContainer(oo)
+		val := UnwrapContainer(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *dialog:
-		val := unwrapDialog(oo)
+		val := UnwrapDialog(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *entry:
-		val := unwrapEntry(oo)
+		val := UnwrapEntry(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *eventBox:
-		val := unwrapEventBox(oo)
+		val := UnwrapEventBox(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *fileChooserDialog:
-		val := unwrapFileChooserDialog(oo)
+		val := UnwrapFileChooserDialog(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *grid:
-		val := unwrapGrid(oo)
+		val := UnwrapGrid(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *headerBar:
-		val := unwrapHeaderBar(oo)
+		val := UnwrapHeaderBar(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *image:
-		val := unwrapImage(oo)
+		val := UnwrapImage(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *infoBar:
-		val := unwrapInfoBar(oo)
+		val := UnwrapInfoBar(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *label:
-		val := unwrapLabel(oo)
+		val := UnwrapLabel(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *listStore:
-		val := unwrapListStore(oo)
+		val := UnwrapListStore(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *menu:
-		val := unwrapMenu(oo)
+		val := UnwrapMenu(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *menuBar:
-		val := unwrapMenuBar(oo)
+		val := UnwrapMenuBar(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *menuItem:
-		val := unwrapMenuItem(oo)
+		val := UnwrapMenuItem(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *menuShell:
-		val := unwrapMenuShell(oo)
+		val := UnwrapMenuShell(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *messageDialog:
-		val := unwrapMessageDialog(oo)
+		val := UnwrapMessageDialog(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *notebook:
-		val := unwrapNotebook(oo)
+		val := UnwrapNotebook(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *progressBar:
-		val := unwrapProgressBar(oo)
+		val := UnwrapProgressBar(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *revealer:
-		val := unwrapRevealer(oo)
+		val := UnwrapRevealer(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *scrolledWindow:
-		val := unwrapScrolledWindow(oo)
+		val := UnwrapScrolledWindow(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *searchBar:
-		val := unwrapSearchBar(oo)
+		val := UnwrapSearchBar(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *searchEntry:
-		val := unwrapSearchEntry(oo)
+		val := UnwrapSearchEntry(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *separatorMenuItem:
-		val := unwrapSeparatorMenuItem(oo)
+		val := UnwrapSeparatorMenuItem(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *spinButton:
-		val := unwrapSpinButton(oo)
+		val := UnwrapSpinButton(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *spinner:
-		val := unwrapSpinner(oo)
+		val := UnwrapSpinner(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *textBuffer:
-		val := unwrapTextBuffer(oo)
+		val := UnwrapTextBuffer(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *textTag:
-		val := unwrapTextTag(oo)
+		val := UnwrapTextTag(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *textTagTable:
-		val := unwrapTextTagTable(oo)
+		val := UnwrapTextTagTable(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *textView:
-		val := unwrapTextView(oo)
+		val := UnwrapTextView(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *toggleButton:
-		val := unwrapToggleButton(oo)
+		val := UnwrapToggleButton(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *treePath:
-		val := unwrapTreePath(oo)
+		val := UnwrapTreePath(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *treeSelection:
-		val := unwrapTreeSelection(oo)
+		val := UnwrapTreeSelection(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *treeStore:
-		val := unwrapTreeStore(oo)
+		val := UnwrapTreeStore(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *treeView:
-		val := unwrapTreeView(oo)
+		val := UnwrapTreeView(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *treeViewColumn:
-		val := unwrapTreeViewColumn(oo)
+		val := UnwrapTreeViewColumn(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *widget:
-		val := unwrapWidget(oo)
+		val := UnwrapWidget(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *window:
-		val := unwrapWindow(oo)
+		val := UnwrapWindow(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *toolItem:
-		val := unwrapToolItem(oo)
+		val := UnwrapToolItem(oo)
 		if val == nil {
 			return nil, true
 		}
 		return val, true
 	case *toolButton:
-		val := unwrapToolButton(oo)
+		val := UnwrapToolButton(oo)
 		if val == nil {
 			return nil, true
 		}

@@ -11,18 +11,18 @@ type textBuffer struct {
 	internal *gtk.TextBuffer
 }
 
-func wrapTextBufferSimple(v *gtk.TextBuffer) *textBuffer {
+func WrapTextBufferSimple(v *gtk.TextBuffer) gtki.TextBuffer {
 	if v == nil {
 		return nil
 	}
 	return &textBuffer{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapTextBuffer(v *gtk.TextBuffer, e error) (*textBuffer, error) {
-	return wrapTextBufferSimple(v), e
+func WrapTextBuffer(v *gtk.TextBuffer, e error) (gtki.TextBuffer, error) {
+	return WrapTextBufferSimple(v), e
 }
 
-func unwrapTextBuffer(v gtki.TextBuffer) *gtk.TextBuffer {
+func UnwrapTextBuffer(v gtki.TextBuffer) *gtk.TextBuffer {
 	if v == nil {
 		return nil
 	}
@@ -30,7 +30,7 @@ func unwrapTextBuffer(v gtki.TextBuffer) *gtk.TextBuffer {
 }
 
 func (v *textBuffer) ApplyTagByName(v1 string, v2, v3 gtki.TextIter) {
-	v.internal.ApplyTagByName(v1, unwrapTextIter(v2), unwrapTextIter(v3))
+	v.internal.ApplyTagByName(v1, UnwrapTextIter(v2), UnwrapTextIter(v3))
 }
 
 func (v *textBuffer) GetCharCount() int {
@@ -42,19 +42,19 @@ func (v *textBuffer) GetLineCount() int {
 }
 
 func (v *textBuffer) GetEndIter() gtki.TextIter {
-	return wrapTextIterSimple(v.internal.GetEndIter())
+	return WrapTextIterSimple(v.internal.GetEndIter())
 }
 
 func (v *textBuffer) GetIterAtOffset(v1 int) gtki.TextIter {
-	return wrapTextIterSimple(v.internal.GetIterAtOffset(v1))
+	return WrapTextIterSimple(v.internal.GetIterAtOffset(v1))
 }
 
 func (v *textBuffer) GetStartIter() gtki.TextIter {
-	return wrapTextIterSimple(v.internal.GetStartIter())
+	return WrapTextIterSimple(v.internal.GetStartIter())
 }
 
 func (v *textBuffer) Insert(v1 gtki.TextIter, v2 string) {
-	v.internal.Insert(unwrapTextIter(v1), v2)
+	v.internal.Insert(UnwrapTextIter(v1), v2)
 }
 
 func (v *textBuffer) InsertAtCursor(v1 string) {
@@ -62,7 +62,7 @@ func (v *textBuffer) InsertAtCursor(v1 string) {
 }
 
 func (v *textBuffer) GetText(v1, v2 gtki.TextIter, v3 bool) string {
-	vx1, _ := v.internal.GetText(unwrapTextIter(v1), unwrapTextIter(v2), v3)
+	vx1, _ := v.internal.GetText(UnwrapTextIter(v1), UnwrapTextIter(v2), v3)
 	return vx1
 }
 
@@ -71,13 +71,13 @@ func (v *textBuffer) SetText(v1 string) {
 }
 
 func (v *textBuffer) Delete(v1, v2 gtki.TextIter) {
-	v.internal.Delete(unwrapTextIter(v1), unwrapTextIter(v2))
+	v.internal.Delete(UnwrapTextIter(v1), UnwrapTextIter(v2))
 }
 
 func (v *textBuffer) CreateMark(v1 string, v2 gtki.TextIter, v3 bool) gtki.TextMark {
-	return wrapTextMarkSimple(v.internal.CreateMark(v1, unwrapTextIter(v2), v3))
+	return WrapTextMarkSimple(v.internal.CreateMark(v1, UnwrapTextIter(v2), v3))
 }
 
 func (v *textBuffer) GetIterAtMark(v1 gtki.TextMark) gtki.TextIter {
-	return wrapTextIterSimple(v.internal.GetIterAtMark(unwrapTextMark(v1)))
+	return WrapTextIterSimple(v.internal.GetIterAtMark(UnwrapTextMark(v1)))
 }

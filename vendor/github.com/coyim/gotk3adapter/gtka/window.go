@@ -21,18 +21,18 @@ func (v *window) toWindow() *window {
 	return v
 }
 
-func wrapWindowSimple(v *gtk.Window) *window {
+func WrapWindowSimple(v *gtk.Window) gtki.Window {
 	if v == nil {
 		return nil
 	}
-	return &window{wrapBinSimple(&v.Bin), v}
+	return &window{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapWindow(v *gtk.Window, e error) (*window, error) {
-	return wrapWindowSimple(v), e
+func WrapWindow(v *gtk.Window, e error) (gtki.Window, error) {
+	return WrapWindowSimple(v), e
 }
 
-func unwrapWindow(v gtki.Window) *gtk.Window {
+func UnwrapWindow(v gtki.Window) *gtk.Window {
 	if v == nil {
 		return nil
 	}
@@ -40,7 +40,7 @@ func unwrapWindow(v gtki.Window) *gtk.Window {
 }
 
 func (v *window) AddAccelGroup(v2 gtki.AccelGroup) {
-	v.internal.AddAccelGroup(unwrapAccelGroup(v2))
+	v.internal.AddAccelGroup(UnwrapAccelGroup(v2))
 }
 
 func (v *window) GetTitle() string {
@@ -60,7 +60,7 @@ func (v *window) Resize(v1, v2 int) {
 }
 
 func (v *window) SetApplication(v2 gtki.Application) {
-	v.internal.SetApplication(unwrapApplication(v2))
+	v.internal.SetApplication(UnwrapApplication(v2))
 }
 
 func (v *window) SetIcon(v2 gdki.Pixbuf) {
@@ -72,15 +72,15 @@ func (v *window) SetTitle(v1 string) {
 }
 
 func (v *window) SetTitlebar(v2 gtki.Widget) {
-	v.internal.SetTitlebar(unwrapWidget(v2))
+	v.internal.SetTitlebar(UnwrapWidget(v2))
 }
 
 func (v *window) SetTransientFor(v2 gtki.Window) {
-	v.internal.SetTransientFor(unwrapWindow(v2))
+	v.internal.SetTransientFor(UnwrapWindow(v2))
 }
 
 func (v *window) GetTransientFor() (gtki.Window, error) {
-	return wrapWindow(v.internal.GetTransientFor())
+	return WrapWindow(v.internal.GetTransientFor())
 }
 
 func (v *window) HasToplevelFocus() bool {
@@ -120,11 +120,11 @@ func (v *window) SetUrgencyHint(v1 bool) {
 }
 
 func (v *window) AddMnemonic(v1 uint, v2 gtki.Widget) {
-	v.internal.AddMnemonic(v1, unwrapWidget(v2))
+	v.internal.AddMnemonic(v1, UnwrapWidget(v2))
 }
 
 func (v *window) RemoveMnemonic(v1 uint, v2 gtki.Widget) {
-	v.internal.RemoveMnemonic(v1, unwrapWidget(v2))
+	v.internal.RemoveMnemonic(v1, UnwrapWidget(v2))
 }
 
 func (v *window) ActivateMnemonic(v1 uint, v2 gdki.ModifierType) bool {

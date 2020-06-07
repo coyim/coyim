@@ -10,18 +10,18 @@ type comboBox struct {
 	internal *gtk.ComboBox
 }
 
-func wrapComboBoxSimple(v *gtk.ComboBox) *comboBox {
+func WrapComboBoxSimple(v *gtk.ComboBox) gtki.ComboBox {
 	if v == nil {
 		return nil
 	}
-	return &comboBox{wrapBinSimple(&v.Bin), v}
+	return &comboBox{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapComboBox(v *gtk.ComboBox, e error) (*comboBox, error) {
-	return wrapComboBoxSimple(v), e
+func WrapComboBox(v *gtk.ComboBox, e error) (gtki.ComboBox, error) {
+	return WrapComboBoxSimple(v), e
 }
 
-func unwrapComboBox(v gtki.ComboBox) *gtk.ComboBox {
+func UnwrapComboBox(v gtki.ComboBox) *gtk.ComboBox {
 	if v == nil {
 		return nil
 	}
@@ -29,7 +29,7 @@ func unwrapComboBox(v gtki.ComboBox) *gtk.ComboBox {
 }
 
 func (v *comboBox) GetActiveIter() (gtki.TreeIter, error) {
-	return wrapTreeIter(v.internal.GetActiveIter())
+	return WrapTreeIter(v.internal.GetActiveIter())
 }
 
 func (v *comboBox) GetActiveID() string {
@@ -45,13 +45,13 @@ func (v *comboBox) SetActive(v1 int) {
 }
 
 func (v *comboBox) SetModel(v1 gtki.TreeModel) {
-	v.internal.SetModel(unwrapTreeModel(v1))
+	v.internal.SetModel(UnwrapTreeModel(v1))
 }
 
 func (v *comboBox) AddAttribute(v1 gtki.CellRenderer, v2 string, v3 int) {
-	v.internal.AddAttribute(unwrapCellRenderer(v1), v2, v3)
+	v.internal.AddAttribute(UnwrapCellRenderer(v1), v2, v3)
 }
 
 func (v *comboBox) PackStart(v1 gtki.CellRenderer, v2 bool) {
-	v.internal.PackStart(unwrapCellRenderer(v1), v2)
+	v.internal.PackStart(UnwrapCellRenderer(v1), v2)
 }

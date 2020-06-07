@@ -9,18 +9,18 @@ type eventKey struct {
 	*gdk.EventKey
 }
 
-func wrapEventKeySimple(v *gdk.EventKey) *eventKey {
+func WrapEventKeySimple(v *gdk.EventKey) gdki.EventKey {
 	if v == nil {
 		return nil
 	}
 	return &eventKey{v}
 }
 
-func wrapEventKey(v *gdk.EventKey, e error) (*eventKey, error) {
-	return wrapEventKeySimple(v), e
+func WrapEventKey(v *gdk.EventKey, e error) (gdki.EventKey, error) {
+	return WrapEventKeySimple(v), e
 }
 
-func unwrapEventKey(v gdki.EventKey) *gdk.EventKey {
+func UnwrapEventKey(v gdki.EventKey) *gdk.EventKey {
 	if v == nil {
 		return nil
 	}

@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type bin struct {
@@ -10,18 +10,18 @@ type bin struct {
 	*gtk.Bin
 }
 
-func wrapBinSimple(v *gtk.Bin) *bin {
+func WrapBinSimple(v *gtk.Bin) gtki.Bin {
 	if v == nil {
 		return nil
 	}
-	return &bin{wrapContainerSimple(&v.Container), v}
+	return &bin{WrapContainerSimple(&v.Container).(*container), v}
 }
 
-func wrapBin(v *gtk.Bin, e error) (*bin, error) {
-	return wrapBinSimple(v), e
+func WrapBin(v *gtk.Bin, e error) (gtki.Bin, error) {
+	return WrapBinSimple(v), e
 }
 
-func unwrapBin(v gtki.Bin) *gtk.Bin {
+func UnwrapBin(v gtki.Bin) *gtk.Bin {
 	if v == nil {
 		return nil
 	}

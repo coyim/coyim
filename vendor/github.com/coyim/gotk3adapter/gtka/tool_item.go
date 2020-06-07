@@ -10,18 +10,18 @@ type toolItem struct {
 	internal *gtk.ToolItem
 }
 
-func wrapToolItemSimple(v *gtk.ToolItem) *toolItem {
+func WrapToolItemSimple(v *gtk.ToolItem) gtki.ToolItem {
 	if v == nil {
 		return nil
 	}
-	return &toolItem{wrapBinSimple(&v.Bin), v}
+	return &toolItem{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapToolItem(v *gtk.ToolItem, e error) (*toolItem, error) {
-	return wrapToolItemSimple(v), e
+func WrapToolItem(v *gtk.ToolItem, e error) (gtki.ToolItem, error) {
+	return WrapToolItemSimple(v), e
 }
 
-func unwrapToolItem(v gtki.ToolItem) *gtk.ToolItem {
+func UnwrapToolItem(v gtki.ToolItem) *gtk.ToolItem {
 	if v == nil {
 		return nil
 	}
@@ -29,5 +29,5 @@ func unwrapToolItem(v gtki.ToolItem) *gtk.ToolItem {
 }
 
 func (v *toolItem) Add(v1 gtki.Widget) {
-	v.internal.Add(unwrapWidget(v1))
+	v.internal.Add(UnwrapWidget(v1))
 }

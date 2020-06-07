@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type separatorMenuItem struct {
@@ -10,18 +10,18 @@ type separatorMenuItem struct {
 	internal *gtk.SeparatorMenuItem
 }
 
-func wrapSeparatorMenuItemSimple(v *gtk.SeparatorMenuItem) *separatorMenuItem {
+func WrapSeparatorMenuItemSimple(v *gtk.SeparatorMenuItem) gtki.SeparatorMenuItem {
 	if v == nil {
 		return nil
 	}
-	return &separatorMenuItem{wrapMenuItemSimple(&v.MenuItem), v}
+	return &separatorMenuItem{WrapMenuItemSimple(&v.MenuItem).(*menuItem), v}
 }
 
-func wrapSeparatorMenuItem(v *gtk.SeparatorMenuItem, e error) (*separatorMenuItem, error) {
-	return wrapSeparatorMenuItemSimple(v), e
+func WrapSeparatorMenuItem(v *gtk.SeparatorMenuItem, e error) (gtki.SeparatorMenuItem, error) {
+	return WrapSeparatorMenuItemSimple(v), e
 }
 
-func unwrapSeparatorMenuItem(v gtki.SeparatorMenuItem) *gtk.SeparatorMenuItem {
+func UnwrapSeparatorMenuItem(v gtki.SeparatorMenuItem) *gtk.SeparatorMenuItem {
 	if v == nil {
 		return nil
 	}

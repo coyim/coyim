@@ -1,9 +1,9 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type application struct {
@@ -11,18 +11,18 @@ type application struct {
 	internal *gtk.Application
 }
 
-func wrapApplicationSimple(v *gtk.Application) *application {
+func WrapApplicationSimple(v *gtk.Application) gtki.Application {
 	if v == nil {
 		return nil
 	}
 	return &application{gliba.WrapApplicationSimple(&v.Application), v}
 }
 
-func wrapApplication(v *gtk.Application, e error) (*application, error) {
-	return wrapApplicationSimple(v), e
+func WrapApplication(v *gtk.Application, e error) (gtki.Application, error) {
+	return WrapApplicationSimple(v), e
 }
 
-func unwrapApplication(v gtki.Application) *gtk.Application {
+func UnwrapApplication(v gtki.Application) *gtk.Application {
 	if v == nil {
 		return nil
 	}
@@ -30,7 +30,7 @@ func unwrapApplication(v gtki.Application) *gtk.Application {
 }
 
 func (v *application) GetActiveWindow() gtki.Window {
-	ret := wrapWindowSimple(v.internal.GetActiveWindow())
+	ret := WrapWindowSimple(v.internal.GetActiveWindow())
 	if ret == nil {
 		return nil
 	}

@@ -1,9 +1,9 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type adjustment struct {
@@ -11,18 +11,18 @@ type adjustment struct {
 	internal *gtk.Adjustment
 }
 
-func wrapAdjustmentSimple(v *gtk.Adjustment) *adjustment {
+func WrapAdjustmentSimple(v *gtk.Adjustment) gtki.Adjustment {
 	if v == nil {
 		return nil
 	}
 	return &adjustment{gliba.WrapObjectSimple(v.Object), v}
 }
 
-func wrapAdjustment(v *gtk.Adjustment, e error) (*adjustment, error) {
-	return wrapAdjustmentSimple(v), e
+func WrapAdjustment(v *gtk.Adjustment, e error) (gtki.Adjustment, error) {
+	return WrapAdjustmentSimple(v), e
 }
 
-func unwrapAdjustment(v gtki.Adjustment) *gtk.Adjustment {
+func UnwrapAdjustment(v gtki.Adjustment) *gtk.Adjustment {
 	if v == nil {
 		return nil
 	}

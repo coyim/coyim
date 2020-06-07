@@ -1,26 +1,26 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type treePath struct {
 	*gtk.TreePath
 }
 
-func wrapTreePathSimple(v *gtk.TreePath) *treePath {
+func WrapTreePathSimple(v *gtk.TreePath) gtki.TreePath {
 	if v == nil {
 		return nil
 	}
 	return &treePath{v}
 }
 
-func wrapTreePath(v *gtk.TreePath, e error) (*treePath, error) {
-	return wrapTreePathSimple(v), e
+func WrapTreePath(v *gtk.TreePath, e error) (gtki.TreePath, error) {
+	return WrapTreePathSimple(v), e
 }
 
-func unwrapTreePath(v gtki.TreePath) *gtk.TreePath {
+func UnwrapTreePath(v gtki.TreePath) *gtk.TreePath {
 	if v == nil {
 		return nil
 	}

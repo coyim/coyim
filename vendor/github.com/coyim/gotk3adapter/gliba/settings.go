@@ -1,8 +1,8 @@
 package gliba
 
 import (
-	"github.com/gotk3/gotk3/glib"
 	"github.com/coyim/gotk3adapter/glibi"
+	"github.com/gotk3/gotk3/glib"
 )
 
 type settings struct {
@@ -10,14 +10,14 @@ type settings struct {
 	*glib.Settings
 }
 
-func wrapSettingsSimple(v *glib.Settings) *settings {
+func WrapSettingsSimple(v *glib.Settings) glibi.Settings {
 	if v == nil {
 		return nil
 	}
 	return &settings{WrapObjectSimple(v.Object), v}
 }
 
-func unwrapSettings(v glibi.Settings) *glib.Settings {
+func UnwrapSettings(v glibi.Settings) *glib.Settings {
 	if v == nil {
 		return nil
 	}
@@ -45,7 +45,7 @@ func (v *settings) GetHasUnapplied() bool {
 }
 
 func (v *settings) GetChild(v1 string) glibi.Settings {
-	return wrapSettingsSimple(v.Settings.GetChild(v1))
+	return WrapSettingsSimple(v.Settings.GetChild(v1))
 }
 
 func (v *settings) Reset(v1 string) {

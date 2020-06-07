@@ -9,15 +9,15 @@ type screen struct {
 	*gdk.Screen
 }
 
-func wrapScreenSimple(v *gdk.Screen) *screen {
+func WrapScreenSimple(v *gdk.Screen) gdki.Screen {
 	if v == nil {
 		return nil
 	}
 	return &screen{v}
 }
 
-func wrapScreen(v *gdk.Screen, e error) (*screen, error) {
-	return wrapScreenSimple(v), e
+func WrapScreen(v *gdk.Screen, e error) (gdki.Screen, error) {
+	return WrapScreenSimple(v), e
 }
 
 func UnwrapScreen(v gdki.Screen) *gdk.Screen {

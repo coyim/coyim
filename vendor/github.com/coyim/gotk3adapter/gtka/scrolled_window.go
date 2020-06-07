@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type scrolledWindow struct {
@@ -10,18 +10,18 @@ type scrolledWindow struct {
 	internal *gtk.ScrolledWindow
 }
 
-func wrapScrolledWindowSimple(v *gtk.ScrolledWindow) *scrolledWindow {
+func WrapScrolledWindowSimple(v *gtk.ScrolledWindow) gtki.ScrolledWindow {
 	if v == nil {
 		return nil
 	}
-	return &scrolledWindow{wrapBinSimple(&v.Bin), v}
+	return &scrolledWindow{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapScrolledWindow(v *gtk.ScrolledWindow, e error) (*scrolledWindow, error) {
-	return wrapScrolledWindowSimple(v), e
+func WrapScrolledWindow(v *gtk.ScrolledWindow, e error) (gtki.ScrolledWindow, error) {
+	return WrapScrolledWindowSimple(v), e
 }
 
-func unwrapScrolledWindow(v gtki.ScrolledWindow) *gtk.ScrolledWindow {
+func UnwrapScrolledWindow(v gtki.ScrolledWindow) *gtk.ScrolledWindow {
 	if v == nil {
 		return nil
 	}
@@ -29,5 +29,5 @@ func unwrapScrolledWindow(v gtki.ScrolledWindow) *gtk.ScrolledWindow {
 }
 
 func (v *scrolledWindow) GetVAdjustment() gtki.Adjustment {
-	return wrapAdjustmentSimple(v.internal.GetVAdjustment())
+	return WrapAdjustmentSimple(v.internal.GetVAdjustment())
 }

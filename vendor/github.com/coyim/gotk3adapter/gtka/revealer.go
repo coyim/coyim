@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 type revealer struct {
@@ -10,18 +10,18 @@ type revealer struct {
 	internal *gtk.Revealer
 }
 
-func wrapRevealerSimple(v *gtk.Revealer) *revealer {
+func WrapRevealerSimple(v *gtk.Revealer) gtki.Revealer {
 	if v == nil {
 		return nil
 	}
-	return &revealer{wrapBinSimple(&v.Bin), v}
+	return &revealer{WrapBinSimple(&v.Bin).(*bin), v}
 }
 
-func wrapRevealer(v *gtk.Revealer, e error) (*revealer, error) {
-	return wrapRevealerSimple(v), e
+func WrapRevealer(v *gtk.Revealer, e error) (gtki.Revealer, error) {
+	return WrapRevealerSimple(v), e
 }
 
-func unwrapRevealer(v gtki.Revealer) *gtk.Revealer {
+func UnwrapRevealer(v gtki.Revealer) *gtk.Revealer {
 	if v == nil {
 		return nil
 	}

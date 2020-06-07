@@ -17,11 +17,32 @@ func WrapAction(v *glib.Action) glibi.Action {
 	return &action{WrapObjectSimple(v.Object), v}
 }
 
-func UnwrapAction(v glibi.Action) *glib.Action {
+func UnwrapActionOnly(v glibi.Action) *glib.Action {
 	if v == nil {
 		return nil
 	}
 	return v.(*action).Action
+}
+
+func UnwrapAction(v glibi.Action) *glib.Action {
+	switch oo := v.(type) {
+	case *simpleAction:
+		val := UnwrapSimpleAction(oo)
+		if val == nil {
+			return nil
+		}
+		return &val.Action
+	case *propertyAction:
+		val := UnwrapPropertyAction(oo)
+		if val == nil {
+			return nil
+		}
+		return &val.Action
+	case *action:
+		return UnwrapActionOnly(oo)
+	default:
+		return nil
+	}
 }
 
 func (v *action) GetName() string {

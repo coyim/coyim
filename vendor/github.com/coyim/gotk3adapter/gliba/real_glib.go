@@ -76,3 +76,23 @@ func (*RealGlib) SettingsSchemaSourceGetDefault() glibi.SettingsSchemaSource {
 func (*RealGlib) SettingsSchemaSourceNewFromDirectory(v1 string, v2 glibi.SettingsSchemaSource, v3 bool) glibi.SettingsSchemaSource {
 	return WrapSettingsSchemaSourceSimple(glib.SettingsSchemaSourceNewFromDirectory(v1, UnwrapSettingsSchemaSource(v2), v3))
 }
+
+func (*RealGlib) MenuNew() glibi.Menu {
+	return WrapMenuSimple(glib.MenuNew())
+}
+
+func (*RealGlib) MenuItemNew(label, detailed_action string) glibi.MenuItem {
+	return WrapMenuItemSimple(glib.MenuItemNew(label, detailed_action))
+}
+
+func (*RealGlib) MenuItemNewSection(label string, section glibi.MenuModel) glibi.MenuItem {
+	return WrapMenuItemSimple(glib.MenuItemNewSection(label, UnwrapMenuModel(section)))
+}
+
+func (*RealGlib) MenuItemNewSubmenu(label string, submenu glibi.MenuModel) glibi.MenuItem {
+	return WrapMenuItemSimple(glib.MenuItemNewSubmenu(label, UnwrapMenuModel(submenu)))
+}
+
+func (*RealGlib) MenuItemNewFromModel(model glibi.MenuModel, index int) glibi.MenuItem {
+	return WrapMenuItemSimple(glib.MenuItemNewFromModel(UnwrapMenuModel(model), index))
+}

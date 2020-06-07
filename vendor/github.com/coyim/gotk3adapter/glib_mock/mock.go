@@ -69,3 +69,23 @@ func (*Mock) SettingsSchemaSourceGetDefault() glibi.SettingsSchemaSource {
 func (*Mock) SettingsSchemaSourceNewFromDirectory(string, glibi.SettingsSchemaSource, bool) glibi.SettingsSchemaSource {
 	return nil
 }
+
+func (*Mock) MenuNew() glibi.Menu {
+	return nil
+}
+
+func (*Mock) MenuItemNew(label, detailed_action string) glibi.MenuItem {
+	return nil
+}
+
+func (*Mock) MenuItemNewSection(label string, section glibi.MenuModel) glibi.MenuItem {
+	return nil
+}
+
+func (*Mock) MenuItemNewSubmenu(label string, submenu glibi.MenuModel) glibi.MenuItem {
+	return nil
+}
+
+func (*Mock) MenuItemNewFromModel(model glibi.MenuModel, index int) glibi.MenuItem {
+	return nil
+}

@@ -22,6 +22,12 @@ type Glib interface {
 	SettingsSchemaSourceNewFromDirectory(string, SettingsSchemaSource, bool) SettingsSchemaSource
 
 	SignalNew(string) (Signal, error)
+
+	MenuNew() Menu
+	MenuItemNew(label, detailed_action string) MenuItem
+	MenuItemNewSection(label string, section MenuModel) MenuItem
+	MenuItemNewSubmenu(label string, submenu MenuModel) MenuItem
+	MenuItemNewFromModel(model MenuModel, index int) MenuItem
 } // end of Glib
 
 func AssertGlib(_ Glib) {}

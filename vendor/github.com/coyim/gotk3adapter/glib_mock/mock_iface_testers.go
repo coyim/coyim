@@ -12,4 +12,7 @@ func init() {
 	glibi.AssertSettingsSchemaSource(&MockSettingsSchemaSource{})
 	glibi.AssertSignal(&MockSignal{})
 	glibi.AssertValue(&MockValue{})
+	glibi.AssertMenuModel(&MockMenuModel{})
+	glibi.AssertMenu(&MockMenu{})
+	glibi.AssertMenuItem(&MockMenuItem{})
 }

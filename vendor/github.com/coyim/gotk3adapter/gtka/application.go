@@ -2,6 +2,7 @@ package gtka
 
 import (
 	"github.com/coyim/gotk3adapter/gliba"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -35,4 +36,32 @@ func (v *application) GetActiveWindow() gtki.Window {
 		return nil
 	}
 	return ret
+}
+
+func (v *application) AddWindow(w gtki.Window) {
+	v.internal.AddWindow(UnwrapWindow(w))
+}
+
+func (v *application) RemoveWindow(w gtki.Window) {
+	v.internal.RemoveWindow(UnwrapWindow(w))
+}
+
+func (v *application) PrefersAppMenu() bool {
+	return v.internal.PrefersAppMenu()
+}
+
+func (v *application) GetAppMenu() glibi.MenuModel {
+	return gliba.WrapMenuModelSimple(v.internal.GetAppMenu())
+}
+
+func (v *application) SetAppMenu(val glibi.MenuModel) {
+	v.internal.SetAppMenu(gliba.UnwrapMenuModel(val))
+}
+
+func (v *application) GetMenubar() glibi.MenuModel {
+	return gliba.WrapMenuModelSimple(v.internal.GetMenubar())
+}
+
+func (v *application) SetMenubar(val glibi.MenuModel) {
+	v.internal.SetMenubar(gliba.UnwrapMenuModel(val))
 }

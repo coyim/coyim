@@ -35,17 +35,17 @@ default: check
 check: lint test
 
 $(BUILD_DIR)/coyim: $(AUTOGEN) $(SRC)
-	$(GOBUILD) $(LDFLAGS) -i $(TAGS) -o $@
+	$(GOBUILD) $(LDFLAGS) $(TAGS) -o $@
 
 $(BUILD_DIR)/coyim-ma: $(AUTOGEN) $(SRC)
-	$(GOBUILD) $(LDFLAGS) -x -msan -i $(TAGS) -o $@
+	$(GOBUILD) $(LDFLAGS) -x -msan $(TAGS) -o $@
 
 # run with: export ASAN_OPTIONS=detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:verbosity=1:handle_segv=0
 $(BUILD_DIR)/coyim-aa: $(AUTOGEN) $(SRC)
-	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" $(GOBUILD) $(LDFLAGS) -x -i -ldflags '-extldflags "-fsanitize=address"' $(TAGS) -o $@
+	CC="clang" CGO_CFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -g -O1 -fno-omit-frame-pointer" CGO_LDFLAGS="-fsanitize=address" $(GOBUILD) $(LDFLAGS) -x -ldflags '-extldflags "-fsanitize=address"' $(TAGS) -o $@
 
 $(BUILD_DIR)/coyim.exe: $(AUTOGEN) $(SRC)
-	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) $(LDFLAGS) -i $(TAGS) -ldflags "-H windowsgui" -o $@
+	CGO_LDFLAGS_ALLOW=".*" CGO_CFLAGS_ALLOW=".*" CGO_CXXFLAGS_ALLOW=".*" CGO_CPPFLAGS_ALLOW=".*" $(GOBUILD) $(LDFLAGS) $(TAGS) -ldflags "-H windowsgui" -o $@
 
 $(BUILD_DIR)/coyim-debug: $(AUTOGEN) $(SRC)
 	$(GOBUILD) $(LDFLAGS) -v -gcflags "-N -l" $(TAGS) -o $@

@@ -143,7 +143,7 @@ func (cl *conversationList) updateItem(csi *conversationStackItem) {
 		cs.rosterPeerBackground,
 		csi.getTextWeight(),
 		createTooltipFor(peer),
-		statusIcons[decideStatusFor(peer)].getPixbuf(),
+		statusIcons[decideStatusFor(peer)].GetPixbuf(),
 		csi.getUnderline(),
 	},
 	)

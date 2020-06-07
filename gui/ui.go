@@ -511,8 +511,8 @@ func (u *gtkUI) mainWindow() {
 
 	u.connectShortcutsMainWindow(u.window)
 
-	u.window.SetIcon(coyimIcon.getPixbuf())
-	g.gtk.WindowSetDefaultIcon(coyimIcon.getPixbuf())
+	u.window.SetIcon(coyimIcon.GetPixbuf())
+	g.gtk.WindowSetDefaultIcon(coyimIcon.GetPixbuf())
 
 	//Ideally, this should respect widgets initial value for "display",
 	//and only call window.Show()

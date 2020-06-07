@@ -456,7 +456,7 @@ func (r *roster) addItem(item *rosters.Peer, parentIter gtki.TreeIter, indent st
 	)
 
 	_ = r.model.SetValue(iter, indexRowType, "peer")
-	_ = r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].getPixbuf())
+	_ = r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].GetPixbuf())
 }
 
 func (r *roster) redrawMerged() {
@@ -624,7 +624,7 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 		stat = "connecting"
 	}
 
-	_ = r.model.SetValue(parentIter, indexStatusIcon, statusIcons[stat].getPixbuf())
+	_ = r.model.SetValue(parentIter, indexStatusIcon, statusIcons[stat].GetPixbuf())
 	_ = r.model.SetValue(parentIter, indexParentDisplayName, createGroupDisplayName(parentName, accountCounter, isExpanded))
 }
 

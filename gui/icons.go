@@ -8,6 +8,10 @@ import (
 	"github.com/coyim/gotk3adapter/gdki"
 )
 
+type Icon interface {
+	GetPixbuf() gdki.Pixbuf
+}
+
 type icon struct {
 	encoded       string
 	size          string
@@ -17,6 +21,8 @@ type icon struct {
 	path          string
 	name          string
 }
+
+var CoyimIcon Icon = coyimIcon
 
 var coyimIcon = &icon{
 	name:   "coyimIcon_256x256.png",
@@ -1084,7 +1090,7 @@ func (i *icon) get() ([]byte, error) {
 	return i.decoded, err
 }
 
-func (i *icon) getPixbuf() gdki.Pixbuf {
+func (i *icon) GetPixbuf() gdki.Pixbuf {
 	var err error
 
 	if i.cached == nil {

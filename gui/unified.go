@@ -22,7 +22,6 @@ var ulAllIndexValues = []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
 type unifiedLayout struct {
 	ui                       *gtkUI
 	cl                       *conversationList
-	headerBar                gtki.HeaderBar
 	leftPane                 gtki.Box
 	rightPane                gtki.Box
 	notebook                 gtki.Notebook
@@ -72,7 +71,6 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	builder.getItems(
 		"treeview", &ul.cl.view,
 		"liststore", &ul.cl.model,
-		"headerbar", &ul.headerBar,
 
 		"right", &ul.rightPane,
 		"notebook", &ul.notebook,
@@ -102,8 +100,6 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	parent.SetChildPacking(ul.leftPane, false, true, 0, gtki.PACK_START)
 
 	ul.rightPane.Hide()
-
-	ul.ui.window.SetTitlebar(ul.headerBar)
 
 	left.SetHAlign(gtki.ALIGN_FILL)
 	left.SetHExpand(true)
@@ -207,7 +203,6 @@ func (ul *unifiedLayout) hideConversations() {
 	ul.leftPane.SetHExpand(true)
 	ul.ui.window.Resize(width, height)
 	ul.convsVisible = false
-	ul.headerBar.SetSubtitle("")
 
 	if currentPos.equals(ul.originalExpandedPosition) {
 		go moveTo(ul)
@@ -295,8 +290,7 @@ func (csi *conversationStackItem) bringToFront() {
 	csi.applyTextWeight()
 	csi.layout.setCurrentPage(csi)
 	title := windowConversationTitle(csi.layout.ui, csi.currentPeerForSending(), csi.account, csi.potentialTarget())
-	csi.layout.header.SetText(title)
-	csi.layout.headerBar.SetSubtitle(title)
+	csi.layout.ui.window.SetTitle(title)
 	csi.entry.GrabFocus()
 	csi.layout.update()
 }

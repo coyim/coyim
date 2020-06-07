@@ -54,11 +54,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a065dc8ac3b12581cbebcb0d13336ed0bfb47dbb41f813fe6ed854e66a989424"
+  digest = "1:0ca31016a5289103991213d0ff3199c66e4b7a7d7f5f501e9105f49479292069"
   name = "github.com/coyim/gotk3osx"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9b156234f1e3b7d9047e5b5464c428d98b7f008c"
+  revision = "0bc104b9d83d107422dfcb1c4981938e74f6e8a7"
 
 [[projects]]
   branch = "master"

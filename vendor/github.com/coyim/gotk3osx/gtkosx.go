@@ -2,7 +2,7 @@
 
 package gotk3osx
 
-// #cgo pkg-config: gtk-mac-integration gio-2.0 glib-2.0 gobject-2.0 gtk+-3.0 gdk-3.0
+// #cgo pkg-config: gtk-mac-integration-gtk3 gio-2.0 glib-2.0 gobject-2.0 gtk+-3.0 gdk-3.0
 // #include <gtk/gtk.h>
 // #include <gdk/gdk.h>
 // #include <glib-object.h>
@@ -87,7 +87,6 @@ func (v *GtkosxApplication) Ready() {
 	C.gtkosx_application_ready(v.native())
 }
 
-
 // SetUseQuartzAccelerators sets quartz accelerator handling; TRUE (default) uses quartz; FALSE uses Gtk+. Quartz accelerator handling is required for normal OS X accelerators (e.g., command-q to quit) to work.
 func (v *GtkosxApplication) SetUseQuartzAccelerators(v2 bool) {
 	C.gtkosx_application_set_use_quartz_accelerators(v.native(), gbool(v2))
@@ -137,7 +136,7 @@ func (v *GtkosxApplication) SetDockIconPixbuf(pixbuf *gdk.Pixbuf) {
 func (v *GtkosxApplication) SetDockIconResource(name, tp, subdir string) {
 	cstrname := C.CString(name)
 	defer C.free(unsafe.Pointer(cstrname))
-	
+
 	cstrtype := C.CString(tp)
 	defer C.free(unsafe.Pointer(cstrtype))
 
@@ -151,9 +150,9 @@ type GtkosxApplicationAttentionType int
 
 const (
 	ATTENTION_TYPE_CRITICAL_REQUEST GtkosxApplicationAttentionType = C.CRITICAL_REQUEST
-	ATTENTION_TYPE_INFO_REQUEST GtkosxApplicationAttentionType = C.INFO_REQUEST
+	ATTENTION_TYPE_INFO_REQUEST     GtkosxApplicationAttentionType = C.INFO_REQUEST
 )
-	
+
 // AttentionRequest creates an attention request. If type is CRITICAL_REQUEST, the dock icon will bounce until cancelled the application receives focus; otherwise it will bounce for 1 second -- but the attention request will remain asserted until cancelled or the application receives focus. This function has no effect if the application has focus.
 func (v *GtkosxApplication) AttentionRequest(tp GtkosxApplicationAttentionType) int {
 	res := C.gtkosx_application_attention_request(v.native(), C.GtkosxApplicationAttentionType(tp))

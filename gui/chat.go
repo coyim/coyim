@@ -347,7 +347,7 @@ func (v *chatRoomView) showRoomConfigDialog() {
 func (u *gtkUI) joinChatRoom() {
 	//pass message and presence channels
 	view := u.newChatView(u.accountManager, u.chatManager)
-	view.SetTransientFor(u.window)
+	view.SetApplication(u.app)
 	view.Show()
 }
 

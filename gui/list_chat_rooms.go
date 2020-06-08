@@ -23,7 +23,7 @@ type listRoomsView struct {
 
 func (u *gtkUI) listChatRooms() {
 	view := u.newListRoomsView(u.accountManager, u.chatManager)
-	view.SetTransientFor(u.window)
+	view.SetApplication(u.app)
 	view.Show()
 }
 
@@ -107,9 +107,6 @@ func (v *listRoomsView) joinSelectedRoom() {
 	service, _ := v.service.GetText()
 
 	addChatView := v.ui.newChatView(v.accountManager, v.chatManager)
-	if parent, err := v.GetTransientFor(); err == nil {
-		addChatView.SetTransientFor(parent)
-	}
 
 	addChatView.service.SetText(service)
 	addChatView.room.SetText(room)

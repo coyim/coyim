@@ -8,6 +8,7 @@ import (
 	"github.com/coyim/gotk3adapter/gdki"
 )
 
+// Icon is a published interface that allows the conversion of an icon to a pixbuf
 type Icon interface {
 	GetPixbuf() gdki.Pixbuf
 }
@@ -22,6 +23,7 @@ type icon struct {
 	name          string
 }
 
+// CoyimIcon is the CoyIM official icon, as a 256x256 png
 var CoyimIcon Icon = coyimIcon
 
 var coyimIcon = &icon{

@@ -35,9 +35,7 @@ import "github.com/coyim/gotk3adapter/glibi"
     if !gtk-shell-shows-menubar
       - we will use our own internal menu, and do nothing
 
-  TODO: We need to create a GMenuModel version of our internal menu
-  TODO: So we need actions for all things you can do
-  TODO: and then we need to bind things properly
+  Most of this work still remains to be done.
 */
 
 func (u *gtkUI) createSimpleAppMenu() glibi.MenuModel {

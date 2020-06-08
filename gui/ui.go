@@ -541,7 +541,7 @@ func (u *gtkUI) initializeMenubar() {
 	top.AppendSubmenu(i18n.Local("_Contacts"), contactsMenu)
 
 	showMenubar, _ := settings.GetProperty("gtk-shell-shows-menubar")
-	if showMenubar {
+	if showMenubar.(bool) {
 		u.app.SetMenubar(top)
 	} else {
 		// We need to use the existing definition

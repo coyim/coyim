@@ -517,9 +517,35 @@ func (u *gtkUI) mainWindow() {
 	//Ideally, this should respect widgets initial value for "display",
 	//and only call window.Show()
 	u.updateGlobalMenuStatus()
+
+	u.initializeMenubar()
+
 	u.window.ShowAll()
 
 	builder.get("muc-mockup-menu").(gtki.MenuItem).SetVisible(config.MUCEnabled)
+}
+
+func (u *gtkUI) initializeMenubar() {
+	settings, err := g.gtk.SettingsGetDefault()
+	if err != nil {
+		panic(err)
+	}
+
+	top := g.glib.MenuNew()
+	contactsMenu := g.glib.MenuNew()
+	addContactsMenuItem := g.glib.MenuItemNew(i18n.Local("Add..."), "app.add_contact")
+	contactsMenu.AppendItem(addContactsMenuItem)
+	newConvMenuItem := g.glib.MenuItemNew(i18n.Local("New Conversation..."), "app.new_conv")
+	contactsMenu.AppendItem(newConvMenuItem)
+
+	top.AppendSubmenu(i18n.Local("_Contacts"), contactsMenu)
+
+	showMenubar, _ := settings.GetProperty("gtk-shell-shows-menubar")
+	if showMenubar {
+		u.app.SetMenubar(top)
+	} else {
+		// We need to use the existing definition
+	}
 }
 
 func (u *gtkUI) addInitialAccountsToRoster() {

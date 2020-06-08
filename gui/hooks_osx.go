@@ -1,13 +1,12 @@
 // +build darwin
 
-package osx
+package gui
 
-import "github.com/coyim/coyim/gui"
 import "github.com/coyim/gotk3osx"
 import "github.com/coyim/gotk3adapter/gdka"
 
-// Create will return os hooks for OS X
-func Create() gui.OSHooks {
+// CreateOSX will return os hooks for OS X
+func CreateOSX() OSHooks {
 	return &osxHooks{}
 }
 
@@ -19,6 +18,6 @@ func (h *osxHooks) AfterInit() {
 	h.app, _ = gotk3osx.GetGtkosxApplication()
 	h.app.Ready()
 
-	p := gui.CoyimIcon.GetPixbuf()
+	p := coyimIcon.GetPixbuf()
 	h.app.SetDockIconPixbuf(gdka.UnwrapPixbuf(p))
 }

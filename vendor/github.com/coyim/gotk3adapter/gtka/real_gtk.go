@@ -146,6 +146,10 @@ func (*RealGtk) ListStoreNew(types ...glibi.Type) (gtki.ListStore, error) {
 	return WrapListStore(gtk.ListStoreNew(unwrapTypes(types)...))
 }
 
+func (*RealGtk) MenuBarNew() (gtki.MenuBar, error) {
+	return WrapMenuBar(gtk.MenuBarNew())
+}
+
 func (*RealGtk) MenuItemNew() (gtki.MenuItem, error) {
 	return WrapMenuItem(gtk.MenuItemNew())
 }

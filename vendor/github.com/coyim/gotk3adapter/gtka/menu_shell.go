@@ -21,11 +21,32 @@ func WrapMenuShell(v *gtk.MenuShell, e error) (gtki.MenuShell, error) {
 	return WrapMenuShellSimple(v), e
 }
 
-func UnwrapMenuShell(v gtki.MenuShell) *gtk.MenuShell {
+func UnwrapMenuShellOnly(v gtki.MenuShell) *gtk.MenuShell {
 	if v == nil {
 		return nil
 	}
 	return v.(*menuShell).internal
+}
+
+func UnwrapMenuShell(v gtki.MenuShell) *gtk.MenuShell {
+	switch oo := v.(type) {
+	case *menuBar:
+		val := UnwrapMenuBar(oo)
+		if val == nil {
+			return nil
+		}
+		return &val.MenuShell
+	case *menu:
+		val := UnwrapMenu(oo)
+		if val == nil {
+			return nil
+		}
+		return &val.MenuShell
+	case *menuShell:
+		return UnwrapMenuShellOnly(oo)
+	default:
+		return nil
+	}
 }
 
 func (v *menuShell) Append(v1 gtki.MenuItem) {

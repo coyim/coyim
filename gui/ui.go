@@ -520,6 +520,8 @@ func (u *gtkUI) mainWindow() {
 
 	u.initializeMenubar()
 
+	u.hooks.BeforeMainWindow(u)
+
 	u.window.ShowAll()
 
 	builder.get("muc-mockup-menu").(gtki.MenuItem).SetVisible(config.MUCEnabled)

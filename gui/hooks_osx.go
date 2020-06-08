@@ -12,8 +12,15 @@ func CreateOSX() OSHooks {
 
 type osxHooks struct {
 	app *gotk3osx.GtkosxApplication
+	ui  *gtkUI
 }
 
+// BeforeMainWindow implements the OSHooks interface
+func (h *osxHooks) BeforeMainWindow(ui *gtkUI) {
+	h.ui = ui
+}
+
+// AfterInit implements the OSHooks interface
 func (h *osxHooks) AfterInit() {
 	h.app, _ = gotk3osx.GetGtkosxApplication()
 	h.app.Ready()

@@ -8,5 +8,5 @@ import (
 )
 
 func (*RealGtk) CssProviderGetDefault() (gtki.CssProvider, error) {
-	return wrapCssProvider(gtk.CssProviderGetDefault())
+	return WrapCssProvider(gtk.CssProviderGetDefault())
 }

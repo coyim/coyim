@@ -521,7 +521,7 @@ func (u *gtkUI) mainWindow() {
 	//and only call window.Show()
 	u.updateGlobalMenuStatus()
 
-	u.initializeMenubar()
+	u.initializeMenus()
 
 	u.hooks.BeforeMainWindow(u)
 
@@ -530,28 +530,28 @@ func (u *gtkUI) mainWindow() {
 	builder.get("muc-mockup-menu").(gtki.MenuItem).SetVisible(config.MUCEnabled)
 }
 
-func (u *gtkUI) initializeMenubar() {
-	settings, err := g.gtk.SettingsGetDefault()
-	if err != nil {
-		panic(err)
-	}
+// func (u *gtkUI) initializeMenubar() {
+// 	settings, err := g.gtk.SettingsGetDefault()
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-	top := g.glib.MenuNew()
-	contactsMenu := g.glib.MenuNew()
-	addContactsMenuItem := g.glib.MenuItemNew(i18n.Local("Add..."), "app.add_contact")
-	contactsMenu.AppendItem(addContactsMenuItem)
-	newConvMenuItem := g.glib.MenuItemNew(i18n.Local("New Conversation..."), "app.new_conv")
-	contactsMenu.AppendItem(newConvMenuItem)
+// 	top := g.glib.MenuNew()
+// 	contactsMenu := g.glib.MenuNew()
+// 	addContactsMenuItem := g.glib.MenuItemNew(i18n.Local("Add..."), "app.add_contact")
+// 	contactsMenu.AppendItem(addContactsMenuItem)
+// 	newConvMenuItem := g.glib.MenuItemNew(i18n.Local("New Conversation..."), "app.new_conv")
+// 	contactsMenu.AppendItem(newConvMenuItem)
 
-	top.AppendSubmenu(i18n.Local("_Contacts"), contactsMenu)
+// 	top.AppendSubmenu(i18n.Local("_Contacts"), contactsMenu)
 
-	showMenubar, _ := settings.GetProperty("gtk-shell-shows-menubar")
-	if showMenubar.(bool) {
-		u.app.SetMenubar(top)
-	} else {
-		// We need to use the existing definition
-	}
-}
+// 	showMenubar, _ := settings.GetProperty("gtk-shell-shows-menubar")
+// 	if showMenubar.(bool) {
+// 		u.app.SetMenubar(top)
+// 	} else {
+// 		// We need to use the existing definition
+// 	}
+// }
 
 func (u *gtkUI) addInitialAccountsToRoster() {
 	for _, account := range u.getAllAccounts() {

@@ -76,6 +76,8 @@ type gtkUI struct {
 	log coylog.Logger
 
 	hooks OSHooks
+
+	mainBuilder *builder
 }
 
 // Graphics represent the graphic configuration
@@ -430,6 +432,7 @@ func (u *gtkUI) initRoster() {
 
 func (u *gtkUI) mainWindow() {
 	builder := newBuilder("Main")
+	u.mainBuilder = builder
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window_signal":                       u.quit,

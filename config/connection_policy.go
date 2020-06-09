@@ -133,8 +133,8 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 			return nil, err
 		}
 
-		if hidden, ok := servers.Get(host); ok {
-			dialer.SetServerAddress(net.JoinHostPort(hidden.Onion, port))
+		if hidden, ok := servers.GetOnion(host); ok {
+			dialer.SetServerAddress(net.JoinHostPort(hidden, port))
 		}
 	}
 

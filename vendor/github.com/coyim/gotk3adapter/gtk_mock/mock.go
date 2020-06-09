@@ -192,3 +192,19 @@ func (*Mock) WindowSetDefaultIcon(icon gdki.Pixbuf) {
 func (*Mock) SettingsGetDefault() (gtki.Settings, error) {
 	return nil, nil
 }
+
+func (*Mock) StatusIconNew() (gtki.StatusIcon, error) {
+	return nil, nil
+}
+
+func (*Mock) StatusIconNewFromFile(filename string) (gtki.StatusIcon, error) {
+	return nil, nil
+}
+
+func (*Mock) StatusIconNewFromIconName(iconName string) (gtki.StatusIcon, error) {
+	return nil, nil
+}
+
+func (*Mock) StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (gtki.StatusIcon, error) {
+	return nil, nil
+}

@@ -45,6 +45,7 @@ func init() {
 	gtki.AssertSettings(&settings{})
 	gtki.AssertSpinner(&spinner{})
 	gtki.AssertSpinButton(&spinButton{})
+	gtki.AssertStatusIcon(&statusIcon{})
 	gtki.AssertStyleContext(&styleContext{})
 	gtki.AssertTextBuffer(&textBuffer{})
 	gtki.AssertTextIter(&textIter{})

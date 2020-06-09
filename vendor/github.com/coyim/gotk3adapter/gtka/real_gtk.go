@@ -5,6 +5,7 @@ import (
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -205,4 +206,20 @@ func (*RealGtk) WindowSetDefaultIcon(icon gdki.Pixbuf) {
 
 func (*RealGtk) SettingsGetDefault() (gtki.Settings, error) {
 	return WrapSettings(gtk.SettingsGetDefault())
+}
+
+func (*RealGtk) StatusIconNew() (gtki.StatusIcon, error) {
+	return WrapStatusIcon(gotk3extra.StatusIconNew())
+}
+
+func (*RealGtk) StatusIconNewFromFile(filename string) (gtki.StatusIcon, error) {
+	return WrapStatusIcon(gotk3extra.StatusIconNewFromFile(filename))
+}
+
+func (*RealGtk) StatusIconNewFromIconName(iconName string) (gtki.StatusIcon, error) {
+	return WrapStatusIcon(gotk3extra.StatusIconNewFromIconName(iconName))
+}
+
+func (*RealGtk) StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (gtki.StatusIcon, error) {
+	return WrapStatusIcon(gotk3extra.StatusIconNewFromPixbuf(gdka.UnwrapPixbuf(pixbuf)))
 }

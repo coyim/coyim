@@ -53,6 +53,11 @@ type Gtk interface {
 	TreePathNew() TreePath
 	WindowSetDefaultIcon(gdki.Pixbuf)
 	SettingsGetDefault() (Settings, error)
+
+	StatusIconNew() (StatusIcon, error)
+	StatusIconNewFromFile(filename string) (StatusIcon, error)
+	StatusIconNewFromIconName(iconName string) (StatusIcon, error)
+	StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (StatusIcon, error)
 }
 
 func AssertGtk(_ Gtk) {}

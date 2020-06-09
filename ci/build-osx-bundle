@@ -13,7 +13,7 @@ OUTPUT=$1
 frameworks=$OUTPUT/Contents/F
 resources=$OUTPUT/Contents/Resources
 macos=$OUTPUT/Contents/MacOS
-wrapper=$macos/Coy
+wrapper=$macos/CoyIM
 binary=${wrapper}-bin
 
 cellar=$(brew --prefix)/Cellar
@@ -26,7 +26,7 @@ mkdir -p $macos $frameworks $resources
 cp -av bin/coyim $binary
 cp -av build/mac-bundle/coyim-launcher.sh $wrapper
 cp -av build/mac-bundle/Info.plist $OUTPUT/Contents/Info.plist
-cp -av build/mac-bundle/coy.icns $resources
+cp -av build/mac-bundle/coyim.icns $resources
 cp -av build/mac-bundle/environment.sh $resources
 
 chmod a+x $wrapper $binary

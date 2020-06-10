@@ -29,7 +29,7 @@ clean-mac-bundle:
 
 mac-bundle:
 	make -C ../ build-gui
-	iconutil -c icns -o ../build/mac-bundle/CoyIM.icns ../build/mac-bundle/CoyIM.iconset
+	iconutil -c icns -o ../build/mac-bundle/coyim.icns ../build/mac-bundle/coyim.iconset
 	cd .. && ci/build-osx-bundle bin/mac-bundle/CoyIM.app
 
 release-dmg: clean-mac-bundle mac-bundle

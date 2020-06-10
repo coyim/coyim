@@ -106,7 +106,7 @@
   </data>
 
   <data dest="${bundle}/Contents/Resources">
-    ${project}/CoyIM.icns
+    ${project}/coyim.icns
   </data>
 
 </app-bundle>

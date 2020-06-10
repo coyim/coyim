@@ -11,7 +11,7 @@
     <key>CFBundleGetInfoString</key>
     <string>Copyright 2015-2020, The CoyIM developers</string>
     <key>CFBundleIconFile</key>
-    <string>CoyIM.icns</string>
+    <string>coyim.icns</string>
     <key>CFBundleIdentifier</key>
     <string>im.coy.coyim</string>
     <key>CFBundleInfoDictionaryVersion</key>

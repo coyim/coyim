@@ -37,7 +37,6 @@ func (cvf *ourConversationViewFactory) OpenConversationView(userInitiated bool) 
 	if !ok {
 		c = cvf.createConversationView(nil)
 	}
-
 	c.show(userInitiated)
 	return c
 }
@@ -86,6 +85,71 @@ func windowConversationTitle(ui *gtkUI, peer jid.Any, account *account, potentia
 	return fmt.Sprintf("%s%s (%s)", otherName, potentialTarget, account.session.DisplayName())
 }
 
+func (cvf *ourConversationViewFactory) recreateWindowOn(conv *conversationWindow) {
+	cp := conv.conversationPane
+
+	builder := newBuilder("Conversation")
+	win := builder.getObj("conversation").(gtki.Window)
+	win.SetApplication(cvf.ui.app)
+
+	win.SetTitle(windowConversationTitle(cvf.ui, cvf.peer, cvf.account, cvf.potentialTarget()))
+	winBox := builder.getObj("box").(gtki.Box)
+	cp.menubar.Show()
+	winBox.PackStart(cp.widget, true, true, 0)
+
+	conv.win = win
+	cp.connectEnterHandler(conv.win)
+
+	cvf.setWindowEvents(conv, winBox)
+
+	cvf.ui.connectShortcutsChildWindow(conv.win)
+	cvf.ui.connectShortcutsConversationWindow(conv)
+
+	cp.transientParent = win
+
+	// This 115 is apparently for the letter "s"
+	win.AddMnemonic(uint(115), cp.encryptedLabel)
+}
+
+func (cvf *ourConversationViewFactory) setWindowEvents(conv *conversationWindow, winBox gtki.Box) {
+	cp := conv.conversationPane
+
+	inEventHandler := false
+	_, _ = conv.win.Connect("set-focus", func() {
+		if !inEventHandler {
+			inEventHandler = true
+			conv.entry.GrabFocus()
+			inEventHandler = false
+		}
+	})
+
+	_, _ = conv.win.Connect("focus-in-event", func() {
+		conv.unsetUrgent()
+	})
+
+	_, _ = conv.win.Connect("delete-event", func() {
+		winBox.Remove(cp.widget)
+		conv.win = nil
+	})
+
+	_, _ = conv.win.Connect("notify::is-active", func() {
+		if conv.win.IsActive() {
+			inEventHandler = true
+			conv.entry.GrabFocus()
+			inEventHandler = false
+		}
+	})
+
+	_, _ = conv.win.Connect("hide", func() {
+		conv.onHide()
+	})
+
+	_, _ = conv.win.Connect("show", func() {
+		conv.onShow()
+	})
+
+}
+
 func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *conversationPane) *conversationWindow {
 	// fmt.Printf("createWindowedConversationView(peer=%s, targeted=%v)\n", cvf.peer, cvf.targeted)
 	builder := newBuilder("Conversation")
@@ -112,38 +176,7 @@ func (cvf *ourConversationViewFactory) createWindowedConversationView(existing *
 	cp.connectEnterHandler(conv.win)
 	cp.afterNewMessage = conv.potentiallySetUrgent
 
-	// Unlike the GTK version, this is not supposed to be used as a callback but
-	// it attaches the callback to the widget
-	conv.win.HideOnDelete()
-
-	inEventHandler := false
-	_, _ = conv.win.Connect("set-focus", func() {
-		if !inEventHandler {
-			inEventHandler = true
-			conv.entry.GrabFocus()
-			inEventHandler = false
-		}
-	})
-
-	_, _ = conv.win.Connect("focus-in-event", func() {
-		conv.unsetUrgent()
-	})
-
-	_, _ = conv.win.Connect("notify::is-active", func() {
-		if conv.win.IsActive() {
-			inEventHandler = true
-			conv.entry.GrabFocus()
-			inEventHandler = false
-		}
-	})
-
-	_, _ = conv.win.Connect("hide", func() {
-		conv.onHide()
-	})
-
-	_, _ = conv.win.Connect("show", func() {
-		conv.onShow()
-	})
+	cvf.setWindowEvents(conv, winBox)
 
 	cvf.ui.connectShortcutsChildWindow(conv.win)
 	cvf.ui.connectShortcutsConversationWindow(conv)
@@ -306,6 +339,11 @@ func (cvf *ourConversationViewFactory) getConversationViewSafely() (conversation
 	if !ok {
 		return nil, false
 	}
+
+	if val, okWin := c.(*conversationWindow); okWin && val.win == nil {
+		cvf.recreateWindowOn(val)
+	}
+
 	if cvf.isWindowingStyleConsistent(c) {
 		return c, true
 	}

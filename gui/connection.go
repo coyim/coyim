@@ -107,7 +107,6 @@ func (u *gtkUI) askForPasswordAndConnect(account *account, addGoogleWarning bool
 func (u *gtkUI) connectWithRandomDelay(a *account) {
 	sleepDelay := time.Duration(rand.Int31n(7643)) * time.Millisecond
 	time.Sleep(sleepDelay)
-	a.session.SetWantToBeOnline(true)
 	a.Connect()
 }
 

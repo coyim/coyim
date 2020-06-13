@@ -286,7 +286,6 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 	}
 
 	if acc, ok := w.u.getAccountByID(w.form.conf.ID()); ok {
-		acc.session.SetWantToBeOnline(true)
 		acc.Connect()
 	}
 

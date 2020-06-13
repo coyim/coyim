@@ -243,10 +243,7 @@ func (account *account) createCheckConnectionItem(u *gtkUI) gtki.MenuItem {
 
 func (account *account) createConnectItem(u *gtkUI) gtki.MenuItem {
 	connectItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("_Connect"))
-	_, _ = connectItem.Connect("activate", func() {
-		account.session.SetWantToBeOnline(true)
-		account.Connect()
-	})
+	_, _ = connectItem.Connect("activate", account.Connect)
 	connectItem.SetSensitive(account.session.IsDisconnected())
 	account.observeConnectionEvents(u, func() {
 		connectItem.SetSensitive(account.session.IsDisconnected())
@@ -362,6 +359,7 @@ func (account *account) buildAccountSubmenu(u *gtkUI) {
 }
 
 func (account *account) Connect() {
+	account.session.SetWantToBeOnline(true)
 	account.executeCmd(connectAccountCmd{account})
 }
 

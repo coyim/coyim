@@ -87,8 +87,8 @@ func (m *conversationManager) getConversationWithUnlocked(peer jid.Any) (Convers
 }
 
 func (m *conversationManager) GetConversationWith(peer jid.Any) (Conversation, bool) {
-	m.RLock()
-	defer m.RUnlock()
+	m.Lock()
+	defer m.Unlock()
 	return m.getConversationWithUnlocked(peer)
 }
 

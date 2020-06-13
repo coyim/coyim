@@ -49,7 +49,7 @@ func (s *ConversationManagerSuite) Test_TerminateAll_willTerminate(c *C) {
 	cb := &testConvBuilder{&otr3.Conversation{}}
 	ts := &testSender{err: nil}
 	mgr := NewConversationManager(cb.NewConversation, ts, "blarg", func(jid.Any, *EventHandler, chan string, chan int) {}, log.New().WithFields(log.Fields{}))
-	conv, created := mgr.EnsureConversationWith(jid.NR("someone@whitehouse.gov"))
+	conv, created := mgr.EnsureConversationWith(jid.NR("someone@whitehouse.gov"), nil)
 
 	c.Assert(created, Equals, true)
 	c.Assert(conv, Not(IsNil))

@@ -37,6 +37,7 @@ type conn struct {
 	keepaliveOut io.Writer
 
 	jid           string
+	resource      string
 	originDomain  string
 	features      data.StreamFeatures
 	serverAddress string
@@ -133,6 +134,14 @@ func (c *conn) ServerAddress() string {
 
 func (c *conn) Out() io.Writer {
 	return c.out
+}
+
+func (c *conn) GetJIDResource() string {
+	return c.resource
+}
+
+func (c *conn) SetJIDResource(v string) {
+	c.resource = v
 }
 
 // NewConn creates a new connection

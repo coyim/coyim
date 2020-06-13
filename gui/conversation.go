@@ -227,7 +227,7 @@ func (conv *conversationPane) onSendMessageSignal() {
 func (conv *conversationPane) onStartOtrSignal() {
 	//TODO: enable/disable depending on the conversation's encryption state
 	session := conv.account.session
-	c, _ := session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending())
+	c, _ := session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending(), nil)
 	err := c.StartEncryptedChat()
 	if err != nil {
 		conv.account.log.WithError(err).Warn("Failed to start encrypted chat")
@@ -481,7 +481,7 @@ func (conv *conversationPane) appendPendingDelayed() {
 		dm, ok := conv.delayed[ctrace]
 		if ok {
 			delete(conv.delayed, ctrace)
-			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending())
+			conversation, _ := conv.account.session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending(), nil)
 
 			dm.isEncrypted = conversation.IsEncrypted()
 			dm.queuedTimestamp = dm.timestamp
@@ -531,7 +531,7 @@ func (conv *conversationPane) sendMessage(message string) error {
 		//TODO: review whether it should create a conversation
 		//TODO: this should be whether the message was encrypted or not, rather than
 		//whether the conversation is encrypted or not
-		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending())
+		conversation, _ := session.ConversationManager().EnsureConversationWith(conv.currentPeerForSending(), nil)
 
 		sent := sentMessage{
 			message:         message,

@@ -53,4 +53,7 @@ type Conn interface {
 
 	SetChannelBinding([]byte)
 	GetChannelBinding() []byte
+
+	GetJIDResource() string
+	SetJIDResource(string)
 }

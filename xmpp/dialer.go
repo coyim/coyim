@@ -22,6 +22,9 @@ type dialer struct {
 	// password used to authenticate to the server
 	password string
 
+	// resource, if any, to bind to
+	resource string
+
 	// serverAddress associates a particular FQDN with the origin domain specified by the JID.
 	serverAddress string
 
@@ -70,6 +73,10 @@ func (d *dialer) SetShouldSendALPN(v bool) {
 
 func (d *dialer) SetPassword(v string) {
 	d.password = v
+}
+
+func (d *dialer) SetResource(v string) {
+	d.resource = v
 }
 
 func (d *dialer) SetProxy(v proxy.Dialer) {
@@ -154,6 +161,7 @@ func (d *dialer) Dial() (interfaces.Conn, error) {
 // RFC 6120, Section 4.2
 func (d *dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
 	c := newConn()
+	c.resource = d.resource
 	c.log = d.log
 	c.config = d.config
 	c.originDomain = d.getJIDDomainpart()

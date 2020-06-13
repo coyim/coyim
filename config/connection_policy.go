@@ -200,7 +200,7 @@ func buildInOutLogs(rawLog io.Writer) (io.Writer, io.Writer) {
 }
 
 // Connect to the server and authenticates with the password
-func (p *ConnectionPolicy) Connect(password string, conf *Account, verifier ourtls.Verifier) (interfaces.Conn, error) {
+func (p *ConnectionPolicy) Connect(password, resource string, conf *Account, verifier ourtls.Verifier) (interfaces.Conn, error) {
 	dialer, err := p.buildDialerFor(conf, verifier)
 	if err != nil {
 		return nil, err
@@ -209,6 +209,7 @@ func (p *ConnectionPolicy) Connect(password string, conf *Account, verifier ourt
 	// We use password rather than conf.Password because the user might have not
 	// stored the password, and changing conf.Password in this case will store it.
 	dialer.SetPassword(password)
+	dialer.SetResource(resource)
 	dialer.SetShouldConnectTLS(conf.ConnectTLS)
 	dialer.SetShouldSendALPN(conf.SetALPN)
 

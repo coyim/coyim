@@ -15,6 +15,7 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 	xe "github.com/coyim/coyim/xmpp/errors"
 	"github.com/coyim/coyim/xmpp/interfaces"
+	"github.com/coyim/coyim/xmpp/jid"
 
 	"github.com/coyim/coyim/sasl"
 	"github.com/coyim/coyim/sasl/digestmd5"
@@ -197,14 +198,24 @@ func (c *conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 
 // Resource binding. RFC 6120, section 7
 func (c *conn) BindResource() error {
+	// We want to use an existing resource if we already have one
+	extra := ""
+	if c.resource != "" {
+		extra = fmt.Sprintf("<resource>%s</resource>", c.resource)
+	}
+
 	// This is mandatory, so a missing features.Bind is a protocol failure
-	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'/></iq>", NsBind)
+	fmt.Fprintf(c.out, "<iq type='set' id='bind_1'><bind xmlns='%s'>%s</bind></iq>", NsBind, extra)
 	var iq data.ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
 		return errors.New("unmarshal <iq>: " + err.Error())
 	}
 
 	c.jid = iq.Bind.Jid // our local id
+	jj := jid.Parse(c.jid)
+	if jwr, ok := jj.(jid.WithResource); ok {
+		c.resource = string(jwr.Resource())
+	}
 
 	return c.establishSession()
 }

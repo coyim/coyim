@@ -1024,7 +1024,7 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 
 type mockConvManager struct {
 	getConversationWith    func(jid.Any) (otrclient.Conversation, bool)
-	ensureConversationWith func(jid.Any) (otrclient.Conversation, bool)
+	ensureConversationWith func(jid.Any, []byte) (otrclient.Conversation, bool)
 	terminateAll           func()
 }
 
@@ -1032,8 +1032,8 @@ func (mcm *mockConvManager) GetConversationWith(peer jid.Any) (otrclient.Convers
 	return mcm.getConversationWith(peer)
 }
 
-func (mcm *mockConvManager) EnsureConversationWith(peer jid.Any) (otrclient.Conversation, bool) {
-	return mcm.ensureConversationWith(peer)
+func (mcm *mockConvManager) EnsureConversationWith(peer jid.Any, msg []byte) (otrclient.Conversation, bool) {
+	return mcm.ensureConversationWith(peer, msg)
 }
 
 func (mcm *mockConvManager) TerminateAll() {
@@ -1121,7 +1121,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 		return false
 	}
 
-	mcm.ensureConversationWith = func(jid.Any) (otrclient.Conversation, bool) {
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
 		return mc, false
 	}
 
@@ -1155,7 +1155,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(
 	mc := &mockConv{}
 	mc.receive = func(s []byte) ([]byte, error) { return s, nil }
 	mc.isEncrypted = func() bool { return true }
-	mcm.ensureConversationWith = func(jid.Any) (otrclient.Conversation, bool) {
+	mcm.ensureConversationWith = func(jid.Any, []byte) (otrclient.Conversation, bool) {
 		return mc, false
 	}
 
@@ -1184,7 +1184,7 @@ func (ncm *convManagerWithoutConversation) GetConversationWith(peer jid.Any) (ot
 	return nil, false
 }
 
-func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer jid.Any) (otrclient.Conversation, bool) {
+func (ncm *convManagerWithoutConversation) EnsureConversationWith(peer jid.Any, msg []byte) (otrclient.Conversation, bool) {
 	return nil, false
 }
 

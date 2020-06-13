@@ -18,6 +18,7 @@ type Dialer interface {
 	SetJID(string)
 	SetPassword(string)
 	SetProxy(proxy.Dialer)
+	SetResource(string)
 	SetServerAddress(v string)
 	SetShouldConnectTLS(bool)
 	SetShouldSendALPN(bool)

@@ -55,7 +55,7 @@ Purported fingerprint for %[1]s:
 
 func verifyFingerprintDialog(account *account, peer jid.Any, parent gtki.Window) gtki.ResponseType {
 	accountConfig := account.session.GetConfig()
-	conversation, _ := account.session.ConversationManager().EnsureConversationWith(peer)
+	conversation, _ := account.session.ConversationManager().EnsureConversationWith(peer, nil)
 	ourFp := conversation.OurFingerprint()
 	theirFp := conversation.TheirFingerprint()
 

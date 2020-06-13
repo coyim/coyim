@@ -87,6 +87,8 @@ type session struct {
 	pendingEvents     int
 	pendingEventsLock sync.Mutex
 	eventsReachedZero chan bool
+
+	resource string
 }
 
 // GetInMemoryLog returns the in memory log or nil
@@ -483,8 +485,9 @@ func (s *session) HandleConfirmOrDeny(jid jid.WithoutResource, isConfirm bool) {
 }
 
 func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string) {
-	conversation, _ := s.convManager.EnsureConversationWith(peer)
-	out, err := conversation.Receive([]byte(body))
+	msg := []byte(body)
+	conversation, _ := s.convManager.EnsureConversationWith(peer, msg)
+	out, err := conversation.Receive(msg)
 	encrypted := conversation.IsEncrypted()
 
 	if err != nil {
@@ -787,7 +790,12 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		DialerFactory: s.dialerFactory,
 	}
 
-	conn, err := policy.Connect(password, conf, verifier)
+	resource := ""
+	if s.wantToBeOnline {
+		resource = s.resource
+	}
+
+	conn, err := policy.Connect(password, resource, conf, verifier)
 	if err != nil {
 		s.setStatus(DISCONNECTED)
 
@@ -797,6 +805,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 	if s.getConnStatus() == CONNECTING {
 		s.conn = conn
 		s.setStatus(CONNECTED)
+		s.resource = s.conn.GetJIDResource()
 
 		_ = conn.SignalPresence("")
 		go s.watchRoster()
@@ -815,7 +824,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 // EncryptAndSendTo encrypts and sends the message to the given peer
 func (s *session) EncryptAndSendTo(peer jid.Any, message string) (trace int, delayed bool, err error) {
 	if s.IsConnected() {
-		c, _ := s.convManager.EnsureConversationWith(peer)
+		c, _ := s.convManager.EnsureConversationWith(peer, nil)
 		trace, err = c.Send([]byte(message))
 		delayed = c.EventHandler().ConsumeDelayedState(trace)
 		return

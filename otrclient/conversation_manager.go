@@ -30,7 +30,7 @@ type ConversationManager interface {
 	// GetConversationWith returns the conversation for the given peer, and
 	// creates the conversation if none exists. Additionally, returns whether the
 	// conversation was created.
-	EnsureConversationWith(peer jid.Any) (Conversation, bool)
+	EnsureConversationWith(peer jid.Any, msg []byte) (Conversation, bool)
 
 	// TerminateAll terminates all existing conversations
 	TerminateAll()
@@ -40,6 +40,7 @@ type conversationManager struct {
 	// conversations maps from either a bare JID or a full to Conversation
 	// the mapping here will be changed when a conversation is locked
 	conversations map[string]*conversation
+
 	sync.RWMutex
 
 	builder    ConversationBuilder
@@ -92,13 +93,29 @@ func (m *conversationManager) GetConversationWith(peer jid.Any) (Conversation, b
 	return m.getConversationWithUnlocked(peer)
 }
 
-func (m *conversationManager) EnsureConversationWith(peer jid.Any) (Conversation, bool) {
+func (m *conversationManager) EnsureConversationWith(peer jid.Any, msg []byte) (Conversation, bool) {
 	m.Lock()
 	defer m.Unlock()
 
 	c1, ok := m.getConversationWithUnlocked(peer)
 	if ok {
 		return c1, false
+	}
+
+	if msg != nil {
+		_, theirs, ok := otr3.ExtractInstanceTags(msg)
+		if ok {
+			for jidc, cc := range m.conversations {
+				jidcp := jid.Parse(jidc)
+				if peer.NoResource().String() == jidcp.NoResource().String() &&
+					theirs == cc.GetTheirInstanceTag() {
+					cc.peer = peer
+					delete(m.conversations, jidc)
+					m.conversations[peer.String()] = cc
+					return cc, false
+				}
+			}
+		}
 	}
 
 	_, locked := peer.(jid.WithResource)
@@ -109,6 +126,7 @@ func (m *conversationManager) EnsureConversationWith(peer jid.Any) (Conversation
 		s:            m.sender,
 		Conversation: m.builder(peer),
 	}
+
 	c.eh = m.createEventHandler(peer, c.Conversation)
 
 	m.conversations[peer.String()] = c

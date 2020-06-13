@@ -534,6 +534,7 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 			Session:     s,
 			Peer:        peer.NoResource(),
 			Fingerprint: conversation.TheirFingerprint(),
+			Tag:         "SMP",
 		})
 	case otrclient.SMPFailed:
 		s.publishSMPEvent(events.Failure, peer.(jid.WithResource), "")

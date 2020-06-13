@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -30,7 +31,7 @@ type conversationView interface {
 	appendStatus(from string, timestamp time.Time, show, showStatus string, gone bool)
 	delayedMessageSent(int)
 	displayNotification(notification string)
-	displayNotificationVerifiedOrNot(notificationV, notificationNV string)
+	displayNotificationVerifiedOrNot(notificationV, notificiationTV, notificationNV string)
 	getTarget() jid.Any
 	isFileTransferNotifCanceled() bool
 	isOtrLockedTo(jid.Any) bool
@@ -740,9 +741,13 @@ func (conv *conversationPane) displayNotification(notification string) {
 	)
 }
 
-func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, notificationNV string) {
+func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, notificationTV, notificationNV string) {
 	if conv.hasVerifiedKey() {
-		conv.displayNotification(notificationV)
+		if conv.hasTag() {
+			conv.displayNotification(fmt.Sprintf(notificationTV, conv.tag()))
+		} else {
+			conv.displayNotification(notificationV)
+		}
 	} else {
 		conv.displayNotification(notificationNV)
 	}

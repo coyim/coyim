@@ -163,7 +163,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer, a *account) {
 			cv.savePeerFingerprint(u)
 			cv.updateSecurityStatus()
 
-			cv.displayNotificationVerifiedOrNot(i18n.Local("Private conversation started."), i18n.Local("Unverified conversation started."))
+			cv.displayNotificationVerifiedOrNot(i18n.Local("Private conversation started."), i18n.Local("Private conversation started (tagged: '%s')."), i18n.Local("Unverified conversation started."))
 			cv.appendPendingDelayed()
 			cv.haveShownPrivateNotification()
 		})
@@ -172,7 +172,7 @@ func (u *gtkUI) handlePeerEvent(ev events.Peer, a *account) {
 		convWindowNowOrLater(a, ev.From, u, func(cv conversationView) {
 			cv.updateSecurityStatus()
 
-			cv.displayNotificationVerifiedOrNot(i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the unverified private conversation."))
+			cv.displayNotificationVerifiedOrNot(i18n.Local("Successfully refreshed the private conversation."), i18n.Local("Successfully refreshed the private conversation (tagged: '%s')."), i18n.Local("Successfully refreshed the unverified private conversation."))
 		})
 
 	case events.SubscriptionRequest:

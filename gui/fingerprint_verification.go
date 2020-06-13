@@ -8,9 +8,10 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func buildVerifyFingerprintDialog(accountName string, ourFp []byte, peer jid.WithoutResource, theirFp []byte) gtki.Dialog {
+func buildVerifyFingerprintDialog(accountName string, ourFp []byte, peer jid.WithoutResource, theirFp []byte) (gtki.Dialog, func() string) {
 	var message string
 	var builderName string
+	getTag := func() string { return "" }
 
 	if theirFp == nil {
 		builderName = "VerifyFingerprintUnknown"
@@ -41,6 +42,14 @@ Purported fingerprint for %[1]s:
 
 	builder := newBuilder(builderName)
 
+	if theirFp != nil {
+		entry := builder.getObj("tag-entry").(gtki.Entry)
+		getTag = func() string {
+			tag, _ := entry.GetText()
+			return tag
+		}
+	}
+
 	obj := builder.getObj("dialog")
 	dialog := obj.(gtki.Dialog)
 
@@ -50,7 +59,7 @@ Purported fingerprint for %[1]s:
 	l.SetSelectable(true)
 
 	dialog.SetTitle(i18n.Localf("Verify fingerprint for %s", peer))
-	return dialog
+	return dialog, getTag
 }
 
 func verifyFingerprintDialog(account *account, peer jid.Any, parent gtki.Window) gtki.ResponseType {
@@ -59,7 +68,7 @@ func verifyFingerprintDialog(account *account, peer jid.Any, parent gtki.Window)
 	ourFp := conversation.OurFingerprint()
 	theirFp := conversation.TheirFingerprint()
 
-	dialog := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, peer.NoResource(), theirFp)
+	dialog, gettag := buildVerifyFingerprintDialog(accountConfig.Account, ourFp, peer.NoResource(), theirFp)
 	defer dialog.Destroy()
 
 	dialog.SetTransientFor(parent)
@@ -73,6 +82,7 @@ func verifyFingerprintDialog(account *account, peer jid.Any, parent gtki.Window)
 			Session:     account.session,
 			Peer:        peer.NoResource(),
 			Fingerprint: theirFp,
+			Tag:         gettag(),
 		})
 	}
 

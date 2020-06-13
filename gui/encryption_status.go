@@ -4,6 +4,7 @@ type encryptionStatus struct {
 	encrypted   bool
 	newKey      bool
 	verifiedKey bool
+	tag         string
 }
 
 func (conv *conversationPane) savePeerFingerprint(u *gtkUI) {
@@ -63,7 +64,7 @@ func (conv *conversationPane) updateSecurityStatus() {
 		p, hasPeer := conv.account.session.GetConfig().GetPeer(strP)
 
 		if hasPeer {
-			conv.encryptionStatus.verifiedKey = p.HasTrustedFingerprint(conversation.TheirFingerprint())
+			conv.encryptionStatus.verifiedKey, conv.encryptionStatus.tag = p.HasTrustedFingerprint(conversation.TheirFingerprint())
 		}
 	} else {
 		conv.encryptionStatus.newKey = false
@@ -84,4 +85,12 @@ func (conv *conversationPane) hasNewKey() bool {
 
 func (conv *conversationPane) hasVerifiedKey() bool {
 	return conv.encryptionStatus.verifiedKey
+}
+
+func (conv *conversationPane) hasTag() bool {
+	return conv.encryptionStatus.tag != ""
+}
+
+func (conv *conversationPane) tag() string {
+	return conv.encryptionStatus.tag
 }

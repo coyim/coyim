@@ -11,6 +11,7 @@ type AuthorizeFingerprintCmd struct {
 	Session     interface{}
 	Peer        jid.WithoutResource
 	Fingerprint []byte
+	Tag         string
 }
 
 // SaveInstanceTagCmd is a command that represents a request to save an instance tag

@@ -24,12 +24,14 @@ const (
 type FingerprintForSerialization struct {
 	FingerprintHex string
 	Trusted        bool
+	Tag            string
 }
 
 // Fingerprint represents a known fingerprint for a specific peer
 type Fingerprint struct {
 	Fingerprint []byte
 	Trusted     bool
+	Tag         string
 }
 
 // Peer represents one peer
@@ -47,6 +49,7 @@ func (k *Fingerprint) MarshalJSON() ([]byte, error) {
 	return json.Marshal(FingerprintForSerialization{
 		FingerprintHex: hex.EncodeToString(k.Fingerprint),
 		Trusted:        k.Trusted,
+		Tag:            k.Tag,
 	})
 }
 
@@ -64,6 +67,7 @@ func (k *Fingerprint) UnmarshalJSON(data []byte) error {
 	}
 
 	k.Trusted = v.Trusted
+	k.Tag = v.Tag
 
 	return nil
 }
@@ -159,18 +163,19 @@ func (p *Peer) GetFingerprint(fpr []byte) (*Fingerprint, bool) {
 }
 
 // HasTrustedFingerprint returns true if the peer has the given fingerprint and it is trusted
-func (p *Peer) HasTrustedFingerprint(fpr []byte) bool {
+func (p *Peer) HasTrustedFingerprint(fpr []byte) (bool, string) {
 	for _, ff := range p.Fingerprints {
 		if ff.Trusted && bytes.Equal(fpr, ff.Fingerprint) {
-			return true
+			return true, ff.Tag
 		}
 	}
-	return false
+	return false, ""
 }
 
 // AddTrustedFingerprint adds a new fingerprint for the given user
-func (a *Account) AddTrustedFingerprint(fpr []byte, uid string) {
+func (a *Account) AddTrustedFingerprint(fpr []byte, uid string, tag string) {
 	f, _ := a.EnsurePeer(uid).EnsureHasFingerprint(fpr)
+	f.Tag = tag
 	f.Trusted = true
 }
 
@@ -186,7 +191,8 @@ func (a *Account) HasFingerprint(uid string) bool {
 // UserIDForVerifiedFingerprint returns the user ID for the given verified fingerprint
 func (a *Account) UserIDForVerifiedFingerprint(fpr []byte) string {
 	for _, pe := range a.Peers {
-		if pe.HasTrustedFingerprint(fpr) {
+		h, _ := pe.HasTrustedFingerprint(fpr)
+		if h {
 			return pe.UserID
 		}
 	}
@@ -200,13 +206,13 @@ var (
 
 // AuthorizeFingerprint will authorize and add the fingerprint for the given user
 // or return an error if the fingerprint is already associated with another user
-func (a *Account) AuthorizeFingerprint(uid string, fingerprint []byte) error {
+func (a *Account) AuthorizeFingerprint(uid string, fingerprint []byte, tag string) error {
 	existing := a.UserIDForVerifiedFingerprint(fingerprint)
 	if len(existing) != 0 {
 		return errFingerprintAlreadyAuthorized
 	}
 
-	a.AddTrustedFingerprint(fingerprint, uid)
+	a.AddTrustedFingerprint(fingerprint, uid, tag)
 	return nil
 }
 

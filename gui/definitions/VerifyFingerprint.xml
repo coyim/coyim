@@ -9,6 +9,19 @@
         <child>
           <object class="GtkLabel" id="message"/>
         </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Tag (optional name for this fingerprint):</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="tag-entry">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+          </object>
+        </child>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">
             <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>

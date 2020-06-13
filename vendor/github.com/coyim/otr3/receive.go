@@ -92,7 +92,7 @@ func (c *Conversation) toSendEncoded(plain MessagePlaintext, toSend []messageWit
 }
 
 func (c *Conversation) receiveEncoded(message encodedMessage) (MessagePlaintext, []messageWithHeader, error) {
-	decodedMessage, err := c.decode(message)
+	decodedMessage, err := decode(message)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -126,7 +126,7 @@ func removeOTRMsgEnvelope(msg encodedMessage) []byte {
 	return msg[len(msgMarker) : len(msg)-1]
 }
 
-func (c *Conversation) decode(encoded encodedMessage) (messageWithHeader, error) {
+func decode(encoded encodedMessage) (messageWithHeader, error) {
 	encoded = removeOTRMsgEnvelope(encoded)
 	msg, err := b64decode(encoded)
 

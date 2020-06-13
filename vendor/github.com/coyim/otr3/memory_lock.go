@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/big"
 	"sync"
+	"unsafe"
 
 	"github.com/awnumar/memcall"
 )
@@ -26,12 +27,10 @@ func tryLockBigInt(x *big.Int) {
 	if x == nil {
 		return
 	}
-	e := mlockWordSlice(x.Bits())
-	if e != nil {
-		notifiedLockFailure.Do(func() {
-			fmt.Printf("Warning: couldn't lock memory pages containing sensitive material: %v\n", e)
-		})
-	}
+	bb := x.Bits()
+	/* #nosec G103 */
+	b2 := *(*[]byte)(unsafe.Pointer(&bb))
+	tryLock(b2)
 }
 
 func (s *sessionKeys) lock() {

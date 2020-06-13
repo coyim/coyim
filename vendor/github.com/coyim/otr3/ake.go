@@ -78,12 +78,6 @@ func appendAll(one, two *big.Int, publicKey PublicKey, keyID uint32) []byte {
 	return AppendWord(append(AppendMPI(AppendMPI(nil, one), two), publicKey.serialize()...), keyID)
 }
 
-func fixedSizeCopy(s int, v []byte) []byte {
-	vv := make([]byte, s)
-	copy(vv, v)
-	return vv
-}
-
 func (c *Conversation) calcXb(key *akeKeys, mb []byte) ([]byte, error) {
 	xb := c.ourCurrentKey.PublicKey().serialize()
 	xb = AppendWord(xb, c.ake.keys.ourKeyID)
@@ -97,18 +91,8 @@ func (c *Conversation) calcXb(key *akeKeys, mb []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	// We have to copy the key here, and expand it to the requisite length -
-	// not all c values will be long enough. We immediately clean the copy
-	// afterwards
-	ccopy := fixedSizeCopy(c.version.keyLength(), key.c)
-	tryLock(ccopy)
-	defer func() {
-		tryUnlock(ccopy)
-		wipeBytes(ccopy)
-	}()
-
 	// this error can't happen, since key.c is fixed to the correct size
-	xb, _ = encrypt(ccopy, append(xb, sigb...))
+	xb, _ = encrypt(key.c, append(xb, sigb...))
 
 	return xb, nil
 }
@@ -354,17 +338,7 @@ func (c *Conversation) processEncryptedSig(encryptedSig []byte, theirMAC []byte,
 
 	decryptedSig := encryptedSig
 
-	// We have to copy the key here, and expand it to the requisite length -
-	// not all c values will be long enough. We immediately clean the copy
-	// afterwards
-	ccopy := fixedSizeCopy(c.version.keyLength(), keys.c)
-	tryLock(ccopy)
-	defer func() {
-		tryUnlock(ccopy)
-		wipeBytes(ccopy)
-	}()
-
-	if err := decrypt(ccopy, decryptedSig, encryptedSig); err != nil {
+	if err := decrypt(keys.c, decryptedSig, encryptedSig); err != nil {
 		return err
 	}
 

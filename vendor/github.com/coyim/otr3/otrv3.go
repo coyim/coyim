@@ -7,7 +7,6 @@ import (
 	/* #nosec G505*/
 	"crypto/sha1"
 	"crypto/sha256"
-	"encoding/binary"
 	"fmt"
 	"hash"
 	"math/big"
@@ -100,27 +99,6 @@ func (v otrV3) messageHeader(c *Conversation, msgType byte) ([]byte, error) {
 	out = AppendWord(out, c.ourInstanceTag)
 	out = AppendWord(out, c.theirInstanceTag)
 	return out, nil
-}
-
-func (c *Conversation) generateInstanceTag() error {
-	if c.ourInstanceTag != 0 {
-		return nil
-	}
-
-	var ret uint32
-	var dst [4]byte
-
-	for ret < minValidInstanceTag {
-		if err := c.randomInto(dst[:]); err != nil {
-			return err
-		}
-
-		ret = binary.BigEndian.Uint32(dst[:])
-	}
-
-	c.ourInstanceTag = ret
-
-	return nil
 }
 
 func malformedMessage(c *Conversation) {

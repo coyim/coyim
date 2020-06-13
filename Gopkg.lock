@@ -70,14 +70,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:65ceb4ba5bf492ff2f3d7d00ae80ea65c1ca7ae15bde0e2a5d26877be0bb0d0d"
+  digest = "1:097d7a78640b18b10e658d25781f2fc306dfdf98b8f4226d963ca38b22b71846"
   name = "github.com/coyim/otr3"
   packages = [
     ".",
     "sexp",
   ]
   pruneopts = "UT"
-  revision = "e73defa61608a83d1d663dfeaafecada1f32c507"
+  revision = "11b750ce3ff6cf99389a375ef5116ed1db3d2deb"
 
 [[projects]]
   digest = "1:57fa4c058c21ce25d0b7272518dd746065117abf6cc706158b0d361202024520"

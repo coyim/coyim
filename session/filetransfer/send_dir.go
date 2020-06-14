@@ -74,7 +74,8 @@ func (ctx *sendContext) sendSIData(profile, file string, isDir bool) data.SI {
 		profile = encryptedTransferProfile
 	}
 
-	// TODO: Add Date and Hash here later?
+	// We probably DON'T want to add date and hash here, since that leaks
+	// potentially unencrypted information about the file being transferred
 	si := data.SI{
 		ID:      ctx.sid,
 		Profile: profile,

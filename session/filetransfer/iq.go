@@ -38,12 +38,14 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 	acceptResult := make(chan *string)
 	go waitForFileTransferUserAcceptance(stanza, si, acceptResult, ctx)
 
-	// TODO: in this case, it seems to make sense that stanza.From HAS to contain a resource
-	// If not, we're dealing with either a bad server or a weird other condition
-	// However, we should probably still validate this somewhere, since the code right now will crash
+	peer, ok := jid.Parse(stanza.From).(jid.WithResource)
+	if !ok {
+		s.Warn(fmt.Sprintf("Stanza sender doesn't contain resource - this shouldn't happen: %v", stanza.From))
+		return nil, "", false
+	}
 
 	s.PublishEvent(events.FileTransfer{
-		Peer:             jid.R(stanza.From),
+		Peer:             peer,
 		Mime:             si.File.Hash,
 		DateLastModified: si.File.Date,
 		Name:             si.File.Name,

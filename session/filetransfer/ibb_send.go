@@ -45,6 +45,31 @@ func ibbSendDoWithBlockSize(ctx *sendContext, blocksize int) {
 	})
 }
 
+func ibbReadAndWrite(ctx *sendContext) io.ReadCloser {
+	f, err := os.Open(ctx.file)
+	if err != nil {
+		ctx.onError(err)
+		return nil
+	}
+
+	r, w := io.Pipe()
+	w2 := base64.NewEncoder(base64.StdEncoding, w)
+	w3, beforeFinish := ctx.enc.wrapForSending(w2)
+
+	go func() {
+		_, err = io.Copy(w3, f)
+		if err != nil && err != errLocalCancel {
+			ctx.onError(err)
+		}
+
+		beforeFinish()
+
+		_ = w3.Close()
+	}()
+
+	return r
+}
+
 func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) bool {
 	if ctx.weWantToCancel {
 		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
@@ -58,13 +83,10 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 
 	n, err := r.Read(buffer)
 	if n > 0 {
-		// TODO: here, we need to optionally do the encryption etc
-		encdata := base64.StdEncoding.EncodeToString(buffer[:n])
-
 		rpl, _, e := ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBData{
 			Sid:      ctx.sid,
 			Sequence: seq,
-			Base64:   encdata,
+			Base64:   string(buffer[:n]),
 		})
 		if e != nil {
 			ctx.onError(e)
@@ -75,9 +97,7 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 		go trackResultOfSend(ctx, rpl)
 	}
 	if err == io.EOF {
-		// TODO: here, for encryption, we need to send the mac key and wait for result of mac key write
 		closeAndIgnore(r)
-		// TODO[LATER]: we ignore the result of this close - maybe we should react to it in some way, if it reports failure from the other side
 		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 		ctx.onFinish()
 		return false
@@ -125,15 +145,13 @@ func ibbSendChunks(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16)
 }
 
 func ibbSendStartTransfer(ctx *sendContext, blockSize int) {
-	// TODO: for encryption, this is probably the right place to create the MAC and AES thingies
 	seq := uint16(0)
 	buffer := make([]byte, blockSize)
-	f, err := os.Open(ctx.file)
-	if err != nil {
-		ctx.onError(err)
+	r := ibbReadAndWrite(ctx)
+	if r == nil {
 		return
 	}
-	ibbSendChunks(ctx, f, buffer, seq)
+	ibbSendChunks(ctx, r, buffer, seq)
 }
 
 func ibbReceivedClose(ctx *sendContext) {

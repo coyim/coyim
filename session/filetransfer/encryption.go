@@ -49,7 +49,7 @@ func generateEncryptionParameters(enabled bool, genKey func() []byte, keyType st
 	return nil
 }
 
-func (enc *encryptionParameters) wrapForSending(data io.Writer) (io.Writer, func()) {
+func (enc *encryptionParameters) wrapForSending(data io.WriteCloser) (io.WriteCloser, func()) {
 	if enc == nil {
 		return data, func() {}
 	}

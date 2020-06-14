@@ -1,8 +1,12 @@
 package filetransfer
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
+	"io"
 )
 
 type encryptionParameters struct {
@@ -43,4 +47,20 @@ func generateEncryptionParameters(enabled bool, genKey func() []byte, keyType st
 		}
 	}
 	return nil
+}
+
+func (enc *encryptionParameters) wrapForSending(data io.Writer) (io.Writer, func()) {
+	if enc == nil {
+		return data, func() {}
+	}
+
+	mac := hmac.New(sha256.New, enc.macKey)
+	aesc, _ := aes.NewCipher(enc.encryptionKey)
+	blockc := cipher.NewCTR(aesc, enc.iv)
+	ww := &cipher.StreamWriter{S: blockc, W: io.MultiWriter(data, mac)}
+	beforeFinish := func() {
+		_, _ = data.Write(mac.Sum(nil))
+	}
+
+	return ww, beforeFinish
 }

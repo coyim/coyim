@@ -49,7 +49,7 @@ func getDefinitionWithFileFallback(uiName string) string {
 		return embeddedFile
 	}
 
-	log.WithField("file", fileName).Info("Loading definition from local file")
+	log.WithField("file", fileName).Debug("Loading definition from local file")
 	return readFile(fileName)
 }
 

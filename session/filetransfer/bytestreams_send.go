@@ -1,10 +1,6 @@
 package filetransfer
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/hmac"
-	"crypto/sha256"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -118,18 +114,7 @@ func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 		return nil
 	}
 
-	var ww io.Writer = c
-	beforeFinish := func() {}
-
-	if ctx.enc != nil {
-		mac := hmac.New(sha256.New, ctx.enc.macKey)
-		aesc, _ := aes.NewCipher(ctx.enc.encryptionKey)
-		blockc := cipher.NewCTR(aesc, ctx.enc.iv)
-		ww = &cipher.StreamWriter{S: blockc, W: io.MultiWriter(ww, mac)}
-		beforeFinish = func() {
-			_, _ = c.Write(mac.Sum(nil))
-		}
-	}
+	ww, beforeFinish := ctx.enc.wrapForSending(c)
 
 	_, err = io.Copy(io.MultiWriter(ww, &reportingWriter{report: reporting}), r)
 	if err != nil && err != errLocalCancel {

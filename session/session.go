@@ -45,7 +45,6 @@ type session struct {
 
 	privateKeys []otr3.PrivateKey
 
-	//TODO: the session does not need all application config. Copy only what it needs to configure the session
 	config *config.ApplicationConfig
 
 	accountConfig *config.Account

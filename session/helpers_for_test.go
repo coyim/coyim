@@ -152,7 +152,6 @@ func (iom *mockConnIOReaderWriter) Close() error {
 	return nil
 }
 
-// TODO: check and verify
 func captureLogEvents(c <-chan interface{}) (ret []events.Log) {
 	for {
 		select {

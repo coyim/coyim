@@ -1,0 +1,10 @@
+<interface>
+  <object class="GtkMessageDialog" id="FileTransferContinueWithoutEncryption">
+    <property name="window-position">GTK_WIN_POS_CENTER_ALWAYS</property>
+    <property name="modal">false</property>
+    <property name="border_width">7</property>
+    <property name="title" translatable="yes">File transfer without encryption?</property>
+    <property name="secondary_text" translatable="yes"></property>
+    <property name="buttons">GTK_BUTTONS_YES_NO</property>
+  </object>
+</interface>

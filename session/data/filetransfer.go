@@ -8,11 +8,13 @@ type transferUpdate struct {
 
 // FileTransferControl supplies the capabilities to control the file transfer
 type FileTransferControl struct {
-	sync.RWMutex                         // all updates to the channels need to be protected by this mutex
-	cancelTransfer   chan bool           // one time use
-	errorOccurred    chan error          // one time use
-	update           chan transferUpdate // will be called many times
-	transferFinished chan bool           // one time use
+	sync.RWMutex                                 // all updates to the channels need to be protected by this mutex
+	cancelTransfer           chan bool           // one time use
+	errorOccurred            chan error          // one time use
+	update                   chan transferUpdate // will be called many times
+	transferFinished         chan bool           // one time use
+	OnEncryptionNotSupported func() bool         // called if encryption is not supported - the return value is true if we should continue without encryption
+	EncryptionDecision       func(bool)          // called when we have decided to use encryption or not
 }
 
 func newFileTransferControl(c chan bool, e chan error, u chan transferUpdate, t chan bool) *FileTransferControl {
@@ -20,8 +22,11 @@ func newFileTransferControl(c chan bool, e chan error, u chan transferUpdate, t 
 }
 
 // CreateFileTransferControl will return a new control object for file transfers
-func CreateFileTransferControl() *FileTransferControl {
-	return newFileTransferControl(make(chan bool), make(chan error), make(chan transferUpdate, 1000), make(chan bool))
+func CreateFileTransferControl(onNoEnc func() bool, encDecision func(bool)) *FileTransferControl {
+	ctl := newFileTransferControl(make(chan bool), make(chan error), make(chan transferUpdate, 1000), make(chan bool))
+	ctl.OnEncryptionNotSupported = onNoEnc
+	ctl.EncryptionDecision = encDecision
+	return ctl
 }
 
 func (ctl *FileTransferControl) closeCancel() {
@@ -33,11 +38,12 @@ func (ctl *FileTransferControl) closeCancel() {
 	}
 }
 
-// WaitForFinish will wait for a transfer to be finished and calls the function after it's done
-func (ctl *FileTransferControl) WaitForFinish(k func()) {
-	_, ok := <-ctl.transferFinished
+// WaitForFinish will wait for a transfer to be finished and calls the function after it's done - the argument to the
+// function will be false if the transfer was declined and true if it finished
+func (ctl *FileTransferControl) WaitForFinish(k func(bool)) {
+	notDeclined, ok := <-ctl.transferFinished
 	if ok {
-		k()
+		k(notDeclined)
 		ctl.closeCancel()
 	}
 }
@@ -92,6 +98,13 @@ func (ctl *FileTransferControl) ReportFinished() {
 	ctl.closeErrorOccurred()
 	ctl.closeUpdate()
 	ctl.sendAndCloseTransferFinished(true)
+}
+
+// ReportDeclined will be called if the file transfer is declined
+func (ctl *FileTransferControl) ReportDeclined() {
+	ctl.closeErrorOccurred()
+	ctl.closeUpdate()
+	ctl.sendAndCloseTransferFinished(false)
 }
 
 // SendUpdate sends update information

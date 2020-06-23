@@ -23,12 +23,19 @@ type EncryptionParameters struct {
 	IV            string                  `xml:"iv,attr"`
 	MAC           string                  `xml:"mac,attr"`
 	EncryptionKey *EncryptionKeyParameter `xml:"encryption-key"`
-	MACKey        *EncryptionKeyParameter `xml:"mac-key"`
+	MACKey        *MACKeyParameter        `xml:"mac-key"`
 }
 
 // EncryptionKeyParameter is an element from an unpublished potential XEP
 type EncryptionKeyParameter struct {
-	XMLName xml.Name `xml:"http://jabber.org/protocol/si/profile/encrypted-data-transfer key"`
+	XMLName xml.Name `xml:"http://jabber.org/protocol/si/profile/encrypted-data-transfer encryption-key"`
+	Type    string   `xml:"type,attr"` // 'static' or 'external'
+	Value   string   `xml:"value,attr,omitempty"`
+}
+
+// MACKeyParameter is an element from an unpublished potential XEP
+type MACKeyParameter struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/si/profile/encrypted-data-transfer mac-key"`
 	Type    string   `xml:"type,attr"` // 'static' or 'external'
 	Value   string   `xml:"value,attr,omitempty"`
 }

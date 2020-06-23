@@ -17,12 +17,12 @@ func init() {
 	registerKnownExtension("http://jabber.org/protocol/ibb data", filetransfer.IbbMessageData)
 }
 
-func (s *session) SendFileTo(peer jid.Any, filename string, encrypted bool) *data.FileTransferControl {
-	s.info(fmt.Sprintf("SendFileTo(%s, %s, encrypted=%v)", peer, filename, encrypted))
-	return filetransfer.InitSend(s, peer, filename, encrypted)
+func (s *session) SendFileTo(peer jid.Any, filename string, onNoEnc func() bool, encDecision func(bool)) *data.FileTransferControl {
+	s.info(fmt.Sprintf("SendFileTo(%s, %s)", peer, filename))
+	return filetransfer.InitSend(s, peer, filename, onNoEnc, encDecision)
 }
 
-func (s *session) SendDirTo(peer jid.Any, dirname string, encrypted bool) *data.FileTransferControl {
-	s.info(fmt.Sprintf("SendDirTo(%s, %s, encrypted=%v)", peer, dirname, encrypted))
-	return filetransfer.InitSendDir(s, peer, dirname, encrypted)
+func (s *session) SendDirTo(peer jid.Any, dirname string, onNoEnc func() bool, encDecision func(bool)) *data.FileTransferControl {
+	s.info(fmt.Sprintf("SendDirTo(%s, %s)", peer, dirname))
+	return filetransfer.InitSendDir(s, peer, dirname, onNoEnc, encDecision)
 }

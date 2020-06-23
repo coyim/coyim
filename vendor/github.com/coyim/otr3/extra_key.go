@@ -45,3 +45,8 @@ func (c *Conversation) receivedSymKey(usage uint32, usageData []byte, symkey []b
 		c.receivedKeyHandler.ReceivedSymmetricKey(usage, usageData, symkey)
 	}
 }
+
+// SetReceivedKeyHandler will set the handler for what is to happen when an extra symmetric key is received
+func (c *Conversation) SetReceivedKeyHandler(keyHandler ReceivedKeyHandler) {
+	c.receivedKeyHandler = keyHandler
+}

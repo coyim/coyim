@@ -10,38 +10,37 @@ import (
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 // This contains all valid file transfer methods. A higher value is better, and if possible, we will choose the method with the highest value
-var supportedFileTransferMethods = map[string]int{
-	"http://jabber.org/protocol/bytestreams": 1,
-	"http://jabber.org/protocol/ibb":         0,
-}
+var supportedFileTransferMethods = map[string]int{}
 
-var fileTransferCancelListeners = map[string]func(*recvContext){
-	"http://jabber.org/protocol/ibb":         ibbWaitForCancel,
-	"http://jabber.org/protocol/bytestreams": bytestreamWaitForCancel,
+var fileTransferCancelListeners = map[string]func(*recvContext){}
+
+// registerRecieveFileTransferMethod registers a known method for receiving data
+// prio is a number, higher is better
+func registerRecieveFileTransferMethod(name string, prio int, cancelListener func(*recvContext)) {
+	supportedFileTransferMethods[name] = prio
+	fileTransferCancelListeners[name] = cancelListener
 }
 
 type recvContext struct {
-	s         access.Session
-	sid       string
-	peer      string
-	mime      string
-	options   []string
-	date      string
-	hash      string
-	name      string
-	size      int64
-	desc      string
-	directory bool
-	rng       struct {
-		length *int
-		offset *int
-	}
+	s           access.Session
+	sid         string
+	peer        string
+	mime        string
+	options     []string
+	date        string
+	hash        string
+	name        string
+	size        int64
+	desc        string
+	directory   bool
 	destination string
 	opaque      interface{}
 	control     *sdata.FileTransferControl
+	enc         *encryptionParameters
 }
 
 func extractFileTransferOptions(f data.Form) ([]string, error) {
@@ -87,7 +86,6 @@ func iqResultChosenStreamMethod(opt string) data.SI {
 	}
 }
 
-// TODO: do we need to do something about encryption here?
 func (ctx *recvContext) finalizeFileTransfer(tempName string) error {
 	if ctx.directory {
 		defer func() {
@@ -146,26 +144,27 @@ func waitForFileTransferUserAcceptance(stanza *data.ClientIQ, si data.SI, accept
 	ctx.s.SendIQError(stanza, *error)
 }
 
-// TODO: here we need to figure out the encryption parameters
-func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, ctl *sdata.FileTransferControl, isDir bool) *recvContext {
+func registerNewFileTransfer(s access.Session, si data.SI, options []string, stanza *data.ClientIQ, ctl *sdata.FileTransferControl, isDir bool, encrypted bool) *recvContext {
 	ctx := &recvContext{
 		s:         s,
 		sid:       si.ID,
 		mime:      si.MIMEType,
 		options:   options,
-		date:      si.File.Date,
-		hash:      si.File.Hash,
-		name:      si.File.Name,
-		size:      si.File.Size,
-		desc:      si.File.Desc,
 		peer:      stanza.From,
 		directory: isDir,
 		control:   ctl,
+		enc:       generateEncryptionParameters(encrypted, func() []byte { return s.GetAndWipeSymmetricKeyFor(jid.Parse(stanza.From)) }, "external"),
 	}
 
-	if si.File.Range != nil {
-		ctx.rng.length = si.File.Range.Length
-		ctx.rng.offset = si.File.Range.Offset
+	if encrypted {
+		ctx.name = si.EncryptedData.Name
+		ctx.size = si.EncryptedData.Size
+	} else {
+		ctx.date = si.File.Date
+		ctx.hash = si.File.Hash
+		ctx.name = si.File.Name
+		ctx.size = si.File.Size
+		ctx.desc = si.File.Desc
 	}
 
 	addInflightRecv(ctx)

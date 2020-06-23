@@ -30,7 +30,7 @@ import (
 //       Or it will get an error message when failed
 //       There will be a cancel button there, that will cancel the file receipt
 
-func (u *gtkUI) startAllListenersForFile(ctl *data.FileTransferControl, cv conversationView, file *fileNotification, name, verbing, purpose string) {
+func (u *gtkUI) startAllListenersForFile(ctl *data.FileTransferControl, cv conversationView, file *fileNotification, name, verbing string) {
 	go ctl.WaitForError(func(err error) {
 		file.fail()
 		cv.Log().WithError(err).WithFields(log.Fields{
@@ -39,12 +39,20 @@ func (u *gtkUI) startAllListenersForFile(ctl *data.FileTransferControl, cv conve
 		}).Warn("file transfer failed")
 	})
 
-	go ctl.WaitForFinish(func() {
-		file.succeed(purpose)
+	go ctl.WaitForFinish(func(finished bool) {
+		if finished {
+			file.succeed()
+			cv.Log().WithFields(log.Fields{
+				"verbing": verbing,
+				"file":    name,
+			}).Info("file transfer finished with success")
+			return
+		}
+		file.decline()
 		cv.Log().WithFields(log.Fields{
 			"verbing": verbing,
 			"file":    name,
-		}).Info("file transfer finished with success")
+		}).Info("file transfer declined by receiver")
 	})
 
 	go ctl.WaitForUpdate(func(upd, total int64) {
@@ -59,6 +67,28 @@ func (u *gtkUI) startAllListenersForFile(ctl *data.FileTransferControl, cv conve
 	})
 }
 
+func (u *gtkUI) askIfContinueUnencrypted(a *account, peer jid.Any) bool {
+	dialogID := "FileTransferContinueWithoutEncryption"
+	builder := newBuilder(dialogID)
+	dialogOb := builder.getObj(dialogID)
+
+	d := dialogOb.(gtki.MessageDialog)
+	d.SetDefaultResponse(gtki.RESPONSE_NO)
+	d.SetTransientFor(u.window)
+
+	message := i18n.Localf("The transfer to %s can't be done encrypted and securely.", peer.NoResource())
+	secondary := i18n.Localf("Do you want to continue anyway? This means an adversary or server administrator can potentially see the content of the file.")
+
+	_ = d.SetProperty("text", message)
+	_ = d.SetProperty("secondary_text", secondary)
+
+	responseType := gtki.ResponseType(d.Run())
+	result := responseType == gtki.RESPONSE_YES
+	d.Destroy()
+
+	return result
+}
+
 func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 	dialogID := "FileTransferAskToReceive"
 	builder := newBuilder(dialogID)
@@ -70,13 +100,27 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 
 	var message, secondary string
 
+	enc := ev.Encrypted
+
 	if ev.IsDirectory {
-		message = i18n.Localf("%s wants to send you a directory: do you want to receive it?", ev.Peer.NoResource())
-		secondary = i18n.Localf("Directory name: %s", ev.Name)
+		if enc {
+			message = i18n.Localf("%s wants to send you a directory - this transfer will be encrypted and secure - do you want to receive it?", ev.Peer.NoResource())
+			secondary = i18n.Localf("Directory name: %s", ev.Name)
+		} else {
+			message = i18n.Localf("%s wants to send you a directory - the transfer will NOT be encrypted or secure - do you want to receive it?", ev.Peer.NoResource())
+			secondary = i18n.Localf("Directory name: %s", ev.Name)
+		}
 	} else {
-		message = i18n.Localf("%s wants to send you a file: do you want to receive it?", ev.Peer.NoResource())
-		secondary = i18n.Localf("File name: %s", ev.Name)
+		if enc {
+			message = i18n.Localf("%s wants to send you a file - this transfer will be encrypted and secure - do you want to receive it?", ev.Peer.NoResource())
+			secondary = i18n.Localf("File name: %s", ev.Name)
+		} else {
+			message = i18n.Localf("%s wants to send you a file - the transfer will NOT be encrypted or secure - do you want to receive it?", ev.Peer.NoResource())
+			secondary = i18n.Localf("File name: %s", ev.Name)
+		}
 	}
+
+	secondary = i18n.Localf("%s\nEncrypted: %v", secondary, enc)
 
 	if ev.Description != "" {
 		secondary = i18n.Localf("%s\nDescription: %s", secondary, ev.Description)
@@ -127,42 +171,90 @@ func (u *gtkUI) handleFileTransfer(ev events.FileTransfer, a *account) {
 		fileName := resizeFileName(ev.Name)
 		cv := u.openConversationView(a, ev.Peer, true)
 		f := createNewFileTransferWithDefaults(fileName, ev.IsDirectory, false, true, ev.Control, cv)
-		u.startAllListenersForFile(ev.Control, cv, f, ev.Name, "Receiving", "receive")
+		f.setEncryptionInformation(enc, cv.hasVerifiedKey())
+		f.updateLabel()
+		u.startAllListenersForFile(ev.Control, cv, f, ev.Name, "Receiving")
 		ev.Answer <- &name
 	} else {
 		ev.Answer <- nil
 	}
 }
 
-func createNewFileTransferWithDefaults(fileName string, dir bool, sending bool, receiving bool, ctl *data.FileTransferControl, cv conversationView) *fileNotification {
+func createNewFileTransferWithDefaults(fileName string, dir bool, sending, receiving bool, ctl *data.FileTransferControl, cv conversationView) *fileNotification {
 	f := cv.newFileTransfer(fileName, dir, sending, receiving)
 	f.afterCancel(func() {
 		cv.updateFileTransferNotificationCounts()
 		ctl.Cancel()
 	})
+	f.afterDeclined(cv.updateFileTransferNotificationCounts)
 	f.afterFail(cv.updateFileTransferNotificationCounts)
 	f.afterSucceed(cv.updateFileTransferNotificationCounts)
 	return f
 }
 
-func (account *account) sendThingTo(peer jid.Any, u *gtkUI, name string, dir bool, ctl *data.FileTransferControl) {
+func (account *account) sendThingTo(peer jid.Any, u *gtkUI, name string, dir bool, ctl *data.FileTransferControl, verifiedKey bool, encDecision chan bool) {
 	nm := resizeFileName(filepath.Base(name))
 	cv := u.openConversationView(account, peer, true)
 	f := createNewFileTransferWithDefaults(nm, dir, true, false, ctl, cv)
-	u.startAllListenersForFile(ctl, cv, f, nm, "Sending", "send")
+	go func() {
+		encDec := <-encDecision
+		f.setEncryptionInformation(encDec, verifiedKey)
+		f.updateLabel()
+	}()
+	u.startAllListenersForFile(ctl, cv, f, nm, "Sending")
 }
 
-func (account *account) sendDirectoryTo(peer jid.Any, u *gtkUI) {
-	if dir, ok := chooseDirToSend(u.window); ok {
-		ctl := account.session.SendDirTo(peer, dir, false)
-		account.sendThingTo(peer, u, dir, true, ctl)
+func (u *gtkUI) ensureJidHasResource(account *account, p jid.Any) jid.Any {
+	if v, ok := p.(jid.WithResource); ok {
+		return v
+	}
+	if peer, ok := u.getPeer(account, p.NoResource()); ok {
+		res := peer.ResourceToUseFallback()
+		account.Log().WithFields(log.Fields{
+			"peer":     p,
+			"resource": res,
+		}).Debug("adding resource to peer")
+		if res != jid.Resource("") {
+			return p.WithResource(res)
+		}
+	}
+
+	account.Log().WithField("peer", p).Error("couldn't find a valid resource for peer")
+
+	return p
+}
+
+func (account *account) sendFileTo(peer jid.Any, u *gtkUI, cp *conversationPane) {
+	peer = u.ensureJidHasResource(account, peer)
+	if file, ok := chooseFileToSend(u.window); ok {
+		encDecision := make(chan bool, 1)
+		ctl := account.session.SendFileTo(peer, file, func() bool {
+			result := make(chan bool)
+			doInUIThread(func() {
+				result <- u.askIfContinueUnencrypted(account, peer)
+			})
+			return <-result
+		}, func(enc bool) {
+			encDecision <- enc
+		})
+		account.sendThingTo(peer, u, file, false, ctl, cp.hasVerifiedKey(), encDecision)
 	}
 }
 
-func (account *account) sendFileTo(peer jid.Any, u *gtkUI) {
-	if file, ok := chooseFileToSend(u.window); ok {
-		ctl := account.session.SendFileTo(peer, file, false)
-		account.sendThingTo(peer, u, file, false, ctl)
+func (account *account) sendDirectoryTo(peer jid.Any, u *gtkUI, cp *conversationPane) {
+	peer = u.ensureJidHasResource(account, peer)
+	if dir, ok := chooseDirToSend(u.window); ok {
+		encDecision := make(chan bool, 1)
+		ctl := account.session.SendDirTo(peer, dir, func() bool {
+			result := make(chan bool)
+			doInUIThread(func() {
+				result <- u.askIfContinueUnencrypted(account, peer)
+			})
+			return <-result
+		}, func(enc bool) {
+			encDecision <- enc
+		})
+		account.sendThingTo(peer, u, dir, true, ctl, cp.hasVerifiedKey(), encDecision)
 	}
 }
 
@@ -185,9 +277,9 @@ func chooseItemToSend(w gtki.Window, action gtki.FileChooserAction, title string
 }
 
 func chooseFileToSend(w gtki.Window) (string, bool) {
-	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_OPEN, "Chose file to send")
+	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_OPEN, "Choose file to send")
 }
 
 func chooseDirToSend(w gtki.Window) (string, bool) {
-	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_SELECT_FOLDER, "Chose directory to send")
+	return chooseItemToSend(w, gtki.FILE_CHOOSER_ACTION_SELECT_FOLDER, "Choose directory to send")
 }

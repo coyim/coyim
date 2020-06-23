@@ -16,8 +16,10 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+const BytestreamMethod = "http://jabber.org/protocol/bytestreams"
+
 func init() {
-	registerSendFileTransferMethod("http://jabber.org/protocol/bytestreams", bytestreamsSendDo, bytestreamsSendCurrentlyValid)
+	registerSendFileTransferMethod(BytestreamMethod, bytestreamsSendDo, bytestreamsSendCurrentlyValid)
 }
 
 func bytestreamsSendCurrentlyValid(_ string, s access.Session) bool {
@@ -54,7 +56,7 @@ func bytestreamsCalculateValidProxies(s access.Session) func(key string) interfa
 					}
 				}
 				for _, feat := range feats {
-					if feat == "http://jabber.org/protocol/bytestreams" {
+					if feat == BytestreamMethod {
 						hasBytestreamsFeature = true
 					}
 				}
@@ -114,9 +116,13 @@ func bytestreamsSendData(ctx *sendContext, c net.Conn) {
 		return nil
 	}
 
-	ww, beforeFinish := ctx.enc.wrapForSending(c)
+	rep := &reportingWriter{report: reporting}
 
-	_, err = io.Copy(io.MultiWriter(ww, &reportingWriter{report: reporting}), r)
+	ctx.totalSize = ctx.enc.totalSize(ctx.size)
+
+	ww, beforeFinish := ctx.enc.wrapForSending(c, io.MultiWriter(c, rep))
+
+	_, err = io.Copy(io.MultiWriter(ww, rep), r)
 	if err != nil && err != errLocalCancel {
 		ctx.onError(err)
 	} else {

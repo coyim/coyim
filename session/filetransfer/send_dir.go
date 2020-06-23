@@ -102,7 +102,7 @@ func (ctx *sendContext) sendSIData(profile, file string, isDir bool) data.SI {
 				IV:            base64.StdEncoding.EncodeToString(ctx.enc.iv),
 				MAC:           "hmac-sha256",
 				EncryptionKey: &data.EncryptionKeyParameter{Type: ctx.enc.keyType},
-				MACKey:        &data.EncryptionKeyParameter{Type: ctx.enc.keyType},
+				MACKey:        &data.MACKeyParameter{Type: ctx.enc.keyType},
 			},
 		}
 		if isDir {
@@ -142,7 +142,7 @@ func (ctx *dirSendContext) offerSendDirectory() error {
 			return
 		}
 		ctx.sc.onError(errors.New("Invalid sending mechanism sent from peer for directory sending"))
-	}, func(_ *data.ClientIQ, e error) {
+	}, func(stanza *data.ClientIQ, e error) {
 		ctx.sc.onError(e)
 	})
 
@@ -163,13 +163,13 @@ func (ctx *dirSendContext) offerSend(file string, availableProfiles map[string]b
 }
 
 // InitSendDir starts the process of sending a directory to a peer
-func InitSendDir(s access.Session, peer jid.Any, dir string, encrypted bool) *sdata.FileTransferControl {
+func InitSendDir(s access.Session, peer jid.Any, dir string, onNoEnc func() bool, encDecision func(bool)) *sdata.FileTransferControl {
 	ctx := &dirSendContext{
 		sc: &sendContext{
 			s:       s,
-			enc:     generateEncryptionParameters(encrypted, func() []byte { return s.CreateSymmetricKeyFor(peer) }, "external"),
+			enc:     generateEncryptionParameters(true, func() []byte { return s.CreateSymmetricKeyFor(peer) }, "external"),
 			peer:    peer.String(),
-			control: sdata.CreateFileTransferControl(),
+			control: sdata.CreateFileTransferControl(onNoEnc, encDecision),
 			onFinishHook: func(ctx *sendContext) {
 				_ = os.Remove(ctx.file)
 			},

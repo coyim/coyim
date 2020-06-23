@@ -7,40 +7,32 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"sync"
 
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
-// TOOD: at some point this should be refactored away into a pure IBB implementation and a small piece that is file transfer specific
-
-type ibbContext struct {
-	sync.Mutex
-	expectingSequence uint16
-	currentSize       int64
-	f                 *os.File
+func init() {
+	registerRecieveFileTransferMethod(IBBMethod, 0, ibbWaitForCancel)
 }
 
-func (ctx *recvContext) ibbCleanup(lock bool) {
-	ictx, ok := ctx.opaque.(*ibbContext)
-	if ok {
-		if lock {
-			ictx.Lock()
-			defer ictx.Unlock()
-		}
+type ibbContext struct {
+	expectingSequence uint16
 
-		if ictx.f != nil {
-			closeAndIgnore(ictx.f) // we ignore any errors here - if the file is already closed, that's OK
-			_ = os.Remove(ictx.f.Name())
-		}
-	}
+	recv *receiver
+}
+
+func (ctx *recvContext) ibbCleanup() {
 	removeInflightRecv(ctx.sid)
 }
 
 func ibbWaitForCancel(ctx *recvContext) {
 	ctx.control.WaitForCancel(func() {
-		ctx.ibbCleanup(true)
+		ictx, ok := ctx.opaque.(*ibbContext)
+		if ok && ictx != nil && ictx.recv != nil {
+			ictx.recv.cancel()
+		}
+		ctx.ibbCleanup()
 		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 	})
 }
@@ -63,20 +55,13 @@ func IbbOpen(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	c := &ibbContext{}
 	ctx.opaque = c
 
-	ff, err := ctx.openDestinationTempFile()
-	if err != nil {
-		s.Warn(fmt.Sprintf("Failed to open temporary file: %v", err))
-		return iqErrorNotAcceptable, "error", false
-	}
-	c.f = ff
+	c.recv = ctx.createReceiver()
 
 	return data.EmptyReply{}, "", false
 }
 
-// TODO: continue refactoring the handling of data to be generic for all
-
-func ibbHandleData(s access.Session, data []byte) (tag data.IBBData, ctx *recvContext, ictx *ibbContext, ret interface{}, iqtype string, ignore bool) {
-	if err := xml.NewDecoder(bytes.NewBuffer(data)).Decode(&tag); err != nil {
+func ibbParseXMLData(s access.Session, dt []byte) (tag data.IBBData, ctx *recvContext, ictx *ibbContext, ret interface{}, iqtype string, ignore bool) {
+	if err := xml.NewDecoder(bytes.NewBuffer(dt)).Decode(&tag); err != nil {
 		s.Warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
 		return tag, nil, nil, iqErrorNotAcceptable, "error", false
 	}
@@ -84,6 +69,11 @@ func ibbHandleData(s access.Session, data []byte) (tag data.IBBData, ctx *recvCo
 	ctx, ok := getInflightRecv(tag.Sid)
 
 	if !ok || ctx.opaque == nil {
+		if hasAndRemoveInflightMAC(tag.Sid) {
+			// This is a MAC key reveal sent to us, so we will ignore it.
+			return tag, nil, nil, data.EmptyReply{}, "", false
+		}
+
 		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
 		return tag, nil, nil, iqErrorItemNotFound, "error", false
 	}
@@ -94,17 +84,14 @@ func ibbHandleData(s access.Session, data []byte) (tag data.IBBData, ctx *recvCo
 		return tag, nil, nil, iqErrorItemNotFound, "error", false
 	}
 
-	ictx.Lock()
 	return tag, ctx, ictx, nil, "", false
 }
 
-// IbbData is the hook function that will be called when we receive an ibb data IQ
-func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	tag, ctx, ictx, ret, iqtype, ignore := ibbHandleData(s, stanza.Query)
+func ibbOnData(s access.Session, body []byte) (ret interface{}, iqtype string, ignore bool) {
+	tag, ctx, ictx, ret, iqtype, ignore := ibbParseXMLData(s, body)
 	if ret != nil {
 		return ret, iqtype, ignore
 	}
-	defer ictx.Unlock()
 
 	// XEP-0047 wants us to keep track of previously used sequence numbers, and only do this error
 	// when a sequence number is reused - otherwise we should immediately close the stream.
@@ -114,76 +101,40 @@ func IbbData(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 	if tag.Sequence != ictx.expectingSequence {
 		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ictx.expectingSequence, tag.Sequence))
 		ctx.control.ReportError(errors.New("Unexpected data sent from the peer"))
-		ctx.ibbCleanup(false)
+		ctx.ibbCleanup()
 		return iqErrorUnexpectedRequest, "error", false
+
 	}
 
 	ictx.expectingSequence++ // wraparound on purpose, to match uint16 spec behavior of the seq field
 
-	result, err := base64.StdEncoding.DecodeString(tag.Base64)
+	dt, err := base64.StdEncoding.DecodeString(tag.Base64)
 	if err != nil {
-		s.Warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
-		ctx.control.ReportError(errors.New("Corrupt data sent by the peer"))
-		ctx.ibbCleanup(false)
-		return iqErrorIBBBadRequest, "error", false
-
-	}
-
-	var n int
-	if n, err = ictx.f.Write(result); err != nil {
-		s.Warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
-		ctx.control.ReportError(errors.New("Couldn't write data to the file system"))
-		ctx.ibbCleanup(false)
+		s.Warn(fmt.Sprintf("IBB had an error when decoding: %v", err))
+		ctx.control.ReportError(errors.New("Couldn't decode incoming data"))
+		ctx.ibbCleanup()
 		return iqErrorNotAcceptable, "error", false
 	}
-	ictx.currentSize += int64(n)
-	ctx.control.SendUpdate(ictx.currentSize, ctx.size)
+
+	_, err = ictx.recv.Write(dt)
+	if err != nil {
+		s.Warn(fmt.Sprintf("IBB had an error when writing: %v", err))
+		ctx.control.ReportError(errors.New("Couldn't write incoming data"))
+		ctx.ibbCleanup()
+		return iqErrorNotAcceptable, "error", false
+	}
 
 	return data.EmptyReply{}, "", false
 }
 
+// IbbData is the hook function that will be called when we receive an ibb data IQ
+func IbbData(s access.Session, stanza *data.ClientIQ) (interface{}, string, bool) {
+	return ibbOnData(s, stanza.Query)
+}
+
 // IbbMessageData is the hook function that will be called when we receive a message containing an ibb data
 func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Extension) {
-	tag, ctx, ictx, ret, _, _ := ibbHandleData(s, []byte(ext.Body))
-	if ret != nil {
-		return
-	}
-	defer ictx.Unlock()
-
-	// XEP-0047 wants us to keep track of previously used sequence numbers, and only do this error
-	// when a sequence number is reused - otherwise we should immediately close the stream.
-	// However, because of the wraparound behavior of "seq" - also specified in XEP-0047, for large
-	// files we can't actually tell the difference between a reused sequence number or a number that
-	// has just been wrapped around. Thus, we do this deviation from the spec here.
-	if tag.Sequence != ictx.expectingSequence {
-		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ictx.expectingSequence, tag.Sequence))
-		// we can't actually send anything back to indicate this problem...
-		ctx.control.ReportError(errors.New("Unexpected data sent from the peer"))
-		ctx.ibbCleanup(false)
-		return
-	}
-
-	ictx.expectingSequence++ // wraparound on purpose, to match uint16 spec behavior of the seq field
-
-	result, err := base64.StdEncoding.DecodeString(tag.Base64)
-	if err != nil {
-		s.Warn(fmt.Sprintf("IBB received corrupt data for sequence %d", tag.Sequence))
-		// we can't actually send anything back to indicate this problem...
-		ctx.control.ReportError(errors.New("Corrupt data sent by the peer"))
-		ctx.ibbCleanup(false)
-		return
-
-	}
-
-	var n int
-	if n, err = ictx.f.Write(result); err != nil {
-		s.Warn(fmt.Sprintf("IBB had an error when writing to the file: %v", err))
-		ctx.control.ReportError(errors.New("Couldn't write data to the file system"))
-		ctx.ibbCleanup(false)
-		return
-	}
-	ictx.currentSize += int64(n)
-	ctx.control.SendUpdate(ictx.currentSize, ctx.size)
+	_, _, _ = ibbOnData(s, []byte(ext.Body))
 }
 
 // IbbClose is the hook function that will be called when we receive an ibb close IQ
@@ -213,25 +164,29 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 		return iqErrorItemNotFound, "error", false
 	}
 
-	ictx.Lock()
-	defer ictx.Unlock()
-
-	defer closeAndIgnore(ictx.f)
-	fstat, _ := ictx.f.Stat()
-
-	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
-	if ictx.currentSize != ctx.size || fstat.Size() != ictx.currentSize {
-		s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", ctx.size, fstat.Size()))
-		ctx.control.ReportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
-		ctx.ibbCleanup(false)
-		return data.EmptyReply{}, "", false
+	toSend, fname, ee, ok := ictx.recv.wait()
+	if !ok {
+		s.Warn(fmt.Sprintf("Had error when waiting for receiving: %v", ee))
+		ctx.control.ReportError(errors.New("Couldn't recv final data"))
+		ctx.ibbCleanup()
+		return
 	}
 
-	// TODO[LATER]: if there's a hash of the file in the inflight, we should calculate it on the file and check it
+	if toSend != nil {
+		encoded := base64.StdEncoding.EncodeToString(toSend)
+		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBData{
+			Sid:      ctx.sid,
+			Sequence: 0,
+			Base64:   encoded,
+		})
+	}
 
-	if err := ctx.finalizeFileTransfer(ictx.f.Name()); err != nil {
+	if err := ctx.finalizeFileTransfer(fname); err != nil {
 		s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
-		ctx.ibbCleanup(false)
+		ctx.control.ReportError(errors.New("Couldn't move the final file"))
+		ctx.ibbCleanup()
+		_ = os.Remove(fname)
+		return
 	}
 
 	return data.EmptyReply{}, "", false

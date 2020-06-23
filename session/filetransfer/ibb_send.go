@@ -11,8 +11,10 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
+const IBBMethod = "http://jabber.org/protocol/ibb"
+
 func init() {
-	registerSendFileTransferMethod("http://jabber.org/protocol/ibb", ibbSendDo, ibbSendCurrentlyValid)
+	registerSendFileTransferMethod(IBBMethod, ibbSendDo, ibbSendCurrentlyValid)
 }
 
 func ibbSendCurrentlyValid(string, access.Session) bool {
@@ -53,18 +55,20 @@ func ibbReadAndWrite(ctx *sendContext) io.ReadCloser {
 	}
 
 	r, w := io.Pipe()
-	w2 := base64.NewEncoder(base64.StdEncoding, w)
-	w3, beforeFinish := ctx.enc.wrapForSending(w2)
+
+	ctx.totalSize = ctx.enc.totalSize(ctx.size)
 
 	go func() {
-		_, err = io.Copy(w3, f)
+		w2, beforeFinish := ctx.enc.wrapForSending(w, w)
+		_, err = io.Copy(w2, f)
 		if err != nil && err != errLocalCancel {
 			ctx.onError(err)
 		}
 
 		beforeFinish()
 
-		_ = w3.Close()
+		_ = w2.Close()
+		_ = w.Close()
 	}()
 
 	return r
@@ -86,7 +90,7 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 		rpl, _, e := ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBData{
 			Sid:      ctx.sid,
 			Sequence: seq,
-			Base64:   string(buffer[:n]),
+			Base64:   base64.StdEncoding.EncodeToString(buffer[:n]),
 		})
 		if e != nil {
 			ctx.onError(e)
@@ -98,6 +102,7 @@ func ibbSendChunk(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) 
 	}
 	if err == io.EOF {
 		closeAndIgnore(r)
+		addInflightMAC(ctx)
 		_, _, _ = ctx.s.Conn().SendIQ(ctx.peer, "set", data.IBBClose{Sid: ctx.sid})
 		ctx.onFinish()
 		return false
@@ -125,8 +130,10 @@ func trackResultOfSend(ctx *sendContext, reply <-chan data.Stanza) {
 	}
 }
 
+var ibbScheduleSendLimit = time.Duration(500) * time.Millisecond
+
 func ibbScheduleNextSend(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16) bool {
-	time.AfterFunc(time.Duration(200)*time.Millisecond, func() {
+	time.AfterFunc(ibbScheduleSendLimit, func() {
 		ibbSendChunks(ctx, r, buffer, seq)
 	})
 
@@ -137,11 +144,7 @@ func ibbSendChunks(ctx *sendContext, r io.ReadCloser, buffer []byte, seq uint16)
 	// The seq variable can wrap around here - THAT IS ON PURPOSE
 	// See XEP-0047 for details
 	_ = ibbSendChunk(ctx, r, buffer, seq) &&
-		ibbSendChunk(ctx, r, buffer, seq+1) &&
-		ibbSendChunk(ctx, r, buffer, seq+2) &&
-		ibbSendChunk(ctx, r, buffer, seq+3) &&
-		ibbSendChunk(ctx, r, buffer, seq+4) &&
-		ibbScheduleNextSend(ctx, r, buffer, seq+5)
+		ibbScheduleNextSend(ctx, r, buffer, seq+1)
 }
 
 func ibbSendStartTransfer(ctx *sendContext, blockSize int) {
@@ -151,6 +154,7 @@ func ibbSendStartTransfer(ctx *sendContext, blockSize int) {
 	if r == nil {
 		return
 	}
+
 	ibbSendChunks(ctx, r, buffer, seq)
 }
 

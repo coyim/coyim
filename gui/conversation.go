@@ -56,6 +56,8 @@ type conversationView interface {
 	updateSecurityStatus()
 	calculateNewKeyStatus()
 	savePeerFingerprint(*gtkUI)
+
+	hasVerifiedKey() bool
 }
 
 func (conv *conversationPane) showSMPRequestForSecret(question string) {

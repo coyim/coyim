@@ -16,9 +16,15 @@ var inflightSends struct {
 	transfers map[string]*sendContext
 }
 
+var inflightMACs struct {
+	sync.RWMutex
+	transfers map[string]bool
+}
+
 func init() {
 	inflightRecvs.transfers = make(map[string]*recvContext)
 	inflightSends.transfers = make(map[string]*sendContext)
+	inflightMACs.transfers = make(map[string]bool)
 }
 
 var iqErrorBadRequest = data.ErrorReply{
@@ -97,4 +103,20 @@ func removeInflightSend(ctx *sendContext) {
 	inflightSends.Lock()
 	defer inflightSends.Unlock()
 	delete(inflightSends.transfers, ctx.sid)
+}
+
+func addInflightMAC(ctx *sendContext) {
+	inflightMACs.Lock()
+	defer inflightMACs.Unlock()
+	inflightMACs.transfers[ctx.sid] = true
+}
+
+func hasAndRemoveInflightMAC(id string) bool {
+	inflightMACs.Lock()
+	defer inflightMACs.Unlock()
+	if inflightMACs.transfers[id] {
+		delete(inflightMACs.transfers, id)
+		return true
+	}
+	return false
 }

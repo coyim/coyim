@@ -75,9 +75,6 @@ func main() {
 	_, enableMUC := os.LookupEnv("COYIM_ENABLE_MUC")
 	config.MUCEnabled = enableMUC
 
-	_, enableEFT := os.LookupEnv("COYIM_ENABLE_ENCRYPTED_FILE_TRANSFER")
-	config.EncryptedFileTransferEnabled = enableEFT
-
 	initLog()
 	runClient()
 	_, _ = os.Stdout.Write([]byte("\n"))

@@ -127,6 +127,7 @@ func (m *conversationManager) EnsureConversationWith(peer jid.Any, msg []byte) (
 		Conversation: m.builder(peer),
 	}
 
+	c.Conversation.SetReceivedKeyHandler(c)
 	c.eh = m.createEventHandler(peer, c.Conversation)
 
 	m.conversations[peer.String()] = c

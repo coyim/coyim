@@ -367,19 +367,23 @@ func (s *session) receiveStanza(stanzaChan chan data.Stanza) bool {
 		return false
 	}
 
+	result := false
+
 	switch stanza := rawStanza.Value.(type) {
 	case *data.StreamError:
-		return s.receivedStreamError(stanza)
+		result = s.receivedStreamError(stanza)
 	case *data.ClientMessage:
-		return s.receivedClientMessage(stanza)
+		result = s.receivedClientMessage(stanza)
 	case *data.ClientPresence:
-		return s.receivedClientPresence(stanza)
+		result = s.receivedClientPresence(stanza)
 	case *data.ClientIQ:
-		return s.receivedClientIQ(stanza)
+		result = s.receivedClientIQ(stanza)
 	default:
 		s.info(fmt.Sprintf("unhandled stanza: %s %s", rawStanza.Name, rawStanza.Value))
-		return true
+		result = true
 	}
+
+	return result
 }
 
 //TODO: differentiate errors from disconnect request

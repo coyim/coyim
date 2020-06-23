@@ -120,6 +120,7 @@ type FileTransfer struct {
 	Size             int64
 	Description      string
 	IsDirectory      bool
+	Encrypted        bool
 
 	Answer  chan<- *string // one time use
 	Control *sdata.FileTransferControl

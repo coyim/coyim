@@ -116,7 +116,6 @@ func (s *session) AbortSMP(peer jid.WithResource) {
 	}
 }
 
-// TODO: we also need a way to deal with when the TLV is received.
 func (s *session) CreateSymmetricKeyFor(peer jid.Any) []byte {
 	conv, ok := s.convManager.GetConversationWith(peer)
 	if !ok {
@@ -127,6 +126,17 @@ func (s *session) CreateSymmetricKeyFor(peer jid.Any) []byte {
 	if err != nil {
 		return nil
 	}
+
+	return key
+}
+
+func (s *session) GetAndWipeSymmetricKeyFor(peer jid.Any) []byte {
+	conv, ok := s.convManager.GetConversationWith(peer)
+	if !ok {
+		return nil
+	}
+
+	_, _, key := conv.GetAndWipeLastExtraKey()
 
 	return key
 }

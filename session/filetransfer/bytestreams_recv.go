@@ -15,9 +15,16 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
+func init() {
+	registerRecieveFileTransferMethod(BytestreamMethod, 1, bytestreamWaitForCancel)
+}
+
 func bytestreamWaitForCancel(ctx *recvContext) {
 	ctx.control.WaitForCancel(func() {
-		ctx.opaque.(chan bool) <- true
+		ch := ctx.opaque
+		if ch != nil {
+			ch.(chan bool) <- true
+		}
 		removeInflightRecv(ctx.sid)
 	})
 }
@@ -57,65 +64,39 @@ func bytestreamCalculateDestinationAddress(tag data.BytestreamQuery, stanza *dat
 	return hex.EncodeToString(digests.Sha1([]byte(tag.Sid + stanza.From + stanza.To)))
 }
 
-const cancelCheckFrequency = 10
-
-func (ctx *recvContext) bytestreamCleanup(conn net.Conn, ff *os.File) {
-	closeAndIgnore(conn)
-	_ = os.Remove(ff.Name())
-	removeInflightRecv(ctx.sid)
-}
-
 func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
-	ff, err := ctx.openDestinationTempFile()
-	if err != nil {
-		ctx.s.Warn(fmt.Sprintf("Failed to open temporary file: %v", err))
-		return
-	}
-
-	defer closeAndIgnore(ff)
-
+	recv := ctx.createReceiver()
 	cancel := ctx.opaque.(chan bool)
-	totalWritten := int64(0)
-	writes := 0
-
-	reporting := func(v int) error {
-		if writes%cancelCheckFrequency == 0 {
-			select {
-			case <-cancel:
-				ctx.bytestreamCleanup(conn, ff)
-				return errLocalCancel
-			default:
-				// Fall through, since we are not going to cancel
-			}
+	go func() {
+		c, ok := <-cancel
+		if c && ok {
+			recv.cancel()
 		}
-		totalWritten += int64(v)
-		writes++
-		ctx.control.SendUpdate(totalWritten, ctx.size)
-		return nil
-	}
+	}()
 
-	_, err = io.Copy(io.MultiWriter(ff, &reportingWriter{report: reporting}), conn)
+	_, err := io.Copy(recv, conn)
+
 	if err != nil && err != errLocalCancel {
-		ctx.s.Warn(fmt.Sprintf("Had error when trying to write to file: %v", err))
-		ctx.control.ReportError(errors.New("Error writing to file"))
-		ctx.bytestreamCleanup(conn, ff)
+		closeAndIgnore(conn)
 		return
 	}
 
-	fstat, _ := ff.Stat()
-
-	// TODO[LATER]: These checks ignore the range flags - we should think about how that would fit
-	if totalWritten != ctx.size || fstat.Size() != totalWritten {
-		ctx.s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", ctx.size, fstat.Size()))
-		ctx.control.ReportError(errors.New("Incorrect final size of file - this implies the transfer was cancelled"))
-		ctx.bytestreamCleanup(conn, ff)
+	toSend, fname, _, ok := recv.wait()
+	if !ok {
+		closeAndIgnore(conn)
 		return
 	}
 
-	// TODO[LATER]: if there's a hash of the file in the inflight, we should calculate it on the file and check it
-	if err := ctx.finalizeFileTransfer(ff.Name()); err != nil {
+	if toSend != nil {
+		_, _ = conn.Write(toSend)
+	}
+
+	closeAndIgnore(conn)
+
+	if err := ctx.finalizeFileTransfer(fname); err != nil {
 		ctx.s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
-		ctx.bytestreamCleanup(conn, ff)
+		ctx.control.ReportError(errors.New("Couldn't move the final file"))
+		_ = os.Remove(fname)
 	}
 }
 

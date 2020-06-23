@@ -28,6 +28,7 @@ type Conversation interface {
 	TheirFingerprint() []byte
 
 	CreateExtraSymmetricKey() ([]byte, error)
+	GetAndWipeLastExtraKey() (usage uint32, usageData []byte, symkey []byte)
 
 	EventHandler() *EventHandler
 }
@@ -47,6 +48,10 @@ type conversation struct {
 	eh *EventHandler
 
 	*otr3.Conversation
+
+	lastExtraKeyUsage     uint32
+	lastExtraKeyUsageData []byte
+	lastExtraKeySymkey    []byte
 }
 
 func (c *conversation) StartEncryptedChat() error {
@@ -163,4 +168,22 @@ func (c *conversation) CreateExtraSymmetricKey() ([]byte, error) {
 	}
 	err = c.sendAll(toSend)
 	return key, err
+}
+
+func (c *conversation) ReceivedSymmetricKey(usage uint32, usageData []byte, symkey []byte) {
+	c.lastExtraKeyUsage = usage
+	c.lastExtraKeyUsageData = usageData
+	c.lastExtraKeySymkey = symkey
+}
+
+func (c *conversation) GetAndWipeLastExtraKey() (usage uint32, usageData []byte, symkey []byte) {
+	usage = c.lastExtraKeyUsage
+	usageData = c.lastExtraKeyUsageData
+	symkey = c.lastExtraKeySymkey
+
+	c.lastExtraKeyUsage = 0
+	c.lastExtraKeyUsageData = nil
+	c.lastExtraKeySymkey = nil
+
+	return
 }

@@ -1,22 +1,32 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+// In these notifications we will use the convention that:
+// - "secure transfer" means that you are sending or receiving something encrypted from/to a peer that is verified
+// - "encrypted transfer" means transfer to/from a peer that is not verified
+// - "insecure transfer" is unencrypted
+
 type fileNotification struct {
-	area             gtki.Box
-	label            gtki.Label
-	image            gtki.Image
-	name             string
-	progress         float64
-	state            string
-	directory        bool
-	sending          bool
-	receiving        bool
-	afterCancelHook  func()
-	afterFailHook    func()
-	afterSucceedHook func()
+	area                      gtki.Box
+	label                     gtki.Label
+	image                     gtki.Image
+	name                      string
+	progress                  float64
+	state                     string
+	directory                 bool
+	sending                   bool
+	receiving                 bool
+	encrypted                 bool
+	verifiedPeer              bool
+	haveEncryptionInformation bool
+	afterCancelHook           func()
+	afterFailHook             func()
+	afterSucceedHook          func()
+	afterDeclinedHook         func()
 }
 
 type fileTransferNotification struct {
@@ -37,7 +47,7 @@ func resizeFileName(name string) string {
 	var fileName string
 
 	if len(name) > 20 {
-		fileName = name[:21] + "..."
+		fileName = name[:20] + "..."
 		return fileName
 	}
 
@@ -46,6 +56,10 @@ func resizeFileName(name string) string {
 
 func (file *fileNotification) afterCancel(f func()) {
 	file.afterCancelHook = f
+}
+
+func (file *fileNotification) afterDeclined(f func()) {
+	file.afterDeclinedHook = f
 }
 
 func (file *fileNotification) afterFail(f func()) {
@@ -82,6 +96,12 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	return fileTransferNotif
 }
 
+func (f *fileNotification) setEncryptionInformation(encrypted, verifiedPeer bool) {
+	f.encrypted = encrypted
+	f.verifiedPeer = verifiedPeer
+	f.haveEncryptionInformation = true
+}
+
 func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receive bool) *fileNotification {
 	if !conv.fileTransferNotif.area.IsVisible() {
 		prov := providerWithCSS("box { background-color: #fff9f3;  color: #000000; border: 3px; }")
@@ -92,17 +112,15 @@ func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receiv
 	}
 
 	info := conv.createFileTransferNotification(fileName, dir, send, receive)
+	info.updateLabel()
+
 	conv.fileTransferNotif.area.SetVisible(true)
 
 	countSending := 0
 	countReceiving := 0
 
-	label := "File transfer started"
-	if dir {
-		label = "Directory transfer started"
-	}
+	label := "Transfer started"
 
-	// TODO: this can be updated by the inside file transfer function
 	for _, f := range conv.fileTransferNotif.files {
 		if f.sending {
 			countSending++
@@ -112,21 +130,49 @@ func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receiv
 		}
 	}
 
+	cc := i18n.Local("Cancel")
+
 	if countSending > 0 && countReceiving == 0 {
 		doInUIThread(func() {
-			conv.updateFileTransferNotification(label, "Cancel", "filetransfer_send.svg")
+			conv.updateFileTransferNotification(label, cc, "filetransfer_send.svg")
 		})
 	} else if countSending == 0 && countReceiving > 0 {
 		doInUIThread(func() {
-			conv.updateFileTransferNotification(label, "Cancel", "filetransfer_receive.svg")
+			conv.updateFileTransferNotification(label, cc, "filetransfer_receive.svg")
 		})
 	} else if countSending > 0 && countReceiving > 0 {
 		doInUIThread(func() {
-			conv.updateFileTransferNotification(label, "Cancel", "filetransfer_receive_send.svg")
+			conv.updateFileTransferNotification(label, cc, "filetransfer_receive_send.svg")
 		})
 	}
 
 	return info
+}
+
+func (f *fileNotification) updateLabel() {
+	var label string
+	switch {
+	case f.sending && !f.haveEncryptionInformation:
+		label = i18n.Localf("Sending: %s", f.name)
+	case !f.sending && !f.haveEncryptionInformation:
+		label = i18n.Localf("Receiving: %s", f.name)
+	case f.sending && f.encrypted && f.verifiedPeer:
+		label = i18n.Localf("Sending securely: %s", f.name)
+	case f.sending && f.encrypted:
+		label = i18n.Localf("Sending encrypted: %s", f.name)
+	case f.sending:
+		label = i18n.Localf("Sending insecurely: %s", f.name)
+	case f.encrypted && f.verifiedPeer:
+		label = i18n.Localf("Receiving securely: %s", f.name)
+	case f.encrypted:
+		label = i18n.Localf("Receiving encrypted: %s", f.name)
+	default:
+		label = i18n.Localf("Receiving insecurely: %s", f.name)
+	}
+
+	doInUIThread(func() {
+		f.label.SetLabel(label)
+	})
 }
 
 func (conv *conversationPane) createFileTransferNotification(fileName string, dir, send, receive bool) *fileNotification {
@@ -146,13 +192,8 @@ func (conv *conversationPane) createFileTransferNotification(fileName string, di
 
 	file.name = fileName
 
-	if send {
-		fileName = "Sending: " + fileName
-	} else {
-		fileName = "Receiving: " + fileName
-	}
+	file.updateLabel()
 
-	file.label.SetLabel(fileName)
 	conv.fileTransferNotif.count++
 	conv.fileTransferNotif.canceled = false
 	conv.fileTransferNotif.totalProgress = 0
@@ -166,7 +207,7 @@ func (conv *conversationPane) createFileTransferNotification(fileName string, di
 }
 
 func (conv *conversationPane) updateFileTransferNotification(label, buttonLabel, image string) {
-	if buttonLabel == "Close" {
+	if buttonLabel == i18n.Local("Close") {
 		prov := providerWithCSS("label { margin-right: 3px;  margin-left: 3px; }")
 		updateWithStyle(conv.fileTransferNotif.labelButton, prov)
 	}
@@ -181,6 +222,7 @@ const stateInProgress = "in-progress"
 const stateSuccess = "success"
 const stateFailed = "failed"
 const stateCanceled = "canceled"
+const stateDeclined = "declined"
 
 func (conv *conversationPane) updateFileTransfer(file *fileNotification) {
 	conv.fileTransferNotif.totalProgress = 0
@@ -212,22 +254,28 @@ func (conv *conversationPane) updateFileTransfer(file *fileNotification) {
 	})
 }
 
-func fileTransferCalculateStates(countCompleted, countCanceled, countFailed, countDirs, countTotal int, canceledBefore bool) (label, image string, canceled bool) {
+func fileTransferCalculateStates(countCompleted, countCanceled, countFailed, countDeclined, countDirs, countDirsCompleted, countTotal int, canceledBefore bool) (label, image string, canceled bool) {
 	verb := "successful"
 	image = "success.svg"
 	canceled = canceledBefore
-	if countCanceled+countFailed == countTotal {
+	if countCanceled+countFailed+countDeclined == countTotal {
 		image = "failure.svg"
 		canceled = true
 		verb = "failed"
-		if countCanceled > countFailed {
+		if countCanceled > (countFailed + countDeclined) {
 			verb = "canceled"
+		} else if countDeclined > (countCanceled + countFailed) {
+			verb = "declined"
 		}
 	}
 
-	label = "File transfer " + verb
-	if countDirs > 0 {
-		label = "Directory transfer " + verb
+	switch {
+	case countDirsCompleted > 0 && countCompleted != countDirsCompleted:
+		label = i18n.Local("File and directory transfer(s) " + verb)
+	case countDirsCompleted > 0:
+		label = i18n.Local("Directory transfer(s) " + verb)
+	default:
+		label = i18n.Local("File transfer(s) " + verb)
 	}
 	return
 }
@@ -238,17 +286,25 @@ func (conv *conversationPane) updateFileTransferNotificationCounts() {
 	countFailed := 0
 	countTotal := 0
 	countDirs := 0
+	countDirsCompleted := 0
+	countDeclined := 0
 	for _, f := range conv.fileTransferNotif.files {
 		switch f.state {
 		case stateInProgress:
 		case stateSuccess:
 			countCompleted++
+			if f.directory {
+				countDirsCompleted++
+			}
 		case stateCanceled:
 			countCompleted++
 			countCanceled++
 		case stateFailed:
 			countCompleted++
 			countFailed++
+		case stateDeclined:
+			countCompleted++
+			countDeclined++
 		}
 		if f.directory {
 			countDirs++
@@ -258,10 +314,10 @@ func (conv *conversationPane) updateFileTransferNotificationCounts() {
 
 	conv.fileTransferNotif.count = countTotal - countCompleted
 	if countCompleted == countTotal {
-		label, image, c := fileTransferCalculateStates(countCompleted, countCanceled, countFailed, countDirs, countTotal, conv.fileTransferNotif.canceled)
+		label, image, c := fileTransferCalculateStates(countCompleted, countCanceled, countFailed, countDeclined, countDirs, countDirsCompleted, countTotal, conv.fileTransferNotif.canceled)
 		conv.fileTransferNotif.canceled = c
 		doInUIThread(func() {
-			conv.updateFileTransferNotification(label, "Close", image)
+			conv.updateFileTransferNotification(label, i18n.Local("Close"), image)
 		})
 	}
 }
@@ -278,13 +334,27 @@ func successProvider() gtki.CssProvider {
 	return providerWithCSS("label { color: #89AF8F; }")
 }
 
+func (file *fileNotification) decline() {
+	if file.state != stateInProgress {
+		return
+	}
+	file.state = stateDeclined
+	file.progress = 0
+	file.update(i18n.Localf("Declined: %s", file.name), canceledProvider())
+	hook := file.afterDeclinedHook
+	file.afterDeclinedHook = nil
+	if hook != nil {
+		hook()
+	}
+}
+
 func (file *fileNotification) cancel() {
 	if file.state != stateInProgress {
 		return
 	}
 	file.state = stateCanceled
 	file.progress = 0
-	file.update("Canceled: "+file.name, canceledProvider())
+	file.update(i18n.Localf("Canceled: %s", file.name), canceledProvider())
 	hook := file.afterCancelHook
 	file.afterCancelHook = nil
 	if hook != nil {
@@ -298,7 +368,7 @@ func (file *fileNotification) fail() {
 	}
 	file.state = stateFailed
 	file.progress = 0
-	file.update("Failed: "+file.name, canceledProvider())
+	file.update(i18n.Localf("Failed: %s", file.name), canceledProvider())
 	hook := file.afterFailHook
 	file.afterFailHook = nil
 	if hook != nil {
@@ -306,17 +376,31 @@ func (file *fileNotification) fail() {
 	}
 }
 
-// TODO: this can be replaced with the same bool
-func (file *fileNotification) succeed(purpose string) {
+func (file *fileNotification) succeed() {
 	if file.state != stateInProgress {
 		return
 	}
 	file.state = stateSuccess
-	if purpose == "send" {
-		file.update("Sent: "+file.name, successProvider())
-	} else {
-		file.update("Received: "+file.name, successProvider())
+
+	var label string
+
+	switch {
+	case file.sending && file.encrypted && file.verifiedPeer:
+		label = i18n.Localf("Sent securely: %s", file.name)
+	case file.sending && file.encrypted:
+		label = i18n.Localf("Sent encrypted: %s", file.name)
+	case file.sending:
+		label = i18n.Localf("Sent insecurely: %s", file.name)
+	case file.encrypted && file.verifiedPeer:
+		label = i18n.Localf("Received securely: %s", file.name)
+	case file.encrypted:
+		label = i18n.Localf("Received encrypted: %s", file.name)
+	default:
+		label = i18n.Localf("Received insecurely: %s", file.name)
 	}
+
+	file.update(label, successProvider())
+
 	hook := file.afterSucceedHook
 	file.afterSucceedHook = nil
 	if hook != nil {
@@ -326,7 +410,7 @@ func (file *fileNotification) succeed(purpose string) {
 
 func (conv *conversationPane) onDestroyFileTransferNotif() {
 	label := conv.fileTransferNotif.labelButton.GetLabel()
-	if label == "Cancel" {
+	if label == i18n.Local("Cancel") {
 		for _, f := range conv.fileTransferNotif.files {
 			f.cancel()
 		}

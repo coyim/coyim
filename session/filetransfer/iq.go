@@ -12,16 +12,21 @@ import (
 
 // InitIQ is the hook function that will be called when we receive a file or directory transfer stream initiation IQ
 func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{}, iqtype string, ignore bool) {
+	peer, ok := jid.Parse(stanza.From).(jid.WithResource)
+	if !ok {
+		s.Warn(fmt.Sprintf("Stanza sender doesn't contain resource - this shouldn't happen: %v", stanza.From))
+		return nil, "", false
+	}
+
 	isDir := false
-	//isEnc := false
+	isEnc := false
 	switch si.Profile {
 	case dirTransferProfile:
 		isDir = true
 	case encryptedTransferProfile:
-		//isEnc = true
+		isEnc = true
 		isDir = si.EncryptedData.Type == "directory"
 	}
-	//isEnc = isEnc && config.EncryptedFileTransferEnabled
 
 	var options []string
 	var err error
@@ -30,30 +35,24 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 		return nil, "", false
 	}
 
-	ctl := sdata.CreateFileTransferControl()
+	ctl := sdata.CreateFileTransferControl(nil, nil)
 
-	// TODO: here until the end we need to figure out what to do with encryption
-	ctx := registerNewFileTransfer(s, si, options, stanza, ctl, isDir)
+	ctx := registerNewFileTransfer(s, si, options, stanza, ctl, isDir, isEnc)
 
 	acceptResult := make(chan *string)
 	go waitForFileTransferUserAcceptance(stanza, si, acceptResult, ctx)
 
-	peer, ok := jid.Parse(stanza.From).(jid.WithResource)
-	if !ok {
-		s.Warn(fmt.Sprintf("Stanza sender doesn't contain resource - this shouldn't happen: %v", stanza.From))
-		return nil, "", false
-	}
-
 	s.PublishEvent(events.FileTransfer{
 		Peer:             peer,
-		Mime:             si.File.Hash,
-		DateLastModified: si.File.Date,
-		Name:             si.File.Name,
-		Size:             si.File.Size,
-		Description:      si.File.Desc,
+		Mime:             ctx.hash,
+		DateLastModified: ctx.date,
+		Name:             ctx.name,
+		Size:             ctx.size,
+		Description:      ctx.desc,
 		Answer:           acceptResult,
 		Control:          ctl,
 		IsDirectory:      isDir,
+		Encrypted:        isEnc,
 	})
 
 	return nil, "", true

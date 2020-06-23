@@ -9,7 +9,7 @@
         <child>
           <object class="GtkMenuItem" id="conversationMenu">
             <property name="visible">true</property>
-	    <child>
+	        <child>
               <object class="GtkLabel" id="menuTag">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Secure Chat</property>
@@ -17,7 +17,7 @@
               </object>
             </child>
             <child type="submenu">
-              <object class="GtkMenu" id="menu">
+              <object class="GtkMenu" id="conversationMenuSubmenu">
                 <property name="visible">true</property>
                 <child>
                   <object class="GtkMenuItem" id="startOTRMenu">
@@ -45,18 +45,36 @@
           </object>
         </child>
         <child>
-          <object class="GtkMenuItem" id="sendFileMenuItem">
+          <object class="GtkMenuItem" id="transferMenu">
             <property name="visible">true</property>
-	    <child>
-              <object class="GtkLabel" id="sendFileTag">
+	        <child>
+              <object class="GtkLabel" id="transferLabelTag">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Send File</property>
+                <property name="label" translatable="yes">Transfer</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
-            <signal name="select" handler="on_send_file_to_contact" />
+            <child type="submenu">
+              <object class="GtkMenu" id="transferMenuSubmenu">
+                <property name="visible">true</property>
+                <child>
+                  <object class="GtkMenuItem" id="sendFileMenuItem">
+                    <property name="visible">true</property>
+                    <property name="label" translatable="yes">Send File</property>
+                    <signal name="activate" handler="on_send_file_to_contact" />
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkMenuItem" id="sendDirMenuItem">
+                    <property name="visible">true</property>
+                    <property name="label" translatable="yes">Send Dir</property>
+                    <signal name="activate" handler="on_send_dir_to_contact" />
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
-      </child>
+        </child>
       </object>
       <packing>
         <property name="expand">false</property>
@@ -68,9 +86,9 @@
     <child>
       <object class="GtkBox" id="notification-area">
         <property name="can_focus">False</property>
-	<property name="visible">true</property>
+	    <property name="visible">true</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-	<child>
+	    <child>
           <object class="GtkBox" id="security-warning">
             <property name="visible">False</property>
             <property name="can_focus">False</property>
@@ -91,7 +109,7 @@
               <object class="GtkLabel" id="label-security-warning">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-		<attributes>
+		        <attributes>
                   <attribute name="weight" value="bold"/>
                 </attributes>
               </object>
@@ -134,7 +152,7 @@
             <property name="position">0</property>
           </packing>
         </child>
-	<child>
+	    <child>
           <object class="GtkBox" id="file-transfer">
             <property name="visible">False</property>
             <property name="can_focus">False</property>
@@ -213,11 +231,11 @@
                         <property name="margin_right">37</property>
                         <property name="margin_top">5</property>
                         <property name="margin_bottom">5</property>
+                      </object>
+                    </child>
+                    <signal name="clicked" handler="on_destroy_file_transfer" />
                   </object>
                 </child>
-                <signal name="clicked" handler="on_destroy_file_transfer" />
-              </object>
-              </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -270,7 +288,7 @@
       <object class="GtkScrolledWindow" id="pendingScroll">
         <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
         <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
-	<property name="min-content-height">60</property>
+	    <property name="min-content-height">60</property>
         <property name="shadow-type">in</property>
         <child>
           <object class="GtkTextView" id="pending">

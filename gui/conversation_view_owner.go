@@ -274,11 +274,11 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,
-		// TODO: this stays clicked longer than it should
 		"on_send_file_to_contact": func() {
-			// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
-			// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
-			doInUIThread(func() { cvf.account.sendFileTo(cp.currentPeerForSending(), cvf.ui) })
+			cvf.account.sendFileTo(cp.currentPeerForSending(), cvf.ui, cp)
+		},
+		"on_send_dir_to_contact": func() {
+			cvf.account.sendDirectoryTo(cp.currentPeerForSending(), cvf.ui, cp)
 		},
 	})
 

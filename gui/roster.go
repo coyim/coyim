@@ -208,22 +208,10 @@ func (r *roster) createAccountPeerPopup(jid jid.WithoutResource, account *accoun
 			r.ui.accountManager.debugPeersFor(account)
 		},
 		"on_send_file_to_contact": func() {
-			if peer, ok := r.ui.getPeer(account, jid); ok {
-				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
-				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
-				doInUIThread(func() {
-					account.sendFileTo(jid.WithResource(peer.ResourceToUse()), r.ui)
-				})
-			}
+			account.sendFileTo(jid, r.ui, nil)
 		},
 		"on_send_directory_to_contact": func() {
-			if peer, ok := r.ui.getPeer(account, jid); ok {
-				// TODO: It's a real problem to start file transfer if we don't have a resource, so we should ensure that here
-				// (Because disco#info will not actually return results from the CLIENT unless a resource is prefixed...
-				doInUIThread(func() {
-					account.sendDirectoryTo(jid.WithResource(peer.ResourceToUse()), r.ui)
-				})
-			}
+			account.sendDirectoryTo(jid, r.ui, nil)
 		},
 	})
 

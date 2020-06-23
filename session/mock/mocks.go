@@ -182,16 +182,21 @@ func (*SessionMock) SendIQError(*data.ClientIQ, interface{}) {}
 func (*SessionMock) SendIQResult(*data.ClientIQ, interface{}) {}
 
 // SendFileTo is the implementation for Session interface
-func (*SessionMock) SendFileTo(jid.Any, string, bool) *sdata.FileTransferControl {
+func (*SessionMock) SendFileTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl {
 	return nil
 }
 
 // SendDirTo is the implementation for Session interface
-func (*SessionMock) SendDirTo(jid.Any, string, bool) *sdata.FileTransferControl {
+func (*SessionMock) SendDirTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl {
 	return nil
 }
 
 // CreateSymmetricKeyFor is the implementation for Session interface
 func (*SessionMock) CreateSymmetricKeyFor(jid.Any) []byte {
+	return nil
+}
+
+// GetAndWipeSymmetricKeyFor is the implementation for Session interface
+func (*SessionMock) GetAndWipeSymmetricKeyFor(jid.Any) []byte {
 	return nil
 }

@@ -92,8 +92,12 @@ func (ctx *sendContext) offerSend() error {
 			return
 		}
 		ctx.onError(errors.New("Invalid sending mechanism sent from peer for file sending"))
-	}, func(_ *data.ClientIQ, e error) {
-		ctx.onError(e)
+	}, func(stanza *data.ClientIQ, e error) {
+		if stanza.Error.Code == "403" {
+			ctx.onDecline()
+		} else {
+			ctx.onError(e)
+		}
 	})
 
 	return nil
@@ -105,6 +109,7 @@ type sendContext struct {
 	file             string
 	sid              string
 	size             int64
+	totalSize        int64
 	enc              *encryptionParameters
 	weWantToCancel   bool
 	theyWantToCancel bool
@@ -113,6 +118,7 @@ type sendContext struct {
 	onFinishHook     func(*sendContext)
 	onErrorHook      func(*sendContext, error)
 	onUpdateHook     func(*sendContext, int64)
+	onDeclineHook    func(*sendContext)
 }
 
 func (ctx *sendContext) onFinish() {
@@ -131,9 +137,17 @@ func (ctx *sendContext) onError(e error) {
 }
 func (ctx *sendContext) onUpdate(v int) {
 	ctx.totalSent += int64(v)
-	ctx.control.SendUpdate(ctx.totalSent, ctx.size)
+	ctx.control.SendUpdate(ctx.totalSent, ctx.totalSize)
 	if ctx.onUpdateHook != nil {
 		ctx.onUpdateHook(ctx, ctx.totalSent)
+	}
+}
+
+func (ctx *sendContext) onDecline() {
+	ctx.control.ReportDeclined()
+	removeInflightSend(ctx)
+	if ctx.onDeclineHook != nil {
+		ctx.onDeclineHook(ctx)
 	}
 }
 
@@ -155,10 +169,23 @@ func (ctx *sendContext) listenForCancellation() {
 }
 
 func (ctx *sendContext) initSend() {
-	_, err := discoverSupport(ctx.s, ctx.peer)
+	vals, err := discoverSupport(ctx.s, ctx.peer)
 	if err != nil {
 		ctx.onError(err)
 		return
+	}
+
+	if !vals[encryptedTransferProfile] || ctx.enc == nil {
+		if ctx.control.OnEncryptionNotSupported != nil && ctx.control.OnEncryptionNotSupported() {
+			ctx.enc = nil
+		} else {
+			ctx.onError(errors.New("will not send unencrypted"))
+			return
+		}
+	}
+
+	if ctx.control.EncryptionDecision != nil {
+		ctx.control.EncryptionDecision(ctx.enc != nil)
 	}
 
 	go ctx.listenForCancellation()
@@ -166,13 +193,13 @@ func (ctx *sendContext) initSend() {
 }
 
 // InitSend starts the process of sending a file to a peer
-func InitSend(s access.Session, peer jid.Any, file string, encrypted bool) *sdata.FileTransferControl {
+func InitSend(s access.Session, peer jid.Any, file string, onNoEnc func() bool, encDecision func(bool)) *sdata.FileTransferControl {
 	ctx := &sendContext{
 		peer:    peer.String(),
 		file:    file,
-		control: sdata.CreateFileTransferControl(),
+		control: sdata.CreateFileTransferControl(onNoEnc, encDecision),
 		s:       s,
-		enc:     generateEncryptionParameters(encrypted, func() []byte { return s.CreateSymmetricKeyFor(peer) }, "external"),
+		enc:     generateEncryptionParameters(true, func() []byte { return s.CreateSymmetricKeyFor(peer) }, "external"),
 	}
 	go ctx.initSend()
 	return ctx.control

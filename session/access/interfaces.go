@@ -68,11 +68,12 @@ type Session interface {
 	SendIQError(*data.ClientIQ, interface{})
 	SendIQResult(*data.ClientIQ, interface{})
 	PublishEvent(interface{})
-	SendFileTo(jid.Any, string, bool) *sdata.FileTransferControl
-	SendDirTo(jid.Any, string, bool) *sdata.FileTransferControl
+	SendFileTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl
+	SendDirTo(jid.Any, string, func() bool, func(bool)) *sdata.FileTransferControl
 	StartSMP(jid.WithResource, string, string)
 	FinishSMP(jid.WithResource, string)
 	AbortSMP(jid.WithResource)
+	GetAndWipeSymmetricKeyFor(jid.Any) []byte
 }
 
 // Factory is a function that can create new Sessions

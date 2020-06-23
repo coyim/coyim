@@ -31,6 +31,7 @@ type Peer struct {
 	resources      map[string]Status
 	resourcesLock  sync.RWMutex
 	lockedResource jid.Resource
+	lastResource   string
 
 	HasConfigData bool
 }
@@ -189,8 +190,16 @@ func (p *Peer) AddResource(ss jid.Resource, status, statusMsg string) {
 		p.resourcesLock.Lock()
 		defer p.resourcesLock.Unlock()
 
+		p.lastResource = s
 		p.resources[s] = Status{status, statusMsg}
 	}
+}
+
+func (p *Peer) firstResource() string {
+	for k := range p.resources {
+		return k
+	}
+	return ""
 }
 
 // RemoveResource removes the given resource
@@ -199,6 +208,13 @@ func (p *Peer) RemoveResource(s jid.Resource) {
 	defer p.resourcesLock.Unlock()
 
 	delete(p.resources, string(s))
+
+	if p.lastResource == string(s) {
+		if len(p.resources) > 0 {
+			p.lastResource = p.firstResource()
+		}
+	}
+
 }
 
 // Resources returns the resources for this peer
@@ -244,6 +260,17 @@ func (p *Peer) LastSeen(r jid.Any) {
 // ResourceToUse returns the resource to use for this peer
 func (p *Peer) ResourceToUse() jid.Resource {
 	return p.lockedResource
+}
+
+// ResourceToUseFallback returns the resource to use for this peer or any resource if one exists
+func (p *Peer) ResourceToUseFallback() jid.Resource {
+	if p.lockedResource != jid.Resource("") {
+		return p.lockedResource
+	}
+	if p.lastResource != "" {
+		return jid.Resource(p.lastResource)
+	}
+	return jid.Resource(p.firstResource())
 }
 
 // IsOnline returns true if any of the resources are online

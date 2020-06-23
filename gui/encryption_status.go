@@ -84,6 +84,9 @@ func (conv *conversationPane) hasNewKey() bool {
 }
 
 func (conv *conversationPane) hasVerifiedKey() bool {
+	if conv == nil {
+		return false
+	}
 	return conv.encryptionStatus.verifiedKey
 }
 

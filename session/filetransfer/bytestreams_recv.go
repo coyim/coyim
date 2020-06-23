@@ -81,7 +81,7 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 		return
 	}
 
-	toSend, fname, _, ok := recv.wait()
+	toSend, fname, ok, _ := recv.wait()
 	if !ok {
 		closeAndIgnore(conn)
 		return

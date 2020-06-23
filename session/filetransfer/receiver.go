@@ -185,15 +185,15 @@ func (r *receiver) Write(d []byte) (int, error) {
 	return len(d), nil
 }
 
-func (r *receiver) wait() ([]byte, string, error, bool) {
+func (r *receiver) wait() ([]byte, string, bool, error) {
 	r.Lock()
 	defer r.Unlock()
 	for {
 		if r.hadError {
-			return nil, "", r.err, false
+			return nil, "", false, r.err
 		}
 		if r.done {
-			return r.toSendAtFinish, r.fileNameAtFinish, nil, true
+			return r.toSendAtFinish, r.fileNameAtFinish, true, nil
 		}
 		r.newData.Wait()
 	}

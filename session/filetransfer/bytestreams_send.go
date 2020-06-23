@@ -16,6 +16,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+// BytestreamMethod contains the profile name for bytestreams
 const BytestreamMethod = "http://jabber.org/protocol/bytestreams"
 
 func init() {

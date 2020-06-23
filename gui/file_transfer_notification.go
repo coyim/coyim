@@ -96,10 +96,10 @@ func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	return fileTransferNotif
 }
 
-func (f *fileNotification) setEncryptionInformation(encrypted, verifiedPeer bool) {
-	f.encrypted = encrypted
-	f.verifiedPeer = verifiedPeer
-	f.haveEncryptionInformation = true
+func (file *fileNotification) setEncryptionInformation(encrypted, verifiedPeer bool) {
+	file.encrypted = encrypted
+	file.verifiedPeer = verifiedPeer
+	file.haveEncryptionInformation = true
 }
 
 func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receive bool) *fileNotification {
@@ -149,29 +149,29 @@ func (conv *conversationPane) newFileTransfer(fileName string, dir, send, receiv
 	return info
 }
 
-func (f *fileNotification) updateLabel() {
+func (file *fileNotification) updateLabel() {
 	var label string
 	switch {
-	case f.sending && !f.haveEncryptionInformation:
-		label = i18n.Localf("Sending: %s", f.name)
-	case !f.sending && !f.haveEncryptionInformation:
-		label = i18n.Localf("Receiving: %s", f.name)
-	case f.sending && f.encrypted && f.verifiedPeer:
-		label = i18n.Localf("Sending securely: %s", f.name)
-	case f.sending && f.encrypted:
-		label = i18n.Localf("Sending encrypted: %s", f.name)
-	case f.sending:
-		label = i18n.Localf("Sending insecurely: %s", f.name)
-	case f.encrypted && f.verifiedPeer:
-		label = i18n.Localf("Receiving securely: %s", f.name)
-	case f.encrypted:
-		label = i18n.Localf("Receiving encrypted: %s", f.name)
+	case file.sending && !file.haveEncryptionInformation:
+		label = i18n.Localf("Sending: %s", file.name)
+	case !file.sending && !file.haveEncryptionInformation:
+		label = i18n.Localf("Receiving: %s", file.name)
+	case file.sending && file.encrypted && file.verifiedPeer:
+		label = i18n.Localf("Sending securely: %s", file.name)
+	case file.sending && file.encrypted:
+		label = i18n.Localf("Sending encrypted: %s", file.name)
+	case file.sending:
+		label = i18n.Localf("Sending insecurely: %s", file.name)
+	case file.encrypted && file.verifiedPeer:
+		label = i18n.Localf("Receiving securely: %s", file.name)
+	case file.encrypted:
+		label = i18n.Localf("Receiving encrypted: %s", file.name)
 	default:
-		label = i18n.Localf("Receiving insecurely: %s", f.name)
+		label = i18n.Localf("Receiving insecurely: %s", file.name)
 	}
 
 	doInUIThread(func() {
-		f.label.SetLabel(label)
+		file.label.SetLabel(label)
 	})
 }
 

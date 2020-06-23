@@ -11,6 +11,7 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
+// IBBMethod contains the profile name for IBB
 const IBBMethod = "http://jabber.org/protocol/ibb"
 
 func init() {

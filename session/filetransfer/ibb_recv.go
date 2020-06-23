@@ -164,7 +164,7 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 		return iqErrorItemNotFound, "error", false
 	}
 
-	toSend, fname, ee, ok := ictx.recv.wait()
+	toSend, fname, ok, ee := ictx.recv.wait()
 	if !ok {
 		s.Warn(fmt.Sprintf("Had error when waiting for receiving: %v", ee))
 		ctx.control.ReportError(errors.New("Couldn't recv final data"))

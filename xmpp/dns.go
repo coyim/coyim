@@ -74,26 +74,32 @@ func resolverWithProxy(p proxy.Dialer) resolver {
 	}
 }
 
-func resolveWithCustom(domain string, fn resolver) (hosts []*connectEntry, err error) {
-	_, addrs, err := fn("xmpps-client", "tcp", domain)
+func resolveOne(part, domain string, fn resolver) (hosts []*connectEntry, err error) {
+	_, addrs, err := fn(part, "tcp", domain)
 	if err != nil {
 		return nil, err
 	}
-	hostporttls, err := massage(addrs, true)
+	hostport, err := massage(addrs, true)
 	if err != nil {
 		return nil, err
 	}
+	return hostport, nil
+}
 
-	_, addrs, err = fn("xmpp-client", "tcp", domain)
-	if err != nil {
-		return nil, err
-	}
-	hostport, err := massage(addrs, false)
-	if err != nil {
-		return nil, err
-	}
+func resolveWithCustom(domain string, fn resolver) (hosts []*connectEntry, err error) {
+	hostporttls, err1 := resolveOne("xmpps-client", domain, fn)
+	hostport, err2 := resolveOne("xmpp-client", domain, fn)
 
 	result := append(hostporttls, hostport...)
+	if len(result) == 0 {
+		if err1 != nil {
+			return nil, err1
+		}
+		if err2 != nil {
+			return nil, err2
+		}
+	}
+
 	sort.Sort(byPriorityWeight(result))
 
 	return result, nil

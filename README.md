@@ -60,7 +60,7 @@ read [this page](https://coy.im/what-is-coyim/).
 **Please note**: Important requirements for building CoyIM are also git and
 golang (at least version 1.11).
 
-The GUI version requires GTK+ >= 3.6.16, which installation depends on your OS:
+The GUI version requires GTK+ >= 3.12, which installation depends on your OS:
 
 **Ubuntu:**
 

@@ -117,6 +117,15 @@ func (s *TCPSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortAfterSRVFa
 		log:   testLogger(),
 	}
 
+	// Connection for lookup of xmpps-client SRV record
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		c.Check(network, Equals, "tcp")
+		c.Check(addr, Equals, "208.67.222.222:53")
+
+		return nil, io.EOF
+	})
+
+	// Connection for lookup of xmpp-client SRV record
 	p.Expects(func(network, addr string) (net.Conn, error) {
 		c.Check(network, Equals, "tcp")
 		c.Check(addr, Equals, "208.67.222.222:53")
@@ -133,6 +142,7 @@ func (s *TCPSuite) Test_newTCPConn_DefaultsToOriginDomainAtDefaultPortAfterSRVFa
 	})
 
 	conn, _, err := d.newTCPConn()
+	c.Check(p.called, Equals, 3)
 	c.Check(err, IsNil)
 	c.Check(conn, Equals, expectedConn)
 
@@ -148,6 +158,15 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingFails(c *C) {
 		log:   testLogger(),
 	}
 
+	// Connection for lookup of xmpps-client SRV record
+	p.Expects(func(network, addr string) (net.Conn, error) {
+		c.Check(network, Equals, "tcp")
+		c.Check(addr, Equals, "208.67.222.222:53")
+
+		return nil, io.EOF
+	})
+
+	// Connection for lookup of xmpp-client SRV record
 	p.Expects(func(network, addr string) (net.Conn, error) {
 		c.Check(network, Equals, "tcp")
 		c.Check(addr, Equals, "208.67.222.222:53")
@@ -163,6 +182,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingFails(c *C) {
 	})
 
 	_, _, err := d.newTCPConn()
+	c.Check(p.called, Equals, 3)
 	c.Check(err, Equals, errors.ErrTCPBindingFailed)
 
 	c.Check(p, MatchesExpectations)
@@ -201,6 +221,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsWhenTCPBindingSucceedsButConnectionFail
 	})
 
 	_, _, err := d.newTCPConn()
+	c.Check(p.called, Equals, 3)
 	c.Check(err, Equals, errors.ErrConnectionFailed)
 	c.Check(p, MatchesExpectations)
 }

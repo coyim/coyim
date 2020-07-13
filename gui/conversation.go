@@ -209,7 +209,10 @@ func clearIn(e gtki.TextView) {
 }
 
 func (conv *conversationWindow) isVisible() bool {
-	return conv.win.HasToplevelFocus()
+	if conv.win != nil {
+		return conv.win.HasToplevelFocus()
+	}
+	return false
 }
 
 func (conv *conversationPane) onSendMessageSignal() {
@@ -358,7 +361,9 @@ func (conv *conversationPane) connectEnterHandler(target gtki.Widget) {
 }
 
 func (conv *conversationWindow) destroy() {
-	conv.win.Destroy()
+	if conv.win != nil {
+		conv.win.Destroy()
+	}
 }
 
 func (conv *conversationWindow) tryEnsureCorrectWorkspace() {
@@ -402,10 +407,12 @@ func (conv *conversationPane) updateSecurityWarning() {
 
 func (conv *conversationWindow) show(userInitiated bool) {
 	conv.updateSecurityWarning()
-	if userInitiated {
-		conv.win.Present() // Raises the window
-	} else {
-		conv.win.Show()
+	if conv.win != nil {
+		if userInitiated {
+			conv.win.Present() // Raises the window
+		} else {
+			conv.win.Show()
+		}
 	}
 	conv.tryEnsureCorrectWorkspace()
 }
@@ -760,10 +767,12 @@ func (conv *conversationPane) displayNotificationVerifiedOrNot(notificationV, no
 }
 
 func (conv *conversationWindow) setEnabled(enabled bool) {
-	if enabled {
-		_, _ = conv.win.Emit("enable")
-	} else {
-		_, _ = conv.win.Emit("disable")
+	if conv.win != nil {
+		if enabled {
+			_, _ = conv.win.Emit("enable")
+		} else {
+			_, _ = conv.win.Emit("disable")
+		}
 	}
 }
 
@@ -845,13 +854,17 @@ func (conv *conversationPane) hideDelayedMessagesWindow() {
 }
 
 func (conv *conversationWindow) potentiallySetUrgent() {
-	if !conv.win.HasToplevelFocus() {
-		conv.win.SetUrgencyHint(true)
+	if conv.win != nil {
+		if !conv.win.HasToplevelFocus() {
+			conv.win.SetUrgencyHint(true)
+		}
 	}
 }
 
 func (conv *conversationWindow) unsetUrgent() {
-	conv.win.SetUrgencyHint(false)
+	if conv.win != nil {
+		conv.win.SetUrgencyHint(false)
+	}
 }
 
 func (conv *conversationPane) removeOtrLock() {

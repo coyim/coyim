@@ -43,13 +43,13 @@ func (d *dialer) newTCPConn() (net.Conn, bool, error) {
 func (d *dialer) srvLookupAndFallback() (net.Conn, bool, error) {
 	host := d.getJIDDomainpart()
 
-	log.WithFields(log.Fields{
+	d.log.WithFields(log.Fields{
 		"host": host,
 	}).Info("Making SRV lookup")
 
 	addrs, err := resolveSRVWithProxy(d.proxy, host)
 
-	log.WithFields(log.Fields{
+	d.log.WithFields(log.Fields{
 		"xmpp": addrs,
 	}).Info("Received SRV records")
 

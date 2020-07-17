@@ -85,6 +85,7 @@ func (s *TCPSuite) Test_newTCPConn_ErrorsIfServiceIsNotAvailable(c *C) {
 		JID: "foo@jabber.com",
 
 		proxy: p,
+		log:   testLogger(),
 	}
 
 	// We exploit resolveSRVWithProxy forwarding conn errors

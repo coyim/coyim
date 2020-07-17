@@ -12,7 +12,7 @@ func observe(s *session) {
 			switch t.Type {
 			case events.Disconnected, events.ConnectionLost:
 				s.r.Clear()
-				s.rosterReceived()
+				s.rosterUpdated()
 			}
 		}
 	}

@@ -402,8 +402,7 @@ func (s *session) readStanzasAndAlertOnErrors(stanzaChan chan data.Stanza) {
 	}
 }
 
-func (s *session) rosterReceived() {
-	s.info("Roster received")
+func (s *session) rosterUpdated() {
 	s.publish(events.RosterReceived)
 }
 
@@ -735,7 +734,8 @@ func (s *session) requestRoster() bool {
 		s.addOrMergeNewPeer(rr, s.GetConfig())
 	}
 
-	s.rosterReceived()
+	s.info("Roster received")
+	s.rosterUpdated()
 
 	return true
 }
@@ -799,8 +799,15 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		resource = s.resource
 	}
 
+	s.connectionLogger.WithFields(log.Fields{
+		"resource":       resource,
+		"wantToBeOnline": s.wantToBeOnline,
+	}).Debug("Connect()")
+
 	conn, err := policy.Connect(password, resource, conf, verifier)
 	if err != nil {
+		s.connectionLogger.WithError(err).Error("failed to connect")
+
 		s.setStatus(DISCONNECTED)
 
 		return err

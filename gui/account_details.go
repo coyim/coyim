@@ -20,49 +20,31 @@ import (
 
 type accountDetailsData struct {
 	builder             *builder
-	dialog              gtki.Dialog
-	notebook            gtki.Notebook
-	otherSettings       gtki.CheckButton
-	acc                 gtki.Entry
-	pass                gtki.Entry
-	displayName         gtki.Entry
-	server              gtki.Entry
-	port                gtki.Entry
-	proxies             gtki.ListStore
-	pins                gtki.ListStore
-	notificationArea    gtki.Box
-	proxiesView         gtki.TreeView
-	fingerprintsMessage gtki.Label
-	pinningPolicy       gtki.ComboBoxText
-	pinsView            gtki.TreeView
+	dialog              gtki.Dialog       `gtk-widget:"AccountDetails"`
+	notebook            gtki.Notebook     `gtk-widget:"notebook1"`
+	otherSettings       gtki.CheckButton  `gtk-widget:"otherSettings"`
+	acc                 gtki.Entry        `gtk-widget:"account"`
+	pass                gtki.Entry        `gtk-widget:"password"`
+	displayName         gtki.Entry        `gtk-widget:"displayName"`
+	server              gtki.Entry        `gtk-widget:"server"`
+	port                gtki.Entry        `gtk-widget:"port"`
+	proxies             gtki.ListStore    `gtk-widget:"proxies-model"`
+	pins                gtki.ListStore    `gtk-widget:"pins-model"`
+	notificationArea    gtki.Box          `gtk-widget:"notification-area"`
+	proxiesView         gtki.TreeView     `gtk-widget:"proxies-view"`
+	fingerprintsMessage gtki.Label        `gtk-widget:"fingerprintsMessage"`
+	pinningPolicy       gtki.ComboBoxText `gtk-widget:"pinningPolicyValue"`
+	pinsView            gtki.TreeView     `gtk-widget:"pins-view"`
 }
 
 func getBuilderAndAccountDialogDetails() *accountDetailsData {
 	data := &accountDetailsData{}
-
-	dialogID := "AccountDetails"
-	data.builder = newBuilder(dialogID)
+	data.builder = newBuilder("AccountDetails")
 
 	//data.proxies needs to be kept beyond the lifespan of the builder.
 	//Because this also holds a reference to the builder, we should be fine.
 
-	data.builder.getItems(
-		dialogID, &data.dialog,
-		"notebook1", &data.notebook,
-		"otherSettings", &data.otherSettings,
-		"account", &data.acc,
-		"password", &data.pass,
-		"displayName", &data.displayName,
-		"server", &data.server,
-		"port", &data.port,
-		"proxies-model", &data.proxies,
-		"notification-area", &data.notificationArea,
-		"proxies-view", &data.proxiesView,
-		"fingerprintsMessage", &data.fingerprintsMessage,
-		"pins-model", &data.pins,
-		"pinningPolicyValue", &data.pinningPolicy,
-		"pins-view", &data.pinsView,
-	)
+	panicOnDevError(data.builder.bindObjects(data))
 
 	return data
 }

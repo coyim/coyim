@@ -35,10 +35,7 @@ func (u *gtkUI) newListRoomsView(accountManager *accountManager, chatManager *ch
 	}
 
 	builder := newBuilder("ListChatRooms")
-	err := builder.bindObjects(view)
-	if err != nil {
-		panic(err)
-	}
+	panicOnDevError(builder.bindObjects(view))
 
 	builder.ConnectSignals(map[string]interface{}{
 		"cancel_handler":             view.Destroy,

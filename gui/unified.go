@@ -23,11 +23,11 @@ type unifiedLayout struct {
 	ui                       *gtkUI
 	cl                       *conversationList
 	leftPane                 gtki.Box
-	rightPane                gtki.Box
-	notebook                 gtki.Notebook
-	header                   gtki.Label
-	headerBox                gtki.Box
-	close                    gtki.Button
+	rightPane                gtki.Box      `gtk-widget:"right"`
+	notebook                 gtki.Notebook `gtk-widget:"notebook"`
+	header                   gtki.Label    `gtk-widget:"header_label"`
+	headerBox                gtki.Box      `gtk-widget:"header_box"`
+	close                    gtki.Button   `gtk-widget:"close_button"`
 	convsVisible             bool
 	inPageSet                bool
 	isFullscreen             bool
@@ -43,8 +43,8 @@ type windowPosition struct {
 
 type conversationList struct {
 	layout *unifiedLayout
-	view   gtki.TreeView
-	model  gtki.ListStore
+	view   gtki.TreeView  `gtk-widget:"treeview"`
+	model  gtki.ListStore `gtk-widget:"liststore"`
 }
 
 type conversationStackItem struct {
@@ -68,16 +68,8 @@ func newUnifiedLayout(ui *gtkUI, left, parent gtki.Box) *unifiedLayout {
 	ul.cl.layout = ul
 
 	builder := newBuilder("UnifiedLayout")
-	builder.getItems(
-		"treeview", &ul.cl.view,
-		"liststore", &ul.cl.model,
-
-		"right", &ul.rightPane,
-		"notebook", &ul.notebook,
-		"header_label", &ul.header,
-		"header_box", &ul.headerBox,
-		"close_button", &ul.close,
-	)
+	panicOnDevError(builder.bindObjects(ul.cl))
+	panicOnDevError(builder.bindObjects(ul))
 
 	//ul.cl.model needs to be kept beyond the lifespan of the builder.
 	ul.cl.model.Ref()

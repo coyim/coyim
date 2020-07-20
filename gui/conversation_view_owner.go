@@ -254,18 +254,7 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 		},
 	}
 
-	builder.getItems(
-		"box", &cp.widget,
-		"menuTag", &cp.encryptedLabel,
-		"history", &cp.history,
-		"pending", &cp.pending,
-		"historyScroll", &cp.scrollHistory,
-		"pendingScroll", &cp.scrollPending,
-		"message", &cp.entry,
-		"notification-area", &cp.notificationArea,
-		"menubar", &cp.menubar,
-		"messageScroll", &cp.entryScroll,
-	)
+	panicOnDevError(builder.bindObjects(cp))
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_start_otr_signal":      cp.onStartOtrSignal,

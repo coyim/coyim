@@ -82,10 +82,10 @@ type conversationWindow struct {
 }
 
 type securityWarningNotification struct {
-	area        gtki.Box
-	image       gtki.Image
-	label       gtki.Label
-	labelButton gtki.Label
+	area        gtki.Box   `gtk-widget:"security-warning"`
+	image       gtki.Image `gtk-widget:"image-security-warning"`
+	label       gtki.Label `gtk-widget:"label-security-warning"`
+	labelButton gtki.Label `gtk-widget:"button-label-security-warning"`
 }
 
 type conversationPane struct {
@@ -101,16 +101,16 @@ type conversationPane struct {
 	isTargeted bool
 
 	account              *account
-	widget               gtki.Box
-	menubar              gtki.MenuBar
-	encryptedLabel       gtki.Label
-	entry                gtki.TextView
-	entryScroll          gtki.ScrolledWindow
-	history              gtki.TextView
-	pending              gtki.TextView
-	scrollHistory        gtki.ScrolledWindow
-	scrollPending        gtki.ScrolledWindow
-	notificationArea     gtki.Box
+	widget               gtki.Box            `gtk-widget:"box"`
+	menubar              gtki.MenuBar        `gtk-widget:"menubar"`
+	encryptedLabel       gtki.Label          `gtk-widget:"menuTag"`
+	entry                gtki.TextView       `gtk-widget:"message"`
+	entryScroll          gtki.ScrolledWindow `gtk-widget:"messageScroll"`
+	history              gtki.TextView       `gtk-widget:"history"`
+	pending              gtki.TextView       `gtk-widget:"pending"`
+	scrollHistory        gtki.ScrolledWindow `gtk-widget:"historyScroll"`
+	scrollPending        gtki.ScrolledWindow `gtk-widget:"pendingScroll"`
+	notificationArea     gtki.Box            `gtk-widget:"notification-area"`
 	fileTransferNotif    *fileTransferNotification
 	securityWarningNotif *securityWarningNotification
 	// The window to set dialogs transient for
@@ -329,12 +329,7 @@ func (conv *conversationPane) currentPeerForSending() jid.Any {
 func (b *builder) securityWarningNotifInit() *securityWarningNotification {
 	securityWarningNotif := &securityWarningNotification{}
 
-	b.getItems(
-		"security-warning", &securityWarningNotif.area,
-		"image-security-warning", &securityWarningNotif.image,
-		"label-security-warning", &securityWarningNotif.label,
-		"button-label-security-warning", &securityWarningNotif.labelButton,
-	)
+	panicOnDevError(b.bindObjects(securityWarningNotif))
 
 	return securityWarningNotif
 }

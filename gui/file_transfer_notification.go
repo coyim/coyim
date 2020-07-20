@@ -11,9 +11,9 @@ import (
 // - "insecure transfer" is unencrypted
 
 type fileNotification struct {
-	area                      gtki.Box
-	label                     gtki.Label
-	image                     gtki.Image
+	area                      gtki.Box   `gtk-widget:"area-file-transfer-info"`
+	label                     gtki.Label `gtk-widget:"name-file-transfer-info"`
+	image                     gtki.Image `gtk-widget:"image-file-transfer-info"`
 	name                      string
 	progress                  float64
 	state                     string
@@ -30,13 +30,13 @@ type fileNotification struct {
 }
 
 type fileTransferNotification struct {
-	area          gtki.Box
-	image         gtki.Image
-	label         gtki.Label
-	box           gtki.Box
-	progressBar   gtki.ProgressBar
-	button        gtki.Button
-	labelButton   gtki.Label
+	area          gtki.Box         `gtk-widget:"file-transfer"`
+	image         gtki.Image       `gtk-widget:"image-file-transfer"`
+	label         gtki.Label       `gtk-widget:"label-file-transfer"`
+	box           gtki.Box         `gtk-widget:"info-file-transfer"`
+	progressBar   gtki.ProgressBar `gtk-widget:"bar-file-transfer"`
+	button        gtki.Button      `gtk-widget:"button-file-transfer"`
+	labelButton   gtki.Label       `gtk-widget:"button-label-file-transfer"`
 	totalProgress float64
 	files         []*fileNotification
 	count         int
@@ -83,15 +83,7 @@ func (file *fileNotification) update(fileName string, prov gtki.CssProvider) {
 func (b *builder) fileTransferNotifInit() *fileTransferNotification {
 	fileTransferNotif := &fileTransferNotification{}
 
-	b.getItems(
-		"file-transfer", &fileTransferNotif.area,
-		"image-file-transfer", &fileTransferNotif.image,
-		"label-file-transfer", &fileTransferNotif.label,
-		"info-file-transfer", &fileTransferNotif.box,
-		"bar-file-transfer", &fileTransferNotif.progressBar,
-		"button-file-transfer", &fileTransferNotif.button,
-		"button-label-file-transfer", &fileTransferNotif.labelButton,
-	)
+	panicOnDevError(b.bindObjects(fileTransferNotif))
 
 	return fileTransferNotif
 }
@@ -180,11 +172,7 @@ func (conv *conversationPane) createFileTransferNotification(fileName string, di
 
 	file := &fileNotification{directory: dir, sending: send, receiving: receive, state: stateInProgress}
 
-	b.getItems(
-		"area-file-transfer-info", &file.area,
-		"name-file-transfer-info", &file.label,
-		"image-file-transfer-info", &file.image,
-	)
+	panicOnDevError(b.bindObjects(file))
 
 	b.ConnectSignals(map[string]interface{}{
 		"on_destroy_single_file_transfer": file.destroy,

@@ -9,39 +9,24 @@ import (
 
 type editContactDialog struct {
 	builder                 *builder
-	dialog                  gtki.Dialog
-	accountName             gtki.Label
-	contactJID              gtki.Label
-	nickname                gtki.Entry
-	requireEncryption       gtki.CheckButton
-	currentGroups           gtki.ListStore
-	existingGroups          gtki.Menu
-	addGroup                gtki.MenuItem
-	removeGroup             gtki.Button
-	currentGroupsView       gtki.TreeView
-	fingerprintsInformation gtki.Label
-	fingerprintsGrid        gtki.Grid
-	save                    gtki.Button
+	dialog                  gtki.Dialog      `gtk-widget:"dialog"`
+	accountName             gtki.Label       `gtk-widget:"account-name"`
+	contactJID              gtki.Label       `gtk-widget:"jid"`
+	nickname                gtki.Entry       `gtk-widget:"nickname"`
+	requireEncryption       gtki.CheckButton `gtk-widget:"require-encryption"`
+	currentGroups           gtki.ListStore   `gtk-widget:"current-groups"`
+	existingGroups          gtki.Menu        `gtk-widget:"groups-menu"`
+	addGroup                gtki.MenuItem    `gtk-widget:"addGroup"`
+	removeGroup             gtki.Button      `gtk-widget:"remove-btn"`
+	currentGroupsView       gtki.TreeView    `gtk-widget:"groups-view"`
+	fingerprintsInformation gtki.Label       `gtk-widget:"fingerprintsInformation"`
+	fingerprintsGrid        gtki.Grid        `gtk-widget:"fingerprintsGrid"`
+	save                    gtki.Button      `gtk-widget:"btn-save"`
 }
 
 func (ecd *editContactDialog) init() {
 	ecd.builder = newBuilder("PeerDetails")
-	ecd.builder.getItems(
-		"dialog", &ecd.dialog,
-		"account-name", &ecd.accountName,
-		"jid", &ecd.contactJID,
-		"nickname", &ecd.nickname,
-		"require-encryption", &ecd.requireEncryption,
-		"current-groups", &ecd.currentGroups,
-		"groups-menu", &ecd.existingGroups,
-		"addGroup", &ecd.addGroup,
-		"remove-btn", &ecd.removeGroup,
-		"groups-view", &ecd.currentGroupsView,
-		"fingerprintsInformation", &ecd.fingerprintsInformation,
-		"fingerprintsGrid", &ecd.fingerprintsGrid,
-		"btn-save", &ecd.save,
-	)
-
+	panicOnDevError(ecd.builder.bindObjects(ecd))
 }
 
 func (ecd *editContactDialog) closeDialog() {

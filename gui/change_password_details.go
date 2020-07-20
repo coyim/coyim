@@ -10,21 +10,21 @@ import (
 
 type changePasswordData struct {
 	builder               *builder
-	dialog                gtki.Dialog
-	formBox               gtki.Box
-	messagesBox           gtki.Box
-	passwordEntry         gtki.Entry
-	repeatPasswordEntry   gtki.Entry
-	formBoxLabel          gtki.Label
-	callbackLabel         gtki.Label
-	formImage             gtki.Image
-	callbackImage         gtki.Image
-	changePasswordSpinner gtki.Spinner
-	callbackGrid          gtki.Grid
-	buttonChange          gtki.Button
-	buttonCancel          gtki.Button
-	buttonOk              gtki.Button
-	checkboxSavePassword  gtki.CheckButton
+	dialog                gtki.Dialog      `gtk-widget:"ChangePassword"`
+	formBox               gtki.Box         `gtk-widget:"form-box"`
+	messagesBox           gtki.Box         `gtk-widget:"messages-box"`
+	passwordEntry         gtki.Entry       `gtk-widget:"new-password-entry"`
+	repeatPasswordEntry   gtki.Entry       `gtk-widget:"repeat-password-entry"`
+	formBoxLabel          gtki.Label       `gtk-widget:"form-box-label"`
+	callbackLabel         gtki.Label       `gtk-widget:"callback-label"`
+	formImage             gtki.Image       `gtk-widget:"form-image"`
+	callbackImage         gtki.Image       `gtk-widget:"callback-image"`
+	changePasswordSpinner gtki.Spinner     `gtk-widget:"change-password-spinner"`
+	callbackGrid          gtki.Grid        `gtk-widget:"callback-grid"`
+	buttonChange          gtki.Button      `gtk-widget:"button-change"`
+	buttonCancel          gtki.Button      `gtk-widget:"button-cancel"`
+	buttonOk              gtki.Button      `gtk-widget:"button-ok"`
+	checkboxSavePassword  gtki.CheckButton `gtk-widget:"save-new-password-checkbox"`
 }
 
 func getBuilderAndChangePasswordData() *changePasswordData {
@@ -32,24 +32,7 @@ func getBuilderAndChangePasswordData() *changePasswordData {
 
 	dialogID := "ChangePassword"
 	data.builder = newBuilder(dialogID)
-
-	data.builder.getItems(
-		dialogID, &data.dialog,
-		"form-box", &data.formBox,
-		"messages-box", &data.messagesBox,
-		"new-password-entry", &data.passwordEntry,
-		"repeat-password-entry", &data.repeatPasswordEntry,
-		"form-box-label", &data.formBoxLabel,
-		"callback-label", &data.callbackLabel,
-		"form-image", &data.formImage,
-		"callback-image", &data.callbackImage,
-		"change-password-spinner", &data.changePasswordSpinner,
-		"callback-grid", &data.callbackGrid,
-		"button-change", &data.buttonChange,
-		"button-cancel", &data.buttonCancel,
-		"button-ok", &data.buttonOk,
-		"save-new-password-checkbox", &data.checkboxSavePassword,
-	)
+	panicOnDevError(data.builder.bindObjects(data))
 
 	return data
 }

@@ -6,10 +6,10 @@ import (
 )
 
 type viewMenu struct {
-	merge      gtki.CheckMenuItem
-	offline    gtki.CheckMenuItem
-	waiting    gtki.CheckMenuItem
-	sortStatus gtki.CheckMenuItem
+	merge      gtki.CheckMenuItem `gtk-widget:"CheckItemMerge"`
+	offline    gtki.CheckMenuItem `gtk-widget:"CheckItemShowOffline"`
+	waiting    gtki.CheckMenuItem `gtk-widget:"CheckItemShowWaiting"`
+	sortStatus gtki.CheckMenuItem `gtk-widget:"CheckItemSortStatus"`
 }
 
 func (v *viewMenu) setFromConfig(c *config.ApplicationConfig) {

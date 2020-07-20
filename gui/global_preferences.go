@@ -8,43 +8,26 @@ import (
 
 type settingsPanel struct {
 	b                        *builder
-	dialog                   gtki.Dialog
-	notebook                 gtki.Notebook
-	singleWindow             gtki.CheckButton
-	showEmptyGroups          gtki.CheckButton
-	sendWithShiftEnter       gtki.CheckButton
-	emacsKeyboard            gtki.CheckButton
-	notificationsType        gtki.ComboBox
-	urgentNotifications      gtki.CheckButton
-	expireNotifications      gtki.CheckButton
-	notificationCommand      gtki.Entry
-	notificationTimeout      gtki.SpinButton
-	rawLogFile               gtki.Entry
-	notificationCommandLabel gtki.Label
-	notificationTimeoutLabel gtki.Label
-	rawLogFileLabel          gtki.Label
+	dialog                   gtki.Dialog      `gtk-widget:"GlobalPreferences"`
+	notebook                 gtki.Notebook    `gtk-widget:"notebook1"`
+	singleWindow             gtki.CheckButton `gtk-widget:"singleWindow"`
+	showEmptyGroups          gtki.CheckButton `gtk-widget:"showEmptyGroups"`
+	sendWithShiftEnter       gtki.CheckButton `gtk-widget:"sendWithShiftEnter"`
+	emacsKeyboard            gtki.CheckButton `gtk-widget:"emacsKeyboard"`
+	notificationsType        gtki.ComboBox    `gtk-widget:"notificationsType"`
+	urgentNotifications      gtki.CheckButton `gtk-widget:"notificationUrgent"`
+	expireNotifications      gtki.CheckButton `gtk-widget:"notificationExpires"`
+	notificationCommand      gtki.Entry       `gtk-widget:"notificationCommand"`
+	notificationTimeout      gtki.SpinButton  `gtk-widget:"notificationTimeout"`
+	rawLogFile               gtki.Entry       `gtk-widget:"rawLogFile"`
+	notificationCommandLabel gtki.Label       `gtk-widget:"notificationCommandLabel"`
+	notificationTimeoutLabel gtki.Label       `gtk-widget:"notificationTimeoutLabel"`
+	rawLogFileLabel          gtki.Label       `gtk-widget:"rawLogFileLabel"`
 }
 
 func createSettingsPanel() *settingsPanel {
 	p := &settingsPanel{b: newBuilder("GlobalPreferences")}
-	p.b.getItems(
-		"GlobalPreferences", &p.dialog,
-		"notebook1", &p.notebook,
-		"singleWindow", &p.singleWindow,
-		"sendWithShiftEnter", &p.sendWithShiftEnter,
-		"emacsKeyboard", &p.emacsKeyboard,
-		"notificationsType", &p.notificationsType,
-		"notificationUrgent", &p.urgentNotifications,
-		"notificationExpires", &p.expireNotifications,
-		"notificationCommand", &p.notificationCommand,
-		"notificationTimeout", &p.notificationTimeout,
-		"rawLogFile", &p.rawLogFile,
-		"notificationCommandLabel", &p.notificationCommandLabel,
-		"notificationTimeoutLabel", &p.notificationTimeoutLabel,
-		"rawLogFileLabel", &p.rawLogFileLabel,
-		"showEmptyGroups", &p.showEmptyGroups,
-	)
-
+	panicOnDevError(p.b.bindObjects(p))
 	return p
 }
 

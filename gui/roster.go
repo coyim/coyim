@@ -18,9 +18,9 @@ import (
 )
 
 type roster struct {
-	widget gtki.ScrolledWindow
-	model  gtki.TreeStore
-	view   gtki.TreeView
+	widget gtki.ScrolledWindow `gtk-widget:"roster"`
+	model  gtki.TreeStore      `gtk-widget:"roster-model"`
+	view   gtki.TreeView       `gtk-widget:"roster-tree"`
 
 	isCollapsed map[string]bool
 	toCollapse  []gtki.TreePath
@@ -53,16 +53,10 @@ func (u *gtkUI) newRoster() *roster {
 		"on_button_press":   r.onButtonPress,
 	})
 
-	obj := builder.getObj("roster")
-	r.widget = obj.(gtki.ScrolledWindow)
+	panicOnDevError(builder.bindObjects(r))
 
-	obj = builder.getObj("roster-tree")
-	r.view = obj.(gtki.TreeView)
 	r.view.SetEnableSearch(true)
 	r.view.SetSearchEqualSubstringMatch()
-
-	obj = builder.getObj("roster-model")
-	r.model = obj.(gtki.TreeStore)
 
 	//r.model needs to be kept beyond the lifespan of the builder.
 	r.model.Ref()

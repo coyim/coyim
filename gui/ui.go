@@ -34,12 +34,12 @@ const (
 type gtkUI struct {
 	roster           *roster
 	app              gtki.Application
-	window           gtki.ApplicationWindow
-	accountsMenu     gtki.MenuItem
-	searchBox        gtki.Box
-	search           gtki.SearchBar
-	searchEntry      gtki.Entry
-	notificationArea gtki.Box
+	window           gtki.ApplicationWindow `gtk-widget:"mainWindow"`
+	accountsMenu     gtki.MenuItem          `gtk-widget:"AccountsMenu"`
+	searchBox        gtki.Box               `gtk-widget:"search-box"`
+	search           gtki.SearchBar         `gtk-widget:"search-area"`
+	searchEntry      gtki.Entry             `gtk-widget:"search-entry"`
+	notificationArea gtki.Box               `gtk-widget:"notification-area"`
 	viewMenu         *viewMenu
 	optionsMenu      *optionsMenu
 
@@ -184,22 +184,16 @@ func (u *gtkUI) confirmAccountRemoval(acc *config.Account, removeAccountFunc fun
 }
 
 type torRunningNotification struct {
-	area  gtki.Box
-	image gtki.Image
-	label gtki.Label
+	area  gtki.Box   `gtk-widget:"infobar"`
+	image gtki.Image `gtk-widget:"image"`
+	label gtki.Label `gtk-widget:"message"`
 }
 
 // TODO: add a spinner
 func torRunningNotificationInit(info gtki.Box) *torRunningNotification {
 	b := newBuilder("TorRunningNotification")
-
 	torRunningNotif := &torRunningNotification{}
-
-	b.getItems(
-		"infobar", &torRunningNotif.area,
-		"image", &torRunningNotif.image,
-		"message", &torRunningNotif.label,
-	)
+	panicOnDevError(b.bindObjects(torRunningNotif))
 
 	info.Add(torRunningNotif.area)
 	torRunningNotif.area.ShowAll()
@@ -450,9 +444,8 @@ func (u *gtkUI) mainWindow() {
 		"on_list_chat_rooms":                           u.listChatRooms,
 	})
 
-	win := builder.get("mainWindow")
+	panicOnDevError(builder.bindObjects(u))
 
-	u.window = win.(gtki.ApplicationWindow)
 	u.window.SetApplication(u.app)
 
 	u.displaySettings = detectCurrentDisplaySettingsFrom(u.window)
@@ -465,21 +458,14 @@ func (u *gtkUI) mainWindow() {
 	addItemsThatShouldToggleOnGlobalMenuStatus(builder.getObj("newConvMenu").(isSensitive))
 	addItemsThatShouldToggleOnGlobalMenuStatus(builder.getObj("addMenu").(isSensitive))
 
-	// AccountsMenu
-	u.accountsMenu = builder.getObj("AccountsMenu").(gtki.MenuItem)
-
 	// ViewMenu
 	u.viewMenu = new(viewMenu)
-	u.viewMenu.merge = builder.getObj("CheckItemMerge").(gtki.CheckMenuItem)
+
+	panicOnDevError(builder.bindObjects(u.viewMenu))
+
 	u.displaySettings.defaultSettingsOn(u.viewMenu.merge)
-
-	u.viewMenu.offline = builder.getObj("CheckItemShowOffline").(gtki.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(u.viewMenu.offline)
-
-	u.viewMenu.waiting = builder.getObj("CheckItemShowWaiting").(gtki.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(u.viewMenu.waiting)
-
-	u.viewMenu.sortStatus = builder.getObj("CheckItemSortStatus").(gtki.CheckMenuItem)
 	u.displaySettings.defaultSettingsOn(u.viewMenu.sortStatus)
 
 	// OptionsMenu
@@ -497,8 +483,6 @@ func (u *gtkUI) mainWindow() {
 	u.unified = newUnifiedLayout(u, vbox, hbox)
 	u.unifiedCached = u.unified
 
-	u.notificationArea = builder.getObj("notification-area").(gtki.Box)
-
 	u.config.WhenLoaded(func(a *config.ApplicationConfig) {
 		if a.Display.HideFeedbackBar {
 			return
@@ -507,9 +491,6 @@ func (u *gtkUI) mainWindow() {
 		doInUIThread(u.addFeedbackInfoBar)
 	})
 
-	u.searchBox = builder.getObj("search-box").(gtki.Box)
-	u.search = builder.getObj("search-area").(gtki.SearchBar)
-	u.searchEntry = builder.getObj("search-entry").(gtki.Entry)
 	u.initSearchBar()
 
 	u.connectShortcutsMainWindow(u.window)

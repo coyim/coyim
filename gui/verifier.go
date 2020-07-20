@@ -72,13 +72,13 @@ func newVerifier(u *gtkUI, conv *conversationPane) *verifier {
 
 type pinWindow struct {
 	b             *builder
-	dialog        gtki.Dialog
-	prompt        gtki.Label
-	pin           gtki.Label
-	smpImage      gtki.Image
-	padlockImage1 gtki.Image
-	padlockImage2 gtki.Image
-	alertImage    gtki.Image
+	dialog        gtki.Dialog `gtk-widget:"dialog"`
+	prompt        gtki.Label  `gtk-widget:"prompt"`
+	pin           gtki.Label  `gtk-widget:"pin"`
+	smpImage      gtki.Image  `gtk-widget:"smp_image"`
+	padlockImage1 gtki.Image  `gtk-widget:"padlock_image1"`
+	padlockImage2 gtki.Image  `gtk-widget:"padlock_image2"`
+	alertImage    gtki.Image  `gtk-widget:"alert_image"`
 }
 
 func (v *verifier) buildPinWindow() {
@@ -86,15 +86,7 @@ func (v *verifier) buildPinWindow() {
 		b: newBuilder("GeneratePIN"),
 	}
 
-	v.pinWindow.b.getItems(
-		"dialog", &v.pinWindow.dialog,
-		"prompt", &v.pinWindow.prompt,
-		"pin", &v.pinWindow.pin,
-		"smp_image", &v.pinWindow.smpImage,
-		"padlock_image1", &v.pinWindow.padlockImage1,
-		"padlock_image2", &v.pinWindow.padlockImage2,
-		"alert_image", &v.pinWindow.alertImage,
-	)
+	panicOnDevError(v.pinWindow.b.bindObjects(v.pinWindow))
 
 	v.pinWindow.dialog.HideOnDelete()
 	v.pinWindow.dialog.SetTransientFor(v.parentWindow)
@@ -124,12 +116,12 @@ func (v *verifier) hideUnverifiedWarning() {
 // TODO: check on linux
 type unverifiedWarning struct {
 	b                         *builder
-	infobar                   gtki.Box
-	closeInfobar              gtki.Box
-	notification              gtki.Box
-	label                     gtki.Label
-	image                     gtki.Image
-	button                    gtki.Button
+	infobar                   gtki.Box    `gtk-widget:"verify-infobar"`
+	closeInfobar              gtki.Box    `gtk-widget:"verify-close-infobar"`
+	notification              gtki.Box    `gtk-widget:"verify-notification"`
+	label                     gtki.Label  `gtk-widget:"verify-message"`
+	image                     gtki.Image  `gtk-widget:"verify-image"`
+	button                    gtki.Button `gtk-widget:"verify-button"`
 	shouldShowVerificationBar func() bool
 }
 
@@ -153,15 +145,7 @@ func (v *verifier) buildUnverifiedWarning(shouldShowVerificationBar func() bool)
 	}
 
 	v.unverifiedWarning.shouldShowVerificationBar = shouldShowVerificationBar
-
-	v.unverifiedWarning.b.getItems(
-		"verify-infobar", &v.unverifiedWarning.infobar,
-		"verify-close-infobar", &v.unverifiedWarning.closeInfobar,
-		"verify-notification", &v.unverifiedWarning.notification,
-		"verify-message", &v.unverifiedWarning.label,
-		"verify-image", &v.unverifiedWarning.image,
-		"verify-button", &v.unverifiedWarning.button,
-	)
+	panicOnDevError(v.unverifiedWarning.b.bindObjects(v.unverifiedWarning))
 
 	v.unverifiedWarning.b.ConnectSignals(map[string]interface{}{
 		"on_press_image": v.hideUnverifiedWarning,
@@ -216,10 +200,10 @@ func (v *verifier) createPIN() (string, error) {
 
 type waitingForPeerNotification struct {
 	b       *builder
-	infobar gtki.InfoBar
-	label   gtki.Label
-	image   gtki.Image
-	button  gtki.Button
+	infobar gtki.InfoBar `gtk-widget:"smp-waiting-infobar"`
+	label   gtki.Label   `gtk-widget:"smp-waiting-label"`
+	image   gtki.Image   `gtk-widget:"smp-waiting-image"`
+	button  gtki.Button  `gtk-widget:"smp-waiting-button"`
 }
 
 func (v *verifier) buildWaitingForPeerNotification() {
@@ -227,12 +211,7 @@ func (v *verifier) buildWaitingForPeerNotification() {
 		b: newBuilder("WaitingSMPComplete"),
 	}
 
-	v.waitingForPeer.b.getItems(
-		"smp-waiting-infobar", &v.waitingForPeer.infobar,
-		"smp-waiting-label", &v.waitingForPeer.label,
-		"smp-waiting-image", &v.waitingForPeer.image,
-		"smp-waiting-button", &v.waitingForPeer.button,
-	)
+	panicOnDevError(v.waitingForPeer.b.bindObjects(v.waitingForPeer))
 
 	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(v.waitingForPeer.infobar, prov)
@@ -276,14 +255,14 @@ func (v *verifier) showCannotGeneratePINDialog(err error) {
 
 type answerSMPWindow struct {
 	b             *builder
-	dialog        gtki.Dialog
-	question      gtki.Label
-	answer        gtki.Entry
-	submitButton  gtki.Button
-	smpImage      gtki.Image
-	padlockImage1 gtki.Image
-	padlockImage2 gtki.Image
-	alertImage    gtki.Image
+	dialog        gtki.Dialog `gtk-widget:"dialog"`
+	question      gtki.Label  `gtk-widget:"question_from_peer"`
+	answer        gtki.Entry  `gtk-widget:"answer"`
+	submitButton  gtki.Button `gtk-widget:"button_submit"`
+	smpImage      gtki.Image  `gtk-widget:"smp_image"`
+	padlockImage1 gtki.Image  `gtk-widget:"padlock_image1"`
+	padlockImage2 gtki.Image  `gtk-widget:"padlock_image2"`
+	alertImage    gtki.Image  `gtk-widget:"alert_image"`
 }
 
 func (v *verifier) buildAnswerSMPDialog() {
@@ -291,16 +270,7 @@ func (v *verifier) buildAnswerSMPDialog() {
 		b: newBuilder("AnswerSMPQuestion"),
 	}
 
-	v.answerSMPWindow.b.getItems(
-		"dialog", &v.answerSMPWindow.dialog,
-		"question_from_peer", &v.answerSMPWindow.question,
-		"button_submit", &v.answerSMPWindow.submitButton,
-		"answer", &v.answerSMPWindow.answer,
-		"smp_image", &v.answerSMPWindow.smpImage,
-		"padlock_image1", &v.answerSMPWindow.padlockImage1,
-		"padlock_image2", &v.answerSMPWindow.padlockImage2,
-		"alert_image", &v.answerSMPWindow.alertImage,
-	)
+	panicOnDevError(v.answerSMPWindow.b.bindObjects(v.answerSMPWindow))
 
 	v.answerSMPWindow.dialog.HideOnDelete()
 	v.answerSMPWindow.dialog.SetTransientFor(v.parentWindow)
@@ -341,12 +311,12 @@ func (v *verifier) showAnswerSMPDialog(question string) {
 
 type peerRequestsSMPNotification struct {
 	b            *builder
-	infobar      gtki.Box
-	closeInfobar gtki.Box
-	notification gtki.Box
-	label        gtki.Label
-	image        gtki.Image
-	button       gtki.Button
+	infobar      gtki.Box    `gtk-widget:"smp-requested-infobar"`
+	closeInfobar gtki.Box    `gtk-widget:"smp-requested-close-infobar"`
+	notification gtki.Box    `gtk-widget:"smp-requested-notification"`
+	label        gtki.Label  `gtk-widget:"smp-requested-message"`
+	image        gtki.Image  `gtk-widget:"smp-requested-image"`
+	button       gtki.Button `gtk-widget:"smp-requested-button"`
 }
 
 func (p *peerRequestsSMPNotification) show() {
@@ -360,14 +330,7 @@ func (v *verifier) buildPeerRequestsSMPNotification() {
 		b: newBuilder("PeerRequestsSMP"),
 	}
 
-	v.peerRequestsSMP.b.getItems(
-		"smp-requested-infobar", &v.peerRequestsSMP.infobar,
-		"smp-requested-close-infobar", &v.peerRequestsSMP.closeInfobar,
-		"smp-requested-notification", &v.peerRequestsSMP.notification,
-		"smp-requested-message", &v.peerRequestsSMP.label,
-		"smp-requested-image", &v.peerRequestsSMP.image,
-		"smp-requested-button", &v.peerRequestsSMP.button,
-	)
+	panicOnDevError(v.peerRequestsSMP.b.bindObjects(v.peerRequestsSMP))
 
 	prov := providerWithCSS("box { background-color: #fff3f3; color: #000000; border: 2px; }")
 	updateWithStyle(v.peerRequestsSMP.infobar, prov)
@@ -397,10 +360,10 @@ func (v *verifier) displayRequestForSecret(question string) {
 
 type verificationSuccessNotification struct {
 	b      *builder
-	dialog gtki.Dialog
-	label  gtki.Label
-	image  gtki.Image
-	button gtki.Button
+	dialog gtki.Dialog `gtk-widget:"verif-success-dialog"`
+	label  gtki.Label  `gtk-widget:"verif-success-label"`
+	image  gtki.Image  `gtk-widget:"verif-success-image"`
+	button gtki.Button `gtk-widget:"verif-success-button"`
 }
 
 func (v *verifier) displayVerificationSuccess() {
@@ -408,12 +371,7 @@ func (v *verifier) displayVerificationSuccess() {
 		b: newBuilder("VerificationSucceeded"),
 	}
 
-	v.verificationSuccess.b.getItems(
-		"verif-success-dialog", &v.verificationSuccess.dialog,
-		"verif-success-label", &v.verificationSuccess.label,
-		"verif-success-image", &v.verificationSuccess.image,
-		"verif-success-button", &v.verificationSuccess.button,
-	)
+	panicOnDevError(v.verificationSuccess.b.bindObjects(v.verificationSuccess))
 
 	_, _ = v.verificationSuccess.button.Connect("clicked", v.verificationSuccess.dialog.Destroy)
 
@@ -426,19 +384,16 @@ func (v *verifier) displayVerificationSuccess() {
 }
 
 type smpFailedNotification struct {
-	dialog gtki.Dialog
-	label  gtki.Label
-	button gtki.Button
+	dialog gtki.Dialog `gtk-widget:"verif-failure-dialog"`
+	label  gtki.Label  `gtk-widget:"verif-failure-label"`
+	button gtki.Button `gtk-widget:"verif-failure-button"`
 }
 
 // TODO: make this consistent
 func (v *verifier) buildSMPFailedDialog() {
 	builder := newBuilder("VerificationFailed")
-	v.smpFailed = &smpFailedNotification{
-		dialog: builder.getObj("verif-failure-dialog").(gtki.Dialog),
-		label:  builder.getObj("verif-failure-label").(gtki.Label),
-		button: builder.getObj("verif-failure-button").(gtki.Button),
-	}
+	v.smpFailed = &smpFailedNotification{}
+	panicOnDevError(builder.bindObjects(v.smpFailed))
 
 	v.smpFailed.dialog.SetTransientFor(v.parentWindow)
 	v.smpFailed.dialog.HideOnDelete()

@@ -28,15 +28,15 @@ func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutRes
 
 type addContactDialog struct {
 	builder                *builder
-	dialog                 gtki.Window
-	model                  gtki.ListStore
-	accountInput           gtki.ComboBox
-	contactInput           gtki.Entry
-	notificationArea       gtki.Box
+	dialog                 gtki.Window    `gtk-widget:"AddContact"`
+	model                  gtki.ListStore `gtk-widget:"accounts-model"`
+	accountInput           gtki.ComboBox  `gtk-widget:"accounts"`
+	contactInput           gtki.Entry     `gtk-widget:"address"`
+	notificationArea       gtki.Box       `gtk-widget:"notification-area"`
 	notification           gtki.InfoBar
-	subscriptionAskMessage gtki.TextBuffer
-	nickname               gtki.Entry
-	autoAuth               gtki.CheckButton
+	subscriptionAskMessage gtki.TextBuffer  `gtk-widget:"subscriptionAskMessage"`
+	nickname               gtki.Entry       `gtk-widget:"nickname"`
+	autoAuth               gtki.CheckButton `gtk-widget:"auto_authorize_checkbutton"`
 	accounts               map[string]*account
 }
 
@@ -104,16 +104,7 @@ func (acd *addContactDialog) initAccounts(accounts []*account) {
 
 func (acd *addContactDialog) init() {
 	acd.builder = newBuilder("AddContact")
-	acd.builder.getItems(
-		"AddContact", &acd.dialog,
-		"accounts-model", &acd.model,
-		"accounts", &acd.accountInput,
-		"notification-area", &acd.notificationArea,
-		"address", &acd.contactInput,
-		"subscriptionAskMessage", &acd.subscriptionAskMessage,
-		"nickname", &acd.nickname,
-		"auto_authorize_checkbutton", &acd.autoAuth,
-	)
+	panicOnDevError(acd.builder.bindObjects(acd))
 }
 
 func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID string, peer jid.WithoutResource, msg, nick string, autoauth bool) error) gtki.Window {

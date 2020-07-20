@@ -7,19 +7,19 @@ import (
 )
 
 type xmlConsoleView struct {
-	gtki.Dialog
+	gtki.Dialog `gtk-widget:"XMLConsole"`
 
-	buf gtki.TextBuffer
+	buf gtki.TextBuffer `gtk-widget:"consoleContent"`
 	log *bytes.Buffer
 }
 
 func newXMLConsoleView(log *bytes.Buffer) *xmlConsoleView {
 	builder := newBuilder("XMLConsole")
 	d := &xmlConsoleView{
-		Dialog: builder.getObj("XMLConsole").(gtki.Dialog),
-		buf:    builder.getObj("consoleContent").(gtki.TextBuffer),
-		log:    log,
+		log: log,
 	}
+
+	panicOnDevError(builder.bindObjects(d))
 
 	d.refresh()
 	builder.ConnectSignals(map[string]interface{}{

@@ -169,14 +169,14 @@ func (w *serverSelectionWindow) renderErrorFor(err error) {
 
 type serverSelectionWindow struct {
 	b           *builder
-	assistant   gtki.Assistant
-	formMessage gtki.Label
-	doneMessage gtki.Label
-	serverBox   gtki.ComboBoxText
-	spinner     gtki.Spinner
-	grid        gtki.Grid
-	formImage   gtki.Image
-	doneImage   gtki.Image
+	assistant   gtki.Assistant    `gtk-widget:"assistant"`
+	formMessage gtki.Label        `gtk-widget:"formMessage"`
+	doneMessage gtki.Label        `gtk-widget:"doneMessage"`
+	serverBox   gtki.ComboBoxText `gtk-widget:"server"`
+	spinner     gtki.Spinner      `gtk-widget:"spinner"`
+	grid        gtki.Grid         `gtk-widget:"formGrid"`
+	formImage   gtki.Image        `gtk-widget:"formImage"`
+	doneImage   gtki.Image        `gtk-widget:"doneImage"`
 
 	formSubmitted chan error
 	done          chan error
@@ -189,16 +189,7 @@ type serverSelectionWindow struct {
 func createServerSelectionWindow(u *gtkUI) *serverSelectionWindow {
 	w := &serverSelectionWindow{b: newBuilder("AccountRegistration"), u: u}
 
-	w.b.getItems(
-		"assistant", &w.assistant,
-		"formMessage", &w.formMessage,
-		"doneMessage", &w.doneMessage,
-		"server", &w.serverBox,
-		"spinner", &w.spinner,
-		"formGrid", &w.grid,
-		"formImage", &w.formImage,
-		"doneImage", &w.doneImage,
-	)
+	panicOnDevError(w.b.bindObjects(w))
 
 	w.assistant.SetTransientFor(u.window)
 

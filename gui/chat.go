@@ -43,10 +43,7 @@ func (u *gtkUI) newChatView(accountManager *accountManager, chatManager *chatMan
 	}
 
 	builder := newBuilder("AddChat")
-	err := builder.bindObjects(view)
-	if err != nil {
-		panic(err)
-	}
+	panicOnDevError(builder.bindObjects(view))
 
 	builder.ConnectSignals(map[string]interface{}{
 		"join_room_handler": view.joinRoomHandler,
@@ -268,10 +265,7 @@ func (u *gtkUI) newRoomConfigDialog(done chan<- interface{}, fields []formField)
 	}
 
 	builder := newBuilder("ConfigureRoom")
-	err := builder.bindObjects(view)
-	if err != nil {
-		panic(err)
-	}
+	panicOnDevError(builder.bindObjects(view))
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_cancel_signal": view.close,
@@ -392,12 +386,8 @@ func (u *gtkUI) newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *
 
 	v.occupantsList.m = make(map[string]*roomOccupant, 5)
 
-	err := builder.bindObjects(v)
+	panicOnDevError(builder.bindObjects(v))
 	v.SetApplication(u.app)
-
-	if err != nil {
-		panic(err)
-	}
 
 	doInUIThread(func() {
 		prov := providerWithCSS("box { border-top: 1px solid #d3d3d3; }")

@@ -14,10 +14,7 @@ func newErrorNotification(info gtki.Box) *errorNotification {
 	view := &errorNotification{}
 
 	b := newBuilder("ErrorNotification")
-	err := b.bindObjects(view)
-	if err != nil {
-		panic(err)
-	}
+	panicOnDevError(b.bindObjects(view))
 
 	info.Add(view.area)
 	return view

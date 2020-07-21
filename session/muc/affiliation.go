@@ -2,9 +2,13 @@ package muc
 
 import "fmt"
 
+// Affiliation represents an affiliation as specificed by section 5.2 in XEP-0045
 type Affiliation interface {
+	// IsBanned will return true if this specific affiliation means that the jid is banned from the room
 	IsBanned() bool
+	// IsMember returns true if this specific affiliation means that the jid is a member of the room
 	IsMember() bool
+	// IsModerator returns true if this specific affiliation means that the jid is a moderator of the room
 	IsModerator() bool
 }
 
@@ -32,6 +36,7 @@ func (*memberAffiliation) IsModerator() bool  { return false }
 func (*adminAffiliation) IsModerator() bool   { return true }
 func (*ownerAffiliation) IsModerator() bool   { return true }
 
+// AffiliationFromString returns an Affiliation from the given string, or an error if the string doesn't match a known affiliation type
 func AffiliationFromString(s string) (Affiliation, error) {
 	switch s {
 	case "none":

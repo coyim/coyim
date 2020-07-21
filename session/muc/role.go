@@ -2,9 +2,13 @@ package muc
 
 import "fmt"
 
+// Role represents the specific role that a user has inside a specific room
 type Role interface {
+	// HasVoice returns true if the user can speak in this room
 	HasVoice() bool
+	// WithVoice returns the closest role upwards that has voice privilege. For Participants and Moderators, it returns itself, otherwise it returns participant
 	WithVoice() Role
+	// AsModerator returns the closest role upwards that can act as a moderator
 	AsModerator() Role
 }
 
@@ -28,6 +32,7 @@ func (*visitorRole) AsModerator() Role     { return &moderatorRole{} }
 func (*participantRole) AsModerator() Role { return &moderatorRole{} }
 func (*moderatorRole) AsModerator() Role   { return &moderatorRole{} }
 
+// RoleFromString returns the role object that matches the string given, or an error if the string given doesn't match a known role
 func RoleFromString(s string) (Role, error) {
 	switch s {
 	case "none":

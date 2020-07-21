@@ -9,6 +9,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+// RoomRoster contains information about all the occupants in a room
 type RoomRoster struct {
 	sync.RWMutex
 
@@ -28,12 +29,14 @@ func (r *RoomRoster) occupantList() []*Occupant {
 	return result
 }
 
+// AllOccupants returns a list of all occupants in the room, sorted by nickname
 func (r *RoomRoster) AllOccupants() []*Occupant {
 	result := r.occupantList()
 	sort.Sort(ByOccupantNick(result))
 	return result
 }
 
+// NoRole returns all occupants that have no role in a room, sorted by nickname
 func (r *RoomRoster) NoRole() []*Occupant {
 	result := []*Occupant{}
 
@@ -46,6 +49,7 @@ func (r *RoomRoster) NoRole() []*Occupant {
 	return result
 }
 
+// Visitors returns all occupants that have the visitor role in a room, sorted by nickname
 func (r *RoomRoster) Visitors() []*Occupant {
 	result := []*Occupant{}
 
@@ -58,6 +62,7 @@ func (r *RoomRoster) Visitors() []*Occupant {
 	return result
 }
 
+// Participants returns all occupants that have the participant role in a room, sorted by nickname
 func (r *RoomRoster) Participants() []*Occupant {
 	result := []*Occupant{}
 
@@ -70,6 +75,7 @@ func (r *RoomRoster) Participants() []*Occupant {
 	return result
 }
 
+// Moderators returns all occupants that have the moderator role in a room, sorted by nickname
 func (r *RoomRoster) Moderators() []*Occupant {
 	result := []*Occupant{}
 
@@ -82,6 +88,7 @@ func (r *RoomRoster) Moderators() []*Occupant {
 	return result
 }
 
+// NoAffiliation returns all occupants that have no affiliation in a room, sorted by nickname
 func (r *RoomRoster) NoAffiliation() []*Occupant {
 	result := []*Occupant{}
 
@@ -94,6 +101,7 @@ func (r *RoomRoster) NoAffiliation() []*Occupant {
 	return result
 }
 
+// Banned returns all occupants that are banned in a room, sorted by nickname. This should likely not return anything.
 func (r *RoomRoster) Banned() []*Occupant {
 	result := []*Occupant{}
 
@@ -106,6 +114,7 @@ func (r *RoomRoster) Banned() []*Occupant {
 	return result
 }
 
+// Members returns all occupants that are members in a room, sorted by nickname.
 func (r *RoomRoster) Members() []*Occupant {
 	result := []*Occupant{}
 
@@ -118,6 +127,7 @@ func (r *RoomRoster) Members() []*Occupant {
 	return result
 }
 
+// Admins returns all occupants that are administrators in a room, sorted by nickname.
 func (r *RoomRoster) Admins() []*Occupant {
 	result := []*Occupant{}
 
@@ -130,6 +140,7 @@ func (r *RoomRoster) Admins() []*Occupant {
 	return result
 }
 
+// Owners returns all occupants that are owners in a room, sorted by nickname.
 func (r *RoomRoster) Owners() []*Occupant {
 	result := []*Occupant{}
 
@@ -142,15 +153,18 @@ func (r *RoomRoster) Owners() []*Occupant {
 	return result
 }
 
+// OccupantsByRole returns all occupants, divided into the different roles
 func (r *RoomRoster) OccupantsByRole() (none, visitors, participants, moderators []*Occupant) {
 	return r.NoRole(), r.Visitors(), r.Participants(), r.Moderators()
 }
 
+// OccupantsByAffiliation returns all occupants, divided into the different affiliations
 func (r *RoomRoster) OccupantsByAffiliation() (none, banned, members, admins, owners []*Occupant) {
 	return r.NoAffiliation(), r.Banned(), r.Members(), r.Admins(), r.Owners()
 }
 
 // UpdateNick should be called when receiving an unavailable with status code 303
+// The new nickname should be given without the room name
 func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 	r.Lock()
 	defer r.Unlock()
@@ -170,6 +184,9 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 	return nil
 }
 
+// UpdatePresence should be called when receiving a regular presence update with no type, or with unavailable as type. It will return
+// indications on whether the presence update means the person joined the room, or left the room.
+// Notice that updating of nick names is done separately and should not be done by calling this method.
 func (r *RoomRoster) UpdatePresence(from jid.WithResource, tp, affiliation, role, show, statusCode, statusMsg string, realJid jid.WithResource) (joined, left bool, err error) {
 	r.Lock()
 	defer r.Unlock()

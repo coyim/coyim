@@ -431,10 +431,7 @@ func (u *gtkUI) initRoster() {
 
 func (u *gtkUI) showMUCMockups() {
 	builder := newBuilder("MUC")
-	u.mainBuilder = builder
-
 	win := builder.get("mucWindow").(gtki.Window)
-
 	win.Show()
 }
 

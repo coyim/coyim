@@ -433,9 +433,7 @@ func (u *gtkUI) showMUCMockups() {
 	builder := newBuilder("MUC")
 	u.mainBuilder = builder
 
-	win := builder.get("mucWindow").(gtki.ApplicationWindow)
-
-	win.SetApplication(u.app)
+	win := builder.get("mucWindow").(gtki.Window)
 
 	win.Show()
 }

@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 	"html"
+	"log"
 
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -70,6 +71,7 @@ type mucRoomsFakeServer struct {
 type mucRoom struct {
 	id      string
 	name    string
+	status  mucPeerStatus
 	members *mucMembers
 }
 
@@ -264,7 +266,7 @@ func (r *mucRoster) addAccountContacts(contacts []*mucAccountContact, accountCou
 		o := item.isOnline()
 		accountCounter.inc(true, o)
 		groupCounter.inc(true, o)
-		r.addItem(item.mucRosterItem)
+		r.addItem(item.mucRosterItem, "")
 	}
 }
 
@@ -272,18 +274,23 @@ func (r *mucRoster) addAccountRooms(rooms []string) {
 	for _, id := range rooms {
 		room, err := r.rooms.byID(id)
 		if err != nil {
+			log.Println(err.Error())
 			continue
 		}
 
-		r.addRoom(room)
+		r.addRoom(id, room)
 	}
 }
 
-func (r *mucRoster) addRoom(room *mucRoom) {
-	// TODO
+func (r *mucRoster) addRoom(id string, room *mucRoom) {
+	r.addItem(&mucRosterItem{
+		id:     id,
+		name:   room.name,
+		status: room.status,
+	}, "#")
 }
 
-func (r *mucRoster) addItem(item *mucRosterItem) {
+func (r *mucRoster) addItem(item *mucRosterItem, indent string) {
 	cs := r.u.currentColorSet()
 	iter := r.model.Append()
 
@@ -291,7 +298,7 @@ func (r *mucRoster) addItem(item *mucRosterItem) {
 		r.model,
 		iter,
 		item.id,
-		item.displayName(),
+		fmt.Sprintf("%s%s", indent, item.displayName()),
 		"BelongsTo",
 		decideColorForPeer(cs, item),
 		cs.rosterPeerBackground,
@@ -313,7 +320,7 @@ func (m *mucUI) initRooms() {
 			name: "Wahay",
 		},
 		"#main:matrix:autonomia.digital": &mucRoom{
-			name: "Mai",
+			name: "Main",
 		},
 	}
 

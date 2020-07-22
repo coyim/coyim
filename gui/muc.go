@@ -11,6 +11,7 @@ type mucUI struct {
 	u              *gtkUI
 	accountManager *mucAccountManager
 	roster         *mucRoster
+	roomsServer    *mucRoomsFakeServer
 	builder        *builder
 
 	panel       gtki.Box    `gtk-widget:"panel"`
@@ -31,25 +32,22 @@ func (m *mucUI) togglePanel() {
 	m.panelOpen = !m.panelOpen
 }
 
-type mucAccountStatus string
+type mucPeerStatus string
 
 var (
-	mucStatusConnecting mucAccountStatus = "connecting"
-	mucStatusOnline     mucAccountStatus = "online"
-	mucStatusOffline    mucAccountStatus = "offline"
+	mucStatusConnecting mucPeerStatus = "connecting"
+	mucStatusOnline     mucPeerStatus = "online"
+	mucStatusOffline    mucPeerStatus = "offline"
 )
 
 type mucAccountContact struct {
-	id     string
-	name   string
-	status mucAccountStatus
+	*mucRosterItem
 }
 
 type mucAccount struct {
-	id       string
-	name     string
-	status   mucAccountStatus
+	*mucRosterItem
 	contacts []*mucAccountContact
+	rooms    []string
 }
 
 type mucAccountManager struct {
@@ -61,7 +59,32 @@ type mucRoster struct {
 	model  gtki.ListStore      `gtk-widget:"roster-model"`
 	view   gtki.TreeView       `gtk-widget:"roster-tree"`
 
+	u     *gtkUI
+	rooms *mucRoomsFakeServer
+}
+
+type mucRoomsFakeServer struct {
+	rooms map[string]*mucRoom
+}
+
+type mucRoom struct {
+	id      string
+	name    string
+	members *mucMembers
+}
+
+type mucMembers struct {
+	widget gtki.ScrolledWindow `gtk-widget:"room-members"`
+	model  gtki.ListStore      `gtk-widget:"room-members-model"`
+	view   gtki.TreeView       `gtk-widget:"room-members-tree"`
+
 	u *gtkUI
+}
+
+type mucRosterItem struct {
+	id     string
+	name   string
+	status mucPeerStatus
 }
 
 func (u *gtkUI) initMUCMockups() {
@@ -73,14 +96,18 @@ func (u *gtkUI) initMUCMockups() {
 	}
 
 	m.init()
+
 	m.addAccountsToRoster()
 
 	m.showWindow()
 }
 
 func (m *mucUI) init() {
-	m.initDemoAccounts()
+	m.initRooms()
+
 	m.initRoster()
+
+	m.initDemoAccounts()
 
 	panicOnDevError(m.builder.bindObjects(m))
 
@@ -94,49 +121,74 @@ func (m *mucUI) initDemoAccounts() {
 
 	accounts := []*mucAccount{
 		&mucAccount{
-			id:     "sandy@autonomia.digital",
-			status: mucStatusOnline,
+			mucRosterItem: &mucRosterItem{
+				id:     "sandy@autonomia.digital",
+				status: mucStatusOnline,
+			},
 			contacts: []*mucAccountContact{
 				&mucAccountContact{
-					id:     "pedro@autonomia.digital",
-					name:   "Pedro Enrique",
-					status: mucStatusOnline,
+					mucRosterItem: &mucRosterItem{
+						id:     "pedro@autonomia.digital",
+						name:   "Pedro Enrique",
+						status: mucStatusOnline,
+					},
 				},
 				&mucAccountContact{
-					id:     "rafael@autonomia.digital",
-					status: mucStatusOnline,
+					mucRosterItem: &mucRosterItem{
+						id:     "rafael@autonomia.digital",
+						status: mucStatusOnline,
+					},
 				},
 				&mucAccountContact{
-					id:     "cristina@autonomia.digital",
-					name:   "Cristina Salcedo",
-					status: mucStatusOffline,
+					mucRosterItem: &mucRosterItem{
+						id:     "cristina@autonomia.digital",
+						name:   "Cristina Salcedo",
+						status: mucStatusOffline,
+					},
 				},
+			},
+			rooms: []string{
+				"#coyim:matrix:autonomia.digital",
+				"#wahay:matrix:autonomia.digital",
 			},
 		},
 		&mucAccount{
-			id:     "pedro@autonomia.digital",
-			status: mucStatusOnline,
+			mucRosterItem: &mucRosterItem{
+				id:     "pedro@autonomia.digital",
+				status: mucStatusOnline,
+			},
 			contacts: []*mucAccountContact{
 				&mucAccountContact{
-					id:     "sandy@autonomia.digital",
-					name:   "Sandy Acurio",
-					status: mucStatusOnline,
+					mucRosterItem: &mucRosterItem{
+						id:     "sandy@autonomia.digital",
+						name:   "Sandy Acurio",
+						status: mucStatusOnline,
+					},
 				},
 				&mucAccountContact{
-					id:     "rafael@autonomia.digital",
-					status: mucStatusOnline,
+					mucRosterItem: &mucRosterItem{
+						id:     "rafael@autonomia.digital",
+						status: mucStatusOnline,
+					},
 				},
 				&mucAccountContact{
-					id:     "cristina@autonomia.digital",
-					name:   "Cristina Salcedo",
-					status: mucStatusOffline,
+					mucRosterItem: &mucRosterItem{
+						id:     "cristina@autonomia.digital",
+						name:   "Cristina Salcedo",
+						status: mucStatusOffline,
+					},
 				},
+			},
+			rooms: []string{
+				"#main:matrix:autonomia.digital",
 			},
 		},
 		&mucAccount{
-			id:     "pedro@coy.im",
-			name:   "Pedro CoyIM",
-			status: mucStatusOffline,
+			mucRosterItem: &mucRosterItem{
+				id:     "pedro@coy.im",
+				name:   "Pedro CoyIM",
+				status: mucStatusOffline,
+			},
 		},
 	}
 
@@ -147,7 +199,8 @@ func (m *mucUI) initDemoAccounts() {
 
 func (m *mucUI) initRoster() {
 	r := &mucRoster{
-		u: m.u,
+		u:     m.u,
+		rooms: m.roomsServer,
 	}
 
 	panicOnDevError(m.builder.bindObjects(r))
@@ -182,7 +235,10 @@ func (r *mucRoster) addAccount(account *mucAccount) {
 	accountCounter := &counter{}
 
 	// Contacts for this account
-	r.addAccountContacts(account.contacts, parentIter, accountCounter)
+	r.addAccountContacts(account.contacts, accountCounter)
+
+	// Rooms this contact is suscribed to
+	r.addAccountRooms(account.rooms)
 
 	displayName := account.displayName()
 
@@ -201,18 +257,33 @@ func (r *mucRoster) addAccount(account *mucAccount) {
 	_ = r.model.SetValue(parentIter, indexParentDisplayName, createGroupDisplayName(displayName, accountCounter, true))
 }
 
-func (r *mucRoster) addAccountContacts(contacts []*mucAccountContact, parentIter gtki.TreeIter, accountCounter *counter) {
+func (r *mucRoster) addAccountContacts(contacts []*mucAccountContact, accountCounter *counter) {
 	groupCounter := &counter{}
 
 	for _, item := range contacts {
 		o := item.isOnline()
 		accountCounter.inc(true, o)
 		groupCounter.inc(true, o)
-		r.addItem(item)
+		r.addItem(item.mucRosterItem)
 	}
 }
 
-func (r *mucRoster) addItem(item *mucAccountContact) {
+func (r *mucRoster) addAccountRooms(rooms []string) {
+	for _, id := range rooms {
+		room, err := r.rooms.byID(id)
+		if err != nil {
+			continue
+		}
+
+		r.addRoom(room)
+	}
+}
+
+func (r *mucRoster) addRoom(room *mucRoom) {
+	// TODO
+}
+
+func (r *mucRoster) addItem(item *mucRosterItem) {
 	cs := r.u.currentColorSet()
 	iter := r.model.Append()
 
@@ -222,11 +293,46 @@ func (r *mucRoster) addItem(item *mucAccountContact) {
 		item.id,
 		item.displayName(),
 		"BelongsTo",
-		decideColorForContact(cs, item),
+		decideColorForPeer(cs, item),
 		cs.rosterPeerBackground,
 		nil,
-		createTooltipForContact(item),
+		createTooltipForPeer(item),
 	)
+}
+
+func (m *mucUI) initRooms() {
+	s := &mucRoomsFakeServer{
+		rooms: map[string]*mucRoom{},
+	}
+
+	rooms := map[string]*mucRoom{
+		"#coyim:matrix:autonomia.digital": &mucRoom{
+			name: "CoyIM",
+		},
+		"#wahay:matrix:autonomia.digital": &mucRoom{
+			name: "Wahay",
+		},
+		"#main:matrix:autonomia.digital": &mucRoom{
+			name: "Mai",
+		},
+	}
+
+	for id, r := range rooms {
+		s.addRoom(id, r)
+	}
+
+	m.roomsServer = s
+}
+
+func (r *mucRoomsFakeServer) addRoom(id string, room *mucRoom) {
+	r.rooms[id] = room
+}
+
+func (r *mucRoomsFakeServer) byID(id string) (*mucRoom, error) {
+	if room, ok := r.rooms[id]; ok {
+		return room, nil
+	}
+	return nil, fmt.Errorf("roomt %s not found", id)
 }
 
 func (a *mucAccount) isOffline() bool {
@@ -241,30 +347,6 @@ func (a *mucAccount) displayName() string {
 	return a.id
 }
 
-func (a *mucAccount) getStatus() string {
-	if a.status == mucStatusConnecting {
-		return "connecting"
-	}
-
-	if a.status == mucStatusOffline {
-		return "offline"
-	}
-
-	return "available"
-}
-
-func (c *mucAccountContact) displayName() string {
-	if c.name != "" {
-		return c.name
-	}
-
-	return c.id
-}
-
-func (c *mucAccountContact) isOnline() bool {
-	return c.status == mucStatusOnline
-}
-
 func setValues(v gtki.ListStore, iter gtki.TreeIter, values ...interface{}) {
 	for i, val := range values {
 		if val != nil {
@@ -273,16 +355,40 @@ func setValues(v gtki.ListStore, iter gtki.TreeIter, values ...interface{}) {
 	}
 }
 
-func decideColorForContact(cs colorSet, c *mucAccountContact) string {
-	if !c.isOnline() {
+func (i *mucRosterItem) displayName() string {
+	if i.name != "" {
+		return i.name
+	}
+
+	return i.id
+}
+
+func (i *mucRosterItem) isOnline() bool {
+	return i.status == mucStatusOnline
+}
+
+func (i *mucRosterItem) getStatus() string {
+	if i.status == mucStatusConnecting {
+		return "connecting"
+	}
+
+	if i.status == mucStatusOffline {
+		return "offline"
+	}
+
+	return "available"
+}
+
+func decideColorForPeer(cs colorSet, i *mucRosterItem) string {
+	if !i.isOnline() {
 		return cs.rosterPeerOfflineForeground
 	}
 	return cs.rosterPeerOnlineForeground
 }
 
-func createTooltipForContact(c *mucAccountContact) string {
-	pname := html.EscapeString(c.displayName())
-	jid := html.EscapeString(c.id)
+func createTooltipForPeer(i *mucRosterItem) string {
+	pname := html.EscapeString(i.displayName())
+	jid := html.EscapeString(i.id)
 	if pname != jid {
 		return fmt.Sprintf("%s (%s)", pname, jid)
 	}

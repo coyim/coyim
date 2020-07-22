@@ -413,8 +413,7 @@ func (u *gtkUI) onActivate() {
 
 	// TODO: This code and the related to it should
 	// be removed when we finish the MUC functionality.
-	log.Println("Showing MUC mockups")
-	u.showMUCMockups()
+	u.initMUCMockups()
 
 	go u.watchCommands()
 	go u.loadConfig(*config.ConfigFile)
@@ -427,12 +426,6 @@ func (u *gtkUI) Loop() {
 
 func (u *gtkUI) initRoster() {
 	u.roster = u.newRoster()
-}
-
-func (u *gtkUI) showMUCMockups() {
-	builder := newBuilder("MUC")
-	win := builder.get("mucWindow").(gtki.Window)
-	win.Show()
 }
 
 func (u *gtkUI) mainWindow() {

@@ -12,6 +12,23 @@ type mucUI struct {
 	accountManager *mucAccountManager
 	roster         *mucRoster
 	builder        *builder
+
+	panel       gtki.Box    `gtk-widget:"panel"`
+	panelToggle gtki.Button `gtk-widget:"panel-toggle"`
+
+	panelOpen bool
+}
+
+func (m *mucUI) togglePanel() {
+	var toggleLabel string
+	if m.panelOpen {
+		toggleLabel = "Hide panel"
+	} else {
+		toggleLabel = "Show panel"
+	}
+	m.panel.SetVisible(m.panelOpen)
+	m.panelToggle.SetProperty("label", toggleLabel)
+	m.panelOpen = !m.panelOpen
 }
 
 type mucAccountStatus string
@@ -56,7 +73,6 @@ func (u *gtkUI) initMUCMockups() {
 	}
 
 	m.init()
-
 	m.addAccountsToRoster()
 
 	m.showWindow()
@@ -65,6 +81,12 @@ func (u *gtkUI) initMUCMockups() {
 func (m *mucUI) init() {
 	m.initDemoAccounts()
 	m.initRoster()
+
+	panicOnDevError(m.builder.bindObjects(m))
+
+	m.builder.ConnectSignals(map[string]interface{}{
+		"on_toggle_panel": m.togglePanel,
+	})
 }
 
 func (m *mucUI) initDemoAccounts() {

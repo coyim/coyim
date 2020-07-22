@@ -16,6 +16,13 @@ type RoomRoster struct {
 	occupants map[string]*Occupant
 }
 
+// newRoomRoster returns a newly created room roster
+func newRoomRoster() *RoomRoster {
+	return &RoomRoster{
+		occupants: make(map[string]*Occupant),
+	}
+}
+
 func (r *RoomRoster) occupantList() []*Occupant {
 	r.lock.RLock()
 	defer r.lock.RUnlock()

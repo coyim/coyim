@@ -53,7 +53,16 @@ func (c *conn) GetRosterDelimiter() (string, error) {
 // RequestRosterDelimiter will request the roster delimiter
 func (c *conn) RequestRosterDelimiter() (<-chan data.Stanza, data.Cookie, error) {
 	cookie := c.getCookie()
-	if _, err := fmt.Fprintf(c.out, requestDelimiterXML, cookie); err != nil {
+
+	var outb bytes.Buffer
+	out := &outb
+
+	if _, err := fmt.Fprintf(out, requestDelimiterXML, cookie); err != nil {
+		return nil, 0, err
+	}
+
+	_, err := c.safeWrite(outb.Bytes())
+	if err != nil {
 		return nil, 0, err
 	}
 

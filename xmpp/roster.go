@@ -7,6 +7,7 @@
 package xmpp
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/coyim/coyim/xmpp/data"
@@ -17,7 +18,16 @@ import (
 // be used to cancel the request.
 func (c *conn) RequestRoster() (<-chan data.Stanza, data.Cookie, error) {
 	cookie := c.getCookie()
-	if _, err := fmt.Fprintf(c.out, "<iq type='get' id='%x'><query xmlns='jabber:iq:roster'/></iq>", cookie); err != nil {
+
+	var outb bytes.Buffer
+	out := &outb
+
+	if _, err := fmt.Fprintf(out, "<iq type='get' id='%x'><query xmlns='jabber:iq:roster'/></iq>", cookie); err != nil {
+		return nil, 0, err
+	}
+
+	_, err := c.safeWrite(outb.Bytes())
+	if err != nil {
 		return nil, 0, err
 	}
 

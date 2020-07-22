@@ -72,18 +72,6 @@ func (s *IqXMPPSuite) Test_Send_returnsErrorIfAnUnXMLableEntryIsGiven(c *C) {
 	c.Assert(err.Error(), Equals, "xml: unsupported type: func() int")
 }
 
-func (s *IqXMPPSuite) Test_SendIQ_returnsErrorIfWritingDataFailsTheSecondTime(c *C) {
-	mockIn := &mockConnIOReaderWriter{err: errors.New("this also fails again"), errCount: 1}
-	conn := conn{
-		log: testLogger(),
-		out: mockIn,
-		jid: "som'ewhat@foo.com/somewhere",
-	}
-	_, _, err := conn.SendIQ("", "", nil)
-	c.Assert(err.Error(), Equals, "this also fails again")
-	c.Assert(string(mockIn.write), Matches, "<iq xmlns='jabber:client'  from='som&apos;ewhat@foo.com/somewhere' type='' id='.+'></iq>")
-}
-
 func (s *IqXMPPSuite) TestConnSendIQReplyAndTyp(c *C) {
 	mockOut := mockConnIOReaderWriter{}
 	conn := conn{
@@ -123,7 +111,7 @@ func (s *IqXMPPSuite) TestConnSendIQErr(c *C) {
 		jid: "jid",
 	}
 	reply, cookie, err := conn.SendIQ("example@xmpp.com", "typ", nil)
-	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='.*'>$")
+	c.Assert(string(mockOut.write), Matches, "<iq xmlns='jabber:client' to='example@xmpp.com' from='jid' type='typ' id='.*'></iq>$")
 	c.Assert(reply, IsNil)
 	c.Assert(cookie, Equals, data.Cookie(0))
 	c.Assert(err, Equals, io.EOF)

@@ -15,6 +15,9 @@ import (
 //continuation of the stream negotiation process.
 //RFC 6120 section 4.3
 func (c *conn) SendInitialStreamHeader() error {
+	c.ioLock.Lock()
+	defer c.ioLock.Unlock()
+
 	if _, err := fmt.Fprintf(c.out, "<?xml version='1.0'?><stream:stream to='%s' xmlns='%s' xmlns:stream='%s' version='1.0'>\n", xmlEscape(c.originDomain), NsClient, NsStream); err != nil {
 		return err
 	}

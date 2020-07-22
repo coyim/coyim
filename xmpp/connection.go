@@ -7,6 +7,7 @@
 package xmpp
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/xml"
 	"errors"
@@ -35,6 +36,8 @@ type conn struct {
 	out          io.Writer
 	rawOut       io.WriteCloser // doesn't log. Used for <auth>
 	keepaliveOut io.Writer
+
+	ioLock sync.Mutex
 
 	jid           string
 	resource      string
@@ -188,7 +191,7 @@ func (c *conn) Close() error {
 	c.log.Info("xmpp: sending closing stream tag")
 
 	c.closedLock.Lock()
-	_, err := fmt.Fprint(c.out, "</stream:stream>")
+	_, err := c.safeWrite([]byte("</stream:stream>"))
 
 	//TODO: find a better way to prevent sending message.
 	c.out = ioutil.Discard
@@ -360,7 +363,16 @@ func (c *conn) Send(to, msg string, otr bool) error {
 	if otr {
 		otrMsg = "<encryption xmlns='urn:xmpp:eme:0' namespace='urn:xmpp:otr:0'/>"
 	}
-	_, err := fmt.Fprintf(c.out, "<message to='%s' from='%s' type='chat'><body>%s</body>%s%s%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive, nocopy, otrMsg)
+
+	var outb bytes.Buffer
+	out := &outb
+
+	_, err := fmt.Fprintf(out, "<message to='%s' from='%s' type='chat'><body>%s</body>%s%s%s</message>", xmlEscape(to), xmlEscape(c.jid), xmlEscape(msg), archive, nocopy, otrMsg)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.safeWrite(outb.Bytes())
 	return err
 }
 
@@ -397,4 +409,11 @@ func (c *conn) SetChannelBinding(v []byte) {
 // support this
 func (c *conn) GetChannelBinding() []byte {
 	return c.channelBinding
+}
+
+func (c *conn) safeWrite(b []byte) (int, error) {
+	c.ioLock.Lock()
+	defer c.ioLock.Unlock()
+
+	return c.out.Write(b)
 }

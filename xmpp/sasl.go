@@ -198,6 +198,9 @@ func (c *conn) receiveChallenge() (t sasl.Token, success bool, err error) {
 
 // Resource binding. RFC 6120, section 7
 func (c *conn) BindResource() error {
+	c.ioLock.Lock()
+	defer c.ioLock.Unlock()
+
 	// We want to use an existing resource if we already have one
 	extra := ""
 	if c.resource != "" {

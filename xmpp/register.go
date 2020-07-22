@@ -67,6 +67,9 @@ func (c *conn) RegisterAccount(user, password string) (bool, error) {
 }
 
 func (c *conn) createAccount(user, password string) error {
+	c.ioLock.Lock()
+	defer c.ioLock.Unlock()
+
 	_, _ = io.WriteString(c.config.GetLog(), "Attempting to create account\n")
 	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
 	var iq data.ClientIQ

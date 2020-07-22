@@ -7,6 +7,8 @@ import "github.com/coyim/coyim/xmpp/jid"
 type Room struct {
 	Identity jid.Bare
 
+	Subject string
+
 	roster *RoomRoster
 
 	// Configuration options:

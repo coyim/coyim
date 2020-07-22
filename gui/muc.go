@@ -5,32 +5,40 @@ import (
 	"html"
 	"log"
 
+	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type mucUI struct {
-	u              *gtkUI
+	u       *gtkUI
+	window  gtki.Window
+	builder *builder
+
 	accountManager *mucAccountManager
 	roster         *mucRoster
 	roomsServer    *mucRoomsFakeServer
-	builder        *builder
 
 	panel       gtki.Box    `gtk-widget:"panel"`
 	panelToggle gtki.Button `gtk-widget:"panel-toggle"`
+	main        gtki.Box    `gtk-widget:"main"`
+	room        gtki.Box    `gtk-widget:"room"`
 
-	panelOpen bool
+	roomPanelOpen  bool
+	roomViewActive bool
 }
 
 func (m *mucUI) togglePanel() {
+	isOpen := !m.roomPanelOpen
+
 	var toggleLabel string
-	if m.panelOpen {
+	if isOpen {
 		toggleLabel = "Hide panel"
 	} else {
 		toggleLabel = "Show panel"
 	}
-	m.panel.SetVisible(m.panelOpen)
 	m.panelToggle.SetProperty("label", toggleLabel)
-	m.panelOpen = !m.panelOpen
+	m.panel.SetVisible(isOpen)
+	m.roomPanelOpen = isOpen
 }
 
 type mucPeerStatus string
@@ -93,8 +101,9 @@ func (u *gtkUI) initMUCMockups() {
 	builder := newBuilder("MUC")
 
 	m := &mucUI{
-		u:       u,
-		builder: builder,
+		u:             u,
+		builder:       builder,
+		roomPanelOpen: false,
 	}
 
 	m.init()
@@ -114,7 +123,10 @@ func (m *mucUI) init() {
 	panicOnDevError(m.builder.bindObjects(m))
 
 	m.builder.ConnectSignals(map[string]interface{}{
-		"on_toggle_panel": m.togglePanel,
+		"on_activate_buddy": m.onActivateRosterRow,
+		"on_button_press":   m.onButtonPress,
+		"on_toggle_panel":   m.togglePanel,
+		"on_close_panel":    m.closeRoomWindow,
 	})
 }
 
@@ -219,6 +231,50 @@ func (m *mucUI) addAccountsToRoster() {
 func (m *mucUI) showWindow() {
 	win := m.builder.get("mucWindow").(gtki.Window)
 	win.Show()
+	m.window = win
+}
+
+func (m *mucUI) closeRoomWindow() {
+	if !m.roomViewActive {
+		return
+	}
+
+	m.main.SetHExpand(true)
+	m.room.SetVisible(false)
+	m.roomViewActive = false
+}
+
+func (m *mucUI) openRoomView(id string) {
+	if m.roomViewActive {
+		return
+	}
+
+	m.main.SetHExpand(false)
+	m.room.SetVisible(true)
+	m.roomViewActive = true
+}
+
+func (m *mucUI) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
+	iter, err := m.roster.model.GetIter(path)
+	if err != nil {
+		return
+	}
+
+	peer := getFromModelIterMUC(m.roster.model, iter, indexJid)
+	rowType := getFromModelIterMUC(m.roster.model, iter, indexRowType)
+
+	switch rowType {
+	case "room":
+		m.openRoomView(peer)
+	case "group":
+		// We ignore this, since a double click on the group doesn't really have any effect
+	default:
+		panic(fmt.Sprintf("unknown roster row type: %s", rowType))
+	}
+}
+
+func (m *mucUI) onButtonPress(view gtki.TreeView, ev gdki.Event) bool {
+	return false
 }
 
 func (m *mucAccountManager) addAccount(a *mucAccount) {
@@ -266,7 +322,7 @@ func (r *mucRoster) addAccountContacts(contacts []*mucAccountContact, accountCou
 		o := item.isOnline()
 		accountCounter.inc(true, o)
 		groupCounter.inc(true, o)
-		r.addItem(item.mucRosterItem, "")
+		r.addItem(item.mucRosterItem, "peer", "")
 	}
 }
 
@@ -283,14 +339,16 @@ func (r *mucRoster) addAccountRooms(rooms []string) {
 }
 
 func (r *mucRoster) addRoom(id string, room *mucRoom) {
-	r.addItem(&mucRosterItem{
+	roomItem := &mucRosterItem{
 		id:     id,
 		name:   room.name,
 		status: room.status,
-	}, "#")
+	}
+
+	r.addItem(roomItem, "room", "#")
 }
 
-func (r *mucRoster) addItem(item *mucRosterItem, indent string) {
+func (r *mucRoster) addItem(item *mucRosterItem, rowType string, indent string) {
 	cs := r.u.currentColorSet()
 	iter := r.model.Append()
 
@@ -305,6 +363,8 @@ func (r *mucRoster) addItem(item *mucRosterItem, indent string) {
 		nil,
 		createTooltipForPeer(item),
 	)
+
+	_ = r.model.SetValue(iter, indexRowType, rowType)
 }
 
 func (m *mucUI) initRooms() {
@@ -400,4 +460,10 @@ func createTooltipForPeer(i *mucRosterItem) string {
 		return fmt.Sprintf("%s (%s)", pname, jid)
 	}
 	return jid
+}
+
+func getFromModelIterMUC(m gtki.ListStore, iter gtki.TreeIter, index int) string {
+	val, _ := m.GetValue(iter, index)
+	v, _ := val.GetString()
+	return v
 }

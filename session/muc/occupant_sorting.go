@@ -1,5 +1,7 @@
 package muc
 
+import "fmt"
+
 // ByOccupantNick sorts occupants by nickname
 type ByOccupantNick []*Occupant
 
@@ -12,10 +14,17 @@ type ByOccupantJid []*Occupant
 
 func (s ByOccupantJid) Len() int { return len(s) }
 func (s ByOccupantJid) Less(i, j int) bool {
-	differentJids := s[i].Jid.String() != s[j].Jid.String()
+	differentJids := stringOrEmpty(s[i].Jid) != stringOrEmpty(s[j].Jid)
 	if differentJids {
-		return s[i].Jid.String() < s[j].Jid.String()
+		return stringOrEmpty(s[i].Jid) < stringOrEmpty(s[j].Jid)
 	}
 	return s[i].Nick < s[j].Nick
 }
 func (s ByOccupantJid) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+func stringOrEmpty(s fmt.Stringer) string {
+	if s == nil {
+		return ""
+	}
+	return s.String()
+}

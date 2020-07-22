@@ -11,14 +11,14 @@ import (
 
 // RoomRoster contains information about all the occupants in a room
 type RoomRoster struct {
-	sync.RWMutex
+	lock sync.RWMutex
 
 	occupants map[string]*Occupant
 }
 
 func (r *RoomRoster) occupantList() []*Occupant {
-	r.RLock()
-	defer r.RUnlock()
+	r.lock.RLock()
+	defer r.lock.RUnlock()
 
 	result := []*Occupant{}
 
@@ -166,8 +166,8 @@ func (r *RoomRoster) OccupantsByAffiliation() (none, banned, members, admins, ow
 // UpdateNick should be called when receiving an unavailable with status code 303
 // The new nickname should be given without the room name
 func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
-	r.Lock()
-	defer r.Unlock()
+	r.lock.Lock()
+	defer r.lock.Unlock()
 
 	base := from.NoResource()
 	newFull := base.WithResource(jid.Resource(newNick))
@@ -188,8 +188,8 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 // indications on whether the presence update means the person joined the room, or left the room.
 // Notice that updating of nick names is done separately and should not be done by calling this method.
 func (r *RoomRoster) UpdatePresence(from jid.WithResource, tp, affiliation, role, show, statusCode, statusMsg string, realJid jid.WithResource) (joined, left bool, err error) {
-	r.Lock()
-	defer r.Unlock()
+	r.lock.Lock()
+	defer r.lock.Unlock()
 
 	oc, ok := r.occupants[from.String()]
 

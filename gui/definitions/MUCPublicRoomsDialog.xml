@@ -1,0 +1,185 @@
+<interface>
+  <object class="GtkListStore" id="accounts-model">
+    <columns>
+      <!-- account name -->
+      <column type="gchararray"/>
+      <!-- account id -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkTreeStore" id="rooms-model">
+    <columns>
+      <!-- jid -->
+      <column type="gchararray"/>
+      <!-- name -->
+      <column type="gchararray"/>
+      <!-- service -->
+      <column type="gchararray"/>
+      <!-- description -->
+      <column type="gchararray"/>
+      <!-- occupants -->
+      <column type="gint"/>
+    </columns>
+  </object>
+  <object class="GtkDialog" id="MUCPublicRooms">
+    <property name="visible">false</property>
+    <property name="border_width">7</property>
+    <property name="title" translatable="yes">Chat rooms</property>
+    <property name="resizable">True</property>
+    <property name="default-height">400</property>
+    <property name="default-width">500</property>
+    <property name="destroy-with-parent">true</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="Vbox">
+        <property name="visible">true</property>
+        <property name="homogeneous">false</property>
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkGrid" id="grid">
+            <property name="visible">true</property>
+            <property name="margin-top">15</property>
+            <property name="margin-bottom">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="row-spacing">12</property>
+            <property name="column-spacing">6</property>
+            <child>
+              <object class="GtkLabel" id="accountsLabel" >
+		        <property name="visible">true</property>
+                <property name="label" translatable="yes">Account:</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="accounts">
+		        <property name="visible">true</property>
+                <property name="model">accounts-model</property>
+                <property name="has-focus">true</property>
+                <property name="hexpand">True</property>
+                <signal name="changed" handler="on_accounts_changed" swapped="no"/>
+                <child>
+                  <object class="GtkCellRendererText" id="account-name-rendered"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="rooms">
+                <property name="hscrollbar-policy">GTK_POLICY_NEVER</property>
+                <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkTreeView" id="rooms-tree">
+                    <property name="visible">True</property>
+                    <property name="model">rooms-model</property>
+                    <property name="headers-visible">true</property>
+                    <property name="show-expanders">false</property>
+                    <property name="level-indentation">3</property>
+                    <!-- <property name="tooltip-column">6</property> -->
+                    <!-- <property name="search-column">6</property> -->
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="selection">
+                        <property name="mode">GTK_SELECTION_SINGLE</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="name-column">
+                        <property name="title">Name</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="name-column-rendered"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="jid-column">
+                        <property name="title">ID</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="jid-column-rendered"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="description-column">
+                        <property name="title">Description</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="description-column-rendered"/>
+                          <attributes>
+                            <attribute name="text">3</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="occupants-column">
+                        <property name="title">Occupants</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="occupants-column-rendered"/>
+                          <attributes>
+                            <attribute name="text">4</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="width">2</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">true</property>
+            <property name="fill">true</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child internal-child="action_area">
+      <object class="GtkButtonBox" id="button_box">
+        <property name="visible">true</property>
+        <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+        <child>
+          <object class="GtkButton" id="button_cancel">
+            <property name="visible">true</property>
+            <property name="label">_Cancel</property>
+            <property name="use-underline">True</property>
+            <signal name="clicked" handler="on_cancel_signal"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_join">
+            <property name="visible">true</property>
+            <property name="label" translatable="yes">Join</property>
+            <property name="use-underline">True</property>
+            <property name="can-default">true</property>
+            <signal name="clicked" handler="on_join_signal"/>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

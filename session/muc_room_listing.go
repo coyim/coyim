@@ -164,7 +164,7 @@ func (s *session) getRoomsInService(service jid.Any, name string, results chan<-
 		rl := muc.NewRoomListing()
 		rl.Service = service
 		rl.ServiceName = identName
-		rl.Jid = jid.NR(i.Jid)
+		rl.Jid = jid.Parse(i.Jid).(jid.Bare)
 		rl.Name = i.Name
 
 		results <- rl

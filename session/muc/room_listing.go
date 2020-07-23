@@ -10,7 +10,7 @@ import (
 type RoomListing struct {
 	Service     jid.Any
 	ServiceName string
-	Jid         jid.WithoutResource
+	Jid         jid.Bare
 	Name        string
 
 	SupportsVoiceRequests     bool

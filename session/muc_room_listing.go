@@ -1,9 +1,6 @@
 package session
 
 import (
-	"bytes"
-	"encoding/xml"
-	"errors"
 	"fmt"
 	"strconv"
 	"sync"
@@ -179,31 +176,9 @@ func (s *session) getRoomsInService(service jid.Any, name string, results chan<-
 }
 
 func (s *session) getRoomsAsync(server jid.Domain, results chan<- *muc.RoomListing, errorResult chan<- error) {
-	rp, _, err := s.conn.SendIQ(server.String(), "get", &data.DiscoveryItemsQuery{})
+	ditems, err := s.conn.QueryServiceItems(server.String())
 	if err != nil {
 		errorResult <- err
-		return
-	}
-
-	r, ok := <-rp
-	if !ok {
-		errorResult <- errors.New("IQ channel closed")
-		return
-	}
-
-	var ditems data.DiscoveryItemsQuery
-	switch ciq := r.Value.(type) {
-	case *data.ClientIQ:
-		if ciq.Type != "result" {
-			errorResult <- errors.New("got IQ result that is not 'result' type")
-			return
-		}
-		if err := xml.NewDecoder(bytes.NewBuffer(ciq.Query)).Decode(&ditems); err != nil {
-			errorResult <- err
-			return
-		}
-	default:
-		errorResult <- errors.New("got result to IQ that wasn't an IQ")
 		return
 	}
 

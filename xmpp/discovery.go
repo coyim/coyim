@@ -22,9 +22,14 @@ import (
 // The entity is identified by its JID and the feature by its XML namespace.
 // It returns true if the feaure is reported to be supported and false
 // otherwise (including if any error happened).
-func (c *conn) HasSupportTo(entity string, feature string) bool {
+func (c *conn) HasSupportTo(entity string, features ...string) bool {
 	if res, ok := c.DiscoveryFeatures(entity); ok {
-		return stringArrayContains(res, feature)
+		for _, feature := range features {
+			if !stringArrayContains(res, feature) {
+				return false
+			}
+		}
+		return true
 	}
 
 	return false

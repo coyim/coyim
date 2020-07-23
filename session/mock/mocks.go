@@ -9,6 +9,7 @@ import (
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
@@ -199,4 +200,9 @@ func (*SessionMock) CreateSymmetricKeyFor(jid.Any) []byte {
 // GetAndWipeSymmetricKeyFor is the implementation for Session interface
 func (*SessionMock) GetAndWipeSymmetricKeyFor(jid.Any) []byte {
 	return nil
+}
+
+// GetRooms is the implementation for Session interface
+func (*SessionMock) GetRooms(jid.Domain) (<-chan *muc.RoomListing, <-chan error) {
+	return nil, nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	sdata "github.com/coyim/coyim/session/data"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
@@ -74,6 +75,8 @@ type Session interface {
 	FinishSMP(jid.WithResource, string)
 	AbortSMP(jid.WithResource)
 	GetAndWipeSymmetricKeyFor(jid.Any) []byte
+
+	GetRooms(jid.Domain) (<-chan *muc.RoomListing, <-chan error)
 }
 
 // Factory is a function that can create new Sessions

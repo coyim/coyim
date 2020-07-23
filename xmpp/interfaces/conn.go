@@ -56,4 +56,9 @@ type Conn interface {
 
 	GetJIDResource() string
 	SetJIDResource(string)
+
+	HasSupportTo(entity string, features ...string) bool
+
+	QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error)
+	QueryServiceItems(entity string) (*data.DiscoveryItemsQuery, error)
 }

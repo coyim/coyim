@@ -49,6 +49,27 @@
                     <property name="use-underline">True</property>
                   </object>
                 </child>
+
+                <child>
+                  <object class="GtkMenuItem" id="ChatRoomsMenu">
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Chat _Rooms</property>
+                    <property name="use-underline">True</property>
+                    <child type="submenu">
+                      <object class="GtkMenu" id="ChatRoomsSubmenu">
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkMenuItem" id="showPublicRoomsMenuItem">
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Show public rooms...</property>
+                            <signal name="activate" handler="on_muc_show_public_rooms" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+
                 <child>
                   <object class="GtkMenuItem" id="ViewMenu">
                     <property name="can_focus">False</property>

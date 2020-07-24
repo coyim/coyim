@@ -58,8 +58,6 @@ func InitGUI(gtkVal gtki.Gtk, glibVal glibi.Glib, gdkVal gdki.Gdk, pangoVal pang
 
 	m.init()
 
-	m.addAccountsToRoster()
-
 	return m
 }
 
@@ -75,8 +73,9 @@ const (
 )
 
 func (m *mucUI) ShowWindow() {
+	m.addAccountsToRoster()
 	win := m.builder.get("mainWindow").(gtki.Window)
-	win.Show()
+	m.doInUIThread(win.Show)
 	m.window = win
 }
 
@@ -150,4 +149,8 @@ func (c *counter) inc(total, online bool) {
 	if online {
 		c.online++
 	}
+}
+
+func (m *mucUI) doInUIThread(f func()) {
+	_, _ = g.glib.IdleAdd(f)
 }

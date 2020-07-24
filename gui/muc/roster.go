@@ -157,6 +157,10 @@ func (i *mucRosterItem) isOnline() bool {
 	return i.status == mucStatusOnline
 }
 
+func (i *mucRosterItem) isOffline() bool {
+	return i.status == mucStatusOffline
+}
+
 func (i *mucRosterItem) getStatus() string {
 	if i.status == mucStatusConnecting {
 		return "connecting"

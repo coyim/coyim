@@ -10,6 +10,7 @@ type Chat interface {
 	CheckForSupport(service string) bool
 	QueryRooms(entity string) ([]data.DiscoveryItem, error)
 	QueryRoomInformation(room string) (*data.RoomInfo, error)
+	CreateRoom(*data.Room) error
 	EnterRoom(*data.Occupant) error
 	LeaveRoom(*data.Occupant) error
 	SendChatMessage(msg string, to *data.Room) error

@@ -457,6 +457,7 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Sort_By_Status_signal":  u.toggleSortByStatus,
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 		"on_preferences_signal":                        u.showGlobalPreferences,
+		"on_create_chat_room":                          u.createChatRoom,
 		"on_join_chat_room":                            u.joinChatRoom,
 		"on_list_chat_rooms":                           u.listChatRooms,
 		"on_muc_show_public_rooms":                     u.mucShowPublicRooms,

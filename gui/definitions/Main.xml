@@ -20,7 +20,7 @@
                   <object class="GtkMenuItem" id="ContactsMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Contacts</property>
-                    <property name="use-underline">True</property>
+                    <property name="use_underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="menu">
                         <property name="can_focus">False</property>
@@ -46,7 +46,7 @@
                   <object class="GtkMenuItem" id="AccountsMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Accounts</property>
-                    <property name="use-underline">True</property>
+                    <property name="use_underline">True</property>
                   </object>
                 </child>
 
@@ -74,7 +74,7 @@
                   <object class="GtkMenuItem" id="ViewMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_View</property>
-                    <property name="use-underline">True</property>
+                    <property name="use_underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="menu2">
                         <property name="can_focus">False</property>
@@ -112,9 +112,9 @@
                 </child>
                 <child>
                   <object class="GtkMenuItem" id="OptionsMenu">
-                    <property name="can-focus">False</property>
+                    <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Options</property>
-                    <property name="use-underline">True</property>
+                    <property name="use_underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="options_submenu">
                         <property name="can_focus">False</property>
@@ -129,7 +129,7 @@
                           <object class="GtkMenuItem" id="preferencesMenuItem">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Preferences...</property>
-                            <property name="use-underline">True</property>
+                            <property name="use_underline">True</property>
                             <signal name="activate" handler="on_preferences_signal" swapped="no"/>
                           </object>
                         </child>
@@ -140,22 +140,32 @@
 
                 <child>
                   <object class="GtkMenuItem" id="muc-mockup-menu">
-                    <property name="visible">False</property>
+                    <property name="can_focus">False</property>
                     <property name="label" translatable="yes">Chat</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="muc-mockup-menu-options">
                         <property name="can_focus">False</property>
                         <child>
+                          <object class="GtkMenuItem" id="muc-create-chat-room-menu">
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Crear Sala Rápida</property>
+                            <property name="use_underline">True</property>
+                            <signal name="activate" handler="on_create_chat_room" swapped="no"/>
+                          </object>
+                        </child>
+                        <child>
                           <object class="GtkMenuItem" id="muc-add-chat-room-menu">
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Join Chat Room...</property>
-                            <property name="use-underline">True</property>
+                            <property name="use_underline">True</property>
                             <signal name="activate" handler="on_join_chat_room" swapped="no"/>
                           </object>
                         </child>
                         <child>
                           <object class="GtkMenuItem" id="muc-list-chat-rooms-menu">
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">List Chat Rooms...</property>
-                            <property name="use-underline">True</property>
+                            <property name="use_underline">True</property>
                             <signal name="activate" handler="on_list_chat_rooms" swapped="no"/>
                           </object>
                         </child>
@@ -168,7 +178,7 @@
                   <object class="GtkMenuItem" id="HelpMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Help</property>
-                    <property name="use-underline">True</property>
+                    <property name="use_underline">True</property>
                     <child type="submenu">
                       <object class="GtkMenu" id="menu3">
                         <property name="can_focus">False</property>
@@ -221,15 +231,23 @@
                     <child>
                       <object class="GtkEntry" id="search-entry">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="shadow_type">etched-in</property>
                         <property name="secondary_icon_name">edit-find</property>
                         <property name="placeholder_text" translatable="yes">Search...</property>
                       </object>
                     </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
               </object>
               <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="pack_type">end</property>
                 <property name="position">1</property>
               </packing>
@@ -242,6 +260,9 @@
           </packing>
         </child>
       </object>
+    </child>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
 </interface>

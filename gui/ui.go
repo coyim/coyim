@@ -11,6 +11,7 @@ import (
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/gui/muc"
 	"github.com/coyim/coyim/gui/settings"
 	"github.com/coyim/coyim/i18n"
 	ournet "github.com/coyim/coyim/net"
@@ -78,6 +79,7 @@ type gtkUI struct {
 	hooks OSHooks
 
 	mainBuilder *builder
+	mucGUI      muc.GUI
 }
 
 // Graphics represent the graphic configuration
@@ -126,6 +128,13 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	g.gtk.Init(argsWithApplicationName())
 	ensureInstalled()
 
+	mucGUI := muc.InitGUI(
+		g.gtk,
+		g.glib,
+		g.gdk,
+		g.pango,
+	)
+
 	ret := &gtkUI{
 		commands:                             make(chan interface{}, 5),
 		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
@@ -136,6 +145,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		deNotify:    newDesktopNotifications(),
 		log:         log.New(),
 		hooks:       hooks,
+
+		mucGUI: mucGUI,
 	}
 
 	hooks.AfterInit()
@@ -413,7 +424,7 @@ func (u *gtkUI) onActivate() {
 
 	// TODO: This code and the related to it should
 	// be removed when we finish the MUC functionality.
-	u.initMUCMockups()
+	u.mucGUI.ShowWindow()
 
 	go u.watchCommands()
 	go u.loadConfig(*config.ConfigFile)

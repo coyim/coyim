@@ -15,4 +15,5 @@ var (
 	VersionFlag         = flag.Bool("version", false, "Print CoyIM version and exit")
 	CPUProfile          = flag.String("cpuprofile", "", "write cpu profile `file`")
 	MUCEnabled          = false
+	MUCEnabledMockups   = true
 )

@@ -128,13 +128,6 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	g.gtk.Init(argsWithApplicationName())
 	ensureInstalled()
 
-	mucGUI := muc.InitGUI(
-		g.gtk,
-		g.glib,
-		g.gdk,
-		g.pango,
-	)
-
 	ret := &gtkUI{
 		commands:                             make(chan interface{}, 5),
 		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
@@ -145,8 +138,6 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		deNotify:    newDesktopNotifications(),
 		log:         log.New(),
 		hooks:       hooks,
-
-		mucGUI: mucGUI,
 	}
 
 	hooks.AfterInit()
@@ -174,6 +165,15 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ret.addAction(ret.app, "quit", ret.quit)
 	ret.addAction(ret.app, "about", ret.aboutDialog)
 	ret.addAction(ret.app, "preferences", ret.showGlobalPreferences)
+
+	if config.MUCEnabledMockups {
+		ret.mucGUI = muc.InitGUI(
+			g.gtk,
+			g.glib,
+			g.gdk,
+			g.pango,
+		)
+	}
 
 	return ret
 }
@@ -424,7 +424,9 @@ func (u *gtkUI) onActivate() {
 
 	// TODO: This code and the related to it should
 	// be removed when we finish the MUC functionality.
-	u.mucGUI.ShowWindow()
+	if config.MUCEnabledMockups {
+		u.mucGUI.ShowWindow()
+	}
 
 	go u.watchCommands()
 	go u.loadConfig(*config.ConfigFile)

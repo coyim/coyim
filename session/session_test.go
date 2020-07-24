@@ -1004,10 +1004,10 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 	}
 
 	sess := &session{
-		connectionLogger: log.New(),
-		connStatus:       CONNECTED,
-		timeouts:         timeouts,
-		conn:             xmpp.NewConn(nil, nil, ""),
+		log:        log.New(),
+		connStatus: CONNECTED,
+		timeouts:   timeouts,
+		conn:       xmpp.NewConn(nil, nil, ""),
 	}
 
 	go func() {

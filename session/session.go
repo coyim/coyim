@@ -36,9 +36,9 @@ const (
 )
 
 type session struct {
-	conn             xi.Conn
-	connectionLogger coylog.Logger
-	r                *roster.List
+	conn xi.Conn
+	log  coylog.Logger
+	r    *roster.List
 
 	connStatus     connStatus
 	connStatusLock sync.RWMutex
@@ -158,10 +158,10 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 
 		autoApproves: make(map[string]bool),
 
-		inMemoryLog:      inMemoryLog,
-		xmppLogger:       xmppLogger,
-		connectionLogger: sessionLog,
-		dialerFactory:    df,
+		inMemoryLog:   inMemoryLog,
+		xmppLogger:    xmppLogger,
+		log:           sessionLog,
+		dialerFactory: df,
 	}
 
 	s.ReloadKeys()
@@ -182,7 +182,7 @@ func (s *session) ReloadKeys() {
 func (s *session) Send(peer jid.Any, msg string, otr bool) error {
 	conn, ok := s.connection()
 	if ok {
-		s.connectionLogger.WithFields(log.Fields{
+		s.log.WithFields(log.Fields{
 			"to":      peer,
 			"sentMsg": msg,
 		}).Debug("Send()")
@@ -215,7 +215,7 @@ func retrieveMessageTime(stanza *data.ClientMessage) time.Time {
 }
 
 func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
-	s.connectionLogger.WithField("stanza", fmt.Sprintf("%#v", stanza)).Debug("receivedClientMessage()")
+	s.log.WithField("stanza", fmt.Sprintf("%#v", stanza)).Debug("receivedClientMessage()")
 
 	if len(stanza.Body) == 0 && len(stanza.Extensions) > 0 {
 		s.processExtensions(stanza)
@@ -640,7 +640,7 @@ func (s *session) watchTimeout() {
 		newTimeouts := make(map[data.Cookie]time.Time)
 		for cookie, expiry := range s.timeouts {
 			if now.After(expiry) {
-				s.connectionLogger.WithField("cookie", cookie).Debug("session: cookie has expired")
+				s.log.WithField("cookie", cookie).Debug("session: cookie has expired")
 				s.conn.Cancel(cookie)
 			} else {
 				newTimeouts[cookie] = expiry
@@ -680,7 +680,7 @@ func (s *session) getVCard() {
 
 	vcardStanza, ok := <-vcardReply
 	if !ok {
-		s.connectionLogger.Debug("session: vcard request cancelled or timed out")
+		s.log.Debug("session: vcard request cancelled or timed out")
 		return
 	}
 
@@ -720,7 +720,7 @@ func (s *session) requestRoster() bool {
 	rosterStanza, ok := <-rosterReply
 	if !ok {
 		//TODO: should we retry the request in such case?
-		s.connectionLogger.Debug("session: roster request cancelled or timed out")
+		s.log.Debug("session: roster request cancelled or timed out")
 		return true
 	}
 
@@ -789,7 +789,7 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 
 	conf := s.GetConfig()
 	policy := config.ConnectionPolicy{
-		Log:           s.connectionLogger,
+		Log:           s.log,
 		XMPPLogger:    s.xmppLogger,
 		DialerFactory: s.dialerFactory,
 	}
@@ -799,14 +799,14 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 		resource = s.resource
 	}
 
-	s.connectionLogger.WithFields(log.Fields{
+	s.log.WithFields(log.Fields{
 		"resource":       resource,
 		"wantToBeOnline": s.wantToBeOnline,
 	}).Debug("Connect()")
 
 	conn, err := policy.Connect(password, resource, conf, verifier)
 	if err != nil {
-		s.connectionLogger.WithError(err).Error("failed to connect")
+		s.log.WithError(err).Error("failed to connect")
 
 		s.setStatus(DISCONNECTED)
 

@@ -26,7 +26,7 @@ func (s *session) notify(peer jid.Any, notification string) {
 func (s *session) processEncryption(peer jid.Any, e *data.Encryption) {
 	if e.Namespace == otrEncryptionNamespace {
 		// We have message marked as OTR, everything good
-		s.connectionLogger.Debug("got message marked with OTR encryption tag (XEP-0380)")
+		s.log.Debug("got message marked with OTR encryption tag (XEP-0380)")
 		return
 	}
 
@@ -35,7 +35,7 @@ func (s *session) processEncryption(peer jid.Any, e *data.Encryption) {
 		name = e.Name
 	}
 
-	s.connectionLogger.WithFields(log.Fields{
+	s.log.WithFields(log.Fields{
 		"namespace": e.Namespace,
 		"name":      name,
 	}).Info("got message marked with unknown encryption tag (XEP-0380)")

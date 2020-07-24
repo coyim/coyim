@@ -50,7 +50,7 @@ func extractFormData(fields []data.FormFieldX) map[string][]string {
 func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 	diq, e := s.Conn().QueryServiceInformation(rl.Jid.String())
 	if e != nil {
-		// TODO: log
+		s.log.WithError(e).Debug("findOutMoreInformationAboutRoom() had error")
 		return
 	}
 
@@ -139,7 +139,10 @@ func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 	rl.Updated()
 }
 
-func (s *session) getRoomsInService(service jid.Any, name string, results chan<- *muc.RoomListing, allRooms *sync.WaitGroup) {
+func (s *session) getRoomsInService(service jid.Any, name string, results chan<- *muc.RoomListing, resultsServices chan<- *muc.ServiceListing, allRooms *sync.WaitGroup) {
+	defer allRooms.Done()
+
+	s.log.WithField("service", service).Debug("getRoomsInService()")
 	idents, features, ok := s.Conn().DiscoveryFeaturesAndIdentities(service.String())
 	if !ok {
 		return
@@ -154,9 +157,14 @@ func (s *session) getRoomsInService(service jid.Any, name string, results chan<-
 		return
 	}
 
+	sl := muc.NewServiceListing()
+	sl.Jid = service
+	sl.Name = identName
+	resultsServices <- sl
+
 	items, err := s.Conn().QueryServiceItems(service.String())
 	if err != nil {
-		// TODO: log
+		s.log.WithError(err).Debug("getRoomsInService() had error")
 		return
 	}
 
@@ -171,11 +179,10 @@ func (s *session) getRoomsInService(service jid.Any, name string, results chan<-
 
 		go s.findOutMoreInformationAboutRoom(rl)
 	}
-
-	allRooms.Done()
 }
 
-func (s *session) getRoomsAsync(server jid.Domain, results chan<- *muc.RoomListing, errorResult chan<- error) {
+func (s *session) getRoomsAsync(server jid.Domain, results chan<- *muc.RoomListing, resultsServices chan<- *muc.ServiceListing, errorResult chan<- error) {
+	s.log.WithField("server", server).Debug("getRoomsAsync()")
 	ditems, err := s.conn.QueryServiceItems(server.String())
 	if err != nil {
 		errorResult <- err
@@ -185,18 +192,21 @@ func (s *session) getRoomsAsync(server jid.Domain, results chan<- *muc.RoomListi
 	allRooms := sync.WaitGroup{}
 	allRooms.Add(len(ditems.DiscoveryItems))
 	for _, di := range ditems.DiscoveryItems {
-		go s.getRoomsInService(jid.Parse(di.Jid), di.Name, results, &allRooms)
+		go s.getRoomsInService(jid.Parse(di.Jid), di.Name, results, resultsServices, &allRooms)
 	}
 	allRooms.Wait()
-	close(results)
-	close(errorResult)
+
+	// This signals we are done
+	results <- nil
 }
 
-func (s *session) GetRooms(server jid.Domain) (<-chan *muc.RoomListing, <-chan error) {
+func (s *session) GetRooms(server jid.Domain) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error) {
+	s.log.WithField("server", server).Debug("GetRooms()")
 	result := make(chan *muc.RoomListing, 20)
+	resultServices := make(chan *muc.ServiceListing, 20)
 	errorResult := make(chan error, 1)
 
-	go s.getRoomsAsync(server, result, errorResult)
+	go s.getRoomsAsync(server, result, resultServices, errorResult)
 
-	return result, errorResult
+	return result, resultServices, errorResult
 }

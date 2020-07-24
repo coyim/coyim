@@ -76,19 +76,30 @@
               </packing>
             </child>
             <child>
+              <object class="GtkSpinner" id="spinner">
+                <property name="visible">false</property>
+                <property name="can_focus">False</property>
+                <property name="active">false</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkScrolledWindow" id="rooms">
                 <property name="hscrollbar-policy">GTK_POLICY_NEVER</property>
                 <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
-                <property name="visible">True</property>
+                <property name="visible">false</property>
                 <child>
                   <object class="GtkTreeView" id="rooms-tree">
                     <property name="visible">True</property>
                     <property name="model">rooms-model</property>
                     <property name="headers-visible">true</property>
-                    <property name="show-expanders">false</property>
-                    <property name="level-indentation">3</property>
+                    <property name="show-expanders">true</property>
                     <!-- <property name="tooltip-column">6</property> -->
                     <!-- <property name="search-column">6</property> -->
                     <child internal-child="selection">
@@ -146,7 +157,7 @@
               <packing>
                 <property name="left-attach">0</property>
                 <property name="width">2</property>
-                <property name="top-attach">2</property>
+                <property name="top-attach">3</property>
               </packing>
             </child>
           </object>

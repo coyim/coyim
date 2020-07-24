@@ -2,160 +2,16 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkListStore" id="room-members-model">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray2 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray3 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray4 -->
-      <column type="gchararray"/>
-      <!-- column-name gint -->
-      <column type="gint"/>
-      <!-- column-name gchararray5 -->
-      <column type="gchararray"/>
-      <!-- column-name gdkpixbuf -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name gchararray6 -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkTextBuffer" id="roomTextBuffer">
-    <property name="text" translatable="yes">[Rafael]
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-[Jhon Doe]
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-[#ElAnimal]
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</property>
-  </object>
-  <object class="GtkListStore" id="roster-model">
-    <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray2 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray3 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray4 -->
-      <column type="gchararray"/>
-      <!-- column-name gint -->
-      <column type="gint"/>
-      <!-- column-name gchararray5 -->
-      <column type="gchararray"/>
-      <!-- column-name gdkpixbuf -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name gchararray6 -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkWindow" id="mucWindow">
+  <object class="GtkWindow">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">CoyIM Room</property>
-    <property name="gravity">center</property>
+    <property name="title" translatable="yes">Room</property>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <child>
-          <object class="GtkBox" id="main">
-            <property name="width_request">380</property>
-            <property name="height_request">660</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="hexpand">True</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkViewport">
-                <property name="width_request">300</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <child>
-                      <object class="GtkScrolledWindow" id="roster">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="window_placement_set">False</property>
-                        <property name="kinetic_scrolling">False</property>
-                        <property name="overlay_scrolling">False</property>
-                        <child>
-                          <object class="GtkTreeView" id="roster-tree">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="model">roster-model</property>
-                            <property name="headers_visible">False</property>
-                            <property name="headers_clickable">False</property>
-                            <property name="search_column">6</property>
-                            <property name="show_expanders">False</property>
-                            <property name="level_indentation">3</property>
-                            <property name="tooltip_column">6</property>
-                            <signal name="button-press-event" handler="on_button_press" swapped="no"/>
-                            <signal name="row-activated" handler="on_activate_buddy" swapped="no"/>
-                            <child internal-child="selection">
-                              <object class="GtkTreeSelection"/>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="icon-column">
-                                <property name="title" translatable="yes">status</property>
-                                <child>
-                                  <object class="GtkCellRendererPixbuf" id="icon-column-rendered"/>
-                                  <attributes>
-                                    <attribute name="cell-background">4</attribute>
-                                    <attribute name="pixbuf">7</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkTreeViewColumn" id="name-column">
-                                <property name="title">name</property>
-                                <child>
-                                  <object class="GtkCellRendererText" id="name-column-rendered"/>
-                                  <attributes>
-                                    <attribute name="background">4</attribute>
-                                    <attribute name="foreground">3</attribute>
-                                    <attribute name="text">1</attribute>
-                                    <attribute name="weight">5</attribute>
-                                  </attributes>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkBox" id="room">
             <property name="width_request">500</property>
@@ -165,8 +21,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
               <object class="GtkViewport">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">10</property>
-                <property name="margin_right">10</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
@@ -200,7 +54,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                                           <object class="GtkBox">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="margin_right">10</property>
                                             <property name="margin_top">10</property>
                                             <property name="margin_bottom">10</property>
                                             <child>
@@ -224,7 +77,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
-                                                <property name="margin_left">10</property>
                                                 <property name="label" translatable="yes">The place to discuss CoyIM</property>
                                                 <property name="xalign">0</property>
                                                 <property name="yalign">0</property>
@@ -254,7 +106,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="valign">center</property>
-                                        <property name="margin_left">10</property>
                                         <child>
                                           <object class="GtkButton" id="panel-toggle">
                                             <property name="label" translatable="yes">Show panel</property>
@@ -275,7 +126,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
-                                            <property name="margin_left">10</property>
                                             <signal name="clicked" handler="on_close_panel" swapped="no"/>
                                           </object>
                                           <packing>
@@ -318,15 +168,12 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                                       <object class="GtkMenuItem">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Room</property>
-                                        <property name="use_underline">True</property>
                                       </object>
                                     </child>
                                     <child>
                                       <object class="GtkMenuItem">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="yes">Help</property>
                                       </object>
                                     </child>
                                   </object>
@@ -451,7 +298,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="margin_left">10</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <object class="GtkButton">
@@ -495,7 +341,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
@@ -630,7 +476,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="margin_right">10</property>
                             <property name="margin_top">10</property>
                             <property name="margin_bottom">10</property>
                             <property name="orientation">vertical</property>
@@ -676,10 +521,42 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="room-members-model">
+    <columns>
+      <!-- column-name gchararray1 -->
+      <column type="gchararray"/>
+      <!-- column-name gchararray2 -->
+      <column type="gchararray"/>
+      <!-- column-name gchararray -->
+      <column type="gchararray"/>
+      <!-- column-name gchararray3 -->
+      <column type="gchararray"/>
+      <!-- column-name gchararray4 -->
+      <column type="gchararray"/>
+      <!-- column-name gint -->
+      <column type="gint"/>
+      <!-- column-name gchararray5 -->
+      <column type="gchararray"/>
+      <!-- column-name gdkpixbuf -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name gchararray6 -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkTextBuffer" id="roomTextBuffer">
+    <property name="text" translatable="yes">[Rafael]
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+[Jhon Doe]
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+[#ElAnimal]
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</property>
   </object>
 </interface>

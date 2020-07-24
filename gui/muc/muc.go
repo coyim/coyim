@@ -34,6 +34,7 @@ type mucUI struct {
 	accountManager *mucAccountManager
 	roster         *mucRoster
 	roomsServer    *mucRoomsFakeServer
+	roomWindows    map[string]*roomUI
 
 	builder *builder
 }
@@ -52,8 +53,9 @@ func InitGUI(gtkVal gtki.Gtk, glibVal glibi.Glib, gdkVal gdki.Gdk, pangoVal pang
 	builder := newBuilder("muc")
 
 	m := &mucUI{
-		g:       g,
-		builder: builder,
+		g:           g,
+		builder:     builder,
+		roomWindows: map[string]*roomUI{},
 	}
 
 	m.init()

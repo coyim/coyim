@@ -35,8 +35,6 @@ type mucUI struct {
 	roster         *mucRoster
 	roomsServer    *mucRoomsFakeServer
 
-	main gtki.Box `gtk-widget:"main"`
-
 	builder *builder
 }
 
@@ -65,10 +63,6 @@ func InitGUI(gtkVal gtki.Gtk, glibVal glibi.Glib, gdkVal gdki.Gdk, pangoVal pang
 	return m
 }
 
-func (m *mucUI) ShowWindow() {
-	m.showWindow()
-}
-
 const (
 	indexJid               = 0
 	indexAccountID         = 2
@@ -80,7 +74,7 @@ const (
 	indexRowType           = 8
 )
 
-func (m *mucUI) showWindow() {
+func (m *mucUI) ShowWindow() {
 	win := m.builder.get("mainWindow").(gtki.Window)
 	win.Show()
 	m.window = win
@@ -100,8 +94,6 @@ func (m *mucUI) init() {
 	m.initRoster()
 
 	m.initDemoAccounts()
-
-	panicOnDevError(m.builder.bindObjects(m))
 
 	m.builder.ConnectSignals(map[string]interface{}{
 		"on_activate_buddy": m.onActivateRosterRow,
@@ -149,4 +141,13 @@ func createGroupDisplayName(parentName string, counter *counter, isExpanded bool
 		name = fmt.Sprintf("[%s]", name)
 	}
 	return fmt.Sprintf("%s (%d/%d)", name, counter.online, counter.total)
+}
+
+func (c *counter) inc(total, online bool) {
+	if total {
+		c.total++
+	}
+	if online {
+		c.online++
+	}
 }

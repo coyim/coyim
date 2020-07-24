@@ -168,12 +168,3 @@ func (i *mucRosterItem) getStatus() string {
 
 	return "available"
 }
-
-func (c *counter) inc(total, online bool) {
-	if total {
-		c.total++
-	}
-	if online {
-		c.online++
-	}
-}

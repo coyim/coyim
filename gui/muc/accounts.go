@@ -29,3 +29,12 @@ type mucAccountManager struct {
 func (m *mucAccountManager) addAccount(a *mucAccount) {
 	m.accounts = append(m.accounts, a)
 }
+
+func (m *mucUI) initDemoAccounts() {
+	m.accountManager = &mucAccountManager{}
+
+	accounts := fakeAccounts()
+	for _, a := range accounts {
+		m.accountManager.addAccount(a)
+	}
+}

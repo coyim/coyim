@@ -28,20 +28,14 @@ type counter struct {
 }
 
 type mucUI struct {
-	g      glibi.Glib
+	g      graphics
 	window gtki.Window
 
 	accountManager *mucAccountManager
 	roster         *mucRoster
 	roomsServer    *mucRoomsFakeServer
 
-	panel       gtki.Box    `gtk-widget:"panel"`
-	panelToggle gtki.Button `gtk-widget:"panel-toggle"`
-	main        gtki.Box    `gtk-widget:"main"`
-	room        gtki.Box    `gtk-widget:"room"`
-
-	roomPanelOpen  bool
-	roomViewActive bool
+	main gtki.Box `gtk-widget:"main"`
 
 	builder *builder
 }
@@ -57,11 +51,11 @@ func InitGUI(gtkVal gtki.Gtk, glibVal glibi.Glib, gdkVal gdki.Gdk, pangoVal pang
 		pango: pangoVal,
 	}
 
-	builder := newBuilder("mainWindow")
+	builder := newBuilder("muc")
 
 	m := &mucUI{
-		roomPanelOpen: false,
-		builder:       builder,
+		g:       g,
+		builder: builder,
 	}
 
 	m.init()
@@ -87,23 +81,9 @@ const (
 )
 
 func (m *mucUI) showWindow() {
-	win := m.builder.get("mucWindow").(gtki.Window)
+	win := m.builder.get("mainWindow").(gtki.Window)
 	win.Show()
 	m.window = win
-}
-
-func (m *mucUI) togglePanel() {
-	isOpen := !m.roomPanelOpen
-
-	var toggleLabel string
-	if isOpen {
-		toggleLabel = "Hide panel"
-	} else {
-		toggleLabel = "Show panel"
-	}
-	m.panelToggle.SetProperty("label", toggleLabel)
-	m.panel.SetVisible(isOpen)
-	m.roomPanelOpen = isOpen
 }
 
 type mucPeerStatus string
@@ -121,135 +101,16 @@ func (m *mucUI) init() {
 
 	m.initDemoAccounts()
 
-	builder := newBuilder("mainWindow")
+	panicOnDevError(m.builder.bindObjects(m))
 
-	panicOnDevError(builder.bindObjects(m))
-
-	builder.ConnectSignals(map[string]interface{}{
+	m.builder.ConnectSignals(map[string]interface{}{
 		"on_activate_buddy": m.onActivateRosterRow,
 		"on_button_press":   m.onButtonPress,
-		"on_toggle_panel":   m.togglePanel,
-		"on_close_panel":    m.closeRoomWindow,
 	})
-}
-
-func (m *mucUI) initDemoAccounts() {
-	m.accountManager = &mucAccountManager{}
-
-	accounts := []*mucAccount{
-		&mucAccount{
-			mucRosterItem: &mucRosterItem{
-				id:     "sandy@autonomia.digital",
-				status: mucStatusOnline,
-			},
-			contacts: []*mucAccountContact{
-				&mucAccountContact{
-					mucRosterItem: &mucRosterItem{
-						id:     "pedro@autonomia.digital",
-						name:   "Pedro Enrique",
-						status: mucStatusOnline,
-					},
-				},
-				&mucAccountContact{
-					mucRosterItem: &mucRosterItem{
-						id:     "rafael@autonomia.digital",
-						status: mucStatusOnline,
-					},
-				},
-				&mucAccountContact{
-					mucRosterItem: &mucRosterItem{
-						id:     "cristina@autonomia.digital",
-						name:   "Cristina Salcedo",
-						status: mucStatusOffline,
-					},
-				},
-			},
-			rooms: []string{
-				"#coyim:matrix:autonomia.digital",
-				"#wahay:matrix:autonomia.digital",
-			},
-		},
-		&mucAccount{
-			mucRosterItem: &mucRosterItem{
-				id:     "pedro@autonomia.digital",
-				status: mucStatusOnline,
-			},
-			contacts: []*mucAccountContact{
-				&mucAccountContact{
-					mucRosterItem: &mucRosterItem{
-						id:     "sandy@autonomia.digital",
-						name:   "Sandy Acurio",
-						status: mucStatusOnline,
-					},
-				},
-				&mucAccountContact{
-					mucRosterItem: &mucRosterItem{
-						id:     "rafael@autonomia.digital",
-						status: mucStatusOnline,
-					},
-				},
-				&mucAccountContact{
-					mucRosterItem: &mucRosterItem{
-						id:     "cristina@autonomia.digital",
-						name:   "Cristina Salcedo",
-						status: mucStatusOffline,
-					},
-				},
-			},
-			rooms: []string{
-				"#main:matrix:autonomia.digital",
-			},
-		},
-		&mucAccount{
-			mucRosterItem: &mucRosterItem{
-				id:     "pedro@coy.im",
-				name:   "Pedro CoyIM",
-				status: mucStatusOffline,
-			},
-		},
-	}
-
-	for _, a := range accounts {
-		m.accountManager.addAccount(a)
-	}
-}
-
-func (m *mucUI) closeRoomWindow() {
-	if !m.roomViewActive {
-		return
-	}
-
-	m.main.SetHExpand(true)
-	m.room.SetVisible(false)
-	m.roomViewActive = false
 }
 
 func (m *mucUI) onButtonPress(view gtki.TreeView, ev gdki.Event) bool {
 	return false
-}
-
-func (m *mucUI) initRooms() {
-	s := &mucRoomsFakeServer{
-		rooms: map[string]*mucRoom{},
-	}
-
-	rooms := map[string]*mucRoom{
-		"#coyim:matrix:autonomia.digital": &mucRoom{
-			name: "CoyIM",
-		},
-		"#wahay:matrix:autonomia.digital": &mucRoom{
-			name: "Wahay",
-		},
-		"#main:matrix:autonomia.digital": &mucRoom{
-			name: "Main",
-		},
-	}
-
-	for id, r := range rooms {
-		s.addRoom(id, r)
-	}
-
-	m.roomsServer = s
 }
 
 func setValues(v gtki.ListStore, iter gtki.TreeIter, values ...interface{}) {

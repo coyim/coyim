@@ -23,16 +23,6 @@ type mucMembers struct {
 	view   gtki.TreeView       `gtk-widget:"room-members-tree"`
 }
 
-func (m *mucUI) openRoomView(id string) {
-	if m.roomViewActive {
-		return
-	}
-
-	m.main.SetHExpand(false)
-	m.room.SetVisible(true)
-	m.roomViewActive = true
-}
-
 func (r *mucRoomsFakeServer) addRoom(id string, room *mucRoom) {
 	r.rooms[id] = room
 }
@@ -42,4 +32,17 @@ func (r *mucRoomsFakeServer) byID(id string) (*mucRoom, error) {
 		return room, nil
 	}
 	return nil, fmt.Errorf("roomt %s not found", id)
+}
+
+func (m *mucUI) initRooms() {
+	s := &mucRoomsFakeServer{
+		rooms: map[string]*mucRoom{},
+	}
+
+	rooms := fakeRooms()
+	for id, r := range rooms {
+		s.addRoom(id, r)
+	}
+
+	m.roomsServer = s
 }

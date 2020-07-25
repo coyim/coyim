@@ -54,7 +54,9 @@ type mucPublicRoomsView struct {
 	rooms        gtki.ScrolledWindow `gtk-widget:"rooms"`
 	spinner      gtki.Spinner        `gtk-widget:"spinner"`
 
-	accounts map[string]*account
+	accountsList    []*account
+	accounts        map[string]*account
+	currentlyActive int
 }
 
 func (prv *mucPublicRoomsView) init() {
@@ -63,8 +65,23 @@ func (prv *mucPublicRoomsView) init() {
 	prv.serviceGroups = make(map[string]gtki.TreeIter)
 }
 
-// initAccounts should be called from the UI thread
-func (prv *mucPublicRoomsView) initAccounts(accounts []*account) {
+// initOrReplaceAccounts should be called from the UI thread
+func (prv *mucPublicRoomsView) initOrReplaceAccounts(accounts []*account) {
+	// TODO: if there are no active accounts, maybe we should just hide the spinner and the view
+
+	prv.currentlyActive = 0
+	if prv.accounts != nil {
+		act := prv.accountInput.GetActive()
+		currentlyActiveAccount := prv.accountsList[act]
+		for ix, a := range accounts {
+			if currentlyActiveAccount == a {
+				prv.currentlyActive = ix
+			}
+		}
+		prv.model.Clear()
+	}
+
+	prv.accountsList = accounts
 	prv.accounts = make(map[string]*account)
 	for _, acc := range accounts {
 		iter := prv.model.Append()
@@ -74,7 +91,7 @@ func (prv *mucPublicRoomsView) initAccounts(accounts []*account) {
 	}
 
 	if len(accounts) > 0 {
-		prv.accountInput.SetActive(0)
+		prv.accountInput.SetActive(prv.currentlyActive)
 	}
 }
 
@@ -191,24 +208,35 @@ func (u *gtkUI) mucShowPublicRooms() {
 	view := &mucPublicRoomsView{}
 	view.init()
 
-	accounts := u.getAllConnectedAccounts()
-	view.initAccounts(accounts)
+	view.initOrReplaceAccounts(u.getAllConnectedAccounts())
+
+	accountsObserverToken := u.onChangeOfConnectedAccounts(func() {
+		doInUIThread(func() {
+			view.initOrReplaceAccounts(u.getAllConnectedAccounts())
+		})
+	})
 
 	view.builder.ConnectSignals(map[string]interface{}{
 		"on_cancel_signal": view.dialog.Destroy,
-		"on_join_signal":   func() {},
+		"on_close_window_signal": func() {
+			u.removeConnectedAccountsObserver(accountsObserverToken)
+		},
+		"on_join_signal": func() {},
 		"on_accounts_changed": func() {
 			act := view.accountInput.GetActive()
-			if act >= 0 && act < len(accounts) {
-				go u.mucUpdatePublicRoomsOn(view, accounts[act])
+			if act >= 0 && act < len(view.accountsList) && act != view.currentlyActive {
+				view.currentlyActive = act
+				go u.mucUpdatePublicRoomsOn(view, view.accountsList[act])
 			}
 		},
 	})
 
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
+	view.currentlyActive = -1
 
-	if len(accounts) > 0 {
-		go u.mucUpdatePublicRoomsOn(view, accounts[0])
+	if len(view.accountsList) > 0 {
+		view.currentlyActive = 0
+		go u.mucUpdatePublicRoomsOn(view, view.accountsList[view.currentlyActive])
 	}
 }

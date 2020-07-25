@@ -104,10 +104,13 @@ func (u *gtkUI) handleSessionEvent(ev events.Event, a *account) {
 	switch ev.Type {
 	case events.Connected:
 		a.enableExistingConversationWindows(true)
+		u.notifyChangeOfConnectedAccounts()
 	case events.Disconnected:
 		a.enableExistingConversationWindows(false)
+		u.notifyChangeOfConnectedAccounts()
 	case events.ConnectionLost:
 		u.notifyConnectionFailure(a, u.connectionFailureMoreInfoConnectionLost)
+		u.notifyChangeOfConnectedAccounts()
 		go u.connectWithRandomDelay(a)
 	case events.RosterReceived:
 		u.roster.update(a, a.session.R())

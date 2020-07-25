@@ -18,6 +18,10 @@ type accountManager struct {
 	events   chan interface{}
 	contacts map[*account]*rosters.List
 
+	connectedAccountsObserversIndex int
+	connectedAccountsObservers      map[int]func()
+	connectedAccountsObserversLock  sync.RWMutex
+
 	otrclient.CommandManager
 
 	log coylog.Logger
@@ -27,11 +31,12 @@ type accountManager struct {
 
 func newAccountManager(c otrclient.CommandManager, log coylog.Logger) *accountManager {
 	return &accountManager{
-		events:         make(chan interface{}, 10),
-		accounts:       make([]*account, 0, 5),
-		contacts:       make(map[*account]*rosters.List),
-		CommandManager: c,
-		log:            log,
+		events:                     make(chan interface{}, 10),
+		accounts:                   make([]*account, 0, 5),
+		contacts:                   make(map[*account]*rosters.List),
+		CommandManager:             c,
+		log:                        log,
+		connectedAccountsObservers: make(map[int]func()),
 	}
 }
 
@@ -40,6 +45,37 @@ func (m *accountManager) getAllAccounts() []*account {
 	defer m.RUnlock()
 
 	return append([]*account(nil), m.accounts...)
+}
+
+// onChangeOfConnectedAccounts will register a callback - this function will
+// be called when the list of all connected accounts change in some way
+// It might be called more than once for a specific event
+func (m *accountManager) onChangeOfConnectedAccounts(f func()) int {
+	m.connectedAccountsObserversLock.Lock()
+	defer m.connectedAccountsObserversLock.Unlock()
+
+	token := m.connectedAccountsObserversIndex
+	m.connectedAccountsObserversIndex++
+
+	m.connectedAccountsObservers[token] = f
+
+	return token
+}
+
+func (m *accountManager) notifyChangeOfConnectedAccounts() {
+	m.connectedAccountsObserversLock.RLock()
+	defer m.connectedAccountsObserversLock.RUnlock()
+
+	for _, f := range m.connectedAccountsObservers {
+		go f()
+	}
+}
+
+func (m *accountManager) removeConnectedAccountsObserver(token int) {
+	m.connectedAccountsObserversLock.Lock()
+	defer m.connectedAccountsObserversLock.Unlock()
+
+	delete(m.connectedAccountsObservers, token)
 }
 
 func (m *accountManager) getAllConnectedAccounts() []*account {
@@ -96,6 +132,8 @@ func (m *accountManager) setContacts(account *account, contacts *rosters.List) {
 }
 
 func (u *gtkUI) addAccount(appConfig *config.ApplicationConfig, account *config.Account, sf access.Factory, df interfaces.DialerFactory) {
+	defer u.notifyChangeOfConnectedAccounts()
+
 	u.Lock()
 	defer u.Unlock()
 
@@ -111,6 +149,8 @@ func (u *gtkUI) addAccount(appConfig *config.ApplicationConfig, account *config.
 }
 
 func (m *accountManager) removeAccount(conf *config.Account, k func()) {
+	defer m.notifyChangeOfConnectedAccounts()
+
 	toRemove, exists := m.getAccountByID(conf.ID())
 	if !exists {
 		return
@@ -135,6 +175,8 @@ func (m *accountManager) removeAccount(conf *config.Account, k func()) {
 }
 
 func (u *gtkUI) buildAccounts(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
+	defer u.notifyChangeOfConnectedAccounts()
+
 	hasConfUpdates := false
 	for _, accountConf := range appConfig.Accounts {
 		if _, ok := u.getAccountByID(accountConf.ID()); ok {
@@ -156,6 +198,8 @@ func (u *gtkUI) buildAccounts(appConfig *config.ApplicationConfig, sf access.Fac
 }
 
 func (u *gtkUI) addNewAccountsFromConfig(appConfig *config.ApplicationConfig, sf access.Factory, df interfaces.DialerFactory) {
+	defer u.notifyChangeOfConnectedAccounts()
+
 	for _, configAccount := range appConfig.Accounts {
 		_, found := u.getAccountByID(configAccount.ID())
 		if found {

@@ -29,6 +29,8 @@
     <property name="default-height">400</property>
     <property name="default-width">500</property>
     <property name="destroy-with-parent">true</property>
+    <signal name="close" handler="on_close_window_signal" swapped="no"/>
+    <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="visible">true</property>

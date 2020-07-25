@@ -55,7 +55,7 @@
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
+                <property name="top-attach">0</property>
               </packing>
             </child>
             <child>
@@ -74,9 +74,62 @@
               </object>
               <packing>
                 <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="refresh_button">
+                <property name="label" translatable="yes">List all rooms</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <signal name="clicked" handler="on_refresh" />
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+
+
+            <child>
+              <object class="GtkLabel" id="customServiceLabel" >
+		        <property name="visible">true</property>
+                <property name="label" translatable="yes">Service:</property>
+                <property name="justify">GTK_JUSTIFY_RIGHT</property>
+                <property name="halign">GTK_ALIGN_END</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
                 <property name="top-attach">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkEntry" id="customServiceEntry">
+		        <property name="visible">true</property>
+                <property name="placeholder-text">chat-service.example.org</property>
+                <property name="hexpand">True</property>
+                <signal name="activate" handler="on_custom_service" />
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="customServiceButton">
+                <property name="label" translatable="yes">List rooms in service</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <signal name="clicked" handler="on_custom_service" />
+              </object>
+              <packing>
+                <property name="left-attach">2</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+
             <child>
               <object class="GtkSpinner" id="spinner">
                 <property name="visible">false</property>
@@ -86,7 +139,7 @@
               <packing>
                 <property name="left-attach">0</property>
                 <property name="top-attach">2</property>
-                <property name="width">2</property>
+                <property name="width">3</property>
               </packing>
             </child>
             <child>
@@ -158,8 +211,8 @@
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="width">2</property>
                 <property name="top-attach">3</property>
+                <property name="width">3</property>
               </packing>
             </child>
           </object>

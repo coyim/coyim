@@ -76,7 +76,7 @@ type Session interface {
 	AbortSMP(jid.WithResource)
 	GetAndWipeSymmetricKeyFor(jid.Any) []byte
 
-	GetRooms(jid.Domain) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
+	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
 }
 
 // Factory is a function that can create new Sessions

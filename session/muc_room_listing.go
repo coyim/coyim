@@ -200,13 +200,29 @@ func (s *session) getRoomsAsync(server jid.Domain, results chan<- *muc.RoomListi
 	results <- nil
 }
 
-func (s *session) GetRooms(server jid.Domain) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error) {
+func (s *session) getRoomsAsyncCustomService(service string, results chan<- *muc.RoomListing, resultsServices chan<- *muc.ServiceListing, errorResult chan<- error) {
+	s.log.WithField("service", service).Debug("getRoomsAsyncCustomService()")
+
+	allRooms := sync.WaitGroup{}
+	allRooms.Add(1)
+	go s.getRoomsInService(jid.Parse(service), "", results, resultsServices, &allRooms)
+	allRooms.Wait()
+
+	// This signals we are done
+	results <- nil
+}
+
+func (s *session) GetRooms(server jid.Domain, customService string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error) {
 	s.log.WithField("server", server).Debug("GetRooms()")
 	result := make(chan *muc.RoomListing, 20)
 	resultServices := make(chan *muc.ServiceListing, 20)
 	errorResult := make(chan error, 1)
 
-	go s.getRoomsAsync(server, result, resultServices, errorResult)
+	if customService == "" {
+		go s.getRoomsAsync(server, result, resultServices, errorResult)
+	} else {
+		go s.getRoomsAsyncCustomService(customService, result, resultServices, errorResult)
+	}
 
 	return result, resultServices, errorResult
 }

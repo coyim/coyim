@@ -9,8 +9,8 @@ import (
 )
 
 // TODO: message bar (for errors etc)
-// TODO: it should be possible to put in your own custom chat service as well
-// TODO: add refresh button
+// TODO: add shortcuts for the window
+// TODO: description field should not push everything out
 
 const (
 	mucListRoomsIndexJid         = 0
@@ -46,13 +46,14 @@ type mucPublicRoomsView struct {
 	serviceGroups map[string]gtki.TreeIter
 	cancel        chan bool
 
-	dialog       gtki.Dialog         `gtk-widget:"MUCPublicRooms"`
-	model        gtki.ListStore      `gtk-widget:"accounts-model"`
-	accountInput gtki.ComboBox       `gtk-widget:"accounts"`
-	roomsModel   gtki.TreeStore      `gtk-widget:"rooms-model"`
-	roomsTree    gtki.TreeView       `gtk-widget:"rooms-tree"`
-	rooms        gtki.ScrolledWindow `gtk-widget:"rooms"`
-	spinner      gtki.Spinner        `gtk-widget:"spinner"`
+	dialog        gtki.Dialog         `gtk-widget:"MUCPublicRooms"`
+	model         gtki.ListStore      `gtk-widget:"accounts-model"`
+	accountInput  gtki.ComboBox       `gtk-widget:"accounts"`
+	roomsModel    gtki.TreeStore      `gtk-widget:"rooms-model"`
+	roomsTree     gtki.TreeView       `gtk-widget:"rooms-tree"`
+	rooms         gtki.ScrolledWindow `gtk-widget:"rooms"`
+	spinner       gtki.Spinner        `gtk-widget:"spinner"`
+	customService gtki.Entry          `gtk-widget:"customServiceEntry"`
 
 	accountsList    []*account
 	accounts        map[string]*account
@@ -103,6 +104,8 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 
 	view.updateLock.Lock()
 
+	customService, _ := view.customService.GetText()
+
 	view.cancel = make(chan bool, 1)
 
 	doInUIThread(func() {
@@ -119,7 +122,7 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 	// We save the generation value here, in case it gets modified inside the view later
 	gen := view.generation
 
-	res, resServices, ec := a.session.GetRooms(jid.Parse(a.session.GetConfig().Account).Host())
+	res, resServices, ec := a.session.GetRooms(jid.Parse(a.session.GetConfig().Account).Host(), customService)
 	go func() {
 		defer func() {
 			if !hasSomething {
@@ -222,6 +225,12 @@ func (u *gtkUI) mucShowPublicRooms() {
 			u.removeConnectedAccountsObserver(accountsObserverToken)
 		},
 		"on_join_signal": func() {},
+		"on_custom_service": func() {
+			go u.mucUpdatePublicRoomsOn(view, view.accountsList[view.currentlyActive])
+		},
+		"on_refresh": func() {
+			go u.mucUpdatePublicRoomsOn(view, view.accountsList[view.currentlyActive])
+		},
 		"on_accounts_changed": func() {
 			act := view.accountInput.GetActive()
 			if act >= 0 && act < len(view.accountsList) && act != view.currentlyActive {

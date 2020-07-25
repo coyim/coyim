@@ -38,6 +38,21 @@
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <property name="spacing">6</property>
         <child>
+          <!--TODO: this seems to render weirdly -->
+          <object class="GtkBox" id="notification-area">
+            <property name="visible">false</property>
+            <property name="margin-top">5</property>
+            <property name="margin-left">5</property>
+            <property name="margin-right">5</property>
+            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkGrid" id="grid">
             <property name="visible">true</property>
             <property name="margin-top">15</property>
@@ -155,8 +170,7 @@
                     <property name="model">rooms-model</property>
                     <property name="headers-visible">true</property>
                     <property name="show-expanders">true</property>
-                    <!-- <property name="tooltip-column">6</property> -->
-                    <!-- <property name="search-column">6</property> -->
+                    <property name="tooltip-column">1</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="selection">
                         <property name="mode">GTK_SELECTION_SINGLE</property>
@@ -165,6 +179,13 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="name-column">
                         <property name="title">Name</property>
+                        <property name="clickable">True</property>
+                        <property name="expand">True</property>
+                        <property name="resizable">True</property>
+                        <property name="min-width">150</property>
+                        <property name="fixed-width">200</property>
+                        <property name="sort-column-id">1</property>
+                        <property name="sort-indicator">True</property>
                         <child>
                           <object class="GtkCellRendererText" id="name-column-rendered"/>
                           <attributes>
@@ -176,6 +197,13 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="jid-column">
                         <property name="title">ID</property>
+                        <property name="clickable">True</property>
+                        <property name="expand">False</property>
+                        <property name="resizable">True</property>
+                        <property name="min-width">50</property>
+                        <property name="fixed-width">150</property>
+                        <property name="sort-column-id">0</property>
+                        <property name="sort-indicator">True</property>
                         <child>
                           <object class="GtkCellRendererText" id="jid-column-rendered"/>
                           <attributes>
@@ -187,6 +215,13 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="description-column">
                         <property name="title">Description</property>
+                        <property name="clickable">True</property>
+                        <property name="expand">True</property>
+                        <property name="resizable">True</property>
+                        <property name="min-width">100</property>
+                        <property name="fixed-width">200</property>
+                        <property name="sort-column-id">3</property>
+                        <property name="sort-indicator">True</property>
                         <child>
                           <object class="GtkCellRendererText" id="description-column-rendered"/>
                           <attributes>
@@ -198,6 +233,13 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="occupants-column">
                         <property name="title">Occupants</property>
+                        <property name="clickable">True</property>
+                        <property name="expand">False</property>
+                        <property name="resizable">True</property>
+                        <property name="min-width">50</property>
+                        <property name="fixed-width">100</property>
+                        <property name="sort-column-id">4</property>
+                        <property name="sort-indicator">True</property>
                         <child>
                           <object class="GtkCellRendererText" id="occupants-column-rendered"/>
                           <attributes>

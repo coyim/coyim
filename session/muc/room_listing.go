@@ -26,6 +26,9 @@ type RoomListing struct {
 	Description               string
 	Occupants                 int
 	MembersCanInvite          bool
+	OccupantsCanInvite        bool
+	AllowPrivateMessages      string // This can be 'anyone', 'participants', 'moderators', 'none'
+	ContactJid                string
 
 	lockUpdates sync.RWMutex
 	onUpdates   []func()

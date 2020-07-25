@@ -63,6 +63,24 @@ func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 		case "http://jabber.org/protocol/muc#self-ping-optimization":
 			// This means the chat room supports XEP-0410, that allows
 			// users to see if they're still connected to a chat room.
+		case "http://jabber.org/protocol/disco#info":
+			// Ignore
+		case "http://jabber.org/protocol/disco#items":
+			// Ignore
+		case "urn:xmpp:mam:0":
+			// Ignore
+		case "urn:xmpp:mam:1":
+			// Ignore
+		case "urn:xmpp:mam:2":
+			// Ignore
+		case "urn:xmpp:mam:tmp":
+			// Ignore
+		case "urn:xmpp:mucsub:0":
+			// Ignore
+		case "urn:xmpp:sid:0":
+			// Ignore
+		case "vcard-temp":
+			// Ignore
 		case "http://jabber.org/protocol/muc#request":
 			rl.SupportsVoiceRequests = true
 		case "jabber:iq:register":
@@ -128,6 +146,18 @@ func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 				case "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites":
 					if len(val) > 0 {
 						rl.MembersCanInvite = val[0] == "1"
+					}
+				case "muc#roomconfig_allowinvites":
+					if len(val) > 0 {
+						rl.OccupantsCanInvite = val[0] == "1"
+					}
+				case "muc#roomconfig_allowpm":
+					if len(val) > 0 {
+						rl.AllowPrivateMessages = val[0]
+					}
+				case "muc#roominfo_contactjid":
+					if len(val) > 0 {
+						rl.ContactJid = val[0]
 					}
 				default:
 					fmt.Printf("UNKNOWN FORM VAR: %s\n", k)

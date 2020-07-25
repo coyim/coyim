@@ -3,14 +3,11 @@ package gui
 import (
 	"sync"
 
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
-
-// TODO: message bar (for errors etc)
-// TODO: add shortcuts for the window
-// TODO: description field should not push everything out
 
 const (
 	mucListRoomsIndexJid         = 0
@@ -46,37 +43,58 @@ type mucPublicRoomsView struct {
 	serviceGroups map[string]gtki.TreeIter
 	cancel        chan bool
 
-	dialog        gtki.Dialog         `gtk-widget:"MUCPublicRooms"`
-	model         gtki.ListStore      `gtk-widget:"accounts-model"`
-	accountInput  gtki.ComboBox       `gtk-widget:"accounts"`
-	roomsModel    gtki.TreeStore      `gtk-widget:"rooms-model"`
-	roomsTree     gtki.TreeView       `gtk-widget:"rooms-tree"`
-	rooms         gtki.ScrolledWindow `gtk-widget:"rooms"`
-	spinner       gtki.Spinner        `gtk-widget:"spinner"`
-	customService gtki.Entry          `gtk-widget:"customServiceEntry"`
+	dialog           gtki.Dialog         `gtk-widget:"MUCPublicRooms"`
+	model            gtki.ListStore      `gtk-widget:"accounts-model"`
+	accountInput     gtki.ComboBox       `gtk-widget:"accounts"`
+	roomsModel       gtki.TreeStore      `gtk-widget:"rooms-model"`
+	roomsTree        gtki.TreeView       `gtk-widget:"rooms-tree"`
+	rooms            gtki.ScrolledWindow `gtk-widget:"rooms"`
+	spinner          gtki.Spinner        `gtk-widget:"spinner"`
+	customService    gtki.Entry          `gtk-widget:"customServiceEntry"`
+	notificationArea gtki.Box            `gtk-widget:"notification-area"`
+	notification     gtki.InfoBar
+	errorNotif       *errorNotification
 
 	accountsList    []*account
 	accounts        map[string]*account
 	currentlyActive int
 }
 
+func (prv *mucPublicRoomsView) clearErrors() {
+	prv.errorNotif.Hide()
+}
+
+func (prv *mucPublicRoomsView) notifyOnError(err string) {
+	doInUIThread(func() {
+		if prv.notification != nil {
+			prv.notificationArea.Remove(prv.notification)
+		}
+
+		prv.errorNotif.ShowMessage(err)
+	})
+}
+
 func (prv *mucPublicRoomsView) init() {
 	prv.builder = newBuilder("MUCPublicRoomsDialog")
 	panicOnDevError(prv.builder.bindObjects(prv))
 	prv.serviceGroups = make(map[string]gtki.TreeIter)
+	prv.errorNotif = newErrorNotification(prv.notificationArea)
 }
 
 // initOrReplaceAccounts should be called from the UI thread
 func (prv *mucPublicRoomsView) initOrReplaceAccounts(accounts []*account) {
-	// TODO: if there are no active accounts, maybe we should just hide the spinner and the view
+	if len(accounts) == 0 {
+		prv.notifyOnError(i18n.Local("There are no connected accounts"))
+	}
 
-	prv.currentlyActive = 0
-	if prv.accounts != nil {
-		act := prv.accountInput.GetActive()
-		currentlyActiveAccount := prv.accountsList[act]
+	currentlyActive := 0
+	oldActive := prv.accountInput.GetActive()
+	if prv.accounts != nil && oldActive >= 0 {
+		currentlyActiveAccount := prv.accountsList[oldActive]
 		for ix, a := range accounts {
 			if currentlyActiveAccount == a {
-				prv.currentlyActive = ix
+				currentlyActive = ix
+				prv.currentlyActive = currentlyActive
 			}
 		}
 		prv.model.Clear()
@@ -92,7 +110,12 @@ func (prv *mucPublicRoomsView) initOrReplaceAccounts(accounts []*account) {
 	}
 
 	if len(accounts) > 0 {
-		prv.accountInput.SetActive(prv.currentlyActive)
+		prv.accountInput.SetActive(currentlyActive)
+	} else {
+		prv.rooms.SetVisible(false)
+		prv.spinner.Stop()
+		prv.spinner.SetVisible(false)
+		prv.roomsModel.Clear()
 	}
 }
 
@@ -103,6 +126,8 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 	}
 
 	view.updateLock.Lock()
+
+	doInUIThread(view.clearErrors)
 
 	customService, _ := view.customService.GetText()
 
@@ -117,19 +142,24 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 	view.generation++
 	view.serviceGroups = make(map[string]gtki.TreeIter)
 
-	hasSomething := false
-
 	// We save the generation value here, in case it gets modified inside the view later
 	gen := view.generation
 
 	res, resServices, ec := a.session.GetRooms(jid.Parse(a.session.GetConfig().Account).Host(), customService)
 	go func() {
+		hasSomething := false
+
 		defer func() {
 			if !hasSomething {
 				doInUIThread(func() {
 					view.spinner.Stop()
 					view.spinner.SetVisible(false)
 					view.rooms.SetVisible(true)
+					if customService != "" {
+						view.notifyOnError(i18n.Local("That service doesn't seem to exist"))
+					} else {
+						view.notifyOnError(i18n.Local("Your XMPP server doesn't seem to have any chat room services"))
+					}
 				})
 			}
 
@@ -190,12 +220,12 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 
 					view.roomsTree.ExpandAll()
 				})
-
 			case e, ok := <-ec:
 				if !ok {
 					return
 				}
 				if e != nil {
+					view.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
 					u.log.WithError(e).Debug("something went wrong trying to get chat rooms")
 				}
 				return
@@ -239,6 +269,8 @@ func (u *gtkUI) mucShowPublicRooms() {
 			}
 		},
 	})
+
+	u.connectShortcutsChildWindow(view.dialog)
 
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()

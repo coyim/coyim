@@ -7,21 +7,42 @@ import (
 )
 
 type roomUI struct {
-	id string
+	id      string
+	builder *builder
+	window  gtki.Window
+	room    *room
 
 	panel       gtki.Box    `gtk-widget:"panel"`
 	panelToggle gtki.Button `gtk-widget:"panel-toggle"`
 
-	room gtki.Box `gtk-widget:"room"`
+	roomPanelOpen    bool
+	roomViewActive   bool
+	roomConversation gtki.Box `gtk-widget:"room"`
 
-	roomPanelOpen  bool
-	roomViewActive bool
+	windowTitle       gtki.Label `gtk-widget:"window-title"`
+	windowDescription gtki.Label `gtk-widget:"window-description"`
 
-	window  gtki.Window
-	builder *builder
+	roomMembers      gtki.ScrolledWindow `gtk-widget:"room-members"`
+	roomMembersModel gtki.ListStore      `gtk-widget:"room-members-model"`
+	roomMembersView  gtki.TreeView       `gtk-widget:"room-members-tree"`
+}
+
+type member struct {
+	*rosterItem
+}
+
+type room struct {
+	*rosterItem
+	description string
+	members     []*member
 }
 
 func (u *gtkUI) openRoomView(id string) {
+	room, err := u.roomsServer.byID(id)
+	if err != nil {
+		panic(err.Error())
+	}
+
 	r2, err := u.roomWindowByID(id)
 	if err == nil {
 		r2.window.Present()
@@ -38,6 +59,7 @@ func (u *gtkUI) openRoomView(id string) {
 		id:      id,
 		builder: builder,
 		window:  win,
+		room:    room,
 	}
 
 	panicOnDevError(builder.bindObjects(r))
@@ -52,7 +74,11 @@ func (u *gtkUI) openRoomView(id string) {
 		"on_toggle_panel": r.togglePanel,
 	})
 
-	u.doInUIThread(win.Show)
+	u.doInUIThread(func() {
+		win.Show()
+		r.windowTitle.SetText(r.room.displayName())
+		r.windowDescription.SetText(r.room.displayDescription())
+	})
 
 	u.addNewRoomWindow(id, r)
 }
@@ -97,4 +123,8 @@ func (u *gtkUI) roomWindowByID(id string) (*roomUI, error) {
 		return r, nil
 	}
 	return nil, errors.New("room window don't exists")
+}
+
+func (r *room) displayDescription() string {
+	return r.description
 }

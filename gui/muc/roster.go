@@ -121,9 +121,17 @@ func (r *roster) addAccountGroups(groups []*group, p gtki.TreeIter) {
 
 func (r *roster) addRoom(r1 *accountRoom, r2 *room, ident string, p gtki.TreeIter) {
 	roomItem := &rosterItem{
-		id:     r1.id,
-		name:   r2.name,
-		status: r1.status,
+		id: r1.id,
+	}
+
+	if r2.name != "" {
+		roomItem.name = r2.name
+	}
+
+	if r2.status != "" {
+		roomItem.status = r2.status
+	} else {
+		roomItem.status = statusOffline
 	}
 
 	r.addItem(roomItem, "room", ident, p)

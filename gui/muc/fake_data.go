@@ -31,12 +31,16 @@ func fakeAccounts() []*account {
 			},
 			rooms: []*accountRoom{
 				&accountRoom{
-					id:     "#coyim:matrix:autonomia.digital",
+					id:     "coyim:matrix:autonomia.digital",
 					status: statusOnline,
 				},
 				&accountRoom{
-					id:     "#wahay:matrix:autonomia.digital",
+					id:     "wahay:matrix:autonomia.digital",
 					status: statusOnline,
+				},
+				&accountRoom{
+					id:     "gtk-ui:matrix:autonomia.digital",
+					status: statusOffline,
 				},
 			},
 			groups: []*group{
@@ -47,11 +51,11 @@ func fakeAccounts() []*account {
 					},
 					rooms: []*accountRoom{
 						&accountRoom{
-							id:     "#main:matrix:autonomia.digital",
+							id:     "main:matrix:autonomia.digital",
 							status: statusOnline,
 						},
 						&accountRoom{
-							id:     "#admin:matrix:autonomia.digital",
+							id:     "admin:matrix:autonomia.digital",
 							status: statusOnline,
 						},
 					},
@@ -109,7 +113,7 @@ func fakeAccounts() []*account {
 			},
 			rooms: []*accountRoom{
 				&accountRoom{
-					id:     "#main:matrix:autonomia.digital",
+					id:     "main:matrix:autonomia.digital",
 					status: statusOffline,
 				},
 			},
@@ -128,18 +132,28 @@ func fakeAccounts() []*account {
 
 func fakeRooms() map[string]*room {
 	rooms := map[string]*room{
-		"#coyim:matrix:autonomia.digital": &room{
-			name: "CoyIM",
+		"coyim:matrix:autonomia.digital": &room{
+			rosterItem: &rosterItem{
+				name: "CoyIM",
+			},
 		},
-		"#wahay:matrix:autonomia.digital": &room{
-			name: "Wahay",
+		"wahay:matrix:autonomia.digital": &room{
+			rosterItem: &rosterItem{
+				name: "Wahay",
+			},
 		},
-		"#main:matrix:autonomia.digital": &room{
-			name: "Main",
+		"main:matrix:autonomia.digital": &room{
+			rosterItem: &rosterItem{
+				name: "Main",
+			},
+			description: "The Main room for CAD",
 		},
-		"#admin:matrix:autonomia.digital": &room{
-			name: "Administration",
+		"admin:matrix:autonomia.digital": &room{
+			rosterItem: &rosterItem{
+				name: "Administration",
+			},
 		},
+		"gtk-ui:matrix:autonomia.digital": &room{},
 	}
 
 	return rooms

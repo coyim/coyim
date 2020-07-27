@@ -2,28 +2,19 @@ package muc
 
 import (
 	"fmt"
-
-	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomsFakeServer struct {
 	rooms map[string]*room
 }
 
-type room struct {
-	id      string
-	name    string
-	status  peerStatus
-	members *members
-}
-
-type members struct {
-	widget gtki.ScrolledWindow `gtk-widget:"room-members"`
-	model  gtki.ListStore      `gtk-widget:"room-members-model"`
-	view   gtki.TreeView       `gtk-widget:"room-members-tree"`
-}
-
 func (r *roomsFakeServer) addRoom(id string, room *room) {
+	if room.rosterItem == nil {
+		room.rosterItem = &rosterItem{
+			id: id,
+		}
+	}
+
 	r.rooms[id] = room
 }
 

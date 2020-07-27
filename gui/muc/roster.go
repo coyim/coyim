@@ -132,11 +132,12 @@ func (r *roster) addItem(item *rosterItem, rowType string, indent string) {
 		"BelongsTo",
 		decideColorForPeer(cs, item),
 		cs.rosterPeerBackground,
-		nil,
+		400,
 		createTooltipForPeer(item),
 	)
 
 	_ = r.model.SetValue(iter, indexRowType, rowType)
+	_ = r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].GetPixbuf())
 }
 
 type rosterItem struct {
@@ -167,6 +168,14 @@ func (i *rosterItem) getStatus() string {
 	}
 
 	if i.status == statusOffline {
+		return "offline"
+	}
+
+	return "available"
+}
+
+func decideStatusFor(r *rosterItem) string {
+	if !r.isOnline() {
 		return "offline"
 	}
 

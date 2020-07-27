@@ -1,28 +1,28 @@
 package muc
 
-type mucAccountContact struct {
-	*mucRosterItem
+type contact struct {
+	*rosterItem
 }
 
-type mucAccount struct {
-	*mucRosterItem
-	contacts []*mucAccountContact
+type account struct {
+	*rosterItem
+	contacts []*contact
 	rooms    []string
 }
 
-type mucAccountManager struct {
-	accounts []*mucAccount
+type accountManager struct {
+	accounts []*account
 }
 
-func (m *mucAccountManager) addAccount(a *mucAccount) {
+func (m *accountManager) addAccount(a *account) {
 	m.accounts = append(m.accounts, a)
 }
 
-func (m *mucUI) initDemoAccounts() {
-	m.accountManager = &mucAccountManager{}
+func (u *gtkUI) initDemoAccounts() {
+	u.accountManager = &accountManager{}
 
 	accounts := fakeAccounts()
 	for _, a := range accounts {
-		m.accountManager.addAccount(a)
+		u.accountManager.addAccount(a)
 	}
 }

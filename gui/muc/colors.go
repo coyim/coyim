@@ -26,7 +26,7 @@ type colorSet struct {
 
 var themeVariant string
 
-func (u *mucUI) isDarkThemeVariant() bool {
+func (u *gtkUI) isDarkThemeVariant() bool {
 	if themeVariant != "" {
 		return themeVariant == "dark"
 	}
@@ -54,14 +54,14 @@ func (u *mucUI) isDarkThemeVariant() bool {
 	return false
 }
 
-func (u *mucUI) currentColorSet() colorSet {
+func (u *gtkUI) currentColorSet() colorSet {
 	if u.isDarkThemeVariant() {
 		return u.defaultDarkColorSet()
 	}
 	return u.defaultLightColorSet()
 }
 
-func (u *mucUI) defaultLightColorSet() colorSet {
+func (u *gtkUI) defaultLightColorSet() colorSet {
 	return colorSet{
 		rosterPeerBackground:                      "#ffffff",
 		rosterPeerOfflineForeground:               "#aaaaaa",
@@ -82,7 +82,7 @@ func (u *mucUI) defaultLightColorSet() colorSet {
 	}
 }
 
-func (u *mucUI) defaultDarkColorSet() colorSet {
+func (u *gtkUI) defaultDarkColorSet() colorSet {
 	return colorSet{
 		rosterPeerBackground:                      "#7f7f7f",
 		rosterPeerOfflineForeground:               "#aaaaaa",

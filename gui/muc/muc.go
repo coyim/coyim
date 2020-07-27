@@ -27,14 +27,14 @@ type counter struct {
 	online int
 }
 
-type mucUI struct {
+type gtkUI struct {
 	g      graphics
 	window gtki.Window
 
-	accountManager *mucAccountManager
-	roster         *mucRoster
-	roomsServer    *mucRoomsFakeServer
-	roomWindows    map[string]*roomUI
+	accountManager *accountManager
+	roster         *roster
+	roomsServer    *roomsFakeServer
+	roomUI         map[string]*roomUI
 
 	builder *builder
 }
@@ -52,15 +52,15 @@ func InitGUI(gtkVal gtki.Gtk, glibVal glibi.Glib, gdkVal gdki.Gdk, pangoVal pang
 
 	builder := newBuilder("muc")
 
-	m := &mucUI{
-		g:           g,
-		builder:     builder,
-		roomWindows: map[string]*roomUI{},
+	u := &gtkUI{
+		g:       g,
+		builder: builder,
+		roomUI:  map[string]*roomUI{},
 	}
 
-	m.init()
+	u.init()
 
-	return m
+	return u
 }
 
 const (
@@ -74,35 +74,35 @@ const (
 	indexRowType           = 8
 )
 
-func (m *mucUI) ShowWindow() {
-	m.addAccountsToRoster()
-	win := m.builder.get("mainWindow").(gtki.Window)
-	m.doInUIThread(win.Show)
-	m.window = win
+func (u *gtkUI) ShowWindow() {
+	u.addAccountsToRoster()
+	win := u.builder.get("mainWindow").(gtki.Window)
+	u.doInUIThread(win.Show)
+	u.window = win
 }
 
-type mucPeerStatus string
+type peerStatus string
 
 var (
-	mucStatusConnecting mucPeerStatus = "connecting"
-	mucStatusOnline     mucPeerStatus = "online"
-	mucStatusOffline    mucPeerStatus = "offline"
+	statusConnecting peerStatus = "connecting"
+	statusOnline     peerStatus = "online"
+	statusOffline    peerStatus = "offline"
 )
 
-func (m *mucUI) init() {
-	m.initRooms()
+func (u *gtkUI) init() {
+	u.initRooms()
 
-	m.initRoster()
+	u.initRoster()
 
-	m.initDemoAccounts()
+	u.initDemoAccounts()
 
-	m.builder.ConnectSignals(map[string]interface{}{
-		"on_activate_buddy": m.onActivateRosterRow,
-		"on_button_press":   m.onButtonPress,
+	u.builder.ConnectSignals(map[string]interface{}{
+		"on_activate_buddy": u.onActivateRosterRow,
+		"on_button_press":   u.onButtonPress,
 	})
 }
 
-func (m *mucUI) onButtonPress(view gtki.TreeView, ev gdki.Event) bool {
+func (u *gtkUI) onButtonPress(view gtki.TreeView, ev gdki.Event) bool {
 	return false
 }
 
@@ -114,14 +114,14 @@ func setValues(v gtki.ListStore, iter gtki.TreeIter, values ...interface{}) {
 	}
 }
 
-func decideColorForPeer(cs colorSet, i *mucRosterItem) string {
+func decideColorForPeer(cs colorSet, i *rosterItem) string {
 	if !i.isOnline() {
 		return cs.rosterPeerOfflineForeground
 	}
 	return cs.rosterPeerOnlineForeground
 }
 
-func createTooltipForPeer(i *mucRosterItem) string {
+func createTooltipForPeer(i *rosterItem) string {
 	pname := html.EscapeString(i.displayName())
 	jid := html.EscapeString(i.id)
 	if pname != jid {
@@ -153,6 +153,6 @@ func (c *counter) inc(total, online bool) {
 	}
 }
 
-func (m *mucUI) doInUIThread(f func()) {
+func (u *gtkUI) doInUIThread(f func()) {
 	_, _ = g.glib.IdleAdd(f)
 }

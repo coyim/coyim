@@ -21,8 +21,8 @@ type roomUI struct {
 	builder *builder
 }
 
-func (m *mucUI) openRoomView(id string) {
-	r2, err := m.roomWindowByID(id)
+func (u *gtkUI) openRoomView(id string) {
+	r2, err := u.roomWindowByID(id)
 	if err == nil {
 		r2.window.Present()
 		return
@@ -44,21 +44,21 @@ func (m *mucUI) openRoomView(id string) {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close": func() {
-			m.removeRoomWindow(id)
+			u.removeRoomWindow(id)
 		},
 		"on_conversation_close": func() {
-			m.doInUIThread(win.Destroy)
+			u.doInUIThread(win.Destroy)
 		},
 		"on_toggle_panel": r.togglePanel,
 	})
 
-	m.doInUIThread(win.Show)
+	u.doInUIThread(win.Show)
 
-	m.addNewRoomWindow(id, r)
+	u.addNewRoomWindow(id, r)
 }
 
-func (m *roomUI) togglePanel() {
-	isOpen := !m.roomPanelOpen
+func (u *roomUI) togglePanel() {
+	isOpen := !u.roomPanelOpen
 
 	var toggleLabel string
 	if isOpen {
@@ -66,34 +66,34 @@ func (m *roomUI) togglePanel() {
 	} else {
 		toggleLabel = "Show panel"
 	}
-	m.panelToggle.SetProperty("label", toggleLabel)
-	m.panel.SetVisible(isOpen)
-	m.roomPanelOpen = isOpen
+	u.panelToggle.SetProperty("label", toggleLabel)
+	u.panel.SetVisible(isOpen)
+	u.roomPanelOpen = isOpen
 }
 
-func (m *roomUI) closeRoomWindow() {
-	if !m.roomViewActive {
+func (u *roomUI) closeRoomWindow() {
+	if !u.roomViewActive {
 		return
 	}
 
-	m.roomViewActive = false
+	u.roomViewActive = false
 }
 
-func (m *mucUI) addNewRoomWindow(id string, r *roomUI) {
-	_, err := m.roomWindowByID(id)
+func (u *gtkUI) addNewRoomWindow(id string, r *roomUI) {
+	_, err := u.roomWindowByID(id)
 	if err != nil {
-		m.roomWindows[id] = r
+		u.roomUI[id] = r
 	}
 }
 
-func (m *mucUI) removeRoomWindow(id string) {
-	if _, ok := m.roomWindows[id]; ok {
-		delete(m.roomWindows, id)
+func (u *gtkUI) removeRoomWindow(id string) {
+	if _, ok := u.roomUI[id]; ok {
+		delete(u.roomUI, id)
 	}
 }
 
-func (m *mucUI) roomWindowByID(id string) (*roomUI, error) {
-	if r, ok := m.roomWindows[id]; ok {
+func (u *gtkUI) roomWindowByID(id string) (*roomUI, error) {
+	if r, ok := u.roomUI[id]; ok {
 		return r, nil
 	}
 	return nil, errors.New("room window don't exists")

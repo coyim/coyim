@@ -91,7 +91,6 @@
                             <property name="headers_clickable">False</property>
                             <property name="enable_search">False</property>
                             <property name="search_column">6</property>
-                            <property name="level_indentation">3</property>
                             <property name="tooltip_column">6</property>
                             <signal name="button-press-event" handler="on_button_press" swapped="no"/>
                             <signal name="row-activated" handler="on_activate_buddy" swapped="no"/>
@@ -100,7 +99,7 @@
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="icon-column">
-                                <property name="title" translatable="yes">status</property>
+                                <property name="title" translatable="yes">Status</property>
                                 <child>
                                   <object class="GtkCellRendererPixbuf" id="icon-column-rendered"/>
                                   <attributes>
@@ -112,7 +111,7 @@
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="name-column">
-                                <property name="title">name</property>
+                                <property name="title">Account</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="name-column-rendered"/>
                                   <attributes>

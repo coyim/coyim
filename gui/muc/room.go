@@ -8,6 +8,7 @@ import (
 
 type roomUI struct {
 	id      string
+	u       *gtkUI
 	builder *builder
 	window  gtki.Window
 	room    *room
@@ -27,14 +28,20 @@ type roomUI struct {
 	roomMembersView  gtki.TreeView       `gtk-widget:"room-members-tree"`
 }
 
-type member struct {
-	*rosterItem
-}
+type roomRole string
+
+const (
+	roleAdministrator roomRole = "administrator"
+	roleModerator     roomRole = "moderator"
+	roleNone          roomRole = "none"
+	roleParticipant   roomRole = "participant"
+	roleVisitor       roomRole = "visitor"
+)
 
 type room struct {
 	*rosterItem
 	description string
-	members     []*member
+	members     membersList
 }
 
 func (u *gtkUI) openRoomView(id string) {
@@ -60,6 +67,7 @@ func (u *gtkUI) openRoomView(id string) {
 		builder: builder,
 		window:  win,
 		room:    room,
+		u:       u,
 	}
 
 	panicOnDevError(builder.bindObjects(r))
@@ -79,6 +87,10 @@ func (u *gtkUI) openRoomView(id string) {
 		r.windowTitle.SetText(r.room.displayName())
 		r.windowDescription.SetText(r.room.displayDescription())
 	})
+
+	// TODO: improve this if required for future interactions
+	// in this mockup
+	r.showRoomMembers()
 
 	u.addNewRoomWindow(id, r)
 }

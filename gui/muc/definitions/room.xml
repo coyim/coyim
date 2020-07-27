@@ -4,23 +4,13 @@
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkListStore" id="room-members-model">
     <columns>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray2 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray3 -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray4 -->
-      <column type="gchararray"/>
-      <!-- column-name gint -->
-      <column type="gint"/>
-      <!-- column-name gchararray5 -->
-      <column type="gchararray"/>
-      <!-- column-name gdkpixbuf -->
+      <!-- column-name statusIcon -->
       <column type="GdkPixbuf"/>
-      <!-- column-name gchararray6 -->
+      <!-- column-name displayName -->
+      <column type="gchararray"/>
+      <!-- column-name displayRole -->
+      <column type="gchararray"/>
+      <!-- column-name displayTooltip -->
       <column type="gchararray"/>
     </columns>
   </object>
@@ -394,7 +384,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
             </child>
             <child>
               <object class="GtkBox" id="panel">
-                <property name="width_request">350</property>
+                <property name="width_request">400</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
@@ -473,35 +463,46 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                                         <property name="model">room-members-model</property>
                                         <property name="headers_visible">False</property>
                                         <property name="headers_clickable">False</property>
-                                        <property name="search_column">6</property>
+                                        <property name="enable_search">False</property>
+                                        <property name="search_column">1</property>
                                         <property name="show_expanders">False</property>
-                                        <property name="level_indentation">3</property>
-                                        <property name="tooltip_column">6</property>
+                                        <property name="tooltip_column">3</property>
                                         <child internal-child="selection">
                                           <object class="GtkTreeSelection"/>
                                         </child>
                                         <child>
-                                          <object class="GtkTreeViewColumn" id="icon-column1">
-                                            <property name="title" translatable="yes">status</property>
+                                          <object class="GtkTreeViewColumn" id="icon-column">
+                                            <property name="title" translatable="yes">Status</property>
                                             <child>
-                                              <object class="GtkCellRendererPixbuf" id="icon-column-rendered1"/>
+                                              <object class="GtkCellRendererPixbuf" id="icon-column-rendered"/>
                                               <attributes>
                                                 <attribute name="cell-background">4</attribute>
-                                                <attribute name="pixbuf">7</attribute>
+                                                <attribute name="pixbuf">0</attribute>
                                               </attributes>
                                             </child>
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkTreeViewColumn" id="name-column1">
-                                            <property name="title">name</property>
+                                          <object class="GtkTreeViewColumn" id="name-column">
+                                            <property name="title">Member</property>
+                                            <property name="expand">True</property>
                                             <child>
-                                              <object class="GtkCellRendererText" id="name-column-rendered1"/>
+                                              <object class="GtkCellRendererText" id="name-column-rendered"/>
                                               <attributes>
-                                                <attribute name="background">4</attribute>
-                                                <attribute name="foreground">3</attribute>
                                                 <attribute name="text">1</attribute>
-                                                <attribute name="weight">5</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkTreeViewColumn" id="role-column">
+                                            <property name="title">Role</property>
+                                            <child>
+                                              <object class="GtkCellRendererText" id="role-column-rendered">
+                                                <property name="foreground_rgba">rgb(136,138,133)</property>
+                                              </object>
+                                              <attributes>
+                                                <attribute name="text">2</attribute>
                                               </attributes>
                                             </child>
                                           </object>

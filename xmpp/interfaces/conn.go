@@ -49,8 +49,6 @@ type Conn interface {
 	SetServerAddress(string)
 	SignalPresence(string) error
 
-	GetChatContext() LegacyOldDoNotUseChat
-
 	SetChannelBinding([]byte)
 	GetChannelBinding() []byte
 

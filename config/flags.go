@@ -14,6 +14,5 @@ var (
 	MultiFlag           = flag.Bool("multi", false, "If true, will not try to unify the windows, but create separate instances")
 	VersionFlag         = flag.Bool("version", false, "Print CoyIM version and exit")
 	CPUProfile          = flag.String("cpuprofile", "", "write cpu profile `file`")
-	MUCEnabled          = false
 	MUCEnabledMockups   = true
 )

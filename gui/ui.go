@@ -50,7 +50,6 @@ type gtkUI struct {
 	config *config.ApplicationConfig
 
 	*accountManager
-	*chatManager
 
 	displaySettings  *displaySettings
 	keyboardSettings *keyboardSettings
@@ -155,8 +154,6 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ret.keySupplier = config.CachingKeySupplier(ret.getMasterPassword)
 
 	ret.accountManager = newAccountManager(ret, ret.log)
-
-	ret.chatManager = newChatManager(ret.accountManager)
 
 	ret.sessionFactory = sf
 
@@ -457,9 +454,6 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Sort_By_Status_signal":  u.toggleSortByStatus,
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 		"on_preferences_signal":                        u.showGlobalPreferences,
-		"on_create_chat_room":                          u.createChatRoom,
-		"on_join_chat_room":                            u.joinChatRoom,
-		"on_list_chat_rooms":                           u.listChatRooms,
 		"on_muc_show_public_rooms":                     u.mucShowPublicRooms,
 	})
 
@@ -528,8 +522,6 @@ func (u *gtkUI) mainWindow() {
 	u.setupSystemTray()
 
 	u.window.ShowAll()
-
-	builder.get("muc-mockup-menu").(gtki.MenuItem).SetVisible(config.MUCEnabled)
 }
 
 func (u *gtkUI) setupSystemTray() {

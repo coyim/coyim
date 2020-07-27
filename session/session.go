@@ -239,16 +239,6 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 			s.alert(fmt.Sprintf("Error reported from %s: %#v", peer.NoResource(), stanza.Error))
 			return true
 		}
-	case "groupchat":
-		if config.MUCEnabled {
-			s.publishEvent(events.ChatMessage{
-				From:          peer.(jid.WithResource),
-				When:          retrieveMessageTime(stanza),
-				Body:          stanza.Body,
-				ClientMessage: stanza,
-			})
-			return true
-		}
 	}
 
 	messageTime := retrieveMessageTime(stanza)
@@ -258,14 +248,6 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 }
 
 func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
-	//MUC is interested in every presence, so we publish regardless.
-	//It is sad that not every presence stanza triggers a presence event.
-	if config.MUCEnabled {
-		s.publishEvent(events.ChatPresence{
-			ClientPresence: stanza,
-		})
-	}
-
 	jj := jid.Parse(stanza.From)
 	jjnr := jj.NoResource()
 

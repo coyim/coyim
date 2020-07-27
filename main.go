@@ -72,9 +72,6 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
-	_, enableMUC := os.LookupEnv("COYIM_ENABLE_MUC")
-	config.MUCEnabled = enableMUC
-
 	initLog()
 	runClient()
 	_, _ = os.Stdout.Write([]byte("\n"))

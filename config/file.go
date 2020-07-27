@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -37,14 +39,27 @@ func findConfigFile(filename string) string {
 const tmpExtension = ".000~"
 
 func safeWrite(name string, data []byte, perm os.FileMode) error {
-	tempName := name + tmpExtension
-	err := ioutil.WriteFile(tempName, data, perm)
+	// This function will leave a backup of the config file every time it writes
+
+	if len(data) < 10 {
+		return errors.New("data amount too small - unlikely to be real data")
+	}
+
+	backupName := fmt.Sprintf("%s.backup.000~", name)
+
+	if fileExists(backupName) {
+		_ = os.Remove(backupName)
+	}
+
+	err := os.Rename(name, backupName)
 	if err != nil {
 		return err
 	}
 
-	if fileExists(name) {
-		_ = os.Remove(name)
+	tempName := fmt.Sprintf("%s%s", name, tmpExtension)
+	err = ioutil.WriteFile(tempName, data, perm)
+	if err != nil {
+		return err
 	}
 
 	return os.Rename(tempName, name)

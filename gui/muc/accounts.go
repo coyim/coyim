@@ -4,10 +4,22 @@ type contact struct {
 	*rosterItem
 }
 
-type account struct {
+type accountRoom struct {
+	id     string
+	status peerStatus
+}
+
+type group struct {
 	*rosterItem
 	contacts []*contact
-	rooms    []string
+	rooms    []*accountRoom
+}
+
+type account struct {
+	*rosterItem
+	groups   []*group
+	contacts []*contact
+	rooms    []*accountRoom
 }
 
 type accountManager struct {
@@ -25,4 +37,8 @@ func (u *gtkUI) initDemoAccounts() {
 	for _, a := range accounts {
 		u.accountManager.addAccount(a)
 	}
+}
+
+func (g *group) hasStatus() bool {
+	return false
 }

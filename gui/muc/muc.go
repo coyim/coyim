@@ -74,6 +74,11 @@ const (
 	indexRowType           = 8
 )
 
+const (
+	identRoom    = "#"
+	identContact = "-"
+)
+
 func (u *gtkUI) ShowWindow() {
 	u.addAccountsToRoster()
 	win := u.builder.get("mainWindow").(gtki.Window)
@@ -106,7 +111,7 @@ func (u *gtkUI) onButtonPress(view gtki.TreeView, ev gdki.Event) bool {
 	return false
 }
 
-func setValues(v gtki.ListStore, iter gtki.TreeIter, values ...interface{}) {
+func setValues(v gtki.TreeStore, iter gtki.TreeIter, values ...interface{}) {
 	for i, val := range values {
 		if val != nil {
 			_ = v.SetValue(iter, i, val)
@@ -130,7 +135,7 @@ func createTooltipForPeer(i *rosterItem) string {
 	return jid
 }
 
-func getFromModelIterMUC(m gtki.ListStore, iter gtki.TreeIter, index int) string {
+func getFromModelIterMUC(m gtki.TreeStore, iter gtki.TreeIter, index int) string {
 	val, _ := m.GetValue(iter, index)
 	v, _ := val.GetString()
 	return v

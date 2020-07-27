@@ -9,7 +9,7 @@ import (
 
 type roster struct {
 	widget gtki.ScrolledWindow `gtk-widget:"roster"`
-	model  gtki.ListStore      `gtk-widget:"roster-model"`
+	model  gtki.TreeStore      `gtk-widget:"roster-model"`
 	view   gtki.TreeView       `gtk-widget:"roster-tree"`
 
 	rooms *roomsFakeServer
@@ -54,21 +54,24 @@ func (u *gtkUI) onActivateRosterRow(v gtki.TreeView, path gtki.TreePath) {
 }
 
 func (r *roster) add(a *account) {
-	r.addAccount(a)
+	r.addAccount(a, nil)
 	r.view.ExpandAll()
 }
 
-func (r *roster) addAccount(a *account) {
+func (r *roster) addAccount(a *account, p gtki.TreeIter) {
 	cs := r.u.currentColorSet()
-	parentIter := r.model.Append()
+	parentIter := r.model.Append(p)
 
 	accountCounter := &counter{}
 
 	// Contacts for this account
-	r.addAccountContacts(a.contacts, accountCounter)
+	r.addAccountContacts(a.contacts, accountCounter, "", parentIter)
 
 	// Rooms this contact is suscribed to
-	r.addAccountRooms(a.rooms)
+	r.addAccountRooms(a.rooms, identRoom, parentIter)
+
+	// Groups for this account
+	r.addAccountGroups(a.groups, parentIter)
 
 	displayName := a.displayName()
 
@@ -87,42 +90,70 @@ func (r *roster) addAccount(a *account) {
 	_ = r.model.SetValue(parentIter, indexParentDisplayName, createGroupDisplayName(displayName, accountCounter, true))
 }
 
-func (r *roster) addAccountContacts(contacts []*contact, accountCounter *counter) {
+func (r *roster) addAccountContacts(contacts []*contact, accountCounter *counter, ident string, p gtki.TreeIter) {
 	groupCounter := &counter{}
 
 	for _, item := range contacts {
 		o := item.isOnline()
 		accountCounter.inc(true, o)
 		groupCounter.inc(true, o)
-		r.addItem(item.rosterItem, "peer", "")
+		r.addItem(item.rosterItem, "peer", ident, p)
 	}
 }
 
-func (r *roster) addAccountRooms(rooms []string) {
-	for _, id := range rooms {
-		room, err := r.rooms.byID(id)
+func (r *roster) addAccountRooms(rooms []*accountRoom, ident string, p gtki.TreeIter) {
+	for _, r2 := range rooms {
+		room, err := r.rooms.byID(r2.id)
 		if err != nil {
 			log.Println(err.Error())
 			continue
 		}
 
-		r.addRoom(id, room)
+		r.addRoom(r2, room, ident, p)
 	}
 }
 
-func (r *roster) addRoom(id string, r2 *room) {
+func (r *roster) addAccountGroups(groups []*group, p gtki.TreeIter) {
+	for _, g := range groups {
+		r.addGroup(g, p)
+	}
+}
+
+func (r *roster) addRoom(r1 *accountRoom, r2 *room, ident string, p gtki.TreeIter) {
 	roomItem := &rosterItem{
-		id:     id,
+		id:     r1.id,
 		name:   r2.name,
-		status: r2.status,
+		status: r1.status,
 	}
 
-	r.addItem(roomItem, "room", "#")
+	r.addItem(roomItem, "room", ident, p)
 }
 
-func (r *roster) addItem(item *rosterItem, rowType string, indent string) {
+func (r *roster) addGroup(g *group, p gtki.TreeIter) {
 	cs := r.u.currentColorSet()
-	iter := r.model.Append()
+	iter := r.model.Append(p)
+
+	setValues(
+		r.model,
+		iter,
+		g.id,
+		g.displayName(),
+		"BelongsTo",
+		decideColorForPeer(cs, g.rosterItem),
+		cs.rosterPeerBackground,
+		400,
+		createTooltipForPeer(g.rosterItem),
+	)
+
+	_ = r.model.SetValue(iter, indexRowType, "group")
+
+	r.addAccountContacts(g.contacts, &counter{}, "", iter)
+	r.addAccountRooms(g.rooms, "#", iter)
+}
+
+func (r *roster) addItem(item *rosterItem, rowType string, indent string, p gtki.TreeIter) {
+	cs := r.u.currentColorSet()
+	iter := r.model.Append(p)
 
 	setValues(
 		r.model,
@@ -137,7 +168,10 @@ func (r *roster) addItem(item *rosterItem, rowType string, indent string) {
 	)
 
 	_ = r.model.SetValue(iter, indexRowType, rowType)
-	_ = r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].GetPixbuf())
+
+	if item.hasStatus() {
+		_ = r.model.SetValue(iter, indexStatusIcon, statusIcons[decideStatusFor(item)].GetPixbuf())
+	}
 }
 
 type rosterItem struct {
@@ -172,6 +206,10 @@ func (i *rosterItem) getStatus() string {
 	}
 
 	return "available"
+}
+
+func (i *rosterItem) hasStatus() bool {
+	return true
 }
 
 func decideStatusFor(r *rosterItem) string {

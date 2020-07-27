@@ -29,9 +29,55 @@ func fakeAccounts() []*account {
 					},
 				},
 			},
-			rooms: []string{
-				"#coyim:matrix:autonomia.digital",
-				"#wahay:matrix:autonomia.digital",
+			rooms: []*accountRoom{
+				&accountRoom{
+					id:     "#coyim:matrix:autonomia.digital",
+					status: statusOnline,
+				},
+				&accountRoom{
+					id:     "#wahay:matrix:autonomia.digital",
+					status: statusOnline,
+				},
+			},
+			groups: []*group{
+				&group{
+					rosterItem: &rosterItem{
+						id:   "autonomia.digital",
+						name: "CAD",
+					},
+					rooms: []*accountRoom{
+						&accountRoom{
+							id:     "#main:matrix:autonomia.digital",
+							status: statusOnline,
+						},
+						&accountRoom{
+							id:     "#admin:matrix:autonomia.digital",
+							status: statusOnline,
+						},
+					},
+					contacts: []*contact{
+						&contact{
+							rosterItem: &rosterItem{
+								id:     "pedro@coy.im",
+								name:   "Pedro CoyIM",
+								status: statusOnline,
+							},
+						},
+						&contact{
+							rosterItem: &rosterItem{
+								id:     "ola@coy.im",
+								name:   "Ola Bini",
+								status: statusOnline,
+							},
+						},
+						&contact{
+							rosterItem: &rosterItem{
+								id:     "sandy@coy.im",
+								status: statusOffline,
+							},
+						},
+					},
+				},
 			},
 		},
 		&account{
@@ -61,8 +107,11 @@ func fakeAccounts() []*account {
 					},
 				},
 			},
-			rooms: []string{
-				"#main:matrix:autonomia.digital",
+			rooms: []*accountRoom{
+				&accountRoom{
+					id:     "#main:matrix:autonomia.digital",
+					status: statusOffline,
+				},
 			},
 		},
 		&account{
@@ -87,6 +136,9 @@ func fakeRooms() map[string]*room {
 		},
 		"#main:matrix:autonomia.digital": &room{
 			name: "Main",
+		},
+		"#admin:matrix:autonomia.digital": &room{
+			name: "Administration",
 		},
 	}
 

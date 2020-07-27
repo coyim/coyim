@@ -21,7 +21,7 @@ func newChatManager(m *accountManager) *chatManager {
 	}
 }
 
-func (m *chatManager) getChatContextForAccount(accountID string) (interfaces.Chat, error) {
+func (m *chatManager) getChatContextForAccount(accountID string) (interfaces.LegacyOldDoNotUseChat, error) {
 	account, ok := m.accountManager.getAccountByID(accountID)
 	if !ok {
 		return nil, errors.New(i18n.Local("The selected account could not be found."))

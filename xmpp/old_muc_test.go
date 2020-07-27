@@ -21,9 +21,9 @@ func (s *MUCSuite) Test_CanJoinRoom(c *C) {
 		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
 
-	err := conn.GetChatContext().EnterRoom(&data.Occupant{
-		Room:   data.Room{ID: "coyim", Service: "chat.coy.im"},
-		Handle: "i_am_coy",
+	err := conn.GetChatContext().LegacyOldDoNotUseEnterRoom(&data.LegacyOldDoNotUseOccupant{
+		LegacyOldDoNotUseRoom: data.LegacyOldDoNotUseRoom{ID: "coyim", Service: "chat.coy.im"},
+		Handle:                "i_am_coy",
 	})
 	c.Assert(err, IsNil)
 	c.Assert(string(mockOut.write), Equals, `<presence xmlns="jabber:client" `+
@@ -41,9 +41,9 @@ func (s *MUCSuite) Test_CanLeaveRoom(c *C) {
 		rand: &mockConnIOReaderWriter{read: []byte("123555111654")},
 	}
 
-	err := conn.GetChatContext().LeaveRoom(&data.Occupant{
-		Room:   data.Room{ID: "coyim", Service: "chat.coy.im"},
-		Handle: "i_am_coy",
+	err := conn.GetChatContext().LegacyOldDoNotUseLeaveRoom(&data.LegacyOldDoNotUseOccupant{
+		LegacyOldDoNotUseRoom: data.LegacyOldDoNotUseRoom{ID: "coyim", Service: "chat.coy.im"},
+		Handle:                "i_am_coy",
 	})
 	c.Assert(err, IsNil)
 	c.Assert(string(mockOut.write), Equals, `<presence xmlns="jabber:client" `+
@@ -110,7 +110,7 @@ func (s *MUCSuite) Test_CanRequestRoomConfigForm(c *C) {
 		_, _ = conn.Next()
 	}()
 
-	result, err := conn.GetChatContext().RequestRoomConfigForm(&data.Room{ID: "coven", Service: "chat.shakespeare.lit"})
+	result, err := conn.GetChatContext().LegacyOldDoNotUseRequestRoomConfigForm(&data.LegacyOldDoNotUseRoom{ID: "coven", Service: "chat.shakespeare.lit"})
 
 	c.Assert(err, IsNil)
 
@@ -195,8 +195,8 @@ func (s *MUCSuite) Test_CanUpdateRoomConfig(c *C) {
 		rand:      bytes.NewBuffer([]byte{1, 0, 0, 0, 0, 0, 0, 0}),
 	}
 
-	err := conn.GetChatContext().UpdateRoomConfig(
-		&data.Room{ID: "coven", Service: "chat.shakespeare.lit"},
+	err := conn.GetChatContext().LegacyOldDoNotUseUpdateRoomConfig(
+		&data.LegacyOldDoNotUseRoom{ID: "coven", Service: "chat.shakespeare.lit"},
 		&data.Form{
 			Type: "submit",
 			Fields: []data.FormFieldX{

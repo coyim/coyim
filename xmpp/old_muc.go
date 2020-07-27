@@ -15,7 +15,7 @@ const (
 	mucNS      = "http://jabber.org/protocol/muc"
 )
 
-func (c *conn) GetChatContext() interfaces.Chat {
+func (c *conn) GetChatContext() interfaces.LegacyOldDoNotUseChat {
 	return &muc{
 		conn:   c,
 		events: make(chan interface{}),
@@ -47,7 +47,7 @@ func (m *muc) QueryRooms(entity string) ([]data.DiscoveryItem, error) {
 }
 
 //See: Section "6.4 Querying for Room Information"
-func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
+func (m *muc) LegacyOldDoNotUseQueryRoomInformation(room string) (*data.LegacyOldDoNotUseRoomInfo, error) {
 	j := jid.Parse(room)
 	if j == jid.Domain("") {
 		return nil, errors.New("invalid room")
@@ -57,7 +57,7 @@ func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
 
 	//TODO: this error is useless when it says ("expected query, got error")
 	//It should give us a xmpp error
-	query, err := m.queryRoomInformation(&data.Room{
+	query, err := m.queryRoomInformation(&data.LegacyOldDoNotUseRoom{
 		ID:      local,
 		Service: string(j.Host()),
 	})
@@ -69,14 +69,14 @@ func (m *muc) QueryRoomInformation(room string) (*data.RoomInfo, error) {
 	return parseRoomInformation(query), nil
 }
 
-func parseRoomInfoForm(forms []data.Form) data.RoomInfoForm {
-	ret := data.RoomInfoForm{}
+func parseRoomInfoForm(forms []data.Form) data.LegacyOldDoNotUseRoomInfoForm {
+	ret := data.LegacyOldDoNotUseRoomInfoForm{}
 	_ = parseForms(&ret, forms)
 	return ret
 }
 
-func parseRoomType(features []data.DiscoveryFeature) data.RoomType {
-	ret := data.RoomType{}
+func parseRoomType(features []data.DiscoveryFeature) data.LegacyOldDoNotUseRoomType {
+	ret := data.LegacyOldDoNotUseRoomType{}
 
 	for _, f := range features {
 		switch f.Var {
@@ -98,19 +98,19 @@ func parseRoomType(features []data.DiscoveryFeature) data.RoomType {
 	return ret
 }
 
-func parseRoomInformation(query *data.DiscoveryInfoQuery) *data.RoomInfo {
-	return &data.RoomInfo{
-		RoomInfoForm: parseRoomInfoForm(query.Forms[:]),
-		RoomType:     parseRoomType(query.Features),
+func parseRoomInformation(query *data.DiscoveryInfoQuery) *data.LegacyOldDoNotUseRoomInfo {
+	return &data.LegacyOldDoNotUseRoomInfo{
+		LegacyOldDoNotUseRoomInfoForm: parseRoomInfoForm(query.Forms[:]),
+		LegacyOldDoNotUseRoomType:     parseRoomType(query.Features),
 	}
 }
 
-func (m *muc) queryRoomInformation(room *data.Room) (*data.DiscoveryInfoQuery, error) {
+func (m *muc) queryRoomInformation(room *data.LegacyOldDoNotUseRoom) (*data.DiscoveryInfoQuery, error) {
 	return m.QueryServiceInformation(room.JID())
 }
 
 //See: Section "7.2.2 Basic MUC Protocol"
-func (m *muc) EnterRoom(occupant *data.Occupant) error {
+func (m *muc) LegacyOldDoNotUseEnterRoom(occupant *data.LegacyOldDoNotUseOccupant) error {
 	//TODO: Implement section "7.2.1 Groupchat 1.0 Protocol"?
 	return m.sendPresence(&data.ClientPresence{
 		To:    occupant.JID(),
@@ -119,7 +119,7 @@ func (m *muc) EnterRoom(occupant *data.Occupant) error {
 }
 
 //See: Section "7.14 Exiting a Room"
-func (m *muc) LeaveRoom(occupant *data.Occupant) error {
+func (m *muc) LegacyOldDoNotUseLeaveRoom(occupant *data.LegacyOldDoNotUseOccupant) error {
 	return m.sendPresence(&data.ClientPresence{
 		To:    occupant.JID(),
 		Type:  "unavailable",
@@ -128,7 +128,7 @@ func (m *muc) LeaveRoom(occupant *data.Occupant) error {
 }
 
 //See: Section "7.4 Sending a Message to All Occupants"
-func (m *muc) SendChatMessage(msg string, to *data.Room) error {
+func (m *muc) LegacyOldDoNotUseSendChatMessage(msg string, to *data.LegacyOldDoNotUseRoom) error {
 	//TODO: How to disable archive for chat messages?
 	//TODO: Can we just use the same conn.Send() with a different type?
 	_, err := fmt.Fprintf(m.out, "<message "+
@@ -142,8 +142,8 @@ func (m *muc) SendChatMessage(msg string, to *data.Room) error {
 }
 
 //See: Section "10.2 Subsequent Room Configuration"
-func (m *muc) RequestRoomConfigForm(room *data.Room) (*data.Form, error) {
-	reply, _, err := m.SendIQ(room.JID(), "get", &data.RoomConfigurationQuery{})
+func (m *muc) LegacyOldDoNotUseRequestRoomConfigForm(room *data.LegacyOldDoNotUseRoom) (*data.Form, error) {
+	reply, _, err := m.SendIQ(room.JID(), "get", &data.LegacyOldDoNotUseRoomConfigurationQuery{})
 	if err != nil {
 		return nil, err
 	}
@@ -158,13 +158,13 @@ func (m *muc) RequestRoomConfigForm(room *data.Room) (*data.Form, error) {
 		return nil, errors.New("xmpp: failed to parse response")
 	}
 
-	r := &data.RoomConfigurationQuery{}
+	r := &data.LegacyOldDoNotUseRoomConfigurationQuery{}
 	err = xml.Unmarshal(iq.Query, r)
 	return r.Form, err
 }
 
-func (m *muc) RoomConfigForm(room *data.Room, formCallback data.FormCallback) error {
-	form, err := m.RequestRoomConfigForm(room)
+func (m *muc) LegacyOldDoNotUseRoomConfigForm(room *data.LegacyOldDoNotUseRoom, formCallback data.FormCallback) error {
+	form, err := m.LegacyOldDoNotUseRequestRoomConfigForm(room)
 	if err != nil {
 		return err
 	}
@@ -175,12 +175,12 @@ func (m *muc) RoomConfigForm(room *data.Room, formCallback data.FormCallback) er
 		return err
 	}
 
-	return m.UpdateRoomConfig(room, roomConfig)
+	return m.LegacyOldDoNotUseUpdateRoomConfig(room, roomConfig)
 }
 
 //See: Section "10.2 Subsequent Room Configuration"
-func (m *muc) UpdateRoomConfig(room *data.Room, form *data.Form) error {
-	_, _, err := m.SendIQ(room.JID(), "set", &data.RoomConfigurationQuery{
+func (m *muc) LegacyOldDoNotUseUpdateRoomConfig(room *data.LegacyOldDoNotUseRoom, form *data.Form) error {
+	_, _, err := m.SendIQ(room.JID(), "set", &data.LegacyOldDoNotUseRoomConfigurationQuery{
 		Form: form,
 	})
 

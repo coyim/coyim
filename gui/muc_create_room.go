@@ -70,11 +70,11 @@ func (v *createMUCRoom) createRoomHandler() {
 
 	conn := account.session.Conn()
 
-	room := &data.Room{
+	room := &data.LegacyOldDoNotUseRoom{
 		ID:      roomName,
 		Service: service,
 	}
-	err := conn.GetChatContext().CreateRoom(room)
+	err := conn.GetChatContext().LegacyOldDoNotUseCreateRoom(room)
 	if err != nil {
 	}
 

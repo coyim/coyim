@@ -105,7 +105,7 @@ func (v *addChatView) setActiveAccount(accIndex int) {
 	})
 }
 
-func (v *addChatView) validateForm() (string, *data.Occupant, error) {
+func (v *addChatView) validateForm() (string, *data.LegacyOldDoNotUseOccupant, error) {
 	accountID, bareJID, err := v.getAccount()
 	if err != nil {
 		panic(err)
@@ -133,8 +133,8 @@ func (v *addChatView) validateForm() (string, *data.Occupant, error) {
 		handle = string(jid.MaybeLocal(jid.Parse(bareJID)))
 	}
 
-	occ := &data.Occupant{
-		Room: data.Room{
+	occ := &data.LegacyOldDoNotUseOccupant{
+		LegacyOldDoNotUseRoom: data.LegacyOldDoNotUseRoom{
 			ID:      room,
 			Service: service,
 		},
@@ -144,7 +144,7 @@ func (v *addChatView) validateForm() (string, *data.Occupant, error) {
 	return accountID, occ, nil
 }
 
-func (v *addChatView) waitForSelfPresence(chat interfaces.Chat, occupant *data.Occupant) ([]*roomOccupant, error) {
+func (v *addChatView) waitForSelfPresence(chat interfaces.LegacyOldDoNotUseChat, occupant *data.LegacyOldDoNotUseOccupant) ([]*roomOccupant, error) {
 	var ret []*roomOccupant
 
 	//TODO: this should timeout
@@ -153,7 +153,7 @@ func (v *addChatView) waitForSelfPresence(chat interfaces.Chat, occupant *data.O
 		switch e := ev.(type) {
 		case events.ChatPresence:
 			presence := e.ClientPresence
-			if jid.NR(presence.From).String() != occupant.Room.JID() {
+			if jid.NR(presence.From).String() != occupant.LegacyOldDoNotUseRoom.JID() {
 				continue
 			}
 
@@ -182,12 +182,12 @@ func (v *addChatView) waitForSelfPresence(chat interfaces.Chat, occupant *data.O
 }
 
 //TODO: This could all go to the interfaces.Chat
-func (v *addChatView) enterRoom(chat interfaces.Chat, occupant *data.Occupant) ([]*roomOccupant, error) {
+func (v *addChatView) enterRoom(chat interfaces.LegacyOldDoNotUseChat, occupant *data.LegacyOldDoNotUseOccupant) ([]*roomOccupant, error) {
 	if !chat.CheckForSupport(occupant.Service) {
 		return nil, errors.New("the service does not support chat")
 	}
 
-	err := chat.EnterRoom(occupant)
+	err := chat.LegacyOldDoNotUseEnterRoom(occupant)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +196,7 @@ func (v *addChatView) enterRoom(chat interfaces.Chat, occupant *data.Occupant) (
 }
 
 //openRoomDialog blocks to do networking and should be called in a goroutine
-func (v *addChatView) openRoomDialog(chat interfaces.Chat, occupant *data.Occupant) {
+func (v *addChatView) openRoomDialog(chat interfaces.LegacyOldDoNotUseChat, occupant *data.LegacyOldDoNotUseOccupant) {
 	occupantsInRoom, err := v.enterRoom(chat, occupant)
 	if err != nil {
 		doInUIThread(func() {
@@ -218,7 +218,7 @@ func (v *addChatView) openRoomDialog(chat interfaces.Chat, occupant *data.Occupa
 	})
 }
 
-func (v *addChatView) getChatAndOccupantFromForm() (interfaces.Chat, *data.Occupant, error) {
+func (v *addChatView) getChatAndOccupantFromForm() (interfaces.LegacyOldDoNotUseChat, *data.LegacyOldDoNotUseOccupant, error) {
 	accountID, occupant, err := v.validateForm()
 	if err != nil {
 		return nil, nil, err
@@ -243,7 +243,7 @@ func (v *addChatView) joinRoomHandler() {
 	}
 
 	v.form.Hide()
-	v.errorBox.ShowMessage(i18n.Localf("Joining #%s", occupant.Room.ID))
+	v.errorBox.ShowMessage(i18n.Localf("Joining #%s", occupant.LegacyOldDoNotUseRoom.ID))
 	go v.openRoomDialog(chat, occupant)
 }
 
@@ -334,7 +334,7 @@ func (v *chatRoomView) showRoomConfigDialog() {
 	//Run in a goroutine to not block the GTK event loop
 	//TODO: Display error
 	go func() {
-		_ = v.chat.RoomConfigForm(&v.occupant.Room, v.renderForm)
+		_ = v.chat.LegacyOldDoNotUseRoomConfigForm(&v.occupant.LegacyOldDoNotUseRoom, v.renderForm)
 	}()
 }
 
@@ -370,13 +370,13 @@ type chatRoomView struct {
 	occupantsView  gtki.TreeView  `gtk-widget:"occupants-view"`
 	occupantsModel gtki.ListStore `gtk-widget:"occupants"`
 
-	chat     interfaces.Chat
-	occupant *data.Occupant
+	chat     interfaces.LegacyOldDoNotUseChat
+	occupant *data.LegacyOldDoNotUseOccupant
 
 	ui *gtkUI
 }
 
-func (u *gtkUI) newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *chatRoomView {
+func (u *gtkUI) newChatRoomView(chat interfaces.LegacyOldDoNotUseChat, occupant *data.LegacyOldDoNotUseOccupant) *chatRoomView {
 	builder := newBuilder("ChatRoom")
 	v := &chatRoomView{
 		chat:     chat,
@@ -404,7 +404,7 @@ func (u *gtkUI) newChatRoomView(chat interfaces.Chat, occupant *data.Occupant) *
 		"leave_room_handler": v.leaveRoom,
 	})
 
-	v.SetTitle(occupant.Room.JID())
+	v.SetTitle(occupant.LegacyOldDoNotUseRoom.JID())
 
 	return v
 }
@@ -420,11 +420,11 @@ func (v *chatRoomView) authenticationError() {
 }
 
 func (v *chatRoomView) leaveRoom() {
-	_ = v.chat.LeaveRoom(v.occupant)
+	_ = v.chat.LegacyOldDoNotUseLeaveRoom(v.occupant)
 }
 
 func (v *chatRoomView) sameRoom(from string) bool {
-	return jid.NR(from).String() == v.occupant.Room.JID()
+	return jid.NR(from).String() == v.occupant.LegacyOldDoNotUseRoom.JID()
 }
 
 func (v *chatRoomView) watchEvents(evs <-chan interface{}) {
@@ -620,6 +620,6 @@ func (v *chatRoomView) onSendMessage(_ glibi.Object) {
 
 	//TODO: error?
 	go func() {
-		_ = v.chat.SendChatMessage(msg, &v.occupant.Room)
+		_ = v.chat.LegacyOldDoNotUseSendChatMessage(msg, &v.occupant.LegacyOldDoNotUseRoom)
 	}()
 }

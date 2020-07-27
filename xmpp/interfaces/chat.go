@@ -4,19 +4,19 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
-// Chat contains the basic functionality to do a chat in a room
-type Chat interface {
+// LegacyOldDoNotUseChat contains the basic functionality to do a chat in a room
+type LegacyOldDoNotUseChat interface {
 	Events() chan interface{}
 	CheckForSupport(service string) bool
 	QueryRooms(entity string) ([]data.DiscoveryItem, error)
-	QueryRoomInformation(room string) (*data.RoomInfo, error)
-	CreateRoom(*data.Room) error
-	EnterRoom(*data.Occupant) error
-	LeaveRoom(*data.Occupant) error
-	SendChatMessage(msg string, to *data.Room) error
-	RoomConfigForm(*data.Room, data.FormCallback) error
+	LegacyOldDoNotUseQueryRoomInformation(room string) (*data.LegacyOldDoNotUseRoomInfo, error)
+	LegacyOldDoNotUseCreateRoom(*data.LegacyOldDoNotUseRoom) error
+	LegacyOldDoNotUseEnterRoom(*data.LegacyOldDoNotUseOccupant) error
+	LegacyOldDoNotUseLeaveRoom(*data.LegacyOldDoNotUseOccupant) error
+	LegacyOldDoNotUseSendChatMessage(msg string, to *data.LegacyOldDoNotUseRoom) error
+	LegacyOldDoNotUseRoomConfigForm(*data.LegacyOldDoNotUseRoom, data.FormCallback) error
 
 	//TODO: Remove me
-	RequestRoomConfigForm(*data.Room) (*data.Form, error)
-	UpdateRoomConfig(*data.Room, *data.Form) error
+	LegacyOldDoNotUseRequestRoomConfigForm(*data.LegacyOldDoNotUseRoom) (*data.Form, error)
+	LegacyOldDoNotUseUpdateRoomConfig(*data.LegacyOldDoNotUseRoom, *data.Form) error
 }

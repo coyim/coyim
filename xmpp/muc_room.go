@@ -8,7 +8,7 @@ import (
 )
 
 // TODO: Add a RoomConfigurationQuery for create a Reserved Room
-func (m *muc) CreateRoom(room *data.Room) error {
+func (m *muc) LegacyOldDoNotUseCreateRoom(room *data.LegacyOldDoNotUseRoom) error {
 	// Send a presence for create the room and signals supportfor MUC
 	// See: 10.1.1 Create room General
 	p := &data.ClientPresence{
@@ -24,7 +24,7 @@ func (m *muc) CreateRoom(room *data.Room) error {
 	// TODO: Delete 'roomConf' and get this information from the function
 	// See: 10.1.2 Creating an Instant Room
 	// Information Query
-	roomConf := &data.RoomConfigurationQuery{
+	roomConf := &data.LegacyOldDoNotUseRoomConfigurationQuery{
 		XMLName: xml.Name{
 			Local: "query",
 			Space: "http://jabber.org/protocol/muc#owner",
@@ -54,7 +54,7 @@ func (m *muc) CreateRoom(room *data.Room) error {
 		return errors.New("xmpp: failed to parse response")
 	}
 
-	r := &data.RoomConfigurationQuery{}
+	r := &data.LegacyOldDoNotUseRoomConfigurationQuery{}
 	err = xml.Unmarshal(iq.Query, r)
 	return err
 }

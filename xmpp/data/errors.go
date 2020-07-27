@@ -48,6 +48,12 @@ type ErrorNoValidStreams struct {
 	XMLName xml.Name `xml:"http://jabber.org/protocol/si no-valid-streams"`
 }
 
+// ErrorServiceUnavailable reflects that a service is unavailable
+// Ref: RFC-6120
+type ErrorServiceUnavailable struct {
+	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas service-unavailable"`
+}
+
 // StreamError represents an XMPP Stream Error as defined in RFC 6120, section 4.9
 type StreamError struct {
 	XMLName              xml.Name `xml:"http://etherx.jabber.org/streams error"`

@@ -259,7 +259,7 @@ func (s *DiscoveryXMPPSuite) Test_VerificationString_failsIfThereAreNoValues(c *
 }
 
 func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
-	rep := DiscoveryReply("foo@bar.com")
+	rep := DiscoveryReply("foo@bar.com", "")
 	c.Assert(rep, DeepEquals,
 		data.DiscoveryInfoQuery{
 			XMLName: xml.Name{Space: "", Local: ""},
@@ -273,6 +273,7 @@ func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
 					Name:     "foo@bar.com"}},
 			Features: []data.DiscoveryFeature{
 				{Var: "http://jabber.org/protocol/disco#info"},
+				{Var: "http://jabber.org/protocol/disco#items"},
 				{Var: "urn:xmpp:bob"},
 				{Var: "urn:xmpp:ping"},
 				{Var: "http://jabber.org/protocol/caps"},
@@ -285,6 +286,7 @@ func (s *DiscoveryXMPPSuite) Test_DiscoveryReply_returnsSupportedValues(c *C) {
 				{Var: "http://jabber.org/protocol/si/profile/encrypted-data-transfer"},
 				{Var: "http://jabber.org/protocol/bytestreams"},
 				{Var: "urn:xmpp:eme:0"},
+				{Var: "http://jabber.org/protocol/muc"},
 			},
 			Forms: []data.Form(nil)})
 }

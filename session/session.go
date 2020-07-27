@@ -343,15 +343,18 @@ func (s *session) receivedClientIQ(stanza *data.ClientIQ) bool {
 			return true
 		}
 
-		if iqtype == "" {
-			iqtype = "result"
-		}
-
 		if reply == nil {
 			reply = data.ErrorReply{
 				Type:  "cancel",
 				Error: data.ErrorBadRequest{},
 			}
+			if iqtype == "" {
+				iqtype = "error"
+			}
+		}
+
+		if iqtype == "" {
+			iqtype = "result"
 		}
 
 		s.sendIQReply(stanza, iqtype, reply)

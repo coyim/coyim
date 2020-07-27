@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/coyim/coyim/session/access"
-	"github.com/coyim/coyim/xmpp"
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -29,13 +28,6 @@ func (s *session) sendIQReply(stanza *data.ClientIQ, tp string, reply interface{
 	if err := s.conn.SendIQReply(stanza.From, tp, stanza.ID, reply); err != nil {
 		s.alert("Failed to send IQ message: " + err.Error())
 	}
-}
-
-func discoIQ(s access.Session, _ *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	// TODO: We should ensure that there is no "node" entity on this query, since we don't support that.
-	// In the case of a "node", we should return  <service-unavailable/>
-	s.Info("IQ: http://jabber.org/protocol/disco#info query")
-	return xmpp.DiscoveryReply(s.GetConfig().Account), "", false
 }
 
 func versionIQ(s access.Session, _ *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
@@ -70,6 +62,7 @@ func getIQHandler(stanzaType, namespace, local string) iqFunction {
 }
 
 func init() {
+	registerKnownIQ("get", "http://jabber.org/protocol/disco#items query", discoItemsIQ)
 	registerKnownIQ("get", "http://jabber.org/protocol/disco#info query", discoIQ)
 	registerKnownIQ("get", "jabber:iq:version query", versionIQ)
 	registerKnownIQ("set", "jabber:iq:roster query", rosterIQ)

@@ -1,6 +1,6 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkDialog" id="MUCJoinRoomDialog">
+  <object class="GtkDialog" id="MUCJoinPrivateRoomDialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Join a Room</property>
@@ -9,7 +9,6 @@
     <property name="default_width">400</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
-    <signal name="activate-default" handler="on_show_window_signal" swapped="no"/>
     <signal name="close" handler="on_close_window_signal" swapped="no"/>
     <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
     <child type="titlebar">
@@ -124,87 +123,6 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox" id="boxNicknameArea">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="valign">center</property>
-                <property name="spacing">5</property>
-                <property name="homogeneous">True</property>
-                <child>
-                  <object class="GtkLabel" id="labelNickname">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="margin_top">5</property>
-                    <property name="margin_bottom">5</property>
-                    <property name="label" translatable="yes">Nickname:</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="txtNickname">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkBox" id="boxPasswordArea">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="valign">center</property>
-                <property name="spacing">5</property>
-                <property name="homogeneous">True</property>
-                <child>
-                  <object class="GtkLabel" id="labelPassword">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="margin_top">5</property>
-                    <property name="margin_bottom">5</property>
-                    <property name="label" translatable="yes">Password:</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="txtPassword">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="visibility">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
               </packing>
             </child>
           </object>

@@ -147,41 +147,6 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkMenuItem" id="muc-mockup-menu">
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Chat</property>
-                    <child type="submenu">
-                      <object class="GtkMenu" id="muc-mockup-menu-options">
-                        <property name="can_focus">False</property>
-                        <child>
-                          <object class="GtkMenuItem" id="muc-create-chat-room-menu1">
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Crear Sala Rápida</property>
-                            <property name="use_underline">True</property>
-                            <signal name="activate" handler="on_create_chat_room" swapped="no"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkMenuItem" id="muc-add-chat-room-menu">
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Join Chat Room...</property>
-                            <property name="use_underline">True</property>
-                            <signal name="activate" handler="on_join_chat_room" swapped="no"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkMenuItem" id="muc-list-chat-rooms-menu">
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">List Chat Rooms...</property>
-                            <property name="use_underline">True</property>
-                            <signal name="activate" handler="on_list_chat_rooms" swapped="no"/>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
                   <object class="GtkMenuItem" id="HelpMenu">
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">_Help</property>

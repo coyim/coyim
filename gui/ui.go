@@ -135,7 +135,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 		actionTimes: make(map[string]time.Time),
 		deNotify:    newDesktopNotifications(),
-		log:         log.New(),
+		log:         log.StandardLogger(),
 		hooks:       hooks,
 	}
 

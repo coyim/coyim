@@ -21,7 +21,7 @@
       <column type="gint"/>
     </columns>
   </object>
-  <object class="GtkDialog" id="MUCPublicRooms">
+  <object class="GtkDialog" id="public-rooms">
     <property name="visible">false</property>
     <property name="border_width">7</property>
     <property name="title" translatable="yes">Chat rooms</property>
@@ -171,8 +171,10 @@
                     <property name="headers-visible">true</property>
                     <property name="show-expanders">true</property>
                     <property name="tooltip-column">1</property>
+                    <signal name="row-activated" handler="on_activate_room_row" />
                     <child internal-child="selection">
                       <object class="GtkTreeSelection" id="selection">
+                        <signal name="changed" handler="on_selection_changed" />
                         <property name="mode">GTK_SELECTION_SINGLE</property>
                       </object>
                     </child>

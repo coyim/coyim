@@ -43,7 +43,7 @@ type mucPublicRoomsView struct {
 	serviceGroups map[string]gtki.TreeIter
 	cancel        chan bool
 
-	dialog           gtki.Dialog         `gtk-widget:"MUCPublicRooms"`
+	dialog           gtki.Dialog         `gtk-widget:"public-rooms"`
 	model            gtki.ListStore      `gtk-widget:"accounts-model"`
 	accountInput     gtki.ComboBox       `gtk-widget:"accounts"`
 	roomsModel       gtki.TreeStore      `gtk-widget:"rooms-model"`
@@ -52,6 +52,7 @@ type mucPublicRoomsView struct {
 	spinner          gtki.Spinner        `gtk-widget:"spinner"`
 	customService    gtki.Entry          `gtk-widget:"customServiceEntry"`
 	notificationArea gtki.Box            `gtk-widget:"notification-area"`
+	joinButton       gtki.Button         `gtk-widget:"button_join"`
 	notification     gtki.InfoBar
 	errorNotif       *errorNotification
 
@@ -236,10 +237,18 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 	}()
 }
 
+// joinRoom should not be called from the UI thread
+func (u *gtkUI) joinRoom(roomJid string, a *account) {
+	a.log.WithField("room", roomJid).Debug("joinRoom()")
+	// TODO: implement
+}
+
 // mucShowPublicRooms should be called from the UI thread
 func (u *gtkUI) mucShowPublicRooms() {
 	view := &mucPublicRoomsView{}
 	view.init()
+
+	view.joinButton.SetSensitive(false)
 
 	view.initOrReplaceAccounts(u.getAllConnectedAccounts())
 
@@ -254,7 +263,66 @@ func (u *gtkUI) mucShowPublicRooms() {
 		"on_close_window_signal": func() {
 			u.removeConnectedAccountsObserver(accountsObserverToken)
 		},
-		"on_join_signal": func() {},
+		"on_join_signal": func() {
+			selection, err := view.roomsTree.GetSelection()
+			if err != nil {
+				u.log.WithError(err).Debug("couldn't join")
+				return
+			}
+			_, iter, ok := selection.GetSelected()
+			if !ok {
+				u.log.Debug("nothing is selected")
+				return
+			}
+
+			val, _ := view.roomsModel.GetValue(iter, mucListRoomsIndexJid)
+			v, _ := val.GetString()
+			_, ok = view.serviceGroups[v]
+
+			if ok {
+				u.log.Debug("a service is selected, not a room, so we can't activate it")
+				return
+			} else {
+				go u.joinRoom(v, view.accountsList[view.currentlyActive])
+			}
+		},
+		"on_activate_room_row": func(_ gtki.TreeView, path gtki.TreePath) {
+			iter, err := view.roomsModel.GetIter(path)
+			if err != nil {
+				u.log.WithError(err).Debug("couldn't activate")
+				return
+			}
+			val, _ := view.roomsModel.GetValue(iter, mucListRoomsIndexJid)
+			v, _ := val.GetString()
+			_, ok := view.serviceGroups[v]
+			if ok {
+				u.log.Debug("a service is selected, not a room, so we can't activate it")
+				return
+			} else {
+				go u.joinRoom(v, view.accountsList[view.currentlyActive])
+			}
+		},
+		"on_selection_changed": func() {
+			selection, err := view.roomsTree.GetSelection()
+			if err != nil {
+				u.log.WithError(err).Debug("problem getting selection")
+				return
+			}
+			_, iter, ok := selection.GetSelected()
+			if !ok {
+				view.joinButton.SetSensitive(false)
+				return
+			}
+
+			val, _ := view.roomsModel.GetValue(iter, mucListRoomsIndexJid)
+			v, _ := val.GetString()
+			_, ok = view.serviceGroups[v]
+			if ok {
+				view.joinButton.SetSensitive(false)
+			} else {
+				view.joinButton.SetSensitive(true)
+			}
+		},
 		"on_custom_service": func() {
 			go u.mucUpdatePublicRoomsOn(view, view.accountsList[view.currentlyActive])
 		},

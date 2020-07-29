@@ -1,5 +1,13 @@
 <interface>
-  <object class="GtkDialog" id="MUCJoinPrivateRoomDialog">
+  <object class="GtkListStore" id="modelAccount">
+    <columns>
+      <!-- column-name account-name -->
+      <column type="gchararray"/>
+      <!-- column-name account-id -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkDialog" id="MUCJoinRoom">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Join a Room</property>
@@ -68,7 +76,6 @@
             <property name="margin_bottom">5</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
-            <property name="homogeneous">True</property>
             <child>
               <object class="GtkBox" id="boxNotificationArea">
                 <property name="can_focus">False</property>
@@ -85,36 +92,69 @@
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="boxPrivateRoomNameArea">
+              <object class="GtkGrid" id="boxControl">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="valign">center</property>
-                <property name="spacing">5</property>
-                <property name="homogeneous">True</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="row_spacing">5</property>
+                <property name="column_spacing">5</property>
+                <property name="row_homogeneous">True</property>
                 <child>
-                  <object class="GtkLabel" id="labelPrivateRoomName">
+                  <object class="GtkLabel" id="labelRoomName">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
-                    <property name="margin_top">5</property>
-                    <property name="margin_bottom">5</property>
-                    <property name="label" translatable="yes">Private Room Name:</property>
+                    <property name="label" translatable="yes">Room Name:</property>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="txtPrivateRoomName">
+                  <object class="GtkEntry" id="txtRoomName">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="hexpand">True</property>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="labelAccount">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Account:</property>
+                    <property name="justify">right</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBox" id="cmbAccount">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="model">modelAccount</property>
+                    <signal name="changed" handler="on_cmb_account_changed" swapped="no"/>
+                    <child>
+                      <object class="GtkCellRendererText" id="account-name-rendered"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
                   </packing>
                 </child>
               </object>
@@ -122,6 +162,19 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinner" id="spinner">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>

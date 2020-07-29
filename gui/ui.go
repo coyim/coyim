@@ -455,6 +455,7 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
 		"on_preferences_signal":                        u.showGlobalPreferences,
 		"on_muc_show_public_rooms":                     u.mucShowPublicRooms,
+		"on_muc_show_join_room":                        u.mucShowJoinRoom,
 	})
 
 	panicOnDevError(builder.bindObjects(u))

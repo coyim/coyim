@@ -282,9 +282,8 @@ func (u *gtkUI) mucShowPublicRooms() {
 			if ok {
 				u.log.Debug("a service is selected, not a room, so we can't activate it")
 				return
-			} else {
-				go u.joinRoom(v, view.accountsList[view.currentlyActive])
 			}
+			go u.joinRoom(v, view.accountsList[view.currentlyActive])
 		},
 		"on_activate_room_row": func(_ gtki.TreeView, path gtki.TreePath) {
 			iter, err := view.roomsModel.GetIter(path)
@@ -298,9 +297,8 @@ func (u *gtkUI) mucShowPublicRooms() {
 			if ok {
 				u.log.Debug("a service is selected, not a room, so we can't activate it")
 				return
-			} else {
-				go u.joinRoom(v, view.accountsList[view.currentlyActive])
 			}
+			go u.joinRoom(v, view.accountsList[view.currentlyActive])
 		},
 		"on_selection_changed": func() {
 			selection, err := view.roomsTree.GetSelection()

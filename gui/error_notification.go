@@ -36,3 +36,8 @@ func (n *errorNotification) Hide() {
 	parent, _ := n.area.GetParent()
 	parent.Hide()
 }
+
+type canNotifyErrors interface {
+	clearErrors()
+	notifyOnError(err string)
+}

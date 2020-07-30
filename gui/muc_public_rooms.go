@@ -44,8 +44,6 @@ type mucPublicRoomsView struct {
 	cancel        chan bool
 
 	dialog           gtki.Dialog         `gtk-widget:"public-rooms"`
-	model            gtki.ListStore      `gtk-widget:"accounts-model"`
-	accountInput     gtki.ComboBox       `gtk-widget:"accounts"`
 	roomsModel       gtki.TreeStore      `gtk-widget:"rooms-model"`
 	roomsTree        gtki.TreeView       `gtk-widget:"rooms-tree"`
 	rooms            gtki.ScrolledWindow `gtk-widget:"rooms"`
@@ -55,10 +53,6 @@ type mucPublicRoomsView struct {
 	joinButton       gtki.Button         `gtk-widget:"button_join"`
 	notification     gtki.InfoBar
 	errorNotif       *errorNotification
-
-	accountsList    []*account
-	accounts        map[string]*account
-	currentlyActive int
 }
 
 func (prv *mucPublicRoomsView) clearErrors() {
@@ -80,44 +74,6 @@ func (prv *mucPublicRoomsView) init() {
 	panicOnDevError(prv.builder.bindObjects(prv))
 	prv.serviceGroups = make(map[string]gtki.TreeIter)
 	prv.errorNotif = newErrorNotification(prv.notificationArea)
-}
-
-// initOrReplaceAccounts should be called from the UI thread
-func (prv *mucPublicRoomsView) initOrReplaceAccounts(accounts []*account) {
-	if len(accounts) == 0 {
-		prv.notifyOnError(i18n.Local("There are no connected accounts"))
-	}
-
-	currentlyActive := 0
-	oldActive := prv.accountInput.GetActive()
-	if prv.accounts != nil && oldActive >= 0 {
-		currentlyActiveAccount := prv.accountsList[oldActive]
-		for ix, a := range accounts {
-			if currentlyActiveAccount == a {
-				currentlyActive = ix
-				prv.currentlyActive = currentlyActive
-			}
-		}
-		prv.model.Clear()
-	}
-
-	prv.accountsList = accounts
-	prv.accounts = make(map[string]*account)
-	for _, acc := range accounts {
-		iter := prv.model.Append()
-		_ = prv.model.SetValue(iter, 0, acc.session.GetConfig().Account)
-		_ = prv.model.SetValue(iter, 1, acc.session.GetConfig().ID())
-		prv.accounts[acc.session.GetConfig().ID()] = acc
-	}
-
-	if len(accounts) > 0 {
-		prv.accountInput.SetActive(currentlyActive)
-	} else {
-		prv.rooms.SetVisible(false)
-		prv.spinner.Stop()
-		prv.spinner.SetVisible(false)
-		prv.roomsModel.Clear()
-	}
 }
 
 // mucUpdatePublicRoomsOn should NOT be called from the UI thread
@@ -248,21 +204,24 @@ func (u *gtkUI) mucShowPublicRooms() {
 	view := &mucPublicRoomsView{}
 	view.init()
 
+	accountsInput := view.builder.get("accounts").(gtki.ComboBox)
+	ac := u.createConnectedAccountsComponent(accountsInput, view,
+		func(acc *account) {
+			go u.mucUpdatePublicRoomsOn(view, acc)
+		},
+		func() {
+			view.rooms.SetVisible(false)
+			view.spinner.Stop()
+			view.spinner.SetVisible(false)
+			view.roomsModel.Clear()
+		},
+	)
+
 	view.joinButton.SetSensitive(false)
 
-	view.initOrReplaceAccounts(u.getAllConnectedAccounts())
-
-	accountsObserverToken := u.onChangeOfConnectedAccounts(func() {
-		doInUIThread(func() {
-			view.initOrReplaceAccounts(u.getAllConnectedAccounts())
-		})
-	})
-
 	view.builder.ConnectSignals(map[string]interface{}{
-		"on_cancel_signal": view.dialog.Destroy,
-		"on_close_window_signal": func() {
-			u.removeConnectedAccountsObserver(accountsObserverToken)
-		},
+		"on_cancel_signal":       view.dialog.Destroy,
+		"on_close_window_signal": ac.onDestroy,
 		"on_join_signal": func() {
 			selection, err := view.roomsTree.GetSelection()
 			if err != nil {
@@ -283,7 +242,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 				u.log.Debug("a service is selected, not a room, so we can't activate it")
 				return
 			}
-			go u.joinRoom(v, view.accountsList[view.currentlyActive])
+			go u.joinRoom(v, ac.currentAccount())
 		},
 		"on_activate_room_row": func(_ gtki.TreeView, path gtki.TreePath) {
 			iter, err := view.roomsModel.GetIter(path)
@@ -298,7 +257,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 				u.log.Debug("a service is selected, not a room, so we can't activate it")
 				return
 			}
-			go u.joinRoom(v, view.accountsList[view.currentlyActive])
+			go u.joinRoom(v, ac.currentAccount())
 		},
 		"on_selection_changed": func() {
 			selection, err := view.roomsTree.GetSelection()
@@ -322,17 +281,10 @@ func (u *gtkUI) mucShowPublicRooms() {
 			}
 		},
 		"on_custom_service": func() {
-			go u.mucUpdatePublicRoomsOn(view, view.accountsList[view.currentlyActive])
+			go u.mucUpdatePublicRoomsOn(view, ac.currentAccount())
 		},
 		"on_refresh": func() {
-			go u.mucUpdatePublicRoomsOn(view, view.accountsList[view.currentlyActive])
-		},
-		"on_accounts_changed": func() {
-			act := view.accountInput.GetActive()
-			if act >= 0 && act < len(view.accountsList) && act != view.currentlyActive {
-				view.currentlyActive = act
-				go u.mucUpdatePublicRoomsOn(view, view.accountsList[act])
-			}
+			go u.mucUpdatePublicRoomsOn(view, ac.currentAccount())
 		},
 	})
 
@@ -340,10 +292,4 @@ func (u *gtkUI) mucShowPublicRooms() {
 
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
-	view.currentlyActive = -1
-
-	if len(view.accountsList) > 0 {
-		view.currentlyActive = 0
-		go u.mucUpdatePublicRoomsOn(view, view.accountsList[view.currentlyActive])
-	}
 }

@@ -1,12 +1,4 @@
 <interface>
-  <object class="GtkListStore" id="accounts-model">
-    <columns>
-      <!-- account name -->
-      <column type="gchararray"/>
-      <!-- account id -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkTreeStore" id="rooms-model">
     <columns>
       <!-- jid -->
@@ -76,10 +68,8 @@
             <child>
               <object class="GtkComboBox" id="accounts">
 		        <property name="visible">true</property>
-                <property name="model">accounts-model</property>
                 <property name="has-focus">true</property>
                 <property name="hexpand">True</property>
-                <signal name="changed" handler="on_accounts_changed" swapped="no"/>
                 <child>
                   <object class="GtkCellRendererText" id="account-name-rendered"/>
                   <attributes>

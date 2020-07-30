@@ -28,10 +28,9 @@ func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutRes
 
 type addContactDialog struct {
 	builder                *builder
-	dialog                 gtki.Window   `gtk-widget:"AddContact"`
-	accountInput           gtki.ComboBox `gtk-widget:"accounts"`
-	contactInput           gtki.Entry    `gtk-widget:"address"`
-	notificationArea       gtki.Box      `gtk-widget:"notification-area"`
+	dialog                 gtki.Window `gtk-widget:"AddContact"`
+	contactInput           gtki.Entry  `gtk-widget:"address"`
+	notificationArea       gtki.Box    `gtk-widget:"notification-area"`
 	notification           gtki.InfoBar
 	subscriptionAskMessage gtki.TextBuffer  `gtk-widget:"subscriptionAskMessage"`
 	nickname               gtki.Entry       `gtk-widget:"nickname"`

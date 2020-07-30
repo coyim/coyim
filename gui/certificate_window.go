@@ -123,7 +123,7 @@ func (u *gtkUI) certificateFailedToVerifyDisplayDialog(a *account, certs []*x509
 
 		accountName := "this account"
 		if a != nil {
-			accountName = a.session.GetConfig().Account
+			accountName = a.Account()
 		}
 
 		md.SetTitle(strings.Replace(md.GetTitle(), "ACCOUNT_NAME", accountName, -1))

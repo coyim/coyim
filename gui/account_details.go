@@ -132,7 +132,7 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 
 	serverAddress := account.session.Conn().ServerAddress()
 	if serverAddress == "" {
-		parts := strings.SplitN(account.session.GetConfig().Account, "@", 2)
+		parts := strings.SplitN(account.Account(), "@", 2)
 		serverAddress = parts[1]
 	}
 	server.SetLabel(serverAddress)

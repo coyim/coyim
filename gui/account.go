@@ -85,7 +85,7 @@ type byAccountNameAlphabetic []*account
 
 func (s byAccountNameAlphabetic) Len() int { return len(s) }
 func (s byAccountNameAlphabetic) Less(i, j int) bool {
-	return s[i].session.GetConfig().Account < s[j].session.GetConfig().Account
+	return s[i].Account() < s[j].Account()
 }
 func (s byAccountNameAlphabetic) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
@@ -98,8 +98,14 @@ func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf 
 	}
 }
 
+// ID returns the id of the account
 func (account *account) ID() string {
 	return account.session.GetConfig().ID()
+}
+
+// Account returns the JID of the account
+func (account *account) Account() string {
+	return account.session.GetConfig().Account
 }
 
 func (account *account) afterConversationWindowCreated(peer jid.Any, f func(conversationView)) {
@@ -324,7 +330,7 @@ func (account *account) createXMLConsoleItem(parent gtki.Window) gtki.MenuItem {
 	if account.xmlConsole == nil {
 		account.xmlConsole = newXMLConsoleView(account.session.GetInMemoryLog())
 		account.xmlConsole.SetTransientFor(parent)
-		account.xmlConsole.SetTitle(strings.Replace(account.xmlConsole.GetTitle(), "ACCOUNT_NAME", account.session.GetConfig().Account, -1))
+		account.xmlConsole.SetTitle(strings.Replace(account.xmlConsole.GetTitle(), "ACCOUNT_NAME", account.Account(), -1))
 	}
 
 	consoleItem, _ := g.gtk.MenuItemNewWithMnemonic(i18n.Local("XML Console"))
@@ -353,7 +359,7 @@ func (account *account) createSubmenu(u *gtkUI) gtki.Menu {
 
 func (account *account) buildAccountSubmenu(u *gtkUI) {
 	menuitem, _ := g.gtk.MenuItemNew()
-	menuitem.SetLabel(account.session.GetConfig().Account)
+	menuitem.SetLabel(account.Account())
 	menuitem.SetSubmenu(account.createSubmenu(u))
 	account.menu = menuitem
 }
@@ -428,11 +434,11 @@ func (account *account) buildNotification(template, msg string, moreInfo func())
 }
 
 func (account *account) buildConnectionNotification() gtki.InfoBar {
-	return account.buildNotification("ConnectingAccountInfo", i18n.Localf("Connecting account\n%s", account.session.GetConfig().Account), nil)
+	return account.buildNotification("ConnectingAccountInfo", i18n.Localf("Connecting account\n%s", account.Account()), nil)
 }
 
 func (account *account) buildConnectionFailureNotification(moreInfo func()) gtki.InfoBar {
-	return account.buildNotification("ConnectionFailureNotification", i18n.Localf("Connection failure\n%s", account.session.GetConfig().Account), moreInfo)
+	return account.buildNotification("ConnectionFailureNotification", i18n.Localf("Connection failure\n%s", account.Account()), moreInfo)
 }
 
 func (account *account) buildTorNotRunningNotification(moreInfo func()) gtki.InfoBar {

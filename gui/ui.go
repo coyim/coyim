@@ -685,8 +685,8 @@ func (u *gtkUI) newCustomConversation() {
 
 	for _, acc := range accounts {
 		iter := model.Append()
-		_ = model.SetValue(iter, 0, acc.session.GetConfig().Account)
-		_ = model.SetValue(iter, 1, acc.session.GetConfig().ID())
+		_ = model.SetValue(iter, 0, acc.Account())
+		_ = model.SetValue(iter, 1, acc.ID())
 	}
 
 	if len(accounts) > 0 {

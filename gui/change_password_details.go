@@ -48,7 +48,7 @@ func validateNewPassword(newPassword, repeatedPassword string) error {
 }
 
 func changePassword(account *account, newPassword string, u *gtkUI, data *changePasswordData) {
-	accountInfo := account.session.GetConfig().Account
+	accountInfo := account.Account()
 	accountInfoParts := strings.SplitN(accountInfo, "@", 2)
 	username := accountInfoParts[0]
 	server := accountInfoParts[1]

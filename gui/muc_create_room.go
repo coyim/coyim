@@ -75,8 +75,8 @@ func (v *createMUCRoom) populateModel(accs []*account) {
 
 	for _, acc := range accs {
 		iter := v.model.Append()
-		_ = v.model.SetValue(iter, 0, acc.session.GetConfig().Account)
-		_ = v.model.SetValue(iter, 1, acc.session.GetConfig().ID())
+		_ = v.model.SetValue(iter, 0, acc.Account())
+		_ = v.model.SetValue(iter, 1, acc.ID())
 	}
 
 	if len(accs) > 0 {

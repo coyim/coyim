@@ -576,11 +576,11 @@ func (r *roster) redrawSeparateAccount(account *account, contacts *rosters.List,
 	accountCounter := &counter{}
 
 	grp := contacts.Grouped(account.session.GroupDelimiter())
-	parentName := account.session.GetConfig().Account
+	parentName := account.Account()
 	r.displayGroup(grp, parentIter, accountCounter, showOffline, showWaiting, parentName)
 
 	_ = r.model.SetValue(parentIter, indexParentJid, parentName)
-	_ = r.model.SetValue(parentIter, indexAccountID, account.session.GetConfig().ID())
+	_ = r.model.SetValue(parentIter, indexAccountID, account.ID())
 	_ = r.model.SetValue(parentIter, indexRowType, "account")
 	_ = r.model.SetValue(parentIter, indexWeight, 700)
 

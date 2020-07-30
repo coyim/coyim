@@ -55,9 +55,9 @@ func (cac *connectedAccountsComponent) initOrReplaceAccounts(accounts []*account
 	cac.accounts = make(map[string]*account)
 	for _, acc := range accounts {
 		iter := cac.accountsModel.Append()
-		_ = cac.accountsModel.SetValue(iter, 0, acc.session.GetConfig().Account)
-		_ = cac.accountsModel.SetValue(iter, 1, acc.session.GetConfig().ID())
-		cac.accounts[acc.session.GetConfig().ID()] = acc
+		_ = cac.accountsModel.SetValue(iter, 0, acc.Account())
+		_ = cac.accountsModel.SetValue(iter, 1, acc.ID())
+		cac.accounts[acc.ID()] = acc
 	}
 
 	if len(accounts) > 0 {

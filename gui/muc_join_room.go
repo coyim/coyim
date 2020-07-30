@@ -70,9 +70,9 @@ func (jrv *mucJoinRoomView) initOrReplaceAccounts(accounts []*account) {
 	jrv.accounts = make(map[string]*account)
 	for _, acc := range accounts {
 		iter := jrv.modelAccount.Append()
-		_ = jrv.modelAccount.SetValue(iter, 0, acc.session.GetConfig().Account)
-		_ = jrv.modelAccount.SetValue(iter, 1, acc.session.GetConfig().ID())
-		jrv.accounts[acc.session.GetConfig().ID()] = acc
+		_ = jrv.modelAccount.SetValue(iter, 0, acc.Account())
+		_ = jrv.modelAccount.SetValue(iter, 1, acc.ID())
+		jrv.accounts[acc.ID()] = acc
 	}
 
 	if len(accounts) > 0 {

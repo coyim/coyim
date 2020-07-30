@@ -102,7 +102,7 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 	// We save the generation value here, in case it gets modified inside the view later
 	gen := view.generation
 
-	res, resServices, ec := a.session.GetRooms(jid.Parse(a.session.GetConfig().Account).Host(), customService)
+	res, resServices, ec := a.session.GetRooms(jid.Parse(a.Account()).Host(), customService)
 	go func() {
 		hasSomething := false
 

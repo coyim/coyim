@@ -43,7 +43,7 @@
             <property name="column-spacing">6</property>
             <child>
               <object class="GtkLabel" id="accountsLabel" >
-		<property name="visible">true</property>
+		        <property name="visible">true</property>
                 <property name="label" translatable="yes">Account:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -55,7 +55,7 @@
             </child>
             <child>
               <object class="GtkComboBox" id="accounts">
-		<property name="visible">true</property>
+		        <property name="visible">true</property>
                 <property name="has-focus">true</property>
                 <property name="hexpand">True</property>
                 <child>
@@ -72,7 +72,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="accountLabel" >
-		<property name="visible">true</property>
+		        <property name="visible">true</property>
                 <property name="label" translatable="yes">Contact to add:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -84,7 +84,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="address">
-		<property name="visible">true</property>
+		        <property name="visible">true</property>
                 <property name="placeholder-text">someone@jabber.org</property>
                 <property name="hexpand">True</property>
                 <signal name="activate" handler="on_save_signal" />
@@ -96,7 +96,7 @@
             </child>
             <child>
               <object class="GtkLabel" id="nicknameLabel" >
-		<property name="visible">true</property>
+		        <property name="visible">true</property>
                 <property name="label" translatable="yes">Nickname:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -108,7 +108,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="nickname">
-		<property name="visible">true</property>
+		        <property name="visible">true</property>
                 <property name="hexpand">True</property>
                 <signal name="activate" handler="on_save_signal" />
               </object>
@@ -168,10 +168,10 @@
         </child>
         <child>
           <object class="GtkLabel" id="subscriptionInstructions">
-          <property name="visible">true</property>
-          <property name="label" translatable="yes">Warning: This message will not be end-to-end encrypted. Do not reveal any sensitive information in it.</property>
-          <property name="wrap">true</property>
-          <property name="max-width-chars">65</property>
+            <property name="visible">true</property>
+            <property name="label" translatable="yes">Warning: This message will not be end-to-end encrypted. Do not reveal any sensitive information in it.</property>
+            <property name="wrap">true</property>
+            <property name="max-width-chars">65</property>
           </object>
         </child>
       </object>

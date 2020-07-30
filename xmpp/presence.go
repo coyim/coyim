@@ -53,7 +53,7 @@ func (c *conn) SendPresence(to, typ, id, status string) error {
 func (c *conn) SendMUCPresence(to string) error {
 	p := &data.ClientPresence{
 		To:       to,
-		MUCExtra: data.MUCExtra{},
+		MUCExtra: &data.MUCExtra{},
 	}
 
 	return c.sendPresence(p)

@@ -19,6 +19,6 @@ type ClientPresence struct {
 	Error *StanzaError `xml:"jabber:client error"`
 	Delay *Delay       `xml:"delay,omitempty"`
 
-	Extra    string   `xml:",innerxml"`
-	MUCExtra MUCExtra `xml:",omitempty"`
+	Extra    string    `xml:",innerxml"`
+	MUCExtra *MUCExtra `xml:",omitempty"`
 }

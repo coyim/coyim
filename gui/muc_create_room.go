@@ -3,9 +3,12 @@ package gui
 import (
 	"fmt"
 
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
+
+var createMUCRoomIsOpen bool
 
 type createMUCRoom struct {
 	accountManager *accountManager
@@ -18,6 +21,8 @@ type createMUCRoom struct {
 	account      gtki.ComboBox `gtk-widget:"accounts"`
 	service      gtki.Entry    `gtk-widget:"service"`
 	room         gtki.Entry    `gtk-widget:"room"`
+	createButton gtki.Button   `gtk-widget:"button-ok"`
+	cancelButton gtki.Button   `gtk-widget:"button-cancel"`
 
 	model       gtki.ListStore `gtk-widget:"accounts-model"`
 	accountList []*account
@@ -49,6 +54,7 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 		"cancel_handler":      view.Destroy,
 		"on_close_window_signal": func() {
 			u.removeConnectedAccountsObserver(accountsObserverToken)
+			createMUCRoomIsOpen = false
 		},
 	})
 
@@ -75,24 +81,35 @@ func (v *createMUCRoom) populateModel(accs []*account) {
 
 	if len(accs) > 0 {
 		v.account.SetActive(newActiveAccount)
+		v.createButton.SetSensitive(true)
 	} else {
-		v.errorBox.ShowMessage("No accounts connected. Please connect some account from your list of accounts.")
+		v.errorBox.ShowMessage(i18n.Local("No accounts connected. Please connect some account from your list of accounts."))
+		v.createButton.SetSensitive(false)
 	}
 	v.accountList = accs
 }
 
+func (v *createMUCRoom) updateFields(f bool) {
+	v.cancelButton.SetSensitive(f)
+	v.createButton.SetSensitive(f)
+	v.account.SetSensitive(f)
+	v.room.SetSensitive(f)
+	v.service.SetSensitive(f)
+}
+
 func (v *createMUCRoom) createRoomHandler() {
 	idAcc := v.getSelectedAccountID()
+
 	v.errorBox.Hide()
 
 	if idAcc == "" {
-		v.errorBox.ShowMessage("No account selected, please select one account from the list or connect some account.")
+		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect some account."))
 		return
 	}
 
 	account, found := v.accountManager.getAccountByID(idAcc)
 	if !found {
-		v.errorBox.ShowMessage(fmt.Sprintf("The given account %s is not connected.", idAcc))
+		v.errorBox.ShowMessage(i18n.Localf("The given account %s is not connected.", idAcc))
 		return
 	}
 
@@ -100,21 +117,32 @@ func (v *createMUCRoom) createRoomHandler() {
 	service, _ := v.service.GetText()
 
 	if roomName == "" || service == "" {
-		v.errorBox.ShowMessage("Please fill the required fields to create the room.")
+		v.errorBox.ShowMessage(i18n.Local("Please fill the required fields to create the room."))
 		return
 	}
 
+	v.updateFields(false)
+	originalLabel, _ := v.createButton.GetProperty("label")
+	v.createButton.SetProperty("label", i18n.Local("Creating room..."))
+
 	complete := make(chan error)
+
 	go func() {
 		complete <- account.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
 	}()
 
-	if <-complete != nil {
-		v.errorBox.ShowMessage("Could not create the new room")
-	} else {
-		v.errorBox.ShowMessage("Room created with success")
-	}
+	go func() {
+		if <-complete != nil {
+			v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
+		} else {
+			v.errorBox.ShowMessage(i18n.Local("Room created with success"))
+		}
 
+		doInUIThread(func() {
+			v.updateFields(true)
+			v.createButton.SetProperty("label", originalLabel)
+		})
+	}()
 }
 
 func (v *createMUCRoom) getSelectedAccountID() string {
@@ -133,7 +161,10 @@ func (v *createMUCRoom) getSelectedAccountID() string {
 }
 
 func (u *gtkUI) mucCreateChatRoom() {
+	if createMUCRoomIsOpen {
+		return
+	}
 	view := u.newMUCRoomView(u.accountManager)
-	view.SetApplication(u.app)
-	view.Show()
+	doInUIThread(view.Show)
+	createMUCRoomIsOpen = true
 }

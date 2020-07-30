@@ -28,47 +28,44 @@ func authorizePresenceSubscriptionDialog(parent gtki.Window, peer jid.WithoutRes
 
 type addContactDialog struct {
 	builder                *builder
-	dialog                 gtki.Window    `gtk-widget:"AddContact"`
-	model                  gtki.ListStore `gtk-widget:"accounts-model"`
-	accountInput           gtki.ComboBox  `gtk-widget:"accounts"`
-	contactInput           gtki.Entry     `gtk-widget:"address"`
-	notificationArea       gtki.Box       `gtk-widget:"notification-area"`
+	dialog                 gtki.Window   `gtk-widget:"AddContact"`
+	accountInput           gtki.ComboBox `gtk-widget:"accounts"`
+	contactInput           gtki.Entry    `gtk-widget:"address"`
+	notificationArea       gtki.Box      `gtk-widget:"notification-area"`
 	notification           gtki.InfoBar
 	subscriptionAskMessage gtki.TextBuffer  `gtk-widget:"subscriptionAskMessage"`
 	nickname               gtki.Entry       `gtk-widget:"nickname"`
 	autoAuth               gtki.CheckButton `gtk-widget:"auto_authorize_checkbutton"`
-	accounts               map[string]*account
+	errorNotif             *errorNotification
 }
 
-func (acd *addContactDialog) getVerifiedContact(errorNotif *errorNotification) (string, bool) {
-	contact, _ := acd.contactInput.GetText()
-	isJid, err := verifyXMPPAddress(contact)
+func (acd *addContactDialog) clearErrors() {
+	acd.errorNotif.Hide()
+}
 
-	if !isJid {
+func (acd *addContactDialog) notifyOnError(err string) {
+	doInUIThread(func() {
 		if acd.notification != nil {
 			acd.notificationArea.Remove(acd.notification)
 		}
 
-		errorNotif.ShowMessage(err)
+		acd.errorNotif.ShowMessage(err)
+	})
+}
+
+func (acd *addContactDialog) getVerifiedContact() (string, bool) {
+	contact, _ := acd.contactInput.GetText()
+	isJid, err := verifyXMPPAddress(contact)
+
+	if !isJid {
+		acd.notifyOnError(err)
 		log.WithField("error", err).Warn("Bad XMPP address entered")
 
 		return "", false
 	}
 
-	errorNotif.Hide() // no errors
+	acd.clearErrors()
 	return contact, true
-}
-
-func (acd *addContactDialog) getCurrentAccount() (string, error) {
-	iter, err := acd.accountInput.GetActiveIter()
-	if err != nil {
-		return "", err
-	}
-	val, err := acd.model.GetValue(iter, 1)
-	if err != nil {
-		return "", err
-	}
-	return val.GetString()
 }
 
 func (acd *addContactDialog) getCurrentMessage() string {
@@ -88,59 +85,53 @@ func (acd *addContactDialog) getAutoAuthorize() bool {
 	return acd.autoAuth.GetActive()
 }
 
-func (acd *addContactDialog) initAccounts(accounts []*account) {
-	acd.accounts = make(map[string]*account)
-	for _, acc := range accounts {
-		iter := acd.model.Append()
-		_ = acd.model.SetValue(iter, 0, acc.session.GetConfig().Account)
-		_ = acd.model.SetValue(iter, 1, acc.session.GetConfig().ID())
-		acd.accounts[acc.session.GetConfig().ID()] = acc
-	}
-
-	if len(accounts) > 0 {
-		acd.accountInput.SetActive(0)
-	}
-}
-
 func (acd *addContactDialog) init() {
 	acd.builder = newBuilder("AddContact")
 	panicOnDevError(acd.builder.bindObjects(acd))
+	acd.errorNotif = newErrorNotification(acd.notificationArea)
 }
 
-func presenceSubscriptionDialog(accounts []*account, sendSubscription func(accountID string, peer jid.WithoutResource, msg, nick string, autoauth bool) error) gtki.Window {
-	//TODO: this can be opened before a account is connected.
-	//In this case the window is useless: cant add a contact and cant see an error
+func (u *gtkUI) presenceSubscriptionDialog(sendSubscription func(accountID string, peer jid.WithoutResource, msg, nick string, autoauth bool) error) gtki.Window {
 	acd := &addContactDialog{}
 	acd.init()
-	acd.initAccounts(accounts)
 
-	errorNotif := newErrorNotification(acd.notificationArea)
+	accountsInput := acd.builder.get("accounts").(gtki.ComboBox)
+	ac := u.createConnectedAccountsComponent(accountsInput, acd,
+		func(acc *account) {
+			acd.clearErrors()
+		},
+		func() {
+			acd.notifyOnError(i18n.Local("There are no currently connected accounts"))
+		},
+	)
 
 	acd.builder.ConnectSignals(map[string]interface{}{
-		"on_cancel_signal": acd.dialog.Destroy,
+		"on_cancel_signal": func() {
+			acd.dialog.Destroy()
+			ac.onDestroy()
+		},
 		"on_save_signal": func() {
-			contact, ok := acd.getVerifiedContact(errorNotif)
+			contact, ok := acd.getVerifiedContact()
 			if !ok {
 				return
 			}
 
-			accountID, err := acd.getCurrentAccount()
-			if err != nil {
-				//TODO: report error, and close?
-				log.WithError(err).Warn("Error encountered when getting account")
+			acc := ac.currentAccount()
+			if acc == nil {
+				acd.notifyOnError(i18n.Local("There is no connected account selected"))
+				acc.log.Warn("can't send subscription without a current account")
 				return
 			}
 
-			acc := acd.accounts[accountID]
-
-			err = sendSubscription(accountID, jid.NR(contact), acd.getCurrentMessage(), acd.getCurrentNickname(), acd.getAutoAuthorize())
+			err := sendSubscription(acc.ID(), jid.NR(contact), acd.getCurrentMessage(), acd.getCurrentNickname(), acd.getAutoAuthorize())
 			if err != nil {
-				//TODO: report error
+				acd.notifyOnError(i18n.Local("We couldn't send a subscription"))
 				acc.log.WithError(err).Warn("Error encountered when sending subscription")
 				return
 			}
 
 			acd.dialog.Destroy()
+			ac.onDestroy()
 		},
 	})
 

@@ -1,12 +1,4 @@
 <interface>
-  <object class="GtkListStore" id="accounts-model">
-    <columns>
-      <!-- account name -->
-      <column type="gchararray"/>
-      <!-- account id -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkTextBuffer" id="subscriptionAskMessage">
     <property name="text" translatable="yes">I would like to add you to my contact list.</property>
   </object>
@@ -64,7 +56,6 @@
             <child>
               <object class="GtkComboBox" id="accounts">
 		<property name="visible">true</property>
-                <property name="model">accounts-model</property>
                 <property name="has-focus">true</property>
                 <property name="hexpand">True</property>
                 <child>

@@ -730,8 +730,7 @@ func (u *gtkUI) newCustomConversation() {
 }
 
 func (u *gtkUI) addContactWindow() {
-	accounts := u.getAllConnectedAccounts()
-	dialog := presenceSubscriptionDialog(accounts, func(accountID string, peer jid.WithoutResource, msg, nick string, autoAuth bool) error {
+	dialog := u.presenceSubscriptionDialog(func(accountID string, peer jid.WithoutResource, msg, nick string, autoAuth bool) error {
 		account, ok := u.accountManager.getAccountByID(accountID)
 		if !ok {
 			return fmt.Errorf(i18n.Local("There is no account with the id %q"), accountID)

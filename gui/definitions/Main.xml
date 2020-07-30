@@ -63,7 +63,7 @@
                         <child>
                           <object class="GtkMenuItem" id="muc-create-chat-room-menu">
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Crear Sala Rápida</property>
+                            <property name="label" translatable="yes">Create Room</property>
                             <property name="use_underline">True</property>
                             <signal name="activate" handler="on_create_chat_room" swapped="no"/>
                           </object>

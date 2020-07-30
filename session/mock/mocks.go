@@ -206,3 +206,8 @@ func (*SessionMock) GetAndWipeSymmetricKeyFor(jid.Any) []byte {
 func (*SessionMock) GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error) {
 	return nil, nil, nil
 }
+
+// CreateRoom is the implementation for session interface
+func (*SessionMock) CreateRoom(jid.Bare) error {
+	return nil
+}

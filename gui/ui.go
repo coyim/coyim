@@ -456,6 +456,7 @@ func (u *gtkUI) mainWindow() {
 		"on_preferences_signal":                        u.showGlobalPreferences,
 		"on_muc_show_public_rooms":                     u.mucShowPublicRooms,
 		"on_muc_show_join_room":                        u.mucShowJoinRoom,
+		"on_create_chat_room":                          u.mucCreateChatRoom,
 	})
 
 	panicOnDevError(builder.bindObjects(u))

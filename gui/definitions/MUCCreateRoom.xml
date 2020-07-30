@@ -17,6 +17,8 @@
     <property name="window_position">center</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
+    <signal name="close" handler="on_close_window_signal" swapped="no"/>
+    <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="visible">True</property>
@@ -29,7 +31,7 @@
             <property name="can_focus">False</property>
             <child>
               <object class="GtkButton" id="button-cancel">
-                <property name="label">_Cancelar</property>
+                <property name="label">_Cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">False</property>
@@ -44,7 +46,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button-ok">
-                <property name="label" translatable="yes">Crear Sala</property>
+                <property name="label" translatable="yes">Create Room</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="can_default">True</property>

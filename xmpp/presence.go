@@ -48,6 +48,17 @@ func (c *conn) SendPresence(to, typ, id, status string) error {
 	return c.sendPresence(p)
 }
 
+// TODO: Could this function be generic, and receive only a data.ClientPresence object?
+// SendMUCPresence sends a presence as first step for create a new room
+func (c *conn) SendMUCPresence(to string) error {
+	p := &data.ClientPresence{
+		To:       to,
+		MUCExtra: data.MUCExtra{},
+	}
+
+	return c.sendPresence(p)
+}
+
 // SignalPresence will signal the current presence
 func (c *conn) SignalPresence(state string) error {
 	var outb bytes.Buffer

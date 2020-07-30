@@ -19,16 +19,6 @@ type ClientPresence struct {
 	Error *StanzaError `xml:"jabber:client error"`
 	Delay *Delay       `xml:"delay,omitempty"`
 
-	Chat *struct {
-		Item struct {
-			JID         string `xml:"jid,attr,omitempty"`
-			Affiliation string `xml:"affiliation,attr,omitempty"`
-			Role        string `xml:"role,attr,omitempty"`
-		} `xml:"item,omitempty"`
-		Status struct {
-			Code int `xml:"code,attr,omitempty"`
-		} `xml:"status,omitempty"`
-	} `xml:"http://jabber.org/protocol/muc#user x,omitempty"`
-
-	Extra string `xml:",innerxml"`
+	Extra    string   `xml:",innerxml"`
+	MUCExtra MUCExtra `xml:",omitempty"`
 }

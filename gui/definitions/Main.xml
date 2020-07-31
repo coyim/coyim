@@ -5,9 +5,6 @@
     <property name="default_width">200</property>
     <property name="default_height">600</property>
     <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child>
       <object class="GtkBox" id="Hbox">
         <property name="visible">True</property>

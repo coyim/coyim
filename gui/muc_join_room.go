@@ -1,9 +1,11 @@
 package gui
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -83,18 +85,70 @@ func (jrv *mucJoinRoomView) initOrReplaceAccounts(accounts []*account) {
 	}
 }
 
+func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
+	jrv.updateLock.Lock()
+
+	doInUIThread(jrv.clearErrors)
+
+	roomName, _ := jrv.txtRoomName.GetText()
+	roomList := make(map[string]jid.Any)
+
+	doInUIThread(func() {
+		jrv.spinner.Start()
+		jrv.spinner.SetVisible(true)
+	})
+
+	resRooms, _, ec := a.session.GetRooms(jid.Parse(a.session.GetConfig().Account).Host(), "")
+	go func() {
+		defer func() {
+			doInUIThread(func() {
+				jrv.spinner.Stop()
+				jrv.spinner.SetVisible(false)
+			})
+
+			jrv.updateLock.Unlock()
+
+			rjid, ok := roomList[roomName]
+			if !ok {
+				jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName)))
+				u.log.Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
+			} else {
+				doInUIThread(func() {
+					u.mucShowRoom(a, rjid.String())
+					jrv.dialog.Hide()
+				})
+			}
+		}()
+		for {
+			select {
+			case rooml, ok := <-resRooms:
+				if !ok || rooml == nil {
+					return
+				}
+
+				_, ok = roomList[rooml.Jid.String()]
+				if !ok {
+					roomList[rooml.Jid.String()] = rooml.Service
+				}
+			case e, ok := <-ec:
+				if !ok {
+					return
+				}
+				if e != nil {
+					jrv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
+					u.log.WithError(e).Debug("something went wrong trying to get chat rooms")
+				}
+				return
+			}
+		}
+	}()
+}
+
+//
+// Custom GTK Events
+//
+
 func (jrv *mucJoinRoomView) onShowWindow() {
-
-}
-
-func (jrv *mucJoinRoomView) onCmbAccountChanged() {
-	act := jrv.cmbAccount.GetActive()
-	if act >= 0 && act < len(jrv.accountsList) && act != jrv.currentlyActive {
-		jrv.currentlyActive = act
-	}
-}
-
-func (jrv *mucJoinRoomView) onBtnJoinClicked() {
 
 }
 
@@ -112,11 +166,16 @@ func (u *gtkUI) mucShowJoinRoom() {
 			view.onShowWindow()
 		},
 		"on_cmb_account_changed": func() {
-			view.onCmbAccountChanged()
+			act := view.cmbAccount.GetActive()
+			if act >= 0 && act < len(view.accountsList) && act != view.currentlyActive {
+				view.currentlyActive = act
+			}
 		},
 		"on_btn_cancel_clicked_signal": view.dialog.Destroy,
 		"on_btn_join_clicked_signal": func() {
-			view.onBtnJoinClicked()
+			idx := view.cmbAccount.GetActive()
+			act := view.accountsList[idx]
+			u.tryJoinRoom(view, act)
 		},
 	})
 

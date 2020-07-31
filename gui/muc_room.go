@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/coyim/gotk3adapter/gtki"
@@ -13,11 +14,10 @@ type mucRoomView struct {
 	generation int
 	updateLock sync.RWMutex
 
-	window gtki.Window `gtk-widget:"MUCRoom"`
+	window gtki.Window `gtk-widget:"MUCRoomWindow"`
 	//room   *room
 
 	boxJoinRoomView  gtki.Box         `gtk-widget:"boxJoinRoomView"`
-	labelNickname    gtki.Label       `gtk-widget:"labelNickname"`
 	txtNickname      gtki.Entry       `gtk-widget:"txtNickname"`
 	chkPassword      gtki.CheckButton `gtk-widget:"chkPassword"`
 	labelPassword    gtki.Label       `gtk-widget:"labelPassword"`
@@ -26,9 +26,9 @@ type mucRoomView struct {
 	notification     gtki.InfoBar
 	errorNotif       *errorNotification
 
-	boxRoomView gtki.Box    `gtk-widget:"boxRoomView"`
-	panel       gtki.Box    `gtk-widget:"panel"`
-	panelToggle gtki.Button `gtk-widget:"panel-toggle"`
+	boxRoomView gtki.Box `gtk-widget:"boxRoomView"`
+	//panel       gtki.Box    `gtk-widget:"panel"`
+	//panelToggle gtki.Button `gtk-widget:"panel-toggle"`
 
 	/*
 		roomPanelOpen    bool
@@ -42,6 +42,8 @@ type mucRoomView struct {
 		roomMembersModel gtki.ListStore      `gtk-widget:"room-members-model"`
 		roomMembersView  gtki.TreeView       `gtk-widget:"room-members-tree"`
 	*/
+	// using the room jid for a moment, this should be an interface with all the necessary room information
+	roomJid     string
 	userAccount *account
 }
 
@@ -166,17 +168,22 @@ func (r *room) displayDescription() string {
 
 // init: Initilize the rooms view
 func (rv *mucRoomView) init() {
-	rv.builder = newBuilder("MUCRoom")
+	rv.builder = newBuilder("MUCRoomWindow")
 	panicOnDevError(rv.builder.bindObjects(rv))
 	rv.errorNotif = newErrorNotification(rv.notificationArea)
 	rv.togglePassword()
+
+	doInUIThread(func() {
+		rv.window.SetTitle(fmt.Sprintf("Room: [%s]", rv.roomJid))
+	})
 }
 
+// tooglePassword activate/deactivate the password fields
 func (rv *mucRoomView) togglePassword() {
 	doInUIThread(func() {
 		value := rv.chkPassword.GetActive()
-		rv.labelPassword.SetSensitive(!value)
-		rv.txtPassword.SetSensitive(!value)
+		rv.labelPassword.SetSensitive(value)
+		rv.txtPassword.SetSensitive(value)
 	})
 }
 
@@ -184,28 +191,27 @@ func (rv *mucRoomView) togglePassword() {
 // Custom GTK Events
 //
 
-//
+// onShowWindow apply some actions when the view is showed
 func (rv *mucRoomView) onShowWindow() {
 	//TODO: add necessary calls here
 }
 
+// onCloseWindow apply some actions when the view is hidden
 func (rv *mucRoomView) onCloseWindow() {
 	//TODO: add necessary calls here
 }
 
-func (rv *mucRoomView) onPasswordChecked() {
-	rv.togglePassword()
-}
-
+// onBtnJoinClicked event handler for the click event on the button join
 func (rv *mucRoomView) onBtnJoinClicked() {
 	//TODO: calls the XMPP logic to join a room here
 }
 
 // mucShowRoom should be called from the UI thread
-func (u *gtkUI) mucShowRoom(userAccount *account) {
+func (u *gtkUI) mucShowRoom(userAccount *account, rjid string) {
 	view := &mucRoomView{}
 
 	view.userAccount = userAccount
+	view.roomJid = rjid
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{
@@ -214,7 +220,7 @@ func (u *gtkUI) mucShowRoom(userAccount *account) {
 			view.onShowWindow()
 		},
 		"on_chk_password_checked_signal": func() {
-			view.onPasswordChecked()
+			view.togglePassword()
 		},
 		"on_btn_cancel_clicked_signal": view.window.Destroy,
 		"on_btn_join_clicked_signal": func() {

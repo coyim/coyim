@@ -8,8 +8,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-var createMUCRoomIsOpen bool
-
 type createMUCRoom struct {
 	accountManager *accountManager
 	errorBox       *errorNotification
@@ -54,7 +52,6 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 		"cancel_handler":      view.Destroy,
 		"on_close_window_signal": func() {
 			u.removeConnectedAccountsObserver(accountsObserverToken)
-			createMUCRoomIsOpen = false
 		},
 	})
 
@@ -103,7 +100,7 @@ func (v *createMUCRoom) createRoomHandler() {
 	v.errorBox.Hide()
 
 	if idAcc == "" {
-		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect some account."))
+		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect to one."))
 		return
 	}
 
@@ -125,14 +122,15 @@ func (v *createMUCRoom) createRoomHandler() {
 	originalLabel, _ := v.createButton.GetProperty("label")
 	v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 
-	complete := make(chan error)
+	ec := make(chan error)
 
 	go func() {
-		complete <- account.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
+		ec <- account.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
 	}()
 
 	go func() {
-		if <-complete != nil {
+		err, ok := <-ec
+		if !ok || err != nil {
 			v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
 		} else {
 			v.errorBox.ShowMessage(i18n.Local("Room created with success"))
@@ -161,10 +159,6 @@ func (v *createMUCRoom) getSelectedAccountID() string {
 }
 
 func (u *gtkUI) mucCreateChatRoom() {
-	if createMUCRoomIsOpen {
-		return
-	}
 	view := u.newMUCRoomView(u.accountManager)
 	doInUIThread(view.Show)
-	createMUCRoomIsOpen = true
 }

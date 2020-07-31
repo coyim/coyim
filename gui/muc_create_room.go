@@ -39,8 +39,6 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 	panicOnDevError(builder.bindObjects(view))
 	view.errorBox = newErrorNotification(view.notification)
 
-	view.populateModel(u.getAllConnectedAccounts())
-
 	accountsObserverToken := u.onChangeOfConnectedAccounts(func() {
 		doInUIThread(func() {
 			view.errorBox.Hide()
@@ -56,6 +54,8 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 		},
 		"changed_value_listener": view.updateChatServices,
 	})
+
+	view.populateModel(u.getAllConnectedAccounts())
 
 	return view
 }
@@ -105,7 +105,6 @@ func (v *createMUCRoom) populateModel(accs []*account) {
 		v.account.SetActive(newActiveAccount)
 		v.createButton.SetSensitive(true)
 	} else {
-
 		v.errorBox.ShowMessage(i18n.Local("No accounts connected. Please connect some account from your list of accounts."))
 		v.createButton.SetSensitive(false)
 	}

@@ -78,6 +78,7 @@ type Session interface {
 
 	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
 	CreateRoom(jid.Bare) error
+	GetChatServices(jid.Domain) ([]data.DiscoveryItem, error)
 }
 
 // Factory is a function that can create new Sessions

@@ -51,3 +51,13 @@ func (s *session) CreateRoom(roomID jid.Bare) error {
 
 	return err
 }
+
+//GetChatServices offers the chat services from a xmpp server.
+func (s *session) GetChatServices(server jid.Domain) ([]data.DiscoveryItem, error) {
+	items, err := s.conn.QueryServiceItems(server.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return items.DiscoveryItems, nil
+}

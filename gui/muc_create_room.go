@@ -14,13 +14,14 @@ type createMUCRoom struct {
 
 	gtki.Dialog `gtk-widget:"create-chat-dialog"`
 
-	notification gtki.Box      `gtk-widget:"notification-area"`
-	form         gtki.Grid     `gtk-widget:"form"`
-	account      gtki.ComboBox `gtk-widget:"accounts"`
-	service      gtki.Entry    `gtk-widget:"service"`
-	room         gtki.Entry    `gtk-widget:"room"`
-	createButton gtki.Button   `gtk-widget:"button-ok"`
-	cancelButton gtki.Button   `gtk-widget:"button-cancel"`
+	notification     gtki.Box          `gtk-widget:"notification-area"`
+	form             gtki.Grid         `gtk-widget:"form"`
+	account          gtki.ComboBox     `gtk-widget:"accounts"`
+	chatServices     gtki.ComboBoxText `gtk-widget:"chatServices"`
+	chatServiceEntry gtki.Entry        `gtk-widget:"chatServiceEntry"`
+	room             gtki.Entry        `gtk-widget:"room"`
+	createButton     gtki.Button       `gtk-widget:"button-ok"`
+	cancelButton     gtki.Button       `gtk-widget:"button-cancel"`
 
 	model       gtki.ListStore `gtk-widget:"accounts-model"`
 	accountList []*account
@@ -53,9 +54,33 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 		"on_close_window_signal": func() {
 			u.removeConnectedAccountsObserver(accountsObserverToken)
 		},
+		"changed_value_listener": view.updateChatServices,
 	})
 
 	return view
+}
+
+func (v *createMUCRoom) updateChatServices() {
+	v.clearCurrentChatServices()
+	acc := v.getCurrentConnectedAcount()
+	if acc == nil {
+		return
+	}
+
+	items, err := acc.session.GetChatServices(jid.Parse(acc.Account()).Host())
+	if err != nil {
+		return
+	}
+
+	for _, i := range items {
+		v.chatServices.AppendText(i.Jid)
+	}
+	v.chatServices.SetActive(0)
+}
+
+func (v *createMUCRoom) clearCurrentChatServices() {
+	v.chatServices.RemoveAll()
+	v.chatServiceEntry.SetText("")
 }
 
 func (v *createMUCRoom) populateModel(accs []*account) {
@@ -80,6 +105,7 @@ func (v *createMUCRoom) populateModel(accs []*account) {
 		v.account.SetActive(newActiveAccount)
 		v.createButton.SetSensitive(true)
 	} else {
+
 		v.errorBox.ShowMessage(i18n.Local("No accounts connected. Please connect some account from your list of accounts."))
 		v.createButton.SetSensitive(false)
 	}
@@ -91,27 +117,17 @@ func (v *createMUCRoom) updateFields(f bool) {
 	v.createButton.SetSensitive(f)
 	v.account.SetSensitive(f)
 	v.room.SetSensitive(f)
-	v.service.SetSensitive(f)
+	v.chatServices.SetSensitive(f)
 }
 
 func (v *createMUCRoom) createRoomHandler() {
-	idAcc := v.getSelectedAccountID()
-
-	v.errorBox.Hide()
-
-	if idAcc == "" {
-		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect to one."))
-		return
-	}
-
-	account, found := v.accountManager.getAccountByID(idAcc)
-	if !found {
-		v.errorBox.ShowMessage(i18n.Localf("The given account %s is not connected.", idAcc))
+	account := v.getCurrentConnectedAcount()
+	if account == nil {
 		return
 	}
 
 	roomName, _ := v.room.GetText()
-	service, _ := v.service.GetText()
+	service := v.chatServices.GetActiveText()
 
 	if roomName == "" || service == "" {
 		v.errorBox.ShowMessage(i18n.Local("Please fill the required fields to create the room."))
@@ -141,6 +157,23 @@ func (v *createMUCRoom) createRoomHandler() {
 			v.createButton.SetProperty("label", originalLabel)
 		})
 	}()
+}
+
+func (v *createMUCRoom) getCurrentConnectedAcount() *account {
+	v.errorBox.Hide()
+	idAcc := v.getSelectedAccountID()
+	if idAcc == "" {
+		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect to one."))
+		return nil
+	}
+
+	account, found := v.accountManager.getAccountByID(idAcc)
+	if !found {
+		v.errorBox.ShowMessage(i18n.Localf("The given account %s is not connected.", idAcc))
+		return nil
+	}
+
+	return account
 }
 
 func (v *createMUCRoom) getSelectedAccountID() string {

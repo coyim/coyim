@@ -119,6 +119,7 @@
                     <attribute name="text">0</attribute>
                   </attributes>
                 </child>
+                <signal name="changed" handler="changed_value_listener" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -165,11 +166,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="service">
+              <object class="GtkComboBoxText" id="chatServices">
+                <property name="has_entry">True</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="placeholder_text" translatable="yes">room.service.server.net</property>
+                <child internal-child="entry">
+                  <object class="GtkEntry" id="chatServiceEntry"/>
+                </child>
               </object>
               <packing>
                 <property name="left_attach">3</property>

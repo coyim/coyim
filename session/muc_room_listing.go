@@ -47,11 +47,11 @@ func extractFormData(fields []data.FormFieldX) map[string][]string {
 	return result
 }
 
-func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
+func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) error {
 	diq, e := s.Conn().QueryServiceInformation(rl.Jid.String())
 	if e != nil {
 		s.log.WithError(e).Debug("findOutMoreInformationAboutRoom() had error")
-		return
+		return e
 	}
 
 	for _, feat := range diq.Features {
@@ -167,6 +167,7 @@ func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 	}
 
 	rl.Updated()
+	return nil
 }
 
 func (s *session) getRoomsInService(service jid.Any, name string, results chan<- *muc.RoomListing, resultsServices chan<- *muc.ServiceListing, allRooms *sync.WaitGroup) {

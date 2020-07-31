@@ -18,9 +18,6 @@
     <property name="gravity">center</property>
     <signal name="close" handler="on_close_window_signal" swapped="no"/>
     <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="VBox">
         <property name="can_focus">False</property>
@@ -119,6 +116,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
+                    <signal name="changed" handler="on_txt_room_name_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>

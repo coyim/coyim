@@ -77,6 +77,8 @@ type Session interface {
 	GetAndWipeSymmetricKeyFor(jid.Any) []byte
 
 	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
+	GetRoom(jid.Bare) (*muc.RoomListing, error)
+	JoinRoom(jid.Bare, string)
 	CreateRoom(jid.Bare) error
 	GetChatServices(jid.Domain) ([]data.DiscoveryItem, error)
 }

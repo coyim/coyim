@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -85,61 +86,39 @@ func (jrv *mucJoinRoomView) initOrReplaceAccounts(accounts []*account) {
 	}
 }
 
+// tryJoinRoom find the room information and make the join to the room
 func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	jrv.updateLock.Lock()
 
 	doInUIThread(jrv.clearErrors)
 
 	roomName, _ := jrv.txtRoomName.GetText()
-	roomList := make(map[string]jid.Any)
 
 	doInUIThread(func() {
 		jrv.spinner.Start()
 		jrv.spinner.SetVisible(true)
 	})
 
-	resRooms, _, ec := a.session.GetRooms(jid.Parse(a.session.GetConfig().Account).Host(), "")
+	rl, err := a.session.GetRoom(jid.Parse(roomName).(jid.Bare))
 	go func() {
 		defer func() {
-			doInUIThread(func() {
-				jrv.spinner.Stop()
-				jrv.spinner.SetVisible(false)
-			})
-
 			jrv.updateLock.Unlock()
-
-			rjid, ok := roomList[roomName]
-			if !ok {
-				jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName)))
-				u.log.Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
-			} else {
-				doInUIThread(func() {
-					u.mucShowRoom(a, rjid.String())
-					jrv.dialog.Hide()
-				})
-			}
 		}()
-		for {
-			select {
-			case rooml, ok := <-resRooms:
-				if !ok || rooml == nil {
-					return
-				}
 
-				_, ok = roomList[rooml.Jid.String()]
-				if !ok {
-					roomList[rooml.Jid.String()] = rooml.Service
-				}
-			case e, ok := <-ec:
-				if !ok {
-					return
-				}
-				if e != nil {
-					jrv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
-					u.log.WithError(e).Debug("something went wrong trying to get chat rooms")
-				}
-				return
-			}
+		doInUIThread(func() {
+			time.Sleep(5000 * time.Millisecond)
+			jrv.spinner.Stop()
+			jrv.spinner.SetVisible(false)
+		})
+
+		if err != nil {
+			jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName)))
+			a.log.Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
+		} else {
+			doInUIThread(func() {
+				u.mucShowRoom(a, rl)
+				jrv.dialog.Hide()
+			})
 		}
 	}()
 }

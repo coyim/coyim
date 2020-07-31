@@ -30,9 +30,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
     <property name="gravity">center</property>
     <signal name="activate-default" handler="on_show_window_signal" swapped="no"/>
     <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child>
       <object class="GtkBox" id="boxMainView">
         <property name="visible">True</property>
@@ -119,6 +116,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="caps_lock_warning">False</property>
+                    <signal name="changed" handler="on_txt_nickname_changed_signal" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -150,6 +148,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="visibility">False</property>
+                    <signal name="changed" handler="on_txt_password_changed_signal" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -201,7 +200,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
-                    <signal name="clicked" handler="on_btn_cancel_join_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_btn_cancel_join_clicked_signal" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -210,13 +209,13 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btnOKJoin">
+                  <object class="GtkButton" id="btnAcceptJoin">
                     <property name="label" translatable="yes">_Join</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
-                    <signal name="clicked" handler="on_btn_ok_join_clicked_signal" swapped="no"/>
+                    <signal name="clicked" handler="on_btn_accept_join_clicked_signal" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>

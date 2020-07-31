@@ -37,5 +37,5 @@ func (v *comboBoxText) GetActiveText() string {
 }
 
 func (v *comboBoxText) RemoveAll() {
-	return v.internal.RemoveAll()
+	v.internal.RemoveAll()
 }

@@ -5,6 +5,7 @@ type ComboBoxText interface {
 
 	AppendText(string)
 	GetActiveText() string
+	RemoveAll()
 }
 
 func AssertComboBoxText(_ ComboBoxText) {}

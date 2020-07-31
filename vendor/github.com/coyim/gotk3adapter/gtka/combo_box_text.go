@@ -35,3 +35,7 @@ func (v *comboBoxText) AppendText(v1 string) {
 func (v *comboBoxText) GetActiveText() string {
 	return v.internal.GetActiveText()
 }
+
+func (v *comboBoxText) RemoveAll() {
+	return v.internal.RemoveAll()
+}

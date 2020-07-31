@@ -24,6 +24,7 @@
       <object class="GtkBox" id="Vbox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="valign">center</property>
         <property name="orientation">vertical</property>
         <property name="spacing">6</property>
         <child internal-child="action_area">
@@ -113,13 +114,13 @@
                 <property name="has_focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="model">accounts-model</property>
+                <signal name="changed" handler="changed_value_listener" swapped="no"/>
                 <child>
                   <object class="GtkCellRendererText" id="account-name-rendered"/>
                   <attributes>
                     <attribute name="text">0</attribute>
                   </attributes>
                 </child>
-                <signal name="changed" handler="changed_value_listener" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -146,6 +147,7 @@
                 <property name="can_focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="placeholder_text" translatable="yes">coyim-room-name</property>
+                <signal name="changed" handler="on_room_changed" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -167,10 +169,13 @@
             </child>
             <child>
               <object class="GtkComboBoxText" id="chatServices">
+                <property name="hexpand">True</property>
                 <property name="has_entry">True</property>
                 <property name="visible">True</property>
                 <child internal-child="entry">
-                  <object class="GtkEntry" id="chatServiceEntry"/>
+                  <object class="GtkEntry" id="chatServiceEntry">
+                    <signal name="changed" handler="on_chatServiceEntry_changed" swapped="no"/>
+                  </object>
                 </child>
               </object>
               <packing>

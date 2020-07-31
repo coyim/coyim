@@ -43,6 +43,7 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 		doInUIThread(func() {
 			view.errorBox.Hide()
 			view.populateModel(u.getAllConnectedAccounts())
+			view.checkIfFieldsAreEmpty()
 		})
 	})
 
@@ -52,7 +53,9 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 		"on_close_window_signal": func() {
 			u.removeConnectedAccountsObserver(accountsObserverToken)
 		},
-		"changed_value_listener": view.updateChatServices,
+		"changed_value_listener":      view.updateChatServices,
+		"on_room_changed":             view.checkIfFieldsAreEmpty,
+		"on_chatServiceEntry_changed": view.checkIfFieldsAreEmpty,
 	})
 
 	view.populateModel(u.getAllConnectedAccounts())
@@ -61,7 +64,9 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 }
 
 func (v *createMUCRoom) updateChatServices() {
+	enteredService, _ := v.chatServiceEntry.GetText()
 	v.clearCurrentChatServices()
+
 	acc := v.getCurrentConnectedAcount()
 	if acc == nil {
 		return
@@ -75,7 +80,12 @@ func (v *createMUCRoom) updateChatServices() {
 	for _, i := range items {
 		v.chatServices.AppendText(i.Jid)
 	}
-	v.chatServices.SetActive(0)
+
+	if enteredService != "" {
+		v.chatServiceEntry.SetText(enteredService)
+	} else {
+		v.chatServices.SetActive(0)
+	}
 }
 
 func (v *createMUCRoom) clearCurrentChatServices() {
@@ -103,10 +113,8 @@ func (v *createMUCRoom) populateModel(accs []*account) {
 
 	if len(accs) > 0 {
 		v.account.SetActive(newActiveAccount)
-		v.createButton.SetSensitive(true)
 	} else {
 		v.errorBox.ShowMessage(i18n.Local("No accounts connected. Please connect some account from your list of accounts."))
-		v.createButton.SetSensitive(false)
 	}
 	v.accountList = accs
 }
@@ -190,7 +198,20 @@ func (v *createMUCRoom) getSelectedAccountID() string {
 	return account
 }
 
+func (v *createMUCRoom) checkIfFieldsAreEmpty() {
+	accountVal := v.getSelectedAccountID()
+	serviceVal := v.chatServices.GetActiveText()
+	roomVal, _ := v.room.GetText()
+
+	if accountVal == "" || serviceVal == "" || roomVal == "" {
+		v.createButton.SetSensitive(false)
+	} else {
+		v.createButton.SetSensitive(true)
+	}
+}
+
 func (u *gtkUI) mucCreateChatRoom() {
 	view := u.newMUCRoomView(u.accountManager)
+	view.SetTransientFor(u.window)
 	doInUIThread(view.Show)
 }

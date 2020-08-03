@@ -10,4 +10,5 @@ func (*MockButton) SetImage(v1 gtki.Widget) {
 }
 
 func (*MockButton) GetLabel() (string, error) {
+	return "", nil
 }

@@ -14,17 +14,19 @@ type createMUCRoom struct {
 
 	gtki.Dialog `gtk-widget:"create-chat-dialog"`
 
-	notification     gtki.Box          `gtk-widget:"notification-area"`
-	form             gtki.Grid         `gtk-widget:"form"`
-	account          gtki.ComboBox     `gtk-widget:"accounts"`
-	chatServices     gtki.ComboBoxText `gtk-widget:"chatServices"`
-	chatServiceEntry gtki.Entry        `gtk-widget:"chatServiceEntry"`
-	room             gtki.Entry        `gtk-widget:"room"`
-	createButton     gtki.Button       `gtk-widget:"button-ok"`
-	cancelButton     gtki.Button       `gtk-widget:"button-cancel"`
+	notification      gtki.Box          `gtk-widget:"notification-area"`
+	form              gtki.Grid         `gtk-widget:"form"`
+	account           gtki.ComboBox     `gtk-widget:"accounts"`
+	chatServices      gtki.ComboBoxText `gtk-widget:"chatServices"`
+	chatServiceEntry  gtki.Entry        `gtk-widget:"chatServiceEntry"`
+	room              gtki.Entry        `gtk-widget:"room"`
+	cancelButton      gtki.Button       `gtk-widget:"button-cancel"`
+	createButton      gtki.Button       `gtk-widget:"button-ok"`
+	createButtonLabel interface{}
 
 	model       gtki.ListStore `gtk-widget:"accounts-model"`
 	accountList []*account
+	cancel      chan bool
 
 	ui *gtkUI
 }
@@ -48,9 +50,12 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 	})
 
 	builder.ConnectSignals(map[string]interface{}{
-		"create_room_handler": view.createRoomHandler,
-		"cancel_handler":      view.Destroy,
+		"create_room_handler": func() {
+			go view.createRoomHandler()
+		},
+		"cancel_handler": view.Destroy,
 		"on_close_window_signal": func() {
+			view.cancel <- true
 			u.removeConnectedAccountsObserver(accountsObserverToken)
 		},
 		"changed_value_listener":      view.updateChatServices,
@@ -141,28 +146,51 @@ func (v *createMUCRoom) createRoomHandler() {
 		return
 	}
 
-	v.updateFields(false)
-	originalLabel, _ := v.createButton.GetProperty("label")
-	v.createButton.SetProperty("label", i18n.Local("Creating room..."))
+	doInUIThread(func() {
+		v.updateFields(false)
+		v.createButtonLabel, _ = v.createButton.GetProperty("label")
+		v.createButton.SetProperty("label", i18n.Local("Creating room..."))
+	})
 
-	ec := make(chan error)
+	v.cancel = make(chan bool, 1)
+
+	ec := account.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
 
 	go func() {
-		ec <- account.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
-	}()
+		hasSomething := false
+		isRoomCreated := false
 
-	go func() {
-		err, ok := <-ec
-		if !ok || err != nil {
-			v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
-		} else {
-			v.errorBox.ShowMessage(i18n.Local("Room created with success"))
+		defer func() {
+			if hasSomething {
+				doInUIThread(func() {
+					if isRoomCreated {
+						v.errorBox.ShowMessage(i18n.Local("Room created with success"))
+					} else {
+						v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
+					}
+					v.updateFields(true)
+					v.createButton.SetProperty("label", v.createButtonLabel)
+				})
+			}
+		}()
+
+		for {
+			select {
+			case err, ok := <-ec:
+				if !ok {
+					return
+				}
+
+				hasSomething = true
+				if err == nil {
+					isRoomCreated = true
+				}
+				return
+
+			case _, _ = <-v.cancel:
+				return
+			}
 		}
-
-		doInUIThread(func() {
-			v.updateFields(true)
-			v.createButton.SetProperty("label", originalLabel)
-		})
 	}()
 }
 

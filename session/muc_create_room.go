@@ -7,13 +7,13 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// TODO: Add a RoomConfigurationQuery for create a Reserved Room
-func (s *session) CreateRoom(roomID jid.Bare) error {
+func (s *session) createRoom(roomID jid.Bare, errorResult chan<- error) {
 	// Send a presence for create the room and signals support for MUC
 	// See: 10.1.1 Create room General
 	err := s.conn.SendMUCPresence(roomID.String())
 	if err != nil {
-		return err
+		errorResult <- err
+		return
 	}
 
 	// TODO: Delete 'roomConf' and get this information from the function.
@@ -28,28 +28,39 @@ func (s *session) CreateRoom(roomID jid.Bare) error {
 	// Send an IQ for create a Instant Room.
 	reply, _, err := s.conn.SendIQ(roomID.String(), "set", roomConf)
 	if err != nil {
-		return err
+		errorResult <- err
+		return
 	}
 
 	stanza, ok := <-reply
 	if !ok {
-		return errors.New("xmpp: failed to receive response")
+		errorResult <- errors.New("xmpp: failed to receive response")
+		return
 	}
 
 	iq, ok := stanza.Value.(*data.ClientIQ)
 	if !ok {
 		err = errors.New("xmpp: failed getting the response")
 		s.log.WithError(err).Error("failed getting the response when configuring room")
-		return err
+		errorResult <- err
+		return
 	}
 
 	if iq.Type == "error" {
 		err = errors.New("xmpp: error type response getting from Information Query")
 		s.log.WithError(err).Error("error stanza information:", iq.Error.Type, iq.Error.Text)
-		return err
+		errorResult <- err
+		return
 	}
+}
 
-	return err
+// TODO: Add a RoomConfigurationQuery for create a Reserved Room
+func (s *session) CreateRoom(roomID jid.Bare) <-chan error {
+	errorResult := make(chan error, 1)
+
+	go s.createRoom(roomID, errorResult)
+
+	return errorResult
 }
 
 //GetChatServices offers the chat services from a xmpp server.

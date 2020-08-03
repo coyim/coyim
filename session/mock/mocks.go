@@ -208,7 +208,7 @@ func (*SessionMock) GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-cha
 }
 
 // CreateRoom is the implementation for session interface
-func (*SessionMock) CreateRoom(jid.Bare) error {
+func (*SessionMock) CreateRoom(jid.Bare) <-chan error {
 	return nil
 }
 

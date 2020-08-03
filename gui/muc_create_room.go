@@ -70,7 +70,7 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 
 func (v *createMUCRoom) updateChatServices() {
 	enteredService, _ := v.chatServiceEntry.GetText()
-	v.clearCurrentChatServices()
+	v.chatServices.RemoveAll()
 
 	acc := v.getCurrentConnectedAcount()
 	if acc == nil {
@@ -86,16 +86,9 @@ func (v *createMUCRoom) updateChatServices() {
 		v.chatServices.AppendText(i.Jid)
 	}
 
-	if enteredService != "" {
-		v.chatServiceEntry.SetText(enteredService)
-	} else {
+	if enteredService == "" {
 		v.chatServices.SetActive(0)
 	}
-}
-
-func (v *createMUCRoom) clearCurrentChatServices() {
-	v.chatServices.RemoveAll()
-	v.chatServiceEntry.SetText("")
 }
 
 func (v *createMUCRoom) populateModel(accs []*account) {

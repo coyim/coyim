@@ -176,12 +176,13 @@ func (v *createMUCRoom) createRoomHandler() {
 					return
 				}
 
-				hasSomething = true
-				if err == nil {
+				if err != nil {
+					v.u.log.WithError(err).Debug("something went wrong trying to create the room")
+				} else {
 					isRoomCreated = true
 				}
+				hasSomething = true
 				return
-
 			case _, _ = <-v.cancel:
 				return
 			}

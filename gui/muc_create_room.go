@@ -237,6 +237,8 @@ func (v *createMUCRoom) disableCreationIfFieldsAreEmpty() {
 
 func (u *gtkUI) mucCreateChatRoom() {
 	view := u.newMUCRoomView(u.accountManager)
-	view.SetTransientFor(u.window)
-	doInUIThread(view.Show)
+	doInUIThread(func() {
+		view.SetTransientFor(u.window)
+		view.Show()
+	})
 }

@@ -22,7 +22,7 @@ environment:
       MSYS2_BITS: 64
       MSYSTEM: MINGW64
       METHOD: cross
-      MSYS2_BASEVER: 20180531
+      MSYS2_BASEVER: 20200720
 install:
   - .\ci\install-deps-windows.bat
 build_script:

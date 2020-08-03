@@ -45,7 +45,7 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 		doInUIThread(func() {
 			view.errorBox.Hide()
 			view.populateModel(u.getAllConnectedAccounts())
-			view.checkIfFieldsAreEmpty()
+			view.disableCreationIfFieldsAreEmpty()
 		})
 	})
 
@@ -61,8 +61,8 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 			u.removeConnectedAccountsObserver(accountsObserverToken)
 		},
 		"changed_value_listener":      view.updateChatServices,
-		"on_room_changed":             view.checkIfFieldsAreEmpty,
-		"on_chatServiceEntry_changed": view.checkIfFieldsAreEmpty,
+		"on_room_changed":             view.disableCreationIfFieldsAreEmpty,
+		"on_chatServiceEntry_changed": view.disableCreationIfFieldsAreEmpty,
 	})
 
 	view.populateModel(u.getAllConnectedAccounts())
@@ -223,7 +223,7 @@ func (v *createMUCRoom) getSelectedAccountID() string {
 	return account
 }
 
-func (v *createMUCRoom) checkIfFieldsAreEmpty() {
+func (v *createMUCRoom) disableCreationIfFieldsAreEmpty() {
 	accountVal := v.getSelectedAccountID()
 	serviceVal := v.chatServices.GetActiveText()
 	roomVal, _ := v.room.GetText()

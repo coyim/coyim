@@ -3,7 +3,6 @@ package gui
 import (
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -16,9 +15,9 @@ type mucJoinRoomView struct {
 	generation int
 	updateLock sync.RWMutex
 
-	dialog           gtki.Dialog    `gtk-widget:"MUCJoinRoom"`
+	dialog           gtki.Dialog    `gtk-widget:"join-room"`
 	cmbAccount       gtki.ComboBox  `gtk-widget:"cmbAccount"`
-	txtRoomName      gtki.Entry     `gtk-widget:"txtRoomName"`
+	txtRoomName      gtki.Entry     `gtk-widget:"textRoomName"`
 	spinner          gtki.Spinner   `gtk-widget:"spinner"`
 	notificationArea gtki.Box       `gtk-widget:"boxNotificationArea"`
 	modelAccount     gtki.ListStore `gtk-widget:"modelAccount"`
@@ -93,34 +92,31 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	doInUIThread(jrv.clearErrors)
 
 	roomName, _ := jrv.txtRoomName.GetText()
+	rj := jid.Parse(roomName).(jid.Bare)
 
 	doInUIThread(func() {
 		jrv.spinner.Start()
 		jrv.spinner.SetVisible(true)
 	})
 
-	rl, err := a.session.GetRoom(jid.Parse(roomName).(jid.Bare))
-	go func() {
-		defer func() {
-			jrv.updateLock.Unlock()
-		}()
+	value := a.session.HasRoom(rj)
 
+	doInUIThread(func() {
+		jrv.spinner.Stop()
+		jrv.spinner.SetVisible(false)
+	})
+
+	jrv.updateLock.Unlock()
+
+	if !value {
+		jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName)))
+		a.log.Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
+	} else {
 		doInUIThread(func() {
-			time.Sleep(5000 * time.Millisecond)
-			jrv.spinner.Stop()
-			jrv.spinner.SetVisible(false)
+			u.mucShowRoom(a, rj)
+			jrv.dialog.Hide()
 		})
-
-		if err != nil {
-			jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName)))
-			a.log.Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
-		} else {
-			doInUIThread(func() {
-				u.mucShowRoom(a, rl)
-				jrv.dialog.Hide()
-			})
-		}
-	}()
+	}
 }
 
 //
@@ -140,18 +136,18 @@ func (u *gtkUI) mucShowJoinRoom() {
 	view.initOrReplaceAccounts(u.getAllConnectedAccounts())
 
 	view.builder.ConnectSignals(map[string]interface{}{
-		"on_close_window_signal": func() {},
-		"on_show_window_signal": func() {
+		"on_close_window": func() {},
+		"on_show_window": func() {
 			view.onShowWindow()
 		},
-		"on_cmb_account_changed": func() {
+		"on_account_changed": func() {
 			act := view.cmbAccount.GetActive()
 			if act >= 0 && act < len(view.accountsList) && act != view.currentlyActive {
 				view.currentlyActive = act
 			}
 		},
-		"on_btn_cancel_clicked_signal": view.dialog.Destroy,
-		"on_btn_join_clicked_signal": func() {
+		"on_cancel_join_clicked": view.dialog.Destroy,
+		"on_accept_join_clicked": func() {
 			idx := view.cmbAccount.GetActive()
 			act := view.accountsList[idx]
 			u.tryJoinRoom(view, act)

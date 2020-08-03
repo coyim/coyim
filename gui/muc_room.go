@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/coyim/coyim/xmpp/jid"
+
 	"github.com/coyim/coyim/session/muc"
 
 	"github.com/coyim/gotk3adapter/gtki"
@@ -16,14 +18,14 @@ type mucRoomView struct {
 	generation int
 	updateLock sync.RWMutex
 
-	window gtki.Window `gtk-widget:"MUCRoomWindow"`
+	window gtki.Window `gtk-widget:"room-window"`
 	//room   *room
 
 	boxJoinRoomView  gtki.Box         `gtk-widget:"boxJoinRoomView"`
-	txtNickname      gtki.Entry       `gtk-widget:"txtNickname"`
-	chkPassword      gtki.CheckButton `gtk-widget:"chkPassword"`
+	textNickname     gtki.Entry       `gtk-widget:"textNickname"`
+	chkPassword      gtki.CheckButton `gtk-widget:"checkPassword"`
 	labelPassword    gtki.Label       `gtk-widget:"labelPassword"`
-	txtPassword      gtki.Entry       `gtk-widget:"txtPassword"`
+	textPassword     gtki.Entry       `gtk-widget:"textPassword"`
 	btnAcceptJoin    gtki.Button      `gtk-widget:"btnAcceptJoin"`
 	notificationArea gtki.Box         `gtk-widget:"boxNotificationArea"`
 	notification     gtki.InfoBar
@@ -46,8 +48,9 @@ type mucRoomView struct {
 		roomMembersView  gtki.TreeView       `gtk-widget:"room-members-tree"`
 	*/
 	// using the room jid for a moment, this should be an interface with all the necessary room information
-	roomInfo    *muc.RoomListing
-	userAccount *account
+	roomJid  jid.Bare
+	roomInfo *muc.RoomListing
+	account  *account
 }
 
 /*
@@ -177,7 +180,7 @@ func (rv *mucRoomView) init() {
 	rv.togglePassword()
 
 	doInUIThread(func() {
-		rv.window.SetTitle(fmt.Sprintf("Room: [%s]", rv.roomInfo.Jid.String()))
+		rv.window.SetTitle(fmt.Sprintf("Room: [%s]", rv.roomJid.String()))
 	})
 }
 
@@ -186,17 +189,40 @@ func (rv *mucRoomView) togglePassword() {
 	doInUIThread(func() {
 		value := rv.chkPassword.GetActive()
 		rv.labelPassword.SetSensitive(value)
-		rv.txtPassword.SetSensitive(value)
+		rv.textPassword.SetSensitive(value)
 	})
 }
 
+// hasValidNickname checking if the nickname has entered
+func (rv *mucRoomView) hasValidNickname() bool {
+	nickName, _ := rv.textNickname.GetText()
+	return len(nickName) > 0
+}
+
+// hasValidPassword checking if the password has checked and entered
+func (rv *mucRoomView) hasValidPassword() bool {
+	value := rv.chkPassword.GetActive()
+	if !value {
+		return true
+	}
+	password, _ := rv.textPassword.GetText()
+	return len(password) > 0
+}
+
+// validateInput checking if the button join must be enable in order to execute the action
 func (rv *mucRoomView) validateInput() {
 	doInUIThread(func() {
-		value := rv.chkPassword.GetActive()
-		nickName, _ := rv.txtNickname.GetText()
-		password, _ := rv.txtPassword.GetText()
-		sensitiveValue := len(nickName) > 0 && ((len(password) > 0 && value) || !value)
+		sensitiveValue := rv.hasValidNickname() && rv.hasValidPassword()
 		rv.btnAcceptJoin.SetSensitive(sensitiveValue)
+	})
+}
+
+// togglePanelView toggle the view between the join panel and chat panel
+func (rv *mucRoomView) togglePanelView() {
+	doInUIThread(func() {
+		value := rv.boxJoinRoomView.IsVisible()
+		rv.boxJoinRoomView.SetVisible(!value)
+		rv.boxRoomView.SetVisible(value)
 	})
 }
 
@@ -216,36 +242,32 @@ func (rv *mucRoomView) onCloseWindow() {
 
 // onBtnJoinClicked event handler for the click event on the button join
 func (rv *mucRoomView) onBtnJoinClicked() {
-	//TODO: calls the XMPP logic to join a room here
-	//nickName, _ := rv.txtNickname.GetText()
-	//rv.userAccount.session.JoinRoom(rv.roomJid, nickName)
+	defer func() {
+		rv.togglePanelView()
+	}()
+	nickName, _ := rv.textNickname.GetText()
+	go rv.account.session.JoinRoom(rv.roomJid, nickName)
 }
 
 // mucShowRoom should be called from the UI thread
-func (u *gtkUI) mucShowRoom(userAccount *account, rl *muc.RoomListing) {
+func (u *gtkUI) mucShowRoom(a *account, rjid jid.Bare) {
 	view := &mucRoomView{}
 
-	view.userAccount = userAccount
-	view.roomInfo = rl
+	view.account = a
+	view.roomJid = rjid
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{
-		"on_close_window_signal": func() {},
-		"on_show_window_signal": func() {
-			view.validateInput()
-		},
-		"on_txt_nickname_changed_signal": func() {
-			view.validateInput()
-		},
-		"on_txt_password_changed_signal": func() {
-			view.validateInput()
-		},
-		"on_chk_password_checked_signal": func() {
+		"on_close_window":     func() {},
+		"on_show_window":      view.validateInput,
+		"on_nickname_changed": view.validateInput,
+		"on_password_changed": view.validateInput,
+		"on_password_checked": func() {
 			view.togglePassword()
 			view.validateInput()
 		},
-		"on_btn_cancel_join_clicked_signal": view.window.Destroy,
-		"on_btn_accept_join_clicked_signal": func() {
+		"on_cancel_join_clicked": view.window.Destroy,
+		"on_accept_join_clicked": func() {
 			view.onBtnJoinClicked()
 		},
 	})

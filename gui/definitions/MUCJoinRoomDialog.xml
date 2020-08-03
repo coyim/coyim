@@ -7,7 +7,7 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkDialog" id="MUCJoinRoom">
+  <object class="GtkDialog" id="join-room">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Join a Room</property>
@@ -16,8 +16,8 @@
     <property name="default_width">400</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
-    <signal name="close" handler="on_close_window_signal" swapped="no"/>
-    <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
+    <signal name="close" handler="on_close_window" swapped="no"/>
+    <signal name="destroy" handler="on_close_window" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="VBox">
         <property name="can_focus">False</property>
@@ -28,13 +28,13 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkButton" id="btnCancel">
+              <object class="GtkButton" id="btnCancelJoin">
                 <property name="label" translatable="yes">_Cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_btn_cancel_clicked_signal" swapped="no"/>
+                <signal name="clicked" handler="on_cancel_join_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -43,13 +43,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btnJoin">
+              <object class="GtkButton" id="btnAcceptJoin">
                 <property name="label" translatable="yes">_Join</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_btn_join_clicked_signal" swapped="no"/>
+                <signal name="clicked" handler="on_accept_join_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -112,11 +112,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="txtRoomName">
+                  <object class="GtkEntry" id="textRoomName">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
-                    <signal name="changed" handler="on_txt_room_name_changed" swapped="no"/>
+                    <signal name="changed" handler="on_room_name_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -142,7 +142,7 @@
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
                     <property name="model">modelAccount</property>
-                    <signal name="changed" handler="on_cmb_account_changed" swapped="no"/>
+                    <signal name="changed" handler="on_account_changed" swapped="no"/>
                     <child>
                       <object class="GtkCellRendererText" id="account-name-rendered"/>
                       <attributes>

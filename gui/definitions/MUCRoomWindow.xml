@@ -21,15 +21,15 @@ Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliqu
 [#Animal]
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</property>
   </object>
-  <object class="GtkWindow" id="MUCRoomWindow">
+  <object class="GtkWindow" id="room-window">
     <property name="width_request">800</property>
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Room</property>
     <property name="window_position">center</property>
     <property name="gravity">center</property>
-    <signal name="activate-default" handler="on_show_window_signal" swapped="no"/>
-    <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
+    <signal name="activate-default" handler="on_show_window" swapped="no"/>
+    <signal name="destroy" handler="on_close_window" swapped="no"/>
     <child>
       <object class="GtkBox" id="boxMainView">
         <property name="visible">True</property>
@@ -111,12 +111,12 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="txtNickname">
+                  <object class="GtkEntry" id="textNickname">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="caps_lock_warning">False</property>
-                    <signal name="changed" handler="on_txt_nickname_changed_signal" swapped="no"/>
+                    <signal name="changed" handler="on_nickname_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -142,13 +142,13 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="txtPassword">
+                  <object class="GtkEntry" id="textPassword">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
                     <property name="visibility">False</property>
-                    <signal name="changed" handler="on_txt_password_changed_signal" swapped="no"/>
+                    <signal name="changed" handler="on_password_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -156,7 +156,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="chkPassword">
+                  <object class="GtkCheckButton" id="checkPassword">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -165,7 +165,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                     <property name="margin_top">5</property>
                     <property name="margin_bottom">5</property>
                     <property name="draw_indicator">True</property>
-                    <signal name="toggled" handler="on_chk_password_checked_signal" swapped="no"/>
+                    <signal name="toggled" handler="on_password_checked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -200,7 +200,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
-                    <signal name="clicked" handler="on_btn_cancel_join_clicked_signal" swapped="no"/>
+                    <signal name="clicked" handler="on_cancel_join_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -215,7 +215,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
-                    <signal name="clicked" handler="on_btn_accept_join_clicked_signal" swapped="no"/>
+                    <signal name="clicked" handler="on_accept_join_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>

@@ -153,11 +153,11 @@ func (v *createMUCRoom) createRoomHandler() {
 	ec := account.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
 
 	go func() {
-		hasSomething := false
+		shouldUpdateUI := false
 		isRoomCreated := false
 
 		defer func() {
-			if hasSomething {
+			if shouldUpdateUI {
 				doInUIThread(func() {
 					if isRoomCreated {
 						v.errorBox.ShowMessage(i18n.Local("Room created with success"))
@@ -182,7 +182,7 @@ func (v *createMUCRoom) createRoomHandler() {
 				} else {
 					isRoomCreated = true
 				}
-				hasSomething = true
+				shouldUpdateUI = true
 				return
 			case <-v.cancel:
 				return

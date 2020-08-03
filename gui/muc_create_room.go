@@ -14,15 +14,15 @@ type createMUCRoom struct {
 
 	gtki.Dialog `gtk-widget:"create-chat-dialog"`
 
-	notification      gtki.Box          `gtk-widget:"notification-area"`
-	form              gtki.Grid         `gtk-widget:"form"`
-	account           gtki.ComboBox     `gtk-widget:"accounts"`
-	chatServices      gtki.ComboBoxText `gtk-widget:"chatServices"`
-	chatServiceEntry  gtki.Entry        `gtk-widget:"chatServiceEntry"`
-	room              gtki.Entry        `gtk-widget:"room"`
-	cancelButton      gtki.Button       `gtk-widget:"button-cancel"`
-	createButton      gtki.Button       `gtk-widget:"button-ok"`
-	createButtonLabel interface{}
+	notification         gtki.Box          `gtk-widget:"notification-area"`
+	form                 gtki.Grid         `gtk-widget:"form"`
+	account              gtki.ComboBox     `gtk-widget:"accounts"`
+	chatServices         gtki.ComboBoxText `gtk-widget:"chatServices"`
+	chatServiceEntry     gtki.Entry        `gtk-widget:"chatServiceEntry"`
+	room                 gtki.Entry        `gtk-widget:"room"`
+	cancelButton         gtki.Button       `gtk-widget:"button-cancel"`
+	createButton         gtki.Button       `gtk-widget:"button-ok"`
+	createButtonPrevText string
 
 	model       gtki.ListStore `gtk-widget:"accounts-model"`
 	accountList []*account
@@ -143,7 +143,7 @@ func (v *createMUCRoom) createRoomHandler() {
 
 	doInUIThread(func() {
 		v.updateFields(false)
-		v.createButtonLabel, _ = v.createButton.GetProperty("label")
+		v.createButtonPrevText, _ = v.createButton.GetLabel()
 		v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 	})
 
@@ -164,7 +164,7 @@ func (v *createMUCRoom) createRoomHandler() {
 						v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
 					}
 					v.updateFields(true)
-					v.createButton.SetProperty("label", v.createButtonLabel)
+					v.createButton.SetProperty("label", v.createButtonPrevText)
 				})
 			}
 		}()

@@ -143,8 +143,9 @@ func (v *createMUCRoom) createRoomHandler() {
 
 	doInUIThread(func() {
 		v.updateFields(false)
+
 		v.createButtonPrevText, _ = v.createButton.GetLabel()
-		v.createButton.SetProperty("label", i18n.Local("Creating room..."))
+		_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 	})
 
 	v.cancel = make(chan bool, 1)
@@ -164,7 +165,7 @@ func (v *createMUCRoom) createRoomHandler() {
 						v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
 					}
 					v.updateFields(true)
-					v.createButton.SetProperty("label", v.createButtonPrevText)
+					_ = v.createButton.SetProperty("label", v.createButtonPrevText)
 				})
 			}
 		}()

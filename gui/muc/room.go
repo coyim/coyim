@@ -104,7 +104,7 @@ func (u *roomUI) togglePanel() {
 	} else {
 		toggleLabel = "Show panel"
 	}
-	u.panelToggle.SetProperty("label", toggleLabel)
+	_ = u.panelToggle.SetProperty("label", toggleLabel)
 	u.panel.SetVisible(isOpen)
 	u.roomPanelOpen = isOpen
 }

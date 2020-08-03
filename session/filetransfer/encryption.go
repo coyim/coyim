@@ -69,7 +69,7 @@ func (enc *encryptionParameters) wrapForSending(data io.WriteCloser, ivMacWriter
 	aesc, _ := aes.NewCipher(enc.encryptionKey)
 	blockc := cipher.NewCTR(aesc, enc.iv)
 
-	ivMacWriter.Write(enc.iv)
+	_, _ = ivMacWriter.Write(enc.iv)
 
 	ww := &cipher.StreamWriter{S: blockc, W: io.MultiWriter(data, mac)}
 	beforeFinish := func() {

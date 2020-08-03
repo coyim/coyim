@@ -1166,9 +1166,9 @@ func (i *icon) getPath() string {
 	if fileNotFound(iconPath) {
 		tmpIconPath := filepath.Join(filepath.Join(os.TempDir(), "coyim"), i.name)
 		if fileNotFound(tmpIconPath) {
-			os.MkdirAll(filepath.Join(os.TempDir(), "coyim"), 0750)
+			_ = os.MkdirAll(filepath.Join(os.TempDir(), "coyim"), 0750)
 			bytes, _ := i.get()
-			ioutil.WriteFile(tmpIconPath, bytes, 0600)
+			_ = ioutil.WriteFile(tmpIconPath, bytes, 0600)
 			log.WithFields(log.Fields{
 				"name": i.name,
 				"path": tmpIconPath,

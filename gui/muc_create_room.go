@@ -28,13 +28,13 @@ type createMUCRoom struct {
 	accountList []*account
 	cancel      chan bool
 
-	ui *gtkUI
+	u *gtkUI
 }
 
 func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 	view := &createMUCRoom{
 		accountManager: accountManager,
-		ui:             u,
+		u:              u,
 	}
 
 	builder := newBuilder("MUCCreateRoom")

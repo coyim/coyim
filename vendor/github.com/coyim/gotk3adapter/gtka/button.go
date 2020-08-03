@@ -31,3 +31,7 @@ func UnwrapButton(v gtki.Button) *gtk.Button {
 func (v *button) SetImage(v1 gtki.Widget) {
 	v.internal.SetImage(UnwrapWidget(v1))
 }
+
+func (v *button) GetLabel() (string, error) {
+	return v.internal.GetLabel()
+}

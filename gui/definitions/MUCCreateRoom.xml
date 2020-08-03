@@ -114,7 +114,7 @@
                 <property name="has_focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="model">accounts-model</property>
-                <signal name="changed" handler="changed_value_listener" swapped="no"/>
+                <signal name="changed" handler="on_account_value_change" swapped="no"/>
                 <child>
                   <object class="GtkCellRendererText" id="account-name-rendered"/>
                   <attributes>

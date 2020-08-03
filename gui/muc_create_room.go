@@ -60,7 +60,7 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 			}()
 			u.removeConnectedAccountsObserver(accountsObserverToken)
 		},
-		"changed_value_listener":      view.updateChatServices,
+		"on_account_value_change":     view.updateChatServices,
 		"on_room_changed":             view.disableCreationIfFieldsAreEmpty,
 		"on_chatServiceEntry_changed": view.disableCreationIfFieldsAreEmpty,
 	})

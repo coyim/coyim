@@ -33,10 +33,6 @@ type createMUCRoom struct {
 	u *gtkUI
 }
 
-func (v *createMUCRoom) clearErrors() {
-	v.errorBox.Hide()
-}
-
 func (v *createMUCRoom) notifyOnError(err string) {
 	doInUIThread(func() {
 		if v.notification != nil {
@@ -45,6 +41,19 @@ func (v *createMUCRoom) notifyOnError(err string) {
 
 		v.errorBox.ShowMessage(err)
 	})
+}
+
+func (v *createMUCRoom) clearErrors() {
+	v.errorBox.Hide()
+}
+
+func (u *gtkUI) onNoAccountsConnected(v *createMUCRoom) {
+	v.chatServices.RemoveAll()
+}
+
+func (u *gtkUI) updateServicesBasedOnAccount(v *createMUCRoom, acc *account) {
+	v.clearErrors()
+	go v.updateChatServices(acc)
 }
 
 func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
@@ -60,10 +69,10 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 	accountsInput := view.builder.get("accounts").(gtki.ComboBox)
 	ac := u.createConnectedAccountsComponent(accountsInput, view,
 		func(acc *account) {
-			go view.updateChatServices(acc)
+			u.updateServicesBasedOnAccount(view, acc)
 		},
 		func() {
-			view.chatServices.RemoveAll()
+			u.onNoAccountsConnected(view)
 		},
 	)
 

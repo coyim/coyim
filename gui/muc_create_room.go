@@ -55,7 +55,9 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 		},
 		"cancel_handler": view.Destroy,
 		"on_close_window_signal": func() {
-			view.cancel <- true
+			go func() {
+				view.cancel <- true
+			}()
 			u.removeConnectedAccountsObserver(accountsObserverToken)
 		},
 		"changed_value_listener":      view.updateChatServices,

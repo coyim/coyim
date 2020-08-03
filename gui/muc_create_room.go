@@ -88,7 +88,7 @@ func (v *createMUCRoom) updateChatServices() {
 		v.chatServices.AppendText(i.Jid)
 	}
 
-	if enteredService == "" {
+	if enteredService == "" && len(items) > 0 {
 		v.chatServices.SetActive(0)
 	}
 }

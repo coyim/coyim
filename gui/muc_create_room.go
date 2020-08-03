@@ -11,10 +11,12 @@ import (
 type createMUCRoom struct {
 	accountManager *accountManager
 	errorBox       *errorNotification
+	builder        *builder
 
 	gtki.Dialog `gtk-widget:"create-chat-dialog"`
 
-	notification         gtki.Box          `gtk-widget:"notification-area"`
+	notification         gtki.InfoBar
+	notificationArea     gtki.Box          `gtk-widget:"notification-area"`
 	form                 gtki.Grid         `gtk-widget:"form"`
 	account              gtki.ComboBox     `gtk-widget:"accounts"`
 	chatServices         gtki.ComboBoxText `gtk-widget:"chatServices"`
@@ -31,56 +33,61 @@ type createMUCRoom struct {
 	u *gtkUI
 }
 
+func (v *createMUCRoom) clearErrors() {
+	v.errorBox.Hide()
+}
+
+func (v *createMUCRoom) notifyOnError(err string) {
+	doInUIThread(func() {
+		if v.notification != nil {
+			v.notificationArea.Remove(v.notification)
+		}
+
+		v.errorBox.ShowMessage(err)
+	})
+}
+
 func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 	view := &createMUCRoom{
 		accountManager: accountManager,
 		u:              u,
 	}
 
-	builder := newBuilder("MUCCreateRoom")
-	panicOnDevError(builder.bindObjects(view))
-	view.errorBox = newErrorNotification(view.notification)
+	view.builder = newBuilder("MUCCreateRoom")
+	panicOnDevError(view.builder.bindObjects(view))
+	view.errorBox = newErrorNotification(view.notificationArea)
 
-	accountsObserverToken := u.onChangeOfConnectedAccounts(func() {
-		doInUIThread(func() {
-			view.errorBox.Hide()
-			view.populateModel(u.getAllConnectedAccounts())
-			view.disableCreationIfFieldsAreEmpty()
-		})
-	})
+	accountsInput := view.builder.get("accounts").(gtki.ComboBox)
+	ac := u.createConnectedAccountsComponent(accountsInput, view,
+		func(acc *account) {
+			go view.updateChatServices(acc)
+		},
+		func() {
+			view.chatServices.RemoveAll()
+		},
+	)
 
-	builder.ConnectSignals(map[string]interface{}{
+	view.builder.ConnectSignals(map[string]interface{}{
 		"create_room_handler": func() {
 			go view.createRoomHandler()
 		},
-		"cancel_handler": view.Destroy,
-		"on_close_window_signal": func() {
-			go func() {
-				view.cancel <- true
-			}()
-			u.removeConnectedAccountsObserver(accountsObserverToken)
-		},
-		"on_account_value_change":     view.updateChatServices,
+		"cancel_handler":              view.Destroy,
+		"on_close_window_signal":      ac.onDestroy,
 		"on_room_changed":             view.disableCreationIfFieldsAreEmpty,
 		"on_chatServiceEntry_changed": view.disableCreationIfFieldsAreEmpty,
 	})
 
-	view.populateModel(u.getAllConnectedAccounts())
-
 	return view
 }
 
-func (v *createMUCRoom) updateChatServices() {
+func (v *createMUCRoom) updateChatServices(ac *account) {
 	enteredService, _ := v.chatServiceEntry.GetText()
 	v.chatServices.RemoveAll()
 
-	acc := v.getCurrentConnectedAcount()
-	if acc == nil {
-		return
-	}
+	items, err := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
 
-	items, err := acc.session.GetChatServices(jid.Parse(acc.Account()).Host())
 	if err != nil {
+		v.u.log.WithError(err).Debug("something went wrong trying to get chat services")
 		return
 	}
 
@@ -91,32 +98,6 @@ func (v *createMUCRoom) updateChatServices() {
 	if len(items) > 0 && enteredService == "" {
 		v.chatServices.SetActive(0)
 	}
-}
-
-func (v *createMUCRoom) populateModel(accs []*account) {
-	newActiveAccount := 0
-	oldActiveAccount := v.account.GetActive()
-	if oldActiveAccount >= 0 {
-		for i, acc := range accs {
-			if acc == v.accountList[oldActiveAccount] {
-				newActiveAccount = i
-			}
-		}
-		v.model.Clear()
-	}
-
-	for _, acc := range accs {
-		iter := v.model.Append()
-		_ = v.model.SetValue(iter, 0, acc.Account())
-		_ = v.model.SetValue(iter, 1, acc.ID())
-	}
-
-	if len(accs) > 0 {
-		v.account.SetActive(newActiveAccount)
-	} else {
-		v.errorBox.ShowMessage(i18n.Local("No accounts connected. Please connect some account from your list of accounts."))
-	}
-	v.accountList = accs
 }
 
 func (v *createMUCRoom) updateFields(f bool) {

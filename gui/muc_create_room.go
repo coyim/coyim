@@ -183,7 +183,7 @@ func (v *createMUCRoom) createRoomHandler() {
 				}
 				hasSomething = true
 				return
-			case _, _ = <-v.cancel:
+			case <-v.cancel:
 				return
 			}
 		}

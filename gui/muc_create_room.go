@@ -69,10 +69,10 @@ func (u *gtkUI) newMUCRoomView() *createMUCRoom {
 	)
 
 	view.builder.ConnectSignals(map[string]interface{}{
-		"create_room_handler": func() {
+		"on_create_room": func() {
 			go view.createRoomHandler(ac.currentAccount())
 		},
-		"cancel_handler":         view.Destroy,
+		"on_cancel":       view.Destroy,
 		"on_close_window": ac.onDestroy,
 		"on_room_changed": func() {
 			view.disableCreationIfFieldsAreEmpty(ac.currentAccount())

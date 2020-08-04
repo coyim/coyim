@@ -31,9 +31,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
     <property name="title" translatable="yes">Room</property>
     <signal name="destroy" handler="on_close" swapped="no"/>
     <child>
-      <placeholder/>
-    </child>
-    <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -403,9 +400,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="orientation">vertical</property>
-                            <child>
-                              <placeholder/>
-                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>

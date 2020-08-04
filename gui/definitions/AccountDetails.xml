@@ -22,9 +22,6 @@
     <property name="title" translatable="yes">Account Details</property>
     <signal name="close" handler="on_cancel" />
     <property name="type_hint">normal</property>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="can_focus">False</property>

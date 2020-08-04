@@ -17,9 +17,6 @@
     <property name="type_hint">normal</property>
     <signal name="close" handler="on_close_window" swapped="no"/>
     <signal name="destroy" handler="on_close_window" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="visible">True</property>
@@ -38,7 +35,7 @@
                 <property name="can_focus">False</property>
                 <property name="receives_default">False</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="cancel_handler" swapped="no"/>
+                <signal name="clicked" handler="on_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -55,7 +52,7 @@
                 <property name="can_default">True</property>
                 <property name="receives_default">False</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="create_room_handler" swapped="no"/>
+                <signal name="clicked" handler="on_create_room" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>

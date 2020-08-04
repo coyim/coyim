@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkDialog" id="dialog">
-    <signal name="response" handler="response-handler" />
-    <signal name="close" handler="close-handler" />
+    <signal name="response" handler="on_response" />
+    <signal name="close" handler="on_close" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="visible">true</property>

@@ -51,9 +51,6 @@
     <property name="title" translatable="yes">CoyIM</property>
     <property name="gravity">center</property>
     <child>
-      <placeholder/>
-    </child>
-    <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>

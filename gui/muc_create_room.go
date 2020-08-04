@@ -51,7 +51,7 @@ func (u *gtkUI) updateServicesBasedOnAccount(v *createMUCRoom, acc *account) {
 	go v.updateChatServices(acc)
 }
 
-func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
+func (u *gtkUI) newMUCRoomView() *createMUCRoom {
 	view := &createMUCRoom{u: u}
 
 	view.builder = newBuilder("MUCCreateRoom")
@@ -191,7 +191,7 @@ func (v *createMUCRoom) disableCreationIfFieldsAreEmpty(ac *account) {
 }
 
 func (u *gtkUI) mucCreateChatRoom() {
-	view := u.newMUCRoomView(u.accountManager)
+	view := u.newMUCRoomView()
 	view.SetTransientFor(u.window)
 	view.Show()
 }

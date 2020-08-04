@@ -14,6 +14,8 @@ import (
 type mucRoomView struct {
 	builder *builder
 
+	// TODO [OB] - why are these 3 fields here? They don't seem to be used.
+
 	id         string
 	generation int
 	updateLock sync.RWMutex
@@ -172,6 +174,8 @@ func (r *room) displayDescription() string {
 }
 */
 
+// TODO [OB] - init is already called from the UI thread, so why have nested calls to doInUIThread?
+
 // init: Initilize the rooms view
 func (rv *mucRoomView) init() {
 	rv.builder = newBuilder("MUCRoomWindow")
@@ -180,6 +184,7 @@ func (rv *mucRoomView) init() {
 	rv.togglePassword()
 
 	doInUIThread(func() {
+		// TODO [OB] - please remember to use i18n everywhere.
 		rv.window.SetTitle(fmt.Sprintf("Room: [%s]", rv.roomJid.String()))
 	})
 }
@@ -242,6 +247,7 @@ func (rv *mucRoomView) onCloseWindow() {
 
 // onBtnJoinClicked event handler for the click event on the button join
 func (rv *mucRoomView) onBtnJoinClicked() {
+	// TODO [OB] - I'm not sure I see the reason to use defer here.
 	defer func() {
 		rv.togglePanelView()
 	}()
@@ -274,6 +280,7 @@ func (u *gtkUI) mucShowRoom(a *account, rjid jid.Bare) {
 
 	u.connectShortcutsChildWindow(view.window)
 
+	// TODO [OB] - transient should NOT be used for regular windows
 	view.window.SetTransientFor(u.window)
 	view.window.Show()
 }

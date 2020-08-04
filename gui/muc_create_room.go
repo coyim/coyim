@@ -174,16 +174,20 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 	}()
 }
 
-func (v *createMUCRoom) disableCreationIfFieldsAreEmpty(ac *account) {
+func (v *createMUCRoom) allFieldsHaveContent(ac *account) bool {
 	accountVal := ac.Account()
 	serviceVal := v.chatServices.GetActiveText()
 	roomVal, _ := v.room.GetText()
 
-	if accountVal == "" || serviceVal == "" || roomVal == "" {
-		v.createButton.SetSensitive(false)
-	} else {
-		v.createButton.SetSensitive(true)
-	}
+	return accountVal != "" && serviceVal != "" && roomVal != ""
+}
+
+func setEnabled(w gtki.Widget, enable bool) {
+	w.SetSensitive(enable)
+}
+
+func (v *createMUCRoom) disableCreationIfFieldsAreEmpty(ac *account) {
+	setEnabled(v.createButton, v.allFieldsHaveContent(ac))
 }
 
 func (u *gtkUI) mucCreateChatRoom() {

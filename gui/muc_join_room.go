@@ -15,22 +15,16 @@ type mucJoinRoomView struct {
 	generation int
 	updateLock sync.RWMutex
 
-	dialog           gtki.Dialog    `gtk-widget:"join-room"`
-	cmbAccount       gtki.ComboBox  `gtk-widget:"cmbAccount"`
-	txtRoomName      gtki.Entry     `gtk-widget:"textRoomName"`
-	spinner          gtki.Spinner   `gtk-widget:"spinner"`
-	notificationArea gtki.Box       `gtk-widget:"boxNotificationArea"`
-	modelAccount     gtki.ListStore `gtk-widget:"modelAccount"`
+	dialog           gtki.Dialog  `gtk-widget:"join-room"`
+	txtRoomName      gtki.Entry   `gtk-widget:"textRoomName"`
+	spinner          gtki.Spinner `gtk-widget:"spinner"`
+	notificationArea gtki.Box     `gtk-widget:"boxNotificationArea"`
 	notification     gtki.InfoBar
 	errorNotif       *errorNotification
-
-	accountsList    []*account
-	accounts        map[string]*account
-	currentlyActive int
 }
 
 func (jrv *mucJoinRoomView) clearErrors() {
-	jrv.errorNotif.Hide()
+	jrv.errorNotif = newErrorNotification(jrv.notificationArea)
 }
 
 func (jrv *mucJoinRoomView) notifyOnError(errMessage string) {
@@ -47,42 +41,6 @@ func (jrv *mucJoinRoomView) init() {
 	jrv.builder = newBuilder("MUCJoinRoomDialog")
 	panicOnDevError(jrv.builder.bindObjects(jrv))
 	jrv.errorNotif = newErrorNotification(jrv.notificationArea)
-}
-
-// initOrReplaceAccounts should be called from the UI thread
-func (jrv *mucJoinRoomView) initOrReplaceAccounts(accounts []*account) {
-	if len(accounts) == 0 {
-		jrv.notifyOnError(i18n.Local("There are no connected accounts"))
-	}
-
-	currentlyActive := 0
-	oldActive := jrv.cmbAccount.GetActive()
-	if jrv.accounts != nil && oldActive >= 0 {
-		currentlyActiveAccount := jrv.accountsList[oldActive]
-		for ix, a := range accounts {
-			if currentlyActiveAccount == a {
-				currentlyActive = ix
-				jrv.currentlyActive = currentlyActive
-			}
-		}
-		jrv.modelAccount.Clear()
-	}
-
-	jrv.accountsList = accounts
-	jrv.accounts = make(map[string]*account)
-	for _, acc := range accounts {
-		iter := jrv.modelAccount.Append()
-		_ = jrv.modelAccount.SetValue(iter, 0, acc.Account())
-		_ = jrv.modelAccount.SetValue(iter, 1, acc.ID())
-		jrv.accounts[acc.ID()] = acc
-	}
-
-	if len(accounts) > 0 {
-		jrv.cmbAccount.SetActive(currentlyActive)
-	} else {
-		jrv.spinner.Stop()
-		jrv.spinner.SetVisible(false)
-	}
 }
 
 // tryJoinRoom find the room information and make the join to the room
@@ -130,27 +88,25 @@ func (jrv *mucJoinRoomView) onShowWindow() {
 // mucJoinRoom should be called from the UI thread
 func (u *gtkUI) mucShowJoinRoom() {
 	view := &mucJoinRoomView{}
-
 	view.init()
 
-	view.initOrReplaceAccounts(u.getAllConnectedAccounts())
+	accountsInput := view.builder.get("accounts").(gtki.ComboBox)
+	ac := u.createConnectedAccountsComponent(accountsInput, view,
+		func(*account) {},
+		func() {
+			view.spinner.Stop()
+			view.spinner.SetVisible(false)
+		},
+	)
 
 	view.builder.ConnectSignals(map[string]interface{}{
 		"on_close_window": func() {},
 		"on_show_window": func() {
 			view.onShowWindow()
 		},
-		"on_account_changed": func() {
-			act := view.cmbAccount.GetActive()
-			if act >= 0 && act < len(view.accountsList) && act != view.currentlyActive {
-				view.currentlyActive = act
-			}
-		},
 		"on_cancel_join_clicked": view.dialog.Destroy,
 		"on_accept_join_clicked": func() {
-			idx := view.cmbAccount.GetActive()
-			act := view.accountsList[idx]
-			u.tryJoinRoom(view, act)
+			u.tryJoinRoom(view, ac.currentAccount())
 		},
 	})
 

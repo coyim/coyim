@@ -38,6 +38,8 @@ func (n *errorNotification) Hide() {
 }
 
 type canNotifyErrors interface {
+	// clearErrors should ONLY be called from the UI thread
 	clearErrors()
+	// notifyOnError should ONLY be called from the UI thread
 	notifyOnError(err string)
 }

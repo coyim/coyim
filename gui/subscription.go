@@ -43,15 +43,14 @@ func (acd *addContactDialog) clearErrors() {
 }
 
 func (acd *addContactDialog) notifyOnError(err string) {
-	doInUIThread(func() {
-		if acd.notification != nil {
-			acd.notificationArea.Remove(acd.notification)
-		}
+	if acd.notification != nil {
+		acd.notificationArea.Remove(acd.notification)
+	}
 
-		acd.errorNotif.ShowMessage(err)
-	})
+	acd.errorNotif.ShowMessage(err)
 }
 
+// getVerifiedContact should ONLY be called from the UI thread
 func (acd *addContactDialog) getVerifiedContact() (string, bool) {
 	contact, _ := acd.contactInput.GetText()
 	isJid, err := verifyXMPPAddress(contact)
@@ -97,10 +96,10 @@ func (u *gtkUI) presenceSubscriptionDialog(sendSubscription func(accountID strin
 	accountsInput := acd.builder.get("accounts").(gtki.ComboBox)
 	ac := u.createConnectedAccountsComponent(accountsInput, acd,
 		func(acc *account) {
-			acd.clearErrors()
+			doInUIThread(acd.clearErrors)
 		},
 		func() {
-			acd.notifyOnError(i18n.Local("There are no currently connected accounts"))
+			doInUIThread(func() { acd.notifyOnError(i18n.Local("There are no currently connected accounts")) })
 		},
 	)
 

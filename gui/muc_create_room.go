@@ -34,13 +34,11 @@ type createMUCRoom struct {
 }
 
 func (v *createMUCRoom) notifyOnError(err string) {
-	doInUIThread(func() {
-		if v.notification != nil {
-			v.notificationArea.Remove(v.notification)
-		}
+	if v.notification != nil {
+		v.notificationArea.Remove(v.notification)
+	}
 
-		v.errorBox.ShowMessage(err)
-	})
+	v.errorBox.ShowMessage(err)
 }
 
 func (v *createMUCRoom) clearErrors() {
@@ -52,7 +50,7 @@ func (u *gtkUI) onNoAccountsConnected(v *createMUCRoom) {
 }
 
 func (u *gtkUI) updateServicesBasedOnAccount(v *createMUCRoom, acc *account) {
-	v.clearErrors()
+	doInUIThread(v.clearErrors)
 	go v.updateChatServices(acc)
 }
 

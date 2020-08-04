@@ -60,13 +60,11 @@ func (prv *mucPublicRoomsView) clearErrors() {
 }
 
 func (prv *mucPublicRoomsView) notifyOnError(err string) {
-	doInUIThread(func() {
-		if prv.notification != nil {
-			prv.notificationArea.Remove(prv.notification)
-		}
+	if prv.notification != nil {
+		prv.notificationArea.Remove(prv.notification)
+	}
 
-		prv.errorNotif.ShowMessage(err)
-	})
+	prv.errorNotif.ShowMessage(err)
 }
 
 func (prv *mucPublicRoomsView) init() {
@@ -182,7 +180,9 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 					return
 				}
 				if e != nil {
-					view.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
+					doInUIThread(func() {
+						view.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
+					})
 					u.log.WithError(e).Debug("something went wrong trying to get chat rooms")
 				}
 				return

@@ -28,13 +28,11 @@ func (jrv *mucJoinRoomView) clearErrors() {
 }
 
 func (jrv *mucJoinRoomView) notifyOnError(errMessage string) {
-	doInUIThread(func() {
-		if jrv.notification != nil {
-			jrv.notificationArea.Remove(jrv.notification)
-		}
+	if jrv.notification != nil {
+		jrv.notificationArea.Remove(jrv.notification)
+	}
 
-		jrv.errorNotif.ShowMessage(errMessage)
-	})
+	jrv.errorNotif.ShowMessage(errMessage)
 }
 
 func (jrv *mucJoinRoomView) init() {
@@ -67,7 +65,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	jrv.updateLock.Unlock()
 
 	if !value {
-		jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName)))
+		doInUIThread(func() { jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))) })
 		a.log.Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
 	} else {
 		doInUIThread(func() {

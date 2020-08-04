@@ -52,6 +52,8 @@ func (s *session) createRoom(roomID jid.Bare, errorResult chan<- error) {
 		errorResult <- err
 		return
 	}
+
+	errorResult <- nil
 }
 
 // TODO: Add a RoomConfigurationQuery for create a Reserved Room

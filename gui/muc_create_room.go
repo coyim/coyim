@@ -9,9 +9,8 @@ import (
 )
 
 type createMUCRoom struct {
-	accountManager *accountManager
-	errorBox       *errorNotification
-	builder        *builder
+	errorBox *errorNotification
+	builder  *builder
 
 	gtki.Dialog `gtk-widget:"create-chat-dialog"`
 
@@ -26,9 +25,7 @@ type createMUCRoom struct {
 	createButton         gtki.Button       `gtk-widget:"button-ok"`
 	createButtonPrevText string
 
-	model       gtki.ListStore `gtk-widget:"accounts-model"`
-	accountList []*account
-	cancel      chan bool
+	cancel chan bool
 
 	u *gtkUI
 }
@@ -55,10 +52,7 @@ func (u *gtkUI) updateServicesBasedOnAccount(v *createMUCRoom, acc *account) {
 }
 
 func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
-	view := &createMUCRoom{
-		accountManager: accountManager,
-		u:              u,
-	}
+	view := &createMUCRoom{u: u}
 
 	view.builder = newBuilder("MUCCreateRoom")
 	panicOnDevError(view.builder.bindObjects(view))
@@ -76,12 +70,16 @@ func (u *gtkUI) newMUCRoomView(accountManager *accountManager) *createMUCRoom {
 
 	view.builder.ConnectSignals(map[string]interface{}{
 		"create_room_handler": func() {
-			go view.createRoomHandler()
+			go view.createRoomHandler(ac.currentAccount())
 		},
-		"cancel_handler":              view.Destroy,
-		"on_close_window_signal":      ac.onDestroy,
-		"on_room_changed":             view.disableCreationIfFieldsAreEmpty,
-		"on_chatServiceEntry_changed": view.disableCreationIfFieldsAreEmpty,
+		"cancel_handler":         view.Destroy,
+		"on_close_window_signal": ac.onDestroy,
+		"on_room_changed": func() {
+			view.disableCreationIfFieldsAreEmpty(ac.currentAccount())
+		},
+		"on_chatServiceEntry_changed": func() {
+			view.disableCreationIfFieldsAreEmpty(ac.currentAccount())
+		},
 	})
 
 	return view
@@ -115,9 +113,9 @@ func (v *createMUCRoom) updateFields(f bool) {
 	v.chatServices.SetSensitive(f)
 }
 
-func (v *createMUCRoom) createRoomHandler() {
-	account := v.getCurrentConnectedAcount()
-	if account == nil {
+func (v *createMUCRoom) createRoomHandler(ac *account) {
+	if ac == nil {
+		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect to one."))
 		return
 	}
 
@@ -131,14 +129,13 @@ func (v *createMUCRoom) createRoomHandler() {
 
 	doInUIThread(func() {
 		v.updateFields(false)
-
 		v.createButtonPrevText, _ = v.createButton.GetLabel()
 		_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 	})
 
 	v.cancel = make(chan bool, 1)
 
-	ec := account.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
+	ec := ac.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
 
 	go func() {
 		shouldUpdateUI := false
@@ -158,61 +155,27 @@ func (v *createMUCRoom) createRoomHandler() {
 			}
 		}()
 
-		for {
-			select {
-			case err, ok := <-ec:
-				if !ok {
-					return
-				}
-
-				if err != nil {
-					v.u.log.WithError(err).Debug("something went wrong trying to create the room")
-				} else {
-					isRoomCreated = true
-				}
-				shouldUpdateUI = true
-				return
-			case <-v.cancel:
+		select {
+		case err, ok := <-ec:
+			if !ok {
 				return
 			}
+
+			if err != nil {
+				v.u.log.WithError(err).Debug("something went wrong trying to create the room")
+			} else {
+				isRoomCreated = true
+			}
+			shouldUpdateUI = true
+			return
+		case <-v.cancel:
+			return
 		}
 	}()
 }
 
-func (v *createMUCRoom) getCurrentConnectedAcount() *account {
-	v.errorBox.Hide()
-	idAcc := v.getSelectedAccountID()
-	if idAcc == "" {
-		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect to one."))
-		return nil
-	}
-
-	account, found := v.accountManager.getAccountByID(idAcc)
-	if !found {
-		v.errorBox.ShowMessage(i18n.Localf("The given account %s is not connected.", idAcc))
-		return nil
-	}
-
-	return account
-}
-
-func (v *createMUCRoom) getSelectedAccountID() string {
-	iter, _ := v.account.GetActiveIter()
-
-	val, err := v.model.GetValue(iter, 1)
-	if err != nil {
-		return ""
-	}
-
-	account, err := val.GetString()
-	if err != nil {
-		return ""
-	}
-	return account
-}
-
-func (v *createMUCRoom) disableCreationIfFieldsAreEmpty() {
-	accountVal := v.getSelectedAccountID()
+func (v *createMUCRoom) disableCreationIfFieldsAreEmpty(ac *account) {
+	accountVal := ac.Account()
 	serviceVal := v.chatServices.GetActiveText()
 	roomVal, _ := v.room.GetText()
 
@@ -225,8 +188,6 @@ func (v *createMUCRoom) disableCreationIfFieldsAreEmpty() {
 
 func (u *gtkUI) mucCreateChatRoom() {
 	view := u.newMUCRoomView(u.accountManager)
-	doInUIThread(func() {
-		view.SetTransientFor(u.window)
-		view.Show()
-	})
+	view.SetTransientFor(u.window)
+	view.Show()
 }

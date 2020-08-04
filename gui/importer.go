@@ -200,7 +200,7 @@ func (u *gtkUI) chooseKeyToImport(keys map[string][]byte) ([]byte, bool) {
 		keyBox.SetActive(0)
 
 		builder.ConnectSignals(map[string]interface{}{
-			"on_import_signal": func() {
+			"on_import": func() {
 				ix := keyBox.GetActive()
 				if ix != -1 {
 					result <- ix
@@ -209,7 +209,7 @@ func (u *gtkUI) chooseKeyToImport(keys map[string][]byte) ([]byte, bool) {
 				}
 			},
 
-			"on_cancel_signal": func() {
+			"on_cancel": func() {
 				close(result)
 				d.Destroy()
 			},

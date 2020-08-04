@@ -2,7 +2,7 @@
   <object class="GtkDialog" id="dialog">
     <property name="window-position">GTK_WIN_POS_CENTER</property>
     <property name="title" translatable="yes">Setup your first account</property>
-    <signal name="delete-event" handler="on_cancel_signal" />
+    <signal name="delete-event" handler="on_cancel" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="orientation">vertical</property>
@@ -35,28 +35,28 @@
               <object class="GtkButton" id="button_register">
                 <property name="label" translatable="yes">Create a new account</property>
                 <property name="margin_bottom">5</property>
-		<signal name="clicked" handler="on_register_signal" />
+		<signal name="clicked" handler="on_register" />
               </object>
             </child>
             <child>
               <object class="GtkButton" id="button_existing">
                 <property name="label" translatable="yes">Add an existing account</property>
                 <property name="margin_bottom">5</property>
-		<signal name="clicked" handler="on_existing_signal" />
+		<signal name="clicked" handler="on_existing" />
               </object>
             </child>
             <child>
               <object class="GtkButton" id="button_import">
                 <property name="label" translatable="yes">Import account from your computer</property>
                 <property name="margin_bottom">5</property>
-		<signal name="clicked" handler="on_import_signal" />
+		<signal name="clicked" handler="on_import" />
               </object>
             </child>
 	    <child>
               <object class="GtkButton" id="button_cancel">
                 <property name="label">Cancel</property>
                 <property name="margin_bottom">5</property>
-		<signal name="clicked" handler="on_cancel_signal" />
+		<signal name="clicked" handler="on_cancel" />
               </object>
             </child>
           </object>

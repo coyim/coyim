@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkDialog" id="ConnectionInformation">
     <property name="title" translatable="yes">Connection Information</property>
-    <signal name="close" handler="on_close_signal" />
+    <signal name="close" handler="on_close" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
@@ -116,7 +116,7 @@
             <child>
               <object class="GtkButton" id="pin-cert">
                 <property name="label" translatable="yes">Pin certificate</property>
-                <signal name="clicked" handler="on_pin_signal"/>
+                <signal name="clicked" handler="on_pin"/>
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -133,7 +133,7 @@
         <child>
           <object class="GtkButton" id="close">
             <property name="label" translatable="yes">Close</property>
-            <signal name="clicked" handler="on_close_signal"/>
+            <signal name="clicked" handler="on_close"/>
           </object>
         </child>
       </object>

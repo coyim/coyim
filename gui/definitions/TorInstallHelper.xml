@@ -48,7 +48,7 @@ Installing Tor for CoyIM:
           <object class="GtkEventBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <signal name="button-press-event" handler="on_press_label_signal" swapped="no"/>
+            <signal name="button-press-event" handler="on_press_label" swapped="no"/>
             <child>
               <object class="GtkLabel">
                 <property name="can_focus">False</property>
@@ -89,7 +89,7 @@ Installing Tor for CoyIM:
         <child>
           <object class="GtkButton" id="close">
             <property name="label" translatable="yes">Close</property>
-            <signal name="clicked" handler="on_close_signal" />
+            <signal name="clicked" handler="on_close" />
           </object>
         </child>
       </object>

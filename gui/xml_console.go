@@ -23,8 +23,8 @@ func newXMLConsoleView(log *bytes.Buffer) *xmlConsoleView {
 
 	d.refresh()
 	builder.ConnectSignals(map[string]interface{}{
-		"on_refresh_signal": d.refresh,
-		"on_close_signal":   d.Destroy,
+		"on_refresh": d.refresh,
+		"on_close":   d.Destroy,
 	})
 
 	return d

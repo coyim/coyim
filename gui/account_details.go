@@ -149,8 +149,8 @@ func (u *gtkUI) connectionInfoDialog(account *account) {
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": dialog.Destroy,
-		"on_pin_signal": func() {
+		"on_close": dialog.Destroy,
+		"on_pin": func() {
 			account.session.GetConfig().SaveCert(certs[0].Subject.CommonName, certs[0].Issuer.CommonName, digests.Sha3_256(certs[0].Raw))
 			u.SaveConfig()
 			pinCertButton.SetSensitive(false)
@@ -306,7 +306,7 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			p3.Show()
 			p4.Show()
 		},
-		"on_save_signal": func() {
+		"on_save": func() {
 			accDtails := getAccountDetails(data)
 			if isJid, err := verifyXMPPAddress(accDtails.accTxt); !isJid {
 				errorNotif.ShowMessage(err)
@@ -322,25 +322,25 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 			data.dialog.Destroy()
 
 		},
-		"on_edit_proxy_signal": func() {
+		"on_edit_proxy": func() {
 			ts, _ := data.proxiesView.GetSelection()
 			if _, iter, ok := ts.GetSelected(); ok {
 				editProxy(iter, func() {})
 			}
 		},
-		"on_remove_proxy_signal": func() {
+		"on_remove_proxy": func() {
 			ts, _ := data.proxiesView.GetSelection()
 			if _, iter, ok := ts.GetSelected(); ok {
 				data.proxies.Remove(iter)
 			}
 		},
-		"on_remove_pin_signal": func() {
+		"on_remove_pin": func() {
 			ts, _ := data.pinsView.GetSelection()
 			if _, iter, ok := ts.GetSelected(); ok {
 				data.pins.Remove(iter)
 			}
 		},
-		"on_add_proxy_signal": func() {
+		"on_add_proxy": func() {
 			iter := data.proxies.Append()
 			_ = data.proxies.SetValue(iter, 0, "tor-auto://")
 			_ = data.proxies.SetValue(iter, 1, "tor-auto://")
@@ -350,26 +350,26 @@ func (u *gtkUI) accountDialog(s access.Session, account *config.Account, saveFun
 				data.proxies.Remove(iter)
 			})
 		},
-		"on_edit_activate_proxy_signal": func(_ gtki.TreeView, path gtki.TreePath) {
+		"on_edit_activate_proxy": func(_ gtki.TreeView, path gtki.TreePath) {
 			iter, err := data.proxies.GetIter(path)
 			if err == nil {
 				editProxy(iter, func() {})
 			}
 		},
-		"on_cancel_signal": func() {
+		"on_cancel": func() {
 			u.buildAccountsMenu()
 			data.dialog.Destroy()
 		},
-		"on_import_key_signal": func() {
+		"on_import_key": func() {
 			u.importKeysForDialog(account, data.dialog)
 		},
-		"on_import_fpr_signal": func() {
+		"on_import_fpr": func() {
 			u.importFingerprintsForDialog(account, data.dialog)
 		},
-		"on_export_key_signal": func() {
+		"on_export_key": func() {
 			u.exportKeysForDialog(account, data.dialog)
 		},
-		"on_export_fpr_signal": func() {
+		"on_export_fpr": func() {
 			u.exportFingerprintsForDialog(account, data.dialog)
 		},
 	})

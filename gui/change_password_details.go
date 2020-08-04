@@ -83,9 +83,9 @@ func (u *gtkUI) buildChangePasswordDialog(account *account) {
 	data := getBuilderAndChangePasswordData()
 
 	data.builder.ConnectSignals(map[string]interface{}{
-		"on_ok_signal":     data.dialog.Destroy,
-		"on_cancel_signal": data.dialog.Destroy,
-		"on_change_signal": func() {
+		"on_ok":     data.dialog.Destroy,
+		"on_cancel": data.dialog.Destroy,
+		"on_change": func() {
 			newPassword, _ := data.passwordEntry.GetText()
 			repeatedPassword, _ := data.repeatPasswordEntry.GetText()
 

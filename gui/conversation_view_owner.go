@@ -257,9 +257,9 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 	panicOnDevError(builder.bindObjects(cp))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_start_otr_signal":      cp.onStartOtrSignal,
-		"on_end_otr_signal":        cp.onEndOtrSignal,
-		"on_verify_fp_signal":      cp.onVerifyFpSignal,
+		"on_start_otr":      cp.onStartOtrSignal,
+		"on_end_otr":        cp.onEndOtrSignal,
+		"on_verify_fp":      cp.onVerifyFpSignal,
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,

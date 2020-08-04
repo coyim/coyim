@@ -2,7 +2,7 @@
   <object class="GtkDialog" id="EditProxy">
     <property name="title" translatable="yes">Edit Proxy</property>
     <property name="modal">True</property>
-    <signal name="close" handler="on_cancel_signal" />
+    <signal name="close" handler="on_cancel" />
     <child internal-child="vbox">
       <object class="GtkBox" id="box">
         <property name="margin">10</property>
@@ -47,7 +47,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="user">
-                <signal name="activate" handler="on_save_signal" />
+                <signal name="activate" handler="on_save" />
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -68,7 +68,7 @@
             <child>
               <object class="GtkEntry" id="password">
                 <property name="visibility">false</property>
-                <signal name="activate" handler="on_save_signal" />
+                <signal name="activate" handler="on_save" />
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -88,7 +88,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="server">
-                <signal name="activate" handler="on_save_signal" />
+                <signal name="activate" handler="on_save" />
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -108,7 +108,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="port">
-                <signal name="activate" handler="on_save_signal" />
+                <signal name="activate" handler="on_save" />
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -128,7 +128,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="path">
-                <signal name="activate" handler="on_save_signal" />
+                <signal name="activate" handler="on_save" />
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -143,14 +143,14 @@
             <child>
               <object class="GtkButton" id="cancel">
                 <property name="label" translatable="yes">Cancel</property>
-                <signal name="clicked" handler="on_cancel_signal"/>
+                <signal name="clicked" handler="on_cancel"/>
               </object>
             </child>
             <child>
               <object class="GtkButton" id="save">
                 <property name="label" translatable="yes">Save</property>
                 <property name="can-default">true</property>
-                <signal name="clicked" handler="on_save_signal"/>
+                <signal name="clicked" handler="on_save"/>
               </object>
             </child>
           </object>

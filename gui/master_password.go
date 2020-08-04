@@ -23,7 +23,7 @@ func (u *gtkUI) captureInitialMasterPassword(k func(), onCancel func()) {
 	messageObj.SetSelectable(true)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_save_signal": func() {
+		"on_save": func() {
 			passText1, _ := password.GetText()
 			passText2, _ := password2.GetText()
 			if len(passText1) == 0 {
@@ -41,7 +41,7 @@ func (u *gtkUI) captureInitialMasterPassword(k func(), onCancel func()) {
 				k()
 			}
 		},
-		"on_cancel_signal": func() {
+		"on_cancel": func() {
 			pwdDialog.Destroy()
 			onCancel()
 		},
@@ -118,7 +118,7 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 		hadSubmission := false
 
 		builder.ConnectSignals(map[string]interface{}{
-			"on_save_signal": func() {
+			"on_save": func() {
 				if !hadSubmission {
 					passText, _ := password.GetText()
 					if len(passText) > 0 {
@@ -129,7 +129,7 @@ func (u *gtkUI) getMasterPassword(params config.EncryptionParameters, lastAttemp
 					}
 				}
 			},
-			"on_cancel_signal": func() {
+			"on_cancel": func() {
 				if !hadSubmission {
 					hadSubmission = true
 					close(pwdResultChan)

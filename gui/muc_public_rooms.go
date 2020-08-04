@@ -220,9 +220,9 @@ func (u *gtkUI) mucShowPublicRooms() {
 	view.joinButton.SetSensitive(false)
 
 	view.builder.ConnectSignals(map[string]interface{}{
-		"on_cancel_signal":       view.dialog.Destroy,
-		"on_close_window_signal": ac.onDestroy,
-		"on_join_signal": func() {
+		"on_cancel":       view.dialog.Destroy,
+		"on_close_window": ac.onDestroy,
+		"on_join": func() {
 			selection, err := view.roomsTree.GetSelection()
 			if err != nil {
 				u.log.WithError(err).Debug("couldn't join")

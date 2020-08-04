@@ -63,7 +63,7 @@ This is the only way we can create a better privacy tool.
         <child>
           <object class="GtkButton" id="close">
             <property name="label" translatable="yes">Close</property>
-            <signal name="clicked" handler="on_close_signal" />
+            <signal name="clicked" handler="on_close" />
           </object>
         </child>
       </object>

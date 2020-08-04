@@ -104,11 +104,11 @@ func (u *gtkUI) presenceSubscriptionDialog(sendSubscription func(accountID strin
 	)
 
 	acd.builder.ConnectSignals(map[string]interface{}{
-		"on_cancel_signal": func() {
+		"on_cancel": func() {
 			acd.dialog.Destroy()
 			ac.onDestroy()
 		},
-		"on_save_signal": func() {
+		"on_save": func() {
 			contact, ok := acd.getVerifiedContact()
 			if !ok {
 				return

@@ -23,21 +23,21 @@
                   <object class="GtkMenuItem" id="startOTRMenu">
                     <property name="visible">true</property>
                     <property name="label" translatable="yes">Start encrypted chat</property>
-                    <signal name="activate" handler="on_start_otr_signal" />
+                    <signal name="activate" handler="on_start_otr" />
                   </object>
                 </child>
                 <child>
                   <object class="GtkMenuItem" id="endOTRMenu">
                     <property name="visible">true</property>
                     <property name="label" translatable="yes">End encrypted chat</property>
-                    <signal name="activate" handler="on_end_otr_signal" />
+                    <signal name="activate" handler="on_end_otr" />
                   </object>
                 </child>
                 <child>
                   <object class="GtkMenuItem" id="verifyFingerMenu">
                     <property name="visible">true</property>
                     <property name="label" translatable="yes">Verify fingerprint</property>
-                    <signal name="activate" handler="on_verify_fp_signal" />
+                    <signal name="activate" handler="on_verify_fp" />
                   </object>
                 </child>
               </object>
@@ -135,7 +135,7 @@
                     <property name="label" translatable="yes">Secure Chat</property>
                   </object>
                 </child>
-                <signal name="clicked" handler="on_start_otr_signal" />
+                <signal name="clicked" handler="on_start_otr" />
               </object>
               <packing>
                 <property name="expand">False</property>

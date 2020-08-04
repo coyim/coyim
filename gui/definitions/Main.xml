@@ -4,7 +4,7 @@
     <property name="title">CoyIM</property>
     <property name="default_width">200</property>
     <property name="default_height">600</property>
-    <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
+    <signal name="destroy" handler="on_close_window" swapped="no"/>
     <child>
       <object class="GtkBox" id="Hbox">
         <property name="visible">True</property>
@@ -28,14 +28,14 @@
                           <object class="GtkMenuItem" id="addMenu">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Add...</property>
-                            <signal name="activate" handler="on_add_contact_window_signal" swapped="no"/>
+                            <signal name="activate" handler="on_add_contact_window" swapped="no"/>
                           </object>
                         </child>
                         <child>
                           <object class="GtkMenuItem" id="newConvMenu">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">New Conversation...</property>
-                            <signal name="activate" handler="on_new_conversation_signal" swapped="no"/>
+                            <signal name="activate" handler="on_new_conversation" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -95,28 +95,28 @@
                           <object class="GtkCheckMenuItem" id="CheckItemMerge">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Merge Accounts</property>
-                            <signal name="toggled" handler="on_toggled_check_Item_Merge_signal" swapped="no"/>
+                            <signal name="toggled" handler="on_toggled_check_Item_Merge" swapped="no"/>
                           </object>
                         </child>
                         <child>
                           <object class="GtkCheckMenuItem" id="CheckItemShowOffline">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Show Offline Contacts</property>
-                            <signal name="toggled" handler="on_toggled_check_Item_Show_Offline_signal" swapped="no"/>
+                            <signal name="toggled" handler="on_toggled_check_Item_Show_Offline" swapped="no"/>
                           </object>
                         </child>
                         <child>
                           <object class="GtkCheckMenuItem" id="CheckItemShowWaiting">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Show Waiting Contacts</property>
-                            <signal name="toggled" handler="on_toggled_check_Item_Show_Waiting_signal" swapped="no"/>
+                            <signal name="toggled" handler="on_toggled_check_Item_Show_Waiting" swapped="no"/>
                           </object>
                         </child>
                         <child>
                           <object class="GtkCheckMenuItem" id="CheckItemSortStatus">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Sort By Status</property>
-                            <signal name="toggled" handler="on_toggled_check_Item_Sort_By_Status_signal" swapped="no"/>
+                            <signal name="toggled" handler="on_toggled_check_Item_Sort_By_Status" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -135,7 +135,7 @@
                           <object class="GtkCheckMenuItem" id="EncryptConfigurationFileCheckMenuItem">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Encrypt configuration file</property>
-                            <signal name="toggled" handler="on_toggled_encrypt_configuration_file_signal" swapped="no"/>
+                            <signal name="toggled" handler="on_toggled_encrypt_configuration_file" swapped="no"/>
                           </object>
                         </child>
                         <child>
@@ -143,7 +143,7 @@
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Preferences...</property>
                             <property name="use_underline">True</property>
-                            <signal name="activate" handler="on_preferences_signal" swapped="no"/>
+                            <signal name="activate" handler="on_preferences" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -162,14 +162,14 @@
                           <object class="GtkMenuItem" id="feedbackMenu">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">Feedback</property>
-                            <signal name="activate" handler="on_feedback_dialog_signal" swapped="no"/>
+                            <signal name="activate" handler="on_feedback_dialog" swapped="no"/>
                           </object>
                         </child>
                         <child>
                           <object class="GtkMenuItem" id="aboutMenu">
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">About</property>
-                            <signal name="activate" handler="on_about_dialog_signal" swapped="no"/>
+                            <signal name="activate" handler="on_about_dialog" swapped="no"/>
                           </object>
                         </child>
                       </object>

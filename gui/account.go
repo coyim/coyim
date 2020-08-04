@@ -408,12 +408,12 @@ func (account *account) buildNotification(template, msg string, moreInfo func())
 	updateWithStyle(box, prov)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_more_info_signal": func() {
+		"on_more_info": func() {
 			if moreInfo != nil {
 				moreInfo()
 			}
 		},
-		"on_close_signal": func() {
+		"on_close": func() {
 			infoBar.Hide()
 			infoBar.Destroy()
 		},

@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkAssistant" id="assistant">
-    <signal name="close" handler="on_cancel_signal" />
-    <signal name="cancel" handler="on_cancel_signal" />
+    <signal name="close" handler="on_cancel" />
+    <signal name="cancel" handler="on_cancel" />
     <signal name="prepare" handler="on_prepare" />
     <child>
       <object class="GtkBox" id="dialog">

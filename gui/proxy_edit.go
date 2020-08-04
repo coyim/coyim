@@ -103,7 +103,7 @@ func (u *gtkUI) editProxy(proxy string, w gtki.Dialog, onSave func(net.Proxy), o
 			updateSensitivity(isUD, path, pathLabel)
 			updateSensitivity(!isUD, server, serverLabel, port, portLabel)
 		},
-		"on_save_signal": func() {
+		"on_save": func() {
 			userTxt, _ := user.GetText()
 			passTxt, _ := pass.GetText()
 			servTxt, _ := server.GetText()
@@ -125,7 +125,7 @@ func (u *gtkUI) editProxy(proxy string, w gtki.Dialog, onSave func(net.Proxy), o
 			go onSave(prox)
 			dialog.Destroy()
 		},
-		"on_cancel_signal": func() {
+		"on_cancel": func() {
 			go onCancel()
 			dialog.Destroy()
 		},

@@ -71,7 +71,7 @@
               <object class="GtkEntry" id="address">
                 <property name="placeholder-text">someone@jabber.org</property>
                 <property name="hexpand">True</property>
-                <signal name="activate" handler="on_start_signal" />
+                <signal name="activate" handler="on_start" />
               </object>
               <packing>
                 <property name="left-attach">1</property>
@@ -92,7 +92,7 @@
               <object class="GtkButton" id="button_cancel">
                 <property name="label">_Cancel</property>
                 <property name="use-underline">True</property>
-                <signal name="clicked" handler="on_close_signal" />
+                <signal name="clicked" handler="on_close" />
               </object>
             </child>
             <child>
@@ -100,7 +100,7 @@
                 <property name="label" translatable="yes">Start</property>
                 <property name="use-underline">True</property>
                 <property name="can-default">true</property>
-                <signal name="clicked" handler="on_start_signal" />
+                <signal name="clicked" handler="on_start" />
               </object>
             </child>
           </object>

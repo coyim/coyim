@@ -99,7 +99,7 @@ func (u *gtkUI) showGlobalPreferences() {
 	}
 
 	panel.b.ConnectSignals(map[string]interface{}{
-		"on_save_signal": func() {
+		"on_save": func() {
 			if newSingleWindow := panel.singleWindow.GetActive(); newSingleWindow != orgSingleWindow {
 				settings.SetSingleWindow(newSingleWindow)
 			}
@@ -154,7 +154,7 @@ func (u *gtkUI) showGlobalPreferences() {
 			u.deNotify.updateWith(settings)
 			u.updateUnifiedOrNot()
 		},
-		"on_cancel_signal": func() {
+		"on_cancel": func() {
 			panel.dialog.Destroy()
 		},
 	})

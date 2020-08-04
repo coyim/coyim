@@ -1,8 +1,8 @@
 <interface>
   <object class="GtkDialog" id="dialog">
     <property name="title" translatable="yes">Choose a key to import</property>
-    <signal name="close" handler="on_cancel_signal" />
-    <signal name="delete-event" handler="on_cancel_signal" />
+    <signal name="close" handler="on_cancel" />
+    <signal name="delete-event" handler="on_cancel" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
@@ -27,14 +27,14 @@
             <child>
               <object class="GtkButton" id="btn-cancel">
                 <property name="label" translatable="yes">Cancel</property>
-                <signal name="clicked" handler="on_cancel_signal" />
+                <signal name="clicked" handler="on_cancel" />
               </object>
             </child>
             <child>
               <object class="GtkButton" id="btn-import">
                 <property name="label" translatable="yes">Import</property>
                 <property name="can-default">true</property>
-                <signal name="clicked" handler="on_import_signal" />
+                <signal name="clicked" handler="on_import" />
               </object>
             </child>
           </object>

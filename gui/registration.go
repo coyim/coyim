@@ -305,7 +305,7 @@ func (u *gtkUI) showServerSelectionWindow() {
 
 	w.b.ConnectSignals(map[string]interface{}{
 		"on_prepare":       w.onPageChange,
-		"on_cancel_signal": w.assistant.Destroy,
+		"on_cancel": w.assistant.Destroy,
 	})
 
 	entry := w.serverBox.GetChild().(gtki.Widget)

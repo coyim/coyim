@@ -228,11 +228,11 @@ func (u *gtkUI) installTor() {
 	torNotif := torRunningNotificationInit(info)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": func() {
+		"on_close": func() {
 			dialog.Destroy()
 		},
 		// TODO: change logos
-		"on_press_label_signal": func() {
+		"on_press_label": func() {
 			if !ournet.Tor.Detect() {
 				err := "Tor is still not running"
 				torNotif.renderTorNotification(err, "software-update-urgent")
@@ -443,17 +443,17 @@ func (u *gtkUI) mainWindow() {
 	u.mainBuilder = builder
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_window_signal":                       u.quit,
-		"on_add_contact_window_signal":                 u.addContactWindow,
-		"on_new_conversation_signal":                   u.newCustomConversation,
-		"on_about_dialog_signal":                       u.aboutDialog,
-		"on_feedback_dialog_signal":                    u.feedbackDialog,
-		"on_toggled_check_Item_Merge_signal":           u.toggleMergeAccounts,
-		"on_toggled_check_Item_Show_Offline_signal":    u.toggleShowOffline,
-		"on_toggled_check_Item_Show_Waiting_signal":    u.toggleShowWaiting,
-		"on_toggled_check_Item_Sort_By_Status_signal":  u.toggleSortByStatus,
-		"on_toggled_encrypt_configuration_file_signal": u.toggleEncryptedConfig,
-		"on_preferences_signal":                        u.showGlobalPreferences,
+		"on_close_window":                       u.quit,
+		"on_add_contact_window":                 u.addContactWindow,
+		"on_new_conversation":                   u.newCustomConversation,
+		"on_about_dialog":                       u.aboutDialog,
+		"on_feedback_dialog":                    u.feedbackDialog,
+		"on_toggled_check_Item_Merge":           u.toggleMergeAccounts,
+		"on_toggled_check_Item_Show_Offline":    u.toggleShowOffline,
+		"on_toggled_check_Item_Show_Waiting":    u.toggleShowWaiting,
+		"on_toggled_check_Item_Sort_By_Status":  u.toggleSortByStatus,
+		"on_toggled_encrypt_configuration_file": u.toggleEncryptedConfig,
+		"on_preferences":                        u.showGlobalPreferences,
 		"on_muc_show_public_rooms":                     u.mucShowPublicRooms,
 		"on_muc_show_join_room":                        u.mucShowJoinRoom,
 		"on_create_chat_room":                          u.mucCreateChatRoom,
@@ -603,7 +603,7 @@ func (u *gtkUI) askForPassword(accountName string, addGoogleWarning bool, cancel
 	savePassword := builder.getObj("savePassword").(gtki.CheckButton)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_entered_password_signal": func() {
+		"on_entered_password": func() {
 			password, _ := passwordEntry.GetText()
 			shouldSave := savePassword.GetActive()
 
@@ -617,7 +617,7 @@ func (u *gtkUI) askForPassword(accountName string, addGoogleWarning bool, cancel
 				dialog.Destroy()
 			}
 		},
-		"on_cancel_password_signal": func() {
+		"on_cancel_password": func() {
 			cancel()
 			dialog.Destroy()
 		},
@@ -634,7 +634,7 @@ func (u *gtkUI) feedbackDialog() {
 	dialog := obj.(gtki.Dialog)
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": func() {
+		"on_close": func() {
 			dialog.Destroy()
 		},
 	})
@@ -694,8 +694,8 @@ func (u *gtkUI) newCustomConversation() {
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close_signal": dialog.Destroy,
-		"on_start_signal": func() {
+		"on_close": dialog.Destroy,
+		"on_start": func() {
 			iter, err := accountInput.GetActiveIter()
 			if err != nil {
 				u.log.WithError(err).Warn("Error encountered when getting account")

@@ -20,7 +20,7 @@
   <object class="GtkDialog" id="AccountDetails">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Account Details</property>
-    <signal name="close" handler="on_cancel_signal" />
+    <signal name="close" handler="on_cancel" />
     <property name="type_hint">normal</property>
     <child>
       <placeholder/>
@@ -37,7 +37,7 @@
                 <property name="label" translatable="yes">Cancel</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">False</property>
-                <signal name="clicked" handler="on_cancel_signal" swapped="no"/>
+                <signal name="clicked" handler="on_cancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -51,7 +51,7 @@
                 <property name="can_focus">False</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">False</property>
-                <signal name="clicked" handler="on_save_signal" swapped="no"/>
+                <signal name="clicked" handler="on_save" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -115,7 +115,7 @@
                     </child>
                     <child>
                       <object class="GtkEntry" id="account">
-                        <signal name="activate" handler="on_save_signal" />
+                        <signal name="activate" handler="on_save" />
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -136,7 +136,7 @@
                     <child>
                       <object class="GtkEntry" id="password">
                         <property name="visibility">false</property>
-                        <signal name="activate" handler="on_save_signal" />
+                        <signal name="activate" handler="on_save" />
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -156,7 +156,7 @@
                     </child>
                     <child>
                       <object class="GtkEntry" id="displayName">
-                        <signal name="activate" handler="on_save_signal" />
+                        <signal name="activate" handler="on_save" />
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -226,7 +226,7 @@
                 </child>
                 <child>
                   <object class="GtkEntry" id="server">
-                    <signal name="activate" handler="on_save_signal" swapped="no"/>
+                    <signal name="activate" handler="on_save" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -246,7 +246,7 @@
                 </child>
                 <child>
                   <object class="GtkEntry" id="port">
-                    <signal name="activate" handler="on_save_signal" />
+                    <signal name="activate" handler="on_save" />
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -367,7 +367,7 @@
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="use_underline">True</property>
-                            <signal name="clicked" handler="on_remove_pin_signal" />
+                            <signal name="clicked" handler="on_remove_pin" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -483,7 +483,7 @@ The pinning policy governs whether we will consider saving information about cer
                             <property name="headers-visible">False</property>
                             <property name="show-expanders">False</property>
                             <property name="reorderable">True</property>
-                            <signal name="row-activated" handler="on_edit_activate_proxy_signal" />
+                            <signal name="row-activated" handler="on_edit_activate_proxy" />
                             <child internal-child="selection">
                               <object class="GtkTreeSelection" id="selection">
                                 <property name="mode">GTK_SELECTION_SINGLE</property>
@@ -522,7 +522,7 @@ The pinning policy governs whether we will consider saving information about cer
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="use_underline">True</property>
-                            <signal name="clicked" handler="on_add_proxy_signal" />
+                            <signal name="clicked" handler="on_add_proxy" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -537,7 +537,7 @@ The pinning policy governs whether we will consider saving information about cer
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="use_underline">True</property>
-                            <signal name="clicked" handler="on_remove_proxy_signal" />
+                            <signal name="clicked" handler="on_remove_proxy" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -552,7 +552,7 @@ The pinning policy governs whether we will consider saving information about cer
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="use-underline">True</property>
-                            <signal name="clicked" handler="on_edit_proxy_signal" />
+                            <signal name="clicked" handler="on_edit_proxy" />
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -639,7 +639,7 @@ There are several applications that use the libotr format, such as Pidgin, Adium
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
                         <property name="use_underline">True</property>
-                        <signal name="clicked" handler="on_import_key_signal" />
+                        <signal name="clicked" handler="on_import_key" />
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -653,7 +653,7 @@ There are several applications that use the libotr format, such as Pidgin, Adium
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
                         <property name="use_underline">True</property>
-                        <signal name="clicked" handler="on_import_fpr_signal" />
+                        <signal name="clicked" handler="on_import_fpr" />
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -680,7 +680,7 @@ There are several applications that use the libotr format, such as Pidgin, Adium
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
-                        <signal name="clicked" handler="on_export_key_signal" />
+                        <signal name="clicked" handler="on_export_key" />
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -693,7 +693,7 @@ There are several applications that use the libotr format, such as Pidgin, Adium
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
-                        <signal name="clicked" handler="on_export_fpr_signal" />
+                        <signal name="clicked" handler="on_export_fpr" />
                       </object>
                       <packing>
                         <property name="left-attach">1</property>

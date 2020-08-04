@@ -33,7 +33,7 @@
   </object>
   <object class="GtkDialog" id="GlobalPreferences">
     <property name="title" translatable="yes">Account Details</property>
-    <signal name="close" handler="on_cancel_signal" />
+    <signal name="close" handler="on_cancel" />
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="margin">10</property>
@@ -284,7 +284,7 @@
                 </child>
                 <child>
                   <object class="GtkEntry" id="notificationCommand">
-                    <signal name="activate" handler="on_save_signal" />
+                    <signal name="activate" handler="on_save" />
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -306,7 +306,7 @@
                   <object class="GtkSpinButton" id="notificationTimeout">
                     <property name="climb-rate">60</property>
                     <property name="adjustment">adjustment1</property>
-                    <signal name="activate" handler="on_save_signal" />
+                    <signal name="activate" handler="on_save" />
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -359,7 +359,7 @@
                 </child>
                 <child>
                   <object class="GtkEntry" id="rawLogFile">
-                    <signal name="activate" handler="on_save_signal" />
+                    <signal name="activate" handler="on_save" />
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -386,14 +386,14 @@
             <child>
               <object class="GtkButton" id="cancel">
                 <property name="label" translatable="yes">Cancel</property>
-                <signal name="clicked" handler="on_cancel_signal"/>
+                <signal name="clicked" handler="on_cancel"/>
               </object>
             </child>
             <child>
               <object class="GtkButton" id="save">
                 <property name="label" translatable="yes">Save</property>
                 <property name="can-default">true</property>
-                <signal name="clicked" handler="on_save_signal"/>
+                <signal name="clicked" handler="on_save"/>
               </object>
             </child>
           </object>

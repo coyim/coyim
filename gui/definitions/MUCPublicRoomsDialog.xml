@@ -21,8 +21,8 @@
     <property name="default-height">400</property>
     <property name="default-width">500</property>
     <property name="destroy-with-parent">true</property>
-    <signal name="close" handler="on_close_window_signal" swapped="no"/>
-    <signal name="destroy" handler="on_close_window_signal" swapped="no"/>
+    <signal name="close" handler="on_close_window" swapped="no"/>
+    <signal name="destroy" handler="on_close_window" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="visible">true</property>
@@ -267,7 +267,7 @@
             <property name="visible">true</property>
             <property name="label">_Cancel</property>
             <property name="use-underline">True</property>
-            <signal name="clicked" handler="on_cancel_signal"/>
+            <signal name="clicked" handler="on_cancel"/>
           </object>
         </child>
         <child>
@@ -276,7 +276,7 @@
             <property name="label" translatable="yes">Join</property>
             <property name="use-underline">True</property>
             <property name="can-default">true</property>
-            <signal name="clicked" handler="on_join_signal"/>
+            <signal name="clicked" handler="on_join"/>
           </object>
         </child>
       </object>

@@ -13,16 +13,16 @@ func (u *gtkUI) showFirstAccountWindow() {
 		cleanup = dialog.Destroy
 
 		b.ConnectSignals(map[string]interface{}{
-			"on_register_signal": func() {
+			"on_register": func() {
 				result <- u.showServerSelectionWindow
 			},
-			"on_existing_signal": func() {
+			"on_existing": func() {
 				result <- u.showAddAccountWindow
 			},
-			"on_import_signal": func() {
+			"on_import": func() {
 				result <- u.runImporter
 			},
-			"on_cancel_signal": func() {
+			"on_cancel": func() {
 				result <- func() {}
 			},
 		})

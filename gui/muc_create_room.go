@@ -73,7 +73,7 @@ func (u *gtkUI) newMUCRoomView() *createMUCRoom {
 			go view.createRoomHandler(ac.currentAccount())
 		},
 		"cancel_handler":         view.Destroy,
-		"on_close_window_signal": ac.onDestroy,
+		"on_close_window": ac.onDestroy,
 		"on_room_changed": func() {
 			view.disableCreationIfFieldsAreEmpty(ac.currentAccount())
 		},

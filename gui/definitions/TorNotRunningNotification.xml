@@ -29,7 +29,7 @@
               <class name="raised"/>
               <class name="close"/>
             </style>
-            <signal name="clicked" handler="on_more_info_signal" />
+            <signal name="clicked" handler="on_more_info" />
             <child>
               <object class="GtkImage" id="more-info-btn">
                 <property name="icon-name">dialog-question</property>
@@ -54,7 +54,7 @@
             <property name="hexpand">False</property>
             <property name="halign">end</property>
             <property name="valign">center</property>
-            <signal name="clicked" handler="on_close_signal" />
+            <signal name="clicked" handler="on_close" />
             <child>
               <object class="GtkImage" id="close_image">
                 <property name="visible">True</property>

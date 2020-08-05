@@ -203,8 +203,8 @@ func (*SessionMock) GetAndWipeSymmetricKeyFor(jid.Any) []byte {
 }
 
 // HasRoom is the implementation for Session interface
-func (s *SessionMock) HasRoom(jid.Bare) bool {
-	return false
+func (s *SessionMock) HasRoom(jid.Bare) <-chan bool {
+	return nil
 }
 
 // GetRooms is the implementation for Session interface

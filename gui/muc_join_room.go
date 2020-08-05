@@ -19,19 +19,14 @@ type mucJoinRoomView struct {
 	txtRoomName      gtki.Entry   `gtk-widget:"textRoomName"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
 	notificationArea gtki.Box     `gtk-widget:"boxNotificationArea"`
-	notification     gtki.InfoBar
 	errorNotif       *errorNotification
 }
 
 func (jrv *mucJoinRoomView) clearErrors() {
-	jrv.errorNotif = newErrorNotification(jrv.notificationArea)
+	jrv.errorNotif.Hide()
 }
 
 func (jrv *mucJoinRoomView) notifyOnError(errMessage string) {
-	if jrv.notification != nil {
-		jrv.notificationArea.Remove(jrv.notification)
-	}
-
 	jrv.errorNotif.ShowMessage(errMessage)
 }
 
@@ -55,24 +50,24 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 		jrv.spinner.SetVisible(true)
 	})
 
-	value := a.session.HasRoom(rj)
+	result := a.session.HasRoom(rj)
+	go func() {
+		value := <-result
+		defer jrv.updateLock.Unlock()
 
-	doInUIThread(func() {
-		jrv.spinner.Stop()
-		jrv.spinner.SetVisible(false)
-	})
-
-	jrv.updateLock.Unlock()
-
-	if !value {
-		doInUIThread(func() { jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))) })
-		a.log.Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
-	} else {
 		doInUIThread(func() {
-			u.mucShowRoom(a, rj)
-			jrv.dialog.Hide()
+			jrv.spinner.Stop()
+			jrv.spinner.SetVisible(false)
+
+			if !value {
+				jrv.notifyOnError(i18n.Local(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName)))
+				a.log.Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
+			} else {
+				jrv.dialog.Hide()
+				u.mucShowRoom(a, rj)
+			}
 		})
-	}
+	}()
 }
 
 //

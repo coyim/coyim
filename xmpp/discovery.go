@@ -70,23 +70,25 @@ func parseDiscoveryItemsReply(iq *data.ClientIQ) (*data.DiscoveryItemsQuery, err
 // QueryServiceInformation sends a service discovery information ("disco#info") query.
 // See XEP-0030, Section "3. Discovering Information About a Jabber Entity"
 // This method blocks until conn#Next() receives the response to the IQ.
-func (c *conn) QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error) {
+func (c *conn) QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, *data.ClientIQ, error) {
 	reply, _, err := c.sendDiscoveryInfo(entity)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	stanza, ok := <-reply
 	if !ok {
-		return nil, errors.New("xmpp: failed to receive response")
+		return nil, nil, errors.New("xmpp: failed to receive response")
 	}
 
 	iq, ok := stanza.Value.(*data.ClientIQ)
 	if !ok {
-		return nil, errors.New("xmpp: failed to parse response")
+		return nil, nil, errors.New("xmpp: failed to parse response")
 	}
 
-	return parseDiscoveryInfoReply(iq)
+	diq, err := parseDiscoveryInfoReply(iq)
+
+	return diq, iq, err
 }
 
 // QueryServiceItems sends a Service Discovery items ("disco#items") query.
@@ -112,7 +114,7 @@ func (c *conn) QueryServiceItems(entity string) (*data.DiscoveryItemsQuery, erro
 }
 
 func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
-	discoveryReply, err := c.QueryServiceInformation(entity)
+	discoveryReply, _, err := c.QueryServiceInformation(entity)
 	if err != nil {
 		return nil, false
 	}
@@ -126,7 +128,7 @@ func (c *conn) DiscoveryFeatures(entity string) ([]string, bool) {
 }
 
 func (c *conn) DiscoveryFeaturesAndIdentities(entity string) ([]data.DiscoveryIdentity, []string, bool) {
-	discoveryReply, err := c.QueryServiceInformation(entity)
+	discoveryReply, _, err := c.QueryServiceInformation(entity)
 	if err != nil {
 		return nil, nil, false
 	}

@@ -48,7 +48,7 @@ func extractFormData(fields []data.FormFieldX) map[string][]string {
 }
 
 func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
-	diq, e := s.Conn().QueryServiceInformation(rl.Jid.String())
+	diq, _, e := s.Conn().QueryServiceInformation(rl.Jid.String())
 	if e != nil {
 		s.log.WithError(e).Debug("findOutMoreInformationAboutRoom() had error")
 		return

@@ -14,7 +14,6 @@ import (
 
 type roomView struct {
 	room    *muc.Room
-	info    *muc.RoomListing
 	account *account
 	jid     jid.Bare
 

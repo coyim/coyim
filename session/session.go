@@ -160,12 +160,12 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 
 		inMemoryLog:   inMemoryLog,
 		xmppLogger:    xmppLogger,
-		log:           sessionLog,
+		log:           sessionLog.WithField("component", "session"),
 		dialerFactory: df,
 	}
 
 	s.ReloadKeys()
-	s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate, sessionLog)
+	s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate, sessionLog.WithField("component", "otr"))
 
 	go observe(s)
 	go checkReconnect(s)

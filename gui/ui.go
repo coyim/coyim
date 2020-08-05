@@ -135,7 +135,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 
 		actionTimes: make(map[string]time.Time),
 		deNotify:    newDesktopNotifications(),
-		log:         log.StandardLogger(),
+		log:         log.StandardLogger().WithField("component", "gui"),
 		hooks:       hooks,
 	}
 
@@ -454,9 +454,9 @@ func (u *gtkUI) mainWindow() {
 		"on_toggled_check_Item_Sort_By_Status":  u.toggleSortByStatus,
 		"on_toggled_encrypt_configuration_file": u.toggleEncryptedConfig,
 		"on_preferences":                        u.showGlobalPreferences,
-		"on_muc_show_public_rooms":                     u.mucShowPublicRooms,
-		"on_muc_show_join_room":                        u.mucShowJoinRoom,
-		"on_create_chat_room":                          u.mucCreateChatRoom,
+		"on_muc_show_public_rooms":              u.mucShowPublicRooms,
+		"on_muc_show_join_room":                 u.mucShowJoinRoom,
+		"on_create_chat_room":                   u.mucCreateChatRoom,
 	})
 
 	panicOnDevError(builder.bindObjects(u))

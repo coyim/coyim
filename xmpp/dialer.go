@@ -158,11 +158,18 @@ func (d *dialer) Dial() (interfaces.Conn, error) {
 	return d.setupStream(conn)
 }
 
+func withFieldSafely(log coylog.Logger, fieldname string, value interface{}) coylog.Logger {
+	if log == nil {
+		return nil
+	}
+	return log.WithField(fieldname, value)
+}
+
 // RFC 6120, Section 4.2
 func (d *dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
 	c := newConn()
 	c.resource = d.resource
-	c.log = d.log
+	c.log = withFieldSafely(d.log, "component", "xmpp")
 	c.config = d.config
 	c.originDomain = d.getJIDDomainpart()
 	c.outerTLS = d.outerTLS

@@ -1,14 +1,35 @@
 package gui
 
 import (
+	"log"
+	"sync"
+
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type mucRoomView struct {
+type roomView struct {
+	room    *muc.Room
+	info    *muc.RoomListing
+	account *account
+	jid     jid.Bare
+
+	session             access.Session
+	sessionObserver     chan interface{}
+	sessionObserverLock sync.RWMutex
+
+	log coylog.Logger
+
+	events chan interface{}
+
+	sync.RWMutex
+
 	builder *builder
+	u       *gtkUI
 
 	window           gtki.Window      `gtk-widget:"room-window"`
 	boxJoinRoomView  gtki.Box         `gtk-widget:"boxJoinRoomView"`
@@ -22,68 +43,81 @@ type mucRoomView struct {
 	errorNotif       *errorNotification
 
 	boxRoomView gtki.Box `gtk-widget:"boxRoomView"`
-
-	// TODO: this is temporary.
-	// the bellow fields should be an interface with all the necessary room information
-	roomJid  jid.Bare
-	roomInfo *muc.RoomListing
-	account  *account
 }
 
-func (rv *mucRoomView) init() {
-	rv.builder = newBuilder("MUCRoomWindow")
-	panicOnDevError(rv.builder.bindObjects(rv))
-	rv.errorNotif = newErrorNotification(rv.notificationArea)
-	rv.togglePassword()
-	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.roomJid.String()))
+func newRoom(a *account, ident jid.Bare) *roomView {
+	r := &roomView{
+		room:    muc.NewRoom(ident),
+		account: a,
+		jid:     ident,
+	}
+	return r
 }
 
-func (rv *mucRoomView) togglePassword() {
+func (r *roomView) init() {
+	r.builder = newBuilder("MUCRoomWindow")
+
+	panicOnDevError(r.builder.bindObjects(r))
+
+	r.errorNotif = newErrorNotification(r.notificationArea)
+	r.togglePassword()
+
+	r.window.SetTitle(i18n.Localf("Room: [%s]", r.jid.String()))
+}
+
+func (r *roomView) togglePassword() {
 	doInUIThread(func() {
-		value := rv.chkPassword.GetActive()
-		rv.labelPassword.SetSensitive(value)
-		rv.textPassword.SetSensitive(value)
+		value := r.chkPassword.GetActive()
+		r.labelPassword.SetSensitive(value)
+		r.textPassword.SetSensitive(value)
 	})
 }
 
-func (rv *mucRoomView) hasValidNickname() bool {
-	nickName, _ := rv.textNickname.GetText()
+func (r *roomView) hasValidNickname() bool {
+	nickName, _ := r.textNickname.GetText()
 	return len(nickName) > 0
 }
 
-func (rv *mucRoomView) hasValidPassword() bool {
-	value := rv.chkPassword.GetActive()
+func (r *roomView) hasValidPassword() bool {
+	value := r.chkPassword.GetActive()
 	if !value {
 		return true
 	}
-	password, _ := rv.textPassword.GetText()
+	password, _ := r.textPassword.GetText()
 	return len(password) > 0
 }
 
-func (rv *mucRoomView) validateInput() {
-	sensitiveValue := rv.hasValidNickname() && rv.hasValidPassword()
-	rv.btnAcceptJoin.SetSensitive(sensitiveValue)
+func (r *roomView) validateInput() {
+	sensitiveValue := r.hasValidNickname() && r.hasValidPassword()
+	r.btnAcceptJoin.SetSensitive(sensitiveValue)
 }
 
-func (rv *mucRoomView) togglePanelView() {
+func (r *roomView) togglePanelView() {
 	doInUIThread(func() {
-		value := rv.boxJoinRoomView.IsVisible()
-		rv.boxJoinRoomView.SetVisible(!value)
-		rv.boxRoomView.SetVisible(value)
+		value := r.boxJoinRoomView.IsVisible()
+		r.boxJoinRoomView.SetVisible(!value)
+		r.boxRoomView.SetVisible(value)
 	})
 }
 
-func (rv *mucRoomView) onBtnJoinClicked() {
-	nickName, _ := rv.textNickname.GetText()
-	go rv.account.session.JoinRoom(rv.roomJid, nickName)
-	rv.togglePanelView()
+func (r *roomView) onBtnJoinClicked() {
+	nickName, _ := r.textNickname.GetText()
+	go r.account.session.JoinRoom(r.jid, nickName)
+	r.togglePanelView()
+}
+
+func (r *roomView) id() string {
+	return r.room.Identity.String()
 }
 
 func (u *gtkUI) mucShowRoom(a *account, rjid jid.Bare) {
-	view := &mucRoomView{}
+	view, err := a.joinRoom(u, rjid)
+	if err != nil {
+		// TODO: Notify in a proper way this error
+		log.Fatal(err.Error())
+		return
+	}
 
-	view.account = a
-	view.roomJid = rjid
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{

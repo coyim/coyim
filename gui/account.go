@@ -43,6 +43,8 @@ type account struct {
 	events chan interface{}
 
 	sync.RWMutex
+
+	roomManager *roomViewsManager
 }
 
 func (account *account) executeOneDelayed(ui *gtkUI, p string, cv conversationView) {
@@ -95,6 +97,7 @@ func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf 
 		c:                    make(map[string]conversationView),
 		delayedConversations: make(map[string][]func(conversationView)),
 		events:               make(chan interface{}),
+		roomManager:          newRoomManager(),
 	}
 }
 

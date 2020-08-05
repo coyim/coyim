@@ -133,8 +133,8 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 		_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 	})
 
-	JIDRoom := jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare)
-	ec := ac.session.CreateRoom(JIDRoom)
+	roomIdentity := jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare)
+	ec := ac.session.CreateRoom(roomIdentity)
 
 	go func() {
 		isRoomCreated := false
@@ -148,7 +148,7 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 				v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
 				return
 			}
-			v.u.mucShowRoom(ac, JIDRoom)
+			v.u.mucShowRoom(ac, roomIdentity)
 			v.Destroy()
 		}()
 

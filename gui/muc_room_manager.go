@@ -44,6 +44,7 @@ func newRoomManager() *roomViewsManager {
 	return &roomViewsManager{
 		manager: muc.NewRoomManager(),
 		events:  make(chan interface{}, 10),
+		views:   make(map[string]*roomView),
 	}
 }
 
@@ -59,7 +60,7 @@ func (a *account) addRoom(u *gtkUI, ident jid.Bare) (*roomView, error) {
 		return nil, errors.New("the room is already opened")
 	}
 
-	r := newRoom(a, ident)
+	r := newRoom(a, ident, u)
 	r.log = u.log
 
 	err := a.roomManager.addRoom(ident, r)

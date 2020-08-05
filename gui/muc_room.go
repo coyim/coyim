@@ -45,11 +45,14 @@ type roomView struct {
 	boxRoomView gtki.Box `gtk-widget:"boxRoomView"`
 }
 
-func newRoom(a *account, ident jid.Bare) *roomView {
+func newRoom(a *account, ident jid.Bare, u *gtkUI) *roomView {
 	r := &roomView{
 		room:    muc.NewRoom(ident),
 		account: a,
+		session: a.session,
 		jid:     ident,
+		events:  make(chan interface{}),
+		u:       u,
 	}
 	return r
 }

@@ -289,7 +289,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		//"From" is how we are identified (will be JID/"some-id")
 		//Same thing happens for the group-chat, but in this case it tell us also what are our affiliations and roles.
 		//Thats why I'm worried about handling this as a regular peer presence - which is not.
-		if stanza.ExtendedPresenceInfo != nil {
+		if stanza.MUCExtendedPresenceInfo != nil {
 			s.publishEvent(events.MUCPresence{
 				ClientPresence: stanza,
 			})

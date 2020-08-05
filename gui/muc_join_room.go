@@ -36,7 +36,6 @@ func (jrv *mucJoinRoomView) init() {
 	jrv.errorNotif = newErrorNotification(jrv.notificationArea)
 }
 
-// tryJoinRoom find the room information and make the join to the room
 func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	jrv.updateLock.Lock()
 
@@ -70,22 +69,12 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	}()
 }
 
-//
-// Custom GTK Events
-//
-
-func (jrv *mucJoinRoomView) onShowWindow() {
-
-}
-
-// mucJoinRoom should be called from the UI thread
 func (u *gtkUI) mucShowJoinRoom() {
 	view := &mucJoinRoomView{}
 	view.init()
 
 	accountsInput := view.builder.get("accounts").(gtki.ComboBox)
-	ac := u.createConnectedAccountsComponent(accountsInput, view,
-		func(*account) {},
+	ac := u.createConnectedAccountsComponent(accountsInput, view, nil,
 		func() {
 			view.spinner.Stop()
 			view.spinner.SetVisible(false)
@@ -93,10 +82,7 @@ func (u *gtkUI) mucShowJoinRoom() {
 	)
 
 	view.builder.ConnectSignals(map[string]interface{}{
-		"on_close_window": func() {},
-		"on_show_window": func() {
-			view.onShowWindow()
-		},
+		"on_close_window":        ac.onDestroy,
 		"on_cancel_join_clicked": view.dialog.Destroy,
 		"on_accept_join_clicked": func() {
 			u.tryJoinRoom(view, ac.currentAccount())

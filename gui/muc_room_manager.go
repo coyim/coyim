@@ -27,9 +27,6 @@ func (m *roomViewsManager) addRoom(ident jid.Bare, r *roomView) error {
 		return errors.New("the room is already in the manager")
 	}
 
-	m.Lock()
-	defer m.Unlock()
-
 	_, ok := m.views[r.id()]
 	if ok {
 		return errors.New("the room is already in the manager")
@@ -67,6 +64,10 @@ func (a *account) addRoom(u *gtkUI, ident jid.Bare) (*roomView, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	go a.roomManager.observeRoomEvents(r)
+
+	a.session.Subscribe(r.events)
 
 	return r, nil
 }

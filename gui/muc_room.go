@@ -18,9 +18,8 @@ type roomView struct {
 	account *account
 	jid     jid.Bare
 
-	session             access.Session
-	sessionObserver     chan interface{}
-	sessionObserverLock sync.RWMutex
+	session                 access.Session
+	connectionEventHandlers []func()
 
 	log coylog.Logger
 
@@ -106,7 +105,19 @@ func (r *roomView) togglePanelView() {
 func (r *roomView) onBtnJoinClicked() {
 	nickName, _ := r.textNickname.GetText()
 	go r.account.session.JoinRoom(r.jid, nickName)
+	go func() {
+		r.onPresenceReceived(func() {
+			log.Fatal("TODO: Unlock the view")
+		})
+	}()
 	r.togglePanelView()
+}
+
+func (r *roomView) onPresenceReceived(f func()) {
+	if r.connectionEventHandlers == nil {
+		r.connectionEventHandlers = []func(){}
+	}
+	r.connectionEventHandlers = append(r.connectionEventHandlers, f)
 }
 
 func (r *roomView) id() string {

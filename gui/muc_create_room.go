@@ -133,44 +133,36 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 		_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 	})
 
-	v.cancel = make(chan bool, 1)
-
-	ec := ac.session.CreateRoom(jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare))
+	JIDRoom := jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare)
+	ec := ac.session.CreateRoom(JIDRoom)
 
 	go func() {
-		shouldUpdateUI := false
 		isRoomCreated := false
-
 		defer func() {
-			if shouldUpdateUI {
-				doInUIThread(func() {
-					if isRoomCreated {
-						v.errorBox.ShowMessage(i18n.Local("Room created with success"))
-					} else {
-						v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
-					}
-					v.updateFields(true)
-					_ = v.createButton.SetProperty("label", v.createButtonPrevText)
-				})
-			}
-		}()
+			doInUIThread(func() {
+				v.updateFields(true)
+				_ = v.createButton.SetProperty("label", v.createButtonPrevText)
+			})
 
-		select {
-		case err, ok := <-ec:
-			if !ok {
+			if !isRoomCreated {
+				v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
 				return
 			}
+			v.u.mucShowRoom(ac, JIDRoom)
+			v.Destroy()
+		}()
 
-			if err != nil {
-				v.u.log.WithError(err).Debug("something went wrong trying to create the room")
-			} else {
-				isRoomCreated = true
-			}
-			shouldUpdateUI = true
-			return
-		case <-v.cancel:
+		err, ok := <-ec
+		if !ok {
 			return
 		}
+
+		if err != nil {
+			v.u.log.WithError(err).Debug("something went wrong trying to create the room")
+			return
+		}
+
+		isRoomCreated = true
 	}()
 }
 

@@ -84,6 +84,11 @@ func (u *gtkUI) createConnectedAccountsComponent(input gtki.ComboBox, errorNot c
 	result.errorNotifications = errorNot
 	result.onNoAccounts = onNoAccounts
 
+	onAccountsUpdatedFinal := onAccountsUpdated
+	if onAccountsUpdatedFinal == nil {
+		onAccountsUpdatedFinal = func(*account) {}
+	}
+
 	var e error
 	// These two arguments are: account name and account id
 	result.accountsModel, e = g.gtk.ListStoreNew(glibi.TYPE_STRING, glibi.TYPE_STRING)
@@ -106,14 +111,14 @@ func (u *gtkUI) createConnectedAccountsComponent(input gtki.ComboBox, errorNot c
 		act := result.accountsInput.GetActive()
 		if act >= 0 && act < len(result.accountsList) && act != result.currentlyActive {
 			result.currentlyActive = act
-			go onAccountsUpdated(result.currentAccount())
+			go onAccountsUpdatedFinal(result.currentAccount())
 		}
 	})
 
 	result.currentlyActive = -1
 	if len(result.accountsList) > 0 {
 		result.currentlyActive = 0
-		onAccountsUpdated(result.currentAccount())
+		onAccountsUpdatedFinal(result.currentAccount())
 	}
 
 	result.onDestroyFunc = func() {

@@ -13,7 +13,6 @@ func (s *session) JoinRoom(rj jid.Bare, nickName string) {
 	if err != nil {
 		s.log.WithError(err).Warn("when trying to enter room")
 	}
-	return
 }
 
 func (s *session) HasRoom(rj jid.Bare) <-chan bool {
@@ -31,8 +30,8 @@ func (s *session) HasRoom(rj jid.Bare) <-chan bool {
 }
 
 func (s *session) GetRoom(rj jid.Bare, rl *muc.RoomListing) {
-	// TODO, check it out the best way to do this function to get all the information of
-	// the room from the server
+	// TODO, check it out the best way to do this function to get all
+	// the information of the room from the server
 	rl = muc.NewRoomListing()
 	rl.Jid = rj
 	go s.findOutMoreInformationAboutRoom(rl)

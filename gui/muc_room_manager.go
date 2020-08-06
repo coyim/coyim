@@ -46,10 +46,10 @@ func newRoomManager() *roomViewsManager {
 }
 
 func (a *account) joinRoom(u *gtkUI, rjid jid.Bare) (*roomView, error) {
-	return a.addRoom(u, rjid)
+	return u.addRoom(a, rjid)
 }
 
-func (a *account) addRoom(u *gtkUI, ident jid.Bare) (*roomView, error) {
+func (u *gtkUI) addRoom(a *account, ident jid.Bare) (*roomView, error) {
 	a.roomManager.Lock()
 	defer a.roomManager.Unlock()
 
@@ -57,7 +57,7 @@ func (a *account) addRoom(u *gtkUI, ident jid.Bare) (*roomView, error) {
 		return nil, errors.New("the room is already opened")
 	}
 
-	r := newRoom(a, ident, u)
+	r := u.newRoomView(a, ident)
 	r.log = u.log
 
 	err := a.roomManager.addRoom(ident, r)

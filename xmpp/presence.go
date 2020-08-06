@@ -52,8 +52,8 @@ func (c *conn) SendPresence(to, typ, id, status string) error {
 // SendMUCPresence sends a presence as first step for create a new room
 func (c *conn) SendMUCPresence(to string) error {
 	p := &data.ClientPresence{
-		To:       to,
-		MUCExtra: &data.MUCExtra{},
+		To:  to,
+		MUC: &data.MUC{},
 	}
 
 	return c.sendPresence(p)

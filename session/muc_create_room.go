@@ -19,7 +19,7 @@ func (s *session) createRoom(roomID jid.Bare, errorResult chan<- error) {
 	// TODO: Delete 'roomConf' and get this information from the function.
 	// See: 10.1.2 Creating an Instant Room
 	// Room Information Query
-	roomConf := &data.RoomConfigurationQuery{
+	roomConf := &data.MUCOwnerQuery{
 		Form: &data.Form{
 			Type: "submit",
 		},

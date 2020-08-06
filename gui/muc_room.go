@@ -122,8 +122,8 @@ func (u *gtkUI) viewForRoom(room *muc.Room) (*roomView, error) {
 		return nil, errors.New("room view not defined")
 	}
 
-	view := room.Opaque.(*roomView)
-	if view == nil {
+	view, succeed := room.Opaque.(*roomView)
+	if !succeed {
 		return nil, errors.New("room view not defined")
 	}
 

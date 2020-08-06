@@ -11,6 +11,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -44,7 +45,7 @@ type account struct {
 
 	sync.RWMutex
 
-	roomManager *roomViewsManager
+	roomManager *muc.RoomManager
 }
 
 func (account *account) executeOneDelayed(ui *gtkUI, p string, cv conversationView) {

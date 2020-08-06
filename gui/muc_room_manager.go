@@ -2,70 +2,37 @@ package gui
 
 import (
 	"errors"
-	"sync"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-type roomViewsManager struct {
-	manager *muc.RoomManager
-	views   map[string]*roomView
-	events  chan interface{}
-	sync.RWMutex
+func newRoomManager() *muc.RoomManager {
+	return muc.NewRoomManager()
 }
 
-func (m *roomViewsManager) hasRoom(ident jid.Bare) bool {
-	_, v := m.manager.GetRoom(ident)
-	return v
-}
-
-func (m *roomViewsManager) addRoom(ident jid.Bare, r *roomView) error {
-	if !m.manager.AddRoom(r.room) {
-		return errors.New("the room is already in the manager")
-	}
-
-	_, ok := m.views[r.id()]
-	if ok {
-		return errors.New("the room is already in the manager")
-	}
-
-	m.views[r.id()] = r
-
-	return nil
-}
-
-func newRoomManager() *roomViewsManager {
-	return &roomViewsManager{
-		manager: muc.NewRoomManager(),
-		events:  make(chan interface{}, 10),
-		views:   make(map[string]*roomView),
-	}
-}
-
-func (a *account) joinRoom(u *gtkUI, rjid jid.Bare) (*roomView, error) {
+func (a *account) joinRoom(u *gtkUI, rjid jid.Bare) (*muc.Room, error) {
 	return u.addRoom(a, rjid)
 }
 
-func (u *gtkUI) addRoom(a *account, ident jid.Bare) (*roomView, error) {
-	a.roomManager.Lock()
-	defer a.roomManager.Unlock()
-
-	if a.roomManager.hasRoom(ident) {
-		return nil, errors.New("the room is already opened")
+func (u *gtkUI) addRoom(a *account, ident jid.Bare) (*muc.Room, error) {
+	_, exists := a.roomManager.GetRoom(ident)
+	if exists {
+		return nil, errors.New("the room is already in the manager")
 	}
 
-	r := u.newRoomView(a, ident)
-	r.log = u.log
+	r := u.newRoom(a, ident)
+	if !a.roomManager.AddRoom(r) {
+		return nil, errors.New("the room is already in the manager")
+	}
 
-	err := a.roomManager.addRoom(ident, r)
+	view, err := u.viewForRoom(r)
 	if err != nil {
 		return nil, err
 	}
 
-	go a.roomManager.observeRoomEvents(r)
-
-	a.session.Subscribe(r.events)
+	go u.observeMUCRoomEvents(view)
+	a.session.Subscribe(view.events)
 
 	return r, nil
 }

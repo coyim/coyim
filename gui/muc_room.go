@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"errors"
 	"log"
 	"sync"
 
@@ -12,7 +13,6 @@ import (
 )
 
 type roomView struct {
-	room    *muc.Room
 	account *account
 	jid     jid.Bare
 
@@ -41,14 +41,15 @@ type roomView struct {
 	boxRoomView gtki.Box `gtk-widget:"boxRoomView"`
 }
 
-func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
-	r := &roomView{
-		room:    muc.NewRoom(ident),
+func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
+	r := muc.NewRoom(ident)
+	r.Opaque = &roomView{
 		account: a,
 		jid:     ident,
 		events:  make(chan interface{}),
 		u:       u,
 	}
+
 	return r
 }
 
@@ -116,18 +117,28 @@ func (r *roomView) onPresenceReceived(f func()) {
 	r.connectionEventHandlers = append(r.connectionEventHandlers, f)
 }
 
-func (r *roomView) id() string {
-	return r.room.Identity.String()
+func (u *gtkUI) viewForRoom(room *muc.Room) (*roomView, error) {
+	if room.Opaque == nil {
+		return nil, errors.New("room view not defined")
+	}
+
+	view := room.Opaque.(*roomView)
+	if view == nil {
+		return nil, errors.New("room view not defined")
+	}
+
+	return view, nil
 }
 
-func (u *gtkUI) mucShowRoom(a *account, rjid jid.Bare) {
-	view, err := a.joinRoom(u, rjid)
+func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
+	room, err := a.joinRoom(u, ident)
 	if err != nil {
 		// TODO: Notify in a proper way this error
 		log.Fatal(err.Error())
 		return
 	}
 
+	view, _ := u.viewForRoom(room)
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{

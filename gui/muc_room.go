@@ -6,7 +6,6 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -17,7 +16,6 @@ type roomView struct {
 	account *account
 	jid     jid.Bare
 
-	session                 access.Session
 	connectionEventHandlers []func()
 
 	log coylog.Logger
@@ -47,7 +45,6 @@ func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
 	r := &roomView{
 		room:    muc.NewRoom(ident),
 		account: a,
-		session: a.session,
 		jid:     ident,
 		events:  make(chan interface{}),
 		u:       u,

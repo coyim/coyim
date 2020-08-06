@@ -4,7 +4,6 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -13,7 +12,6 @@ type roomViewsManager struct {
 	manager *muc.RoomManager
 	views   map[string]*roomView
 	events  chan interface{}
-	log     coylog.Logger
 	sync.RWMutex
 }
 

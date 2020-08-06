@@ -9,6 +9,8 @@ type Room struct {
 
 	Subject string
 
+	Opaque interface{}
+
 	roster *RoomRoster
 
 	// Configuration options:

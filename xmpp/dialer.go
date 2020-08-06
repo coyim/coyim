@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/servers"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -48,6 +49,8 @@ type dialer struct {
 	// Should we set the ALPN Next Protocol when connecting over Direct TLS?
 	// This might potentially leak information so we won't do it by default.
 	sendALPN bool
+
+	known *servers.Server
 }
 
 // DialerFactory returns a new xmpp dialer
@@ -57,6 +60,10 @@ func DialerFactory(verifier tls.Verifier, connFactory tls.Factory) interfaces.Di
 
 func (d *dialer) SetJID(v string) {
 	d.JID = v
+}
+
+func (d *dialer) SetKnown(v *servers.Server) {
+	d.known = v
 }
 
 func (d *dialer) SetServerAddress(v string) {
@@ -173,6 +180,7 @@ func (d *dialer) setupStream(conn net.Conn) (interfaces.Conn, error) {
 	c.config = d.config
 	c.originDomain = d.getJIDDomainpart()
 	c.outerTLS = d.outerTLS
+	c.known = d.known
 
 	if c.outerTLS {
 		if err := d.startRawTLS(c, conn); err != nil {

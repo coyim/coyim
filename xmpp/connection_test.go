@@ -618,6 +618,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfDecodingFallbackFails(c *C) {
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -652,6 +653,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfAccountCreationFails(c *C) {
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -686,6 +688,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_failsIfTheIQQueryHasNoContent(c *C) {
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -722,6 +725,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_ifRegisterQueryDoesntContainDataFailsAtN
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -759,6 +763,7 @@ func (s *ConnectionXMPPSuite) Test_Dial_afterRegisterFailsIfReceivesAnErrorEleme
 				return nil
 			},
 		},
+		log: testLogger(),
 	}
 	_, err := d.setupStream(conn)
 
@@ -890,7 +895,6 @@ func (s *ConnectionXMPPSuite) Test_Dial_setsLog(c *C) {
 	_, err := d.setupStream(conn)
 
 	c.Assert(err.Error(), Matches, "unmarshal <iq>:( XML syntax error on line 1: unexpected)? EOF")
-	c.Assert(string(l.write), Equals, "Attempting to create account\n")
 	c.Assert(string(rw.write), Equals, ""+
 		"<?xml version='1.0'?>"+
 		"<stream:stream to='domain' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>\n"+

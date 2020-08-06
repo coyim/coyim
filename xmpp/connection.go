@@ -23,6 +23,7 @@ import (
 
 	"github.com/coyim/coyim/cache"
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/servers"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -68,6 +69,8 @@ type conn struct {
 	log coylog.Logger
 
 	outerTLS bool
+
+	known *servers.Server
 }
 
 func (c *conn) Cache() cache.WithExpiry {

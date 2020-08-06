@@ -29,6 +29,7 @@ type registrationForm struct {
 func (f *registrationForm) accepted() error {
 	conf, err := config.NewAccount()
 	if err != nil {
+		f.l.Log().WithError(err).Debug("error while creating new account")
 		return err
 	}
 
@@ -235,6 +236,7 @@ func (w *serverSelectionWindow) renderForm(pg gtki.Widget) func(string, string, 
 func (w *serverSelectionWindow) doRendering(pg gtki.Widget) {
 	err := requestAndRenderRegistrationForm(w.form.server, w.renderForm(pg), w.u.dialerFactory, w.u.unassociatedVerifier(), w.u.config)
 	if err != nil {
+		w.u.log.WithError(err).Debug("error while rendering registration form")
 		// TODO: refactor me!
 		if err == config.ErrTorNotRunning || err == xmppErr.ErrAuthenticationFailed || err == xmpp.ErrRegistrationFailed || err == ourNet.ErrTimeout {
 			w.assistant.SetPageType(pg, gtki.ASSISTANT_PAGE_SUMMARY)
@@ -268,6 +270,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 	w.spinner.Stop()
 
 	if err != nil {
+		w.u.log.WithError(err).Debug("error for submitted page")
 		w.renderErrorFor(err)
 		return
 	}
@@ -276,6 +279,7 @@ func (w *serverSelectionWindow) formSubmittedPage() {
 	err = w.u.addAndSaveAccountConfig(w.form.conf)
 
 	if err != nil {
+		w.u.log.WithError(err).Debug("error when adding or saving account config")
 		renderError(w.doneMessage, storeAccountInfoError, storeAccountInfoLog, err, w.u)
 		return
 	}
@@ -304,8 +308,8 @@ func (u *gtkUI) showServerSelectionWindow() {
 	w.initializeServers()
 
 	w.b.ConnectSignals(map[string]interface{}{
-		"on_prepare":       w.onPageChange,
-		"on_cancel": w.assistant.Destroy,
+		"on_prepare": w.onPageChange,
+		"on_cancel":  w.assistant.Destroy,
 	})
 
 	entry := w.serverBox.GetChild().(gtki.Widget)

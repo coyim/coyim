@@ -126,13 +126,18 @@ func (p *ConnectionPolicy) buildDialerFor(conf *Account, verifier ourtls.Verifie
 		dialer.SetServerAddress(net.JoinHostPort(conf.Server, strconv.Itoa(conf.Port)))
 	}
 
-	if hasTorAuto || p.torState.IsConnectionOverTor(proxy) {
-		server := dialer.GetServer()
-		host, port, err := net.SplitHostPort(server)
-		if err != nil {
-			return nil, err
-		}
+	server := dialer.GetServer()
+	host, port, err := net.SplitHostPort(server)
+	if err != nil {
+		return nil, err
+	}
 
+	known, ok := servers.Get(host)
+	if ok {
+		dialer.SetKnown(&known)
+	}
+
+	if hasTorAuto || p.torState.IsConnectionOverTor(proxy) {
 		if hidden, ok := servers.GetOnion(host); ok {
 			dialer.SetServerAddress(net.JoinHostPort(hidden, port))
 		}

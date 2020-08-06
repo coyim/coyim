@@ -11,7 +11,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io"
 
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
@@ -70,7 +69,7 @@ func (c *conn) createAccount(user, password string) error {
 	c.ioLock.Lock()
 	defer c.ioLock.Unlock()
 
-	_, _ = io.WriteString(c.config.GetLog(), "Attempting to create account\n")
+	c.log.Debug("Attempting to create account")
 	fmt.Fprintf(c.out, "<iq type='get' id='create_1'><query xmlns='jabber:iq:register'/></iq>")
 	var iq data.ClientIQ
 	if err := c.in.DecodeElement(&iq, nil); err != nil {
@@ -81,6 +80,8 @@ func (c *conn) createAccount(user, password string) error {
 		return ErrRegistrationFailed
 	}
 
+	c.log.Debug("createAccount() - received the registration form")
+
 	var register data.RegisterQuery
 
 	if err := xml.NewDecoder(bytes.NewBuffer(iq.Query)).Decode(&register); err != nil {
@@ -88,17 +89,21 @@ func (c *conn) createAccount(user, password string) error {
 	}
 
 	if len(register.Form.Type) > 0 {
+		c.log.Debug("createAccount() - processing form")
 		reply, err := processForm(&register.Form, register.Datas, c.config.CreateCallback)
 		if err != nil {
+			c.log.WithError(err).Debug("createAccount() - couldn't process form")
 			return err
 		}
 
 		fmt.Fprintf(c.rawOut, "<iq type='set' id='create_2'><query xmlns='jabber:iq:register'>")
+
 		if err = xml.NewEncoder(c.rawOut).Encode(reply); err != nil {
 			return err
 		}
 
 		fmt.Fprintf(c.rawOut, "</query></iq>")
+		c.log.Debug("createAccount() - have sent the IQ with registration information")
 	} else if register.Username != nil && register.Password != nil {
 		//TODO: make sure this only happens via SSL
 		//TODO: should generate form asking for username and password,
@@ -136,6 +141,8 @@ func (c *conn) createAccount(user, password string) error {
 		}
 	}
 
+	c.log.Debug("createAccount() - received a successful response")
+
 	return nil
 }
 
@@ -160,7 +167,7 @@ func (c *conn) sendChangePasswordInfo(username, server, password string) (reply 
 // ChangePassword changes the account password registered in the server
 // Reference: https://xmpp.org/extensions/xep-0077.html#usecases-changepw
 func (c *conn) ChangePassword(username, server, password string) error {
-	_, _ = io.WriteString(c.config.GetLog(), "Attempting to change account's password\n")
+	c.log.WithField("user", username).Debug("Attempting to change account's password")
 
 	reply, _, err := c.sendChangePasswordInfo(username, server, password)
 	if err != nil {

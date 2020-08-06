@@ -78,13 +78,19 @@ func (c *conn) isGoogle() bool {
 	return false
 }
 
+var preferedMechanisms = []string{"SCRAM-SHA-512-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
+var preferedMechanismsWithoutSCRAM = []string{"DIGEST-MD5", "PLAIN"}
+
 func (c *conn) authenticateWithPreferedMethod(user, password string) error {
 	//TODO: this should be configurable by the client
-	preferedMechanisms := []string{"SCRAM-SHA-512-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-1", "DIGEST-MD5", "PLAIN"}
+	pm := preferedMechanisms
+	if c.known != nil && c.known.BrokenSCRAM {
+		pm = preferedMechanismsWithoutSCRAM
+	}
 
 	c.log.WithField("mechanisms", c.features.Mechanisms.Mechanism).Info("sasl: server supports mechanisms")
 
-	for _, prefered := range preferedMechanisms {
+	for _, prefered := range pm {
 		if !sasl.ClientSupport(prefered) {
 			continue
 		}

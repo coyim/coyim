@@ -18,8 +18,8 @@ type roomView struct {
 
 	account  *account
 	jid      jid.Bare
-	cancelCh chan bool
-	joinCh   chan bool
+	onCancel chan bool
+	onJoin   chan bool
 
 	connectionEventHandlers []func()
 
@@ -114,15 +114,15 @@ func (rv *roomView) togglePanelView() {
 }
 
 func (rv *roomView) onRoomJoinClicked() {
-	if rv.cancelCh != nil {
-		rv.cancelCh <- true
-		rv.joinCh <- false
+	if rv.onCancel != nil {
+		rv.onCancel <- true
+		rv.onJoin <- false
 	}
 
 	doInUIThread(rv.clearErrors)
 
-	rv.cancelCh = make(chan bool, 1)
-	rv.joinCh = make(chan bool, 1)
+	rv.onCancel = make(chan bool, 1)
+	rv.onJoin = make(chan bool, 1)
 	nickName, _ := rv.nicknameEntry.GetText()
 
 	doInUIThread(func() {
@@ -140,7 +140,7 @@ func (rv *roomView) onRoomJoinClicked() {
 		}()
 		for {
 			select {
-			case jev, ok := <-rv.joinCh:
+			case jev, ok := <-rv.onJoin:
 				if !ok {
 					//TODO: Add the error message here
 					return
@@ -148,13 +148,13 @@ func (rv *roomView) onRoomJoinClicked() {
 				if !jev {
 					//TODO: Capture the error details here to show to the user
 					rv.notifyOnError(i18n.Localf("You can't logged in to the room. Details: %s", jev))
-					rv.account.log.WithField("The Field: ", jev).Debug()
+					rv.account.log.WithField("Join Event: ", jev).Debug("Some user can't logged in to the room.")
 				} else {
 					rv.clearErrors()
 					rv.togglePanelView()
 				}
 				return
-			case _, _ = <-rv.cancelCh:
+			case _, _ = <-rv.onCancel:
 				return
 			}
 		}
@@ -162,8 +162,8 @@ func (rv *roomView) onRoomJoinClicked() {
 	go func() {
 		//TODO: this event need to receive a data for the MUC Event received
 		rv.onPresenceReceived(func() {
-			rv.account.log.WithField("Join Channel: ", rv.joinCh).Info("Presence received...")
-			rv.joinCh <- true
+			rv.account.log.WithField("Join Channel: ", rv.onJoin).Info("Presence received...")
+			rv.onJoin <- true
 		})
 	}()
 }
@@ -195,7 +195,6 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 		log.Fatal(err.Error())
 		return
 	}
-
 	view, _ := u.viewForRoom(room)
 	view.init()
 

@@ -73,7 +73,7 @@ func (rv *roomView) init() {
 	rv.errorNotif = newErrorNotification(rv.notificationArea)
 	rv.togglePassword()
 
-	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.jid.String()))
+	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.jid))
 }
 
 func (rv *roomView) togglePassword() {

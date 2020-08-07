@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/coyim/coyim/i18n"
@@ -65,7 +64,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 
 			if !value {
 				jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exists", roomName))
-				a.log.WithField("Looking Room: ", roomName).Debug(fmt.Sprintf("The Room \"%s\" doesn't exists", roomName))
+				a.log.WithField("Looking Room: ", roomName).Debugf("The Room \"%s\" doesn't exists", roomName)
 			} else {
 				jrv.dialog.Hide()
 				u.mucShowRoom(a, rj)

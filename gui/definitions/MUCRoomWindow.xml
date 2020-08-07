@@ -1,4 +1,5 @@
 <interface>
+  <requires lib="gtk+" version="3.18"/>
   <object class="GtkListStore" id="room-members-model">
     <columns>
       <!-- column-name statusIcon -->
@@ -62,7 +63,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="labelOccupantData">
+              <object class="GtkLabel" id="occupantDataLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
@@ -94,7 +95,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                 <property name="row_spacing">5</property>
                 <property name="baseline_row">5</property>
                 <child>
-                  <object class="GtkLabel" id="labelNickname">
+                  <object class="GtkLabel" id="nicknameLabel">
                     <property name="width_request">75</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -111,7 +112,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="textNickname">
+                  <object class="GtkEntry" id="nicknameEntry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
@@ -124,7 +125,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="labelPassword">
+                  <object class="GtkLabel" id="passwordLabel">
                     <property name="width_request">75</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
@@ -142,7 +143,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="textPassword">
+                  <object class="GtkEntry" id="passwordEntry">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
@@ -156,7 +157,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="checkPassword">
+                  <object class="GtkCheckButton" id="passwordCheck">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
@@ -172,11 +173,27 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                     <property name="top_attach">1</property>
                   </packing>
                 </child>
+                <child>
+                  <placeholder/>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinner" id="joinSpinner">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -191,13 +208,13 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                 <property name="spacing">5</property>
                 <property name="layout_style">start</property>
                 <child>
-                  <object class="GtkButton" id="btnCancelJoin">
+                  <object class="GtkButton" id="roomCancelButton">
                     <property name="label" translatable="yes">_Cancel</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
-                    <signal name="clicked" handler="on_cancel_join_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_room_cancel_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -206,13 +223,13 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btnAcceptJoin">
+                  <object class="GtkButton" id="roomJoinButton">
                     <property name="label" translatable="yes">_Join</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
-                    <signal name="clicked" handler="on_accept_join_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_room_join_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -224,7 +241,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>

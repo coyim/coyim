@@ -13,32 +13,46 @@ import (
 )
 
 type roomView struct {
-	account *account
-	jid     jid.Bare
+	builder *builder
+	u       *gtkUI
+
+	account  *account
+	jid      jid.Bare
+	cancelCh chan bool
+	joinCh   chan bool
 
 	connectionEventHandlers []func()
 
-	log coylog.Logger
-
+	log    coylog.Logger
 	events chan interface{}
 
 	sync.RWMutex
 
-	builder *builder
-	u       *gtkUI
-
 	window           gtki.Window      `gtk-widget:"room-window"`
 	boxJoinRoomView  gtki.Box         `gtk-widget:"boxJoinRoomView"`
-	textNickname     gtki.Entry       `gtk-widget:"textNickname"`
-	chkPassword      gtki.CheckButton `gtk-widget:"checkPassword"`
-	labelPassword    gtki.Label       `gtk-widget:"labelPassword"`
-	textPassword     gtki.Entry       `gtk-widget:"textPassword"`
-	btnAcceptJoin    gtki.Button      `gtk-widget:"btnAcceptJoin"`
+	nicknameEntry    gtki.Entry       `gtk-widget:"nicknameEntry"`
+	passwordCheck    gtki.CheckButton `gtk-widget:"passwordCheck"`
+	passwordLabel    gtki.Label       `gtk-widget:"passwordLabel"`
+	passwordEntry    gtki.Entry       `gtk-widget:"passwordEntry"`
+	roomJoinButton   gtki.Button      `gtk-widget:"roomJoinButton"`
+	spinnerJoinView  gtki.Spinner     `gtk-widget:"joinSpinner"`
 	notificationArea gtki.Box         `gtk-widget:"boxNotificationArea"`
 	notification     gtki.InfoBar
 	errorNotif       *errorNotification
 
 	boxRoomView gtki.Box `gtk-widget:"boxRoomView"`
+}
+
+func (rv *roomView) clearErrors() {
+	rv.errorNotif.Hide()
+}
+
+func (rv *roomView) notifyOnError(err string) {
+	if rv.notification != nil {
+		rv.notificationArea.Remove(rv.notification)
+	}
+
+	rv.errorNotif.ShowMessage(err)
 }
 
 func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
@@ -53,68 +67,112 @@ func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
 	return r
 }
 
-func (r *roomView) init() {
-	r.builder = newBuilder("MUCRoomWindow")
+func (rv *roomView) init() {
+	rv.builder = newBuilder("MUCRoomWindow")
 
-	panicOnDevError(r.builder.bindObjects(r))
+	panicOnDevError(rv.builder.bindObjects(rv))
 
-	r.errorNotif = newErrorNotification(r.notificationArea)
-	r.togglePassword()
+	rv.errorNotif = newErrorNotification(rv.notificationArea)
+	rv.togglePassword()
 
-	r.window.SetTitle(i18n.Localf("Room: [%s]", r.jid.String()))
+	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.jid.String()))
 }
 
-func (r *roomView) togglePassword() {
+func (rv *roomView) togglePassword() {
 	doInUIThread(func() {
-		value := r.chkPassword.GetActive()
-		r.labelPassword.SetSensitive(value)
-		r.textPassword.SetSensitive(value)
+		value := rv.passwordCheck.GetActive()
+		rv.passwordLabel.SetSensitive(value)
+		rv.passwordEntry.SetSensitive(value)
 	})
 }
 
-func (r *roomView) hasValidNickname() bool {
-	nickName, _ := r.textNickname.GetText()
+func (rv *roomView) hasValidNickname() bool {
+	nickName, _ := rv.nicknameEntry.GetText()
 	return len(nickName) > 0
 }
 
-func (r *roomView) hasValidPassword() bool {
-	value := r.chkPassword.GetActive()
-	if !value {
+func (rv *roomView) hasValidPassword() bool {
+	cv := rv.passwordCheck.GetActive()
+	if !cv {
 		return true
 	}
-	password, _ := r.textPassword.GetText()
+	password, _ := rv.passwordEntry.GetText()
 	return len(password) > 0
 }
 
-func (r *roomView) validateInput() {
-	sensitiveValue := r.hasValidNickname() && r.hasValidPassword()
-	r.btnAcceptJoin.SetSensitive(sensitiveValue)
+func (rv *roomView) validateInput() {
+	sensitiveValue := rv.hasValidNickname() && rv.hasValidPassword()
+	rv.roomJoinButton.SetSensitive(sensitiveValue)
 }
 
-func (r *roomView) togglePanelView() {
+func (rv *roomView) togglePanelView() {
 	doInUIThread(func() {
-		value := r.boxJoinRoomView.IsVisible()
-		r.boxJoinRoomView.SetVisible(!value)
-		r.boxRoomView.SetVisible(value)
+		value := rv.boxJoinRoomView.IsVisible()
+		rv.boxJoinRoomView.SetVisible(!value)
+		rv.boxRoomView.SetVisible(value)
 	})
 }
 
-func (r *roomView) onBtnJoinClicked() {
-	nickName, _ := r.textNickname.GetText()
-	go r.account.session.JoinRoom(r.jid, nickName)
+func (rv *roomView) onRoomJoinClicked() {
+	if rv.cancelCh != nil {
+		rv.cancelCh <- true
+		rv.joinCh <- false
+	}
+
+	doInUIThread(rv.clearErrors)
+
+	rv.cancelCh = make(chan bool, 1)
+	rv.joinCh = make(chan bool, 1)
+	nickName, _ := rv.nicknameEntry.GetText()
+
+	doInUIThread(func() {
+		rv.spinnerJoinView.Start()
+		rv.spinnerJoinView.SetVisible(true)
+	})
+
+	go rv.account.session.JoinRoom(rv.jid, nickName)
 	go func() {
-		r.onPresenceReceived(func() {
-			log.Fatal("TODO: Unlock the view")
+		defer func() {
+			doInUIThread(func() {
+				rv.spinnerJoinView.Stop()
+				rv.spinnerJoinView.SetVisible(false)
+			})
+		}()
+		for {
+			select {
+			case jev, ok := <-rv.joinCh:
+				if !ok {
+					//TODO: Add the error message here
+					return
+				}
+				if !jev {
+					//TODO: Capture the error details here to show to the user
+					rv.notifyOnError(i18n.Localf("You can't logged in to the room. Details: %s", jev))
+					rv.account.log.WithField("The Field: ", jev).Debug()
+				} else {
+					rv.clearErrors()
+					rv.togglePanelView()
+				}
+				return
+			case _, _ = <-rv.cancelCh:
+				return
+			}
+		}
+	}()
+	go func() {
+		//TODO: this event need to receive a data for the MUC Event received
+		rv.onPresenceReceived(func() {
+			rv.account.log.WithField("Join Channel: ", rv.joinCh).Info("Presence received...")
+			rv.joinCh <- true
 		})
 	}()
-	r.togglePanelView()
 }
 
-func (r *roomView) onPresenceReceived(f func()) {
-	if r.connectionEventHandlers == nil {
-		r.connectionEventHandlers = []func(){}
+func (rv *roomView) onPresenceReceived(f func()) {
+	if rv.connectionEventHandlers == nil {
+		rv.connectionEventHandlers = []func(){}
 	}
-	r.connectionEventHandlers = append(r.connectionEventHandlers, f)
+	rv.connectionEventHandlers = append(rv.connectionEventHandlers, f)
 }
 
 func (u *gtkUI) viewForRoom(room *muc.Room) (*roomView, error) {
@@ -150,9 +208,9 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 			view.togglePassword()
 			view.validateInput()
 		},
-		"on_cancel_join_clicked": view.window.Destroy,
-		"on_accept_join_clicked": func() {
-			view.onBtnJoinClicked()
+		"on_room_cancel_clicked": view.window.Destroy,
+		"on_room_join_clicked": func() {
+			view.onRoomJoinClicked()
 		},
 	})
 

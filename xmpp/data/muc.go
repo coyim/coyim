@@ -4,8 +4,8 @@ import (
 	"encoding/xml"
 )
 
-// MUCOwnerQuery contains the deserialized information about a room configuration query
-type MUCOwnerQuery struct {
+// MUCRoomConfiguration contains the deserialized information about a room configuration query
+type MUCRoomConfiguration struct {
 	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#owner query"`
 	Form    *Form    `xml:",omitempty"`
 }

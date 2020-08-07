@@ -5,7 +5,6 @@ import (
 	"log"
 	"sync"
 
-	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -23,7 +22,6 @@ type roomView struct {
 
 	connectionEventHandlers []func()
 
-	log    coylog.Logger
 	events chan interface{}
 
 	sync.RWMutex

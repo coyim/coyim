@@ -35,6 +35,15 @@ type StanzaError struct {
 	} `xml:",any"`
 
 	ApplicationCondition *Any `xml:",any,omitempty"`
+
+	MUCNotAuthorized        *MUCNotAuthorized
+	MUCForbidden            *MUCForbidden
+	MUCItemNotFound         *MUCItemNotFound
+	MUCNotAllowed           *MUCNotAllowed
+	MUCNotAceptable         *MUCNotAceptable
+	MUCRegistrationRequired *MUCRegistrationRequired
+	MUCConflict             *MUCConflict
+	MUCServiceUnavailable   *MUCServiceUnavailable
 }
 
 // ClientMessage implements RFC 3921  B.1  jabber:client

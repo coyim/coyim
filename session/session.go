@@ -313,11 +313,14 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		if s.isMUCPresence(stanza) {
 			s.handleMUCError(stanza)
 		} else {
-			s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
+			log.WithFields(log.Fields{
+				"from":  stanza.From,
+				"error": stanza.Error,
+			}).Error("Got a presence error")
 			s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 		}
 	default:
-		s.info(fmt.Sprintf("unrecognized presence: %#v", stanza))
+		log.WithField("stanza", stanza).Warn("Unrecognized presence")
 	}
 
 	return true

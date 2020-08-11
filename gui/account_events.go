@@ -45,7 +45,12 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
 			u.handleSMPEvent(t, a)
 		})
 	default:
-		a.log.WithField("event", t).Warn("unsupported event")
+		// TODO: maybe can be a good idea if we can ask if "t" is
+		// a known MUC event type, if not log an error as usual
+		doInUIThread(func() {
+			u.handleOneMUCRoomEvent(t, a)
+		})
+		//a.log.WithField("event", t).Warn("unsupported event")
 	}
 }
 

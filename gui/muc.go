@@ -29,7 +29,7 @@ func (u *gtkUI) getRoomView(rid jid.Bare, account *account) (*roomView, *muc.Roo
 
 func (u *gtkUI) roomOcuppantJoinedOn(account *account, ev events.MUCOccupantJoined) {
 	rid := jid.Parse(ev.From).(jid.Bare)
-	_, room, err := u.getRoomView(rid, account)
+	rv, room, err := u.getRoomView(rid, account)
 	if err != nil {
 		account.log.WithError(err)
 	}
@@ -38,6 +38,7 @@ func (u *gtkUI) roomOcuppantJoinedOn(account *account, ev events.MUCOccupantJoin
 	fjid := jid.Parse(from).(jid.WithResource)
 	rjid := jid.Parse(ev.Jid).(jid.WithResource)
 	room.Roster().UpdatePresence(fjid, "", ev.Affiliation, ev.Role, "", ev.Status, "Room Joined", rjid)
+	rv.roomOcuppantJoinedOn(err)
 }
 
 func (u *gtkUI) roomOccupantUpdatedOn(account *account, ev events.MUCOccupantUpdated) {

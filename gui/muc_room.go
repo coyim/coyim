@@ -14,10 +14,11 @@ type roomView struct {
 	builder *builder
 	u       *gtkUI
 
-	account *account
-	jid     jid.Bare
-	onJoin  chan bool
-
+	account          *account
+	jid              jid.Bare
+	onJoin           chan bool
+	lastError        error
+	lastErrorMessage string
 	sync.RWMutex
 
 	window           gtki.Window      `gtk-widget:"room-window"`
@@ -134,7 +135,7 @@ func (rv *roomView) onRoomJoinClicked() {
 		}
 
 		if !jev {
-			rv.notifyOnError(i18n.Localf("You can't logged in to the room. Details: "))
+			rv.notifyOnError(i18n.Localf("You can't logged in to the room. Details: %s", rv.lastErrorMessage))
 			rv.account.log.WithField("Join Event: ", jev).Debug("Some user can't logged in to the room.")
 		} else {
 			rv.clearErrors()
@@ -143,27 +144,24 @@ func (rv *roomView) onRoomJoinClicked() {
 	}()
 }
 
-func (u *gtkUI) viewForRoom(room *muc.Room) *roomView {
-	if room.Opaque == nil {
-		panic("developer error: trying to get an undefined view from room")
+func (rv *roomView) roomOcuppantJoinedOn(err error) {
+	if err != nil {
+		rv.account.log.WithError(err).Info("Room join event received")
+		rv.lastErrorMessage = err.Error()
+		rv.onJoin <- false
+		return
 	}
-
-	view, succeed := room.Opaque.(*roomView)
-	if !succeed {
-		panic("developer error: failed parsing room view into room.Opaque")
-	}
-
-	return view
+	rv.onJoin <- true
 }
 
 func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
-	room, err := a.joinRoom(u, ident)
+	_, err := u.addRoom(a, ident)
 	if err != nil {
 		// TODO: Notify in a proper way this error
 		log.Fatal(err.Error())
 		return
 	}
-	view := u.viewForRoom(room)
+	view, _, _ := u.getRoomView(ident, a)
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{

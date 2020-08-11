@@ -11,10 +11,6 @@ func newRoomManager() *muc.RoomManager {
 	return muc.NewRoomManager()
 }
 
-func (a *account) joinRoom(u *gtkUI, rjid jid.Bare) (*muc.Room, error) {
-	return u.addRoom(a, rjid)
-}
-
 func (u *gtkUI) addRoom(a *account, ident jid.Bare) (*muc.Room, error) {
 	_, exists := a.roomManager.GetRoom(ident)
 	if exists {

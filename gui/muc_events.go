@@ -28,6 +28,8 @@ func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, a *account) {
 		"affiliation": ev.Affiliation,
 		"role":        ev.Role,
 	}).Info("Room Joined event received")
+
+	u.roomOcuppantJoinedOn(a, ev)
 }
 
 func (u *gtkUI) handleMUCUpdatedEvent(ev events.MUCOccupantUpdated, a *account) {

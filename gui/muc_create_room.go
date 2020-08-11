@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -23,6 +24,7 @@ type createMUCRoom struct {
 	cancelButton         gtki.Button       `gtk-widget:"button-cancel"`
 	createButton         gtki.Button       `gtk-widget:"button-ok"`
 	createButtonPrevText string
+	servicesMutex        sync.Mutex
 
 	u *gtkUI
 }
@@ -83,6 +85,9 @@ func (u *gtkUI) newMUCRoomView() *createMUCRoom {
 }
 
 func (v *createMUCRoom) updateChatServices(ac *account) {
+	v.servicesMutex.Lock()
+	defer v.servicesMutex.Unlock()
+
 	enteredService, _ := v.chatServiceEntry.GetText()
 	v.chatServices.RemoveAll()
 

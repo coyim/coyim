@@ -35,23 +35,22 @@ func (s *session) info(m string) {
 }
 
 func (s *session) Warn(m string) {
-	s.warn(m)
-}
-
-func (s *session) Info(m string) {
-	s.info(m)
-}
-
-func (s *session) warn(m string) {
 	s.publishEvent(events.Log{
 		Level:   events.Warn,
 		Message: m,
 	})
 }
 
-func (s *session) alert(m string) {
+func (s *session) Info(m string) {
 	s.publishEvent(events.Log{
-		Level:   events.Alert,
+		Level:   events.Info,
+		Message: m,
+	})
+}
+
+func (s *session) warn(m string) {
+	s.publishEvent(events.Log{
+		Level:   events.Warn,
 		Message: m,
 	})
 }

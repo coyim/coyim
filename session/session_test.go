@@ -8,6 +8,7 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/i18n"
@@ -41,7 +42,9 @@ func (s *SessionSuite) Test_NewSession_returnsANewSession(c *C) {
 const testTimeout = time.Duration(5) * time.Second
 
 func (s *SessionSuite) Test_info_publishesInfoEvent(c *C) {
-	sess := &session{}
+	sess := &session{
+		log: log.StandardLogger(),
+	}
 
 	observer := make(chan interface{}, 1)
 	sess.Subscribe(observer)
@@ -67,7 +70,9 @@ func (s *SessionSuite) Test_info_publishesInfoEvent(c *C) {
 }
 
 func (s *SessionSuite) Test_warn_publishesWarnEvent(c *C) {
-	sess := &session{}
+	sess := &session{
+		log: log.StandardLogger(),
+	}
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -92,34 +97,10 @@ func (s *SessionSuite) Test_warn_publishesWarnEvent(c *C) {
 	}
 }
 
-func (s *SessionSuite) Test_alert_publishedAlertEvent(c *C) {
-	sess := &session{}
-
-	observer := make(chan interface{}, 1000)
-	sess.Subscribe(observer)
-	eventsDone := make(chan bool, 1)
-	sess.eventsReachedZero = eventsDone
-
-	sess.alert("hello world3")
-
-	select {
-	case <-eventsDone:
-		close(observer)
-		select {
-		case ev := <-observer:
-			t := ev.(events.Log)
-			c.Assert(t.Level, Equals, events.Alert)
-			c.Assert(t.Message, Equals, "hello world3")
-		default:
-			c.Errorf("did not receive event")
-		}
-	case <-time.After(testTimeout):
-		c.Errorf("test timed out")
-	}
-}
-
 func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
-	sess := &session{}
+	sess := &session{
+		log: log.StandardLogger(),
+	}
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -153,7 +134,9 @@ func (s *SessionSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 		"some@one.org/foo",
 	)
 
+	l, hook := test.NewNullLogger()
 	sess := &session{
+		log:        l,
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -165,19 +148,10 @@ func (s *SessionSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 
 	sess.watchStanzas()
 
-	select {
-	case <-eventsDone:
-		close(observer)
-		select {
-		case ev := <-observer:
-			t := ev.(events.Log)
-			c.Assert(t.Message, Equals, "error reading XMPP message: unexpected XMPP message clientx <message/>")
-		default:
-			c.Errorf("did not receive event")
-		}
-	case <-time.After(testTimeout):
-		c.Errorf("test timed out")
-	}
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "error reading XMPP message")
+	c.Assert(hook.LastEntry().Data["error"].(error).Error(), Equals, "unexpected XMPP message clientx <message/>")
 }
 
 func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
@@ -188,7 +162,10 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 		"some@one.org/foo",
 	)
 
+	l, _ := test.NewNullLogger()
+
 	sess := &session{
+		log:        l,
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -199,6 +176,11 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	sess.eventsReachedZero = eventsDone
 
 	sess.watchStanzas()
+
+	// c.Assert(len(hook.Entries), Equals, 1)
+	// c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
+	// c.Assert(hook.LastEntry().Message, Equals, "error reading XMPP message")
+	// c.Assert(hook.LastEntry().Data["error"], Equals, "")
 
 	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
 		t, ok := ev.(events.Log)
@@ -234,6 +216,7 @@ func assertReceivesEvent(c *C, eventsDone chan bool, observer <-chan interface{}
 
 func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:error xmlns:stream='http://etherx.jabber.org/streams'><stream:text>bad horse showed up</stream:text></stream:error>")}
+	l, hook := test.NewNullLogger()
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
 		mockIn,
@@ -241,6 +224,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	)
 
 	sess := &session{
+		log:        l,
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -250,14 +234,15 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 
 	sess.watchStanzas()
 
-	assertLogContains(c, observer, events.Log{
-		Level:   events.Alert,
-		Message: "Exiting in response to fatal error from server: bad horse showed up",
-	})
+	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "Exiting in response to fatal error from server")
+	c.Assert(hook.LastEntry().Data["stanza"], Equals, "bad horse showed up")
 }
 
 func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:error xmlns:stream='http://etherx.jabber.org/streams'><not-well-formed xmlns='urn:ietf:params:xml:ns:xmpp-streams'/></stream:error>")}
+	l, hook := test.NewNullLogger()
 	conn := xmpp.NewConn(
 		xml.NewDecoder(mockIn),
 		mockIn,
@@ -265,6 +250,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C
 	)
 
 	sess := &session{
+		log:        l,
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -274,10 +260,10 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C
 
 	sess.watchStanzas()
 
-	assertLogContains(c, observer, events.Log{
-		Level:   events.Alert,
-		Message: "Exiting in response to fatal error from server: {urn:ietf:params:xml:ns:xmpp-streams not-well-formed}",
-	})
+	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "Exiting in response to fatal error from server")
+	c.Assert(hook.LastEntry().Data["stanza"], Equals, "{urn:ietf:params:xml:ns:xmpp-streams not-well-formed}")
 }
 
 func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
@@ -324,6 +310,7 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 	)
 
 	sess := &session{
+		log:        log.StandardLogger(),
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -359,6 +346,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
 	)
 
 	sess := &session{
+		log:    log.StandardLogger(),
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
@@ -405,6 +393,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsVersionInfoIQ(c *C) {
 	)
 
 	sess := &session{
+		log:    log.StandardLogger(),
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
@@ -438,6 +427,7 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 	)
 
 	sess := &session{
+		log:    log.StandardLogger(),
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
@@ -477,6 +467,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 	)
 
 	sess := &session{
+		log:    log.StandardLogger(),
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -511,6 +502,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *
 	)
 
 	sess := &session{
+		log:    log.StandardLogger(),
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -543,6 +535,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c *C) 
 	)
 
 	sess := &session{
+		log:    log.StandardLogger(),
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -573,6 +566,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_setsExistingRosterItem(c 
 	called := 0
 
 	sess := &session{
+		log:    log.StandardLogger(),
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -607,6 +601,7 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_removesRosterItems(c *C) 
 	)
 
 	sess := &session{
+		log:    log.StandardLogger(),
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -656,6 +651,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forNoneKnownUser(c
 	)
 
 	sess := &session{
+		log:        log.StandardLogger(),
 		r:          roster.New(),
 		connStatus: DISCONNECTED,
 	}
@@ -693,6 +689,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 	)
 
 	sess := &session{
+		log:           log.StandardLogger(),
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -731,6 +728,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_subscribe(c *C) {
 	)
 
 	sess := &session{
+		log:           log.StandardLogger(),
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -753,6 +751,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unknown(c *C) {
 	)
 
 	sess := &session{
+		log:           log.StandardLogger(),
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		connStatus:    DISCONNECTED,
@@ -796,6 +795,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_regularPresenceIsAdded(c *C) {
 	)
 
 	sess := &session{
+		log:           log.StandardLogger(),
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -834,6 +834,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 	)
 
 	sess := &session{
+		log:           log.StandardLogger(),
 		config:        &config.ApplicationConfig{},
 		accountConfig: &config.Account{},
 		r:             roster.New(),
@@ -877,7 +878,8 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 
 func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWaiting(c *C) {
 	sess := &session{
-		r: roster.New(),
+		log: log.StandardLogger(),
+		r:   roster.New(),
 	}
 
 	observer := make(chan interface{}, 1000)
@@ -909,6 +911,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
 	called := 0
 
 	sess := &session{
+		log:                 log.StandardLogger(),
 		conn:                conn,
 		r:                   roster.New(),
 		sessionEventHandler: &mockSessionEventHandler{
@@ -940,6 +943,7 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnAllowedAndAskBack(c *C
 	called := 0
 
 	sess := &session{
+		log:                 log.StandardLogger(),
 		conn:                conn,
 		r:                   roster.New(),
 		sessionEventHandler: &mockSessionEventHandler{
@@ -970,7 +974,8 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 	)
 
 	sess := &session{
-		r: roster.New(),
+		log: log.StandardLogger(),
+		r:   roster.New(),
 	}
 	sess.conn = conn
 	sess.r.SubscribeRequest(jid.NR("foo@bar.com"), "123", "")
@@ -1006,7 +1011,7 @@ func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAbout
 	}
 
 	sess := &session{
-		log:        log.New(),
+		log:        log.StandardLogger(),
 		connStatus: CONNECTED,
 		timeouts:   timeouts,
 		conn:       xmpp.NewConn(nil, nil, ""),
@@ -1112,6 +1117,7 @@ func (mc *mockConv) GetAndWipeLastExtraKey() (usage uint32, usageData []byte, sy
 func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncrypted(c *C) {
 	mcm := &mockConvManager{}
 	sess := &session{
+		log:         log.StandardLogger(),
 		connStatus:  CONNECTED,
 		convManager: mcm,
 		config:      &config.ApplicationConfig{},
@@ -1153,6 +1159,7 @@ func (s *SessionSuite) Test_receiveClientMessage_willNotProcessBRTagsWhenNotEncr
 func (s *SessionSuite) Test_receiveClientMessage_willProcessBRTagsWhenEncrypted(c *C) {
 	mcm := &mockConvManager{}
 	sess := &session{
+		log:         log.StandardLogger(),
 		connStatus:  CONNECTED,
 		convManager: mcm,
 		config:      &config.ApplicationConfig{},
@@ -1199,6 +1206,7 @@ func (ncm *convManagerWithoutConversation) TerminateAll() {
 
 func sessionWithConvMngrWithoutConvs() *session {
 	return &session{
+		log:         log.StandardLogger(),
 		connStatus:  CONNECTED,
 		convManager: &convManagerWithoutConversation{},
 		config:      &config.ApplicationConfig{},
@@ -1207,63 +1215,51 @@ func sessionWithConvMngrWithoutConvs() *session {
 
 func (s *SessionSuite) Test_logsError_whenWeStartSMPWithoutAConversation(c *C) {
 	sess := sessionWithConvMngrWithoutConvs()
+	l, hook := test.NewNullLogger()
+	sess.log = l
+
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
 
-	go sess.StartSMP(jid.R("someone's peer/resource"), "Im a question", "im an answer")
+	sess.StartSMP(jid.R("someone's peer/resource"), "Im a question", "im an answer")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
-		t, ok := ev.(events.Log)
-		if !ok || t.Level != events.Alert {
-			return false
-		}
-
-		c.Assert(t.Level, Equals, events.Alert)
-		c.Assert(t.Message, Equals, "error: tried to start SMP when a conversation does not exist")
-		return true
-	})
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "tried to start SMP when a conversation does not exist")
 }
 
 func (s *SessionSuite) Test_logsError_whenWeFinishSMPWithoutAConversation(c *C) {
 	sess := sessionWithConvMngrWithoutConvs()
+	l, hook := test.NewNullLogger()
+	sess.log = l
+
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
 
-	go sess.FinishSMP(jid.R("someone's peer/resource"), "im an answer")
+	sess.FinishSMP(jid.R("someone's peer/resource"), "im an answer")
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
-		t, ok := ev.(events.Log)
-		if !ok || t.Level != events.Alert {
-			return false
-		}
-
-		c.Assert(t.Level, Equals, events.Alert)
-		c.Assert(t.Message, Equals, "error: tried to finish SMP when a conversation does not exist")
-		return true
-	})
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "tried to finish SMP when a conversation does not exist")
 }
 
 func (s *SessionSuite) Test_logsError_whenWeAbortSMPWithoutAConversation(c *C) {
 	sess := sessionWithConvMngrWithoutConvs()
+	l, hook := test.NewNullLogger()
+	sess.log = l
+
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
 
-	go sess.AbortSMP(jid.R("someone's peer/resource"))
+	sess.AbortSMP(jid.R("someone's peer/resource"))
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
-		t, ok := ev.(events.Log)
-		if !ok || t.Level != events.Alert {
-			return false
-		}
-
-		c.Assert(t.Level, Equals, events.Alert)
-		c.Assert(t.Message, Equals, "error: tried to abort SMP when a conversation does not exist")
-		return true
-	})
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "tried to abort SMP when a conversation does not exist")
 }

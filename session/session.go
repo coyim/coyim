@@ -192,7 +192,7 @@ func (s *session) Send(peer jid.Any, msg string, otr bool) error {
 }
 
 func (s *session) receivedStreamError(stanza *data.StreamError) bool {
-	s.alert("Exiting in response to fatal error from server: " + stanza.String())
+	s.log.WithField("stanza", stanza.String()).Error("Exiting in response to fatal error from server")
 	return false
 }
 
@@ -236,7 +236,7 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 		//to close the connection
 		//https://xmpp.org/rfcs/rfc3920.html#stanzas-error
 		if stanza.Error != nil {
-			s.alert(fmt.Sprintf("Error reported from %s: %#v", peer.NoResource(), stanza.Error))
+			s.log.WithField("error", stanza.Error).WithField("peer", peer.NoResource()).Error("error reported from peer")
 			return true
 		}
 	}
@@ -391,7 +391,7 @@ func (s *session) watchStanzas() {
 
 func (s *session) readStanzasAndAlertOnErrors(stanzaChan chan data.Stanza) {
 	if err := s.conn.ReadStanzas(stanzaChan); err != nil {
-		s.alert(fmt.Sprintf("error reading XMPP message: %s", err.Error()))
+		s.log.WithError(err).Error("error reading XMPP message")
 	}
 }
 
@@ -486,7 +486,7 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 	encrypted := conversation.IsEncrypted()
 
 	if err != nil {
-		s.alert("While processing message from " + peer.String() + ": " + err.Error())
+		s.log.WithError(err).WithField("peer", peer.String()).Error("While processing message from peer")
 	}
 
 	eh := conversation.EventHandler()
@@ -577,7 +577,7 @@ func (s *session) maybeNotify() {
 	cmd := exec.Command(s.config.NotifyCommand[0], s.config.NotifyCommand[1:]...)
 	go func() {
 		if err := cmd.Run(); err != nil {
-			s.alert("Failed to run notify command: " + err.Error())
+			s.log.WithError(err).Error("Failed to run notify command")
 		}
 	}()
 }
@@ -667,7 +667,7 @@ func (s *session) getVCard() {
 
 	vcardReply, _, err := conn.RequestVCard()
 	if err != nil {
-		s.alert("Failed to request vcard: " + err.Error())
+		s.log.WithError(err).Error("Failed to request vcard")
 		return
 	}
 
@@ -679,7 +679,7 @@ func (s *session) getVCard() {
 
 	vc, err := data.ParseVCard(vcardStanza)
 	if err != nil {
-		s.alert("Failed to parse vcard: " + err.Error())
+		s.log.WithError(err).Error("Failed to parse vcard")
 		return
 	}
 
@@ -706,7 +706,7 @@ func (s *session) requestRoster() bool {
 
 	rosterReply, _, err := conn.RequestRoster()
 	if err != nil {
-		s.alert("Failed to request roster: " + err.Error())
+		s.log.WithError(err).Error("Failed to request roster")
 		return true
 	}
 
@@ -719,7 +719,7 @@ func (s *session) requestRoster() bool {
 
 	rst, err := data.ParseRoster(rosterStanza)
 	if err != nil {
-		s.alert("Failed to parse roster: " + err.Error())
+		s.log.WithError(err).Error("Failed to parse roster")
 		return true
 	}
 

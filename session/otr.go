@@ -84,11 +84,11 @@ func (s *session) terminateConversations() {
 func (s *session) StartSMP(peer jid.WithResource, question, answer string) {
 	conv, ok := s.convManager.GetConversationWith(peer)
 	if !ok {
-		s.alert("error: tried to start SMP when a conversation does not exist")
+		s.log.Error("tried to start SMP when a conversation does not exist")
 		return
 	}
 	if err := conv.StartAuthenticate(question, []byte(answer)); err != nil {
-		s.alert("error: cannot start SMP: " + err.Error())
+		s.log.WithError(err).Error("cannot start SMP")
 	}
 }
 
@@ -96,11 +96,11 @@ func (s *session) StartSMP(peer jid.WithResource, question, answer string) {
 func (s *session) FinishSMP(peer jid.WithResource, answer string) {
 	conv, ok := s.convManager.GetConversationWith(peer)
 	if !ok {
-		s.alert("error: tried to finish SMP when a conversation does not exist")
+		s.log.Error("tried to finish SMP when a conversation does not exist")
 		return
 	}
 	if err := conv.ProvideAuthenticationSecret([]byte(answer)); err != nil {
-		s.alert("error: cannot provide an authentication secret for SMP: " + err.Error())
+		s.log.WithError(err).Error("cannot provide an authentication secret for SMP")
 	}
 }
 
@@ -108,11 +108,11 @@ func (s *session) FinishSMP(peer jid.WithResource, answer string) {
 func (s *session) AbortSMP(peer jid.WithResource) {
 	conv, ok := s.convManager.GetConversationWith(peer)
 	if !ok {
-		s.alert("error: tried to abort SMP when a conversation does not exist")
+		s.log.Error("tried to abort SMP when a conversation does not exist")
 		return
 	}
 	if err := conv.AbortAuthentication(); err != nil {
-		s.alert("error: cannot abort SMP: " + err.Error())
+		s.log.WithError(err).Error("cannot abort SMP")
 	}
 }
 

@@ -26,7 +26,7 @@ func (s *session) SendIQResult(stanza *data.ClientIQ, reply interface{}) {
 
 func (s *session) sendIQReply(stanza *data.ClientIQ, tp string, reply interface{}) {
 	if err := s.conn.SendIQReply(stanza.From, tp, stanza.ID, reply); err != nil {
-		s.alert("Failed to send IQ message: " + err.Error())
+		s.log.WithError(err).Error("Failed to send IQ message")
 	}
 }
 

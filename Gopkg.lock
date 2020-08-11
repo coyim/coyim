@@ -150,9 +150,12 @@
   revision = "a10e7caefd8e0d600cea437f5c3613aeb1553d56"
 
 [[projects]]
-  digest = "1:05eebdd5727fea23083fce0d98d307d70c86baed644178e81608aaa9f09ea469"
+  digest = "1:1705716d33e69b9567ec6fd8e318a6e60869838b60643e54d0301bed8ac427d1"
   name = "github.com/sirupsen/logrus"
-  packages = ["."]
+  packages = [
+    ".",
+    "hooks/test",
+  ]
   pruneopts = "UT"
   revision = "60c74ad9be0d874af0ab0daef6ab07c5c5911f0d"
   version = "v1.6.0"
@@ -289,6 +292,7 @@
     "github.com/kardianos/osext",
     "github.com/miekg/dns",
     "github.com/sirupsen/logrus",
+    "github.com/sirupsen/logrus/hooks/test",
     "golang.org/x/crypto/pbkdf2",
     "golang.org/x/crypto/scrypt",
     "golang.org/x/crypto/sha3",

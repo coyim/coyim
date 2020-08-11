@@ -4,25 +4,31 @@ import (
 	"github.com/coyim/coyim/session/events"
 )
 
-func (u *gtkUI) handleOneMUCRoomEvent(ev interface{}, r *roomView) {
+func (u *gtkUI) handleOneMUCRoomEvent(ev interface{}, rv *roomView) {
 	switch t := ev.(type) {
-	case events.MUCPresence:
+	case events.MUCOccupantJoinedType:
 		doInUIThread(func() {
-			u.handleMUCPresenceEvent(t, r)
+			u.handleMUCJoinedEvent(t, rv)
+		})
+	case events.MUCOccupantUpdatedType:
+		doInUIThread(func() {
+			u.handleMUCUpdatedEvent(t, rv)
 		})
 	default:
 		u.log.WithField("event", t).Warn("unsupported event")
 	}
 }
 
-func (u *gtkUI) observeMUCRoomEvents(r *roomView) {
-	for ev := range r.events {
-		u.handleOneMUCRoomEvent(ev, r)
+func (u *gtkUI) observeMUCRoomEvents(rv *roomView) {
+	for ev := range rv.events {
+		u.handleOneMUCRoomEvent(ev, rv)
 	}
 }
 
-func (u *gtkUI) handleMUCPresenceEvent(ev events.MUCPresence, r *roomView) {
-	for _, f := range r.connectionEventHandlers {
-		f()
-	}
+func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoinedType, rv *roomView) {
+	u.log.WithField("Event", ev).Info("handleMUCJoinedEvent")
+}
+
+func (u *gtkUI) handleMUCUpdatedEvent(ev events.MUCOccupantUpdatedType, rv *roomView) {
+	u.log.WithField("Event", ev).Info("handleMUCUpdatedEvent")
 }

@@ -64,7 +64,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 
 			if !value {
 				jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exists", roomName))
-				a.log.WithField("Looking Room: ", roomName).Debugf("The Room \"%s\" doesn't exists", roomName)
+				a.log.WithField("Room", roomName).Debug("The Room doesn't exists")
 			} else {
 				jrv.dialog.Hide()
 				u.mucShowRoom(a, rj)

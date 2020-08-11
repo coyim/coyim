@@ -353,7 +353,7 @@ func (s *session) receivedClientIQ(stanza *data.ClientIQ) bool {
 		s.sendIQReply(stanza, iqtype, reply)
 		return true
 	}
-	s.info(fmt.Sprintf("unrecognized iq: %#v", stanza))
+	s.log.WithField("stanza", stanza).Info("unrecognized iq")
 	return true
 }
 
@@ -375,7 +375,10 @@ func (s *session) receiveStanza(stanzaChan chan data.Stanza) bool {
 	case *data.ClientIQ:
 		result = s.receivedClientIQ(stanza)
 	default:
-		s.info(fmt.Sprintf("unhandled stanza: %s %s", rawStanza.Name, rawStanza.Value))
+		s.log.WithFields(log.Fields{
+			"name":  rawStanza.Name,
+			"value": rawStanza.Value,
+		}).Info("unhandled stanza")
 		result = true
 	}
 
@@ -512,16 +515,16 @@ func (s *session) receiveClientMessage(peer jid.Any, when time.Time, body string
 		// might send a plain text message. So we should ensure they _want_ this
 		// feature and have set it as an explicit preference.
 		if s.GetConfig().OTRAutoTearDown {
-			s.info(fmt.Sprintf("%s has ended the secure conversation.", peer))
+			s.log.WithField("peer", peer).Info("Peer has ended the secure conversation.")
 			err := conversation.EndEncryptedChat()
 			if err != nil {
-				s.info(fmt.Sprintf("Unable to automatically tear down OTR conversation with %s: %s\n", peer, err.Error()))
+				s.log.WithError(err).WithField("peer", peer).Info("Unable to automatically tear down OTR conversation with peer")
 				break
 			}
 
-			s.info(fmt.Sprintf("Secure session with %s has been automatically ended. Messages will be sent in the clear until another OTR session is established.", peer))
+			s.log.WithField("peer", peer).Info("Secure session with peer has been automatically ended. Messages will be sent in the clear until another OTR session is established.")
 		} else {
-			s.info(fmt.Sprintf("%s has ended the secure conversation. You should do likewise with /otr-end %s", peer, peer))
+			s.log.WithField("peer", peer).Info("Peer has ended the secure conversation. You should do likewise")
 		}
 	case otrclient.SMPSecretNeeded:
 		s.publishSMPEvent(events.SecretNeeded, peer.(jid.WithResource), eh.SmpQuestion)
@@ -613,7 +616,7 @@ func (s *session) AwaitVersionReply(ch <-chan data.Stanza, user string) {
 		return
 	}
 
-	s.info(fmt.Sprintf("Version reply from %s: %#v", user, versionReply))
+	s.log.WithField("user", user).WithField("version", versionReply).Info("Version reply from peer")
 }
 
 var tickInterval = time.Second
@@ -666,7 +669,7 @@ func (s *session) getVCard() {
 		return
 	}
 
-	s.info("Fetching VCard")
+	s.log.Info("Fetching VCard")
 
 	vcardReply, _, err := conn.RequestVCard()
 	if err != nil {
@@ -699,7 +702,7 @@ func (s *session) requestRoster() bool {
 		return false
 	}
 
-	s.info("Fetching roster")
+	s.log.Info("Fetching roster")
 
 	delim, err := conn.GetRosterDelimiter()
 	if err != nil || delim == "" {
@@ -730,7 +733,7 @@ func (s *session) requestRoster() bool {
 		s.addOrMergeNewPeer(rr, s.GetConfig())
 	}
 
-	s.info("Roster received")
+	s.log.Info("Roster received")
 	s.rosterUpdated()
 
 	return true

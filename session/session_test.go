@@ -41,34 +41,6 @@ func (s *SessionSuite) Test_NewSession_returnsANewSession(c *C) {
 
 const testTimeout = time.Duration(5) * time.Second
 
-func (s *SessionSuite) Test_info_publishesInfoEvent(c *C) {
-	sess := &session{
-		log: log.StandardLogger(),
-	}
-
-	observer := make(chan interface{}, 1)
-	sess.Subscribe(observer)
-	eventsDone := make(chan bool, 1)
-	sess.eventsReachedZero = eventsDone
-
-	sess.info("hello world")
-
-	select {
-	case <-eventsDone:
-		close(observer)
-		select {
-		case ev := <-observer:
-			t := ev.(events.Log)
-			c.Assert(t.Level, Equals, events.Info)
-			c.Assert(t.Message, Equals, "hello world")
-		default:
-			c.Errorf("did not receive event")
-		}
-	case <-time.After(testTimeout):
-		c.Errorf("test timed out")
-	}
-}
-
 func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	sess := &session{
 		log: log.StandardLogger(),
@@ -134,7 +106,7 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 		"some@one.org/foo",
 	)
 
-	l, _ := test.NewNullLogger()
+	l, hook := test.NewNullLogger()
 
 	sess := &session{
 		log:        l,
@@ -149,19 +121,20 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 
 	sess.watchStanzas()
 
-	// c.Assert(len(hook.Entries), Equals, 1)
-	// c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
-	// c.Assert(hook.LastEntry().Message, Equals, "error reading XMPP message")
-	// c.Assert(hook.LastEntry().Data["error"], Equals, "")
+	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(hook.LastEntry().Level, Equals, log.InfoLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "unhandled stanza")
+	c.Assert(hook.LastEntry().Data["name"].(xml.Name), Equals, xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"})
+	c.Assert(*(hook.LastEntry().Data["value"].(*data.BindBind)), Equals, data.BindBind{XMLName: xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"}, Resource: "", Jid: ""})
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
-		t, ok := ev.(events.Log)
-		if !ok || t.Level != events.Info {
-			return false
-		}
-		c.Assert(t.Message, Equals, "unhandled stanza: {urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
-		return true
-	})
+	// assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
+	// 	t, ok := ev.(events.Log)
+	// 	if !ok || t.Level != events.Info {
+	// 		return false
+	// 	}
+	// 	c.Assert(t.Message, Equals, "unhandled stanza: {urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
+	// 	return true
+	// })
 }
 
 type checker func(interface{}) bool
@@ -281,8 +254,9 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 		"some@one.org/foo",
 	)
 
+	l, hook := test.NewNullLogger()
 	sess := &session{
-		log:        log.StandardLogger(),
+		log:        l,
 		connStatus: DISCONNECTED,
 	}
 	sess.conn = conn
@@ -294,15 +268,9 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 
 	sess.watchStanzas()
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
-		t, ok := ev.(events.Log)
-		if !ok || t.Level != events.Info {
-			return false
-		}
-
-		c.Assert(t.Message, Equals, "unrecognized iq: &data.ClientIQ{XMLName:xml.Name{Space:\"jabber:client\", Local:\"iq\"}, From:\"\", ID:\"\", To:\"\", Type:\"something\", Error:data.StanzaError{By:\"\", Code:\"\", Type:\"\", Text:\"\", Condition:struct { XMLName xml.Name; Body string \"xml:\\\",innerxml\\\"\" }{XMLName:xml.Name{Space:\"\", Local:\"\"}, Body:\"\"}, ApplicationCondition:(*data.Any)(nil), MUCNotAuthorized:(*data.MUCNotAuthorized)(nil), MUCForbidden:(*data.MUCForbidden)(nil), MUCItemNotFound:(*data.MUCItemNotFound)(nil), MUCNotAllowed:(*data.MUCNotAllowed)(nil), MUCNotAceptable:(*data.MUCNotAceptable)(nil), MUCRegistrationRequired:(*data.MUCRegistrationRequired)(nil), MUCConflict:(*data.MUCConflict)(nil), MUCServiceUnavailable:(*data.MUCServiceUnavailable)(nil)}, Bind:data.BindBind{XMLName:xml.Name{Space:\"\", Local:\"\"}, Resource:\"\", Jid:\"\"}, Query:[]uint8{}}")
-		return true
-	})
+	c.Assert(hook.LastEntry().Level, Equals, log.InfoLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "unrecognized iq")
+	c.Assert(hook.LastEntry().Data["stanza"], DeepEquals, &data.ClientIQ{XMLName: xml.Name{Space: "jabber:client", Local: "iq"}, Type: "something", Query: []uint8{}})
 }
 
 func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {

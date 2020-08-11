@@ -1,11 +1,10 @@
 package session
 
 import (
-	"fmt"
-
 	"github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/filetransfer"
 	"github.com/coyim/coyim/xmpp/jid"
+	log "github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -18,11 +17,17 @@ func init() {
 }
 
 func (s *session) SendFileTo(peer jid.Any, filename string, onNoEnc func() bool, encDecision func(bool)) *data.FileTransferControl {
-	s.info(fmt.Sprintf("SendFileTo(%s, %s)", peer, filename))
+	s.log.WithFields(log.Fields{
+		"peer":     peer,
+		"filename": filename,
+	}).Info("SendFileTo()")
 	return filetransfer.InitSend(s, peer, filename, onNoEnc, encDecision)
 }
 
 func (s *session) SendDirTo(peer jid.Any, dirname string, onNoEnc func() bool, encDecision func(bool)) *data.FileTransferControl {
-	s.info(fmt.Sprintf("SendDirTo(%s, %s)", peer, dirname))
+	s.log.WithFields(log.Fields{
+		"peer":    peer,
+		"dirname": dirname,
+	}).Info("SendDirTo()")
 	return filetransfer.InitSendDir(s, peer, dirname, onNoEnc, encDecision)
 }

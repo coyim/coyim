@@ -40,9 +40,9 @@ func (s *session) receivedMUCPresence(stanza *data.ClientPresence) bool {
 }
 
 func (s *session) mucOccupantUpdate(rid, nickname, affiliation, role string) {
-	s.publishEvent(events.MUCOccupantUpdatedType{
-		MUCOccupantType: &events.MUCOccupantType{
-			MUCType: &events.MUCType{
+	s.publishEvent(events.MUCOccupantUpdated{
+		MUCOccupant: &events.MUCOccupant{
+			MUC: &events.MUC{
 				From: rid,
 			},
 			Nickname: nickname,
@@ -59,9 +59,9 @@ func (s *session) mucRosterUpdated() {
 }
 
 func (s *session) mucOccupantJoined(rid, nickname string, v bool) {
-	s.publishEvent(events.MUCOccupantJoinedType{
-		MUCOccupantType: &events.MUCOccupantType{
-			MUCType: &events.MUCType{
+	s.publishEvent(events.MUCOccupantJoined{
+		MUCOccupant: &events.MUCOccupant{
+			MUC: &events.MUC{
 				From: rid,
 			},
 			Nickname: nickname,

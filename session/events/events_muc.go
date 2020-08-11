@@ -1,25 +1,25 @@
 package events
 
-// MUCType description
-type MUCType struct {
+// MUC description
+type MUC struct {
 	From string
 }
 
-// MUCOccupantType description
-type MUCOccupantType struct {
-	*MUCType
+// MUCOccupant description
+type MUCOccupant struct {
+	*MUC
 	Nickname string
 }
 
-// MUCOccupantJoinedType description
-type MUCOccupantJoinedType struct {
-	*MUCOccupantType
+// MUCOccupantJoined description
+type MUCOccupantJoined struct {
+	*MUCOccupant
 	Joined bool
 }
 
-// MUCOccupantUpdatedType description
-type MUCOccupantUpdatedType struct {
-	*MUCOccupantType
+// MUCOccupantUpdated description
+type MUCOccupantUpdated struct {
+	*MUCOccupant
 	Affiliation string
 	Role        string
 }

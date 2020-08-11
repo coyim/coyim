@@ -6,11 +6,11 @@ import (
 
 func (u *gtkUI) handleOneMUCRoomEvent(ev interface{}, rv *roomView) {
 	switch t := ev.(type) {
-	case events.MUCOccupantJoinedType:
+	case events.MUCOccupantJoined:
 		doInUIThread(func() {
 			u.handleMUCJoinedEvent(t, rv)
 		})
-	case events.MUCOccupantUpdatedType:
+	case events.MUCOccupantUpdated:
 		doInUIThread(func() {
 			u.handleMUCUpdatedEvent(t, rv)
 		})
@@ -25,10 +25,10 @@ func (u *gtkUI) observeMUCRoomEvents(rv *roomView) {
 	}
 }
 
-func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoinedType, rv *roomView) {
+func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, rv *roomView) {
 	u.log.WithField("Event", ev).Info("handleMUCJoinedEvent")
 }
 
-func (u *gtkUI) handleMUCUpdatedEvent(ev events.MUCOccupantUpdatedType, rv *roomView) {
+func (u *gtkUI) handleMUCUpdatedEvent(ev events.MUCOccupantUpdated, rv *roomView) {
 	u.log.WithField("Event", ev).Info("handleMUCUpdatedEvent")
 }

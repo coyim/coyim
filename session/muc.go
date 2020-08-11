@@ -78,3 +78,34 @@ func (s *session) mucOccupantJoined(rid, nickname, affiliation, jid, role, statu
 		Joined: v,
 	})
 }
+
+func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) bool {
+	for _, identity := range identities {
+		return identity.Category == "conference" && identity.Type == "text"
+	}
+	return false
+}
+
+func (s *session) filterOnlyChatServices(items *data.DiscoveryItemsQuery) []string {
+	chatServices := make([]string, 0)
+	for _, item := range items.DiscoveryItems {
+		iq, _, err := s.conn.QueryServiceInformation(item.Jid)
+		if err != nil {
+			s.log.WithError(err).Error("Error getting the information query for the service:", item.Jid)
+			continue
+		}
+		if iq != nil && s.hasSomeConferenceService(iq.Identities) {
+			chatServices = append(chatServices, item.Jid)
+		}
+	}
+	return chatServices
+}
+
+//GetChatServices offers the chat services from a xmpp server.
+func (s *session) GetChatServices(server jid.Domain) ([]string, error) {
+	items, err := s.conn.QueryServiceItems(server.String())
+	if err != nil {
+		return nil, err
+	}
+	return s.filterOnlyChatServices(items), nil
+}

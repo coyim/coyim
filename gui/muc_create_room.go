@@ -86,18 +86,18 @@ func (v *createMUCRoom) updateChatServices(ac *account) {
 	enteredService, _ := v.chatServiceEntry.GetText()
 	v.chatServices.RemoveAll()
 
-	items, err := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
+	cs, err := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
 
 	if err != nil {
 		v.u.log.WithError(err).Debug("something went wrong trying to get chat services")
 		return
 	}
 
-	for _, i := range items {
-		v.chatServices.AppendText(i.Jid)
+	for _, i := range cs {
+		v.chatServices.AppendText(i)
 	}
 
-	if len(items) > 0 && enteredService == "" {
+	if len(cs) > 0 && enteredService == "" {
 		v.chatServices.SetActive(0)
 	}
 }

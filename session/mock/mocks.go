@@ -219,7 +219,7 @@ func (*SessionMock) CreateRoom(jid.Bare) <-chan error {
 }
 
 // GetChatServices is the implementation for session interface
-func (*SessionMock) GetChatServices(jid.Domain) ([]data.DiscoveryItem, error) {
+func (*SessionMock) GetChatServices(jid.Domain) ([]string, error) {
 	return nil, nil
 }
 

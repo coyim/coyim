@@ -13,7 +13,7 @@ type MUCOccupant struct {
 
 // MUCOccupantJoined description
 type MUCOccupantJoined struct {
-	*MUCOccupant
+	*MUCOccupantUpdated
 	Joined bool
 }
 
@@ -21,7 +21,9 @@ type MUCOccupantJoined struct {
 type MUCOccupantUpdated struct {
 	*MUCOccupant
 	Affiliation string
+	Jid         string
 	Role        string
+	Status      string
 }
 
 // MUC event types

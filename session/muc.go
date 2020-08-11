@@ -25,10 +25,13 @@ func (s *session) receivedMUCPresence(stanza *data.ClientPresence) bool {
 		}
 
 		if len(stanza.MUCUser.Status) > 0 {
+			affiliation := stanza.MUCUser.Item.Affiliation
+			jid := stanza.MUCUser.Item.Jid
+			role := stanza.MUCUser.Item.Role
 			for _, status := range stanza.MUCUser.Status {
 				switch status.Code {
 				case MUCStatusPresenceJoined:
-					s.mucOccupantJoined(rid.String(), string(nickname), true)
+					s.mucOccupantJoined(rid.String(), string(nickname), affiliation, jid, role, status.Code, true)
 				}
 			}
 		}
@@ -58,13 +61,19 @@ func (s *session) mucRosterUpdated() {
 	s.publishEvent(events.MUCOccupantUpdate)
 }
 
-func (s *session) mucOccupantJoined(rid, nickname string, v bool) {
+func (s *session) mucOccupantJoined(rid, nickname, affiliation, jid, role, status string, v bool) {
 	s.publishEvent(events.MUCOccupantJoined{
-		MUCOccupant: &events.MUCOccupant{
-			MUC: &events.MUC{
-				From: rid,
+		MUCOccupantUpdated: &events.MUCOccupantUpdated{
+			MUCOccupant: &events.MUCOccupant{
+				MUC: &events.MUC{
+					From: rid,
+				},
+				Nickname: nickname,
 			},
-			Nickname: nickname,
+			Affiliation: affiliation,
+			Jid:         jid,
+			Role:        role,
+			Status:      status,
 		},
 		Joined: v,
 	})

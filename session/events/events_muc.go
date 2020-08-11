@@ -26,9 +26,12 @@ type MUCOccupantUpdated struct {
 	Status      string
 }
 
+// MUCErrorEventType represents the errors types on MUC
+type MUCErrorEventType int
+
 // MUC event types
 const (
-	MUCOccupantUpdate EventType = iota
+	MUCOccupantUpdate MUCErrorEventType = iota
 
 	MUCNotAuthorized
 	MUCForbidden
@@ -39,3 +42,9 @@ const (
 	MUCConflict
 	MUCServiceUnavailable
 )
+
+// MUCErrorEvent structure
+type MUCErrorEvent struct {
+	*MUC
+	EventType MUCErrorEventType
+}

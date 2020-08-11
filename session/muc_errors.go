@@ -5,23 +5,30 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 )
 
-func (s *session) handleMUCError(stanza *data.ClientPresence) {
+func (s *session) publishMUCError(stanza *data.ClientPresence) {
+	e := events.MUCErrorEvent{
+		MUC: &events.MUC{
+			From: stanza.From,
+		},
+	}
+
 	switch {
 	case stanza.Error.MUCNotAuthorized != nil:
-		s.publishEvent(events.MUCNotAuthorized)
+		e.EventType = events.MUCNotAuthorized
 	case stanza.Error.MUCForbidden != nil:
-		s.publishEvent(events.MUCForbidden)
+		e.EventType = events.MUCForbidden
 	case stanza.Error.MUCItemNotFound != nil:
-		s.publishEvent(events.MUCItemNotFound)
+		e.EventType = events.MUCItemNotFound
 	case stanza.Error.MUCNotAllowed != nil:
-		s.publishEvent(events.MUCNotAllowed)
+		e.EventType = events.MUCNotAllowed
 	case stanza.Error.MUCNotAceptable != nil:
-		s.publishEvent(events.MUCNotAceptable)
+		e.EventType = events.MUCNotAceptable
 	case stanza.Error.MUCRegistrationRequired != nil:
-		s.publishEvent(events.MUCRegistrationRequired)
+		e.EventType = events.MUCRegistrationRequired
 	case stanza.Error.MUCConflict != nil:
-		s.publishEvent(events.MUCConflict)
+		e.EventType = events.MUCConflict
 	case stanza.Error.MUCServiceUnavailable != nil:
-		s.publishEvent(events.MUCServiceUnavailable)
+		e.EventType = events.MUCServiceUnavailable
 	}
+	s.publishEvent(e)
 }

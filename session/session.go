@@ -314,7 +314,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		// Ignore
 	case "error":
 		if s.isMUCPresence(stanza) {
-			s.handleMUCError(stanza)
+			s.publishMUCError(stanza)
 		} else {
 			log.WithFields(log.Fields{
 				"from":  stanza.From,

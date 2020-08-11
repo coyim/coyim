@@ -45,3 +45,15 @@ func (u *gtkUI) roomOccupantUpdatedOn(account *account, ev events.MUCOccupantUpd
 	//TODO: Implements the actions to do when a Occupant presence is received
 	u.log.Info("roomOccupantUpdatedOn")
 }
+
+func (u *gtkUI) roomOcuppantJoinFailedOn(account *account, ev events.MUCErrorEvent) {
+	from := jid.Parse(ev.From)
+	ridwr, nickname := from.PotentialSplit()
+	rid := jid.Parse(ridwr.String()).(jid.Bare)
+	rv, _, err := u.getRoomView(rid, account)
+	if err != nil {
+		account.log.WithError(err)
+	}
+	errorMessage := fmt.Sprintf("Nickname conflict, can't join to the room using \"%s\"", nickname)
+	rv.roomOcuppantJoinedOn(errors.New(errorMessage))
+}

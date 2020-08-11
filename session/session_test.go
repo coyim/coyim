@@ -341,7 +341,7 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 			return false
 		}
 
-		c.Assert(t.Message, Equals, "unrecognized iq: &data.ClientIQ{XMLName:xml.Name{Space:\"jabber:client\", Local:\"iq\"}, From:\"\", ID:\"\", To:\"\", Type:\"something\", Error:data.StanzaError{By:\"\", Code:\"\", Type:\"\", Text:\"\", Condition:struct { XMLName xml.Name; Body string \"xml:\\\",innerxml\\\"\" }{XMLName:xml.Name{Space:\"\", Local:\"\"}, Body:\"\"}, ApplicationCondition:(*data.Any)(nil)}, Bind:data.BindBind{XMLName:xml.Name{Space:\"\", Local:\"\"}, Resource:\"\", Jid:\"\"}, Query:[]uint8{}}")
+		c.Assert(t.Message, Equals, "unrecognized iq: &data.ClientIQ{XMLName:xml.Name{Space:\"jabber:client\", Local:\"iq\"}, From:\"\", ID:\"\", To:\"\", Type:\"something\", Error:data.StanzaError{By:\"\", Code:\"\", Type:\"\", Text:\"\", Condition:struct { XMLName xml.Name; Body string \"xml:\\\",innerxml\\\"\" }{XMLName:xml.Name{Space:\"\", Local:\"\"}, Body:\"\"}, ApplicationCondition:(*data.Any)(nil), MUCNotAuthorized:(*data.MUCNotAuthorized)(nil), MUCForbidden:(*data.MUCForbidden)(nil), MUCItemNotFound:(*data.MUCItemNotFound)(nil), MUCNotAllowed:(*data.MUCNotAllowed)(nil), MUCNotAceptable:(*data.MUCNotAceptable)(nil), MUCRegistrationRequired:(*data.MUCRegistrationRequired)(nil), MUCConflict:(*data.MUCConflict)(nil), MUCServiceUnavailable:(*data.MUCServiceUnavailable)(nil)}, Bind:data.BindBind{XMLName:xml.Name{Space:\"\", Local:\"\"}, Resource:\"\", Jid:\"\"}, Query:[]uint8{}}")
 		return true
 	})
 }

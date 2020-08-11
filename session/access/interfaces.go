@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	sdata "github.com/coyim/coyim/session/data"
@@ -65,7 +66,6 @@ type Session interface {
 	Subscribe(chan<- interface{})
 	Timeout(data.Cookie, time.Time)
 	Info(string)
-	Warn(string)
 	SendIQError(*data.ClientIQ, interface{})
 	SendIQResult(*data.ClientIQ, interface{})
 	PublishEvent(interface{})
@@ -82,6 +82,8 @@ type Session interface {
 	JoinRoom(jid.Bare, string)
 	CreateRoom(jid.Bare) <-chan error
 	GetChatServices(jid.Domain) ([]data.DiscoveryItem, error)
+
+	Log() coylog.Logger
 }
 
 // Factory is a function that can create new Sessions

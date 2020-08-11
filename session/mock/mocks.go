@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/config"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/otrclient"
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/access"
@@ -158,9 +159,6 @@ func (*SessionMock) Subscribe(chan<- interface{}) {}
 // Timeout is the implementation for Session interface
 func (*SessionMock) Timeout(data.Cookie, time.Time) {}
 
-// Warn is the implementation for Session interface
-func (*SessionMock) Warn(string) {}
-
 // Info is the implementation for Session interface
 func (*SessionMock) Info(string) {}
 
@@ -226,4 +224,9 @@ func (*SessionMock) CreateRoom(jid.Bare) <-chan error {
 // GetChatServices is the implementation for session interface
 func (*SessionMock) GetChatServices(jid.Domain) ([]data.DiscoveryItem, error) {
 	return nil, nil
+}
+
+// Log is the implementation for session interface
+func (*SessionMock) Log() coylog.Logger {
+	return nil
 }

@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"io"
 	"net"
 	"os"
@@ -31,7 +30,7 @@ func bytestreamWaitForCancel(ctx *recvContext) {
 
 func bytestreamInitialSetup(s access.Session, stanza *data.ClientIQ) (tag data.BytestreamQuery, ctx *recvContext, earlyReturn bool) {
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil || tag.Sid == "" {
-		s.Warn(fmt.Sprintf("Failed to parse bytestream open: %v", err))
+		s.Log().WithError(err).Warn("Failed to parse bytestream open")
 		s.SendIQError(stanza, iqErrorIBBBadRequest)
 		return tag, ctx, true
 	}
@@ -39,7 +38,7 @@ func bytestreamInitialSetup(s access.Session, stanza *data.ClientIQ) (tag data.B
 	ctx, ok := getInflightRecv(tag.Sid)
 
 	if !ok || ctx.opaque != nil {
-		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		s.Log().WithField("SID", tag.Sid).Warn("No file transfer associated with SID")
 		s.SendIQError(stanza, iqErrorNotAcceptable)
 		return tag, ctx, true
 	}
@@ -47,7 +46,7 @@ func bytestreamInitialSetup(s access.Session, stanza *data.ClientIQ) (tag data.B
 	if tag.Mode == "udp" {
 		// This shouldn't really be possible, since we don't advertise udp support
 		// But we can always register the error anyway.
-		s.Warn("Received a request for UDP, even though we don't support or advertize UDP - this means the peer is using a non-conforming application")
+		s.Log().Warn("Received a request for UDP, even though we don't support or advertize UDP - this means the peer is using a non-conforming application")
 		s.SendIQError(stanza, iqErrorIBBBadRequest)
 		return tag, ctx, true
 	}
@@ -94,7 +93,7 @@ func (ctx *recvContext) bytestreamDoReceive(conn net.Conn) {
 	closeAndIgnore(conn)
 
 	if err := ctx.finalizeFileTransfer(fname); err != nil {
-		ctx.s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
+		ctx.s.Log().WithError(err).Warn("Had error when trying to move the final file")
 		ctx.control.ReportError(errors.New("Couldn't move the final file"))
 		_ = os.Remove(fname)
 	}

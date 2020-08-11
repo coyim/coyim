@@ -1,8 +1,6 @@
 package filetransfer
 
 import (
-	"fmt"
-
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/events"
@@ -14,7 +12,7 @@ import (
 func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{}, iqtype string, ignore bool) {
 	peer, ok := jid.Parse(stanza.From).(jid.WithResource)
 	if !ok {
-		s.Warn(fmt.Sprintf("Stanza sender doesn't contain resource - this shouldn't happen: %v", stanza.From))
+		s.Log().WithField("from", stanza.From).Warn("Stanza sender doesn't contain resource - this shouldn't happen")
 		return nil, "", false
 	}
 
@@ -31,7 +29,7 @@ func InitIQ(s access.Session, stanza *data.ClientIQ, si data.SI) (ret interface{
 	var options []string
 	var err error
 	if options, err = extractFileTransferOptions(si.Feature.Form); err != nil {
-		s.Warn(fmt.Sprintf("Failed to parse stream initiation: %v", err))
+		s.Log().WithError(err).Warn("Failed to parse stream initiation")
 		return nil, "", false
 	}
 

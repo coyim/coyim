@@ -3,7 +3,6 @@ package session
 import (
 	"bytes"
 	"encoding/xml"
-	"fmt"
 
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/session/filetransfer"
@@ -21,15 +20,15 @@ var supportedSIProfiles = map[string]func(access.Session, *data.ClientIQ, data.S
 }
 
 func streamInitIQ(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	s.Info("IQ: stream initiation")
+	s.Log().Info("IQ: stream initiation")
 	var si data.SI
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&si); err != nil {
-		s.Warn(fmt.Sprintf("Failed to parse stream initiation: %v", err))
+		s.Log().WithError(err).Warn("Failed to parse stream initiation")
 	}
 
 	prof, ok := supportedSIProfiles[si.Profile]
 	if !ok {
-		s.Warn(fmt.Sprintf("Unsupported SI profile: %v", si.Profile))
+		s.Log().WithField("profile", si.Profile).Warn("Unsupported SI profile")
 		return nil, "", false
 	}
 

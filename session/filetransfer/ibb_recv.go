@@ -5,8 +5,9 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/data"
@@ -41,14 +42,14 @@ func ibbWaitForCancel(ctx *recvContext) {
 func IbbOpen(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	var tag data.IBBOpen
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
-		s.Warn(fmt.Sprintf("Failed to parse IBB open: %v", err))
+		s.Log().WithError(err).Warn("Failed to parse IBB open")
 		return iqErrorNotAcceptable, "error", false
 	}
 
 	ctx, ok := getInflightRecv(tag.Sid)
 
 	if !ok || ctx.opaque != nil {
-		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		s.Log().WithField("SID", tag.Sid).Warn("No file transfer associated with SID")
 		return iqErrorNotAcceptable, "error", false
 	}
 
@@ -62,7 +63,7 @@ func IbbOpen(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype s
 
 func ibbParseXMLData(s access.Session, dt []byte) (tag data.IBBData, ctx *recvContext, ictx *ibbContext, ret interface{}, iqtype string, ignore bool) {
 	if err := xml.NewDecoder(bytes.NewBuffer(dt)).Decode(&tag); err != nil {
-		s.Warn(fmt.Sprintf("Failed to parse IBB data: %v", err))
+		s.Log().WithError(err).Warn("Failed to parse IBB data")
 		return tag, nil, nil, iqErrorNotAcceptable, "error", false
 	}
 
@@ -74,13 +75,13 @@ func ibbParseXMLData(s access.Session, dt []byte) (tag data.IBBData, ctx *recvCo
 			return tag, nil, nil, data.EmptyReply{}, "", false
 		}
 
-		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		s.Log().WithField("SID", tag.Sid).Warn("No file transfer associated with SID")
 		return tag, nil, nil, iqErrorItemNotFound, "error", false
 	}
 
 	ictx, ok = ctx.opaque.(*ibbContext)
 	if !ok {
-		s.Warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
+		s.Log().WithField("SID", tag.Sid).Warn("No file transfer associated with SID")
 		return tag, nil, nil, iqErrorItemNotFound, "error", false
 	}
 
@@ -99,7 +100,10 @@ func ibbOnData(s access.Session, body []byte) (ret interface{}, iqtype string, i
 	// files we can't actually tell the difference between a reused sequence number or a number that
 	// has just been wrapped around. Thus, we do this deviation from the spec here.
 	if tag.Sequence != ictx.expectingSequence {
-		s.Warn(fmt.Sprintf("IBB expected sequence number %d, but got %d", ictx.expectingSequence, tag.Sequence))
+		s.Log().WithFields(log.Fields{
+			"expected": ictx.expectingSequence,
+			"current":  tag.Sequence,
+		}).Warn("IBB unexpected sequence")
 		ctx.control.ReportError(errors.New("Unexpected data sent from the peer"))
 		ctx.ibbCleanup()
 		return iqErrorUnexpectedRequest, "error", false
@@ -110,7 +114,7 @@ func ibbOnData(s access.Session, body []byte) (ret interface{}, iqtype string, i
 
 	dt, err := base64.StdEncoding.DecodeString(tag.Base64)
 	if err != nil {
-		s.Warn(fmt.Sprintf("IBB had an error when decoding: %v", err))
+		s.Log().WithError(err).Warn("IBB had an error when decoding")
 		ctx.control.ReportError(errors.New("Couldn't decode incoming data"))
 		ctx.ibbCleanup()
 		return iqErrorNotAcceptable, "error", false
@@ -118,7 +122,7 @@ func ibbOnData(s access.Session, body []byte) (ret interface{}, iqtype string, i
 
 	_, err = ictx.recv.Write(dt)
 	if err != nil {
-		s.Warn(fmt.Sprintf("IBB had an error when writing: %v", err))
+		s.Log().WithError(err).Warn("IBB had an error when writing")
 		ctx.control.ReportError(errors.New("Couldn't write incoming data"))
 		ctx.ibbCleanup()
 		return iqErrorNotAcceptable, "error", false
@@ -141,7 +145,7 @@ func IbbMessageData(s access.Session, stanza *data.ClientMessage, ext *data.Exte
 func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
 	var tag data.IBBClose
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&tag); err != nil {
-		s.Warn(fmt.Sprintf("Failed to parse IBB close: %v", err))
+		s.Log().WithError(err).Warn("Failed to parse IBB close")
 		return iqErrorNotAcceptable, "error", false
 	}
 
@@ -154,19 +158,19 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 	ctx, ok := getInflightRecv(tag.Sid)
 
 	if !ok || ctx.opaque == nil {
-		s.Warn(fmt.Sprintf("No file transfer associated with SID: %v", tag.Sid))
+		s.Log().WithField("SID", tag.Sid).Warn("No file transfer associated with SID")
 		return iqErrorItemNotFound, "error", false
 	}
 
 	ictx, ok := ctx.opaque.(*ibbContext)
 	if !ok {
-		s.Warn(fmt.Sprintf("No IBB file transfer associated with SID: %v", tag.Sid))
+		s.Log().WithField("SID", tag.Sid).Warn("No IBB file transfer associated with SID")
 		return iqErrorItemNotFound, "error", false
 	}
 
 	toSend, fname, ok, ee := ictx.recv.wait()
 	if !ok {
-		s.Warn(fmt.Sprintf("Had error when waiting for receiving: %v", ee))
+		s.Log().WithError(ee).Warn("Had error when waiting for receiving")
 		ctx.control.ReportError(errors.New("Couldn't recv final data"))
 		ctx.ibbCleanup()
 		return
@@ -182,7 +186,7 @@ func IbbClose(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype 
 	}
 
 	if err := ctx.finalizeFileTransfer(fname); err != nil {
-		s.Warn(fmt.Sprintf("Had error when trying to move the final file: %v", err))
+		s.Log().WithError(err).Warn("Had error when trying to move the final file")
 		ctx.control.ReportError(errors.New("Couldn't move the final file"))
 		ctx.ibbCleanup()
 		_ = os.Remove(fname)

@@ -2,10 +2,11 @@ package filetransfer
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"sync"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // This file and the object inside it encapsulate everything necessary for receiving data - it should work for both the bytestream and IBB methods
@@ -92,7 +93,7 @@ func (r *receiver) saveError(e error) {
 func (r *receiver) readAndRun() {
 	ff, err := r.ctx.openDestinationTempFile()
 	if err != nil {
-		r.ctx.s.Warn(fmt.Sprintf("Failed to open temporary file: %v", err))
+		r.ctx.s.Log().WithError(err).Warn("Failed to open temporary file")
 		removeInflightRecv(r.ctx.sid)
 		r.saveError(err)
 		return
@@ -112,7 +113,7 @@ func (r *receiver) readAndRun() {
 
 	_, err = io.CopyN(io.MultiWriter(ff, &reportingWriter{report: reporting}), rr, r.ctx.size)
 	if err != nil {
-		r.ctx.s.Warn(fmt.Sprintf("Had error when trying to write to file: %v", err))
+		r.ctx.s.Log().WithError(err).Warn("Had error when trying to write to file")
 		r.ctx.control.ReportError(errors.New("Error writing to file"))
 		closeAndIgnore(ff)
 		_ = os.Remove(ff.Name())
@@ -124,7 +125,10 @@ func (r *receiver) readAndRun() {
 	fstat, _ := ff.Stat()
 
 	if totalWritten != r.ctx.size || fstat.Size() != totalWritten {
-		r.ctx.s.Warn(fmt.Sprintf("Expected size of file to be %d, but was %d - this probably means the transfer was cancelled", r.ctx.size, fstat.Size()))
+		r.ctx.s.Log().WithFields(log.Fields{
+			"expected": r.ctx.size,
+			"actual":   fstat.Size(),
+		}).Warn("Unexpected file size - this probably means the transfer was cancelled")
 		err = errors.New("Incorrect final size of file - this implies the transfer was cancelled")
 		r.ctx.control.ReportError(err)
 		closeAndIgnore(ff)
@@ -136,7 +140,7 @@ func (r *receiver) readAndRun() {
 
 	toSend, err := afterFinish()
 	if err != nil {
-		r.ctx.s.Warn(fmt.Sprintf("Couldn't verify integrity of sent file: %v", err))
+		r.ctx.s.Log().WithError(err).Warn("Couldn't verify integrity of sent file")
 		r.ctx.control.ReportError(errors.New("Couldn't verify integrity of sent file"))
 		closeAndIgnore(ff)
 		_ = os.Remove(ff.Name())

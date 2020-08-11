@@ -6,6 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/events"
 )
 
@@ -34,13 +35,6 @@ func (s *session) info(m string) {
 	})
 }
 
-func (s *session) Warn(m string) {
-	s.publishEvent(events.Log{
-		Level:   events.Warn,
-		Message: m,
-	})
-}
-
 func (s *session) Info(m string) {
 	s.publishEvent(events.Log{
 		Level:   events.Info,
@@ -53,4 +47,9 @@ func (s *session) warn(m string) {
 		Level:   events.Warn,
 		Message: m,
 	})
+}
+
+// Log is the implementation for session interface
+func (s *session) Log() coylog.Logger {
+	return s.log
 }

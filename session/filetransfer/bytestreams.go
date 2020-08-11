@@ -1,7 +1,6 @@
 package filetransfer
 
 import (
-	"fmt"
 	"net"
 	"strconv"
 
@@ -19,7 +18,7 @@ func tryStreamhost(s access.Session, sh data.BytestreamStreamhost, dstAddr strin
 
 	p, err := s.GetConfig().CreateTorProxy()
 	if err != nil {
-		s.Warn(fmt.Sprintf("Had error when trying to connect: %v", err))
+		s.Log().WithError(err).Warn("Had error when trying to connect")
 		return false
 	}
 
@@ -29,13 +28,13 @@ func tryStreamhost(s access.Session, sh data.BytestreamStreamhost, dstAddr strin
 
 	dialer, e := socks5.XMPP("tcp", net.JoinHostPort(sh.Host, strconv.Itoa(port)), nil, p)
 	if e != nil {
-		s.Info(fmt.Sprintf("Error setting up socks5 for %v: %v", sh, e))
+		s.Log().WithError(e).WithField("streamhost", sh).Info("Error setting up socks5")
 		return false
 	}
 
 	conn, e2 := dialer.Dial("tcp", net.JoinHostPort(dstAddr, "0"))
 	if e2 != nil {
-		s.Info(fmt.Sprintf("Error connecting socks5 for %v: %v", sh, e2))
+		s.Log().WithError(e2).WithField("streamhost", sh).Info("Error connecting socks5")
 		return false
 	}
 

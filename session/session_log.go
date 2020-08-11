@@ -35,13 +35,6 @@ func (s *session) info(m string) {
 	})
 }
 
-func (s *session) warn(m string) {
-	s.publishEvent(events.Log{
-		Level:   events.Warn,
-		Message: m,
-	})
-}
-
 // Log is the implementation for session interface
 func (s *session) Log() coylog.Logger {
 	return s.log

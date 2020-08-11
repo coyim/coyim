@@ -278,7 +278,10 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			// This happens if a malfunctioning client/server is
 			// sending presence information without a resource.
 			// This is likely a bug
-			s.warn(fmt.Sprintf("Got a presence without resource in 'from' - this is likely an error: %s - %#v\n", stanza.From, stanza))
+			s.log.WithFields(log.Fields{
+				"from":   stanza.From,
+				"stanza": stanza,
+			}).Warn("Got a presence without resource in 'from' - this is likely an error")
 			return true
 		}
 		if !s.r.PeerPresenceUpdate(jj.(jid.WithResource), stanza.Show, stanza.Status, s.GetConfig().ID()) {
@@ -432,12 +435,12 @@ func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{},
 	// TODO: we should deal with "ask" attributes here
 
 	if len(stanza.From) > 0 && !s.GetConfig().Is(stanza.From) {
-		s.warn("Ignoring roster IQ from bad address: " + stanza.From)
+		s.log.WithField("from", stanza.From).Warn("Ignoring roster IQ from bad address")
 		return nil, "", true
 	}
 	var rst data.Roster
 	if err := xml.NewDecoder(bytes.NewBuffer(stanza.Query)).Decode(&rst); err != nil || len(rst.Item) == 0 {
-		s.warn("Failed to parse roster push IQ")
+		s.log.Warn("Failed to parse roster push IQ")
 		return nil, "", false
 	}
 
@@ -457,7 +460,7 @@ func (s *session) receivedIQRosterQuery(stanza *data.ClientIQ) (ret interface{},
 func (s *session) HandleConfirmOrDeny(jid jid.WithoutResource, isConfirm bool) {
 	id, ok := s.r.RemovePendingSubscribe(jid)
 	if !ok {
-		s.warn("No pending subscription from " + jid.String())
+		s.log.WithField("from", jid.String()).Warn("No pending subscription")
 		return
 	}
 
@@ -470,7 +473,7 @@ func (s *session) HandleConfirmOrDeny(jid jid.WithoutResource, isConfirm bool) {
 	}
 
 	if err != nil {
-		s.warn("Error sending presence stanza: " + err.Error())
+		s.log.WithError(err).Warn("Error sending presence stanza")
 		return
 	}
 
@@ -586,27 +589,27 @@ func (s *session) maybeNotify() {
 func (s *session) AwaitVersionReply(ch <-chan data.Stanza, user string) {
 	stanza, ok := <-ch
 	if !ok {
-		s.warn("Version request to " + user + " timed out")
+		s.log.WithField("user", user).Warn("Version request timed out")
 		return
 	}
 	reply, ok := stanza.Value.(*data.ClientIQ)
 	if !ok {
-		s.warn("Version request to " + user + " resulted in bad reply type")
+		s.log.WithField("user", user).Warn("Version request resulted in bad reply type")
 		return
 	}
 
 	if reply.Type == "error" {
-		s.warn("Version request to " + user + " resulted in XMPP error")
+		s.log.WithField("user", user).Warn("Version request resulted in XMPP error")
 		return
 	} else if reply.Type != "result" {
-		s.warn("Version request to " + user + " resulted in response with unknown type: " + reply.Type)
+		s.log.WithField("user", user).WithField("type", reply.Type).Warn("Version request resulted in response with unknown type")
 		return
 	}
 
 	buf := bytes.NewBuffer(reply.Query)
 	var versionReply data.VersionReply
 	if err := xml.NewDecoder(buf).Decode(&versionReply); err != nil {
-		s.warn("Failed to parse version reply from " + user + ": " + err.Error())
+		s.log.WithField("user", user).WithError(err).Warn("Failed to parse version reply")
 		return
 	}
 
@@ -916,7 +919,7 @@ func (s *session) SetLastActionTime(t time.Time) {
 func (s *session) SendPing() {
 	reply, _, err := s.conn.SendPing()
 	if err != nil {
-		s.warn(fmt.Sprintf("Failure to ping server: %#v\n", err))
+		s.log.WithError(err).Warn("Failure to ping server")
 		return
 	}
 
@@ -925,7 +928,7 @@ func (s *session) SendPing() {
 	go func() {
 		select {
 		case <-time.After(pingTimeout):
-			s.info("Ping timeout. Disconnecting...")
+			s.log.Info("Ping timeout. Disconnecting...")
 			s.setStatus(DISCONNECTED)
 		case stanza := <-reply:
 			iq, ok := stanza.Value.(*data.ClientIQ)
@@ -933,7 +936,7 @@ func (s *session) SendPing() {
 				return
 			}
 			if iq.Type == "error" {
-				s.warn("Server does not support Ping")
+				s.log.Warn("Server does not support Ping")
 				return
 			}
 		}

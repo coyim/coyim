@@ -69,34 +69,6 @@ func (s *SessionSuite) Test_info_publishesInfoEvent(c *C) {
 	}
 }
 
-func (s *SessionSuite) Test_warn_publishesWarnEvent(c *C) {
-	sess := &session{
-		log: log.StandardLogger(),
-	}
-
-	observer := make(chan interface{}, 1000)
-	sess.Subscribe(observer)
-	eventsDone := make(chan bool, 1)
-	sess.eventsReachedZero = eventsDone
-
-	sess.warn("hello world2")
-
-	select {
-	case <-eventsDone:
-		close(observer)
-		select {
-		case ev := <-observer:
-			t := ev.(events.Log)
-			c.Assert(t.Level, Equals, events.Warn)
-			c.Assert(t.Message, Equals, "hello world2")
-		default:
-			c.Errorf("did not receive event")
-		}
-	case <-time.After(testTimeout):
-		c.Errorf("test timed out")
-	}
-}
-
 func (s *SessionSuite) Test_iqReceived_publishesIQReceivedEvent(c *C) {
 	sess := &session{
 		log: log.StandardLogger(),
@@ -455,8 +427,9 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 		"some@one.org/foo",
 	)
 
+	l, hook := test.NewNullLogger()
 	sess := &session{
-		log:    log.StandardLogger(),
+		log:    l,
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -474,10 +447,10 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {
 
 	sess.receiveStanza(stanzaChan)
 
-	assertLogContains(c, observer, events.Log{
-		Level:   events.Warn,
-		Message: "Ignoring roster IQ from bad address: some2@one.org",
-	})
+	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "Ignoring roster IQ from bad address")
+	c.Assert(hook.LastEntry().Data["from"], Equals, "some2@one.org")
 
 	c.Assert(string(mockIn.write), Equals, "")
 }
@@ -490,8 +463,9 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *
 		"some@one.org/foo",
 	)
 
+	l, hook := test.NewNullLogger()
 	sess := &session{
-		log:    log.StandardLogger(),
+		log:    l,
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "some@one.org",
@@ -505,10 +479,9 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *
 
 	sess.watchStanzas()
 
-	assertLogContains(c, observer, events.Log{
-		Level:   events.Warn,
-		Message: "Failed to parse roster push IQ",
-	})
+	c.Assert(len(hook.Entries), Equals, 3)
+	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "Failed to parse roster push IQ")
 }
 
 func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c *C) {
@@ -866,8 +839,9 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 }
 
 func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWaiting(c *C) {
+	l, hook := test.NewNullLogger()
 	sess := &session{
-		log: log.StandardLogger(),
+		log: l,
 		r:   roster.New(),
 	}
 
@@ -878,15 +852,10 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_failsWhenNoPendingSubscribeIsWai
 
 	sess.HandleConfirmOrDeny(jid.NR("foo@bar.com"), true)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
-		t, ok := ev.(events.Log)
-		if !ok {
-			return false
-		}
-
-		c.Assert(t.Level, Equals, events.Warn)
-		return true
-	})
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "No pending subscription")
+	c.Assert(hook.LastEntry().Data["from"], Equals, "foo@bar.com")
 }
 
 func (s *SessionSuite) Test_HandleConfirmOrDeny_succeedsOnNotAllowed(c *C) {
@@ -962,8 +931,9 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 		"some@one.org/foo",
 	)
 
+	l, hook := test.NewNullLogger()
 	sess := &session{
-		log: log.StandardLogger(),
+		log: l,
 		r:   roster.New(),
 	}
 	sess.conn = conn
@@ -976,15 +946,10 @@ func (s *SessionSuite) Test_HandleConfirmOrDeny_handlesSendPresenceError(c *C) {
 
 	sess.HandleConfirmOrDeny(jid.NR("foo@bar.com"), true)
 
-	assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
-		t, ok := ev.(events.Log)
-		if !ok || t.Level != events.Warn {
-			return false
-		}
-
-		c.Assert(t.Message, Equals, "Error sending presence stanza: foo bar")
-		return true
-	})
+	c.Assert(len(hook.Entries), Equals, 1)
+	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "Error sending presence stanza")
+	c.Assert(hook.LastEntry().Data["error"].(error).Error(), Equals, "foo bar")
 }
 
 func (s *SessionSuite) Test_watchTimeouts_cancelsTimedoutRequestsAndForgetsAboutThem(c *C) {

@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"errors"
 	"log"
 	"sync"
 
@@ -173,17 +172,17 @@ func (rv *roomView) onPresenceReceived(f func()) {
 	rv.connectionEventHandlers = append(rv.connectionEventHandlers, f)
 }
 
-func (u *gtkUI) viewForRoom(room *muc.Room) (*roomView, error) {
+func (u *gtkUI) viewForRoom(room *muc.Room) *roomView {
 	if room.Opaque == nil {
-		return nil, errors.New("room view not defined")
+		panic("developer error: trying to get an undefined view from room")
 	}
 
 	view, succeed := room.Opaque.(*roomView)
 	if !succeed {
-		return nil, errors.New("room view not defined")
+		panic("developer error: failed parsing room view into room.Opaque")
 	}
 
-	return view, nil
+	return view
 }
 
 func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
@@ -193,7 +192,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 		log.Fatal(err.Error())
 		return
 	}
-	view, _ := u.viewForRoom(room)
+	view := u.viewForRoom(room)
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{

@@ -425,9 +425,10 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 		mockIn,
 		"some@one.org/foo",
 	)
+	l, hook := test.NewNullLogger()
 
 	sess := &session{
-		log:    log.StandardLogger(),
+		log:    l,
 		config: &config.ApplicationConfig{},
 		accountConfig: &config.Account{
 			Account: "foo.bar@somewhere.org",
@@ -441,21 +442,9 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 
 	sess.watchStanzas()
 
-	for {
-		select {
-		case ev := <-observer:
-			t := ev.(events.Log)
-			if t.Level != events.Info {
-				continue
-			}
-
-			c.Assert(t.Message, Equals, "Unknown IQ: <query xmlns='jabber:iq:somethingStrange'/>")
-			return
-		case <-time.After(time.Duration(10) * time.Second):
-			c.Errorf("did not receive event")
-			return
-		}
-	}
+	c.Assert(len(hook.Entries), Equals, 2)
+	c.Assert(hook.LastEntry().Level, Equals, log.InfoLevel)
+	c.Assert(hook.LastEntry().Message, Equals, "Unknown IQ: <query xmlns='jabber:iq:somethingStrange'/>")
 }
 
 func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {

@@ -2,7 +2,6 @@ package filetransfer
 
 import (
 	"encoding/base64"
-	"fmt"
 	"io"
 	"os"
 	"time"
@@ -124,7 +123,7 @@ func trackResultOfSend(ctx *sendContext, reply <-chan data.Stanza) {
 				return
 			}
 		}
-		ctx.s.Info(fmt.Sprintf("Received unhappy response to IBB data sent: %#v", r))
+		ctx.s.Log().WithField("response", r).Info("Received unhappy response to IBB data sent")
 		ctx.theyWantToCancel = true
 	case <-time.After(time.Minute * 5):
 		// Ignore timeout

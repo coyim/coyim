@@ -35,13 +35,6 @@ func (s *session) info(m string) {
 	})
 }
 
-func (s *session) Info(m string) {
-	s.publishEvent(events.Log{
-		Level:   events.Info,
-		Message: m,
-	})
-}
-
 func (s *session) warn(m string) {
 	s.publishEvent(events.Log{
 		Level:   events.Warn,

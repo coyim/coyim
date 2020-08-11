@@ -13,7 +13,7 @@ type extensionFunction func(access.Session, *data.ClientMessage, *data.Extension
 var knownExtensions = map[string]extensionFunction{}
 
 func unknownExtension(s access.Session, stanza *data.ClientMessage, ext *data.Extension) {
-	s.Info(fmt.Sprintf("Unknown extension: %s", bytes.NewBuffer([]byte(ext.Body))))
+	s.Log().WithField("extension", bytes.NewBuffer([]byte(ext.Body))).Info("Unknown extension")
 }
 
 func registerKnownExtension(fullName string, f extensionFunction) {

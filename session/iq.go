@@ -31,17 +31,17 @@ func (s *session) sendIQReply(stanza *data.ClientIQ, tp string, reply interface{
 }
 
 func versionIQ(s access.Session, _ *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	s.Info("IQ: jabber:iq:version query")
+	s.Log().Info("IQ: jabber:iq:version query")
 	return s.(*session).receivedIQVersion(), "", false
 }
 
 func rosterIQ(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	s.Info("IQ: jabber:iq:roster query")
+	s.Log().Info("IQ: jabber:iq:roster query")
 	return s.(*session).receivedIQRosterQuery(stanza)
 }
 
 func unknownIQ(s access.Session, stanza *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	s.Info(fmt.Sprintf("Unknown IQ: %s", bytes.NewBuffer(stanza.Query)))
+	s.Log().Info(fmt.Sprintf("Unknown IQ: %s", bytes.NewBuffer(stanza.Query)))
 	return nil, "", false
 }
 

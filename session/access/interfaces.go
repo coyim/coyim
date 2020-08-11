@@ -65,7 +65,6 @@ type Session interface {
 	SetWantToBeOnline(bool)
 	Subscribe(chan<- interface{})
 	Timeout(data.Cookie, time.Time)
-	Info(string)
 	SendIQError(*data.ClientIQ, interface{})
 	SendIQResult(*data.ClientIQ, interface{})
 	PublishEvent(interface{})

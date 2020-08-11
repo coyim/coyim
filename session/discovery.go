@@ -9,7 +9,7 @@ import (
 )
 
 func discoIQ(s access.Session, iq *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	s.Info("IQ: http://jabber.org/protocol/disco#info query")
+	s.Log().Info("IQ: http://jabber.org/protocol/disco#info query")
 
 	query := &data.DiscoveryInfoQuery{}
 	err := xml.Unmarshal(iq.Query, query)
@@ -23,7 +23,7 @@ func discoIQ(s access.Session, iq *data.ClientIQ) (ret interface{}, iqtype strin
 }
 
 func discoItemsIQ(s access.Session, iq *data.ClientIQ) (ret interface{}, iqtype string, ignore bool) {
-	s.Info("IQ: http://jabber.org/protocol/disco#items query")
+	s.Log().Info("IQ: http://jabber.org/protocol/disco#items query")
 
 	query := &data.DiscoveryItemsQuery{}
 	err := xml.Unmarshal(iq.Query, query)

@@ -12,6 +12,7 @@ import (
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
+	log "github.com/sirupsen/logrus"
 )
 
 const fileTransferProfile = "http://jabber.org/protocol/si/profile/file-transfer"
@@ -152,7 +153,11 @@ func (ctx *sendContext) onDecline() {
 }
 
 func notifyUserThatSendStarted(method string, s access.Session, file, peer string) {
-	s.Info(fmt.Sprintf("Started sending of %v to %v using %v", file, peer, method))
+	s.Log().WithFields(log.Fields{
+		"file":   file,
+		"peer":   peer,
+		"method": method,
+	}).Info("Started sending file to peer using method")
 }
 
 func isValidSubmitForm(siq data.SI) bool {

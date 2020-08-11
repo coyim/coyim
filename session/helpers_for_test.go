@@ -2,13 +2,9 @@ package session
 
 import (
 	"io"
-	"reflect"
 	"time"
 
-	gocheck "gopkg.in/check.v1"
-
 	"github.com/coyim/coyim/session/access"
-	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/otr3"
 )
 
@@ -150,32 +146,4 @@ func (iom *mockConnIOReaderWriter) Write(p []byte) (n int, err error) {
 func (iom *mockConnIOReaderWriter) Close() error {
 	iom.calledClose++
 	return nil
-}
-
-func captureLogEvents(c <-chan interface{}) (ret []events.Log) {
-	for {
-		select {
-		case ev := <-c:
-			switch t := ev.(type) {
-			case events.Log:
-				ret = append(ret, t)
-			default:
-				//ignore
-			}
-		case <-time.After(100 * time.Millisecond):
-			return
-		}
-	}
-}
-
-func assertLogContains(c *gocheck.C, ch <-chan interface{}, exp events.Log) {
-	logs := captureLogEvents(ch)
-
-	for _, l := range logs {
-		if reflect.DeepEqual(l, exp) {
-			return
-		}
-	}
-
-	c.Errorf("Could not find %#v in %#v", exp, logs)
 }

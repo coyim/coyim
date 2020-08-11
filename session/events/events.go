@@ -77,22 +77,6 @@ type Message struct {
 	Encrypted bool
 }
 
-// LogLevel is the current log level
-type LogLevel int
-
-// The different available log levels
-const (
-	Info LogLevel = iota
-	Warn
-	Alert
-)
-
-// Log contains information one specific log event
-type Log struct {
-	Level   LogLevel
-	Message string
-}
-
 // FileTransfer represents an event associated with file transfers
 type FileTransfer struct {
 	Peer jid.WithResource

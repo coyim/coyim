@@ -36,10 +36,6 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
 		doInUIThread(func() {
 			u.handleMessageEvent(t, a)
 		})
-	case events.Log:
-		doInUIThread(func() {
-			u.handleLogEvent(t, a)
-		})
 	case events.FileTransfer:
 		doInUIThread(func() {
 			u.handleFileTransfer(t, a)
@@ -56,19 +52,6 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
 func (u *gtkUI) observeAccountEvents(a *account) {
 	for ev := range a.events {
 		u.handleOneAccountEvent(ev, a)
-	}
-}
-
-func (u *gtkUI) handleLogEvent(ev events.Log, a *account) {
-	m := ev.Message
-
-	switch ev.Level {
-	case events.Info:
-		a.log.Info(m)
-	case events.Warn:
-		a.log.Warn(m)
-	case events.Alert:
-		a.log.Error(m)
 	}
 }
 

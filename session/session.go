@@ -310,7 +310,9 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	case "unsubscribed":
 		// Ignore
 	case "error":
-		if ok := s.receivedMUCError(stanza); !ok {
+		if s.isMUCPresence(stanza) {
+			s.handleMUCError(stanza)
+		} else {
 			s.warn(fmt.Sprintf("Got a presence error from %s: %#v\n", stanza.From, stanza.Error))
 			s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 		}

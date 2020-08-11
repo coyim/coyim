@@ -82,7 +82,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkGrid" id="form">
+          <object class="GtkGrid" id="room-information-form">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_start">10</property>

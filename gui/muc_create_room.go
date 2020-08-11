@@ -16,7 +16,6 @@ type createMUCRoom struct {
 
 	notification         gtki.InfoBar
 	notificationArea     gtki.Box          `gtk-widget:"notification-area"`
-	form                 gtki.Grid         `gtk-widget:"form"`
 	account              gtki.ComboBox     `gtk-widget:"accounts"`
 	chatServices         gtki.ComboBoxText `gtk-widget:"chatServices"`
 	chatServiceEntry     gtki.Entry        `gtk-widget:"chatServiceEntry"`
@@ -24,8 +23,6 @@ type createMUCRoom struct {
 	cancelButton         gtki.Button       `gtk-widget:"button-cancel"`
 	createButton         gtki.Button       `gtk-widget:"button-ok"`
 	createButtonPrevText string
-
-	cancel chan bool
 
 	u *gtkUI
 }

@@ -19,12 +19,6 @@ func (u *gtkUI) handleOneMUCRoomEvent(ev interface{}, rv *roomView) {
 	}
 }
 
-func (u *gtkUI) observeMUCRoomEvents(rv *roomView) {
-	for ev := range rv.events {
-		u.handleOneMUCRoomEvent(ev, rv)
-	}
-}
-
 func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, rv *roomView) {
 	u.log.WithField("Event", ev).Info("handleMUCJoinedEvent")
 }

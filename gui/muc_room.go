@@ -14,14 +14,9 @@ type roomView struct {
 	builder *builder
 	u       *gtkUI
 
-	account  *account
-	jid      jid.Bare
-	onCancel chan bool
-	onJoin   chan bool
-
-	connectionEventHandlers []func()
-
-	events chan interface{}
+	account *account
+	jid     jid.Bare
+	onJoin  chan bool
 
 	sync.RWMutex
 
@@ -57,7 +52,6 @@ func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
 	r.Opaque = &roomView{
 		account: a,
 		jid:     ident,
-		events:  make(chan interface{}),
 		u:       u,
 	}
 
@@ -111,20 +105,16 @@ func (rv *roomView) togglePanelView() {
 }
 
 func (rv *roomView) onRoomJoinClicked() {
-	if rv.onCancel != nil {
-		rv.onCancel <- true
-		rv.onJoin <- false
-	}
 
 	doInUIThread(rv.clearErrors)
 
-	rv.onCancel = make(chan bool, 1)
 	rv.onJoin = make(chan bool, 1)
 	nickName, _ := rv.nicknameEntry.GetText()
 
 	doInUIThread(func() {
 		rv.spinnerJoinView.Start()
 		rv.spinnerJoinView.SetVisible(true)
+		rv.roomJoinButton.SetSensitive(false)
 	})
 
 	go rv.account.session.JoinRoom(rv.jid, nickName)
@@ -133,43 +123,24 @@ func (rv *roomView) onRoomJoinClicked() {
 			doInUIThread(func() {
 				rv.spinnerJoinView.Stop()
 				rv.spinnerJoinView.SetVisible(false)
+				rv.roomJoinButton.SetSensitive(true)
 			})
 		}()
-		for {
-			select {
-			case jev, ok := <-rv.onJoin:
-				if !ok {
-					//TODO: Add the error message here
-					return
-				}
-				if !jev {
-					//TODO: Capture the error details here to show to the user
-					rv.notifyOnError(i18n.Localf("You can't logged in to the room. Details: %s", jev))
-					rv.account.log.WithField("Join Event: ", jev).Debug("Some user can't logged in to the room.")
-				} else {
-					rv.clearErrors()
-					rv.togglePanelView()
-				}
-				return
-			case _, _ = <-rv.onCancel:
-				return
-			}
+
+		jev, ok := <-rv.onJoin
+		if !ok {
+			//TODO: Add the error message here
+			return
+		}
+
+		if !jev {
+			rv.notifyOnError(i18n.Localf("You can't logged in to the room. Details: "))
+			rv.account.log.WithField("Join Event: ", jev).Debug("Some user can't logged in to the room.")
+		} else {
+			rv.clearErrors()
+			rv.togglePanelView()
 		}
 	}()
-	go func() {
-		//TODO: this event need to receive a data for the MUC Event received
-		rv.onPresenceReceived(func() {
-			rv.account.log.WithField("Join Channel: ", rv.onJoin).Info("Presence received...")
-			rv.onJoin <- true
-		})
-	}()
-}
-
-func (rv *roomView) onPresenceReceived(f func()) {
-	if rv.connectionEventHandlers == nil {
-		rv.connectionEventHandlers = []func(){}
-	}
-	rv.connectionEventHandlers = append(rv.connectionEventHandlers, f)
 }
 
 func (u *gtkUI) viewForRoom(room *muc.Room) *roomView {

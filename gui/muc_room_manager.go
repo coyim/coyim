@@ -26,10 +26,5 @@ func (u *gtkUI) addRoom(a *account, ident jid.Bare) (*muc.Room, error) {
 		return nil, errors.New("the room is already in the manager")
 	}
 
-	view := u.viewForRoom(r)
-
-	go u.observeMUCRoomEvents(view)
-	a.session.Subscribe(view.events)
-
 	return r, nil
 }

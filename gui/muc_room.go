@@ -135,7 +135,7 @@ func (rv *roomView) onRoomJoinClicked() {
 		}
 
 		if !jev {
-			rv.notifyOnError(i18n.Localf("You can't logged in to the room. Details: %s", rv.lastErrorMessage))
+			rv.notifyOnError(i18n.Local(rv.lastErrorMessage))
 			rv.account.log.WithField("Join Event: ", jev).Debug("Some user can't logged in to the room.")
 		} else {
 			rv.clearErrors()

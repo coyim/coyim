@@ -14,21 +14,21 @@ func (s *session) publishMUCError(stanza *data.ClientPresence) {
 
 	switch {
 	case stanza.Error.MUCNotAuthorized != nil:
-		e.EventType = events.MUCNotAuthorized
+		e.Event = events.MUCNotAuthorized
 	case stanza.Error.MUCForbidden != nil:
-		e.EventType = events.MUCForbidden
+		e.Event = events.MUCForbidden
 	case stanza.Error.MUCItemNotFound != nil:
-		e.EventType = events.MUCItemNotFound
+		e.Event = events.MUCItemNotFound
 	case stanza.Error.MUCNotAllowed != nil:
-		e.EventType = events.MUCNotAllowed
+		e.Event = events.MUCNotAllowed
 	case stanza.Error.MUCNotAceptable != nil:
-		e.EventType = events.MUCNotAceptable
+		e.Event = events.MUCNotAceptable
 	case stanza.Error.MUCRegistrationRequired != nil:
-		e.EventType = events.MUCRegistrationRequired
+		e.Event = events.MUCRegistrationRequired
 	case stanza.Error.MUCConflict != nil:
-		e.EventType = events.MUCConflict
+		e.Event = events.MUCConflict
 	case stanza.Error.MUCServiceUnavailable != nil:
-		e.EventType = events.MUCServiceUnavailable
+		e.Event = events.MUCServiceUnavailable
 	}
 	s.publishEvent(e)
 }

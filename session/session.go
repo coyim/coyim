@@ -285,6 +285,10 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			return true
 		}
 		if !s.r.PeerPresenceUpdate(jj.(jid.WithResource), stanza.Show, stanza.Status, s.GetConfig().ID()) {
+			// Sometimes the MUC Events Presence is treated as an own presence,
+			// so we need to check if we need to send the received event to a
+			// specific Room on MUC
+			s.receivedMUCPresence(stanza)
 			return true
 		}
 

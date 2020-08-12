@@ -26,7 +26,7 @@ func (u *gtkUI) handleOneMUCRoomEvent(ev interface{}, a *account) {
 }
 
 func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, a *account) {
-	u.log.WithField("Event", ev).Debug("handleMUCJoinedEvent")
+
 	a.log.WithFields(log.Fields{
 		"from":        ev.From,
 		"nickname":    ev.Nickname,
@@ -42,7 +42,7 @@ func (u *gtkUI) handleMUCUpdatedEvent(ev events.MUCOccupantUpdated, a *account) 
 }
 
 func (u *gtkUI) handleMUCErrorEvent(ev events.MUCErrorEvent, a *account) {
-	switch ev.EventType {
+	switch ev.Event {
 	case events.MUCNotAuthorized:
 		u.log.WithField("account", a).Debug("MUC Error NotAuthorized received")
 	case events.MUCForbidden:

@@ -83,8 +83,8 @@ func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) 
 	return false
 }
 
-func (s *session) filterOnlyChatServices(items *data.DiscoveryItemsQuery) []string {
-	chatServices := make([]string, 0)
+func (s *session) filterOnlyChatServices(items *data.DiscoveryItemsQuery) []jid.Domain {
+	var chatServices []jid.Domain
 	for _, item := range items.DiscoveryItems {
 		iq, err := s.conn.QueryServiceInformation(item.Jid)
 		if err != nil {
@@ -92,14 +92,14 @@ func (s *session) filterOnlyChatServices(items *data.DiscoveryItemsQuery) []stri
 			continue
 		}
 		if iq != nil && s.hasSomeConferenceService(iq.Identities) {
-			chatServices = append(chatServices, item.Jid)
+			chatServices = append(chatServices, jid.Parse(item.Jid).Host())
 		}
 	}
 	return chatServices
 }
 
 //GetChatServices offers the chat services from a xmpp server.
-func (s *session) GetChatServices(server jid.Domain) ([]string, error) {
+func (s *session) GetChatServices(server jid.Domain) ([]jid.Domain, error) {
 	items, err := s.conn.QueryServiceItems(server.String())
 	if err != nil {
 		return nil, err

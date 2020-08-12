@@ -99,7 +99,7 @@ func (v *createMUCRoom) updateChatServices(ac *account) {
 	}
 
 	for _, i := range cs {
-		v.chatServices.AppendText(i)
+		v.chatServices.AppendText(string(i))
 	}
 
 	if len(cs) > 0 && enteredService == "" {

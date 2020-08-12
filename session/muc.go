@@ -40,40 +40,34 @@ func (s *session) handleMUCPresence(stanza *data.ClientPresence) {
 }
 
 func (s *session) mucOccupantUpdate(rid, nickname, affiliation, role string) {
-	s.publishEvent(events.MUCOccupantUpdated{
-		MUCOccupant: &events.MUCOccupant{
-			MUC: &events.MUC{
-				From: rid,
-			},
-			Nickname: nickname,
-		},
-		Affiliation: affiliation,
-		Role:        role,
-	})
+	ev := events.MUCOccupantUpdated{}
+	ev.From = rid
+	ev.Nickname = nickname
+	ev.Affiliation = affiliation
+	ev.Role = role
 
-	s.mucRosterUpdated()
-}
-
-func (s *session) mucRosterUpdated() {
-	s.publishEvent(events.MUCOccupantUpdate)
+	s.publishMUCEvent(ev, events.MUCOccupantUpdate)
 }
 
 func (s *session) mucOccupantJoined(rid, nickname, affiliation, jid, role, status string, v bool) {
-	s.publishEvent(events.MUCOccupantJoined{
-		MUCOccupantUpdated: &events.MUCOccupantUpdated{
-			MUCOccupant: &events.MUCOccupant{
-				MUC: &events.MUC{
-					From: rid,
-				},
-				Nickname: nickname,
-			},
-			Affiliation: affiliation,
-			Jid:         jid,
-			Role:        role,
-			Status:      status,
-		},
-		Joined: v,
-	})
+	ev := events.MUCOccupantJoined{}
+	ev.From = rid
+	ev.Nickname = nickname
+	ev.Affiliation = affiliation
+	ev.Jid = jid
+	ev.Role = role
+	ev.Status = status
+	ev.Joined = v
+
+	s.publishMUCEvent(ev, events.MUCOccupantJoin)
+}
+
+func (s *session) publishMUCEvent(e interface{}, t events.MUCEventType) {
+	ev := events.MUC{}
+	ev.EventInfo = e
+	ev.EventType = t
+
+	s.publishEvent(ev)
 }
 
 func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) bool {

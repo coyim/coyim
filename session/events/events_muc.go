@@ -1,36 +1,43 @@
 package events
 
-// MUC description
-type MUC struct {
+// MUCInfo description
+type MUCInfo struct {
 	From string
 }
 
 // MUCOccupant description
 type MUCOccupant struct {
-	*MUC
+	MUCInfo
 	Nickname string
 }
 
 // MUCOccupantJoined description
 type MUCOccupantJoined struct {
-	*MUCOccupantUpdated
+	MUCOccupantUpdated
+	Jid    string
+	Status string
 	Joined bool
 }
 
 // MUCOccupantUpdated description
 type MUCOccupantUpdated struct {
-	*MUCOccupant
+	MUCOccupant
 	Affiliation string
-	Jid         string
 	Role        string
-	Status      string
 }
+
+// MUCEventType represents the type of MUC event
+type MUCEventType EventType
+
+// MUCEventErrorType represents the type of MUC error event
+type MUCEventErrorType MUCEventType
 
 // MUC event types
 const (
-	MUCOccupantUpdate EventType = iota
+	MUCOccupantUpdate MUCEventType = iota
+	MUCOccupantJoin
 
-	MUCNotAuthorized
+	MUCNotAuthorized MUCEventErrorType = iota
 	MUCForbidden
 	MUCItemNotFound
 	MUCNotAllowed
@@ -40,8 +47,14 @@ const (
 	MUCServiceUnavailable
 )
 
-// MUCErrorEvent structure
-type MUCErrorEvent struct {
-	*MUC
-	Event EventType
+// MUC contains information related to MUC session event
+type MUC struct {
+	EventInfo interface{}
+	EventType MUCEventType
+}
+
+// MUCError contains information related to MUC-error session event
+type MUCError struct {
+	EventInfo MUCInfo
+	EventType MUCEventErrorType
 }

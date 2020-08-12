@@ -46,8 +46,8 @@ func (u *gtkUI) roomOccupantUpdatedOn(account *account, ev events.MUCOccupantUpd
 	u.log.Info("roomOccupantUpdatedOn")
 }
 
-func (u *gtkUI) roomOcuppantJoinFailedOn(account *account, ev events.MUCErrorEvent) {
-	from := jid.Parse(ev.From)
+func (u *gtkUI) roomOcuppantJoinFailedOn(account *account, ev events.MUCError) {
+	from := jid.Parse(ev.EventInfo.From)
 	ridwr, nickname := from.PotentialSplit()
 	rid := jid.Parse(ridwr.String()).(jid.Bare)
 	rv, _, err := u.getRoomView(rid, account)

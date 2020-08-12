@@ -15,11 +15,12 @@ func (s *session) isMUCPresence(stanza *data.ClientPresence) bool {
 	return stanza.MUC != nil
 }
 
-func (s *session) receivedMUCPresence(stanza *data.ClientPresence) bool {
+func (s *session) handleMUCPresence(stanza *data.ClientPresence) {
 	from := jid.Parse(stanza.From)
 	rid, nickname := from.PotentialSplit()
 
-	if stanza.MUCUser != nil {
+	switch {
+	case stanza.MUCUser != nil:
 		if stanza.MUCUser.Item != nil {
 			s.mucOccupantUpdate(rid.String(), string(nickname), stanza.MUCUser.Item.Affiliation, stanza.MUCUser.Item.Role)
 		}
@@ -35,11 +36,7 @@ func (s *session) receivedMUCPresence(stanza *data.ClientPresence) bool {
 				}
 			}
 		}
-
-		return true
 	}
-
-	return false
 }
 
 func (s *session) mucOccupantUpdate(rid, nickname, affiliation, role string) {

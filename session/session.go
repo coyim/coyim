@@ -292,7 +292,9 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		//"From" is how we are identified (will be JID/"some-id")
 		//Same thing happens for the group-chat, but in this case it tell us also what are our affiliations and roles.
 		//Thats why I'm worried about handling this as a regular peer presence - which is not.
-		if ok := s.receivedMUCPresence(stanza); !ok {
+		if s.isMUCPresence(stanza) {
+			s.handleMUCPresence(stanza)
+		} else {
 			s.publishEvent(events.Presence{
 				ClientPresence: stanza,
 				Gone:           false,

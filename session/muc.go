@@ -72,20 +72,26 @@ func (s *session) publishMUCEvent(e interface{}, t events.MUCEventType) {
 
 func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) bool {
 	for _, identity := range identities {
-		return identity.Category == "conference" && identity.Type == "text"
+		if identity.Category == "conference" && identity.Type == "text" {
+			return true
+		}
 	}
 	return false
+}
+
+func (s *session) hasSomeChatService(di data.DiscoveryItem) bool {
+	iq, err := s.conn.QueryServiceInformation(di.Jid)
+	if err != nil {
+		s.log.WithError(err).Error("Error getting the information query for the service:", di.Jid)
+		return false
+	}
+	return s.hasSomeConferenceService(iq.Identities)
 }
 
 func (s *session) filterOnlyChatServices(items *data.DiscoveryItemsQuery) []jid.Domain {
 	var chatServices []jid.Domain
 	for _, item := range items.DiscoveryItems {
-		iq, err := s.conn.QueryServiceInformation(item.Jid)
-		if err != nil {
-			s.log.WithError(err).Error("Error getting the information query for the service:", item.Jid)
-			continue
-		}
-		if iq != nil && s.hasSomeConferenceService(iq.Identities) {
+		if s.hasSomeChatService(item) {
 			chatServices = append(chatServices, jid.Parse(item.Jid).Host())
 		}
 	}

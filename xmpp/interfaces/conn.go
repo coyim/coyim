@@ -58,6 +58,7 @@ type Conn interface {
 
 	HasSupportTo(entity string, features ...string) bool
 
-	QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, *data.ClientIQ, error)
+	QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error)
 	QueryServiceItems(entity string) (*data.DiscoveryItemsQuery, error)
+	CheckQueryServiceInformation(entity string) (bool, error)
 }

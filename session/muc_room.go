@@ -18,13 +18,13 @@ func (s *session) JoinRoom(rj jid.Bare, nickName string) {
 func (s *session) HasRoom(rj jid.Bare) <-chan bool {
 	result := make(chan bool, 1)
 	go func() {
-		_, iq, e := s.Conn().QueryServiceInformation(rj.String())
-		if iq.Type == "error" && e != nil {
-			s.log.WithError(e).Debug("HasRoom() had an error")
-			result <- false
-			return
+		r, err := s.Conn().CheckQueryServiceInformation(rj.String())
+		if !r {
+			if err != nil {
+				s.log.WithError(err).Debug("HasRoom() had an error")
+			}
 		}
-		result <- true
+		result <- r
 	}()
 	return result
 }

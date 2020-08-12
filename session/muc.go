@@ -86,7 +86,7 @@ func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) 
 func (s *session) filterOnlyChatServices(items *data.DiscoveryItemsQuery) []string {
 	chatServices := make([]string, 0)
 	for _, item := range items.DiscoveryItems {
-		iq, _, err := s.conn.QueryServiceInformation(item.Jid)
+		iq, err := s.conn.QueryServiceInformation(item.Jid)
 		if err != nil {
 			s.log.WithError(err).Error("Error getting the information query for the service:", item.Jid)
 			continue

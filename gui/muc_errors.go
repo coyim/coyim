@@ -29,7 +29,7 @@ func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUCError, a *account) {
 }
 
 func (u *gtkUI) handleErrorMUCConflictEvent(a *account, ev events.MUCError) {
-	u.log.WithField("Event", ev).Debug("handleErrorMUCConflictEvent")
+	a.log.WithField("Event", ev).Debug("handleErrorMUCConflictEvent")
 	a.log.WithFields(log.Fields{
 		"from": ev.EventInfo.From,
 	}).Info("Nickname conflict received")

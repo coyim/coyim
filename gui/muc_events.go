@@ -19,7 +19,7 @@ func (u *gtkUI) handleOneMUCRoomEvent(ev events.MUC, a *account) {
 }
 
 func (u *gtkUI) handleMUCUpdatedEvent(ev events.MUCOccupantUpdated, a *account) {
-	u.log.WithField("Event", ev).Debug("handleMUCUpdatedEvent")
+	a.log.WithField("Event", ev).Debug("handleMUCUpdatedEvent")
 }
 
 func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, a *account) {

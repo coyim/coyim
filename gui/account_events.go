@@ -53,8 +53,6 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
 			u.handleOneMUCErrorEvent(t, a)
 		})
 	default:
-		// TODO: maybe can be a good idea if we can ask if "t" is
-		// a known MUC event type, if not log an error as usual
 		a.log.WithField("event", t).Warn("unsupported event")
 	}
 }

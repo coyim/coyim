@@ -5,21 +5,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (u *gtkUI) handleOneMUCRoomEvent(ev interface{}, a *account) {
-	switch t := ev.(type) {
+func (u *gtkUI) handleOneMUCRoomEvent(ev events.MUC, a *account) {
+	switch t := ev.EventInfo.(type) {
 	case events.MUCOccupantJoined:
-		doInUIThread(func() {
-			u.handleMUCJoinedEvent(t, a)
-		})
+		u.handleMUCJoinedEvent(t, a)
 	case events.MUCOccupantUpdated:
-		doInUIThread(func() {
-			u.handleMUCUpdatedEvent(t, a)
-		})
-	// Handling Errors
-	case events.MUCErrorEvent:
-		doInUIThread(func() {
-			u.handleMUCErrorEvent(t, a)
-		})
+		u.handleMUCUpdatedEvent(t, a)
 	default:
 		u.log.WithField("event", t).Warn("unsupported event")
 	}

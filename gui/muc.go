@@ -15,14 +15,7 @@ func (u *gtkUI) getRoomView(rid jid.Bare, account *account) (*roomView, *muc.Roo
 		return nil, nil, errors.New("The rooms doesn't exists")
 	}
 
-	if room.Opaque == nil {
-		panic("developer error: trying to get an undefined view from room")
-	}
-
-	rv, ok := room.Opaque.(*roomView)
-	if !ok {
-		panic("developer error: failed parsing room view into room.Opaque")
-	}
+	rv := room.Opaque.(*roomView)
 
 	return rv, room, nil
 }

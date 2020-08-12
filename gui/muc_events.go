@@ -26,13 +26,12 @@ func (u *gtkUI) handleOneMUCRoomEvent(ev interface{}, a *account) {
 }
 
 func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, a *account) {
-
 	a.log.WithFields(log.Fields{
 		"from":        ev.From,
 		"nickname":    ev.Nickname,
 		"affiliation": ev.Affiliation,
 		"role":        ev.Role,
-	}).Info("Room Joined event received")
+	}).Debug("Room Joined event received")
 
 	u.roomOcuppantJoinedOn(a, ev)
 }

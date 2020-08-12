@@ -185,6 +185,16 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 	c.Assert(hook.LastEntry().Data["stanza"], Equals, "bad horse showed up")
 }
 
+func checkLogHasAny(hook *test.Hook, level log.Level, message string) *log.Entry {
+	for _, e := range hook.Entries {
+		if e.Level == level && e.Message == message {
+			return &e
+		}
+	}
+
+	return nil
+}
+
 func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C) {
 	mockIn := &mockConnIOReaderWriter{read: []byte("<stream:error xmlns:stream='http://etherx.jabber.org/streams'><not-well-formed xmlns='urn:ietf:params:xml:ns:xmpp-streams'/></stream:error>")}
 	l, hook := test.NewNullLogger()
@@ -205,10 +215,9 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withEmbeddedTag(c *C
 
 	sess.watchStanzas()
 
-	c.Assert(len(hook.Entries), Equals, 2)
-	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
-	c.Assert(hook.LastEntry().Message, Equals, "Exiting in response to fatal error from server")
-	c.Assert(hook.LastEntry().Data["stanza"], Equals, "{urn:ietf:params:xml:ns:xmpp-streams not-well-formed}")
+	e := checkLogHasAny(hook, log.ErrorLevel, "Exiting in response to fatal error from server")
+	c.Assert(e, Not(IsNil))
+	c.Assert(e.Data["stanza"], Equals, "{urn:ietf:params:xml:ns:xmpp-streams not-well-formed}")
 }
 
 func (s *SessionSuite) Test_WatchStanzas_receivesAMessage(c *C) {
@@ -268,9 +277,9 @@ func (s *SessionSuite) Test_WatchStanzas_failsOnUnrecognizedIQ(c *C) {
 
 	sess.watchStanzas()
 
-	c.Assert(hook.LastEntry().Level, Equals, log.InfoLevel)
-	c.Assert(hook.LastEntry().Message, Equals, "unrecognized iq")
-	c.Assert(hook.LastEntry().Data["stanza"], DeepEquals, &data.ClientIQ{XMLName: xml.Name{Space: "jabber:client", Local: "iq"}, Type: "something", Query: []uint8{}})
+	e := checkLogHasAny(hook, log.InfoLevel, "unrecognized iq")
+	c.Assert(e, Not(IsNil))
+	c.Assert(e.Data["stanza"], DeepEquals, &data.ClientIQ{XMLName: xml.Name{Space: "jabber:client", Local: "iq"}, Type: "something", Query: []uint8{}})
 }
 
 func (s *SessionSuite) Test_WatchStanzas_getsDiscoInfoIQ(c *C) {
@@ -382,9 +391,8 @@ func (s *SessionSuite) Test_WatchStanzas_getsUnknown(c *C) {
 
 	sess.watchStanzas()
 
-	c.Assert(len(hook.Entries), Equals, 2)
-	c.Assert(hook.LastEntry().Level, Equals, log.InfoLevel)
-	c.Assert(hook.LastEntry().Message, Equals, "Unknown IQ: <query xmlns='jabber:iq:somethingStrange'/>")
+	e := checkLogHasAny(hook, log.InfoLevel, "Unknown IQ: <query xmlns='jabber:iq:somethingStrange'/>")
+	c.Assert(e, Not(IsNil))
 }
 
 func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withBadFrom(c *C) {

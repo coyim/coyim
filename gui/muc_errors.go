@@ -8,23 +8,23 @@ import (
 func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUCError, a *account) {
 	switch ev.EventType {
 	case events.MUCNotAuthorized:
-		u.log.WithField("account", a).Debug("MUC Error NotAuthorized received")
+		a.log.WithField("account", a).Debug("MUC Error NotAuthorized received")
 	case events.MUCForbidden:
-		u.log.WithField("account", a).Debug("MUC Error MUCForbidden received")
+		a.log.WithField("account", a).Debug("MUC Error MUCForbidden received")
 	case events.MUCItemNotFound:
-		u.log.WithField("account", a).Debug("MUC Error MUCItemNotFound received")
+		a.log.WithField("account", a).Debug("MUC Error MUCItemNotFound received")
 	case events.MUCNotAllowed:
-		u.log.WithField("account", a).Debug("MUC Error MUCNotAllowed received")
+		a.log.WithField("account", a).Debug("MUC Error MUCNotAllowed received")
 	case events.MUCNotAceptable:
-		u.log.WithField("account", a).Debug("MUC Error MUCNotAceptable received")
+		a.log.WithField("account", a).Debug("MUC Error MUCNotAceptable received")
 	case events.MUCRegistrationRequired:
-		u.log.WithField("account", a).Debug("MUC Error MUCRegistrationRequired received")
+		a.log.WithField("account", a).Debug("MUC Error MUCRegistrationRequired received")
 	case events.MUCConflict:
 		u.handleErrorMUCConflictEvent(a, ev)
 	case events.MUCServiceUnavailable:
-		u.log.WithField("account", a).Debug("MUC Error MUCServiceUnavailable received")
+		a.log.WithField("account", a).Debug("MUC Error MUCServiceUnavailable received")
 	default:
-		u.log.WithField("event", ev).Warn("unsupported event")
+		a.log.WithField("event", ev).Warn("unsupported event")
 	}
 }
 

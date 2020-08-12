@@ -455,9 +455,8 @@ func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_withFromContainingJid(c *
 
 	sess.watchStanzas()
 
-	c.Assert(len(hook.Entries), Equals, 3)
-	c.Assert(hook.LastEntry().Level, Equals, log.WarnLevel)
-	c.Assert(hook.LastEntry().Message, Equals, "Failed to parse roster push IQ")
+	e := checkLogHasAny(hook, log.WarnLevel, "Failed to parse roster push IQ")
+	c.Assert(e, Not(IsNil))
 }
 
 func (s *SessionSuite) Test_WatchStanzas_iq_set_roster_addsANewRosterItem(c *C) {

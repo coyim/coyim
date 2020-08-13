@@ -44,6 +44,6 @@ func (u *gtkUI) roomOcuppantJoinFailedOn(a *account, ev events.MUCError) {
 	if err != nil {
 		a.log.WithError(err).Debug()
 	}
-	err = muc.NewNicknameConflictError(nickname).GetError()
+	err = muc.NewNicknameConflictError(nickname).New()
 	rv.roomOcuppantJoinedOn(err)
 }

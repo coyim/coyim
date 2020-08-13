@@ -36,7 +36,7 @@ func (u *gtkUI) roomOcuppantJoinedOn(a *account, ev events.MUCOccupantJoined) {
 
 func (u *gtkUI) roomOccupantUpdatedOn(a *account, ev events.MUCOccupantUpdated) {
 	//TODO: Implements the actions to do when a Occupant presence is received
-	a.log.Info("roomOccupantUpdatedOn")
+	a.log.Debug("roomOccupantUpdatedOn")
 }
 
 func (u *gtkUI) roomOcuppantJoinFailedOn(a *account, ev events.MUCError) {

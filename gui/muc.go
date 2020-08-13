@@ -3,8 +3,7 @@ package gui
 import (
 	"errors"
 
-	"github.com/coyim/coyim/i18n"
-
+	cerrors "github.com/coyim/coyim/session/errors"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -46,6 +45,6 @@ func (u *gtkUI) roomOcuppantJoinFailedOn(a *account, ev events.MUCError) {
 	if err != nil {
 		a.log.WithError(err).Debug()
 	}
-	errorMessage := i18n.Localf("Nickname conflict, can't join to the room using \"%s\"", nickname)
-	rv.roomOcuppantJoinedOn(errors.New(errorMessage))
+	err = cerrors.NewNicknameConflictError(nickname).GetError()
+	rv.roomOcuppantJoinedOn(err)
 }

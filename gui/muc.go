@@ -3,7 +3,6 @@ package gui
 import (
 	"errors"
 
-	cerrors "github.com/coyim/coyim/session/errors"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -45,6 +44,6 @@ func (u *gtkUI) roomOcuppantJoinFailedOn(a *account, ev events.MUCError) {
 	if err != nil {
 		a.log.WithError(err).Debug()
 	}
-	err = cerrors.NewNicknameConflictError(nickname).GetError()
+	err = muc.NewNicknameConflictError(nickname).GetError()
 	rv.roomOcuppantJoinedOn(err)
 }

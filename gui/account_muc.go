@@ -19,7 +19,7 @@ func (a *account) getRoomView(rid jid.Bare) (*roomView, *muc.Room, error) {
 	return rv, room, nil
 }
 
-func (a *account) roomOccupantJoinedOn(ev events.MUCOccupantJoined) {
+func (a *account) enrollNewOccupantRoomEvent(ev events.MUCOccupantJoined) {
 	rid := ev.From
 	rv, room, err := a.getRoomView(rid)
 	if err != nil {
@@ -29,15 +29,15 @@ func (a *account) roomOccupantJoinedOn(ev events.MUCOccupantJoined) {
 	fjid := ev.From.WithResource(jid.Resource(ev.Nickname))
 	realjid := ev.Jid
 	room.Roster().UpdatePresence(fjid, "", ev.Affiliation, ev.Role, "", ev.Status, "Room Joined", realjid)
-	rv.roomOccupantJoinedOn(err)
+	rv.processOccupantJoinedEvent(err)
 }
 
-func (a *account) roomOccupantUpdatedOn(ev events.MUCOccupantUpdated) {
+func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
 	//TODO: Implements the actions to do when a Occupant presence is received
-	a.log.Debug("roomOccupantUpdatedOn")
+	a.log.Debug("updateOccupantRoomEvent")
 }
 
-func (a *account) roomOccupantJoinFailedOn(ev events.MUCError) {
+func (a *account) errorNewOccupantRoomEvent(ev events.MUCError) {
 	ridwr, nickname := ev.EventInfo.From.PotentialSplit()
 	rid := ridwr.(jid.Bare)
 	rv, _, err := a.getRoomView(rid)
@@ -45,5 +45,5 @@ func (a *account) roomOccupantJoinFailedOn(ev events.MUCError) {
 		a.log.WithError(err).Debug()
 	}
 	err = muc.NewNicknameConflictError(nickname).New()
-	rv.roomOccupantJoinedOn(err)
+	rv.processOccupantJoinedEvent(err)
 }

@@ -144,7 +144,7 @@ func (rv *roomView) onRoomJoinClicked() {
 	}()
 }
 
-func (rv *roomView) roomOccupantJoinedOn(err error) {
+func (rv *roomView) processOccupantJoinedEvent(err error) {
 	if err != nil {
 		rv.account.log.WithError(err).Debug("Room join event received")
 		rv.lastErrorMessage = err.Error()

@@ -33,5 +33,5 @@ func (u *gtkUI) handleErrorMUCConflictEvent(a *account, ev events.MUCError) {
 		"from": ev.EventInfo.From,
 	}).Debug("Nickname conflict event received")
 
-	a.roomOccupantJoinFailedOn(ev)
+	a.errorNewOccupantRoomEvent(ev)
 }

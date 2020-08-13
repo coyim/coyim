@@ -57,8 +57,13 @@ type MUC struct {
 	EventType MUCEventType
 }
 
+// MUCInfoError description
+type MUCInfoError struct {
+	From jid.WithResource
+}
+
 // MUCError contains information related to MUC-error session event
 type MUCError struct {
-	EventInfo MUCInfo
+	EventInfo MUCInfoError
 	EventType MUCEventErrorType
 }

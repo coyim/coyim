@@ -7,9 +7,10 @@ import (
 )
 
 func (s *session) publishMUCError(stanza *data.ClientPresence) {
+	from := jid.Parse(stanza.From).(jid.WithResource)
 	e := events.MUCError{}
-	e.EventInfo = events.MUCInfo{
-		From: jid.Parse(stanza.From).(jid.Bare),
+	e.EventInfo = events.MUCInfoError{
+		From: from,
 	}
 
 	switch {

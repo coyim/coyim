@@ -30,5 +30,5 @@ func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, a *account) {
 		"role":        ev.Role,
 	}).Debug("Room Joined event received")
 
-	u.roomOcuppantJoinedOn(a, ev)
+	a.roomOccupantJoinedOn(ev)
 }

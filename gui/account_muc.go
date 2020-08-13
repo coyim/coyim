@@ -8,8 +8,8 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (u *gtkUI) getRoomView(rid jid.Bare, account *account) (*roomView, *muc.Room, error) {
-	room, exists := account.roomManager.GetRoom(rid)
+func (a *account) getRoomView(rid jid.Bare) (*roomView, *muc.Room, error) {
+	room, exists := a.roomManager.GetRoom(rid)
 	if !exists {
 		return nil, nil, errors.New("The rooms doesn't exists")
 	}
@@ -19,9 +19,9 @@ func (u *gtkUI) getRoomView(rid jid.Bare, account *account) (*roomView, *muc.Roo
 	return rv, room, nil
 }
 
-func (u *gtkUI) roomOcuppantJoinedOn(a *account, ev events.MUCOccupantJoined) {
+func (a *account) roomOccupantJoinedOn(ev events.MUCOccupantJoined) {
 	rid := ev.From
-	rv, room, err := u.getRoomView(rid, a)
+	rv, room, err := a.getRoomView(rid)
 	if err != nil {
 		a.log.WithError(err).Debug()
 	}
@@ -29,21 +29,21 @@ func (u *gtkUI) roomOcuppantJoinedOn(a *account, ev events.MUCOccupantJoined) {
 	fjid := ev.From.WithResource(jid.Resource(ev.Nickname))
 	realjid := ev.Jid
 	room.Roster().UpdatePresence(fjid, "", ev.Affiliation, ev.Role, "", ev.Status, "Room Joined", realjid)
-	rv.roomOcuppantJoinedOn(err)
+	rv.roomOccupantJoinedOn(err)
 }
 
-func (u *gtkUI) roomOccupantUpdatedOn(a *account, ev events.MUCOccupantUpdated) {
+func (a *account) roomOccupantUpdatedOn(ev events.MUCOccupantUpdated) {
 	//TODO: Implements the actions to do when a Occupant presence is received
 	a.log.Debug("roomOccupantUpdatedOn")
 }
 
-func (u *gtkUI) roomOcuppantJoinFailedOn(a *account, ev events.MUCError) {
+func (a *account) roomOccupantJoinFailedOn(ev events.MUCError) {
 	ridwr, nickname := ev.EventInfo.From.PotentialSplit()
 	rid := ridwr.(jid.Bare)
-	rv, _, err := u.getRoomView(rid, a)
+	rv, _, err := a.getRoomView(rid)
 	if err != nil {
 		a.log.WithError(err).Debug()
 	}
 	err = muc.NewNicknameConflictError(nickname).New()
-	rv.roomOcuppantJoinedOn(err)
+	rv.roomOccupantJoinedOn(err)
 }

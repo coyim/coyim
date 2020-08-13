@@ -144,9 +144,9 @@ func (rv *roomView) onRoomJoinClicked() {
 	}()
 }
 
-func (rv *roomView) roomOcuppantJoinedOn(err error) {
+func (rv *roomView) roomOccupantJoinedOn(err error) {
 	if err != nil {
-		rv.account.log.WithError(err).Info("Room join event received")
+		rv.account.log.WithError(err).Debug("Room join event received")
 		rv.lastErrorMessage = err.Error()
 		rv.onJoin <- false
 		return
@@ -161,7 +161,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 		log.Fatal(err.Error())
 		return
 	}
-	view, _, _ := u.getRoomView(ident, a)
+	view, _, _ := a.getRoomView(ident)
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{

@@ -17,31 +17,33 @@ func (s *session) isMUCPresence(stanza *data.ClientPresence) bool {
 
 func (s *session) handleMUCPresence(stanza *data.ClientPresence) {
 	from := jid.Parse(stanza.From)
-	rid, nickname := from.PotentialSplit()
+	ridwr, nr := from.PotentialSplit()
+	rid := ridwr.(jid.Bare)
+	nickname := string(nr)
 
 	switch {
 	case stanza.MUCUser != nil:
 		if stanza.MUCUser.Item != nil {
-			s.mucOccupantUpdate(rid.String(), string(nickname), stanza.MUCUser.Item.Affiliation, stanza.MUCUser.Item.Role)
+			s.mucOccupantUpdate(rid, nickname, stanza.MUCUser.Item.Affiliation, stanza.MUCUser.Item.Role)
 		}
 
 		if len(stanza.MUCUser.Status) > 0 {
 			affiliation := stanza.MUCUser.Item.Affiliation
-			realjid := stanza.MUCUser.Item.Jid
+			realjid := jid.Parse(stanza.MUCUser.Item.Jid).(jid.WithResource)
 			role := stanza.MUCUser.Item.Role
 			for _, status := range stanza.MUCUser.Status {
 				switch status.Code {
 				case MUCStatusPresenceJoined:
-					s.mucOccupantJoined(rid.String(), string(nickname), affiliation, realjid, role, status.Code, true)
+					s.mucOccupantJoined(rid, realjid, nickname, affiliation, role, status.Code, true)
 				}
 			}
 		}
 	}
 }
 
-func (s *session) mucOccupantUpdate(rid, nickname, affiliation, role string) {
+func (s *session) mucOccupantUpdate(rid jid.Bare, nickname, affiliation, role string) {
 	ev := events.MUCOccupantUpdated{}
-	ev.From = jid.Parse(rid).(jid.Bare)
+	ev.From = rid
 	ev.Nickname = nickname
 	ev.Affiliation = affiliation
 	ev.Role = role
@@ -49,12 +51,12 @@ func (s *session) mucOccupantUpdate(rid, nickname, affiliation, role string) {
 	s.publishMUCEvent(ev, events.MUCOccupantUpdate)
 }
 
-func (s *session) mucOccupantJoined(rid, nickname, affiliation, realjid, role, status string, v bool) {
+func (s *session) mucOccupantJoined(rid jid.Bare, realjid jid.WithResource, nickname, affiliation, role, status string, v bool) {
 	ev := events.MUCOccupantJoined{}
-	ev.From = jid.Parse(rid).(jid.Bare)
+	ev.From = rid
 	ev.Nickname = nickname
 	ev.Affiliation = affiliation
-	ev.Jid = jid.Parse(realjid).(jid.WithResource)
+	ev.Jid = realjid
 	ev.Role = role
 	ev.Status = status
 	ev.Joined = v

@@ -1,8 +1,12 @@
 package events
 
+import (
+	"github.com/coyim/coyim/xmpp/jid"
+)
+
 // MUCInfo description
 type MUCInfo struct {
-	From string
+	From jid.Bare
 }
 
 // MUCOccupant description
@@ -14,7 +18,7 @@ type MUCOccupant struct {
 // MUCOccupantJoined description
 type MUCOccupantJoined struct {
 	MUCOccupantUpdated
-	Jid    string
+	Jid    jid.WithResource
 	Status string
 	Joined bool
 }

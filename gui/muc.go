@@ -2,7 +2,8 @@ package gui
 
 import (
 	"errors"
-	"fmt"
+
+	"github.com/coyim/coyim/i18n"
 
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
@@ -20,33 +21,31 @@ func (u *gtkUI) getRoomView(rid jid.Bare, account *account) (*roomView, *muc.Roo
 	return rv, room, nil
 }
 
-func (u *gtkUI) roomOcuppantJoinedOn(account *account, ev events.MUCOccupantJoined) {
-	rid := jid.Parse(ev.From).(jid.Bare)
-	rv, room, err := u.getRoomView(rid, account)
+func (u *gtkUI) roomOcuppantJoinedOn(a *account, ev events.MUCOccupantJoined) {
+	rid := ev.From
+	rv, room, err := u.getRoomView(rid, a)
 	if err != nil {
-		account.log.WithError(err)
+		a.log.WithError(err).Debug()
 	}
 	// Updating the room occupant in the room manager
-	from := fmt.Sprintf("%s/%s", ev.From, ev.Nickname)
-	fjid := jid.Parse(from).(jid.WithResource)
-	rjid := jid.Parse(ev.Jid).(jid.WithResource)
-	room.Roster().UpdatePresence(fjid, "", ev.Affiliation, ev.Role, "", ev.Status, "Room Joined", rjid)
+	fjid := ev.From.WithResource(jid.Resource(ev.Nickname))
+	realjid := ev.Jid
+	room.Roster().UpdatePresence(fjid, "", ev.Affiliation, ev.Role, "", ev.Status, "Room Joined", realjid)
 	rv.roomOcuppantJoinedOn(err)
 }
 
-func (u *gtkUI) roomOccupantUpdatedOn(account *account, ev events.MUCOccupantUpdated) {
+func (u *gtkUI) roomOccupantUpdatedOn(a *account, ev events.MUCOccupantUpdated) {
 	//TODO: Implements the actions to do when a Occupant presence is received
-	u.log.Info("roomOccupantUpdatedOn")
+	a.log.Info("roomOccupantUpdatedOn")
 }
 
-func (u *gtkUI) roomOcuppantJoinFailedOn(account *account, ev events.MUCError) {
-	from := jid.Parse(ev.EventInfo.From)
-	ridwr, nickname := from.PotentialSplit()
-	rid := jid.Parse(ridwr.String()).(jid.Bare)
-	rv, _, err := u.getRoomView(rid, account)
+func (u *gtkUI) roomOcuppantJoinFailedOn(a *account, ev events.MUCError) {
+	ridwr, nickname := ev.EventInfo.From.PotentialSplit()
+	rid := ridwr.(jid.Bare)
+	rv, _, err := u.getRoomView(rid, a)
 	if err != nil {
-		account.log.WithError(err)
+		a.log.WithError(err).Debug()
 	}
-	errorMessage := fmt.Sprintf("Nickname conflict, can't join to the room using \"%s\"", nickname)
+	errorMessage := i18n.Localf("Nickname conflict, can't join to the room using \"%s\"", nickname)
 	rv.roomOcuppantJoinedOn(errors.New(errorMessage))
 }

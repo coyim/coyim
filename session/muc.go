@@ -27,12 +27,12 @@ func (s *session) handleMUCPresence(stanza *data.ClientPresence) {
 
 		if len(stanza.MUCUser.Status) > 0 {
 			affiliation := stanza.MUCUser.Item.Affiliation
-			jid := stanza.MUCUser.Item.Jid
+			realjid := stanza.MUCUser.Item.Jid
 			role := stanza.MUCUser.Item.Role
 			for _, status := range stanza.MUCUser.Status {
 				switch status.Code {
 				case MUCStatusPresenceJoined:
-					s.mucOccupantJoined(rid.String(), string(nickname), affiliation, jid, role, status.Code, true)
+					s.mucOccupantJoined(rid.String(), string(nickname), affiliation, realjid, role, status.Code, true)
 				}
 			}
 		}
@@ -41,7 +41,7 @@ func (s *session) handleMUCPresence(stanza *data.ClientPresence) {
 
 func (s *session) mucOccupantUpdate(rid, nickname, affiliation, role string) {
 	ev := events.MUCOccupantUpdated{}
-	ev.From = rid
+	ev.From = jid.Parse(rid).(jid.Bare)
 	ev.Nickname = nickname
 	ev.Affiliation = affiliation
 	ev.Role = role
@@ -49,12 +49,12 @@ func (s *session) mucOccupantUpdate(rid, nickname, affiliation, role string) {
 	s.publishMUCEvent(ev, events.MUCOccupantUpdate)
 }
 
-func (s *session) mucOccupantJoined(rid, nickname, affiliation, jid, role, status string, v bool) {
+func (s *session) mucOccupantJoined(rid, nickname, affiliation, realjid, role, status string, v bool) {
 	ev := events.MUCOccupantJoined{}
-	ev.From = rid
+	ev.From = jid.Parse(rid).(jid.Bare)
 	ev.Nickname = nickname
 	ev.Affiliation = affiliation
-	ev.Jid = jid
+	ev.Jid = jid.Parse(realjid).(jid.WithResource)
 	ev.Role = role
 	ev.Status = status
 	ev.Joined = v

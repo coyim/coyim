@@ -3,12 +3,13 @@ package session
 import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/xmpp/jid"
 )
 
 func (s *session) publishMUCError(stanza *data.ClientPresence) {
 	e := events.MUCError{}
 	e.EventInfo = events.MUCInfo{
-		From: stanza.From,
+		From: jid.Parse(stanza.From).(jid.Bare),
 	}
 
 	switch {

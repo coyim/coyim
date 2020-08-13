@@ -91,20 +91,31 @@ func (v *createMUCRoom) updateChatServices(ac *account) {
 	enteredService, _ := v.chatServiceEntry.GetText()
 	v.chatServices.RemoveAll()
 
-	cs, err := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
+	csc, ec := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
+	go func() {
+		err, ok := <-ec
+		if !ok {
+			return
+		}
 
-	if err != nil {
-		v.u.log.WithError(err).Debug("something went wrong trying to get chat services")
-		return
-	}
+		if err != nil {
+			v.u.log.WithError(err).Debug("something went wrong trying to get chat services")
+			return
+		}
 
-	for _, i := range cs {
-		v.chatServices.AppendText(string(i))
-	}
+		cs, ok := <-csc
+		if !ok {
+			return
+		}
 
-	if len(cs) > 0 && enteredService == "" {
-		v.chatServices.SetActive(0)
-	}
+		for _, i := range cs {
+			v.chatServices.AppendText(string(i))
+		}
+
+		if len(cs) > 0 && enteredService == "" {
+			v.chatServices.SetActive(0)
+		}
+	}()
 }
 
 func (v *createMUCRoom) updateFields(f bool) {

@@ -100,11 +100,24 @@ func (s *session) filterOnlyChatServices(items *data.DiscoveryItemsQuery) []jid.
 	return chatServices
 }
 
-//GetChatServices offers the chat services from a xmpp server.
-func (s *session) GetChatServices(server jid.Domain) ([]jid.Domain, error) {
+func (s *session) getChatServices(server jid.Domain, csc chan<- []jid.Domain, ec chan<- error) {
+	defer func() {
+		close(csc)
+		close(ec)
+	}()
 	items, err := s.conn.QueryServiceItems(server.String())
 	if err != nil {
-		return nil, err
+		ec <- err
+		return
 	}
-	return s.filterOnlyChatServices(items), nil
+	ec <- nil
+	csc <- s.filterOnlyChatServices(items)
+}
+
+//GetChatServices offers the chat services from a xmpp server.
+func (s *session) GetChatServices(server jid.Domain) (<-chan []jid.Domain, <-chan error) {
+	ec := make(chan error)
+	csc := make(chan []jid.Domain)
+	go s.getChatServices(server, csc, ec)
+	return csc, ec
 }

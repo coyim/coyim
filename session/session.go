@@ -88,6 +88,8 @@ type session struct {
 	eventsReachedZero chan bool
 
 	resource string
+
+	doneBadStanza chan<- bool
 }
 
 // GetInMemoryLog returns the in memory log or nil
@@ -404,6 +406,9 @@ func (s *session) watchStanzas() {
 func (s *session) readStanzasAndAlertOnErrors(stanzaChan chan data.Stanza) {
 	if err := s.conn.ReadStanzas(stanzaChan); err != nil {
 		s.log.WithError(err).Error("error reading XMPP message")
+	}
+	if s.doneBadStanza != nil {
+		s.doneBadStanza <- true
 	}
 }
 

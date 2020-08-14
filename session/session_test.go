@@ -89,8 +89,12 @@ func (s *SessionSuite) Test_WatchStanzas_warnsAndExitsOnBadStanza(c *C) {
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 1)
 	sess.eventsReachedZero = eventsDone
+	done := make(chan bool)
+	sess.doneBadStanza = done
 
 	sess.watchStanzas()
+
+	<-done
 
 	c.Assert(len(hook.Entries), Equals, 1)
 	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)

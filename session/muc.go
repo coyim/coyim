@@ -19,7 +19,7 @@ func (s *session) handleMUCPresence(stanza *data.ClientPresence) {
 	from := jid.Parse(stanza.From)
 	ridwr, nr := from.PotentialSplit()
 	rid := ridwr.(jid.Bare)
-	nickname := string(nr)
+	nickname := nr.String()
 
 	switch {
 	case stanza.MUCUser != nil:

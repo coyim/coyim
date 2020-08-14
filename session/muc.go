@@ -1,6 +1,8 @@
 package session
 
 import (
+	"sync"
+
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -90,34 +92,62 @@ func (s *session) hasSomeChatService(di data.DiscoveryItem) bool {
 	return s.hasSomeConferenceService(iq.Identities)
 }
 
-func (s *session) filterOnlyChatServices(items *data.DiscoveryItemsQuery) []jid.Domain {
-	var chatServices []jid.Domain
-	for _, item := range items.DiscoveryItems {
-		if s.hasSomeChatService(item) {
-			chatServices = append(chatServices, jid.Parse(item.Jid).Host())
-		}
-	}
-	return chatServices
+type chatServiceReceivalContext struct {
+	sync.RWMutex
+
+	resultsChannel chan jid.Domain
+	errorChannel   chan error
+
+	s *session
 }
 
-func (s *session) getChatServices(server jid.Domain, csc chan<- []jid.Domain, ec chan<- error) {
-	defer func() {
-		close(csc)
-		close(ec)
-	}()
-	items, err := s.conn.QueryServiceItems(server.String())
+func (c *chatServiceReceivalContext) end() {
+	c.Lock()
+	defer c.Unlock()
+	if c.resultsChannel != nil {
+		close(c.resultsChannel)
+		close(c.errorChannel)
+		c.resultsChannel = nil
+		c.errorChannel = nil
+	}
+}
+
+func (s *session) createChatServiceReceivalContext() *chatServiceReceivalContext {
+	result := &chatServiceReceivalContext{}
+
+	result.resultsChannel = make(chan jid.Domain)
+	result.errorChannel = make(chan error)
+	result.s = s
+
+	return result
+}
+
+func (c *chatServiceReceivalContext) fetchChatServices(server jid.Domain) {
+	defer c.end()
+	items, err := c.s.conn.QueryServiceItems(server.String())
 	if err != nil {
-		ec <- err
+		c.RLock()
+		defer c.RUnlock()
+		if c.errorChannel != nil {
+			c.errorChannel <- err
+		}
 		return
 	}
-	ec <- nil
-	csc <- s.filterOnlyChatServices(items)
+	for _, item := range items.DiscoveryItems {
+		if c.s.hasSomeChatService(item) {
+			c.RLock()
+			defer c.RUnlock()
+			if c.resultsChannel == nil {
+				return
+			}
+			c.resultsChannel <- jid.Parse(item.Jid).Host()
+		}
+	}
 }
 
 //GetChatServices offers the chat services from a xmpp server.
-func (s *session) GetChatServices(server jid.Domain) (<-chan []jid.Domain, <-chan error) {
-	ec := make(chan error)
-	csc := make(chan []jid.Domain)
-	go s.getChatServices(server, csc, ec)
-	return csc, ec
+func (s *session) GetChatServices(server jid.Domain) (<-chan jid.Domain, <-chan error, func()) {
+	ctx := s.createChatServiceReceivalContext()
+	go ctx.fetchChatServices(server)
+	return ctx.resultsChannel, ctx.errorChannel, ctx.end
 }

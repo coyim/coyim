@@ -2,7 +2,6 @@ package gui
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -15,16 +14,16 @@ type createMUCRoom struct {
 
 	gtki.Dialog `gtk-widget:"create-chat-dialog"`
 
-	notification         gtki.InfoBar
-	notificationArea     gtki.Box          `gtk-widget:"notification-area"`
-	account              gtki.ComboBox     `gtk-widget:"accounts"`
-	chatServices         gtki.ComboBoxText `gtk-widget:"chatServices"`
-	chatServiceEntry     gtki.Entry        `gtk-widget:"chatServiceEntry"`
-	room                 gtki.Entry        `gtk-widget:"room"`
-	cancelButton         gtki.Button       `gtk-widget:"button-cancel"`
-	createButton         gtki.Button       `gtk-widget:"button-ok"`
-	createButtonPrevText string
-	servicesMutex        sync.Mutex
+	notification          gtki.InfoBar
+	notificationArea      gtki.Box          `gtk-widget:"notification-area"`
+	account               gtki.ComboBox     `gtk-widget:"accounts"`
+	chatServices          gtki.ComboBoxText `gtk-widget:"chatServices"`
+	chatServiceEntry      gtki.Entry        `gtk-widget:"chatServiceEntry"`
+	room                  gtki.Entry        `gtk-widget:"room"`
+	cancelButton          gtki.Button       `gtk-widget:"button-cancel"`
+	createButton          gtki.Button       `gtk-widget:"button-ok"`
+	createButtonPrevText  string
+	previousUpdateChannel chan bool
 
 	u *gtkUI
 }
@@ -85,35 +84,49 @@ func (u *gtkUI) newMUCRoomView() *createMUCRoom {
 }
 
 func (v *createMUCRoom) updateChatServices(ac *account) {
-	v.servicesMutex.Lock()
-	defer v.servicesMutex.Unlock()
+	if v.previousUpdateChannel != nil {
+		v.previousUpdateChannel <- true
+	}
+
+	v.previousUpdateChannel = make(chan bool)
 
 	enteredService, _ := v.chatServiceEntry.GetText()
 	v.chatServices.RemoveAll()
 
-	csc, ec := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
+	csc, ec, endEarly := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
 	go func() {
-		err, ok := <-ec
-		if !ok {
-			return
-		}
+		hadAny := false
+		defer func() {
+			if hadAny && enteredService == "" {
+				doInUIThread(func() {
+					v.chatServices.SetActive(0)
+				})
+			}
+			v.previousUpdateChannel = nil
+		}()
+		for {
+			select {
+			case <-v.previousUpdateChannel:
+				doInUIThread(func() {
+					v.chatServices.RemoveAll()
+				})
+				endEarly()
+				return
+			case err, _ := <-ec:
+				if err != nil {
+					ac.log.WithError(err).Error("something went wrong trying to get chat services")
+				}
+				return
+			case cs, ok := <-csc:
+				if !ok {
+					return
+				}
 
-		if err != nil {
-			v.u.log.WithError(err).Debug("something went wrong trying to get chat services")
-			return
-		}
-
-		cs, ok := <-csc
-		if !ok {
-			return
-		}
-
-		for _, i := range cs {
-			v.chatServices.AppendText(string(i))
-		}
-
-		if len(cs) > 0 && enteredService == "" {
-			v.chatServices.SetActive(0)
+				hadAny = true
+				doInUIThread(func() {
+					v.chatServices.AppendText(cs.String())
+				})
+			}
 		}
 	}()
 }

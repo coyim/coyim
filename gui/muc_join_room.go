@@ -43,25 +43,31 @@ func (jrv *mucJoinRoomView) init() {
 func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	jrv.updateLock.Lock()
 
-	doInUIThread(jrv.clearErrors)
+	jrv.clearErrors()
 
 	roomName, _ := jrv.txtRoomName.GetText()
-	rj := jid.Parse(roomName).(jid.Bare)
+	rj, ok := jid.Parse(roomName).(jid.Bare)
+	if !ok {
+		if len(roomName) == 0 {
+			jrv.notifyOnError(i18n.Localf("Please specify a valid Room Name"))
+		} else {
+			jrv.notifyOnError(i18n.Localf("The Room \"%s\" is not a valid JID Bare format", roomName))
+		}
+		jrv.updateLock.Unlock()
+		return
+	}
 
-	doInUIThread(func() {
-		jrv.spinner.Start()
-		jrv.spinner.SetVisible(true)
-	})
+	jrv.spinner.Start()
+	jrv.spinner.SetVisible(true)
 
 	r := a.session.HasRoom(rj)
 	go func() {
 		value := <-r
 		defer jrv.updateLock.Unlock()
 
+		jrv.spinner.Stop()
+		jrv.spinner.SetVisible(false)
 		doInUIThread(func() {
-			jrv.spinner.Stop()
-			jrv.spinner.SetVisible(false)
-
 			if !value {
 				jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exists", roomName))
 				a.log.WithField("Room", roomName).Debug("The Room doesn't exists")

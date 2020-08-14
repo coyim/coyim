@@ -44,6 +44,6 @@ func (a *account) errorNewOccupantRoomEvent(ev events.MUCError) {
 	if err != nil {
 		a.log.WithError(err).Debug()
 	}
-	err = muc.NewNicknameConflictError(nickname).New()
+	err = muc.NewNicknameConflictError(nickname)
 	rv.processOccupantJoinedEvent(err)
 }

@@ -222,6 +222,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                   <object class="GtkButton" id="roomJoinButton">
                     <property name="label" translatable="yes">_Join</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>

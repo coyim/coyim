@@ -171,11 +171,16 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 			})
 
 			if !isRoomCreated {
-				v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
+				doInUIThread(func() {
+					v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
+				})
 				return
 			}
-			v.u.mucShowRoom(ac, roomIdentity)
-			v.Destroy()
+
+			doInUIThread(func() {
+				v.u.mucShowRoom(ac, roomIdentity)
+				v.Destroy()
+			})
 		}()
 
 		err, ok := <-ec

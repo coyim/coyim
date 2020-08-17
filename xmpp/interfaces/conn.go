@@ -60,5 +60,5 @@ type Conn interface {
 
 	QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error)
 	QueryServiceItems(entity string) (*data.DiscoveryItemsQuery, error)
-	CheckQueryServiceInformation(entity string) (bool, error)
+	EntityExists(entity string) (bool, error)
 }

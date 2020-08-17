@@ -65,12 +65,7 @@ func parseDiscoveryItemsReply(iq *data.ClientIQ) (*data.DiscoveryItemsQuery, err
 	return reply, err
 }
 
-// TODO: at some point we need to cache these features somewhere
-
-// QueryServiceInformation sends a service discovery information ("disco#info") query.
-// See XEP-0030, Section "3. Discovering Information About a Jabber Entity"
-// This method blocks until conn#Next() receives the response to the IQ.
-func (c *conn) QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error) {
+func (c *conn) sendAndReceiveDiscoveryInfo(entity string) (*data.ClientIQ, error) {
 	reply, _, err := c.sendDiscoveryInfo(entity)
 	if err != nil {
 		return nil, err
@@ -84,6 +79,20 @@ func (c *conn) QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery,
 	iq, ok := stanza.Value.(*data.ClientIQ)
 	if !ok {
 		return nil, errors.New("xmpp: failed to parse response")
+	}
+
+	return iq, nil
+}
+
+// TODO: at some point we need to cache these features somewhere
+
+// QueryServiceInformation sends a service discovery information ("disco#info") query.
+// See XEP-0030, Section "3. Discovering Information About a Jabber Entity"
+// This method blocks until conn#Next() receives the response to the IQ.
+func (c *conn) QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error) {
+	iq, err := c.sendAndReceiveDiscoveryInfo(entity)
+	if err != nil {
+		return nil, err
 	}
 
 	diq, err := parseDiscoveryInfoReply(iq)
@@ -113,28 +122,15 @@ func (c *conn) QueryServiceItems(entity string) (*data.DiscoveryItemsQuery, erro
 	return parseDiscoveryItemsReply(iq)
 }
 
-// CheckQueryServiceInformation sends a service discovery information ("disco#info") query.
+// EntityExists sends a receive service discovery information ("disco#info") query.
 // Checks if the service information returns a non error information
 // This method blocks until conn#Next() receives the response to the IQ.
-func (c *conn) CheckQueryServiceInformation(entity string) (bool, error) {
-	reply, _, err := c.sendDiscoveryItems(entity)
+func (c *conn) EntityExists(entity string) (bool, error) {
+	iq, err := c.sendAndReceiveDiscoveryInfo(entity)
 	if err != nil {
 		return false, err
 	}
 
-	stanza, ok := <-reply
-	if !ok {
-		return false, errors.New("xmpp: failed to receive response")
-	}
-
-	iq, ok := stanza.Value.(*data.ClientIQ)
-	if !ok {
-		return false, errors.New("xmpp: failed to parse response")
-	}
-
-	// TODO: Here in the future we can add some custom logic to check
-	// if any specific MUC error is received, for now we need to know
-	// if the item-not-found is received from the server
 	if iq.Error.MUCItemNotFound != nil {
 		return false, nil
 	}

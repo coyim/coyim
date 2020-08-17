@@ -313,6 +313,11 @@ func WithAndWithout(peer Any) (WithResource, WithoutResource) {
 	return nil, peer.NoResource()
 }
 
+// String implements Local
+func (j Local) String() string {
+	return string(j)
+}
+
 // String implements Resource
 func (j Resource) String() string {
 	return string(j)

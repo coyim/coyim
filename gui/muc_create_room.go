@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -68,6 +69,7 @@ func (u *gtkUI) newMUCRoomView() *createMUCRoom {
 
 	view.builder.ConnectSignals(map[string]interface{}{
 		"on_create_room": func() {
+			doInUIThread(view.clearErrors)
 			go view.createRoomHandler(ac.currentAccount())
 		},
 		"on_cancel":       view.Destroy,
@@ -139,62 +141,86 @@ func (v *createMUCRoom) updateFields(f bool) {
 	v.chatServices.SetSensitive(f)
 }
 
+func (v *createMUCRoom) getRoomID() jid.Bare {
+	roomName, err := v.room.GetText()
+	if err != nil {
+		doInUIThread(func() {
+			v.errorBox.ShowMessage(i18n.Local("Could not get the room name, please try again."))
+		})
+		return nil
+	}
+	service := v.chatServices.GetActiveText()
+	if strings.TrimSpace(roomName) == "" || strings.TrimSpace(service) == "" {
+		doInUIThread(func() {
+			v.errorBox.ShowMessage(i18n.Local("Please fill the required fields to create the room."))
+		})
+		return nil
+	}
+
+	ri, ok := jid.Parse(fmt.Sprintf("%s@%s", strings.TrimSpace(roomName), strings.TrimSpace(service))).(jid.Bare)
+	if !ok {
+		doInUIThread(func() {
+			v.errorBox.ShowMessage(i18n.Local("Room name not allowed."))
+		})
+		return nil
+	}
+
+	return ri
+}
+
 func (v *createMUCRoom) createRoomHandler(ac *account) {
 	if ac == nil {
-		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect to one."))
+		doInUIThread(func() {
+			v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect to one."))
+		})
 		return
 	}
 
-	roomName, _ := v.room.GetText()
-	service := v.chatServices.GetActiveText()
+	roomIdentity := v.getRoomID()
 
-	if roomName == "" || service == "" {
-		v.errorBox.ShowMessage(i18n.Local("Please fill the required fields to create the room."))
-		return
-	}
+	if roomIdentity != nil {
+		doInUIThread(func() {
+			v.updateFields(false)
+			v.createButtonPrevText, _ = v.createButton.GetLabel()
+			_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
+		})
 
-	doInUIThread(func() {
-		v.updateFields(false)
-		v.createButtonPrevText, _ = v.createButton.GetLabel()
-		_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
-	})
+		ec := ac.session.CreateRoom(roomIdentity)
 
-	roomIdentity := jid.Parse(fmt.Sprintf("%s@%s", roomName, service)).(jid.Bare)
-	ec := ac.session.CreateRoom(roomIdentity)
-
-	go func() {
-		isRoomCreated := false
-		defer func() {
-			doInUIThread(func() {
-				v.updateFields(true)
-				_ = v.createButton.SetProperty("label", v.createButtonPrevText)
-			})
-
-			if !isRoomCreated {
+		go func() {
+			isRoomCreated := false
+			defer func() {
 				doInUIThread(func() {
-					v.errorBox.ShowMessage(i18n.Local("Could not create the new room"))
+					v.updateFields(true)
+					_ = v.createButton.SetProperty("label", v.createButtonPrevText)
 				})
+
+				if !isRoomCreated {
+					doInUIThread(func() {
+						v.errorBox.ShowMessage(i18n.Local("Could not create the new room."))
+					})
+					return
+				}
+
+				doInUIThread(func() {
+					v.u.mucShowRoom(ac, roomIdentity)
+					v.Destroy()
+				})
+			}()
+
+			err, ok := <-ec
+			if !ok {
 				return
 			}
 
-			doInUIThread(func() {
-				v.u.mucShowRoom(ac, roomIdentity)
-				v.Destroy()
-			})
+			if err != nil {
+				v.u.log.WithError(err).Debug("something went wrong trying to create the room")
+				return
+			}
+
+			isRoomCreated = true
 		}()
-
-		err, ok := <-ec
-		if !ok {
-			return
-		}
-
-		if err != nil {
-			v.u.log.WithError(err).Debug("something went wrong trying to create the room")
-			return
-		}
-
-		isRoomCreated = true
-	}()
+	}
 }
 
 func (v *createMUCRoom) allFieldsHaveContent(ac *account) bool {

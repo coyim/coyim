@@ -28,19 +28,18 @@ func (s *session) HasRoom(rj jid.Bare) <-chan bool {
 		}
 		// Make sure the entity is a Room
 		idents, features, ok := s.Conn().DiscoveryFeaturesAndIdentities(rj.String())
+		if !ok {
+			result <- false
+			return
+		}
 		// Checking Identities
-		identName, hasIdent := s.hasIdentity(idents, "conference", "text")
-		if !ok || !hasIdent {
+		_, hasIdent := hasIdentity(idents, "conference", "text")
+		if !hasIdent {
 			result <- false
 			return
 		}
 		// Checking Features
-		if !s.hasFeatures(features, "http://jabber.org/protocol/muc") {
-			result <- false
-			return
-		}
-		// Checking Identity Name with the room specified
-		if identName != rj.Local().String() {
+		if !hasFeatures(features, "http://jabber.org/protocol/muc") {
 			result <- false
 			return
 		}

@@ -10,7 +10,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (s *session) hasIdentity(idents []data.DiscoveryIdentity, category, tp string) (name string, ok bool) {
+func hasIdentity(idents []data.DiscoveryIdentity, category, tp string) (name string, ok bool) {
 	for _, id := range idents {
 		if id.Category == category && id.Type == tp {
 			return id.Name, true
@@ -19,7 +19,7 @@ func (s *session) hasIdentity(idents []data.DiscoveryIdentity, category, tp stri
 	return "", false
 }
 
-func (s *session) stringArrayContains(r []string, a string) bool {
+func stringArrayContains(r []string, a string) bool {
 	for _, f := range r {
 		if f == a {
 			return true
@@ -29,9 +29,9 @@ func (s *session) stringArrayContains(r []string, a string) bool {
 	return false
 }
 
-func (s *session) hasFeatures(features []string, expected ...string) bool {
+func hasFeatures(features []string, expected ...string) bool {
 	for _, exp := range expected {
-		if !s.stringArrayContains(features, exp) {
+		if !stringArrayContains(features, exp) {
 			return false
 		}
 	}
@@ -178,12 +178,12 @@ func (s *session) getRoomsInService(service jid.Any, name string, results chan<-
 		return
 	}
 
-	identName, hasIdent := s.hasIdentity(idents, "conference", "text")
+	identName, hasIdent := hasIdentity(idents, "conference", "text")
 	if !hasIdent {
 		return
 	}
 
-	if !s.hasFeatures(features, "http://jabber.org/protocol/disco#items", "http://jabber.org/protocol/muc") {
+	if !hasFeatures(features, "http://jabber.org/protocol/disco#items", "http://jabber.org/protocol/muc") {
 		return
 	}
 

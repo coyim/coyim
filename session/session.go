@@ -286,11 +286,13 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			}).Warn("Got a presence without resource in 'from' - this is likely an error")
 			return true
 		}
-		if !s.r.PeerPresenceUpdate(jj.(jid.WithResource), stanza.Show, stanza.Status, s.GetConfig().ID()) {
-			// Sometimes the MUC Events Presence is treated as an own presence,
-			// so we need to check if we need to send the received event to a
-			// specific Room on MUC
+
+		if s.isMUCUserPresence(stanza) {
 			s.handleMUCPresence(stanza)
+			return true
+		}
+
+		if !s.r.PeerPresenceUpdate(jj.(jid.WithResource), stanza.Show, stanza.Status, s.GetConfig().ID()) {
 			return true
 		}
 
@@ -298,14 +300,10 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		//"From" is how we are identified (will be JID/"some-id")
 		//Same thing happens for the group-chat, but in this case it tell us also what are our affiliations and roles.
 		//Thats why I'm worried about handling this as a regular peer presence - which is not.
-		if s.isMUCPresence(stanza) {
-			s.handleMUCPresence(stanza)
-		} else {
-			s.publishEvent(events.Presence{
-				ClientPresence: stanza,
-				Gone:           false,
-			})
-		}
+		s.publishEvent(events.Presence{
+			ClientPresence: stanza,
+			Gone:           false,
+		})
 	case "subscribed":
 		s.r.Subscribed(jjnr)
 		s.publishPeerEvent(

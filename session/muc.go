@@ -17,6 +17,10 @@ func (s *session) isMUCPresence(stanza *data.ClientPresence) bool {
 	return stanza.MUC != nil
 }
 
+func (s *session) isMUCUserPresence(stanza *data.ClientPresence) bool {
+	return stanza.MUCUser != nil
+}
+
 func (s *session) handleMUCPresence(stanza *data.ClientPresence) {
 	from := jid.Parse(stanza.From)
 	ridwr, nr := from.PotentialSplit()

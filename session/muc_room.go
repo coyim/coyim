@@ -36,13 +36,20 @@ func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
 			return
 		}
 		// Checking Identities
-		_, hasIdent := hasIdentity(idents, "conference", "text")
+		ident, hasIdent := hasIdentity(idents, "conference", "text")
 		if !hasIdent {
 			resultChannel <- false
 			return
 		}
 		// Checking Features
 		if !hasFeatures(features, "http://jabber.org/protocol/muc") {
+			resultChannel <- false
+			return
+		}
+		// Checking Bare JID
+		bares := fmt.Sprintf("%s@%s", ident, rj.Host())
+		barerj, ok := jid.Parse(bares).(jid.Bare)
+		if !ok || barerj != rj {
 			resultChannel <- false
 			return
 		}

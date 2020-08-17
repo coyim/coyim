@@ -122,7 +122,7 @@ func (c *conn) QueryServiceItems(entity string) (*data.DiscoveryItemsQuery, erro
 	return parseDiscoveryItemsReply(iq)
 }
 
-// EntityExists sends a receive service discovery information ("disco#info") query.
+// EntityExists checks if entity exists using service discovery information ("disco#info") query.
 // Checks if the service information returns a non error information
 // This method blocks until conn#Next() receives the response to the IQ.
 func (c *conn) EntityExists(entity string) (bool, error) {

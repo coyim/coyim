@@ -75,7 +75,7 @@ type Session interface {
 	AbortSMP(jid.WithResource)
 	GetAndWipeSymmetricKeyFor(jid.Any) []byte
 
-	HasRoom(jid.Bare) <-chan bool
+	HasRoom(jid.Bare) (<-chan bool, <-chan error)
 	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
 	GetRoom(jid.Bare, *muc.RoomListing)
 	JoinRoom(jid.Bare, string)

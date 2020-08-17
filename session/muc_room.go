@@ -15,37 +15,40 @@ func (s *session) JoinRoom(rj jid.Bare, nickName string) {
 	}
 }
 
-func (s *session) HasRoom(rj jid.Bare) <-chan bool {
-	result := make(chan bool, 1)
+func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
+	resultChannel := make(chan bool, 1)
+	errorChannel := make(chan error)
 	go func() {
 		r, err := s.Conn().EntityExists(rj.String())
-		if !r {
+		if !r || err != nil {
 			if err != nil {
-				s.log.WithError(err).Debug("HasRoom() had an error")
+				s.log.WithError(err).Warn("HasRoom() had an error")
+				errorChannel <- err
+				return
 			}
-			result <- false
+			resultChannel <- false
 			return
 		}
 		// Make sure the entity is a Room
 		idents, features, ok := s.Conn().DiscoveryFeaturesAndIdentities(rj.String())
 		if !ok {
-			result <- false
+			resultChannel <- false
 			return
 		}
 		// Checking Identities
 		_, hasIdent := hasIdentity(idents, "conference", "text")
 		if !hasIdent {
-			result <- false
+			resultChannel <- false
 			return
 		}
 		// Checking Features
 		if !hasFeatures(features, "http://jabber.org/protocol/muc") {
-			result <- false
+			resultChannel <- false
 			return
 		}
-		result <- true
+		resultChannel <- true
 	}()
-	return result
+	return resultChannel, errorChannel
 }
 
 func (s *session) GetRoom(rj jid.Bare, rl *muc.RoomListing) {

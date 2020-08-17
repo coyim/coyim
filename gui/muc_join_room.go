@@ -60,22 +60,39 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	jrv.spinner.Start()
 	jrv.spinner.SetVisible(true)
 
-	r := a.session.HasRoom(rj)
+	rc, ec := a.session.HasRoom(rj)
 	go func() {
-		value := <-r
 		defer jrv.updateLock.Unlock()
 
-		jrv.spinner.Stop()
-		jrv.spinner.SetVisible(false)
-		doInUIThread(func() {
-			if !value {
-				jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exists", roomName))
-				a.log.WithField("Room", roomName).Debug("The Room doesn't exists")
-			} else {
-				jrv.dialog.Hide()
-				u.mucShowRoom(a, rj)
+		select {
+		case value, ok := <-rc:
+			if !ok {
+				return
 			}
-		})
+			doInUIThread(func() {
+				jrv.spinner.Stop()
+				jrv.spinner.SetVisible(false)
+				if !value {
+					jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exists", roomName))
+					a.log.WithField("Room", roomName).Debug("The Room doesn't exists")
+				} else {
+					jrv.dialog.Hide()
+					u.mucShowRoom(a, rj)
+				}
+			})
+		case err, ok := <-ec:
+			if !ok {
+				return
+			}
+			doInUIThread(func() {
+				jrv.spinner.Stop()
+				jrv.spinner.SetVisible(false)
+				if err != nil {
+					jrv.notifyOnError(i18n.Localf("Error occurred trying to find the Room \"%s\"", roomName))
+					a.log.WithField("Room", roomName).WithError(err).Warn("Error occurred trying to find the Room")
+				}
+			})
+		}
 	}()
 }
 

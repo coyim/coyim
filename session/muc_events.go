@@ -5,49 +5,54 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (m *mucManager) mucRoomCreated(from jid.Bare) {
+func (m *mucManager) mucRoomCreated(from jid.Full, room jid.Bare) {
 	ev := events.MUCRoomCreated{}
+	ev.Room = room
 
 	m.publishMUCEvent(from, ev)
 }
 
-func (m *mucManager) mucRoomRenamed(from jid.WithoutResource) {
+func (m *mucManager) mucRoomRenamed(from jid.Full, room jid.Bare) {
 	ev := events.MUCRoomRenamed{}
+	ev.Room = room
 
 	m.publishMUCEvent(from, ev)
 }
 
-func (m *mucManager) mucOccupantExit(from jid.WithoutResource, occupant jid.Resource) {
+func (m *mucManager) mucOccupantExit(from jid.Full, room jid.Bare, occupant jid.Resource) {
 	ev := events.MUCOccupantExited{}
-	ev.Jid = jid.NewBare(occupant, from)
+	ev.Room = room
 	ev.Nickname = occupant
+	ev.Jid = from
 
 	m.publishMUCEvent(from, ev)
 }
 
-func (m *mucManager) mucOccupantUpdate(from jid.WithoutResource, occupant jid.Resource, affiliation, role string) {
+func (m *mucManager) mucOccupantUpdate(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string) {
 	ev := events.MUCOccupantUpdated{}
-	ev.Jid = jid.NewBare(occupant, from)
+	ev.Room = room
 	ev.Nickname = occupant
+	ev.Jid = from
 	ev.Affiliation = affiliation
 	ev.Role = role
 
 	m.publishMUCEvent(from, ev)
 }
 
-func (m *mucManager) mucOccupantJoined(from jid.WithoutResource, occupant jid.Resource, affiliation, role string) {
+func (m *mucManager) mucOccupantJoined(from jid.Full, room jid.Bare, occupant jid.Resource, ident jid.Full, affiliation, role string) {
 	ev := events.MUCOccupantJoined{}
-	ev.Jid = jid.NewBare(occupant, from)
+	ev.Room = room
 	ev.Nickname = occupant
+	ev.Jid = ident
 	ev.Affiliation = affiliation
 	ev.Role = role
 
 	m.publishMUCEvent(from, ev)
 }
 
-func (m *mucManager) publishMUCEvent(from jid.WithoutResource, e interface{}) {
+func (m *mucManager) publishMUCEvent(from jid.Full, e interface{}) {
 	ev := events.MUC{}
-	ev.From = from.(jid.Bare)
+	ev.From = from
 	ev.Info = e
 
 	m.publishEvent(ev)

@@ -93,9 +93,10 @@ func isMUCUserPresence(stanza *data.ClientPresence) bool {
 }
 
 func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
-	from := jid.Parse(stanza.From).(jid.WithResource)
+	from := jid.Parse(stanza.From).(jid.Full)
 
-	room, occupant := from.PotentialSplit()
+	roomWithoutResource, occupant := from.PotentialSplit()
+	room := roomWithoutResource.(jid.Bare)
 	status := stanza.MUCUser.Status
 
 	isOwnPresence := userStatusContains(status, MUCStatusSelfPresence)
@@ -105,7 +106,7 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 
 	switch stanza.Type {
 	case "unavailable":
-		m.mucOccupantExit(room, occupant)
+		m.mucOccupantExit(from, room, occupant)
 
 		if userStatusContains(status, MUCStatusBanned) {
 			// We got banned
@@ -141,13 +142,14 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 		role := stanza.MUCUser.Item.Role
 
 		if isOwnPresence {
-			m.mucOccupantJoined(room, occupant, affiliation, role)
+			ident := jid.Parse(stanza.MUCUser.Item.Jid).(jid.Full)
+			m.mucOccupantJoined(from, room, occupant, ident, affiliation, role)
 		} else {
-			m.mucOccupantUpdate(room, occupant, affiliation, role)
+			m.mucOccupantUpdate(from, room, occupant, affiliation, role)
 		}
 
 		if userStatusContains(status, MUCStatusNicknameAssigned) {
-			m.mucRoomRenamed(room)
+			m.mucRoomRenamed(from, room)
 		}
 	}
 }

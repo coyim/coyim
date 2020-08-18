@@ -6,16 +6,17 @@ import (
 
 // MUC is for publishing MUC-related session events
 type MUC struct {
-	From      jid.Full
-	EventType EventType
-	Room      jid.Bare
+	From jid.Full
+	Room jid.Bare
 	// Contains information related to any MUC event
 	Info interface{}
 }
 
 // MUCError contains information about a MUC-related
 // error event
-type MUCError struct{}
+type MUCError struct {
+	ErrorType MUCErrorType
+}
 
 // MUCRoomCreated contains event information about
 // the created room
@@ -58,9 +59,12 @@ type MUCOccupantExited struct {
 	MUCOccupant
 }
 
+// MUCErrorType represents the type of MUC error event
+type MUCErrorType EventType
+
 // MUC event types
 const (
-	MUCNotAuthorized EventType = iota
+	MUCNotAuthorized MUCErrorType = iota
 	MUCForbidden
 	MUCItemNotFound
 	MUCNotAllowed

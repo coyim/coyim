@@ -9,26 +9,30 @@ import (
 func (m *mucManager) publishMUCError(stanza *data.ClientPresence) {
 	e := events.MUC{}
 	e.From = jid.Parse(stanza.From).(jid.Full)
-	e.Info = events.MUCError{}
 
+	var t events.MUCErrorType
 	switch {
 	case stanza.Error.MUCNotAuthorized != nil:
-		e.EventType = events.MUCNotAuthorized
+		t = events.MUCNotAuthorized
 	case stanza.Error.MUCForbidden != nil:
-		e.EventType = events.MUCForbidden
+		t = events.MUCForbidden
 	case stanza.Error.MUCItemNotFound != nil:
-		e.EventType = events.MUCItemNotFound
+		t = events.MUCItemNotFound
 	case stanza.Error.MUCNotAllowed != nil:
-		e.EventType = events.MUCNotAllowed
+		t = events.MUCNotAllowed
 	case stanza.Error.MUCNotAceptable != nil:
-		e.EventType = events.MUCNotAceptable
+		t = events.MUCNotAceptable
 	case stanza.Error.MUCRegistrationRequired != nil:
-		e.EventType = events.MUCRegistrationRequired
+		t = events.MUCRegistrationRequired
 	case stanza.Error.MUCConflict != nil:
-		e.EventType = events.MUCConflict
+		t = events.MUCConflict
 	case stanza.Error.MUCServiceUnavailable != nil:
-		e.EventType = events.MUCServiceUnavailable
+		t = events.MUCServiceUnavailable
 	}
+
+	errorInfo := events.MUCError{}
+	errorInfo.ErrorType = t
+	e.Info = errorInfo
 
 	m.publishEvent(e)
 }

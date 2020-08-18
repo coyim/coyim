@@ -15,13 +15,12 @@ func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
 	case events.MUCOccupantJoined:
 		u.handleMUCJoinedEvent(from, t, a)
 	case events.MUCError:
-		u.handleOneMUCErrorEvent(ev, a)
+		u.handleOneMUCErrorEvent(from, t, a)
 	default:
 		u.log.WithFields(log.Fields{
-			"Type":      t,
-			"From":      ev.From,
-			"EventType": ev.EventType,
-		}).Warn("Unsupported received MUC event")
+			"Type": t,
+			"From": ev.From,
+		}).Warn("Unsupported MUC event")
 	}
 }
 

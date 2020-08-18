@@ -46,10 +46,10 @@ func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
 
 // TODO[OB]-MUC: I'm not a fan of this method name either
 
-func (a *account) errorNewOccupantRoomEvent(ev events.MUC) {
+func (a *account) errorNewOccupantRoomEvent(from jid.Full, ev events.MUCError) {
 	// TODO[OB]-MUC: It doesn't make sense to use PotentialSplit here, since you are assuming the nickname exists, you
 	// should make sure the From is a full JID and use Split() instead
-	ridwr, nickname := ev.From.PotentialSplit()
+	ridwr, nickname := from.PotentialSplit()
 	rid := ridwr.(jid.Bare)
 	rv, _, err := a.roomViewFor(rid)
 	if err != nil {

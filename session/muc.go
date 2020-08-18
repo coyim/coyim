@@ -95,8 +95,7 @@ func isMUCUserPresence(stanza *data.ClientPresence) bool {
 func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	from := jid.Parse(stanza.From).(jid.Full)
 
-	// TODO[OB]-MUC: I don't think PotentialSplit is the right function here
-	roomWithoutResource, occupant := from.PotentialSplit()
+	roomWithoutResource, occupant := from.Split()
 	room := roomWithoutResource.(jid.Bare)
 	status := stanza.MUCUser.Status
 
@@ -109,34 +108,28 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	case "unavailable":
 		m.mucOccupantExit(from, room, occupant)
 
-		// TODO[OB]-MUC: I think a switch might be more nice for these cases
-
-		if userStatusContains(status, MUCStatusBanned) {
+		switch {
+		case userStatusContains(status, MUCStatusBanned):
 			// We got banned
 			m.log.Debug("handleMUCPresence(): MUCStatusBanned")
-		}
 
-		if userStatusContains(status, MUCStatusNewNickname) {
+		case userStatusContains(status, MUCStatusNewNickname):
 			// Someone has changed its nickname
 			m.log.Debug("handleMUCPresence(): MUCStatusNewNickname")
-		}
 
-		if userStatusContains(status, MUCStatusBecauseKickedFrom) {
+		case userStatusContains(status, MUCStatusBecauseKickedFrom):
 			// Someone was kicked from the room
 			m.log.Debug("handleMUCPresence(): MUCStatusBecauseKickedFrom")
-		}
 
-		if userStatusContains(status, MUCStatusRemovedBecauseAffiliationChanged) {
+		case userStatusContains(status, MUCStatusRemovedBecauseAffiliationChanged):
 			// Removed due to an affiliation change
 			m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseAffiliationChanged")
-		}
 
-		if userStatusContains(status, MUCStatusRemovedBecauseNotMember) {
+		case userStatusContains(status, MUCStatusRemovedBecauseNotMember):
 			// Removed because room is now members-only
 			m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseNotMember")
-		}
 
-		if userStatusContains(status, MUCStatusRemovedBecauseShutdown) {
+		case userStatusContains(status, MUCStatusRemovedBecauseShutdown):
 			// Removes due to system shutdown
 			m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseShutdown")
 		}
@@ -179,8 +172,7 @@ func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) 
 func (s *session) hasSomeChatService(di data.DiscoveryItem) bool {
 	iq, err := s.conn.QueryServiceInformation(di.Jid)
 	if err != nil {
-		// TODO[OB]-MUC: This should be a field, not part of the log message
-		s.log.WithError(err).Error("Error getting the information query for the service:", di.Jid)
+		s.log.WithField("jid", di.Jid).WithError(err).Error("Error getting the information query for the service")
 		return false
 	}
 	return s.hasSomeConferenceService(iq.Identities)
@@ -239,7 +231,7 @@ func (c *chatServiceReceivalContext) fetchChatServices(server jid.Domain) {
 	}
 }
 
-//GetChatServices offers the chat services from a xmpp server.
+// GetChatServices offers the chat services from a xmpp server.
 func (s *session) GetChatServices(server jid.Domain) (<-chan jid.Domain, <-chan error, func()) {
 	ctx := s.createChatServiceReceivalContext()
 	go ctx.fetchChatServices(server)

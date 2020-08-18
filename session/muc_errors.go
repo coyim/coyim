@@ -6,7 +6,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (s *session) publishMUCError(stanza *data.ClientPresence) {
+func (m *mucManager) publishMUCError(stanza *data.ClientPresence) {
 	rid := jid.Parse(stanza.From).(jid.WithResource)
 	from := rid.NoResource().(jid.Bare)
 
@@ -33,5 +33,5 @@ func (s *session) publishMUCError(stanza *data.ClientPresence) {
 		e.EventType = events.MUCServiceUnavailable
 	}
 
-	s.publishEvent(e)
+	m.s.publishEvent(e)
 }

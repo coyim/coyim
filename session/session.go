@@ -40,6 +40,8 @@ type session struct {
 	log  coylog.Logger
 	r    *roster.List
 
+	muc *mucManager
+
 	connStatus     connStatus
 	connStatusLock sync.RWMutex
 
@@ -168,6 +170,7 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 
 	s.ReloadKeys()
 	s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate, sessionLog.WithField("component", "otr"))
+	s.muc = newMUCManager(s)
 
 	go observe(s)
 	go checkReconnect(s)
@@ -267,8 +270,8 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			)
 		}
 	case "unavailable":
-		if isMUCUserPresence(stanza) {
-			s.handleMUCPresence(stanza)
+		if s.muc.isMUCUserPresence(stanza) {
+			s.muc.handleMUCPresence(stanza)
 			return true
 		}
 
@@ -292,8 +295,8 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			return true
 		}
 
-		if isMUCUserPresence(stanza) {
-			s.handleMUCPresence(stanza)
+		if s.muc.isMUCUserPresence(stanza) {
+			s.muc.handleMUCPresence(stanza)
 			return true
 		}
 
@@ -331,8 +334,8 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 
 		s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 
-		if isMUCPresence(stanza) {
-			s.publishMUCError(stanza)
+		if s.muc.isMUCPresence(stanza) {
+			s.muc.publishMUCError(stanza)
 		}
 	default:
 		log.WithField("stanza", stanza).Warn("Unrecognized presence")

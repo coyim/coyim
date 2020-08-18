@@ -50,5 +50,13 @@ func (m *mucManager) publishMUCEvent(from jid.WithoutResource, e interface{}) {
 	ev.From = from.(jid.Bare)
 	ev.Info = e
 
-	m.s.publishEvent(ev)
+	m.publishEvent(ev)
+}
+
+func (m *mucManager) publishEvent(ev interface{}) {
+	if m.publishEv == nil {
+		panic("programmer error: muc manager \"publishEv\" function not defined")
+	}
+
+	m.publishEv(ev)
 }

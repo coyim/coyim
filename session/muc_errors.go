@@ -33,5 +33,5 @@ func (m *mucManager) publishMUCError(stanza *data.ClientPresence) {
 		e.EventType = events.MUCServiceUnavailable
 	}
 
-	m.s.publishEvent(e)
+	m.publishEvent(e)
 }

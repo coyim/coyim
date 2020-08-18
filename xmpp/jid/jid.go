@@ -42,6 +42,11 @@ func NewBare(local Resource, domain WithoutResource) WithResource {
 	return domain.WithResource(local)
 }
 
+// NewFull creates a full JID from the different parts of a JID
+func NewFull(local Local, domain Domain, resource Resource) Full {
+	return domain.AddLocal(local).WithResource(resource).(Full)
+}
+
 // WithResource represents any valid JID that has a resource part
 type WithResource interface {
 	Any
@@ -83,6 +88,21 @@ func NR(s string) WithoutResource {
 // R returns a JID with resource. This method will fail if the object doesn't have a resource
 func R(s string) WithResource {
 	return Parse(s).(WithResource)
+}
+
+// ParseBare returns a bare JID. It will fail if the given string isn't at least a bare
+func ParseBare(s string) Bare {
+	return NR(s).(Bare)
+}
+
+// ParseFull returns a full JID. It will fail if the given string isn't at least a full
+func ParseFull(s string) Full {
+	return R(s).(Full)
+}
+
+// ParseDomain returns a domain part of a JID. It will fail if the given string isn't at least a domain
+func ParseDomain(s string) Domain {
+	return NR(s).Host()
 }
 
 // Parse will parse the given string and return the most specific JID type that matches it
@@ -294,12 +314,17 @@ func (j Domain) NoResource() WithoutResource {
 
 // WithResource implements WithoutResource
 func (j Domain) WithResource(r Resource) WithResource {
-	return R(j.String() + "/" + string(r))
+	return R(fmt.Sprintf("%s/%s", j, r))
 }
 
 // MaybeWithResource implements WithoutResource
 func (j Domain) MaybeWithResource(r Resource) Any {
-	return Parse(j.String() + "/" + string(r))
+	return Parse(fmt.Sprintf("%s/%s", j, r))
+}
+
+// AddLocal returns a Bare, combining this domain with a Local
+func (j Domain) AddLocal(l Local) Bare {
+	return ParseBare(fmt.Sprintf("%s@%s", l, j))
 }
 
 // MaybeLocal returns the local part of a JID if it has one, otherwise empty

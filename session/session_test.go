@@ -122,27 +122,13 @@ func (s *SessionSuite) Test_WatchStanzas_handlesUnknownMessage(c *C) {
 	sess.Subscribe(observer)
 	eventsDone := make(chan bool, 2)
 	sess.eventsReachedZero = eventsDone
-	done := make(chan bool)
-	sess.doneBadStanza = done
 
 	sess.watchStanzas()
 
-	<-done
-
-	c.Assert(len(hook.Entries), Equals, 2)
-	c.Assert(hook.LastEntry().Level, Equals, log.InfoLevel)
-	c.Assert(hook.LastEntry().Message, Equals, "unhandled stanza")
-	c.Assert(hook.LastEntry().Data["name"].(xml.Name), Equals, xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"})
-	c.Assert(*(hook.LastEntry().Data["value"].(*data.BindBind)), Equals, data.BindBind{XMLName: xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"}, Resource: "", Jid: ""})
-
-	// assertReceivesEvent(c, eventsDone, observer, func(ev interface{}) bool {
-	// 	t, ok := ev.(events.Log)
-	// 	if !ok || t.Level != events.Info {
-	// 		return false
-	// 	}
-	// 	c.Assert(t.Message, Equals, "unhandled stanza: {urn:ietf:params:xml:ns:xmpp-bind bind} &{{urn:ietf:params:xml:ns:xmpp-bind bind}  }")
-	// 	return true
-	// })
+	e := checkLogHasAny(hook, log.InfoLevel, "unhandled stanza")
+	c.Assert(e, Not(IsNil))
+	c.Assert(e.Data["name"].(xml.Name), Equals, xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"})
+	c.Assert(*(e.Data["value"].(*data.BindBind)), Equals, data.BindBind{XMLName: xml.Name{Space: "urn:ietf:params:xml:ns:xmpp-bind", Local: "bind"}, Resource: "", Jid: ""})
 }
 
 type checker func(interface{}) bool

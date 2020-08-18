@@ -37,6 +37,11 @@ type Any interface {
 	PotentialSplit() (WithoutResource, Resource)
 }
 
+// NewBare accept a domain and a local and creates a valid resource
+func NewBare(local Resource, domain WithoutResource) WithResource {
+	return domain.WithResource(local)
+}
+
 // WithResource represents any valid JID that has a resource part
 type WithResource interface {
 	Any

@@ -4,15 +4,12 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// MUCAny represents any type of MUC event
-type MUCAny interface{}
-
 // MUC is for publishing MUC-related session events
 type MUC struct {
 	From      jid.Bare
 	EventType EventType
 	// Contains information related to any MUC event
-	Info MUCAny
+	Info interface{}
 }
 
 // MUCError contains information about a MUC-related

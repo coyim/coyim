@@ -45,7 +45,7 @@ func (m *mucManager) mucOccupantJoined(from jid.WithoutResource, occupant jid.Re
 	m.publishMUCEvent(from, ev)
 }
 
-func (m *mucManager) publishMUCEvent(from jid.WithoutResource, e events.MUCAny) {
+func (m *mucManager) publishMUCEvent(from jid.WithoutResource, e interface{}) {
 	ev := events.MUC{}
 	ev.From = from.(jid.Bare)
 	ev.Info = e

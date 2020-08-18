@@ -8,7 +8,7 @@ import (
 
 func (m *mucManager) publishMUCError(stanza *data.ClientPresence) {
 	e := events.MUC{}
-	e.From = jid.Parse(stanza.From).(jid.Full)
+	e.From = jid.ParseFull(stanza.From)
 
 	var t events.MUCErrorType
 	switch {

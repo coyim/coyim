@@ -270,7 +270,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			)
 		}
 	case "unavailable":
-		if s.muc.isMUCUserPresence(stanza) {
+		if isMUCUserPresence(stanza) {
 			s.muc.handleMUCPresence(stanza)
 			return true
 		}
@@ -295,7 +295,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			return true
 		}
 
-		if s.muc.isMUCUserPresence(stanza) {
+		if isMUCUserPresence(stanza) {
 			s.muc.handleMUCPresence(stanza)
 			return true
 		}
@@ -334,7 +334,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 
 		s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 
-		if s.muc.isMUCPresence(stanza) {
+		if isMUCPresence(stanza) {
 			s.muc.publishMUCError(stanza)
 		}
 	default:

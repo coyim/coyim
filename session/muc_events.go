@@ -57,7 +57,3 @@ func (m *mucManager) publishMUCEvent(from jid.Full, e interface{}) {
 
 	m.publishEvent(ev)
 }
-
-func (m *mucManager) publishEvent(ev interface{}) {
-	m.publishEv(ev)
-}

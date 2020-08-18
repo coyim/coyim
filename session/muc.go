@@ -71,14 +71,14 @@ const (
 )
 
 type mucManager struct {
-	log       coylog.Logger
-	publishEv func(ev interface{})
+	log          coylog.Logger
+	publishEvent func(ev interface{})
 }
 
-func newMUCManager(log coylog.Logger, publishEv func(ev interface{})) *mucManager {
+func newMUCManager(log coylog.Logger, publishEvent func(ev interface{})) *mucManager {
 	m := &mucManager{
-		log:       log,
-		publishEv: publishEv,
+		log:          log,
+		publishEvent: publishEvent,
 	}
 
 	return m

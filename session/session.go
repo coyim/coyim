@@ -267,6 +267,11 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			)
 		}
 	case "unavailable":
+		if isMUCUserPresence(stanza) {
+			s.handleMUCPresence(stanza)
+			return true
+		}
+
 		if !s.r.PeerBecameUnavailable(jj) {
 			return true
 		}
@@ -287,7 +292,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 			return true
 		}
 
-		if s.isMUCUserPresence(stanza) {
+		if isMUCUserPresence(stanza) {
 			s.handleMUCPresence(stanza)
 			return true
 		}
@@ -319,14 +324,15 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	case "unsubscribed":
 		// Ignore
 	case "error":
-		if s.isMUCPresence(stanza) {
+		log.WithFields(log.Fields{
+			"from":  stanza.From,
+			"error": stanza.Error,
+		}).Error("Got a presence error")
+
+		s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
+
+		if isMUCPresence(stanza) {
 			s.publishMUCError(stanza)
-		} else {
-			log.WithFields(log.Fields{
-				"from":  stanza.From,
-				"error": stanza.Error,
-			}).Error("Got a presence error")
-			s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 		}
 	default:
 		log.WithField("stanza", stanza).Warn("Unrecognized presence")

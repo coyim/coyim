@@ -13,11 +13,11 @@ const (
 	MUCStatusPresenceJoined = "110"
 )
 
-func (s *session) isMUCPresence(stanza *data.ClientPresence) bool {
+func isMUCPresence(stanza *data.ClientPresence) bool {
 	return stanza.MUC != nil
 }
 
-func (s *session) isMUCUserPresence(stanza *data.ClientPresence) bool {
+func isMUCUserPresence(stanza *data.ClientPresence) bool {
 	return stanza.MUCUser != nil
 }
 

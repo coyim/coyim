@@ -4,8 +4,6 @@ import (
 	"strconv"
 	"sync"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -107,32 +105,32 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 
 		if userStatusContains(status, MUCStatusBanned) {
 			// We got banned
-			log.Debug("handleMUCPresence(): MUCStatusBanned")
+			m.s.log.Debug("handleMUCPresence(): MUCStatusBanned")
 		}
 
 		if userStatusContains(status, MUCStatusNewNickname) {
 			// Someone has changed its nickname
-			log.Debug("handleMUCPresence(): MUCStatusNewNickname")
+			m.s.log.Debug("handleMUCPresence(): MUCStatusNewNickname")
 		}
 
 		if userStatusContains(status, MUCStatusBecauseKickedFrom) {
 			// Someone was kicked from the room
-			log.Debug("handleMUCPresence(): MUCStatusBecauseKickedFrom")
+			m.s.log.Debug("handleMUCPresence(): MUCStatusBecauseKickedFrom")
 		}
 
 		if userStatusContains(status, MUCStatusRemovedBecauseAffiliationChanged) {
 			// Removed due to an affiliation change
-			log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseAffiliationChanged")
+			m.s.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseAffiliationChanged")
 		}
 
 		if userStatusContains(status, MUCStatusRemovedBecauseNotMember) {
 			// Removed because room is now members-only
-			log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseNotMember")
+			m.s.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseNotMember")
 		}
 
 		if userStatusContains(status, MUCStatusRemovedBecauseShutdown) {
 			// Removes due to system shutdown
-			log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseShutdown")
+			m.s.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseShutdown")
 		}
 	case "":
 		affiliation := stanza.MUCUser.Item.Affiliation

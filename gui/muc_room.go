@@ -161,7 +161,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 		log.Fatal(err.Error())
 		return
 	}
-	view, _, _ := a.getRoomView(ident)
+	view, _, _ := a.roomViewFor(ident)
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{

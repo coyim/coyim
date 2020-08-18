@@ -8,7 +8,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (a *account) getRoomView(rid jid.Bare) (*roomView, *muc.Room, error) {
+func (a *account) roomViewFor(rid jid.Bare) (*roomView, *muc.Room, error) {
 	room, exists := a.roomManager.GetRoom(rid)
 	if !exists {
 		return nil, nil, errors.New("The rooms doesn't exists")
@@ -20,7 +20,7 @@ func (a *account) getRoomView(rid jid.Bare) (*roomView, *muc.Room, error) {
 }
 
 func (a *account) enrollNewOccupantRoomEvent(from jid.Bare, ev events.MUCOccupantJoined) {
-	rv, room, err := a.getRoomView(from)
+	rv, room, err := a.roomViewFor(from)
 	if err != nil {
 		a.log.WithError(err).Error("An error ocurred while trying to change the room occupant status.")
 		return
@@ -42,7 +42,7 @@ func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
 func (a *account) errorNewOccupantRoomEvent(ev events.MUC) {
 	ridwr, nickname := ev.From.PotentialSplit()
 	rid := ridwr.(jid.Bare)
-	rv, _, err := a.getRoomView(rid)
+	rv, _, err := a.roomViewFor(rid)
 	if err != nil {
 		a.log.WithError(err).Error("An error occurred ")
 		return

@@ -56,6 +56,7 @@ func anyNotNil(vals ...interface{}) interface{} {
 	return nil
 }
 
+// AnyMUCError will return any of the potential MUC errors, or nil
 func (e *StanzaError) AnyMUCError() interface{} {
 	return anyNotNil(
 		e.MUCNotAuthorized,

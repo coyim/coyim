@@ -153,7 +153,7 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 func userStatusContains(status []data.MUCUserStatus, c int) bool {
 	for _, s := range status {
 		code, _ := strconv.Atoi(s.Code)
-		if code == code {
+		if code == c {
 			return true
 		}
 	}

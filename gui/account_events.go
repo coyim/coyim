@@ -46,11 +46,7 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
 		})
 	case events.MUC:
 		doInUIThread(func() {
-			u.handleOneMUCRoomEvent(t, a)
-		})
-	case events.MUCError:
-		doInUIThread(func() {
-			u.handleOneMUCErrorEvent(t, a)
+			u.handleOneMUCEvent(t, a)
 		})
 	default:
 		a.log.WithField("event", t).Warn("unsupported event")

@@ -2,27 +2,34 @@ package gui
 
 import (
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
 
-func (u *gtkUI) handleOneMUCRoomEvent(ev events.MUC, a *account) {
-	switch ev.EventType {
-	case events.MUCOccupantUpdate:
-		t := ev.EventInfo.(events.MUCOccupantUpdated)
-		u.handleMUCUpdatedEvent(t, a)
-	case events.MUCOccupantJoin:
-		t := ev.EventInfo.(events.MUCOccupantJoined)
-		u.handleMUCJoinedEvent(t, a)
+func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
+	from := ev.From
+
+	switch t := ev.Info.(type) {
+	case events.MUCOccupantUpdated:
+		u.handleMUCUpdatedEvent(from, t, a)
+	case events.MUCOccupantJoined:
+		u.handleMUCJoinedEvent(from, t, a)
+	case events.MUCError:
+		u.handleOneMUCErrorEvent(ev, a)
 	default:
-		u.log.WithField("event", ev).Warn("unsupported event")
+		u.log.WithFields(log.Fields{
+			"Type":      t,
+			"From":      ev.From,
+			"EventType": ev.EventType,
+		}).Warn("Unsupported received MUC event")
 	}
 }
 
-func (u *gtkUI) handleMUCUpdatedEvent(ev events.MUCOccupantUpdated, a *account) {
+func (u *gtkUI) handleMUCUpdatedEvent(from jid.Bare, ev events.MUCOccupantUpdated, a *account) {
 	a.log.WithField("Event", ev).Debug("handleMUCUpdatedEvent")
 }
 
-func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, a *account) {
+func (u *gtkUI) handleMUCJoinedEvent(from jid.Bare, ev events.MUCOccupantJoined, a *account) {
 	a.log.WithFields(log.Fields{
 		"from":        ev.From,
 		"nickname":    ev.Nickname,
@@ -30,5 +37,5 @@ func (u *gtkUI) handleMUCJoinedEvent(ev events.MUCOccupantJoined, a *account) {
 		"role":        ev.Role,
 	}).Debug("Room Joined event received")
 
-	a.enrollNewOccupantRoomEvent(ev)
+	a.enrollNewOccupantRoomEvent(from, ev)
 }

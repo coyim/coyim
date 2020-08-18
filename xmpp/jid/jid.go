@@ -80,6 +80,8 @@ type Any interface {
 	PotentialResource() Resource
 	// PotentialSplit will return the result of calling WithoutResource and PotentialResource
 	PotentialSplit() (WithoutResource, Resource)
+	// Valid returns true if this is a valid JID
+	Valid() bool
 }
 
 // NewBare accept a domain and a local and creates a valid resource
@@ -158,11 +160,14 @@ func TryParseFull(s string) (Full, bool) {
 }
 
 // ParseDomain returns a domain part of a JID. It will fail if the given string isn't at least a domain
+// This will parse the full string as a JID and _extract_ the domain part, This is in comparison to
+// NewDomain that will try to create a new Domain object from the given string
 func ParseDomain(s string) Domain {
 	return NR(s).Host()
 }
 
 // Parse will parse the given string and return the most specific JID type that matches it
+// In general, it is a good idea to check that the returned result is valid before using it by calling Valid()
 func Parse(j string) Any {
 	local := ""
 	resource := ""
@@ -396,4 +401,34 @@ func (j Local) String() string {
 // String implements Resource
 func (j Resource) String() string {
 	return j.v
+}
+
+// Valid returns true if this object is valid
+func (j Local) Valid() bool {
+	return j.v != ""
+}
+
+// Valid returns true if this object is valid
+func (j Domain) Valid() bool {
+	return j.v != ""
+}
+
+// Valid returns true if this object is valid
+func (j Resource) Valid() bool {
+	return j.v != ""
+}
+
+// Valid returns true if this object is valid
+func (j bare) Valid() bool {
+	return j.l.Valid() && j.d.Valid()
+}
+
+// Valid returns true if this object is valid
+func (j full) Valid() bool {
+	return j.l.Valid() && j.d.Valid() && j.r.Valid()
+}
+
+// Valid returns true if this object is valid
+func (j domainWithResource) Valid() bool {
+	return j.d.Valid() && j.r.Valid()
 }

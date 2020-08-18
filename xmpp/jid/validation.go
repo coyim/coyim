@@ -58,19 +58,27 @@ func ValidJID(s string) bool {
 // ValidBareJID returns true if the given string is a valid bare JID. This function will true for full JIDs as well as
 // bare JIDs
 func ValidBareJID(s string) bool {
-	// TODO
-	return false
+	res, ok := TryParseBare(s)
+	return ok && res.Valid()
 }
 
 // ValidFullJID returns true if the given string is a valid full JID
 func ValidFullJID(s string) bool {
-	// TODO
-	return false
+	res, ok := TryParseFull(s)
+	return ok && res.Valid()
 }
 
 // ValidDomainWithResource returns true if the given string a valid domain with resource part. This wil return true for
 // a full JID, as well as a domain with JID
 func ValidDomainWithResource(s string) bool {
-	// TODO
+	res := Parse(s)
+
+	switch res.(type) {
+	case full:
+		return res.Valid()
+	case domainWithResource:
+		return res.Valid()
+	}
+
 	return false
 }

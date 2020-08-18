@@ -95,6 +95,7 @@ func isMUCUserPresence(stanza *data.ClientPresence) bool {
 func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	from := jid.Parse(stanza.From).(jid.Full)
 
+	// TODO[OB]-MUC: I don't think PotentialSplit is the right function here
 	roomWithoutResource, occupant := from.PotentialSplit()
 	room := roomWithoutResource.(jid.Bare)
 	status := stanza.MUCUser.Status
@@ -107,6 +108,8 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	switch stanza.Type {
 	case "unavailable":
 		m.mucOccupantExit(from, room, occupant)
+
+		// TODO[OB]-MUC: I think a switch might be more nice for these cases
 
 		if userStatusContains(status, MUCStatusBanned) {
 			// We got banned
@@ -176,6 +179,7 @@ func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) 
 func (s *session) hasSomeChatService(di data.DiscoveryItem) bool {
 	iq, err := s.conn.QueryServiceInformation(di.Jid)
 	if err != nil {
+		// TODO[OB]-MUC: This should be a field, not part of the log message
 		s.log.WithError(err).Error("Error getting the information query for the service:", di.Jid)
 		return false
 	}

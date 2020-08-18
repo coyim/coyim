@@ -36,14 +36,37 @@ type StanzaError struct {
 
 	ApplicationCondition *Any `xml:",any,omitempty"`
 
-	MUCNotAuthorized        *MUCNotAuthorized
-	MUCForbidden            *MUCForbidden
-	MUCItemNotFound         *MUCItemNotFound
-	MUCNotAllowed           *MUCNotAllowed
+	MUCNotAuthorized *MUCNotAuthorized
+	MUCForbidden     *MUCForbidden
+	MUCItemNotFound  *MUCItemNotFound
+	MUCNotAllowed    *MUCNotAllowed
+	// TODO[OB]-MUC: Spelling
 	MUCNotAceptable         *MUCNotAceptable
 	MUCRegistrationRequired *MUCRegistrationRequired
 	MUCConflict             *MUCConflict
 	MUCServiceUnavailable   *MUCServiceUnavailable
+}
+
+func anyNotNil(vals ...interface{}) interface{} {
+	for _, v := range vals {
+		if v != nil {
+			return v
+		}
+	}
+	return nil
+}
+
+func (e *StanzaError) AnyMUCError() interface{} {
+	return anyNotNil(
+		e.MUCNotAuthorized,
+		e.MUCForbidden,
+		e.MUCItemNotFound,
+		e.MUCNotAllowed,
+		e.MUCNotAceptable,
+		e.MUCRegistrationRequired,
+		e.MUCConflict,
+		e.MUCServiceUnavailable,
+	)
 }
 
 // ClientMessage implements RFC 3921  B.1  jabber:client

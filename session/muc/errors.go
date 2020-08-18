@@ -14,6 +14,7 @@ type nicknameError struct {
 
 // Error returns the error message
 func (e *nicknameError) Error() string {
+	// TODO[OB]-MUC: It's an antipattern to send a custom message to Sprintf
 	return fmt.Sprintf(e.message, e.nickname)
 }
 

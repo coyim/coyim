@@ -93,7 +93,7 @@ func isMUCUserPresence(stanza *data.ClientPresence) bool {
 }
 
 func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
-	from := jid.Parse(stanza.From).(jid.Full)
+	from := jid.ParseFull(stanza.From)
 
 	roomWithoutResource, occupant := from.Split()
 	room := roomWithoutResource.(jid.Bare)
@@ -138,7 +138,7 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 		role := stanza.MUCUser.Item.Role
 
 		if isOwnPresence {
-			ident := jid.Parse(stanza.MUCUser.Item.Jid).(jid.Full)
+			ident := jid.ParseFull(stanza.MUCUser.Item.Jid)
 			m.mucOccupantJoined(from, room, occupant, ident, affiliation, role)
 		} else {
 			m.mucOccupantUpdate(from, room, occupant, affiliation, role)

@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUCError, a *account) {
+func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUC, a *account) {
 	switch ev.EventType {
 	case events.MUCNotAuthorized:
 		a.log.Debug("MUC Error NotAuthorized received")
@@ -20,17 +20,17 @@ func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUCError, a *account) {
 	case events.MUCRegistrationRequired:
 		a.log.Debug("MUC Error MUCRegistrationRequired received")
 	case events.MUCConflict:
-		u.handleErrorMUCConflictEvent(a, ev)
+		u.handleErrorMUCConflictEvent(ev, a)
 	case events.MUCServiceUnavailable:
 		a.log.Debug("MUC Error MUCServiceUnavailable received")
 	default:
-		a.log.WithField("event", ev).Warn("unsupported event")
+		a.log.WithField("event", ev).Warn("unsupported muc error event")
 	}
 }
 
-func (u *gtkUI) handleErrorMUCConflictEvent(a *account, ev events.MUCError) {
+func (u *gtkUI) handleErrorMUCConflictEvent(ev events.MUC, a *account) {
 	a.log.WithFields(log.Fields{
-		"from": ev.EventInfo.From,
+		"from": ev.From,
 	}).Debug("Nickname conflict event received")
 
 	a.errorNewOccupantRoomEvent(ev)

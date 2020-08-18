@@ -1,16 +1,74 @@
 package session
 
 import (
+	"strconv"
 	"sync"
 
-	"github.com/coyim/coyim/session/events"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
 const (
-	// MUCStatusPresenceJoined inform user that presence refers to one of its own room occupants
-	MUCStatusPresenceJoined = "110"
+	// MUCStatusJIDPublic inform user that any occupant is
+	// allowed to see the user's full JID
+	MUCStatusJIDPublic = 100
+	// MUCStatusAffiliationChanged inform user that his or
+	// her affiliation changed while not in the room
+	MUCStatusAffiliationChanged = 101
+	// MUCStatusUnavailableShown inform occupants that room
+	// now shows unavailable members
+	MUCStatusUnavailableShown = 102
+	// MUCStatusUnavailableNotShown inform occupants that room
+	// now does not show unavailable members
+	MUCStatusUnavailableNotShown = 103
+	// MUCStatusConfigurationChanged inform occupants that a
+	// non-privacy-related room configuration change has occurred
+	MUCStatusConfigurationChanged = 104
+	// MUCStatusSelfPresence inform user that presence refers
+	// to one of its own room occupants
+	MUCStatusSelfPresence = 110
+	// MUCStatusRoomLoggingEnabled inform occupants that room
+	// logging is now enabled
+	MUCStatusRoomLoggingEnabled = 170
+	// MUCStatusRoomLoggingDisabled inform occupants that room
+	// logging is now disabled
+	MUCStatusRoomLoggingDisabled = 171
+	// MUCStatusRoomNonAnonymous inform occupants that the room
+	// is now non-anonymous
+	MUCStatusRoomNonAnonymous = 172
+	// MUCStatusRoomSemiAnonymous inform occupants that the room
+	// is now semi-anonymous
+	MUCStatusRoomSemiAnonymous = 173
+	// MUCStatusRoomFullyAnonymous inform occupants that the room
+	// is now fully-anonymous
+	MUCStatusRoomFullyAnonymous = 174
+	// MUCStatusRoomCreated inform user that a new room has
+	// been created
+	MUCStatusRoomCreated = 201
+	// MUCStatusNicknameAssigned inform user that the service has
+	// assigned or modified the occupant's roomnick
+	MUCStatusNicknameAssigned = 210
+	// MUCStatusBanned inform user that he or she has been banned
+	// from the room
+	MUCStatusBanned = 301
+	// MUCStatusNewNickname inform all occupants of new room nickname
+	MUCStatusNewNickname = 303
+	// MUCStatusBecauseKickedFrom inform user that he or she has been
+	// kicked from the room
+	MUCStatusBecauseKickedFrom = 307
+	// MUCStatusRemovedBecauseAffiliationChanged inform user that
+	// he or she is being removed from the room because of an
+	// affiliation change
+	MUCStatusRemovedBecauseAffiliationChanged = 321
+	// MUCStatusRemovedBecauseNotMember inform user that he or she
+	// is being removed from the room because the room has been
+	// changed to members-only and the user is not a member
+	MUCStatusRemovedBecauseNotMember = 322
+	// MUCStatusRemovedBecauseShutdown inform user that he or she
+	// is being removed from the room because of a system shutdown
+	MUCStatusRemovedBecauseShutdown = 332
 )
 
 func isMUCPresence(stanza *data.ClientPresence) bool {
@@ -22,60 +80,73 @@ func isMUCUserPresence(stanza *data.ClientPresence) bool {
 }
 
 func (s *session) handleMUCPresence(stanza *data.ClientPresence) {
-	from := jid.Parse(stanza.From)
-	ridwr, nr := from.PotentialSplit()
-	rid := ridwr.(jid.Bare)
-	nickname := nr.String()
+	from := jid.Parse(stanza.From).(jid.WithResource)
 
-	switch {
-	case stanza.MUCUser != nil:
-		if stanza.MUCUser.Item != nil {
-			s.mucOccupantUpdate(rid, nickname, stanza.MUCUser.Item.Affiliation, stanza.MUCUser.Item.Role)
+	room, occupant := from.PotentialSplit()
+	status := stanza.MUCUser.Status
+
+	isOwnPresence := userStatusContains(status, MUCStatusSelfPresence)
+	if !isOwnPresence && stanza.MUCUser.Item.Jid == from.String() {
+		isOwnPresence = true
+	}
+
+	switch stanza.Type {
+	case "unavailable":
+		s.mucOccupantExit(room, occupant)
+
+		if userStatusContains(status, MUCStatusBanned) {
+			// We got banned
+			log.Debug("handleMUCPresence(): MUCStatusBanned")
 		}
 
-		if len(stanza.MUCUser.Status) > 0 {
-			affiliation := stanza.MUCUser.Item.Affiliation
-			realjid := jid.Parse(stanza.MUCUser.Item.Jid).(jid.WithResource)
-			role := stanza.MUCUser.Item.Role
-			for _, status := range stanza.MUCUser.Status {
-				switch status.Code {
-				case MUCStatusPresenceJoined:
-					s.mucOccupantJoined(rid, realjid, nickname, affiliation, role, status.Code, true)
-				}
-			}
+		if userStatusContains(status, MUCStatusNewNickname) {
+			// Someone has changed its nickname
+			log.Debug("handleMUCPresence(): MUCStatusNewNickname")
+		}
+
+		if userStatusContains(status, MUCStatusBecauseKickedFrom) {
+			// Someone was kicked from the room
+			log.Debug("handleMUCPresence(): MUCStatusBecauseKickedFrom")
+		}
+
+		if userStatusContains(status, MUCStatusRemovedBecauseAffiliationChanged) {
+			// Removed due to an affiliation change
+			log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseAffiliationChanged")
+		}
+
+		if userStatusContains(status, MUCStatusRemovedBecauseNotMember) {
+			// Removed because room is now members-only
+			log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseNotMember")
+		}
+
+		if userStatusContains(status, MUCStatusRemovedBecauseShutdown) {
+			// Removes due to system shutdown
+			log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseShutdown")
+		}
+	case "":
+		affiliation := stanza.MUCUser.Item.Affiliation
+		role := stanza.MUCUser.Item.Role
+
+		if isOwnPresence {
+			s.mucOccupantJoined(room, occupant, affiliation, role)
+		} else {
+			s.mucOccupantUpdate(room, occupant, affiliation, role)
+		}
+
+		if userStatusContains(status, MUCStatusNicknameAssigned) {
+			s.mucRoomRenamed(room)
 		}
 	}
 }
 
-func (s *session) mucOccupantUpdate(rid jid.Bare, nickname, affiliation, role string) {
-	ev := events.MUCOccupantUpdated{}
-	ev.From = rid
-	ev.Nickname = nickname
-	ev.Affiliation = affiliation
-	ev.Role = role
-
-	s.publishMUCEvent(ev, events.MUCOccupantUpdate)
-}
-
-func (s *session) mucOccupantJoined(rid jid.Bare, realjid jid.WithResource, nickname, affiliation, role, status string, v bool) {
-	ev := events.MUCOccupantJoined{}
-	ev.From = rid
-	ev.Nickname = nickname
-	ev.Affiliation = affiliation
-	ev.Jid = realjid
-	ev.Role = role
-	ev.Status = status
-	ev.Joined = v
-
-	s.publishMUCEvent(ev, events.MUCOccupantJoin)
-}
-
-func (s *session) publishMUCEvent(e interface{}, t events.MUCEventType) {
-	ev := events.MUC{}
-	ev.EventInfo = e
-	ev.EventType = t
-
-	s.publishEvent(ev)
+func userStatusContains(status []data.MUCUserStatus, c int) bool {
+	for _, s := range status {
+		code, _ := strconv.Atoi(s.Code)
+		if code == code {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) bool {

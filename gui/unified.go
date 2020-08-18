@@ -269,7 +269,7 @@ func (csi *conversationStackItem) show(userInitiated bool) {
 }
 
 func (csi *conversationStackItem) potentialTarget() string {
-	p := string(csi.target.PotentialResource())
+	p := csi.target.PotentialResource().String()
 	if p != "" {
 		return fmt.Sprintf(" (%s)", p)
 	}

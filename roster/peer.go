@@ -185,7 +185,7 @@ func (p *Peer) SetGroups(groups []string) {
 
 // AddResource adds the given resource if it isn't blank
 func (p *Peer) AddResource(ss jid.Resource, status, statusMsg string) {
-	s := string(ss)
+	s := ss.String()
 	if s != "" {
 		p.resourcesLock.Lock()
 		defer p.resourcesLock.Unlock()
@@ -207,9 +207,9 @@ func (p *Peer) RemoveResource(s jid.Resource) {
 	p.resourcesLock.Lock()
 	defer p.resourcesLock.Unlock()
 
-	delete(p.resources, string(s))
+	delete(p.resources, s.String())
 
-	if p.lastResource == string(s) {
+	if p.lastResource == s.String() {
 		if len(p.resources) > 0 {
 			p.lastResource = p.firstResource()
 		}
@@ -230,7 +230,7 @@ func (p *Peer) Resources() []jid.Resource {
 
 	result2 := []jid.Resource{}
 	for _, k := range result1 {
-		result2 = append(result2, jid.Resource(k))
+		result2 = append(result2, jid.NewResource(k))
 	}
 
 	return result2
@@ -264,13 +264,13 @@ func (p *Peer) ResourceToUse() jid.Resource {
 
 // ResourceToUseFallback returns the resource to use for this peer or any resource if one exists
 func (p *Peer) ResourceToUseFallback() jid.Resource {
-	if p.lockedResource != jid.Resource("") {
+	if p.lockedResource != jid.NewResource("") {
 		return p.lockedResource
 	}
 	if p.lastResource != "" {
-		return jid.Resource(p.lastResource)
+		return jid.NewResource(p.lastResource)
 	}
-	return jid.Resource(p.firstResource())
+	return jid.NewResource(p.firstResource())
 }
 
 // IsOnline returns true if any of the resources are online
@@ -279,8 +279,8 @@ func (p *Peer) IsOnline() bool {
 }
 
 func (p *Peer) currentResourceStatus() Status {
-	if p.lockedResource != jid.Resource("") {
-		return p.resources[string(p.lockedResource)]
+	if p.lockedResource != jid.NewResource("") {
+		return p.resources[p.lockedResource.String()]
 	}
 	for _, s := range p.resources {
 		return s

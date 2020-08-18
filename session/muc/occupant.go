@@ -76,7 +76,7 @@ func (o *Occupant) ChangeAffiliationToOwner() {
 func (o *Occupant) Update(from jid.WithResource, affiliation, role, show, statusMsg string, realJid jid.WithResource) error {
 	var err error
 
-	o.Nick = string(from.Resource())
+	o.Nick = from.Resource().String()
 	o.Jid = realJid
 	o.Affiliation, err = AffiliationFromString(affiliation)
 	if err != nil {

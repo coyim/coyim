@@ -177,7 +177,7 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 	defer r.lock.Unlock()
 
 	base := from.NoResource()
-	newFull := base.WithResource(jid.Resource(newNick))
+	newFull := base.WithResource(jid.NewResource(newNick))
 
 	oc, ok := r.occupants[from.String()]
 	if !ok {

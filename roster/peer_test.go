@@ -63,7 +63,7 @@ func (s *PeerSuite) Test_Dump_willDumpAllInfo(c *g.C) {
 }
 
 func (s *PeerSuite) Test_PeerWithState_createsANewPeer(c *g.C) {
-	p := PeerWithState(tj("bla@foo.com"), "hmm", "no", "", "1234")
+	p := PeerWithState(tj("bla@foo.com"), "hmm", "no", "", jid.NewResource("1234"))
 	c.Assert(p.Jid, g.Equals, tj("bla@foo.com"))
 	c.Assert(p.Name, g.Equals, "")
 	c.Assert(p.MainStatus(), g.Equals, "hmm")
@@ -71,8 +71,8 @@ func (s *PeerSuite) Test_PeerWithState_createsANewPeer(c *g.C) {
 }
 
 func (s *PeerSuite) Test_PeerWithState_hasWorkingResources(c *g.C) {
-	p := PeerWithState(tj("bla@foo.com"), "hmm", "no", "", "1234")
-	c.Assert(p.Resources(), g.DeepEquals, []jid.Resource{"1234"})
+	p := PeerWithState(tj("bla@foo.com"), "hmm", "no", "", jid.NewResource("1234"))
+	c.Assert(p.Resources(), g.DeepEquals, []jid.Resource{jid.NewResource("1234")})
 }
 
 func (s *PeerSuite) Test_PeerWithPendingSubscribe_createsNewPeer(c *g.C) {

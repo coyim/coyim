@@ -168,7 +168,7 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 					}
 
 					iter := view.roomsModel.Append(serv)
-					_ = view.roomsModel.SetValue(iter, mucListRoomsIndexJid, string(rl.Jid.Local()))
+					_ = view.roomsModel.SetValue(iter, mucListRoomsIndexJid, rl.Jid.Local().String())
 					_ = view.roomsModel.SetValue(iter, mucListRoomsIndexName, rl.Name)
 					_ = view.roomsModel.SetValue(iter, mucListRoomsIndexService, rl.Service.String())
 					rl.OnUpdate(u.updatedRoomListing, &roomListingUpdateData{iter, view, gen})

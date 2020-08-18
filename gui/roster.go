@@ -228,7 +228,7 @@ func (r *roster) appendResourcesAsMenuItems(jid jid.WithoutResource, account *ac
 
 	innerMenu, _ := g.gtk.MenuNew()
 	for _, resource := range peer.Resources() {
-		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(string(resource))
+		item, _ := g.gtk.CheckMenuItemNewWithMnemonic(resource.String())
 		rs := resource
 		_, _ = item.Connect("activate",
 			func() {

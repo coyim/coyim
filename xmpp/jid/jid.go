@@ -6,13 +6,34 @@ import (
 )
 
 // Local represents the local part of a JID
-type Local string
+type Local struct {
+	v string
+}
 
 // Domain represents the domain part of a JID
-type Domain string
+type Domain struct {
+	v string
+}
 
 // Resource represents the resource part of a JID
-type Resource string
+type Resource struct {
+	v string
+}
+
+// NewLocal returns a new local if possible
+func NewLocal(s string) Local {
+	return Local{s}
+}
+
+// NewDomain returns a new domain if possible
+func NewDomain(s string) Domain {
+	return Domain{s}
+}
+
+// NewResource returns a new resource if possible
+func NewResource(s string) Resource {
+	return Resource{s}
+}
 
 type bare string
 type full string
@@ -95,9 +116,21 @@ func ParseBare(s string) Bare {
 	return NR(s).(Bare)
 }
 
+// TryParseBare returns a bare JID if it can.
+func TryParseBare(s string) (Bare, bool) {
+	res, ok := NR(s).(Bare)
+	return res, ok
+}
+
 // ParseFull returns a full JID. It will fail if the given string isn't at least a full
 func ParseFull(s string) Full {
 	return R(s).(Full)
+}
+
+// TryParseFull returns a full JID if it can.
+func TryParseFull(s string) (Full, bool) {
+	res, ok := R(s).(Full)
+	return res, ok
 }
 
 // ParseDomain returns a domain part of a JID. It will fail if the given string isn't at least a domain
@@ -134,7 +167,7 @@ func Parse(j string) Any {
 		return domainWithResource(fmt.Sprintf("%s/%s", left, resource))
 	}
 
-	return Domain(left)
+	return Domain{left}
 }
 
 // Host implements Any
@@ -144,12 +177,12 @@ func (j Domain) Host() Domain {
 
 // String implements Any
 func (j Domain) String() string {
-	return string(j)
+	return j.v
 }
 
 // PotentialResource implements Any
 func (j Domain) PotentialResource() Resource {
-	return Resource("")
+	return Resource{""}
 }
 
 // PotentialSplit implements Any
@@ -161,7 +194,7 @@ func (j Domain) PotentialSplit() (WithoutResource, Resource) {
 func (j bare) Host() Domain {
 	// bare is guaranteed to have both a local and a domain part, so that means there HAS to be an @ sign
 	at := strings.IndexRune(string(j), '@')
-	return Domain(j[at+1:])
+	return Domain{string(j[at+1:])}
 }
 
 // String implements Any
@@ -171,7 +204,7 @@ func (j bare) String() string {
 
 // PotentialResource implements Any
 func (j bare) PotentialResource() Resource {
-	return Resource("")
+	return Resource{""}
 }
 
 // PotentialSplit implements Any
@@ -183,7 +216,7 @@ func (j bare) PotentialSplit() (WithoutResource, Resource) {
 func (j bare) Local() Local {
 	// bareJID is guaranteed to have both a local and a domain part, so that means there HAS to be an @ sign
 	at := strings.IndexRune(string(j), '@')
-	return Local(j[:at])
+	return Local{string(j[:at])}
 }
 
 // NoResource implements Any
@@ -193,12 +226,12 @@ func (j bare) NoResource() WithoutResource {
 
 // WithResource implements Any
 func (j bare) WithResource(r Resource) WithResource {
-	return R(j.String() + "/" + string(r))
+	return R(j.String() + "/" + r.v)
 }
 
 // MaybeWithResource implements Any
 func (j bare) MaybeWithResource(r Resource) Any {
-	return Parse(j.String() + "/" + string(r))
+	return Parse(j.String() + "/" + r.v)
 }
 
 // Host implements Any
@@ -247,7 +280,7 @@ func (j full) NoResource() WithoutResource {
 func (j full) Resource() Resource {
 	// Since a full is guaranteed to contain a resource, we can assume the slash is there
 	slash := strings.IndexRune(string(j), '/')
-	return Resource(j[slash+1:])
+	return Resource{string(j[slash+1:])}
 }
 
 // Split implements WithResource
@@ -257,7 +290,7 @@ func (j full) Split() (WithoutResource, Resource) {
 
 // Host implements Any
 func (j domainWithResource) Host() Domain {
-	return Domain(j.NoResource().String())
+	return Domain{j.NoResource().String()}
 }
 
 // String implements Any
@@ -289,14 +322,14 @@ func (j domainWithResource) PotentialSplit() (WithoutResource, Resource) {
 func (j domainWithResource) Resource() Resource {
 	// Since a domainWithResource is guaranteed to contain a resource, we can assume the slash is there
 	slash := strings.IndexRune(string(j), '/')
-	return Resource(j[slash+1:])
+	return Resource{string(j[slash+1:])}
 }
 
 // NoResource implements WithResource
 func (j domainWithResource) NoResource() WithoutResource {
 	// Since a domainWithResource is guaranteed to contain a resource, we can assume the slash is there
 	slash := strings.IndexRune(string(j), '/')
-	return Domain(j[:slash])
+	return Domain{string(j[:slash])}
 }
 
 // Split implements WithResource
@@ -332,7 +365,7 @@ func MaybeLocal(j Any) Local {
 	if jj, ok := j.(WithLocal); ok {
 		return jj.Local()
 	}
-	return Local("")
+	return Local{""}
 }
 
 // WithAndWithout will return the JID with the resource, and without the resource
@@ -345,10 +378,10 @@ func WithAndWithout(peer Any) (WithResource, WithoutResource) {
 
 // String implements Local
 func (j Local) String() string {
-	return string(j)
+	return j.v
 }
 
 // String implements Resource
 func (j Resource) String() string {
-	return string(j)
+	return j.v
 }

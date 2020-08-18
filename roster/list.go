@@ -112,7 +112,7 @@ func (l *List) PeerPresenceUpdate(peer jid.WithResource, status, statusMsg, belo
 		oldOnline := p.IsOnline()
 		mainStatus := p.MainStatus()
 		mainStatusMsg := p.MainStatusMsg()
-		p.lockedResource = jid.Resource("")
+		p.lockedResource = jid.NewResource("")
 
 		p.AddResource(peer.Resource(), status, statusMsg)
 		if mainStatus != status || mainStatusMsg != statusMsg {

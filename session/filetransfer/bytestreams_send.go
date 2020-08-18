@@ -45,7 +45,7 @@ func bytestreamsCalculateValidProxies(s access.Session) func(key string) interfa
 	return func(key string) interface{} {
 		var ditems data.DiscoveryItemsQuery
 		possibleProxies := []string{}
-		dm := string(jid.Parse(s.GetConfig().Account).Host())
+		dm := jid.Parse(s.GetConfig().Account).Host().String()
 		e := basicIQ(s, dm, "get", &data.DiscoveryItemsQuery{}, &ditems, func(*data.ClientIQ) {
 			for _, di := range ditems.DiscoveryItems {
 				ids, feats, _ := s.Conn().DiscoveryFeaturesAndIdentities(di.Jid)

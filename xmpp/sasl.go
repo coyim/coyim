@@ -223,7 +223,7 @@ func (c *conn) BindResource() error {
 	c.jid = iq.Bind.Jid // our local id
 	jj := jid.Parse(c.jid)
 	if jwr, ok := jj.(jid.WithResource); ok {
-		c.resource = string(jwr.Resource())
+		c.resource = jwr.Resource().String()
 	}
 
 	return c.establishSession()

@@ -627,7 +627,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_unavailable_forKnownUser(c *C)
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "somewhere", "", "", "balcony"))
+	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "somewhere", "", "", jid.NewResource("balcony")))
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
@@ -772,7 +772,7 @@ func (s *SessionSuite) Test_WatchStanzas_presence_ignoresSameState(c *C) {
 		connStatus:    DISCONNECTED,
 	}
 	sess.conn = conn
-	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "dnd", "", "", "main"))
+	sess.r.AddOrReplace(roster.PeerWithState(jid.NR("some2@one.org"), "dnd", "", "", jid.NewResource("main")))
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)

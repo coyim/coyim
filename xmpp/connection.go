@@ -288,7 +288,7 @@ func (c *conn) asyncReturnIQResponse(stanza data.Stanza) error {
 		// servers differ in how they construct the
 		// reply.
 		bare := jid.Parse(c.jid).NoResource().String()
-		dm := string(jid.Parse(c.jid).Host())
+		dm := jid.Parse(c.jid).Host().String()
 		if len(iq.From) > 0 && iq.From != c.jid && iq.From != bare && iq.From != dm {
 			return nil
 		}

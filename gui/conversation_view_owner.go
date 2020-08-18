@@ -67,7 +67,7 @@ func (cvf *ourConversationViewFactory) createConversationView(existing *conversa
 }
 
 func (cvf *ourConversationViewFactory) potentialTarget() string {
-	p := string(cvf.peer.PotentialResource())
+	p := cvf.peer.PotentialResource().String()
 	if cvf.targeted && p != "" {
 		return fmt.Sprintf(" (%s)", p)
 	}
@@ -211,7 +211,7 @@ func (cvf *ourConversationViewFactory) createUnifiedConversationView(existing *c
 	csi.entryScroll.SetMarginBottom(5)
 
 	tabLabel := csi.shortName()
-	resource := string(cvf.peer.PotentialResource())
+	resource := cvf.peer.PotentialResource().String()
 	if resource != "" {
 		tabLabel = tabLabel + " [at] " + resource
 	}
@@ -257,9 +257,9 @@ func (cvf *ourConversationViewFactory) createConversationPane(win gtki.Window) *
 	panicOnDevError(builder.bindObjects(cp))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_start_otr":      cp.onStartOtrSignal,
-		"on_end_otr":        cp.onEndOtrSignal,
-		"on_verify_fp":      cp.onVerifyFpSignal,
+		"on_start_otr":             cp.onStartOtrSignal,
+		"on_end_otr":               cp.onEndOtrSignal,
+		"on_verify_fp":             cp.onVerifyFpSignal,
 		"on_connect":               cp.onConnect,
 		"on_disconnect":            cp.onDisconnect,
 		"on_destroy_file_transfer": cp.onDestroyFileTransferNotif,

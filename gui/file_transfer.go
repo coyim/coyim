@@ -214,7 +214,7 @@ func (u *gtkUI) ensureJidHasResource(account *account, p jid.Any) jid.Any {
 			"peer":     p,
 			"resource": res,
 		}).Debug("adding resource to peer")
-		if res != jid.Resource("") {
+		if res != jid.NewResource("") {
 			return p.WithResource(res)
 		}
 	}

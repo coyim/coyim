@@ -25,11 +25,11 @@ func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
 	}
 }
 
-func (u *gtkUI) handleMUCUpdatedEvent(from jid.Bare, ev events.MUCOccupantUpdated, a *account) {
+func (u *gtkUI) handleMUCUpdatedEvent(from jid.Full, ev events.MUCOccupantUpdated, a *account) {
 	a.log.WithField("Event", ev).Debug("handleMUCUpdatedEvent")
 }
 
-func (u *gtkUI) handleMUCJoinedEvent(from jid.Bare, ev events.MUCOccupantJoined, a *account) {
+func (u *gtkUI) handleMUCJoinedEvent(from jid.Full, ev events.MUCOccupantJoined, a *account) {
 	a.log.WithFields(log.Fields{
 		"from":        ev.From,
 		"nickname":    ev.Nickname,

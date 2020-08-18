@@ -23,14 +23,14 @@ func (a *account) roomViewFor(rid jid.Bare) (*roomView, *muc.Room, error) {
 
 // TODO[OB]-MUC: I'm not a huge fan of this method name
 
-func (a *account) enrollNewOccupantRoomEvent(from jid.Bare, ev events.MUCOccupantJoined) {
-	rv, room, err := a.roomViewFor(from)
+func (a *account) enrollNewOccupantRoomEvent(from jid.Full, ev events.MUCOccupantJoined) {
+	rv, room, err := a.roomViewFor(ev.Room)
 	if err != nil {
 		a.log.WithError(err).Error("An error occurred while trying to change the room occupant status.")
 		return
 	}
 
-	fjid := from.WithResource(jid.Resource(ev.Nickname))
+	fjid := from.WithResource(ev.Nickname)
 	realjid := ev.Jid
 
 	// TODO[OB]-MUC: You should not ignore the results of this call

@@ -6,8 +6,9 @@ import (
 
 // MUC is for publishing MUC-related session events
 type MUC struct {
-	From      jid.Bare
+	From      jid.Full
 	EventType EventType
+	Room      jid.Bare
 	// Contains information related to any MUC event
 	Info interface{}
 }
@@ -33,7 +34,7 @@ type MUCRoomRenamed struct {
 type MUCOccupant struct {
 	MUC
 	Nickname jid.Resource
-	Jid      jid.WithResource
+	Jid      jid.Full
 }
 
 // MUCOccupantUpdated contains information about

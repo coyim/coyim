@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"sync"
+	"strings"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -10,10 +10,6 @@ import (
 
 type mucJoinRoomView struct {
 	builder *builder
-
-	// TODO[OB]-MUC: this field doesn't seem to be used.
-	generation int
-	updateLock sync.RWMutex
 
 	dialog           gtki.Dialog  `gtk-widget:"join-room"`
 	txtRoomName      gtki.Entry   `gtk-widget:"textRoomName"`
@@ -44,22 +40,13 @@ func (jrv *mucJoinRoomView) init() {
 func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
 	// Since this is in the UI thread, there are probably better ways to deal with it
-
-	jrv.updateLock.Lock()
-
 	jrv.clearErrors()
 
 	roomName, _ := jrv.txtRoomName.GetText()
+	roomName = strings.TrimSpace(roomName)
 	rj, ok := jid.Parse(roomName).(jid.Bare)
 	if !ok {
-		// TODO[OB]-MUC: I don't really understand why these two cases are handled differently
-		if len(roomName) == 0 {
-			jrv.notifyOnError(i18n.Localf("Please specify a valid Room Name"))
-		} else {
-			// TODO[OB]-MUC: This message is not so friendly
-			jrv.notifyOnError(i18n.Localf("The Room \"%s\" is not a valid JID Bare format", roomName))
-		}
-		jrv.updateLock.Unlock()
+		jrv.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))
 		return
 	}
 
@@ -68,12 +55,15 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 
 	rc, ec := a.session.HasRoom(rj)
 	go func() {
-		defer jrv.updateLock.Unlock()
-
 		select {
 		case value, ok := <-rc:
 			if !ok {
-				// TODO[OB]-MUC: If this happens, what will the user be told?
+				doInUIThread(func() {
+					jrv.spinner.Stop()
+					jrv.spinner.SetVisible(false)
+					jrv.notifyOnError(i18n.Localf("An error ocurred trying to find the room \"%s\"", roomName))
+					a.log.WithField("Room", roomName).Warn("An error ocurred trying to find a room")
+				})
 				return
 			}
 			doInUIThread(func() {
@@ -125,7 +115,5 @@ func (u *gtkUI) mucShowJoinRoom() {
 
 	u.connectShortcutsChildWindow(view.dialog)
 
-	// TODO[OB]-MUC: This dialog should not be transient
-	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
 }

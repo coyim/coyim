@@ -7,11 +7,12 @@ import (
 )
 
 func (s *session) publishMUCError(stanza *data.ClientPresence) {
-	from := jid.Parse(stanza.From).(jid.WithResource)
-	e := events.MUCError{}
-	e.EventInfo = events.MUCInfoError{
-		From: from,
-	}
+	rid := jid.Parse(stanza.From).(jid.WithResource)
+	from := rid.NoResource().(jid.Bare)
+
+	e := events.MUC{}
+	e.From = from
+	e.Info = events.MUCError{}
 
 	switch {
 	case stanza.Error.MUCNotAuthorized != nil:

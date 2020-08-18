@@ -29,6 +29,9 @@ func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUC, a *account) {
 }
 
 func (u *gtkUI) handleErrorMUCConflictEvent(ev events.MUC, a *account) {
+	// TODO[OB]-MUC: Is debug level the right level for this one?
+	// TODO[OB]-MUC: When it's only one field, you should use WithField(), not WithFields()
+
 	a.log.WithFields(log.Fields{
 		"from": ev.From,
 	}).Debug("Nickname conflict event received")

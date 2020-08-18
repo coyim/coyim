@@ -11,6 +11,7 @@ import (
 type mucJoinRoomView struct {
 	builder *builder
 
+	// TODO[OB]-MUC: this field doesn't seem to be used.
 	generation int
 	updateLock sync.RWMutex
 

@@ -13,6 +13,8 @@ type createMUCRoom struct {
 	errorBox *errorNotification
 	builder  *builder
 
+	// TODO[OB]-MUC: This should be assigned to a named field, as mentioned in earlier comments
+
 	gtki.Dialog `gtk-widget:"create-chat-dialog"`
 
 	notification          gtki.InfoBar
@@ -69,6 +71,7 @@ func (u *gtkUI) newMUCRoomView() *createMUCRoom {
 
 	view.builder.ConnectSignals(map[string]interface{}{
 		"on_create_room": func() {
+			// TODO[OB]-MUC: Signals are already executing in the UI thread, so not necessary to doInUIThread here
 			doInUIThread(view.clearErrors)
 			go view.createRoomHandler(ac.currentAccount())
 		},
@@ -95,6 +98,7 @@ func (v *createMUCRoom) updateChatServices(ac *account) {
 	enteredService, _ := v.chatServiceEntry.GetText()
 	v.chatServices.RemoveAll()
 
+	// TODO[OB]-MUC: you should use jid.ParseDomain() here instead
 	csc, ec, endEarly := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
 	go func() {
 		hadAny := false
@@ -144,6 +148,7 @@ func (v *createMUCRoom) updateFields(f bool) {
 func (v *createMUCRoom) getRoomID() jid.Bare {
 	roomName, err := v.room.GetText()
 	if err != nil {
+		// TODO[OB]-MUC: It miht be good to log the error here
 		doInUIThread(func() {
 			v.errorBox.ShowMessage(i18n.Local("Could not get the room name, please try again."))
 		})
@@ -151,14 +156,17 @@ func (v *createMUCRoom) getRoomID() jid.Bare {
 	}
 	service := v.chatServices.GetActiveText()
 	if strings.TrimSpace(roomName) == "" || strings.TrimSpace(service) == "" {
+		// TODO[OB]-MUC: is this all validation that is necessary?
 		doInUIThread(func() {
 			v.errorBox.ShowMessage(i18n.Local("Please fill the required fields to create the room."))
 		})
 		return nil
 	}
 
+	// TODO[OB]-MUC: Use jid.NewBare instead, here
 	ri, ok := jid.Parse(fmt.Sprintf("%s@%s", strings.TrimSpace(roomName), strings.TrimSpace(service))).(jid.Bare)
 	if !ok {
+		// TODO[OB]-MUC: This shouldn't really be possible. Can you give an example of how it can happen?
 		doInUIThread(func() {
 			v.errorBox.ShowMessage(i18n.Local("Room name not allowed."))
 		})
@@ -214,6 +222,7 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 			}
 
 			if err != nil {
+				// TODO[OB]-MUC: Why is this at the Debug level?
 				v.u.log.WithError(err).Debug("something went wrong trying to create the room")
 				return
 			}

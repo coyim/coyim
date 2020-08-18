@@ -4,44 +4,65 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// MUCInfo description
-type MUCInfo struct {
-	From jid.Bare
+// MUCAny represents any type of MUC event
+type MUCAny interface{}
+
+// MUC is for publishing MUC-related session events
+type MUC struct {
+	From      jid.Bare
+	EventType EventType
+	// Contains information related to any MUC event
+	Info MUCAny
 }
 
-// MUCOccupant description
+// MUCError contains information about a MUC-related
+// error event
+type MUCError struct{}
+
+// MUCRoomCreated contains event information about
+// the created room
+type MUCRoomCreated struct {
+	MUC
+}
+
+// MUCRoomRenamed contains event information about
+// the renamed room's nickname
+type MUCRoomRenamed struct {
+	MUC
+}
+
+// MUCOccupant contains basic information about
+// any room's occupant
 type MUCOccupant struct {
-	MUCInfo
-	Nickname string
+	MUC
+	Nickname jid.Resource
+	Jid      jid.WithResource
 }
 
-// MUCOccupantJoined description
-type MUCOccupantJoined struct {
-	MUCOccupantUpdated
-	Jid    jid.WithResource
-	Status string
-	Joined bool
-}
-
-// MUCOccupantUpdated description
+// MUCOccupantUpdated contains information about
+// the updated occupant in a room
 type MUCOccupantUpdated struct {
 	MUCOccupant
 	Affiliation string
 	Role        string
 }
 
-// MUCEventType represents the type of MUC event
-type MUCEventType EventType
+// MUCOccupantJoined contains information about
+// the occupant that has joined to room
+type MUCOccupantJoined struct {
+	MUCOccupantUpdated
+	Status string
+}
 
-// MUCEventErrorType represents the type of MUC error event
-type MUCEventErrorType MUCEventType
+// MUCOccupantExited contains information about
+// the occupant that has exited from a room
+type MUCOccupantExited struct {
+	MUCOccupant
+}
 
 // MUC event types
 const (
-	MUCOccupantUpdate MUCEventType = iota
-	MUCOccupantJoin
-
-	MUCNotAuthorized MUCEventErrorType = iota
+	MUCNotAuthorized EventType = iota
 	MUCForbidden
 	MUCItemNotFound
 	MUCNotAllowed
@@ -50,20 +71,3 @@ const (
 	MUCConflict
 	MUCServiceUnavailable
 )
-
-// MUC contains information related to MUC session event
-type MUC struct {
-	EventInfo interface{}
-	EventType MUCEventType
-}
-
-// MUCInfoError description
-type MUCInfoError struct {
-	From jid.WithResource
-}
-
-// MUCError contains information related to MUC-error session event
-type MUCError struct {
-	EventInfo MUCInfoError
-	EventType MUCEventErrorType
-}

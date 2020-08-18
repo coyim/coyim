@@ -70,6 +70,8 @@ func (rv *roomView) init() {
 	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.jid))
 }
 
+// TODO[OB]-MUC: I don't think this is a great name for the method - since the method doesn't do what the method name says it does
+
 func (rv *roomView) togglePassword() {
 	doInUIThread(func() {
 		value := rv.passwordCheck.GetActive()
@@ -106,9 +108,9 @@ func (rv *roomView) togglePanelView() {
 }
 
 func (rv *roomView) onRoomJoinClicked() {
-
 	doInUIThread(rv.clearErrors)
 
+	// TODO[OB]-MUC: Hmm, this channel should likely not be cached. That seems to imply a race condition later on
 	rv.onJoin = make(chan bool, 1)
 	nickName, _ := rv.nicknameEntry.GetText()
 
@@ -135,7 +137,10 @@ func (rv *roomView) onRoomJoinClicked() {
 		}
 
 		if !jev {
+			// TODO[OB]-MUC: You should only send fixed strings to the i18n functions
 			rv.notifyOnError(i18n.Local(rv.lastErrorMessage))
+			// TODO[OB]-MUC: Why debug-level?
+			// TODO[OB]-MUC: I don't think this log message makes much sense
 			rv.account.log.WithField("Join Event: ", jev).Debug("Some user can't logged in to the room.")
 		} else {
 			rv.clearErrors()
@@ -144,8 +149,13 @@ func (rv *roomView) onRoomJoinClicked() {
 	}()
 }
 
+// TODO[OB]-MUC: This method name is confusing
+
 func (rv *roomView) processOccupantJoinedEvent(err error) {
+	// TODO[OB]-MUC: Why does this method take an error argument?
+
 	if err != nil {
+		// TODO[OB]-MUC: Why debug level?
 		rv.account.log.WithError(err).Debug("Room join event received")
 		rv.lastErrorMessage = err.Error()
 		rv.onJoin <- false
@@ -158,6 +168,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 	_, err := u.addRoom(a, ident)
 	if err != nil {
 		// TODO: Notify in a proper way this error
+		// TODO[OB]-MUC: Use log on 'a' object
 		log.Fatal(err.Error())
 		return
 	}
@@ -165,6 +176,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{
+		// TODO[OB]-MUC: Useless handler
 		"on_close_window":     func() {},
 		"on_show_window":      view.validateInput,
 		"on_nickname_changed": view.validateInput,
@@ -174,6 +186,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 			view.validateInput()
 		},
 		"on_room_cancel_clicked": view.window.Destroy,
+		// TODO[OB]-MUC: Can be inlined without func()
 		"on_room_join_clicked": func() {
 			view.onRoomJoinClicked()
 		},

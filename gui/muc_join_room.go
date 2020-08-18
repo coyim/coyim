@@ -42,6 +42,9 @@ func (jrv *mucJoinRoomView) init() {
 }
 
 func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
+	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
+	// Since this is in the UI thread, there are probably better ways to deal with it
+
 	jrv.updateLock.Lock()
 
 	jrv.clearErrors()
@@ -49,9 +52,11 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	roomName, _ := jrv.txtRoomName.GetText()
 	rj, ok := jid.Parse(roomName).(jid.Bare)
 	if !ok {
+		// TODO[OB]-MUC: I don't really understand why these two cases are handled differently
 		if len(roomName) == 0 {
 			jrv.notifyOnError(i18n.Localf("Please specify a valid Room Name"))
 		} else {
+			// TODO[OB]-MUC: This message is not so friendly
 			jrv.notifyOnError(i18n.Localf("The Room \"%s\" is not a valid JID Bare format", roomName))
 		}
 		jrv.updateLock.Unlock()
@@ -68,14 +73,15 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 		select {
 		case value, ok := <-rc:
 			if !ok {
+				// TODO[OB]-MUC: If this happens, what will the user be told?
 				return
 			}
 			doInUIThread(func() {
 				jrv.spinner.Stop()
 				jrv.spinner.SetVisible(false)
 				if !value {
-					jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exists", roomName))
-					a.log.WithField("Room", roomName).Debug("The Room doesn't exists")
+					jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exist", roomName))
+					a.log.WithField("Room", roomName).Debug("The Room doesn't exist")
 				} else {
 					jrv.dialog.Hide()
 					u.mucShowRoom(a, rj)
@@ -119,6 +125,7 @@ func (u *gtkUI) mucShowJoinRoom() {
 
 	u.connectShortcutsChildWindow(view.dialog)
 
+	// TODO[OB]-MUC: This dialog should not be transient
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
 }

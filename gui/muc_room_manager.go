@@ -12,6 +12,8 @@ func newRoomManager() *muc.RoomManager {
 }
 
 func (u *gtkUI) addRoom(a *account, ident jid.Bare) (*muc.Room, error) {
+	// TODO[OB]-MUC: Something about the logic in this method seems weird
+
 	_, exists := a.roomManager.GetRoom(ident)
 	if exists {
 		return nil, errors.New("the room is already in the manager")

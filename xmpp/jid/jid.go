@@ -38,8 +38,8 @@ type Any interface {
 }
 
 // NewBare accept a domain and a local and creates a valid resource
-func NewBare(local Local, domain Domain) Bare {
-	return domain.AddLocal(local)
+func NewBare(local Resource, domain WithoutResource) WithResource {
+	return domain.WithResource(local)
 }
 
 // NewFull creates a full JID from the different parts of a JID

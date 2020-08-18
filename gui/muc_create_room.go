@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/coyim/coyim/i18n"
@@ -13,9 +12,7 @@ type createMUCRoom struct {
 	errorBox *errorNotification
 	builder  *builder
 
-	// TODO[OB]-MUC: This should be assigned to a named field, as mentioned in earlier comments
-
-	gtki.Dialog `gtk-widget:"create-chat-dialog"`
+	dialog gtki.Dialog `gtk-widget:"create-chat-dialog"`
 
 	notification          gtki.InfoBar
 	notificationArea      gtki.Box          `gtk-widget:"notification-area"`
@@ -71,11 +68,10 @@ func (u *gtkUI) newMUCRoomView() *createMUCRoom {
 
 	view.builder.ConnectSignals(map[string]interface{}{
 		"on_create_room": func() {
-			// TODO[OB]-MUC: Signals are already executing in the UI thread, so not necessary to doInUIThread here
-			doInUIThread(view.clearErrors)
+			view.clearErrors()
 			go view.createRoomHandler(ac.currentAccount())
 		},
-		"on_cancel":       view.Destroy,
+		"on_cancel":       view.dialog.Destroy,
 		"on_close_window": ac.onDestroy,
 		"on_room_changed": func() {
 			view.disableCreationIfFieldsAreEmpty(ac.currentAccount())
@@ -98,8 +94,7 @@ func (v *createMUCRoom) updateChatServices(ac *account) {
 	enteredService, _ := v.chatServiceEntry.GetText()
 	v.chatServices.RemoveAll()
 
-	// TODO[OB]-MUC: you should use jid.ParseDomain() here instead
-	csc, ec, endEarly := ac.session.GetChatServices(jid.Parse(ac.Account()).Host())
+	csc, ec, endEarly := ac.session.GetChatServices(jid.ParseDomain(ac.Account()))
 	go func() {
 		hadAny := false
 		defer func() {
@@ -148,32 +143,21 @@ func (v *createMUCRoom) updateFields(f bool) {
 func (v *createMUCRoom) getRoomID() jid.Bare {
 	roomName, err := v.room.GetText()
 	if err != nil {
-		// TODO[OB]-MUC: It miht be good to log the error here
+		v.u.log.WithError(err).Error("something went wrong trying to create the room")
 		doInUIThread(func() {
 			v.errorBox.ShowMessage(i18n.Local("Could not get the room name, please try again."))
 		})
 		return nil
 	}
 	service := v.chatServices.GetActiveText()
-	if strings.TrimSpace(roomName) == "" || strings.TrimSpace(service) == "" {
-		// TODO[OB]-MUC: is this all validation that is necessary?
+	if !jid.ValidLocal(strings.TrimSpace(roomName)) || !jid.ValidDomain(strings.TrimSpace(roomName)) {
 		doInUIThread(func() {
-			v.errorBox.ShowMessage(i18n.Local("Please fill the required fields to create the room."))
+			v.errorBox.ShowMessage(i18n.Localf("%s@%s is not a valid room name.", roomName, service))
 		})
 		return nil
 	}
 
-	// TODO[OB]-MUC: Use jid.NewBare instead, here
-	ri, ok := jid.Parse(fmt.Sprintf("%s@%s", strings.TrimSpace(roomName), strings.TrimSpace(service))).(jid.Bare)
-	if !ok {
-		// TODO[OB]-MUC: This shouldn't really be possible. Can you give an example of how it can happen?
-		doInUIThread(func() {
-			v.errorBox.ShowMessage(i18n.Local("Room name not allowed."))
-		})
-		return nil
-	}
-
-	return ri
+	return jid.NewBare(jid.NewLocal(strings.TrimSpace(roomName)), jid.NewDomain(strings.TrimSpace(service)))
 }
 
 func (v *createMUCRoom) createRoomHandler(ac *account) {
@@ -203,17 +187,12 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 					_ = v.createButton.SetProperty("label", v.createButtonPrevText)
 				})
 
-				if !isRoomCreated {
+				if isRoomCreated {
 					doInUIThread(func() {
-						v.errorBox.ShowMessage(i18n.Local("Could not create the new room."))
+						v.u.mucShowRoom(ac, roomIdentity)
+						v.dialog.Destroy()
 					})
-					return
 				}
-
-				doInUIThread(func() {
-					v.u.mucShowRoom(ac, roomIdentity)
-					v.Destroy()
-				})
 			}()
 
 			err, ok := <-ec
@@ -222,8 +201,10 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 			}
 
 			if err != nil {
-				// TODO[OB]-MUC: Why is this at the Debug level?
-				v.u.log.WithError(err).Debug("something went wrong trying to create the room")
+				ac.log.WithError(err).Error("something went wrong trying to create the room")
+				doInUIThread(func() {
+					v.errorBox.ShowMessage(i18n.Localf("Could not create the new room, because the following reason:\n %s", err))
+				})
 				return
 			}
 
@@ -250,6 +231,6 @@ func (v *createMUCRoom) disableCreationIfFieldsAreEmpty(ac *account) {
 
 func (u *gtkUI) mucCreateChatRoom() {
 	view := u.newMUCRoomView()
-	view.SetTransientFor(u.window)
-	view.Show()
+	view.dialog.SetTransientFor(u.window)
+	view.dialog.Show()
 }

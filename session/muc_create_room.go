@@ -50,8 +50,8 @@ func (s *session) createRoom(roomID jid.Bare, errorResult chan<- error) {
 	}
 
 	if iq.Type == "error" {
-		err = errors.New("xmpp: error type response getting from Information Query")
-		s.log.WithError(err).Error("error stanza information:", iq.Error.Type, iq.Error.Text)
+		err = errors.New(iq.Error.Text)
+		s.log.WithError(err).Error("Received an error from information query")
 		errorResult <- err
 		return
 	}

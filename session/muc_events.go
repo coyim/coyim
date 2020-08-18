@@ -59,11 +59,5 @@ func (m *mucManager) publishMUCEvent(from jid.Full, e interface{}) {
 }
 
 func (m *mucManager) publishEvent(ev interface{}) {
-	if m.publishEv == nil {
-		// TODO[OB]-MUC: I don't think this check is necessary. Just call publishEv directly - it will fail with a
-		// nil-pointer error which will have the same result as the panic here.
-		panic("programmer error: muc manager \"publishEv\" function not defined")
-	}
-
 	m.publishEv(ev)
 }

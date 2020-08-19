@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -160,6 +161,18 @@ func (v *createMUCRoom) getRoomID() jid.Bare {
 	return jid.NewBare(jid.NewLocal(strings.TrimSpace(roomName)), jid.NewDomain(strings.TrimSpace(service)))
 }
 
+func reasonBasedOnError(err interface{}) string {
+	switch e := err.(type) {
+	case *session.ErrInvalidInformationQueryRequest:
+		return i18n.Local("Could not send the information query to the server, please try again.")
+	case *session.ErrUnexpectedResponse:
+		return i18n.Local("The connection to the server can not be stablished.")
+	case *session.ErrInformationQueryResponse:
+		return e.Error()
+	}
+	return ""
+}
+
 func (v *createMUCRoom) createRoomHandler(ac *account) {
 	if ac == nil {
 		doInUIThread(func() {
@@ -197,18 +210,22 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 
 			err, ok := <-ec
 			if !ok {
+				isRoomCreated = true
 				return
 			}
 
 			if err != nil {
-				ac.log.WithError(err).Error("something went wrong trying to create the room")
+				ac.log.WithError(err.(error)).Error("something went wrong trying to create the room")
+				var finalErr string
+				if r := reasonBasedOnError(err); r != "" {
+					finalErr = i18n.Localf("Could not create the new room, because the following reason:\n %s", r)
+				} else {
+					finalErr = i18n.Local("Could not create the new room")
+				}
 				doInUIThread(func() {
-					v.errorBox.ShowMessage(i18n.Localf("Could not create the new room, because the following reason:\n %s", err))
+					v.errorBox.ShowMessage(finalErr)
 				})
-				return
 			}
-
-			isRoomCreated = true
 		}()
 	}
 }

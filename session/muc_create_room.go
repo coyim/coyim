@@ -1,70 +1,94 @@
 package session
 
 import (
-	"errors"
-
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// TODO[OB]-MUC: This is a fairly large method. Would it be possible to break it up into smaller, more helpful bits
+// ErrInvalidInformationQueryRequest is an invalid information query request error
+type ErrInvalidInformationQueryRequest struct{}
 
-func (s *session) createRoom(roomID jid.Bare, errorResult chan<- error) {
-	// Send a presence for create the room and signals support for MUC
-	// See: 10.1.1 Create room General
-	err := s.conn.SendMUCPresence(roomID.String())
-	if err != nil {
-		errorResult <- err
-		return
-	}
+// ErrUnexpectedResponse is an unexpected response from the server error
+type ErrUnexpectedResponse struct{}
 
-	// TODO[OB]-MUC: What does this comment mean?
-	// TODO: Delete 'roomConf' and get this information from the function.
-	// See: 10.1.2 Creating an Instant Room
-	// Room Information Query
-	roomConf := &data.MUCRoomConfiguration{
-		Form: &data.Form{
-			Type: "submit",
-		},
-	}
+// ErrInformationQueryResponse contains an error received in the information query response
+type ErrInformationQueryResponse struct {
+	Type   string
+	Reason string
+}
 
-	reply, _, err := s.conn.SendIQ(roomID.String(), "set", roomConf)
-	if err != nil {
-		errorResult <- err
-		return
-	}
+func (e *ErrInvalidInformationQueryRequest) Error() string {
+	return "invalid information query request"
+}
 
+func (e *ErrUnexpectedResponse) Error() string {
+	return "received an unexpected response from the server"
+}
+
+func (e *ErrInformationQueryResponse) Error() string {
+	return e.Reason
+}
+
+func validateStanza(reply <-chan data.Stanza) error {
 	stanza, ok := <-reply
 	if !ok {
-		errorResult <- errors.New("xmpp: failed to receive response")
-		return
+		return &ErrInvalidInformationQueryRequest{}
 	}
 
 	iq, ok := stanza.Value.(*data.ClientIQ)
 	if !ok {
-		// TODO[OB]-MUC: These error messages are not exactly correct. It would be better if they said something more useful about what happened
-		err = errors.New("xmpp: failed getting the response")
-		s.log.WithError(err).Error("failed getting the response when configuring room")
-		errorResult <- err
-		return
+		return &ErrUnexpectedResponse{}
 	}
 
 	if iq.Type == "error" {
-		err = errors.New(iq.Error.Text)
-		s.log.WithError(err).Error("Received an error from information query")
+		return &ErrInformationQueryResponse{
+			Type:   iq.Type,
+			Reason: iq.Error.Text,
+		}
+	}
+
+	return nil
+}
+
+func newRoomConfiguration() data.MUCRoomConfiguration {
+	return data.MUCRoomConfiguration{
+		Form: &data.Form{
+			Type: "submit",
+		},
+	}
+}
+
+// Send a presence for creating the room and signals support for MUC
+func (s *session) createRoom(roomID jid.Bare, errorResult chan<- interface{}) {
+	// See XEP-0045 v1.32.0, section: 10.1.1
+	err := s.conn.SendMUCPresence(roomID.String())
+	if err != nil {
+		s.log.WithError(err).Error("An error ocurred while sending a presence for creating an instant room")
+		errorResult <- &ErrUnexpectedResponse{}
+		return
+	}
+
+	// See XEP-0045 v1.32.0, section: 10.1.2
+	reply, _, err := s.conn.SendIQ(roomID.String(), "set", newRoomConfiguration())
+	if err != nil {
+		s.log.WithError(err).Error("An error ocurred while sending the information query for creating an instant room")
+		errorResult <- &ErrUnexpectedResponse{}
+		return
+	}
+
+	err = validateStanza(reply)
+	if err != nil {
+		s.log.WithError(err).Error("Invalid information query response")
 		errorResult <- err
 		return
 	}
 
-	// TODO[OB]-MUC: I don't like this pattern of sending a nil on the errorResult channel. Much better to close the channel
-	errorResult <- nil
+	close(errorResult)
 }
 
 // TODO: Add a RoomConfigurationQuery for create a Reserved Room
-func (s *session) CreateRoom(roomID jid.Bare) <-chan error {
-	// TODO[OB]-MUC: I don't think this channel should be buffered
-	errorResult := make(chan error, 1)
-
+func (s *session) CreateRoom(roomID jid.Bare) <-chan interface{} {
+	errorResult := make(chan interface{})
 	go s.createRoom(roomID, errorResult)
 
 	return errorResult

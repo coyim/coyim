@@ -3,7 +3,6 @@ package gui
 import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/jid"
-	log "github.com/sirupsen/logrus"
 )
 
 func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *account) {
@@ -21,7 +20,7 @@ func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *acc
 	case events.MUCRegistrationRequired:
 		a.log.Debug("MUC Error MUCRegistrationRequired received")
 	case events.MUCConflict:
-		u.handleErrorMUCConflictEvent(from, ev, a)
+		u.handleErrorMUCConflictEvent(from, a)
 	case events.MUCServiceUnavailable:
 		a.log.Debug("MUC Error MUCServiceUnavailable received")
 	default:
@@ -29,13 +28,9 @@ func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *acc
 	}
 }
 
-func (u *gtkUI) handleErrorMUCConflictEvent(from jid.Full, ev events.MUCError, a *account) {
-	// TODO[OB]-MUC: Is debug level the right level for this one?
-	// TODO[OB]-MUC: When it's only one field, you should use WithField(), not WithFields()
+func (u *gtkUI) handleErrorMUCConflictEvent(from jid.Full, a *account) {
 
-	a.log.WithFields(log.Fields{
-		"from": from,
-	}).Debug("Nickname conflict event received")
+	a.log.WithField("from", from).Warn("Nickname conflict event received")
 
-	a.errorNewOccupantRoomEvent(from, ev)
+	a.generateNicknameConflictError(from)
 }

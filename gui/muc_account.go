@@ -54,7 +54,7 @@ func (a *account) generateNicknameConflictError(from jid.Full) {
 	}
 	// Generating a custom error for the nickname conflict event received
 	err = muc.NewNicknameConflictError(nickname)
-	a.log.WithError(err).Error("Room join event received")
+	a.log.WithError(err).Error("Nickname conflict event received")
 	rv.lastErrorMessage = err.Error()
 	rv.onJoin <- false
 }

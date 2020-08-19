@@ -3,17 +3,75 @@ package jid
 import (
 	"net"
 	"regexp"
-	"strings"
+
+	"github.com/xdg/stringprep"
 )
 
-// ValidLocal checks whether the given string is a valid local part of a JID
+func stringToStringprepSet(s string) stringprep.Set {
+	var result stringprep.Set
+
+	for _, r := range s {
+		result = append(result, stringprep.RuneRange{r, r})
+	}
+
+	return result
+}
+
+var localPartCustomExcludedTable = stringToStringprepSet("\"&'/:<>@")
+
+var localPartProfile = stringprep.Profile{
+	Mappings: []stringprep.Mapping{
+		stringprep.TableB1,
+		stringprep.TableB2,
+	},
+	Normalize: true,
+	Prohibits: []stringprep.Set{
+		stringprep.TableC1_1,
+		stringprep.TableC1_2,
+		stringprep.TableC2_1,
+		stringprep.TableC2_2,
+		stringprep.TableC3,
+		stringprep.TableC4,
+		stringprep.TableC5,
+		stringprep.TableC6,
+		stringprep.TableC7,
+		stringprep.TableC8,
+		stringprep.TableC9,
+		localPartCustomExcludedTable,
+	},
+	CheckBiDi: true,
+}
+
+var resourcePartProfile = stringprep.Profile{
+	Mappings: []stringprep.Mapping{
+		stringprep.TableB1,
+	},
+	Normalize: true,
+	Prohibits: []stringprep.Set{
+		stringprep.TableC1_2,
+		stringprep.TableC2_1,
+		stringprep.TableC2_2,
+		stringprep.TableC3,
+		stringprep.TableC4,
+		stringprep.TableC5,
+		stringprep.TableC6,
+		stringprep.TableC7,
+		stringprep.TableC8,
+		stringprep.TableC9,
+	},
+	CheckBiDi: true,
+}
+
+// ValidLocal checks whether the given string is a valid local part of a JID A localpart is defined to be any string of
+// length 1 to 1023, matching the UsernameCaseMapped profile from RFC7613, and excluding a few more characters
 func ValidLocal(s string) bool {
-	l := len(s)
-	if l == 0 || l > 1023 {
+	ps, err := localPartProfile.Prepare(s)
+	if err != nil {
 		return false
 	}
 
-	if strings.ContainsAny(s, "\"&'/:<>@") {
+	l := len(ps)
+	if l == 0 || l > 1023 {
 		return false
 	}
 
@@ -42,7 +100,12 @@ func ValidDomain(s string) bool {
 // ValidResource returns true if the given string is a valid resource part for a JID.
 // Note that a resource part is allowed to contain / and @ characters
 func ValidResource(s string) bool {
-	l := len(s)
+	ps, err := resourcePartProfile.Prepare(s)
+	if err != nil {
+		return false
+	}
+
+	l := len(ps)
 	if l == 0 || l > 1023 {
 		return false
 	}

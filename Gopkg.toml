@@ -52,3 +52,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/coyim/gotk3osx"
+
+[[constraint]]
+  name = "github.com/xdg/stringprep"
+  version = "1.0.0"

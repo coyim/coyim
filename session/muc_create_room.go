@@ -59,7 +59,7 @@ func newRoomConfiguration() data.MUCRoomConfiguration {
 }
 
 // Send a presence for creating the room and signals support for MUC
-func (s *session) createRoom(roomID jid.Bare, errorResult chan<- interface{}) {
+func (s *session) createRoom(roomID jid.Bare, errorResult chan<- error) {
 	// See XEP-0045 v1.32.0, section: 10.1.1
 	err := s.conn.SendMUCPresence(roomID.String())
 	if err != nil {
@@ -87,8 +87,8 @@ func (s *session) createRoom(roomID jid.Bare, errorResult chan<- interface{}) {
 }
 
 // TODO: Add a RoomConfigurationQuery for create a Reserved Room
-func (s *session) CreateRoom(roomID jid.Bare) <-chan interface{} {
-	errorResult := make(chan interface{})
+func (s *session) CreateRoom(roomID jid.Bare) <-chan error {
+	errorResult := make(chan error)
 	go s.createRoom(roomID, errorResult)
 
 	return errorResult

@@ -216,7 +216,7 @@ func (s *SessionMock) JoinRoom(rj jid.Bare, nickName string) error {
 }
 
 // CreateRoom is the implementation for session interface
-func (*SessionMock) CreateRoom(jid.Bare) <-chan interface{} {
+func (*SessionMock) CreateRoom(jid.Bare) <-chan error {
 	return nil
 }
 

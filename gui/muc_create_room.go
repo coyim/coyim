@@ -161,7 +161,7 @@ func (v *createMUCRoom) getRoomID() jid.Bare {
 	return jid.NewBare(jid.NewLocal(strings.TrimSpace(roomName)), jid.NewDomain(strings.TrimSpace(service)))
 }
 
-func reasonBasedOnError(err interface{}) string {
+func reasonBasedOnError(err error) string {
 	switch e := err.(type) {
 	case *session.ErrInvalidInformationQueryRequest:
 		return i18n.Local("Could not send the information query to the server, please try again.")
@@ -215,7 +215,7 @@ func (v *createMUCRoom) createRoomHandler(ac *account) {
 			}
 
 			if err != nil {
-				ac.log.WithError(err.(error)).Error("something went wrong trying to create the room")
+				ac.log.WithError(err).Error("something went wrong trying to create the room")
 				var finalErr string
 				if r := reasonBasedOnError(err); r != "" {
 					finalErr = i18n.Localf("Could not create the new room, because the following reason:\n %s", r)

@@ -335,7 +335,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 
 		if isMUCPresence(stanza) {
-			s.muc.publishMUCError(stanza)
+			s.muc.handleMUCPresence(stanza)
 		}
 	default:
 		log.WithField("stanza", stanza).Warn("Unrecognized presence")

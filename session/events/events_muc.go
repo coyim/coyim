@@ -16,6 +16,7 @@ type MUC struct {
 // error event
 type MUCError struct {
 	ErrorType MUCErrorType
+	Room      jid.Bare
 }
 
 // MUCRoomCreated contains event information about
@@ -68,7 +69,7 @@ const (
 	MUCForbidden
 	MUCItemNotFound
 	MUCNotAllowed
-	MUCNotAceptable
+	MUCNotAcceptable
 	MUCRegistrationRequired
 	MUCConflict
 	MUCServiceUnavailable

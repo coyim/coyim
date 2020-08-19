@@ -15,8 +15,8 @@ func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *acc
 		a.log.Debug("MUC Error MUCItemNotFound received")
 	case events.MUCNotAllowed:
 		a.log.Debug("MUC Error MUCNotAllowed received")
-	case events.MUCNotAceptable:
-		a.log.Debug("MUC Error MUCNotAceptable received")
+	case events.MUCNotAcceptable:
+		a.log.Debug("MUC Error MUCNotAcceptable received")
 	case events.MUCRegistrationRequired:
 		a.log.Debug("MUC Error MUCRegistrationRequired received")
 	case events.MUCConflict:

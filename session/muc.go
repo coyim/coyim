@@ -95,6 +95,11 @@ func isMUCUserPresence(stanza *data.ClientPresence) bool {
 func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	from := jid.ParseFull(stanza.From)
 
+	if stanza.Type == "error" {
+		m.handleMUCErrorPresence(from, stanza)
+		return
+	}
+
 	roomWithoutResource, occupant := from.Split()
 	room := roomWithoutResource.(jid.Bare)
 	status := stanza.MUCUser.Status
@@ -106,33 +111,7 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 
 	switch stanza.Type {
 	case "unavailable":
-		m.mucOccupantExit(from, room, occupant)
-
-		switch {
-		case userStatusContains(status, MUCStatusBanned):
-			// We got banned
-			m.log.Debug("handleMUCPresence(): MUCStatusBanned")
-
-		case userStatusContains(status, MUCStatusNewNickname):
-			// Someone has changed its nickname
-			m.log.Debug("handleMUCPresence(): MUCStatusNewNickname")
-
-		case userStatusContains(status, MUCStatusBecauseKickedFrom):
-			// Someone was kicked from the room
-			m.log.Debug("handleMUCPresence(): MUCStatusBecauseKickedFrom")
-
-		case userStatusContains(status, MUCStatusRemovedBecauseAffiliationChanged):
-			// Removed due to an affiliation change
-			m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseAffiliationChanged")
-
-		case userStatusContains(status, MUCStatusRemovedBecauseNotMember):
-			// Removed because room is now members-only
-			m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseNotMember")
-
-		case userStatusContains(status, MUCStatusRemovedBecauseShutdown):
-			// Removes due to system shutdown
-			m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseShutdown")
-		}
+		m.handleMUCUnavailablePresence(from, room, occupant, status)
 	case "":
 		affiliation := stanza.MUCUser.Item.Affiliation
 		role := stanza.MUCUser.Item.Role
@@ -148,6 +127,40 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 			m.mucRoomRenamed(from, room)
 		}
 	}
+}
+
+func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant jid.Resource, status []data.MUCUserStatus) {
+	m.mucOccupantExit(from, room, occupant)
+
+	switch {
+	case userStatusContains(status, MUCStatusBanned):
+		// We got banned
+		m.log.Debug("handleMUCPresence(): MUCStatusBanned")
+
+	case userStatusContains(status, MUCStatusNewNickname):
+		// Someone has changed its nickname
+		m.log.Debug("handleMUCPresence(): MUCStatusNewNickname")
+
+	case userStatusContains(status, MUCStatusBecauseKickedFrom):
+		// Someone was kicked from the room
+		m.log.Debug("handleMUCPresence(): MUCStatusBecauseKickedFrom")
+
+	case userStatusContains(status, MUCStatusRemovedBecauseAffiliationChanged):
+		// Removed due to an affiliation change
+		m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseAffiliationChanged")
+
+	case userStatusContains(status, MUCStatusRemovedBecauseNotMember):
+		// Removed because room is now members-only
+		m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseNotMember")
+
+	case userStatusContains(status, MUCStatusRemovedBecauseShutdown):
+		// Removes due to system shutdown
+		m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseShutdown")
+	}
+}
+
+func (m *mucManager) handleMUCErrorPresence(from jid.Full, stanza *data.ClientPresence) {
+	m.publishMUCError(from, stanza.Error)
 }
 
 func userStatusContains(status []data.MUCUserStatus, c int) bool {

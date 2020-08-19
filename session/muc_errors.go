@@ -6,33 +6,34 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (m *mucManager) publishMUCError(stanza *data.ClientPresence) {
-	e := events.MUC{}
-	e.From = jid.ParseFull(stanza.From)
+func (m *mucManager) publishMUCError(from jid.Full, e *data.StanzaError) {
+	ev := events.MUC{}
+	ev.From = from
 
 	var t events.MUCErrorType
 	switch {
-	case stanza.Error.MUCNotAuthorized != nil:
+	case e.MUCNotAuthorized != nil:
 		t = events.MUCNotAuthorized
-	case stanza.Error.MUCForbidden != nil:
+	case e.MUCForbidden != nil:
 		t = events.MUCForbidden
-	case stanza.Error.MUCItemNotFound != nil:
+	case e.MUCItemNotFound != nil:
 		t = events.MUCItemNotFound
-	case stanza.Error.MUCNotAllowed != nil:
+	case e.MUCNotAllowed != nil:
 		t = events.MUCNotAllowed
-	case stanza.Error.MUCNotAcceptable != nil:
-		t = events.MUCNotAceptable
-	case stanza.Error.MUCRegistrationRequired != nil:
+	case e.MUCNotAcceptable != nil:
+		t = events.MUCNotAcceptable
+	case e.MUCRegistrationRequired != nil:
 		t = events.MUCRegistrationRequired
-	case stanza.Error.MUCConflict != nil:
+	case e.MUCConflict != nil:
 		t = events.MUCConflict
-	case stanza.Error.MUCServiceUnavailable != nil:
+	case e.MUCServiceUnavailable != nil:
 		t = events.MUCServiceUnavailable
 	}
 
 	errorInfo := events.MUCError{}
 	errorInfo.ErrorType = t
-	e.Info = errorInfo
+	errorInfo.Room = jid.ParseBare(from.NoResource().String())
+	ev.Info = errorInfo
 
-	m.publishEvent(e)
+	m.publishEvent(ev)
 }

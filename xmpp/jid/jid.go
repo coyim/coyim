@@ -94,6 +94,11 @@ func NewFull(local Local, domain Domain, resource Resource) Full {
 	return domain.AddLocal(local).WithResource(resource).(Full)
 }
 
+// NewBareFromFull extract a bare JID from a given full JID
+func NewBareFromFull(f Full) Bare {
+	return f.NoResource().(bare)
+}
+
 // WithResource represents any valid JID that has a resource part
 type WithResource interface {
 	Any
@@ -101,8 +106,6 @@ type WithResource interface {
 	Resource() Resource
 	// Split will return the JID split into the part without resource and the part with resource
 	Split() (WithoutResource, Resource)
-	// Bare returns a bare jid from the actual jid
-	Bare() Bare
 }
 
 // WithoutResource represents any valid JID that does not have a resource part
@@ -309,10 +312,6 @@ func (j full) Resource() Resource {
 // Split implements WithResource
 func (j full) Split() (WithoutResource, Resource) {
 	return j.NoResource(), j.Resource()
-}
-
-func (j full) Bare() Bare {
-	return j.NoResource().(bare)
 }
 
 // Host implements Any

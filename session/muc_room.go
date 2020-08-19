@@ -6,7 +6,7 @@ import (
 )
 
 func (s *session) JoinRoom(rj jid.Bare, nickName string) error {
-	to := jid.NewFull(rj.Local(), rj.Host(), jid.NewResource(nickName))
+	to := rj.WithResource(jid.NewResource(nickName))
 	err := s.conn.SendMUCPresence(to.String())
 	if err != nil {
 		s.log.WithError(err).Warn("when trying to enter room")

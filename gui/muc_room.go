@@ -149,7 +149,7 @@ func (rv *roomView) onRoomJoinClicked() {
 		if !jev {
 			doInUIThread(func() {
 				rv.notifyOnError(rv.lastErrorMessage)
-				rv.account.log.Errorf("Couldn't join to a room with the message: %s", rv.lastErrorMessage)
+				rv.account.log.WithField("Error Details", rv.lastErrorMessage).Error("Couldn't join to a room with the message")
 			})
 		} else {
 			doInUIThread(func() {

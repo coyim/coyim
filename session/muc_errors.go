@@ -20,7 +20,7 @@ func (m *mucManager) publishMUCError(stanza *data.ClientPresence) {
 		t = events.MUCItemNotFound
 	case stanza.Error.MUCNotAllowed != nil:
 		t = events.MUCNotAllowed
-	case stanza.Error.MUCNotAceptable != nil:
+	case stanza.Error.MUCNotAcceptable != nil:
 		t = events.MUCNotAceptable
 	case stanza.Error.MUCRegistrationRequired != nil:
 		t = events.MUCRegistrationRequired

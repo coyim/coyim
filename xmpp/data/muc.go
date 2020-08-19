@@ -62,8 +62,8 @@ type MUCNotAllowed struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas not-allowed,omitempty"`
 }
 
-// MUCNotAceptable inform user that the reserved roomnick must be used
-type MUCNotAceptable struct {
+// MUCNotAcceptable inform user that the reserved roomnick must be used
+type MUCNotAcceptable struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas not-acceptable,omitempty"`
 }
 

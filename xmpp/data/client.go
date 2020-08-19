@@ -36,12 +36,11 @@ type StanzaError struct {
 
 	ApplicationCondition *Any `xml:",any,omitempty"`
 
-	MUCNotAuthorized *MUCNotAuthorized
-	MUCForbidden     *MUCForbidden
-	MUCItemNotFound  *MUCItemNotFound
-	MUCNotAllowed    *MUCNotAllowed
-	// TODO[OB]-MUC: Spelling
-	MUCNotAceptable         *MUCNotAceptable
+	MUCNotAuthorized        *MUCNotAuthorized
+	MUCForbidden            *MUCForbidden
+	MUCItemNotFound         *MUCItemNotFound
+	MUCNotAllowed           *MUCNotAllowed
+	MUCNotAcceptable        *MUCNotAcceptable
 	MUCRegistrationRequired *MUCRegistrationRequired
 	MUCConflict             *MUCConflict
 	MUCServiceUnavailable   *MUCServiceUnavailable
@@ -63,7 +62,7 @@ func (e *StanzaError) AnyMUCError() interface{} {
 		e.MUCForbidden,
 		e.MUCItemNotFound,
 		e.MUCNotAllowed,
-		e.MUCNotAceptable,
+		e.MUCNotAcceptable,
 		e.MUCRegistrationRequired,
 		e.MUCConflict,
 		e.MUCServiceUnavailable,

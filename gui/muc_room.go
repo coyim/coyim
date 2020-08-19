@@ -102,24 +102,39 @@ func (rv *roomView) togglePanelView() {
 	})
 }
 
-func (rv *roomView) onRoomJoinClicked() {
-	rv.clearErrors()
-
-	// TODO[OB]-MUC: Hmm, this channel should likely not be cached. That seems to imply a race condition later on
-	rv.onJoin = make(chan bool, 1)
-	nickName, _ := rv.nicknameEntry.GetText()
-
+func (rv *roomView) startSpinner() {
 	rv.spinnerJoinView.Start()
 	rv.spinnerJoinView.SetVisible(true)
 	rv.roomJoinButton.SetSensitive(false)
+}
 
-	go rv.account.session.JoinRoom(rv.jid, nickName)
+func (rv *roomView) stopSpinner() {
+	rv.spinnerJoinView.Stop()
+	rv.spinnerJoinView.SetVisible(false)
+	rv.roomJoinButton.SetSensitive(true)
+}
+
+func (rv *roomView) onRoomJoinClicked() {
+	rv.clearErrors()
+
+	rv.onJoin = make(chan bool)
+	nickName, _ := rv.nicknameEntry.GetText()
+
+	rv.startSpinner()
+
+	go func() {
+		err := rv.account.session.JoinRoom(rv.jid, nickName)
+		if err != nil {
+			doInUIThread(func() {
+				rv.stopSpinner()
+				rv.account.log.WithError(err).Error("Trying to join a room")
+			})
+		}
+	}()
 	go func() {
 		defer func() {
 			doInUIThread(func() {
-				rv.spinnerJoinView.Stop()
-				rv.spinnerJoinView.SetVisible(false)
-				rv.roomJoinButton.SetSensitive(true)
+				rv.stopSpinner()
 			})
 		}()
 
@@ -132,7 +147,7 @@ func (rv *roomView) onRoomJoinClicked() {
 		if !jev {
 			doInUIThread(func() {
 				rv.notifyOnError(rv.lastErrorMessage)
-				rv.account.log.Errorf("Couldn't join to a room with the message %s", rv.lastErrorMessage)
+				rv.account.log.Errorf("Couldn't join to a room with the message: %s", rv.lastErrorMessage)
 			})
 		} else {
 			doInUIThread(func() {

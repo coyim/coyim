@@ -19,8 +19,8 @@ func (a *account) roomViewFor(rid jid.Bare) (*roomView, *muc.Room, error) {
 	return rv, room, nil
 }
 
-func (a *account) addOccupantToRoster(from jid.Full, userj jid.Full, affiliation, role, status string) {
-	roomj := jid.NewBare(from.Local(), from.Host())
+func (a *account) addOccupantToRoomRoster(from jid.Full, userj jid.Full, affiliation, role, status string) {
+	roomj := jid.NewBareFromFull(from)
 	rv, room, err := a.roomViewFor(roomj)
 	if err != nil {
 		rv.lastErrorMessage = err.Error()
@@ -33,6 +33,8 @@ func (a *account) addOccupantToRoster(from jid.Full, userj jid.Full, affiliation
 	if err != nil {
 		rv.lastErrorMessage = err.Error()
 		a.log.WithError(err).Error("An error occurred trying to add the occupant to the roster")
+		rv.onJoin <- false
+		return
 	}
 	rv.onJoin <- joined
 }

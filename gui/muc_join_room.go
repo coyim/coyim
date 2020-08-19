@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"strings"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -43,7 +41,6 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	jrv.clearErrors()
 
 	roomName, _ := jrv.txtRoomName.GetText()
-	roomName = strings.TrimSpace(roomName)
 	rj, ok := jid.Parse(roomName).(jid.Bare)
 	if !ok {
 		jrv.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))

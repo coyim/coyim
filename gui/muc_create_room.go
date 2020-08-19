@@ -166,7 +166,7 @@ func reasonBasedOnError(err error) string {
 	case *session.ErrInvalidInformationQueryRequest:
 		return i18n.Local("Could not send the information query to the server, please try again.")
 	case *session.ErrUnexpectedResponse:
-		return i18n.Local("The connection to the server can not be stablished.")
+		return i18n.Local("The connection to the server can not be established.")
 	case *session.ErrInformationQueryResponse:
 		return e.Error()
 	}

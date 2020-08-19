@@ -65,14 +65,16 @@ func (rv *roomView) init() {
 	panicOnDevError(rv.builder.bindObjects(rv))
 
 	rv.errorNotif = newErrorNotification(rv.notificationArea)
-	rv.enablePasswordFieldsWith(rv.passwordCheck.GetActive())
+	rv.setPasswordSensitiveBasedOnCheck()
 
 	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.jid))
 }
 
-func (rv *roomView) enablePasswordFieldsWith(value bool) {
-	rv.passwordLabel.SetSensitive(value)
-	rv.passwordEntry.SetSensitive(value)
+func (rv *roomView) setPasswordSensitiveBasedOnCheck() {
+	v := rv.passwordCheck.GetActive()
+
+	rv.passwordLabel.SetSensitive(v)
+	rv.passwordEntry.SetSensitive(v)
 }
 
 func (rv *roomView) hasValidNickname() bool {
@@ -178,7 +180,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 		"on_nickname_changed": view.validateInput,
 		"on_password_changed": view.validateInput,
 		"on_password_checked": func() {
-			view.enablePasswordFieldsWith(view.passwordCheck.GetActive())
+			view.setPasswordSensitiveBasedOnCheck()
 			view.validateInput()
 		},
 		"on_room_cancel_clicked": view.window.Destroy,

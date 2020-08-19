@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"log"
+	"errors"
 	"sync"
 
 	"github.com/coyim/coyim/i18n"
@@ -65,19 +65,14 @@ func (rv *roomView) init() {
 	panicOnDevError(rv.builder.bindObjects(rv))
 
 	rv.errorNotif = newErrorNotification(rv.notificationArea)
-	rv.togglePassword()
+	rv.enablePasswordFieldsWith(rv.passwordCheck.GetActive())
 
 	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.jid))
 }
 
-// TODO[OB]-MUC: I don't think this is a great name for the method - since the method doesn't do what the method name says it does
-
-func (rv *roomView) togglePassword() {
-	doInUIThread(func() {
-		value := rv.passwordCheck.GetActive()
-		rv.passwordLabel.SetSensitive(value)
-		rv.passwordEntry.SetSensitive(value)
-	})
+func (rv *roomView) enablePasswordFieldsWith(value bool) {
+	rv.passwordLabel.SetSensitive(value)
+	rv.passwordEntry.SetSensitive(value)
 }
 
 func (rv *roomView) hasValidNickname() bool {
@@ -108,17 +103,15 @@ func (rv *roomView) togglePanelView() {
 }
 
 func (rv *roomView) onRoomJoinClicked() {
-	doInUIThread(rv.clearErrors)
+	rv.clearErrors()
 
 	// TODO[OB]-MUC: Hmm, this channel should likely not be cached. That seems to imply a race condition later on
 	rv.onJoin = make(chan bool, 1)
 	nickName, _ := rv.nicknameEntry.GetText()
 
-	doInUIThread(func() {
-		rv.spinnerJoinView.Start()
-		rv.spinnerJoinView.SetVisible(true)
-		rv.roomJoinButton.SetSensitive(false)
-	})
+	rv.spinnerJoinView.Start()
+	rv.spinnerJoinView.SetVisible(true)
+	rv.roomJoinButton.SetSensitive(false)
 
 	go rv.account.session.JoinRoom(rv.jid, nickName)
 	go func() {
@@ -137,59 +130,44 @@ func (rv *roomView) onRoomJoinClicked() {
 		}
 
 		if !jev {
-			// TODO[OB]-MUC: You should only send fixed strings to the i18n functions
-			rv.notifyOnError(i18n.Local(rv.lastErrorMessage))
-			// TODO[OB]-MUC: Why debug-level?
-			// TODO[OB]-MUC: I don't think this log message makes much sense
-			rv.account.log.WithField("Join Event: ", jev).Debug("Some user can't logged in to the room.")
+			doInUIThread(func() {
+				rv.notifyOnError(rv.lastErrorMessage)
+				rv.account.log.Errorf("Couldn't join to a room with the message %s", rv.lastErrorMessage)
+			})
 		} else {
-			rv.clearErrors()
-			rv.togglePanelView()
+			doInUIThread(func() {
+				rv.clearErrors()
+				rv.togglePanelView()
+			})
 		}
 	}()
 }
 
-// TODO[OB]-MUC: This method name is confusing
-
-func (rv *roomView) processOccupantJoinedEvent(err error) {
-	// TODO[OB]-MUC: Why does this method take an error argument?
-
-	if err != nil {
-		// TODO[OB]-MUC: Why debug level?
-		rv.account.log.WithError(err).Debug("Room join event received")
-		rv.lastErrorMessage = err.Error()
-		rv.onJoin <- false
-		return
-	}
-	rv.onJoin <- true
-}
-
 func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
-	_, err := u.addRoom(a, ident)
+	room, err := u.addRoom(a, ident)
 	if err != nil {
 		// TODO: Notify in a proper way this error
-		// TODO[OB]-MUC: Use log on 'a' object
-		log.Fatal(err.Error())
+		a.log.Fatal(err.Error())
 		return
 	}
-	view, _, _ := a.roomViewFor(ident)
+
+	view, ok := room.Opaque.(*roomView)
+	if !ok {
+		// TODO: Notify in a proper way this error
+		a.log.Fatal(errors.New("Can't create the room view"))
+	}
 	view.init()
 
 	view.builder.ConnectSignals(map[string]interface{}{
-		// TODO[OB]-MUC: Useless handler
-		"on_close_window":     func() {},
 		"on_show_window":      view.validateInput,
 		"on_nickname_changed": view.validateInput,
 		"on_password_changed": view.validateInput,
 		"on_password_checked": func() {
-			view.togglePassword()
+			view.enablePasswordFieldsWith(view.passwordCheck.GetActive())
 			view.validateInput()
 		},
 		"on_room_cancel_clicked": view.window.Destroy,
-		// TODO[OB]-MUC: Can be inlined without func()
-		"on_room_join_clicked": func() {
-			view.onRoomJoinClicked()
-		},
+		"on_room_join_clicked":   view.onRoomJoinClicked,
 	})
 
 	u.connectShortcutsChildWindow(view.window)

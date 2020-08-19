@@ -1,28 +1,22 @@
 package session
 
 import (
-	"fmt"
-
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (s *session) JoinRoom(rj jid.Bare, nickName string) {
-	// TODO[OB]-MUC: Better to use a factory function here
-	// TODO[OB]-MUC: You don't need to call String() when using the %s modifier
-	to := fmt.Sprintf("%s/%s", rj.String(), nickName)
-	err := s.conn.SendMUCPresence(to)
+func (s *session) JoinRoom(rj jid.Bare, nickName string) error {
+	to := jid.NewFull(rj.Local(), rj.Host(), jid.NewResource(nickName))
+	err := s.conn.SendMUCPresence(to.String())
 	if err != nil {
-		// TODO[OB]-MUC: This error condition shouldn't be returned to someone?
 		s.log.WithError(err).Warn("when trying to enter room")
+		return err
 	}
+	return nil
 }
 
-// TODO[OB]-MUC: Lots of unnecessary comments in this method
-
 func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
-	// TODO[OB]-MUC: Why is this one buffered?
-	resultChannel := make(chan bool, 1)
+	resultChannel := make(chan bool)
 	errorChannel := make(chan error)
 	go func() {
 		r, err := s.Conn().EntityExists(rj.String())
@@ -44,22 +38,17 @@ func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
 			resultChannel <- false
 			return
 		}
-		// Checking Identities
 		ident, hasIdent := hasIdentity(idents, "conference", "text")
 		if !hasIdent {
 			resultChannel <- false
 			return
 		}
-		// Checking Features
 		if !hasFeatures(features, "http://jabber.org/protocol/muc") {
 			resultChannel <- false
 			return
 		}
-		// Checking Bare JID
-		// TODO[OB]-MUC: Better to use a factory composition method here
-		bares := fmt.Sprintf("%s@%s", ident, rj.Host())
-		barerj, ok := jid.Parse(bares).(jid.Bare)
-		if !ok || barerj != rj {
+		barerj := jid.NewBare(jid.NewLocal(ident), rj.Host())
+		if barerj != rj {
 			// TODO[OB]-MUC: I feel like this mixes up two conerns
 			resultChannel <- false
 			return

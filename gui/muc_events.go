@@ -36,5 +36,5 @@ func (u *gtkUI) handleMUCJoinedEvent(from jid.Full, ev events.MUCOccupantJoined,
 		"role":        ev.Role,
 	}).Debug("Room Joined event received")
 
-	a.enrollNewOccupantRoomEvent(from, ev)
+	a.addOccupantToRoster(from, ev.Jid, ev.Affiliation, ev.Role, ev.Status)
 }

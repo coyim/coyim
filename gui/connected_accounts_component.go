@@ -29,7 +29,10 @@ func (cac *connectedAccountsComponent) onDestroy() {
 
 // currentAccount is safe to call from the UI thread, or from outside the UI thread
 func (cac *connectedAccountsComponent) currentAccount() *account {
-	return cac.accountsList[cac.currentlyActive]
+	if len(cac.accountsList) > 0 {
+		return cac.accountsList[cac.currentlyActive]
+	}
+	return nil
 }
 
 // initOrReplaceAccounts should ONLY be called from the UI thread

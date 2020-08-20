@@ -17,8 +17,7 @@ func (e *nicknameError) Error() string {
 
 // NewNicknameConflictError creates a new nickname conflict error
 func NewNicknameConflictError(n jid.Resource) error {
-	e := &nicknameError{
+	return &nicknameError{
 		nickname: n,
 	}
-	return e
 }

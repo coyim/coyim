@@ -134,6 +134,10 @@ func (s *JidXMPPSuite) Test_bare_WithResource(c *C) {
 	c.Assert(bare{NewLocal("foo"), NewDomain("bar.com")}.WithResource(NewResource("someone")).String(), Equals, "foo@bar.com/someone")
 }
 
+func (s *JidXMPPSuite) Test_bare_Bare(c *C) {
+	c.Assert(bare{NewLocal("foo"), NewDomain("bar.com")}.Bare(), Equals, bare{NewLocal("foo"), NewDomain("bar.com")})
+}
+
 func (s *JidXMPPSuite) Test_full_Host(c *C) {
 	c.Assert(full{NewLocal("foo"), NewDomain("bar.com"), NewResource("someone")}.Host(), Equals, NewDomain("bar.com"))
 }

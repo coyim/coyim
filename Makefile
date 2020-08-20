@@ -153,3 +153,7 @@ clean-cover:
 # generats an HTML report with coverage information
 cover: run-cover
 	go tool cover -html=$(COVERPROFILES)/all.coverprofile
+
+cover-tails: run-cover
+	go tool cover -html=$(COVERPROFILES)/all.coverprofile -o ~/Tor\ Browser/coverage.html
+	xdg-open ~/Tor\ Browser/coverage.html

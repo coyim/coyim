@@ -74,3 +74,147 @@ func (s *JidXMPPSuite) Test_interfaceImplementations(c *C) {
 
 	testInterfaceFull(ParseFull("bla@bla.com/blu"))
 }
+
+func (s *JidXMPPSuite) Test_NewResource(c *C) {
+	c.Assert(NewResource("foo").Valid(), Equals, true)
+	c.Assert(NewResource("a\u06DDb").Valid(), Equals, false)
+}
+
+func (s *JidXMPPSuite) Test_NewBare(c *C) {
+	c.Assert(NewBare(NewLocal("hello"), NewDomain("goodbye.com")).String(), Equals, "hello@goodbye.com")
+}
+
+func (s *JidXMPPSuite) Test_NewFull(c *C) {
+	c.Assert(NewFull(NewLocal("hello"), NewDomain("goodbye.com"), NewResource("somewhere")), DeepEquals,
+		full{
+			l: NewLocal("hello"),
+			d: NewDomain("goodbye.com"),
+			r: NewResource("somewhere"),
+		},
+	)
+}
+
+func (s *JidXMPPSuite) Test_ParseDomain(c *C) {
+	c.Assert(ParseDomain("foo@bar.com/res"), Equals, NewDomain("bar.com"))
+}
+
+func (s *JidXMPPSuite) Test_Domain_Host(c *C) {
+	c.Assert(NewDomain("bar.com").Host(), Equals, NewDomain("bar.com"))
+}
+
+func (s *JidXMPPSuite) Test_Domain_PotentialResource(c *C) {
+	c.Assert(NewDomain("bar.com").PotentialResource(), Equals, Resource{""})
+}
+
+func (s *JidXMPPSuite) Test_Domain_PotentialSplit(c *C) {
+	l, r := NewDomain("bar.com").PotentialSplit()
+	c.Assert(l, Equals, NewDomain("bar.com"))
+	c.Assert(r, Equals, Resource{""})
+}
+
+func (s *JidXMPPSuite) Test_bare_Host(c *C) {
+	c.Assert(bare{NewLocal("foo"), NewDomain("bar.com")}.Host(), Equals, NewDomain("bar.com"))
+}
+
+func (s *JidXMPPSuite) Test_bare_PotentialResource(c *C) {
+	c.Assert(bare{NewLocal("foo"), NewDomain("bar.com")}.PotentialResource(), Equals, Resource{""})
+}
+
+func (s *JidXMPPSuite) Test_bare_PotentialSplit(c *C) {
+	l, r := bare{NewLocal("foo"), NewDomain("bar.com")}.PotentialSplit()
+	c.Assert(l, Equals, bare{NewLocal("foo"), NewDomain("bar.com")})
+	c.Assert(r, Equals, Resource{""})
+}
+
+func (s *JidXMPPSuite) Test_bare_Local(c *C) {
+	c.Assert(bare{NewLocal("foo"), NewDomain("bar.com")}.Local(), Equals, NewLocal("foo"))
+}
+
+func (s *JidXMPPSuite) Test_bare_WithResource(c *C) {
+	c.Assert(bare{NewLocal("foo"), NewDomain("bar.com")}.WithResource(NewResource("someone")).String(), Equals, "foo@bar.com/someone")
+}
+
+func (s *JidXMPPSuite) Test_full_Host(c *C) {
+	c.Assert(full{NewLocal("foo"), NewDomain("bar.com"), NewResource("someone")}.Host(), Equals, NewDomain("bar.com"))
+}
+
+func (s *JidXMPPSuite) Test_full_String(c *C) {
+	c.Assert(full{NewLocal("foo"), NewDomain("bar.com"), NewResource("someone")}.String(), Equals, "foo@bar.com/someone")
+}
+
+func (s *JidXMPPSuite) Test_full_WithResource(c *C) {
+	c.Assert(full{NewLocal("foo"), NewDomain("bar.com"), NewResource("someone")}.WithResource(NewResource("elsewhere")).String(), Equals, "foo@bar.com/elsewhere")
+}
+
+func (s *JidXMPPSuite) Test_full_PotentialResource(c *C) {
+	c.Assert(full{NewLocal("foo"), NewDomain("bar.com"), NewResource("someone")}.PotentialResource(), Equals, Resource{"someone"})
+}
+
+func (s *JidXMPPSuite) Test_full_PotentialSplit(c *C) {
+	l, r := full{NewLocal("foo"), NewDomain("bar.com"), NewResource("someone")}.PotentialSplit()
+	c.Assert(l, Equals, bare{NewLocal("foo"), NewDomain("bar.com")})
+	c.Assert(r, Equals, NewResource("someone"))
+}
+
+func (s *JidXMPPSuite) Test_full_Local(c *C) {
+	c.Assert(full{NewLocal("foo"), NewDomain("bar.com"), NewResource("someone")}.Local(), Equals, NewLocal("foo"))
+}
+
+func (s *JidXMPPSuite) Test_full_Bare(c *C) {
+	c.Assert(full{NewLocal("foo"), NewDomain("bar.com"), NewResource("someone")}.Bare(), Equals, bare{NewLocal("foo"), NewDomain("bar.com")})
+}
+
+func (s *JidXMPPSuite) Test_domainWithResource_Host(c *C) {
+	c.Assert(domainWithResource{NewDomain("bar.com"), NewResource("someone")}.Host(), Equals, NewDomain("bar.com"))
+}
+
+func (s *JidXMPPSuite) Test_domainWithResource_String(c *C) {
+	c.Assert(domainWithResource{NewDomain("bar.com"), NewResource("someone")}.String(), Equals, "bar.com/someone")
+}
+
+func (s *JidXMPPSuite) Test_domainWithResource_MaybeWithResource(c *C) {
+	c.Assert(domainWithResource{NewDomain("bar.com"), NewResource("someone")}.MaybeWithResource(NewResource("elsewhere")), Equals, domainWithResource{NewDomain("bar.com"), NewResource("elsewhere")})
+}
+
+func (s *JidXMPPSuite) Test_domainWithResource_WithResource(c *C) {
+	c.Assert(domainWithResource{NewDomain("bar.com"), NewResource("someone")}.WithResource(NewResource("elsewhere")), Equals, domainWithResource{NewDomain("bar.com"), NewResource("elsewhere")})
+}
+
+func (s *JidXMPPSuite) Test_domainWithResource_PotentialResource(c *C) {
+	c.Assert(domainWithResource{NewDomain("bar.com"), NewResource("someone")}.PotentialResource(), Equals, NewResource("someone"))
+}
+
+func (s *JidXMPPSuite) Test_domainWithResource_PotentialSplit(c *C) {
+	l, r := domainWithResource{NewDomain("bar.com"), NewResource("someone")}.PotentialSplit()
+	c.Assert(l, Equals, NewDomain("bar.com"))
+	c.Assert(r, Equals, NewResource("someone"))
+}
+
+func (s *JidXMPPSuite) Test_domainWithResource_Split(c *C) {
+	l, r := domainWithResource{NewDomain("bar.com"), NewResource("someone")}.Split()
+	c.Assert(l, Equals, NewDomain("bar.com"))
+	c.Assert(r, Equals, NewResource("someone"))
+}
+
+func (s *JidXMPPSuite) Test_Domain_WithResource(c *C) {
+	c.Assert(NewDomain("foo.com").WithResource(NewResource("somewhere")), Equals, domainWithResource{NewDomain("foo.com"), NewResource("somewhere")})
+}
+
+func (s *JidXMPPSuite) Test_Domain_MaybeWithResource(c *C) {
+	c.Assert(NewDomain("foo.com").MaybeWithResource(NewResource("somewhere")), Equals, domainWithResource{NewDomain("foo.com"), NewResource("somewhere")})
+}
+
+func (s *JidXMPPSuite) Test_MaybeLocal(c *C) {
+	c.Assert(MaybeLocal(NewDomain("foo.com")), Equals, Local{""})
+	c.Assert(MaybeLocal(bare{NewLocal("someone"), NewDomain("foo.com")}), Equals, Local{"someone"})
+}
+
+func (s *JidXMPPSuite) Test_WithAndWithout(c *C) {
+	wr, wnr := WithAndWithout(Domain{"foo.bar"})
+	c.Assert(wr, IsNil)
+	c.Assert(wnr, Equals, Domain{"foo.bar"})
+
+	wr, wnr = WithAndWithout(full{Local{"someone"}, Domain{"foo.bar"}, Resource{"bla"}})
+	c.Assert(wr, Equals, full{Local{"someone"}, Domain{"foo.bar"}, Resource{"bla"}})
+	c.Assert(wnr, Equals, bare{Local{"someone"}, Domain{"foo.bar"}})
+}

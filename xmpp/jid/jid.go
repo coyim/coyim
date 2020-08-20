@@ -163,7 +163,7 @@ func ParseFull(s string) Full {
 
 // TryParseFull returns a full JID if it can.
 func TryParseFull(s string) (Full, bool) {
-	res, ok := R(s).(Full)
+	res, ok := Parse(s).(Full)
 	return res, ok
 }
 

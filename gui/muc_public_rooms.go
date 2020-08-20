@@ -196,7 +196,7 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 // joinRoom should not be called from the UI thread
 func (u *gtkUI) joinRoom(roomJid string, a *account) {
 	a.log.WithField("room", roomJid).Debug("joinRoom()")
-	u.mucShowRoom(a, jid.Parse(roomJid).(jid.Bare))
+	u.showMUCRoom(a, jid.Parse(roomJid).(jid.Bare))
 }
 
 // mucShowPublicRooms should be called from the UI thread

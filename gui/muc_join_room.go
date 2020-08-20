@@ -78,7 +78,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 					a.log.WithField("Room", roomName).Debug("The Room doesn't exist")
 				} else {
 					jrv.dialog.Hide()
-					u.mucShowRoom(a, rj)
+					u.showMUCRoom(a, rj)
 				}
 			})
 		case err, ok := <-ec:

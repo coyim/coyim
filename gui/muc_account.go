@@ -3,40 +3,57 @@ package gui
 import (
 	"errors"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (a *account) roomViewFor(rid jid.Bare) (*roomView, *muc.Room, error) {
-	room, exists := a.roomManager.GetRoom(rid)
+func (a *account) roomForIdentity(ident jid.Bare) (*muc.Room, error) {
+	room, exists := a.roomManager.GetRoom(ident)
 	if !exists {
-		return nil, nil, errors.New("The room doesn't exist")
+		return nil, errors.New("the room doesn't exist")
 	}
 
-	rv := room.Opaque.(*roomView)
-
-	return rv, room, nil
+	return room, nil
 }
 
-func (a *account) addOccupantToRoomRoster(from jid.Full, userj jid.Full, affiliation, role, status string) {
-	roomj := from.Bare()
-	rv, room, err := a.roomViewFor(roomj)
+func (a *account) roomViewFor(ident jid.Bare) (*roomView, error) {
+	room, err := a.roomForIdentity(ident)
 	if err != nil {
-		rv.lastErrorMessage = err.Error()
-		a.log.WithError(err).Error("An error occurred trying to get the room view")
-		rv.onJoin <- false
+		a.log.WithError(err).Error("An error occurred trying to get the room")
+		return nil, err
+	}
+
+	return getViewFromRoom(room), nil
+}
+
+func (a *account) addOccupantToRoomRoster(from jid.Full, occupant jid.Full, affiliation, role, status string) {
+	room, err := a.roomForIdentity(from.Bare())
+	if err != nil {
+		a.log.WithFields(log.Fields{
+			"from": from.String(),
+		}).WithError(err).Error("An error occurred trying to get the room")
 		return
 	}
 
-	joined, _, err := room.Roster().UpdatePresence(from, "", affiliation, role, "", status, "Room Joined", userj)
+	view := getViewFromRoom(room)
+
+	joined, _, err := room.Roster().UpdatePresence(from, "", affiliation, role, "", status, "Room Joined", occupant)
 	if err != nil {
-		rv.lastErrorMessage = err.Error()
-		a.log.WithError(err).Error("An error occurred trying to add the occupant to the roster")
-		rv.onJoin <- false
+		a.log.WithFields(log.Fields{
+			"occupant":    occupant.String(),
+			"affiliation": affiliation,
+			"role":        role,
+			"status":      status,
+		}).WithError(err).Error("An error occurred trying to add the occupant to the roster")
+		view.lastErrorMessage = err.Error()
+		view.onJoin <- false
 		return
 	}
-	rv.onJoin <- joined
+
+	view.onJoin <- joined
 }
 
 func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
@@ -45,18 +62,21 @@ func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
 }
 
 func (a *account) generateNicknameConflictError(from jid.Full) {
-	ridwr, nickname := from.Split()
-	rid := ridwr.(jid.Bare)
-	rv, _, err := a.roomViewFor(rid)
+	roomWithoutResource, nickname := from.Split()
+
+	view, err := a.roomViewFor(jid.ParseBare(roomWithoutResource.String()))
 	if err != nil {
-		rv.lastErrorMessage = err.Error()
-		a.log.WithError(err).Error("An error occurred trying to get the room view")
-		rv.onJoin <- false
+		a.log.WithFields(log.Fields{
+			"from": from.String(),
+		}).WithError(err).Error("An error occurred trying to get the room view")
 		return
 	}
-	// Generating a custom error for the nickname conflict event received
+
 	err = muc.NewNicknameConflictError(nickname)
-	a.log.WithError(err).Error("Nickname conflict event received")
-	rv.lastErrorMessage = err.Error()
-	rv.onJoin <- false
+	a.log.WithFields(log.Fields{
+		"from": from.String(),
+	}).WithError(err).Error("Nickname conflict event received")
+
+	view.lastErrorMessage = err.Error()
+	view.onJoin <- false
 }

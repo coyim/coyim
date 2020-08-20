@@ -164,9 +164,9 @@ func (rv *roomView) onRoomJoinClicked() {
 			doInUIThread(func() {
 				rv.notifyOnError(rv.lastErrorMessage)
 				rv.account.log.WithFields(log.Fields{
-					"Room":     rv.jid,
-					"Nickname": nickName,
-					"Message":  rv.lastErrorMessage,
+					"room":     rv.jid,
+					"nickname": nickName,
+					"message":  rv.lastErrorMessage,
 				}).Error("The user couldn't join a room")
 			})
 		} else {

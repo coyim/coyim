@@ -67,7 +67,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 				doInUIThread(func() {
 					jrv.stopSpinner()
 					jrv.notifyOnError(i18n.Localf("An error ocurred trying to find the room \"%s\"", roomName))
-					a.log.WithField("Room", roomName).Warn("An error ocurred trying to find a room")
+					a.log.WithField("room", roomName).Warn("An error ocurred trying to find a room")
 				})
 				return
 			}
@@ -75,7 +75,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 				jrv.stopSpinner()
 				if !value {
 					jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exist", roomName))
-					a.log.WithField("Room", roomName).Debug("The Room doesn't exist")
+					a.log.WithField("room", roomName).Debug("The Room doesn't exist")
 				} else {
 					jrv.dialog.Hide()
 					u.showMUCRoom(a, rj)
@@ -89,7 +89,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 				jrv.stopSpinner()
 				if err != nil {
 					jrv.notifyOnError(i18n.Localf("An error occurred trying to find the room \"%s\"", roomName))
-					a.log.WithField("Room", roomName).WithError(err).Warn("Error occurred trying to find the Room")
+					a.log.WithField("room", roomName).WithError(err).Warn("Error occurred trying to find the Room")
 				}
 			})
 		}

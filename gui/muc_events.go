@@ -18,14 +18,14 @@ func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
 		u.handleOneMUCErrorEvent(from, t, a)
 	default:
 		u.log.WithFields(log.Fields{
-			"Type": t,
-			"From": ev.From,
+			"type": t,
+			"from": ev.From,
 		}).Warn("Unsupported MUC event")
 	}
 }
 
 func (u *gtkUI) handleMUCUpdatedEvent(from jid.Full, ev events.MUCOccupantUpdated, a *account) {
-	a.log.WithField("Event", ev).Debug("handleMUCUpdatedEvent")
+	a.log.WithField("event", ev).Debug("handleMUCUpdatedEvent")
 }
 
 func (u *gtkUI) handleMUCJoinedEvent(from jid.Full, ev events.MUCOccupantJoined, a *account) {

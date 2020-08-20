@@ -191,7 +191,7 @@ func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
 
 }
 
-func (u *gtkUI) showMUCRoom(a *account, ident jid.Bare) {
+func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 	room, ok := a.roomManager.GetRoom(ident)
 	if !ok {
 		room = u.newRoom(a, ident)

@@ -162,7 +162,7 @@ func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident ji
 
 	if created {
 		doInUIThread(func() {
-			v.u.showMUCRoom(ca, ident)
+			v.u.mucShowRoom(ca, ident)
 			v.dialog.Destroy()
 		})
 	}

@@ -8,6 +8,7 @@ import (
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
+	log "github.com/sirupsen/logrus"
 )
 
 type roomView struct {
@@ -149,7 +150,11 @@ func (rv *roomView) onRoomJoinClicked() {
 		if !jev {
 			doInUIThread(func() {
 				rv.notifyOnError(rv.lastErrorMessage)
-				rv.account.log.WithField("Message", rv.lastErrorMessage).Error("The user couldn't join to a room")
+				rv.account.log.WithFields(log.Fields{
+					"Room":     rv.jid,
+					"Nickname": nickName,
+					"Message":  rv.lastErrorMessage,
+				}).Error("The user couldn't join a room")
 			})
 		} else {
 			doInUIThread(func() {

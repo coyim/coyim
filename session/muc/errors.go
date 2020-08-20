@@ -12,7 +12,7 @@ type nicknameError struct {
 
 // Error returns the error message
 func (e *nicknameError) Error() string {
-	return i18n.Localf("Nickname conflict, can't join to the room using \"%s\"", e.nickname)
+	return i18n.Localf("Can't join the room using \"%s\". Nickname is already being used", e.nickname)
 }
 
 // NewNicknameConflictError creates a new nickname conflict error

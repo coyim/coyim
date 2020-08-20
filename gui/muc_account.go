@@ -32,9 +32,7 @@ func (a *account) roomViewFor(ident jid.Bare) (*roomView, error) {
 func (a *account) addOccupantToRoomRoster(from jid.Full, occupant jid.Full, affiliation, role, status string) {
 	room, err := a.roomForIdentity(from.Bare())
 	if err != nil {
-		a.log.WithFields(log.Fields{
-			"from": from.String(),
-		}).WithError(err).Error("An error occurred trying to get the room")
+		a.log.WithField("from", from.String()).WithError(err).Error("An error occurred trying to get the room")
 		return
 	}
 
@@ -66,9 +64,7 @@ func (a *account) generateNicknameConflictError(from jid.Full) {
 
 	view, err := a.roomViewFor(jid.ParseBare(roomWithoutResource.String()))
 	if err != nil {
-		a.log.WithFields(log.Fields{
-			"from": from.String(),
-		}).WithError(err).Error("An error occurred trying to get the room view")
+		a.log.WithField("from", from.String()).WithError(err).Error("An error occurred trying to get the room view")
 		return
 	}
 

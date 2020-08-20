@@ -19,7 +19,7 @@ func (u *gtkUI) addRoom(a *account, ident jid.Bare) (*muc.Room, error) {
 		return nil, errors.New("the room is already in the manager")
 	}
 
-	r := u.newRoom(a, ident)
+	r := u.newRoom(ident)
 	if !a.roomManager.AddRoom(r) {
 		return nil, errors.New("the room is already in the manager")
 	}

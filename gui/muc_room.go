@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/coyim/coyim/i18n"
@@ -49,25 +48,39 @@ func (rv *roomView) notifyOnError(err string) {
 	rv.errorNotif.ShowMessage(err)
 }
 
-func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
+func (u *gtkUI) newRoom(ident jid.Bare) *muc.Room {
 	r := muc.NewRoom(ident)
-	r.Opaque = &roomView{
-		account: a,
-		jid:     ident,
-		u:       u,
-	}
-
 	return r
 }
 
-func (rv *roomView) init() {
+func (rv *roomView) initUIBuilder() {
 	rv.builder = newBuilder("MUCRoomWindow")
 
 	panicOnDevError(rv.builder.bindObjects(rv))
 
+	rv.builder.ConnectSignals(map[string]interface{}{
+		"on_show_window":         rv.validateInput,
+		"on_nickname_changed":    rv.validateInput,
+		"on_password_changed":    rv.validateInput,
+		"on_password_checked":    rv.onPasswordChecked,
+		"on_room_cancel_clicked": rv.window.Destroy,
+		"on_room_join_clicked":   rv.onRoomJoinClicked,
+		"on_close_window":        rv.onCloseWindow,
+	})
+}
+
+func (rv *roomView) onPasswordChecked() {
+	rv.setPasswordSensitiveBasedOnCheck()
+	rv.validateInput()
+}
+
+func (rv *roomView) onCloseWindow() {
+	_ = rv.account.roomManager.LeaveRoom(rv.jid)
+}
+
+func (rv *roomView) initDefaults() {
 	rv.errorNotif = newErrorNotification(rv.notificationArea)
 	rv.setPasswordSensitiveBasedOnCheck()
-
 	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.jid))
 }
 
@@ -165,34 +178,42 @@ func (rv *roomView) onRoomJoinClicked() {
 	}()
 }
 
-func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
-	room, err := u.addRoom(a, ident)
-	if err != nil {
-		// TODO: Notify in a proper way this error
-		a.log.Fatal(err.Error())
+func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
+	v := &roomView{
+		account: a,
+		jid:     ident,
+		u:       u,
+	}
+
+	v.initUIBuilder()
+	v.initDefaults()
+
+	return v
+}
+
+func (u *gtkUI) newRoomWithView(a *account, ident jid.Bare) *muc.Room {
+	room := u.newRoom(ident)
+	view := u.newRoomView(a, ident)
+	room.Opaque = view
+	return room
+
+}
+
+func (u *gtkUI) showMUCRoom(a *account, ident jid.Bare) {
+	room, ok := a.roomManager.GetRoom(ident)
+	if !ok {
+		room = u.newRoomWithView(a, ident)
+		a.roomManager.AddRoom(room)
+	}
+	view := getViewFromRoom(room)
+
+	if !ok {
+		view.window.Show()
 		return
 	}
+	view.window.Present()
+}
 
-	view, ok := room.Opaque.(*roomView)
-	if !ok {
-		// TODO: Notify in a proper way this error
-		a.log.Fatal(errors.New("Can't create the room view"))
-	}
-	view.init()
-
-	view.builder.ConnectSignals(map[string]interface{}{
-		"on_show_window":      view.validateInput,
-		"on_nickname_changed": view.validateInput,
-		"on_password_changed": view.validateInput,
-		"on_password_checked": func() {
-			view.setPasswordSensitiveBasedOnCheck()
-			view.validateInput()
-		},
-		"on_room_cancel_clicked": view.window.Destroy,
-		"on_room_join_clicked":   view.onRoomJoinClicked,
-	})
-
-	u.connectShortcutsChildWindow(view.window)
-
-	view.window.Show()
+func getViewFromRoom(r *muc.Room) *roomView {
+	return r.Opaque.(*roomView)
 }

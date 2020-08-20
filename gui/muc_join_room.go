@@ -35,6 +35,16 @@ func (jrv *mucJoinRoomView) init() {
 	jrv.errorNotif = newErrorNotification(jrv.notificationArea)
 }
 
+func (jrv *mucJoinRoomView) startSpinner() {
+	jrv.spinner.Start()
+	jrv.spinner.SetVisible(true)
+}
+
+func (jrv *mucJoinRoomView) stopSpinner() {
+	jrv.spinner.Stop()
+	jrv.spinner.SetVisible(false)
+}
+
 func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
 	// Since this is in the UI thread, there are probably better ways to deal with it
@@ -47,8 +57,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 		return
 	}
 
-	jrv.spinner.Start()
-	jrv.spinner.SetVisible(true)
+	jrv.startSpinner()
 
 	rc, ec := a.session.HasRoom(rj)
 	go func() {
@@ -56,16 +65,14 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 		case value, ok := <-rc:
 			if !ok {
 				doInUIThread(func() {
-					jrv.spinner.Stop()
-					jrv.spinner.SetVisible(false)
+					jrv.stopSpinner()
 					jrv.notifyOnError(i18n.Localf("An error ocurred trying to find the room \"%s\"", roomName))
 					a.log.WithField("Room", roomName).Warn("An error ocurred trying to find a room")
 				})
 				return
 			}
 			doInUIThread(func() {
-				jrv.spinner.Stop()
-				jrv.spinner.SetVisible(false)
+				jrv.stopSpinner()
 				if !value {
 					jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exist", roomName))
 					a.log.WithField("Room", roomName).Debug("The Room doesn't exist")
@@ -79,10 +86,9 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 				return
 			}
 			doInUIThread(func() {
-				jrv.spinner.Stop()
-				jrv.spinner.SetVisible(false)
+				jrv.stopSpinner()
 				if err != nil {
-					jrv.notifyOnError(i18n.Localf("Error occurred trying to find the Room \"%s\"", roomName))
+					jrv.notifyOnError(i18n.Localf("An error occurred trying to find the room \"%s\"", roomName))
 					a.log.WithField("Room", roomName).WithError(err).Warn("Error occurred trying to find the Room")
 				}
 			})
@@ -97,8 +103,7 @@ func (u *gtkUI) mucShowJoinRoom() {
 	accountsInput := view.builder.get("accounts").(gtki.ComboBox)
 	ac := u.createConnectedAccountsComponent(accountsInput, view, nil,
 		func() {
-			view.spinner.Stop()
-			view.spinner.SetVisible(false)
+			view.stopSpinner()
 		},
 	)
 

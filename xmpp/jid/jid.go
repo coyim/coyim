@@ -113,20 +113,26 @@ type WithoutResource interface {
 type Bare interface {
 	WithoutResource
 	WithLocal
+	WithBare
 }
 
 // Full represents a JID containing a local, host and resource component. A Full is a Bare and an Any
 type Full interface {
 	WithResource
 	WithLocal
-	// Bare will return the extracted bare jid from the full jid
-	Bare() Bare
+	WithBare
 }
 
 // WithLocal represents a JID that has a Local port
 type WithLocal interface {
 	// Local returns the local part of the JID
 	Local() Local
+}
+
+// WithBare represents a JID that is a bare jid compatible
+type WithBare interface {
+	// Bare will return the extracted bare jid from the original jid
+	Bare() Bare
 }
 
 // NR returns a JID without a resource
@@ -259,6 +265,11 @@ func (j bare) WithResource(r Resource) WithResource {
 // MaybeWithResource implements Any
 func (j bare) MaybeWithResource(r Resource) Any {
 	return Parse(j.String() + "/" + r.v)
+}
+
+// Bare implements Bare
+func (j bare) Bare() Bare {
+	return j
 }
 
 // Host implements Any

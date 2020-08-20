@@ -67,6 +67,7 @@ func (cac *connectedAccountsComponent) initOrReplaceAccounts(accounts []*account
 
 	if len(accounts) > 0 {
 		cac.accountsInput.SetActive(currentlyActive)
+		cac.errorNotifications.clearErrors()
 	} else {
 		go cac.onNoAccounts()
 	}

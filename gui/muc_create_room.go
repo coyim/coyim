@@ -28,7 +28,6 @@ type createMUCRoom struct {
 
 	createButtonPrevText  string
 	previousUpdateChannel chan bool
-	supportedErrors       map[session.CreateRoomError]string
 }
 
 func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
@@ -43,14 +42,14 @@ func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 	return view
 }
 
+var supportedCreateMUCErrors map[error]string
+
 func (v *createMUCRoom) initSupportedMappingErrors() {
-	m := map[session.CreateRoomError]string{}
+	supportedCreateMUCErrors := map[error]string{}
 
-	m[session.ErrInvalidInformationQueryRequest] = i18n.Local("Couldn't send the information query to the server, please try again.")
-	m[session.ErrUnexpectedResponse] = i18n.Local("The connection to the server can't be established.")
-	m[session.ErrInformationQueryResponse] = i18n.Local("You don't have the permissions to create a room on the server or the room is already created.")
-
-	v.supportedErrors = m
+	supportedCreateMUCErrors[session.ErrInvalidInformationQueryRequest] = i18n.Local("Couldn't send the information query to the server, please try again.")
+	supportedCreateMUCErrors[session.ErrUnexpectedResponse] = i18n.Local("The connection to the server can't be established.")
+	supportedCreateMUCErrors[session.ErrInformationQueryResponse] = i18n.Local("You don't have the permissions to create a room on the server or the room is already created.")
 }
 
 func (v *createMUCRoom) initUIBuilder() {
@@ -147,7 +146,7 @@ func (v *createMUCRoom) doSomethingWhenFinish(ca *account, ec <-chan error) bool
 	if err != nil {
 		ca.log.WithError(err).Error("Something went wrong while trying to create the room")
 
-		userErr, ok := v.supportedErrors[err]
+		userErr, ok := supportedCreateMUCErrors[err]
 		if !ok {
 			userErr = i18n.Local("Could not create the new room")
 		}

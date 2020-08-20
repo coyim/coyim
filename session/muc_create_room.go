@@ -7,18 +7,15 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// CreateRoomError represents an error from create room functionality
-type CreateRoomError error
-
 var (
 	// ErrInvalidInformationQueryRequest is an invalid information query request error
-	ErrInvalidInformationQueryRequest CreateRoomError = errors.New("invalid information query request")
+	ErrInvalidInformationQueryRequest = errors.New("invalid information query request")
 
 	// ErrUnexpectedResponse is an unexpected response from the server error
-	ErrUnexpectedResponse CreateRoomError = errors.New("received an unexpected response from the server")
+	ErrUnexpectedResponse = errors.New("received an unexpected response from the server")
 
 	// ErrInformationQueryResponse contains an error received in the information query response
-	ErrInformationQueryResponse CreateRoomError = errors.New("received an error from the server")
+	ErrInformationQueryResponse = errors.New("received an error from the server")
 )
 
 func newCreateMUCRoomContext(s *session, ident jid.Bare) *createMUCRoomContext {
@@ -78,7 +75,7 @@ func (c *createMUCRoomContext) logWithError(err error, message string) {
 	c.s.log.WithError(err).Error(message)
 }
 
-func (c *createMUCRoomContext) sendMUCPresence() CreateRoomError {
+func (c *createMUCRoomContext) sendMUCPresence() error {
 	err := c.s.conn.SendMUCPresence(c.identity())
 	if err != nil {
 		c.logWithError(err, "An error ocurred while sending a presence for creating an instant room")
@@ -104,7 +101,7 @@ func (c *createMUCRoomContext) sendInformationQuery() (<-chan data.Stanza, error
 	return reply, nil
 }
 
-func (c *createMUCRoomContext) checkForErrorsInResponse(reply <-chan data.Stanza) CreateRoomError {
+func (c *createMUCRoomContext) checkForErrorsInResponse(reply <-chan data.Stanza) error {
 	stanza, ok := <-reply
 	if !ok {
 		return ErrInvalidInformationQueryRequest

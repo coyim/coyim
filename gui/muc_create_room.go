@@ -51,8 +51,8 @@ func (v *createMUCRoom) initUIBuilder() {
 		"on_create_room":              v.onCreateRoom,
 		"on_cancel":                   v.dialog.Destroy,
 		"on_close_window":             v.onCloseWindow,
-		"on_room_changed":             v.disableCreationIfAnyFieldIsEmpty,
-		"on_chatServiceEntry_changed": v.disableCreationIfAnyFieldIsEmpty,
+		"on_room_changed":             v.disableOrEnableIfAnyFieldIsEmpty,
+		"on_chatServiceEntry_changed": v.disableOrEnableIfAnyFieldIsEmpty,
 	})
 }
 
@@ -161,7 +161,7 @@ func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident ji
 	}
 }
 
-func (v *createMUCRoom) disableCreationIfAnyFieldIsEmpty() {
+func (v *createMUCRoom) disableOrEnableIfAnyFieldIsEmpty() {
 	setEnabled(v.createButton, v.areAllFieldsFilled())
 }
 
@@ -193,7 +193,11 @@ func (v *createMUCRoom) onNoAccountsConnected() {
 }
 
 func (v *createMUCRoom) updateServicesBasedOnAccount(acc *account) {
-	doInUIThread(v.clearErrors)
+	doInUIThread(func() {
+		v.clearErrors()
+		v.disableOrEnableIfAnyFieldIsEmpty()
+	})
+
 	go v.updateChatServicesBasedOnAccount(acc)
 }
 

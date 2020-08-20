@@ -174,11 +174,8 @@ func (v *createMUCRoom) disableCreationIfAnyFieldIsEmpty() {
 
 func (v *createMUCRoom) areAllFieldsFilled() bool {
 	accountVal := ""
-	if len(v.ac.accountsList) > 0 {
-		ac := v.ac.currentAccount()
-		if ac != nil {
-			accountVal = ac.Account()
-		}
+	if ac := v.ac.currentAccount(); ac != nil {
+		accountVal = ac.Account()
 	}
 
 	serviceVal := v.chatServices.GetActiveText()

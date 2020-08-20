@@ -48,11 +48,6 @@ func (rv *roomView) notifyOnError(err string) {
 	rv.errorNotif.ShowMessage(err)
 }
 
-func (u *gtkUI) newRoom(ident jid.Bare) *muc.Room {
-	r := muc.NewRoom(ident)
-	return r
-}
-
 func (rv *roomView) initUIBuilder() {
 	rv.builder = newBuilder("MUCRoomWindow")
 
@@ -178,23 +173,20 @@ func (rv *roomView) onRoomJoinClicked() {
 	}()
 }
 
-func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
-	v := &roomView{
+func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
+	room := muc.NewRoom(ident)
+
+	view := &roomView{
 		account: a,
 		jid:     ident,
 		u:       u,
 	}
 
-	v.initUIBuilder()
-	v.initDefaults()
+	view.initUIBuilder()
+	view.initDefaults()
 
-	return v
-}
-
-func (u *gtkUI) newRoomWithView(a *account, ident jid.Bare) *muc.Room {
-	room := u.newRoom(ident)
-	view := u.newRoomView(a, ident)
 	room.Opaque = view
+
 	return room
 
 }
@@ -202,15 +194,17 @@ func (u *gtkUI) newRoomWithView(a *account, ident jid.Bare) *muc.Room {
 func (u *gtkUI) showMUCRoom(a *account, ident jid.Bare) {
 	room, ok := a.roomManager.GetRoom(ident)
 	if !ok {
-		room = u.newRoomWithView(a, ident)
+		room = u.newRoom(a, ident)
 		a.roomManager.AddRoom(room)
 	}
+
 	view := getViewFromRoom(room)
 
 	if !ok {
 		view.window.Show()
 		return
 	}
+
 	view.window.Present()
 }
 

@@ -1,56 +1,93 @@
 package session
 
 import (
+	"errors"
+
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// ErrInvalidInformationQueryRequest is an invalid information query request error
-type ErrInvalidInformationQueryRequest struct{}
+// CreateRoomError represents an error from create room functionality
+type CreateRoomError error
 
-// ErrUnexpectedResponse is an unexpected response from the server error
-type ErrUnexpectedResponse struct{}
+var (
+	// ErrInvalidInformationQueryRequest is an invalid information query request error
+	ErrInvalidInformationQueryRequest CreateRoomError = errors.New("invalid information query request")
 
-// ErrInformationQueryResponse contains an error received in the information query response
-type ErrInformationQueryResponse struct {
-	Type   string
-	Reason string
-}
+	// ErrUnexpectedResponse is an unexpected response from the server error
+	ErrUnexpectedResponse CreateRoomError = errors.New("received an unexpected response from the server")
 
-func (e *ErrInvalidInformationQueryRequest) Error() string {
-	return "invalid information query request"
-}
+	// ErrInformationQueryResponse contains an error received in the information query response
+	ErrInformationQueryResponse CreateRoomError = errors.New("received an error from the server")
+)
 
-func (e *ErrUnexpectedResponse) Error() string {
-	return "received an unexpected response from the server"
-}
-
-func (e *ErrInformationQueryResponse) Error() string {
-	return e.Reason
-}
-
-func validateStanza(reply <-chan data.Stanza) error {
-	stanza, ok := <-reply
-	if !ok {
-		return &ErrInvalidInformationQueryRequest{}
+func newCreateMUCRoomContext(s *session, ident jid.Bare) *createMUCRoomContext {
+	c := &createMUCRoomContext{
+		ident:       ident,
+		errorResult: make(chan error),
+		s:           s,
 	}
 
-	iq, ok := stanza.Value.(*data.ClientIQ)
-	if !ok {
-		return &ErrUnexpectedResponse{}
+	return c
+}
+
+// TODO: Add a RoomConfigurationQuery for create a Reserved Room
+func (s *session) CreateRoom(ident jid.Bare) <-chan error {
+	c := newCreateMUCRoomContext(s, ident)
+	go c.createRoom()
+	return c.errorResult
+}
+
+type createMUCRoomContext struct {
+	ident       jid.Bare
+	errorResult chan error
+	s           *session
+}
+
+// Send a presence for creating the room and signals support for MUC
+func (c *createMUCRoomContext) createRoom() {
+	// See XEP-0045 v1.32.0, section: 10.1.1
+	err := c.sendMUCPresence()
+	if err != nil {
+		c.errorResult <- err
+		return
 	}
 
-	if iq.Type == "error" {
-		return &ErrInformationQueryResponse{
-			Type:   iq.Type,
-			Reason: iq.Error.Text,
-		}
+	// // See XEP-0045 v1.32.0, section: 10.1.2
+	reply, err := c.sendInformationQuery()
+	if err != nil {
+		c.errorResult <- ErrUnexpectedResponse
+		return
 	}
 
+	err = c.checkForErrorsInResponse(reply)
+	if err != nil {
+		c.logWithError(err, "Invalid information query response")
+		c.errorResult <- err
+		return
+	}
+
+	close(c.errorResult)
+}
+
+func (c *createMUCRoomContext) identity() string {
+	return c.ident.String()
+}
+
+func (c *createMUCRoomContext) logWithError(err error, message string) {
+	c.s.log.WithError(err).Error(message)
+}
+
+func (c *createMUCRoomContext) sendMUCPresence() CreateRoomError {
+	err := c.s.conn.SendMUCPresence(c.identity())
+	if err != nil {
+		c.logWithError(err, "An error ocurred while sending a presence for creating an instant room")
+		return ErrUnexpectedResponse
+	}
 	return nil
 }
 
-func newRoomConfiguration() data.MUCRoomConfiguration {
+func (c *createMUCRoomContext) newRoomConfiguration() data.MUCRoomConfiguration {
 	return data.MUCRoomConfiguration{
 		Form: &data.Form{
 			Type: "submit",
@@ -58,38 +95,29 @@ func newRoomConfiguration() data.MUCRoomConfiguration {
 	}
 }
 
-// Send a presence for creating the room and signals support for MUC
-func (s *session) createRoom(roomID jid.Bare, errorResult chan<- error) {
-	// See XEP-0045 v1.32.0, section: 10.1.1
-	err := s.conn.SendMUCPresence(roomID.String())
+func (c *createMUCRoomContext) sendInformationQuery() (<-chan data.Stanza, error) {
+	reply, _, err := c.s.conn.SendIQ(c.identity(), "set", c.newRoomConfiguration())
 	if err != nil {
-		s.log.WithError(err).Error("An error ocurred while sending a presence for creating an instant room")
-		errorResult <- &ErrUnexpectedResponse{}
-		return
+		c.logWithError(err, "An error ocurred while sending the information query for creating an instant room")
+		return nil, err
 	}
-
-	// See XEP-0045 v1.32.0, section: 10.1.2
-	reply, _, err := s.conn.SendIQ(roomID.String(), "set", newRoomConfiguration())
-	if err != nil {
-		s.log.WithError(err).Error("An error ocurred while sending the information query for creating an instant room")
-		errorResult <- &ErrUnexpectedResponse{}
-		return
-	}
-
-	err = validateStanza(reply)
-	if err != nil {
-		s.log.WithError(err).Error("Invalid information query response")
-		errorResult <- err
-		return
-	}
-
-	close(errorResult)
+	return reply, nil
 }
 
-// TODO: Add a RoomConfigurationQuery for create a Reserved Room
-func (s *session) CreateRoom(roomID jid.Bare) <-chan error {
-	errorResult := make(chan error)
-	go s.createRoom(roomID, errorResult)
+func (c *createMUCRoomContext) checkForErrorsInResponse(reply <-chan data.Stanza) CreateRoomError {
+	stanza, ok := <-reply
+	if !ok {
+		return ErrInvalidInformationQueryRequest
+	}
 
-	return errorResult
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return ErrUnexpectedResponse
+	}
+
+	if iq.Type == "error" {
+		return ErrInformationQueryResponse
+	}
+
+	return nil
 }

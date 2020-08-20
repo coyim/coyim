@@ -94,11 +94,6 @@ func NewFull(local Local, domain Domain, resource Resource) Full {
 	return domain.AddLocal(local).WithResource(resource).(Full)
 }
 
-// NewBareFromFull extract a bare JID from a given full JID
-func NewBareFromFull(f Full) Bare {
-	return f.NoResource().(bare)
-}
-
 // WithResource represents any valid JID that has a resource part
 type WithResource interface {
 	Any
@@ -124,6 +119,8 @@ type Bare interface {
 type Full interface {
 	WithResource
 	WithLocal
+	// Bare will return the extracted bare jid from the full jid
+	Bare() Bare
 }
 
 // WithLocal represents a JID that has a Local port
@@ -312,6 +309,11 @@ func (j full) Resource() Resource {
 // Split implements WithResource
 func (j full) Split() (WithoutResource, Resource) {
 	return j.NoResource(), j.Resource()
+}
+
+// Bare implements Full
+func (j full) Bare() Bare {
+	return j.NoResource().(Bare)
 }
 
 // Host implements Any

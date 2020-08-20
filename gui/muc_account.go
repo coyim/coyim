@@ -20,7 +20,7 @@ func (a *account) roomViewFor(rid jid.Bare) (*roomView, *muc.Room, error) {
 }
 
 func (a *account) addOccupantToRoomRoster(from jid.Full, userj jid.Full, affiliation, role, status string) {
-	roomj := jid.NewBareFromFull(from)
+	roomj := from.Bare()
 	rv, room, err := a.roomViewFor(roomj)
 	if err != nil {
 		rv.lastErrorMessage = err.Error()

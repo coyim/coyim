@@ -132,12 +132,12 @@ func (v *createMUCRoom) createRoom(ca *account, ident jid.Bare) {
 	ec := ca.session.CreateRoom(ident)
 
 	go func() {
-		isRoomCreated := v.doSomethingWhenFinish(ca, ec)
+		isRoomCreated := v.listenToRoomCreation(ca, ec)
 		v.onCreateRoomFinished(isRoomCreated, ca, ident)
 	}()
 }
 
-func (v *createMUCRoom) doSomethingWhenFinish(ca *account, ec <-chan error) bool {
+func (v *createMUCRoom) listenToRoomCreation(ca *account, ec <-chan error) bool {
 	err, ok := <-ec
 	if !ok {
 		return true

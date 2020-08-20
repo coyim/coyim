@@ -39,6 +39,74 @@ func (cs *CacheSuite) Test_EmptyCache_ReturnsCorrectResults(c *C) {
 	c.Assert(found, Equals, false)
 }
 
+func (cs *CacheSuite) Test_EmptyCache_GetOrCompute(c *C) {
+	r := New()
+
+	result, found := r.GetOrCompute("something", func(string) interface{} {
+		return "val"
+	})
+
+	rr := r.(*cache)
+
+	c.Assert(result, Equals, "val")
+	c.Assert(found, Equals, false)
+	c.Assert(len(rr.data), Equals, 1)
+	c.Assert(rr.data["something"].value, Equals, "val")
+
+	called := false
+
+	result, found = r.GetOrCompute("something", func(string) interface{} {
+		called = true
+		return "val2"
+	})
+
+	c.Assert(result, Equals, "val")
+	c.Assert(found, Equals, true)
+	c.Assert(called, Equals, false)
+}
+
+func (cs *CacheSuite) Test_EmptyCache_GetOrComputeTimed(c *C) {
+	r := NewWithExpiry()
+
+	result, found := r.GetOrComputeTimed("something", time.Duration(10)*time.Minute, func(string) interface{} {
+		return "val"
+	})
+
+	rr := r.(*cache)
+
+	c.Assert(result, Equals, "val")
+	c.Assert(found, Equals, false)
+	c.Assert(len(rr.data), Equals, 1)
+	c.Assert(rr.data["something"].value, Equals, "val")
+
+	called := false
+
+	result, found = r.GetOrComputeTimed("something", time.Duration(5)*time.Minute, func(string) interface{} {
+		called = true
+		return "val2"
+	})
+
+	c.Assert(result, Equals, "val")
+	c.Assert(found, Equals, true)
+	c.Assert(called, Equals, false)
+}
+
+func (cs *CacheSuite) Test_CacheWithExistingValue_Clear(c *C) {
+	r := New()
+	r.Put("foo", "bar")
+	r.Clear()
+
+	_, found := r.Get("foo")
+	c.Assert(found, Equals, false)
+}
+
+func (cs *CacheSuite) Test_CacheWithExistingValue_PutTimed(c *C) {
+	r := NewWithExpiry()
+	r.Put("foo", "bar")
+	res := r.PutTimed("foo", time.Duration(10)*time.Minute, "something")
+	c.Assert(res, Equals, true)
+}
+
 func (cs *CacheSuite) Test_CacheWithExistingValue_ReturnsCorrectResults(c *C) {
 	r := New()
 	r.Clear()

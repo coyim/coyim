@@ -30,26 +30,21 @@ type createMUCRoom struct {
 	previousUpdateChannel chan bool
 }
 
+var supportedCreateMUCErrors = map[error]string{
+	session.ErrInvalidInformationQueryRequest: i18n.Local("Couldn't send the information query to the server, please try again."),
+	session.ErrUnexpectedResponse:             i18n.Local("The connection to the server can't be established."),
+	session.ErrInformationQueryResponse:       i18n.Local("You don't have the permissions to create a room on the server or the room is already created."),
+}
+
 func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 	view := &createMUCRoom{
 		u: u,
 	}
 
-	view.initSupportedMappingErrors()
 	view.initUIBuilder()
 	view.initConnectedAccountsComponent()
 
 	return view
-}
-
-var supportedCreateMUCErrors map[error]string
-
-func (v *createMUCRoom) initSupportedMappingErrors() {
-	supportedCreateMUCErrors := map[error]string{}
-
-	supportedCreateMUCErrors[session.ErrInvalidInformationQueryRequest] = i18n.Local("Couldn't send the information query to the server, please try again.")
-	supportedCreateMUCErrors[session.ErrUnexpectedResponse] = i18n.Local("The connection to the server can't be established.")
-	supportedCreateMUCErrors[session.ErrInformationQueryResponse] = i18n.Local("You don't have the permissions to create a room on the server or the room is already created.")
 }
 
 func (v *createMUCRoom) initUIBuilder() {

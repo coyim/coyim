@@ -40,8 +40,6 @@ func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 	view.initUIBuilder()
 	view.initConnectedAccountsComponent()
 
-	view.errorBox = newErrorNotification(view.notificationArea)
-
 	return view
 }
 
@@ -59,6 +57,8 @@ func (v *createMUCRoom) initUIBuilder() {
 	v.builder = newBuilder("MUCCreateRoom")
 
 	panicOnDevError(v.builder.bindObjects(v))
+
+	v.errorBox = newErrorNotification(v.notificationArea)
 
 	v.builder.ConnectSignals(map[string]interface{}{
 		"on_create_room":              v.onCreateRoom,
@@ -180,8 +180,11 @@ func (v *createMUCRoom) disableCreationIfAnyFieldIsEmpty() {
 
 func (v *createMUCRoom) areAllFieldsFilled() bool {
 	accountVal := ""
-	if ac := v.ac.currentAccount(); ac != nil {
-		accountVal = ac.Account()
+	if len(v.ac.accountsList) > 0 {
+		ac := v.ac.currentAccount()
+		if ac != nil {
+			accountVal = ac.Account()
+		}
 	}
 
 	serviceVal := v.chatServices.GetActiveText()
@@ -194,10 +197,7 @@ func (v *createMUCRoom) notifyOnError(err string) {
 	if v.notification != nil {
 		v.notificationArea.Remove(v.notification)
 	}
-
-	doInUIThread(func() {
-		v.errorBox.ShowMessage(err)
-	})
+	v.errorBox.ShowMessage(err)
 }
 
 func (v *createMUCRoom) clearErrors() {
@@ -205,7 +205,7 @@ func (v *createMUCRoom) clearErrors() {
 }
 
 func (v *createMUCRoom) onNoAccountsConnected() {
-	v.chatServices.RemoveAll()
+	doInUIThread(v.chatServices.RemoveAll)
 }
 
 func (v *createMUCRoom) updateServicesBasedOnAccount(acc *account) {
@@ -227,7 +227,11 @@ func (v *createMUCRoom) updateChatServicesBasedOnAccount(ac *account) {
 
 func (v *createMUCRoom) updateChatServices(ac *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
 	hadAny := false
-	typedService, _ := v.chatServiceEntry.GetText()
+
+	var typedService string
+	doInUIThread(func() {
+		typedService, _ = v.chatServiceEntry.GetText()
+	})
 
 	doInUIThread(v.chatServices.RemoveAll)
 

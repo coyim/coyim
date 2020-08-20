@@ -7,7 +7,13 @@ type Localizer interface {
 	Local(string) string
 }
 
-var g Localizer
+type nullLocalizer struct{}
+
+func (*nullLocalizer) Local(v string) string {
+	return fmt.Sprintf("[NULL LOCALIZER] - %s", v)
+}
+
+var g Localizer = &nullLocalizer{}
 
 // InitLocalization should be called before using localization - it sets the variable used to access the localization interface
 func InitLocalization(gx Localizer) {

@@ -20,7 +20,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkButton" id="btnCancelJoin">
+              <object class="GtkButton" id="cancelJoinButton">
                 <property name="label" translatable="yes">_Cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -35,13 +35,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btnAcceptJoin">
+              <object class="GtkButton" id="doJoinButton">
                 <property name="label" translatable="yes">_Join</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_accept_join_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_do_join_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -70,9 +71,6 @@
                 <property name="can_focus">False</property>
                 <property name="margin_bottom">31</property>
                 <property name="orientation">vertical</property>
-                <child>
-                  <placeholder/>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -92,7 +90,7 @@
                 <property name="column_spacing">5</property>
                 <property name="row_homogeneous">True</property>
                 <child>
-                  <object class="GtkLabel" id="labelRoomName">
+                  <object class="GtkLabel" id="roomNameLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
@@ -104,11 +102,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="textRoomName">
+                  <object class="GtkEntry" id="roomNameEntry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
-                    <signal name="changed" handler="on_room_name_changed" swapped="no"/>
+                    <signal name="changed" handler="on_roomname_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -116,7 +114,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="labelAccount">
+                  <object class="GtkLabel" id="accountLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>

@@ -10,7 +10,8 @@ type mucJoinRoomView struct {
 	builder *builder
 
 	dialog           gtki.Dialog  `gtk-widget:"join-room"`
-	txtRoomName      gtki.Entry   `gtk-widget:"textRoomName"`
+	roomNameEntry    gtki.Entry   `gtk-widget:"roomNameEntry"`
+	doJoinButton     gtki.Button  `gtk-widget:"doJoinButton"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
 	notificationArea gtki.Box     `gtk-widget:"boxNotificationArea"`
 	notification     gtki.InfoBar
@@ -50,7 +51,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	// Since this is in the UI thread, there are probably better ways to deal with it
 	jrv.clearErrors()
 
-	roomName, _ := jrv.txtRoomName.GetText()
+	roomName, _ := jrv.roomNameEntry.GetText()
 	rj, ok := jid.Parse(roomName).(jid.Bare)
 	if !ok {
 		jrv.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))
@@ -110,7 +111,7 @@ func (u *gtkUI) mucShowJoinRoom() {
 	view.builder.ConnectSignals(map[string]interface{}{
 		"on_close_window":        ac.onDestroy,
 		"on_cancel_join_clicked": view.dialog.Destroy,
-		"on_accept_join_clicked": func() {
+		"on_do_join_clicked": func() {
 			u.tryJoinRoom(view, ac.currentAccount())
 		},
 	})

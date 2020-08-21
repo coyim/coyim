@@ -11,7 +11,7 @@ type mucJoinRoomView struct {
 
 	dialog           gtki.Dialog  `gtk-widget:"join-room"`
 	roomNameEntry    gtki.Entry   `gtk-widget:"roomNameEntry"`
-	doJoinButton     gtki.Button  `gtk-widget:"doJoinButton"`
+	joinButton       gtki.Button  `gtk-widget:"joinButton"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
 	notificationArea gtki.Box     `gtk-widget:"boxNotificationArea"`
 	notification     gtki.InfoBar
@@ -46,18 +46,28 @@ func (jrv *mucJoinRoomView) stopSpinner() {
 	jrv.spinner.SetVisible(false)
 }
 
+func (jrv *mucJoinRoomView) hasValidRoomName() bool {
+	jrv.clearErrors()
+	roomName, _ := jrv.roomNameEntry.GetText()
+	valid := jid.ValidBareJID(roomName)
+	if !valid {
+		jrv.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))
+	}
+	return valid
+}
+
+func (jrv *mucJoinRoomView) validateInput() {
+	sensitiveValue := jrv.hasValidRoomName()
+	jrv.joinButton.SetSensitive(sensitiveValue)
+}
+
 func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
 	// Since this is in the UI thread, there are probably better ways to deal with it
 	jrv.clearErrors()
 
 	roomName, _ := jrv.roomNameEntry.GetText()
-	rj, ok := jid.Parse(roomName).(jid.Bare)
-	if !ok {
-		jrv.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))
-		return
-	}
-
+	rj := jid.ParseBare(roomName)
 	jrv.startSpinner()
 
 	rc, ec := a.session.HasRoom(rj)
@@ -109,9 +119,10 @@ func (u *gtkUI) mucShowJoinRoom() {
 	)
 
 	view.builder.ConnectSignals(map[string]interface{}{
-		"on_close_window":        ac.onDestroy,
-		"on_cancel_join_clicked": view.dialog.Destroy,
-		"on_do_join_clicked": func() {
+		"on_close_window":     ac.onDestroy,
+		"on_roomname_changed": view.validateInput,
+		"on_cancel_clicked":   view.dialog.Destroy,
+		"on_join_clicked": func() {
 			u.tryJoinRoom(view, ac.currentAccount())
 		},
 	})

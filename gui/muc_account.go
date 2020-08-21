@@ -32,7 +32,7 @@ func (a *account) roomViewFor(ident jid.Bare) (*roomView, error) {
 func (a *account) addOccupantToRoomRoster(from jid.Full, occupant jid.Full, affiliation, role, status string) {
 	room, err := a.roomForIdentity(from.Bare())
 	if err != nil {
-		a.log.WithField("from", from.String()).WithError(err).Error("An error occurred trying to get the room")
+		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room")
 		return
 	}
 
@@ -41,7 +41,7 @@ func (a *account) addOccupantToRoomRoster(from jid.Full, occupant jid.Full, affi
 	joined, _, err := room.Roster().UpdatePresence(from, "", affiliation, role, "", status, "Room Joined", occupant)
 	if err != nil {
 		a.log.WithFields(log.Fields{
-			"occupant":    occupant.String(),
+			"occupant":    occupant,
 			"affiliation": affiliation,
 			"role":        role,
 			"status":      status,
@@ -64,15 +64,12 @@ func (a *account) generateNicknameConflictError(from jid.Full) {
 
 	view, err := a.roomViewFor(jid.ParseBare(roomWithoutResource.String()))
 	if err != nil {
-		a.log.WithField("from", from.String()).WithError(err).Error("An error occurred trying to get the room view")
+		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room view")
 		return
 	}
 
 	err = muc.NewNicknameConflictError(nickname)
-	a.log.WithFields(log.Fields{
-		"from": from.String(),
-	}).WithError(err).Error("Nickname conflict event received")
-
+	a.log.WithField("from", from).WithError(err).Error("Nickname conflict event received")
 	view.lastErrorMessage = err.Error()
 	view.onJoin <- false
 }

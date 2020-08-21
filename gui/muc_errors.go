@@ -29,8 +29,6 @@ func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *acc
 }
 
 func (u *gtkUI) handleErrorMUCConflictEvent(from jid.Full, a *account) {
-
 	a.log.WithField("from", from).Warn("Nickname conflict event received")
-
 	a.generateNicknameConflictError(from)
 }

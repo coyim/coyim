@@ -170,6 +170,8 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 
 	observer := make(chan interface{}, 1000)
 	sess.Subscribe(observer)
+	eventsDone := make(chan bool, 2)
+	sess.eventsReachedZero = eventsDone
 
 	sess.watchStanzas()
 

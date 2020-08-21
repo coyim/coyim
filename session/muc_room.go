@@ -1,6 +1,8 @@
 package session
 
 import (
+	"errors"
+
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -20,36 +22,29 @@ func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
 	errorChannel := make(chan error)
 	go func() {
 		r, err := s.Conn().EntityExists(rj.String())
-
-		// TODO[OB]-MUC: It reads a bit weirdly mixing up these two results
-		if !r || err != nil {
-			if err != nil {
-				s.log.WithError(err).Warn("HasRoom() had an error")
-				errorChannel <- err
-				return
-			}
+		if err != nil {
+			s.log.WithError(err).Error("HasRoom() had an error")
+			errorChannel <- err
+			return
+		}
+		if !r {
 			resultChannel <- false
 			return
 		}
 		// Make sure the entity is a Room
 		idents, features, ok := s.Conn().DiscoveryFeaturesAndIdentities(rj.String())
 		if !ok {
-			// TODO[OB]-MUC: Is this really correct?
-			resultChannel <- false
+			err := errors.New("An error ocurred trying to get the features and identities from the server")
+			s.log.WithError(err).Error("DiscoveryFeaturesAndIdentities() had an error")
+			errorChannel <- err
 			return
 		}
-		ident, hasIdent := hasIdentity(idents, "conference", "text")
+		_, hasIdent := hasIdentity(idents, "conference", "text")
 		if !hasIdent {
 			resultChannel <- false
 			return
 		}
 		if !hasFeatures(features, "http://jabber.org/protocol/muc") {
-			resultChannel <- false
-			return
-		}
-		barerj := jid.NewBare(jid.NewLocal(ident), rj.Host())
-		if barerj != rj {
-			// TODO[OB]-MUC: I feel like this mixes up two conerns
 			resultChannel <- false
 			return
 		}

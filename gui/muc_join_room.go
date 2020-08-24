@@ -92,7 +92,7 @@ func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
 	doInUIThread(func() {
 		v.notifyOnError(i18n.Localf("The room \"%s\" doesn't exist", ident))
 	})
-	a.log.WithField("room", ident).Debug("The room doesn't exist")
+	a.log.WithField("room", ident).Warn("The room doesn't exist")
 }
 
 func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {

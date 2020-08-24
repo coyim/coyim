@@ -106,7 +106,7 @@ func (v *createMUCRoom) onCreateRoom() {
 	roomIdentity := v.getRoomID()
 	if roomIdentity != nil {
 		v.onBeforeToCreateARoom()
-		go v.createRoom(ca, roomIdentity)
+		go v.createRoomIfDoesntExist(ca, roomIdentity)
 	}
 }
 
@@ -116,12 +116,41 @@ func (v *createMUCRoom) onBeforeToCreateARoom() {
 	_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 }
 
-func (v *createMUCRoom) createRoom(ca *account, ident jid.Bare) {
-	ec := ca.session.CreateRoom(ident)
+func (v *createMUCRoom) onAfterToCreateARoom() {
+	doInUIThread(func() {
+		v.disableOrEnableFields(true)
+		_ = v.createButton.SetProperty("label", v.createButtonPrevText)
+	})
+}
 
+func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
+	erc, ec := ca.session.HasRoom(ident)
 	go func() {
-		isRoomCreated := v.listenToRoomCreation(ca, ec)
-		v.onCreateRoomFinished(isRoomCreated, ca, ident)
+		defer v.onAfterToCreateARoom()
+
+		select {
+		case err, _ := <-ec:
+			if err != nil {
+				ca.log.WithError(err).Error("Could not get information about the existent room")
+				doInUIThread(func() {
+					v.errorBox.ShowMessage(i18n.Local("Could not connect with the server, please try again later."))
+				})
+			}
+
+		case er, _ := <-erc:
+			if !er {
+				ec := ca.session.CreateRoom(ident)
+				go func() {
+					isRoomCreated := v.listenToRoomCreation(ca, ec)
+					v.onCreateRoomFinished(isRoomCreated, ca, ident)
+				}()
+				return
+			}
+
+			doInUIThread(func() {
+				v.errorBox.ShowMessage(i18n.Local("The room already exist."))
+			})
+		}
 	}()
 }
 
@@ -148,11 +177,6 @@ func (v *createMUCRoom) listenToRoomCreation(ca *account, ec <-chan error) bool 
 }
 
 func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident jid.Bare) {
-	doInUIThread(func() {
-		v.disableOrEnableFields(true)
-		_ = v.createButton.SetProperty("label", v.createButtonPrevText)
-	})
-
 	if created {
 		doInUIThread(func() {
 			v.u.mucShowRoom(ca, ident)

@@ -35,7 +35,7 @@ func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
 		idents, features, ok := s.Conn().DiscoveryFeaturesAndIdentities(rj.String())
 		if !ok {
 			err := errors.New("Something went wrong discovering the features and identities of the entity")
-			s.log.WithField("Entity", rj).WithError(err).Error("An error occurred trying to get the features and identities from the server")
+			s.log.WithField("entity", rj).WithError(err).Error("An error occurred trying to get the features and identities from the server")
 			errorChannel <- err
 			return
 		}

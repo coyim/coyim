@@ -51,7 +51,7 @@ func (v *createMUCRoom) initUIBuilder() {
 		"on_create_room":              v.onCreateRoom,
 		"on_cancel":                   v.dialog.Destroy,
 		"on_close_window":             v.onCloseWindow,
-		"on_room_changed":             v.disableOrEnableIfAnyFieldIsEmpty,
+		"on_room_changed":             v.onRoomNameChanged,
 		"on_chatServiceEntry_changed": v.disableOrEnableIfAnyFieldIsEmpty,
 	})
 }
@@ -131,7 +131,7 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
 		select {
 		case err, _ := <-ec:
 			if err != nil {
-				ca.log.WithError(err).Error("Could not get information about the existent room")
+				ca.log.WithError(err).Error("Error trying to validate if room exists")
 				doInUIThread(func() {
 					v.errorBox.ShowMessage(i18n.Local("Could not connect with the server, please try again later."))
 				})
@@ -148,7 +148,7 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
 			}
 
 			doInUIThread(func() {
-				v.errorBox.ShowMessage(i18n.Local("The room already exist."))
+				v.errorBox.ShowMessage(i18n.Local("The room already exists."))
 			})
 		}
 	}()
@@ -185,8 +185,40 @@ func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident ji
 	}
 }
 
+func (v *createMUCRoom) onRoomNameChanged() {
+	v.clearErrors()
+	v.validateAllowedCharacters()
+}
+
 func (v *createMUCRoom) disableOrEnableIfAnyFieldIsEmpty() {
 	setEnabled(v.createButton, v.areAllFieldsFilled())
+}
+
+func (v *createMUCRoom) validateAllowedCharacters() {
+	cna := v.extractNotAllowedCharacters()
+	if len(cna) > 0 {
+		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed inside the room name", cna))
+		setEnabled(v.createButton, false)
+		return
+	}
+	v.disableOrEnableIfAnyFieldIsEmpty()
+}
+
+func (v *createMUCRoom) extractNotAllowedCharacters() []string {
+	s, _ := v.room.GetText()
+
+	m := make(map[string]interface{})
+	for i, c := range strings.Split(s, "") {
+		if strings.ContainsAny(c, "\"&'/:<>@ ") {
+			m[c] = i
+		}
+	}
+
+	var cna []string
+	for k := range m {
+		cna = append(cna, k)
+	}
+	return cna
 }
 
 func (v *createMUCRoom) areAllFieldsFilled() bool {

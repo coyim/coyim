@@ -27,9 +27,6 @@ type createMUCRoom struct {
 
 	createButtonPrevText  string
 	previousUpdateChannel chan bool
-	inputRoomName         string
-	inputServiceName      string
-	wasInputPasted        bool
 }
 
 func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
@@ -51,17 +48,11 @@ func (v *createMUCRoom) initUIBuilder() {
 	v.errorBox = newErrorNotification(v.notificationArea)
 
 	v.builder.ConnectSignals(map[string]interface{}{
-		"on_create_room":        v.onCreateRoom,
-		"on_cancel":             v.dialog.Destroy,
-		"on_close_window":       v.onCloseWindow,
-		"on_room_name_paste":    v.onRoomNamePasted,
-		"on_room_service_paste": v.onRoomNamePasted,
-		"on_room_changed": func() {
-			v.onInputChanged(v.room)
-		},
-		"on_chatServiceEntry_changed": func() {
-			v.onInputChanged(v.chatServiceEntry)
-		},
+		"on_create_room":              v.onCreateRoom,
+		"on_cancel":                   v.dialog.Destroy,
+		"on_close_window":             v.onCloseWindow,
+		"on_room_changed":             v.disableOrEnableIfAnyFieldIsEmpty,
+		"on_chatServiceEntry_changed": v.disableOrEnableIfAnyFieldIsEmpty,
 	})
 }
 
@@ -85,7 +76,7 @@ func (v *createMUCRoom) disableOrEnableFields(f bool) {
 func (v *createMUCRoom) getRoomID() jid.Bare {
 	roomName, err := v.room.GetText()
 	if err != nil {
-		v.u.log.WithError(err).Error("something went wrong while trying to create the room")
+		v.u.log.WithError(err).Error("Something went wrong while trying to create the room")
 		doInUIThread(func() {
 			v.errorBox.ShowMessage(i18n.Local("Could not get the room name, please try again."))
 		})
@@ -141,7 +132,7 @@ func (v *createMUCRoom) listenToRoomCreation(ca *account, ec <-chan error) bool 
 	}
 
 	if err != nil {
-		ca.log.WithError(err).Error("something went wrong while trying to create the room")
+		ca.log.WithError(err).Error("Something went wrong while trying to create the room")
 
 		userErr, ok := supportedCreateMUCErrors[err]
 		if !ok {
@@ -168,84 +159,6 @@ func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident ji
 			v.dialog.Destroy()
 		})
 	}
-}
-
-func (v *createMUCRoom) onRoomNamePasted() {
-	v.inputRoomName, _ = v.room.GetText()
-	v.inputServiceName = v.chatServices.GetActiveText()
-	insertTextIntoEntry(v.room, "")
-	insertTextIntoEntry(v.chatServiceEntry, "")
-	v.wasInputPasted = true
-}
-
-func (v *createMUCRoom) onInputChanged(e gtki.Entry) {
-	if v.wasInputPasted {
-		v.updateRoomIdentityBasedOn(e)
-	}
-	v.disableOrEnableIfAnyFieldIsEmpty()
-}
-
-func (v *createMUCRoom) updateRoomIdentityBasedOn(e gtki.Entry) {
-	entry, err := e.GetText()
-	if err != nil {
-		v.u.log.WithError(err).Error("something went wrong trying to read the room name input.")
-		return
-	}
-	v.changeRoomIdentityBasedOn(entry)
-	insertTextIntoEntry(v.room, v.inputRoomName)
-	insertTextIntoEntry(v.chatServiceEntry, v.inputServiceName)
-}
-
-func (v *createMUCRoom) changeRoomIdentityBasedOn(entry string) {
-	doInUIThread(func() {
-		v.clearErrors()
-		v.errorBox.ShowMessage(i18n.Local("Room and service names have been changed automatically after pasting."))
-	})
-
-	defer func() {
-		v.wasInputPasted = false
-	}()
-
-	if entry != "" {
-		rns := strings.Split(entry, "@")
-		if len(rns) > 2 {
-			doInUIThread(func() {
-				v.errorBox.ShowMessage(i18n.Local("A room name cannot contains more that one \"@\" character."))
-			})
-			return
-		}
-
-		if len(rns) == 1 {
-			v.updateRoomName(rns[0])
-			return
-		}
-
-		if len(rns) == 2 {
-			v.updateRoomIdentity(rns[0], rns[1])
-			return
-		}
-	}
-}
-
-func (v *createMUCRoom) updateRoomName(rn string) {
-	if jid.ValidLocal(rn) {
-		v.inputRoomName = rn
-		return
-	}
-	doInUIThread(func() {
-		v.errorBox.ShowMessage(i18n.Local("The room name contains some invalid character like: /n, @ or some blank space."))
-	})
-}
-
-func (v *createMUCRoom) updateRoomIdentity(rn, cs string) {
-	v.updateRoomName(rn)
-	if jid.ValidDomain(cs) {
-		v.inputServiceName = cs
-		return
-	}
-	doInUIThread(func() {
-		v.errorBox.ShowMessage(i18n.Local("The chat service contains some invalid character like: /n, @ or some blank space."))
-	})
 }
 
 func (v *createMUCRoom) disableOrEnableIfAnyFieldIsEmpty() {
@@ -320,7 +233,7 @@ func (v *createMUCRoom) updateChatServices(ac *account, csc <-chan jid.Domain, e
 			return
 		case err, _ := <-ec:
 			if err != nil {
-				ac.log.WithError(err).Error("something went wrong trying to get chat services")
+				ac.log.WithError(err).Error("Something went wrong trying to get chat services")
 			}
 			return
 		case cs, ok := <-csc:
@@ -347,10 +260,6 @@ func (v *createMUCRoom) onUpdateChatServicesFinished(hadAny bool, typedService s
 
 func setEnabled(w gtki.Widget, enable bool) {
 	w.SetSensitive(enable)
-}
-
-func insertTextIntoEntry(e gtki.Entry, s string) {
-	e.SetText(s)
 }
 
 func (u *gtkUI) mucCreateChatRoom() {

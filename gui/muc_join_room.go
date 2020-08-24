@@ -109,7 +109,7 @@ func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
 	})
 }
 
-func (v *mucJoinRoomView) onJoinServerUnavailable(a *account, ident jid.Bare) {
+func (v *mucJoinRoomView) onServiceUnavailable(a *account, ident jid.Bare) {
 	doInUIThread(func() {
 		v.stopSpinner()
 		v.notifyOnError(i18n.Local("We can't get access to the server, please check your Internet connection or make sure the server exists."))
@@ -121,30 +121,22 @@ type mucJoinRoomContext struct {
 	a     *account
 	v     *mucJoinRoomView
 	ident jid.Bare
-	// onBeforeStart IS called from the UI thread
-	onBeforeStart func()
-	// onSuccess is NOT called from the UI thread
-	onSuccess func(*account, jid.Bare, bool)
-	// onError is NOT called from the UI thread
-	onError func(*account, jid.Bare, error)
-	// onServiceUnavailable is NOT called from the UI thread
-	onServiceUnavailable func(*account, jid.Bare)
 }
 
 func (c *mucJoinRoomContext) onFinishWithResult(s, isChannelClosed bool) {
 	if !isChannelClosed {
-		c.onServiceUnavailable(c.a, c.ident)
+		c.v.onServiceUnavailable(c.a, c.ident)
 		return
 	}
-	c.onSuccess(c.a, c.ident, s)
+	c.v.onJoinSuccess(c.a, c.ident, s)
 }
 
 func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed bool) {
 	if !isErrorChannelClosed {
-		c.onServiceUnavailable(c.a, c.ident)
+		c.v.onServiceUnavailable(c.a, c.ident)
 		return
 	}
-	c.onError(c.a, c.ident, err)
+	c.v.onJoinError(c.a, c.ident, err)
 }
 
 func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChannel <-chan error) {
@@ -157,7 +149,7 @@ func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChanne
 }
 
 func (c *mucJoinRoomContext) exec() {
-	c.onBeforeStart()
+	c.v.onBeforeStart()
 	resultChannel, errorChannel := c.a.session.HasRoom(c.ident)
 	go c.waitToFinish(resultChannel, errorChannel)
 }
@@ -166,13 +158,9 @@ func (v *mucJoinRoomView) tryJoinRoom() {
 	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
 	// Since this is in the UI thread, there are probably better ways to deal with it
 	c := &mucJoinRoomContext{
-		a:                    v.ac.currentAccount(),
-		v:                    v,
-		ident:                jid.ParseBare(v.typedRoomName()),
-		onBeforeStart:        v.onBeforeStart,
-		onSuccess:            v.onJoinSuccess,
-		onError:              v.onJoinError,
-		onServiceUnavailable: v.onJoinServerUnavailable,
+		a:     v.ac.currentAccount(),
+		v:     v,
+		ident: jid.ParseBare(v.typedRoomName()),
 	}
 
 	c.exec()

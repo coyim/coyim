@@ -119,19 +119,6 @@ type mucJoinRoomContext struct {
 	ident jid.Bare
 }
 
-func (c *mucJoinRoomContext) onFinishWithResult(s, isChannelClosed bool) {
-	if !isChannelClosed {
-		c.v.onServiceUnavailable(c.a, c.ident)
-		return
-	}
-
-	if s {
-		c.v.onJoinSuccess(c.a, c.ident)
-	} else {
-		c.v.onJoinFails(c.a, c.ident)
-	}
-}
-
 func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed bool) {
 	if !isErrorChannelClosed {
 		c.v.onServiceUnavailable(c.a, c.ident)
@@ -143,7 +130,16 @@ func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed b
 func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChannel <-chan error) {
 	select {
 	case value, ok := <-resultChannel:
-		c.onFinishWithResult(value, ok)
+		if !ok {
+			c.v.onServiceUnavailable(c.a, c.ident)
+			return
+		}
+
+		if value {
+			c.v.onJoinSuccess(c.a, c.ident)
+		} else {
+			c.v.onJoinFails(c.a, c.ident)
+		}
 	case err, ok := <-errorChannel:
 		c.onFinishWithError(err, ok)
 	}

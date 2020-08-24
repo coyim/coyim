@@ -178,7 +178,10 @@ func (v *mucJoinRoomView) init() {
 	v.ac = v.u.createConnectedAccountsComponent(accountsInput, v, func(a *account) {
 		doInUIThread(v.validateInput)
 	}, func() {
-		doInUIThread(v.stopSpinner)
+		doInUIThread(func() {
+			v.stopSpinner()
+			v.validateInput()
+		})
 	})
 
 	v.builder.ConnectSignals(map[string]interface{}{

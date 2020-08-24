@@ -51,7 +51,9 @@ func (jrv *mucJoinRoomView) hasValidRoomName() bool {
 	roomName, _ := jrv.roomNameEntry.GetText()
 	valid := jid.ValidBareJID(roomName)
 	if !valid {
-		jrv.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))
+		if len(roomName) > 0 {
+			jrv.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))
+		}
 	}
 	return valid
 }

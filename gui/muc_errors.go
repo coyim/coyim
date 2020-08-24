@@ -29,6 +29,14 @@ func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *acc
 }
 
 func (u *gtkUI) handleErrorMUCConflictEvent(from jid.Full, a *account) {
-	a.log.WithField("from", from).Warn("Nickname conflict event received")
-	a.generateNicknameConflictError(from)
+	view, err := a.roomViewFor(from.Bare())
+	if err != nil {
+		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room view")
+		return
+	}
+
+	err = newNicknameConflictError(from.Resource())
+	a.log.WithField("from", from).WithError(err).Error("Nickname conflict event received")
+	view.lastErrorMessage = err.Error()
+	view.onJoin <- false
 }

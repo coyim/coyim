@@ -58,18 +58,3 @@ func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
 	//TODO: Implements the actions to do when a Occupant presence is received
 	a.log.Debug("updateOccupantRoomEvent")
 }
-
-func (a *account) generateNicknameConflictError(from jid.Full) {
-	roomWithoutResource, nickname := from.Split()
-
-	view, err := a.roomViewFor(jid.ParseBare(roomWithoutResource.String()))
-	if err != nil {
-		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room view")
-		return
-	}
-
-	err = muc.NewNicknameConflictError(nickname)
-	a.log.WithField("from", from).WithError(err).Error("Nickname conflict event received")
-	view.lastErrorMessage = err.Error()
-	view.onJoin <- false
-}

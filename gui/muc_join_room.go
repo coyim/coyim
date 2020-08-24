@@ -76,27 +76,23 @@ func (v *mucJoinRoomView) validateInput() {
 }
 
 func (v *mucJoinRoomView) onBeforeStart() {
-	doInUIThread(func() {
-		v.clearErrors()
-		v.startSpinner()
-	})
+	v.clearErrors()
+	v.startSpinner()
 }
 
-func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare, s bool) {
-	doInUIThread(v.stopSpinner)
-
-	if !s {
-		doInUIThread(func() {
-			v.notifyOnError(i18n.Localf("The room \"%s\" doesn't exist", ident))
-		})
-		a.log.WithField("room", ident).Debug("The room doesn't exist")
-		return
-	}
-
+func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare) {
 	doInUIThread(func() {
+		v.stopSpinner()
 		v.dialog.Hide()
 		v.u.mucShowRoom(a, ident)
 	})
+}
+
+func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
+	doInUIThread(func() {
+		v.notifyOnError(i18n.Localf("The room \"%s\" doesn't exist", ident))
+	})
+	a.log.WithField("room", ident).Debug("The room doesn't exist")
 }
 
 func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
@@ -128,7 +124,12 @@ func (c *mucJoinRoomContext) onFinishWithResult(s, isChannelClosed bool) {
 		c.v.onServiceUnavailable(c.a, c.ident)
 		return
 	}
-	c.v.onJoinSuccess(c.a, c.ident, s)
+
+	if s {
+		c.v.onJoinSuccess(c.a, c.ident)
+	} else {
+		c.v.onJoinFails(c.a, c.ident)
+	}
 }
 
 func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed bool) {

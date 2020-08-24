@@ -7,6 +7,7 @@ import (
 )
 
 type mucJoinRoomView struct {
+	u       *gtkUI
 	builder *builder
 
 	dialog           gtki.Dialog  `gtk-widget:"join-room"`
@@ -28,12 +29,6 @@ func (jrv *mucJoinRoomView) notifyOnError(err string) {
 	}
 
 	jrv.errorNotif.ShowMessage(err)
-}
-
-func (jrv *mucJoinRoomView) init() {
-	jrv.builder = newBuilder("MUCJoinRoomDialog")
-	panicOnDevError(jrv.builder.bindObjects(jrv))
-	jrv.errorNotif = newErrorNotification(jrv.notificationArea)
 }
 
 func (jrv *mucJoinRoomView) startSpinner() {
@@ -69,7 +64,7 @@ func (jrv *mucJoinRoomView) notifyErrorServerUnavailable(a *account, roomName st
 	a.log.WithField("room", roomName).Warn("An error ocurred trying to find a room")
 }
 
-func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
+func (jrv *mucJoinRoomView) tryJoinRoom(a *account) {
 	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
 	// Since this is in the UI thread, there are probably better ways to deal with it
 	jrv.clearErrors()
@@ -95,7 +90,7 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 					a.log.WithField("room", roomName).Debug("The room doesn't exist")
 				} else {
 					jrv.dialog.Hide()
-					u.mucShowRoom(a, rj)
+					jrv.u.mucShowRoom(a, rj)
 				}
 			})
 		case err, ok := <-ec:
@@ -116,27 +111,39 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	}()
 }
 
-func (u *gtkUI) mucShowJoinRoom() {
-	view := &mucJoinRoomView{}
-	view.init()
+func (jrv *mucJoinRoomView) init() {
+	jrv.builder = newBuilder("MUCJoinRoomDialog")
 
-	accountsInput := view.builder.get("accounts").(gtki.ComboBox)
-	ac := u.createConnectedAccountsComponent(accountsInput, view, nil,
-		func() {
-			view.stopSpinner()
-		},
-	)
+	panicOnDevError(jrv.builder.bindObjects(jrv))
 
-	view.builder.ConnectSignals(map[string]interface{}{
+	accountsInput := jrv.builder.get("accounts").(gtki.ComboBox)
+	ac := jrv.u.createConnectedAccountsComponent(accountsInput, jrv, nil, jrv.stopSpinner)
+
+	jrv.builder.ConnectSignals(map[string]interface{}{
 		"on_close_window":     ac.onDestroy,
-		"on_roomname_changed": view.validateInput,
-		"on_cancel_clicked":   view.dialog.Destroy,
+		"on_roomname_changed": jrv.validateInput,
+		"on_cancel_clicked":   jrv.dialog.Destroy,
 		"on_join_clicked": func() {
-			u.tryJoinRoom(view, ac.currentAccount())
+			jrv.tryJoinRoom(ac.currentAccount())
 		},
 	})
 
+	jrv.errorNotif = newErrorNotification(jrv.notificationArea)
+}
+
+func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
+	view := &mucJoinRoomView{
+		u: u,
+	}
+
+	view.init()
+
 	u.connectShortcutsChildWindow(view.dialog)
 
+	return view
+}
+
+func (u *gtkUI) mucShowJoinRoom() {
+	view := newMUCJoinRoomView(u)
 	view.dialog.Show()
 }

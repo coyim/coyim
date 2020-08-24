@@ -18,6 +18,7 @@ type connectedAccountsComponent struct {
 	onDestroyFunc      func()
 	errorNotifications canNotifyErrors
 	onNoAccounts       func()
+	onAccountsUpdated  func(*account)
 }
 
 // onDestroy should ONLY be called from the UI thread
@@ -68,6 +69,7 @@ func (cac *connectedAccountsComponent) initOrReplaceAccounts(accounts []*account
 	if len(accounts) > 0 {
 		cac.accountsInput.SetActive(currentlyActive)
 		cac.errorNotifications.clearErrors()
+		cac.onAccountsUpdated(cac.currentAccount())
 	} else {
 		go cac.onNoAccounts()
 	}
@@ -93,6 +95,8 @@ func (u *gtkUI) createConnectedAccountsComponent(input gtki.ComboBox, errorNot c
 		onAccountsUpdatedFinal = func(*account) {}
 	}
 
+	result.onAccountsUpdated = onAccountsUpdatedFinal
+
 	var e error
 	// These two arguments are: account name and account id
 	result.accountsModel, e = g.gtk.ListStoreNew(glibi.TYPE_STRING, glibi.TYPE_STRING)
@@ -115,14 +119,14 @@ func (u *gtkUI) createConnectedAccountsComponent(input gtki.ComboBox, errorNot c
 		act := result.accountsInput.GetActive()
 		if act >= 0 && act < len(result.accountsList) && act != result.currentlyActive {
 			result.currentlyActive = act
-			go onAccountsUpdatedFinal(result.currentAccount())
+			go result.onAccountsUpdated(result.currentAccount())
 		}
 	})
 
 	result.currentlyActive = -1
 	if len(result.accountsList) > 0 {
 		result.currentlyActive = 0
-		onAccountsUpdatedFinal(result.currentAccount())
+		result.onAccountsUpdated(result.currentAccount())
 	}
 
 	result.onDestroyFunc = func() {

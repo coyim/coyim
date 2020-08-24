@@ -9,6 +9,7 @@ import (
 type mucJoinRoomView struct {
 	u       *gtkUI
 	builder *builder
+	ac      *connectedAccountsComponent
 
 	dialog           gtki.Dialog  `gtk-widget:"join-room"`
 	roomNameEntry    gtki.Entry   `gtk-widget:"roomNameEntry"`
@@ -41,32 +42,50 @@ func (v *mucJoinRoomView) stopSpinner() {
 	v.spinner.SetVisible(false)
 }
 
+func (v *mucJoinRoomView) typedRoomName() string {
+	name, _ := v.roomNameEntry.GetText()
+	return name
+}
+
+func (v *mucJoinRoomView) isValidRoomName(name string) bool {
+	return jid.ValidBareJID(name)
+}
+
 func (v *mucJoinRoomView) hasValidRoomName() bool {
-	v.clearErrors()
-	roomName, _ := v.roomNameEntry.GetText()
-	valid := jid.ValidBareJID(roomName)
-	if !valid {
-		if len(roomName) > 0 {
-			v.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))
-		}
+	if len(v.ac.accounts) == 0 {
+		return false
 	}
-	return valid
+
+	v.clearErrors()
+
+	roomName := v.typedRoomName()
+	if len(roomName) == 0 {
+		return false
+	}
+
+	if !v.isValidRoomName(roomName) {
+		v.notifyOnError(i18n.Localf("\"%s\" is not a valid room identification", roomName))
+		return false
+	}
+
+	return true
 }
 
 func (v *mucJoinRoomView) validateInput() {
-	sensitiveValue := v.hasValidRoomName()
-	v.joinButton.SetSensitive(sensitiveValue)
+	v.joinButton.SetSensitive(v.hasValidRoomName())
 }
 
 func (v *mucJoinRoomView) notifyErrorServerUnavailable(a *account, roomName string) {
 	v.stopSpinner()
 	v.notifyOnError(i18n.Local("We can't get access to the server, please check your Internet connection or make sure the server exists."))
-	a.log.WithField("room", roomName).Warn("An error ocurred trying to find a room")
+	a.log.WithField("room", roomName).Warn("An error ocurred trying to find the room")
 }
 
-func (v *mucJoinRoomView) tryJoinRoom(a *account) {
+func (v *mucJoinRoomView) tryJoinRoom() {
 	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
 	// Since this is in the UI thread, there are probably better ways to deal with it
+	a := v.ac.currentAccount()
+
 	v.clearErrors()
 
 	roomName, _ := v.roomNameEntry.GetText()
@@ -116,19 +135,21 @@ func (v *mucJoinRoomView) init() {
 
 	panicOnDevError(v.builder.bindObjects(v))
 
-	accountsInput := v.builder.get("accounts").(gtki.ComboBox)
-	ac := v.u.createConnectedAccountsComponent(accountsInput, v, nil, v.stopSpinner)
+	v.errorNotif = newErrorNotification(v.notificationArea)
 
-	v.builder.ConnectSignals(map[string]interface{}{
-		"on_close_window":     ac.onDestroy,
-		"on_roomname_changed": v.validateInput,
-		"on_cancel_clicked":   v.dialog.Destroy,
-		"on_join_clicked": func() {
-			v.tryJoinRoom(ac.currentAccount())
-		},
+	accountsInput := v.builder.get("accounts").(gtki.ComboBox)
+	v.ac = v.u.createConnectedAccountsComponent(accountsInput, v, func(a *account) {
+		doInUIThread(v.validateInput)
+	}, func() {
+		doInUIThread(v.stopSpinner)
 	})
 
-	v.errorNotif = newErrorNotification(v.notificationArea)
+	v.builder.ConnectSignals(map[string]interface{}{
+		"on_close_window":     v.ac.onDestroy,
+		"on_roomname_changed": v.validateInput,
+		"on_cancel_clicked":   v.dialog.Destroy,
+		"on_join_clicked":     v.tryJoinRoom,
+	})
 }
 
 func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {

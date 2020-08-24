@@ -63,6 +63,12 @@ func (jrv *mucJoinRoomView) validateInput() {
 	jrv.joinButton.SetSensitive(sensitiveValue)
 }
 
+func (jrv *mucJoinRoomView) notifyErrorServerUnavailable(a *account, roomName string) {
+	jrv.stopSpinner()
+	jrv.notifyOnError(i18n.Local("We can't get access to the server, please check your Internet connection or make sure the server exists."))
+	a.log.WithField("room", roomName).Warn("An error ocurred trying to find a room")
+}
+
 func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
 	// Since this is in the UI thread, there are probably better ways to deal with it
@@ -78,17 +84,15 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 		case value, ok := <-rc:
 			if !ok {
 				doInUIThread(func() {
-					jrv.stopSpinner()
-					jrv.notifyOnError(i18n.Localf("An error ocurred trying to find the room \"%s\"", roomName))
-					a.log.WithField("room", roomName).Warn("An error ocurred trying to find a room")
+					jrv.notifyErrorServerUnavailable(a, roomName)
 				})
 				return
 			}
 			doInUIThread(func() {
 				jrv.stopSpinner()
 				if !value {
-					jrv.notifyOnError(i18n.Localf("The Room \"%s\" doesn't exist", roomName))
-					a.log.WithField("room", roomName).Debug("The Room doesn't exist")
+					jrv.notifyOnError(i18n.Localf("The room \"%s\" doesn't exist", roomName))
+					a.log.WithField("room", roomName).Debug("The room doesn't exist")
 				} else {
 					jrv.dialog.Hide()
 					u.mucShowRoom(a, rj)
@@ -96,13 +100,16 @@ func (u *gtkUI) tryJoinRoom(jrv *mucJoinRoomView, a *account) {
 			})
 		case err, ok := <-ec:
 			if !ok {
+				doInUIThread(func() {
+					jrv.notifyErrorServerUnavailable(a, roomName)
+				})
 				return
 			}
 			doInUIThread(func() {
 				jrv.stopSpinner()
 				if err != nil {
-					jrv.notifyOnError(i18n.Localf("An error occurred trying to find the room \"%s\"", roomName))
-					a.log.WithField("room", roomName).WithError(err).Warn("Error occurred trying to find the Room")
+					jrv.notifyOnError(i18n.Local("Looks like the server or the service doesn't exists, please verify the provided name."))
+					a.log.WithField("room", roomName).WithError(err).Warn("An error occurred trying to find the room")
 				}
 			})
 		}

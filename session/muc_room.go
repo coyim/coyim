@@ -23,7 +23,7 @@ func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
 	go func() {
 		r, err := s.Conn().EntityExists(rj.String())
 		if err != nil {
-			s.log.WithError(err).Error("An error ocurred searching the entity on the server")
+			s.log.WithError(err).Error("An error occurred searching the entity on the server")
 			errorChannel <- err
 			return
 		}
@@ -34,8 +34,8 @@ func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
 		// Make sure the entity is a Room
 		idents, features, ok := s.Conn().DiscoveryFeaturesAndIdentities(rj.String())
 		if !ok {
-			err := errors.New("Discovery features and identities cause an error")
-			s.log.WithError(err).Error("An error ocurred trying to get the features and identities from the server")
+			err := errors.New("Something went wrong discovering the features and identities of the entity")
+			s.log.WithField("Entity", rj).WithError(err).Error("An error occurred trying to get the features and identities from the server")
 			errorChannel <- err
 			return
 		}

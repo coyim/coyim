@@ -52,7 +52,7 @@ func (v *createMUCRoom) initUIBuilder() {
 		"on_cancel":                   v.dialog.Destroy,
 		"on_close_window":             v.onCloseWindow,
 		"on_room_changed":             v.onRoomNameChanged,
-		"on_chatServiceEntry_changed": v.disableOrEnableIfAnyFieldIsEmpty,
+		"on_chatServiceEntry_changed": v.onChatServiceChanged,
 	})
 }
 
@@ -187,26 +187,57 @@ func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident ji
 
 func (v *createMUCRoom) onRoomNameChanged() {
 	v.clearErrors()
-	v.validateAllowedCharacters()
+	v.handleRoomNameEntered()
+	v.disableOrEnableIfMeetAllValidations()
 }
 
-func (v *createMUCRoom) disableOrEnableIfAnyFieldIsEmpty() {
-	setEnabled(v.createButton, v.areAllFieldsFilled())
+func (v *createMUCRoom) onChatServiceChanged() {
+	v.clearErrors()
+	v.disableOrEnableIfMeetAllValidations()
 }
 
-func (v *createMUCRoom) validateAllowedCharacters() {
-	cna := v.extractNotAllowedCharacters()
-	if len(cna) > 0 {
-		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed inside the room name", cna))
-		setEnabled(v.createButton, false)
-		return
-	}
-	v.disableOrEnableIfAnyFieldIsEmpty()
-}
-
-func (v *createMUCRoom) extractNotAllowedCharacters() []string {
+func (v *createMUCRoom) handleRoomNameEntered() {
 	s, _ := v.room.GetText()
+	chann := strings.Split(s, "@")
+	if len(chann) >= 2 {
+		v.room.SetText(chann[0])
+		if v.chatServices.GetActiveText() == "" {
+			v.chatServiceEntry.SetText(chann[1])
+		}
+		v.chatServices.SetProperty("is_focus", true)
+	}
+}
 
+func (v *createMUCRoom) disableOrEnableIfMeetAllValidations() {
+	setEnabled(v.createButton, v.meetAllValidations())
+}
+
+func (v *createMUCRoom) meetAllValidations() bool {
+	return v.areAllFieldsFilled() && !v.existsNotAllowedCharactersOnRoomName() && !v.existsNotAllowedCharactersOnChatService()
+}
+
+func (v *createMUCRoom) existsNotAllowedCharactersOnRoomName() bool {
+	s, _ := v.room.GetText()
+	cna := v.extractNotAllowedCharacters(s)
+	if len(cna) > 0 {
+		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed in room name", cna))
+		setEnabled(v.createButton, false)
+		return true
+	}
+	return false
+}
+
+func (v *createMUCRoom) existsNotAllowedCharactersOnChatService() bool {
+	cna := v.extractNotAllowedCharacters(v.chatServices.GetActiveText())
+	if len(cna) > 0 {
+		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed in chat service name", cna))
+		setEnabled(v.createButton, false)
+		return true
+	}
+	return false
+}
+
+func (v *createMUCRoom) extractNotAllowedCharacters(s string) []string {
 	m := make(map[string]interface{})
 	for i, c := range strings.Split(s, "") {
 		if strings.ContainsAny(c, "\"&'/:<>@ ") {
@@ -251,7 +282,7 @@ func (v *createMUCRoom) onNoAccountsConnected() {
 func (v *createMUCRoom) updateServicesBasedOnAccount(acc *account) {
 	doInUIThread(func() {
 		v.clearErrors()
-		v.disableOrEnableIfAnyFieldIsEmpty()
+		v.disableOrEnableIfMeetAllValidations()
 	})
 
 	go v.updateChatServicesBasedOnAccount(acc)
@@ -316,6 +347,10 @@ func (v *createMUCRoom) onUpdateChatServicesFinished(hadAny bool, typedService s
 
 func setEnabled(w gtki.Widget, enable bool) {
 	w.SetSensitive(enable)
+}
+
+func insertTextIntoEntry(e gtki.Entry, s string) {
+	e.SetText(s)
 }
 
 func (u *gtkUI) mucCreateChatRoom() {

@@ -58,3 +58,14 @@ func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
 	//TODO: Implements the actions to do when a Occupant presence is received
 	a.log.Debug("updateOccupantRoomEvent")
 }
+
+func (a *account) onRoomNicknameConflict(from jid.Full, message string) {
+	view, err := a.roomViewFor(from.Bare())
+	if err != nil {
+		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room view")
+		return
+	}
+
+	view.lastErrorMessage = message
+	view.onJoin <- false
+}

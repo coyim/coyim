@@ -116,7 +116,7 @@ func (v *createMUCRoom) onBeforeToCreateARoom() {
 	_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 }
 
-func (v *createMUCRoom) onAfterToCreateARoom() {
+func (v *createMUCRoom) afterRoomCreated() {
 	doInUIThread(func() {
 		v.disableOrEnableFields(true)
 		_ = v.createButton.SetProperty("label", v.createButtonPrevText)
@@ -126,7 +126,7 @@ func (v *createMUCRoom) onAfterToCreateARoom() {
 func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
 	erc, ec := ca.session.HasRoom(ident)
 	go func() {
-		defer v.onAfterToCreateARoom()
+		defer v.afterRoomCreated()
 
 		select {
 		case err, _ := <-ec:
@@ -198,7 +198,7 @@ func (v *createMUCRoom) onChatServiceChanged() {
 
 func (v *createMUCRoom) handleRoomNameEntered() {
 	s, _ := v.room.GetText()
-	chann := strings.Split(s, "@")
+	chann := strings.SplitN(s, "@", 2)
 	if len(chann) >= 2 {
 		v.room.SetText(chann[0])
 		if v.chatServices.GetActiveText() == "" {
@@ -237,19 +237,23 @@ func (v *createMUCRoom) existsNotAllowedCharactersOnChatService() bool {
 	return false
 }
 
-func (v *createMUCRoom) extractNotAllowedCharacters(s string) []string {
-	m := make(map[string]interface{})
-	for i, c := range strings.Split(s, "") {
-		if strings.ContainsAny(c, "\"&'/:<>@ ") {
-			m[c] = i
+func indexOf(value string, s []string) int {
+	for i, c := range s {
+		if value == c {
+			return i
 		}
 	}
+	return -1
+}
 
-	var cna []string
-	for k := range m {
-		cna = append(cna, k)
+func (v *createMUCRoom) extractNotAllowedCharacters(s string) []string {
+	var response []string
+	for _, c := range strings.Split(s, "") {
+		if strings.ContainsAny(c, "\"&'/:<>@ ") && indexOf(c, response) == -1 {
+			response = append(response, c)
+		}
 	}
-	return cna
+	return response
 }
 
 func (v *createMUCRoom) areAllFieldsFilled() bool {

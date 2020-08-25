@@ -213,28 +213,28 @@ func (v *createMUCRoom) disableOrEnableIfMeetAllValidations() {
 }
 
 func (v *createMUCRoom) meetAllValidations() bool {
-	return v.areAllFieldsFilled() && !v.existsNotAllowedCharactersOnRoomName() && !v.existsNotAllowedCharactersOnChatService()
+	return v.areAllFieldsFilled() && v.areAllCharactersAllowedInRoomName() && v.areAllCharactersAllowedInChatService()
 }
 
-func (v *createMUCRoom) existsNotAllowedCharactersOnRoomName() bool {
+func (v *createMUCRoom) areAllCharactersAllowedInRoomName() bool {
 	s, _ := v.room.GetText()
 	cna := v.extractNotAllowedCharacters(s)
 	if len(cna) > 0 {
 		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed in room name", cna))
 		setEnabled(v.createButton, false)
-		return true
+		return false
 	}
-	return false
+	return true
 }
 
-func (v *createMUCRoom) existsNotAllowedCharactersOnChatService() bool {
+func (v *createMUCRoom) areAllCharactersAllowedInChatService() bool {
 	cna := v.extractNotAllowedCharacters(v.chatServices.GetActiveText())
 	if len(cna) > 0 {
 		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed in chat service name", cna))
 		setEnabled(v.createButton, false)
-		return true
+		return false
 	}
-	return false
+	return true
 }
 
 func indexOf(value string, s []string) int {

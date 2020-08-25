@@ -213,10 +213,10 @@ func (v *createMUCRoom) disableOrEnableIfMeetAllValidations() {
 }
 
 func (v *createMUCRoom) meetAllValidations() bool {
-	return v.areAllFieldsFilled() && v.areAllCharactersAllowedInRoomName() && v.areAllCharactersAllowedInChatService()
+	return v.areAllFieldsFilled() && v.isRoomNameValid() && v.isChatServiceValid()
 }
 
-func (v *createMUCRoom) areAllCharactersAllowedInRoomName() bool {
+func (v *createMUCRoom) isRoomNameValid() bool {
 	s, _ := v.room.GetText()
 	cna := v.extractNotAllowedCharacters(s)
 	if len(cna) > 0 {
@@ -224,14 +224,27 @@ func (v *createMUCRoom) areAllCharactersAllowedInRoomName() bool {
 		setEnabled(v.createButton, false)
 		return false
 	}
+	if !jid.ValidLocal(s) {
+		doInUIThread(func() {
+			v.errorBox.ShowMessage(i18n.Localf("\"%s\" is not a valid room name.", s))
+		})
+		return false
+	}
 	return true
 }
 
-func (v *createMUCRoom) areAllCharactersAllowedInChatService() bool {
-	cna := v.extractNotAllowedCharacters(v.chatServices.GetActiveText())
+func (v *createMUCRoom) isChatServiceValid() bool {
+	s := v.chatServices.GetActiveText()
+	cna := v.extractNotAllowedCharacters(s)
 	if len(cna) > 0 {
 		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed in chat service name", cna))
 		setEnabled(v.createButton, false)
+		return false
+	}
+	if !jid.ValidDomain(s) {
+		doInUIThread(func() {
+			v.errorBox.ShowMessage(i18n.Localf("\"%s\" is not a valid chat service name.", s))
+		})
 		return false
 	}
 	return true

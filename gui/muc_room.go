@@ -112,16 +112,86 @@ func (v *roomView) togglePanelView() {
 	})
 }
 
+// startSpinner should be called from UI thread
 func (v *roomView) startSpinner() {
 	v.spinnerJoinView.Start()
 	v.spinnerJoinView.SetVisible(true)
 	v.roomJoinButton.SetSensitive(false)
 }
 
+// stopSpinner should be called from UI thread
 func (v *roomView) stopSpinner() {
 	v.spinnerJoinView.Stop()
 	v.spinnerJoinView.SetVisible(false)
 	v.roomJoinButton.SetSensitive(true)
+}
+
+func (v *roomView) joinRoomWithNickname(nickname string) {
+	v.account.log.WithFields(log.Fields{
+		"room":     v.jid,
+		"nickname": nickname,
+	}).Debug("joinRoomWithNickname()")
+
+	doInUIThread(func() {
+		v.startSpinner()
+	})
+
+	go func() {
+		err := v.account.session.JoinRoom(v.jid, nickname)
+		if err != nil {
+			doInUIThread(func() {
+				v.stopSpinner()
+				v.account.log.WithFields(log.Fields{
+					"room":     v.jid,
+					"nickname": nickname,
+				}).WithError(err).Error("An error occurred while trying to join the room.")
+			})
+		}
+	}()
+
+	go v.whenJoinRoomFinishes(nickname)
+}
+
+func (v *roomView) whenJoinRoomFinishes(nickname string) {
+	defer func() {
+		doInUIThread(func() {
+			v.stopSpinner()
+		})
+	}()
+
+	hasJoined, ok := <-v.onJoin
+	if !ok {
+		doInUIThread(func() {
+			v.lastErrorMessage = i18n.Local("An error happened while trying to join the room, please check your connection or try again.")
+			v.notifyOnError(v.lastErrorMessage)
+		})
+		return
+	}
+
+	if !hasJoined {
+		// TODO: We should do the better for the user, if the room doesn't exists maybe we should
+		// allow the user to create the room or tell him something to try as solution
+		if v.lastErrorMessage == "" {
+			v.lastErrorMessage = i18n.Local("An error happened while trying to join the room, please check your connection or make sure the room exists.")
+		}
+
+		v.account.log.WithFields(log.Fields{
+			"room":     v.jid,
+			"nickname": nickname,
+			"message":  v.lastErrorMessage,
+		}).Error("An error happened while trying to join the room")
+
+		doInUIThread(func() {
+			v.notifyOnError(v.lastErrorMessage)
+		})
+
+		return
+	}
+
+	doInUIThread(func() {
+		v.clearErrors()
+		v.togglePanelView()
+	})
 }
 
 func (v *roomView) joinRoom() {
@@ -130,47 +200,7 @@ func (v *roomView) joinRoom() {
 	v.onJoin = make(chan bool)
 	nickname, _ := v.nicknameEntry.GetText()
 
-	v.startSpinner()
-
-	go func() {
-		err := v.account.session.JoinRoom(v.jid, nickname)
-		if err != nil {
-			doInUIThread(func() {
-				v.stopSpinner()
-				v.account.log.WithError(err).Error("Trying to join a room")
-			})
-		}
-	}()
-
-	go func() {
-		defer func() {
-			doInUIThread(func() {
-				v.stopSpinner()
-			})
-		}()
-
-		jev, ok := <-v.onJoin
-		if !ok {
-			//TODO: Add the error message here
-			return
-		}
-
-		if !jev {
-			doInUIThread(func() {
-				v.notifyOnError(v.lastErrorMessage)
-				v.account.log.WithFields(log.Fields{
-					"room":     v.jid,
-					"nickname": nickname,
-					"message":  v.lastErrorMessage,
-				}).Error("The user couldn't join a room")
-			})
-		} else {
-			doInUIThread(func() {
-				v.clearErrors()
-				v.togglePanelView()
-			})
-		}
-	}()
+	go v.joinRoomWithNickname(nickname)
 }
 
 func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {

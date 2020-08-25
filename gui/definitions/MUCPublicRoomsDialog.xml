@@ -13,7 +13,7 @@
       <column type="gint"/>
     </columns>
   </object>
-  <object class="GtkDialog" id="roomsPublic">
+  <object class="GtkDialog" id="publicRooms">
     <property name="visible">false</property>
     <property name="border_width">7</property>
     <property name="title" translatable="yes">Chat rooms</property>

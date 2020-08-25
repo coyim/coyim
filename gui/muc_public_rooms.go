@@ -43,7 +43,7 @@ type mucPublicRoomsView struct {
 	serviceGroups map[string]gtki.TreeIter
 	cancel        chan bool
 
-	dialog              gtki.Dialog         `gtk-widget:"roomsPublic"`
+	dialog              gtki.Dialog         `gtk-widget:"publicRooms"`
 	roomsModel          gtki.TreeStore      `gtk-widget:"roomsModel"`
 	roomsTree           gtki.TreeView       `gtk-widget:"roomsTree"`
 	rooms               gtki.ScrolledWindow `gtk-widget:"rooms"`

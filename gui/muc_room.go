@@ -36,120 +36,120 @@ type roomView struct {
 	errorNotif   *errorNotification
 }
 
-func (rv *roomView) clearErrors() {
-	rv.errorNotif.Hide()
+func (v *roomView) clearErrors() {
+	v.errorNotif.Hide()
 }
 
-func (rv *roomView) notifyOnError(err string) {
-	if rv.notification != nil {
-		rv.notificationArea.Remove(rv.notification)
+func (v *roomView) notifyOnError(err string) {
+	if v.notification != nil {
+		v.notificationArea.Remove(v.notification)
 	}
 
-	rv.errorNotif.ShowMessage(err)
+	v.errorNotif.ShowMessage(err)
 }
 
-func (rv *roomView) initUIBuilder() {
-	rv.builder = newBuilder("MUCRoomWindow")
+func (v *roomView) initUIBuilder() {
+	v.builder = newBuilder("MUCRoomWindow")
 
-	panicOnDevError(rv.builder.bindObjects(rv))
+	panicOnDevError(v.builder.bindObjects(v))
 
-	rv.builder.ConnectSignals(map[string]interface{}{
-		"on_show_window":         rv.validateInput,
-		"on_nickname_changed":    rv.validateInput,
-		"on_password_changed":    rv.validateInput,
-		"on_password_checked":    rv.onPasswordChecked,
-		"on_room_cancel_clicked": rv.window.Destroy,
-		"on_room_join_clicked":   rv.onRoomJoinClicked,
-		"on_close_window":        rv.onCloseWindow,
+	v.builder.ConnectSignals(map[string]interface{}{
+		"on_show_window":         v.validateInput,
+		"on_nickname_changed":    v.validateInput,
+		"on_password_changed":    v.validateInput,
+		"on_password_checked":    v.onPasswordChecked,
+		"on_room_cancel_clicked": v.window.Destroy,
+		"on_room_join_clicked":   v.joinRoom,
+		"on_close_window":        v.onCloseWindow,
 	})
 }
 
-func (rv *roomView) onPasswordChecked() {
-	rv.setPasswordSensitiveBasedOnCheck()
-	rv.validateInput()
+func (v *roomView) onPasswordChecked() {
+	v.setPasswordSensitiveBasedOnCheck()
+	v.validateInput()
 }
 
-func (rv *roomView) onCloseWindow() {
-	_ = rv.account.roomManager.LeaveRoom(rv.jid)
+func (v *roomView) onCloseWindow() {
+	_ = v.account.roomManager.LeaveRoom(v.jid)
 }
 
-func (rv *roomView) initDefaults() {
-	rv.errorNotif = newErrorNotification(rv.notificationArea)
-	rv.setPasswordSensitiveBasedOnCheck()
-	rv.window.SetTitle(i18n.Localf("Room: [%s]", rv.jid))
+func (v *roomView) initDefaults() {
+	v.errorNotif = newErrorNotification(v.notificationArea)
+	v.setPasswordSensitiveBasedOnCheck()
+	v.window.SetTitle(i18n.Localf("Room: [%s]", v.jid))
 }
 
-func (rv *roomView) setPasswordSensitiveBasedOnCheck() {
-	v := rv.passwordCheck.GetActive()
-
-	rv.passwordLabel.SetSensitive(v)
-	rv.passwordEntry.SetSensitive(v)
+func (v *roomView) setPasswordSensitiveBasedOnCheck() {
+	a := v.passwordCheck.GetActive()
+	v.passwordLabel.SetSensitive(a)
+	v.passwordEntry.SetSensitive(a)
 }
 
-func (rv *roomView) hasValidNickname() bool {
-	nickName, _ := rv.nicknameEntry.GetText()
-	return len(nickName) > 0
+func (v *roomView) hasValidNickname() bool {
+	nickname, _ := v.nicknameEntry.GetText()
+	return len(nickname) > 0
 }
 
-func (rv *roomView) hasValidPassword() bool {
-	cv := rv.passwordCheck.GetActive()
+func (v *roomView) hasValidPassword() bool {
+	cv := v.passwordCheck.GetActive()
 	if !cv {
 		return true
 	}
-	password, _ := rv.passwordEntry.GetText()
+	password, _ := v.passwordEntry.GetText()
 	return len(password) > 0
 }
 
-func (rv *roomView) validateInput() {
-	sensitiveValue := rv.hasValidNickname() && rv.hasValidPassword()
-	rv.roomJoinButton.SetSensitive(sensitiveValue)
+func (v *roomView) validateInput() {
+	sensitiveValue := v.hasValidNickname() && v.hasValidPassword()
+	v.roomJoinButton.SetSensitive(sensitiveValue)
 }
 
-func (rv *roomView) togglePanelView() {
+func (v *roomView) togglePanelView() {
 	doInUIThread(func() {
-		value := rv.boxJoinRoomView.IsVisible()
-		rv.boxJoinRoomView.SetVisible(!value)
-		rv.boxRoomView.SetVisible(value)
+		value := v.boxJoinRoomView.IsVisible()
+		v.boxJoinRoomView.SetVisible(!value)
+		v.boxRoomView.SetVisible(value)
 	})
 }
 
-func (rv *roomView) startSpinner() {
-	rv.spinnerJoinView.Start()
-	rv.spinnerJoinView.SetVisible(true)
-	rv.roomJoinButton.SetSensitive(false)
+func (v *roomView) startSpinner() {
+	v.spinnerJoinView.Start()
+	v.spinnerJoinView.SetVisible(true)
+	v.roomJoinButton.SetSensitive(false)
 }
 
-func (rv *roomView) stopSpinner() {
-	rv.spinnerJoinView.Stop()
-	rv.spinnerJoinView.SetVisible(false)
-	rv.roomJoinButton.SetSensitive(true)
+func (v *roomView) stopSpinner() {
+	v.spinnerJoinView.Stop()
+	v.spinnerJoinView.SetVisible(false)
+	v.roomJoinButton.SetSensitive(true)
 }
 
-func (rv *roomView) onRoomJoinClicked() {
-	rv.clearErrors()
+func (v *roomView) joinRoom() {
+	v.clearErrors()
 
-	rv.onJoin = make(chan bool)
-	nickName, _ := rv.nicknameEntry.GetText()
+	v.onJoin = make(chan bool)
+	nickname, _ := v.nicknameEntry.GetText()
 
-	rv.startSpinner()
+	v.startSpinner()
 
 	go func() {
-		err := rv.account.session.JoinRoom(rv.jid, nickName)
+		err := v.account.session.JoinRoom(v.jid, nickname)
 		if err != nil {
 			doInUIThread(func() {
-				rv.stopSpinner()
-				rv.account.log.WithError(err).Error("Trying to join a room")
+				v.stopSpinner()
+				v.account.log.WithError(err).Error("Trying to join a room")
 			})
 		}
 	}()
+
 	go func() {
 		defer func() {
 			doInUIThread(func() {
-				rv.stopSpinner()
+				v.stopSpinner()
 			})
 		}()
 
-		jev, ok := <-rv.onJoin
+		jev, ok := <-v.onJoin
 		if !ok {
 			//TODO: Add the error message here
 			return
@@ -157,17 +157,17 @@ func (rv *roomView) onRoomJoinClicked() {
 
 		if !jev {
 			doInUIThread(func() {
-				rv.notifyOnError(rv.lastErrorMessage)
-				rv.account.log.WithFields(log.Fields{
-					"room":     rv.jid,
-					"nickname": nickName,
-					"message":  rv.lastErrorMessage,
+				v.notifyOnError(v.lastErrorMessage)
+				v.account.log.WithFields(log.Fields{
+					"room":     v.jid,
+					"nickname": nickname,
+					"message":  v.lastErrorMessage,
 				}).Error("The user couldn't join a room")
 			})
 		} else {
 			doInUIThread(func() {
-				rv.clearErrors()
-				rv.togglePanelView()
+				v.clearErrors()
+				v.togglePanelView()
 			})
 		}
 	}()

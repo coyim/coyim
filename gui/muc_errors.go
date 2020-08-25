@@ -32,5 +32,5 @@ func (u *gtkUI) handleErrorMUCConflictEvent(from jid.Full, a *account) {
 	err := newNicknameConflictError(from.Resource())
 	a.log.WithField("from", from).WithError(err).Error("Nickname conflict event received")
 
-	a.onRoomNicknameConflict(from, err.Error())
+	a.onRoomNicknameConflict(from)
 }

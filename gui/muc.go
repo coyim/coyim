@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -26,9 +28,8 @@ type nicknameError struct {
 	nickname jid.Resource
 }
 
-// Error returns the error message
 func (e *nicknameError) Error() string {
-	return i18n.Localf("Can't join the room using \"%s\" because the nickname is already being used.", e.nickname)
+	return fmt.Sprintf("the nickname \"%s\" is already being used.", e.nickname)
 }
 
 func newNicknameConflictError(n jid.Resource) error {

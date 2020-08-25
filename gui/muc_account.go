@@ -5,6 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -59,13 +60,13 @@ func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
 	a.log.Debug("updateOccupantRoomEvent")
 }
 
-func (a *account) onRoomNicknameConflict(from jid.Full, message string) {
+func (a *account) onRoomNicknameConflict(from jid.Full) {
 	view, err := a.roomViewFor(from.Bare())
 	if err != nil {
 		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room view")
 		return
 	}
 
-	view.lastErrorMessage = message
+	view.lastErrorMessage = i18n.Localf("Can't join the room using \"%s\" because the nickname is already being used.", from.Resource())
 	view.onJoin <- false
 }

@@ -52,6 +52,7 @@ type mucPublicRoomsView struct {
 	notificationArea    gtki.Box            `gtk-widget:"notificationArea"`
 	joinButton          gtki.Button         `gtk-widget:"buttonJoin"`
 	refreshButton       gtki.Button         `gtk-widget:"buttonRefresh"`
+	customServiceButton gtki.Button         `gtk-widget:"buttonCustomService"`
 
 	notification gtki.InfoBar
 	errorNotif   *errorNotification
@@ -95,6 +96,8 @@ func (u *gtkUI) mucUpdatePublicRoomsOn(view *mucPublicRoomsView, a *account) {
 		view.spinner.Start()
 		view.spinner.SetVisible(true)
 		view.roomsModel.Clear()
+		view.refreshButton.SetSensitive(true)
+		view.customServiceButton.SetSensitive(true)
 	})
 	view.generation++
 	view.serviceGroups = make(map[string]gtki.TreeIter)
@@ -216,6 +219,8 @@ func (u *gtkUI) mucShowPublicRooms() {
 			view.spinner.Stop()
 			view.spinner.SetVisible(false)
 			view.roomsModel.Clear()
+			view.refreshButton.SetSensitive(false)
+			view.customServiceButton.SetSensitive(false)
 		},
 	)
 

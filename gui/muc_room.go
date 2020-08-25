@@ -132,9 +132,7 @@ func (v *roomView) stopSpinner() {
 func (v *roomView) joinRoomWithNickname(nickname string) {
 	v.log.WithField("nickname", nickname).Debug("joinRoomWithNickname()")
 
-	doInUIThread(func() {
-		v.startSpinner()
-	})
+	doInUIThread(v.startSpinner)
 
 	go func() {
 		err := v.account.session.JoinRoom(v.jid, nickname)
@@ -151,9 +149,7 @@ func (v *roomView) joinRoomWithNickname(nickname string) {
 
 func (v *roomView) whenJoinRoomFinishes(nickname string) {
 	defer func() {
-		doInUIThread(func() {
-			v.stopSpinner()
-		})
+		doInUIThread(v.stopSpinner)
 	}()
 
 	hasJoined, ok := <-v.onJoin

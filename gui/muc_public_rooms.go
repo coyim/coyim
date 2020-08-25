@@ -43,16 +43,18 @@ type mucPublicRoomsView struct {
 	serviceGroups map[string]gtki.TreeIter
 	cancel        chan bool
 
-	dialog           gtki.Dialog         `gtk-widget:"public-rooms"`
-	roomsModel       gtki.TreeStore      `gtk-widget:"rooms-model"`
-	roomsTree        gtki.TreeView       `gtk-widget:"rooms-tree"`
-	rooms            gtki.ScrolledWindow `gtk-widget:"rooms"`
-	spinner          gtki.Spinner        `gtk-widget:"spinner"`
-	customService    gtki.Entry          `gtk-widget:"customServiceEntry"`
-	notificationArea gtki.Box            `gtk-widget:"notification-area"`
-	joinButton       gtki.Button         `gtk-widget:"button_join"`
-	notification     gtki.InfoBar
-	errorNotif       *errorNotification
+	dialog              gtki.Dialog         `gtk-widget:"roomsPublic"`
+	roomsModel          gtki.TreeStore      `gtk-widget:"roomsModel"`
+	roomsTree           gtki.TreeView       `gtk-widget:"roomsTree"`
+	rooms               gtki.ScrolledWindow `gtk-widget:"rooms"`
+	spinner             gtki.Spinner        `gtk-widget:"spinner"`
+	customService       gtki.Entry          `gtk-widget:"customServiceEntry"`
+	notificationArea    gtki.Box            `gtk-widget:"notificationArea"`
+	joinButton          gtki.Button         `gtk-widget:"buttonJoin"`
+	refreshButton       gtki.Button         `gtk-widget:"buttonRefresh"`
+
+	notification gtki.InfoBar
+	errorNotif   *errorNotification
 }
 
 func (prv *mucPublicRoomsView) clearErrors() {

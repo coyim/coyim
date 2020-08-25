@@ -1,5 +1,5 @@
 <interface>
-  <object class="GtkTreeStore" id="rooms-model">
+  <object class="GtkTreeStore" id="roomsModel">
     <columns>
       <!-- jid -->
       <column type="gchararray"/>
@@ -13,7 +13,7 @@
       <column type="gint"/>
     </columns>
   </object>
-  <object class="GtkDialog" id="public-rooms">
+  <object class="GtkDialog" id="roomsPublic">
     <property name="visible">false</property>
     <property name="border_width">7</property>
     <property name="title" translatable="yes">Chat rooms</property>
@@ -31,7 +31,7 @@
         <property name="spacing">6</property>
         <child>
           <!--TODO: this seems to render weirdly -->
-          <object class="GtkBox" id="notification-area">
+          <object class="GtkBox" id="notificationArea">
             <property name="visible">false</property>
             <property name="margin-top">5</property>
             <property name="margin-left">5</property>
@@ -83,7 +83,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="refresh_button">
+              <object class="GtkButton" id="buttonRefresh">
                 <property name="label" translatable="yes">List all rooms</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -122,7 +122,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="customServiceButton">
+              <object class="GtkButton" id="buttonCustomService">
                 <property name="label" translatable="yes">List rooms in service</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -155,9 +155,9 @@
                 <property name="vexpand">True</property>
                 <property name="visible">false</property>
                 <child>
-                  <object class="GtkTreeView" id="rooms-tree">
+                  <object class="GtkTreeView" id="roomsTree">
                     <property name="visible">True</property>
-                    <property name="model">rooms-model</property>
+                    <property name="model">roomsModel</property>
                     <property name="headers-visible">true</property>
                     <property name="show-expanders">true</property>
                     <property name="tooltip-column">1</property>
@@ -271,7 +271,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="button_join">
+          <object class="GtkButton" id="buttonJoin">
             <property name="visible">true</property>
             <property name="label" translatable="yes">Join</property>
             <property name="use-underline">True</property>

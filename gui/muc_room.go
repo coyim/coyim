@@ -3,6 +3,7 @@ package gui
 import (
 	"sync"
 
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -14,6 +15,7 @@ type roomView struct {
 	builder *builder
 	u       *gtkUI
 
+	log              coylog.Logger
 	account          *account
 	jid              jid.Bare
 	onJoin           chan bool
@@ -74,6 +76,7 @@ func (v *roomView) onCloseWindow() {
 }
 
 func (v *roomView) initDefaults() {
+	v.log = v.account.log.WithField("room", v.jid)
 	v.errorNotif = newErrorNotification(v.notificationArea)
 	v.setPasswordSensitiveBasedOnCheck()
 	v.window.SetTitle(i18n.Localf("Room: [%s]", v.jid))
@@ -127,10 +130,7 @@ func (v *roomView) stopSpinner() {
 }
 
 func (v *roomView) joinRoomWithNickname(nickname string) {
-	v.account.log.WithFields(log.Fields{
-		"room":     v.jid,
-		"nickname": nickname,
-	}).Debug("joinRoomWithNickname()")
+	v.log.WithField("nickname", nickname).Debug("joinRoomWithNickname()")
 
 	doInUIThread(func() {
 		v.startSpinner()
@@ -141,10 +141,7 @@ func (v *roomView) joinRoomWithNickname(nickname string) {
 		if err != nil {
 			doInUIThread(func() {
 				v.stopSpinner()
-				v.account.log.WithFields(log.Fields{
-					"room":     v.jid,
-					"nickname": nickname,
-				}).WithError(err).Error("An error occurred while trying to join the room.")
+				v.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room.")
 			})
 		}
 	}()
@@ -175,8 +172,7 @@ func (v *roomView) whenJoinRoomFinishes(nickname string) {
 			v.lastErrorMessage = i18n.Local("An error happened while trying to join the room, please check your connection or make sure the room exists.")
 		}
 
-		v.account.log.WithFields(log.Fields{
-			"room":     v.jid,
+		v.log.WithFields(log.Fields{
 			"nickname": nickname,
 			"message":  v.lastErrorMessage,
 		}).Error("An error happened while trying to join the room")

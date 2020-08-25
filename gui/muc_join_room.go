@@ -154,8 +154,14 @@ func (c *mucJoinRoomContext) exec() {
 func (v *mucJoinRoomView) tryJoinRoom() {
 	// TODO[OB]-MUC: I don't think using a mutex here is a good idea
 	// Since this is in the UI thread, there are probably better ways to deal with it
+	ca := v.ac.currentAccount()
+	if ca == nil {
+		v.notifyOnError(i18n.Local("No account was selected, select an account from the list or enable one."))
+		return
+	}
+
 	c := &mucJoinRoomContext{
-		a:     v.ac.currentAccount(),
+		a:     ca,
 		v:     v,
 		ident: jid.ParseBare(v.typedRoomName()),
 	}

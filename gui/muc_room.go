@@ -21,7 +21,7 @@ type roomView struct {
 	lastErrorMessage string
 	sync.RWMutex
 
-	window           gtki.Window      `gtk-widget:"room-window"`
+	window           gtki.Window      `gtk-widget:"roomWindow"`
 	boxJoinRoomView  gtki.Box         `gtk-widget:"boxJoinRoomView"`
 	nicknameEntry    gtki.Entry       `gtk-widget:"nicknameEntry"`
 	passwordCheck    gtki.CheckButton `gtk-widget:"passwordCheck"`
@@ -30,10 +30,10 @@ type roomView struct {
 	roomJoinButton   gtki.Button      `gtk-widget:"roomJoinButton"`
 	spinnerJoinView  gtki.Spinner     `gtk-widget:"joinSpinner"`
 	notificationArea gtki.Box         `gtk-widget:"boxNotificationArea"`
-	notification     gtki.InfoBar
-	errorNotif       *errorNotification
+	boxRoomView      gtki.Box         `gtk-widget:"boxRoomView"`
 
-	boxRoomView gtki.Box `gtk-widget:"boxRoomView"`
+	notification gtki.InfoBar
+	errorNotif   *errorNotification
 }
 
 func (rv *roomView) clearErrors() {

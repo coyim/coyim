@@ -99,7 +99,7 @@ func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
 	doInUIThread(func() {
 		v.stopSpinner()
 		if err != nil {
-			v.notifyOnError(i18n.Local("Looks like the server or the service doesn't exists, please verify the provided name."))
+			v.notifyOnError(i18n.Local("Looks like the room you are trying to connect doesn't exists, please verify the provided name."))
 			a.log.WithField("room", ident).WithError(err).Warn("An error occurred trying to find the room")
 		}
 	})

@@ -29,7 +29,7 @@ type nicknameError struct {
 }
 
 func (e *nicknameError) Error() string {
-	return fmt.Sprintf("the nickname \"%s\" is already being used.", e.nickname)
+	return fmt.Sprintf("the nickname \"%s\" is already being used", e.nickname)
 }
 
 func newNicknameConflictError(n jid.Resource) error {

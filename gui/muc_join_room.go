@@ -132,7 +132,7 @@ func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed b
 }
 
 func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChannel <-chan error) {
-	defer c.done()
+	defer doInUIThread(c.done)
 
 	select {
 	case value, ok := <-resultChannel:
@@ -176,19 +176,20 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 }
 
 func doOnlyOnceAtATime(f func(func())) func() {
-	active := false
-	handler := func(isDoing bool) func() {
+	return func() func() {
+		isDoing := false
 		return func() {
 			if isDoing {
 				return
 			}
 			isDoing = true
+			// The "done" function should be called ONLY from the UI thread,
+			// in other cases it's not "safe" executing it.
 			f(func() {
 				isDoing = false
 			})
 		}
-	}
-	return handler(active)
+	}()
 }
 
 func (v *mucJoinRoomView) init() {

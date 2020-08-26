@@ -120,6 +120,7 @@ type mucJoinRoomContext struct {
 	a     *account
 	v     *mucJoinRoomView
 	ident jid.Bare
+	done  func()
 }
 
 func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed bool) {
@@ -131,6 +132,8 @@ func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed b
 }
 
 func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChannel <-chan error) {
+	defer c.done()
+
 	select {
 	case value, ok := <-resultChannel:
 		if !ok {
@@ -138,11 +141,12 @@ func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChanne
 			return
 		}
 
-		if value {
-			c.v.onJoinSuccess(c.a, c.ident)
-		} else {
+		if !value {
 			c.v.onJoinFails(c.a, c.ident)
+			return
 		}
+
+		c.v.onJoinSuccess(c.a, c.ident)
 	case err, ok := <-errorChannel:
 		c.onFinishWithError(err, ok)
 	}
@@ -154,7 +158,7 @@ func (c *mucJoinRoomContext) exec() {
 	go c.waitToFinish(resultChannel, errorChannel)
 }
 
-func (v *mucJoinRoomView) tryJoinRoom() {
+func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 	ca := v.ac.currentAccount()
 	if ca == nil {
 		v.notifyOnError(i18n.Local("No account was selected, select an account from the list or enable one."))
@@ -165,9 +169,26 @@ func (v *mucJoinRoomView) tryJoinRoom() {
 		a:     ca,
 		v:     v,
 		ident: jid.ParseBare(v.typedRoomName()),
+		done:  done,
 	}
 
 	c.exec()
+}
+
+func doOnlyOnceAtATime(f func(func())) func() {
+	active := false
+	handler := func(isDoing bool) func() {
+		return func() {
+			if isDoing {
+				return
+			}
+			isDoing = true
+			f(func() {
+				isDoing = false
+			})
+		}
+	}
+	return handler(active)
 }
 
 func (v *mucJoinRoomView) init() {
@@ -191,7 +212,7 @@ func (v *mucJoinRoomView) init() {
 		"on_close_window":     v.ac.onDestroy,
 		"on_roomname_changed": v.validateInput,
 		"on_cancel_clicked":   v.dialog.Destroy,
-		"on_join_clicked":     v.tryJoinRoom,
+		"on_join_clicked":     doOnlyOnceAtATime(v.tryJoinRoom),
 	})
 }
 

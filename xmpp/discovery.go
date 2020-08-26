@@ -281,3 +281,20 @@ func VerificationString(r *data.DiscoveryInfoQuery) (string, error) {
 
 	return base64.StdEncoding.EncodeToString(h.Sum(nil)), nil
 }
+
+// ServerHasFeature blocks and returns a boolean whether the server supports the feature or not
+// This method uses a cached value for the features of the server
+func (c *conn) ServerHasFeature(ns string) bool {
+	c.serverFeaturesInit.Do(func() {
+		c.serverFeatures = make(map[string]bool)
+		vals, ok := c.DiscoveryFeatures(c.originDomain)
+		if ok {
+			c.log.WithField("features", vals).Debug("The server supports these features")
+			for _, f := range vals {
+				c.serverFeatures[f] = true
+			}
+		}
+	})
+
+	return c.serverFeatures[ns]
+}

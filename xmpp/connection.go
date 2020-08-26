@@ -71,6 +71,9 @@ type conn struct {
 	outerTLS bool
 
 	known *servers.Server
+
+	serverFeaturesInit sync.Once
+	serverFeatures     map[string]bool
 }
 
 func (c *conn) Cache() cache.WithExpiry {

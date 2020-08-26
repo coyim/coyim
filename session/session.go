@@ -837,7 +837,11 @@ func (s *session) Connect(password string, verifier tls.Verifier) error {
 
 		_ = conn.SignalPresence("")
 		go s.watchRoster()
-		go s.getVCard()
+		go func() {
+			if s.conn.ServerHasFeature("vcard-temp") {
+				s.getVCard()
+			}
+		}()
 		go s.watchTimeout()
 		go s.watchStanzas()
 	} else {

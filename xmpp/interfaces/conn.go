@@ -61,4 +61,6 @@ type Conn interface {
 	QueryServiceInformation(entity string) (*data.DiscoveryInfoQuery, error)
 	QueryServiceItems(entity string) (*data.DiscoveryItemsQuery, error)
 	EntityExists(entity string) (bool, error)
+
+	ServerHasFeature(ns string) bool
 }

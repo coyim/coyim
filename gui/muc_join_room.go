@@ -77,6 +77,7 @@ func (v *mucJoinRoomView) validateInput() {
 
 func (v *mucJoinRoomView) onBeforeStart() {
 	v.clearErrors()
+	v.disableJoinFields()
 	v.startSpinner()
 }
 
@@ -91,6 +92,7 @@ func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare) {
 func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
 	doInUIThread(func() {
 		v.notifyOnError(i18n.Localf("The room \"%s\" doesn't exist", ident))
+		v.enableJoinFields()
 	})
 	a.log.WithField("room", ident).Warn("The room doesn't exist")
 }
@@ -98,6 +100,7 @@ func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
 func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
 	doInUIThread(func() {
 		v.stopSpinner()
+		v.enableJoinFields()
 		if err != nil {
 			v.notifyOnError(i18n.Local("Looks like the room you are trying to connect to doesn't exists, please verify the provided name."))
 			a.log.WithField("room", ident).WithError(err).Warn("An error occurred trying to find the room")
@@ -202,6 +205,18 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 	u.connectShortcutsChildWindow(view.dialog)
 
 	return view
+}
+
+func (v *mucJoinRoomView) disableJoinFields() {
+	v.joinButton.SetSensitive(false)
+	v.roomNameEntry.SetSensitive(false)
+	v.ac.disableAccountInput()
+}
+
+func (v *mucJoinRoomView) enableJoinFields() {
+	v.joinButton.SetSensitive(true)
+	v.roomNameEntry.SetSensitive(true)
+	v.ac.enableAccountInput()
 }
 
 func (u *gtkUI) mucShowJoinRoom() {

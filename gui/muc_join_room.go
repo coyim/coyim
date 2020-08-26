@@ -176,20 +176,18 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 }
 
 func doOnlyOnceAtATime(f func(func())) func() {
-	return func() func() {
-		isDoing := false
-		return func() {
-			if isDoing {
-				return
-			}
-			isDoing = true
-			// The "done" function should be called ONLY from the UI thread,
-			// in other cases it's not "safe" executing it.
-			f(func() {
-				isDoing = false
-			})
+	isDoing := false
+	return func() {
+		if isDoing {
+			return
 		}
-	}()
+		isDoing = true
+		// The "done" function should be called ONLY from the UI thread,
+		// in other cases it's not "safe" executing it.
+		f(func() {
+			isDoing = false
+		})
+	}
 }
 
 func (v *mucJoinRoomView) init() {

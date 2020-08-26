@@ -21,6 +21,16 @@ type connectedAccountsComponent struct {
 	onAccountsUpdated  func(*account)
 }
 
+// disableAccountInput should ONLY be called from the UI thread
+func (cac *connectedAccountsComponent) disableAccountInput() {
+	cac.accountsInput.SetSensitive(false)
+}
+
+// enableAccountInput should ONLY be called from the UI thread
+func (cac *connectedAccountsComponent) enableAccountInput() {
+	cac.accountsInput.SetSensitive(true)
+}
+
 // onDestroy should ONLY be called from the UI thread
 func (cac *connectedAccountsComponent) onDestroy() {
 	if cac.onDestroyFunc != nil {

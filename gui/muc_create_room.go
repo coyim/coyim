@@ -27,17 +27,267 @@ type createMUCRoom struct {
 
 	createButtonPrevText  string
 	previousUpdateChannel chan bool
+
+	fieldsToValidate map[string]*validateField
+}
+
+const (
+	validationFieldAccount     = "account"
+	validationFieldRoomName    = "room"
+	validationFieldChatService = "service"
+
+	invalidCharactersForRoomName    = "\"&'/:<>@ "
+	invalidCharactersForChatService = "\"&'/:<>@+ "
+)
+
+type rule func() error
+
+type validateField struct {
+	widget    gtki.Widget
+	rules     []rule
+	isValid   bool
+	lastError error
+}
+
+type errorEmptyField struct {
+	fieldName string
+}
+
+type errorNotAllowedCharacters struct {
+	characters string
+	fieldName  string
+}
+
+type errorNotValidLocal struct {
+	local string
+}
+
+type errorNotValidDomain struct {
+	domain string
+}
+
+type errorNoConnectedAccount struct{}
+
+func newErrorNotAllowedCharacters(c, n string) error {
+	return &errorNotAllowedCharacters{
+		characters: c,
+		fieldName:  n,
+	}
+}
+
+func newErrorEmptyField(n string) error {
+	return &errorEmptyField{fieldName: n}
+}
+
+func newErrorValidLocal(l string) error {
+	return &errorNotValidLocal{local: l}
+}
+
+func newErrorValidDomain(d string) error {
+	return &errorNotValidDomain{domain: d}
+}
+
+func newErrorNoConnectedAccount() error {
+	return &errorNoConnectedAccount{}
+}
+
+func (e *errorNotAllowedCharacters) Error() string {
+	switch e.fieldName {
+	case validationFieldRoomName:
+		return i18n.Localf("The character(s) [%s] are not allowed in room name field", e.characters)
+	case validationFieldChatService:
+		return i18n.Localf("The character(s) [%s] are not allowed in chat service", e.characters)
+	default:
+		return i18n.Localf("The character(s) [%s] are not allowed", e.characters)
+	}
+}
+
+func (e *errorEmptyField) Error() string {
+	switch e.fieldName {
+	case validationFieldRoomName:
+		return i18n.Localf("The field room name cannot be empty")
+	case validationFieldChatService:
+		return i18n.Localf("The field chat service cannot be empty")
+	default:
+		return i18n.Localf("The fields cannot be empty")
+	}
+}
+
+func (e *errorNotValidLocal) Error() string {
+	return i18n.Localf("The room name '%s' is not valid", e.local)
+}
+
+func (e *errorNotValidDomain) Error() string {
+	return i18n.Localf("The chat service name '%s' is not valid", e.domain)
+}
+
+func (e *errorNoConnectedAccount) Error() string {
+	return i18n.Local("There are not connected accounts")
+}
+
+func (v *createMUCRoom) newValidateField(w gtki.Widget) *validateField {
+	vi := &validateField{
+		widget: w,
+	}
+	return vi
+}
+
+func (v *createMUCRoom) initRulesForAccount() *validateField {
+	vf := v.newValidateField(v.account)
+
+	vf.addRule(func() error {
+		ac := v.ac.currentAccount()
+		if ac == nil {
+			return newErrorNoConnectedAccount()
+		}
+
+		return nil
+	})
+
+	return vf
+}
+
+func (v *createMUCRoom) initRulesForRoomName() *validateField {
+	vf := v.newValidateField(v.room)
+
+	vf.addRule(func() error {
+		s, _ := vf.widget.(gtki.Entry).GetText()
+		if s == "" {
+			return newErrorEmptyField(validationFieldRoomName)
+		}
+		return nil
+	})
+
+	vf.addRule(func() error {
+		s, _ := vf.widget.(gtki.Entry).GetText()
+		return checkIfAnyCharacterInField(validationFieldRoomName, s, invalidCharactersForRoomName)
+	})
+
+	vf.addRule(func() error {
+		s, _ := vf.widget.(gtki.Entry).GetText()
+		return isLocalValid(s)
+	})
+
+	return vf
+}
+
+func (v *createMUCRoom) initRulesForChatService() *validateField {
+	vi := v.newValidateField(v.chatServiceEntry)
+
+	vi.addRule(func() error {
+		s, _ := vi.widget.(gtki.Entry).GetText()
+		if s == "" {
+			return newErrorEmptyField(validationFieldChatService)
+		}
+		return nil
+	})
+
+	vi.addRule(func() error {
+		s, _ := vi.widget.(gtki.Entry).GetText()
+		return checkIfAnyCharacterInField(validationFieldChatService, s, invalidCharactersForChatService)
+	})
+
+	vi.addRule(func() error {
+		s, _ := vi.widget.(gtki.Entry).GetText()
+		return isDomainValid(s)
+	})
+
+	return vi
 }
 
 func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 	view := &createMUCRoom{
-		u: u,
+		u:                u,
+		fieldsToValidate: make(map[string]*validateField),
 	}
 
 	view.initUIBuilder()
 	view.initConnectedAccountsComponent()
+	view.initValidationRules()
 
 	return view
+}
+
+func (vi *validateField) addRule(r rule) {
+	vi.rules = append(vi.rules, r)
+}
+
+func (v *createMUCRoom) initValidationRules() {
+	v.fieldsToValidate[validationFieldAccount] = v.initRulesForAccount()
+	v.fieldsToValidate[validationFieldRoomName] = v.initRulesForRoomName()
+	v.fieldsToValidate[validationFieldChatService] = v.initRulesForChatService()
+}
+
+func isLocalValid(s string) error {
+	if jid.ValidLocal(s) {
+		return nil
+	}
+	return newErrorValidLocal(s)
+}
+
+func isDomainValid(s string) error {
+	if jid.ValidDomain(s) {
+		return nil
+	}
+	return newErrorValidDomain(s)
+}
+
+func checkIfAnyCharacterInField(n, s, pattern string) error {
+	var sb strings.Builder
+	for _, c := range strings.Split(s, "") {
+		if strings.ContainsAny(c, pattern) && !strings.ContainsAny(c, sb.String()) {
+			sb.WriteString(c)
+		}
+	}
+
+	if sb.Len() > 0 {
+		return newErrorNotAllowedCharacters(sb.String(), n)
+	}
+
+	return nil
+}
+
+func (vi *validateField) validate() {
+	for _, f := range vi.rules {
+		err := f()
+		if err != nil {
+			vi.isValid = false
+			vi.lastError = err
+			return
+		}
+	}
+
+	vi.isValid = true
+	vi.lastError = nil
+}
+
+func (v *createMUCRoom) doValidationFor(k string, onValidate func()) {
+	vi, ok := v.fieldsToValidate[k]
+	if !ok {
+		return
+	}
+
+	vi.validate()
+	if onValidate != nil {
+		onValidate()
+	}
+}
+
+func (v *createMUCRoom) validateAll(onValid, onInvalid func()) {
+	isValid := true
+	for _, vi := range v.fieldsToValidate {
+		vi.validate()
+		if !vi.isValid {
+			isValid = false
+		}
+	}
+
+	if isValid {
+		onValid()
+		return
+	}
+
+	onInvalid()
 }
 
 func (v *createMUCRoom) initUIBuilder() {
@@ -84,22 +334,22 @@ func (v *createMUCRoom) getRoomID() jid.Bare {
 	}
 
 	service := v.chatServices.GetActiveText()
-	if !jid.ValidLocal(strings.TrimSpace(roomName)) || !jid.ValidDomain(strings.TrimSpace(service)) {
+	if !jid.ValidLocal(roomName) || !jid.ValidDomain(service) {
 		doInUIThread(func() {
-			v.errorBox.ShowMessage(i18n.Localf("%s@%s is not a valid room name.", roomName, service))
+			v.errorBox.ShowMessage(i18n.Localf("The room identity \"%s@%s\" is not valid.", roomName, service))
 		})
 		return nil
 	}
 
-	return jid.NewBare(jid.NewLocal(strings.TrimSpace(roomName)), jid.NewDomain(strings.TrimSpace(service)))
+	return jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(service))
 }
 
-func (v *createMUCRoom) onCreateRoom() {
-	v.clearErrors()
-
+// createRoom should be called only when all validations
+// has passed succesfully
+func (v *createMUCRoom) createRoom() {
 	ca := v.ac.currentAccount()
 	if ca == nil {
-		v.errorBox.ShowMessage(i18n.Local("No account selected, please select one account from the list or connect to one."))
+		v.errorBox.ShowMessage(i18n.Local("No account is selected, please select one account from the list or connect to one."))
 		return
 	}
 
@@ -110,13 +360,17 @@ func (v *createMUCRoom) onCreateRoom() {
 	}
 }
 
+func (v *createMUCRoom) onCreateRoom() {
+	v.validateAll(v.createRoom, v.checkValidationsAndShowErrorsIfAny)
+}
+
 func (v *createMUCRoom) onBeforeToCreateARoom() {
 	v.disableOrEnableFields(false)
 	v.createButtonPrevText, _ = v.createButton.GetLabel()
 	_ = v.createButton.SetProperty("label", i18n.Local("Creating room..."))
 }
 
-func (v *createMUCRoom) afterRoomCreated() {
+func (v *createMUCRoom) afterRoomIsCreated() {
 	doInUIThread(func() {
 		v.disableOrEnableFields(true)
 		_ = v.createButton.SetProperty("label", v.createButtonPrevText)
@@ -126,7 +380,7 @@ func (v *createMUCRoom) afterRoomCreated() {
 func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
 	erc, ec := ca.session.HasRoom(ident)
 	go func() {
-		defer v.afterRoomCreated()
+		defer v.afterRoomIsCreated()
 
 		select {
 		case err, _ := <-ec:
@@ -185,100 +439,49 @@ func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident ji
 	}
 }
 
-func (v *createMUCRoom) onRoomNameChanged() {
+func (v *createMUCRoom) checkValidationsAndShowErrorsIfAny() {
 	v.clearErrors()
+
+	errorMessages := []string{}
+	itHasValidationErrors := false
+	for _, vi := range v.fieldsToValidate {
+		if !vi.isValid {
+			itHasValidationErrors = true
+			if vi.lastError != nil {
+				errorMessages = append(errorMessages, vi.lastError.Error())
+			}
+		}
+	}
+
+	setEnabled(v.createButton, !itHasValidationErrors)
+	if len(errorMessages) > 0 {
+		if len(errorMessages) == 1 {
+			v.errorBox.ShowMessage(strings.Join(errorMessages, ""))
+			return
+		}
+		v.errorBox.ShowMessage(i18n.Localf("The following errors were found:\n• %s", strings.Join(errorMessages, "\n• ")))
+	}
+}
+
+func (v *createMUCRoom) onRoomNameChanged() {
 	v.handleRoomNameEntered()
-	v.disableOrEnableIfMeetAllValidations()
+	v.doValidationFor(validationFieldRoomName, v.checkValidationsAndShowErrorsIfAny)
 }
 
 func (v *createMUCRoom) onChatServiceChanged() {
-	v.clearErrors()
-	v.disableOrEnableIfMeetAllValidations()
+	v.doValidationFor(validationFieldChatService, v.checkValidationsAndShowErrorsIfAny)
 }
 
 func (v *createMUCRoom) handleRoomNameEntered() {
 	s, _ := v.room.GetText()
-	chann := strings.SplitN(s, "@", 2)
-	if len(chann) >= 2 {
-		v.room.SetText(chann[0])
+	ri := strings.SplitN(s, "@", 2)
+	if len(ri) >= 2 {
+		v.room.SetText(ri[0])
 		if v.chatServices.GetActiveText() == "" {
-			v.chatServiceEntry.SetText(chann[1])
+			v.chatServiceEntry.SetText(ri[1])
 		}
 		v.chatServices.SetProperty("is_focus", true)
 	}
-}
-
-func (v *createMUCRoom) disableOrEnableIfMeetAllValidations() {
-	setEnabled(v.createButton, v.meetAllValidations())
-}
-
-func (v *createMUCRoom) meetAllValidations() bool {
-	return v.areAllFieldsFilled() && v.isRoomNameValid() && v.isChatServiceValid()
-}
-
-func (v *createMUCRoom) isRoomNameValid() bool {
-	s, _ := v.room.GetText()
-	cna := v.extractNotAllowedCharacters(s)
-	if len(cna) > 0 {
-		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed in room name", cna))
-		setEnabled(v.createButton, false)
-		return false
-	}
-	if !jid.ValidLocal(s) {
-		doInUIThread(func() {
-			v.errorBox.ShowMessage(i18n.Localf("\"%s\" is not a valid room name.", s))
-		})
-		return false
-	}
-	return true
-}
-
-func (v *createMUCRoom) isChatServiceValid() bool {
-	s := v.chatServices.GetActiveText()
-	cna := v.extractNotAllowedCharacters(s)
-	if len(cna) > 0 {
-		v.errorBox.ShowMessage(i18n.Localf("The character(s) %s are not allowed in chat service name", cna))
-		setEnabled(v.createButton, false)
-		return false
-	}
-	if !jid.ValidDomain(s) {
-		doInUIThread(func() {
-			v.errorBox.ShowMessage(i18n.Localf("\"%s\" is not a valid chat service name.", s))
-		})
-		return false
-	}
-	return true
-}
-
-func indexOf(value string, s []string) int {
-	for i, c := range s {
-		if value == c {
-			return i
-		}
-	}
-	return -1
-}
-
-func (v *createMUCRoom) extractNotAllowedCharacters(s string) []string {
-	var response []string
-	for _, c := range strings.Split(s, "") {
-		if strings.ContainsAny(c, "\"&'/:<>@ ") && indexOf(c, response) == -1 {
-			response = append(response, c)
-		}
-	}
-	return response
-}
-
-func (v *createMUCRoom) areAllFieldsFilled() bool {
-	accountVal := ""
-	if ac := v.ac.currentAccount(); ac != nil {
-		accountVal = ac.Account()
-	}
-
-	serviceVal := v.chatServices.GetActiveText()
-	roomVal, _ := v.room.GetText()
-
-	return accountVal != "" && serviceVal != "" && roomVal != ""
 }
 
 func (v *createMUCRoom) notifyOnError(err string) {
@@ -293,15 +496,16 @@ func (v *createMUCRoom) clearErrors() {
 }
 
 func (v *createMUCRoom) onNoAccountsConnected() {
-	doInUIThread(v.chatServices.RemoveAll)
+	doInUIThread(func() {
+		v.chatServices.RemoveAll()
+		v.doValidationFor(validationFieldAccount, v.checkValidationsAndShowErrorsIfAny)
+	})
 }
 
 func (v *createMUCRoom) updateServicesBasedOnAccount(acc *account) {
 	doInUIThread(func() {
-		v.clearErrors()
-		v.disableOrEnableIfMeetAllValidations()
+		v.doValidationFor(validationFieldAccount, v.checkValidationsAndShowErrorsIfAny)
 	})
-
 	go v.updateChatServicesBasedOnAccount(acc)
 }
 
@@ -364,10 +568,6 @@ func (v *createMUCRoom) onUpdateChatServicesFinished(hadAny bool, typedService s
 
 func setEnabled(w gtki.Widget, enable bool) {
 	w.SetSensitive(enable)
-}
-
-func insertTextIntoEntry(e gtki.Entry, s string) {
-	e.SetText(s)
 }
 
 func (u *gtkUI) mucCreateChatRoom() {

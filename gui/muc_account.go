@@ -70,3 +70,13 @@ func (a *account) onRoomNicknameConflict(from jid.Full) {
 	view.lastErrorMessage = i18n.Localf("Can't join the room using \"%s\" because the nickname is already being used.", from.Resource())
 	view.onJoin <- false
 }
+
+func (a *account) onErrorRegistrationRequired(from jid.Full) {
+	view, err := a.roomViewFor(from.Bare())
+	if err != nil {
+		a.log.WithError(err).Error("Error getting the room view")
+		return
+	}
+	view.lastErrorMessage = i18n.Local("Sorry, this room only allows registered members")
+	view.onJoin <- false
+}

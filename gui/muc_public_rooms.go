@@ -166,7 +166,7 @@ func (prv *mucPublicRoomsView) getSelectedRoomBare() (jid.Bare, error) {
 func (prv *mucPublicRoomsView) onJoinRoom() {
 	ident, err := prv.getSelectedRoomBare()
 	if err != nil {
-		prv.currentAccount.log.WithError(err).Debug("couldn't join")
+		prv.currentAccount.log.WithError(err).Error("An error occurred when trying to join the room")
 		prv.showUserMessageForError(err)
 		return
 	}
@@ -177,13 +177,13 @@ func (prv *mucPublicRoomsView) onJoinRoom() {
 func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.TreePath) {
 	iter, err := prv.roomsModel.GetIter(path)
 	if err != nil {
-		prv.currentAccount.log.WithError(err).Debug("couldn't activate")
+		prv.currentAccount.log.WithError(err).Error("Couldn't activate the selected item")
 		return
 	}
 
 	ident, err := prv.getRoomBareFromIter(iter)
 	if err != nil {
-		prv.currentAccount.log.WithError(err).Debug("couldn't join")
+		prv.currentAccount.log.WithError(err).Error("Couldn't join to the room based on the current selection")
 		prv.showUserMessageForError(err)
 		return
 	}
@@ -315,7 +315,7 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 					doInUIThread(func() {
 						prv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
 					})
-					prv.currentAccount.log.WithError(e).Debug("something went wrong trying to get chat rooms")
+					prv.currentAccount.log.WithError(e).Error("something went wrong trying to get chat rooms")
 				}
 				return
 			case _, _ = <-prv.cancel:

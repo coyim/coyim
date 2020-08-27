@@ -315,7 +315,7 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 					doInUIThread(func() {
 						prv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
 					})
-					prv.currentAccount.log.WithError(e).Error("something went wrong trying to get chat rooms")
+					prv.currentAccount.log.WithError(e).Error("Something went wrong when trying to get chat rooms")
 				}
 				return
 			case _, _ = <-prv.cancel:

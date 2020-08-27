@@ -37,9 +37,10 @@ func (u *gtkUI) updatedRoomListing(rl *muc.RoomListing, data interface{}) {
 }
 
 type mucPublicRoomsView struct {
-	u       *gtkUI
-	builder *builder
-	ac      *connectedAccountsComponent
+	u              *gtkUI
+	builder        *builder
+	ac             *connectedAccountsComponent
+	currentAccount *account
 
 	generation    int
 	updateLock    sync.RWMutex
@@ -84,6 +85,9 @@ func (prv *mucPublicRoomsView) initConnectedAccountsComponent() {
 	accountsInput := prv.builder.get("accounts").(gtki.ComboBox)
 	ac := prv.u.createConnectedAccountsComponent(accountsInput, prv,
 		func(acc *account) {
+			// This is safe to do because we really have a selected account here
+			prv.currentAccount = acc
+
 			go prv.mucUpdatePublicRoomsOn(acc)
 		},
 		func() {
@@ -93,6 +97,10 @@ func (prv *mucPublicRoomsView) initConnectedAccountsComponent() {
 			prv.roomsModel.Clear()
 			prv.refreshButton.SetSensitive(false)
 			prv.customServiceButton.SetSensitive(false)
+
+			// We don't have a selected account anymore, we should
+			// remove the existing reference to a no-selected account
+			prv.currentAccount = nil
 		},
 	)
 	prv.ac = ac
@@ -159,7 +167,7 @@ func (prv *mucPublicRoomsView) onJoinRoom() {
 	ident, err := prv.getSelectedRoomBare()
 	if err != nil {
 		// TODO: we should inform the user
-		prv.u.log.WithError(err).Debug("couldn't join")
+		prv.currentAccount.log.WithError(err).Debug("couldn't join")
 		return
 	}
 
@@ -169,14 +177,14 @@ func (prv *mucPublicRoomsView) onJoinRoom() {
 func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.TreePath) {
 	iter, err := prv.roomsModel.GetIter(path)
 	if err != nil {
-		prv.u.log.WithError(err).Debug("couldn't activate")
+		prv.currentAccount.log.WithError(err).Debug("couldn't activate")
 		return
 	}
 
 	ident, err := prv.getRoomBareFromIter(iter)
 	if err != nil {
 		// TODO: we should inform the user
-		prv.u.log.WithError(err).Debug("couldn't join")
+		prv.currentAccount.log.WithError(err).Debug("couldn't join")
 		return
 	}
 
@@ -307,7 +315,7 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 					doInUIThread(func() {
 						prv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
 					})
-					prv.u.log.WithError(e).Debug("something went wrong trying to get chat rooms")
+					prv.currentAccount.log.WithError(e).Debug("something went wrong trying to get chat rooms")
 				}
 				return
 			case _, _ = <-prv.cancel:
@@ -343,7 +351,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare) {
 	a := prv.ac.currentAccount()
 	if a == nil {
-		prv.u.log.WithField("room", roomJid).Debug("joinRoom(): no account is selected")
+		prv.currentAccount.log.WithField("room", roomJid).Debug("joinRoom(): no account is selected")
 		prv.notifyOnError(i18n.Local("No account was selected, please select one account from the list."))
 		return
 	}

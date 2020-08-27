@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	mrand "math/rand"
 	"os"
 	"path/filepath"
 	"strings"
@@ -35,6 +36,10 @@ func FormatFingerprint(fpr []byte) string {
 	}
 
 	return result
+}
+
+func randomUint64() uint64 {
+	return mrand.Uint64()
 }
 
 func randomString(dest []byte) error {

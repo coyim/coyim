@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/coyim/coyim/i18n"
@@ -114,32 +115,55 @@ func (prv *mucPublicRoomsView) initCommons() {
 	prv.joinButton.SetSensitive(false)
 }
 
-func (prv *mucPublicRoomsView) onJoinRoom() {
+var (
+	errNoPossibleSelection = errors.New("problem getting selection")
+	errNoSelection         = errors.New("nothing is selected")
+	errNoRoomSelected      = errors.New("a service is selected, not a room, so we can't activate it")
+	errNoService           = errors.New("no service is available")
+)
+
+func (prv *mucPublicRoomsView) getRoomBareFromIter(iter gtki.TreeIter) (jid.Bare, error) {
+	roomJidValue, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexJid)
+	ident, _ := roomJidValue.GetString()
+
+	_, ok := prv.serviceGroups[ident]
+	if ok {
+		return nil, errNoRoomSelected
+	}
+
+	serviceValue, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexService)
+	service, _ := serviceValue.GetString()
+	_, ok = prv.serviceGroups[service]
+	if !ok {
+		return nil, errNoService
+	}
+
+	return jid.NewBare(jid.NewLocal(ident), jid.NewDomain(service)), nil
+}
+
+func (prv *mucPublicRoomsView) getSelectedRoomBare() (jid.Bare, error) {
 	selection, err := prv.roomsTree.GetSelection()
 	if err != nil {
-		prv.u.log.WithError(err).Debug("couldn't join")
-		prv.notifyOnError(i18n.Local("Please, select one room from the list to join to."))
-		return
+		return nil, errNoPossibleSelection
 	}
 
 	_, iter, ok := selection.GetSelected()
 	if !ok {
-		prv.u.log.Debug("nothing is selected")
-		prv.notifyOnError(i18n.Local("Please, select one room from the list to join to."))
+		return nil, errNoSelection
+	}
+
+	return prv.getRoomBareFromIter(iter)
+}
+
+func (prv *mucPublicRoomsView) onJoinRoom() {
+	ident, err := prv.getSelectedRoomBare()
+	if err != nil {
+		// TODO: we should inform the user
+		prv.u.log.WithError(err).Debug("couldn't join")
 		return
 	}
 
-	val, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexJid)
-	v, _ := val.GetString()
-
-	_, ok = prv.serviceGroups[v]
-	if ok {
-		prv.u.log.Debug("a service is selected, not a room, so we can't activate it")
-		prv.notifyOnError(i18n.Local("The selected item is not a room, select one room from the list to join to."))
-		return
-	}
-
-	go prv.joinRoom(v)
+	go prv.joinRoom(ident)
 }
 
 func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.TreePath) {
@@ -148,33 +172,20 @@ func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.Tree
 		prv.u.log.WithError(err).Debug("couldn't activate")
 		return
 	}
-	val, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexJid)
-	v, _ := val.GetString()
-	_, ok := prv.serviceGroups[v]
-	if ok {
-		prv.u.log.Debug("a service is selected, not a room, so we can't activate it")
-		prv.notifyOnError(i18n.Local("The selected item is not a room, select one room from the list to join to."))
+
+	ident, err := prv.getRoomBareFromIter(iter)
+	if err != nil {
+		// TODO: we should inform the user
+		prv.u.log.WithError(err).Debug("couldn't join")
 		return
 	}
-	go prv.joinRoom(v)
+
+	go prv.joinRoom(ident)
 }
 
 func (prv *mucPublicRoomsView) onSelectionChanged() {
-	selection, err := prv.roomsTree.GetSelection()
+	_, err := prv.getSelectedRoomBare()
 	if err != nil {
-		prv.u.log.WithError(err).Debug("problem getting selection")
-		return
-	}
-	_, iter, ok := selection.GetSelected()
-	if !ok {
-		prv.joinButton.SetSensitive(false)
-		return
-	}
-
-	val, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexJid)
-	v, _ := val.GetString()
-	_, ok = prv.serviceGroups[v]
-	if ok {
 		prv.joinButton.SetSensitive(false)
 	} else {
 		prv.joinButton.SetSensitive(true)
@@ -329,7 +340,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 }
 
 // joinRoom should not be called from the UI thread
-func (prv *mucPublicRoomsView) joinRoom(roomJid string) {
+func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare) {
 	a := prv.ac.currentAccount()
 	if a == nil {
 		prv.u.log.WithField("room", roomJid).Debug("joinRoom(): no account is selected")
@@ -338,5 +349,8 @@ func (prv *mucPublicRoomsView) joinRoom(roomJid string) {
 	}
 
 	a.log.WithField("room", roomJid).Debug("joinRoom()")
-	prv.u.mucShowRoom(a, jid.Parse(roomJid).(jid.Bare))
+	doInUIThread(func() {
+		prv.dialog.Destroy()
+		prv.u.mucShowRoom(a, roomJid)
+	})
 }

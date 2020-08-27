@@ -117,15 +117,15 @@ func (prv *mucPublicRoomsView) initCommons() {
 func (prv *mucPublicRoomsView) onJoinRoom() {
 	selection, err := prv.roomsTree.GetSelection()
 	if err != nil {
-		// TODO: we should inform the user
 		prv.u.log.WithError(err).Debug("couldn't join")
+		prv.notifyOnError(i18n.Local("Please, select one room from the list to join to."))
 		return
 	}
 
 	_, iter, ok := selection.GetSelected()
 	if !ok {
-		// TODO: we should inform the user
 		prv.u.log.Debug("nothing is selected")
+		prv.notifyOnError(i18n.Local("Please, select one room from the list to join to."))
 		return
 	}
 
@@ -134,8 +134,8 @@ func (prv *mucPublicRoomsView) onJoinRoom() {
 
 	_, ok = prv.serviceGroups[v]
 	if ok {
-		// TODO: we should inform the user
 		prv.u.log.Debug("a service is selected, not a room, so we can't activate it")
+		prv.notifyOnError(i18n.Local("The selected item is not a room, select one room from the list to join to."))
 		return
 	}
 
@@ -153,6 +153,7 @@ func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.Tree
 	_, ok := prv.serviceGroups[v]
 	if ok {
 		prv.u.log.Debug("a service is selected, not a room, so we can't activate it")
+		prv.notifyOnError(i18n.Local("The selected item is not a room, select one room from the list to join to."))
 		return
 	}
 	go prv.joinRoom(v)
@@ -331,8 +332,8 @@ func (u *gtkUI) mucShowPublicRooms() {
 func (prv *mucPublicRoomsView) joinRoom(roomJid string) {
 	a := prv.ac.currentAccount()
 	if a == nil {
-		// TODO: we should inform the user
 		prv.u.log.WithField("room", roomJid).Debug("joinRoom(): no account is selected")
+		prv.notifyOnError(i18n.Local("No account was selected, please select one account from the list."))
 		return
 	}
 

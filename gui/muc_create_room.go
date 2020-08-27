@@ -387,7 +387,7 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
 			if err != nil {
 				ca.log.WithError(err).Error("Error trying to validate if room exists")
 				doInUIThread(func() {
-					v.errorBox.ShowMessage(i18n.Local("Could not connect with the server, please try again later."))
+					v.errorBox.ShowMessage(i18n.Local("Could not connect to the server, please verify that the server exists or try again later."))
 				})
 			}
 

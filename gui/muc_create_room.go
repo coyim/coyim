@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/coyim/coyim/i18n"
@@ -459,7 +460,9 @@ func (v *createMUCRoom) checkValidationsAndShowErrorsIfAny() {
 			v.errorBox.ShowMessage(strings.Join(errorMessages, ""))
 			return
 		}
-		v.errorBox.ShowMessage(i18n.Localf("The following errors were found:\n• %s", strings.Join(errorMessages, "\n• ")))
+
+		allMessages := strings.Join(errorMessages, fmt.Sprintf("\n%s ", symbols.bullet))
+		v.errorBox.ShowMessage(i18n.Localf("The following errors were found:\n%s %s", symbols.bullet, allMessages))
 	}
 }
 

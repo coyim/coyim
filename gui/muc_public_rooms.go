@@ -166,8 +166,8 @@ func (prv *mucPublicRoomsView) getSelectedRoomBare() (jid.Bare, error) {
 func (prv *mucPublicRoomsView) onJoinRoom() {
 	ident, err := prv.getSelectedRoomBare()
 	if err != nil {
-		// TODO: we should inform the user
 		prv.currentAccount.log.WithError(err).Debug("couldn't join")
+		prv.showUserMessageForError(err)
 		return
 	}
 
@@ -183,8 +183,8 @@ func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.Tree
 
 	ident, err := prv.getRoomBareFromIter(iter)
 	if err != nil {
-		// TODO: we should inform the user
 		prv.currentAccount.log.WithError(err).Debug("couldn't join")
+		prv.showUserMessageForError(err)
 		return
 	}
 
@@ -335,6 +335,25 @@ func (prv *mucPublicRoomsView) notifyOnError(err string) {
 	}
 
 	prv.errorNotif.ShowMessage(err)
+}
+
+func (prv *mucPublicRoomsView) showUserMessageForError(err error) {
+	var userMessage string
+
+	switch err {
+	case errNoPossibleSelection:
+		userMessage = i18n.Local("We cant't determinate what has been selected, please try again.")
+	case errNoRoomSelected:
+		userMessage = i18n.Local("The selected item is not a room, select one room from the list to join to.")
+	case errNoSelection:
+		userMessage = i18n.Local("Please, select one room from the list to join to.")
+	case errNoService:
+		userMessage = i18n.Local("We cant't determinate which service has been selected, please try again.")
+	default:
+		userMessage = i18n.Local("An unknow error ocurred, please try again.")
+	}
+
+	prv.notifyOnError(userMessage)
 }
 
 // mucShowPublicRooms should be called from the UI thread

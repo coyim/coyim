@@ -572,6 +572,9 @@ func setEnabled(w gtki.Widget, enable bool) {
 
 func (u *gtkUI) mucCreateChatRoom() {
 	view := u.newCreateMUCRoom()
+
+	u.connectShortcutsChildWindow(view.dialog)
+
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
 }

@@ -241,5 +241,9 @@ func (v *mucJoinRoomView) enableJoinFields() {
 
 func (u *gtkUI) mucShowJoinRoom() {
 	view := newMUCJoinRoomView(u)
+
+	u.connectShortcutsChildWindow(view.dialog)
+
+	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
 }

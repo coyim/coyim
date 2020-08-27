@@ -18,12 +18,12 @@ func initUnicodeSymbols() {
 
 func windowsSymbols() supportedSymbols {
 	return supportedSymbols{
-		bullet: "•",
+		bullet: "*",
 	}
 }
 
 func defaultSymbols() supportedSymbols {
 	return supportedSymbols{
-		bullet: "*",
+		bullet: "•",
 	}
 }

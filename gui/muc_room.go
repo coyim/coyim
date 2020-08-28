@@ -127,7 +127,9 @@ func (v *roomView) startSpinner() {
 func (v *roomView) stopSpinner() {
 	v.spinnerJoinView.Stop()
 	v.spinnerJoinView.SetVisible(false)
-	v.roomJoinButton.SetSensitive(true)
+	if !v.errorNotif.IsVisible() {
+		v.roomJoinButton.SetSensitive(true)
+	}
 }
 
 func (v *roomView) joinRoomWithNickname(nickname string) {

@@ -37,6 +37,12 @@ func (n *errorNotification) Hide() {
 	parent.Hide()
 }
 
+func (n *errorNotification) IsVisible() bool {
+	parent, _ := n.area.GetParent()
+
+	return parent.IsVisible()
+}
+
 type canNotifyErrors interface {
 	// clearErrors should ONLY be called from the UI thread
 	clearErrors()

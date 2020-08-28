@@ -103,6 +103,7 @@ func (v *roomView) hasValidPassword() bool {
 }
 
 func (v *roomView) validateInput() {
+	v.clearErrors()
 	sensitiveValue := v.hasValidNickname() && v.hasValidPassword()
 	v.roomJoinButton.SetSensitive(sensitiveValue)
 }

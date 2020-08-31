@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
@@ -23,16 +24,17 @@ type roomView struct {
 	lastErrorMessage string
 	sync.RWMutex
 
-	window           gtki.Window      `gtk-widget:"roomWindow"`
-	boxJoinRoomView  gtki.Box         `gtk-widget:"boxJoinRoomView"`
-	nicknameEntry    gtki.Entry       `gtk-widget:"nicknameEntry"`
-	passwordCheck    gtki.CheckButton `gtk-widget:"passwordCheck"`
-	passwordLabel    gtki.Label       `gtk-widget:"passwordLabel"`
-	passwordEntry    gtki.Entry       `gtk-widget:"passwordEntry"`
-	roomJoinButton   gtki.Button      `gtk-widget:"roomJoinButton"`
-	spinnerJoinView  gtki.Spinner     `gtk-widget:"joinSpinner"`
-	notificationArea gtki.Box         `gtk-widget:"boxNotificationArea"`
-	boxRoomView      gtki.Box         `gtk-widget:"boxRoomView"`
+	window             gtki.Window      `gtk-widget:"roomWindow"`
+	boxJoinRoomView    gtki.Box         `gtk-widget:"boxJoinRoomView"`
+	nicknameEntry      gtki.Entry       `gtk-widget:"nicknameEntry"`
+	passwordCheck      gtki.CheckButton `gtk-widget:"passwordCheck"`
+	passwordLabel      gtki.Label       `gtk-widget:"passwordLabel"`
+	passwordEntry      gtki.Entry       `gtk-widget:"passwordEntry"`
+	roomJoinButton     gtki.Button      `gtk-widget:"roomJoinButton"`
+	spinnerJoinView    gtki.Spinner     `gtk-widget:"joinSpinner"`
+	notificationArea   gtki.Box         `gtk-widget:"boxNotificationArea"`
+	boxRoomView        gtki.Box         `gtk-widget:"boxRoomView"`
+	roomChatTextBuffer gtki.TextBuffer  `gtk-widget:"roomChatTextBuffer"`
 
 	notification gtki.InfoBar
 	errorNotif   *errorNotification
@@ -235,4 +237,23 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 
 func getViewFromRoom(r *muc.Room) *roomView {
 	return r.Opaque.(*roomView)
+}
+
+func (v *roomView) addLineToChatText(text string) {
+
+	i := v.roomChatTextBuffer.GetEndIter()
+
+	t := fmt.Sprintf("%s\n", text)
+	v.roomChatTextBuffer.Insert(i, t)
+
+}
+
+func (v *roomView) showOccupantLeftRoom(nickname jid.Resource) {
+
+	go func() {
+		doInUIThread(func() {
+			v.addLineToChatText(i18n.Localf("%s left the room", nickname))
+		})
+	}()
+
 }

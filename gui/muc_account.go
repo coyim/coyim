@@ -6,7 +6,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -55,8 +54,40 @@ func (a *account) addOccupantToRoomRoster(from jid.Full, occupant jid.Full, affi
 	view.onJoin <- joined
 }
 
-func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
+func (a *account) updateOccupantRoomEvent(from jid.Full, occupant jid.Full, affiliation, role string) {
 	//TODO: Implements the actions to do when a Occupant presence is received
+	room, err := a.roomForIdentity(from.Bare())
+	status := ""
+
+	a.log.WithFields(log.Fields{
+		"from:":        from,
+		"room:":        room,
+		"affiliaiton:": affiliation,
+		"role:":        role,
+		"occupant:":    occupant,
+		"status:":      status,
+	}).Info("Fields")
+
+	if err != nil {
+		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room")
+		return
+	}
+
+	_ = getViewFromRoom(room)
+
+	_, _, err = room.Roster().UpdatePresence(from, "", affiliation, role, "", status, "Room Joined", occupant)
+	if err != nil {
+		a.log.WithFields(log.Fields{
+			"occupant":    occupant,
+			"affiliation": affiliation,
+			"role":        role,
+			"status":      status,
+		}).WithError(err).Error("An error occurred trying to add the occupant to the roster")
+		//view.lastErrorMessage = err.Error()
+		//view.onJoin <- false
+		return
+	}
+
 	a.log.Debug("updateOccupantRoomEvent")
 }
 
@@ -79,4 +110,29 @@ func (a *account) onErrorRegistrationRequired(from jid.Full) {
 	}
 	view.lastErrorMessage = i18n.Local("Sorry, this room only allows registered members")
 	view.onJoin <- false
+}
+
+func (a *account) removeOccupantFromRoomRoster(from jid.Full, occupant jid.Full, affiliation, role string) {
+	room, err := a.roomForIdentity(from.Bare())
+	if err != nil {
+		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room")
+		return
+	}
+
+	view := getViewFromRoom(room)
+
+	_, left, err := room.Roster().UpdatePresence(from, "unavailable", affiliation, role, "", "unavailable", "Room left", occupant)
+	if err != nil {
+		a.log.WithFields(log.Fields{
+			"occupant":    occupant,
+			"affiliation": affiliation,
+			"role":        role,
+		}).WithError(err).Error("An error occurred trying to remove the occupant from the roster")
+		return
+	}
+
+	if left {
+		view.showOccupantLeftRoom(occupant.Resource())
+	}
+
 }

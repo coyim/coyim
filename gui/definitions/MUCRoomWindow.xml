@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <object class="GtkListStore" id="room-members-model">
     <columns>
@@ -11,16 +12,7 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkTextBuffer" id="roomTextBuffer">
-    <property name="text" translatable="yes">[Rafael]
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-[Jhon Doe]
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-[#Animal]
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</property>
-  </object>
+  <object class="GtkTextBuffer" id="roomChatTextBuffer"/>
   <object class="GtkWindow" id="roomWindow">
     <property name="width_request">800</property>
     <property name="height_request">600</property>
@@ -51,9 +43,6 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                 <property name="can_focus">False</property>
                 <property name="margin_bottom">31</property>
                 <property name="orientation">vertical</property>
-                <child>
-                  <placeholder/>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -486,7 +475,7 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
                                         <property name="top_margin">10</property>
                                         <property name="bottom_margin">10</property>
                                         <property name="cursor_visible">False</property>
-                                        <property name="buffer">roomTextBuffer</property>
+                                        <property name="buffer">roomChatTextBuffer</property>
                                         <property name="accepts_tab">False</property>
                                       </object>
                                     </child>

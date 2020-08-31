@@ -19,11 +19,13 @@ func (m *mucManager) mucRoomRenamed(from jid.Full, room jid.Bare) {
 	m.publishMUCEvent(from, ev)
 }
 
-func (m *mucManager) mucOccupantExit(from jid.Full, room jid.Bare, occupant jid.Resource) {
-	ev := events.MUCOccupantExited{}
+func (m *mucManager) mucOccupantLeft(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string) {
+	ev := events.MUCOccupantLeft{}
 	ev.Room = room
 	ev.Nickname = occupant
 	ev.Jid = from
+	ev.Affiliation = affiliation
+	ev.Role = role
 
 	m.publishMUCEvent(from, ev)
 }

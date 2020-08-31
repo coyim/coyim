@@ -54,10 +54,12 @@ type MUCOccupantJoined struct {
 	Status string
 }
 
-// MUCOccupantExited contains information about
-// the occupant that has exited from a room
-type MUCOccupantExited struct {
+// MUCOccupantLeft contains information about
+// the occupant that has left the room
+type MUCOccupantLeft struct {
 	MUCOccupant
+	Affiliation string
+	Role        string
 }
 
 // MUCErrorType represents the type of MUC error event

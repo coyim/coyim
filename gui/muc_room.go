@@ -240,20 +240,16 @@ func getViewFromRoom(r *muc.Room) *roomView {
 }
 
 func (v *roomView) addLineToChatText(text string) {
-
 	i := v.roomChatTextBuffer.GetEndIter()
 
 	t := fmt.Sprintf("%s\n", text)
 	v.roomChatTextBuffer.Insert(i, t)
-
 }
 
 func (v *roomView) showOccupantLeftRoom(nickname jid.Resource) {
 
-	go func() {
-		doInUIThread(func() {
-			v.addLineToChatText(i18n.Localf("%s left the room", nickname))
-		})
-	}()
+	doInUIThread(func() {
+		v.addLineToChatText(i18n.Localf("%s left the room", nickname))
+	})
 
 }

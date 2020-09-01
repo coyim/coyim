@@ -7,6 +7,7 @@ import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -134,8 +135,15 @@ func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, 
 
 	switch {
 	case hasUserStatus(status):
-		// Someone left the room
-		m.log.Debug("handleMUCPresence(): MUCOccupantLeft")
+		// This handler sends an event to GUI when some user left the room
+		m.log.WithFields(log.Fields{
+			"from":             from,
+			"room":             room,
+			"occupant":         occupant,
+			"item.Affiliation": item.Affiliation,
+			"item.Role":        item.Role,
+		}).Debug("Parameters send to mucOccupantLeft")
+
 		m.mucOccupantLeft(from, room, occupant, item.Affiliation, item.Role)
 
 	case userStatusContains(status, MUCStatusBanned):

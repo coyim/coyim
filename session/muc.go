@@ -133,7 +133,7 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant jid.Resource, item data.MUCUserItem, status []data.MUCUserStatus) {
 
 	switch {
-	case userStatusEmpty(status):
+	case hasUserStatus(status):
 		// Someone left the room
 		m.log.Debug("handleMUCPresence(): MUCOccupantLeft")
 		m.mucOccupantLeft(from, room, occupant, item.Affiliation, item.Role)
@@ -178,7 +178,7 @@ func userStatusContains(status []data.MUCUserStatus, c int) bool {
 	return false
 }
 
-func userStatusEmpty(status []data.MUCUserStatus) bool {
+func hasUserStatus(status []data.MUCUserStatus) bool {
 	return len(status) == 0
 }
 

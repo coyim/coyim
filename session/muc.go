@@ -103,9 +103,17 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 
 	occupant := from.Resource()
 	room := from.Bare()
-	affiliation := stanza.MUCUser.Item.Affiliation
-	role := stanza.MUCUser.Item.Role
 	status := stanza.MUCUser.Status
+
+	var affiliation string
+	var role string
+	if stanza.MUCUser.Item != nil {
+		affiliation = stanza.MUCUser.Item.Affiliation
+		role = stanza.MUCUser.Item.Role
+	} else {
+		affiliation = "none"
+		role = "none"
+	}
 
 	isOwnPresence := userStatusContains(status, MUCStatusSelfPresence)
 	if !isOwnPresence && stanza.MUCUser.Item.Jid == from.String() {

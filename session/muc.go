@@ -150,7 +150,7 @@ func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, 
 
 	case userStatusContains(status, MUCStatusNewNickname):
 		// Someone has changed its nickname
-		m.log.Debug("handleMUCPresence(): MUCStatusNewNickname")
+		m.mucOccupantUpdate(from, room, occupant, item.Affiliation, item.Role)
 
 	case userStatusContains(status, MUCStatusBecauseKickedFrom):
 		// Someone was kicked from the room

@@ -22,6 +22,7 @@ type roomView struct {
 	onJoin           chan bool
 	lastError        error
 	lastErrorMessage string
+	roomPanelOpen    bool
 	sync.RWMutex
 
 	window             gtki.Window      `gtk-widget:"roomWindow"`
@@ -35,9 +36,13 @@ type roomView struct {
 	notificationArea   gtki.Box         `gtk-widget:"boxNotificationArea"`
 	boxRoomView        gtki.Box         `gtk-widget:"boxRoomView"`
 	roomChatTextBuffer gtki.TextBuffer  `gtk-widget:"roomChatTextBuffer"`
+	panel              gtki.Box         `gtk-widget:"panel"`
+	panelToggle        gtki.Button      `gtk-widget:"panel-toggle"`
+	membersModel       gtki.ListStore   `gtk-widget:"room-members-model"`
+	membersView        gtki.TreeView    `gtk-widget:"room-members-tree"`
+	notification       gtki.InfoBar
 
-	notification gtki.InfoBar
-	errorNotif   *errorNotification
+	errorNotif *errorNotification
 }
 
 func (v *roomView) clearErrors() {
@@ -65,6 +70,7 @@ func (v *roomView) initUIBuilder() {
 		"on_room_cancel_clicked": v.window.Destroy,
 		"on_room_join_clicked":   v.joinRoom,
 		"on_close_window":        v.onCloseWindow,
+		"on_toggle_roster_panel": v.toggleRosterPanel,
 	})
 }
 
@@ -116,6 +122,20 @@ func (v *roomView) togglePanelView() {
 		v.boxJoinRoomView.SetVisible(!value)
 		v.boxRoomView.SetVisible(value)
 	})
+}
+
+func (v *roomView) toggleRosterPanel() {
+	isOpen := !v.roomPanelOpen
+
+	var toggleLabel string
+	if isOpen {
+		toggleLabel = "Hide panel"
+	} else {
+		toggleLabel = "Show panel"
+	}
+	_ = v.panelToggle.SetProperty("label", toggleLabel)
+	v.panel.SetVisible(isOpen)
+	v.roomPanelOpen = isOpen
 }
 
 // startSpinner should be called from UI thread
@@ -252,4 +272,13 @@ func (v *roomView) showOccupantLeftRoom(nickname jid.Resource) {
 		v.addLineToChatText(i18n.Localf("%s left the room", nickname))
 	})
 
+}
+
+func (v *roomView) updateOccupantsInModel(occupants []*muc.Occupant) {
+	v.membersModel.Clear()
+	for _, o := range occupants {
+		iter := v.membersModel.Append()
+		_ = v.membersModel.SetValue(iter, 0, v.account.Account())
+		_ = v.membersModel.SetValue(iter, 1, o.Nick)
+	}
 }

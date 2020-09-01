@@ -6,7 +6,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -52,12 +51,30 @@ func (a *account) addOccupantToRoomRoster(from jid.Full, occupant jid.Full, affi
 		return
 	}
 
+	view.updateOccupantsInModel(room.Roster().AllOccupants())
 	view.onJoin <- joined
 }
 
-func (a *account) updateOccupantRoomEvent(ev events.MUCOccupantUpdated) {
-	//TODO: Implements the actions to do when a Occupant presence is received
-	a.log.Debug("updateOccupantRoomEvent")
+func (a *account) updateOccupantRoomEvent(from jid.Full, occupant jid.Full, affiliation, role string) {
+	room, err := a.roomForIdentity(from.Bare())
+	if err != nil {
+		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room")
+		return
+	}
+
+	view := getViewFromRoom(room)
+	_, _, err = room.Roster().UpdatePresence(from, "", affiliation, role, "", "", "Room Joined", occupant)
+
+	if err != nil {
+		a.log.WithFields(log.Fields{
+			"from":        from,
+			"occupant":    occupant,
+			"affiliation": affiliation,
+		}).Error("Error on trying to join a new occupant")
+		return
+	}
+
+	view.updateOccupantsInModel(room.Roster().AllOccupants())
 }
 
 func (a *account) onRoomNicknameConflict(from jid.Full) {

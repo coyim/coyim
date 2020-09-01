@@ -333,7 +333,7 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <signal name="clicked" handler="on_toggle_panel" swapped="no"/>
+                                        <signal name="clicked" handler="on_toggle_roster_panel" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

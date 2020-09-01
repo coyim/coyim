@@ -103,7 +103,8 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 
 	occupant := from.Resource()
 	room := from.Bare()
-	item := *stanza.MUCUser.Item
+	affiliation := stanza.MUCUser.Item.Affiliation
+	role := stanza.MUCUser.Item.Role
 	status := stanza.MUCUser.Status
 
 	isOwnPresence := userStatusContains(status, MUCStatusSelfPresence)
@@ -113,11 +114,8 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 
 	switch stanza.Type {
 	case "unavailable":
-		m.handleMUCUnavailablePresence(from, room, occupant, item, status)
+		m.handleMUCUnavailablePresence(from, room, occupant, affiliation, role, status)
 	case "":
-		affiliation := stanza.MUCUser.Item.Affiliation
-		role := stanza.MUCUser.Item.Role
-
 		if isOwnPresence {
 			ident := jid.ParseFull(stanza.MUCUser.Item.Jid)
 			m.mucOccupantJoined(from, room, occupant, ident, affiliation, role)
@@ -131,20 +129,20 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	}
 }
 
-func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant jid.Resource, item data.MUCUserItem, status []data.MUCUserStatus) {
+func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string, status []data.MUCUserStatus) {
 
 	switch {
 	case hasUserStatus(status):
 		// This handler sends an event to GUI when some user left the room
 		m.log.WithFields(log.Fields{
-			"from":             from,
-			"room":             room,
-			"occupant":         occupant,
-			"item.Affiliation": item.Affiliation,
-			"item.Role":        item.Role,
+			"from":        from,
+			"room":        room,
+			"occupant":    occupant,
+			"affiliation": affiliation,
+			"role":        role,
 		}).Debug("Parameters send to mucOccupantLeft")
 
-		m.mucOccupantLeft(from, room, occupant, item.Affiliation, item.Role)
+		m.mucOccupantLeft(from, room, occupant, affiliation, role)
 
 	case userStatusContains(status, MUCStatusBanned):
 		// We got banned

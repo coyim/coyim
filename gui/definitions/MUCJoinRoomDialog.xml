@@ -10,11 +10,10 @@
     <property name="gravity">center</property>
     <signal name="close" handler="on_close_window" swapped="no"/>
     <signal name="destroy" handler="on_close_window" swapped="no"/>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="layout">
+        <property name="margin_left">10</property>
+        <property name="margin_right">10</property>
         <property name="orientation">vertical</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="buttons">
@@ -119,6 +118,7 @@
             <child>
               <object class="GtkGrid" id="controls">
                 <property name="visible">True</property>
+                <property name="valign">center</property>
                 <property name="margin_top">10</property>
                 <property name="margin_bottom">10</property>
                 <property name="row_spacing">6</property>

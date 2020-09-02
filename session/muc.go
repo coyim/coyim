@@ -138,14 +138,13 @@ func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, 
 
 	switch {
 	case hasUserStatus(status):
-		// This handler sends an event to GUI when some user left the room
 		m.log.WithFields(log.Fields{
 			"from":        from,
 			"room":        room,
 			"occupant":    occupant,
 			"affiliation": affiliation,
 			"role":        role,
-		}).Debug("Parameters send to mucOccupantLeft")
+		}).Debug("Parameters sent when someone leaves a room")
 
 		m.mucOccupantLeft(from, room, occupant, affiliation, role)
 

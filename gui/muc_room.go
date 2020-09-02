@@ -16,13 +16,12 @@ type roomView struct {
 	builder *builder
 	u       *gtkUI
 
-	log                 coylog.Logger
-	account             *account
-	jid                 jid.Bare
-	onJoin              chan bool
-	lastError           error
-	lastErrorMessage    string
-	roomRosterPanelOpen bool
+	log              coylog.Logger
+	account          *account
+	jid              jid.Bare
+	onJoin           chan bool
+	lastError        error
+	lastErrorMessage string
 	sync.RWMutex
 
 	window           gtki.Window      `gtk-widget:"roomWindow"`
@@ -35,15 +34,15 @@ type roomView struct {
 	spinnerJoinView  gtki.Spinner     `gtk-widget:"joinSpinner"`
 	notificationArea gtki.Box         `gtk-widget:"boxNotificationArea"`
 
-	errorNotif *errorNotification
+	errorNotif   *errorNotification
+	notification gtki.InfoBar
 
 	boxRoomView        gtki.Box        `gtk-widget:"boxRoomView"`
 	roomChatTextBuffer gtki.TextBuffer `gtk-widget:"roomChatTextBuffer"`
-	panel              gtki.Box        `gtk-widget:"panel"`
+	rosterPanel        gtki.Box        `gtk-widget:"panel"`
 	panelToggle        gtki.Button     `gtk-widget:"panel-toggle"`
 	membersModel       gtki.ListStore  `gtk-widget:"room-members-model"`
 	membersView        gtki.TreeView   `gtk-widget:"room-members-tree"`
-	notification       gtki.InfoBar
 }
 
 func (v *roomView) clearErrors() {
@@ -126,17 +125,14 @@ func (v *roomView) togglePanelView() {
 }
 
 func (v *roomView) toggleRosterPanel() {
-	isOpen := !v.roomRosterPanelOpen
-
-	var toggleLabel string
-	if isOpen {
-		toggleLabel = i18n.Local("Hide panel")
-	} else {
-		toggleLabel = i18n.Local("Show panel")
+	iv := v.rosterPanel.IsVisible()
+	v.rosterPanel.SetVisible(!iv)
+	if !iv {
+		v.panelToggle.SetProperty("label", i18n.Local("Hide panel"))
+		return
 	}
-	_ = v.panelToggle.SetProperty("label", toggleLabel)
-	v.panel.SetVisible(isOpen)
-	v.roomRosterPanelOpen = isOpen
+
+	v.panelToggle.SetProperty("label", i18n.Local("Show panel"))
 }
 
 // startSpinner should be called from UI thread

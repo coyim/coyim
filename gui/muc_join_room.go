@@ -274,6 +274,14 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 	return view
 }
 
+func (v *mucJoinRoomView) isValidRoomName(name string) bool {
+	bare, isValid := jid.TryParseBare(name)
+	if !isValid {
+		return false
+	}
+	return jid.NewLocal(bare.Local().String()).Valid() && jid.NewDomain(bare.Host().String()).Valid()
+}
+
 func (v *mucJoinRoomView) disableJoinFields() {
 	v.roomNameEntry.SetSensitive(false)
 	v.chatServiceEntry.SetSensitive(false)

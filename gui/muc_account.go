@@ -70,7 +70,7 @@ func (a *account) updateOccupantRoomEvent(from jid.Full, occupant jid.Full, affi
 			"from":        from,
 			"occupant":    occupant,
 			"affiliation": affiliation,
-		}).Error("Error on trying to join a new occupant")
+		}).WithError(err).Error("Error on trying to join a new occupant")
 		return
 	}
 

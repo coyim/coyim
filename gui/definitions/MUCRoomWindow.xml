@@ -666,7 +666,6 @@
                                                 <child>
                                                   <object class="GtkCellRendererPixbuf" id="icon-column-rendered"/>
                                                   <attributes>
-                                                    <attribute name="cell-background">4</attribute>
                                                     <attribute name="pixbuf">0</attribute>
                                                   </attributes>
                                                 </child>

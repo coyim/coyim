@@ -16,13 +16,13 @@ type roomView struct {
 	builder *builder
 	u       *gtkUI
 
-	log              coylog.Logger
-	account          *account
-	jid              jid.Bare
-	onJoin           chan bool
-	lastError        error
-	lastErrorMessage string
-	roomPanelOpen    bool
+	log                 coylog.Logger
+	account             *account
+	jid                 jid.Bare
+	onJoin              chan bool
+	lastError           error
+	lastErrorMessage    string
+	roomRosterPanelOpen bool
 	sync.RWMutex
 
 	window           gtki.Window      `gtk-widget:"roomWindow"`
@@ -126,7 +126,7 @@ func (v *roomView) togglePanelView() {
 }
 
 func (v *roomView) toggleRosterPanel() {
-	isOpen := !v.roomPanelOpen
+	isOpen := !v.roomRosterPanelOpen
 
 	var toggleLabel string
 	if isOpen {
@@ -136,7 +136,7 @@ func (v *roomView) toggleRosterPanel() {
 	}
 	_ = v.panelToggle.SetProperty("label", toggleLabel)
 	v.panel.SetVisible(isOpen)
-	v.roomPanelOpen = isOpen
+	v.roomRosterPanelOpen = isOpen
 }
 
 // startSpinner should be called from UI thread

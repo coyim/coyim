@@ -15,7 +15,6 @@ type mucJoinRoomView struct {
 	dialog           gtki.Dialog  `gtk-widget:"join-chat-dialog"`
 	roomNameEntry    gtki.Entry   `gtk-widget:"room-name-entry"`
 	chatServiceEntry gtki.Entry   `gtk-widget:"chat-service-entry"`
-	nicknameEntry    gtki.Entry   `gtk-widget:"nickname-entry"`
 	joinButton       gtki.Button  `gtk-widget:"join-button"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
 	notificationArea gtki.Box     `gtk-widget:"box-notification-area"`
@@ -55,9 +54,8 @@ func (v *mucJoinRoomView) typedRoomName() string {
 func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 	roomName, _ := v.roomNameEntry.GetText()
 	chatServerName, _ := v.chatServiceEntry.GetText()
-	nickname, _ := v.nicknameEntry.GetText()
 
-	hasAllValues := len(roomName) != 0 && len(chatServerName) != 0 && len(nickname) != 0 && v.ac.currentAccount() != nil
+	hasAllValues := len(roomName) != 0 && len(chatServerName) != 0 && v.ac.currentAccount() != nil
 	v.joinButton.SetSensitive(hasAllValues)
 }
 
@@ -103,11 +101,10 @@ func (v *mucJoinRoomView) onServiceUnavailable(a *account, ident jid.Bare) {
 }
 
 type mucJoinRoomContext struct {
-	a        *account
-	v        *mucJoinRoomView
-	ident    jid.Bare
-	nickname jid.Resource
-	done     func()
+	a     *account
+	v     *mucJoinRoomView
+	ident jid.Bare
+	done  func()
 }
 
 func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed bool) {
@@ -153,7 +150,7 @@ func (v *mucJoinRoomView) log() coylog.Logger {
 	return v.u.log
 }
 
-func (v *mucJoinRoomView) fullRoomBareAfterValidatingIt() (jid.Full, bool) {
+func (v *mucJoinRoomView) fullRoomBareAfterValidatingIt() (jid.Bare, bool) {
 	roomName, err := v.roomNameEntry.GetText()
 	if err != nil {
 		v.log().WithField("name", roomName).Error("Trying to join a room with an invalid room name")
@@ -182,21 +179,7 @@ func (v *mucJoinRoomView) fullRoomBareAfterValidatingIt() (jid.Full, bool) {
 		return nil, false
 	}
 
-	nickName, err := v.chatServiceEntry.GetText()
-	if err != nil {
-		v.log().WithField("domain", nickName).Error("Something went wrong while trying to join the room")
-		v.notifyOnError(i18n.Local("Could not get the nickname, please try again."))
-		return nil, false
-	}
-
-	resource := jid.NewResource(nickName)
-	if !resource.Valid() {
-		v.log().WithField("resource", nickName).Error("Trying to join a room with an invalid resource")
-		v.notifyOnError(i18n.Local("You must provide a valid server nickname."))
-		return nil, false
-	}
-
-	return jid.NewFull(local, domain, resource), true
+	return jid.NewBare(local, domain), true
 }
 
 func (v *mucJoinRoomView) tryJoinRoom(done func()) {
@@ -213,11 +196,10 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 	}
 
 	c := &mucJoinRoomContext{
-		a:        ca,
-		v:        v,
-		ident:    ident.Bare(),
-		nickname: ident.Resource(),
-		done:     done,
+		a:     ca,
+		v:     v,
+		ident: ident,
+		done:  done,
 	}
 
 	c.exec()
@@ -285,7 +267,6 @@ func (v *mucJoinRoomView) isValidRoomName(name string) bool {
 func (v *mucJoinRoomView) disableJoinFields() {
 	v.roomNameEntry.SetSensitive(false)
 	v.chatServiceEntry.SetSensitive(false)
-	v.nicknameEntry.SetSensitive(false)
 	v.joinButton.SetSensitive(false)
 	v.ac.disableAccountInput()
 }
@@ -293,7 +274,6 @@ func (v *mucJoinRoomView) disableJoinFields() {
 func (v *mucJoinRoomView) enableJoinFields() {
 	v.roomNameEntry.SetSensitive(true)
 	v.chatServiceEntry.SetSensitive(true)
-	v.nicknameEntry.SetSensitive(true)
 	v.joinButton.SetSensitive(true)
 	v.ac.enableAccountInput()
 }

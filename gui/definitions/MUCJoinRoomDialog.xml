@@ -1,29 +1,42 @@
 <interface>
-  <object class="GtkDialog" id="join-room">
-    <property name="can_focus">False</property>
+  <object class="GtkDialog" id="join-chat-dialog">
+    <property name="width_request">480</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Join a chat room</property>
     <property name="resizable">False</property>
     <property name="window_position">center</property>
-    <property name="default_width">400</property>
+    <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <signal name="close" handler="on_close_window" swapped="no"/>
     <signal name="destroy" handler="on_close_window" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
-      <object class="GtkBox" id="VBox">
-        <property name="can_focus">False</property>
+      <object class="GtkBox" id="layout">
         <property name="orientation">vertical</property>
-        <property name="spacing">6</property>
         <child internal-child="action_area">
-          <object class="GtkButtonBox" id="boxButtons">
+          <object class="GtkButtonBox" id="buttons">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkButton" id="cancelButton">
+              <object class="GtkSpinner" id="spinner">
+                <property name="visible">True</property>
+                <property name="halign">end</property>
+                <property name="valign">center</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="pack_type">end</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="cancel-button">
                 <property name="label" translatable="yes">_Cancel</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_underline">True</property>
                 <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
@@ -31,15 +44,14 @@
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="joinButton">
+              <object class="GtkButton" id="join-button">
                 <property name="label" translatable="yes">_Join</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_underline">True</property>
                 <signal name="clicked" handler="on_join_clicked" swapped="no"/>
@@ -47,7 +59,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -58,19 +70,32 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="boxControls">
+          <object class="GtkBox" id="content">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
             <property name="valign">center</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
             <property name="margin_top">5</property>
             <property name="margin_bottom">5</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
             <child>
-              <object class="GtkBox" id="boxNotificationArea">
-                <property name="can_focus">False</property>
-                <property name="margin_bottom">31</property>
+              <object class="GtkBox">
+                <property name="visible">True</property>
                 <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="intro-label">
+                    <property name="visible">True</property>
+                    <property name="margin_bottom">10</property>
+                    <property name="label" translatable="yes">Please provide the following information about the room you want to join to.</property>
+                    <property name="wrap">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -79,22 +104,31 @@
               </packing>
             </child>
             <child>
-              <object class="GtkGrid" id="boxControl">
+              <object class="GtkBox" id="box-notification-area">
+                <property name="orientation">vertical</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkGrid" id="controls">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
-                <property name="margin_top">5</property>
-                <property name="margin_bottom">5</property>
-                <property name="row_spacing">5</property>
-                <property name="column_spacing">5</property>
+                <property name="margin_top">10</property>
+                <property name="margin_bottom">10</property>
+                <property name="row_spacing">6</property>
+                <property name="column_spacing">12</property>
                 <property name="row_homogeneous">True</property>
                 <child>
                   <object class="GtkLabel" id="roomNameLabel">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">Room Name:</property>
+                    <property name="label" translatable="yes">Room</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -102,10 +136,10 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="roomNameEntry">
+                  <object class="GtkEntry" id="room-name-entry">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
+                    <property name="placeholder_text" translatable="yes">Enter the room name</property>
                     <signal name="changed" handler="on_roomname_changed" swapped="no"/>
                   </object>
                   <packing>
@@ -116,9 +150,8 @@
                 <child>
                   <object class="GtkLabel" id="accountLabel">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">Account:</property>
+                    <property name="label" translatable="yes">Account</property>
                     <property name="justify">right</property>
                   </object>
                   <packing>
@@ -129,7 +162,6 @@
                 <child>
                   <object class="GtkComboBox" id="accounts">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
                     <child>
                       <object class="GtkCellRendererText" id="account-name-rendered"/>
@@ -143,29 +175,59 @@
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkLabel" id="chatServiceLabel">
+                    <property name="visible">True</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Server</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="chat-service-entry">
+                    <property name="visible">True</property>
+                    <property name="placeholder_text" translatable="yes">Enter the server name</property>
+                    <signal name="changed" handler="on_chatService_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="nicknameLabel">
+                    <property name="visible">True</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Nickname</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="nickname-entry">
+                    <property name="visible">True</property>
+                    <signal name="changed" handler="on_nickName_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSpinner" id="spinner">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
                 <property name="position">2</property>
               </packing>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>

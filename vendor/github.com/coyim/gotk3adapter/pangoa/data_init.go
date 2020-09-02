@@ -13,4 +13,8 @@ func init() {
 	pangoi.UNDERLINE_DOUBLE = int(pango.UNDERLINE_DOUBLE)
 	pangoi.UNDERLINE_LOW = int(pango.UNDERLINE_LOW)
 	pangoi.UNDERLINE_ERROR = int(pango.UNDERLINE_ERROR)
+
+	pangoi.STYLE_NORMAL = int(pango.STYLE_NORMAL)
+    	pangoi.STYLE_OBLIQUE = int(pango.STYLE_OBLIQUE)
+    	pangoi.STYLE_ITALIC = int(pango.STYLE_ITALIC)
 }

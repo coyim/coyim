@@ -15,13 +15,16 @@
     <property name="resizable">False</property>
     <property name="window_position">center</property>
     <property name="destroy_with_parent">True</property>
-    <property name="type_hint">normal</property>
+    <property name="type_hint">dialog</property>
+    <property name="gravity">center</property>
     <signal name="close" handler="on_close_window" swapped="no"/>
     <signal name="destroy" handler="on_close_window" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="layout">
         <property name="visible">True</property>
         <property name="valign">center</property>
+        <property name="margin_left">10</property>
+        <property name="margin_right">10</property>
         <property name="orientation">vertical</property>
         <property name="spacing">6</property>
         <child internal-child="action_area">
@@ -89,8 +92,6 @@
         </child>
         <child>
           <object class="GtkBox" id="notification-area">
-            <property name="margin_left">5</property>
-            <property name="margin_right">5</property>
             <property name="margin_top">5</property>
             <property name="orientation">vertical</property>
           </object>
@@ -105,7 +106,7 @@
             <property name="visible">True</property>
             <property name="margin_start">10</property>
             <property name="margin_end">10</property>
-            <property name="margin_top">15</property>
+            <property name="margin_top">10</property>
             <property name="margin_bottom">10</property>
             <property name="row_spacing">12</property>
             <property name="column_spacing">6</property>

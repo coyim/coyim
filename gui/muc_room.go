@@ -25,24 +25,25 @@ type roomView struct {
 	roomPanelOpen    bool
 	sync.RWMutex
 
-	window             gtki.Window      `gtk-widget:"roomWindow"`
-	boxJoinRoomView    gtki.Box         `gtk-widget:"boxJoinRoomView"`
-	nicknameEntry      gtki.Entry       `gtk-widget:"nicknameEntry"`
-	passwordCheck      gtki.CheckButton `gtk-widget:"passwordCheck"`
-	passwordLabel      gtki.Label       `gtk-widget:"passwordLabel"`
-	passwordEntry      gtki.Entry       `gtk-widget:"passwordEntry"`
-	roomJoinButton     gtki.Button      `gtk-widget:"roomJoinButton"`
-	spinnerJoinView    gtki.Spinner     `gtk-widget:"joinSpinner"`
-	notificationArea   gtki.Box         `gtk-widget:"boxNotificationArea"`
-	boxRoomView        gtki.Box         `gtk-widget:"boxRoomView"`
-	roomChatTextBuffer gtki.TextBuffer  `gtk-widget:"roomChatTextBuffer"`
-	panel              gtki.Box         `gtk-widget:"panel"`
-	panelToggle        gtki.Button      `gtk-widget:"panel-toggle"`
-	membersModel       gtki.ListStore   `gtk-widget:"room-members-model"`
-	membersView        gtki.TreeView    `gtk-widget:"room-members-tree"`
-	notification       gtki.InfoBar
+	window           gtki.Window      `gtk-widget:"roomWindow"`
+	boxJoinRoomView  gtki.Box         `gtk-widget:"boxJoinRoomView"`
+	nicknameEntry    gtki.Entry       `gtk-widget:"nicknameEntry"`
+	passwordCheck    gtki.CheckButton `gtk-widget:"passwordCheck"`
+	passwordLabel    gtki.Label       `gtk-widget:"passwordLabel"`
+	passwordEntry    gtki.Entry       `gtk-widget:"passwordEntry"`
+	roomJoinButton   gtki.Button      `gtk-widget:"roomJoinButton"`
+	spinnerJoinView  gtki.Spinner     `gtk-widget:"joinSpinner"`
+	notificationArea gtki.Box         `gtk-widget:"boxNotificationArea"`
 
 	errorNotif *errorNotification
+
+	boxRoomView        gtki.Box        `gtk-widget:"boxRoomView"`
+	roomChatTextBuffer gtki.TextBuffer `gtk-widget:"roomChatTextBuffer"`
+	panel              gtki.Box        `gtk-widget:"panel"`
+	panelToggle        gtki.Button     `gtk-widget:"panel-toggle"`
+	membersModel       gtki.ListStore  `gtk-widget:"room-members-model"`
+	membersView        gtki.TreeView   `gtk-widget:"room-members-tree"`
+	notification       gtki.InfoBar
 }
 
 func (v *roomView) clearErrors() {
@@ -129,9 +130,9 @@ func (v *roomView) toggleRosterPanel() {
 
 	var toggleLabel string
 	if isOpen {
-		toggleLabel = "Hide panel"
+		toggleLabel = i18n.Local("Hide panel")
 	} else {
-		toggleLabel = "Show panel"
+		toggleLabel = i18n.Local("Show panel")
 	}
 	_ = v.panelToggle.SetProperty("label", toggleLabel)
 	v.panel.SetVisible(isOpen)
@@ -267,18 +268,18 @@ func (v *roomView) addLineToChatText(text string) {
 }
 
 func (v *roomView) showOccupantLeftRoom(nickname jid.Resource) {
-
 	doInUIThread(func() {
 		v.addLineToChatText(i18n.Localf("%s left the room", nickname))
 	})
-
 }
 
 func (v *roomView) updateOccupantsInModel(occupants []*muc.Occupant) {
-	v.membersModel.Clear()
+	doInUIThread(func() {
+		v.membersModel.Clear()
 	for _, o := range occupants {
 		iter := v.membersModel.Append()
 		_ = v.membersModel.SetValue(iter, 0, v.account.Account())
 		_ = v.membersModel.SetValue(iter, 1, o.Nick)
 	}
+	})
 }

@@ -276,10 +276,45 @@ func (v *roomView) showOccupantLeftRoom(nickname jid.Resource) {
 func (v *roomView) updateOccupantsInModel(occupants []*muc.Occupant) {
 	doInUIThread(func() {
 		v.membersModel.Clear()
-	for _, o := range occupants {
-		iter := v.membersModel.Append()
-		_ = v.membersModel.SetValue(iter, 0, v.account.Account())
-		_ = v.membersModel.SetValue(iter, 1, o.Nick)
-	}
+		for _, o := range occupants {
+			iter := v.membersModel.Append()
+			_ = v.membersModel.SetValue(iter, 0, v.getIconBaseOnVoice(o.Role).GetPixbuf())
+			_ = v.membersModel.SetValue(iter, 1, o.Nick)
+			_ = v.membersModel.SetValue(iter, 2, v.getAffiliationForRosterPanel(o.Affiliation))
+			_ = v.membersModel.SetValue(iter, 3, getRoleNameForTooltip(o.Role))
+		}
 	})
+}
+
+func getRoleNameForTooltip(r muc.Role) string {
+	switch r.Name() {
+	case muc.RoleNone:
+		return i18n.Local("Role: None")
+	case muc.RoleParticipant:
+		return i18n.Local("Role: Participant")
+	case muc.RoleVisitor:
+		return i18n.Local("Role: Visitor")
+	case muc.RoleModerator:
+		return i18n.Local("Role: Moderator")
+	default:
+		return ""
+	}
+}
+
+func (v *roomView) getAffiliationForRosterPanel(a muc.Affiliation) string {
+	switch a.Name() {
+	case muc.AffiliationAdmin:
+		return i18n.Local("Admin")
+	case muc.AffiliationOwner:
+		return i18n.Local("Owner")
+	default:
+		return ""
+	}
+}
+
+func (v *roomView) getIconBaseOnVoice(r muc.Role) Icon {
+	if r.HasVoice() {
+		return statusIcons["available"]
+	}
+	return statusIcons["offline"]
 }

@@ -12,6 +12,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	occupantRosterIconIndex int = iota
+	occupantRosterNicknameIndex
+	occupantRosterAffiliationIndex
+	occupantRosterTooltipIndex
+)
+
 type roomView struct {
 	builder *builder
 	u       *gtkUI
@@ -274,15 +281,14 @@ func (v *roomView) updateOccupantsInModel(occupants []*muc.Occupant) {
 		v.membersModel.Clear()
 		for _, o := range occupants {
 			iter := v.membersModel.Append()
-			_ = v.membersModel.SetValue(iter, 0, v.getIconBaseOnVoice(o.Role).GetPixbuf())
-			_ = v.membersModel.SetValue(iter, 1, o.Nick)
-			_ = v.membersModel.SetValue(iter, 2, v.getAffiliationForRosterPanel(o.Affiliation))
-			_ = v.membersModel.SetValue(iter, 3, getRoleNameForTooltip(o.Role))
+			_ = v.membersModel.SetValue(iter, occupantRosterIconIndex, v.getIconBaseOnVoice(o.Role).GetPixbuf())
+			_ = v.membersModel.SetValue(iter, occupantRosterNicknameIndex, o.Nick)
+			_ = v.membersModel.SetValue(iter, occupantRosterAffiliationIndex, v.getAffiliationForRosterPanel(o.Affiliation))
+			_ = v.membersModel.SetValue(iter, occupantRosterTooltipIndex, getLabelForOcuppantTooltipFrom(o.Role))
 		}
 	})
 }
-
-func getRoleNameForTooltip(r muc.Role) string {
+func getLabelForOcuppantTooltipFrom(r muc.Role) string {
 	switch r.Name() {
 	case muc.RoleNone:
 		return i18n.Local("Role: None")

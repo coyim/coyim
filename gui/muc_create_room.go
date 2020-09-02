@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"fmt"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -105,14 +103,6 @@ func (v *createMUCRoom) onCreateRoom() {
 	}
 
 	roomIdentity := jid.NewBare(local, domain)
-	// At this point we should have a valid local and domain, and
-	// `bare.Valid()` internally calls the `Valid` method for `local` and `domain`
-	// but I don't know, this is gives more safety to this code.
-	if !roomIdentity.Valid() {
-		v.u.log.WithField("identity", fmt.Sprintf("%s@%s", roomName, chatService)).Error("Trying to create a room with an invalid identity (bare)")
-		v.notifyOnError(i18n.Localf("The room identity \"%s\" is not valid.", roomIdentity.String()))
-		return
-	}
 
 	ca := v.ac.currentAccount()
 	if ca == nil {
@@ -204,19 +194,12 @@ func (v *createMUCRoom) onChatServiceChange() {
 }
 
 func (v *createMUCRoom) enableCreationIfConditionsAreMet() {
-	hasAllValues := false
-
-	defer func() {
-		v.createButton.SetSensitive(hasAllValues)
-	}()
-
 	roomName, _ := v.roomEntry.GetText()
 	chatService, _ := v.chatServiceEntry.GetText()
 	currentAccount := v.ac.currentAccount()
 
-	if len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil {
-		hasAllValues = true
-	}
+	hasAllValues := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
+	v.createButton.SetSensitive(hasAllValues)
 }
 
 func (v *createMUCRoom) notifyOnError(err string) {

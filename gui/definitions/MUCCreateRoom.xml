@@ -18,9 +18,6 @@
     <property name="type_hint">normal</property>
     <signal name="close" handler="on_close_window" swapped="no"/>
     <signal name="destroy" handler="on_close_window" swapped="no"/>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="layout">
         <property name="visible">True</property>

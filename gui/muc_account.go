@@ -119,6 +119,7 @@ func (a *account) removeOccupantFromRoomRoster(from jid.Full, occupant jid.Full,
 
 	if left {
 		view.showOccupantLeftRoom(occupant.Resource())
+		view.updateOccupantsInModel(room.Roster().AllOccupants())
 	}
 
 }

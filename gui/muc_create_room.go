@@ -70,6 +70,11 @@ func (v *createMUCRoom) disableOrEnableFields(f bool) {
 	v.account.SetSensitive(f)
 	v.roomEntry.SetSensitive(f)
 	v.chatServices.SetSensitive(f)
+	if f {
+		v.ac.disableAccountInput()
+	} else {
+		v.ac.enableAccountInput()
+	}
 }
 
 func (v *createMUCRoom) onCreateRoom() {

@@ -75,7 +75,7 @@ func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare) {
 
 func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
 	doInUIThread(func() {
-		v.notifyOnError(i18n.Local("The room doesn't exist othat server."))
+		v.notifyOnError(i18n.Local("The room doesn't exist on that server."))
 		v.enableJoinFields()
 		v.hideSpinner()
 	})

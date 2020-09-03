@@ -1,5 +1,4 @@
 <interface>
-  <object class="GtkTextBuffer" id="messages"/>
   <object class="GtkBox" id="roomConversation">
     <property name="visible">True</property>
     <property name="hexpand">True</property>
@@ -13,8 +12,8 @@
           <object class="GtkScrolledWindow">
             <property name="visible">True</property>
             <child>
-              <object class="GtkTextView">
-                <property name="visible">True</property>
+              <object class="GtkTextView" id="roomChatTextView">
+                <property name="visible">True</property
                 <property name="pixels_above_lines">2</property>
                 <property name="pixels_inside_wrap">1</property>
                 <property name="editable">False</property>
@@ -24,7 +23,6 @@
                 <property name="top_margin">10</property>
                 <property name="bottom_margin">10</property>
                 <property name="cursor_visible">False</property>
-                <property name="buffer">messages</property>
                 <property name="accepts_tab">False</property>
               </object>
             </child>

@@ -44,7 +44,7 @@
             </child>
             <child>
               <object class="GtkButton" id="join-button">
-                <property name="label" translatable="yes">_Join</property>
+                <property name="label" translatable="yes">_Continue</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="receives_default">True</property>
@@ -74,34 +74,6 @@
             <property name="margin_bottom">5</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkLabel" id="intro-label">
-                    <property name="visible">True</property>
-                    <property name="halign">start</property>
-                    <property name="margin_bottom">10</property>
-                    <property name="label" translatable="yes">Please provide the following information about the room you want to join to.</property>
-                    <property name="wrap">True</property>
-                    <property name="wrap_mode">word-char</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkBox" id="box-notification-area">
                 <property name="orientation">vertical</property>
@@ -179,7 +151,7 @@
                   <object class="GtkLabel" id="chatServiceLabel">
                     <property name="visible">True</property>
                     <property name="halign">end</property>
-                    <property name="label" translatable="yes">Server</property>
+                    <property name="label" translatable="yes">Service</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -189,7 +161,7 @@
                 <child>
                   <object class="GtkEntry" id="chat-service-entry">
                     <property name="visible">True</property>
-                    <property name="placeholder_text" translatable="yes">Enter the server name</property>
+                    <property name="placeholder_text" translatable="yes">Enter the service name</property>
                     <signal name="changed" handler="on_chatService_changed" swapped="no"/>
                   </object>
                   <packing>

@@ -52,10 +52,8 @@ func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
 	return view
 }
 
-func (v *roomView) setTittle(r string) {
-	doInUIThread(func() {
-		v.window.SetTitle(r)
-	})
+func (v *roomView) setTitle(r string) {
+	v.window.SetTitle(r)
 }
 
 func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
@@ -98,7 +96,7 @@ func (v *roomView) initUIBuilder() {
 }
 
 func (v *roomView) initDefaults() {
-	v.setTittle(v.identity.String())
+	v.setTitle(v.identity.String())
 }
 
 func (v *roomView) onShowWindow() {}

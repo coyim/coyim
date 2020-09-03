@@ -134,7 +134,7 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
 			if err != nil {
 				ca.log.WithError(err).Error("Error trying to validate if room exists")
 				doInUIThread(func() {
-					v.errorBox.ShowMessage(i18n.Local("Could not connect to the server, please verify that the server exists or try again later."))
+					v.errorBox.ShowMessage(i18n.Local("Couldn't connect to the server, please verify that it exists or try again later."))
 					v.hideSpinner()
 					v.disableOrEnableFields(true)
 				})
@@ -151,7 +151,7 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
 			}
 
 			doInUIThread(func() {
-				v.errorBox.ShowMessage(i18n.Local("The room already exists."))
+				v.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
 				v.hideSpinner()
 				v.disableOrEnableFields(true)
 			})

@@ -3,123 +3,140 @@ package gui
 import (
 	"errors"
 
-	log "github.com/sirupsen/logrus"
-
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
+	log "github.com/sirupsen/logrus"
 )
 
-func (a *account) roomForIdentity(ident jid.Bare) (*muc.Room, error) {
-	room, exists := a.roomManager.GetRoom(ident)
-	if !exists {
-		return nil, errors.New("the room doesn't exist")
-	}
+func (a *account) getRoomFromManager(ident jid.Bare) (*muc.Room, bool) {
+	return a.roomManager.GetRoom(ident)
+}
 
+func (a *account) getRoomByIdentity(ident jid.Bare) (*muc.Room, error) {
+	room, exists := a.getRoomFromManager(ident)
+	if !exists {
+		return nil, newRoomNotExistsError(ident)
+	}
 	return room, nil
 }
 
-func (a *account) roomViewFor(ident jid.Bare) (*roomView, error) {
-	room, err := a.roomForIdentity(ident)
+// getRoomOrLogIt will return a specific room based on it's bare.
+// If the room doesn't exists this method will return false
+func (a *account) getRoomOrLogIt(ident jid.Bare) (*muc.Room, bool) {
+	room, err := a.getRoomByIdentity(ident)
 	if err != nil {
-		a.log.WithError(err).Error("An error occurred trying to get the room")
-		return nil, err
+		a.log.WithField("room", ident).WithError(err).Error("An error occurred trying to get the room")
+		return nil, false
 	}
+	return room, true
+}
 
+func (a *account) getRoomViewByIdentity(ident jid.Bare) (*roomView, error) {
+	room, ok := a.getRoomOrLogIt(ident)
+	if ok {
+		return nil, errors.New("the room doesn't exist")
+	}
 	return getViewFromRoom(room), nil
 }
 
-func (a *account) addOccupantToRoomRoster(from jid.Full, occupant jid.Full, affiliation, role, status string) {
-	room, err := a.roomForIdentity(from.Bare())
+// getRoomViewOrLogIt will return a specific room view based on it's bare.
+// If the view doesn't exists this method will return false
+func (a *account) getRoomViewOrLogIt(ident jid.Full) (*roomView, bool) {
+	view, err := a.getRoomViewByIdentity(ident.Bare())
 	if err != nil {
-		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room")
+		a.log.WithField("room", ident).WithError(err).Error("An error occurred trying to get the room view")
+		return nil, false
+	}
+	return view, true
+}
+
+func (a *account) onRoomNicknameConflict(from jid.Full) {
+	view, ok := a.getRoomViewOrLogIt(from)
+	if ok {
+		view.onNicknameConflictReceived(from)
+	}
+}
+
+func (a *account) onRoomRegistrationRequired(from jid.Full) {
+	view, ok := a.getRoomViewOrLogIt(from)
+	if ok {
+		view.onRegistrationRequiredReceived(from)
+	}
+}
+
+func (a *account) onRoomOccupantJoined(from jid.Full, ident jid.Full, affiliation, role, status string) {
+	room, ok := a.getRoomOrLogIt(from.Bare())
+	if !ok {
 		return
 	}
 
 	view := getViewFromRoom(room)
 
-	joined, _, err := room.Roster().UpdatePresence(from, "", affiliation, role, "", status, "Room Joined", occupant)
+	roster := room.Roster()
+	joined, _, err := roster.UpdatePresence(from, "", affiliation, role, "", status, "Occupant joined", ident)
 	if err != nil {
 		a.log.WithFields(log.Fields{
-			"occupant":    occupant,
+			"from":        from,
+			"occupant":    ident,
 			"affiliation": affiliation,
 			"role":        role,
 			"status":      status,
 		}).WithError(err).Error("An error occurred trying to add the occupant to the roster")
-		view.lastErrorMessage = err.Error()
-		view.onJoin <- false
+
+		view.onRoomOccupantErrorReceived(from)
 		return
 	}
 
-	view.updateOccupantsInModel(room.Roster().AllOccupants())
-	view.onJoin <- joined
+	// TODO: we are receiving a `join the room` event, so,
+	// if !joined we should log it
+	if joined {
+		view.onRoomOccupantJoinedReceived(ident.Resource(), roster.AllOccupants())
+	}
 }
 
-func (a *account) updateOccupantRoomEvent(from jid.Full, occupant jid.Full, affiliation, role string) {
-	room, err := a.roomForIdentity(from.Bare())
-	if err != nil {
-		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room")
+func (a *account) onRoomOccupantUpdated(from jid.Full, occupant jid.Full, affiliation, role string) {
+	room, ok := a.getRoomOrLogIt(from.Bare())
+	if !ok {
 		return
 	}
 
-	view := getViewFromRoom(room)
-	_, _, err = room.Roster().UpdatePresence(from, "", affiliation, role, "", "", "Room Joined", occupant)
-
+	roster := room.Roster()
+	_, _, err := roster.UpdatePresence(from, "", affiliation, role, "", "", "Occupant updated", occupant)
 	if err != nil {
 		a.log.WithFields(log.Fields{
 			"from":        from,
 			"occupant":    occupant,
 			"affiliation": affiliation,
-		}).WithError(err).Error("Error on trying to join a new occupant")
-		return
-	}
-
-	view.updateOccupantsInModel(room.Roster().AllOccupants())
-}
-
-func (a *account) onRoomNicknameConflict(from jid.Full) {
-	view, err := a.roomViewFor(from.Bare())
-	if err != nil {
-		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room view")
-		return
-	}
-
-	view.lastErrorMessage = i18n.Localf("Can't join the room using \"%s\" because the nickname is already being used.", from.Resource())
-	view.onJoin <- false
-}
-
-func (a *account) onErrorRegistrationRequired(from jid.Full) {
-	view, err := a.roomViewFor(from.Bare())
-	if err != nil {
-		a.log.WithError(err).Error("Error getting the room view")
-		return
-	}
-	view.lastErrorMessage = i18n.Local("Sorry, this room only allows registered members")
-	view.onJoin <- false
-}
-
-func (a *account) removeOccupantFromRoomRoster(from jid.Full, occupant jid.Full, affiliation, role string) {
-	room, err := a.roomForIdentity(from.Bare())
-	if err != nil {
-		a.log.WithField("from", from).WithError(err).Error("An error occurred trying to get the room")
+		}).WithError(err).Error("Error on trying to update the occupant status in the roster")
 		return
 	}
 
 	view := getViewFromRoom(room)
+	view.onRoomOccupantUpdateReceived(roster.AllOccupants())
+}
 
-	_, left, err := room.Roster().UpdatePresence(from, "unavailable", affiliation, role, "", "unavailable", "Room left", occupant)
+func (a *account) onRoomOccupantLeftTheRoom(from jid.Full, ident jid.Full, affiliation, role string) {
+	room, ok := a.getRoomOrLogIt(from.Bare())
+	if !ok {
+		return
+	}
+
+	roster := room.Roster()
+	_, left, err := roster.UpdatePresence(from, "unavailable", affiliation, role, "", "unavailable", "Occupant left the room", ident)
 	if err != nil {
 		a.log.WithFields(log.Fields{
-			"occupant":    occupant,
+			"from":        from,
+			"occupant":    ident,
 			"affiliation": affiliation,
 			"role":        role,
 		}).WithError(err).Error("An error occurred trying to remove the occupant from the roster")
 		return
 	}
 
+	// TODO: we are receiving a `left the room` event, so,
+	// if !left we should log it
 	if left {
-		view.showOccupantLeftRoom(occupant.Resource())
-		view.updateOccupantsInModel(room.Roster().AllOccupants())
+		view := getViewFromRoom(room)
+		view.onRoomOccupantLeftTheRoomReceived(ident.Resource(), roster.AllOccupants())
 	}
-
 }

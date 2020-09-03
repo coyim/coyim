@@ -11,11 +11,11 @@ func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
 
 	switch t := ev.Info.(type) {
 	case events.MUCOccupantUpdated:
-		u.handleMUCUpdatedEvent(from, t, a)
+		u.handlMUCOccupantUpdatedEvent(from, t, a)
 	case events.MUCOccupantJoined:
-		u.handleMUCJoinedEvent(from, t, a)
+		u.handleMUCOccupantJoinedEvent(from, t, a)
 	case events.MUCOccupantLeft:
-		u.handleMUCOccupantLeft(from, t, a)
+		u.handleMUCOccupantLeftEvent(from, t, a)
 	case events.MUCError:
 		u.handleOneMUCErrorEvent(from, t, a)
 	default:
@@ -26,28 +26,35 @@ func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
 	}
 }
 
-func (u *gtkUI) handleMUCUpdatedEvent(from jid.Full, ev events.MUCOccupantUpdated, a *account) {
-	a.updateOccupantRoomEvent(from, ev.Jid, ev.Affiliation, ev.Role)
-}
-
-func (u *gtkUI) handleMUCJoinedEvent(from jid.Full, ev events.MUCOccupantJoined, a *account) {
+func (u *gtkUI) handleMUCOccupantJoinedEvent(from jid.Full, ev events.MUCOccupantJoined, a *account) {
 	a.log.WithFields(log.Fields{
 		"from":        ev.From,
 		"nickname":    ev.Nickname,
 		"affiliation": ev.Affiliation,
 		"role":        ev.Role,
-	}).Debug("Room Joined event received")
+	}).Debug("Room occupant joined event received")
 
-	a.addOccupantToRoomRoster(from, ev.Jid, ev.Affiliation, ev.Role, ev.Status)
+	a.onRoomOccupantJoined(from, ev.Jid, ev.Affiliation, ev.Role, ev.Status)
 }
 
-func (u *gtkUI) handleMUCOccupantLeft(from jid.Full, ev events.MUCOccupantLeft, a *account) {
+func (u *gtkUI) handlMUCOccupantUpdatedEvent(from jid.Full, ev events.MUCOccupantUpdated, a *account) {
 	a.log.WithFields(log.Fields{
 		"from":        ev.From,
 		"nickname":    ev.Nickname,
 		"affiliation": ev.Affiliation,
 		"role":        ev.Role,
-	}).Debug("Occupant left the room")
+	}).Debug("Room occupant presence updated event received")
 
-	a.removeOccupantFromRoomRoster(from, ev.Jid, ev.Affiliation, ev.Role)
+	a.onRoomOccupantUpdated(from, ev.Jid, ev.Affiliation, ev.Role)
+}
+
+func (u *gtkUI) handleMUCOccupantLeftEvent(from jid.Full, ev events.MUCOccupantLeft, a *account) {
+	a.log.WithFields(log.Fields{
+		"from":        ev.From,
+		"nickname":    ev.Nickname,
+		"affiliation": ev.Affiliation,
+		"role":        ev.Role,
+	}).Debug("Occupant left the room event received")
+
+	a.onRoomOccupantLeftTheRoom(from, ev.Jid, ev.Affiliation, ev.Role)
 }

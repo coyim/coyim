@@ -175,10 +175,9 @@ func (s *SessionSuite) Test_WatchStanzas_handlesStreamError_withText(c *C) {
 
 	sess.watchStanzas()
 
-	c.Assert(len(hook.Entries), Equals, 2)
-	c.Assert(hook.LastEntry().Level, Equals, log.ErrorLevel)
-	c.Assert(hook.LastEntry().Message, Equals, "Exiting in response to fatal error from server")
-	c.Assert(hook.LastEntry().Data["stanza"], Equals, "bad horse showed up")
+	e := checkLogHasAny(hook, log.ErrorLevel, "Exiting in response to fatal error from server")
+	c.Assert(e, Not(IsNil))
+	c.Assert(e.Data["stanza"], Equals, "bad horse showed up")
 }
 
 func checkLogHasAny(hook *test.Hook, level log.Level, message string) *log.Entry {

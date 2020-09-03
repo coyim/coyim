@@ -16,7 +16,5 @@ func newRoomViewToolbar() *roomViewToolbar {
 	builder := newBuilder("MUCRoomToolbar")
 	panicOnDevError(builder.bindObjects(t))
 
-	builder.ConnectSignals(map[string]interface{}{})
-
 	return t
 }

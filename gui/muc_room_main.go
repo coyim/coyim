@@ -37,8 +37,6 @@ func newRoomMainView(a *account, rid jid.Bare, main, panel, top, parent gtki.Box
 
 	m.log = a.log.WithField("room", m.ident)
 
-	builder.ConnectSignals(map[string]interface{}{})
-
 	m.roomBox.SetHExpand(true)
 	m.content.SetHExpand(true)
 

@@ -19,8 +19,6 @@ func newRoomViewConversation() *roomViewConversation {
 	builder := newBuilder("MUCRoomConversation")
 	panicOnDevError(builder.bindObjects(c))
 
-	builder.ConnectSignals(map[string]interface{}{})
-
 	return c
 }
 

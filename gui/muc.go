@@ -29,7 +29,7 @@ type nicknameError struct {
 }
 
 type registrationRequiredError struct {
-	room jid.Full
+	room jid.Bare
 }
 
 type roomNotExistsError struct {
@@ -54,7 +54,7 @@ func newNicknameConflictError(n jid.Resource) error {
 	}
 }
 
-func newRegistrationRequiredError(ident jid.Full) error {
+func newRegistrationRequiredError(ident jid.Bare) error {
 	return &registrationRequiredError{
 		room: ident,
 	}

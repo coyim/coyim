@@ -150,7 +150,7 @@ func (v *mucJoinRoomView) log() coylog.Logger {
 	return v.u.log
 }
 
-func (v *mucJoinRoomView) fullRoomBareAfterValidatingIt() (jid.Bare, bool) {
+func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 	roomName, err := v.roomNameEntry.GetText()
 	if err != nil {
 		v.log().WithField("name", roomName).Error("Trying to join a room with an invalid room name")
@@ -183,7 +183,7 @@ func (v *mucJoinRoomView) fullRoomBareAfterValidatingIt() (jid.Bare, bool) {
 }
 
 func (v *mucJoinRoomView) tryJoinRoom(done func()) {
-	ident, isValid := v.fullRoomBareAfterValidatingIt()
+	ident, isValid := v.validateFieldsAndGetBareIfOk()
 	if !isValid {
 		done()
 		return

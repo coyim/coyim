@@ -28,12 +28,40 @@ type nicknameError struct {
 	nickname jid.Resource
 }
 
+type registrationRequiredError struct {
+	room jid.Full
+}
+
+type roomNotExistsError struct {
+	ident jid.Bare
+}
+
 func (e *nicknameError) Error() string {
 	return fmt.Sprintf("the nickname \"%s\" is already being used", e.nickname)
+}
+
+func (e *registrationRequiredError) Error() string {
+	return fmt.Sprintf("the room \"%s\" only allows registered members", e.room)
+}
+
+func (e *roomNotExistsError) Error() string {
+	return fmt.Sprintf("the room \"%s\" doesn't exists", e.ident)
 }
 
 func newNicknameConflictError(n jid.Resource) error {
 	return &nicknameError{
 		nickname: n,
+	}
+}
+
+func newRegistrationRequiredError(ident jid.Full) error {
+	return &registrationRequiredError{
+		room: ident,
+	}
+}
+
+func newRoomNotExistsError(ident jid.Bare) error {
+	return &roomNotExistsError{
+		ident: ident,
 	}
 }

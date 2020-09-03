@@ -52,6 +52,12 @@ func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
 	return view
 }
 
+func (v *roomView) setTittle(r string) {
+	doInUIThread(func() {
+		v.window.SetTitle(r)
+	})
+}
+
 func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
 	room := muc.NewRoom(ident)
 	room.Opaque = u.newRoomView(a, ident)
@@ -91,7 +97,9 @@ func (v *roomView) initUIBuilder() {
 	})
 }
 
-func (v *roomView) initDefaults() {}
+func (v *roomView) initDefaults() {
+	v.setTittle(v.identity.String())
+}
 
 func (v *roomView) onShowWindow() {}
 

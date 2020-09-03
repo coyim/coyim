@@ -2,7 +2,6 @@
   <object class="GtkWindow" id="roomWindow">
     <property name="width_request">800</property>
     <property name="height_request">600</property>
-    <property name="title" translatable="yes">Room</property>
     <property name="window_position">center</property>
     <property name="gravity">center</property>
     <signal name="activate-default" handler="on_show_window" swapped="no"/>

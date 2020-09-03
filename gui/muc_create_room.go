@@ -17,10 +17,12 @@ type createMUCRoom struct {
 	chatServices     gtki.ComboBoxText `gtk-widget:"chat-services"`
 	chatServiceEntry gtki.Entry        `gtk-widget:"chat-service-entry"`
 	roomEntry        gtki.Entry        `gtk-widget:"room-name-entry"`
+	roomAutoJoin     gtki.CheckButton  `gtk-widget:"room-auto-join"`
 	spinner          gtki.Spinner      `gtk-widget:"spinner"`
 	cancelButton     gtki.Button       `gtk-widget:"cancel-button"`
 	createButton     gtki.Button       `gtk-widget:"create-button"`
 
+	autoJoin     bool
 	errorBox     *errorNotification
 	notification gtki.InfoBar
 
@@ -50,6 +52,7 @@ func (v *createMUCRoom) initUIBuilder() {
 		"on_cancel":                  v.dialog.Destroy,
 		"on_close_window":            v.onCloseWindow,
 		"on_roomName_change":         v.onRoomNameChange,
+		"on_roomAutoJoin_toggled":    v.onRoomAutoJoinChange,
 		"on_chatServiceEntry_change": v.onChatServiceChange,
 	})
 }
@@ -70,11 +73,18 @@ func (v *createMUCRoom) disableOrEnableFields(f bool) {
 	v.account.SetSensitive(f)
 	v.roomEntry.SetSensitive(f)
 	v.chatServices.SetSensitive(f)
+	v.roomAutoJoin.SetSensitive(f)
 	if f {
 		v.ac.enableAccountInput()
 	} else {
 		v.ac.disableAccountInput()
 	}
+}
+
+func (v *createMUCRoom) clearFields() {
+	// TODO: should we keep the service name or not?
+	v.roomEntry.SetText("")
+	v.enableCreationIfConditionsAreMet()
 }
 
 func (v *createMUCRoom) onCreateRoom() {
@@ -183,6 +193,16 @@ func (v *createMUCRoom) listenToRoomCreation(ca *account, ec <-chan error) bool 
 
 func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident jid.Bare) {
 	if created {
+		if !v.autoJoin {
+			doInUIThread(func() {
+				v.notifyOnError(i18n.Local("The room has been created."))
+				v.disableOrEnableFields(true)
+				v.hideSpinner()
+				v.clearFields()
+			})
+			return
+		}
+
 		doInUIThread(func() {
 			v.u.mucShowRoom(ca, ident)
 			v.dialog.Destroy()
@@ -192,6 +212,15 @@ func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident ji
 
 func (v *createMUCRoom) onRoomNameChange() {
 	v.enableCreationIfConditionsAreMet()
+}
+
+func (v *createMUCRoom) onRoomAutoJoinChange() {
+	v.autoJoin = v.roomAutoJoin.GetActive()
+	if v.autoJoin {
+		v.createButton.SetProperty("label", i18n.Local("Create Room & Join"))
+	} else {
+		v.createButton.SetProperty("label", i18n.Local("Create Room"))
+	}
 }
 
 func (v *createMUCRoom) onChatServiceChange() {

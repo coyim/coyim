@@ -23,7 +23,7 @@ type roomView struct {
 	toolbar *roomViewToolbar
 	roster  *roomViewRoster
 	conv    *roomViewConversation
-	join    *roomViewEnter
+	join    *roomViewJoin
 }
 
 func getViewFromRoom(r *muc.Room) *roomView {

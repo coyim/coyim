@@ -15,23 +15,6 @@
         <property name="valign">center</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkLabel" id="occupantDataLabel">
-            <property name="visible">True</property>
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <property name="margin_bottom">10</property>
-            <property name="label" translatable="yes">Please provide the following information to finish joining to the room</property>
-            <attributes>
-              <attribute name="weight" value="bold"/>
-            </attributes>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkBox" id="boxNotificationArea">
             <property name="orientation">vertical</property>
           </object>
@@ -78,19 +61,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="passwordEntry">
-                <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="hexpand">True</property>
-                <property name="visibility">False</property>
-                <signal name="changed" handler="on_password_changed" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkLabel" id="roomNameLabel">
                 <property name="visible">True</property>
                 <property name="halign">end</property>
@@ -109,19 +79,6 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkCheckButton" id="passwordCheck">
-                <property name="label" translatable="yes">Password</property>
-                <property name="visible">True</property>
-                <property name="receives_default">False</property>
-                <property name="draw_indicator">True</property>
-                <signal name="toggled" handler="on_password_checked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">2</property>
               </packing>
             </child>
           </object>
@@ -166,13 +123,13 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="enterButton">
-                <property name="label" translatable="yes">_Continue</property>
+              <object class="GtkButton" id="joinButton">
+                <property name="label" translatable="yes">_Join</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="receives_default">True</property>
                 <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_enter_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_joined_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>

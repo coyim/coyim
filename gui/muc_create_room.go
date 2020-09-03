@@ -106,14 +106,14 @@ func (v *createMUCRoom) onCreateRoom() {
 	chatService, err := v.chatServiceEntry.GetText()
 	if err != nil {
 		v.u.log.WithError(err).Error("Something went wrong while trying to create the room")
-		v.notifyOnError(i18n.Local("Could not get the server name, please try again."))
+		v.notifyOnError(i18n.Local("Could not get the service name, please try again."))
 		return
 	}
 
 	domain := jid.NewDomain(chatService)
 	if !domain.Valid() {
 		v.u.log.WithField("domain", chatService).Error("Trying to create a room with an invalid domain")
-		v.notifyOnError(i18n.Local("You must provide a valid server name."))
+		v.notifyOnError(i18n.Local("You must provide a valid service name."))
 		return
 	}
 
@@ -144,7 +144,7 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
 			if err != nil {
 				ca.log.WithError(err).Error("Error trying to validate if room exists")
 				doInUIThread(func() {
-					v.errorBox.ShowMessage(i18n.Local("Couldn't connect to the server, please verify that it exists or try again later."))
+					v.errorBox.ShowMessage(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
 					v.hideSpinner()
 					v.disableOrEnableFields(true)
 				})

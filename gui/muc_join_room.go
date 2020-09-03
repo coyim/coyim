@@ -53,9 +53,9 @@ func (v *mucJoinRoomView) typedRoomName() string {
 // enableJoinIfConditionsAreMet SHOULD be called from the UI thread
 func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 	roomName, _ := v.roomNameEntry.GetText()
-	chatServerName, _ := v.chatServiceEntry.GetText()
+	chatServiceName, _ := v.chatServiceEntry.GetText()
 
-	hasAllValues := len(roomName) != 0 && len(chatServerName) != 0 && v.ac.currentAccount() != nil
+	hasAllValues := len(roomName) != 0 && len(chatServiceName) != 0 && v.ac.currentAccount() != nil
 	v.joinButton.SetSensitive(hasAllValues)
 }
 
@@ -75,7 +75,7 @@ func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare) {
 
 func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
 	doInUIThread(func() {
-		v.notifyOnError(i18n.Local("The room doesn't exist on that server."))
+		v.notifyOnError(i18n.Local("The room doesn't exist on that service."))
 		v.enableJoinFields()
 		v.hideSpinner()
 	})
@@ -96,7 +96,7 @@ func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
 func (v *mucJoinRoomView) onServiceUnavailable(a *account, ident jid.Bare) {
 	doInUIThread(func() {
 		v.hideSpinner()
-		v.notifyOnError(i18n.Local("We can't get access to the server, please check your Internet connection or make sure the server exists."))
+		v.notifyOnError(i18n.Local("We can't get access to the service, please check your Internet connection or make sure the service exists."))
 	})
 	a.log.WithField("room", ident).Warn("An error ocurred trying to find the room")
 }
@@ -169,14 +169,14 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 	chatServiceName, err := v.chatServiceEntry.GetText()
 	if err != nil {
 		v.log().WithError(err).Error("Something went wrong while trying to join the room")
-		v.notifyOnError(i18n.Local("Could not get the server name, please try again."))
+		v.notifyOnError(i18n.Local("Could not get the service name, please try again."))
 		return nil, false
 	}
 
 	domain := jid.NewDomain(chatServiceName)
 	if !domain.Valid() {
 		v.log().WithField("domain", chatServiceName).Error("Trying to join a room with an invalid domain")
-		v.notifyOnError(i18n.Local("You must provide a valid server name."))
+		v.notifyOnError(i18n.Local("You must provide a valid service name."))
 		return nil, false
 	}
 

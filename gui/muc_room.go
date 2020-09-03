@@ -1,67 +1,83 @@
 package gui
 
 import (
-	"fmt"
-	"sync"
-
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
-	log "github.com/sirupsen/logrus"
-)
-
-const (
-	occupantRosterIconIndex int = iota
-	occupantRosterNicknameIndex
-	occupantRosterAffiliationIndex
-	occupantRosterTooltipIndex
 )
 
 type roomView struct {
-	builder *builder
 	u       *gtkUI
+	account *account
+	builder *builder
 
-	log              coylog.Logger
-	account          *account
-	jid              jid.Bare
-	onJoin           chan bool
-	lastError        error
-	lastErrorMessage string
-	sync.RWMutex
+	log      coylog.Logger
+	identity jid.Bare
+	joined   bool
 
-	window           gtki.Window      `gtk-widget:"roomWindow"`
-	boxJoinRoomView  gtki.Box         `gtk-widget:"boxJoinRoomView"`
-	nicknameEntry    gtki.Entry       `gtk-widget:"nicknameEntry"`
-	passwordCheck    gtki.CheckButton `gtk-widget:"passwordCheck"`
-	passwordLabel    gtki.Label       `gtk-widget:"passwordLabel"`
-	passwordEntry    gtki.Entry       `gtk-widget:"passwordEntry"`
-	roomJoinButton   gtki.Button      `gtk-widget:"roomJoinButton"`
-	spinnerJoinView  gtki.Spinner     `gtk-widget:"joinSpinner"`
-	notificationArea gtki.Box         `gtk-widget:"boxNotificationArea"`
+	window  gtki.Window `gtk-widget:"roomWindow"`
+	content gtki.Box    `gtk-widget:"boxMainView"`
 
-	errorNotif   *errorNotification
-	notification gtki.InfoBar
-
-	boxRoomView        gtki.Box        `gtk-widget:"boxRoomView"`
-	roomChatTextBuffer gtki.TextBuffer `gtk-widget:"roomChatTextBuffer"`
-	rosterPanel        gtki.Box        `gtk-widget:"panel"`
-	panelToggle        gtki.Button     `gtk-widget:"panel-toggle"`
-	membersModel       gtki.ListStore  `gtk-widget:"room-members-model"`
-	membersView        gtki.TreeView   `gtk-widget:"room-members-tree"`
+	main    *roomViewMain
+	toolbar *roomViewToolbar
+	roster  *roomViewRoster
+	conv    *roomViewConversation
+	join    *roomViewEnter
 }
 
-func (v *roomView) clearErrors() {
-	v.errorNotif.Hide()
+func getViewFromRoom(r *muc.Room) *roomView {
+	return r.Opaque.(*roomView)
 }
 
-func (v *roomView) notifyOnError(err string) {
-	if v.notification != nil {
-		v.notificationArea.Remove(v.notification)
+func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
+	view := &roomView{
+		u:        u,
+		account:  a,
+		identity: ident,
 	}
 
-	v.errorNotif.ShowMessage(err)
+	view.initUIBuilder()
+	view.initDefaults()
+
+	toolbar := newRoomViewToolbar()
+	view.toolbar = toolbar
+
+	roster := newRoomViewRoster()
+	view.roster = roster
+
+	conversation := newRoomViewConversation()
+	view.conv = conversation
+
+	return view
+}
+
+func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
+	room := muc.NewRoom(ident)
+	room.Opaque = u.newRoomView(a, ident)
+	return room
+}
+
+func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare) (*muc.Room, bool) {
+	room, ok := a.roomManager.GetRoom(ident)
+	if !ok {
+		room = u.newRoom(a, ident)
+		a.roomManager.AddRoom(room)
+	}
+	return room, ok
+}
+
+func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
+	room, wasCreated := u.getRoomOrCreateItIfNoExists(a, ident)
+	view := getViewFromRoom(room)
+
+	if !wasCreated {
+		view.switchToEnterRoom()
+		view.window.Show()
+		return
+	}
+
+	view.switchToMainView()
 }
 
 func (v *roomView) initUIBuilder() {
@@ -70,253 +86,94 @@ func (v *roomView) initUIBuilder() {
 	panicOnDevError(v.builder.bindObjects(v))
 
 	v.builder.ConnectSignals(map[string]interface{}{
-		"on_show_window":         v.validateInput,
-		"on_nickname_changed":    v.validateInput,
-		"on_password_changed":    v.validateInput,
-		"on_password_checked":    v.onPasswordChecked,
-		"on_room_cancel_clicked": v.window.Destroy,
-		"on_room_join_clicked":   v.joinRoom,
-		"on_close_window":        v.onCloseWindow,
-		"on_toggle_roster_panel": v.toggleRosterPanel,
+		"on_show_window":  v.onShowWindow,
+		"on_close_window": v.onCloseWindow,
 	})
 }
 
-func (v *roomView) onPasswordChecked() {
-	v.setPasswordSensitiveBasedOnCheck()
-	v.validateInput()
-}
+func (v *roomView) initDefaults() {}
+
+func (v *roomView) onShowWindow() {}
 
 func (v *roomView) onCloseWindow() {
-	_ = v.account.roomManager.LeaveRoom(v.jid)
-}
-
-func (v *roomView) initDefaults() {
-	v.log = v.account.log.WithField("room", v.jid)
-	v.errorNotif = newErrorNotification(v.notificationArea)
-	v.setPasswordSensitiveBasedOnCheck()
-	v.window.SetTitle(i18n.Localf("Room: [%s]", v.jid))
-}
-
-func (v *roomView) setPasswordSensitiveBasedOnCheck() {
-	a := v.passwordCheck.GetActive()
-	v.passwordLabel.SetSensitive(a)
-	v.passwordEntry.SetSensitive(a)
-}
-
-func (v *roomView) hasValidNickname() bool {
-	nickname, _ := v.nicknameEntry.GetText()
-	return len(nickname) > 0
-}
-
-func (v *roomView) hasValidPassword() bool {
-	cv := v.passwordCheck.GetActive()
-	if !cv {
-		return true
+	exists := v.account.roomManager.LeaveRoom(v.identity)
+	if !exists {
+		v.log.Error("Trying to leave a room that doesn't exists.")
+		return
 	}
-	password, _ := v.passwordEntry.GetText()
-	return len(password) > 0
+	v.joined = false
 }
 
-func (v *roomView) validateInput() {
-	v.clearErrors()
-	sensitiveValue := v.hasValidNickname() && v.hasValidPassword()
-	v.roomJoinButton.SetSensitive(sensitiveValue)
+func (v *roomView) switchToEnterRoom() {
+	if v.joined {
+		panic("developer error: the user is already in this room")
+	}
+
+	v.join = newRoomEnterView(v.account, v.identity, v.content, v.onEnter, v.onCancel)
+	v.join.show()
 }
 
-func (v *roomView) togglePanelView() {
+func (v *roomView) switchToMainView() {
+	if !v.joined {
+		panic("developer error: the user is not in this room")
+	}
+
+	v.main = newRoomMainView(v.account, v.identity, v.conv.view, v.roster.view, v.toolbar.view, v.content)
+	v.main.show()
+}
+
+func (v *roomView) onEnter() {
+	v.joined = true
 	doInUIThread(func() {
-		value := v.boxJoinRoomView.IsVisible()
-		v.boxJoinRoomView.SetVisible(!value)
-		v.boxRoomView.SetVisible(value)
+		v.join.hide()
+		v.switchToMainView()
 	})
 }
 
-func (v *roomView) toggleRosterPanel() {
-	iv := v.rosterPanel.IsVisible()
-	v.rosterPanel.SetVisible(!iv)
-	if !iv {
-		v.panelToggle.SetProperty("label", i18n.Local("Hide panel"))
+// TODO: if we have an active connection or request, we should
+// stop/close it here before destroying the window
+func (v *roomView) onCancel() {
+	doInUIThread(v.window.Destroy)
+}
+
+func (v *roomView) onNicknameConflictReceived(from jid.Full) {
+	if v.joined {
+		v.log.WithField("from", from).Error("A nickname conflict event was received but the user is already in the room")
 		return
 	}
-
-	v.panelToggle.SetProperty("label", i18n.Local("Show panel"))
+	v.join.onNicknameConflictReceived(from)
 }
 
-// startSpinner should be called from UI thread
-func (v *roomView) startSpinner() {
-	v.spinnerJoinView.Start()
-	v.spinnerJoinView.SetVisible(true)
-	v.roomJoinButton.SetSensitive(false)
-}
-
-// stopSpinner should be called from UI thread
-func (v *roomView) stopSpinner() {
-	v.spinnerJoinView.Stop()
-	v.spinnerJoinView.SetVisible(false)
-	if !v.errorNotif.IsVisible() {
-		v.roomJoinButton.SetSensitive(true)
-	}
-}
-
-func (v *roomView) joinRoomWithNickname(nickname string) {
-	v.log.WithField("nickname", nickname).Debug("joinRoomWithNickname()")
-
-	doInUIThread(v.startSpinner)
-
-	go func() {
-		err := v.account.session.JoinRoom(v.jid, nickname)
-		if err != nil {
-			doInUIThread(func() {
-				v.stopSpinner()
-				v.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room.")
-			})
-		}
-	}()
-
-	go v.whenJoinRoomFinishes(nickname)
-}
-
-func (v *roomView) whenJoinRoomFinishes(nickname string) {
-	defer func() {
-		doInUIThread(v.stopSpinner)
-	}()
-
-	hasJoined, ok := <-v.onJoin
-	if !ok {
-		doInUIThread(func() {
-			v.lastErrorMessage = i18n.Local("An error happened while trying to join the room, please check your connection or try again.")
-			v.notifyOnError(v.lastErrorMessage)
-		})
+func (v *roomView) onRegistrationRequiredReceived(from jid.Full) {
+	if v.joined {
+		v.log.WithField("from", from).Error("A registration required event was received but the user is already in the room")
 		return
 	}
+	v.join.onRegistrationRequiredReceived(from)
+}
 
-	if !hasJoined {
-		// TODO: We should do the better for the user, if the room doesn't exists maybe we should
-		// allow the user to create the room or tell him something to try as solution
-		if v.lastErrorMessage == "" {
-			v.lastErrorMessage = i18n.Local("An error happened while trying to join the room, please check your connection or make sure the room exists.")
-		}
-
-		v.log.WithFields(log.Fields{
-			"nickname": nickname,
-			"message":  v.lastErrorMessage,
-		}).Error("An error happened while trying to join the room")
-
-		doInUIThread(func() {
-			v.notifyOnError(v.lastErrorMessage)
-		})
-
+func (v *roomView) onRoomOccupantErrorReceived(from jid.Full) {
+	if v.joined {
+		v.log.WithField("from", from).Error("A joined event error was received but the user is already in the room")
 		return
 	}
-
-	doInUIThread(func() {
-		v.clearErrors()
-		v.togglePanelView()
-	})
+	v.join.onJoinErrorRecevied(from)
 }
 
-func (v *roomView) joinRoom() {
-	v.clearErrors()
-
-	v.onJoin = make(chan bool)
-	nickname, _ := v.nicknameEntry.GetText()
-
-	go v.joinRoomWithNickname(nickname)
-}
-
-func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
-	room := muc.NewRoom(ident)
-
-	view := &roomView{
-		account: a,
-		jid:     ident,
-		u:       u,
-	}
-
-	view.initUIBuilder()
-	view.initDefaults()
-
-	room.Opaque = view
-
-	return room
-
-}
-
-func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
-	room, ok := a.roomManager.GetRoom(ident)
-	if !ok {
-		room = u.newRoom(a, ident)
-		a.roomManager.AddRoom(room)
-	}
-
-	view := getViewFromRoom(room)
-
-	if !ok {
-		view.window.Show()
+func (v *roomView) onRoomOccupantJoinedReceived(occupant jid.Resource, occupants []*muc.Occupant) {
+	if v.joined {
+		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return
 	}
-
-	view.window.Present()
+	v.join.onRoomOccupantJoinedReceived()
+	v.roster.updateRoomRoster(occupants)
 }
 
-func getViewFromRoom(r *muc.Room) *roomView {
-	return r.Opaque.(*roomView)
+func (v *roomView) onRoomOccupantUpdateReceived(occupants []*muc.Occupant) {
+	v.roster.updateRoomRoster(occupants)
 }
 
-func (v *roomView) addLineToChatText(text string) {
-	i := v.roomChatTextBuffer.GetEndIter()
-
-	t := fmt.Sprintf("%s\n", text)
-	v.roomChatTextBuffer.Insert(i, t)
-}
-
-func (v *roomView) showOccupantLeftRoom(nickname jid.Resource) {
-	doInUIThread(func() {
-		v.addLineToChatText(i18n.Localf("%s left the room", nickname))
-	})
-}
-
-func (v *roomView) updateOccupantsInModel(occupants []*muc.Occupant) {
-	doInUIThread(func() {
-		v.membersModel.Clear()
-		for _, o := range occupants {
-			iter := v.membersModel.Append()
-			_ = v.membersModel.SetValue(iter, occupantRosterIconIndex, v.getIconBaseOnVoice(o.Role).GetPixbuf())
-			_ = v.membersModel.SetValue(iter, occupantRosterNicknameIndex, o.Nick)
-			_ = v.membersModel.SetValue(iter, occupantRosterAffiliationIndex, v.getAffiliationForRosterPanel(o.Affiliation))
-			_ = v.membersModel.SetValue(iter, occupantRosterTooltipIndex, getLabelForOcuppantTooltipFrom(o.Role))
-		}
-	})
-}
-func getLabelForOcuppantTooltipFrom(r muc.Role) string {
-	switch r.Name() {
-	case muc.RoleNone:
-		return i18n.Local("Role: None")
-	case muc.RoleParticipant:
-		return i18n.Local("Role: Participant")
-	case muc.RoleVisitor:
-		return i18n.Local("Role: Visitor")
-	case muc.RoleModerator:
-		return i18n.Local("Role: Moderator")
-	default:
-		return ""
-	}
-}
-
-func (v *roomView) getAffiliationForRosterPanel(a muc.Affiliation) string {
-	switch a.Name() {
-	case muc.AffiliationAdmin:
-		return i18n.Local("Admin")
-	case muc.AffiliationOwner:
-		return i18n.Local("Owner")
-	default:
-		return ""
-	}
-}
-
-func (v *roomView) getIconBaseOnVoice(r muc.Role) Icon {
-	if r.HasVoice() {
-		return statusIcons["available"]
-	}
-	return statusIcons["offline"]
+func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource, occupants []*muc.Occupant) {
+	v.conv.showOccupantLeftRoom(occupant)
+	v.roster.updateRoomRoster(occupants)
 }

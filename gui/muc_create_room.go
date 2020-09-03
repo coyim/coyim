@@ -41,7 +41,7 @@ func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 }
 
 func (v *createMUCRoom) initUIBuilder() {
-	v.builder = newBuilder("MUCCreateRoom")
+	v.builder = newBuilder("MUCCreateRoomDialog")
 
 	panicOnDevError(v.builder.bindObjects(v))
 

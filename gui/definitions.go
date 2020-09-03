@@ -3534,8 +3534,8 @@ b24td2lkZ2V0PgogICAgPC9hY3Rpb24td2lkZ2V0cz4KICA8L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
 `,
 	},
 
-	"/definitions/MUCCreateRoom.xml": {
-		local:   "definitions/MUCCreateRoom.xml",
+	"/definitions/MUCCreateRoomDialog.xml": {
+		local:   "definitions/MUCCreateRoomDialog.xml",
 		size:    9885,
 		modtime: 1489449600,
 		compressed: `

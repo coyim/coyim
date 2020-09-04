@@ -31,7 +31,7 @@ type roomViewLobby struct {
 	onCancel  func()
 }
 
-func newRoomEnterView(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
+func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
 	e := &roomViewLobby{
 		ident:     rid,
 		ac:        a,

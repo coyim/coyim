@@ -76,7 +76,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare) {
 	view := getViewFromRoom(room)
 
 	if !wasCreated {
-		view.switchToEnterRoom()
+		view.switchToLobbyView()
 		view.window.Show()
 		return
 	}
@@ -110,12 +110,12 @@ func (v *roomView) onCloseWindow() {
 	v.joined = false
 }
 
-func (v *roomView) switchToEnterRoom() {
+func (v *roomView) switchToLobbyView() {
 	if v.joined {
 		panic("developer error: the user is already in this room")
 	}
 
-	v.lobby = newRoomEnterView(v.account, v.identity, v.content, v.onEnter, v.onCancel)
+	v.lobby = newRoomViewLobby(v.account, v.identity, v.content, v.onEnter, v.onCancel)
 	v.lobby.show()
 }
 

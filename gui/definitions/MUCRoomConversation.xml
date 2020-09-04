@@ -23,7 +23,6 @@
                 <property name="top_margin">10</property>
                 <property name="bottom_margin">10</property>
                 <property name="cursor_visible">False</property>
-                <property name="accepts_tab">False</property>
               </object>
             </child>
           </object>
@@ -56,7 +55,6 @@
                 <child>
                   <object class="GtkEntry">
                     <property name="visible">True</property>
-                    <property name="input_hints">GTK_INPUT_HINT_SPELLCHECK | GTK_INPUT_HINT_NONE</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

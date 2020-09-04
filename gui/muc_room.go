@@ -166,26 +166,23 @@ func (v *roomView) onRoomOccupantErrorReceived(from jid.Full) {
 	v.lobby.onJoinErrorRecevied(from)
 }
 
+// onRoomOccupantJoinedReceived should be called from the UI thread
 func (v *roomView) onRoomOccupantJoinedReceived(occupant jid.Resource, occupants []*muc.Occupant) {
 	if v.joined {
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return
 	}
-	doInUIThread(func() {
-		v.lobby.onRoomOccupantJoinedReceived()
-		v.roster.updateRoomRoster(occupants)
-	})
+	v.lobby.onRoomOccupantJoinedReceived()
+	v.roster.updateRoomRoster(occupants)
 }
 
+// onRoomOccupantUpdateReceived should be called from the UI thread
 func (v *roomView) onRoomOccupantUpdateReceived(occupants []*muc.Occupant) {
-	doInUIThread(func() {
-		v.roster.updateRoomRoster(occupants)
-	})
+	v.roster.updateRoomRoster(occupants)
 }
 
+// onRoomOccupantLeftTheRoomReceived should be called from the UI thread
 func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource, occupants []*muc.Occupant) {
-	doInUIThread(func() {
-		v.conv.showOccupantLeftRoom(occupant)
-		v.roster.updateRoomRoster(occupants)
-	})
+	v.conv.showOccupantLeftRoom(occupant)
+	v.roster.updateRoomRoster(occupants)
 }

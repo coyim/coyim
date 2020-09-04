@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	roomViewRosterStatusIconIndex  = 0
-	roomViewRosterNickNameIndex    = 1
-	roomViewRosterAffiliationIndex = 2
-	roomViewRosterRoleIndex        = 3
+	roomViewRosterStatusIconIndex int = iota
+	roomViewRosterNickNameIndex
+	roomViewRosterAffiliationIndex
+	roomViewRosterRoleIndex
 )
 
 type roomViewRoster struct {

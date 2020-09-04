@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type roomViewJoin struct {
+type roomViewLobby struct {
 	ident jid.Bare
 	ac    *account
 	log   coylog.Logger
@@ -31,8 +31,8 @@ type roomViewJoin struct {
 	onCancel  func()
 }
 
-func newRoomEnterView(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewJoin {
-	e := &roomViewJoin{
+func newRoomEnterView(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
+	e := &roomViewLobby{
 		ident:     rid,
 		ac:        a,
 		parent:    parent,
@@ -59,47 +59,47 @@ func newRoomEnterView(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCa
 	return e
 }
 
-func (v *roomViewJoin) show() {
+func (v *roomViewLobby) show() {
 	v.content.Show()
 }
 
-func (v *roomViewJoin) hide() {
+func (v *roomViewLobby) hide() {
 	v.content.Hide()
 }
 
-func (v *roomViewJoin) close() {
+func (v *roomViewLobby) close() {
 	v.hide()
 	v.parent.Remove(v.content)
 }
 
-func (v *roomViewJoin) onNickNameChange() {
+func (v *roomViewLobby) onNickNameChange() {
 	v.enableJoinIfConditionsAreMet()
 }
 
-func (v *roomViewJoin) enableJoinIfConditionsAreMet() {
+func (v *roomViewLobby) enableJoinIfConditionsAreMet() {
 	nickName, _ := v.nickNameEntry.GetText()
 	v.joinButton.SetSensitive(len(nickName) != 0)
 }
 
-func (v *roomViewJoin) disableFields() {
+func (v *roomViewLobby) disableFields() {
 	v.nickNameEntry.SetSensitive(false)
 }
 
-func (v *roomViewJoin) enableFields() {
+func (v *roomViewLobby) enableFields() {
 	v.nickNameEntry.SetSensitive(true)
 }
 
-func (v *roomViewJoin) showSpinner() {
+func (v *roomViewLobby) showSpinner() {
 	v.spinner.Start()
 	v.spinner.Show()
 }
 
-func (v *roomViewJoin) hideSpinner() {
+func (v *roomViewLobby) hideSpinner() {
 	v.spinner.Stop()
 	v.spinner.Hide()
 }
 
-func (v *roomViewJoin) onJoin() {
+func (v *roomViewLobby) onJoin() {
 	v.disableFields()
 	v.showSpinner()
 	v.joinButton.SetSensitive(false)
@@ -111,7 +111,7 @@ func (v *roomViewJoin) onJoin() {
 	go v.whenEnterRequestHasBeenResolved(nickName)
 }
 
-func (v *roomViewJoin) sendRoomEnterRequest(nickName string) {
+func (v *roomViewLobby) sendRoomEnterRequest(nickName string) {
 	err := v.ac.session.JoinRoom(v.ident, nickName)
 	if err != nil {
 		v.log.WithField("nickname", nickName).WithError(err).Error("An error occurred while trying to join the room.")
@@ -120,7 +120,7 @@ func (v *roomViewJoin) sendRoomEnterRequest(nickName string) {
 	}
 }
 
-func (v *roomViewJoin) whenEnterRequestHasBeenResolved(nickName string) {
+func (v *roomViewLobby) whenEnterRequestHasBeenResolved(nickName string) {
 	hasJoined, ok := <-v.onJoinChannel
 	if !ok {
 		doInUIThread(func() {
@@ -153,43 +153,43 @@ func (v *roomViewJoin) whenEnterRequestHasBeenResolved(nickName string) {
 	}
 }
 
-func (v *roomViewJoin) onJoinFails() {
+func (v *roomViewLobby) onJoinFails() {
 	v.enableFields()
 	v.hideSpinner()
 	v.joinButton.SetSensitive(true)
 }
 
-func (v *roomViewJoin) onJoinCancel() {
+func (v *roomViewLobby) onJoinCancel() {
 	if v.onCancel != nil {
 		v.onCancel()
 	}
 }
 
-func (v *roomViewJoin) clearErrors() {
+func (v *roomViewLobby) clearErrors() {
 	v.errorNotif.Hide()
 }
 
-func (v *roomViewJoin) notifyOnError(err string) {
+func (v *roomViewLobby) notifyOnError(err string) {
 	if v.notification != nil {
 		v.notificationArea.Remove(v.notification)
 	}
 	v.errorNotif.ShowMessage(err)
 }
 
-func (v *roomViewJoin) onRoomOccupantJoinedReceived() {
+func (v *roomViewLobby) onRoomOccupantJoinedReceived() {
 	v.onJoinChannel <- true
 }
 
-func (v *roomViewJoin) onJoinErrorRecevied(from jid.Full) {
+func (v *roomViewLobby) onJoinErrorRecevied(from jid.Full) {
 	v.onJoinChannel <- false
 }
 
-func (v *roomViewJoin) onNicknameConflictReceived(from jid.Full) {
+func (v *roomViewLobby) onNicknameConflictReceived(from jid.Full) {
 	v.lastErrorMessage = i18n.Localf("Can't join the room using \"%s\" because the nickname is already being used.", from.Resource())
 	v.onJoinChannel <- false
 }
 
-func (v *roomViewJoin) onRegistrationRequiredReceived(from jid.Full) {
+func (v *roomViewLobby) onRegistrationRequiredReceived(from jid.Full) {
 	v.lastErrorMessage = i18n.Local("Sorry, this room only allows registered members")
 	v.onJoinChannel <- false
 }

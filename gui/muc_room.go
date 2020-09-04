@@ -23,7 +23,7 @@ type roomView struct {
 	toolbar *roomViewToolbar
 	roster  *roomViewRoster
 	conv    *roomViewConversation
-	join    *roomViewJoin
+	lobby   *roomViewLobby
 }
 
 func getViewFromRoom(r *muc.Room) *roomView {
@@ -115,8 +115,8 @@ func (v *roomView) switchToEnterRoom() {
 		panic("developer error: the user is already in this room")
 	}
 
-	v.join = newRoomEnterView(v.account, v.identity, v.content, v.onEnter, v.onCancel)
-	v.join.show()
+	v.lobby = newRoomEnterView(v.account, v.identity, v.content, v.onEnter, v.onCancel)
+	v.lobby.show()
 }
 
 func (v *roomView) switchToMainView() {
@@ -131,7 +131,7 @@ func (v *roomView) switchToMainView() {
 func (v *roomView) onEnter() {
 	v.joined = true
 	doInUIThread(func() {
-		v.join.hide()
+		v.lobby.hide()
 		v.switchToMainView()
 	})
 }
@@ -147,7 +147,7 @@ func (v *roomView) onNicknameConflictReceived(from jid.Full) {
 		v.log.WithField("from", from).Error("A nickname conflict event was received but the user is already in the room")
 		return
 	}
-	v.join.onNicknameConflictReceived(from)
+	v.lobby.onNicknameConflictReceived(from)
 }
 
 func (v *roomView) onRegistrationRequiredReceived(from jid.Full) {
@@ -155,7 +155,7 @@ func (v *roomView) onRegistrationRequiredReceived(from jid.Full) {
 		v.log.WithField("from", from).Error("A registration required event was received but the user is already in the room")
 		return
 	}
-	v.join.onRegistrationRequiredReceived(from)
+	v.lobby.onRegistrationRequiredReceived(from)
 }
 
 func (v *roomView) onRoomOccupantErrorReceived(from jid.Full) {
@@ -163,7 +163,7 @@ func (v *roomView) onRoomOccupantErrorReceived(from jid.Full) {
 		v.log.WithField("from", from).Error("A joined event error was received but the user is already in the room")
 		return
 	}
-	v.join.onJoinErrorRecevied(from)
+	v.lobby.onJoinErrorRecevied(from)
 }
 
 func (v *roomView) onRoomOccupantJoinedReceived(occupant jid.Resource, occupants []*muc.Occupant) {
@@ -171,7 +171,7 @@ func (v *roomView) onRoomOccupantJoinedReceived(occupant jid.Resource, occupants
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return
 	}
-	v.join.onRoomOccupantJoinedReceived()
+	v.lobby.onRoomOccupantJoinedReceived()
 	v.roster.updateRoomRoster(occupants)
 }
 

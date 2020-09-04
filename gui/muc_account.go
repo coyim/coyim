@@ -1,71 +1,57 @@
 package gui
 
 import (
-	"errors"
-
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
 
-func (a *account) getRoomFromManager(ident jid.Bare) (*muc.Room, bool) {
-	return a.roomManager.GetRoom(ident)
-}
-
 func (a *account) getRoomByIdentity(ident jid.Bare) (*muc.Room, error) {
-	room, exists := a.getRoomFromManager(ident)
+	room, exists := a.roomManager.GetRoom(ident)
 	if !exists {
 		return nil, newRoomNotExistsError(ident)
 	}
 	return room, nil
 }
 
-// getRoomOrLogIt will return a specific room based on it's bare.
+// getRoom will return a specific room based on it's bare.
 // If the room doesn't exists this method will return false
-func (a *account) getRoomOrLogIt(ident jid.Bare) (*muc.Room, bool) {
+func (a *account) getRoom(ident jid.Bare) (*muc.Room, bool) {
 	room, err := a.getRoomByIdentity(ident)
 	if err != nil {
-		a.log.WithField("room", ident).WithError(err).Error("An error occurred trying to get the room")
+		a.log.WithField("room", ident).WithError(err).Error("Trying to get a room that is not in the manager")
 		return nil, false
 	}
 	return room, true
 }
 
-func (a *account) getRoomViewByIdentity(ident jid.Bare) (*roomView, error) {
-	room, ok := a.getRoomOrLogIt(ident)
-	if ok {
-		return nil, errors.New("the room doesn't exist")
-	}
-	return getViewFromRoom(room), nil
-}
-
-// getRoomViewOrLogIt will return a specific room view based on it's bare.
+// getRoomView will return a specific room view based on it's bare.
 // If the view doesn't exists this method will return false
-func (a *account) getRoomViewOrLogIt(ident jid.Full) (*roomView, bool) {
-	view, err := a.getRoomViewByIdentity(ident.Bare())
-	if err != nil {
-		a.log.WithField("room", ident).WithError(err).Error("An error occurred trying to get the room view")
+func (a *account) getRoomView(ident jid.Bare) (*roomView, bool) {
+	room, ok := a.getRoom(ident)
+	if !ok {
+		a.log.WithField("room", ident).Error("Trying to get a room that is not in the manager")
 		return nil, false
 	}
-	return view, true
+	return getViewFromRoom(room), true
 }
 
 func (a *account) onRoomNicknameConflict(from jid.Full) {
-	view, ok := a.getRoomViewOrLogIt(from)
+	view, ok := a.getRoomView(from.Bare())
 	if ok {
 		view.onNicknameConflictReceived(from)
 	}
 }
 
 func (a *account) onRoomRegistrationRequired(from jid.Full) {
-	view, ok := a.getRoomViewOrLogIt(from)
+	view, ok := a.getRoomView(from.Bare())
 	if ok {
 		view.onRegistrationRequiredReceived(from)
 	}
 }
 
 func (a *account) onRoomOccupantJoined(from jid.Full, ident jid.Full, affiliation, role, status string) {
-	room, ok := a.getRoomOrLogIt(from.Bare())
+	room, ok := a.getRoom(from.Bare())
 	if !ok {
 		return
 	}
@@ -95,7 +81,7 @@ func (a *account) onRoomOccupantJoined(from jid.Full, ident jid.Full, affiliatio
 }
 
 func (a *account) onRoomOccupantUpdated(from jid.Full, occupant jid.Full, affiliation, role string) {
-	room, ok := a.getRoomOrLogIt(from.Bare())
+	room, ok := a.getRoom(from.Bare())
 	if !ok {
 		return
 	}
@@ -116,7 +102,7 @@ func (a *account) onRoomOccupantUpdated(from jid.Full, occupant jid.Full, affili
 }
 
 func (a *account) onRoomOccupantLeftTheRoom(from jid.Full, ident jid.Full, affiliation, role string) {
-	room, ok := a.getRoomOrLogIt(from.Bare())
+	room, ok := a.getRoom(from.Bare())
 	if !ok {
 		return
 	}

@@ -19,7 +19,10 @@ type roomViewConversation struct {
 
 type mucStyleTags struct {
 	table gtki.TextTagTable
-	buf   gtki.TextBuffer
+}
+
+func getTimestamp() string {
+	return time.Now().Format("15:04:05")
 }
 
 func (v *roomViewConversation) getStyleTags() *mucStyleTags {
@@ -34,7 +37,7 @@ func (v *roomViewConversation) newStyleTags() *mucStyleTags {
 	// if we define a structure with a predefined colors pallete based on kind
 	// of messages to show like entering a room, leaving the room, incoming
 	// message, etc
-	t := new(mucStyleTags)
+	t := &mucStyleTags{}
 
 	t.table, _ = g.gtk.TextTagTableNew()
 
@@ -49,9 +52,12 @@ func (v *roomViewConversation) newStyleTags() *mucStyleTags {
 	t.table.Add(leftRoomTag)
 	t.table.Add(timestampTag)
 
-	t.buf, _ = g.gtk.TextBufferNew(t.table)
-
 	return t
+}
+
+func (t *mucStyleTags) createTextBuffer() gtki.TextBuffer {
+	buf, _ := g.gtk.TextBufferNew(t.table)
+	return buf
 }
 
 func newRoomViewConversation() *roomViewConversation {
@@ -61,16 +67,9 @@ func newRoomViewConversation() *roomViewConversation {
 	panicOnDevError(builder.bindObjects(c))
 
 	t := c.getStyleTags()
-	c.roomChatTextView.SetBuffer(t.buf)
+	c.roomChatTextView.SetBuffer(t.createTextBuffer())
 
 	return c
-}
-
-func (v *roomViewConversation) showOccupantLeftRoom(nickname jid.Resource) {
-	doInUIThread(func() {
-		msg := i18n.Localf("%s left the room", nickname)
-		v.addLineToChatTextUsingTagID(msg, "leftRoomText")
-	})
 }
 
 func (v *roomViewConversation) addLineToChatText(timestamp, text string) {
@@ -85,17 +84,19 @@ func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag stri
 
 	charCount := buf.GetCharCount()
 
-	t := fmt.Sprintf("[%s]", getTimestamp())
+	t := fmt.Sprintf("[%s] ", getTimestamp())
 	v.addLineToChatText(t, text)
 
 	oldIterEnd := buf.GetIterAtOffset(charCount)
 	offsetTimestamp := buf.GetIterAtOffset(charCount + len(t))
+	offsetText := buf.GetIterAtOffset(charCount + len(t) + 1)
 	newIterEnd := buf.GetEndIter()
 
 	buf.ApplyTagByName("timestampText", oldIterEnd, offsetTimestamp)
-	buf.ApplyTagByName(tag, oldIterEnd, newIterEnd)
+	buf.ApplyTagByName(tag, offsetText, newIterEnd)
 }
 
-func getTimestamp() string {
-	return time.Now().Format("15:04:05")
+func (v *roomViewConversation) showOccupantLeftRoom(nickname jid.Resource) {
+	msg := i18n.Localf("%s left the room", nickname)
+	v.addLineToChatTextUsingTagID(msg, "leftRoomText")
 }

@@ -50,17 +50,14 @@ func (v *roomViewRoster) updateRoomRoster(occupants []*muc.Occupant) {
 func (v *roomViewRoster) addOccupantToRoster(o *muc.Occupant) {
 	iter := v.model.Append()
 
-	var icon Icon
-	if o.Role.HasVoice() {
-		icon = statusIcons["available"]
-	} else {
-		icon = statusIcons["offline"]
-	}
-
-	_ = v.model.SetValue(iter, roomViewRosterStatusIconIndex, icon.GetPixbuf())
+	_ = v.model.SetValue(iter, roomViewRosterStatusIconIndex, v.getOccupantIcon().GetPixbuf())
 	_ = v.model.SetValue(iter, roomViewRosterNickNameIndex, o.Nick)
 	_ = v.model.SetValue(iter, roomViewRosterAffiliationIndex, v.affiliationDisplayName(o.Affiliation))
 	_ = v.model.SetValue(iter, roomViewRosterRoleIndex, v.roleDisplayName(o.Role))
+}
+
+func (v *roomViewRoster) getOccupantIcon() Icon {
+	return statusIcons["occupant"]
 }
 
 func (v *roomViewRoster) affiliationDisplayName(a muc.Affiliation) string {

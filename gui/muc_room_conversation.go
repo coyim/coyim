@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -41,7 +42,12 @@ func (v *roomViewConversation) newStyleTags() *mucStyleTags {
 	_ = leftRoomTag.SetProperty("foreground", "#EE0000")
 	_ = leftRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
 
+	timestampTag, _ := g.gtk.TextTagNew("timestampText")
+	_ = timestampTag.SetProperty("foreground", "#AAB7B8")
+	_ = timestampTag.SetProperty("style", pangoi.STYLE_NORMAL)
+
 	t.table.Add(leftRoomTag)
+	t.table.Add(timestampTag)
 
 	t.buf, _ = g.gtk.TextBufferNew(t.table)
 
@@ -71,16 +77,24 @@ func (v *roomViewConversation) addLineToChatText(text string) {
 	buf, _ := v.roomChatTextView.GetBuffer()
 	i := buf.GetEndIter()
 
-	buf.Insert(i, fmt.Sprintf("%s\n", text))
+	buf.Insert(i, fmt.Sprintf("[%s] %s\n", getTimestamp(), text))
 }
 
 func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag string) {
 	buf, _ := v.roomChatTextView.GetBuffer()
 
 	charCount := buf.GetCharCount()
+
 	v.addLineToChatText(text)
+
 	oldIterEnd := buf.GetIterAtOffset(charCount)
+	offsetTimestamp := buf.GetIterAtOffset(charCount + 10)
 	newIterEnd := buf.GetEndIter()
 
+	buf.ApplyTagByName("timestampText", oldIterEnd, offsetTimestamp)
 	buf.ApplyTagByName(tag, oldIterEnd, newIterEnd)
+}
+
+func getTimestamp() string {
+	return time.Now().Format("15:04:05")
 }

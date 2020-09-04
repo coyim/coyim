@@ -40,7 +40,7 @@ func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCa
 		onCancel:  onCancel,
 	}
 
-	builder := newBuilder("MUCRoomJoin")
+	builder := newBuilder("MUCRoomLobby")
 	panicOnDevError(builder.bindObjects(e))
 
 	e.errorNotif = newErrorNotification(e.notificationArea)

@@ -4168,8 +4168,8 @@ IDwvb2JqZWN0Pgo8L2ludGVyZmFjZT4K
 `,
 	},
 
-	"/definitions/MUCRoomJoin.xml": {
-		local:   "definitions/MUCRoomJoin.xml",
+	"/definitions/MUCRoomLobby.xml": {
+		local:   "definitions/MUCRoomLobby.xml",
 		size:    6663,
 		modtime: 1489449600,
 		compressed: `

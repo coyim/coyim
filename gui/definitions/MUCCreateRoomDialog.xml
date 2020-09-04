@@ -8,7 +8,7 @@
     </columns>
   </object>
   <object class="GtkDialog" id="create-chat-dialog">
-    <property name="width_request">480</property>
+    <property name="width_request">580</property>
     <property name="border_width">7</property>
     <property name="title" translatable="yes">Create new chat room</property>
     <property name="resizable">False</property>
@@ -171,7 +171,7 @@
                 <child internal-child="entry">
                   <object class="GtkEntry" id="chat-service-entry">
                     <property name="hexpand">False</property>
-                    <property name="placeholder_text" translatable="yes">Enter the server name or select one</property>
+                    <property name="placeholder_text" translatable="yes">Enter the service name or select one from the list</property>
                     <signal name="changed" handler="on_chatServiceEntry_change" swapped="no"/>
                   </object>
                 </child>
@@ -185,7 +185,7 @@
               <object class="GtkLabel" id="server-label">
                 <property name="visible">True</property>
                 <property name="halign">end</property>
-                <property name="label" translatable="yes">Server</property>
+                <property name="label" translatable="yes">Where</property>
                 <property name="justify">right</property>
               </object>
               <packing>

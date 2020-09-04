@@ -31,11 +31,13 @@ type createMUCRoom struct {
 
 func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 	view := &createMUCRoom{
-		u: u,
+		u:        u,
+		autoJoin: true,
 	}
 
 	view.initUIBuilder()
 	view.initConnectedAccountsComponent()
+	view.initDefaults()
 
 	return view
 }
@@ -60,6 +62,10 @@ func (v *createMUCRoom) initUIBuilder() {
 func (v *createMUCRoom) initConnectedAccountsComponent() {
 	c := v.builder.get("accounts").(gtki.ComboBox)
 	v.ac = v.u.createConnectedAccountsComponent(c, v, v.updateServicesBasedOnAccount, v.onNoAccountsConnected)
+}
+
+func (v *createMUCRoom) initDefaults() {
+	v.roomAutoJoin.SetActive(v.autoJoin)
 }
 
 func (v *createMUCRoom) onCloseWindow() {

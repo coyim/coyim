@@ -1,33 +1,23 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
 
-func (a *account) getRoom(ident jid.Bare) (*muc.Room, error) {
+func (a *account) getRoomView(ident jid.Bare) (*roomView, bool) {
 	room, ok := a.roomManager.GetRoom(ident)
 	if !ok {
 		a.log.WithField("room", ident).Error("Trying to get a room that is not in the manager")
-		return nil, newRoomNotExistsError(ident)
+		return nil, false
 	}
-	return room, nil
-}
-
-func (a *account) getRoomView(ident jid.Bare) (*roomView, error) {
-	room, err := a.getRoom(ident)
-	if err != nil {
-		a.log.WithField("room", ident).WithError(err).Error("An error occurred while trying to get a room view")
-		return nil, err
-	}
-	return getViewFromRoom(room), nil
+	return getViewFromRoom(room), true
 }
 
 func (a *account) onRoomNicknameConflict(from jid.Full) {
-	view, err := a.getRoomView(from.Bare())
-	if err != nil {
-		a.log.WithField("from", from).WithError(err).Error("An error occurred when a room nickname conflict event was received")
+	view, ok := a.getRoomView(from.Bare())
+	if !ok {
+		a.log.WithField("from", from).Error("Room view not available when a room nickname conflict event was received")
 		return
 	}
 
@@ -35,9 +25,9 @@ func (a *account) onRoomNicknameConflict(from jid.Full) {
 }
 
 func (a *account) onRoomRegistrationRequired(from jid.Full) {
-	view, err := a.getRoomView(from.Bare())
-	if err != nil {
-		a.log.WithField("from", from).WithError(err).Error("An error occurred when a room registration required event was received")
+	view, ok := a.getRoomView(from.Bare())
+	if !ok {
+		a.log.WithField("from", from).Error("Room view not available when a room registration required event was received")
 		return
 	}
 
@@ -53,9 +43,9 @@ func (a *account) onRoomOccupantJoined(from jid.Full, ident jid.Full, affiliatio
 		"status":      status,
 	})
 
-	room, err := a.getRoom(from.Bare())
-	if err != nil {
-		l.WithError(err).Error("An error occurred when a room occupant joined event was received")
+	room, ok := a.roomManager.GetRoom(from.Bare())
+	if !ok {
+		l.Error("Room view not available when a room occupant joined event was received")
 		return
 	}
 
@@ -85,14 +75,14 @@ func (a *account) onRoomOccupantUpdated(from jid.Full, occupant jid.Full, affili
 		"role":        role,
 	})
 
-	room, err := a.getRoom(from.Bare())
-	if err != nil {
-		l.WithError(err).Error("An error occurred when a room occupant updated event was received")
+	room, ok := a.roomManager.GetRoom(from.Bare())
+	if !ok {
+		l.Error("Room view not available when a room occupant updated event was received")
 		return
 	}
 
 	roster := room.Roster()
-	_, _, err = roster.UpdatePresence(from, "", affiliation, role, "", "", "Occupant updated", occupant)
+	_, _, err := roster.UpdatePresence(from, "", affiliation, role, "", "", "Occupant updated", occupant)
 	if err != nil {
 		l.WithError(err).Error("Error on trying to update the occupant status in the roster")
 		return
@@ -110,9 +100,9 @@ func (a *account) onRoomOccupantLeftTheRoom(from jid.Full, ident jid.Full, affil
 		"role":        role,
 	})
 
-	room, err := a.getRoom(from.Bare())
-	if err != nil {
-		l.WithError(err).Error("An error occurred when an occupant left the room event was received")
+	room, ok := a.roomManager.GetRoom(from.Bare())
+	if !ok {
+		l.Error("Room view not available when an occupant left the room event was received")
 		return
 	}
 

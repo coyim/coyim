@@ -44,10 +44,6 @@ func (e *registrationRequiredError) Error() string {
 	return fmt.Sprintf("the room \"%s\" only allows registered members", e.room)
 }
 
-func (e *roomNotExistsError) Error() string {
-	return fmt.Sprintf("the room \"%s\" doesn't exists", e.ident)
-}
-
 func newNicknameConflictError(n jid.Resource) error {
 	return &nicknameError{
 		nickname: n,
@@ -57,11 +53,5 @@ func newNicknameConflictError(n jid.Resource) error {
 func newRegistrationRequiredError(ident jid.Bare) error {
 	return &registrationRequiredError{
 		room: ident,
-	}
-}
-
-func newRoomNotExistsError(ident jid.Bare) error {
-	return &roomNotExistsError{
-		ident: ident,
 	}
 }

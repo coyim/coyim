@@ -22,8 +22,6 @@ type mucStyleTags struct {
 	buf   gtki.TextBuffer
 }
 
-const timestampCharCount = 10
-
 func (v *roomViewConversation) getStyleTags() *mucStyleTags {
 	if v.tags == nil {
 		v.tags = v.newStyleTags()
@@ -75,11 +73,11 @@ func (v *roomViewConversation) showOccupantLeftRoom(nickname jid.Resource) {
 	})
 }
 
-func (v *roomViewConversation) addLineToChatText(text string) {
+func (v *roomViewConversation) addLineToChatText(timestamp, text string) {
 	buf, _ := v.roomChatTextView.GetBuffer()
 	i := buf.GetEndIter()
 
-	buf.Insert(i, fmt.Sprintf("[%s] %s\n", getTimestamp(), text))
+	buf.Insert(i, fmt.Sprintf("%s %s\n", timestamp, text))
 }
 
 func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag string) {
@@ -87,10 +85,11 @@ func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag stri
 
 	charCount := buf.GetCharCount()
 
-	v.addLineToChatText(text)
+	t := fmt.Sprintf("[%s]", getTimestamp())
+	v.addLineToChatText(t, text)
 
 	oldIterEnd := buf.GetIterAtOffset(charCount)
-	offsetTimestamp := buf.GetIterAtOffset(charCount + timestampCharCount)
+	offsetTimestamp := buf.GetIterAtOffset(charCount + len(t))
 	newIterEnd := buf.GetEndIter()
 
 	buf.ApplyTagByName("timestampText", oldIterEnd, offsetTimestamp)

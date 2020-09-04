@@ -55,7 +55,7 @@
             <property name="column-spacing">6</property>
             <child>
               <object class="GtkLabel" id="accountsLabel" >
-		        <property name="visible">true</property>
+                <property name="visible">true</property>
                 <property name="label" translatable="yes">Account:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -67,7 +67,7 @@
             </child>
             <child>
               <object class="GtkComboBox" id="accounts">
-		        <property name="visible">true</property>
+		            <property name="visible">true</property>
                 <property name="has-focus">true</property>
                 <property name="hexpand">True</property>
                 <child>
@@ -95,11 +95,9 @@
                 <property name="top-attach">0</property>
               </packing>
             </child>
-
-
             <child>
               <object class="GtkLabel" id="customServiceLabel" >
-		        <property name="visible">true</property>
+		            <property name="visible">true</property>
                 <property name="label" translatable="yes">Service:</property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
                 <property name="halign">GTK_ALIGN_END</property>
@@ -111,7 +109,7 @@
             </child>
             <child>
               <object class="GtkEntry" id="customServiceEntry">
-		        <property name="visible">true</property>
+		            <property name="visible">true</property>
                 <property name="placeholder-text">chat-service.example.org</property>
                 <property name="hexpand">True</property>
                 <signal name="activate" handler="on_custom_service" />
@@ -134,7 +132,6 @@
                 <property name="top-attach">1</property>
               </packing>
             </child>
-
             <child>
               <object class="GtkSpinner" id="spinner">
                 <property name="visible">false</property>

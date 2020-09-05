@@ -22,3 +22,10 @@ func (*MockBox) GetOrientation() gtki.Orientation {
 
 func (*MockBox) SetOrientation(o gtki.Orientation) {
 }
+
+func (*MockBox) SetCenterWidget(gtki.Widget) {
+}
+
+func (*MockBox) GetCenterWidget() gtki.Widget {
+	return nil
+}

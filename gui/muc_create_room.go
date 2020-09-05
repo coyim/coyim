@@ -1,7 +1,9 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/i18n"
+	"errors"
+
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -9,341 +11,160 @@ import (
 type createMUCRoom struct {
 	u       *gtkUI
 	builder *builder
-	ac      *connectedAccountsComponent
+	log     coylog.Logger
 
-	dialog           gtki.Dialog       `gtk-widget:"create-chat-dialog"`
-	notificationArea gtki.Box          `gtk-widget:"notification-area"`
-	account          gtki.ComboBox     `gtk-widget:"accounts"`
-	chatServices     gtki.ComboBoxText `gtk-widget:"chat-services"`
-	chatServiceEntry gtki.Entry        `gtk-widget:"chat-service-entry"`
-	roomEntry        gtki.Entry        `gtk-widget:"room-name-entry"`
-	roomAutoJoin     gtki.CheckButton  `gtk-widget:"room-auto-join"`
-	spinner          gtki.Spinner      `gtk-widget:"spinner"`
-	cancelButton     gtki.Button       `gtk-widget:"cancel-button"`
-	createButton     gtki.Button       `gtk-widget:"create-button"`
+	autoJoin bool
 
-	autoJoin     bool
-	errorBox     *errorNotification
-	notification gtki.InfoBar
+	window    gtki.Window `gtk-widget:"createRoomWindow"`
+	container gtki.Box    `gtk-widget:"content"`
 
-	previousUpdateChannel chan bool
+	form    *createMUCRoomForm
+	success *createMUCRoomSuccess
+
+	showCreateForm  func()
+	showSuccessView func(*account, jid.Bare)
+	onAutoJoinList  []func(bool)
+	onDestroyList   []func()
+	builderSignals  map[string]interface{}
 }
 
 func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
-	view := &createMUCRoom{
-		u:        u,
-		autoJoin: true,
+	v := &createMUCRoom{
+		u:               u,
+		log:             u.log,
+		showCreateForm:  func() {},
+		showSuccessView: func(*account, jid.Bare) {},
+		onAutoJoinList:  []func(bool){},
+		onDestroyList:   []func(){},
+		builderSignals:  make(map[string]interface{}),
 	}
 
-	view.initUIBuilder()
-	view.initConnectedAccountsComponent()
-	view.initDefaults()
+	v.initUIBuilder()
+	v.initForm()
+	v.initSuccessView(v.joinRoom)
+	v.initBuilderSignals()
 
-	return view
+	u.connectShortcutsChildWindow(v.window)
+
+	return v
+}
+
+func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {
+	if v.autoJoin == newValue {
+		return
+	}
+
+	v.autoJoin = newValue
+	for _, cb := range v.onAutoJoinList {
+		cb(v.autoJoin)
+	}
+}
+
+func (v *createMUCRoom) onAutoJoin(f func(bool)) {
+	v.onAutoJoinList = append(v.onAutoJoinList, f)
+}
+
+func (v *createMUCRoom) onDestroy(f func()) {
+	v.onDestroyList = append(v.onDestroyList, f)
+}
+
+func (v *createMUCRoom) addBuilderSignals(signals map[string]interface{}) {
+	for signal, callback := range signals {
+		v.addBuilderSignal(signal, callback)
+	}
+}
+
+func (v *createMUCRoom) addBuilderSignal(signal string, callback interface{}) {
+	if _, ok := v.builderSignals[signal]; ok {
+		v.log.WithField("signal", signal).Warn("Signal already registered")
+		return
+	}
+	v.builderSignals[signal] = callback
 }
 
 func (v *createMUCRoom) initUIBuilder() {
 	v.builder = newBuilder("MUCCreateRoomDialog")
-
 	panicOnDevError(v.builder.bindObjects(v))
-
-	v.errorBox = newErrorNotification(v.notificationArea)
-
-	v.builder.ConnectSignals(map[string]interface{}{
-		"on_create_room":             v.onCreateRoom,
-		"on_cancel":                  v.dialog.Destroy,
-		"on_close_window":            v.onCloseWindow,
-		"on_roomName_change":         v.onRoomNameChange,
-		"on_roomAutoJoin_toggled":    v.onRoomAutoJoinChange,
-		"on_chatServiceEntry_change": v.onChatServiceChange,
-	})
 }
 
-func (v *createMUCRoom) initConnectedAccountsComponent() {
-	c := v.builder.get("accounts").(gtki.ComboBox)
-	v.ac = v.u.createConnectedAccountsComponent(c, v, v.updateServicesBasedOnAccount, v.onNoAccountsConnected)
+func (v *createMUCRoom) initBuilderSignals() {
+	v.addBuilderSignal("on_close_window", v.onCloseWindow)
+	v.builder.ConnectSignals(v.builderSignals)
 }
 
-func (v *createMUCRoom) initDefaults() {
-	v.roomAutoJoin.SetActive(v.autoJoin)
+func (v *createMUCRoom) onCancel() {
+	v.window.Destroy()
 }
 
 func (v *createMUCRoom) onCloseWindow() {
-	v.ac.onDestroy()
-}
-
-// disableOrEnableFields SHOULD be called from the UI thread
-func (v *createMUCRoom) disableOrEnableFields(f bool) {
-	v.cancelButton.SetSensitive(f)
-	v.createButton.SetSensitive(f)
-	v.account.SetSensitive(f)
-	v.roomEntry.SetSensitive(f)
-	v.chatServices.SetSensitive(f)
-	v.roomAutoJoin.SetSensitive(f)
-	if f {
-		v.ac.enableAccountInput()
-	} else {
-		v.ac.disableAccountInput()
+	for _, cb := range v.onDestroyList {
+		cb()
 	}
 }
 
-func (v *createMUCRoom) clearFields() {
-	// TODO: should we keep the service name or not?
-	v.roomEntry.SetText("")
-	v.enableCreationIfConditionsAreMet()
-}
+var (
+	errCreateRoomCheckIfExistsFails = errors.New("room exists failed")
+	errCreateRoomAlreadyExists      = errors.New("room already exists")
+	errCreateRoomFailed             = errors.New("couldn't create the room")
+)
 
-func (v *createMUCRoom) onCreateRoom() {
-	v.clearErrors()
-
-	roomName, err := v.roomEntry.GetText()
-	if err != nil {
-		v.u.log.WithError(err).Error("Something went wrong while trying to create the room")
-		v.notifyOnError(i18n.Local("Could not get the room name, please try again."))
-	}
-
-	local := jid.NewLocal(roomName)
-	if !local.Valid() {
-		v.u.log.WithField("local", roomName).Error("Trying to create a room with an invalid local")
-		v.notifyOnError(i18n.Local("You must provide a valid room name."))
-		return
-	}
-
-	chatService, err := v.chatServiceEntry.GetText()
-	if err != nil {
-		v.u.log.WithError(err).Error("Something went wrong while trying to create the room")
-		v.notifyOnError(i18n.Local("Could not get the service name, please try again."))
-		return
-	}
-
-	domain := jid.NewDomain(chatService)
-	if !domain.Valid() {
-		v.u.log.WithField("domain", chatService).Error("Trying to create a room with an invalid domain")
-		v.notifyOnError(i18n.Local("You must provide a valid service name."))
-		return
-	}
-
-	roomIdentity := jid.NewBare(local, domain)
-
-	ca := v.ac.currentAccount()
-	if ca == nil {
-		v.u.log.WithField("room", roomIdentity).Error("No account was selected to create the room")
-		v.notifyOnError(i18n.Local("No account is selected, please select one account from the list or connect to one."))
-		return
-	}
-
-	v.onBeforeToCreateARoom()
-
-	go v.createRoomIfDoesntExist(ca, roomIdentity)
-}
-
-func (v *createMUCRoom) onBeforeToCreateARoom() {
-	v.showSpinner()
-	v.disableOrEnableFields(false)
-}
-
-func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare) {
+func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, successResult chan bool, errResult chan error) {
 	erc, ec := ca.session.HasRoom(ident)
 	go func() {
 		select {
-		case err, _ := <-ec:
+		case err := <-ec:
 			if err != nil {
 				ca.log.WithError(err).Error("Error trying to validate if room exists")
-				doInUIThread(func() {
-					v.errorBox.ShowMessage(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
-					v.hideSpinner()
-					v.disableOrEnableFields(true)
-				})
+				errResult <- errCreateRoomCheckIfExistsFails
 			}
 
-		case er, _ := <-erc:
+		case er := <-erc:
 			if !er {
 				ec := ca.session.CreateRoom(ident)
 				go func() {
-					isRoomCreated := v.listenToRoomCreation(ca, ec)
-					v.onCreateRoomFinished(isRoomCreated, ca, ident)
+					err := <-ec
+					if err != nil {
+						ca.log.WithError(err).Error("Something went wrong while trying to create the room")
+						errResult <- errCreateRoomFailed
+						return
+					}
+					v.onCreateRoomFinished(ca, ident)
 				}()
 				return
 			}
-
-			doInUIThread(func() {
-				v.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
-				v.hideSpinner()
-				v.disableOrEnableFields(true)
-			})
+			errResult <- errCreateRoomAlreadyExists
 		}
 	}()
 }
 
-func (v *createMUCRoom) listenToRoomCreation(ca *account, ec <-chan error) bool {
-	err, ok := <-ec
-	if !ok {
-		return true
-	}
-
-	if err != nil {
-		ca.log.WithError(err).Error("Something went wrong while trying to create the room")
-
-		userErr, ok := supportedCreateMUCErrors[err]
-		if !ok {
-			userErr = i18n.Local("Could not create the new room.")
-		}
-
+func (v *createMUCRoom) onCreateRoomFinished(ca *account, ident jid.Bare) {
+	if !v.autoJoin {
 		doInUIThread(func() {
-			v.errorBox.ShowMessage(userErr)
+			v.showSuccessView(ca, ident)
 		})
+		return
 	}
 
-	return false
-}
-
-func (v *createMUCRoom) onCreateRoomFinished(created bool, ca *account, ident jid.Bare) {
-	if created {
-		if !v.autoJoin {
-			doInUIThread(func() {
-				v.notifyOnError(i18n.Local("The room has been created."))
-				v.disableOrEnableFields(true)
-				v.hideSpinner()
-				v.clearFields()
-			})
-			return
-		}
-
-		doInUIThread(func() {
-			v.u.mucShowRoom(ca, ident)
-			v.dialog.Destroy()
-		})
-	}
-}
-
-func (v *createMUCRoom) onRoomNameChange() {
-	v.enableCreationIfConditionsAreMet()
-}
-
-func (v *createMUCRoom) onRoomAutoJoinChange() {
-	v.autoJoin = v.roomAutoJoin.GetActive()
-	if v.autoJoin {
-		v.createButton.SetProperty("label", i18n.Local("Create Room & Join"))
-	} else {
-		v.createButton.SetProperty("label", i18n.Local("Create Room"))
-	}
-}
-
-func (v *createMUCRoom) onChatServiceChange() {
-	v.enableCreationIfConditionsAreMet()
-}
-
-func (v *createMUCRoom) enableCreationIfConditionsAreMet() {
-	roomName, _ := v.roomEntry.GetText()
-	chatService, _ := v.chatServiceEntry.GetText()
-	currentAccount := v.ac.currentAccount()
-
-	hasAllValues := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
-	v.createButton.SetSensitive(hasAllValues)
-}
-
-func (v *createMUCRoom) notifyOnError(err string) {
-	if v.notification != nil {
-		v.notificationArea.Remove(v.notification)
-	}
-	v.errorBox.ShowMessage(err)
-}
-
-func (v *createMUCRoom) clearErrors() {
-	v.errorBox.Hide()
-}
-
-func (v *createMUCRoom) onNoAccountsConnected() {
 	doInUIThread(func() {
-		v.enableCreationIfConditionsAreMet()
-		v.chatServices.RemoveAll()
+		v.joinRoom(ca, ident)
 	})
 }
 
-func (v *createMUCRoom) updateServicesBasedOnAccount(acc *account) {
-	doInUIThread(v.enableCreationIfConditionsAreMet)
-	go v.updateChatServicesBasedOnAccount(acc)
+func (v *createMUCRoom) joinRoom(ca *account, ident jid.Bare) {
+	v.destroy()
+	v.u.mucShowRoom(ca, ident)
 }
 
-func (v *createMUCRoom) updateChatServicesBasedOnAccount(ac *account) {
-	if v.previousUpdateChannel != nil {
-		v.previousUpdateChannel <- true
-	}
-
-	v.previousUpdateChannel = make(chan bool)
-
-	csc, ec, endEarly := ac.session.GetChatServices(jid.ParseDomain(ac.Account()))
-
-	go v.updateChatServices(ac, csc, ec, endEarly)
+func (v *createMUCRoom) destroy() {
+	v.window.Destroy()
 }
 
-func (v *createMUCRoom) updateChatServices(ac *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
-	hadAny := false
-
-	var typedService string
-	doInUIThread(func() {
-		typedService, _ = v.chatServiceEntry.GetText()
-		v.chatServices.RemoveAll()
-		v.showSpinner()
-	})
-
-	defer v.onUpdateChatServicesFinished(hadAny, typedService)
-
-	for {
-		select {
-		case <-v.previousUpdateChannel:
-			doInUIThread(v.chatServices.RemoveAll)
-			endEarly()
-			return
-		case err, _ := <-ec:
-			if err != nil {
-				ac.log.WithError(err).Error("Something went wrong trying to get chat services")
-			}
-			return
-		case cs, ok := <-csc:
-			if !ok {
-				return
-			}
-
-			hadAny = true
-			doInUIThread(func() {
-				v.chatServices.AppendText(cs.String())
-			})
-		}
-	}
-}
-
-func (v *createMUCRoom) onUpdateChatServicesFinished(hadAny bool, typedService string) {
-	if hadAny && typedService == "" {
-		doInUIThread(func() {
-			v.chatServices.SetActive(0)
-		})
-	}
-
-	doInUIThread(v.hideSpinner)
-
-	v.previousUpdateChannel = nil
-}
-
-func (v *createMUCRoom) showSpinner() {
-	v.spinner.Start()
-	v.spinner.Show()
-}
-
-func (v *createMUCRoom) hideSpinner() {
-	v.spinner.Stop()
-	v.spinner.Hide()
-}
-
-func setEnabled(w gtki.Widget, enable bool) {
-	w.SetSensitive(enable)
+func (v *createMUCRoom) show() {
+	v.showCreateForm()
+	v.window.Show()
 }
 
 func (u *gtkUI) mucCreateChatRoom() {
 	view := u.newCreateMUCRoom()
-
-	u.connectShortcutsChildWindow(view.dialog)
-
-	view.dialog.SetTransientFor(u.window)
-	view.dialog.Show()
+	view.show()
 }

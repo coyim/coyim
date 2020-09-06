@@ -14,11 +14,13 @@ type roomViewLobby struct {
 	log   coylog.Logger
 
 	content          gtki.Box     `gtk-widget:"boxJoinRoomView"`
+	mainBox          gtki.Box     `gtk-widget:"mainContent"`
 	roomNameLabel    gtki.Label   `gtk-widget:"roomNameValue"`
 	nickNameEntry    gtki.Entry   `gtk-widget:"nickNameEntry"`
 	joinButton       gtki.Button  `gtk-widget:"joinButton"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
 	notificationArea gtki.Box     `gtk-widget:"boxNotificationArea"`
+	warningsArea     gtki.Box     `gtk-widget:"boxWarningsArea"`
 	parent           gtki.Box
 	errorNotif       *errorNotification
 	notification     gtki.InfoBar
@@ -56,7 +58,35 @@ func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCa
 	e.content.SetHExpand(true)
 	e.parent.Add(e.content)
 
+	e.content.SetCenterWidget(e.mainBox)
+
+	e.addWarning(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room."))
+
 	return e
+}
+
+type roomLobbyWarning struct {
+	text string
+
+	bar     gtki.Box   `gtk-widget:"warning-infobar"`
+	message gtki.Label `gtk-widget:"message"`
+}
+
+// addWarning should be called from the UI thread
+func (v *roomViewLobby) addWarning(s string) {
+	w := &roomLobbyWarning{text: s}
+
+	builder := newBuilder("MUCRoomWarning")
+	panicOnDevError(builder.bindObjects(w))
+
+	w.message.SetText(w.text)
+
+	prov := providerWithCSS("box { background-color: #89AF8F; color: #000000; border: 1px solid #000000; border-radius: 5px; }")
+	updateWithStyle(w.bar, prov)
+
+	v.warningsArea.PackStart(w.bar, false, false, 5)
+
+	v.warningsArea.ShowAll()
 }
 
 func (v *roomViewLobby) show() {

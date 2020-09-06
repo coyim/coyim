@@ -2,11 +2,12 @@
   <object class="GtkBox" id="warning-infobar">
     <property name="homogeneous">false</property>
     <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+    <property name="spacing">20</property>
     <child>
       <object class="GtkLabel" id="message">
+        <property name="max-width-chars">75</property>
         <property name="wrap">true</property>
-        <property name="margin-left">10</property>
-        <property name="margin-right">10</property>
+        <property name="margin">3</property>
       </object>
     </child>
   </object>

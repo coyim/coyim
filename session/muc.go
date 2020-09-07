@@ -290,9 +290,14 @@ func (m *mucManager) handleMUCReceivedClientMessage(stanza *data.ClientMessage) 
 }
 
 func (m *mucManager) handleMUCSubjectReceived(stanza *data.ClientMessage) {
-	from := jid.ParseBare(stanza.From)
+	from, ok := jid.TryParseBare(stanza.From)
+	if !ok {
+		m.log.WithField("from", stanza.From).Debug("Error parsing stanza.From")
+		return
+	}
 	subject := stanza.Subject
 	to := stanza.To
+
 	m.log.WithFields(log.Fields{
 		"from":    from,
 		"subject": subject,

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -109,7 +110,7 @@ var (
 )
 
 func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, successResult chan bool, errResult chan error) {
-	erc, ec := ca.session.HasRoom(ident)
+	erc, ec := ca.session.HasRoom(ident, nil)
 	go func() {
 		select {
 		case err := <-ec:
@@ -145,14 +146,20 @@ func (v *createMUCRoom) onCreateRoomFinished(ca *account, ident jid.Bare) {
 		return
 	}
 
-	doInUIThread(func() {
-		v.joinRoom(ca, ident)
-	})
+	v.joinRoom(ca, ident)
 }
 
 func (v *createMUCRoom) joinRoom(ca *account, ident jid.Bare) {
-	v.destroy()
-	v.u.mucShowRoom(ca, ident)
+	doInUIThread(v.destroy)
+	go func() {
+		rl := make(chan *muc.RoomListing)
+		go ca.session.GetRoom(ident, rl)
+		roomInfo := <-rl
+
+		doInUIThread(func() {
+			v.u.mucShowRoom(ca, ident, roomInfo)
+		})
+	}()
 }
 
 func (v *createMUCRoom) destroy() {

@@ -198,17 +198,18 @@ func (*SessionMock) GetAndWipeSymmetricKeyFor(jid.Any) []byte {
 }
 
 // HasRoom is the implementation for Session interface
-func (s *SessionMock) HasRoom(jid.Bare) (<-chan bool, <-chan error) {
+func (s *SessionMock) HasRoom(jid.Bare, chan<- *muc.RoomListing) (<-chan bool, <-chan error) {
 	return nil, nil
+}
+
+// GetRoom is the implementation for Session interface
+func (s *SessionMock) GetRoom(jid.Bare, chan<- *muc.RoomListing) {
 }
 
 // GetRooms is the implementation for Session interface
 func (*SessionMock) GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error) {
 	return nil, nil, nil
 }
-
-// GetRoom is the implementation for Session interface
-func (s *SessionMock) GetRoom(jid.Bare, *muc.RoomListing) {}
 
 // JoinRoom is the implementation for Session interface
 func (s *SessionMock) JoinRoom(rj jid.Bare, nickName string) error {

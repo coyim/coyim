@@ -11,6 +11,8 @@
       <column type="gchararray"/>
       <!-- occupants -->
       <column type="gint"/>
+      <!-- room info reference-->
+      <column type="gint"/>
     </columns>
   </object>
   <object class="GtkDialog" id="publicRooms">

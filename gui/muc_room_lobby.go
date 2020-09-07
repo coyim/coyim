@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
@@ -33,7 +34,7 @@ type roomViewLobby struct {
 	onCancel  func()
 }
 
-func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
+func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func(), roomInfo *muc.RoomListing) *roomViewLobby {
 	e := &roomViewLobby{
 		ident:     rid,
 		ac:        a,

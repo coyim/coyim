@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -65,11 +66,11 @@ func (v *mucJoinRoomView) onBeforeStart() {
 	v.showSpinner()
 }
 
-func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare) {
+func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare, roomInfo *muc.RoomListing) {
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.dialog.Hide()
-		v.u.mucShowRoom(a, ident)
+		v.u.mucShowRoom(a, ident, roomInfo)
 	})
 }
 
@@ -116,7 +117,7 @@ func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed b
 	c.v.onJoinError(c.a, c.ident, err)
 }
 
-func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChannel <-chan error) {
+func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChannel <-chan error, roomInfo <-chan *muc.RoomListing) {
 	defer doInUIThread(c.done)
 
 	select {
@@ -131,7 +132,9 @@ func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChanne
 			return
 		}
 
-		c.v.onJoinSuccess(c.a, c.ident)
+		ri := <-roomInfo
+
+		c.v.onJoinSuccess(c.a, c.ident, ri)
 	case err, ok := <-errorChannel:
 		c.onFinishWithError(err, ok)
 	}
@@ -139,8 +142,9 @@ func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChanne
 
 func (c *mucJoinRoomContext) exec() {
 	c.v.onBeforeStart()
-	resultChannel, errorChannel := c.a.session.HasRoom(c.ident)
-	go c.waitToFinish(resultChannel, errorChannel)
+	roomInfo := make(chan *muc.RoomListing)
+	resultChannel, errorChannel := c.a.session.HasRoom(c.ident, roomInfo)
+	go c.waitToFinish(resultChannel, errorChannel, roomInfo)
 }
 
 func (v *mucJoinRoomView) log() coylog.Logger {

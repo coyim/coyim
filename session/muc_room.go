@@ -17,7 +17,7 @@ func (s *session) JoinRoom(rj jid.Bare, nickName string) error {
 	return nil
 }
 
-func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
+func (s *session) HasRoom(rj jid.Bare, wantRoomInfo chan<- *muc.RoomListing) (<-chan bool, <-chan error) {
 	resultChannel := make(chan bool)
 	errorChannel := make(chan error)
 	go func() {
@@ -49,14 +49,21 @@ func (s *session) HasRoom(rj jid.Bare) (<-chan bool, <-chan error) {
 			return
 		}
 		resultChannel <- true
+
+		if wantRoomInfo != nil {
+			s.GetRoom(rj, wantRoomInfo)
+		}
 	}()
 	return resultChannel, errorChannel
 }
 
-func (s *session) GetRoom(rj jid.Bare, rl *muc.RoomListing) {
-	// TODO, check it out the best way to do this function to get all
-	// the information of the room from the server
-	rl = muc.NewRoomListing()
+// GetRoom will block, waiting to get the room information
+func (s *session) GetRoom(rj jid.Bare, result chan<- *muc.RoomListing) {
+	rl := muc.NewRoomListing()
 	rl.Jid = rj
-	go s.findOutMoreInformationAboutRoom(rl)
+	// This is a little bit redundant since we already asked for this once
+	// The right solution is to use the values from above, but that would be an extensive refactoring
+	// so we will wait with that for now
+	s.findOutMoreInformationAboutRoom(rl)
+	result <- rl
 }

@@ -2,6 +2,7 @@ package gui
 
 import (
 	"errors"
+	"math/rand"
 	"sync"
 
 	"github.com/coyim/coyim/i18n"
@@ -16,6 +17,7 @@ const (
 	mucListRoomsIndexService     = 2
 	mucListRoomsIndexDescription = 3
 	mucListRoomsIndexOccupants   = 4
+	mucListRoomsIndexRoomInfo    = 5
 )
 
 type roomListingUpdateData struct {
@@ -45,18 +47,20 @@ type mucPublicRoomsView struct {
 	generation    int
 	updateLock    sync.RWMutex
 	serviceGroups map[string]gtki.TreeIter
+	roomInfos     map[int]*muc.RoomListing
 	cancel        chan bool
 
-	dialog              gtki.Dialog         `gtk-widget:"publicRooms"`
-	roomsModel          gtki.TreeStore      `gtk-widget:"roomsModel"`
-	roomsTree           gtki.TreeView       `gtk-widget:"roomsTree"`
-	rooms               gtki.ScrolledWindow `gtk-widget:"rooms"`
-	spinner             gtki.Spinner        `gtk-widget:"spinner"`
-	customService       gtki.Entry          `gtk-widget:"customServiceEntry"`
-	notificationArea    gtki.Box            `gtk-widget:"notificationArea"`
-	joinButton          gtki.Button         `gtk-widget:"buttonJoin"`
-	refreshButton       gtki.Button         `gtk-widget:"buttonRefresh"`
-	customServiceButton gtki.Button         `gtk-widget:"buttonCustomService"`
+	dialog           gtki.Dialog         `gtk-widget:"publicRooms"`
+	roomsModel       gtki.TreeStore      `gtk-widget:"roomsModel"`
+	roomsTree        gtki.TreeView       `gtk-widget:"roomsTree"`
+	rooms            gtki.ScrolledWindow `gtk-widget:"rooms"`
+	spinner          gtki.Spinner        `gtk-widget:"spinner"`
+	customService    gtki.Entry          `gtk-widget:"customServiceEntry"`
+	notificationArea gtki.Box            `gtk-widget:"notificationArea"`
+
+	joinButton          gtki.Button `gtk-widget:"buttonJoin"`
+	refreshButton       gtki.Button `gtk-widget:"buttonRefresh"`
+	customServiceButton gtki.Button `gtk-widget:"buttonCustomService"`
 
 	notification gtki.InfoBar
 	errorNotif   *errorNotification
@@ -120,6 +124,7 @@ func (prv *mucPublicRoomsView) initEvents() {
 
 func (prv *mucPublicRoomsView) initCommons() {
 	prv.serviceGroups = make(map[string]gtki.TreeIter)
+	prv.roomInfos = make(map[int]*muc.RoomListing)
 	prv.joinButton.SetSensitive(false)
 }
 
@@ -130,48 +135,60 @@ var (
 	errNoService           = errors.New("no service is available")
 )
 
-func (prv *mucPublicRoomsView) getRoomBareFromIter(iter gtki.TreeIter) (jid.Bare, error) {
+func (prv *mucPublicRoomsView) getRoomFromIter(iter gtki.TreeIter) (jid.Bare, *muc.RoomListing, error) {
+	roomInfoValue, e1 := prv.roomsModel.GetValue(iter, mucListRoomsIndexRoomInfo)
+	roomInfoRef, e2 := roomInfoValue.GoValue()
+	if e1 != nil || e2 != nil {
+		return nil, nil, errNoRoomSelected
+	}
+
+	roomInfoRealVal := roomInfoRef.(int)
+	rl, ok := prv.roomInfos[roomInfoRealVal]
+	if !ok || rl == nil {
+		return nil, nil, errNoPossibleSelection
+	}
+
 	roomJidValue, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexJid)
 	ident, _ := roomJidValue.GetString()
 
-	_, ok := prv.serviceGroups[ident]
+	_, ok = prv.serviceGroups[ident]
 	if ok {
-		return nil, errNoRoomSelected
+		return nil, nil, errNoRoomSelected
 	}
 
 	serviceValue, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexService)
 	service, _ := serviceValue.GetString()
 	_, ok = prv.serviceGroups[service]
 	if !ok {
-		return nil, errNoService
+		return nil, nil, errNoService
 	}
 
-	return jid.NewBare(jid.NewLocal(ident), jid.NewDomain(service)), nil
+	return jid.NewBare(jid.NewLocal(ident), jid.NewDomain(service)), rl, nil
 }
 
-func (prv *mucPublicRoomsView) getSelectedRoomBare() (jid.Bare, error) {
+func (prv *mucPublicRoomsView) getSelectedRoom() (jid.Bare, *muc.RoomListing, error) {
 	selection, err := prv.roomsTree.GetSelection()
 	if err != nil {
-		return nil, errNoPossibleSelection
+		return nil, nil, errNoPossibleSelection
 	}
 
 	_, iter, ok := selection.GetSelected()
 	if !ok {
-		return nil, errNoSelection
+		return nil, nil, errNoSelection
 	}
 
-	return prv.getRoomBareFromIter(iter)
+	return prv.getRoomFromIter(iter)
 }
 
 func (prv *mucPublicRoomsView) onJoinRoom() {
-	ident, err := prv.getSelectedRoomBare()
+	ident, rl, err := prv.getSelectedRoom()
 	if err != nil {
 		prv.currentAccount.log.WithError(err).Error("An error occurred when trying to join the room")
 		prv.showUserMessageForError(err)
 		return
 	}
 
-	go prv.joinRoom(ident)
+	go prv.joinRoom(ident, rl)
 }
 
 func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.TreePath) {
@@ -181,18 +198,18 @@ func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.Tree
 		return
 	}
 
-	ident, err := prv.getRoomBareFromIter(iter)
+	ident, rl, err := prv.getRoomFromIter(iter)
 	if err != nil {
 		prv.currentAccount.log.WithError(err).Error("Couldn't join to the room based on the current selection")
 		prv.showUserMessageForError(err)
 		return
 	}
 
-	go prv.joinRoom(ident)
+	go prv.joinRoom(ident, rl)
 }
 
 func (prv *mucPublicRoomsView) onSelectionChanged() {
-	_, err := prv.getSelectedRoomBare()
+	_, _, err := prv.getSelectedRoom()
 	if err != nil {
 		prv.joinButton.SetSensitive(false)
 	} else {
@@ -202,6 +219,17 @@ func (prv *mucPublicRoomsView) onSelectionChanged() {
 
 func (prv *mucPublicRoomsView) onUpdatePublicRooms() {
 	go prv.mucUpdatePublicRoomsOn(prv.ac.currentAccount())
+}
+
+func (prv *mucPublicRoomsView) getFreshRoomInfoIdentifierAndSet(rl *muc.RoomListing) int {
+	for {
+		v := int(rand.Int31())
+		_, ok := prv.roomInfos[v]
+		if !ok {
+			prv.roomInfos[v] = rl
+			return v
+		}
+	}
 }
 
 // mucUpdatePublicRoomsOn should NOT be called from the UI thread
@@ -228,6 +256,7 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 	})
 	prv.generation++
 	prv.serviceGroups = make(map[string]gtki.TreeIter)
+	prv.roomInfos = make(map[int]*muc.RoomListing)
 
 	// We save the generation value here, in case it gets modified inside the view later
 	gen := prv.generation
@@ -303,6 +332,12 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 					_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexJid, rl.Jid.Local().String())
 					_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexName, rl.Name)
 					_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexService, rl.Service.String())
+
+					// This will block while finding an unused identifier. However, since
+					// we don't expect to get millions of room listings, it's not likely this will ever be a problem.
+					roomInfoRef := prv.getFreshRoomInfoIdentifierAndSet(rl)
+					_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexRoomInfo, roomInfoRef)
+
 					rl.OnUpdate(prv.u.updatedRoomListing, &roomListingUpdateData{iter, prv, gen})
 
 					prv.roomsTree.ExpandAll()
@@ -367,7 +402,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 }
 
 // joinRoom should not be called from the UI thread
-func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare) {
+func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare, roomInfo *muc.RoomListing) {
 	a := prv.ac.currentAccount()
 	if a == nil {
 		prv.currentAccount.log.WithField("room", roomJid).Debug("joinRoom(): no account is selected")
@@ -378,6 +413,6 @@ func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare) {
 	a.log.WithField("room", roomJid).Debug("joinRoom()")
 	doInUIThread(func() {
 		prv.dialog.Destroy()
-		prv.u.mucShowRoom(a, roomJid)
+		prv.u.mucShowRoom(a, roomJid, roomInfo)
 	})
 }

@@ -69,6 +69,12 @@ func (e *StanzaError) AnyMUCError() interface{} {
 	)
 }
 
+// ClientMessageSubject contains all the subject text of any room when it is received
+type ClientMessageSubject struct {
+	XMLName xml.Name `xml:""`
+	Text    string   `xml:",innerxml"`
+}
+
 // ClientMessage implements RFC 3921  B.1  jabber:client
 type ClientMessage struct {
 	XMLName xml.Name `xml:"jabber:client message"`
@@ -79,11 +85,11 @@ type ClientMessage struct {
 
 	// These should technically be []clientText,
 	// but string is much more convenient.
-	Subject    *string     `xml:"subject"`
-	Body       string      `xml:"body"`
-	Thread     string      `xml:"thread"`
-	Delay      *Delay      `xml:"delay,omitempty"`
-	Encryption *Encryption `xml:"encryption,omitempty"`
+	Subject    *ClientMessageSubject `xml:"subject,omitempty"`
+	Body       string                `xml:"body"`
+	Thread     string                `xml:"thread"`
+	Delay      *Delay                `xml:"delay,omitempty"`
+	Encryption *Encryption           `xml:"encryption,omitempty"`
 
 	Error *StanzaError `xml:"error"`
 

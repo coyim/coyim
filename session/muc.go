@@ -295,7 +295,7 @@ func (m *mucManager) handleMUCSubjectReceived(stanza *data.ClientMessage) {
 		m.log.WithField("from", stanza.From).Debug("Error parsing stanza.From")
 		return
 	}
-	subject := stanza.Subject
+	subject := stanza.Subject.Text
 	to := stanza.To
 
 	m.log.WithFields(log.Fields{
@@ -303,12 +303,13 @@ func (m *mucManager) handleMUCSubjectReceived(stanza *data.ClientMessage) {
 		"subject": subject,
 		"to":      to,
 	}).Debug("Subject received")
-	//TODO:This should be done in issue #587
+	//TODO: This should be done in issue #587
 }
 
 func (m *mucManager) handleMUCMessageReceived(stanza *data.ClientMessage) {
 	from := jid.ParseFull(stanza.From)
 	room := from.Bare()
+	subject := ""
 	body := stanza.Body
 	to := stanza.To
 	nickname := from.Resource()
@@ -321,5 +322,5 @@ func (m *mucManager) handleMUCMessageReceived(stanza *data.ClientMessage) {
 		"nickname": nickname,
 	}).Debug("Message received")
 
-	m.mucMessageReceived(from, room, nickname, "", body)
+	m.mucMessageReceived(from, room, nickname, subject, body)
 }

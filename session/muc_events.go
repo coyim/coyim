@@ -52,6 +52,17 @@ func (m *mucManager) mucOccupantJoined(from jid.Full, room jid.Bare, occupant ji
 	m.publishMUCEvent(from, ev)
 }
 
+func (m *mucManager) mucMessageReceived(from jid.Full, room jid.Bare, nickname jid.Resource, subject, body string) {
+	ev := events.MUCMessageReceived{}
+	ev.From = from
+	ev.Room = room
+	ev.Nickname = nickname
+	ev.Subject = subject
+	ev.Body = body
+
+	m.publishMUCEvent(from, ev)
+}
+
 func (m *mucManager) publishMUCEvent(from jid.Full, e interface{}) {
 	ev := events.MUC{}
 	ev.From = from

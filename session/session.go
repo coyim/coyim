@@ -221,7 +221,6 @@ func retrieveMessageTime(stanza *data.ClientMessage) time.Time {
 
 func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	s.log.WithField("stanza", fmt.Sprintf("%#v", stanza)).Debug("receivedClientMessage()")
-
 	if len(stanza.Body) == 0 && len(stanza.Extensions) > 0 {
 		s.processExtensions(stanza)
 		return true
@@ -236,6 +235,9 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	// TODO: it feels iffy that we have error and groupchat special handled here
 	// But not checking on the "message" type.
 	switch stanza.Type {
+	case "groupchat":
+		s.muc.handleMUCReceivedClientMessage(stanza)
+		return true
 	case "error":
 		//TODO: investigate which errors are NOT recoverable, and return false
 		//to close the connection

@@ -278,3 +278,44 @@ func (s *session) GetChatServices(server jid.Domain) (<-chan jid.Domain, <-chan 
 	go ctx.fetchChatServices(server)
 	return ctx.resultsChannel, ctx.errorChannel, ctx.end
 }
+
+func (m *mucManager) handleMUCReceivedClientMessage(stanza *data.ClientMessage) {
+	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
+
+	if stanza.Subject != nil {
+		m.handleMUCSubjectReceived(stanza)
+
+	} else {
+		m.handleMUCMessageReceived(stanza)
+	}
+}
+
+func (m *mucManager) handleMUCSubjectReceived(stanza *data.ClientMessage) {
+	from := jid.ParseBare(stanza.From)
+	subject := stanza.Subject
+	to := stanza.To
+	m.log.WithFields(log.Fields{
+		"from":    from,
+		"subject": subject,
+		"to":      to,
+	}).Debug("Subject received")
+	//TODO:This should be done in issue #587
+}
+
+func (m *mucManager) handleMUCMessageReceived(stanza *data.ClientMessage) {
+	from := jid.ParseFull(stanza.From)
+	room := from.Bare()
+	body := stanza.Body
+	to := stanza.To
+	nickname := from.Resource()
+
+	m.log.WithFields(log.Fields{
+		"from":     from,
+		"room":     room,
+		"body":     body,
+		"to":       to,
+		"nickname": nickname,
+	}).Debug("Message received")
+
+	m.mucMessageReceived(from, room, nickname, "", body)
+}

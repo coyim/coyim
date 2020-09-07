@@ -63,6 +63,15 @@ func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCa
 
 	e.addWarning(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room."))
 
+	switch roomInfo.Anonymity {
+	case "semi":
+		e.addWarning(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
+	case "no":
+		e.addWarning(i18n.Local("This room is not anomyous. This means that any person in this room can connect your nickname with your real username (your JID)."))
+	default:
+		e.log.WithField("anonymity", roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
+	}
+
 	return e
 }
 

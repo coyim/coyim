@@ -75,7 +75,9 @@ several warnings at the top of the box.
 If you add a text label with a lot of text, you will generally end up in a situation where the text expands vertically,
 and this will expand the box its inside, all the way out to the window. I have not found a good way to stop this
 behavior and let it expand vertically instead of horizontally. However, you can use the `max-width-chars` property to
-make the label wrap at a specific point. This makes it possible to stop the expansion of the box, to some degree.
+make the label wrap at a specific point. This makes it possible to stop the expansion of the box, to some degree. If you
+do this, and the left margin becomes unpredictable, sometimes more indented and sometimes less, you can solve this by
+setting the `halign` and `xalign` properties on the label. They should be set to `start` and `0`, respectively.
 
 
 ## Don't allow a text label to expand the box and window it's inside - BETTER SOLUTION WANTED

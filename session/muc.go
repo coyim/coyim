@@ -284,7 +284,6 @@ func (m *mucManager) handleMUCReceivedClientMessage(stanza *data.ClientMessage) 
 
 	if stanza.Subject != nil {
 		m.handleMUCSubjectReceived(stanza)
-
 	} else {
 		m.handleMUCMessageReceived(stanza)
 	}

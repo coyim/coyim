@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"errors"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -15,6 +17,7 @@ type roomView struct {
 	log      coylog.Logger
 	identity jid.Bare
 	joined   bool
+	occupant jid.Resource
 
 	window  gtki.Window `gtk-widget:"roomWindow"`
 	content gtki.Box    `gtk-widget:"boxMainView"`
@@ -102,12 +105,27 @@ func (v *roomView) initDefaults() {
 func (v *roomView) onShowWindow() {}
 
 func (v *roomView) onCloseWindow() {
-	exists := v.account.roomManager.LeaveRoom(v.identity)
-	if !exists {
-		v.log.Error("Trying to leave a room that doesn't exists.")
+	err := v.leaveRoom()
+	if err != nil {
+		v.account.log.WithError(err).Error("Trying to leave a room that doesn't exists.")
 		return
 	}
 	v.joined = false
+}
+
+func (v *roomView) leaveRoom() error {
+	room, ok := v.account.roomManager.GetRoom(v.identity)
+	if !ok {
+		return errors.New("room doesn't exist in room manager")
+	}
+
+	// Leaving the xmpp server
+	v.account.session.LeaveRoom(jid.NewFull(room.Identity.Local(), room.Identity.Host(), v.occupant))
+
+	// Leaving the room manager
+	v.account.roomManager.LeaveRoom(room.Identity)
+
+	return nil
 }
 
 func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {
@@ -172,6 +190,7 @@ func (v *roomView) onRoomOccupantJoinedReceived(occupant jid.Resource, occupants
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return
 	}
+	v.occupant = occupant
 	v.lobby.onRoomOccupantJoinedReceived()
 	v.roster.updateRoomRoster(occupants)
 }

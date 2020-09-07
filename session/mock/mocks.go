@@ -230,3 +230,7 @@ func (*SessionMock) GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error
 func (*SessionMock) Log() coylog.Logger {
 	return nil
 }
+
+// LeaveRoom is the implementation for session interface
+func (*SessionMock) LeaveRoom(jid.Full) {
+}

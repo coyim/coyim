@@ -67,3 +67,12 @@ func (s *session) GetRoom(rj jid.Bare, result chan<- *muc.RoomListing) {
 	s.findOutMoreInformationAboutRoom(rl)
 	result <- rl
 }
+
+func (s *session) LeaveRoom(to jid.Full) {
+	go func() {
+		err := s.conn.SendPresence(to.String(), "unavailable", "", "")
+		if err != nil {
+			s.log.WithField("to", to.String()).WithError(err).Error("error trying to leave room")
+		}
+	}()
+}

@@ -62,6 +62,15 @@ type MUCOccupantLeft struct {
 	Role        string
 }
 
+// MUCMessageReceived contains information about
+// the message received
+type MUCMessageReceived struct {
+	MUC
+	Nickname jid.Resource
+	Body     string
+	Subject  string
+}
+
 // MUCErrorType represents the type of MUC error event
 type MUCErrorType EventType
 

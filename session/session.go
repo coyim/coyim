@@ -221,6 +221,7 @@ func retrieveMessageTime(stanza *data.ClientMessage) time.Time {
 
 func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	s.log.WithField("stanza", fmt.Sprintf("%#v", stanza)).Debug("receivedClientMessage()")
+
 	if len(stanza.Body) == 0 && len(stanza.Extensions) > 0 {
 		s.processExtensions(stanza)
 		return true

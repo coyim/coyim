@@ -88,6 +88,14 @@
   version = "v4.1.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:47c6dc571557e5063e0c9ee129e5968a0550056edaef86aab3fad17c42cf3365"
+  name = "github.com/golang-collections/collections"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "604e922904d35e97f98a774db7881f049cd8d970"
+
+[[projects]]
   digest = "1:ddf66fdcdb1ec703fa6316f0735dc287290f6e0123037f59972f5fe9202e09d4"
   name = "github.com/gotk3/gotk3"
   packages = [
@@ -296,6 +304,7 @@
     "github.com/coyim/gotk3osx",
     "github.com/coyim/otr3",
     "github.com/godbus/dbus",
+    "github.com/golang-collections/collections",
     "github.com/hydrogen18/stalecucumber",
     "github.com/kardianos/osext",
     "github.com/miekg/dns",

@@ -11,12 +11,12 @@
           <object class="GtkLabel">
             <property name="can_focus">False</property>
             <property name="margin-top">5</property>
-	    <property name="label" translatable="yes">
-Installing Tor for CoyIM:
+	        <property name="label" translatable="yes">
+              Installing Tor for CoyIM:
             </property>
             <attributes>
               <attribute name="font-desc" value="&lt;Enter Value&gt; 14"/>
-	      <attribute name="weight" value="semibold"/>
+	          <attribute name="weight" value="semibold"/>
             </attributes>
           </object>
           <packing>
@@ -28,23 +28,23 @@ Installing Tor for CoyIM:
         <child>
           <object class="GtkLabel">
             <property name="can_focus">False</property>
-	    <property name="label" translatable="yes">
+	        <property name="label" translatable="yes">
 
-    1. Go to https://www.torproject.org/
+              1. Go to https://www.torproject.org/
 
-    2. Download and install Tor (or the Tor Browser Bundle)
+              2. Download and install Tor (or the Tor Browser Bundle)
 
-    3. Start Tor (or the Tor Browser)
+              3. Start Tor (or the Tor Browser)
             </property>
             <property name="selectable">True</property>
-	  </object>
+	      </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
-	<child>
+	    <child>
           <object class="GtkEventBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -59,7 +59,7 @@ Installing Tor for CoyIM:
                 <attributes>
                   <attribute name="underline" value="True"/>
                 </attributes>
-	      </object>
+	          </object>
             </child>
           </object>
           <packing>

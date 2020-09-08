@@ -6,12 +6,12 @@
       <object class="GtkBox" id="verify-close-infobar">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-	<child>
+	    <child>
           <object class="GtkEventBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <signal name="button-press-event" handler="on_press_image" swapped="no"/>
-	    <child>
+	        <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -28,7 +28,7 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="pack_type">end</property>
-	    <property name="position">0</property>
+	        <property name="position">0</property>
           </packing>
         </child>
       </object>
@@ -63,7 +63,7 @@
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
-	  </object>
+	      </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
@@ -86,13 +86,13 @@
                 <property name="margin_right">10</property>
                 <property name="label" translatable="yes">Validate Channel</property>
               </object>
-	    </child>
+	        </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="pack_type">end</property>
-	    <property name="position">2</property>
+	        <property name="position">2</property>
           </packing>
         </child>
       </object>

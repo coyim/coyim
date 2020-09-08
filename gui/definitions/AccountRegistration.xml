@@ -7,12 +7,12 @@
       <object class="GtkBox" id="dialog">
         <property name="margin">10</property>
         <property name="spacing">10</property>
-	<child>
+	    <child>
           <object class="GtkGrid">
             <property name="margin-bottom">10</property>
             <property name="row-spacing">12</property>
             <property name="column-spacing">6</property>
-	    <child>
+	        <child>
               <object class="GtkLabel" id="server-label">
                 <property name="label" translatable="yes">Recommended servers: </property>
                 <property name="justify">GTK_JUSTIFY_RIGHT</property>
@@ -23,7 +23,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText" id="server">                
+              <object class="GtkComboBoxText" id="server">
                 <property name="has-entry">True</property>
               </object>
               <packing>
@@ -31,13 +31,13 @@
                 <property name="top-attach">1</property>
               </packing>
             </child>
-	  </object>
+	      </object>
         </child>
       </object>
       <packing>
         <property name="title" translatable="yes">1. Choose a server</property>
-         <property name="page-type">GTK_ASSISTANT_PAGE_INTRO</property>
-	<property name="complete">true</property>
+        <property name="page-type">GTK_ASSISTANT_PAGE_INTRO</property>
+	    <property name="complete">true</property>
       </packing>
     </child>
     <child>
@@ -47,10 +47,10 @@
             <property name="margin_right">15</property>
           </object>
         </child>
-	<child>
-	  <object class="GtkLabel" id="formMessage">
+	    <child>
+	      <object class="GtkLabel" id="formMessage">
             <property name="margin-top">20</property>
-	  </object>
+	      </object>
         </child>
         <child>
           <object class="GtkSpinner" id="spinner">
@@ -79,13 +79,13 @@
           <object class="GtkImage" id="doneImage">
             <property name="margin_right">15</property>
           </object>
-	</child>
-	<child>
+	    </child>
+	    <child>
           <object class="GtkLabel" id="doneMessage" />
         </child>
       </object>
       <packing>
-         <property name="page-type">GTK_ASSISTANT_PAGE_SUMMARY</property>
+        <property name="page-type">GTK_ASSISTANT_PAGE_SUMMARY</property>
       </packing>
     </child>
   </object>

@@ -6,13 +6,13 @@
     <child internal-child="vbox">
       <object class="GtkBox" id="Vbox">
         <property name="orientation">vertical</property>
-	<property name="margin">20</property>
+	    <property name="margin">20</property>
         <property name="margin_top">30</property>
-	<property name="spacing">2</property>
+	    <property name="spacing">2</property>
         <child>
           <object class="GtkLabel" id="message">
             <property name="wrap">true</property>
-	    <property name="label" translatable="yes">Welcome to CoyIM!</property>
+	        <property name="label" translatable="yes">Welcome to CoyIM!</property>
             <property name="margin_bottom">10</property>
             <attributes>
               <attribute name="font-desc" value="&lt;Enter Value&gt; 14"/>
@@ -31,32 +31,32 @@
             <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
             <property name="homogeneous">True</property>
             <property name="margin_top">20</property>
-	    <child>
+	        <child>
               <object class="GtkButton" id="button_register">
                 <property name="label" translatable="yes">Create a new account</property>
                 <property name="margin_bottom">5</property>
-		<signal name="clicked" handler="on_register" />
+		        <signal name="clicked" handler="on_register" />
               </object>
             </child>
             <child>
               <object class="GtkButton" id="button_existing">
                 <property name="label" translatable="yes">Add an existing account</property>
                 <property name="margin_bottom">5</property>
-		<signal name="clicked" handler="on_existing" />
+		        <signal name="clicked" handler="on_existing" />
               </object>
             </child>
             <child>
               <object class="GtkButton" id="button_import">
                 <property name="label" translatable="yes">Import account from your computer</property>
                 <property name="margin_bottom">5</property>
-		<signal name="clicked" handler="on_import" />
+		        <signal name="clicked" handler="on_import" />
               </object>
             </child>
-	    <child>
+	        <child>
               <object class="GtkButton" id="button_cancel">
                 <property name="label">Cancel</property>
                 <property name="margin_bottom">5</property>
-		<signal name="clicked" handler="on_cancel" />
+		        <signal name="clicked" handler="on_cancel" />
               </object>
             </child>
           </object>

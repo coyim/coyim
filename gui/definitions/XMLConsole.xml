@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <interface>
   <object class="GtkTextBuffer" id="consoleContent">
     <property name="text" translatable="yes">Hello world</property>

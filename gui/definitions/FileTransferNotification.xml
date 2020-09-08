@@ -1,48 +1,48 @@
 <interface>
   <object class="GtkBox" id="area-file-transfer-info">
-   <property name="visible">true</property>
-   <property name="homogeneous">false</property>
-   <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-   <property name="spacing">9</property>
-   <child>
-     <object class="GtkLabel" id="name-file-transfer-info">
-       <property name="visible">True</property>
-       <property name="can_focus">False</property>
-       <property name="halign">start</property>
-       <property name="label">start</property>
-       <property name="margin-top">4</property>
-       <attributes>
-         <attribute name="font-desc" value="&lt;Enter Value&gt; 9"/>
-         <attribute name="weight" value="thin"/>
-       </attributes>
-     </object>
-     <packing>
-       <property name="expand">False</property>
-       <property name="fill">True</property>
-       <property name="position">0</property>
-     </packing>
-   </child>
-   <child>
-     <object class="GtkEventBox">
-       <property name="visible">True</property>
-       <property name="can_focus">False</property>
-       <signal name="button-press-event" handler="on_destroy_single_file_transfer" swapped="no"/>
-      <child>
-        <object class="GtkImage" id="image-file-transfer-info">
-          <property name="visible">True</property>
-          <property name="can_focus">False</property>
-          <property name="pixel_size">12</property>
-          <property name="icon_name">window-close</property>
-          <property name="icon_size">1</property>
-        </object>
-      </child>
-     </object>
-     <packing>
-       <property name="expand">False</property>
-       <property name="fill">True</property>
-       <property name="pack-type">end</property>
-       <property name="position">1</property>
-     </packing>
-   </child>
+    <property name="visible">true</property>
+    <property name="homogeneous">false</property>
+    <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+    <property name="spacing">9</property>
+    <child>
+      <object class="GtkLabel" id="name-file-transfer-info">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">start</property>
+        <property name="label">start</property>
+        <property name="margin-top">4</property>
+        <attributes>
+          <attribute name="font-desc" value="&lt;Enter Value&gt; 9"/>
+          <attribute name="weight" value="thin"/>
+        </attributes>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEventBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <signal name="button-press-event" handler="on_destroy_single_file_transfer" swapped="no"/>
+        <child>
+          <object class="GtkImage" id="image-file-transfer-info">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixel_size">12</property>
+            <property name="icon_name">window-close</property>
+            <property name="icon_size">1</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="pack-type">end</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
   </object>
 </interface>

@@ -24,7 +24,7 @@
               <object class="GtkButton" id="verif-success-button">
                 <property name="label" translatable="yes">OK</property>
                 <property name="margin-top">10</property>
-	      </object>
+	          </object>
             </child>
           </object>
         </child>

@@ -7,12 +7,12 @@
       <object class="GtkBox" id="box">
         <property name="border-width">10</property>
         <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-	<child>
+	    <child>
           <object class="GtkLabel">
             <property name="can_focus">False</property>
             <property name="margin-bottom">3</property>
-	    <property name="label" translatable="yes">
-Visit the website to get in touch with us:
+	        <property name="label" translatable="yes">
+              Visit the website to get in touch with us:
             </property>
           </object>
           <packing>
@@ -21,15 +21,15 @@ Visit the website to get in touch with us:
             <property name="position">0</property>
           </packing>
         </child>
-	<child>
+	    <child>
           <object class="GtkLabel" id="message">
             <property name="can_focus">False</property>
             <property name="margin-top">10</property>
-	    <property name="label" translatable="yes">https://coy.im</property>
+	        <property name="label" translatable="yes">https://coy.im</property>
             <property name="selectable">True</property>
             <attributes>
               <attribute name="font-desc" value="&lt;Enter Value&gt; 14"/>
-	      <attribute name="weight" value="semibold"/>
+	          <attribute name="weight" value="semibold"/>
             </attributes>
           </object>
           <packing>
@@ -43,10 +43,10 @@ Visit the website to get in touch with us:
             <property name="can_focus">False</property>
             <property name="margin-top">10</property>
             <property name="margin-bottom">10</property>
-	    <property name="label" translatable="yes">
-Let us know what you think of CoyIM.
+	        <property name="label" translatable="yes">
+              Let us know what you think of CoyIM.
 
-This is the only way we can create a better privacy tool.
+              This is the only way we can create a better privacy tool.
             </property>
           </object>
           <packing>

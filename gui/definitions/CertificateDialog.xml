@@ -260,7 +260,7 @@
           <object class="GtkLabel" id="validityMessage">
             <property name="label" translatable="yes">Validity:</property>
             <property name="halign">GTK_ALIGN_START</property>
-                <property name="justify">GTK_JUSTIFY_LEFT</property>
+            <property name="justify">GTK_JUSTIFY_LEFT</property>
             <property name="selectable">TRUE</property>
             <attributes>
               <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>

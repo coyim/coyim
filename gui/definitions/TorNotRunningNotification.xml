@@ -14,7 +14,7 @@
           <object class="GtkLabel" id="message">
             <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
             <property name="hexpand">True</property>
-	    <property name="wrap">true</property>
+	        <property name="wrap">true</property>
             <property name="margin-right">10</property>
           </object>
         </child>

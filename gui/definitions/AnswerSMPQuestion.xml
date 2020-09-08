@@ -39,7 +39,7 @@
                 <property name="margin-bottom">12</property>
               </object>
             </child>
-           </object>
+          </object>
         </child>
         <child>
           <object class="GtkGrid">
@@ -74,67 +74,67 @@
           </object>
         </child>
         <child>
-            <object class="GtkGrid">
+          <object class="GtkGrid">
             <property name="column-spacing">6</property>
             <property name="row-spacing">2</property>
             <child>
-                <object class="GtkImage" id="padlock_image1"/>
-                <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">0</property>
-                </packing>
+              <object class="GtkImage" id="padlock_image1"/>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
             </child>
             <child>
-                <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Ask them in person</property>
-                    <property name="justify">GTK_JUSTIFY_LEFT</property>
-                    <property name="halign">GTK_ALIGN_START</property>
-                </object>
-                <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
-                </packing>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Ask them in person</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
+                <property name="halign">GTK_ALIGN_START</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
             </child>
             <child>
-                <object class="GtkImage" id="padlock_image2"/>
-                <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">1</property>
-                </packing>
+              <object class="GtkImage" id="padlock_image2"/>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
             </child>
             <child>
-                <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Ask them in a different encrypted channel</property>
-                    <property name="justify">GTK_JUSTIFY_LEFT</property>
-                    <property name="halign">GTK_ALIGN_START</property>
-                </object>
-                <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">1</property>
-                </packing>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Ask them in a different encrypted channel</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
+                <property name="halign">GTK_ALIGN_START</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
             </child>
             <child>
-                <object class="GtkImage" id="alert_image"/>
-                <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">2</property>
-                </packing>
+              <object class="GtkImage" id="alert_image"/>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
             </child>
             <child>
-                <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Ask them over the phone</property>
-                    <property name="justify">GTK_JUSTIFY_LEFT</property>
-                    <property name="halign">GTK_ALIGN_START</property>
-                </object>
-                <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">2</property>
-                </packing>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Ask them over the phone</property>
+                <property name="justify">GTK_JUSTIFY_LEFT</property>
+                <property name="halign">GTK_ALIGN_START</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
             </child>
-            </object>
+          </object>
         </child>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="button_box">

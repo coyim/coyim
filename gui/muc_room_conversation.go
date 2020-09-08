@@ -49,8 +49,14 @@ func (v *roomViewConversation) newStyleTags() *mucStyleTags {
 	_ = timestampTag.SetProperty("foreground", "#AAB7B8")
 	_ = timestampTag.SetProperty("style", pangoi.STYLE_NORMAL)
 
+	cset := v.u.currentColorSet()
+
+	warningTag, _ := g.gtk.TextTagNew("warning")
+	_ = warningTag.SetProperty("foreground", cset.warningForeground)
+
 	t.table.Add(leftRoomTag)
 	t.table.Add(timestampTag)
+	t.table.Add(warningTag)
 
 	return t
 }

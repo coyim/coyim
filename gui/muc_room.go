@@ -19,7 +19,8 @@ type roomView struct {
 	joined   bool
 	occupant jid.Resource
 
-	log     coylog.Logger
+	log coylog.Logger
+
 	window  gtki.Window `gtk-widget:"roomWindow"`
 	content gtki.Box    `gtk-widget:"boxMainView"`
 

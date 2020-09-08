@@ -218,6 +218,9 @@
               <object class="GtkBox" id="notification-area">
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
+                <style>
+                  <class name="notifications"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>

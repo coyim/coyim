@@ -12,5 +12,8 @@
         <property name="orientation">vertical</property>
       </object>
     </child>
+    <style>
+      <class name="muc"/>
+    </style>
   </object>
 </interface>

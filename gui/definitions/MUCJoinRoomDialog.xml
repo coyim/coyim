@@ -77,9 +77,9 @@
             <child>
               <object class="GtkBox" id="box-notification-area">
                 <property name="orientation">vertical</property>
-                <child>
-                  <placeholder/>
-                </child>
+                <style>
+                  <class name="notifications"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -185,5 +185,8 @@
         </child>
       </object>
     </child>
+    <style>
+      <class name="muc"/>
+    </style>
   </object>
 </interface>

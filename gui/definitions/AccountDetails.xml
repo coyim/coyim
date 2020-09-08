@@ -83,6 +83,9 @@
                     <property name="margin-right">5</property>
                     <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
                     <property name="can_focus">False</property>
+                    <style>
+                      <class name="notifications"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="expand">False</property>

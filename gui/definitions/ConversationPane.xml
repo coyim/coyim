@@ -252,6 +252,9 @@
             <property name="position">1</property>
           </packing>
         </child>
+        <style>
+          <class name="notifications"/>
+        </style>
       </object>
       <packing>
         <property name="expand">false</property>

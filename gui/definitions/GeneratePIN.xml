@@ -12,84 +12,84 @@
               <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
               <property name="spacing">10</property>
               <child>
-                  <object class="GtkImage" id="smp_image">
-                    <property name="margin_top">10</property>
-		  </object>
-	      </child>
+                <object class="GtkImage" id="smp_image">
+                  <property name="margin_top">10</property>
+		        </object>
+	          </child>
               <child>
-                  <object class="GtkLabel" id="prompt">
-                      <property name="margin-top">5</property>
-		      <property name="label" translatable="yes"></property>
-                  </object>
+                <object class="GtkLabel" id="prompt">
+                  <property name="margin-top">5</property>
+		          <property name="label" translatable="yes"></property>
+                </object>
               </child>
               <child>
-                  <object class="GtkLabel" id="pin">
-                      <property name="visible">True</property>
-                      <property name="selectable">True</property>
-                  </object>
+                <object class="GtkLabel" id="pin">
+                  <property name="visible">True</property>
+                  <property name="selectable">True</property>
+                </object>
               </child>
               <child>
-                  <object class="GtkGrid">
+                <object class="GtkGrid">
                   <property name="column-spacing">6</property>
                   <property name="row-spacing">2</property>
                   <child>
-                      <object class="GtkImage" id="padlock_image1"/>
-                      <packing>
-                          <property name="left-attach">0</property>
-                          <property name="top-attach">0</property>
-                      </packing>
+                    <object class="GtkImage" id="padlock_image1"/>
+                    <packing>
+                      <property name="left-attach">0</property>
+                      <property name="top-attach">0</property>
+                    </packing>
                   </child>
                   <child>
-                      <object class="GtkLabel">
-                          <property name="visible">True</property>
-                          <property name="label" translatable="yes">Share in person</property>
-                          <property name="justify">GTK_JUSTIFY_LEFT</property>
-                          <property name="halign">GTK_ALIGN_START</property>
-                      </object>
-                      <packing>
-                          <property name="left-attach">1</property>
-                          <property name="top-attach">0</property>
-                      </packing>
+                    <object class="GtkLabel">
+                      <property name="visible">True</property>
+                      <property name="label" translatable="yes">Share in person</property>
+                      <property name="justify">GTK_JUSTIFY_LEFT</property>
+                      <property name="halign">GTK_ALIGN_START</property>
+                    </object>
+                    <packing>
+                      <property name="left-attach">1</property>
+                      <property name="top-attach">0</property>
+                    </packing>
                   </child>
                   <child>
-                      <object class="GtkImage" id="padlock_image2"/>
-                      <packing>
-                          <property name="left-attach">0</property>
-                          <property name="top-attach">1</property>
-                      </packing>
+                    <object class="GtkImage" id="padlock_image2"/>
+                    <packing>
+                      <property name="left-attach">0</property>
+                      <property name="top-attach">1</property>
+                    </packing>
                   </child>
                   <child>
-                      <object class="GtkLabel">
-                          <property name="visible">True</property>
-                          <property name="label" translatable="yes">Share through a different encrypted channel</property>
-                          <property name="justify">GTK_JUSTIFY_LEFT</property>
-                          <property name="halign">GTK_ALIGN_START</property>
-                      </object>
-                      <packing>
-                          <property name="left-attach">1</property>
-                          <property name="top-attach">1</property>
-                      </packing>
+                    <object class="GtkLabel">
+                      <property name="visible">True</property>
+                      <property name="label" translatable="yes">Share through a different encrypted channel</property>
+                      <property name="justify">GTK_JUSTIFY_LEFT</property>
+                      <property name="halign">GTK_ALIGN_START</property>
+                    </object>
+                    <packing>
+                      <property name="left-attach">1</property>
+                      <property name="top-attach">1</property>
+                    </packing>
                   </child>
                   <child>
-                      <object class="GtkImage" id="alert_image"/>
-                      <packing>
-                          <property name="left-attach">0</property>
-                          <property name="top-attach">2</property>
-                      </packing>
+                    <object class="GtkImage" id="alert_image"/>
+                    <packing>
+                      <property name="left-attach">0</property>
+                      <property name="top-attach">2</property>
+                    </packing>
                   </child>
                   <child>
-                      <object class="GtkLabel">
-                          <property name="visible">True</property>
-                          <property name="label" translatable="yes">Share in a phone call</property>
-                          <property name="justify">GTK_JUSTIFY_LEFT</property>
-                          <property name="halign">GTK_ALIGN_START</property>
-                      </object>
-                      <packing>
-                          <property name="left-attach">1</property>
-                          <property name="top-attach">2</property>
-                      </packing>
+                    <object class="GtkLabel">
+                      <property name="visible">True</property>
+                      <property name="label" translatable="yes">Share in a phone call</property>
+                      <property name="justify">GTK_JUSTIFY_LEFT</property>
+                      <property name="halign">GTK_ALIGN_START</property>
+                    </object>
+                    <packing>
+                      <property name="left-attach">1</property>
+                      <property name="top-attach">2</property>
+                    </packing>
                   </child>
-                  </object>
+                </object>
               </child>
             </object>
           </child>
@@ -105,7 +105,10 @@
               </child>
             </object>
           </child>
+          <style>
+            <class name="notifications"/>
+          </style>
         </object>
-    </child>
-  </object>
-</interface>
+      </child>
+    </object>
+  </interface>

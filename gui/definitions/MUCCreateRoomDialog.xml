@@ -99,6 +99,9 @@
         <property name="orientation">vertical</property>
       </object>
     </child>
+    <style>
+      <class name="muc"/>
+    </style>
   </object>
   <object class="GtkListStore" id="createRoomsAccountsModel">
     <columns>
@@ -120,6 +123,9 @@
     <child>
       <object class="GtkBox" id="notificationArea">
         <property name="orientation">vertical</property>
+        <style>
+          <class name="notifications"/>
+        </style>
       </object>
       <packing>
         <property name="expand">False</property>

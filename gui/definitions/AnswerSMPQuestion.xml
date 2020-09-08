@@ -13,7 +13,10 @@
         <child>
           <object class="GtkBox" id="notification-area">
             <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-              <property name="spacing">10</property>
+            <property name="spacing">10</property>
+            <style>
+              <class name="notifications"/>
+            </style>
           </object>
           <packing>
             <property name="expand">false</property>

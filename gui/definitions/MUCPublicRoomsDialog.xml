@@ -39,6 +39,9 @@
             <property name="margin-left">5</property>
             <property name="margin-right">5</property>
             <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+            <style>
+              <class name="notifications"/>
+            </style>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -280,5 +283,8 @@
         </child>
       </object>
     </child>
+    <style>
+      <class name="muc"/>
+    </style>
   </object>
 </interface>

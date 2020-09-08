@@ -180,33 +180,24 @@ func (v *roomViewLobby) sendRoomEnterRequest(nickName string) {
 	err := v.ac.session.JoinRoom(v.ident, nickName)
 	if err != nil {
 		v.log.WithField("nickname", nickName).WithError(err).Error("An error occurred while trying to join the room.")
-		v.finishJoinRequest(false, errJoinNoConnection)
+		v.finishJoinRequest(errJoinNoConnection)
 	}
 }
 
 func (v *roomViewLobby) whenEnterRequestHasBeenResolved(nickName string) {
-	for {
-		select {
-		case joined := <-v.onJoinChannel:
-			if joined {
-				doInUIThread(v.clearErrors)
-				if v.onSuccess != nil {
-					v.onSuccess()
-				}
-			}
-		case err, ok := <-v.onJoinErrorChannel:
-			l := v.log.WithField("nickname", nickName)
-
-			// The join wasn't successfull but we didn't received any error
-			if !ok {
-				l.Debug("whenEnterRequestHasBeenResolved(): There was an error trying to join the room, but we don't know which one.")
-			}
-
-			l.WithError(err).Error("An error occurred while trying to join the room")
-			doInUIThread(func() {
-				v.onJoinFailed(err)
-			})
+	select {
+	case <-v.onJoinChannel:
+		doInUIThread(v.clearErrors)
+		if v.onSuccess != nil {
+			v.onSuccess()
 		}
+	case err := <-v.onJoinErrorChannel:
+		l := v.log.WithField("nickname", nickName)
+
+		l.WithError(err).Error("An error occurred while trying to join the room")
+		doInUIThread(func() {
+			v.onJoinFailed(err)
+		})
 	}
 }
 
@@ -250,32 +241,26 @@ func (v *roomViewLobby) notifyOnError(err string) {
 	v.errorNotif.ShowMessage(err)
 }
 
-func (v *roomViewLobby) finishJoinRequest(ok bool, err error) {
-	v.onJoinChannel <- ok
-
-	// At this point, I don't check the "ok" flag because we can even
-	// have a failed room joining without an error (a programmer did something bad),
-	// and to prevent errors in this logic, we close the error channel if we
-	// don't get any error when the join request is finished.
+func (v *roomViewLobby) finishJoinRequest(err error) {
 	if err != nil {
 		v.onJoinErrorChannel <- err
 	} else {
-		close(v.onJoinErrorChannel)
+		v.onJoinChannel <- true
 	}
 }
 
 func (v *roomViewLobby) onRoomOccupantJoinedReceived() {
-	v.finishJoinRequest(true, nil)
+	v.finishJoinRequest(nil)
 }
 
 func (v *roomViewLobby) onJoinErrorRecevied(from jid.Full) {
-	v.finishJoinRequest(false, newMUCRoomLobbyErr(from, errJoinRequestFailed))
+	v.finishJoinRequest(newMUCRoomLobbyErr(from, errJoinRequestFailed))
 }
 
 func (v *roomViewLobby) onNicknameConflictReceived(from jid.Full) {
-	v.finishJoinRequest(false, newMUCRoomLobbyErr(from, errJoinNickNameConflict))
+	v.finishJoinRequest(newMUCRoomLobbyErr(from, errJoinNickNameConflict))
 }
 
 func (v *roomViewLobby) onRegistrationRequiredReceived(from jid.Full) {
-	v.finishJoinRequest(false, newMUCRoomLobbyErr(from, errJoinOnlyMembers))
+	v.finishJoinRequest(newMUCRoomLobbyErr(from, errJoinOnlyMembers))
 }

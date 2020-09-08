@@ -237,7 +237,7 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 	// But not checking on the "message" type.
 	switch stanza.Type {
 	case "groupchat":
-		s.muc.handleMUCReceivedClientMessage(stanza)
+		s.muc.receivedClientMessage(stanza)
 		return true
 	case "error":
 		//TODO: investigate which errors are NOT recoverable, and return false

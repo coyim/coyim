@@ -67,8 +67,7 @@ type MUCOccupantLeft struct {
 type MUCMessageReceived struct {
 	MUC
 	Nickname jid.Resource
-	Body     string
-	Subject  string
+	Message  string
 }
 
 // MUCErrorType represents the type of MUC error event

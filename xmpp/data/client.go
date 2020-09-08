@@ -69,9 +69,9 @@ func (e *StanzaError) AnyMUCError() interface{} {
 	)
 }
 
-// ClientMessageSubject contains all the subject text of any room when it is received
-type ClientMessageSubject struct {
-	XMLName xml.Name `xml:""`
+// Subject contains all the subject text of any room when it is received
+type Subject struct {
+	XMLName xml.Name `xml:"subject"`
 	Text    string   `xml:",innerxml"`
 }
 
@@ -85,11 +85,11 @@ type ClientMessage struct {
 
 	// These should technically be []clientText,
 	// but string is much more convenient.
-	Subject    *ClientMessageSubject `xml:"subject,omitempty"`
-	Body       string                `xml:"body"`
-	Thread     string                `xml:"thread"`
-	Delay      *Delay                `xml:"delay,omitempty"`
-	Encryption *Encryption           `xml:"encryption,omitempty"`
+	Subject    *Subject    `xml:",omitempty"`
+	Body       string      `xml:"body"`
+	Thread     string      `xml:"thread"`
+	Delay      *Delay      `xml:"delay,omitempty"`
+	Encryption *Encryption `xml:"encryption,omitempty"`
 
 	Error *StanzaError `xml:"error"`
 

@@ -27,6 +27,7 @@ type createMUCRoomForm struct {
 
 	previousUpdateChannel   chan bool
 	createRoomIfDoesntExist func(*account, jid.Bare)
+	onCheckFieldsConditions func(string, string, *account) bool
 }
 
 func (v *createMUCRoom) initForm() {
@@ -56,10 +57,21 @@ func (v *createMUCRoom) initForm() {
 				})
 
 			case errCreateRoomAlreadyExists:
+				f.onCheckFieldsConditions = func(roomName, chatServiceName string, a *account) bool {
+					currentIdent := jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(chatServiceName))
+					if currentIdent.String() == ident.String() {
+						f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
+						return false
+					}
+					f.clearErrors()
+					return true
+				}
+
 				doInUIThread(func() {
 					f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
 					f.hideSpinner()
 					f.disableOrEnableFields(true)
+					f.createButton.SetSensitive(false)
 				})
 
 			case errCreateRoomFailed:
@@ -213,8 +225,12 @@ func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
 	chatService, _ := f.chatServiceEntry.GetText()
 	currentAccount := f.ac.currentAccount()
 
-	hasAllValues := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
-	f.createButton.SetSensitive(hasAllValues)
+	s := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
+	if f.onCheckFieldsConditions != nil {
+		s = f.onCheckFieldsConditions(roomName, chatService, currentAccount)
+	}
+
+	f.createButton.SetSensitive(s)
 }
 
 func (f *createMUCRoomForm) updateChatServicesBasedOnAccount(ac *account) {

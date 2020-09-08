@@ -8,6 +8,7 @@ import (
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/golang-collections/collections/set"
 )
 
 type roomViewLobby struct {
@@ -30,17 +31,20 @@ type roomViewLobby struct {
 	onJoinChannel      chan bool
 	onJoinErrorChannel chan error
 
+	nickNamesWithConflict *set.Set
+
 	onSuccess func()
 	onCancel  func()
 }
 
 func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func(), roomInfo *muc.RoomListing) *roomViewLobby {
 	e := &roomViewLobby{
-		ident:     rid,
-		ac:        a,
-		parent:    parent,
-		onSuccess: onSuccess,
-		onCancel:  onCancel,
+		ident:                 rid,
+		ac:                    a,
+		parent:                parent,
+		onSuccess:             onSuccess,
+		onCancel:              onCancel,
+		nickNamesWithConflict: set.New(),
 	}
 
 	builder := newBuilder("MUCRoomLobby")

@@ -95,8 +95,18 @@ func newBuilderFromString(uiName string) *builder {
 	return &builder{builderForDefinition(uiName)}
 }
 
+// optionallySetWidgetNameFromID will set the name from the ID, making it possible to use the ID to refer to the object from
+// CSS using the name as ID.
+func optionallySetWidgetNameFromID(o glibi.Object, ident string) {
+	w, ok := o.(gtki.Widget)
+	if ok {
+		w.SetName(ident)
+	}
+}
+
 func (b *builder) getObj(name string) glibi.Object {
 	obj, _ := b.GetObject(name)
+	optionallySetWidgetNameFromID(obj, name)
 	return obj
 }
 
@@ -168,6 +178,7 @@ func (b *builder) get(name string) glibi.Object {
 	if err != nil {
 		panic("builder.GetObject() failed: " + err.Error())
 	}
+	optionallySetWidgetNameFromID(obj, name)
 	return obj
 }
 

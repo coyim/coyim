@@ -120,12 +120,7 @@ func (f *createMUCRoomForm) onAutoJoinChange(aj bool) {
 func (f *createMUCRoomForm) onCreateRoom() {
 	f.clearErrors()
 
-	roomName, err := f.roomEntry.GetText()
-	if err != nil {
-		f.log.WithError(err).Error("Something went wrong while trying to create the room")
-		f.notifyOnError(i18n.Local("Could not get the room name, please try again."))
-	}
-
+	roomName, _ := f.roomEntry.GetText()
 	local := jid.NewLocal(roomName)
 	if !local.Valid() {
 		f.log.WithField("local", roomName).Error("Trying to create a room with an invalid local")
@@ -133,13 +128,7 @@ func (f *createMUCRoomForm) onCreateRoom() {
 		return
 	}
 
-	chatService, err := f.chatServiceEntry.GetText()
-	if err != nil {
-		f.log.WithError(err).Error("Something went wrong while trying to create the room")
-		f.notifyOnError(i18n.Local("Could not get the service name, please try again."))
-		return
-	}
-
+	chatService, _ := f.chatServiceEntry.GetText()
 	domain := jid.NewDomain(chatService)
 	if !domain.Valid() {
 		f.log.WithField("domain", chatService).Error("Trying to create a room with an invalid domain")

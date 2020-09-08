@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/coyim/coyim/coylog"
+
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -14,11 +15,11 @@ type roomView struct {
 	account *account
 	builder *builder
 
-	log      coylog.Logger
 	identity jid.Bare
 	joined   bool
 	occupant jid.Resource
 
+	log     coylog.Logger
 	window  gtki.Window `gtk-widget:"roomWindow"`
 	content gtki.Box    `gtk-widget:"boxMainView"`
 
@@ -39,6 +40,8 @@ func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
 		account:  a,
 		identity: ident,
 	}
+
+	view.log = a.log.WithField("room", ident)
 
 	view.initUIBuilder()
 	view.initDefaults()

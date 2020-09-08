@@ -1,12 +1,13 @@
 package gui
 
 import (
+	"errors"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
-	log "github.com/sirupsen/logrus"
 )
 
 type roomViewLobby struct {
@@ -26,9 +27,8 @@ type roomViewLobby struct {
 	errorNotif       *errorNotification
 	notification     gtki.InfoBar
 
-	lastError        error
-	lastErrorMessage string
-	onJoinChannel    chan bool
+	onJoinChannel      chan bool
+	onJoinErrorChannel chan error
 
 	onSuccess func()
 	onCancel  func()
@@ -147,56 +147,90 @@ func (v *roomViewLobby) onJoin() {
 	nickName, _ := v.nickNameEntry.GetText()
 
 	v.onJoinChannel = make(chan bool)
+	v.onJoinErrorChannel = make(chan error)
+
 	go v.sendRoomEnterRequest(nickName)
 	go v.whenEnterRequestHasBeenResolved(nickName)
+}
+
+var (
+	errJoinRequestFailed    = errors.New("the request to join the room has failed")
+	errJoinNoConnection     = errors.New("join request failed because maybe no connection available")
+	errJoinNickNameConflict = errors.New("join failed because the nickname is being used")
+	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
+)
+
+type mucRoomLobbyErr struct {
+	from    jid.Full
+	errType error
+}
+
+func (e *mucRoomLobbyErr) Error() string {
+	return e.errType.Error()
+}
+
+func newMUCRoomLobbyErr(from jid.Full, errType error) error {
+	return &mucRoomLobbyErr{
+		from:    from,
+		errType: errType,
+	}
 }
 
 func (v *roomViewLobby) sendRoomEnterRequest(nickName string) {
 	err := v.ac.session.JoinRoom(v.ident, nickName)
 	if err != nil {
 		v.log.WithField("nickname", nickName).WithError(err).Error("An error occurred while trying to join the room.")
-		v.onJoinChannel <- false
-		doInUIThread(v.onJoinFails)
+		v.finishJoinRequest(false, errJoinNoConnection)
 	}
 }
 
 func (v *roomViewLobby) whenEnterRequestHasBeenResolved(nickName string) {
-	hasJoined, ok := <-v.onJoinChannel
-	if !ok {
-		doInUIThread(func() {
-			v.notifyOnError(i18n.Local("An error happened while trying to join the room, please check your connection or try again."))
-		})
-		return
-	}
+	for {
+		select {
+		case joined := <-v.onJoinChannel:
+			if joined {
+				doInUIThread(v.clearErrors)
+				if v.onSuccess != nil {
+					v.onSuccess()
+				}
+			}
+		case err, ok := <-v.onJoinErrorChannel:
+			l := v.log.WithField("nickname", nickName)
 
-	if !hasJoined {
-		if len(v.lastErrorMessage) == 0 {
-			v.lastErrorMessage = i18n.Local("An error happened while trying to join the room, please check your connection or make sure the room exists.")
+			// The join wasn't successfull but we didn't received any error
+			if !ok {
+				l.Debug("whenEnterRequestHasBeenResolved(): There was an error trying to join the room, but we don't know which one.")
+			}
+
+			l.WithError(err).Error("An error occurred while trying to join the room")
+			doInUIThread(func() {
+				v.onJoinFailed(err)
+			})
 		}
-
-		v.log.WithFields(log.Fields{
-			"nickname": nickName,
-			"message":  v.lastErrorMessage,
-		}).Error("An error happened while trying to join the room")
-
-		doInUIThread(func() {
-			v.notifyOnError(v.lastErrorMessage)
-		})
-
-		return
-	}
-
-	doInUIThread(v.clearErrors)
-
-	if v.onSuccess != nil {
-		v.onSuccess()
 	}
 }
 
-func (v *roomViewLobby) onJoinFails() {
+func (v *roomViewLobby) onJoinFailed(err error) {
+	userMessage := v.getUserErrorMessage(err)
+	v.notifyOnError(userMessage)
+
 	v.enableFields()
 	v.hideSpinner()
 	v.joinButton.SetSensitive(true)
+}
+
+func (v *roomViewLobby) getUserErrorMessage(err error) string {
+	if err, ok := err.(*mucRoomLobbyErr); ok {
+		switch err.errType {
+		case errJoinRequestFailed:
+			return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists.")
+		case errJoinNickNameConflict:
+			return i18n.Localf("Can't join the room using the nickname \"%s\" because it's already being used.", err.from.Resource())
+		case errJoinOnlyMembers:
+			return i18n.Local("Sorry, this room only allows registered members")
+		}
+	}
+	return i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
 }
 
 func (v *roomViewLobby) onJoinCancel() {
@@ -216,20 +250,32 @@ func (v *roomViewLobby) notifyOnError(err string) {
 	v.errorNotif.ShowMessage(err)
 }
 
+func (v *roomViewLobby) finishJoinRequest(ok bool, err error) {
+	v.onJoinChannel <- ok
+
+	// At this point, I don't check the "ok" flag because we can even
+	// have a failed room joining without an error (a programmer did something bad),
+	// and to prevent errors in this logic, we close the error channel if we
+	// don't get any error when the join request is finished.
+	if err != nil {
+		v.onJoinErrorChannel <- err
+	} else {
+		close(v.onJoinErrorChannel)
+	}
+}
+
 func (v *roomViewLobby) onRoomOccupantJoinedReceived() {
-	v.onJoinChannel <- true
+	v.finishJoinRequest(true, nil)
 }
 
 func (v *roomViewLobby) onJoinErrorRecevied(from jid.Full) {
-	v.onJoinChannel <- false
+	v.finishJoinRequest(false, newMUCRoomLobbyErr(from, errJoinRequestFailed))
 }
 
 func (v *roomViewLobby) onNicknameConflictReceived(from jid.Full) {
-	v.lastErrorMessage = i18n.Localf("Can't join the room using \"%s\" because the nickname is already being used.", from.Resource())
-	v.onJoinChannel <- false
+	v.finishJoinRequest(false, newMUCRoomLobbyErr(from, errJoinNickNameConflict))
 }
 
 func (v *roomViewLobby) onRegistrationRequiredReceived(from jid.Full) {
-	v.lastErrorMessage = i18n.Local("Sorry, this room only allows registered members")
-	v.onJoinChannel <- false
+	v.finishJoinRequest(false, newMUCRoomLobbyErr(from, errJoinOnlyMembers))
 }

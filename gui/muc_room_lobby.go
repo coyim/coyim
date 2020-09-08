@@ -76,6 +76,10 @@ func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCa
 		e.log.WithField("anonymity", roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
 	}
 
+	if roomInfo.Logged {
+		e.addWarning(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
+	}
+
 	return e
 }
 

@@ -29,6 +29,7 @@ type RoomListing struct {
 	OccupantsCanInvite        bool
 	AllowPrivateMessages      string // This can be 'anyone', 'participants', 'moderators', 'none'
 	ContactJid                string
+	Logged                    bool // Notice that this will not always be correct for all servers
 
 	lockUpdates sync.RWMutex
 	onUpdates   []func()

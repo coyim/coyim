@@ -130,6 +130,10 @@ func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 					if len(val) > 0 {
 						rl.OccupantsCanChangeSubject = val[0] == "1"
 					}
+				case "muc#roomconfig_enablelogging":
+					if len(val) > 0 {
+						rl.Logged = val[0] == "1"
+					}
 				case "muc#roomconfig_roomname":
 					// Room name - we already have this
 				case "muc#roominfo_description":

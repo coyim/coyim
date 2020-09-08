@@ -89,9 +89,9 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:47c6dc571557e5063e0c9ee129e5968a0550056edaef86aab3fad17c42cf3365"
+  digest = "1:a43c00d59cbc0b4d633a1fff11ff66c97263850e36d42f58854a59cec1273c36"
   name = "github.com/golang-collections/collections"
-  packages = ["."]
+  packages = ["set"]
   pruneopts = "UT"
   revision = "604e922904d35e97f98a774db7881f049cd8d970"
 
@@ -304,7 +304,7 @@
     "github.com/coyim/gotk3osx",
     "github.com/coyim/otr3",
     "github.com/godbus/dbus",
-    "github.com/golang-collections/collections",
+    "github.com/golang-collections/collections/set",
     "github.com/hydrogen18/stalecucumber",
     "github.com/kardianos/osext",
     "github.com/miekg/dns",

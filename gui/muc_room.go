@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"errors"
-
 	"github.com/coyim/coyim/coylog"
 
 	"github.com/coyim/coyim/session/muc"
@@ -112,26 +110,18 @@ func (v *roomView) initDefaults() {
 }
 
 func (v *roomView) onCloseWindow() {
-	err := v.leaveRoom()
-	if err != nil {
-		v.account.log.WithError(err).Error("Trying to leave a room that doesn't exists.")
-		return
-	}
+	v.leaveRoom()
 }
 
-func (v *roomView) leaveRoom() error {
-	room, ok := v.account.roomManager.GetRoom(v.identity)
-	if !ok {
-		return errors.New("room doesn't exist in room manager")
+func (v *roomView) leaveRoom() {
+	// TODO: This should implements channels for handle the `race condition`
+	// only if it is called from another different action than close window
+	v.account.roomManager.LeaveRoom(v.identity)
+
+	if v.joined {
+		v.account.session.LeaveRoom(jid.NewFull(v.identity.Local(), v.identity.Host(), v.occupant))
+		v.joined = false
 	}
-
-	// Leaving the xmpp server
-	v.account.session.LeaveRoom(jid.NewFull(room.Identity.Local(), room.Identity.Host(), v.occupant))
-
-	// Leaving the room manager
-	v.account.roomManager.LeaveRoom(room.Identity)
-
-	return nil
 }
 
 func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {

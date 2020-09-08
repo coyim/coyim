@@ -25,14 +25,14 @@ func getTimestamp() string {
 	return time.Now().Format("15:04:05")
 }
 
-func (v *roomViewConversation) getStyleTags() *mucStyleTags {
+func (v *roomViewConversation) getStyleTags(u *gtkUI) *mucStyleTags {
 	if v.tags == nil {
-		v.tags = v.newStyleTags()
+		v.tags = v.newStyleTags(u)
 	}
 	return v.tags
 }
 
-func (v *roomViewConversation) newStyleTags() *mucStyleTags {
+func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 	// TODO: for now we are using a default styles, but we can improve it
 	// if we define a structure with a predefined colors pallete based on kind
 	// of messages to show like entering a room, leaving the room, incoming
@@ -49,7 +49,7 @@ func (v *roomViewConversation) newStyleTags() *mucStyleTags {
 	_ = timestampTag.SetProperty("foreground", "#AAB7B8")
 	_ = timestampTag.SetProperty("style", pangoi.STYLE_NORMAL)
 
-	cset := v.u.currentColorSet()
+	cset := u.currentColorSet()
 
 	warningTag, _ := g.gtk.TextTagNew("warning")
 	_ = warningTag.SetProperty("foreground", cset.warningForeground)
@@ -66,13 +66,13 @@ func (t *mucStyleTags) createTextBuffer() gtki.TextBuffer {
 	return buf
 }
 
-func newRoomViewConversation() *roomViewConversation {
+func (u *gtkUI) newRoomViewConversation() *roomViewConversation {
 	c := &roomViewConversation{}
 
 	builder := newBuilder("MUCRoomConversation")
 	panicOnDevError(builder.bindObjects(c))
 
-	t := c.getStyleTags()
+	t := c.getStyleTags(u)
 	c.roomChatTextView.SetBuffer(t.createTextBuffer())
 
 	return c

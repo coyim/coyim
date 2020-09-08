@@ -53,7 +53,7 @@ func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
 	roster := newRoomViewRoster()
 	view.roster = roster
 
-	conversation := newRoomViewConversation()
+	conversation := u.newRoomViewConversation()
 	view.conv = conversation
 
 	return view

@@ -32,9 +32,12 @@ type roomViewLobby struct {
 	onJoinErrorChannel chan error
 
 	nickNamesWithConflict *set.Set
+	warnings              []*roomLobbyWarning
 
+	// onSuccess SHOULD NEVER be called from the UI thread
 	onSuccess func()
-	onCancel  func()
+	// onSuccess SHOULD NEVER be called from the UI thread
+	onCancel func()
 }
 
 func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func(), roomInfo *muc.RoomListing) *roomViewLobby {
@@ -65,22 +68,30 @@ func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCa
 
 	e.content.SetCenterWidget(e.mainBox)
 
-	e.addWarning(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room."))
-
-	switch roomInfo.Anonymity {
-	case "semi":
-		e.addWarning(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
-	case "no":
-		e.addWarning(i18n.Local("This room is not anomyous. This means that any person in this room can connect your nickname with your real username (your JID)."))
-	default:
-		e.log.WithField("anonymity", roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
-	}
-
-	if roomInfo.Logged {
-		e.addWarning(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
+	if roomInfo != nil {
+		e.setRoomInfo(roomInfo)
 	}
 
 	return e
+}
+
+func (v *roomViewLobby) setRoomInfo(roomInfo *muc.RoomListing) {
+	v.clearWarnings()
+
+	v.addWarning(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room."))
+
+	switch roomInfo.Anonymity {
+	case "semi":
+		v.addWarning(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
+	case "no":
+		v.addWarning(i18n.Local("This room is not anomyous. This means that any person in this room can connect your nickname with your real username (your JID)."))
+	default:
+		v.log.WithField("anonymity", roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
+	}
+
+	if roomInfo.Logged {
+		v.addWarning(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
+	}
 }
 
 type roomLobbyWarning struct {
@@ -93,6 +104,7 @@ type roomLobbyWarning struct {
 // addWarning should be called from the UI thread
 func (v *roomViewLobby) addWarning(s string) {
 	w := &roomLobbyWarning{text: s}
+	v.warnings = append(v.warnings, w)
 
 	builder := newBuilder("MUCRoomWarning")
 	panicOnDevError(builder.bindObjects(w))
@@ -105,6 +117,12 @@ func (v *roomViewLobby) addWarning(s string) {
 	v.warningsArea.PackStart(w.bar, false, false, 5)
 
 	v.warningsArea.ShowAll()
+}
+
+func (v *roomViewLobby) clearWarnings() {
+	for _, w := range v.warnings {
+		v.warningsArea.Remove(w.bar)
+	}
 }
 
 func (v *roomViewLobby) show() {

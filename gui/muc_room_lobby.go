@@ -121,8 +121,17 @@ func (v *roomViewLobby) onNickNameChange() {
 }
 
 func (v *roomViewLobby) enableJoinIfConditionsAreMet() {
+	v.clearErrors()
+
 	nickName, _ := v.nickNameEntry.GetText()
-	v.joinButton.SetSensitive(len(nickName) != 0)
+	conditionsAreValid := len(nickName) != 0
+
+	if v.nickNamesWithConflict.Has(nickName) {
+		conditionsAreValid = false
+		v.notifyOnError(i18n.Local("That nickname is already being used."))
+	}
+
+	v.joinButton.SetSensitive(conditionsAreValid)
 }
 
 func (v *roomViewLobby) disableFields() {
@@ -206,26 +215,37 @@ func (v *roomViewLobby) whenEnterRequestHasBeenResolved(nickName string) {
 }
 
 func (v *roomViewLobby) onJoinFailed(err error) {
-	userMessage := v.getUserErrorMessage(err)
+	shouldEnableCreation := true
+
+	userMessage := i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
+	if err, ok := err.(*mucRoomLobbyErr); ok {
+		userMessage = v.getUserErrorMessage(err)
+
+		if err.errType == errJoinNickNameConflict {
+			shouldEnableCreation = false
+			nickName := err.from.Resource().String()
+			if !v.nickNamesWithConflict.Has(nickName) {
+				v.nickNamesWithConflict.Insert(nickName)
+			}
+		}
+	}
+
 	v.notifyOnError(userMessage)
 
 	v.enableFields()
 	v.hideSpinner()
-	v.joinButton.SetSensitive(true)
+	v.joinButton.SetSensitive(shouldEnableCreation)
 }
 
-func (v *roomViewLobby) getUserErrorMessage(err error) string {
-	if err, ok := err.(*mucRoomLobbyErr); ok {
-		switch err.errType {
-		case errJoinRequestFailed:
-			return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists.")
-		case errJoinNickNameConflict:
-			return i18n.Localf("Can't join the room using the nickname \"%s\" because it's already being used.", err.from.Resource())
-		case errJoinOnlyMembers:
-			return i18n.Local("Sorry, this room only allows registered members")
-		}
+func (v *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
+	switch err.errType {
+	case errJoinNickNameConflict:
+		return i18n.Localf("Can't join the room using the nickname \"%s\" because it's already being used.", err.from.Resource())
+	case errJoinOnlyMembers:
+		return i18n.Local("Sorry, this room only allows registered members")
+	default:
+		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists.")
 	}
-	return i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
 }
 
 func (v *roomViewLobby) onJoinCancel() {

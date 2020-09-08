@@ -16,10 +16,11 @@ type roomView struct {
 	builder *builder
 
 	identity jid.Bare
-	joined   bool
 	occupant jid.Resource
+	info     *muc.RoomListing
 
-	log coylog.Logger
+	log    coylog.Logger
+	joined bool
 
 	window  gtki.Window `gtk-widget:"roomWindow"`
 	content gtki.Box    `gtk-widget:"boxMainView"`
@@ -35,11 +36,12 @@ func getViewFromRoom(r *muc.Room) *roomView {
 	return r.Opaque.(*roomView)
 }
 
-func (u *gtkUI) newRoomView(a *account, ident jid.Bare) *roomView {
+func (u *gtkUI) newRoomView(a *account, ident jid.Bare, roomInfo *muc.RoomListing) *roomView {
 	view := &roomView{
 		u:        u,
 		account:  a,
 		identity: ident,
+		info:     roomInfo,
 	}
 
 	view.log = a.log.WithField("room", ident)
@@ -63,32 +65,36 @@ func (v *roomView) setTitle(r string) {
 	v.window.SetTitle(r)
 }
 
-func (u *gtkUI) newRoom(a *account, ident jid.Bare) *muc.Room {
+func (u *gtkUI) newRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing) *muc.Room {
 	room := muc.NewRoom(ident)
-	room.Opaque = u.newRoomView(a, ident)
+	room.Opaque = u.newRoomView(a, ident, roomInfo)
 	return room
 }
 
-func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare) (*muc.Room, bool) {
+func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare, roomInfo *muc.RoomListing) (*muc.Room, bool) {
 	room, ok := a.roomManager.GetRoom(ident)
 	if !ok {
-		room = u.newRoom(a, ident)
+		room = u.newRoom(a, ident, roomInfo)
 		a.roomManager.AddRoom(room)
 	}
 	return room, ok
 }
 
 func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing) {
-	room, wasCreated := u.getRoomOrCreateItIfNoExists(a, ident)
-	view := getViewFromRoom(room)
+	room, ok := u.getRoomOrCreateItIfNoExists(a, ident, roomInfo)
 
-	if !wasCreated {
-		view.switchToLobbyView(roomInfo)
-		view.window.Show()
-		return
+	view := getViewFromRoom(room)
+	if !view.joined {
+		view.switchToLobbyView(view.info)
+	} else {
+		view.switchToMainView()
 	}
 
-	view.switchToMainView()
+	if !ok {
+		view.window.Show()
+	} else {
+		view.window.Present()
+	}
 }
 
 func (v *roomView) initUIBuilder() {
@@ -97,7 +103,6 @@ func (v *roomView) initUIBuilder() {
 	panicOnDevError(v.builder.bindObjects(v))
 
 	v.builder.ConnectSignals(map[string]interface{}{
-		"on_show_window":  v.onShowWindow,
 		"on_close_window": v.onCloseWindow,
 	})
 }
@@ -106,15 +111,12 @@ func (v *roomView) initDefaults() {
 	v.setTitle(v.identity.String())
 }
 
-func (v *roomView) onShowWindow() {}
-
 func (v *roomView) onCloseWindow() {
 	err := v.leaveRoom()
 	if err != nil {
 		v.account.log.WithError(err).Error("Trying to leave a room that doesn't exists.")
 		return
 	}
-	v.joined = false
 }
 
 func (v *roomView) leaveRoom() error {
@@ -133,25 +135,24 @@ func (v *roomView) leaveRoom() error {
 }
 
 func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {
-	if v.joined {
-		panic("developer error: the user is already in this room")
+	if v.lobby == nil {
+		v.lobby = newRoomViewLobby(v.account, v.identity, v.content, v.onEntered, v.onCancel, roomInfo)
+	} else {
+		v.lobby.setRoomInfo(roomInfo)
 	}
-
-	v.lobby = newRoomViewLobby(v.account, v.identity, v.content, v.onEnter, v.onCancel, roomInfo)
 	v.lobby.show()
 }
 
 func (v *roomView) switchToMainView() {
-	if !v.joined {
-		panic("developer error: the user is not in this room")
+	if v.main == nil {
+		v.main = newRoomMainView(v.account, v.identity, v.conv.view, v.roster.view, v.toolbar.view, v.content)
 	}
-
-	v.main = newRoomMainView(v.account, v.identity, v.conv.view, v.roster.view, v.toolbar.view, v.content)
 	v.main.show()
 }
 
-func (v *roomView) onEnter() {
+func (v *roomView) onEntered() {
 	v.joined = true
+
 	doInUIThread(func() {
 		v.lobby.hide()
 		v.switchToMainView()
@@ -169,6 +170,7 @@ func (v *roomView) onNicknameConflictReceived(from jid.Full) {
 		v.log.WithField("from", from).Error("A nickname conflict event was received but the user is already in the room")
 		return
 	}
+
 	v.lobby.onNicknameConflictReceived(from)
 }
 
@@ -177,6 +179,7 @@ func (v *roomView) onRegistrationRequiredReceived(from jid.Full) {
 		v.log.WithField("from", from).Error("A registration required event was received but the user is already in the room")
 		return
 	}
+
 	v.lobby.onRegistrationRequiredReceived(from)
 }
 
@@ -185,26 +188,28 @@ func (v *roomView) onRoomOccupantErrorReceived(from jid.Full) {
 		v.log.WithField("from", from).Error("A joined event error was received but the user is already in the room")
 		return
 	}
+
 	v.lobby.onJoinErrorRecevied(from)
 }
 
-// onRoomOccupantJoinedReceived should be called from the UI thread
+// onRoomOccupantJoinedReceived SHOULD be called from the UI thread
 func (v *roomView) onRoomOccupantJoinedReceived(occupant jid.Resource, occupants []*muc.Occupant) {
 	if v.joined {
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return
 	}
+
 	v.occupant = occupant
 	v.lobby.onRoomOccupantJoinedReceived()
 	v.roster.updateRoomRoster(occupants)
 }
 
-// onRoomOccupantUpdateReceived should be called from the UI thread
+// onRoomOccupantUpdateReceived SHOULD be called from the UI thread
 func (v *roomView) onRoomOccupantUpdateReceived(occupants []*muc.Occupant) {
 	v.roster.updateRoomRoster(occupants)
 }
 
-// onRoomOccupantLeftTheRoomReceived should be called from the UI thread
+// onRoomOccupantLeftTheRoomReceived SHOULD be called from the UI thread
 func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource, occupants []*muc.Occupant) {
 	v.conv.showOccupantLeftRoom(occupant)
 	v.roster.updateRoomRoster(occupants)

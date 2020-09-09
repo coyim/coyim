@@ -84,7 +84,7 @@ func (v *roomViewLobby) setRoomInfo(roomInfo *muc.RoomListing) {
 	case "semi":
 		v.addWarning(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
 	case "no":
-		v.addWarning(i18n.Local("This room is not anomyous. This means that any person in this room can connect your nickname with your real username (your JID)."))
+		v.addWarning(i18n.Local("This room is not anonymous. This means that any person in this room can connect your nickname with your real username (your JID)."))
 	default:
 		v.log.WithField("anonymity", roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
 	}

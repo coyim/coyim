@@ -78,7 +78,7 @@ func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCa
 func (v *roomViewLobby) setRoomInfo(roomInfo *muc.RoomListing) {
 	v.clearWarnings()
 
-	v.addWarning(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room."))
+	v.addWarning(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile."))
 
 	switch roomInfo.Anonymity {
 	case "semi":

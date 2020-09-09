@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -203,4 +204,24 @@ func (v *roomView) onRoomOccupantUpdateReceived(occupants []*muc.Occupant) {
 func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource, occupants []*muc.Occupant) {
 	v.conv.showOccupantLeftRoom(occupant)
 	v.roster.updateRoomRoster(occupants)
+}
+
+// loggingIsEnabled MUST not be called from the UI thread
+func (v *roomView) loggingIsEnabled() {
+	if v.conv != nil {
+		msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
+		doInUIThread(func() {
+			v.conv.addLineToChatTextUsingTagID(msg, "warning")
+		})
+	}
+}
+
+// loggingIsDisabled MUST not be called from the UI thread
+func (v *roomView) loggingIsDisabled() {
+	if v.conv != nil {
+		msg := i18n.Local("This room is no longer publicly logged.")
+		doInUIThread(func() {
+			v.conv.addLineToChatTextUsingTagID(msg, "warning")
+		})
+	}
 }

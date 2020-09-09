@@ -9,6 +9,10 @@ import (
 func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
 	from := ev.From
 
+	// TODO: we should probably just look up the room here directly, instead of duplicating it all over the place
+	// TODO: also, most people don't use the room field
+	// TODO: also, we should make this event pattern work a bit better
+
 	switch t := ev.Info.(type) {
 	case events.MUCOccupantUpdated:
 		u.handlMUCOccupantUpdatedEvent(from, t, a)
@@ -18,6 +22,10 @@ func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
 		u.handleMUCOccupantLeftEvent(from, t, a)
 	case events.MUCError:
 		u.handleOneMUCErrorEvent(from, t, a)
+	case events.MUCLoggingEnabled:
+		a.handleMUCLoggingEnabled(ev.Room)
+	case events.MUCLoggingDisabled:
+		a.handleMUCLoggingDisabled(ev.Room)
 	default:
 		u.log.WithFields(log.Fields{
 			"type": t,

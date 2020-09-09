@@ -70,6 +70,16 @@ type MUCMessageReceived struct {
 	Message  string
 }
 
+// MUCLoggingEnabled signifies that logging has been turned on from the room
+type MUCLoggingEnabled struct {
+	MUC
+}
+
+// MUCLoggingDisabled signifies that logging has been turned off from the room
+type MUCLoggingDisabled struct {
+	MUC
+}
+
 // MUCErrorType represents the type of MUC error event
 type MUCErrorType EventType
 

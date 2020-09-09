@@ -41,7 +41,26 @@ func (m *mucManager) mucOccupantUpdate(from jid.Full, room jid.Bare, occupant ji
 	m.publishMUCEvent(from, ev)
 }
 
-func (m *mucManager) mucOccupantJoined(from jid.Full, room jid.Bare, occupant jid.Resource, ident jid.Full, affiliation, role string) {
+func (m *mucManager) publishLoggingEnabled(room jid.Bare) {
+	ev := events.MUC{}
+	ev.Room = room
+	ev.Info = events.MUCLoggingEnabled{}
+
+	m.publishEvent(ev)
+}
+
+func (m *mucManager) publishLoggingDisabled(room jid.Bare) {
+	ev := events.MUC{}
+	ev.Room = room
+	ev.Info = events.MUCLoggingDisabled{}
+
+	m.publishEvent(ev)
+}
+
+// mucSelfOccupantUpdated can happen several times - every time a status code update is changed, or role or affiliation
+// is updated, this can lead to the method being called. For now, it will generate a event about joining, but this
+// should be cleaned up and fixed
+func (m *mucManager) mucSelfOccupantUpdated(from jid.Full, room jid.Bare, occupant jid.Resource, ident jid.Full, affiliation, role string, status mucUserStatuses) {
 	ev := events.MUCOccupantJoined{}
 	ev.Room = room
 	ev.Nickname = occupant
@@ -50,6 +69,14 @@ func (m *mucManager) mucOccupantJoined(from jid.Full, room jid.Bare, occupant ji
 	ev.Role = role
 
 	m.publishMUCEvent(from, ev)
+
+	if status.contains(MUCStatusRoomLoggingEnabled) {
+		m.publishLoggingEnabled(room)
+	}
+
+	if status.contains(MUCStatusRoomLoggingDisabled) {
+		m.publishLoggingDisabled(room)
+	}
 }
 
 func (m *mucManager) mucMessageReceived(from jid.Full, room jid.Bare, nickname jid.Resource, message string) {

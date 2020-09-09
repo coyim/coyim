@@ -24,6 +24,26 @@ func (a *account) onRoomNicknameConflict(from jid.Full) {
 	view.onNicknameConflictReceived(from)
 }
 
+func (a *account) handleMUCLoggingEnabled(room jid.Bare) {
+	view, ok := a.getRoomView(room)
+	if !ok {
+		a.log.WithField("room", room).Error("Not possible to get room view when handling Logging Enabled event")
+		return
+	}
+
+	view.loggingIsEnabled()
+}
+
+func (a *account) handleMUCLoggingDisabled(room jid.Bare) {
+	view, ok := a.getRoomView(room)
+	if !ok {
+		a.log.WithField("room", room).Error("Not possible to get room view when handling Logging Disabled event")
+		return
+	}
+
+	view.loggingIsDisabled()
+}
+
 func (a *account) onRoomRegistrationRequired(from jid.Full) {
 	view, ok := a.getRoomView(from.Bare())
 	if !ok {

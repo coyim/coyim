@@ -117,11 +117,11 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 
 	occupant := from.Resource()
 	room := from.Bare()
-	status := stanza.MUCUser.Status
+	status := mucUserStatuses(stanza.MUCUser.Status)
 
 	affiliation, role := getAffiliationAndRoleBasedOnItem(stanza.MUCUser.Item)
 
-	isOwnPresence := userStatusContains(status, MUCStatusSelfPresence)
+	isOwnPresence := status.contains(MUCStatusSelfPresence)
 	if !isOwnPresence && stanza.MUCUser.Item.Jid == from.String() {
 		isOwnPresence = true
 	}
@@ -132,21 +132,20 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	case "":
 		if isOwnPresence {
 			ident := jid.ParseFull(stanza.MUCUser.Item.Jid)
-			m.mucOccupantJoined(from, room, occupant, ident, affiliation, role)
+			m.mucSelfOccupantUpdated(from, room, occupant, ident, affiliation, role, status)
 		} else {
 			m.mucOccupantUpdate(from, room, occupant, affiliation, role)
 		}
 
-		if userStatusContains(status, MUCStatusNicknameAssigned) {
+		if status.contains(MUCStatusNicknameAssigned) {
 			m.mucRoomRenamed(from, room)
 		}
 	}
 }
 
-func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string, status []data.MUCUserStatus) {
-
+func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string, status mucUserStatuses) {
 	switch {
-	case hasUserStatus(status):
+	case status.isEmpty():
 		m.log.WithFields(log.Fields{
 			"from":        from,
 			"room":        room,
@@ -157,27 +156,27 @@ func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, 
 
 		m.mucOccupantLeft(from, room, occupant, affiliation, role)
 
-	case userStatusContains(status, MUCStatusBanned):
+	case status.contains(MUCStatusBanned):
 		// We got banned
 		m.log.Debug("handleMUCPresence(): MUCStatusBanned")
 
-	case userStatusContains(status, MUCStatusNewNickname):
+	case status.contains(MUCStatusNewNickname):
 		// Someone has changed its nickname
 		m.log.Debug("handleMUCPresence(): MUCStatusNewNickname")
 
-	case userStatusContains(status, MUCStatusBecauseKickedFrom):
+	case status.contains(MUCStatusBecauseKickedFrom):
 		// Someone was kicked from the room
 		m.log.Debug("handleMUCPresence(): MUCStatusBecauseKickedFrom")
 
-	case userStatusContains(status, MUCStatusRemovedBecauseAffiliationChanged):
+	case status.contains(MUCStatusRemovedBecauseAffiliationChanged):
 		// Removed due to an affiliation change
 		m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseAffiliationChanged")
 
-	case userStatusContains(status, MUCStatusRemovedBecauseNotMember):
+	case status.contains(MUCStatusRemovedBecauseNotMember):
 		// Removed because room is now members-only
 		m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseNotMember")
 
-	case userStatusContains(status, MUCStatusRemovedBecauseShutdown):
+	case status.contains(MUCStatusRemovedBecauseShutdown):
 		// Removes due to system shutdown
 		m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseShutdown")
 	}
@@ -187,8 +186,30 @@ func (m *mucManager) handleMUCErrorPresence(from jid.Full, stanza *data.ClientPr
 	m.publishMUCError(from, stanza.Error)
 }
 
-func userStatusContains(status []data.MUCUserStatus, c int) bool {
-	for _, s := range status {
+type mucUserStatuses []data.MUCUserStatus
+
+// contains will return true if the list of MUC user statuses contains ALL of the given argument statuses
+func (mus mucUserStatuses) contains(c ...int) bool {
+	for _, cc := range c {
+		if !mus.containsOne(cc) {
+			return false
+		}
+	}
+	return true
+}
+
+// containsAny will return true if the list of MUC user statuses contains ANY of the given argument statuses
+func (mus mucUserStatuses) containsAny(c ...int) bool {
+	for _, cc := range c {
+		if mus.containsOne(cc) {
+			return true
+		}
+	}
+	return false
+}
+
+func (mus mucUserStatuses) containsOne(c int) bool {
+	for _, s := range mus {
 		code, _ := strconv.Atoi(s.Code)
 		if code == c {
 			return true
@@ -197,8 +218,8 @@ func userStatusContains(status []data.MUCUserStatus, c int) bool {
 	return false
 }
 
-func hasUserStatus(status []data.MUCUserStatus) bool {
-	return len(status) == 0
+func (mus mucUserStatuses) isEmpty() bool {
+	return len(mus) == 0
 }
 
 func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) bool {

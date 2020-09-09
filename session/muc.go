@@ -282,20 +282,18 @@ func (s *session) GetChatServices(server jid.Domain) (<-chan jid.Domain, <-chan 
 func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
-	if len(stanza.Body) == 0 {
-		return
+	if len(stanza.Body) > 0 {
+		from := jid.ParseFull(stanza.From)
+		room := from.Bare()
+		nickname := from.Resource()
+
+		m.log.WithFields(log.Fields{
+			"from":     from,
+			"room":     room,
+			"message":  stanza.Body,
+			"nickname": nickname,
+		}).Info("MUC message received")
+
+		m.mucMessageReceived(from, room, nickname, stanza.Body)
 	}
-
-	from := jid.ParseFull(stanza.From)
-	room := from.Bare()
-	nickname := from.Resource()
-
-	m.log.WithFields(log.Fields{
-		"from":     from,
-		"room":     room,
-		"message":  stanza.Body,
-		"nickname": nickname,
-	}).Info("MUC message received")
-
-	m.mucMessageReceived(from, room, nickname, stanza.Body)
 }

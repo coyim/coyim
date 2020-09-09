@@ -73,21 +73,10 @@ func (o *Occupant) ChangeAffiliationToOwner() {
 
 // Update will update the information in this occupant object with the given information. It returns an error if the given affiliation or role doesn't match
 // a known affiliation or role.
-func (o *Occupant) Update(from jid.WithResource, affiliation, role, show, statusMsg string, realJid jid.WithResource) error {
-	var err error
-
+func (o *Occupant) Update(from jid.WithResource, affiliation Affiliation, role Role, show, statusMsg string, realJid jid.WithResource) {
 	o.Nick = from.Resource().String()
 	o.Jid = realJid
-	o.Affiliation, err = AffiliationFromString(affiliation)
-	if err != nil {
-		return err
-	}
-	o.Role, err = RoleFromString(role)
-	if err != nil {
-		return err
-	}
-
+	o.Affiliation = affiliation
+	o.Role = role
 	o.Status = roster.Status{show, statusMsg}
-
-	return nil
 }

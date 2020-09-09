@@ -83,8 +83,7 @@ func (s *MucSuite) Test_Occupant_Update(c *C) {
 		Status:      roster.Status{"xa", "foo"},
 	}
 
-	e := o.Update(jid.R("room1@conf.example.org/Two"), "admin", "participant", "away", "here", nil)
-	c.Assert(e, IsNil)
+	o.Update(jid.R("room1@conf.example.org/Two"), &adminAffiliation{}, &participantRole{}, "away", "here", nil)
 
 	c.Assert(o.Nick, Equals, "Two")
 	c.Assert(o.Jid, IsNil)
@@ -92,10 +91,4 @@ func (s *MucSuite) Test_Occupant_Update(c *C) {
 	c.Assert(o.Role, FitsTypeOf, &participantRole{})
 	c.Assert(o.Status.Status, Equals, "away")
 	c.Assert(o.Status.StatusMsg, Equals, "here")
-
-	e = o.Update(jid.R("room1@conf.example.org/Two"), "admin2", "participant", "away", "here", nil)
-	c.Assert(e, ErrorMatches, "unknown affiliation string: 'admin2'")
-
-	e = o.Update(jid.R("room1@conf.example.org/Two"), "admin", "participant2", "away", "here", nil)
-	c.Assert(e, ErrorMatches, "unknown role string: 'participant2'")
 }

@@ -194,7 +194,7 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 // UpdatePresence should be called when receiving a regular presence update with no type, or with unavailable as type. It will return
 // indications on whether the presence update means the person joined the room, or left the room.
 // Notice that updating of nick names is done separately and should not be done by calling this method.
-func (r *RoomRoster) UpdatePresence(from jid.WithResource, tp, affiliation, role, show, statusCode, statusMsg string, realJid jid.WithResource) (joined, left bool, err error) {
+func (r *RoomRoster) UpdatePresence(from jid.WithResource, tp string, affiliation Affiliation, role Role, show, statusCode, statusMsg string, realJid jid.WithResource) (joined, left bool, err error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -215,20 +215,14 @@ func (r *RoomRoster) UpdatePresence(from jid.WithResource, tp, affiliation, role
 
 	if !ok {
 		oc = &Occupant{}
-		err = oc.Update(from, affiliation, role, show, statusMsg, realJid)
-
-		if err != nil {
-			return false, false, err
-		}
+		oc.Update(from, affiliation, role, show, statusMsg, realJid)
 
 		r.occupants[from.String()] = oc
 
 		return true, false, nil
 	}
 
-	err = oc.Update(from, affiliation, role, show, statusMsg, realJid)
-	if err != nil {
-		return false, false, err
-	}
+	oc.Update(from, affiliation, role, show, statusMsg, realJid)
+
 	return false, false, nil
 }

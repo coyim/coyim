@@ -132,13 +132,13 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	case "":
 		if isOwnPresence {
 			ident := jid.ParseFull(stanza.MUCUser.Item.Jid)
-			m.mucSelfOccupantUpdated(from, room, occupant, ident, affiliation, role, status)
+			m.selfOccupantUpdated(from, room, occupant, ident, affiliation, role, status)
 		} else {
-			m.mucOccupantUpdate(from, room, occupant, affiliation, role)
+			m.occupantUpdate(from, room, occupant, affiliation, role)
 		}
 
 		if status.contains(MUCStatusNicknameAssigned) {
-			m.mucRoomRenamed(from, room)
+			m.roomRenamed(from, room)
 		}
 	}
 }
@@ -154,7 +154,7 @@ func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, 
 			"role":        role,
 		}).Debug("Parameters sent when someone leaves a room")
 
-		m.mucOccupantLeft(from, room, occupant, affiliation, role)
+		m.occupantLeft(from, room, occupant, affiliation, role)
 
 	case status.contains(MUCStatusBanned):
 		// We got banned
@@ -315,6 +315,6 @@ func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
 			"nickname": nickname,
 		}).Info("MUC message received")
 
-		m.mucMessageReceived(from, room, nickname, stanza.Body)
+		m.messageReceived(from, room, nickname, stanza.Body)
 	}
 }

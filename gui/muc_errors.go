@@ -3,9 +3,10 @@ package gui
 import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/jid"
+	log "github.com/sirupsen/logrus"
 )
 
-func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *account) {
+func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUCError, a *account) {
 	switch ev.ErrorType {
 	case events.MUCNotAuthorized:
 		a.log.Debug("MUC Error NotAuthorized received")
@@ -18,9 +19,9 @@ func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *acc
 	case events.MUCNotAcceptable:
 		a.log.Debug("MUC Error MUCNotAcceptable received")
 	case events.MUCRegistrationRequired:
-		u.handleErrorMUCRegistrationRequiredEvent(from, a)
+		u.handleErrorMUCRegistrationRequiredEvent(ev.Room, ev.Nickname, a)
 	case events.MUCConflict:
-		u.handleErrorMUCNicknameConflictEvent(from, a)
+		u.handleErrorMUCNicknameConflictEvent(ev.Room, ev.Nickname, a)
 	case events.MUCServiceUnavailable:
 		a.log.Debug("MUC Error MUCServiceUnavailable received")
 	default:
@@ -28,16 +29,20 @@ func (u *gtkUI) handleOneMUCErrorEvent(from jid.Full, ev events.MUCError, a *acc
 	}
 }
 
-func (u *gtkUI) handleErrorMUCNicknameConflictEvent(from jid.Full, a *account) {
-	err := newNicknameConflictError(from.Resource())
-	a.log.WithField("from", from).WithError(err).Error("Room nickname conflict event received")
+func (u *gtkUI) handleErrorMUCNicknameConflictEvent(room jid.Bare, nickname string, a *account) {
+	a.log.WithFields(log.Fields{
+		"room":     room,
+		"nickname": nickname,
+	}).Error("Room nickname conflict event received")
 
-	a.onRoomNicknameConflict(from)
+	a.onRoomNicknameConflict(room, nickname)
 }
 
-func (u *gtkUI) handleErrorMUCRegistrationRequiredEvent(from jid.Full, a *account) {
-	err := newNicknameConflictError(from.Resource())
-	a.log.WithField("from", from).WithError(err).Error("Room registration required event received")
+func (u *gtkUI) handleErrorMUCRegistrationRequiredEvent(room jid.Bare, nickname string, a *account) {
+	a.log.WithFields(log.Fields{
+		"room":     room,
+		"nickname": nickname,
+	}).Error("Room registration required event received")
 
-	a.onRoomRegistrationRequired(from)
+	a.onRoomRegistrationRequired(room, nickname)
 }

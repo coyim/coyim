@@ -206,7 +206,7 @@ func (s *MucSuite) Test_RoomRoster_UpdateNick(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 	rr := newRoomRoster()
 
-	j, l, e := rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "unavailable", "none", "none", "away", "101", "gone", nil)
+	j, l, e := rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "unavailable", &noneAffiliation{}, &noneRole{}, "away", "101", "gone", nil)
 	c.Assert(j, Equals, false)
 	c.Assert(l, Equals, false)
 	c.Assert(e, ErrorMatches, "no such occupant known in this room")
@@ -214,7 +214,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 	occ := &Occupant{Nick: "bello"}
 	rr.occupants["foo@somewhere.com/bello"] = occ
 
-	j, l, e = rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "unavailable", "none", "none", "away", "101", "gone", nil)
+	j, l, e = rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "unavailable", &noneAffiliation{}, &noneRole{}, "away", "101", "gone", nil)
 	c.Assert(j, Equals, false)
 	c.Assert(l, Equals, true)
 	c.Assert(e, IsNil)
@@ -225,7 +225,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_bad_type(c *C) {
 	rr := newRoomRoster()
 
-	j, l, e := rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "hungry", "none", "none", "away", "101", "gone", nil)
+	j, l, e := rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "hungry", &noneAffiliation{}, &noneRole{}, "away", "101", "gone", nil)
 	c.Assert(j, Equals, false)
 	c.Assert(l, Equals, false)
 	c.Assert(e, ErrorMatches, "incorrect presence type sent to room roster: 'hungry'")
@@ -234,7 +234,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_bad_type(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 	rr := newRoomRoster()
 
-	j, l, e := rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "", "none", "none", "away", "101", "gone", jid.R("foo@example.org/test1"))
+	j, l, e := rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "", &noneAffiliation{}, &noneRole{}, "away", "101", "gone", jid.R("foo@example.org/test1"))
 	c.Assert(j, Equals, true)
 	c.Assert(l, Equals, false)
 	c.Assert(e, IsNil)
@@ -248,11 +248,6 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 	c.Assert(occ.Status.Status, Equals, "away")
 	c.Assert(occ.Status.StatusMsg, Equals, "gone")
 	c.Assert(occ.Jid, Equals, jid.R("foo@example.org/test1"))
-
-	j, l, e = rr.UpdatePresence(jid.R("foo@somewhere.com/bello2"), "", "nonex", "none", "away", "101", "gone", jid.R("foo@example.org/test2"))
-	c.Assert(j, Equals, false)
-	c.Assert(l, Equals, false)
-	c.Assert(e, ErrorMatches, "unknown affiliation string: 'nonex'")
 }
 
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
@@ -261,7 +256,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
 	occ := &Occupant{Nick: "bello"}
 	rr.occupants["foo@somewhere.com/bello"] = occ
 
-	j, l, e := rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "", "none", "none", "away", "101", "gone", jid.R("foo@example.org/test1"))
+	j, l, e := rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "", &noneAffiliation{}, &noneRole{}, "away", "101", "gone", jid.R("foo@example.org/test1"))
 	c.Assert(j, Equals, false)
 	c.Assert(l, Equals, false)
 	c.Assert(e, IsNil)
@@ -271,9 +266,4 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
 	c.Assert(occ.Status.Status, Equals, "away")
 	c.Assert(occ.Status.StatusMsg, Equals, "gone")
 	c.Assert(occ.Jid, Equals, jid.R("foo@example.org/test1"))
-
-	j, l, e = rr.UpdatePresence(jid.R("foo@somewhere.com/bello"), "", "none", "nonexx", "away", "101", "gone", jid.R("foo@example.org/test2"))
-	c.Assert(j, Equals, false)
-	c.Assert(l, Equals, false)
-	c.Assert(e, ErrorMatches, "unknown role string: 'nonexx'")
 }

@@ -48,15 +48,15 @@ func (rm *RoomManager) AddRoom(r *Room) bool {
 
 // LeaveRoom will remove the room with the given identifier from the manager. If the room doesn't exist, this method
 // will return false
-func (rm *RoomManager) LeaveRoom(ident jid.Bare) bool {
+func (rm *RoomManager) LeaveRoom(room jid.Bare) bool {
 	rm.lock.Lock()
 	defer rm.lock.Unlock()
 
-	_, ok := rm.rooms[ident.String()]
+	_, ok := rm.rooms[room.String()]
 	if !ok {
 		return false
 	}
 
-	delete(rm.rooms, ident.String())
+	delete(rm.rooms, room.String())
 	return true
 }

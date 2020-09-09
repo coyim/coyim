@@ -196,18 +196,20 @@ var (
 )
 
 type mucRoomLobbyErr struct {
-	from    jid.Full
-	errType error
+	room     jid.Bare
+	nickname string
+	errType  error
 }
 
 func (e *mucRoomLobbyErr) Error() string {
 	return e.errType.Error()
 }
 
-func newMUCRoomLobbyErr(from jid.Full, errType error) error {
+func newMUCRoomLobbyErr(room jid.Bare, nickname string, errType error) error {
 	return &mucRoomLobbyErr{
-		from:    from,
-		errType: errType,
+		room:     room,
+		nickname: nickname,
+		errType:  errType,
 	}
 }
 
@@ -245,7 +247,7 @@ func (v *roomViewLobby) onJoinFailed(err error) {
 
 		if err.errType == errJoinNickNameConflict {
 			shouldEnableCreation = false
-			nickName := err.from.Resource().String()
+			nickName := err.nickname
 			if !v.nickNamesWithConflict.Has(nickName) {
 				v.nickNamesWithConflict.Insert(nickName)
 			}
@@ -262,7 +264,7 @@ func (v *roomViewLobby) onJoinFailed(err error) {
 func (v *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	switch err.errType {
 	case errJoinNickNameConflict:
-		return i18n.Localf("Can't join the room using the nickname \"%s\" because it's already being used.", err.from.Resource())
+		return i18n.Localf("Can't join the room using the nickname \"%s\" because it's already being used.", err.nickname)
 	case errJoinOnlyMembers:
 		return i18n.Local("Sorry, this room only allows registered members")
 	default:
@@ -299,14 +301,14 @@ func (v *roomViewLobby) onRoomOccupantJoinedReceived() {
 	v.finishJoinRequest(nil)
 }
 
-func (v *roomViewLobby) onJoinErrorRecevied(from jid.Full) {
-	v.finishJoinRequest(newMUCRoomLobbyErr(from, errJoinRequestFailed))
+func (v *roomViewLobby) onJoinErrorRecevied(room jid.Bare, nickname string) {
+	v.finishJoinRequest(newMUCRoomLobbyErr(room, nickname, errJoinRequestFailed))
 }
 
-func (v *roomViewLobby) onNicknameConflictReceived(from jid.Full) {
-	v.finishJoinRequest(newMUCRoomLobbyErr(from, errJoinNickNameConflict))
+func (v *roomViewLobby) onNicknameConflictReceived(room jid.Bare, nickname string) {
+	v.finishJoinRequest(newMUCRoomLobbyErr(room, nickname, errJoinNickNameConflict))
 }
 
-func (v *roomViewLobby) onRegistrationRequiredReceived(from jid.Full) {
-	v.finishJoinRequest(newMUCRoomLobbyErr(from, errJoinOnlyMembers))
+func (v *roomViewLobby) onRegistrationRequiredReceived(room jid.Bare, nickname string) {
+	v.finishJoinRequest(newMUCRoomLobbyErr(room, nickname, errJoinOnlyMembers))
 }

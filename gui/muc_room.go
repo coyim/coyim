@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -15,7 +16,7 @@ type roomView struct {
 	builder *builder
 
 	identity jid.Bare
-	occupant jid.Resource
+	occupant string
 	info     *muc.RoomListing
 
 	log    coylog.Logger
@@ -120,7 +121,7 @@ func (v *roomView) leaveRoom() {
 	v.account.roomManager.LeaveRoom(v.identity)
 
 	if v.joined {
-		v.account.session.LeaveRoom(jid.NewFull(v.identity.Local(), v.identity.Host(), v.occupant))
+		v.account.session.LeaveRoom(v.identity, v.occupant)
 		v.joined = false
 	}
 }
@@ -156,35 +157,44 @@ func (v *roomView) onCancel() {
 	doInUIThread(v.window.Destroy)
 }
 
-func (v *roomView) onNicknameConflictReceived(from jid.Full) {
+func (v *roomView) onNicknameConflictReceived(room jid.Bare, nickname string) {
 	if v.joined {
-		v.log.WithField("from", from).Error("A nickname conflict event was received but the user is already in the room")
+		v.log.WithFields(log.Fields{
+			"room":     room,
+			"nickname": nickname,
+		}).Error("A nickname conflict event was received but the user is already in the room")
 		return
 	}
 
-	v.lobby.onNicknameConflictReceived(from)
+	v.lobby.onNicknameConflictReceived(room, nickname)
 }
 
-func (v *roomView) onRegistrationRequiredReceived(from jid.Full) {
+func (v *roomView) onRegistrationRequiredReceived(room jid.Bare, nickname string) {
 	if v.joined {
-		v.log.WithField("from", from).Error("A registration required event was received but the user is already in the room")
+		v.log.WithFields(log.Fields{
+			"room":     room,
+			"nickname": nickname,
+		}).Error("A registration required event was received but the user is already in the room")
 		return
 	}
 
-	v.lobby.onRegistrationRequiredReceived(from)
+	v.lobby.onRegistrationRequiredReceived(room, nickname)
 }
 
-func (v *roomView) onRoomOccupantErrorReceived(from jid.Full) {
+func (v *roomView) onRoomOccupantErrorReceived(room jid.Bare, nickname string) {
 	if v.joined {
-		v.log.WithField("from", from).Error("A joined event error was received but the user is already in the room")
+		v.log.WithFields(log.Fields{
+			"room":     room,
+			"nickname": nickname,
+		}).Error("A joined event error was received but the user is already in the room")
 		return
 	}
 
-	v.lobby.onJoinErrorRecevied(from)
+	v.lobby.onJoinErrorRecevied(room, nickname)
 }
 
 // onRoomOccupantJoinedReceived SHOULD be called from the UI thread
-func (v *roomView) onRoomOccupantJoinedReceived(occupant jid.Resource, occupants []*muc.Occupant) {
+func (v *roomView) onRoomOccupantJoinedReceived(occupant string, occupants []*muc.Occupant) {
 	if v.joined {
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return

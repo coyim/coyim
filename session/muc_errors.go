@@ -7,9 +7,6 @@ import (
 )
 
 func (m *mucManager) publishMUCError(from jid.Full, e *data.StanzaError) {
-	ev := events.MUC{}
-	ev.From = from
-
 	var t events.MUCErrorType
 	switch {
 	case e.MUCNotAuthorized != nil:
@@ -30,10 +27,9 @@ func (m *mucManager) publishMUCError(from jid.Full, e *data.StanzaError) {
 		t = events.MUCServiceUnavailable
 	}
 
-	errorInfo := events.MUCError{}
-	errorInfo.ErrorType = t
-	errorInfo.Room = jid.ParseBare(from.NoResource().String())
-	ev.Info = errorInfo
+	ev := events.MUCError{}
+	ev.ErrorType = t
+	ev.Room = jid.ParseBare(from.NoResource().String())
 
 	m.publishEvent(ev)
 }

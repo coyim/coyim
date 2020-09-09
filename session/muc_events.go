@@ -1,74 +1,91 @@
 package session
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (m *mucManager) mucRoomCreated(from jid.Full, room jid.Bare) {
+func (m *mucManager) roomCreated(from jid.Full, room jid.Bare) {
 	ev := events.MUCRoomCreated{}
 	ev.Room = room
 
-	m.publishMUCEvent(from, ev)
+	m.publishEvent(ev)
 }
 
-func (m *mucManager) mucRoomRenamed(from jid.Full, room jid.Bare) {
+func (m *mucManager) roomRenamed(from jid.Full, room jid.Bare) {
 	ev := events.MUCRoomRenamed{}
 	ev.Room = room
 
-	m.publishMUCEvent(from, ev)
+	m.publishEvent(ev)
 }
 
-func (m *mucManager) mucOccupantLeft(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string) {
+func parseAffiliationAndReport(a string) muc.Affiliation {
+	aa, e := muc.AffiliationFromString(a)
+	if e != nil {
+		fmt.Printf("error when parsing affiliation: %v\n", e)
+	}
+	return aa
+}
+
+func parseRoleAndReport(a string) muc.Role {
+	aa, e := muc.RoleFromString(a)
+	if e != nil {
+		fmt.Printf("error when parsing role: %v\n", e)
+	}
+	return aa
+}
+
+func (m *mucManager) occupantLeft(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string) {
 	ev := events.MUCOccupantLeft{}
 	ev.Room = room
-	ev.Nickname = occupant
-	ev.Jid = from
-	ev.Affiliation = affiliation
-	ev.Role = role
+	ev.Nickname = occupant.String()
+	ev.RealJid = from
+	ev.Affiliation = parseAffiliationAndReport(affiliation)
+	ev.Role = parseRoleAndReport(role)
 
-	m.publishMUCEvent(from, ev)
+	m.publishEvent(ev)
 }
 
-func (m *mucManager) mucOccupantUpdate(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string) {
+func (m *mucManager) occupantUpdate(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string) {
 	ev := events.MUCOccupantUpdated{}
 	ev.Room = room
-	ev.Nickname = occupant
-	ev.Jid = from
-	ev.Affiliation = affiliation
-	ev.Role = role
+	ev.Nickname = occupant.String()
+	ev.RealJid = from
+	ev.Affiliation = parseAffiliationAndReport(affiliation)
+	ev.Role = parseRoleAndReport(role)
 
-	m.publishMUCEvent(from, ev)
+	m.publishEvent(ev)
 }
 
 func (m *mucManager) publishLoggingEnabled(room jid.Bare) {
-	ev := events.MUC{}
+	ev := events.MUCLoggingEnabled{}
 	ev.Room = room
-	ev.Info = events.MUCLoggingEnabled{}
 
 	m.publishEvent(ev)
 }
 
 func (m *mucManager) publishLoggingDisabled(room jid.Bare) {
-	ev := events.MUC{}
+	ev := events.MUCLoggingDisabled{}
 	ev.Room = room
-	ev.Info = events.MUCLoggingDisabled{}
 
 	m.publishEvent(ev)
 }
 
-// mucSelfOccupantUpdated can happen several times - every time a status code update is changed, or role or affiliation
+// selfOccupantUpdated can happen several times - every time a status code update is changed, or role or affiliation
 // is updated, this can lead to the method being called. For now, it will generate a event about joining, but this
 // should be cleaned up and fixed
-func (m *mucManager) mucSelfOccupantUpdated(from jid.Full, room jid.Bare, occupant jid.Resource, ident jid.Full, affiliation, role string, status mucUserStatuses) {
+func (m *mucManager) selfOccupantUpdated(from jid.Full, room jid.Bare, occupant jid.Resource, ident jid.Full, affiliation, role string, status mucUserStatuses) {
 	ev := events.MUCOccupantJoined{}
 	ev.Room = room
-	ev.Nickname = occupant
-	ev.Jid = ident
-	ev.Affiliation = affiliation
-	ev.Role = role
+	ev.Nickname = occupant.String()
+	ev.RealJid = ident
+	ev.Affiliation = parseAffiliationAndReport(affiliation)
+	ev.Role = parseRoleAndReport(role)
 
-	m.publishMUCEvent(from, ev)
+	m.publishEvent(ev)
 
 	if status.contains(MUCStatusRoomLoggingEnabled) {
 		m.publishLoggingEnabled(room)
@@ -79,19 +96,11 @@ func (m *mucManager) mucSelfOccupantUpdated(from jid.Full, room jid.Bare, occupa
 	}
 }
 
-func (m *mucManager) mucMessageReceived(from jid.Full, room jid.Bare, nickname jid.Resource, message string) {
+func (m *mucManager) messageReceived(from jid.Full, room jid.Bare, nickname jid.Resource, message string) {
 	ev := events.MUCMessageReceived{}
 	ev.Room = room
 	ev.Nickname = nickname
 	ev.Message = message
-
-	m.publishMUCEvent(from, ev)
-}
-
-func (m *mucManager) publishMUCEvent(from jid.Full, e interface{}) {
-	ev := events.MUC{}
-	ev.From = from
-	ev.Info = e
 
 	m.publishEvent(ev)
 }

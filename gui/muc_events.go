@@ -15,6 +15,8 @@ func (u *gtkUI) handleOneMUCEvent(ev events.MUC, a *account) {
 		u.handleMUCOccupantJoinedEvent(t, a)
 	case events.MUCOccupantLeft:
 		u.handleMUCOccupantLeftEvent(t, a)
+	case events.MUCMessageReceived:
+		u.handleMUCMessageReceived(t, a)
 	case events.MUCError:
 		u.handleOneMUCErrorEvent(t, a)
 	case events.MUCLoggingEnabled:
@@ -57,4 +59,13 @@ func (u *gtkUI) handleMUCOccupantLeftEvent(ev events.MUCOccupantLeft, a *account
 	}).Debug("Occupant left the room event received")
 
 	a.onRoomOccupantLeftTheRoom(ev.Room, ev.Nickname, ev.RealJid, ev.Affiliation, ev.Role)
+}
+
+func (u *gtkUI) handleMUCMessageReceived(ev events.MUCMessageReceived, a *account) {
+	a.log.WithFields(log.Fields{
+		"nickname": ev.Nickname,
+		"message":  ev.Message,
+	}).Debug("New message received")
+
+	a.onRoomMessageReceived(ev.Room, ev.Nickname, ev.Message)
 }

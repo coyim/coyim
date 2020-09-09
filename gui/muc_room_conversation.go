@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -15,11 +16,20 @@ type roomViewConversation struct {
 	roomChatTextView gtki.TextView `gtk-widget:"roomChatTextView"`
 
 	tags *mucStyleTags
+	log  coylog.Logger
 }
 
 type mucStyleTags struct {
 	table gtki.TextTagTable
 }
+
+type messageType int
+
+const (
+	mtLeftRoom messageType = iota
+	mtLiveMessage
+	mtWarning
+)
 
 func getTimestamp() string {
 	return time.Now().Format("15:04:05")
@@ -40,23 +50,32 @@ func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 	t := &mucStyleTags{}
 
 	t.table, _ = g.gtk.TextTagTableNew()
+	cset := u.currentColorSet()
+
+	warningTag, _ := g.gtk.TextTagNew("warning")
+	_ = warningTag.SetProperty("foreground", cset.warningForeground)
 
 	leftRoomTag, _ := g.gtk.TextTagNew("leftRoomText")
-	_ = leftRoomTag.SetProperty("foreground", "#EE0000")
+	_ = leftRoomTag.SetProperty("foreground", cset.warningForeground)
 	_ = leftRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
 
 	timestampTag, _ := g.gtk.TextTagNew("timestampText")
 	_ = timestampTag.SetProperty("foreground", "#AAB7B8")
 	_ = timestampTag.SetProperty("style", pangoi.STYLE_NORMAL)
 
-	cset := u.currentColorSet()
+	nicknameTag, _ := g.gtk.TextTagNew("nicknameText")
+	_ = nicknameTag.SetProperty("foreground", "#395BA3")
+	_ = nicknameTag.SetProperty("style", pangoi.STYLE_NORMAL)
 
-	warningTag, _ := g.gtk.TextTagNew("warning")
-	_ = warningTag.SetProperty("foreground", cset.warningForeground)
+	messageTag, _ := g.gtk.TextTagNew("messageText")
+	_ = messageTag.SetProperty("foreground", "#000000")
+	_ = messageTag.SetProperty("style", pangoi.STYLE_NORMAL)
 
+	t.table.Add(warningTag)
 	t.table.Add(leftRoomTag)
 	t.table.Add(timestampTag)
-	t.table.Add(warningTag)
+	t.table.Add(nicknameTag)
+	t.table.Add(messageTag)
 
 	return t
 }
@@ -78,31 +97,56 @@ func (u *gtkUI) newRoomViewConversation() *roomViewConversation {
 	return c
 }
 
-func (v *roomViewConversation) addLineToChatText(timestamp, text string) {
+func (v *roomViewConversation) addTextToChat(text string) {
 	buf, _ := v.roomChatTextView.GetBuffer()
 	i := buf.GetEndIter()
 
-	buf.Insert(i, fmt.Sprintf("%s %s\n", timestamp, text))
-}
-
-func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag string) {
-	buf, _ := v.roomChatTextView.GetBuffer()
-
-	charCount := buf.GetCharCount()
-
-	t := fmt.Sprintf("[%s] ", getTimestamp())
-	v.addLineToChatText(t, text)
-
-	oldIterEnd := buf.GetIterAtOffset(charCount)
-	offsetTimestamp := buf.GetIterAtOffset(charCount + len(t))
-	offsetText := buf.GetIterAtOffset(charCount + len(t) + 1)
-	newIterEnd := buf.GetEndIter()
-
-	buf.ApplyTagByName("timestampText", oldIterEnd, offsetTimestamp)
-	buf.ApplyTagByName(tag, offsetText, newIterEnd)
+	buf.Insert(i, fmt.Sprintf("%s\n", text))
 }
 
 func (v *roomViewConversation) showOccupantLeftRoom(nickname jid.Resource) {
-	msg := i18n.Localf("%s left the room", nickname)
-	v.addLineToChatTextUsingTagID(msg, "leftRoomText")
+	v.showMessageInChatRoom(nickname, "left the room", mtLeftRoom)
+}
+
+func (v *roomViewConversation) showMessageInChatRoom(nickname jid.Resource, message string, mt messageType) {
+	buf, _ := v.roomChatTextView.GetBuffer()
+	c := buf.GetCharCount()
+
+	t := fmt.Sprintf("[%s]", getTimestamp())
+
+	n := fmt.Sprintf("%s", nickname)
+	if mt == mtLiveMessage {
+		n = fmt.Sprintf("%s:", nickname)
+	}
+
+	switch mt {
+	case mtWarning:
+		txt := i18n.Localf("%s %s", t, message)
+		v.addTextToChat(txt)
+		c = v.applyTagByNameAndOffset(buf, "timestampText", t, c)
+		c = v.applyTagByNameAndOffset(buf, "warning", t, c)
+	case mtLeftRoom:
+		txt := i18n.Localf("%s %s", n, message)
+		v.addTextToChat(txt)
+		c = v.applyTagByNameAndOffset(buf, "leftRoomText", n, c)
+		c = v.applyTagByNameAndOffset(buf, "leftRoomText", message, c)
+	case mtLiveMessage:
+		txt := i18n.Localf("%s %s %s ", t, n, message)
+		v.addTextToChat(txt)
+		c = v.applyTagByNameAndOffset(buf, "timestampText", t, c)
+		c = v.applyTagByNameAndOffset(buf, "nicknameText", n, c)
+		c = v.applyTagByNameAndOffset(buf, "messageText", message, c)
+	default:
+		v.log.WithField("messageType", mt).Debug("message type not controlled")
+		return
+	}
+}
+
+func (v *roomViewConversation) applyTagByNameAndOffset(b gtki.TextBuffer, tagName, text string, initialPos int) int {
+	finalPos := initialPos + 1 + len(text)
+	beginIter := b.GetIterAtOffset(initialPos)
+	endIter := b.GetIterAtOffset(finalPos)
+	b.ApplyTagByName(tagName, beginIter, endIter)
+
+	return finalPos
 }

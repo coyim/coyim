@@ -145,3 +145,19 @@ func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, 
 	view := getViewFromRoom(room)
 	view.onRoomOccupantLeftTheRoomReceived(ident.Resource(), roster.AllOccupants())
 }
+
+func (a *account) onRoomMessageReceived(roomName jid.Bare, nickname jid.Resource, message string) {
+	l := a.log.WithFields(log.Fields{
+		"nickname": nickname,
+		"message":  message,
+	})
+
+	room, ok := a.roomManager.GetRoom(roomName)
+	if !ok {
+		l.Error("Room view not available when a live message was received")
+		return
+	}
+
+	view := getViewFromRoom(room)
+	view.onRoomMessageToTheRoomReceived(nickname, message)
+}

@@ -260,12 +260,17 @@ func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource, occu
 	v.roster.updateRoomRoster(occupants)
 }
 
+// onRoomMessageToTheRoomReceived should be called from the UI thread
+func (v *roomView) onRoomMessageToTheRoomReceived(occupant jid.Resource, message string) {
+	v.conv.showMessageInChatRoom(occupant, message, mtLiveMessage)
+}
+
 // loggingIsEnabled MUST not be called from the UI thread
 func (v *roomView) loggingIsEnabled() {
 	if v.conv != nil {
 		msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
 		doInUIThread(func() {
-			v.conv.addLineToChatTextUsingTagID(msg, "warning")
+			v.conv.showMessageInChatRoom(jid.Resource{}, msg, mtWarning)
 		})
 	}
 }
@@ -275,7 +280,7 @@ func (v *roomView) loggingIsDisabled() {
 	if v.conv != nil {
 		msg := i18n.Local("This room is no longer publicly logged.")
 		doInUIThread(func() {
-			v.conv.addLineToChatTextUsingTagID(msg, "warning")
+			v.conv.showMessageInChatRoom(jid.Resource{}, msg, mtWarning)
 		})
 	}
 }

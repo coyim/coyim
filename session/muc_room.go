@@ -68,12 +68,20 @@ func (s *session) GetRoom(rj jid.Bare, result chan<- *muc.RoomListing) {
 	result <- rl
 }
 
-func (s *session) LeaveRoom(room jid.Bare, nickname string) {
+func (s *session) LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error) {
 	receiver := room.WithResource(jid.NewResource(nickname)).String()
+
+	resultCh := make(chan bool)
+	errorCh := make(chan error)
 	go func() {
 		err := s.conn.SendPresence(receiver, "unavailable", "", "")
 		if err != nil {
 			s.log.WithField("to", receiver).WithError(err).Error("error trying to leave room")
+			errorCh <- err
+			return
 		}
+		resultCh <- true
 	}()
+
+	return resultCh, errorCh
 }

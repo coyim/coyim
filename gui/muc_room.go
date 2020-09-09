@@ -103,7 +103,7 @@ func (v *roomView) initUIBuilder() {
 	panicOnDevError(v.builder.bindObjects(v))
 
 	v.builder.ConnectSignals(map[string]interface{}{
-		"on_close_window": v.onCloseWindow,
+		"on_destroy_window": v.onDestroyWindow,
 	})
 }
 
@@ -111,18 +111,62 @@ func (v *roomView) initDefaults() {
 	v.setTitle(v.identity.String())
 }
 
-func (v *roomView) onCloseWindow() {
-	v.leaveRoom()
+func (v *roomView) onDestroyWindow() {
+	go v.forceLeaveRoom()
 }
 
-func (v *roomView) leaveRoom() {
-	// TODO: This should implements channels for handle the `race condition`
-	// only if it is called from another different action than close window
-	v.account.roomManager.LeaveRoom(v.identity)
+func (v *roomView) forceLeaveRoom() {
+	if !v.joined {
+		v.log.Info("The occupant left the lobby")
+		v.leaveRoomMananger()
+		return
+	}
+	// TODO: Should we implement a timeout here?
+	for {
+		sc := make(chan bool)
+		go func() {
+			v.tryLeaveRoom(func() {
+				sc <- true
+			}, func() {
+				sc <- false
+			})
+		}()
 
-	if v.joined {
-		v.account.session.LeaveRoom(v.identity, v.occupant)
-		v.joined = false
+		if <-sc {
+			return
+		}
+	}
+}
+
+func (v *roomView) tryLeaveRoom(s, f func()) {
+	go func() {
+		resultCh, errCh := v.account.session.LeaveRoom(v.identity, v.occupant)
+		select {
+		case <-resultCh:
+			v.onLeaveRoomSuccess(s)
+		case err := <-errCh:
+			v.log.WithError(err).Error("An error occurred when trying to leave the room")
+			v.onLeaveRoomFailure(f)
+		}
+	}()
+}
+
+func (v *roomView) onLeaveRoomSuccess(f func()) {
+	v.log.Info("The occupant left the room")
+	v.leaveRoomMananger()
+	v.joined = false
+	if f != nil {
+		f()
+	}
+}
+
+func (v *roomView) leaveRoomMananger() {
+	v.account.roomManager.LeaveRoom(v.identity)
+}
+
+func (v *roomView) onLeaveRoomFailure(f func()) {
+	if f != nil {
+		f()
 	}
 }
 

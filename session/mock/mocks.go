@@ -232,5 +232,6 @@ func (*SessionMock) Log() coylog.Logger {
 }
 
 // LeaveRoom is the implementation for session interface
-func (*SessionMock) LeaveRoom(room jid.Bare, nickname string) {
+func (*SessionMock) LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error) {
+	return nil, nil
 }

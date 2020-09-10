@@ -63,6 +63,7 @@ func (u *gtkUI) handleMUCOccupantLeftEvent(ev events.MUCOccupantLeft, a *account
 
 func (u *gtkUI) handleMUCMessageReceived(ev events.MUCMessageReceived, a *account) {
 	a.log.WithFields(log.Fields{
+		"room":     ev.Room,
 		"nickname": ev.Nickname,
 		"message":  ev.Message,
 	}).Debug("New message received")

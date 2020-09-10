@@ -113,7 +113,14 @@ func (v *roomViewLobby) addWarning(s string) {
 
 	w.message.SetText(w.text)
 
-	prov := providerWithCSS("box { background-color: #89AF8F; color: #000000; border: 1px solid #000000; border-radius: 5px; }")
+	prov := providerWithStyle("box", style{
+		"color":            "#744210",
+		"background-color": "#fefcbf",
+		"border":           "1px solid #d69e2e",
+		"border-radius":    "4px",
+		"padding":          "10px",
+	})
+
 	updateWithStyle(w.bar, prov)
 
 	v.warningsArea.PackStart(w.bar, false, false, 5)

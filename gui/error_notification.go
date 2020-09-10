@@ -21,7 +21,12 @@ func newErrorNotification(info gtki.Box) *errorNotification {
 }
 
 func (n *errorNotification) ShowMessage(label string) {
-	prov := providerWithCSS("box { background-color: #4a8fd9;  color: #ffffff; border-radius: 2px; }")
+	prov := providerWithStyle("box", style{
+		"background-color": "#e53e3e",
+		"border-radius":    "2px",
+		"color":            "#ffffff",
+	})
+
 	updateWithStyle(n.area, prov)
 
 	n.label.SetMarginTop(10)

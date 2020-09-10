@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
@@ -123,4 +124,19 @@ func providerWithCSS(s string) gtki.CssProvider {
 func updateWithStyle(l StyleContextable, p gtki.CssProvider) {
 	sc, _ := l.GetStyleContext()
 	sc.AddProvider(p, 9999)
+}
+
+type style map[string]interface{}
+
+func providerWithStyle(el string, s style) gtki.CssProvider {
+	o := fmt.Sprintf("%s {%s}", el, inlineStyleProperties(s))
+	return providerWithCSS(o)
+}
+
+func inlineStyleProperties(s style) string {
+	inline := []string{}
+	for attr, value := range s {
+		inline = append(inline, fmt.Sprintf("%s: %s;", attr, value))
+	}
+	return strings.Join(inline, "")
 }

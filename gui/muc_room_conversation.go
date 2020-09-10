@@ -108,7 +108,7 @@ func (v *roomViewConversation) showOccupantLeftRoom(nickname string) {
 	v.showMessageInChatRoom(nickname, "left the room", "", mtLeftRoom)
 }
 
-func (v *roomViewConversation) showMessageInChatRoom(nickname, message, subject string, mt messageType) {
+func (v *roomViewConversation) showMessageInChatRoom(nickname, subject, message string, mt messageType) {
 	buf, _ := v.roomChatTextView.GetBuffer()
 	c := buf.GetCharCount()
 

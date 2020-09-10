@@ -101,10 +101,10 @@ func (m MUCOccupantLeft) WhichRoom() jid.Bare { return m.Room }
 // MUCMessageReceived contains information about
 // the message received
 type MUCMessageReceived struct {
-	Room        jid.Bare
-	Nickname    string
-	BodyMessage string
-	Subject     string
+	Room     jid.Bare
+	Nickname string
+	Subject  string
+	Message  string
 }
 
 func (MUCMessageReceived) mucEventMarkerFunction() {}

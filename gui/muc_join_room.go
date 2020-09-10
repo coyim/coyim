@@ -70,7 +70,10 @@ func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare, roomInfo *mu
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.dialog.Hide()
-		v.u.mucShowRoom(a, ident, roomInfo)
+		v.u.mucShowRoom(a, ident, roomInfo, func() {
+			v.enableJoinFields()
+			v.dialog.Show()
+		})
 	})
 }
 

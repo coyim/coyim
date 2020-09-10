@@ -9,19 +9,16 @@
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkScrolledWindow">
+          <object class="GtkScrolledWindow" id="roomChatScrollView">
             <property name="visible">True</property>
             <child>
               <object class="GtkTextView" id="roomChatTextView">
                 <property name="visible">True</property>
-                <property name="pixels_above_lines">2</property>
-                <property name="pixels_inside_wrap">1</property>
+                <property name="pixels_below_lines">5</property>
                 <property name="editable">False</property>
                 <property name="wrap_mode">word</property>
-                <property name="left_margin">10</property>
-                <property name="right_margin">10</property>
-                <property name="top_margin">10</property>
-                <property name="bottom_margin">10</property>
+                <property name="left_margin">5</property>
+                <property name="right_margin">5</property>
                 <property name="cursor_visible">False</property>
               </object>
             </child>

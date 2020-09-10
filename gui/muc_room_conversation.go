@@ -6,14 +6,14 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
 )
 
 type roomViewConversation struct {
-	view             gtki.Box      `gtk-widget:"roomConversation"`
-	roomChatTextView gtki.TextView `gtk-widget:"roomChatTextView"`
+	view               gtki.Box            `gtk-widget:"roomConversation"`
+	roomChatTextView   gtki.TextView       `gtk-widget:"roomChatTextView"`
+	roomChatScrollView gtki.ScrolledWindow `gtk-widget:"roomChatScrollView"`
 
 	tags *mucStyleTags
 	log  coylog.Logger
@@ -104,11 +104,11 @@ func (v *roomViewConversation) addTextToChat(text string) {
 	buf.Insert(i, fmt.Sprintf("%s\n", text))
 }
 
-func (v *roomViewConversation) showOccupantLeftRoom(nickname jid.Resource) {
-	v.showMessageInChatRoom(nickname, "left the room", mtLeftRoom)
+func (v *roomViewConversation) showOccupantLeftRoom(nickname string) {
+	v.showMessageInChatRoom(nickname, "left the room", "", mtLeftRoom)
 }
 
-func (v *roomViewConversation) showMessageInChatRoom(nickname jid.Resource, message string, mt messageType) {
+func (v *roomViewConversation) showMessageInChatRoom(nickname, message, subject string, mt messageType) {
 	buf, _ := v.roomChatTextView.GetBuffer()
 	c := buf.GetCharCount()
 
@@ -140,6 +140,11 @@ func (v *roomViewConversation) showMessageInChatRoom(nickname jid.Resource, mess
 		v.log.WithField("messageType", mt).Debug("message type not controlled")
 		return
 	}
+
+	// TODO: This call should be better if we connect this to the signal
+	// "size-allocate" of the roomChatTextView, for now it's ok here
+	// because this is the only function that add text to the textview
+	scrollToBottom(v.roomChatScrollView)
 }
 
 func (v *roomViewConversation) applyTagByNameAndOffset(b gtki.TextBuffer, tagName, text string, initialPos int) int {

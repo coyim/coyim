@@ -5,6 +5,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/golang-collections/collections/set"
 )
 
 type createMUCRoomForm struct {
@@ -26,13 +27,15 @@ type createMUCRoomForm struct {
 	notification gtki.InfoBar
 
 	previousUpdateChannel   chan bool
+	roomNameConflictList    *set.Set
 	createRoomIfDoesntExist func(*account, jid.Bare)
 	onCheckFieldsConditions func(string, string, *account) bool
 }
 
 func (v *createMUCRoom) initForm() {
 	f := &createMUCRoomForm{
-		log: v.log,
+		log:                  v.log,
+		roomNameConflictList: set.New(),
 	}
 
 	panicOnDevError(v.builder.bindObjects(f))
@@ -57,16 +60,7 @@ func (v *createMUCRoom) initForm() {
 				})
 
 			case errCreateRoomAlreadyExists:
-				f.onCheckFieldsConditions = func(roomName, chatServiceName string, a *account) bool {
-					currentIdent := jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(chatServiceName))
-					if currentIdent.String() == ident.String() {
-						f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
-						return false
-					}
-					f.clearErrors()
-					return true
-				}
-
+				f.roomNameConflictList.Insert(ident.String())
 				doInUIThread(func() {
 					f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
 					f.hideSpinner()
@@ -210,13 +204,21 @@ func (f *createMUCRoomForm) onNoAccountsConnected() {
 }
 
 func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
+	f.clearErrors()
+
 	roomName, _ := f.roomEntry.GetText()
 	chatService, _ := f.chatServiceEntry.GetText()
 	currentAccount := f.ac.currentAccount()
 
 	s := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
-	if f.onCheckFieldsConditions != nil {
-		s = f.onCheckFieldsConditions(roomName, chatService, currentAccount)
+	if s {
+		ident := jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(chatService))
+		if ident.Valid() {
+			if f.roomNameConflictList.Has(ident.String()) {
+				f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
+				s = false
+			}
+		}
 	}
 
 	f.createButton.SetSensitive(s)

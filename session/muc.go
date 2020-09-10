@@ -308,10 +308,7 @@ func isLiveMessage(stanza *data.ClientMessage) bool {
 	// TODO: this function need to include more validations to make sure that
 	// the stanza received is a Live Message, for now we all only validating
 	// the body contains some information
-	if bodyHasContent(stanza) {
-		return true
-	}
-	return false
+	return bodyHasContent(stanza)
 }
 
 func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {

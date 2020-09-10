@@ -213,11 +213,9 @@ func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
 	s := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
 	if s {
 		ident := jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(chatService))
-		if ident.Valid() {
-			if f.roomNameConflictList.Has(ident.String()) {
-				f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
-				s = false
-			}
+		if ident.Valid() && f.roomNameConflictList.Has(ident.String()) {
+			f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
+			s = false
 		}
 	}
 

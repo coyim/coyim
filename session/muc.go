@@ -318,7 +318,7 @@ func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
 		from := jid.ParseFull(stanza.From)
 		room := from.Bare()
 		nickname := from.Resource().String()
-		body := stanza.Body
+		message := stanza.Body
 		subject := ""
 
 		if stanza.Subject != nil {
@@ -327,11 +327,11 @@ func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
 
 		m.log.WithFields(log.Fields{
 			"room":     room,
-			"message":  body,
+			"message":  message,
 			"subject":  subject,
 			"nickname": nickname,
 		}).Info("MUC message received")
 
-		m.messageReceived(room, nickname, body, subject)
+		m.messageReceived(room, nickname, subject, message)
 	}
 }

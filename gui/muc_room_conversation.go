@@ -105,7 +105,7 @@ func (v *roomViewConversation) addTextToChat(text string) {
 }
 
 func (v *roomViewConversation) showOccupantLeftRoom(nickname string) {
-	v.showMessageInChatRoom(nickname, "left the room", "", mtLeftRoom)
+	v.showMessageInChatRoom(nickname, "", "left the room", mtLeftRoom)
 }
 
 func (v *roomViewConversation) showMessageInChatRoom(nickname, subject, message string, mt messageType) {
@@ -126,8 +126,9 @@ func (v *roomViewConversation) showMessageInChatRoom(nickname, subject, message 
 		c = v.applyTagByNameAndOffset(buf, "timestampText", t, c)
 		c = v.applyTagByNameAndOffset(buf, "warning", t, c)
 	case mtLeftRoom:
-		txt := i18n.Localf("%s %s", n, message)
+		txt := i18n.Localf("%s %s %s", t, n, message)
 		v.addTextToChat(txt)
+		c = v.applyTagByNameAndOffset(buf, "timestampText", t, c)
 		c = v.applyTagByNameAndOffset(buf, "leftRoomText", n, c)
 		c = v.applyTagByNameAndOffset(buf, "leftRoomText", message, c)
 	case mtLiveMessage:

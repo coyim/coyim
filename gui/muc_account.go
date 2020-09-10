@@ -146,11 +146,12 @@ func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, 
 	view.onRoomOccupantLeftTheRoomReceived(ident.Resource(), roster.AllOccupants())
 }
 
-func (a *account) onRoomMessageReceived(roomName jid.Bare, nickname jid.Resource, message string) {
+func (a *account) onRoomMessageReceived(roomName jid.Bare, nickname, body, subject string) {
 	l := a.log.WithFields(log.Fields{
 		"room":     roomName,
 		"nickname": nickname,
-		"message":  message,
+		"body":     body,
+		"subject":  subject,
 	})
 
 	room, ok := a.roomManager.GetRoom(roomName)
@@ -160,5 +161,5 @@ func (a *account) onRoomMessageReceived(roomName jid.Bare, nickname jid.Resource
 	}
 
 	view := getViewFromRoom(room)
-	view.onRoomMessageToTheRoomReceived(nickname, message)
+	view.onRoomMessageToTheRoomReceived(nickname, body, subject)
 }

@@ -287,13 +287,13 @@ func (v *roomView) onRoomOccupantUpdateReceived(occupants []*muc.Occupant) {
 
 // onRoomOccupantLeftTheRoomReceived MUST be called from the UI thread
 func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource, occupants []*muc.Occupant) {
-	v.conv.showOccupantLeftRoom(occupant)
+	v.conv.showOccupantLeftRoom(occupant.String())
 	v.roster.updateRoomRoster(occupants)
 }
 
 // onRoomMessageToTheRoomReceived MUST be called from the UI thread
-func (v *roomView) onRoomMessageToTheRoomReceived(occupant jid.Resource, message string) {
-	v.conv.showMessageInChatRoom(occupant, message, mtLiveMessage)
+func (v *roomView) onRoomMessageToTheRoomReceived(nickname, body, subject string) {
+	v.conv.showMessageInChatRoom(nickname, body, subject, mtLiveMessage)
 }
 
 // loggingIsEnabled MUST not be called from the UI thread
@@ -301,7 +301,7 @@ func (v *roomView) loggingIsEnabled() {
 	if v.conv != nil {
 		msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
 		doInUIThread(func() {
-			v.conv.showMessageInChatRoom(jid.Resource{}, msg, mtWarning)
+			v.conv.showMessageInChatRoom("", msg, "", mtWarning)
 		})
 	}
 }
@@ -311,7 +311,7 @@ func (v *roomView) loggingIsDisabled() {
 	if v.conv != nil {
 		msg := i18n.Local("This room is no longer publicly logged.")
 		doInUIThread(func() {
-			v.conv.showMessageInChatRoom(jid.Resource{}, msg, mtWarning)
+			v.conv.showMessageInChatRoom("", msg, "", mtWarning)
 		})
 	}
 }

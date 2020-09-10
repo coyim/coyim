@@ -300,21 +300,41 @@ func (s *session) GetChatServices(server jid.Domain) (<-chan jid.Domain, <-chan 
 	return ctx.resultsChannel, ctx.errorChannel, ctx.end
 }
 
+func bodyHasContent(stanza *data.ClientMessage) bool {
+	return len(stanza.Body) > 0
+}
+
+func isLiveMessage(stanza *data.ClientMessage) bool {
+	// TODO: this function need to include more validations to make sure that
+	// the stanza received is a Live Message, for now we all only validating
+	// the body contains some information
+	if bodyHasContent(stanza) {
+		return true
+	}
+	return false
+}
+
 func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
-	if len(stanza.Body) > 0 {
+	if isLiveMessage(stanza) {
 		from := jid.ParseFull(stanza.From)
 		room := from.Bare()
-		nickname := from.Resource()
+		nickname := from.Resource().String()
+		body := stanza.Body
+		subject := ""
+
+		if stanza.Subject != nil {
+			subject = stanza.Subject.Text
+		}
 
 		m.log.WithFields(log.Fields{
-			"from":     from,
 			"room":     room,
-			"message":  stanza.Body,
+			"message":  body,
+			"subject":  subject,
 			"nickname": nickname,
 		}).Info("MUC message received")
 
-		m.messageReceived(from, room, nickname, stanza.Body)
+		m.messageReceived(room, nickname, body, subject)
 	}
 }

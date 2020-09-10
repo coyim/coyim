@@ -148,6 +148,7 @@ func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, 
 
 func (a *account) onRoomMessageReceived(roomName jid.Bare, nickname jid.Resource, message string) {
 	l := a.log.WithFields(log.Fields{
+		"roomName": roomName,
 		"nickname": nickname,
 		"message":  message,
 	})

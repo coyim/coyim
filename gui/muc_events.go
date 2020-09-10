@@ -65,8 +65,9 @@ func (u *gtkUI) handleMUCMessageReceived(ev events.MUCMessageReceived, a *accoun
 	a.log.WithFields(log.Fields{
 		"room":     ev.Room,
 		"nickname": ev.Nickname,
-		"message":  ev.Message,
+		"body":     ev.BodyMessage,
+		"subject":  ev.Subject,
 	}).Debug("New message received")
 
-	a.onRoomMessageReceived(ev.Room, ev.Nickname, ev.Message)
+	a.onRoomMessageReceived(ev.Room, ev.Nickname, ev.BodyMessage, ev.Subject)
 }

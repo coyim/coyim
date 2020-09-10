@@ -96,11 +96,12 @@ func (m *mucManager) selfOccupantUpdated(from jid.Full, room jid.Bare, occupant 
 	}
 }
 
-func (m *mucManager) messageReceived(from jid.Full, room jid.Bare, nickname jid.Resource, message string) {
+func (m *mucManager) messageReceived(room jid.Bare, nickname, message, subject string) {
 	ev := events.MUCMessageReceived{}
 	ev.Room = room
 	ev.Nickname = nickname
-	ev.Message = message
+	ev.BodyMessage = message
+	ev.Subject = subject
 
 	m.publishEvent(ev)
 }

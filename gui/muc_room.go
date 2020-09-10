@@ -85,17 +85,16 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListin
 	room, ok := u.getRoomOrCreateItIfNoExists(a, ident, roomInfo)
 
 	view := getViewFromRoom(room)
-	if !view.joined {
-		view.returnTo = returnTo
-
-		view.switchToLobbyView(view.info)
-	} else {
+	if view.joined {
 		// In the main view of the room, we don't have the "cancel"
 		// functionality that it's useful only in the lobby view of the room.
 		// For that reason is why we ignore the "returnTo" value.
 		view.returnTo = nil
 
 		view.switchToMainView()
+	} else {
+		view.returnTo = returnTo
+		view.switchToLobbyView(view.info)
 	}
 
 	if !ok {
@@ -217,7 +216,14 @@ func (v *roomView) onEntered() {
 // TODO: if we have an active connection or request, we should
 // stop/close it here before destroying the window
 func (v *roomView) onCancel() {
-	doInUIThread(v.window.Destroy)
+	doInUIThread(func() {
+		if v.joined {
+			v.window.Destroy()
+		} else {
+			v.window.Hide()
+		}
+	})
+
 	if v.shouldReturnOnCancel() {
 		v.returnTo()
 	}
@@ -259,7 +265,7 @@ func (v *roomView) onRoomOccupantErrorReceived(room jid.Bare, nickname string) {
 	v.lobby.onJoinErrorRecevied(room, nickname)
 }
 
-// onRoomOccupantJoinedReceived SHOULD be called from the UI thread
+// onRoomOccupantJoinedReceived MUST be called from the UI thread
 func (v *roomView) onRoomOccupantJoinedReceived(occupant string, occupants []*muc.Occupant) {
 	if v.joined {
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
@@ -271,18 +277,18 @@ func (v *roomView) onRoomOccupantJoinedReceived(occupant string, occupants []*mu
 	v.roster.updateRoomRoster(occupants)
 }
 
-// onRoomOccupantUpdateReceived SHOULD be called from the UI thread
+// onRoomOccupantUpdateReceived MUST be called from the UI thread
 func (v *roomView) onRoomOccupantUpdateReceived(occupants []*muc.Occupant) {
 	v.roster.updateRoomRoster(occupants)
 }
 
-// onRoomOccupantLeftTheRoomReceived SHOULD be called from the UI thread
+// onRoomOccupantLeftTheRoomReceived MUST be called from the UI thread
 func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource, occupants []*muc.Occupant) {
 	v.conv.showOccupantLeftRoom(occupant)
 	v.roster.updateRoomRoster(occupants)
 }
 
-// onRoomMessageToTheRoomReceived should be called from the UI thread
+// onRoomMessageToTheRoomReceived MUST be called from the UI thread
 func (v *roomView) onRoomMessageToTheRoomReceived(occupant jid.Resource, message string) {
 	v.conv.showMessageInChatRoom(occupant, message, mtLiveMessage)
 }

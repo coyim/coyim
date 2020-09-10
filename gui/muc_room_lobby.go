@@ -21,6 +21,7 @@ type roomViewLobby struct {
 	roomNameLabel    gtki.Label   `gtk-widget:"roomNameValue"`
 	nickNameEntry    gtki.Entry   `gtk-widget:"nickNameEntry"`
 	joinButton       gtki.Button  `gtk-widget:"joinButton"`
+	cancelButton     gtki.Button  `gtk-widget:"cancelButton"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
 	notificationArea gtki.Box     `gtk-widget:"boxNotificationArea"`
 	warningsArea     gtki.Box     `gtk-widget:"boxWarningsArea"`
@@ -123,6 +124,14 @@ func (v *roomViewLobby) clearWarnings() {
 	for _, w := range v.warnings {
 		v.warningsArea.Remove(w.bar)
 	}
+}
+
+func (v *roomViewLobby) swtichToReturnOnCancel() {
+	v.cancelButton.SetProperty("label", i18n.Local("Return"))
+}
+
+func (v *roomViewLobby) swtichToCancel() {
+	v.cancelButton.SetProperty("label", i18n.Local("Cancel"))
 }
 
 func (v *roomViewLobby) show() {
@@ -230,7 +239,6 @@ func (v *roomViewLobby) whenEnterRequestHasBeenResolved(nickName string) {
 		}
 	case err := <-v.onJoinErrorChannel:
 		l := v.log.WithField("nickname", nickName)
-
 		l.WithError(err).Error("An error occurred while trying to join the room")
 		doInUIThread(func() {
 			v.onJoinFailed(err)

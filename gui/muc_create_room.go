@@ -157,7 +157,7 @@ func (v *createMUCRoom) joinRoom(ca *account, ident jid.Bare) {
 		roomInfo := <-rl
 
 		doInUIThread(func() {
-			v.u.mucShowRoom(ca, ident, roomInfo)
+			v.u.mucShowRoom(ca, ident, roomInfo, nil)
 		})
 	}()
 }

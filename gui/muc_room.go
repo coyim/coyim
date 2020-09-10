@@ -19,8 +19,9 @@ type roomView struct {
 	occupant string
 	info     *muc.RoomListing
 
-	log    coylog.Logger
-	joined bool
+	log      coylog.Logger
+	joined   bool
+	returnTo func()
 
 	window  gtki.Window `gtk-widget:"roomWindow"`
 	content gtki.Box    `gtk-widget:"boxMainView"`
@@ -80,13 +81,20 @@ func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare, roomInfo
 	return room, ok
 }
 
-func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing) {
+func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing, returnTo func()) {
 	room, ok := u.getRoomOrCreateItIfNoExists(a, ident, roomInfo)
 
 	view := getViewFromRoom(room)
 	if !view.joined {
+		view.returnTo = returnTo
+
 		view.switchToLobbyView(view.info)
 	} else {
+		// In the main view of the room, we don't have the "cancel"
+		// functionality that it's useful only in the lobby view of the room.
+		// For that reason is why we ignore the "returnTo" value.
+		view.returnTo = nil
+
 		view.switchToMainView()
 	}
 
@@ -176,7 +184,18 @@ func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {
 	} else {
 		v.lobby.setRoomInfo(roomInfo)
 	}
+
+	if v.shouldReturnOnCancel() {
+		v.lobby.swtichToReturnOnCancel()
+	} else {
+		v.lobby.swtichToCancel()
+	}
+
 	v.lobby.show()
+}
+
+func (v *roomView) shouldReturnOnCancel() bool {
+	return v.returnTo != nil
 }
 
 func (v *roomView) switchToMainView() {
@@ -199,6 +218,9 @@ func (v *roomView) onEntered() {
 // stop/close it here before destroying the window
 func (v *roomView) onCancel() {
 	doInUIThread(v.window.Destroy)
+	if v.shouldReturnOnCancel() {
+		v.returnTo()
+	}
 }
 
 func (v *roomView) onNicknameConflictReceived(room jid.Bare, nickname string) {

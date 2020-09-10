@@ -81,6 +81,13 @@ func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare, roomInfo
 	return room, ok
 }
 
+// mucShowRoom MUST be called always from the UI thread
+//
+// Also, when we want to show a chat room, having a "return to" function that
+// will be called from the lobby only when the user wants to "cancel" or "return"
+// might be useful in some scenarios like "returning to previous step".
+//
+// Please note that "returnTo" will be called from the UI thread too
 func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing, returnTo func()) {
 	room, ok := u.getRoomOrCreateItIfNoExists(a, ident, roomInfo)
 
@@ -218,13 +225,11 @@ func (v *roomView) onEntered() {
 // TODO: if we have an active connection or request, we should
 // stop/close it here before destroying the window
 func (v *roomView) onCancel() {
-	doInUIThread(func() {
-		if v.joined {
-			v.window.Destroy()
-		} else {
-			v.window.Hide()
-		}
-	})
+	if v.joined {
+		v.window.Destroy()
+	} else {
+		v.window.Hide()
+	}
 
 	if v.shouldReturnOnCancel() {
 		v.returnTo()

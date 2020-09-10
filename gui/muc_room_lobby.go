@@ -35,9 +35,10 @@ type roomViewLobby struct {
 	nickNamesWithConflict *set.Set
 	warnings              []*roomLobbyWarning
 
-	// onSuccess SHOULD NEVER be called from the UI thread
+	// onSuccess will NOT be called from the UI thread
 	onSuccess func()
-	// onSuccess SHOULD NEVER be called from the UI thread
+
+	// onCancel will BE called from the UI thread
 	onCancel func()
 }
 

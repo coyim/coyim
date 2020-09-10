@@ -186,7 +186,7 @@ func (v *roomView) onLeaveRoomFailure(f func()) {
 
 func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {
 	if v.lobby == nil {
-		v.lobby = newRoomViewLobby(v.account, v.identity, v.content, v.onEntered, v.onCancel, roomInfo)
+		v.lobby = newRoomViewLobby(v.account, v.identity, v.content, v.onJoined, v.onJoinCancel, roomInfo)
 	} else {
 		// If we got new room information, we should show
 		// any warnings based on that info
@@ -213,7 +213,7 @@ func (v *roomView) switchToMainView() {
 	v.main.show()
 }
 
-func (v *roomView) onEntered() {
+func (v *roomView) onJoined() {
 	v.joined = true
 
 	doInUIThread(func() {
@@ -224,12 +224,8 @@ func (v *roomView) onEntered() {
 
 // TODO: if we have an active connection or request, we should
 // stop/close it here before destroying the window
-func (v *roomView) onCancel() {
-	if v.joined {
-		v.window.Destroy()
-	} else {
-		v.window.Hide()
-	}
+func (v *roomView) onJoinCancel() {
+	v.window.Destroy()
 
 	if v.shouldReturnOnCancel() {
 		v.returnTo()

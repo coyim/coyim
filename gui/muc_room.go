@@ -181,7 +181,9 @@ func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {
 	if v.lobby == nil {
 		v.lobby = newRoomViewLobby(v.account, v.identity, v.content, v.onEntered, v.onCancel, roomInfo)
 	} else {
-		v.lobby.setRoomInfo(roomInfo)
+		// If we got new room information, we should show
+		// any warnings based on that info
+		v.lobby.showRoomWarnings(roomInfo)
 	}
 
 	if v.shouldReturnOnCancel() {

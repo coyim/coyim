@@ -78,7 +78,7 @@ func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 	_ = warningTag.SetProperty("foreground", cset.warningForeground)
 
 	leftRoomTag, _ := g.gtk.TextTagNew("leftRoomText")
-	_ = leftRoomTag.SetProperty("foreground", "#731629")
+	_ = leftRoomTag.SetProperty("foreground", cset.mucSomeoneLeftForeground)
 	_ = leftRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
 
 	joinedRoomTag, _ := g.gtk.TextTagNew("joinedRoomText")
@@ -86,15 +86,15 @@ func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 	_ = joinedRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
 
 	timestampTag, _ := g.gtk.TextTagNew("timestampText")
-	_ = timestampTag.SetProperty("foreground", "#AAB7B8")
+	_ = timestampTag.SetProperty("foreground", cset.mucTimestampForeground)
 	_ = timestampTag.SetProperty("style", pangoi.STYLE_NORMAL)
 
 	nicknameTag, _ := g.gtk.TextTagNew("nicknameText")
-	_ = nicknameTag.SetProperty("foreground", "#395BA3")
+	_ = nicknameTag.SetProperty("foreground", cset.mucNicknameForeground)
 	_ = nicknameTag.SetProperty("style", pangoi.STYLE_NORMAL)
 
 	messageTag, _ := g.gtk.TextTagNew("messageText")
-	_ = messageTag.SetProperty("foreground", "#000000")
+	_ = messageTag.SetProperty("foreground", cset.mucMessageForeground)
 	_ = messageTag.SetProperty("style", pangoi.STYLE_NORMAL)
 
 	t.table.Add(warningTag)

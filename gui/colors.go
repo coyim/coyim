@@ -24,6 +24,10 @@ type colorSet struct {
 	timestampForeground                       string
 	warningForeground                         string
 	mucSomeoneJoinedForeground                string
+	mucSomeoneLeftForeground                  string
+	mucTimestampForeground                    string
+	mucNicknameForeground                     string
+	mucMessageForeground                      string
 }
 
 var themeVariant string
@@ -83,6 +87,10 @@ func (u *gtkUI) defaultLightColorSet() colorSet {
 		timestampForeground:                       "#aaaaaa",
 		warningForeground:                         "#c2171d",
 		mucSomeoneJoinedForeground:                "#731629",
+		mucSomeoneLeftForeground:                  "#731629",
+		mucTimestampForeground:                    "#AAB7B8",
+		mucNicknameForeground:                     "#395BA3",
+		mucMessageForeground:                      "#000000",
 	}
 }
 
@@ -106,5 +114,9 @@ func (u *gtkUI) defaultDarkColorSet() colorSet {
 		timestampForeground:                       "#444444",
 		warningForeground:                         "#c2171d",
 		mucSomeoneJoinedForeground:                "#731629",
+		mucSomeoneLeftForeground:                  "#731629",
+		mucTimestampForeground:                    "#AAB7B8",
+		mucNicknameForeground:                     "#395BA3",
+		mucMessageForeground:                      "#000000",
 	}
 }

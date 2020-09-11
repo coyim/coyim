@@ -138,10 +138,11 @@ func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag stri
 	charCount := buf.GetCharCount()
 
 	t := fmt.Sprintf("[%s]", getTimestamp())
-	v.addLineToChatText(text)
+	ft := fmt.Sprintf("%s%s", t, text)
+	v.addLineToChatText(ft)
 
 	oldIterEnd := buf.GetIterAtOffset(charCount)
-	offsetTimestamp := buf.GetIterAtOffset(charCount + len(t) + 1)
+	offsetTimestamp := buf.GetIterAtOffset(charCount + len(t))
 	newIterEnd := buf.GetEndIter()
 
 	buf.ApplyTagByName("timestampText", oldIterEnd, offsetTimestamp)

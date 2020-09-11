@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
 )
@@ -22,14 +21,6 @@ type roomViewConversation struct {
 type mucStyleTags struct {
 	table gtki.TextTagTable
 }
-
-type messageType int
-
-const (
-	mtLeftRoom messageType = iota
-	mtLiveMessage
-	mtWarning
-)
 
 func getTimestamp() string {
 	return time.Now().Format("15:04:05")
@@ -56,7 +47,7 @@ func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 	_ = warningTag.SetProperty("foreground", cset.warningForeground)
 
 	leftRoomTag, _ := g.gtk.TextTagNew("leftRoomText")
-	_ = leftRoomTag.SetProperty("foreground", cset.warningForeground)
+	_ = leftRoomTag.SetProperty("foreground", "#731629")
 	_ = leftRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
 
 	timestampTag, _ := g.gtk.TextTagNew("timestampText")
@@ -105,54 +96,38 @@ func (v *roomViewConversation) addTextToChat(text string) {
 }
 
 func (v *roomViewConversation) showOccupantLeftRoom(nickname string) {
-	v.showMessageInChatRoom(nickname, "", "left the room", mtLeftRoom)
+	text := fmt.Sprintf("%s left the room", nickname)
+	v.addLineToChatTextUsingTagID(text, "leftRoomText")
 }
 
-func (v *roomViewConversation) showMessageInChatRoom(nickname, subject, message string, mt messageType) {
+func (v *roomViewConversation) showLiveMessageInTheRoom(nickname, subject, message string) {
+	text := fmt.Sprintf("%s: %s", nickname, message)
+	if len(subject) > 0 {
+		text = fmt.Sprintf("%s: [%s] %s", nickname, subject, message)
+	}
+	v.addLineToChatTextUsingTagID(text, "messageText")
+}
+
+func (v *roomViewConversation) addLineToChatText(timestamp, text string) {
 	buf, _ := v.roomChatTextView.GetBuffer()
-	c := buf.GetCharCount()
+	i := buf.GetEndIter()
+
+	newtext := fmt.Sprintf("%s %s\n", timestamp, text)
+	buf.Insert(i, newtext)
+}
+
+func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag string) {
+	buf, _ := v.roomChatTextView.GetBuffer()
+
+	charCount := buf.GetCharCount()
 
 	t := fmt.Sprintf("[%s]", getTimestamp())
+	v.addLineToChatText(t, text)
 
-	n := fmt.Sprintf("%s", nickname)
-	if mt == mtLiveMessage {
-		n = fmt.Sprintf("%s:", nickname)
-	}
+	oldIterEnd := buf.GetIterAtOffset(charCount)
+	offsetTimestamp := buf.GetIterAtOffset(charCount + len(t) + 1)
+	newIterEnd := buf.GetEndIter()
 
-	switch mt {
-	case mtWarning:
-		txt := i18n.Localf("%s %s", t, message)
-		v.addTextToChat(txt)
-		c = v.applyTagByNameAndOffset(buf, "timestampText", t, c)
-		c = v.applyTagByNameAndOffset(buf, "warning", t, c)
-	case mtLeftRoom:
-		txt := i18n.Localf("%s %s %s", t, n, message)
-		v.addTextToChat(txt)
-		c = v.applyTagByNameAndOffset(buf, "timestampText", t, c)
-		c = v.applyTagByNameAndOffset(buf, "leftRoomText", n, c)
-		c = v.applyTagByNameAndOffset(buf, "leftRoomText", message, c)
-	case mtLiveMessage:
-		txt := i18n.Localf("%s %s %s ", t, n, message)
-		v.addTextToChat(txt)
-		c = v.applyTagByNameAndOffset(buf, "timestampText", t, c)
-		c = v.applyTagByNameAndOffset(buf, "nicknameText", n, c)
-		c = v.applyTagByNameAndOffset(buf, "messageText", message, c)
-	default:
-		v.log.WithField("messageType", mt).Debug("message type not controlled")
-		return
-	}
-
-	// TODO: This call should be better if we connect this to the signal
-	// "size-allocate" of the roomChatTextView, for now it's ok here
-	// because this is the only function that add text to the textview
-	scrollToBottom(v.roomChatScrollView)
-}
-
-func (v *roomViewConversation) applyTagByNameAndOffset(b gtki.TextBuffer, tagName, text string, initialPos int) int {
-	finalPos := initialPos + 1 + len(text)
-	beginIter := b.GetIterAtOffset(initialPos)
-	endIter := b.GetIterAtOffset(finalPos)
-	b.ApplyTagByName(tagName, beginIter, endIter)
-
-	return finalPos
+	buf.ApplyTagByName("timestampText", oldIterEnd, offsetTimestamp)
+	buf.ApplyTagByName(tag, offsetTimestamp, newIterEnd)
 }

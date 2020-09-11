@@ -169,16 +169,19 @@ func (v *roomViewConversation) addLineToChatTextUsingTagUtils(tu *tagUtil) {
 	}
 }
 
+// displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
 func (v *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
 	text := fmt.Sprintf("%s joined the room", nickname)
 	v.addLineToChatTextUsingTagID(text, "joinedRoomText")
 }
 
+// displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
 func (v *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
 	text := fmt.Sprintf("%s left the room", nickname)
 	v.addLineToChatTextUsingTagID(text, "leftRoomText")
 }
 
+// displayNewLiveMessage MUST be called from the UI thread
 func (v *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
 	tu := v.newTagUtil()
 	nicknameText := fmt.Sprintf("%s: ", nickname)
@@ -191,6 +194,7 @@ func (v *roomViewConversation) displayNewLiveMessage(nickname, subject, message 
 	v.addLineToChatTextUsingTagUtils(tu)
 }
 
+// displayWarningMessage MUST be called from the UI thread
 func (v *roomViewConversation) displayWarningMessage(message string) {
 	v.addLineToChatTextUsingTagID(message, "warning")
 }

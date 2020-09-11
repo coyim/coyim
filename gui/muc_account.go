@@ -153,7 +153,7 @@ func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, 
 	}
 
 	view := getViewFromRoom(room)
-	view.onRoomOccupantLeftTheRoomReceived(ident.Resource())
+	view.onRoomOccupantLeftTheRoomReceived(nickname)
 }
 
 func (a *account) onRoomMessageReceived(roomName jid.Bare, nickname, subject, message string) {

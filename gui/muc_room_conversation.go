@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/coyim/coyim/coylog"
@@ -20,6 +21,36 @@ type roomViewConversation struct {
 
 type mucStyleTags struct {
 	table gtki.TextTagTable
+}
+
+type tagUtil struct {
+	tags map[string]string
+	keys []string
+}
+
+func (v *roomViewConversation) newTagUtil() *tagUtil {
+	tu := &tagUtil{}
+	tu.tags = make(map[string]string)
+	return tu
+}
+
+func (tu *tagUtil) add(tagName, text string) {
+	tu.keys = append(tu.keys, tagName)
+	tu.tags[tagName] = text
+}
+
+func (tu *tagUtil) addFromTagUtil(fromtu *tagUtil) {
+	for _, key := range fromtu.keys {
+		tu.add(key, fromtu.tags[key])
+	}
+}
+
+func (tu *tagUtil) getText() string {
+	var text string
+	for _, key := range tu.keys {
+		text = text + tu.tags[key]
+	}
+	return text
 }
 
 func getTimestamp() string {
@@ -93,36 +124,11 @@ func (u *gtkUI) newRoomViewConversation() *roomViewConversation {
 	return c
 }
 
-func (v *roomViewConversation) addTextToChat(text string) {
+func (v *roomViewConversation) addLineToChatText(text string) {
 	buf, _ := v.roomChatTextView.GetBuffer()
 	i := buf.GetEndIter()
 
-	buf.Insert(i, fmt.Sprintf("%s\n", text))
-}
-
-func (v *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
-	text := fmt.Sprintf("%s joined the room", nickname)
-	v.addLineToChatTextUsingTagID(text, "joinedRoomText")
-}
-
-func (v *roomViewConversation) showOccupantLeftRoom(nickname string) {
-	text := fmt.Sprintf("%s left the room", nickname)
-	v.addLineToChatTextUsingTagID(text, "leftRoomText")
-}
-
-func (v *roomViewConversation) showLiveMessageInTheRoom(nickname, subject, message string) {
-	text := fmt.Sprintf("%s: %s", nickname, message)
-	if len(subject) > 0 {
-		text = fmt.Sprintf("%s: [%s] %s", nickname, subject, message)
-	}
-	v.addLineToChatTextUsingTagID(text, "messageText")
-}
-
-func (v *roomViewConversation) addLineToChatText(timestamp, text string) {
-	buf, _ := v.roomChatTextView.GetBuffer()
-	i := buf.GetEndIter()
-
-	newtext := fmt.Sprintf("%s %s\n", timestamp, text)
+	newtext := fmt.Sprintf("%s\n", text)
 	buf.Insert(i, newtext)
 }
 
@@ -132,7 +138,7 @@ func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag stri
 	charCount := buf.GetCharCount()
 
 	t := fmt.Sprintf("[%s]", getTimestamp())
-	v.addLineToChatText(t, text)
+	v.addLineToChatText(text)
 
 	oldIterEnd := buf.GetIterAtOffset(charCount)
 	offsetTimestamp := buf.GetIterAtOffset(charCount + len(t) + 1)
@@ -140,4 +146,51 @@ func (v *roomViewConversation) addLineToChatTextUsingTagID(text string, tag stri
 
 	buf.ApplyTagByName("timestampText", oldIterEnd, offsetTimestamp)
 	buf.ApplyTagByName(tag, offsetTimestamp, newIterEnd)
+}
+
+func (v *roomViewConversation) addLineToChatTextUsingTagUtils(tu *tagUtil) {
+	newtu := v.newTagUtil()
+	t := fmt.Sprintf("[%s] ", getTimestamp())
+	newtu.add("timestampText", t)
+	newtu.addFromTagUtil(tu)
+	text := newtu.getText()
+
+	buf, _ := v.roomChatTextView.GetBuffer()
+	charCount := buf.GetCharCount()
+
+	v.addLineToChatText(text)
+
+	for _, tagName := range newtu.keys {
+		tagText := newtu.tags[tagName]
+		pos := strings.Index(text, tagText)
+		iterFrom := buf.GetIterAtOffset(charCount + pos)
+		iterTo := buf.GetIterAtOffset(charCount + pos + len(tagText))
+		buf.ApplyTagByName(tagName, iterFrom, iterTo)
+	}
+}
+
+func (v *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
+	text := fmt.Sprintf("%s joined the room", nickname)
+	v.addLineToChatTextUsingTagID(text, "joinedRoomText")
+}
+
+func (v *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
+	text := fmt.Sprintf("%s left the room", nickname)
+	v.addLineToChatTextUsingTagID(text, "leftRoomText")
+}
+
+func (v *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
+	tu := v.newTagUtil()
+	nicknameText := fmt.Sprintf("%s: ", nickname)
+	tu.add("nicknameText", nicknameText)
+	if len(subject) > 0 {
+		subjectText := fmt.Sprintf("[%s] ", subject)
+		tu.add("messageText", subjectText)
+	}
+	tu.add("messageText", message)
+	v.addLineToChatTextUsingTagUtils(tu)
+}
+
+func (v *roomViewConversation) displayWarningMessage(message string) {
+	v.addLineToChatTextUsingTagID(message, "warning")
 }

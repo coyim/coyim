@@ -266,17 +266,17 @@ func (v *roomView) onRoomOccupantUpdateReceived() {
 }
 
 // onRoomOccupantLeftTheRoomReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource) {
+func (v *roomView) onRoomOccupantLeftTheRoomReceived(nickname string) {
 	if v.conv != nil {
-		v.conv.showOccupantLeftRoom(occupant.String())
+		v.conv.displayNotificationWhenOccupantLeftTheRoom(nickname)
 	}
 	v.roster.updateRosterModel()
 }
 
 // someoneJoinedTheRoom MUST be called from the UI thread
-func (v *roomView) someoneJoinedTheRoom(nick string) {
+func (v *roomView) someoneJoinedTheRoom(nickname string) {
 	if v.conv != nil {
-		v.conv.displayNotificationWhenOccupantJoinedRoom(nick)
+		v.conv.displayNotificationWhenOccupantJoinedRoom(nickname)
 	}
 	v.roster.updateRosterModel()
 }
@@ -284,7 +284,7 @@ func (v *roomView) someoneJoinedTheRoom(nick string) {
 // onRoomMessageToTheRoomReceived MUST be called from the UI thread
 func (v *roomView) onRoomMessageToTheRoomReceived(nickname, subject, message string) {
 	if v.conv != nil {
-		v.conv.showLiveMessageInTheRoom(nickname, subject, message)
+		v.conv.displayNewLiveMessage(nickname, subject, message)
 	}
 }
 
@@ -293,7 +293,7 @@ func (v *roomView) loggingIsEnabled() {
 	if v.conv != nil {
 		msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
 		doInUIThread(func() {
-			v.conv.addLineToChatTextUsingTagID(msg, "warning")
+			v.conv.displayWarningMessage(msg)
 		})
 	}
 }
@@ -303,7 +303,7 @@ func (v *roomView) loggingIsDisabled() {
 	if v.conv != nil {
 		msg := i18n.Local("This room is no longer publicly logged.")
 		doInUIThread(func() {
-			v.conv.addLineToChatTextUsingTagID(msg, "warning")
+			v.conv.displayWarningMessage(msg)
 		})
 	}
 }

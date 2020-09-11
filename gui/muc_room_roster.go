@@ -73,6 +73,8 @@ func (v *roomViewRoster) affiliationDisplayName(a muc.Affiliation) string {
 		return i18n.Local("Admin")
 	case muc.AffiliationOwner:
 		return i18n.Local("Owner")
+	case muc.AffiliationOutcast:
+		return i18n.Local("Outcast")
 	default:
 		return ""
 	}

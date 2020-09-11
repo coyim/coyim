@@ -50,6 +50,10 @@ func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 	_ = leftRoomTag.SetProperty("foreground", "#731629")
 	_ = leftRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
 
+	joinedRoomTag, _ := g.gtk.TextTagNew("joinedRoomText")
+	_ = joinedRoomTag.SetProperty("foreground", cset.mucSomeoneJoinedForeground)
+	_ = joinedRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
+
 	timestampTag, _ := g.gtk.TextTagNew("timestampText")
 	_ = timestampTag.SetProperty("foreground", "#AAB7B8")
 	_ = timestampTag.SetProperty("style", pangoi.STYLE_NORMAL)
@@ -64,6 +68,7 @@ func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 
 	t.table.Add(warningTag)
 	t.table.Add(leftRoomTag)
+	t.table.Add(joinedRoomTag)
 	t.table.Add(timestampTag)
 	t.table.Add(nicknameTag)
 	t.table.Add(messageTag)
@@ -93,6 +98,11 @@ func (v *roomViewConversation) addTextToChat(text string) {
 	i := buf.GetEndIter()
 
 	buf.Insert(i, fmt.Sprintf("%s\n", text))
+}
+
+func (v *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
+	text := fmt.Sprintf("%s joined the room", nickname)
+	v.addLineToChatTextUsingTagID(text, "joinedRoomText")
 }
 
 func (v *roomViewConversation) showOccupantLeftRoom(nickname string) {

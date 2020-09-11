@@ -296,6 +296,7 @@ func (v *roomView) onRoomOccupantJoinedReceived(occupant string) {
 
 // onRoomOccupantUpdateReceived MUST be called from the UI thread
 func (v *roomView) onRoomOccupantUpdateReceived() {
+	// TODO[OB] - This is incorrect
 	for _, f := range v.onOccupantJoinedReceived {
 		f()
 	}
@@ -305,6 +306,14 @@ func (v *roomView) onRoomOccupantUpdateReceived() {
 func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource) {
 	if v.conv != nil {
 		v.conv.showOccupantLeftRoom(occupant.String())
+	}
+	v.roster.updateRosterModel()
+}
+
+// someoneJoinedTheRoom MUST be called from the UI thread
+func (v *roomView) someoneJoinedTheRoom(nick string) {
+	if v.conv != nil {
+		v.conv.displayNotificationWhenOccupantJoinedRoom(nick)
 	}
 	v.roster.updateRosterModel()
 }

@@ -105,14 +105,18 @@ func (a *account) onRoomOccupantUpdated(roomName jid.Bare, nickname string, occu
 	}
 
 	roster := room.Roster()
-	_, _, err := roster.UpdatePresence(roomName.WithResource(jid.NewResource(nickname)), "", affiliation, role, "", "", "Occupant updated", occupant)
+	joined, _, err := roster.UpdatePresence(roomName.WithResource(jid.NewResource(nickname)), "", affiliation, role, "", "", "Occupant updated", occupant)
 	if err != nil {
 		l.WithError(err).Error("Error on trying to update the occupant status in the roster")
 		return
 	}
 
 	view := getViewFromRoom(room)
-	view.onRoomOccupantUpdateReceived()
+	if joined {
+		view.someoneJoinedTheRoom(nickname)
+	} else {
+		view.onRoomOccupantUpdateReceived()
+	}
 }
 
 func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, ident jid.Full, affiliation muc.Affiliation, role muc.Role) {

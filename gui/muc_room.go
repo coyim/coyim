@@ -139,7 +139,7 @@ func (v *roomView) initDefaults() {
 }
 
 func (v *roomView) onDestroyWindow() {
-	v.leaveRoomMananger()
+	v.leaveRoomManager()
 }
 
 func (v *roomView) LeaveRoom() {
@@ -147,7 +147,7 @@ func (v *roomView) LeaveRoom() {
 		resultCh, errCh := v.account.session.LeaveRoom(v.identity, v.occupant.Nick)
 		select {
 		case <-resultCh:
-			v.leaveRoomMananger()
+			v.leaveRoomManager()
 			doInUIThread(v.window.Destroy)
 		case err := <-errCh:
 			v.log.WithError(err).Error("An error occurred when trying to leave the room")
@@ -156,7 +156,7 @@ func (v *roomView) LeaveRoom() {
 	}()
 }
 
-func (v *roomView) leaveRoomMananger() {
+func (v *roomView) leaveRoomManager() {
 	v.account.roomManager.LeaveRoom(v.identity)
 }
 

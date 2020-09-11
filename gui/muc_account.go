@@ -86,7 +86,7 @@ func (a *account) onRoomOccupantJoined(roomName jid.Bare, nickname string, ident
 		return
 	}
 
-	view.onRoomOccupantJoinedReceived(nickname, roster.AllOccupants())
+	view.onRoomOccupantJoinedReceived(nickname)
 }
 
 func (a *account) onRoomOccupantUpdated(roomName jid.Bare, nickname string, occupant jid.Full, affiliation muc.Affiliation, role muc.Role) {
@@ -112,7 +112,7 @@ func (a *account) onRoomOccupantUpdated(roomName jid.Bare, nickname string, occu
 	}
 
 	view := getViewFromRoom(room)
-	view.onRoomOccupantUpdateReceived(roster.AllOccupants())
+	view.onRoomOccupantUpdateReceived()
 }
 
 func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, ident jid.Full, affiliation muc.Affiliation, role muc.Role) {
@@ -143,7 +143,7 @@ func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, 
 	}
 
 	view := getViewFromRoom(room)
-	view.onRoomOccupantLeftTheRoomReceived(ident.Resource(), roster.AllOccupants())
+	view.onRoomOccupantLeftTheRoomReceived(ident.Resource())
 }
 
 func (a *account) onRoomMessageReceived(roomName jid.Bare, nickname, subject, message string) {

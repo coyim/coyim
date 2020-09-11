@@ -16,13 +16,17 @@ const (
 )
 
 type roomViewRoster struct {
+	r *muc.RoomRoster
+
 	view  gtki.Box       `gtk-widget:"roomRosterBox"`
 	model gtki.ListStore `gtk-widget:"room-members-model"`
 	tree  gtki.TreeView  `gtk-widget:"room-members-tree"`
 }
 
-func newRoomViewRoster() *roomViewRoster {
-	r := &roomViewRoster{}
+func (v *roomView) newRoomViewRoster() *roomViewRoster {
+	r := &roomViewRoster{
+		r: v.roomRoster,
+	}
 
 	builder := newBuilder("MUCRoomRoster")
 	panicOnDevError(builder.bindObjects(r))
@@ -34,13 +38,16 @@ func newRoomViewRoster() *roomViewRoster {
 		ros.(*roster).model = nil
 	})
 
+	v.onSelfJoinReceived(r.updateRosterModel)
+	v.onOccupantReceived(r.updateRosterModel)
+
 	return r
 }
 
-func (v *roomViewRoster) updateRoomRoster(occupants []*muc.Occupant) {
+func (v *roomViewRoster) updateRosterModel() {
 	v.model.Clear()
 
-	for _, o := range occupants {
+	for _, o := range v.r.AllOccupants() {
 		v.addOccupantToRoster(o)
 	}
 

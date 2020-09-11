@@ -15,9 +15,10 @@ type roomView struct {
 	account *account
 	builder *builder
 
-	identity jid.Bare
-	occupant string
-	info     *muc.RoomListing
+	identity   jid.Bare
+	occupant   string
+	roomRoster *muc.RoomRoster
+	info       *muc.RoomListing
 
 	log      coylog.Logger
 	joined   bool
@@ -25,6 +26,9 @@ type roomView struct {
 
 	window  gtki.Window `gtk-widget:"roomWindow"`
 	content gtki.Box    `gtk-widget:"boxMainView"`
+
+	onSelfJoinedReceived     []func()
+	onOccupantJoinedReceived []func()
 
 	main    *roomViewMain
 	toolbar *roomViewToolbar
@@ -37,12 +41,21 @@ func getViewFromRoom(r *muc.Room) *roomView {
 	return r.Opaque.(*roomView)
 }
 
-func (u *gtkUI) newRoomView(a *account, ident jid.Bare, roomInfo *muc.RoomListing) *roomView {
+func (v *roomView) onSelfJoinReceived(f func()) {
+	v.onSelfJoinedReceived = append(v.onSelfJoinedReceived, f)
+}
+
+func (v *roomView) onOccupantReceived(f func()) {
+	v.onOccupantJoinedReceived = append(v.onOccupantJoinedReceived, f)
+}
+
+func (u *gtkUI) newRoomView(a *account, ident jid.Bare, roomInfo *muc.RoomListing, roomRoster *muc.RoomRoster) *roomView {
 	view := &roomView{
-		u:        u,
-		account:  a,
-		identity: ident,
-		info:     roomInfo,
+		u:          u,
+		account:    a,
+		identity:   ident,
+		info:       roomInfo,
+		roomRoster: roomRoster,
 	}
 
 	view.log = a.log.WithField("room", ident)
@@ -50,10 +63,10 @@ func (u *gtkUI) newRoomView(a *account, ident jid.Bare, roomInfo *muc.RoomListin
 	view.initUIBuilder()
 	view.initDefaults()
 
-	toolbar := newRoomViewToolbar()
+	toolbar := view.newRoomViewToolbar()
 	view.toolbar = toolbar
 
-	roster := newRoomViewRoster()
+	roster := view.newRoomViewRoster()
 	view.roster = roster
 
 	conversation := u.newRoomViewConversation()
@@ -68,7 +81,7 @@ func (v *roomView) setTitle(r string) {
 
 func (u *gtkUI) newRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing) *muc.Room {
 	room := muc.NewRoom(ident)
-	room.Opaque = u.newRoomView(a, ident, roomInfo)
+	room.Opaque = u.newRoomView(a, ident, roomInfo, room.Roster())
 	return room
 }
 
@@ -186,7 +199,7 @@ func (v *roomView) onLeaveRoomFailure(f func()) {
 
 func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {
 	if v.lobby == nil {
-		v.lobby = newRoomViewLobby(v.account, v.identity, v.content, v.onJoined, v.onJoinCancel, roomInfo)
+		v.lobby = v.newRoomViewLobby(v.account, v.identity, v.content, v.onJoined, v.onJoinCancel, roomInfo)
 	} else {
 		// If we got new room information, we should show
 		// any warnings based on that info
@@ -269,28 +282,31 @@ func (v *roomView) onRoomOccupantErrorReceived(room jid.Bare, nickname string) {
 }
 
 // onRoomOccupantJoinedReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantJoinedReceived(occupant string, occupants []*muc.Occupant) {
+func (v *roomView) onRoomOccupantJoinedReceived(occupant string) {
 	if v.joined {
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return
 	}
 
 	v.occupant = occupant
-	v.lobby.onRoomOccupantJoinedReceived()
-	v.roster.updateRoomRoster(occupants)
+	for _, f := range v.onSelfJoinedReceived {
+		f()
+	}
 }
 
 // onRoomOccupantUpdateReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantUpdateReceived(occupants []*muc.Occupant) {
-	v.roster.updateRoomRoster(occupants)
+func (v *roomView) onRoomOccupantUpdateReceived() {
+	for _, f := range v.onOccupantJoinedReceived {
+		f()
+	}
 }
 
 // onRoomOccupantLeftTheRoomReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource, occupants []*muc.Occupant) {
+func (v *roomView) onRoomOccupantLeftTheRoomReceived(occupant jid.Resource) {
 	if v.conv != nil {
 		v.conv.showOccupantLeftRoom(occupant.String())
 	}
-	v.roster.updateRoomRoster(occupants)
+	v.roster.updateRosterModel()
 }
 
 // onRoomMessageToTheRoomReceived MUST be called from the UI thread

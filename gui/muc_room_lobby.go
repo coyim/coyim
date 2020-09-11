@@ -42,7 +42,7 @@ type roomViewLobby struct {
 	onCancel func()
 }
 
-func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func(), roomInfo *muc.RoomListing) *roomViewLobby {
+func (v *roomView) newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func(), roomInfo *muc.RoomListing) *roomViewLobby {
 	e := &roomViewLobby{
 		ident:                 rid,
 		ac:                    a,
@@ -73,6 +73,8 @@ func newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCa
 	if roomInfo != nil {
 		e.showRoomWarnings(roomInfo)
 	}
+
+	v.onSelfJoinReceived(e.onRoomOccupantJoinedReceived)
 
 	return e
 }

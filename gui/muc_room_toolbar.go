@@ -10,7 +10,7 @@ type roomViewToolbar struct {
 	closeConversationButton gtki.Button `gtk-widget:"closeConversationButton"`
 }
 
-func newRoomViewToolbar() *roomViewToolbar {
+func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 	t := &roomViewToolbar{}
 
 	builder := newBuilder("MUCRoomToolbar")

@@ -16,7 +16,7 @@ type roomView struct {
 	builder *builder
 
 	identity   jid.Bare
-	occupant   string
+	occupant   *muc.Occupant
 	roomRoster *muc.RoomRoster
 	info       *muc.RoomListing
 
@@ -139,62 +139,25 @@ func (v *roomView) initDefaults() {
 }
 
 func (v *roomView) onDestroyWindow() {
-	go v.forceLeaveRoom()
+	v.leaveRoomMananger()
 }
 
-func (v *roomView) forceLeaveRoom() {
-	if !v.joined {
-		v.log.Info("The occupant left the lobby")
-		v.leaveRoomMananger()
-		return
-	}
-	// TODO: Should we implement a timeout here?
-	for {
-		sc := make(chan bool)
-		go func() {
-			v.tryLeaveRoom(func() {
-				sc <- true
-			}, func() {
-				sc <- false
-			})
-		}()
-
-		if <-sc {
-			return
-		}
-	}
-}
-
-func (v *roomView) tryLeaveRoom(s, f func()) {
+func (v *roomView) LeaveRoom() {
 	go func() {
-		resultCh, errCh := v.account.session.LeaveRoom(v.identity, v.occupant)
+		resultCh, errCh := v.account.session.LeaveRoom(v.identity, v.occupant.Nick)
 		select {
 		case <-resultCh:
-			v.onLeaveRoomSuccess(s)
+			v.leaveRoomMananger()
+			doInUIThread(v.window.Destroy)
 		case err := <-errCh:
 			v.log.WithError(err).Error("An error occurred when trying to leave the room")
-			v.onLeaveRoomFailure(f)
+			//TODO: Show an appropiate way to present the error message to the user.
 		}
 	}()
 }
 
-func (v *roomView) onLeaveRoomSuccess(f func()) {
-	v.log.Info("The occupant left the room")
-	v.leaveRoomMananger()
-	v.joined = false
-	if f != nil {
-		f()
-	}
-}
-
 func (v *roomView) leaveRoomMananger() {
 	v.account.roomManager.LeaveRoom(v.identity)
-}
-
-func (v *roomView) onLeaveRoomFailure(f func()) {
-	if f != nil {
-		f()
-	}
 }
 
 func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {
@@ -282,7 +245,7 @@ func (v *roomView) onRoomOccupantErrorReceived(room jid.Bare, nickname string) {
 }
 
 // onRoomOccupantJoinedReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantJoinedReceived(occupant string) {
+func (v *roomView) onRoomOccupantJoinedReceived(occupant *muc.Occupant) {
 	if v.joined {
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return

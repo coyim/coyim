@@ -67,11 +67,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="closeConversationButton">
-                    <property name="label" translatable="yes">Close conversation</property>
+                  <object class="GtkButton" id="leaveRoomButton">
+                    <property name="label" translatable="yes">Leave Room</property>
                     <property name="visible">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="clicked" handler="on_conversation_close" swapped="no"/>
+                    <property name="sensitive">False</property>
+                    <signal name="clicked" handler="on_leave_room" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

@@ -38,6 +38,9 @@ func (*MockTextBuffer) Insert(v1 gtki.TextIter, v2 string) {
 func (*MockTextBuffer) InsertAtCursor(v1 string) {
 }
 
+func (*MockTextBuffer) InsertWithTagByName(v1 gtki.TextIter, v2, v3 string) {
+}
+
 func (*MockTextBuffer) GetText(gtki.TextIter, gtki.TextIter, bool) string {
 	return ""
 }

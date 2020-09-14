@@ -142,7 +142,7 @@ func (v *roomView) onDestroyWindow() {
 	v.leaveRoomManager()
 }
 
-func (v *roomView) LeaveRoom() {
+func (v *roomView) leaveRoom() {
 	go func() {
 		resultCh, errCh := v.account.session.LeaveRoom(v.identity, v.occupant.Nick)
 		select {
@@ -245,16 +245,27 @@ func (v *roomView) onRoomOccupantErrorReceived(room jid.Bare, nickname string) {
 }
 
 // onRoomOccupantJoinedReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantJoinedReceived(occupant *muc.Occupant) {
+func (v *roomView) onRoomOccupantJoinedReceived(occupant string) {
 	if v.joined {
 		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
 		return
 	}
 
-	v.occupant = occupant
+	v.assignCurrentOccupant(v.identity.WithResource(jid.NewResource(occupant)).String())
 	for _, f := range v.onSelfJoinedReceived {
 		f()
 	}
+}
+
+func (v *roomView) assignCurrentOccupant(occupantIdentity string) {
+	o, ok := v.roomRoster.GetOccupantByIdentity(occupantIdentity)
+	if !ok {
+		//TODO: Show in an appropriate way the error message to the user. Maybe with some ´handler notification´ struct?
+		v.log.Error("An error occurred trying to get the current occupant")
+		return
+	}
+
+	v.occupant = o
 }
 
 // onRoomOccupantUpdateReceived MUST be called from the UI thread

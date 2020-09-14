@@ -72,10 +72,9 @@ func (a *account) onRoomOccupantJoined(roomName jid.Bare, nickname string, ident
 	}
 
 	view := getViewFromRoom(room)
-	occupantID := roomName.WithResource(jid.NewResource(nickname))
 
 	roster := room.Roster()
-	joined, _, err := roster.UpdatePresence(occupantID, "", affiliation, role, "", status, "Occupant joined", ident)
+	joined, _, err := roster.UpdatePresence(roomName.WithResource(jid.NewResource(nickname)), "", affiliation, role, "", status, "Occupant joined", ident)
 	if err != nil {
 		l.WithError(err).Error("An error occurred trying to add the occupant to the roster")
 		view.onRoomOccupantErrorReceived(roomName, nickname)
@@ -87,12 +86,7 @@ func (a *account) onRoomOccupantJoined(roomName jid.Bare, nickname string, ident
 		return
 	}
 
-	o, err := roster.GetOccupantByID(occupantID)
-	if err != nil {
-		l.WithError(err).Error("An error occurred trying to get the current occupant")
-		return
-	}
-	view.onRoomOccupantJoinedReceived(o)
+	view.onRoomOccupantJoinedReceived(nickname)
 }
 
 func (a *account) onRoomOccupantUpdated(roomName jid.Bare, nickname string, occupant jid.Full, affiliation muc.Affiliation, role muc.Role) {

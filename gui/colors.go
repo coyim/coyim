@@ -27,6 +27,7 @@ type colorSet struct {
 	mucSomeoneLeftForeground                  string
 	mucTimestampForeground                    string
 	mucNicknameForeground                     string
+	mucSubjectForeground                      string
 	mucMessageForeground                      string
 }
 
@@ -90,6 +91,7 @@ func (u *gtkUI) defaultLightColorSet() colorSet {
 		mucSomeoneLeftForeground:                  "#731629",
 		mucTimestampForeground:                    "#AAB7B8",
 		mucNicknameForeground:                     "#395BA3",
+		mucSubjectForeground:                      "#000080",
 		mucMessageForeground:                      "#000000",
 	}
 }
@@ -117,6 +119,7 @@ func (u *gtkUI) defaultDarkColorSet() colorSet {
 		mucSomeoneLeftForeground:                  "#731629",
 		mucTimestampForeground:                    "#AAB7B8",
 		mucNicknameForeground:                     "#395BA3",
+		mucSubjectForeground:                      "#000080",
 		mucMessageForeground:                      "#000000",
 	}
 }

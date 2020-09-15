@@ -2971,6 +2971,18 @@ PgogICAgICA8L29iamVjdD4KICAgIDwvY2hpbGQ+CiAgPC9vYmplY3Q+CjwvaW50ZXJmYWNlPgo=
 `,
 	},
 
+	"/definitions/GTKColumnTypes.xml": {
+		local:   "definitions/GTKColumnTypes.xml",
+		size:    189,
+		modtime: 1489449600,
+		compressed: `
+PGludGVyZmFjZT4KICA8b2JqZWN0IGlkPSJzdG9yZU9mQ29sdW1uVHlwZXMiIGNsYXNzPSJHdGtMaXN0
+U3RvcmUiPgogICAgPGNvbHVtbnM+CiAgICAgIDwhLS0gY29sdW1uLW5hbWUgcGl4YnVmIC0tPgogICAg
+ICA8Y29sdW1uIHR5cGU9Ikdka1BpeGJ1ZiIvPgogICAgPC9jb2x1bW5zPgogIDwvb2JqZWN0Pgo8L2lu
+dGVyZmFjZT4K
+`,
+	},
+
 	"/definitions/GeneratePIN.xml": {
 		local:   "definitions/GeneratePIN.xml",
 		size:    4885,

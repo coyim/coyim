@@ -1,10 +1,9 @@
 package gui
 
 import (
-	"runtime"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -18,9 +17,9 @@ const (
 type roomViewRoster struct {
 	r *muc.RoomRoster
 
-	view  gtki.Box       `gtk-widget:"roomRosterBox"`
-	model gtki.ListStore `gtk-widget:"room-members-model"`
-	tree  gtki.TreeView  `gtk-widget:"room-members-tree"`
+	view  gtki.Box      `gtk-widget:"roomRosterBox"`
+	tree  gtki.TreeView `gtk-widget:"room-members-tree"`
+	model gtki.ListStore
 }
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
@@ -31,12 +30,13 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	builder := newBuilder("MUCRoomRoster")
 	panicOnDevError(builder.bindObjects(r))
 
-	// r.model needs to be kept beyond the lifespan of the builder.
-	r.model.Ref()
-	runtime.SetFinalizer(r, func(ros interface{}) {
-		ros.(*roster).model.Unref()
-		ros.(*roster).model = nil
-	})
+	var err error
+	r.model, err = g.gtk.ListStoreNew(pixbufType(), glibi.TYPE_STRING, glibi.TYPE_STRING, glibi.TYPE_STRING)
+	if err != nil {
+		panic(err)
+	}
+
+	r.tree.SetModel(r.model)
 
 	v.onSelfJoinReceived(r.updateRosterModel)
 	v.onOccupantReceived(r.updateRosterModel)

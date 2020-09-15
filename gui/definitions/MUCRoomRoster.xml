@@ -1,16 +1,4 @@
 <interface>
-  <object class="GtkListStore" id="room-members-model">
-    <columns>
-      <!-- column-name statusIcon -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name displayName -->
-      <column type="gchararray"/>
-      <!-- column-name displayRole -->
-      <column type="gchararray"/>
-      <!-- column-name displayTooltip -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkBox" id="roomRosterBox">
     <property name="visible">True</property>
     <property name="hexpand">False</property>
@@ -53,7 +41,6 @@
             <child>
               <object class="GtkTreeView" id="room-members-tree">
                 <property name="visible">True</property>
-                <property name="model">room-members-model</property>
                 <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
                 <property name="enable_search">False</property>

@@ -304,11 +304,12 @@ func bodyHasContent(stanza *data.ClientMessage) bool {
 	return len(stanza.Body) > 0
 }
 
+func isMessageDelayed(stanza *data.ClientMessage) bool {
+	return stanza.Delay != nil
+}
+
 func isLiveMessage(stanza *data.ClientMessage) bool {
-	// TODO: this function need to include more validations to make sure that
-	// the stanza received is a Live Message, for now we all only validating
-	// the body contains some information
-	return bodyHasContent(stanza)
+	return bodyHasContent(stanza) && !isMessageDelayed(stanza)
 }
 
 func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {

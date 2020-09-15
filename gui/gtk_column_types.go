@@ -21,7 +21,6 @@ var pixbufType func() glibi.Type = func() func() glibi.Type {
 <interface>
 	<object id="storeOfColumnTypes" class="GtkListStore">
 		<columns>
-			<!-- column-name pixbuf -->
 			<column type="GdkPixbuf"/>
 		</columns>
 	</object>

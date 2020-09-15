@@ -3,28 +3,32 @@ package gui
 import (
 	"sync"
 
-	"github.com/coyim/gotk3adapter/glibi"
-
 	"github.com/coyim/gotk3adapter/gtki"
+
+	"github.com/coyim/gotk3adapter/glibi"
 )
 
 const (
 	indexPixbufColumn = iota
 )
 
-type gtkColumnTypes struct {
-	store gtki.ListStore `gtk-widget:"storeOfColumnTypes"`
-}
-
 var pixbufType func() glibi.Type = func() func() glibi.Type {
 	var onlyOnce sync.Once
 	var tp glibi.Type
 
 	readPixbufType := func() {
-		ct := &gtkColumnTypes{}
-		builder := newBuilder("GTKColumnTypes")
-		panicOnDevError(builder.bindObjects(ct))
-		tp = ct.store.GetColumnType(indexPixbufColumn)
+		builder := newBuilderFromString(`
+<interface>
+	<object id="storeOfColumnTypes" class="GtkListStore">
+		<columns>
+			<!-- column-name pixbuf -->
+			<column type="GdkPixbuf"/>
+		</columns>
+	</object>
+</interface>
+`)
+		store := builder.get("storeOfColumnTypes").(gtki.ListStore)
+		tp = store.GetColumnType(indexPixbufColumn)
 	}
 
 	return func() glibi.Type {

@@ -74,3 +74,7 @@ func (v *listStore) GetValue(v1 gtki.TreeIter, v2 int) (glibi.Value, error) {
 func (v *listStore) IterNext(v1 gtki.TreeIter) bool {
 	return v.internal.IterNext(UnwrapTreeIter(v1))
 }
+
+func (v *listStore) GetColumnType(index int) glibi.Type {
+	return glibi.Type(v.internal.GetColumnType(index))
+}

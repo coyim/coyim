@@ -11,6 +11,7 @@ type ListStore interface {
 	Remove(TreeIter) bool
 	Set2(TreeIter, []int, []interface{}) error
 	SetValue(TreeIter, int, interface{}) error
+	GetColumnType(index int) glibi.Type
 }
 
 func AssertListStore(_ ListStore) {}

@@ -52,3 +52,7 @@ func (*MockListStore) GetValue(v1 gtki.TreeIter, v2 int) (glibi.Value, error) {
 func (*MockListStore) IterNext(v1 gtki.TreeIter) bool {
 	return false
 }
+
+func (*MockListStore) GetColumnType(index int) glibi.Type {
+	return glibi.TYPE_NONE
+}

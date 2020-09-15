@@ -92,20 +92,24 @@ func newBuilder(filename string) *builder {
 }
 
 func newBuilderFromString(template string) *builder {
-	b, err := g.gtk.BuilderNew()
+	return &builder{builderForString(template)}
+}
+
+func builderForString(template string) gtki.Builder {
+	builder, err := g.gtk.BuilderNew()
 	if err != nil {
 		//We cant recover from this
 		panic(err)
 	}
 
 	//We dont use NewFromString because it doesnt give us an error message
-	err = b.AddFromString(template)
+	err = builder.AddFromString(template)
 	if err != nil {
 		//This is a programming error
 		panic(fmt.Sprintf("gui: wrong template format: %s\n", err.Error()))
 	}
 
-	return &builder{b}
+	return builder
 }
 
 // optionallySetWidgetNameFromID will set the name from the ID, making it possible to use the ID to refer to the object from

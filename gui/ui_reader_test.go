@@ -77,7 +77,7 @@ func (s *UIReaderSuite) Test_builderForString_panicsIfNotBuilder(c *C) {
 	}}
 
 	c.Assert(func() {
-		_ = builderForString(testFile)
+		builderForString(testFile)
 	}, PanicMatches, "bla")
 }
 

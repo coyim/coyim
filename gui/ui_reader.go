@@ -88,11 +88,24 @@ type builder struct {
 }
 
 func newBuilder(filename string) *builder {
-	return newBuilderFromString(filename)
+	return &builder{builderForDefinition(filename)}
 }
 
-func newBuilderFromString(uiName string) *builder {
-	return &builder{builderForDefinition(uiName)}
+func newBuilderFromString(template string) *builder {
+	b, err := g.gtk.BuilderNew()
+	if err != nil {
+		//We cant recover from this
+		panic(err)
+	}
+
+	//We dont use NewFromString because it doesnt give us an error message
+	err = b.AddFromString(template)
+	if err != nil {
+		//This is a programming error
+		panic(fmt.Sprintf("gui: wrong template format: %s\n", err.Error()))
+	}
+
+	return &builder{b}
 }
 
 // optionallySetWidgetNameFromID will set the name from the ID, making it possible to use the ID to refer to the object from

@@ -3,6 +3,7 @@ package gui
 import (
 	"bytes"
 	"encoding/base64"
+	"errors"
 	"io/ioutil"
 	"os"
 	"time"
@@ -42,19 +43,72 @@ func removeFile(name string) {
 type mockBuilder struct {
 	gtk_mock.MockBuilder
 	stringGiven string
+	errorGiven  error
 }
 
 func (v *mockBuilder) AddFromString(v1 string) error {
 	v.stringGiven = v1
-	return nil
+	return v.errorGiven
 }
 
 type mockWithBuilder struct {
 	gtk_mock.Mock
+	errorGiven       error
+	secondErrorGiven error
 }
 
-func (*mockWithBuilder) BuilderNew() (gtki.Builder, error) {
-	return &mockBuilder{}, nil
+func (v *mockWithBuilder) BuilderNew() (gtki.Builder, error) {
+	return &mockBuilder{
+		errorGiven: v.secondErrorGiven,
+	}, v.errorGiven
+}
+
+const wrongTemplate string = `
+yeah
+<interfae>
+  <object class="GtkWindow">
+    I have a bad format
+  </object>
+`
+
+func (s *UIReaderSuite) Test_builderForString_panicsIfNotBuilder(c *C) {
+	g = Graphics{gtk: &mockWithBuilder{
+		errorGiven: errors.New("bla"),
+	}}
+
+	c.Assert(func() {
+		_ = builderForString(testFile)
+	}, PanicMatches, "bla")
+}
+
+func (s *UIReaderSuite) Test_builderForString_panicsIfEmptyTemplate(c *C) {
+	g = Graphics{gtk: &mockWithBuilder{
+		secondErrorGiven: errors.New("foo"),
+	}}
+
+	c.Assert(func() {
+		builderForString("")
+	}, PanicMatches, "gui: wrong template format: foo\n")
+}
+
+func (s *UIReaderSuite) Test_builderForString_panicsIfWrongTemplate(c *C) {
+	g = Graphics{gtk: &mockWithBuilder{
+		secondErrorGiven: errors.New("bla"),
+	}}
+
+	c.Assert(func() {
+		builderForString(wrongTemplate)
+	}, PanicMatches, "gui: wrong template format: bla\n")
+}
+
+func (s *UIReaderSuite) Test_builderForString_useTemplateStringIfOk(c *C) {
+	g = Graphics{gtk: &mockWithBuilder{}}
+
+	builder := builderForString(testFile)
+
+	str := builder.(*mockBuilder).stringGiven
+
+	c.Assert(str, Equals, testFile)
 }
 
 func (s *UIReaderSuite) Test_builderForDefinition_useXMLIfExists(c *C) {

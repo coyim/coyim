@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -72,17 +73,27 @@ const (
 )
 
 type mucManager struct {
+	roomManager *muc.RoomManager
+
 	log          coylog.Logger
 	publishEvent func(ev interface{})
 }
 
 func newMUCManager(log coylog.Logger, publishEvent func(ev interface{})) *mucManager {
 	m := &mucManager{
+		roomManager:  muc.NewRoomManager(),
 		log:          log,
 		publishEvent: publishEvent,
 	}
 
 	return m
+}
+
+// NewRoom creates a new muc room and add it to the room manager
+func (s *session) NewRoom(identity jid.Bare) *muc.Room {
+	room := muc.NewRoom(identity)
+	s.muc.roomManager.AddRoom(room)
+	return room
 }
 
 func isMUCPresence(stanza *data.ClientPresence) bool {

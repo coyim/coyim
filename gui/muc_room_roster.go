@@ -24,7 +24,7 @@ type roomViewRoster struct {
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	r := &roomViewRoster{
-		r: v.roomRoster,
+		r: v.room.Roster(),
 	}
 
 	builder := newBuilder("MUCRoomRoster")

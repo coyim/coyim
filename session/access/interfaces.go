@@ -84,6 +84,8 @@ type Session interface {
 	LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error)
 
 	Log() coylog.Logger
+
+	NewRoom(jid.Bare) *muc.Room
 }
 
 // Factory is a function that can create new Sessions

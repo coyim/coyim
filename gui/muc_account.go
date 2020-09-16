@@ -6,17 +6,21 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (a *account) getRoomView(ident jid.Bare) (*roomView, bool) {
-	room, ok := a.roomManager.GetRoom(ident)
-	if !ok {
-		a.log.WithField("room", ident).Error("Trying to get a room that is not in the manager")
-		return nil, false
-	}
-	return getViewFromRoom(room), true
+func (a *account) getRoomView(roomIdentity string) (*roomView, bool) {
+	room, ok := a.rooms[roomIdentity]
+	return room, ok
+}
+
+func (a *account) addRoomView(v *roomView) {
+	a.rooms[v.identity.String()] = v
+}
+
+func (a *account) newRoomModel(identity jid.Bare) *muc.Room {
+	return a.session.NewRoom(identity)
 }
 
 func (a *account) onRoomNicknameConflict(room jid.Bare, nickname string) {
-	view, ok := a.getRoomView(room)
+	view, ok := a.getRoomView(room.String())
 	if !ok {
 		a.log.WithField("room", room).Error("Room view not available when a room nickname conflict event was received")
 		return
@@ -26,7 +30,7 @@ func (a *account) onRoomNicknameConflict(room jid.Bare, nickname string) {
 }
 
 func (a *account) handleMUCLoggingEnabled(room jid.Bare) {
-	view, ok := a.getRoomView(room)
+	view, ok := a.getRoomView(room.String())
 	if !ok {
 		a.log.WithField("room", room).Error("Not possible to get room view when handling Logging Enabled event")
 		return
@@ -36,7 +40,7 @@ func (a *account) handleMUCLoggingEnabled(room jid.Bare) {
 }
 
 func (a *account) handleMUCLoggingDisabled(room jid.Bare) {
-	view, ok := a.getRoomView(room)
+	view, ok := a.getRoomView(room.String())
 	if !ok {
 		a.log.WithField("room", room).Error("Not possible to get room view when handling Logging Disabled event")
 		return
@@ -46,7 +50,7 @@ func (a *account) handleMUCLoggingDisabled(room jid.Bare) {
 }
 
 func (a *account) onRoomRegistrationRequired(room jid.Bare, nickname string) {
-	view, ok := a.getRoomView(room)
+	view, ok := a.getRoomView(room.String())
 	if !ok {
 		a.log.WithField("room", room).Error("Room view not available when a room registration required event was received")
 		return
@@ -65,15 +69,13 @@ func (a *account) onRoomOccupantJoined(roomName jid.Bare, nickname string, ident
 		"status":      status,
 	})
 
-	room, ok := a.roomManager.GetRoom(roomName)
+	view, ok := a.getRoomView(roomName.String())
 	if !ok {
 		l.Error("Room view not available when a room occupant joined event was received")
 		return
 	}
 
-	view := getViewFromRoom(room)
-
-	roster := room.Roster()
+	roster := view.room.Roster()
 	joined, _, err := roster.UpdatePresence(roomName.WithResource(jid.NewResource(nickname)), "", affiliation, role, "", status, "Occupant joined", ident)
 	if err != nil {
 		l.WithError(err).Error("An error occurred trying to add the occupant to the roster")
@@ -98,20 +100,19 @@ func (a *account) onRoomOccupantUpdated(roomName jid.Bare, nickname string, occu
 		"role":        role,
 	})
 
-	room, ok := a.roomManager.GetRoom(roomName)
+	view, ok := a.getRoomView(roomName.String())
 	if !ok {
 		l.Error("Room view not available when a room occupant updated event was received")
 		return
 	}
 
-	roster := room.Roster()
+	roster := view.room.Roster()
 	joined, _, err := roster.UpdatePresence(roomName.WithResource(jid.NewResource(nickname)), "", affiliation, role, "", "", "Occupant updated", occupant)
 	if err != nil {
 		l.WithError(err).Error("Error on trying to update the occupant status in the roster")
 		return
 	}
 
-	view := getViewFromRoom(room)
 	if joined {
 		view.someoneJoinedTheRoom(nickname)
 	} else {
@@ -128,13 +129,13 @@ func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, 
 		"role":        role,
 	})
 
-	room, ok := a.roomManager.GetRoom(roomName)
+	view, ok := a.getRoomView(roomName.String())
 	if !ok {
 		l.Error("Room view not available when an occupant left the room event was received")
 		return
 	}
 
-	roster := room.Roster()
+	roster := view.room.Roster()
 	_, left, err := roster.UpdatePresence(roomName.WithResource(jid.NewResource(nickname)), "unavailable", affiliation, role, "", "unavailable", "Occupant left the room", ident)
 	if err != nil {
 		l.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
@@ -146,7 +147,6 @@ func (a *account) onRoomOccupantLeftTheRoom(roomName jid.Bare, nickname string, 
 		return
 	}
 
-	view := getViewFromRoom(room)
 	view.onRoomOccupantLeftTheRoomReceived(nickname)
 }
 
@@ -158,12 +158,11 @@ func (a *account) onRoomMessageReceived(roomName jid.Bare, nickname, subject, me
 		"message":  message,
 	})
 
-	room, ok := a.roomManager.GetRoom(roomName)
+	view, ok := a.getRoomView(roomName.String())
 	if !ok {
 		l.Error("Room view not available when a live message was received")
 		return
 	}
 
-	view := getViewFromRoom(room)
 	view.onRoomMessageToTheRoomReceived(nickname, subject, message)
 }

@@ -15,10 +15,10 @@ type roomView struct {
 	account *account
 	builder *builder
 
-	identity   jid.Bare
-	occupant   *muc.Occupant
-	roomRoster *muc.RoomRoster
-	info       *muc.RoomListing
+	identity jid.Bare
+	room     *muc.Room
+	occupant *muc.Occupant
+	info     *muc.RoomListing
 
 	log      coylog.Logger
 	joined   bool
@@ -37,10 +37,6 @@ type roomView struct {
 	lobby   *roomViewLobby
 }
 
-func getViewFromRoom(r *muc.Room) *roomView {
-	return r.Opaque.(*roomView)
-}
-
 func (v *roomView) onSelfJoinReceived(f func()) {
 	v.onSelfJoinedReceived = append(v.onSelfJoinedReceived, f)
 }
@@ -49,13 +45,13 @@ func (v *roomView) onOccupantReceived(f func()) {
 	v.onOccupantJoinedReceived = append(v.onOccupantJoinedReceived, f)
 }
 
-func (u *gtkUI) newRoomView(a *account, ident jid.Bare, roomInfo *muc.RoomListing, roomRoster *muc.RoomRoster) *roomView {
+func (u *gtkUI) newRoomView(a *account, ident jid.Bare, roomInfo *muc.RoomListing) *roomView {
 	view := &roomView{
-		u:          u,
-		account:    a,
-		identity:   ident,
-		info:       roomInfo,
-		roomRoster: roomRoster,
+		u:        u,
+		account:  a,
+		identity: ident,
+		info:     roomInfo,
+		room:     a.newRoomModel(ident),
 	}
 
 	view.log = a.log.WithField("room", ident)
@@ -79,19 +75,13 @@ func (v *roomView) setTitle(r string) {
 	v.window.SetTitle(r)
 }
 
-func (u *gtkUI) newRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing) *muc.Room {
-	room := muc.NewRoom(ident)
-	room.Opaque = u.newRoomView(a, ident, roomInfo, room.Roster())
-	return room
-}
-
-func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare, roomInfo *muc.RoomListing) (*muc.Room, bool) {
-	room, ok := a.roomManager.GetRoom(ident)
+func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare, roomInfo *muc.RoomListing) (*roomView, bool) {
+	v, ok := a.getRoomView(ident.String())
 	if !ok {
-		room = u.newRoom(a, ident, roomInfo)
-		a.roomManager.AddRoom(room)
+		v = u.newRoomView(a, ident, roomInfo)
+		a.addRoomView(v)
 	}
-	return room, ok
+	return v, ok
 }
 
 // mucShowRoom MUST be called always from the UI thread
@@ -102,9 +92,12 @@ func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare, roomInfo
 //
 // Please note that "returnTo" will be called from the UI thread too
 func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing, returnTo func()) {
-	room, ok := u.getRoomOrCreateItIfNoExists(a, ident, roomInfo)
+	view, ok := a.getRoomView(ident.String())
+	if !ok {
+		view = u.newRoomView(a, ident, roomInfo)
+		a.addRoomView(view)
+	}
 
-	view := getViewFromRoom(room)
 	if view.joined {
 		// In the main view of the room, we don't have the "cancel"
 		// functionality that it's useful only in the lobby view of the room.
@@ -258,7 +251,7 @@ func (v *roomView) onRoomOccupantJoinedReceived(occupant string) {
 }
 
 func (v *roomView) assignCurrentOccupant(occupantIdentity string) {
-	o, ok := v.roomRoster.GetOccupantByIdentity(occupantIdentity)
+	o, ok := v.roster.r.GetOccupantByIdentity(occupantIdentity)
 	if !ok {
 		//TODO: Show in an appropriate way the error message to the user. Maybe with some ´handler notification´ struct?
 		v.log.Error("An error occurred trying to get the current occupant")

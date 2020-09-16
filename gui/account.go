@@ -45,6 +45,7 @@ type account struct {
 
 	sync.RWMutex
 
+	rooms       map[string]*roomView
 	roomManager *muc.RoomManager
 }
 
@@ -98,6 +99,7 @@ func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf 
 		c:                    make(map[string]conversationView),
 		delayedConversations: make(map[string][]func(conversationView)),
 		events:               make(chan interface{}),
+		rooms:                make(map[string]*roomView),
 		roomManager:          newRoomManager(),
 	}
 }

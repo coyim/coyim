@@ -78,7 +78,6 @@ func (u *gtkUI) newRoster() *roster {
 		glibi.TYPE_STRING,
 	)
 	if err != nil {
-		// Can we recover from this?
 		panic(err)
 	}
 

@@ -134,6 +134,10 @@ func (*Mock) ListStoreNew(types ...glibi.Type) (gtki.ListStore, error) {
 	return nil, nil
 }
 
+func (*Mock) TreeStoreNew(types ...glibi.Type) (gtki.TreeStore, error) {
+	return nil, nil
+}
+
 func (*Mock) MenuBarNew() (gtki.MenuBar, error) {
 	return nil, nil
 }

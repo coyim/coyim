@@ -38,6 +38,7 @@ type Gtk interface {
 	InfoBarNew() (InfoBar, error)
 	LabelNew(string) (Label, error)
 	ListStoreNew(...glibi.Type) (ListStore, error)
+	TreeStoreNew(...glibi.Type) (TreeStore, error)
 	MenuBarNew() (MenuBar, error)
 	MenuItemNew() (MenuItem, error)
 	MenuItemNewWithLabel(string) (MenuItem, error)

@@ -30,6 +30,7 @@ func (m *mucManager) publishMUCError(from jid.Full, e *data.StanzaError) {
 	ev := events.MUCError{}
 	ev.ErrorType = t
 	ev.Room = jid.ParseBare(from.NoResource().String())
+	ev.Nickname = from.Resource().String()
 
 	m.publishEvent(ev)
 }

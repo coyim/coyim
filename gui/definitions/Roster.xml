@@ -1,32 +1,9 @@
 <interface>
-  <object class="GtkTreeStore" id="roster-model">
-    <columns>
-      <!-- jid -->
-      <column type="gchararray"/>
-      <!-- display name -->
-      <column type="gchararray"/>
-      <!-- account id -->
-      <column type="gchararray"/>
-      <!-- status color -->
-      <column type="gchararray"/>
-      <!-- background color -->
-      <column type="gchararray"/>
-      <!-- weight of font -->
-      <column type="gint"/>
-      <!-- tooltip -->
-      <column type="gchararray"/>
-      <!-- icon -->
-      <column type="GdkPixbuf"/>
-      <!-- row type -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkScrolledWindow" id="roster">
     <property name="hscrollbar-policy">GTK_POLICY_NEVER</property>
     <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
     <child>
       <object class="GtkTreeView" id="roster-tree">
-        <property name="model">roster-model</property>
         <property name="headers-visible">false</property>
         <property name="show-expanders">false</property>
         <property name="level-indentation">3</property>

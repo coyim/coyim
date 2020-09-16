@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"html"
-	"runtime"
 	"sort"
 	"strings"
 
@@ -14,13 +13,14 @@ import (
 	rosters "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roster struct {
 	widget gtki.ScrolledWindow `gtk-widget:"roster"`
-	model  gtki.TreeStore      `gtk-widget:"roster-model"`
 	view   gtki.TreeView       `gtk-widget:"roster-tree"`
+	model  gtki.TreeStore
 
 	isCollapsed map[string]bool
 	toCollapse  []gtki.TreePath
@@ -44,8 +44,7 @@ func (u *gtkUI) newRoster() *roster {
 
 	r := &roster{
 		isCollapsed: make(map[string]bool),
-
-		ui: u,
+		ui:          u,
 	}
 
 	builder.ConnectSignals(map[string]interface{}{
@@ -58,12 +57,33 @@ func (u *gtkUI) newRoster() *roster {
 	r.view.SetEnableSearch(true)
 	r.view.SetSearchEqualSubstringMatch()
 
-	//r.model needs to be kept beyond the lifespan of the builder.
-	r.model.Ref()
-	runtime.SetFinalizer(r, func(ros interface{}) {
-		ros.(*roster).model.Unref()
-		ros.(*roster).model = nil
-	})
+	model, err := g.gtk.TreeStoreNew(
+		// jid
+		glibi.TYPE_STRING,
+		// display name
+		glibi.TYPE_STRING,
+		// account id
+		glibi.TYPE_STRING,
+		// status color
+		glibi.TYPE_STRING,
+		// background color
+		glibi.TYPE_STRING,
+		// weight of font
+		glibi.TYPE_INT,
+		// tooltip
+		glibi.TYPE_STRING,
+		// status icon
+		pixbufType(),
+		// row type
+		glibi.TYPE_STRING,
+	)
+	if err != nil {
+		// Can we recover from this?
+		panic(err)
+	}
+
+	r.model = model
+	r.view.SetModel(r.model)
 
 	return r
 }

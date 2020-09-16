@@ -282,7 +282,7 @@ func (v *roomViewLobby) onJoinFailed(err error) {
 func (v *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	switch err.errType {
 	case errJoinNickNameConflict:
-		return i18n.Localf("Can't join the room using the nickname \"%s\" because it's already being used.", err.nickname)
+		return i18n.Local("Can't join the room using that nickname because it's already being used.")
 	case errJoinOnlyMembers:
 		return i18n.Local("Sorry, this room only allows registered members")
 	default:

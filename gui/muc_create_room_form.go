@@ -41,9 +41,7 @@ func (v *createMUCRoom) initForm() {
 	panicOnDevError(v.builder.bindObjects(f))
 
 	f.errorBox = newErrorNotification(f.notificationArea)
-
-	c := v.builder.get("accounts").(gtki.ComboBox)
-	f.ac = v.u.createConnectedAccountsComponent(c, f, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
+	f.ac = v.u.createConnectedAccountsComponent(f.account, f, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
 
 	f.createRoomIfDoesntExist = func(a *account, ident jid.Bare) {
 		successResult := make(chan bool)
@@ -81,9 +79,12 @@ func (v *createMUCRoom) initForm() {
 	}
 
 	v.addBuilderSignals(map[string]interface{}{
-		"on_cancel":          v.onCancel,
-		"on_create_room":     f.onCreateRoom,
-		"on_roomName_change": f.enableCreationIfConditionsAreMet,
+		"on_cancel":      v.onCancel,
+		"on_create_room": f.onCreateRoom,
+		"on_roomName_change": func() {
+			f.clearErrors()
+			f.enableCreationIfConditionsAreMet()
+		},
 		"on_roomAutoJoin_toggled": func() {
 			v.updateAutoJoinValue(f.roomAutoJoin.GetActive())
 		},
@@ -192,7 +193,10 @@ func (f *createMUCRoomForm) disableOrEnableFields(v bool) {
 }
 
 func (f *createMUCRoomForm) updateServicesBasedOnAccount(acc *account) {
-	doInUIThread(f.enableCreationIfConditionsAreMet)
+	doInUIThread(func() {
+		f.clearErrors()
+		f.enableCreationIfConditionsAreMet()
+	})
 	go f.updateChatServicesBasedOnAccount(acc)
 }
 
@@ -204,8 +208,6 @@ func (f *createMUCRoomForm) onNoAccountsConnected() {
 }
 
 func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
-	f.clearErrors()
-
 	roomName, _ := f.roomEntry.GetText()
 	chatService, _ := f.chatServiceEntry.GetText()
 	currentAccount := f.ac.currentAccount()

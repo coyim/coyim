@@ -40,7 +40,7 @@ func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 		builderSignals:  make(map[string]interface{}),
 	}
 
-	v.initUIBuilder()
+	v.initBuilder()
 	v.initForm()
 	v.initSuccessView(v.joinRoom)
 	v.initBuilderSignals()
@@ -50,23 +50,14 @@ func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 	return v
 }
 
-func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {
-	if v.autoJoin == newValue {
-		return
-	}
-
-	v.autoJoin = newValue
-	for _, cb := range v.onAutoJoinList {
-		cb(v.autoJoin)
-	}
+func (v *createMUCRoom) initBuilder() {
+	v.builder = newBuilder("MUCCreateRoomDialog")
+	panicOnDevError(v.builder.bindObjects(v))
 }
 
-func (v *createMUCRoom) onAutoJoin(f func(bool)) {
-	v.onAutoJoinList = append(v.onAutoJoinList, f)
-}
-
-func (v *createMUCRoom) onDestroy(f func()) {
-	v.onDestroyList = append(v.onDestroyList, f)
+func (v *createMUCRoom) initBuilderSignals() {
+	v.addBuilderSignal("on_close_window", v.onCloseWindow)
+	v.builder.ConnectSignals(v.builderSignals)
 }
 
 func (v *createMUCRoom) addBuilderSignals(signals map[string]interface{}) {
@@ -83,14 +74,8 @@ func (v *createMUCRoom) addBuilderSignal(signal string, callback interface{}) {
 	v.builderSignals[signal] = callback
 }
 
-func (v *createMUCRoom) initUIBuilder() {
-	v.builder = newBuilder("MUCCreateRoomDialog")
-	panicOnDevError(v.builder.bindObjects(v))
-}
-
-func (v *createMUCRoom) initBuilderSignals() {
-	v.addBuilderSignal("on_close_window", v.onCloseWindow)
-	v.builder.ConnectSignals(v.builderSignals)
+func (v *createMUCRoom) onDestroy(f func()) {
+	v.onDestroyList = append(v.onDestroyList, f)
 }
 
 func (v *createMUCRoom) onCancel() {
@@ -162,13 +147,28 @@ func (v *createMUCRoom) joinRoom(ca *account, ident jid.Bare) {
 	}()
 }
 
+func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {
+	if v.autoJoin == newValue {
+		return
+	}
+
+	v.autoJoin = newValue
+	for _, cb := range v.onAutoJoinList {
+		cb(v.autoJoin)
+	}
+}
+
+func (v *createMUCRoom) onAutoJoin(f func(bool)) {
+	v.onAutoJoinList = append(v.onAutoJoinList, f)
+}
+
 func (v *createMUCRoom) destroy() {
 	v.window.Destroy()
 }
 
 func (v *createMUCRoom) show() {
 	v.showCreateForm()
-	v.window.Show()
+	v.window.ShowAll()
 }
 
 func (u *gtkUI) mucCreateChatRoom() {

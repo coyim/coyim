@@ -61,21 +61,7 @@ func readFile(fileName string) string {
 // This must be called from the UI thread - otherwise bad things will happen sooner or later
 func builderForDefinition(uiName string) gtki.Builder {
 	template := getDefinitionWithFileFallback(uiName)
-
-	builder, err := g.gtk.BuilderNew()
-	if err != nil {
-		//We cant recover from this
-		panic(err)
-	}
-
-	//We dont use NewFromString because it doesnt give us an error message
-	err = builder.AddFromString(template)
-	if err != nil {
-		//This is a programming error
-		panic(fmt.Sprintf("gui: failed load %s: %s\n", uiName, err.Error()))
-	}
-
-	return builder
+	return builderForString(template)
 }
 
 func fileNotFound(fileName string) bool {

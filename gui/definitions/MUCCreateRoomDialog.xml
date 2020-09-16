@@ -48,7 +48,7 @@
             <property name="layout_style">center</property>
             <child>
               <object class="GtkButton" id="createNewRoomButton">
-                <property name="label" translatable="yes">Create new one</property>
+                <property name="label" translatable="yes">Create another room</property>
                 <property name="visible">True</property>
                 <property name="receives_default">True</property>
                 <signal name="clicked" handler="on_createRoom_clicked" swapped="no"/>
@@ -61,7 +61,7 @@
             </child>
             <child>
               <object class="GtkButton" id="joinCreatedRoomButton">
-                <property name="label" translatable="yes">Join it</property>
+                <property name="label" translatable="yes">Join</property>
                 <property name="visible">True</property>
                 <property name="receives_default">True</property>
                 <signal name="clicked" handler="on_joinRoom_clicked" swapped="no"/>
@@ -122,6 +122,7 @@
     <property name="orientation">vertical</property>
     <child>
       <object class="GtkBox" id="notificationArea">
+        <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <style>
           <class name="notifications"/>
@@ -206,7 +207,7 @@
             <property name="has_entry">True</property>
             <child internal-child="entry">
               <object class="GtkEntry" id="chatServicesEntry">
-                <property name="placeholder_text" translatable="yes">Enter the service name or select one from the list</property>
+                <property name="placeholder_text" translatable="yes">Enter the location or select it from the list</property>
                 <signal name="changed" handler="on_chatServiceEntry_change" swapped="no"/>
               </object>
             </child>

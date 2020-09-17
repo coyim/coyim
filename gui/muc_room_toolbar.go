@@ -17,7 +17,16 @@ func (r *roomView) newRoomViewToolbar() *roomViewToolbar {
 	panicOnDevError(builder.bindObjects(t))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_leave_room": r.leaveRoom,
+		"on_leave_room": func() {
+			t.leaveRoomButton.SetSensitive(false)
+			r.tryLeaveRoom(nil, func() {
+				if r.canDoSomethingInTheUI() {
+					doInUIThread(func() {
+						t.leaveRoomButton.SetSensitive(true)
+					})
+				}
+			})
+		},
 	})
 
 	r.onSelfJoinReceived(func() {

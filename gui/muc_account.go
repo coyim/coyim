@@ -19,6 +19,23 @@ func (a *account) newRoomModel(identity jid.Bare) *muc.Room {
 	return a.session.NewRoom(identity)
 }
 
+// leaveRoom MUST not be called from the UI thread
+func (a *account) leaveRoom(identity jid.Bare, nickname string, onSuccess func(), onError func(error)) {
+	okCh, erCh := a.session.LeaveRoom(identity, nickname)
+
+	go func() {
+		select {
+		case <-okCh:
+			//TODO: We SHOULD use a rlock before deleting
+			//WIP: Refactor this
+			delete(a.rooms, identity.String())
+			onSuccess()
+		case err := <-erCh:
+			onError(err)
+		}
+	}()
+}
+
 func (a *account) onRoomNicknameConflict(room jid.Bare, nickname string) {
 	view, ok := a.getRoomView(room.String())
 	if !ok {

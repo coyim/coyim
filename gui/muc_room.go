@@ -22,11 +22,19 @@ type roomView struct {
 
 	log      coylog.Logger
 	joined   bool
+	isOpen   bool
 	returnTo func()
 
-	window  gtki.Window `gtk-widget:"roomWindow"`
-	content gtki.Box    `gtk-widget:"boxMainView"`
+	window           gtki.Window  `gtk-widget:"roomWindow"`
+	content          gtki.Box     `gtk-widget:"boxMainView"`
+	spinner          gtki.Spinner `gtk-widget:"spinner"`
+	notificationArea gtki.Box     `gtk-widget:"roomNotificationArea"`
 
+	notification gtki.InfoBar
+	errorNotif   *errorNotification
+
+	//TODO: It's neccessary handle events signals in a better way.
+	//Maybe we should take a look to the session event management.
 	onSelfJoinedReceived     []func()
 	onOccupantJoinedReceived []func()
 
@@ -115,12 +123,19 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListin
 	} else {
 		view.window.Present()
 	}
+	view.isOpen = true
+}
+
+func (v *roomView) canDoSomethingInTheUI() bool {
+	return v.isOpen
 }
 
 func (v *roomView) initUIBuilder() {
 	v.builder = newBuilder("MUCRoomWindow")
 
 	panicOnDevError(v.builder.bindObjects(v))
+
+	v.errorNotif = newErrorNotification(v.notificationArea)
 
 	v.builder.ConnectSignals(map[string]interface{}{
 		"on_destroy_window": v.onDestroyWindow,
@@ -132,25 +147,53 @@ func (v *roomView) initDefaults() {
 }
 
 func (v *roomView) onDestroyWindow() {
-	v.leaveRoomManager()
+	v.isOpen = false
 }
 
-func (v *roomView) leaveRoom() {
+func (v *roomView) clearErrors() {
+	v.errorNotif.Hide()
+}
+
+func (v *roomView) notifyOnError(err string) {
+	if v.notification != nil {
+		v.notificationArea.Remove(v.notification)
+	}
+
+	v.errorNotif.ShowMessage(err)
+}
+
+func (v *roomView) showSpinner() {
+	v.spinner.Start()
+	v.spinner.Show()
+}
+
+func (v *roomView) hideSpinner() {
+	v.spinner.Stop()
+	v.spinner.Hide()
+}
+
+func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
+	v.clearErrors()
+	v.showSpinner()
+
 	go func() {
-		resultCh, errCh := v.account.session.LeaveRoom(v.identity, v.occupant.Nick)
-		select {
-		case <-resultCh:
-			v.leaveRoomManager()
+		v.account.leaveRoom(v.identity, v.occupant.Nick, func() {
 			doInUIThread(v.window.Destroy)
-		case err := <-errCh:
+			if onSuccess != nil {
+				onSuccess()
+			}
+		}, func(err error) {
+			//TODO: Should we use some notification manager?
 			v.log.WithError(err).Error("An error occurred when trying to leave the room")
-			//TODO: Show an appropiate way to present the error message to the user.
-		}
+			doInUIThread(func() {
+				v.hideSpinner()
+				v.notifyOnError(i18n.Local("Couldn't leave the room, please try again."))
+			})
+			if onError != nil {
+				onError()
+			}
+		})
 	}()
-}
-
-func (v *roomView) leaveRoomManager() {
-	v.account.roomManager.LeaveRoom(v.identity)
 }
 
 func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {

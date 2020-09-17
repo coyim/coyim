@@ -9,8 +9,9 @@ import (
 )
 
 type createMUCRoomForm struct {
-	log coylog.Logger
-	ac  *connectedAccountsComponent
+	log     coylog.Logger
+	ac      *connectedAccountsComponent
+	isShown bool
 
 	view             gtki.Box          `gtk-widget:"createRoomForm"`
 	notificationArea gtki.Box          `gtk-widget:"notificationArea"`
@@ -20,7 +21,6 @@ type createMUCRoomForm struct {
 	roomEntry        gtki.Entry        `gtk-widget:"roomNameEntry"`
 	roomAutoJoin     gtki.CheckButton  `gtk-widget:"autoJoinCheckButton"`
 	spinner          gtki.Spinner      `gtk-widget:"createRoomFormSpinner"`
-	cancelButton     gtki.Button       `gtk-widget:"createRoomFormCancelButton"`
 	createButton     gtki.Button       `gtk-widget:"createRoomFormCreateButton"`
 
 	errorBox     *errorNotification
@@ -99,6 +99,7 @@ func (v *createMUCRoom) initForm() {
 		v.container.Remove(v.success.view)
 		v.form.reset()
 		v.container.Add(v.form.view)
+		f.isShown = true
 	}
 
 	v.form = f
@@ -151,6 +152,7 @@ func (f *createMUCRoomForm) onBeforeToCreateARoom() {
 }
 
 func (f *createMUCRoomForm) destroy() {
+	f.isShown = false
 	f.ac.onDestroy()
 }
 
@@ -162,7 +164,9 @@ func (f *createMUCRoomForm) notifyOnError(err string) {
 }
 
 func (f *createMUCRoomForm) clearErrors() {
-	f.errorBox.Hide()
+	if f.isShown {
+		f.errorBox.Hide()
+	}
 }
 
 func (f *createMUCRoomForm) clearFields() {
@@ -179,7 +183,6 @@ func (f *createMUCRoomForm) reset() {
 
 // disableOrEnableFields SHOULD be called from the UI thread
 func (f *createMUCRoomForm) disableOrEnableFields(v bool) {
-	f.cancelButton.SetSensitive(v)
 	f.createButton.SetSensitive(v)
 	f.account.SetSensitive(v)
 	f.roomEntry.SetSensitive(v)

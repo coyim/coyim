@@ -15,6 +15,7 @@ type createMUCRoom struct {
 	log     coylog.Logger
 
 	autoJoin bool
+	cancel   chan bool
 
 	window    gtki.Window `gtk-widget:"createRoomWindow"`
 	container gtki.Box    `gtk-widget:"content"`
@@ -79,6 +80,10 @@ func (v *createMUCRoom) onDestroy(f func()) {
 }
 
 func (v *createMUCRoom) onCancel() {
+	if v.cancel != nil {
+		v.cancel <- true
+	}
+
 	v.window.Destroy()
 }
 
@@ -107,6 +112,7 @@ func (v *createMUCRoom) checkIfRoomExists(ca *account, ident jid.Bare, successCh
 				return
 			}
 			successChannel <- true
+		case <-v.cancel:
 		}
 	}()
 }
@@ -127,6 +133,8 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, suc
 	sc := make(chan bool, 1)
 	er := make(chan error, 1)
 
+	v.cancel = make(chan bool, 1)
+
 	go func() {
 		v.checkIfRoomExists(ca, ident, sc, er)
 		select {
@@ -139,6 +147,7 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, suc
 			})
 		case err := <-er:
 			errorChannel <- err
+		case <-v.cancel:
 		}
 	}()
 }

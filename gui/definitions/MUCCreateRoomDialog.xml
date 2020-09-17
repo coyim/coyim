@@ -91,6 +91,7 @@
     <property name="width_request">580</property>
     <property name="title" translatable="yes">Create new chat room</property>
     <property name="resizable">False</property>
+    <signal name="destroy" handler="on_close_window" swapped="no"/>
     <child>
       <object class="GtkBox" id="content">
         <property name="visible">True</property>
@@ -281,12 +282,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="createRoomFormCancelButton">
+          <object class="GtkButton">
             <property name="label">_Cancel</property>
             <property name="visible">True</property>
             <property name="receives_default">False</property>
             <property name="use_underline">True</property>
-            <signal name="activate" handler="on_cancel" swapped="no"/>
+            <signal name="clicked" handler="on_cancel" swapped="no"/>
           </object>
           <packing>
             <property name="expand">True</property>

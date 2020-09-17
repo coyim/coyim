@@ -208,7 +208,7 @@
             <property name="has_entry">True</property>
             <child internal-child="entry">
               <object class="GtkEntry" id="chatServicesEntry">
-                <property name="placeholder_text" translatable="yes">Enter the location or select it from the list</property>
+                <property name="placeholder_text" translatable="yes">Enter the location or select one from the list</property>
                 <signal name="changed" handler="on_chatServiceEntry_change" swapped="no"/>
               </object>
             </child>

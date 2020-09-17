@@ -79,12 +79,9 @@ func (v *createMUCRoom) initForm() {
 	}
 
 	v.addBuilderSignals(map[string]interface{}{
-		"on_cancel":      v.onCancel,
-		"on_create_room": f.onCreateRoom,
-		"on_roomName_change": func() {
-			f.clearErrors()
-			f.enableCreationIfConditionsAreMet()
-		},
+		"on_cancel":          v.onCancel,
+		"on_create_room":     f.onCreateRoom,
+		"on_roomName_change": f.enableCreationIfConditionsAreMet,
 		"on_roomAutoJoin_toggled": func() {
 			v.updateAutoJoinValue(f.roomAutoJoin.GetActive())
 		},
@@ -211,6 +208,11 @@ func (f *createMUCRoomForm) onNoAccountsConnected() {
 }
 
 func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
+	// Let the connected accounts component show any errors if it have one
+	if len(f.ac.accounts) > 0 {
+		f.clearErrors()
+	}
+
 	roomName, _ := f.roomEntry.GetText()
 	chatService, _ := f.chatServiceEntry.GetText()
 	currentAccount := f.ac.currentAccount()

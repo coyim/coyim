@@ -94,31 +94,51 @@ var (
 	errCreateRoomFailed             = errors.New("couldn't create the room")
 )
 
-func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, successResult chan bool, errResult chan error) {
-	erc, ec := ca.session.HasRoom(ident, nil)
+func (v *createMUCRoom) checkIfRoomExists(ca *account, ident jid.Bare, successChannel chan bool, errorChannel chan error) {
+	rc, ec := ca.session.HasRoom(ident, nil)
 	go func() {
 		select {
 		case err := <-ec:
-			if err != nil {
-				ca.log.WithError(err).Error("Error trying to validate if room exists")
-				errResult <- errCreateRoomCheckIfExistsFails
-			}
-
-		case er := <-erc:
-			if !er {
-				ec := ca.session.CreateRoom(ident)
-				go func() {
-					err := <-ec
-					if err != nil {
-						ca.log.WithError(err).Error("Something went wrong while trying to create the room")
-						errResult <- errCreateRoomFailed
-						return
-					}
-					v.onCreateRoomFinished(ca, ident)
-				}()
+			ca.log.WithError(err).Error("Error trying to validate if room exists")
+			errorChannel <- errCreateRoomCheckIfExistsFails
+		case exists := <-rc:
+			if exists {
+				errorChannel <- errCreateRoomAlreadyExists
 				return
 			}
-			errResult <- errCreateRoomAlreadyExists
+			successChannel <- true
+		}
+	}()
+}
+
+func (a *account) createRoom(ident jid.Bare, onSuccess func(), onError func(error)) {
+	errorChannel := a.session.CreateRoom(ident)
+	go func() {
+		err := <-errorChannel
+		if err != nil {
+			onError(err)
+			return
+		}
+		onSuccess()
+	}()
+}
+
+func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, successChannel chan bool, errorChannel chan error) {
+	sc := make(chan bool, 1)
+	er := make(chan error, 1)
+
+	go func() {
+		v.checkIfRoomExists(ca, ident, sc, er)
+		select {
+		case <-sc:
+			ca.createRoom(ident, func() {
+				v.onCreateRoomFinished(ca, ident)
+			}, func(err error) {
+				ca.log.WithError(err).Error("Something went wrong while trying to create the room")
+				errorChannel <- errCreateRoomFailed
+			})
+		case err := <-er:
+			errorChannel <- err
 		}
 	}()
 }

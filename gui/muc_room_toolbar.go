@@ -20,7 +20,7 @@ func (r *roomView) newRoomViewToolbar() *roomViewToolbar {
 		"on_leave_room": func() {
 			t.leaveRoomButton.SetSensitive(false)
 			r.tryLeaveRoom(nil, func() {
-				if r.canDoSomethingInTheUI() {
+				if r.isOpen() {
 					doInUIThread(func() {
 						t.leaveRoomButton.SetSensitive(true)
 					})

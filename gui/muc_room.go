@@ -22,7 +22,7 @@ type roomView struct {
 
 	log      coylog.Logger
 	joined   bool
-	isOpen   bool
+	opened   bool
 	returnTo func()
 
 	window           gtki.Window  `gtk-widget:"roomWindow"`
@@ -127,11 +127,11 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, returnTo func()) {
 	} else {
 		view.window.Present()
 	}
-	view.isOpen = true
+	view.opened = true
 }
 
-func (v *roomView) canDoSomethingInTheUI() bool {
-	return v.isOpen
+func (v *roomView) isOpen() bool {
+	return v.opened
 }
 
 func (v *roomView) initUIBuilder() {
@@ -165,7 +165,7 @@ func (v *roomView) requestRoomInfo() {
 }
 
 func (v *roomView) onDestroyWindow() {
-	v.isOpen = false
+	v.opened = false
 }
 
 func (v *roomView) clearErrors() {

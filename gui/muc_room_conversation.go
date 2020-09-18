@@ -86,13 +86,13 @@ func (t *mucStyleTags) createTextBuffer() gtki.TextBuffer {
 	return buf
 }
 
-func (u *gtkUI) newRoomViewConversation() *roomViewConversation {
+func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c := &roomViewConversation{}
 
 	builder := newBuilder("MUCRoomConversation")
 	panicOnDevError(builder.bindObjects(c))
 
-	t := c.getStyleTags(u)
+	t := c.getStyleTags(v.u)
 	c.roomChatTextView.SetBuffer(t.createTextBuffer())
 
 	return c

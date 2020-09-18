@@ -37,6 +37,7 @@ type roomView struct {
 	//Maybe we should take a look to the session event management.
 	onSelfJoinedReceived     []func()
 	onOccupantJoinedReceived []func()
+	roomInfoReceived         []func(*muc.RoomListing)
 
 	main    *roomViewMain
 	toolbar *roomViewToolbar
@@ -53,12 +54,15 @@ func (v *roomView) onOccupantReceived(f func()) {
 	v.onOccupantJoinedReceived = append(v.onOccupantJoinedReceived, f)
 }
 
-func (u *gtkUI) newRoomView(a *account, ident jid.Bare, roomInfo *muc.RoomListing) *roomView {
+func (v *roomView) onRoomInfoReceived(f func(*muc.RoomListing)) {
+	v.roomInfoReceived = append(v.roomInfoReceived, f)
+}
+
+func (a *account) newRoomView(ident jid.Bare, u *gtkUI) *roomView {
 	view := &roomView{
 		u:        u,
 		account:  a,
 		identity: ident,
-		info:     roomInfo,
 		room:     a.newRoomModel(ident),
 	}
 
@@ -73,7 +77,7 @@ func (u *gtkUI) newRoomView(a *account, ident jid.Bare, roomInfo *muc.RoomListin
 	roster := view.newRoomViewRoster()
 	view.roster = roster
 
-	conversation := u.newRoomViewConversation()
+	conversation := view.newRoomViewConversation()
 	view.conv = conversation
 
 	return view
@@ -83,10 +87,10 @@ func (v *roomView) setTitle(r string) {
 	v.window.SetTitle(r)
 }
 
-func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare, roomInfo *muc.RoomListing) (*roomView, bool) {
+func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare) (*roomView, bool) {
 	v, ok := a.getRoomView(ident.String())
 	if !ok {
-		v = u.newRoomView(a, ident, roomInfo)
+		v = a.newRoomView(ident, u)
 		a.addRoomView(v)
 	}
 	return v, ok
@@ -99,10 +103,10 @@ func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare, roomInfo
 // might be useful in some scenarios like "returning to previous step".
 //
 // Please note that "returnTo" will be called from the UI thread too
-func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListing, returnTo func()) {
+func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, returnTo func()) {
 	view, ok := a.getRoomView(ident.String())
 	if !ok {
-		view = u.newRoomView(a, ident, roomInfo)
+		view = a.newRoomView(ident, u)
 		a.addRoomView(view)
 	}
 
@@ -115,7 +119,7 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, roomInfo *muc.RoomListin
 		view.switchToMainView()
 	} else {
 		view.returnTo = returnTo
-		view.switchToLobbyView(view.info)
+		view.switchToLobbyView()
 	}
 
 	if !ok {
@@ -144,6 +148,16 @@ func (v *roomView) initUIBuilder() {
 
 func (v *roomView) initDefaults() {
 	v.setTitle(v.identity.String())
+	v.showSpinner()
+	go func() {
+		rl := make(chan *muc.RoomListing)
+		go v.account.session.GetRoom(v.identity, rl)
+		v.info = <-rl
+		doInUIThread(v.hideSpinner)
+		for _, f := range v.roomInfoReceived {
+			f(v.info)
+		}
+	}()
 }
 
 func (v *roomView) onDestroyWindow() {
@@ -196,13 +210,9 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 	}()
 }
 
-func (v *roomView) switchToLobbyView(roomInfo *muc.RoomListing) {
+func (v *roomView) switchToLobbyView() {
 	if v.lobby == nil {
-		v.lobby = v.newRoomViewLobby(v.account, v.identity, v.content, v.onJoined, v.onJoinCancel, roomInfo)
-	} else {
-		// If we got new room information, we should show
-		// any warnings based on that info
-		v.lobby.showRoomWarnings(roomInfo)
+		v.lobby = v.newRoomViewLobby(v.account, v.identity, v.content, v.onJoined, v.onJoinCancel)
 	}
 
 	if v.shouldReturnOnCancel() {

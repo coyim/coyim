@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -164,16 +163,10 @@ func (v *createMUCRoom) onCreateRoomFinished(ca *account, ident jid.Bare) {
 }
 
 func (v *createMUCRoom) joinRoom(ca *account, ident jid.Bare) {
-	doInUIThread(v.destroy)
-	go func() {
-		rl := make(chan *muc.RoomListing)
-		go ca.session.GetRoom(ident, rl)
-		roomInfo := <-rl
-
-		doInUIThread(func() {
-			v.u.mucShowRoom(ca, ident, roomInfo, nil)
-		})
-	}()
+	doInUIThread(func() {
+		v.destroy()
+		v.u.mucShowRoom(ca, ident, nil)
+	})
 }
 
 func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {

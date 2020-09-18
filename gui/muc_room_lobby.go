@@ -32,6 +32,8 @@ type roomViewLobby struct {
 	onJoinChannel      chan bool
 	onJoinErrorChannel chan error
 
+	isReadyToJoinRoom bool
+
 	nickNamesWithConflict *set.Set
 	warnings              []*roomLobbyWarning
 
@@ -42,7 +44,7 @@ type roomViewLobby struct {
 	onCancel func()
 }
 
-func (v *roomView) newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func(), roomInfo *muc.RoomListing) *roomViewLobby {
+func (v *roomView) newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
 	e := &roomViewLobby{
 		ident:                 rid,
 		ac:                    a,
@@ -70,9 +72,15 @@ func (v *roomView) newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, o
 
 	e.content.SetCenterWidget(e.mainBox)
 
-	if roomInfo != nil {
-		e.showRoomWarnings(roomInfo)
-	}
+	v.onRoomInfoReceived(func(roomInfo *muc.RoomListing) {
+		if roomInfo != nil {
+			doInUIThread(func() {
+				e.showRoomWarnings(roomInfo)
+			})
+		}
+		e.isReadyToJoinRoom = true
+		doInUIThread(e.enableJoinIfConditionsAreMet)
+	})
 
 	v.onSelfJoinReceived(e.onRoomOccupantJoinedReceived)
 
@@ -165,7 +173,7 @@ func (v *roomViewLobby) enableJoinIfConditionsAreMet() {
 	v.clearErrors()
 
 	nickName, _ := v.nickNameEntry.GetText()
-	conditionsAreValid := len(nickName) != 0
+	conditionsAreValid := v.isReadyToJoinRoom && len(nickName) != 0
 
 	if v.nickNamesWithConflict.Has(nickName) {
 		conditionsAreValid = false

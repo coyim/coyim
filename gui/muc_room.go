@@ -82,17 +82,12 @@ func (a *account) newRoomView(ident jid.Bare, u *gtkUI) *roomView {
 
 	view.log = a.log.WithField("room", ident)
 
-	view.initUIBuilder()
+	view.initBuilderAndSignals()
 	view.initDefaults()
+	view.initRoomLobby()
+	view.initRoomMain()
 
-	toolbar := view.newRoomViewToolbar()
-	view.toolbar = toolbar
-
-	roster := view.newRoomViewRoster()
-	view.roster = roster
-
-	conversation := view.newRoomViewConversation()
-	view.conv = conversation
+	view.requestRoomInfo()
 
 	return view
 }
@@ -129,7 +124,6 @@ func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, returnTo func()) {
 		// functionality that it's useful only in the lobby view of the room.
 		// For that reason is why we ignore the "returnTo" value.
 		view.returnTo = nil
-
 		view.switchToMainView()
 	} else {
 		view.returnTo = returnTo
@@ -148,7 +142,7 @@ func (v *roomView) isOpen() bool {
 	return v.opened
 }
 
-func (v *roomView) initUIBuilder() {
+func (v *roomView) initBuilderAndSignals() {
 	v.builder = newBuilder("MUCRoomWindow")
 
 	panicOnDevError(v.builder.bindObjects(v))
@@ -162,7 +156,6 @@ func (v *roomView) initUIBuilder() {
 
 func (v *roomView) initDefaults() {
 	v.setTitle(v.identity.String())
-	v.requestRoomInfo()
 }
 
 func (v *roomView) requestRoomInfo() {
@@ -237,10 +230,6 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 }
 
 func (v *roomView) switchToLobbyView() {
-	if v.lobby == nil {
-		v.lobby = v.newRoomViewLobby(v.account, v.identity, v.content, v.onJoined, v.onJoinCancel)
-	}
-
 	if v.shouldReturnOnCancel() {
 		v.lobby.swtichToReturnOnCancel()
 	} else {
@@ -255,9 +244,6 @@ func (v *roomView) shouldReturnOnCancel() bool {
 }
 
 func (v *roomView) switchToMainView() {
-	if v.main == nil {
-		v.main = newRoomMainView(v.account, v.identity, v.conv.view, v.roster.view, v.toolbar.view, v.content)
-	}
 	v.main.show()
 }
 

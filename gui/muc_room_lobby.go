@@ -44,6 +44,10 @@ type roomViewLobby struct {
 	onCancel func()
 }
 
+func (v *roomView) initRoomLobby() {
+	v.lobby = v.newRoomViewLobby(v.account, v.identity, v.content, v.onJoined, v.onJoinCancel)
+}
+
 func (v *roomView) newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
 	e := &roomViewLobby{
 		ident:                 rid,

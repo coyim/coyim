@@ -22,6 +22,21 @@ type roomViewMain struct {
 	parent gtki.Box
 }
 
+func (v *roomView) initRoomMain() {
+	v.toolbar = v.newRoomViewToolbar()
+	v.roster = v.newRoomViewRoster()
+	v.conv = v.newRoomViewConversation()
+
+	v.main = newRoomMainView(
+		v.account,
+		v.identity,
+		v.conv.view,
+		v.roster.view,
+		v.toolbar.view,
+		v.content,
+	)
+}
+
 func newRoomMainView(a *account, rid jid.Bare, main, panel, top, parent gtki.Box) *roomViewMain {
 	m := &roomViewMain{
 		ident:  rid,

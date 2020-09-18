@@ -21,17 +21,20 @@ func (a *account) newRoomModel(identity jid.Bare) *muc.Room {
 
 // leaveRoom MUST not be called from the UI thread
 func (a *account) leaveRoom(identity jid.Bare, nickname string, onSuccess func(), onError func(error)) {
-	okCh, erCh := a.session.LeaveRoom(identity, nickname)
+	resultChannel, errorChannel := a.session.LeaveRoom(identity, nickname)
 
 	go func() {
 		select {
-		case <-okCh:
+		case <-resultChannel:
 			//TODO: We SHOULD use a rlock before deleting
 			//WIP: Refactor this
 			delete(a.rooms, identity.String())
 			onSuccess()
-		case err := <-erCh:
-			onError(err)
+		case err := <-errorChannel:
+			a.log.WithError(err).Error("An error occurred while trying to leave the room.")
+			if onError != nil {
+				onError(err)
+			}
 		}
 	}()
 }

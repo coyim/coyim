@@ -128,9 +128,9 @@ func (a *account) createRoom(ident jid.Bare, onSuccess func(), onError func(erro
 	}()
 }
 
-func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, successChannel chan bool, errorChannel chan error) {
-	sc := make(chan bool, 1)
-	er := make(chan error, 1)
+func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, errorChannel chan error) {
+	sc := make(chan bool)
+	er := make(chan error)
 
 	v.cancel = make(chan bool, 1)
 

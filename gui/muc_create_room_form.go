@@ -44,9 +44,8 @@ func (v *createMUCRoom) initForm() {
 	f.ac = v.u.createConnectedAccountsComponent(f.account, f, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
 
 	f.createRoomIfDoesntExist = func(a *account, ident jid.Bare) {
-		successResult := make(chan bool)
 		errResult := make(chan error)
-		v.createRoomIfDoesntExist(a, ident, successResult, errResult)
+		v.createRoomIfDoesntExist(a, ident, errResult)
 		select {
 		case err := <-errResult:
 			switch err {

@@ -148,6 +148,10 @@ func (v *roomView) initUIBuilder() {
 
 func (v *roomView) initDefaults() {
 	v.setTitle(v.identity.String())
+	v.requestRoomInfo()
+}
+
+func (v *roomView) requestRoomInfo() {
 	v.showSpinner()
 	go func() {
 		rl := make(chan *muc.RoomListing)

@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"sync"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	log "github.com/sirupsen/logrus"
@@ -33,11 +35,14 @@ type roomView struct {
 	notification gtki.InfoBar
 	errorNotif   *errorNotification
 
-	//TODO: It's neccessary handle events signals in a better way.
-	//Maybe we should take a look to the session event management.
-	onSelfJoinedReceived     []func()
-	onOccupantJoinedReceived []func()
-	roomInfoReceived         []func(*muc.RoomListing)
+	// TODO: It's neccessary handle events signals in a better way.
+	// Maybe we can take inspiration from the session event management.
+	selfJoinedReceived     []func()
+	occupantReceived       []func()
+	roomInfoReceived       []func(*muc.RoomListing)
+	selfJoinedReceivedLock sync.RWMutex
+	occupantReceivedLock   sync.RWMutex
+	roomInfoReceivedLock   sync.RWMutex
 
 	main    *roomViewMain
 	toolbar *roomViewToolbar
@@ -47,14 +52,23 @@ type roomView struct {
 }
 
 func (v *roomView) onSelfJoinReceived(f func()) {
-	v.onSelfJoinedReceived = append(v.onSelfJoinedReceived, f)
+	v.selfJoinedReceivedLock.Lock()
+	defer v.selfJoinedReceivedLock.Unlock()
+
+	v.selfJoinedReceived = append(v.selfJoinedReceived, f)
 }
 
 func (v *roomView) onOccupantReceived(f func()) {
-	v.onOccupantJoinedReceived = append(v.onOccupantJoinedReceived, f)
+	v.occupantReceivedLock.Lock()
+	defer v.occupantReceivedLock.Unlock()
+
+	v.occupantReceived = append(v.occupantReceived, f)
 }
 
 func (v *roomView) onRoomInfoReceived(f func(*muc.RoomListing)) {
+	v.roomInfoReceivedLock.Lock()
+	defer v.roomInfoReceivedLock.Unlock()
+
 	v.roomInfoReceived = append(v.roomInfoReceived, f)
 }
 
@@ -153,15 +167,23 @@ func (v *roomView) initDefaults() {
 
 func (v *roomView) requestRoomInfo() {
 	v.showSpinner()
+
 	go func() {
 		rl := make(chan *muc.RoomListing)
 		go v.account.session.GetRoom(v.identity, rl)
 		v.info = <-rl
-		doInUIThread(v.hideSpinner)
-		for _, f := range v.roomInfoReceived {
-			f(v.info)
-		}
+		v.onRequestRoomInfoFinish()
 	}()
+}
+
+func (v *roomView) onRequestRoomInfoFinish() {
+	doInUIThread(v.hideSpinner)
+
+	v.roomInfoReceivedLock.RLock()
+	defer v.roomInfoReceivedLock.RUnlock()
+	for _, f := range v.roomInfoReceived {
+		f(v.info)
+	}
 }
 
 func (v *roomView) onDestroyWindow() {
@@ -302,7 +324,10 @@ func (v *roomView) onRoomOccupantJoinedReceived(occupant string) {
 	}
 
 	v.assignCurrentOccupant(v.identity.WithResource(jid.NewResource(occupant)).String())
-	for _, f := range v.onSelfJoinedReceived {
+
+	v.selfJoinedReceivedLock.RLock()
+	defer v.selfJoinedReceivedLock.RUnlock()
+	for _, f := range v.selfJoinedReceived {
 		f()
 	}
 }
@@ -320,8 +345,9 @@ func (v *roomView) assignCurrentOccupant(occupantIdentity string) {
 
 // onRoomOccupantUpdateReceived MUST be called from the UI thread
 func (v *roomView) onRoomOccupantUpdateReceived() {
-	// TODO[OB] - This is incorrect
-	for _, f := range v.onOccupantJoinedReceived {
+	v.occupantReceivedLock.RLock()
+	defer v.occupantReceivedLock.RUnlock()
+	for _, f := range v.occupantReceived {
 		f()
 	}
 }

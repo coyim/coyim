@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"sync"
-
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	log "github.com/sirupsen/logrus"
@@ -35,41 +33,13 @@ type roomView struct {
 	notification gtki.InfoBar
 	errorNotif   *errorNotification
 
-	// TODO: It's neccessary handle events signals in a better way.
-	// Maybe we can take inspiration from the session event management.
-	selfJoinedReceived     []func()
-	occupantReceived       []func()
-	roomInfoReceived       []func(*muc.RoomListing)
-	selfJoinedReceivedLock sync.RWMutex
-	occupantReceivedLock   sync.RWMutex
-	roomInfoReceivedLock   sync.RWMutex
+	subscribers *roomViewSubscribers
 
 	main    *roomViewMain
 	toolbar *roomViewToolbar
 	roster  *roomViewRoster
 	conv    *roomViewConversation
 	lobby   *roomViewLobby
-}
-
-func (v *roomView) onSelfJoinReceived(f func()) {
-	v.selfJoinedReceivedLock.Lock()
-	defer v.selfJoinedReceivedLock.Unlock()
-
-	v.selfJoinedReceived = append(v.selfJoinedReceived, f)
-}
-
-func (v *roomView) onOccupantReceived(f func()) {
-	v.occupantReceivedLock.Lock()
-	defer v.occupantReceivedLock.Unlock()
-
-	v.occupantReceived = append(v.occupantReceived, f)
-}
-
-func (v *roomView) onRoomInfoReceived(f func(*muc.RoomListing)) {
-	v.roomInfoReceivedLock.Lock()
-	defer v.roomInfoReceivedLock.Unlock()
-
-	v.roomInfoReceived = append(v.roomInfoReceived, f)
 }
 
 func (a *account) newRoomView(ident jid.Bare, u *gtkUI) *roomView {
@@ -81,6 +51,7 @@ func (a *account) newRoomView(ident jid.Bare, u *gtkUI) *roomView {
 	}
 
 	view.log = a.log.WithField("room", ident)
+	view.subscribers = newRoomViewSubscribers(view.identity, view.log)
 
 	view.initBuilderAndSignals()
 	view.initDefaults()
@@ -171,12 +142,7 @@ func (v *roomView) requestRoomInfo() {
 
 func (v *roomView) onRequestRoomInfoFinish() {
 	doInUIThread(v.hideSpinner)
-
-	v.roomInfoReceivedLock.RLock()
-	defer v.roomInfoReceivedLock.RUnlock()
-	for _, f := range v.roomInfoReceived {
-		f(v.info)
-	}
+	v.publish(roomInfoReceived)
 }
 
 func (v *roomView) onDestroyWindow() {
@@ -230,6 +196,8 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 }
 
 func (v *roomView) switchToLobbyView() {
+	v.publish(previousToSwitchToLobby)
+
 	if v.shouldReturnOnCancel() {
 		v.lobby.swtichToReturnOnCancel()
 	} else {
@@ -244,6 +212,7 @@ func (v *roomView) shouldReturnOnCancel() bool {
 }
 
 func (v *roomView) switchToMainView() {
+	v.publish(previousToSwitchToMain)
 	v.main.show()
 }
 
@@ -311,11 +280,7 @@ func (v *roomView) onRoomOccupantJoinedReceived(occupant string) {
 
 	v.assignCurrentOccupant(v.identity.WithResource(jid.NewResource(occupant)).String())
 
-	v.selfJoinedReceivedLock.RLock()
-	defer v.selfJoinedReceivedLock.RUnlock()
-	for _, f := range v.selfJoinedReceived {
-		f()
-	}
+	v.publish(occupantSelfJoined)
 }
 
 func (v *roomView) assignCurrentOccupant(occupantIdentity string) {
@@ -331,34 +296,30 @@ func (v *roomView) assignCurrentOccupant(occupantIdentity string) {
 
 // onRoomOccupantUpdateReceived MUST be called from the UI thread
 func (v *roomView) onRoomOccupantUpdateReceived() {
-	v.occupantReceivedLock.RLock()
-	defer v.occupantReceivedLock.RUnlock()
-	for _, f := range v.occupantReceived {
-		f()
-	}
+	v.publish(occupantUpdated)
 }
 
 // onRoomOccupantLeftTheRoomReceived MUST be called from the UI thread
 func (v *roomView) onRoomOccupantLeftTheRoomReceived(nickname string) {
-	if v.conv != nil {
-		v.conv.displayNotificationWhenOccupantLeftTheRoom(nickname)
-	}
-	v.roster.updateRosterModel()
+	v.publishWithInfo(occupantLeft, roomViewEventInfo{
+		nickname: nickname,
+	})
 }
 
 // someoneJoinedTheRoom MUST be called from the UI thread
 func (v *roomView) someoneJoinedTheRoom(nickname string) {
-	if v.conv != nil {
-		v.conv.displayNotificationWhenOccupantJoinedRoom(nickname)
-	}
-	v.roster.updateRosterModel()
+	v.publishWithInfo(occupantJoined, roomViewEventInfo{
+		nickname: nickname,
+	})
 }
 
 // onRoomMessageToTheRoomReceived MUST be called from the UI thread
 func (v *roomView) onRoomMessageToTheRoomReceived(nickname, subject, message string) {
-	if v.conv != nil {
-		v.conv.displayNewLiveMessage(nickname, subject, message)
-	}
+	v.publishWithInfo(messageReceived, roomViewEventInfo{
+		nickname,
+		subject,
+		message,
+	})
 }
 
 // loggingIsEnabled MUST not be called from the UI thread

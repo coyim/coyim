@@ -76,17 +76,21 @@ func (v *roomView) newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, o
 
 	e.content.SetCenterWidget(e.mainBox)
 
-	v.onRoomInfoReceived(func(roomInfo *muc.RoomListing) {
-		if roomInfo != nil {
+	v.subscribe("lobby", occupantSelfJoined, e.onRoomOccupantJoinedReceived)
+	v.subscribe("lobby", roomInfoReceived, func(roomViewEventInfo) {
+		if v.info != nil {
 			doInUIThread(func() {
-				e.showRoomWarnings(roomInfo)
+				e.showRoomWarnings(v.info)
 			})
 		}
 		e.isReadyToJoinRoom = true
 		doInUIThread(e.enableJoinIfConditionsAreMet)
 	})
 
-	v.onSelfJoinReceived(e.onRoomOccupantJoinedReceived)
+	v.subscribe("lobby", previousToSwitchToMain, func(roomViewEventInfo) {
+		v.unsubscribe("lobby", occupantSelfJoined)
+		v.unsubscribe("lobby", roomInfoReceived)
+	})
 
 	return e
 }
@@ -327,7 +331,7 @@ func (v *roomViewLobby) finishJoinRequest(err error) {
 	}
 }
 
-func (v *roomViewLobby) onRoomOccupantJoinedReceived() {
+func (v *roomViewLobby) onRoomOccupantJoinedReceived(roomViewEventInfo) {
 	v.finishJoinRequest(nil)
 }
 

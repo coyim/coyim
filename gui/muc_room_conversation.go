@@ -18,6 +18,34 @@ type roomViewConversation struct {
 	log  coylog.Logger
 }
 
+func (v *roomView) newRoomViewConversation() *roomViewConversation {
+	c := &roomViewConversation{}
+
+	builder := newBuilder("MUCRoomConversation")
+	panicOnDevError(builder.bindObjects(c))
+
+	t := c.getStyleTags(v.u)
+	c.roomChatTextView.SetBuffer(t.createTextBuffer())
+
+	v.subscribe("conversation", occupantLeft, func(ei roomViewEventInfo) {
+		c.displayNotificationWhenOccupantLeftTheRoom(ei.whichNickname())
+	})
+
+	v.subscribe("conversation", occupantJoined, func(ei roomViewEventInfo) {
+		c.displayNotificationWhenOccupantJoinedRoom(ei.whichNickname())
+	})
+
+	v.subscribe("conversation", messageReceived, func(ei roomViewEventInfo) {
+		c.displayNewLiveMessage(
+			ei.whichNickname(),
+			ei.whichSubject(),
+			ei.whichMessage(),
+		)
+	})
+
+	return c
+}
+
 type mucStyleTags struct {
 	table gtki.TextTagTable
 }
@@ -84,18 +112,6 @@ func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 func (t *mucStyleTags) createTextBuffer() gtki.TextBuffer {
 	buf, _ := g.gtk.TextBufferNew(t.table)
 	return buf
-}
-
-func (v *roomView) newRoomViewConversation() *roomViewConversation {
-	c := &roomViewConversation{}
-
-	builder := newBuilder("MUCRoomConversation")
-	panicOnDevError(builder.bindObjects(c))
-
-	t := c.getStyleTags(v.u)
-	c.roomChatTextView.SetBuffer(t.createTextBuffer())
-
-	return c
 }
 
 func (v *roomViewConversation) addNewLine() {

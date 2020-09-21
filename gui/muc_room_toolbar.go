@@ -10,7 +10,7 @@ type roomViewToolbar struct {
 	leaveRoomButton      gtki.Button `gtk-widget:"leaveRoomButton"`
 }
 
-func (r *roomView) newRoomViewToolbar() *roomViewToolbar {
+func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 	t := &roomViewToolbar{}
 
 	builder := newBuilder("MUCRoomToolbar")
@@ -19,8 +19,8 @@ func (r *roomView) newRoomViewToolbar() *roomViewToolbar {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_leave_room": func() {
 			t.leaveRoomButton.SetSensitive(false)
-			r.tryLeaveRoom(nil, func() {
-				if r.isOpen() {
+			v.tryLeaveRoom(nil, func() {
+				if v.isOpen() {
 					doInUIThread(func() {
 						t.leaveRoomButton.SetSensitive(true)
 					})
@@ -29,7 +29,7 @@ func (r *roomView) newRoomViewToolbar() *roomViewToolbar {
 		},
 	})
 
-	r.onSelfJoinReceived(func() {
+	v.subscribe("toolbar", occupantSelfJoined, func(roomViewEventInfo) {
 		t.leaveRoomButton.SetSensitive(true)
 	})
 

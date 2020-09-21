@@ -38,10 +38,16 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 
 	r.tree.SetModel(r.model)
 
-	v.onSelfJoinReceived(r.updateRosterModel)
-	v.onOccupantReceived(r.updateRosterModel)
+	v.subscribe("roster", occupantSelfJoined, r.onUpdateRoster)
+	v.subscribe("roster", occupantJoined, r.onUpdateRoster)
+	v.subscribe("roster", occupantUpdated, r.onUpdateRoster)
+	v.subscribe("roster", occupantLeft, r.onUpdateRoster)
 
 	return r
+}
+
+func (v *roomViewRoster) onUpdateRoster(roomViewEventInfo) {
+	v.updateRosterModel()
 }
 
 func (v *roomViewRoster) updateRosterModel() {

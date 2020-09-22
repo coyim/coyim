@@ -23,10 +23,6 @@ type roomViewMain struct {
 }
 
 func (v *roomView) initRoomMain() {
-	v.toolbar = v.newRoomViewToolbar()
-	v.roster = v.newRoomViewRoster()
-	v.conv = v.newRoomViewConversation()
-
 	v.main = newRoomMainView(
 		v.account,
 		v.identity,

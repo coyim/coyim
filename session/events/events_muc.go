@@ -5,12 +5,6 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// MUC is a marker interface that is used to differentiate MUC events
-type MUC interface {
-	mucEventMarkerFunction()
-	WhichRoom() jid.Bare
-}
-
 // MUCError contains information about a MUC-related
 // error event
 type MUCError struct {
@@ -19,18 +13,17 @@ type MUCError struct {
 	Nickname  string
 }
 
-func (MUCError) mucEventMarkerFunction() {}
-
 // WhichRoom implements the MUC interface
 func (m MUCError) WhichRoom() jid.Bare { return m.Room }
+
+// WhichNickname returns the nickname
+func (m MUCError) WhichNickname() string { return m.Nickname }
 
 // MUCRoomCreated contains event information about
 // the created room
 type MUCRoomCreated struct {
 	Room jid.Bare
 }
-
-func (MUCRoomCreated) mucEventMarkerFunction() {}
 
 // WhichRoom implements the MUC interface
 func (m MUCRoomCreated) WhichRoom() jid.Bare { return m.Room }
@@ -41,8 +34,6 @@ type MUCRoomRenamed struct {
 	Room        jid.Bare
 	NewNickname string
 }
-
-func (MUCRoomRenamed) mucEventMarkerFunction() {}
 
 // WhichRoom implements the MUC interface
 func (m MUCRoomRenamed) WhichRoom() jid.Bare { return m.Room }
@@ -55,8 +46,6 @@ type MUCOccupant struct {
 	RealJid  jid.Full
 }
 
-func (MUCOccupant) mucEventMarkerFunction() {}
-
 // WhichRoom implements the MUC interface
 func (m MUCOccupant) WhichRoom() jid.Bare { return m.Room }
 
@@ -68,8 +57,6 @@ type MUCOccupantUpdated struct {
 	Role        muc.Role
 }
 
-func (MUCOccupantUpdated) mucEventMarkerFunction() {}
-
 // WhichRoom implements the MUC interface
 func (m MUCOccupantUpdated) WhichRoom() jid.Bare { return m.Room }
 
@@ -80,10 +67,17 @@ type MUCOccupantJoined struct {
 	Status string
 }
 
-func (MUCOccupantJoined) mucEventMarkerFunction() {}
-
 // WhichRoom implements the MUC interface
 func (m MUCOccupantJoined) WhichRoom() jid.Bare { return m.Room }
+
+// MUCSelfOccupantJoined contains information about
+// the occupant that has joined to room
+type MUCSelfOccupantJoined struct {
+	MUCOccupantJoined
+}
+
+// WhichRoom implements the MUC interface
+func (m MUCSelfOccupantJoined) WhichRoom() jid.Bare { return m.Room }
 
 // MUCOccupantLeft contains information about
 // the occupant that has left the room
@@ -92,8 +86,6 @@ type MUCOccupantLeft struct {
 	Affiliation muc.Affiliation
 	Role        muc.Role
 }
-
-func (MUCOccupantLeft) mucEventMarkerFunction() {}
 
 // WhichRoom implements the MUC interface
 func (m MUCOccupantLeft) WhichRoom() jid.Bare { return m.Room }
@@ -107,8 +99,6 @@ type MUCMessageReceived struct {
 	Message  string
 }
 
-func (MUCMessageReceived) mucEventMarkerFunction() {}
-
 // WhichRoom implements the MUC interface
 func (m MUCMessageReceived) WhichRoom() jid.Bare { return m.Room }
 
@@ -117,8 +107,6 @@ type MUCLoggingEnabled struct {
 	Room jid.Bare
 }
 
-func (MUCLoggingEnabled) mucEventMarkerFunction() {}
-
 // WhichRoom implements the MUC interface
 func (m MUCLoggingEnabled) WhichRoom() jid.Bare { return m.Room }
 
@@ -126,8 +114,6 @@ func (m MUCLoggingEnabled) WhichRoom() jid.Bare { return m.Room }
 type MUCLoggingDisabled struct {
 	Room jid.Bare
 }
-
-func (MUCLoggingDisabled) mucEventMarkerFunction() {}
 
 // WhichRoom implements the MUC interface
 func (m MUCLoggingDisabled) WhichRoom() jid.Bare { return m.Room }

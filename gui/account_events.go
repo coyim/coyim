@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -44,9 +45,9 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
 		doInUIThread(func() {
 			u.handleSMPEvent(t, a)
 		})
-	case events.MUC:
+	case muc.MUC:
 		doInUIThread(func() {
-			u.handleOneMUCEvent(t, a)
+			u.handleMUCEvent(t, a)
 		})
 	default:
 		a.log.WithField("event", t).Warn("unsupported event")

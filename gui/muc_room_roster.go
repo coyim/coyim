@@ -37,6 +37,7 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	}
 
 	r.tree.SetModel(r.model)
+	r.draw()
 
 	v.subscribe("roster", occupantSelfJoined, r.onUpdateRoster)
 	v.subscribe("roster", occupantJoined, r.onUpdateRoster)
@@ -47,17 +48,20 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 }
 
 func (v *roomViewRoster) onUpdateRoster(roomViewEventInfo) {
-	v.updateRosterModel()
+	v.redraw()
 }
 
-func (v *roomViewRoster) updateRosterModel() {
-	v.model.Clear()
-
+func (v *roomViewRoster) draw() {
 	for _, o := range v.r.AllOccupants() {
 		v.addOccupantToRoster(o)
 	}
 
 	v.tree.ExpandAll()
+}
+
+func (v *roomViewRoster) redraw() {
+	v.model.Clear()
+	v.draw()
 }
 
 func (v *roomViewRoster) addOccupantToRoster(o *muc.Occupant) {

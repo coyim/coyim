@@ -5,13 +5,17 @@ import (
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
+	log "github.com/sirupsen/logrus"
 )
 
-func (s *session) JoinRoom(rj jid.Bare, nickName string) error {
-	to := rj.WithResource(jid.NewResource(nickName))
+func (s *session) JoinRoom(ident jid.Bare, nickname string) error {
+	to := ident.WithResource(jid.NewResource(nickname))
 	err := s.conn.SendMUCPresence(to.String())
 	if err != nil {
-		s.log.WithError(err).Warn("when trying to enter room")
+		s.log.WithFields(log.Fields{
+			"room":     ident,
+			"nickname": nickname,
+		}).WithError(err).Error("An error occurred trying join the room")
 		return err
 	}
 	return nil

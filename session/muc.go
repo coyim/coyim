@@ -7,6 +7,7 @@ import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/data"
+	xi "github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
@@ -73,26 +74,65 @@ const (
 )
 
 type mucManager struct {
-	roomManager *muc.RoomManager
-
 	log          coylog.Logger
+	conn         xi.Conn
 	publishEvent func(ev interface{})
+	roomManager  *muc.RoomManager
+	sync.Locker
 }
 
-func newMUCManager(log coylog.Logger, publishEvent func(ev interface{})) *mucManager {
+func newMUCManager(log coylog.Logger, conn xi.Conn, publishEvent func(ev interface{})) *mucManager {
 	m := &mucManager{
-		roomManager:  muc.NewRoomManager(),
 		log:          log,
+		conn:         conn,
 		publishEvent: publishEvent,
+		roomManager:  muc.NewRoomManager(),
 	}
 
 	return m
 }
 
+// TODO: Replace original "JoinRoom" with this method to get a
+// proper implementation of the join room functionality
+func (m *mucManager) joinRoom(ident jid.Bare, nickname string) (*muc.Room, error) {
+	m.Lock()
+	defer m.Unlock()
+
+	room, exists := m.roomManager.GetRoom(ident)
+	if exists {
+		m.log.WithFields(log.Fields{
+			"room":     ident,
+			"nickname": nickname,
+		}).Debug("joinRoom(): trying to join a room already joined")
+		return room, nil
+	}
+
+	to := ident.WithResource(jid.NewResource(nickname))
+	err := m.conn.SendMUCPresence(to.String())
+	if err != nil {
+		m.log.WithFields(log.Fields{
+			"room":     ident,
+			"nickname": nickname,
+		}).WithError(err).Error("An error occurred trying join the room")
+		return nil, err
+	}
+
+	room = muc.NewRoom(ident)
+	m.roomManager.AddRoom(room)
+
+	return room, nil
+}
+
 // NewRoom creates a new muc room and add it to the room manager
-func (s *session) NewRoom(identity jid.Bare) *muc.Room {
-	room := muc.NewRoom(identity)
+func (s *session) NewRoom(ident jid.Bare) *muc.Room {
+	room, exists := s.muc.roomManager.GetRoom(ident)
+	if exists {
+		return room
+	}
+
+	room = muc.NewRoom(ident)
 	s.muc.roomManager.AddRoom(room)
+
 	return room
 }
 
@@ -102,6 +142,12 @@ func isMUCPresence(stanza *data.ClientPresence) bool {
 
 func isMUCUserPresence(stanza *data.ClientPresence) bool {
 	return stanza.MUCUser != nil
+}
+
+func getOccupantBasedOnItem(from jid.Full, item *data.MUCUserItem) mucRoomOccupant {
+	affiliation, role := getAffiliationAndRoleBasedOnItem(item)
+	realJid := getRealJidBasedOnItem(item)
+	return newMUCRoomOccupant(from.Resource(), affiliation, role, realJid)
 }
 
 func getAffiliationAndRoleBasedOnItem(item *data.MUCUserItem) (string, string) {
@@ -118,6 +164,16 @@ func getAffiliationAndRoleBasedOnItem(item *data.MUCUserItem) (string, string) {
 	return affiliation, role
 }
 
+func getRealJidBasedOnItem(item *data.MUCUserItem) jid.Full {
+	var realJid jid.Full
+	if item != nil {
+		if len(item.Jid) > 0 {
+			realJid = jid.ParseFull(item.Jid)
+		}
+	}
+	return realJid
+}
+
 func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	from := jid.ParseFull(stanza.From)
 
@@ -126,26 +182,23 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 		return
 	}
 
-	occupant := from.Resource()
 	room := from.Bare()
+	occupant := getOccupantBasedOnItem(from, stanza.MUCUser.Item)
 	status := mucUserStatuses(stanza.MUCUser.Status)
 
-	affiliation, role := getAffiliationAndRoleBasedOnItem(stanza.MUCUser.Item)
-
 	isOwnPresence := status.contains(MUCStatusSelfPresence)
-	if !isOwnPresence && stanza.MUCUser.Item.Jid == from.String() {
+	if !isOwnPresence && occupant.sameFrom(from) {
 		isOwnPresence = true
 	}
 
 	switch stanza.Type {
 	case "unavailable":
-		m.handleMUCUnavailablePresence(from, room, occupant, affiliation, role, status)
+		m.handleMUCUnavailablePresence(from, room, occupant, status)
 	case "":
 		if isOwnPresence {
-			ident := jid.ParseFull(stanza.MUCUser.Item.Jid)
-			m.selfOccupantUpdated(from, room, occupant, ident, affiliation, role, status)
+			m.selfOccupantUpdate(from, room, occupant, status)
 		} else {
-			m.occupantUpdate(from, room, occupant, affiliation, role)
+			m.occupantUpdate(from, room, occupant)
 		}
 
 		if status.contains(MUCStatusNicknameAssigned) {
@@ -154,18 +207,44 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 	}
 }
 
-func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string, status mucUserStatuses) {
+// selfOccupantUpdate can happen several times - every time a status code update is
+// changed, or role or affiliation is updated, this can lead to the method being called.
+// For now, it will generate a event about joining, but this should be cleaned up and fixed
+func (m *mucManager) selfOccupantUpdate(from jid.Full, room jid.Bare, occupant mucRoomOccupant, status mucUserStatuses) {
+	if m.selfOccupantNotInRoom(room, occupant) {
+		m.roomSetJoined(room, true)
+		m.occupantUpdate(from, room, occupant)
+		m.publishSelfOccupantJoined(from, room, occupant)
+	}
+
+	if status.contains(MUCStatusRoomLoggingEnabled) {
+		m.publishLoggingEnabled(room)
+	}
+
+	if status.contains(MUCStatusRoomLoggingDisabled) {
+		m.publishLoggingDisabled(room)
+	}
+}
+
+func (m *mucManager) roomSetJoined(ident jid.Bare, v bool) {
+	room, exists := m.roomManager.GetRoom(ident)
+	if exists {
+		room.Joined = v
+	}
+}
+
+func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant mucRoomOccupant, status mucUserStatuses) {
 	switch {
 	case status.isEmpty():
 		m.log.WithFields(log.Fields{
 			"from":        from,
 			"room":        room,
 			"occupant":    occupant,
-			"affiliation": affiliation,
-			"role":        role,
+			"affiliation": occupant.affiliation,
+			"role":        occupant.role,
 		}).Debug("Parameters sent when someone leaves a room")
 
-		m.occupantLeft(from, room, occupant, affiliation, role)
+		m.occupantLeft(from, room, occupant)
 
 	case status.contains(MUCStatusBanned):
 		// We got banned
@@ -197,6 +276,14 @@ func (m *mucManager) handleMUCErrorPresence(from jid.Full, stanza *data.ClientPr
 	m.publishMUCError(from, stanza.Error)
 }
 
+func (m *mucManager) selfOccupantNotInRoom(ident jid.Bare, occupant mucRoomOccupant) bool {
+	room, exists := m.roomManager.GetRoom(ident)
+	if exists {
+		return !room.Roster().HasOccupant(occupant.nickname)
+	}
+	return false
+}
+
 type mucUserStatuses []data.MUCUserStatus
 
 // contains will return true if the list of MUC user statuses contains ALL of the given argument statuses
@@ -219,6 +306,7 @@ func (mus mucUserStatuses) containsAny(c ...int) bool {
 	return false
 }
 
+// containsOne will return true if the list of MUC user statuses contains ONLY the given argument status
 func (mus mucUserStatuses) containsOne(c int) bool {
 	for _, s := range mus {
 		code, _ := strconv.Atoi(s.Code)

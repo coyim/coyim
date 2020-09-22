@@ -1,17 +1,18 @@
 package muc
 
-import "github.com/coyim/coyim/xmpp/jid"
+import (
+	"github.com/coyim/coyim/xmpp/jid"
+)
 
 // Room represents a multi user chat room that a session is currently connected to.
 // It contains information about the room configuration itself, and the participants in the room
 type Room struct {
 	Identity jid.Bare
+	Subject  string
+	Joined   bool
 
-	Subject string
-
-	Opaque interface{}
-
-	roster *RoomRoster
+	roster      *RoomRoster
+	subscribers *roomSubscribers
 
 	// Configuration options:
 
@@ -38,12 +39,23 @@ type Room struct {
 // NewRoom returns a newly created room
 func NewRoom(ident jid.Bare) *Room {
 	return &Room{
-		Identity: ident,
-		roster:   newRoomRoster(),
+		Identity:    ident,
+		roster:      newRoomRoster(),
+		subscribers: newRoomSubscribers(),
 	}
 }
 
 // Roster returns the RoomRoster for this room
 func (r *Room) Roster() *RoomRoster {
 	return r.roster
+}
+
+// Subscribe subscribes the observer to room events
+func (r *Room) Subscribe(c chan<- MUC) {
+	r.subscribers.subscribe(c)
+}
+
+// Publish will publish a new room event
+func (r *Room) Publish(ev MUC) {
+	r.subscribers.publishEvent(ev)
 }

@@ -227,11 +227,18 @@ func (r *RoomRoster) UpdatePresence(from jid.WithResource, tp string, affiliatio
 	return false, false, nil
 }
 
-//GetOccupantByIdentity return an occupant if this exist in the roster, otherwise return nil and false
+// GetOccupantByIdentity return an occupant if this exist in the roster, otherwise return nil and false
 func (r *RoomRoster) GetOccupantByIdentity(identity string) (*Occupant, bool) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
 	o, ok := r.occupants[identity]
 	return o, ok
+}
+
+// HasOccupant returns a boolean indicating if the roster
+// has the given occuppant
+func (r *RoomRoster) HasOccupant(identity string) bool {
+	_, ok := r.GetOccupantByIdentity(identity)
+	return ok
 }

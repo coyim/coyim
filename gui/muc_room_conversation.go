@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/coyim/gotk3adapter/pangoi"
 )
@@ -28,19 +29,29 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c.roomChatTextView.SetBuffer(t.createTextBuffer())
 
 	v.subscribe("conversation", occupantLeft, func(ei roomViewEventInfo) {
-		c.displayNotificationWhenOccupantLeftTheRoom(ei.whichNickname())
+		c.displayNotificationWhenOccupantLeftTheRoom(ei.nickname)
 	})
 
 	v.subscribe("conversation", occupantJoined, func(ei roomViewEventInfo) {
-		c.displayNotificationWhenOccupantJoinedRoom(ei.whichNickname())
+		c.displayNotificationWhenOccupantJoinedRoom(ei.nickname)
 	})
 
 	v.subscribe("conversation", messageReceived, func(ei roomViewEventInfo) {
 		c.displayNewLiveMessage(
-			ei.whichNickname(),
-			ei.whichSubject(),
-			ei.whichMessage(),
+			ei.nickname,
+			ei.subject,
+			ei.message,
 		)
+	})
+
+	v.subscribe("conversation", loggingEnabled, func(roomViewEventInfo) {
+		msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
+		v.conv.displayWarningMessage(msg)
+	})
+
+	v.subscribe("conversation", loggingDisabled, func(roomViewEventInfo) {
+		msg := i18n.Local("This room is no longer publicly logged.")
+		v.conv.displayWarningMessage(msg)
 	})
 
 	return c

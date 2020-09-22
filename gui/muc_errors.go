@@ -2,11 +2,9 @@ package gui
 
 import (
 	"github.com/coyim/coyim/session/events"
-	"github.com/coyim/coyim/xmpp/jid"
-	log "github.com/sirupsen/logrus"
 )
 
-func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUCError, a *account) {
+func (a *account) handleMUCErrorEvent(ev events.MUCError, view *roomView) {
 	switch ev.ErrorType {
 	case events.MUCNotAuthorized:
 		a.log.Debug("MUC Error NotAuthorized received")
@@ -19,30 +17,12 @@ func (u *gtkUI) handleOneMUCErrorEvent(ev events.MUCError, a *account) {
 	case events.MUCNotAcceptable:
 		a.log.Debug("MUC Error MUCNotAcceptable received")
 	case events.MUCRegistrationRequired:
-		u.handleErrorMUCRegistrationRequiredEvent(ev.Room, ev.Nickname, a)
+		view.registrationRequired(ev.WhichNickname())
 	case events.MUCConflict:
-		u.handleErrorMUCNicknameConflictEvent(ev.Room, ev.Nickname, a)
+		view.nicknameConflict(ev.WhichNickname())
 	case events.MUCServiceUnavailable:
 		a.log.Debug("MUC Error MUCServiceUnavailable received")
 	default:
 		a.log.WithField("event", ev).Warn("unsupported muc error event")
 	}
-}
-
-func (u *gtkUI) handleErrorMUCNicknameConflictEvent(room jid.Bare, nickname string, a *account) {
-	a.log.WithFields(log.Fields{
-		"room":     room,
-		"nickname": nickname,
-	}).Error("Room nickname conflict event received")
-
-	a.onRoomNicknameConflict(room, nickname)
-}
-
-func (u *gtkUI) handleErrorMUCRegistrationRequiredEvent(room jid.Bare, nickname string, a *account) {
-	a.log.WithFields(log.Fields{
-		"room":     room,
-		"nickname": nickname,
-	}).Error("Room registration required event received")
-
-	a.onRoomRegistrationRequired(room, nickname)
 }

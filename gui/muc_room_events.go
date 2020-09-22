@@ -4,26 +4,77 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
 
+func (v *roomView) handleRoomEvent(ev muc.MUC) {
+	switch t := ev.(type) {
+	case events.MUCSelfOccupantJoined:
+		doInUIThread(func() {
+			v.publishWithInfo(occupantSelfJoined, roomViewEventInfo{
+				nickname: t.Nickname,
+			})
+		})
+
+	case events.MUCOccupantUpdated:
+		doInUIThread(func() {
+			v.publishWithInfo(occupantUpdated, roomViewEventInfo{
+				nickname: t.Nickname,
+			})
+		})
+
+	case events.MUCOccupantJoined:
+		doInUIThread(func() {
+			v.publishWithInfo(occupantJoined, roomViewEventInfo{
+				nickname: t.Nickname,
+			})
+		})
+
+	case events.MUCOccupantLeft:
+		doInUIThread(func() {
+			v.publishWithInfo(occupantLeft, roomViewEventInfo{
+				nickname: t.Nickname,
+			})
+		})
+
+	case events.MUCMessageReceived:
+		doInUIThread(func() {
+			v.publishWithInfo(messageReceived, roomViewEventInfo{
+				nickname: t.Nickname,
+				subject:  t.Subject,
+				message:  t.Message,
+			})
+		})
+
+	case events.MUCLoggingEnabled:
+		doInUIThread(func() {
+			v.publish(loggingEnabled)
+		})
+
+	case events.MUCLoggingDisabled:
+		doInUIThread(func() {
+			v.publish(loggingDisabled)
+		})
+
+	default:
+		v.log.WithField("event", t).Warn("Unsupported room event received")
+	}
+}
+
+func (v *roomView) observeRoomEvents() {
+	for ev := range v.events {
+		v.handleRoomEvent(ev)
+	}
+}
+
+// roomViewEventInfo contains information about any room view event
 type roomViewEventInfo struct {
 	nickname string
 	subject  string
 	message  string
-}
-
-func (e *roomViewEventInfo) whichNickname() string {
-	return e.nickname
-}
-
-func (e *roomViewEventInfo) whichSubject() string {
-	return e.subject
-}
-
-func (e *roomViewEventInfo) whichMessage() string {
-	return e.message
 }
 
 type roomViewEventType int
@@ -37,6 +88,12 @@ const (
 	roomInfoReceived
 
 	messageReceived
+
+	loggingEnabled
+	loggingDisabled
+
+	registrationRequired
+	nicknameConflict
 
 	previousToSwitchToLobby
 	previousToSwitchToMain

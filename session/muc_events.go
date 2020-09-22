@@ -1,12 +1,19 @@
 package session
 
 import (
-	"fmt"
-
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
+
+func (m *mucManager) publishRoomEvent(ident jid.Bare, ev muc.MUC) {
+	room, exists := m.roomManager.GetRoom(ident)
+	if !exists {
+		m.log.Error("Trying to publish an event in a not existing room")
+		return
+	}
+	room.Publish(ev)
+}
 
 func (m *mucManager) roomCreated(from jid.Full, room jid.Bare) {
 	ev := events.MUCRoomCreated{}
@@ -22,78 +29,62 @@ func (m *mucManager) roomRenamed(from jid.Full, room jid.Bare) {
 	m.publishEvent(ev)
 }
 
-func parseAffiliationAndReport(a string) muc.Affiliation {
-	aa, e := muc.AffiliationFromString(a)
-	if e != nil {
-		fmt.Printf("error when parsing affiliation: %v\n", e)
-	}
-	return aa
-}
-
-func parseRoleAndReport(a string) muc.Role {
-	aa, e := muc.RoleFromString(a)
-	if e != nil {
-		fmt.Printf("error when parsing role: %v\n", e)
-	}
-	return aa
-}
-
-func (m *mucManager) occupantLeft(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string) {
+func (m *mucManager) publishOccupantLeft(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
 	ev := events.MUCOccupantLeft{}
 	ev.Room = room
-	ev.Nickname = occupant.String()
+	ev.Nickname = occupant.nickname
 	ev.RealJid = from
-	ev.Affiliation = parseAffiliationAndReport(affiliation)
-	ev.Role = parseRoleAndReport(role)
+	ev.Affiliation = occupant.affiliation
+	ev.Role = occupant.role
 
-	m.publishEvent(ev)
+	m.publishRoomEvent(room, ev)
 }
 
-func (m *mucManager) occupantUpdate(from jid.Full, room jid.Bare, occupant jid.Resource, affiliation, role string) {
+func (m *mucManager) publishOccupantJoined(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
+	ev := events.MUCOccupantJoined{}
+	ev.Room = room
+	ev.Nickname = occupant.nickname
+	ev.RealJid = from
+	ev.Affiliation = occupant.affiliation
+	ev.Role = occupant.role
+
+	m.publishRoomEvent(room, ev)
+}
+
+func (m *mucManager) publishOccupantUpdate(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
 	ev := events.MUCOccupantUpdated{}
 	ev.Room = room
-	ev.Nickname = occupant.String()
+	ev.Nickname = occupant.nickname
 	ev.RealJid = from
-	ev.Affiliation = parseAffiliationAndReport(affiliation)
-	ev.Role = parseRoleAndReport(role)
+	ev.Affiliation = occupant.affiliation
+	ev.Role = occupant.role
 
-	m.publishEvent(ev)
+	m.publishRoomEvent(room, ev)
 }
 
 func (m *mucManager) publishLoggingEnabled(room jid.Bare) {
 	ev := events.MUCLoggingEnabled{}
 	ev.Room = room
 
-	m.publishEvent(ev)
+	m.publishRoomEvent(room, ev)
 }
 
 func (m *mucManager) publishLoggingDisabled(room jid.Bare) {
 	ev := events.MUCLoggingDisabled{}
 	ev.Room = room
 
-	m.publishEvent(ev)
+	m.publishRoomEvent(room, ev)
 }
 
-// selfOccupantUpdated can happen several times - every time a status code update is changed, or role or affiliation
-// is updated, this can lead to the method being called. For now, it will generate a event about joining, but this
-// should be cleaned up and fixed
-func (m *mucManager) selfOccupantUpdated(from jid.Full, room jid.Bare, occupant jid.Resource, ident jid.Full, affiliation, role string, status mucUserStatuses) {
-	ev := events.MUCOccupantJoined{}
+func (m *mucManager) publishSelfOccupantJoined(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
+	ev := events.MUCSelfOccupantJoined{}
 	ev.Room = room
-	ev.Nickname = occupant.String()
-	ev.RealJid = ident
-	ev.Affiliation = parseAffiliationAndReport(affiliation)
-	ev.Role = parseRoleAndReport(role)
+	ev.Nickname = occupant.nickname
+	ev.RealJid = occupant.realJid
+	ev.Affiliation = occupant.affiliation
+	ev.Role = occupant.role
 
-	m.publishEvent(ev)
-
-	if status.contains(MUCStatusRoomLoggingEnabled) {
-		m.publishLoggingEnabled(room)
-	}
-
-	if status.contains(MUCStatusRoomLoggingDisabled) {
-		m.publishLoggingDisabled(room)
-	}
+	m.publishRoomEvent(room, ev)
 }
 
 func (m *mucManager) messageReceived(room jid.Bare, nickname, subject, message string) {
@@ -103,5 +94,5 @@ func (m *mucManager) messageReceived(room jid.Bare, nickname, subject, message s
 	ev.Subject = subject
 	ev.Message = message
 
-	m.publishEvent(ev)
+	m.publishRoomEvent(room, ev)
 }

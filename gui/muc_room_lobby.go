@@ -76,15 +76,19 @@ func (v *roomView) newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, o
 
 	e.content.SetCenterWidget(e.mainBox)
 
-	v.subscribe("lobby", occupantSelfJoined, e.onRoomOccupantJoinedReceived)
+	e.withRoomInfo(v.info)
+
+	v.subscribe("lobby", occupantSelfJoined, e.occupantJoined)
 	v.subscribe("lobby", roomInfoReceived, func(roomViewEventInfo) {
-		if v.info != nil {
-			doInUIThread(func() {
-				e.showRoomWarnings(v.info)
-			})
-		}
-		e.isReadyToJoinRoom = true
-		doInUIThread(e.enableJoinIfConditionsAreMet)
+		e.withRoomInfo(v.info)
+	})
+
+	v.subscribe("lobby", nicknameConflict, func(ei roomViewEventInfo) {
+		e.nicknameConflict(v.identity, ei.nickname)
+	})
+
+	v.subscribe("lobby", registrationRequired, func(ei roomViewEventInfo) {
+		e.registrationRequired(v.identity, ei.nickname)
 	})
 
 	v.subscribe("lobby", previousToSwitchToMain, func(roomViewEventInfo) {
@@ -93,6 +97,14 @@ func (v *roomView) newRoomViewLobby(a *account, rid jid.Bare, parent gtki.Box, o
 	})
 
 	return e
+}
+
+func (v *roomViewLobby) withRoomInfo(info *muc.RoomListing) {
+	if info != nil {
+		v.showRoomWarnings(info)
+	}
+	v.isReadyToJoinRoom = true
+	v.enableJoinIfConditionsAreMet()
 }
 
 func (v *roomViewLobby) showRoomWarnings(roomInfo *muc.RoomListing) {
@@ -214,13 +226,13 @@ func (v *roomViewLobby) onJoin() {
 	v.showSpinner()
 	v.joinButton.SetSensitive(false)
 
-	nickName, _ := v.nickNameEntry.GetText()
+	nickname, _ := v.nickNameEntry.GetText()
 
 	v.onJoinChannel = make(chan bool)
 	v.onJoinErrorChannel = make(chan error)
 
-	go v.sendRoomEnterRequest(nickName)
-	go v.whenEnterRequestHasBeenResolved(nickName)
+	go v.sendRoomEnterRequest(nickname)
+	go v.whenEnterRequestHasBeenResolved(nickname)
 }
 
 var (
@@ -256,7 +268,7 @@ func (v *roomViewLobby) sendRoomEnterRequest(nickName string) {
 	}
 }
 
-func (v *roomViewLobby) whenEnterRequestHasBeenResolved(nickName string) {
+func (v *roomViewLobby) whenEnterRequestHasBeenResolved(nickname string) {
 	select {
 	case <-v.onJoinChannel:
 		doInUIThread(v.clearErrors)
@@ -264,7 +276,7 @@ func (v *roomViewLobby) whenEnterRequestHasBeenResolved(nickName string) {
 			v.onSuccess()
 		}
 	case err := <-v.onJoinErrorChannel:
-		l := v.log.WithField("nickname", nickName)
+		l := v.log.WithField("nickname", nickname)
 		l.WithError(err).Error("An error occurred while trying to join the room")
 		doInUIThread(func() {
 			v.onJoinFailed(err)
@@ -331,18 +343,18 @@ func (v *roomViewLobby) finishJoinRequest(err error) {
 	}
 }
 
-func (v *roomViewLobby) onRoomOccupantJoinedReceived(roomViewEventInfo) {
+func (v *roomViewLobby) occupantJoined(roomViewEventInfo) {
 	v.finishJoinRequest(nil)
 }
 
-func (v *roomViewLobby) onJoinErrorRecevied(room jid.Bare, nickname string) {
+func (v *roomViewLobby) joinFailed(room jid.Bare, nickname string) {
 	v.finishJoinRequest(newMUCRoomLobbyErr(room, nickname, errJoinRequestFailed))
 }
 
-func (v *roomViewLobby) onNicknameConflictReceived(room jid.Bare, nickname string) {
+func (v *roomViewLobby) nicknameConflict(room jid.Bare, nickname string) {
 	v.finishJoinRequest(newMUCRoomLobbyErr(room, nickname, errJoinNickNameConflict))
 }
 
-func (v *roomViewLobby) onRegistrationRequiredReceived(room jid.Bare, nickname string) {
+func (v *roomViewLobby) registrationRequired(room jid.Bare, nickname string) {
 	v.finishJoinRequest(newMUCRoomLobbyErr(room, nickname, errJoinOnlyMembers))
 }

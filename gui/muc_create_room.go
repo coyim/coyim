@@ -165,7 +165,7 @@ func (v *createMUCRoom) onCreateRoomFinished(ca *account, ident jid.Bare) {
 func (v *createMUCRoom) joinRoom(ca *account, ident jid.Bare) {
 	doInUIThread(func() {
 		v.destroy()
-		v.u.mucShowRoom(ca, ident, nil)
+		v.u.joinMultiUserChat(ca, ident, nil)
 	})
 }
 

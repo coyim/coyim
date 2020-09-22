@@ -1,9 +1,10 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -16,14 +17,17 @@ type roomView struct {
 	builder *builder
 
 	identity jid.Bare
-	room     *muc.Room
-	occupant *muc.Occupant
-	info     *muc.RoomListing
+	nickname string
+
+	room *muc.Room
+	info *muc.RoomListing
 
 	log      coylog.Logger
 	joined   bool
 	opened   bool
 	returnTo func()
+
+	events chan muc.MUC
 
 	window           gtki.Window  `gtk-widget:"roomWindow"`
 	content          gtki.Box     `gtk-widget:"boxMainView"`
@@ -42,75 +46,37 @@ type roomView struct {
 	lobby   *roomViewLobby
 }
 
-func (a *account) newRoomView(ident jid.Bare, u *gtkUI) *roomView {
+func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
 	view := &roomView{
 		u:        u,
 		account:  a,
 		identity: ident,
-		room:     a.newRoomModel(ident),
+		events:   make(chan muc.MUC),
 	}
 
+	view.room = a.newRoomModel(ident)
+	view.joined = view.room.Joined
 	view.log = a.log.WithField("room", ident)
+
+	view.room.Subscribe(view.events)
+	go view.observeRoomEvents()
+
 	view.subscribers = newRoomViewSubscribers(view.identity, view.log)
+
+	view.subscribe("room", occupantSelfJoined, func(ei roomViewEventInfo) {
+		view.nickname = ei.nickname
+	})
 
 	view.initBuilderAndSignals()
 	view.initDefaults()
-	view.initRoomLobby()
-	view.initRoomMain()
+
+	view.toolbar = view.newRoomViewToolbar()
+	view.roster = view.newRoomViewRoster()
+	view.conv = view.newRoomViewConversation()
 
 	view.requestRoomInfo()
 
 	return view
-}
-
-func (v *roomView) setTitle(r string) {
-	v.window.SetTitle(r)
-}
-
-func (u *gtkUI) getRoomOrCreateItIfNoExists(a *account, ident jid.Bare) (*roomView, bool) {
-	v, ok := a.getRoomView(ident.String())
-	if !ok {
-		v = a.newRoomView(ident, u)
-		a.addRoomView(v)
-	}
-	return v, ok
-}
-
-// mucShowRoom MUST be called always from the UI thread
-//
-// Also, when we want to show a chat room, having a "return to" function that
-// will be called from the lobby only when the user wants to "cancel" or "return"
-// might be useful in some scenarios like "returning to previous step".
-//
-// Please note that "returnTo" will be called from the UI thread too
-func (u *gtkUI) mucShowRoom(a *account, ident jid.Bare, returnTo func()) {
-	view, ok := a.getRoomView(ident.String())
-	if !ok {
-		view = a.newRoomView(ident, u)
-		a.addRoomView(view)
-	}
-
-	if view.joined {
-		// In the main view of the room, we don't have the "cancel"
-		// functionality that it's useful only in the lobby view of the room.
-		// For that reason is why we ignore the "returnTo" value.
-		view.returnTo = nil
-		view.switchToMainView()
-	} else {
-		view.returnTo = returnTo
-		view.switchToLobbyView()
-	}
-
-	if !ok {
-		view.window.Show()
-	} else {
-		view.window.Present()
-	}
-	view.opened = true
-}
-
-func (v *roomView) isOpen() bool {
-	return v.opened
 }
 
 func (v *roomView) initBuilderAndSignals() {
@@ -126,7 +92,7 @@ func (v *roomView) initBuilderAndSignals() {
 }
 
 func (v *roomView) initDefaults() {
-	v.setTitle(v.identity.String())
+	v.setTitle(fmt.Sprintf("%s [%s]", v.identity.String(), v.account.Account()))
 }
 
 func (v *roomView) requestRoomInfo() {
@@ -147,6 +113,35 @@ func (v *roomView) onRequestRoomInfoFinish() {
 
 func (v *roomView) onDestroyWindow() {
 	v.opened = false
+	v.account.removeRoomView(v.identity)
+}
+
+func (v *roomView) setTitle(t string) {
+	v.window.SetTitle(t)
+}
+
+func (v *roomView) isOpen() bool {
+	return v.opened
+}
+
+func (v *roomView) isJoined() bool {
+	return v.joined
+}
+
+func (v *roomView) present() {
+	if v.isOpen() {
+		v.window.Present()
+	}
+}
+
+func (v *roomView) show() {
+	if v.isOpen() {
+		v.log.Debug("show(): the room view is already opened")
+		return
+	}
+
+	v.opened = true
+	v.window.Show()
 }
 
 func (v *roomView) clearErrors() {
@@ -176,13 +171,12 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 	v.showSpinner()
 
 	go func() {
-		v.account.leaveRoom(v.identity, v.occupant.Nick, func() {
+		v.account.leaveRoom(v.identity, v.nickname, func() {
 			doInUIThread(v.window.Destroy)
 			if onSuccess != nil {
 				onSuccess()
 			}
 		}, func(err error) {
-			//TODO: Should we use some notification manager?
 			v.log.WithError(err).Error("An error occurred when trying to leave the room")
 			doInUIThread(func() {
 				v.hideSpinner()
@@ -198,6 +192,8 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 func (v *roomView) switchToLobbyView() {
 	v.publish(previousToSwitchToLobby)
 
+	v.initRoomLobby()
+
 	if v.shouldReturnOnCancel() {
 		v.lobby.swtichToReturnOnCancel()
 	} else {
@@ -207,12 +203,9 @@ func (v *roomView) switchToLobbyView() {
 	v.lobby.show()
 }
 
-func (v *roomView) shouldReturnOnCancel() bool {
-	return v.returnTo != nil
-}
-
 func (v *roomView) switchToMainView() {
 	v.publish(previousToSwitchToMain)
+	v.initRoomMain()
 	v.main.show()
 }
 
@@ -225,6 +218,10 @@ func (v *roomView) onJoined() {
 	})
 }
 
+func (v *roomView) shouldReturnOnCancel() bool {
+	return v.returnTo != nil
+}
+
 // TODO: if we have an active connection or request, we should
 // stop/close it here before destroying the window
 func (v *roomView) onJoinCancel() {
@@ -235,109 +232,16 @@ func (v *roomView) onJoinCancel() {
 	}
 }
 
-func (v *roomView) onNicknameConflictReceived(room jid.Bare, nickname string) {
-	if v.joined {
-		v.log.WithFields(log.Fields{
-			"room":     room,
-			"nickname": nickname,
-		}).Error("A nickname conflict event was received but the user is already in the room")
-		return
-	}
-
-	v.lobby.onNicknameConflictReceived(room, nickname)
-}
-
-func (v *roomView) onRegistrationRequiredReceived(room jid.Bare, nickname string) {
-	if v.joined {
-		v.log.WithFields(log.Fields{
-			"room":     room,
-			"nickname": nickname,
-		}).Error("A registration required event was received but the user is already in the room")
-		return
-	}
-
-	v.lobby.onRegistrationRequiredReceived(room, nickname)
-}
-
-func (v *roomView) onRoomOccupantErrorReceived(room jid.Bare, nickname string) {
-	if v.joined {
-		v.log.WithFields(log.Fields{
-			"room":     room,
-			"nickname": nickname,
-		}).Error("A joined event error was received but the user is already in the room")
-		return
-	}
-
-	v.lobby.onJoinErrorRecevied(room, nickname)
-}
-
-// onRoomOccupantJoinedReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantJoinedReceived(occupant string) {
-	if v.joined {
-		v.log.WithField("occupant", occupant).Error("A joined event was received but the user is already in the room")
-		return
-	}
-
-	v.assignCurrentOccupant(v.identity.WithResource(jid.NewResource(occupant)).String())
-
-	v.publish(occupantSelfJoined)
-}
-
-func (v *roomView) assignCurrentOccupant(occupantIdentity string) {
-	o, ok := v.roster.r.GetOccupantByIdentity(occupantIdentity)
-	if !ok {
-		//TODO: Show in an appropriate way the error message to the user. Maybe with some ´handler notification´ struct?
-		v.log.Error("An error occurred trying to get the current occupant")
-		return
-	}
-
-	v.occupant = o
-}
-
-// onRoomOccupantUpdateReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantUpdateReceived() {
-	v.publish(occupantUpdated)
-}
-
-// onRoomOccupantLeftTheRoomReceived MUST be called from the UI thread
-func (v *roomView) onRoomOccupantLeftTheRoomReceived(nickname string) {
-	v.publishWithInfo(occupantLeft, roomViewEventInfo{
+// nicknameConflict MUST not be called from the UI thread
+func (v *roomView) nicknameConflict(nickname string) {
+	v.publishWithInfo(nicknameConflict, roomViewEventInfo{
 		nickname: nickname,
 	})
 }
 
-// someoneJoinedTheRoom MUST be called from the UI thread
-func (v *roomView) someoneJoinedTheRoom(nickname string) {
-	v.publishWithInfo(occupantJoined, roomViewEventInfo{
+// registrationRequired MUST not be called from the UI thread
+func (v *roomView) registrationRequired(nickname string) {
+	v.publishWithInfo(registrationRequired, roomViewEventInfo{
 		nickname: nickname,
 	})
-}
-
-// onRoomMessageToTheRoomReceived MUST be called from the UI thread
-func (v *roomView) onRoomMessageToTheRoomReceived(nickname, subject, message string) {
-	v.publishWithInfo(messageReceived, roomViewEventInfo{
-		nickname,
-		subject,
-		message,
-	})
-}
-
-// loggingIsEnabled MUST not be called from the UI thread
-func (v *roomView) loggingIsEnabled() {
-	if v.conv != nil {
-		msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
-		doInUIThread(func() {
-			v.conv.displayWarningMessage(msg)
-		})
-	}
-}
-
-// loggingIsDisabled MUST not be called from the UI thread
-func (v *roomView) loggingIsDisabled() {
-	if v.conv != nil {
-		msg := i18n.Local("This room is no longer publicly logged.")
-		doInUIThread(func() {
-			v.conv.displayWarningMessage(msg)
-		})
-	}
 }

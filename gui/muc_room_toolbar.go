@@ -29,6 +29,7 @@ func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 		},
 	})
 
+	t.leaveRoomButton.SetSensitive(v.isJoined())
 	v.subscribe("toolbar", occupantSelfJoined, func(roomViewEventInfo) {
 		t.leaveRoomButton.SetSensitive(true)
 	})

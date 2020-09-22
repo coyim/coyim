@@ -170,7 +170,7 @@ func Factory(c *config.ApplicationConfig, cu *config.Account, df func(tls.Verifi
 
 	s.ReloadKeys()
 	s.convManager = otrclient.NewConversationManager(s.newConversation, s, cu.Account, s.onOtrEventHandlerCreate, sessionLog.WithField("component", "otr"))
-	s.muc = newMUCManager(s.log, s.publishEvent)
+	s.muc = newMUCManager(s.log, s.conn, s.publishEvent)
 
 	go observe(s)
 	go checkReconnect(s)

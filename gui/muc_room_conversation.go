@@ -22,12 +22,19 @@ type roomViewConversation struct {
 func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c := &roomViewConversation{}
 
+	c.initBuilder()
+	c.initSubscribers(v)
+	c.initTags(v)
+
+	return c
+}
+
+func (c *roomViewConversation) initBuilder() {
 	builder := newBuilder("MUCRoomConversation")
 	panicOnDevError(builder.bindObjects(c))
+}
 
-	t := c.getStyleTags(v.u)
-	c.roomChatTextView.SetBuffer(t.createTextBuffer())
-
+func (c *roomViewConversation) initSubscribers(v *roomView) {
 	v.subscribe("conversation", occupantLeft, func(ei roomViewEventInfo) {
 		c.displayNotificationWhenOccupantLeftTheRoom(ei.nickname)
 	})
@@ -53,8 +60,11 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 		msg := i18n.Local("This room is no longer publicly logged.")
 		v.conv.displayWarningMessage(msg)
 	})
+}
 
-	return c
+func (c *roomViewConversation) initTags(v *roomView) {
+	t := c.getStyleTags(v.u)
+	c.roomChatTextView.SetBuffer(t.createTextBuffer())
 }
 
 type mucStyleTags struct {
@@ -65,14 +75,14 @@ func getTimestamp() string {
 	return time.Now().Format("15:04:05")
 }
 
-func (v *roomViewConversation) getStyleTags(u *gtkUI) *mucStyleTags {
-	if v.tags == nil {
-		v.tags = v.newStyleTags(u)
+func (c *roomViewConversation) getStyleTags(u *gtkUI) *mucStyleTags {
+	if c.tags == nil {
+		c.tags = c.newStyleTags(u)
 	}
-	return v.tags
+	return c.tags
 }
 
-func (v *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
+func (c *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
 	// TODO: for now we are using a default styles, but we can improve it
 	// if we define a structure with a predefined colors pallete based on kind
 	// of messages to show like entering a room, leaving the room, incoming
@@ -125,23 +135,23 @@ func (t *mucStyleTags) createTextBuffer() gtki.TextBuffer {
 	return buf
 }
 
-func (v *roomViewConversation) addNewLine() {
-	buf, _ := v.roomChatTextView.GetBuffer()
+func (c *roomViewConversation) addNewLine() {
+	buf, _ := c.roomChatTextView.GetBuffer()
 	i := buf.GetEndIter()
 
 	buf.Insert(i, "\n")
 }
 
-func (v *roomViewConversation) addTimestamp() {
-	buf, _ := v.roomChatTextView.GetBuffer()
+func (c *roomViewConversation) addTimestamp() {
+	buf, _ := c.roomChatTextView.GetBuffer()
 	i := buf.GetEndIter()
 	t := fmt.Sprintf("[%s] ", getTimestamp())
 
 	buf.InsertWithTagByName(i, t, "timestampText")
 }
 
-func (v *roomViewConversation) addTextToChatTextUsingTagID(text string, tagName string) {
-	buf, _ := v.roomChatTextView.GetBuffer()
+func (c *roomViewConversation) addTextToChatTextUsingTagID(text string, tagName string) {
+	buf, _ := c.roomChatTextView.GetBuffer()
 	i := buf.GetEndIter()
 
 	if len(tagName) > 0 {
@@ -151,38 +161,38 @@ func (v *roomViewConversation) addTextToChatTextUsingTagID(text string, tagName 
 	}
 }
 
-func (v *roomViewConversation) addLineTextToChatTextUsingTagID(text string, tagName string) {
-	v.addTimestamp()
-	v.addTextToChatTextUsingTagID(text, tagName)
-	v.addNewLine()
+func (c *roomViewConversation) addLineTextToChatTextUsingTagID(text string, tagName string) {
+	c.addTimestamp()
+	c.addTextToChatTextUsingTagID(text, tagName)
+	c.addNewLine()
 }
 
 // displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
-func (v *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
+func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
 	text := fmt.Sprintf("%s joined the room", nickname)
-	v.addLineTextToChatTextUsingTagID(text, "joinedRoomText")
+	c.addLineTextToChatTextUsingTagID(text, "joinedRoomText")
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
-func (v *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
+func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
 	text := fmt.Sprintf("%s left the room", nickname)
-	v.addLineTextToChatTextUsingTagID(text, "leftRoomText")
+	c.addLineTextToChatTextUsingTagID(text, "leftRoomText")
 }
 
 // displayNewLiveMessage MUST be called from the UI thread
-func (v *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
-	v.addTimestamp()
+func (c *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
+	c.addTimestamp()
 	nicknameText := fmt.Sprintf("%s: ", nickname)
-	v.addTextToChatTextUsingTagID(nicknameText, "nicknameText")
+	c.addTextToChatTextUsingTagID(nicknameText, "nicknameText")
 	if len(subject) > 0 {
 		subjectText := fmt.Sprintf("[%s] ", subject)
-		v.addTextToChatTextUsingTagID(subjectText, "subjectText")
+		c.addTextToChatTextUsingTagID(subjectText, "subjectText")
 	}
-	v.addTextToChatTextUsingTagID(message, "messageText")
-	v.addNewLine()
+	c.addTextToChatTextUsingTagID(message, "messageText")
+	c.addNewLine()
 }
 
 // displayWarningMessage MUST be called from the UI thread
-func (v *roomViewConversation) displayWarningMessage(message string) {
-	v.addLineTextToChatTextUsingTagID(message, "warning")
+func (c *roomViewConversation) displayWarningMessage(message string) {
+	c.addLineTextToChatTextUsingTagID(message, "warning")
 }

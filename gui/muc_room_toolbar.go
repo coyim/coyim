@@ -13,6 +13,14 @@ type roomViewToolbar struct {
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 	t := &roomViewToolbar{}
 
+	t.initBuilder(v)
+	t.initDefaults(v)
+	t.initSubscribers(v)
+
+	return t
+}
+
+func (t *roomViewToolbar) initBuilder(v *roomView) {
 	builder := newBuilder("MUCRoomToolbar")
 	panicOnDevError(builder.bindObjects(t))
 
@@ -28,11 +36,14 @@ func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 			})
 		},
 	})
+}
 
+func (t *roomViewToolbar) initDefaults(v *roomView) {
 	t.leaveRoomButton.SetSensitive(v.isJoined())
+}
+
+func (t *roomViewToolbar) initSubscribers(v *roomView) {
 	v.subscribe("toolbar", occupantSelfJoined, func(roomViewEventInfo) {
 		t.leaveRoomButton.SetSensitive(true)
 	})
-
-	return t
 }

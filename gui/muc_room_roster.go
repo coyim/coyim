@@ -15,7 +15,7 @@ const (
 )
 
 type roomViewRoster struct {
-	r *muc.RoomRoster
+	roster *muc.RoomRoster
 
 	view  gtki.Box      `gtk-widget:"roomRosterBox"`
 	tree  gtki.TreeView `gtk-widget:"room-members-tree"`
@@ -24,12 +24,21 @@ type roomViewRoster struct {
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	r := &roomViewRoster{
-		r: v.room.Roster(),
+		roster: v.room.Roster(),
 	}
 
+	r.initBuilder()
+	r.initDefaults()
+	r.initSubscribers(v)
+	return r
+}
+
+func (r *roomViewRoster) initBuilder() {
 	builder := newBuilder("MUCRoomRoster")
 	panicOnDevError(builder.bindObjects(r))
+}
 
+func (r *roomViewRoster) initDefaults() {
 	var err error
 	r.model, err = g.gtk.ListStoreNew(pixbufType(), glibi.TYPE_STRING, glibi.TYPE_STRING, glibi.TYPE_STRING)
 	if err != nil {
@@ -38,46 +47,46 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 
 	r.tree.SetModel(r.model)
 	r.draw()
+}
 
+func (r *roomViewRoster) initSubscribers(v *roomView) {
 	v.subscribe("roster", occupantSelfJoined, r.onUpdateRoster)
 	v.subscribe("roster", occupantJoined, r.onUpdateRoster)
 	v.subscribe("roster", occupantUpdated, r.onUpdateRoster)
 	v.subscribe("roster", occupantLeft, r.onUpdateRoster)
-
-	return r
 }
 
-func (v *roomViewRoster) onUpdateRoster(roomViewEventInfo) {
-	v.redraw()
+func (r *roomViewRoster) onUpdateRoster(roomViewEventInfo) {
+	r.redraw()
 }
 
-func (v *roomViewRoster) draw() {
-	for _, o := range v.r.AllOccupants() {
-		v.addOccupantToRoster(o)
+func (r *roomViewRoster) draw() {
+	for _, o := range r.roster.AllOccupants() {
+		r.addOccupantToRoster(o)
 	}
 
-	v.tree.ExpandAll()
+	r.tree.ExpandAll()
 }
 
-func (v *roomViewRoster) redraw() {
-	v.model.Clear()
-	v.draw()
+func (r *roomViewRoster) redraw() {
+	r.model.Clear()
+	r.draw()
 }
 
-func (v *roomViewRoster) addOccupantToRoster(o *muc.Occupant) {
-	iter := v.model.Append()
+func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant) {
+	iter := r.model.Append()
 
-	_ = v.model.SetValue(iter, roomViewRosterStatusIconIndex, v.getOccupantIcon().GetPixbuf())
-	_ = v.model.SetValue(iter, roomViewRosterNickNameIndex, o.Nick)
-	_ = v.model.SetValue(iter, roomViewRosterAffiliationIndex, v.affiliationDisplayName(o.Affiliation))
-	_ = v.model.SetValue(iter, roomViewRosterRoleIndex, v.roleDisplayName(o.Role))
+	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, r.getOccupantIcon().GetPixbuf())
+	_ = r.model.SetValue(iter, roomViewRosterNickNameIndex, o.Nick)
+	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, r.affiliationDisplayName(o.Affiliation))
+	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, r.roleDisplayName(o.Role))
 }
 
-func (v *roomViewRoster) getOccupantIcon() Icon {
+func (r *roomViewRoster) getOccupantIcon() Icon {
 	return statusIcons["occupant"]
 }
 
-func (v *roomViewRoster) affiliationDisplayName(a muc.Affiliation) string {
+func (r *roomViewRoster) affiliationDisplayName(a muc.Affiliation) string {
 	switch a.Name() {
 	case muc.AffiliationAdmin:
 		return i18n.Local("Admin")
@@ -90,8 +99,8 @@ func (v *roomViewRoster) affiliationDisplayName(a muc.Affiliation) string {
 	}
 }
 
-func (v *roomViewRoster) roleDisplayName(r muc.Role) string {
-	switch r.Name() {
+func (r *roomViewRoster) roleDisplayName(role muc.Role) string {
+	switch role.Name() {
 	case muc.RoleNone:
 		return i18n.Local("None")
 	case muc.RoleParticipant:

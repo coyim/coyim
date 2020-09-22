@@ -17,13 +17,11 @@ type roomView struct {
 	builder *builder
 
 	identity jid.Bare
-	nickname string
 
 	room *muc.Room
 	info *muc.RoomListing
 
 	log      coylog.Logger
-	joined   bool
 	opened   bool
 	returnTo func()
 
@@ -55,17 +53,12 @@ func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
 	}
 
 	view.room = a.newRoomModel(ident)
-	view.joined = view.room.Joined
 	view.log = a.log.WithField("room", ident)
 
 	view.room.Subscribe(view.events)
 	go view.observeRoomEvents()
 
 	view.subscribers = newRoomViewSubscribers(view.identity, view.log)
-
-	view.subscribe("room", occupantSelfJoined, func(ei roomViewEventInfo) {
-		view.nickname = ei.nickname
-	})
 
 	view.initBuilderAndSignals()
 	view.initDefaults()
@@ -125,7 +118,7 @@ func (v *roomView) isOpen() bool {
 }
 
 func (v *roomView) isJoined() bool {
-	return v.joined
+	return v.room.Joined
 }
 
 func (v *roomView) present() {
@@ -167,11 +160,19 @@ func (v *roomView) hideSpinner() {
 }
 
 func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
+	if !v.room.Joined {
+		v.log.Debug("tryLeaveRoom(): trying to leave a not joined room")
+		doInUIThread(func() {
+			v.notifyOnError(i18n.Local("Couldn't leave the room, please try again."))
+		})
+		return
+	}
+
 	v.clearErrors()
 	v.showSpinner()
 
 	go func() {
-		v.account.leaveRoom(v.identity, v.nickname, func() {
+		v.account.leaveRoom(v.identity, v.room.Occupant.Nick, func() {
 			doInUIThread(v.window.Destroy)
 			if onSuccess != nil {
 				onSuccess()
@@ -210,8 +211,6 @@ func (v *roomView) switchToMainView() {
 }
 
 func (v *roomView) onJoined() {
-	v.joined = true
-
 	doInUIThread(func() {
 		v.lobby.hide()
 		v.switchToMainView()

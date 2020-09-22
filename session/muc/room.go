@@ -1,6 +1,8 @@
 package muc
 
 import (
+	"sync"
+
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
@@ -11,8 +13,11 @@ type Room struct {
 	Subject  string
 	Joined   bool
 
+	Occupant    *Occupant
 	roster      *RoomRoster
 	subscribers *roomSubscribers
+
+	once sync.Once
 
 	// Configuration options:
 
@@ -58,4 +63,12 @@ func (r *Room) Subscribe(c chan<- MUC) {
 // Publish will publish a new room event
 func (r *Room) Publish(ev MUC) {
 	r.subscribers.publishEvent(ev)
+}
+
+// AddSelfOccupant set the own occupant of the room
+func (r *Room) AddSelfOccupant(occupant *Occupant) {
+	r.once.Do(func() {
+		r.Joined = true
+		r.Occupant = occupant
+	})
 }

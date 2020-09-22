@@ -62,11 +62,11 @@ func (m *mucManager) publishOccupantUpdate(from jid.Full, room jid.Bare, occupan
 	m.publishRoomEvent(room, ev)
 }
 
-func (m *mucManager) publishLoggingEnabled(room jid.Bare) {
+func (m *mucManager) publishLoggingEnabled(ident jid.Bare) {
 	ev := events.MUCLoggingEnabled{}
-	ev.Room = room
+	ev.Room = ident
 
-	m.publishRoomEvent(room, ev)
+	m.publishRoomEvent(ident, ev)
 }
 
 func (m *mucManager) publishLoggingDisabled(room jid.Bare) {

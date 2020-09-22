@@ -211,11 +211,8 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 // changed, or role or affiliation is updated, this can lead to the method being called.
 // For now, it will generate a event about joining, but this should be cleaned up and fixed
 func (m *mucManager) selfOccupantUpdate(from jid.Full, room jid.Bare, occupant mucRoomOccupant, status mucUserStatuses) {
-	if m.selfOccupantNotInRoom(room, occupant) {
-		m.roomSetJoined(room, true)
-		m.occupantUpdate(from, room, occupant)
-		m.publishSelfOccupantJoined(from, room, occupant)
-	}
+	m.occupantUpdate(from, room, occupant)
+	m.selfOccupantJoin(from, room, occupant)
 
 	if status.contains(MUCStatusRoomLoggingEnabled) {
 		m.publishLoggingEnabled(room)
@@ -226,10 +223,21 @@ func (m *mucManager) selfOccupantUpdate(from jid.Full, room jid.Bare, occupant m
 	}
 }
 
-func (m *mucManager) roomSetJoined(ident jid.Bare, v bool) {
+func (m *mucManager) selfOccupantJoin(from jid.Full, ident jid.Bare, occupant mucRoomOccupant) {
 	room, exists := m.roomManager.GetRoom(ident)
+	if !exists {
+		m.log.WithFields(log.Fields{
+			"from":     from,
+			"room":     room,
+			"occupant": occupant.nickname,
+		}).Debug("selfOccupantJoin(): trying to join to an unvailable room")
+		return
+	}
+
+	o, exists := room.Roster().GetOccupantByIdentity(ident.WithResource(jid.NewResource(occupant.nickname)).String())
 	if exists {
-		room.Joined = v
+		room.AddSelfOccupant(o)
+		m.publishSelfOccupantJoined(from, ident, occupant)
 	}
 }
 

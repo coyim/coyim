@@ -4,7 +4,13 @@ import (
 	"github.com/coyim/coyim/session/events"
 )
 
-func (a *account) handleMUCErrorEvent(ev events.MUCError, view *roomView) {
+func (a *account) handleMUCErrorEvent(ev events.MUCError) {
+	view, ok := a.getRoomView(ev.WhichRoom())
+	if !ok {
+		a.log.WithField("room", ev.WhichRoom()).Error("Not possible to get room view when handling multi user chat event")
+		return
+	}
+
 	switch ev.ErrorType {
 	case events.MUCNotAuthorized:
 		a.log.Debug("MUC Error NotAuthorized received")

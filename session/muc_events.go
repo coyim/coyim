@@ -6,108 +6,79 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (m *mucManager) publishRoomEvent(ident jid.Bare, ev muc.MUC) {
-	room, exists := m.roomManager.GetRoom(ident)
+func (m *mucManager) publishRoomEvent(roomID jid.Bare, ev muc.MUC) {
+	room, exists := m.roomManager.GetRoom(roomID)
 	if !exists {
-		m.log.WithField("room", ident).Error("Trying to publish an event in a room that does not exist")
+		m.log.WithField("room", roomID).Error("Trying to publish an event in a room that does not exist")
 		return
 	}
 	room.Publish(ev)
 }
 
-func (m *mucManager) roomCreated(from jid.Full, room jid.Bare) {
+func (m *mucManager) roomCreated(roomID jid.Bare) {
 	ev := events.MUCRoomCreated{}
-	ev.Room = room
+	ev.Room = roomID
 
 	m.publishEvent(ev)
 }
 
-func (m *mucManager) roomRenamed(from jid.Full, room jid.Bare) {
-	// TODO: This should use publishRoomEvent
-	ev := events.MUCRoomRenamed{}
-	ev.Room = room
-
-	m.publishEvent(ev)
+func (m *mucManager) roomRenamed(roomID jid.Bare) {
+	m.publishRoomEvent(roomID, events.MUCRoomRenamed{})
 }
 
-func (m *mucManager) publishOccupantLeft(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
-	// TODO: for room events, we should not have a "Room" field in the event
-
+func (m *mucManager) occupantLeft(roomID jid.Bare, occupant *mucRoomOccupant) {
 	ev := events.MUCOccupantLeft{}
-	ev.Room = room
-	ev.Nickname = occupant.nickname
-	ev.RealJid = from
-	ev.Affiliation = occupant.affiliation
-	ev.Role = occupant.role
-
-	m.publishRoomEvent(room, ev)
-}
-
-func (m *mucManager) publishOccupantJoined(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
-	// TODO: for room events, we should not have a "Room" field in the event
-
-	ev := events.MUCOccupantJoined{}
-	ev.Room = room
-	ev.Nickname = occupant.nickname
-	ev.RealJid = from
-	ev.Affiliation = occupant.affiliation
-	ev.Role = occupant.role
-
-	m.publishRoomEvent(room, ev)
-}
-
-func (m *mucManager) publishOccupantUpdate(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
-	// TODO: for room events, we should not have a "Room" field in the event
-
-	ev := events.MUCOccupantUpdated{}
-	ev.Room = room
-	ev.Nickname = occupant.nickname
-	ev.RealJid = from
-	ev.Affiliation = occupant.affiliation
-	ev.Role = occupant.role
-
-	m.publishRoomEvent(room, ev)
-}
-
-func (m *mucManager) publishLoggingEnabled(ident jid.Bare) {
-	// TODO: for room events, we should not have a "Room" field in the event
-
-	ev := events.MUCLoggingEnabled{}
-	ev.Room = ident
-
-	m.publishRoomEvent(ident, ev)
-}
-
-func (m *mucManager) publishLoggingDisabled(room jid.Bare) {
-	// TODO: for room events, we should not have a "Room" field in the event
-
-	ev := events.MUCLoggingDisabled{}
-	ev.Room = room
-
-	m.publishRoomEvent(room, ev)
-}
-
-func (m *mucManager) publishSelfOccupantJoined(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
-	// TODO: for room events, we should not have a "Room" field in the event
-
-	ev := events.MUCSelfOccupantJoined{}
-	ev.Room = room
 	ev.Nickname = occupant.nickname
 	ev.RealJid = occupant.realJid
 	ev.Affiliation = occupant.affiliation
 	ev.Role = occupant.role
 
-	m.publishRoomEvent(room, ev)
+	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) messageReceived(room jid.Bare, nickname, subject, message string) {
-	// TODO: for room events, we should not have a "Room" field in the event
+func (m *mucManager) occupantJoined(roomID jid.Bare, occupant *mucRoomOccupant) {
+	ev := events.MUCOccupantJoined{}
+	ev.Nickname = occupant.nickname
+	ev.RealJid = occupant.realJid
+	ev.Affiliation = occupant.affiliation
+	ev.Role = occupant.role
 
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) occupantUpdate(roomID jid.Bare, occupant *mucRoomOccupant) {
+	ev := events.MUCOccupantUpdated{}
+	ev.Nickname = occupant.nickname
+	ev.RealJid = occupant.realJid
+	ev.Affiliation = occupant.affiliation
+	ev.Role = occupant.role
+
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) loggingEnabled(roomID jid.Bare) {
+	m.publishRoomEvent(roomID, events.MUCLoggingEnabled{})
+}
+
+func (m *mucManager) loggingDisabled(roomID jid.Bare) {
+	m.publishRoomEvent(roomID, events.MUCLoggingDisabled{})
+}
+
+func (m *mucManager) selfOccupantJoined(roomID jid.Bare, occupant *mucRoomOccupant) {
+	ev := events.MUCSelfOccupantJoined{}
+	ev.Nickname = occupant.nickname
+	ev.RealJid = occupant.realJid
+	ev.Affiliation = occupant.affiliation
+	ev.Role = occupant.role
+
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) messageReceived(roomID jid.Bare, nickname, subject, message string) {
 	ev := events.MUCMessageReceived{}
-	ev.Room = room
 	ev.Nickname = nickname
 	ev.Subject = subject
 	ev.Message = message
 
-	m.publishRoomEvent(room, ev)
+	m.publishRoomEvent(roomID, ev)
 }

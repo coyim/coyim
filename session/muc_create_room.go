@@ -22,58 +22,52 @@ var (
 	ErrInformationQueryResponse = errors.New("received an error from the server")
 )
 
-func newCreateMUCRoomContext(s *session, ident jid.Bare) *createMUCRoomContext {
+func newCreateMUCRoomContext(s *session, roomID jid.Bare) *createMUCRoomContext {
 	c := &createMUCRoomContext{
-		ident:       ident,
-		errorResult: make(chan error),
-		s:           s,
+		roomID:       roomID,
+		errorChannel: make(chan error),
+		s:            s,
 	}
 
 	return c
 }
 
 // TODO: Add a RoomConfigurationQuery for create a Reserved Room
-func (s *session) CreateRoom(ident jid.Bare) <-chan error {
-	c := newCreateMUCRoomContext(s, ident)
+func (s *session) CreateRoom(roomID jid.Bare) <-chan error {
+	c := newCreateMUCRoomContext(s, roomID)
 	go c.createRoom()
-	return c.errorResult
+	return c.errorChannel
 }
 
 type createMUCRoomContext struct {
-	ident jid.Bare
-	// TODO: Maybe rename to errorChannel for consistency?
-	errorResult chan error
-	s           *session
+	roomID       jid.Bare
+	errorChannel chan error
+	s            *session
 }
 
 func (c *createMUCRoomContext) createRoom() {
 	// See XEP-0045 v1.32.0, section: 10.1.1
 	err := c.sendMUCPresence()
 	if err != nil {
-		c.errorResult <- err
+		c.errorChannel <- err
 		return
 	}
 
 	// // See XEP-0045 v1.32.0, section: 10.1.2
 	reply, err := c.sendInformationQuery()
 	if err != nil {
-		c.errorResult <- ErrUnexpectedResponse
+		c.errorChannel <- ErrUnexpectedResponse
 		return
 	}
 
-	err = c.checkForErrorsInResponse(reply)
+	err = c.waitAndCheckResponse(reply)
 	if err != nil {
 		c.logWithError(err, "Invalid information query response")
-		c.errorResult <- err
+		c.errorChannel <- err
 		return
 	}
 
-	close(c.errorResult)
-}
-
-// TODO: I do not like the name of this method. I have really no idea what it means!
-func (c *createMUCRoomContext) identity() string {
-	return c.ident.String()
+	close(c.errorChannel)
 }
 
 func (c *createMUCRoomContext) logWithError(e error, m string) {
@@ -81,7 +75,7 @@ func (c *createMUCRoomContext) logWithError(e error, m string) {
 }
 
 func (c *createMUCRoomContext) sendMUCPresence() error {
-	err := c.s.conn.SendMUCPresence(c.identity())
+	err := c.s.conn.SendMUCPresence(c.roomID.String())
 	if err != nil {
 		c.logWithError(err, "An error ocurred while sending a presence for creating an instant room")
 		return ErrUnexpectedResponse
@@ -98,7 +92,7 @@ func (c *createMUCRoomContext) newRoomConfiguration() data.MUCRoomConfiguration 
 }
 
 func (c *createMUCRoomContext) sendInformationQuery() (<-chan data.Stanza, error) {
-	reply, _, err := c.s.conn.SendIQ(c.identity(), "set", c.newRoomConfiguration())
+	reply, _, err := c.s.conn.SendIQ(c.roomID.String(), "set", c.newRoomConfiguration())
 	if err != nil {
 		c.logWithError(err, "An error ocurred while sending the information query for creating an instant room")
 		return nil, err
@@ -106,10 +100,7 @@ func (c *createMUCRoomContext) sendInformationQuery() (<-chan data.Stanza, error
 	return reply, nil
 }
 
-// TODO: This method lies about what it is doing - it is waiting for a response
-// and then checking it for an error. The name should reflect that
-// maybe "waitAndCheckResponse"
-func (c *createMUCRoomContext) checkForErrorsInResponse(reply <-chan data.Stanza) error {
+func (c *createMUCRoomContext) waitAndCheckResponse(reply <-chan data.Stanza) error {
 	stanza, ok := <-reply
 	if !ok {
 		return ErrInvalidInformationQueryRequest

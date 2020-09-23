@@ -20,8 +20,8 @@ type mucRoomOccupant struct {
 // The problem is that UpdatePresence on the RoomRoster is responsible for creating the Occupant if it does not
 // exist. We need to think about whether this should be refactored or what makes sense.
 
-func newMUCRoomOccupant(nickname jid.Resource, affiliation, role string, realJid jid.Full) mucRoomOccupant {
-	return mucRoomOccupant{
+func newMUCRoomOccupant(nickname jid.Resource, affiliation, role string, realJid jid.Full) *mucRoomOccupant {
+	return &mucRoomOccupant{
 		nickname:    nickname.String(),
 		affiliation: parseAffiliationAndReport(affiliation),
 		role:        parseRoleAndReport(role),
@@ -37,13 +37,11 @@ func (o *mucRoomOccupant) sameFrom(from jid.Full) bool {
 	return false
 }
 
-// TODO: This method should not take both "from" and "room" and "occupant"
-
-func (m *mucManager) occupantUpdate(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
+func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, occupant *mucRoomOccupant) {
 	// TODO: why does this ignore the second argument?
-	r, _ := m.roomManager.GetRoom(room)
-	joined, _, err := r.Roster().UpdatePresence(
-		room.WithResource(jid.NewResource(occupant.nickname)),
+	room, _ := m.roomManager.GetRoom(roomID)
+	joined, _, err := room.Roster().UpdatePresence(
+		roomID.WithResource(jid.NewResource(occupant.nickname)),
 		"",
 		occupant.affiliation,
 		occupant.role,
@@ -61,19 +59,19 @@ func (m *mucManager) occupantUpdate(from jid.Full, room jid.Bare, occupant mucRo
 
 	// TODO: It is a bit confusing that we publish events in both the muc_events.go and this file.
 	// TODO: Joining should probably happen before updating
-	m.publishOccupantUpdate(from, room, occupant)
+	m.occupantUpdate(roomID, occupant)
 
 	if joined {
-		m.publishOccupantJoined(from, room, occupant)
+		m.occupantJoined(roomID, occupant)
 	}
 }
 
-func (m *mucManager) occupantLeft(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
+func (m *mucManager) handleOccupantLeft(roomID jid.Bare, occupant *mucRoomOccupant) {
 	// TODO: Same, why ignoring second result?
-	r, _ := m.roomManager.GetRoom(room)
+	r, _ := m.roomManager.GetRoom(roomID)
 	// TODO: We should check whether the person ACTUALLY left or not.
 	_, _, err := r.Roster().UpdatePresence(
-		room.WithResource(jid.NewResource(occupant.nickname)),
+		roomID.WithResource(jid.NewResource(occupant.nickname)),
 		"unavailable",
 		occupant.affiliation,
 		occupant.role,
@@ -88,7 +86,7 @@ func (m *mucManager) occupantLeft(from jid.Full, room jid.Bare, occupant mucRoom
 		return
 	}
 
-	m.publishOccupantLeft(from, room, occupant)
+	m.occupantLeft(roomID, occupant)
 }
 
 // TODO: Maybe move these and other utility methods to the muc.go file, and move

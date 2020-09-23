@@ -116,7 +116,7 @@ func isMUCUserPresence(stanza *data.ClientPresence) bool {
 	return stanza.MUCUser != nil
 }
 
-func getOccupantBasedOnItem(from jid.Full, item *data.MUCUserItem) mucRoomOccupant {
+func getOccupantBasedOnItem(from jid.Full, item *data.MUCUserItem) *mucRoomOccupant {
 	affiliation, role := getAffiliationAndRoleBasedOnItem(item)
 	realJid := getRealJidBasedOnItem(item)
 	return newMUCRoomOccupant(from.Resource(), affiliation, role, realJid)
@@ -146,7 +146,7 @@ func getRealJidBasedOnItem(item *data.MUCUserItem) jid.Full {
 	return jid.ParseFull(item.Jid)
 }
 
-func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
+func (m *mucManager) handlePresence(stanza *data.ClientPresence) {
 	from := jid.ParseFull(stanza.From)
 
 	if stanza.Type == "error" {
@@ -154,7 +154,7 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 		return
 	}
 
-	room := from.Bare()
+	roomID := from.Bare()
 	occupant := getOccupantBasedOnItem(from, stanza.MUCUser.Item)
 	status := mucUserStatuses(stanza.MUCUser.Status)
 
@@ -165,45 +165,44 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 
 	switch stanza.Type {
 	case "unavailable":
-		m.handleMUCUnavailablePresence(from, room, occupant, status)
+		m.handleUnavailablePresence(roomID, occupant, status)
 	case "":
 		if isOwnPresence {
-			m.selfOccupantUpdate(from, room, occupant, status)
+			m.handleSelfOccupantUpdate(roomID, occupant, status)
 		} else {
-			m.occupantUpdate(from, room, occupant)
+			m.handleOccupantUpdate(roomID, occupant)
 		}
 
 		// TODO: is this only sent for own presence, or for changes for other nicknames?
 		if status.contains(MUCStatusNicknameAssigned) {
-			m.roomRenamed(from, room)
+			m.roomRenamed(roomID)
 		}
 	}
 }
 
-// selfOccupantUpdate can happen several times - every time a status code update is
+// handleSelfOccupantUpdate can happen several times - every time a status code update is
 // changed, or role or affiliation is updated, this can lead to the method being called.
 // For now, it will generate a event about joining, but this should be cleaned up and fixed
-func (m *mucManager) selfOccupantUpdate(from jid.Full, room jid.Bare, occupant mucRoomOccupant, status mucUserStatuses) {
-	m.occupantUpdate(from, room, occupant)
+func (m *mucManager) handleSelfOccupantUpdate(roomID jid.Bare, occupant *mucRoomOccupant, status mucUserStatuses) {
+	m.handleOccupantUpdate(roomID, occupant)
 	// TODO: This is a bit confusing since the selfOccupantUpdate method can be called more than
 	// once - and it's only the first time it is called that it actually means the person joined
-	m.selfOccupantJoin(from, room, occupant)
+	m.selfOccupantJoin(roomID, occupant)
 
 	if status.contains(MUCStatusRoomLoggingEnabled) {
-		m.publishLoggingEnabled(room)
+		m.loggingEnabled(roomID)
 	}
 
 	if status.contains(MUCStatusRoomLoggingDisabled) {
-		m.publishLoggingDisabled(room)
+		m.loggingDisabled(roomID)
 	}
 }
 
-func (m *mucManager) selfOccupantJoin(from jid.Full, ident jid.Bare, occupant mucRoomOccupant) {
-	room, exists := m.roomManager.GetRoom(ident)
+func (m *mucManager) selfOccupantJoin(roomID jid.Bare, occupant *mucRoomOccupant) {
+	room, exists := m.roomManager.GetRoom(roomID)
 	if !exists {
 		m.log.WithFields(log.Fields{
-			"from":     from,
-			"room":     room,
+			"room":     roomID,
 			"occupant": occupant.nickname,
 			"method":   "selfOccupantJoin",
 		}).Error("trying to join to an unavailable room")
@@ -213,25 +212,24 @@ func (m *mucManager) selfOccupantJoin(from jid.Full, ident jid.Bare, occupant mu
 	}
 
 	// TODO: This should be simplified by only using the nickname to identify peers in the roster
-	o, exists := room.Roster().GetOccupantByIdentity(ident.WithResource(jid.NewResource(occupant.nickname)).String())
+	o, exists := room.Roster().GetOccupantByIdentity(roomID.WithResource(jid.NewResource(occupant.nickname)).String())
 	if exists {
 		room.AddSelfOccupant(o)
-		m.publishSelfOccupantJoined(from, ident, occupant)
+		m.selfOccupantJoined(roomID, occupant)
 	}
 }
 
-func (m *mucManager) handleMUCUnavailablePresence(from jid.Full, room jid.Bare, occupant mucRoomOccupant, status mucUserStatuses) {
+func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, occupant *mucRoomOccupant, status mucUserStatuses) {
 	switch {
 	case status.isEmpty():
 		m.log.WithFields(log.Fields{
-			"from":        from,
-			"room":        room,
-			"occupant":    occupant,
+			"room":        roomID,
+			"occupant":    occupant.nickname,
 			"affiliation": occupant.affiliation,
 			"role":        occupant.role,
 		}).Debug("Parameters sent when someone leaves a room")
 
-		m.occupantLeft(from, room, occupant)
+		m.handleOccupantLeft(roomID, occupant)
 
 	case status.contains(MUCStatusBanned):
 		// We got banned

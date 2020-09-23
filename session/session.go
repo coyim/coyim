@@ -274,7 +274,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		}
 	case "unavailable":
 		if isMUCUserPresence(stanza) {
-			s.muc.handleMUCPresence(stanza)
+			s.muc.handlePresence(stanza)
 			return true
 		}
 
@@ -299,7 +299,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		}
 
 		if isMUCUserPresence(stanza) {
-			s.muc.handleMUCPresence(stanza)
+			s.muc.handlePresence(stanza)
 			return true
 		}
 
@@ -338,7 +338,7 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 		s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 
 		if isMUCPresence(stanza) {
-			s.muc.handleMUCPresence(stanza)
+			s.muc.handlePresence(stanza)
 		}
 	default:
 		log.WithField("stanza", stanza).Warn("Unrecognized presence")

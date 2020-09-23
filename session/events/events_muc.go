@@ -5,119 +5,6 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// MUCError contains information about a MUC-related
-// error event
-type MUCError struct {
-	ErrorType MUCErrorType
-	Room      jid.Bare
-	Nickname  string
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCError) WhichRoom() jid.Bare { return m.Room }
-
-// WhichNickname returns the nickname
-func (m MUCError) WhichNickname() string { return m.Nickname }
-
-// MUCRoomCreated contains event information about
-// the created room
-type MUCRoomCreated struct {
-	Room jid.Bare
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCRoomCreated) WhichRoom() jid.Bare { return m.Room }
-
-// MUCRoomRenamed contains event information about
-// the renamed room's nickname
-type MUCRoomRenamed struct {
-	Room        jid.Bare
-	NewNickname string
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCRoomRenamed) WhichRoom() jid.Bare { return m.Room }
-
-// MUCOccupant contains basic information about
-// any room's occupant
-type MUCOccupant struct {
-	Room     jid.Bare
-	Nickname string
-	RealJid  jid.Full
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCOccupant) WhichRoom() jid.Bare { return m.Room }
-
-// MUCOccupantUpdated contains information about
-// the updated occupant in a room
-type MUCOccupantUpdated struct {
-	MUCOccupant
-	Affiliation muc.Affiliation
-	Role        muc.Role
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCOccupantUpdated) WhichRoom() jid.Bare { return m.Room }
-
-// MUCOccupantJoined contains information about
-// the occupant that has joined to room
-type MUCOccupantJoined struct {
-	MUCOccupantUpdated
-	Status string
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCOccupantJoined) WhichRoom() jid.Bare { return m.Room }
-
-// MUCSelfOccupantJoined contains information about
-// the occupant that has joined to room
-type MUCSelfOccupantJoined struct {
-	MUCOccupantJoined
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCSelfOccupantJoined) WhichRoom() jid.Bare { return m.Room }
-
-// MUCOccupantLeft contains information about
-// the occupant that has left the room
-type MUCOccupantLeft struct {
-	MUCOccupant
-	Affiliation muc.Affiliation
-	Role        muc.Role
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCOccupantLeft) WhichRoom() jid.Bare { return m.Room }
-
-// MUCMessageReceived contains information about
-// the message received
-type MUCMessageReceived struct {
-	Room     jid.Bare
-	Nickname string
-	Subject  string
-	Message  string
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCMessageReceived) WhichRoom() jid.Bare { return m.Room }
-
-// MUCLoggingEnabled signifies that logging has been turned on from the room
-type MUCLoggingEnabled struct {
-	Room jid.Bare
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCLoggingEnabled) WhichRoom() jid.Bare { return m.Room }
-
-// MUCLoggingDisabled signifies that logging has been turned off from the room
-type MUCLoggingDisabled struct {
-	Room jid.Bare
-}
-
-// WhichRoom implements the MUC interface
-func (m MUCLoggingDisabled) WhichRoom() jid.Bare { return m.Room }
-
 // MUCErrorType represents the type of MUC error event
 type MUCErrorType EventType
 
@@ -132,3 +19,115 @@ const (
 	MUCConflict
 	MUCServiceUnavailable
 )
+
+// MUCError contains information about a MUC-related
+// error event
+type MUCError struct {
+	ErrorType MUCErrorType
+	Room      jid.Bare
+	Nickname  string
+}
+
+// WhichRoom returns a room for this event
+func (m MUCError) WhichRoom() jid.Bare { return m.Room }
+
+// WhichNickname returns the nickname
+func (m MUCError) WhichNickname() string { return m.Nickname }
+
+// MUCRoomCreated contains event information about
+// the created room
+type MUCRoomCreated struct {
+	Room jid.Bare
+}
+
+// WhichRoom returns a room for this event
+func (m MUCRoomCreated) WhichRoom() jid.Bare { return m.Room }
+
+// MUCRoomRenamed contains event information about
+// the renamed room's nickname
+type MUCRoomRenamed struct {
+	NewNickname string
+}
+
+// MUCOccupant contains basic information about
+// any room's occupant
+type MUCOccupant struct {
+	Nickname string
+	RealJid  jid.Full
+}
+
+// MUCOccupantUpdated contains information about
+// the updated occupant in a room
+type MUCOccupantUpdated struct {
+	MUCOccupant
+	Affiliation muc.Affiliation
+	Role        muc.Role
+}
+
+// MUCOccupantJoined contains information about
+// the occupant that has joined to room
+type MUCOccupantJoined struct {
+	MUCOccupantUpdated
+	Status string
+}
+
+// MUCSelfOccupantJoined contains information about
+// the occupant that has joined to room
+type MUCSelfOccupantJoined struct {
+	MUCOccupantJoined
+}
+
+// MUCOccupantLeft contains information about
+// the occupant that has left the room
+type MUCOccupantLeft struct {
+	MUCOccupant
+	Affiliation muc.Affiliation
+	Role        muc.Role
+}
+
+// MUCMessageReceived contains information about
+// the message received
+type MUCMessageReceived struct {
+	Nickname string
+	Subject  string
+	Message  string
+}
+
+// MUCLoggingEnabled signifies that logging has been turned on from the room
+type MUCLoggingEnabled struct{}
+
+// MUCLoggingDisabled signifies that logging has been turned off from the room
+type MUCLoggingDisabled struct{}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCError) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCRoomCreated) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCRoomRenamed) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCOccupant) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCOccupantUpdated) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCOccupantJoined) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCSelfOccupantJoined) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCOccupantLeft) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCMessageReceived) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCLoggingEnabled) MarkAsMUCInterface() {}
+
+// MarkAsMUCInterface implements the MUC interface
+func (MUCLoggingDisabled) MarkAsMUCInterface() {}

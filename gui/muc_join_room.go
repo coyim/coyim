@@ -114,19 +114,19 @@ type mucJoinRoomContext struct {
 	done  func()
 }
 
-func (c *mucJoinRoomContext) onFinishWithError(err error, isErrorChannelClosed bool) {
-	if !isErrorChannelClosed {
+func (c *mucJoinRoomContext) onFinishWithError(err error, errorIsClosed bool) {
+	if !errorIsClosed {
 		c.v.onServiceUnavailable(c.a, c.ident)
 		return
 	}
 	c.v.onJoinError(c.a, c.ident, err)
 }
 
-func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChannel <-chan error, roomInfo <-chan *muc.RoomListing) {
+func (c *mucJoinRoomContext) waitToFinish(result <-chan bool, errors <-chan error, roomInfo <-chan *muc.RoomListing) {
 	defer doInUIThread(c.done)
 
 	select {
-	case value, ok := <-resultChannel:
+	case value, ok := <-result:
 		if !ok {
 			c.v.onServiceUnavailable(c.a, c.ident)
 			return
@@ -140,7 +140,7 @@ func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChanne
 		ri := <-roomInfo
 
 		c.v.onJoinSuccess(c.a, c.ident, ri)
-	case err, ok := <-errorChannel:
+	case err, ok := <-errors:
 		c.onFinishWithError(err, ok)
 	}
 }
@@ -148,8 +148,8 @@ func (c *mucJoinRoomContext) waitToFinish(resultChannel <-chan bool, errorChanne
 func (c *mucJoinRoomContext) exec() {
 	c.v.onBeforeStart()
 	roomInfo := make(chan *muc.RoomListing)
-	resultChannel, errorChannel := c.a.session.HasRoom(c.ident, roomInfo)
-	go c.waitToFinish(resultChannel, errorChannel, roomInfo)
+	result, errors := c.a.session.HasRoom(c.ident, roomInfo)
+	go c.waitToFinish(result, errors, roomInfo)
 }
 
 func (v *mucJoinRoomView) log() coylog.Logger {

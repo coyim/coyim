@@ -26,7 +26,7 @@ type createMUCRoomForm struct {
 	errorBox     *errorNotification
 	notification gtki.InfoBar
 
-	previousUpdateChannel   chan bool
+	previousUpdate          chan bool
 	roomNameConflictList    *set.Set
 	createRoomIfDoesntExist func(*account, jid.Bare)
 	onCheckFieldsConditions func(string, string, *account) bool
@@ -101,8 +101,8 @@ func (v *createMUCRoom) initForm() {
 	v.form = f
 }
 
-func (f *createMUCRoomForm) onAutoJoinChange(aj bool) {
-	if aj {
+func (f *createMUCRoomForm) onAutoJoinChange(v bool) {
+	if v {
 		f.createButton.SetProperty("label", i18n.Local("Create Room & Join"))
 	} else {
 		f.createButton.SetProperty("label", i18n.Local("Create Room"))
@@ -166,7 +166,6 @@ func (f *createMUCRoomForm) clearErrors() {
 }
 
 func (f *createMUCRoomForm) clearFields() {
-	// TODO: should we keep the service name?
 	f.roomEntry.SetText("")
 	f.enableCreationIfConditionsAreMet()
 }
@@ -177,7 +176,7 @@ func (f *createMUCRoomForm) reset() {
 	f.clearFields()
 }
 
-// disableOrEnableFields SHOULD be called from the UI thread
+// disableOrEnableFields MUST be called from the UI thread
 func (f *createMUCRoomForm) disableOrEnableFields(v bool) {
 	f.createButton.SetSensitive(v)
 	f.account.SetSensitive(v)
@@ -229,11 +228,11 @@ func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
 }
 
 func (f *createMUCRoomForm) updateChatServicesBasedOnAccount(ac *account) {
-	if f.previousUpdateChannel != nil {
-		f.previousUpdateChannel <- true
+	if f.previousUpdate != nil {
+		f.previousUpdate <- true
 	}
 
-	f.previousUpdateChannel = make(chan bool)
+	f.previousUpdate = make(chan bool)
 
 	csc, ec, endEarly := ac.session.GetChatServices(jid.ParseDomain(ac.Account()))
 
@@ -254,7 +253,7 @@ func (f *createMUCRoomForm) updateChatServices(ac *account, csc <-chan jid.Domai
 
 	for {
 		select {
-		case <-f.previousUpdateChannel:
+		case <-f.previousUpdate:
 			doInUIThread(f.chatServices.RemoveAll)
 			endEarly()
 			return
@@ -285,7 +284,7 @@ func (f *createMUCRoomForm) onUpdateChatServicesFinished(hadAny bool, typedServi
 
 	doInUIThread(f.hideSpinner)
 
-	f.previousUpdateChannel = nil
+	f.previousUpdate = nil
 }
 
 func (f *createMUCRoomForm) showSpinner() {

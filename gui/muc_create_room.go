@@ -98,28 +98,28 @@ var (
 	errCreateRoomFailed             = errors.New("couldn't create the room")
 )
 
-func (v *createMUCRoom) checkIfRoomExists(ca *account, ident jid.Bare, successChannel chan bool, errorChannel chan error) {
+func (v *createMUCRoom) checkIfRoomExists(ca *account, ident jid.Bare, result chan bool, errors chan error) {
 	rc, ec := ca.session.HasRoom(ident, nil)
 	go func() {
 		select {
 		case err := <-ec:
 			ca.log.WithError(err).Error("Error trying to validate if room exists")
-			errorChannel <- errCreateRoomCheckIfExistsFails
+			errors <- errCreateRoomCheckIfExistsFails
 		case exists := <-rc:
 			if exists {
-				errorChannel <- errCreateRoomAlreadyExists
+				errors <- errCreateRoomAlreadyExists
 				return
 			}
-			successChannel <- true
+			result <- true
 		case <-v.cancel:
 		}
 	}()
 }
 
 func (a *account) createRoom(ident jid.Bare, onSuccess func(), onError func(error)) {
-	errorChannel := a.session.CreateRoom(ident)
+	result := a.session.CreateRoom(ident)
 	go func() {
-		err := <-errorChannel
+		err := <-result
 		if err != nil {
 			onError(err)
 			return
@@ -128,7 +128,7 @@ func (a *account) createRoom(ident jid.Bare, onSuccess func(), onError func(erro
 	}()
 }
 
-func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, errorChannel chan error) {
+func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, errors chan error) {
 	sc := make(chan bool)
 	er := make(chan error)
 
@@ -142,10 +142,10 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, err
 				v.onCreateRoomFinished(ca, ident)
 			}, func(err error) {
 				ca.log.WithError(err).Error("Something went wrong while trying to create the room")
-				errorChannel <- errCreateRoomFailed
+				errors <- errCreateRoomFailed
 			})
 		case err := <-er:
-			errorChannel <- err
+			errors <- err
 		case <-v.cancel:
 		}
 	}()

@@ -100,8 +100,10 @@ func (v *roomView) requestRoomInfo() {
 }
 
 func (v *roomView) onRequestRoomInfoFinish() {
-	doInUIThread(v.hideSpinner)
-	v.publish(roomInfoReceived)
+	doInUIThread(func() {
+		v.hideSpinner()
+		v.publish(roomInfoReceived)
+	})
 }
 
 func (v *roomView) onDestroyWindow() {

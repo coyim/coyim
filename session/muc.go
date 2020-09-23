@@ -78,7 +78,7 @@ type mucManager struct {
 	conn         xi.Conn
 	publishEvent func(ev interface{})
 	roomManager  *muc.RoomManager
-	sync.Locker
+	sync.Mutex
 }
 
 func newMUCManager(log coylog.Logger, conn xi.Conn, publishEvent func(ev interface{})) *mucManager {
@@ -92,40 +92,12 @@ func newMUCManager(log coylog.Logger, conn xi.Conn, publishEvent func(ev interfa
 	return m
 }
 
-// TODO: Replace original "JoinRoom" with this method to get a
-// proper implementation of the join room functionality
-func (m *mucManager) joinRoom(ident jid.Bare, nickname string) (*muc.Room, error) {
-	m.Lock()
-	defer m.Unlock()
-
-	room, exists := m.roomManager.GetRoom(ident)
-	if exists {
-		m.log.WithFields(log.Fields{
-			"room":     ident,
-			"nickname": nickname,
-		}).Debug("joinRoom(): trying to join a room already joined")
-		return room, nil
-	}
-
-	to := ident.WithResource(jid.NewResource(nickname))
-	err := m.conn.SendMUCPresence(to.String())
-	if err != nil {
-		m.log.WithFields(log.Fields{
-			"room":     ident,
-			"nickname": nickname,
-		}).WithError(err).Error("An error occurred trying join the room")
-		return nil, err
-	}
-
-	room = muc.NewRoom(ident)
-	m.roomManager.AddRoom(room)
-
-	return room, nil
-}
-
 // NewRoom creates a new muc room and add it to the room manager
 func (s *session) NewRoom(ident jid.Bare) *muc.Room {
+	// TODO: This must be made concurrency safe
+
 	room, exists := s.muc.roomManager.GetRoom(ident)
+
 	if exists {
 		return room
 	}
@@ -151,6 +123,8 @@ func getOccupantBasedOnItem(from jid.Full, item *data.MUCUserItem) mucRoomOccupa
 }
 
 func getAffiliationAndRoleBasedOnItem(item *data.MUCUserItem) (string, string) {
+	// TODO: refactor to separate out getters for affiliation and role
+
 	affiliation := "none"
 	role := "none"
 	if item != nil {
@@ -165,13 +139,11 @@ func getAffiliationAndRoleBasedOnItem(item *data.MUCUserItem) (string, string) {
 }
 
 func getRealJidBasedOnItem(item *data.MUCUserItem) jid.Full {
-	var realJid jid.Full
-	if item != nil {
-		if len(item.Jid) > 0 {
-			realJid = jid.ParseFull(item.Jid)
-		}
+	if item == nil || len(item.Jid) == 0 {
+		return nil
 	}
-	return realJid
+
+	return jid.ParseFull(item.Jid)
 }
 
 func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
@@ -201,6 +173,7 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 			m.occupantUpdate(from, room, occupant)
 		}
 
+		// TODO: is this only sent for own presence, or for changes for other nicknames?
 		if status.contains(MUCStatusNicknameAssigned) {
 			m.roomRenamed(from, room)
 		}
@@ -212,6 +185,8 @@ func (m *mucManager) handleMUCPresence(stanza *data.ClientPresence) {
 // For now, it will generate a event about joining, but this should be cleaned up and fixed
 func (m *mucManager) selfOccupantUpdate(from jid.Full, room jid.Bare, occupant mucRoomOccupant, status mucUserStatuses) {
 	m.occupantUpdate(from, room, occupant)
+	// TODO: This is a bit confusing since the selfOccupantUpdate method can be called more than
+	// once - and it's only the first time it is called that it actually means the person joined
 	m.selfOccupantJoin(from, room, occupant)
 
 	if status.contains(MUCStatusRoomLoggingEnabled) {
@@ -230,10 +205,14 @@ func (m *mucManager) selfOccupantJoin(from jid.Full, ident jid.Bare, occupant mu
 			"from":     from,
 			"room":     room,
 			"occupant": occupant.nickname,
-		}).Debug("selfOccupantJoin(): trying to join to an unvailable room")
+			"method":   "selfOccupantJoin",
+		}).Error("trying to join to an unavailable room")
+		// TODO: This will only happen when the room disappeared AFTER trying to join, but before we could
+		// finish the join. We should figure out the right way of handling this situation
 		return
 	}
 
+	// TODO: This should be simplified by only using the nickname to identify peers in the roster
 	o, exists := room.Roster().GetOccupantByIdentity(ident.WithResource(jid.NewResource(occupant.nickname)).String())
 	if exists {
 		room.AddSelfOccupant(o)
@@ -284,14 +263,6 @@ func (m *mucManager) handleMUCErrorPresence(from jid.Full, stanza *data.ClientPr
 	m.publishMUCError(from, stanza.Error)
 }
 
-func (m *mucManager) selfOccupantNotInRoom(ident jid.Bare, occupant mucRoomOccupant) bool {
-	room, exists := m.roomManager.GetRoom(ident)
-	if exists {
-		return !room.Roster().HasOccupant(occupant.nickname)
-	}
-	return false
-}
-
 type mucUserStatuses []data.MUCUserStatus
 
 // contains will return true if the list of MUC user statuses contains ALL of the given argument statuses
@@ -329,7 +300,7 @@ func (mus mucUserStatuses) isEmpty() bool {
 	return len(mus) == 0
 }
 
-func (s *session) hasSomeConferenceService(identities []data.DiscoveryIdentity) bool {
+func hasSomeConferenceService(identities []data.DiscoveryIdentity) bool {
 	for _, identity := range identities {
 		if identity.Category == "conference" && identity.Type == "text" {
 			return true
@@ -344,9 +315,10 @@ func (s *session) hasSomeChatService(di data.DiscoveryItem) bool {
 		s.log.WithField("jid", di.Jid).WithError(err).Error("Error getting the information query for the service")
 		return false
 	}
-	return s.hasSomeConferenceService(iq.Identities)
+	return hasSomeConferenceService(iq.Identities)
 }
 
+// TODO: Ola named this badly. We should change the name
 type chatServiceReceivalContext struct {
 	sync.RWMutex
 
@@ -399,6 +371,8 @@ func (c *chatServiceReceivalContext) fetchChatServices(server jid.Domain) {
 		}
 	}
 }
+
+// TODO: Maybe move the below function and related functionality to its own file?
 
 // GetChatServices offers the chat services from a xmpp server.
 func (s *session) GetChatServices(server jid.Domain) (<-chan jid.Domain, <-chan error, func()) {

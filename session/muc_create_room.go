@@ -7,6 +7,10 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+// TODO: We should refactor EVERYWHERE so that for the room bla@service.example.org
+// the local part, which is "bla" should be called roomName
+// the full thing "bla@service.example.org" should be called roomID
+
 var (
 	// ErrInvalidInformationQueryRequest is an invalid information query request error
 	ErrInvalidInformationQueryRequest = errors.New("invalid information query request")
@@ -36,12 +40,12 @@ func (s *session) CreateRoom(ident jid.Bare) <-chan error {
 }
 
 type createMUCRoomContext struct {
-	ident       jid.Bare
+	ident jid.Bare
+	// TODO: Maybe rename to errorChannel for consistency?
 	errorResult chan error
 	s           *session
 }
 
-// Send a presence for creating the room and signals support for MUC
 func (c *createMUCRoomContext) createRoom() {
 	// See XEP-0045 v1.32.0, section: 10.1.1
 	err := c.sendMUCPresence()
@@ -67,12 +71,13 @@ func (c *createMUCRoomContext) createRoom() {
 	close(c.errorResult)
 }
 
+// TODO: I do not like the name of this method. I have really no idea what it means!
 func (c *createMUCRoomContext) identity() string {
 	return c.ident.String()
 }
 
-func (c *createMUCRoomContext) logWithError(err error, message string) {
-	c.s.log.WithError(err).Error(message)
+func (c *createMUCRoomContext) logWithError(e error, m string) {
+	c.s.log.WithError(e).Error(m)
 }
 
 func (c *createMUCRoomContext) sendMUCPresence() error {
@@ -101,6 +106,9 @@ func (c *createMUCRoomContext) sendInformationQuery() (<-chan data.Stanza, error
 	return reply, nil
 }
 
+// TODO: This method lies about what it is doing - it is waiting for a response
+// and then checking it for an error. The name should reflect that
+// maybe "waitAndCheckResponse"
 func (c *createMUCRoomContext) checkForErrorsInResponse(reply <-chan data.Stanza) error {
 	stanza, ok := <-reply
 	if !ok {

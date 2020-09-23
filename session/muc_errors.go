@@ -7,6 +7,7 @@ import (
 )
 
 func (m *mucManager) publishMUCError(from jid.Full, e *data.StanzaError) {
+	// TODO: Extract this switch to its own helper method
 	var t events.MUCErrorType
 	switch {
 	case e.MUCNotAuthorized != nil:
@@ -29,7 +30,7 @@ func (m *mucManager) publishMUCError(from jid.Full, e *data.StanzaError) {
 
 	ev := events.MUCError{}
 	ev.ErrorType = t
-	ev.Room = jid.ParseBare(from.NoResource().String())
+	ev.Room = from.Bare()
 	ev.Nickname = from.Resource().String()
 
 	m.publishEvent(ev)

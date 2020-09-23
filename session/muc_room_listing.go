@@ -50,10 +50,11 @@ func extractFormData(fields []data.FormFieldX) map[string][]string {
 func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 	diq, e := s.Conn().QueryServiceInformation(rl.Jid.String())
 	if e != nil {
-		s.log.WithError(e).Debug("findOutMoreInformationAboutRoom() had error")
+		s.log.WithError(e).WithField("room", rl.Jid).Error("findOutMoreInformationAboutRoom() had error")
 		return
 	}
 
+	// TODO: This can be refactored into helper methods
 	for _, feat := range diq.Features {
 		switch feat.Var {
 		case "http://jabber.org/protocol/muc":
@@ -191,6 +192,8 @@ func (s *session) getRoomsInService(service jid.Any, name string, results chan<-
 		return
 	}
 
+	// TODO: Refactor into cleaner helper methods
+
 	sl := muc.NewServiceListing()
 	sl.Jid = service
 	sl.Name = identName
@@ -223,6 +226,7 @@ func (s *session) getRoomsAsync(server jid.Domain, results chan<- *muc.RoomListi
 		return
 	}
 
+	// TODO: This variable should be allServices, not allRooms
 	allRooms := sync.WaitGroup{}
 	allRooms.Add(len(ditems.DiscoveryItems))
 	for _, di := range ditems.DiscoveryItems {
@@ -237,6 +241,7 @@ func (s *session) getRoomsAsync(server jid.Domain, results chan<- *muc.RoomListi
 func (s *session) getRoomsAsyncCustomService(service string, results chan<- *muc.RoomListing, resultsServices chan<- *muc.ServiceListing, errorResult chan<- error) {
 	s.log.WithField("service", service).Debug("getRoomsAsyncCustomService()")
 
+	// TODO: Ola should think before naming things badly. should be allServices
 	allRooms := sync.WaitGroup{}
 	allRooms.Add(1)
 	go s.getRoomsInService(jid.Parse(service), "", results, resultsServices, &allRooms)
@@ -248,6 +253,8 @@ func (s *session) getRoomsAsyncCustomService(service string, results chan<- *muc
 
 func (s *session) GetRooms(server jid.Domain, customService string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error) {
 	s.log.WithField("server", server).Debug("GetRooms()")
+	// 20 is a fairly arbitrary work load number that will restrict how many
+	// messages we send at the same time, so we don't overwhelm or DoS the servers.
 	result := make(chan *muc.RoomListing, 20)
 	resultServices := make(chan *muc.ServiceListing, 20)
 	errorResult := make(chan error, 1)

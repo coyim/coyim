@@ -9,7 +9,7 @@ import (
 func (m *mucManager) publishRoomEvent(ident jid.Bare, ev muc.MUC) {
 	room, exists := m.roomManager.GetRoom(ident)
 	if !exists {
-		m.log.Error("Trying to publish an event in a not existing room")
+		m.log.WithField("room", ident).Error("Trying to publish an event in a room that does not exist")
 		return
 	}
 	room.Publish(ev)
@@ -23,6 +23,7 @@ func (m *mucManager) roomCreated(from jid.Full, room jid.Bare) {
 }
 
 func (m *mucManager) roomRenamed(from jid.Full, room jid.Bare) {
+	// TODO: This should use publishRoomEvent
 	ev := events.MUCRoomRenamed{}
 	ev.Room = room
 
@@ -30,6 +31,8 @@ func (m *mucManager) roomRenamed(from jid.Full, room jid.Bare) {
 }
 
 func (m *mucManager) publishOccupantLeft(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
+	// TODO: for room events, we should not have a "Room" field in the event
+
 	ev := events.MUCOccupantLeft{}
 	ev.Room = room
 	ev.Nickname = occupant.nickname
@@ -41,6 +44,8 @@ func (m *mucManager) publishOccupantLeft(from jid.Full, room jid.Bare, occupant 
 }
 
 func (m *mucManager) publishOccupantJoined(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
+	// TODO: for room events, we should not have a "Room" field in the event
+
 	ev := events.MUCOccupantJoined{}
 	ev.Room = room
 	ev.Nickname = occupant.nickname
@@ -52,6 +57,8 @@ func (m *mucManager) publishOccupantJoined(from jid.Full, room jid.Bare, occupan
 }
 
 func (m *mucManager) publishOccupantUpdate(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
+	// TODO: for room events, we should not have a "Room" field in the event
+
 	ev := events.MUCOccupantUpdated{}
 	ev.Room = room
 	ev.Nickname = occupant.nickname
@@ -63,6 +70,8 @@ func (m *mucManager) publishOccupantUpdate(from jid.Full, room jid.Bare, occupan
 }
 
 func (m *mucManager) publishLoggingEnabled(ident jid.Bare) {
+	// TODO: for room events, we should not have a "Room" field in the event
+
 	ev := events.MUCLoggingEnabled{}
 	ev.Room = ident
 
@@ -70,6 +79,8 @@ func (m *mucManager) publishLoggingEnabled(ident jid.Bare) {
 }
 
 func (m *mucManager) publishLoggingDisabled(room jid.Bare) {
+	// TODO: for room events, we should not have a "Room" field in the event
+
 	ev := events.MUCLoggingDisabled{}
 	ev.Room = room
 
@@ -77,6 +88,8 @@ func (m *mucManager) publishLoggingDisabled(room jid.Bare) {
 }
 
 func (m *mucManager) publishSelfOccupantJoined(from jid.Full, room jid.Bare, occupant mucRoomOccupant) {
+	// TODO: for room events, we should not have a "Room" field in the event
+
 	ev := events.MUCSelfOccupantJoined{}
 	ev.Room = room
 	ev.Nickname = occupant.nickname
@@ -88,6 +101,8 @@ func (m *mucManager) publishSelfOccupantJoined(from jid.Full, room jid.Bare, occ
 }
 
 func (m *mucManager) messageReceived(room jid.Bare, nickname, subject, message string) {
+	// TODO: for room events, we should not have a "Room" field in the event
+
 	ev := events.MUCMessageReceived{}
 	ev.Room = room
 	ev.Nickname = nickname

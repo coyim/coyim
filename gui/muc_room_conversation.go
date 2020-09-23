@@ -11,12 +11,13 @@ import (
 )
 
 type roomViewConversation struct {
+	tags *mucStyleTags
+
 	view               gtki.Box            `gtk-widget:"roomConversation"`
 	roomChatTextView   gtki.TextView       `gtk-widget:"roomChatTextView"`
 	roomChatScrollView gtki.ScrolledWindow `gtk-widget:"roomChatScrollView"`
 
-	tags *mucStyleTags
-	log  coylog.Logger
+	log coylog.Logger
 }
 
 func (v *roomView) newRoomViewConversation() *roomViewConversation {

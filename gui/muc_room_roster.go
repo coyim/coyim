@@ -17,8 +17,9 @@ const (
 type roomViewRoster struct {
 	roster *muc.RoomRoster
 
-	view  gtki.Box      `gtk-widget:"roomRosterBox"`
-	tree  gtki.TreeView `gtk-widget:"room-members-tree"`
+	view gtki.Box      `gtk-widget:"roster"`
+	tree gtki.TreeView `gtk-widget:"occupantsTreeView"`
+
 	model gtki.ListStore
 }
 

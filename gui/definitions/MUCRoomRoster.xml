@@ -1,45 +1,21 @@
 <interface>
-  <object class="GtkBox" id="roomRosterBox">
+  <object class="GtkBox" id="roster">
     <property name="visible">True</property>
     <property name="hexpand">False</property>
     <property name="vexpand">True</property>
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="margin_top">10</property>
-        <property name="margin_bottom">10</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkButton">
-            <property name="label" translatable="yes">Invite members to this room</property>
-            <property name="visible">True</property>
-            <property name="receives_default">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">True</property>
-        <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="main">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkScrolledWindow" id="room-members">
+          <object class="GtkScrolledWindow" id="occupants">
             <property name="visible">True</property>
+            <property name="shadow_type">in</property>
             <property name="kinetic_scrolling">False</property>
             <property name="overlay_scrolling">False</property>
             <child>
-              <object class="GtkTreeView" id="room-members-tree">
+              <object class="GtkTreeView" id="occupantsTreeView">
                 <property name="visible">True</property>
                 <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
@@ -51,7 +27,7 @@
                   <object class="GtkTreeSelection"/>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn" id="icon-column">
+                  <object class="GtkTreeViewColumn" id="iconColumn">
                     <property name="title" translatable="yes">Status</property>
                     <child>
                       <object class="GtkCellRendererPixbuf" id="icon-column-rendered"/>
@@ -62,7 +38,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn" id="name-column">
+                  <object class="GtkTreeViewColumn" id="nameColumn">
                     <property name="title">Member</property>
                     <property name="expand">True</property>
                     <child>
@@ -74,7 +50,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn" id="role-column">
+                  <object class="GtkTreeViewColumn" id="roleColumn">
                     <property name="title">Role</property>
                     <child>
                       <object class="GtkCellRendererText" id="role-column-rendered">
@@ -100,33 +76,6 @@
         <property name="expand">True</property>
         <property name="fill">True</property>
         <property name="position">1</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="margin_top">10</property>
-        <property name="margin_bottom">10</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkSearchEntry">
-            <property name="visible">True</property>
-            <property name="primary_icon_name">edit-find-symbolic</property>
-            <property name="primary_icon_activatable">False</property>
-            <property name="primary_icon_sensitive">False</property>
-            <property name="placeholder_text" translatable="yes">Filter room members</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">True</property>
-        <property name="position">3</property>
       </packing>
     </child>
   </object>

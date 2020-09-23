@@ -6,7 +6,6 @@ type roomViewToolbar struct {
 	view                 gtki.Box    `gtk-widget:"roomToolbar"`
 	roomNameLabel        gtki.Label  `gtk-widget:"roomNameLabel"`
 	roomDescriptionLabel gtki.Label  `gtk-widget:"roomDescriptionLabel"`
-	togglePanelButton    gtki.Button `gtk-widget:"togglePanelButton"`
 	leaveRoomButton      gtki.Button `gtk-widget:"leaveRoomButton"`
 }
 

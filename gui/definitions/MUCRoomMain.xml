@@ -19,7 +19,6 @@
     <child>
       <object class="GtkBox" id="roomViewMain">
         <property name="visible">True</property>
-        <property name="margin_top">10</property>
         <child>
           <object class="GtkBox" id="room">
             <property name="width_request">500</property>
@@ -27,9 +26,6 @@
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
             <property name="orientation">vertical</property>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -43,9 +39,6 @@
             <property name="visible">True</property>
             <property name="vexpand">True</property>
             <property name="orientation">vertical</property>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>

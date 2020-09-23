@@ -10,6 +10,11 @@
         <child>
           <object class="GtkBox" id="toolbarTop">
             <property name="visible">True</property>
+            <property name="margin_left">12</property>
+            <property name="margin_right">12</property>
+            <property name="margin_top">12</property>
+            <property name="margin_bottom">12</property>
+            <property name="spacing">12</property>
             <child>
               <object class="GtkBox" id="toolbarInfoBox">
                 <property name="visible">True</property>
@@ -52,26 +57,14 @@
             <child>
               <object class="GtkButtonBox" id="toolbarButtonBox">
                 <property name="visible">True</property>
+                <property name="spacing">10</property>
                 <property name="layout_style">start</property>
-                <child>
-                  <object class="GtkButton" id="togglePanelButton">
-                    <property name="label" translatable="yes">Show panel</property>
-                    <property name="visible">True</property>
-                    <property name="receives_default">True</property>
-                    <signal name="clicked" handler="on_toggle_roster_panel" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
                 <child>
                   <object class="GtkButton" id="leaveRoomButton">
                     <property name="label" translatable="yes">Leave Room</property>
                     <property name="visible">True</property>
-                    <property name="receives_default">True</property>
                     <property name="sensitive">False</property>
+                    <property name="receives_default">True</property>
                     <signal name="clicked" handler="on_leave_room" swapped="no"/>
                   </object>
                   <packing>
@@ -92,37 +85,6 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox" id="toolbarBottom">
-            <property name="visible">True</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkMenuBar" id="roomMainMenu">
-                <property name="visible">True</property>
-                <child>
-                  <object class="GtkMenuItem">
-                    <property name="visible">True</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuItem">
-                    <property name="visible">True</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
       </object>

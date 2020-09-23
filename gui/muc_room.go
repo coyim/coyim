@@ -17,8 +17,6 @@ type roomView struct {
 	account *account
 	builder *builder
 
-	identity jid.Bare
-
 	room *muc.Room
 	info *muc.RoomListing
 
@@ -49,10 +47,9 @@ type roomView struct {
 
 func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
 	view := &roomView{
-		u:        u,
-		account:  a,
-		identity: ident,
-		events:   make(chan muc.MUC),
+		u:       u,
+		account: a,
+		events:  make(chan muc.MUC),
 	}
 
 	view.room = a.newRoomModel(ident)
@@ -61,7 +58,7 @@ func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
 	view.room.Subscribe(view.events)
 	go view.observeRoomEvents()
 
-	view.subscribers = newRoomViewSubscribers(view.identity, view.log)
+	view.subscribers = newRoomViewSubscribers(view.identity(), view.log)
 
 	view.initBuilderAndSignals()
 	view.initDefaults()
@@ -88,14 +85,14 @@ func (v *roomView) initBuilderAndSignals() {
 }
 
 func (v *roomView) initDefaults() {
-	v.setTitle(fmt.Sprintf("%s [%s]", v.identity.String(), v.account.Account()))
+	v.setTitle(fmt.Sprintf("%s [%s]", v.identity(), v.account.Account()))
 }
 
 func (v *roomView) requestRoomInfo() {
 	doInUIThread(v.showSpinner)
 
 	rl := make(chan *muc.RoomListing)
-	go v.account.session.GetRoom(v.identity, rl)
+	go v.account.session.GetRoom(v.identity(), rl)
 	go func() {
 		roomInfo := <-rl
 		v.onRequestRoomInfoFinish(roomInfo)
@@ -116,7 +113,7 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 
 func (v *roomView) onDestroyWindow() {
 	v.opened = false
-	v.account.removeRoomView(v.identity)
+	v.account.removeRoomView(v.identity())
 	v.room.Unsubscribe(v.events)
 }
 
@@ -183,7 +180,7 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 	v.showSpinner()
 
 	go func() {
-		v.account.leaveRoom(v.identity, v.room.Occupant.Nick, func() {
+		v.account.leaveRoom(v.identity(), v.room.Occupant.Nick, func() {
 			doInUIThread(v.window.Destroy)
 			if onSuccess != nil {
 				onSuccess()
@@ -254,4 +251,8 @@ func (v *roomView) registrationRequired(nickname string) {
 	v.publishWithInfo(registrationRequired, roomViewEventInfo{
 		nickname: nickname,
 	})
+}
+
+func (v *roomView) identity() jid.Bare {
+	return v.room.Identity
 }

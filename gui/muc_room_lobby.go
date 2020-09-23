@@ -45,7 +45,7 @@ type roomViewLobby struct {
 }
 
 func (v *roomView) initRoomLobby() {
-	v.lobby = v.newRoomViewLobby(v.account, v.identity, v.content, v.onJoined, v.onJoinCancel)
+	v.lobby = v.newRoomViewLobby(v.account, v.identity(), v.content, v.onJoined, v.onJoinCancel)
 }
 
 func (v *roomView) newRoomViewLobby(a *account, ident jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
@@ -95,11 +95,11 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	})
 
 	v.subscribe("lobby", nicknameConflict, func(ei roomViewEventInfo) {
-		l.nicknameConflict(v.identity, ei.nickname)
+		l.nicknameConflict(v.identity(), ei.nickname)
 	})
 
 	v.subscribe("lobby", registrationRequired, func(ei roomViewEventInfo) {
-		l.registrationRequired(v.identity, ei.nickname)
+		l.registrationRequired(v.identity(), ei.nickname)
 	})
 
 	v.subscribe("lobby", previousToSwitchToMain, func(roomViewEventInfo) {

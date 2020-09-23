@@ -21,7 +21,7 @@ func (a *account) addRoomView(v *roomView) {
 	a.multiUserChatRoomsLock.Lock()
 	defer a.multiUserChatRoomsLock.Unlock()
 
-	a.multiUserChatRooms[v.identity.String()] = v
+	a.multiUserChatRooms[v.identity().String()] = v
 }
 
 func (a *account) removeRoomView(ident jid.Bare) {

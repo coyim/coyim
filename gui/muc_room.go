@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
@@ -42,6 +43,8 @@ type roomView struct {
 	roster  *roomViewRoster
 	conv    *roomViewConversation
 	lobby   *roomViewLobby
+
+	sync.Mutex
 }
 
 func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
@@ -67,7 +70,7 @@ func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
 	view.roster = view.newRoomViewRoster()
 	view.conv = view.newRoomViewConversation()
 
-	view.requestRoomInfo()
+	go view.requestRoomInfo()
 
 	return view
 }
@@ -89,17 +92,22 @@ func (v *roomView) initDefaults() {
 }
 
 func (v *roomView) requestRoomInfo() {
-	v.showSpinner()
+	doInUIThread(v.showSpinner)
 
+	rl := make(chan *muc.RoomListing)
+	go v.account.session.GetRoom(v.identity, rl)
 	go func() {
-		rl := make(chan *muc.RoomListing)
-		go v.account.session.GetRoom(v.identity, rl)
-		v.info = <-rl
-		v.onRequestRoomInfoFinish()
+		roomInfo := <-rl
+		v.onRequestRoomInfoFinish(roomInfo)
 	}()
 }
 
-func (v *roomView) onRequestRoomInfoFinish() {
+func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
+	v.Lock()
+	defer v.Unlock()
+
+	v.info = roomInfo
+
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.publish(roomInfoReceived)

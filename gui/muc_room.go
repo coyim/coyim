@@ -117,6 +117,7 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 func (v *roomView) onDestroyWindow() {
 	v.opened = false
 	v.account.removeRoomView(v.identity)
+	v.room.Unsubscribe(v.events)
 }
 
 func (v *roomView) setTitle(t string) {

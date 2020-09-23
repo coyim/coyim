@@ -60,6 +60,11 @@ func (r *Room) Subscribe(c chan<- MUC) {
 	r.subscribers.subscribe(c)
 }
 
+// Unsubscribe unsubscribe the observer to room events
+func (r *Room) Unsubscribe(c chan<- MUC) {
+	r.subscribers.unsubscribe(c)
+}
+
 // Publish will publish a new room event
 func (r *Room) Publish(ev MUC) {
 	r.subscribers.publishEvent(ev)

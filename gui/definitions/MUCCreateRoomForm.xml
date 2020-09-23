@@ -1,12 +1,4 @@
 <interface>
-  <object class="GtkListStore" id="createRoomsAccountsModel">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkBox" id="createRoomForm">
     <property name="margin_left">12</property>
     <property name="margin_right">12</property>
@@ -53,7 +45,6 @@
         <child>
           <object class="GtkComboBox" id="accounts">
             <property name="hexpand">True</property>
-            <property name="model">createRoomsAccountsModel</property>
             <child>
               <object class="GtkCellRendererText" id="account-name-rendered"/>
               <attributes>

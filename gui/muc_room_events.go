@@ -77,6 +77,7 @@ type roomViewEventInfo struct {
 	message  string
 }
 
+type roomViewEventObservers map[roomViewEventType]func(roomViewEventInfo)
 type roomViewEventType int
 
 const (
@@ -131,6 +132,12 @@ func (s *roomViewSubscribers) subscribe(ev roomViewEventType, o *roomViewObserve
 	s.observers[ev] = append(s.observers[ev], o)
 }
 
+func (s *roomViewSubscribers) subscribeAll(observers map[roomViewEventType]*roomViewObserver) {
+	for ev, ob := range observers {
+		s.subscribe(ev, ob)
+	}
+}
+
 func (s *roomViewSubscribers) unsubscribe(ev roomViewEventType, id string) {
 	s.RLock()
 	defer s.RUnlock()
@@ -175,6 +182,12 @@ func (v *roomView) subscribe(id string, ev roomViewEventType, onNotify func(room
 		id:       id,
 		onNotify: onNotify,
 	})
+}
+
+func (v *roomView) subscribeAll(id string, o roomViewEventObservers) {
+	for ev, onNotify := range o {
+		v.subscribe(id, ev, onNotify)
+	}
 }
 
 func (v *roomView) unsubscribe(id string, ev roomViewEventType) {

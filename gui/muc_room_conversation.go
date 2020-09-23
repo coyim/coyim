@@ -36,30 +36,28 @@ func (c *roomViewConversation) initBuilder() {
 }
 
 func (c *roomViewConversation) initSubscribers(v *roomView) {
-	v.subscribe("conversation", occupantLeft, func(ei roomViewEventInfo) {
-		c.displayNotificationWhenOccupantLeftTheRoom(ei.nickname)
-	})
-
-	v.subscribe("conversation", occupantJoined, func(ei roomViewEventInfo) {
-		c.displayNotificationWhenOccupantJoinedRoom(ei.nickname)
-	})
-
-	v.subscribe("conversation", messageReceived, func(ei roomViewEventInfo) {
-		c.displayNewLiveMessage(
-			ei.nickname,
-			ei.subject,
-			ei.message,
-		)
-	})
-
-	v.subscribe("conversation", loggingEnabled, func(roomViewEventInfo) {
-		msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
-		v.conv.displayWarningMessage(msg)
-	})
-
-	v.subscribe("conversation", loggingDisabled, func(roomViewEventInfo) {
-		msg := i18n.Local("This room is no longer publicly logged.")
-		v.conv.displayWarningMessage(msg)
+	v.subscribeAll("conversation", roomViewEventObservers{
+		occupantLeft: func(ei roomViewEventInfo) {
+			c.displayNotificationWhenOccupantLeftTheRoom(ei.nickname)
+		},
+		occupantJoined: func(ei roomViewEventInfo) {
+			c.displayNotificationWhenOccupantJoinedRoom(ei.nickname)
+		},
+		messageReceived: func(ei roomViewEventInfo) {
+			c.displayNewLiveMessage(
+				ei.nickname,
+				ei.subject,
+				ei.message,
+			)
+		},
+		loggingEnabled: func(roomViewEventInfo) {
+			msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
+			v.conv.displayWarningMessage(msg)
+		},
+		loggingDisabled: func(roomViewEventInfo) {
+			msg := i18n.Local("This room is no longer publicly logged.")
+			v.conv.displayWarningMessage(msg)
+		},
 	})
 }
 

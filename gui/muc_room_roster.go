@@ -31,6 +31,7 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	r.initBuilder()
 	r.initDefaults()
 	r.initSubscribers(v)
+
 	return r
 }
 
@@ -51,10 +52,12 @@ func (r *roomViewRoster) initDefaults() {
 }
 
 func (r *roomViewRoster) initSubscribers(v *roomView) {
-	v.subscribe("roster", occupantSelfJoined, r.onUpdateRoster)
-	v.subscribe("roster", occupantJoined, r.onUpdateRoster)
-	v.subscribe("roster", occupantUpdated, r.onUpdateRoster)
-	v.subscribe("roster", occupantLeft, r.onUpdateRoster)
+	v.subscribeAll("roster", roomViewEventObservers{
+		occupantSelfJoined: r.onUpdateRoster,
+		occupantJoined:     r.onUpdateRoster,
+		occupantUpdated:    r.onUpdateRoster,
+		occupantLeft:       r.onUpdateRoster,
+	})
 }
 
 func (r *roomViewRoster) onUpdateRoster(roomViewEventInfo) {

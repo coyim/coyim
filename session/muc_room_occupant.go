@@ -7,49 +7,19 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-type mucRoomOccupant struct {
-	nickname    string
-	realJid     jid.Full
-	affiliation muc.Affiliation
-	role        muc.Role
-}
-
-// TODO: this should return a pointer instead. No point in copying structs all over the place
-
-// TODO: we need to think about this struct, it is a bit weird to have this and muc.Occupant at the same time
-// The problem is that UpdatePresence on the RoomRoster is responsible for creating the Occupant if it does not
-// exist. We need to think about whether this should be refactored or what makes sense.
-
-func newMUCRoomOccupant(nickname jid.Resource, affiliation, role string, realJid jid.Full) *mucRoomOccupant {
-	return &mucRoomOccupant{
-		nickname:    nickname.String(),
-		affiliation: parseAffiliationAndReport(affiliation),
-		role:        parseRoleAndReport(role),
-		realJid:     realJid,
+func newMUCRoomOccupant(nickname string, affiliation muc.Affiliation, role muc.Role, realJid jid.Full) *muc.Occupant {
+	return &muc.Occupant{
+		Nick:        nickname,
+		Affiliation: affiliation,
+		Role:        role,
+		Jid:         realJid,
 	}
 }
 
-func (o *mucRoomOccupant) sameFrom(from jid.Full) bool {
-	if o.realJid != nil {
-		// TODO: Maybe better to implement an Equals method on the jid objects
-		return o.realJid.String() == from.String()
-	}
-	return false
-}
-
-func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, occupant *mucRoomOccupant) {
+func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, occupant *muc.Occupant) {
 	// TODO: why does this ignore the second argument?
 	room, _ := m.roomManager.GetRoom(roomID)
-	joined, _, err := room.Roster().UpdatePresence(
-		roomID.WithResource(jid.NewResource(occupant.nickname)),
-		"",
-		occupant.affiliation,
-		occupant.role,
-		"",
-		"",
-		"Occupant updated",
-		occupant.realJid,
-	)
+	joined, _, err := room.Roster().UpdatePresence(occupant, "")
 
 	if err != nil {
 		// TODO: We should probably add fields for room and occupant here
@@ -66,20 +36,12 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, occupant *mucRoomOccu
 	}
 }
 
-func (m *mucManager) handleOccupantLeft(roomID jid.Bare, occupant *mucRoomOccupant) {
+func (m *mucManager) handleOccupantLeft(roomID jid.Bare, occupant *muc.Occupant) {
 	// TODO: Same, why ignoring second result?
 	r, _ := m.roomManager.GetRoom(roomID)
 	// TODO: We should check whether the person ACTUALLY left or not.
-	_, _, err := r.Roster().UpdatePresence(
-		roomID.WithResource(jid.NewResource(occupant.nickname)),
-		"unavailable",
-		occupant.affiliation,
-		occupant.role,
-		"",
-		"unavailable",
-		"Occupant left the room",
-		occupant.realJid,
-	)
+	occupant.UpdateStatus("unavailable", "Occupant left the room")
+	_, _, err := r.Roster().UpdatePresence(occupant, "unavailable")
 
 	if err != nil {
 		m.log.WithError(err).Error("An error occurred trying to remove the occupant from the roster")

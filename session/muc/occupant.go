@@ -1,7 +1,9 @@
 package muc
 
-import "github.com/coyim/coyim/xmpp/jid"
-import "github.com/coyim/coyim/roster"
+import (
+	"github.com/coyim/coyim/roster"
+	"github.com/coyim/coyim/xmpp/jid"
+)
 
 // Occupant contains information about a specific occupant in a specific room.
 // This structure doesn't make sense without a connection to a room, since the information
@@ -10,7 +12,7 @@ type Occupant struct {
 	// Nick is the nickname of the person
 	Nick string
 	// Jid is the real JID of the person, if known. Otherwise it is nil
-	Jid jid.WithResource
+	Jid jid.Full
 
 	// Affiliation is the current affiliation of the occupant in the room
 	Affiliation Affiliation
@@ -73,10 +75,15 @@ func (o *Occupant) ChangeAffiliationToOwner() {
 
 // Update will update the information in this occupant object with the given information. It returns an error if the given affiliation or role doesn't match
 // a known affiliation or role.
-func (o *Occupant) Update(from jid.WithResource, affiliation Affiliation, role Role, show, statusMsg string, realJid jid.WithResource) {
-	o.Nick = from.Resource().String()
+func (o *Occupant) Update(nickname string, affiliation Affiliation, role Role, status, statusMsg string, realJid jid.Full) {
+	o.Nick = nickname
 	o.Jid = realJid
 	o.Affiliation = affiliation
 	o.Role = role
-	o.Status = roster.Status{show, statusMsg}
+	o.Status = roster.Status{Status: status, StatusMsg: statusMsg}
+}
+
+// UpdateStatus will update the occupant's status
+func (o *Occupant) UpdateStatus(status, statusMsg string) {
+	o.Status = roster.Status{Status: status, StatusMsg: statusMsg}
 }

@@ -49,8 +49,8 @@ func (s *MucSuite) Test_ByOccupantJid(c *C) {
 	c.Assert(vals[4].Nick, Equals, "Reinaldo")
 
 	vals2 := []*Occupant{
-		&Occupant{Nick: "Rafael", Jid: jid.R("foo@jabber.org/abc")},
-		&Occupant{Nick: "Rafael2", Jid: jid.R("foo@jabber.im/abc")},
+		&Occupant{Nick: "Rafael", Jid: jid.ParseFull("foo@jabber.org/abc")},
+		&Occupant{Nick: "Rafael2", Jid: jid.ParseFull("foo@jabber.im/abc")},
 		&Occupant{Nick: "Ola", Jid: nil},
 		&Occupant{Nick: "Cristian", Jid: nil},
 	}

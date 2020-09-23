@@ -26,32 +26,32 @@ func (m *mucManager) roomRenamed(roomID jid.Bare) {
 	m.publishRoomEvent(roomID, events.MUCRoomRenamed{})
 }
 
-func (m *mucManager) occupantLeft(roomID jid.Bare, occupant *mucRoomOccupant) {
+func (m *mucManager) occupantLeft(roomID jid.Bare, occupant *muc.Occupant) {
 	ev := events.MUCOccupantLeft{}
-	ev.Nickname = occupant.nickname
-	ev.RealJid = occupant.realJid
-	ev.Affiliation = occupant.affiliation
-	ev.Role = occupant.role
+	ev.Nickname = occupant.Nick
+	ev.RealJid = occupant.Jid
+	ev.Affiliation = occupant.Affiliation
+	ev.Role = occupant.Role
 
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) occupantJoined(roomID jid.Bare, occupant *mucRoomOccupant) {
+func (m *mucManager) occupantJoined(roomID jid.Bare, occupant *muc.Occupant) {
 	ev := events.MUCOccupantJoined{}
-	ev.Nickname = occupant.nickname
-	ev.RealJid = occupant.realJid
-	ev.Affiliation = occupant.affiliation
-	ev.Role = occupant.role
+	ev.Nickname = occupant.Nick
+	ev.RealJid = occupant.Jid
+	ev.Affiliation = occupant.Affiliation
+	ev.Role = occupant.Role
 
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) occupantUpdate(roomID jid.Bare, occupant *mucRoomOccupant) {
+func (m *mucManager) occupantUpdate(roomID jid.Bare, occupant *muc.Occupant) {
 	ev := events.MUCOccupantUpdated{}
-	ev.Nickname = occupant.nickname
-	ev.RealJid = occupant.realJid
-	ev.Affiliation = occupant.affiliation
-	ev.Role = occupant.role
+	ev.Nickname = occupant.Nick
+	ev.RealJid = occupant.Jid
+	ev.Affiliation = occupant.Affiliation
+	ev.Role = occupant.Role
 
 	m.publishRoomEvent(roomID, ev)
 }
@@ -64,12 +64,12 @@ func (m *mucManager) loggingDisabled(roomID jid.Bare) {
 	m.publishRoomEvent(roomID, events.MUCLoggingDisabled{})
 }
 
-func (m *mucManager) selfOccupantJoined(roomID jid.Bare, occupant *mucRoomOccupant) {
+func (m *mucManager) selfOccupantJoined(roomID jid.Bare, occupant *muc.Occupant) {
 	ev := events.MUCSelfOccupantJoined{}
-	ev.Nickname = occupant.nickname
-	ev.RealJid = occupant.realJid
-	ev.Affiliation = occupant.affiliation
-	ev.Role = occupant.role
+	ev.Nickname = occupant.Nick
+	ev.RealJid = occupant.Jid
+	ev.Affiliation = occupant.Affiliation
+	ev.Role = occupant.Role
 
 	m.publishRoomEvent(roomID, ev)
 }

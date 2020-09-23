@@ -32,22 +32,20 @@ type createMUCRoomForm struct {
 	onCheckFieldsConditions func(string, string, *account) bool
 }
 
-func (v *createMUCRoom) initForm() {
+func (v *createMUCRoom) newCreateRoomForm() *createMUCRoomForm {
 	f := &createMUCRoomForm{
 		log:                  v.log,
 		roomNameConflictList: set.New(),
 	}
 
-	panicOnDevError(v.builder.bindObjects(f))
-
-	f.errorBox = newErrorNotification(f.notificationArea)
-	f.ac = v.u.createConnectedAccountsComponent(f.account, f, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
+	f.initBuilder(v)
+	f.initDefaults(v)
 
 	f.createRoomIfDoesntExist = func(a *account, ident jid.Bare) {
-		errResult := make(chan error)
-		v.createRoomIfDoesntExist(a, ident, errResult)
+		errors := make(chan error)
+		v.createRoomIfDoesntExist(a, ident, errors)
 		select {
-		case err := <-errResult:
+		case err := <-errors:
 			switch err {
 			case errCreateRoomCheckIfExistsFails:
 				doInUIThread(func() {
@@ -77,16 +75,6 @@ func (v *createMUCRoom) initForm() {
 		}
 	}
 
-	v.addBuilderSignals(map[string]interface{}{
-		"on_cancel":          v.onCancel,
-		"on_create_room":     f.onCreateRoom,
-		"on_roomName_change": f.enableCreationIfConditionsAreMet,
-		"on_roomAutoJoin_toggled": func() {
-			v.updateAutoJoinValue(f.roomAutoJoin.GetActive())
-		},
-		"on_chatServiceEntry_change": f.enableCreationIfConditionsAreMet,
-	})
-
 	v.onAutoJoin(f.onAutoJoinChange)
 	v.onDestroy(f.destroy)
 
@@ -98,7 +86,27 @@ func (v *createMUCRoom) initForm() {
 		f.isShown = true
 	}
 
-	v.form = f
+	return f
+}
+
+func (f *createMUCRoomForm) initBuilder(v *createMUCRoom) {
+	builder := newBuilder("MUCCreateRoomForm")
+	panicOnDevError(builder.bindObjects(f))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_cancel":          v.onCancel,
+		"on_create_room":     f.onCreateRoom,
+		"on_roomName_change": f.enableCreationIfConditionsAreMet,
+		"on_roomAutoJoin_toggled": func() {
+			v.updateAutoJoinValue(f.roomAutoJoin.GetActive())
+		},
+		"on_chatServiceEntry_change": f.enableCreationIfConditionsAreMet,
+	})
+}
+
+func (f *createMUCRoomForm) initDefaults(v *createMUCRoom) {
+	f.errorBox = newErrorNotification(f.notificationArea)
+	f.ac = v.u.createConnectedAccountsComponent(f.account, f, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
 }
 
 func (f *createMUCRoomForm) onAutoJoinChange(v bool) {

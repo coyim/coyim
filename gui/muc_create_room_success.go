@@ -13,17 +13,12 @@ type createMUCRoomSuccess struct {
 	view gtki.Box `gtk-widget:"createRoomSuccess"`
 }
 
-func (v *createMUCRoom) initSuccessView(onJoinRoom func(*account, jid.Bare)) {
+func (v *createMUCRoom) newCreateRoomSuccess() *createMUCRoomSuccess {
 	s := &createMUCRoomSuccess{
-		onJoinRoom: onJoinRoom,
+		onJoinRoom: v.joinRoom,
 	}
 
-	panicOnDevError(v.builder.bindObjects(s))
-
-	v.addBuilderSignals(map[string]interface{}{
-		"on_createRoom_clicked": v.showCreateForm,
-		"on_joinRoom_clicked":   s.onJoinRoomClick,
-	})
+	s.initBuilder(v)
 
 	v.showSuccessView = func(a *account, ident jid.Bare) {
 		v.form.reset()
@@ -32,7 +27,17 @@ func (v *createMUCRoom) initSuccessView(onJoinRoom func(*account, jid.Bare)) {
 		v.container.Add(v.success.view)
 	}
 
-	v.success = s
+	return s
+}
+
+func (s *createMUCRoomSuccess) initBuilder(v *createMUCRoom) {
+	builder := newBuilder("MUCCreateRoomSuccess")
+	panicOnDevError(builder.bindObjects(s))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_createRoom_clicked": v.showCreateForm,
+		"on_joinRoom_clicked":   s.onJoinRoomClick,
+	})
 }
 
 func (s *createMUCRoomSuccess) updateInfo(a *account, ident jid.Bare) {

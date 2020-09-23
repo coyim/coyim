@@ -2,6 +2,7 @@ package gui
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -9,9 +10,8 @@ import (
 )
 
 type createMUCRoom struct {
-	u       *gtkUI
-	builder *builder
-	log     coylog.Logger
+	u   *gtkUI
+	log coylog.Logger
 
 	autoJoin bool
 	cancel   chan bool
@@ -22,11 +22,12 @@ type createMUCRoom struct {
 	form    *createMUCRoomForm
 	success *createMUCRoomSuccess
 
-	showCreateForm  func()
-	showSuccessView func(*account, jid.Bare)
-	onAutoJoinList  []func(bool)
-	onDestroyList   []func()
-	builderSignals  map[string]interface{}
+	showCreateForm   func()
+	showSuccessView  func(*account, jid.Bare)
+	onAutoJoinList   []func(bool)
+	onDestroyList    []func()
+	onAutoJoinLocker sync.RWMutex
+	onDestroyLocker  sync.RWMutex
 }
 
 func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
@@ -37,13 +38,12 @@ func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 		showSuccessView: func(*account, jid.Bare) {},
 		onAutoJoinList:  []func(bool){},
 		onDestroyList:   []func(){},
-		builderSignals:  make(map[string]interface{}),
 	}
 
 	v.initBuilder()
-	v.initForm()
-	v.initSuccessView(v.joinRoom)
-	v.initBuilderSignals()
+
+	v.form = v.newCreateRoomForm()
+	v.success = v.newCreateRoomSuccess()
 
 	u.connectShortcutsChildWindow(v.window)
 
@@ -51,30 +51,18 @@ func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 }
 
 func (v *createMUCRoom) initBuilder() {
-	v.builder = newBuilder("MUCCreateRoomDialog")
-	panicOnDevError(v.builder.bindObjects(v))
-}
+	builder := newBuilder("MUCCreateRoomDialog")
+	panicOnDevError(builder.bindObjects(v))
 
-func (v *createMUCRoom) initBuilderSignals() {
-	v.addBuilderSignal("on_close_window", v.onCloseWindow)
-	v.builder.ConnectSignals(v.builderSignals)
-}
-
-func (v *createMUCRoom) addBuilderSignals(signals map[string]interface{}) {
-	for signal, callback := range signals {
-		v.addBuilderSignal(signal, callback)
-	}
-}
-
-func (v *createMUCRoom) addBuilderSignal(signal string, callback interface{}) {
-	if _, ok := v.builderSignals[signal]; ok {
-		v.log.WithField("signal", signal).Warn("Signal already registered")
-		return
-	}
-	v.builderSignals[signal] = callback
+	builder.ConnectSignals(map[string]interface{}{
+		"on_close_window": v.onCloseWindow,
+	})
 }
 
 func (v *createMUCRoom) onDestroy(f func()) {
+	v.onDestroyLocker.Lock()
+	defer v.onDestroyLocker.Unlock()
+
 	v.onDestroyList = append(v.onDestroyList, f)
 }
 
@@ -87,6 +75,9 @@ func (v *createMUCRoom) onCancel() {
 }
 
 func (v *createMUCRoom) onCloseWindow() {
+	v.onDestroyLocker.RLock()
+	defer v.onDestroyLocker.RUnlock()
+
 	for _, cb := range v.onDestroyList {
 		cb()
 	}
@@ -155,6 +146,7 @@ func (v *createMUCRoom) onCreateRoomFinished(ca *account, ident jid.Bare) {
 	if !v.autoJoin {
 		doInUIThread(func() {
 			v.showSuccessView(ca, ident)
+			v.window.ShowAll()
 		})
 		return
 	}
@@ -174,6 +166,9 @@ func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {
 		return
 	}
 
+	v.onAutoJoinLocker.RLock()
+	defer v.onAutoJoinLocker.RUnlock()
+
 	v.autoJoin = newValue
 	for _, cb := range v.onAutoJoinList {
 		cb(v.autoJoin)
@@ -181,6 +176,9 @@ func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {
 }
 
 func (v *createMUCRoom) onAutoJoin(f func(bool)) {
+	v.onAutoJoinLocker.Lock()
+	defer v.onAutoJoinLocker.Unlock()
+
 	v.onAutoJoinList = append(v.onAutoJoinList, f)
 }
 

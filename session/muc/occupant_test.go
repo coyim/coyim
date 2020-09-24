@@ -14,62 +14,69 @@ func init() {
 	log.SetOutput(ioutil.Discard)
 }
 
+func newOccupantForTest(affiliation Affiliation, role Role) *Occupant {
+	return &Occupant{
+		Affiliation: affiliation,
+		Role:        role,
+	}
+}
+
 func (s *MucSuite) Test_Occupant_ChangeRoleToNone(c *C) {
-	o := &Occupant{Role: &visitorRole{}}
+	o := newOccupantForTest(nil, &visitorRole{})
 	o.ChangeRoleToNone()
 	c.Assert(o.Role, FitsTypeOf, &noneRole{})
 }
 
 func (s *MucSuite) Test_Occupant_ChangeRoleToVisitor(c *C) {
-	o := &Occupant{Role: &noneRole{}}
+	o := newOccupantForTest(nil, &noneRole{})
 	o.ChangeRoleToVisitor()
 	c.Assert(o.Role, FitsTypeOf, &visitorRole{})
 }
 
 func (s *MucSuite) Test_Occupant_ChangeRoleToParticipant(c *C) {
-	o := &Occupant{Role: &noneRole{}}
+	o := newOccupantForTest(nil, &noneRole{})
 	o.ChangeRoleToParticipant()
 	c.Assert(o.Role, FitsTypeOf, &participantRole{})
 }
 
 func (s *MucSuite) Test_Occupant_ChangeRoleToModerator(c *C) {
-	o := &Occupant{Role: &noneRole{}}
+	o := newOccupantForTest(nil, &noneRole{})
 	o.ChangeRoleToModerator()
 	c.Assert(o.Role, FitsTypeOf, &moderatorRole{})
 }
 
 func (s *MucSuite) Test_Occupant_ChangeAffiliationToNone(c *C) {
-	o := &Occupant{Affiliation: &outcastAffiliation{}}
+	o := newOccupantForTest(&outcastAffiliation{}, nil)
 	o.ChangeAffiliationToNone()
 	c.Assert(o.Affiliation, FitsTypeOf, &noneAffiliation{})
 }
 
 func (s *MucSuite) Test_Occupant_Ban(c *C) {
-	o := &Occupant{Affiliation: &noneAffiliation{}}
+	o := newOccupantForTest(&noneAffiliation{}, nil)
 	o.Ban()
 	c.Assert(o.Affiliation, FitsTypeOf, &outcastAffiliation{})
 }
 
 func (s *MucSuite) Test_Occupant_ChangeAffiliationToOutcast(c *C) {
-	o := &Occupant{Affiliation: &noneAffiliation{}}
+	o := newOccupantForTest(&noneAffiliation{}, nil)
 	o.ChangeAffiliationToOutcast()
 	c.Assert(o.Affiliation, FitsTypeOf, &outcastAffiliation{})
 }
 
 func (s *MucSuite) Test_Occupant_ChangeAffiliationToMember(c *C) {
-	o := &Occupant{Affiliation: &noneAffiliation{}}
+	o := newOccupantForTest(&noneAffiliation{}, nil)
 	o.ChangeAffiliationToMember()
 	c.Assert(o.Affiliation, FitsTypeOf, &memberAffiliation{})
 }
 
 func (s *MucSuite) Test_Occupant_ChangeAffiliationToAdmin(c *C) {
-	o := &Occupant{Affiliation: &noneAffiliation{}}
+	o := newOccupantForTest(&noneAffiliation{}, nil)
 	o.ChangeAffiliationToAdmin()
 	c.Assert(o.Affiliation, FitsTypeOf, &adminAffiliation{})
 }
 
 func (s *MucSuite) Test_Occupant_ChangeAffiliationToOwner(c *C) {
-	o := &Occupant{Affiliation: &noneAffiliation{}}
+	o := newOccupantForTest(&noneAffiliation{}, nil)
 	o.ChangeAffiliationToOwner()
 	c.Assert(o.Affiliation, FitsTypeOf, &ownerAffiliation{})
 }

@@ -14,11 +14,28 @@ func init() {
 	log.SetOutput(ioutil.Discard)
 }
 
+func getRealJidFromString(realJid string) jid.Full {
+	if len(realJid) > 0 {
+		return jid.ParseFull(realJid)
+	}
+	return nil
+}
+
+func newRosterOccupantForTest(nickname string, realJid string, role Role, affiliation Affiliation) *Occupant {
+
+	return &Occupant{
+		Nick:        nickname,
+		Jid:         getRealJidFromString(realJid),
+		Role:        role,
+		Affiliation: affiliation,
+	}
+}
+
 func (s *MucSuite) Test_RoomRoster_AllOccupants(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere")}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse")}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo")}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", nil, nil)
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", nil, nil)
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", nil, nil)
 
 	oo := rr.AllOccupants()
 	c.Assert(oo, HasLen, 3)
@@ -29,9 +46,9 @@ func (s *MucSuite) Test_RoomRoster_AllOccupants(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_NoRole(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Role: &noneRole{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Role: &participantRole{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Role: &noneRole{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", &noneRole{}, nil)
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", &participantRole{}, nil)
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", &noneRole{}, nil)
 
 	oo := rr.NoRole()
 	c.Assert(oo, HasLen, 2)
@@ -41,9 +58,9 @@ func (s *MucSuite) Test_RoomRoster_NoRole(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_Visitors(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Role: &visitorRole{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Role: &participantRole{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Role: &visitorRole{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", &visitorRole{}, nil)
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", &participantRole{}, nil)
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", &visitorRole{}, nil)
 
 	oo := rr.Visitors()
 	c.Assert(oo, HasLen, 2)
@@ -53,9 +70,9 @@ func (s *MucSuite) Test_RoomRoster_Visitors(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_Participants(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Role: &participantRole{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Role: &visitorRole{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Role: &participantRole{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", &participantRole{}, nil)
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", &visitorRole{}, nil)
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", &participantRole{}, nil)
 
 	oo := rr.Participants()
 	c.Assert(oo, HasLen, 2)
@@ -65,9 +82,9 @@ func (s *MucSuite) Test_RoomRoster_Participants(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_Moderators(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Role: &moderatorRole{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Role: &visitorRole{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Role: &moderatorRole{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", &moderatorRole{}, nil)
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", &visitorRole{}, nil)
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", &moderatorRole{}, nil)
 
 	oo := rr.Moderators()
 	c.Assert(oo, HasLen, 2)
@@ -77,9 +94,9 @@ func (s *MucSuite) Test_RoomRoster_Moderators(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_NoAffiliation(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Affiliation: &noneAffiliation{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Affiliation: &ownerAffiliation{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Affiliation: &noneAffiliation{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", nil, &noneAffiliation{})
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", nil, &ownerAffiliation{})
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", nil, &noneAffiliation{})
 
 	oo := rr.NoAffiliation()
 	c.Assert(oo, HasLen, 2)
@@ -89,9 +106,9 @@ func (s *MucSuite) Test_RoomRoster_NoAffiliation(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_Banned(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Affiliation: &outcastAffiliation{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Affiliation: &ownerAffiliation{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Affiliation: &outcastAffiliation{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", nil, &outcastAffiliation{})
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", nil, &ownerAffiliation{})
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", nil, &outcastAffiliation{})
 
 	oo := rr.Banned()
 	c.Assert(oo, HasLen, 2)
@@ -101,9 +118,9 @@ func (s *MucSuite) Test_RoomRoster_Banned(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_Members(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Affiliation: &memberAffiliation{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Affiliation: &ownerAffiliation{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Affiliation: &memberAffiliation{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", nil, &memberAffiliation{})
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", nil, &ownerAffiliation{})
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", nil, &memberAffiliation{})
 
 	oo := rr.Members()
 	c.Assert(oo, HasLen, 2)
@@ -113,9 +130,9 @@ func (s *MucSuite) Test_RoomRoster_Members(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_Admins(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Affiliation: &adminAffiliation{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Affiliation: &ownerAffiliation{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Affiliation: &adminAffiliation{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", nil, &adminAffiliation{})
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", nil, &ownerAffiliation{})
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", nil, &adminAffiliation{})
 
 	oo := rr.Admins()
 	c.Assert(oo, HasLen, 2)
@@ -125,9 +142,9 @@ func (s *MucSuite) Test_RoomRoster_Admins(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_Owners(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Affiliation: &ownerAffiliation{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Affiliation: &adminAffiliation{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Affiliation: &ownerAffiliation{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", nil, &ownerAffiliation{})
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", nil, &adminAffiliation{})
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", nil, &ownerAffiliation{})
 
 	oo := rr.Owners()
 	c.Assert(oo, HasLen, 2)
@@ -137,12 +154,12 @@ func (s *MucSuite) Test_RoomRoster_Owners(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_OccupantsByRole(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Role: &noneRole{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Role: &noneRole{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Role: &participantRole{}}
-	rr.occupants["four"] = &Occupant{Nick: "Bar", Jid: jid.ParseFull("foo@bar.com/bar"), Role: &visitorRole{}}
-	rr.occupants["five"] = &Occupant{Nick: "Baz", Jid: jid.ParseFull("foo@bar.com/baz"), Role: &participantRole{}}
-	rr.occupants["six"] = &Occupant{Nick: "Quux", Jid: jid.ParseFull("foo@bar.com/quu"), Role: &moderatorRole{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", &noneRole{}, nil)
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", &noneRole{}, nil)
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", &participantRole{}, nil)
+	rr.occupants["four"] = newRosterOccupantForTest("Bar", "foo@bar.com/bar", &visitorRole{}, nil)
+	rr.occupants["five"] = newRosterOccupantForTest("Baz", "foo@bar.com/baz", &participantRole{}, nil)
+	rr.occupants["six"] = newRosterOccupantForTest("Quux", "foo@bar.com/quu", &moderatorRole{}, nil)
 
 	r1, r2, r3, r4 := rr.OccupantsByRole()
 	c.Assert(r1, HasLen, 2)
@@ -162,12 +179,12 @@ func (s *MucSuite) Test_RoomRoster_OccupantsByRole(c *C) {
 
 func (s *MucSuite) Test_RoomRoster_OccupantsByAffiliation(c *C) {
 	rr := newRoomRoster()
-	rr.occupants["one"] = &Occupant{Nick: "One", Jid: jid.ParseFull("foo@bar.com/somewhere"), Affiliation: &noneAffiliation{}}
-	rr.occupants["two"] = &Occupant{Nick: "Abc", Jid: jid.ParseFull("foo@bar.com/somewhereelse"), Affiliation: &noneAffiliation{}}
-	rr.occupants["three"] = &Occupant{Nick: "Foo", Jid: jid.ParseFull("foo@bar.com/foo"), Affiliation: &memberAffiliation{}}
-	rr.occupants["four"] = &Occupant{Nick: "Bar", Jid: jid.ParseFull("foo@bar.com/bar"), Affiliation: &outcastAffiliation{}}
-	rr.occupants["five"] = &Occupant{Nick: "Baz", Jid: jid.ParseFull("foo@bar.com/baz"), Affiliation: &memberAffiliation{}}
-	rr.occupants["six"] = &Occupant{Nick: "Quux", Jid: jid.ParseFull("foo@bar.com/quu"), Affiliation: &adminAffiliation{}}
+	rr.occupants["one"] = newRosterOccupantForTest("One", "foo@bar.com/somewhere", nil, &noneAffiliation{})
+	rr.occupants["two"] = newRosterOccupantForTest("Abc", "foo@bar.com/somewhereelse", nil, &noneAffiliation{})
+	rr.occupants["three"] = newRosterOccupantForTest("Foo", "foo@bar.com/foo", nil, &memberAffiliation{})
+	rr.occupants["four"] = newRosterOccupantForTest("Bar", "foo@bar.com/bar", nil, &outcastAffiliation{})
+	rr.occupants["five"] = newRosterOccupantForTest("Baz", "foo@bar.com/baz", nil, &memberAffiliation{})
+	rr.occupants["six"] = newRosterOccupantForTest("Quux", "foo@bar.com/quu", nil, &adminAffiliation{})
 
 	r1, r2, r3, r4, r5 := rr.OccupantsByAffiliation()
 	c.Assert(r1, HasLen, 2)
@@ -192,7 +209,7 @@ func (s *MucSuite) Test_RoomRoster_UpdateNick(c *C) {
 	e := rr.UpdateNick(jid.ParseFull("foo@somewhere.com/bello"), "something")
 	c.Assert(e, ErrorMatches, "no such occupant known in this room")
 
-	occ := &Occupant{Nick: "bello"}
+	occ := newRosterOccupantForTest("bello", "", nil, nil)
 	rr.occupants["foo@somewhere.com/bello"] = occ
 
 	e = rr.UpdateNick(jid.ParseFull("foo@somewhere.com/bello"), "baxa")
@@ -206,12 +223,7 @@ func (s *MucSuite) Test_RoomRoster_UpdateNick(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 	rr := newRoomRoster()
 
-	o := &Occupant{
-		Nick:        "bello",
-		Affiliation: &noneAffiliation{},
-		Role:        &noneRole{},
-		Jid:         nil,
-	}
+	o := newRosterOccupantForTest("bello", "", &noneRole{}, &noneAffiliation{})
 	o.UpdateStatus("away", "gone")
 
 	j, l, e := rr.UpdatePresence(o, "unavailable")
@@ -219,26 +231,21 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 	c.Assert(l, Equals, false)
 	c.Assert(e, ErrorMatches, "no such occupant known in this room")
 
-	occ := &Occupant{Nick: "bello"}
-	rr.occupants["foo@somewhere.com/bello"] = occ
+	occ := newRosterOccupantForTest("bello", "", nil, nil)
+	rr.occupants["bello"] = occ
 
 	j, l, e = rr.UpdatePresence(o, "unavailable")
 	c.Assert(j, Equals, false)
 	c.Assert(l, Equals, true)
 	c.Assert(e, IsNil)
-	_, ok := rr.occupants["foo@somewhere.com/bello"]
+	_, ok := rr.occupants["bello"]
 	c.Assert(ok, Equals, false)
 }
 
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_bad_type(c *C) {
 	rr := newRoomRoster()
 
-	o := &Occupant{
-		Nick:        "bello",
-		Affiliation: &noneAffiliation{},
-		Role:        &noneRole{},
-		Jid:         nil,
-	}
+	o := newRosterOccupantForTest("bello", "", &noneRole{}, &noneAffiliation{})
 	o.UpdateStatus("away", "gone")
 
 	j, l, e := rr.UpdatePresence(o, "hungry")
@@ -250,12 +257,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_bad_type(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 	rr := newRoomRoster()
 
-	o := &Occupant{
-		Nick:        "bello",
-		Affiliation: &noneAffiliation{},
-		Role:        &noneRole{},
-		Jid:         jid.ParseFull("foo@example.org/test1"),
-	}
+	o := newRosterOccupantForTest("bello", "foo@example.org/test1", &noneRole{}, &noneAffiliation{})
 	o.UpdateStatus("away", "gone")
 
 	j, l, e := rr.UpdatePresence(o, "")
@@ -263,7 +265,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 	c.Assert(l, Equals, false)
 	c.Assert(e, IsNil)
 
-	occ, ok := rr.occupants["foo@somewhere.com/bello"]
+	occ, ok := rr.occupants["bello"]
 	c.Assert(ok, Equals, true)
 	c.Assert(occ, Not(IsNil))
 	c.Assert(occ.Nick, Equals, "bello")
@@ -277,18 +279,16 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
 	rr := newRoomRoster()
 
-	occ := &Occupant{Nick: "bello"}
-	rr.occupants["foo@somewhere.com/bello"] = occ
+	occ := newRosterOccupantForTest("bello", "", nil, nil)
+	rr.occupants["bello"] = occ
 
-	o := &Occupant{
-		Nick:        "bello",
-		Affiliation: &noneAffiliation{},
-		Role:        &noneRole{},
-		Jid:         jid.ParseFull("foo@example.org/test1"),
-	}
+	o := newRosterOccupantForTest("bello", "foo@example.org/test1", &noneRole{}, &noneAffiliation{})
 	o.UpdateStatus("away", "gone")
 
 	j, l, e := rr.UpdatePresence(o, "")
+
+	occ = rr.occupants["bello"]
+
 	c.Assert(j, Equals, false)
 	c.Assert(l, Equals, false)
 	c.Assert(e, IsNil)

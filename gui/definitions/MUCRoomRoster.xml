@@ -11,6 +11,8 @@
         <child>
           <object class="GtkScrolledWindow" id="occupants">
             <property name="visible">True</property>
+            <property name="margin_right">6</property>
+            <property name="margin_bottom">6</property>
             <property name="shadow_type">in</property>
             <property name="kinetic_scrolling">False</property>
             <property name="overlay_scrolling">False</property>

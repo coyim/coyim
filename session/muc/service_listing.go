@@ -11,6 +11,10 @@ type ServiceListing struct {
 }
 
 // NewServiceListing creates and returns a new service listing
-func NewServiceListing() *ServiceListing {
-	return &ServiceListing{}
+func NewServiceListing(service jid.Any, name string) *ServiceListing {
+	sl := &ServiceListing{
+		Jid:  service,
+		Name: name,
+	}
+	return sl
 }

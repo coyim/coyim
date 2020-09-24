@@ -198,10 +198,10 @@ func (r *RoomRoster) UpdatePresence(occupant *Occupant, tp string) (joined, left
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	_, ok := r.occupants[occupant.Nick]
+	_, exist := r.occupants[occupant.Nick]
 
 	if tp == "unavailable" {
-		if !ok {
+		if !exist {
 			return false, false, errors.New("no such occupant known in this room")
 		}
 		occupant.ChangeRoleToNone()
@@ -215,11 +215,7 @@ func (r *RoomRoster) UpdatePresence(occupant *Occupant, tp string) (joined, left
 
 	r.occupants[occupant.Nick] = occupant
 
-	if !ok {
-		return true, false, nil
-	}
-
-	return false, false, nil
+	return !exist, false, nil
 }
 
 // GetOccupantByIdentity return an occupant if this exist in the roster, otherwise return nil and false

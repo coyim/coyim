@@ -28,16 +28,10 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, occupant *muc.Occupan
 		return
 	}
 
-	joined, _, err := room.Roster().UpdatePresence(occupant, "")
-	if err != nil {
-		l.WithError(err).Error("An error occurred trying to update the occupant status in the roster")
-		return
-	}
-
-	if joined {
+	updated := room.Roster().UpdateOrAddOccupant(occupant)
+	if !updated {
 		m.occupantJoined(roomID, occupant)
 	}
-
 	m.occupantUpdate(roomID, occupant)
 }
 
@@ -54,15 +48,13 @@ func (m *mucManager) handleOccupantLeft(roomID jid.Bare, occupant *muc.Occupant)
 		return
 	}
 
-	// TODO: Check this functionality, create two functions (join and remove) from roster
 	occupant.UpdateStatus("unavailable", "Occupant left the room")
-	_, left, err := r.Roster().UpdatePresence(occupant, "unavailable")
+
+	err := r.Roster().RemoveOccupant(occupant)
 	if err != nil {
 		m.log.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
 		return
 	}
 
-	if left {
-		m.occupantLeft(roomID, occupant)
-	}
+	m.occupantLeft(roomID, occupant)
 }

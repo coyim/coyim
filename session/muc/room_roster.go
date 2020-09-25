@@ -195,27 +195,48 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 // indications on whether the presence update means the person joined the room, or left the room.
 // Notice that updating of nick names is done separately and should not be done by calling this method.
 func (r *RoomRoster) UpdatePresence(occupant *Occupant, tp string) (joined, left bool, err error) {
+	switch tp {
+	case "unavailable":
+		err := r.RemoveOccupant(occupant)
+		return false, err == nil, err
+	case "":
+		updated := r.UpdateOrAddOccupant(occupant)
+		return !updated, false, err
+	default:
+		return false, false, fmt.Errorf("incorrect presence type sent to room roster: '%s'", tp)
+	}
+}
+
+func (r *RoomRoster) isOccupantKnowed(nickname string) bool {
+	_, k := r.occupants[nickname]
+	return k
+}
+
+// UpdateOrAddOccupant return true if the occupant was updated or false if that was added
+func (r *RoomRoster) UpdateOrAddOccupant(occupant *Occupant) bool {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	_, exist := r.occupants[occupant.Nick]
-
-	if tp == "unavailable" {
-		if !exist {
-			return false, false, errors.New("no such occupant known in this room")
-		}
-		occupant.ChangeRoleToNone()
-		delete(r.occupants, occupant.Nick)
-		return false, true, nil
-	}
-
-	if tp != "" {
-		return false, false, fmt.Errorf("incorrect presence type sent to room roster: '%s'", tp)
-	}
+	isKnowed := r.isOccupantKnowed(occupant.Nick)
 
 	r.occupants[occupant.Nick] = occupant
 
-	return !exist, false, nil
+	return isKnowed
+}
+
+// RemoveOccupant delete an occupant if that exists
+func (r *RoomRoster) RemoveOccupant(occupant *Occupant) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if !r.isOccupantKnowed(occupant.Nick) {
+		return errors.New("no such occupant known in this room")
+	}
+
+	occupant.ChangeRoleToNone()
+	delete(r.occupants, occupant.Nick)
+
+	return nil
 }
 
 // GetOccupantByIdentity return an occupant if this exist in the roster, otherwise return nil and false

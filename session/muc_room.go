@@ -26,13 +26,13 @@ func (s *session) JoinRoom(ident jid.Bare, nickname string) error {
 }
 
 type hasRoomContext struct {
-	s             *session
-	resultChannel chan bool
-	errorChannel  chan error
-	roomID        jid.Bare
-	identities    []data.DiscoveryIdentity
-	features      []string
-	log           coylog.Logger
+	s               *session
+	resultChannel   chan bool
+	errorChannel    chan error
+	roomID          jid.Bare
+	foundIdentities []data.DiscoveryIdentity
+	foundFeatures   []string
+	log             coylog.Logger
 }
 
 func (rc *hasRoomContext) exec(wantRoomInfo chan<- *muc.RoomListing) {
@@ -79,14 +79,14 @@ func (rc *hasRoomContext) discoverFeaturesAndIdentities() (bool, error) {
 		return false, errors.New("the room doesn't exists")
 	}
 
-	rc.identities = i
-	rc.features = f
+	rc.foundIdentities = i
+	rc.foundFeatures = f
 
 	return true, nil
 }
 
 func (rc *hasRoomContext) hasRoomIdentity() (bool, error) {
-	_, ok := hasIdentity(rc.identities, "conference", "text")
+	_, ok := hasIdentity(rc.foundIdentities, "conference", "text")
 	if !ok {
 		return false, errors.New("invalid room identity")
 	}
@@ -94,7 +94,7 @@ func (rc *hasRoomContext) hasRoomIdentity() (bool, error) {
 }
 
 func (rc *hasRoomContext) hasRoomFeature() (bool, error) {
-	if !hasFeatures(rc.features, "http://jabber.org/protocol/muc") {
+	if !hasFeatures(rc.foundFeatures, "http://jabber.org/protocol/muc") {
 		return false, errors.New("invalid room feature")
 	}
 	return true, nil

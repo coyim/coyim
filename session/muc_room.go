@@ -3,7 +3,9 @@ package session
 import (
 	"errors"
 
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
@@ -23,46 +25,93 @@ func (s *session) JoinRoom(ident jid.Bare, nickname string) error {
 	return nil
 }
 
-func (s *session) HasRoom(rj jid.Bare, wantRoomInfo chan<- *muc.RoomListing) (<-chan bool, <-chan error) {
-	// TODO: This should be refactored into smaller, more focused helper methods
-	// TODO: unify logging in all the below, so everything logs the room name
-	// TODO: rename these variables
-	resultChannel := make(chan bool)
-	errorChannel := make(chan error)
-	go func() {
-		r, err := s.Conn().EntityExists(rj.String())
-		if err != nil {
-			s.log.WithError(err).Error("An error occurred searching the entity on the server")
-			errorChannel <- err
-			return
-		}
-		if !r {
-			resultChannel <- false
-			return
-		}
-		idents, features, ok := s.Conn().DiscoveryFeaturesAndIdentities(rj.String())
-		if !ok {
-			err := errors.New("Something went wrong discovering the features and identities of the room")
-			s.log.WithField("room", rj).WithError(err).Error("An error occurred trying to get the features and identities from the server")
-			errorChannel <- err
-			return
-		}
-		_, hasIdent := hasIdentity(idents, "conference", "text")
-		if !hasIdent {
-			resultChannel <- false
-			return
-		}
-		if !hasFeatures(features, "http://jabber.org/protocol/muc") {
-			resultChannel <- false
-			return
-		}
-		resultChannel <- true
+type hasRoomContext struct {
+	s             *session
+	resultChannel chan bool
+	errorChannel  chan error
+	roomID        jid.Bare
+	identities    []data.DiscoveryIdentity
+	features      []string
+	log           coylog.Logger
+}
 
-		if wantRoomInfo != nil {
-			s.GetRoom(rj, wantRoomInfo)
+func (rc *hasRoomContext) exec(wantRoomInfo chan<- *muc.RoomListing) {
+	steps := []func() (bool, error){
+		rc.searchEntityOnServer,
+		rc.discoverFeaturesAndIdentities,
+		rc.hasRoomIdentity,
+		rc.hasRoomFeature,
+	}
+
+	for _, f := range steps {
+		ok, err := f()
+		if err != nil {
+			rc.s.log.WithError(err).Error("An error occurred while if the room exists on the server")
+			rc.errorChannel <- err
+			return
 		}
-	}()
-	return resultChannel, errorChannel
+
+		if !ok {
+			rc.resultChannel <- false
+			return
+		}
+	}
+
+	rc.resultChannel <- true
+
+	if wantRoomInfo != nil {
+		rc.s.GetRoom(rc.roomID, wantRoomInfo)
+	}
+}
+
+func (rc *hasRoomContext) searchEntityOnServer() (bool, error) {
+	exists, err := rc.s.Conn().EntityExists(rc.roomID.String())
+	if err != nil {
+		return exists, err
+	}
+
+	return exists, nil
+}
+
+func (rc *hasRoomContext) discoverFeaturesAndIdentities() (bool, error) {
+	i, f, ok := rc.s.Conn().DiscoveryFeaturesAndIdentities(rc.roomID.String())
+	if !ok {
+		return false, errors.New("the room doesn't exists")
+	}
+
+	rc.identities = i
+	rc.features = f
+
+	return true, nil
+}
+
+func (rc *hasRoomContext) hasRoomIdentity() (bool, error) {
+	_, ok := hasIdentity(rc.identities, "conference", "text")
+	if !ok {
+		return false, errors.New("invalid room identity")
+	}
+	return true, nil
+}
+
+func (rc *hasRoomContext) hasRoomFeature() (bool, error) {
+	if !hasFeatures(rc.features, "http://jabber.org/protocol/muc") {
+		return false, errors.New("invalid room feature")
+	}
+	return true, nil
+}
+
+func (s *session) HasRoom(roomID jid.Bare, wantRoomInfo chan<- *muc.RoomListing) (<-chan bool, <-chan error) {
+	rc := &hasRoomContext{
+		s:             s,
+		roomID:        roomID,
+		resultChannel: make(chan bool),
+		errorChannel:  make(chan error),
+		log:           s.log.WithField("room", roomID),
+	}
+
+	go rc.exec(wantRoomInfo)
+
+	return rc.resultChannel, rc.errorChannel
 }
 
 // GetRoom will block, waiting to get the room information

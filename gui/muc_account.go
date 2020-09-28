@@ -6,9 +6,11 @@ import (
 )
 
 func (a *account) getRoomView(ident jid.Bare) (*roomView, bool) {
+	// TODO: I think mucRoomsLock should be fine for this field
 	a.multiUserChatRoomsLock.RLock()
 	defer a.multiUserChatRoomsLock.RUnlock()
 
+	// TODO: This one too, mucRooms
 	v, ok := a.multiUserChatRooms[ident.String()]
 	if !ok {
 		a.log.WithField("room", ident).Debug("getRoomView(): trying to get a not connected room")
@@ -51,6 +53,7 @@ func (a *account) leaveRoom(ident jid.Bare, nickname string, onSuccess func(), o
 				onSuccess()
 			}
 		case err := <-anyError:
+			// TODO: Would it be possible for us to log this on the room logger?
 			a.log.WithError(err).Error("An error occurred while trying to leave the room.")
 			if onError != nil {
 				onError(err)

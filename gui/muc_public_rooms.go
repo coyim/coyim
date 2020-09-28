@@ -11,6 +11,8 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+// TODO: We decided to use iota for all of the places
+
 const (
 	mucListRoomsIndexJid         = 0
 	mucListRoomsIndexName        = 1
@@ -136,6 +138,7 @@ var (
 )
 
 func (prv *mucPublicRoomsView) getRoomFromIter(iter gtki.TreeIter) (jid.Bare, *muc.RoomListing, error) {
+	// TODO: Maybe refactor and clean this up a little at some point
 	roomInfoValue, e1 := prv.roomsModel.GetValue(iter, mucListRoomsIndexRoomInfo)
 	roomInfoRef, e2 := roomInfoValue.GoValue()
 	if e1 != nil || e2 != nil {
@@ -183,6 +186,8 @@ func (prv *mucPublicRoomsView) getSelectedRoom() (jid.Bare, *muc.RoomListing, er
 func (prv *mucPublicRoomsView) onJoinRoom() {
 	ident, rl, err := prv.getSelectedRoom()
 	if err != nil {
+		// TODO: Maybe introduce helper method to always get the log, either
+		// from current account or if no current account from the ui
 		prv.currentAccount.log.WithError(err).Error("An error occurred when trying to join the room")
 		prv.showUserMessageForError(err)
 		return
@@ -210,19 +215,21 @@ func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.Tree
 
 func (prv *mucPublicRoomsView) onSelectionChanged() {
 	_, _, err := prv.getSelectedRoom()
-	if err != nil {
-		prv.joinButton.SetSensitive(false)
-	} else {
-		prv.joinButton.SetSensitive(true)
-	}
+	prv.joinButton.SetSensitive(err == nil)
 }
 
 func (prv *mucPublicRoomsView) onUpdatePublicRooms() {
+	// TODO: Is there any specific reason to use currentAccount() here instead
+	// of the currentAccount field on prv?
 	go prv.mucUpdatePublicRoomsOn(prv.ac.currentAccount())
 }
 
 func (prv *mucPublicRoomsView) getFreshRoomInfoIdentifierAndSet(rl *muc.RoomListing) int {
 	for {
+		// We are getting a 31 bit integer here to avoid negative numbers
+		// We also want to have it be smaller than normal size Golang numbers because
+		// this number will be sent out into C, with Glib. For some reason, it did not
+		// like negative numbers, and it doesn't work well will 64 bit numbers either
 		v := int(rand.Int31())
 		_, ok := prv.roomInfos[v]
 		if !ok {
@@ -232,7 +239,10 @@ func (prv *mucPublicRoomsView) getFreshRoomInfoIdentifierAndSet(rl *muc.RoomList
 	}
 }
 
-// mucUpdatePublicRoomsOn should NOT be called from the UI thread
+// TODO: This method is a bit of a beast. We should probably refactor and clean up a bit
+// This is big enough that using a helper context object might be necessary.
+
+// mucUpdatePublicRoomsOn MUST NOT be called from the UI thread
 func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 	if prv.cancel != nil {
 		prv.cancel <- true
@@ -391,7 +401,7 @@ func (prv *mucPublicRoomsView) showUserMessageForError(err error) {
 	prv.notifyOnError(userMessage)
 }
 
-// mucShowPublicRooms should be called from the UI thread
+// mucShowPublicRooms MUST be called from the UI thread
 func (u *gtkUI) mucShowPublicRooms() {
 	view := newMUCPublicRoomsView(u)
 
@@ -403,6 +413,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 
 // joinRoom should not be called from the UI thread
 func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare, roomInfo *muc.RoomListing) {
+	// TODO: should we use the current account field here?
 	a := prv.ac.currentAccount()
 	if a == nil {
 		prv.currentAccount.log.WithField("room", roomJid).Debug("joinRoom(): no account is selected")

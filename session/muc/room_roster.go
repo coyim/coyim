@@ -175,11 +175,13 @@ func (r *RoomRoster) Owners() []*Occupant {
 
 // OccupantsByRole returns all occupants, divided into the different roles
 func (r *RoomRoster) OccupantsByRole() (none, visitors, participants, moderators []*Occupant) {
+	// TODO: This should be made thread safe
 	return r.NoRole(), r.Visitors(), r.Participants(), r.Moderators()
 }
 
 // OccupantsByAffiliation returns all occupants, divided into the different affiliations
 func (r *RoomRoster) OccupantsByAffiliation() (none, banned, members, admins, owners []*Occupant) {
+	// TODO: This should be made thread safe
 	return r.NoAffiliation(), r.Banned(), r.Members(), r.Admins(), r.Owners()
 }
 
@@ -189,9 +191,12 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	// TODO: from should not be WithResource, it should be jid.Full
+
 	base := from.NoResource()
 	newFull := base.WithResource(jid.NewResource(newNick))
 
+	// TODO: Occupants is only stored with nicknames, so the below is not correct anymore
 	oc, ok := r.occupants[from.String()]
 	if !ok {
 		return errors.New("no such occupant known in this room")
@@ -203,6 +208,12 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 
 	return nil
 }
+
+// TODO: This taking an occupant can cause a lot of problems. The code was
+// originally written so that the RoomRoster is responsible for managing and creating
+// new instances of Occupant when needed. If that happens outside of the package, that suddenly
+// creates completely different preconditions and the code in this package might have to be
+// completely rewritten...
 
 // UpdatePresence should be called when receiving a regular presence update with no type, or with unavailable as type. It will return
 // indications on whether the presence update means the person joined the room, or left the room.

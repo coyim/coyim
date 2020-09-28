@@ -34,13 +34,14 @@ type createMUCRoomForm struct {
 
 func (v *createMUCRoom) newCreateRoomForm() *createMUCRoomForm {
 	f := &createMUCRoomForm{
-		log:                  v.log,
+		log:                  v.u.log,
 		roomNameConflictList: set.New(),
 	}
 
 	f.initBuilder(v)
 	f.initDefaults(v)
 
+	// TODO: Maybe extract some of this stuff
 	f.createRoomIfDoesntExist = func(a *account, ident jid.Bare) {
 		errors := make(chan error)
 		v.createRoomIfDoesntExist(a, ident, errors)
@@ -75,6 +76,9 @@ func (v *createMUCRoom) newCreateRoomForm() *createMUCRoomForm {
 		}
 	}
 
+	// TODO: I think all three of these statements are inappropriate in a method called
+	// newCreateRoomForm
+	// Maybe do them from the view side, or something like that inside.
 	v.onAutoJoin(f.onAutoJoinChange)
 	v.onDestroy(f.destroy)
 
@@ -145,6 +149,7 @@ func (f *createMUCRoomForm) onCreateRoom() {
 		return
 	}
 
+	// TODO: Clunky name
 	f.onBeforeToCreateARoom()
 
 	go f.createRoomIfDoesntExist(ca, roomIdentity)
@@ -152,6 +157,7 @@ func (f *createMUCRoomForm) onCreateRoom() {
 
 func (f *createMUCRoomForm) onBeforeToCreateARoom() {
 	f.showSpinner()
+	// TODO: Quite confusing name
 	f.disableOrEnableFields(false)
 }
 
@@ -223,16 +229,16 @@ func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
 	chatService, _ := f.chatServiceEntry.GetText()
 	currentAccount := f.ac.currentAccount()
 
-	s := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
-	if s {
+	ok := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
+	if ok {
 		ident := jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(chatService))
 		if ident.Valid() && f.roomNameConflictList.Has(ident.String()) {
 			f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
-			s = false
+			ok = false
 		}
 	}
 
-	f.createButton.SetSensitive(s)
+	f.createButton.SetSensitive(ok)
 }
 
 func (f *createMUCRoomForm) updateChatServicesBasedOnAccount(ac *account) {
@@ -250,6 +256,8 @@ func (f *createMUCRoomForm) updateChatServicesBasedOnAccount(ac *account) {
 func (f *createMUCRoomForm) updateChatServices(ac *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
 	hadAny := false
 
+	// TODO: Here.... there is a funny concurrency problem
+	// When waiting for typedService to be set, you need to wait for it in this function
 	var typedService string
 	doInUIThread(func() {
 		typedService, _ = f.chatServiceEntry.GetText()

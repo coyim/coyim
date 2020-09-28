@@ -66,6 +66,8 @@ func (rl *RoomListing) Updated() {
 
 // SetFeatures receive a list of features and updates the room listing properties based on each feature
 func (rl *RoomListing) SetFeatures(features []data.DiscoveryFeature) {
+	// TODO: Is this safe to call more than once?
+	// TODO: It might be necessary to make it thread safe.
 	for _, feat := range features {
 		rl.setFeature(feat.Var)
 	}
@@ -134,6 +136,7 @@ func (rl *RoomListing) setFeature(feature string) {
 
 // SetFormsData extract the forms data and updates the room listing properties based on each data
 func (rl *RoomListing) SetFormsData(forms []data.Form) {
+	// TODO: Same questions as above
 	for _, form := range forms {
 		formData := extractFormData(form.Fields)
 		rl.setFormData(form, formData)
@@ -143,6 +146,7 @@ func (rl *RoomListing) SetFormsData(forms []data.Form) {
 func (rl *RoomListing) setFormData(form data.Form, formData map[string][]string) {
 	if form.Type == "result" && len(formData["FORM_TYPE"]) > 0 && formData["FORM_TYPE"][0] == "http://jabber.org/protocol/muc#roominfo" {
 		for k, val := range formData {
+			// TODO: Maybe extract the below into another helper?
 			switch k {
 			case "FORM_TYPE":
 				// Ignore, we already checked
@@ -193,6 +197,8 @@ func (rl *RoomListing) setFormData(form data.Form, formData map[string][]string)
 		}
 	}
 }
+
+// TODO: The name is a bit weird
 
 func extractFormData(fields []data.FormFieldX) map[string][]string {
 	result := make(map[string][]string)

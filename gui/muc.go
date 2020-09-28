@@ -24,34 +24,10 @@ func initMUCSupportedErrors() {
 	}
 }
 
-type nicknameError struct {
-	nickname jid.Resource
-}
-
-type registrationRequiredError struct {
-	room jid.Bare
-}
-
-type roomNotExistsError struct {
-	ident jid.Bare
-}
-
-func (e *nicknameError) Error() string {
-	return fmt.Sprintf("the nickname \"%s\" is already being used", e.nickname)
-}
-
-func (e *registrationRequiredError) Error() string {
-	return fmt.Sprintf("the room \"%s\" only allows registered members", e.room)
-}
-
 func newNicknameConflictError(n jid.Resource) error {
-	return &nicknameError{
-		nickname: n,
-	}
+	return fmt.Errorf("the nickname \"%s\" is already being used", n)
 }
 
 func newRegistrationRequiredError(ident jid.Bare) error {
-	return &registrationRequiredError{
-		room: ident,
-	}
+	return fmt.Errorf("the room \"%s\" only allows registered members", ident)
 }

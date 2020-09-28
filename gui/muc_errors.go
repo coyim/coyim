@@ -5,9 +5,9 @@ import (
 )
 
 func (a *account) handleMUCErrorEvent(ev events.MUCError) {
-	view, ok := a.getRoomView(ev.WhichRoom())
+	view, ok := a.getRoomView(ev.Room)
 	if !ok {
-		a.log.WithField("room", ev.WhichRoom()).Error("Not possible to get room view when handling multi user chat event")
+		a.log.WithField("room", ev.Room).Error("Not possible to get room view when handling multi user chat event")
 		return
 	}
 
@@ -23,9 +23,9 @@ func (a *account) handleMUCErrorEvent(ev events.MUCError) {
 	case events.MUCNotAcceptable:
 		a.log.Debug("MUC Error MUCNotAcceptable received")
 	case events.MUCRegistrationRequired:
-		view.registrationRequired(ev.WhichNickname())
+		view.registrationRequired(ev.Nickname)
 	case events.MUCConflict:
-		view.nicknameConflict(ev.WhichNickname())
+		view.nicknameConflict(ev.Nickname)
 	case events.MUCServiceUnavailable:
 		a.log.Debug("MUC Error MUCServiceUnavailable received")
 	default:

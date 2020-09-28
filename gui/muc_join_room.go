@@ -8,10 +8,11 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+// TODO: We might want to have a helper function or log object
+
 type mucJoinRoomView struct {
-	u       *gtkUI
-	builder *builder
-	ac      *connectedAccountsComponent
+	u  *gtkUI
+	ac *connectedAccountsComponent
 
 	dialog           gtki.Dialog  `gtk-widget:"join-chat-dialog"`
 	roomNameEntry    gtki.Entry   `gtk-widget:"room-name-entry"`
@@ -36,6 +37,8 @@ func (v *mucJoinRoomView) notifyOnError(err string) {
 	v.errorNotif.ShowMessage(err)
 }
 
+// TODO: Maybe we should extract some spinner logic into a component - we do this in a lot of places
+
 func (v *mucJoinRoomView) showSpinner() {
 	v.spinner.Start()
 	v.spinner.Show()
@@ -51,7 +54,7 @@ func (v *mucJoinRoomView) typedRoomName() string {
 	return name
 }
 
-// enableJoinIfConditionsAreMet SHOULD be called from the UI thread
+// enableJoinIfConditionsAreMet MUST be called from the UI thread
 func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 	roomName, _ := v.roomNameEntry.GetText()
 	chatServiceName, _ := v.chatServiceEntry.GetText()
@@ -59,6 +62,8 @@ func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 	hasAllValues := len(roomName) != 0 && len(chatServiceName) != 0 && v.ac.currentAccount() != nil
 	v.joinButton.SetSensitive(hasAllValues)
 }
+
+// TODO: not sure what "before start" means in this method name.
 
 func (v *mucJoinRoomView) onBeforeStart() {
 	v.clearErrors()
@@ -74,24 +79,29 @@ func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare, roomInfo *mu
 	})
 }
 
+// TODO: This method name might also be nicer and more understandable
+// This will be called when going back from the lobby, so maybe something about that?
+
 func (v *mucJoinRoomView) returnWhenCancelJoining() {
 	v.enableJoinFields()
 	v.dialog.Show()
 }
 
 func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
+	a.log.WithField("room", ident).Warn("The room doesn't exist")
 	doInUIThread(func() {
 		v.notifyOnError(i18n.Local("The room doesn't exist on that service."))
 		v.enableJoinFields()
 		v.hideSpinner()
 	})
-	a.log.WithField("room", ident).Warn("The room doesn't exist")
 }
 
 func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.enableJoinFields()
+		// TODO: This should not be necessary. We should analyze and check IF and why it could
+		// happen that error is sent in as nil
 		if err != nil {
 			v.notifyOnError(i18n.Local("It looks like the room you are trying to connect to doesn't exist, please verify the provided information."))
 			a.log.WithField("room", ident).WithError(err).Warn("An error occurred trying to find the room")
@@ -100,11 +110,11 @@ func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
 }
 
 func (v *mucJoinRoomView) onServiceUnavailable(a *account, ident jid.Bare) {
+	a.log.WithField("room", ident).Warn("An error occurred trying to find the room")
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.notifyOnError(i18n.Local("We can't get access to the service, please check your Internet connection or make sure the service exists."))
 	})
-	a.log.WithField("room", ident).Warn("An error ocurred trying to find the room")
 }
 
 type mucJoinRoomContext struct {
@@ -114,12 +124,12 @@ type mucJoinRoomContext struct {
 	done  func()
 }
 
-func (c *mucJoinRoomContext) onFinishWithError(err error, errorIsClosed bool) {
-	if !errorIsClosed {
-		c.v.onServiceUnavailable(c.a, c.ident)
+func (c *mucJoinRoomContext) onFinishWithError(err error, errorReceived bool) {
+	if errorReceived {
+		c.v.onJoinError(c.a, c.ident, err)
 		return
 	}
-	c.v.onJoinError(c.a, c.ident, err)
+	c.v.onServiceUnavailable(c.a, c.ident)
 }
 
 func (c *mucJoinRoomContext) waitToFinish(result <-chan bool, errors <-chan error, roomInfo <-chan *muc.RoomListing) {
@@ -141,9 +151,11 @@ func (c *mucJoinRoomContext) waitToFinish(result <-chan bool, errors <-chan erro
 
 		c.v.onJoinSuccess(c.a, c.ident, ri)
 	case err, ok := <-errors:
-		c.onFinishWithError(err, ok)
+		c.onFinishWithError(err, !ok)
 	}
 }
+
+// TODO: I think "exec" is not a super helpful name here
 
 func (c *mucJoinRoomContext) exec() {
 	c.v.onBeforeStart()
@@ -161,6 +173,9 @@ func (v *mucJoinRoomView) log() coylog.Logger {
 }
 
 func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
+	// TODO: Not sure if capturing this error here is useful
+	// It will only happen when something goes badly wrong with GTK, and at that
+	// point we are messed up anyway...
 	roomName, err := v.roomNameEntry.GetText()
 	if err != nil {
 		v.log().WithField("name", roomName).Error("Trying to join a room with an invalid room name")
@@ -193,8 +208,8 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 }
 
 func (v *mucJoinRoomView) tryJoinRoom(done func()) {
-	ident, isValid := v.validateFieldsAndGetBareIfOk()
-	if !isValid {
+	ident, ok := v.validateFieldsAndGetBareIfOk()
+	if !ok {
 		done()
 		return
 	}
@@ -231,20 +246,20 @@ func doOnlyOnceAtATime(f func(func())) func() {
 }
 
 func (v *mucJoinRoomView) init() {
-	v.builder = newBuilder("MUCJoinRoomDialog")
+	builder := newBuilder("MUCJoinRoomDialog")
 
-	panicOnDevError(v.builder.bindObjects(v))
+	panicOnDevError(builder.bindObjects(v))
 
 	v.errorNotif = newErrorNotification(v.notificationArea)
 
-	accountsInput := v.builder.get("accounts").(gtki.ComboBox)
+	accountsInput := builder.get("accounts").(gtki.ComboBox)
 	v.ac = v.u.createConnectedAccountsComponent(accountsInput, v, func(a *account) {
 		doInUIThread(v.enableJoinIfConditionsAreMet)
 	}, func() {
 		doInUIThread(v.enableJoinIfConditionsAreMet)
 	})
 
-	v.builder.ConnectSignals(map[string]interface{}{
+	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window":        v.ac.onDestroy,
 		"on_roomname_changed":    v.enableJoinIfConditionsAreMet,
 		"on_chatService_changed": v.enableJoinIfConditionsAreMet,
@@ -267,24 +282,22 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 }
 
 func (v *mucJoinRoomView) isValidRoomName(name string) bool {
-	bare, isValid := jid.TryParseBare(name)
-	if !isValid {
-		return false
-	}
-	return jid.NewLocal(bare.Local().String()).Valid() && jid.NewDomain(bare.Host().String()).Valid()
+	return jid.ValidBareJID(name)
+}
+
+func (v *mucJoinRoomView) setSensitivityForAllFields(f bool) {
+	v.roomNameEntry.SetSensitive(f)
+	v.chatServiceEntry.SetSensitive(f)
+	v.joinButton.SetSensitive(f)
 }
 
 func (v *mucJoinRoomView) disableJoinFields() {
-	v.roomNameEntry.SetSensitive(false)
-	v.chatServiceEntry.SetSensitive(false)
-	v.joinButton.SetSensitive(false)
+	v.setSensitivityForAllFields(false)
 	v.ac.disableAccountInput()
 }
 
 func (v *mucJoinRoomView) enableJoinFields() {
-	v.roomNameEntry.SetSensitive(true)
-	v.chatServiceEntry.SetSensitive(true)
-	v.joinButton.SetSensitive(true)
+	v.setSensitivityForAllFields(true)
 	v.ac.enableAccountInput()
 }
 

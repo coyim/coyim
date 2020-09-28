@@ -4,14 +4,19 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+// TODO: I'm not sure if we should change the name of this struct
+// It is not clear that this struct represents the view
+
+// TODO: Maybe it is time to introduce a simple callback helper type
+// that contains the list of func() and RWMutex, and helper functions for
+// invoking them
+
 type createMUCRoom struct {
-	u   *gtkUI
-	log coylog.Logger
+	u *gtkUI
 
 	autoJoin bool
 	cancel   chan bool
@@ -22,10 +27,12 @@ type createMUCRoom struct {
 	form    *createMUCRoomForm
 	success *createMUCRoomSuccess
 
-	showCreateForm   func()
-	showSuccessView  func(*account, jid.Bare)
-	onAutoJoinList   []func(bool)
-	onDestroyList    []func()
+	showCreateForm  func()
+	showSuccessView func(*account, jid.Bare)
+	// TODO: I think "list" can be removed in these two
+	onAutoJoinList []func(bool)
+	onDestroyList  []func()
+	// TODO: Locker should be lock
 	onAutoJoinLocker sync.RWMutex
 	onDestroyLocker  sync.RWMutex
 }
@@ -33,11 +40,8 @@ type createMUCRoom struct {
 func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 	v := &createMUCRoom{
 		u:               u,
-		log:             u.log,
 		showCreateForm:  func() {},
 		showSuccessView: func(*account, jid.Bare) {},
-		onAutoJoinList:  []func(bool){},
-		onDestroyList:   []func(){},
 	}
 
 	v.initBuilder()
@@ -69,6 +73,7 @@ func (v *createMUCRoom) onDestroy(f func()) {
 func (v *createMUCRoom) onCancel() {
 	if v.cancel != nil {
 		v.cancel <- true
+		v.cancel = nil
 	}
 
 	v.window.Destroy()
@@ -125,6 +130,8 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, err
 
 	v.cancel = make(chan bool, 1)
 
+	// TODO: make sure logging everywhere in this field contains idents etc
+
 	go func() {
 		v.checkIfRoomExists(ca, ident, sc, er)
 		select {
@@ -157,11 +164,14 @@ func (v *createMUCRoom) onCreateRoomFinished(ca *account, ident jid.Bare) {
 func (v *createMUCRoom) joinRoom(ca *account, ident jid.Bare) {
 	doInUIThread(func() {
 		v.destroy()
+		// TODO: rethink naming. Maybe joinRoom?
 		v.u.joinMultiUserChat(ca, ident, nil)
 	})
 }
 
 func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {
+	// TODO: this feels slightly concurrency unsafe, but I am not sure
+	// Should be analyzed
 	if v.autoJoin == newValue {
 		return
 	}
@@ -182,6 +192,7 @@ func (v *createMUCRoom) onAutoJoin(f func(bool)) {
 	v.onAutoJoinList = append(v.onAutoJoinList, f)
 }
 
+// TODO: Does this helper function actually help in anything?
 func (v *createMUCRoom) destroy() {
 	v.window.Destroy()
 }

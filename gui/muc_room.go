@@ -24,6 +24,7 @@ type roomView struct {
 	opened   bool
 	returnTo func()
 
+	// TODO: Do we need this to be both send AND receive, or can it be just receive?
 	events chan muc.MUC
 
 	window           gtki.Window  `gtk-widget:"roomWindow"`
@@ -42,6 +43,8 @@ type roomView struct {
 	conv    *roomViewConversation
 	lobby   *roomViewLobby
 
+	// TODO: This object is pretty big. It might be a good idea for us to document
+	// exactly what this mutex covers, and what not
 	sync.Mutex
 }
 
@@ -52,6 +55,7 @@ func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
 		events:  make(chan muc.MUC),
 	}
 
+	// TODO: We already know this need to change
 	view.room = a.newRoomModel(ident)
 	view.log = a.log.WithField("room", ident)
 
@@ -85,6 +89,7 @@ func (v *roomView) initBuilderAndSignals() {
 }
 
 func (v *roomView) initDefaults() {
+	// TODO: Maybe this needs to be i18n
 	v.setTitle(fmt.Sprintf("%s [%s]", v.identity(), v.account.Account()))
 }
 
@@ -94,6 +99,7 @@ func (v *roomView) requestRoomInfo() {
 	rl := make(chan *muc.RoomListing)
 	go v.account.session.GetRoom(v.identity(), rl)
 	go func() {
+		// TODO: What happens if no result ever comes? Maybe we need a timeout
 		roomInfo := <-rl
 		v.onRequestRoomInfoFinish(roomInfo)
 	}()
@@ -136,11 +142,6 @@ func (v *roomView) present() {
 }
 
 func (v *roomView) show() {
-	if v.isOpen() {
-		v.log.Debug("show(): the room view is already opened")
-		return
-	}
-
 	v.opened = true
 	v.window.Show()
 }
@@ -168,7 +169,8 @@ func (v *roomView) hideSpinner() {
 }
 
 func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
-	if !v.room.Joined {
+	// TODO: This feels a bit weird. Maybe we can analyze and see if this is even possible
+	if !v.isJoined() {
 		v.log.Debug("tryLeaveRoom(): trying to leave a not joined room")
 		doInUIThread(func() {
 			v.notifyOnError(i18n.Local("Couldn't leave the room, please try again."))
@@ -199,13 +201,16 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 }
 
 func (v *roomView) switchToLobbyView() {
+	// TODO: This event name is a bit confusing to me
 	v.publish(previousToSwitchToLobby)
 
 	v.initRoomLobby()
 
 	if v.shouldReturnOnCancel() {
+		// TODO: spelling
 		v.lobby.swtichToReturnOnCancel()
 	} else {
+		// TODO: spelling
 		v.lobby.swtichToCancel()
 	}
 
@@ -239,14 +244,14 @@ func (v *roomView) onJoinCancel() {
 	}
 }
 
-// nicknameConflict MUST not be called from the UI thread
+// nicknameConflict MUST NOT be called from the UI thread
 func (v *roomView) nicknameConflict(nickname string) {
 	v.publishWithInfo(nicknameConflict, roomViewEventInfo{
 		nickname: nickname,
 	})
 }
 
-// registrationRequired MUST not be called from the UI thread
+// registrationRequired MUST NOT be called from the UI thread
 func (v *roomView) registrationRequired(nickname string) {
 	v.publishWithInfo(registrationRequired, roomViewEventInfo{
 		nickname: nickname,

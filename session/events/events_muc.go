@@ -8,7 +8,7 @@ import (
 // MUCErrorType represents the type of MUC error event
 type MUCErrorType EventType
 
-// MUC event types
+// MUC error event types
 const (
 	MUCNotAuthorized MUCErrorType = iota
 	MUCForbidden
@@ -28,20 +28,11 @@ type MUCError struct {
 	Nickname  string
 }
 
-// WhichRoom returns a room for this event
-func (m MUCError) WhichRoom() jid.Bare { return m.Room }
-
-// WhichNickname returns the nickname
-func (m MUCError) WhichNickname() string { return m.Nickname }
-
 // MUCRoomCreated contains event information about
 // the created room
 type MUCRoomCreated struct {
 	Room jid.Bare
 }
-
-// WhichRoom returns a room for this event
-func (m MUCRoomCreated) WhichRoom() jid.Bare { return m.Room }
 
 // MUCRoomRenamed contains event information about
 // the renamed room's nickname
@@ -55,6 +46,8 @@ type MUCOccupant struct {
 	Nickname string
 	RealJid  jid.Full
 }
+
+// TODO: Updated and Joined events need to have Status and StatusText fields
 
 // MUCOccupantUpdated contains information about
 // the updated occupant in a room
@@ -98,6 +91,9 @@ type MUCLoggingEnabled struct{}
 
 // MUCLoggingDisabled signifies that logging has been turned off from the room
 type MUCLoggingDisabled struct{}
+
+// TODO: Having a marker method for an interface implementation
+// exported is not very nice at all.
 
 // MarkAsMUCInterface implements the MUC interface
 func (MUCError) MarkAsMUCInterface() {}

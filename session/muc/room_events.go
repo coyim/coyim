@@ -8,9 +8,7 @@ type roomSubscribers struct {
 }
 
 func newRoomSubscribers() *roomSubscribers {
-	return &roomSubscribers{
-		subscribers: make([]chan<- MUC, 0),
-	}
+	return &roomSubscribers{}
 }
 
 func (s *roomSubscribers) subscribe(c chan<- MUC) {
@@ -18,6 +16,8 @@ func (s *roomSubscribers) subscribe(c chan<- MUC) {
 	defer s.Unlock()
 	s.subscribers = append(s.subscribers, c)
 }
+
+// TODO: We will remove this when we remove the Room.Unsubscribe functionality
 
 func (s *roomSubscribers) unsubscribe(c chan<- MUC) {
 	s.Lock()
@@ -46,9 +46,10 @@ func (s *roomSubscribers) publishEventTo(subscriber chan<- MUC, e MUC) {
 
 func (s *roomSubscribers) publishEvent(e MUC) {
 	s.RLock()
-	defer s.RUnlock()
+	subs := append([]chan<- MUC{}, s.subscribers...)
+	s.RUnlock()
 
-	for _, c := range s.subscribers {
+	for _, c := range subs {
 		go s.publishEventTo(c, e)
 	}
 }

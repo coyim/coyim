@@ -11,6 +11,8 @@ import (
 )
 
 func (v *roomView) handleRoomEvent(ev muc.MUC) {
+	// TODO: Most of these handlers simply publish a new event
+	// There is probably no point in doing this publishing in the UI thread
 	switch t := ev.(type) {
 	case events.MUCSelfOccupantJoined:
 		doInUIThread(func() {
@@ -70,6 +72,10 @@ func (v *roomView) observeRoomEvents() {
 	}
 }
 
+// TODO: This pattern might be problematic once we start having more and more and more
+// data. It might be better to have a map with information, so that each event can use
+// whatever fields they need
+
 // roomViewEventInfo contains information about any room view event
 type roomViewEventInfo struct {
 	nickname string
@@ -79,6 +85,9 @@ type roomViewEventInfo struct {
 
 type roomViewEventObservers map[roomViewEventType]func(roomViewEventInfo)
 type roomViewEventType int
+
+// TODO: Not sure if an integer type for the possible events is the right choice
+// Something to think more about
 
 const (
 	occupantSelfJoined roomViewEventType = iota
@@ -96,6 +105,7 @@ const (
 	registrationRequired
 	nicknameConflict
 
+	// TODO: These names are a bit confusing to me
 	previousToSwitchToLobby
 	previousToSwitchToMain
 )
@@ -121,13 +131,11 @@ func newRoomViewSubscribers(room jid.Bare, l coylog.Logger) *roomViewSubscribers
 	}
 }
 
+// TODO: I feel like the "roomViewObserver" type should not be exposed to users
+// of the functionality. Better that it takes a name and the function directly
 func (s *roomViewSubscribers) subscribe(ev roomViewEventType, o *roomViewObserver) {
 	s.Lock()
 	defer s.Unlock()
-
-	if _, ok := s.observers[ev]; !ok {
-		s.observers[ev] = make([]*roomViewObserver, 0)
-	}
 
 	s.observers[ev] = append(s.observers[ev], o)
 }
@@ -139,6 +147,7 @@ func (s *roomViewSubscribers) subscribeAll(observers map[roomViewEventType]*room
 }
 
 func (s *roomViewSubscribers) unsubscribe(ev roomViewEventType, id string) {
+	// TODO: Unsafe
 	s.RLock()
 	defer s.RUnlock()
 

@@ -20,6 +20,8 @@ func (v *createMUCRoom) newCreateRoomSuccess() *createMUCRoomSuccess {
 
 	s.initBuilder(v)
 
+	// TODO: Same as with the form, we are modifying the parent from the child
+	// constructor, which feels a bit confusing
 	v.showSuccessView = func(a *account, ident jid.Bare) {
 		v.form.reset()
 		v.container.Remove(v.form.view)
@@ -36,17 +38,15 @@ func (s *createMUCRoomSuccess) initBuilder(v *createMUCRoom) {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_createRoom_clicked": v.showCreateForm,
-		"on_joinRoom_clicked":   s.onJoinRoomClick,
+		"on_joinRoom_clicked": func() {
+			s.onJoinRoom(s.ac, s.ident)
+		},
 	})
 }
 
 func (s *createMUCRoomSuccess) updateInfo(a *account, ident jid.Bare) {
 	s.ac = a
 	s.ident = ident
-}
-
-func (s *createMUCRoomSuccess) onJoinRoomClick() {
-	s.onJoinRoom(s.ac, s.ident)
 }
 
 func (s *createMUCRoomSuccess) reset() {

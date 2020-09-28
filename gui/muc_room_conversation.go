@@ -66,6 +66,8 @@ func (c *roomViewConversation) initTags(v *roomView) {
 	c.roomChatTextView.SetBuffer(t.createTextBuffer())
 }
 
+// TODO: I don't think I see the need for the mucStyleTags structure
+// It doesn't really help us understand the code
 type mucStyleTags struct {
 	table gtki.TextTagTable
 }
@@ -153,7 +155,7 @@ func (c *roomViewConversation) addTextToChatTextUsingTagID(text string, tagName 
 	buf, _ := c.roomChatTextView.GetBuffer()
 	i := buf.GetEndIter()
 
-	if len(tagName) > 0 {
+	if tagName != "" {
 		buf.InsertWithTagByName(i, text, tagName)
 	} else {
 		buf.Insert(i, text)
@@ -168,12 +170,14 @@ func (c *roomViewConversation) addLineTextToChatTextUsingTagID(text string, tagN
 
 // displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
+	// TODO: i18n
 	text := fmt.Sprintf("%s joined the room", nickname)
 	c.addLineTextToChatTextUsingTagID(text, "joinedRoomText")
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
+	// TODO: i18n
 	text := fmt.Sprintf("%s left the room", nickname)
 	c.addLineTextToChatTextUsingTagID(text, "leftRoomText")
 }
@@ -181,9 +185,11 @@ func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickna
 // displayNewLiveMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
 	c.addTimestamp()
+	// TODO: i18n
 	nicknameText := fmt.Sprintf("%s: ", nickname)
 	c.addTextToChatTextUsingTagID(nicknameText, "nicknameText")
-	if len(subject) > 0 {
+	if subject != "" {
+		// TODO: i18n
 		subjectText := fmt.Sprintf("[%s] ", subject)
 		c.addTextToChatTextUsingTagID(subjectText, "subjectText")
 	}

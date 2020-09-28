@@ -9,8 +9,10 @@ import (
 // This structure doesn't make sense without a connection to a room, since the information
 // inside it depends on the room
 type Occupant struct {
+	// TODO: We should change this member name to be consistent
 	// Nick is the nickname of the person
 	Nick string
+	// TODO: Maybe change to RealJid to be consistent
 	// Jid is the real JID of the person, if known. Otherwise it is nil
 	Jid jid.Full
 

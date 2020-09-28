@@ -342,7 +342,6 @@ func (s *session) hasSomeChatService(di data.DiscoveryItem) bool {
 	return hasSomeConferenceService(iq.Identities)
 }
 
-// TODO: Ola named this badly. We should change the name
 type chatServicesReceiver struct {
 	sync.RWMutex
 

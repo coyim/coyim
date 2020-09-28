@@ -9,8 +9,8 @@ import (
 // Room represents a multi user chat room that a session is currently connected to.
 // It contains information about the room configuration itself, and the participants in the room
 type Room struct {
-	Identity jid.Bare
-	Subject  string
+	ID      jid.Bare
+	Subject string
 
 	// TODO: this one feels like the coupling with the user account and the room
 	// is too tight. We should think about other ways to represent this
@@ -50,9 +50,9 @@ type Room struct {
 }
 
 // NewRoom returns a newly created room
-func NewRoom(ident jid.Bare) *Room {
+func NewRoom(roomID jid.Bare) *Room {
 	return &Room{
-		Identity:    ident,
+		ID:          roomID,
 		roster:      newRoomRoster(),
 		subscribers: newRoomSubscribers(),
 	}

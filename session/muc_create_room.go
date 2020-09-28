@@ -7,10 +7,6 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// TODO: We should refactor EVERYWHERE so that for the room bla@service.example.org
-// the local part, which is "bla" should be called roomName
-// the full thing "bla@service.example.org" should be called roomID
-
 var (
 	// ErrInvalidInformationQueryRequest is an invalid information query request error
 	ErrInvalidInformationQueryRequest = errors.New("invalid information query request")

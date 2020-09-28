@@ -71,11 +71,11 @@ func (v *mucJoinRoomView) onBeforeStart() {
 	v.showSpinner()
 }
 
-func (v *mucJoinRoomView) onJoinSuccess(a *account, ident jid.Bare, roomInfo *muc.RoomListing) {
+func (v *mucJoinRoomView) onJoinSuccess(a *account, roomID jid.Bare, roomInfo *muc.RoomListing) {
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.dialog.Hide()
-		v.u.joinMultiUserChat(a, ident, v.returnWhenCancelJoining)
+		v.u.joinMultiUserChat(a, roomID, v.returnWhenCancelJoining)
 	})
 }
 
@@ -87,8 +87,8 @@ func (v *mucJoinRoomView) returnWhenCancelJoining() {
 	v.dialog.Show()
 }
 
-func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
-	a.log.WithField("room", ident).Warn("The room doesn't exist")
+func (v *mucJoinRoomView) onJoinFails(a *account, roomID jid.Bare) {
+	a.log.WithField("room", roomID).Warn("The room doesn't exist")
 	doInUIThread(func() {
 		v.notifyOnError(i18n.Local("The room doesn't exist on that service."))
 		v.enableJoinFields()
@@ -96,7 +96,7 @@ func (v *mucJoinRoomView) onJoinFails(a *account, ident jid.Bare) {
 	})
 }
 
-func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
+func (v *mucJoinRoomView) onJoinError(a *account, roomID jid.Bare, err error) {
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.enableJoinFields()
@@ -104,13 +104,13 @@ func (v *mucJoinRoomView) onJoinError(a *account, ident jid.Bare, err error) {
 		// happen that error is sent in as nil
 		if err != nil {
 			v.notifyOnError(i18n.Local("It looks like the room you are trying to connect to doesn't exist, please verify the provided information."))
-			a.log.WithField("room", ident).WithError(err).Warn("An error occurred trying to find the room")
+			a.log.WithField("room", roomID).WithError(err).Warn("An error occurred trying to find the room")
 		}
 	})
 }
 
-func (v *mucJoinRoomView) onServiceUnavailable(a *account, ident jid.Bare) {
-	a.log.WithField("room", ident).Warn("An error occurred trying to find the room")
+func (v *mucJoinRoomView) onServiceUnavailable(a *account, roomID jid.Bare) {
+	a.log.WithField("room", roomID).Warn("An error occurred trying to find the room")
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.notifyOnError(i18n.Local("We can't get access to the service, please check your Internet connection or make sure the service exists."))
@@ -118,18 +118,18 @@ func (v *mucJoinRoomView) onServiceUnavailable(a *account, ident jid.Bare) {
 }
 
 type mucJoinRoomContext struct {
-	a     *account
-	v     *mucJoinRoomView
-	ident jid.Bare
-	done  func()
+	a      *account
+	v      *mucJoinRoomView
+	roomID jid.Bare
+	done   func()
 }
 
 func (c *mucJoinRoomContext) onFinishWithError(err error, errorReceived bool) {
 	if errorReceived {
-		c.v.onJoinError(c.a, c.ident, err)
+		c.v.onJoinError(c.a, c.roomID, err)
 		return
 	}
-	c.v.onServiceUnavailable(c.a, c.ident)
+	c.v.onServiceUnavailable(c.a, c.roomID)
 }
 
 func (c *mucJoinRoomContext) waitToFinish(result <-chan bool, errors <-chan error, roomInfo <-chan *muc.RoomListing) {
@@ -138,18 +138,18 @@ func (c *mucJoinRoomContext) waitToFinish(result <-chan bool, errors <-chan erro
 	select {
 	case value, ok := <-result:
 		if !ok {
-			c.v.onServiceUnavailable(c.a, c.ident)
+			c.v.onServiceUnavailable(c.a, c.roomID)
 			return
 		}
 
 		if !value {
-			c.v.onJoinFails(c.a, c.ident)
+			c.v.onJoinFails(c.a, c.roomID)
 			return
 		}
 
 		ri := <-roomInfo
 
-		c.v.onJoinSuccess(c.a, c.ident, ri)
+		c.v.onJoinSuccess(c.a, c.roomID, ri)
 	case err, ok := <-errors:
 		c.onFinishWithError(err, !ok)
 	}
@@ -160,7 +160,7 @@ func (c *mucJoinRoomContext) waitToFinish(result <-chan bool, errors <-chan erro
 func (c *mucJoinRoomContext) exec() {
 	c.v.onBeforeStart()
 	roomInfo := make(chan *muc.RoomListing)
-	result, errors := c.a.session.HasRoom(c.ident, roomInfo)
+	result, errors := c.a.session.HasRoom(c.roomID, roomInfo)
 	go c.waitToFinish(result, errors, roomInfo)
 }
 
@@ -208,7 +208,7 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 }
 
 func (v *mucJoinRoomView) tryJoinRoom(done func()) {
-	ident, ok := v.validateFieldsAndGetBareIfOk()
+	roomID, ok := v.validateFieldsAndGetBareIfOk()
 	if !ok {
 		done()
 		return
@@ -221,10 +221,10 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 	}
 
 	c := &mucJoinRoomContext{
-		a:     ca,
-		v:     v,
-		ident: ident,
-		done:  done,
+		a:      ca,
+		v:      v,
+		roomID: roomID,
+		done:   done,
 	}
 
 	c.exec()

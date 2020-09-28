@@ -10,14 +10,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (s *session) JoinRoom(ident jid.Bare, nickname string) error {
+func (s *session) JoinRoom(roomID jid.Bare, nickname string) error {
 	// TODO: The problem with this method is that it only _starts_ the process of joining the room
 	// It would be good to have a method that takes responsibility for the whole flow
-	to := ident.WithResource(jid.NewResource(nickname))
+	to := roomID.WithResource(jid.NewResource(nickname))
 	err := s.conn.SendMUCPresence(to.String())
 	if err != nil {
 		s.log.WithFields(log.Fields{
-			"room":     ident,
+			"room":     roomID,
 			"nickname": nickname,
 		}).WithError(err).Error("An error occurred trying join the room")
 		return err
@@ -115,11 +115,11 @@ func (s *session) HasRoom(roomID jid.Bare, wantRoomInfo chan<- *muc.RoomListing)
 }
 
 // GetRoom will block, waiting to get the room information
-func (s *session) GetRoom(rj jid.Bare, result chan<- *muc.RoomListing) {
+func (s *session) GetRoom(roomID jid.Bare, result chan<- *muc.RoomListing) {
 	// TODO: make this method unnecessary by changing the GUI parts to not use it
 
 	rl := muc.NewRoomListing()
-	rl.Jid = rj
+	rl.Jid = roomID
 	// This is a little bit redundant since we already asked for this once
 	// The right solution is to use the values from above, but that would be an extensive refactoring
 	// so we will wait with that for now

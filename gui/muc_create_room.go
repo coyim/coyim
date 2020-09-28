@@ -94,8 +94,8 @@ var (
 	errCreateRoomFailed             = errors.New("couldn't create the room")
 )
 
-func (v *createMUCRoom) checkIfRoomExists(ca *account, ident jid.Bare, result chan bool, errors chan error) {
-	rc, ec := ca.session.HasRoom(ident, nil)
+func (v *createMUCRoom) checkIfRoomExists(ca *account, roomID jid.Bare, result chan bool, errors chan error) {
+	rc, ec := ca.session.HasRoom(roomID, nil)
 	go func() {
 		select {
 		case err := <-ec:
@@ -112,8 +112,8 @@ func (v *createMUCRoom) checkIfRoomExists(ca *account, ident jid.Bare, result ch
 	}()
 }
 
-func (a *account) createRoom(ident jid.Bare, onSuccess func(), onError func(error)) {
-	result := a.session.CreateRoom(ident)
+func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(error)) {
+	result := a.session.CreateRoom(roomID)
 	go func() {
 		err := <-result
 		if err != nil {
@@ -124,7 +124,7 @@ func (a *account) createRoom(ident jid.Bare, onSuccess func(), onError func(erro
 	}()
 }
 
-func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, errors chan error) {
+func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, roomID jid.Bare, errors chan error) {
 	sc := make(chan bool)
 	er := make(chan error)
 
@@ -133,11 +133,11 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, err
 	// TODO: make sure logging everywhere in this field contains idents etc
 
 	go func() {
-		v.checkIfRoomExists(ca, ident, sc, er)
+		v.checkIfRoomExists(ca, roomID, sc, er)
 		select {
 		case <-sc:
-			ca.createRoom(ident, func() {
-				v.onCreateRoomFinished(ca, ident)
+			ca.createRoom(roomID, func() {
+				v.onCreateRoomFinished(ca, roomID)
 			}, func(err error) {
 				ca.log.WithError(err).Error("Something went wrong while trying to create the room")
 				errors <- errCreateRoomFailed
@@ -149,23 +149,23 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, ident jid.Bare, err
 	}()
 }
 
-func (v *createMUCRoom) onCreateRoomFinished(ca *account, ident jid.Bare) {
+func (v *createMUCRoom) onCreateRoomFinished(ca *account, roomID jid.Bare) {
 	if !v.autoJoin {
 		doInUIThread(func() {
-			v.showSuccessView(ca, ident)
+			v.showSuccessView(ca, roomID)
 			v.window.ShowAll()
 		})
 		return
 	}
 
-	v.joinRoom(ca, ident)
+	v.joinRoom(ca, roomID)
 }
 
-func (v *createMUCRoom) joinRoom(ca *account, ident jid.Bare) {
+func (v *createMUCRoom) joinRoom(ca *account, roomID jid.Bare) {
 	doInUIThread(func() {
 		v.destroy()
 		// TODO: rethink naming. Maybe joinRoom?
-		v.u.joinMultiUserChat(ca, ident, nil)
+		v.u.joinMultiUserChat(ca, roomID, nil)
 	})
 }
 

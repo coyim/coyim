@@ -4,10 +4,10 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (u *gtkUI) getAccountRoomViewBasedOnBare(a *account, ident jid.Bare) *roomView {
-	v, exists := a.getRoomView(ident)
+func (u *gtkUI) getAccountRoomViewBasedOnBare(a *account, roomID jid.Bare) *roomView {
+	v, exists := a.getRoomView(roomID)
 	if !exists {
-		v = newRoomView(u, a, ident)
+		v = newRoomView(u, a, roomID)
 		a.addRoomView(v)
 	}
 	return v
@@ -20,8 +20,8 @@ func (u *gtkUI) getAccountRoomViewBasedOnBare(a *account, ident jid.Bare) *roomV
 // might be useful in some scenarios like "returning to previous step".
 //
 // Please note that "returnTo" will be called from the UI thread too
-func (u *gtkUI) joinMultiUserChat(a *account, ident jid.Bare, returnTo func()) {
-	v := u.getAccountRoomViewBasedOnBare(a, ident)
+func (u *gtkUI) joinMultiUserChat(a *account, roomID jid.Bare, returnTo func()) {
+	v := u.getAccountRoomViewBasedOnBare(a, roomID)
 
 	if v.isJoined() {
 		// In the main view of the room, we don't have the "cancel"

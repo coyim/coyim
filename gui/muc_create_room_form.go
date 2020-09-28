@@ -42,9 +42,9 @@ func (v *createMUCRoom) newCreateRoomForm() *createMUCRoomForm {
 	f.initDefaults(v)
 
 	// TODO: Maybe extract some of this stuff
-	f.createRoomIfDoesntExist = func(a *account, ident jid.Bare) {
+	f.createRoomIfDoesntExist = func(a *account, roomID jid.Bare) {
 		errors := make(chan error)
-		v.createRoomIfDoesntExist(a, ident, errors)
+		v.createRoomIfDoesntExist(a, roomID, errors)
 		select {
 		case err := <-errors:
 			switch err {
@@ -56,7 +56,7 @@ func (v *createMUCRoom) newCreateRoomForm() *createMUCRoomForm {
 				})
 
 			case errCreateRoomAlreadyExists:
-				f.roomNameConflictList.Insert(ident.String())
+				f.roomNameConflictList.Insert(roomID.String())
 				doInUIThread(func() {
 					f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
 					f.hideSpinner()
@@ -231,8 +231,8 @@ func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
 
 	ok := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
 	if ok {
-		ident := jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(chatService))
-		if ident.Valid() && f.roomNameConflictList.Has(ident.String()) {
+		roomID := jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(chatService))
+		if roomID.Valid() && f.roomNameConflictList.Has(roomID.String()) {
 			f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
 			ok = false
 		}

@@ -48,7 +48,7 @@ type roomView struct {
 	sync.Mutex
 }
 
-func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
+func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view := &roomView{
 		u:       u,
 		account: a,
@@ -56,13 +56,13 @@ func newRoomView(u *gtkUI, a *account, ident jid.Bare) *roomView {
 	}
 
 	// TODO: We already know this need to change
-	view.room = a.newRoomModel(ident)
-	view.log = a.log.WithField("room", ident)
+	view.room = a.newRoomModel(roomID)
+	view.log = a.log.WithField("room", roomID)
 
 	view.room.Subscribe(view.events)
 	go view.observeRoomEvents()
 
-	view.subscribers = newRoomViewSubscribers(view.identity(), view.log)
+	view.subscribers = newRoomViewSubscribers(view.roomID(), view.log)
 
 	view.initBuilderAndSignals()
 	view.initDefaults()
@@ -90,14 +90,14 @@ func (v *roomView) initBuilderAndSignals() {
 
 func (v *roomView) initDefaults() {
 	// TODO: Maybe this needs to be i18n
-	v.setTitle(fmt.Sprintf("%s [%s]", v.identity(), v.account.Account()))
+	v.setTitle(fmt.Sprintf("%s [%s]", v.roomID(), v.account.Account()))
 }
 
 func (v *roomView) requestRoomInfo() {
 	doInUIThread(v.showSpinner)
 
 	rl := make(chan *muc.RoomListing)
-	go v.account.session.GetRoom(v.identity(), rl)
+	go v.account.session.GetRoom(v.roomID(), rl)
 	go func() {
 		// TODO: What happens if no result ever comes? Maybe we need a timeout
 		roomInfo := <-rl
@@ -119,7 +119,7 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 
 func (v *roomView) onDestroyWindow() {
 	v.opened = false
-	v.account.removeRoomView(v.identity())
+	v.account.removeRoomView(v.roomID())
 	v.room.Unsubscribe(v.events)
 }
 
@@ -182,7 +182,7 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 	v.showSpinner()
 
 	go func() {
-		v.account.leaveRoom(v.identity(), v.room.Occupant.Nick, func() {
+		v.account.leaveRoom(v.roomID(), v.room.Occupant.Nick, func() {
 			doInUIThread(v.window.Destroy)
 			if onSuccess != nil {
 				onSuccess()
@@ -258,6 +258,6 @@ func (v *roomView) registrationRequired(nickname string) {
 	})
 }
 
-func (v *roomView) identity() jid.Bare {
-	return v.room.Identity
+func (v *roomView) roomID() jid.Bare {
+	return v.room.ID
 }

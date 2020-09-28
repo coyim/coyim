@@ -7,7 +7,7 @@ import (
 
 type createMUCRoomSuccess struct {
 	ac         *account
-	ident      jid.Bare
+	roomID     jid.Bare
 	onJoinRoom func(*account, jid.Bare)
 
 	view gtki.Box `gtk-widget:"createRoomSuccess"`
@@ -22,10 +22,10 @@ func (v *createMUCRoom) newCreateRoomSuccess() *createMUCRoomSuccess {
 
 	// TODO: Same as with the form, we are modifying the parent from the child
 	// constructor, which feels a bit confusing
-	v.showSuccessView = func(a *account, ident jid.Bare) {
+	v.showSuccessView = func(a *account, roomID jid.Bare) {
 		v.form.reset()
 		v.container.Remove(v.form.view)
-		v.success.updateInfo(a, ident)
+		v.success.updateInfo(a, roomID)
 		v.container.Add(v.success.view)
 	}
 
@@ -39,17 +39,17 @@ func (s *createMUCRoomSuccess) initBuilder(v *createMUCRoom) {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_createRoom_clicked": v.showCreateForm,
 		"on_joinRoom_clicked": func() {
-			s.onJoinRoom(s.ac, s.ident)
+			s.onJoinRoom(s.ac, s.roomID)
 		},
 	})
 }
 
-func (s *createMUCRoomSuccess) updateInfo(a *account, ident jid.Bare) {
+func (s *createMUCRoomSuccess) updateInfo(a *account, roomID jid.Bare) {
 	s.ac = a
-	s.ident = ident
+	s.roomID = roomID
 }
 
 func (s *createMUCRoomSuccess) reset() {
 	s.ac = nil
-	s.ident = nil
+	s.roomID = nil
 }

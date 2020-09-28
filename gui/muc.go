@@ -28,6 +28,6 @@ func newNicknameConflictError(n jid.Resource) error {
 	return fmt.Errorf("the nickname \"%s\" is already being used", n)
 }
 
-func newRegistrationRequiredError(ident jid.Bare) error {
-	return fmt.Errorf("the room \"%s\" only allows registered members", ident)
+func newRegistrationRequiredError(roomID jid.Bare) error {
+	return fmt.Errorf("the room \"%s\" only allows registered members", roomID)
 }

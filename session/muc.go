@@ -93,16 +93,16 @@ func newMUCManager(log coylog.Logger, conn xi.Conn, publishEvent func(ev interfa
 }
 
 // NewRoom creates a new muc room and add it to the room manager
-func (s *session) NewRoom(ident jid.Bare) *muc.Room {
+func (s *session) NewRoom(roomID jid.Bare) *muc.Room {
 	// TODO: This must be made concurrency safe
 
-	room, exists := s.muc.roomManager.GetRoom(ident)
+	room, exists := s.muc.roomManager.GetRoom(roomID)
 
 	if exists {
 		return room
 	}
 
-	room = muc.NewRoom(ident)
+	room = muc.NewRoom(roomID)
 	s.muc.roomManager.AddRoom(room)
 
 	return room

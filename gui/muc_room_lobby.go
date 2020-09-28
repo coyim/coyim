@@ -12,7 +12,7 @@ import (
 )
 
 type roomViewLobby struct {
-	ident   jid.Bare
+	roomID  jid.Bare
 	account *account
 	log     coylog.Logger
 
@@ -45,12 +45,12 @@ type roomViewLobby struct {
 }
 
 func (v *roomView) initRoomLobby() {
-	v.lobby = v.newRoomViewLobby(v.account, v.identity(), v.content, v.onJoined, v.onJoinCancel)
+	v.lobby = v.newRoomViewLobby(v.account, v.roomID(), v.content, v.onJoined, v.onJoinCancel)
 }
 
-func (v *roomView) newRoomViewLobby(a *account, ident jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
+func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
 	l := &roomViewLobby{
-		ident:                 ident,
+		roomID:                roomID,
 		account:               a,
 		parent:                parent,
 		onSuccess:             onSuccess,
@@ -80,7 +80,7 @@ func (l *roomViewLobby) initBuilder() {
 func (l *roomViewLobby) initDefaults(v *roomView) {
 	l.errorNotif = newErrorNotification(l.notificationArea)
 
-	l.roomNameLabel.SetText(l.ident.String())
+	l.roomNameLabel.SetText(l.roomID.String())
 	l.content.SetHExpand(true)
 	l.parent.Add(l.content)
 	l.content.SetCenterWidget(l.mainBox)
@@ -95,10 +95,10 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 			l.withRoomInfo(v.info)
 		},
 		nicknameConflict: func(ei roomViewEventInfo) {
-			l.nicknameConflict(v.identity(), ei.nickname)
+			l.nicknameConflict(v.roomID(), ei.nickname)
 		},
 		registrationRequired: func(ei roomViewEventInfo) {
-			l.registrationRequired(v.identity(), ei.nickname)
+			l.registrationRequired(v.roomID(), ei.nickname)
 		},
 		previousToSwitchToMain: func(roomViewEventInfo) {
 			v.unsubscribe("lobby", occupantSelfJoined)
@@ -262,16 +262,16 @@ func (e *mucRoomLobbyErr) Error() string {
 	return e.errType.Error()
 }
 
-func newMUCRoomLobbyErr(ident jid.Bare, nickname string, errType error) error {
+func newMUCRoomLobbyErr(roomID jid.Bare, nickname string, errType error) error {
 	return &mucRoomLobbyErr{
-		room:     ident,
+		room:     roomID,
 		nickname: nickname,
 		errType:  errType,
 	}
 }
 
 func (l *roomViewLobby) sendRoomEnterRequest(nickname string) {
-	err := l.account.session.JoinRoom(l.ident, nickname)
+	err := l.account.session.JoinRoom(l.roomID, nickname)
 	if err != nil {
 		l.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room.")
 		l.finishJoinRequest(errJoinNoConnection)
@@ -356,14 +356,14 @@ func (l *roomViewLobby) occupantJoined(roomViewEventInfo) {
 	l.finishJoinRequest(nil)
 }
 
-func (l *roomViewLobby) joinFailed(ident jid.Bare, nickname string) {
-	l.finishJoinRequest(newMUCRoomLobbyErr(ident, nickname, errJoinRequestFailed))
+func (l *roomViewLobby) joinFailed(roomID jid.Bare, nickname string) {
+	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinRequestFailed))
 }
 
-func (l *roomViewLobby) nicknameConflict(ident jid.Bare, nickname string) {
-	l.finishJoinRequest(newMUCRoomLobbyErr(ident, nickname, errJoinNickNameConflict))
+func (l *roomViewLobby) nicknameConflict(roomID jid.Bare, nickname string) {
+	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinNickNameConflict))
 }
 
-func (l *roomViewLobby) registrationRequired(ident jid.Bare, nickname string) {
-	l.finishJoinRequest(newMUCRoomLobbyErr(ident, nickname, errJoinOnlyMembers))
+func (l *roomViewLobby) registrationRequired(roomID jid.Bare, nickname string) {
+	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinOnlyMembers))
 }

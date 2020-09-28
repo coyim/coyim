@@ -23,11 +23,11 @@ func NewRoomManager() *RoomManager {
 }
 
 // GetRoom returns the room corresponding to the given identifier, or returns false if it can't be found
-func (rm *RoomManager) GetRoom(ident jid.Bare) (*Room, bool) {
+func (rm *RoomManager) GetRoom(roomID jid.Bare) (*Room, bool) {
 	rm.lock.RLock()
 	defer rm.lock.RUnlock()
 
-	r, ok := rm.rooms[ident.String()]
+	r, ok := rm.rooms[roomID.String()]
 	return r, ok
 }
 
@@ -37,12 +37,12 @@ func (rm *RoomManager) AddRoom(r *Room) bool {
 	rm.lock.Lock()
 	defer rm.lock.Unlock()
 
-	_, ok := rm.rooms[r.Identity.String()]
+	_, ok := rm.rooms[r.ID.String()]
 	if ok {
 		return false
 	}
 
-	rm.rooms[r.Identity.String()] = r
+	rm.rooms[r.ID.String()] = r
 	return true
 }
 

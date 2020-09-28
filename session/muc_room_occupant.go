@@ -15,10 +15,10 @@ func newMUCRoomOccupant(nickname string, affiliation muc.Affiliation, role muc.R
 	}
 }
 
-func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, occupant *muc.Occupant) {
+func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, op *muc.OccupantPresenceInfo) {
 	l := m.log.WithFields(log.Fields{
 		"room":     roomID,
-		"occupant": occupant.Nick,
+		"occupant": op.Nickname,
 		"method":   "handleOccupantUpdate",
 	})
 
@@ -28,17 +28,17 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, occupant *muc.Occupan
 		return
 	}
 
-	updated := room.Roster().UpdateOrAddOccupant(occupant)
+	updated := room.Roster().UpdateOrAddOccupant(op)
 	if !updated {
-		m.occupantJoined(roomID, occupant)
+		m.occupantJoined(roomID, op)
 	}
-	m.occupantUpdate(roomID, occupant)
+	m.occupantUpdate(roomID, op)
 }
 
-func (m *mucManager) handleOccupantLeft(roomID jid.Bare, occupant *muc.Occupant) {
+func (m *mucManager) handleOccupantLeft(roomID jid.Bare, op *muc.OccupantPresenceInfo) {
 	l := m.log.WithFields(log.Fields{
 		"room":     roomID,
-		"occupant": occupant.Nick,
+		"occupant": op.Nickname,
 		"method":   "handleOccupantLeft",
 	})
 
@@ -48,13 +48,11 @@ func (m *mucManager) handleOccupantLeft(roomID jid.Bare, occupant *muc.Occupant)
 		return
 	}
 
-	occupant.UpdateStatus("unavailable", "Occupant left the room")
-
-	err := r.Roster().RemoveOccupant(occupant)
+	err := r.Roster().RemoveOccupant(op.Nickname)
 	if err != nil {
 		m.log.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
 		return
 	}
 
-	m.occupantLeft(roomID, occupant)
+	m.occupantLeft(roomID, op)
 }

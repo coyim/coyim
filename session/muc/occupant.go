@@ -20,7 +20,7 @@ type Occupant struct {
 	Role Role
 
 	// Status contains the current status of the occupant in the room
-	Status roster.Status
+	Status *roster.Status
 }
 
 // ChangeRoleToNone changes the role to the none role
@@ -80,10 +80,10 @@ func (o *Occupant) Update(nickname string, affiliation Affiliation, role Role, s
 	o.Jid = realJid
 	o.Affiliation = affiliation
 	o.Role = role
-	o.Status = roster.Status{Status: status, StatusMsg: statusMsg}
+	o.Status = &roster.Status{Status: status, StatusMsg: statusMsg}
 }
 
 // UpdateStatus will update the occupant's status
 func (o *Occupant) UpdateStatus(status, statusMsg string) {
-	o.Status = roster.Status{Status: status, StatusMsg: statusMsg}
+	o.Status = &roster.Status{Status: status, StatusMsg: statusMsg}
 }

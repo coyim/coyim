@@ -6,8 +6,21 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/coyim/coyim/roster"
+
 	"github.com/coyim/coyim/xmpp/jid"
 )
+
+// OccupantPresenceInfo containts information for an occupant presence
+type OccupantPresenceInfo struct {
+	Nickname      string
+	RealJid       jid.Full
+	Affiliation   Affiliation
+	Role          Role
+	Show          string
+	StatusCode    string
+	StatusMessage string
+}
 
 // RoomRoster contains information about all the occupants in a room
 type RoomRoster struct {
@@ -194,63 +207,74 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 // UpdatePresence should be called when receiving a regular presence update with no type, or with unavailable as type. It will return
 // indications on whether the presence update means the person joined the room, or left the room.
 // Notice that updating of nick names is done separately and should not be done by calling this method.
-func (r *RoomRoster) UpdatePresence(occupant *Occupant, tp string) (joined, left bool, err error) {
+func (r *RoomRoster) UpdatePresence(op *OccupantPresenceInfo, tp string) (joined, left bool, err error) {
+	if len(op.Nickname) == 0 {
+		return false, false, errors.New("nickname was not provided")
+	}
+
 	switch tp {
 	case "unavailable":
-		err := r.RemoveOccupant(occupant)
+		err := r.RemoveOccupant(op.Nickname)
 		return false, err == nil, err
 	case "":
-		updated := r.UpdateOrAddOccupant(occupant)
+		updated := r.UpdateOrAddOccupant(op)
 		return !updated, false, err
 	default:
 		return false, false, fmt.Errorf("incorrect presence type sent to room roster: '%s'", tp)
 	}
 }
 
-func (r *RoomRoster) isOccupantKnowed(nickname string) bool {
-	_, k := r.occupants[nickname]
-	return k
+func (r *RoomRoster) newOccupantFromPresenceInfo(op *OccupantPresenceInfo) *Occupant {
+	return &Occupant{
+		Affiliation: op.Affiliation,
+		Jid:         op.RealJid,
+		Nick:        op.Nickname,
+		Role:        op.Role,
+		Status: &roster.Status{
+			Status:    op.StatusCode,
+			StatusMsg: op.StatusMessage,
+		},
+	}
 }
 
 // UpdateOrAddOccupant return true if the occupant was updated or false if that was added
-func (r *RoomRoster) UpdateOrAddOccupant(occupant *Occupant) bool {
+func (r *RoomRoster) UpdateOrAddOccupant(op *OccupantPresenceInfo) bool {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	isKnowed := r.isOccupantKnowed(occupant.Nick)
+	o, ok := r.occupants[op.Nickname]
+	if !ok {
+		o = r.newOccupantFromPresenceInfo(op)
+		r.occupants[o.Nick] = o
+		return false
+	}
 
-	r.occupants[occupant.Nick] = occupant
-
-	return isKnowed
+	o.Update(op.Nickname, op.Affiliation, op.Role, op.StatusCode, op.StatusMessage, op.RealJid)
+	return true
 }
 
 // RemoveOccupant delete an occupant if that exists
-func (r *RoomRoster) RemoveOccupant(occupant *Occupant) error {
+func (r *RoomRoster) RemoveOccupant(nickname string) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	if !r.isOccupantKnowed(occupant.Nick) {
+	o, ok := r.occupants[nickname]
+	if !ok {
 		return errors.New("no such occupant known in this room")
 	}
 
-	occupant.ChangeRoleToNone()
-	delete(r.occupants, occupant.Nick)
+	o.ChangeRoleToNone()
+	o.UpdateStatus("unavailable", "Occupant left the room")
+	delete(r.occupants, nickname)
 
 	return nil
 }
 
-// GetOccupantByIdentity return an occupant if this exist in the roster, otherwise return nil and false
-func (r *RoomRoster) GetOccupantByIdentity(identity string) (*Occupant, bool) {
+// GetOccupant return an occupant if this exist in the roster, otherwise return nil and false
+func (r *RoomRoster) GetOccupant(nickname string) (*Occupant, bool) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
-	o, ok := r.occupants[identity]
+	o, ok := r.occupants[nickname]
 	return o, ok
-}
-
-// HasOccupant returns a boolean indicating if the roster
-// has the given occuppant
-func (r *RoomRoster) HasOccupant(identity string) bool {
-	_, ok := r.GetOccupantByIdentity(identity)
-	return ok
 }

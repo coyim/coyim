@@ -87,7 +87,7 @@ func (s *MucSuite) Test_Occupant_Update(c *C) {
 		Jid:         jid.ParseFull("foo@bar.com/somewhere"),
 		Affiliation: &memberAffiliation{},
 		Role:        &moderatorRole{},
-		Status:      roster.Status{Status: "xa", StatusMsg: "foo"},
+		Status:      &roster.Status{Status: "xa", StatusMsg: "foo"},
 	}
 
 	o.Update("Two", &adminAffiliation{}, &participantRole{}, "away", "here", nil)

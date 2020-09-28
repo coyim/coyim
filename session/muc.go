@@ -78,6 +78,7 @@ type mucManager struct {
 	conn         xi.Conn
 	publishEvent func(ev interface{})
 	roomManager  *muc.RoomManager
+	roomLock     sync.Mutex
 	sync.Mutex
 }
 
@@ -94,16 +95,21 @@ func newMUCManager(log coylog.Logger, conn xi.Conn, publishEvent func(ev interfa
 
 // NewRoom creates a new muc room and add it to the room manager
 func (s *session) NewRoom(roomID jid.Bare) *muc.Room {
-	// TODO: This must be made concurrency safe
+	return s.muc.newRoom(roomID)
+}
 
-	room, exists := s.muc.roomManager.GetRoom(roomID)
+func (m *mucManager) newRoom(roomID jid.Bare) *muc.Room {
+	m.roomLock.Lock()
+	defer m.roomLock.Unlock()
+
+	room, exists := m.roomManager.GetRoom(roomID)
 
 	if exists {
 		return room
 	}
 
 	room = muc.NewRoom(roomID)
-	s.muc.roomManager.AddRoom(room)
+	m.roomManager.AddRoom(room)
 
 	return room
 }
@@ -232,7 +238,6 @@ func (m *mucManager) selfOccupantJoin(roomID jid.Bare, op *muc.OccupantPresenceI
 		return
 	}
 
-	// TODO: This should be simplified by only using the nickname to identify peers in the roster
 	o, exists := room.Roster().GetOccupant(op.Nickname)
 	if !exists {
 		room.AddSelfOccupant(o)
@@ -338,7 +343,7 @@ func (s *session) hasSomeChatService(di data.DiscoveryItem) bool {
 }
 
 // TODO: Ola named this badly. We should change the name
-type chatServiceReceivalContext struct {
+type chatServicesReceiver struct {
 	sync.RWMutex
 
 	resultsChannel chan jid.Domain
@@ -347,19 +352,19 @@ type chatServiceReceivalContext struct {
 	s *session
 }
 
-func (c *chatServiceReceivalContext) end() {
-	c.Lock()
-	defer c.Unlock()
-	if c.resultsChannel != nil {
-		close(c.resultsChannel)
-		close(c.errorChannel)
-		c.resultsChannel = nil
-		c.errorChannel = nil
+func (r *chatServicesReceiver) finish() {
+	r.Lock()
+	defer r.Unlock()
+	if r.resultsChannel != nil {
+		close(r.resultsChannel)
+		close(r.errorChannel)
+		r.resultsChannel = nil
+		r.errorChannel = nil
 	}
 }
 
-func (s *session) createChatServiceReceivalContext() *chatServiceReceivalContext {
-	result := &chatServiceReceivalContext{}
+func (s *session) createChatServicesReceiver() *chatServicesReceiver {
+	result := &chatServicesReceiver{}
 
 	result.resultsChannel = make(chan jid.Domain)
 	result.errorChannel = make(chan error)
@@ -368,25 +373,25 @@ func (s *session) createChatServiceReceivalContext() *chatServiceReceivalContext
 	return result
 }
 
-func (c *chatServiceReceivalContext) fetchChatServices(server jid.Domain) {
-	defer c.end()
-	items, err := c.s.conn.QueryServiceItems(server.String())
+func (r *chatServicesReceiver) fetchChatServices(server jid.Domain) {
+	defer r.finish()
+	items, err := r.s.conn.QueryServiceItems(server.String())
 	if err != nil {
-		c.RLock()
-		defer c.RUnlock()
-		if c.errorChannel != nil {
-			c.errorChannel <- err
+		r.RLock()
+		defer r.RUnlock()
+		if r.errorChannel != nil {
+			r.errorChannel <- err
 		}
 		return
 	}
 	for _, item := range items.DiscoveryItems {
-		if c.s.hasSomeChatService(item) {
-			c.RLock()
-			defer c.RUnlock()
-			if c.resultsChannel == nil {
+		if r.s.hasSomeChatService(item) {
+			r.RLock()
+			defer r.RUnlock()
+			if r.resultsChannel == nil {
 				return
 			}
-			c.resultsChannel <- jid.Parse(item.Jid).Host()
+			r.resultsChannel <- jid.Parse(item.Jid).Host()
 		}
 	}
 }
@@ -395,9 +400,9 @@ func (c *chatServiceReceivalContext) fetchChatServices(server jid.Domain) {
 
 // GetChatServices offers the chat services from a xmpp server.
 func (s *session) GetChatServices(server jid.Domain) (<-chan jid.Domain, <-chan error, func()) {
-	ctx := s.createChatServiceReceivalContext()
-	go ctx.fetchChatServices(server)
-	return ctx.resultsChannel, ctx.errorChannel, ctx.end
+	r := s.createChatServicesReceiver()
+	go r.fetchChatServices(server)
+	return r.resultsChannel, r.errorChannel, r.finish
 }
 
 func bodyHasContent(stanza *data.ClientMessage) bool {

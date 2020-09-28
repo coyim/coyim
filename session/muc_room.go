@@ -134,19 +134,18 @@ func createRoomRecipient(room jid.Bare, nickname string) jid.Full {
 func (s *session) LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error) {
 	to := createRoomRecipient(room, nickname).String()
 
-	// TODO: rename variables
-	resultCh := make(chan bool)
-	errorCh := make(chan error)
+	result := make(chan bool)
+	errors := make(chan error)
 	go func() {
 		err := s.conn.SendPresence(to, "unavailable", "", "")
 		if err != nil {
 			s.log.WithField("to", to).WithError(err).Error("error trying to leave room")
-			errorCh <- err
+			errors <- err
 			return
 		}
 		s.muc.roomManager.LeaveRoom(room)
-		resultCh <- true
+		result <- true
 	}()
 
-	return resultCh, errorCh
+	return result, errors
 }

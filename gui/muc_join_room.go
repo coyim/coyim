@@ -110,8 +110,9 @@ func (v *mucJoinRoomView) onJoinError(a *account, roomID jid.Bare, err error) {
 func (v *mucJoinRoomView) onServiceUnavailable(a *account, roomID jid.Bare) {
 	a.log.WithField("room", roomID).Warn("An error occurred trying to find the room")
 	doInUIThread(func() {
-		v.hideSpinner()
 		v.notifyOnError(i18n.Local("We can't get access to the service, please check your Internet connection or make sure the service exists."))
+		v.enableJoinFields()
+		v.hideSpinner()
 	})
 }
 

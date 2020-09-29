@@ -115,51 +115,6 @@ func (v *mucJoinRoomView) onServiceUnavailable(a *account, roomID jid.Bare) {
 	})
 }
 
-type mucJoinRoomContext struct {
-	a      *account
-	v      *mucJoinRoomView
-	roomID jid.Bare
-	done   func()
-}
-
-func (c *mucJoinRoomContext) onFinishWithError(err error, errorReceived bool) {
-	if errorReceived {
-		c.v.onJoinError(c.a, c.roomID, err)
-		return
-	}
-	c.v.onServiceUnavailable(c.a, c.roomID)
-}
-
-func (c *mucJoinRoomContext) waitToFinish(result <-chan bool, errors <-chan error, roomInfo <-chan *muc.RoomListing) {
-	defer doInUIThread(c.done)
-
-	select {
-	case value, ok := <-result:
-		if !ok {
-			c.v.onServiceUnavailable(c.a, c.roomID)
-			return
-		}
-
-		if !value {
-			c.v.onJoinFails(c.a, c.roomID)
-			return
-		}
-
-		ri := <-roomInfo
-
-		c.v.onJoinSuccess(c.a, c.roomID, ri)
-	case err, ok := <-errors:
-		c.onFinishWithError(err, !ok)
-	}
-}
-
-func (c *mucJoinRoomContext) joinRoom() {
-	c.v.beforeJoiningRoom()
-	roomInfo := make(chan *muc.RoomListing)
-	result, errors := c.a.session.HasRoom(c.roomID, roomInfo)
-	go c.waitToFinish(result, errors, roomInfo)
-}
-
 func (v *mucJoinRoomView) log() coylog.Logger {
 	l := v.u.log
 
@@ -206,12 +161,7 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 		return
 	}
 
-	c := &mucJoinRoomContext{
-		a:      ca,
-		v:      v,
-		roomID: roomID,
-		done:   done,
-	}
+	c := v.newJoinRoomContext(ca, roomID, done)
 
 	c.joinRoom()
 }

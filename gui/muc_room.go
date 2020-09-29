@@ -195,24 +195,21 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 }
 
 func (v *roomView) switchToLobbyView() {
-	// TODO: This event name is a bit confusing to me
-	v.publish("previousToSwitchToLobby")
+	v.publish("beforeSwitchingToLobbyView")
 
 	v.initRoomLobby()
 
 	if v.shouldReturnOnCancel() {
-		// TODO: spelling
-		v.lobby.swtichToReturnOnCancel()
+		v.lobby.switchToReturnOnCancel()
 	} else {
-		// TODO: spelling
-		v.lobby.swtichToCancel()
+		v.lobby.switchToCancel()
 	}
 
 	v.lobby.show()
 }
 
 func (v *roomView) switchToMainView() {
-	v.publish("previousToSwitchToMain")
+	v.publish("beforeSwitchingToMainView")
 	v.initRoomMain()
 	v.main.show()
 }

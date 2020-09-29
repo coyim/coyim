@@ -101,7 +101,7 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 		"registrationRequired": func(ei roomViewEventInfo) {
 			l.registrationRequired(v.roomID(), ei["nickname"])
 		},
-		"previousToSwitchToMain": func(roomViewEventInfo) {
+		"beforeSwitchingToMainView": func(roomViewEventInfo) {
 			v.unsubscribe("lobby", "occupantSelfJoined")
 			v.unsubscribe("lobby", "roomInfoReceived")
 		},
@@ -179,13 +179,11 @@ func (l *roomViewLobby) clearWarnings() {
 	}
 }
 
-// TODO: Spelling
-
-func (l *roomViewLobby) swtichToReturnOnCancel() {
+func (l *roomViewLobby) switchToReturnOnCancel() {
 	l.cancelButton.SetProperty("label", i18n.Local("Return"))
 }
 
-func (l *roomViewLobby) swtichToCancel() {
+func (l *roomViewLobby) switchToCancel() {
 	l.cancelButton.SetProperty("label", i18n.Local("Cancel"))
 }
 

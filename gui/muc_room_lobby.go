@@ -91,19 +91,19 @@ func (l *roomViewLobby) initDefaults(v *roomView) {
 
 func (l *roomViewLobby) initSubscribers(v *roomView) {
 	v.subscribeAll("lobby", roomViewEventObservers{
-		"occupantSelfJoined": l.occupantJoined,
-		"roomInfoReceived": func(roomViewEventInfo) {
+		"occupantSelfJoinedEvent": l.occupantJoinedEvent,
+		"roomInfoReceivedEvent": func(roomViewEventInfo) {
 			l.withRoomInfo(v.info)
 		},
-		"nicknameConflict": func(ei roomViewEventInfo) {
-			l.nicknameConflict(v.roomID(), ei["nickname"])
+		"nicknameConflictEvent": func(ei roomViewEventInfo) {
+			l.nicknameConflictEvent(v.roomID(), ei["nickname"])
 		},
-		"registrationRequired": func(ei roomViewEventInfo) {
-			l.registrationRequired(v.roomID(), ei["nickname"])
+		"registrationRequiredEvent": func(ei roomViewEventInfo) {
+			l.registrationRequiredEvent(v.roomID(), ei["nickname"])
 		},
-		"beforeSwitchingToMainView": func(roomViewEventInfo) {
-			v.unsubscribe("lobby", "occupantSelfJoined")
-			v.unsubscribe("lobby", "roomInfoReceived")
+		"beforeSwitchingToMainViewEvent": func(roomViewEventInfo) {
+			v.unsubscribe("lobby", "occupantSelfJoinedEvent")
+			v.unsubscribe("lobby", "roomInfoReceivedEvent")
 		},
 	})
 }
@@ -253,7 +253,7 @@ func (l *roomViewLobby) onJoinClicked() {
 var (
 	errJoinRequestFailed    = errors.New("the request to join the room has failed")
 	errJoinNoConnection     = errors.New("join request failed because maybe no connection available")
-	errJoinNickNameConflict = errors.New("join failed because the nickname is being used")
+	errJoinnicknameConflictEvent = errors.New("join failed because the nickname is being used")
 	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
 )
 
@@ -308,7 +308,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 	if err, ok := err.(*mucRoomLobbyErr); ok {
 		userMessage = l.getUserErrorMessage(err)
 
-		if err.errType == errJoinNickNameConflict {
+		if err.errType == errJoinnicknameConflictEvent {
 			shouldEnableCreation = false
 			// TODO: This naming is different from most other places
 			nickName := err.nickname
@@ -327,7 +327,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 
 func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	switch err.errType {
-	case errJoinNickNameConflict:
+	case errJoinnicknameConflictEvent:
 		return i18n.Local("Can't join the room using that nickname because it's already being used.")
 	case errJoinOnlyMembers:
 		return i18n.Local("Sorry, this room only allows registered members.")
@@ -361,7 +361,7 @@ func (l *roomViewLobby) finishJoinRequest(err error) {
 	}
 }
 
-func (l *roomViewLobby) occupantJoined(roomViewEventInfo) {
+func (l *roomViewLobby) occupantJoinedEvent(roomViewEventInfo) {
 	l.finishJoinRequest(nil)
 }
 
@@ -369,10 +369,10 @@ func (l *roomViewLobby) joinFailed(roomID jid.Bare, nickname string) {
 	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinRequestFailed))
 }
 
-func (l *roomViewLobby) nicknameConflict(roomID jid.Bare, nickname string) {
-	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinNickNameConflict))
+func (l *roomViewLobby) nicknameConflictEvent(roomID jid.Bare, nickname string) {
+	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinnicknameConflictEvent))
 }
 
-func (l *roomViewLobby) registrationRequired(roomID jid.Bare, nickname string) {
+func (l *roomViewLobby) registrationRequiredEvent(roomID jid.Bare, nickname string) {
 	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinOnlyMembers))
 }

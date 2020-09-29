@@ -15,37 +15,37 @@ func (v *roomView) handleRoomEvent(ev muc.MUC) {
 	// There is probably no point in doing this publishing in the UI thread
 	switch t := ev.(type) {
 	case events.MUCSelfOccupantJoined:
-		v.publishWithInfo("occupantSelfJoined", roomViewEventInfo{
+		v.publishWithInfo("occupantSelfJoinedEvent", roomViewEventInfo{
 			"nickname": t.Nickname,
 		})
 
 	case events.MUCOccupantUpdated:
-		v.publishWithInfo("occupantUpdated", roomViewEventInfo{
+		v.publishWithInfo("occupantUpdatedEvent", roomViewEventInfo{
 			"nickname": t.Nickname,
 		})
 
 	case events.MUCOccupantJoined:
-		v.publishWithInfo("occupantJoined", roomViewEventInfo{
+		v.publishWithInfo("occupantJoinedEvent", roomViewEventInfo{
 			"nickname": t.Nickname,
 		})
 
 	case events.MUCOccupantLeft:
-		v.publishWithInfo("occupantLeft", roomViewEventInfo{
+		v.publishWithInfo("occupantLeftEvent", roomViewEventInfo{
 			"nickname": t.Nickname,
 		})
 
 	case events.MUCMessageReceived:
-		v.publishWithInfo("messageReceived", roomViewEventInfo{
+		v.publishWithInfo("messageReceivedEvent", roomViewEventInfo{
 			"nickname": t.Nickname,
 			"subject":  t.Subject,
 			"message":  t.Message,
 		})
 
 	case events.MUCLoggingEnabled:
-		v.publish("loggingEnabled")
+		v.publish("loggingEnabledEvent")
 
 	case events.MUCLoggingDisabled:
-		v.publish("loggingDisabled")
+		v.publish("loggingDisabledEvent")
 
 	default:
 		v.log.WithField("event", t).Warn("Unsupported room event received")

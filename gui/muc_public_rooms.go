@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"sync"
 
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -128,6 +129,17 @@ func (prv *mucPublicRoomsView) initCommons() {
 	prv.joinButton.SetSensitive(false)
 }
 
+func (prv *mucPublicRoomsView) log() coylog.Logger {
+	l := prv.u.log
+	if prv.currentAccount != nil {
+		l = prv.currentAccount.log
+	}
+
+	l.WithField("who", "mucPublilcRoomsView")
+
+	return l
+}
+
 var (
 	errNoPossibleSelection = errors.New("problem getting selection")
 	errNoSelection         = errors.New("nothing is selected")
@@ -186,7 +198,7 @@ func (prv *mucPublicRoomsView) onJoinRoom() {
 	if err != nil {
 		// TODO: Maybe introduce helper method to always get the log, either
 		// from current account or if no current account from the ui
-		prv.currentAccount.log.WithError(err).Error("An error occurred when trying to join the room")
+		prv.log().WithError(err).Error("An error occurred when trying to join the room")
 		prv.showUserMessageForError(err)
 		return
 	}
@@ -197,13 +209,13 @@ func (prv *mucPublicRoomsView) onJoinRoom() {
 func (prv *mucPublicRoomsView) onActivateRoomRow(_ gtki.TreeView, path gtki.TreePath) {
 	iter, err := prv.roomsModel.GetIter(path)
 	if err != nil {
-		prv.currentAccount.log.WithError(err).Error("Couldn't activate the selected item")
+		prv.log().WithError(err).Error("Couldn't activate the selected item")
 		return
 	}
 
 	ident, rl, err := prv.getRoomFromIter(iter)
 	if err != nil {
-		prv.currentAccount.log.WithError(err).Error("Couldn't join to the room based on the current selection")
+		prv.log().WithError(err).Error("Couldn't join to the room based on the current selection")
 		prv.showUserMessageForError(err)
 		return
 	}
@@ -217,9 +229,7 @@ func (prv *mucPublicRoomsView) onSelectionChanged() {
 }
 
 func (prv *mucPublicRoomsView) onUpdatePublicRooms() {
-	// TODO: Is there any specific reason to use currentAccount() here instead
-	// of the currentAccount field on prv?
-	go prv.mucUpdatePublicRoomsOn(prv.ac.currentAccount())
+	go prv.mucUpdatePublicRoomsOn(prv.currentAccount)
 }
 
 func (prv *mucPublicRoomsView) getFreshRoomInfoIdentifierAndSet(rl *muc.RoomListing) int {
@@ -358,7 +368,7 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 					doInUIThread(func() {
 						prv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
 					})
-					prv.currentAccount.log.WithError(e).Error("Something went wrong when trying to get chat rooms")
+					prv.log().WithError(e).Error("Something went wrong when trying to get chat rooms")
 				}
 				return
 			case _, _ = <-prv.cancel:
@@ -412,16 +422,15 @@ func (u *gtkUI) mucShowPublicRooms() {
 // joinRoom should not be called from the UI thread
 func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare, roomInfo *muc.RoomListing) {
 	// TODO: should we use the current account field here?
-	a := prv.ac.currentAccount()
-	if a == nil {
-		prv.currentAccount.log.WithField("room", roomJid).Debug("joinRoom(): no account is selected")
+	if prv.currentAccount == nil {
+		prv.log().WithField("room", roomJid).Debug("joinRoom(): no account is selected")
 		prv.notifyOnError(i18n.Local("No account was selected, please select one account from the list."))
 		return
 	}
 
-	a.log.WithField("room", roomJid).Debug("joinRoom()")
+	prv.log().WithField("room", roomJid).Debug("joinRoom()")
 	doInUIThread(func() {
 		prv.dialog.Destroy()
-		prv.u.joinRoom(a, roomJid, nil)
+		prv.u.joinRoom(prv.currentAccount, roomJid, nil)
 	})
 }

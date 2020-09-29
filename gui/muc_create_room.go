@@ -7,10 +7,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// TODO: Maybe it is time to introduce a simple callback helper type
-// that contains the list of func() and RWMutex, and helper functions for
-// invoking them
-
 type mucCreateRoomView struct {
 	u *gtkUI
 

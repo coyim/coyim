@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
@@ -30,4 +31,30 @@ func newNicknameConflictError(n jid.Resource) error {
 
 func newRegistrationRequiredError(roomID jid.Bare) error {
 	return fmt.Errorf("the room \"%s\" only allows registered members", roomID)
+}
+
+type withCallbacks struct {
+	callbacks []func()
+	lock      sync.RWMutex
+}
+
+func newWithCallbacks() *withCallbacks {
+	return &withCallbacks{}
+}
+
+func (wc *withCallbacks) add(cb func()) {
+	wc.lock.Lock()
+	defer wc.lock.Unlock()
+
+	wc.callbacks = append(wc.callbacks, cb)
+}
+
+func (wc *withCallbacks) invokeAll() {
+	wc.lock.Lock()
+	callbacks := wc.callbacks
+	wc.lock.Unlock()
+
+	for _, cb := range callbacks {
+		cb()
+	}
 }

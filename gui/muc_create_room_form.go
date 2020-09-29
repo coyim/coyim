@@ -79,8 +79,11 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	// TODO: I think all three of these statements are inappropriate in a method called
 	// newCreateRoomForm
 	// Maybe do them from the view side, or something like that inside.
-	v.onAutoJoin(f.onAutoJoinChange)
-	v.onDestroy(f.destroy)
+	v.onAutoJoin.add(func() {
+		f.onAutoJoinChange(v.autoJoin)
+	})
+
+	v.onDestroy.add(f.destroy)
 
 	v.showCreateForm = func() {
 		v.success.reset()

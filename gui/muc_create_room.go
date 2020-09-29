@@ -2,7 +2,6 @@ package gui
 
 import (
 	"errors"
-	"sync"
 
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -26,12 +25,9 @@ type mucCreateRoomView struct {
 
 	showCreateForm  func()
 	showSuccessView func(*account, jid.Bare)
-	// TODO: I think "list" can be removed in these two
-	onAutoJoinList []func(bool)
-	onDestroyList  []func()
-	// TODO: Locker should be lock
-	onAutoJoinLocker sync.RWMutex
-	onDestroyLocker  sync.RWMutex
+
+	onAutoJoin *withCallbacks
+	onDestroy  *withCallbacks
 }
 
 func (u *gtkUI) newmucCreateRoomView() *mucCreateRoomView {
@@ -39,6 +35,8 @@ func (u *gtkUI) newmucCreateRoomView() *mucCreateRoomView {
 		u:               u,
 		showCreateForm:  func() {},
 		showSuccessView: func(*account, jid.Bare) {},
+		onAutoJoin:      newWithCallbacks(),
+		onDestroy:       newWithCallbacks(),
 	}
 
 	v.initBuilder()
@@ -60,13 +58,6 @@ func (v *mucCreateRoomView) initBuilder() {
 	})
 }
 
-func (v *mucCreateRoomView) onDestroy(f func()) {
-	v.onDestroyLocker.Lock()
-	defer v.onDestroyLocker.Unlock()
-
-	v.onDestroyList = append(v.onDestroyList, f)
-}
-
 func (v *mucCreateRoomView) onCancel() {
 	if v.cancel != nil {
 		v.cancel <- true
@@ -77,12 +68,7 @@ func (v *mucCreateRoomView) onCancel() {
 }
 
 func (v *mucCreateRoomView) onCloseWindow() {
-	v.onDestroyLocker.RLock()
-	defer v.onDestroyLocker.RUnlock()
-
-	for _, cb := range v.onDestroyList {
-		cb()
-	}
+	v.onDestroy.invokeAll()
 }
 
 var (
@@ -173,20 +159,8 @@ func (v *mucCreateRoomView) updateAutoJoinValue(newValue bool) {
 		return
 	}
 
-	v.onAutoJoinLocker.RLock()
-	defer v.onAutoJoinLocker.RUnlock()
-
 	v.autoJoin = newValue
-	for _, cb := range v.onAutoJoinList {
-		cb(v.autoJoin)
-	}
-}
-
-func (v *mucCreateRoomView) onAutoJoin(f func(bool)) {
-	v.onAutoJoinLocker.Lock()
-	defer v.onAutoJoinLocker.Unlock()
-
-	v.onAutoJoinList = append(v.onAutoJoinList, f)
+	v.onAutoJoin.invokeAll()
 }
 
 // TODO: Does this helper function actually help in anything?

@@ -132,7 +132,7 @@ func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 	return l
 }
 
-func (v *mucCreateRoomView) createRoomIfDoesntExist(ca *account, roomID jid.Bare, errors chan error) {
+func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan error) {
 	sc := make(chan bool)
 	er := make(chan error)
 

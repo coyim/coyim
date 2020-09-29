@@ -27,7 +27,7 @@ type mucCreateRoomViewForm struct {
 
 	previousUpdate          chan bool
 	roomNameConflictList    *set.Set
-	createRoomIfDoesntExist func(*account, jid.Bare)
+	createRoom              func(*account, jid.Bare)
 	onCheckFieldsConditions func(string, string, *account) bool
 
 	log func(*account, jid.Bare) coylog.Logger
@@ -68,35 +68,56 @@ func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
 func (v *mucCreateRoomView) initCreateRoomForm() *mucCreateRoomViewForm {
 	f := v.newCreateRoomForm()
 
-	// TODO: Maybe extract some of this stuff
 	f.createRoom = func(ca *account, roomID jid.Bare) {
 		errors := make(chan error)
 		v.createRoom(ca, roomID, errors)
-
-			case errCreateRoomAlreadyExists:
-				f.roomNameConflictList.Insert(roomID.String())
-				doInUIThread(func() {
-					f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
-					f.hideSpinner()
-					f.disableOrEnableFields(true)
-					f.createButton.SetSensitive(false)
-				})
-
-			case errCreateRoomFailed:
-				userErr, ok := supportedCreateMUCErrors[err]
-				if !ok {
-					userErr = i18n.Local("Could not create the room.")
-				}
-				doInUIThread(func() {
-					f.errorBox.ShowMessage(userErr)
-				})
-			}
-		}
+		go f.listenToCreateError(roomID, errors)
 	}
 
 	f.addCallbacks(v)
 
 	return f
+}
+
+func (f *mucCreateRoomViewForm) listenToCreateError(roomID jid.Bare, errors chan error) {
+	err := <-errors
+
+	switch err {
+	case errCreateRoomCheckIfExistsFails:
+		doInUIThread(f.onCreateRoomCheckIfExistsFails)
+
+	case errCreateRoomAlreadyExists:
+		f.roomNameConflictList.Insert(roomID.String())
+		doInUIThread(f.onCreateRoomAlreadyExists)
+
+	case errCreateRoomFailed:
+		doInUIThread(func() {
+			f.onCreateRoomFailed(err)
+		})
+
+	}
+}
+
+func (f *mucCreateRoomViewForm) onCreateRoomCheckIfExistsFails() {
+	f.errorBox.ShowMessage(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
+	f.hideSpinner()
+	f.disableOrEnableFields(true)
+}
+
+func (f *mucCreateRoomViewForm) onCreateRoomAlreadyExists() {
+	f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
+	f.hideSpinner()
+	f.disableOrEnableFields(true)
+	f.createButton.SetSensitive(false)
+}
+
+func (f *mucCreateRoomViewForm) onCreateRoomFailed(err error) {
+	displayErr, ok := supportedCreateMUCErrors[err]
+	if ok {
+		f.errorBox.ShowMessage(displayErr)
+		return
+	}
+	f.errorBox.ShowMessage(i18n.Local("Could not create the room."))
 }
 
 func (f *mucCreateRoomViewForm) addCallbacks(v *mucCreateRoomView) {
@@ -154,7 +175,7 @@ func (f *mucCreateRoomViewForm) onCreateRoom() {
 	// TODO: Clunky name
 	f.onBeforeToCreateARoom()
 
-	go f.createRoomIfDoesntExist(ca, roomID)
+	go f.createRoom(ca, roomID)
 }
 
 func (f *mucCreateRoomViewForm) onBeforeToCreateARoom() {

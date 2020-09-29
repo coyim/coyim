@@ -424,6 +424,6 @@ func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare, roomInfo *muc.RoomList
 	a.log.WithField("room", roomJid).Debug("joinRoom()")
 	doInUIThread(func() {
 		prv.dialog.Destroy()
-		prv.u.joinMultiUserChat(a, roomJid, nil)
+		prv.u.joinRoom(a, roomJid, nil)
 	})
 }

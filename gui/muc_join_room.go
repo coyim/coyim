@@ -75,7 +75,7 @@ func (v *mucJoinRoomView) onJoinSuccess(a *account, roomID jid.Bare, roomInfo *m
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.dialog.Hide()
-		v.u.joinMultiUserChat(a, roomID, v.returnWhenCancelJoining)
+		v.u.joinRoom(a, roomID, v.returnWhenCancelJoining)
 	})
 }
 

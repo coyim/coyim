@@ -160,8 +160,7 @@ func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
 func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
 	doInUIThread(func() {
 		v.destroy()
-		// TODO: rethink naming. Maybe joinRoom?
-		v.u.joinMultiUserChat(ca, roomID, nil)
+		v.u.joinRoom(ca, roomID, nil)
 	})
 }
 

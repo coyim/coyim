@@ -13,14 +13,14 @@ func (u *gtkUI) getAccountRoomViewBasedOnBare(a *account, roomID jid.Bare) *room
 	return v
 }
 
-// joinMultiUserChat MUST be called always from the UI thread
+// joinRoom MUST be called always from the UI thread
 //
 // Also, when we want to show a chat room, having a "return to" function that
 // will be called from the lobby only when the user wants to "cancel" or "return"
 // might be useful in some scenarios like "returning to previous step".
 //
 // Please note that "returnTo" will be called from the UI thread too
-func (u *gtkUI) joinMultiUserChat(a *account, roomID jid.Bare, returnTo func()) {
+func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, returnTo func()) {
 	v := u.getAccountRoomViewBasedOnBare(a, roomID)
 
 	if v.isJoined() {

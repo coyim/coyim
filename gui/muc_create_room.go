@@ -162,7 +162,7 @@ func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
 
 func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
 	doInUIThread(func() {
-		v.destroy()
+		v.window.Destroy()
 		v.u.joinRoom(ca, roomID, nil)
 	})
 }
@@ -177,11 +177,6 @@ func (v *mucCreateRoomView) updateAutoJoinValue(f bool) {
 
 	v.autoJoin = f
 	v.onAutoJoin.invokeAll()
-}
-
-// TODO: Does this helper function actually help in anything?
-func (v *mucCreateRoomView) destroy() {
-	v.window.Destroy()
 }
 
 func (v *mucCreateRoomView) show() {

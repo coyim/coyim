@@ -6,7 +6,7 @@ import (
 )
 
 type mucCreateRoomViewSuccess struct {
-	ac         *account
+	ca         *account
 	roomID     jid.Bare
 	onJoinRoom func(*account, jid.Bare)
 
@@ -30,7 +30,7 @@ func (s *mucCreateRoomViewSuccess) initBuilder(v *mucCreateRoomView) {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_createRoom_clicked": v.showCreateForm,
 		"on_joinRoom_clicked": func() {
-			s.onJoinRoom(s.ac, s.roomID)
+			s.onJoinRoom(s.ca, s.roomID)
 		},
 	})
 }
@@ -40,19 +40,19 @@ func (v *mucCreateRoomView) initCreateRoomSuccess() *mucCreateRoomViewSuccess {
 	return s
 }
 
-func (s *mucCreateRoomViewSuccess) showSuccessView(v *mucCreateRoomView, a *account, roomID jid.Bare) {
+func (s *mucCreateRoomViewSuccess) showSuccessView(v *mucCreateRoomView, ca *account, roomID jid.Bare) {
 	v.form.reset()
 	v.container.Remove(v.form.view)
-	v.success.updateInfo(a, roomID)
+	v.success.updateInfo(ca, roomID)
 	v.container.Add(s.view)
 }
 
-func (s *mucCreateRoomViewSuccess) updateInfo(a *account, roomID jid.Bare) {
-	s.ac = a
+func (s *mucCreateRoomViewSuccess) updateInfo(ca *account, roomID jid.Bare) {
+	s.ca = ca
 	s.roomID = roomID
 }
 
 func (s *mucCreateRoomViewSuccess) reset() {
-	s.ac = nil
+	s.ca = nil
 	s.roomID = nil
 }

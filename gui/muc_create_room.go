@@ -48,8 +48,8 @@ func (u *gtkUI) newmucCreateRoomView() *mucCreateRoomView {
 	}
 
 	v.success = v.initCreateRoomSuccess()
-	v.showSuccessView = func(a *account, roomID jid.Bare) {
-		v.success.showSuccessView(v, a, roomID)
+	v.showSuccessView = func(ca *account, roomID jid.Bare) {
+		v.success.showSuccessView(v, ca, roomID)
 	}
 
 	u.connectShortcutsChildWindow(v.window)

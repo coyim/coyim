@@ -215,12 +215,12 @@ func (f *mucCreateRoomViewForm) disableOrEnableFields(v bool) {
 	}
 }
 
-func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(acc *account) {
+func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(ca *account) {
 	doInUIThread(func() {
 		f.clearErrors()
 		f.enableCreationIfConditionsAreMet()
 	})
-	go f.updateChatServicesBasedOnAccount(acc)
+	go f.updateChatServicesBasedOnAccount(ca)
 }
 
 func (f *mucCreateRoomViewForm) onNoAccountsConnected() {
@@ -252,16 +252,16 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 	f.createButton.SetSensitive(ok)
 }
 
-func (f *mucCreateRoomViewForm) updateChatServicesBasedOnAccount(ac *account) {
+func (f *mucCreateRoomViewForm) updateChatServicesBasedOnAccount(ca *account) {
 	if f.previousUpdate != nil {
 		f.previousUpdate <- true
 	}
 
 	f.previousUpdate = make(chan bool)
 
-	csc, ec, endEarly := ac.session.GetChatServices(jid.ParseDomain(ac.Account()))
+	csc, ec, endEarly := ca.session.GetChatServices(jid.ParseDomain(ca.Account()))
 
-	go f.updateChatServices(ac, csc, ec, endEarly)
+	go f.updateChatServices(ca, csc, ec, endEarly)
 }
 
 func (f *mucCreateRoomViewForm) updateChatServices(ca *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {

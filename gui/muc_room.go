@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
@@ -84,8 +83,7 @@ func (v *roomView) initBuilderAndSignals() {
 }
 
 func (v *roomView) initDefaults() {
-	// TODO: Maybe this needs to be i18n
-	v.setTitle(fmt.Sprintf("%s [%s]", v.roomID(), v.account.Account()))
+	v.setTitle(i18n.Localf("%s [%s]", v.roomID(), v.account.Account()))
 }
 
 func (v *roomView) requestRoomInfo() {

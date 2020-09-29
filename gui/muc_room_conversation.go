@@ -170,27 +170,23 @@ func (c *roomViewConversation) addLineTextToChatTextUsingTagID(text string, tagN
 
 // displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
-	// TODO: i18n
-	text := fmt.Sprintf("%s joined the room", nickname)
+	text := i18n.Localf("%s joined the room", nickname)
 	c.addLineTextToChatTextUsingTagID(text, "joinedRoomText")
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
-	// TODO: i18n
-	text := fmt.Sprintf("%s left the room", nickname)
+	text := i18n.Localf("%s left the room", nickname)
 	c.addLineTextToChatTextUsingTagID(text, "leftRoomText")
 }
 
 // displayNewLiveMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
 	c.addTimestamp()
-	// TODO: i18n
-	nicknameText := fmt.Sprintf("%s: ", nickname)
+	nicknameText := i18n.Localf("%s: ", nickname)
 	c.addTextToChatTextUsingTagID(nicknameText, "nicknameText")
 	if subject != "" {
-		// TODO: i18n
-		subjectText := fmt.Sprintf("[%s] ", subject)
+		subjectText := i18n.Localf("[%s] ", subject)
 		c.addTextToChatTextUsingTagID(subjectText, "subjectText")
 	}
 	c.addTextToChatTextUsingTagID(message, "messageText")

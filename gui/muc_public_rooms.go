@@ -11,15 +11,13 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// TODO: We decided to use iota for all of the places
-
 const (
-	mucListRoomsIndexJid         = 0
-	mucListRoomsIndexName        = 1
-	mucListRoomsIndexService     = 2
-	mucListRoomsIndexDescription = 3
-	mucListRoomsIndexOccupants   = 4
-	mucListRoomsIndexRoomInfo    = 5
+	mucListRoomsIndexJid = iota
+	mucListRoomsIndexName
+	mucListRoomsIndexService
+	mucListRoomsIndexDescription
+	mucListRoomsIndexOccupants
+	mucListRoomsIndexRoomInfo
 )
 
 type roomListingUpdateData struct {

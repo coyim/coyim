@@ -6,12 +6,10 @@ import (
 )
 
 func (a *account) getRoomView(roomID jid.Bare) (*roomView, bool) {
-	// TODO: I think mucRoomsLock should be fine for this field
-	a.multiUserChatRoomsLock.RLock()
-	defer a.multiUserChatRoomsLock.RUnlock()
+	a.mucRoomsLock.RLock()
+	defer a.mucRoomsLock.RUnlock()
 
-	// TODO: This one too, mucRooms
-	v, ok := a.multiUserChatRooms[roomID.String()]
+	v, ok := a.mucRooms[roomID.String()]
 	if !ok {
 		a.log.WithField("room", roomID).Debug("getRoomView(): trying to get a not connected room")
 	}
@@ -20,22 +18,22 @@ func (a *account) getRoomView(roomID jid.Bare) (*roomView, bool) {
 }
 
 func (a *account) addRoomView(v *roomView) {
-	a.multiUserChatRoomsLock.Lock()
-	defer a.multiUserChatRoomsLock.Unlock()
+	a.mucRoomsLock.Lock()
+	defer a.mucRoomsLock.Unlock()
 
-	a.multiUserChatRooms[v.roomID().String()] = v
+	a.mucRooms[v.roomID().String()] = v
 }
 
 func (a *account) removeRoomView(roomID jid.Bare) {
-	a.multiUserChatRoomsLock.Lock()
-	defer a.multiUserChatRoomsLock.Unlock()
+	a.mucRoomsLock.Lock()
+	defer a.mucRoomsLock.Unlock()
 
-	_, exists := a.multiUserChatRooms[roomID.String()]
+	_, exists := a.mucRooms[roomID.String()]
 	if !exists {
 		return
 	}
 
-	delete(a.multiUserChatRooms, roomID.String())
+	delete(a.mucRooms, roomID.String())
 }
 
 func (a *account) newRoomModel(roomID jid.Bare) *muc.Room {

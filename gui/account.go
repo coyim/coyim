@@ -44,8 +44,8 @@ type account struct {
 
 	sync.RWMutex
 
-	multiUserChatRooms     map[string]*roomView
-	multiUserChatRoomsLock sync.RWMutex
+	mucRooms     map[string]*roomView
+	mucRoomsLock sync.RWMutex
 }
 
 func (account *account) executeOneDelayed(ui *gtkUI, p string, cv conversationView) {
@@ -98,7 +98,7 @@ func newAccount(conf *config.ApplicationConfig, currentConf *config.Account, sf 
 		c:                    make(map[string]conversationView),
 		delayedConversations: make(map[string][]func(conversationView)),
 		events:               make(chan interface{}),
-		multiUserChatRooms:   make(map[string]*roomView),
+		mucRooms:             make(map[string]*roomView),
 	}
 }
 

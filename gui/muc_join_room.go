@@ -61,8 +61,6 @@ func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 	v.joinButton.SetSensitive(hasAllValues)
 }
 
-// TODO: not sure what "before start" means in this method name.
-
 func (v *mucJoinRoomView) beforeJoiningRoom() {
 	v.clearErrors()
 	v.disableJoinFields()
@@ -73,14 +71,11 @@ func (v *mucJoinRoomView) onJoinSuccess(a *account, roomID jid.Bare, roomInfo *m
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.dialog.Hide()
-		v.u.joinRoom(a, roomID, v.returnWhenCancelJoining)
+		v.u.joinRoom(a, roomID, v.returnToJoinRoomView)
 	})
 }
 
-// TODO: This method name might also be nicer and more understandable
-// This will be called when going back from the lobby, so maybe something about that?
-
-func (v *mucJoinRoomView) returnWhenCancelJoining() {
+func (v *mucJoinRoomView) returnToJoinRoomView() {
 	v.enableJoinFields()
 	v.dialog.Show()
 }
@@ -100,10 +95,8 @@ func (v *mucJoinRoomView) onJoinError(a *account, roomID jid.Bare, err error) {
 		v.enableJoinFields()
 		// TODO: This should not be necessary. We should analyze and check IF and why it could
 		// happen that error is sent in as nil
-		if err != nil {
-			v.notifyOnError(i18n.Local("It looks like the room you are trying to connect to doesn't exist, please verify the provided information."))
-			a.log.WithField("room", roomID).WithError(err).Warn("An error occurred trying to find the room")
-		}
+		v.notifyOnError(i18n.Local("It looks like the room you are trying to connect to doesn't exist, please verify the provided information."))
+		a.log.WithField("room", roomID).WithError(err).Warn("An error occurred trying to find the room")
 	})
 }
 

@@ -20,15 +20,6 @@ func (v *mucCreateRoomView) newCreateRoomSuccess() *mucCreateRoomViewSuccess {
 
 	s.initBuilder(v)
 
-	// TODO: Same as with the form, we are modifying the parent from the child
-	// constructor, which feels a bit confusing
-	v.showSuccessView = func(a *account, roomID jid.Bare) {
-		v.form.reset()
-		v.container.Remove(v.form.view)
-		v.success.updateInfo(a, roomID)
-		v.container.Add(v.success.view)
-	}
-
 	return s
 }
 
@@ -42,6 +33,18 @@ func (s *mucCreateRoomViewSuccess) initBuilder(v *mucCreateRoomView) {
 			s.onJoinRoom(s.ac, s.roomID)
 		},
 	})
+}
+
+func (v *mucCreateRoomView) initCreateRoomSuccess() *mucCreateRoomViewSuccess {
+	s := v.newCreateRoomSuccess()
+	return s
+}
+
+func (s *mucCreateRoomViewSuccess) showSuccessView(v *mucCreateRoomView, a *account, roomID jid.Bare) {
+	v.form.reset()
+	v.container.Remove(v.form.view)
+	v.success.updateInfo(a, roomID)
+	v.container.Add(s.view)
 }
 
 func (s *mucCreateRoomViewSuccess) updateInfo(a *account, roomID jid.Bare) {

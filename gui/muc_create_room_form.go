@@ -42,6 +42,32 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	f.initBuilder(v)
 	f.initDefaults(v)
 
+	return f
+}
+
+func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
+	builder := newBuilder("MUCCreateRoomForm")
+	panicOnDevError(builder.bindObjects(f))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_cancel":          v.onCancel,
+		"on_create_room":     f.onCreateRoom,
+		"on_roomName_change": f.enableCreationIfConditionsAreMet,
+		"on_roomAutoJoin_toggled": func() {
+			v.updateAutoJoinValue(f.roomAutoJoin.GetActive())
+		},
+		"on_chatServiceEntry_change": f.enableCreationIfConditionsAreMet,
+	})
+}
+
+func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
+	f.errorBox = newErrorNotification(f.notificationArea)
+	f.ac = v.u.createConnectedAccountsComponent(f.account, f, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
+}
+
+func (v *mucCreateRoomView) initCreateRoomForm() *mucCreateRoomViewForm {
+	f := v.newCreateRoomForm()
+
 	// TODO: Maybe extract some of this stuff
 	f.createRoomIfDoesntExist = func(a *account, roomID jid.Bare) {
 		errors := make(chan error)
@@ -77,44 +103,25 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 		}
 	}
 
-	// TODO: I think all three of these statements are inappropriate in a method called
-	// newCreateRoomForm
-	// Maybe do them from the view side, or something like that inside.
+	f.addCallbacks(v)
+
+	return f
+}
+
+func (f *mucCreateRoomViewForm) addCallbacks(v *mucCreateRoomView) {
 	v.onAutoJoin.add(func() {
 		f.onAutoJoinChange(v.autoJoin)
 	})
 
 	v.onDestroy.add(f.destroy)
-
-	v.showCreateForm = func() {
-		v.success.reset()
-		v.container.Remove(v.success.view)
-		v.form.reset()
-		v.container.Add(v.form.view)
-		f.isShown = true
-	}
-
-	return f
 }
 
-func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
-	builder := newBuilder("MUCCreateRoomForm")
-	panicOnDevError(builder.bindObjects(f))
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_cancel":          v.onCancel,
-		"on_create_room":     f.onCreateRoom,
-		"on_roomName_change": f.enableCreationIfConditionsAreMet,
-		"on_roomAutoJoin_toggled": func() {
-			v.updateAutoJoinValue(f.roomAutoJoin.GetActive())
-		},
-		"on_chatServiceEntry_change": f.enableCreationIfConditionsAreMet,
-	})
-}
-
-func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
-	f.errorBox = newErrorNotification(f.notificationArea)
-	f.ac = v.u.createConnectedAccountsComponent(f.account, f, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
+func (f *mucCreateRoomViewForm) showCreateForm(v *mucCreateRoomView) {
+	v.success.reset()
+	v.container.Remove(v.success.view)
+	f.reset()
+	v.container.Add(f.view)
+	f.isShown = true
 }
 
 func (f *mucCreateRoomViewForm) onAutoJoinChange(v bool) {

@@ -42,8 +42,15 @@ func (u *gtkUI) newmucCreateRoomView() *mucCreateRoomView {
 
 	v.initBuilder()
 
-	v.form = v.newCreateRoomForm()
-	v.success = v.newCreateRoomSuccess()
+	v.form = v.initCreateRoomForm()
+	v.showCreateForm = func() {
+		v.form.showCreateForm(v)
+	}
+
+	v.success = v.initCreateRoomSuccess()
+	v.showSuccessView = func(a *account, roomID jid.Bare) {
+		v.success.showSuccessView(v, a, roomID)
+	}
 
 	u.connectShortcutsChildWindow(v.window)
 

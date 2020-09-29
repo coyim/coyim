@@ -31,7 +31,7 @@ type mucCreateRoomView struct {
 	sync.Mutex
 }
 
-func (u *gtkUI) newmucCreateRoomView() *mucCreateRoomView {
+func (u *gtkUI) newCreateMUCRoomView() *mucCreateRoomView {
 	v := &mucCreateRoomView{
 		u:               u,
 		showCreateForm:  func() {},
@@ -41,16 +41,7 @@ func (u *gtkUI) newmucCreateRoomView() *mucCreateRoomView {
 	}
 
 	v.initBuilder()
-
-	v.form = v.initCreateRoomForm()
-	v.showCreateForm = func() {
-		v.form.showCreateForm(v)
-	}
-
-	v.success = v.initCreateRoomSuccess()
-	v.showSuccessView = func(ca *account, roomID jid.Bare) {
-		v.success.showSuccessView(v, ca, roomID)
-	}
+	v.initChildViews()
 
 	u.connectShortcutsChildWindow(v.window)
 
@@ -64,6 +55,18 @@ func (v *mucCreateRoomView) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close_window": v.onCloseWindow,
 	})
+}
+
+func (v *mucCreateRoomView) initChildViews() {
+	v.form = v.initCreateRoomForm()
+	v.showCreateForm = func() {
+		v.form.showCreateForm(v)
+	}
+
+	v.success = v.initCreateRoomSuccess()
+	v.showSuccessView = func(ca *account, roomID jid.Bare) {
+		v.success.showSuccessView(v, ca, roomID)
+	}
 }
 
 func (v *mucCreateRoomView) onCancel() {
@@ -156,22 +159,23 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 }
 
 func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
-	if !v.autoJoin {
+	if v.autoJoin {
 		doInUIThread(func() {
-			v.showSuccessView(ca, roomID)
-			v.window.ShowAll()
+			v.joinRoom(ca, roomID)
 		})
 		return
 	}
 
-	v.joinRoom(ca, roomID)
+	doInUIThread(func() {
+		v.showSuccessView(ca, roomID)
+		v.window.ShowAll()
+	})
 }
 
+// joinRoom MUST be called from the UI thread
 func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
-	doInUIThread(func() {
-		v.window.Destroy()
-		v.u.joinRoom(ca, roomID, nil)
-	})
+	v.window.Destroy()
+	v.u.joinRoom(ca, roomID, nil)
 }
 
 func (v *mucCreateRoomView) updateAutoJoinValue(f bool) {
@@ -192,6 +196,6 @@ func (v *mucCreateRoomView) show() {
 }
 
 func (u *gtkUI) mucCreateChatRoom() {
-	view := u.newmucCreateRoomView()
+	view := u.newCreateMUCRoomView()
 	view.show()
 }

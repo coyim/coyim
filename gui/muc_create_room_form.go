@@ -94,7 +94,6 @@ func (f *mucCreateRoomViewForm) listenToCreateError(roomID jid.Bare, errors chan
 		doInUIThread(func() {
 			f.onCreateRoomFailed(err)
 		})
-
 	}
 }
 
@@ -280,17 +279,23 @@ func (f *mucCreateRoomViewForm) updateChatServicesBasedOnAccount(ca *account) {
 
 func (f *mucCreateRoomViewForm) updateChatServices(ca *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
 	hadAny := false
+	ts := make(chan string)
 
-	// TODO: Here.... there is a funny concurrency problem
-	// When waiting for typedService to be set, you need to wait for it in this function
-	var typedService string
 	doInUIThread(func() {
-		typedService, _ = f.chatServiceEntry.GetText()
+		t, _ := f.chatServiceEntry.GetText()
+		ts <- t
 		f.chatServices.RemoveAll()
 		f.showSpinner()
 	})
 
-	defer f.onUpdateChatServicesFinished(hadAny, typedService)
+	typedService := <-ts
+
+	defer func() {
+		// We call this in a anonymous function because we want
+		// always the latest value of hadAny and we use it as a
+		// global variable in this context
+		f.onUpdateChatServicesFinished(hadAny, typedService)
+	}()
 
 	for {
 		select {

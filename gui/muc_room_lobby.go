@@ -37,11 +37,9 @@ type roomViewLobby struct {
 	nicknamesWithConflict *set.Set
 	warnings              []*roomLobbyWarning
 
-	// onSuccess WILL NOT be called from the UI thread
+	// These two methods WILL BE called from the UI thread
 	onSuccess func()
-
-	// onCancel WILL ONLY be called from the UI thread
-	onCancel func()
+	onCancel  func()
 }
 
 func (v *roomView) initRoomLobby() {
@@ -53,10 +51,21 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare, parent gtki.Box
 		roomID:                roomID,
 		account:               a,
 		parent:                parent,
-		onSuccess:             onSuccess,
 		onCancel:              onCancel,
 		nicknamesWithConflict: set.New(),
 		log:                   v.log,
+	}
+
+	l.onSuccess = func() {
+		if onSuccess != nil {
+			onSuccess()
+		}
+	}
+
+	l.onCancel = func() {
+		if onCancel != nil {
+			onCancel()
+		}
 	}
 
 	l.initBuilder()
@@ -85,15 +94,14 @@ func (l *roomViewLobby) initDefaults(v *roomView) {
 	l.parent.Add(l.content)
 	l.content.SetCenterWidget(l.mainBox)
 
-	// TODO: This method name implies that something is returned, not set
-	l.withRoomInfo(v.info)
+	l.setRoomInfo(v.info)
 }
 
 func (l *roomViewLobby) initSubscribers(v *roomView) {
 	v.subscribeAll("lobby", roomViewEventObservers{
 		"occupantSelfJoinedEvent": l.occupantJoinedEvent,
 		"roomInfoReceivedEvent": func(roomViewEventInfo) {
-			l.withRoomInfo(v.info)
+			l.setRoomInfo(v.info)
 		},
 		"nicknameConflictEvent": func(ei roomViewEventInfo) {
 			l.nicknameConflictEvent(v.roomID(), ei["nickname"])
@@ -108,9 +116,9 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	})
 }
 
-// TODO: Change name
-func (l *roomViewLobby) withRoomInfo(info *muc.RoomListing) {
+func (l *roomViewLobby) setRoomInfo(info *muc.RoomListing) {
 	l.clearWarnings()
+
 	if info != nil {
 		l.showRoomWarnings(info)
 	}
@@ -120,8 +128,6 @@ func (l *roomViewLobby) withRoomInfo(info *muc.RoomListing) {
 }
 
 func (l *roomViewLobby) showRoomWarnings(roomInfo *muc.RoomListing) {
-	l.clearWarnings()
-
 	l.addWarning(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile."))
 
 	switch roomInfo.Anonymity {
@@ -251,10 +257,10 @@ func (l *roomViewLobby) onJoinClicked() {
 }
 
 var (
-	errJoinRequestFailed    = errors.New("the request to join the room has failed")
-	errJoinNoConnection     = errors.New("join request failed because maybe no connection available")
+	errJoinRequestFailed         = errors.New("the request to join the room has failed")
+	errJoinNoConnection          = errors.New("join request failed because maybe no connection available")
 	errJoinnicknameConflictEvent = errors.New("join failed because the nickname is being used")
-	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
+	errJoinOnlyMembers           = errors.New("join failed because only registered members are allowed")
 )
 
 type mucRoomLobbyErr struct {
@@ -284,15 +290,12 @@ func (l *roomViewLobby) sendRoomEnterRequest(nickname string) {
 }
 
 func (l *roomViewLobby) whenEnterRequestHasBeenResolved(nickname string) {
-	// TODO: Why is onSuccess called outside UI thread but onJoinFailed from inside it?
-	// This inconsistency is a bit surprising, and it might be nice to just do one thing or the other,
-	// but not both
 	select {
 	case <-l.onJoin:
-		doInUIThread(l.clearErrors)
-		if l.onSuccess != nil {
+		doInUIThread(func() {
+			l.clearErrors()
 			l.onSuccess()
-		}
+		})
 	case err := <-l.onJoinError:
 		l.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room")
 		doInUIThread(func() {
@@ -337,9 +340,7 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 }
 
 func (l *roomViewLobby) onJoinCancel() {
-	if l.onCancel != nil {
-		l.onCancel()
-	}
+	l.onCancel()
 }
 
 func (l *roomViewLobby) clearErrors() {

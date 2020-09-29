@@ -2,6 +2,7 @@ package gui
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/coyim/coyim/coylog"
 
@@ -26,6 +27,8 @@ type mucCreateRoomView struct {
 
 	onAutoJoin *withCallbacks
 	onDestroy  *withCallbacks
+
+	sync.Mutex
 }
 
 func (u *gtkUI) newmucCreateRoomView() *mucCreateRoomView {
@@ -164,14 +167,15 @@ func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
 	})
 }
 
-func (v *mucCreateRoomView) updateAutoJoinValue(newValue bool) {
-	// TODO: this feels slightly concurrency unsafe, but I am not sure
-	// Should be analyzed
-	if v.autoJoin == newValue {
+func (v *mucCreateRoomView) updateAutoJoinValue(f bool) {
+	if v.autoJoin == f {
 		return
 	}
 
-	v.autoJoin = newValue
+	v.Lock()
+	defer v.Unlock()
+
+	v.autoJoin = f
 	v.onAutoJoin.invokeAll()
 }
 

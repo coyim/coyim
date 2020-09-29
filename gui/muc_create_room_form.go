@@ -69,18 +69,9 @@ func (v *mucCreateRoomView) initCreateRoomForm() *mucCreateRoomViewForm {
 	f := v.newCreateRoomForm()
 
 	// TODO: Maybe extract some of this stuff
-	f.createRoomIfDoesntExist = func(a *account, roomID jid.Bare) {
+	f.createRoom = func(ca *account, roomID jid.Bare) {
 		errors := make(chan error)
-		v.createRoomIfDoesntExist(a, roomID, errors)
-		select {
-		case err := <-errors:
-			switch err {
-			case errCreateRoomCheckIfExistsFails:
-				doInUIThread(func() {
-					f.errorBox.ShowMessage(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
-					f.hideSpinner()
-					f.disableOrEnableFields(true)
-				})
+		v.createRoom(ca, roomID, errors)
 
 			case errCreateRoomAlreadyExists:
 				f.roomNameConflictList.Insert(roomID.String())

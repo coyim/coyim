@@ -3,6 +3,8 @@ package gui
 import (
 	"errors"
 
+	"github.com/coyim/coyim/coylog"
+
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -78,7 +80,7 @@ func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, resu
 	go func() {
 		select {
 		case err := <-ec:
-			ca.log.WithError(err).Error("Error trying to validate if room exists")
+			v.log(ca, roomID).WithError(err).Error("Error trying to validate if room exists")
 			errors <- errCreateRoomCheckIfExistsFails
 		case exists := <-rc:
 			if exists {
@@ -103,13 +105,28 @@ func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(err
 	}()
 }
 
+func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
+	var l coylog.Logger
+	if ca != nil {
+		l = ca.log
+	} else {
+		l = v.u.log
+	}
+
+	if roomID != nil {
+		l.WithField("room", roomID)
+	}
+
+	l.WithField("who", "mucCreateRoomView")
+
+	return l
+}
+
 func (v *mucCreateRoomView) createRoomIfDoesntExist(ca *account, roomID jid.Bare, errors chan error) {
 	sc := make(chan bool)
 	er := make(chan error)
 
 	v.cancel = make(chan bool, 1)
-
-	// TODO: make sure logging everywhere in this field contains idents etc
 
 	go func() {
 		v.checkIfRoomExists(ca, roomID, sc, er)
@@ -118,7 +135,7 @@ func (v *mucCreateRoomView) createRoomIfDoesntExist(ca *account, roomID jid.Bare
 			ca.createRoom(roomID, func() {
 				v.onCreateRoomFinished(ca, roomID)
 			}, func(err error) {
-				ca.log.WithError(err).Error("Something went wrong while trying to create the room")
+				v.log(ca, roomID).WithError(err).Error("Something went wrong while trying to create the room")
 				errors <- errCreateRoomFailed
 			})
 		case err := <-er:

@@ -9,7 +9,6 @@ import (
 )
 
 type mucCreateRoomViewForm struct {
-	log     coylog.Logger
 	ac      *connectedAccountsComponent
 	isShown bool
 
@@ -30,11 +29,13 @@ type mucCreateRoomViewForm struct {
 	roomNameConflictList    *set.Set
 	createRoomIfDoesntExist func(*account, jid.Bare)
 	onCheckFieldsConditions func(string, string, *account) bool
+
+	log func(*account, jid.Bare) coylog.Logger
 }
 
 func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	f := &mucCreateRoomViewForm{
-		log:                  v.u.log,
+		log:                  v.log,
 		roomNameConflictList: set.New(),
 	}
 
@@ -130,7 +131,7 @@ func (f *mucCreateRoomViewForm) onCreateRoom() {
 	roomName, _ := f.roomEntry.GetText()
 	local := jid.NewLocal(roomName)
 	if !local.Valid() {
-		f.log.WithField("local", roomName).Error("Trying to create a room with an invalid local")
+		f.log(nil, nil).WithField("local", roomName).Error("Trying to create a room with an invalid local")
 		f.notifyOnError(i18n.Local("You must provide a valid room name."))
 		return
 	}
@@ -138,16 +139,16 @@ func (f *mucCreateRoomViewForm) onCreateRoom() {
 	chatService, _ := f.chatServiceEntry.GetText()
 	domain := jid.NewDomain(chatService)
 	if !domain.Valid() {
-		f.log.WithField("domain", chatService).Error("Trying to create a room with an invalid domain")
+		f.log(nil, nil).WithField("domain", chatService).Error("Trying to create a room with an invalid domain")
 		f.notifyOnError(i18n.Local("You must provide a valid service name."))
 		return
 	}
 
-	roomIdentity := jid.NewBare(local, domain)
+	roomID := jid.NewBare(local, domain)
 
 	ca := f.ac.currentAccount()
 	if ca == nil {
-		f.log.WithField("room", roomIdentity).Error("No account was selected to create the room")
+		f.log(nil, roomID).Error("No account was selected to create the room")
 		f.notifyOnError(i18n.Local("No account is selected, please select one account from the list or connect to one."))
 		return
 	}
@@ -155,7 +156,7 @@ func (f *mucCreateRoomViewForm) onCreateRoom() {
 	// TODO: Clunky name
 	f.onBeforeToCreateARoom()
 
-	go f.createRoomIfDoesntExist(ca, roomIdentity)
+	go f.createRoomIfDoesntExist(ca, roomID)
 }
 
 func (f *mucCreateRoomViewForm) onBeforeToCreateARoom() {
@@ -256,7 +257,7 @@ func (f *mucCreateRoomViewForm) updateChatServicesBasedOnAccount(ac *account) {
 	go f.updateChatServices(ac, csc, ec, endEarly)
 }
 
-func (f *mucCreateRoomViewForm) updateChatServices(ac *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
+func (f *mucCreateRoomViewForm) updateChatServices(ca *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
 	hadAny := false
 
 	// TODO: Here.... there is a funny concurrency problem
@@ -278,7 +279,7 @@ func (f *mucCreateRoomViewForm) updateChatServices(ac *account, csc <-chan jid.D
 			return
 		case err, _ := <-ec:
 			if err != nil {
-				ac.log.WithError(err).Error("Something went wrong trying to get chat services")
+				f.log(ca, nil).WithError(err).Error("Something went wrong trying to get chat services")
 			}
 			return
 		case cs, ok := <-csc:

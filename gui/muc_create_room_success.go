@@ -5,7 +5,7 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type createMUCRoomSuccess struct {
+type mucCreateRoomViewSuccess struct {
 	ac         *account
 	roomID     jid.Bare
 	onJoinRoom func(*account, jid.Bare)
@@ -13,8 +13,8 @@ type createMUCRoomSuccess struct {
 	view gtki.Box `gtk-widget:"createRoomSuccess"`
 }
 
-func (v *createMUCRoom) newCreateRoomSuccess() *createMUCRoomSuccess {
-	s := &createMUCRoomSuccess{
+func (v *mucCreateRoomView) newCreateRoomSuccess() *mucCreateRoomViewSuccess {
+	s := &mucCreateRoomViewSuccess{
 		onJoinRoom: v.joinRoom,
 	}
 
@@ -32,7 +32,7 @@ func (v *createMUCRoom) newCreateRoomSuccess() *createMUCRoomSuccess {
 	return s
 }
 
-func (s *createMUCRoomSuccess) initBuilder(v *createMUCRoom) {
+func (s *mucCreateRoomViewSuccess) initBuilder(v *mucCreateRoomView) {
 	builder := newBuilder("MUCCreateRoomSuccess")
 	panicOnDevError(builder.bindObjects(s))
 
@@ -44,12 +44,12 @@ func (s *createMUCRoomSuccess) initBuilder(v *createMUCRoom) {
 	})
 }
 
-func (s *createMUCRoomSuccess) updateInfo(a *account, roomID jid.Bare) {
+func (s *mucCreateRoomViewSuccess) updateInfo(a *account, roomID jid.Bare) {
 	s.ac = a
 	s.roomID = roomID
 }
 
-func (s *createMUCRoomSuccess) reset() {
+func (s *mucCreateRoomViewSuccess) reset() {
 	s.ac = nil
 	s.roomID = nil
 }

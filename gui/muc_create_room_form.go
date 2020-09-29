@@ -8,7 +8,7 @@ import (
 	"github.com/golang-collections/collections/set"
 )
 
-type createMUCRoomForm struct {
+type mucCreateRoomViewForm struct {
 	log     coylog.Logger
 	ac      *connectedAccountsComponent
 	isShown bool
@@ -32,8 +32,8 @@ type createMUCRoomForm struct {
 	onCheckFieldsConditions func(string, string, *account) bool
 }
 
-func (v *createMUCRoom) newCreateRoomForm() *createMUCRoomForm {
-	f := &createMUCRoomForm{
+func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
+	f := &mucCreateRoomViewForm{
 		log:                  v.u.log,
 		roomNameConflictList: set.New(),
 	}
@@ -93,7 +93,7 @@ func (v *createMUCRoom) newCreateRoomForm() *createMUCRoomForm {
 	return f
 }
 
-func (f *createMUCRoomForm) initBuilder(v *createMUCRoom) {
+func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
 	builder := newBuilder("MUCCreateRoomForm")
 	panicOnDevError(builder.bindObjects(f))
 
@@ -108,12 +108,12 @@ func (f *createMUCRoomForm) initBuilder(v *createMUCRoom) {
 	})
 }
 
-func (f *createMUCRoomForm) initDefaults(v *createMUCRoom) {
+func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
 	f.errorBox = newErrorNotification(f.notificationArea)
 	f.ac = v.u.createConnectedAccountsComponent(f.account, f, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
 }
 
-func (f *createMUCRoomForm) onAutoJoinChange(v bool) {
+func (f *mucCreateRoomViewForm) onAutoJoinChange(v bool) {
 	if v {
 		f.createButton.SetProperty("label", i18n.Local("Create Room & Join"))
 	} else {
@@ -121,7 +121,7 @@ func (f *createMUCRoomForm) onAutoJoinChange(v bool) {
 	}
 }
 
-func (f *createMUCRoomForm) onCreateRoom() {
+func (f *mucCreateRoomViewForm) onCreateRoom() {
 	f.clearErrors()
 
 	roomName, _ := f.roomEntry.GetText()
@@ -155,43 +155,43 @@ func (f *createMUCRoomForm) onCreateRoom() {
 	go f.createRoomIfDoesntExist(ca, roomIdentity)
 }
 
-func (f *createMUCRoomForm) onBeforeToCreateARoom() {
+func (f *mucCreateRoomViewForm) onBeforeToCreateARoom() {
 	f.showSpinner()
 	// TODO: Quite confusing name
 	f.disableOrEnableFields(false)
 }
 
-func (f *createMUCRoomForm) destroy() {
+func (f *mucCreateRoomViewForm) destroy() {
 	f.isShown = false
 	f.ac.onDestroy()
 }
 
-func (f *createMUCRoomForm) notifyOnError(err string) {
+func (f *mucCreateRoomViewForm) notifyOnError(err string) {
 	if f.notification != nil {
 		f.notificationArea.Remove(f.notification)
 	}
 	f.errorBox.ShowMessage(err)
 }
 
-func (f *createMUCRoomForm) clearErrors() {
+func (f *mucCreateRoomViewForm) clearErrors() {
 	if f.isShown {
 		f.errorBox.Hide()
 	}
 }
 
-func (f *createMUCRoomForm) clearFields() {
+func (f *mucCreateRoomViewForm) clearFields() {
 	f.roomEntry.SetText("")
 	f.enableCreationIfConditionsAreMet()
 }
 
-func (f *createMUCRoomForm) reset() {
+func (f *mucCreateRoomViewForm) reset() {
 	f.spinner.Stop()
 	f.disableOrEnableFields(true)
 	f.clearFields()
 }
 
 // disableOrEnableFields MUST be called from the UI thread
-func (f *createMUCRoomForm) disableOrEnableFields(v bool) {
+func (f *mucCreateRoomViewForm) disableOrEnableFields(v bool) {
 	f.createButton.SetSensitive(v)
 	f.account.SetSensitive(v)
 	f.roomEntry.SetSensitive(v)
@@ -204,7 +204,7 @@ func (f *createMUCRoomForm) disableOrEnableFields(v bool) {
 	}
 }
 
-func (f *createMUCRoomForm) updateServicesBasedOnAccount(acc *account) {
+func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(acc *account) {
 	doInUIThread(func() {
 		f.clearErrors()
 		f.enableCreationIfConditionsAreMet()
@@ -212,14 +212,14 @@ func (f *createMUCRoomForm) updateServicesBasedOnAccount(acc *account) {
 	go f.updateChatServicesBasedOnAccount(acc)
 }
 
-func (f *createMUCRoomForm) onNoAccountsConnected() {
+func (f *mucCreateRoomViewForm) onNoAccountsConnected() {
 	doInUIThread(func() {
 		f.enableCreationIfConditionsAreMet()
 		f.chatServices.RemoveAll()
 	})
 }
 
-func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
+func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 	// Let the connected accounts component show any errors if it have one
 	if len(f.ac.accounts) > 0 {
 		f.clearErrors()
@@ -241,7 +241,7 @@ func (f *createMUCRoomForm) enableCreationIfConditionsAreMet() {
 	f.createButton.SetSensitive(ok)
 }
 
-func (f *createMUCRoomForm) updateChatServicesBasedOnAccount(ac *account) {
+func (f *mucCreateRoomViewForm) updateChatServicesBasedOnAccount(ac *account) {
 	if f.previousUpdate != nil {
 		f.previousUpdate <- true
 	}
@@ -253,7 +253,7 @@ func (f *createMUCRoomForm) updateChatServicesBasedOnAccount(ac *account) {
 	go f.updateChatServices(ac, csc, ec, endEarly)
 }
 
-func (f *createMUCRoomForm) updateChatServices(ac *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
+func (f *mucCreateRoomViewForm) updateChatServices(ac *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
 	hadAny := false
 
 	// TODO: Here.... there is a funny concurrency problem
@@ -291,7 +291,7 @@ func (f *createMUCRoomForm) updateChatServices(ac *account, csc <-chan jid.Domai
 	}
 }
 
-func (f *createMUCRoomForm) onUpdateChatServicesFinished(hadAny bool, typedService string) {
+func (f *mucCreateRoomViewForm) onUpdateChatServicesFinished(hadAny bool, typedService string) {
 	if hadAny && typedService == "" {
 		doInUIThread(func() {
 			f.chatServices.SetActive(0)
@@ -303,12 +303,12 @@ func (f *createMUCRoomForm) onUpdateChatServicesFinished(hadAny bool, typedServi
 	f.previousUpdate = nil
 }
 
-func (f *createMUCRoomForm) showSpinner() {
+func (f *mucCreateRoomViewForm) showSpinner() {
 	f.spinner.Start()
 	f.spinner.Show()
 }
 
-func (f *createMUCRoomForm) hideSpinner() {
+func (f *mucCreateRoomViewForm) hideSpinner() {
 	f.spinner.Stop()
 	f.spinner.Hide()
 }

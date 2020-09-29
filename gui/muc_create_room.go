@@ -8,14 +8,11 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// TODO: I'm not sure if we should change the name of this struct
-// It is not clear that this struct represents the view
-
 // TODO: Maybe it is time to introduce a simple callback helper type
 // that contains the list of func() and RWMutex, and helper functions for
 // invoking them
 
-type createMUCRoom struct {
+type mucCreateRoomView struct {
 	u *gtkUI
 
 	autoJoin bool
@@ -24,8 +21,8 @@ type createMUCRoom struct {
 	window    gtki.Window `gtk-widget:"createRoomWindow"`
 	container gtki.Box    `gtk-widget:"content"`
 
-	form    *createMUCRoomForm
-	success *createMUCRoomSuccess
+	form    *mucCreateRoomViewForm
+	success *mucCreateRoomViewSuccess
 
 	showCreateForm  func()
 	showSuccessView func(*account, jid.Bare)
@@ -37,8 +34,8 @@ type createMUCRoom struct {
 	onDestroyLocker  sync.RWMutex
 }
 
-func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
-	v := &createMUCRoom{
+func (u *gtkUI) newmucCreateRoomView() *mucCreateRoomView {
+	v := &mucCreateRoomView{
 		u:               u,
 		showCreateForm:  func() {},
 		showSuccessView: func(*account, jid.Bare) {},
@@ -54,7 +51,7 @@ func (u *gtkUI) newCreateMUCRoom() *createMUCRoom {
 	return v
 }
 
-func (v *createMUCRoom) initBuilder() {
+func (v *mucCreateRoomView) initBuilder() {
 	builder := newBuilder("MUCCreateRoomDialog")
 	panicOnDevError(builder.bindObjects(v))
 
@@ -63,14 +60,14 @@ func (v *createMUCRoom) initBuilder() {
 	})
 }
 
-func (v *createMUCRoom) onDestroy(f func()) {
+func (v *mucCreateRoomView) onDestroy(f func()) {
 	v.onDestroyLocker.Lock()
 	defer v.onDestroyLocker.Unlock()
 
 	v.onDestroyList = append(v.onDestroyList, f)
 }
 
-func (v *createMUCRoom) onCancel() {
+func (v *mucCreateRoomView) onCancel() {
 	if v.cancel != nil {
 		v.cancel <- true
 		v.cancel = nil
@@ -79,7 +76,7 @@ func (v *createMUCRoom) onCancel() {
 	v.window.Destroy()
 }
 
-func (v *createMUCRoom) onCloseWindow() {
+func (v *mucCreateRoomView) onCloseWindow() {
 	v.onDestroyLocker.RLock()
 	defer v.onDestroyLocker.RUnlock()
 
@@ -94,7 +91,7 @@ var (
 	errCreateRoomFailed             = errors.New("couldn't create the room")
 )
 
-func (v *createMUCRoom) checkIfRoomExists(ca *account, roomID jid.Bare, result chan bool, errors chan error) {
+func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, result chan bool, errors chan error) {
 	rc, ec := ca.session.HasRoom(roomID, nil)
 	go func() {
 		select {
@@ -124,7 +121,7 @@ func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(err
 	}()
 }
 
-func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, roomID jid.Bare, errors chan error) {
+func (v *mucCreateRoomView) createRoomIfDoesntExist(ca *account, roomID jid.Bare, errors chan error) {
 	sc := make(chan bool)
 	er := make(chan error)
 
@@ -149,7 +146,7 @@ func (v *createMUCRoom) createRoomIfDoesntExist(ca *account, roomID jid.Bare, er
 	}()
 }
 
-func (v *createMUCRoom) onCreateRoomFinished(ca *account, roomID jid.Bare) {
+func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
 	if !v.autoJoin {
 		doInUIThread(func() {
 			v.showSuccessView(ca, roomID)
@@ -161,7 +158,7 @@ func (v *createMUCRoom) onCreateRoomFinished(ca *account, roomID jid.Bare) {
 	v.joinRoom(ca, roomID)
 }
 
-func (v *createMUCRoom) joinRoom(ca *account, roomID jid.Bare) {
+func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
 	doInUIThread(func() {
 		v.destroy()
 		// TODO: rethink naming. Maybe joinRoom?
@@ -169,7 +166,7 @@ func (v *createMUCRoom) joinRoom(ca *account, roomID jid.Bare) {
 	})
 }
 
-func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {
+func (v *mucCreateRoomView) updateAutoJoinValue(newValue bool) {
 	// TODO: this feels slightly concurrency unsafe, but I am not sure
 	// Should be analyzed
 	if v.autoJoin == newValue {
@@ -185,7 +182,7 @@ func (v *createMUCRoom) updateAutoJoinValue(newValue bool) {
 	}
 }
 
-func (v *createMUCRoom) onAutoJoin(f func(bool)) {
+func (v *mucCreateRoomView) onAutoJoin(f func(bool)) {
 	v.onAutoJoinLocker.Lock()
 	defer v.onAutoJoinLocker.Unlock()
 
@@ -193,16 +190,16 @@ func (v *createMUCRoom) onAutoJoin(f func(bool)) {
 }
 
 // TODO: Does this helper function actually help in anything?
-func (v *createMUCRoom) destroy() {
+func (v *mucCreateRoomView) destroy() {
 	v.window.Destroy()
 }
 
-func (v *createMUCRoom) show() {
+func (v *mucCreateRoomView) show() {
 	v.showCreateForm()
 	v.window.ShowAll()
 }
 
 func (u *gtkUI) mucCreateChatRoom() {
-	view := u.newCreateMUCRoom()
+	view := u.newmucCreateRoomView()
 	view.show()
 }

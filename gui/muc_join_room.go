@@ -93,8 +93,6 @@ func (v *mucJoinRoomView) onJoinError(a *account, roomID jid.Bare, err error) {
 	doInUIThread(func() {
 		v.hideSpinner()
 		v.enableJoinFields()
-		// TODO: This should not be necessary. We should analyze and check IF and why it could
-		// happen that error is sent in as nil
 		v.notifyOnError(i18n.Local("It looks like the room you are trying to connect to doesn't exist, please verify the provided information."))
 		a.log.WithField("room", roomID).WithError(err).Warn("An error occurred trying to find the room")
 	})

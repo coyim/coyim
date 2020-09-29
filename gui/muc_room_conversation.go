@@ -37,24 +37,24 @@ func (c *roomViewConversation) initBuilder() {
 
 func (c *roomViewConversation) initSubscribers(v *roomView) {
 	v.subscribeAll("conversation", roomViewEventObservers{
-		occupantLeft: func(ei roomViewEventInfo) {
-			c.displayNotificationWhenOccupantLeftTheRoom(ei.nickname)
+		"occupantLeft": func(ei roomViewEventInfo) {
+			c.displayNotificationWhenOccupantLeftTheRoom(ei["nickname"])
 		},
-		occupantJoined: func(ei roomViewEventInfo) {
-			c.displayNotificationWhenOccupantJoinedRoom(ei.nickname)
+		"occupantJoined": func(ei roomViewEventInfo) {
+			c.displayNotificationWhenOccupantJoinedRoom(ei["nickname"])
 		},
-		messageReceived: func(ei roomViewEventInfo) {
+		"messageReceived": func(ei roomViewEventInfo) {
 			c.displayNewLiveMessage(
-				ei.nickname,
-				ei.subject,
-				ei.message,
+				ei["nickname"],
+				ei["subject"],
+				ei["message"],
 			)
 		},
-		loggingEnabled: func(roomViewEventInfo) {
+		"loggingEnabled": func(roomViewEventInfo) {
 			msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
 			v.conv.displayWarningMessage(msg)
 		},
-		loggingDisabled: func(roomViewEventInfo) {
+		"loggingDisabled": func(roomViewEventInfo) {
 			msg := i18n.Local("This room is no longer publicly logged.")
 			v.conv.displayWarningMessage(msg)
 		},

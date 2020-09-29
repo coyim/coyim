@@ -108,7 +108,7 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 
 	doInUIThread(func() {
 		v.hideSpinner()
-		v.publish(roomInfoReceived)
+		v.publish("roomInfoReceived")
 	})
 }
 
@@ -196,7 +196,7 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 
 func (v *roomView) switchToLobbyView() {
 	// TODO: This event name is a bit confusing to me
-	v.publish(previousToSwitchToLobby)
+	v.publish("previousToSwitchToLobby")
 
 	v.initRoomLobby()
 
@@ -212,7 +212,7 @@ func (v *roomView) switchToLobbyView() {
 }
 
 func (v *roomView) switchToMainView() {
-	v.publish(previousToSwitchToMain)
+	v.publish("previousToSwitchToMain")
 	v.initRoomMain()
 	v.main.show()
 }
@@ -240,15 +240,15 @@ func (v *roomView) onJoinCancel() {
 
 // nicknameConflict MUST NOT be called from the UI thread
 func (v *roomView) nicknameConflict(nickname string) {
-	v.publishWithInfo(nicknameConflict, roomViewEventInfo{
-		nickname: nickname,
+	v.publishWithInfo("nicknameConflict", roomViewEventInfo{
+		"nickname": nickname,
 	})
 }
 
 // registrationRequired MUST NOT be called from the UI thread
 func (v *roomView) registrationRequired(nickname string) {
-	v.publishWithInfo(registrationRequired, roomViewEventInfo{
-		nickname: nickname,
+	v.publishWithInfo("registrationRequired", roomViewEventInfo{
+		"nickname": nickname,
 	})
 }
 

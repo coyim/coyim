@@ -91,19 +91,19 @@ func (l *roomViewLobby) initDefaults(v *roomView) {
 
 func (l *roomViewLobby) initSubscribers(v *roomView) {
 	v.subscribeAll("lobby", roomViewEventObservers{
-		occupantSelfJoined: l.occupantJoined,
-		roomInfoReceived: func(roomViewEventInfo) {
+		"occupantSelfJoined": l.occupantJoined,
+		"roomInfoReceived": func(roomViewEventInfo) {
 			l.withRoomInfo(v.info)
 		},
-		nicknameConflict: func(ei roomViewEventInfo) {
-			l.nicknameConflict(v.roomID(), ei.nickname)
+		"nicknameConflict": func(ei roomViewEventInfo) {
+			l.nicknameConflict(v.roomID(), ei["nickname"])
 		},
-		registrationRequired: func(ei roomViewEventInfo) {
-			l.registrationRequired(v.roomID(), ei.nickname)
+		"registrationRequired": func(ei roomViewEventInfo) {
+			l.registrationRequired(v.roomID(), ei["nickname"])
 		},
-		previousToSwitchToMain: func(roomViewEventInfo) {
-			v.unsubscribe("lobby", occupantSelfJoined)
-			v.unsubscribe("lobby", roomInfoReceived)
+		"previousToSwitchToMain": func(roomViewEventInfo) {
+			v.unsubscribe("lobby", "occupantSelfJoined")
+			v.unsubscribe("lobby", "roomInfoReceived")
 		},
 	})
 }

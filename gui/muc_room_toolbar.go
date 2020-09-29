@@ -43,7 +43,7 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
-	v.subscribe("toolbar", occupantSelfJoined, func(roomViewEventInfo) {
+	v.subscribe("toolbar", "occupantSelfJoined", func(roomViewEventInfo) {
 		t.leaveRoomButton.SetSensitive(true)
 	})
 }

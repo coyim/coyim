@@ -15,51 +15,37 @@ func (v *roomView) handleRoomEvent(ev muc.MUC) {
 	// There is probably no point in doing this publishing in the UI thread
 	switch t := ev.(type) {
 	case events.MUCSelfOccupantJoined:
-		doInUIThread(func() {
-			v.publishWithInfo(occupantSelfJoined, roomViewEventInfo{
-				nickname: t.Nickname,
-			})
+		v.publishWithInfo("occupantSelfJoined", roomViewEventInfo{
+			"nickname": t.Nickname,
 		})
 
 	case events.MUCOccupantUpdated:
-		doInUIThread(func() {
-			v.publishWithInfo(occupantUpdated, roomViewEventInfo{
-				nickname: t.Nickname,
-			})
+		v.publishWithInfo("occupantUpdated", roomViewEventInfo{
+			"nickname": t.Nickname,
 		})
 
 	case events.MUCOccupantJoined:
-		doInUIThread(func() {
-			v.publishWithInfo(occupantJoined, roomViewEventInfo{
-				nickname: t.Nickname,
-			})
+		v.publishWithInfo("occupantJoined", roomViewEventInfo{
+			"nickname": t.Nickname,
 		})
 
 	case events.MUCOccupantLeft:
-		doInUIThread(func() {
-			v.publishWithInfo(occupantLeft, roomViewEventInfo{
-				nickname: t.Nickname,
-			})
+		v.publishWithInfo("occupantLeft", roomViewEventInfo{
+			"nickname": t.Nickname,
 		})
 
 	case events.MUCMessageReceived:
-		doInUIThread(func() {
-			v.publishWithInfo(messageReceived, roomViewEventInfo{
-				nickname: t.Nickname,
-				subject:  t.Subject,
-				message:  t.Message,
-			})
+		v.publishWithInfo("messageReceived", roomViewEventInfo{
+			"nickname": t.Nickname,
+			"subject":  t.Subject,
+			"message":  t.Message,
 		})
 
 	case events.MUCLoggingEnabled:
-		doInUIThread(func() {
-			v.publish(loggingEnabled)
-		})
+		v.publish("loggingEnabled")
 
 	case events.MUCLoggingDisabled:
-		doInUIThread(func() {
-			v.publish(loggingDisabled)
-		})
+		v.publish("loggingDisabled")
 
 	default:
 		v.log.WithField("event", t).Warn("Unsupported room event received")
@@ -71,38 +57,9 @@ func (v *roomView) handleRoomEvent(ev muc.MUC) {
 // whatever fields they need
 
 // roomViewEventInfo contains information about any room view event
-type roomViewEventInfo struct {
-	nickname string
-	subject  string
-	message  string
-}
+type roomViewEventInfo map[string]string
 
-type roomViewEventObservers map[roomViewEventType]func(roomViewEventInfo)
-type roomViewEventType int
-
-// TODO: Not sure if an integer type for the possible events is the right choice
-// Something to think more about
-
-const (
-	occupantSelfJoined roomViewEventType = iota
-	occupantJoined
-	occupantUpdated
-	occupantLeft
-
-	roomInfoReceived
-
-	messageReceived
-
-	loggingEnabled
-	loggingDisabled
-
-	registrationRequired
-	nicknameConflict
-
-	// TODO: These names are a bit confusing to me
-	previousToSwitchToLobby
-	previousToSwitchToMain
-)
+type roomViewEventObservers map[string]func(roomViewEventInfo)
 
 type roomViewObserver struct {
 	id       string
@@ -110,9 +67,9 @@ type roomViewObserver struct {
 }
 
 type roomViewSubscribers struct {
-	sync.RWMutex
+	observers map[string][]*roomViewObserver
 	log       coylog.Logger
-	observers map[roomViewEventType][]*roomViewObserver
+	sync.RWMutex
 }
 
 func newRoomViewSubscribers(room jid.Bare, l coylog.Logger) *roomViewSubscribers {
@@ -121,26 +78,26 @@ func newRoomViewSubscribers(room jid.Bare, l coylog.Logger) *roomViewSubscribers
 			"who":  "newRoomViewSubscribers",
 			"room": room,
 		}),
-		observers: make(map[roomViewEventType][]*roomViewObserver),
+		observers: make(map[string][]*roomViewObserver),
 	}
 }
 
 // TODO: I feel like the "roomViewObserver" type should not be exposed to users
 // of the functionality. Better that it takes a name and the function directly
-func (s *roomViewSubscribers) subscribe(ev roomViewEventType, o *roomViewObserver) {
+func (s *roomViewSubscribers) subscribe(ev string, o *roomViewObserver) {
 	s.Lock()
 	defer s.Unlock()
 
 	s.observers[ev] = append(s.observers[ev], o)
 }
 
-func (s *roomViewSubscribers) subscribeAll(observers map[roomViewEventType]*roomViewObserver) {
+func (s *roomViewSubscribers) subscribeAll(observers map[string]*roomViewObserver) {
 	for ev, ob := range observers {
 		s.subscribe(ev, ob)
 	}
 }
 
-func (s *roomViewSubscribers) unsubscribe(ev roomViewEventType, id string) {
+func (s *roomViewSubscribers) unsubscribe(ev string, id string) {
 	// TODO: Unsafe
 	s.RLock()
 	defer s.RUnlock()
@@ -161,7 +118,7 @@ func (s *roomViewSubscribers) unsubscribe(ev roomViewEventType, id string) {
 	}
 }
 
-func (s *roomViewSubscribers) publish(ev roomViewEventType, ei roomViewEventInfo) {
+func (s *roomViewSubscribers) publish(ev string, ei roomViewEventInfo) {
 	s.RLock()
 	defer s.RUnlock()
 
@@ -176,11 +133,11 @@ func (s *roomViewSubscribers) publish(ev roomViewEventType, ei roomViewEventInfo
 	}
 }
 
-func (s *roomViewSubscribers) debug(m string, ev roomViewEventType) {
+func (s *roomViewSubscribers) debug(m string, ev string) {
 	s.log.Debug(m, ev)
 }
 
-func (v *roomView) subscribe(id string, ev roomViewEventType, onNotify func(roomViewEventInfo)) {
+func (v *roomView) subscribe(id string, ev string, onNotify func(roomViewEventInfo)) {
 	v.subscribers.subscribe(ev, &roomViewObserver{
 		id:       id,
 		onNotify: onNotify,
@@ -193,14 +150,14 @@ func (v *roomView) subscribeAll(id string, o roomViewEventObservers) {
 	}
 }
 
-func (v *roomView) unsubscribe(id string, ev roomViewEventType) {
+func (v *roomView) unsubscribe(id string, ev string) {
 	v.subscribers.unsubscribe(ev, id)
 }
 
-func (v *roomView) publish(ev roomViewEventType) {
+func (v *roomView) publish(ev string) {
 	v.subscribers.publish(ev, roomViewEventInfo{})
 }
 
-func (v *roomView) publishWithInfo(ev roomViewEventType, ei roomViewEventInfo) {
+func (v *roomView) publishWithInfo(ev string, ei roomViewEventInfo) {
 	v.subscribers.publish(ev, ei)
 }

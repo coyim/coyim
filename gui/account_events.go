@@ -135,8 +135,6 @@ func convWindowNowOrLater(account *account, peer jid.Any, ui *gtkUI, f func(conv
 func (u *gtkUI) handlePeerEvent(ev events.Peer, a *account) {
 	switch ev.Type {
 	case events.IQReceived:
-		//TODO
-		// TODO WHAT?
 		a.log.WithFields(log.Fields{"from": ev.From, "event": ev}).Info("received iq")
 	case events.OTREnded:
 		convWindowNowOrLater(a, ev.From, u, func(cv conversationView) {

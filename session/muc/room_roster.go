@@ -209,12 +209,6 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 	return nil
 }
 
-// TODO: This taking an occupant can cause a lot of problems. The code was
-// originally written so that the RoomRoster is responsible for managing and creating
-// new instances of Occupant when needed. If that happens outside of the package, that suddenly
-// creates completely different preconditions and the code in this package might have to be
-// completely rewritten...
-
 // UpdatePresence should be called when receiving a regular presence update with no type, or with unavailable as type. It will return
 // indications on whether the presence update means the person joined the room, or left the room.
 // Notice that updating of nick names is done separately and should not be done by calling this method.

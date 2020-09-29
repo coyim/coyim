@@ -161,15 +161,6 @@ func (v *roomView) hideSpinner() {
 }
 
 func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
-	// TODO: This feels a bit weird. Maybe we can analyze and see if this is even possible
-	if !v.isJoined() {
-		v.log.Debug("tryLeaveRoom(): trying to leave a not joined room")
-		doInUIThread(func() {
-			v.notifyOnError(i18n.Local("Couldn't leave the room, please try again."))
-		})
-		return
-	}
-
 	v.clearErrors()
 	v.showSpinner()
 

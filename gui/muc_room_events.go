@@ -66,12 +66,6 @@ func (v *roomView) handleRoomEvent(ev muc.MUC) {
 	}
 }
 
-func (v *roomView) observeRoomEvents() {
-	for ev := range v.events {
-		v.handleRoomEvent(ev)
-	}
-}
-
 // TODO: This pattern might be problematic once we start having more and more and more
 // data. It might be better to have a map with information, so that each event can use
 // whatever fields they need

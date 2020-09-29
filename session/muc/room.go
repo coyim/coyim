@@ -21,9 +21,7 @@ type Room struct {
 	Occupant *Occupant
 	roster   *RoomRoster
 
-	// TODO: I think this name is a bit ambigious. Maybe
-	// observers or something like that instead?
-	subscribers *roomSubscribers
+	observers *roomObservers
 
 	once sync.Once
 
@@ -52,9 +50,9 @@ type Room struct {
 // NewRoom returns a newly created room
 func NewRoom(roomID jid.Bare) *Room {
 	return &Room{
-		ID:          roomID,
-		roster:      newRoomRoster(),
-		subscribers: newRoomSubscribers(),
+		ID:        roomID,
+		roster:    newRoomRoster(),
+		observers: newRoomObservers(),
 	}
 }
 
@@ -67,22 +65,13 @@ func (r *Room) Roster() *RoomRoster {
 // instead of channels, for more flexibility
 
 // Subscribe subscribes the observer to room events
-func (r *Room) Subscribe(c chan<- MUC) {
-	r.subscribers.subscribe(c)
-}
-
-// TODO: Unsubscribe is not really necessary. The GUI will need
-// to continue listening for events for as long as you haven't left
-// the room
-
-// Unsubscribe unsubscribe the observer to room events
-func (r *Room) Unsubscribe(c chan<- MUC) {
-	r.subscribers.unsubscribe(c)
+func (r *Room) Subscribe(f func(MUC)) {
+	r.observers.subscribe(f)
 }
 
 // Publish will publish a new room event
 func (r *Room) Publish(ev MUC) {
-	r.subscribers.publishEvent(ev)
+	r.observers.publishEvent(ev)
 }
 
 // AddSelfOccupant set the own occupant of the room

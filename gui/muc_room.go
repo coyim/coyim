@@ -24,9 +24,6 @@ type roomView struct {
 	opened   bool
 	returnTo func()
 
-	// TODO: Do we need this to be both send AND receive, or can it be just receive?
-	events chan muc.MUC
-
 	window           gtki.Window  `gtk-widget:"roomWindow"`
 	content          gtki.Box     `gtk-widget:"boxMainView"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
@@ -52,15 +49,13 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view := &roomView{
 		u:       u,
 		account: a,
-		events:  make(chan muc.MUC),
 	}
 
 	// TODO: We already know this need to change
 	view.room = a.newRoomModel(roomID)
 	view.log = a.log.WithField("room", roomID)
 
-	view.room.Subscribe(view.events)
-	go view.observeRoomEvents()
+	view.room.Subscribe(view.handleRoomEvent)
 
 	view.subscribers = newRoomViewSubscribers(view.roomID(), view.log)
 
@@ -120,7 +115,6 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 func (v *roomView) onDestroyWindow() {
 	v.opened = false
 	v.account.removeRoomView(v.roomID())
-	v.room.Unsubscribe(v.events)
 }
 
 func (v *roomView) setTitle(t string) {

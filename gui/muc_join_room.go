@@ -176,16 +176,7 @@ func (v *mucJoinRoomView) log() coylog.Logger {
 }
 
 func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
-	// TODO: Not sure if capturing this error here is useful
-	// It will only happen when something goes badly wrong with GTK, and at that
-	// point we are messed up anyway...
-	roomName, err := v.roomNameEntry.GetText()
-	if err != nil {
-		v.log().WithField("name", roomName).Error("Trying to join a room with an invalid room name")
-		v.notifyOnError(i18n.Local("Could not get the room name, please try again."))
-		return nil, false
-	}
-
+	roomName, _ := v.roomNameEntry.GetText()
 	local := jid.NewLocal(roomName)
 	if !local.Valid() {
 		v.log().WithField("local", roomName).Error("Trying to join a room with an invalid local")
@@ -193,13 +184,7 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 		return nil, false
 	}
 
-	chatServiceName, err := v.chatServiceEntry.GetText()
-	if err != nil {
-		v.log().WithError(err).Error("Something went wrong while trying to join the room")
-		v.notifyOnError(i18n.Local("Could not get the service name, please try again."))
-		return nil, false
-	}
-
+	chatServiceName, _ := v.chatServiceEntry.GetText()
 	domain := jid.NewDomain(chatServiceName)
 	if !domain.Valid() {
 		v.log().WithField("domain", chatServiceName).Error("Trying to join a room with an invalid domain")

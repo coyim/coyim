@@ -101,13 +101,13 @@ func (f *mucCreateRoomViewForm) listenToCreateError(roomID jid.Bare, errors chan
 func (f *mucCreateRoomViewForm) onCreateRoomCheckIfExistsFails() {
 	f.errorBox.ShowMessage(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
 	f.hideSpinner()
-	f.disableOrEnableFields(true)
+	f.enableFields()
 }
 
 func (f *mucCreateRoomViewForm) onCreateRoomAlreadyExists() {
 	f.errorBox.ShowMessage(i18n.Local("That room already exists, try again with a different name."))
 	f.hideSpinner()
-	f.disableOrEnableFields(true)
+	f.enableFields()
 	f.createButton.SetSensitive(false)
 }
 
@@ -172,16 +172,14 @@ func (f *mucCreateRoomViewForm) onCreateRoom() {
 		return
 	}
 
-	// TODO: Clunky name
-	f.onBeforeToCreateARoom()
+	f.beforeCreatingTheRoom()
 
 	go f.createRoom(ca, roomID)
 }
 
-func (f *mucCreateRoomViewForm) onBeforeToCreateARoom() {
+func (f *mucCreateRoomViewForm) beforeCreatingTheRoom() {
 	f.showSpinner()
-	// TODO: Quite confusing name
-	f.disableOrEnableFields(false)
+	f.disableFields()
 }
 
 func (f *mucCreateRoomViewForm) destroy() {
@@ -209,22 +207,26 @@ func (f *mucCreateRoomViewForm) clearFields() {
 
 func (f *mucCreateRoomViewForm) reset() {
 	f.spinner.Stop()
-	f.disableOrEnableFields(true)
+	f.enableFields()
 	f.clearFields()
 }
 
-// disableOrEnableFields MUST be called from the UI thread
-func (f *mucCreateRoomViewForm) disableOrEnableFields(v bool) {
+func (f *mucCreateRoomViewForm) setFieldsSensitive(v bool) {
 	f.createButton.SetSensitive(v)
 	f.account.SetSensitive(v)
 	f.roomEntry.SetSensitive(v)
 	f.chatServices.SetSensitive(v)
 	f.roomAutoJoin.SetSensitive(v)
-	if v {
-		f.ac.enableAccountInput()
-	} else {
-		f.ac.disableAccountInput()
-	}
+}
+
+func (f *mucCreateRoomViewForm) disableFields() {
+	f.setFieldsSensitive(false)
+	f.ac.disableAccountInput()
+}
+
+func (f *mucCreateRoomViewForm) enableFields() {
+	f.setFieldsSensitive(true)
+	f.ac.enableAccountInput()
 }
 
 func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(ca *account) {

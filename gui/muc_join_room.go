@@ -63,7 +63,7 @@ func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 
 // TODO: not sure what "before start" means in this method name.
 
-func (v *mucJoinRoomView) onBeforeStart() {
+func (v *mucJoinRoomView) beforeJoiningRoom() {
 	v.clearErrors()
 	v.disableJoinFields()
 	v.showSpinner()
@@ -153,10 +153,8 @@ func (c *mucJoinRoomContext) waitToFinish(result <-chan bool, errors <-chan erro
 	}
 }
 
-// TODO: I think "exec" is not a super helpful name here
-
-func (c *mucJoinRoomContext) exec() {
-	c.v.onBeforeStart()
+func (c *mucJoinRoomContext) joinRoom() {
+	c.v.beforeJoiningRoom()
 	roomInfo := make(chan *muc.RoomListing)
 	result, errors := c.a.session.HasRoom(c.roomID, roomInfo)
 	go c.waitToFinish(result, errors, roomInfo)
@@ -215,7 +213,7 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 		done:   done,
 	}
 
-	c.exec()
+	c.joinRoom()
 }
 
 func doOnlyOnceAtATime(f func(func())) func() {

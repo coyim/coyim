@@ -8,8 +8,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// TODO: We might want to have a helper function or log object
-
 type mucJoinRoomView struct {
 	u  *gtkUI
 	ac *connectedAccountsComponent
@@ -165,11 +163,16 @@ func (c *mucJoinRoomContext) exec() {
 }
 
 func (v *mucJoinRoomView) log() coylog.Logger {
+	l := v.u.log
+
 	ca := v.ac.currentAccount()
 	if ca != nil {
-		return ca.log
+		l = ca.log
 	}
-	return v.u.log
+
+	l.WithField("who", "mucJoinRoomView")
+
+	return l
 }
 
 func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {

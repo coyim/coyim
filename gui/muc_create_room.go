@@ -119,11 +119,9 @@ func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(err
 }
 
 func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
-	var l coylog.Logger
+	l := v.u.log
 	if ca != nil {
 		l = ca.log
-	} else {
-		l = v.u.log
 	}
 
 	if roomID != nil {

@@ -37,10 +37,10 @@ type roomViewLobby struct {
 	nicknamesWithConflict *set.Set
 	warnings              []*roomLobbyWarning
 
-	// onSuccess will NOT be called from the UI thread
+	// onSuccess WILL NOT be called from the UI thread
 	onSuccess func()
 
-	// onCancel will BE called from the UI thread
+	// onCancel WILL ONLY be called from the UI thread
 	onCancel func()
 }
 
@@ -85,6 +85,7 @@ func (l *roomViewLobby) initDefaults(v *roomView) {
 	l.parent.Add(l.content)
 	l.content.SetCenterWidget(l.mainBox)
 
+	// TODO: This method name implies that something is returned, not set
 	l.withRoomInfo(v.info)
 }
 
@@ -107,6 +108,7 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	})
 }
 
+// TODO: Change name
 func (l *roomViewLobby) withRoomInfo(info *muc.RoomListing) {
 	l.clearWarnings()
 	if info != nil {
@@ -169,10 +171,15 @@ func (l *roomViewLobby) addWarning(s string) {
 }
 
 func (l *roomViewLobby) clearWarnings() {
+	// TODO: Why can't we just remove
+	// all the entitites inside the warningsArea
+	// and then remove the need to have the "warnings" field at all
 	for _, w := range l.warnings {
 		l.warningsArea.Remove(w.bar)
 	}
 }
+
+// TODO: Spelling
 
 func (l *roomViewLobby) swtichToReturnOnCancel() {
 	l.cancelButton.SetProperty("label", i18n.Local("Return"))
@@ -203,7 +210,7 @@ func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 	l.clearErrors()
 
 	nickname, _ := l.nickNameEntry.GetText()
-	conditionsAreValid := l.isReadyToJoinRoom && len(nickname) != 0
+	conditionsAreValid := l.isReadyToJoinRoom && nickname != ""
 
 	if l.nicknamesWithConflict.Has(nickname) {
 		conditionsAreValid = false
@@ -279,6 +286,9 @@ func (l *roomViewLobby) sendRoomEnterRequest(nickname string) {
 }
 
 func (l *roomViewLobby) whenEnterRequestHasBeenResolved(nickname string) {
+	// TODO: Why is onSuccess called outside UI thread but onJoinFailed from inside it?
+	// This inconsistency is a bit surprising, and it might be nice to just do one thing or the other,
+	// but not both
 	select {
 	case <-l.onJoin:
 		doInUIThread(l.clearErrors)
@@ -302,6 +312,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 
 		if err.errType == errJoinNickNameConflict {
 			shouldEnableCreation = false
+			// TODO: This naming is different from most other places
 			nickName := err.nickname
 			if !l.nicknamesWithConflict.Has(nickName) {
 				l.nicknamesWithConflict.Insert(nickName)
@@ -321,7 +332,7 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	case errJoinNickNameConflict:
 		return i18n.Local("Can't join the room using that nickname because it's already being used.")
 	case errJoinOnlyMembers:
-		return i18n.Local("Sorry, this room only allows registered members")
+		return i18n.Local("Sorry, this room only allows registered members.")
 	default:
 		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists.")
 	}

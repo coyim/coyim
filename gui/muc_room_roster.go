@@ -42,6 +42,8 @@ func (r *roomViewRoster) initBuilder() {
 
 func (r *roomViewRoster) initDefaults() {
 	var err error
+	// TODO: Should we document the fields in connection with their types here?
+	// TODO: We can probably ignore the error here, just as we do with most other GTK errors
 	r.model, err = g.gtk.ListStoreNew(pixbufType(), glibi.TYPE_STRING, glibi.TYPE_STRING, glibi.TYPE_STRING)
 	if err != nil {
 		panic(err)
@@ -98,7 +100,7 @@ func (r *roomViewRoster) affiliationDisplayName(a muc.Affiliation) string {
 		return i18n.Local("Owner")
 	case muc.AffiliationOutcast:
 		return i18n.Local("Outcast")
-	default:
+	default: // Member or other values get the default treatment
 		return ""
 	}
 }
@@ -114,6 +116,8 @@ func (r *roomViewRoster) roleDisplayName(role muc.Role) string {
 	case muc.RoleModerator:
 		return i18n.Local("Moderator")
 	default:
+		// This should not really be possible, but it is necessary
+		// because golang can't prove it
 		return ""
 	}
 }

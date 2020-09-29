@@ -25,6 +25,7 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_leave_room": func() {
+			// TODO: Maybe extract?
 			t.leaveRoomButton.SetSensitive(false)
 			v.tryLeaveRoom(nil, func() {
 				if v.isOpen() {

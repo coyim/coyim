@@ -4,6 +4,8 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+// TODO: Maybe simplify the name here: getOrCreateRoomView?
+
 func (u *gtkUI) getAccountRoomViewBasedOnBare(a *account, roomID jid.Bare) *roomView {
 	v, exists := a.getRoomView(roomID)
 	if !exists {
@@ -13,7 +15,7 @@ func (u *gtkUI) getAccountRoomViewBasedOnBare(a *account, roomID jid.Bare) *room
 	return v
 }
 
-// joinRoom MUST be called always from the UI thread
+// joinRoom MUST always be called from the UI thread
 //
 // Also, when we want to show a chat room, having a "return to" function that
 // will be called from the lobby only when the user wants to "cancel" or "return"
@@ -24,6 +26,9 @@ func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, returnTo func()) {
 	v := u.getAccountRoomViewBasedOnBare(a, roomID)
 
 	if v.isJoined() {
+		// TODO: What if we already had a returnTo function?
+		// We probably should not just overwrite it here
+
 		// In the main view of the room, we don't have the "cancel"
 		// functionality that it's useful only in the lobby view of the room.
 		// For that reason is why we ignore the "returnTo" value.

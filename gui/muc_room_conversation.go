@@ -66,8 +66,6 @@ func (c *roomViewConversation) initTags(v *roomView) {
 	c.roomChatTextView.SetBuffer(c.createTextBuffer())
 }
 
-// TODO: I don't think I see the need for the mucStyleTags structure
-// It doesn't really help us understand the code
 func getTimestamp() string {
 	return time.Now().Format("15:04:05")
 }

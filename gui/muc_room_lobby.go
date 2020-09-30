@@ -101,13 +101,19 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	v.subscribeAll("lobby", roomViewEventObservers{
 		"occupantSelfJoinedEvent": l.occupantJoinedEvent,
 		"roomInfoReceivedEvent": func(roomViewEventInfo) {
-			l.setRoomInfo(v.info)
+			doInUIThread(func() {
+				l.setRoomInfo(v.info)
+			})
 		},
 		"nicknameConflictEvent": func(ei roomViewEventInfo) {
-			l.nicknameConflictEvent(v.roomID(), ei["nickname"])
+			doInUIThread(func() {
+				l.nicknameConflictEvent(v.roomID(), ei["nickname"])
+			})
 		},
 		"registrationRequiredEvent": func(ei roomViewEventInfo) {
-			l.registrationRequiredEvent(v.roomID(), ei["nickname"])
+			doInUIThread(func() {
+				l.registrationRequiredEvent(v.roomID(), ei["nickname"])
+			})
 		},
 		"beforeSwitchingToMainViewEvent": func(roomViewEventInfo) {
 			v.unsubscribe("lobby", "occupantSelfJoinedEvent")

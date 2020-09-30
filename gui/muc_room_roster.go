@@ -63,7 +63,7 @@ func (r *roomViewRoster) initSubscribers(v *roomView) {
 }
 
 func (r *roomViewRoster) onUpdateRoster(roomViewEventInfo) {
-	r.redraw()
+	doInUIThread(r.redraw)
 }
 
 func (r *roomViewRoster) draw() {

@@ -44,6 +44,8 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
 	v.subscribe("toolbar", "occupantSelfJoinedEvent", func(roomViewEventInfo) {
-		t.leaveRoomButton.SetSensitive(true)
+		doInUIThread(func() {
+			t.leaveRoomButton.SetSensitive(true)
+		})
 	})
 }

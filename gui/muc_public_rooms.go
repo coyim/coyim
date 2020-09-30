@@ -221,8 +221,6 @@ func (prv *mucPublicRoomsView) getSelectedRoom() (jid.Bare, *muc.RoomListing, er
 func (prv *mucPublicRoomsView) onJoinRoom() {
 	ident, rl, err := prv.getSelectedRoom()
 	if err != nil {
-		// TODO: Maybe introduce helper method to always get the log, either
-		// from current account or if no current account from the ui
 		prv.log().WithError(err).Error("An error occurred when trying to join the room")
 		prv.showUserMessageForError(err)
 		return

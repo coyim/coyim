@@ -147,36 +147,61 @@ var (
 	errNoService           = errors.New("no service is available")
 )
 
-func (prv *mucPublicRoomsView) getRoomFromIter(iter gtki.TreeIter) (jid.Bare, *muc.RoomListing, error) {
-	// TODO: Maybe refactor and clean this up a little at some point
+func (prv *mucPublicRoomsView) getRoomListingFromIter(iter gtki.TreeIter) (*muc.RoomListing, error) {
+	roomInfoRealVal, err := prv.getRoomInfoFromIter(iter)
+	if err != nil {
+		return nil, err
+	}
+
+	rl, ok := prv.roomInfos[roomInfoRealVal]
+	if !ok || rl == nil {
+		return nil, errNoPossibleSelection
+	}
+	return rl, nil
+}
+
+func (prv *mucPublicRoomsView) getRoomInfoFromIter(iter gtki.TreeIter) (int, error) {
 	roomInfoValue, e1 := prv.roomsModel.GetValue(iter, mucListRoomsIndexRoomInfo)
 	roomInfoRef, e2 := roomInfoValue.GoValue()
 	if e1 != nil || e2 != nil {
-		return nil, nil, errNoRoomSelected
+		return 0, errNoRoomSelected
 	}
 
 	roomInfoRealVal := roomInfoRef.(int)
-	rl, ok := prv.roomInfos[roomInfoRealVal]
-	if !ok || rl == nil {
-		return nil, nil, errNoPossibleSelection
-	}
+	return roomInfoRealVal, nil
+}
 
+func (prv *mucPublicRoomsView) getRoomIDFromIter(iter gtki.TreeIter) (jid.Bare, error) {
 	roomJidValue, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexJid)
-	ident, _ := roomJidValue.GetString()
+	roomName, _ := roomJidValue.GetString()
 
-	_, ok = prv.serviceGroups[ident]
+	_, ok := prv.serviceGroups[roomName]
 	if ok {
-		return nil, nil, errNoRoomSelected
+		return nil, errNoRoomSelected
 	}
 
 	serviceValue, _ := prv.roomsModel.GetValue(iter, mucListRoomsIndexService)
 	service, _ := serviceValue.GetString()
 	_, ok = prv.serviceGroups[service]
 	if !ok {
-		return nil, nil, errNoService
+		return nil, errNoService
 	}
 
-	return jid.NewBare(jid.NewLocal(ident), jid.NewDomain(service)), rl, nil
+	return jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(service)), nil
+}
+
+func (prv *mucPublicRoomsView) getRoomFromIter(iter gtki.TreeIter) (jid.Bare, *muc.RoomListing, error) {
+	rl, err := prv.getRoomListingFromIter(iter)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	roomID, err := prv.getRoomIDFromIter(iter)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return roomID, rl, nil
 }
 
 func (prv *mucPublicRoomsView) getSelectedRoom() (jid.Bare, *muc.RoomListing, error) {

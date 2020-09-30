@@ -319,10 +319,8 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 
 		if err.errType == errJoinnicknameConflictEvent {
 			shouldEnableCreation = false
-			// TODO: This naming is different from most other places
-			nickName := err.nickname
-			if !l.nicknamesWithConflict.Has(nickName) {
-				l.nicknamesWithConflict.Insert(nickName)
+			if !l.nicknamesWithConflict.Has(err.nickname) {
+				l.nicknamesWithConflict.Insert(err.nickname)
 			}
 		}
 	}

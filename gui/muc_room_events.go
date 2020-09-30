@@ -11,8 +11,6 @@ import (
 )
 
 func (v *roomView) handleRoomEvent(ev muc.MUC) {
-	// TODO: Most of these handlers simply publish a new event
-	// There is probably no point in doing this publishing in the UI thread
 	switch t := ev.(type) {
 	case events.MUCSelfOccupantJoined:
 		v.publishWithInfo("occupantSelfJoinedEvent", roomViewEventInfo{
@@ -52,10 +50,6 @@ func (v *roomView) handleRoomEvent(ev muc.MUC) {
 	}
 }
 
-// TODO: This pattern might be problematic once we start having more and more and more
-// data. It might be better to have a map with information, so that each event can use
-// whatever fields they need
-
 // roomViewEventInfo contains information about any room view event
 type roomViewEventInfo map[string]string
 
@@ -67,9 +61,10 @@ type roomViewObserver struct {
 }
 
 type roomViewSubscribers struct {
-	observers map[string][]*roomViewObserver
-	log       coylog.Logger
-	sync.RWMutex
+	observers     map[string][]*roomViewObserver
+	observersLock sync.Mutex
+
+	log coylog.Logger
 }
 
 func newRoomViewSubscribers(room jid.Bare, l coylog.Logger) *roomViewSubscribers {
@@ -82,27 +77,25 @@ func newRoomViewSubscribers(room jid.Bare, l coylog.Logger) *roomViewSubscribers
 	}
 }
 
-// TODO: I feel like the "roomViewObserver" type should not be exposed to users
-// of the functionality. Better that it takes a name and the function directly
 func (s *roomViewSubscribers) subscribe(ev string, o *roomViewObserver) {
-	s.Lock()
-	defer s.Unlock()
+	s.observersLock.Lock()
+	defer s.observersLock.Unlock()
 
 	s.observers[ev] = append(s.observers[ev], o)
 }
 
-func (s *roomViewSubscribers) subscribeAll(observers map[string]*roomViewObserver) {
-	for ev, ob := range observers {
-		s.subscribe(ev, ob)
-	}
-}
-
 func (s *roomViewSubscribers) unsubscribe(ev string, id string) {
-	// TODO: Unsafe
-	s.RLock()
-	defer s.RUnlock()
-
+	s.observersLock.Lock()
+	hasChanged := false
 	observers, ok := s.observers[ev]
+
+	defer func() {
+		if hasChanged {
+			s.observers[ev] = observers
+		}
+		s.observersLock.Unlock()
+	}()
+
 	if !ok {
 		s.debug("unsubscribe(): trying to unsubscribe from a not initialized event", ev)
 		return
@@ -110,19 +103,20 @@ func (s *roomViewSubscribers) unsubscribe(ev string, id string) {
 
 	for i, o := range observers {
 		if o.id == id {
-			s.observers[ev] = append(
-				s.observers[ev][:i], s.observers[ev][i+1:]...,
+			observers = append(
+				observers[:i], observers[i+1:]...,
 			)
+			hasChanged = true
 			return
 		}
 	}
 }
 
 func (s *roomViewSubscribers) publish(ev string, ei roomViewEventInfo) {
-	s.RLock()
-	defer s.RUnlock()
-
+	s.observersLock.Lock()
 	observers, ok := s.observers[ev]
+	s.observersLock.Unlock()
+
 	if !ok {
 		s.debug("publish(): trying to publish a not initialized event", ev)
 		return

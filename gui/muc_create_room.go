@@ -25,8 +25,8 @@ type mucCreateRoomView struct {
 	showCreateForm  func()
 	showSuccessView func(*account, jid.Bare)
 
-	onAutoJoin *withCallbacks
-	onDestroy  *withCallbacks
+	onAutoJoin *callbacksSet
+	onDestroy  *callbacksSet
 
 	sync.Mutex
 }
@@ -36,8 +36,8 @@ func (u *gtkUI) newCreateMUCRoomView() *mucCreateRoomView {
 		u:               u,
 		showCreateForm:  func() {},
 		showSuccessView: func(*account, jid.Bare) {},
-		onAutoJoin:      newWithCallbacks(),
-		onDestroy:       newWithCallbacks(),
+		onAutoJoin:      newCallbacksSet(),
+		onDestroy:       newCallbacksSet(),
 	}
 
 	v.initBuilder()

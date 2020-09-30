@@ -33,26 +33,26 @@ func newRegistrationRequiredError(roomID jid.Bare) error {
 	return fmt.Errorf("the room \"%s\" only allows registered members", roomID)
 }
 
-type withCallbacks struct {
+type callbacksSet struct {
 	callbacks []func()
 	lock      sync.RWMutex
 }
 
-func newWithCallbacks() *withCallbacks {
-	return &withCallbacks{}
+func newCallbacksSet() *callbacksSet {
+	return &callbacksSet{}
 }
 
-func (wc *withCallbacks) add(cb func()) {
-	wc.lock.Lock()
-	defer wc.lock.Unlock()
+func (s *callbacksSet) add(cb func()) {
+	s.lock.Lock()
+	defer s.lock.Unlock()
 
-	wc.callbacks = append(wc.callbacks, cb)
+	s.callbacks = append(s.callbacks, cb)
 }
 
-func (wc *withCallbacks) invokeAll() {
-	wc.lock.Lock()
-	callbacks := wc.callbacks
-	wc.lock.Unlock()
+func (s *callbacksSet) invokeAll() {
+	s.lock.Lock()
+	callbacks := s.callbacks
+	s.lock.Unlock()
 
 	for _, cb := range callbacks {
 		cb()

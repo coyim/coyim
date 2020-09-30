@@ -478,7 +478,6 @@ func (u *gtkUI) mucShowPublicRooms() {
 
 // joinRoom should not be called from the UI thread
 func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare, roomInfo *muc.RoomListing) {
-	// TODO: should we use the current account field here?
 	if prv.currentAccount == nil {
 		prv.log().WithField("room", roomJid).Debug("joinRoom(): no account is selected")
 		prv.notifyOnError(i18n.Local("No account was selected, please select one account from the list."))

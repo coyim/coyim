@@ -25,7 +25,7 @@ GOBUILD := $(GO) build
 GOTEST := $(GO) test
 TAGS := -tags $(GTK_BUILD_TAG)
 
-AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go gui/muc/definitions.go
+AUTOGEN := gui/settings/definitions/schemas.go gui/definitions.go
 
 LDFLAGS := -ldflags "-X 'main.BuildTimestamp=$(BUILD_TIMESTAMP)' -X 'main.BuildCommit=$(GIT_VERSION)' -X 'main.BuildShortCommit=$(GIT_SHORT_VERSION)' -X 'main.BuildTag=$(TAG_VERSION)'"
 

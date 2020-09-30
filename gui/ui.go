@@ -11,7 +11,6 @@ import (
 
 	"github.com/coyim/coyim/config"
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/gui/muc"
 	"github.com/coyim/coyim/gui/settings"
 	"github.com/coyim/coyim/i18n"
 	ournet "github.com/coyim/coyim/net"
@@ -78,7 +77,6 @@ type gtkUI struct {
 	hooks OSHooks
 
 	mainBuilder *builder
-	mucGUI      muc.GUI
 }
 
 // Graphics represent the graphic configuration
@@ -164,15 +162,6 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ret.addAction(ret.app, "quit", ret.quit)
 	ret.addAction(ret.app, "about", ret.aboutDialog)
 	ret.addAction(ret.app, "preferences", ret.showGlobalPreferences)
-
-	if config.MUCEnabledMockups {
-		ret.mucGUI = muc.InitGUI(
-			g.gtk,
-			g.glib,
-			g.gdk,
-			g.pango,
-		)
-	}
 
 	return ret
 }
@@ -420,12 +409,6 @@ func (u *gtkUI) onActivate() {
 
 	applyHacks()
 	u.mainWindow()
-
-	// TODO: This code and the related to it should
-	// be removed when we finish the MUC functionality.
-	if config.MUCEnabledMockups {
-		u.mucGUI.ShowWindow()
-	}
 
 	go u.watchCommands()
 	go u.loadConfig(*config.ConfigFile)

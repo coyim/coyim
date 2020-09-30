@@ -4,9 +4,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-// TODO: Maybe simplify the name here: getOrCreateRoomView?
-
-func (u *gtkUI) getAccountRoomViewBasedOnBare(a *account, roomID jid.Bare) *roomView {
+func (u *gtkUI) getOrCreateRoomView(a *account, roomID jid.Bare) *roomView {
 	v, exists := a.getRoomView(roomID)
 	if !exists {
 		v = newRoomView(u, a, roomID)
@@ -23,7 +21,7 @@ func (u *gtkUI) getAccountRoomViewBasedOnBare(a *account, roomID jid.Bare) *room
 //
 // Please note that "returnTo" will be called from the UI thread too
 func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, returnTo func()) {
-	v := u.getAccountRoomViewBasedOnBare(a, roomID)
+	v := u.getOrCreateRoomView(a, roomID)
 
 	if v.isJoined() {
 		// TODO: What if we already had a returnTo function?

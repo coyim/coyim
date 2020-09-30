@@ -41,13 +41,15 @@ func (r *roomViewRoster) initBuilder() {
 }
 
 func (r *roomViewRoster) initDefaults() {
-	var err error
-	// TODO: Should we document the fields in connection with their types here?
-	// TODO: We can probably ignore the error here, just as we do with most other GTK errors
-	r.model, err = g.gtk.ListStoreNew(pixbufType(), glibi.TYPE_STRING, glibi.TYPE_STRING, glibi.TYPE_STRING)
-	if err != nil {
-		panic(err)
-	}
+	r.model, _ = g.gtk.ListStoreNew(
+		// icon
+		pixbufType(),
+		// display nickname
+		glibi.TYPE_STRING,
+		// affiliation
+		glibi.TYPE_STRING,
+		// role - tooltip
+		glibi.TYPE_STRING)
 
 	r.tree.SetModel(r.model)
 	r.draw()

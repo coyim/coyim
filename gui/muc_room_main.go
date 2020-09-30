@@ -4,10 +4,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// TODO: I think the naming of this is maybe a bit unclear
-// We should make it clear that this is a component that is _part_ of the room view,
-// not an independent thing
-
 type roomViewMain struct {
 	main   gtki.Box
 	panel  gtki.Box

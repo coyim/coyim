@@ -11,7 +11,7 @@ import (
 )
 
 type roomViewConversation struct {
-	tags *mucStyleTags
+	tags gtki.TextTagTable
 
 	view               gtki.Box            `gtk-widget:"roomConversation"`
 	roomChatTextView   gtki.TextView       `gtk-widget:"roomChatTextView"`
@@ -62,77 +62,95 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 }
 
 func (c *roomViewConversation) initTags(v *roomView) {
-	t := c.getStyleTags(v.u)
-	c.roomChatTextView.SetBuffer(t.createTextBuffer())
+	c.tags = c.newMUCTableStyleTags(v.u)
+	c.roomChatTextView.SetBuffer(c.createTextBuffer())
 }
 
 // TODO: I don't think I see the need for the mucStyleTags structure
 // It doesn't really help us understand the code
-type mucStyleTags struct {
-	table gtki.TextTagTable
-}
-
 func getTimestamp() string {
 	return time.Now().Format("15:04:05")
 }
 
-func (c *roomViewConversation) getStyleTags(u *gtkUI) *mucStyleTags {
-	if c.tags == nil {
-		c.tags = c.newStyleTags(u)
+func (c *roomViewConversation) createConversationTag(name string, properties map[string]interface{}) gtki.TextTag {
+	tag, _ := g.gtk.TextTagNew(name)
+	for attribute, value := range properties {
+		_ = tag.SetProperty(attribute, value)
 	}
-	return c.tags
+	return tag
 }
 
-func (c *roomViewConversation) newStyleTags(u *gtkUI) *mucStyleTags {
-	// TODO: for now we are using a default styles, but we can improve it
-	// if we define a structure with a predefined colors pallete based on kind
-	// of messages to show like entering a room, leaving the room, incoming
-	// message, etc
-	t := &mucStyleTags{}
+func (c *roomViewConversation) createWarningTag(cs colorSet) gtki.TextTag {
+	return c.createConversationTag("warning", map[string]interface{}{
+		"foreground": cs.warningForeground,
+	})
+}
 
-	t.table, _ = g.gtk.TextTagTableNew()
+func (c *roomViewConversation) createLeftRoomTag(cs colorSet) gtki.TextTag {
+	return c.createConversationTag("leftRoomText", map[string]interface{}{
+		"foreground": cs.mucSomeoneLeftForeground,
+		"style":      pangoi.STYLE_ITALIC,
+	})
+}
+
+func (c *roomViewConversation) createJoinedRoomTag(cs colorSet) gtki.TextTag {
+	return c.createConversationTag("joinedRoomText", map[string]interface{}{
+		"foreground": cs.mucSomeoneJoinedForeground,
+		"style":      pangoi.STYLE_ITALIC,
+	})
+}
+
+func (c *roomViewConversation) createTimestampTag(cs colorSet) gtki.TextTag {
+	return c.createConversationTag("timestampText", map[string]interface{}{
+		"foreground": cs.mucTimestampForeground,
+		"style":      pangoi.STYLE_NORMAL,
+	})
+}
+
+func (c *roomViewConversation) createNicknameTag(cs colorSet) gtki.TextTag {
+	return c.createConversationTag("nicknameText", map[string]interface{}{
+		"foreground": cs.mucNicknameForeground,
+		"style":      pangoi.STYLE_NORMAL,
+	})
+}
+
+func (c *roomViewConversation) createSubjectTag(cs colorSet) gtki.TextTag {
+	return c.createConversationTag("subjectText", map[string]interface{}{
+		"foreground": cs.mucSubjectForeground,
+		"style":      pangoi.STYLE_ITALIC,
+	})
+}
+
+func (c *roomViewConversation) createMessageTag(cs colorSet) gtki.TextTag {
+	return c.createConversationTag("messageText", map[string]interface{}{
+		"foreground": cs.mucMessageForeground,
+		"style":      pangoi.STYLE_NORMAL,
+	})
+}
+
+func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
+	table, _ := g.gtk.TextTagTableNew()
 	cset := u.currentColorSet()
 
-	warningTag, _ := g.gtk.TextTagNew("warning")
-	_ = warningTag.SetProperty("foreground", cset.warningForeground)
+	tags := []func(colorSet) gtki.TextTag{
+		c.createWarningTag,
+		c.createLeftRoomTag,
+		c.createJoinedRoomTag,
+		c.createTimestampTag,
+		c.createNicknameTag,
+		c.createSubjectTag,
+		c.createMessageTag,
+	}
 
-	leftRoomTag, _ := g.gtk.TextTagNew("leftRoomText")
-	_ = leftRoomTag.SetProperty("foreground", cset.mucSomeoneLeftForeground)
-	_ = leftRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
+	for _, t := range tags {
+		table.Add(t(cset))
+	}
 
-	joinedRoomTag, _ := g.gtk.TextTagNew("joinedRoomText")
-	_ = joinedRoomTag.SetProperty("foreground", cset.mucSomeoneJoinedForeground)
-	_ = joinedRoomTag.SetProperty("style", pangoi.STYLE_ITALIC)
-
-	timestampTag, _ := g.gtk.TextTagNew("timestampText")
-	_ = timestampTag.SetProperty("foreground", cset.mucTimestampForeground)
-	_ = timestampTag.SetProperty("style", pangoi.STYLE_NORMAL)
-
-	nicknameTag, _ := g.gtk.TextTagNew("nicknameText")
-	_ = nicknameTag.SetProperty("foreground", cset.mucNicknameForeground)
-	_ = nicknameTag.SetProperty("style", pangoi.STYLE_NORMAL)
-
-	subjectTag, _ := g.gtk.TextTagNew("subjectText")
-	_ = subjectTag.SetProperty("foreground", cset.mucSubjectForeground)
-	_ = subjectTag.SetProperty("style", pangoi.STYLE_ITALIC)
-
-	messageTag, _ := g.gtk.TextTagNew("messageText")
-	_ = messageTag.SetProperty("foreground", cset.mucMessageForeground)
-	_ = messageTag.SetProperty("style", pangoi.STYLE_NORMAL)
-
-	t.table.Add(warningTag)
-	t.table.Add(leftRoomTag)
-	t.table.Add(joinedRoomTag)
-	t.table.Add(timestampTag)
-	t.table.Add(nicknameTag)
-	t.table.Add(subjectTag)
-	t.table.Add(messageTag)
-
-	return t
+	return table
 }
 
-func (t *mucStyleTags) createTextBuffer() gtki.TextBuffer {
-	buf, _ := g.gtk.TextBufferNew(t.table)
+func (c *roomViewConversation) createTextBuffer() gtki.TextBuffer {
+	buf, _ := g.gtk.TextBufferNew(c.tags)
 	return buf
 }
 

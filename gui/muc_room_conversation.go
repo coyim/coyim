@@ -1,21 +1,18 @@
 package gui
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
-	"github.com/coyim/gotk3adapter/pangoi"
 )
 
 type roomViewConversation struct {
 	tags gtki.TextTagTable
 
-	view               gtki.Box            `gtk-widget:"roomConversation"`
-	roomChatTextView   gtki.TextView       `gtk-widget:"roomChatTextView"`
-	roomChatScrollView gtki.ScrolledWindow `gtk-widget:"roomChatScrollView"`
+	view gtki.Box      `gtk-widget:"roomConversation"`
+	text gtki.TextView `gtk-widget:"roomChatTextView"`
 
 	log coylog.Logger
 }
@@ -25,7 +22,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 
 	c.initBuilder()
 	c.initSubscribers(v)
-	c.initTags(v)
+	c.initTagsAndTextBuffer(v)
 
 	return c
 }
@@ -51,165 +48,87 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			)
 		},
 		"loggingEnabledEvent": func(roomViewEventInfo) {
-			msg := i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website.")
-			v.conv.displayWarningMessage(msg)
+			c.displayWarningMessage(i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
 		},
 		"loggingDisabledEvent": func(roomViewEventInfo) {
-			msg := i18n.Local("This room is no longer publicly logged.")
-			v.conv.displayWarningMessage(msg)
+			c.displayWarningMessage(i18n.Local("This room is no longer publicly logged."))
 		},
 	})
 }
 
-func (c *roomViewConversation) initTags(v *roomView) {
-	c.tags = c.newMUCTableStyleTags(v.u)
-	c.roomChatTextView.SetBuffer(c.createTextBuffer())
-}
-
-func getTimestamp() string {
-	return time.Now().Format("15:04:05")
-}
-
-func (c *roomViewConversation) createConversationTag(name string, properties map[string]interface{}) gtki.TextTag {
-	tag, _ := g.gtk.TextTagNew(name)
-	for attribute, value := range properties {
-		_ = tag.SetProperty(attribute, value)
-	}
-	return tag
-}
-
-func (c *roomViewConversation) createWarningTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag("warning", map[string]interface{}{
-		"foreground": cs.warningForeground,
-	})
-}
-
-func (c *roomViewConversation) createLeftRoomTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag("leftRoomText", map[string]interface{}{
-		"foreground": cs.someoneLeftForeground,
-		"style":      pangoi.STYLE_ITALIC,
-	})
-}
-
-func (c *roomViewConversation) createJoinedRoomTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag("joinedRoomText", map[string]interface{}{
-		"foreground": cs.someoneJoinedForeground,
-		"style":      pangoi.STYLE_ITALIC,
-	})
-}
-
-func (c *roomViewConversation) createTimestampTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag("timestampText", map[string]interface{}{
-		"foreground": cs.timestampForeground,
-		"style":      pangoi.STYLE_NORMAL,
-	})
-}
-
-func (c *roomViewConversation) createNicknameTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag("nicknameText", map[string]interface{}{
-		"foreground": cs.nicknameForeground,
-		"style":      pangoi.STYLE_NORMAL,
-	})
-}
-
-func (c *roomViewConversation) createSubjectTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag("subjectText", map[string]interface{}{
-		"foreground": cs.subjectForeground,
-		"style":      pangoi.STYLE_ITALIC,
-	})
-}
-
-func (c *roomViewConversation) createMessageTag(cs mucColorSet) gtki.TextTag {
-	return c.createConversationTag("messageText", map[string]interface{}{
-		"foreground": cs.messageForeground,
-		"style":      pangoi.STYLE_NORMAL,
-	})
-}
-
-func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
-	table, _ := g.gtk.TextTagTableNew()
-	cs := u.currentMUCColorSet()
-
-	tags := []func(mucColorSet) gtki.TextTag{
-		c.createWarningTag,
-		c.createLeftRoomTag,
-		c.createJoinedRoomTag,
-		c.createTimestampTag,
-		c.createNicknameTag,
-		c.createSubjectTag,
-		c.createMessageTag,
-	}
-
-	for _, t := range tags {
-		table.Add(t(cs))
-	}
-
-	return table
-}
-
-func (c *roomViewConversation) createTextBuffer() gtki.TextBuffer {
-	buf, _ := g.gtk.TextBufferNew(c.tags)
-	return buf
+func (c *roomViewConversation) getTextBuffer() gtki.TextBuffer {
+	b, _ := c.text.GetBuffer()
+	return b
 }
 
 func (c *roomViewConversation) addNewLine() {
-	buf, _ := c.roomChatTextView.GetBuffer()
-	i := buf.GetEndIter()
-
-	buf.Insert(i, "\n")
+	c.addText("\n")
 }
 
-func (c *roomViewConversation) addTimestamp() {
-	buf, _ := c.roomChatTextView.GetBuffer()
-	i := buf.GetEndIter()
-	t := fmt.Sprintf("[%s] ", getTimestamp())
-
-	buf.InsertWithTagByName(i, t, "timestampText")
+func (c *roomViewConversation) addText(text string) {
+	b := c.getTextBuffer()
+	b.Insert(b.GetEndIter(), text)
 }
 
-func (c *roomViewConversation) addTextToChatTextUsingTagID(text string, tagName string) {
-	buf, _ := c.roomChatTextView.GetBuffer()
-	i := buf.GetEndIter()
-
-	if tagName != "" {
-		buf.InsertWithTagByName(i, text, tagName)
-	} else {
-		buf.Insert(i, text)
-	}
+func (c *roomViewConversation) addTextWithTag(text string, tag string) {
+	b := c.getTextBuffer()
+	b.InsertWithTagByName(b.GetEndIter(), text, tag)
 }
 
-func (c *roomViewConversation) addLineTextToChatTextUsingTagID(text string, tagName string) {
-	c.addTimestamp()
-	c.addTextToChatTextUsingTagID(text, tagName)
+func (c *roomViewConversation) addTextLineWithTimestamp(text string, tag string) {
+	c.displayTimestamp()
+	c.addTextWithTag(text, tag)
 	c.addNewLine()
+}
+
+// displayTimestamp MUST be called from the UI thread
+func (c *roomViewConversation) displayTimestamp() {
+	c.addTextWithTag(i18n.Localf("[%s] ", getTimestamp()), "timestamp")
 }
 
 // displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
-	text := i18n.Localf("%s joined the room", nickname)
-	c.addLineTextToChatTextUsingTagID(text, "joinedRoomText")
+	c.addTextLineWithTimestamp(i18n.Localf("%s joined the room", nickname), "joinedRoom")
 }
 
 // displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
-	text := i18n.Localf("%s left the room", nickname)
-	c.addLineTextToChatTextUsingTagID(text, "leftRoomText")
+	c.addTextLineWithTimestamp(i18n.Localf("%s left the room", nickname), "leftRoom")
+}
+
+// displayNickname MUST be called from the UI thread
+func (c *roomViewConversation) displayNickname(nickname string) {
+	c.addTextWithTag(i18n.Localf("%s: ", nickname), "nickname")
+}
+
+// displayRoomSubject MUST be called from the UI thread
+func (c *roomViewConversation) displayRoomSubject(subject string) {
+	c.addTextWithTag(i18n.Localf("[%s] ", subject), "subject")
+}
+
+// displayMessage MUST be called from the UI thread
+func (c *roomViewConversation) displayMessage(message string) {
+	c.addTextWithTag(message, "message")
 }
 
 // displayNewLiveMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
-	c.addTimestamp()
-	nicknameText := i18n.Localf("%s: ", nickname)
-	c.addTextToChatTextUsingTagID(nicknameText, "nicknameText")
+	c.displayTimestamp()
+
+	c.displayNickname(nickname)
 	if subject != "" {
-		subjectText := i18n.Localf("[%s] ", subject)
-		c.addTextToChatTextUsingTagID(subjectText, "subjectText")
+		c.displayRoomSubject(subject)
 	}
-	c.addTextToChatTextUsingTagID(message, "messageText")
+	c.displayMessage(message)
+
 	c.addNewLine()
 }
 
 // displayWarningMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayWarningMessage(message string) {
-	c.addLineTextToChatTextUsingTagID(message, "warning")
+	c.addTextLineWithTimestamp(message, "warning")
+}
+
+func getTimestamp() string {
+	return time.Now().Format("15:04:05")
 }

@@ -270,8 +270,146 @@ func (prv *mucPublicRoomsView) getFreshRoomInfoIdentifierAndSet(rl *muc.RoomList
 	}
 }
 
-// TODO: This method is a bit of a beast. We should probably refactor and clean up a bit
-// This is big enough that using a helper context object might be necessary.
+func (prv *mucPublicRoomsView) beforeUpdatingPublicRooms() {
+	prv.clearErrors()
+	prv.hideRoomsViewAndShowSpinner()
+
+	prv.roomsModel.Clear()
+	prv.refreshButton.SetSensitive(true)
+	prv.customServiceButton.SetSensitive(true)
+}
+
+func (prv *mucPublicRoomsView) onUpdatePublicRoomsNoResults(customService string) {
+	prv.showRoomsViewAndHideSpinner()
+	if customService != "" {
+		prv.notifyOnError(i18n.Local("That service doesn't seem to exist"))
+	} else {
+		prv.notifyOnError(i18n.Local("Your XMPP server doesn't seem to have any chat room services"))
+	}
+}
+
+func (prv *mucPublicRoomsView) showSpinner() {
+	prv.spinner.Start()
+	prv.spinner.Show()
+}
+
+func (prv *mucPublicRoomsView) hideSpinner() {
+	prv.spinner.Stop()
+	prv.spinner.Hide()
+}
+
+func (prv *mucPublicRoomsView) showRoomsViewAndHideSpinner() {
+	prv.rooms.Show()
+	prv.hideSpinner()
+}
+
+func (prv *mucPublicRoomsView) hideRoomsViewAndShowSpinner() {
+	prv.rooms.Hide()
+	prv.showSpinner()
+}
+
+func (prv *mucPublicRoomsView) addNewServiceToModel(roomName, serviceName string) gtki.TreeIter {
+	serv := prv.roomsModel.Append(nil)
+
+	prv.serviceGroups[roomName] = serv
+	_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexJid, roomName)
+	_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexName, serviceName)
+
+	return serv
+}
+
+func (prv *mucPublicRoomsView) addNewRoomToModel(parentIter gtki.TreeIter, rl *muc.RoomListing, gen int) {
+	iter := prv.roomsModel.Append(parentIter)
+
+	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexJid, rl.Jid.Local().String())
+	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexName, rl.Name)
+	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexService, rl.Service.String())
+
+	// This will block while finding an unused identifier. However, since
+	// we don't expect to get millions of room listings, it's not likely this will ever be a problem.
+	roomInfoRef := prv.getFreshRoomInfoIdentifierAndSet(rl)
+	_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexRoomInfo, roomInfoRef)
+
+	rl.OnUpdate(prv.u.updatedRoomListing, &roomListingUpdateData{iter, prv, gen})
+
+	prv.roomsTree.ExpandAll()
+}
+
+func (prv *mucPublicRoomsView) handleReceivedServiceListing(sl *muc.ServiceListing) {
+	_, ok := prv.serviceGroups[sl.Jid.String()]
+	if !ok {
+		doInUIThread(func() {
+			prv.addNewServiceToModel(sl.Jid.String(), sl.Name)
+		})
+	}
+}
+
+func (prv *mucPublicRoomsView) handleReceivedRoomListing(rl *muc.RoomListing, gen int) {
+	serv, ok := prv.serviceGroups[rl.Service.String()]
+	doInUIThread(func() {
+		if !ok {
+			serv = prv.addNewServiceToModel(rl.Service.String(), rl.ServiceName)
+		}
+
+		prv.addNewRoomToModel(serv, rl, gen)
+	})
+}
+
+func (prv *mucPublicRoomsView) handleReceivedError(err error) {
+	prv.log().WithError(err).Error("Something went wrong when trying to get chat rooms")
+	doInUIThread(func() {
+		prv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
+	})
+}
+
+func (prv *mucPublicRoomsView) listenPublicRoomsResponse(gen int, res <-chan *muc.RoomListing, resServices <-chan *muc.ServiceListing, ec <-chan error) bool {
+	select {
+	case sl, ok := <-resServices:
+		if !ok {
+			return false
+		}
+
+		prv.handleReceivedServiceListing(sl)
+	case rl, ok := <-res:
+		if !ok || rl == nil {
+			return false
+		}
+
+		prv.handleReceivedRoomListing(rl, gen)
+	case err, ok := <-ec:
+		if !ok {
+			return false
+		}
+		if err != nil {
+			prv.handleReceivedError(err)
+		}
+		return false
+	case <-prv.cancel:
+		return false
+	}
+	return true
+}
+
+func (prv *mucPublicRoomsView) listenPublicRoomsUpdate(customService string, gen int, res <-chan *muc.RoomListing, resServices <-chan *muc.ServiceListing, ec <-chan error) {
+	hasSomething := false
+
+	defer func() {
+		if !hasSomething {
+			doInUIThread(func() {
+				prv.onUpdatePublicRoomsNoResults(customService)
+			})
+		}
+
+		prv.updateLock.Unlock()
+	}()
+
+	for prv.listenPublicRoomsResponse(gen, res, resServices, ec) {
+		if !hasSomething {
+			hasSomething = true
+			doInUIThread(prv.showRoomsViewAndHideSpinner)
+		}
+	}
+}
 
 // mucUpdatePublicRoomsOn MUST NOT be called from the UI thread
 func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
@@ -280,21 +418,10 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 	}
 
 	prv.updateLock.Lock()
-
-	doInUIThread(prv.clearErrors)
-
-	customService, _ := prv.customService.GetText()
-
 	prv.cancel = make(chan bool, 1)
 
-	doInUIThread(func() {
-		prv.rooms.SetVisible(false)
-		prv.spinner.Start()
-		prv.spinner.SetVisible(true)
-		prv.roomsModel.Clear()
-		prv.refreshButton.SetSensitive(true)
-		prv.customServiceButton.SetSensitive(true)
-	})
+	doInUIThread(prv.beforeUpdatingPublicRooms)
+
 	prv.generation++
 	prv.serviceGroups = make(map[string]gtki.TreeIter)
 	prv.roomInfos = make(map[int]*muc.RoomListing)
@@ -302,103 +429,10 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 	// We save the generation value here, in case it gets modified inside the view later
 	gen := prv.generation
 
+	customService, _ := prv.customService.GetText()
+
 	res, resServices, ec := a.session.GetRooms(jid.Parse(a.Account()).Host(), customService)
-	go func() {
-		hasSomething := false
-
-		defer func() {
-			if !hasSomething {
-				doInUIThread(func() {
-					prv.spinner.Stop()
-					prv.spinner.SetVisible(false)
-					prv.rooms.SetVisible(true)
-					if customService != "" {
-						prv.notifyOnError(i18n.Local("That service doesn't seem to exist"))
-					} else {
-						prv.notifyOnError(i18n.Local("Your XMPP server doesn't seem to have any chat room services"))
-					}
-				})
-			}
-
-			prv.updateLock.Unlock()
-		}()
-		for {
-			select {
-			case sl, ok := <-resServices:
-				if !ok {
-					return
-				}
-				if !hasSomething {
-					hasSomething = true
-					doInUIThread(func() {
-						prv.spinner.Stop()
-						prv.spinner.SetVisible(false)
-						prv.rooms.SetVisible(true)
-					})
-				}
-
-				serv, ok := prv.serviceGroups[sl.Jid.String()]
-				if !ok {
-					doInUIThread(func() {
-						serv = prv.roomsModel.Append(nil)
-						prv.serviceGroups[sl.Jid.String()] = serv
-						_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexJid, sl.Jid.String())
-						_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexName, sl.Name)
-					})
-				}
-			case rl, ok := <-res:
-				if !ok || rl == nil {
-					return
-				}
-
-				if !hasSomething {
-					hasSomething = true
-					doInUIThread(func() {
-						prv.spinner.Stop()
-						prv.spinner.SetVisible(false)
-						prv.rooms.SetVisible(true)
-					})
-				}
-
-				serv, ok := prv.serviceGroups[rl.Service.String()]
-				doInUIThread(func() {
-					if !ok {
-						serv = prv.roomsModel.Append(nil)
-						prv.serviceGroups[rl.Service.String()] = serv
-						_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexJid, rl.Service.String())
-						_ = prv.roomsModel.SetValue(serv, mucListRoomsIndexName, rl.ServiceName)
-					}
-
-					iter := prv.roomsModel.Append(serv)
-					_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexJid, rl.Jid.Local().String())
-					_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexName, rl.Name)
-					_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexService, rl.Service.String())
-
-					// This will block while finding an unused identifier. However, since
-					// we don't expect to get millions of room listings, it's not likely this will ever be a problem.
-					roomInfoRef := prv.getFreshRoomInfoIdentifierAndSet(rl)
-					_ = prv.roomsModel.SetValue(iter, mucListRoomsIndexRoomInfo, roomInfoRef)
-
-					rl.OnUpdate(prv.u.updatedRoomListing, &roomListingUpdateData{iter, prv, gen})
-
-					prv.roomsTree.ExpandAll()
-				})
-			case e, ok := <-ec:
-				if !ok {
-					return
-				}
-				if e != nil {
-					doInUIThread(func() {
-						prv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
-					})
-					prv.log().WithError(e).Error("Something went wrong when trying to get chat rooms")
-				}
-				return
-			case _, _ = <-prv.cancel:
-				return
-			}
-		}
-	}()
+	go prv.listenPublicRoomsUpdate(customService, gen, res, resServices, ec)
 }
 
 func (prv *mucPublicRoomsView) clearErrors() {

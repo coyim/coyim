@@ -52,6 +52,7 @@ type Gtk interface {
 	TextTagTableNew() (TextTagTable, error)
 	TextViewNew() (TextView, error)
 	TreePathNew() TreePath
+	SpinnerNew() (Spinner, error)
 	WindowSetDefaultIcon(gdki.Pixbuf)
 	SettingsGetDefault() (Settings, error)
 

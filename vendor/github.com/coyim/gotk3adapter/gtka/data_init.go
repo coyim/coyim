@@ -64,4 +64,10 @@ func init() {
 	gtki.STYLE_PROVIDER_PRIORITY_SETTINGS = gtki.StyleProviderPriority(gtk.STYLE_PROVIDER_PRIORITY_SETTINGS)
 	gtki.STYLE_PROVIDER_PRIORITY_APPLICATION = gtki.StyleProviderPriority(gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 	gtki.STYLE_PROVIDER_PRIORITY_USER = gtki.StyleProviderPriority(gtk.STYLE_PROVIDER_PRIORITY_USER)
+
+	gtki.MESSAGE_INFO = gtki.MessageType(gtk.MESSAGE_INFO)
+	gtki.MESSAGE_WARNING = gtki.MessageType(gtk.MESSAGE_WARNING)
+	gtki.MESSAGE_QUESTION = gtki.MessageType(gtk.MESSAGE_QUESTION)
+	gtki.MESSAGE_ERROR = gtki.MessageType(gtk.MESSAGE_ERROR)
+	gtki.MESSAGE_OTHER = gtki.MessageType(gtk.MESSAGE_OTHER)
 }

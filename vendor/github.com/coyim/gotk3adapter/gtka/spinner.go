@@ -29,6 +29,10 @@ func UnwrapSpinner(v gtki.Spinner) *gtk.Spinner {
 	return v.(*spinner).internal
 }
 
+func (*RealGtk) SpinnerNew() (gtki.Spinner, error) {
+	return WrapSpinner(gtk.SpinnerNew())
+}
+
 func (v *spinner) Start() {
 	v.internal.Start()
 }

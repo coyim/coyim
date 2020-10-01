@@ -90,10 +90,7 @@ func (m *mucManager) handlePresence(stanza *data.ClientPresence) {
 // changed, or role or affiliation is updated, this can lead to the method being called.
 // For now, it will generate a event about joining, but this should be cleaned up and fixed
 func (m *mucManager) handleSelfOccupantUpdate(roomID jid.Bare, op *muc.OccupantPresenceInfo, status mucUserStatuses) {
-	// TODO: This is a bit confusing since the selfOccupantUpdate method can be called more than
-	// once - and it's only the first time it is called that it actually means the person joined
-	m.selfOccupantJoin(roomID, op)
-	m.handleOccupantUpdate(roomID, op)
+	m.selfOccupantUpdate(roomID, op)
 
 	if status.contains(MUCStatusRoomLoggingEnabled) {
 		m.loggingEnabled(roomID)
@@ -104,24 +101,38 @@ func (m *mucManager) handleSelfOccupantUpdate(roomID jid.Bare, op *muc.OccupantP
 	}
 }
 
-func (m *mucManager) selfOccupantJoin(roomID jid.Bare, op *muc.OccupantPresenceInfo) {
+func (m *mucManager) selfOccupantUpdate(roomID jid.Bare, op *muc.OccupantPresenceInfo) {
 	room, exists := m.roomManager.GetRoom(roomID)
 	if !exists {
 		m.log.WithFields(log.Fields{
 			"room":     roomID,
 			"occupant": op.Nickname,
-			"method":   "selfOccupantJoin",
+			"method":   "selfOccupantUpdate",
 		}).Error("trying to join to an unavailable room")
 		// TODO: This will only happen when the room disappeared AFTER trying to join, but before we could
 		// finish the join. We should figure out the right way of handling this situation
 		return
 	}
 
-	o, exists := room.Roster().GetOccupant(op.Nickname)
+	exists = m.existOccupantInRoster(room, op.Nickname)
+
+	o := m.updateOccupantAndReturn(room, op)
+
 	if !exists {
 		room.AddSelfOccupant(o)
 		m.selfOccupantJoined(roomID, op)
 	}
+}
+
+func (m *mucManager) existOccupantInRoster(room *muc.Room, nickname string) bool {
+	_, exist := room.Roster().GetOccupant(nickname)
+	return exist
+}
+
+func (m *mucManager) updateOccupantAndReturn(room *muc.Room, op *muc.OccupantPresenceInfo) *muc.Occupant {
+	m.handleOccupantUpdate(room.ID, op)
+	o, _ := room.Roster().GetOccupant(op.Nickname)
+	return o
 }
 
 func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.OccupantPresenceInfo, status mucUserStatuses) {

@@ -57,10 +57,9 @@ func (r *roomViewRoster) initDefaults() {
 
 func (r *roomViewRoster) initSubscribers(v *roomView) {
 	v.subscribeAll("roster", roomViewEventObservers{
-		"occupantSelfJoinedEvent": r.onUpdateRoster,
-		"occupantJoinedEvent":     r.onUpdateRoster,
-		"occupantUpdatedEvent":    r.onUpdateRoster,
-		"occupantLeftEvent":       r.onUpdateRoster,
+		"occupantJoinedEvent":  r.onUpdateRoster,
+		"occupantUpdatedEvent": r.onUpdateRoster,
+		"occupantLeftEvent":    r.onUpdateRoster,
 	})
 }
 

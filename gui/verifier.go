@@ -116,12 +116,12 @@ func (v *verifier) hideUnverifiedWarning() {
 // TODO: check on linux
 type unverifiedWarning struct {
 	b                         *builder
-	infobar                   gtki.Box    `gtk-widget:"verify-infobar"`
-	closeInfobar              gtki.Box    `gtk-widget:"verify-close-infobar"`
-	notification              gtki.Box    `gtk-widget:"verify-notification"`
-	label                     gtki.Label  `gtk-widget:"verify-message"`
-	image                     gtki.Image  `gtk-widget:"verify-image"`
-	button                    gtki.Button `gtk-widget:"verify-button"`
+	infobar                   gtki.InfoBar `gtk-widget:"verify-infobar"`
+	closeInfobar              gtki.Box     `gtk-widget:"verify-close-infobar"`
+	notification              gtki.Box     `gtk-widget:"verify-notification"`
+	label                     gtki.Label   `gtk-widget:"verify-message"`
+	image                     gtki.Image   `gtk-widget:"verify-image"`
+	button                    gtki.Button  `gtk-widget:"verify-button"`
 	shouldShowVerificationBar func() bool
 }
 
@@ -311,12 +311,12 @@ func (v *verifier) showAnswerSMPDialog(question string) {
 
 type peerRequestsSMPNotification struct {
 	b            *builder
-	infobar      gtki.Box    `gtk-widget:"smp-requested-infobar"`
-	closeInfobar gtki.Box    `gtk-widget:"smp-requested-close-infobar"`
-	notification gtki.Box    `gtk-widget:"smp-requested-notification"`
-	label        gtki.Label  `gtk-widget:"smp-requested-message"`
-	image        gtki.Image  `gtk-widget:"smp-requested-image"`
-	button       gtki.Button `gtk-widget:"smp-requested-button"`
+	infobar      gtki.InfoBar `gtk-widget:"smp-requested-infobar"`
+	closeInfobar gtki.Box     `gtk-widget:"smp-requested-close-infobar"`
+	notification gtki.Box     `gtk-widget:"smp-requested-notification"`
+	label        gtki.Label   `gtk-widget:"smp-requested-message"`
+	image        gtki.Image   `gtk-widget:"smp-requested-image"`
+	button       gtki.Button  `gtk-widget:"smp-requested-button"`
 }
 
 func (p *peerRequestsSMPNotification) show() {

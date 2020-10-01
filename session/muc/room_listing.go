@@ -66,8 +66,9 @@ func (rl *RoomListing) Updated() {
 
 // SetFeatures receive a list of features and updates the room listing properties based on each feature
 func (rl *RoomListing) SetFeatures(features []data.DiscoveryFeature) {
-	// TODO: Is this safe to call more than once?
-	// TODO: It might be necessary to make it thread safe.
+	rl.lockUpdates.Lock()
+	defer rl.lockUpdates.Unlock()
+
 	for _, feat := range features {
 		rl.setFeature(feat.Var)
 	}
@@ -136,7 +137,9 @@ func (rl *RoomListing) setFeature(feature string) {
 
 // SetFormsData extract the forms data and updates the room listing properties based on each data
 func (rl *RoomListing) SetFormsData(forms []data.Form) {
-	// TODO: Same questions as above
+	rl.lockUpdates.Lock()
+	defer rl.lockUpdates.Unlock()
+
 	for _, form := range forms {
 		formData := extractFormData(form.Fields)
 		rl.setFormData(form, formData)

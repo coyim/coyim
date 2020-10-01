@@ -87,6 +87,10 @@ func (*Mock) EventBoxNew() (gtki.EventBox, error) {
 	return nil, nil
 }
 
+func (*Mock) ButtonBoxNew(gtki.Orientation) (gtki.ButtonBox, error) {
+	return nil, nil
+}
+
 func (*Mock) FileChooserDialogNewWith2Buttons(title string, parent gtki.Window, action gtki.FileChooserAction, first_button_text string, first_button_id gtki.ResponseType, second_button_text string, second_button_id gtki.ResponseType) (gtki.FileChooserDialog, error) {
 	return nil, nil
 }

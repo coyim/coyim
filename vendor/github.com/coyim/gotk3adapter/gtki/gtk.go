@@ -26,6 +26,7 @@ type Gtk interface {
 	CssProviderGetNamed(string, string) (CssProvider, error)
 	EntryNew() (Entry, error)
 	EventBoxNew() (EventBox, error)
+	ButtonBoxNew(Orientation) (ButtonBox, error)
 	FileChooserDialogNewWith2Buttons(string, Window, FileChooserAction, string, ResponseType, string, ResponseType) (FileChooserDialog, error)
 	GetMajorVersion() uint
 	GetMinorVersion() uint

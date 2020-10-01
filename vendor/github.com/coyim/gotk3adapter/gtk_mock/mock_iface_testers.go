@@ -24,6 +24,7 @@ func init() {
 	gtki.AssertDialog(&MockDialog{})
 	gtki.AssertEntry(&MockEntry{})
 	gtki.AssertEventBox(&MockEventBox{})
+	gtki.AssertButtonBox(&MockButtonBox{})
 	gtki.AssertFileChooserDialog(&MockFileChooserDialog{})
 	gtki.AssertGrid(&MockGrid{})
 	gtki.AssertHeaderBar(&MockHeaderBar{})

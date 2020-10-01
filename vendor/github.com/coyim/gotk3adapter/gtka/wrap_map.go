@@ -151,6 +151,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.ButtonBox:
+		val := WrapButtonBoxSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.FileChooserDialog:
 		val := WrapFileChooserDialogSimple(oo)
 		if val == nil {
@@ -484,6 +490,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *eventBox:
 		val := UnwrapEventBox(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *buttonBox:
+		val := UnwrapButtonBox(oo)
 		if val == nil {
 			return nil, true
 		}

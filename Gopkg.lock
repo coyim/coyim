@@ -35,7 +35,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:5ac8470795144937e886a2cb010442e6ff176cb1bb3e93ebbea40a4bdffac4a0"
+  digest = "1:8b809f508779991048065203e29e9bf8aa86d68db1f627462cb1c7c0a05cb21f"
   name = "github.com/coyim/gotk3adapter"
   packages = [
     "gdka",
@@ -50,7 +50,7 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "da226552eab8e7a9594c423dacd309d2d53b7992"
+  revision = "a02b052be456a89f482ece13d5e587667ec4fa9b"
 
 [[projects]]
   branch = "master"

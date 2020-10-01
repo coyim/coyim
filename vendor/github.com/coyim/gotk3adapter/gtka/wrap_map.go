@@ -367,6 +367,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.Overlay:
+		val := WrapOverlaySimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	default:
 		return nil, false
 	}
@@ -706,6 +712,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *toolButton:
 		val := UnwrapToolButton(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *overlay:
+		val := UnwrapOverlay(oo)
 		if val == nil {
 			return nil, true
 		}

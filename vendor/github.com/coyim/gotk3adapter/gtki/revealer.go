@@ -1,5 +1,9 @@
 package gtki
 
-type Revealer interface{}
+type Revealer interface {
+	Bin
+
+	SetRevealChild(bool)
+}
 
 func AssertRevealer(_ Revealer) {}

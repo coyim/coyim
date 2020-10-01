@@ -27,3 +27,7 @@ func UnwrapRevealer(v gtki.Revealer) *gtk.Revealer {
 	}
 	return v.(*revealer).internal
 }
+
+func (v *revealer) SetRevealChild(revealChild bool) {
+	v.internal.SetRevealChild(revealChild)
+}

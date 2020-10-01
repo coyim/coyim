@@ -142,62 +142,65 @@ func (rl *RoomListing) SetFormsData(forms []data.Form) {
 
 	for _, form := range forms {
 		formData := extractFormData(form.Fields)
-		rl.setFormData(form, formData)
+		rl.handleFormData(form, formData)
 	}
 }
 
-func (rl *RoomListing) setFormData(form data.Form, formData map[string][]string) {
+func (rl *RoomListing) handleFormData(form data.Form, formData map[string][]string) {
 	if form.Type == "result" && len(formData["FORM_TYPE"]) > 0 && formData["FORM_TYPE"][0] == "http://jabber.org/protocol/muc#roominfo" {
 		for k, val := range formData {
-			// TODO: Maybe extract the below into another helper?
-			switch k {
-			case "FORM_TYPE":
-				// Ignore, we already checked
-			case "muc#roominfo_lang":
-				if len(val) > 0 {
-					rl.Language = val[0]
-				}
-			case "muc#roominfo_changesubject":
-				if len(val) > 0 {
-					rl.OccupantsCanChangeSubject = val[0] == "1"
-				}
-			case "muc#roomconfig_enablelogging":
-				if len(val) > 0 {
-					rl.Logged = val[0] == "1"
-				}
-			case "muc#roomconfig_roomname":
-				// Room name - we already have this
-			case "muc#roominfo_description":
-				if len(val) > 0 {
-					rl.Description = val[0]
-				}
-			case "muc#roominfo_occupants":
-				if len(val) > 0 {
-					res, e := strconv.Atoi(val[0])
-					if e != nil {
-						rl.Occupants = res
-					}
-				}
-			case "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites":
-				if len(val) > 0 {
-					rl.MembersCanInvite = val[0] == "1"
-				}
-			case "muc#roomconfig_allowinvites":
-				if len(val) > 0 {
-					rl.OccupantsCanInvite = val[0] == "1"
-				}
-			case "muc#roomconfig_allowpm":
-				if len(val) > 0 {
-					rl.AllowPrivateMessages = val[0]
-				}
-			case "muc#roominfo_contactjid":
-				if len(val) > 0 {
-					rl.ContactJid = val[0]
-				}
-			default:
-				fmt.Printf("UNKNOWN FORM VAR: %s\n", k)
+			rl.setFormData(k, val)
+		}
+	}
+}
+
+func (rl *RoomListing) setFormData(formType string, formValue []string) {
+	switch formType {
+	case "FORM_TYPE":
+		// Ignore, we already checked
+	case "muc#roominfo_lang":
+		if len(formValue) > 0 {
+			rl.Language = formValue[0]
+		}
+	case "muc#roominfo_changesubject":
+		if len(formValue) > 0 {
+			rl.OccupantsCanChangeSubject = formValue[0] == "1"
+		}
+	case "muc#roomconfig_enablelogging":
+		if len(formValue) > 0 {
+			rl.Logged = formValue[0] == "1"
+		}
+	case "muc#roomconfig_roomname":
+		// Room name - we already have this
+	case "muc#roominfo_description":
+		if len(formValue) > 0 {
+			rl.Description = formValue[0]
+		}
+	case "muc#roominfo_occupants":
+		if len(formValue) > 0 {
+			res, e := strconv.Atoi(formValue[0])
+			if e != nil {
+				rl.Occupants = res
 			}
 		}
+	case "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites":
+		if len(formValue) > 0 {
+			rl.MembersCanInvite = formValue[0] == "1"
+		}
+	case "muc#roomconfig_allowinvites":
+		if len(formValue) > 0 {
+			rl.OccupantsCanInvite = formValue[0] == "1"
+		}
+	case "muc#roomconfig_allowpm":
+		if len(formValue) > 0 {
+			rl.AllowPrivateMessages = formValue[0]
+		}
+	case "muc#roominfo_contactjid":
+		if len(formValue) > 0 {
+			rl.ContactJid = formValue[0]
+		}
+	default:
+		fmt.Printf("UNKNOWN FORM VAR: %s\n", formType)
 	}
 }
 

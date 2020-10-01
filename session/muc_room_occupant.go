@@ -8,10 +8,10 @@ import (
 
 func newMUCRoomOccupant(nickname string, affiliation muc.Affiliation, role muc.Role, realJid jid.Full) *muc.Occupant {
 	return &muc.Occupant{
-		Nick:        nickname,
+		Nickname:    nickname,
 		Affiliation: affiliation,
 		Role:        role,
-		Jid:         realJid,
+		RealJid:     realJid,
 	}
 }
 

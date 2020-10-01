@@ -84,7 +84,7 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant) {
 	iter := r.model.Append()
 
 	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, r.getOccupantIcon().GetPixbuf())
-	_ = r.model.SetValue(iter, roomViewRosterNickNameIndex, o.Nick)
+	_ = r.model.SetValue(iter, roomViewRosterNickNameIndex, o.Nickname)
 	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, r.affiliationDisplayName(o.Affiliation))
 	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, r.roleDisplayName(o.Role))
 }

@@ -165,7 +165,7 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 	v.showSpinner()
 
 	go func() {
-		v.account.leaveRoom(v.roomID(), v.room.Occupant.Nick, func() {
+		v.account.leaveRoom(v.roomID(), v.room.Occupant.Nickname, func() {
 			doInUIThread(v.window.Destroy)
 			if onSuccess != nil {
 				onSuccess()

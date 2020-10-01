@@ -9,12 +9,11 @@ import (
 // This structure doesn't make sense without a connection to a room, since the information
 // inside it depends on the room
 type Occupant struct {
-	// TODO: We should change this member name to be consistent
-	// Nick is the nickname of the person
-	Nick string
-	// TODO: Maybe change to RealJid to be consistent
-	// Jid is the real JID of the person, if known. Otherwise it is nil
-	Jid jid.Full
+	// Nickname is the nickname of the person
+	Nickname string
+
+	// RealJid is the real JID of the person, if known. Otherwise it is nil
+	RealJid jid.Full
 
 	// Affiliation is the current affiliation of the occupant in the room
 	Affiliation Affiliation
@@ -78,8 +77,8 @@ func (o *Occupant) ChangeAffiliationToOwner() {
 // Update will update the information in this occupant object with the given information. It returns an error if the given affiliation or role doesn't match
 // a known affiliation or role.
 func (o *Occupant) Update(nickname string, affiliation Affiliation, role Role, status, statusMsg string, realJid jid.Full) {
-	o.Nick = nickname
-	o.Jid = realJid
+	o.Nickname = nickname
+	o.RealJid = realJid
 	o.Affiliation = affiliation
 	o.Role = role
 	o.Status = &roster.Status{Status: status, StatusMsg: statusMsg}

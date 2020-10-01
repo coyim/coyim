@@ -34,8 +34,8 @@ func newRosterOccupantPresenceForTest(nickname string, realJid string, role Role
 
 func newRosterOccupantForTest(nickname string, realJid string, role Role, affiliation Affiliation) *Occupant {
 	return &Occupant{
-		Nick:        nickname,
-		Jid:         getRealJidFromString(realJid),
+		Nickname:    nickname,
+		RealJid:     getRealJidFromString(realJid),
 		Role:        role,
 		Affiliation: affiliation,
 	}
@@ -49,9 +49,9 @@ func (s *MucSuite) Test_RoomRoster_AllOccupants(c *C) {
 
 	oo := rr.AllOccupants()
 	c.Assert(oo, HasLen, 3)
-	c.Assert(oo[0].Nick, Equals, "Abc")
-	c.Assert(oo[1].Nick, Equals, "Foo")
-	c.Assert(oo[2].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Abc")
+	c.Assert(oo[1].Nickname, Equals, "Foo")
+	c.Assert(oo[2].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_NoRole(c *C) {
@@ -62,8 +62,8 @@ func (s *MucSuite) Test_RoomRoster_NoRole(c *C) {
 
 	oo := rr.NoRole()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_Visitors(c *C) {
@@ -74,8 +74,8 @@ func (s *MucSuite) Test_RoomRoster_Visitors(c *C) {
 
 	oo := rr.Visitors()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_Participants(c *C) {
@@ -86,8 +86,8 @@ func (s *MucSuite) Test_RoomRoster_Participants(c *C) {
 
 	oo := rr.Participants()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_Moderators(c *C) {
@@ -98,8 +98,8 @@ func (s *MucSuite) Test_RoomRoster_Moderators(c *C) {
 
 	oo := rr.Moderators()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_NoAffiliation(c *C) {
@@ -110,8 +110,8 @@ func (s *MucSuite) Test_RoomRoster_NoAffiliation(c *C) {
 
 	oo := rr.NoAffiliation()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_Banned(c *C) {
@@ -122,8 +122,8 @@ func (s *MucSuite) Test_RoomRoster_Banned(c *C) {
 
 	oo := rr.Banned()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_Members(c *C) {
@@ -134,8 +134,8 @@ func (s *MucSuite) Test_RoomRoster_Members(c *C) {
 
 	oo := rr.Members()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_Admins(c *C) {
@@ -146,8 +146,8 @@ func (s *MucSuite) Test_RoomRoster_Admins(c *C) {
 
 	oo := rr.Admins()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_Owners(c *C) {
@@ -158,8 +158,8 @@ func (s *MucSuite) Test_RoomRoster_Owners(c *C) {
 
 	oo := rr.Owners()
 	c.Assert(oo, HasLen, 2)
-	c.Assert(oo[0].Nick, Equals, "Foo")
-	c.Assert(oo[1].Nick, Equals, "One")
+	c.Assert(oo[0].Nickname, Equals, "Foo")
+	c.Assert(oo[1].Nickname, Equals, "One")
 }
 
 func (s *MucSuite) Test_RoomRoster_OccupantsByRole(c *C) {
@@ -173,18 +173,18 @@ func (s *MucSuite) Test_RoomRoster_OccupantsByRole(c *C) {
 
 	r1, r2, r3, r4 := rr.OccupantsByRole()
 	c.Assert(r1, HasLen, 2)
-	c.Assert(r1[0].Nick, Equals, "Abc")
-	c.Assert(r1[1].Nick, Equals, "One")
+	c.Assert(r1[0].Nickname, Equals, "Abc")
+	c.Assert(r1[1].Nickname, Equals, "One")
 
 	c.Assert(r2, HasLen, 1)
-	c.Assert(r2[0].Nick, Equals, "Bar")
+	c.Assert(r2[0].Nickname, Equals, "Bar")
 
 	c.Assert(r3, HasLen, 2)
-	c.Assert(r3[0].Nick, Equals, "Baz")
-	c.Assert(r3[1].Nick, Equals, "Foo")
+	c.Assert(r3[0].Nickname, Equals, "Baz")
+	c.Assert(r3[1].Nickname, Equals, "Foo")
 
 	c.Assert(r4, HasLen, 1)
-	c.Assert(r4[0].Nick, Equals, "Quux")
+	c.Assert(r4[0].Nickname, Equals, "Quux")
 }
 
 func (s *MucSuite) Test_RoomRoster_OccupantsByAffiliation(c *C) {
@@ -198,18 +198,18 @@ func (s *MucSuite) Test_RoomRoster_OccupantsByAffiliation(c *C) {
 
 	r1, r2, r3, r4, r5 := rr.OccupantsByAffiliation()
 	c.Assert(r1, HasLen, 2)
-	c.Assert(r1[0].Nick, Equals, "Abc")
-	c.Assert(r1[1].Nick, Equals, "One")
+	c.Assert(r1[0].Nickname, Equals, "Abc")
+	c.Assert(r1[1].Nickname, Equals, "One")
 
 	c.Assert(r2, HasLen, 1)
-	c.Assert(r2[0].Nick, Equals, "Bar")
+	c.Assert(r2[0].Nickname, Equals, "Bar")
 
 	c.Assert(r3, HasLen, 2)
-	c.Assert(r3[0].Nick, Equals, "Baz")
-	c.Assert(r3[1].Nick, Equals, "Foo")
+	c.Assert(r3[0].Nickname, Equals, "Baz")
+	c.Assert(r3[1].Nickname, Equals, "Foo")
 
 	c.Assert(r4, HasLen, 1)
-	c.Assert(r4[0].Nick, Equals, "Quux")
+	c.Assert(r4[0].Nickname, Equals, "Quux")
 
 	c.Assert(r5, HasLen, 0)
 }
@@ -224,7 +224,7 @@ func (s *MucSuite) Test_RoomRoster_UpdateNick(c *C) {
 
 	e = rr.UpdateNick(jid.ParseFull("foo@somewhere.com/bello"), "baxa")
 	c.Assert(e, IsNil)
-	c.Assert(occ.Nick, Equals, "baxa")
+	c.Assert(occ.Nickname, Equals, "baxa")
 	newOcc, ok := rr.occupants["foo@somewhere.com/baxa"]
 	c.Assert(ok, Equals, true)
 	c.Assert(newOcc, Equals, occ)
@@ -275,12 +275,12 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 	occ, ok := rr.occupants["bello"]
 	c.Assert(ok, Equals, true)
 	c.Assert(occ, Not(IsNil))
-	c.Assert(occ.Nick, Equals, "bello")
+	c.Assert(occ.Nickname, Equals, "bello")
 	c.Assert(occ.Role, FitsTypeOf, &noneRole{})
 	c.Assert(occ.Affiliation, FitsTypeOf, &noneAffiliation{})
 	c.Assert(occ.Status.Status, Equals, "away")
 	c.Assert(occ.Status.StatusMsg, Equals, "gone")
-	c.Assert(occ.Jid, Equals, jid.ParseFull("foo@example.org/test1"))
+	c.Assert(occ.RealJid, Equals, jid.ParseFull("foo@example.org/test1"))
 }
 
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
@@ -303,5 +303,5 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
 	c.Assert(occ.Role, FitsTypeOf, &noneRole{})
 	c.Assert(occ.Status.Status, Equals, "away")
 	c.Assert(occ.Status.StatusMsg, Equals, "gone")
-	c.Assert(occ.Jid, Equals, jid.ParseFull("foo@example.org/test1"))
+	c.Assert(occ.RealJid, Equals, jid.ParseFull("foo@example.org/test1"))
 }

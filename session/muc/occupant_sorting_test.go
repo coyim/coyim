@@ -17,47 +17,47 @@ func init() {
 
 func (s *MucSuite) Test_ByOccupantNick(c *C) {
 	vals := []*Occupant{
-		&Occupant{Nick: "Rafael"},
-		&Occupant{Nick: "Ola"},
-		&Occupant{Nick: "Cristian"},
-		&Occupant{Nick: "Ola2"},
-		&Occupant{Nick: "Reinaldo"},
+		&Occupant{Nickname: "Rafael"},
+		&Occupant{Nickname: "Ola"},
+		&Occupant{Nickname: "Cristian"},
+		&Occupant{Nickname: "Ola2"},
+		&Occupant{Nickname: "Reinaldo"},
 	}
 
 	sort.Sort(ByOccupantNick(vals))
-	c.Assert(vals[0].Nick, Equals, "Cristian")
-	c.Assert(vals[1].Nick, Equals, "Ola")
-	c.Assert(vals[2].Nick, Equals, "Ola2")
-	c.Assert(vals[3].Nick, Equals, "Rafael")
-	c.Assert(vals[4].Nick, Equals, "Reinaldo")
+	c.Assert(vals[0].Nickname, Equals, "Cristian")
+	c.Assert(vals[1].Nickname, Equals, "Ola")
+	c.Assert(vals[2].Nickname, Equals, "Ola2")
+	c.Assert(vals[3].Nickname, Equals, "Rafael")
+	c.Assert(vals[4].Nickname, Equals, "Reinaldo")
 }
 
 func (s *MucSuite) Test_ByOccupantJid(c *C) {
 	vals := []*Occupant{
-		&Occupant{Nick: "Rafael"},
-		&Occupant{Nick: "Ola"},
-		&Occupant{Nick: "Cristian"},
-		&Occupant{Nick: "Ola2"},
-		&Occupant{Nick: "Reinaldo"},
+		&Occupant{Nickname: "Rafael"},
+		&Occupant{Nickname: "Ola"},
+		&Occupant{Nickname: "Cristian"},
+		&Occupant{Nickname: "Ola2"},
+		&Occupant{Nickname: "Reinaldo"},
 	}
 
 	sort.Sort(ByOccupantJid(vals))
-	c.Assert(vals[0].Nick, Equals, "Cristian")
-	c.Assert(vals[1].Nick, Equals, "Ola")
-	c.Assert(vals[2].Nick, Equals, "Ola2")
-	c.Assert(vals[3].Nick, Equals, "Rafael")
-	c.Assert(vals[4].Nick, Equals, "Reinaldo")
+	c.Assert(vals[0].Nickname, Equals, "Cristian")
+	c.Assert(vals[1].Nickname, Equals, "Ola")
+	c.Assert(vals[2].Nickname, Equals, "Ola2")
+	c.Assert(vals[3].Nickname, Equals, "Rafael")
+	c.Assert(vals[4].Nickname, Equals, "Reinaldo")
 
 	vals2 := []*Occupant{
-		&Occupant{Nick: "Rafael", Jid: jid.ParseFull("foo@jabber.org/abc")},
-		&Occupant{Nick: "Rafael2", Jid: jid.ParseFull("foo@jabber.im/abc")},
-		&Occupant{Nick: "Ola", Jid: nil},
-		&Occupant{Nick: "Cristian", Jid: nil},
+		&Occupant{Nickname: "Rafael", RealJid: jid.ParseFull("foo@jabber.org/abc")},
+		&Occupant{Nickname: "Rafael2", RealJid: jid.ParseFull("foo@jabber.im/abc")},
+		&Occupant{Nickname: "Ola", RealJid: nil},
+		&Occupant{Nickname: "Cristian", RealJid: nil},
 	}
 
 	sort.Sort(ByOccupantJid(vals2))
-	c.Assert(vals2[0].Nick, Equals, "Cristian")
-	c.Assert(vals2[1].Nick, Equals, "Ola")
-	c.Assert(vals2[2].Nick, Equals, "Rafael2")
-	c.Assert(vals2[3].Nick, Equals, "Rafael")
+	c.Assert(vals2[0].Nickname, Equals, "Cristian")
+	c.Assert(vals2[1].Nickname, Equals, "Ola")
+	c.Assert(vals2[2].Nickname, Equals, "Rafael2")
+	c.Assert(vals2[3].Nickname, Equals, "Rafael")
 }

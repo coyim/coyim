@@ -83,8 +83,8 @@ func (s *MucSuite) Test_Occupant_ChangeAffiliationToOwner(c *C) {
 
 func (s *MucSuite) Test_Occupant_Update(c *C) {
 	o := &Occupant{
-		Nick:        "One",
-		Jid:         jid.ParseFull("foo@bar.com/somewhere"),
+		Nickname:    "One",
+		RealJid:     jid.ParseFull("foo@bar.com/somewhere"),
 		Affiliation: &memberAffiliation{},
 		Role:        &moderatorRole{},
 		Status:      &roster.Status{Status: "xa", StatusMsg: "foo"},
@@ -92,8 +92,8 @@ func (s *MucSuite) Test_Occupant_Update(c *C) {
 
 	o.Update("Two", &adminAffiliation{}, &participantRole{}, "away", "here", nil)
 
-	c.Assert(o.Nick, Equals, "Two")
-	c.Assert(o.Jid, IsNil)
+	c.Assert(o.Nickname, Equals, "Two")
+	c.Assert(o.RealJid, IsNil)
 	c.Assert(o.Affiliation, FitsTypeOf, &adminAffiliation{})
 	c.Assert(o.Role, FitsTypeOf, &participantRole{})
 	c.Assert(o.Status.Status, Equals, "away")

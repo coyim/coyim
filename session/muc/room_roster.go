@@ -202,7 +202,7 @@ func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
 		return errors.New("no such occupant known in this room")
 	}
 
-	oc.Nick = newNick
+	oc.Nickname = newNick
 	delete(r.occupants, from.String())
 	r.occupants[newFull.String()] = oc
 
@@ -232,8 +232,8 @@ func (r *RoomRoster) UpdatePresence(op *OccupantPresenceInfo, tp string) (joined
 func (r *RoomRoster) newOccupantFromPresenceInfo(op *OccupantPresenceInfo) *Occupant {
 	return &Occupant{
 		Affiliation: op.Affiliation,
-		Jid:         op.RealJid,
-		Nick:        op.Nickname,
+		RealJid:     op.RealJid,
+		Nickname:    op.Nickname,
 		Role:        op.Role,
 		Status: &roster.Status{
 			Status:    op.StatusCode,
@@ -250,7 +250,7 @@ func (r *RoomRoster) UpdateOrAddOccupant(op *OccupantPresenceInfo) bool {
 	o, ok := r.occupants[op.Nickname]
 	if !ok {
 		o = r.newOccupantFromPresenceInfo(op)
-		r.occupants[o.Nick] = o
+		r.occupants[o.Nickname] = o
 		return false
 	}
 

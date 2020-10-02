@@ -5,7 +5,6 @@ import (
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/events"
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/ui"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -45,7 +44,7 @@ func (u *gtkUI) handleOneAccountEvent(ev interface{}, a *account) {
 		doInUIThread(func() {
 			u.handleSMPEvent(t, a)
 		})
-	case muc.MUC:
+	case events.MUC:
 		doInUIThread(func() {
 			u.handleMUCEvent(t, a)
 		})

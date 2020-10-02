@@ -5,12 +5,11 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/events"
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
 
-func (v *roomView) handleRoomEvent(ev muc.MUC) {
+func (v *roomView) handleRoomEvent(ev events.MUC) {
 	switch t := ev.(type) {
 	case events.MUCSelfOccupantJoined:
 		v.publishWithInfo("occupantSelfJoinedEvent", roomViewEventInfo{

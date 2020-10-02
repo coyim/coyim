@@ -6,7 +6,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (m *mucManager) publishRoomEvent(roomID jid.Bare, ev muc.MUC) {
+func (m *mucManager) publishRoomEvent(roomID jid.Bare, ev events.MUC) {
 	room, exists := m.roomManager.GetRoom(roomID)
 	if !exists {
 		m.log.WithField("room", roomID).Error("Trying to publish an event in a room that does not exist")

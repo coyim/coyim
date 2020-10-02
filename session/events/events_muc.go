@@ -1,9 +1,14 @@
 package events
 
 import (
-	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
+
+// MUC is a marker interface that is used to differentiate MUC "events"
+type MUC interface {
+	markAsMUCEventTypeInterface()
+}
 
 // MUCErrorType represents the type of MUC error event
 type MUCErrorType EventType
@@ -53,8 +58,8 @@ type MUCOccupant struct {
 // the updated occupant in a room
 type MUCOccupantUpdated struct {
 	MUCOccupant
-	Affiliation muc.Affiliation
-	Role        muc.Role
+	Affiliation data.Affiliation
+	Role        data.Role
 }
 
 // MUCOccupantJoined contains information about
@@ -74,8 +79,8 @@ type MUCSelfOccupantJoined struct {
 // the occupant that has left the room
 type MUCOccupantLeft struct {
 	MUCOccupant
-	Affiliation muc.Affiliation
-	Role        muc.Role
+	Affiliation data.Affiliation
+	Role        data.Role
 }
 
 // MUCMessageReceived contains information about
@@ -92,38 +97,14 @@ type MUCLoggingEnabled struct{}
 // MUCLoggingDisabled signifies that logging has been turned off from the room
 type MUCLoggingDisabled struct{}
 
-// TODO: Having a marker method for an interface implementation
-// exported is not very nice at all.
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCError) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCRoomCreated) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCRoomRenamed) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCOccupant) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCOccupantUpdated) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCOccupantJoined) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCSelfOccupantJoined) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCOccupantLeft) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCMessageReceived) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCLoggingEnabled) MarkAsMUCInterface() {}
-
-// MarkAsMUCInterface implements the MUC interface
-func (MUCLoggingDisabled) MarkAsMUCInterface() {}
+func (MUCError) markAsMUCEventTypeInterface()              {}
+func (MUCRoomCreated) markAsMUCEventTypeInterface()        {}
+func (MUCRoomRenamed) markAsMUCEventTypeInterface()        {}
+func (MUCOccupant) markAsMUCEventTypeInterface()           {}
+func (MUCOccupantUpdated) markAsMUCEventTypeInterface()    {}
+func (MUCOccupantJoined) markAsMUCEventTypeInterface()     {}
+func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface() {}
+func (MUCOccupantLeft) markAsMUCEventTypeInterface()       {}
+func (MUCMessageReceived) markAsMUCEventTypeInterface()    {}
+func (MUCLoggingEnabled) markAsMUCEventTypeInterface()     {}
+func (MUCLoggingDisabled) markAsMUCEventTypeInterface()    {}

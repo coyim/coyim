@@ -3,6 +3,8 @@ package muc
 import (
 	"sync"
 
+	"github.com/coyim/coyim/session/events"
+
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
@@ -65,12 +67,12 @@ func (r *Room) Roster() *RoomRoster {
 // instead of channels, for more flexibility
 
 // Subscribe subscribes the observer to room events
-func (r *Room) Subscribe(f func(MUC)) {
+func (r *Room) Subscribe(f func(events.MUC)) {
 	r.observers.subscribe(f)
 }
 
 // Publish will publish a new room event
-func (r *Room) Publish(ev MUC) {
+func (r *Room) Publish(ev events.MUC) {
 	r.observers.publishEvent(ev)
 }
 

@@ -63,9 +63,6 @@ func (r *Room) Roster() *RoomRoster {
 	return r.roster
 }
 
-// TODO: change the subscribers to use callback functions
-// instead of channels, for more flexibility
-
 // Subscribe subscribes the observer to room events
 func (r *Room) Subscribe(f func(events.MUC)) {
 	r.observers.subscribe(f)

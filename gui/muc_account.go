@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -40,7 +42,19 @@ func (a *account) newRoomModel(roomID jid.Bare) *muc.Room {
 	return a.session.NewRoom(roomID)
 }
 
+func (a *account) newErrAccountInvalidRoom(roomID jid.Bare) error {
+	return fmt.Errorf("trying to leave a not available room \"%s\" for the account \"%s\"", roomID.String(), a.Account())
+}
+
 func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), onError func(error)) {
+	// We need the room view because if something bad occurr while
+	// leaving the room, we might want to log the error using the room's logger
+	room, exists := a.getRoomView(roomID)
+	if !exists {
+		onError(a.newErrAccountInvalidRoom(roomID))
+		return
+	}
+
 	ok, anyError := a.session.LeaveRoom(roomID, nickname)
 
 	go func() {
@@ -51,8 +65,7 @@ func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), 
 				onSuccess()
 			}
 		case err := <-anyError:
-			// TODO: Would it be possible for us to log this on the room logger?
-			a.log.WithError(err).Error("An error occurred while trying to leave the room.")
+			room.log.WithError(err).Error("An error occurred while trying to leave the room.")
 			if onError != nil {
 				onError(err)
 			}

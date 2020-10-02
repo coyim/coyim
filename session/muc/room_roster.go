@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/roster"
+	"github.com/coyim/coyim/session/muc/data"
 
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -16,8 +17,8 @@ import (
 type OccupantPresenceInfo struct {
 	Nickname      string
 	RealJid       jid.Full
-	Affiliation   Affiliation
-	Role          Role
+	Affiliation   data.Affiliation
+	Role          data.Role
 	Show          string
 	StatusCode    string
 	StatusMessage string
@@ -83,60 +84,60 @@ func (r *RoomRoster) AllOccupants() []*Occupant {
 
 // NoRole returns all occupants that have no role in a room, sorted by nickname
 func (r *RoomRoster) NoRole() []*Occupant {
-	return r.byRole(&noneRole{})
+	return r.byRole(&data.NoneRole{})
 }
 
 // Visitors returns all occupants that have the visitor role in a room, sorted by nickname
 func (r *RoomRoster) Visitors() []*Occupant {
-	return r.byRole(&visitorRole{})
+	return r.byRole(&data.VisitorRole{})
 }
 
 // Participants returns all occupants that have the participant role in a room, sorted by nickname
 func (r *RoomRoster) Participants() []*Occupant {
-	return r.byRole(&participantRole{})
+	return r.byRole(&data.ParticipantRole{})
 }
 
 // Moderators returns all occupants that have the moderator role in a room, sorted by nickname
 func (r *RoomRoster) Moderators() []*Occupant {
-	return r.byRole(&moderatorRole{})
+	return r.byRole(&data.ModeratorRole{})
 }
 
 // NoAffiliation returns all occupants that have no affiliation in a room, sorted by nickname
 func (r *RoomRoster) NoAffiliation() []*Occupant {
-	return r.byAffiliation(&noneAffiliation{})
+	return r.byAffiliation(&data.NoneAffiliation{})
 }
 
 // Banned returns all occupants that are banned in a room, sorted by nickname. This should likely not return anything.
 func (r *RoomRoster) Banned() []*Occupant {
-	return r.byAffiliation(&outcastAffiliation{})
+	return r.byAffiliation(&data.OutcastAffiliation{})
 }
 
 // Members returns all occupants that are members in a room, sorted by nickname.
 func (r *RoomRoster) Members() []*Occupant {
-	return r.byAffiliation(&memberAffiliation{})
+	return r.byAffiliation(&data.MemberAffiliation{})
 }
 
 // Admins returns all occupants that are administrators in a room, sorted by nickname.
 func (r *RoomRoster) Admins() []*Occupant {
-	return r.byAffiliation(&adminAffiliation{})
+	return r.byAffiliation(&data.AdminAffiliation{})
 }
 
 // Owners returns all occupants that are owners in a room, sorted by nickname.
 func (r *RoomRoster) Owners() []*Occupant {
-	return r.byAffiliation(&ownerAffiliation{})
+	return r.byAffiliation(&data.OwnerAffiliation{})
 }
 
 // OccupantsByRole returns all occupants, divided into the different roles
 func (r *RoomRoster) OccupantsByRole() (none, visitors, participants, moderators []*Occupant) {
 	for _, o := range r.AllOccupants() {
 		switch o.Role.(type) {
-		case *noneRole:
+		case *data.NoneRole:
 			none = append(none, o)
-		case *visitorRole:
+		case *data.VisitorRole:
 			visitors = append(visitors, o)
-		case *participantRole:
+		case *data.ParticipantRole:
 			participants = append(participants, o)
-		case *moderatorRole:
+		case *data.ModeratorRole:
 			moderators = append(moderators, o)
 		}
 	}
@@ -148,15 +149,15 @@ func (r *RoomRoster) OccupantsByRole() (none, visitors, participants, moderators
 func (r *RoomRoster) OccupantsByAffiliation() (none, banned, members, admins, owners []*Occupant) {
 	for _, o := range r.AllOccupants() {
 		switch o.Affiliation.(type) {
-		case *noneAffiliation:
+		case *data.NoneAffiliation:
 			none = append(none, o)
-		case *outcastAffiliation:
+		case *data.OutcastAffiliation:
 			banned = append(banned, o)
-		case *memberAffiliation:
+		case *data.MemberAffiliation:
 			members = append(members, o)
-		case *adminAffiliation:
+		case *data.AdminAffiliation:
 			admins = append(admins, o)
-		case *ownerAffiliation:
+		case *data.OwnerAffiliation:
 			owners = append(owners, o)
 		}
 	}

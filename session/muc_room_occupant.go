@@ -2,11 +2,12 @@ package session
 
 import (
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
 
-func newMUCRoomOccupant(nickname string, affiliation muc.Affiliation, role muc.Role, realJid jid.Full) *muc.Occupant {
+func newMUCRoomOccupant(nickname string, affiliation data.Affiliation, role data.Role, realJid jid.Full) *muc.Occupant {
 	return &muc.Occupant{
 		Nickname:    nickname,
 		Affiliation: affiliation,

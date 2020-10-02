@@ -5,7 +5,8 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/muc/data"
+	xmppData "github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -52,7 +53,7 @@ func (m *mucManager) newRoom(roomID jid.Bare) *muc.Room {
 	return room
 }
 
-func (m *mucManager) handlePresence(stanza *data.ClientPresence) {
+func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 	from := jid.ParseFull(stanza.From)
 
 	if stanza.Type == "error" {
@@ -173,19 +174,19 @@ func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.Occupant
 	}
 }
 
-func (m *mucManager) handleMUCErrorPresence(from jid.Full, stanza *data.ClientPresence) {
+func (m *mucManager) handleMUCErrorPresence(from jid.Full, stanza *xmppData.ClientPresence) {
 	m.publishMUCError(from, stanza.Error)
 }
 
-func isMUCPresence(stanza *data.ClientPresence) bool {
+func isMUCPresence(stanza *xmppData.ClientPresence) bool {
 	return stanza.MUC != nil
 }
 
-func isMUCUserPresence(stanza *data.ClientPresence) bool {
+func isMUCUserPresence(stanza *xmppData.ClientPresence) bool {
 	return stanza.MUCUser != nil
 }
 
-func getOccupantPresenceBasedOnItem(nickname jid.Resource, item *data.MUCUserItem) *muc.OccupantPresenceInfo {
+func getOccupantPresenceBasedOnItem(nickname jid.Resource, item *xmppData.MUCUserItem) *muc.OccupantPresenceInfo {
 	realJid := getRealJidBasedOnItem(item)
 	affiliation := getAffiliationBasedOnItem(item)
 	role := getRoleBasedOnItem(item)
@@ -200,7 +201,7 @@ func getOccupantPresenceBasedOnItem(nickname jid.Resource, item *data.MUCUserIte
 	return op
 }
 
-func getAffiliationBasedOnItem(item *data.MUCUserItem) muc.Affiliation {
+func getAffiliationBasedOnItem(item *xmppData.MUCUserItem) data.Affiliation {
 	affiliation := "none"
 	if item != nil && len(item.Affiliation) > 0 {
 		affiliation = item.Affiliation
@@ -209,12 +210,12 @@ func getAffiliationBasedOnItem(item *data.MUCUserItem) muc.Affiliation {
 	return affiliationFromString(affiliation)
 }
 
-func affiliationFromString(a string) muc.Affiliation {
-	affiliation, _ := muc.AffiliationFromString(a)
+func affiliationFromString(a string) data.Affiliation {
+	affiliation, _ := data.AffiliationFromString(a)
 	return affiliation
 }
 
-func getRoleBasedOnItem(item *data.MUCUserItem) muc.Role {
+func getRoleBasedOnItem(item *xmppData.MUCUserItem) data.Role {
 	role := "none"
 	if item != nil && len(item.Role) > 0 {
 		role = item.Role
@@ -223,12 +224,12 @@ func getRoleBasedOnItem(item *data.MUCUserItem) muc.Role {
 	return roleFromString(role)
 }
 
-func roleFromString(r string) muc.Role {
-	role, _ := muc.RoleFromString(r)
+func roleFromString(r string) data.Role {
+	role, _ := data.RoleFromString(r)
 	return role
 }
 
-func getRealJidBasedOnItem(item *data.MUCUserItem) jid.Full {
+func getRealJidBasedOnItem(item *xmppData.MUCUserItem) jid.Full {
 	if item == nil || len(item.Jid) == 0 {
 		return nil
 	}

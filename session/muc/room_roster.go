@@ -164,26 +164,20 @@ func (r *RoomRoster) OccupantsByAffiliation() (none, banned, members, admins, ow
 	return
 }
 
-// UpdateNick should be called when receiving an unavailable with status code 303
+// UpdateNickname should be called when receiving an unavailable with status code 303
 // The new nickname should be given without the room name
-func (r *RoomRoster) UpdateNick(from jid.WithResource, newNick string) error {
+func (r *RoomRoster) UpdateNickname(nickname, newNickname string) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	// TODO: from should not be WithResource, it should be jid.Full
-
-	base := from.NoResource()
-	newFull := base.WithResource(jid.NewResource(newNick))
-
-	// TODO: Occupants is only stored with nicknames, so the below is not correct anymore
-	oc, ok := r.occupants[from.String()]
+	oc, ok := r.occupants[nickname]
 	if !ok {
 		return errors.New("no such occupant known in this room")
 	}
 
-	oc.Nickname = newNick
-	delete(r.occupants, from.String())
-	r.occupants[newFull.String()] = oc
+	oc.Nickname = newNickname
+	delete(r.occupants, nickname)
+	r.occupants[newNickname] = oc
 
 	return nil
 }

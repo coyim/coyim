@@ -214,18 +214,18 @@ func (s *MucSuite) Test_RoomRoster_OccupantsByAffiliation(c *C) {
 	c.Assert(r5, HasLen, 0)
 }
 
-func (s *MucSuite) Test_RoomRoster_UpdateNick(c *C) {
+func (s *MucSuite) Test_RoomRoster_UpdateNickname(c *C) {
 	rr := newRoomRoster()
-	e := rr.UpdateNick(jid.ParseFull("foo@somewhere.com/bello"), "something")
+	e := rr.UpdateNickname("bello", "something")
 	c.Assert(e, ErrorMatches, "no such occupant known in this room")
 
 	occ := newRosterOccupantForTest("bello", "", nil, nil)
-	rr.occupants["foo@somewhere.com/bello"] = occ
+	rr.occupants["bello"] = occ
 
-	e = rr.UpdateNick(jid.ParseFull("foo@somewhere.com/bello"), "baxa")
+	e = rr.UpdateNickname("bello", "baxa")
 	c.Assert(e, IsNil)
 	c.Assert(occ.Nickname, Equals, "baxa")
-	newOcc, ok := rr.occupants["foo@somewhere.com/baxa"]
+	newOcc, ok := rr.occupants["baxa"]
 	c.Assert(ok, Equals, true)
 	c.Assert(newOcc, Equals, occ)
 }

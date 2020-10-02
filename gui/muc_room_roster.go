@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -93,28 +94,28 @@ func (r *roomViewRoster) getOccupantIcon() Icon {
 	return statusIcons["occupant"]
 }
 
-func (r *roomViewRoster) affiliationDisplayName(a muc.Affiliation) string {
+func (r *roomViewRoster) affiliationDisplayName(a data.Affiliation) string {
 	switch a.Name() {
-	case muc.AffiliationAdmin:
+	case data.AffiliationAdmin:
 		return i18n.Local("Admin")
-	case muc.AffiliationOwner:
+	case data.AffiliationOwner:
 		return i18n.Local("Owner")
-	case muc.AffiliationOutcast:
+	case data.AffiliationOutcast:
 		return i18n.Local("Outcast")
 	default: // Member or other values get the default treatment
 		return ""
 	}
 }
 
-func (r *roomViewRoster) roleDisplayName(role muc.Role) string {
+func (r *roomViewRoster) roleDisplayName(role data.Role) string {
 	switch role.Name() {
-	case muc.RoleNone:
+	case data.RoleNone:
 		return i18n.Local("None")
-	case muc.RoleParticipant:
+	case data.RoleParticipant:
 		return i18n.Local("Participant")
-	case muc.RoleVisitor:
+	case data.RoleVisitor:
 		return i18n.Local("Visitor")
-	case muc.RoleModerator:
+	case data.RoleModerator:
 		return i18n.Local("Moderator")
 	default:
 		// This should not really be possible, but it is necessary

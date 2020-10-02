@@ -12,12 +12,14 @@ type mucJoinRoomView struct {
 	u  *gtkUI
 	ac *connectedAccountsComponent
 
-	dialog           gtki.Dialog  `gtk-widget:"join-chat-dialog"`
-	roomNameEntry    gtki.Entry   `gtk-widget:"room-name-entry"`
-	chatServiceEntry gtki.Entry   `gtk-widget:"chat-service-entry"`
-	joinButton       gtki.Button  `gtk-widget:"join-button"`
-	spinner          gtki.Spinner `gtk-widget:"spinner"`
-	notificationArea gtki.Box     `gtk-widget:"box-notification-area"`
+	dialog           gtki.Dialog `gtk-widget:"join-chat-dialog"`
+	roomNameEntry    gtki.Entry  `gtk-widget:"room-name-entry"`
+	chatServiceEntry gtki.Entry  `gtk-widget:"chat-service-entry"`
+	joinButton       gtki.Button `gtk-widget:"join-button"`
+	spinnerBox       gtki.Box    `gtk-widget:"spinner-box"`
+	notificationArea gtki.Box    `gtk-widget:"notification-area-box"`
+
+	spinner *spinner
 
 	notification gtki.InfoBar
 	errorNotif   *errorNotification
@@ -33,18 +35,6 @@ func (v *mucJoinRoomView) notifyOnError(err string) {
 	}
 
 	v.errorNotif.ShowMessage(err)
-}
-
-// TODO: Maybe we should extract some spinner logic into a component - we do this in a lot of places
-
-func (v *mucJoinRoomView) showSpinner() {
-	v.spinner.Start()
-	v.spinner.Show()
-}
-
-func (v *mucJoinRoomView) hideSpinner() {
-	v.spinner.Stop()
-	v.spinner.Hide()
 }
 
 func (v *mucJoinRoomView) typedRoomName() string {
@@ -64,12 +54,12 @@ func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 func (v *mucJoinRoomView) beforeJoiningRoom() {
 	v.clearErrors()
 	v.disableJoinFields()
-	v.showSpinner()
+	v.spinner.show()
 }
 
 func (v *mucJoinRoomView) onJoinSuccess(a *account, roomID jid.Bare, roomInfo *muc.RoomListing) {
 	doInUIThread(func() {
-		v.hideSpinner()
+		v.spinner.hide()
 		v.dialog.Hide()
 		v.u.joinRoom(a, roomID, v.returnToJoinRoomView)
 	})
@@ -85,13 +75,13 @@ func (v *mucJoinRoomView) onJoinFails(a *account, roomID jid.Bare) {
 	doInUIThread(func() {
 		v.notifyOnError(i18n.Local("The room doesn't exist on that service."))
 		v.enableJoinFields()
-		v.hideSpinner()
+		v.spinner.hide()
 	})
 }
 
 func (v *mucJoinRoomView) onJoinError(a *account, roomID jid.Bare, err error) {
 	doInUIThread(func() {
-		v.hideSpinner()
+		v.spinner.hide()
 		v.enableJoinFields()
 		v.notifyOnError(i18n.Local("It looks like the room you are trying to connect to doesn't exist, please verify the provided information."))
 		a.log.WithField("room", roomID).WithError(err).Warn("An error occurred trying to find the room")
@@ -103,7 +93,7 @@ func (v *mucJoinRoomView) onServiceUnavailable(a *account, roomID jid.Bare) {
 	doInUIThread(func() {
 		v.notifyOnError(i18n.Local("We can't get access to the service, please check your Internet connection or make sure the service exists."))
 		v.enableJoinFields()
-		v.hideSpinner()
+		v.spinner.hide()
 	})
 }
 
@@ -175,7 +165,6 @@ func doOnlyOnceAtATime(f func(func())) func() {
 
 func (v *mucJoinRoomView) init() {
 	builder := newBuilder("MUCJoinRoomDialog")
-
 	panicOnDevError(builder.bindObjects(v))
 
 	v.errorNotif = newErrorNotification(v.notificationArea)
@@ -195,6 +184,9 @@ func (v *mucJoinRoomView) init() {
 		"on_cancel_clicked":      v.dialog.Destroy,
 		"on_join_clicked":        doOnlyOnceAtATime(v.tryJoinRoom),
 	})
+
+	v.spinner = newSpinner()
+	v.spinnerBox.Add(v.spinner.getWidget())
 }
 
 func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {

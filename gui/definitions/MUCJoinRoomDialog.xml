@@ -1,7 +1,6 @@
 <interface>
   <object class="GtkDialog" id="join-chat-dialog">
     <property name="width_request">480</property>
-    <property name="border_width">5</property>
     <property name="title" translatable="yes">Join a chat room</property>
     <property name="window_position">center</property>
     <property name="destroy_with_parent">True</property>
@@ -10,57 +9,95 @@
     <signal name="close" handler="on_close_window" swapped="no"/>
     <signal name="destroy" handler="on_close_window" swapped="no"/>
     <child internal-child="vbox">
-      <object class="GtkBox" id="layout">
+      <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="buttons">
             <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="layout_style">expand</property>
             <child>
-              <object class="GtkSpinner" id="spinner">
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="halign">end</property>
-                <property name="valign">center</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="pack_type">end</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="cancel-button">
-                <property name="label" translatable="yes">_Cancel</property>
-                <property name="visible">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="border_width">0</property>
+                <child>
+                  <object class="GtkBox" id="spinner-box">
+                    <property name="visible">True</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButtonBox">
+                    <property name="visible">True</property>
+                    <property name="border_width">12</property>
+                    <property name="spacing">12</property>
+                    <child>
+                      <object class="GtkButton" id="cancel-button">
+                        <property name="label" translatable="yes">_Cancel</property>
+                        <property name="visible">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_underline">True</property>
+                        <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="join-button">
+                        <property name="label" translatable="yes">_Continue</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_underline">True</property>
+                        <signal name="clicked" handler="on_join_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="join-button">
-                <property name="label" translatable="yes">_Continue</property>
-                <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="receives_default">True</property>
-                <property name="use_underline">True</property>
-                <signal name="clicked" handler="on_join_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">0</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="notification-area-box">
+            <property name="visible">True</property>
+            <property name="margin_bottom">12</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -68,31 +105,13 @@
           <object class="GtkBox" id="content">
             <property name="visible">True</property>
             <property name="valign">center</property>
-            <property name="margin_left">10</property>
-            <property name="margin_right">10</property>
-            <property name="margin_top">5</property>
-            <property name="margin_bottom">5</property>
+            <property name="border_width">12</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
-            <child>
-              <object class="GtkBox" id="box-notification-area">
-                <property name="orientation">vertical</property>
-                <style>
-                  <class name="notifications"/>
-                </style>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkGrid" id="controls">
                 <property name="visible">True</property>
                 <property name="valign">center</property>
-                <property name="margin_top">10</property>
-                <property name="margin_bottom">10</property>
                 <property name="row_spacing">6</property>
                 <property name="column_spacing">12</property>
                 <property name="row_homogeneous">True</property>

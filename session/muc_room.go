@@ -35,7 +35,7 @@ type hasRoomContext struct {
 	log             coylog.Logger
 }
 
-func (rc *hasRoomContext) exec(wantRoomInfo chan<- *muc.RoomListing) {
+func (rc *hasRoomContext) checkIfRoomExists(wantRoomInfo chan<- *muc.RoomListing) {
 	steps := []func() (bool, error){
 		rc.searchEntityOnServer,
 		rc.discoverFeaturesAndIdentities,
@@ -101,7 +101,7 @@ func (rc *hasRoomContext) hasRoomFeature() (bool, error) {
 }
 
 func (s *session) HasRoom(roomID jid.Bare, wantRoomInfo chan<- *muc.RoomListing) (<-chan bool, <-chan error) {
-	rc := &hasRoomContext{
+	c := &hasRoomContext{
 		s:             s,
 		roomID:        roomID,
 		resultChannel: make(chan bool),
@@ -109,9 +109,9 @@ func (s *session) HasRoom(roomID jid.Bare, wantRoomInfo chan<- *muc.RoomListing)
 		log:           s.log.WithField("room", roomID),
 	}
 
-	go rc.exec(wantRoomInfo)
+	go c.checkIfRoomExists(wantRoomInfo)
 
-	return rc.resultChannel, rc.errorChannel
+	return c.resultChannel, c.errorChannel
 }
 
 // GetRoom will block, waiting to get the room information

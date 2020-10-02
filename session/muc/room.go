@@ -16,10 +16,8 @@ type Room struct {
 	// is too tight. We should think about other ways to represent this
 	Joined bool
 
-	// TODO: I don't like the name of this field. A Room has many occupants,
-	// what makes this one special?
-	Occupant *Occupant
-	roster   *RoomRoster
+	selfOccupant *Occupant
+	roster       *RoomRoster
 
 	observers *roomObservers
 
@@ -54,6 +52,21 @@ func NewRoom(roomID jid.Bare) *Room {
 	}
 }
 
+// SelfOccupant returns the self occupant of the room
+func (r *Room) SelfOccupant() *Occupant {
+	return r.selfOccupant
+}
+
+//SelfOccupantNickname returns the nickname of the room's self occupant
+func (r *Room) SelfOccupantNickname() string {
+	o := r.SelfOccupant()
+	if o != nil {
+		return o.Nickname
+	}
+
+	return ""
+}
+
 // Roster returns the RoomRoster for this room
 func (r *Room) Roster() *RoomRoster {
 	return r.roster
@@ -72,5 +85,5 @@ func (r *Room) Publish(ev events.MUC) {
 // AddSelfOccupant set the own occupant of the room
 func (r *Room) AddSelfOccupant(occupant *Occupant) {
 	r.Joined = true
-	r.Occupant = occupant
+	r.selfOccupant = occupant
 }

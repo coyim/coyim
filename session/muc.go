@@ -80,7 +80,6 @@ func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 			m.handleOccupantUpdate(roomID, occupantPresence)
 		}
 
-		// TODO: is this only sent for own presence, or for changes for other nicknames?
 		if status.contains(MUCStatusNicknameAssigned) {
 			m.roomRenamed(roomID)
 		}

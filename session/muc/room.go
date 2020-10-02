@@ -1,8 +1,6 @@
 package muc
 
 import (
-	"sync"
-
 	"github.com/coyim/coyim/session/events"
 
 	"github.com/coyim/coyim/xmpp/jid"
@@ -24,8 +22,6 @@ type Room struct {
 	roster   *RoomRoster
 
 	observers *roomObservers
-
-	once sync.Once
 
 	// Configuration options:
 
@@ -75,12 +71,6 @@ func (r *Room) Publish(ev events.MUC) {
 
 // AddSelfOccupant set the own occupant of the room
 func (r *Room) AddSelfOccupant(occupant *Occupant) {
-	// TODO: this logic probably belongs in the muc manager
-	// where we can do different things directly depending on
-	// whether the self occupant has joined or not
-
-	r.once.Do(func() {
-		r.Joined = true
-		r.Occupant = occupant
-	})
+	r.Joined = true
+	r.Occupant = occupant
 }

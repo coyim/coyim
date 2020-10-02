@@ -141,76 +141,82 @@ func (rl *RoomListing) SetFormsData(forms []data.Form) {
 	defer rl.lockUpdates.Unlock()
 
 	for _, form := range forms {
-		formData := extractFormData(form.Fields)
-		rl.handleFormData(form, formData)
-	}
-}
-
-func (rl *RoomListing) handleFormData(form data.Form, formData map[string][]string) {
-	if form.Type == "result" && len(formData["FORM_TYPE"]) > 0 && formData["FORM_TYPE"][0] == "http://jabber.org/protocol/muc#roominfo" {
-		for k, val := range formData {
-			rl.setFormData(k, val)
+		fields := formFieldsToKeyValue(form.Fields)
+		if isValidRoomInfoForm(form, fields) {
+			rl.updateWithFormFields(form, fields)
 		}
 	}
 }
 
-func (rl *RoomListing) setFormData(formType string, formValue []string) {
-	switch formType {
+func (rl *RoomListing) updateWithFormFields(form data.Form, fields map[string][]string) {
+	for field, values := range fields {
+		rl.updateWithFormField(field, values)
+	}
+}
+
+func (rl *RoomListing) updateWithFormField(field string, values []string) {
+	switch field {
 	case "FORM_TYPE":
 		// Ignore, we already checked
 	case "muc#roominfo_lang":
-		if len(formValue) > 0 {
-			rl.Language = formValue[0]
+		if len(values) > 0 {
+			rl.Language = values[0]
 		}
 	case "muc#roominfo_changesubject":
-		if len(formValue) > 0 {
-			rl.OccupantsCanChangeSubject = formValue[0] == "1"
+		if len(values) > 0 {
+			rl.OccupantsCanChangeSubject = values[0] == "1"
 		}
 	case "muc#roomconfig_enablelogging":
-		if len(formValue) > 0 {
-			rl.Logged = formValue[0] == "1"
+		if len(values) > 0 {
+			rl.Logged = values[0] == "1"
 		}
 	case "muc#roomconfig_roomname":
 		// Room name - we already have this
 	case "muc#roominfo_description":
-		if len(formValue) > 0 {
-			rl.Description = formValue[0]
+		if len(values) > 0 {
+			rl.Description = values[0]
 		}
 	case "muc#roominfo_occupants":
-		if len(formValue) > 0 {
-			res, e := strconv.Atoi(formValue[0])
+		if len(values) > 0 {
+			res, e := strconv.Atoi(values[0])
 			if e != nil {
 				rl.Occupants = res
 			}
 		}
 	case "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites":
-		if len(formValue) > 0 {
-			rl.MembersCanInvite = formValue[0] == "1"
+		if len(values) > 0 {
+			rl.MembersCanInvite = values[0] == "1"
 		}
 	case "muc#roomconfig_allowinvites":
-		if len(formValue) > 0 {
-			rl.OccupantsCanInvite = formValue[0] == "1"
+		if len(values) > 0 {
+			rl.OccupantsCanInvite = values[0] == "1"
 		}
 	case "muc#roomconfig_allowpm":
-		if len(formValue) > 0 {
-			rl.AllowPrivateMessages = formValue[0]
+		if len(values) > 0 {
+			rl.AllowPrivateMessages = values[0]
 		}
 	case "muc#roominfo_contactjid":
-		if len(formValue) > 0 {
-			rl.ContactJid = formValue[0]
+		if len(values) > 0 {
+			rl.ContactJid = values[0]
 		}
 	default:
-		fmt.Printf("UNKNOWN FORM VAR: %s\n", formType)
+		fmt.Printf("UNKNOWN FORM VAR: %s\n", field)
 	}
 }
 
-// TODO: The name is a bit weird
-
-func extractFormData(fields []data.FormFieldX) map[string][]string {
+func formFieldsToKeyValue(fields []data.FormFieldX) map[string][]string {
 	result := make(map[string][]string)
 	for _, field := range fields {
 		result[field.Var] = field.Values
 	}
 
 	return result
+}
+
+func isValidRoomInfoForm(form data.Form, fields map[string][]string) bool {
+	return form.Type == "result" && hasRoomInfoFormType(fields)
+}
+
+func hasRoomInfoFormType(fields map[string][]string) bool {
+	return len(fields["FORM_TYPE"]) > 0 && fields["FORM_TYPE"][0] == "http://jabber.org/protocol/muc#roominfo"
 }

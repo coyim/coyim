@@ -3,6 +3,7 @@ package muc
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"sort"
 	"sync"
 
@@ -49,6 +50,30 @@ func (r *RoomRoster) occupantList() []*Occupant {
 	return result
 }
 
+func (r *RoomRoster) byRole(role interface{}) []*Occupant {
+	result := []*Occupant{}
+
+	for _, o := range r.AllOccupants() {
+		if areTheSameType(role, o.Role) {
+			result = append(result, o)
+		}
+	}
+
+	return result
+}
+
+func (r *RoomRoster) byAffiliation(affiliation interface{}) []*Occupant {
+	result := []*Occupant{}
+
+	for _, o := range r.AllOccupants() {
+		if areTheSameType(affiliation, o.Affiliation) {
+			result = append(result, o)
+		}
+	}
+
+	return result
+}
+
 // AllOccupants returns a list of all occupants in the room, sorted by nickname
 func (r *RoomRoster) AllOccupants() []*Occupant {
 	result := r.occupantList()
@@ -58,131 +83,85 @@ func (r *RoomRoster) AllOccupants() []*Occupant {
 
 // NoRole returns all occupants that have no role in a room, sorted by nickname
 func (r *RoomRoster) NoRole() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Role.(*noneRole); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byRole(&noneRole{})
 }
 
 // Visitors returns all occupants that have the visitor role in a room, sorted by nickname
 func (r *RoomRoster) Visitors() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Role.(*visitorRole); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byRole(&visitorRole{})
 }
 
 // Participants returns all occupants that have the participant role in a room, sorted by nickname
 func (r *RoomRoster) Participants() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Role.(*participantRole); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byRole(&participantRole{})
 }
 
 // Moderators returns all occupants that have the moderator role in a room, sorted by nickname
 func (r *RoomRoster) Moderators() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Role.(*moderatorRole); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byRole(&moderatorRole{})
 }
 
 // NoAffiliation returns all occupants that have no affiliation in a room, sorted by nickname
 func (r *RoomRoster) NoAffiliation() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Affiliation.(*noneAffiliation); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byAffiliation(&noneAffiliation{})
 }
 
 // Banned returns all occupants that are banned in a room, sorted by nickname. This should likely not return anything.
 func (r *RoomRoster) Banned() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Affiliation.(*outcastAffiliation); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byAffiliation(&outcastAffiliation{})
 }
 
 // Members returns all occupants that are members in a room, sorted by nickname.
 func (r *RoomRoster) Members() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Affiliation.(*memberAffiliation); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byAffiliation(&memberAffiliation{})
 }
 
 // Admins returns all occupants that are administrators in a room, sorted by nickname.
 func (r *RoomRoster) Admins() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Affiliation.(*adminAffiliation); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byAffiliation(&adminAffiliation{})
 }
 
 // Owners returns all occupants that are owners in a room, sorted by nickname.
 func (r *RoomRoster) Owners() []*Occupant {
-	result := []*Occupant{}
-
-	for _, o := range r.AllOccupants() {
-		if _, ok := o.Affiliation.(*ownerAffiliation); ok {
-			result = append(result, o)
-		}
-	}
-
-	return result
+	return r.byAffiliation(&ownerAffiliation{})
 }
 
 // OccupantsByRole returns all occupants, divided into the different roles
 func (r *RoomRoster) OccupantsByRole() (none, visitors, participants, moderators []*Occupant) {
-	// TODO: This should be made thread safe
-	return r.NoRole(), r.Visitors(), r.Participants(), r.Moderators()
+	for _, o := range r.AllOccupants() {
+		switch o.Role.(type) {
+		case *noneRole:
+			none = append(none, o)
+		case *visitorRole:
+			visitors = append(visitors, o)
+		case *participantRole:
+			participants = append(participants, o)
+		case *moderatorRole:
+			moderators = append(moderators, o)
+		}
+	}
+
+	return
 }
 
 // OccupantsByAffiliation returns all occupants, divided into the different affiliations
 func (r *RoomRoster) OccupantsByAffiliation() (none, banned, members, admins, owners []*Occupant) {
-	// TODO: This should be made thread safe
-	return r.NoAffiliation(), r.Banned(), r.Members(), r.Admins(), r.Owners()
+	for _, o := range r.AllOccupants() {
+		switch o.Affiliation.(type) {
+		case *noneAffiliation:
+			none = append(none, o)
+		case *outcastAffiliation:
+			banned = append(banned, o)
+		case *memberAffiliation:
+			members = append(members, o)
+		case *adminAffiliation:
+			admins = append(admins, o)
+		case *ownerAffiliation:
+			owners = append(owners, o)
+		}
+	}
+
+	return
 }
 
 // UpdateNick should be called when receiving an unavailable with status code 303
@@ -282,4 +261,8 @@ func (r *RoomRoster) GetOccupant(nickname string) (*Occupant, bool) {
 
 	o, ok := r.occupants[nickname]
 	return o, ok
+}
+
+func areTheSameType(v1 interface{}, v2 interface{}) bool {
+	return reflect.TypeOf(v1) == reflect.TypeOf(v2)
 }

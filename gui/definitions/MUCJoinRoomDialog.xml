@@ -1,7 +1,8 @@
 <interface>
   <object class="GtkDialog" id="join-chat-dialog">
-    <property name="width_request">480</property>
+    <property name="width_request">580</property>
     <property name="title" translatable="yes">Join a chat room</property>
+    <property name="resizable">False</property>
     <property name="window_position">center</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
@@ -14,8 +15,9 @@
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="buttons">
             <property name="visible">True</property>
+            <property name="valign">center</property>
             <property name="hexpand">True</property>
-            <property name="layout_style">expand</property>
+            <property name="layout_style">end</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
@@ -44,13 +46,15 @@
                         <property name="label" translatable="yes">_Cancel</property>
                         <property name="visible">True</property>
                         <property name="receives_default">True</property>
+                        <property name="relief">none</property>
                         <property name="use_underline">True</property>
                         <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
+                        <property name="non_homogeneous">True</property>
                       </packing>
                     </child>
                     <child>
@@ -60,18 +64,22 @@
                         <property name="sensitive">False</property>
                         <property name="receives_default">True</property>
                         <property name="use_underline">True</property>
+                        <property name="image_position">right</property>
                         <signal name="clicked" handler="on_join_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
+                        <property name="pack_type">end</property>
                         <property name="position">1</property>
+                        <property name="non_homogeneous">True</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
+                    <property name="pack_type">end</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -104,7 +112,6 @@
         <child>
           <object class="GtkBox" id="content">
             <property name="visible">True</property>
-            <property name="valign">center</property>
             <property name="border_width">12</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
@@ -181,7 +188,7 @@
                   <object class="GtkEntry" id="chat-service-entry">
                     <property name="visible">True</property>
                     <property name="placeholder_text" translatable="yes">Enter the location</property>
-                    <signal name="changed" handler="on_chatService_changed" swapped="no"/>
+                    <signal name="changed" handler="on_service_changed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -197,7 +204,7 @@
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>

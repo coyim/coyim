@@ -9,8 +9,9 @@ import (
 )
 
 type mucJoinRoomView struct {
-	u  *gtkUI
-	ac *connectedAccountsComponent
+	u       *gtkUI
+	builder *builder
+	ac      *connectedAccountsComponent
 
 	dialog           gtki.Dialog `gtk-widget:"join-chat-dialog"`
 	roomNameEntry    gtki.Entry  `gtk-widget:"room-name-entry"`
@@ -19,22 +20,60 @@ type mucJoinRoomView struct {
 	spinnerBox       gtki.Box    `gtk-widget:"spinner-box"`
 	notificationArea gtki.Box    `gtk-widget:"notification-area-box"`
 
-	spinner *spinner
-
-	notification gtki.InfoBar
-	errorNotif   *errorNotification
+	spinner       *spinner
+	notifications *notifications
 }
 
-func (v *mucJoinRoomView) clearErrors() {
-	v.errorNotif.Hide()
-}
-
-func (v *mucJoinRoomView) notifyOnError(err string) {
-	if v.notification != nil {
-		v.notificationArea.Remove(v.notification)
+func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
+	view := &mucJoinRoomView{
+		u: u,
 	}
 
-	v.errorNotif.ShowMessage(err)
+	view.initBuilder()
+	view.initNotifications()
+	view.initConnectedAccounts()
+	view.initDefaults()
+
+	u.connectShortcutsChildWindow(view.dialog)
+
+	return view
+}
+
+func (v *mucJoinRoomView) initBuilder() {
+	v.builder = newBuilder("MUCJoinRoomDialog")
+	panicOnDevError(v.builder.bindObjects(v))
+
+	v.builder.ConnectSignals(map[string]interface{}{
+		"on_close_window":     v.onCloseWindow,
+		"on_roomname_changed": v.enableJoinIfConditionsAreMet,
+		"on_service_changed":  v.enableJoinIfConditionsAreMet,
+		"on_cancel_clicked":   v.dialog.Destroy,
+		"on_join_clicked":     doOnlyOnceAtATime(v.tryJoinRoom),
+	})
+}
+
+func (v *mucJoinRoomView) initNotifications() {
+	v.notifications = v.u.newNotifications(v.notificationArea, nil)
+}
+
+func (v *mucJoinRoomView) initConnectedAccounts() {
+	accountsInput := v.builder.get("accounts").(gtki.ComboBox)
+	v.ac = v.u.createConnectedAccountsComponent(accountsInput, v.notifications, func(a *account) {
+		doInUIThread(v.enableJoinIfConditionsAreMet)
+	}, func() {
+		doInUIThread(v.enableJoinIfConditionsAreMet)
+	})
+}
+
+func (v *mucJoinRoomView) initDefaults() {
+	v.spinner = newSpinner()
+	v.spinnerBox.Add(v.spinner.getWidget())
+}
+
+func (v *mucJoinRoomView) onCloseWindow() {
+	if v.ac != nil {
+		v.ac.onDestroy()
+	}
 }
 
 func (v *mucJoinRoomView) typedRoomName() string {
@@ -52,7 +91,7 @@ func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 }
 
 func (v *mucJoinRoomView) beforeJoiningRoom() {
-	v.clearErrors()
+	v.notifications.clearErrors()
 	v.disableJoinFields()
 	v.spinner.show()
 }
@@ -72,26 +111,29 @@ func (v *mucJoinRoomView) returnToJoinRoomView() {
 
 func (v *mucJoinRoomView) onJoinFails(a *account, roomID jid.Bare) {
 	a.log.WithField("room", roomID).Warn("The room doesn't exist")
+
 	doInUIThread(func() {
-		v.notifyOnError(i18n.Local("The room doesn't exist on that service."))
+		v.notifications.error(i18n.Local("The room doesn't exist on that service."))
 		v.enableJoinFields()
 		v.spinner.hide()
 	})
 }
 
 func (v *mucJoinRoomView) onJoinError(a *account, roomID jid.Bare, err error) {
+	a.log.WithField("room", roomID).WithError(err).Warn("An error occurred trying to find the room")
+
 	doInUIThread(func() {
-		v.spinner.hide()
+		v.notifications.error(i18n.Local("It looks like the room you are trying to connect to doesn't exist, please verify the provided information."))
 		v.enableJoinFields()
-		v.notifyOnError(i18n.Local("It looks like the room you are trying to connect to doesn't exist, please verify the provided information."))
-		a.log.WithField("room", roomID).WithError(err).Warn("An error occurred trying to find the room")
+		v.spinner.hide()
 	})
 }
 
 func (v *mucJoinRoomView) onServiceUnavailable(a *account, roomID jid.Bare) {
 	a.log.WithField("room", roomID).Warn("An error occurred trying to find the room")
+
 	doInUIThread(func() {
-		v.notifyOnError(i18n.Local("We can't get access to the service, please check your Internet connection or make sure the service exists."))
+		v.notifications.error(i18n.Local("We can't get access to the service, please check your Internet connection or make sure the service exists."))
 		v.enableJoinFields()
 		v.spinner.hide()
 	})
@@ -115,7 +157,7 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 	local := jid.NewLocal(roomName)
 	if !local.Valid() {
 		v.log().WithField("local", roomName).Error("Trying to join a room with an invalid local")
-		v.notifyOnError(i18n.Local("You must provide a valid room name."))
+		v.notifications.error(i18n.Local("You must provide a valid room name."))
 		return nil, false
 	}
 
@@ -123,7 +165,7 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 	domain := jid.NewDomain(chatServiceName)
 	if !domain.Valid() {
 		v.log().WithField("domain", chatServiceName).Error("Trying to join a room with an invalid domain")
-		v.notifyOnError(i18n.Local("You must provide a valid service name."))
+		v.notifications.error(i18n.Local("You must provide a valid service name."))
 		return nil, false
 	}
 
@@ -139,66 +181,13 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 
 	ca := v.ac.currentAccount()
 	if ca == nil {
-		v.notifyOnError(i18n.Local("No account was selected, select an account from the list or enable one."))
+		v.notifications.error(i18n.Local("No account was selected, select an account from the list or enable one."))
 		return
 	}
 
 	c := v.newJoinRoomContext(ca, roomID, done)
 
 	c.joinRoom()
-}
-
-func doOnlyOnceAtATime(f func(func())) func() {
-	isDoing := false
-	return func() {
-		if isDoing {
-			return
-		}
-		isDoing = true
-		// The "done" function should be called ONLY from the UI thread,
-		// in other cases it's not "safe" executing it.
-		f(func() {
-			isDoing = false
-		})
-	}
-}
-
-func (v *mucJoinRoomView) init() {
-	builder := newBuilder("MUCJoinRoomDialog")
-	panicOnDevError(builder.bindObjects(v))
-
-	v.errorNotif = newErrorNotification(v.notificationArea)
-
-	accountsInput := builder.get("accounts").(gtki.ComboBox)
-	v.ac = v.u.createConnectedAccountsComponent(accountsInput, v, func(a *account) {
-		doInUIThread(v.enableJoinIfConditionsAreMet)
-	}, func() {
-		doInUIThread(v.enableJoinIfConditionsAreMet)
-	})
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_close_window":        v.ac.onDestroy,
-		"on_roomname_changed":    v.enableJoinIfConditionsAreMet,
-		"on_chatService_changed": v.enableJoinIfConditionsAreMet,
-		"on_nickName_changed":    v.enableJoinIfConditionsAreMet,
-		"on_cancel_clicked":      v.dialog.Destroy,
-		"on_join_clicked":        doOnlyOnceAtATime(v.tryJoinRoom),
-	})
-
-	v.spinner = newSpinner()
-	v.spinnerBox.Add(v.spinner.getWidget())
-}
-
-func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
-	view := &mucJoinRoomView{
-		u: u,
-	}
-
-	view.init()
-
-	u.connectShortcutsChildWindow(view.dialog)
-
-	return view
 }
 
 func (v *mucJoinRoomView) isValidRoomName(name string) bool {
@@ -228,4 +217,19 @@ func (u *gtkUI) mucShowJoinRoom() {
 
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
+}
+
+func doOnlyOnceAtATime(f func(func())) func() {
+	isDoing := false
+	return func() {
+		if isDoing {
+			return
+		}
+		isDoing = true
+		// The "done" function should be called ONLY from the UI thread,
+		// in other cases it's not "safe" executing it.
+		f(func() {
+			isDoing = false
+		})
+	}
 }

@@ -50,6 +50,12 @@ func (ib *infoBar) addAction(text string, rt gtki.ResponseType) {
 	ib.widget.AddButton(text, rt)
 }
 
+// getMessageType implements the "infoMessage" interface
+func (ib *infoBar) getMessageType() gtki.MessageType {
+	return ib.messageType
+}
+
+// getWidget implements the "widget" interface
 func (ib *infoBar) getWidget() gtki.Widget {
 	return ib.widget
 }

@@ -53,7 +53,7 @@ func (v *mucJoinRoomView) initBuilder() {
 }
 
 func (v *mucJoinRoomView) initNotifications() {
-	v.notifications = v.u.newNotifications(v.notificationArea, nil)
+	v.notifications = v.u.newNotifications(v.notificationArea)
 }
 
 func (v *mucJoinRoomView) initConnectedAccounts() {

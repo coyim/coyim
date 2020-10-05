@@ -110,53 +110,20 @@ type notifications struct {
 	lock sync.Mutex
 	log  coylog.Logger
 
-	onlyOneMessage bool
+	showAllMessagesInStack bool
 }
 
-func (u *gtkUI) newNotifications(box gtki.Box, options map[string]interface{}) *notifications {
+func (u *gtkUI) newNotifications(box gtki.Box) *notifications {
 	n := &notifications{
 		box: box,
 		log: u.log.WithField("who", "notifications"),
 	}
 
-	n.setOptions(options)
-
 	return n
 }
 
-func (n *notifications) setOptions(o map[string]interface{}) {
-	options := n.addDefaultOptions(o)
-
-	for prop, value := range options {
-		switch prop {
-		case "onlyOneMessage":
-			n.onlyOneMessage = value.(bool)
-		default:
-			n.log.WithField("option", prop).Warning("Unknow notifications option")
-		}
-	}
-}
-
-func (n *notifications) addDefaultOptions(o map[string]interface{}) map[string]interface{} {
-	options := make(map[string]interface{})
-	for k, v := range n.getDefaultOptions() {
-		if _, ok := o[k]; !ok {
-			options[k] = v
-		} else {
-			options[k] = o[k]
-		}
-	}
-	return options
-}
-
-func (n *notifications) getDefaultOptions() map[string]interface{} {
-	return map[string]interface{}{
-		"onlyOneMessage": true,
-	}
-}
-
 func (n *notifications) add(m notificationWidget) {
-	if n.onlyOneMessage {
+	if !n.showAllMessagesInStack {
 		n.clearAll()
 	}
 

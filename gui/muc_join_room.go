@@ -13,10 +13,10 @@ type mucJoinRoomView struct {
 	builder *builder
 	ac      *connectedAccountsComponent
 
-	dialog           gtki.Dialog `gtk-widget:"join-chat-dialog"`
+	dialog           gtki.Dialog `gtk-widget:"join-room-dialog"`
 	roomNameEntry    gtki.Entry  `gtk-widget:"room-name-entry"`
 	chatServiceEntry gtki.Entry  `gtk-widget:"chat-service-entry"`
-	joinButton       gtki.Button `gtk-widget:"join-button"`
+	joinButton       gtki.Button `gtk-widget:"join-room-button"`
 	spinnerBox       gtki.Box    `gtk-widget:"spinner-box"`
 	notificationArea gtki.Box    `gtk-widget:"notification-area-box"`
 

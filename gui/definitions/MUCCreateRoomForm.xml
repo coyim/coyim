@@ -183,9 +183,10 @@
                     <signal name="clicked" handler="on_cancel" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
                     <property name="position">0</property>
+                    <property name="non_homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
@@ -198,9 +199,11 @@
                     <signal name="clicked" handler="on_create_room" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="pack_type">end</property>
                     <property name="position">1</property>
+                    <property name="non_homogeneous">True</property>
                   </packing>
                 </child>
               </object>

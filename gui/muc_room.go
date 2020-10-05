@@ -20,6 +20,8 @@ type roomView struct {
 	info     *muc.RoomListing
 	infoLock sync.Mutex
 
+	cancel chan bool
+
 	log      coylog.Logger
 	opened   bool
 	returnTo func()
@@ -97,11 +99,16 @@ func (v *roomView) requestRoomInfo() {
 	doInUIThread(v.loadingInfoBar.show)
 
 	rl := make(chan *muc.RoomListing)
+	v.cancel = make(chan bool)
+
 	go v.account.session.GetRoom(v.roomID(), rl)
 	go func() {
-		// TODO: What happens if no result ever comes? Maybe we need a timeout
-		roomInfo := <-rl
-		v.onRequestRoomInfoFinish(roomInfo)
+		select {
+		case roomInfo := <-rl:
+			// TODO: What happens if no result ever comes? Maybe we need a timeout
+			v.onRequestRoomInfoFinish(roomInfo)
+		case <-v.cancel:
+		}
 	}()
 }
 
@@ -171,6 +178,15 @@ func (v *roomView) closeNotificationsOverlay() {
 func (v *roomView) onDestroyWindow() {
 	v.opened = false
 	v.account.removeRoomView(v.roomID())
+	go v.cancelActiveRequests()
+}
+
+// cancelActiveRequests MUST NOT be called from the UI thread
+func (v *roomView) cancelActiveRequests() {
+	if v.cancel != nil {
+		v.cancel <- true
+		v.cancel = nil
+	}
 }
 
 func (v *roomView) setTitle(t string) {
@@ -246,8 +262,6 @@ func (v *roomView) shouldReturnOnCancel() bool {
 	return v.returnTo != nil
 }
 
-// TODO: if we have an active connection or request, we should
-// stop/close it here before destroying the window
 func (v *roomView) onJoinCancel() {
 	v.window.Destroy()
 

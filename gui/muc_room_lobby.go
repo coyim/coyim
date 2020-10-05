@@ -2,7 +2,6 @@ package gui
 
 import (
 	"errors"
-	"time"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
@@ -213,7 +212,6 @@ func newMUCRoomLobbyErr(roomID jid.Bare, nickname string, errType error) error {
 }
 
 func (l *roomViewLobby) sendJoinRoomRequest(nickname string) {
-	time.Sleep(time.Second * 4)
 	err := l.account.session.JoinRoom(l.roomID, nickname)
 	if err != nil {
 		l.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room.")

@@ -115,9 +115,8 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 		v.warnings.clear()
 		v.showRoomWarnings()
 		v.notifications.add(v.warningsInfoBar)
+		v.loadingInfoBar.hide()
 	})
-
-	doInUIThread(v.loadingInfoBar.hide)
 
 	v.publish("roomInfoReceivedEvent")
 }

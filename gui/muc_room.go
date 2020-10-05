@@ -16,8 +16,9 @@ type roomView struct {
 	account *account
 	builder *builder
 
-	room *muc.Room
-	info *muc.RoomListing
+	room     *muc.Room
+	info     *muc.RoomListing
+	infoLock sync.Mutex
 
 	log      coylog.Logger
 	opened   bool
@@ -44,10 +45,6 @@ type roomView struct {
 	roster  *roomViewRoster
 	conv    *roomViewConversation
 	lobby   *roomViewLobby
-
-	// TODO: This object is pretty big. It might be a good idea for us to document
-	// exactly what this mutex covers, and what not
-	sync.Mutex
 }
 
 func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
@@ -109,10 +106,11 @@ func (v *roomView) requestRoomInfo() {
 }
 
 func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
-	v.Lock()
-	defer v.Unlock()
+	v.infoLock.Lock()
+	defer v.infoLock.Unlock()
 
 	v.info = roomInfo
+
 	doInUIThread(func() {
 		v.warnings.clear()
 		v.showRoomWarnings()

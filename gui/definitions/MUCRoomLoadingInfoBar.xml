@@ -1,0 +1,62 @@
+<interface>
+  <object class="GtkInfoBar" id="info">
+    <property name="visible">True</property>
+    <child internal-child="action_area">
+      <object class="GtkButtonBox" id="actions">
+        <property name="spacing">6</property>
+        <property name="layout_style">start</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child internal-child="content_area">
+      <object class="GtkBox" id="content">
+        <property name="valign">center</property>
+        <property name="spacing">16</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Getting room information, please wait</property>
+                <property name="xalign">0</property>
+                <property name="yalign">0</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinner">
+            <property name="visible">True</property>
+            <property name="active">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+  </object>
+</interface>

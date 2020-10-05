@@ -148,7 +148,11 @@ func (v *roomView) unsubscribe(id string, ev string) {
 }
 
 func (v *roomView) publish(ev string) {
-	v.subscribers.publish(ev, roomViewEventInfo{})
+	if v.opened {
+		// We should analyze if at some point we need
+		// to be able to publish an event in a closed view
+		v.subscribers.publish(ev, roomViewEventInfo{})
+	}
 }
 
 func (v *roomView) publishWithInfo(ev string, ei roomViewEventInfo) {

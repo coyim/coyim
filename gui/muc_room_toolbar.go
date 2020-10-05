@@ -1,12 +1,13 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 type roomViewToolbar struct {
-	view                 gtki.Box    `gtk-widget:"roomToolbar"`
-	roomNameLabel        gtki.Label  `gtk-widget:"roomNameLabel"`
-	roomDescriptionLabel gtki.Label  `gtk-widget:"roomDescriptionLabel"`
-	leaveRoomButton      gtki.Button `gtk-widget:"leaveRoomButton"`
+	view            gtki.Box    `gtk-widget:"roomToolbar"`
+	roomNameLabel   gtki.Label  `gtk-widget:"roomNameLabel"`
+	leaveRoomButton gtki.Button `gtk-widget:"leaveRoomButton"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -30,6 +31,27 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 	})
 }
 
+func (t *roomViewToolbar) initDefaults(v *roomView) {
+	t.leaveRoomButton.SetSensitive(v.isJoined())
+
+	t.roomNameLabel.SetText(v.roomID().String())
+
+	prov := providerWithStyle("label", style{
+		"font-size":   "22px",
+		"font-weight": "bold",
+	})
+
+	updateWithStyle(t.roomNameLabel, prov)
+}
+
+func (t *roomViewToolbar) initSubscribers(v *roomView) {
+	v.subscribe("toolbar", "occupantSelfJoinedEvent", func(roomViewEventInfo) {
+		doInUIThread(func() {
+			t.leaveRoomButton.SetSensitive(true)
+		})
+	})
+}
+
 func (t *roomViewToolbar) onLeaveRoom(v *roomView) {
 	t.leaveRoomButton.SetSensitive(false)
 	v.tryLeaveRoom(nil, func() {
@@ -38,17 +60,5 @@ func (t *roomViewToolbar) onLeaveRoom(v *roomView) {
 				t.leaveRoomButton.SetSensitive(true)
 			})
 		}
-	})
-}
-
-func (t *roomViewToolbar) initDefaults(v *roomView) {
-	t.leaveRoomButton.SetSensitive(v.isJoined())
-}
-
-func (t *roomViewToolbar) initSubscribers(v *roomView) {
-	v.subscribe("toolbar", "occupantSelfJoinedEvent", func(roomViewEventInfo) {
-		doInUIThread(func() {
-			t.leaveRoomButton.SetSensitive(true)
-		})
 	})
 }

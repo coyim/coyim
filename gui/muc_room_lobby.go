@@ -2,10 +2,10 @@ package gui
 
 import (
 	"errors"
+	"time"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/golang-collections/collections/set"
@@ -31,11 +31,11 @@ type roomViewLobby struct {
 
 	onJoin      chan bool
 	onJoinError chan error
+	cancel      chan bool
 
 	isReadyToJoinRoom bool
 
 	nicknamesWithConflict *set.Set
-	warnings              []*roomLobbyWarning
 
 	// These two methods WILL BE called from the UI thread
 	onSuccess func()
@@ -69,7 +69,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare, parent gtki.Box
 	}
 
 	l.initBuilder()
-	l.initDefaults(v)
+	l.initDefaults()
 	l.initSubscribers(v)
 
 	return l
@@ -80,115 +80,39 @@ func (l *roomViewLobby) initBuilder() {
 	panicOnDevError(builder.bindObjects(l))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_nickname_changed": l.onNickNameChange,
+		"on_nickname_changed": l.onNicknameChange,
 		"on_joined_clicked":   l.onJoinClicked,
 		"on_cancel_clicked":   l.onJoinCancel,
 	})
 }
 
-func (l *roomViewLobby) initDefaults(v *roomView) {
+func (l *roomViewLobby) initDefaults() {
 	l.errorNotif = newErrorNotification(l.notificationArea)
 
 	l.roomNameLabel.SetText(l.roomID.String())
 	l.content.SetHExpand(true)
 	l.parent.Add(l.content)
 	l.content.SetCenterWidget(l.mainBox)
-
-	l.setRoomInfo(v.info)
 }
 
 func (l *roomViewLobby) initSubscribers(v *roomView) {
 	v.subscribeAll("lobby", roomViewEventObservers{
 		"occupantSelfJoinedEvent": l.occupantJoinedEvent,
 		"roomInfoReceivedEvent": func(roomViewEventInfo) {
-			doInUIThread(func() {
-				l.setRoomInfo(v.info)
-			})
+			l.isReadyToJoinRoom = true
+			doInUIThread(l.enableJoinIfConditionsAreMet)
 		},
 		"nicknameConflictEvent": func(ei roomViewEventInfo) {
-			doInUIThread(func() {
-				l.nicknameConflictEvent(v.roomID(), ei["nickname"])
-			})
+			l.nicknameConflictEvent(v.roomID(), ei["nickname"])
 		},
 		"registrationRequiredEvent": func(ei roomViewEventInfo) {
-			doInUIThread(func() {
-				l.registrationRequiredEvent(v.roomID(), ei["nickname"])
-			})
+			l.registrationRequiredEvent(v.roomID(), ei["nickname"])
 		},
 		"beforeSwitchingToMainViewEvent": func(roomViewEventInfo) {
 			v.unsubscribe("lobby", "occupantSelfJoinedEvent")
 			v.unsubscribe("lobby", "roomInfoReceivedEvent")
 		},
 	})
-}
-
-func (l *roomViewLobby) setRoomInfo(info *muc.RoomListing) {
-	l.clearWarnings()
-
-	if info != nil {
-		l.showRoomWarnings(info)
-	}
-
-	l.isReadyToJoinRoom = true
-	l.enableJoinIfConditionsAreMet()
-}
-
-func (l *roomViewLobby) showRoomWarnings(roomInfo *muc.RoomListing) {
-	l.addWarning(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile."))
-
-	switch roomInfo.Anonymity {
-	case "semi":
-		l.addWarning(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
-	case "no":
-		l.addWarning(i18n.Local("This room is not anonymous. This means that any person in this room can connect your nickname with your real username (your JID)."))
-	default:
-		l.log.WithField("anonymity", roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
-	}
-
-	if roomInfo.Logged {
-		l.addWarning(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
-	}
-}
-
-type roomLobbyWarning struct {
-	text string
-
-	bar     gtki.Box   `gtk-widget:"warning-infobar"`
-	message gtki.Label `gtk-widget:"message"`
-}
-
-// addWarning should be called from the UI thread
-func (l *roomViewLobby) addWarning(s string) {
-	w := &roomLobbyWarning{text: s}
-	l.warnings = append(l.warnings, w)
-
-	builder := newBuilder("MUCRoomWarning")
-	panicOnDevError(builder.bindObjects(w))
-
-	w.message.SetText(w.text)
-
-	prov := providerWithStyle("box", style{
-		"color":            "#744210",
-		"background-color": "#fefcbf",
-		"border":           "1px solid #d69e2e",
-		"border-radius":    "4px",
-		"padding":          "10px",
-	})
-
-	updateWithStyle(w.bar, prov)
-
-	l.warningsArea.PackStart(w.bar, false, false, 5)
-
-	l.warningsArea.ShowAll()
-}
-
-func (l *roomViewLobby) clearWarnings() {
-	// TODO: Why can't we just remove
-	// all the entitites inside the warningsArea
-	// and then remove the need to have the "warnings" field at all
-	for _, w := range l.warnings {
-		l.warningsArea.Remove(w.bar)
-	}
 }
 
 func (l *roomViewLobby) switchToReturnOnCancel() {
@@ -212,7 +136,7 @@ func (l *roomViewLobby) close() {
 	l.parent.Remove(l.content)
 }
 
-func (l *roomViewLobby) onNickNameChange() {
+func (l *roomViewLobby) onNicknameChange() {
 	l.enableJoinIfConditionsAreMet()
 }
 
@@ -257,8 +181,9 @@ func (l *roomViewLobby) onJoinClicked() {
 
 	l.onJoin = make(chan bool)
 	l.onJoinError = make(chan error)
+	l.cancel = make(chan bool)
 
-	go l.sendRoomEnterRequest(nickname)
+	go l.sendJoinRoomRequest(nickname)
 	go l.whenEnterRequestHasBeenResolved(nickname)
 }
 
@@ -287,7 +212,8 @@ func newMUCRoomLobbyErr(roomID jid.Bare, nickname string, errType error) error {
 	}
 }
 
-func (l *roomViewLobby) sendRoomEnterRequest(nickname string) {
+func (l *roomViewLobby) sendJoinRoomRequest(nickname string) {
+	time.Sleep(time.Second * 4)
 	err := l.account.session.JoinRoom(l.roomID, nickname)
 	if err != nil {
 		l.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room.")
@@ -307,6 +233,7 @@ func (l *roomViewLobby) whenEnterRequestHasBeenResolved(nickname string) {
 		doInUIThread(func() {
 			l.onJoinFailed(err)
 		})
+	case <-l.cancel:
 	}
 }
 
@@ -344,6 +271,11 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 }
 
 func (l *roomViewLobby) onJoinCancel() {
+	if l.cancel != nil {
+		l.cancel <- true
+		l.cancel = nil
+	}
+
 	l.onCancel()
 }
 

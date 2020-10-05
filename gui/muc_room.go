@@ -2,7 +2,6 @@ package gui
 
 import (
 	"sync"
-	"time"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
@@ -103,8 +102,6 @@ func (v *roomView) requestRoomInfo() {
 	rl := make(chan *muc.RoomListing)
 	go v.account.session.GetRoom(v.roomID(), rl)
 	go func() {
-		// FIXME
-		time.Sleep(time.Second * 2)
 		// TODO: What happens if no result ever comes? Maybe we need a timeout
 		roomInfo := <-rl
 		v.onRequestRoomInfoFinish(roomInfo)
@@ -117,7 +114,7 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 
 	v.info = roomInfo
 	doInUIThread(func() {
-		v.clearWarnings()
+		v.warnings.clear()
 		v.showRoomWarnings()
 		v.notifications.add(v.warningsInfoBar)
 	})
@@ -172,40 +169,6 @@ func (v *roomView) showNotificationsOverlay() {
 
 func (v *roomView) closeNotificationsOverlay() {
 	v.messagesOverlay.Hide()
-}
-
-// addWarning should be called from the UI thread
-func (v *roomView) addWarning(s string) {
-	// w := &roomLobbyWarning{text: s}
-	// v.warnings = append(v.warnings, w)
-
-	// builder := newBuilder("MUCRoomWarning")
-	// panicOnDevError(builder.bindObjects(w))
-
-	// w.message.SetText(w.text)
-
-	// prov := providerWithStyle("box", style{
-	// 	"color":            "#744210",
-	// 	"background-color": "#fefcbf",
-	// 	"border":           "1px solid #d69e2e",
-	// 	"border-radius":    "4px",
-	// 	"padding":          "10px",
-	// })
-
-	// updateWithStyle(w.bar, prov)
-
-	// l.warningsArea.PackStart(w.bar, false, false, 5)
-
-	// l.warningsArea.ShowAll()
-}
-
-func (v *roomView) clearWarnings() {
-	// TODO: Why can't we just remove
-	// all the entitites inside the warningsArea
-	// and then remove the need to have the "warnings" field at all
-	// for _, w := range v.warnings {
-	// 	l.warningsArea.Remove(w.bar)
-	// }
 }
 
 func (v *roomView) onDestroyWindow() {

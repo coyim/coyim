@@ -12,10 +12,6 @@ type Room struct {
 	ID      jid.Bare
 	Subject string
 
-	// TODO: this one feels like the coupling with the user account and the room
-	// is too tight. We should think about other ways to represent this
-	Joined bool
-
 	selfOccupant *Occupant
 	roster       *RoomRoster
 
@@ -84,6 +80,10 @@ func (r *Room) Publish(ev events.MUC) {
 
 // AddSelfOccupant set the own occupant of the room
 func (r *Room) AddSelfOccupant(occupant *Occupant) {
-	r.Joined = true
 	r.selfOccupant = occupant
+}
+
+//IsSelfOccupantJoined returns true if the self occupant is in the room, false in otherwise
+func (r *Room) IsSelfOccupantJoined() bool {
+	return r.selfOccupant != nil
 }

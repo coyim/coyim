@@ -124,7 +124,7 @@ func (v *roomView) isOpen() bool {
 }
 
 func (v *roomView) isJoined() bool {
-	return v.room.Joined
+	return v.room.IsSelfOccupantJoined()
 }
 
 func (v *roomView) present() {

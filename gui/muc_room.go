@@ -2,6 +2,7 @@ package gui
 
 import (
 	"sync"
+	"time"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
@@ -23,13 +24,19 @@ type roomView struct {
 	opened   bool
 	returnTo func()
 
-	window           gtki.Window  `gtk-widget:"roomWindow"`
-	content          gtki.Box     `gtk-widget:"boxMainView"`
-	spinner          gtki.Spinner `gtk-widget:"spinner"`
-	notificationArea gtki.Box     `gtk-widget:"roomNotificationArea"`
+	window                 gtki.Window  `gtk-widget:"roomWindow"`
+	content                gtki.Box     `gtk-widget:"boxMainView"`
+	messagesOverlay        gtki.Overlay `gtk-widget:"messagesOverlay"`
+	messagesOverlayBox     gtki.Box     `gtk-widget:"messagesOverlayBox"`
+	messagesBox            gtki.Box     `gtk-widget:"messagesBox"`
+	notificationBox        gtki.Box     `gtk-widget:"notificationBox"`
+	loadingNotificationBox gtki.Box     `gtk-widget:"loadingNotificationBox"`
 
-	notification gtki.InfoBar
-	errorNotif   *errorNotification
+	spinner         *spinner
+	notifications   *notifications
+	loadingInfoBar  *roomViewLoadingInfoBar
+	warnings        *roomViewWarningsOverlay
+	warningsInfoBar *roomViewWarningsInfoBar
 
 	subscribers *roomViewSubscribers
 
@@ -65,6 +72,12 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view.roster = view.newRoomViewRoster()
 	view.conv = view.newRoomViewConversation()
 
+	view.spinner = newSpinner()
+	view.notifications = u.newNotifications(view.notificationBox)
+	view.loadingInfoBar = view.newRoomViewLoadingInfoBar(view.loadingNotificationBox)
+	view.warnings = view.newRoomViewWarningsOverlay(view.closeNotificationsOverlay)
+	view.warningsInfoBar = view.newRoomViewWarningsInfoBar(view.showWarnings, view.removeWarningsInfobar)
+
 	go view.requestRoomInfo()
 
 	return view
@@ -74,8 +87,6 @@ func (v *roomView) initBuilderAndSignals() {
 	v.builder = newBuilder("MUCRoomWindow")
 
 	panicOnDevError(v.builder.bindObjects(v))
-
-	v.errorNotif = newErrorNotification(v.notificationArea)
 
 	v.builder.ConnectSignals(map[string]interface{}{
 		"on_destroy_window": v.onDestroyWindow,
@@ -87,11 +98,13 @@ func (v *roomView) initDefaults() {
 }
 
 func (v *roomView) requestRoomInfo() {
-	doInUIThread(v.showSpinner)
+	doInUIThread(v.loadingInfoBar.show)
 
 	rl := make(chan *muc.RoomListing)
 	go v.account.session.GetRoom(v.roomID(), rl)
 	go func() {
+		// FIXME
+		time.Sleep(time.Second * 2)
 		// TODO: What happens if no result ever comes? Maybe we need a timeout
 		roomInfo := <-rl
 		v.onRequestRoomInfoFinish(roomInfo)
@@ -103,11 +116,96 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 	defer v.Unlock()
 
 	v.info = roomInfo
-
 	doInUIThread(func() {
-		v.hideSpinner()
-		v.publish("roomInfoReceivedEvent")
+		v.clearWarnings()
+		v.showRoomWarnings()
+		v.notifications.add(v.warningsInfoBar)
 	})
+
+	doInUIThread(v.loadingInfoBar.hide)
+
+	v.publish("roomInfoReceivedEvent")
+}
+
+func (v *roomView) showRoomWarnings() {
+	v.warnings.add(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile."))
+
+	switch v.info.Anonymity {
+	case "semi":
+		v.warnings.add(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
+	case "no":
+		v.warnings.add(i18n.Local("This room is not anonymous. This means that any person in this room can connect your nickname with your real username (your JID)."))
+	default:
+		v.log.WithField("anonymity", v.info.Anonymity).Warn("Unknown anonymity setting for room")
+	}
+
+	if v.info.Logged {
+		v.warnings.add(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
+	}
+}
+
+func (v *roomView) showWarnings() {
+	prov := providerWithStyle("box", style{
+		"background-color": "#ffffff",
+		"box-shadow":       "0 10px 20px rgba(0, 0, 0, 0.35)",
+	})
+
+	updateWithStyle(v.messagesBox, prov)
+
+	v.warnings.show()
+	v.showNotificationsOverlay()
+}
+
+func (v *roomView) removeWarningsInfobar() {
+	v.notifications.remove(v.warningsInfoBar.getWidget())
+}
+
+func (v *roomView) showNotificationsOverlay() {
+	prov := providerWithStyle("box", style{
+		"background-color": "rgba(0, 0, 0, 0.5)",
+	})
+
+	updateWithStyle(v.messagesOverlayBox, prov)
+
+	v.messagesOverlay.Show()
+}
+
+func (v *roomView) closeNotificationsOverlay() {
+	v.messagesOverlay.Hide()
+}
+
+// addWarning should be called from the UI thread
+func (v *roomView) addWarning(s string) {
+	// w := &roomLobbyWarning{text: s}
+	// v.warnings = append(v.warnings, w)
+
+	// builder := newBuilder("MUCRoomWarning")
+	// panicOnDevError(builder.bindObjects(w))
+
+	// w.message.SetText(w.text)
+
+	// prov := providerWithStyle("box", style{
+	// 	"color":            "#744210",
+	// 	"background-color": "#fefcbf",
+	// 	"border":           "1px solid #d69e2e",
+	// 	"border-radius":    "4px",
+	// 	"padding":          "10px",
+	// })
+
+	// updateWithStyle(w.bar, prov)
+
+	// l.warningsArea.PackStart(w.bar, false, false, 5)
+
+	// l.warningsArea.ShowAll()
+}
+
+func (v *roomView) clearWarnings() {
+	// TODO: Why can't we just remove
+	// all the entitites inside the warningsArea
+	// and then remove the need to have the "warnings" field at all
+	// for _, w := range v.warnings {
+	// 	l.warningsArea.Remove(w.bar)
+	// }
 }
 
 func (v *roomView) onDestroyWindow() {
@@ -138,31 +236,8 @@ func (v *roomView) show() {
 	v.window.Show()
 }
 
-func (v *roomView) clearErrors() {
-	v.errorNotif.Hide()
-}
-
-func (v *roomView) notifyOnError(err string) {
-	if v.notification != nil {
-		v.notificationArea.Remove(v.notification)
-	}
-
-	v.errorNotif.ShowMessage(err)
-}
-
-func (v *roomView) showSpinner() {
-	v.spinner.Start()
-	v.spinner.Show()
-}
-
-func (v *roomView) hideSpinner() {
-	v.spinner.Stop()
-	v.spinner.Hide()
-}
-
 func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
-	v.clearErrors()
-	v.showSpinner()
+	v.spinner.show()
 
 	go func() {
 		v.account.leaveRoom(v.roomID(), v.room.SelfOccupantNickname(), func() {
@@ -172,10 +247,7 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 			}
 		}, func(err error) {
 			v.log.WithError(err).Error("An error occurred when trying to leave the room")
-			doInUIThread(func() {
-				v.hideSpinner()
-				v.notifyOnError(i18n.Local("Couldn't leave the room, please try again."))
-			})
+			doInUIThread(v.spinner.hide)
 			if onError != nil {
 				onError()
 			}

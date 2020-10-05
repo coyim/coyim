@@ -1,14 +1,42 @@
 <interface>
-  <object class="GtkWindow" id="createRoomWindow">
+  <object class="GtkDialog" id="create-room-dialog">
     <property name="width_request">580</property>
-    <property name="title" translatable="yes">Create new chat room</property>
-    <property name="resizable">False</property>
+    <property name="title" translatable="yes">Create chat room</property>
+    <property name="resizable">False</property>    
+    <property name="destroy_with_parent">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="gravity">north-east</property>
+    <property name="border_width">0</property>
+    <signal name="close" handler="on_close_window" swapped="no"/>
     <signal name="destroy" handler="on_close_window" swapped="no"/>
-    <child>
-      <object class="GtkBox" id="content">
-        <property name="hexpand">True</property>
-        <property name="vexpand">True</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="visible">True</property>
         <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="buttons">
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="create-room-content">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
       </object>
     </child>
     <style>

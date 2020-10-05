@@ -16,8 +16,8 @@ type mucCreateRoomView struct {
 	autoJoin bool
 	cancel   chan bool
 
-	window    gtki.Window `gtk-widget:"createRoomWindow"`
-	container gtki.Box    `gtk-widget:"content"`
+	dialog    gtki.Dialog `gtk-widget:"create-room-dialog"`
+	container gtki.Box    `gtk-widget:"create-room-content"`
 
 	form    *mucCreateRoomViewForm
 	success *mucCreateRoomViewSuccess
@@ -31,7 +31,7 @@ type mucCreateRoomView struct {
 	sync.Mutex
 }
 
-func (u *gtkUI) newCreateMUCRoomView() *mucCreateRoomView {
+func newCreateMUCRoomView(u *gtkUI) *mucCreateRoomView {
 	v := &mucCreateRoomView{
 		u:               u,
 		showCreateForm:  func() {},
@@ -42,8 +42,6 @@ func (u *gtkUI) newCreateMUCRoomView() *mucCreateRoomView {
 
 	v.initBuilder()
 	v.initChildViews()
-
-	u.connectShortcutsChildWindow(v.window)
 
 	return v
 }
@@ -75,7 +73,7 @@ func (v *mucCreateRoomView) onCancel() {
 		v.cancel = nil
 	}
 
-	v.window.Destroy()
+	v.dialog.Destroy()
 }
 
 func (v *mucCreateRoomView) onCloseWindow() {
@@ -166,13 +164,13 @@ func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
 
 	doInUIThread(func() {
 		v.showSuccessView(ca, roomID)
-		v.window.ShowAll()
+		v.dialog.ShowAll()
 	})
 }
 
 // joinRoom MUST be called from the UI thread
 func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
-	v.window.Destroy()
+	v.dialog.Destroy()
 	v.u.joinRoom(ca, roomID, nil)
 }
 
@@ -188,12 +186,13 @@ func (v *mucCreateRoomView) updateAutoJoinValue(f bool) {
 	v.onAutoJoin.invokeAll()
 }
 
-func (v *mucCreateRoomView) show() {
-	v.showCreateForm()
-	v.window.ShowAll()
-}
-
 func (u *gtkUI) mucCreateChatRoom() {
-	view := u.newCreateMUCRoomView()
-	view.show()
+	view := newCreateMUCRoomView(u)
+
+	u.connectShortcutsChildWindow(view.dialog)
+
+	view.showCreateForm()
+
+	view.dialog.SetTransientFor(u.window)
+	view.dialog.Show()
 }

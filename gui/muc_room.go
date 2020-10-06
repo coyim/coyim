@@ -96,7 +96,7 @@ func (v *roomView) initDefaults() {
 }
 
 func (v *roomView) requestRoomInfo() {
-	doInUIThread(v.loadingInfoBar.show)
+	doInUIThread(v.loadingInfoBar.start)
 
 	rl := make(chan *muc.RoomListing)
 	v.cancel = make(chan bool)

@@ -24,13 +24,6 @@ func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, returnTo func()) {
 	v := u.getOrCreateRoomView(a, roomID)
 
 	if v.isJoined() {
-		// TODO: What if we already had a returnTo function?
-		// We probably should not just overwrite it here
-
-		// In the main view of the room, we don't have the "cancel"
-		// functionality that it's useful only in the lobby view of the room.
-		// For that reason is why we ignore the "returnTo" value.
-		v.returnTo = nil
 		v.switchToMainView()
 	} else {
 		v.returnTo = returnTo

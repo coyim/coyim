@@ -10,10 +10,10 @@ type roomViewMain struct {
 	top    gtki.Box
 	parent gtki.Box
 
-	content gtki.Box `gtk-widget:"boxRoomView"`
-	topBox  gtki.Box `gtk-widget:"roomViewTop"`
-	roomBox gtki.Box `gtk-widget:"room"`
-	paneBox gtki.Box `gtk-widget:"panel"`
+	content gtki.Box `gtk-widget:"room-view-box"`
+	topBox  gtki.Box `gtk-widget:"room-view-top"`
+	roomBox gtki.Box `gtk-widget:"room-view-content"`
+	paneBox gtki.Box `gtk-widget:"room-view-panel"`
 }
 
 func (v *roomView) initRoomMain() {
@@ -40,10 +40,6 @@ func (m *roomViewMain) initBuilder() {
 }
 
 func (m *roomViewMain) initDefaults() {
-	// TODO: I think for these properties we should be consistent and always set them in XML
-	m.roomBox.SetHExpand(true)
-	m.content.SetHExpand(true)
-
 	m.roomBox.Add(m.main)
 	m.paneBox.Add(m.panel)
 	m.topBox.Add(m.top)

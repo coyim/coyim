@@ -37,6 +37,7 @@ type Conn interface {
 	RequestRoster() (<-chan data.Stanza, data.Cookie, error)
 	RequestVCard() (<-chan data.Stanza, data.Cookie, error)
 	Send(string, string, bool) error
+	SendMessage(*data.Message) error
 	SendIQ(string, string, interface{}) (<-chan data.Stanza, data.Cookie, error)
 	SendIQReply(string, string, string, interface{}) error
 	SendInitialStreamHeader() error

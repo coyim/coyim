@@ -382,6 +382,33 @@ func (c *conn) Send(to, msg string, otr bool) error {
 	return err
 }
 
+// SendMessage send a group chat message to the given room.
+func (c *conn) SendMessage(m *data.Message) error {
+	if m.ID == "" {
+		m.ID = strconv.FormatUint(uint64(c.getCookie()), 10)
+	}
+
+	mb, err := messageToByteArray(m)
+	if err != nil {
+		return err
+	}
+
+	_, err = c.safeWrite(mb)
+	return err
+}
+
+func messageToByteArray(m *data.Message) ([]byte, error) {
+	var outb bytes.Buffer
+	out := &outb
+
+	err := xml.NewEncoder(out).Encode(m)
+	if err != nil {
+		return []byte(""), err
+	}
+
+	return outb.Bytes(), nil
+}
+
 // ReadStanzas reads XMPP stanzas
 func (c *conn) ReadStanzas(stanzaChan chan<- data.Stanza) error {
 	defer close(stanzaChan)

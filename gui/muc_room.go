@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"errors"
 	"sync"
 	"time"
 
@@ -23,7 +24,6 @@ type roomView struct {
 
 	cancel chan bool
 
-	log      coylog.Logger
 	opened   bool
 	returnTo func()
 
@@ -48,6 +48,8 @@ type roomView struct {
 	roster  *roomViewRoster
 	conv    *roomViewConversation
 	lobby   *roomViewLobby
+
+	log coylog.Logger
 }
 
 func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
@@ -300,4 +302,14 @@ func (v *roomView) registrationRequired(nickname string) {
 
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
+}
+
+func (v *roomView) occupantID() (jid.Full, error) {
+	o := v.room.SelfOccupant()
+
+	if o != nil && o.RealJid != nil {
+		return o.RealJid, nil
+	}
+
+	return nil, errors.New("not self occupant available in the room")
 }

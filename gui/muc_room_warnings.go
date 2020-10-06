@@ -123,10 +123,9 @@ func (o *roomViewWarningsOverlay) close() {
 }
 
 func (o *roomViewWarningsOverlay) clear() {
-	// TODO: Why can't we just remove
-	// all the entitites inside the warningsArea
-	// and then remove the need to have the "warnings" field at all
-	for _, w := range o.warnings {
+	warnings := o.warnings
+	for _, w := range warnings {
 		o.box.Remove(w.bar)
 	}
+	o.warnings = nil
 }

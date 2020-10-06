@@ -2,6 +2,7 @@ package gui
 
 import (
 	"sync"
+	"time"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
@@ -105,14 +106,15 @@ func (v *roomView) requestRoomInfo() {
 	go func() {
 		select {
 		case roomInfo := <-rl:
-			// TODO: What happens if no result ever comes? Maybe we need a timeout
-			v.onRequestRoomInfoFinish(roomInfo)
+			v.onRequestRoomInfoFinish(roomInfo, false)
+		case <-time.After(time.Minute * 5):
+			v.onRequestRoomInfoFinish(nil, true)
 		case <-v.cancel:
 		}
 	}()
 }
 
-func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
+func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing, timeout bool) {
 	v.infoLock.Lock()
 	defer v.infoLock.Unlock()
 
@@ -128,6 +130,18 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 			v.notifications.add(v.warningsInfoBar)
 		})
 	}
+
+	if timeout {
+		v.loadingInfoBar.error(
+			i18n.Local("An error occurred while loading room information"),
+			i18n.Local("Loading the room information took longer than usual, perhaps the connection to the server was lost. Do you want to try again?."),
+			v.requestRoomInfo,
+		)
+
+		v.publishEvent(roomInfoTimeoutEvent{})
+		return
+	}
+
 	doInUIThread(v.loadingInfoBar.hide)
 
 	v.publishEvent(roomInfoReceivedEvent{
@@ -239,8 +253,6 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 }
 
 func (v *roomView) switchToLobbyView() {
-	v.publish("beforeSwitchingToLobbyViewEvent")
-
 	v.initRoomLobby()
 
 	if v.shouldReturnOnCancel() {
@@ -253,7 +265,6 @@ func (v *roomView) switchToLobbyView() {
 }
 
 func (v *roomView) switchToMainView() {
-	v.publish("beforeSwitchingToMainViewEvent")
 	v.initRoomMain()
 	v.main.show()
 }

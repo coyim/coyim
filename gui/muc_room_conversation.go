@@ -5,20 +5,31 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/access"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomViewConversation struct {
-	tags gtki.TextTagTable
+	tags    gtki.TextTagTable
+	roomID  jid.Bare
+	session access.Session
 
-	view gtki.Box      `gtk-widget:"roomConversation"`
-	text gtki.TextView `gtk-widget:"roomChatTextView"`
+	occupantID func() (jid.Full, error)
+
+	view    gtki.Box      `gtk-widget:"roomConversation"`
+	text    gtki.TextView `gtk-widget:"roomChatTextView"`
+	newText gtki.Entry    `gtk-widget:"textConversation"`
 
 	log coylog.Logger
 }
 
-func (v *roomView) newRoomViewConversation() *roomViewConversation {
-	c := &roomViewConversation{}
+func (v *roomView) newRoomViewConversation(s access.Session) *roomViewConversation {
+	c := &roomViewConversation{
+		roomID:     v.roomID(),
+		occupantID: v.occupantID,
+		session:    s,
+	}
 
 	c.initBuilder()
 	c.initSubscribers(v)
@@ -30,6 +41,10 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 func (c *roomViewConversation) initBuilder() {
 	builder := newBuilder("MUCRoomConversation")
 	panicOnDevError(builder.bindObjects(c))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_send_message": c.onSendMessage,
+	})
 }
 
 func (c *roomViewConversation) initSubscribers(v *roomView) {
@@ -82,6 +97,34 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 	doInUIThread(func() {
 		c.displayWarningMessage(i18n.Local("This room is no longer publicly logged."))
 	})
+}
+
+func (c *roomViewConversation) getTypedMessage() string {
+	c.newText.SetEditable(false)
+	text, _ := c.newText.GetText()
+	c.newText.SetText("")
+	c.newText.SetEditable(true)
+
+	return text
+}
+
+func (c *roomViewConversation) onSendMessage() {
+	text := c.getTypedMessage()
+	if text == "" {
+		return
+	}
+
+	n, err := c.occupantID()
+	if err != nil {
+		//TODO: Show a friendly message to the user
+		return
+	}
+
+	err = c.session.SendMUCMessage(c.roomID.String(), n.String(), text)
+	if err != nil {
+		//TODO: Show a friendly message to the user
+		c.log.WithError(err).Warn("Failed to send the message")
+	}
 }
 
 func (c *roomViewConversation) getTextBuffer() gtki.TextBuffer {

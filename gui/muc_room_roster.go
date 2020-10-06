@@ -10,7 +10,7 @@ import (
 
 const (
 	roomViewRosterStatusIconIndex int = iota
-	roomViewRosterNickNameIndex
+	roomViewRosterNicknameIndex
 	roomViewRosterAffiliationIndex
 	roomViewRosterRoleIndex
 )
@@ -21,7 +21,7 @@ type roomViewRoster struct {
 	view gtki.Box      `gtk-widget:"roster"`
 	tree gtki.TreeView `gtk-widget:"occupantsTreeView"`
 
-	model gtki.ListStore
+	model gtki.TreeStore
 }
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
@@ -42,7 +42,7 @@ func (r *roomViewRoster) initBuilder() {
 }
 
 func (r *roomViewRoster) initDefaults() {
-	r.model, _ = g.gtk.ListStoreNew(
+	r.model, _ = g.gtk.TreeStoreNew(
 		// icon
 		pixbufType(),
 		// display nickname
@@ -59,6 +59,8 @@ func (r *roomViewRoster) initDefaults() {
 func (r *roomViewRoster) initSubscribers(v *roomView) {
 	v.subscribe("roster", func(ev roomViewEvent) {
 		switch ev.(type) {
+		case occupantSelfJoinedEvent:
+			r.onUpdateRoster()
 		case occupantJoinedEvent:
 			r.onUpdateRoster()
 		case occupantUpdatedEvent:
@@ -74,9 +76,11 @@ func (r *roomViewRoster) onUpdateRoster() {
 }
 
 func (r *roomViewRoster) draw() {
-	for _, o := range r.roster.AllOccupants() {
-		r.addOccupantToRoster(o)
-	}
+	noneRoles, visitors, participants, moderators := r.roster.OccupantsByRole()
+	r.drawOccupantsByRole(noneRoles)
+	r.drawOccupantsByRole(visitors)
+	r.drawOccupantsByRole(participants)
+	r.drawOccupantsByRole(moderators)
 
 	r.tree.ExpandAll()
 }
@@ -86,11 +90,25 @@ func (r *roomViewRoster) redraw() {
 	r.draw()
 }
 
-func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant) {
-	iter := r.model.Append()
+func (r *roomViewRoster) drawOccupantsByRole(occupants []*muc.Occupant) {
+	if len(occupants) > 0 {
+		roleHeader := r.roleDisplayName(occupants[0].Role)
+		roleHeader = i18n.Localf("%s (%v)", roleHeader, len(occupants))
+
+		iter := r.model.Append(nil)
+		_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, roleHeader)
+
+		for _, o := range occupants {
+			r.addOccupantToRoster(o, iter)
+		}
+	}
+}
+
+func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.TreeIter) {
+	iter := r.model.Append(parentIter)
 
 	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, r.getOccupantIcon().GetPixbuf())
-	_ = r.model.SetValue(iter, roomViewRosterNickNameIndex, o.Nickname)
+	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
 	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, r.affiliationDisplayName(o.Affiliation))
 	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, r.roleDisplayName(o.Role))
 }

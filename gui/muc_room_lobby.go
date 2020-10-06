@@ -3,6 +3,8 @@ package gui
 import (
 	"errors"
 
+	"github.com/coyim/coyim/session/muc"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -95,23 +97,23 @@ func (l *roomViewLobby) initDefaults() {
 }
 
 func (l *roomViewLobby) initSubscribers(v *roomView) {
-	v.subscribeAll("lobby", roomViewEventObservers{
-		"occupantSelfJoinedEvent": l.occupantJoinedEvent,
-		"roomInfoReceivedEvent": func(roomViewEventInfo) {
-			l.isReadyToJoinRoom = true
-			doInUIThread(l.enableJoinIfConditionsAreMet)
-		},
-		"nicknameConflictEvent": func(ei roomViewEventInfo) {
-			l.nicknameConflictEvent(v.roomID(), ei["nickname"])
-		},
-		"registrationRequiredEvent": func(ei roomViewEventInfo) {
-			l.registrationRequiredEvent(v.roomID(), ei["nickname"])
-		},
-		"beforeSwitchingToMainViewEvent": func(roomViewEventInfo) {
-			v.unsubscribe("lobby", "occupantSelfJoinedEvent")
-			v.unsubscribe("lobby", "roomInfoReceivedEvent")
-		},
+	v.subscribe("lobby", func(ev roomViewEvent) {
+		switch t := ev.(type) {
+		case occupantSelfJoinedEvent:
+			l.occupantSelfJoinedEvent()
+		case roomInfoReceivedEvent:
+			l.roomInfoReceivedEvent(t.info)
+		case nicknameConflictEvent:
+			l.nicknameConflictEvent(l.roomID, t.nickname)
+		case registrationRequiredEvent:
+			l.registrationRequiredEvent(l.roomID, t.nickname)
+		}
 	})
+}
+
+func (l *roomViewLobby) roomInfoReceivedEvent(roomInfo *muc.RoomListing) {
+	l.isReadyToJoinRoom = true
+	doInUIThread(l.enableJoinIfConditionsAreMet)
 }
 
 func (l *roomViewLobby) switchToReturnOnCancel() {
@@ -296,7 +298,7 @@ func (l *roomViewLobby) finishJoinRequest(err error) {
 	}
 }
 
-func (l *roomViewLobby) occupantJoinedEvent(roomViewEventInfo) {
+func (l *roomViewLobby) occupantSelfJoinedEvent() {
 	l.finishJoinRequest(nil)
 }
 

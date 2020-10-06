@@ -118,14 +118,21 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
 
 	v.info = roomInfo
 
-	doInUIThread(func() {
-		v.warnings.clear()
-		v.showRoomWarnings()
-		v.notifications.add(v.warningsInfoBar)
-		v.loadingInfoBar.hide()
-	})
+	// We clear current warnings, because we don't want to show some warnings
+	// to the user even if we don't get any info from the room server
+	doInUIThread(v.warnings.clear)
 
-	v.publish("roomInfoReceivedEvent")
+	if v.info != nil {
+		doInUIThread(func() {
+			v.showRoomWarnings()
+			v.notifications.add(v.warningsInfoBar)
+		})
+	}
+	doInUIThread(v.loadingInfoBar.hide)
+
+	v.publishEvent(roomInfoReceivedEvent{
+		info: roomInfo,
+	})
 }
 
 func (v *roomView) showRoomWarnings() {
@@ -272,16 +279,12 @@ func (v *roomView) onJoinCancel() {
 
 // nicknameConflict MUST NOT be called from the UI thread
 func (v *roomView) nicknameConflict(nickname string) {
-	v.publishWithInfo("nicknameConflictEvent", roomViewEventInfo{
-		"nickname": nickname,
-	})
+	v.publishEvent(nicknameConflictEvent{nickname})
 }
 
 // registrationRequired MUST NOT be called from the UI thread
 func (v *roomView) registrationRequired(nickname string) {
-	v.publishWithInfo("registrationRequiredEvent", roomViewEventInfo{
-		"nickname": nickname,
-	})
+	v.publishEvent(registrationRequiredEvent{nickname})
 }
 
 func (v *roomView) roomID() jid.Bare {

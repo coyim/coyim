@@ -33,36 +33,54 @@ func (c *roomViewConversation) initBuilder() {
 }
 
 func (c *roomViewConversation) initSubscribers(v *roomView) {
-	v.subscribeAll("conversation", roomViewEventObservers{
-		"occupantLeftEvent": func(ei roomViewEventInfo) {
-			doInUIThread(func() {
-				c.displayNotificationWhenOccupantLeftTheRoom(ei["nickname"])
-			})
-		},
-		"occupantJoinedEvent": func(ei roomViewEventInfo) {
-			doInUIThread(func() {
-				c.displayNotificationWhenOccupantJoinedRoom(ei["nickname"])
-			})
-		},
-		"messageReceivedEvent": func(ei roomViewEventInfo) {
-			doInUIThread(func() {
-				c.displayNewLiveMessage(
-					ei["nickname"],
-					ei["subject"],
-					ei["message"],
-				)
-			})
-		},
-		"loggingEnabledEvent": func(roomViewEventInfo) {
-			doInUIThread(func() {
-				c.displayWarningMessage(i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
-			})
-		},
-		"loggingDisabledEvent": func(roomViewEventInfo) {
-			doInUIThread(func() {
-				c.displayWarningMessage(i18n.Local("This room is no longer publicly logged."))
-			})
-		},
+	v.subscribe("conversation", func(ev roomViewEvent) {
+		switch t := ev.(type) {
+		case occupantLeftEvent:
+			c.occupantLeftEvent(t.nickname)
+		case occupantJoinedEvent:
+			c.occupantJoinedEvent(t.nickname)
+		case messageEvent:
+			c.messageEvent(t.tp, t.nickname, t.subject, t.message)
+		case loggingEnabledEvent:
+			c.loggingEnabledEvent()
+		case loggingDisabledEvent:
+			c.loggingDisabledEvent()
+		}
+	})
+}
+
+func (c *roomViewConversation) occupantLeftEvent(nickname string) {
+	doInUIThread(func() {
+		c.displayNotificationWhenOccupantLeftTheRoom(nickname)
+	})
+}
+
+func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
+	doInUIThread(func() {
+		c.displayNotificationWhenOccupantJoinedRoom(nickname)
+	})
+}
+
+func (c *roomViewConversation) messageEvent(tp, nickname, subject, message string) {
+	doInUIThread(func() {
+		switch tp {
+		case "received":
+			c.displayNewLiveMessage(nickname, subject, message)
+		default:
+			c.log.WithField("type", tp).Warn("Unknow message event type")
+		}
+	})
+}
+
+func (c *roomViewConversation) loggingEnabledEvent() {
+	doInUIThread(func() {
+		c.displayWarningMessage(i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
+	})
+}
+
+func (c *roomViewConversation) loggingDisabledEvent() {
+	doInUIThread(func() {
+		c.displayWarningMessage(i18n.Local("This room is no longer publicly logged."))
 	})
 }
 

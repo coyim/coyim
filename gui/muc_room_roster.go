@@ -57,14 +57,19 @@ func (r *roomViewRoster) initDefaults() {
 }
 
 func (r *roomViewRoster) initSubscribers(v *roomView) {
-	v.subscribeAll("roster", roomViewEventObservers{
-		"occupantJoinedEvent":  r.onUpdateRoster,
-		"occupantUpdatedEvent": r.onUpdateRoster,
-		"occupantLeftEvent":    r.onUpdateRoster,
+	v.subscribe("roster", func(ev roomViewEvent) {
+		switch ev.(type) {
+		case occupantJoinedEvent:
+			r.onUpdateRoster()
+		case occupantUpdatedEvent:
+			r.onUpdateRoster()
+		case occupantLeftEvent:
+			r.onUpdateRoster()
+		}
 	})
 }
 
-func (r *roomViewRoster) onUpdateRoster(roomViewEventInfo) {
+func (r *roomViewRoster) onUpdateRoster() {
 	doInUIThread(r.redraw)
 }
 

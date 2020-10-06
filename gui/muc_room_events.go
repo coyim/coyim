@@ -12,93 +12,68 @@ import (
 func (v *roomView) handleRoomEvent(ev events.MUC) {
 	switch t := ev.(type) {
 	case events.MUCSelfOccupantJoined:
-		v.publishWithInfo("occupantSelfJoinedEvent", roomViewEventInfo{
-			"nickname": t.Nickname,
-		})
-
+		v.publishEvent(occupantSelfJoinedEvent{t.Nickname})
 	case events.MUCOccupantUpdated:
-		v.publishWithInfo("occupantUpdatedEvent", roomViewEventInfo{
-			"nickname": t.Nickname,
-		})
-
+		v.publishEvent(occupantUpdatedEvent{t.Nickname})
 	case events.MUCOccupantJoined:
-		v.publishWithInfo("occupantJoinedEvent", roomViewEventInfo{
-			"nickname": t.Nickname,
-		})
-
+		v.publishEvent(occupantJoinedEvent{t.Nickname})
 	case events.MUCOccupantLeft:
-		v.publishWithInfo("occupantLeftEvent", roomViewEventInfo{
-			"nickname": t.Nickname,
-		})
-
+		v.publishEvent(occupantLeftEvent{t.Nickname})
 	case events.MUCMessageReceived:
-		v.publishWithInfo("messageReceivedEvent", roomViewEventInfo{
-			"nickname": t.Nickname,
-			"subject":  t.Subject,
-			"message":  t.Message,
-		})
-
+		v.publishMessageEvent("received", t.Nickname, t.Subject, t.Message)
 	case events.MUCLoggingEnabled:
-		v.publish("loggingEnabledEvent")
-
+		v.publishEvent(loggingEnabledEvent{})
 	case events.MUCLoggingDisabled:
-		v.publish("loggingDisabledEvent")
-
+		v.publishEvent(loggingDisabledEvent{})
 	default:
 		v.log.WithField("event", t).Warn("Unsupported room event received")
 	}
 }
 
-// roomViewEventInfo contains information about any room view event
-type roomViewEventInfo map[string]string
-
-type roomViewEventObservers map[string]func(roomViewEventInfo)
-
 type roomViewObserver struct {
 	id       string
-	onNotify func(roomViewEventInfo)
+	onNotify func(roomViewEvent)
 }
 
 type roomViewSubscribers struct {
-	observers     map[string][]*roomViewObserver
+	observers     []*roomViewObserver
 	observersLock sync.Mutex
 
 	log coylog.Logger
 }
 
-func newRoomViewSubscribers(room jid.Bare, l coylog.Logger) *roomViewSubscribers {
-	return &roomViewSubscribers{
-		log: l.WithFields(log.Fields{
-			"who":  "newRoomViewSubscribers",
-			"room": room,
-		}),
-		observers: make(map[string][]*roomViewObserver),
-	}
+func newRoomViewSubscribers(roomID jid.Bare, l coylog.Logger) *roomViewSubscribers {
+	s := &roomViewSubscribers{}
+
+	s.log = l.WithFields(log.Fields{
+		"who":  "newRoomViewSubscribers",
+		"room": roomID,
+	})
+
+	return s
 }
 
-func (s *roomViewSubscribers) subscribe(ev string, o *roomViewObserver) {
+func (s *roomViewSubscribers) subscribe(id string, onNotify func(roomViewEvent)) {
 	s.observersLock.Lock()
 	defer s.observersLock.Unlock()
 
-	s.observers[ev] = append(s.observers[ev], o)
+	s.observers = append(s.observers, &roomViewObserver{
+		id:       id,
+		onNotify: onNotify,
+	})
 }
 
-func (s *roomViewSubscribers) unsubscribe(ev string, id string) {
+func (s *roomViewSubscribers) unsubscribe(id string) {
 	s.observersLock.Lock()
 	hasChanged := false
-	observers, ok := s.observers[ev]
+	observers := s.observers
 
 	defer func() {
 		if hasChanged {
-			s.observers[ev] = observers
+			s.observers = observers
 		}
 		s.observersLock.Unlock()
 	}()
-
-	if !ok {
-		s.debug("unsubscribe(): trying to unsubscribe from a not initialized event", ev)
-		return
-	}
 
 	for i, o := range observers {
 		if o.id == id {
@@ -111,18 +86,13 @@ func (s *roomViewSubscribers) unsubscribe(ev string, id string) {
 	}
 }
 
-func (s *roomViewSubscribers) publish(ev string, ei roomViewEventInfo) {
+func (s *roomViewSubscribers) publish(ev roomViewEvent) {
 	s.observersLock.Lock()
-	observers, ok := s.observers[ev]
+	observers := s.observers
 	s.observersLock.Unlock()
 
-	if !ok {
-		s.debug("publish(): trying to publish a not initialized event", ev)
-		return
-	}
-
 	for _, o := range observers {
-		o.onNotify(ei)
+		o.onNotify(ev)
 	}
 }
 
@@ -130,31 +100,27 @@ func (s *roomViewSubscribers) debug(m string, ev string) {
 	s.log.Debug(m, ev)
 }
 
-func (v *roomView) subscribe(id string, ev string, onNotify func(roomViewEventInfo)) {
-	v.subscribers.subscribe(ev, &roomViewObserver{
-		id:       id,
-		onNotify: onNotify,
-	})
+func (v *roomView) subscribe(id string, onNotify func(roomViewEvent)) {
+	v.subscribers.subscribe(id, onNotify)
 }
 
-func (v *roomView) subscribeAll(id string, o roomViewEventObservers) {
-	for ev, onNotify := range o {
-		v.subscribe(id, ev, onNotify)
-	}
+func (v *roomView) unsubscribe(id string) {
+	v.subscribers.unsubscribe(id)
 }
 
-func (v *roomView) unsubscribe(id string, ev string) {
-	v.subscribers.unsubscribe(ev, id)
-}
-
-func (v *roomView) publish(ev string) {
+func (v *roomView) publishEvent(ev roomViewEvent) {
 	if v.opened {
 		// We should analyze if at some point we need
 		// to be able to publish an event in a closed view
-		v.subscribers.publish(ev, roomViewEventInfo{})
+		v.subscribers.publish(ev)
 	}
 }
 
-func (v *roomView) publishWithInfo(ev string, ei roomViewEventInfo) {
-	v.subscribers.publish(ev, ei)
+func (v *roomView) publishMessageEvent(tp, nickname, subject, msg string) {
+	v.publishEvent(messageEvent{
+		tp:       tp,
+		nickname: nickname,
+		subject:  subject,
+		message:  msg,
+	})
 }

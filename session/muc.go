@@ -235,3 +235,20 @@ func getRealJidBasedOnItem(item *xmppData.MUCUserItem) jid.Full {
 
 	return jid.ParseFull(item.Jid)
 }
+
+func (m *mucManager) sendMessage(to, from, body string) error {
+	msg := &xmppData.Message{
+		To:   to,
+		From: from,
+		Body: body,
+		Type: "groupchat",
+	}
+
+	err := m.conn().SendMessage(msg)
+	if err != nil {
+		m.log.WithError(err).Error("The message could not be send")
+		return err
+	}
+
+	return nil
+}

@@ -135,6 +135,11 @@ func (*SessionMock) Send(jid.Any, string, bool) error {
 	return nil
 }
 
+// SendMUCMessage is the implementation for Session interface
+func (*SessionMock) SendMUCMessage(to, from, body string) error {
+	return nil
+}
+
 // SendPing is the implementation for Session interface
 func (*SessionMock) SendPing() {}
 

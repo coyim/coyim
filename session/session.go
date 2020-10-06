@@ -3,6 +3,7 @@ package session
 import (
 	"bytes"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"os/exec"
@@ -969,4 +970,13 @@ func (s *session) SendPing() {
 			}
 		}
 	}()
+}
+
+// SendMUCMessage is used to send a group chat message
+func (s *session) SendMUCMessage(to, from, body string) error {
+	if !s.IsConnected() {
+		return errors.New("session is not connected")
+	}
+
+	return s.muc.sendMessage(to, from, body)
 }

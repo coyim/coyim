@@ -14,14 +14,14 @@ import (
 
 type mucManager struct {
 	log          coylog.Logger
-	conn         xi.Conn
+	conn         func() xi.Conn
 	publishEvent func(ev interface{})
 	roomManager  *muc.RoomManager
 	roomLock     sync.Mutex
 	sync.Mutex
 }
 
-func newMUCManager(log coylog.Logger, conn xi.Conn, publishEvent func(ev interface{})) *mucManager {
+func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev interface{})) *mucManager {
 	m := &mucManager{
 		log:          log,
 		conn:         conn,

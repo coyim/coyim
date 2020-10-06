@@ -7,6 +7,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -44,6 +45,7 @@ func (c *roomViewConversation) initBuilder() {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_send_message": c.onSendMessage,
+		"on_key_press":    c.onKeyPress,
 	})
 }
 
@@ -125,6 +127,18 @@ func (c *roomViewConversation) onSendMessage() {
 		//TODO: Show a friendly message to the user
 		c.log.WithError(err).Warn("Failed to send the message")
 	}
+}
+
+func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
+	evk := g.gdk.EventKeyFrom(ev)
+	ret := false
+
+	if isNormalEnter(evk) {
+		c.onSendMessage()
+		ret = true
+	}
+
+	return ret
 }
 
 func (c *roomViewConversation) getTextBuffer() gtki.TextBuffer {

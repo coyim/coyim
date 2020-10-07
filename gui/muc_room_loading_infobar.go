@@ -8,11 +8,11 @@ import (
 type roomViewLoadingInfoBar struct {
 	parent gtki.Box
 
-	infoBar        gtki.InfoBar `gtk-widget:"info"`
-	content        gtki.Box     `gtk-widget:"info-content"`
-	text           gtki.Label   `gtk-widget:"info-label"`
-	description    gtki.Label   `gtk-widget:"info-description"`
-	tryAgainButton gtki.Button  `gtk-widget:"try-again-button"`
+	infoBar                 gtki.InfoBar `gtk-widget:"info"`
+	content                 gtki.Box     `gtk-widget:"info-content"`
+	infoBarLabel            gtki.Label   `gtk-widget:"info-label"`
+	infoBarDescriptionLabel gtki.Label   `gtk-widget:"info-description"`
+	tryAgainButton          gtki.Button  `gtk-widget:"try-again-button"`
 
 	spinner *spinner
 	onRetry func()
@@ -37,7 +37,7 @@ func (v *roomView) newRoomViewLoadingInfoBar(parent gtki.Box) *roomViewLoadingIn
 		"font-weight": "bold",
 	})
 
-	updateWithStyle(ib.text, prov)
+	updateWithStyle(ib.infoBarLabel, prov)
 
 	ib.content.Add(ib.spinner.getWidget())
 	ib.parent.Add(ib.infoBar)
@@ -46,8 +46,8 @@ func (v *roomView) newRoomViewLoadingInfoBar(parent gtki.Box) *roomViewLoadingIn
 }
 
 func (ib *roomViewLoadingInfoBar) start() {
-	ib.text.SetLabel(i18n.Local("Loading room information"))
-	ib.description.SetLabel(i18n.Local("Sometimes this can take few minutes, so please wait until it finishes."))
+	ib.infoBarLabel.SetLabel(i18n.Local("Loading room information"))
+	ib.infoBarDescriptionLabel.SetLabel(i18n.Local("Sometimes this can take few minutes, so please wait until it finishes."))
 	ib.infoBar.SetMessageType(gtki.MESSAGE_INFO)
 	ib.show()
 }
@@ -61,12 +61,12 @@ func (ib *roomViewLoadingInfoBar) error(text, description string, onRetry func()
 	ib.stop()
 
 	ib.infoBar.SetMessageType(gtki.MESSAGE_ERROR)
-	ib.text.SetLabel(text)
+	ib.infoBarLabel.SetLabel(text)
 
 	if description != "" {
-		ib.description.SetLabel(description)
+		ib.infoBarDescriptionLabel.SetLabel(description)
 	} else {
-		ib.description.Hide()
+		ib.infoBarDescriptionLabel.Hide()
 	}
 
 	if onRetry != nil {

@@ -71,7 +71,7 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 
 	view.toolbar = view.newRoomViewToolbar()
 	view.roster = view.newRoomViewRoster()
-	view.conv = view.newRoomViewConversation(a.session)
+	view.conv = view.newRoomViewConversation()
 
 	view.spinner = newSpinner()
 	view.notifications = u.newNotifications(view.notificationBox)

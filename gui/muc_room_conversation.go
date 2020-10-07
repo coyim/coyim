@@ -1,22 +1,18 @@
 package gui
 
 import (
-	"time"
-
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/access"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
+	log "github.com/sirupsen/logrus"
 )
 
 type roomViewConversation struct {
 	tags    gtki.TextTagTable
 	roomID  jid.Bare
-	session access.Session
-
-	occupantID func() (jid.Full, error)
+	account *account
 
 	view       gtki.Box      `gtk-widget:"roomConversation"`
 	text       gtki.TextView `gtk-widget:"roomChatTextView"`
@@ -26,12 +22,16 @@ type roomViewConversation struct {
 	log coylog.Logger
 }
 
-func (v *roomView) newRoomViewConversation(s access.Session) *roomViewConversation {
+func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c := &roomViewConversation{
-		roomID:     v.roomID(),
-		occupantID: v.occupantID,
-		session:    s,
+		roomID:  v.roomID(),
+		account: v.account,
 	}
+
+	c.log = c.account.log.WithFields(log.Fields{
+		"who":  "roomViewConversation",
+		"room": c.roomID,
+	})
 
 	c.initBuilder()
 	c.initSubscribers(v)
@@ -107,6 +107,10 @@ func (c *roomViewConversation) getTypedMessage() string {
 	return text
 }
 
+func (c *roomViewConversation) clearTypedMessage() {
+	c.newText.SetText("")
+}
+
 func (c *roomViewConversation) disableEntryAndSendButton() {
 	c.newText.SetEditable(false)
 	c.sendButton.SetSensitive(false)
@@ -117,33 +121,20 @@ func (c *roomViewConversation) enableEntryAndSendButton() {
 	c.sendButton.SetSensitive(true)
 }
 
-func (c *roomViewConversation) clearMessage() {
-	c.newText.SetText("")
+func (c *roomViewConversation) beforeSendingMessage() {
+	c.disableEntryAndSendButton()
 }
 
-func (c *roomViewConversation) onSendMessage() {
-	c.disableEntryAndSendButton()
-	defer c.enableEntryAndSendButton()
+func (c *roomViewConversation) onSendMessageFinish() {
+	c.enableEntryAndSendButton()
+	c.clearTypedMessage()
+}
 
-	text := c.getTypedMessage()
-	if text == "" {
-		return
-	}
-
-	n, err := c.occupantID()
-	if err != nil {
-		//TODO: Show a friendly message to the user
-		return
-	}
-
-	err = c.session.SendMUCMessage(c.roomID.String(), n.String(), text)
-	if err != nil {
-		//TODO: Show a friendly message to the user
-		c.log.WithError(err).Warn("Failed to send the message")
-		return
-	}
-
-	c.clearMessage()
+func (c *roomViewConversation) onSendMessageFailed(err error) {
+	c.log.WithError(err).Warn("failed to send the message")
+	doInUIThread(func() {
+		c.displayErrorMessage(i18n.Local("The message couldn't be sent, please try again"))
+	})
 }
 
 func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
@@ -158,79 +149,17 @@ func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	return ret
 }
 
-func (c *roomViewConversation) getTextBuffer() gtki.TextBuffer {
-	b, _ := c.text.GetBuffer()
-	return b
-}
+func (c *roomViewConversation) onSendMessage() {
+	c.beforeSendingMessage()
+	defer c.onSendMessageFinish()
 
-func (c *roomViewConversation) addNewLine() {
-	c.addText("\n")
-}
-
-func (c *roomViewConversation) addText(text string) {
-	b := c.getTextBuffer()
-	b.Insert(b.GetEndIter(), text)
-}
-
-func (c *roomViewConversation) addTextWithTag(text string, tag string) {
-	b := c.getTextBuffer()
-	b.InsertWithTagByName(b.GetEndIter(), text, tag)
-}
-
-func (c *roomViewConversation) addTextLineWithTimestamp(text string, tag string) {
-	c.displayTimestamp()
-	c.addTextWithTag(text, tag)
-	c.addNewLine()
-}
-
-// displayTimestamp MUST be called from the UI thread
-func (c *roomViewConversation) displayTimestamp() {
-	c.addTextWithTag(i18n.Localf("[%s] ", getTimestamp()), "timestamp")
-}
-
-// displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
-func (c *roomViewConversation) displayNotificationWhenOccupantJoinedRoom(nickname string) {
-	c.addTextLineWithTimestamp(i18n.Localf("%s joined the room", nickname), "joinedRoom")
-}
-
-// displayNotificationWhenOccupantLeftTheRoom MUST be called from the UI thread
-func (c *roomViewConversation) displayNotificationWhenOccupantLeftTheRoom(nickname string) {
-	c.addTextLineWithTimestamp(i18n.Localf("%s left the room", nickname), "leftRoom")
-}
-
-// displayNickname MUST be called from the UI thread
-func (c *roomViewConversation) displayNickname(nickname string) {
-	c.addTextWithTag(i18n.Localf("%s: ", nickname), "nickname")
-}
-
-// displayRoomSubject MUST be called from the UI thread
-func (c *roomViewConversation) displayRoomSubject(subject string) {
-	c.addTextWithTag(i18n.Localf("[%s] ", subject), "subject")
-}
-
-// displayMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayMessage(message string) {
-	c.addTextWithTag(message, "message")
-}
-
-// displayNewLiveMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
-	c.displayTimestamp()
-
-	c.displayNickname(nickname)
-	if subject != "" {
-		c.displayRoomSubject(subject)
+	message := c.getTypedMessage()
+	if message == "" {
+		return
 	}
-	c.displayMessage(message)
 
-	c.addNewLine()
-}
-
-// displayWarningMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayWarningMessage(message string) {
-	c.addTextLineWithTimestamp(message, "warning")
-}
-
-func getTimestamp() string {
-	return time.Now().Format("15:04:05")
+	err := c.account.session.SendMUCMessage(c.roomID.String(), c.account.Account(), message)
+	if err != nil {
+		c.onSendMessageFailed(err)
+	}
 }

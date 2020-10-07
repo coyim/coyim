@@ -382,7 +382,7 @@ func (c *conn) Send(to, msg string, otr bool) error {
 	return err
 }
 
-// SendMessage send a group chat message to the given room.
+// SendMessage sends a message to the intended recipient.
 func (c *conn) SendMessage(m *data.Message) error {
 	if m.ID == "" {
 		m.ID = strconv.FormatUint(uint64(c.getCookie()), 10)

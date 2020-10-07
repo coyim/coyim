@@ -340,7 +340,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSeparator" id="bottom separator">
+              <object class="GtkSeparator" id="bottom-separator">
                 <property name="visible">True</property>
               </object>
               <packing>

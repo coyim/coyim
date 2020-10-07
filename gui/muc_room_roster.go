@@ -106,14 +106,10 @@ func (r *roomViewRoster) drawOccupantsByRole(occupants []*muc.Occupant) {
 func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.TreeIter) {
 	iter := r.model.Append(parentIter)
 
-	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, r.getOccupantIcon().GetPixbuf())
+	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getMUCIconPixbuf("occupant"))
 	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
 	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, r.affiliationDisplayName(o.Affiliation))
 	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, r.roleDisplayName(o.Role))
-}
-
-func (r *roomViewRoster) getOccupantIcon() Icon {
-	return statusIcons["occupant"]
 }
 
 func (r *roomViewRoster) affiliationDisplayName(a data.Affiliation) string {

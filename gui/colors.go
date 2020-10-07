@@ -23,6 +23,7 @@ type colorSet struct {
 	conversationUnlockTypingBackground        string
 	timestampForeground                       string
 	warningForeground                         string
+	errorForeground                           string
 }
 
 var themeVariant string
@@ -81,6 +82,7 @@ func (u *gtkUI) defaultLightColorSet() colorSet {
 		conversationUnlockTypingBackground:        "#f9f9f9",
 		timestampForeground:                       "#aaaaaa",
 		warningForeground:                         "#c2171d",
+		errorForeground:                           "#a30707",
 	}
 }
 
@@ -103,5 +105,6 @@ func (u *gtkUI) defaultDarkColorSet() colorSet {
 		conversationUnlockTypingBackground:        "#252a2c",
 		timestampForeground:                       "#444444",
 		warningForeground:                         "#c2171d",
+		errorForeground:                           "#d16860",
 	}
 }

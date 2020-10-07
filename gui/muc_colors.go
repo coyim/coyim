@@ -8,6 +8,7 @@ type mucColorSet struct {
 	nicknameForeground      string
 	subjectForeground       string
 	messageForeground       string
+	errorForeground         string
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -22,6 +23,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 
 	return mucColorSet{
 		warningForeground:       cs.warningForeground,
+		errorForeground:         cs.errorForeground,
 		someoneJoinedForeground: "#297316",
 		someoneLeftForeground:   "#731629",
 		timestampForeground:     "#AAB7B8",
@@ -36,6 +38,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 
 	return mucColorSet{
 		warningForeground:       cs.warningForeground,
+		errorForeground:         cs.errorForeground,
 		someoneJoinedForeground: "#297316",
 		someoneLeftForeground:   "#731629",
 		timestampForeground:     "#AAB7B8",

@@ -68,6 +68,12 @@ func (c *roomViewConversation) createMessageTag(cs mucColorSet) gtki.TextTag {
 	})
 }
 
+func (c *roomViewConversation) createErrorTag(cs mucColorSet) gtki.TextTag {
+	return c.createConversationTag("error", map[string]interface{}{
+		"foreground": cs.errorForeground,
+	})
+}
+
 func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
 	table, _ := g.gtk.TextTagTableNew()
 	cs := u.currentMUCColorSet()
@@ -80,6 +86,7 @@ func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable 
 		c.createNicknameTag,
 		c.createSubjectTag,
 		c.createMessageTag,
+		c.createErrorTag,
 	}
 
 	for _, t := range tags {

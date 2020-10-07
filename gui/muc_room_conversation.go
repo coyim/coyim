@@ -131,7 +131,7 @@ func (c *roomViewConversation) onSendMessageFinish() {
 }
 
 func (c *roomViewConversation) onSendMessageFailed(err error) {
-	c.log.WithError(err).Warn("failed to send the message")
+	c.log.WithError(err).Error("failed to send the message")
 	doInUIThread(func() {
 		c.displayErrorMessage(i18n.Local("The message couldn't be sent, please try again"))
 	})

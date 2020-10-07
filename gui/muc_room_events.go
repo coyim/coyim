@@ -63,27 +63,20 @@ func (s *roomViewSubscribers) subscribe(id string, onNotify func(roomViewEvent))
 	})
 }
 
-func (s *roomViewSubscribers) unsubscribe(id string) {
-	s.observersLock.Lock()
-	hasChanged := false
-	observers := s.observers
-
-	defer func() {
-		if hasChanged {
-			s.observers = observers
-		}
-		s.observersLock.Unlock()
-	}()
-
-	for i, o := range observers {
+func removeFromObservers(obs []*roomViewObserver, id string) []*roomViewObserver {
+	for i, o := range obs {
 		if o.id == id {
-			observers = append(
-				observers[:i], observers[i+1:]...,
-			)
-			hasChanged = true
-			return
+			return append(obs[:i], obs[i+1:]...)
 		}
 	}
+	return obs
+}
+
+func (s *roomViewSubscribers) unsubscribe(id string) {
+	s.observersLock.Lock()
+	defer s.observersLock.Unlock()
+
+	s.observers = removeFromObservers(s.observers, id)
 }
 
 func (s *roomViewSubscribers) publish(ev roomViewEvent) {

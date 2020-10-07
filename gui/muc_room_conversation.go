@@ -18,10 +18,10 @@ type roomViewConversation struct {
 
 	occupantID func() (jid.Full, error)
 
-	view    gtki.Box      `gtk-widget:"roomConversation"`
-	text    gtki.TextView `gtk-widget:"roomChatTextView"`
-	newText gtki.Entry    `gtk-widget:"textConversation"`
-	send    gtki.Button   `gtk-widget:"button-send"`
+	view       gtki.Box      `gtk-widget:"roomConversation"`
+	text       gtki.TextView `gtk-widget:"roomChatTextView"`
+	newText    gtki.Entry    `gtk-widget:"textConversation"`
+	sendButton gtki.Button   `gtk-widget:"button-send"`
 
 	log coylog.Logger
 }
@@ -109,12 +109,12 @@ func (c *roomViewConversation) getTypedMessage() string {
 
 func (c *roomViewConversation) disableEntryAndSendButton() {
 	c.newText.SetEditable(false)
-	c.send.SetSensitive(false)
+	c.sendButton.SetSensitive(false)
 }
 
 func (c *roomViewConversation) enableEntryAndSendButton() {
 	c.newText.SetEditable(true)
-	c.send.SetSensitive(true)
+	c.sendButton.SetSensitive(true)
 }
 
 func (c *roomViewConversation) clearMessage() {

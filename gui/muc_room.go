@@ -122,8 +122,6 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing, timeout bo
 
 	v.info = roomInfo
 
-	// We clear current warnings, because we don't want to show some warnings
-	// to the user even if we don't get any info from the room server
 	doInUIThread(v.warnings.clear)
 
 	if v.info != nil {

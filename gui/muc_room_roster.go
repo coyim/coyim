@@ -77,11 +77,10 @@ func (r *roomViewRoster) onUpdateRoster() {
 
 func (r *roomViewRoster) draw() {
 	noneRoles, visitors, participants, moderators := r.roster.OccupantsByRole()
-	r.drawOccupantsByRole(noneRoles)
-	r.drawOccupantsByRole(visitors)
-	r.drawOccupantsByRole(participants)
 	r.drawOccupantsByRole(moderators)
-
+	r.drawOccupantsByRole(participants)
+	r.drawOccupantsByRole(visitors)
+	r.drawOccupantsByRole(noneRoles)
 	r.tree.ExpandAll()
 }
 

@@ -7,6 +7,8 @@
       <object class="GtkButtonBox" id="actions">
         <property name="spacing">6</property>
         <property name="layout_style">start</property>
+        <property name="margin_right">12</property>
+        <property name="margin_left">12</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -18,6 +20,8 @@
       <object class="GtkBox" id="content">
         <property name="valign">center</property>
         <property name="spacing">16</property>
+        <property name="margin_right">12</property>
+        <property name="margin_left">12</property>
         <child>
           <object class="GtkBox" id="labels">
             <property name="visible">True</property>

@@ -18,9 +18,9 @@ type roomView struct {
 	account *account
 	builder *builder
 
-	room     *muc.Room
-	info     *muc.RoomListing
-	infoLock sync.Mutex
+	room         *muc.Room
+	roomInfo     *muc.RoomListing
+	roomInfoLock sync.Mutex
 
 	cancel chan bool
 
@@ -108,38 +108,22 @@ func (v *roomView) requestRoomInfo() {
 	go func() {
 		select {
 		case roomInfo := <-rl:
-			v.onRequestRoomInfoFinish(roomInfo, false)
+			v.onRequestRoomInfoFinish(roomInfo)
 		case <-time.After(time.Minute * 5):
-			v.onRequestRoomInfoFinish(nil, true)
+			v.onRequestRoomInfoTimeout()
 		case <-v.cancel:
 		}
 	}()
 }
 
-func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing, timeout bool) {
-	v.infoLock.Lock()
-	defer v.infoLock.Unlock()
+func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
+	v.setRoomInfoAndClearWarnings(roomInfo)
 
-	v.info = roomInfo
-
-	doInUIThread(v.warnings.clear)
-
-	if v.info != nil {
+	if v.roomInfo != nil {
 		doInUIThread(func() {
 			v.showRoomWarnings()
 			v.notifications.add(v.warningsInfoBar)
 		})
-	}
-
-	if timeout {
-		v.loadingInfoBar.error(
-			i18n.Local("An error occurred while loading room information"),
-			i18n.Local("Loading the room information took longer than usual, perhaps the connection to the server was lost. Do you want to try again?."),
-			v.requestRoomInfo,
-		)
-
-		v.publishEvent(roomInfoTimeoutEvent{})
-		return
 	}
 
 	doInUIThread(v.loadingInfoBar.hide)
@@ -149,19 +133,40 @@ func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing, timeout bo
 	})
 }
 
+func (v *roomView) onRequestRoomInfoTimeout() {
+	v.setRoomInfoAndClearWarnings(nil)
+
+	v.loadingInfoBar.error(
+		i18n.Local("An error occurred while loading room information"),
+		i18n.Local("Loading the room information took longer than usual, perhaps the connection to the server was lost. Do you want to try again?."),
+		v.requestRoomInfo,
+	)
+
+	v.publishEvent(roomInfoTimeoutEvent{})
+}
+
+func (v *roomView) setRoomInfoAndClearWarnings(roomInfo *muc.RoomListing) {
+	v.roomInfoLock.Lock()
+	defer v.roomInfoLock.Unlock()
+
+	v.roomInfo = roomInfo
+
+	doInUIThread(v.warnings.clear)
+}
+
 func (v *roomView) showRoomWarnings() {
 	v.warnings.add(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile."))
 
-	switch v.info.Anonymity {
+	switch v.roomInfo.Anonymity {
 	case "semi":
 		v.warnings.add(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
 	case "no":
 		v.warnings.add(i18n.Local("This room is not anonymous. This means that any person in this room can connect your nickname with your real username (your JID)."))
 	default:
-		v.log.WithField("anonymity", v.info.Anonymity).Warn("Unknown anonymity setting for room")
+		v.log.WithField("anonymity", v.roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
 	}
 
-	if v.info.Logged {
+	if v.roomInfo.Logged {
 		v.warnings.add(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
 	}
 }

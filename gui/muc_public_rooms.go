@@ -9,6 +9,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -51,54 +52,98 @@ type mucPublicRoomsView struct {
 	roomInfos     map[int]*muc.RoomListing
 	cancel        chan bool
 
-	dialog           gtki.Dialog         `gtk-widget:"publicRooms"`
-	roomsModel       gtki.TreeStore      `gtk-widget:"roomsModel"`
-	roomsTree        gtki.TreeView       `gtk-widget:"roomsTree"`
-	rooms            gtki.ScrolledWindow `gtk-widget:"rooms"`
-	spinner          gtki.Spinner        `gtk-widget:"spinner"`
-	customService    gtki.Entry          `gtk-widget:"customServiceEntry"`
-	notificationArea gtki.Box            `gtk-widget:"notificationArea"`
+	roomsModel gtki.TreeStore
 
-	joinButton          gtki.Button `gtk-widget:"buttonJoin"`
-	refreshButton       gtki.Button `gtk-widget:"buttonRefresh"`
-	customServiceButton gtki.Button `gtk-widget:"buttonCustomService"`
+	dialog              gtki.Dialog         `gtk-widget:"public-rooms-dialog"`
+	roomsTree           gtki.TreeView       `gtk-widget:"public-rooms-tree"`
+	rooms               gtki.ScrolledWindow `gtk-widget:"public-rooms-view"`
+	customService       gtki.Entry          `gtk-widget:"custom-service-entry"`
+	joinButton          gtki.Button         `gtk-widget:"join-room-button"`
+	refreshButton       gtki.Button         `gtk-widget:"refresh-button"`
+	customServiceButton gtki.Button         `gtk-widget:"list-rooms-button"`
 
-	notification gtki.InfoBar
-	errorNotif   *errorNotification
+	notificationArea gtki.Box `gtk-widget:"notifications-area"`
+	notifications    *notifications
+
+	spinnerOverlay gtki.Overlay `gtk-widget:"spinner-overlay"`
+	spinnerBox     gtki.Box     `gtk-widget:"spinner-box"`
+	spinner        *spinner
 }
 
 func newMUCPublicRoomsView(u *gtkUI) *mucPublicRoomsView {
 	view := &mucPublicRoomsView{u: u}
-	view.init()
-	return view
-}
 
-func (prv *mucPublicRoomsView) init() {
-	prv.initBuilder()
-	prv.initConnectedAccountsComponent()
-	prv.initEvents()
-	prv.initCommons()
+	view.initBuilder()
+	view.initModel()
+	view.initNotificationsAndSpinner(u)
+	view.initConnectedAccountsComponent()
+	view.initDefaults()
+
+	return view
 }
 
 func (prv *mucPublicRoomsView) initBuilder() {
 	prv.builder = newBuilder("MUCPublicRoomsDialog")
 	panicOnDevError(prv.builder.bindObjects(prv))
-	prv.errorNotif = newErrorNotification(prv.notificationArea)
+
+	prv.builder.ConnectSignals(map[string]interface{}{
+		"on_cancel":            prv.onCancel,
+		"on_window_closed":     prv.onWindowClose,
+		"on_join":              prv.onJoinRoom,
+		"on_activate_room_row": prv.onActivateRoomRow,
+		"on_selection_changed": prv.onSelectionChanged,
+		"on_custom_service":    prv.onUpdatePublicRooms,
+		"on_refresh":           prv.onUpdatePublicRooms,
+	})
+}
+
+func (prv *mucPublicRoomsView) initModel() {
+	roomsModel, _ := g.gtk.TreeStoreNew(
+		// jid
+		glibi.TYPE_STRING,
+		// name
+		glibi.TYPE_STRING,
+		// service
+		glibi.TYPE_STRING,
+		// description
+		glibi.TYPE_STRING,
+		// occupants
+		glibi.TYPE_INT,
+		// room info reference
+		glibi.TYPE_INT,
+	)
+
+	prv.roomsModel = roomsModel
+	prv.roomsTree.SetModel(prv.roomsModel)
+}
+
+func (prv *mucPublicRoomsView) initNotificationsAndSpinner(u *gtkUI) {
+	prv.notifications = u.newNotifications(prv.notificationArea)
+
+	prv.spinner = newSpinner()
+	s := prv.spinner.getWidget()
+
+	// This is a GTK trick to set the size of the spinner,
+	// so if the parent has a size of 40x40 for example, with
+	// the bellow properties the spinner will be 40x40 too
+	s.SetProperty("hexpand", true)
+	s.SetProperty("vexpand", true)
+
+	prv.spinnerBox.Add(s)
 }
 
 func (prv *mucPublicRoomsView) initConnectedAccountsComponent() {
 	accountsInput := prv.builder.get("accounts").(gtki.ComboBox)
-	ac := prv.u.createConnectedAccountsComponent(accountsInput, prv,
+	ac := prv.u.createConnectedAccountsComponent(accountsInput, prv.notifications,
 		func(acc *account) {
 			// This is safe to do because we really have a selected account here
 			prv.currentAccount = acc
-
 			go prv.mucUpdatePublicRoomsOn(acc)
 		},
 		func() {
-			prv.rooms.SetVisible(false)
-			prv.spinner.Stop()
-			prv.spinner.SetVisible(false)
+			prv.disableRoomsView()
+			prv.hideSpinner()
+
 			prv.roomsModel.Clear()
 			prv.refreshButton.SetSensitive(false)
 			prv.customServiceButton.SetSensitive(false)
@@ -111,19 +156,7 @@ func (prv *mucPublicRoomsView) initConnectedAccountsComponent() {
 	prv.ac = ac
 }
 
-func (prv *mucPublicRoomsView) initEvents() {
-	prv.builder.ConnectSignals(map[string]interface{}{
-		"on_cancel":            prv.dialog.Destroy,
-		"on_close_window":      prv.ac.onDestroy,
-		"on_join":              prv.onJoinRoom,
-		"on_activate_room_row": prv.onActivateRoomRow,
-		"on_selection_changed": prv.onSelectionChanged,
-		"on_custom_service":    prv.onUpdatePublicRooms,
-		"on_refresh":           prv.onUpdatePublicRooms,
-	})
-}
-
-func (prv *mucPublicRoomsView) initCommons() {
+func (prv *mucPublicRoomsView) initDefaults() {
 	prv.serviceGroups = make(map[string]gtki.TreeIter)
 	prv.roomInfos = make(map[int]*muc.RoomListing)
 	prv.joinButton.SetSensitive(false)
@@ -138,6 +171,16 @@ func (prv *mucPublicRoomsView) log() coylog.Logger {
 	l.WithField("who", "mucPublilcRoomsView")
 
 	return l
+}
+
+func (prv *mucPublicRoomsView) onCancel() {
+	prv.dialog.Destroy()
+}
+
+func (prv *mucPublicRoomsView) onWindowClose() {
+	if prv.ac != nil {
+		prv.ac.onDestroy()
+	}
 }
 
 var (
@@ -271,8 +314,8 @@ func (prv *mucPublicRoomsView) getFreshRoomInfoIdentifierAndSet(rl *muc.RoomList
 }
 
 func (prv *mucPublicRoomsView) beforeUpdatingPublicRooms() {
-	prv.clearErrors()
-	prv.hideRoomsViewAndShowSpinner()
+	prv.notifications.clearErrors()
+	prv.disableRoomsViewAndShowSpinner()
 
 	prv.roomsModel.Clear()
 	prv.refreshButton.SetSensitive(true)
@@ -280,32 +323,36 @@ func (prv *mucPublicRoomsView) beforeUpdatingPublicRooms() {
 }
 
 func (prv *mucPublicRoomsView) onUpdatePublicRoomsNoResults(customService string) {
-	prv.showRoomsViewAndHideSpinner()
+	prv.enableRoomsViewAndHideSpinner()
 	if customService != "" {
-		prv.notifyOnError(i18n.Local("That service doesn't seem to exist"))
+		prv.notifications.error(i18n.Local("That service doesn't seem to exist"))
 	} else {
-		prv.notifyOnError(i18n.Local("Your XMPP server doesn't seem to have any chat room services"))
+		prv.notifications.error(i18n.Local("Your XMPP server doesn't seem to have any chat room services"))
 	}
 }
 
 func (prv *mucPublicRoomsView) showSpinner() {
-	prv.spinner.Start()
-	prv.spinner.Show()
+	prv.spinnerOverlay.Show()
+	prv.spinner.show()
 }
 
 func (prv *mucPublicRoomsView) hideSpinner() {
-	prv.spinner.Stop()
-	prv.spinner.Hide()
+	prv.spinner.hide()
+	prv.spinnerOverlay.Hide()
 }
 
-func (prv *mucPublicRoomsView) showRoomsViewAndHideSpinner() {
-	prv.rooms.Show()
+func (prv *mucPublicRoomsView) enableRoomsViewAndHideSpinner() {
+	prv.rooms.SetSensitive(true)
 	prv.hideSpinner()
 }
 
-func (prv *mucPublicRoomsView) hideRoomsViewAndShowSpinner() {
-	prv.rooms.Hide()
+func (prv *mucPublicRoomsView) disableRoomsViewAndShowSpinner() {
+	prv.disableRoomsView()
 	prv.showSpinner()
+}
+
+func (prv *mucPublicRoomsView) disableRoomsView() {
+	prv.rooms.SetSensitive(false)
 }
 
 func (prv *mucPublicRoomsView) addNewServiceToModel(roomName, serviceName string) gtki.TreeIter {
@@ -358,7 +405,7 @@ func (prv *mucPublicRoomsView) handleReceivedRoomListing(rl *muc.RoomListing, ge
 func (prv *mucPublicRoomsView) handleReceivedError(err error) {
 	prv.log().WithError(err).Error("Something went wrong when trying to get chat rooms")
 	doInUIThread(func() {
-		prv.notifyOnError(i18n.Local("Something went wrong when trying to get chat rooms"))
+		prv.notifications.error(i18n.Local("Something went wrong when trying to get chat rooms"))
 	})
 }
 
@@ -406,7 +453,7 @@ func (prv *mucPublicRoomsView) listenPublicRoomsUpdate(customService string, gen
 	for prv.listenPublicRoomsResponse(gen, res, resServices, ec) {
 		if !hasSomething {
 			hasSomething = true
-			doInUIThread(prv.showRoomsViewAndHideSpinner)
+			doInUIThread(prv.enableRoomsViewAndHideSpinner)
 		}
 	}
 }
@@ -435,18 +482,6 @@ func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
 	go prv.listenPublicRoomsUpdate(customService, gen, res, resServices, ec)
 }
 
-func (prv *mucPublicRoomsView) clearErrors() {
-	prv.errorNotif.Hide()
-}
-
-func (prv *mucPublicRoomsView) notifyOnError(err string) {
-	if prv.notification != nil {
-		prv.notificationArea.Remove(prv.notification)
-	}
-
-	prv.errorNotif.ShowMessage(err)
-}
-
 func (prv *mucPublicRoomsView) showUserMessageForError(err error) {
 	var userMessage string
 
@@ -463,7 +498,7 @@ func (prv *mucPublicRoomsView) showUserMessageForError(err error) {
 		userMessage = i18n.Local("An unknow error ocurred, please try again.")
 	}
 
-	prv.notifyOnError(userMessage)
+	prv.notifications.error(userMessage)
 }
 
 // mucShowPublicRooms MUST be called from the UI thread
@@ -480,7 +515,7 @@ func (u *gtkUI) mucShowPublicRooms() {
 func (prv *mucPublicRoomsView) joinRoom(roomJid jid.Bare, roomInfo *muc.RoomListing) {
 	if prv.currentAccount == nil {
 		prv.log().WithField("room", roomJid).Debug("joinRoom(): no account is selected")
-		prv.notifyOnError(i18n.Local("No account was selected, please select one account from the list."))
+		prv.notifications.error(i18n.Local("No account was selected, please select one account from the list."))
 		return
 	}
 

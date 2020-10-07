@@ -21,6 +21,7 @@ type roomViewConversation struct {
 	view    gtki.Box      `gtk-widget:"roomConversation"`
 	text    gtki.TextView `gtk-widget:"roomChatTextView"`
 	newText gtki.Entry    `gtk-widget:"textConversation"`
+	send    gtki.Button   `gtk-widget:"button-send"`
 
 	log coylog.Logger
 }
@@ -102,15 +103,28 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 }
 
 func (c *roomViewConversation) getTypedMessage() string {
-	c.newText.SetEditable(false)
 	text, _ := c.newText.GetText()
-	c.newText.SetText("")
-	c.newText.SetEditable(true)
-
 	return text
 }
 
+func (c *roomViewConversation) disableEntryAndSendButton() {
+	c.newText.SetEditable(false)
+	c.send.SetSensitive(false)
+}
+
+func (c *roomViewConversation) enableEntryAndSendButton() {
+	c.newText.SetEditable(true)
+	c.send.SetSensitive(true)
+}
+
+func (c *roomViewConversation) clearMessage() {
+	c.newText.SetText("")
+}
+
 func (c *roomViewConversation) onSendMessage() {
+	c.disableEntryAndSendButton()
+	defer c.enableEntryAndSendButton()
+
 	text := c.getTypedMessage()
 	if text == "" {
 		return
@@ -126,7 +140,10 @@ func (c *roomViewConversation) onSendMessage() {
 	if err != nil {
 		//TODO: Show a friendly message to the user
 		c.log.WithError(err).Warn("Failed to send the message")
+		return
 	}
+
+	c.clearMessage()
 }
 
 func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {

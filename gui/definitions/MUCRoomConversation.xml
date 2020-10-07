@@ -76,7 +76,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkButton" id="button-send">
                     <property name="label" translatable="yes">Send</property>
                     <property name="visible">True</property>
                     <property name="receives_default">True</property>

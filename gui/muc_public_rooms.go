@@ -134,25 +134,7 @@ func (prv *mucPublicRoomsView) initNotificationsAndSpinner(u *gtkUI) {
 
 func (prv *mucPublicRoomsView) initConnectedAccountsComponent() {
 	accountsInput := prv.builder.get("accounts").(gtki.ComboBox)
-	ac := prv.u.createConnectedAccountsComponent(accountsInput, prv.notifications,
-		func(acc *account) {
-			// This is safe to do because we really have a selected account here
-			prv.currentAccount = acc
-			go prv.mucUpdatePublicRoomsOn(acc)
-		},
-		func() {
-			prv.disableRoomsView()
-			prv.hideSpinner()
-
-			prv.roomsModel.Clear()
-			prv.refreshButton.SetSensitive(false)
-			prv.customServiceButton.SetSensitive(false)
-
-			// We don't have a selected account anymore, we should
-			// remove the existing reference to a no-selected account
-			prv.currentAccount = nil
-		},
-	)
+	ac := prv.u.createConnectedAccountsComponent(accountsInput, prv.notifications, prv.onAccountsUpdated, prv.onNoAccounts)
 	prv.ac = ac
 }
 
@@ -173,14 +155,38 @@ func (prv *mucPublicRoomsView) log() coylog.Logger {
 	return l
 }
 
+func (prv *mucPublicRoomsView) onAccountsUpdated(ca *account) {
+	prv.currentAccount = ca
+	prv.updatePublicRoomsForCurrentAccount()
+}
+
+func (prv *mucPublicRoomsView) onNoAccounts() {
+	prv.currentAccount = nil
+
+	prv.disableRoomsView()
+	prv.hideSpinner()
+
+	prv.roomsModel.Clear()
+	prv.refreshButton.SetSensitive(false)
+	prv.customServiceButton.SetSensitive(false)
+}
+
 func (prv *mucPublicRoomsView) onCancel() {
 	prv.dialog.Destroy()
 }
 
 func (prv *mucPublicRoomsView) onWindowClose() {
-	if prv.ac != nil {
-		prv.ac.onDestroy()
+	prv.cancelActiveUpdate()
+	prv.ac.onDestroy()
+}
+
+func (prv *mucPublicRoomsView) cancelActiveUpdate() {
+	if prv.cancel == nil {
+		return
 	}
+
+	prv.cancel <- true
+	prv.cancel = nil
 }
 
 var (
@@ -295,7 +301,13 @@ func (prv *mucPublicRoomsView) onSelectionChanged() {
 }
 
 func (prv *mucPublicRoomsView) onUpdatePublicRooms() {
-	go prv.mucUpdatePublicRoomsOn(prv.currentAccount)
+	prv.updatePublicRoomsForCurrentAccount()
+}
+
+func (prv *mucPublicRoomsView) updatePublicRoomsForCurrentAccount() {
+	if prv.currentAccount != nil {
+		go prv.mucUpdatePublicRoomsOn(prv.currentAccount)
+	}
 }
 
 func (prv *mucPublicRoomsView) getFreshRoomInfoIdentifierAndSet(rl *muc.RoomListing) int {
@@ -460,9 +472,7 @@ func (prv *mucPublicRoomsView) listenPublicRoomsUpdate(customService string, gen
 
 // mucUpdatePublicRoomsOn MUST NOT be called from the UI thread
 func (prv *mucPublicRoomsView) mucUpdatePublicRoomsOn(a *account) {
-	if prv.cancel != nil {
-		prv.cancel <- true
-	}
+	prv.cancelActiveUpdate()
 
 	prv.updateLock.Lock()
 	prv.cancel = make(chan bool, 1)

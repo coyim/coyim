@@ -304,6 +304,10 @@ func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }
 
+func (v *roomView) roomDisplayName() string {
+	return v.roomID().Local().String()
+}
+
 func (v *roomView) occupantID() (jid.Full, error) {
 	o := v.room.SelfOccupant()
 

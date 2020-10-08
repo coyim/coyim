@@ -18,8 +18,8 @@ const (
 type roomViewRoster struct {
 	roster *muc.RoomRoster
 
-	view gtki.Box      `gtk-widget:"roster"`
-	tree gtki.TreeView `gtk-widget:"occupantsTreeView"`
+	view gtki.Box      `gtk-widget:"roster-view"`
+	tree gtki.TreeView `gtk-widget:"roster-tree-view"`
 
 	model gtki.TreeStore
 }
@@ -50,7 +50,8 @@ func (r *roomViewRoster) initDefaults() {
 		// affiliation
 		glibi.TYPE_STRING,
 		// role - tooltip
-		glibi.TYPE_STRING)
+		glibi.TYPE_STRING,
+	)
 
 	r.tree.SetModel(r.model)
 	r.draw()
@@ -77,10 +78,12 @@ func (r *roomViewRoster) onUpdateRoster() {
 
 func (r *roomViewRoster) draw() {
 	noneRoles, visitors, participants, moderators := r.roster.OccupantsByRole()
-	r.drawOccupantsByRole(moderators)
-	r.drawOccupantsByRole(participants)
-	r.drawOccupantsByRole(visitors)
-	r.drawOccupantsByRole(noneRoles)
+
+	r.drawOccupantsByRole(data.RoleModerator, moderators)
+	r.drawOccupantsByRole(data.RoleParticipant, participants)
+	r.drawOccupantsByRole(data.RoleVisitor, visitors)
+	r.drawOccupantsByRole(data.RoleNone, noneRoles)
+
 	r.tree.ExpandAll()
 }
 
@@ -89,17 +92,19 @@ func (r *roomViewRoster) redraw() {
 	r.draw()
 }
 
-func (r *roomViewRoster) drawOccupantsByRole(occupants []*muc.Occupant) {
-	if len(occupants) > 0 {
-		roleHeader := r.roleDisplayName(occupants[0].Role)
-		roleHeader = i18n.Localf("%s (%v)", roleHeader, len(occupants))
+func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occupant) {
+	if isOccupantListEmpty(occupants) {
+		return
+	}
 
-		iter := r.model.Append(nil)
-		_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, roleHeader)
+	roleHeader := r.rolePluralName(role)
+	roleHeader = i18n.Localf("%s (%v)", roleHeader, len(occupants))
 
-		for _, o := range occupants {
-			r.addOccupantToRoster(o, iter)
-		}
+	iter := r.model.Append(nil)
+	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, roleHeader)
+
+	for _, o := range occupants {
+		r.addOccupantToRoster(o, iter)
 	}
 }
 
@@ -125,6 +130,23 @@ func (r *roomViewRoster) affiliationDisplayName(a data.Affiliation) string {
 	}
 }
 
+func (r *roomViewRoster) rolePluralName(role string) string {
+	switch role {
+	case data.RoleNone:
+		return i18n.Local("None")
+	case data.RoleParticipant:
+		return i18n.Local("Participants")
+	case data.RoleVisitor:
+		return i18n.Local("Visitors")
+	case data.RoleModerator:
+		return i18n.Local("Moderators")
+	default:
+		// This should not really be possible, but it is necessary
+		// because golang can't prove it
+		return ""
+	}
+}
+
 func (r *roomViewRoster) roleDisplayName(role data.Role) string {
 	switch role.Name() {
 	case data.RoleNone:
@@ -140,4 +162,8 @@ func (r *roomViewRoster) roleDisplayName(role data.Role) string {
 		// because golang can't prove it
 		return ""
 	}
+}
+
+func isOccupantListEmpty(o []*muc.Occupant) bool {
+	return len(o) == 0
 }

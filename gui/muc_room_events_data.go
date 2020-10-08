@@ -43,6 +43,10 @@ type messageEvent struct {
 	message  string
 }
 
+type subjectEvent struct {
+	subject string
+}
+
 type roomViewEvent interface {
 	markAsRoomViewEvent()
 }
@@ -52,6 +56,7 @@ func (occupantJoinedEvent) markAsRoomViewEvent()       {}
 func (occupantUpdatedEvent) markAsRoomViewEvent()      {}
 func (occupantSelfJoinedEvent) markAsRoomViewEvent()   {}
 func (messageEvent) markAsRoomViewEvent()              {}
+func (subjectEvent) markAsRoomViewEvent()              {}
 func (nicknameConflictEvent) markAsRoomViewEvent()     {}
 func (registrationRequiredEvent) markAsRoomViewEvent() {}
 func (roomInfoReceivedEvent) markAsRoomViewEvent()     {}

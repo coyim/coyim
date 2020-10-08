@@ -28,7 +28,9 @@ func (c *roomViewConversation) displayNickname(nickname string) {
 
 // displayRoomSubject MUST be called from the UI thread
 func (c *roomViewConversation) displayRoomSubject(subject string) {
-	c.addTextWithTag(i18n.Localf("[%s] ", subject), "subject")
+	c.displayTimestamp()
+	c.addTextWithTag(subject, "subject")
+	c.addNewLine()
 }
 
 // displayMessage MUST be called from the UI thread

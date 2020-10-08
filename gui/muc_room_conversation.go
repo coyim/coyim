@@ -19,6 +19,8 @@ type roomViewConversation struct {
 	newText    gtki.Entry    `gtk-widget:"textConversation"`
 	sendButton gtki.Button   `gtk-widget:"button-send"`
 
+	subject string
+
 	log coylog.Logger
 }
 
@@ -34,6 +36,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	})
 
 	c.initBuilder()
+	c.initDefaults(v)
 	c.initSubscribers(v)
 	c.initTagsAndTextBuffer(v)
 
@@ -50,6 +53,10 @@ func (c *roomViewConversation) initBuilder() {
 	})
 }
 
+func (c *roomViewConversation) initDefaults(v *roomView) {
+	c.subject = v.room.Subject
+}
+
 func (c *roomViewConversation) initSubscribers(v *roomView) {
 	v.subscribe("conversation", func(ev roomViewEvent) {
 		switch t := ev.(type) {
@@ -59,6 +66,11 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantJoinedEvent(t.nickname)
 		case messageEvent:
 			c.messageEvent(t.tp, t.nickname, t.subject, t.message)
+		case subjectEvent:
+			if c.subject != "" && c.subject != t.subject {
+				c.subjectEvent(t.subject)
+			}
+			c.subject = t.subject
 		case loggingEnabledEvent:
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
@@ -87,6 +99,12 @@ func (c *roomViewConversation) messageEvent(tp, nickname, subject, message strin
 		default:
 			c.log.WithField("type", tp).Warn("Unknow message event type")
 		}
+	})
+}
+
+func (c *roomViewConversation) subjectEvent(subject string) {
+	doInUIThread(func() {
+		c.displayRoomSubject(i18n.Localf("The subject of the room was changed to: %s", subject))
 	})
 }
 

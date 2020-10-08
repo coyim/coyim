@@ -21,6 +21,8 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishEvent(occupantLeftEvent{t.Nickname})
 	case events.MUCMessageReceived:
 		v.publishMessageEvent("received", t.Nickname, t.Subject, t.Message)
+	case events.MUCSubjectReceived:
+		v.publishSubjectEvent(t.Subject)
 	case events.MUCLoggingEnabled:
 		v.publishEvent(loggingEnabledEvent{})
 	case events.MUCLoggingDisabled:
@@ -115,5 +117,11 @@ func (v *roomView) publishMessageEvent(tp, nickname, subject, msg string) {
 		nickname: nickname,
 		subject:  subject,
 		message:  msg,
+	})
+}
+
+func (v *roomView) publishSubjectEvent(subject string) {
+	v.publishEvent(subjectEvent{
+		subject: subject,
 	})
 }

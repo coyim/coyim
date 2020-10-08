@@ -82,3 +82,10 @@ func (m *mucManager) messageReceived(roomID jid.Bare, nickname, subject, message
 
 	m.publishRoomEvent(roomID, ev)
 }
+
+func (m *mucManager) subjectReceived(roomID jid.Bare, subject string) {
+	ev := events.MUCSubjectReceived{}
+	ev.Subject = subject
+
+	m.publishRoomEvent(roomID, ev)
+}

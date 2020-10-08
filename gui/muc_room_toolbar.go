@@ -5,9 +5,10 @@ import (
 )
 
 type roomViewToolbar struct {
-	view            gtki.Box    `gtk-widget:"roomToolbar"`
-	roomNameLabel   gtki.Label  `gtk-widget:"roomNameLabel"`
-	leaveRoomButton gtki.Button `gtk-widget:"leaveRoomButton"`
+	view             gtki.Box    `gtk-widget:"roomToolbar"`
+	roomNameLabel    gtki.Label  `gtk-widget:"roomNameLabel"`
+	roomSubjectLabel gtki.Label  `gtk-widget:"roomSubjectLabel"`
+	leaveRoomButton  gtki.Button `gtk-widget:"leaveRoomButton"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -34,14 +35,37 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 func (t *roomViewToolbar) initDefaults(v *roomView) {
 	t.leaveRoomButton.SetSensitive(v.isJoined())
 
-	t.roomNameLabel.SetText(v.roomID().String())
-
-	prov := providerWithStyle("label", style{
+	t.initLabelFor(t.roomNameLabel, providerWithStyle("label", style{
 		"font-size":   "22px",
 		"font-weight": "bold",
+	}))
+
+	t.initLabelFor(t.roomSubjectLabel, providerWithStyle("label", style{
+		"font-size":  "14px",
+		"font-style": "italic",
+		"color":      "#666666",
+	}))
+
+	t.roomNameLabel.SetText(v.roomID().String())
+
+	doInUIThread(func() {
+		t.roomSubjectLabel.Hide()
 	})
 
-	updateWithStyle(t.roomNameLabel, prov)
+	if v.room.Subject != "" {
+		t.showSubject(v.room.Subject)
+	}
+}
+
+func (t *roomViewToolbar) showSubject(subject string) {
+	doInUIThread(func() {
+		t.roomSubjectLabel.SetText(subject)
+		t.roomSubjectLabel.Show()
+	})
+}
+
+func (t *roomViewToolbar) initLabelFor(label gtki.Label, cssProvider gtki.CssProvider) {
+	updateWithStyle(label, cssProvider)
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
@@ -51,6 +75,8 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 			doInUIThread(func() {
 				t.leaveRoomButton.SetSensitive(true)
 			})
+		case subjectEvent:
+			t.showSubject(v.room.Subject)
 		}
 	})
 }

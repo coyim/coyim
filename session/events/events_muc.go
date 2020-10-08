@@ -91,6 +91,11 @@ type MUCMessageReceived struct {
 	Message  string
 }
 
+// MUCSubjectReceived contains the room subject received
+type MUCSubjectReceived struct {
+	Subject string
+}
+
 // MUCLoggingEnabled signifies that logging has been turned on from the room
 type MUCLoggingEnabled struct{}
 
@@ -106,5 +111,6 @@ func (MUCOccupantJoined) markAsMUCEventTypeInterface()     {}
 func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface() {}
 func (MUCOccupantLeft) markAsMUCEventTypeInterface()       {}
 func (MUCMessageReceived) markAsMUCEventTypeInterface()    {}
+func (MUCSubjectReceived) markAsMUCEventTypeInterface()    {}
 func (MUCLoggingEnabled) markAsMUCEventTypeInterface()     {}
 func (MUCLoggingDisabled) markAsMUCEventTypeInterface()    {}

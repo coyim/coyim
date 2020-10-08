@@ -5,10 +5,10 @@ import (
 )
 
 type roomViewToolbar struct {
-	view             gtki.Box    `gtk-widget:"roomToolbar"`
-	roomNameLabel    gtki.Label  `gtk-widget:"roomNameLabel"`
-	roomSubjectLabel gtki.Label  `gtk-widget:"roomSubjectLabel"`
-	leaveRoomButton  gtki.Button `gtk-widget:"leaveRoomButton"`
+	view             gtki.Box    `gtk-widget:"room-view-toolbar"`
+	roomNameLabel    gtki.Label  `gtk-widget:"room-name-label"`
+	roomSubjectLabel gtki.Label  `gtk-widget:"room-subject-label"`
+	leaveRoomButton  gtki.Button `gtk-widget:"leave-room-button"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {

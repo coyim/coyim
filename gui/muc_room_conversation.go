@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -10,9 +11,10 @@ import (
 )
 
 type roomViewConversation struct {
-	tags    gtki.TextTagTable
-	roomID  jid.Bare
-	account *account
+	tags            gtki.TextTagTable
+	roomID          jid.Bare
+	account         *account
+	canSendMessages bool
 
 	view       gtki.Box      `gtk-widget:"roomConversation"`
 	text       gtki.TextView `gtk-widget:"roomChatTextView"`
@@ -75,8 +77,21 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
+		case occupantUpdatedEvent:
+			c.enableSendCapabilitiesIfHasVoice(v.room.SelfOccupant())
 		}
 	})
+}
+
+func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(occupant *muc.Occupant) {
+	if occupant != nil && occupant.Role != nil && occupant.Role.HasVoice() {
+		c.canSendMessages = true
+		c.enableEntryAndSendButton()
+		return
+	}
+
+	c.canSendMessages = false
+	c.disableEntryAndSendButton()
 }
 
 func (c *roomViewConversation) occupantLeftEvent(nickname string) {
@@ -168,6 +183,12 @@ func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 }
 
 func (c *roomViewConversation) onSendMessage() {
+	if c.canSendMessages {
+		c.sendMessage()
+	}
+}
+
+func (c *roomViewConversation) sendMessage() {
 	c.beforeSendingMessage()
 	defer c.onSendMessageFinish()
 

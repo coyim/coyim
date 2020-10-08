@@ -8,6 +8,7 @@ type roomViewToolbar struct {
 	view             gtki.Box    `gtk-widget:"room-view-toolbar"`
 	roomNameLabel    gtki.Label  `gtk-widget:"room-name-label"`
 	roomSubjectLabel gtki.Label  `gtk-widget:"room-subject-label"`
+	roomStatusIcon   gtki.Image  `gtk-widget:"room-status-icon"`
 	leaveRoomButton  gtki.Button `gtk-widget:"leave-room-button"`
 }
 
@@ -34,6 +35,8 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 
 func (t *roomViewToolbar) initDefaults(v *roomView) {
 	t.leaveRoomButton.SetSensitive(v.isJoined())
+
+	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room"))
 
 	t.initLabelFor(t.roomNameLabel, providerWithStyle("label", style{
 		"font-size":   "22px",

@@ -16,10 +16,11 @@ type roomViewConversation struct {
 	account         *account
 	canSendMessages bool
 
-	view       gtki.Box      `gtk-widget:"roomConversation"`
-	text       gtki.TextView `gtk-widget:"roomChatTextView"`
-	newText    gtki.Entry    `gtk-widget:"textConversation"`
-	sendButton gtki.Button   `gtk-widget:"button-send"`
+	view                  gtki.Box            `gtk-widget:"room-conversation"`
+	chatTextView          gtki.TextView       `gtk-widget:"chat-text-view"`
+	messageScrolledWindow gtki.ScrolledWindow `gtk-widget:"message-scrolled-window"`
+	messageTextView       gtki.TextView       `gtk-widget:"message-text-view"`
+	sendButton            gtki.Button         `gtk-widget:"message-send-button"`
 
 	subject string
 
@@ -40,7 +41,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c.initBuilder()
 	c.initDefaults(v)
 	c.initSubscribers(v)
-	c.initTagsAndTextBuffer(v)
+	c.initTagsAndTextBuffers(v)
 
 	return c
 }
@@ -53,6 +54,12 @@ func (c *roomViewConversation) initBuilder() {
 		"on_send_message": c.onSendMessage,
 		"on_key_press":    c.onKeyPress,
 	})
+
+	messageScrolledWindoStyle := providerWithStyle("scrolledwindow", style{
+		"border": "none",
+	})
+
+	updateWithStyle(c.messageScrolledWindow, messageScrolledWindoStyle)
 }
 
 func (c *roomViewConversation) initDefaults(v *roomView) {
@@ -136,21 +143,23 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 }
 
 func (c *roomViewConversation) getTypedMessage() string {
-	text, _ := c.newText.GetText()
-	return text
+	b := c.getMessageTextBuffer()
+	starts, ends := b.GetBounds()
+	return b.GetText(starts, ends, false)
 }
 
 func (c *roomViewConversation) clearTypedMessage() {
-	c.newText.SetText("")
+	b := c.getMessageTextBuffer()
+	b.SetText("")
 }
 
 func (c *roomViewConversation) disableEntryAndSendButton() {
-	c.newText.SetEditable(false)
+	c.messageTextView.SetEditable(false)
 	c.sendButton.SetSensitive(false)
 }
 
 func (c *roomViewConversation) enableEntryAndSendButton() {
-	c.newText.SetEditable(true)
+	c.messageTextView.SetEditable(true)
 	c.sendButton.SetSensitive(true)
 }
 

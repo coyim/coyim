@@ -2,8 +2,13 @@ package gui
 
 import "github.com/coyim/gotk3adapter/gtki"
 
+func (c *roomViewConversation) getMessageTextBuffer() gtki.TextBuffer {
+	b, _ := c.messageTextView.GetBuffer()
+	return b
+}
+
 func (c *roomViewConversation) getTextBuffer() gtki.TextBuffer {
-	b, _ := c.text.GetBuffer()
+	b, _ := c.chatTextView.GetBuffer()
 	return b
 }
 

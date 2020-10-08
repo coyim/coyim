@@ -51,10 +51,7 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 
 	t.roomNameLabel.SetText(v.roomID().String())
 
-	doInUIThread(func() {
-		t.roomSubjectLabel.Hide()
-	})
-
+	t.roomSubjectLabel.Hide()
 	if v.room.Subject != "" {
 		t.showSubject(v.room.Subject)
 	}

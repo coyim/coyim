@@ -78,6 +78,11 @@ func (v *textBuffer) Delete(v1, v2 gtki.TextIter) {
 	v.internal.Delete(UnwrapTextIter(v1), UnwrapTextIter(v2))
 }
 
+func (v *textBuffer) GetBounds() (gtki.TextIter, gtki.TextIter) {
+	v1, v2 := v.internal.GetBounds()
+	return WrapTextIterSimple(v1), WrapTextIterSimple(v2)
+}
+
 func (v *textBuffer) CreateMark(v1 string, v2 gtki.TextIter, v3 bool) gtki.TextMark {
 	return WrapTextMarkSimple(v.internal.CreateMark(v1, UnwrapTextIter(v2), v3))
 }

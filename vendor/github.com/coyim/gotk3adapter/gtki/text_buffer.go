@@ -1,6 +1,8 @@
 package gtki
 
-import "github.com/coyim/gotk3adapter/glibi"
+import (
+	"github.com/coyim/gotk3adapter/glibi"
+)
 
 type TextBuffer interface {
 	glibi.Object
@@ -8,6 +10,7 @@ type TextBuffer interface {
 	ApplyTagByName(string, TextIter, TextIter)
 	CreateMark(string, TextIter, bool) TextMark
 	Delete(TextIter, TextIter)
+	GetBounds() (TextIter, TextIter)
 	GetCharCount() int
 	GetEndIter() TextIter
 	GetIterAtMark(TextMark) TextIter

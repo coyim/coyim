@@ -51,6 +51,10 @@ func (*MockTextBuffer) SetText(string) {
 func (*MockTextBuffer) Delete(gtki.TextIter, gtki.TextIter) {
 }
 
+func (*MockTextBuffer) GetBounds() (gtki.TextIter, gtki.TextIter) {
+	return nil, nil
+}
+
 func (*MockTextBuffer) CreateMark(string, gtki.TextIter, bool) gtki.TextMark {
 	return nil
 }

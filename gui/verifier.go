@@ -33,7 +33,7 @@ type notifier struct {
 	notificationArea gtki.Box
 }
 
-func (n *notifier) notify(i gtki.InfoBar) {
+func (n *notifier) notify(i gtki.Box) {
 	n.notificationArea.Add(i)
 }
 
@@ -116,12 +116,12 @@ func (v *verifier) hideUnverifiedWarning() {
 // TODO: check on linux
 type unverifiedWarning struct {
 	b                         *builder
-	infobar                   gtki.InfoBar `gtk-widget:"verify-infobar"`
-	closeInfobar              gtki.Box     `gtk-widget:"verify-close-infobar"`
-	notification              gtki.Box     `gtk-widget:"verify-notification"`
-	label                     gtki.Label   `gtk-widget:"verify-message"`
-	image                     gtki.Image   `gtk-widget:"verify-image"`
-	button                    gtki.Button  `gtk-widget:"verify-button"`
+	infobar                   gtki.Box    `gtk-widget:"verify-infobar"`
+	closeInfobar              gtki.Box    `gtk-widget:"verify-close-infobar"`
+	notification              gtki.Box    `gtk-widget:"verify-notification"`
+	label                     gtki.Label  `gtk-widget:"verify-message"`
+	image                     gtki.Image  `gtk-widget:"verify-image"`
+	button                    gtki.Button `gtk-widget:"verify-button"`
 	shouldShowVerificationBar func() bool
 }
 
@@ -200,10 +200,10 @@ func (v *verifier) createPIN() (string, error) {
 
 type waitingForPeerNotification struct {
 	b       *builder
-	infobar gtki.InfoBar `gtk-widget:"smp-waiting-infobar"`
-	label   gtki.Label   `gtk-widget:"smp-waiting-label"`
-	image   gtki.Image   `gtk-widget:"smp-waiting-image"`
-	button  gtki.Button  `gtk-widget:"smp-waiting-button"`
+	infobar gtki.Box    `gtk-widget:"smp-waiting-infobar"`
+	label   gtki.Label  `gtk-widget:"smp-waiting-label"`
+	image   gtki.Image  `gtk-widget:"smp-waiting-image"`
+	button  gtki.Button `gtk-widget:"smp-waiting-button"`
 }
 
 func (v *verifier) buildWaitingForPeerNotification() {
@@ -235,7 +235,7 @@ func (v *verifier) showWaitingForPeerToCompleteSMPDialog() {
 func (v *verifier) showCannotGeneratePINDialog(err error) {
 	b := newBuilder("CannotVerifyWithSMP")
 
-	infobar := b.getObj("smp-error-infobar").(gtki.InfoBar)
+	infobar := b.getObj("smp-error-infobar").(gtki.Box)
 	label := b.getObj("smp-error-label").(gtki.Label)
 	image := b.getObj("smp-error-image").(gtki.Image)
 	button := b.getObj("smp-error-button").(gtki.Button)
@@ -311,12 +311,12 @@ func (v *verifier) showAnswerSMPDialog(question string) {
 
 type peerRequestsSMPNotification struct {
 	b            *builder
-	infobar      gtki.InfoBar `gtk-widget:"smp-requested-infobar"`
-	closeInfobar gtki.Box     `gtk-widget:"smp-requested-close-infobar"`
-	notification gtki.Box     `gtk-widget:"smp-requested-notification"`
-	label        gtki.Label   `gtk-widget:"smp-requested-message"`
-	image        gtki.Image   `gtk-widget:"smp-requested-image"`
-	button       gtki.Button  `gtk-widget:"smp-requested-button"`
+	infobar      gtki.Box    `gtk-widget:"smp-requested-infobar"`
+	closeInfobar gtki.Box    `gtk-widget:"smp-requested-close-infobar"`
+	notification gtki.Box    `gtk-widget:"smp-requested-notification"`
+	label        gtki.Label  `gtk-widget:"smp-requested-message"`
+	image        gtki.Image  `gtk-widget:"smp-requested-image"`
+	button       gtki.Button `gtk-widget:"smp-requested-button"`
 }
 
 func (p *peerRequestsSMPNotification) show() {

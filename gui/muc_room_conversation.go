@@ -75,6 +75,10 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantJoinedEvent(t.nickname)
 		case messageEvent:
 			c.messageEvent(v.room, t.tp, t.nickname, t.message)
+		case messageForbidden:
+			c.messageForbiddenEvent()
+		case messageNotAcceptable:
+			c.messageNotAcceptable()
 		case subjectEvent:
 			if c.subject != "" && c.subject != t.subject {
 				c.subjectEvent(i18n.Localf("The room subject was changed to: %s", t.subject))
@@ -129,6 +133,18 @@ func (c *roomViewConversation) messageEvent(r *muc.Room, tp, nickname, message s
 		default:
 			c.log.WithField("type", tp).Warn("Unknow message event type")
 		}
+	})
+}
+
+func (c *roomViewConversation) messageForbiddenEvent() {
+	doInUIThread(func() {
+		c.displayErrorMessage(i18n.Local("You are forbidden to send messages to this room."))
+	})
+}
+
+func (c *roomViewConversation) messageNotAcceptable() {
+	doInUIThread(func() {
+		c.displayErrorMessage(i18n.Local("Your messages to this room aren't accepted."))
 	})
 }
 

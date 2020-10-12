@@ -74,11 +74,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantJoinedEvent:
 			c.occupantJoinedEvent(t.nickname)
 		case messageEvent:
-			// Display of self messages is disabled because the own typed messages
-			// are displayed automatically on chat screen
-			if v.room.SelfOccupantNickname() != t.nickname {
-				c.messageEvent(t.tp, t.nickname, t.message)
-			}
+			c.messageEvent(v.room, t.tp, t.nickname, t.message)
 		case subjectEvent:
 			if c.subject != "" && c.subject != t.subject {
 				c.subjectEvent(i18n.Localf("The room subject was changed to: %s", t.subject))
@@ -119,7 +115,13 @@ func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
 	})
 }
 
-func (c *roomViewConversation) messageEvent(tp, nickname, message string) {
+func (c *roomViewConversation) messageEvent(r *muc.Room, tp, nickname, message string) {
+	// Display of self messages is disabled because the own typed messages
+	// are displayed automatically on chat screen
+	if r.SelfOccupantNickname() == nickname {
+		return
+	}
+
 	doInUIThread(func() {
 		switch tp {
 		case "received":

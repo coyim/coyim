@@ -241,13 +241,17 @@ func (s *session) receivedClientMessage(stanza *data.ClientMessage) bool {
 		s.muc.receivedClientMessage(stanza)
 		return true
 	case "error":
-		//TODO: investigate which errors are NOT recoverable, and return false
-		//to close the connection
-		//https://xmpp.org/rfcs/rfc3920.html#stanzas-error
-		if stanza.Error != nil {
-			s.log.WithField("error", stanza.Error).WithField("peer", peer.NoResource()).Error("error reported from peer")
-			return true
+		// TODO: investigate which errors are NOT recoverable, and return false
+		// to close the connection
+		// https://xmpp.org/rfcs/rfc3920.html#stanzas-error
+
+		if isMUCError(stanza.Error) {
+			s.muc.handleMUCErrorMessage(jid.ParseBare(stanza.From), stanza.Error)
+		} else {
+			s.log.WithField("error", stanza.Error).WithField("peer", peer.NoResource()).Error("Error reported from peer")
 		}
+
+		return true
 	}
 
 	messageTime := retrieveMessageTime(stanza)

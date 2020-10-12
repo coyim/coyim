@@ -15,7 +15,11 @@ type MUCErrorType EventType
 
 // MUC error event types
 const (
-	MUCNotAuthorized MUCErrorType = iota
+	// MUCNoError is a special type that can be used as a "no error"
+	// flag inside the logic of the MUC implementation
+	MUCNoError MUCErrorType = iota
+
+	MUCNotAuthorized
 	MUCForbidden
 	MUCItemNotFound
 	MUCNotAllowed
@@ -23,6 +27,9 @@ const (
 	MUCRegistrationRequired
 	MUCConflict
 	MUCServiceUnavailable
+
+	MUCMessageForbidden
+	MUCMessageNotAcceptable
 )
 
 // MUCError contains information about a MUC-related

@@ -57,7 +57,7 @@ func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 	from := jid.ParseFull(stanza.From)
 
 	if stanza.Type == "error" {
-		m.handleMUCErrorPresence(from, stanza)
+		m.handleMUCErrorPresence(from, stanza.Error)
 		return
 	}
 
@@ -173,8 +173,12 @@ func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.Occupant
 	}
 }
 
-func (m *mucManager) handleMUCErrorPresence(from jid.Full, stanza *xmppData.ClientPresence) {
-	m.publishMUCError(from, stanza.Error)
+func (m *mucManager) handleMUCErrorPresence(from jid.Full, e *xmppData.StanzaError) {
+	m.publishMUCError(from, e)
+}
+
+func (m *mucManager) handleMUCErrorMessage(roomID jid.Bare, e *xmppData.StanzaError) {
+	m.publishMUCMessageError(roomID, e)
 }
 
 func isMUCPresence(stanza *xmppData.ClientPresence) bool {

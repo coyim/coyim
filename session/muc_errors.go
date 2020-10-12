@@ -15,8 +15,27 @@ func (m *mucManager) publishMUCError(from jid.Full, e *data.StanzaError) {
 	m.publishEvent(ev)
 }
 
+func (m *mucManager) publishMUCMessageError(roomID jid.Bare, e *data.StanzaError) {
+	ev := events.MUCError{}
+	ev.ErrorType = getEventErrorTypeBasedOnMessageError(e)
+	ev.Room = roomID
+
+	m.publishEvent(ev)
+}
+
+func getEventErrorTypeBasedOnMessageError(e *data.StanzaError) events.MUCErrorType {
+	t := events.MUCNoError
+	switch {
+	case e.MUCForbidden != nil:
+		t = events.MUCMessageForbidden
+	case e.MUCNotAcceptable != nil:
+		t = events.MUCMessageNotAcceptable
+	}
+	return t
+}
+
 func getEventErrorTypeBasedOnStanzaError(e *data.StanzaError) events.MUCErrorType {
-	var t events.MUCErrorType
+	t := events.MUCNoError
 	switch {
 	case e.MUCNotAuthorized != nil:
 		t = events.MUCNotAuthorized
@@ -36,4 +55,8 @@ func getEventErrorTypeBasedOnStanzaError(e *data.StanzaError) events.MUCErrorTyp
 		t = events.MUCServiceUnavailable
 	}
 	return t
+}
+
+func isMUCError(e *data.StanzaError) bool {
+	return getEventErrorTypeBasedOnStanzaError(e) != events.MUCNoError
 }

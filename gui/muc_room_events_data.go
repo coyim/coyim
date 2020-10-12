@@ -46,6 +46,10 @@ type subjectEvent struct {
 	subject string
 }
 
+type messageForbidden struct{}
+
+type messageNotAcceptable struct{}
+
 type roomViewEvent interface {
 	markAsRoomViewEvent()
 }
@@ -62,3 +66,5 @@ func (roomInfoReceivedEvent) markAsRoomViewEvent()     {}
 func (roomInfoTimeoutEvent) markAsRoomViewEvent()      {}
 func (loggingEnabledEvent) markAsRoomViewEvent()       {}
 func (loggingDisabledEvent) markAsRoomViewEvent()      {}
+func (messageForbidden) markAsRoomViewEvent()          {}
+func (messageNotAcceptable) markAsRoomViewEvent()      {}

@@ -293,6 +293,16 @@ func (v *roomView) onJoinCancel() {
 	}
 }
 
+// messageForbidden MUST NOT be called from the UI thread
+func (v *roomView) messageForbidden() {
+	v.publishEvent(messageForbidden{})
+}
+
+// messageNotAccepted MUST NOT be called from the UI thread
+func (v *roomView) messageNotAccepted() {
+	v.publishEvent(messageNotAcceptable{})
+}
+
 // nicknameConflict MUST NOT be called from the UI thread
 func (v *roomView) nicknameConflict(nickname string) {
 	v.publishEvent(nicknameConflictEvent{nickname})

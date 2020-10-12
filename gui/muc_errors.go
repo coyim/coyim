@@ -16,12 +16,16 @@ func (a *account) handleMUCErrorEvent(ev events.MUCError) {
 		a.log.Debug("MUC Error NotAuthorized received")
 	case events.MUCForbidden:
 		a.log.Debug("MUC Error MUCForbidden received")
+	case events.MUCMessageForbidden:
+		view.messageForbidden()
 	case events.MUCItemNotFound:
 		a.log.Debug("MUC Error MUCItemNotFound received")
 	case events.MUCNotAllowed:
 		a.log.Debug("MUC Error MUCNotAllowed received")
 	case events.MUCNotAcceptable:
 		a.log.Debug("MUC Error MUCNotAcceptable received")
+	case events.MUCMessageNotAcceptable:
+		view.messageNotAccepted()
 	case events.MUCRegistrationRequired:
 		view.registrationRequired(ev.Nickname)
 	case events.MUCConflict:

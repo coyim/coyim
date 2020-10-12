@@ -77,9 +77,11 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.messageEvent(t.tp, t.nickname, t.subject, t.message)
 		case subjectEvent:
 			if c.subject != "" && c.subject != t.subject {
-				c.subjectEvent(t.subject)
+				c.subjectEvent(i18n.Localf("The room subject was changed to: %s", t.subject))
+				return
 			}
 			c.subject = t.subject
+			c.subjectEvent(i18n.Localf("The room subject is: %s", t.subject))
 		case loggingEnabledEvent:
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
@@ -126,7 +128,7 @@ func (c *roomViewConversation) messageEvent(tp, nickname, subject, message strin
 
 func (c *roomViewConversation) subjectEvent(subject string) {
 	doInUIThread(func() {
-		c.displayRoomSubject(i18n.Localf("The subject of the room was changed to: %s", subject))
+		c.displayRoomSubject(subject)
 	})
 }
 

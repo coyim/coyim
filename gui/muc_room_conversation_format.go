@@ -39,13 +39,10 @@ func (c *roomViewConversation) displayMessage(message string) {
 }
 
 // displayNewLiveMessage MUST be called from the UI thread
-func (c *roomViewConversation) displayNewLiveMessage(nickname, subject, message string) {
+func (c *roomViewConversation) displayNewLiveMessage(nickname, message string) {
 	c.displayTimestamp()
 
 	c.displayNickname(nickname)
-	if subject != "" {
-		c.displayRoomSubject(subject)
-	}
 	c.displayMessage(message)
 
 	c.addNewLine()

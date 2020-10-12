@@ -74,7 +74,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantJoinedEvent:
 			c.occupantJoinedEvent(t.nickname)
 		case messageEvent:
-			c.messageEvent(t.tp, t.nickname, t.subject, t.message)
+			c.messageEvent(t.tp, t.nickname, t.message)
 		case subjectEvent:
 			if c.subject != "" && c.subject != t.subject {
 				c.subjectEvent(i18n.Localf("The room subject was changed to: %s", t.subject))
@@ -115,11 +115,11 @@ func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
 	})
 }
 
-func (c *roomViewConversation) messageEvent(tp, nickname, subject, message string) {
+func (c *roomViewConversation) messageEvent(tp, nickname, message string) {
 	doInUIThread(func() {
 		switch tp {
 		case "received":
-			c.displayNewLiveMessage(nickname, subject, message)
+			c.displayNewLiveMessage(nickname, message)
 		default:
 			c.log.WithField("type", tp).Warn("Unknow message event type")
 		}

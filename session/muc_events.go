@@ -74,10 +74,9 @@ func (m *mucManager) selfOccupantJoined(roomID jid.Bare, op *muc.OccupantPresenc
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) messageReceived(roomID jid.Bare, nickname, subject, message string) {
+func (m *mucManager) messageReceived(roomID jid.Bare, nickname, message string) {
 	ev := events.MUCMessageReceived{}
 	ev.Nickname = nickname
-	ev.Subject = subject
 	ev.Message = message
 
 	m.publishRoomEvent(roomID, ev)

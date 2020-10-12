@@ -9,30 +9,23 @@ import (
 func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
+	if hasSubject(stanza) {
+		m.handleSubjectReceived(stanza)
+	}
+
 	if isLiveMessage(stanza) {
 		from := jid.ParseFull(stanza.From)
 		roomID := from.Bare()
 		nickname := from.Resource().String()
 		message := stanza.Body
-		subject := ""
-
-		if hasSubject(stanza) {
-			m.handleSubjectReceived(stanza)
-		}
 
 		m.log.WithFields(log.Fields{
 			"roomID":   roomID,
 			"message":  message,
-			"subject":  subject,
 			"nickname": nickname,
 		}).Info("MUC message received")
 
-		m.messageReceived(roomID, nickname, subject, message)
-		return
-	}
-
-	if hasSubject(stanza) {
-		m.handleSubjectReceived(stanza)
+		m.messageReceived(roomID, nickname, message)
 	}
 }
 

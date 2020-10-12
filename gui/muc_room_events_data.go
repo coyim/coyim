@@ -39,7 +39,6 @@ type loggingDisabledEvent struct{}
 type messageEvent struct {
 	tp       string
 	nickname string
-	subject  string
 	message  string
 }
 

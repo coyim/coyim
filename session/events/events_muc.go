@@ -87,7 +87,6 @@ type MUCOccupantLeft struct {
 // the message received
 type MUCMessageReceived struct {
 	Nickname string
-	Subject  string
 	Message  string
 }
 

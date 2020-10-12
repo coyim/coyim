@@ -38,12 +38,12 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 
 	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room"))
 
-	t.initLabelFor(t.roomNameLabel, providerWithStyle("label", style{
+	updateWithStyle(t.roomNameLabel, providerWithStyle("label", style{
 		"font-size":   "22px",
 		"font-weight": "bold",
 	}))
 
-	t.initLabelFor(t.roomSubjectLabel, providerWithStyle("label", style{
+	updateWithStyle(t.roomSubjectLabel, providerWithStyle("label", style{
 		"font-size":  "14px",
 		"font-style": "italic",
 		"color":      "#666666",
@@ -57,15 +57,10 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 	}
 }
 
+// showSubject MUST be called from the UI thread
 func (t *roomViewToolbar) showSubject(subject string) {
-	doInUIThread(func() {
-		t.roomSubjectLabel.SetText(subject)
-		t.roomSubjectLabel.Show()
-	})
-}
-
-func (t *roomViewToolbar) initLabelFor(label gtki.Label, cssProvider gtki.CssProvider) {
-	updateWithStyle(label, cssProvider)
+	t.roomSubjectLabel.SetText(subject)
+	t.roomSubjectLabel.Show()
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
@@ -76,7 +71,9 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 				t.leaveRoomButton.SetSensitive(true)
 			})
 		case subjectEvent:
-			t.showSubject(v.room.Subject)
+			doInUIThread(func() {
+				t.showSubject(v.room.Subject)
+			})
 		}
 	})
 }

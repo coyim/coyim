@@ -30,21 +30,26 @@ func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
 }
 
 func (m *mucManager) handleSubjectReceived(stanza *data.ClientMessage) {
-	roomID := jid.ParseBare(stanza.From)
-	room, ok := m.roomManager.GetRoom(roomID)
+	l := m.log.WithField("from", stanza.From)
+
+	roomID, ok := jid.TryParseBare(stanza.From)
 	if !ok {
-		m.log.WithFields(log.Fields{
-			"roomID": roomID,
-		}).Error("Error trying to read the subject of room")
+		l.Error("Error trying to get the room from stanza")
+		return
 	}
 
-	room.Subject = stanza.Subject.Text
+	room, ok := m.roomManager.GetRoom(roomID)
+	if !ok {
+		l.WithField("room", roomID).Error("Error trying to read the subject of room")
+		return
+	}
 
+	room.Subject = getSubjectFromStanza(stanza)
 	m.subjectReceived(roomID, room.Subject)
 }
 
 func bodyHasContent(stanza *data.ClientMessage) bool {
-	return len(stanza.Body) > 0
+	return stanza.Body != ""
 }
 
 func isMessageDelayed(stanza *data.ClientMessage) bool {
@@ -55,10 +60,13 @@ func isLiveMessage(stanza *data.ClientMessage) bool {
 	return bodyHasContent(stanza) && !isMessageDelayed(stanza)
 }
 
-func subjectHasContent(stanza *data.ClientMessage) bool {
-	return stanza.Subject != nil && len(stanza.Subject.Text) > 0
+func hasSubject(stanza *data.ClientMessage) bool {
+	return !bodyHasContent(stanza) && getSubjectFromStanza(stanza) != ""
 }
 
-func hasSubject(stanza *data.ClientMessage) bool {
-	return !bodyHasContent(stanza) && subjectHasContent(stanza)
+func getSubjectFromStanza(stanza *data.ClientMessage) string {
+	if stanza.Subject != nil {
+		return stanza.Subject.Text
+	}
+	return ""
 }

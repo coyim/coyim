@@ -30,10 +30,15 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, op *muc.OccupantPrese
 	}
 
 	updated := room.Roster().UpdateOrAddOccupant(op)
-	if !updated {
-		m.occupantJoined(roomID, op)
+	// Added isSelfOccupantJoined validation to avoid publishing the events of
+	// other occupants until receive the selfPresence.
+	// This validation is temporally while 'step machine' pattern is implemented.
+	if room.IsSelfOccupantJoined() {
+		if !updated {
+			m.occupantJoined(roomID, op)
+		}
+		m.occupantUpdate(roomID, op)
 	}
-	m.occupantUpdate(roomID, op)
 }
 
 func (m *mucManager) handleOccupantLeft(roomID jid.Bare, op *muc.OccupantPresenceInfo) {

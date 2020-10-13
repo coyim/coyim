@@ -124,8 +124,8 @@ func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
 func (c *roomViewConversation) messageEvent(tp, nickname, message string) {
 	switch tp {
 	case "received":
-		// We don't really care of self-incomming messages because we already have
-		// those messages in the conversation textview
+		// We don't really care about self-incoming messages because
+		// we already have those messages in the conversation's textview
 		if c.selfOccupantNickname() != nickname {
 			doInUIThread(func() {
 				c.displayNewLiveMessage(nickname, message)

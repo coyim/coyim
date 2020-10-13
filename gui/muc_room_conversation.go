@@ -202,18 +202,20 @@ func (c *roomViewConversation) clearTypedMessage() {
 
 // disableEntryAndSendButton MUST be called from the UI thread
 func (c *roomViewConversation) disableEntryAndSendButton() {
-	c.messageTextView.SetEditable(false)
-	c.sendButton.SetSensitive(false)
-	c.messageTextView.SetVisible(false)
-	c.messageView.SetVisible(false)
+	c.enableOrDisableFields(false)
 }
 
 // enableEntryAndSendButton MUST be called from the UI thread
 func (c *roomViewConversation) enableEntryAndSendButton() {
-	c.messageTextView.SetEditable(true)
-	c.sendButton.SetSensitive(true)
-	c.messageTextView.SetVisible(true)
-	c.messageView.SetVisible(true)
+	c.enableOrDisableFields(true)
+}
+
+// enableOrDisableFields MUST be called from the UI thread
+func (c *roomViewConversation) enableOrDisableFields(v bool) {
+	c.messageTextView.SetEditable(v)
+	c.sendButton.SetSensitive(v)
+	c.messageTextView.SetVisible(v)
+	c.messageView.SetVisible(v)
 }
 
 // beforeSendingMessage MUST be called from the UI thread

@@ -7,6 +7,7 @@ import (
 
 type occupantSelfJoinedEvent struct {
 	nickname string
+	role     data.Role
 }
 
 type occupantLeftEvent struct {

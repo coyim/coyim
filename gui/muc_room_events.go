@@ -12,7 +12,10 @@ import (
 func (v *roomView) handleRoomEvent(ev events.MUC) {
 	switch t := ev.(type) {
 	case events.MUCSelfOccupantJoined:
-		v.publishEvent(occupantSelfJoinedEvent{t.Nickname})
+		v.publishEvent(occupantSelfJoinedEvent{
+			nickname: t.Nickname,
+			role:     t.Role,
+		})
 	case events.MUCOccupantUpdated:
 		v.publishEvent(occupantUpdatedEvent{
 			nickname: t.Nickname,

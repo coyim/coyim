@@ -42,7 +42,12 @@ type messageEvent struct {
 	message  string
 }
 
-type subjectEvent struct {
+type subjectUpdatedEvent struct {
+	nickname string
+	subject  string
+}
+
+type subjectReceivedEvent struct {
 	subject string
 }
 
@@ -59,7 +64,8 @@ func (occupantJoinedEvent) markAsRoomViewEvent()       {}
 func (occupantUpdatedEvent) markAsRoomViewEvent()      {}
 func (occupantSelfJoinedEvent) markAsRoomViewEvent()   {}
 func (messageEvent) markAsRoomViewEvent()              {}
-func (subjectEvent) markAsRoomViewEvent()              {}
+func (subjectUpdatedEvent) markAsRoomViewEvent()       {}
+func (subjectReceivedEvent) markAsRoomViewEvent()      {}
 func (nicknameConflictEvent) markAsRoomViewEvent()     {}
 func (registrationRequiredEvent) markAsRoomViewEvent() {}
 func (roomInfoReceivedEvent) markAsRoomViewEvent()     {}

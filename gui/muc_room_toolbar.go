@@ -51,16 +51,17 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 
 	t.roomNameLabel.SetText(v.roomID().String())
 
-	t.roomSubjectLabel.Hide()
-	if v.room.Subject != "" {
-		t.showSubject(v.room.Subject)
-	}
+	t.showSubjectIfExists(v.room.Subject.Text)
 }
 
 // showSubject MUST be called from the UI thread
-func (t *roomViewToolbar) showSubject(subject string) {
+func (t *roomViewToolbar) showSubjectIfExists(subject string) {
 	t.roomSubjectLabel.SetText(subject)
-	t.roomSubjectLabel.Show()
+	if subject != "" {
+		t.roomSubjectLabel.Show()
+		return
+	}
+	t.roomSubjectLabel.Hide()
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
@@ -70,9 +71,9 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 			doInUIThread(func() {
 				t.leaveRoomButton.SetSensitive(true)
 			})
-		case subjectEvent:
+		case subjectReceivedEvent, subjectUpdatedEvent:
 			doInUIThread(func() {
-				t.showSubject(v.room.Subject)
+				t.showSubjectIfExists(v.room.Subject.Text)
 			})
 		}
 	})

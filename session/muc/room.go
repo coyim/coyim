@@ -10,7 +10,7 @@ import (
 // It contains information about the room configuration itself, and the participants in the room
 type Room struct {
 	ID      jid.Bare
-	Subject string
+	Subject *roomSubject
 
 	selfOccupant *Occupant
 	roster       *RoomRoster
@@ -39,10 +39,18 @@ type Room struct {
 	Whois                 string // This can either be 'moderators' or 'anyone'
 }
 
+// TODO: This struct could be provitional until the implementation
+// of the state machine pattern
+type roomSubject struct {
+	Text     string
+	Received bool
+}
+
 // NewRoom returns a newly created room
 func NewRoom(roomID jid.Bare) *Room {
 	return &Room{
 		ID:        roomID,
+		Subject:   &roomSubject{},
 		roster:    newRoomRoster(),
 		observers: newRoomObservers(),
 	}

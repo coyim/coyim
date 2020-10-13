@@ -23,8 +23,6 @@ type roomViewConversation struct {
 	messageTextView       gtki.TextView       `gtk-widget:"message-text-view"`
 	sendButton            gtki.Button         `gtk-widget:"message-send-button"`
 
-	subject string
-
 	log coylog.Logger
 }
 
@@ -40,7 +38,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	})
 
 	c.initBuilder()
-	c.initDefaults(v)
+	c.initDefaults()
 	c.initSubscribers(v)
 	c.initTagsAndTextBuffers(v)
 
@@ -63,8 +61,7 @@ func (c *roomViewConversation) initBuilder() {
 	updateWithStyle(c.messageScrolledWindow, messageScrolledWindoStyle)
 }
 
-func (c *roomViewConversation) initDefaults(v *roomView) {
-	c.subject = v.room.Subject
+func (c *roomViewConversation) initDefaults() {
 	c.disableEntryAndSendButton()
 }
 
@@ -81,13 +78,10 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.messageForbiddenEvent()
 		case messageNotAcceptable:
 			c.messageNotAcceptable()
-		case subjectEvent:
-			if c.subject != "" && c.subject != t.subject {
-				c.subjectEvent(i18n.Localf("The room subject was changed to: %s", t.subject))
-				return
-			}
-			c.subject = t.subject
-			c.subjectEvent(i18n.Localf("The room subject is: %s", t.subject))
+		case subjectUpdatedEvent:
+			c.subjectUpdatedEvent(t.nickname, t.subject)
+		case subjectReceivedEvent:
+			c.subjectReceivedEvent(t.subject)
 		case loggingEnabledEvent:
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
@@ -150,10 +144,25 @@ func (c *roomViewConversation) messageNotAcceptable() {
 	})
 }
 
-func (c *roomViewConversation) subjectEvent(subject string) {
+func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	doInUIThread(func() {
-		c.displayRoomSubject(subject)
+		c.displayRoomSubject(i18n.Localf("%s updated the room subject to \"%s\"", nickname, subject))
 	})
+}
+
+func (c *roomViewConversation) subjectReceivedEvent(subject string) {
+	if subject != "" {
+		doInUIThread(func() {
+			c.displayRoomSubject(i18n.Localf("the room subject is \"%s\"", subject))
+		})
+		return
+	}
+
+	if subject == "" {
+		doInUIThread(func() {
+			c.displayRoomSubject(i18n.Local("The room does not have subject"))
+		})
+	}
 }
 
 func (c *roomViewConversation) loggingEnabledEvent() {

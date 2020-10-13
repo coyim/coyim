@@ -97,6 +97,12 @@ type MUCMessageReceived struct {
 	Message  string
 }
 
+// MUCSubjectUpdated contains the room subject will be updated
+type MUCSubjectUpdated struct {
+	Nickname string
+	Subject  string
+}
+
 // MUCSubjectReceived contains the room subject received
 type MUCSubjectReceived struct {
 	Subject string
@@ -117,6 +123,7 @@ func (MUCOccupantJoined) markAsMUCEventTypeInterface()     {}
 func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface() {}
 func (MUCOccupantLeft) markAsMUCEventTypeInterface()       {}
 func (MUCMessageReceived) markAsMUCEventTypeInterface()    {}
+func (MUCSubjectUpdated) markAsMUCEventTypeInterface()     {}
 func (MUCSubjectReceived) markAsMUCEventTypeInterface()    {}
 func (MUCLoggingEnabled) markAsMUCEventTypeInterface()     {}
 func (MUCLoggingDisabled) markAsMUCEventTypeInterface()    {}

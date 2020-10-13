@@ -168,17 +168,20 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 	})
 }
 
+// getTypedMessage MUST be called from the UI thread
 func (c *roomViewConversation) getTypedMessage() string {
 	b := c.getMessageTextBuffer()
 	starts, ends := b.GetBounds()
 	return b.GetText(starts, ends, false)
 }
 
+// clearTypedMessage MUST be called from the UI thread
 func (c *roomViewConversation) clearTypedMessage() {
 	b := c.getMessageTextBuffer()
 	b.SetText("")
 }
 
+// disableEntryAndSendButton MUST be called from the UI thread
 func (c *roomViewConversation) disableEntryAndSendButton() {
 	c.messageTextView.SetEditable(false)
 	c.sendButton.SetSensitive(false)
@@ -186,6 +189,7 @@ func (c *roomViewConversation) disableEntryAndSendButton() {
 	c.messageView.SetVisible(false)
 }
 
+// enableEntryAndSendButton MUST be called from the UI thread
 func (c *roomViewConversation) enableEntryAndSendButton() {
 	c.messageTextView.SetEditable(true)
 	c.sendButton.SetSensitive(true)
@@ -193,10 +197,12 @@ func (c *roomViewConversation) enableEntryAndSendButton() {
 	c.messageView.SetVisible(true)
 }
 
+// beforeSendingMessage MUST be called from the UI thread
 func (c *roomViewConversation) beforeSendingMessage() {
 	c.disableEntryAndSendButton()
 }
 
+// onSendMessageFinish MUST be called from the UI thread
 func (c *roomViewConversation) onSendMessageFinish() {
 	c.clearTypedMessage()
 	if c.canSendMessages {
@@ -204,6 +210,7 @@ func (c *roomViewConversation) onSendMessageFinish() {
 	}
 }
 
+// onSendMessageFailed MUST be called from the UI thread
 func (c *roomViewConversation) onSendMessageFailed(err error) {
 	c.log.WithError(err).Error("failed to send the message")
 	doInUIThread(func() {
@@ -211,6 +218,7 @@ func (c *roomViewConversation) onSendMessageFailed(err error) {
 	})
 }
 
+// onKeyPress MUST be called from the UI thread
 func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	evk := g.gdk.EventKeyFrom(ev)
 	ret := false
@@ -223,12 +231,14 @@ func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	return ret
 }
 
+// onSendMessage MUST be called from the UI thread
 func (c *roomViewConversation) onSendMessage() {
 	if c.canSendMessages {
 		c.sendMessage()
 	}
 }
 
+// sendMessage MUST be called from the UI thread
 func (c *roomViewConversation) sendMessage() {
 	c.beforeSendingMessage()
 	defer c.onSendMessageFinish()

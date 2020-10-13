@@ -25,9 +25,3 @@ func (c *roomViewConversation) addTextWithTag(text string, tag string) {
 	b := c.getTextBuffer()
 	b.InsertWithTagByName(b.GetEndIter(), text, tag)
 }
-
-func (c *roomViewConversation) addTextLineWithTimestamp(text string, tag string) {
-	c.displayTimestamp()
-	c.addTextWithTag(text, tag)
-	c.addNewLine()
-}

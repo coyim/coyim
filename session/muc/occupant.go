@@ -89,3 +89,12 @@ func (o *Occupant) Update(nickname string, affiliation data.Affiliation, role da
 func (o *Occupant) UpdateStatus(status, statusMsg string) {
 	o.Status = &roster.Status{Status: status, StatusMsg: statusMsg}
 }
+
+// HasVoice returns a boolean indicating if the occupant has voice based on the role
+func (o *Occupant) HasVoice() bool {
+	if o == nil || o.Role == nil {
+		return false
+	}
+
+	return o.Role.HasVoice()
+}

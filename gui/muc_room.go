@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"errors"
 	"sync"
 	"time"
 
@@ -319,14 +318,4 @@ func (v *roomView) roomID() jid.Bare {
 
 func (v *roomView) roomDisplayName() string {
 	return v.roomID().Local().String()
-}
-
-func (v *roomView) occupantID() (jid.Full, error) {
-	o := v.room.SelfOccupant()
-
-	if o != nil && o.RealJid != nil {
-		return o.RealJid, nil
-	}
-
-	return nil, errors.New("not self occupant available in the room")
 }

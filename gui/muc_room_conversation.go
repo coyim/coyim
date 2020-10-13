@@ -159,13 +159,13 @@ func (c *roomViewConversation) messageNotAcceptableEvent() {
 
 func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	doInUIThread(func() {
-		c.displayRoomSubject(getDisplayRoomSubjectForNickname(nickname, subject))
+		c.displayNewInfoMessage(getDisplayRoomSubjectForNickname(nickname, subject))
 	})
 }
 
 func (c *roomViewConversation) subjectReceivedEvent(subject string) {
 	doInUIThread(func() {
-		c.displayRoomSubject(getDisplayRoomSubject(subject))
+		c.displayNewInfoMessage(getDisplayRoomSubject(subject))
 	})
 }
 

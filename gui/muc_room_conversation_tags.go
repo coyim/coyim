@@ -29,6 +29,13 @@ func (c *roomViewConversation) createWarningTag(cs mucColorSet) gtki.TextTag {
 	})
 }
 
+func (c *roomViewConversation) createInfoMessageTag(cs mucColorSet) gtki.TextTag {
+	return c.createConversationTag("infoMessage", map[string]interface{}{
+		"foreground": cs.infoMessageForeground,
+		"style":      pangoi.STYLE_ITALIC,
+	})
+}
+
 func (c *roomViewConversation) createLeftRoomTag(cs mucColorSet) gtki.TextTag {
 	return c.createConversationTag("leftRoom", map[string]interface{}{
 		"foreground": cs.someoneLeftForeground,
@@ -88,6 +95,7 @@ func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable 
 		c.createTimestampTag,
 		c.createNicknameTag,
 		c.createSubjectTag,
+		c.createInfoMessageTag,
 		c.createMessageTag,
 		c.createErrorTag,
 	}

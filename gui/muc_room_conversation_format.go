@@ -36,6 +36,11 @@ func (c *roomViewConversation) displayMessage(message string) {
 	c.addTextWithTag(message, "message")
 }
 
+// displayInfoMessage MUST be called from the UI thread
+func (c *roomViewConversation) displayInfoMessage(message string) {
+	c.addTextWithTag(message, "infoMessage")
+}
+
 // displayNewLiveMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewLiveMessage(nickname, message string) {
 	c.displayTimestamp()
@@ -43,6 +48,13 @@ func (c *roomViewConversation) displayNewLiveMessage(nickname, message string) {
 	c.displayNickname(nickname)
 	c.displayMessage(message)
 
+	c.addNewLine()
+}
+
+// displayNewInfoMessage MUST be called from the UI thread
+func (c *roomViewConversation) displayNewInfoMessage(message string) {
+	c.displayTimestamp()
+	c.displayInfoMessage(message)
 	c.addNewLine()
 }
 

@@ -7,6 +7,7 @@ type mucColorSet struct {
 	timestampForeground     string
 	nicknameForeground      string
 	subjectForeground       string
+	infoMessageForeground   string
 	messageForeground       string
 	errorForeground         string
 }
@@ -29,6 +30,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		timestampForeground:     "#AAB7B8",
 		nicknameForeground:      "#395BA3",
 		subjectForeground:       "#000080",
+		infoMessageForeground:   "#395BA3",
 		messageForeground:       "#000000",
 	}
 }
@@ -44,6 +46,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		timestampForeground:     "#AAB7B8",
 		nicknameForeground:      "#395BA3",
 		subjectForeground:       "#000080",
+		infoMessageForeground:   "#E34267",
 		messageForeground:       "#000000",
 	}
 }

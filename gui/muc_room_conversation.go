@@ -3,7 +3,6 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
@@ -24,6 +23,7 @@ type roomViewConversation struct {
 	messageScrolledWindow gtki.ScrolledWindow `gtk-widget:"message-scrolled-window"`
 	messageTextView       gtki.TextView       `gtk-widget:"message-text-view"`
 	sendButton            gtki.Button         `gtk-widget:"message-send-button"`
+	sendButtonIcon        gtki.Image          `gtk-widget:"message-send-icon"`
 
 	log coylog.Logger
 }
@@ -41,7 +41,7 @@ func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	})
 
 	c.initBuilder()
-	c.initDefaults()
+	c.initDefaults(v)
 	c.initSubscribers(v)
 	c.initTagsAndTextBuffers(v)
 
@@ -62,8 +62,13 @@ func (c *roomViewConversation) initBuilder() {
 	}))
 }
 
-func (c *roomViewConversation) initDefaults() {
+func (c *roomViewConversation) initDefaults(v *roomView) {
+	c.sendButtonIcon.SetFromPixbuf(getMUCIconPixbuf("send"))
+
 	c.disableEntryAndSendButton()
+	if v.room.SelfOccupant().HasVoice() {
+		c.enableSendCapabilitiesIfHasVoice(true)
+	}
 }
 
 func (c *roomViewConversation) initSubscribers(v *roomView) {
@@ -97,14 +102,14 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 
 func (c *roomViewConversation) occupantSelfJoinedEvent(r data.Role) {
 	doInUIThread(func() {
-		c.enableSendCapabilitiesIfHasVoice(r)
+		c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
 	})
 }
 
 func (c *roomViewConversation) occupantUpdatedEvent(nickname string, r data.Role) {
 	if c.selfOccupantNickname() == nickname {
 		doInUIThread(func() {
-			c.enableSendCapabilitiesIfHasVoice(r)
+			c.enableSendCapabilitiesIfHasVoice(r.HasVoice())
 		})
 	}
 }
@@ -173,8 +178,8 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 }
 
 // enableSendCapabilitiesIfHasVoice MUST be called from the UI thread
-func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(r data.Role) {
-	c.canSendMessages = r.HasVoice()
+func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(hasVoice bool) {
+	c.canSendMessages = hasVoice
 	if c.canSendMessages {
 		c.enableEntryAndSendButton()
 	} else {
@@ -221,6 +226,7 @@ func (c *roomViewConversation) onSendMessageFinish() {
 	c.clearTypedMessage()
 	if c.canSendMessages {
 		c.enableEntryAndSendButton()
+		c.messageTextView.GrabFocus()
 	}
 }
 
@@ -233,7 +239,7 @@ func (c *roomViewConversation) onSendMessageFailed(err error) {
 // onKeyPress MUST be called from the UI thread
 func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 	if isNormalEnter(g.gdk.EventKeyFrom(ev)) {
-		c.sendWrittenMessage()
+		c.sendMessage()
 		return true
 	}
 
@@ -242,11 +248,11 @@ func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
 
 // onSendMessage MUST be called from the UI thread
 func (c *roomViewConversation) onSendMessage() {
-	c.sendWrittenMessage()
+	c.sendMessage()
 }
 
-// sendWrittenMessage MUST be called from the UI thread
-func (c *roomViewConversation) sendWrittenMessage() {
+// sendMessage MUST be called from the UI thread
+func (c *roomViewConversation) sendMessage() {
 	if !c.canSendMessages {
 		c.log.Warn("Trying to send a message to all occupants without having voice")
 		return

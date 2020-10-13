@@ -56,11 +56,9 @@ func (c *roomViewConversation) initBuilder() {
 		"on_key_press":    c.onKeyPress,
 	})
 
-	messageScrolledWindoStyle := providerWithStyle("scrolledwindow", style{
+	updateWithStyle(c.messageScrolledWindow, providerWithStyle("scrolledwindow", style{
 		"border": "none",
-	})
-
-	updateWithStyle(c.messageScrolledWindow, messageScrolledWindoStyle)
+	}))
 }
 
 func (c *roomViewConversation) initDefaults() {

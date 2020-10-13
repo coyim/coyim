@@ -28,14 +28,7 @@ func (c *roomViewConversation) displayNickname(nickname string) {
 
 // displayRoomSubject MUST be called from the UI thread
 func (c *roomViewConversation) displayRoomSubject(subject string) {
-	c.displayTextLineWithTimestamp(subject, "subject")
-}
-
-// displayTextLineWithTimestamp MUST be called from the UI thread
-func (c *roomViewConversation) displayTextLineWithTimestamp(text, tag string) {
-	c.displayTimestamp()
-	c.addTextWithTag(text, tag)
-	c.addNewLine()
+	c.addTextLineWithTimestamp(subject, "subject")
 }
 
 // displayMessage MUST be called from the UI thread

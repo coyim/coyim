@@ -3,7 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -11,10 +11,11 @@ import (
 )
 
 type roomViewConversation struct {
-	tags            gtki.TextTagTable
-	roomID          jid.Bare
-	account         *account
-	canSendMessages bool
+	tags                 gtki.TextTagTable
+	roomID               jid.Bare
+	account              *account
+	canSendMessages      bool
+	selfOccupantNickname func() string
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatTextView          gtki.TextView       `gtk-widget:"chat-text-view"`
@@ -28,8 +29,9 @@ type roomViewConversation struct {
 
 func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c := &roomViewConversation{
-		roomID:  v.roomID(),
-		account: v.account,
+		roomID:               v.roomID(),
+		account:              v.account,
+		selfOccupantNickname: v.room.SelfOccupantNickname,
 	}
 
 	c.log = c.account.log.WithFields(log.Fields{
@@ -73,7 +75,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantJoinedEvent:
 			c.occupantJoinedEvent(t.nickname)
 		case messageEvent:
-			c.messageEvent(v.room, t.tp, t.nickname, t.message)
+			c.messageEvent(t.tp, t.nickname, t.message)
 		case messageForbidden:
 			c.messageForbiddenEvent()
 		case messageNotAcceptable:
@@ -115,10 +117,10 @@ func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
 	})
 }
 
-func (c *roomViewConversation) messageEvent(r *muc.Room, tp, nickname, message string) {
+func (c *roomViewConversation) messageEvent(tp, nickname, message string) {
 	// Display of self messages is disabled because the own typed messages
 	// are displayed automatically on chat screen
-	if r.SelfOccupantNickname() == nickname {
+	if c.selfOccupantNickname() == nickname {
 		return
 	}
 

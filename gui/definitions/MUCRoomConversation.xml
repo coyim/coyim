@@ -53,7 +53,7 @@
         <property name="visible">True</property>
         <property name="shadow_type">none</property>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="message-view">
             <property name="visible">True</property>
             <child>
               <object class="GtkScrolledWindow" id="message-scrolled-window">

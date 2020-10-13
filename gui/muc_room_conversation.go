@@ -18,6 +18,7 @@ type roomViewConversation struct {
 
 	view                  gtki.Box            `gtk-widget:"room-conversation"`
 	chatTextView          gtki.TextView       `gtk-widget:"chat-text-view"`
+	messageView           gtki.Box            `gtk-widget:"message-view"`
 	messageScrolledWindow gtki.ScrolledWindow `gtk-widget:"message-scrolled-window"`
 	messageTextView       gtki.TextView       `gtk-widget:"message-text-view"`
 	sendButton            gtki.Button         `gtk-widget:"message-send-button"`
@@ -64,6 +65,7 @@ func (c *roomViewConversation) initBuilder() {
 
 func (c *roomViewConversation) initDefaults(v *roomView) {
 	c.subject = v.room.Subject
+	c.disableEntryAndSendButton()
 }
 
 func (c *roomViewConversation) initSubscribers(v *roomView) {
@@ -180,11 +182,15 @@ func (c *roomViewConversation) clearTypedMessage() {
 func (c *roomViewConversation) disableEntryAndSendButton() {
 	c.messageTextView.SetEditable(false)
 	c.sendButton.SetSensitive(false)
+	c.messageTextView.SetVisible(false)
+	c.messageView.SetVisible(false)
 }
 
 func (c *roomViewConversation) enableEntryAndSendButton() {
 	c.messageTextView.SetEditable(true)
 	c.sendButton.SetSensitive(true)
+	c.messageTextView.SetVisible(true)
+	c.messageView.SetVisible(true)
 }
 
 func (c *roomViewConversation) beforeSendingMessage() {

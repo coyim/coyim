@@ -1,6 +1,9 @@
 package gui
 
-import "github.com/coyim/coyim/session/muc"
+import (
+	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
+)
 
 type occupantSelfJoinedEvent struct {
 	nickname string
@@ -16,6 +19,7 @@ type occupantJoinedEvent struct {
 
 type occupantUpdatedEvent struct {
 	nickname string
+	role     data.Role
 }
 
 type nicknameConflictEvent struct {

@@ -87,13 +87,13 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
 		case occupantUpdatedEvent:
-			c.enableSendCapabilitiesIfHasVoice(v.room.SelfOccupant())
+			c.enableSendCapabilitiesIfHasVoice(t.role)
 		}
 	})
 }
 
-func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(occupant *muc.Occupant) {
-	if occupant != nil && occupant.Role != nil && occupant.Role.HasVoice() {
+func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(r data.Role) {
+	if r.HasVoice() {
 		c.canSendMessages = true
 		c.enableEntryAndSendButton()
 		return

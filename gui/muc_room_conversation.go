@@ -209,8 +209,10 @@ func (c *roomViewConversation) beforeSendingMessage() {
 }
 
 func (c *roomViewConversation) onSendMessageFinish() {
-	c.enableEntryAndSendButton()
 	c.clearTypedMessage()
+	if c.canSendMessages {
+		c.enableEntryAndSendButton()
+	}
 }
 
 func (c *roomViewConversation) onSendMessageFailed(err error) {

@@ -51,32 +51,42 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 
 	t.roomNameLabel.SetText(v.roomID().String())
 
-	t.showSubjectIfExists(v.room.Subject.Text)
-}
-
-// showSubject MUST be called from the UI thread
-func (t *roomViewToolbar) showSubjectIfExists(subject string) {
-	t.roomSubjectLabel.SetText(subject)
-	if subject != "" {
-		t.roomSubjectLabel.Show()
-		return
-	}
-	t.roomSubjectLabel.Hide()
+	t.displayRoomSubject(v.room.GetSubject())
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
 	v.subscribe("toolbar", func(ev roomViewEvent) {
-		switch ev.(type) {
+		switch e := ev.(type) {
 		case occupantSelfJoinedEvent:
-			doInUIThread(func() {
-				t.leaveRoomButton.SetSensitive(true)
-			})
-		case subjectReceivedEvent, subjectUpdatedEvent:
-			doInUIThread(func() {
-				t.showSubjectIfExists(v.room.Subject.Text)
-			})
+			t.occupantSelfJoinedEvent()
+		case subjectReceivedEvent:
+			t.subjectReceivedEvent(e.subject)
+		case subjectUpdatedEvent:
+			t.subjectReceivedEvent(e.subject)
 		}
 	})
+}
+
+func (t *roomViewToolbar) occupantSelfJoinedEvent() {
+	doInUIThread(func() {
+		t.leaveRoomButton.SetSensitive(true)
+	})
+}
+
+func (t *roomViewToolbar) subjectReceivedEvent(subject string) {
+	doInUIThread(func() {
+		t.displayRoomSubject(subject)
+	})
+}
+
+// displayRoomSubject MUST be called from the UI thread
+func (t *roomViewToolbar) displayRoomSubject(subject string) {
+	t.roomSubjectLabel.SetText(subject)
+	if subject == "" {
+		t.roomSubjectLabel.Hide()
+	} else {
+		t.roomSubjectLabel.Show()
+	}
 }
 
 func (t *roomViewToolbar) onLeaveRoom(v *roomView) {

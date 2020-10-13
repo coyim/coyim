@@ -9,8 +9,10 @@ import (
 // Room represents a multi user chat room that a session is currently connected to.
 // It contains information about the room configuration itself, and the participants in the room
 type Room struct {
-	ID      jid.Bare
-	Subject *roomSubject
+	ID jid.Bare
+
+	subject           string
+	subjectWasUpdated bool
 
 	selfOccupant *Occupant
 	roster       *RoomRoster
@@ -39,18 +41,10 @@ type Room struct {
 	Whois                 string // This can either be 'moderators' or 'anyone'
 }
 
-// TODO: This struct could be provitional until the implementation
-// of the state machine pattern
-type roomSubject struct {
-	Text     string
-	Received bool
-}
-
 // NewRoom returns a newly created room
 func NewRoom(roomID jid.Bare) *Room {
 	return &Room{
 		ID:        roomID,
-		Subject:   &roomSubject{},
 		roster:    newRoomRoster(),
 		observers: newRoomObservers(),
 	}
@@ -94,4 +88,22 @@ func (r *Room) AddSelfOccupant(occupant *Occupant) {
 //IsSelfOccupantJoined returns true if the self occupant is in the room, false in otherwise
 func (r *Room) IsSelfOccupantJoined() bool {
 	return r.selfOccupant != nil
+}
+
+// GetSubject returns the room subject
+func (r *Room) GetSubject() string {
+	return r.subject
+}
+
+// UpdateSubject updates the room subject and returns a boolean
+// indicating if the subject was updated (true) or not (false)
+func (r *Room) UpdateSubject(s string) bool {
+	r.subject = s
+
+	if r.subjectWasUpdated {
+		return true
+	}
+
+	r.subjectWasUpdated = true
+	return false
 }

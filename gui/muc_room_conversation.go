@@ -79,7 +79,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case messageForbidden:
 			c.messageForbiddenEvent()
 		case messageNotAcceptable:
-			c.messageNotAcceptable()
+			c.messageNotAcceptableEvent()
 		case subjectUpdatedEvent:
 			c.subjectUpdatedEvent(t.nickname, t.subject)
 		case subjectReceivedEvent:
@@ -140,7 +140,7 @@ func (c *roomViewConversation) messageForbiddenEvent() {
 	})
 }
 
-func (c *roomViewConversation) messageNotAcceptable() {
+func (c *roomViewConversation) messageNotAcceptableEvent() {
 	doInUIThread(func() {
 		c.displayErrorMessage(i18n.Local("Your messages to this room aren't accepted."))
 	})
@@ -148,23 +148,14 @@ func (c *roomViewConversation) messageNotAcceptable() {
 
 func (c *roomViewConversation) subjectUpdatedEvent(nickname, subject string) {
 	doInUIThread(func() {
-		c.displayRoomSubject(i18n.Localf("%s updated the room subject to \"%s\"", nickname, subject))
+		c.displayRoomSubject(getDisplayRoomSubjectForNickname(nickname, subject))
 	})
 }
 
 func (c *roomViewConversation) subjectReceivedEvent(subject string) {
-	if subject != "" {
-		doInUIThread(func() {
-			c.displayRoomSubject(i18n.Localf("the room subject is \"%s\"", subject))
-		})
-		return
-	}
-
-	if subject == "" {
-		doInUIThread(func() {
-			c.displayRoomSubject(i18n.Local("The room does not have subject"))
-		})
-	}
+	doInUIThread(func() {
+		c.displayRoomSubject(getDisplayRoomSubject(subject))
+	})
 }
 
 func (c *roomViewConversation) loggingEnabledEvent() {
@@ -256,4 +247,20 @@ func (c *roomViewConversation) sendMessage() {
 	}
 
 	c.displayTextLineWithTimestamp(message, "message")
+}
+
+func getDisplayRoomSubjectForNickname(nickname, subject string) string {
+	if nickname == "" {
+		return i18n.Localf("Someone has updated the room subject to: \"%s\"", subject)
+	}
+
+	return i18n.Localf("%s updated the room subject to \"%s\"", nickname, subject)
+}
+
+func getDisplayRoomSubject(subject string) string {
+	if subject == "" {
+		return i18n.Local("The room does not have subject")
+	}
+
+	return i18n.Localf("The room subject is \"%s\"", subject)
 }

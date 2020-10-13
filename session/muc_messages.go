@@ -30,11 +30,14 @@ func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
 }
 
 func (m *mucManager) handleSubjectReceived(stanza *data.ClientMessage) {
-	l := m.log.WithField("from", stanza.From)
+	l := m.log.WithFields(log.Fields{
+		"from": stanza.From,
+		"who":  "handleSubjectReceived",
+	})
 
 	roomID, ok := jid.TryParseBare(stanza.From)
 	if !ok {
-		l.Error("Error trying to get the room from stanza")
+		l.Error("Error trying to get the room ID from stanza")
 		return
 	}
 
@@ -44,22 +47,14 @@ func (m *mucManager) handleSubjectReceived(stanza *data.ClientMessage) {
 		return
 	}
 
-	subjectReceived := getSubjectFromStanza(stanza)
-	room.Subject.Text = subjectReceived
-
-	if !room.Subject.Received {
-		room.Subject.Received = true
-		m.subjectReceived(roomID, subjectReceived)
+	s := getSubjectFromStanza(stanza)
+	updated := room.UpdateSubject(s)
+	if updated {
+		m.subjectUpdated(roomID, getNicknameFromStanza(stanza), s)
 		return
 	}
 
-	from, ok := jid.TryParseFull(stanza.From)
-	if !ok {
-		l.WithField("room", roomID).Error("Error trying to get the nickname")
-		return
-	}
-	nickname := from.Resource().String()
-	m.subjectUpdated(roomID, nickname, subjectReceived)
+	m.subjectReceived(roomID, s)
 }
 
 func bodyHasContent(stanza *data.ClientMessage) bool {
@@ -76,6 +71,15 @@ func isLiveMessage(stanza *data.ClientMessage) bool {
 
 func hasSubject(stanza *data.ClientMessage) bool {
 	return stanza.Subject != nil
+}
+
+func getNicknameFromStanza(stanza *data.ClientMessage) string {
+	from, ok := jid.TryParseFull(stanza.From)
+	if ok {
+		return from.Resource().String()
+	}
+
+	return ""
 }
 
 func getSubjectFromStanza(stanza *data.ClientMessage) string {

@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
@@ -72,6 +73,10 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantLeftEvent(t.nickname)
 		case occupantJoinedEvent:
 			c.occupantJoinedEvent(t.nickname)
+		case occupantSelfJoinedEvent:
+			c.occupantSelfJoinedEvent(t.role)
+		case occupantUpdatedEvent:
+			c.occupantUpdatedEvent(t.nickname, t.role)
 		case messageEvent:
 			c.messageEvent(t.tp, t.nickname, t.message)
 		case messageForbidden:
@@ -86,21 +91,22 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
-		case occupantUpdatedEvent:
-			c.enableSendCapabilitiesIfHasVoice(t.role)
 		}
 	})
 }
 
-func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(r data.Role) {
-	if r.HasVoice() {
-		c.canSendMessages = true
-		c.enableEntryAndSendButton()
-		return
-	}
+func (c *roomViewConversation) occupantSelfJoinedEvent(r data.Role) {
+	doInUIThread(func() {
+		c.enableSendCapabilitiesIfHasVoice(r)
+	})
+}
 
-	c.canSendMessages = false
-	c.disableEntryAndSendButton()
+func (c *roomViewConversation) occupantUpdatedEvent(nickname string, r data.Role) {
+	if c.selfOccupantNickname() == nickname {
+		doInUIThread(func() {
+			c.enableSendCapabilitiesIfHasVoice(r)
+		})
+	}
 }
 
 func (c *roomViewConversation) occupantLeftEvent(nickname string) {
@@ -116,20 +122,18 @@ func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
 }
 
 func (c *roomViewConversation) messageEvent(tp, nickname, message string) {
-	// Display of self messages is disabled because the own typed messages
-	// are displayed automatically on chat screen
-	if c.selfOccupantNickname() == nickname {
-		return
-	}
-
-	doInUIThread(func() {
-		switch tp {
-		case "received":
-			c.displayNewLiveMessage(nickname, message)
-		default:
-			c.log.WithField("type", tp).Warn("Unknow message event type")
+	switch tp {
+	case "received":
+		// We don't really care of self-incomming messages because we already have
+		// those messages in the conversation textview
+		if c.selfOccupantNickname() != nickname {
+			doInUIThread(func() {
+				c.displayNewLiveMessage(nickname, message)
+			})
 		}
-	})
+	default:
+		c.log.WithField("type", tp).Warn("Unknow message event type")
+	}
 }
 
 func (c *roomViewConversation) messageForbiddenEvent() {
@@ -168,8 +172,18 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 	})
 }
 
-// getTypedMessage MUST be called from the UI thread
-func (c *roomViewConversation) getTypedMessage() string {
+// enableSendCapabilitiesIfHasVoice MUST be called from the UI thread
+func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(r data.Role) {
+	c.canSendMessages = r.HasVoice()
+	if c.canSendMessages {
+		c.enableEntryAndSendButton()
+	} else {
+		c.disableEntryAndSendButton()
+	}
+}
+
+// getWrittenMessage MUST be called from the UI thread
+func (c *roomViewConversation) getWrittenMessage() string {
 	b := c.getMessageTextBuffer()
 	starts, ends := b.GetBounds()
 	return b.GetText(starts, ends, false)
@@ -212,49 +226,47 @@ func (c *roomViewConversation) onSendMessageFinish() {
 
 // onSendMessageFailed MUST be called from the UI thread
 func (c *roomViewConversation) onSendMessageFailed(err error) {
-	c.log.WithError(err).Error("failed to send the message")
-	doInUIThread(func() {
-		c.displayErrorMessage(i18n.Local("The message couldn't be sent, please try again"))
-	})
+	c.log.WithError(err).Error("Failed to send the message to all occupants")
+	c.displayErrorMessage(i18n.Local("The message couldn't be sent, please try again"))
 }
 
 // onKeyPress MUST be called from the UI thread
 func (c *roomViewConversation) onKeyPress(_ gtki.Widget, ev gdki.Event) bool {
-	evk := g.gdk.EventKeyFrom(ev)
-	ret := false
-
-	if isNormalEnter(evk) {
-		c.onSendMessage()
-		ret = true
+	if isNormalEnter(g.gdk.EventKeyFrom(ev)) {
+		c.sendWrittenMessage()
+		return true
 	}
 
-	return ret
+	return false
 }
 
 // onSendMessage MUST be called from the UI thread
 func (c *roomViewConversation) onSendMessage() {
-	if c.canSendMessages {
-		c.sendMessage()
-	}
+	c.sendWrittenMessage()
 }
 
-// sendMessage MUST be called from the UI thread
-func (c *roomViewConversation) sendMessage() {
-	c.beforeSendingMessage()
-	defer c.onSendMessageFinish()
-
-	message := c.getTypedMessage()
-	if message == "" {
+// sendWrittenMessage MUST be called from the UI thread
+func (c *roomViewConversation) sendWrittenMessage() {
+	if !c.canSendMessages {
+		c.log.Warn("Trying to send a message to all occupants without having voice")
 		return
 	}
 
-	err := c.account.session.SendMUCMessage(c.roomID.String(), c.account.Account(), message)
+	c.beforeSendingMessage()
+	defer c.onSendMessageFinish()
+
+	m := c.getWrittenMessage()
+	if m == "" {
+		return
+	}
+
+	err := c.account.session.SendMUCMessage(c.roomID.String(), c.account.Account(), m)
 	if err != nil {
 		c.onSendMessageFailed(err)
 		return
 	}
 
-	c.displayTextLineWithTimestamp(message, "message")
+	c.displayNewLiveMessage(c.selfOccupantNickname(), m)
 }
 
 func getDisplayRoomSubjectForNickname(nickname, subject string) string {

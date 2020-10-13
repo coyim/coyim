@@ -24,6 +24,7 @@ type roomViewConversation struct {
 	messageTextView       gtki.TextView       `gtk-widget:"message-text-view"`
 	sendButton            gtki.Button         `gtk-widget:"message-send-button"`
 	sendButtonIcon        gtki.Image          `gtk-widget:"message-send-icon"`
+	notificationBox       gtki.Box            `gtk-widget:"notification-box"`
 
 	log coylog.Logger
 }
@@ -64,6 +65,9 @@ func (c *roomViewConversation) initBuilder() {
 
 func (c *roomViewConversation) initDefaults(v *roomView) {
 	c.sendButtonIcon.SetFromPixbuf(getMUCIconPixbuf("send"))
+
+	voiceNotification := newRoomVoiceNotification()
+	c.notificationBox.Add(voiceNotification.widget())
 
 	c.disableEntryAndSendButton()
 	if v.room.SelfOccupant().HasVoice() {
@@ -182,8 +186,10 @@ func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(hasVoice bool) {
 	c.canSendMessages = hasVoice
 	if c.canSendMessages {
 		c.enableEntryAndSendButton()
+		c.notificationBox.Hide()
 	} else {
 		c.disableEntryAndSendButton()
+		c.notificationBox.Show()
 	}
 }
 

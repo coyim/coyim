@@ -35,23 +35,20 @@ func (t *roomViewToolbar) initBuilder(v *roomView) {
 
 func (t *roomViewToolbar) initDefaults(v *roomView) {
 	t.leaveRoomButton.SetSensitive(v.isJoined())
-
 	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room"))
 
+	t.roomNameLabel.SetText(v.roomID().String())
 	updateWithStyle(t.roomNameLabel, providerWithStyle("label", style{
 		"font-size":   "22px",
 		"font-weight": "bold",
 	}))
 
+	t.displayRoomSubject(v.room.GetSubject())
 	updateWithStyle(t.roomSubjectLabel, providerWithStyle("label", style{
 		"font-size":  "14px",
 		"font-style": "italic",
 		"color":      "#666666",
 	}))
-
-	t.roomNameLabel.SetText(v.roomID().String())
-
-	t.displayRoomSubject(v.room.GetSubject())
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {

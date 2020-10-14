@@ -55,7 +55,7 @@ func (r *Room) SelfOccupant() *Occupant {
 	return r.selfOccupant
 }
 
-//SelfOccupantNickname returns the nickname of the room's self occupant
+// SelfOccupantNickname returns the nickname of the room's self occupant
 func (r *Room) SelfOccupantNickname() string {
 	o := r.SelfOccupant()
 	if o != nil {
@@ -85,7 +85,7 @@ func (r *Room) AddSelfOccupant(occupant *Occupant) {
 	r.selfOccupant = occupant
 }
 
-//IsSelfOccupantJoined returns true if the self occupant is in the room, false in otherwise
+// IsSelfOccupantJoined returns true if the self occupant is in the room, false in otherwise
 func (r *Room) IsSelfOccupantJoined() bool {
 	return r.selfOccupant != nil
 }

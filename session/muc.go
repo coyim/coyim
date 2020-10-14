@@ -107,7 +107,7 @@ func (m *mucManager) selfOccupantUpdate(roomID jid.Bare, op *muc.OccupantPresenc
 		m.log.WithFields(log.Fields{
 			"room":     roomID,
 			"occupant": op.Nickname,
-			"method":   "selfOccupantUpdate",
+			"who":      "selfOccupantUpdate",
 		}).Error("trying to join to an unavailable room")
 		// TODO: This will only happen when the room disappeared AFTER trying to join, but before we could
 		// finish the join. We should figure out the right way of handling this situation

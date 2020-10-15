@@ -1,6 +1,8 @@
 package events
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
@@ -102,6 +104,11 @@ type MUCLiveMessageReceived struct {
 	MUCMessageReceived
 }
 
+// MUCDelayedMessageReceived contains information about the received delayed message
+type MUCDelayedMessageReceived struct {
+	MUCMessageReceived
+}
+
 // MUCSubjectUpdated contains the room subject will be updated
 type MUCSubjectUpdated struct {
 	Nickname string
@@ -119,16 +126,17 @@ type MUCLoggingEnabled struct{}
 // MUCLoggingDisabled signifies that logging has been turned off from the room
 type MUCLoggingDisabled struct{}
 
-func (MUCError) markAsMUCEventTypeInterface()               {}
-func (MUCRoomCreated) markAsMUCEventTypeInterface()         {}
-func (MUCRoomRenamed) markAsMUCEventTypeInterface()         {}
-func (MUCOccupant) markAsMUCEventTypeInterface()            {}
-func (MUCOccupantUpdated) markAsMUCEventTypeInterface()     {}
-func (MUCOccupantJoined) markAsMUCEventTypeInterface()      {}
-func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface()  {}
-func (MUCOccupantLeft) markAsMUCEventTypeInterface()        {}
-func (MUCLiveMessageReceived) markAsMUCEventTypeInterface() {}
-func (MUCSubjectUpdated) markAsMUCEventTypeInterface()      {}
-func (MUCSubjectReceived) markAsMUCEventTypeInterface()     {}
-func (MUCLoggingEnabled) markAsMUCEventTypeInterface()      {}
-func (MUCLoggingDisabled) markAsMUCEventTypeInterface()     {}
+func (MUCError) markAsMUCEventTypeInterface()                  {}
+func (MUCRoomCreated) markAsMUCEventTypeInterface()            {}
+func (MUCRoomRenamed) markAsMUCEventTypeInterface()            {}
+func (MUCOccupant) markAsMUCEventTypeInterface()               {}
+func (MUCOccupantUpdated) markAsMUCEventTypeInterface()        {}
+func (MUCOccupantJoined) markAsMUCEventTypeInterface()         {}
+func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface()     {}
+func (MUCOccupantLeft) markAsMUCEventTypeInterface()           {}
+func (MUCLiveMessageReceived) markAsMUCEventTypeInterface()    {}
+func (MUCDelayedMessageReceived) markAsMUCEventTypeInterface() {}
+func (MUCSubjectUpdated) markAsMUCEventTypeInterface()         {}
+func (MUCSubjectReceived) markAsMUCEventTypeInterface()        {}
+func (MUCLoggingEnabled) markAsMUCEventTypeInterface()         {}
+func (MUCLoggingDisabled) markAsMUCEventTypeInterface()        {}

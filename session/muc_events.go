@@ -85,6 +85,15 @@ func (m *mucManager) liveMessageReceived(roomID jid.Bare, nickname, message stri
 	m.publishRoomEvent(roomID, ev)
 }
 
+func (m *mucManager) delayedMessageReceived(roomID jid.Bare, nickname, message string, timestamp time.Time) {
+	ev := events.MUCDelayedMessageReceived{}
+	ev.Nickname = nickname
+	ev.Message = message
+	ev.Timestamp = timestamp
+
+	m.publishRoomEvent(roomID, ev)
+}
+
 func (m *mucManager) subjectReceived(roomID jid.Bare, subject string) {
 	ev := events.MUCSubjectReceived{}
 	ev.Subject = subject

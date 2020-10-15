@@ -1,6 +1,8 @@
 package session
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -13,19 +15,11 @@ func (m *mucManager) receiveClientMessage(stanza *data.ClientMessage) {
 		m.handleSubjectReceived(stanza)
 	}
 
-	if isLiveMessage(stanza) {
-		from := jid.ParseFull(stanza.From)
-		roomID := from.Bare()
-		nickname := from.Resource().String()
-		message := stanza.Body
-
-		m.log.WithFields(log.Fields{
-			"roomID":   roomID,
-			"message":  message,
-			"nickname": nickname,
-		}).Info("MUC message received")
-
-		m.liveMessageReceived(roomID, nickname, message, retrieveMessageTime(stanza))
+	switch {
+	case isDelayedMessage(stanza):
+		m.handleMessageReceived(stanza, m.delayedMessageReceived)
+	case isLiveMessage(stanza):
+		m.handleMessageReceived(stanza, m.liveMessageReceived)
 	}
 }
 
@@ -57,16 +51,21 @@ func (m *mucManager) handleSubjectReceived(stanza *data.ClientMessage) {
 	m.subjectReceived(roomID, s)
 }
 
+func (m *mucManager) handleMessageReceived(stanza *data.ClientMessage, h func(jid.Bare, string, string, time.Time)) {
+	roomID, nickname := retrieveRoomIDAndNickname(stanza.From)
+	h(roomID, nickname, stanza.Body, retrieveMessageTime(stanza))
+}
+
 func bodyHasContent(stanza *data.ClientMessage) bool {
 	return stanza.Body != ""
 }
 
-func isMessageDelayed(stanza *data.ClientMessage) bool {
+func isDelayedMessage(stanza *data.ClientMessage) bool {
 	return stanza.Delay != nil
 }
 
 func isLiveMessage(stanza *data.ClientMessage) bool {
-	return bodyHasContent(stanza) && !isMessageDelayed(stanza)
+	return bodyHasContent(stanza) && !isDelayedMessage(stanza)
 }
 
 func hasSubject(stanza *data.ClientMessage) bool {
@@ -86,5 +85,6 @@ func getSubjectFromStanza(stanza *data.ClientMessage) string {
 	if hasSubject(stanza) {
 		return stanza.Subject.Text
 	}
+
 	return ""
 }

@@ -80,6 +80,6 @@ func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag str
 	c.addNewLine()
 }
 
-func getTimestamp() string {
-	return time.Now().Format("15:04:05")
+func formatTimestamp(t time.Time) string {
+	return t.Format("15:04:05")
 }

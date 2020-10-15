@@ -92,8 +92,9 @@ type MUCOccupantLeft struct {
 
 // MUCMessageReceived represents a received groupchat message
 type MUCMessageReceived struct {
-	Nickname string
-	Message  string
+	Nickname  string
+	Message   string
+	Timestamp time.Time
 }
 
 // MUCLiveMessageReceived contains information about the received live message

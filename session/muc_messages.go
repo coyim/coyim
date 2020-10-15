@@ -25,7 +25,7 @@ func (m *mucManager) receiveClientMessage(stanza *data.ClientMessage) {
 			"nickname": nickname,
 		}).Info("MUC message received")
 
-		m.liveMessageReceived(roomID, nickname, message)
+		m.liveMessageReceived(roomID, nickname, message, retrieveMessageTime(stanza))
 	}
 }
 

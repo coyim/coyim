@@ -74,10 +74,11 @@ func (m *mucManager) selfOccupantJoined(roomID jid.Bare, op *muc.OccupantPresenc
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) liveMessageReceived(roomID jid.Bare, nickname, message string) {
+func (m *mucManager) liveMessageReceived(roomID jid.Bare, nickname, message string, timestamp time.Time) {
 	ev := events.MUCLiveMessageReceived{}
 	ev.Nickname = nickname
 	ev.Message = message
+	ev.Timestamp = timestamp
 
 	m.publishRoomEvent(roomID, ev)
 }

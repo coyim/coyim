@@ -56,6 +56,16 @@ func (c *roomViewConversation) displayLiveMessage(nickname, message string, time
 	c.addNewLine()
 }
 
+// displayDelayedMessage MUST be called from the UI thread
+func (c *roomViewConversation) displayDelayedMessage(nickname, message string, timestamp time.Time) {
+	c.displayTimestamp(timestamp)
+
+	c.displayNickname(nickname)
+	c.displayMessage(message)
+
+	c.addNewLine()
+}
+
 // displayNewInfoMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewInfoMessage(message string) {
 	c.displayCurrentTimestamp()

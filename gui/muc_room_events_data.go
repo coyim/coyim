@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 )
@@ -42,9 +44,10 @@ type loggingEnabledEvent struct{}
 type loggingDisabledEvent struct{}
 
 type messageEvent struct {
-	tp       string
-	nickname string
-	message  string
+	tp        string
+	nickname  string
+	message   string
+	timestamp time.Time
 }
 
 type subjectUpdatedEvent struct {

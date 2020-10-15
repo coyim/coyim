@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
@@ -87,7 +89,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantUpdatedEvent:
 			c.occupantUpdatedEvent(t.nickname, t.role)
 		case messageEvent:
-			c.messageEvent(t.tp, t.nickname, t.message)
+			c.messageEvent(t.tp, t.nickname, t.message, t.timestamp)
 		case messageForbidden:
 			c.messageForbiddenEvent()
 		case messageNotAcceptable:
@@ -130,14 +132,14 @@ func (c *roomViewConversation) occupantJoinedEvent(nickname string) {
 	})
 }
 
-func (c *roomViewConversation) messageEvent(tp, nickname, message string) {
+func (c *roomViewConversation) messageEvent(tp, nickname, message string, timestamp time.Time) {
 	switch tp {
 	case "live":
 		// We don't really care about self-incoming messages because
 		// we already have those messages in the conversation's textview
 		if c.selfOccupantNickname() != nickname {
 			doInUIThread(func() {
-				c.displayLiveMessage(nickname, message)
+				c.displayLiveMessage(nickname, message, timestamp)
 			})
 		}
 	default:
@@ -280,7 +282,7 @@ func (c *roomViewConversation) sendMessage() {
 		return
 	}
 
-	c.displayNewLiveMessage(c.selfOccupantNickname(), m)
+	c.displayLiveMessage(c.selfOccupantNickname(), m, time.Now())
 }
 
 func getDisplayRoomSubjectForNickname(nickname, subject string) string {

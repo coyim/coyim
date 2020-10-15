@@ -1,6 +1,8 @@
 package session
 
 import (
+	"time"
+
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"

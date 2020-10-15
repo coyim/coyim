@@ -2,6 +2,7 @@ package gui
 
 import (
 	"sync"
+	"time"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/events"
@@ -26,7 +27,7 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 	case events.MUCOccupantLeft:
 		v.publishEvent(occupantLeftEvent{t.Nickname})
 	case events.MUCLiveMessageReceived:
-		v.publishMessageEvent("live", t.Nickname, t.Message)
+		v.publishMessageEvent("live", t.Nickname, t.Message, t.Timestamp)
 	case events.MUCSubjectUpdated:
 		v.publishSubjectUpdatedEvent(t.Nickname, t.Subject)
 	case events.MUCSubjectReceived:

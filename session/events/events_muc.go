@@ -90,11 +90,15 @@ type MUCOccupantLeft struct {
 	Role        data.Role
 }
 
-// MUCMessageReceived contains information about
-// the message received
+// MUCMessageReceived represents a received groupchat message
 type MUCMessageReceived struct {
 	Nickname string
 	Message  string
+}
+
+// MUCLiveMessageReceived contains information about the received live message
+type MUCLiveMessageReceived struct {
+	MUCMessageReceived
 }
 
 // MUCSubjectUpdated contains the room subject will be updated
@@ -114,16 +118,16 @@ type MUCLoggingEnabled struct{}
 // MUCLoggingDisabled signifies that logging has been turned off from the room
 type MUCLoggingDisabled struct{}
 
-func (MUCError) markAsMUCEventTypeInterface()              {}
-func (MUCRoomCreated) markAsMUCEventTypeInterface()        {}
-func (MUCRoomRenamed) markAsMUCEventTypeInterface()        {}
-func (MUCOccupant) markAsMUCEventTypeInterface()           {}
-func (MUCOccupantUpdated) markAsMUCEventTypeInterface()    {}
-func (MUCOccupantJoined) markAsMUCEventTypeInterface()     {}
-func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface() {}
-func (MUCOccupantLeft) markAsMUCEventTypeInterface()       {}
-func (MUCMessageReceived) markAsMUCEventTypeInterface()    {}
-func (MUCSubjectUpdated) markAsMUCEventTypeInterface()     {}
-func (MUCSubjectReceived) markAsMUCEventTypeInterface()    {}
-func (MUCLoggingEnabled) markAsMUCEventTypeInterface()     {}
-func (MUCLoggingDisabled) markAsMUCEventTypeInterface()    {}
+func (MUCError) markAsMUCEventTypeInterface()               {}
+func (MUCRoomCreated) markAsMUCEventTypeInterface()         {}
+func (MUCRoomRenamed) markAsMUCEventTypeInterface()         {}
+func (MUCOccupant) markAsMUCEventTypeInterface()            {}
+func (MUCOccupantUpdated) markAsMUCEventTypeInterface()     {}
+func (MUCOccupantJoined) markAsMUCEventTypeInterface()      {}
+func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface()  {}
+func (MUCOccupantLeft) markAsMUCEventTypeInterface()        {}
+func (MUCLiveMessageReceived) markAsMUCEventTypeInterface() {}
+func (MUCSubjectUpdated) markAsMUCEventTypeInterface()      {}
+func (MUCSubjectReceived) markAsMUCEventTypeInterface()     {}
+func (MUCLoggingEnabled) markAsMUCEventTypeInterface()      {}
+func (MUCLoggingDisabled) markAsMUCEventTypeInterface()     {}

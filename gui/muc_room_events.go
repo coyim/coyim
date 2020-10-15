@@ -25,8 +25,8 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishEvent(occupantJoinedEvent{t.Nickname})
 	case events.MUCOccupantLeft:
 		v.publishEvent(occupantLeftEvent{t.Nickname})
-	case events.MUCMessageReceived:
-		v.publishMessageEvent("received", t.Nickname, t.Message)
+	case events.MUCLiveMessageReceived:
+		v.publishMessageEvent("live", t.Nickname, t.Message)
 	case events.MUCSubjectUpdated:
 		v.publishSubjectUpdatedEvent(t.Nickname, t.Subject)
 	case events.MUCSubjectReceived:

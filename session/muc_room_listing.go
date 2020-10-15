@@ -36,18 +36,6 @@ func hasFeatures(features []string, expected ...string) bool {
 	return true
 }
 
-func (s *session) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
-	diq, e := s.Conn().QueryServiceInformation(rl.Jid.String())
-	if e != nil {
-		s.log.WithError(e).WithField("room", rl.Jid).Error("findOutMoreInformationAboutRoom() had error")
-		return
-	}
-
-	rl.SetFeatures(diq.Features)
-	rl.SetFormsData(diq.Forms)
-	rl.Updated()
-}
-
 func (s *session) getRoomsInService(service jid.Any, name string, results chan<- *muc.RoomListing, resultsServices chan<- *muc.ServiceListing, allRooms *sync.WaitGroup) {
 	defer allRooms.Done()
 
@@ -88,7 +76,7 @@ func (s *session) discoverRoomListingInformation(items []data.DiscoveryItem, sl 
 
 		results <- rl
 
-		go s.findOutMoreInformationAboutRoom(rl)
+		go s.muc.findOutMoreInformationAboutRoom(rl)
 	}
 }
 

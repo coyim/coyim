@@ -93,6 +93,8 @@ type ClientMessage struct {
 
 	Error *StanzaError `xml:"error"`
 
+	MucUserExtension *MUCUser `xml:",omitempty"`
+
 	Extensions `xml:",any,omitempty"`
 }
 

@@ -108,3 +108,10 @@ func (m *mucManager) subjectUpdated(roomID jid.Bare, nickname, subject string) {
 
 	m.publishRoomEvent(roomID, ev)
 }
+
+func (m *mucManager) roomConfigurationChanged(roomID jid.Bare, rl interface{}) {
+	ev := events.MUCRoomConfigurationChanged{}
+	ev.RoomConfiguration = rl
+
+	m.publishRoomEvent(roomID, ev)
+}

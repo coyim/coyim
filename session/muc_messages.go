@@ -3,6 +3,7 @@ package session
 import (
 	"time"
 
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -20,6 +21,8 @@ func (m *mucManager) receiveClientMessage(stanza *data.ClientMessage) {
 		m.handleMessageReceived(stanza, m.delayedMessageReceived)
 	case isLiveMessage(stanza):
 		m.handleMessageReceived(stanza, m.liveMessageReceived)
+	case hasMucUserExtension(stanza):
+		m.handleMucUserExtension(stanza)
 	}
 }
 
@@ -56,6 +59,38 @@ func (m *mucManager) handleMessageReceived(stanza *data.ClientMessage, h func(ji
 	h(roomID, nickname, stanza.Body, retrieveMessageTime(stanza))
 }
 
+func (m *mucManager) handleMucUserExtension(stanza *data.ClientMessage) {
+	for _, status := range stanza.MucUserExtension.Status {
+		switch status.Code {
+		// TODO: Implements the publishing of events for states 170, 171, 172, and 173
+		case "104":
+			m.handleMucRoomConfigurationChanged(stanza)
+			m.log.WithField("status code:", status.Code).Info("Room changes published")
+		default:
+			m.log.WithField("status code:", status.Code).Warn("Unknown status code received")
+		}
+	}
+}
+
+func (m *mucManager) handleMucRoomConfigurationChanged(stanza *data.ClientMessage) {
+	l := m.log.WithFields(log.Fields{
+		"stanza": stanza,
+		"who":    "handleMucUserExtension",
+	})
+
+	roomID, ok := jid.TryParseBare(stanza.From)
+	if !ok {
+		l.Error("Error trying to get the room ID from stanza")
+		return
+	}
+
+	roomInfo := make(chan *muc.RoomListing)
+	go m.getRoom(roomID, roomInfo)
+
+	ri := <-roomInfo
+	m.roomConfigurationChanged(roomID, ri)
+}
+
 func bodyHasContent(stanza *data.ClientMessage) bool {
 	return stanza.Body != ""
 }
@@ -70,6 +105,10 @@ func isLiveMessage(stanza *data.ClientMessage) bool {
 
 func hasSubject(stanza *data.ClientMessage) bool {
 	return stanza.Subject != nil
+}
+
+func hasMucUserExtension(stanza *data.ClientMessage) bool {
+	return stanza.MucUserExtension != nil
 }
 
 func getNicknameFromStanza(stanza *data.ClientMessage) string {

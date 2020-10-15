@@ -117,14 +117,7 @@ func (s *session) HasRoom(roomID jid.Bare, wantRoomInfo chan<- *muc.RoomListing)
 // GetRoom will block, waiting to get the room information
 func (s *session) GetRoom(roomID jid.Bare, result chan<- *muc.RoomListing) {
 	// TODO: make this method unnecessary by changing the GUI parts to not use it
-
-	rl := muc.NewRoomListing()
-	rl.Jid = roomID
-	// This is a little bit redundant since we already asked for this once
-	// The right solution is to use the values from above, but that would be an extensive refactoring
-	// so we will wait with that for now
-	s.findOutMoreInformationAboutRoom(rl)
-	result <- rl
+	s.muc.getRoom(roomID, result)
 }
 
 func createRoomRecipient(room jid.Bare, nickname string) jid.Full {

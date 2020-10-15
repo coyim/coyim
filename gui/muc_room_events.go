@@ -120,11 +120,12 @@ func (v *roomView) publishEvent(ev roomViewEvent) {
 	}
 }
 
-func (v *roomView) publishMessageEvent(tp, nickname, msg string) {
+func (v *roomView) publishMessageEvent(tp, nickname, message string, timestamp time.Time) {
 	v.publishEvent(messageEvent{
-		tp:       tp,
-		nickname: nickname,
-		message:  msg,
+		tp:        tp,
+		nickname:  nickname,
+		message:   message,
+		timestamp: timestamp,
 	})
 }
 

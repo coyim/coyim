@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (m *mucManager) receivedClientMessage(stanza *data.ClientMessage) {
+func (m *mucManager) receiveClientMessage(stanza *data.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
 	if hasSubject(stanza) {

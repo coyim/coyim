@@ -256,3 +256,12 @@ func (m *mucManager) sendMessage(to, from, body string) error {
 
 	return nil
 }
+
+func retrieveRoomIDAndNickname(from string) (jid.Bare, string) {
+	f, ok := jid.TryParseFull(from)
+	if ok {
+		return f.Bare(), f.Resource().String()
+	}
+
+	return nil, ""
+}

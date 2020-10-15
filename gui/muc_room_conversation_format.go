@@ -6,9 +6,14 @@ import (
 	"github.com/coyim/coyim/i18n"
 )
 
+// displayCurrentTimestamp MUST be called from the UI thread
+func (c *roomViewConversation) displayCurrentTimestamp() {
+	c.displayTimestamp(time.Now())
+}
+
 // displayTimestamp MUST be called from the UI thread
-func (c *roomViewConversation) displayTimestamp() {
-	c.addTextWithTag(i18n.Localf("[%s] ", getTimestamp()), "timestamp")
+func (c *roomViewConversation) displayTimestamp(timestamp time.Time) {
+	c.addTextWithTag(i18n.Localf("[%s] ", formatTimestamp(timestamp)), "timestamp")
 }
 
 // displayNotificationWhenOccupantJoinedRoom MUST be called from the UI thread
@@ -43,7 +48,7 @@ func (c *roomViewConversation) displayInfoMessage(message string) {
 
 // displayNewLiveMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewLiveMessage(nickname, message string) {
-	c.displayTimestamp()
+	c.displayCurrentTimestamp()
 
 	c.displayNickname(nickname)
 	c.displayMessage(message)
@@ -53,7 +58,7 @@ func (c *roomViewConversation) displayNewLiveMessage(nickname, message string) {
 
 // displayNewInfoMessage MUST be called from the UI thread
 func (c *roomViewConversation) displayNewInfoMessage(message string) {
-	c.displayTimestamp()
+	c.displayCurrentTimestamp()
 	c.displayInfoMessage(message)
 	c.addNewLine()
 }
@@ -70,7 +75,7 @@ func (c *roomViewConversation) displayErrorMessage(message string) {
 
 // displayTextLineWithTimestamp MUST be called from the UI thread
 func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag string) {
-	c.displayTimestamp()
+	c.displayCurrentTimestamp()
 	c.addTextWithTag(text, tag)
 	c.addNewLine()
 }

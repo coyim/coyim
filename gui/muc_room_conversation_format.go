@@ -83,6 +83,12 @@ func (c *roomViewConversation) displayErrorMessage(message string) {
 	c.displayTextLineWithTimestamp(message, "error")
 }
 
+// displayDivider MUST be called from the UI thread
+func (c *roomViewConversation) displayDivider() {
+	c.addTextWithTag("---", "divider")
+	c.addNewLine()
+}
+
 // displayTextLineWithTimestamp MUST be called from the UI thread
 func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag string) {
 	c.displayCurrentTimestamp()

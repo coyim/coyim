@@ -13,6 +13,8 @@ type TextView interface {
 	SetCursorVisible(bool)
 	SetEditable(bool)
 	StartsDisplayLine(TextIter) bool
+	SetJustification(Justification)
+	GetJustification() Justification
 }
 
 func AssertTextView(_ TextView) {}

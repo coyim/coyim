@@ -1,8 +1,8 @@
 package gtka
 
 import (
-	"github.com/gotk3/gotk3/gtk"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 func init() {
@@ -70,4 +70,9 @@ func init() {
 	gtki.MESSAGE_QUESTION = gtki.MessageType(gtk.MESSAGE_QUESTION)
 	gtki.MESSAGE_ERROR = gtki.MessageType(gtk.MESSAGE_ERROR)
 	gtki.MESSAGE_OTHER = gtki.MessageType(gtk.MESSAGE_OTHER)
+
+	gtki.JUSTIFY_LEFT = gtki.Justification(gtk.JUSTIFY_LEFT)
+	gtki.JUSTIFY_RIGHT = gtki.Justification(gtk.JUSTIFY_RIGHT)
+	gtki.JUSTIFY_CENTER = gtki.Justification(gtk.JUSTIFY_CENTER)
+	gtki.JUSTIFY_FILL = gtki.Justification(gtk.JUSTIFY_FILL)
 }

@@ -64,6 +64,14 @@ func (v *textView) StartsDisplayLine(iter gtki.TextIter) bool {
 	return v.internal.StartsDisplayLine(UnwrapTextIter(iter))
 }
 
+func (v *textView) SetJustification(justify gtki.Justification) {
+	v.internal.SetJustification(gtk.Justification(justify))
+}
+
+func (v *textView) GetJustification() gtki.Justification {
+	return gtki.Justification(v.internal.GetJustification())
+}
+
 func (v *textView) MoveVisually(iter gtki.TextIter, count int) bool {
 	return v.internal.MoveVisually(UnwrapTextIter(iter), count)
 }

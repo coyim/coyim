@@ -2,6 +2,7 @@ package pangoa
 
 import (
 	"github.com/coyim/gotk3adapter/pangoi"
+	"github.com/gotk3/gotk3/gtk"
 	"github.com/gotk3/gotk3/pango"
 )
 
@@ -17,4 +18,9 @@ func init() {
 	pangoi.STYLE_NORMAL = int(pango.STYLE_NORMAL)
 	pangoi.STYLE_OBLIQUE = int(pango.STYLE_OBLIQUE)
 	pangoi.STYLE_ITALIC = int(pango.STYLE_ITALIC)
+
+	pangoi.JUSTIFY_LEFT = int(gtk.JUSTIFY_LEFT)
+	pangoi.JUSTIFY_RIGHT = int(gtk.JUSTIFY_RIGHT)
+	pangoi.JUSTIFY_CENTER = int(gtk.JUSTIFY_CENTER)
+	pangoi.JUSTIFY_FILL = int(gtk.JUSTIFY_FILL)
 }

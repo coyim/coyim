@@ -39,6 +39,13 @@ func (*MockTextView) StartsDisplayLine(gtki.TextIter) bool {
 	return false
 }
 
+func (*MockTextView) SetJustification(gtki.Justification) {
+}
+
+func (*MockTextView) GetJustification() gtki.Justification {
+	return gtki.JUSTIFY_LEFT
+}
+
 func (*MockTextView) MoveVisually(gtki.TextIter, int) bool {
 	return false
 }

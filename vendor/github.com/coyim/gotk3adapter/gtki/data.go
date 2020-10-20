@@ -112,3 +112,12 @@ var (
 	MESSAGE_ERROR    MessageType
 	MESSAGE_OTHER    MessageType
 )
+
+type Justification int
+
+var (
+	JUSTIFY_LEFT   Justification
+	JUSTIFY_RIGHT  Justification
+	JUSTIFY_CENTER Justification
+	JUSTIFY_FILL   Justification
+)

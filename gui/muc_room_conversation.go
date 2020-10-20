@@ -90,6 +90,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantUpdatedEvent(t.nickname, t.role)
 		case messageEvent:
 			c.messageEvent(t.tp, t.nickname, t.message, t.timestamp)
+		case discussionHistoryEvent:
+			c.discussionHistoryEvent(t.history)
 		case messageForbidden:
 			c.messageForbiddenEvent()
 		case messageNotAcceptable:
@@ -148,6 +150,34 @@ func (c *roomViewConversation) messageEvent(tp, nickname, message string, timest
 		})
 	default:
 		c.log.WithField("type", tp).Warn("Unknow message event type")
+	}
+}
+
+func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory) {
+	doInUIThread(func() {
+		for _, dm := range dh.GetHistory() {
+			c.displayDiscussionHistoryDate(dm.GetDate())
+			c.displayDiscussionHistoryMessages(dm.GetMessages())
+			c.displayDivider()
+		}
+	})
+}
+
+// displayDiscussionHistoryDate MUST be called from the UI thread
+func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
+	j := c.chatTextView.GetJustification()
+	c.chatTextView.SetJustification(gtki.JUSTIFY_CENTER)
+
+	c.addTextWithTag(d.String(), "groupdate")
+	c.addNewLine()
+
+	c.chatTextView.SetJustification(j)
+}
+
+// displayDiscussionHistoryMessages MUST be called from the UI thread
+func (c *roomViewConversation) displayDiscussionHistoryMessages(messages []*data.DelayedMessage) {
+	for _, m := range messages {
+		c.displayDelayedMessage(m.Nickname, m.Message, m.Timestamp)
 	}
 }
 

@@ -18,15 +18,19 @@ type mucManager struct {
 	publishEvent func(ev interface{})
 	roomManager  *muc.RoomManager
 	roomLock     sync.Mutex
+
+	discussionHistory map[jid.Bare]*data.DiscussionHistory
+
 	sync.Mutex
 }
 
 func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev interface{})) *mucManager {
 	m := &mucManager{
-		log:          log,
-		conn:         conn,
-		publishEvent: publishEvent,
-		roomManager:  muc.NewRoomManager(),
+		log:               log,
+		conn:              conn,
+		publishEvent:      publishEvent,
+		roomManager:       muc.NewRoomManager(),
+		discussionHistory: make(map[jid.Bare]*data.DiscussionHistory),
 	}
 
 	return m
@@ -144,6 +148,14 @@ func (m *mucManager) selfOccupantUpdate(roomID jid.Bare, op *muc.OccupantPresenc
 		room.AddSelfOccupant(o)
 		m.selfOccupantJoined(roomID, op)
 	}
+}
+
+func (m *mucManager) getDiscussionHistory(roomID jid.Bare) *data.DiscussionHistory {
+	h, ok := m.discussionHistory[roomID]
+	if ok {
+		return h
+	}
+	return nil
 }
 
 func (m *mucManager) existOccupantInRoster(room *muc.Room, nickname string) bool {

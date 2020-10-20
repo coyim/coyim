@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
@@ -90,6 +91,13 @@ func (m *mucManager) delayedMessageReceived(roomID jid.Bare, nickname, message s
 	ev.Nickname = nickname
 	ev.Message = message
 	ev.Timestamp = timestamp
+
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) discussionHistoryReceived(roomID jid.Bare, history *data.DiscussionHistory) {
+	ev := events.MUCDiscussionHistoryReceived{}
+	ev.History = history
 
 	m.publishRoomEvent(roomID, ev)
 }

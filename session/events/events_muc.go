@@ -109,6 +109,11 @@ type MUCDelayedMessageReceived struct {
 	MUCMessageReceived
 }
 
+// MUCDiscussionHistoryReceived contains information about full discussion history
+type MUCDiscussionHistoryReceived struct {
+	History *data.DiscussionHistory
+}
+
 // MUCSubjectUpdated contains the room subject will be updated
 type MUCSubjectUpdated struct {
 	Nickname string
@@ -145,4 +150,5 @@ func (MUCSubjectUpdated) markAsMUCEventTypeInterface()           {}
 func (MUCSubjectReceived) markAsMUCEventTypeInterface()          {}
 func (MUCLoggingEnabled) markAsMUCEventTypeInterface()           {}
 func (MUCLoggingDisabled) markAsMUCEventTypeInterface()          {}
-func (MUCRoomConfigurationChanged) markAsMUCEventTypeInterface() {}
+func (MUCRoomConfigurationChanged) markAsMUCEventTypeInterface() {}          {}
+func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}

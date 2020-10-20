@@ -63,6 +63,10 @@ type messageForbidden struct{}
 
 type messageNotAcceptable struct{}
 
+type discussionHistoryEvent struct {
+	history *data.DiscussionHistory
+}
+
 type roomViewEvent interface {
 	markAsRoomViewEvent()
 }
@@ -82,3 +86,4 @@ func (loggingEnabledEvent) markAsRoomViewEvent()       {}
 func (loggingDisabledEvent) markAsRoomViewEvent()      {}
 func (messageForbidden) markAsRoomViewEvent()          {}
 func (messageNotAcceptable) markAsRoomViewEvent()      {}
+func (discussionHistoryEvent) markAsRoomViewEvent()    {}

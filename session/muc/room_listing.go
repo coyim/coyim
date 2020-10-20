@@ -26,6 +26,7 @@ type RoomListing struct {
 	Public                    bool
 	Language                  string
 	OccupantsCanChangeSubject bool
+	Title                     string
 	Description               string
 	Occupants                 int
 	MembersCanInvite          bool
@@ -171,7 +172,9 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 			rl.Logged = values[0] == "1"
 		}
 	case "muc#roomconfig_roomname":
-		// Room name - we already have this
+		if len(values) > 0 {
+			rl.Title = values[0]
+		}
 	case "muc#roominfo_description":
 		if len(values) > 0 {
 			rl.Description = values[0]

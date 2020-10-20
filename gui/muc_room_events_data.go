@@ -71,6 +71,11 @@ type roomViewEvent interface {
 	markAsRoomViewEvent()
 }
 
+type roomConfigurationChanged struct {
+	oldConfiguration *muc.RoomListing
+	newConfiguration *muc.RoomListing
+}
+
 func (occupantLeftEvent) markAsRoomViewEvent()         {}
 func (occupantJoinedEvent) markAsRoomViewEvent()       {}
 func (occupantUpdatedEvent) markAsRoomViewEvent()      {}
@@ -87,3 +92,4 @@ func (loggingDisabledEvent) markAsRoomViewEvent()      {}
 func (messageForbidden) markAsRoomViewEvent()          {}
 func (messageNotAcceptable) markAsRoomViewEvent()      {}
 func (discussionHistoryEvent) markAsRoomViewEvent()    {}
+func (roomConfigurationChanged) markAsRoomViewEvent()  {}

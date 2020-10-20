@@ -6,6 +6,7 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/events"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
@@ -42,6 +43,11 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishEvent(loggingEnabledEvent{})
 	case events.MUCLoggingDisabled:
 		v.publishEvent(loggingDisabledEvent{})
+	case events.MUCRoomConfigurationChanged:
+		v.publishEvent(roomConfigurationChanged{
+			oldConfiguration: v.roomInfo,
+			newConfiguration: t.RoomConfiguration.(*muc.RoomListing),
+		})
 	default:
 		v.log.WithField("event", t).Warn("Unsupported room event received")
 	}

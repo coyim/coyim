@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
@@ -104,6 +105,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
+		case roomConfigurationChanged:
+			c.roomConfigurationChangedEvent(v, t.oldConfiguration, t.newConfiguration)
 		}
 	})
 }
@@ -215,6 +218,104 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 	doInUIThread(func() {
 		c.displayWarningMessage(i18n.Local("This room is no longer publicly logged."))
 	})
+}
+
+func (c *roomViewConversation) roomConfigurationChangedEvent(v *roomView, oldConfig, newConfig *muc.RoomListing) {
+	d := c.getRoomConfigurationMessages(oldConfig, newConfig)
+	c.showRoomConfigurationChanges(d)
+
+	v.roomInfo = newConfig
+}
+
+func (c *roomViewConversation) getRoomConfigurationMessages(oldConfig, newConfig *muc.RoomListing) (messages []string) {
+	if oldConfig.Title != newConfig.Title {
+		messages = append(messages, i18n.Localf("Title was modified to: \"%s\"", newConfig.Title))
+	}
+
+	if oldConfig.Description != newConfig.Description {
+		messages = append(messages, i18n.Localf("Description was modified to: \"%s\"", newConfig.Description))
+	}
+
+	if oldConfig.Language != newConfig.Language {
+		messages = append(messages, i18n.Localf("Language was modified to: \"%s\"", newConfig.Language))
+	}
+
+	if oldConfig.Persistent != newConfig.Persistent {
+		m := i18n.Local("This room is not persistent now")
+		if newConfig.Persistent {
+			m = i18n.Local("This room is persistent now")
+		}
+		messages = append(messages, m)
+	}
+
+	if oldConfig.Public != newConfig.Public {
+		m := i18n.Local("This room is not public now")
+		if newConfig.Public {
+			m = i18n.Local("This room is public now")
+		}
+		messages = append(messages, m)
+	}
+
+	if oldConfig.PasswordProtected != newConfig.PasswordProtected {
+		m := i18n.Local("This room is not protected by password")
+		if newConfig.PasswordProtected {
+			m = i18n.Local("This room is protected by password")
+		}
+		messages = append(messages, m)
+	}
+
+	if oldConfig.Open != newConfig.Open {
+		m := i18n.Local("The room allows to join only registered members")
+		if newConfig.Open {
+			m = i18n.Local("The room allows joining to anyone")
+		}
+		messages = append(messages, m)
+	}
+
+	if oldConfig.MembersCanInvite != newConfig.MembersCanInvite {
+		m := i18n.Local("Members can not invite others")
+		if newConfig.MembersCanInvite {
+			m = i18n.Local("Members can invite others")
+		}
+		messages = append(messages, m)
+	}
+
+	if oldConfig.OccupantsCanChangeSubject != newConfig.OccupantsCanChangeSubject {
+		m := i18n.Local("Occupants can not change room's subject")
+		if newConfig.OccupantsCanChangeSubject {
+			m = i18n.Local("Occupants can change room's subject")
+		}
+		messages = append(messages, m)
+	}
+
+	if oldConfig.Moderated != newConfig.Moderated {
+		m := i18n.Local("This is a non moderated room")
+		if newConfig.Moderated {
+			m = i18n.Local("This is a moderated room")
+		}
+		messages = append(messages, m)
+	}
+
+	return messages
+}
+
+func (c *roomViewConversation) showRoomConfigurationChanges(messages []string) {
+	msg := c.getRoomConfigurationMessage(messages)
+	doInUIThread(func() {
+		c.displayNewInfoMessage(msg)
+	})
+}
+
+func (c *roomViewConversation) getRoomConfigurationMessage(messages []string) string {
+	if len(messages) == 1 {
+		return i18n.Localf("Room configuration changed - %s", messages[0])
+	}
+
+	m := i18n.Local("Room configuration changed:")
+	for _, msg := range messages {
+		m = i18n.Localf("%s \n - %s", m, msg)
+	}
+	return m
 }
 
 // enableSendCapabilitiesIfHasVoice MUST be called from the UI thread

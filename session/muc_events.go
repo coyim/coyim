@@ -123,3 +123,11 @@ func (m *mucManager) roomConfigurationChanged(roomID jid.Bare, rl interface{}) {
 
 	m.publishRoomEvent(roomID, ev)
 }
+
+func (m *mucManager) nonAnonymousRoom(roomID jid.Bare) {
+	m.publishRoomEvent(roomID, events.MUCNonAnonymousRoom{})
+}
+
+func (m *mucManager) semiAnonymousRoom(roomID jid.Bare) {
+	m.publishRoomEvent(roomID, events.MUCSemiAnonymousRoom{})
+}

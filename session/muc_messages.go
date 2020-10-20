@@ -1,6 +1,7 @@
 package session
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/coyim/coyim/session/muc"
@@ -23,7 +24,7 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	case isLiveMessage(stanza):
 		m.handleMessageReceived(stanza, m.liveMessageReceived)
 	case hasMucUserExtension(stanza):
-		m.handleMucUserExtension(stanza)
+		m.handleMUCUserExtension(stanza)
 	}
 }
 
@@ -75,31 +76,35 @@ func (m *mucManager) handleMessageReceived(stanza *xmppData.ClientMessage, h fun
 	h(roomID, nickname, stanza.Body, retrieveMessageTime(stanza))
 }
 
-func (m *mucManager) handleMucUserExtension(stanza *xmppData.ClientMessage) {
+func (m *mucManager) handleMUCUserExtension(stanza *xmppData.ClientMessage) {
+	roomID, ok := jid.TryParseBare(stanza.From)
+	if !ok {
+		m.log.WithFields(log.Fields{
+			"stanza": stanza,
+			"who":    "handleMucUserExtension",
+		}).Error("Error trying to get room ID from stanza")
+		return
+	}
+
 	for _, status := range stanza.MucUserExtension.Status {
 		switch status.Code {
-		// TODO: Implements the publishing of events for states 170, 171, 172, and 173
-		case "104":
-			m.handleMucRoomConfigurationChanged(stanza)
-			m.log.WithField("status code:", status.Code).Info("Room changes published")
+		case strconv.Itoa(MUCStatusRoomLoggingEnabled):
+			m.loggingEnabled(roomID)
+		case strconv.Itoa(MUCStatusRoomLoggingDisabled):
+			m.loggingDisabled(roomID)
+		case strconv.Itoa(MUCStatusRoomNonAnonymous):
+			m.nonAnonymousRoom(roomID)
+		case strconv.Itoa(MUCStatusRoomSemiAnonymous):
+			m.semiAnonymousRoom(roomID)
+		case strconv.Itoa(MUCStatusConfigurationChanged):
+			m.handleMUCRoomConfigurationChanged(roomID)
 		default:
 			m.log.WithField("status code:", status.Code).Warn("Unknown status code received")
 		}
 	}
 }
 
-func (m *mucManager) handleMucRoomConfigurationChanged(stanza *xmppData.ClientMessage) {
-	l := m.log.WithFields(log.Fields{
-		"stanza": stanza,
-		"who":    "handleMucUserExtension",
-	})
-
-	roomID, ok := jid.TryParseBare(stanza.From)
-	if !ok {
-		l.Error("Error trying to get the room ID from stanza")
-		return
-	}
-
+func (m *mucManager) handleMUCRoomConfigurationChanged(roomID jid.Bare) {
 	roomInfo := make(chan *muc.RoomListing)
 	go m.getRoom(roomID, roomInfo)
 

@@ -78,6 +78,22 @@ func (c *roomViewConversation) createMessageTag(cs mucColorSet) gtki.TextTag {
 	})
 }
 
+func (c *roomViewConversation) createGroupDateTag(cs mucColorSet) gtki.TextTag {
+	return c.createConversationTag("groupdate", map[string]interface{}{
+		"justification":      pangoi.JUSTIFY_CENTER,
+		"pixels-above-lines": 12,
+		"pixels-below-lines": 12,
+	})
+}
+
+func (c *roomViewConversation) createDividerTag(cs mucColorSet) gtki.TextTag {
+	return c.createConversationTag("divider", map[string]interface{}{
+		"justification":      pangoi.JUSTIFY_CENTER,
+		"pixels-above-lines": 12,
+		"pixels-below-lines": 12,
+	})
+}
+
 func (c *roomViewConversation) createErrorTag(cs mucColorSet) gtki.TextTag {
 	return c.createConversationTag("error", map[string]interface{}{
 		"foreground": cs.errorForeground,
@@ -97,6 +113,8 @@ func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable 
 		c.createSubjectTag,
 		c.createInfoMessageTag,
 		c.createMessageTag,
+		c.createGroupDateTag,
+		c.createDividerTag,
 		c.createErrorTag,
 	}
 

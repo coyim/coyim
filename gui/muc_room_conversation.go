@@ -105,6 +105,10 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
+		case nonAnonymousRoomEvent:
+			c.nonAnonymousRoomEvent()
+		case semiAnonymousRoomEvent:
+			c.semiAnonymousRoomEvent()
 		case roomConfigurationChanged:
 			c.roomConfigurationChangedEvent(v, t.oldConfiguration, t.newConfiguration)
 		}
@@ -220,10 +224,21 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 	})
 }
 
-func (c *roomViewConversation) roomConfigurationChangedEvent(v *roomView, oldConfig, newConfig *muc.RoomListing) {
-	d := c.getRoomConfigurationMessages(oldConfig, newConfig)
-	c.showRoomConfigurationChanges(d)
+func (c *roomViewConversation) nonAnonymousRoomEvent() {
+	doInUIThread(func() {
+		c.displayWarningMessage(i18n.Local("This is not a non-anonymous room now, it means that the real occupant's JID could be viewed by anyone"))
+	})
+}
 
+func (c *roomViewConversation) semiAnonymousRoomEvent() {
+	doInUIThread(func() {
+		c.displayWarningMessage(i18n.Local("This is a semi-anonymous room now, it means that the real occupant's JID could be viewed ONLY by moderators"))
+	})
+}
+
+func (c *roomViewConversation) roomConfigurationChangedEvent(v *roomView, oldConfig, newConfig *muc.RoomListing) {
+	messages := c.getRoomConfigurationMessages(oldConfig, newConfig)
+	c.showRoomConfigurationChanges(messages)
 	v.roomInfo = newConfig
 }
 
@@ -300,6 +315,10 @@ func (c *roomViewConversation) getRoomConfigurationMessages(oldConfig, newConfig
 }
 
 func (c *roomViewConversation) showRoomConfigurationChanges(messages []string) {
+	if len(messages) == 0 {
+		return
+	}
+
 	msg := c.getRoomConfigurationMessage(messages)
 	doInUIThread(func() {
 		c.displayNewInfoMessage(msg)

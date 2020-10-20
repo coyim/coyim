@@ -4,12 +4,13 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/session/muc"
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/muc/data"
+	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
 
-func (m *mucManager) receiveClientMessage(stanza *data.ClientMessage) {
+func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
 	if hasSubject(stanza) {
@@ -18,7 +19,7 @@ func (m *mucManager) receiveClientMessage(stanza *data.ClientMessage) {
 
 	switch {
 	case isDelayedMessage(stanza):
-		m.handleMessageReceived(stanza, m.delayedMessageReceived)
+		m.handleMessageReceived(stanza, m.receiveDelayedMessage)
 	case isLiveMessage(stanza):
 		m.handleMessageReceived(stanza, m.liveMessageReceived)
 	case hasMucUserExtension(stanza):
@@ -26,7 +27,17 @@ func (m *mucManager) receiveClientMessage(stanza *data.ClientMessage) {
 	}
 }
 
-func (m *mucManager) handleSubjectReceived(stanza *data.ClientMessage) {
+func (m *mucManager) receiveDelayedMessage(roomID jid.Bare, nickname, message string, timestamp time.Time) {
+	dh, ok := m.discussionHistory[roomID]
+	if !ok {
+		dh = data.NewDiscussionHistory()
+		m.discussionHistory[roomID] = dh
+	}
+
+	dh.AddMessage(nickname, message, timestamp)
+}
+
+func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
 	l := m.log.WithFields(log.Fields{
 		"from": stanza.From,
 		"who":  "handleSubjectReceived",
@@ -36,6 +47,11 @@ func (m *mucManager) handleSubjectReceived(stanza *data.ClientMessage) {
 	if !ok {
 		l.Error("Error trying to get the room ID from stanza")
 		return
+	}
+
+	dh := m.getDiscussionHistory(roomID)
+	if dh != nil {
+		m.discussionHistoryReceived(roomID, dh)
 	}
 
 	room, ok := m.roomManager.GetRoom(roomID)
@@ -54,12 +70,12 @@ func (m *mucManager) handleSubjectReceived(stanza *data.ClientMessage) {
 	m.subjectReceived(roomID, s)
 }
 
-func (m *mucManager) handleMessageReceived(stanza *data.ClientMessage, h func(jid.Bare, string, string, time.Time)) {
+func (m *mucManager) handleMessageReceived(stanza *xmppData.ClientMessage, h func(jid.Bare, string, string, time.Time)) {
 	roomID, nickname := retrieveRoomIDAndNickname(stanza.From)
 	h(roomID, nickname, stanza.Body, retrieveMessageTime(stanza))
 }
 
-func (m *mucManager) handleMucUserExtension(stanza *data.ClientMessage) {
+func (m *mucManager) handleMucUserExtension(stanza *xmppData.ClientMessage) {
 	for _, status := range stanza.MucUserExtension.Status {
 		switch status.Code {
 		// TODO: Implements the publishing of events for states 170, 171, 172, and 173
@@ -72,7 +88,7 @@ func (m *mucManager) handleMucUserExtension(stanza *data.ClientMessage) {
 	}
 }
 
-func (m *mucManager) handleMucRoomConfigurationChanged(stanza *data.ClientMessage) {
+func (m *mucManager) handleMucRoomConfigurationChanged(stanza *xmppData.ClientMessage) {
 	l := m.log.WithFields(log.Fields{
 		"stanza": stanza,
 		"who":    "handleMucUserExtension",
@@ -91,27 +107,27 @@ func (m *mucManager) handleMucRoomConfigurationChanged(stanza *data.ClientMessag
 	m.roomConfigurationChanged(roomID, ri)
 }
 
-func bodyHasContent(stanza *data.ClientMessage) bool {
+func bodyHasContent(stanza *xmppData.ClientMessage) bool {
 	return stanza.Body != ""
 }
 
-func isDelayedMessage(stanza *data.ClientMessage) bool {
+func isDelayedMessage(stanza *xmppData.ClientMessage) bool {
 	return stanza.Delay != nil
 }
 
-func isLiveMessage(stanza *data.ClientMessage) bool {
+func isLiveMessage(stanza *xmppData.ClientMessage) bool {
 	return bodyHasContent(stanza) && !isDelayedMessage(stanza)
 }
 
-func hasSubject(stanza *data.ClientMessage) bool {
+func hasSubject(stanza *xmppData.ClientMessage) bool {
 	return stanza.Subject != nil
 }
 
-func hasMucUserExtension(stanza *data.ClientMessage) bool {
+func hasMucUserExtension(stanza *xmppData.ClientMessage) bool {
 	return stanza.MucUserExtension != nil
 }
 
-func getNicknameFromStanza(stanza *data.ClientMessage) string {
+func getNicknameFromStanza(stanza *xmppData.ClientMessage) string {
 	from, ok := jid.TryParseFull(stanza.From)
 	if ok {
 		return from.Resource().String()
@@ -120,7 +136,7 @@ func getNicknameFromStanza(stanza *data.ClientMessage) string {
 	return ""
 }
 
-func getSubjectFromStanza(stanza *data.ClientMessage) string {
+func getSubjectFromStanza(stanza *xmppData.ClientMessage) string {
 	if hasSubject(stanza) {
 		return stanza.Subject.Text
 	}

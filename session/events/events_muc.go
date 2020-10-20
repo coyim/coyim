@@ -136,19 +136,19 @@ type MUCRoomConfigurationChanged struct {
 	RoomConfiguration interface{}
 }
 
-func (MUCError) markAsMUCEventTypeInterface()                    {}
-func (MUCRoomCreated) markAsMUCEventTypeInterface()              {}
-func (MUCRoomRenamed) markAsMUCEventTypeInterface()              {}
-func (MUCOccupant) markAsMUCEventTypeInterface()                 {}
-func (MUCOccupantUpdated) markAsMUCEventTypeInterface()          {}
-func (MUCOccupantJoined) markAsMUCEventTypeInterface()           {}
-func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface()       {}
-func (MUCOccupantLeft) markAsMUCEventTypeInterface()             {}
-func (MUCLiveMessageReceived) markAsMUCEventTypeInterface()      {}
-func (MUCDelayedMessageReceived) markAsMUCEventTypeInterface()   {}
-func (MUCSubjectUpdated) markAsMUCEventTypeInterface()           {}
-func (MUCSubjectReceived) markAsMUCEventTypeInterface()          {}
-func (MUCLoggingEnabled) markAsMUCEventTypeInterface()           {}
-func (MUCLoggingDisabled) markAsMUCEventTypeInterface()          {}
-func (MUCRoomConfigurationChanged) markAsMUCEventTypeInterface() {}          {}
+func (MUCError) markAsMUCEventTypeInterface()                     {}
+func (MUCRoomCreated) markAsMUCEventTypeInterface()               {}
+func (MUCRoomRenamed) markAsMUCEventTypeInterface()               {}
+func (MUCOccupant) markAsMUCEventTypeInterface()                  {}
+func (MUCOccupantUpdated) markAsMUCEventTypeInterface()           {}
+func (MUCOccupantJoined) markAsMUCEventTypeInterface()            {}
+func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface()        {}
+func (MUCOccupantLeft) markAsMUCEventTypeInterface()              {}
+func (MUCLiveMessageReceived) markAsMUCEventTypeInterface()       {}
+func (MUCDelayedMessageReceived) markAsMUCEventTypeInterface()    {}
+func (MUCSubjectUpdated) markAsMUCEventTypeInterface()            {}
+func (MUCSubjectReceived) markAsMUCEventTypeInterface()           {}
+func (MUCLoggingEnabled) markAsMUCEventTypeInterface()            {}
+func (MUCLoggingDisabled) markAsMUCEventTypeInterface()           {}
+func (MUCRoomConfigurationChanged) markAsMUCEventTypeInterface()  {}
 func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}

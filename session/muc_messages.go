@@ -1,7 +1,6 @@
 package session
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/coyim/coyim/session/muc"
@@ -108,15 +107,15 @@ func (m *mucManager) handleMUCUserExtension(stanza *xmppData.ClientMessage) {
 
 	for _, status := range stanza.MucUserExtension.Status {
 		switch status.Code {
-		case strconv.Itoa(MUCStatusRoomLoggingEnabled):
+		case MUCStatusRoomLoggingEnabled:
 			m.loggingEnabled(roomID)
-		case strconv.Itoa(MUCStatusRoomLoggingDisabled):
+		case MUCStatusRoomLoggingDisabled:
 			m.loggingDisabled(roomID)
-		case strconv.Itoa(MUCStatusRoomNonAnonymous):
+		case MUCStatusRoomNonAnonymous:
 			m.nonAnonymousRoom(roomID)
-		case strconv.Itoa(MUCStatusRoomSemiAnonymous):
+		case MUCStatusRoomSemiAnonymous:
 			m.semiAnonymousRoom(roomID)
-		case strconv.Itoa(MUCStatusConfigurationChanged):
+		case MUCStatusConfigurationChanged:
 			m.handleMUCRoomConfigurationChanged(roomID)
 		default:
 			m.log.WithField("status code:", status.Code).Warn("Unknown status code received")

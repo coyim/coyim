@@ -1,8 +1,6 @@
 package session
 
 import (
-	"strconv"
-
 	"github.com/coyim/coyim/xmpp/data"
 )
 
@@ -92,8 +90,7 @@ func (mus mucUserStatuses) containsAny(c ...int) bool {
 // containsOne will return true if the list of MUC user statuses contains ONLY the given argument status
 func (mus mucUserStatuses) containsOne(c int) bool {
 	for _, s := range mus {
-		code, _ := strconv.Atoi(s.Code)
-		if code == c {
+		if s.Code == c {
 			return true
 		}
 	}

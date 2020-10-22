@@ -33,7 +33,7 @@ type MUCUserItem struct {
 // MUCUserStatus contains information related to status of the occupant
 type MUCUserStatus struct {
 	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#user status"`
-	Code    string   `xml:"code,attr,omitempty"`
+	Code    int      `xml:"code,attr,omitempty"`
 }
 
 // MUCRoomConfiguration contains the deserialized information about a room configuration query

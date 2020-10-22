@@ -291,11 +291,28 @@ func (m *mucManager) sendMessage(to, from, body string) error {
 	return nil
 }
 
-func retrieveRoomIDAndNickname(from string) (jid.Bare, string) {
-	f, ok := jid.TryParseFull(from)
-	if ok {
-		return f.Bare(), f.Resource().String()
+func (m *mucManager) retrieveRoomID(from string) jid.Bare {
+	roomID, ok := jid.TryParseBare(from)
+	if !ok {
+		m.log.WithFields(log.Fields{
+			"who":  "retrieveRoomID",
+			"from": from,
+		}).Error("Error trying to get the room ID from stanza's from")
+		return nil
 	}
 
-	return nil, ""
+	return roomID
+}
+
+func (m *mucManager) retrieveRoomIDAndNickname(from string) (jid.Bare, string) {
+	f, ok := jid.TryParseFull(from)
+	if !ok {
+		m.log.WithFields(log.Fields{
+			"who":  "retrieveRoomIDAndNickname",
+			"from": from,
+		}).Error("Error trying to get the room ID and the nickname from stanza's from")
+		return nil, ""
+	}
+
+	return f.Bare(), f.Resource().String()
 }

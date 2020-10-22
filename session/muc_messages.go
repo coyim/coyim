@@ -72,7 +72,7 @@ func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
 }
 
 func (m *mucManager) handleMessageReceived(stanza *xmppData.ClientMessage, h func(jid.Bare, string, string, time.Time)) {
-	roomID, nickname := retrieveRoomIDAndNickname(stanza.From)
+	roomID, nickname := m.retrieveRoomIDAndNickname(stanza.From)
 	h(roomID, nickname, stanza.Body, retrieveMessageTime(stanza))
 }
 

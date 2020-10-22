@@ -165,7 +165,6 @@ func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory
 		for _, dm := range dh.GetHistory() {
 			c.displayDiscussionHistoryDate(dm.GetDate())
 			c.displayDiscussionHistoryMessages(dm.GetMessages())
-			c.displayDivider()
 		}
 	})
 }
@@ -175,7 +174,7 @@ func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
 	j := c.chatTextView.GetJustification()
 	c.chatTextView.SetJustification(gtki.JUSTIFY_CENTER)
 
-	c.addTextWithTag(d.String(), "groupdate")
+	c.addTextWithTag(timeToFriendlyString(d), "groupdate")
 	c.addNewLine()
 
 	c.chatTextView.SetJustification(j)

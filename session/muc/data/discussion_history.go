@@ -16,7 +16,7 @@ func newDelayedMessage(nickname, message string, timestamp time.Time) *DelayedMe
 	return &DelayedMessage{
 		Nickname:  nickname,
 		Message:   message,
-		Timestamp: serverTimestampInLocalTime(timestamp),
+		Timestamp: serverTimeInLocal(timestamp),
 	}
 }
 
@@ -29,7 +29,7 @@ type DelayedMessages struct {
 
 func newDelayedMessages(date time.Time) *DelayedMessages {
 	return &DelayedMessages{
-		date: serverTimestampInLocalTime(date),
+		date: serverTimeInLocal(date),
 	}
 }
 
@@ -85,29 +85,36 @@ func (dh *DiscussionHistory) GetHistory() []*DelayedMessages {
 
 // AddMessage add a new delayed message to the history
 func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time.Time) {
+	t := serverTimeInLocal(timestamp)
+
 	for _, dm := range dh.GetHistory() {
-		if areTheSameDate(dm.date, serverTimestampInLocalTime(timestamp)) {
-			dm.add(nickname, message, timestamp)
+		if mightBeTheSameTime(dm.date, t) {
+			dm.add(nickname, message, t)
 			return
 		}
 	}
 
-	dh.addNewMessagesGroup(nickname, message, timestamp)
-}
-
-func (dh *DiscussionHistory) addNewMessagesGroup(nickname, message string, timestamp time.Time) {
-	dm := newDelayedMessages(timestamp)
+	dm := dh.addNewMessagesGroup(t)
 	dm.add(nickname, message, timestamp)
+}
 
+func (dh *DiscussionHistory) addNewMessagesGroup(date time.Time) *DelayedMessages {
 	dh.lock.Lock()
+	defer dh.lock.Unlock()
+
+	dm := newDelayedMessages(date)
 	dh.history = append(dh.history, dm)
-	dh.lock.Unlock()
+
+	return dm
 }
 
-func areTheSameDate(d1, d2 time.Time) bool {
-	return d1.Format("02 Jan 06") == d2.Format("02 Jan 06")
+func mightBeTheSameTime(d1, d2 time.Time) bool {
+	t1 := d1.In(time.UTC)
+	t2 := d2.In(time.UTC)
+
+	return t1.Day() == t2.Day() && t1.Month() == t2.Month() && t1.Year() == t1.Year()
 }
 
-func serverTimestampInLocalTime(timestamp time.Time) time.Time {
-	return timestamp.In(time.Now().Location())
+func serverTimeInLocal(t time.Time) time.Time {
+	return t.In(time.Now().Location())
 }

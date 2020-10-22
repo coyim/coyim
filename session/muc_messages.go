@@ -15,6 +15,7 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
 	if hasSubject(stanza) {
+		m.handleDiscussionHistoryOneTime(stanza)
 		m.handleSubjectReceived(stanza)
 	}
 
@@ -29,13 +30,42 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 }
 
 func (m *mucManager) receiveDelayedMessage(roomID jid.Bare, nickname, message string, timestamp time.Time) {
-	dh, ok := m.discussionHistory[roomID]
+	dh, ok := m.getDiscussionHistory(roomID)
 	if !ok {
-		dh = data.NewDiscussionHistory()
-		m.discussionHistory[roomID] = dh
+		dh = m.addNewDiscussionHistory(roomID)
 	}
 
 	dh.AddMessage(nickname, message, timestamp)
+}
+
+// getDiscussionHistory returns the discussion history for the given room and a boolean indicating if it was found or not
+func (m *mucManager) getDiscussionHistory(roomID jid.Bare) (*data.DiscussionHistory, bool) {
+	h, ok := m.discussionHistory[roomID]
+	return h, ok
+}
+
+func (m *mucManager) addNewDiscussionHistory(roomID jid.Bare) *data.DiscussionHistory {
+	m.discussionHistoryLock.Lock()
+	defer m.discussionHistoryLock.Unlock()
+
+	dh := data.NewDiscussionHistory()
+	m.discussionHistory[roomID] = dh
+
+	return dh
+}
+
+// The discussion history MUST happen only one time in the events flow of XMPP's MUC
+// This should be done in a proper way, maybe in the pending "state machine" pattern
+// that we want to implement later, when that happens, this method should be fine
+func (m *mucManager) handleDiscussionHistory(stanza *xmppData.ClientMessage) {
+	roomID := m.retrieveRoomID(stanza.From)
+	dh, exists := m.getDiscussionHistory(roomID)
+	if !exists {
+		m.log.WithField("room", roomID).Warn("Trying to get a not available discussion history for the given room")
+		return
+	}
+
+	m.discussionHistoryReceived(roomID, dh)
 }
 
 func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
@@ -44,17 +74,7 @@ func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
 		"who":  "handleSubjectReceived",
 	})
 
-	roomID, ok := jid.TryParseBare(stanza.From)
-	if !ok {
-		l.Error("Error trying to get the room ID from stanza")
-		return
-	}
-
-	dh := m.getDiscussionHistory(roomID)
-	if dh != nil {
-		m.discussionHistoryReceived(roomID, dh)
-	}
-
+	roomID := m.retrieveRoomID(stanza.From)
 	room, ok := m.roomManager.GetRoom(roomID)
 	if !ok {
 		l.WithField("room", roomID).Error("Error trying to read the subject of room")

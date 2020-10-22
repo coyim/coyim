@@ -316,3 +316,13 @@ func (m *mucManager) retrieveRoomIDAndNickname(from string) (jid.Bare, string) {
 
 	return f.Bare(), f.Resource().String()
 }
+
+func doOnceWithStanza(f func(*xmppData.ClientMessage)) func(*xmppData.ClientMessage) {
+	canCallIt := true
+	return func(stanza *xmppData.ClientMessage) {
+		if canCallIt {
+			canCallIt = false
+			f(stanza)
+		}
+	}
+}

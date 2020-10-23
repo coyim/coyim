@@ -93,14 +93,9 @@ func (m *mucManager) onRoomConfigurationUpdate(roomID jid.Bare, currConfig, prev
 		}
 	}
 
-	m.publishConfigurationChanges(roomID, changes, currConfig)
+	m.roomConfigChanged(roomID, changes, currConfig)
 }
 
-func (m *mucManager) publishConfigurationChanges(roomID jid.Bare, changes []data.RoomConfigType, config data.RoomConfig) {
-	if len(changes) > 0 {
-		m.roomConfigChanged(roomID, changes, config)
-	}
-}
 func roomConfigSupportsVoiceRequestsCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
 	return currConfig.SupportsVoiceRequests != prevConfig.SupportsVoiceRequests
 }

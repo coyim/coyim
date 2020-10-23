@@ -3,7 +3,6 @@ package session
 import (
 	"time"
 
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -23,7 +22,8 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 		m.handleMessageReceived(stanza, m.receiveDelayedMessage)
 	case isLiveMessage(stanza):
 		m.handleMessageReceived(stanza, m.liveMessageReceived)
-	case hasMUCUserExtension(stanza):
+	case isRoomConfigUpdate(stanza):
+		m.handleRoomConfigUpdate(stanza)
 	}
 }
 
@@ -92,42 +92,6 @@ func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
 func (m *mucManager) handleMessageReceived(stanza *xmppData.ClientMessage, h func(jid.Bare, string, string, time.Time)) {
 	roomID, nickname := m.retrieveRoomIDAndNickname(stanza.From)
 	h(roomID, nickname, stanza.Body, retrieveMessageTime(stanza))
-}
-
-func (m *mucManager) handleMUCUserExtension(stanza *xmppData.ClientMessage) {
-	roomID, ok := jid.TryParseBare(stanza.From)
-	if !ok {
-		m.log.WithFields(log.Fields{
-			"stanza": stanza,
-			"who":    "handleMucUserExtension",
-		}).Error("Error trying to get room ID from stanza")
-		return
-	}
-
-	for _, status := range stanza.MucUserExtension.Status {
-		switch status.Code {
-		case MUCStatusRoomLoggingEnabled:
-			m.loggingEnabled(roomID)
-		case MUCStatusRoomLoggingDisabled:
-			m.loggingDisabled(roomID)
-		case MUCStatusRoomNonAnonymous:
-			m.nonAnonymousRoom(roomID)
-		case MUCStatusRoomSemiAnonymous:
-			m.semiAnonymousRoom(roomID)
-		case MUCStatusConfigurationChanged:
-			m.handleMUCRoomConfigurationChanged(roomID)
-		default:
-			m.log.WithField("status code:", status.Code).Warn("Unknown status code received")
-		}
-	}
-}
-
-func (m *mucManager) handleMUCRoomConfigurationChanged(roomID jid.Bare) {
-	roomInfo := make(chan *muc.RoomListing)
-	go m.getRoom(roomID, roomInfo)
-
-	ri := <-roomInfo
-	m.roomConfigurationChanged(roomID, ri)
 }
 
 func bodyHasContent(stanza *xmppData.ClientMessage) bool {

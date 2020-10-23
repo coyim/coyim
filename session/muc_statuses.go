@@ -17,9 +17,9 @@ const (
 	// MUCStatusUnavailableNotShown inform occupants that room
 	// now does not show unavailable members
 	MUCStatusUnavailableNotShown = 103
-	// MUCStatusConfigurationChanged inform occupants that a
+	// MUCStatusConfigChanged inform occupants that a
 	// non-privacy-related room configuration change has occurred
-	MUCStatusConfigurationChanged = 104
+	MUCStatusConfigChanged = 104
 	// MUCStatusSelfPresence inform user that presence refers
 	// to one of its own room occupants
 	MUCStatusSelfPresence = 110

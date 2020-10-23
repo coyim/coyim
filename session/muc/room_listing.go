@@ -153,6 +153,10 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 			rl.Language = values[0]
 		}
 	case "muc#roominfo_changesubject":
+		// When the `roominfo_changesubject` field is changed to false,
+		// the response is not 0 for false value, this response is `empty`.
+		// For this reason, this field is `initialized` with false
+		rl.OccupantsCanChangeSubject = false
 		if len(values) > 0 {
 			rl.OccupantsCanChangeSubject = values[0] == "1"
 		}

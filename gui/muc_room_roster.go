@@ -97,7 +97,7 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 		return
 	}
 
-	roleHeader := r.rolePluralName(role)
+	roleHeader := rolePluralName(role)
 	roleHeader = i18n.Localf("%s (%v)", roleHeader, len(occupants))
 
 	iter := r.model.Append(nil)
@@ -114,7 +114,7 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getMUCIconPixbuf("occupant"))
 	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
 	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, r.affiliationDisplayName(o.Affiliation))
-	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, r.roleDisplayName(o.Role))
+	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, roleDisplayName(o.Role))
 }
 
 func (r *roomViewRoster) affiliationDisplayName(a data.Affiliation) string {
@@ -130,7 +130,7 @@ func (r *roomViewRoster) affiliationDisplayName(a data.Affiliation) string {
 	}
 }
 
-func (r *roomViewRoster) rolePluralName(role string) string {
+func rolePluralName(role string) string {
 	switch role {
 	case data.RoleNone:
 		return i18n.Local("None")
@@ -147,7 +147,7 @@ func (r *roomViewRoster) rolePluralName(role string) string {
 	}
 }
 
-func (r *roomViewRoster) roleDisplayName(role data.Role) string {
+func roleDisplayName(role data.Role) string {
 	switch role.Name() {
 	case data.RoleNone:
 		return i18n.Local("None")

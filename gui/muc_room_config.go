@@ -118,9 +118,9 @@ func roomConfigLanguage(config data.RoomConfig) string {
 
 func roomConfigOccupantsCanChangeSubject(config data.RoomConfig) string {
 	if config.OccupantsCanChangeSubject {
-		return i18n.Local("Occupants can now change this room's subject.")
+		return i18n.Local("Occupants can now change this room subject.")
 	}
-	return i18n.Local("Occupants can't change this room's subject.")
+	return i18n.Local("Occupants can't change this room subject.")
 }
 
 func roomConfigTitle(config data.RoomConfig) string {

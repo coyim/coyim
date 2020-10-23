@@ -5,7 +5,6 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
@@ -109,8 +108,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.nonAnonymousRoomEvent()
 		case semiAnonymousRoomEvent:
 			c.semiAnonymousRoomEvent()
-		case roomConfigurationChanged:
-			c.roomConfigurationChangedEvent(v, t.oldConfiguration, t.newConfiguration)
+		case roomConfigChangedEvent:
+			c.roomConfigChangedEvent(t.changes, t.config)
 		}
 	})
 }
@@ -235,186 +234,15 @@ func (c *roomViewConversation) semiAnonymousRoomEvent() {
 	})
 }
 
-func (c *roomViewConversation) roomConfigurationChangedEvent(v *roomView, oldConfig, newConfig *muc.RoomListing) {
-	messages := c.getRoomConfigurationMessages(oldConfig, newConfig)
-	c.showRoomConfigurationChanges(messages)
-	v.roomInfo = newConfig
-}
-
-func (c *roomViewConversation) getRoomConfigurationMessages(oldConfig, newConfig *muc.RoomListing) []string {
-	messages := make([]string, 0)
-
-	c.checkSupportVoiceRequest(oldConfig, newConfig, &messages)
-	c.checkSupportRegistration(oldConfig, newConfig, &messages)
-	// TODO: Validate if must check anonymity field here
-	c.checkPersistent(oldConfig, newConfig, &messages)
-	c.checkModerated(oldConfig, newConfig, &messages)
-	c.checkOpen(oldConfig, newConfig, &messages)
-	c.checkPasswordProtected(oldConfig, newConfig, &messages)
-	c.checkPublic(oldConfig, newConfig, &messages)
-	c.checkLanguage(oldConfig, newConfig, &messages)
-	c.checkOccupantsCanChangeSubject(oldConfig, newConfig, &messages)
-	c.checkEnabledLoggingRoomConversations(oldConfig, newConfig, &messages)
-	c.checkTitle(oldConfig, newConfig, &messages)
-	c.checkDescription(oldConfig, newConfig, &messages)
-	c.checkNumberOfOccupants(oldConfig, newConfig, &messages)
-	c.checkMembersCanInvite(oldConfig, newConfig, &messages)
-	c.checkAllowPrivateMessages(oldConfig, newConfig, &messages)
-
-	return messages
-}
-
-func (c *roomViewConversation) checkSupportVoiceRequest(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.SupportsVoiceRequests != newConfig.SupportsVoiceRequests {
-		m := i18n.Local("This room does not support voice request")
-		if newConfig.SupportsVoiceRequests {
-			m = i18n.Local("This room support voice request")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkSupportRegistration(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.AllowsRegistration != newConfig.AllowsRegistration {
-		m := i18n.Local("This room does not support registration")
-		if newConfig.AllowsRegistration {
-			m = i18n.Local("This room support registration")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkEnabledLoggingRoomConversations(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Logged != newConfig.Logged {
-		m := i18n.Local("This room does not have conversations log enabled")
-		if newConfig.Logged {
-			m = i18n.Local("This room have conversations log enabled")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkTitle(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Title != newConfig.Title {
-		*messages = append(*messages, i18n.Localf("Title was modified to: \"%s\"", newConfig.Title))
-	}
-}
-
-func (c *roomViewConversation) checkDescription(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Description != newConfig.Description {
-		*messages = append(*messages, i18n.Localf("Description was modified to: \"%s\"", newConfig.Description))
-	}
-}
-
-func (c *roomViewConversation) checkLanguage(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Language != newConfig.Language {
-		*messages = append(*messages, i18n.Localf("Language was modified to: \"%s\"", newConfig.Language))
-	}
-}
-
-func (c *roomViewConversation) checkPersistent(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Persistent != newConfig.Persistent {
-		m := i18n.Local("This room is not persistent now")
-		if newConfig.Persistent {
-			m = i18n.Local("This room is persistent now")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkPublic(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Public != newConfig.Public {
-		m := i18n.Local("This room is not public now")
-		if newConfig.Public {
-			m = i18n.Local("This room is public now")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkPasswordProtected(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.PasswordProtected != newConfig.PasswordProtected {
-		m := i18n.Local("This room is not protected by password")
-		if newConfig.PasswordProtected {
-			m = i18n.Local("This room is protected by password")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkOpen(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Open != newConfig.Open {
-		m := i18n.Local("The room allows to join only registered members")
-		if newConfig.Open {
-			m = i18n.Local("The room allows joining to anyone")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkNumberOfOccupants(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Occupants != newConfig.Occupants {
-		*messages = append(*messages, i18n.Localf("The number of occupants now is: \"%d\"", newConfig.Occupants))
-	}
-}
-
-func (c *roomViewConversation) checkMembersCanInvite(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.OccupantsCanInvite != newConfig.OccupantsCanInvite {
-		m := i18n.Local("Occupants can not invite others")
-		if newConfig.OccupantsCanInvite {
-			m = i18n.Local("Occupants can invite others")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkAllowPrivateMessages(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.AllowPrivateMessages != newConfig.AllowPrivateMessages {
-		*messages = append(*messages, i18n.Localf("Private messages can be send by: \"%d\"", newConfig.AllowPrivateMessages))
-	}
-}
-
-func (c *roomViewConversation) checkOccupantsCanChangeSubject(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.OccupantsCanChangeSubject != newConfig.OccupantsCanChangeSubject {
-		m := i18n.Local("Occupants can not change room's subject")
-		if newConfig.OccupantsCanChangeSubject {
-			m = i18n.Local("Occupants can change room's subject")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) checkModerated(oldConfig, newConfig *muc.RoomListing, messages *[]string) {
-	if oldConfig.Moderated != newConfig.Moderated {
-		m := i18n.Local("This is a non moderated room")
-		if newConfig.Moderated {
-			m = i18n.Local("This is a moderated room")
-		}
-		*messages = append(*messages, m)
-	}
-}
-
-func (c *roomViewConversation) showRoomConfigurationChanges(messages []string) {
-	if len(messages) == 0 {
-		return
-	}
-
-	msg := c.getRoomConfigurationMessage(messages)
+func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedTypes, config data.RoomConfig) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(msg)
+		messages := getRoomConfigUpdatedFriendlyMessages(changes, config)
+		c.displayNewInfoMessage(i18n.Local("Room's configuration changed:"))
+		for _, m := range messages {
+			c.displayInfoMessage(m)
+			c.addNewLine()
+		}
 	})
-}
-
-func (c *roomViewConversation) getRoomConfigurationMessage(messages []string) string {
-	if len(messages) == 1 {
-		return i18n.Localf("Room configuration changed - %s", messages[0])
-	}
-
-	m := i18n.Local("Room configuration changed:")
-	for _, msg := range messages {
-		m = i18n.Localf("%s \n - %s", m, msg)
-	}
-	return m
 }
 
 // enableSendCapabilitiesIfHasVoice MUST be called from the UI thread

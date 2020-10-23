@@ -12,53 +12,61 @@ type timeTranslator struct {
 	formatter                       func(time.Time) string
 }
 
-var timeTranslators = []timeTranslator{
-	timeTranslator{
-		0, 0, 0,
-		checkTimeToday,
-		func(t time.Time) string {
-			return i18n.Local("Today")
-		},
-	},
-	timeTranslator{
-		-1, 0, 0,
-		checkTimeAfter,
-		func(t time.Time) string {
-			return i18n.Local("Yesterday")
-		},
-	},
-	timeTranslator{
-		-2, 0, 0,
-		checkTimeAfter,
-		func(t time.Time) string {
-			return i18n.Local("Two days ago")
-		},
-	},
-	timeTranslator{
-		-3, 0, 0,
-		checkTimeAfter,
-		func(t time.Time) string {
-			return i18n.Local("Three days ago")
-		},
-	},
-	timeTranslator{
-		-4, 0, 0,
-		checkTimeAfter,
-		func(t time.Time) string {
-			return i18n.Local("Four days ago")
-		},
-	},
-	timeTranslator{
-		-5, 0, 0,
-		checkTimeAfter,
-		func(t time.Time) string {
-			return timeToFriendlyDate(t)
-		},
-	},
+var timeTranslators []timeTranslator
+
+func getTimeTranslators() []timeTranslator {
+	if len(timeTranslators) == 0 {
+		timeTranslators = []timeTranslator{
+			timeTranslator{
+				0, 0, 0,
+				checkTimeToday,
+				func(t time.Time) string {
+					return i18n.Local("Today")
+				},
+			},
+			timeTranslator{
+				-1, 0, 0,
+				checkTimeAfter,
+				func(t time.Time) string {
+					return i18n.Local("Yesterday")
+				},
+			},
+			timeTranslator{
+				-2, 0, 0,
+				checkTimeAfter,
+				func(t time.Time) string {
+					return i18n.Local("Two days ago")
+				},
+			},
+			timeTranslator{
+				-3, 0, 0,
+				checkTimeAfter,
+				func(t time.Time) string {
+					return i18n.Local("Three days ago")
+				},
+			},
+			timeTranslator{
+				-4, 0, 0,
+				checkTimeAfter,
+				func(t time.Time) string {
+					return i18n.Local("Four days ago")
+				},
+			},
+			timeTranslator{
+				-5, 0, 0,
+				checkTimeAfter,
+				func(t time.Time) string {
+					return timeToFriendlyDate(t)
+				},
+			},
+		}
+	}
+
+	return timeTranslators
 }
 
 func timeToFriendlyString(t time.Time) string {
-	for _, tt := range timeTranslators {
+	for _, tt := range getTimeTranslators() {
 		if tt.applies(t, tt) {
 			return tt.formatter(t)
 		}

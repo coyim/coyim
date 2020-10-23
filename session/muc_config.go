@@ -79,23 +79,28 @@ var roomConfigUpdateCheckers = map[data.RoomConfigType]func(data.RoomConfig, dat
 	data.RoomConfigTitle:                     roomConfigTitleCheckUpdate,
 	data.RoomConfigDescription:               roomConfigDescriptionCheckUpdate,
 	data.RoomConfigOccupants:                 roomConfigOccupantsCheckUpdate,
-	data.RoomConfigOccupantsCanInvite:        roomConfigOccupantsCanInviteCheckUpdate,
+	data.RoomConfigMembersCanInvite:          roomConfigMembersCanInviteCheckUpdate,
 	data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessagesCheckUpdate,
 	data.RoomConfigLogged:                    roomConfigLoggedCheckUpdate,
 }
 
 func (m *mucManager) onRoomConfigurationUpdate(roomID jid.Bare, currConfig, prevConfig data.RoomConfig) {
-	whatChanged := []data.RoomConfigType{}
+	changes := []data.RoomConfigType{}
 
-	for kk, f := range roomConfigUpdateCheckers {
+	for k, f := range roomConfigUpdateCheckers {
 		if f(currConfig, prevConfig) {
-			whatChanged = append(whatChanged, kk)
+			changes = append(changes, k)
 		}
 	}
 
-	m.roomConfigChanged(roomID, whatChanged, currConfig)
+	m.publishConfigurationChanges(roomID, changes, currConfig)
 }
 
+func (m *mucManager) publishConfigurationChanges(roomID jid.Bare, changes []data.RoomConfigType, config data.RoomConfig) {
+	if len(changes) > 0 {
+		m.roomConfigChanged(roomID, changes, config)
+	}
+}
 func roomConfigSupportsVoiceRequestsCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
 	return currConfig.SupportsVoiceRequests != prevConfig.SupportsVoiceRequests
 }
@@ -144,8 +149,8 @@ func roomConfigOccupantsCheckUpdate(currConfig, prevConfig data.RoomConfig) bool
 	return currConfig.Occupants != prevConfig.Occupants
 }
 
-func roomConfigOccupantsCanInviteCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
-	return currConfig.OccupantsCanInvite != prevConfig.OccupantsCanInvite
+func roomConfigMembersCanInviteCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
+	return currConfig.MembersCanInvite != prevConfig.MembersCanInvite
 }
 
 func roomConfigAllowPrivateMessagesCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {

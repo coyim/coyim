@@ -28,8 +28,8 @@ const (
 	RoomConfigDescription
 	// RoomConfigOccupants represents room's "Occupants" config
 	RoomConfigOccupants
-	// RoomConfigOccupantsCanInvite represents room's "OccupantsCanInvite" config
-	RoomConfigOccupantsCanInvite
+	// RoomConfigMembersCanInvite represents room's "OccupantsCanInvite" config
+	RoomConfigMembersCanInvite
 	// RoomConfigAllowPrivateMessages represents room's "AllowPrivateMessages" config
 	RoomConfigAllowPrivateMessages
 	// RoomConfigLogged represents room's "Logged" config

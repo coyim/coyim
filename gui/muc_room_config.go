@@ -32,7 +32,7 @@ func initMUCConfigUpdateMessages() {
 		data.RoomConfigTitle:                     roomConfigTitle,
 		data.RoomConfigDescription:               roomConfigDescription,
 		data.RoomConfigOccupants:                 roomConfigOccupants,
-		data.RoomConfigOccupantsCanInvite:        roomConfigOccupantsCanInvite,
+		data.RoomConfigMembersCanInvite:          roomConfigMembersCanInvite,
 		data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessages,
 		data.RoomConfigLogged:                    roomConfigLogged,
 	}
@@ -144,12 +144,12 @@ func roomConfigOccupants(config data.RoomConfig) string {
 		"limited to \"%d\".", config.Occupants)
 }
 
-func roomConfigOccupantsCanInvite(config data.RoomConfig) string {
-	if config.OccupantsCanInvite {
-		return i18n.Local("Room's cccupants can now invite other users " +
+func roomConfigMembersCanInvite(config data.RoomConfig) string {
+	if config.MembersCanInvite {
+		return i18n.Local("Room's members can now invite other users " +
 			"to join it.")
 	}
-	return i18n.Local("Occupants are now unable to invite other users " +
+	return i18n.Local("Members are now unable to invite other users " +
 		"to join this room.")
 }
 

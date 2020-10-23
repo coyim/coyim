@@ -215,7 +215,7 @@ func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.Occupant
 
 	case status.contains(MUCStatusRemovedBecauseNotMember):
 		// Removed because room is now members-only
-		m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseNotMember")
+		m.handleNonMembersRemoved(roomID, op)
 
 	case status.contains(MUCStatusRemovedBecauseShutdown):
 		// Removes due to system shutdown

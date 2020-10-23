@@ -143,3 +143,11 @@ func (m *mucManager) roomConfigChanged(roomID jid.Bare, changes []data.RoomConfi
 
 	m.publishRoomEvent(roomID, ev)
 }
+
+func (m *mucManager) nonMemberRemoved(roomID jid.Bare, selfOccupant bool, nickname string) {
+	ev := events.MUCNonMemberRemoved{}
+	ev.Nickname = nickname
+	ev.SelfOccupant = selfOccupant
+
+	m.publishRoomEvent(roomID, ev)
+}

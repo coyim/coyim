@@ -24,6 +24,11 @@ type occupantUpdatedEvent struct {
 	role     data.Role
 }
 
+type nonMembersRemovedEvent struct {
+	selfOccupant bool
+	nickname     string
+}
+
 type nicknameConflictEvent struct {
 	nickname string
 }
@@ -98,3 +103,4 @@ func (discussionHistoryEvent) markAsRoomViewEvent()        {}
 func (roomConfigReceivedEvent) markAsRoomViewEvent()       {}
 func (roomConfigRequestTimeoutEvent) markAsRoomViewEvent() {}
 func (roomConfigChangedEvent) markAsRoomViewEvent()        {}
+func (nonMembersRemovedEvent) markAsRoomViewEvent()        {}

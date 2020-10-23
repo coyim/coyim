@@ -56,9 +56,30 @@ func (m *mucManager) handleOccupantLeft(roomID jid.Bare, op *muc.OccupantPresenc
 
 	err := r.Roster().RemoveOccupant(op.Nickname)
 	if err != nil {
-		m.log.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
+		l.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
 		return
 	}
 
 	m.occupantLeft(roomID, op)
+}
+
+func (m *mucManager) handleNonMembersRemoved(roomID jid.Bare, op *muc.OccupantPresenceInfo) {
+	l := m.log.WithFields(log.Fields{
+		"room":     roomID,
+		"occupant": op.Nickname,
+		"method":   "handleNonMembersRemoved",
+	})
+
+	r, ok := m.roomManager.GetRoom(roomID)
+	if !ok {
+		l.Error("Trying to get a room that is not in the room manager")
+		return
+	}
+
+	err := r.Roster().RemoveOccupant(op.Nickname)
+	if err != nil {
+		l.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
+	}
+
+	m.nonMemberRemoved(roomID, r.SelfOccupant().Nickname == op.Nickname, op.Nickname)
 }

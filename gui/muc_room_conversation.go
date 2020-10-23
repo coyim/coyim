@@ -110,6 +110,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.semiAnonymousRoomEvent()
 		case roomConfigChangedEvent:
 			c.roomConfigChangedEvent(t.changes, t.config)
+		case nonMembersRemovedEvent:
+			c.nonMembersRemovedEvent(t.selfOccupant, t.nickname)
 		}
 	})
 }
@@ -227,9 +229,31 @@ func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedT
 	})
 }
 
+func (c *roomViewConversation) nonMembersRemovedEvent(v bool, nickname string) {
+	doInUIThread(func() {
+		if v {
+			c.displayWarningMessage(i18n.Local("You have been removed from the room because the configuration. Now this room allows only-members."))
+		} else {
+			c.displayWarningMessage(i18n.Localf("\"%s\" has been removed from the room because the configuration. Now this room allows only-members.", nickname))
+		}
+		c.disabledSendCapabilities()
+	})
+}
+
+// disabledSendCapabilities MUST be called from the UI thread
+func (c *roomViewConversation) disabledSendCapabilities() {
+	c.canSendMessages = false
+	c.updateSendCapabilities()
+}
+
 // enableSendCapabilitiesIfHasVoice MUST be called from the UI thread
 func (c *roomViewConversation) enableSendCapabilitiesIfHasVoice(hasVoice bool) {
 	c.canSendMessages = hasVoice
+	c.updateSendCapabilities()
+}
+
+// updateSendCapabilities MUST be called from the UI thread
+func (c *roomViewConversation) updateSendCapabilities() {
 	if c.canSendMessages {
 		c.enableEntryAndSendButton()
 		c.notificationBox.Hide()

@@ -92,6 +92,13 @@ type MUCOccupantLeft struct {
 	Role        data.Role
 }
 
+// MUCNonMemberRemoved contains information related to member removed
+// because room configuration was changed to only-members
+type MUCNonMemberRemoved struct {
+	SelfOccupant bool
+	Nickname     string
+}
+
 // MUCMessageReceived represents a received groupchat message
 type MUCMessageReceived struct {
 	Nickname  string
@@ -168,6 +175,7 @@ func (MUCLoggingDisabled) markAsMUCEventTypeInterface()           {}
 func (MUCNonAnonymousRoom) markAsMUCEventTypeInterface()          {}
 func (MUCSemiAnonymousRoom) markAsMUCEventTypeInterface()         {}
 func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}
-func (MUCRoomConfigReceived) markAsMUCEventTypeInterface() {}
-func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()  {}
-func (MUCRoomConfigChanged) markAsMUCEventTypeInterface()  {}
+func (MUCRoomConfigReceived) markAsMUCEventTypeInterface()        {}
+func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()         {}
+func (MUCRoomConfigChanged) markAsMUCEventTypeInterface()         {}
+func (MUCNonMemberRemoved) markAsMUCEventTypeInterface()          {}

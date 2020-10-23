@@ -10,9 +10,9 @@ import (
 // When a window is closed, the room stays in this list. A room will only be removed
 // from this list when the current user leaves that room.
 type RoomManager struct {
-	lock sync.RWMutex
-
 	rooms map[string]*Room
+
+	lock sync.RWMutex
 }
 
 // NewRoomManager returns a newly created room manager

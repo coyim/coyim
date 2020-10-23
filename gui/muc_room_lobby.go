@@ -3,8 +3,6 @@ package gui
 import (
 	"errors"
 
-	"github.com/coyim/coyim/session/muc"
-
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -101,8 +99,8 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 		switch t := ev.(type) {
 		case occupantSelfJoinedEvent:
 			l.occupantSelfJoinedEvent()
-		case roomInfoReceivedEvent:
-			l.roomInfoReceivedEvent(t.info)
+		case roomConfigReceivedEvent:
+			l.roomConfigReceivedEvent()
 		case nicknameConflictEvent:
 			l.nicknameConflictEvent(l.roomID, t.nickname)
 		case registrationRequiredEvent:
@@ -111,7 +109,7 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	})
 }
 
-func (l *roomViewLobby) roomInfoReceivedEvent(roomInfo *muc.RoomListing) {
+func (l *roomViewLobby) roomConfigReceivedEvent() {
 	l.isReadyToJoinRoom = true
 	doInUIThread(l.enableJoinIfConditionsAreMet)
 }

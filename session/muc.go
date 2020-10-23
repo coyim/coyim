@@ -195,13 +195,6 @@ func (m *mucManager) updateOccupantAndReturn(room *muc.Room, op *muc.OccupantPre
 func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.OccupantPresenceInfo, status mucUserStatuses) {
 	switch {
 	case status.isEmpty():
-		m.log.WithFields(log.Fields{
-			"room":        roomID,
-			"occupant":    op.Nickname,
-			"affiliation": op.Affiliation,
-			"role":        op.Role,
-		}).Debug("Parameters sent when someone leaves a room")
-
 		m.handleOccupantLeft(roomID, op)
 
 	case status.contains(MUCStatusBanned):
@@ -314,11 +307,11 @@ func (m *mucManager) sendMessage(to, from, body string) error {
 	return nil
 }
 
-func (m *mucManager) retrieveRoomID(from string) jid.Bare {
+func (m *mucManager) retrieveRoomID(from string, who string) jid.Bare {
 	roomID, ok := jid.TryParseBare(from)
 	if !ok {
 		m.log.WithFields(log.Fields{
-			"who":  "retrieveRoomID",
+			"who":  who,
 			"from": from,
 		}).Error("Error trying to get the room ID from stanza's from")
 		return nil

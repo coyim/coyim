@@ -1,13 +1,11 @@
 package gui
 
 import (
-	"sync"
-	"time"
-
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -17,9 +15,7 @@ type roomView struct {
 	account *account
 	builder *builder
 
-	room         *muc.Room
-	roomInfo     *muc.RoomListing
-	roomInfoLock sync.Mutex
+	room *muc.Room
 
 	cancel chan bool
 
@@ -67,6 +63,7 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 
 	view.initBuilderAndSignals()
 	view.initDefaults()
+	view.initSubscribers()
 
 	view.toolbar = view.newRoomViewToolbar()
 	view.roster = view.newRoomViewRoster()
@@ -97,75 +94,57 @@ func (v *roomView) initDefaults() {
 	v.setTitle(i18n.Localf("%s [%s]", v.roomID(), v.account.Account()))
 }
 
-func (v *roomView) requestRoomInfo() {
-	doInUIThread(v.loadingInfoBar.start)
-
-	rl := make(chan *muc.RoomListing)
-	v.cancel = make(chan bool)
-
-	go v.account.session.GetRoomListing(v.roomID(), rl)
-	go func() {
-		select {
-		case roomInfo := <-rl:
-			v.onRequestRoomInfoFinish(roomInfo)
-		case <-time.After(time.Minute * 5):
-			v.onRequestRoomInfoTimeout()
-		case <-v.cancel:
+func (v *roomView) initSubscribers() {
+	v.subscribe("room", func(ev roomViewEvent) {
+		switch t := ev.(type) {
+		case roomConfigReceivedEvent:
+			doInUIThread(func() {
+				v.roomConfigReceivedEvent(t.config)
+			})
+		case roomConfigRequestTimeoutEvent:
+			doInUIThread(v.roomConfigRequestTimeoutEvent)
 		}
-	}()
-}
-
-func (v *roomView) onRequestRoomInfoFinish(roomInfo *muc.RoomListing) {
-	v.setRoomInfoAndClearWarnings(roomInfo)
-
-	if v.roomInfo != nil {
-		doInUIThread(func() {
-			v.showRoomWarnings()
-			v.notifications.add(v.warningsInfoBar)
-		})
-	}
-
-	doInUIThread(v.loadingInfoBar.hide)
-
-	v.publishEvent(roomInfoReceivedEvent{
-		info: roomInfo,
 	})
 }
 
-func (v *roomView) onRequestRoomInfoTimeout() {
-	v.setRoomInfoAndClearWarnings(nil)
+func (v *roomView) requestRoomInfo() {
+	doInUIThread(v.loadingInfoBar.start)
+	v.account.session.LoadRoomInfo(v.roomID())
+}
+
+// roomConfigReceivedEvent MUST be called from the UI thread
+func (v *roomView) roomConfigReceivedEvent(roomInfo data.RoomConfig) {
+	v.loadingInfoBar.hide()
+
+	v.warnings.clear()
+	v.showRoomWarnings(roomInfo)
+	v.notifications.add(v.warningsInfoBar)
+}
+
+// roomConfigRequestTimeoutEvent MUST be called from the UI thread
+func (v *roomView) roomConfigRequestTimeoutEvent() {
+	v.warnings.clear()
 
 	v.loadingInfoBar.error(
 		i18n.Local("An error occurred while loading room information"),
 		i18n.Local("Loading the room information took longer than usual, perhaps the connection to the server was lost. Do you want to try again?."),
 		v.requestRoomInfo,
 	)
-
-	v.publishEvent(roomInfoTimeoutEvent{})
 }
 
-func (v *roomView) setRoomInfoAndClearWarnings(roomInfo *muc.RoomListing) {
-	v.roomInfoLock.Lock()
-	defer v.roomInfoLock.Unlock()
-
-	v.roomInfo = roomInfo
-
-	doInUIThread(v.warnings.clear)
-}
-
-func (v *roomView) showRoomWarnings() {
+func (v *roomView) showRoomWarnings(roomInfo data.RoomConfig) {
 	v.warnings.add(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile."))
 
-	switch v.roomInfo.Anonymity {
+	switch roomInfo.Anonymity {
 	case "semi":
 		v.warnings.add(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
 	case "no":
 		v.warnings.add(i18n.Local("This room is not anonymous. This means that any person in this room can connect your nickname with your real username (your JID)."))
 	default:
-		v.log.WithField("anonymity", v.roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
+		v.log.WithField("anonymity", roomInfo.Anonymity).Warn("Unknown anonymity setting for room")
 	}
 
-	if v.roomInfo.Logged {
+	if roomInfo.Logged {
 		v.warnings.add(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
 	}
 }

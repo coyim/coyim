@@ -81,7 +81,7 @@ type Session interface {
 	JoinRoom(jid.Bare, string) error
 	CreateRoom(jid.Bare) <-chan error
 	GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error, func())
-	GetRoom(jid.Bare, chan<- *muc.RoomListing)
+	GetRoomListing(jid.Bare, chan<- *muc.RoomListing)
 	LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error)
 
 	Log() coylog.Logger

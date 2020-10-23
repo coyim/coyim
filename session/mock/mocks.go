@@ -207,9 +207,9 @@ func (s *SessionMock) HasRoom(jid.Bare, chan<- *muc.RoomListing) (<-chan bool, <
 	return nil, nil
 }
 
-// GetRoom is the implementation for Session interface
-func (s *SessionMock) GetRoom(jid.Bare, chan<- *muc.RoomListing) {
-}
+// GetRoomListing is the implementation for Session interface
+func (s *SessionMock) GetRoomListing(jid.Bare, chan<- *muc.RoomListing) {}
+
 
 // GetRooms is the implementation for Session interface
 func (*SessionMock) GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error) {

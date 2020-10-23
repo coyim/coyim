@@ -61,13 +61,20 @@ func (m *mucManager) newRoom(roomID jid.Bare) *muc.Room {
 	return room
 }
 
-func (m *mucManager) getRoom(roomID jid.Bare, result chan<- *muc.RoomListing) {
+func (m *mucManager) newRoomListing(roomID jid.Bare) *muc.RoomListing {
 	rl := muc.NewRoomListing()
 	rl.Jid = roomID
+	return rl
+}
+
+func (m *mucManager) getRoomListing(roomID jid.Bare, result chan<- *muc.RoomListing) {
+	rl := m.newRoomListing(roomID)
+
 	// This is a little bit redundant since we already asked for this once
 	// The right solution is to use the values from above, but that would be an extensive refactoring
 	// so we will wait with that for now
 	m.findOutMoreInformationAboutRoom(rl)
+
 	result <- rl
 }
 

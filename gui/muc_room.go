@@ -103,7 +103,7 @@ func (v *roomView) requestRoomInfo() {
 	rl := make(chan *muc.RoomListing)
 	v.cancel = make(chan bool)
 
-	go v.account.session.GetRoom(v.roomID(), rl)
+	go v.account.session.GetRoomListing(v.roomID(), rl)
 	go func() {
 		select {
 		case roomInfo := <-rl:

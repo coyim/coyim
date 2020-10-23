@@ -60,7 +60,7 @@ func (rc *hasRoomContext) checkIfRoomExists(wantRoomInfo chan<- *muc.RoomListing
 	rc.resultChannel <- true
 
 	if wantRoomInfo != nil {
-		rc.s.GetRoom(rc.roomID, wantRoomInfo)
+		rc.s.GetRoomListing(rc.roomID, wantRoomInfo)
 	}
 }
 
@@ -120,8 +120,10 @@ func (s *session) GetRoom(roomID jid.Bare, result chan<- *muc.RoomListing) {
 	s.muc.getRoom(roomID, result)
 }
 
-func createRoomRecipient(room jid.Bare, nickname string) jid.Full {
-	return jid.NewFull(room.Local(), room.Host(), jid.NewResource(nickname))
+// GetRoomListing will block, waiting to get the room information
+func (s *session) GetRoomListing(roomID jid.Bare, result chan<- *muc.RoomListing) {
+	// TODO: make this method unnecessary by changing the GUI parts to not use it
+	s.muc.getRoomListing(roomID, result)
 }
 
 func (s *session) LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error) {

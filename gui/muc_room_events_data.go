@@ -3,7 +3,6 @@ package gui
 import (
 	"time"
 
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 )
 
@@ -32,12 +31,6 @@ type nicknameConflictEvent struct {
 type registrationRequiredEvent struct {
 	nickname string
 }
-
-type roomInfoReceivedEvent struct {
-	info *muc.RoomListing
-}
-
-type roomInfoTimeoutEvent struct{}
 
 type loggingEnabledEvent struct{}
 
@@ -75,27 +68,33 @@ type roomViewEvent interface {
 	markAsRoomViewEvent()
 }
 
-type roomConfigurationChanged struct {
-	oldConfiguration *muc.RoomListing
-	newConfiguration *muc.RoomListing
+type roomConfigReceivedEvent struct {
+	config data.RoomConfig
 }
 
-func (occupantLeftEvent) markAsRoomViewEvent()         {}
-func (occupantJoinedEvent) markAsRoomViewEvent()       {}
-func (occupantUpdatedEvent) markAsRoomViewEvent()      {}
-func (occupantSelfJoinedEvent) markAsRoomViewEvent()   {}
-func (messageEvent) markAsRoomViewEvent()              {}
-func (subjectUpdatedEvent) markAsRoomViewEvent()       {}
-func (subjectReceivedEvent) markAsRoomViewEvent()      {}
-func (nicknameConflictEvent) markAsRoomViewEvent()     {}
-func (registrationRequiredEvent) markAsRoomViewEvent() {}
-func (roomInfoReceivedEvent) markAsRoomViewEvent()     {}
-func (roomInfoTimeoutEvent) markAsRoomViewEvent()      {}
-func (loggingEnabledEvent) markAsRoomViewEvent()       {}
-func (loggingDisabledEvent) markAsRoomViewEvent()      {}
-func (nonAnonymousRoomEvent) markAsRoomViewEvent()     {}
-func (semiAnonymousRoomEvent) markAsRoomViewEvent()    {}
-func (roomConfigurationChanged) markAsRoomViewEvent()  {}
-func (messageForbidden) markAsRoomViewEvent()          {}
-func (messageNotAcceptable) markAsRoomViewEvent()      {}
-func (discussionHistoryEvent) markAsRoomViewEvent()    {}
+type roomConfigRequestTimeoutEvent struct{}
+
+type roomConfigChangedEvent struct {
+	changes []data.RoomConfigType
+	config  data.RoomConfig
+}
+
+func (occupantLeftEvent) markAsRoomViewEvent()             {}
+func (occupantJoinedEvent) markAsRoomViewEvent()           {}
+func (occupantUpdatedEvent) markAsRoomViewEvent()          {}
+func (occupantSelfJoinedEvent) markAsRoomViewEvent()       {}
+func (messageEvent) markAsRoomViewEvent()                  {}
+func (subjectUpdatedEvent) markAsRoomViewEvent()           {}
+func (subjectReceivedEvent) markAsRoomViewEvent()          {}
+func (nicknameConflictEvent) markAsRoomViewEvent()         {}
+func (registrationRequiredEvent) markAsRoomViewEvent()     {}
+func (loggingEnabledEvent) markAsRoomViewEvent()           {}
+func (loggingDisabledEvent) markAsRoomViewEvent()          {}
+func (nonAnonymousRoomEvent) markAsRoomViewEvent()         {}
+func (semiAnonymousRoomEvent) markAsRoomViewEvent()        {}
+func (messageForbidden) markAsRoomViewEvent()              {}
+func (messageNotAcceptable) markAsRoomViewEvent()          {}
+func (discussionHistoryEvent) markAsRoomViewEvent()        {}
+func (roomConfigReceivedEvent) markAsRoomViewEvent()       {}
+func (roomConfigRequestTimeoutEvent) markAsRoomViewEvent() {}
+func (roomConfigChangedEvent) markAsRoomViewEvent()        {}

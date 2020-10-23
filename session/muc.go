@@ -16,8 +16,12 @@ type mucManager struct {
 	log          coylog.Logger
 	conn         func() xi.Conn
 	publishEvent func(ev interface{})
-	roomManager  *muc.RoomManager
-	roomLock     sync.Mutex
+
+	roomInfos     map[jid.Bare]*muc.RoomListing
+	roomInfosLock sync.Mutex
+
+	roomManager *muc.RoomManager
+	roomLock    sync.Mutex
 
 	discussionHistory              map[jid.Bare]*data.DiscussionHistory
 	handleDiscussionHistoryOneTime func(*xmppData.ClientMessage)
@@ -32,6 +36,7 @@ func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev 
 		conn:              conn,
 		publishEvent:      publishEvent,
 		roomManager:       muc.NewRoomManager(),
+		roomInfos:         make(map[jid.Bare]*muc.RoomListing),
 		discussionHistory: make(map[jid.Bare]*data.DiscussionHistory),
 	}
 
@@ -59,6 +64,21 @@ func (m *mucManager) newRoom(roomID jid.Bare) *muc.Room {
 	m.roomManager.AddRoom(room)
 
 	return room
+}
+
+func (m *mucManager) addRoomInfo(roomID jid.Bare, rl *muc.RoomListing) {
+	m.roomInfosLock.Lock()
+	m.roomInfos[roomID] = rl
+	m.roomInfosLock.Unlock()
+}
+
+func (m *mucManager) getRoomInfo(roomID jid.Bare) (*muc.RoomListing, bool) {
+	m.roomInfosLock.Lock()
+	defer m.roomInfosLock.Unlock()
+
+	rl, ok := m.roomInfos[roomID]
+
+	return rl, ok
 }
 
 func (m *mucManager) newRoomListing(roomID jid.Bare) *muc.RoomListing {

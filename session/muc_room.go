@@ -114,10 +114,9 @@ func (s *session) HasRoom(roomID jid.Bare, wantRoomInfo chan<- *muc.RoomListing)
 	return c.resultChannel, c.errorChannel
 }
 
-// GetRoom will block, waiting to get the room information
-func (s *session) GetRoom(roomID jid.Bare, result chan<- *muc.RoomListing) {
-	// TODO: make this method unnecessary by changing the GUI parts to not use it
-	s.muc.getRoom(roomID, result)
+// LoadRoomInfo will load the given room configuration (RoomListing)
+func (s *session) LoadRoomInfo(roomID jid.Bare) {
+	s.muc.loadRoomInfo(roomID)
 }
 
 // GetRoomListing will block, waiting to get the room information

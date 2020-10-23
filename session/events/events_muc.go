@@ -137,9 +137,18 @@ type MUCNonAnonymousRoom struct{}
 // MUCSemiAnonymousRoom signifies that the real occupant's JID could be viewed for moderators only
 type MUCSemiAnonymousRoom struct{}
 
-// MUCRoomConfigurationChanged signifies that room configuration changed
-type MUCRoomConfigurationChanged struct {
-	RoomConfiguration interface{}
+// MUCRoomConfigReceived contains information of the received room listing
+type MUCRoomConfigReceived struct {
+	Config data.RoomConfig
+}
+
+// MUCRoomConfigTimeout indicates that the room listing request has timeout
+type MUCRoomConfigTimeout struct{}
+
+// MUCRoomConfigChanged signifies that room configuration changed
+type MUCRoomConfigChanged struct {
+	Changes []data.RoomConfigType
+	Config  data.RoomConfig
 }
 
 func (MUCError) markAsMUCEventTypeInterface()                     {}
@@ -158,5 +167,7 @@ func (MUCLoggingEnabled) markAsMUCEventTypeInterface()            {}
 func (MUCLoggingDisabled) markAsMUCEventTypeInterface()           {}
 func (MUCNonAnonymousRoom) markAsMUCEventTypeInterface()          {}
 func (MUCSemiAnonymousRoom) markAsMUCEventTypeInterface()         {}
-func (MUCRoomConfigurationChanged) markAsMUCEventTypeInterface()  {}
 func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}
+func (MUCRoomConfigReceived) markAsMUCEventTypeInterface() {}
+func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()  {}
+func (MUCRoomConfigChanged) markAsMUCEventTypeInterface()  {}

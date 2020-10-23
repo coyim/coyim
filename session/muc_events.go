@@ -117,17 +117,29 @@ func (m *mucManager) subjectUpdated(roomID jid.Bare, nickname, subject string) {
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) roomConfigurationChanged(roomID jid.Bare, rl interface{}) {
-	ev := events.MUCRoomConfigurationChanged{}
-	ev.RoomConfiguration = rl
-
-	m.publishRoomEvent(roomID, ev)
-}
-
 func (m *mucManager) nonAnonymousRoom(roomID jid.Bare) {
 	m.publishRoomEvent(roomID, events.MUCNonAnonymousRoom{})
 }
 
 func (m *mucManager) semiAnonymousRoom(roomID jid.Bare) {
 	m.publishRoomEvent(roomID, events.MUCSemiAnonymousRoom{})
+}
+
+func (m *mucManager) roomConfigReceived(roomID jid.Bare, conf data.RoomConfig) {
+	ev := events.MUCRoomConfigReceived{}
+	ev.Config = conf
+
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) roomConfigRequestTimeout(roomID jid.Bare) {
+	m.publishRoomEvent(roomID, events.MUCRoomConfigTimeout{})
+}
+
+func (m *mucManager) roomConfigChanged(roomID jid.Bare, changes []data.RoomConfigType, config data.RoomConfig) {
+	ev := events.MUCRoomConfigChanged{}
+	ev.Changes = changes
+	ev.Config = config
+
+	m.publishRoomEvent(roomID, ev)
 }

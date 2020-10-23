@@ -5,7 +5,8 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/coyim/coyim/xmpp/data"
+	"github.com/coyim/coyim/session/muc/data"
+	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
@@ -16,24 +17,7 @@ type RoomListing struct {
 	Jid         jid.Bare
 	Name        string
 
-	SupportsVoiceRequests     bool
-	AllowsRegistration        bool
-	Anonymity                 string
-	Persistent                bool
-	Moderated                 bool
-	Open                      bool
-	PasswordProtected         bool
-	Public                    bool
-	Language                  string
-	OccupantsCanChangeSubject bool
-	Title                     string
-	Description               string
-	Occupants                 int
-	MembersCanInvite          bool
-	OccupantsCanInvite        bool
-	AllowPrivateMessages      string // This can be 'anyone', 'participants', 'moderators', 'none'
-	ContactJid                string
-	Logged                    bool // Notice that this will not always be correct for all servers
+	data.RoomConfig
 
 	lockUpdates sync.RWMutex
 	onUpdates   []func()
@@ -42,6 +26,11 @@ type RoomListing struct {
 // NewRoomListing creates and returns a new room listing
 func NewRoomListing() *RoomListing {
 	return &RoomListing{}
+}
+
+//GetConfig description
+func (rl *RoomListing) GetConfig() data.RoomConfig {
+	return rl.RoomConfig
 }
 
 // OnUpdate takes a function and some data, and when this room listing is updated, that function
@@ -66,7 +55,7 @@ func (rl *RoomListing) Updated() {
 }
 
 // SetFeatures receive a list of features and updates the room listing properties based on each feature
-func (rl *RoomListing) SetFeatures(features []data.DiscoveryFeature) {
+func (rl *RoomListing) SetFeatures(features []xmppData.DiscoveryFeature) {
 	rl.lockUpdates.Lock()
 	defer rl.lockUpdates.Unlock()
 
@@ -137,7 +126,7 @@ func (rl *RoomListing) setFeature(feature string) {
 }
 
 // SetFormsData extract the forms data and updates the room listing properties based on each data
-func (rl *RoomListing) SetFormsData(forms []data.Form) {
+func (rl *RoomListing) SetFormsData(forms []xmppData.Form) {
 	rl.lockUpdates.Lock()
 	defer rl.lockUpdates.Unlock()
 
@@ -149,7 +138,7 @@ func (rl *RoomListing) SetFormsData(forms []data.Form) {
 	}
 }
 
-func (rl *RoomListing) updateWithFormFields(form data.Form, fields map[string][]string) {
+func (rl *RoomListing) updateWithFormFields(form xmppData.Form, fields map[string][]string) {
 	for field, values := range fields {
 		rl.updateWithFormField(field, values)
 	}
@@ -207,7 +196,7 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 	}
 }
 
-func formFieldsToKeyValue(fields []data.FormFieldX) map[string][]string {
+func formFieldsToKeyValue(fields []xmppData.FormFieldX) map[string][]string {
 	result := make(map[string][]string)
 	for _, field := range fields {
 		result[field.Var] = field.Values
@@ -216,7 +205,7 @@ func formFieldsToKeyValue(fields []data.FormFieldX) map[string][]string {
 	return result
 }
 
-func isValidRoomInfoForm(form data.Form, fields map[string][]string) bool {
+func isValidRoomInfoForm(form xmppData.Form, fields map[string][]string) bool {
 	return form.Type == "result" && hasRoomInfoFormType(fields)
 }
 

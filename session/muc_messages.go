@@ -23,8 +23,7 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 		m.handleMessageReceived(stanza, m.receiveDelayedMessage)
 	case isLiveMessage(stanza):
 		m.handleMessageReceived(stanza, m.liveMessageReceived)
-	case hasMucUserExtension(stanza):
-		m.handleMUCUserExtension(stanza)
+	case hasMUCUserExtension(stanza):
 	}
 }
 
@@ -147,8 +146,8 @@ func hasSubject(stanza *xmppData.ClientMessage) bool {
 	return stanza.Subject != nil
 }
 
-func hasMucUserExtension(stanza *xmppData.ClientMessage) bool {
-	return stanza.MucUserExtension != nil
+func hasMUCUserExtension(stanza *xmppData.ClientMessage) bool {
+	return stanza.MUCUser != nil
 }
 
 func getNicknameFromStanza(stanza *xmppData.ClientMessage) string {

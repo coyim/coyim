@@ -52,7 +52,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare, parent gtki.Box
 		parent:                parent,
 		onCancel:              onCancel,
 		nicknamesWithConflict: set.New(),
-		log:                   v.log,
+		log: v.log.WithField("who", "roomViewLobby"),
 	}
 
 	l.onSuccess = func() {

@@ -11,6 +11,7 @@ import (
 
 func initMUC() {
 	initMUCSupportedErrors()
+	initMUCConfigUpdateMessages()
 }
 
 var supportedCreateMUCErrors map[error]string

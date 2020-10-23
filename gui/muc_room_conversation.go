@@ -168,24 +168,6 @@ func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory
 	})
 }
 
-// displayDiscussionHistoryDate MUST be called from the UI thread
-func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
-	j := c.chatTextView.GetJustification()
-	c.chatTextView.SetJustification(gtki.JUSTIFY_CENTER)
-
-	c.addTextWithTag(timeToFriendlyString(d), "groupdate")
-	c.addNewLine()
-
-	c.chatTextView.SetJustification(j)
-}
-
-// displayDiscussionHistoryMessages MUST be called from the UI thread
-func (c *roomViewConversation) displayDiscussionHistoryMessages(messages []*data.DelayedMessage) {
-	for _, m := range messages {
-		c.displayDelayedMessage(m.Nickname, m.Message, m.Timestamp)
-	}
-}
-
 func (c *roomViewConversation) messageForbiddenEvent() {
 	doInUIThread(func() {
 		c.displayErrorMessage(i18n.Local("You are forbidden to send messages to this room."))

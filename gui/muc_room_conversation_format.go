@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 // displayCurrentTimestamp MUST be called from the UI thread
@@ -54,6 +56,24 @@ func (c *roomViewConversation) displayLiveMessage(nickname, message string, time
 	c.displayMessage(message)
 
 	c.addNewLine()
+}
+
+// displayDiscussionHistoryDate MUST be called from the UI thread
+func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
+	j := c.chatTextView.GetJustification()
+	c.chatTextView.SetJustification(gtki.JUSTIFY_CENTER)
+
+	c.addTextWithTag(timeToFriendlyString(d), "groupdate")
+	c.addNewLine()
+
+	c.chatTextView.SetJustification(j)
+}
+
+// displayDiscussionHistoryMessages MUST be called from the UI thread
+func (c *roomViewConversation) displayDiscussionHistoryMessages(messages []*data.DelayedMessage) {
+	for _, m := range messages {
+		c.displayDelayedMessage(m.Nickname, m.Message, m.Timestamp)
+	}
 }
 
 // displayDelayedMessage MUST be called from the UI thread

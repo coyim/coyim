@@ -143,3 +143,7 @@ func (s *session) LeaveRoom(room jid.Bare, nickname string) (chan bool, chan err
 
 	return result, errors
 }
+
+func createRoomRecipient(room jid.Bare, nickname string) jid.Full {
+	return jid.NewFull(room.Local(), room.Host(), jid.NewResource(nickname))
+}

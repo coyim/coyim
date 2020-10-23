@@ -56,7 +56,7 @@ func (m *mucManager) addNewDiscussionHistory(roomID jid.Bare) *data.DiscussionHi
 // This should be done in a proper way, maybe in the pending "state machine" pattern
 // that we want to implement later, when that happens, this method should be fine
 func (m *mucManager) handleDiscussionHistory(stanza *xmppData.ClientMessage) {
-	roomID := m.retrieveRoomID(stanza.From)
+	roomID := m.retrieveRoomID(stanza.From, "handleDiscussionHistory")
 	dh, exists := m.getDiscussionHistory(roomID)
 	if !exists {
 		m.log.WithField("room", roomID).Warn("Trying to get a not available discussion history for the given room")
@@ -72,7 +72,7 @@ func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {
 		"who":  "handleSubjectReceived",
 	})
 
-	roomID := m.retrieveRoomID(stanza.From)
+	roomID := m.retrieveRoomID(stanza.From, "handleSubjectReceived")
 	room, ok := m.roomManager.GetRoom(roomID)
 	if !ok {
 		l.WithField("room", roomID).Error("Error trying to read the subject of room")

@@ -63,7 +63,7 @@ func (m *mucManager) nonPrivacyConfigChanged(roomID jid.Bare) {
 
 	prevConfig := rl.GetConfig()
 	m.findOutMoreInformationAboutRoom(rl)
-	m.onRoomConfigurationUpdate(roomID, rl.GetConfig(), prevConfig)
+	m.onRoomConfigUpdate(roomID, rl.GetConfig(), prevConfig)
 }
 
 var roomConfigUpdateCheckers = map[data.RoomConfigType]func(data.RoomConfig, data.RoomConfig) bool{
@@ -84,7 +84,7 @@ var roomConfigUpdateCheckers = map[data.RoomConfigType]func(data.RoomConfig, dat
 	data.RoomConfigLogged:                    roomConfigLoggedCheckUpdate,
 }
 
-func (m *mucManager) onRoomConfigurationUpdate(roomID jid.Bare, currConfig, prevConfig data.RoomConfig) {
+func (m *mucManager) onRoomConfigUpdate(roomID jid.Bare, currConfig, prevConfig data.RoomConfig) {
 	changes := []data.RoomConfigType{}
 
 	for k, f := range roomConfigUpdateCheckers {

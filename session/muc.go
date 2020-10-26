@@ -119,7 +119,7 @@ func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 	}
 
 	roomID := from.Bare()
-	occupantPresence := getOccupantPresenceBasedOnItem(from.Resource(), stanza.MUCUser.Item)
+	occupantPresence := getOccupantPresenceBasedOnStanza(from.Resource(), stanza)
 	status := mucUserStatuses(stanza.MUCUser.Status)
 
 	isOwnPresence := status.contains(MUCStatusSelfPresence)
@@ -249,6 +249,24 @@ func getOccupantPresenceBasedOnItem(nickname jid.Resource, item *xmppData.MUCUse
 		RealJid:     realJid,
 		Affiliation: affiliation,
 		Role:        role,
+	}
+
+	return op
+}
+
+func getOccupantPresenceBasedOnStanza(nickname jid.Resource, stanza *xmppData.ClientPresence) *muc.OccupantPresenceInfo {
+	item := stanza.MUCUser.Item
+	realJid := getRealJidBasedOnItem(item)
+	affiliation := getAffiliationBasedOnItem(item)
+	role := getRoleBasedOnItem(item)
+
+	op := &muc.OccupantPresenceInfo{
+		Nickname:      nickname.String(),
+		RealJid:       realJid,
+		Affiliation:   affiliation,
+		Role:          role,
+		Status:        stanza.Show,
+		StatusMessage: stanza.Status,
 	}
 
 	return op

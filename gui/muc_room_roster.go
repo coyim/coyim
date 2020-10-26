@@ -1,7 +1,10 @@
 package gui
 
 import (
+	"github.com/coyim/gotk3adapter/gdki"
+
 	"github.com/coyim/coyim/i18n"
+	coyroster "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/gotk3adapter/glibi"
@@ -113,10 +116,32 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.TreeIter) {
 	iter := r.model.Append(parentIter)
 
-	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getMUCIconPixbuf("occupant"))
+	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getOccupantIconForStatus(o.Status))
 	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
 	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, r.affiliationDisplayName(o.Affiliation))
 	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, roleDisplayName(o.Role))
+}
+
+func getOccupantIconForStatus(s *coyroster.Status) gdki.Pixbuf {
+	icon := getOccupantIconNameForStatus(s.Status)
+	return getMUCIconPixbuf(icon)
+}
+
+func getOccupantIconNameForStatus(status string) string {
+	switch status {
+	case "unavailable":
+		return "occupant-offline"
+	case "away":
+		return "occupant-away"
+	case "dnd":
+		return "occupant-busy"
+	case "xa":
+		return "occupant-extended-away"
+	case "chat":
+		return "occupant-chat"
+	default:
+		return "occupant-online"
+	}
 }
 
 func (r *roomViewRoster) affiliationDisplayName(a data.Affiliation) string {

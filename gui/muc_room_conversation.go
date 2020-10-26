@@ -361,7 +361,7 @@ func getDisplayRoomSubjectForNickname(nickname, subject string) string {
 
 func getDisplayRoomSubject(subject string) string {
 	if subject == "" {
-		return i18n.Local("The room does not have subject")
+		return i18n.Local("The room does not have a subject")
 	}
 
 	return i18n.Localf("The room subject is \"%s\"", subject)

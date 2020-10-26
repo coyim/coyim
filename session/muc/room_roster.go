@@ -18,8 +18,7 @@ type OccupantPresenceInfo struct {
 	RealJid       jid.Full
 	Affiliation   data.Affiliation
 	Role          data.Role
-	Show          string
-	StatusCode    string
+	Status        string
 	StatusMessage string
 }
 
@@ -194,7 +193,7 @@ func (r *RoomRoster) newOccupantFromPresenceInfo(op *OccupantPresenceInfo) *Occu
 		Nickname:    op.Nickname,
 		Role:        op.Role,
 		Status: &roster.Status{
-			Status:    op.StatusCode,
+			Status:    op.Status,
 			StatusMsg: op.StatusMessage,
 		},
 	}
@@ -212,7 +211,7 @@ func (r *RoomRoster) UpdateOrAddOccupant(op *OccupantPresenceInfo) bool {
 		return false
 	}
 
-	o.Update(op.Nickname, op.Affiliation, op.Role, op.StatusCode, op.StatusMessage, op.RealJid)
+	o.Update(op.Nickname, op.Affiliation, op.Role, op.Status, op.StatusMessage, op.RealJid)
 	return true
 }
 

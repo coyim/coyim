@@ -75,14 +75,13 @@ func (o *Occupant) ChangeAffiliationToOwner() {
 	o.Affiliation = &data.OwnerAffiliation{}
 }
 
-// Update will update the information in this occupant object with the given information. It returns an error if the given affiliation or role doesn't match
-// a known affiliation or role.
-func (o *Occupant) Update(nickname string, affiliation data.Affiliation, role data.Role, status, statusMsg string, realJid jid.Full) {
+// Update will update the information in this occupant object with the given information.
+func (o *Occupant) Update(nickname string, affiliation data.Affiliation, role data.Role, status, statusMessage string, realJid jid.Full) {
 	o.Nickname = nickname
 	o.RealJid = realJid
 	o.Affiliation = affiliation
 	o.Role = role
-	o.Status = &roster.Status{Status: status, StatusMsg: statusMsg}
+	o.Status = &roster.Status{Status: status, StatusMsg: statusMessage}
 }
 
 // UpdateStatus will update the occupant's status

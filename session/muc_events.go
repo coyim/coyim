@@ -55,6 +55,8 @@ func (m *mucManager) occupantUpdate(roomID jid.Bare, op *muc.OccupantPresenceInf
 	ev.RealJid = op.RealJid
 	ev.Affiliation = op.Affiliation
 	ev.Role = op.Role
+	ev.Status = op.Status
+	ev.StatusMessage = op.StatusMessage
 
 	m.publishRoomEvent(roomID, ev)
 }

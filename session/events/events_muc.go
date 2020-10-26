@@ -57,8 +57,10 @@ type MUCRoomRenamed struct {
 // MUCOccupant contains basic information about
 // any room's occupant
 type MUCOccupant struct {
-	Nickname string
-	RealJid  jid.Full
+	Nickname      string
+	RealJid       jid.Full
+	Status        string
+	StatusMessage string
 }
 
 // TODO: Updated and Joined events need to have Status and StatusText fields

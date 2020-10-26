@@ -221,10 +221,8 @@ func (c *roomViewConversation) semiAnonymousRoomEvent() {
 func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedTypes, config data.RoomConfig) {
 	doInUIThread(func() {
 		messages := getRoomConfigUpdatedFriendlyMessages(changes, config)
-		c.displayNewInfoMessage(i18n.Local("Room's configuration changed:"))
 		for _, m := range messages {
-			c.displayInfoMessage(m)
-			c.addNewLine()
+			c.displayNewConfigurationMessage(m)
 		}
 	})
 }

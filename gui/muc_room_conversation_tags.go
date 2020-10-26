@@ -83,6 +83,8 @@ func (c *roomViewConversation) createGroupDateTag(cs mucColorSet) gtki.TextTag {
 		"justification":      pangoi.JUSTIFY_CENTER,
 		"pixels-above-lines": 12,
 		"pixels-below-lines": 12,
+		"foreground":         cs.infoMessageForeground,
+		"style":              pangoi.STYLE_ITALIC,
 	})
 }
 

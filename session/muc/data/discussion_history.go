@@ -88,12 +88,16 @@ func (dh *DiscussionHistory) GetHistory() []*DelayedMessages {
 func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time.Time) {
 	t := serverTimeInLocal(timestamp)
 
-	for _, dm := range dh.GetHistory() {
+	dh.lock.RLock()
+
+	for _, dm := range dh.history {
 		if checkIfDatesAreTheSame(dm.date, t) {
 			dm.add(nickname, message, t)
 			return
 		}
 	}
+
+	dh.lock.RUnlock()
 
 	dm := dh.addNewMessagesGroup(t)
 	dm.add(nickname, message, timestamp)

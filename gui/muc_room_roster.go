@@ -15,7 +15,7 @@ const (
 	roomViewRosterStatusIconIndex int = iota
 	roomViewRosterNicknameIndex
 	roomViewRosterAffiliationIndex
-	roomViewRosterRoleIndex
+	roomViewRosterInfoIndex
 )
 
 type roomViewRoster struct {
@@ -52,7 +52,7 @@ func (r *roomViewRoster) initDefaults() {
 		glibi.TYPE_STRING,
 		// affiliation
 		glibi.TYPE_STRING,
-		// role - tooltip
+		// info tooltip
 		glibi.TYPE_STRING,
 	)
 
@@ -119,7 +119,7 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getOccupantIconForStatus(o.Status))
 	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
 	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, affiliationDisplayName(o.Affiliation))
-	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, roleDisplayName(o.Role))
+	_ = r.model.SetValue(iter, roomViewRosterInfoIndex, roleDisplayName(o.Role))
 }
 
 func getOccupantIconForStatus(s *coyroster.Status) gdki.Pixbuf {

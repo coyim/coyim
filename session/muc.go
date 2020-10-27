@@ -23,24 +23,21 @@ type mucManager struct {
 	roomManager *muc.RoomManager
 	roomLock    sync.Mutex
 
-	discussionHistory              map[jid.Bare]*data.DiscussionHistory
-	handleDiscussionHistoryOneTime func(*xmppData.ClientMessage)
-	discussionHistoryLock          sync.Mutex
+	dhManager *discussionHistoryManager
 
 	sync.Mutex
 }
 
 func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev interface{})) *mucManager {
 	m := &mucManager{
-		log:               log,
-		conn:              conn,
-		publishEvent:      publishEvent,
-		roomManager:       muc.NewRoomManager(),
-		roomInfos:         make(map[jid.Bare]*muc.RoomListing),
-		discussionHistory: make(map[jid.Bare]*data.DiscussionHistory),
+		log:          log,
+		conn:         conn,
+		publishEvent: publishEvent,
+		roomManager:  muc.NewRoomManager(),
+		roomInfos:    make(map[jid.Bare]*muc.RoomListing),
 	}
 
-	m.handleDiscussionHistoryOneTime = doOnceWithStanza(m.handleDiscussionHistory)
+	m.dhManager = newDiscussionHistoryManager(m.handleDiscussionHistory)
 
 	return m
 }

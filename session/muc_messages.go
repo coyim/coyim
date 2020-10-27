@@ -3,7 +3,6 @@ package session
 import (
 	"time"
 
-	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -13,7 +12,7 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 	m.log.WithField("stanza", stanza).Debug("handleMUCReceivedClientMessage()")
 
 	if hasSubject(stanza) {
-		m.handleDiscussionHistoryOneTime(stanza)
+		m.dhManager.handleClientPresence(stanza)
 		m.handleSubjectReceived(stanza)
 	}
 
@@ -28,28 +27,12 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 }
 
 func (m *mucManager) receiveDelayedMessage(roomID jid.Bare, nickname, message string, timestamp time.Time) {
-	dh, ok := m.getDiscussionHistory(roomID)
+	dh, ok := m.dhManager.getHistory(roomID)
 	if !ok {
-		dh = m.addNewDiscussionHistory(roomID)
+		dh = m.dhManager.addHistory(roomID)
 	}
 
 	dh.AddMessage(nickname, message, timestamp)
-}
-
-// getDiscussionHistory returns the discussion history for the given room and a boolean indicating if it was found or not
-func (m *mucManager) getDiscussionHistory(roomID jid.Bare) (*data.DiscussionHistory, bool) {
-	h, ok := m.discussionHistory[roomID]
-	return h, ok
-}
-
-func (m *mucManager) addNewDiscussionHistory(roomID jid.Bare) *data.DiscussionHistory {
-	m.discussionHistoryLock.Lock()
-	defer m.discussionHistoryLock.Unlock()
-
-	dh := data.NewDiscussionHistory()
-	m.discussionHistory[roomID] = dh
-
-	return dh
 }
 
 // The discussion history MUST happen only one time in the events flow of XMPP's MUC
@@ -57,7 +40,7 @@ func (m *mucManager) addNewDiscussionHistory(roomID jid.Bare) *data.DiscussionHi
 // that we want to implement later, when that happens, this method should be fine
 func (m *mucManager) handleDiscussionHistory(stanza *xmppData.ClientMessage) {
 	roomID := m.retrieveRoomID(stanza.From, "handleDiscussionHistory")
-	dh, exists := m.getDiscussionHistory(roomID)
+	dh, exists := m.dhManager.getHistory(roomID)
 	if !exists {
 		m.log.WithField("room", roomID).Warn("Trying to get a not available discussion history for the given room")
 		return

@@ -118,7 +118,7 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 
 	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getOccupantIconForStatus(o.Status))
 	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
-	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, r.affiliationDisplayName(o.Affiliation))
+	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, affiliationDisplayName(o.Affiliation))
 	_ = r.model.SetValue(iter, roomViewRosterRoleIndex, roleDisplayName(o.Role))
 }
 
@@ -144,7 +144,7 @@ func getOccupantIconNameForStatus(status string) string {
 	}
 }
 
-func (r *roomViewRoster) affiliationDisplayName(a data.Affiliation) string {
+func affiliationDisplayName(a data.Affiliation) string {
 	switch a.Name() {
 	case data.AffiliationAdmin:
 		return i18n.Local("Admin")

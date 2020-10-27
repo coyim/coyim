@@ -22,13 +22,13 @@ func getRealJidFromString(realJid string) jid.Full {
 	return nil
 }
 
-func newRosterOccupantPresenceForTest(nickname string, realJid string, role data.Role, affiliation data.Affiliation, statusCode, statusMessage string) *OccupantPresenceInfo {
+func newRosterOccupantPresenceForTest(nickname string, realJid string, role data.Role, affiliation data.Affiliation, status, statusMessage string) *OccupantPresenceInfo {
 	return &OccupantPresenceInfo{
 		Nickname:      nickname,
 		RealJid:       getRealJidFromString(realJid),
 		Role:          role,
 		Affiliation:   affiliation,
-		StatusCode:    statusCode,
+		Status:        status,
 		StatusMessage: statusMessage,
 	}
 }

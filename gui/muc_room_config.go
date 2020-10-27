@@ -98,27 +98,22 @@ func roomConfigLanguage(config data.RoomConfig) string {
 	return i18n.Localf("The language of this room was changed to \"%s\".", l)
 }
 
+var languages = map[string]string{
+	"ar": "Arabic",
+	"en": "English",
+	"es": "Spanish",
+	"pt": "Portuguese",
+	"sv": "Swedish",
+	"zh": "Chinese",
+	"fr": "French",
+	"de": "German",
+}
+
 func getLanguage(languageCode string) string {
-	switch languageCode {
-	case "ar":
-		return "Arabic"
-	case "en":
-		return "English"
-	case "es":
-		return "Spanish"
-	case "pt":
-		return "Portuguese"
-	case "sv":
-		return "Swedish"
-	case "zh":
-		return "Chinese"
-	case "fr":
-		return "French"
-	case "de":
-		return "German"
-	default:
-		return languageCode
+	if l, ok := languages[languageCode]; ok {
+		return l
 	}
+	return languageCode
 }
 
 func roomConfigOccupantsCanChangeSubject(config data.RoomConfig) string {

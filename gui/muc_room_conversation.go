@@ -196,25 +196,25 @@ func (c *roomViewConversation) subjectReceivedEvent(subject string) {
 
 func (c *roomViewConversation) loggingEnabledEvent() {
 	doInUIThread(func() {
-		c.displayWarningMessage(i18n.Local("This room is now publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
+		c.displayWarningMessage(i18n.Local("This room is now publicly logged."))
 	})
 }
 
 func (c *roomViewConversation) loggingDisabledEvent() {
 	doInUIThread(func() {
-		c.displayWarningMessage(i18n.Local("This room is no longer publicly logged."))
+		c.displayWarningMessage(i18n.Local("This room is not publicly logged anymore."))
 	})
 }
 
 func (c *roomViewConversation) nonAnonymousRoomEvent() {
 	doInUIThread(func() {
-		c.displayWarningMessage(i18n.Local("This is not a non-anonymous room now, it means that the real occupant's JID could be viewed by anyone"))
+		c.displayWarningMessage(i18n.Local("Your real JID can now be seen by anyone."))
 	})
 }
 
 func (c *roomViewConversation) semiAnonymousRoomEvent() {
 	doInUIThread(func() {
-		c.displayWarningMessage(i18n.Local("This is a semi-anonymous room now, it means that the real occupant's JID could be viewed ONLY by moderators"))
+		c.displayWarningMessage(i18n.Local("Your real JID can now be seen only by moderators."))
 	})
 }
 
@@ -230,9 +230,9 @@ func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedT
 func (c *roomViewConversation) nonMembersRemovedEvent(v bool, nickname string) {
 	doInUIThread(func() {
 		if v {
-			c.displayWarningMessage(i18n.Local("You have been removed from the room because the configuration. Now this room allows only-members."))
+			c.displayWarningMessage(i18n.Local("You are not available to participate in this room because the \"Allow only members in the room\" option was set."))
 		} else {
-			c.displayWarningMessage(i18n.Localf("\"%s\" has been removed from the room because the configuration. Now this room allows only-members.", nickname))
+			c.displayWarningMessage(i18n.Localf("\"%s\" is available to participate in this room.", nickname))
 		}
 		c.disabledSendCapabilities()
 	})

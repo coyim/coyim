@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"strings"
+
 	"github.com/coyim/gotk3adapter/gdki"
 
 	"github.com/coyim/coyim/i18n"
@@ -119,7 +121,7 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getOccupantIconForStatus(o.Status))
 	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
 	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, affiliationDisplayName(o.Affiliation))
-	_ = r.model.SetValue(iter, roomViewRosterInfoIndex, roleDisplayName(o.Role))
+	_ = r.model.SetValue(iter, roomViewRosterInfoIndex, occupantDisplayTooltip(o))
 }
 
 func getOccupantIconForStatus(s *coyroster.Status) gdki.Pixbuf {
@@ -189,6 +191,28 @@ func roleDisplayName(role data.Role) string {
 		// because golang can't prove it
 		return ""
 	}
+}
+
+func statusDisplayMessage(s *coyroster.Status) string {
+	return s.StatusMsg
+}
+
+func statusDisplayName(s *coyroster.Status) string {
+	return showForDisplay(s.Status, false)
+}
+
+func occupantDisplayTooltip(o *muc.Occupant) string {
+	ms := []string{
+		o.Nickname,
+		statusDisplayName(o.Status),
+	}
+
+	m := statusDisplayMessage(o.Status)
+	if m != "" {
+		ms = append(ms, m)
+	}
+
+	return strings.Join(ms, "\n")
 }
 
 func isOccupantListEmpty(o []*muc.Occupant) bool {

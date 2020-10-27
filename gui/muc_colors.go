@@ -33,7 +33,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		subjectForeground:       "#000080",
 		infoMessageForeground:   "#395BA3",
 		messageForeground:       "#000000",
-		configurationForeground: "#f02011",
+		configurationForeground: "#9a04bf",
 	}
 }
 
@@ -50,6 +50,6 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		subjectForeground:       "#000080",
 		infoMessageForeground:   "#E34267",
 		messageForeground:       "#000000",
-		configurationForeground: "#f02011",
+		configurationForeground: "#9a04bf",
 	}
 }

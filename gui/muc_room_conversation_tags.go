@@ -105,6 +105,7 @@ func (c *roomViewConversation) createErrorTag(cs mucColorSet) gtki.TextTag {
 func (c *roomViewConversation) createConfigurationChangeTag(cs mucColorSet) gtki.TextTag {
 	return c.createConversationTag("configuration", map[string]interface{}{
 		"foreground": cs.configurationForeground,
+		"style":      pangoi.STYLE_ITALIC,
 	})
 }
 

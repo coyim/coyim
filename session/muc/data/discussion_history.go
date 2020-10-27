@@ -117,5 +117,5 @@ func checkIfDatesAreTheSame(d1, d2 time.Time) bool {
 }
 
 func serverTimeInLocal(t time.Time) time.Time {
-	return t.In(time.Now().Location())
+	return t.In(time.Local)
 }

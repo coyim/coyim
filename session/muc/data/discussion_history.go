@@ -54,8 +54,9 @@ func (dm *DelayedMessages) GetMessages() []*DelayedMessage {
 
 func (dm *DelayedMessages) add(nickname, message string, timestamp time.Time) {
 	dm.lock.Lock()
+	defer dm.lock.Unlock()
+
 	dm.messages = append(dm.messages, newDelayedMessage(nickname, message, timestamp))
-	dm.lock.Unlock()
 }
 
 // DiscussionHistory contains the rooms's discussion history

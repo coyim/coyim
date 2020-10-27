@@ -137,16 +137,16 @@ func getTodayFromStart() time.Time {
 }
 
 func checkTimeToday(t time.Time, tt timeTranslator) bool {
-	return mightBeTheSameTime(t, time.Now())
+	return areTheSameDateInUTC(t, time.Now())
 }
 
 func checkTimeAfter(t time.Time, tt timeTranslator) bool {
 	return t.After(getTodayFromStart().AddDate(tt.yearIndex, tt.monthIndex, tt.dayIndex))
 }
 
-func mightBeTheSameTime(d1, d2 time.Time) bool {
-	t1 := d1.In(time.UTC)
-	t2 := d2.In(time.UTC)
+func areTheSameDateInUTC(d1, d2 time.Time) bool {
+	t1y, t1m, t1d := d1.In(time.UTC).Date()
+	t2y, t2m, t2d := d2.In(time.UTC).Date()
 
-	return t1.Day() == t2.Day() && t1.Month() == t2.Month() && t1.Year() == t1.Year()
+	return t1d == t2d && t1m == t2m && t1y == t2y
 }

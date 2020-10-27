@@ -27,6 +27,9 @@ func (m *mucManager) receiveClientMessage(stanza *xmppData.ClientMessage) {
 }
 
 func (m *mucManager) receiveDelayedMessage(roomID jid.Bare, nickname, message string, timestamp time.Time) {
+	m.dhLock.Lock()
+	defer m.dhLock.Unlock()
+
 	dh, ok := m.dhManager.getHistory(roomID)
 	if !ok {
 		dh = m.dhManager.addHistory(roomID)

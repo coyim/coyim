@@ -24,6 +24,7 @@ type mucManager struct {
 	roomLock    sync.Mutex
 
 	dhManager *discussionHistoryManager
+	dhLock    sync.Mutex
 
 	sync.Mutex
 }

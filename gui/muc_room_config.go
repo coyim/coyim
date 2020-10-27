@@ -94,7 +94,31 @@ func roomConfigPublic(config data.RoomConfig) string {
 }
 
 func roomConfigLanguage(config data.RoomConfig) string {
-	return i18n.Localf("The language of this room was changed to \"%s\".", config.Language)
+	l := getLanguage(config.Language)
+	return i18n.Localf("The language of this room was changed to \"%s\".", l)
+}
+
+func getLanguage(languageCode string) string {
+	switch languageCode {
+	case "ar":
+		return "Arabic"
+	case "en":
+		return "English"
+	case "es":
+		return "Spanish"
+	case "pt":
+		return "Portuguese"
+	case "sv":
+		return "Swedish"
+	case "zh":
+		return "Chinese"
+	case "fr":
+		return "French"
+	case "de":
+		return "German"
+	default:
+		return languageCode
+	}
 }
 
 func roomConfigOccupantsCanChangeSubject(config data.RoomConfig) string {

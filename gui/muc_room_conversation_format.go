@@ -66,12 +66,12 @@ func (c *roomViewConversation) displayLiveMessage(nickname, message string, time
 // displayDiscussionHistoryDate MUST be called from the UI thread
 func (c *roomViewConversation) displayDiscussionHistoryDate(d time.Time) {
 	j := c.chatTextView.GetJustification()
+	defer c.chatTextView.SetJustification(j)
+
 	c.chatTextView.SetJustification(gtki.JUSTIFY_CENTER)
 
 	c.addTextWithTag(timeToFriendlyString(d), "groupdate")
 	c.addNewLine()
-
-	c.chatTextView.SetJustification(j)
 }
 
 // displayDiscussionHistoryMessages MUST be called from the UI thread

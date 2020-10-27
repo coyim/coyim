@@ -89,7 +89,7 @@ func (dh *DiscussionHistory) AddMessage(nickname, message string, timestamp time
 	t := serverTimeInLocal(timestamp)
 
 	for _, dm := range dh.GetHistory() {
-		if mightBeTheSameTime(dm.date, t) {
+		if checkIfDatesAreTheSame(dm.date, t) {
 			dm.add(nickname, message, t)
 			return
 		}
@@ -109,11 +109,11 @@ func (dh *DiscussionHistory) addNewMessagesGroup(date time.Time) *DelayedMessage
 	return dm
 }
 
-func mightBeTheSameTime(d1, d2 time.Time) bool {
-	t1 := d1.In(time.UTC)
-	t2 := d2.In(time.UTC)
+func checkIfDatesAreTheSame(d1, d2 time.Time) bool {
+	t1y, t1m, t1d := d1.In(time.UTC).Date()
+	t2y, t2m, t2d := d2.In(time.UTC).Date()
 
-	return t1.Day() == t2.Day() && t1.Month() == t2.Month() && t1.Year() == t1.Year()
+	return t1d == t2d && t1m == t2m && t1y == t2y
 }
 
 func serverTimeInLocal(t time.Time) time.Time {

@@ -31,8 +31,8 @@ var roomConfigUpdateCallers map[int]func(jid.Bare)
 func (m *mucManager) getRoomConfigUpdateCallers() map[int]func(jid.Bare) {
 	if len(roomConfigUpdateCallers) == 0 {
 		roomConfigUpdateCallers = map[int]func(jid.Bare){
-			MUCStatusRoomLoggingEnabled:  m.loggingEnabled,
-			MUCStatusRoomLoggingDisabled: m.loggingDisabled,
+			MUCStatusRoomLoggingEnabled:  m.handleLoggingEnabled,
+			MUCStatusRoomLoggingDisabled: m.handleLoggingDisabled,
 			MUCStatusConfigChanged:       m.nonPrivacyConfigChanged,
 		}
 	}
@@ -52,12 +52,35 @@ func (m *mucManager) handleRoomConfigUpdate(stanza *xmppData.ClientMessage) {
 	}
 }
 
-func (m *mucManager) nonPrivacyConfigChanged(roomID jid.Bare) {
+func (m *mucManager) obtainRoomInfo(roomID jid.Bare) *muc.RoomListing {
 	rl, ok := m.getRoomInfo(roomID)
 	if !ok {
 		rl = m.newRoomListing(roomID)
 		m.addRoomInfo(roomID, rl)
 	}
+	return rl
+}
+
+func (m *mucManager) handleLoggingEnabled(roomID jid.Bare) {
+	rl := m.obtainRoomInfo(roomID)
+
+	if rl.LoggedCode != MUCStatusRoomLoggingEnabled {
+		m.loggingEnabled(roomID)
+		rl.UpdateLoggedCode(MUCStatusRoomLoggingEnabled)
+	}
+}
+
+func (m *mucManager) handleLoggingDisabled(roomID jid.Bare) {
+	rl := m.obtainRoomInfo(roomID)
+
+	if rl.LoggedCode != MUCStatusRoomLoggingDisabled {
+		m.loggingDisabled(roomID)
+		rl.UpdateLoggedCode(MUCStatusRoomLoggingDisabled)
+	}
+}
+
+func (m *mucManager) nonPrivacyConfigChanged(roomID jid.Bare) {
+	rl := m.obtainRoomInfo(roomID)
 
 	prevConfig := rl.GetConfig()
 	m.findOutMoreInformationAboutRoom(rl)

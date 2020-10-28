@@ -28,9 +28,14 @@ func NewRoomListing() *RoomListing {
 	return &RoomListing{}
 }
 
-//GetConfig description
+// GetConfig returns the room configuration from the room listing
 func (rl *RoomListing) GetConfig() data.RoomConfig {
 	return rl.RoomConfig
+}
+
+// UpdateLoggedCode update the logged code in the room configuration
+func (rl *RoomListing) UpdateLoggedCode(c int) {
+	rl.LoggedCode = c
 }
 
 // OnUpdate takes a function and some data, and when this room listing is updated, that function

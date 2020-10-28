@@ -58,4 +58,5 @@ type RoomConfig struct {
 	AllowPrivateMessages      string // This can be 'anyone', 'participants', 'moderators', 'none'
 	ContactJid                string
 	Logged                    bool // Notice that this will not always be correct for all servers
+	LoggedCode                int
 }

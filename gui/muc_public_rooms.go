@@ -92,7 +92,6 @@ func (prv *mucPublicRoomsView) initBuilder() {
 		"on_join":              prv.onJoinRoom,
 		"on_activate_room_row": prv.onActivateRoomRow,
 		"on_selection_changed": prv.onSelectionChanged,
-		"on_custom_service":    prv.onUpdatePublicRooms,
 		"on_refresh":           prv.onUpdatePublicRooms,
 	})
 }
@@ -156,8 +155,10 @@ func (prv *mucPublicRoomsView) log() coylog.Logger {
 }
 
 func (prv *mucPublicRoomsView) onAccountsUpdated(ca *account) {
-	prv.currentAccount = ca
-	prv.updatePublicRoomsForCurrentAccount()
+	if prv.currentAccount == nil || prv.currentAccount.Account() != ca.Account() {
+		prv.currentAccount = ca
+		prv.updatePublicRoomsForCurrentAccount()
+	}
 }
 
 func (prv *mucPublicRoomsView) onNoAccounts() {

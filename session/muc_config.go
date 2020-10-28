@@ -105,6 +105,7 @@ var roomConfigUpdateCheckers = map[data.RoomConfigType]func(data.RoomConfig, dat
 	data.RoomConfigMembersCanInvite:          roomConfigMembersCanInviteCheckUpdate,
 	data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessagesCheckUpdate,
 	data.RoomConfigLogged:                    roomConfigLoggedCheckUpdate,
+	data.RoomMaxHistoryFetch:                 roomConfigMaxHistoryFetchCheckUpdate,
 }
 
 func (m *mucManager) onRoomConfigUpdate(roomID jid.Bare, currConfig, prevConfig data.RoomConfig) {
@@ -185,4 +186,8 @@ func roomConfigLoggedCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
 
 func isRoomConfigUpdate(stanza *xmppData.ClientMessage) bool {
 	return hasMUCUserExtension(stanza)
+}
+
+func roomConfigMaxHistoryFetchCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
+	return currConfig.MaxHistoryFetch != prevConfig.MaxHistoryFetch
 }

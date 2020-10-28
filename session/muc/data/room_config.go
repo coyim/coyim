@@ -34,6 +34,8 @@ const (
 	RoomConfigAllowPrivateMessages
 	// RoomConfigLogged represents room's "Logged" config
 	RoomConfigLogged
+	// RoomMaxHistoryFetch represents the maximum number of history messages returned by Room
+	RoomMaxHistoryFetch
 )
 
 // RoomConfig represents the room's configuration values
@@ -57,4 +59,5 @@ type RoomConfig struct {
 	ContactJid                string
 	Logged                    bool // Notice that this will not always be correct for all servers
 	LoggedCode                int
+	MaxHistoryFetch           int
 }

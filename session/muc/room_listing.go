@@ -200,6 +200,13 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 		if len(values) > 0 {
 			rl.ContactJid = values[0]
 		}
+	case "muc#maxhistoryfetch":
+		if len(values) > 0 {
+			res, e := strconv.Atoi(values[0])
+			if e == nil {
+				rl.MaxHistoryFetch = res
+			}
+		}
 	default:
 		fmt.Printf("UNKNOWN FORM VAR: %s\n", field)
 	}

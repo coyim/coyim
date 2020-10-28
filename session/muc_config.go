@@ -33,6 +33,8 @@ func (m *mucManager) getRoomConfigUpdateCallers() map[int]func(jid.Bare) {
 		roomConfigUpdateCallers = map[int]func(jid.Bare){
 			MUCStatusRoomLoggingEnabled:  m.handleLoggingEnabled,
 			MUCStatusRoomLoggingDisabled: m.handleLoggingDisabled,
+			MUCStatusRoomNonAnonymous:    m.nonAnonymousRoom,
+			MUCStatusRoomSemiAnonymous:   m.semiAnonymousRoom,
 			MUCStatusConfigChanged:       m.nonPrivacyConfigChanged,
 		}
 	}
@@ -103,7 +105,6 @@ var roomConfigUpdateCheckers = map[data.RoomConfigType]func(data.RoomConfig, dat
 	data.RoomConfigMembersCanInvite:          roomConfigMembersCanInviteCheckUpdate,
 	data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessagesCheckUpdate,
 	data.RoomConfigLogged:                    roomConfigLoggedCheckUpdate,
-	data.RoomAnonymity:                       roomConfigAnonymityCheckUpdate,
 }
 
 func (m *mucManager) onRoomConfigUpdate(roomID jid.Bare, currConfig, prevConfig data.RoomConfig) {
@@ -180,10 +181,6 @@ func roomConfigAllowPrivateMessagesCheckUpdate(currConfig, prevConfig data.RoomC
 
 func roomConfigLoggedCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
 	return currConfig.Logged != prevConfig.Logged
-}
-
-func roomConfigAnonymityCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
-	return currConfig.Anonymity != prevConfig.Anonymity
 }
 
 func isRoomConfigUpdate(stanza *xmppData.ClientMessage) bool {

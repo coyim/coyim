@@ -104,6 +104,10 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
+		case nonAnonymousRoomEvent:
+			c.nonAnonymousRoomEvent()
+		case semiAnonymousRoomEvent:
+			c.semiAnonymousRoomEvent()
 		case roomConfigChangedEvent:
 			c.roomConfigChangedEvent(t.changes, t.config)
 		case nonMembersRemovedEvent:
@@ -199,6 +203,18 @@ func (c *roomViewConversation) loggingEnabledEvent() {
 func (c *roomViewConversation) loggingDisabledEvent() {
 	doInUIThread(func() {
 		c.displayWarningMessage(i18n.Local("This room is not publicly logged anymore."))
+	})
+}
+
+func (c *roomViewConversation) nonAnonymousRoomEvent() {
+	doInUIThread(func() {
+		c.displayNewConfigurationMessage(i18n.Local("Your real JID can now be seen by anyone."))
+	})
+}
+
+func (c *roomViewConversation) semiAnonymousRoomEvent() {
+	doInUIThread(func() {
+		c.displayNewConfigurationMessage(i18n.Local("Your real JID can now be seen only by moderators."))
 	})
 }
 

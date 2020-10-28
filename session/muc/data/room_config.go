@@ -10,8 +10,6 @@ const (
 	RoomConfigAllowsRegistration
 	// RoomConfigPersistent represents room's "Persistent" config
 	RoomConfigPersistent
-	// RoomAnonymity represents room's "Anonymity" config
-	RoomAnonymity
 	// RoomConfigModerated represents room's "Moderated" config
 	RoomConfigModerated
 	// RoomConfigOpen represents room's "Open" config

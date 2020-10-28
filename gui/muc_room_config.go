@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"errors"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
 	"golang.org/x/text/language"
@@ -99,20 +97,16 @@ func roomConfigPublic(config data.RoomConfig) string {
 }
 
 func roomConfigLanguage(config data.RoomConfig) string {
-	l, err := getLanguage(config.Language)
-	if err != nil {
-		return i18n.Localf("Undefined language in the room for \"%s\".", config.Language)
-	}
-	return i18n.Localf("The language of this room was changed to \"%s\".", l)
+	return i18n.Localf("The language of this room was changed to %s", getLanguage(config.Language))
 }
 
-func getLanguage(languageCode string) (string, error) {
+func getLanguage(languageCode string) string {
 	languageTag, _ := language.Parse(languageCode)
 	l := display.Self.Name(languageTag)
 	if l == "" {
-		return "", errors.New("language undefined")
+		return languageCode
 	}
-	return l, nil
+	return l
 }
 
 func roomConfigOccupantsCanChangeSubject(config data.RoomConfig) string {

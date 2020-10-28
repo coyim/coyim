@@ -38,6 +38,7 @@ func initMUCConfigUpdateMessages() {
 		data.RoomConfigMembersCanInvite:          roomConfigMembersCanInvite,
 		data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessages,
 		data.RoomConfigLogged:                    roomConfigLogged,
+		data.RoomAnonymity:                       roomAnonymity,
 	}
 }
 
@@ -156,4 +157,11 @@ func roomConfigLogged(config data.RoomConfig) string {
 	}
 	return i18n.Local("The room's discussion is private now, " +
 		"the service is not logging any message.")
+}
+
+func roomAnonymity(config data.RoomConfig) string {
+	if config.Anonymity == "no" {
+		return i18n.Local("Your real JID can now be seen by anyone.")
+	}
+	return i18n.Local("Your real JID can now be seen only by moderators.")
 }

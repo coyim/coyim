@@ -33,8 +33,6 @@ func (m *mucManager) getRoomConfigUpdateCallers() map[int]func(jid.Bare) {
 		roomConfigUpdateCallers = map[int]func(jid.Bare){
 			MUCStatusRoomLoggingEnabled:  m.loggingEnabled,
 			MUCStatusRoomLoggingDisabled: m.loggingDisabled,
-			MUCStatusRoomNonAnonymous:    m.nonAnonymousRoom,
-			MUCStatusRoomSemiAnonymous:   m.semiAnonymousRoom,
 			MUCStatusConfigChanged:       m.nonPrivacyConfigChanged,
 		}
 	}
@@ -82,6 +80,7 @@ var roomConfigUpdateCheckers = map[data.RoomConfigType]func(data.RoomConfig, dat
 	data.RoomConfigMembersCanInvite:          roomConfigMembersCanInviteCheckUpdate,
 	data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessagesCheckUpdate,
 	data.RoomConfigLogged:                    roomConfigLoggedCheckUpdate,
+	data.RoomAnonymity:                       roomConfigAnonymityCheckUpdate,
 }
 
 func (m *mucManager) onRoomConfigUpdate(roomID jid.Bare, currConfig, prevConfig data.RoomConfig) {
@@ -93,7 +92,11 @@ func (m *mucManager) onRoomConfigUpdate(roomID jid.Bare, currConfig, prevConfig 
 		}
 	}
 
-	m.roomConfigChanged(roomID, changes, currConfig)
+	// Some XMPP clients sends an update room configuration even when nothing has changed
+	// We do this validation to avoid publish and room configuration change event when nothing has changed.
+	if len(changes) > 0 {
+		m.roomConfigChanged(roomID, changes, currConfig)
+	}
 }
 
 func roomConfigSupportsVoiceRequestsCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
@@ -154,6 +157,10 @@ func roomConfigAllowPrivateMessagesCheckUpdate(currConfig, prevConfig data.RoomC
 
 func roomConfigLoggedCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
 	return currConfig.Logged != prevConfig.Logged
+}
+
+func roomConfigAnonymityCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
+	return currConfig.Anonymity != prevConfig.Anonymity
 }
 
 func isRoomConfigUpdate(stanza *xmppData.ClientMessage) bool {

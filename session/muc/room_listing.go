@@ -180,7 +180,7 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 	case "muc#roominfo_occupants":
 		if len(values) > 0 {
 			res, e := strconv.Atoi(values[0])
-			if e != nil {
+			if e == nil {
 				rl.Occupants = res
 			}
 		}

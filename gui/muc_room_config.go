@@ -32,10 +32,9 @@ func initMUCConfigUpdateMessages() {
 		data.RoomConfigOccupantsCanChangeSubject: roomConfigOccupantsCanChangeSubject,
 		data.RoomConfigTitle:                     roomConfigTitle,
 		data.RoomConfigDescription:               roomConfigDescription,
-		data.RoomConfigOccupants:                 roomConfigOccupants,
 		data.RoomConfigMembersCanInvite:          roomConfigMembersCanInvite,
 		data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessages,
-		data.RoomConfigLogged:                    roomConfigLogged,
+		data.RoomConfigMaxHistoryFetch:           roomConfigMaxHistoryFetch,
 	}
 }
 
@@ -131,11 +130,6 @@ func roomConfigAllowPrivateMessages(config data.RoomConfig) string {
 		"to the room's occupants.", rolePluralName(config.AllowPrivateMessages))
 }
 
-func roomConfigOccupants(config data.RoomConfig) string {
-	return i18n.Localf("The number of occupants in this room was "+
-		"limited to \"%d\".", config.Occupants)
-}
-
 func roomConfigMembersCanInvite(config data.RoomConfig) string {
 	if config.MembersCanInvite {
 		return i18n.Local("Members can now invite other users to join.")
@@ -143,11 +137,6 @@ func roomConfigMembersCanInvite(config data.RoomConfig) string {
 	return i18n.Local("Members cannot invite other users to join anymore.")
 }
 
-func roomConfigLogged(config data.RoomConfig) string {
-	if config.Logged {
-		return i18n.Local("The discussion in this room is logged " +
-			"to a public archive now.")
-	}
-	return i18n.Local("The room's discussion is private now, " +
-		"the service is not logging any message.")
+func roomConfigMaxHistoryFetch(config data.RoomConfig) string {
+	return i18n.Localf("The room's max history length was changed to %d", config.MaxHistoryFetch)
 }

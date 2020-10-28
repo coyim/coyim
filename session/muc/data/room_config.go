@@ -26,16 +26,14 @@ const (
 	RoomConfigTitle
 	// RoomConfigDescription represents room's "Description" config
 	RoomConfigDescription
-	// RoomConfigOccupants represents room's "Occupants" config
-	RoomConfigOccupants
 	// RoomConfigMembersCanInvite represents room's "OccupantsCanInvite" config
 	RoomConfigMembersCanInvite
 	// RoomConfigAllowPrivateMessages represents room's "AllowPrivateMessages" config
 	RoomConfigAllowPrivateMessages
 	// RoomConfigLogged represents room's "Logged" config
 	RoomConfigLogged
-	// RoomMaxHistoryFetch represents the maximum number of history messages returned by Room
-	RoomMaxHistoryFetch
+	// RoomConfigMaxHistoryFetch represents the maximum number of history messages returned by Room
+	RoomConfigMaxHistoryFetch
 )
 
 // RoomConfig represents the room's configuration values

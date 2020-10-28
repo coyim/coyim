@@ -101,11 +101,10 @@ var roomConfigUpdateCheckers = map[data.RoomConfigType]func(data.RoomConfig, dat
 	data.RoomConfigOccupantsCanChangeSubject: roomConfigOccupantsCanChangeSubjectCheckUpdate,
 	data.RoomConfigTitle:                     roomConfigTitleCheckUpdate,
 	data.RoomConfigDescription:               roomConfigDescriptionCheckUpdate,
-	data.RoomConfigOccupants:                 roomConfigOccupantsCheckUpdate,
 	data.RoomConfigMembersCanInvite:          roomConfigMembersCanInviteCheckUpdate,
 	data.RoomConfigAllowPrivateMessages:      roomConfigAllowPrivateMessagesCheckUpdate,
 	data.RoomConfigLogged:                    roomConfigLoggedCheckUpdate,
-	data.RoomMaxHistoryFetch:                 roomConfigMaxHistoryFetchCheckUpdate,
+	data.RoomConfigMaxHistoryFetch:           roomConfigMaxHistoryFetchCheckUpdate,
 }
 
 func (m *mucManager) onRoomConfigUpdate(roomID jid.Bare, currConfig, prevConfig data.RoomConfig) {
@@ -166,10 +165,6 @@ func roomConfigTitleCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
 
 func roomConfigDescriptionCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
 	return currConfig.Description != prevConfig.Description
-}
-
-func roomConfigOccupantsCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {
-	return currConfig.Occupants != prevConfig.Occupants
 }
 
 func roomConfigMembersCanInviteCheckUpdate(currConfig, prevConfig data.RoomConfig) bool {

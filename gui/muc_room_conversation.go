@@ -214,9 +214,9 @@ func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedT
 func (c *roomViewConversation) nonMembersRemovedEvent(v bool, nickname string) {
 	doInUIThread(func() {
 		if v {
-			c.displayWarningMessage(i18n.Local("You are not available to participate in this room because the \"Allow only members in the room\" option was set."))
+			c.displayWarningMessage(i18n.Local("You have been thrown out of this room because it's now a members only room."))
 		} else {
-			c.displayWarningMessage(i18n.Localf("\"%s\" is available to participate in this room.", nickname))
+			c.displayWarningMessage(i18n.Localf("\"%s\" can participate in this room.", nickname))
 		}
 		c.disabledSendCapabilities()
 	})

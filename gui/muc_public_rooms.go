@@ -92,6 +92,7 @@ func (prv *mucPublicRoomsView) initBuilder() {
 		"on_join":              prv.onJoinRoom,
 		"on_activate_room_row": prv.onActivateRoomRow,
 		"on_selection_changed": prv.onSelectionChanged,
+		"on_custom_service":    prv.onUpdatePublicRooms,
 		"on_refresh":           prv.onUpdatePublicRooms,
 	})
 }

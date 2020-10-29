@@ -82,3 +82,15 @@ type MUCConflict struct {
 type MUCServiceUnavailable struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas service-unavailable,omitempty"`
 }
+
+// MUCRoomDestroyQuery contains query information to destroy a room
+type MUCRoomDestroyQuery struct {
+	XMLName xml.Name       `xml:"http://jabber.org/protocol/muc#owner query"`
+	Destroy MUCRoomDestroy `xml:"destroy"`
+}
+
+// MUCRoomDestroy contains information used to destroy a room
+type MUCRoomDestroy struct {
+	Jid    string `xml:"jid,attr,omitempty"`
+	Reason string `xml:"reason,omitempty"`
+}

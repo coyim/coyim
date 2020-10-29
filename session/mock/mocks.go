@@ -233,6 +233,11 @@ func (*SessionMock) GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error
 	return nil, nil, nil
 }
 
+// DestroyRoom is the implementation for session interface
+func (*SessionMock) DestroyRoom(jid.Bare, jid.Bare, string) (<-chan bool, <-chan error, func()) {
+	return nil, nil, nil
+}
+
 // Log is the implementation for session interface
 func (*SessionMock) Log() coylog.Logger {
 	return nil

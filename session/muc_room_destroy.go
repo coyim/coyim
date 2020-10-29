@@ -140,20 +140,18 @@ func (ctx *destroyRoomContext) handleIQError(err data.StanzaError) error {
 
 func (ctx *destroyRoomContext) finish() {
 	ctx.resultChannel <- true
-	close(ctx.resultChannel)
+	ctx.clean()
 }
 
 func (ctx *destroyRoomContext) finishWithError(err error) {
 	ctx.log.WithError(err).Error("An error ocurred trying to destroy the room")
 	ctx.errorChannel <- err
-	close(ctx.errorChannel)
+	ctx.clean()
 }
 
 func (ctx *destroyRoomContext) finishWithCancel() {
 	ctx.log.Warn("The destroy room operation was canceled, but it could still happen")
-	close(ctx.resultChannel)
-	close(ctx.errorChannel)
-	close(ctx.cancelChannel)
+	ctx.clean()
 }
 
 func (ctx *destroyRoomContext) endEarly() {
@@ -162,6 +160,12 @@ func (ctx *destroyRoomContext) endEarly() {
 	}
 
 	ctx.cancelChannel <- true
+}
+
+func (ctx *destroyRoomContext) clean() {
+	close(ctx.resultChannel)
+	close(ctx.errorChannel)
+	close(ctx.cancelChannel)
 }
 
 func (ctx *destroyRoomContext) getAlternateRoomID() string {

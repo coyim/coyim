@@ -21,6 +21,7 @@
                 <property name="headers_clickable">False</property>
                 <property name="search_column">1</property>
                 <property name="tooltip_column">3</property>
+                <signal name="row-activated" handler="on_occupant_selected" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>

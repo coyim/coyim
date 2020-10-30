@@ -167,6 +167,7 @@ func (c *roomViewConversation) discussionHistoryEvent(dh *data.DiscussionHistory
 			c.displayDiscussionHistoryDate(dm.GetDate())
 			c.displayDiscussionHistoryMessages(dm.GetMessages())
 		}
+		c.displayDivider()
 	})
 }
 

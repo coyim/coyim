@@ -53,7 +53,7 @@ func getTimeTranslators() []timeTranslator {
 				},
 			},
 			timeTranslator{
-				-5, 0, 0,
+				0, -1, 0,
 				checkTimeAfter,
 				func(t time.Time) string {
 					return timeToFriendlyDate(t)

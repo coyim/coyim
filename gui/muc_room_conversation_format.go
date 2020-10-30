@@ -117,7 +117,7 @@ func (c *roomViewConversation) displayErrorMessage(message string) {
 
 // displayDivider MUST be called from the UI thread
 func (c *roomViewConversation) displayDivider() {
-	c.addTextWithTag("---", "divider")
+	c.addTextWithTag("――――――――――――――――――――", "divider")
 	c.addNewLine()
 }
 

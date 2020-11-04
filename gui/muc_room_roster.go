@@ -38,9 +38,8 @@ type roomViewRoster struct {
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	r := &roomViewRoster{
-		roster:     v.room.Roster(),
-		rosterInfo: v.newRoomViewRosterInfo(),
-		log:        v.log,
+		roster: v.room.Roster(),
+		log:    v.log,
 	}
 
 	r.initBuilder()
@@ -107,11 +106,20 @@ func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath)
 		return
 	}
 
+	r.showOccupantInfo(occupant)
+}
+
+func (r *roomViewRoster) addInfoPanel() {
+	r.rosterInfo = r.newRoomViewRosterInfo()
+}
+
+func (r *roomViewRoster) showOccupantInfo(occupant *muc.Occupant) {
 	r.rosterPanel.Hide()
+
+	r.addInfoPanel()
 	r.view.Add(r.rosterInfo.rosterInfoBox)
 	r.rosterInfo.displayOccupantInfoPanel(occupant, func() {
 		doInUIThread(func() {
-			r.view.Remove(r.rosterInfo.rosterInfoBox)
 			r.rosterPanel.Show()
 		})
 	})

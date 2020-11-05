@@ -228,14 +228,14 @@ func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedT
 	})
 }
 
-func (c *roomViewConversation) nonMembersRemovedEvent(v bool, nickname string) {
+func (c *roomViewConversation) nonMembersRemovedEvent(selfOccupantRemoved bool, nickname string) {
 	doInUIThread(func() {
-		if v {
+		if selfOccupantRemoved {
 			c.displayWarningMessage(i18n.Local("You have been thrown out of this room because it's now a members only room."))
-		} else {
-			c.displayWarningMessage(i18n.Localf("\"%s\" can participate in this room.", nickname))
+			c.disableSendCapabilities()
+			return
 		}
-		c.disableSendCapabilities()
+		c.displayWarningMessage(i18n.Localf("\"%s\" was removed from this room.", nickname))
 	})
 }
 

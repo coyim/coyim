@@ -165,6 +165,9 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 			rl.Logged = values[0] == "1"
 		}
 	case "muc#roomconfig_roomname":
+		// Initialized with an empty string because when `muc#roomconfig_roomname`
+		// has no value, the` Title` field is not updated
+		rl.Title = ""
 		if len(values) > 0 {
 			rl.Title = values[0]
 		}

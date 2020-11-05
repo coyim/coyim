@@ -235,12 +235,12 @@ func (c *roomViewConversation) nonMembersRemovedEvent(v bool, nickname string) {
 		} else {
 			c.displayWarningMessage(i18n.Localf("\"%s\" can participate in this room.", nickname))
 		}
-		c.disabledSendCapabilities()
+		c.disableSendCapabilities()
 	})
 }
 
-// disabledSendCapabilities MUST be called from the UI thread
-func (c *roomViewConversation) disabledSendCapabilities() {
+// disableSendCapabilities MUST be called from the UI thread
+func (c *roomViewConversation) disableSendCapabilities() {
 	c.canSendMessages = false
 	c.updateSendCapabilities()
 }

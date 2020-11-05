@@ -61,9 +61,9 @@ func roomConfigSupportsVoiceRequests(config data.RoomConfig) string {
 
 func roomConfigAllowsRegistration(config data.RoomConfig) string {
 	if config.AllowsRegistration {
-		return i18n.Local("This room support users registration.")
+		return i18n.Local("This room supports user registration.")
 	}
-	return i18n.Local("This room doesn't support users registration.")
+	return i18n.Local("This room doesn't support user registration.")
 }
 
 func roomConfigPersistent(config data.RoomConfig) string {

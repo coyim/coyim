@@ -66,18 +66,18 @@ func (m *mucManager) obtainRoomInfo(roomID jid.Bare) *muc.RoomListing {
 func (m *mucManager) handleLoggingEnabled(roomID jid.Bare) {
 	rl := m.obtainRoomInfo(roomID)
 
-	if rl.LoggedCode != MUCStatusRoomLoggingEnabled {
+	if !rl.Logged {
 		m.loggingEnabled(roomID)
-		rl.UpdateLoggedCode(MUCStatusRoomLoggingEnabled)
+		rl.Logged = true
 	}
 }
 
 func (m *mucManager) handleLoggingDisabled(roomID jid.Bare) {
 	rl := m.obtainRoomInfo(roomID)
 
-	if rl.LoggedCode != MUCStatusRoomLoggingDisabled {
+	if rl.Logged {
 		m.loggingDisabled(roomID)
-		rl.UpdateLoggedCode(MUCStatusRoomLoggingDisabled)
+		rl.Logged = false
 	}
 }
 

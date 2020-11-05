@@ -33,11 +33,6 @@ func (rl *RoomListing) GetConfig() data.RoomConfig {
 	return rl.RoomConfig
 }
 
-// UpdateLoggedCode update the logged code in the room configuration
-func (rl *RoomListing) UpdateLoggedCode(c int) {
-	rl.LoggedCode = c
-}
-
 // OnUpdate takes a function and some data, and when this room listing is updated, that function
 // will be called with the current room listing and the associated data
 func (rl *RoomListing) OnUpdate(f func(*RoomListing, interface{}), data interface{}) {

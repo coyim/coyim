@@ -24,7 +24,9 @@
                 <property name="activate-on-single-click">True</property>
                 <signal name="row-activated" handler="on_occupant_selected" swapped="no"/>
                 <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                  <object class="GtkTreeSelection">
+                    <property name="mode">GTK_SELECTION_NONE</property>
+                  </object>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="occupant-column">

@@ -85,8 +85,8 @@ func (r *Room) AddSelfOccupant(occupant *Occupant) {
 	r.selfOccupant = occupant
 }
 
-// IsSelfOccupantJoined returns true if the self occupant is in the room, false in otherwise
-func (r *Room) IsSelfOccupantJoined() bool {
+// SelfOccupantIsJoined returns true if the self occupant is in the room, false in otherwise
+func (r *Room) SelfOccupantIsJoined() bool {
 	return r.selfOccupant != nil
 }
 

@@ -31,7 +31,7 @@
                 <property name="border_width">12</property>
                 <property name="spacing">12</property>
                 <child>
-                  <object class="GtkButton" id="cancen-button">
+                  <object class="GtkButton" id="cancel-button">
                     <property name="label" translatable="yes">Cancel</property>
                     <property name="visible">True</property>
                     <property name="receives_default">True</property>

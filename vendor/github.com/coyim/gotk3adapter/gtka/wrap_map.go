@@ -79,6 +79,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.ModelButton:
+		val := WrapModelButtonSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	case *gtk.LinkButton:
 		val := WrapLinkButtonSimple(oo)
 		if val == nil {
@@ -213,6 +219,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *gtk.MenuItem:
 		val := WrapMenuItemSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *gtk.MenuButton:
+		val := WrapMenuButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -373,6 +385,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.Popover:
+		val := WrapPopoverSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	default:
 		return nil, false
 	}
@@ -424,6 +442,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *button:
 		val := UnwrapButton(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *modelButton:
+		val := UnwrapModelButton(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -562,6 +586,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *menuItem:
 		val := UnwrapMenuItem(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *menuButton:
+		val := UnwrapMenuButton(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -718,6 +748,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *overlay:
 		val := UnwrapOverlay(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *popover:
+		val := UnwrapPopover(oo)
 		if val == nil {
 			return nil, true
 		}

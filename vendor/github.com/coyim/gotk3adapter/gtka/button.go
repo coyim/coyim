@@ -35,3 +35,7 @@ func (v *button) SetImage(v1 gtki.Widget) {
 func (v *button) GetLabel() (string, error) {
 	return v.internal.GetLabel()
 }
+
+func (v *button) SetLabel(v1 string) {
+	v.internal.SetLabel(v1)
+}

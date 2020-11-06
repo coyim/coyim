@@ -91,6 +91,14 @@ func (*Mock) ButtonBoxNew(gtki.Orientation) (gtki.ButtonBox, error) {
 	return nil, nil
 }
 
+func (*Mock) PopoverNew(gtki.Widget) (gtki.Popover, error) {
+	return nil, nil
+}
+
+func (*Mock) BoxNew(gtki.Orientation, int) (gtki.Box, error) {
+	return nil, nil
+}
+
 func (*Mock) FileChooserDialogNewWith2Buttons(title string, parent gtki.Window, action gtki.FileChooserAction, first_button_text string, first_button_id gtki.ResponseType, second_button_text string, second_button_id gtki.ResponseType) (gtki.FileChooserDialog, error) {
 	return nil, nil
 }
@@ -198,6 +206,10 @@ func (*Mock) WindowSetDefaultIcon(icon gdki.Pixbuf) {
 }
 
 func (*Mock) SettingsGetDefault() (gtki.Settings, error) {
+	return nil, nil
+}
+
+func (*Mock) SeparatorNew(gtki.Orientation) (gtki.Separator, error) {
 	return nil, nil
 }
 

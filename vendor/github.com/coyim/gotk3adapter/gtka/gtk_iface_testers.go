@@ -13,6 +13,7 @@ func init() {
 	gtki.AssertBox(&box{})
 	gtki.AssertBuilder(&builder{})
 	gtki.AssertButton(&button{})
+	gtki.AssertModelButton(&modelButton{})
 	gtki.AssertCellRenderer(&cellRenderer{})
 	gtki.AssertCellRendererText(&cellRendererText{})
 	gtki.AssertCellRendererToggle(&cellRendererToggle{})

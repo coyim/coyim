@@ -5,6 +5,7 @@ type Button interface {
 
 	SetImage(Widget)
 	GetLabel() (string, error)
+	SetLabel(string)
 }
 
 func AssertButton(_ Button) {}

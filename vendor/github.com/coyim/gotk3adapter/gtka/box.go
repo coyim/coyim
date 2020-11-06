@@ -28,6 +28,10 @@ func UnwrapBox(v gtki.Box) *gtk.Box {
 	return v.(*box).internal
 }
 
+func (*RealGtk) BoxNew(v1 gtki.Orientation, v2 int) (gtki.Box, error) {
+	return WrapBox(gtk.BoxNew(gtk.Orientation(v1), v2))
+}
+
 func (v *box) PackEnd(v1 gtki.Widget, v2, v3 bool, v4 uint) {
 	v.internal.PackEnd(UnwrapWidget(v1), v2, v3, v4)
 }

@@ -4754,6 +4754,39 @@ ZXJmYWNlPgo=
 `,
 	},
 
+	"/definitions/MUCRoomMenu.xml": {
+		local:   "definitions/MUCRoomMenu.xml",
+		size:    552,
+		modtime: 1489449600,
+		compressed: `
+PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBHZW5lcmF0ZWQgd2l0aCBn
+bGFkZSAzLjIyLjEgLS0+CjxpbnRlcmZhY2U+CiAgPHJlcXVpcmVzIGxpYj0iZ3RrKyIgdmVyc2lvbj0i
+My4yMCIvPgogIDxvYmplY3QgY2xhc3M9Ikd0a1BvcG92ZXIiIGlkPSJyb29tLW1lbnUiPgogICAgPHBy
+b3BlcnR5IG5hbWU9ImNhbl9mb2N1cyI+RmFsc2U8L3Byb3BlcnR5PgogICAgPGNoaWxkPgogICAgICA8
+b2JqZWN0IGNsYXNzPSJHdGtCb3giIGlkPSJyb29tLW1lbnUtYm94Ij4KICAgICAgICA8cHJvcGVydHkg
+bmFtZT0idmlzaWJsZSI+VHJ1ZTwvcHJvcGVydHk+CiAgICAgICAgPHByb3BlcnR5IG5hbWU9ImNhbl9m
+b2N1cyI+RmFsc2U8L3Byb3BlcnR5PgogICAgICAgIDxwcm9wZXJ0eSBuYW1lPSJvcmllbnRhdGlvbiI+
+dmVydGljYWw8L3Byb3BlcnR5PgogICAgICAgIDxjaGlsZD4KICAgICAgICAgIDxwbGFjZWhvbGRlci8+
+CiAgICAgICAgPC9jaGlsZD4KICAgICAgPC9vYmplY3Q+CiAgICA8L2NoaWxkPgogIDwvb2JqZWN0Pgo8
+L2ludGVyZmFjZT4K
+`,
+	},
+
+	"/definitions/MUCRoomMenuButton.xml": {
+		local:   "definitions/MUCRoomMenuButton.xml",
+		size:    418,
+		modtime: 1489449600,
+		compressed: `
+PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBHZW5lcmF0ZWQgd2l0aCBn
+bGFkZSAzLjIyLjEgLS0+CjxpbnRlcmZhY2U+CiAgPHJlcXVpcmVzIGxpYj0iZ3RrKyIgdmVyc2lvbj0i
+My4yMCIvPgogIDxvYmplY3QgY2xhc3M9Ikd0a01vZGVsQnV0dG9uIiBpZD0icm9vbS1tZW51LWJ1dHRv
+biI+CiAgICA8cHJvcGVydHkgbmFtZT0idmlzaWJsZSI+VHJ1ZTwvcHJvcGVydHk+CiAgICA8cHJvcGVy
+dHkgbmFtZT0iY2FuX2ZvY3VzIj5UcnVlPC9wcm9wZXJ0eT4KICAgIDxwcm9wZXJ0eSBuYW1lPSJyZWNl
+aXZlc19kZWZhdWx0Ij5UcnVlPC9wcm9wZXJ0eT4KICAgIDxzaWduYWwgbmFtZT0iY2xpY2tlZCIgaGFu
+ZGxlcj0ib25fY2xpY2tlZCIgc3dhcHBlZD0ibm8iLz4KICA8L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
+`,
+	},
+
 	"/definitions/MUCRoomRoster.xml": {
 		local:   "definitions/MUCRoomRoster.xml",
 		size:    3470,

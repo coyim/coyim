@@ -65,9 +65,6 @@
                               <object class="GtkLabel" id="occupant-nickname">
                                 <property name="visible">True</property>
                                 <property name="halign">center</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -91,9 +88,6 @@
                               <object class="GtkLabel" id="status">
                                 <property name="visible">True</property>
                                 <property name="halign">center</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
                               </object>
                               <packing>
                                 <property name="expand">False</property>

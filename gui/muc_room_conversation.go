@@ -105,11 +105,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
 		case roomAnonymityEvent:
-			if t.semi {
-				c.semiAnonymousRoomEvent()
-			} else {
-				c.nonAnonymousRoomEvent()
-			}
+			c.roomAnonymityChangedEvent(t.semi)
 		case roomConfigChangedEvent:
 			c.roomConfigChangedEvent(t.changes, t.config)
 		case selfOccupantRemovedEvent:
@@ -221,6 +217,14 @@ func (c *roomViewConversation) semiAnonymousRoomEvent() {
 	doInUIThread(func() {
 		c.displayNewConfigurationMessage(i18n.Local("Your real JID can now be seen only by moderators."))
 	})
+}
+
+func (c *roomViewConversation) roomAnonymityChangedEvent(semiAnonymous bool) {
+	if semiAnonymous {
+		c.semiAnonymousRoomEvent()
+	} else {
+		c.nonAnonymousRoomEvent()
+	}
 }
 
 func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedTypes, config data.RoomConfig) {

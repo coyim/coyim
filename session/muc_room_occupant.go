@@ -81,5 +81,9 @@ func (m *mucManager) handleNonMembersRemoved(roomID jid.Bare, op *muc.OccupantPr
 		l.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
 	}
 
-	m.nonMemberRemoved(roomID, r.SelfOccupant().Nickname == op.Nickname, op.Nickname)
+	if r.SelfOccupant().Nickname == op.Nickname {
+		m.removeSelfOccupant(roomID, op.Nickname)
+		return
+	}
+	m.removeOccupant(roomID, op.Nickname)
 }

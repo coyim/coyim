@@ -87,7 +87,9 @@ func (r *roomViewRoster) initSubscribers(v *roomView) {
 			r.onUpdateRoster()
 		case occupantLeftEvent:
 			r.onUpdateRoster()
-		case nonMembersRemovedEvent:
+		case selfOccupantRemovedEvent:
+			r.onUpdateRoster()
+		case occupantRemovedEvent:
 			r.onUpdateRoster()
 		}
 	})

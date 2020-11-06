@@ -57,10 +57,13 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 			changes: roomConfigChangedTypes(t.Changes),
 			config:  t.Config,
 		})
-	case events.MUCNonMemberRemoved:
-		v.publishEvent(nonMembersRemovedEvent{
-			selfOccupant: t.SelfOccupant,
-			nickname:     t.Nickname,
+	case events.MUCOccupantRemoved:
+		v.publishEvent(occupantRemovedEvent{
+			nickname: t.Nickname,
+		})
+	case events.MUCSelfOccupantRemoved:
+		v.publishEvent(selfOccupantRemovedEvent{
+			nickname: t.Nickname,
 		})
 	default:
 		v.log.WithField("event", t).Warn("Unsupported room event received")

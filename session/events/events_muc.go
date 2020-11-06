@@ -94,11 +94,15 @@ type MUCOccupantLeft struct {
 	Role        data.Role
 }
 
-// MUCNonMemberRemoved contains information related to member removed
+// MUCOccupantRemoved contains information related to member removed
 // because room configuration was changed to only-members
-type MUCNonMemberRemoved struct {
-	SelfOccupant bool
-	Nickname     string
+type MUCOccupantRemoved struct {
+	MUCOccupant
+}
+
+// MUCSelfOccupantRemoved contains information related to self occupant to be removed
+type MUCSelfOccupantRemoved struct {
+	MUCOccupant
 }
 
 // MUCMessageReceived represents a received groupchat message
@@ -180,4 +184,5 @@ func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}
 func (MUCRoomConfigReceived) markAsMUCEventTypeInterface()        {}
 func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()         {}
 func (MUCRoomConfigChanged) markAsMUCEventTypeInterface()         {}
-func (MUCNonMemberRemoved) markAsMUCEventTypeInterface()          {}
+func (MUCOccupantRemoved) markAsMUCEventTypeInterface()           {}
+func (MUCSelfOccupantRemoved) markAsMUCEventTypeInterface()       {}

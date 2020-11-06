@@ -18,6 +18,7 @@ type Occupant struct {
 
 	// Affiliation is the current affiliation of the occupant in the room
 	Affiliation data.Affiliation
+
 	// Role is the current role of the occupant in the room
 	Role data.Role
 

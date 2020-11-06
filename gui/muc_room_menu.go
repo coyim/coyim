@@ -132,9 +132,7 @@ func (v *roomView) refreshRoomMenu() {
 	v.menu.reset()
 
 	if v.isJoined() {
-		v.menu.addItem("leave-room", i18n.Local("Leave room"), func() {
-			v.tryLeaveRoom(nil, nil)
-		})
+		v.menu.addItem("leave-room", i18n.Local("Leave room"), v.onLeaveRoom)
 	}
 }
 

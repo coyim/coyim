@@ -231,6 +231,12 @@ func (v *roomView) show() {
 	v.window.Show()
 }
 
+func (v *roomView) onLeaveRoom() {
+	// TODO: Implement the logic behind leaving this room and
+	// how the view will interact with the user during this process
+	v.tryLeaveRoom(nil, nil)
+}
+
 func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 	v.spinner.show()
 

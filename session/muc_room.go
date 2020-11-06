@@ -125,6 +125,35 @@ func (s *session) GetRoomListing(roomID jid.Bare, result chan<- *muc.RoomListing
 	s.muc.getRoomListing(roomID, result)
 }
 
+func (m *mucManager) newRoomListing(roomID jid.Bare) *muc.RoomListing {
+	rl := muc.NewRoomListing()
+	rl.Jid = roomID
+	return rl
+}
+
+func (m *mucManager) getRoomListing(roomID jid.Bare, result chan<- *muc.RoomListing) {
+	rl := m.newRoomListing(roomID)
+
+	// This is a little bit redundant since we already asked for this once
+	// The right solution is to use the values from above, but that would be an extensive refactoring
+	// so we will wait with that for now
+	m.findOutMoreInformationAboutRoom(rl)
+
+	result <- rl
+}
+
+func (m *mucManager) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
+	diq, e := m.conn().QueryServiceInformation(rl.Jid.String())
+	if e != nil {
+		m.log.WithError(e).WithField("room", rl.Jid).Error("findOutMoreInformationAboutRoom() had error")
+		return
+	}
+
+	rl.SetFeatures(diq.Features)
+	rl.SetFormsData(diq.Forms)
+	rl.Updated()
+}
+
 func (s *session) LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error) {
 	to := createRoomRecipient(room, nickname).String()
 

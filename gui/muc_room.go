@@ -261,6 +261,25 @@ func (v *roomView) onDestroyRoom() {
 	d.show()
 }
 
+func (v *roomView) tryDestroyRoom(alternateID jid.Bare, reason string, onSuccess func(), onError func()) {
+	v.spinner.show()
+
+	go func() {
+		v.account.destroyRoom(v.roomID(), alternateID, reason, func() {
+			v.notifications.info(i18n.Local("The room has been destroyed"))
+			if onSuccess != nil {
+				onSuccess()
+			}
+		}, func(err error) {
+			v.log.WithError(err).Error("An error occurred when trying to destroy the room")
+			doInUIThread(v.spinner.hide)
+			if onError != nil {
+				onError()
+			}
+		})
+	}()
+}
+
 func (v *roomView) switchToLobbyView() {
 	v.initRoomLobby()
 

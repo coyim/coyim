@@ -4769,16 +4769,14 @@ ICAgIDwvY2hpbGQ+CiAgPC9vYmplY3Q+CjwvaW50ZXJmYWNlPgo=
 
 	"/definitions/MUCRoomMenuButton.xml": {
 		local:   "definitions/MUCRoomMenuButton.xml",
-		size:    418,
+		size:    255,
 		modtime: 1489449600,
 		compressed: `
-PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBHZW5lcmF0ZWQgd2l0aCBn
-bGFkZSAzLjIyLjEgLS0+CjxpbnRlcmZhY2U+CiAgPHJlcXVpcmVzIGxpYj0iZ3RrKyIgdmVyc2lvbj0i
-My4yMCIvPgogIDxvYmplY3QgY2xhc3M9Ikd0a01vZGVsQnV0dG9uIiBpZD0icm9vbS1tZW51LWJ1dHRv
-biI+CiAgICA8cHJvcGVydHkgbmFtZT0idmlzaWJsZSI+VHJ1ZTwvcHJvcGVydHk+CiAgICA8cHJvcGVy
-dHkgbmFtZT0iY2FuX2ZvY3VzIj5UcnVlPC9wcm9wZXJ0eT4KICAgIDxwcm9wZXJ0eSBuYW1lPSJyZWNl
-aXZlc19kZWZhdWx0Ij5UcnVlPC9wcm9wZXJ0eT4KICAgIDxzaWduYWwgbmFtZT0iY2xpY2tlZCIgaGFu
-ZGxlcj0ib25fY2xpY2tlZCIgc3dhcHBlZD0ibm8iLz4KICA8L29iamVjdD4KPC9pbnRlcmZhY2U+Cg==
+PGludGVyZmFjZT4KICA8b2JqZWN0IGNsYXNzPSJHdGtNb2RlbEJ1dHRvbiIgaWQ9InJvb20tbWVudS1i
+dXR0b24iPgogICAgPHByb3BlcnR5IG5hbWU9InZpc2libGUiPlRydWU8L3Byb3BlcnR5PgogICAgPHBy
+b3BlcnR5IG5hbWU9InJlY2VpdmVzX2RlZmF1bHQiPlRydWU8L3Byb3BlcnR5PgogICAgPHNpZ25hbCBu
+YW1lPSJjbGlja2VkIiBoYW5kbGVyPSJvbl9jbGlja2VkIiBzd2FwcGVkPSJubyIvPgogIDwvb2JqZWN0
+Pgo8L2ludGVyZmFjZT4K
 `,
 	},
 

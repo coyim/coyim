@@ -131,6 +131,11 @@ func (v *roomView) initRoomMenu() {
 func (v *roomView) refreshRoomMenu() {
 	v.menu.reset()
 
+	if v.isOwner() {
+		v.menu.addItem("destroy-room", i18n.Local("Destroy room"), v.onDestroyRoom)
+		v.menu.addDivider()
+	}
+
 	if v.isJoined() {
 		v.menu.addItem("leave-room", i18n.Local("Leave room"), v.onLeaveRoom)
 	}

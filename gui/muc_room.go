@@ -256,7 +256,7 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 	}()
 }
 
-func (v *roomView) tryDestroyRoom() {
+func (v *roomView) onDestroyRoom() {
 	d := newRoomDestroyView(v.window)
 	d.show()
 }

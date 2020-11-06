@@ -83,7 +83,7 @@ type Session interface {
 	GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error, func())
 	GetRoomListing(jid.Bare, chan<- *muc.RoomListing)
 	LoadRoomInfo(jid.Bare)
-	LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error)
+	LeaveRoom(room jid.Bare, nickname string) (<-chan bool, <-chan error)
 	DestroyRoom(room, alternate jid.Bare, reason string) (<-chan bool, <-chan error, func())
 
 	Log() coylog.Logger

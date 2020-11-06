@@ -154,7 +154,9 @@ func (m *mucManager) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 	rl.Updated()
 }
 
-func (s *session) LeaveRoom(room jid.Bare, nickname string) (chan bool, chan error) {
+// TODO: this should return a "cancel early" function so anyone can cancel early
+// this operation if required
+func (s *session) LeaveRoom(room jid.Bare, nickname string) (<-chan bool, <-chan error) {
 	to := createRoomRecipient(room, nickname).String()
 
 	result := make(chan bool)

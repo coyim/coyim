@@ -23,6 +23,8 @@ type Affiliation interface {
 	IsMember() bool
 	// IsModerator returns true if this specific affiliation means that the jid is a moderator of the room
 	IsModerator() bool
+	// IsOwner returns ture if this specific affiliation means that the jid is an owner of the room
+	IsOwner() bool
 	// Name returns the string name of the affiliation type
 	Name() string
 }
@@ -36,10 +38,10 @@ type OutcastAffiliation struct{}
 // MemberAffiliation is a representation of MUC's "member" affiliation
 type MemberAffiliation struct{}
 
-// AdminAffiliation is a representation of MUC's" none" affiliation
+// AdminAffiliation is a representation of MUC's" admin" affiliation
 type AdminAffiliation struct{}
 
-// OwnerAffiliation is a representation of MUC's "none" affiliation
+// OwnerAffiliation is a representation of MUC's "owner" affiliation
 type OwnerAffiliation struct{}
 
 // IsBanned implements Affiliation interface
@@ -86,6 +88,21 @@ func (*AdminAffiliation) IsModerator() bool { return true }
 
 // IsModerator implements Affiliation interface
 func (*OwnerAffiliation) IsModerator() bool { return true }
+
+// IsOwner implements Affiliation interface
+func (*NoneAffiliation) IsOwner() bool { return false }
+
+// IsOwner implements Affiliation interface
+func (*OutcastAffiliation) IsOwner() bool { return false }
+
+// IsOwner implements Affiliation interface
+func (*MemberAffiliation) IsOwner() bool { return false }
+
+// IsOwner implements Affiliation interface
+func (*AdminAffiliation) IsOwner() bool { return false }
+
+// IsOwner implements Affiliation interface
+func (*OwnerAffiliation) IsOwner() bool { return true }
 
 // Name implements Affiliation interface
 func (*NoneAffiliation) Name() string { return AffiliationNone }

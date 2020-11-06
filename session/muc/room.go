@@ -90,6 +90,14 @@ func (r *Room) SelfOccupantIsJoined() bool {
 	return r.selfOccupant != nil
 }
 
+// SelfOccupantIsOwner returns a boolean indicating if the self occupant is an owner
+func (r *Room) SelfOccupantIsOwner() bool {
+	if r.SelfOccupantIsJoined() {
+		return r.selfOccupant.Affiliation.IsOwner()
+	}
+	return false
+}
+
 // GetSubject returns the room subject
 func (r *Room) GetSubject() string {
 	return r.subject

@@ -72,6 +72,16 @@
           </packing>
         </child>
         <child>
+          <object class="GtkBox" id="notification-area">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkBox" id="destroy-room-content">
             <property name="visible">True</property>
             <property name="valign">center</property>

@@ -141,11 +141,10 @@ type MUCLoggingEnabled struct{}
 // MUCLoggingDisabled signifies that logging has been turned off from the room
 type MUCLoggingDisabled struct{}
 
-// MUCNonAnonymousRoom signifies that the real occupant's JID could be viewed for anyone
-type MUCNonAnonymousRoom struct{}
-
-// MUCSemiAnonymousRoom signifies that the real occupant's JID could be viewed for moderators only
-type MUCSemiAnonymousRoom struct{}
+// MUCRoomAnonymity contains information regarding to if the the room is semi or non anonymous
+type MUCRoomAnonymity struct {
+	Semi bool
+}
 
 // MUCRoomConfigReceived contains information of the received room listing
 type MUCRoomConfigReceived struct {
@@ -175,8 +174,7 @@ func (MUCSubjectUpdated) markAsMUCEventTypeInterface()            {}
 func (MUCSubjectReceived) markAsMUCEventTypeInterface()           {}
 func (MUCLoggingEnabled) markAsMUCEventTypeInterface()            {}
 func (MUCLoggingDisabled) markAsMUCEventTypeInterface()           {}
-func (MUCNonAnonymousRoom) markAsMUCEventTypeInterface()          {}
-func (MUCSemiAnonymousRoom) markAsMUCEventTypeInterface()         {}
+func (MUCRoomAnonymity) markAsMUCEventTypeInterface()             {}
 func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}
 func (MUCRoomConfigReceived) markAsMUCEventTypeInterface()        {}
 func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()         {}

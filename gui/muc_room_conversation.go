@@ -104,10 +104,12 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.loggingEnabledEvent()
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
-		case nonAnonymousRoomEvent:
-			c.nonAnonymousRoomEvent()
-		case semiAnonymousRoomEvent:
-			c.semiAnonymousRoomEvent()
+		case roomAnonymityEvent:
+			if t.semi {
+				c.semiAnonymousRoomEvent()
+			} else {
+				c.nonAnonymousRoomEvent()
+			}
 		case roomConfigChangedEvent:
 			c.roomConfigChangedEvent(t.changes, t.config)
 		case selfOccupantRemovedEvent:

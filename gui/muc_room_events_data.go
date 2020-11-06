@@ -42,9 +42,9 @@ type loggingEnabledEvent struct{}
 
 type loggingDisabledEvent struct{}
 
-type nonAnonymousRoomEvent struct{}
-
-type semiAnonymousRoomEvent struct{}
+type roomAnonymityEvent struct {
+	semi bool
+}
 
 type messageEvent struct {
 	tp        string
@@ -96,8 +96,7 @@ func (nicknameConflictEvent) markAsRoomViewEvent()         {}
 func (registrationRequiredEvent) markAsRoomViewEvent()     {}
 func (loggingEnabledEvent) markAsRoomViewEvent()           {}
 func (loggingDisabledEvent) markAsRoomViewEvent()          {}
-func (nonAnonymousRoomEvent) markAsRoomViewEvent()         {}
-func (semiAnonymousRoomEvent) markAsRoomViewEvent()        {}
+func (roomAnonymityEvent) markAsRoomViewEvent()            {}
 func (messageForbidden) markAsRoomViewEvent()              {}
 func (messageNotAcceptable) markAsRoomViewEvent()          {}
 func (discussionHistoryEvent) markAsRoomViewEvent()        {}

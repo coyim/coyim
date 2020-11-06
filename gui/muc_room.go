@@ -105,12 +105,12 @@ func (v *roomView) initSubscribers() {
 }
 
 func (v *roomView) onEventReceived(ev roomViewEvent) {
-		switch t := ev.(type) {
-		case roomConfigReceivedEvent:
-				v.roomConfigReceivedEvent(t.config)
-		case roomConfigRequestTimeoutEvent:
+	switch t := ev.(type) {
+	case roomConfigReceivedEvent:
+		v.roomConfigReceivedEvent(t.config)
+	case roomConfigRequestTimeoutEvent:
 		v.roomConfigRequestTimeoutEvent()
-		}
+	}
 
 	// Actually, we prefer to always refresh the room menu every time an event
 	// is received, because in that way we can have the right menu printed based
@@ -216,6 +216,10 @@ func (v *roomView) isJoined() bool {
 	return v.room.SelfOccupantIsJoined()
 }
 
+func (v *roomView) isOwner() bool {
+	return v.room.SelfOccupantIsOwner()
+}
+
 func (v *roomView) present() {
 	if v.isOpen() {
 		v.window.Present()
@@ -244,6 +248,11 @@ func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
 			}
 		})
 	}()
+}
+
+func (v *roomView) tryDestroyRoom() {
+	d := newRoomDestroyView(v.window)
+	d.show()
 }
 
 func (v *roomView) switchToLobbyView() {

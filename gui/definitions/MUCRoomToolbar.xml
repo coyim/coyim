@@ -13,14 +13,12 @@
             <child>
               <object class="GtkBox" id="room-info-box">
                 <property name="visible">True</property>
-                <property name="margin_top">10</property>
-                <property name="margin_bottom">10</property>
+                <property name="valign">center</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkImage" id="room-status-icon">
                     <property name="visible">True</property>
-                    <property name="stock">gtk-missing-image</property>
-                    <property name="icon_size">3</property>
+                    <property name="icon_size">4</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -31,6 +29,7 @@
                 <child>
                   <object class="GtkBox" id="room-details-box">
                     <property name="visible">True</property>
+                    <property name="valign">center</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkLabel" id="room-name-label">
@@ -72,29 +71,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButtonBox" id="room-actions">
+              <object class="GtkMenuButton" id="room-menu">
                 <property name="visible">True</property>
-                <property name="spacing">10</property>
-                <property name="layout_style">start</property>
-                <child>
-                  <object class="GtkButton" id="leave-room-button">
-                    <property name="label" translatable="yes">Leave Room</property>
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="receives_default">True</property>
-                    <signal name="clicked" handler="on_leave_room" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
+                <property name="receives_default">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>

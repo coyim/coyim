@@ -5,11 +5,13 @@ import (
 )
 
 type roomViewToolbar struct {
-	view             gtki.Box    `gtk-widget:"room-view-toolbar"`
-	roomNameLabel    gtki.Label  `gtk-widget:"room-name-label"`
-	roomSubjectLabel gtki.Label  `gtk-widget:"room-subject-label"`
-	roomStatusIcon   gtki.Image  `gtk-widget:"room-status-icon"`
-	leaveRoomButton  gtki.Button `gtk-widget:"leave-room-button"`
+	menu gtki.Popover
+
+	view             gtki.Box        `gtk-widget:"room-view-toolbar"`
+	roomNameLabel    gtki.Label      `gtk-widget:"room-name-label"`
+	roomSubjectLabel gtki.Label      `gtk-widget:"room-subject-label"`
+	roomStatusIcon   gtki.Image      `gtk-widget:"room-status-icon"`
+	roomMenu         gtki.MenuButton `gtk-widget:"room-menu"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -25,16 +27,9 @@ func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 func (t *roomViewToolbar) initBuilder(v *roomView) {
 	builder := newBuilder("MUCRoomToolbar")
 	panicOnDevError(builder.bindObjects(t))
-
-	builder.ConnectSignals(map[string]interface{}{
-		"on_leave_room": func() {
-			t.onLeaveRoom(v)
-		},
-	})
 }
 
 func (t *roomViewToolbar) initDefaults(v *roomView) {
-	t.leaveRoomButton.SetSensitive(v.isJoined())
 	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room"))
 
 	t.roomNameLabel.SetText(v.roomID().String())
@@ -49,24 +44,18 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 		"font-style": "italic",
 		"color":      "#666666",
 	}))
+
+	t.roomMenu.SetPopover(v.getRoomMenuWidget())
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
 	v.subscribe("toolbar", func(ev roomViewEvent) {
 		switch e := ev.(type) {
-		case occupantSelfJoinedEvent:
-			t.occupantSelfJoinedEvent()
 		case subjectReceivedEvent:
 			t.subjectReceivedEvent(e.subject)
 		case subjectUpdatedEvent:
 			t.subjectReceivedEvent(e.subject)
 		}
-	})
-}
-
-func (t *roomViewToolbar) occupantSelfJoinedEvent() {
-	doInUIThread(func() {
-		t.leaveRoomButton.SetSensitive(true)
 	})
 }
 
@@ -84,15 +73,4 @@ func (t *roomViewToolbar) displayRoomSubject(subject string) {
 	} else {
 		t.roomSubjectLabel.Show()
 	}
-}
-
-func (t *roomViewToolbar) onLeaveRoom(v *roomView) {
-	t.leaveRoomButton.SetSensitive(false)
-	v.tryLeaveRoom(nil, func() {
-		if v.isOpen() {
-			doInUIThread(func() {
-				t.leaveRoomButton.SetSensitive(true)
-			})
-		}
-	})
 }

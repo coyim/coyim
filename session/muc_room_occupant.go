@@ -82,7 +82,7 @@ func (m *mucManager) handleNonMembersRemoved(roomID jid.Bare, op *muc.OccupantPr
 	}
 
 	if r.SelfOccupant().Nickname == op.Nickname {
-		m.removeSelfOccupant(roomID, op.Nickname)
+		m.removeSelfOccupant(roomID)
 		return
 	}
 	m.removeOccupant(roomID, op.Nickname)

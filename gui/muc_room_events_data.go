@@ -24,9 +24,7 @@ type occupantUpdatedEvent struct {
 	role     data.Role
 }
 
-type selfOccupantRemovedEvent struct {
-	nickname string
-}
+type selfOccupantRemovedEvent struct{}
 
 type occupantRemovedEvent struct {
 	nickname string

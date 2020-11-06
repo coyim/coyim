@@ -153,9 +153,8 @@ func (m *mucManager) removeOccupant(roomID jid.Bare, nickname string) {
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) removeSelfOccupant(roomID jid.Bare, nickname string) {
+func (m *mucManager) removeSelfOccupant(roomID jid.Bare) {
 	ev := events.MUCSelfOccupantRemoved{}
-	ev.Nickname = nickname
 
 	m.publishRoomEvent(roomID, ev)
 }

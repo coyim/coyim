@@ -94,16 +94,13 @@ type MUCOccupantLeft struct {
 	Role        data.Role
 }
 
-// MUCOccupantRemoved contains information related to member removed
-// because room configuration was changed to only-members
+// MUCOccupantRemoved contains information related to member removedcontains information related to self occupant which has been removed
 type MUCOccupantRemoved struct {
 	MUCOccupant
 }
 
-// MUCSelfOccupantRemoved contains information related to self occupant to be removed
-type MUCSelfOccupantRemoved struct {
-	MUCOccupant
-}
+// MUCSelfOccupantRemoved contains information related to self occupant which has been removed
+type MUCSelfOccupantRemoved struct{}
 
 // MUCMessageReceived represents a received groupchat message
 type MUCMessageReceived struct {

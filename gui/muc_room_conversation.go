@@ -111,7 +111,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case roomConfigChangedEvent:
 			c.roomConfigChangedEvent(t.changes, t.config)
 		case selfOccupantRemovedEvent:
-			c.selfOccupantRemovedEvent(t.nickname)
+			c.selfOccupantRemovedEvent()
 		case occupantRemovedEvent:
 			c.occupantRemovedEvent(t.nickname)
 		}
@@ -230,7 +230,7 @@ func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedT
 	})
 }
 
-func (c *roomViewConversation) selfOccupantRemovedEvent(nickname string) {
+func (c *roomViewConversation) selfOccupantRemovedEvent() {
 	doInUIThread(func() {
 		c.displayWarningMessage(i18n.Local("You have been thrown out of this room because it's now a members only room."))
 		c.disableSendCapabilities()

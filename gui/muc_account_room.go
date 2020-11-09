@@ -4,7 +4,7 @@ import "github.com/coyim/coyim/xmpp/jid"
 
 // leaveRoom should return the context so the caller can cancel the context early if required
 func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), onError func(error)) {
-	leaveRoomCb := func() (<-chan bool, <-chan error, func()) {
+	leaveRoom := func() (<-chan bool, <-chan error, func()) {
 		ok, err := a.session.LeaveRoom(roomID, nickname)
 		return ok, err, nil
 	}
@@ -16,7 +16,7 @@ func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), 
 		}
 	}
 
-	controller := a.newRoomOpController("leave-room", leaveRoomCb, leaveRoomSuccess, onError)
+	controller := a.newRoomOpController("leave-room", leaveRoom, leaveRoomSuccess, onError)
 	ctx := a.newAccountRoomOpContext("leave-room", roomID, controller)
 
 	go ctx.doOperation()
@@ -24,11 +24,11 @@ func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), 
 
 // destroyRoom should return the context so the caller can cancel the context early if required
 func (a *account) destroyRoom(roomID jid.Bare, alternativeRoomID jid.Bare, reason string, onSuccess func(), onError func(error)) {
-	destroyRoomCb := func() (<-chan bool, <-chan error, func()) {
+	destroyRoom := func() (<-chan bool, <-chan error, func()) {
 		return a.session.DestroyRoom(roomID, alternativeRoomID, reason)
 	}
 
-	controller := a.newRoomOpController("destroy-room", destroyRoomCb, onSuccess, onError)
+	controller := a.newRoomOpController("destroy-room", destroyRoom, onSuccess, onError)
 	ctx := a.newAccountRoomOpContext("destroy-room", roomID, controller)
 
 	go ctx.doOperation()

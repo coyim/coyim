@@ -77,12 +77,12 @@ func (d *roomDestroyView) onDestroyRoom() {
 	d.room.tryDestroyRoom(alternateID, reason, d.onDestroySuccess, d.onDestroyFails)
 }
 
-// onDestroySuccess SHOULD no be called from the UI thread
+// onDestroySuccess MUST NOT be called from the UI thread
 func (d *roomDestroyView) onDestroySuccess() {
 	doInUIThread(d.close)
 }
 
-// onDestroyFails SHOULD not be called from the UI thread
+// onDestroyFails MUST NOT be called from the UI thread
 func (d *roomDestroyView) onDestroyFails(err error) {
 	doInUIThread(func() {
 		d.enableFields()
@@ -90,7 +90,6 @@ func (d *roomDestroyView) onDestroyFails(err error) {
 	})
 }
 
-// getFriendlyErrorMessage CAN be called from any thread
 func (d *roomDestroyView) getFriendlyErrorMessage(err error) string {
 	switch err {
 	case session.ErrDestroyRoomInvalidIQResponse:
@@ -119,12 +118,12 @@ func (d *roomDestroyView) onCancel() {
 	d.close()
 }
 
-// onDialogDestroy CAN be called from anywhere
+// onDialogDestroy MUST be called from the UI thread
 func (d *roomDestroyView) onDialogDestroy() {
 	d.cancelActiveRequest()
 }
 
-// cancelActiveRequest CAN be called from anywhere
+// cancelActiveRequest MUST be called from the UI thread
 func (d *roomDestroyView) cancelActiveRequest() {
 	if d.cancelChannel != nil {
 		d.cancelChannel <- true

@@ -16,8 +16,7 @@ func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), 
 		}
 	}
 
-	controller := a.newRoomOpController("leave-room", leaveRoom, leaveRoomSuccess, onError)
-	ctx := a.newAccountRoomOpContext("leave-room", roomID, controller)
+	ctx := a.newAccountRoomOpContext("leave-room", roomID, leaveRoom, leaveRoomSuccess, onError)
 
 	go ctx.doOperation()
 }
@@ -28,8 +27,7 @@ func (a *account) destroyRoom(roomID jid.Bare, alternativeRoomID jid.Bare, reaso
 		return a.session.DestroyRoom(roomID, alternativeRoomID, reason)
 	}
 
-	controller := a.newRoomOpController("destroy-room", destroyRoom, onSuccess, onError)
-	ctx := a.newAccountRoomOpContext("destroy-room", roomID, controller)
+	ctx := a.newAccountRoomOpContext("destroy-room", roomID, destroyRoom, onSuccess, onError)
 
 	go ctx.doOperation()
 }

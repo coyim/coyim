@@ -186,10 +186,16 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="chat-service-entry">
+                  <object class="GtkComboBoxText" id="chat-services-combobox-text">
                     <property name="visible">True</property>
-                    <property name="placeholder_text" translatable="yes">Enter the location</property>
-                    <signal name="changed" handler="on_service_changed" swapped="no"/>
+                    <property name="hexpand">True</property>
+                    <property name="has_entry">True</property>
+                    <child internal-child="entry">
+                      <object class="GtkEntry" id="chat-service-entry">
+                        <property name="placeholder_text" translatable="yes">Enter the location or select one from the list</property>
+                        <signal name="changed" handler="on_service_changed" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>

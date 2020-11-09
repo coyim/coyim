@@ -57,11 +57,16 @@ func (d *roomDestroyView) initDefaults(u *gtkUI) {
 }
 
 func (d *roomDestroyView) onDestroyRoom() {
-	d.spinner.show()
-	d.disableFields()
+	d.disableFieldsAndShowSpinner()
 
 	reason := d.getReason()
-	alternateID := d.getAlternateID()
+
+	alternateID, valid := d.getAlternateID()
+	if !valid {
+		d.notification.error(i18n.Local("You must type a valid alternate venue for destroying the room."))
+		d.enableFieldsAndHideSpinner()
+		return
+	}
 
 	d.room.tryDestroyRoom(alternateID, reason, d.onDestroySuccess, d.onDestroyFails)
 }
@@ -116,12 +121,12 @@ func (d *roomDestroyView) getReason() string {
 	return t
 }
 
-func (d *roomDestroyView) getAlternateID() jid.Bare {
+func (d *roomDestroyView) getAlternateID() (jid.Bare, bool) {
 	t, _ := d.alternateVenueEntry.GetText()
 	if t != "" {
-		return jid.ParseBare(t)
+		return jid.TryParseBare(t)
 	}
-	return nil
+	return nil, true
 }
 
 func (d *roomDestroyView) disableFields() {
@@ -142,4 +147,14 @@ func (d *roomDestroyView) show() {
 
 func (d *roomDestroyView) close() {
 	d.dialog.Destroy()
+}
+
+func (d *roomDestroyView) disableFieldsAndShowSpinner() {
+	d.disableFields()
+	d.spinner.show()
+}
+
+func (d *roomDestroyView) enableFieldsAndHideSpinner() {
+	d.enableFields()
+	d.spinner.hide()
 }

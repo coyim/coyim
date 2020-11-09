@@ -45,16 +45,16 @@ func (a *account) newRoomModel(roomID jid.Bare) *muc.Room {
 	return a.session.NewRoom(roomID)
 }
 
-type roomOpCallbackType func() (<-chan bool, <-chan error, func())
+type roomOpCallback func() (<-chan bool, <-chan error, func())
 
 type roomOpController struct {
-	callback  roomOpCallbackType
+	callback  roomOpCallback
 	onSuccess func()
 	onError   func(error)
 	log       coylog.Logger
 }
 
-func (a *account) newRoomOpController(op string, cb roomOpCallbackType, onSuccess func(), onError func(error)) *roomOpController {
+func (a *account) newRoomOpController(op string, cb roomOpCallback, onSuccess func(), onError func(error)) *roomOpController {
 	return &roomOpController{
 		callback:  cb,
 		onSuccess: onSuccess,

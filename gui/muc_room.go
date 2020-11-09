@@ -250,7 +250,7 @@ func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
 	onErrorFinal := func(err error) {
 		v.log.WithError(err).Error("An error occurred when trying to leave the room")
 		doInUIThread(v.spinner.hide)
-		callFuncWithErrIfNotNil(onError, err)
+		callErrorFuncIfNotNil(onError, err)
 	}
 
 	go v.account.leaveRoom(v.roomID(), v.room.SelfOccupantNickname(), onSuccessFinal, onErrorFinal)
@@ -269,7 +269,7 @@ func (v *roomView) tryDestroyRoom(alternateID jid.Bare, reason string, onSuccess
 	onErrorFinal := func(err error) {
 		v.log.WithError(err).Error("An error occurred when trying to destroy the room")
 		doInUIThread(v.spinner.hide)
-		callFuncWithErrIfNotNil(onError, err)
+		callErrorFuncIfNotNil(onError, err)
 	}
 
 	go v.account.destroyRoom(v.roomID(), alternateID, reason, onSuccessFinal, onErrorFinal)
@@ -349,7 +349,7 @@ func callFuncIfNotNil(f func()) {
 	}
 }
 
-func callFuncWithErrIfNotNil(f func(error), err error) {
+func callErrorFuncIfNotNil(f func(error), err error) {
 	if f != nil {
 		f(err)
 	}

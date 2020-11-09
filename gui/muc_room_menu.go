@@ -58,8 +58,8 @@ func newRoomViewMenuDivider() *roomViewMenuDivider {
 type roomViewMenu struct {
 	items map[string]roomViewMenuItem
 
-	menu    gtki.Popover `gtk-widget:"room-menu"`
-	menuBox gtki.Box     `gtk-widget:"room-menu-box"`
+	popover gtki.Popover `gtk-widget:"room-menu"`
+	view    gtki.Box     `gtk-widget:"room-menu-box"`
 }
 
 // newRoomViewMenu MUST be called from the UI thread
@@ -78,20 +78,20 @@ func (m *roomViewMenu) initBuilder() {
 	panicOnDevError(b.bindObjects(m))
 }
 
-// addMenuItem MUST always be called from the UI thread
-func (m *roomViewMenu) addMenuItem(id string, item roomViewMenuItem) {
+// addOrUpdateMenuItem MUST always be called from the UI thread
+func (m *roomViewMenu) addOrUpdateMenuItem(id string, item roomViewMenuItem) {
 	m.items[id] = item
 	m.redraw()
 }
 
-// addItem MUST always be called from the UI thread
-func (m *roomViewMenu) addItem(id, l string, f func()) {
-	m.addMenuItem(id, newRoomViewMenuButton(l, f))
+// addButtonItem MUST always be called from the UI thread
+func (m *roomViewMenu) addButtonItem(id, l string, f func()) {
+	m.addOrUpdateMenuItem(id, newRoomViewMenuButton(l, f))
 }
 
-// addDivider MUST always be called from the UI thread
-func (m *roomViewMenu) addDivider() {
-	m.addMenuItem(fmt.Sprintf("divider-%d", len(m.items)+1), newRoomViewMenuDivider())
+// addDividerItem MUST always be called from the UI thread
+func (m *roomViewMenu) addDividerItem() {
+	m.addOrUpdateMenuItem(fmt.Sprintf("divider-%d", len(m.items)+1), newRoomViewMenuDivider())
 }
 
 // redraw MUST be called from the UI thread
@@ -131,15 +131,15 @@ func (v *roomView) refreshRoomMenu() {
 	v.menu.reset()
 
 	if v.isOwner() {
-		v.menu.addItem("destroy-room", i18n.Local("Destroy room"), v.onDestroyRoom)
-		v.menu.addDivider()
+		v.menu.addButtonItem("destroy-room", i18n.Local("Destroy room"), v.onDestroyRoom)
+		v.menu.addDividerItem()
 	}
 
 	if v.isJoined() {
-		v.menu.addItem("leave-room", i18n.Local("Leave room"), v.onLeaveRoom)
+		v.menu.addButtonItem("leave-room", i18n.Local("Leave room"), v.onLeaveRoom)
 	}
 }
 
 func (v *roomView) getRoomMenuWidget() gtki.Popover {
-	return v.menu.menu
+	return v.menu.popover
 }

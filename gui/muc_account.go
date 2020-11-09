@@ -128,11 +128,11 @@ func (ctx *accountRoomOpContext) doOperation() {
 	ctx.errorChannel = make(chan error)
 	ctx.cancelChannel = make(chan bool)
 
-	go ctx.waitUntilItFinish()
+	go ctx.waitUntilFinished()
 	ctx.controller.request(ctx.successChannel, ctx.errorChannel)
 }
 
-func (ctx *accountRoomOpContext) waitUntilItFinish() {
+func (ctx *accountRoomOpContext) waitUntilFinished() {
 	select {
 	case <-ctx.successChannel:
 		ctx.controller.success()

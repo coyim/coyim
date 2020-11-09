@@ -43,7 +43,7 @@ type loggingEnabledEvent struct{}
 type loggingDisabledEvent struct{}
 
 type roomAnonymityEvent struct {
-	semi bool
+	anonymityType data.RoomAnonymityType
 }
 
 type messageEvent struct {

@@ -120,16 +120,16 @@ func (m *mucManager) subjectUpdated(roomID jid.Bare, nickname, subject string) {
 }
 
 func (m *mucManager) nonAnonymousRoom(roomID jid.Bare) {
-	m.roomAnonymityChanged(roomID, false)
+	m.roomAnonymityChanged(roomID, data.NoAnonymous)
 }
 
 func (m *mucManager) semiAnonymousRoom(roomID jid.Bare) {
-	m.roomAnonymityChanged(roomID, true)
+	m.roomAnonymityChanged(roomID, data.SemiAnonymous)
 }
 
-func (m *mucManager) roomAnonymityChanged(roomID jid.Bare, v bool) {
-	ev := events.MUCRoomAnonymity{}
-	ev.Semi = v
+func (m *mucManager) roomAnonymityChanged(roomID jid.Bare, value data.RoomAnonymityType) {
+	ev := events.MUCRoomAnonymityChanged{}
+	ev.AnonymityType = value
 
 	m.publishRoomEvent(roomID, ev)
 }

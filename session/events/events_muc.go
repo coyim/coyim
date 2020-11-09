@@ -141,9 +141,9 @@ type MUCLoggingEnabled struct{}
 // MUCLoggingDisabled signifies that logging has been turned off from the room
 type MUCLoggingDisabled struct{}
 
-// MUCRoomAnonymity contains information regarding to if the the room is semi or non anonymous
-type MUCRoomAnonymity struct {
-	Semi bool
+// MUCRoomAnonymityChanged contains information regarding to if the the room is semi or non anonymous
+type MUCRoomAnonymityChanged struct {
+	AnonymityType data.RoomAnonymityType
 }
 
 // MUCRoomConfigReceived contains information of the received room listing
@@ -174,7 +174,7 @@ func (MUCSubjectUpdated) markAsMUCEventTypeInterface()            {}
 func (MUCSubjectReceived) markAsMUCEventTypeInterface()           {}
 func (MUCLoggingEnabled) markAsMUCEventTypeInterface()            {}
 func (MUCLoggingDisabled) markAsMUCEventTypeInterface()           {}
-func (MUCRoomAnonymity) markAsMUCEventTypeInterface()             {}
+func (MUCRoomAnonymityChanged) markAsMUCEventTypeInterface()      {}
 func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}
 func (MUCRoomConfigReceived) markAsMUCEventTypeInterface()        {}
 func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()         {}

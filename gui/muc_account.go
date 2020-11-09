@@ -124,9 +124,9 @@ func (a *account) newAccountRoomOpContext(op string, roomID jid.Bare, c *roomOpC
 
 // doOperation will block until the controller finishes
 func (ctx *accountRoomOpContext) doOperation() {
-	ctx.successChannel = make(chan bool, 1)
-	ctx.errorChannel = make(chan error, 1)
-	ctx.cancelChannel = make(chan bool, 1)
+	ctx.successChannel = make(chan bool)
+	ctx.errorChannel = make(chan error)
+	ctx.cancelChannel = make(chan bool)
 
 	go ctx.waitUntilItFinish()
 	ctx.controller.request(ctx.successChannel, ctx.errorChannel)

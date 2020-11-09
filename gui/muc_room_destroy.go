@@ -56,6 +56,7 @@ func (d *roomDestroyView) initDefaults(u *gtkUI) {
 	d.notification = u.newNotifications(d.notificationBox)
 }
 
+// onDestroyRoom MUST be called from the UI thread
 func (d *roomDestroyView) onDestroyRoom() {
 	d.disableFieldsAndShowSpinner()
 
@@ -71,15 +72,20 @@ func (d *roomDestroyView) onDestroyRoom() {
 	d.room.tryDestroyRoom(alternateID, reason, d.onDestroySuccess, d.onDestroyFails)
 }
 
+// onDestroySuccess SHOULD no be called from the UI thread
 func (d *roomDestroyView) onDestroySuccess() {
-	d.close()
+	doInUIThread(d.close)
 }
 
+// onDestroyFails SHOULD not be called from the UI thread
 func (d *roomDestroyView) onDestroyFails(err error) {
-	d.enableFields()
-	d.notification.error(d.getFriendlyErrorMessage(err))
+	doInUIThread(func() {
+		d.enableFields()
+		d.notification.error(d.getFriendlyErrorMessage(err))
+	})
 }
 
+// getFriendlyErrorMessage CAN be called from any thread
 func (d *roomDestroyView) getFriendlyErrorMessage(err error) string {
 	switch err {
 	case session.ErrDestroyRoomInvalidIQResponse:
@@ -100,27 +106,33 @@ func (d *roomDestroyView) getFriendlyErrorMessage(err error) string {
 	}
 }
 
+// onCancel MUST be called from the UI thread
 func (d *roomDestroyView) onCancel() {
-	d.spinner.hide()
 	d.cancelActiveRequest()
+
+	d.spinner.hide()
 	d.close()
 }
 
+// onDialogDestroy CAN be called from anywhere
 func (d *roomDestroyView) onDialogDestroy() {
 	d.cancelActiveRequest()
 }
 
+// cancelActiveRequest CAN be called from anywhere
 func (d *roomDestroyView) cancelActiveRequest() {
 	if d.cancelChannel != nil {
 		d.cancelChannel <- true
 	}
 }
 
+// getReason MUST be called from the UI thread
 func (d *roomDestroyView) getReason() string {
 	t, _ := d.reasonEntry.GetText()
 	return t
 }
 
+// getAlternateID MUST be called from the UI thread
 func (d *roomDestroyView) getAlternateID() (jid.Bare, bool) {
 	t, _ := d.alternateVenueEntry.GetText()
 	if t != "" {
@@ -129,31 +141,40 @@ func (d *roomDestroyView) getAlternateID() (jid.Bare, bool) {
 	return nil, true
 }
 
+// disableFields MUST be called from the UI thread
 func (d *roomDestroyView) disableFields() {
-	d.reasonEntry.SetSensitive(false)
-	d.alternateVenueEntry.SetSensitive(false)
-	d.destroyRoomButton.SetSensitive(false)
+	d.setSensitivityForAllFields(false)
 }
 
+// enableFields MUST be called from the UI thread
 func (d *roomDestroyView) enableFields() {
-	d.reasonEntry.SetSensitive(true)
-	d.alternateVenueEntry.SetSensitive(true)
-	d.destroyRoomButton.SetSensitive(true)
+	d.setSensitivityForAllFields(true)
 }
 
+// setSensitivityForAllFields MUST be called from the UI thread
+func (d *roomDestroyView) setSensitivityForAllFields(v bool) {
+	d.reasonEntry.SetSensitive(v)
+	d.alternateVenueEntry.SetSensitive(v)
+	d.destroyRoomButton.SetSensitive(v)
+}
+
+// show MUST be called from the UI thread
 func (d *roomDestroyView) show() {
 	d.dialog.Show()
 }
 
+// close MUST be called from the UI thread
 func (d *roomDestroyView) close() {
 	d.dialog.Destroy()
 }
 
+// disableFieldsAndShowSpinner MUST be called from the UI thread
 func (d *roomDestroyView) disableFieldsAndShowSpinner() {
 	d.disableFields()
 	d.spinner.show()
 }
 
+// enableFieldsAndHideSpinner MUST be called from the UI thread
 func (d *roomDestroyView) enableFieldsAndHideSpinner() {
 	d.enableFields()
 	d.spinner.hide()

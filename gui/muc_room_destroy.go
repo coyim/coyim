@@ -15,13 +15,13 @@ func (v *roomView) onDestroyRoom() {
 type roomDestroyView struct {
 	room *roomView
 
-	transient           gtki.Window
-	dialog              gtki.Dialog `gtk-widget:"destroy-room-dialog"`
-	reasonEntry         gtki.Entry  `gtk-widget:"destroy-room-reason-entry"`
-	alternateVenueEntry gtki.Entry  `gtk-widget:"destroy-room-alternate-venue-entry"`
-	destroyRoomButton   gtki.Button `gtk-widget:"destroy-room-button"`
-	spinnerBox          gtki.Box    `gtk-widget:"destroy-room-spinner-box"`
-	notificationBox     gtki.Box    `gtk-widget:"notification-area"`
+	transient            gtki.Window
+	dialog               gtki.Dialog `gtk-widget:"destroy-room-dialog"`
+	reasonEntry          gtki.Entry  `gtk-widget:"destroy-room-reason-entry"`
+	alternativeRoomEntry gtki.Entry  `gtk-widget:"destroy-room-alternative-room-entry"`
+	destroyRoomButton    gtki.Button `gtk-widget:"destroy-room-button"`
+	spinnerBox           gtki.Box    `gtk-widget:"destroy-room-spinner-box"`
+	notificationBox      gtki.Box    `gtk-widget:"notification-area"`
 
 	spinner      *spinner
 	notification *notifications
@@ -67,14 +67,14 @@ func (d *roomDestroyView) onDestroyRoom() {
 
 	reason := d.getReason()
 
-	alternateID, valid := d.getAlternateID()
+	alternativeID, valid := d.getAlternativeRoomID()
 	if !valid {
-		d.notification.error(i18n.Local("You must type a valid alternate venue for destroying the room."))
+		d.notification.error(i18n.Local("You must type a valid alternative room address for destroying the room."))
 		d.enableFieldsAndHideSpinner()
 		return
 	}
 
-	d.room.tryDestroyRoom(alternateID, reason, d.onDestroySuccess, d.onDestroyFails)
+	d.room.tryDestroyRoom(alternativeID, reason, d.onDestroySuccess, d.onDestroyFails)
 }
 
 // onDestroySuccess MUST NOT be called from the UI thread
@@ -136,9 +136,13 @@ func (d *roomDestroyView) getReason() string {
 	return t
 }
 
-// getAlternateID MUST be called from the UI thread
-func (d *roomDestroyView) getAlternateID() (jid.Bare, bool) {
-	t, _ := d.alternateVenueEntry.GetText()
+// getAlternativeRoomID MUST be called from the UI thread
+//
+// This should be "alternative venue" as the protocol says, but
+// we prefer to use "alternative room id" in this context
+// in order to have a better understanding of what this field means
+func (d *roomDestroyView) getAlternativeRoomID() (jid.Bare, bool) {
+	t, _ := d.alternativeRoomEntry.GetText()
 	if t != "" {
 		return jid.TryParseBare(t)
 	}
@@ -158,7 +162,7 @@ func (d *roomDestroyView) enableFields() {
 // setSensitivityForAllFields MUST be called from the UI thread
 func (d *roomDestroyView) setSensitivityForAllFields(v bool) {
 	d.reasonEntry.SetSensitive(v)
-	d.alternateVenueEntry.SetSensitive(v)
+	d.alternativeRoomEntry.SetSensitive(v)
 	d.destroyRoomButton.SetSensitive(v)
 }
 

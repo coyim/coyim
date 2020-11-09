@@ -22,8 +22,8 @@ var (
 	ErrDestroyRoomNoResult = errors.New("destroy room no result error")
 )
 
-func (s *session) DestroyRoom(roomID, alternateID jid.Bare, reason string) (<-chan bool, <-chan error, func()) {
-	ctx := s.newDestroyRoomContext(roomID, alternateID, reason)
+func (s *session) DestroyRoom(roomID, alternativeRoomID jid.Bare, reason string) (<-chan bool, <-chan error, func()) {
+	ctx := s.newDestroyRoomContext(roomID, alternativeRoomID, reason)
 
 	go ctx.destroyRoom()
 
@@ -31,9 +31,9 @@ func (s *session) DestroyRoom(roomID, alternateID jid.Bare, reason string) (<-ch
 }
 
 type destroyRoomContext struct {
-	roomID      jid.Bare
-	alternateID jid.Bare
-	reason      string
+	roomID            jid.Bare
+	alternativeRoomID jid.Bare
+	reason            string
 
 	resultChannel chan bool
 	errorChannel  chan error
@@ -43,18 +43,18 @@ type destroyRoomContext struct {
 	log  coylog.Logger
 }
 
-func (s *session) newDestroyRoomContext(roomID, alternateID jid.Bare, reason string) *destroyRoomContext {
+func (s *session) newDestroyRoomContext(roomID, alternativeRoomID jid.Bare, reason string) *destroyRoomContext {
 	return &destroyRoomContext{
-		roomID:        roomID,
-		alternateID:   alternateID,
-		reason:        reason,
-		resultChannel: make(chan bool, 1),
-		errorChannel:  make(chan error, 1),
-		conn:          s.conn,
+		roomID:            roomID,
+		alternativeRoomID: alternativeRoomID,
+		reason:            reason,
+		resultChannel:     make(chan bool, 1),
+		errorChannel:      make(chan error, 1),
+		conn:              s.conn,
 		log: s.log.WithFields(log.Fields{
-			"room":           roomID,
-			"alternate-room": alternateID,
-			"context":        "destroy-room",
+			"room":            roomID,
+			"alternativeRoom": alternativeRoomID,
+			"context":         "destroy-room",
 		}),
 	}
 }
@@ -89,7 +89,7 @@ func (ctx *destroyRoomContext) newRoomDestroyQuery() data.MUCRoomDestroyQuery {
 
 func (ctx *destroyRoomContext) newRoomDestroyData() data.MUCRoomDestroy {
 	return data.MUCRoomDestroy{
-		Jid:    ctx.getAlternateRoomID(),
+		Jid:    ctx.getAlternativeRoomID(),
 		Reason: ctx.reason,
 	}
 }
@@ -168,9 +168,9 @@ func (ctx *destroyRoomContext) clean() {
 	close(ctx.cancelChannel)
 }
 
-func (ctx *destroyRoomContext) getAlternateRoomID() string {
-	if ctx.alternateID != nil {
-		return ctx.alternateID.String()
+func (ctx *destroyRoomContext) getAlternativeRoomID() string {
+	if ctx.alternativeRoomID != nil {
+		return ctx.alternativeRoomID.String()
 	}
 	return ""
 }

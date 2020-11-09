@@ -23,9 +23,9 @@ func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), 
 }
 
 // destroyRoom should return the context so the caller can cancel the context early if required
-func (a *account) destroyRoom(roomID jid.Bare, alternateID jid.Bare, reason string, onSuccess func(), onError func(error)) {
+func (a *account) destroyRoom(roomID jid.Bare, alternativeRoomID jid.Bare, reason string, onSuccess func(), onError func(error)) {
 	destroyRoomCb := func() (<-chan bool, <-chan error, func()) {
-		return a.session.DestroyRoom(roomID, alternateID, reason)
+		return a.session.DestroyRoom(roomID, alternativeRoomID, reason)
 	}
 
 	controller := a.newRoomOpController("destroy-room", destroyRoomCb, onSuccess, onError)

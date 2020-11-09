@@ -185,11 +185,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="destroy-room-alternate-venue">
+                  <object class="GtkLabel" id="destroy-room-alternative-room-label">
                     <property name="visible">True</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
-                    <property name="label" translatable="yes">Alternate venue</property>
+                    <property name="label" translatable="yes">Alternative room</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -207,7 +207,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="destroy-room-alternate-venue-entry">
+                  <object class="GtkEntry" id="destroy-room-alternative-room-entry">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
                   </object>

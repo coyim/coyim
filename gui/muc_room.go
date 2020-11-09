@@ -354,3 +354,9 @@ func callFuncWithErrIfNotNil(f func(error), err error) {
 		f(err)
 	}
 }
+
+func wrapSafeCallOfNilFunc(f func()) func() {
+	return func() {
+		callFuncIfNotNil(f)
+	}
+}

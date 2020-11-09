@@ -237,23 +237,23 @@ func (v *roomView) onLeaveRoom() {
 	v.tryLeaveRoom(nil, nil)
 }
 
-func (v *roomView) tryLeaveRoom(onSuccess, onError func()) {
+// tryLeaveRoom MUST be called from the UI thread.
+// Please note that "onSuccess" and "onError" will be called from another thread.
+func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
 	v.spinner.show()
 
-	go func() {
-		v.account.leaveRoom(v.roomID(), v.room.SelfOccupantNickname(), func() {
-			doInUIThread(v.window.Destroy)
-			if onSuccess != nil {
-				onSuccess()
-			}
-		}, func(err error) {
-			v.log.WithError(err).Error("An error occurred when trying to leave the room")
-			doInUIThread(v.spinner.hide)
-			if onError != nil {
-				onError()
-			}
-		})
-	}()
+	onSuccessFinal := func() {
+		doInUIThread(v.window.Destroy)
+		callFuncIfNotNil(onSuccess)
+	}
+
+	onErrorFinal := func(err error) {
+		v.log.WithError(err).Error("An error occurred when trying to leave the room")
+		doInUIThread(v.spinner.hide)
+		callFuncWithErrIfNotNil(onError, err)
+	}
+
+	go v.account.leaveRoom(v.roomID(), v.room.SelfOccupantNickname(), onSuccessFinal, onErrorFinal)
 }
 
 func (v *roomView) onDestroyRoom() {

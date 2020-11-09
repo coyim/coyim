@@ -261,23 +261,27 @@ func (v *roomView) onDestroyRoom() {
 	d.show()
 }
 
+// tryDestroyRoom MUST be called from the UI thread, but please, note that
+// the "onSuccess" and "onError" callbacks will be called from another thread
 func (v *roomView) tryDestroyRoom(alternateID jid.Bare, reason string, onSuccess func(), onError func(error)) {
 	v.spinner.show()
 
-	go func() {
-		v.account.destroyRoom(v.roomID(), alternateID, reason, func() {
-			v.notifications.info(i18n.Local("The room has been destroyed"))
-			if onSuccess != nil {
-				onSuccess()
-			}
-		}, func(err error) {
-			v.log.WithError(err).Error("An error occurred when trying to destroy the room")
-			doInUIThread(v.spinner.hide)
-			if onError != nil {
-				onError(err)
-			}
-		})
-	}()
+	onSuccessFinal := func() {
+		doInUIThread(v.onRoomDestroyed)
+		callFuncIfNotNil(onSuccess)
+	}
+
+	onErrorFinal := func(err error) {
+		v.log.WithError(err).Error("An error occurred when trying to destroy the room")
+		doInUIThread(v.spinner.hide)
+		callFuncWithErrIfNotNil(onError, err)
+	}
+
+	go v.account.destroyRoom(v.roomID(), alternateID, reason, onSuccessFinal, onErrorFinal)
+}
+
+func (v *roomView) onRoomDestroyed() {
+	v.notifications.info(i18n.Local("The room has been destroyed"))
 }
 
 func (v *roomView) switchToLobbyView() {
@@ -342,4 +346,16 @@ func (v *roomView) roomID() jid.Bare {
 
 func (v *roomView) roomDisplayName() string {
 	return v.roomID().Local().String()
+}
+
+func callFuncIfNotNil(f func()) {
+	if f != nil {
+		f()
+	}
+}
+
+func callFuncWithErrIfNotNil(f func(error), err error) {
+	if f != nil {
+		f(err)
+	}
 }

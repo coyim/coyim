@@ -113,34 +113,13 @@ func (a *account) newAccountRoomOpContext(op string, roomID jid.Bare, c *roomOpC
 		controller: c,
 	}
 
-	ctx.initLog()
-
-	return ctx
-}
-
-func (ctx *accountRoomOpContext) initLog() {
-	fields := ctx.getLogCommonFields()
-	ctx.log = ctx.account.log.WithFields(fields)
-
-	// We need the room view because if some error happens
-	// during this operation we might want to log it using the room's logger
-	room, exists := ctx.account.getRoomView(ctx.roomID)
-	if !exists {
-		// We don't call "stopWithError" here because we haven't even
-		// started this context's operation
-		ctx.controller.error(ctx.newInvalidRoomError())
-		return
-	}
-
-	ctx.log = room.log.WithFields(fields)
-}
-
-func (ctx *accountRoomOpContext) getLogCommonFields() log.Fields {
-	return log.Fields{
+	ctx.log = a.log.WithFields(log.Fields{
 		"room":      ctx.roomID,
 		"operation": ctx.op,
 		"who":       "accountRoomOpContext",
-	}
+	})
+
+	return ctx
 }
 
 // doOperation will block until the controller finishes

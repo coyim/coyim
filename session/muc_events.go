@@ -153,7 +153,7 @@ func (m *mucManager) roomConfigChanged(roomID jid.Bare, changes []data.RoomConfi
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) removeOccupant(roomID jid.Bare, nickname string) {
+func (m *mucManager) occupantRemoved(roomID jid.Bare, nickname string) {
 	ev := events.MUCOccupantRemoved{}
 	ev.Nickname = nickname
 

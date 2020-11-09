@@ -261,7 +261,7 @@ func (v *roomView) onDestroyRoom() {
 	d.show()
 }
 
-func (v *roomView) tryDestroyRoom(alternateID jid.Bare, reason string, onSuccess func(), onError func()) {
+func (v *roomView) tryDestroyRoom(alternateID jid.Bare, reason string, onSuccess func(), onError func(error)) {
 	v.spinner.show()
 
 	go func() {
@@ -274,7 +274,7 @@ func (v *roomView) tryDestroyRoom(alternateID jid.Bare, reason string, onSuccess
 			v.log.WithError(err).Error("An error occurred when trying to destroy the room")
 			doInUIThread(v.spinner.hide)
 			if onError != nil {
-				onError()
+				onError(err)
 			}
 		})
 	}()

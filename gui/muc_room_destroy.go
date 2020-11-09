@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -69,10 +70,29 @@ func (d *roomDestroyView) onDestroySuccess() {
 	d.close()
 }
 
-func (d *roomDestroyView) onDestroyFails() {
+func (d *roomDestroyView) onDestroyFails(err error) {
 	d.enableFields()
-	// TODO: check which type of error happened to show a friendly message to the user
-	d.notification.error(i18n.Local("The room can't be destroyed, please try again."))
+	d.notification.error(d.getFriendlyErrorMessage(err))
+}
+
+func (d *roomDestroyView) getFriendlyErrorMessage(err error) string {
+	switch err {
+	case session.ErrDestroyRoomInvalidIQResponse:
+		return i18n.Local("We were able to connect to the room service, " +
+			"but we received an invalid response from it. Please try again.")
+	case session.ErrDestroyRoomForbidden:
+		return i18n.Local("You don't have the permission to destroy this room. " +
+			"Please get in contact with one of the room owners.")
+	case session.ErrDestroyRoomUnknown:
+		return i18n.Local("The room's service responded with an unknow error, " +
+			"so, the room can't be destroyed. Please try again.")
+	case session.ErrDestroyRoomNoResult:
+		return i18n.Local("We were able to send the request to destroy the room, " +
+			"but the service responded with an unknow result. Please contact the " +
+			"room's administrator.")
+	default:
+		return i18n.Local("An error occurred while destroying the room, please try again.")
+	}
 }
 
 func (d *roomDestroyView) onCancel() {

@@ -75,7 +75,7 @@ func (c *roomOpController) request(sch chan bool, ech chan error) {
 
 func (c *roomOpController) success() {
 	if c.onSuccess == nil {
-		c.log.Warn("Room operation executed but no success callback was given")
+		c.log.Warn("Room operation succeed but no success callback was given")
 		return
 	}
 
@@ -85,11 +85,10 @@ func (c *roomOpController) success() {
 func (c *roomOpController) error(err error) {
 	log := c.log.WithError(err)
 	if c.onError == nil {
-		log.Error("Room operation executed but no error callback was given")
+		log.Error("Room operation failed but no error callback was given")
 		return
 	}
 
-	log.Error("A error occurred while trying to do a room's operation")
 	c.onError(err)
 }
 

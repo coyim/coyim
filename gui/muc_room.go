@@ -212,12 +212,12 @@ func (v *roomView) isOpen() bool {
 	return v.opened
 }
 
-func (v *roomView) isJoined() bool {
-	return v.room.SelfOccupantIsJoined()
+func (v *roomView) isSelfOccupantJoined() bool {
+	return v.room.IsSelfOccupantJoined()
 }
 
-func (v *roomView) isOwner() bool {
-	return v.room.SelfOccupantIsOwner()
+func (v *roomView) isSelfOccupantAnOwner() bool {
+	return v.room.IsSelfOccupantAnOwner()
 }
 
 func (v *roomView) present() {

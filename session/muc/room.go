@@ -85,14 +85,14 @@ func (r *Room) AddSelfOccupant(occupant *Occupant) {
 	r.selfOccupant = occupant
 }
 
-// SelfOccupantIsJoined returns true if the self occupant is in the room, false in otherwise
-func (r *Room) SelfOccupantIsJoined() bool {
+// IsSelfOccupantJoined returns true if the self occupant is in the room, false in otherwise
+func (r *Room) IsSelfOccupantJoined() bool {
 	return r.selfOccupant != nil
 }
 
-// SelfOccupantIsOwner returns a boolean indicating if the self occupant is an owner
-func (r *Room) SelfOccupantIsOwner() bool {
-	if r.SelfOccupantIsJoined() {
+// IsSelfOccupantAnOwner returns a boolean indicating if the self occupant is an owner
+func (r *Room) IsSelfOccupantAnOwner() bool {
+	if r.IsSelfOccupantJoined() {
 		return r.selfOccupant.Affiliation.IsOwner()
 	}
 	return false

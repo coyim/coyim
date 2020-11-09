@@ -7,6 +7,11 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+func (v *roomView) onDestroyRoom() {
+	d := v.newRoomDestroyView(v.window)
+	d.show()
+}
+
 type roomDestroyView struct {
 	room *roomView
 

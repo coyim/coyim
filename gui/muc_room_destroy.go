@@ -15,7 +15,7 @@ func (v *roomView) onDestroyRoom() {
 type roomDestroyView struct {
 	room *roomView
 
-	transient            gtki.Window
+	parentWindow         gtki.Window
 	dialog               gtki.Dialog `gtk-widget:"destroy-room-dialog"`
 	reasonEntry          gtki.Entry  `gtk-widget:"destroy-room-reason-entry"`
 	alternativeRoomEntry gtki.Entry  `gtk-widget:"destroy-room-alternative-room-entry"`
@@ -31,8 +31,8 @@ type roomDestroyView struct {
 
 func (v *roomView) newRoomDestroyView(t gtki.Window) *roomDestroyView {
 	d := &roomDestroyView{
-		room:      v,
-		transient: t,
+		room:         v,
+		parentWindow: t,
 	}
 
 	d.initBuilder()
@@ -53,7 +53,7 @@ func (d *roomDestroyView) initBuilder() {
 }
 
 func (d *roomDestroyView) initDefaults(u *gtkUI) {
-	d.dialog.SetTransientFor(d.transient)
+	d.dialog.SetTransientFor(d.parentWindow)
 
 	d.spinner = newSpinner()
 	d.spinnerBox.Add(d.spinner.getWidget())

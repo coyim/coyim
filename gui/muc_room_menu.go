@@ -19,20 +19,19 @@ type roomViewMenuButton struct {
 }
 
 func newRoomViewMenuButton(l string, onClick func()) *roomViewMenuButton {
-	mb := &roomViewMenuButton{}
+	mb := &roomViewMenuButton{
+		label:   l,
+		onClick: wrapSafeCallOfNilFunc(onClick),
+	}
 
 	b := newBuilder("MUCRoomMenuButton")
 	panicOnDevError(b.bindObjects(mb))
 
 	b.ConnectSignals(map[string]interface{}{
-		"on_clicked": func() {
-			if onClick != nil {
-				onClick()
-			}
-		},
+		"on_clicked": mb.onClick,
 	})
 
-	mb.button.SetLabel(l)
+	mb.button.SetLabel(mb.label)
 
 	return mb
 }

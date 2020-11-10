@@ -112,7 +112,16 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.selfOccupantRemovedEvent()
 		case occupantRemovedEvent:
 			c.occupantRemovedEvent(t.nickname)
+		case roomDestroyedEvent:
+			c.roomDestroyedEvent(t.reason, t.alternative)
 		}
+	})
+}
+
+func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid.Bare) {
+	doInUIThread(func() {
+		c.displayNotificationWhenRoomDestroyed(reason, alternative)
+		c.disableSendCapabilities()
 	})
 }
 

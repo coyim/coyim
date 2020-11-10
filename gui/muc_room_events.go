@@ -168,3 +168,10 @@ func (v *roomView) publishSubjectReceivedEvent(subject string) {
 		subject: subject,
 	})
 }
+
+func (v *roomView) publishRoomDestroyedEvent(reason string, alternative jid.Bare) {
+	v.publishEvent(roomDestroyedEvent{
+		reason:      reason,
+		alternative: alternative,
+	})
+}

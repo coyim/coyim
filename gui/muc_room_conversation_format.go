@@ -1,7 +1,10 @@
 package gui
 
 import (
+	"fmt"
 	"time"
+
+	"github.com/coyim/coyim/xmpp/jid"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
@@ -128,6 +131,23 @@ func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag str
 	c.addNewLine()
 }
 
+// displayNotificationWhenRoomDestroyed MUST be called from the UI thread
+func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason string, alternative jid.Bare) {
+	c.displayTextLineWithTimestamp(i18n.Localf("%s", getMessageForDestroyRoom(reason, alternative)), "warning")
+}
+
 func formatTimestamp(t time.Time) string {
 	return t.Format("15:04:05")
+}
+
+func getMessageForDestroyRoom(reason string, alternative jid.Bare) string {
+	msg := "The room has been destroyed"
+	if reason != "" {
+		msg = fmt.Sprintf("%s [reason: %s]", msg, reason)
+	}
+
+	if alternative != nil {
+		msg = fmt.Sprintf("%s [alternative room: %s]", msg, alternative.String())
+	}
+	return msg
 }

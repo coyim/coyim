@@ -3,6 +3,8 @@ package gui
 import (
 	"time"
 
+	"github.com/coyim/coyim/xmpp/jid"
+
 	"github.com/coyim/coyim/session/muc/data"
 )
 
@@ -62,6 +64,11 @@ type subjectReceivedEvent struct {
 	subject string
 }
 
+type roomDestroyedEvent struct {
+	reason      string
+	alternative jid.Bare
+}
+
 type messageForbidden struct{}
 
 type messageNotAcceptable struct{}
@@ -102,6 +109,7 @@ func (messageNotAcceptable) markAsRoomViewEvent()          {}
 func (discussionHistoryEvent) markAsRoomViewEvent()        {}
 func (roomConfigReceivedEvent) markAsRoomViewEvent()       {}
 func (roomConfigRequestTimeoutEvent) markAsRoomViewEvent() {}
+func (roomDestroyedEvent) markAsRoomViewEvent()            {}
 func (roomConfigChangedEvent) markAsRoomViewEvent()        {}
 func (selfOccupantRemovedEvent) markAsRoomViewEvent()      {}
 func (occupantRemovedEvent) markAsRoomViewEvent()          {}

@@ -262,7 +262,9 @@ func (v *roomView) tryDestroyRoom(alternativeRoomID jid.Bare, reason string, onS
 	v.spinner.show()
 
 	onSuccessFinal := func() {
-		doInUIThread(v.onRoomDestroyed)
+		doInUIThread(func() {
+			v.onRoomDestroyed(alternativeRoomID, reason)
+		})
 		callFuncIfNotNil(onSuccess)
 	}
 
@@ -275,8 +277,13 @@ func (v *roomView) tryDestroyRoom(alternativeRoomID jid.Bare, reason string, onS
 	go v.account.destroyRoom(v.roomID(), alternativeRoomID, reason, onSuccessFinal, onErrorFinal)
 }
 
-func (v *roomView) onRoomDestroyed() {
+func (v *roomView) onRoomDestroyed(alternativeRoomID jid.Bare, reason string) {
 	v.notifications.info(i18n.Local("The room has been destroyed"))
+	v.roomDestroyed(alternativeRoomID, reason)
+}
+
+func (v *roomView) roomDestroyed(alternativeRoomID jid.Bare, reason string) {
+	v.publishRoomDestroyedEvent(reason, alternativeRoomID)
 }
 
 func (v *roomView) switchToLobbyView() {

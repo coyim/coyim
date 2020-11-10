@@ -42,10 +42,21 @@ type MUCError struct {
 	Nickname  string
 }
 
+// MUCRoom contains information about the room id
+type MUCRoom struct {
+	Room jid.Bare
+}
+
 // MUCRoomCreated contains event information about
 // the created room
 type MUCRoomCreated struct {
-	Room jid.Bare
+	MUCRoom
+}
+
+// MUCRoomDestroyed contains event information about
+// the destroyed room
+type MUCRoomDestroyed struct {
+	MUCRoom
 }
 
 // MUCRoomRenamed contains event information about
@@ -161,7 +172,9 @@ type MUCRoomConfigChanged struct {
 }
 
 func (MUCError) markAsMUCEventTypeInterface()                     {}
+func (MUCRoom) markAsMUCEventTypeInterface()                      {}
 func (MUCRoomCreated) markAsMUCEventTypeInterface()               {}
+func (MUCRoomDestroyed) markAsMUCEventTypeInterface()             {}
 func (MUCRoomRenamed) markAsMUCEventTypeInterface()               {}
 func (MUCOccupant) markAsMUCEventTypeInterface()                  {}
 func (MUCOccupantUpdated) markAsMUCEventTypeInterface()           {}

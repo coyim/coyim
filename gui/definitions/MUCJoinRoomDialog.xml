@@ -122,7 +122,6 @@
                 <property name="hexpand">True</property>
                 <property name="row_spacing">12</property>
                 <property name="column_spacing">12</property>
-                <property name="row_homogeneous">True</property>
                 <child>
                   <object class="GtkLabel" id="roomNameLabel">
                     <property name="visible">True</property>
@@ -186,16 +185,9 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBoxText" id="chat-services-combobox-text">
+                  <object class="GtkBox" id="chat-services-box">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
-                    <property name="has_entry">True</property>
-                    <child internal-child="entry">
-                      <object class="GtkEntry" id="chat-service-entry">
-                        <property name="placeholder_text" translatable="yes">Enter the location or select one from the list</property>
-                        <signal name="changed" handler="on_service_changed" swapped="no"/>
-                      </object>
-                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>

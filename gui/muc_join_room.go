@@ -9,22 +9,20 @@ import (
 )
 
 type mucJoinRoomView struct {
-	u       *gtkUI
-	builder *builder
-	ac      *connectedAccountsComponent
+	u                     *gtkUI
+	builder               *builder
+	ac                    *connectedAccountsComponent
+	chatServicesComponent *chatServicesComponent
 
-	dialog           gtki.Dialog       `gtk-widget:"join-room-dialog"`
-	roomNameEntry    gtki.Entry        `gtk-widget:"room-name-entry"`
-	chatServices     gtki.ComboBoxText `gtk-widget:"chat-services-combobox-text"`
-	chatServiceEntry gtki.Entry        `gtk-widget:"chat-service-entry"`
-	joinButton       gtki.Button       `gtk-widget:"join-room-button"`
-	spinnerBox       gtki.Box          `gtk-widget:"spinner-box"`
-	notificationArea gtki.Box          `gtk-widget:"notification-area-box"`
+	dialog           gtki.Dialog `gtk-widget:"join-room-dialog"`
+	roomNameEntry    gtki.Entry  `gtk-widget:"room-name-entry"`
+	chatServiceBox   gtki.Box    `gtk-widget:"chat-services-box"`
+	joinButton       gtki.Button `gtk-widget:"join-room-button"`
+	spinnerBox       gtki.Box    `gtk-widget:"spinner-box"`
+	notificationArea gtki.Box    `gtk-widget:"notification-area-box"`
 
 	spinner       *spinner
 	notifications *notifications
-
-	previousUpdateChannel chan bool
 }
 
 func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
@@ -33,6 +31,7 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 	}
 
 	view.initBuilder()
+	view.initChatServices()
 	view.initNotifications()
 	view.initConnectedAccounts()
 	view.initDefaults()
@@ -49,10 +48,14 @@ func (v *mucJoinRoomView) initBuilder() {
 	v.builder.ConnectSignals(map[string]interface{}{
 		"on_close_window":     v.onCloseWindow,
 		"on_roomname_changed": v.enableJoinIfConditionsAreMet,
-		"on_service_changed":  v.enableJoinIfConditionsAreMet,
 		"on_cancel_clicked":   v.dialog.Destroy,
 		"on_join_clicked":     doOnlyOnceAtATime(v.tryJoinRoom),
 	})
+}
+
+func (v *mucJoinRoomView) initChatServices() {
+	v.chatServicesComponent = v.u.createChatServicesComponent(v.enableJoinIfConditionsAreMet)
+	v.chatServiceBox.Add(v.chatServicesComponent.getView())
 }
 
 func (v *mucJoinRoomView) initNotifications() {
@@ -64,84 +67,19 @@ func (v *mucJoinRoomView) initConnectedAccounts() {
 	v.ac = v.u.createConnectedAccountsComponent(accountsInput, v.notifications, v.updateServicesBasedOnAccount, v.onNoAccountsConnected)
 }
 
-func (v *mucJoinRoomView) onNoAccountsConnected() {
-	doInUIThread(func() {
-		v.enableJoinIfConditionsAreMet()
-		v.chatServices.RemoveAll()
-	})
-}
-
 func (v *mucJoinRoomView) updateServicesBasedOnAccount(ca *account) {
 	doInUIThread(func() {
 		v.notifications.clearErrors()
 		v.enableJoinIfConditionsAreMet()
 	})
-	go v.updateChatServicesBasedOnAccount(ca)
+	go v.chatServicesComponent.updateServicesBasedOnAccount(ca)
 }
 
-func (v *mucJoinRoomView) updateChatServicesBasedOnAccount(ca *account) {
-	if v.previousUpdateChannel != nil {
-		v.previousUpdateChannel <- true
-	}
-
-	v.previousUpdateChannel = make(chan bool)
-
-	csc, ec, endEarly := ca.session.GetChatServices(jid.ParseDomain(ca.Account()))
-
-	go v.updateChatServices(ca, csc, ec, endEarly)
-}
-
-func (v *mucJoinRoomView) updateChatServices(ca *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
-	hadAny := false
-	ts := make(chan string)
-
+func (v *mucJoinRoomView) onNoAccountsConnected() {
 	doInUIThread(func() {
-		t, _ := v.chatServiceEntry.GetText()
-		ts <- t
-		v.chatServices.RemoveAll()
-		v.spinner.show()
+		v.enableJoinIfConditionsAreMet()
+		v.chatServicesComponent.removeAll()
 	})
-
-	typedService := <-ts
-
-	defer func() {
-		v.onUpdateChatServicesFinished(hadAny, typedService)
-	}()
-
-	for {
-		select {
-		case <-v.previousUpdateChannel:
-			doInUIThread(v.chatServices.RemoveAll)
-			endEarly()
-			return
-		case err, _ := <-ec:
-			if err != nil {
-				ca.log.WithError(err).Error("Something went wrong trying to get chat services")
-			}
-			return
-		case cs, ok := <-csc:
-			if !ok {
-				return
-			}
-
-			hadAny = true
-			doInUIThread(func() {
-				v.chatServices.AppendText(cs.String())
-			})
-		}
-	}
-}
-
-func (v *mucJoinRoomView) onUpdateChatServicesFinished(hadAny bool, typedService string) {
-	if hadAny && typedService == "" {
-		doInUIThread(func() {
-			v.chatServices.SetActive(0)
-		})
-	}
-
-	doInUIThread(v.spinner.hide)
-
-	v.previousUpdateChannel = nil
 }
 
 func (v *mucJoinRoomView) initDefaults() {
@@ -163,9 +101,9 @@ func (v *mucJoinRoomView) typedRoomName() string {
 // enableJoinIfConditionsAreMet MUST be called from the UI thread
 func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 	roomName, _ := v.roomNameEntry.GetText()
-	chatServiceName, _ := v.chatServiceEntry.GetText()
+	chatService := v.chatServicesComponent.currentService()
 
-	hasAllValues := len(roomName) != 0 && len(chatServiceName) != 0 && v.ac.currentAccount() != nil
+	hasAllValues := len(roomName) != 0 && len(chatService.String()) != 0 && v.ac.currentAccount() != nil
 	v.joinButton.SetSensitive(hasAllValues)
 }
 
@@ -240,15 +178,14 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 		return nil, false
 	}
 
-	chatServiceName, _ := v.chatServiceEntry.GetText()
-	domain := jid.NewDomain(chatServiceName)
-	if !domain.Valid() {
+	chatServiceName := v.chatServicesComponent.currentService()
+	if !chatServiceName.Valid() {
 		v.log().WithField("domain", chatServiceName).Error("Trying to join a room with an invalid domain")
 		v.notifications.error(i18n.Local("You must provide a valid service name."))
 		return nil, false
 	}
 
-	return jid.NewBare(local, domain), true
+	return jid.NewBare(local, chatServiceName), true
 }
 
 func (v *mucJoinRoomView) tryJoinRoom(done func()) {
@@ -275,17 +212,18 @@ func (v *mucJoinRoomView) isValidRoomName(name string) bool {
 
 func (v *mucJoinRoomView) setSensitivityForAllFields(f bool) {
 	v.roomNameEntry.SetSensitive(f)
-	v.chatServices.SetSensitive(f)
 	v.joinButton.SetSensitive(f)
 }
 
 func (v *mucJoinRoomView) disableJoinFields() {
 	v.setSensitivityForAllFields(false)
+	v.chatServicesComponent.disableServiceInput()
 	v.ac.disableAccountInput()
 }
 
 func (v *mucJoinRoomView) enableJoinFields() {
 	v.setSensitivityForAllFields(true)
+	v.chatServicesComponent.enableServiceInput()
 	v.ac.enableAccountInput()
 }
 

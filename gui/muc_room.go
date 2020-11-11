@@ -244,13 +244,17 @@ func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
 
 	onSuccessFinal := func() {
 		doInUIThread(v.window.Destroy)
-		callFuncIfNotNil(onSuccess)
+		if onSuccess != nil {
+			onSuccess()
+		}
 	}
 
 	onErrorFinal := func(err error) {
 		v.log.WithError(err).Error("An error occurred when trying to leave the room")
 		doInUIThread(v.spinner.hide)
-		callErrorFuncIfNotNil(onError, err)
+		if onError != nil {
+			onError(err)
+		}
 	}
 
 	go v.account.leaveRoom(v.roomID(), v.room.SelfOccupantNickname(), onSuccessFinal, onErrorFinal)
@@ -262,16 +266,18 @@ func (v *roomView) tryDestroyRoom(alternativeRoomID jid.Bare, reason string, onS
 	v.spinner.show()
 
 	onSuccessFinal := func() {
-		doInUIThread(func() {
-			v.onRoomDestroyed(alternativeRoomID, reason)
-		})
-		callFuncIfNotNil(onSuccess)
+		doInUIThread(v.onRoomDestroyed)
+		if onSuccess != nil {
+			onSuccess()
+		}
 	}
 
 	onErrorFinal := func(err error) {
 		v.log.WithError(err).Error("An error occurred when trying to destroy the room")
 		doInUIThread(v.spinner.hide)
-		callErrorFuncIfNotNil(onError, err)
+		if onError != nil {
+			onError(err)
+		}
 	}
 
 	go v.account.destroyRoom(v.roomID(), alternativeRoomID, reason, onSuccessFinal, onErrorFinal)
@@ -348,22 +354,4 @@ func (v *roomView) roomID() jid.Bare {
 
 func (v *roomView) roomDisplayName() string {
 	return v.roomID().Local().String()
-}
-
-func callFuncIfNotNil(f func()) {
-	if f != nil {
-		f()
-	}
-}
-
-func callErrorFuncIfNotNil(f func(error), err error) {
-	if f != nil {
-		f(err)
-	}
-}
-
-func wrapSafeCallOfNilFunc(f func()) func() {
-	return func() {
-		callFuncIfNotNil(f)
-	}
 }

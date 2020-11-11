@@ -20,8 +20,12 @@ type roomViewMenuButton struct {
 
 func newRoomViewMenuButton(l string, onClick func()) *roomViewMenuButton {
 	mb := &roomViewMenuButton{
-		label:   l,
-		onClick: wrapSafeCallOfNilFunc(onClick),
+		label: l,
+		onClick: func() {
+			if onClick != nil {
+				onClick()
+			}
+		},
 	}
 
 	b := newBuilder("MUCRoomMenuButton")

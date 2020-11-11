@@ -48,8 +48,8 @@ func (s *session) newDestroyRoomContext(roomID, alternativeRoomID jid.Bare, reas
 		roomID:            roomID,
 		alternativeRoomID: alternativeRoomID,
 		reason:            reason,
-		resultChannel:     make(chan bool, 1),
-		errorChannel:      make(chan error, 1),
+		resultChannel:     make(chan bool),
+		errorChannel:      make(chan error),
 		conn:              s.conn,
 		log: s.log.WithFields(log.Fields{
 			"room":            roomID,

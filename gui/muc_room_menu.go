@@ -8,7 +8,7 @@ import (
 )
 
 type roomViewMenuItem interface {
-	getRoomViewMenuItemWidget() gtki.Widget
+	getRoomMenuItem() gtki.Widget
 }
 
 type roomViewMenuButton struct {
@@ -41,7 +41,7 @@ func newRoomViewMenuButton(l string, onClick func()) *roomViewMenuButton {
 }
 
 // implements roomViewMenuItem interface
-func (b *roomViewMenuButton) getRoomViewMenuItemWidget() gtki.Widget {
+func (b *roomViewMenuButton) getRoomMenuItem() gtki.Widget {
 	return b.button
 }
 
@@ -50,7 +50,7 @@ type roomViewMenuDivider struct {
 }
 
 // implements roomViewMenuItem interface
-func (d *roomViewMenuDivider) getRoomViewMenuItemWidget() gtki.Widget {
+func (d *roomViewMenuDivider) getRoomMenuItem() gtki.Widget {
 	return d.s
 }
 
@@ -103,14 +103,14 @@ func (m *roomViewMenu) redraw() {
 	m.removeAll()
 
 	for _, i := range m.items {
-		m.view.Add(i.getRoomViewMenuItemWidget())
+		m.view.Add(i.getRoomMenuItem())
 	}
 }
 
 // removeAll MUST be called from the UI thread
 func (m *roomViewMenu) removeAll() {
 	for _, i := range m.items {
-		m.view.Remove(i.getRoomViewMenuItemWidget())
+		m.view.Remove(i.getRoomMenuItem())
 	}
 }
 

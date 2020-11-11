@@ -55,6 +55,8 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 			t.subjectReceivedEvent(e.subject)
 		case subjectUpdatedEvent:
 			t.subjectReceivedEvent(e.subject)
+		case roomDestroyedEvent:
+			t.roomDestroyedEvent()
 		}
 	})
 }
@@ -63,6 +65,19 @@ func (t *roomViewToolbar) subjectReceivedEvent(subject string) {
 	doInUIThread(func() {
 		t.displayRoomSubject(subject)
 	})
+}
+
+func (t *roomViewToolbar) roomDestroyedEvent() {
+	doInUIThread(t.onRoomDestroyed)
+}
+
+// onRoomDestroyed MUST be called from UI Thread
+func (t *roomViewToolbar) onRoomDestroyed() {
+	t.roomMenu.SetSensitive(false)
+
+	updateWithStyle(t.roomNameLabel, providerWithStyle("label", style{
+		"color": "#A9A9A9",
+	}))
 }
 
 // displayRoomSubject MUST be called from the UI thread

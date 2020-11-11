@@ -266,7 +266,9 @@ func (v *roomView) tryDestroyRoom(alternativeRoomID jid.Bare, reason string, onS
 	v.spinner.show()
 
 	onSuccessFinal := func() {
-		doInUIThread(v.onRoomDestroyed)
+		doInUIThread(func() {
+			v.onRoomDestroyed(alternativeRoomID, reason)
+		})
 		if onSuccess != nil {
 			onSuccess()
 		}

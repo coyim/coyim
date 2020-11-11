@@ -184,7 +184,13 @@ func (r *roomViewRoster) onUpdateRoster() {
 
 func (r *roomViewRoster) onRoomDestroy() {
 	r.areSignalsEnabled = false
+	doInUIThread(func() {
+		updateWithStyle(r.tree, providerWithStyle("treeview", style{
+			"background": "rgba(128, 128, 128, 0.1)",
+		}))
+	})
 }
+
 func (r *roomViewRoster) draw() {
 	noneRoles, visitors, participants, moderators := r.roster.OccupantsByRole()
 

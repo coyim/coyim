@@ -18,75 +18,62 @@
             <property name="hexpand">True</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkBox">
+              <object class="GtkBox" id="spinner-box">
                 <property name="visible">True</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
+                <property name="halign">end</property>
+                <property name="valign">center</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButtonBox">
+                <property name="visible">True</property>
+                <property name="border_width">12</property>
+                <property name="spacing">12</property>
                 <child>
-                  <object class="GtkBox" id="spinner-box">
+                  <object class="GtkButton" id="cancel-button">
+                    <property name="label" translatable="yes">_Cancel</property>
                     <property name="visible">True</property>
-                    <property name="halign">end</property>
-                    <property name="valign">center</property>
+                    <property name="receives_default">True</property>
+                    <property name="relief">none</property>
+                    <property name="use_underline">True</property>
+                    <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
                     <property name="position">0</property>
+                    <property name="non_homogeneous">True</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButtonBox">
+                  <object class="GtkButton" id="join-room-button">
+                    <property name="label" translatable="yes">_Continue</property>
                     <property name="visible">True</property>
-                    <property name="border_width">12</property>
-                    <property name="spacing">12</property>
-                    <child>
-                      <object class="GtkButton" id="cancel-button">
-                        <property name="label" translatable="yes">_Cancel</property>
-                        <property name="visible">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="relief">none</property>
-                        <property name="use_underline">True</property>
-                        <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">0</property>
-                        <property name="non_homogeneous">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="join-room-button">
-                        <property name="label" translatable="yes">_Continue</property>
-                        <property name="visible">True</property>
-                        <property name="sensitive">False</property>
-                        <property name="receives_default">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="image_position">right</property>
-                        <signal name="clicked" handler="on_join_clicked" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="pack_type">end</property>
-                        <property name="position">1</property>
-                        <property name="non_homogeneous">True</property>
-                      </packing>
-                    </child>
+                    <property name="sensitive">False</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_underline">True</property>
+                    <property name="image_position">right</property>
+                    <signal name="clicked" handler="on_join_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="pack_type">end</property>
                     <property name="position">1</property>
+                    <property name="non_homogeneous">True</property>
                   </packing>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="pack_type">end</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>
@@ -123,7 +110,7 @@
                 <property name="row_spacing">12</property>
                 <property name="column_spacing">12</property>
                 <child>
-                  <object class="GtkLabel" id="roomNameLabel">
+                  <object class="GtkLabel" id="room-name-label">
                     <property name="visible">True</property>
                     <property name="halign">end</property>
                     <property name="label" translatable="yes">Room</property>
@@ -174,7 +161,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="chatServiceLabel">
+                  <object class="GtkLabel" id="chat-service-label">
                     <property name="visible">True</property>
                     <property name="halign">end</property>
                     <property name="label" translatable="yes">Where</property>
@@ -188,6 +175,23 @@
                   <object class="GtkBox" id="chat-services-box">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
+                    <child>
+                      <object class="GtkComboBoxText" id="chat-services-list">
+                        <property name="visible">True</property>
+                        <property name="has_entry">True</property>
+                        <child internal-child="entry">
+                          <object class="GtkEntry" id="chat-services-entry">
+                            <property name="visible">True</property>
+                            <property name="placeholder_text" translatable="yes">Enter or select the service</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>

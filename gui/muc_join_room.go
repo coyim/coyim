@@ -11,7 +11,7 @@ import (
 type mucJoinRoomView struct {
 	u                     *gtkUI
 	builder               *builder
-	ac                    *connectedAccountsComponent
+	accountsComponent     *connectedAccountsComponent
 	chatServicesComponent *chatServicesComponent
 
 	dialog           gtki.Dialog `gtk-widget:"join-room-dialog"`
@@ -64,7 +64,7 @@ func (v *mucJoinRoomView) initNotifications() {
 
 func (v *mucJoinRoomView) initConnectedAccounts() {
 	accountsInput := v.builder.get("accounts").(gtki.ComboBox)
-	v.ac = v.u.createConnectedAccountsComponent(accountsInput, v.notifications, v.updateServicesBasedOnAccount, v.onNoAccountsConnected)
+	v.accountsComponent = v.u.createConnectedAccountsComponent(accountsInput, v.notifications, v.updateServicesBasedOnAccount, v.onNoAccountsConnected)
 }
 
 func (v *mucJoinRoomView) updateServicesBasedOnAccount(ca *account) {
@@ -88,8 +88,8 @@ func (v *mucJoinRoomView) initDefaults() {
 }
 
 func (v *mucJoinRoomView) onCloseWindow() {
-	if v.ac != nil {
-		v.ac.onDestroy()
+	if v.accountsComponent != nil {
+		v.accountsComponent.onDestroy()
 	}
 }
 
@@ -103,7 +103,7 @@ func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 	roomName, _ := v.roomNameEntry.GetText()
 	chatService := v.chatServicesComponent.currentService()
 
-	hasAllValues := len(roomName) != 0 && len(chatService.String()) != 0 && v.ac.currentAccount() != nil
+	hasAllValues := len(roomName) != 0 && len(chatService.String()) != 0 && v.accountsComponent.currentAccount() != nil
 	v.joinButton.SetSensitive(hasAllValues)
 }
 
@@ -159,7 +159,7 @@ func (v *mucJoinRoomView) onServiceUnavailable(a *account, roomID jid.Bare) {
 func (v *mucJoinRoomView) log() coylog.Logger {
 	l := v.u.log
 
-	ca := v.ac.currentAccount()
+	ca := v.accountsComponent.currentAccount()
 	if ca != nil {
 		l = ca.log
 	}
@@ -195,7 +195,7 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 		return
 	}
 
-	ca := v.ac.currentAccount()
+	ca := v.accountsComponent.currentAccount()
 	if ca == nil {
 		v.notifications.error(i18n.Local("No account was selected, select an account from the list or enable one."))
 		return
@@ -218,13 +218,13 @@ func (v *mucJoinRoomView) setSensitivityForAllFields(f bool) {
 func (v *mucJoinRoomView) disableJoinFields() {
 	v.setSensitivityForAllFields(false)
 	v.chatServicesComponent.disableServiceInput()
-	v.ac.disableAccountInput()
+	v.accountsComponent.disableAccountInput()
 }
 
 func (v *mucJoinRoomView) enableJoinFields() {
 	v.setSensitivityForAllFields(true)
 	v.chatServicesComponent.enableServiceInput()
-	v.ac.enableAccountInput()
+	v.accountsComponent.enableAccountInput()
 }
 
 func (u *gtkUI) mucShowJoinRoom() {

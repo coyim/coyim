@@ -72,20 +72,20 @@ func (m *roomViewMenu) initBuilder() {
 	panicOnDevError(b.bindObjects(m))
 }
 
-// addOrUpdateMenuItem MUST always be called from the UI thread
-func (m *roomViewMenu) addOrUpdateMenuItem(id string, item roomViewMenuItem) {
+// setMenuItem MUST always be called from the UI thread
+func (m *roomViewMenu) setMenuItem(id string, item roomViewMenuItem) {
 	m.items[id] = item
 	m.redraw()
 }
 
-// addButtonItem MUST always be called from the UI thread
-func (m *roomViewMenu) addButtonItem(id, l string, f func()) {
-	m.addOrUpdateMenuItem(id, newRoomViewMenuButton(l, f))
+// setButtonItem MUST always be called from the UI thread
+func (m *roomViewMenu) setButtonItem(id, l string, f func()) {
+	m.setMenuItem(id, newRoomViewMenuButton(l, f))
 }
 
 // addDividerItem MUST always be called from the UI thread
 func (m *roomViewMenu) addDividerItem() {
-	m.addOrUpdateMenuItem(fmt.Sprintf("divider-%d", len(m.items)+1), newRoomViewMenuDivider())
+	m.setMenuItem(fmt.Sprintf("divider-%d", len(m.items)+1), newRoomViewMenuDivider())
 }
 
 // redraw MUST be called from the UI thread
@@ -125,12 +125,12 @@ func (v *roomView) refreshRoomMenu() {
 	v.menu.reset()
 
 	if v.isSelfOccupantAnOwner() {
-		v.menu.addButtonItem("destroy-room", i18n.Local("Destroy room"), v.onDestroyRoom)
+		v.menu.setButtonItem("destroy-room", i18n.Local("Destroy room"), v.onDestroyRoom)
 		v.menu.addDividerItem()
 	}
 
 	if v.isSelfOccupantJoined() {
-		v.menu.addButtonItem("leave-room", i18n.Local("Leave room"), v.onLeaveRoom)
+		v.menu.setButtonItem("leave-room", i18n.Local("Leave room"), v.onLeaveRoom)
 	}
 }
 

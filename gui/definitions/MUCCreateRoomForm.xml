@@ -85,7 +85,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText" id="chat-services-combobox-text">
+              <object class="GtkComboBoxText" id="chat-services-list">
                 <property name="visible">True</property>
                 <property name="hexpand">True</property>
                 <property name="has_entry">True</property>

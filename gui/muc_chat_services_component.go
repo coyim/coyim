@@ -6,35 +6,25 @@ import (
 )
 
 type chatServicesComponent struct {
-	u *gtkUI
-
-	chatServicesBox  gtki.Box          `gtk-widget:"chat-services-content"`
-	chatServices     gtki.ComboBoxText `gtk-widget:"chat-services-combobox-text"`
-	chatServiceEntry gtki.Entry        `gtk-widget:"chat-service-entry"`
-
+	chatServicesBox       gtki.Box
+	chatServicesList      gtki.ComboBoxText
+	chatServiceEntry      gtki.Entry
 	previousUpdateChannel chan bool
-
-	onServiceChanged func()
 }
 
-func (u *gtkUI) createChatServicesComponent(onServiceChanged func()) *chatServicesComponent {
-	c := &chatServicesComponent{
-		u:                u,
-		onServiceChanged: onServiceChanged,
-	}
+func (u *gtkUI) createChatServicesComponent(list gtki.ComboBoxText, entry gtki.Entry, onServiceChanged func()) *chatServicesComponent {
+	c := &chatServicesComponent{}
 
-	c.initBuilder()
+	c.chatServiceEntry = entry
+
+	c.chatServicesList = list
+	c.chatServicesList.Connect("changed", func() {
+		if onServiceChanged != nil {
+			onServiceChanged()
+		}
+	})
 
 	return c
-}
-
-func (c *chatServicesComponent) initBuilder() {
-	b := newBuilder("MUCChatServices")
-	panicOnDevError(b.bindObjects(c))
-
-	b.ConnectSignals(map[string]interface{}{
-		"on_service_changed": c.onServiceChanged,
-	})
 }
 
 func (c *chatServicesComponent) updateServicesBasedOnAccount(ca *account) {
@@ -68,12 +58,12 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 	for {
 		select {
 		case <-c.previousUpdateChannel:
-			c.removeAll()
+			doInUIThread(c.removeAll)
 			endEarly()
 			return
-		case err, _ := <-ec:
+		case err := <-ec:
 			if err != nil {
-				ca.log.WithError(err).Error("Something went wrong trying to get chat services")
+				ca.log.WithError(err).Error("Something went wrong trying to get the available chat services")
 			}
 			return
 		case cs, ok := <-csc:
@@ -83,7 +73,7 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 
 			hadAny = true
 			doInUIThread(func() {
-				c.chatServices.AppendText(cs.String())
+				c.addService(cs)
 			})
 		}
 	}
@@ -91,37 +81,41 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 
 func (c *chatServicesComponent) onUpdateChatServicesFinished(hadAny bool, typedService jid.Domain) {
 	if hadAny && len(typedService.String()) == 0 {
-		c.setActive(0)
+		doInUIThread(func() {
+			c.setActive(0)
+		})
 	}
 
 	c.previousUpdateChannel = nil
 }
 
-func (c *chatServicesComponent) getView() gtki.Box {
-	return c.chatServicesBox
-}
-
+// currentService MUST be called from the UI thread
 func (c *chatServicesComponent) currentService() jid.Domain {
 	cs, _ := c.chatServiceEntry.GetText()
 	return jid.ParseDomain(cs)
 }
 
+// setActive MUST be called from the UI thread
 func (c *chatServicesComponent) setActive(index int) {
-	doInUIThread(func() {
-		c.chatServices.SetActive(index)
-	})
+	c.chatServicesList.SetActive(index)
 }
 
+// addService MUST be called from the UI thread
+func (c *chatServicesComponent) addService(s jid.Domain) {
+	c.chatServicesList.AppendText(s.String())
+}
+
+// removeAll MUST be called from the UI thread
 func (c *chatServicesComponent) removeAll() {
-	doInUIThread(c.chatServices.RemoveAll)
+	c.chatServicesList.RemoveAll()
 }
 
 // enableServiceInput MUST be called from the UI thread
 func (c *chatServicesComponent) enableServiceInput() {
-	c.chatServices.SetSensitive(true)
+	c.chatServicesList.SetSensitive(true)
 }
 
 // disableServiceInput MUST be called from the UI thread
 func (c *chatServicesComponent) disableServiceInput() {
-	c.chatServices.SetSensitive(false)
+	c.chatServicesList.SetSensitive(false)
 }

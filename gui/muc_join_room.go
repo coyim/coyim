@@ -16,7 +16,6 @@ type mucJoinRoomView struct {
 
 	dialog           gtki.Dialog `gtk-widget:"join-room-dialog"`
 	roomNameEntry    gtki.Entry  `gtk-widget:"room-name-entry"`
-	chatServiceBox   gtki.Box    `gtk-widget:"chat-services-box"`
 	joinButton       gtki.Button `gtk-widget:"join-room-button"`
 	spinnerBox       gtki.Box    `gtk-widget:"spinner-box"`
 	notificationArea gtki.Box    `gtk-widget:"notification-area-box"`
@@ -31,8 +30,8 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 	}
 
 	view.initBuilder()
-	view.initChatServices()
 	view.initNotifications()
+	view.initChatServices()
 	view.initConnectedAccounts()
 	view.initDefaults()
 
@@ -53,13 +52,14 @@ func (v *mucJoinRoomView) initBuilder() {
 	})
 }
 
-func (v *mucJoinRoomView) initChatServices() {
-	v.chatServicesComponent = v.u.createChatServicesComponent(v.enableJoinIfConditionsAreMet)
-	v.chatServiceBox.Add(v.chatServicesComponent.getView())
-}
-
 func (v *mucJoinRoomView) initNotifications() {
 	v.notifications = v.u.newNotifications(v.notificationArea)
+}
+
+func (v *mucJoinRoomView) initChatServices() {
+	chatServicesList := v.builder.get("chat-services-list").(gtki.ComboBoxText)
+	chatServicesEntry := v.builder.get("chat-services-entry").(gtki.Entry)
+	v.chatServicesComponent = v.u.createChatServicesComponent(chatServicesList, chatServicesEntry, v.enableJoinIfConditionsAreMet)
 }
 
 func (v *mucJoinRoomView) initConnectedAccounts() {

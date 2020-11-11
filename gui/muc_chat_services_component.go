@@ -6,19 +6,18 @@ import (
 )
 
 type chatServicesComponent struct {
-	chatServicesBox       gtki.Box
-	chatServicesList      gtki.ComboBoxText
-	chatServiceEntry      gtki.Entry
+	servicesList          gtki.ComboBoxText
+	serviceEntry          gtki.Entry
 	previousUpdateChannel chan bool
 }
 
 func (u *gtkUI) createChatServicesComponent(list gtki.ComboBoxText, entry gtki.Entry, onServiceChanged func()) *chatServicesComponent {
-	c := &chatServicesComponent{}
+	c := &chatServicesComponent{
+		serviceEntry: entry,
+	}
 
-	c.chatServiceEntry = entry
-
-	c.chatServicesList = list
-	c.chatServicesList.Connect("changed", func() {
+	c.servicesList = list
+	c.servicesList.Connect("changed", func() {
 		if onServiceChanged != nil {
 			onServiceChanged()
 		}
@@ -91,31 +90,31 @@ func (c *chatServicesComponent) onUpdateChatServicesFinished(hadAny bool, typedS
 
 // currentService MUST be called from the UI thread
 func (c *chatServicesComponent) currentService() jid.Domain {
-	cs, _ := c.chatServiceEntry.GetText()
+	cs, _ := c.serviceEntry.GetText()
 	return jid.ParseDomain(cs)
 }
 
 // setActive MUST be called from the UI thread
 func (c *chatServicesComponent) setActive(index int) {
-	c.chatServicesList.SetActive(index)
+	c.servicesList.SetActive(index)
 }
 
 // addService MUST be called from the UI thread
 func (c *chatServicesComponent) addService(s jid.Domain) {
-	c.chatServicesList.AppendText(s.String())
+	c.servicesList.AppendText(s.String())
 }
 
 // removeAll MUST be called from the UI thread
 func (c *chatServicesComponent) removeAll() {
-	c.chatServicesList.RemoveAll()
+	c.servicesList.RemoveAll()
 }
 
 // enableServiceInput MUST be called from the UI thread
 func (c *chatServicesComponent) enableServiceInput() {
-	c.chatServicesList.SetSensitive(true)
+	c.servicesList.SetSensitive(true)
 }
 
 // disableServiceInput MUST be called from the UI thread
 func (c *chatServicesComponent) disableServiceInput() {
-	c.chatServicesList.SetSensitive(false)
+	c.servicesList.SetSensitive(false)
 }

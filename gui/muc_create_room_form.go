@@ -9,23 +9,21 @@ import (
 )
 
 type mucCreateRoomViewForm struct {
-	isShown bool
-	ac      *connectedAccountsComponent
+	isShown               bool
+	builder               *builder
+	accountsComponent     *connectedAccountsComponent
+	chatServicesComponent *chatServicesComponent
 
-	view             gtki.Box          `gtk-widget:"create-room-form"`
-	account          gtki.ComboBox     `gtk-widget:"accounts"`
-	chatServices     gtki.ComboBoxText `gtk-widget:"chat-services-combobox-text"`
-	chatServiceEntry gtki.Entry        `gtk-widget:"chat-services-entry"`
-	roomEntry        gtki.Entry        `gtk-widget:"room-name-entry"`
-	roomAutoJoin     gtki.CheckButton  `gtk-widget:"autojoin-check-button"`
-	createButton     gtki.Button       `gtk-widget:"create-room-button"`
-	spinnerBox       gtki.Box          `gtk-widget:"spinner-box"`
-	notificationArea gtki.Box          `gtk-widget:"notification-area-box"`
+	view             gtki.Box         `gtk-widget:"create-room-form"`
+	roomEntry        gtki.Entry       `gtk-widget:"room-name-entry"`
+	roomAutoJoin     gtki.CheckButton `gtk-widget:"autojoin-check-button"`
+	createButton     gtki.Button      `gtk-widget:"create-room-button"`
+	spinnerBox       gtki.Box         `gtk-widget:"spinner-box"`
+	notificationArea gtki.Box         `gtk-widget:"notification-area-box"`
 
 	spinner       *spinner
 	notifications *notifications
 
-	previousUpdateChannel   chan bool
 	roomNameConflictList    *set.Set
 	createRoom              func(*account, jid.Bare)
 	onCheckFieldsConditions func(string, string, *account) bool
@@ -35,22 +33,24 @@ type mucCreateRoomViewForm struct {
 
 func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	f := &mucCreateRoomViewForm{
-		log:                  v.log,
 		roomNameConflictList: set.New(),
+		log:                  v.log,
 	}
 
 	f.initBuilder(v)
 	f.initNotifications(v)
+	f.initChatServices(v)
+	f.initConnectedAccounts(v)
 	f.initDefaults(v)
 
 	return f
 }
 
 func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
-	builder := newBuilder("MUCCreateRoomForm")
-	panicOnDevError(builder.bindObjects(f))
+	f.builder = newBuilder("MUCCreateRoomForm")
+	panicOnDevError(f.builder.bindObjects(f))
 
-	builder.ConnectSignals(map[string]interface{}{
+	f.builder.ConnectSignals(map[string]interface{}{
 		"on_cancel":          v.onCancel,
 		"on_create_room":     f.onCreateRoom,
 		"on_roomName_change": f.enableCreationIfConditionsAreMet,
@@ -65,11 +65,20 @@ func (f *mucCreateRoomViewForm) initNotifications(v *mucCreateRoomView) {
 	f.notifications = v.u.newNotifications(f.notificationArea)
 }
 
+func (f *mucCreateRoomViewForm) initChatServices(v *mucCreateRoomView) {
+	chatServicesList := f.builder.get("chat-services-list").(gtki.ComboBoxText)
+	chatServicesEntry := f.builder.get("chat-services-entry").(gtki.Entry)
+	f.chatServicesComponent = v.u.createChatServicesComponent(chatServicesList, chatServicesEntry, f.enableCreationIfConditionsAreMet)
+}
+
+func (f *mucCreateRoomViewForm) initConnectedAccounts(v *mucCreateRoomView) {
+	account := f.builder.get("accounts").(gtki.ComboBox)
+	f.accountsComponent = v.u.createConnectedAccountsComponent(account, f.notifications, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
+}
+
 func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
 	f.spinner = newSpinner()
 	f.spinnerBox.Add(f.spinner.getWidget())
-
-	f.ac = v.u.createConnectedAccountsComponent(f.account, f.notifications, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
 }
 
 func (v *mucCreateRoomView) initCreateRoomForm() *mucCreateRoomViewForm {
@@ -161,17 +170,16 @@ func (f *mucCreateRoomViewForm) onCreateRoom() {
 		return
 	}
 
-	chatService, _ := f.chatServiceEntry.GetText()
-	domain := jid.NewDomain(chatService)
+	domain := f.chatServicesComponent.currentService()
 	if !domain.Valid() {
-		f.log(nil, nil).WithField("domain", chatService).Error("Trying to create a room with an invalid domain")
+		f.log(nil, nil).WithField("domain", domain).Error("Trying to create a room with an invalid domain")
 		f.notifications.error(i18n.Local("You must provide a valid service name."))
 		return
 	}
 
 	roomID := jid.NewBare(local, domain)
 
-	ca := f.ac.currentAccount()
+	ca := f.accountsComponent.currentAccount()
 	if ca == nil {
 		f.log(nil, roomID).Error("No account was selected to create the room")
 		f.notifications.error(i18n.Local("No account is selected, please select one account from the list or connect to one."))
@@ -191,8 +199,8 @@ func (f *mucCreateRoomViewForm) beforeCreatingTheRoom() {
 func (f *mucCreateRoomViewForm) destroy() {
 	f.isShown = false
 
-	if f.ac != nil {
-		f.ac.onDestroy()
+	if f.accountsComponent != nil {
+		f.accountsComponent.onDestroy()
 	}
 }
 
@@ -209,20 +217,20 @@ func (f *mucCreateRoomViewForm) reset() {
 
 func (f *mucCreateRoomViewForm) setFieldsSensitive(v bool) {
 	f.createButton.SetSensitive(v)
-	f.account.SetSensitive(v)
 	f.roomEntry.SetSensitive(v)
-	f.chatServices.SetSensitive(v)
 	f.roomAutoJoin.SetSensitive(v)
 }
 
 func (f *mucCreateRoomViewForm) disableFields() {
 	f.setFieldsSensitive(false)
-	f.ac.disableAccountInput()
+	f.accountsComponent.disableAccountInput()
+	f.chatServicesComponent.disableServiceInput()
 }
 
 func (f *mucCreateRoomViewForm) enableFields() {
 	f.setFieldsSensitive(true)
-	f.ac.enableAccountInput()
+	f.accountsComponent.enableAccountInput()
+	f.chatServicesComponent.enableServiceInput()
 }
 
 func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(ca *account) {
@@ -230,29 +238,29 @@ func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(ca *account) {
 		f.notifications.clearErrors()
 		f.enableCreationIfConditionsAreMet()
 	})
-	go f.updateChatServicesBasedOnAccount(ca)
+	go f.chatServicesComponent.updateServicesBasedOnAccount(ca)
 }
 
 func (f *mucCreateRoomViewForm) onNoAccountsConnected() {
 	doInUIThread(func() {
 		f.enableCreationIfConditionsAreMet()
-		f.chatServices.RemoveAll()
+		f.chatServicesComponent.removeAll()
 	})
 }
 
 func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 	// Let the connected accounts component show any errors if it have one
-	if len(f.ac.accounts) > 0 {
+	if len(f.accountsComponent.accounts) > 0 {
 		f.notifications.clearErrors()
 	}
 
 	roomName, _ := f.roomEntry.GetText()
-	chatService, _ := f.chatServiceEntry.GetText()
-	currentAccount := f.ac.currentAccount()
+	chatService := f.chatServicesComponent.currentService()
+	currentAccount := f.accountsComponent.currentAccount()
 
-	ok := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
+	ok := len(roomName) != 0 && len(chatService.String()) != 0 && currentAccount != nil
 	if ok {
-		roomID := jid.NewBare(jid.NewLocal(roomName), jid.NewDomain(chatService))
+		roomID := jid.NewBare(jid.NewLocal(roomName), chatService)
 		if roomID.Valid() && f.roomNameConflictList.Has(roomID.String()) {
 			f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
 			ok = false
@@ -260,74 +268,6 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 	}
 
 	f.createButton.SetSensitive(ok)
-}
-
-func (f *mucCreateRoomViewForm) updateChatServicesBasedOnAccount(ca *account) {
-	if f.previousUpdateChannel != nil {
-		f.previousUpdateChannel <- true
-	}
-
-	f.previousUpdateChannel = make(chan bool)
-
-	csc, ec, endEarly := ca.session.GetChatServices(jid.ParseDomain(ca.Account()))
-
-	go f.updateChatServices(ca, csc, ec, endEarly)
-}
-
-func (f *mucCreateRoomViewForm) updateChatServices(ca *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
-	hadAny := false
-	ts := make(chan string)
-
-	doInUIThread(func() {
-		t, _ := f.chatServiceEntry.GetText()
-		ts <- t
-		f.chatServices.RemoveAll()
-		f.spinner.show()
-	})
-
-	typedService := <-ts
-
-	defer func() {
-		// We call this in a anonymous function because we want
-		// always the latest value of hadAny and we use it as a
-		// global variable in this context
-		f.onUpdateChatServicesFinished(hadAny, typedService)
-	}()
-
-	for {
-		select {
-		case <-f.previousUpdateChannel:
-			doInUIThread(f.chatServices.RemoveAll)
-			endEarly()
-			return
-		case err, _ := <-ec:
-			if err != nil {
-				f.log(ca, nil).WithError(err).Error("Something went wrong trying to get chat services")
-			}
-			return
-		case cs, ok := <-csc:
-			if !ok {
-				return
-			}
-
-			hadAny = true
-			doInUIThread(func() {
-				f.chatServices.AppendText(cs.String())
-			})
-		}
-	}
-}
-
-func (f *mucCreateRoomViewForm) onUpdateChatServicesFinished(hadAny bool, typedService string) {
-	if hadAny && typedService == "" {
-		doInUIThread(func() {
-			f.chatServices.SetActive(0)
-		})
-	}
-
-	doInUIThread(f.spinner.hide)
-
-	f.previousUpdateChannel = nil
 }
 
 func setEnabled(w gtki.Widget, enable bool) {

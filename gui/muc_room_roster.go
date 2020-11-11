@@ -26,8 +26,6 @@ const (
 type roomViewRoster struct {
 	roster *muc.RoomRoster
 
-	areSignalsEnabled bool
-
 	view        gtki.Box      `gtk-widget:"roster-view"`
 	rosterPanel gtki.Box      `gtk-widget:"roster-main-panel"`
 	tree        gtki.TreeView `gtk-widget:"roster-tree-view"`
@@ -40,9 +38,8 @@ type roomViewRoster struct {
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	r := &roomViewRoster{
-		roster:            v.room.Roster(),
-		log:               v.log,
-		areSignalsEnabled: true,
+		roster: v.room.Roster(),
+		log:    v.log,
 	}
 
 	r.initBuilder()
@@ -94,17 +91,11 @@ func (r *roomViewRoster) initSubscribers(v *roomView) {
 			r.onUpdateRoster()
 		case occupantRemovedEvent:
 			r.onUpdateRoster()
-		case roomDestroyedEvent:
-			r.onRoomDestroy()
 		}
 	})
 }
 
 func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath) {
-	if !r.areSignalsEnabled {
-		return
-	}
-
 	nickname, err := r.getNicknameFromTreeModel(path)
 	if err != nil {
 		r.log.Warn("Nickname not found")
@@ -180,15 +171,6 @@ func (r *roomViewRoster) getIterValue(iter gtki.TreeIter, index int) (interface{
 
 func (r *roomViewRoster) onUpdateRoster() {
 	doInUIThread(r.redraw)
-}
-
-func (r *roomViewRoster) onRoomDestroy() {
-	r.areSignalsEnabled = false
-	doInUIThread(func() {
-		updateWithStyle(r.tree, providerWithStyle("treeview", style{
-			"background": "rgba(128, 128, 128, 0.1)",
-		}))
-	})
 }
 
 func (r *roomViewRoster) draw() {

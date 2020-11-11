@@ -12,30 +12,20 @@ type roomViewMenuItem interface {
 }
 
 type roomViewMenuButton struct {
-	label   string
-	onClick func()
-
 	button gtki.ModelButton `gtk-widget:"room-menu-button"`
 }
 
 func newRoomViewMenuButton(l string, onClick func()) *roomViewMenuButton {
-	mb := &roomViewMenuButton{
-		label: l,
-		onClick: func() {
-			if onClick != nil {
-				onClick()
-			}
-		},
-	}
+	mb := &roomViewMenuButton{}
 
 	b := newBuilder("MUCRoomMenuButton")
 	panicOnDevError(b.bindObjects(mb))
 
 	b.ConnectSignals(map[string]interface{}{
-		"on_clicked": mb.onClick,
+		"on_clicked": onClick,
 	})
 
-	mb.button.SetLabel(mb.label)
+	mb.button.SetLabel(l)
 
 	return mb
 }

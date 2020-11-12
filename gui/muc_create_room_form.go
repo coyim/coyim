@@ -255,19 +255,29 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 	}
 
 	roomName, _ := f.roomEntry.GetText()
-	chatService := f.chatServicesComponent.currentService()
+	chatService := f.chatServicesComponent.currentServiceValue()
 	currentAccount := f.accountsComponent.currentAccount()
 
-	ok := len(roomName) != 0 && len(chatService.String()) != 0 && currentAccount != nil
+	ok := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
 	if ok {
-		roomID := jid.NewBare(jid.NewLocal(roomName), chatService)
-		if roomID.Valid() && f.roomNameConflictList.Has(roomID.String()) {
-			f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
-			ok = false
-		}
+		ok = f.isInRoomNameConflictList(roomName, chatService)
 	}
 
 	f.createButton.SetSensitive(ok)
+}
+
+func (f *mucCreateRoomViewForm) isInRoomNameConflictList(local, domain string) bool {
+	roomLocal := jid.NewLocal(local)
+	roomDomain := jid.NewDomain(domain)
+	if roomLocal.Valid() && roomDomain.Valid() {
+		roomID := jid.NewBare(roomLocal, roomDomain)
+		if roomID.Valid() && f.roomNameConflictList.Has(roomID.String()) {
+			f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
+			return false
+		}
+	}
+
+	return true
 }
 
 func setEnabled(w gtki.Widget, enable bool) {

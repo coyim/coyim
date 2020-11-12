@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"errors"
+
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -12,6 +14,13 @@ func (v *roomView) onDestroyRoom() {
 	d.show()
 }
 
+var (
+	errEmptyServiceName   = errors.New("empty service name")
+	errEmptyRoomName      = errors.New("empty room name")
+	errInvalidRoomName    = errors.New("invalid room name")
+	errInvalidServiceName = errors.New("invalid service name")
+)
+
 type roomDestroyView struct {
 	builder               *builder
 	chatServicesComponent *chatServicesComponent
@@ -20,7 +29,7 @@ type roomDestroyView struct {
 	parentWindow         gtki.Window
 	dialog               gtki.Dialog `gtk-widget:"destroy-room-dialog"`
 	reasonEntry          gtki.Entry  `gtk-widget:"destroy-room-reason-entry"`
-	alternativeRoomEntry gtki.Entry  `gtk-widget:"destroy-room-alternative-room-entry"`
+	alternativeRoomEntry gtki.Entry  `gtk-widget:"destroy-room-name-entry"`
 	destroyRoomButton    gtki.Button `gtk-widget:"destroy-room-button"`
 	spinnerBox           gtki.Box    `gtk-widget:"destroy-room-spinner-box"`
 	notificationBox      gtki.Box    `gtk-widget:"notification-area"`
@@ -76,14 +85,29 @@ func (d *roomDestroyView) onDestroyRoom() {
 
 	reason := d.getReason()
 
-	alternativeID, valid := d.getAlternativeRoomID()
-	if !valid {
-		d.notification.error(i18n.Local("You must type a valid alternative room address for destroying the room."))
+	alternativeID, err := d.tryParseAlternativeRoomID()
+	if err != nil {
+		d.notification.error(d.getMessageForAlternativeRoomError(err))
 		d.enableFieldsAndHideSpinner()
 		return
 	}
 
 	d.destroyRoom(alternativeID, reason, d.onDestroySuccess, d.onDestroyFails)
+}
+
+func (d *roomDestroyView) getMessageForAlternativeRoomError(err error) string {
+	switch err {
+	case errEmptyServiceName:
+		return i18n.Local("You must provide a service name")
+	case errEmptyRoomName:
+		return i18n.Local("You must provide a room name")
+	case errInvalidRoomName:
+		return i18n.Local("You must provide a valid room name")
+	case errInvalidServiceName:
+		return i18n.Local("You must provide a valid service name")
+	default:
+		return i18n.Local("The room identification is not valid")
+	}
 }
 
 // onDestroySuccess MUST NOT be called from the UI thread
@@ -145,17 +169,30 @@ func (d *roomDestroyView) getReason() string {
 	return t
 }
 
-// getAlternativeRoomID MUST be called from the UI thread
+// tryParseAlternativeRoomID MUST be called from the UI thread
 //
 // This should be "alternative venue" as the protocol says, but
 // we prefer to use "alternative room id" in this context
 // in order to have a better understanding of what this field means
-func (d *roomDestroyView) getAlternativeRoomID() (jid.Bare, bool) {
-	t, _ := d.alternativeRoomEntry.GetText()
-	if t != "" {
-		return jid.TryParseBare(t)
+func (d *roomDestroyView) tryParseAlternativeRoomID() (jid.Bare, error) {
+	rn, _ := d.alternativeRoomEntry.GetText()
+	s := d.chatServicesComponent.currentServiceValue()
+
+	ch := newAlternativeRoomChecker(rn, s)
+
+	// We don't really need to continue if the user hasn't entered
+	// anything in the room name and the service, because the alternative
+	// room is always optional according to the protocol
+	if ch.shouldBypassChecking() {
+		return nil, nil
 	}
-	return nil, true
+
+	roomID, err := ch.alternativeRoomID()
+	if err != nil {
+		return nil, err
+	}
+
+	return roomID, nil
 }
 
 type alternativeRoomChecker struct {

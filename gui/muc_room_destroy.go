@@ -158,6 +158,68 @@ func (d *roomDestroyView) getAlternativeRoomID() (jid.Bare, bool) {
 	return nil, true
 }
 
+type alternativeRoomChecker struct {
+	roomName, service string
+}
+
+func newAlternativeRoomChecker(rn, s string) *alternativeRoomChecker {
+	return &alternativeRoomChecker{rn, s}
+}
+
+func (c *alternativeRoomChecker) shouldBypassChecking() bool {
+	return c.roomName == "" && c.service == ""
+}
+
+func (c *alternativeRoomChecker) alternativeRoomID() (jid.Bare, error) {
+	err := c.doAllChecks()
+	if err != nil {
+		return nil, err
+	}
+	return jid.NewBare(jid.NewLocal(c.roomName), jid.NewDomain(c.service)), nil
+}
+
+func (c *alternativeRoomChecker) doAllChecks() error {
+	rules := []func() (bool, error){
+		c.validateRoomName,
+		c.validateServiceName,
+	}
+
+	for _, ch := range rules {
+		invalid, err := ch()
+		if invalid {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (c *alternativeRoomChecker) validateRoomName() (bool, error) {
+	if c.roomName == "" && c.service != "" {
+		return true, errEmptyRoomName
+	}
+
+	l := jid.NewLocal(c.roomName)
+	if !l.Valid() {
+		return true, errInvalidRoomName
+	}
+
+	return false, nil
+}
+
+func (c *alternativeRoomChecker) validateServiceName() (bool, error) {
+	if c.roomName != "" && c.service == "" {
+		return true, errEmptyServiceName
+	}
+
+	d := jid.NewDomain(c.service)
+	if !d.Valid() {
+		return true, errInvalidServiceName
+	}
+
+	return false, nil
+}
+
 // disableFields MUST be called from the UI thread
 func (d *roomDestroyView) disableFields() {
 	d.setSensitivityForAllFields(false)

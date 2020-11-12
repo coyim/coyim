@@ -232,7 +232,7 @@ func (c *roomViewConversation) roomAnonymityChangedEvent(anonymityType data.Room
 	switch anonymityType {
 	case data.SemiAnonymous:
 		c.semiAnonymousRoomEvent()
-	case data.NoAnonymous:
+	case data.NonAnonymous:
 		c.nonAnonymousRoomEvent()
 	default:
 		c.log.Warn("room anonymity type unsupported")

@@ -120,7 +120,7 @@ func (m *mucManager) subjectUpdated(roomID jid.Bare, nickname, subject string) {
 }
 
 func (m *mucManager) nonAnonymousRoom(roomID jid.Bare) {
-	m.roomAnonymityChanged(roomID, data.NoAnonymous)
+	m.roomAnonymityChanged(roomID, data.NonAnonymous)
 }
 
 func (m *mucManager) semiAnonymousRoom(roomID jid.Bare) {

@@ -99,7 +99,7 @@ func (rl *RoomListing) setFeature(feature string) {
 	case "muc_semianonymous":
 		rl.Anonymity = data.SemiAnonymous
 	case "muc_nonanonymous":
-		rl.Anonymity = data.NoAnonymous
+		rl.Anonymity = data.NonAnonymous
 	case "muc_persistent":
 		rl.Persistent = true
 	case "muc_temporary":

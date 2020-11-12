@@ -26,7 +26,6 @@ type roomDestroyView struct {
 	chatServicesComponent *chatServicesComponent
 	destroyRoom           func(jid.Bare, string, func(), func(error))
 
-	parentWindow         gtki.Window
 	dialog               gtki.Dialog `gtk-widget:"destroy-room-dialog"`
 	reasonEntry          gtki.Entry  `gtk-widget:"destroy-room-reason-entry"`
 	alternativeRoomEntry gtki.Entry  `gtk-widget:"destroy-room-name-entry"`

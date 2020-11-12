@@ -185,18 +185,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="destroy-room-alternative-room-label">
-                    <property name="visible">True</property>
-                    <property name="halign">end</property>
-                    <property name="valign">center</property>
-                    <property name="label" translatable="yes">Alternative room</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkEntry" id="destroy-room-reason-entry">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
@@ -207,13 +195,64 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="destroy-room-alternative-room-entry">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Room</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="destroy-room-name-entry">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Where</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="chat-services-box">
+                    <property name="visible">True</property>
+                    <property name="hexpand">True</property>
+                    <child>
+                      <object class="GtkComboBoxText" id="chat-services-list">
+                        <property name="visible">True</property>
+                        <property name="has_entry">True</property>
+                        <child internal-child="entry">
+                          <object class="GtkEntry" id="chat-services-entry">
+                            <property name="visible">True</property>
+                            <property name="placeholder_text" translatable="yes">Enter or select the service</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">2</property>
                   </packing>
                 </child>
               </object>

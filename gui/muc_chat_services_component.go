@@ -88,10 +88,15 @@ func (c *chatServicesComponent) onUpdateChatServicesFinished(hadAny bool, typedS
 	c.previousUpdateChannel = nil
 }
 
+// currentServiceValue MUST be called from the UI thread
+func (c *chatServicesComponent) currentServiceValue() string {
+	cs, _ := c.serviceEntry.GetText()
+	return cs
+}
+
 // currentService MUST be called from the UI thread
 func (c *chatServicesComponent) currentService() jid.Domain {
-	cs, _ := c.serviceEntry.GetText()
-	return jid.ParseDomain(cs)
+	return jid.ParseDomain(c.currentServiceValue())
 }
 
 // setActive MUST be called from the UI thread

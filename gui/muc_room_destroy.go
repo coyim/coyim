@@ -8,12 +8,14 @@ import (
 )
 
 func (v *roomView) onDestroyRoom() {
-	d := v.newRoomDestroyView(v.window)
+	d := v.newRoomDestroyView()
 	d.show()
 }
 
 type roomDestroyView struct {
-	room *roomView
+	builder               *builder
+	chatServicesComponent *chatServicesComponent
+	destroyRoom           func(jid.Bare, string, func(), func(error))
 
 	parentWindow         gtki.Window
 	dialog               gtki.Dialog `gtk-widget:"destroy-room-dialog"`
@@ -29,36 +31,43 @@ type roomDestroyView struct {
 	cancelChannel chan bool
 }
 
-func (v *roomView) newRoomDestroyView(t gtki.Window) *roomDestroyView {
+func (v *roomView) newRoomDestroyView() *roomDestroyView {
 	d := &roomDestroyView{
-		room:         v,
-		parentWindow: t,
+		destroyRoom: v.tryDestroyRoom,
 	}
 
 	d.initBuilder()
-	d.initDefaults(v.u)
+	d.initChatServices(v)
+	d.initDefaults(v)
 
 	return d
 }
 
 func (d *roomDestroyView) initBuilder() {
-	builder := newBuilder("MUCRoomDestroyDialog")
-	panicOnDevError(builder.bindObjects(d))
+	d.builder = newBuilder("MUCRoomDestroyDialog")
+	panicOnDevError(d.builder.bindObjects(d))
 
-	builder.ConnectSignals(map[string]interface{}{
+	d.builder.ConnectSignals(map[string]interface{}{
 		"on_destroy_clicked":  d.onDestroyRoom,
 		"on_cancel_clicked":   d.onCancel,
 		"on_dialog_destroyed": d.onDialogDestroy,
 	})
 }
 
-func (d *roomDestroyView) initDefaults(u *gtkUI) {
-	d.dialog.SetTransientFor(d.parentWindow)
+func (d *roomDestroyView) initChatServices(v *roomView) {
+	chatServicesList := d.builder.get("chat-services-list").(gtki.ComboBoxText)
+	chatServicesEntry := d.builder.get("chat-services-entry").(gtki.Entry)
+	d.chatServicesComponent = v.u.createChatServicesComponent(chatServicesList, chatServicesEntry, nil)
+	go d.chatServicesComponent.updateServicesBasedOnAccount(v.account)
+}
+
+func (d *roomDestroyView) initDefaults(v *roomView) {
+	d.dialog.SetTransientFor(v.window)
 
 	d.spinner = newSpinner()
 	d.spinnerBox.Add(d.spinner.getWidget())
 
-	d.notification = u.newNotifications(d.notificationBox)
+	d.notification = v.u.newNotifications(d.notificationBox)
 }
 
 // onDestroyRoom MUST be called from the UI thread

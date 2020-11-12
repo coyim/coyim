@@ -83,7 +83,7 @@ func (d *roomDestroyView) onDestroyRoom() {
 		return
 	}
 
-	d.room.tryDestroyRoom(alternativeID, reason, d.onDestroySuccess, d.onDestroyFails)
+	d.destroyRoom(alternativeID, reason, d.onDestroySuccess, d.onDestroyFails)
 }
 
 // onDestroySuccess MUST NOT be called from the UI thread
@@ -95,11 +95,11 @@ func (d *roomDestroyView) onDestroySuccess() {
 func (d *roomDestroyView) onDestroyFails(err error) {
 	doInUIThread(func() {
 		d.enableFields()
-		d.notification.error(d.getFriendlyErrorMessage(err))
+		d.notification.error(d.getMessageForDestroyError(err))
 	})
 }
 
-func (d *roomDestroyView) getFriendlyErrorMessage(err error) string {
+func (d *roomDestroyView) getMessageForDestroyError(err error) string {
 	switch err {
 	case session.ErrDestroyRoomInvalidIQResponse:
 		return i18n.Local("We were able to connect to the room service, " +

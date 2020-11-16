@@ -97,9 +97,9 @@ func (rl *RoomListing) setFeature(feature string) {
 	case "jabber:iq:register":
 		rl.AllowsRegistration = true
 	case "muc_semianonymous":
-		rl.Anonymity = data.SemiAnonymous
+		rl.AnonymityLevel = "semi"
 	case "muc_nonanonymous":
-		rl.Anonymity = data.NotAnonymous
+		rl.AnonymityLevel = "no"
 	case "muc_persistent":
 		rl.Persistent = true
 	case "muc_temporary":

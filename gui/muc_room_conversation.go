@@ -105,7 +105,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case loggingDisabledEvent:
 			c.loggingDisabledEvent()
 		case roomAnonymityEvent:
-			c.roomAnonymityChangedEvent(t.anonymityType)
+			c.roomAnonymityChangedEvent(t.anonymityLevel)
 		case roomConfigChangedEvent:
 			c.roomConfigChangedEvent(t.changes, t.config)
 		case selfOccupantRemovedEvent:
@@ -228,14 +228,14 @@ func (c *roomViewConversation) semiAnonymousRoomEvent() {
 	})
 }
 
-func (c *roomViewConversation) roomAnonymityChangedEvent(anonymityType data.RoomAnonymityType) {
-	switch anonymityType {
-	case data.SemiAnonymous:
+func (c *roomViewConversation) roomAnonymityChangedEvent(anonymityLevel string) {
+	switch anonymityLevel {
+	case "semi":
 		c.semiAnonymousRoomEvent()
-	case data.NotAnonymous:
+	case "no":
 		c.notAnonymousRoomEvent()
 	default:
-		c.log.Warn("room anonymity type unsupported")
+		c.log.Warn("room anonymity level unsupported")
 	}
 }
 

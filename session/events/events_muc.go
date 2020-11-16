@@ -154,7 +154,7 @@ type MUCLoggingDisabled struct{}
 
 // MUCRoomAnonymityChanged contains information regarding to if the the room is semi or non anonymous
 type MUCRoomAnonymityChanged struct {
-	AnonymityType data.RoomAnonymityType
+	AnonymityLevel string
 }
 
 // MUCRoomConfigReceived contains information of the received room listing

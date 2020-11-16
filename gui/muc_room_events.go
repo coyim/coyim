@@ -44,7 +44,7 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishEvent(loggingDisabledEvent{})
 	case events.MUCRoomAnonymityChanged:
 		v.publishEvent(roomAnonymityEvent{
-			anonymityType: t.AnonymityType,
+			anonymityLevel: t.AnonymityLevel,
 		})
 	case events.MUCRoomConfigReceived:
 		v.publishEvent(roomConfigReceivedEvent{

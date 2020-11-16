@@ -36,21 +36,11 @@ const (
 	RoomConfigMaxHistoryFetch
 )
 
-// RoomAnonymityType contains information related to the room anonymity
-type RoomAnonymityType string
-
-const (
-	// SemiAnonymous define a room as a semi-anonymous room
-	SemiAnonymous RoomAnonymityType = "semi"
-	// NotAnonymous define a room as a no-anonymous room
-	NotAnonymous RoomAnonymityType = "no"
-)
-
 // RoomConfig represents the room's configuration values
 type RoomConfig struct {
 	SupportsVoiceRequests     bool
 	AllowsRegistration        bool
-	Anonymity                 RoomAnonymityType
+	AnonymityLevel            string
 	Persistent                bool
 	Moderated                 bool
 	Open                      bool

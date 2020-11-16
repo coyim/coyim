@@ -216,7 +216,7 @@ func (c *roomViewConversation) loggingDisabledEvent() {
 	})
 }
 
-func (c *roomViewConversation) nonAnonymousRoomEvent() {
+func (c *roomViewConversation) notAnonymousRoomEvent() {
 	doInUIThread(func() {
 		c.displayNewConfigurationMessage(i18n.Local("Your real JID can now be seen by anyone."))
 	})
@@ -232,8 +232,8 @@ func (c *roomViewConversation) roomAnonymityChangedEvent(anonymityType data.Room
 	switch anonymityType {
 	case data.SemiAnonymous:
 		c.semiAnonymousRoomEvent()
-	case data.NonAnonymous:
-		c.nonAnonymousRoomEvent()
+	case data.NotAnonymous:
+		c.notAnonymousRoomEvent()
 	default:
 		c.log.Warn("room anonymity type unsupported")
 	}

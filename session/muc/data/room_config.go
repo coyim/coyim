@@ -42,8 +42,8 @@ type RoomAnonymityType string
 const (
 	// SemiAnonymous define a room as a semi-anonymous room
 	SemiAnonymous RoomAnonymityType = "semi"
-	// NonAnonymous define a room as a no-anonymous room
-	NonAnonymous RoomAnonymityType = "no"
+	// NotAnonymous define a room as a no-anonymous room
+	NotAnonymous RoomAnonymityType = "no"
 )
 
 // RoomConfig represents the room's configuration values

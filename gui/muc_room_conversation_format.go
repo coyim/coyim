@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/coyim/coyim/xmpp/jid"
@@ -133,21 +132,22 @@ func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag str
 
 // displayNotificationWhenRoomDestroyed MUST be called from the UI thread
 func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason string, alternative jid.Bare) {
-	c.displayTextLineWithTimestamp(i18n.Localf("%s", getMessageForDestroyRoom(reason, alternative)), "warning")
+	c.displayTextLineWithTimestamp(i18n.Localf("%s", getMessageForDestroyedRoom(reason, alternative)), "warning")
+}
+
+func getMessageForDestroyedRoom(reason string, alternative jid.Bare) string {
+	switch {
+	case reason == "" && alternative == nil:
+		return i18n.Local("The room has been destroyed.")
+	case reason != "" && alternative == nil:
+		return i18n.Localf("The room has been destroyed because the following reason \"%s\".", reason)
+	case reason == "" && alternative != nil:
+		return i18n.Localf("The room has been destroyed but, an alternative room has been specified, you can join to \"%s\".", alternative.String())
+	default:
+		return i18n.Localf("The room has been destroyed because the following reason \"%s\". An alternative room has been specified, you can join to \"%s\".", reason, alternative.String())
+	}
 }
 
 func formatTimestamp(t time.Time) string {
 	return t.Format("15:04:05")
-}
-
-func getMessageForDestroyRoom(reason string, alternative jid.Bare) string {
-	msg := "The room has been destroyed"
-	if reason != "" {
-		msg = fmt.Sprintf("%s [reason: %s]", msg, reason)
-	}
-
-	if alternative != nil {
-		msg = fmt.Sprintf("%s [alternative room: %s]", msg, alternative.String())
-	}
-	return msg
 }

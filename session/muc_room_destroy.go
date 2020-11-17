@@ -22,8 +22,8 @@ var (
 	ErrDestroyRoomNoResult = errors.New("destroy room no result error")
 )
 
-func (s *session) DestroyRoom(roomID, alternativeRoomID jid.Bare, reason string) (<-chan bool, <-chan error, func()) {
-	ctx := s.newDestroyRoomContext(roomID, alternativeRoomID, reason)
+func (s *session) DestroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) (<-chan bool, <-chan error, func()) {
+	ctx := s.newDestroyRoomContext(roomID, reason, alternativeRoomID, password)
 
 	go ctx.destroyRoom()
 
@@ -31,9 +31,10 @@ func (s *session) DestroyRoom(roomID, alternativeRoomID jid.Bare, reason string)
 }
 
 type destroyRoomContext struct {
-	roomID            jid.Bare
-	alternativeRoomID jid.Bare
-	reason            string
+	roomID                  jid.Bare
+	reason                  string
+	alternativeRoomID       jid.Bare
+	alternativeRoomPassword string
 
 	resultChannel chan bool
 	errorChannel  chan error
@@ -43,18 +44,20 @@ type destroyRoomContext struct {
 	log  coylog.Logger
 }
 
-func (s *session) newDestroyRoomContext(roomID, alternativeRoomID jid.Bare, reason string) *destroyRoomContext {
+func (s *session) newDestroyRoomContext(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) *destroyRoomContext {
 	return &destroyRoomContext{
-		roomID:            roomID,
-		alternativeRoomID: alternativeRoomID,
-		reason:            reason,
-		resultChannel:     make(chan bool),
-		errorChannel:      make(chan error),
-		conn:              s.conn,
+		roomID:                  roomID,
+		reason:                  reason,
+		alternativeRoomID:       alternativeRoomID,
+		alternativeRoomPassword: password,
+		resultChannel:           make(chan bool),
+		errorChannel:            make(chan error),
+		conn:                    s.conn,
 		log: s.log.WithFields(log.Fields{
-			"room":            roomID,
-			"alternativeRoom": alternativeRoomID,
-			"context":         "destroy-room",
+			"room":                    roomID,
+			"alternativeRoom":         alternativeRoomID,
+			"alternativeRoomPassword": password,
+			"context":                 "destroy-room",
 		}),
 	}
 }
@@ -89,8 +92,9 @@ func (ctx *destroyRoomContext) newRoomDestroyQuery() data.MUCRoomDestroyQuery {
 
 func (ctx *destroyRoomContext) newRoomDestroyData() data.MUCRoomDestroy {
 	return data.MUCRoomDestroy{
-		Jid:    ctx.getAlternativeRoomID(),
-		Reason: ctx.reason,
+		Reason:   ctx.reason,
+		Jid:      ctx.getAlternativeRoomID(),
+		Password: ctx.alternativeRoomPassword,
 	}
 }
 

@@ -84,7 +84,7 @@ type Session interface {
 	GetRoomListing(jid.Bare, chan<- *muc.RoomListing)
 	LoadRoomInfo(jid.Bare)
 	LeaveRoom(room jid.Bare, nickname string) (<-chan bool, <-chan error)
-	DestroyRoom(room, alternativeRoom jid.Bare, reason string) (<-chan bool, <-chan error, func())
+	DestroyRoom(room jid.Bare, reason string, alternativeRoom jid.Bare, password string) (<-chan bool, <-chan error, func())
 
 	Log() coylog.Logger
 

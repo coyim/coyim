@@ -26,12 +26,16 @@ type roomDestroyView struct {
 	chatServicesComponent *chatServicesComponent
 	destroyRoom           func(jid.Bare, string, func(), func(error))
 
-	dialog               gtki.Dialog `gtk-widget:"destroy-room-dialog"`
-	reasonEntry          gtki.Entry  `gtk-widget:"destroy-room-reason-entry"`
-	alternativeRoomEntry gtki.Entry  `gtk-widget:"destroy-room-name-entry"`
-	destroyRoomButton    gtki.Button `gtk-widget:"destroy-room-button"`
-	spinnerBox           gtki.Box    `gtk-widget:"destroy-room-spinner-box"`
-	notificationBox      gtki.Box    `gtk-widget:"notification-area"`
+	dialog               gtki.Dialog      `gtk-widget:"destroy-room-dialog"`
+	reasonEntry          gtki.Entry       `gtk-widget:"destroy-room-reason-entry"`
+	alternativeRoomCheck gtki.CheckButton `gtk-widget:"destroy-room-alternative-check"`
+	alternativeRoomLabel gtki.Label       `gtk-widget:"destroy-room-name-label"`
+	alternativeRoomEntry gtki.Entry       `gtk-widget:"destroy-room-name-entry"`
+	chatServicesLabel    gtki.Label       `gtk-widget:"destroy-room-service-label"`
+	chatServicesBox      gtki.Box         `gtk-widget:"chat-services-box"`
+	destroyRoomButton    gtki.Button      `gtk-widget:"destroy-room-button"`
+	spinnerBox           gtki.Box         `gtk-widget:"destroy-room-spinner-box"`
+	notificationBox      gtki.Box         `gtk-widget:"notification-area"`
 
 	spinner      *spinner
 	notification *notifications
@@ -56,9 +60,10 @@ func (d *roomDestroyView) initBuilder() {
 	panicOnDevError(d.builder.bindObjects(d))
 
 	d.builder.ConnectSignals(map[string]interface{}{
-		"on_destroy_clicked":  d.onDestroyRoom,
-		"on_cancel_clicked":   d.onCancel,
-		"on_dialog_destroyed": d.onDialogDestroy,
+		"on_destroy_clicked":          d.onDestroyRoom,
+		"on_alternative_room_toggled": d.onAlternativeRoomToggled,
+		"on_cancel_clicked":           d.onCancel,
+		"on_dialog_destroyed":         d.onDialogDestroy,
 	})
 }
 
@@ -92,6 +97,20 @@ func (d *roomDestroyView) onDestroyRoom() {
 	}
 
 	d.destroyRoom(alternativeID, reason, d.onDestroySuccess, d.onDestroyFails)
+}
+
+// onAlternativeRoomToggled MUST be called from the UI thread
+func (d *roomDestroyView) onAlternativeRoomToggled() {
+	v := d.alternativeRoomCheck.GetActive()
+
+	setFieldVisibility(d.alternativeRoomLabel, v)
+	setFieldVisibility(d.alternativeRoomEntry, v)
+	setFieldVisibility(d.chatServicesLabel, v)
+	setFieldVisibility(d.chatServicesBox, v)
+}
+
+func setFieldVisibility(w gtki.Widget, v bool) {
+	w.SetVisible(v)
 }
 
 func (d *roomDestroyView) getMessageForAlternativeRoomError(err error) string {

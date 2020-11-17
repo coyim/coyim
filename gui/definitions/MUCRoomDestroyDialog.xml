@@ -259,6 +259,28 @@
                     <property name="top_attach">2</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkLabel" id="destroy-room-password-label">
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Password</property>
+                    <property name="visible">false</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="destroy-room-password-entry">
+                    <property name="visible">false</property>
+                    <property name="input_purpose">password</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">4</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>

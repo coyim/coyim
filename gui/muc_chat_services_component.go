@@ -6,6 +6,7 @@ import (
 )
 
 type chatServicesComponent struct {
+	hasItems              bool
 	servicesList          gtki.ComboBoxText
 	serviceEntry          gtki.Entry
 	previousUpdateChannel chan bool
@@ -106,11 +107,13 @@ func (c *chatServicesComponent) setActive(index int) {
 
 // addService MUST be called from the UI thread
 func (c *chatServicesComponent) addService(s jid.Domain) {
+	c.hasItems = true
 	c.servicesList.AppendText(s.String())
 }
 
 // removeAll MUST be called from the UI thread
 func (c *chatServicesComponent) removeAll() {
+	c.hasItems = false
 	c.servicesList.RemoveAll()
 }
 
@@ -122,4 +125,12 @@ func (c *chatServicesComponent) enableServiceInput() {
 // disableServiceInput MUST be called from the UI thread
 func (c *chatServicesComponent) disableServiceInput() {
 	c.servicesList.SetSensitive(false)
+}
+
+// resetToDefault MUST be called from the UI thread
+func (c *chatServicesComponent) resetToDefault() {
+	c.serviceEntry.SetText("")
+	if c.hasItems {
+		c.setActive(0)
+	}
 }

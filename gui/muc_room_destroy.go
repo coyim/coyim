@@ -24,7 +24,7 @@ var (
 type roomDestroyView struct {
 	builder               *builder
 	chatServicesComponent *chatServicesComponent
-	destroyRoom           func(jid.Bare, string, func(), func(error))
+	destroyRoom           func(string, jid.Bare, string, func(), func(error))
 
 	dialog               gtki.Dialog      `gtk-widget:"destroy-room-dialog"`
 	reasonEntry          gtki.Entry       `gtk-widget:"destroy-room-reason-entry"`
@@ -33,6 +33,8 @@ type roomDestroyView struct {
 	alternativeRoomEntry gtki.Entry       `gtk-widget:"destroy-room-name-entry"`
 	chatServicesLabel    gtki.Label       `gtk-widget:"destroy-room-service-label"`
 	chatServicesBox      gtki.Box         `gtk-widget:"chat-services-box"`
+	passwordLabel        gtki.Label       `gtk-widget:"destroy-room-password-label"`
+	passwordEntry        gtki.Entry       `gtk-widget:"destroy-room-password-entry"`
 	destroyRoomButton    gtki.Button      `gtk-widget:"destroy-room-button"`
 	spinnerBox           gtki.Box         `gtk-widget:"destroy-room-spinner-box"`
 	notificationBox      gtki.Box         `gtk-widget:"notification-area"`
@@ -88,27 +90,29 @@ func (d *roomDestroyView) onDestroyRoom() {
 	d.disableFieldsAndShowSpinner()
 
 	reason := d.getReason()
-	alternativeID, err := d.getAlternativeRoomID()
+	alternativeID, password, err := d.getAlternativeRoom()
 	if err != nil {
 		d.notification.error(d.getMessageForAlternativeRoomError(err))
 		d.enableFieldsAndHideSpinner()
 		return
 	}
 
-	d.destroyRoom(alternativeID, reason, d.onDestroySuccess, d.onDestroyFails)
+	d.destroyRoom(reason, alternativeID, password, d.onDestroySuccess, d.onDestroyFails)
 }
 
-func (d *roomDestroyView) getAlternativeRoomID() (jid.Bare, error) {
+func (d *roomDestroyView) getAlternativeRoom() (jid.Bare, string, error) {
 	if !d.alternativeRoomCheck.GetActive() {
-		return nil, nil
+		return nil, "", nil
 	}
 
 	alternativeID, err := d.tryParseAlternativeRoomID()
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	return alternativeID, nil
+	password, _ := d.passwordEntry.GetText()
+
+	return alternativeID, password, nil
 }
 
 // onAlternativeRoomToggled MUST be called from the UI thread
@@ -119,6 +123,8 @@ func (d *roomDestroyView) onAlternativeRoomToggled() {
 	setFieldVisibility(d.alternativeRoomEntry, v)
 	setFieldVisibility(d.chatServicesLabel, v)
 	setFieldVisibility(d.chatServicesBox, v)
+	setFieldVisibility(d.passwordLabel, v)
+	setFieldVisibility(d.passwordEntry, v)
 }
 
 func setFieldVisibility(w gtki.Widget, v bool) {

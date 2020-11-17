@@ -91,6 +91,7 @@ type MUCRoomDestroyQuery struct {
 
 // MUCRoomDestroy contains information used to destroy a room
 type MUCRoomDestroy struct {
-	Jid    string `xml:"jid,attr,omitempty"`
-	Reason string `xml:"reason,omitempty"`
+	Jid      string `xml:"jid,attr,omitempty"`
+	Reason   string `xml:"reason,omitempty"`
+	Password string `xml:"password,omitempty"`
 }

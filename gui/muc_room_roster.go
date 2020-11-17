@@ -20,7 +20,6 @@ const (
 	roomViewRosterNicknameIndex
 	roomViewRosterAffiliationIndex
 	roomViewRosterInfoIndex
-	roomViewRosterCanShowInfoIndex
 )
 
 type roomViewRoster struct {
@@ -68,8 +67,6 @@ func (r *roomViewRoster) initDefaults() {
 		glibi.TYPE_STRING,
 		// info tooltip
 		glibi.TYPE_STRING,
-		// can show information
-		glibi.TYPE_BOOLEAN,
 	)
 
 	r.tree.SetModel(r.model)
@@ -104,7 +101,7 @@ func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath)
 
 	occupant, ok := r.roster.GetOccupant(nickname)
 	if !ok {
-		r.log.WithField("nickname", nickname).Warn("Occupant was not found")
+		r.log.WithField("nickname", nickname).Debug("Occupant was not found")
 		return
 	}
 
@@ -130,43 +127,16 @@ func (r *roomViewRoster) showOccupantInfo(occupant *muc.Occupant) {
 func (r *roomViewRoster) getNicknameFromTreeModel(path gtki.TreePath) (string, error) {
 	iter, err := r.model.GetIter(path)
 	if err != nil {
+		r.log.WithError(err).Error("Couldn't activate the selected item")
 		return "", err
 	}
 
-	nickname, err := r.getOccupantInfoFromIter(iter)
-	if err != nil {
-		return "", err
+	iterValue, e1 := r.model.GetValue(iter, roomViewRosterNicknameIndex)
+	if e1 != nil {
+		return "", errors.New("error trying to get iter value")
 	}
 
-	return nickname, nil
-}
-
-func (r *roomViewRoster) getOccupantInfoFromIter(iter gtki.TreeIter) (string, error) {
-	canShowInfoValue, err := r.getIterValue(iter, roomViewRosterCanShowInfoIndex)
-	if err != nil {
-		return "", err
-	}
-
-	if !canShowInfoValue.(bool) {
-		return "", errors.New("The node selected is not an occupant")
-	}
-
-	nickname, err := r.getIterValue(iter, roomViewRosterNicknameIndex)
-	if err != nil {
-		return "", err
-	}
-
-	return nickname.(string), nil
-}
-
-func (r *roomViewRoster) getIterValue(iter gtki.TreeIter, index int) (interface{}, error) {
-	iterValue, e1 := r.model.GetValue(iter, index)
-	iterRef, e2 := iterValue.GoValue()
-	if e1 != nil || e2 != nil {
-		return 0, errors.New("error trying to get iter value")
-	}
-
-	return iterRef, nil
+	return iterValue.GetString()
 }
 
 func (r *roomViewRoster) onUpdateRoster() {
@@ -198,8 +168,7 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 	roleHeader = i18n.Localf("%s (%v)", roleHeader, len(occupants))
 
 	iter := r.model.Append(nil)
-	r.model.SetValue(iter, roomViewRosterNicknameIndex, roleHeader)
-	r.model.SetValue(iter, roomViewRosterCanShowInfoIndex, false)
+	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, roleHeader)
 
 	for _, o := range occupants {
 		r.addOccupantToRoster(o, iter)
@@ -209,11 +178,10 @@ func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occup
 func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.TreeIter) {
 	iter := r.model.Append(parentIter)
 
-	r.model.SetValue(iter, roomViewRosterStatusIconIndex, getOccupantIconForStatus(o.Status))
-	r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
-	r.model.SetValue(iter, roomViewRosterAffiliationIndex, affiliationDisplayName(o.Affiliation))
-	r.model.SetValue(iter, roomViewRosterInfoIndex, occupantDisplayTooltip(o))
-	r.model.SetValue(iter, roomViewRosterCanShowInfoIndex, true)
+	_ = r.model.SetValue(iter, roomViewRosterStatusIconIndex, getOccupantIconForStatus(o.Status))
+	_ = r.model.SetValue(iter, roomViewRosterNicknameIndex, o.Nickname)
+	_ = r.model.SetValue(iter, roomViewRosterAffiliationIndex, affiliationDisplayName(o.Affiliation))
+	_ = r.model.SetValue(iter, roomViewRosterInfoIndex, occupantDisplayTooltip(o))
 }
 
 func getOccupantIconForStatus(s *coyroster.Status) gdki.Pixbuf {

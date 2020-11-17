@@ -88,8 +88,7 @@ func (d *roomDestroyView) onDestroyRoom() {
 	d.disableFieldsAndShowSpinner()
 
 	reason := d.getReason()
-
-	alternativeID, err := d.tryParseAlternativeRoomID()
+	alternativeID, err := d.getAlternativeRoomID()
 	if err != nil {
 		d.notification.error(d.getMessageForAlternativeRoomError(err))
 		d.enableFieldsAndHideSpinner()
@@ -97,6 +96,19 @@ func (d *roomDestroyView) onDestroyRoom() {
 	}
 
 	d.destroyRoom(alternativeID, reason, d.onDestroySuccess, d.onDestroyFails)
+}
+
+func (d *roomDestroyView) getAlternativeRoomID() (jid.Bare, error) {
+	if !d.alternativeRoomCheck.GetActive() {
+		return nil, nil
+	}
+
+	alternativeID, err := d.tryParseAlternativeRoomID()
+	if err != nil {
+		return nil, err
+	}
+
+	return alternativeID, nil
 }
 
 // onAlternativeRoomToggled MUST be called from the UI thread

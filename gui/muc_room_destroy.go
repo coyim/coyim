@@ -119,6 +119,11 @@ func (d *roomDestroyView) getAlternativeRoom() (jid.Bare, string, error) {
 func (d *roomDestroyView) onAlternativeRoomToggled() {
 	v := d.alternativeRoomCheck.GetActive()
 
+	d.setAlternativeRoomFieldsVisibility(v)
+	d.resetAlternativeRoomFields()
+}
+
+func (d *roomDestroyView) setAlternativeRoomFieldsVisibility(v bool) {
 	setFieldVisibility(d.alternativeRoomLabel, v)
 	setFieldVisibility(d.alternativeRoomEntry, v)
 	setFieldVisibility(d.chatServicesLabel, v)
@@ -127,8 +132,10 @@ func (d *roomDestroyView) onAlternativeRoomToggled() {
 	setFieldVisibility(d.passwordEntry, v)
 }
 
-func setFieldVisibility(w gtki.Widget, v bool) {
-	w.SetVisible(v)
+func (d *roomDestroyView) resetAlternativeRoomFields() {
+	d.alternativeRoomEntry.SetText("")
+	d.passwordEntry.SetText("")
+	d.chatServicesComponent.resetToDefault()
 }
 
 func (d *roomDestroyView) getMessageForAlternativeRoomError(err error) string {
@@ -330,4 +337,8 @@ func (d *roomDestroyView) disableFieldsAndShowSpinner() {
 func (d *roomDestroyView) enableFieldsAndHideSpinner() {
 	d.enableFields()
 	d.spinner.hide()
+}
+
+func setFieldVisibility(w gtki.Widget, v bool) {
+	w.SetVisible(v)
 }

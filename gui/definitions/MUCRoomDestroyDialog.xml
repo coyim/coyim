@@ -1,6 +1,8 @@
 <interface>
   <object class="GtkDialog" id="destroy-room-dialog">
     <property name="width_request">400</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
     <property name="default_width">320</property>
     <property name="type_hint">dialog</property>
     <property name="urgency_hint">True</property>
@@ -84,7 +86,7 @@
         <child>
           <object class="GtkBox" id="destroy-room-content">
             <property name="visible">True</property>
-            <property name="valign">center</property>
+            <property name="valign">start</property>
             <property name="border_width">12</property>
             <property name="orientation">vertical</property>
             <property name="spacing">12</property>
@@ -153,18 +155,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSeparator">
-                <property name="visible">True</property>
-                <property name="margin_top">6</property>
-                <property name="margin_bottom">6</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="valign">center</property>
@@ -188,6 +178,7 @@
                   <object class="GtkEntry" id="destroy-room-reason-entry">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
+                    <property name="placeholder_text" translatable="yes">Ej. We moved to another place</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -195,21 +186,14 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkCheckButton" id="destroy-room-alternative-check">
+                    <property name="label" translatable="yes">_Add alternative room information</property>
                     <property name="visible">True</property>
-                    <property name="halign">end</property>
-                    <property name="valign">center</property>
-                    <property name="label" translatable="yes">Room</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="destroy-room-name-entry">
-                    <property name="visible">True</property>
-                    <property name="hexpand">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">An alternative room (also known as alternate venue) is the room that will be available as an alternative to this one you wan to destroy.</property>
+                    <property name="use_underline">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_alternative_room_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -217,20 +201,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="halign">end</property>
-                    <property name="valign">center</property>
-                    <property name="label" translatable="yes">Where</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkBox" id="chat-services-box">
-                    <property name="visible">True</property>
                     <property name="hexpand">True</property>
                     <child>
                       <object class="GtkComboBoxText" id="chat-services-list">
@@ -239,6 +210,7 @@
                         <child internal-child="entry">
                           <object class="GtkEntry" id="chat-services-entry">
                             <property name="visible">True</property>
+                            <property name="can_focus">True</property>
                             <property name="placeholder_text" translatable="yes">Enter or select the service</property>
                           </object>
                         </child>
@@ -252,6 +224,38 @@
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="destroy-room-service-label">
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Where</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="destroy-room-name-entry">
+                    <property name="can_focus">True</property>
+                    <property name="hexpand">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="destroy-room-name-label">
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Room</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
                     <property name="top_attach">2</property>
                   </packing>
                 </child>

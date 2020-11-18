@@ -131,21 +131,25 @@ func (c *roomViewConversation) displayTextLineWithTimestamp(text string, tag str
 }
 
 // displayNotificationWhenRoomDestroyed MUST be called from the UI thread
-func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason string, alternative jid.Bare) {
-	c.displayTextLineWithTimestamp(i18n.Localf("%s", getMessageForDestroyedRoom(reason, alternative)), "warning")
+func (c *roomViewConversation) displayNotificationWhenRoomDestroyed(reason string, alternative jid.Bare, password string) {
+	c.displayTextLineWithTimestamp(composeMessageForDestroyedRoom(reason, alternative, password), "warning")
+	c.displayTextLineWithTimestamp(i18n.Local("You can no longer receive any messages in this room."), "warning")
 }
 
-func getMessageForDestroyedRoom(reason string, alternative jid.Bare) string {
-	switch {
-	case reason == "" && alternative == nil:
-		return i18n.Local("The room has been destroyed.")
-	case reason != "" && alternative == nil:
-		return i18n.Localf("The room has been destroyed because the following reason \"%s\".", reason)
-	case reason == "" && alternative != nil:
-		return i18n.Localf("The room has been destroyed but, an alternative room has been specified, you can join to \"%s\".", alternative.String())
-	default:
-		return i18n.Localf("The room has been destroyed because the following reason \"%s\". An alternative room has been specified, you can join to \"%s\".", reason, alternative.String())
+func composeMessageForDestroyedRoom(reason string, alternative jid.Bare, password string) string {
+	message := i18n.Local("The room was destroyed.")
+	if reason != "" {
+		message = i18n.Localf("%s The reason given was \"%s\".", message, reason)
 	}
+
+	if alternative != nil {
+		message = i18n.Localf("%s\nDiscussions will continue in this room: \"%s\"", message, alternative)
+		if password != "" {
+			message = i18n.Localf("%s, with this password: \"%s\".", message, password)
+		}
+	}
+
+	return message
 }
 
 func formatTimestamp(t time.Time) string {

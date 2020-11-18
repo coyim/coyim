@@ -115,15 +115,15 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case occupantRemovedEvent:
 			c.occupantRemovedEvent(t.nickname)
 		case roomDestroyedEvent:
-			c.roomDestroyedEvent(t.reason, t.alternative)
+			c.roomDestroyedEvent(t.reason, t.alternative, t.password)
 		}
 	})
 }
 
-func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid.Bare) {
+func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid.Bare, password string) {
 	doInUIThread(func() {
 		c.updateNotificationMessage(i18n.Local("You can't send messages because this room has been destroyed."))
-		c.displayNotificationWhenRoomDestroyed(reason, alternative)
+		c.displayNotificationWhenRoomDestroyed(reason, alternative, password)
 		c.disableSendCapabilities()
 	})
 }

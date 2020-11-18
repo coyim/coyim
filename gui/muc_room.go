@@ -267,7 +267,7 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 
 	onSuccessFinal := func() {
 		doInUIThread(func() {
-			v.onRoomDestroyed(alternativeRoomID, reason)
+			v.onRoomDestroyed(alternativeRoomID, reason, password)
 		})
 		if onSuccess != nil {
 			onSuccess()
@@ -285,13 +285,13 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 	go v.account.destroyRoom(v.roomID(), reason, alternativeRoomID, password, onSuccessFinal, onErrorFinal)
 }
 
-func (v *roomView) onRoomDestroyed(alternativeRoomID jid.Bare, reason string) {
+func (v *roomView) onRoomDestroyed(alternativeRoomID jid.Bare, reason, password string) {
 	v.notifications.info(i18n.Local("The room has been destroyed"))
-	v.roomDestroyed(alternativeRoomID, reason)
+	v.roomDestroyed(alternativeRoomID, reason, password)
 }
 
-func (v *roomView) roomDestroyed(alternativeRoomID jid.Bare, reason string) {
-	v.publishRoomDestroyedEvent(reason, alternativeRoomID)
+func (v *roomView) roomDestroyed(alternativeRoomID jid.Bare, reason, password string) {
+	v.publishRoomDestroyedEvent(reason, alternativeRoomID, password)
 }
 
 func (v *roomView) switchToLobbyView() {

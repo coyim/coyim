@@ -18,7 +18,7 @@ type roomViewLobby struct {
 	content          gtki.Box     `gtk-widget:"boxJoinRoomView"`
 	mainBox          gtki.Box     `gtk-widget:"mainContent"`
 	roomNameLabel    gtki.Label   `gtk-widget:"roomNameValue"`
-	nickNameEntry    gtki.Entry   `gtk-widget:"nickNameEntry"`
+	nicknameEntry    gtki.Entry   `gtk-widget:"nicknameEntry"`
 	joinButton       gtki.Button  `gtk-widget:"joinButton"`
 	cancelButton     gtki.Button  `gtk-widget:"cancelButton"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
@@ -52,7 +52,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare, parent gtki.Box
 		parent:                parent,
 		onCancel:              onCancel,
 		nicknamesWithConflict: set.New(),
-		log: v.log.WithField("who", "roomViewLobby"),
+		log:                   v.log.WithField("who", "roomViewLobby"),
 	}
 
 	l.onSuccess = func() {
@@ -142,7 +142,7 @@ func (l *roomViewLobby) onNicknameChange() {
 func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 	l.clearErrors()
 
-	nickname, _ := l.nickNameEntry.GetText()
+	nickname, _ := l.nicknameEntry.GetText()
 	conditionsAreValid := l.isReadyToJoinRoom && nickname != ""
 
 	if l.nicknamesWithConflict.Has(nickname) {
@@ -154,11 +154,11 @@ func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 }
 
 func (l *roomViewLobby) disableFields() {
-	l.nickNameEntry.SetSensitive(false)
+	l.nicknameEntry.SetSensitive(false)
 }
 
 func (l *roomViewLobby) enableFields() {
-	l.nickNameEntry.SetSensitive(true)
+	l.nicknameEntry.SetSensitive(true)
 }
 
 func (l *roomViewLobby) showSpinner() {
@@ -176,7 +176,7 @@ func (l *roomViewLobby) onJoinClicked() {
 	l.showSpinner()
 	l.joinButton.SetSensitive(false)
 
-	nickname, _ := l.nickNameEntry.GetText()
+	nickname, _ := l.nicknameEntry.GetText()
 
 	l.onJoin = make(chan bool)
 	l.onJoinError = make(chan error)

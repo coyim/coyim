@@ -26,43 +26,11 @@
         <property name="column_spacing">10</property>
         <property name="baseline_row">5</property>
         <child>
-          <object class="GtkLabel" id="nicknameLabel">
-            <property name="width_request">75</property>
-            <property name="visible">True</property>
-            <property name="halign">end</property>
-            <property name="valign">center</property>
-            <property name="margin_top">5</property>
-            <property name="margin_bottom">5</property>
-            <property name="label" translatable="yes">Nickname</property>
-            <property name="justify">right</property>
-            <property name="xalign">0</property>
-            <property name="yalign">0</property>
-          </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="nickNameEntry">
-            <property name="visible">True</property>
-            <property name="hexpand">True</property>
-            <property name="caps_lock_warning">False</property>
-            <signal name="changed" handler="on_nickname_changed" swapped="no"/>
-          </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">1</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkLabel" id="roomNameLabel">
             <property name="visible">True</property>
             <property name="halign">end</property>
             <property name="valign">center</property>
             <property name="label" translatable="yes">Room</property>
-            <property name="xalign">0</property>
-            <property name="yalign">0</property>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -77,6 +45,54 @@
           <packing>
             <property name="left_attach">1</property>
             <property name="top_attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="nicknameLabel">
+            <property name="visible">True</property>
+            <property name="halign">end</property>
+            <property name="valign">center</property>
+            <property name="label" translatable="yes">Nickname</property>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="nicknameEntry">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="caps_lock_warning">False</property>
+            <signal name="changed" handler="on_nickname_changed" swapped="no"/>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="top_attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="halign">end</property>
+            <property name="valign">center</property>
+            <property name="label" translatable="yes">Password</property>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="passwordEntry">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="visibility">False</property>
+            <property name="caps_lock_warning">True</property>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="top_attach">2</property>
           </packing>
         </child>
       </object>

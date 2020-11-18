@@ -3,6 +3,7 @@ package session
 import (
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
+	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
 )
@@ -61,6 +62,29 @@ func (m *mucManager) handleOccupantLeft(roomID jid.Bare, op *muc.OccupantPresenc
 	}
 
 	m.occupantLeft(roomID, op)
+}
+
+func (m *mucManager) handleOccupantUnavailable(roomID jid.Bare, op *muc.OccupantPresenceInfo, u *xmppData.MUCUser) {
+	if u == nil {
+		return
+	}
+
+	if u.Destroy != nil {
+		m.handleRoomDestroyed(roomID, u.Destroy)
+	}
+}
+
+func (m *mucManager) handleRoomDestroyed(roomID jid.Bare, d *xmppData.MUCRoomDestroy) {
+	j, ok := jid.TryParseBare(d.Jid)
+	if d.Jid != "" && !ok {
+		m.log.WithFields(log.Fields{
+			"room":            roomID,
+			"alternativeRoom": d.Jid,
+			"method":          "handleRoomDestroyed",
+		}).Warn("An destroyed room presence was received but, an invalid alternative room was provided")
+	}
+
+	m.roomDestroyed(roomID, d.Reason, j, d.Password)
 }
 
 func (m *mucManager) handleNonMembersRemoved(roomID jid.Bare, op *muc.OccupantPresenceInfo) {

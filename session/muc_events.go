@@ -165,3 +165,12 @@ func (m *mucManager) removeSelfOccupant(roomID jid.Bare) {
 
 	m.publishRoomEvent(roomID, ev)
 }
+
+func (m *mucManager) roomDestroyed(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) {
+	ev := events.MUCRoomDestroyed{}
+	ev.Reason = reason
+	ev.AlternativeRoom = alternativeRoomID
+	ev.Password = password
+
+	m.publishRoomEvent(roomID, ev)
+}

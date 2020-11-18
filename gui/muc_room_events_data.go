@@ -67,6 +67,7 @@ type subjectReceivedEvent struct {
 type roomDestroyedEvent struct {
 	reason      string
 	alternative jid.Bare
+	password    string
 }
 
 type messageForbidden struct{}

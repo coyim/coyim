@@ -73,7 +73,7 @@ func (c *roomViewConversation) initDefaults(v *roomView) {
 	c.messageBoxNotification = newRoomMessageBoxNotification()
 	c.notificationBox.Add(c.messageBoxNotification.widget())
 
-	c.disableEntryAndSendButton()
+	c.disableSendCapabilities()
 	if v.room.SelfOccupant().HasVoice() {
 		c.enableSendCapabilitiesIfHasVoice(true)
 	}

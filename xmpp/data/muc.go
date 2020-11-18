@@ -19,6 +19,7 @@ type MUCStatus struct {
 type MUCUser struct {
 	XMLName xml.Name        `xml:"http://jabber.org/protocol/muc#user x"`
 	Item    *MUCUserItem    `xml:"item,omitempty"`
+	Destroy *MUCRoomDestroy `xml:"destroy,omitempty"`
 	Status  []MUCUserStatus `xml:"status,omitempty"`
 }
 

@@ -28,6 +28,8 @@ type roomViewConversation struct {
 	sendButtonIcon        gtki.Image          `gtk-widget:"message-send-icon"`
 	notificationBox       gtki.Box            `gtk-widget:"notification-box"`
 
+	messageBoxNotification *roomMessageBoxNotification
+
 	log coylog.Logger
 }
 
@@ -68,8 +70,8 @@ func (c *roomViewConversation) initBuilder() {
 func (c *roomViewConversation) initDefaults(v *roomView) {
 	c.sendButtonIcon.SetFromPixbuf(getMUCIconPixbuf("send"))
 
-	voiceNotification := newRoomMessageBoxNotification()
-	c.notificationBox.Add(voiceNotification.widget())
+	c.messageBoxNotification = newRoomMessageBoxNotification()
+	c.notificationBox.Add(c.messageBoxNotification.widget())
 
 	c.disableEntryAndSendButton()
 	if v.room.SelfOccupant().HasVoice() {
@@ -120,6 +122,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 
 func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid.Bare) {
 	doInUIThread(func() {
+		c.updateNotificationMessage(i18n.Local("You can't send messages because this room has been destroyed."))
 		c.displayNotificationWhenRoomDestroyed(reason, alternative)
 		c.disableSendCapabilities()
 	})
@@ -372,6 +375,10 @@ func (c *roomViewConversation) sendMessage() {
 	}
 
 	c.displayLiveMessage(c.selfOccupantNickname(), m, time.Now())
+}
+
+func (c *roomViewConversation) updateNotificationMessage(m string) {
+	c.messageBoxNotification.updateMessage(m)
 }
 
 func getDisplayRoomSubjectForNickname(nickname, subject string) string {

@@ -56,7 +56,9 @@ type MUCRoomCreated struct {
 // MUCRoomDestroyed contains event information about
 // the destroyed room
 type MUCRoomDestroyed struct {
-	MUCRoom
+	Reason          string
+	AlternativeRoom jid.Bare
+	Password        string
 }
 
 // MUCRoomRenamed contains event information about

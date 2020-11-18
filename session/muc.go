@@ -98,7 +98,7 @@ func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 
 	switch stanza.Type {
 	case "unavailable":
-		m.handleUnavailablePresence(roomID, occupantPresence, status)
+		m.handleUnavailablePresence(roomID, occupantPresence, status, stanza)
 	case "":
 		if isOwnPresence {
 			m.handleSelfOccupantUpdate(roomID, occupantPresence, status)
@@ -161,7 +161,7 @@ func (m *mucManager) updateOccupantAndReturn(room *muc.Room, op *muc.OccupantPre
 	return o
 }
 
-func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.OccupantPresenceInfo, status mucUserStatuses) {
+func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.OccupantPresenceInfo, status mucUserStatuses, stanza *xmppData.ClientPresence) {
 	switch {
 	case status.isEmpty():
 		m.handleOccupantLeft(roomID, op)
@@ -189,6 +189,9 @@ func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.Occupant
 	case status.contains(MUCStatusRemovedBecauseShutdown):
 		// Removes due to system shutdown
 		m.log.Debug("handleMUCPresence(): MUCStatusRemovedBecauseShutdown")
+
+	default:
+		m.handleOccupantUnavailable(roomID, op, stanza.MUCUser)
 	}
 }
 

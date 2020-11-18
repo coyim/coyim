@@ -23,7 +23,7 @@
             <property name="valign">center</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="message">
                 <property name="visible">True</property>
                 <property name="valign">center</property>
                 <property name="label" translatable="yes">You don't have the permissions to send messages.</property>

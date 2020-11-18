@@ -68,7 +68,7 @@ func (c *roomViewConversation) initBuilder() {
 func (c *roomViewConversation) initDefaults(v *roomView) {
 	c.sendButtonIcon.SetFromPixbuf(getMUCIconPixbuf("send"))
 
-	voiceNotification := newRoomVoiceNotification()
+	voiceNotification := newRoomMessageBoxNotification()
 	c.notificationBox.Add(voiceNotification.widget())
 
 	c.disableEntryAndSendButton()

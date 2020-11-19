@@ -94,7 +94,7 @@ func (d *roomDestroyView) onDestroyRoom() {
 
 	alternativeID, password, err := d.alternativeRooInformation()
 	if err != nil {
-		d.notification.error(d.getMessageForAlternativeRoomError(err))
+		d.notification.error(d.friendlyMessageForAlternativeRoomError(err))
 		d.enableFieldsAndHideSpinner()
 		return
 	}
@@ -130,21 +130,6 @@ func (d *roomDestroyView) resetAlternativeRoomFields() {
 	d.chatServicesComponent.resetToDefault()
 }
 
-func (d *roomDestroyView) getMessageForAlternativeRoomError(err error) string {
-	switch err {
-	case errEmptyServiceName:
-		return i18n.Local("You must provide a service name")
-	case errEmptyRoomName:
-		return i18n.Local("You must provide a room name")
-	case errInvalidRoomName:
-		return i18n.Local("You must provide a valid room name")
-	case errInvalidServiceName:
-		return i18n.Local("You must provide a valid service name")
-	default:
-		return i18n.Local("The room identification is not valid")
-	}
-}
-
 // onDestroySuccess MUST NOT be called from the UI thread
 func (d *roomDestroyView) onDestroySuccess() {
 	doInUIThread(d.close)
@@ -154,11 +139,11 @@ func (d *roomDestroyView) onDestroySuccess() {
 func (d *roomDestroyView) onDestroyFails(err error) {
 	doInUIThread(func() {
 		d.enableFields()
-		d.notification.error(d.getMessageForDestroyError(err))
+		d.notification.error(d.friendlyMessageForDestroyError(err))
 	})
 }
 
-func (d *roomDestroyView) getMessageForDestroyError(err error) string {
+func (d *roomDestroyView) friendlyMessageForDestroyError(err error) string {
 	switch err {
 	case session.ErrDestroyRoomInvalidIQResponse:
 		return i18n.Local("We were able to connect to the room service, " +
@@ -175,6 +160,21 @@ func (d *roomDestroyView) getMessageForDestroyError(err error) string {
 			"room's administrator.")
 	default:
 		return i18n.Local("An error occurred while destroying the room, please try again.")
+	}
+}
+
+func (d *roomDestroyView) friendlyMessageForAlternativeRoomError(err error) string {
+	switch err {
+	case errEmptyServiceName:
+		return i18n.Local("You must provide a service name")
+	case errEmptyRoomName:
+		return i18n.Local("You must provide a room name")
+	case errInvalidRoomName:
+		return i18n.Local("You must provide a valid room name")
+	case errInvalidServiceName:
+		return i18n.Local("You must provide a valid service name")
+	default:
+		return i18n.Local("The room identification is not valid")
 	}
 }
 

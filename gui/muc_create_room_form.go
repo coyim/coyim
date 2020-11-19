@@ -255,12 +255,11 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 	}
 
 	roomName, _ := f.roomEntry.GetText()
-	chatService := f.chatServicesComponent.currentServiceValue()
 	currentAccount := f.accountsComponent.currentAccount()
 
-	ok := len(roomName) != 0 && len(chatService) != 0 && currentAccount != nil
+	ok := roomName != "" && f.chatServicesComponent.hasServiceValue() && currentAccount != nil
 	if ok {
-		ok = f.isInRoomNameConflictList(roomName, chatService)
+		ok = f.isInRoomNameConflictList(roomName, f.chatServicesComponent.currentServiceValue())
 	}
 
 	f.createButton.SetSensitive(ok)

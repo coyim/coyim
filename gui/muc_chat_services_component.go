@@ -134,3 +134,8 @@ func (c *chatServicesComponent) resetToDefault() {
 		c.setActive(0)
 	}
 }
+
+// hasServiceValue MUST be called from the UI thread
+func (c *chatServicesComponent) hasServiceValue() bool {
+	return c.currentServiceValue() != ""
+}

@@ -101,9 +101,8 @@ func (v *mucJoinRoomView) typedRoomName() string {
 // enableJoinIfConditionsAreMet MUST be called from the UI thread
 func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
 	roomName, _ := v.roomNameEntry.GetText()
-	chatService := v.chatServicesComponent.currentServiceValue()
 
-	hasAllValues := len(roomName) != 0 && len(chatService) != 0 && v.accountsComponent.currentAccount() != nil
+	hasAllValues := roomName != "" && v.chatServicesComponent.hasServiceValue() && v.accountsComponent.currentAccount() != nil
 	v.joinButton.SetSensitive(hasAllValues)
 }
 

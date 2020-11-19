@@ -40,12 +40,14 @@ type destroyRoomContext struct {
 	errorChannel  chan error
 	cancelChannel chan bool
 
+	clean func()
+
 	conn xi.Conn
 	log  coylog.Logger
 }
 
 func (s *session) newDestroyRoomContext(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) *destroyRoomContext {
-	return &destroyRoomContext{
+	ctx := &destroyRoomContext{
 		roomID:                  roomID,
 		reason:                  reason,
 		alternativeRoomID:       alternativeRoomID,
@@ -60,6 +62,16 @@ func (s *session) newDestroyRoomContext(roomID jid.Bare, reason string, alternat
 			"context":                 "destroy-room",
 		}),
 	}
+
+	ctx.clean = callFunctionOnce(func() {
+		close(ctx.resultChannel)
+		close(ctx.errorChannel)
+		if ctx.cancelChannel != nil {
+			close(ctx.cancelChannel)
+		}
+	})
+
+	return ctx
 }
 
 func (ctx *destroyRoomContext) destroyRoom() {
@@ -166,15 +178,19 @@ func (ctx *destroyRoomContext) endEarly() {
 	ctx.cancelChannel <- true
 }
 
-func (ctx *destroyRoomContext) clean() {
-	close(ctx.resultChannel)
-	close(ctx.errorChannel)
-	close(ctx.cancelChannel)
-}
-
 func (ctx *destroyRoomContext) getAlternativeRoomID() string {
 	if ctx.alternativeRoomID != nil {
 		return ctx.alternativeRoomID.String()
 	}
 	return ""
+}
+
+func callFunctionOnce(f func()) func() {
+	notCalled := true
+	return func() {
+		if notCalled {
+			notCalled = false
+			f()
+		}
+	}
 }

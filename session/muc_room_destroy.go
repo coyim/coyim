@@ -40,14 +40,12 @@ type destroyRoomContext struct {
 	errorChannel  chan error
 	cancelChannel chan bool
 
-	clean func()
-
 	conn xi.Conn
 	log  coylog.Logger
 }
 
 func (s *session) newDestroyRoomContext(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) *destroyRoomContext {
-	ctx := &destroyRoomContext{
+	return &destroyRoomContext{
 		roomID:                  roomID,
 		reason:                  reason,
 		alternativeRoomID:       alternativeRoomID,
@@ -62,19 +60,19 @@ func (s *session) newDestroyRoomContext(roomID jid.Bare, reason string, alternat
 			"context":                 "destroy-room",
 		}),
 	}
+}
 
-	ctx.clean = callFunctionOnce(func() {
-		close(ctx.resultChannel)
-		close(ctx.errorChannel)
-		if ctx.cancelChannel != nil {
-			close(ctx.cancelChannel)
-		}
-	})
-
-	return ctx
+func cleanDestroyRoomContext(ctx *destroyRoomContext) {
+	close(ctx.resultChannel)
+	close(ctx.errorChannel)
+	if ctx.cancelChannel != nil {
+		close(ctx.cancelChannel)
+	}
 }
 
 func (ctx *destroyRoomContext) destroyRoom() {
+	defer cleanDestroyRoomContext(ctx)
+
 	if ctx.cancelChannel != nil {
 		ctx.finishWithCancel()
 		return
@@ -156,18 +154,15 @@ func (ctx *destroyRoomContext) handleIQError(err data.StanzaError) error {
 
 func (ctx *destroyRoomContext) finish() {
 	ctx.resultChannel <- true
-	ctx.clean()
 }
 
 func (ctx *destroyRoomContext) finishWithError(err error) {
 	ctx.log.WithError(err).Error("An error ocurred trying to destroy the room")
 	ctx.errorChannel <- err
-	ctx.clean()
 }
 
 func (ctx *destroyRoomContext) finishWithCancel() {
 	ctx.log.Warn("The destroy room operation was canceled, but it could still happen")
-	ctx.clean()
 }
 
 func (ctx *destroyRoomContext) endEarly() {
@@ -183,14 +178,4 @@ func (ctx *destroyRoomContext) getAlternativeRoomID() string {
 		return ctx.alternativeRoomID.String()
 	}
 	return ""
-}
-
-func callFunctionOnce(f func()) func() {
-	notCalled := true
-	return func() {
-		if notCalled {
-			notCalled = false
-			f()
-		}
-	}
 }

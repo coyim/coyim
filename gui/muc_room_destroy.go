@@ -207,83 +207,64 @@ func (d *roomDestroyView) tryParseAlternativeRoomID() (jid.Bare, error) {
 	rn, _ := d.alternativeRoomEntry.GetText()
 	s := d.chatServicesComponent.currentServiceValue()
 
-	ch := newAlternativeRoomChecker(rn, s)
-
 	// We don't really need to continue if the user hasn't entered
 	// anything in the room name and the service, because the alternative
 	// room is always optional according to the protocol
-	if ch.shouldBypassChecking() {
+	if rn == "" && s == "" {
 		return nil, nil
 	}
 
-	roomID, err := ch.alternativeRoomID()
+	r, err := d.alternativeRoomID()
 	if err != nil {
 		return nil, err
 	}
 
-	return roomID, nil
+	return r, nil
 }
 
-type alternativeRoomChecker struct {
-	roomName, service string
-}
-
-func newAlternativeRoomChecker(rn, s string) *alternativeRoomChecker {
-	return &alternativeRoomChecker{rn, s}
-}
-
-func (c *alternativeRoomChecker) shouldBypassChecking() bool {
-	return c.roomName == "" && c.service == ""
-}
-
-func (c *alternativeRoomChecker) alternativeRoomID() (jid.Bare, error) {
-	err := c.doAllChecks()
+func (d *roomDestroyView) alternativeRoomID() (r jid.Bare, err error) {
+	l, err := d.validateRoomName()
 	if err != nil {
-		return nil, err
+		return
 	}
-	return jid.NewBare(jid.NewLocal(c.roomName), jid.NewDomain(c.service)), nil
+
+	s, err := d.validateServiceName()
+	if err != nil {
+		return
+	}
+
+	r = jid.NewBare(l, s)
+	return
 }
 
-func (c *alternativeRoomChecker) doAllChecks() error {
-	rules := []func() (bool, error){
-		c.validateRoomName,
-		c.validateServiceName,
+func (d *roomDestroyView) validateRoomName() (l jid.Local, err error) {
+	rn, _ := d.alternativeRoomEntry.GetText()
+
+	if rn == "" {
+		err = errEmptyRoomName
+		return
 	}
 
-	for _, ch := range rules {
-		invalid, err := ch()
-		if invalid {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (c *alternativeRoomChecker) validateRoomName() (bool, error) {
-	if c.roomName == "" && c.service != "" {
-		return true, errEmptyRoomName
-	}
-
-	l := jid.NewLocal(c.roomName)
+	l = jid.NewLocal(rn)
 	if !l.Valid() {
-		return true, errInvalidRoomName
+		err = errInvalidRoomName
 	}
 
-	return false, nil
+	return
 }
 
-func (c *alternativeRoomChecker) validateServiceName() (bool, error) {
-	if c.roomName != "" && c.service == "" {
-		return true, errEmptyServiceName
+func (d *roomDestroyView) validateServiceName() (s jid.Domain, err error) {
+	if !d.chatServicesComponent.hasServiceValue() {
+		err = errEmptyServiceName
+		return
 	}
 
-	d := jid.NewDomain(c.service)
-	if !d.Valid() {
-		return true, errInvalidServiceName
+	s = jid.NewDomain(d.chatServicesComponent.currentServiceValue())
+	if !s.Valid() {
+		err = errInvalidServiceName
 	}
 
-	return false, nil
+	return
 }
 
 // disableFields MUST be called from the UI thread

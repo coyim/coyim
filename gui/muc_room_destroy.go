@@ -27,12 +27,12 @@ type roomDestroyView struct {
 	destroyRoom           func(string, jid.Bare, string, func(), func(error))
 
 	dialog               gtki.Dialog      `gtk-widget:"destroy-room-dialog"`
-	reasonEntry          gtki.Entry       `gtk-widget:"destroy-room-reason-entry"`
+	reasonEntry          gtki.TextView    `gtk-widget:"destroy-room-reason-entry"`
 	alternativeRoomCheck gtki.CheckButton `gtk-widget:"destroy-room-alternative-check"`
+	alternativeRoomBox   gtki.Box         `gtk-widget:"destroy-room-alternative-box"`
 	alternativeRoomLabel gtki.Label       `gtk-widget:"destroy-room-name-label"`
 	alternativeRoomEntry gtki.Entry       `gtk-widget:"destroy-room-name-entry"`
 	chatServicesLabel    gtki.Label       `gtk-widget:"destroy-room-service-label"`
-	chatServicesBox      gtki.Box         `gtk-widget:"chat-services-box"`
 	passwordLabel        gtki.Label       `gtk-widget:"destroy-room-password-label"`
 	passwordEntry        gtki.Entry       `gtk-widget:"destroy-room-password-entry"`
 	destroyRoomButton    gtki.Button      `gtk-widget:"destroy-room-button"`
@@ -118,18 +118,8 @@ func (d *roomDestroyView) getAlternativeRoom() (jid.Bare, string, error) {
 // onAlternativeRoomToggled MUST be called from the UI thread
 func (d *roomDestroyView) onAlternativeRoomToggled() {
 	v := d.alternativeRoomCheck.GetActive()
-
-	d.setAlternativeRoomFieldsVisibility(v)
+	d.alternativeRoomBox.SetVisible(v)
 	d.resetAlternativeRoomFields()
-}
-
-func (d *roomDestroyView) setAlternativeRoomFieldsVisibility(v bool) {
-	setFieldVisibility(d.alternativeRoomLabel, v)
-	setFieldVisibility(d.alternativeRoomEntry, v)
-	setFieldVisibility(d.chatServicesLabel, v)
-	setFieldVisibility(d.chatServicesBox, v)
-	setFieldVisibility(d.passwordLabel, v)
-	setFieldVisibility(d.passwordEntry, v)
 }
 
 func (d *roomDestroyView) resetAlternativeRoomFields() {
@@ -208,8 +198,8 @@ func (d *roomDestroyView) cancelActiveRequest() {
 
 // getReason MUST be called from the UI thread
 func (d *roomDestroyView) getReason() string {
-	t, _ := d.reasonEntry.GetText()
-	return t
+	b, _ := d.reasonEntry.GetBuffer()
+	return b.GetText(b.GetStartIter(), b.GetEndIter(), false)
 }
 
 // tryParseAlternativeRoomID MUST be called from the UI thread
@@ -337,8 +327,4 @@ func (d *roomDestroyView) disableFieldsAndShowSpinner() {
 func (d *roomDestroyView) enableFieldsAndHideSpinner() {
 	d.enableFields()
 	d.spinner.hide()
-}
-
-func setFieldVisibility(w gtki.Widget, v bool) {
-	w.SetVisible(v)
 }

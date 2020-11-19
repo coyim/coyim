@@ -72,8 +72,8 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
+          <object class="GtkLabel" id="passwordLabel">
+            <property name="visible">False</property>
             <property name="halign">end</property>
             <property name="valign">center</property>
             <property name="label" translatable="yes">Password</property>
@@ -85,7 +85,7 @@
         </child>
         <child>
           <object class="GtkEntry" id="passwordEntry">
-            <property name="visible">True</property>
+            <property name="visible">False</property>
             <property name="hexpand">True</property>
             <property name="visibility">False</property>
             <property name="caps_lock_warning">True</property>

@@ -5,6 +5,7 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/golang-collections/collections/set"
@@ -19,6 +20,8 @@ type roomViewLobby struct {
 	mainBox          gtki.Box     `gtk-widget:"mainContent"`
 	roomNameLabel    gtki.Label   `gtk-widget:"roomNameValue"`
 	nicknameEntry    gtki.Entry   `gtk-widget:"nicknameEntry"`
+	passwordLabel    gtki.Label   `gtk-widget:"passwordLabel"`
+	passwordEntry    gtki.Entry   `gtk-widget:"passwordEntry"`
 	joinButton       gtki.Button  `gtk-widget:"joinButton"`
 	cancelButton     gtki.Button  `gtk-widget:"cancelButton"`
 	spinner          gtki.Spinner `gtk-widget:"spinner"`
@@ -100,7 +103,7 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 		case occupantSelfJoinedEvent:
 			l.occupantSelfJoinedEvent()
 		case roomConfigReceivedEvent:
-			l.roomConfigReceivedEvent()
+			l.roomConfigReceivedEvent(t.config)
 		case nicknameConflictEvent:
 			l.nicknameConflictEvent(l.roomID, t.nickname)
 		case registrationRequiredEvent:
@@ -109,9 +112,15 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	})
 }
 
-func (l *roomViewLobby) roomConfigReceivedEvent() {
+func (l *roomViewLobby) roomConfigReceivedEvent(roomInfo data.RoomConfig) {
 	l.isReadyToJoinRoom = true
-	doInUIThread(l.enableJoinIfConditionsAreMet)
+	doInUIThread(func() {
+		l.enableJoinIfConditionsAreMet()
+		if roomInfo.PasswordProtected {
+			l.passwordLabel.SetVisible(true)
+			l.passwordEntry.SetVisible(true)
+		}
+	})
 }
 
 func (l *roomViewLobby) switchToReturnOnCancel() {

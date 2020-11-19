@@ -105,12 +105,12 @@ type accountRoomOpContext struct {
 	log coylog.Logger
 }
 
-func (a *account) newAccountRoomOpContext(op string, roomID jid.Bare, callback roomOpCallback, onSucces func(), onError func(error)) *accountRoomOpContext {
+func (a *account) newAccountRoomOpContext(op string, roomID jid.Bare, callback roomOpCallback, onSuccess func(), onError func(error)) *accountRoomOpContext {
 	ctx := &accountRoomOpContext{
 		op:         op,
 		roomID:     roomID,
 		account:    a,
-		controller: a.newRoomOpController(op, callback, onSucces, onError),
+		controller: a.newRoomOpController(op, callback, onSuccess, onError),
 	}
 
 	ctx.log = a.log.WithFields(log.Fields{

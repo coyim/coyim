@@ -89,7 +89,9 @@ func (d *roomDestroyView) initDefaults(v *roomView) {
 func (d *roomDestroyView) onDestroyRoom() {
 	d.disableFieldsAndShowSpinner()
 
-	reason := d.getReason()
+	b, _ := d.reasonEntry.GetBuffer()
+	reason := b.GetText(b.GetStartIter(), b.GetEndIter(), false)
+
 	alternativeID, password, err := d.getAlternativeRoom()
 	if err != nil {
 		d.notification.error(d.getMessageForAlternativeRoomError(err))
@@ -194,12 +196,6 @@ func (d *roomDestroyView) cancelActiveRequest() {
 	if d.cancelChannel != nil {
 		d.cancelChannel <- true
 	}
-}
-
-// getReason MUST be called from the UI thread
-func (d *roomDestroyView) getReason() string {
-	b, _ := d.reasonEntry.GetBuffer()
-	return b.GetText(b.GetStartIter(), b.GetEndIter(), false)
 }
 
 // tryParseAlternativeRoomID MUST be called from the UI thread

@@ -116,7 +116,7 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="valign">start</property>
-                        <property name="label" translatable="yes">You are about to destroy this room permanently.</property>
+                        <property name="label" translatable="yes">You are about to permanently destroy this room.</property>
                         <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <property name="yalign">0</property>
@@ -130,7 +130,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">You may want to fill in the following information:</property>
+                        <property name="label" translatable="yes">You may want to provide the following information:</property>
                         <property name="xalign">0</property>
                         <property name="yalign">0</property>
                       </object>
@@ -162,7 +162,7 @@
                 <child>
                   <object class="GtkLabel" id="destroy-room-reason-label">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Reason</property>
+                    <property name="label" translatable="yes">Enter the reason for destroying the room</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
                   </object>

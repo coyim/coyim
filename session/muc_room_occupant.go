@@ -65,13 +65,11 @@ func (m *mucManager) handleOccupantLeft(roomID jid.Bare, op *muc.OccupantPresenc
 }
 
 func (m *mucManager) handleOccupantUnavailable(roomID jid.Bare, op *muc.OccupantPresenceInfo, u *xmppData.MUCUser) {
-	if u == nil {
+	if u == nil || u.Destroy == nil {
 		return
 	}
 
-	if u.Destroy != nil {
-		m.handleRoomDestroyed(roomID, u.Destroy)
-	}
+	m.handleRoomDestroyed(roomID, u.Destroy)
 }
 
 func (m *mucManager) handleRoomDestroyed(roomID jid.Bare, d *xmppData.MUCRoomDestroy) {
@@ -81,7 +79,7 @@ func (m *mucManager) handleRoomDestroyed(roomID jid.Bare, d *xmppData.MUCRoomDes
 			"room":            roomID,
 			"alternativeRoom": d.Jid,
 			"method":          "handleRoomDestroyed",
-		}).Warn("An destroyed room presence was received but, an invalid alternative room was provided")
+		}).Warn("Invalid alternative room ID")
 	}
 
 	m.roomDestroyed(roomID, d.Reason, j, d.Password)

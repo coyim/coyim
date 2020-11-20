@@ -62,9 +62,7 @@ func (c *roomViewConversation) initBuilder() {
 		"on_key_press":    c.onKeyPress,
 	})
 
-	updateWithStyle(c.messageScrolledWindow, providerWithStyle("scrolledwindow", style{
-		"border": "none",
-	}))
+	mucStyles.setMessageScrolledWindowStyle(c.messageScrolledWindow)
 }
 
 func (c *roomViewConversation) initDefaults(v *roomView) {

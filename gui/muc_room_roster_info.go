@@ -36,21 +36,9 @@ func (r *roomViewRosterInfo) initBuilder() {
 }
 
 func (r *roomViewRosterInfo) initDefaults() {
-	updateWithStyle(r.nickname, providerWithStyle("label", style{
-		"font-size":   "14px",
-		"font-weight": "bold",
-	}))
-
-	updateWithStyle(r.userJID, providerWithStyle("label", style{
-		"font-size": "12px",
-	}))
-
-	updateWithStyle(r.status, providerWithStyle("label", style{
-		"font-size":   "12px",
-		"font-style":  "italic",
-		"font-weight": "bold",
-		"color":       "#666666",
-	}))
+	mucStyles.setRoomRosterInfoNicknameLabelStyle(r.nickname)
+	mucStyles.setRoomRosterInfoUserJIDLabelStyle(r.userJID)
+	mucStyles.setRoomRosterInfoStatusLabelStyle(r.status)
 }
 
 func (r *roomViewRosterInfo) onHideOccupantInfoPanel() {

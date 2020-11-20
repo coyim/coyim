@@ -79,11 +79,7 @@ func (v *roomView) newRoomViewWarningsOverlay(onClose func()) *roomViewWarningsO
 		"on_close": o.close,
 	})
 
-	prov := providerWithStyle("box", style{
-		"padding": "12px",
-	})
-
-	updateWithStyle(o.box, prov)
+	mucStyles.setRoomWarningsBoxStyle(o.box)
 
 	v.messagesBox.Add(o.revealer)
 
@@ -94,15 +90,7 @@ func (o *roomViewWarningsOverlay) add(text string) {
 	w := newRoomViewWarning(text)
 	o.warnings = append(o.warnings, w)
 
-	prov := providerWithStyle("box", style{
-		"color":            "#744210",
-		"background-color": "#fefcbf",
-		"border":           "1px solid #d69e2e",
-		"border-radius":    "4px",
-		"padding":          "10px",
-	})
-
-	updateWithStyle(w.bar, prov)
+	mucStyles.setRoomWarningsMessageBoxStyle(w.bar)
 
 	o.box.PackStart(w.bar, false, false, 5)
 

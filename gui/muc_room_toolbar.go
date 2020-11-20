@@ -33,17 +33,10 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room"))
 
 	t.roomNameLabel.SetText(v.roomID().String())
-	updateWithStyle(t.roomNameLabel, providerWithStyle("label", style{
-		"font-size":   "22px",
-		"font-weight": "bold",
-	}))
+	mucStyles.setRoomToolbarNameLabelStyle(t.roomNameLabel)
 
 	t.displayRoomSubject(v.room.GetSubject())
-	updateWithStyle(t.roomSubjectLabel, providerWithStyle("label", style{
-		"font-size":  "14px",
-		"font-style": "italic",
-		"color":      "#666666",
-	}))
+	mucStyles.setRoomToolbarSubjectLabelStyle(t.roomSubjectLabel)
 
 	t.roomMenu.SetPopover(v.getRoomMenuWidget())
 }

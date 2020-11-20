@@ -32,12 +32,7 @@ func (v *roomView) newRoomViewLoadingInfoBar(parent gtki.Box) *roomViewLoadingIn
 		"on_try_again_clicked": ib.onRetryClicked,
 	})
 
-	prov := providerWithStyle("label", style{
-		"font-size":   "16px",
-		"font-weight": "bold",
-	})
-
-	updateWithStyle(ib.infoBarLabel, prov)
+	mucStyles.setRoomLoadingInfoBarLabelStyle(ib.infoBarLabel)
 
 	ib.content.Add(ib.spinner.getWidget())
 	ib.parent.Add(ib.infoBar)

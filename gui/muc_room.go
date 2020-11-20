@@ -161,12 +161,7 @@ func (v *roomView) showRoomWarnings(roomInfo data.RoomConfig) {
 }
 
 func (v *roomView) showWarnings() {
-	prov := providerWithStyle("box", style{
-		"background-color": "#ffffff",
-		"box-shadow":       "0 10px 20px rgba(0, 0, 0, 0.35)",
-	})
-
-	updateWithStyle(v.messagesBox, prov)
+	mucStyles.setRoomMessagesBoxStyle(v.messagesBox)
 
 	v.warnings.show()
 	v.showNotificationsOverlay()
@@ -177,12 +172,7 @@ func (v *roomView) removeWarningsInfobar() {
 }
 
 func (v *roomView) showNotificationsOverlay() {
-	prov := providerWithStyle("box", style{
-		"background-color": "rgba(0, 0, 0, 0.5)",
-	})
-
-	updateWithStyle(v.messagesOverlayBox, prov)
-
+	mucStyles.setRoomOverlayMessagesBoxStyle(v.messagesOverlayBox)
 	v.messagesOverlay.Show()
 }
 

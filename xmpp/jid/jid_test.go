@@ -84,6 +84,14 @@ func (s *JidXMPPSuite) Test_NewBare(c *C) {
 	c.Assert(NewBare(NewLocal("hello"), NewDomain("goodbye.com")).String(), Equals, "hello@goodbye.com")
 }
 
+func (s *JidXMPPSuite) Test_NewBareFromStrings(c *C) {
+	c.Assert(NewBareFromStrings("", "").String(), Equals, "@")
+	c.Assert(NewBareFromStrings("hello", "goodbye.com").String(), Equals, "hello@goodbye.com")
+	c.Assert(NewBareFromStrings("hello", "").String(), Equals, "@")
+	c.Assert(NewBareFromStrings("@", "").String(), Equals, "@")
+	c.Assert(NewBareFromStrings("#", "#").String(), Equals, "@")
+}
+
 func (s *JidXMPPSuite) Test_NewFull(c *C) {
 	c.Assert(NewFull(NewLocal("hello"), NewDomain("goodbye.com"), NewResource("somewhere")), DeepEquals,
 		full{

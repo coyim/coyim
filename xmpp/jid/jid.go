@@ -89,6 +89,17 @@ func NewBare(local Local, domain Domain) Bare {
 	return domain.AddLocal(local)
 }
 
+// NewBareFromStrings generate a new Bare from local and domain as strings
+func NewBareFromStrings(local, domain string) Bare {
+	l := NewLocal(local)
+	d := NewDomain(domain)
+	if l.Valid() && d.Valid() {
+		return NewBare(l, d)
+	}
+
+	return bare{}
+}
+
 // NewFull creates a full JID from the different parts of a JID
 func NewFull(local Local, domain Domain, resource Resource) Full {
 	return domain.AddLocal(local).WithResource(resource).(Full)

@@ -12,6 +12,7 @@ import (
 func (u *gtkUI) initMUC() {
 	initMUCSupportedErrors()
 	initMUCConfigUpdateMessages()
+	initMUCStyles(u.currentMUCColorSet())
 }
 
 var supportedCreateMUCErrors map[error]string

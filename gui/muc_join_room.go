@@ -79,9 +79,7 @@ func (v *mucJoinRoomView) updateServicesBasedOnAccount(ca *account) {
 }
 
 func (v *mucJoinRoomView) onNoAccountsConnected() {
-	doInUIThread(func() {
-		v.enableJoinIfConditionsAreMet()
-	})
+	doInUIThread(v.enableJoinIfConditionsAreMet)
 }
 
 func (v *mucJoinRoomView) initDefaults() {

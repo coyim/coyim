@@ -9,13 +9,11 @@ import (
 )
 
 type mucCreateRoomViewForm struct {
-	isShown               bool
-	builder               *builder
-	accountsComponent     *connectedAccountsComponent
-	chatServicesComponent *chatServicesComponent
+	isShown           bool
+	builder           *builder
+	roomFormComponent *mucRoomFormComponent
 
 	view             gtki.Box         `gtk-widget:"create-room-form"`
-	roomEntry        gtki.Entry       `gtk-widget:"room-name-entry"`
 	roomAutoJoin     gtki.CheckButton `gtk-widget:"autojoin-check-button"`
 	createButton     gtki.Button      `gtk-widget:"create-room-button"`
 	spinnerBox       gtki.Box         `gtk-widget:"spinner-box"`
@@ -26,6 +24,7 @@ type mucCreateRoomViewForm struct {
 
 	roomNameConflictList    *set.Set
 	createRoom              func(*account, jid.Bare)
+	updateAutoJoinValue     func(bool)
 	onCheckFieldsConditions func(string, string, *account) bool
 
 	log func(*account, jid.Bare) coylog.Logger
@@ -34,13 +33,13 @@ type mucCreateRoomViewForm struct {
 func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	f := &mucCreateRoomViewForm{
 		roomNameConflictList: set.New(),
+		updateAutoJoinValue:  v.updateAutoJoinValue,
 		log:                  v.log,
 	}
 
 	f.initBuilder(v)
 	f.initNotifications(v)
-	f.initChatServices(v)
-	f.initConnectedAccounts(v)
+	f.initRoomFormComponent(v)
 	f.initDefaults(v)
 
 	return f
@@ -51,12 +50,10 @@ func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
 	panicOnDevError(f.builder.bindObjects(f))
 
 	f.builder.ConnectSignals(map[string]interface{}{
-		"on_cancel":          v.onCancel,
-		"on_create_room":     f.onCreateRoom,
-		"on_roomName_change": f.enableCreationIfConditionsAreMet,
-		"on_roomAutoJoin_toggled": func() {
-			v.updateAutoJoinValue(f.roomAutoJoin.GetActive())
-		},
+		"on_cancel":                  v.onCancel,
+		"on_create_room":             f.onCreateRoom,
+		"on_roomName_change":         f.enableCreationIfConditionsAreMet,
+		"on_roomAutoJoin_toggled":    f.onRoomAutoJoinToggled,
 		"on_chatServiceEntry_change": f.enableCreationIfConditionsAreMet,
 	})
 }
@@ -65,15 +62,22 @@ func (f *mucCreateRoomViewForm) initNotifications(v *mucCreateRoomView) {
 	f.notifications = v.u.newNotifications(f.notificationArea)
 }
 
-func (f *mucCreateRoomViewForm) initChatServices(v *mucCreateRoomView) {
+func (f *mucCreateRoomViewForm) initRoomFormComponent(v *mucCreateRoomView) {
+	account := f.builder.get("accounts").(gtki.ComboBox)
+	roomEntry := f.builder.get("room-name-entry").(gtki.Entry)
 	chatServicesList := f.builder.get("chat-services-list").(gtki.ComboBoxText)
 	chatServicesEntry := f.builder.get("chat-services-entry").(gtki.Entry)
-	f.chatServicesComponent = v.u.createChatServicesComponent(chatServicesList, chatServicesEntry, f.enableCreationIfConditionsAreMet)
-}
 
-func (f *mucCreateRoomViewForm) initConnectedAccounts(v *mucCreateRoomView) {
-	account := f.builder.get("accounts").(gtki.ComboBox)
-	f.accountsComponent = v.u.createConnectedAccountsComponent(account, f.notifications, f.updateServicesBasedOnAccount, f.onNoAccountsConnected)
+	f.roomFormComponent = v.u.createMUCRoomFormComponent(&mucRoomFormData{
+		errorNotifications:     f.notifications,
+		connectedAccountsInput: account,
+		roomNameEntry:          roomEntry,
+		chatServicesInput:      chatServicesList,
+		chatServicesEntry:      chatServicesEntry,
+		onAccountSelected:      f.updateServicesBasedOnAccount,
+		onNoAccount:            f.onNoAccountsConnected,
+		onChatServiceChanged:   f.enableCreationIfConditionsAreMet,
+	})
 }
 
 func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
@@ -93,6 +97,10 @@ func (v *mucCreateRoomView) initCreateRoomForm() *mucCreateRoomViewForm {
 	f.addCallbacks(v)
 
 	return f
+}
+
+func (f *mucCreateRoomViewForm) onRoomAutoJoinToggled() {
+	f.updateAutoJoinValue(f.roomAutoJoin.GetActive())
 }
 
 func (f *mucCreateRoomViewForm) listenToCreateError(roomID jid.Bare, errors chan error) {
@@ -123,7 +131,7 @@ func (f *mucCreateRoomViewForm) onCreateRoomAlreadyExists() {
 	f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
 	f.spinner.hide()
 	f.enableFields()
-	f.createButton.SetSensitive(false)
+	f.disableCreateRoomButton()
 }
 
 func (f *mucCreateRoomViewForm) onCreateRoomFailed(err error) {
@@ -152,60 +160,30 @@ func (f *mucCreateRoomViewForm) showCreateForm(v *mucCreateRoomView) {
 }
 
 func (f *mucCreateRoomViewForm) onAutoJoinChange(v bool) {
-	if v {
-		f.createButton.SetProperty("label", i18n.Local("Create Room & Join"))
-	} else {
-		f.createButton.SetProperty("label", i18n.Local("Create Room"))
-	}
+	f.createButton.SetProperty("label", createRoomButtonLabelForAutoJoin(v))
+
 }
 
 func (f *mucCreateRoomViewForm) onCreateRoom() {
-	f.notifications.clearErrors()
-
-	roomName, _ := f.roomEntry.GetText()
-	local := jid.NewLocal(roomName)
-	if !local.Valid() {
-		f.log(nil, nil).WithField("local", roomName).Error("Trying to create a room with an invalid local")
-		f.notifications.error(i18n.Local("You must provide a valid room name."))
-		return
+	if f.roomFormComponent.validateWithErrorNotification() {
+		f.beforeCreatingTheRoom()
+		go f.createRoom(f.roomFormComponent.currentAccount(), f.roomFormComponent.currentRoomID())
 	}
-
-	domain := f.chatServicesComponent.currentService()
-	if !domain.Valid() {
-		f.log(nil, nil).WithField("domain", domain).Error("Trying to create a room with an invalid domain")
-		f.notifications.error(i18n.Local("You must provide a valid service name."))
-		return
-	}
-
-	roomID := jid.NewBare(local, domain)
-
-	ca := f.accountsComponent.currentAccount()
-	if ca == nil {
-		f.log(nil, roomID).Error("No account was selected to create the room")
-		f.notifications.error(i18n.Local("No account is selected, please select one account from the list or connect to one."))
-		return
-	}
-
-	f.beforeCreatingTheRoom()
-
-	go f.createRoom(ca, roomID)
 }
 
 func (f *mucCreateRoomViewForm) beforeCreatingTheRoom() {
 	f.spinner.show()
 	f.disableFields()
+	f.setFieldsSensitive(false)
 }
 
 func (f *mucCreateRoomViewForm) destroy() {
 	f.isShown = false
-
-	if f.accountsComponent != nil {
-		f.accountsComponent.onDestroy()
-	}
+	f.roomFormComponent.onDestroy()
 }
 
 func (f *mucCreateRoomViewForm) clearFields() {
-	f.roomEntry.SetText("")
+	f.roomFormComponent.resetFields()
 	f.enableCreationIfConditionsAreMet()
 }
 
@@ -215,22 +193,19 @@ func (f *mucCreateRoomViewForm) reset() {
 	f.clearFields()
 }
 
-func (f *mucCreateRoomViewForm) setFieldsSensitive(v bool) {
-	f.createButton.SetSensitive(v)
-	f.roomEntry.SetSensitive(v)
-	f.roomAutoJoin.SetSensitive(v)
+func (f *mucCreateRoomViewForm) enableFields() {
+	f.roomFormComponent.enableFields()
+	f.setFieldsSensitive(true)
 }
 
 func (f *mucCreateRoomViewForm) disableFields() {
+	f.roomFormComponent.disableFields()
 	f.setFieldsSensitive(false)
-	f.accountsComponent.disableAccountInput()
-	f.chatServicesComponent.disableServiceInput()
 }
 
-func (f *mucCreateRoomViewForm) enableFields() {
-	f.setFieldsSensitive(true)
-	f.accountsComponent.enableAccountInput()
-	f.chatServicesComponent.enableServiceInput()
+func (f *mucCreateRoomViewForm) setFieldsSensitive(v bool) {
+	f.createButton.SetSensitive(v)
+	f.roomAutoJoin.SetSensitive(v)
 }
 
 func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(ca *account) {
@@ -238,67 +213,57 @@ func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(ca *account) {
 		f.notifications.clearErrors()
 		f.enableCreationIfConditionsAreMet()
 	})
-	go f.chatServicesComponent.updateServicesBasedOnAccount(ca)
 }
 
 func (f *mucCreateRoomViewForm) onNoAccountsConnected() {
-	doInUIThread(func() {
-		f.enableCreationIfConditionsAreMet()
-		f.chatServicesComponent.removeAll()
-	})
+	doInUIThread(f.enableCreationIfConditionsAreMet)
 }
 
 func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
-	var canCreate bool
-	var message string
-
-	defer func() {
-		f.createButton.SetSensitive(canCreate)
-		if message != "" {
-			f.notifications.error(message)
-		}
-	}()
-
-	// Let the connected accounts component show any errors if it have one
-	if f.accountsComponent.hasAccounts() {
+	if f.roomFormComponent.hasNotErrorsNotified() {
 		f.notifications.clearErrors()
 	}
 
-	validations := []func() (ok bool, message string){
-		f.validateRoomRequiredFields,
-		f.validateIfRoomIsInConflict,
+	f.disableCreateRoomButton()
+
+	validations := []func() bool{
+		f.roomFormComponent.isFilled,
+		f.checkIfRoomNameHasConflict,
 	}
 
 	for _, v := range validations {
-		canCreate, message = v()
-		if !canCreate {
+		if !v() {
 			return
 		}
 	}
+
+	f.enableCreateRoomButton()
 }
 
-func (f *mucCreateRoomViewForm) validateRoomRequiredFields() (bool, string) {
-	v := f.roomNameFromEntry() != "" && f.chatServicesComponent.hasServiceValue() && f.accountsComponent.currentAccount() != nil
-	return v, ""
-}
-
-func (f *mucCreateRoomViewForm) validateIfRoomIsInConflict() (bool, string) {
-	if !f.isRoomInConflict(f.roomNameFromEntry(), f.chatServicesComponent.currentServiceValue()) {
-		return false, i18n.Local("That room already exists, try again with a different name.")
+func (f *mucCreateRoomViewForm) checkIfRoomNameHasConflict() bool {
+	if f.roomNameConflictList.Has(f.roomFormComponent.currentRoomIDValue()) {
+		f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
+		return false
 	}
-	return true, ""
+	return true
 }
 
-func (f *mucCreateRoomViewForm) isRoomInConflict(local, domain string) bool {
-	roomID := jid.NewBareFromStrings(local, domain)
-	return f.roomNameConflictList.Has(roomID.String())
+func (f *mucCreateRoomViewForm) enableCreateRoomButton() {
+	f.createButton.SetSensitive(true)
 }
 
-func (f *mucCreateRoomViewForm) roomNameFromEntry() string {
-	t, _ := f.roomEntry.GetText()
-	return t
+func (f *mucCreateRoomViewForm) disableCreateRoomButton() {
+	f.createButton.SetSensitive(false)
 }
 
 func setEnabled(w gtki.Widget, enable bool) {
 	w.SetSensitive(enable)
+}
+
+func createRoomButtonLabelForAutoJoin(v bool) string {
+	l := i18n.Local("Create Room")
+	if v {
+		l = i18n.Local("Create Room & Join")
+	}
+	return l
 }

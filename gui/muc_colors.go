@@ -11,6 +11,12 @@ type mucColorSet struct {
 	messageForeground       string
 	errorForeground         string
 	configurationForeground string
+	white                   string
+	gray300                 string
+	gray500                 string
+	brown500                string
+	yellow200               string
+	yellow600               string
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -34,6 +40,12 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		infoMessageForeground:   "#395BA3",
 		messageForeground:       "#000000",
 		configurationForeground: "#9a04bf",
+		white:                   "#FFFFFF",
+		gray300:                 "#A9A9A9",
+		gray500:                 "#666666",
+		brown500:                "#744210",
+		yellow200:               "#FEFCBF",
+		yellow600:               "#D69E2E",
 	}
 }
 
@@ -51,5 +63,11 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		infoMessageForeground:   "#E34267",
 		messageForeground:       "#000000",
 		configurationForeground: "#9a04bf",
+		white:                   "#FFFFFF",
+		gray300:                 "#A9A9A9",
+		gray500:                 "#666666",
+		brown500:                "#744210",
+		yellow200:               "#FEFCBF",
+		yellow600:               "#D69E2E",
 	}
 }

@@ -9,13 +9,11 @@ import (
 )
 
 type mucJoinRoomView struct {
-	u                     *gtkUI
-	builder               *builder
-	accountsComponent     *connectedAccountsComponent
-	chatServicesComponent *chatServicesComponent
+	u                 *gtkUI
+	builder           *builder
+	roomFormComponent *mucRoomFormComponent
 
 	dialog           gtki.Dialog `gtk-widget:"join-room-dialog"`
-	roomNameEntry    gtki.Entry  `gtk-widget:"room-name-entry"`
 	joinButton       gtki.Button `gtk-widget:"join-room-button"`
 	spinnerBox       gtki.Box    `gtk-widget:"spinner-box"`
 	notificationArea gtki.Box    `gtk-widget:"notification-area-box"`
@@ -31,8 +29,7 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 
 	view.initBuilder()
 	view.initNotifications()
-	view.initChatServices()
-	view.initConnectedAccounts()
+	view.initRoomFormComponent()
 	view.initDefaults()
 
 	u.connectShortcutsChildWindow(view.dialog)
@@ -56,15 +53,22 @@ func (v *mucJoinRoomView) initNotifications() {
 	v.notifications = v.u.newNotifications(v.notificationArea)
 }
 
-func (v *mucJoinRoomView) initChatServices() {
+func (v *mucJoinRoomView) initRoomFormComponent() {
+	account := v.builder.get("accounts").(gtki.ComboBox)
+	roomEntry := v.builder.get("room-name-entry").(gtki.Entry)
 	chatServicesList := v.builder.get("chat-services-list").(gtki.ComboBoxText)
 	chatServicesEntry := v.builder.get("chat-services-entry").(gtki.Entry)
-	v.chatServicesComponent = v.u.createChatServicesComponent(chatServicesList, chatServicesEntry, v.enableJoinIfConditionsAreMet)
-}
 
-func (v *mucJoinRoomView) initConnectedAccounts() {
-	accountsInput := v.builder.get("accounts").(gtki.ComboBox)
-	v.accountsComponent = v.u.createConnectedAccountsComponent(accountsInput, v.notifications, v.updateServicesBasedOnAccount, v.onNoAccountsConnected)
+	v.roomFormComponent = v.u.createMUCRoomFormComponent(&mucRoomFormData{
+		errorNotifications:     v.notifications,
+		connectedAccountsInput: account,
+		roomNameEntry:          roomEntry,
+		chatServicesInput:      chatServicesList,
+		chatServicesEntry:      chatServicesEntry,
+		onAccountSelected:      v.updateServicesBasedOnAccount,
+		onNoAccount:            v.onNoAccountsConnected,
+		onChatServiceChanged:   v.enableJoinIfConditionsAreMet,
+	})
 }
 
 func (v *mucJoinRoomView) updateServicesBasedOnAccount(ca *account) {
@@ -72,13 +76,11 @@ func (v *mucJoinRoomView) updateServicesBasedOnAccount(ca *account) {
 		v.notifications.clearErrors()
 		v.enableJoinIfConditionsAreMet()
 	})
-	go v.chatServicesComponent.updateServicesBasedOnAccount(ca)
 }
 
 func (v *mucJoinRoomView) onNoAccountsConnected() {
 	doInUIThread(func() {
 		v.enableJoinIfConditionsAreMet()
-		v.chatServicesComponent.removeAll()
 	})
 }
 
@@ -88,22 +90,16 @@ func (v *mucJoinRoomView) initDefaults() {
 }
 
 func (v *mucJoinRoomView) onCloseWindow() {
-	if v.accountsComponent != nil {
-		v.accountsComponent.onDestroy()
-	}
+	v.roomFormComponent.onDestroy()
 }
 
 func (v *mucJoinRoomView) typedRoomName() string {
-	name, _ := v.roomNameEntry.GetText()
-	return name
+	return v.roomFormComponent.currentRoomNameValue()
 }
 
 // enableJoinIfConditionsAreMet MUST be called from the UI thread
 func (v *mucJoinRoomView) enableJoinIfConditionsAreMet() {
-	roomName, _ := v.roomNameEntry.GetText()
-
-	hasAllValues := roomName != "" && v.chatServicesComponent.hasServiceValue() && v.accountsComponent.currentAccount() != nil
-	v.joinButton.SetSensitive(hasAllValues)
+	v.joinButton.SetSensitive(v.roomFormComponent.isFilled())
 }
 
 func (v *mucJoinRoomView) beforeJoiningRoom() {
@@ -158,7 +154,7 @@ func (v *mucJoinRoomView) onServiceUnavailable(a *account, roomID jid.Bare) {
 func (v *mucJoinRoomView) log() coylog.Logger {
 	l := v.u.log
 
-	ca := v.accountsComponent.currentAccount()
+	ca := v.roomFormComponent.currentAccount()
 	if ca != nil {
 		l = ca.log
 	}
@@ -169,17 +165,14 @@ func (v *mucJoinRoomView) log() coylog.Logger {
 }
 
 func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
-	roomName, _ := v.roomNameEntry.GetText()
-	local := jid.NewLocal(roomName)
+	local := v.roomFormComponent.currentRoomName()
 	if !local.Valid() {
-		v.log().WithField("local", roomName).Error("Trying to join a room with an invalid local")
 		v.notifications.error(i18n.Local("You must provide a valid room name."))
 		return nil, false
 	}
 
-	chatServiceName := v.chatServicesComponent.currentService()
+	chatServiceName := v.roomFormComponent.currentService()
 	if !chatServiceName.Valid() {
-		v.log().WithField("domain", chatServiceName).Error("Trying to join a room with an invalid domain")
 		v.notifications.error(i18n.Local("You must provide a valid service name."))
 		return nil, false
 	}
@@ -194,7 +187,7 @@ func (v *mucJoinRoomView) tryJoinRoom(done func()) {
 		return
 	}
 
-	ca := v.accountsComponent.currentAccount()
+	ca := v.roomFormComponent.currentAccount()
 	if ca == nil {
 		v.notifications.error(i18n.Local("No account was selected, select an account from the list or enable one."))
 		return
@@ -209,21 +202,18 @@ func (v *mucJoinRoomView) isValidRoomName(name string) bool {
 	return jid.ValidBareJID(name)
 }
 
-func (v *mucJoinRoomView) setSensitivityForAllFields(f bool) {
-	v.roomNameEntry.SetSensitive(f)
+func (v *mucJoinRoomView) setSensitivityForJoin(f bool) {
 	v.joinButton.SetSensitive(f)
 }
 
 func (v *mucJoinRoomView) disableJoinFields() {
-	v.setSensitivityForAllFields(false)
-	v.chatServicesComponent.disableServiceInput()
-	v.accountsComponent.disableAccountInput()
+	v.setSensitivityForJoin(false)
+	v.roomFormComponent.disableFields()
 }
 
 func (v *mucJoinRoomView) enableJoinFields() {
-	v.setSensitivityForAllFields(true)
-	v.chatServicesComponent.enableServiceInput()
-	v.accountsComponent.enableAccountInput()
+	v.setSensitivityForJoin(true)
+	v.roomFormComponent.enableFields()
 }
 
 func (u *gtkUI) mucShowJoinRoom() {

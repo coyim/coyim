@@ -249,34 +249,54 @@ func (f *mucCreateRoomViewForm) onNoAccountsConnected() {
 }
 
 func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
+	var canCreate bool
+	var message string
+
+	defer func() {
+		f.createButton.SetSensitive(canCreate)
+		if message != "" {
+			f.notifications.error(message)
+		}
+	}()
+
 	// Let the connected accounts component show any errors if it have one
-	if len(f.accountsComponent.accounts) > 0 {
+	if f.accountsComponent.hasAccounts() {
 		f.notifications.clearErrors()
 	}
 
-	roomName, _ := f.roomEntry.GetText()
-	currentAccount := f.accountsComponent.currentAccount()
-
-	ok := roomName != "" && f.chatServicesComponent.hasServiceValue() && currentAccount != nil
-	if ok {
-		ok = f.isInRoomNameConflictList(roomName, f.chatServicesComponent.currentServiceValue())
+	validations := []func() (ok bool, message string){
+		f.validateRoomRequiredFields,
+		f.validateIfRoomIsInConflict,
 	}
 
-	f.createButton.SetSensitive(ok)
-}
-
-func (f *mucCreateRoomViewForm) isInRoomNameConflictList(local, domain string) bool {
-	roomLocal := jid.NewLocal(local)
-	roomDomain := jid.NewDomain(domain)
-	if roomLocal.Valid() && roomDomain.Valid() {
-		roomID := jid.NewBare(roomLocal, roomDomain)
-		if roomID.Valid() && f.roomNameConflictList.Has(roomID.String()) {
-			f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
-			return false
+	for _, v := range validations {
+		canCreate, message = v()
+		if !canCreate {
+			return
 		}
 	}
+}
 
-	return true
+func (f *mucCreateRoomViewForm) validateRoomRequiredFields() (bool, string) {
+	v := f.roomNameFromEntry() != "" && f.chatServicesComponent.hasServiceValue() && f.accountsComponent.currentAccount() != nil
+	return v, ""
+}
+
+func (f *mucCreateRoomViewForm) validateIfRoomIsInConflict() (bool, string) {
+	if !f.isRoomInConflict(f.roomNameFromEntry(), f.chatServicesComponent.currentServiceValue()) {
+		return false, i18n.Local("That room already exists, try again with a different name.")
+	}
+	return true, ""
+}
+
+func (f *mucCreateRoomViewForm) isRoomInConflict(local, domain string) bool {
+	roomID := jid.NewBareFromStrings(local, domain)
+	return f.roomNameConflictList.Has(roomID.String())
+}
+
+func (f *mucCreateRoomViewForm) roomNameFromEntry() string {
+	t, _ := f.roomEntry.GetText()
+	return t
 }
 
 func setEnabled(w gtki.Widget, enable bool) {

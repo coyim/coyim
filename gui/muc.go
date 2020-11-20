@@ -9,7 +9,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func initMUC() {
+func (u *gtkUI) initMUC() {
 	initMUCSupportedErrors()
 	initMUCConfigUpdateMessages()
 }

@@ -125,8 +125,6 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	g.gtk.Init(argsWithApplicationName())
 	ensureInstalled()
 
-	initMUC()
-
 	ret := &gtkUI{
 		commands:                             make(chan interface{}, 5),
 		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
@@ -138,6 +136,8 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 		log:         log.StandardLogger().WithField("component", "gui"),
 		hooks:       hooks,
 	}
+
+	ret.initMUC()
 
 	hooks.AfterInit()
 

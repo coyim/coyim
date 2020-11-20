@@ -51,6 +51,11 @@ func (cac *connectedAccountsComponent) hasAccounts() bool {
 	return len(cac.accounts) > 0
 }
 
+// hasAccountValue is safe to call from the UI thread, or from outside the UI thread
+func (cac *connectedAccountsComponent) hasAccountValue() bool {
+	return cac.currentAccount() != nil
+}
+
 // initOrReplaceAccounts should ONLY be called from the UI thread
 // We don't need to do any locking here, since it's already in the UI thread
 // so no other things can happen to the UI in the meantime

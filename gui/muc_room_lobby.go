@@ -212,12 +212,13 @@ func (l *roomViewLobby) onJoinClicked() {
 	l.joinButton.SetSensitive(false)
 
 	nickname, _ := l.nicknameEntry.GetText()
+	password, _ := l.passwordEntry.GetText()
 
 	l.onJoin = make(chan bool)
 	l.onJoinError = make(chan error)
 	l.cancel = make(chan bool)
 
-	go l.sendJoinRoomRequest(nickname)
+	go l.sendJoinRoomRequest(nickname, password)
 	go l.whenEnterRequestHasBeenResolved(nickname)
 }
 
@@ -246,8 +247,15 @@ func newMUCRoomLobbyErr(roomID jid.Bare, nickname string, errType error) error {
 	}
 }
 
-func (l *roomViewLobby) sendJoinRoomRequest(nickname string) {
-	err := l.account.session.JoinRoom(l.roomID, nickname)
+func (l *roomViewLobby) joinRoom(nickname, password string) error {
+	if l.roomIsPasswordProtected {
+		return l.account.session.JoinRoomWithPassword(l.roomID, nickname, password)
+	}
+	return l.account.session.JoinRoom(l.roomID, nickname)
+}
+
+func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string) {
+	err := l.joinRoom(nickname, password)
 	if err != nil {
 		l.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room.")
 		l.finishJoinRequest(errJoinNoConnection)

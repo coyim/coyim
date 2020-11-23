@@ -6,7 +6,8 @@ import (
 
 // MUC contains information related with Presence x tag
 type MUC struct {
-	XMLName xml.Name `xml:"http://jabber.org/protocol/muc x"`
+	XMLName  xml.Name `xml:"http://jabber.org/protocol/muc x"`
+	Password string   `xml:"password,omitempty"`
 }
 
 // MUCStatus contains information related to status of the presence or message

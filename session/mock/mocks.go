@@ -223,6 +223,11 @@ func (s *SessionMock) JoinRoom(roomID jid.Bare, nickName string) error {
 	return nil
 }
 
+// JoinRoomWithPassword is the implementation for Session interface
+func (s *SessionMock) JoinRoomWithPassword(roomID jid.Bare, nickName, password string) error {
+	return nil
+}
+
 // CreateRoom is the implementation for session interface
 func (*SessionMock) CreateRoom(jid.Bare) <-chan error {
 	return nil

@@ -59,6 +59,17 @@ func (c *conn) SendMUCPresence(to string) error {
 	return c.sendPresence(p)
 }
 
+func (c *conn) SendMUCPresenceWithPassword(to, password string) error {
+	p := &data.ClientPresence{
+		To: to,
+		MUC: &data.MUC{
+			Password: password,
+		},
+	}
+
+	return c.sendPresence(p)
+}
+
 // SignalPresence will signal the current presence
 func (c *conn) SignalPresence(state string) error {
 	var outb bytes.Buffer

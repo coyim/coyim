@@ -25,6 +25,18 @@ func (s *session) JoinRoom(roomID jid.Bare, nickname string) error {
 	return nil
 }
 
+func (s *session) JoinRoomWithPassword(roomID jid.Bare, nickname, password string) error {
+	err := s.conn.SendMUCPresenceWithPassword(roomID.WithResource(jid.NewResource(nickname)).String(), password)
+	if err != nil {
+		s.log.WithFields(log.Fields{
+			"room":     roomID,
+			"nickname": nickname,
+		}).WithError(err).Error("An error occurred trying join the room")
+		return err
+	}
+	return nil
+}
+
 type hasRoomContext struct {
 	s               *session
 	resultChannel   chan bool

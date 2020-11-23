@@ -44,6 +44,7 @@ type Conn interface {
 	SendPing() (reply <-chan data.Stanza, cookie data.Cookie, err error)
 	SendPresence(string, string, string, string) error
 	SendMUCPresence(string) error
+	SendMUCPresenceWithPassword(string, string) error
 	ServerAddress() string
 	SetInOut(*xml.Decoder, io.Writer)
 	SetKeepaliveOut(io.Writer)

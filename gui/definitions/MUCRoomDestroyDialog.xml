@@ -203,7 +203,6 @@
                         <property name="label" translatable="yes">Add information about the new room</property>
                         <property name="visible">True</property>
                         <property name="receives_default">False</property>
-                        <property name="tooltip_text" translatable="yes">An alternative room is the room that will be available as an alternative to this one you want to destroy.</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
                         <signal name="toggled" handler="on_alternative_room_toggled" swapped="no"/>

@@ -31,9 +31,10 @@ type roomViewLobby struct {
 	errorNotif       *errorNotification
 	notification     gtki.InfoBar
 
-	onJoin      chan bool
-	onJoinError chan error
-	cancel      chan bool
+	onJoin                  chan bool
+	onJoinError             chan error
+	cancel                  chan bool
+	roomIsPasswordProtected bool
 
 	isReadyToJoinRoom bool
 
@@ -83,6 +84,7 @@ func (l *roomViewLobby) initBuilder() {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_nickname_changed": l.onNicknameChange,
+		"on_password_changed": l.onPasswordChange,
 		"on_joined_clicked":   l.onJoinClicked,
 		"on_cancel_clicked":   l.onJoinCancel,
 	})
@@ -117,6 +119,7 @@ func (l *roomViewLobby) roomConfigReceivedEvent(roomInfo data.RoomConfig) {
 	doInUIThread(func() {
 		l.enableJoinIfConditionsAreMet()
 		if roomInfo.PasswordProtected {
+			l.roomIsPasswordProtected = true
 			l.passwordLabel.SetVisible(true)
 			l.passwordEntry.SetVisible(true)
 		}
@@ -148,18 +151,41 @@ func (l *roomViewLobby) onNicknameChange() {
 	l.enableJoinIfConditionsAreMet()
 }
 
+func (l *roomViewLobby) onPasswordChange() {
+	l.enableJoinIfConditionsAreMet()
+}
+
+func (l *roomViewLobby) nicknameHasContent() bool {
+	nickname, _ := l.nicknameEntry.GetText()
+	return nickname != ""
+}
+
+func (l *roomViewLobby) passwordHasContent() bool {
+	password, _ := l.passwordEntry.GetText()
+	return password != ""
+}
+
+func (l *roomViewLobby) isNotNicknameInConflictList() bool {
+	nickname, _ := l.nicknameEntry.GetText()
+	if l.nicknamesWithConflict.Has(nickname) {
+		l.notifyOnError(i18n.Local("That nickname is already being used."))
+		return false
+	}
+	return true
+}
+
 func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 	l.clearErrors()
 
-	nickname, _ := l.nicknameEntry.GetText()
-	conditionsAreValid := l.isReadyToJoinRoom && nickname != ""
+	conditionsAreValid := false
+	defer func() {
+		l.joinButton.SetSensitive(conditionsAreValid)
+	}()
 
-	if l.nicknamesWithConflict.Has(nickname) {
-		conditionsAreValid = false
-		l.notifyOnError(i18n.Local("That nickname is already being used."))
+	conditionsAreValid = l.isReadyToJoinRoom && l.nicknameHasContent() && l.isNotNicknameInConflictList()
+	if conditionsAreValid && l.roomIsPasswordProtected {
+		conditionsAreValid = l.passwordHasContent()
 	}
-
-	l.joinButton.SetSensitive(conditionsAreValid)
 }
 
 func (l *roomViewLobby) disableFields() {

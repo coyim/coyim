@@ -89,6 +89,7 @@
             <property name="hexpand">True</property>
             <property name="visibility">False</property>
             <property name="caps_lock_warning">True</property>
+            <signal name="changed" handler="on_password_changed" swapped="no"/>
           </object>
           <packing>
             <property name="left_attach">1</property>

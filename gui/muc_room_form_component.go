@@ -106,6 +106,10 @@ func (f *mucRoomFormComponent) isFilled() bool {
 	return f.accountsComponent.hasAccountValue() && f.roomNameComponent.hasNameValue() && f.chatServicesComponent.hasServiceValue()
 }
 
+func (f *mucRoomFormComponent) isEmpty() bool {
+	return !f.isFilled()
+}
+
 func (f *mucRoomFormComponent) hasNotErrorsNotified() bool {
 	return f.accountsComponent.hasAccounts()
 }

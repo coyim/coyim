@@ -13,7 +13,7 @@ func (a *account) handleMUCErrorEvent(ev events.MUCError) {
 
 	switch ev.ErrorType {
 	case events.MUCNotAuthorized:
-		a.log.Debug("MUC Error NotAuthorized received")
+		view.notAuthorized()
 	case events.MUCForbidden:
 		a.log.Debug("MUC Error MUCForbidden received")
 	case events.MUCMessageForbidden:

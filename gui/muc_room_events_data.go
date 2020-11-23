@@ -40,6 +40,9 @@ type registrationRequiredEvent struct {
 	nickname string
 }
 
+type notAuthorizedEvent struct {
+}
+
 type loggingEnabledEvent struct{}
 
 type loggingDisabledEvent struct{}
@@ -114,3 +117,4 @@ func (roomDestroyedEvent) markAsRoomViewEvent()            {}
 func (roomConfigChangedEvent) markAsRoomViewEvent()        {}
 func (selfOccupantRemovedEvent) markAsRoomViewEvent()      {}
 func (occupantRemovedEvent) markAsRoomViewEvent()          {}
+func (notAuthorizedEvent) markAsRoomViewEvent()            {}

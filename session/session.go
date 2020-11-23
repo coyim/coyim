@@ -335,6 +335,11 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 	case "unsubscribed":
 		// Ignore
 	case "error":
+		if isMUCPresence(stanza) {
+			s.muc.handlePresence(stanza)
+			return true
+		}
+
 		log.WithFields(log.Fields{
 			"from":  stanza.From,
 			"error": stanza.Error,
@@ -342,9 +347,6 @@ func (s *session) receivedClientPresence(stanza *data.ClientPresence) bool {
 
 		s.r.LatestError(jjnr, stanza.Error.Code, stanza.Error.Type, stanza.Error.Condition.XMLName.Space+" "+stanza.Error.Condition.XMLName.Local)
 
-		if isMUCPresence(stanza) {
-			s.muc.handlePresence(stanza)
-		}
 	default:
 		log.WithField("stanza", stanza).Warn("Unrecognized presence")
 	}

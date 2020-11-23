@@ -110,6 +110,8 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 			l.nicknameConflictEvent(l.roomID, t.nickname)
 		case registrationRequiredEvent:
 			l.registrationRequiredEvent(l.roomID, t.nickname)
+		case notAuthorizedEvent:
+			l.notAuthorizedEvent()
 		}
 	})
 }
@@ -223,10 +225,11 @@ func (l *roomViewLobby) onJoinClicked() {
 }
 
 var (
-	errJoinRequestFailed         = errors.New("the request to join the room has failed")
-	errJoinNoConnection          = errors.New("join request failed because maybe no connection available")
-	errJoinnicknameConflictEvent = errors.New("join failed because the nickname is being used")
-	errJoinOnlyMembers           = errors.New("join failed because only registered members are allowed")
+	errJoinRequestFailed    = errors.New("the request to join the room has failed")
+	errJoinNoConnection     = errors.New("join request failed because maybe no connection available")
+	errJoinNicknameConflict = errors.New("join failed because the nickname is being used")
+	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
+	errJoinNotAuthorized    = errors.New("join failed because doesn't have authorization")
 )
 
 type mucRoomLobbyErr struct {
@@ -285,7 +288,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 	if err, ok := err.(*mucRoomLobbyErr); ok {
 		userMessage = l.getUserErrorMessage(err)
 
-		if err.errType == errJoinnicknameConflictEvent {
+		if err.errType == errJoinNicknameConflict {
 			shouldEnableCreation = false
 			if !l.nicknamesWithConflict.Has(err.nickname) {
 				l.nicknamesWithConflict.Insert(err.nickname)
@@ -302,10 +305,12 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 
 func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	switch err.errType {
-	case errJoinnicknameConflictEvent:
+	case errJoinNicknameConflict:
 		return i18n.Local("Can't join the room using that nickname because it's already being used.")
 	case errJoinOnlyMembers:
 		return i18n.Local("Sorry, this room only allows registered members.")
+	case errJoinNotAuthorized:
+		return i18n.Local("Sorry, the password is invalid.")
 	default:
 		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists.")
 	}
@@ -348,9 +353,13 @@ func (l *roomViewLobby) joinFailed(roomID jid.Bare, nickname string) {
 }
 
 func (l *roomViewLobby) nicknameConflictEvent(roomID jid.Bare, nickname string) {
-	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinnicknameConflictEvent))
+	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinNicknameConflict))
 }
 
 func (l *roomViewLobby) registrationRequiredEvent(roomID jid.Bare, nickname string) {
 	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinOnlyMembers))
+}
+
+func (l *roomViewLobby) notAuthorizedEvent() {
+	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errJoinNotAuthorized))
 }

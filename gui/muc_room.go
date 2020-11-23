@@ -331,6 +331,11 @@ func (v *roomView) registrationRequired(nickname string) {
 	v.publishEvent(registrationRequiredEvent{nickname})
 }
 
+// notAuthorized MUST NOT be called from the UI thread
+func (v *roomView) notAuthorized() {
+	v.publishEvent(notAuthorizedEvent{})
+}
+
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }

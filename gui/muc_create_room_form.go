@@ -226,15 +226,8 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 
 	f.disableCreateRoomButton()
 
-	validations := []func() bool{
-		f.roomFormComponent.isFilled,
-		f.checkIfRoomNameHasConflict,
-	}
-
-	for _, v := range validations {
-		if !v() {
-			return
-		}
+	if f.roomFormComponent.isEmpty() || f.checkIfRoomNameHasConflict() {
+		return
 	}
 
 	f.enableCreateRoomButton()
@@ -243,9 +236,9 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 func (f *mucCreateRoomViewForm) checkIfRoomNameHasConflict() bool {
 	if f.roomNameConflictList.Has(f.roomFormComponent.currentRoomIDValue()) {
 		f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
-		return false
+		return true
 	}
-	return true
+	return false
 }
 
 func (f *mucCreateRoomViewForm) enableCreateRoomButton() {

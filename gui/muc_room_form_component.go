@@ -110,7 +110,7 @@ func (f *mucRoomFormComponent) isEmpty() bool {
 	return !f.isFilled()
 }
 
-func (f *mucRoomFormComponent) hasNotErrorsNotified() bool {
+func (f *mucRoomFormComponent) hasNoErrorsReported() bool {
 	return f.accountsComponent.hasAccounts()
 }
 

@@ -220,7 +220,7 @@ func (f *mucCreateRoomViewForm) onNoAccountsConnected() {
 }
 
 func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
-	if f.roomFormComponent.hasNotErrorsNotified() {
+	if f.roomFormComponent.hasNoErrorsReported() {
 		f.notifications.clearErrors()
 	}
 

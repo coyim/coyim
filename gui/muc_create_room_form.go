@@ -254,9 +254,8 @@ func setEnabled(w gtki.Widget, enable bool) {
 }
 
 func createRoomButtonLabelForAutoJoin(v bool) string {
-	l := i18n.Local("Create Room")
 	if v {
-		l = i18n.Local("Create Room & Join")
+		return i18n.Local("Create Room & Join")
 	}
-	return l
+	return i18n.Local("Create Room")
 }

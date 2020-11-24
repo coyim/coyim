@@ -17,7 +17,7 @@ type RoomListing struct {
 	Jid         jid.Bare
 	Name        string
 
-	data.RoomConfig
+	data.RoomDiscoInfo
 
 	lockUpdates sync.RWMutex
 	onUpdates   []func()
@@ -28,9 +28,9 @@ func NewRoomListing() *RoomListing {
 	return &RoomListing{}
 }
 
-// GetConfig returns the room configuration from the room listing
-func (rl *RoomListing) GetConfig() data.RoomConfig {
-	return rl.RoomConfig
+// GetDiscoInfo returns the room disco info from the room listing
+func (rl *RoomListing) GetDiscoInfo() data.RoomDiscoInfo {
+	return rl.RoomDiscoInfo
 }
 
 // OnUpdate takes a function and some data, and when this room listing is updated, that function

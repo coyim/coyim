@@ -159,9 +159,9 @@ type MUCRoomAnonymityChanged struct {
 	AnonymityLevel string
 }
 
-// MUCRoomConfigReceived contains information of the received room listing
-type MUCRoomConfigReceived struct {
-	Config data.RoomConfig
+// MUCRoomDiscoInfoReceived contains information of the received room disco info
+type MUCRoomDiscoInfoReceived struct {
+	DiscoInfo data.RoomDiscoInfo
 }
 
 // MUCRoomConfigTimeout indicates that the room listing request has timeout
@@ -169,8 +169,8 @@ type MUCRoomConfigTimeout struct{}
 
 // MUCRoomConfigChanged signifies that room configuration changed
 type MUCRoomConfigChanged struct {
-	Changes []data.RoomConfigType
-	Config  data.RoomConfig
+	Changes   []data.RoomConfigType
+	DiscoInfo data.RoomDiscoInfo
 }
 
 func (MUCError) markAsMUCEventTypeInterface()                     {}
@@ -191,7 +191,7 @@ func (MUCLoggingEnabled) markAsMUCEventTypeInterface()            {}
 func (MUCLoggingDisabled) markAsMUCEventTypeInterface()           {}
 func (MUCRoomAnonymityChanged) markAsMUCEventTypeInterface()      {}
 func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}
-func (MUCRoomConfigReceived) markAsMUCEventTypeInterface()        {}
+func (MUCRoomDiscoInfoReceived) markAsMUCEventTypeInterface()     {}
 func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()         {}
 func (MUCRoomConfigChanged) markAsMUCEventTypeInterface()         {}
 func (MUCOccupantRemoved) markAsMUCEventTypeInterface()           {}

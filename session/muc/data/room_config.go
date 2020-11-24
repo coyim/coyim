@@ -4,57 +4,122 @@ package data
 type RoomConfigType int
 
 const (
-	// RoomConfigSupportsVoiceRequests represents room's "SupportsVoiceRequests" config
+	// RoomConfigSupportsVoiceRequests represents rooms "SupportsVoiceRequests" config
 	RoomConfigSupportsVoiceRequests RoomConfigType = iota
-	// RoomConfigAllowsRegistration represents room's "AllowsRegistration" config
+	// RoomConfigAllowsRegistration represents rooms "AllowsRegistration" config
 	RoomConfigAllowsRegistration
-	// RoomConfigPersistent represents room's "Persistent" config
+	// RoomConfigPersistent represents rooms "Persistent" config
 	RoomConfigPersistent
-	// RoomConfigModerated represents room's "Moderated" config
+	// RoomConfigModerated represents rooms "Moderated" config
 	RoomConfigModerated
-	// RoomConfigOpen represents room's "Open" config
+	// RoomConfigOpen represents rooms "Open" config
 	RoomConfigOpen
-	// RoomConfigPasswordProtected represents room's "PasswordProtected" config
+	// RoomConfigPasswordProtected represents rooms "PasswordProtected" config
 	RoomConfigPasswordProtected
-	// RoomConfigPublic represents room's "Public" config
+	// RoomConfigPublic represents rooms "Public" config
 	RoomConfigPublic
-	// RoomConfigLanguage represents room's "Language" config
+	// RoomConfigLanguage represents rooms "Language" config
 	RoomConfigLanguage
-	// RoomConfigOccupantsCanChangeSubject represents room's "OccupantsCanChangeSubject" config
+	// RoomConfigOccupantsCanChangeSubject represents rooms "OccupantsCanChangeSubject" config
 	RoomConfigOccupantsCanChangeSubject
-	// RoomConfigTitle represents room's "Title" config
+	// RoomConfigTitle represents rooms "Title" config
 	RoomConfigTitle
-	// RoomConfigDescription represents room's "Description" config
+	// RoomConfigDescription represents rooms "Description" config
 	RoomConfigDescription
-	// RoomConfigMembersCanInvite represents room's "OccupantsCanInvite" config
+	// RoomConfigMembersCanInvite represents rooms "OccupantsCanInvite" config
 	RoomConfigMembersCanInvite
-	// RoomConfigAllowPrivateMessages represents room's "AllowPrivateMessages" config
+	// RoomConfigAllowPrivateMessages represents rooms "AllowPrivateMessages" config
 	RoomConfigAllowPrivateMessages
-	// RoomConfigLogged represents room's "Logged" config
+	// RoomConfigLogged represents rooms "Logged" config
 	RoomConfigLogged
 	// RoomConfigMaxHistoryFetch represents the maximum number of history messages returned by Room
 	RoomConfigMaxHistoryFetch
 )
 
-// RoomConfig represents the room's configuration values
+// RoomConfig represents the room configuration form values
+// (https://xmpp.org/extensions/xep-0045.html#registrar-formtype-owner)
 type RoomConfig struct {
-	SupportsVoiceRequests     bool
-	AllowsRegistration        bool
-	AnonymityLevel            string
-	Persistent                bool
-	Moderated                 bool
-	Open                      bool
-	PasswordProtected         bool
-	Public                    bool
-	Language                  string
+	// muc#maxhistoryfetch
+	// Maximum Number of History Messages Returned by Room
+	MaxHistoryFetch int
+
+	// muc#roomconfig_allowpm
+	// Roles that May Send Private Messages
+	AllowPrivateMessages bool
+
+	// muc#roomconfig_allowinvites
+	// Whether to Allow Occupants to Invite Others
+	OccupantsCanInvite bool
+
+	// muc#roomconfig_changesubject
+	// Whether to Allow Occupants to Change Subject
 	OccupantsCanChangeSubject bool
-	Title                     string
-	Description               string
-	Occupants                 int
-	MembersCanInvite          bool
-	OccupantsCanInvite        bool
-	AllowPrivateMessages      string // This can be 'anyone', 'participants', 'moderators', 'none'
-	ContactJid                string
-	Logged                    bool // Notice that this will not always be correct for all servers
-	MaxHistoryFetch           int
+
+	// muc#roomconfig_enablelogging
+	// Whether to Enable Public Logging of Room Conversations
+	Logged bool
+
+	// muc#roomconfig_getmemberlist
+	// Roles and Affiliations that May Retrieve Member List
+	RetrieveMembersList string
+
+	// muc#roomconfig_lang
+	// Natural Language for Room Discussions
+	Language string
+
+	// muc#roomconfig_pubsub
+	// XMPP URI of Associated Publish-Subscribe Node
+	AssociatedPublishSubscribeNode string
+
+	// muc#roomconfig_maxusers
+	// Maximum Number of Room Occupants
+	MaxOccupantsNumber int
+
+	// muc#roomconfig_membersonly
+	// Whether to Make Room Members-Only
+	MembersOnly bool
+
+	// muc#roomconfig_moderatedroom
+	// Whether to Make Room Moderated
+	Moderated bool
+
+	// muc#roomconfig_passwordprotectedroom
+	// Whether a Password is Required to Enter
+	PasswordProtected bool
+
+	// muc#roomconfig_persistentroom
+	// Whether to Make Room Persistent
+	Persistent bool
+
+	// muc#roomconfig_presencebroadcast
+	// Roles for which Presence is Broadcasted
+	PresenceBroadcast string
+
+	// muc#roomconfig_publicroom
+	// Whether to Allow Public Searching for Room
+	Public bool
+
+	// muc#roomconfig_roomadmins
+	// Full List of Room Admins
+	Admins string
+
+	// muc#roomconfig_roomdesc
+	// Short Description of Room
+	Description string
+
+	// muc#roomconfig_roomname
+	// Natural-Language Room Name
+	Title string
+
+	// muc#roomconfig_roomowners
+	// Full List of Room Owners
+	Owners string
+
+	// muc#roomconfig_roomsecret
+	// The Room Password
+	Password string
+
+	// muc#roomconfig_whois
+	// Affiliations that May Discover Real JIDs of Occupants
+	Whois string
 }

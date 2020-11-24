@@ -134,21 +134,21 @@ func (m *mucManager) roomAnonymityChanged(roomID jid.Bare, value string) {
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) roomConfigReceived(roomID jid.Bare, conf data.RoomConfig) {
-	ev := events.MUCRoomConfigReceived{}
-	ev.Config = conf
+func (m *mucManager) roomDiscoInfoReceived(roomID jid.Bare, di data.RoomDiscoInfo) {
+	ev := events.MUCRoomDiscoInfoReceived{}
+	ev.DiscoInfo = di
 
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) roomConfigRequestTimeout(roomID jid.Bare) {
+func (m *mucManager) roomDiscoInfoRequestTimeout(roomID jid.Bare) {
 	m.publishRoomEvent(roomID, events.MUCRoomConfigTimeout{})
 }
 
-func (m *mucManager) roomConfigChanged(roomID jid.Bare, changes []data.RoomConfigType, config data.RoomConfig) {
+func (m *mucManager) roomConfigChanged(roomID jid.Bare, changes []data.RoomConfigType, discoInfo data.RoomDiscoInfo) {
 	ev := events.MUCRoomConfigChanged{}
 	ev.Changes = changes
-	ev.Config = config
+	ev.DiscoInfo = discoInfo
 
 	m.publishRoomEvent(roomID, ev)
 }

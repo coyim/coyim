@@ -92,7 +92,7 @@ func (d *roomDestroyView) onDestroyRoom() {
 	b, _ := d.reasonEntry.GetBuffer()
 	reason := b.GetText(b.GetStartIter(), b.GetEndIter(), false)
 
-	alternativeID, password, err := d.alternativeRooInformation()
+	alternativeID, password, err := d.alternativeRoomInformation()
 	if err != nil {
 		d.notification.error(d.friendlyMessageForAlternativeRoomError(err))
 		d.enableFieldsAndHideSpinner()
@@ -102,7 +102,7 @@ func (d *roomDestroyView) onDestroyRoom() {
 	d.destroyRoom(reason, alternativeID, password, d.onDestroySuccess, d.onDestroyFails)
 }
 
-func (d *roomDestroyView) alternativeRooInformation() (jid.Bare, string, error) {
+func (d *roomDestroyView) alternativeRoomInformation() (jid.Bare, string, error) {
 	if !d.alternativeRoomCheck.GetActive() {
 		return nil, "", nil
 	}

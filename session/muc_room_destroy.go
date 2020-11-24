@@ -2,6 +2,7 @@ package session
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/coyim/coyim/coylog"
 	log "github.com/sirupsen/logrus"
@@ -41,6 +42,7 @@ type destroyRoomContext struct {
 	cancelChannel chan bool
 
 	conn xi.Conn
+	lock sync.Mutex
 	log  coylog.Logger
 }
 
@@ -62,16 +64,9 @@ func (s *session) newDestroyRoomContext(roomID jid.Bare, reason string, alternat
 	}
 }
 
-func cleanDestroyRoomContext(ctx *destroyRoomContext) {
-	close(ctx.resultChannel)
-	close(ctx.errorChannel)
-	if ctx.cancelChannel != nil {
-		close(ctx.cancelChannel)
-	}
-}
-
 func (ctx *destroyRoomContext) destroyRoom() {
-	defer cleanDestroyRoomContext(ctx)
+	ctx.lock.Lock()
+	defer ctx.lock.Unlock()
 
 	if ctx.cancelChannel != nil {
 		ctx.finishWithCancel()
@@ -103,7 +98,7 @@ func (ctx *destroyRoomContext) newRoomDestroyQuery() data.MUCRoomDestroyQuery {
 func (ctx *destroyRoomContext) newRoomDestroyData() data.MUCRoomDestroy {
 	return data.MUCRoomDestroy{
 		Reason:   ctx.reason,
-		Jid:      ctx.getAlternativeRoomID(),
+		Jid:      ctx.alternativeRoomIDValue(),
 		Password: ctx.alternativeRoomPassword,
 	}
 }
@@ -173,7 +168,7 @@ func (ctx *destroyRoomContext) endEarly() {
 	ctx.cancelChannel <- true
 }
 
-func (ctx *destroyRoomContext) getAlternativeRoomID() string {
+func (ctx *destroyRoomContext) alternativeRoomIDValue() string {
 	if ctx.alternativeRoomID != nil {
 		return ctx.alternativeRoomID.String()
 	}

@@ -107,7 +107,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case roomAnonymityEvent:
 			c.roomAnonymityChangedEvent(t.anonymityLevel)
 		case roomConfigChangedEvent:
-			c.roomConfigChangedEvent(t.changes, t.config)
+			c.roomConfigChangedEvent(t.changes, t.discoInfo)
 		case selfOccupantRemovedEvent:
 			c.selfOccupantRemovedEvent()
 		case occupantRemovedEvent:
@@ -240,9 +240,9 @@ func (c *roomViewConversation) roomAnonymityChangedEvent(anonymityLevel string) 
 	}
 }
 
-func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedTypes, config data.RoomConfig) {
+func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedTypes, discoInfo data.RoomDiscoInfo) {
 	doInUIThread(func() {
-		messages := getRoomConfigUpdatedFriendlyMessages(changes, config)
+		messages := getRoomConfigUpdatedFriendlyMessages(changes, discoInfo)
 		for _, m := range messages {
 			c.displayNewConfigurationMessage(m)
 		}

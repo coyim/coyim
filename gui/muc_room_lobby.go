@@ -56,7 +56,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare, parent gtki.Box
 		parent:                parent,
 		onCancel:              onCancel,
 		nicknamesWithConflict: set.New(),
-		log: v.log.WithField("who", "roomViewLobby"),
+		log:                   v.log.WithField("who", "roomViewLobby"),
 	}
 
 	l.onSuccess = func() {
@@ -248,10 +248,7 @@ func newMUCRoomLobbyErr(roomID jid.Bare, nickname string, errType error) error {
 }
 
 func (l *roomViewLobby) joinRoom(nickname, password string) error {
-	if l.roomIsPasswordProtected {
-		return l.account.session.JoinRoomWithPassword(l.roomID, nickname, password)
-	}
-	return l.account.session.JoinRoom(l.roomID, nickname)
+	return l.account.session.JoinRoom(l.roomID, nickname, password)
 }
 
 func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string) {

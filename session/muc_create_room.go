@@ -71,7 +71,7 @@ func (c *createMUCRoomContext) logWithError(e error, m string) {
 }
 
 func (c *createMUCRoomContext) sendMUCPresence() error {
-	err := c.s.conn.SendMUCPresence(c.roomID.String())
+	err := c.s.conn.SendMUCPresence(c.roomID.String(), &data.MUC{})
 	if err != nil {
 		c.logWithError(err, "An error ocurred while sending a presence for creating an instant room")
 		return ErrUnexpectedResponse

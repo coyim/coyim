@@ -43,8 +43,7 @@ type Conn interface {
 	SendInitialStreamHeader() error
 	SendPing() (reply <-chan data.Stanza, cookie data.Cookie, err error)
 	SendPresence(string, string, string, string) error
-	SendMUCPresence(string) error
-	SendMUCPresenceWithPassword(string, string) error
+	SendMUCPresence(string, *data.MUC) error
 	ServerAddress() string
 	SetInOut(*xml.Decoder, io.Writer)
 	SetKeepaliveOut(io.Writer)

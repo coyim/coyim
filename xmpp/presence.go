@@ -48,23 +48,11 @@ func (c *conn) SendPresence(to, typ, id, status string) error {
 	return c.sendPresence(p)
 }
 
-// TODO: Could this function be generic, and receive only a data.ClientPresence object?
 // SendMUCPresence sends a presence as first step for create a new room
-func (c *conn) SendMUCPresence(to string) error {
+func (c *conn) SendMUCPresence(to string, m *data.MUC) error {
 	p := &data.ClientPresence{
 		To:  to,
-		MUC: &data.MUC{},
-	}
-
-	return c.sendPresence(p)
-}
-
-func (c *conn) SendMUCPresenceWithPassword(to, password string) error {
-	p := &data.ClientPresence{
-		To: to,
-		MUC: &data.MUC{
-			Password: password,
-		},
+		MUC: m,
 	}
 
 	return c.sendPresence(p)

@@ -78,8 +78,7 @@ type Session interface {
 
 	HasRoom(jid.Bare, chan<- *muc.RoomListing) (<-chan bool, <-chan error)
 	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
-	JoinRoom(jid.Bare, string) error
-	JoinRoomWithPassword(jid.Bare, string, string) error
+	JoinRoom(jid.Bare, string, string) error
 	CreateRoom(jid.Bare) <-chan error
 	GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error, func())
 	GetRoomListing(jid.Bare, chan<- *muc.RoomListing)

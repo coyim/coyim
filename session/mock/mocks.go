@@ -219,7 +219,7 @@ func (*SessionMock) GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-cha
 }
 
 // JoinRoom is the implementation for Session interface
-func (s *SessionMock) JoinRoom(roomID jid.Bare, nickName string) error {
+func (s *SessionMock) JoinRoom(roomID jid.Bare, nickname, password string) error {
 	return nil
 }
 

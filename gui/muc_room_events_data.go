@@ -8,6 +8,8 @@ import (
 	"github.com/coyim/coyim/session/muc/data"
 )
 
+type selfOccupantRemovedEvent struct{}
+
 type occupantSelfJoinedEvent struct {
 	nickname string
 	role     data.Role
@@ -26,8 +28,6 @@ type occupantUpdatedEvent struct {
 	role     data.Role
 }
 
-type selfOccupantRemovedEvent struct{}
-
 type occupantRemovedEvent struct {
 	nickname string
 }
@@ -40,8 +40,7 @@ type registrationRequiredEvent struct {
 	nickname string
 }
 
-type notAuthorizedEvent struct {
-}
+type notAuthorizedEvent struct{}
 
 type loggingEnabledEvent struct{}
 
@@ -85,17 +84,18 @@ type roomViewEvent interface {
 	markAsRoomViewEvent()
 }
 
-type roomConfigReceivedEvent struct {
-	config data.RoomConfig
+type roomDiscoInfoReceivedEvent struct {
+	info data.RoomDiscoInfo
 }
 
 type roomConfigRequestTimeoutEvent struct{}
 
 type roomConfigChangedEvent struct {
-	changes []data.RoomConfigType
-	config  data.RoomConfig
+	changes   []data.RoomConfigType
+	discoInfo data.RoomDiscoInfo
 }
 
+func (selfOccupantRemovedEvent) markAsRoomViewEvent()      {}
 func (occupantLeftEvent) markAsRoomViewEvent()             {}
 func (occupantJoinedEvent) markAsRoomViewEvent()           {}
 func (occupantUpdatedEvent) markAsRoomViewEvent()          {}
@@ -111,10 +111,9 @@ func (roomAnonymityEvent) markAsRoomViewEvent()            {}
 func (messageForbidden) markAsRoomViewEvent()              {}
 func (messageNotAcceptable) markAsRoomViewEvent()          {}
 func (discussionHistoryEvent) markAsRoomViewEvent()        {}
-func (roomConfigReceivedEvent) markAsRoomViewEvent()       {}
+func (roomDiscoInfoReceivedEvent) markAsRoomViewEvent()    {}
 func (roomConfigRequestTimeoutEvent) markAsRoomViewEvent() {}
 func (roomDestroyedEvent) markAsRoomViewEvent()            {}
 func (roomConfigChangedEvent) markAsRoomViewEvent()        {}
-func (selfOccupantRemovedEvent) markAsRoomViewEvent()      {}
 func (occupantRemovedEvent) markAsRoomViewEvent()          {}
 func (notAuthorizedEvent) markAsRoomViewEvent()            {}

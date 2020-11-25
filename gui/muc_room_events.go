@@ -46,16 +46,16 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishEvent(roomAnonymityEvent{
 			anonymityLevel: t.AnonymityLevel,
 		})
-	case events.MUCRoomConfigReceived:
-		v.publishEvent(roomConfigReceivedEvent{
-			config: t.Config,
+	case events.MUCRoomDiscoInfoReceived:
+		v.publishEvent(roomDiscoInfoReceivedEvent{
+			info: t.DiscoInfo,
 		})
 	case events.MUCRoomConfigTimeout:
 		v.publishEvent(roomConfigRequestTimeoutEvent{})
 	case events.MUCRoomConfigChanged:
 		v.publishEvent(roomConfigChangedEvent{
-			changes: roomConfigChangedTypes(t.Changes),
-			config:  t.Config,
+			changes:   roomConfigChangedTypes(t.Changes),
+			discoInfo: t.DiscoInfo,
 		})
 	case events.MUCOccupantRemoved:
 		v.publishEvent(occupantRemovedEvent{

@@ -77,7 +77,7 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view.warnings = view.newRoomViewWarningsOverlay(view.closeNotificationsOverlay)
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar(view.showWarnings, view.removeWarningsInfobar)
 
-	go view.requestRoomInfo()
+	go view.requestRoomDiscoInfo()
 
 	return view
 }
@@ -106,8 +106,8 @@ func (v *roomView) initSubscribers() {
 
 func (v *roomView) onEventReceived(ev roomViewEvent) {
 	switch t := ev.(type) {
-	case roomConfigReceivedEvent:
-		v.roomConfigReceivedEvent(t.config)
+	case roomDiscoInfoReceivedEvent:
+		v.roomDiscoInfoReceivedEvent(t.info)
 	case roomConfigRequestTimeoutEvent:
 		v.roomConfigRequestTimeoutEvent()
 	}
@@ -118,17 +118,17 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 	v.refreshRoomMenu()
 }
 
-func (v *roomView) requestRoomInfo() {
+func (v *roomView) requestRoomDiscoInfo() {
 	doInUIThread(v.loadingInfoBar.start)
-	v.account.session.LoadRoomInfo(v.roomID())
+	v.account.session.RequestRoomDiscoInfo(v.roomID())
 }
 
-// roomConfigReceivedEvent MUST be called from the UI thread
-func (v *roomView) roomConfigReceivedEvent(roomInfo data.RoomConfig) {
+// roomDiscoInfoReceivedEvent MUST be called from the UI thread
+func (v *roomView) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 	v.loadingInfoBar.hide()
 
 	v.warnings.clear()
-	v.showRoomWarnings(roomInfo)
+	v.showRoomWarnings(di)
 	v.notifications.add(v.warningsInfoBar)
 }
 
@@ -139,23 +139,23 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 	v.loadingInfoBar.error(
 		i18n.Local("An error occurred while loading room information"),
 		i18n.Local("Loading the room information took longer than usual, perhaps the connection to the server was lost. Do you want to try again?."),
-		v.requestRoomInfo,
+		v.requestRoomDiscoInfo,
 	)
 }
 
-func (v *roomView) showRoomWarnings(roomInfo data.RoomConfig) {
+func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {
 	v.warnings.add(i18n.Local("Please be aware that communication in chat rooms is not encrypted - anyone that can intercept communication between you and the server - and the server itself - will be able to see what you are saying in this chat room. Only join this room and communicate here if you trust the server to not be hostile."))
 
-	switch roomInfo.AnonymityLevel {
+	switch info.AnonymityLevel {
 	case "semi":
 		v.warnings.add(i18n.Local("This room is partially anonymous. This means that only moderators can connect your nickname with your real username (your JID)."))
 	case "no":
 		v.warnings.add(i18n.Local("This room is not anonymous. This means that any person in this room can connect your nickname with your real username (your JID)."))
 	default:
-		v.log.WithField("anonymityLevel", roomInfo.AnonymityLevel).Warn("Unknown anonymity setting for room")
+		v.log.WithField("anonymityLevel", info.AnonymityLevel).Warn("Unknown anonymity setting for room")
 	}
 
-	if roomInfo.Logged {
+	if info.Logged {
 		v.warnings.add(i18n.Local("This room is publicly logged, meaning that everything you and the others in the room say or do can be made public on a website."))
 	}
 }

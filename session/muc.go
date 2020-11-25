@@ -81,12 +81,6 @@ func (m *mucManager) getRoomInfo(roomID jid.Bare) (*muc.RoomListing, bool) {
 
 func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 	from := jid.ParseFull(stanza.From)
-
-	if stanza.Type == "error" {
-		m.handleMUCErrorPresence(from, stanza.Error)
-		return
-	}
-
 	roomID := from.Bare()
 	occupantPresence := getOccupantPresenceBasedOnStanza(from.Resource(), stanza)
 	status := mucUserStatuses(stanza.MUCUser.Status)
@@ -195,8 +189,8 @@ func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.Occupant
 	}
 }
 
-func (m *mucManager) handleMUCErrorPresence(from jid.Full, e *xmppData.StanzaError) {
-	m.publishMUCError(from, e)
+func (m *mucManager) handleMUCErrorPresence(from string, e *xmppData.StanzaError) {
+	m.publishMUCError(jid.ParseFull(from), e)
 }
 
 func (m *mucManager) handleMUCErrorMessage(roomID jid.Bare, e *xmppData.StanzaError) {
@@ -205,6 +199,27 @@ func (m *mucManager) handleMUCErrorMessage(roomID jid.Bare, e *xmppData.StanzaEr
 
 func isMUCPresence(stanza *xmppData.ClientPresence) bool {
 	return stanza.MUC != nil
+}
+
+func isMUCErrorPresence(e *xmppData.StanzaError) bool {
+	if e == nil {
+		return false
+	}
+
+	switch {
+	case e.MUCNotAuthorized != nil,
+		e.MUCNotAuthorized != nil,
+		e.MUCForbidden != nil,
+		e.MUCItemNotFound != nil,
+		e.MUCNotAllowed != nil,
+		e.MUCNotAcceptable != nil,
+		e.MUCRegistrationRequired != nil,
+		e.MUCConflict != nil,
+		e.MUCServiceUnavailable != nil:
+		return true
+	default:
+		return false
+	}
 }
 
 func isMUCUserPresence(stanza *xmppData.ClientPresence) bool {

@@ -220,7 +220,7 @@ func (l *roomViewLobby) onJoinClicked() {
 	l.cancel = make(chan bool)
 
 	go l.sendJoinRoomRequest(nickname, password)
-	go l.whenEnterRequestHasBeenResolved(nickname)
+	go l.whenJoinRequestHasBeenResolved(nickname)
 }
 
 var (
@@ -262,7 +262,11 @@ func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string) {
 	}
 }
 
-func (l *roomViewLobby) whenEnterRequestHasBeenResolved(nickname string) {
+func (l *roomViewLobby) afterJoinRequestFinished() {
+	l.cancel = nil
+}
+
+func (l *roomViewLobby) whenJoinRequestHasBeenResolved(nickname string) {
 	select {
 	case <-l.onJoin:
 		doInUIThread(func() {
@@ -276,17 +280,19 @@ func (l *roomViewLobby) whenEnterRequestHasBeenResolved(nickname string) {
 		})
 	case <-l.cancel:
 	}
+
+	l.afterJoinRequestFinished()
 }
 
 func (l *roomViewLobby) onJoinFailed(err error) {
-	shouldEnableCreation := true
+	shouldEnableJoin := true
 
 	userMessage := i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
 	if err, ok := err.(*mucRoomLobbyErr); ok {
 		userMessage = l.getUserErrorMessage(err)
 
 		if err.errType == errJoinNicknameConflict {
-			shouldEnableCreation = false
+			shouldEnableJoin = false
 			if !l.nicknamesWithConflict.Has(err.nickname) {
 				l.nicknamesWithConflict.Insert(err.nickname)
 			}
@@ -297,7 +303,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 
 	l.enableFields()
 	l.hideSpinner()
-	l.joinButton.SetSensitive(shouldEnableCreation)
+	l.joinButton.SetSensitive(shouldEnableJoin)
 }
 
 func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
@@ -318,7 +324,6 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 func (l *roomViewLobby) onJoinCancel() {
 	if l.cancel != nil {
 		l.cancel <- true
-		l.cancel = nil
 	}
 
 	l.onCancel()

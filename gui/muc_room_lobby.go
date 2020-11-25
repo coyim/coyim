@@ -56,7 +56,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare, parent gtki.Box
 		parent:                parent,
 		onCancel:              onCancel,
 		nicknamesWithConflict: set.New(),
-		log:                   v.log.WithField("who", "roomViewLobby"),
+		log: v.log.WithField("who", "roomViewLobby"),
 	}
 
 	l.onSuccess = func() {
@@ -104,8 +104,8 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 		switch t := ev.(type) {
 		case occupantSelfJoinedEvent:
 			l.occupantSelfJoinedEvent()
-		case roomConfigReceivedEvent:
-			l.roomConfigReceivedEvent(t.config)
+		case roomDiscoInfoReceivedEvent:
+			l.roomDiscoInfoReceivedEvent(t.info)
 		case nicknameConflictEvent:
 			l.nicknameConflictEvent(l.roomID, t.nickname)
 		case registrationRequiredEvent:
@@ -116,11 +116,11 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	})
 }
 
-func (l *roomViewLobby) roomConfigReceivedEvent(roomInfo data.RoomConfig) {
+func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 	l.isReadyToJoinRoom = true
 	doInUIThread(func() {
 		l.enableJoinIfConditionsAreMet()
-		if roomInfo.PasswordProtected {
+		if di.PasswordProtected {
 			l.roomIsPasswordProtected = true
 			l.passwordLabel.SetVisible(true)
 			l.passwordEntry.SetVisible(true)

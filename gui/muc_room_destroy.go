@@ -174,7 +174,7 @@ func (d *roomDestroyView) friendlyMessageForAlternativeRoomError(err error) stri
 	case errInvalidServiceName:
 		return i18n.Local("You must provide a valid service name")
 	default:
-		return i18n.Local("You must provide a valid room identifier")
+		return i18n.Local("You must provide a valid service and room name")
 	}
 }
 

@@ -112,6 +112,8 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 			l.registrationRequiredEvent(l.roomID, t.nickname)
 		case notAuthorizedEvent:
 			l.notAuthorizedEvent()
+		case serviceUnavailableEvent:
+			l.notServiceUnavailableEvent()
 		}
 	})
 }
@@ -227,6 +229,7 @@ var (
 	errJoinNicknameConflict = errors.New("join failed because the nickname is being used")
 	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
 	errJoinNotAuthorized    = errors.New("join failed because doesn't have authorization")
+	errServiceUnavailable   = errors.New("join failed because the service is unavailable")
 )
 
 type mucRoomLobbyErr struct {
@@ -305,6 +308,8 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 		return i18n.Local("Sorry, this room only allows registered members.")
 	case errJoinNotAuthorized:
 		return i18n.Local("Invalid password.")
+	case errServiceUnavailable:
+		return i18n.Local("Can't join the room because the maximun number of occupants has been reached")
 	default:
 		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists.")
 	}
@@ -356,4 +361,8 @@ func (l *roomViewLobby) registrationRequiredEvent(roomID jid.Bare, nickname stri
 
 func (l *roomViewLobby) notAuthorizedEvent() {
 	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errJoinNotAuthorized))
+}
+
+func (l *roomViewLobby) notServiceUnavailableEvent() {
+	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errServiceUnavailable))
 }

@@ -326,6 +326,11 @@ func (v *roomView) nicknameConflict(nickname string) {
 	v.publishEvent(nicknameConflictEvent{nickname})
 }
 
+// serviceUnavailableEvent MUST NOT be called from the UI thread
+func (v *roomView) serviceUnavailable() {
+	v.publishEvent(serviceUnavailableEvent{})
+}
+
 // registrationRequired MUST NOT be called from the UI thread
 func (v *roomView) registrationRequired(nickname string) {
 	v.publishEvent(registrationRequiredEvent{nickname})

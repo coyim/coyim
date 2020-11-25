@@ -36,6 +36,8 @@ type nicknameConflictEvent struct {
 	nickname string
 }
 
+type serviceUnavailableEvent struct{}
+
 type registrationRequiredEvent struct {
 	nickname string
 }
@@ -117,3 +119,4 @@ func (roomDestroyedEvent) markAsRoomViewEvent()            {}
 func (roomConfigChangedEvent) markAsRoomViewEvent()        {}
 func (occupantRemovedEvent) markAsRoomViewEvent()          {}
 func (notAuthorizedEvent) markAsRoomViewEvent()            {}
+func (serviceUnavailableEvent) markAsRoomViewEvent()       {}

@@ -31,7 +31,7 @@ func (a *account) handleMUCErrorEvent(ev events.MUCError) {
 	case events.MUCConflict:
 		view.nicknameConflict(ev.Nickname)
 	case events.MUCServiceUnavailable:
-		a.log.Debug("MUC Error MUCServiceUnavailable received")
+		view.serviceUnavailable()
 	default:
 		a.log.WithField("event", ev).Warn("unsupported muc error event")
 	}

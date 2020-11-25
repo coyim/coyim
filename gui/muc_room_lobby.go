@@ -179,15 +179,12 @@ func (l *roomViewLobby) isNotNicknameInConflictList() bool {
 func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 	l.clearErrors()
 
-	conditionsAreValid := false
-	defer func() {
-		l.joinButton.SetSensitive(conditionsAreValid)
-	}()
-
-	conditionsAreValid = l.isReadyToJoinRoom && l.nicknameHasContent() && l.isNotNicknameInConflictList()
-	if conditionsAreValid && l.roomIsPasswordProtected {
-		conditionsAreValid = l.passwordHasContent()
+	conditionsAreValid := l.isReadyToJoinRoom && l.nicknameHasContent() && l.isNotNicknameInConflictList()
+	if l.roomIsPasswordProtected {
+		conditionsAreValid = conditionsAreValid && l.passwordHasContent()
 	}
+
+	l.joinButton.SetSensitive(conditionsAreValid)
 }
 
 func (l *roomViewLobby) disableFields() {
@@ -310,7 +307,7 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	case errJoinOnlyMembers:
 		return i18n.Local("Sorry, this room only allows registered members.")
 	case errJoinNotAuthorized:
-		return i18n.Local("Sorry, the password is invalid.")
+		return i18n.Local("Invalid password.")
 	default:
 		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists.")
 	}

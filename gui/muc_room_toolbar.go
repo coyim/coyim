@@ -68,9 +68,7 @@ func (t *roomViewToolbar) roomDestroyedEvent() {
 func (t *roomViewToolbar) onRoomDestroyed() {
 	t.roomMenu.SetSensitive(false)
 
-	updateWithStyle(t.roomNameLabel, providerWithStyle("label", style{
-		"color": "#A9A9A9",
-	}))
+	mucStyles.setRoomToolbarNameLabelDisabledStyle(t.roomNameLabel)
 }
 
 // displayRoomSubject MUST be called from the UI thread

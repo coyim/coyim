@@ -9,15 +9,18 @@ import (
 )
 
 type mucCreateRoomViewForm struct {
-	isShown           bool
-	builder           *builder
-	roomFormComponent *mucRoomFormComponent
+	isShown             bool
+	builder             *builder
+	roomFormComponent   *mucRoomFormComponent
+	roomConfigComponent *mucRoomConfigComponent
 
 	view             gtki.Box         `gtk-widget:"create-room-form"`
 	roomAutoJoin     gtki.CheckButton `gtk-widget:"autojoin-check-button"`
 	createButton     gtki.Button      `gtk-widget:"create-room-button"`
 	spinnerBox       gtki.Box         `gtk-widget:"spinner-box"`
 	notificationArea gtki.Box         `gtk-widget:"notification-area-box"`
+	roomConfigCheck  gtki.CheckButton `gtk-widget:"config-room-check-button"`
+	roomConfigBox    gtki.Box         `gtk-widget:"configure-room-box"`
 
 	spinner       *spinner
 	notifications *notifications
@@ -40,6 +43,7 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	f.initBuilder(v)
 	f.initNotifications(v)
 	f.initRoomFormComponent(v)
+	f.initRoomConfigComponent(v)
 	f.initDefaults(v)
 
 	return f
@@ -55,6 +59,7 @@ func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
 		"on_roomName_change":         f.enableCreationIfConditionsAreMet,
 		"on_roomAutoJoin_toggled":    f.onRoomAutoJoinToggled,
 		"on_chatServiceEntry_change": f.enableCreationIfConditionsAreMet,
+		"on_config_room_toggled":     f.onRoomConfigToggled,
 	})
 }
 
@@ -78,6 +83,11 @@ func (f *mucCreateRoomViewForm) initRoomFormComponent(v *mucCreateRoomView) {
 		onNoAccount:            f.onNoAccountsConnected,
 		onChatServiceChanged:   f.enableCreationIfConditionsAreMet,
 	})
+}
+
+func (f *mucCreateRoomViewForm) initRoomConfigComponent(v *mucCreateRoomView) {
+	f.roomConfigComponent = v.u.newMUCRoomConfigComponent()
+	f.roomConfigBox.Add(f.roomConfigComponent.configurationView())
 }
 
 func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
@@ -231,6 +241,10 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 	}
 
 	f.enableCreateRoomButton()
+}
+
+func (f *mucCreateRoomViewForm) onRoomConfigToggled() {
+	f.roomConfigBox.SetVisible(f.roomConfigCheck.GetActive())
 }
 
 func (f *mucCreateRoomViewForm) checkIfRoomNameHasConflict() bool {

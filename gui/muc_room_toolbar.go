@@ -50,6 +50,8 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 			t.subjectReceivedEvent(e.subject)
 		case roomDestroyedEvent:
 			t.roomDestroyedEvent()
+		case selfOccupantRemovedEvent:
+			t.selfOccupantRemovedEvent()
 		}
 	})
 }
@@ -61,11 +63,15 @@ func (t *roomViewToolbar) subjectReceivedEvent(subject string) {
 }
 
 func (t *roomViewToolbar) roomDestroyedEvent() {
-	doInUIThread(t.onRoomDestroyed)
+	doInUIThread(t.disable)
 }
 
-// onRoomDestroyed MUST be called from UI Thread
-func (t *roomViewToolbar) onRoomDestroyed() {
+func (t *roomViewToolbar) selfOccupantRemovedEvent() {
+	doInUIThread(t.disable)
+}
+
+// disable MUST be called from UI Thread
+func (t *roomViewToolbar) disable() {
 	t.roomMenu.SetSensitive(false)
 
 	mucStyles.setRoomToolbarNameLabelDisabledStyle(t.roomNameLabel)

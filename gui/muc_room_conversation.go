@@ -251,6 +251,7 @@ func (c *roomViewConversation) roomConfigChangedEvent(changes roomConfigChangedT
 
 func (c *roomViewConversation) selfOccupantRemovedEvent() {
 	doInUIThread(func() {
+		c.updateNotificationMessage(i18n.Local("You can't send messages because the room configuration has been changed."))
 		c.displayWarningMessage(i18n.Local("You have been removed from this room because it's now a members only room."))
 		c.disableSendCapabilities()
 	})

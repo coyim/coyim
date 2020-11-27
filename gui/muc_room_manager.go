@@ -23,6 +23,11 @@ func (u *gtkUI) getOrCreateRoomView(a *account, roomID jid.Bare) *roomView {
 func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, returnTo func()) {
 	v := u.getOrCreateRoomView(a, roomID)
 
+	if v.isOpen() {
+		v.present()
+		return
+	}
+
 	if v.isSelfOccupantJoined() {
 		v.switchToMainView()
 	} else {
@@ -30,9 +35,5 @@ func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, returnTo func()) {
 		v.switchToLobbyView()
 	}
 
-	if v.isOpen() {
-		v.present()
-	} else {
-		v.show()
-	}
+	v.show()
 }

@@ -26,6 +26,9 @@ type mucManager struct {
 	dhManager *discussionHistoryManager
 	dhLock    sync.Mutex
 
+	destroyRequests []*destroyRequest
+	destroyLock     sync.RWMutex
+
 	sync.Mutex
 }
 

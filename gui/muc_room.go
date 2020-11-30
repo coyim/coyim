@@ -272,7 +272,7 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 		}
 	}
 
-	go v.account.destroyRoom(v.roomID(), reason, alternativeRoomID, password, onSuccessFinal, onErrorFinal)
+	v.account.destroyRoom(v.roomID(), reason, alternativeRoomID, password, onSuccessFinal, onErrorFinal)
 }
 
 func (v *roomView) switchToLobbyView() {

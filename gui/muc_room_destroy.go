@@ -3,8 +3,9 @@ package gui
 import (
 	"errors"
 
+	"github.com/coyim/coyim/coylog"
+
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -24,7 +25,7 @@ var (
 type roomDestroyView struct {
 	builder               *builder
 	chatServicesComponent *chatServicesComponent
-	destroyRoom           func(reason string, alternativeRoomID jid.Bare, password string, onSuccess func(), onError func(error))
+	destroyRoom           func(reason string, alternativeID jid.Bare, password string)
 
 	dialog               gtki.Dialog      `gtk-widget:"destroy-room-dialog"`
 	reasonEntry          gtki.TextView    `gtk-widget:"destroy-room-reason-entry"`
@@ -41,16 +42,13 @@ type roomDestroyView struct {
 
 	spinner      *spinner
 	notification *notifications
-
-	cancelChannel chan bool
 }
 
 func (v *roomView) newRoomDestroyView() *roomDestroyView {
-	d := &roomDestroyView{
-		destroyRoom: v.tryDestroyRoom,
-	}
+	d := &roomDestroyView{}
 
 	d.initBuilder()
+	d.initDestroyContext(v)
 	d.initChatServices(v)
 	d.initDefaults(v)
 
@@ -64,9 +62,16 @@ func (d *roomDestroyView) initBuilder() {
 	d.builder.ConnectSignals(map[string]interface{}{
 		"on_destroy_clicked":          d.onDestroyRoom,
 		"on_alternative_room_toggled": d.onAlternativeRoomToggled,
-		"on_cancel_clicked":           d.onCancel,
-		"on_dialog_destroyed":         d.onDialogDestroy,
+		"on_cancel_clicked":           d.close,
 	})
+}
+
+func (d *roomDestroyView) initDestroyContext(v *roomView) {
+	d.destroyRoom = func(reason string, alternativeID jid.Bare, password string) {
+		d.close()
+		ctx := v.newDestroyContext(reason, alternativeID, password)
+		ctx.destroyRoom()
+	}
 }
 
 func (d *roomDestroyView) initChatServices(v *roomView) {
@@ -99,7 +104,7 @@ func (d *roomDestroyView) onDestroyRoom() {
 		return
 	}
 
-	d.destroyRoom(reason, alternativeID, password, d.onDestroySuccess, d.onDestroyFails)
+	d.destroyRoom(reason, alternativeID, password)
 }
 
 func (d *roomDestroyView) alternativeRoomInformation() (jid.Bare, string, error) {
@@ -130,39 +135,6 @@ func (d *roomDestroyView) resetAlternativeRoomFields() {
 	d.chatServicesComponent.resetToDefault()
 }
 
-// onDestroySuccess MUST NOT be called from the UI thread
-func (d *roomDestroyView) onDestroySuccess() {
-	doInUIThread(d.close)
-}
-
-// onDestroyFails MUST NOT be called from the UI thread
-func (d *roomDestroyView) onDestroyFails(err error) {
-	doInUIThread(func() {
-		d.enableFields()
-		d.notification.error(d.friendlyMessageForDestroyError(err))
-	})
-}
-
-func (d *roomDestroyView) friendlyMessageForDestroyError(err error) string {
-	switch err {
-	case session.ErrDestroyRoomInvalidIQResponse:
-		return i18n.Local("We were able to connect to the room service, " +
-			"but we received an invalid response from it. Please try again.")
-	case session.ErrDestroyRoomForbidden:
-		return i18n.Local("You don't have the permission to destroy this room. " +
-			"Please get in contact with one of the room owners.")
-	case session.ErrDestroyRoomUnknown:
-		return i18n.Local("The room's service responded with an unknow error, " +
-			"so, the room can't be destroyed. Please try again.")
-	case session.ErrDestroyRoomNoResult:
-		return i18n.Local("We were able to send the request to destroy the room, " +
-			"but the service responded with an unknow result. Please contact the " +
-			"room's administrator.")
-	default:
-		return i18n.Local("An error occurred while destroying the room, please try again.")
-	}
-}
-
 func (d *roomDestroyView) friendlyMessageForAlternativeRoomError(err error) string {
 	switch err {
 	case errEmptyServiceName:
@@ -175,26 +147,6 @@ func (d *roomDestroyView) friendlyMessageForAlternativeRoomError(err error) stri
 		return i18n.Local("You must provide a valid service name")
 	default:
 		return i18n.Local("You must provide a valid service and room name")
-	}
-}
-
-// onCancel MUST be called from the UI thread
-func (d *roomDestroyView) onCancel() {
-	d.cancelActiveRequest()
-
-	d.spinner.hide()
-	d.close()
-}
-
-// onDialogDestroy MUST be called from the UI thread
-func (d *roomDestroyView) onDialogDestroy() {
-	d.cancelActiveRequest()
-}
-
-// cancelActiveRequest MUST be called from the UI thread
-func (d *roomDestroyView) cancelActiveRequest() {
-	if d.cancelChannel != nil {
-		d.cancelChannel <- true
 	}
 }
 
@@ -304,4 +256,39 @@ func (d *roomDestroyView) disableFieldsAndShowSpinner() {
 func (d *roomDestroyView) enableFieldsAndHideSpinner() {
 	d.enableFields()
 	d.spinner.hide()
+}
+
+type roomDestroyContext struct {
+	roomID        jid.Bare
+	reason        string
+	alternativeID jid.Bare
+	password      string
+	destroy       func(reason string, alternativeID jid.Bare, password string, onSuccess func(), onError func(error))
+	log           coylog.Logger
+}
+
+func (v *roomView) newDestroyContext(reason string, alternativeID jid.Bare, password string) *roomDestroyContext {
+	return &roomDestroyContext{
+		roomID:        v.roomID(),
+		reason:        reason,
+		alternativeID: alternativeID,
+		password:      password,
+		destroy:       v.tryDestroyRoom,
+		log:           v.log,
+	}
+}
+
+func (dc *roomDestroyContext) destroyRoom() {
+	dc.destroy(dc.reason, dc.alternativeID, dc.password, dc.onDestroySuccess, dc.onDestroyFails)
+}
+
+func (dc *roomDestroyContext) onDestroySuccess() {
+	dc.log.Info("The room has been destroyed")
+}
+
+func (dc *roomDestroyContext) onDestroyFails(err error) {
+	doInUIThread(func() {
+		rd := newDestroyError(dc.roomID, err, dc.destroyRoom)
+		rd.show()
+	})
 }

@@ -10,35 +10,33 @@ type mucRoomConfigComponent struct {
 	u *gtkUI
 
 	notebook            gtki.Notebook `gtk-widget:"config-room-notebook"`
-	bannedList          gtki.TreeView `gtk-widget:"config-banned-list"`
+	kickedList          gtki.TreeView `gtk-widget:"config-banned-list"`
 	membersList         gtki.TreeView `gtk-widget:"config-members-list"`
 	ownersList          gtki.TreeView `gtk-widget:"config-owners-list"`
 	adminList           gtki.TreeView `gtk-widget:"config-admin-list"`
-	bannedAddButton     gtki.Button   `gtk-widget:"ban-add"`
+	kickedAddButton     gtki.Button   `gtk-widget:"ban-add"`
 	membersAddButton    gtki.Button   `gtk-widget:"member-add"`
 	ownersAddButton     gtki.Button   `gtk-widget:"owner-add"`
 	adminAddButton      gtki.Button   `gtk-widget:"admin-add"`
-	bannedRemoveButton  gtki.Button   `gtk-widget:"ban-remove"`
+	kickedRemoveButton  gtki.Button   `gtk-widget:"ban-remove"`
 	membersRemoveButton gtki.Button   `gtk-widget:"member-remove"`
 	ownersRemoveButton  gtki.Button   `gtk-widget:"owner-remove"`
 	adminRemoveButton   gtki.Button   `gtk-widget:"admin-remove"`
 
-	bannedListComponent  *mucRoomConfigListComponent
-	membersListComponent *mucRoomConfigListComponent
-	ownersListComponent  *mucRoomConfigListComponent
-	adminListComponent   *mucRoomConfigListComponent
-
-	bannedListAddComponent  *mucRoomConfigListAddComponent
-	membersListAddComponent *mucRoomConfigListAddComponent
-	ownersListAddComponent  *mucRoomConfigListAddComponent
-	adminListAddComponent   *mucRoomConfigListAddComponent
+	kickedListController  *mucRoomConfigListController
+	membersListController *mucRoomConfigListController
+	ownersListController  *mucRoomConfigListController
+	adminsListController  *mucRoomConfigListController
 }
 
 func (u *gtkUI) newMUCRoomConfigComponent() *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{u: u}
 
 	c.initBuilder()
-	c.initMembersListComponent()
+	c.initKickedListController()
+	c.initMembersListController()
+	c.initOwnersListController()
+	c.initAdminsListController()
 
 	return c
 }
@@ -48,7 +46,26 @@ func (c *mucRoomConfigComponent) initBuilder() {
 	panicOnDevError(b.bindObjects(c))
 }
 
-func (c *mucRoomConfigComponent) initMembersListComponent() {
+func (c *mucRoomConfigComponent) initKickedListController() {
+	kickedListColumns := []glibi.Type{
+		// jid
+		glibi.TYPE_STRING,
+		// reason
+		glibi.TYPE_STRING,
+	}
+
+	c.kickedListController = c.u.newMUCRoomConfigListController(&mucRoomConfigListControllerData{
+		addOccupantButton:        c.kickedAddButton,
+		removeOccupantButton:     c.kickedRemoveButton,
+		occupantsTreeView:        c.kickedList,
+		occupantsTreeViewColumns: kickedListColumns,
+		addOccupantDialogTitle:   i18n.Local("Adding banned member..."),
+		addOccupantDescription:   i18n.Local("Whom do you want to ban a member?"),
+		addOccupantForm:          newMUCRoomConfigListKickedForm,
+	})
+}
+
+func (c *mucRoomConfigComponent) initMembersListController() {
 	membersListColumns := []glibi.Type{
 		// jid
 		glibi.TYPE_STRING,
@@ -58,24 +75,49 @@ func (c *mucRoomConfigComponent) initMembersListComponent() {
 		glibi.TYPE_STRING,
 	}
 
-	c.membersListComponent = c.u.newMUCRoomConfigListComponent(
-		c.membersList,
-		membersListColumns,
-		c.membersAddButton,
-		c.membersRemoveButton,
-		c.onAddMembersToList,
-	)
-
-	c.membersListAddComponent = c.u.newMUCRoomConfigListAddComponent(
-		i18n.Local("Adding member..."),
-		i18n.Local("Whom do you want to make a member?"),
-		newMUCRoomConfigListMembersForm(nil),
-		c.membersListComponent.addListItem,
-	)
+	c.membersListController = c.u.newMUCRoomConfigListController(&mucRoomConfigListControllerData{
+		addOccupantButton:        c.membersAddButton,
+		removeOccupantButton:     c.membersRemoveButton,
+		occupantsTreeView:        c.membersList,
+		occupantsTreeViewColumns: membersListColumns,
+		addOccupantDialogTitle:   i18n.Local("Adding member..."),
+		addOccupantDescription:   i18n.Local("Whom do you want to make a member?"),
+		addOccupantForm:          newMUCRoomConfigListMembersForm,
+	})
 }
 
-func (c *mucRoomConfigComponent) onAddMembersToList() {
-	c.membersListAddComponent.show()
+func (c *mucRoomConfigComponent) initOwnersListController() {
+	ownersListColumns := []glibi.Type{
+		// jid
+		glibi.TYPE_STRING,
+	}
+
+	c.ownersListController = c.u.newMUCRoomConfigListController(&mucRoomConfigListControllerData{
+		addOccupantButton:        c.ownersAddButton,
+		removeOccupantButton:     c.ownersRemoveButton,
+		occupantsTreeView:        c.ownersList,
+		occupantsTreeViewColumns: ownersListColumns,
+		addOccupantDialogTitle:   i18n.Local("Adding owner member..."),
+		addOccupantDescription:   i18n.Local("Whom do you want to make an owner member?"),
+		addOccupantForm:          newMUCRoomConfigListOwnersForm,
+	})
+}
+
+func (c *mucRoomConfigComponent) initAdminsListController() {
+	adminsListColumns := []glibi.Type{
+		// jid
+		glibi.TYPE_STRING,
+	}
+
+	c.adminsListController = c.u.newMUCRoomConfigListController(&mucRoomConfigListControllerData{
+		addOccupantButton:        c.adminAddButton,
+		removeOccupantButton:     c.adminRemoveButton,
+		occupantsTreeView:        c.adminList,
+		occupantsTreeViewColumns: adminsListColumns,
+		addOccupantDialogTitle:   i18n.Local("Adding admin member..."),
+		addOccupantDescription:   i18n.Local("Whom do you want to make an admin member?"),
+		addOccupantForm:          newMUCRoomConfigListAdminsForm,
+	})
 }
 
 func (c *mucRoomConfigComponent) configurationView() gtki.Widget {

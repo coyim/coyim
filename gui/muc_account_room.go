@@ -4,9 +4,8 @@ import "github.com/coyim/coyim/xmpp/jid"
 
 // leaveRoom should return the context so the caller can cancel the context early if required
 func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), onError func(error)) {
-	leaveRoom := func() (<-chan bool, <-chan error, func()) {
-		ok, err := a.session.LeaveRoom(roomID, nickname)
-		return ok, err, nil
+	leaveRoom := func() (<-chan bool, <-chan error) {
+		return a.session.LeaveRoom(roomID, nickname)
 	}
 
 	leaveRoomSuccess := func() {
@@ -23,7 +22,7 @@ func (a *account) leaveRoom(roomID jid.Bare, nickname string, onSuccess func(), 
 
 // destroyRoom should return the context so the caller can cancel the context early if required
 func (a *account) destroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string, onSuccess func(), onError func(error)) {
-	destroyRoom := func() (<-chan bool, <-chan error, func()) {
+	destroyRoom := func() (<-chan bool, <-chan error) {
 		return a.session.DestroyRoom(roomID, reason, alternativeRoomID, password)
 	}
 

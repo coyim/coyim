@@ -234,8 +234,8 @@ func (*SessionMock) GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error
 }
 
 // DestroyRoom is the implementation for session interface
-func (*SessionMock) DestroyRoom(jid.Bare, string, jid.Bare, string) (<-chan bool, <-chan error, func()) {
-	return nil, nil, nil
+func (*SessionMock) DestroyRoom(jid.Bare, string, jid.Bare, string) (<-chan bool, <-chan error) {
+	return nil, nil
 }
 
 // Log is the implementation for session interface

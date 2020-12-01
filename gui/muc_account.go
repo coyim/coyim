@@ -45,7 +45,7 @@ func (a *account) newRoomModel(roomID jid.Bare) *muc.Room {
 	return a.session.NewRoom(roomID)
 }
 
-type roomOpCallback func() (<-chan bool, <-chan error, func())
+type roomOpCallback func() (<-chan bool, <-chan error)
 
 type roomOpController struct {
 	callback  roomOpCallback
@@ -64,7 +64,7 @@ func (a *account) newRoomOpController(op string, cb roomOpCallback, onSuccess fu
 }
 
 func (c *roomOpController) request(sch chan bool, ech chan error) {
-	ok, anyError, _ := c.callback()
+	ok, anyError := c.callback()
 	select {
 	case <-ok:
 		sch <- true

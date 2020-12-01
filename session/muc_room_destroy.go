@@ -12,7 +12,7 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (s *session) DestroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) (<-chan bool, <-chan error, func()) {
+func (s *session) DestroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) (<-chan bool, <-chan error) {
 	return s.muc.destroyRoom(roomID, reason, alternativeRoomID, password)
 }
 
@@ -40,7 +40,7 @@ func (dr *destroyRequest) resolveNewRequest(reason string, alternativeRoomID jid
 	}
 }
 
-func (m *mucManager) destroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) (<-chan bool, <-chan error, func()) {
+func (m *mucManager) destroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) (<-chan bool, <-chan error) {
 	dr := m.requestForRoomID(roomID)
 
 	m.destroyLock.Lock()
@@ -51,7 +51,7 @@ func (m *mucManager) destroyRoom(roomID jid.Bare, reason string, alternativeRoom
 
 	go dr.resolveNewRequest(reason, alternativeRoomID, password, rc, ec)
 
-	return rc, ec, func() {}
+	return rc, ec
 }
 
 func (m *mucManager) requestForRoomID(roomID jid.Bare) *destroyRequest {

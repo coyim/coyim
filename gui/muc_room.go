@@ -29,12 +29,16 @@ type roomView struct {
 	messagesBox            gtki.Box     `gtk-widget:"messagesBox"`
 	notificationBox        gtki.Box     `gtk-widget:"notificationBox"`
 	loadingNotificationBox gtki.Box     `gtk-widget:"loadingNotificationBox"`
+	loadingOverlay         gtki.Overlay `gtk-widget:"loadingOverlay"`
+	loadingOverlayBox      gtki.Box     `gtk-widget:"loadingOverlayBox"`
+	loadingOverlayLabel    gtki.Label   `gtk-widget:"loadingOverlayMessage"`
 
-	spinner         *spinner
-	notifications   *notifications
-	loadingInfoBar  *roomViewLoadingInfoBar
-	warnings        *roomViewWarningsOverlay
-	warningsInfoBar *roomViewWarningsInfoBar
+	spinner            *spinner
+	notifications      *notifications
+	loadingInfoBar     *roomViewLoadingInfoBar
+	warnings           *roomViewWarningsOverlay
+	warningsInfoBar    *roomViewWarningsInfoBar
+	loadingViewOverlay *roomViewLoadingOverlay
 
 	subscribers *roomViewSubscribers
 
@@ -76,6 +80,7 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view.loadingInfoBar = view.newRoomViewLoadingInfoBar(view.loadingNotificationBox)
 	view.warnings = view.newRoomViewWarningsOverlay(view.closeNotificationsOverlay)
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar(view.showWarnings, view.removeWarningsInfobar)
+	view.loadingViewOverlay = view.newRoomViewLoadingOverlay(view.loadingOverlay, view.loadingOverlayBox, view.loadingOverlayLabel)
 
 	go view.requestRoomDiscoInfo()
 
@@ -253,11 +258,12 @@ func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
 // tryDestroyRoom MUST be called from the UI thread, but please, note that
 // the "onSuccess" and "onError" callbacks will be called from another thread
 func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, password string, onSuccess func(), onError func(error)) {
-	v.spinner.show()
+	v.loadingViewOverlay.showWithMessage(i18n.Local("Destroying room"))
 
 	onSuccessFinal := func() {
 		doInUIThread(func() {
 			v.notifications.info(i18n.Local("The room has been destroyed"))
+			v.loadingViewOverlay.hide()
 		})
 		if onSuccess != nil {
 			onSuccess()
@@ -266,7 +272,7 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 
 	onErrorFinal := func(err error) {
 		v.log.WithError(err).Error("An error occurred when trying to destroy the room")
-		doInUIThread(v.spinner.hide)
+		doInUIThread(v.loadingViewOverlay.hide)
 		if onError != nil {
 			onError(err)
 		}

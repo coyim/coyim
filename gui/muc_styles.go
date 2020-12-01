@@ -105,6 +105,21 @@ func (s *mucStylesProvider) setRoomOverlayMessagesBoxStyle(b gtki.Box) {
 	})
 }
 
+func (s *mucStylesProvider) setRoomLoadingViewOverlayBoxStyle(b gtki.Box) {
+	s.setBoxStyle(b, style{
+		"background-color": s.hexToRGBA(s.colors.dark, 0.25),
+	})
+}
+
+func (s *mucStylesProvider) setRoomLoadingViewOverlayContentBoxStyle(b gtki.Box) {
+	s.setBoxStyle(b, style{
+		"background-color": s.colors.light,
+		"color":            s.colors.dark,
+		"border-radius":    "6px",
+		"box-shadow":       s.boxShadow("0 10px 20px", s.rgba(0, 0, 0, 0.5)),
+	})
+}
+
 func (s *mucStylesProvider) setWidgetStyle(w gtki.Widget, se string, st style) {
 	updateWithStyle(w, providerWithStyle(se, st))
 }
@@ -117,12 +132,25 @@ func (s *mucStylesProvider) setBoxStyle(b gtki.Box, st style) {
 	s.setWidgetStyle(b, "box", st)
 }
 
+func (s *mucStylesProvider) setOverlayStyle(o gtki.Overlay, st style) {
+	s.setWidgetStyle(o, "overlay", st)
+}
+
 func (s *mucStylesProvider) border(size int, style, color string) string {
 	return fmt.Sprintf("%dpx %s %s", size, style, color)
 }
 
-func (s *mucStylesProvider) rgba(r, g, b int, a float64) string {
+func (s *mucStylesProvider) rgba(r, g, b uint8, a float64) string {
 	return fmt.Sprintf("rgba(%d, %d, %d, %f)", r, g, b, a)
+}
+
+func (s *mucStylesProvider) hexToRGBA(hex string, a float64) string {
+	rgb, err := s.colors.hexToRGB(hex)
+	if err != nil {
+		return s.rgba(0, 0, 0, 0.5)
+	}
+
+	return s.rgba(rgb.red, rgb.green, rgb.blue, a)
 }
 
 func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {

@@ -1,5 +1,10 @@
 package gui
 
+import (
+	"strconv"
+	"strings"
+)
+
 type mucColorSet struct {
 	warningForeground       string
 	someoneJoinedForeground string
@@ -12,6 +17,9 @@ type mucColorSet struct {
 	errorForeground         string
 	configurationForeground string
 	white                   string
+	black                   string
+	light                   string
+	dark                    string
 	gray300                 string
 	gray500                 string
 	brown500                string
@@ -41,6 +49,9 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		messageForeground:       "#000000",
 		configurationForeground: "#9a04bf",
 		white:                   "#FFFFFF",
+		black:                   "#000000",
+		light:                   "#FFFFFF",
+		dark:                    "#333333",
 		gray300:                 "#A9A9A9",
 		gray500:                 "#666666",
 		brown500:                "#744210",
@@ -64,10 +75,30 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		messageForeground:       "#000000",
 		configurationForeground: "#9a04bf",
 		white:                   "#FFFFFF",
+		black:                   "#000000",
+		light:                   "#111111",
+		dark:                    "#000000",
 		gray300:                 "#A9A9A9",
 		gray500:                 "#666666",
 		brown500:                "#744210",
 		yellow200:               "#FEFCBF",
 		yellow600:               "#D69E2E",
 	}
+}
+
+type rgb struct {
+	red, green, blue uint8
+}
+
+func (cs *mucColorSet) hexClean(hex string) string {
+	return strings.ReplaceAll(hex, "#", "")
+}
+
+func (cs *mucColorSet) hexToRGB(hex string) (*rgb, error) {
+	values, err := strconv.ParseInt(cs.hexClean(hex), 16, 32)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rgb{uint8(values >> 16), uint8((values >> 8) & 0xFF), uint8(values & 0xFF)}, nil
 }

@@ -19,6 +19,7 @@ type destroyRoomRequest struct {
 	reason                  string
 	alternativeRoomID       jid.Bare
 	alternativeRoomPassword string
+	onDestroyFinish         func(jid.Bare)
 
 	resultChannel chan bool
 	errorChannel  chan error
@@ -27,7 +28,7 @@ type destroyRoomRequest struct {
 	log  coylog.Logger
 }
 
-func (m *mucManager) newDestroyRoomRequest(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) *destroyRoomRequest {
+func (m *mucManager) newDestroyRoomRequest(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string, onDestroyFinish func(jid.Bare)) *destroyRoomRequest {
 	return &destroyRoomRequest{
 		roomID:                  roomID,
 		conn:                    m.conn(),
@@ -36,6 +37,7 @@ func (m *mucManager) newDestroyRoomRequest(roomID jid.Bare, reason string, alter
 		alternativeRoomPassword: password,
 		resultChannel:           make(chan bool),
 		errorChannel:            make(chan error),
+		onDestroyFinish:         onDestroyFinish,
 		log:                     m.log,
 	}
 }
@@ -46,16 +48,16 @@ func (m *mucManager) destroyRoom(roomID jid.Bare, reason string, alternativeRoom
 
 	dr, ok := m.destroyRequests[roomID.String()]
 	if !ok {
-		dr = m.newDestroyRoomRequest(roomID, reason, alternativeRoomID, password)
+		dr = m.newDestroyRoomRequest(roomID, reason, alternativeRoomID, password, m.onDestroyRoomFinish)
 		m.destroyRequests[roomID.String()] = dr
 
-		go m.sendDestroyRoomRequest(dr)
+		go dr.sendDestroyRoomRequest()
 	}
 
 	return dr.resultChannel, dr.errorChannel
 }
 
-func (m *mucManager) onDestroyRoomRequestFinished(roomID jid.Bare) {
+func (m *mucManager) onDestroyRoomFinish(roomID jid.Bare) {
 	m.destroyLock.Lock()
 	delete(m.destroyRequests, roomID.String())
 	m.destroyLock.Unlock()
@@ -72,8 +74,8 @@ var (
 	ErrDestroyRoomNoResult = errors.New("destroy room no result error")
 )
 
-func (m *mucManager) sendDestroyRoomRequest(dr *destroyRoomRequest) {
-	defer m.onDestroyRoomRequestFinished(dr.roomID)
+func (dr *destroyRoomRequest) sendDestroyRoomRequest() {
+	defer dr.onDestroyFinish(dr.roomID)
 
 	reply, err := dr.sendIQRequest()
 	if err != nil {

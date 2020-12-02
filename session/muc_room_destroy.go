@@ -19,6 +19,7 @@ type destroyRoomRequest struct {
 	reason                  string
 	alternativeRoomID       jid.Bare
 	alternativeRoomPassword string
+	onDestroySuccess        func(jid.Bare) bool
 	onDestroyFinish         func(jid.Bare)
 
 	resultChannel chan bool
@@ -28,7 +29,7 @@ type destroyRoomRequest struct {
 	log  coylog.Logger
 }
 
-func (m *mucManager) newDestroyRoomRequest(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string, onDestroyFinish func(jid.Bare)) *destroyRoomRequest {
+func (m *mucManager) newDestroyRoomRequest(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string, onDestroySuccess func(jid.Bare) bool, onDestroyFinish func(jid.Bare)) *destroyRoomRequest {
 	return &destroyRoomRequest{
 		roomID:                  roomID,
 		conn:                    m.conn(),
@@ -37,6 +38,7 @@ func (m *mucManager) newDestroyRoomRequest(roomID jid.Bare, reason string, alter
 		alternativeRoomPassword: password,
 		resultChannel:           make(chan bool),
 		errorChannel:            make(chan error),
+		onDestroySuccess:        onDestroySuccess,
 		onDestroyFinish:         onDestroyFinish,
 		log:                     m.log,
 	}
@@ -48,7 +50,7 @@ func (m *mucManager) destroyRoom(roomID jid.Bare, reason string, alternativeRoom
 
 	dr, ok := m.destroyRequests[roomID.String()]
 	if !ok {
-		dr = m.newDestroyRoomRequest(roomID, reason, alternativeRoomID, password, m.onDestroyRoomFinish)
+		dr = m.newDestroyRoomRequest(roomID, reason, alternativeRoomID, password, m.roomManager.LeaveRoom, m.onDestroyRoomFinish)
 		m.destroyRequests[roomID.String()] = dr
 
 		go dr.sendDestroyRoomRequest()
@@ -141,6 +143,11 @@ func (dr *destroyRoomRequest) handleIQError(err data.StanzaError) error {
 }
 
 func (dr *destroyRoomRequest) finish() {
+	ok := dr.onDestroySuccess(dr.roomID)
+	if !ok {
+		dr.log.Debug("Cannot remove room from room manager when the room was destroyed")
+	}
+
 	dr.resultChannel <- true
 }
 

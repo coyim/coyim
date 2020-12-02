@@ -25,6 +25,7 @@ type mucColorSet struct {
 	brown500                string
 	yellow200               string
 	yellow600               string
+	red200                  string
 }
 
 func (u *gtkUI) currentMUCColorSet() mucColorSet {
@@ -57,6 +58,7 @@ func (u *gtkUI) defaultMUCLightColorSet() mucColorSet {
 		brown500:                "#744210",
 		yellow200:               "#FEFCBF",
 		yellow600:               "#D69E2E",
+		red200:                  "#FEE2E2",
 	}
 }
 
@@ -83,6 +85,7 @@ func (u *gtkUI) defaultMUCDarkColorSet() mucColorSet {
 		brown500:                "#744210",
 		yellow200:               "#FEFCBF",
 		yellow600:               "#D69E2E",
+		red200:                  "#FEE2E2",
 	}
 }
 

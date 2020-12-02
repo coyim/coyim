@@ -109,6 +109,13 @@ func (c *roomViewConversation) createConfigurationChangeTag(cs mucColorSet) gtki
 	})
 }
 
+func (c *roomViewConversation) createPasswordTag(cs mucColorSet) gtki.TextTag {
+	return c.createConversationTag("password", map[string]interface{}{
+		"foreground": cs.warningForeground,
+		"background": cs.red200,
+	})
+}
+
 func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable {
 	table, _ := g.gtk.TextTagTableNew()
 	cs := u.currentMUCColorSet()
@@ -126,6 +133,7 @@ func (c *roomViewConversation) newMUCTableStyleTags(u *gtkUI) gtki.TextTagTable 
 		c.createDividerTag,
 		c.createErrorTag,
 		c.createConfigurationChangeTag,
+		c.createPasswordTag,
 	}
 
 	for _, t := range tags {

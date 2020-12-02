@@ -255,6 +255,14 @@ func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
 	go v.account.leaveRoom(v.roomID(), v.room.SelfOccupantNickname(), onSuccessFinal, onErrorFinal)
 }
 
+func (v *roomView) publishDestroyEvent(reason string, alternativeRoomID jid.Bare, password string) {
+	v.publishEvent(roomDestroyedEvent{
+		reason:      reason,
+		alternative: alternativeRoomID,
+		password:    password,
+	})
+}
+
 // tryDestroyRoom MUST be called from the UI thread, but please, note that
 // the "onSuccess" and "onError" callbacks will be called from another thread
 func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, password string, onSuccess func(), onError func(error)) {
@@ -265,6 +273,7 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 			v.notifications.info(i18n.Local("The room has been destroyed"))
 			v.loadingViewOverlay.hide()
 		})
+		v.publishDestroyEvent(reason, alternativeRoomID, password)
 		if onSuccess != nil {
 			onSuccess()
 		}

@@ -15,7 +15,7 @@ func (a *account) handleMUCErrorEvent(ev events.MUCError) {
 	case events.MUCNotAuthorized:
 		view.notAuthorized()
 	case events.MUCForbidden:
-		a.log.Debug("MUC Error MUCForbidden received")
+		view.occupantForbidden()
 	case events.MUCMessageForbidden:
 		view.messageForbidden()
 	case events.MUCItemNotFound:

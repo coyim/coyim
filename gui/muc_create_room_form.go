@@ -23,19 +23,21 @@ type mucCreateRoomViewForm struct {
 	spinner       *spinner
 	notifications *notifications
 
-	roomNameConflictList    *set.Set
-	createRoom              func(*account, jid.Bare)
-	updateAutoJoinValue     func(bool)
-	onCheckFieldsConditions func(string, string, *account) bool
+	roomNameConflictList     *set.Set
+	createRoom               func(*account, jid.Bare)
+	updateAutoJoinValue      func(bool)
+	updateConfigureRoomValue func(bool)
+	onCheckFieldsConditions  func(string, string, *account) bool
 
 	log func(*account, jid.Bare) coylog.Logger
 }
 
 func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	f := &mucCreateRoomViewForm{
-		roomNameConflictList: set.New(),
-		updateAutoJoinValue:  v.updateAutoJoinValue,
-		log:                  v.log,
+		roomNameConflictList:     set.New(),
+		updateAutoJoinValue:      v.updateAutoJoinValue,
+		updateConfigureRoomValue: v.updateConfigureRoomValue,
+		log: v.log,
 	}
 
 	f.initBuilder(v)
@@ -106,7 +108,7 @@ func (f *mucCreateRoomViewForm) onRoomAutoJoinToggled() {
 }
 
 func (f *mucCreateRoomViewForm) onRoomConfigToggled() {
-	// TODO: invoke configuration value changed
+	f.updateConfigureRoomValue(f.roomConfigCheck.GetActive())
 }
 
 func (f *mucCreateRoomViewForm) listenToCreateError(roomID jid.Bare, errors chan error) {
@@ -150,8 +152,8 @@ func (f *mucCreateRoomViewForm) onCreateRoomFailed(err error) {
 }
 
 func (f *mucCreateRoomViewForm) addCallbacks(v *mucCreateRoomView) {
-	v.onAutoJoin.add(func() {
-		f.onAutoJoinChange(v.autoJoin)
+	v.onCreateOptionChange.add(func() {
+		f.onCreateOptionsChange(v.autoJoin, v.configureRoom)
 	})
 
 	v.onDestroy.add(f.destroy)
@@ -165,9 +167,12 @@ func (f *mucCreateRoomViewForm) showCreateForm(v *mucCreateRoomView) {
 	f.isShown = true
 }
 
-func (f *mucCreateRoomViewForm) onAutoJoinChange(v bool) {
-	f.createButton.SetProperty("label", createRoomButtonLabelForAutoJoin(v))
+func (f *mucCreateRoomViewForm) setCreateRoomButtonLabel(l string) {
+	f.createButton.SetProperty("label", l)
+}
 
+func (f *mucCreateRoomViewForm) onCreateOptionsChange(autoJoin, configRoom bool) {
+	f.setCreateRoomButtonLabel(labelForCreateRoomButton(autoJoin, configRoom))
 }
 
 func (f *mucCreateRoomViewForm) onCreateRoom() {
@@ -259,9 +264,14 @@ func setEnabled(w gtki.Widget, enable bool) {
 	w.SetSensitive(enable)
 }
 
-func createRoomButtonLabelForAutoJoin(v bool) string {
-	if v {
+func labelForCreateRoomButton(autoJoin, configRoom bool) string {
+	if configRoom {
+		return i18n.Local("Configure Room")
+	}
+
+	if autoJoin {
 		return i18n.Local("Create Room & Join")
 	}
+
 	return i18n.Local("Create Room")
 }

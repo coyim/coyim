@@ -13,8 +13,9 @@ import (
 type mucCreateRoomView struct {
 	u *gtkUI
 
-	autoJoin bool
-	cancel   chan bool
+	autoJoin      bool
+	configureRoom bool
+	cancel        chan bool
 
 	dialog    gtki.Dialog `gtk-widget:"create-room-dialog"`
 	container gtki.Box    `gtk-widget:"create-room-content"`
@@ -25,19 +26,19 @@ type mucCreateRoomView struct {
 	showCreateForm  func()
 	showSuccessView func(*account, jid.Bare)
 
-	onAutoJoin *callbacksSet
-	onDestroy  *callbacksSet
+	onCreateOptionChange *callbacksSet
+	onDestroy            *callbacksSet
 
 	sync.Mutex
 }
 
 func newCreateMUCRoomView(u *gtkUI) *mucCreateRoomView {
 	v := &mucCreateRoomView{
-		u:               u,
-		showCreateForm:  func() {},
-		showSuccessView: func(*account, jid.Bare) {},
-		onAutoJoin:      newCallbacksSet(),
-		onDestroy:       newCallbacksSet(),
+		u:                    u,
+		showCreateForm:       func() {},
+		showSuccessView:      func(*account, jid.Bare) {},
+		onCreateOptionChange: newCallbacksSet(),
+		onDestroy:            newCallbacksSet(),
 	}
 
 	v.initBuilder()
@@ -155,6 +156,11 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 }
 
 func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
+	if v.configureRoom {
+		v.log(ca, roomID).Warn("Show the configuration view for the created room")
+		return
+	}
+
 	if v.autoJoin {
 		doInUIThread(func() {
 			v.joinRoom(ca, roomID)
@@ -175,15 +181,31 @@ func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
 }
 
 func (v *mucCreateRoomView) updateAutoJoinValue(f bool) {
-	if v.autoJoin == f {
-		return
-	}
+	v.updateCreateOption("autoJoin", f)
+}
 
+func (v *mucCreateRoomView) updateConfigureRoomValue(f bool) {
+	v.updateCreateOption("configRoom", f)
+}
+
+func (v *mucCreateRoomView) updateCreateOption(o string, f bool) {
 	v.Lock()
 	defer v.Unlock()
 
-	v.autoJoin = f
-	v.onAutoJoin.invokeAll()
+	oldValue := false
+
+	switch o {
+	case "autoJoin":
+		oldValue = v.autoJoin
+		v.autoJoin = f
+	case "configRoom":
+		oldValue = v.configureRoom
+		v.configureRoom = f
+	}
+
+	if oldValue != f {
+		v.onCreateOptionChange.invokeAll()
+	}
 }
 
 func (u *gtkUI) mucCreateChatRoom() {

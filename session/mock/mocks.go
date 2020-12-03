@@ -228,6 +228,11 @@ func (*SessionMock) CreateRoom(jid.Bare) <-chan error {
 	return nil
 }
 
+// ReserveRoom is the implementation for session interface
+func (*SessionMock) ReserveRoom(jid.Bare) (<-chan data.Stanza, <-chan error) {
+	return nil, nil
+}
+
 // GetChatServices is the implementation for session interface
 func (*SessionMock) GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error, func()) {
 	return nil, nil, nil

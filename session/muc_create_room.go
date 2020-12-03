@@ -35,10 +35,18 @@ func (s *session) CreateRoom(roomID jid.Bare) <-chan error {
 	return c.errorChannel
 }
 
+func (s *session) ReserveRoom(roomID jid.Bare) (<-chan data.Stanza, <-chan error) {
+	c := newCreateMUCRoomContext(s, roomID)
+	c.roomConfigFormChannel = make(chan data.Stanza)
+	go c.reserveRoom()
+	return c.roomConfigFormChannel, c.errorChannel
+}
+
 type createMUCRoomContext struct {
-	roomID       jid.Bare
-	errorChannel chan error
-	s            *session
+	roomID                jid.Bare
+	roomConfigFormChannel chan data.Stanza
+	errorChannel          chan error
+	s                     *session
 }
 
 func (c *createMUCRoomContext) createRoom() {
@@ -56,7 +64,13 @@ func (c *createMUCRoomContext) createRoom() {
 		return
 	}
 
-	err = c.waitAndCheckResponse(reply)
+	stanza, ok := <-reply
+	if !ok {
+		c.errorChannel <- ErrInvalidInformationQueryRequest
+		return
+	}
+
+	err = c.validateStanzaReceived(stanza)
 	if err != nil {
 		c.logWithError(err, "Invalid information query response")
 		c.errorChannel <- err
@@ -64,6 +78,31 @@ func (c *createMUCRoomContext) createRoom() {
 	}
 
 	close(c.errorChannel)
+}
+
+func (c *createMUCRoomContext) reserveRoom() {
+	err := c.sendMUCPresence()
+	if err != nil {
+		c.errorChannel <- err
+		return
+	}
+
+	c.getRoomConfigurationForm()
+}
+
+func (c *createMUCRoomContext) getRoomConfigurationForm() {
+	reply, err := c.requestRoomForm()
+	if err != nil {
+		c.errorChannel <- ErrUnexpectedResponse
+		return
+	}
+
+	err = c.validateRoomFormReceived(reply)
+	if err != nil {
+		c.logWithError(err, "Invalid information query response")
+		c.errorChannel <- err
+		return
+	}
 }
 
 func (c *createMUCRoomContext) logWithError(e error, m string) {
@@ -79,7 +118,7 @@ func (c *createMUCRoomContext) sendMUCPresence() error {
 	return nil
 }
 
-func (c *createMUCRoomContext) newRoomConfiguration() data.MUCRoomConfiguration {
+func (c *createMUCRoomContext) newRoomConfigurationWithSubmit() data.MUCRoomConfiguration {
 	return data.MUCRoomConfiguration{
 		Form: &data.Form{
 			Type: "submit",
@@ -88,7 +127,7 @@ func (c *createMUCRoomContext) newRoomConfiguration() data.MUCRoomConfiguration 
 }
 
 func (c *createMUCRoomContext) sendInformationQuery() (<-chan data.Stanza, error) {
-	reply, _, err := c.s.conn.SendIQ(c.roomID.String(), "set", c.newRoomConfiguration())
+	reply, _, err := c.s.conn.SendIQ(c.roomID.String(), "set", c.newRoomConfigurationWithSubmit())
 	if err != nil {
 		c.logWithError(err, "An error ocurred while sending the information query for creating an instant room")
 		return nil, err
@@ -96,12 +135,36 @@ func (c *createMUCRoomContext) sendInformationQuery() (<-chan data.Stanza, error
 	return reply, nil
 }
 
-func (c *createMUCRoomContext) waitAndCheckResponse(reply <-chan data.Stanza) error {
+func (c *createMUCRoomContext) newRoomConfiguration() data.MUCRoomConfiguration {
+	return data.MUCRoomConfiguration{}
+}
+
+func (c *createMUCRoomContext) requestRoomForm() (<-chan data.Stanza, error) {
+	reply, _, err := c.s.conn.SendIQ(c.roomID.String(), "get", c.newRoomConfiguration())
+	if err != nil {
+		c.logWithError(err, "An error ocurred while sending the information query for request the room configuration form")
+		return nil, err
+	}
+	return reply, nil
+}
+
+func (c *createMUCRoomContext) validateRoomFormReceived(reply <-chan data.Stanza) error {
 	stanza, ok := <-reply
 	if !ok {
 		return ErrInvalidInformationQueryRequest
 	}
 
+	err := c.validateStanzaReceived(stanza)
+	if err != nil {
+		return err
+	}
+
+	c.roomConfigFormChannel <- stanza
+
+	return nil
+}
+
+func (c *createMUCRoomContext) validateStanzaReceived(stanza data.Stanza) error {
 	iq, ok := stanza.Value.(*data.ClientIQ)
 	if !ok {
 		return ErrUnexpectedResponse

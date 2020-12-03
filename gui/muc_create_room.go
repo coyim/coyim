@@ -6,6 +6,7 @@ import (
 
 	"github.com/coyim/coyim/coylog"
 
+	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -117,6 +118,21 @@ func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(err
 	}()
 }
 
+func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(data.Stanza), onError func(error)) {
+	fc, ec := a.session.ReserveRoom(roomID)
+	go func() {
+		select {
+		case err := <-ec:
+			if err != nil {
+				onError(err)
+				return
+			}
+		case form := <-fc:
+			onSuccess(form)
+		}
+	}()
+}
+
 func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 	l := v.u.log
 	if ca != nil {
@@ -142,6 +158,16 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 		v.checkIfRoomExists(ca, roomID, sc, er)
 		select {
 		case <-sc:
+			if v.configureRoom {
+				ca.reserveRoom(roomID, func(s data.Stanza) {
+					v.onReserveRoomFinished(ca, roomID, s)
+				}, func(err error) {
+					v.log(ca, roomID).WithError(err).Error("Something went wrong while trying to create the room")
+					errors <- errCreateRoomFailed
+				})
+				return
+			}
+
 			ca.createRoom(roomID, func() {
 				v.onCreateRoomFinished(ca, roomID)
 			}, func(err error) {
@@ -155,12 +181,15 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 	}()
 }
 
-func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
-	if v.configureRoom {
-		v.log(ca, roomID).Warn("Show the configuration view for the created room")
-		return
-	}
+func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, form data.Stanza) {
+	// TODO: show the configure room view
+	doInUIThread(func() {
+		v.showSuccessView(ca, roomID)
+		v.dialog.ShowAll()
+	})
+}
 
+func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
 	if v.autoJoin {
 		doInUIThread(func() {
 			v.joinRoom(ca, roomID)

@@ -114,6 +114,8 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 			l.notAuthorizedEvent()
 		case serviceUnavailableEvent:
 			l.notServiceUnavailableEvent()
+		case occupantForbiddenEvent:
+			l.occupantForbiddenEvent()
 		}
 	})
 }
@@ -230,6 +232,7 @@ var (
 	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
 	errJoinNotAuthorized    = errors.New("join failed because doesn't have authorization")
 	errServiceUnavailable   = errors.New("join failed because the service is unavailable")
+	errOccupantForbidden    = errors.New("join failed because the occupant was banned")
 )
 
 type mucRoomLobbyErr struct {
@@ -309,15 +312,17 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	switch err.errType {
 	case errJoinNicknameConflict:
-		return i18n.Local("Can't join the room using that nickname because it's already being used.")
+		return i18n.Local("Can't join the room using that nickname because it's already being used")
 	case errJoinOnlyMembers:
-		return i18n.Local("Sorry, this room only allows registered members.")
+		return i18n.Local("Sorry, this room only allows registered members")
 	case errJoinNotAuthorized:
-		return i18n.Local("Invalid password.")
+		return i18n.Local("Invalid password")
 	case errServiceUnavailable:
 		return i18n.Local("Can't join the room because the maximun number of occupants has been reached")
+	case errOccupantForbidden:
+		return i18n.Local("Can't join the room because you are banned")
 	default:
-		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists.")
+		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists")
 	}
 }
 
@@ -370,4 +375,8 @@ func (l *roomViewLobby) notAuthorizedEvent() {
 
 func (l *roomViewLobby) notServiceUnavailableEvent() {
 	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errServiceUnavailable))
+}
+
+func (l *roomViewLobby) occupantForbiddenEvent() {
+	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errOccupantForbidden))
 }

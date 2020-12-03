@@ -9,18 +9,16 @@ import (
 )
 
 type mucCreateRoomViewForm struct {
-	isShown             bool
-	builder             *builder
-	roomFormComponent   *mucRoomFormComponent
-	roomConfigComponent *mucRoomConfigComponent
+	isShown           bool
+	builder           *builder
+	roomFormComponent *mucRoomFormComponent
 
-	view             gtki.Box         `gtk-widget:"create-room-form"`
-	roomAutoJoin     gtki.CheckButton `gtk-widget:"autojoin-check-button"`
-	createButton     gtki.Button      `gtk-widget:"create-room-button"`
-	spinnerBox       gtki.Box         `gtk-widget:"spinner-box"`
-	notificationArea gtki.Box         `gtk-widget:"notification-area-box"`
-	roomConfigCheck  gtki.CheckButton `gtk-widget:"config-room-check-button"`
-	roomConfigBox    gtki.Box         `gtk-widget:"configure-room-box"`
+	view              gtki.Box         `gtk-widget:"create-room-form"`
+	roomAutoJoinCheck gtki.CheckButton `gtk-widget:"autojoin-check-button"`
+	roomConfigCheck   gtki.CheckButton `gtk-widget:"config-room-check-button"`
+	createButton      gtki.Button      `gtk-widget:"create-room-button"`
+	spinnerBox        gtki.Box         `gtk-widget:"spinner-box"`
+	notificationArea  gtki.Box         `gtk-widget:"notification-area-box"`
 
 	spinner       *spinner
 	notifications *notifications
@@ -43,7 +41,6 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 	f.initBuilder(v)
 	f.initNotifications(v)
 	f.initRoomFormComponent(v)
-	f.initRoomConfigComponent(v)
 	f.initDefaults(v)
 
 	return f
@@ -54,12 +51,12 @@ func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
 	panicOnDevError(f.builder.bindObjects(f))
 
 	f.builder.ConnectSignals(map[string]interface{}{
-		"on_cancel":                  v.onCancel,
-		"on_create_room":             f.onCreateRoom,
-		"on_roomName_change":         f.enableCreationIfConditionsAreMet,
-		"on_roomAutoJoin_toggled":    f.onRoomAutoJoinToggled,
-		"on_chatServiceEntry_change": f.enableCreationIfConditionsAreMet,
-		"on_config_room_toggled":     f.onRoomConfigToggled,
+		"on_cancel":                   v.onCancel,
+		"on_create_room":              f.onCreateRoom,
+		"on_room_name_change":         f.enableCreationIfConditionsAreMet,
+		"on_room_autojoin_toggled":    f.onRoomAutoJoinToggled,
+		"on_room_config_toggled":      f.onRoomConfigToggled,
+		"on_chatservice_entry_change": f.enableCreationIfConditionsAreMet,
 	})
 }
 
@@ -85,11 +82,6 @@ func (f *mucCreateRoomViewForm) initRoomFormComponent(v *mucCreateRoomView) {
 	})
 }
 
-func (f *mucCreateRoomViewForm) initRoomConfigComponent(v *mucCreateRoomView) {
-	f.roomConfigComponent = v.u.newMUCRoomConfigComponent()
-	f.roomConfigBox.Add(f.roomConfigComponent.configurationView())
-}
-
 func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
 	f.spinner = newSpinner()
 	f.spinnerBox.Add(f.spinner.getWidget())
@@ -110,7 +102,11 @@ func (v *mucCreateRoomView) initCreateRoomForm() *mucCreateRoomViewForm {
 }
 
 func (f *mucCreateRoomViewForm) onRoomAutoJoinToggled() {
-	f.updateAutoJoinValue(f.roomAutoJoin.GetActive())
+	f.updateAutoJoinValue(f.roomAutoJoinCheck.GetActive())
+}
+
+func (f *mucCreateRoomViewForm) onRoomConfigToggled() {
+	// TODO: invoke configuration value changed
 }
 
 func (f *mucCreateRoomViewForm) listenToCreateError(roomID jid.Bare, errors chan error) {
@@ -215,7 +211,7 @@ func (f *mucCreateRoomViewForm) disableFields() {
 
 func (f *mucCreateRoomViewForm) setFieldsSensitive(v bool) {
 	f.createButton.SetSensitive(v)
-	f.roomAutoJoin.SetSensitive(v)
+	f.roomAutoJoinCheck.SetSensitive(v)
 }
 
 func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(ca *account) {
@@ -241,10 +237,6 @@ func (f *mucCreateRoomViewForm) enableCreationIfConditionsAreMet() {
 	}
 
 	f.enableCreateRoomButton()
-}
-
-func (f *mucCreateRoomViewForm) onRoomConfigToggled() {
-	f.roomConfigBox.SetVisible(f.roomConfigCheck.GetActive())
 }
 
 func (f *mucCreateRoomViewForm) checkIfRoomNameHasConflict() bool {

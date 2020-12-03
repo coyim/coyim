@@ -78,7 +78,7 @@
                 <property name="visible">True</property>
                 <property name="hexpand">True</property>
                 <property name="placeholder_text" translatable="yes">Enter the room name</property>
-                <signal name="changed" handler="on_roomName_change" swapped="no"/>
+                <signal name="changed" handler="on_room_name_change" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -93,7 +93,7 @@
                 <child internal-child="entry">
                   <object class="GtkEntry" id="chat-services-entry">
                     <property name="placeholder_text" translatable="yes">Enter the location or select one from the list</property>
-                    <signal name="changed" handler="on_chatServiceEntry_change" swapped="no"/>
+                    <signal name="changed" handler="on_chatservice_entry_change" swapped="no"/>
                   </object>
                 </child>
               </object>
@@ -116,21 +116,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="config-room-check-button">
-                <property name="label" translatable="yes">Preconfigure room</property>
-                <property name="visible">True</property>
-                <property name="receives_default">False</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="draw_indicator">True</property>
-                <signal name="toggled" handler="on_config_room_toggled" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">3</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkCheckButton" id="autojoin-check-button">
                 <property name="label" translatable="yes">_Automatically join the room</property>
                 <property name="visible">True</property>
@@ -140,30 +125,22 @@
                 <property name="valign">center</property>
                 <property name="use_underline">True</property>
                 <property name="draw_indicator">True</property>
-                <signal name="toggled" handler="on_roomAutoJoin_toggled" swapped="no"/>
+                <signal name="toggled" handler="on_room_autojoin_toggled" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">5</property>
+                <property name="top_attach">3</property>
               </packing>
             </child>
             <child>
-              <object class="GtkBox">
-                <property name="width_request">400</property>
+              <object class="GtkCheckButton" id="config-room-check-button">
+                <property name="label" translatable="yes">Add custom configuration</property>
                 <property name="visible">True</property>
+                <property name="receives_default">False</property>
                 <property name="halign">start</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkBox" id="configure-room-box">
-                    <property name="halign">start</property>
-                    <property name="orientation">vertical</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
+                <property name="valign">center</property>
+                <property name="draw_indicator">True</property>
+                <signal name="toggled" handler="on_room_config_toggled" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>

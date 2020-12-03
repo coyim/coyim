@@ -356,6 +356,11 @@ func (v *roomView) notAuthorized() {
 	v.publishEvent(notAuthorizedEvent{})
 }
 
+// occupantForbidden MUST NOT be called from the UI thread
+func (v *roomView) occupantForbidden() {
+	v.publishEvent(occupantForbiddenEvent{})
+}
+
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }

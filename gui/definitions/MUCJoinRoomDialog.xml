@@ -41,7 +41,7 @@
                     <property name="receives_default">True</property>
                     <property name="relief">none</property>
                     <property name="use_underline">True</property>
-                    <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_cancel" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -58,7 +58,7 @@
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
                     <property name="image_position">right</property>
-                    <signal name="clicked" handler="on_join_clicked" swapped="no"/>
+                    <signal name="clicked" handler="on_join" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -126,6 +126,7 @@
                     <property name="hexpand">True</property>
                     <property name="placeholder_text" translatable="yes">Enter the room name</property>
                     <signal name="changed" handler="on_roomname_changed" swapped="no"/>
+                    <signal name="activate" handler="on_join" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -183,6 +184,7 @@
                           <object class="GtkEntry" id="chat-services-entry">
                             <property name="visible">True</property>
                             <property name="placeholder_text" translatable="yes">Enter or select the service</property>
+                            <signal name="activate" handler="on_join" swapped="no"/>
                           </object>
                         </child>
                       </object>

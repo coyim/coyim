@@ -44,8 +44,8 @@ func (v *mucJoinRoomView) initBuilder() {
 	v.builder.ConnectSignals(map[string]interface{}{
 		"on_close_window":     v.onCloseWindow,
 		"on_roomname_changed": v.enableJoinIfConditionsAreMet,
-		"on_cancel_clicked":   v.dialog.Destroy,
-		"on_join_clicked":     doOnlyOnceAtATime(v.tryJoinRoom),
+		"on_cancel":           v.dialog.Destroy,
+		"on_join":             doOnlyOnceAtATime(v.tryJoinRoom),
 	})
 }
 
@@ -179,20 +179,12 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 }
 
 func (v *mucJoinRoomView) tryJoinRoom(done func()) {
-	roomID, ok := v.validateFieldsAndGetBareIfOk()
-	if !ok {
+	if !v.roomFormComponent.validateWithErrorNotification() {
 		done()
 		return
 	}
 
-	ca := v.roomFormComponent.currentAccount()
-	if ca == nil {
-		v.notifications.error(i18n.Local("No account was selected, select an account from the list or enable one."))
-		return
-	}
-
-	c := v.newJoinRoomContext(ca, roomID, done)
-
+	c := v.newJoinRoomContext(v.roomFormComponent.currentAccount(), v.roomFormComponent.currentRoomID(), done)
 	c.joinRoom()
 }
 

@@ -102,22 +102,22 @@ func (l *roomViewLobby) initDefaults() {
 func (l *roomViewLobby) initSubscribers(v *roomView) {
 	v.subscribe("lobby", func(ev roomViewEvent) {
 		switch t := ev.(type) {
-		case occupantSelfJoinedEvent:
-			l.occupantSelfJoinedEvent()
 		case roomDiscoInfoReceivedEvent:
 			l.roomDiscoInfoReceivedEvent(t.info)
+		case occupantSelfJoinedEvent:
+			l.finishJoinRequest()
 		case nicknameConflictEvent:
-			l.nicknameConflictEvent(l.roomID, t.nickname)
+			l.joinRequestErrorExtendedEvent(l.roomID, t.nickname, errJoinNicknameConflict)
 		case registrationRequiredEvent:
-			l.registrationRequiredEvent(l.roomID, t.nickname)
+			l.joinRequestErrorExtendedEvent(l.roomID, t.nickname, errJoinOnlyMembers)
 		case notAuthorizedEvent:
-			l.notAuthorizedEvent()
+			l.joinRequestErrorEvent(errJoinNotAuthorized)
 		case serviceUnavailableEvent:
-			l.notServiceUnavailableEvent()
+			l.joinRequestErrorEvent(errServiceUnavailable)
 		case unknownErrorEvent:
-			l.unknownErrorEvent()
+			l.joinRequestErrorEvent(errUnknownError)
 		case occupantForbiddenEvent:
-			l.occupantForbiddenEvent()
+			l.joinRequestErrorEvent(errOccupantForbidden)
 		}
 	})
 }
@@ -264,7 +264,7 @@ func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string) {
 	err := l.joinRoom(nickname, password)
 	if err != nil {
 		l.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room.")
-		l.finishJoinRequest(errJoinNoConnection)
+		l.finishJoinRequestWithError(errJoinNoConnection)
 	}
 }
 
@@ -350,42 +350,18 @@ func (l *roomViewLobby) notifyOnError(err string) {
 	l.errorNotif.ShowMessage(err)
 }
 
-func (l *roomViewLobby) finishJoinRequest(err error) {
-	if err != nil {
-		l.onJoinError <- err
-	} else {
-		l.onJoin <- true
-	}
+func (l *roomViewLobby) finishJoinRequest() {
+	l.onJoin <- true
 }
 
-func (l *roomViewLobby) occupantSelfJoinedEvent() {
-	l.finishJoinRequest(nil)
+func (l *roomViewLobby) finishJoinRequestWithError(err error) {
+	l.onJoinError <- err
 }
 
-func (l *roomViewLobby) joinFailed(roomID jid.Bare, nickname string) {
-	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinRequestFailed))
+func (l *roomViewLobby) joinRequestErrorEvent(err error) {
+	l.joinRequestErrorExtendedEvent(nil, "", err)
 }
 
-func (l *roomViewLobby) nicknameConflictEvent(roomID jid.Bare, nickname string) {
-	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinNicknameConflict))
-}
-
-func (l *roomViewLobby) registrationRequiredEvent(roomID jid.Bare, nickname string) {
-	l.finishJoinRequest(newMUCRoomLobbyErr(roomID, nickname, errJoinOnlyMembers))
-}
-
-func (l *roomViewLobby) notAuthorizedEvent() {
-	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errJoinNotAuthorized))
-}
-
-func (l *roomViewLobby) notServiceUnavailableEvent() {
-	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errServiceUnavailable))
-}
-
-func (l *roomViewLobby) unknownErrorEvent() {
-	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errUnknownError))
-}
-
-func (l *roomViewLobby) occupantForbiddenEvent() {
-	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errOccupantForbidden))
+func (l *roomViewLobby) joinRequestErrorExtendedEvent(roomID jid.Bare, nickname string, err error) {
+	l.finishJoinRequestWithError(newMUCRoomLobbyErr(roomID, nickname, err))
 }

@@ -38,6 +38,8 @@ type nicknameConflictEvent struct {
 
 type serviceUnavailableEvent struct{}
 
+type unknownErrorEvent struct{}
+
 type registrationRequiredEvent struct {
 	nickname string
 }
@@ -123,3 +125,4 @@ func (occupantRemovedEvent) markAsRoomViewEvent()          {}
 func (notAuthorizedEvent) markAsRoomViewEvent()            {}
 func (occupantForbiddenEvent) markAsRoomViewEvent()        {}
 func (serviceUnavailableEvent) markAsRoomViewEvent()       {}
+func (unknownErrorEvent) markAsRoomViewEvent()             {}

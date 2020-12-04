@@ -346,6 +346,11 @@ func (v *roomView) serviceUnavailable() {
 	v.publishEvent(serviceUnavailableEvent{})
 }
 
+// unknownError MUST NOT be called from the UI thread
+func (v *roomView) unknownError() {
+	v.publishEvent(unknownErrorEvent{})
+}
+
 // registrationRequired MUST NOT be called from the UI thread
 func (v *roomView) registrationRequired(nickname string) {
 	v.publishEvent(registrationRequiredEvent{nickname})

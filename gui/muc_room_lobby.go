@@ -114,6 +114,8 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 			l.notAuthorizedEvent()
 		case serviceUnavailableEvent:
 			l.notServiceUnavailableEvent()
+		case unknownErrorEvent:
+			l.unknownErrorEvent()
 		case occupantForbiddenEvent:
 			l.occupantForbiddenEvent()
 		}
@@ -232,6 +234,7 @@ var (
 	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
 	errJoinNotAuthorized    = errors.New("join failed because doesn't have authorization")
 	errServiceUnavailable   = errors.New("join failed because the service is unavailable")
+	errUnknownError         = errors.New("join failed because an unknown error occurred")
 	errOccupantForbidden    = errors.New("join failed because the occupant was banned")
 )
 
@@ -319,6 +322,8 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 		return i18n.Local("Invalid password")
 	case errServiceUnavailable:
 		return i18n.Local("Can't join the room because the maximun number of occupants has been reached")
+	case errUnknownError:
+		return i18n.Local("An unknown error occurred while trying to join the room, please try again later")
 	case errOccupantForbidden:
 		return i18n.Local("Can't join the room because you are banned")
 	default:
@@ -375,6 +380,10 @@ func (l *roomViewLobby) notAuthorizedEvent() {
 
 func (l *roomViewLobby) notServiceUnavailableEvent() {
 	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errServiceUnavailable))
+}
+
+func (l *roomViewLobby) unknownErrorEvent() {
+	l.finishJoinRequest(newMUCRoomLobbyErr(nil, "", errUnknownError))
 }
 
 func (l *roomViewLobby) occupantForbiddenEvent() {

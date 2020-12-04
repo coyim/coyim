@@ -182,10 +182,10 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 }
 
 func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, form data.Stanza) {
-	// TODO: show the configure room view
 	doInUIThread(func() {
-		v.showSuccessView(ca, roomID)
-		v.dialog.ShowAll()
+		v.dialog.Destroy()
+		rc := newRoomConfigAssistant()
+		rc.show()
 	})
 }
 

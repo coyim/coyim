@@ -1,0 +1,58 @@
+<interface>
+  <object class="GtkAssistant" id="room-config-assistant">
+    <property name="use_header_bar">1</property>
+    <signal name="prepare" handler="on_page_changed" swapped="no" />
+    <signal name="cancel" handler="on_cancel" swapped="no" />
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">1 INFO ROOM</property>
+      </object>
+      <packing>
+        <property name="page_type">intro</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">2 ACCESS PAGE</property>
+      </object>
+      <packing></packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">3 PERMISSIONS PAGE</property>
+      </object>
+      <packing></packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">4 OCCUPANTS PAGE</property>
+      </object>
+      <packing></packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">5 OTHER CONFIGURATION PAGE</property>
+      </object>
+      <packing></packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">6 SUMMARY PAGE</property>
+      </object>
+      <packing>
+        <property name="page_type">confirm</property>
+      </packing>
+    </child>
+    <child internal-child="action_area">
+      <object class="GtkBox">
+        <property name="halign">end</property>
+      </object>
+    </child>
+  </object>
+</interface>

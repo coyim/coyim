@@ -37,7 +37,7 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 		roomNameConflictList:     set.New(),
 		updateAutoJoinValue:      v.updateAutoJoinValue,
 		updateConfigureRoomValue: v.updateConfigureRoomValue,
-		log: v.log,
+		log:                      v.log,
 	}
 
 	f.initBuilder(v)
@@ -54,7 +54,7 @@ func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
 
 	f.builder.ConnectSignals(map[string]interface{}{
 		"on_cancel":                   v.onCancel,
-		"on_create_room":              f.onCreateRoom,
+		"on_create":                   f.onCreateRoom,
 		"on_room_name_change":         f.enableCreationIfConditionsAreMet,
 		"on_room_autojoin_toggled":    f.onRoomAutoJoinToggled,
 		"on_room_config_toggled":      f.onRoomConfigToggled,

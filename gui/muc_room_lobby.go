@@ -204,7 +204,7 @@ func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string, done func
 		return
 	}
 
-	l.disableFieldsAndShowSpinner()
+	doInUIThread(l.disableFieldsAndShowSpinner)
 }
 
 func (l *roomViewLobby) joinRoom(nickname, password string) error {

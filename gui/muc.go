@@ -7,6 +7,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/gtki"
 )
 
 func (u *gtkUI) initMUC() {
@@ -59,4 +60,44 @@ func (s *callbacksSet) invokeAll() {
 	for _, cb := range callbacks {
 		cb()
 	}
+}
+
+func doOnlyOnceAtATime(f func(func())) func() {
+	isDoing := false
+	return func() {
+		if isDoing {
+			return
+		}
+		isDoing = true
+		// The "done" function should be called ONLY from the UI thread,
+		// in other cases it's not "safe" executing it.
+		f(func() {
+			isDoing = false
+		})
+	}
+}
+
+func getEntryText(e gtki.Entry) string {
+	t, _ := e.GetText()
+	return t
+}
+
+func setFieldVisibility(w gtki.Widget, v bool) {
+	w.SetVisible(v)
+}
+
+func setFieldSensitive(w gtki.Widget, v bool) {
+	w.SetSensitive(v)
+}
+
+func setFieldLabel(w gtki.Widget, l string) {
+	w.SetProperty("label", l)
+}
+
+func disableField(w gtki.Widget) {
+	setFieldSensitive(w, false)
+}
+
+func enableField(w gtki.Widget) {
+	setFieldSensitive(w, true)
 }

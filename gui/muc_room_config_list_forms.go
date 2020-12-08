@@ -249,8 +249,3 @@ func (af *mucRoomConfigListAdminsForm) friendlyErrorMessage(err error) string {
 		return i18n.Local("Invalid form")
 	}
 }
-
-func getEntryText(e gtki.Entry) string {
-	t, _ := e.GetText()
-	return t
-}

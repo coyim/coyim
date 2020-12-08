@@ -214,18 +214,3 @@ func (u *gtkUI) mucShowJoinRoom() {
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
 }
-
-func doOnlyOnceAtATime(f func(func())) func() {
-	isDoing := false
-	return func() {
-		if isDoing {
-			return
-		}
-		isDoing = true
-		// The "done" function should be called ONLY from the UI thread,
-		// in other cases it's not "safe" executing it.
-		f(func() {
-			isDoing = false
-		})
-	}
-}

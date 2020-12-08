@@ -1,11 +1,9 @@
 <interface>
-  <object class="GtkBox" id="mainContent">
+  <object class="GtkBox" id="main-content">
     <property name="visible">True</property>
-    <property name="halign">center</property>
-    <property name="valign">center</property>
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkBox" id="boxNotificationArea">
+      <object class="GtkBox" id="notifications-box">
         <property name="orientation">vertical</property>
         <style>
           <class name="notifications"/>
@@ -18,173 +16,172 @@
       </packing>
     </child>
     <child>
-      <object class="GtkGrid" id="boxOccupantData">
+      <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="margin_top">5</property>
-        <property name="margin_bottom">5</property>
-        <property name="row_spacing">6</property>
-        <property name="column_spacing">10</property>
-        <property name="baseline_row">5</property>
+        <property name="hexpand">True</property>
+        <property name="vexpand">True</property>
+        <property name="orientation">vertical</property>
         <child>
-          <object class="GtkLabel" id="roomNameLabel">
+          <object class="GtkBox">
+            <property name="width_request">500</property>
             <property name="visible">True</property>
-            <property name="halign">end</property>
+            <property name="halign">center</property>
             <property name="valign">center</property>
-            <property name="label" translatable="yes">Room</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkGrid" id="form-grid">
+                <property name="visible">True</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="row_spacing">6</property>
+                <property name="column_spacing">10</property>
+                <property name="baseline_row">5</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Room</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="room-name-value">
+                    <property name="visible">True</property>
+                    <property name="halign">start</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Nickname</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="nickname-entry">
+                    <property name="visible">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="caps_lock_warning">False</property>
+                    <signal name="activate" handler="on_join" swapped="no"/>
+                    <signal name="changed" handler="on_nickname_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="password-label">
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Password</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="password-entry">
+                    <property name="hexpand">True</property>
+                    <property name="visibility">False</property>
+                    <signal name="activate" handler="on_join" swapped="no"/>
+                    <signal name="changed" handler="on_password_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButtonBox" id="buttons-box">
+                <property name="visible">True</property>
+                <property name="halign">end</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="spacing">5</property>
+                <property name="layout_style">start</property>
+                <child>
+                  <object class="GtkBox" id="spinner-box">
+                    <property name="visible">True</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="cancel-button">
+                    <property name="label" translatable="yes">_Cancel</property>
+                    <property name="visible">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_underline">True</property>
+                    <signal name="clicked" handler="on_cancel" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="join-button">
+                    <property name="label" translatable="yes">_Join</property>
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_underline">True</property>
+                    <signal name="clicked" handler="on_join" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="roomNameValue">
-            <property name="visible">True</property>
-            <property name="halign">start</property>
-          </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="nicknameLabel">
-            <property name="visible">True</property>
-            <property name="halign">end</property>
-            <property name="valign">center</property>
-            <property name="label" translatable="yes">Nickname</property>
-          </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="nicknameEntry">
-            <property name="visible">True</property>
-            <property name="hexpand">True</property>
-            <property name="caps_lock_warning">False</property>
-            <signal name="changed" handler="on_nickname_changed" swapped="no"/>
-          </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="passwordLabel">
-            <property name="visible">False</property>
-            <property name="halign">end</property>
-            <property name="valign">center</property>
-            <property name="label" translatable="yes">Password</property>
-          </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEntry" id="passwordEntry">
-            <property name="visible">False</property>
-            <property name="hexpand">True</property>
-            <property name="visibility">False</property>
-            <property name="caps_lock_warning">True</property>
-            <signal name="changed" handler="on_password_changed" swapped="no"/>
-          </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">2</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="position">2</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkButtonBox" id="boxJoinButtons">
-        <property name="visible">True</property>
-        <property name="halign">end</property>
-        <property name="margin_top">5</property>
-        <property name="margin_bottom">5</property>
-        <property name="spacing">5</property>
-        <property name="layout_style">start</property>
-        <child>
-          <object class="GtkSpinner" id="spinner">
-            <property name="visible">True</property>
-            <property name="halign">end</property>
-            <property name="valign">center</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
         </child>
-        <child>
-          <object class="GtkButton" id="cancelButton">
-            <property name="label" translatable="yes">_Cancel</property>
-            <property name="visible">True</property>
-            <property name="receives_default">True</property>
-            <property name="use_underline">True</property>
-            <signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="joinButton">
-            <property name="label" translatable="yes">_Join</property>
-            <property name="visible">True</property>
-            <property name="sensitive">False</property>
-            <property name="receives_default">True</property>
-            <property name="use_underline">True</property>
-            <signal name="clicked" handler="on_joined_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">True</property>
-        <property name="position">3</property>
-      </packing>
-    </child>
-  </object>
-  <object class="GtkBox" id="boxJoinRoomView">
-    <property name="visible">True</property>
-    <property name="margin_left">10</property>
-    <property name="margin_right">10</property>
-    <property name="margin_top">10</property>
-    <property name="margin_bottom">10</property>
-    <property name="hexpand">True</property>
-    <property name="vexpand">True</property>
-    <property name="orientation">vertical</property>
-    <property name="spacing">5</property>
-    <child>
-      <object class="GtkBox" id="boxWarningsArea">
-        <property name="orientation">vertical</property>
-        <style>
-          <class name="warnings"/>
-        </style>
       </object>
       <packing>
         <property name="expand">True</property>
         <property name="fill">True</property>
-        <property name="position">0</property>
+        <property name="position">2</property>
       </packing>
     </child>
-    <style>
-      <class name="muc"/>
-    </style>
   </object>
 </interface>

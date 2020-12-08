@@ -4,11 +4,9 @@
     <signal name="prepare" handler="on_page_changed" swapped="no" />
     <signal name="cancel" handler="on_cancel" swapped="no" />
     <child>
-      <object class="GtkLabel">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">1 INFO ROOM</property>
-      </object>
+      <object class="GtkBox" id="room-config-info"/>
       <packing>
+        <property name="title" translatable="yes">1. Configure room information</property>
         <property name="page_type">intro</property>
       </packing>
     </child>

@@ -5,12 +5,15 @@ import (
 )
 
 type roomConfigAssistant struct {
-	assistant gtki.Assistant `gtk-widget:"room-config-assistant"`
+	assistant     gtki.Assistant `gtk-widget:"room-config-assistant"`
+	configInfoBox gtki.Box       `gtk-widget:"room-config-info"`
 }
 
 func newRoomConfigAssistant() *roomConfigAssistant {
 	rc := &roomConfigAssistant{}
+
 	rc.initBuilder()
+	rc.initDefaults()
 	return rc
 }
 
@@ -22,6 +25,11 @@ func (rc *roomConfigAssistant) initBuilder() {
 		"on_cancel":       rc.onCancel,
 		"on_page_changed": rc.onPageChanged,
 	})
+}
+
+func (rc *roomConfigAssistant) initDefaults() {
+	ri := rc.newRoomConfigInfo()
+	rc.configInfoBox.Add(ri.content)
 }
 
 func (rc *roomConfigAssistant) onCancel() {

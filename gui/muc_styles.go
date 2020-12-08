@@ -99,15 +99,27 @@ func (s *mucStylesProvider) setRoomMessagesBoxStyle(b gtki.Box) {
 	})
 }
 
+func (s *mucStylesProvider) setRoomLoadingViewOverlayTitleStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-weight": "bold",
+	})
+}
+
 func (s *mucStylesProvider) setRoomOverlayMessagesBoxStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
 		"background-color": s.rgba(0, 0, 0, 0.5),
 	})
 }
 
-func (s *mucStylesProvider) setRoomLoadingViewOverlayBoxStyle(b gtki.Box) {
+func (s *mucStylesProvider) setRoomLoadingViewOverlayTransparentStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
 		"background-color": s.hexToRGBA(s.colors.dark, 0.25),
+	})
+}
+
+func (s *mucStylesProvider) setRoomLoadingViewOverlaySolidStyle(b gtki.Box) {
+	s.setBoxStyle(b, style{
+		"background-color": s.colors.light,
 	})
 }
 

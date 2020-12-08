@@ -1,6 +1,9 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 type roomViewLoadingOverlay struct {
 	overlay gtki.Overlay
@@ -15,9 +18,13 @@ func (v *roomView) newRoomViewLoadingOverlay(o gtki.Overlay, b gtki.Box, l gtki.
 	return lo
 }
 
-// show MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) initDefaults() {
 	mucStyles.setRoomLoadingViewOverlayBoxStyle(lo.box)
+}
+
+// onRoomDiscoInfoLoad MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onRoomDiscoInfoLoad() {
+	lo.showWithMessage(i18n.Local("Loading room info...."))
 }
 
 // show MUST be called from the UI thread

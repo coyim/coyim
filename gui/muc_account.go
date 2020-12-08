@@ -51,19 +51,29 @@ type roomOpController struct {
 	callback  roomOpCallback
 	onSuccess func()
 	onError   func(error)
+	onDone    func()
 	log       coylog.Logger
 }
 
-func (a *account) newRoomOpController(op string, cb roomOpCallback, onSuccess func(), onError func(error)) *roomOpController {
+func (a *account) newRoomOpController(op string, cb roomOpCallback, onSuccess func(), onError func(error), onDone func()) *roomOpController {
+	onDoneFinal := func() {
+		if onDone != nil {
+			onDone()
+		}
+	}
+
 	return &roomOpController{
 		callback:  cb,
 		onSuccess: onSuccess,
 		onError:   onError,
+		onDone:    onDoneFinal,
 		log:       a.log.WithField("operation", op),
 	}
 }
 
 func (c *roomOpController) request(sch chan bool, ech chan error) {
+	defer c.onDone()
+
 	ok, anyError := c.callback()
 	select {
 	case <-ok:
@@ -104,12 +114,12 @@ type accountRoomOpContext struct {
 	log coylog.Logger
 }
 
-func (a *account) newAccountRoomOpContext(op string, roomID jid.Bare, callback roomOpCallback, onSuccess func(), onError func(error)) *accountRoomOpContext {
+func (a *account) newAccountRoomOpContext(op string, roomID jid.Bare, callback roomOpCallback, onSuccess func(), onError func(error), onDone func()) *accountRoomOpContext {
 	ctx := &accountRoomOpContext{
 		op:         op,
 		roomID:     roomID,
 		account:    a,
-		controller: a.newRoomOpController(op, callback, onSuccess, onError),
+		controller: a.newRoomOpController(op, callback, onSuccess, onError, onDone),
 	}
 
 	ctx.log = a.log.WithFields(log.Fields{

@@ -25,7 +25,7 @@ var (
 type roomDestroyView struct {
 	builder               *builder
 	chatServicesComponent *chatServicesComponent
-	destroyRoom           func(reason string, alternativeID jid.Bare, password string)
+	destroyRoom           func(reason string, alternativeID jid.Bare, password string, done func())
 
 	dialog               gtki.Dialog      `gtk-widget:"destroy-room-dialog"`
 	reasonEntry          gtki.TextView    `gtk-widget:"destroy-room-reason-entry"`
@@ -60,16 +60,16 @@ func (d *roomDestroyView) initBuilder() {
 	panicOnDevError(d.builder.bindObjects(d))
 
 	d.builder.ConnectSignals(map[string]interface{}{
-		"on_destroy_clicked":          d.onDestroyRoom,
 		"on_alternative_room_toggled": d.onAlternativeRoomToggled,
-		"on_cancel_clicked":           d.close,
+		"on_destroy":                  doOnlyOnceAtATime(d.onDestroyRoom),
+		"on_cancel":                   d.close,
 	})
 }
 
 func (d *roomDestroyView) initDestroyContext(v *roomView) {
-	d.destroyRoom = func(reason string, alternativeID jid.Bare, password string) {
+	d.destroyRoom = func(reason string, alternativeID jid.Bare, password string, done func()) {
 		d.close()
-		ctx := v.newDestroyContext(reason, alternativeID, password)
+		ctx := v.newDestroyContext(reason, alternativeID, password, done)
 		ctx.destroyRoom()
 	}
 }
@@ -91,8 +91,8 @@ func (d *roomDestroyView) initDefaults(v *roomView) {
 }
 
 // onDestroyRoom MUST be called from the UI thread
-func (d *roomDestroyView) onDestroyRoom() {
-	d.disableFieldsAndShowSpinner()
+func (d *roomDestroyView) onDestroyRoom(done func()) {
+	d.notification.clearErrors()
 
 	b, _ := d.reasonEntry.GetBuffer()
 	reason := b.GetText(b.GetStartIter(), b.GetEndIter(), false)
@@ -100,11 +100,13 @@ func (d *roomDestroyView) onDestroyRoom() {
 	alternativeID, password, err := d.alternativeRoomInformation()
 	if err != nil {
 		d.notification.error(d.friendlyMessageForAlternativeRoomError(err))
-		d.enableFieldsAndHideSpinner()
+		done()
 		return
 	}
 
-	d.destroyRoom(reason, alternativeID, password)
+	d.disableFieldsAndShowSpinner()
+	d.destroyRoom(reason, alternativeID, password, done)
+	d.enableFieldsAndHideSpinner()
 }
 
 func (d *roomDestroyView) alternativeRoomInformation() (jid.Bare, string, error) {
@@ -263,23 +265,25 @@ type roomDestroyContext struct {
 	reason        string
 	alternativeID jid.Bare
 	password      string
-	destroy       func(reason string, alternativeID jid.Bare, password string, onSuccess func(), onError func(error))
+	destroy       func(reason string, alternativeID jid.Bare, password string, onSuccess func(), onError func(error), onDone func())
+	onDone        func()
 	log           coylog.Logger
 }
 
-func (v *roomView) newDestroyContext(reason string, alternativeID jid.Bare, password string) *roomDestroyContext {
+func (v *roomView) newDestroyContext(reason string, alternativeID jid.Bare, password string, done func()) *roomDestroyContext {
 	return &roomDestroyContext{
 		roomID:        v.roomID(),
 		reason:        reason,
 		alternativeID: alternativeID,
 		password:      password,
 		destroy:       v.tryDestroyRoom,
+		onDone:        done,
 		log:           v.log,
 	}
 }
 
 func (dc *roomDestroyContext) destroyRoom() {
-	dc.destroy(dc.reason, dc.alternativeID, dc.password, dc.onDestroySuccess, dc.onDestroyFails)
+	dc.destroy(dc.reason, dc.alternativeID, dc.password, dc.onDestroySuccess, dc.onDestroyFails, dc.onDone)
 }
 
 func (dc *roomDestroyContext) onDestroySuccess() {

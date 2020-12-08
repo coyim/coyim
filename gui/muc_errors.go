@@ -33,6 +33,7 @@ func (a *account) handleMUCErrorEvent(ev events.MUCError) {
 	case events.MUCServiceUnavailable:
 		view.serviceUnavailable()
 	default:
+		a.log.WithField("event", ev).Warn("unsupported muc error event")
 		view.unknownError()
 	}
 }

@@ -24,7 +24,12 @@ func (lo *roomViewLoadingOverlay) initDefaults() {
 
 // onRoomDiscoInfoLoad MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomDiscoInfoLoad() {
-	lo.showWithMessage(i18n.Local("Loading room info...."))
+	lo.showWithMessage(i18n.Local("Loading room info..."))
+}
+
+// onRoomDestroy MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onRoomDestroy() {
+	lo.showWithMessage(i18n.Local("Destroying room..."))
 }
 
 // show MUST be called from the UI thread

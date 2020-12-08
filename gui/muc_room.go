@@ -271,7 +271,7 @@ func (v *roomView) publishDestroyEvent(reason string, alternativeRoomID jid.Bare
 // tryDestroyRoom MUST be called from the UI thread, but please, note that
 // the "onSuccess" and "onError" callbacks will be called from another thread
 func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, password string, onSuccess func(), onError func(error), onDone func()) {
-	v.loadingViewOverlay.showWithMessage(i18n.Local("Destroying room"))
+	v.loadingViewOverlay.onRoomDestroy()
 
 	onSuccessFinal := func() {
 		doInUIThread(func() {

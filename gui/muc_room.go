@@ -32,10 +32,11 @@ type roomView struct {
 	loadingOverlay         gtki.Overlay `gtk-widget:"loadingOverlay"`
 	loadingOverlayBox      gtki.Box     `gtk-widget:"loadingOverlayBox"`
 	loadingOverlayLabel    gtki.Label   `gtk-widget:"loadingOverlayMessage"`
+	discoInfoErrorBar      gtki.InfoBar `gtk-widget:"discoinfo-error-bar"`
 
-	spinner            *spinner
-	notifications      *notifications
-	loadingInfoBar     *roomViewLoadingInfoBar
+	spinner       *spinner
+	notifications *notifications
+
 	warnings           *roomViewWarningsOverlay
 	warningsInfoBar    *roomViewWarningsInfoBar
 	loadingViewOverlay *roomViewLoadingOverlay
@@ -77,12 +78,11 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 
 	view.spinner = newSpinner()
 	view.notifications = u.newNotifications(view.notificationBox)
-	view.loadingInfoBar = view.newRoomViewLoadingInfoBar(view.loadingNotificationBox)
 	view.warnings = view.newRoomViewWarningsOverlay(view.closeNotificationsOverlay)
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar(view.showWarnings, view.removeWarningsInfobar)
 	view.loadingViewOverlay = view.newRoomViewLoadingOverlay(view.loadingOverlay, view.loadingOverlayBox, view.loadingOverlayLabel)
 
-	go view.requestRoomDiscoInfo()
+	view.requestRoomDiscoInfo()
 
 	return view
 }
@@ -93,7 +93,8 @@ func (v *roomView) initBuilderAndSignals() {
 	panicOnDevError(v.builder.bindObjects(v))
 
 	v.builder.ConnectSignals(map[string]interface{}{
-		"on_destroy_window": v.onDestroyWindow,
+		"on_destroy_window":       v.onDestroyWindow,
+		"on_discoinfo_retry_load": v.requestRoomDiscoInfo,
 	})
 }
 
@@ -124,13 +125,14 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 }
 
 func (v *roomView) requestRoomDiscoInfo() {
-	doInUIThread(v.loadingInfoBar.start)
-	v.account.session.RequestRoomDiscoInfo(v.roomID())
+	v.loadingViewOverlay.onRoomDiscoInfoLoad()
+	v.discoInfoErrorBar.Hide()
+	go v.account.session.RequestRoomDiscoInfo(v.roomID())
 }
 
 // roomDiscoInfoReceivedEvent MUST be called from the UI thread
 func (v *roomView) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
-	v.loadingInfoBar.hide()
+	v.loadingViewOverlay.hide()
 
 	v.warnings.clear()
 	v.showRoomWarnings(di)
@@ -139,13 +141,10 @@ func (v *roomView) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 
 // roomConfigRequestTimeoutEvent MUST be called from the UI thread
 func (v *roomView) roomConfigRequestTimeoutEvent() {
+	v.loadingViewOverlay.hide()
 	v.warnings.clear()
 
-	v.loadingInfoBar.error(
-		i18n.Local("An error occurred while loading room information"),
-		i18n.Local("Loading the room information took longer than usual, perhaps the connection to the server was lost. Do you want to try again?."),
-		v.requestRoomDiscoInfo,
-	)
+	v.discoInfoErrorBar.Show()
 }
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {

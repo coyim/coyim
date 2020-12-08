@@ -6,30 +6,43 @@ import (
 )
 
 type roomViewLoadingOverlay struct {
-	overlay gtki.Overlay
-	box     gtki.Box
-	label   gtki.Label
+	overlay     gtki.Overlay
+	box         gtki.Box
+	title       gtki.Label
+	description gtki.Label
 }
 
-func (v *roomView) newRoomViewLoadingOverlay(o gtki.Overlay, b gtki.Box, l gtki.Label) *roomViewLoadingOverlay {
-	lo := &roomViewLoadingOverlay{o, b, l}
+func (v *roomView) newRoomViewLoadingOverlay(o gtki.Overlay, b gtki.Box, t gtki.Label, d gtki.Label) *roomViewLoadingOverlay {
+	lo := &roomViewLoadingOverlay{o, b, t, d}
 	lo.initDefaults()
-
 	return lo
 }
 
 func (lo *roomViewLoadingOverlay) initDefaults() {
-	mucStyles.setRoomLoadingViewOverlayBoxStyle(lo.box)
+	mucStyles.setRoomLoadingViewOverlayTitleStyle(lo.title)
+}
+
+func (lo *roomViewLoadingOverlay) setTransparent() {
+	mucStyles.setRoomLoadingViewOverlayTransparentStyle(lo.box)
+}
+
+func (lo *roomViewLoadingOverlay) setSolid() {
+	mucStyles.setRoomLoadingViewOverlaySolidStyle(lo.box)
 }
 
 // onRoomDiscoInfoLoad MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomDiscoInfoLoad() {
-	lo.showWithMessage(i18n.Local("Loading room info..."))
+	lo.setTitle(i18n.Local("Loading room info..."))
+	lo.setDescription(i18n.Local("Sometimes this can take few minutes, so please wait until it finishes."))
+	lo.setSolid()
+	lo.show()
 }
 
 // onRoomDestroy MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomDestroy() {
-	lo.showWithMessage(i18n.Local("Destroying room..."))
+	lo.setTitle(i18n.Local("Destroying room..."))
+	lo.setTransparent()
+	lo.show()
 }
 
 // show MUST be called from the UI thread
@@ -39,14 +52,27 @@ func (lo *roomViewLoadingOverlay) show() {
 
 // showWithMessage MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) showWithMessage(m string) {
-	lo.label.SetLabel(m)
-	lo.label.Show()
+	lo.setTitle(m)
 	lo.show()
+}
+
+func (lo *roomViewLoadingOverlay) setTitle(t string) {
+	lo.title.SetLabel(t)
+	lo.title.Show()
+}
+
+func (lo *roomViewLoadingOverlay) setDescription(d string) {
+	lo.description.SetLabel(d)
+	lo.description.Show()
 }
 
 // hide MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) hide() {
-	lo.label.SetLabel("")
-	lo.label.Hide()
+	lo.setTitle("")
+	lo.setDescription("")
+
+	lo.title.Hide()
+	lo.description.Hide()
+
 	lo.overlay.Hide()
 }

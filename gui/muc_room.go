@@ -22,17 +22,18 @@ type roomView struct {
 	opened   bool
 	returnTo func()
 
-	window                 gtki.Window  `gtk-widget:"roomWindow"`
-	content                gtki.Box     `gtk-widget:"boxMainView"`
-	messagesOverlay        gtki.Overlay `gtk-widget:"messagesOverlay"`
-	messagesOverlayBox     gtki.Box     `gtk-widget:"messagesOverlayBox"`
-	messagesBox            gtki.Box     `gtk-widget:"messagesBox"`
-	notificationBox        gtki.Box     `gtk-widget:"notificationBox"`
-	loadingNotificationBox gtki.Box     `gtk-widget:"loadingNotificationBox"`
-	loadingOverlay         gtki.Overlay `gtk-widget:"loadingOverlay"`
-	loadingOverlayBox      gtki.Box     `gtk-widget:"loadingOverlayBox"`
-	loadingOverlayLabel    gtki.Label   `gtk-widget:"loadingOverlayMessage"`
-	discoInfoErrorBar      gtki.InfoBar `gtk-widget:"discoinfo-error-bar"`
+	window                    gtki.Window  `gtk-widget:"roomWindow"`
+	content                   gtki.Box     `gtk-widget:"boxMainView"`
+	messagesOverlay           gtki.Overlay `gtk-widget:"messagesOverlay"`
+	messagesOverlayBox        gtki.Box     `gtk-widget:"messagesOverlayBox"`
+	messagesBox               gtki.Box     `gtk-widget:"messagesBox"`
+	notificationBox           gtki.Box     `gtk-widget:"notificationBox"`
+	loadingNotificationBox    gtki.Box     `gtk-widget:"loadingNotificationBox"`
+	loadingOverlay            gtki.Overlay `gtk-widget:"loadingOverlay"`
+	loadingOverlayBox         gtki.Box     `gtk-widget:"loadingOverlayBox"`
+	loadingOverlayTitle       gtki.Label   `gtk-widget:"loadingOverlayTitle"`
+	loadingOverlayDescription gtki.Label   `gtk-widget:"loadingOverlayDescription"`
+	discoInfoErrorBar         gtki.InfoBar `gtk-widget:"discoinfo-error-bar"`
 
 	spinner       *spinner
 	notifications *notifications
@@ -80,7 +81,7 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view.notifications = u.newNotifications(view.notificationBox)
 	view.warnings = view.newRoomViewWarningsOverlay(view.closeNotificationsOverlay)
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar(view.showWarnings, view.removeWarningsInfobar)
-	view.loadingViewOverlay = view.newRoomViewLoadingOverlay(view.loadingOverlay, view.loadingOverlayBox, view.loadingOverlayLabel)
+	view.loadingViewOverlay = view.newRoomViewLoadingOverlay(view.loadingOverlay, view.loadingOverlayBox, view.loadingOverlayTitle, view.loadingOverlayDescription)
 
 	view.requestRoomDiscoInfo()
 

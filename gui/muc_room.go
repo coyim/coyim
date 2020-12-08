@@ -309,7 +309,8 @@ func (v *roomView) switchToMainView() {
 
 func (v *roomView) onJoined() {
 	doInUIThread(func() {
-		v.lobby.hide()
+		v.lobby.destroy()
+		v.content.Remove(v.lobby.content)
 		v.switchToMainView()
 	})
 }

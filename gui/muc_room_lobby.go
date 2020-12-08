@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"errors"
-
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
@@ -12,67 +10,49 @@ import (
 )
 
 type roomViewLobby struct {
-	roomID  jid.Bare
-	account *account
-	log     coylog.Logger
-
-	content          gtki.Box     `gtk-widget:"boxJoinRoomView"`
-	mainBox          gtki.Box     `gtk-widget:"mainContent"`
-	roomNameLabel    gtki.Label   `gtk-widget:"roomNameValue"`
-	nicknameEntry    gtki.Entry   `gtk-widget:"nicknameEntry"`
-	passwordLabel    gtki.Label   `gtk-widget:"passwordLabel"`
-	passwordEntry    gtki.Entry   `gtk-widget:"passwordEntry"`
-	joinButton       gtki.Button  `gtk-widget:"joinButton"`
-	cancelButton     gtki.Button  `gtk-widget:"cancelButton"`
-	spinner          gtki.Spinner `gtk-widget:"spinner"`
-	notificationArea gtki.Box     `gtk-widget:"boxNotificationArea"`
-	warningsArea     gtki.Box     `gtk-widget:"boxWarningsArea"`
-	parent           gtki.Box
-	errorNotif       *errorNotification
-	notification     gtki.InfoBar
-
-	onJoin                  chan bool
-	onJoinError             chan error
-	cancel                  chan bool
-	roomIsPasswordProtected bool
-
-	isReadyToJoinRoom bool
-
+	roomID                jid.Bare
+	account               *account
+	isPasswordProtected   bool
+	isReadyToJoinRoom     bool
 	nicknamesWithConflict *set.Set
+
+	content          gtki.Box    `gtk-widget:"main-content"`
+	roomNameLabel    gtki.Label  `gtk-widget:"room-name-value"`
+	nicknameEntry    gtki.Entry  `gtk-widget:"nickname-entry"`
+	passwordLabel    gtki.Label  `gtk-widget:"password-label"`
+	passwordEntry    gtki.Entry  `gtk-widget:"password-entry"`
+	joinButton       gtki.Button `gtk-widget:"join-button"`
+	cancelButton     gtki.Button `gtk-widget:"cancel-button"`
+	notificationArea gtki.Box    `gtk-widget:"notifications-box"`
+	spinnerBox       gtki.Box    `gtk-widget:"spinner-box"`
+
+	notifications *notifications
+	spinner       *spinner
 
 	// These two methods WILL BE called from the UI thread
 	onSuccess func()
 	onCancel  func()
+
+	log coylog.Logger
 }
 
 func (v *roomView) initRoomLobby() {
-	v.lobby = v.newRoomViewLobby(v.account, v.roomID(), v.content, v.onJoined, v.onJoinCancel)
+	v.lobby = v.newRoomViewLobby(v.account, v.roomID())
+	v.content.Add(v.lobby.content)
 }
 
-func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare, parent gtki.Box, onSuccess, onCancel func()) *roomViewLobby {
+func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby {
 	l := &roomViewLobby{
 		roomID:                roomID,
 		account:               a,
-		parent:                parent,
-		onCancel:              onCancel,
+		onSuccess:             v.onJoined,
+		onCancel:              v.onJoinCancel,
 		nicknamesWithConflict: set.New(),
 		log:                   v.log.WithField("who", "roomViewLobby"),
 	}
 
-	l.onSuccess = func() {
-		if onSuccess != nil {
-			onSuccess()
-		}
-	}
-
-	l.onCancel = func() {
-		if onCancel != nil {
-			onCancel()
-		}
-	}
-
 	l.initBuilder()
-	l.initDefaults()
+	l.initDefaults(v)
 	l.initSubscribers(v)
 
 	return l
@@ -83,20 +63,23 @@ func (l *roomViewLobby) initBuilder() {
 	panicOnDevError(builder.bindObjects(l))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_nickname_changed": l.onNicknameChange,
-		"on_password_changed": l.onPasswordChange,
-		"on_joined_clicked":   l.onJoinClicked,
-		"on_cancel_clicked":   l.onJoinCancel,
+		"on_nickname_changed": l.enableJoinIfConditionsAreMet,
+		"on_password_changed": l.enableJoinIfConditionsAreMet,
+		"on_join":             doOnlyOnceAtATime(l.onJoinRoom),
+		"on_cancel":           l.onCancel,
 	})
 }
 
-func (l *roomViewLobby) initDefaults() {
-	l.errorNotif = newErrorNotification(l.notificationArea)
+func (l *roomViewLobby) initDefaults(v *roomView) {
+	l.spinner = newSpinner()
+	l.spinnerBox.Add(l.spinner.getWidget())
+	l.notifications = v.u.newNotifications(l.notificationArea)
 
 	l.roomNameLabel.SetText(l.roomID.String())
 	l.content.SetHExpand(true)
-	l.parent.Add(l.content)
-	l.content.SetCenterWidget(l.mainBox)
+
+	setFieldVisibility(l.passwordLabel, false)
+	setFieldVisibility(l.passwordEntry, false)
 }
 
 func (l *roomViewLobby) initSubscribers(v *roomView) {
@@ -107,17 +90,17 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 		case occupantSelfJoinedEvent:
 			l.finishJoinRequest()
 		case nicknameConflictEvent:
-			l.joinRequestErrorExtendedEvent(l.roomID, t.nickname, errJoinNicknameConflict)
+			l.nicknameConflictEvent(t.nickname)
 		case registrationRequiredEvent:
-			l.joinRequestErrorExtendedEvent(l.roomID, t.nickname, errJoinOnlyMembers)
+			l.registrationRequiredEvent()
 		case notAuthorizedEvent:
-			l.joinRequestErrorEvent(errJoinNotAuthorized)
+			l.notAuthorizedEvent()
 		case serviceUnavailableEvent:
-			l.joinRequestErrorEvent(errServiceUnavailable)
+			l.serviceUnavailableEvent()
 		case unknownErrorEvent:
-			l.joinRequestErrorEvent(errUnknownError)
+			l.unknownErrorEvent()
 		case occupantForbiddenEvent:
-			l.joinRequestErrorEvent(errOccupantForbidden)
+			l.occupantForbiddenEvent()
 		}
 	})
 }
@@ -127,171 +110,115 @@ func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 	doInUIThread(func() {
 		l.enableJoinIfConditionsAreMet()
 		if di.PasswordProtected {
-			l.roomIsPasswordProtected = true
-			l.passwordLabel.SetVisible(true)
-			l.passwordEntry.SetVisible(true)
+			l.isPasswordProtected = true
+			setFieldVisibility(l.passwordLabel, true)
+			setFieldVisibility(l.passwordEntry, true)
 		}
 	})
 }
 
+func (l *roomViewLobby) finishJoinRequest() {
+	doInUIThread(func() {
+		l.notifications.clearAll()
+		l.onSuccess()
+	})
+}
+
+func (l *roomViewLobby) finishJoinRequestWithError(err error) {
+	l.log.WithError(err).Error("An error occurred while trying to join the room")
+	doInUIThread(func() {
+		l.onJoinFailed(err)
+	})
+}
+
 func (l *roomViewLobby) switchToReturnOnCancel() {
-	l.cancelButton.SetProperty("label", i18n.Local("Return"))
+	setFieldLabel(l.cancelButton, i18n.Local("Return"))
 }
 
 func (l *roomViewLobby) switchToCancel() {
-	l.cancelButton.SetProperty("label", i18n.Local("Cancel"))
+	setFieldLabel(l.cancelButton, i18n.Local("Cancel"))
 }
 
 func (l *roomViewLobby) show() {
 	l.content.Show()
 }
 
-func (l *roomViewLobby) hide() {
-	l.content.Hide()
-}
-
-func (l *roomViewLobby) close() {
-	l.hide()
-	l.parent.Remove(l.content)
-}
-
-func (l *roomViewLobby) onNicknameChange() {
-	l.enableJoinIfConditionsAreMet()
-}
-
-func (l *roomViewLobby) onPasswordChange() {
-	l.enableJoinIfConditionsAreMet()
+func (l *roomViewLobby) destroy() {
+	l.content.Destroy()
 }
 
 func (l *roomViewLobby) nicknameHasContent() bool {
-	nickname, _ := l.nicknameEntry.GetText()
-	return nickname != ""
+	return getEntryText(l.nicknameEntry) != ""
 }
 
 func (l *roomViewLobby) passwordHasContent() bool {
-	password, _ := l.passwordEntry.GetText()
-	return password != ""
+	return getEntryText(l.passwordEntry) != ""
 }
 
 func (l *roomViewLobby) isNotNicknameInConflictList() bool {
-	nickname, _ := l.nicknameEntry.GetText()
-	if l.nicknamesWithConflict.Has(nickname) {
-		l.notifyOnError(i18n.Local("That nickname is already being used."))
+	if l.nicknamesWithConflict.Has(getEntryText(l.nicknameEntry)) {
+		l.notifications.error(i18n.Local("That nickname is already being used."))
 		return false
 	}
 	return true
 }
 
 func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
-	l.clearErrors()
+	l.notifications.clearErrors()
+	setFieldSensitive(l.joinButton, l.checkJoinConditions())
+}
 
+func (l *roomViewLobby) checkJoinConditions() bool {
 	conditionsAreValid := l.isReadyToJoinRoom && l.nicknameHasContent() && l.isNotNicknameInConflictList()
-	if l.roomIsPasswordProtected {
+	if l.isPasswordProtected {
 		conditionsAreValid = conditionsAreValid && l.passwordHasContent()
 	}
-
-	l.joinButton.SetSensitive(conditionsAreValid)
+	return conditionsAreValid
 }
 
-func (l *roomViewLobby) disableFields() {
-	l.nicknameEntry.SetSensitive(false)
+func (l *roomViewLobby) disableFieldsAndShowSpinner() {
+	disableField(l.nicknameEntry)
+	disableField(l.joinButton)
+	l.spinner.show()
 }
 
-func (l *roomViewLobby) enableFields() {
-	l.nicknameEntry.SetSensitive(true)
+func (l *roomViewLobby) enableFieldsAndHideSpinner() {
+	enableField(l.nicknameEntry)
+	enableField(l.joinButton)
+	l.spinner.hide()
 }
 
-func (l *roomViewLobby) showSpinner() {
-	l.spinner.Start()
-	l.spinner.Show()
+func (l *roomViewLobby) onJoinRoom(done func()) {
+	nickname := getEntryText(l.nicknameEntry)
+	password := getEntryText(l.passwordEntry)
+
+	go l.sendJoinRoomRequest(nickname, password, done)
 }
 
-func (l *roomViewLobby) hideSpinner() {
-	l.spinner.Stop()
-	l.spinner.Hide()
-}
+func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string, done func()) {
+	defer done()
 
-func (l *roomViewLobby) onJoinClicked() {
-	l.disableFields()
-	l.showSpinner()
-	l.joinButton.SetSensitive(false)
-
-	nickname, _ := l.nicknameEntry.GetText()
-	password, _ := l.passwordEntry.GetText()
-
-	l.onJoin = make(chan bool)
-	l.onJoinError = make(chan error)
-	l.cancel = make(chan bool)
-
-	go l.sendJoinRoomRequest(nickname, password)
-	go l.whenJoinRequestHasBeenResolved(nickname)
-}
-
-var (
-	errJoinRequestFailed    = errors.New("the request to join the room has failed")
-	errJoinNoConnection     = errors.New("join request failed because maybe no connection available")
-	errJoinNicknameConflict = errors.New("join failed because the nickname is being used")
-	errJoinOnlyMembers      = errors.New("join failed because only registered members are allowed")
-	errJoinNotAuthorized    = errors.New("join failed because doesn't have authorization")
-	errServiceUnavailable   = errors.New("join failed because the service is unavailable")
-	errUnknownError         = errors.New("join failed because an unknown error occurred")
-	errOccupantForbidden    = errors.New("join failed because the occupant was banned")
-)
-
-type mucRoomLobbyErr struct {
-	room     jid.Bare
-	nickname string
-	errType  error
-}
-
-func (e *mucRoomLobbyErr) Error() string {
-	return e.errType.Error()
-}
-
-func newMUCRoomLobbyErr(roomID jid.Bare, nickname string, errType error) error {
-	return &mucRoomLobbyErr{
-		room:     roomID,
-		nickname: nickname,
-		errType:  errType,
+	err := l.joinRoom(nickname, password)
+	if err != nil {
+		l.finishJoinRequestWithError(err)
+		return
 	}
+
+	l.disableFieldsAndShowSpinner()
 }
 
 func (l *roomViewLobby) joinRoom(nickname, password string) error {
-	return l.account.session.JoinRoom(l.roomID, nickname, password)
-}
-
-func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string) {
-	err := l.joinRoom(nickname, password)
-	if err != nil {
-		l.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room.")
-		l.finishJoinRequestWithError(errJoinNoConnection)
-	}
-}
-
-func (l *roomViewLobby) afterJoinRequestFinished() {
-	l.cancel = nil
-}
-
-func (l *roomViewLobby) whenJoinRequestHasBeenResolved(nickname string) {
-	select {
-	case <-l.onJoin:
-		doInUIThread(func() {
-			l.clearErrors()
-			l.onSuccess()
-		})
-	case err := <-l.onJoinError:
-		l.log.WithField("nickname", nickname).WithError(err).Error("An error occurred while trying to join the room")
-		doInUIThread(func() {
-			l.onJoinFailed(err)
-		})
-	case <-l.cancel:
+	resource := jid.NewResource(nickname)
+	if !resource.Valid() {
+		return newRoomLobbyInvalidNicknameError()
 	}
 
-	l.afterJoinRequestFinished()
+	return l.account.session.JoinRoom(l.roomID.WithResource(resource), password)
 }
 
 func (l *roomViewLobby) onJoinFailed(err error) {
-	shouldEnableJoin := true
+	l.enableFieldsAndHideSpinner()
+	shouldEnableJoin := l.checkJoinConditions()
 
 	userMessage := i18n.Local("An unknown error occurred while trying to join the room, please check your connection or try again.")
 	if err, ok := err.(*mucRoomLobbyErr); ok {
@@ -305,63 +232,7 @@ func (l *roomViewLobby) onJoinFailed(err error) {
 		}
 	}
 
-	l.notifyOnError(userMessage)
+	l.notifications.error(userMessage)
 
-	l.enableFields()
-	l.hideSpinner()
-	l.joinButton.SetSensitive(shouldEnableJoin)
-}
-
-func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
-	switch err.errType {
-	case errJoinNicknameConflict:
-		return i18n.Local("Can't join the room using that nickname because it's already being used")
-	case errJoinOnlyMembers:
-		return i18n.Local("Sorry, this room only allows registered members")
-	case errJoinNotAuthorized:
-		return i18n.Local("Invalid password")
-	case errServiceUnavailable:
-		return i18n.Local("Can't join the room because the maximun number of occupants has been reached")
-	case errUnknownError:
-		return i18n.Local("An unknown error occurred while trying to join the room, please try again later")
-	case errOccupantForbidden:
-		return i18n.Local("Can't join the room because you are banned")
-	default:
-		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists")
-	}
-}
-
-func (l *roomViewLobby) onJoinCancel() {
-	if l.cancel != nil {
-		l.cancel <- true
-	}
-
-	l.onCancel()
-}
-
-func (l *roomViewLobby) clearErrors() {
-	l.errorNotif.Hide()
-}
-
-func (l *roomViewLobby) notifyOnError(err string) {
-	if l.notification != nil {
-		l.notificationArea.Remove(l.notification)
-	}
-	l.errorNotif.ShowMessage(err)
-}
-
-func (l *roomViewLobby) finishJoinRequest() {
-	l.onJoin <- true
-}
-
-func (l *roomViewLobby) finishJoinRequestWithError(err error) {
-	l.onJoinError <- err
-}
-
-func (l *roomViewLobby) joinRequestErrorEvent(err error) {
-	l.joinRequestErrorExtendedEvent(nil, "", err)
-}
-
-func (l *roomViewLobby) joinRequestErrorExtendedEvent(roomID jid.Bare, nickname string, err error) {
-	l.finishJoinRequestWithError(newMUCRoomLobbyErr(roomID, nickname, err))
+	setFieldSensitive(l.joinButton, shouldEnableJoin)
 }

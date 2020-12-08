@@ -80,7 +80,7 @@ type Session interface {
 	GetRooms(jid.Domain, string) (<-chan *muc.RoomListing, <-chan *muc.ServiceListing, <-chan error)
 	JoinRoom(jid.WithResource, string) error
 	CreateRoom(jid.Bare) <-chan error
-	ReserveRoom(jid.Bare) (<-chan data.Stanza, <-chan error)
+	ReserveRoom(jid.Bare) (<-chan *data.MUCRoomConfiguration, <-chan error)
 	GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error, func())
 	GetRoomListing(jid.Bare, chan<- *muc.RoomListing)
 	RequestRoomDiscoInfo(jid.Bare)

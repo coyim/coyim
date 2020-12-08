@@ -118,7 +118,7 @@ func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(err
 	}()
 }
 
-func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(data.Stanza), onError func(error)) {
+func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(*data.MUCRoomConfiguration), onError func(error)) {
 	fc, ec := a.session.ReserveRoom(roomID)
 	go func() {
 		select {
@@ -159,8 +159,8 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 		select {
 		case <-sc:
 			if v.configureRoom {
-				ca.reserveRoom(roomID, func(s data.Stanza) {
-					v.onReserveRoomFinished(ca, roomID, s)
+				ca.reserveRoom(roomID, func(rc *data.MUCRoomConfiguration) {
+					v.onReserveRoomFinished(ca, roomID, rc)
 				}, func(err error) {
 					v.log(ca, roomID).WithError(err).Error("Something went wrong while trying to create the room")
 					errors <- errCreateRoomFailed
@@ -181,11 +181,11 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 	}()
 }
 
-func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, form data.Stanza) {
+func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, rc *data.MUCRoomConfiguration) {
 	doInUIThread(func() {
 		v.dialog.Destroy()
-		rc := newRoomConfigAssistant()
-		rc.show()
+		rca := newRoomConfigAssistant()
+		rca.show()
 	})
 }
 

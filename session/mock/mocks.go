@@ -229,7 +229,7 @@ func (*SessionMock) CreateRoom(jid.Bare) <-chan error {
 }
 
 // ReserveRoom is the implementation for session interface
-func (*SessionMock) ReserveRoom(jid.Bare) (<-chan data.Stanza, <-chan error) {
+func (*SessionMock) ReserveRoom(jid.Bare) (<-chan *data.MUCRoomConfiguration, <-chan error) {
 	return nil, nil
 }
 

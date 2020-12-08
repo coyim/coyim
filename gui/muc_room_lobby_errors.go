@@ -15,7 +15,7 @@ var (
 	errJoinNotAuthorized    = errors.New("join failed because doesn't have authorization")
 	errServiceUnavailable   = errors.New("join failed because the service is unavailable")
 	errUnknownError         = errors.New("join failed because an unknown error occurred")
-	errOccupantForbidden    = errors.New("join failed because the occupant was banned")
+	errOccupantForbidden    = errors.New("join failed because the occupant is banned")
 )
 
 type mucRoomLobbyErr struct {

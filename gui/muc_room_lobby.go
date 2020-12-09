@@ -169,11 +169,8 @@ func (l *roomViewLobby) enableJoinIfConditionsAreMet() {
 }
 
 func (l *roomViewLobby) checkJoinConditions() bool {
-	conditionsAreValid := l.isReadyToJoinRoom && l.nicknameHasContent() && l.isNotNicknameInConflictList()
-	if l.isPasswordProtected {
-		conditionsAreValid = conditionsAreValid && l.passwordHasContent()
-	}
-	return conditionsAreValid
+	return l.isReadyToJoinRoom && l.nicknameHasContent() && l.isNotNicknameInConflictList() &&
+		(!l.isPasswordProtected || l.passwordHasContent())
 }
 
 func (l *roomViewLobby) disableFieldsAndShowSpinner() {

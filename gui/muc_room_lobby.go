@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -48,7 +49,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby 
 		onSuccess:             v.onJoined,
 		onCancel:              v.onJoinCancel,
 		nicknamesWithConflict: set.New(),
-		log: v.log.WithField("where", "roomViewLobby"),
+		log:                   v.log.WithField("where", "roomViewLobby"),
 	}
 
 	l.initBuilder()
@@ -205,12 +206,11 @@ func (l *roomViewLobby) sendJoinRoomRequest(nickname, password string, done func
 }
 
 func (l *roomViewLobby) joinRoom(nickname, password string) error {
-	resource := jid.NewResource(nickname)
-	if !resource.Valid() {
+	err := l.account.session.JoinRoom(l.roomID, nickname, password)
+	if err == session.ErrMUCJoinRoomInvalidNickname {
 		return newRoomLobbyInvalidNicknameError()
 	}
-
-	return l.account.session.JoinRoom(l.roomID.WithResource(resource), password)
+	return err
 }
 
 func (l *roomViewLobby) onJoinFailed(err error) {

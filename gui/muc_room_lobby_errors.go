@@ -81,7 +81,7 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	case errUnknownError:
 		return i18n.Local("An unknown error occurred while trying to join the room, please try again later")
 	case errOccupantForbidden:
-		return i18n.Local("Can't join the room because you are banned")
+		return i18n.Local("Can't join the room because you are currently banned")
 	default:
 		return i18n.Local("An error occurred while trying to join the room, please check your connection or make sure the room exists")
 	}

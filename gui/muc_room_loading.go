@@ -32,8 +32,8 @@ func (lo *roomViewLoadingOverlay) setSolid() {
 
 // onRoomDiscoInfoLoad MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomDiscoInfoLoad() {
-	lo.setTitle(i18n.Local("Loading room info..."))
-	lo.setDescription(i18n.Local("Sometimes this can take few minutes, so please wait until it finishes."))
+	lo.setTitle(i18n.Local("Loading room information"))
+	lo.setDescription(i18n.Local("This will only take a few moments."))
 	lo.setSolid()
 	lo.show()
 }

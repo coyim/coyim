@@ -33,7 +33,7 @@ type roomView struct {
 	loadingOverlayBox         gtki.Box     `gtk-widget:"loadingOverlayBox"`
 	loadingOverlayTitle       gtki.Label   `gtk-widget:"loadingOverlayTitle"`
 	loadingOverlayDescription gtki.Label   `gtk-widget:"loadingOverlayDescription"`
-	discoInfoErrorBar         gtki.InfoBar `gtk-widget:"discoinfo-error-bar"`
+	roomInfoErrorBar          gtki.InfoBar `gtk-widget:"room-info-error-bar"`
 
 	spinner       *spinner
 	notifications *notifications
@@ -95,7 +95,7 @@ func (v *roomView) initBuilderAndSignals() {
 
 	v.builder.ConnectSignals(map[string]interface{}{
 		"on_destroy_window":       v.onDestroyWindow,
-		"on_discoinfo_retry_load": v.requestRoomDiscoInfo,
+		"on_room_info_load_retry": v.requestRoomDiscoInfo,
 	})
 }
 
@@ -127,7 +127,7 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 
 func (v *roomView) requestRoomDiscoInfo() {
 	v.loadingViewOverlay.onRoomDiscoInfoLoad()
-	v.discoInfoErrorBar.Hide()
+	v.roomInfoErrorBar.Hide()
 	go v.account.session.RequestRoomDiscoInfo(v.roomID())
 }
 
@@ -145,7 +145,7 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 	v.loadingViewOverlay.hide()
 	v.warnings.clear()
 
-	v.discoInfoErrorBar.Show()
+	v.roomInfoErrorBar.Show()
 }
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {

@@ -14,7 +14,7 @@ func (m *mucManager) requestRoomDiscoInfo(roomID jid.Bare) {
 	select {
 	case rl := <-result:
 		m.onRoomDiscoInfoReceived(roomID, rl)
-	case <-time.After(time.Minute * 5):
+	case <-time.After(time.Second * 10):
 		m.roomDiscoInfoRequestTimeout(roomID)
 	}
 }

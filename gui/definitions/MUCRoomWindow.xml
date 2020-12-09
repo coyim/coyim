@@ -26,18 +26,20 @@
             <child>
               <object class="GtkBox" id="loadingNotificationBox">
                 <property name="visible">True</property>
+                <property name="border_width">0</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkInfoBar" id="discoinfo-error-bar">
+                    <property name="border_width">0</property>
                     <property name="spacing">6</property>
                     <child internal-child="action_area">
                       <object class="GtkButtonBox">
+                        <property name="border_width">12</property>
                         <property name="spacing">6</property>
                         <property name="layout_style">start</property>
                         <child>
                           <object class="GtkButton">
                             <property name="label" translatable="yes">Yes, try again</property>
-                            <property name="visible">True</property>
                             <property name="receives_default">True</property>
                             <property name="use_underline">True</property>
                             <signal name="clicked" handler="on_discoinfo_retry_load" swapped="no"/>
@@ -58,6 +60,7 @@
                     <child internal-child="content_area">
                       <object class="GtkBox">
                         <property name="valign">center</property>
+                        <property name="border_width">12</property>
                         <property name="spacing">16</property>
                         <child>
                           <object class="GtkBox">
@@ -67,20 +70,7 @@
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">An error occurred while loading room information</property>
-                                <property name="wrap">True</property>
-                                <property name="xalign">0</property>
-                                <property name="yalign">0</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
+                                
                                 <property name="label" translatable="yes">Loading the room information took longer than usual, perhaps the connection to the server was lost. Do you want to try again?</property>
                                 <property name="wrap">True</property>
                                 <property name="xalign">0</property>
@@ -180,16 +170,30 @@
                     <property name="visible">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
+                    <property name="spacing">12</property>
                     <child>
-                      <object class="GtkSpinner">
-                        <property name="width_request">60</property>
-                        <property name="height_request">60</property>
+                      <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="halign">center</property>
                         <property name="valign">center</property>
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
-                        <property name="active">True</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkSpinner">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <property name="active">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -200,38 +204,42 @@
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
+                        <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">3</property>
                         <child>
                           <object class="GtkLabel" id="loadingOverlayTitle">
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkLabel" id="loadingOverlayDescription">
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
                             <property name="wrap">True</property>
-                            <property name="width_chars">60</property>
-                            <property name="max_width_chars">60</property>
+                            <property name="max_width_chars">40</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">1</property>
                       </packing>
                     </child>

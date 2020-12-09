@@ -12,9 +12,16 @@ type roomViewLoadingOverlay struct {
 	description gtki.Label
 }
 
-func (v *roomView) newRoomViewLoadingOverlay(o gtki.Overlay, b gtki.Box, t gtki.Label, d gtki.Label) *roomViewLoadingOverlay {
-	lo := &roomViewLoadingOverlay{o, b, t, d}
+func (v *roomView) newRoomViewLoadingOverlay() *roomViewLoadingOverlay {
+	lo := &roomViewLoadingOverlay{
+		overlay:     v.loadingOverlay,
+		box:         v.loadingOverlayBox,
+		title:       v.loadingOverlayTitle,
+		description: v.loadingOverlayDescription,
+	}
+
 	lo.initDefaults()
+
 	return lo
 }
 

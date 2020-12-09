@@ -31,15 +31,15 @@ type roomViewWarningsInfoBar struct {
 	infoBar gtki.InfoBar `gtk-widget:"bar"`
 }
 
-func (v *roomView) newRoomViewWarningsInfoBar(onShowWarnings func(), onClose func()) *roomViewWarningsInfoBar {
+func (v *roomView) newRoomViewWarningsInfoBar() *roomViewWarningsInfoBar {
 	ib := &roomViewWarningsInfoBar{}
 
 	builder := newBuilder("MUCRoomWarningsInfoBar")
 	panicOnDevError(builder.bindObjects(ib))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_show_warnings": onShowWarnings,
-		"on_close":         onClose,
+		"on_show_warnings": v.showWarnings,
+		"on_close":         v.removeWarningsInfobar,
 	})
 
 	return ib
@@ -63,13 +63,9 @@ type roomViewWarningsOverlay struct {
 	revealer gtki.Revealer `gtk-widget:"revealer"`
 }
 
-func (v *roomView) newRoomViewWarningsOverlay(onClose func()) *roomViewWarningsOverlay {
+func (v *roomView) newRoomViewWarningsOverlay() *roomViewWarningsOverlay {
 	o := &roomViewWarningsOverlay{
-		onClose: func() {
-			if onClose != nil {
-				onClose()
-			}
-		},
+		onClose: v.closeNotificationsOverlay,
 	}
 
 	builder := newBuilder("MUCRoomWarningsOverlay")

@@ -79,9 +79,9 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 
 	view.spinner = newSpinner()
 	view.notifications = u.newNotifications(view.notificationBox)
-	view.warnings = view.newRoomViewWarningsOverlay(view.closeNotificationsOverlay)
-	view.warningsInfoBar = view.newRoomViewWarningsInfoBar(view.showWarnings, view.removeWarningsInfobar)
-	view.loadingViewOverlay = view.newRoomViewLoadingOverlay(view.loadingOverlay, view.loadingOverlayBox, view.loadingOverlayTitle, view.loadingOverlayDescription)
+	view.warnings = view.newRoomViewWarningsOverlay()
+	view.warningsInfoBar = view.newRoomViewWarningsInfoBar()
+	view.loadingViewOverlay = view.newRoomViewLoadingOverlay()
 
 	view.requestRoomDiscoInfo()
 

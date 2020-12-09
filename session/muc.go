@@ -205,17 +205,6 @@ func isMUCPresence(stanza *xmppData.ClientPresence) bool {
 	return stanza.MUC != nil
 }
 
-func isMUCErrorPresence(e *xmppData.StanzaError) bool {
-	return (e != nil) && (e.MUCNotAuthorized != nil ||
-		e.MUCForbidden != nil ||
-		e.MUCItemNotFound != nil ||
-		e.MUCNotAllowed != nil ||
-		e.MUCNotAcceptable != nil ||
-		e.MUCRegistrationRequired != nil ||
-		e.MUCConflict != nil ||
-		e.MUCServiceUnavailable != nil)
-}
-
 func isMUCUserPresence(stanza *xmppData.ClientPresence) bool {
 	return stanza.MUCUser != nil
 }

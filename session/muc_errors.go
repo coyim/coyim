@@ -3,6 +3,7 @@ package session
 import (
 	"github.com/coyim/coyim/session/events"
 	"github.com/coyim/coyim/xmpp/data"
+	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
@@ -21,6 +22,17 @@ func (m *mucManager) publishMUCMessageError(roomID jid.Bare, e *data.StanzaError
 	ev.Room = roomID
 
 	m.publishEvent(ev)
+}
+
+func isMUCErrorPresence(e *xmppData.StanzaError) bool {
+	return (e != nil) && (e.MUCNotAuthorized != nil ||
+		e.MUCForbidden != nil ||
+		e.MUCItemNotFound != nil ||
+		e.MUCNotAllowed != nil ||
+		e.MUCNotAcceptable != nil ||
+		e.MUCRegistrationRequired != nil ||
+		e.MUCConflict != nil ||
+		e.MUCServiceUnavailable != nil)
 }
 
 func getEventErrorTypeBasedOnMessageError(e *data.StanzaError) events.MUCErrorType {

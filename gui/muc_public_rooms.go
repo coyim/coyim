@@ -150,7 +150,7 @@ func (prv *mucPublicRoomsView) log() coylog.Logger {
 		l = prv.currentAccount.log
 	}
 
-	l.WithField("who", "mucPublilcRoomsView")
+	l.WithField("where", "mucPublilcRoomsView")
 
 	return l
 }

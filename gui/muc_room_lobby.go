@@ -48,7 +48,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby 
 		onSuccess:             v.onJoined,
 		onCancel:              v.onJoinCancel,
 		nicknamesWithConflict: set.New(),
-		log:                   v.log.WithField("who", "roomViewLobby"),
+		log: v.log.WithField("where", "roomViewLobby"),
 	}
 
 	l.initBuilder()

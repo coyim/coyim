@@ -116,7 +116,7 @@ type notifications struct {
 func (u *gtkUI) newNotifications(box gtki.Box) *notifications {
 	n := &notifications{
 		box: box,
-		log: u.log.WithField("who", "notifications"),
+		log: u.log.WithField("where", "notifications"),
 	}
 
 	return n

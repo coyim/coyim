@@ -157,7 +157,7 @@ func (v *mucJoinRoomView) log() coylog.Logger {
 		l = ca.log
 	}
 
-	l.WithField("who", "mucJoinRoomView")
+	l.WithField("where", "mucJoinRoomView")
 
 	return l
 }

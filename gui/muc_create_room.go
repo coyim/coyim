@@ -143,7 +143,7 @@ func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 		l.WithField("room", roomID)
 	}
 
-	l.WithField("who", "mucCreateRoomView")
+	l.WithField("where", "mucCreateRoomView")
 
 	return l
 }

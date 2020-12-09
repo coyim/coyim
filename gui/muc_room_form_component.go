@@ -114,7 +114,7 @@ func (f *mucRoomFormComponent) hasNoErrorsReported() bool {
 	return f.accountsComponent.hasAccounts()
 }
 
-func (f *mucRoomFormComponent) validateWithErrorNotification() bool {
+func (f *mucRoomFormComponent) validate() bool {
 	f.errorNotifications.clearErrors()
 
 	local := f.currentRoomName()

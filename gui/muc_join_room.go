@@ -179,7 +179,7 @@ func (v *mucJoinRoomView) validateFieldsAndGetBareIfOk() (jid.Bare, bool) {
 }
 
 func (v *mucJoinRoomView) tryJoinRoom(done func()) {
-	if !v.roomFormComponent.validateWithErrorNotification() {
+	if !v.roomFormComponent.validate() {
 		done()
 		return
 	}

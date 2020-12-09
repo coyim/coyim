@@ -176,7 +176,7 @@ func (f *mucCreateRoomViewForm) onCreateOptionsChange(autoJoin, configRoom bool)
 }
 
 func (f *mucCreateRoomViewForm) onCreateRoom() {
-	if f.roomFormComponent.validateWithErrorNotification() {
+	if f.roomFormComponent.validate() {
 		f.beforeCreatingTheRoom()
 		go f.createRoom(f.roomFormComponent.currentAccount(), f.roomFormComponent.currentRoomID())
 	}

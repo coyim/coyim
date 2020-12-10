@@ -1,5 +1,7 @@
 package data
 
+import "github.com/coyim/coyim/xmpp/jid"
+
 // RoomConfigType is used to represent a room configuration field
 type RoomConfigType int
 
@@ -45,7 +47,7 @@ type RoomConfig struct {
 
 	// muc#roomconfig_allowpm
 	// Roles that May Send Private Messages
-	AllowPrivateMessages bool
+	AllowPrivateMessages []Role
 
 	// muc#roomconfig_allowinvites
 	// Whether to Allow Occupants to Invite Others
@@ -61,7 +63,7 @@ type RoomConfig struct {
 
 	// muc#roomconfig_getmemberlist
 	// Roles and Affiliations that May Retrieve Member List
-	RetrieveMembersList string
+	RetrieveMembersList []string
 
 	// muc#roomconfig_lang
 	// Natural Language for Room Discussions
@@ -93,7 +95,7 @@ type RoomConfig struct {
 
 	// muc#roomconfig_presencebroadcast
 	// Roles for which Presence is Broadcasted
-	PresenceBroadcast string
+	PresenceBroadcast []string
 
 	// muc#roomconfig_publicroom
 	// Whether to Allow Public Searching for Room
@@ -101,7 +103,7 @@ type RoomConfig struct {
 
 	// muc#roomconfig_roomadmins
 	// Full List of Room Admins
-	Admins string
+	Admins []jid.Any
 
 	// muc#roomconfig_roomdesc
 	// Short Description of Room
@@ -113,7 +115,7 @@ type RoomConfig struct {
 
 	// muc#roomconfig_roomowners
 	// Full List of Room Owners
-	Owners string
+	Owners []jid.Any
 
 	// muc#roomconfig_roomsecret
 	// The Room Password
@@ -121,5 +123,5 @@ type RoomConfig struct {
 
 	// muc#roomconfig_whois
 	// Affiliations that May Discover Real JIDs of Occupants
-	Whois string
+	Whois []string
 }

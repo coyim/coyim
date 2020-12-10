@@ -1,19 +1,41 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type assistantStep int
+
+const (
+	info assistantStep = iota
+	admission
+	permissions
+	occupants
+	otherConfiguration
+	summary
+)
+
+type assitantFields map[string]bool
+
 type roomConfigAssistant struct {
+	form *muc.RoomConfigForm
+
 	assistant     gtki.Assistant `gtk-widget:"room-config-assistant"`
 	configInfoBox gtki.Box       `gtk-widget:"room-config-info"`
+
+	log coylog.Logger
 }
 
-func newRoomConfigAssistant() *roomConfigAssistant {
-	rc := &roomConfigAssistant{}
+func newRoomConfigAssistant(form *muc.RoomConfigForm) *roomConfigAssistant {
+	rc := &roomConfigAssistant{
+		form: form,
+	}
 
 	rc.initBuilder()
 	rc.initDefaults()
+
 	return rc
 }
 
@@ -28,8 +50,8 @@ func (rc *roomConfigAssistant) initBuilder() {
 }
 
 func (rc *roomConfigAssistant) initDefaults() {
-	ri := rc.newRoomConfigInfo()
-	rc.configInfoBox.Add(ri.content)
+	roomInfo := rc.newRoomConfigInfo(rc.form)
+	rc.configInfoBox.Add(roomInfo.content)
 }
 
 func (rc *roomConfigAssistant) onCancel() {

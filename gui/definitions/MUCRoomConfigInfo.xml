@@ -1,12 +1,13 @@
 <interface>
   <object class="GtkGrid" id="room-config-info-content">
-    <property name="visible">True</property>
+    <property name="visible">True</property>    
     <property name="margin_left">10</property>
     <property name="margin_right">10</property>
     <property name="margin_start">10</property>
     <property name="margin_end">10</property>
     <property name="margin_top">15</property>
     <property name="margin_bottom">10</property>
+    <property name="orientation">vertical</property>
     <property name="row_spacing">12</property>
     <property name="column_spacing">6</property>
     <child>
@@ -19,7 +20,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="room-description">
+      <object class="GtkLabel" id="room-instructions">
         <property name="visible">True</property>
       </object>
       <packing>
@@ -28,11 +29,10 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="title-box">
+      <object class="GtkBox" id="room-name-box">
         <child>
           <object class="GtkBox">
-            <property name="width_request">140</property>
-            <property name="visible">True</property>
+            <property name="width_request">140</property>        
             <property name="halign">start</property>
             <property name="orientation">vertical</property>
             <child>
@@ -59,11 +59,11 @@
         </child>
         <child>
           <object class="GtkBox">
-            <property name="visible">True</property>
+            <property name="visible">True</property>           
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkEntry" id="roomname">
-                <property name="visible">True</property>
+                <property name="visible">True</property>            
                 <property name="hexpand">True</property>
               </object>
               <packing>
@@ -74,7 +74,7 @@
             </child>
             <child>
               <object class="GtkLabel">
-                <property name="visible">True</property>
+                <property name="visible">True</property>               
                 <property name="label" translatable="yes">Natural-Language Room Name</property>
                 <property name="xalign">0</property>
                 <property name="yalign">0</property>
@@ -100,15 +100,15 @@
     </child>
     <child>
       <object class="GtkBox" id="description-box">
-        <property name="visible">True</property>
+        <property name="visible">True</property>     
         <child>
           <object class="GtkBox">
             <property name="width_request">140</property>
-            <property name="visible">True</property>
+            <property name="visible">True</property>       
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkLabel">
-                <property name="visible">True</property>
+                <property name="visible">True</property>             
                 <property name="halign">end</property>
                 <property name="valign">start</property>
                 <property name="margin_end">12</property>
@@ -130,16 +130,16 @@
         </child>
         <child>
           <object class="GtkBox">
-            <property name="visible">True</property>
+            <property name="visible">True</property>           
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
               <object class="GtkScrolledWindow">
-                <property name="visible">True</property>
+                <property name="visible">True</property>              
                 <property name="shadow_type">in</property>
                 <child>
                   <object class="GtkTextView" id="roomdesc">
-                    <property name="visible">True</property>
+                    <property name="visible">True</property>        
                     <property name="hexpand">True</property>
                   </object>
                 </child>
@@ -152,7 +152,7 @@
             </child>
             <child>
               <object class="GtkLabel">
-                <property name="visible">True</property>
+                <property name="visible">True</property>            
                 <property name="label" translatable="yes">Short Description of Room</property>
                 <property name="xalign">0</property>
                 <property name="yalign">0</property>
@@ -178,11 +178,11 @@
     </child>
     <child>
       <object class="GtkBox" id="language-box">
-        <property name="visible">True</property>
+        <property name="visible">True</property>      
         <child>
           <object class="GtkBox">
             <property name="width_request">140</property>
-            <property name="visible">True</property>
+            <property name="visible">True</property>            
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkLabel">
@@ -208,7 +208,7 @@
         </child>
         <child>
           <object class="GtkBox">
-            <property name="visible">True</property>
+            <property name="visible">True</property>        
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
@@ -250,7 +250,7 @@
     </child>
     <child>
       <object class="GtkBox" id="persistent-box">
-        <property name="visible">True</property>
+        <property name="visible">True</property>  
         <child>
           <object class="GtkBox">
             <property name="width_request">140</property>
@@ -282,14 +282,14 @@
         </child>
         <child>
           <object class="GtkBox">
-            <property name="visible">True</property>
+            <property name="visible">True</property>  
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
-              <object class="GtkSwitch" id="persistentroom">
+              <object class="GtkCheckButton" id="persistentroom">
                 <property name="visible">True</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
+                <property name="receives_default">False</property>
+                <property name="draw_indicator">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -358,10 +358,10 @@
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
-              <object class="GtkSwitch">
+              <object class="GtkCheckButton" id="publicroom">
                 <property name="visible">True</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
+                <property name="receives_default">False</property>
+                <property name="draw_indicator">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -370,7 +370,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="publicroom">
+              <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes">Whether to Allow Public Searching for Room</property>

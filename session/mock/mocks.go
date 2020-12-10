@@ -223,13 +223,13 @@ func (s *SessionMock) JoinRoom(jid.Bare, string, string) error {
 	return nil
 }
 
-// CreateRoom is the implementation for session interface
-func (*SessionMock) CreateRoom(jid.Bare) <-chan error {
+// CreateInstantRoom is the implementation for session interface
+func (*SessionMock) CreateInstantRoom(jid.Bare) <-chan error {
 	return nil
 }
 
-// ReserveRoom is the implementation for session interface
-func (*SessionMock) ReserveRoom(jid.Bare) (<-chan *data.MUCRoomConfiguration, <-chan error) {
+// CreateReservedRoom is the implementation for session interface
+func (*SessionMock) CreateReservedRoom(jid.Bare) (<-chan *muc.RoomConfigForm, <-chan error) {
 	return nil, nil
 }
 

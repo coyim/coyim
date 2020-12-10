@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/session/muc"
 
-	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -107,7 +107,7 @@ func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, resu
 }
 
 func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(error)) {
-	result := a.session.CreateRoom(roomID)
+	result := a.session.CreateInstantRoom(roomID)
 	go func() {
 		err := <-result
 		if err != nil {
@@ -118,8 +118,8 @@ func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(err
 	}()
 }
 
-func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(*data.MUCRoomConfiguration), onError func(error)) {
-	fc, ec := a.session.ReserveRoom(roomID)
+func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(*muc.RoomConfigForm), onError func(error)) {
+	fc, ec := a.session.CreateReservedRoom(roomID)
 	go func() {
 		select {
 		case err := <-ec:
@@ -159,9 +159,7 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 		select {
 		case <-sc:
 			if v.configureRoom {
-				ca.reserveRoom(roomID, func(rc *data.MUCRoomConfiguration) {
-					v.onReserveRoomFinished(ca, roomID, rc)
-				}, func(err error) {
+				ca.reserveRoom(roomID, v.onReserveRoomFinished, func(err error) {
 					v.log(ca, roomID).WithError(err).Error("Something went wrong while trying to create the room")
 					errors <- errCreateRoomFailed
 				})
@@ -181,10 +179,10 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 	}()
 }
 
-func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, rc *data.MUCRoomConfiguration) {
+func (v *mucCreateRoomView) onReserveRoomFinished(cf *muc.RoomConfigForm) {
 	doInUIThread(func() {
 		v.dialog.Destroy()
-		rca := newRoomConfigAssistant()
+		rca := newRoomConfigAssistant(cf)
 		rca.show()
 	})
 }

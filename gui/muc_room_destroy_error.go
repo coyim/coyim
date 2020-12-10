@@ -8,19 +8,25 @@ import (
 )
 
 type roomDestroyErrorView struct {
-	roomID       jid.Bare
-	destroyError error
-	onRetry      func()
+	roomID            jid.Bare
+	reason            string
+	alternativeRoomID jid.Bare
+	password          string
+	destroyError      error
+
+	onRetry func(reason string, alternativeID jid.Bare, password string)
 
 	dialog       gtki.Dialog `gtk-widget:"destroy-room-error-dialog"`
 	errorMessage gtki.Label  `gtk-widget:"destroy-room-error-message"`
 }
 
-func newDestroyError(roomID jid.Bare, err error, onRetry func()) *roomDestroyErrorView {
+func (v *roomView) newDestroyError(reason string, alternativeRoomID jid.Bare, password string, err error) *roomDestroyErrorView {
 	rd := &roomDestroyErrorView{
-		roomID:       roomID,
-		destroyError: err,
-		onRetry:      onRetry,
+		roomID:            v.roomID(),
+		reason:            reason,
+		alternativeRoomID: alternativeRoomID,
+		password:          password,
+		onRetry:           v.tryDestroyRoom,
 	}
 
 	rd.initBuilder()
@@ -45,7 +51,7 @@ func (rd *roomDestroyErrorView) initDefaults() {
 }
 
 func (rd *roomDestroyErrorView) retry() {
-	rd.onRetry()
+	go rd.onRetry(rd.reason, rd.alternativeRoomID, rd.password)
 	rd.close()
 }
 

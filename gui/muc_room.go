@@ -271,37 +271,28 @@ func (v *roomView) publishDestroyEvent(reason string, alternativeRoomID jid.Bare
 
 // tryDestroyRoom MUST be called from the UI thread, but please, note that
 // the "onSuccess" and "onError" callbacks will be called from another thread
-func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, password string, onSuccess func(), onError func(error), onDone func()) {
+func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, password string) {
 	v.loadingViewOverlay.onRoomDestroy()
 
-	onSuccessFinal := func() {
-		doInUIThread(func() {
-			v.notifications.info(i18n.Local("The room has been destroyed"))
-			v.loadingViewOverlay.hide()
-		})
-		v.publishDestroyEvent(reason, alternativeRoomID, password)
-		if onSuccess != nil {
-			onSuccess()
+	sc, ec := v.account.session.DestroyRoom(v.roomID(), reason, alternativeRoomID, password)
+	go func() {
+		select {
+		case <-sc:
+			v.log.Info("The room has been destroyed")
+			v.publishDestroyEvent(reason, alternativeRoomID, password)
+			doInUIThread(func() {
+				v.notifications.info(i18n.Local("The room has been destroyed"))
+				v.loadingViewOverlay.hide()
+			})
+		case err := <-ec:
+			v.log.WithError(err).Error("An error occurred when trying to destroy the room")
+			doInUIThread(func() {
+				v.loadingViewOverlay.hide()
+				rd := v.newDestroyError(reason, alternativeRoomID, password, err)
+				rd.show()
+			})
 		}
-	}
-
-	onErrorFinal := func(err error) {
-		v.log.WithError(err).Error("An error occurred when trying to destroy the room")
-		doInUIThread(v.loadingViewOverlay.hide)
-		if onError != nil {
-			onError(err)
-		}
-	}
-
-	v.account.destroyRoom(
-		v.roomID(),
-		reason,
-		alternativeRoomID,
-		password,
-		onSuccessFinal,
-		onErrorFinal,
-		onDone,
-	)
+	}()
 }
 
 func (v *roomView) switchToLobbyView() {

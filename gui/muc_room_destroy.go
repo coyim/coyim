@@ -3,8 +3,6 @@ package gui
 import (
 	"errors"
 
-	"github.com/coyim/coyim/coylog"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -25,7 +23,7 @@ var (
 type roomDestroyView struct {
 	builder               *builder
 	chatServicesComponent *chatServicesComponent
-	destroyRoom           func(reason string, alternativeID jid.Bare, password string, done func())
+	destroyRoom           func(reason string, alternativeID jid.Bare, password string)
 
 	dialog               gtki.Dialog      `gtk-widget:"destroy-room-dialog"`
 	reasonEntry          gtki.TextView    `gtk-widget:"destroy-room-reason-entry"`
@@ -40,10 +38,11 @@ type roomDestroyView struct {
 }
 
 func (v *roomView) newRoomDestroyView() *roomDestroyView {
-	d := &roomDestroyView{}
+	d := &roomDestroyView{
+		destroyRoom: v.tryDestroyRoom,
+	}
 
 	d.initBuilder()
-	d.initDestroyContext(v)
 	d.initChatServices(v)
 	d.initDefaults(v)
 
@@ -56,17 +55,9 @@ func (d *roomDestroyView) initBuilder() {
 
 	d.builder.ConnectSignals(map[string]interface{}{
 		"on_alternative_room_toggled": d.onAlternativeRoomToggled,
-		"on_destroy":                  doOnlyOnceAtATime(d.onDestroyRoom),
+		"on_destroy":                  d.onDestroyRoom,
 		"on_cancel":                   d.close,
 	})
-}
-
-func (d *roomDestroyView) initDestroyContext(v *roomView) {
-	d.destroyRoom = func(reason string, alternativeID jid.Bare, password string, done func()) {
-		d.close()
-		ctx := v.newDestroyContext(reason, alternativeID, password, done)
-		ctx.destroyRoom()
-	}
 }
 
 func (d *roomDestroyView) initChatServices(v *roomView) {
@@ -83,7 +74,7 @@ func (d *roomDestroyView) initDefaults(v *roomView) {
 }
 
 // onDestroyRoom MUST be called from the UI thread
-func (d *roomDestroyView) onDestroyRoom(done func()) {
+func (d *roomDestroyView) onDestroyRoom() {
 	d.notification.clearErrors()
 
 	b, _ := d.reasonEntry.GetBuffer()
@@ -92,11 +83,11 @@ func (d *roomDestroyView) onDestroyRoom(done func()) {
 	alternativeID, password, err := d.alternativeRoomInformation()
 	if err != nil {
 		d.notification.error(d.friendlyMessageForAlternativeRoomError(err))
-		done()
 		return
 	}
 
-	d.destroyRoom(reason, alternativeID, password, done)
+	go d.destroyRoom(reason, alternativeID, password)
+	d.close()
 }
 
 func (d *roomDestroyView) alternativeRoomInformation() (jid.Bare, string, error) {
@@ -236,41 +227,4 @@ func (d *roomDestroyView) show() {
 // close MUST be called from the UI thread
 func (d *roomDestroyView) close() {
 	d.dialog.Destroy()
-}
-
-type roomDestroyContext struct {
-	roomID        jid.Bare
-	reason        string
-	alternativeID jid.Bare
-	password      string
-	destroy       func(reason string, alternativeID jid.Bare, password string, onSuccess func(), onError func(error), onDone func())
-	onDone        func()
-	log           coylog.Logger
-}
-
-func (v *roomView) newDestroyContext(reason string, alternativeID jid.Bare, password string, done func()) *roomDestroyContext {
-	return &roomDestroyContext{
-		roomID:        v.roomID(),
-		reason:        reason,
-		alternativeID: alternativeID,
-		password:      password,
-		destroy:       v.tryDestroyRoom,
-		onDone:        done,
-		log:           v.log,
-	}
-}
-
-func (dc *roomDestroyContext) destroyRoom() {
-	dc.destroy(dc.reason, dc.alternativeID, dc.password, dc.onDestroySuccess, dc.onDestroyFails, dc.onDone)
-}
-
-func (dc *roomDestroyContext) onDestroySuccess() {
-	dc.log.Info("The room has been destroyed")
-}
-
-func (dc *roomDestroyContext) onDestroyFails(err error) {
-	doInUIThread(func() {
-		rd := newDestroyError(dc.roomID, err, dc.destroyRoom)
-		rd.show()
-	})
 }

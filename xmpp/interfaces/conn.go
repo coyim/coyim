@@ -64,6 +64,4 @@ type Conn interface {
 	EntityExists(entity string) (bool, error)
 
 	ServerHasFeature(ns string) bool
-
-	SendConfigurationFormRequest(to string) (*data.MUCRoomConfiguration, error)
 }

@@ -31,16 +31,11 @@ type roomDestroyView struct {
 	reasonEntry          gtki.TextView    `gtk-widget:"destroy-room-reason-entry"`
 	alternativeRoomCheck gtki.CheckButton `gtk-widget:"destroy-room-alternative-check"`
 	alternativeRoomBox   gtki.Box         `gtk-widget:"destroy-room-alternative-box"`
-	alternativeRoomLabel gtki.Label       `gtk-widget:"destroy-room-name-label"`
 	alternativeRoomEntry gtki.Entry       `gtk-widget:"destroy-room-name-entry"`
-	chatServicesLabel    gtki.Label       `gtk-widget:"destroy-room-service-label"`
-	passwordLabel        gtki.Label       `gtk-widget:"destroy-room-password-label"`
 	passwordEntry        gtki.Entry       `gtk-widget:"destroy-room-password-entry"`
 	destroyRoomButton    gtki.Button      `gtk-widget:"destroy-room-button"`
-	spinnerBox           gtki.Box         `gtk-widget:"destroy-room-spinner-box"`
 	notificationBox      gtki.Box         `gtk-widget:"notification-area"`
 
-	spinner      *spinner
 	notification *notifications
 }
 
@@ -84,9 +79,6 @@ func (d *roomDestroyView) initChatServices(v *roomView) {
 func (d *roomDestroyView) initDefaults(v *roomView) {
 	d.dialog.SetTransientFor(v.window)
 
-	d.spinner = newSpinner()
-	d.spinnerBox.Add(d.spinner.getWidget())
-
 	d.notification = v.u.newNotifications(d.notificationBox)
 }
 
@@ -104,9 +96,7 @@ func (d *roomDestroyView) onDestroyRoom(done func()) {
 		return
 	}
 
-	d.disableFieldsAndShowSpinner()
 	d.destroyRoom(reason, alternativeID, password, done)
-	d.enableFieldsAndHideSpinner()
 }
 
 func (d *roomDestroyView) alternativeRoomInformation() (jid.Bare, string, error) {
@@ -246,18 +236,6 @@ func (d *roomDestroyView) show() {
 // close MUST be called from the UI thread
 func (d *roomDestroyView) close() {
 	d.dialog.Destroy()
-}
-
-// disableFieldsAndShowSpinner MUST be called from the UI thread
-func (d *roomDestroyView) disableFieldsAndShowSpinner() {
-	d.disableFields()
-	d.spinner.show()
-}
-
-// enableFieldsAndHideSpinner MUST be called from the UI thread
-func (d *roomDestroyView) enableFieldsAndHideSpinner() {
-	d.enableFields()
-	d.spinner.hide()
 }
 
 type roomDestroyContext struct {

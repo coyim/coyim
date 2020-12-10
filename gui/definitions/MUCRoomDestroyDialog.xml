@@ -15,18 +15,6 @@
             <property name="valign">center</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkBox" id="destroy-room-spinner-box">
-                <property name="visible">True</property>
-                <property name="halign">end</property>
-                <property name="valign">center</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="border_width">12</property>

@@ -391,6 +391,18 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.RadioButton:
+		val := WrapRadioButtonSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *gtk.Switch:
+		val := WrapSwitchSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	default:
 		return nil, false
 	}
@@ -754,6 +766,18 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *popover:
 		val := UnwrapPopover(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *radioButton:
+		val := UnwrapRadioButton(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *zwitch:
+		val := UnwrapSwitch(oo)
 		if val == nil {
 			return nil, true
 		}

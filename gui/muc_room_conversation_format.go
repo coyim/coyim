@@ -145,18 +145,19 @@ func (c *roomViewConversation) displayAlternativeRoomInfoWithPassword(message, p
 }
 
 func (c *roomViewConversation) displayAlternativeRoomInfo(reason string, alternative jid.Bare, password string) {
-	message := i18n.Local("The room was destroyed.")
+	message := i18n.Local("The room was destroyed")
 
 	if reason != "" {
-		message = i18n.Localf("%s The reason given was \"%s\".", message, reason)
+		message = i18n.Localf("%s. The reason given was \"%s\"", message, reason)
 	}
 
 	if alternative != nil {
-		message = i18n.Localf("%s Discussions will continue in this room: \"%s\"", message, alternative)
+		message = i18n.Localf("%s. Discussions will continue in this room: \"%s\"", message, alternative)
 		if password != "" {
 			c.displayAlternativeRoomInfoWithPassword(message, password)
 			return
 		}
+	}
 		c.displayTextLineWithTimestamp(i18n.Localf("%s.", message), "warning")
 	}
 }

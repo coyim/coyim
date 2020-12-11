@@ -1,56 +1,58 @@
 <interface>
   <object class="GtkAssistant" id="room-config-assistant">
+    <property name="title" translatable="yes">Room configuration</property>
     <property name="use_header_bar">1</property>
-    <signal name="prepare" handler="on_page_changed" swapped="no" />
-    <signal name="cancel" handler="on_cancel" swapped="no" />
+    <signal name="cancel" handler="on_cancel" swapped="no"/>
+    <signal name="prepare" handler="on_page_changed" swapped="no"/>
     <child>
-      <object class="GtkBox" id="room-config-info"/>
+      <object class="GtkBox" id="room-config-info-page"></object>
       <packing>
-        <property name="title" translatable="yes">1. Configure room information</property>
         <property name="page_type">intro</property>
+        <property name="title" translatable="yes">Basic information</property>
+        <property name="complete">True</property>
       </packing>
     </child>
     <child>
-      <object class="GtkLabel">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">2 ACCESS PAGE</property>
+      <object class="GtkBox" id="room-config-access-page">
+        
       </object>
-      <packing></packing>
+      <packing>
+        <property name="title" translatable="yes">Access</property>
+        <property name="complete">True</property>
+      </packing>
     </child>
     <child>
-      <object class="GtkLabel">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">3 PERMISSIONS PAGE</property>
+      <object class="GtkBox" id="room-config-permissions-page">
       </object>
-      <packing></packing>
+      <packing>
+        <property name="title" translatable="yes">Permissions</property>
+        <property name="complete">True</property>
+      </packing>
     </child>
     <child>
-      <object class="GtkLabel">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">4 OCCUPANTS PAGE</property>
+      <object class="GtkBox" id="room-config-occupants-page">
       </object>
-      <packing></packing>
+      <packing>
+        <property name="title" translatable="yes">Occupants</property>
+        <property name="complete">True</property>
+      </packing>
     </child>
     <child>
-      <object class="GtkLabel">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">5 OTHER CONFIGURATION PAGE</property>
+      <object class="GtkBox" id="room-config-others-page">
       </object>
-      <packing></packing>
+      <packing>
+        <property name="title" translatable="yes">Other settings</property>
+        <property name="complete">True</property>
+      </packing>
     </child>
     <child>
-      <object class="GtkLabel">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">6 SUMMARY PAGE</property>
+      <object class="GtkBox" id="room-config-summary-page">
       </object>
       <packing>
         <property name="page_type">confirm</property>
+        <property name="title" translatable="yes">Summary</property>
+        <property name="complete">True</property>
       </packing>
-    </child>
-    <child internal-child="action_area">
-      <object class="GtkBox">
-        <property name="halign">end</property>
-      </object>
     </child>
   </object>
 </interface>

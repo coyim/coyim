@@ -158,8 +158,7 @@ func (c *roomViewConversation) displayAlternativeRoomInfo(reason string, alterna
 			return
 		}
 	}
-		c.displayTextLineWithTimestamp(i18n.Localf("%s.", message), "warning")
-	}
+	c.displayTextLineWithTimestamp(i18n.Localf("%s.", message), "warning")
 }
 
 func formatTimestamp(t time.Time) string {

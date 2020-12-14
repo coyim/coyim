@@ -25,7 +25,7 @@ func (m *mucManager) publishMUCMessageError(roomID jid.Bare, e *data.StanzaError
 }
 
 func isMUCErrorPresence(e *xmppData.StanzaError) bool {
-	return (e != nil) && (e.MUCNotAuthorized != nil ||
+	return e != nil && (e.MUCNotAuthorized != nil ||
 		e.MUCForbidden != nil ||
 		e.MUCItemNotFound != nil ||
 		e.MUCNotAllowed != nil ||

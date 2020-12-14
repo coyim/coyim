@@ -51,7 +51,7 @@ func (s *mucStylesProvider) setRoomRosterInfoStatusLabelStyle(l gtki.Label) {
 		"font-size":   "12px",
 		"font-style":  "italic",
 		"font-weight": "bold",
-		"color":       s.colors.gray500,
+		"color":       s.colors.roomRosterStatusForeground,
 	})
 }
 
@@ -66,13 +66,13 @@ func (s *mucStylesProvider) setRoomToolbarSubjectLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-size":  "14px",
 		"font-style": "italic",
-		"color":      s.colors.gray500,
+		"color":      s.colors.roomSubjectForeground,
 	})
 }
 
 func (s *mucStylesProvider) setRoomToolbarNameLabelDisabledStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
-		"color": s.colors.gray300,
+		"color": s.colors.roomNameDisabledForeground,
 	})
 }
 
@@ -84,9 +84,9 @@ func (s *mucStylesProvider) setRoomWarningsBoxStyle(b gtki.Box) {
 
 func (s *mucStylesProvider) setRoomWarningsMessageBoxStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"color":            s.colors.brown500,
-		"background-color": s.colors.yellow200,
-		"border":           s.border(1, "solid", s.colors.yellow600),
+		"color":            s.colors.roomWarningForeground,
+		"background-color": s.colors.roomWarningBackground,
+		"border":           s.border(1, "solid", s.colors.roomWarningBorder),
 		"border-radius":    "4px",
 		"padding":          "10px",
 	})
@@ -94,7 +94,7 @@ func (s *mucStylesProvider) setRoomWarningsMessageBoxStyle(b gtki.Box) {
 
 func (s *mucStylesProvider) setRoomMessagesBoxStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": s.colors.white,
+		"background-color": s.colors.roomMessagesBackground,
 		"box-shadow":       s.boxShadow("0 10px 20px", s.rgba(0, 0, 0, 0.35)),
 	})
 }
@@ -113,20 +113,20 @@ func (s *mucStylesProvider) setRoomOverlayMessagesBoxStyle(b gtki.Box) {
 
 func (s *mucStylesProvider) setRoomLoadingViewOverlayTransparentStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": s.hexToRGBA(s.colors.dark, 0.25),
+		"background-color": s.hexToRGBA(s.colors.roomOverlayBackground, 0.25),
 	})
 }
 
 func (s *mucStylesProvider) setRoomLoadingViewOverlaySolidStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": s.colors.light,
+		"background-color": s.colors.roomOverlaySolidBackground,
 	})
 }
 
 func (s *mucStylesProvider) setRoomLoadingViewOverlayContentBoxStyle(b gtki.Box) {
 	s.setBoxStyle(b, style{
-		"background-color": s.colors.light,
-		"color":            s.colors.dark,
+		"background-color": s.colors.roomOverlayContentBackground,
+		"color":            s.colors.roomOverlayContentForeground,
 		"border-radius":    "6px",
 		"box-shadow":       s.boxShadow("0 10px 20px", s.rgba(0, 0, 0, 0.5)),
 	})

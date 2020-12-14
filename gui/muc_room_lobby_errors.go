@@ -71,18 +71,18 @@ func (l *roomViewLobby) getUserErrorMessage(err *mucRoomLobbyErr) string {
 	case errInvalidNickname:
 		return i18n.Local("You must provide a valid nickname")
 	case errJoinNicknameConflict:
-		return i18n.Local("You can't join the room using that nickname because it's already being used")
+		return i18n.Local("You can't join the room using that nickname because it's already being used.")
 	case errJoinOnlyMembers:
-		return i18n.Local("Sorry, this room only allows registered members")
+		return i18n.Local("Sorry, this room only allows registered members.")
 	case errJoinNotAuthorized:
-		return i18n.Local("You can't join the room because the password is not valid")
+		return i18n.Local("You can't join the room because the password is not valid.")
 	case errServiceUnavailable:
-		return i18n.Local("You can't join the room because the maximun number of occupants has been reached")
+		return i18n.Local("You can't join the room because the maximum number of occupants has been reached.")
 	case errUnknownError:
-		return i18n.Local("An unknown error occurred when trying to join the room please try again later")
+		return i18n.Local("An unknown error occurred when trying to join the room. Please try again later.")
 	case errOccupantForbidden:
-		return i18n.Local("You can't join the room because your account is currently banned")
+		return i18n.Local("You can't join the room because your account is currently banned.")
 	default:
-		return i18n.Local("An error occurred when trying to join the room please check your connection or make sure the room exists")
+		return i18n.Local("An error occurred when trying to join the room. Please check your connection or make sure the room exists.")
 	}
 }

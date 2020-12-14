@@ -79,6 +79,6 @@ func (rd *roomDestroyErrorView) friendlyMessageForDestroyError(err error) string
 			"but the service responded with an unknow result. Please contact the " +
 			"room's administrator.")
 	default:
-		return i18n.Local("An error occurred when destroying the room please try again.")
+		return i18n.Local("An error occurred when destroying the room. Please try again.")
 	}
 }

@@ -165,23 +165,31 @@ func (m *mucManager) findOutMoreInformationAboutRoom(rl *muc.RoomListing) {
 
 // TODO: this should return a "cancel early" function so anyone can cancel early
 // this operation if required
-func (s *session) LeaveRoom(room jid.Bare, nickname string) (<-chan bool, <-chan error) {
-	to := createRoomRecipient(room, nickname).String()
+func (s *session) LeaveRoom(roomID jid.Bare, nickname string) (<-chan bool, <-chan error) {
+	occupant := createRoomRecipient(roomID, nickname).String()
 
 	result := make(chan bool)
 	errors := make(chan error)
+
 	go func() {
-		err := s.conn.SendPresence(to, "unavailable", "", "")
+		err := s.conn.SendPresence(occupant, "unavailable", "", "")
 		if err != nil {
-			s.log.WithField("to", to).WithError(err).Error("error trying to leave room")
+			s.log.WithField("occupant", occupant).WithError(err).Error("An error occurred when trying to leave room")
 			errors <- err
 			return
 		}
-		s.muc.roomManager.LeaveRoom(room)
+
+		s.muc.deleteRoomFromManager(roomID)
 		result <- true
 	}()
 
 	return result, errors
+}
+
+func (m *mucManager) deleteRoomFromManager(roomID jid.Bare) {
+	if !m.roomManager.LeaveRoom(roomID) {
+		m.log.WithField("room", roomID).Error("Trying to leave a room that is not present in the manager")
+	}
 }
 
 func createRoomRecipient(room jid.Bare, nickname string) jid.Full {

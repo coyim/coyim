@@ -10,17 +10,25 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
-func (s *session) DestroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) (<-chan bool, <-chan error) {
-	return s.muc.destroyRoom(roomID, reason, alternativeRoomID, password)
-}
+var (
+	// ErrDestroyRoomInvalidIQResponse represents an invalid IQ response error
+	ErrDestroyRoomInvalidIQResponse = errors.New("invalid destroy room IQ response")
+	// ErrDestroyRoomForbidden represents a forbidden destroy room error
+	ErrDestroyRoomForbidden = errors.New("destroy room forbidden")
+	// ErrDestroyRoomDoesntExist represents an unknown destroy room error
+	ErrDestroyRoomDoesntExist = errors.New("room doesn't exist")
+	// ErrDestroyRoomUnknown represents an unknown destroy room error
+	ErrDestroyRoomUnknown = errors.New("destroy room unknown error")
+	// ErrDestroyRoomNoResult represents a no result received IQ error
+	ErrDestroyRoomNoResult = errors.New("destroy room no result error")
+)
 
-type destroyRoomRequest struct {
+type destroyRoomContext struct {
 	roomID                  jid.Bare
 	reason                  string
 	alternativeRoomID       jid.Bare
 	alternativeRoomPassword string
-	onDestroySuccess        func(jid.Bare) bool
-	onDestroyFinish         func(jid.Bare)
+	onSuccess               func(roomID jid.Bare) bool
 
 	resultChannel chan bool
 	errorChannel  chan error
@@ -29,95 +37,62 @@ type destroyRoomRequest struct {
 	log  coylog.Logger
 }
 
-func (m *mucManager) newDestroyRoomRequest(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string, onDestroySuccess func(jid.Bare) bool, onDestroyFinish func(jid.Bare)) *destroyRoomRequest {
-	return &destroyRoomRequest{
+func (s *session) newDestroyRoomContext(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string, onSuccess func(jid.Bare) bool) *destroyRoomContext {
+	return &destroyRoomContext{
 		roomID:                  roomID,
-		conn:                    m.conn(),
 		reason:                  reason,
 		alternativeRoomID:       alternativeRoomID,
 		alternativeRoomPassword: password,
+		onSuccess:               onSuccess,
 		resultChannel:           make(chan bool),
 		errorChannel:            make(chan error),
-		onDestroySuccess:        onDestroySuccess,
-		onDestroyFinish:         onDestroyFinish,
-		log:                     m.log,
+		conn:                    s.conn,
+		log:                     s.log.WithField("where", "destroyRoomContext"),
 	}
 }
 
-func (m *mucManager) destroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) (<-chan bool, <-chan error) {
-	m.destroyLock.Lock()
-	defer m.destroyLock.Unlock()
-
-	dr, ok := m.destroyRequests[roomID.String()]
-	if !ok {
-		dr = m.newDestroyRoomRequest(roomID, reason, alternativeRoomID, password, m.roomManager.LeaveRoom, m.onDestroyRoomFinish)
-		m.destroyRequests[roomID.String()] = dr
-
-		go dr.sendDestroyRoomRequest()
-	}
-
-	return dr.resultChannel, dr.errorChannel
+func (s *session) DestroyRoom(roomID jid.Bare, reason string, alternativeRoomID jid.Bare, password string) (<-chan bool, <-chan error) {
+	ctx := s.newDestroyRoomContext(roomID, reason, alternativeRoomID, password, s.muc.roomManager.LeaveRoom)
+	go ctx.destroyRoom()
+	return ctx.resultChannel, ctx.errorChannel
 }
 
-func (m *mucManager) onDestroyRoomFinish(roomID jid.Bare) {
-	m.destroyLock.Lock()
-	delete(m.destroyRequests, roomID.String())
-	m.destroyLock.Unlock()
-}
-
-var (
-	// ErrDestroyRoomInvalidIQResponse represents an invalid IQ response error
-	ErrDestroyRoomInvalidIQResponse = errors.New("invalid destroy room IQ response")
-	// ErrDestroyRoomForbidden represents a forbidden destroy room error
-	ErrDestroyRoomForbidden = errors.New("destroy room forbidden")
-	// ErrDestroyRoomUnknown represents an unknown destroy room error
-	ErrDestroyRoomUnknown = errors.New("destroy room unknown error")
-	// ErrDestroyRoomNoResult represents a no result received IQ error
-	ErrDestroyRoomNoResult = errors.New("destroy room no result error")
-)
-
-func (dr *destroyRoomRequest) sendDestroyRoomRequest() {
-	defer dr.onDestroyFinish(dr.roomID)
-
-	reply, err := dr.sendIQRequest()
+func (ctx *destroyRoomContext) destroyRoom() {
+	reply, err := ctx.sendIQRequest()
 	if err != nil {
-		dr.finishWithError(err)
+		ctx.finishWithError(err)
 		return
 	}
 
-	err = dr.handleIQResponse(<-reply)
+	err = ctx.handleIQResponse(<-reply)
 	if err != nil {
-		dr.finishWithError(err)
+		ctx.finishWithError(err)
 		return
 	}
 
-	dr.finish()
+	ctx.finishWithSuccess()
 }
 
-func (dr *destroyRoomRequest) newRoomDestroyQuery() data.MUCRoomDestroyQuery {
+func (ctx *destroyRoomContext) newRoomDestroyQuery() data.MUCRoomDestroyQuery {
 	return data.MUCRoomDestroyQuery{
-		Destroy: dr.newRoomDestroyData(),
+		Destroy: ctx.newRoomDestroyData(),
 	}
 }
 
-func (dr *destroyRoomRequest) newRoomDestroyData() data.MUCRoomDestroy {
+func (ctx *destroyRoomContext) newRoomDestroyData() data.MUCRoomDestroy {
 	return data.MUCRoomDestroy{
-		Reason:   dr.reason,
-		Jid:      dr.alternativeRoomIDValue(),
-		Password: dr.alternativeRoomPassword,
+		Reason:   ctx.reason,
+		Jid:      ctx.alternativeRoomIDValue(),
+		Password: ctx.alternativeRoomPassword,
 	}
 }
 
-func (dr *destroyRoomRequest) sendIQRequest() (<-chan data.Stanza, error) {
-	q := dr.newRoomDestroyQuery()
-	reply, cookie, err := dr.conn.SendIQ(dr.roomID.String(), "set", q)
-
-	dr.log.WithField("cookie", cookie).Info("Sending an Information Query to destroy the room")
-
+func (ctx *destroyRoomContext) sendIQRequest() (<-chan data.Stanza, error) {
+	reply, _, err := ctx.conn.SendIQ(ctx.roomID.String(), "set", ctx.newRoomDestroyQuery())
 	return reply, err
 }
 
-func (dr *destroyRoomRequest) handleIQResponse(s data.Stanza) error {
+func (ctx *destroyRoomContext) handleIQResponse(s data.Stanza) error {
 	ciq, ok := s.Value.(*data.ClientIQ)
 	if !ok {
 		return ErrDestroyRoomInvalidIQResponse
@@ -127,13 +102,17 @@ func (dr *destroyRoomRequest) handleIQResponse(s data.Stanza) error {
 	case "result":
 		return nil
 	case "error":
-		return dr.handleIQError(ciq.Error)
+		return ctx.handleIQError(ciq.Error)
 	default:
 		return ErrDestroyRoomNoResult
 	}
 }
 
-func (dr *destroyRoomRequest) handleIQError(err data.StanzaError) error {
+func (ctx *destroyRoomContext) handleIQError(err data.StanzaError) error {
+	if err.Type == "cancel" {
+		return ErrDestroyRoomDoesntExist
+	}
+
 	switch {
 	case err.MUCForbidden != nil:
 		return ErrDestroyRoomForbidden
@@ -142,23 +121,19 @@ func (dr *destroyRoomRequest) handleIQError(err data.StanzaError) error {
 	}
 }
 
-func (dr *destroyRoomRequest) finish() {
-	ok := dr.onDestroySuccess(dr.roomID)
-	if !ok {
-		dr.log.Debug("Cannot remove room from room manager when the room was destroyed")
-	}
-
-	dr.resultChannel <- true
+func (ctx *destroyRoomContext) finishWithSuccess() {
+	ctx.onSuccess(ctx.roomID)
+	ctx.resultChannel <- true
 }
 
-func (dr *destroyRoomRequest) finishWithError(err error) {
-	dr.log.WithError(err).Error("An error ocurred trying to destroy the room")
-	dr.errorChannel <- err
+func (ctx *destroyRoomContext) finishWithError(err error) {
+	ctx.log.WithError(err).Error("An error ocurred trying to destroy the room")
+	ctx.errorChannel <- err
 }
 
-func (dr *destroyRoomRequest) alternativeRoomIDValue() string {
-	if dr.alternativeRoomID != nil {
-		return dr.alternativeRoomID.String()
+func (ctx *destroyRoomContext) alternativeRoomIDValue() string {
+	if ctx.alternativeRoomID != nil {
+		return ctx.alternativeRoomID.String()
 	}
 	return ""
 }

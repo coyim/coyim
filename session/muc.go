@@ -26,20 +26,16 @@ type mucManager struct {
 	dhManager *discussionHistoryManager
 	dhLock    sync.Mutex
 
-	destroyRequests map[string]*destroyRoomRequest
-	destroyLock     sync.RWMutex
-
 	sync.Mutex
 }
 
 func newMUCManager(log coylog.Logger, conn func() xi.Conn, publishEvent func(ev interface{})) *mucManager {
 	m := &mucManager{
-		log:             log,
-		conn:            conn,
-		publishEvent:    publishEvent,
-		roomManager:     muc.NewRoomManager(),
-		roomInfos:       make(map[jid.Bare]*muc.RoomListing),
-		destroyRequests: make(map[string]*destroyRoomRequest),
+		log:          log,
+		conn:         conn,
+		publishEvent: publishEvent,
+		roomManager:  muc.NewRoomManager(),
+		roomInfos:    make(map[jid.Bare]*muc.RoomListing),
 	}
 
 	m.dhManager = newDiscussionHistoryManager(m.handleDiscussionHistory)

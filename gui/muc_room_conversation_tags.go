@@ -112,7 +112,7 @@ func (c *roomViewConversation) createConfigurationChangeTag(cs mucColorSet) gtki
 func (c *roomViewConversation) createPasswordTag(cs mucColorSet) gtki.TextTag {
 	return c.createConversationTag("password", map[string]interface{}{
 		"foreground": cs.warningForeground,
-		"background": cs.red200,
+		"background": cs.warningBackground,
 	})
 }
 

@@ -123,7 +123,7 @@ func (v *mucJoinRoomView) onJoinFails(a *account, roomID jid.Bare) {
 	a.log.WithField("room", roomID).Warn("The room doesn't exist")
 
 	doInUIThread(func() {
-		v.notifications.error(i18n.Local("The room doesn't exist in that service."))
+		v.notifications.error(i18n.Local("The room wasn't found."))
 		v.enableJoinFields()
 		v.spinner.hide()
 	})

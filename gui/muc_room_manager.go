@@ -28,7 +28,7 @@ func (u *gtkUI) joinRoom(a *account, roomID jid.Bare, returnTo func()) {
 		return
 	}
 
-	if v.isSelfOccupantJoined() {
+	if v.isSelfOccupantInTheRoom() {
 		v.switchToMainView()
 	} else {
 		v.returnTo = returnTo

@@ -129,7 +129,7 @@ func (v *roomView) refreshRoomMenu() {
 		v.menu.addDividerItem()
 	}
 
-	if v.isSelfOccupantJoined() {
+	if v.isSelfOccupantInTheRoom() {
 		v.menu.setButtonItem("leave-room", i18n.Local("Leave room"), v.onLeaveRoom)
 	}
 }

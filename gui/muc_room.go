@@ -207,8 +207,8 @@ func (v *roomView) isOpen() bool {
 	return v.opened
 }
 
-func (v *roomView) isSelfOccupantJoined() bool {
-	return v.room.IsSelfOccupantJoined()
+func (v *roomView) isSelfOccupantInTheRoom() bool {
+	return v.room.IsSelfOccupantInTheRoom()
 }
 
 func (v *roomView) isSelfOccupantAnOwner() bool {

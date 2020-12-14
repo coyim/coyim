@@ -1,7 +1,5 @@
 package data
 
-import "github.com/coyim/coyim/xmpp/jid"
-
 // RoomConfigType is used to represent a room configuration field
 type RoomConfigType int
 
@@ -43,85 +41,85 @@ const (
 type RoomConfig struct {
 	// muc#maxhistoryfetch
 	// Maximum Number of History Messages Returned by Room
-	MaxHistoryFetch int
+	MaxHistoryFetch roomConfigTextSingleField
 
 	// muc#roomconfig_allowpm
 	// Roles that May Send Private Messages
-	AllowPrivateMessages []Role
+	AllowPrivateMessages roomConfigListSingleField
 
 	// muc#roomconfig_allowinvites
 	// Whether to Allow Occupants to Invite Others
-	OccupantsCanInvite bool
+	OccupantsCanInvite roomConfigBooleanField
 
 	// muc#roomconfig_changesubject
 	// Whether to Allow Occupants to Change Subject
-	OccupantsCanChangeSubject bool
+	OccupantsCanChangeSubject roomConfigBooleanField
 
 	// muc#roomconfig_enablelogging
 	// Whether to Enable Public Logging of Room Conversations
-	Logged bool
+	Logged roomConfigBooleanField
 
 	// muc#roomconfig_getmemberlist
 	// Roles and Affiliations that May Retrieve Member List
-	RetrieveMembersList []string
+	RetrieveMembersList roomConfigListMultiField
 
 	// muc#roomconfig_lang
 	// Natural Language for Room Discussions
-	Language string
+	Language roomConfigTextSingleField
 
 	// muc#roomconfig_pubsub
 	// XMPP URI of Associated Publish-Subscribe Node
-	AssociatedPublishSubscribeNode string
+	AssociatedPublishSubscribeNode roomConfigTextSingleField
 
 	// muc#roomconfig_maxusers
 	// Maximum Number of Room Occupants
-	MaxOccupantsNumber int
+	MaxOccupantsNumber roomConfigListSingleField
 
 	// muc#roomconfig_membersonly
 	// Whether to Make Room Members-Only
-	MembersOnly bool
+	MembersOnly roomConfigBooleanField
 
 	// muc#roomconfig_moderatedroom
 	// Whether to Make Room Moderated
-	Moderated bool
+	Moderated roomConfigBooleanField
 
 	// muc#roomconfig_passwordprotectedroom
 	// Whether a Password is Required to Enter
-	PasswordProtected bool
+	PasswordProtected roomConfigBooleanField
 
 	// muc#roomconfig_persistentroom
 	// Whether to Make Room Persistent
-	Persistent bool
+	Persistent roomConfigBooleanField
 
 	// muc#roomconfig_presencebroadcast
 	// Roles for which Presence is Broadcasted
-	PresenceBroadcast []string
+	PresenceBroadcast roomConfigListMultiField
 
 	// muc#roomconfig_publicroom
 	// Whether to Allow Public Searching for Room
-	Public bool
+	Public roomConfigBooleanField
 
 	// muc#roomconfig_roomadmins
 	// Full List of Room Admins
-	Admins []jid.Any
+	Admins roomConfigJidMultiField
 
 	// muc#roomconfig_roomdesc
 	// Short Description of Room
-	Description string
+	Description roomConfigTextSingleField
 
 	// muc#roomconfig_roomname
 	// Natural-Language Room Name
-	Title string
+	Title roomConfigTextSingleField
 
 	// muc#roomconfig_roomowners
 	// Full List of Room Owners
-	Owners []jid.Any
+	Owners roomConfigJidMultiField
 
 	// muc#roomconfig_roomsecret
 	// The Room Password
-	Password string
+	Password roomConfigTextSingleField
 
 	// muc#roomconfig_whois
 	// Affiliations that May Discover Real JIDs of Occupants
-	Whois []string
+	Whois roomConfigListSingleField
 }

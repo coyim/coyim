@@ -32,67 +32,93 @@ func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
 	case "muc#maxhistoryfetch":
-		rcf.MaxHistoryFetch = formFieldInt(field.Values)
+		v := formFieldSingleString(field.Values)
+		rcf.MaxHistoryFetch.SetValue(v)
 
 	case "muc#roomconfig_allowpm":
-		rcf.AllowPrivateMessages = formFieldRoles(field.Values)
+		v := formFieldSingleString(field.Values)
+		rcf.AllowPrivateMessages.SetValue(v)
 
 	case "muc#roomconfig_allowinvites":
-		rcf.OccupantsCanInvite = formFieldBool(field.Values)
+		v := formFieldBool(field.Values)
+		rcf.OccupantsCanInvite.SetValue(v)
 
 	case "muc#roomconfig_changesubject":
-		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
+		v := formFieldBool(field.Values)
+		rcf.OccupantsCanChangeSubject.SetValue(v)
 
 	case "muc#roomconfig_enablelogging":
-		rcf.Logged = formFieldBool(field.Values)
+		rcf.Logged.SetValue(formFieldBool(field.Values))
 
 	case "muc#roomconfig_getmemberlist":
-		rcf.RetrieveMembersList = field.Values
+		o := formFieldOptionsValues(field.Options)
+		rcf.RetrieveMembersList.SetValues(field.Values)
+		rcf.RetrieveMembersList.SetOptions(o)
 
 	case "muc#roomconfig_lang":
-		rcf.Language = formFieldSingleString(field.Values)
+		v := formFieldSingleString(field.Values)
+		rcf.Language.SetValue(v)
 
 	case "muc#roomconfig_pubsub":
-		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
+		v := formFieldSingleString(field.Values)
+		rcf.AssociatedPublishSubscribeNode.SetValue(v)
 
 	case "muc#roomconfig_maxusers":
-		rcf.MaxOccupantsNumber = formFieldInt(field.Values)
+		v := formFieldSingleString(field.Values)
+		o := formFieldOptionsValues(field.Options)
+		rcf.MaxOccupantsNumber.SetValue(v)
+		rcf.MaxOccupantsNumber.SetOptions(o)
 
 	case "muc#roomconfig_membersonly":
-		rcf.MembersOnly = formFieldBool(field.Values)
+		v := formFieldBool(field.Values)
+		rcf.MembersOnly.SetValue(v)
 
 	case "muc#roomconfig_moderatedroom":
-		rcf.Moderated = formFieldBool(field.Values)
+		v := formFieldBool(field.Values)
+		rcf.Moderated.SetValue(v)
 
 	case "muc#roomconfig_passwordprotectedroom":
-		rcf.PasswordProtected = formFieldBool(field.Values)
+		v := formFieldBool(field.Values)
+		rcf.PasswordProtected.SetValue(v)
 
 	case "muc#roomconfig_persistentroom":
-		rcf.Persistent = formFieldBool(field.Values)
+		v := formFieldBool(field.Values)
+		rcf.Persistent.SetValue(v)
 
 	case "muc#roomconfig_presencebroadcast":
-		rcf.PresenceBroadcast = field.Values
+		o := formFieldOptionsValues(field.Options)
+		rcf.PresenceBroadcast.SetValues(field.Values)
+		rcf.PresenceBroadcast.SetOptions(o)
 
 	case "muc#roomconfig_publicroom":
-		rcf.Persistent = formFieldBool(field.Values)
+		v := formFieldBool(field.Values)
+		rcf.Persistent.SetValue(v)
 
 	case "muc#roomconfig_roomadmins":
-		rcf.Admins = formFieldJidList(field.Values)
+		v := formFieldJidList(field.Values)
+		rcf.Admins.SetValues(v)
 
 	case "muc#roomconfig_roomdesc":
-		rcf.Description = formFieldSingleString(field.Values)
+		v := formFieldSingleString(field.Values)
+		rcf.Description.SetValue(v)
 
 	case "muc#roomconfig_roomname":
-		rcf.Title = formFieldSingleString(field.Values)
+		v := formFieldSingleString(field.Values)
+		rcf.Title.SetValue(v)
 
 	case "muc#roomconfig_roomowners":
-		rcf.Owners = formFieldJidList(field.Values)
+		v := formFieldJidList(field.Values)
+		rcf.Owners.SetValues(v)
 
 	case "muc#roomconfig_roomsecret":
-		rcf.Password = formFieldSingleString(field.Values)
+		v := formFieldSingleString(field.Values)
+		rcf.Password.SetValue(v)
 
 	case "muc#roomconfig_whois":
-		rcf.Whois = field.Values
+		v := formFieldSingleString(field.Values)
+		o := formFieldOptionsValues(field.Options)
+		rcf.Whois.SetValue(v)
+		rcf.Whois.SetOptions(o)
 	}
 }
 
@@ -105,6 +131,13 @@ func formFieldSingleString(values []string) string {
 		return values[0]
 	}
 	return ""
+}
+
+func formFieldOptionsValues(options []xmppData.FormFieldOptionX) (list []string) {
+	for _, o := range options {
+		list = append(list, o.Value)
+	}
+	return list
 }
 
 func formFieldInt(values []string) int {

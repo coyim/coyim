@@ -91,22 +91,9 @@
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
+                    <property name="valign">center</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="valign">center</property>
-                        <property name="label" translatable="yes">The following error occurred while destroying this room:</property>
-                        <property name="xalign">0</property>
-                        <property name="yalign">0</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
                     <child>
                       <object class="GtkLabel" id="destroy-room-error-message">
                         <property name="visible">True</property>
@@ -114,8 +101,6 @@
                         <property name="width_chars">50</property>
                         <property name="max_width_chars">50</property>
                         <property name="track_visited_links">False</property>
-                        <property name="xalign">0</property>
-                        <property name="yalign">0</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>

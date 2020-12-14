@@ -26,6 +26,7 @@ func (v *roomView) newDestroyError(reason string, alternativeRoomID jid.Bare, pa
 		reason:            reason,
 		alternativeRoomID: alternativeRoomID,
 		password:          password,
+		destroyError:      err,
 		onRetry:           v.tryDestroyRoom,
 	}
 
@@ -78,6 +79,8 @@ func (rd *roomDestroyErrorView) friendlyMessageForDestroyError(err error) string
 		return i18n.Local("We were able to send the request to destroy the room, " +
 			"but the service responded with an unknow result. Please contact the " +
 			"room's administrator.")
+	case session.ErrDestroyRoomDoesntExist:
+		return i18n.Local("We couldn't find the room that you are trying to destroy.")
 	default:
 		return i18n.Local("An error occurred when destroying the room. Please try again.")
 	}

@@ -28,3 +28,11 @@ func UnwrapSwitch(v gtki.Switch) *gtk.Switch {
 	}
 	return v.(*zwitch).internal
 }
+
+func (v *zwitch) SetActive(v1 bool) {
+	v.internal.SetActive(v1)
+}
+
+func (v *zwitch) GetActive() bool {
+	return v.internal.GetActive()
+}

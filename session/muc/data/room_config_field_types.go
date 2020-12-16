@@ -1,6 +1,6 @@
 package data
 
-import "github.com/coyim/coyim/xmpp/jid"
+import "github.com/coyim/coyim/xmpp/data"
 
 const (
 	// PrivateMessageAnyoneRole description
@@ -37,60 +37,48 @@ const (
 	RoomConfigVisitorRole = "visitor"
 )
 
-type roomConfigTextSingleField struct {
+// OptionList description
+type OptionList struct {
+	label string
 	value string
 }
 
-func (f *roomConfigTextSingleField) SetValue(v string) {
-	f.value = v
+// NewOptionList description
+func NewOptionList(l, v string) OptionList {
+	return OptionList{l, v}
 }
 
-type roomConfigBooleanField struct {
-	value bool
-}
-
-func (f *roomConfigBooleanField) SetValue(v bool) {
-	f.value = v
-}
-
-type roomConfigListSingleField struct {
+// ListSingleField description
+type ListSingleField struct {
 	value   string
-	options []string
+	options []OptionList
 }
 
-func (f *roomConfigListSingleField) SetValue(v string) {
-	f.value = v
+// NewListSingleField description
+func NewListSingleField(value string, options []data.FormFieldOptionX) *ListSingleField {
+	return &ListSingleField{
+		value:   value,
+		options: populateSingleListOptions(options),
+	}
 }
 
-func (f *roomConfigListSingleField) SetOptions(o []string) {
-	f.options = o
-}
-
-type roomConfigListMultiField struct {
+// ListMultiField description
+type ListMultiField struct {
 	values  []string
-	options []string
+	options []OptionList
 }
 
-func (f *roomConfigListMultiField) SetValues(v []string) {
-	f.values = v
+// NewListMultiField description
+func NewListMultiField(values []string, options []data.FormFieldOptionX) *ListMultiField {
+	return &ListMultiField{
+		values:  values,
+		options: populateSingleListOptions(options),
+	}
 }
 
-func (f *roomConfigListMultiField) SetOptions(o []string) {
-	f.options = o
-}
-
-type roomConfigPrivateField struct {
-	value string
-}
-
-func (f *roomConfigPrivateField) SetValue(v string) {
-	f.value = v
-}
-
-type roomConfigJidMultiField struct {
-	values []jid.Any
-}
-
-func (f *roomConfigJidMultiField) SetValues(v []jid.Any) {
-	f.values = v
+func populateSingleListOptions(options []data.FormFieldOptionX) (listOptions []OptionList) {
+	for _, o := range options {
+		listOptions = append(listOptions, NewOptionList(o.Label, o.Value))
+	}
+	return listOptions
 }

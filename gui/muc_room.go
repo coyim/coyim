@@ -45,7 +45,6 @@ type roomView struct {
 	subscribers *roomViewSubscribers
 
 	main    *roomViewMain
-	menu    *roomViewMenu
 	toolbar *roomViewToolbar
 	roster  *roomViewRoster
 	conv    *roomViewConversation
@@ -70,7 +69,6 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 
 	view.initBuilderAndSignals()
 	view.initDefaults()
-	view.initRoomMenu()
 	view.initSubscribers()
 
 	view.toolbar = view.newRoomViewToolbar()
@@ -118,11 +116,6 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 	case roomConfigRequestTimeoutEvent:
 		v.roomConfigRequestTimeoutEvent()
 	}
-
-	// Actually, we prefer to always refresh the room menu every time an event
-	// is received, because in that way we can have the right menu printed based
-	// on the latest configuration of the room
-	v.refreshRoomMenu()
 }
 
 func (v *roomView) requestRoomDiscoInfo() {

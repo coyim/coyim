@@ -7,11 +7,10 @@ import (
 type roomViewToolbar struct {
 	menu gtki.Popover
 
-	view             gtki.Box        `gtk-widget:"room-view-toolbar"`
-	roomNameLabel    gtki.Label      `gtk-widget:"room-name-label"`
-	roomSubjectLabel gtki.Label      `gtk-widget:"room-subject-label"`
-	roomStatusIcon   gtki.Image      `gtk-widget:"room-status-icon"`
-	roomMenu         gtki.MenuButton `gtk-widget:"room-menu"`
+	view             gtki.Box   `gtk-widget:"room-view-toolbar"`
+	roomNameLabel    gtki.Label `gtk-widget:"room-name-label"`
+	roomSubjectLabel gtki.Label `gtk-widget:"room-subject-label"`
+	roomStatusIcon   gtki.Image `gtk-widget:"room-status-icon"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -37,8 +36,6 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 
 	t.displayRoomSubject(v.room.GetSubject())
 	mucStyles.setRoomToolbarSubjectLabelStyle(t.roomSubjectLabel)
-
-	t.roomMenu.SetPopover(v.getRoomMenuWidget())
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
@@ -72,8 +69,7 @@ func (t *roomViewToolbar) selfOccupantRemovedEvent() {
 
 // disable MUST be called from UI Thread
 func (t *roomViewToolbar) disable() {
-	t.roomMenu.SetSensitive(false)
-
+	// TODO: disable menu button here
 	mucStyles.setRoomToolbarNameLabelDisabledStyle(t.roomNameLabel)
 }
 

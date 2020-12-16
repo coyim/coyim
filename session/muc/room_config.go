@@ -33,92 +33,84 @@ func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
 	case "muc#maxhistoryfetch":
 		v := formFieldSingleString(field.Values)
-		rcf.MaxHistoryFetch.SetValue(v)
+		rcf.MaxHistoryFetch = v
 
 	case "muc#roomconfig_allowpm":
 		v := formFieldSingleString(field.Values)
-		rcf.AllowPrivateMessages.SetValue(v)
+		rcf.AllowPrivateMessages = data.NewListSingleField(v, field.Options)
 
 	case "muc#roomconfig_allowinvites":
 		v := formFieldBool(field.Values)
-		rcf.OccupantsCanInvite.SetValue(v)
+		rcf.OccupantsCanInvite = v
 
 	case "muc#roomconfig_changesubject":
 		v := formFieldBool(field.Values)
-		rcf.OccupantsCanChangeSubject.SetValue(v)
+		rcf.OccupantsCanChangeSubject = v
 
 	case "muc#roomconfig_enablelogging":
-		rcf.Logged.SetValue(formFieldBool(field.Values))
+		rcf.Logged = formFieldBool(field.Values)
 
 	case "muc#roomconfig_getmemberlist":
-		o := formFieldOptionsValues(field.Options)
-		rcf.RetrieveMembersList.SetValues(field.Values)
-		rcf.RetrieveMembersList.SetOptions(o)
+		rcf.RetrieveMembersList = data.NewListMultiField(field.Values, field.Options)
 
 	case "muc#roomconfig_lang":
 		v := formFieldSingleString(field.Values)
-		rcf.Language.SetValue(v)
+		rcf.Language = v
 
 	case "muc#roomconfig_pubsub":
 		v := formFieldSingleString(field.Values)
-		rcf.AssociatedPublishSubscribeNode.SetValue(v)
+		rcf.AssociatedPublishSubscribeNode = v
 
 	case "muc#roomconfig_maxusers":
 		v := formFieldSingleString(field.Values)
-		o := formFieldOptionsValues(field.Options)
-		rcf.MaxOccupantsNumber.SetValue(v)
-		rcf.MaxOccupantsNumber.SetOptions(o)
+		rcf.MaxOccupantsNumber = data.NewListSingleField(v, field.Options)
 
 	case "muc#roomconfig_membersonly":
 		v := formFieldBool(field.Values)
-		rcf.MembersOnly.SetValue(v)
+		rcf.MembersOnly = v
 
 	case "muc#roomconfig_moderatedroom":
 		v := formFieldBool(field.Values)
-		rcf.Moderated.SetValue(v)
+		rcf.Moderated = v
 
 	case "muc#roomconfig_passwordprotectedroom":
 		v := formFieldBool(field.Values)
-		rcf.PasswordProtected.SetValue(v)
+		rcf.PasswordProtected = v
 
 	case "muc#roomconfig_persistentroom":
 		v := formFieldBool(field.Values)
-		rcf.Persistent.SetValue(v)
+		rcf.Persistent = v
 
 	case "muc#roomconfig_presencebroadcast":
-		o := formFieldOptionsValues(field.Options)
-		rcf.PresenceBroadcast.SetValues(field.Values)
-		rcf.PresenceBroadcast.SetOptions(o)
+		rcf.PresenceBroadcast = data.NewListMultiField(field.Values, field.Options)
 
 	case "muc#roomconfig_publicroom":
 		v := formFieldBool(field.Values)
-		rcf.Persistent.SetValue(v)
+		rcf.Public = v
 
 	case "muc#roomconfig_roomadmins":
 		v := formFieldJidList(field.Values)
-		rcf.Admins.SetValues(v)
+		rcf.Admins = v
 
 	case "muc#roomconfig_roomdesc":
 		v := formFieldSingleString(field.Values)
-		rcf.Description.SetValue(v)
+		rcf.Description = v
 
 	case "muc#roomconfig_roomname":
 		v := formFieldSingleString(field.Values)
-		rcf.Title.SetValue(v)
+		rcf.Title = v
 
 	case "muc#roomconfig_roomowners":
 		v := formFieldJidList(field.Values)
-		rcf.Owners.SetValues(v)
+		rcf.Owners = v
 
 	case "muc#roomconfig_roomsecret":
 		v := formFieldSingleString(field.Values)
-		rcf.Password.SetValue(v)
+		rcf.Password = v
 
 	case "muc#roomconfig_whois":
 		v := formFieldSingleString(field.Values)
-		o := formFieldOptionsValues(field.Options)
-		rcf.Whois.SetValue(v)
-		rcf.Whois.SetOptions(o)
+		rcf.Whois = data.NewListSingleField(v, field.Options)
 	}
 }
 

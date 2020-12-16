@@ -106,8 +106,17 @@ func (c *mucRoomConfigComponent) initConfigPages() {
 	c.initConfigSummaryPage()
 }
 
+func (c *mucRoomConfigComponent) initInformationPageDefaultValues() {
+	c.roomTitle.SetText(c.form.Title)
+	c.setDescriptionText()
+	c.roomLanguage.SetText(c.form.Language)
+	c.roomPersistent.SetActive(c.form.Persistent)
+	c.roomPublic.SetActive(c.form.Public)
+}
+
 func (c *mucRoomConfigComponent) initConfigInformationPage() {
 	c.configInformationPage = newMUCRoomConfigPage(c.configInformationBox)
+	c.initInformationPageDefaultValues()
 }
 
 func (c *mucRoomConfigComponent) initConfigAccessPage() {
@@ -212,19 +221,19 @@ func (c *mucRoomConfigComponent) initAdminsListController() {
 	})
 }
 
-func (c *mucRoomConfigComponent) getConfigPage(p string) *mucRoomConfigPage {
+func (c *mucRoomConfigComponent) getConfigPage(p int) *mucRoomConfigPage {
 	switch p {
-	case "information":
+	case roomConfigInformationPage:
 		return c.configInformationPage
-	case "access":
+	case roomConfigAccessPage:
 		return c.configAccessPage
-	case "permissions":
+	case roomConfigPermissionsPage:
 		return c.configPermissionsPage
-	case "occupants":
+	case roomConfigOccupantsPage:
 		return c.configOccupantsPage
-	case "others":
+	case roomConfigOthersPage:
 		return c.configOthersPage
-	case "summary":
+	case roomConfigSummaryPage:
 		return c.configSummaryPage
 	default:
 		return nil
@@ -241,4 +250,10 @@ func newMUCRoomConfigPage(b gtki.Box) *mucRoomConfigPage {
 
 func (p *mucRoomConfigPage) getPageView() gtki.Box {
 	return p.box
+}
+
+func (c *mucRoomConfigComponent) setDescriptionText() {
+	cb, _ := g.gtk.TextBufferNew(nil)
+	cb.SetText(c.form.Description)
+	c.roomDescription.SetBuffer(cb)
 }

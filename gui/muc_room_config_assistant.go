@@ -54,12 +54,12 @@ func (rc *roomConfigAssistant) initRoomConfigComponent(form *muc.RoomConfigForm)
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
-	rc.roomConfigInfoPage = rc.roomConfigComponent.getConfigPage("information")
-	rc.roomConfigAccessPage = rc.roomConfigComponent.getConfigPage("access")
-	rc.roomConfigPermissionsPage = rc.roomConfigComponent.getConfigPage("permissions")
-	rc.roomConfigOccupantsPage = rc.roomConfigComponent.getConfigPage("occupants")
-	rc.roomConfigOthersPage = rc.roomConfigComponent.getConfigPage("others")
-	rc.roomConfigSummaryPage = rc.roomConfigComponent.getConfigPage("summary")
+	rc.roomConfigInfoPage = rc.roomConfigComponent.getConfigPage(roomConfigInformationPage)
+	rc.roomConfigAccessPage = rc.roomConfigComponent.getConfigPage(roomConfigAccessPage)
+	rc.roomConfigPermissionsPage = rc.roomConfigComponent.getConfigPage(roomConfigPermissionsPage)
+	rc.roomConfigOccupantsPage = rc.roomConfigComponent.getConfigPage(roomConfigOccupantsPage)
+	rc.roomConfigOthersPage = rc.roomConfigComponent.getConfigPage(roomConfigOthersPage)
+	rc.roomConfigSummaryPage = rc.roomConfigComponent.getConfigPage(roomConfigSummaryPage)
 
 	rc.roomConfigInfoBox.Add(rc.roomConfigInfoPage.getPageView())
 	rc.roomConfigAccessBox.Add(rc.roomConfigAccessPage.getPageView())

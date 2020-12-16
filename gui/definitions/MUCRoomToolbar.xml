@@ -84,7 +84,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem">
+                      <object class="GtkMenuItem" id="destroy-item">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">Destroy Room</property>
                         <signal name="activate" handler="on_destroy_room" swapped="no"/>

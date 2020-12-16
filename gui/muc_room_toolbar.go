@@ -26,6 +26,11 @@ func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
 func (t *roomViewToolbar) initBuilder(v *roomView) {
 	builder := newBuilder("MUCRoomToolbar")
 	panicOnDevError(builder.bindObjects(t))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_leave_room":   v.onLeaveRoom,
+		"on_destroy_room": v.onDestroyRoom,
+	})
 }
 
 func (t *roomViewToolbar) initDefaults(v *roomView) {

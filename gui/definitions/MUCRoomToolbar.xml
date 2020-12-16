@@ -70,6 +70,37 @@
                 <property name="position">0</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkMenuToolButton">
+                <property name="visible">True</property>
+                <child type="menu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Leave Room</property>
+                        <signal name="activate" handler="on_leave_room" swapped="no"/>
+                        <property name="use_underline">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Destroy Room</property>
+                        <signal name="activate" handler="on_destroy_room" swapped="no"/>
+                        <property name="use_underline">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="padding">12</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">True</property>

@@ -36,7 +36,7 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 func (p *roomConfigOthersPage) initializeAvailableOptions(combo gtki.ComboBoxText, options []string) {
 	combo.SetSensitive(true)
 	for _, o := range options {
-		combo.AppendText(o)
+		combo.AppendText(configOptionToFriendlyMessage(o))
 	}
 	combo.SetActive(0)
 }

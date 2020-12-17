@@ -3,6 +3,7 @@ package session
 import (
 	"encoding/xml"
 	"errors"
+	"fmt"
 
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
@@ -25,22 +26,100 @@ var (
 	ErrInformationQueryResponse = errors.New("received an error from the server")
 )
 
+// CreateInstantRoom will create a room "instantly" accepting the default configuration of the room
+// For more information see XEP-0045 v1.32.0, section: 10.1.2
 func (s *session) CreateInstantRoom(roomID jid.Bare) <-chan error {
-	c := s.newCreateMUCRoomContext(roomID)
+	c := s.newCreateMUCInstantRoomContext(roomID)
 	return c.createInstantRoom()
 }
 
+type createMUCInstantRoomContext struct {
+	*createMUCRoomContext
+}
+
+func (s *session) newCreateMUCInstantRoomContext(roomID jid.Bare) *createMUCInstantRoomContext {
+	return &createMUCInstantRoomContext{
+		s.newCreateMUCRoomContext(roomID),
+	}
+}
+
+func (c *createMUCInstantRoomContext) createInstantRoom() <-chan error {
+	go c.createRoom(c.sendIQForInstantRoom, func(stanza data.Stanza) error {
+		err := c.validateStanzaReceived(stanza)
+		if err != nil {
+			return newCreateRoomError("Invalid information query response", err)
+		}
+		return nil
+	})
+
+	return c.errorChannel
+}
+
+func (c *createMUCInstantRoomContext) sendIQForInstantRoom() (<-chan data.Stanza, error) {
+	return c.sendInformationQuery("set", c.newRoomConfigurationFormSubmit())
+}
+
+// CreateReservedRoom will reserve a room and request the configuration form for it
 func (s *session) CreateReservedRoom(roomID jid.Bare) (<-chan *muc.RoomConfigForm, <-chan error) {
-	c := s.newCreateMUCRoomContext(roomID)
+	c := s.newCreateMUCReservedRoomContext(roomID)
 	return c.createReservedRoom()
 }
 
-type createMUCRoomContext struct {
-	roomID            jid.Bare
+type createMUCReservedRoomContext struct {
+	*createMUCRoomContext
 	configFormChannel chan *muc.RoomConfigForm
-	errorChannel      chan error
-	conn              xi.Conn
-	log               coylog.Logger
+}
+
+func (s *session) newCreateMUCReservedRoomContext(roomID jid.Bare) *createMUCReservedRoomContext {
+	return &createMUCReservedRoomContext{
+		createMUCRoomContext: s.newCreateMUCRoomContext(roomID),
+		configFormChannel:    make(chan *muc.RoomConfigForm),
+	}
+}
+
+func (c *createMUCReservedRoomContext) createReservedRoom() (<-chan *muc.RoomConfigForm, <-chan error) {
+	c.configFormChannel = make(chan *muc.RoomConfigForm)
+
+	go c.createRoom(c.sendIQForReservedRoom, func(stanza data.Stanza) error {
+		form, err := c.getConfigFormFromStanza(stanza)
+		if err != nil {
+			return newCreateRoomError("Invalid information query response", err)
+		}
+		c.configFormChannel <- form
+		return nil
+	})
+
+	return c.configFormChannel, c.errorChannel
+}
+
+func (c *createMUCReservedRoomContext) sendIQForReservedRoom() (<-chan data.Stanza, error) {
+	return c.sendInformationQuery("get", c.newRoomConfigurationFormRequest())
+}
+
+func (c *createMUCReservedRoomContext) getConfigFormFromStanza(stanza data.Stanza) (*muc.RoomConfigForm, error) {
+	iq, err := c.getIQFromStanza(stanza)
+	if err != nil {
+		return nil, err
+	}
+
+	cf, err := c.getConfigFormFromIQResponse(iq)
+	if err != nil {
+		return nil, err
+	}
+
+	return muc.NewRoomConfigRom(cf.Form), nil
+}
+
+func (c *createMUCReservedRoomContext) getConfigFormFromIQResponse(iq *data.ClientIQ) (cf *data.MUCRoomConfiguration, err error) {
+	err = xml.Unmarshal(iq.Query, &cf)
+	return
+}
+
+type createMUCRoomContext struct {
+	roomID       jid.Bare
+	errorChannel chan error
+	conn         xi.Conn
+	log          coylog.Logger
 }
 
 func (s *session) newCreateMUCRoomContext(roomID jid.Bare) *createMUCRoomContext {
@@ -64,78 +143,51 @@ func (c *createMUCRoomContext) reserveRoom() bool {
 	return true
 }
 
-func (c *createMUCRoomContext) createRoom(sendIQ func() (<-chan data.Stanza, error), onStanzaReceived func(stanza data.Stanza) (string, error)) {
+func (c *createMUCRoomContext) createRoom(sendIQ func() (<-chan data.Stanza, error), onStanzaReceived func(stanza data.Stanza) error) {
 	if !c.reserveRoom() {
-		c.finishWithError(ErrInvalidReserveRoomRequest, "An error occurred while reserving the room")
+		c.error(ErrInvalidReserveRoomRequest, "An error occurred while reserving the room")
 		return
 	}
 
 	reply, err := sendIQ()
 	if err != nil {
-		c.finishWithError(ErrUnexpectedResponse, "Unexpected information query response")
+		c.error(ErrUnexpectedResponse, "Unexpected information query response")
 		return
 	}
 
 	stanza, ok := <-reply
 	if !ok {
-		c.finishWithError(ErrInvalidInformationQueryRequest, "Unexpected information query reply")
+		c.error(ErrInvalidInformationQueryRequest, "Unexpected information query reply")
 		return
 	}
 
-	errMessage, err := onStanzaReceived(stanza)
+	err = onStanzaReceived(stanza)
 	if err != nil {
-		c.finishWithError(err, errMessage)
+		switch e := err.(type) {
+		case *createRoomError:
+			c.error(e.err, e.message)
+		default:
+			c.error(err, "An error occurred when the stanza was received")
+		}
 		return
 	}
 
 	close(c.errorChannel)
 }
 
-// createInstantRoom will create a room "instantly" accepting the default configuration of the room
-// For more information see XEP-0045 v1.32.0, section: 10.1.2
-func (c *createMUCRoomContext) createInstantRoom() <-chan error {
-	go c.createRoom(c.sendIQForInstantRoom, func(stanza data.Stanza) (string, error) {
-		err := c.validateStanzaReceived(stanza)
-		if err != nil {
-			return "Invalid information query response", err
-		}
-		return "", nil
-	})
-
-	return c.errorChannel
-}
-
-// createReservedRoom will reserve a room and request the configuration form for it
-func (c *createMUCRoomContext) createReservedRoom() (<-chan *muc.RoomConfigForm, <-chan error) {
-	c.configFormChannel = make(chan *muc.RoomConfigForm)
-
-	go c.createRoom(c.sendIQForReservedRoom, func(stanza data.Stanza) (string, error) {
-		form, err := c.getConfigFormFromStanza(stanza)
-		if err != nil {
-			return "Invalid information query response", err
-		}
-
-		c.configFormChannel <- form
-
-		return "", nil
-	})
-
-	return c.configFormChannel, c.errorChannel
-}
-
-func (c *createMUCRoomContext) finishWithError(err error, m string) {
-	c.logWithError(err, m)
+func (c *createMUCRoomContext) error(err error, m string) {
+	c.logError(err, m)
 	c.errorChannel <- err
 }
 
-func (c *createMUCRoomContext) logWithError(err error, m string) {
+func (c *createMUCRoomContext) logError(err error, m string) {
 	c.log.WithError(err).Error(m)
 }
 
 func (c *createMUCRoomContext) sendMUCPresence() error {
 	err := c.conn.SendMUCPresence(c.roomID.String(), &data.MUC{})
 	if err != nil {
-		c.logWithError(err, "An error ocurred while sending a presence for creating an instant room")
+		c.logError(err, "An error ocurred while sending a presence for creating an instant room")
 		return ErrUnexpectedResponse
 	}
 
@@ -145,19 +197,11 @@ func (c *createMUCRoomContext) sendMUCPresence() error {
 func (c *createMUCRoomContext) sendInformationQuery(tp string, d interface{}) (<-chan data.Stanza, error) {
 	reply, _, err := c.conn.SendIQ(c.roomID.String(), tp, d)
 	if err != nil {
-		c.logWithError(err, "An error ocurred while sending the information query")
+		c.logError(err, "An error ocurred while sending the information query")
 		return nil, err
 	}
 
 	return reply, nil
-}
-
-func (c *createMUCRoomContext) sendIQForInstantRoom() (<-chan data.Stanza, error) {
-	return c.sendInformationQuery("set", c.newRoomConfigurationFormSubmit())
-}
-
-func (c *createMUCRoomContext) sendIQForReservedRoom() (<-chan data.Stanza, error) {
-	return c.sendInformationQuery("get", c.newRoomConfigurationFormRequest())
 }
 
 func (c *createMUCRoomContext) getIQFromStanza(stanza data.Stanza) (*data.ClientIQ, error) {
@@ -171,25 +215,6 @@ func (c *createMUCRoomContext) getIQFromStanza(stanza data.Stanza) (*data.Client
 	}
 
 	return iq, nil
-}
-
-func (c *createMUCRoomContext) getConfigFormFromStanza(stanza data.Stanza) (*muc.RoomConfigForm, error) {
-	iq, err := c.getIQFromStanza(stanza)
-	if err != nil {
-		return nil, err
-	}
-
-	cf, err := c.getConfigFormFromIQResponse(iq)
-	if err != nil {
-		return nil, err
-	}
-
-	return muc.NewRoomConfigRom(cf.Form), nil
-}
-
-func (c *createMUCRoomContext) getConfigFormFromIQResponse(iq *data.ClientIQ) (cf *data.MUCRoomConfiguration, err error) {
-	err = xml.Unmarshal(iq.Query, &cf)
-	return
 }
 
 func (c *createMUCRoomContext) validateStanzaReceived(stanza data.Stanza) error {
@@ -207,4 +232,17 @@ func (c *createMUCRoomContext) newRoomConfigurationFormSubmit() data.MUCRoomConf
 
 func (c *createMUCRoomContext) newRoomConfigurationFormRequest() data.MUCRoomConfiguration {
 	return data.MUCRoomConfiguration{}
+}
+
+type createRoomError struct {
+	message string
+	err     error
+}
+
+func newCreateRoomError(message string, err error) error {
+	return &createRoomError{message, err}
+}
+
+func (e *createRoomError) Error() string {
+	return fmt.Sprintf("%s: %s", e.message, e.err)
 }

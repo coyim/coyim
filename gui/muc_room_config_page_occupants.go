@@ -2,6 +2,7 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -79,5 +80,13 @@ func (p *roomConfigOccupantsPage) initDefaultValues() {
 }
 
 func (p *roomConfigOccupantsPage) collectData() {
-	// TODO
+	p.form.Owners = jidListFromConfigListController(p.ownersListController)
+	p.form.Admins = jidListFromConfigListController(p.adminsListController)
+}
+
+func jidListFromConfigListController(l *mucRoomConfigListController) (result []jid.Any) {
+	for _, i := range l.listItems() {
+		result = append(result, jid.Parse(i[0]))
+	}
+	return result
 }

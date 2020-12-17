@@ -1,6 +1,7 @@
 package muc
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/coyim/coyim/session/muc/data"
@@ -10,16 +11,81 @@ import (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	data.RoomConfig
+	MaxHistoryFetch                string
+	AllowPrivateMessages           ConfigListSingleField
+	OccupantsCanInvite             bool
+	OccupantsCanChangeSubject      bool
+	Logged                         bool
+	RetrieveMembersList            ConfigListMultiField
+	Language                       string
+	AssociatedPublishSubscribeNode string
+	MaxOccupantsNumber             ConfigListSingleField
+	MembersOnly                    bool
+	Moderated                      bool
+	PasswordProtected              bool
+	Persistent                     bool
+	PresenceBroadcast              ConfigListMultiField
+	Public                         bool
+	Admins                         []jid.Any
+	Description                    string
+	Title                          string
+	Owners                         []jid.Any
+	Password                       string
+	Whois                          ConfigListSingleField
 }
 
 // NewRoomConfigRom creates a new room configuration form instance
 func NewRoomConfigRom(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{}
 
+	cf.AllowPrivateMessages = newConfigListSingleField([]string{
+		RoomConfigOptionParticipant,
+		RoomConfigOptionModerators,
+		RoomConfigOptionNone,
+	})
+
+	cf.RetrieveMembersList = newConfigListMultiField([]string{
+		RoomConfigOptionModerator,
+		RoomConfigOptionParticipant,
+		RoomConfigOptionVisitor,
+	})
+
+	cf.MaxOccupantsNumber = newConfigListSingleField([]string{
+		RoomConfigOption10,
+		RoomConfigOption20,
+		RoomConfigOption30,
+		RoomConfigOption50,
+		RoomConfigOption100,
+		RoomConfigOptionNone,
+	})
+
+	cf.PresenceBroadcast = newConfigListMultiField([]string{
+		RoomConfigOptionModerator,
+		RoomConfigOptionParticipant,
+		RoomConfigOptionVisitor,
+	})
+
+	cf.Whois = newConfigListSingleField([]string{
+		RoomConfigOptionModerators,
+		RoomConfigOptionAnyone,
+	})
+
 	cf.SetFormFields(form)
 
 	return cf
+}
+
+// Submit will send the configuration form data to the service that provided the initial configuration for the room.
+//
+// Please note that the configuration process can be canceled but if the room owner
+// cancels the initial configuration, the service will destroy the room and will send
+// an unavailable presence to the room owner
+//
+// For more information see:
+// https://xmpp.org/extensions/xep-0045.html#createroom-reserved
+// https://xmpp.org/extensions/xep-0045.html#example-163
+func (rcf *RoomConfigForm) Submit() error {
+	return errors.New("RoomConfigForm: Submit() not yet implemented")
 }
 
 // SetFormFields extract the form fields and updates the room config form properties based on each data
@@ -32,85 +98,67 @@ func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
 	case "muc#maxhistoryfetch":
-		v := formFieldSingleString(field.Values)
-		rcf.MaxHistoryFetch = v
+		rcf.MaxHistoryFetch = formFieldSingleString(field.Values)
 
 	case "muc#roomconfig_allowpm":
-		v := formFieldSingleString(field.Values)
-		rcf.AllowPrivateMessages = data.NewListSingleField(v, field.Options)
+		rcf.AllowPrivateMessages.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	case "muc#roomconfig_allowinvites":
-		v := formFieldBool(field.Values)
-		rcf.OccupantsCanInvite = v
+		rcf.OccupantsCanInvite = formFieldBool(field.Values)
 
 	case "muc#roomconfig_changesubject":
-		v := formFieldBool(field.Values)
-		rcf.OccupantsCanChangeSubject = v
+		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
 
 	case "muc#roomconfig_enablelogging":
 		rcf.Logged = formFieldBool(field.Values)
 
 	case "muc#roomconfig_getmemberlist":
-		rcf.RetrieveMembersList = data.NewListMultiField(field.Values, field.Options)
+		rcf.RetrieveMembersList.UpdateField(field.Values, formFieldOptionsValues(field.Options))
 
 	case "muc#roomconfig_lang":
-		v := formFieldSingleString(field.Values)
-		rcf.Language = v
+		rcf.Language = formFieldSingleString(field.Values)
 
 	case "muc#roomconfig_pubsub":
-		v := formFieldSingleString(field.Values)
-		rcf.AssociatedPublishSubscribeNode = v
+		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
 
 	case "muc#roomconfig_maxusers":
-		v := formFieldSingleString(field.Values)
-		rcf.MaxOccupantsNumber = data.NewListSingleField(v, field.Options)
+		rcf.MaxOccupantsNumber.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	case "muc#roomconfig_membersonly":
-		v := formFieldBool(field.Values)
-		rcf.MembersOnly = v
+		rcf.MembersOnly = formFieldBool(field.Values)
 
 	case "muc#roomconfig_moderatedroom":
-		v := formFieldBool(field.Values)
-		rcf.Moderated = v
+		rcf.Moderated = formFieldBool(field.Values)
 
 	case "muc#roomconfig_passwordprotectedroom":
-		v := formFieldBool(field.Values)
-		rcf.PasswordProtected = v
+		rcf.PasswordProtected = formFieldBool(field.Values)
 
 	case "muc#roomconfig_persistentroom":
-		v := formFieldBool(field.Values)
-		rcf.Persistent = v
+		rcf.Persistent = formFieldBool(field.Values)
 
 	case "muc#roomconfig_presencebroadcast":
-		rcf.PresenceBroadcast = data.NewListMultiField(field.Values, field.Options)
+		rcf.PresenceBroadcast.UpdateField(field.Values, formFieldOptionsValues(field.Options))
 
 	case "muc#roomconfig_publicroom":
-		v := formFieldBool(field.Values)
-		rcf.Public = v
+		rcf.Public = formFieldBool(field.Values)
 
 	case "muc#roomconfig_roomadmins":
-		v := formFieldJidList(field.Values)
-		rcf.Admins = v
+		rcf.Admins = formFieldJidList(field.Values)
 
 	case "muc#roomconfig_roomdesc":
-		v := formFieldSingleString(field.Values)
-		rcf.Description = v
+		rcf.Description = formFieldSingleString(field.Values)
 
 	case "muc#roomconfig_roomname":
-		v := formFieldSingleString(field.Values)
-		rcf.Title = v
+		rcf.Title = formFieldSingleString(field.Values)
 
 	case "muc#roomconfig_roomowners":
-		v := formFieldJidList(field.Values)
-		rcf.Owners = v
+		rcf.Owners = formFieldJidList(field.Values)
 
 	case "muc#roomconfig_roomsecret":
-		v := formFieldSingleString(field.Values)
-		rcf.Password = v
+		rcf.Password = formFieldSingleString(field.Values)
 
 	case "muc#roomconfig_whois":
-		v := formFieldSingleString(field.Values)
-		rcf.Whois = data.NewListSingleField(v, field.Options)
+		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 	}
 }
 
@@ -129,6 +177,7 @@ func formFieldOptionsValues(options []xmppData.FormFieldOptionX) (list []string)
 	for _, o := range options {
 		list = append(list, o.Value)
 	}
+
 	return list
 }
 

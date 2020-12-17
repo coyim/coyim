@@ -78,8 +78,30 @@ func doOnlyOnceAtATime(f func(func())) func() {
 }
 
 func getEntryText(e gtki.Entry) string {
-	t, _ := e.GetText()
+	t, err := e.GetText()
+	if err != nil {
+		panic(err)
+	}
+
 	return t
+}
+
+func setTextViewText(tv gtki.TextView, t string) {
+	b, err := tv.GetBuffer()
+	if err != nil {
+		panic(err)
+	}
+
+	b.SetText(t)
+}
+
+func getTextViewText(tv gtki.TextView) string {
+	b, err := tv.GetBuffer()
+	if err != nil {
+		panic(err)
+	}
+
+	return b.GetText(b.GetStartIter(), b.GetEndIter(), false)
 }
 
 func setFieldVisibility(w gtki.Widget, v bool) {
@@ -100,4 +122,16 @@ func disableField(w gtki.Widget) {
 
 func enableField(w gtki.Widget) {
 	setFieldSensitive(w, true)
+}
+
+func setEntryText(e gtki.Entry, t string) {
+	e.SetText(t)
+}
+
+func setSwitchActive(s gtki.Switch, v bool) {
+	s.SetActive(v)
+}
+
+func getSwitchActive(s gtki.Switch) bool {
+	return s.GetActive()
 }

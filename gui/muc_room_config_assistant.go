@@ -1,35 +1,49 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
+	log "github.com/sirupsen/logrus"
 )
 
 type roomConfigAssistant struct {
 	u                   *gtkUI
 	roomConfigComponent *mucRoomConfigComponent
+	roomID              jid.Bare
 
-	assistant                gtki.Assistant `gtk-widget:"room-config-assistant"`
-	roomConfigInfoBox        gtki.Box       `gtk-widget:"room-config-info-page"`
-	roomConfigAccessBox      gtki.Box       `gtk-widget:"room-config-access-page"`
-	roomConfigPermissionsBox gtki.Box       `gtk-widget:"room-config-permissions-page"`
-	roomConfigOccupantsBox   gtki.Box       `gtk-widget:"room-config-occupants-page"`
-	roomConfigOthersBox      gtki.Box       `gtk-widget:"room-config-others-page"`
-	roomConfigSummaryBox     gtki.Box       `gtk-widget:"room-config-summary-page"`
+	assistant          gtki.Assistant `gtk-widget:"room-config-assistant"`
+	infoPageBox        gtki.Box       `gtk-widget:"room-config-info-page"`
+	accessPageBox      gtki.Box       `gtk-widget:"room-config-access-page"`
+	permissionsPageBox gtki.Box       `gtk-widget:"room-config-permissions-page"`
+	occupantsPageBox   gtki.Box       `gtk-widget:"room-config-occupants-page"`
+	othersPageBox      gtki.Box       `gtk-widget:"room-config-others-page"`
+	summaryPageBox     gtki.Box       `gtk-widget:"room-config-summary-page"`
 
-	roomConfigInfoPage        *mucRoomConfigPage
-	roomConfigAccessPage      *mucRoomConfigPage
-	roomConfigPermissionsPage *mucRoomConfigPage
-	roomConfigOccupantsPage   *mucRoomConfigPage
-	roomConfigOthersPage      *mucRoomConfigPage
-	roomConfigSummaryPage     *mucRoomConfigPage
+	infoPage        mucRoomConfigPage
+	accessPage      mucRoomConfigPage
+	permissionsPage mucRoomConfigPage
+	occupantsPage   mucRoomConfigPage
+	othersPage      mucRoomConfigPage
+	summaryPage     mucRoomConfigPage
+
+	currentPageIndex int
 
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(form *muc.RoomConfigForm) *roomConfigAssistant {
-	rc := &roomConfigAssistant{u: u}
+func (u *gtkUI) newRoomConfigAssistant(roomID jid.Bare, form *muc.RoomConfigForm) *roomConfigAssistant {
+	rc := &roomConfigAssistant{
+		u:      u,
+		roomID: roomID,
+		log: u.log.WithFields(log.Fields{
+			"room":  roomID,
+			"where": "configureRoomAssistant",
+		}),
+	}
 
 	rc.initBuilder()
 	rc.initRoomConfigComponent(form)
@@ -46,58 +60,80 @@ func (rc *roomConfigAssistant) initBuilder() {
 	b.ConnectSignals(map[string]interface{}{
 		"on_cancel":       rc.onCancel,
 		"on_page_changed": rc.onPageChanged,
+		"on_apply":        rc.onApply,
 	})
 }
 
 func (rc *roomConfigAssistant) initRoomConfigComponent(form *muc.RoomConfigForm) {
-	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(form)
+	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.roomID, form)
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
-	rc.roomConfigInfoPage = rc.roomConfigComponent.getConfigPage(roomConfigInformationPage)
-	rc.roomConfigAccessPage = rc.roomConfigComponent.getConfigPage(roomConfigAccessPage)
-	rc.roomConfigPermissionsPage = rc.roomConfigComponent.getConfigPage(roomConfigPermissionsPage)
-	rc.roomConfigOccupantsPage = rc.roomConfigComponent.getConfigPage(roomConfigOccupantsPage)
-	rc.roomConfigOthersPage = rc.roomConfigComponent.getConfigPage(roomConfigOthersPage)
-	rc.roomConfigSummaryPage = rc.roomConfigComponent.getConfigPage(roomConfigSummaryPage)
+	rc.infoPage = rc.roomConfigComponent.getConfigPage(roomConfigInformationPageIndex)
+	rc.accessPage = rc.roomConfigComponent.getConfigPage(roomConfigAccessPageIndex)
+	rc.permissionsPage = rc.roomConfigComponent.getConfigPage(roomConfigPermissionsPageIndex)
+	rc.occupantsPage = rc.roomConfigComponent.getConfigPage(roomConfigOccupantsPageIndex)
+	rc.othersPage = rc.roomConfigComponent.getConfigPage(roomConfigOthersPageIndex)
+	rc.summaryPage = rc.roomConfigComponent.getConfigPage(roomConfigSummaryPageIndex)
 
-	rc.roomConfigInfoBox.Add(rc.roomConfigInfoPage.getPageView())
-	rc.roomConfigAccessBox.Add(rc.roomConfigAccessPage.getPageView())
-	rc.roomConfigPermissionsBox.Add(rc.roomConfigPermissionsPage.getPageView())
-	rc.roomConfigOccupantsBox.Add(rc.roomConfigOccupantsPage.getPageView())
-	rc.roomConfigOthersBox.Add(rc.roomConfigOthersPage.getPageView())
-	rc.roomConfigSummaryBox.Add(rc.roomConfigSummaryPage.getPageView())
+	rc.infoPageBox.Add(rc.infoPage.getPageView())
+	rc.accessPageBox.Add(rc.accessPage.getPageView())
+	rc.permissionsPageBox.Add(rc.permissionsPage.getPageView())
+	rc.occupantsPageBox.Add(rc.occupantsPage.getPageView())
+	rc.othersPageBox.Add(rc.othersPage.getPageView())
+	rc.summaryPageBox.Add(rc.summaryPage.getPageView())
 }
 
 func (rc *roomConfigAssistant) initDefaults() {
-	rc.roomConfigInfoBox.SetHExpand(true)
-	rc.roomConfigAccessBox.SetHExpand(true)
-	rc.roomConfigPermissionsBox.SetHExpand(true)
-	rc.roomConfigOccupantsBox.SetHExpand(true)
-	rc.roomConfigOthersBox.SetHExpand(true)
-	rc.roomConfigSummaryBox.SetHExpand(true)
+	rc.infoPageBox.SetHExpand(true)
+	rc.accessPageBox.SetHExpand(true)
+	rc.permissionsPageBox.SetHExpand(true)
+	rc.occupantsPageBox.SetHExpand(true)
+	rc.othersPageBox.SetHExpand(true)
+	rc.summaryPageBox.SetHExpand(true)
 }
 
 func (rc *roomConfigAssistant) onCancel() {
+	// TODO: cancel the configuration process
+	// See https://xmpp.org/extensions/xep-0045.html#createroom-reserved
 	rc.assistant.Destroy()
 }
 
 func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
-	rc.assistant.SetPageComplete(p, true)
+	previousPage := rc.pageByIndex(rc.currentPageIndex)
+	previousPage.collectData()
 
-	switch rc.assistant.GetCurrentPage() {
-	case roomConfigInformationPage:
-		// TODO: Add implementation for "basic information" step
-	case roomConfigAccessPage:
-		// TODO: Add implementation for "access" step
-	case roomConfigPermissionsPage:
-		// TODO: Add implementation for "permissions" step
-	case roomConfigOccupantsPage:
-		// TODO: Add implementation for "occupants" step
-	case roomConfigOthersPage:
-		// TODO: Add implementation for "other settings" step
-	case roomConfigSummaryPage:
-		// TODO: Add implementation for "summary" step
+	rc.currentPageIndex = rc.assistant.GetCurrentPage()
+	currentPage := rc.pageByIndex(rc.currentPageIndex)
+
+	rc.assistant.SetPageComplete(p, true)
+	currentPage.refresh()
+}
+
+func (rc *roomConfigAssistant) onApply() {
+	// TODO: This is a basic implementation we should finish with the right behavior
+	err := rc.roomConfigComponent.submitForm()
+	if err != nil {
+		rc.log.WithError(err).Error("An error occurred when submitting the room configuration form")
+	}
+}
+
+func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {
+	switch p {
+	case roomConfigInformationPageIndex:
+		return rc.infoPage
+	case roomConfigAccessPageIndex:
+		return rc.accessPage
+	case roomConfigPermissionsPageIndex:
+		return rc.permissionsPage
+	case roomConfigOccupantsPageIndex:
+		return rc.occupantsPage
+	case roomConfigOthersPageIndex:
+		return rc.othersPage
+	case roomConfigSummaryPageIndex:
+		return rc.summaryPage
+	default:
+		panic(fmt.Sprintf("developer error: unsupported room config assistant page \"%d\"", p))
 	}
 }
 

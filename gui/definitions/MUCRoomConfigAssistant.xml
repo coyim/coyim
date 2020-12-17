@@ -4,6 +4,7 @@
     <property name="use_header_bar">1</property>
     <signal name="cancel" handler="on_cancel" swapped="no"/>
     <signal name="prepare" handler="on_page_changed" swapped="no"/>
+    <signal name="apply" handler="on_apply" swapped="no"/>
     <child>
       <object class="GtkBox" id="room-config-info-page"></object>
       <packing>

@@ -11,7 +11,7 @@ import (
 
 // RoomConfigForm represents a room configuration form
 type RoomConfigForm struct {
-	MaxHistoryFetch                string
+	MaxHistoryFetch                ConfigListSingleField
 	AllowPrivateMessages           ConfigListSingleField
 	OccupantsCanInvite             bool
 	OccupantsCanChangeSubject      bool
@@ -37,6 +37,10 @@ type RoomConfigForm struct {
 // NewRoomConfigRom creates a new room configuration form instance
 func NewRoomConfigRom(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{}
+
+	cf.MaxHistoryFetch = newConfigListSingleField([]string{
+		RoomConfigOption50,
+	})
 
 	cf.AllowPrivateMessages = newConfigListSingleField([]string{
 		RoomConfigOptionParticipant,
@@ -98,7 +102,7 @@ func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
 	case "muc#maxhistoryfetch":
-		rcf.MaxHistoryFetch = formFieldSingleString(field.Values)
+		rcf.MaxHistoryFetch.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
 	case "muc#roomconfig_allowpm":
 		rcf.AllowPrivateMessages.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))

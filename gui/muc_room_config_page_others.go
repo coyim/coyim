@@ -1,14 +1,16 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 type roomConfigOthersPage struct {
 	*roomConfigPageBase
 
-	configOthersBox     gtki.Box        `gtk-widget:"room-config-others-page"`
-	roomMaxHistoryFetch gtki.SpinButton `gtk-widget:"room-maxhistoryfetch"`
-	roomMaxOccupants    gtki.SpinButton `gtk-widget:"room-maxoccupants"`
-	roomEnableLoggin    gtki.Switch     `gtk-widget:"room-enablelogging"`
+	configOthersBox     gtki.Box          `gtk-widget:"room-config-others-page"`
+	roomMaxHistoryFetch gtki.ComboBoxText `gtk-widget:"room-maxhistoryfetch"`
+	roomMaxOccupants    gtki.ComboBoxText `gtk-widget:"room-maxoccupants"`
+	roomEnableLoggin    gtki.Switch       `gtk-widget:"room-enablelogging"`
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
@@ -25,13 +27,20 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigOthersPage) initDefaultValues() {
-	setEntryText(p.roomMaxHistoryFetch, p.form.MaxHistoryFetch)
-	setEntryText(p.roomMaxOccupants, p.form.MaxOccupantsNumber.CurrentValue())
 	setSwitchActive(p.roomEnableLoggin, p.form.Logged)
+
+	p.initializeAvailableOptions(p.roomMaxHistoryFetch, p.form.MaxHistoryFetch.Options())
+	p.initializeAvailableOptions(p.roomMaxOccupants, p.form.MaxOccupantsNumber.Options())
+}
+
+func (p *roomConfigOthersPage) initializeAvailableOptions(combo gtki.ComboBoxText, options []string) {
+	combo.SetSensitive(true)
+	for _, o := range options {
+		combo.AppendText(o)
+	}
+	combo.SetActive(0)
 }
 
 func (p *roomConfigOthersPage) collectData() {
-	p.form.MaxHistoryFetch = getEntryText(p.roomMaxHistoryFetch)
-	p.form.MaxOccupantsNumber.UpdateValue(getEntryText(p.roomMaxOccupants))
 	p.form.Logged = getSwitchActive(p.roomEnableLoggin)
 }

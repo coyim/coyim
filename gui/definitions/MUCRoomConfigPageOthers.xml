@@ -73,8 +73,19 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkSpinButton" id="room-maxhistoryfetch">
+                      <object class="GtkComboBoxText" id="room-maxhistoryfetch">
                         <property name="visible">True</property>
+                        <property name="has_entry">True</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="label-max-history"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -93,8 +104,19 @@
                     <property name="visible">True</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkSpinButton" id="room-maxoccupants">
+                      <object class="GtkComboBoxText" id="room-maxoccupants">
                         <property name="visible">True</property>
+                        <property name="has_entry">True</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="label-max-occupants"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>

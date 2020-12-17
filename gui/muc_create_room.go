@@ -118,7 +118,7 @@ func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(err
 	}()
 }
 
-func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(*muc.RoomConfigForm), onError func(error)) {
+func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(jid.Bare, *muc.RoomConfigForm), onError func(error)) {
 	fc, ec := a.session.CreateReservedRoom(roomID)
 	go func() {
 		select {
@@ -128,7 +128,7 @@ func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(*muc.RoomConfigFor
 				return
 			}
 		case form := <-fc:
-			onSuccess(form)
+			onSuccess(roomID, form)
 		}
 	}()
 }
@@ -179,10 +179,10 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 	}()
 }
 
-func (v *mucCreateRoomView) onReserveRoomFinished(cf *muc.RoomConfigForm) {
+func (v *mucCreateRoomView) onReserveRoomFinished(roomID jid.Bare, cf *muc.RoomConfigForm) {
 	doInUIThread(func() {
 		v.dialog.Destroy()
-		rca := v.u.newRoomConfigAssistant(cf)
+		rca := v.u.newRoomConfigAssistant(roomID, cf)
 		rca.show()
 	})
 }

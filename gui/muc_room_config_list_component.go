@@ -12,6 +12,7 @@ type mucRoomConfigListComponent struct {
 	listModelColumns        []glibi.Type
 	addButton, removeButton gtki.Button
 	onAdd                   func()
+	items                   [][]string
 }
 
 func (u *gtkUI) newMUCRoomConfigListComponent(list gtki.TreeView, listModelColumns []glibi.Type, addButton, removeButton gtki.Button, onAdd func()) *mucRoomConfigListComponent {
@@ -56,6 +57,8 @@ func (cl *mucRoomConfigListComponent) addListItem(cells ...string) {
 	for i, c := range cells {
 		_ = cl.listModel.SetValue(li, i, c)
 	}
+
+	cl.items = append(cl.items, cells)
 }
 
 func enableListWidget(w gtki.Widget) {

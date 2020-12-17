@@ -71,3 +71,7 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 func (c *mucRoomConfigListController) onAddOccupantsToList() {
 	c.addComponent.show()
 }
+
+func (c *mucRoomConfigListController) listItems() [][]string {
+	return c.listComponent.items
+}

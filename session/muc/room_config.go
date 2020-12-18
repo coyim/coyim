@@ -86,7 +86,12 @@ func NewRoomConfigRom(form *xmppData.Form) *RoomConfigForm {
 	cf := &RoomConfigForm{}
 
 	cf.MaxHistoryFetch = newConfigListSingleField([]string{
+		RoomConfigOption10,
+		RoomConfigOption20,
+		RoomConfigOption30,
 		RoomConfigOption50,
+		RoomConfigOption100,
+		RoomConfigOptionNone,
 	})
 
 	cf.AllowPrivateMessages = newConfigListSingleField([]string{

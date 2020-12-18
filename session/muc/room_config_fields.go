@@ -14,7 +14,7 @@ const (
 	// RoomConfigOptionVisitor represents the field option for "visitor"
 	RoomConfigOptionVisitor = "visitor"
 	// RoomConfigOptionNone represents the field option for "none"
-	RoomConfigOptionNone = "none"
+	RoomConfigOptionNone = "0"
 	// RoomConfigOption10 represents the field option for "10"
 	RoomConfigOption10 = "10"
 	// RoomConfigOption20 represents the field option for "20"

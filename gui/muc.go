@@ -135,3 +135,7 @@ func setSwitchActive(s gtki.Switch, v bool) {
 func getSwitchActive(s gtki.Switch) bool {
 	return s.GetActive()
 }
+
+func setLabelText(l gtki.Label, t string) {
+	l.SetLabel(t)
+}

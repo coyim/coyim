@@ -99,8 +99,15 @@ func (rc *roomConfigAssistant) initDefaults() {
 }
 
 func (rc *roomConfigAssistant) onCancel() {
-	// TODO: cancel the configuration process
-	// See https://xmpp.org/extensions/xep-0045.html#createroom-reserved
+	ec := rc.account.session.CancelRoomConfiguration(rc.roomID)
+	go func() {
+		err := <-ec
+		if err != nil {
+			// TODO: Show notification related to error produced trying to cancel the room configuration
+			rc.log.WithError(err).Error("Error trying to cancel the room configuration")
+			return
+		}
+	}()
 	rc.assistant.Destroy()
 }
 

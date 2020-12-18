@@ -1,8 +1,6 @@
 package session
 
 import (
-	"errors"
-
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -28,16 +26,9 @@ func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomCon
 			return
 		}
 
-		stanza, ok := <-reply
-		if !ok {
-			log.WithError(errors.New("error reading stanza reply")).Error("An error ocured trying to read the stanza reply")
-			errorChannel <- err
-			return
-		}
-
-		err = validateStanza(stanza)
+		err = validateIqResponse(reply)
 		if err != nil {
-			log.WithError(err).Error("Error in stanza reply")
+			log.WithError(ErrInformationQueryResponse).Error("An error ocured trying to read the stanza reply")
 			errorChannel <- err
 			return
 		}
@@ -47,15 +38,51 @@ func (s *session) SubmitRoomConfigurationForm(roomID jid.Bare, form *muc.RoomCon
 	return succesChannel, errorChannel
 }
 
-func validateStanza(stanza data.Stanza) error {
-	iq, ok := stanza.Value.(*data.ClientIQ)
+func validateIqResponse(reply <-chan data.Stanza) error {
+	stanza, ok := <-reply
 	if !ok {
-		return ErrUnexpectedResponse
-	}
-
-	if iq.Type == "error" {
 		return ErrInformationQueryResponse
 	}
 
+	iq, ok := stanza.Value.(*data.ClientIQ)
+	if !ok {
+		return ErrInformationQueryResponse
+	}
+
+	if iq.Type == "error" {
+		return ErrUnexpectedResponse
+	}
+
 	return nil
+}
+
+func (s *session) CancelRoomConfiguration(roomID jid.Bare) <-chan error {
+	log := log.WithFields(log.Fields{
+		"room":  roomID,
+		"where": "CancelRoomConfiguration",
+	})
+
+	errorChannel := make(chan error)
+	go func() {
+		reply, _, err := s.conn.SendIQ(roomID.String(), "set", data.MUCRoomConfiguration{
+			Form: &data.Form{
+				Type: "cancel",
+			},
+		})
+
+		if err != nil {
+			log.WithError(err).Error("An error ocured trying to send iq for canceling room configuration")
+			errorChannel <- err
+			return
+		}
+
+		err = validateIqResponse(reply)
+		if err != nil {
+			log.WithError(ErrInformationQueryResponse).Error("An error ocured trying to read the stanza reply")
+			errorChannel <- err
+			return
+		}
+
+	}()
+	return errorChannel
 }

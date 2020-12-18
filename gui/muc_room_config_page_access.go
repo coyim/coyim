@@ -32,6 +32,7 @@ func (p *roomConfigAccessPage) initDefaultValues() {
 
 func (p *roomConfigAccessPage) collectData() {
 	p.form.Password = getEntryText(p.roomPassword)
+	p.form.PasswordProtected = p.form.Password != ""
 	p.form.MembersOnly = getSwitchActive(p.roomMembersOnly)
 	p.form.OccupantsCanInvite = getSwitchActive(p.roomAllowInvites)
 }

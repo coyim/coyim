@@ -6,34 +6,44 @@ import (
 
 type roomConfigSummaryPage struct {
 	*roomConfigPageBase
+	autoJoin bool
 
-	box                     gtki.Box   `gtk-widget:"room-config-summary-page"`
-	infoSectionLabel        gtki.Label `gtk-widget:"room-config-information-title"`
-	title                   gtki.Label `gtk-widget:"room-config-summary-title"`
-	description             gtki.Label `gtk-widget:"room-config-summary-description"`
-	language                gtki.Label `gtk-widget:"room-config-summary-language"`
-	includePublicList       gtki.Image `gtk-widget:"room-config-summary-public"`
-	persistent              gtki.Image `gtk-widget:"room-config-summary-persistent"`
-	accessSectionLabel      gtki.Label `gtk-widget:"room-config-access-title"`
-	password                gtki.Image `gtk-widget:"room-config-summary-password"`
-	allowInviteUsers        gtki.Image `gtk-widget:"room-config-summary-invite"`
-	onlyMembers             gtki.Image `gtk-widget:"room-config-summary-onlymembers"`
-	permsisionsSectionLabel gtki.Label `gtk-widget:"room-config-permissions-title"`
-	allowSetRoomSubject     gtki.Image `gtk-widget:"room-config-summary-changesubject"`
-	moderatedRoom           gtki.Image `gtk-widget:"room-config-summary-moderated"`
-	whoIs                   gtki.Label `gtk-widget:"room-config-summary-whois"`
-	occupantsSectionLabel   gtki.Label `gtk-widget:"room-config-occupants-title"`
-	othersSectionLabel      gtki.Label `gtk-widget:"room-config-others-title"`
-	maxHistoryFetch         gtki.Label `gtk-widget:"room-config-summary-maxhistoryfetch"`
-	maxOccupants            gtki.Label `gtk-widget:"room-config-summary-maxoccupants"`
-	enableArchiving         gtki.Image `gtk-widget:"room-config-summary-archive"`
+	box                     gtki.Box         `gtk-widget:"room-config-summary-page"`
+	infoSectionLabel        gtki.Label       `gtk-widget:"room-config-information-title"`
+	title                   gtki.Label       `gtk-widget:"room-config-summary-title"`
+	description             gtki.Label       `gtk-widget:"room-config-summary-description"`
+	language                gtki.Label       `gtk-widget:"room-config-summary-language"`
+	includePublicList       gtki.Image       `gtk-widget:"room-config-summary-public"`
+	persistent              gtki.Image       `gtk-widget:"room-config-summary-persistent"`
+	accessSectionLabel      gtki.Label       `gtk-widget:"room-config-access-title"`
+	password                gtki.Image       `gtk-widget:"room-config-summary-password"`
+	allowInviteUsers        gtki.Image       `gtk-widget:"room-config-summary-invite"`
+	onlyMembers             gtki.Image       `gtk-widget:"room-config-summary-onlymembers"`
+	permsisionsSectionLabel gtki.Label       `gtk-widget:"room-config-permissions-title"`
+	allowSetRoomSubject     gtki.Image       `gtk-widget:"room-config-summary-changesubject"`
+	moderatedRoom           gtki.Image       `gtk-widget:"room-config-summary-moderated"`
+	whoIs                   gtki.Label       `gtk-widget:"room-config-summary-whois"`
+	occupantsSectionLabel   gtki.Label       `gtk-widget:"room-config-occupants-title"`
+	othersSectionLabel      gtki.Label       `gtk-widget:"room-config-others-title"`
+	maxHistoryFetch         gtki.Label       `gtk-widget:"room-config-summary-maxhistoryfetch"`
+	maxOccupants            gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
+	enableArchiving         gtki.Image       `gtk-widget:"room-config-summary-archive"`
+	autojoinCheckButton     gtki.CheckButton `gtk-widget:"room-config-autojoin"`
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
-	p := &roomConfigSummaryPage{}
+	p := &roomConfigSummaryPage{
+		autoJoin: c.autoJoin,
+	}
 
 	builder := newBuilder("MUCRoomConfigPageSummary")
 	panicOnDevError(builder.bindObjects(p))
+
+	builder.ConnectSignals(map[string]interface{}{
+		"on_autojoin_toggled": func() {
+			c.updateAutoJoin(p.autojoinCheckButton.GetActive())
+		},
+	})
 
 	p.roomConfigPageBase = c.newConfigPage(p.box)
 	p.onRefresh(p.onSummaryPageRefresh)
@@ -65,6 +75,8 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	setLabelText(p.maxHistoryFetch, p.form.MaxHistoryFetch.CurrentValue())
 	setLabelText(p.maxOccupants, p.form.MaxOccupantsNumber.CurrentValue())
 	setImageYesOrNo(p.enableArchiving, p.form.Logged)
+
+	p.autojoinCheckButton.SetActive(p.autoJoin)
 }
 
 func (p *roomConfigSummaryPage) collectData() {

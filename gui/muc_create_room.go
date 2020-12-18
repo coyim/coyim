@@ -167,7 +167,7 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 			}
 
 			ca.createRoom(roomID, func() {
-				v.onCreateRoomFinished(ca, roomID)
+				v.onCreateRoomFinished(ca, roomID, v.autoJoin)
 			}, func(err error) {
 				v.log(ca, roomID).WithError(err).Error("Something went wrong while trying to create the room")
 				errors <- errCreateRoomFailed
@@ -181,13 +181,13 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 
 func (v *mucCreateRoomView) onReserveRoomFinished(roomID jid.Bare, cf *muc.RoomConfigForm) {
 	doInUIThread(func() {
-		rca := v.u.newRoomConfigAssistant(v.form.roomFormComponent.currentAccount(), roomID, cf, v.onCreateRoomFinished)
+		rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished)
 		rca.show()
 	})
 }
 
-func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare) {
-	if v.autoJoin {
+func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, autoJoin bool) {
+	if autoJoin {
 		doInUIThread(func() {
 			v.joinRoom(ca, roomID)
 		})

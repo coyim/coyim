@@ -693,12 +693,13 @@
         <property name="border_width">12</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkCheckButton">
+          <object class="GtkCheckButton" id="room-config-autojoin">
             <property name="label" translatable="yes">Automatically join the room</property>
             <property name="visible">True</property>
             <property name="receives_default">False</property>
             <property name="halign">end</property>
             <property name="draw_indicator">True</property>
+            <signal name="toggled" handler="on_autojoin_toggled" />
           </object>
           <packing>
             <property name="expand">True</property>

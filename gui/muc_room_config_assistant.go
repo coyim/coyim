@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/coyim/coyim/coylog"
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -15,6 +16,14 @@ type roomConfigAssistant struct {
 	account             *account
 	roomConfigComponent *mucRoomConfigComponent
 	roomID              jid.Bare
+	autoJoin            bool
+	currentPageIndex    int
+
+	// The onSuccess function receives the following params:
+	//  - the account
+	//  - the room id
+	//  - the "auto join" flag
+	onSuccess func(*account, jid.Bare, bool)
 
 	assistant          gtki.Assistant `gtk-widget:"room-config-assistant"`
 	infoPageBox        gtki.Box       `gtk-widget:"room-config-info-page"`
@@ -31,18 +40,15 @@ type roomConfigAssistant struct {
 	othersPage      mucRoomConfigPage
 	summaryPage     mucRoomConfigPage
 
-	onSuccess func(*account, jid.Bare)
-
-	currentPageIndex int
-
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(account *account, roomID jid.Bare, form *muc.RoomConfigForm, onSuccess func(*account, jid.Bare)) *roomConfigAssistant {
+func (u *gtkUI) newRoomConfigAssistant(account *account, roomID jid.Bare, form *muc.RoomConfigForm, autoJoin bool, onSuccess func(*account, jid.Bare, bool)) *roomConfigAssistant {
 	rc := &roomConfigAssistant{
 		u:         u,
 		account:   account,
 		roomID:    roomID,
+		autoJoin:  autoJoin,
 		onSuccess: onSuccess,
 		log: u.log.WithFields(log.Fields{
 			"room":  roomID,
@@ -70,7 +76,7 @@ func (rc *roomConfigAssistant) initBuilder() {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigComponent(form *muc.RoomConfigForm) {
-	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.roomID, form)
+	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.roomID, form, rc.autoJoin)
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
@@ -129,7 +135,7 @@ func (rc *roomConfigAssistant) onApply() {
 	go func() {
 		select {
 		case <-sc:
-			rc.onSuccess(rc.account, rc.roomID)
+			rc.onSuccess(rc.account, rc.roomID, rc.roomConfigComponent.autoJoin)
 			doInUIThread(func() {
 				rc.assistant.Destroy()
 			})

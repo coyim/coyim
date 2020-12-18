@@ -18,9 +18,10 @@ const (
 )
 
 type mucRoomConfigComponent struct {
-	u      *gtkUI
-	form   *muc.RoomConfigForm
-	roomID jid.Bare
+	u        *gtkUI
+	form     *muc.RoomConfigForm
+	roomID   jid.Bare
+	autoJoin bool
 
 	infoPage        mucRoomConfigPage
 	accessPage      mucRoomConfigPage
@@ -32,11 +33,12 @@ type mucRoomConfigComponent struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newMUCRoomConfigComponent(roomID jid.Bare, f *muc.RoomConfigForm) *mucRoomConfigComponent {
+func (u *gtkUI) newMUCRoomConfigComponent(roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool) *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{
-		u:      u,
-		form:   f,
-		roomID: roomID,
+		u:        u,
+		form:     f,
+		roomID:   roomID,
+		autoJoin: autoJoin,
 		log: u.log.WithFields(log.Fields{
 			"room":  roomID,
 			"where": "roomConfigComponent",
@@ -55,6 +57,10 @@ func (c *mucRoomConfigComponent) initConfigPages() {
 	c.occupantsPage = c.newRoomConfigOccupantsPage()
 	c.othersPage = c.newRoomConfigOthersPage()
 	c.summaryPage = c.newRoomConfigSummaryPage()
+}
+
+func (c *mucRoomConfigComponent) updateAutoJoin(v bool) {
+	c.autoJoin = v
 }
 
 func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {

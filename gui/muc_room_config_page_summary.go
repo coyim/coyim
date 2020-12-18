@@ -1,15 +1,32 @@
 package gui
 
 import (
-	"log"
-
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomConfigSummaryPage struct {
 	*roomConfigPageBase
 
-	box gtki.Box `gtk-widget:"room-config-summary-page"`
+	box                     gtki.Box   `gtk-widget:"room-config-summary-page"`
+	infoSectionLabel        gtki.Label `gtk-widget:"room-config-information-title"`
+	title                   gtki.Label `gtk-widget:"room-config-summary-title"`
+	description             gtki.Label `gtk-widget:"room-config-summary-description"`
+	language                gtki.Label `gtk-widget:"room-config-summary-language"`
+	includePublicList       gtki.Image `gtk-widget:"room-config-summary-public"`
+	persistent              gtki.Image `gtk-widget:"room-config-summary-persistent"`
+	accessSectionLabel      gtki.Label `gtk-widget:"room-config-access-title"`
+	password                gtki.Image `gtk-widget:"room-config-summary-password"`
+	allowInviteUsers        gtki.Image `gtk-widget:"room-config-summary-invite"`
+	onlyMembers             gtki.Image `gtk-widget:"room-config-summary-onlymembers"`
+	permsisionsSectionLabel gtki.Label `gtk-widget:"room-config-permissions-title"`
+	allowSetRoomSubject     gtki.Image `gtk-widget:"room-config-summary-changesubject"`
+	moderatedRoom           gtki.Image `gtk-widget:"room-config-summary-moderated"`
+	whoIs                   gtki.Label `gtk-widget:"room-config-summary-whois"`
+	occupantsSectionLabel   gtki.Label `gtk-widget:"room-config-occupants-title"`
+	othersSectionLabel      gtki.Label `gtk-widget:"room-config-others-title"`
+	maxHistoryFetch         gtki.Label `gtk-widget:"room-config-summary-maxhistoryfetch"`
+	maxOccupants            gtki.Label `gtk-widget:"room-config-summary-maxoccupants"`
+	enableArchiving         gtki.Image `gtk-widget:"room-config-summary-archive"`
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
@@ -21,33 +38,44 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	p.roomConfigPageBase = c.newConfigPage(p.box)
 	p.onRefresh(p.onSummaryPageRefresh)
 
+	mucStyles.setRoomConfigSummarySectionLabelStyle(p.infoSectionLabel)
+	mucStyles.setRoomConfigSummarySectionLabelStyle(p.accessSectionLabel)
+	mucStyles.setRoomConfigSummarySectionLabelStyle(p.permsisionsSectionLabel)
+	mucStyles.setRoomConfigSummarySectionLabelStyle(p.occupantsSectionLabel)
+	mucStyles.setRoomConfigSummarySectionLabelStyle(p.othersSectionLabel)
+
+	mucStyles.setRoomConfigSummaryRoomTitleLabelStyle(p.title)
+	mucStyles.setRoomConfigSummaryRoomDescriptionLabelStyle(p.description)
+
 	return p
 }
 
 func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
-	log.Println("MaxHistoryFetch: ", p.form.MaxHistoryFetch)
-	log.Println("AllowPrivateMessages: ", p.form.AllowPrivateMessages)
-	log.Println("OccupantsCanInvite: ", p.form.OccupantsCanInvite)
-	log.Println("OccupantsCanChangeSubject: ", p.form.OccupantsCanChangeSubject)
-	log.Println("Logged: ", p.form.Logged)
-	log.Println("RetrieveMembersList: ", p.form.RetrieveMembersList)
-	log.Println("Language: ", p.form.Language)
-	log.Println("AssociatedPublishSubscribeNode: ", p.form.AssociatedPublishSubscribeNode)
-	log.Println("MaxOccupantsNumber: ", p.form.MaxOccupantsNumber)
-	log.Println("MembersOnly: ", p.form.MembersOnly)
-	log.Println("Moderated: ", p.form.Moderated)
-	log.Println("PasswordProtected: ", p.form.PasswordProtected)
-	log.Println("Persistent: ", p.form.Persistent)
-	log.Println("PresenceBroadcast: ", p.form.PresenceBroadcast)
-	log.Println("Public: ", p.form.Public)
-	log.Println("Admins: ", p.form.Admins)
-	log.Println("Description: ", p.form.Description)
-	log.Println("Title: ", p.form.Title)
-	log.Println("Owners: ", p.form.Owners)
-	log.Println("Password: ", p.form.Password)
-	log.Println("Whois: ", p.form.Whois)
+	setLabelText(p.title, p.form.Title)
+	setLabelText(p.description, p.form.Description)
+	setLabelText(p.language, p.form.Language)
+	setImageYesOrNo(p.includePublicList, p.form.Public)
+	setImageYesOrNo(p.persistent, p.form.Persistent)
+	setImageYesOrNo(p.password, p.form.PasswordProtected)
+	setImageYesOrNo(p.allowInviteUsers, p.form.OccupantsCanInvite)
+	setImageYesOrNo(p.onlyMembers, p.form.MembersOnly)
+	setImageYesOrNo(p.allowSetRoomSubject, p.form.OccupantsCanChangeSubject)
+	setImageYesOrNo(p.moderatedRoom, p.form.Moderated)
+	//TODO: implement whois functionality
+	setLabelText(p.maxHistoryFetch, p.form.MaxHistoryFetch.CurrentValue())
+	setLabelText(p.maxOccupants, p.form.MaxOccupantsNumber.CurrentValue())
+	setImageYesOrNo(p.enableArchiving, p.form.Logged)
 }
 
 func (p *roomConfigSummaryPage) collectData() {
 	// Nothing to do, just implement the interface
+}
+
+func setImageYesOrNo(img gtki.Image, v bool) {
+	icon := "no"
+	if v {
+		icon = "yes"
+	}
+
+	img.SetFromIconName("gtk-"+icon, gtki.ICON_SIZE_BUTTON)
 }

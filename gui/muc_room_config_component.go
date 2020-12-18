@@ -57,11 +57,6 @@ func (c *mucRoomConfigComponent) initConfigPages() {
 	c.summaryPage = c.newRoomConfigSummaryPage()
 }
 
-func (c *mucRoomConfigComponent) submitForm() error {
-	// TODO: implements the behavior of this method
-	return c.form.Submit()
-}
-
 func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {
 	switch p {
 	case roomConfigInformationPageIndex:

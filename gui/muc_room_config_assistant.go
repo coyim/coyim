@@ -12,6 +12,7 @@ import (
 
 type roomConfigAssistant struct {
 	u                   *gtkUI
+	account             *account
 	roomConfigComponent *mucRoomConfigComponent
 	roomID              jid.Bare
 
@@ -35,10 +36,11 @@ type roomConfigAssistant struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(roomID jid.Bare, form *muc.RoomConfigForm) *roomConfigAssistant {
+func (u *gtkUI) newRoomConfigAssistant(account *account, roomID jid.Bare, form *muc.RoomConfigForm) *roomConfigAssistant {
 	rc := &roomConfigAssistant{
-		u:      u,
-		roomID: roomID,
+		u:       u,
+		account: account,
+		roomID:  roomID,
 		log: u.log.WithFields(log.Fields{
 			"room":  roomID,
 			"where": "configureRoomAssistant",
@@ -111,11 +113,15 @@ func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
 }
 
 func (rc *roomConfigAssistant) onApply() {
-	// TODO: This is a basic implementation we should finish with the right behavior
-	err := rc.roomConfigComponent.submitForm()
-	if err != nil {
-		rc.log.WithError(err).Error("An error occurred when submitting the room configuration form")
-	}
+	sc, ec := rc.account.session.SubmitRoomConfigurationForm(rc.roomID, rc.roomConfigComponent.form)
+	go func() {
+		select {
+		case <-sc:
+			rc.log.Info("SUCCESS RECEIVED")
+		case err := <-ec:
+			rc.log.WithField("error", err).Error("ERROR RECEIVED")
+		}
+	}()
 }
 
 func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {

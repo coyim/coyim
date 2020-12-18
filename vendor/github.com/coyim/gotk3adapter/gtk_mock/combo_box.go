@@ -29,3 +29,9 @@ func (*MockComboBox) AddAttribute(v1 gtki.CellRenderer, v2 string, v3 int) {
 
 func (*MockComboBox) PackStart(v1 gtki.CellRenderer, v2 bool) {
 }
+
+func (*MockComboBox) SetIDColumn(v1 int) {
+}
+
+func (*MockComboBox) SetEntryTextColumn(v1 int) {
+}

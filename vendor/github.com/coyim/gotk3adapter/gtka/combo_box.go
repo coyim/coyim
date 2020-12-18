@@ -55,3 +55,11 @@ func (v *comboBox) AddAttribute(v1 gtki.CellRenderer, v2 string, v3 int) {
 func (v *comboBox) PackStart(v1 gtki.CellRenderer, v2 bool) {
 	v.internal.PackStart(UnwrapCellRenderer(v1), v2)
 }
+
+func (v *comboBox) SetIDColumn(v1 int) {
+	v.internal.SetIDColumn(v1)
+}
+
+func (v *comboBox) SetEntryTextColumn(v1 int) {
+	v.internal.SetEntryTextColumn(v1)
+}

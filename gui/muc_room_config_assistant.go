@@ -31,16 +31,19 @@ type roomConfigAssistant struct {
 	othersPage      mucRoomConfigPage
 	summaryPage     mucRoomConfigPage
 
+	onSuccess func(*account, jid.Bare)
+
 	currentPageIndex int
 
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(account *account, roomID jid.Bare, form *muc.RoomConfigForm) *roomConfigAssistant {
+func (u *gtkUI) newRoomConfigAssistant(account *account, roomID jid.Bare, form *muc.RoomConfigForm, onSuccess func(*account, jid.Bare)) *roomConfigAssistant {
 	rc := &roomConfigAssistant{
-		u:       u,
-		account: account,
-		roomID:  roomID,
+		u:         u,
+		account:   account,
+		roomID:    roomID,
+		onSuccess: onSuccess,
 		log: u.log.WithFields(log.Fields{
 			"room":  roomID,
 			"where": "configureRoomAssistant",
@@ -117,7 +120,10 @@ func (rc *roomConfigAssistant) onApply() {
 	go func() {
 		select {
 		case <-sc:
-			rc.log.Info("SUCCESS RECEIVED")
+			rc.onSuccess(rc.account, rc.roomID)
+			doInUIThread(func() {
+				rc.assistant.Destroy()
+			})
 		case err := <-ec:
 			rc.log.WithField("error", err).Error("ERROR RECEIVED")
 		}

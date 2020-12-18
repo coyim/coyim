@@ -159,7 +159,9 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 		select {
 		case <-sc:
 			if v.configureRoom {
-				ca.reserveRoom(roomID, v.onReserveRoomFinished, func(err error) {
+				ca.reserveRoom(roomID, func(roomID jid.Bare, cf *muc.RoomConfigForm) {
+					v.onReserveRoomFinished(ca, roomID, cf)
+				}, func(err error) {
 					v.log(ca, roomID).WithError(err).Error("Something went wrong while trying to create the room")
 					errors <- errCreateRoomFailed
 				})
@@ -179,7 +181,7 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 	}()
 }
 
-func (v *mucCreateRoomView) onReserveRoomFinished(roomID jid.Bare, cf *muc.RoomConfigForm) {
+func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) {
 	doInUIThread(func() {
 		rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished)
 		rca.show()

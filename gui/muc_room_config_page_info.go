@@ -41,6 +41,7 @@ func (p *roomConfigInfoPage) initDefaultValues() {
 func (p *roomConfigInfoPage) collectData() {
 	p.form.Title = getEntryText(p.roomTitle)
 	p.form.Description = getTextViewText(p.roomDescription)
+	p.form.Language = getEntryText(p.roomLanguage)
 	p.form.Persistent = getSwitchActive(p.roomPersistent)
 	p.form.Public = getSwitchActive(p.roomPublic)
 }

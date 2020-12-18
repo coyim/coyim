@@ -132,6 +132,25 @@ func (s *mucStylesProvider) setRoomLoadingViewOverlayContentBoxStyle(b gtki.Box)
 	})
 }
 
+func (s *mucStylesProvider) setRoomConfigSummarySectionLabelStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-size":   "14px",
+		"font-weight": "bold",
+	})
+}
+
+func (s *mucStylesProvider) setRoomConfigSummaryRoomTitleLabelStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-size": "16px",
+	})
+}
+
+func (s *mucStylesProvider) setRoomConfigSummaryRoomDescriptionLabelStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-style": "italic",
+	})
+}
+
 func (s *mucStylesProvider) setWidgetStyle(w gtki.Widget, se string, st style) {
 	updateWithStyle(w, providerWithStyle(se, st))
 }

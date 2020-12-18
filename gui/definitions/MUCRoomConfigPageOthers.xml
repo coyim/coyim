@@ -76,14 +76,9 @@
                       <object class="GtkComboBoxText" id="room-maxhistoryfetch">
                         <property name="visible">True</property>
                         <property name="has_entry">True</property>
-                        <child>
-                          <object class="GtkCellRendererText" id="label-max-history"/>
-                          <attributes>
-                            <attribute name="text">1</attribute>
-                          </attributes>
-                        </child>
                         <child internal-child="entry">
-                          <object class="GtkEntry">
+                          <object class="GtkEntry" id="room-maxhistoryfetch-entry">
+                            <property name="input_purpose">number</property>
                           </object>
                         </child>
                       </object>
@@ -107,14 +102,9 @@
                       <object class="GtkComboBoxText" id="room-maxoccupants">
                         <property name="visible">True</property>
                         <property name="has_entry">True</property>
-                        <child>
-                          <object class="GtkCellRendererText" id="label-max-occupants"/>
-                          <attributes>
-                            <attribute name="text">1</attribute>
-                          </attributes>
-                        </child>
                         <child internal-child="entry">
-                          <object class="GtkEntry">
+                          <object class="GtkEntry" id="room-maxoccupants-entry">
+                            <property name="input_purpose">number</property>
                           </object>
                         </child>
                       </object>

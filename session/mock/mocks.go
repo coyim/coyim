@@ -233,6 +233,11 @@ func (*SessionMock) CreateReservedRoom(jid.Bare) (<-chan *muc.RoomConfigForm, <-
 	return nil, nil
 }
 
+// SubmitRoomConfigurationForm is the implementation for session interface
+func (*SessionMock) SubmitRoomConfigurationForm(jid.Bare, *muc.RoomConfigForm) (chan bool, chan error) {
+	return nil, nil
+}
+
 // GetChatServices is the implementation for session interface
 func (*SessionMock) GetChatServices(jid.Domain) (<-chan jid.Domain, <-chan error, func()) {
 	return nil, nil, nil

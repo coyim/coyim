@@ -146,7 +146,7 @@ func (rl *RoomListing) updateWithFormFields(form xmppData.Form, fields map[strin
 
 func (rl *RoomListing) updateWithFormField(field string, values []string) {
 	switch field {
-	case "FORM_TYPE":
+	case ConfigFieldFormType:
 		// Ignore, we already checked
 	case "muc#roominfo_lang":
 		if len(values) > 0 {
@@ -160,11 +160,11 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 		if len(values) > 0 {
 			rl.OccupantsCanChangeSubject = values[0] == "1"
 		}
-	case "muc#roomconfig_enablelogging":
+	case ConfigFieldEnableLogging:
 		if len(values) > 0 {
 			rl.Logged = values[0] == "1"
 		}
-	case "muc#roomconfig_roomname":
+	case ConfigFieldRoomName:
 		// Initialized with an empty string because when `muc#roomconfig_roomname`
 		// has no value, the` Title` field is not updated
 		rl.Title = ""
@@ -186,11 +186,11 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 		if len(values) > 0 {
 			rl.MembersCanInvite = values[0] == "1"
 		}
-	case "muc#roomconfig_allowinvites":
+	case ConfigFieldAllowInvites:
 		if len(values) > 0 {
 			rl.OccupantsCanInvite = values[0] == "1"
 		}
-	case "muc#roomconfig_allowpm":
+	case ConfigFieldAllowPrivateMessages:
 		if len(values) > 0 {
 			rl.AllowPrivateMessages = values[0]
 		}
@@ -198,7 +198,7 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 		if len(values) > 0 {
 			rl.ContactJid = values[0]
 		}
-	case "muc#maxhistoryfetch":
+	case ConfigFieldMaxHistoryFetch:
 		if len(values) > 0 {
 			res, e := strconv.Atoi(values[0])
 			if e == nil {
@@ -224,5 +224,5 @@ func isValidRoomInfoForm(form xmppData.Form, fields map[string][]string) bool {
 }
 
 func hasRoomInfoFormType(fields map[string][]string) bool {
-	return len(fields["FORM_TYPE"]) > 0 && fields["FORM_TYPE"][0] == "http://jabber.org/protocol/muc#roominfo"
+	return len(fields[ConfigFieldFormType]) > 0 && fields[ConfigFieldFormType][0] == "http://jabber.org/protocol/muc#roominfo"
 }

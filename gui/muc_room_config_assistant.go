@@ -96,6 +96,8 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.occupantsPageBox.SetHExpand(true)
 	rc.othersPageBox.SetHExpand(true)
 	rc.summaryPageBox.SetHExpand(true)
+
+	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID.String()))
 }
 
 func (rc *roomConfigAssistant) onCancel() {

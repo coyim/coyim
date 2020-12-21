@@ -63,32 +63,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="halign">end</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes">Persistent</property>
-                <property name="justify">right</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="halign">end</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes">Include in public list</property>
-                <property name="justify">right</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">4</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
@@ -189,6 +163,7 @@
                 <child>
                   <object class="GtkSwitch" id="room-persistent">
                     <property name="visible">True</property>
+                    <property name="tooltip_text" translatable="yes">Whether to make room persistent</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                   </object>
@@ -201,8 +176,9 @@
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Whether to make room persistent</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Persistent</property>
+                    <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -223,6 +199,7 @@
                 <child>
                   <object class="GtkSwitch" id="room-public">
                     <property name="visible">True</property>
+                    <property name="tooltip_text" translatable="yes">Whether to allow public searching for room</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                   </object>
@@ -233,10 +210,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="publicroom">
+                  <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">Whether to allow public searching for room</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Include in public list</property>
+                    <property name="justify">right</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

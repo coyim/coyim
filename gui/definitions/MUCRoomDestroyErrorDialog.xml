@@ -1,6 +1,5 @@
 <interface>
   <object class="GtkDialog" id="destroy-room-error-dialog">
-    <property name="width_request">200</property>
     <property name="title" translatable="yes">Room destroy error</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -10,15 +9,13 @@
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
+        <property name="border_width">12</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButtonBox">
                 <property name="visible">True</property>
-                <property name="border_width">12</property>
-                <property name="spacing">12</property>
                 <property name="layout_style">start</property>
                 <child>
                   <object class="GtkButton">
@@ -68,46 +65,30 @@
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="border_width">12</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">12</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="valign">start</property>
+                <property name="stock">gtk-delete</property>
+                <property name="icon_size">6</property>
+                <property name="margin_right">12</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="spacing">12</property>
+                <property name="valign">center</property>
+                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkImage">
+                  <object class="GtkLabel" id="destroy-room-error-message">
                     <property name="visible">True</property>
-                    <property name="valign">start</property>
-                    <property name="stock">gtk-delete</property>
-                    <property name="icon_size">6</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="valign">center</property>
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">6</property>
-                    <child>
-                      <object class="GtkLabel" id="destroy-room-error-message">
-                        <property name="visible">True</property>
-                        <property name="wrap">True</property>
-                        <property name="width_chars">50</property>
-                        <property name="max_width_chars">50</property>
-                        <property name="track_visited_links">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
+                    <property name="wrap">True</property>
+                    <property name="track_visited_links">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -118,15 +99,15 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>

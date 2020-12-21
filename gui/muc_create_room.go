@@ -152,7 +152,7 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 	sc := make(chan bool)
 	er := make(chan error)
 
-	v.cancel = make(chan bool, 1)
+	v.cancel = make(chan bool)
 
 	go func() {
 		v.checkIfRoomExists(ca, roomID, sc, er)

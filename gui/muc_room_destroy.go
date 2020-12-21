@@ -77,14 +77,14 @@ func (d *roomDestroyView) initDefaults(v *roomView) {
 func (d *roomDestroyView) onDestroyRoom() {
 	d.notification.clearErrors()
 
-	b, _ := d.reasonEntry.GetBuffer()
-	reason := b.GetText(b.GetStartIter(), b.GetEndIter(), false)
-
 	alternativeID, password, err := d.alternativeRoomInformation()
 	if err != nil {
 		d.notification.error(d.friendlyMessageForAlternativeRoomError(err))
 		return
 	}
+
+	b, _ := d.reasonEntry.GetBuffer()
+	reason := b.GetText(b.GetStartIter(), b.GetEndIter(), false)
 
 	go d.destroyRoom(reason, alternativeID, password)
 	d.close()

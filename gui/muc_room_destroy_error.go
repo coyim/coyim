@@ -69,22 +69,15 @@ func (rd *roomDestroyErrorView) show() {
 
 func (rd *roomDestroyErrorView) friendlyMessageForDestroyError(err error) string {
 	switch err {
-	case session.ErrDestroyRoomInvalidIQResponse:
+	case session.ErrDestroyRoomInvalidIQResponse, session.ErrDestroyRoomNoResult:
 		return i18n.Local("We were able to connect to the room service, " +
-			"but we received an invalid response from it. Please try again.")
+			"but we received an invalid response from it. Please try again later.")
 	case session.ErrDestroyRoomForbidden:
 		return i18n.Local("You don't have the permission to destroy this room. " +
-			"Please get in contact with one of the room owners.")
-	case session.ErrDestroyRoomUnknown:
-		return i18n.Local("The room's service responded with an unknow error, " +
-			"so, the room can't be destroyed. Please try again.")
-	case session.ErrDestroyRoomNoResult:
-		return i18n.Local("We were able to send the request to destroy the room, " +
-			"but the service responded with an unknow result. Please contact the " +
-			"room's administrator.")
+			"Please contact one of the room owners.")
 	case session.ErrDestroyRoomDoesntExist:
-		return i18n.Local("We couldn't find the room that you are trying to destroy.")
+		return i18n.Local("We couldn't find the room in the server.")
 	default:
-		return i18n.Local("An error occurred when destroying the room. Please try again.")
+		return i18n.Local("An unknown error ocurred during the process. Please try again later.")
 	}
 }

@@ -65,6 +65,33 @@ func (c *mucRoomConfigComponent) updateAutoJoin(v bool) {
 	c.autoJoin = v
 }
 
+// cancelConfiguration IS SAFE to be called from the UI thread
+func (c *mucRoomConfigComponent) cancelConfiguration(onSuccess func(), onError func(error)) {
+	ec := c.account.session.CancelRoomConfiguration(c.roomID)
+
+	onSuccessFinal := func() {
+		if onSuccess != nil {
+			onSuccess()
+		}
+	}
+
+	onErrorFinal := func(err error) {
+		if onError != nil {
+			onError(err)
+		}
+	}
+
+	go func() {
+		if err := <-ec; err != nil {
+			c.log.WithError(err).Error("An error occurred when trying to cancel the room configuration")
+			onErrorFinal(err)
+			return
+		}
+
+		onSuccessFinal()
+	}()
+}
+
 // submitConfigurationForm IS SAFE to be called from the UI thread
 func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onError func(error)) {
 	rc, ec := c.account.session.SubmitRoomConfigurationForm(c.roomID, c.form)

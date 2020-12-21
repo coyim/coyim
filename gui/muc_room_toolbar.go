@@ -42,8 +42,6 @@ func (t *roomViewToolbar) initDefaults(v *roomView) {
 
 	t.displayRoomSubject(v.room.GetSubject())
 	mucStyles.setRoomToolbarSubjectLabelStyle(t.roomSubjectLabel)
-
-	t.destroyItem.SetVisible(v.isSelfOccupantAnOwner())
 }
 
 func (t *roomViewToolbar) initSubscribers(v *roomView) {
@@ -57,6 +55,8 @@ func (t *roomViewToolbar) initSubscribers(v *roomView) {
 			t.roomDestroyedEvent()
 		case selfOccupantRemovedEvent:
 			t.selfOccupantRemovedEvent()
+		case *occupantSelfJoinedEvent:
+			t.selfOccupantJoinedEvent(v.isSelfOccupantAnOwner())
 		}
 	})
 }
@@ -73,6 +73,10 @@ func (t *roomViewToolbar) roomDestroyedEvent() {
 
 func (t *roomViewToolbar) selfOccupantRemovedEvent() {
 	doInUIThread(t.disable)
+}
+
+func (t *roomViewToolbar) selfOccupantJoinedEvent(owner bool) {
+	t.destroyItem.SetVisible(owner)
 }
 
 // disable MUST be called from UI Thread

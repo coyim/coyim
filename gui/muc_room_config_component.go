@@ -19,6 +19,7 @@ const (
 
 type mucRoomConfigComponent struct {
 	u        *gtkUI
+	account  *account
 	form     *muc.RoomConfigForm
 	roomID   jid.Bare
 	autoJoin bool
@@ -33,11 +34,12 @@ type mucRoomConfigComponent struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newMUCRoomConfigComponent(roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool) *mucRoomConfigComponent {
+func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool) *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{
 		u:        u,
-		form:     f,
+		account:  account,
 		roomID:   roomID,
+		form:     f,
 		autoJoin: autoJoin,
 		log: u.log.WithFields(log.Fields{
 			"room":  roomID,
@@ -61,6 +63,33 @@ func (c *mucRoomConfigComponent) initConfigPages() {
 
 func (c *mucRoomConfigComponent) updateAutoJoin(v bool) {
 	c.autoJoin = v
+}
+
+// submitConfigurationForm IS SAFE to be called from the UI thread
+func (c *mucRoomConfigComponent) submitConfigurationForm(onSuccess func(), onError func(error)) {
+	rc, ec := c.account.session.SubmitRoomConfigurationForm(c.roomID, c.form)
+
+	onSuccessFinal := func() {
+		if onSuccess != nil {
+			onSuccess()
+		}
+	}
+
+	onErrorFinal := func(err error) {
+		if onError != nil {
+			onError(err)
+		}
+	}
+
+	go func() {
+		select {
+		case <-rc:
+			onSuccessFinal()
+		case err := <-ec:
+			c.log.WithError(err).Error("An error occurred when submitting the configuration form")
+			onErrorFinal(err)
+		}
+	}()
 }
 
 func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {

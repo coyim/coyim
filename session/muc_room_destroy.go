@@ -39,14 +39,12 @@ func (s *session) DestroyRoom(roomID jid.Bare, reason string, altRoomID jid.Bare
 }
 
 func (m *mucManager) destroyRoom(roomID jid.Bare, q data.MUCRoomDestroyQuery, rc chan bool, ec chan error) {
-	log := m.log.WithFields(log.Fields{
-		"room":  roomID,
-		"where": "destroyRoom",
-	})
-
 	reply, _, err := m.conn().SendIQ(roomID.String(), "set", q)
 	if err != nil {
-		log.WithError(err).Error("Invalid destroy room information query response")
+		m.log.WithFields(log.Fields{
+			"room":  roomID,
+			"where": "destroyRoom",
+		}).WithError(err).Error("Invalid destroy room information query response")
 		ec <- err
 		return
 	}

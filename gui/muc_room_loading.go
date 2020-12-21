@@ -26,7 +26,7 @@ func (v *roomView) newRoomViewLoadingOverlay() *roomViewLoadingOverlay {
 }
 
 func (lo *roomViewLoadingOverlay) initDefaults() {
-	mucStyles.setRoomLoadingViewOverlayTitleStyle(lo.title)
+	mucStyles.setLabelBoldStyle(lo.title)
 }
 
 func (lo *roomViewLoadingOverlay) setTransparent() {

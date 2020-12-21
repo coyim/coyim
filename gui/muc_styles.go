@@ -99,7 +99,7 @@ func (s *mucStylesProvider) setRoomMessagesBoxStyle(b gtki.Box) {
 	})
 }
 
-func (s *mucStylesProvider) setRoomLoadingViewOverlayTitleStyle(l gtki.Label) {
+func (s *mucStylesProvider) setLabelBoldStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-weight": "bold",
 	})

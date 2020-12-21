@@ -18,12 +18,7 @@ type roomConfigAssistant struct {
 	roomID              jid.Bare
 	autoJoin            bool
 	currentPageIndex    int
-
-	// The onSuccess function receives the following params:
-	//  - the account
-	//  - the room id
-	//  - the "auto join" flag
-	onSuccess func(*account, jid.Bare, bool)
+	onSuccess           func(currentAccount *account, roomID jid.Bare, autoJoin bool)
 
 	assistant          gtki.Assistant `gtk-widget:"room-config-assistant"`
 	infoPageBox        gtki.Box       `gtk-widget:"room-config-info-page"`
@@ -76,7 +71,7 @@ func (rc *roomConfigAssistant) initBuilder() {
 }
 
 func (rc *roomConfigAssistant) initRoomConfigComponent(form *muc.RoomConfigForm) {
-	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.roomID, form, rc.autoJoin)
+	rc.roomConfigComponent = rc.u.newMUCRoomConfigComponent(rc.account, rc.roomID, form, rc.autoJoin)
 }
 
 func (rc *roomConfigAssistant) initRoomConfigPages() {
@@ -131,18 +126,21 @@ func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
 }
 
 func (rc *roomConfigAssistant) onApply() {
-	sc, ec := rc.account.session.SubmitRoomConfigurationForm(rc.roomID, rc.roomConfigComponent.form)
-	go func() {
-		select {
-		case <-sc:
-			rc.onSuccess(rc.account, rc.roomID, rc.roomConfigComponent.autoJoin)
-			doInUIThread(func() {
-				rc.assistant.Destroy()
-			})
-		case err := <-ec:
-			rc.log.WithField("error", err).Error("ERROR RECEIVED")
-		}
-	}()
+	rc.roomConfigComponent.submitConfigurationForm(
+		rc.onApplySuccess,
+		rc.onApplyError,
+	)
+}
+
+func (rc *roomConfigAssistant) onApplySuccess() {
+	rc.onSuccess(rc.account, rc.roomID, rc.roomConfigComponent.autoJoin)
+	doInUIThread(func() {
+		rc.assistant.Destroy()
+	})
+}
+
+func (rc *roomConfigAssistant) onApplyError(err error) {
+	// TODO show a friendly error message (bassed on "err") to the user inside the assistant
 }
 
 func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {

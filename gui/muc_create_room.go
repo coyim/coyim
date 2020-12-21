@@ -183,7 +183,7 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan
 
 func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) {
 	doInUIThread(func() {
-		rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished)
+		rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished, nil)
 		rca.show()
 	})
 }

@@ -19,6 +19,7 @@ type roomConfigAssistant struct {
 	autoJoin            bool
 	currentPageIndex    int
 	onSuccess           func(currentAccount *account, roomID jid.Bare, autoJoin bool)
+	onCancel            func()
 
 	assistant          gtki.Assistant `gtk-widget:"room-config-assistant"`
 	infoPageBox        gtki.Box       `gtk-widget:"room-config-info-page"`
@@ -38,17 +39,28 @@ type roomConfigAssistant struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(account *account, roomID jid.Bare, form *muc.RoomConfigForm, autoJoin bool, onSuccess func(*account, jid.Bare, bool)) *roomConfigAssistant {
+func (u *gtkUI) newRoomConfigAssistant(ca *account, roomID jid.Bare, form *muc.RoomConfigForm, autoJoin bool, onSuccess func(*account, jid.Bare, bool), onCancel func()) *roomConfigAssistant {
 	rc := &roomConfigAssistant{
-		u:         u,
-		account:   account,
-		roomID:    roomID,
-		autoJoin:  autoJoin,
-		onSuccess: onSuccess,
+		u:        u,
+		account:  ca,
+		roomID:   roomID,
+		autoJoin: autoJoin,
 		log: u.log.WithFields(log.Fields{
 			"room":  roomID,
 			"where": "configureRoomAssistant",
 		}),
+	}
+
+	rc.onSuccess = func(a *account, rid jid.Bare, aj bool) {
+		if onSuccess != nil {
+			onSuccess(a, rid, aj)
+		}
+	}
+
+	rc.onCancel = func() {
+		if onCancel != nil {
+			onCancel()
+		}
 	}
 
 	rc.initBuilder()
@@ -64,8 +76,8 @@ func (rc *roomConfigAssistant) initBuilder() {
 	panicOnDevError(b.bindObjects(rc))
 
 	b.ConnectSignals(map[string]interface{}{
-		"on_cancel":       rc.onCancel,
 		"on_page_changed": rc.onPageChanged,
+		"on_cancel":       rc.onCancelClicked,
 		"on_apply":        rc.onApply,
 	})
 }
@@ -101,19 +113,6 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID.String()))
 }
 
-func (rc *roomConfigAssistant) onCancel() {
-	ec := rc.account.session.CancelRoomConfiguration(rc.roomID)
-	go func() {
-		err := <-ec
-		if err != nil {
-			// TODO: Show notification related to error produced trying to cancel the room configuration
-			rc.log.WithError(err).Error("Error trying to cancel the room configuration")
-			return
-		}
-	}()
-	rc.assistant.Destroy()
-}
-
 func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
 	previousPage.collectData()
@@ -125,6 +124,19 @@ func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
 	currentPage.refresh()
 }
 
+func (rc *roomConfigAssistant) onCancelClicked() {
+	rc.roomConfigComponent.cancelConfiguration(rc.onCancelSuccess, rc.onCancelError)
+}
+
+func (rc *roomConfigAssistant) onCancelSuccess() {
+	rc.onCancel()
+	doInUIThread(rc.assistant.Destroy)
+}
+
+func (rc *roomConfigAssistant) onCancelError(err error) {
+	// TODO show a friendly error message (bassed on "err") to the user
+}
+
 func (rc *roomConfigAssistant) onApply() {
 	rc.roomConfigComponent.submitConfigurationForm(
 		rc.onApplySuccess,
@@ -134,9 +146,7 @@ func (rc *roomConfigAssistant) onApply() {
 
 func (rc *roomConfigAssistant) onApplySuccess() {
 	rc.onSuccess(rc.account, rc.roomID, rc.roomConfigComponent.autoJoin)
-	doInUIThread(func() {
-		rc.assistant.Destroy()
-	})
+	doInUIThread(rc.assistant.Destroy)
 }
 
 func (rc *roomConfigAssistant) onApplyError(err error) {

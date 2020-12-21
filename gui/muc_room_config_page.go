@@ -11,23 +11,29 @@ type mucRoomConfigPage interface {
 	collectData()
 	onRefresh(func())
 	refresh()
+	nofityError(string)
 }
 
 type roomConfigPageBase struct {
-	u           *gtkUI
-	box         gtki.Box
-	refreshList []func()
-	form        *muc.RoomConfigForm
-	log         coylog.Logger
+	u             *gtkUI
+	box           gtki.Box
+	notifications *notifications
+	refreshList   []func()
+	form          *muc.RoomConfigForm
+	log           coylog.Logger
 }
 
-func (c *mucRoomConfigComponent) newConfigPage(b gtki.Box) *roomConfigPageBase {
-	return &roomConfigPageBase{
+func (c *mucRoomConfigComponent) newConfigPage(b gtki.Box, nb gtki.Box) *roomConfigPageBase {
+	cp := &roomConfigPageBase{
 		u:    c.u,
 		box:  b,
 		form: c.form,
 		log:  c.log,
 	}
+
+	cp.notifications = c.u.newNotifications(nb)
+
+	return cp
 }
 
 func (p *roomConfigPageBase) getPageView() gtki.Box {
@@ -48,4 +54,8 @@ func (p *roomConfigPageBase) refresh() {
 	for _, f := range p.refreshList {
 		f()
 	}
+}
+
+func (p *roomConfigPageBase) nofityError(m string) {
+	p.notifications.notifyOnError(m)
 }

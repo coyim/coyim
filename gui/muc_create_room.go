@@ -88,51 +88,6 @@ var (
 	errCreateRoomFailed             = errors.New("couldn't create the room")
 )
 
-func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, result chan bool, errors chan error) {
-	rc, ec := ca.session.HasRoom(roomID, nil)
-	go func() {
-		select {
-		case err := <-ec:
-			v.log(ca, roomID).WithError(err).Error("Error trying to validate if room exists")
-			errors <- errCreateRoomCheckIfExistsFails
-		case exists := <-rc:
-			if exists {
-				errors <- errCreateRoomAlreadyExists
-				return
-			}
-			result <- true
-		case <-v.cancel:
-		}
-	}()
-}
-
-func (a *account) createRoom(roomID jid.Bare, onSuccess func(), onError func(error)) {
-	result := a.session.CreateInstantRoom(roomID)
-	go func() {
-		err := <-result
-		if err != nil {
-			onError(err)
-			return
-		}
-		onSuccess()
-	}()
-}
-
-func (a *account) reserveRoom(roomID jid.Bare, onSuccess func(jid.Bare, *muc.RoomConfigForm), onError func(error)) {
-	fc, ec := a.session.CreateReservedRoom(roomID)
-	go func() {
-		select {
-		case err := <-ec:
-			if err != nil {
-				onError(err)
-				return
-			}
-		case form := <-fc:
-			onSuccess(roomID, form)
-		}
-	}()
-}
-
 func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 	l := v.u.log
 	if ca != nil {
@@ -148,37 +103,35 @@ func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 	return l
 }
 
-func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, errors chan error) {
-	sc := make(chan bool)
-	er := make(chan error)
-
+func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError func(err error)) {
 	v.cancel = make(chan bool)
 
+	sc := make(chan bool)
+	ec := make(chan error)
+
+	onErrorFinal := onError
+	onError = func(err error) {
+		if onErrorFinal != nil {
+			onErrorFinal(err)
+		}
+	}
+
 	go func() {
-		v.checkIfRoomExists(ca, roomID, sc, er)
+		v.checkIfRoomExists(ca, roomID, sc, ec)
+
 		select {
 		case <-sc:
 			if v.configureRoom {
-				ca.reserveRoom(roomID, func(roomID jid.Bare, cf *muc.RoomConfigForm) {
-					v.onReserveRoomFinished(ca, roomID, cf)
-				}, func(err error) {
-					v.log(ca, roomID).WithError(err).Error("Something went wrong while trying to create the room")
-					errors <- errCreateRoomFailed
-				})
-				return
+				v.createReservedRoom(ca, roomID, onError)
+			} else {
+				v.createInstantRoom(ca, roomID, onError)
 			}
-
-			ca.createRoom(roomID, func() {
-				v.onCreateRoomFinished(ca, roomID, v.autoJoin)
-			}, func(err error) {
-				v.log(ca, roomID).WithError(err).Error("Something went wrong while trying to create the room")
-				errors <- errCreateRoomFailed
-			})
-		case err := <-er:
-			errors <- err
+		case err := <-ec:
+			onError(err)
 		case <-v.cancel:
 		}
 	}()
+
 }
 
 func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) {

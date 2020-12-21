@@ -9,6 +9,7 @@ type roomConfigPermissionsPage struct {
 	*roomConfigPageBase
 
 	configPermissionsBox gtki.Box      `gtk-widget:"room-config-permissions-page"`
+	notificationBox      gtki.Box      `gtk-widget:"notification-box"`
 	roomChangeSubject    gtki.Switch   `gtk-widget:"room-changesubject"`
 	roomModerated        gtki.Switch   `gtk-widget:"room-moderated"`
 	roomWhois            gtki.ComboBox `gtk-widget:"room-whois"`
@@ -22,7 +23,7 @@ func (c *mucRoomConfigComponent) newRoomConfigPermissionsPage() mucRoomConfigPag
 	builder := newBuilder("MUCRoomConfigPagePermissions")
 	panicOnDevError(builder.bindObjects(p))
 
-	p.roomConfigPageBase = c.newConfigPage(p.configPermissionsBox)
+	p.roomConfigPageBase = c.newConfigPage(p.configPermissionsBox, p.notificationBox)
 	p.onRefresh(p.refreshWhoisField)
 
 	// These two values are the option name and the friendly label for it

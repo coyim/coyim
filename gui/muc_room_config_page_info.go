@@ -7,6 +7,7 @@ type roomConfigInfoPage struct {
 	roomDescriptionBuffer gtki.TextBuffer
 
 	box             gtki.Box      `gtk-widget:"room-config-info-page"`
+	notificationBox gtki.Box      `gtk-widget:"notification-box"`
 	roomTitle       gtki.Entry    `gtk-widget:"room-title"`
 	roomDescription gtki.TextView `gtk-widget:"room-description"`
 	roomLanguage    gtki.Entry    `gtk-widget:"room-language"`
@@ -20,7 +21,7 @@ func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
 	builder := newBuilder("MUCRoomConfigPageInfo")
 	panicOnDevError(builder.bindObjects(p))
 
-	p.roomConfigPageBase = c.newConfigPage(p.box)
+	p.roomConfigPageBase = c.newConfigPage(p.box, p.notificationBox)
 
 	p.roomDescriptionBuffer, _ = g.gtk.TextBufferNew(nil)
 	p.roomDescription.SetBuffer(p.roomDescriptionBuffer)

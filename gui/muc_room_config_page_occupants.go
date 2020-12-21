@@ -11,6 +11,7 @@ type roomConfigOccupantsPage struct {
 	*roomConfigPageBase
 
 	configOccupantsBox gtki.Box      `gtk-widget:"room-config-occupants-page"`
+	notificationBox    gtki.Box      `gtk-widget:"notification-box"`
 	ownersList         gtki.TreeView `gtk-widget:"room-config-owners-list"`
 	ownersAddButton    gtki.Button   `gtk-widget:"room-owner-add"`
 	ownersRemoveButton gtki.Button   `gtk-widget:"room-owner-remove"`
@@ -28,7 +29,7 @@ func (c *mucRoomConfigComponent) newRoomConfigOccupantsPage() mucRoomConfigPage 
 	builder := newBuilder("MUCRoomConfigPageOccupants")
 	panicOnDevError(builder.bindObjects(p))
 
-	p.roomConfigPageBase = c.newConfigPage(p.configOccupantsBox)
+	p.roomConfigPageBase = c.newConfigPage(p.configOccupantsBox, p.notificationBox)
 
 	p.initOccupantsLists()
 	p.initDefaultValues()

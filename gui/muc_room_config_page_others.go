@@ -11,6 +11,7 @@ type roomConfigOthersPage struct {
 	*roomConfigPageBase
 
 	configOthersBox          gtki.Box          `gtk-widget:"room-config-others-page"`
+	notificationBox          gtki.Box          `gtk-widget:"notification-box"`
 	roomMaxHistoryFetchCombo gtki.ComboBoxText `gtk-widget:"room-maxhistoryfetch"`
 	roomMaxHistoryFetchEntry gtki.Entry        `gtk-widget:"room-maxhistoryfetch-entry"`
 	roomMaxOccupantsCombo    gtki.ComboBoxText `gtk-widget:"room-maxoccupants"`
@@ -27,7 +28,7 @@ func (c *mucRoomConfigComponent) newRoomConfigOthersPage() mucRoomConfigPage {
 	builder := newBuilder("MUCRoomConfigPageOthers")
 	panicOnDevError(builder.bindObjects(p))
 
-	p.roomConfigPageBase = c.newConfigPage(p.configOthersBox)
+	p.roomConfigPageBase = c.newConfigPage(p.configOthersBox, p.notificationBox)
 
 	p.roomMaxHistoryFetch = newRoomConfigCombo(p.roomMaxHistoryFetchCombo, p.roomMaxHistoryFetchEntry)
 	p.roomMaxOccupants = newRoomConfigCombo(p.roomMaxOccupantsCombo, p.roomMaxOccupantsEntry)

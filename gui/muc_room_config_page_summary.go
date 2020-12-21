@@ -29,6 +29,7 @@ type roomConfigSummaryPage struct {
 	maxOccupants            gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
 	enableArchiving         gtki.Image       `gtk-widget:"room-config-summary-archive"`
 	autojoinCheckButton     gtki.CheckButton `gtk-widget:"room-config-autojoin"`
+	notificationBox         gtki.Box         `gtk-widget:"notification-box"`
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
@@ -45,7 +46,7 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 		},
 	})
 
-	p.roomConfigPageBase = c.newConfigPage(p.box)
+	p.roomConfigPageBase = c.newConfigPage(p.box, p.notificationBox)
 	p.onRefresh(p.onSummaryPageRefresh)
 
 	mucStyles.setRoomConfigSummarySectionLabelStyle(p.infoSectionLabel)

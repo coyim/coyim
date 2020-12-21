@@ -23,7 +23,8 @@ type mucCreateRoomViewForm struct {
 	spinner       *spinner
 	notifications *notifications
 
-	roomNameConflictList     *set.Set
+	roomNameConflictList *set.Set
+	// createRoom MUST NOT be called from the UI thread
 	createRoom               func(*account, jid.Bare)
 	updateAutoJoinValue      func(bool)
 	updateConfigureRoomValue func(bool)
@@ -37,7 +38,7 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 		roomNameConflictList:     set.New(),
 		updateAutoJoinValue:      v.updateAutoJoinValue,
 		updateConfigureRoomValue: v.updateConfigureRoomValue,
-		log:                      v.log,
+		log: v.log,
 	}
 
 	f.initBuilder(v)
@@ -93,9 +94,9 @@ func (v *mucCreateRoomView) initCreateRoomForm() *mucCreateRoomViewForm {
 	f := v.newCreateRoomForm()
 
 	f.createRoom = func(ca *account, roomID jid.Bare) {
-		errors := make(chan error)
-		v.createRoom(ca, roomID, errors)
-		go f.listenToCreateError(roomID, errors)
+		v.createRoom(ca, roomID, func(err error) {
+			f.onCreateRoomError(roomID, err)
+		})
 	}
 
 	f.addCallbacks(v)
@@ -111,9 +112,7 @@ func (f *mucCreateRoomViewForm) onRoomConfigToggled() {
 	f.updateConfigureRoomValue(f.roomConfigCheck.GetActive())
 }
 
-func (f *mucCreateRoomViewForm) listenToCreateError(roomID jid.Bare, errors chan error) {
-	err := <-errors
-
+func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 	switch err {
 	case errCreateRoomCheckIfExistsFails:
 		doInUIThread(f.onCreateRoomCheckIfExistsFails)

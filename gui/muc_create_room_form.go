@@ -56,7 +56,7 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 		roomNameConflictList:     set.New(),
 		updateAutoJoinValue:      v.updateAutoJoinValue,
 		updateConfigureRoomValue: v.updateConfigureRoomValue,
-		log: v.log,
+		log:                      v.log,
 	}
 
 	f.initBuilder(v)
@@ -228,6 +228,7 @@ func (f *mucCreateRoomViewForm) disableFields() {
 func (f *mucCreateRoomViewForm) setFieldsSensitive(v bool) {
 	f.createButton.SetSensitive(v)
 	f.roomAutoJoinCheck.SetSensitive(v)
+	f.roomConfigCheck.SetSensitive(v)
 }
 
 func (f *mucCreateRoomViewForm) updateServicesBasedOnAccount(ca *account) {

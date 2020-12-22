@@ -44,3 +44,7 @@ func (v *MockTreeStore) Clear() {
 func (v *MockTreeStore) SetValue(v1 gtki.TreeIter, v2 int, v3 interface{}) error {
 	return nil
 }
+
+func (v *MockTreeStore) Remove(v1 gtki.TreeIter) bool {
+	return false
+}

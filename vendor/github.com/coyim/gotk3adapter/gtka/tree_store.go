@@ -66,3 +66,7 @@ func (v *treeStore) Clear() {
 func (v *treeStore) SetValue(v1 gtki.TreeIter, v2 int, v3 interface{}) error {
 	return v.internal.SetValue(UnwrapTreeIter(v1), v2, gliba.UnwrapAllGuard(v3))
 }
+
+func (v *treeStore) Remove(v1 gtki.TreeIter) bool {
+	return v.internal.Remove(UnwrapTreeIter(v1))
+}

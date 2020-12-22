@@ -9,6 +9,7 @@ type TreeStore interface {
 	Append(TreeIter) TreeIter
 	Clear()
 	SetValue(TreeIter, int, interface{}) error
+	Remove(TreeIter) bool
 }
 
 func AssertTreeStore(_ TreeStore) {}

@@ -2,39 +2,20 @@ package gui
 
 import (
 	"github.com/coyim/coyim/i18n"
-	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomViewLoadingOverlay struct {
-	overlay     gtki.Overlay
-	box         gtki.Box
-	title       gtki.Label
-	description gtki.Label
+	*loadingOverlayComponent
 }
 
 func (v *roomView) newRoomViewLoadingOverlay() *roomViewLoadingOverlay {
-	lo := &roomViewLoadingOverlay{
-		overlay:     v.loadingOverlay,
-		box:         v.loadingOverlayBox,
-		title:       v.loadingOverlayTitle,
-		description: v.loadingOverlayDescription,
+	o := &roomViewLoadingOverlay{
+		v.u.newLoadingOverlayComponent(),
 	}
 
-	lo.initDefaults()
+	v.overlay.AddOverlay(o.overlay)
 
-	return lo
-}
-
-func (lo *roomViewLoadingOverlay) initDefaults() {
-	mucStyles.setLabelBoldStyle(lo.title)
-}
-
-func (lo *roomViewLoadingOverlay) setTransparent() {
-	mucStyles.setRoomLoadingViewOverlayTransparentStyle(lo.box)
-}
-
-func (lo *roomViewLoadingOverlay) setSolid() {
-	mucStyles.setRoomLoadingViewOverlaySolidStyle(lo.box)
+	return o
 }
 
 // onRoomDiscoInfoLoad MUST be called from the UI thread
@@ -50,36 +31,4 @@ func (lo *roomViewLoadingOverlay) onRoomDestroy() {
 	lo.setTitle(i18n.Local("Destroying room..."))
 	lo.setTransparent()
 	lo.show()
-}
-
-// show MUST be called from the UI thread
-func (lo *roomViewLoadingOverlay) show() {
-	lo.overlay.Show()
-}
-
-// showWithMessage MUST be called from the UI thread
-func (lo *roomViewLoadingOverlay) showWithMessage(m string) {
-	lo.setTitle(m)
-	lo.show()
-}
-
-func (lo *roomViewLoadingOverlay) setTitle(t string) {
-	lo.title.SetLabel(t)
-	lo.title.Show()
-}
-
-func (lo *roomViewLoadingOverlay) setDescription(d string) {
-	lo.description.SetLabel(d)
-	lo.description.Show()
-}
-
-// hide MUST be called from the UI thread
-func (lo *roomViewLoadingOverlay) hide() {
-	lo.setTitle("")
-	lo.setDescription("")
-
-	lo.title.Hide()
-	lo.description.Hide()
-
-	lo.overlay.Hide()
 }

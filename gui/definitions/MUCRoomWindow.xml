@@ -6,7 +6,7 @@
     <property name="gravity">center</property>
     <signal name="destroy" handler="on_destroy_window" swapped="no"/>
     <child>
-      <object class="GtkOverlay">
+      <object class="GtkOverlay" id="roomOverlay">
         <property name="visible">True</property>
         <child>
           <object class="GtkBox">
@@ -70,7 +70,6 @@
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
-                                
                                 <property name="label" translatable="yes">Loading the room information took longer than usual, perhaps the connection to the server was lost. Do you want to try again?</property>
                                 <property name="wrap">True</property>
                                 <property name="xalign">0</property>
@@ -152,105 +151,6 @@
               <packing>
                 <property name="index">-1</property>
               </packing>
-            </child>
-          </object>
-        </child>
-        <child type="overlay">
-          <object class="GtkOverlay" id="loadingOverlay">
-            <property name="hexpand">True</property>
-            <property name="vexpand">True</property>
-            <child>
-              <object class="GtkBox" id="loadingOverlayBox">
-                <property name="visible">True</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkBox" id="loadingOverlayContentBox">
-                    <property name="visible">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="spacing">12</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="halign">center</property>
-                        <property name="valign">center</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkSpinner">
-                            <property name="width_request">48</property>
-                            <property name="height_request">48</property>
-                            <property name="visible">True</property>
-                            <property name="halign">center</property>
-                            <property name="valign">center</property>
-                            <property name="hexpand">True</property>
-                            <property name="vexpand">True</property>
-                            <property name="active">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">3</property>
-                        <child>
-                          <object class="GtkLabel" id="loadingOverlayTitle">
-                            <property name="halign">start</property>
-                            <property name="valign">start</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="loadingOverlayDescription">
-                            <property name="halign">start</property>
-                            <property name="valign">start</property>
-                            <property name="wrap">True</property>
-                            <property name="max_width_chars">40</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-              </object>
             </child>
           </object>
         </child>

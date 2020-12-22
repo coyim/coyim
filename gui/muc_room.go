@@ -22,18 +22,15 @@ type roomView struct {
 	opened   bool
 	returnTo func()
 
-	window                    gtki.Window  `gtk-widget:"roomWindow"`
-	content                   gtki.Box     `gtk-widget:"boxMainView"`
-	messagesOverlay           gtki.Overlay `gtk-widget:"messagesOverlay"`
-	messagesOverlayBox        gtki.Box     `gtk-widget:"messagesOverlayBox"`
-	messagesBox               gtki.Box     `gtk-widget:"messagesBox"`
-	notificationBox           gtki.Box     `gtk-widget:"notificationBox"`
-	loadingNotificationBox    gtki.Box     `gtk-widget:"loadingNotificationBox"`
-	loadingOverlay            gtki.Overlay `gtk-widget:"loadingOverlay"`
-	loadingOverlayBox         gtki.Box     `gtk-widget:"loadingOverlayBox"`
-	loadingOverlayTitle       gtki.Label   `gtk-widget:"loadingOverlayTitle"`
-	loadingOverlayDescription gtki.Label   `gtk-widget:"loadingOverlayDescription"`
-	roomInfoErrorBar          gtki.InfoBar `gtk-widget:"room-info-error-bar"`
+	window                 gtki.Window  `gtk-widget:"roomWindow"`
+	content                gtki.Box     `gtk-widget:"boxMainView"`
+	overlay                gtki.Overlay `gtk-widget:"roomOverlay"`
+	messagesOverlay        gtki.Overlay `gtk-widget:"messagesOverlay"`
+	messagesOverlayBox     gtki.Box     `gtk-widget:"messagesOverlayBox"`
+	messagesBox            gtki.Box     `gtk-widget:"messagesBox"`
+	notificationBox        gtki.Box     `gtk-widget:"notificationBox"`
+	loadingNotificationBox gtki.Box     `gtk-widget:"loadingNotificationBox"`
+	roomInfoErrorBar       gtki.InfoBar `gtk-widget:"room-info-error-bar"`
 
 	spinner       *spinner
 	notifications *notifications

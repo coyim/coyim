@@ -23,10 +23,10 @@ var (
 )
 
 // DestroyRoom sends a destroy room request, it receives:
-// 	- roomID Room's jid that will be destroyed
-// 	- reason The reason why the room is being destroyed
-// 	- altRoomID The alternative room's jid where the discussions could continue
-// 	- password The alternative room password
+//	- roomID Identifier of the room to be destroyed
+//	- reason The reason why the room is being destroyed
+//	- altRoomID The alternative room's jid where the discussions could continue
+//	- password The alternative room password
 // This method returns two read-only channels, one for the result and another one for any error
 // that can happen during the room destruction process
 func (s *session) DestroyRoom(roomID jid.Bare, reason string, altRoomID jid.Bare, password string) (<-chan bool, <-chan error) {
@@ -72,9 +72,9 @@ func (m *mucManager) destroyRoom(roomID jid.Bare, q data.MUCRoomDestroyQuery, rc
 
 // newRoomDestroyQuery returns a new query instance to be used as part of the destroy room process.
 // This function receives:
-// 	- reason The reason of why the room is being destroyed
-// 	- altRoomID The alternative room identifier
-//  - password The password to join the alternative room
+//	- reason The reason of why the room is being destroyed
+//	- altRoomID The alternative room identifier
+//	- password The password to join the alternative room
 func newRoomDestroyQuery(reason string, altRoomID jid.Bare, password string) data.MUCRoomDestroyQuery {
 	return data.MUCRoomDestroyQuery{
 		Destroy: data.MUCRoomDestroy{

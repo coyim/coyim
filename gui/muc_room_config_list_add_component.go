@@ -55,7 +55,7 @@ func (la *mucRoomConfigListAddComponent) initBuilder() {
 }
 
 func (la *mucRoomConfigListAddComponent) initDefaults(parent gtki.Window) {
-	la.content.Add(la.form.roomConfigListForm())
+	la.content.Add(la.form.getFormView())
 
 	la.dialog.SetTitle(la.dialogTitle)
 	la.dialog.SetTransientFor(parent)

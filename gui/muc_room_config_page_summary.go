@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -84,13 +85,20 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// TODO: Occupants
 
 	// Other settings
-	setLabelText(p.maxHistoryFetch, p.form.MaxHistoryFetch.CurrentValue())
-	setLabelText(p.maxOccupants, p.form.MaxOccupantsNumber.CurrentValue())
+	setLabelText(p.maxHistoryFetch, summaryValueForConfigOption(p.form.MaxHistoryFetch.CurrentValue()))
+	setLabelText(p.maxOccupants, summaryValueForConfigOption(p.form.MaxOccupantsNumber.CurrentValue()))
 	setImageYesOrNo(p.enableArchiving, p.form.Logged)
 }
 
 func (p *roomConfigSummaryPage) collectData() {
 	// Nothing to do, just implement the interface
+}
+
+func summaryValueForConfigOption(v string) string {
+	if v == "" {
+		v = muc.RoomConfigOptionNone
+	}
+	return configOptionToFriendlyMessage(v)
 }
 
 func setImageYesOrNo(img gtki.Image, v bool) {

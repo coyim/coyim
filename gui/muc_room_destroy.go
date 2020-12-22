@@ -26,7 +26,7 @@ type roomDestroyView struct {
 	destroyRoom           func(reason string, alternativeID jid.Bare, password string)
 
 	dialog               gtki.Dialog      `gtk-widget:"destroy-room-dialog"`
-	reasonEntry          gtki.TextView    `gtk-widget:"destroy-room-reason-entry"`
+	reasonTextView       gtki.TextView    `gtk-widget:"destroy-room-reason-entry"`
 	alternativeRoomCheck gtki.CheckButton `gtk-widget:"destroy-room-alternative-check"`
 	alternativeRoomBox   gtki.Box         `gtk-widget:"destroy-room-alternative-box"`
 	alternativeRoomEntry gtki.Entry       `gtk-widget:"destroy-room-name-entry"`
@@ -83,7 +83,7 @@ func (d *roomDestroyView) onDestroyRoom() {
 		return
 	}
 
-	b, _ := d.reasonEntry.GetBuffer()
+	b, _ := d.reasonTextView.GetBuffer()
 	reason := b.GetText(b.GetStartIter(), b.GetEndIter(), false)
 
 	go d.destroyRoom(reason, alternativeID, password)
@@ -214,7 +214,7 @@ func (d *roomDestroyView) enableFields() {
 
 // setSensitivityForAllFields MUST be called from the UI thread
 func (d *roomDestroyView) setSensitivityForAllFields(v bool) {
-	d.reasonEntry.SetSensitive(v)
+	d.reasonTextView.SetSensitive(v)
 	d.alternativeRoomEntry.SetSensitive(v)
 	d.destroyRoomButton.SetSensitive(v)
 }

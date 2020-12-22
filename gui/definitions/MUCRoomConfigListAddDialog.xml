@@ -35,6 +35,7 @@
                   <object class="GtkButton" id="room-config-list-add-apply">
                     <property name="label" translatable="yes">Apply</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
                     <signal name="clicked" handler="on_apply" swapped="no"/>

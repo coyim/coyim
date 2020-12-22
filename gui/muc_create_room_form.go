@@ -8,6 +8,24 @@ import (
 	"github.com/golang-collections/collections/set"
 )
 
+// initCreateRoomForm MUST be called from the UI thread
+func (v *mucCreateRoomView) initCreateRoomForm() {
+	f := v.newCreateRoomForm()
+
+	f.createRoom = func(ca *account, roomID jid.Bare) {
+		v.createRoom(ca, roomID, func(err error) {
+			f.onCreateRoomError(roomID, err)
+		})
+	}
+
+	f.addCallbacks(v)
+
+	v.form = f
+	v.showCreateForm = func() {
+		v.form.showCreateForm(v)
+	}
+}
+
 type mucCreateRoomViewForm struct {
 	isShown           bool
 	builder           *builder
@@ -88,20 +106,6 @@ func (f *mucCreateRoomViewForm) initRoomFormComponent(v *mucCreateRoomView) {
 func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
 	f.spinner = newSpinner()
 	f.spinnerBox.Add(f.spinner.getWidget())
-}
-
-func (v *mucCreateRoomView) initCreateRoomForm() *mucCreateRoomViewForm {
-	f := v.newCreateRoomForm()
-
-	f.createRoom = func(ca *account, roomID jid.Bare) {
-		v.createRoom(ca, roomID, func(err error) {
-			f.onCreateRoomError(roomID, err)
-		})
-	}
-
-	f.addCallbacks(v)
-
-	return f
 }
 
 func (f *mucCreateRoomViewForm) onRoomAutoJoinToggled() {

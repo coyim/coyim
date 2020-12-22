@@ -5,6 +5,13 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+func (v *mucCreateRoomView) initCreateRoomSuccess() {
+	v.success = v.newCreateRoomSuccess()
+	v.showSuccessView = func(ca *account, roomID jid.Bare) {
+		v.success.showSuccessView(v, ca, roomID)
+	}
+}
+
 type mucCreateRoomViewSuccess struct {
 	ca         *account
 	roomID     jid.Bare
@@ -33,11 +40,6 @@ func (s *mucCreateRoomViewSuccess) initBuilder(v *mucCreateRoomView) {
 			s.onJoinRoom(s.ca, s.roomID)
 		},
 	})
-}
-
-func (v *mucCreateRoomView) initCreateRoomSuccess() *mucCreateRoomViewSuccess {
-	s := v.newCreateRoomSuccess()
-	return s
 }
 
 func (s *mucCreateRoomViewSuccess) showSuccessView(v *mucCreateRoomView, ca *account, roomID jid.Bare) {

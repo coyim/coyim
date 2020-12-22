@@ -78,7 +78,7 @@ func (rc *roomConfigAssistant) initBuilder() {
 	b.ConnectSignals(map[string]interface{}{
 		"on_page_changed": rc.onPageChanged,
 		"on_cancel":       rc.onCancelClicked,
-		"on_apply":        rc.onApply,
+		"on_apply":        rc.onApplyClicked,
 	})
 }
 
@@ -142,7 +142,7 @@ func (rc *roomConfigAssistant) onCancelError(err error) {
 	// TODO show a friendly error message (bassed on "err") to the user
 }
 
-func (rc *roomConfigAssistant) onApply() {
+func (rc *roomConfigAssistant) onApplyClicked() {
 	rc.roomConfigComponent.submitConfigurationForm(
 		rc.onApplySuccess,
 		rc.onApplyError,

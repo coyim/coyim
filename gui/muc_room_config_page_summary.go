@@ -62,22 +62,31 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
+	p.autojoinCheckButton.SetActive(p.autoJoin)
+
+	// Basic information
 	setLabelText(p.title, p.form.Title)
 	setLabelText(p.description, p.form.Description)
 	setLabelText(p.language, p.form.Language)
 	setImageYesOrNo(p.includePublicList, p.form.Public)
 	setImageYesOrNo(p.persistent, p.form.Persistent)
+
+	// Access
 	setImageYesOrNo(p.password, p.form.PasswordProtected)
 	setImageYesOrNo(p.allowInviteUsers, p.form.OccupantsCanInvite)
 	setImageYesOrNo(p.onlyMembers, p.form.MembersOnly)
+
+	// Permissions
 	setImageYesOrNo(p.allowSetRoomSubject, p.form.OccupantsCanChangeSubject)
 	setImageYesOrNo(p.moderatedRoom, p.form.Moderated)
-	//TODO: implement whois functionality
+	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.CurrentValue()))
+
+	// TODO: Occupants
+
+	// Other settings
 	setLabelText(p.maxHistoryFetch, p.form.MaxHistoryFetch.CurrentValue())
 	setLabelText(p.maxOccupants, p.form.MaxOccupantsNumber.CurrentValue())
 	setImageYesOrNo(p.enableArchiving, p.form.Logged)
-
-	p.autojoinCheckButton.SetActive(p.autoJoin)
 }
 
 func (p *roomConfigSummaryPage) collectData() {

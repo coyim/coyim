@@ -106,10 +106,6 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	setImageYesOrNo(p.enableArchiving, p.form.Logged)
 }
 
-func (p *roomConfigSummaryPage) collectData() {
-	// Nothing to do, just implement the interface
-}
-
 func summaryValueOfOccupantList(model gtki.ListStore, items []jid.Any) {
 	model.Clear()
 	for _, j := range items {

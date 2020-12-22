@@ -42,7 +42,7 @@ func (p *roomConfigPageBase) isValid() bool {
 }
 
 func (p *roomConfigPageBase) collectData() {
-	panic("developer error: collectData()")
+	// Nothing to do, just implement the interface
 }
 
 func (p *roomConfigPageBase) onRefresh(f func()) {

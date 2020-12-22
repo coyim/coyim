@@ -1,7 +1,6 @@
 package muc
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/coyim/coyim/session/muc/data"
@@ -10,50 +9,28 @@ import (
 )
 
 const (
-	// ConfigFieldFormType represents `FORM_TYPE` field in room configuration form
-	ConfigFieldFormType = "FORM_TYPE"
-	// ConfigFieldRoomName represents `muc#roomconfig_roomname` field in room configuration form
-	ConfigFieldRoomName = "muc#roomconfig_roomname"
-	// ConfigFieldRoomDescription represents `muc#roomconfig_roomdesc` field in room configuration form
-	ConfigFieldRoomDescription = "muc#roomconfig_roomdesc"
-	// ConfigFieldEnableLogging represents `muc#roomconfig_enablelogging` field in room configuration form
-	ConfigFieldEnableLogging = "muc#roomconfig_enablelogging"
-	// ConfigFieldMemberList represents `muc#roomconfig_getmemberlist` field in room configuration form
-	ConfigFieldMemberList = "muc#roomconfig_getmemberlist"
-	// ConfigFieldLanguage represents `muc#roomconfig_lang` field in room configuration form
-	ConfigFieldLanguage = "muc#roomconfig_lang"
-	// ConfigFieldPubsub represents `muc#roomconfig_pubsub` field in room configuration form
-	ConfigFieldPubsub = "muc#roomconfig_pubsub"
-	// ConfigFieldCanChangeSubject represents `muc#roomconfig_changesubject` field in room configuration form
-	ConfigFieldCanChangeSubject = "muc#roomconfig_changesubject"
-	// ConfigFieldAllowInvites represents `muc#roomconfig_allowinvites` field in room configuration form
-	ConfigFieldAllowInvites = "muc#roomconfig_allowinvites"
-	// ConfigFieldAllowPrivateMessages represents `muc#roomconfig_allowpm` field in room configuration form
-	ConfigFieldAllowPrivateMessages = "muc#roomconfig_allowpm"
-	// ConfigFieldMaxOccupantsNumber represents `muc#roomconfig_maxusers` field in room configuration form
-	ConfigFieldMaxOccupantsNumber = "muc#roomconfig_maxusers"
-	// ConfigFieldIsPublic represents `muc#roomconfig_publicroom` field in room configuration form
-	ConfigFieldIsPublic = "muc#roomconfig_publicroom"
-	// ConfigFieldIsPersistent represents `muc#roomconfig_persistentroom` field in room configuration form
-	ConfigFieldIsPersistent = "muc#roomconfig_persistentroom"
-	// ConfigFieldPresenceBroadcast represents `muc#roomconfig_presencebroadcast` field in room configuration form
-	ConfigFieldPresenceBroadcast = "muc#roomconfig_presencebroadcast"
-	// ConfigFieldModerated represents `muc#roomconfig_moderatedroom` field in room configuration form
-	ConfigFieldModerated = "muc#roomconfig_moderatedroom"
-	// ConfigFieldMembersOnly represents `muc#roomconfig_membersonly` field in room configuration form
-	ConfigFieldMembersOnly = "muc#roomconfig_membersonly"
-	// ConfigFieldPasswordProtected represents `muc#roomconfig_passwordprotectedroom` field in room configuration form
-	ConfigFieldPasswordProtected = "muc#roomconfig_passwordprotectedroom"
-	// ConfigFieldPassword represents `muc#roomconfig_roomsecret` field in room configuration form
-	ConfigFieldPassword = "muc#roomconfig_roomsecret"
-	// ConfigFieldOwners represents `muc#roomconfig_roomowners` field in room configuration form
-	ConfigFieldOwners = "muc#roomconfig_roomowners"
-	// ConfigFieldWhoIs represents `muc#roomconfig_whois` field in room configuration form
-	ConfigFieldWhoIs = "muc#roomconfig_whois"
-	// ConfigFieldMaxHistoryFetch represents `muc#maxhistoryfetch` field in room configuration form
-	ConfigFieldMaxHistoryFetch = "muc#maxhistoryfetch"
-	// ConfigFieldRoomAdmins represents `muc#roomconfig_roomadmins` field in room configuration form
-	ConfigFieldRoomAdmins = "muc#roomconfig_roomadmins"
+	confiFieldFormType              = "http://jabber.org/protocol/muc#roomconfig"
+	configFieldRoomName             = "muc#roomconfig_roomname"
+	configFieldRoomDescription      = "muc#roomconfig_roomdesc"
+	configFieldEnableLogging        = "muc#roomconfig_enablelogging"
+	configFieldMemberList           = "muc#roomconfig_getmemberlist"
+	configFieldLanguage             = "muc#roomconfig_lang"
+	configFieldPubsub               = "muc#roomconfig_pubsub"
+	configFieldCanChangeSubject     = "muc#roomconfig_changesubject"
+	configFieldAllowInvites         = "muc#roomconfig_allowinvites"
+	configFieldAllowPrivateMessages = "muc#roomconfig_allowpm"
+	configFieldMaxOccupantsNumber   = "muc#roomconfig_maxusers"
+	configFieldIsPublic             = "muc#roomconfig_publicroom"
+	configFieldIsPersistent         = "muc#roomconfig_persistentroom"
+	configFieldPresenceBroadcast    = "muc#roomconfig_presencebroadcast"
+	configFieldModerated            = "muc#roomconfig_moderatedroom"
+	configFieldMembersOnly          = "muc#roomconfig_membersonly"
+	configFieldPasswordProtected    = "muc#roomconfig_passwordprotectedroom"
+	configFieldPassword             = "muc#roomconfig_roomsecret"
+	configFieldOwners               = "muc#roomconfig_roomowners"
+	configFieldWhoIs                = "muc#roomconfig_whois"
+	configFieldMaxHistoryFetch      = "muc#maxhistoryfetch"
+	configFieldRoomAdmins           = "muc#roomconfig_roomadmins"
 )
 
 // RoomConfigForm represents a room configuration form
@@ -131,40 +108,32 @@ func NewRoomConfigRom(form *xmppData.Form) *RoomConfigForm {
 	return cf
 }
 
-// Submit will send the configuration form data to the service that provided the initial configuration for the room.
-//
-// Please note that the configuration process can be canceled but if the room owner
-// cancels the initial configuration, the service will destroy the room and will send
-// an unavailable presence to the room owner
+// GetFormData returns a representation of the room config FORM_TYPE as described in the
+// XMPP specification for MUC
 //
 // For more information see:
 // https://xmpp.org/extensions/xep-0045.html#createroom-reserved
 // https://xmpp.org/extensions/xep-0045.html#example-163
-func (rcf *RoomConfigForm) Submit() error {
-	return errors.New("RoomConfigForm: Submit() not yet implemented")
-}
-
-// GetFormData description
 func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	fields := map[string][]string{
-		ConfigFieldFormType:             []string{"http://jabber.org/protocol/muc#roomconfig"},
-		ConfigFieldRoomName:             []string{rcf.Title},
-		ConfigFieldRoomDescription:      []string{rcf.Description},
-		ConfigFieldEnableLogging:        []string{strconv.FormatBool(rcf.Logged)},
-		ConfigFieldCanChangeSubject:     []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)},
-		ConfigFieldAllowInvites:         []string{strconv.FormatBool(rcf.OccupantsCanInvite)},
-		ConfigFieldAllowPrivateMessages: []string{rcf.AllowPrivateMessages.CurrentValue()},
-		ConfigFieldMaxOccupantsNumber:   []string{rcf.MaxOccupantsNumber.CurrentValue()},
-		ConfigFieldIsPublic:             []string{strconv.FormatBool(rcf.Public)},
-		ConfigFieldIsPersistent:         []string{strconv.FormatBool(rcf.Persistent)},
-		ConfigFieldModerated:            []string{strconv.FormatBool(rcf.Moderated)},
-		ConfigFieldMembersOnly:          []string{strconv.FormatBool(rcf.MembersOnly)},
-		ConfigFieldPasswordProtected:    []string{strconv.FormatBool(rcf.PasswordProtected)},
-		ConfigFieldPassword:             []string{rcf.Password},
-		ConfigFieldWhoIs:                []string{rcf.Whois.CurrentValue()},
-		ConfigFieldMaxHistoryFetch:      []string{rcf.MaxHistoryFetch.CurrentValue()},
-		ConfigFieldLanguage:             []string{rcf.Language},
-		ConfigFieldRoomAdmins:           jidListToStringList(rcf.Admins),
+		"FORM_TYPE":                     []string{confiFieldFormType},
+		configFieldRoomName:             []string{rcf.Title},
+		configFieldRoomDescription:      []string{rcf.Description},
+		configFieldEnableLogging:        []string{strconv.FormatBool(rcf.Logged)},
+		configFieldCanChangeSubject:     []string{strconv.FormatBool(rcf.OccupantsCanChangeSubject)},
+		configFieldAllowInvites:         []string{strconv.FormatBool(rcf.OccupantsCanInvite)},
+		configFieldAllowPrivateMessages: []string{rcf.AllowPrivateMessages.CurrentValue()},
+		configFieldMaxOccupantsNumber:   []string{rcf.MaxOccupantsNumber.CurrentValue()},
+		configFieldIsPublic:             []string{strconv.FormatBool(rcf.Public)},
+		configFieldIsPersistent:         []string{strconv.FormatBool(rcf.Persistent)},
+		configFieldModerated:            []string{strconv.FormatBool(rcf.Moderated)},
+		configFieldMembersOnly:          []string{strconv.FormatBool(rcf.MembersOnly)},
+		configFieldPasswordProtected:    []string{strconv.FormatBool(rcf.PasswordProtected)},
+		configFieldPassword:             []string{rcf.Password},
+		configFieldWhoIs:                []string{rcf.Whois.CurrentValue()},
+		configFieldMaxHistoryFetch:      []string{rcf.MaxHistoryFetch.CurrentValue()},
+		configFieldLanguage:             []string{rcf.Language},
+		configFieldRoomAdmins:           jidListToStringList(rcf.Admins),
 	}
 
 	formFields := []xmppData.FormFieldX{}
@@ -181,13 +150,6 @@ func (rcf *RoomConfigForm) GetFormData() *xmppData.Form {
 	}
 }
 
-func jidListToStringList(jidList []jid.Any) (result []string) {
-	for _, j := range jidList {
-		result = append(result, j.String())
-	}
-	return result
-}
-
 // SetFormFields extract the form fields and updates the room config form properties based on each data
 func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
 	for _, field := range form.Fields {
@@ -197,67 +159,67 @@ func (rcf *RoomConfigForm) SetFormFields(form *xmppData.Form) {
 
 func (rcf *RoomConfigForm) setField(field xmppData.FormFieldX) {
 	switch field.Var {
-	case ConfigFieldMaxHistoryFetch:
+	case configFieldMaxHistoryFetch:
 		rcf.MaxHistoryFetch.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
-	case ConfigFieldAllowPrivateMessages:
+	case configFieldAllowPrivateMessages:
 		rcf.AllowPrivateMessages.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
-	case ConfigFieldAllowInvites:
+	case configFieldAllowInvites:
 		rcf.OccupantsCanInvite = formFieldBool(field.Values)
 
-	case ConfigFieldCanChangeSubject:
+	case configFieldCanChangeSubject:
 		rcf.OccupantsCanChangeSubject = formFieldBool(field.Values)
 
-	case ConfigFieldEnableLogging:
+	case configFieldEnableLogging:
 		rcf.Logged = formFieldBool(field.Values)
 
-	case ConfigFieldMemberList:
+	case configFieldMemberList:
 		rcf.RetrieveMembersList.UpdateField(field.Values, formFieldOptionsValues(field.Options))
 
-	case ConfigFieldLanguage:
+	case configFieldLanguage:
 		rcf.Language = formFieldSingleString(field.Values)
 
-	case ConfigFieldPubsub:
+	case configFieldPubsub:
 		rcf.AssociatedPublishSubscribeNode = formFieldSingleString(field.Values)
 
-	case ConfigFieldMaxOccupantsNumber:
+	case configFieldMaxOccupantsNumber:
 		rcf.MaxOccupantsNumber.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 
-	case ConfigFieldMembersOnly:
+	case configFieldMembersOnly:
 		rcf.MembersOnly = formFieldBool(field.Values)
 
-	case ConfigFieldModerated:
+	case configFieldModerated:
 		rcf.Moderated = formFieldBool(field.Values)
 
-	case ConfigFieldPasswordProtected:
+	case configFieldPasswordProtected:
 		rcf.PasswordProtected = formFieldBool(field.Values)
 
-	case ConfigFieldIsPersistent:
+	case configFieldIsPersistent:
 		rcf.Persistent = formFieldBool(field.Values)
 
-	case ConfigFieldPresenceBroadcast:
+	case configFieldPresenceBroadcast:
 		rcf.PresenceBroadcast.UpdateField(field.Values, formFieldOptionsValues(field.Options))
 
-	case ConfigFieldIsPublic:
+	case configFieldIsPublic:
 		rcf.Public = formFieldBool(field.Values)
 
-	case ConfigFieldRoomAdmins:
+	case configFieldRoomAdmins:
 		rcf.Admins = formFieldJidList(field.Values)
 
-	case ConfigFieldRoomDescription:
+	case configFieldRoomDescription:
 		rcf.Description = formFieldSingleString(field.Values)
 
-	case ConfigFieldRoomName:
+	case configFieldRoomName:
 		rcf.Title = formFieldSingleString(field.Values)
 
-	case ConfigFieldOwners:
+	case configFieldOwners:
 		rcf.Owners = formFieldJidList(field.Values)
 
-	case ConfigFieldPassword:
+	case configFieldPassword:
 		rcf.Password = formFieldSingleString(field.Values)
 
-	case ConfigFieldWhoIs:
+	case configFieldWhoIs:
 		rcf.Whois.UpdateField(formFieldSingleString(field.Values), formFieldOptionsValues(field.Options))
 	}
 }
@@ -306,4 +268,11 @@ func formFieldJidList(values []string) (list []jid.Any) {
 		list = append(list, jid.Parse(v))
 	}
 	return list
+}
+
+func jidListToStringList(jidList []jid.Any) (result []string) {
+	for _, j := range jidList {
+		result = append(result, j.String())
+	}
+	return result
 }

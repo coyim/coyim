@@ -132,9 +132,14 @@ func (s *mucStylesProvider) setRoomLoadingViewOverlayContentBoxStyle(b gtki.Box)
 	})
 }
 
+func (s *mucStylesProvider) setRoomConfigFormHelpLabelStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-style": "italic",
+	})
+}
+
 func (s *mucStylesProvider) setRoomConfigSummarySectionLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
-		"font-size":   "14px",
 		"font-weight": "bold",
 	})
 }

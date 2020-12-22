@@ -6,13 +6,14 @@ type roomConfigInfoPage struct {
 	*roomConfigPageBase
 	roomDescriptionBuffer gtki.TextBuffer
 
-	box             gtki.Box      `gtk-widget:"room-config-info-page"`
-	notificationBox gtki.Box      `gtk-widget:"notification-box"`
-	roomTitle       gtki.Entry    `gtk-widget:"room-title"`
-	roomDescription gtki.TextView `gtk-widget:"room-description"`
-	roomLanguage    gtki.Entry    `gtk-widget:"room-language"`
-	roomPersistent  gtki.Switch   `gtk-widget:"room-persistent"`
-	roomPublic      gtki.Switch   `gtk-widget:"room-public"`
+	box                 gtki.Box      `gtk-widget:"room-config-info-page"`
+	notificationBox     gtki.Box      `gtk-widget:"notification-box"`
+	roomTitle           gtki.Entry    `gtk-widget:"room-title"`
+	roomDescription     gtki.TextView `gtk-widget:"room-description"`
+	roomDescriptionHelp gtki.Label    `gtk-widget:"room-description-helper-label"`
+	roomLanguage        gtki.Entry    `gtk-widget:"room-language"`
+	roomPersistent      gtki.Switch   `gtk-widget:"room-persistent"`
+	roomPublic          gtki.Switch   `gtk-widget:"room-public"`
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
@@ -27,6 +28,8 @@ func (c *mucRoomConfigComponent) newRoomConfigInfoPage() mucRoomConfigPage {
 	p.roomDescription.SetBuffer(p.roomDescriptionBuffer)
 
 	p.initDefaultValues()
+
+	mucStyles.setRoomConfigFormHelpLabelStyle(p.roomDescriptionHelp)
 
 	return p
 }

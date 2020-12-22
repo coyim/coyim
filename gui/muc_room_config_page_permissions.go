@@ -13,6 +13,7 @@ type roomConfigPermissionsPage struct {
 	roomChangeSubject    gtki.Switch   `gtk-widget:"room-changesubject"`
 	roomModerated        gtki.Switch   `gtk-widget:"room-moderated"`
 	roomWhois            gtki.ComboBox `gtk-widget:"room-whois"`
+	roomWhoisHelp        gtki.Label    `gtk-widget:"room-whois-helper-label"`
 	roomWhoisModel       gtki.ListStore
 	roomWhoisOptions     map[string]int
 }
@@ -31,6 +32,8 @@ func (c *mucRoomConfigComponent) newRoomConfigPermissionsPage() mucRoomConfigPag
 	p.roomWhois.SetModel(p.roomWhoisModel)
 
 	p.initDefaultValues()
+
+	mucStyles.setRoomConfigFormHelpLabelStyle(p.roomWhoisHelp)
 
 	return p
 }

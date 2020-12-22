@@ -62,7 +62,8 @@ func (s *session) CancelRoomConfiguration(roomID jid.Bare) <-chan error {
 		"where": "CancelRoomConfiguration",
 	})
 
-	errorChannel := make(chan error)
+	ec := make(chan error)
+
 	go func() {
 		reply, _, err := s.conn.SendIQ(roomID.String(), "set", data.MUCRoomConfiguration{
 			Form: &data.Form{
@@ -72,17 +73,19 @@ func (s *session) CancelRoomConfiguration(roomID jid.Bare) <-chan error {
 
 		if err != nil {
 			log.WithError(err).Error("An error ocured trying to send iq for canceling room configuration")
-			errorChannel <- err
+			ec <- err
 			return
 		}
 
 		err = validateIqResponse(reply)
 		if err != nil {
 			log.WithError(ErrInformationQueryResponse).Error("An error ocured trying to read the stanza reply")
-			errorChannel <- err
+			ec <- err
 			return
 		}
 
+		close(ec)
 	}()
-	return errorChannel
+
+	return ec
 }

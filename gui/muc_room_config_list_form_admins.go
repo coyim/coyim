@@ -4,8 +4,8 @@ type mucRoomConfigListAdminsForm struct {
 	*roomConfigListForm
 }
 
-func newMUCRoomConfigListAdminsForm(onFieldChanged func()) mucRoomConfigListForm {
+func newMUCRoomConfigListAdminsForm(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm {
 	return &mucRoomConfigListAdminsForm{
-		newRoomConfigListForm("MUCRoomConfigListFormAdmins", nil, onFieldChanged),
+		newRoomConfigListForm("MUCRoomConfigListFormAdmins", nil, onFieldChanged, onFieldActivate),
 	}
 }

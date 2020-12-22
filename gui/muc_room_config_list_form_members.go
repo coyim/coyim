@@ -11,9 +11,9 @@ type mucRoomConfigListMembersForm struct {
 	roleEntry     gtki.Entry `gtk-widget:"room-config-list-members-role"`
 }
 
-func newMUCRoomConfigListMembersForm(onFieldChanged func()) mucRoomConfigListForm {
+func newMUCRoomConfigListMembersForm(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm {
 	f := &mucRoomConfigListMembersForm{}
-	f.roomConfigListForm = newRoomConfigListForm("MUCRoomConfigListFormOwners", f, onFieldChanged)
+	f.roomConfigListForm = newRoomConfigListForm("MUCRoomConfigListFormOwners", f, onFieldChanged, onFieldActivate)
 	return f
 }
 

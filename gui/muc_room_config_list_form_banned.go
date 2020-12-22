@@ -10,9 +10,9 @@ type mucRoomConfigListBannedForm struct {
 	reasonEntry gtki.Entry `gtk-widget:"room-config-list-banned-reason"`
 }
 
-func newMUCRoomConfigListBannedForm(onFieldChanged func()) mucRoomConfigListForm {
+func newMUCRoomConfigListBannedForm(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm {
 	f := &mucRoomConfigListBannedForm{}
-	f.roomConfigListForm = newRoomConfigListForm("MUCRoomConfigListFormBanned", f, onFieldChanged)
+	f.roomConfigListForm = newRoomConfigListForm("MUCRoomConfigListFormBanned", f, onFieldChanged, onFieldActivate)
 	return f
 }
 

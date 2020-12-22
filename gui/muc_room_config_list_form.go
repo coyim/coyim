@@ -24,7 +24,7 @@ type roomConfigListForm struct {
 	jidEntry gtki.Entry `gtk-widget:"room-config-list-jid"`
 }
 
-func newRoomConfigListForm(ui string, ef interface{}, onFieldChanged func()) *roomConfigListForm {
+func newRoomConfigListForm(ui string, ef interface{}, onFieldChanged, onFieldActivate func()) *roomConfigListForm {
 	f := &roomConfigListForm{}
 
 	builder := newBuilder(ui)
@@ -37,6 +37,11 @@ func newRoomConfigListForm(ui string, ef interface{}, onFieldChanged func()) *ro
 		"on_field_changed": func() {
 			if onFieldChanged != nil {
 				onFieldChanged()
+			}
+		},
+		"on_field_activate": func() {
+			if onFieldActivate != nil {
+				onFieldActivate()
 			}
 		},
 	})

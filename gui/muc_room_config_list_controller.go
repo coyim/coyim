@@ -14,7 +14,7 @@ type mucRoomConfigListControllerData struct {
 
 	addOccupantDialogTitle string
 	addOccupantDescription string
-	addOccupantForm        func(onFormFieldValueChanges func()) mucRoomConfigListForm
+	addOccupantForm        func(onFormFieldValueChanges, onFormFieldValueActivates func()) mucRoomConfigListForm
 }
 
 type mucRoomConfigListController struct {
@@ -49,7 +49,8 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 		addToList := c.u.newMUCRoomConfigListAddComponent(
 			d.addOccupantDialogTitle,
 			d.addOccupantDescription,
-			d.addOccupantForm(nil),
+			// TODO: Uses real callbacks here
+			d.addOccupantForm(nil, nil),
 			c.listComponent.addListItem,
 			d.parentWindow,
 		)

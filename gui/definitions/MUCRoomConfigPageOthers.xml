@@ -31,12 +31,13 @@
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="hexpand">True</property>
-                <property name="row_spacing">10</property>
-                <property name="column_spacing">5</property>
+                <property name="row_spacing">12</property>
+                <property name="column_spacing">12</property>
                 <property name="row_homogeneous">True</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
+                    <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="hexpand">True</property>
                     <property name="label" translatable="yes">Maximun number of history messages</property>
@@ -52,6 +53,7 @@
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
+                    <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="hexpand">True</property>
                     <property name="label" translatable="yes">Maximun numbers of occupants</property>
@@ -67,6 +69,7 @@
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
+                    <property name="halign">start</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
                     <child>
@@ -94,6 +97,7 @@
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
+                    <property name="halign">start</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkComboBoxText" id="room-maxoccupants">
@@ -120,7 +124,7 @@
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="spacing">6</property>
+                    <property name="spacing">12</property>
                     <child>
                       <object class="GtkSwitch" id="room-enablelogging">
                         <property name="visible">True</property>

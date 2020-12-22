@@ -115,7 +115,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="room-description-helper-label">
                     <property name="visible">True</property>
                     <property name="label" translatable="yes">Short description of room</property>
                     <property name="xalign">0</property>

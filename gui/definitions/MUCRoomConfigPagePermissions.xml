@@ -55,12 +55,12 @@
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
+                        <property name="halign">start</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">3</property>
                         <child>
                           <object class="GtkComboBox" id="room-whois">
                             <property name="visible">True</property>
-                            <property name="halign">start</property>
                             <property name="popup_fixed_width">False</property>
                             <property name="id_column">0</property>
                             <child>
@@ -84,7 +84,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="room-whois-helper-label">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">Affiliations that may discover real JIDs of occupants</property>
                         <property name="track_visited_links">False</property>

@@ -10,6 +10,7 @@ import (
 type mucRoomConfigListForm interface {
 	jid() string
 	isValid() (bool, error)
+	isFilled() bool
 	getValues() []string
 	friendlyErrorMessage(error) string
 	getFormView() gtki.Widget
@@ -55,6 +56,10 @@ func (f *roomConfigListForm) jid() string {
 
 func (*roomConfigListForm) isValid() (bool, error) {
 	return true, nil
+}
+
+func (f *roomConfigListForm) isFilled() bool {
+	return f.jid() != ""
 }
 
 func (f *roomConfigListForm) getValues() []string {

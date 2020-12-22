@@ -7,37 +7,38 @@ import (
 )
 
 type mucRoomConfigPage interface {
-	getPageView() gtki.Box
+	getContent() gtki.Box
+	isValid() bool
 	collectData()
 	onRefresh(func())
 	refresh()
-	nofityError(string)
 }
 
 type roomConfigPageBase struct {
 	u             *gtkUI
-	box           gtki.Box
+	content       gtki.Box
 	notifications *notifications
 	refreshList   []func()
 	form          *muc.RoomConfigForm
 	log           coylog.Logger
 }
 
-func (c *mucRoomConfigComponent) newConfigPage(b gtki.Box, nb gtki.Box) *roomConfigPageBase {
-	cp := &roomConfigPageBase{
-		u:    c.u,
-		box:  b,
-		form: c.form,
-		log:  c.log,
+func (c *mucRoomConfigComponent) newConfigPage(content gtki.Box, nb gtki.Box) *roomConfigPageBase {
+	return &roomConfigPageBase{
+		u:             c.u,
+		content:       content,
+		notifications: c.u.newNotifications(nb),
+		form:          c.form,
+		log:           c.log,
 	}
-
-	cp.notifications = c.u.newNotifications(nb)
-
-	return cp
 }
 
-func (p *roomConfigPageBase) getPageView() gtki.Box {
-	return p.box
+func (p *roomConfigPageBase) getContent() gtki.Box {
+	return p.content
+}
+
+func (p *roomConfigPageBase) isValid() bool {
+	return true
 }
 
 func (p *roomConfigPageBase) collectData() {
@@ -49,11 +50,15 @@ func (p *roomConfigPageBase) onRefresh(f func()) {
 }
 
 func (p *roomConfigPageBase) refresh() {
-	p.box.ShowAll()
+	p.content.ShowAll()
 
 	for _, f := range p.refreshList {
 		f()
 	}
+}
+
+func (p *roomConfigPageBase) clearErrors() {
+	p.notifications.clearErrors()
 }
 
 func (p *roomConfigPageBase) nofityError(m string) {

@@ -94,12 +94,12 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 	rc.othersPage = rc.roomConfigComponent.getConfigPage(roomConfigOthersPageIndex)
 	rc.summaryPage = rc.roomConfigComponent.getConfigPage(roomConfigSummaryPageIndex)
 
-	rc.infoPageBox.Add(rc.infoPage.getPageView())
-	rc.accessPageBox.Add(rc.accessPage.getPageView())
-	rc.permissionsPageBox.Add(rc.permissionsPage.getPageView())
-	rc.occupantsPageBox.Add(rc.occupantsPage.getPageView())
-	rc.othersPageBox.Add(rc.othersPage.getPageView())
-	rc.summaryPageBox.Add(rc.summaryPage.getPageView())
+	rc.infoPageBox.Add(rc.infoPage.getContent())
+	rc.accessPageBox.Add(rc.accessPage.getContent())
+	rc.permissionsPageBox.Add(rc.permissionsPage.getContent())
+	rc.occupantsPageBox.Add(rc.occupantsPage.getContent())
+	rc.othersPageBox.Add(rc.othersPage.getContent())
+	rc.summaryPageBox.Add(rc.summaryPage.getContent())
 }
 
 func (rc *roomConfigAssistant) initDefaults() {
@@ -115,6 +115,11 @@ func (rc *roomConfigAssistant) initDefaults() {
 
 func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
+	if !previousPage.isValid() {
+		rc.assistant.SetCurrentPage(rc.currentPageIndex)
+		return
+	}
+
 	previousPage.collectData()
 
 	rc.currentPageIndex = rc.assistant.GetCurrentPage()

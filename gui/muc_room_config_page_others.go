@@ -3,6 +3,8 @@ package gui
 import (
 	"strconv"
 
+	"github.com/coyim/coyim/i18n"
+
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -43,6 +45,24 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 
 	p.roomMaxHistoryFetch.updateOptions(p.form.MaxHistoryFetch.Options())
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
+}
+
+func (p *roomConfigOthersPage) isValid() bool {
+	p.clearErrors()
+
+	if !p.roomMaxHistoryFetch.isValid() {
+		p.nofityError(i18n.Local("The value given for the maximum number of history messages is not valid. " +
+			"Please select one from the list."))
+		return false
+	}
+
+	if !p.roomMaxOccupants.isValid() {
+		p.nofityError(i18n.Local("The value given for the maximum number of occupants is not valid. " +
+			"Please select one from the list."))
+		return false
+	}
+
+	return true
 }
 
 func (p *roomConfigOthersPage) collectData() {
@@ -98,6 +118,17 @@ func (cc *roomConfigComboEntry) updateOptions(options []string) {
 
 		cc.options[label] = o
 	}
+}
+
+func (cc *roomConfigComboEntry) isValid() bool {
+	ct := getEntryText(cc.entry)
+	if ct != "" {
+		_, err := strconv.Atoi(cc.currentValue())
+		if err != nil {
+			return false
+		}
+	}
+	return true
 }
 
 func (cc *roomConfigComboEntry) currentValue() string {

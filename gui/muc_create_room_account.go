@@ -74,7 +74,9 @@ func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, resu
 // onReserveRoomFinished MUST NOT be called from the UI thread
 func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) {
 	doInUIThread(func() {
-		rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished, nil)
+		rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished, func() {
+			v.form.onReserveRoomConfigurationCancel()
+		})
 		rca.show()
 	})
 }

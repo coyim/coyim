@@ -132,16 +132,24 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 	}
 }
 
-func (f *mucCreateRoomViewForm) onCreateRoomCheckIfExistsFails() {
-	f.notifications.error(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
+func (f *mucCreateRoomViewForm) onReserveRoomConfigurationCancel() {
+	f.hideSpinnerAndEnableFields()
+	f.enableCreationIfConditionsAreMet()
+}
+
+func (f *mucCreateRoomViewForm) hideSpinnerAndEnableFields() {
 	f.spinner.hide()
 	f.enableFields()
 }
 
+func (f *mucCreateRoomViewForm) onCreateRoomCheckIfExistsFails() {
+	f.notifications.error(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
+	f.hideSpinnerAndEnableFields()
+}
+
 func (f *mucCreateRoomViewForm) onCreateRoomAlreadyExists() {
 	f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
-	f.spinner.hide()
-	f.enableFields()
+	f.hideSpinnerAndEnableFields()
 	f.disableCreateRoomButton()
 }
 

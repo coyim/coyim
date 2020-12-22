@@ -1,10 +1,7 @@
 package gui
 
 import (
-	"sync"
 	"time"
-
-	"github.com/coyim/coyim/coylog"
 
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -103,20 +100,15 @@ type notificationWidget interface {
 }
 
 type notifications struct {
-	box      gtki.Box
-	messages []notificationWidget
-	options  map[string]interface{}
-
-	lock sync.Mutex
-	log  coylog.Logger
-
+	box                    gtki.Box
+	messages               []notificationWidget
+	options                map[string]interface{}
 	showAllMessagesInStack bool
 }
 
 func (u *gtkUI) newNotifications(box gtki.Box) *notifications {
 	n := &notifications{
 		box: box,
-		log: u.log.WithField("where", "notifications"),
 	}
 
 	return n
@@ -126,9 +118,6 @@ func (n *notifications) add(m notificationWidget) {
 	if !n.showAllMessagesInStack {
 		n.clearAll()
 	}
-
-	n.lock.Lock()
-	defer n.lock.Unlock()
 
 	n.messages = append(n.messages, m)
 
@@ -141,31 +130,22 @@ func (n *notifications) remove(w gtki.Widget) {
 }
 
 func (n *notifications) clearAll() {
-	n.lock.Lock()
 	messages := n.messages
 	n.messages = nil
-	n.lock.Unlock()
-
 	for _, m := range messages {
 		n.remove(m.getWidget())
 	}
 }
 
 func (n *notifications) clearMessageType(mt gtki.MessageType) {
-	n.lock.Lock()
 	messages := n.messages
-	n.lock.Unlock()
-
 	for i, m := range messages {
 		if m.getMessageType() == mt {
 			n.remove(m.getWidget())
 			messages = append(messages[:i], messages[i+1:]...)
 		}
 	}
-
-	n.lock.Lock()
 	n.messages = messages
-	n.lock.Unlock()
 }
 
 func (n *notifications) notify(text string, mt gtki.MessageType, b *button) {

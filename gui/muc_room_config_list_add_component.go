@@ -29,17 +29,17 @@ type mucRoomConfigListAddComponent struct {
 	onApply       func(...string)
 }
 
-func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, f mucRoomConfigListForm, onApply func(...string), parent gtki.Window) *mucRoomConfigListAddComponent {
+func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, addOccupantForm func(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm, onApply func(...string), parent gtki.Window) *mucRoomConfigListAddComponent {
 	la := &mucRoomConfigListAddComponent{
 		u:           u,
 		dialogTitle: dialogTitle,
 		formTitle:   formTitle,
-		form:        f,
 		onApply:     onApply,
 	}
 
 	la.initBuilder()
 	la.initDefaults(parent)
+	la.initAddOccupantForm(addOccupantForm)
 
 	return la
 }
@@ -55,8 +55,6 @@ func (la *mucRoomConfigListAddComponent) initBuilder() {
 }
 
 func (la *mucRoomConfigListAddComponent) initDefaults(parent gtki.Window) {
-	la.content.Add(la.form.getFormView())
-
 	la.dialog.SetTitle(la.dialogTitle)
 	la.dialog.SetTransientFor(parent)
 	la.title.SetLabel(la.formTitle)
@@ -64,19 +62,36 @@ func (la *mucRoomConfigListAddComponent) initDefaults(parent gtki.Window) {
 	la.notifications = la.u.newNotifications(la.notificationBox)
 }
 
+func (la *mucRoomConfigListAddComponent) initAddOccupantForm(addOccupantForm func(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm) {
+	la.form = addOccupantForm(
+		la.onAddOccupantFormFieldChanged,
+		la.onApplyClicked,
+	)
+
+	la.content.Add(la.form.getFormView())
+}
+
+func (la *mucRoomConfigListAddComponent) onAddOccupantFormFieldChanged() {
+	la.applyButton.SetSensitive(la.form.isFilled())
+}
+
 func (la *mucRoomConfigListAddComponent) onCancelClicked() {
 	la.close()
 }
 
 func (la *mucRoomConfigListAddComponent) onApplyClicked() {
-	isValid, err := la.isFormValid()
-	if !isValid {
-		la.notifyError(la.friendlyErrorMessage(err))
-		return
+	if la.isValid() {
+		la.onApply(la.form.getValues()...)
+		la.close()
 	}
+}
 
-	la.onApply(la.form.getValues()...)
-	la.close()
+func (la *mucRoomConfigListAddComponent) isValid() bool {
+	if ok, err := la.isFormValid(); !ok {
+		la.notifyError(la.friendlyErrorMessage(err))
+		return false
+	}
+	return true
 }
 
 func (la *mucRoomConfigListAddComponent) isFormValid() (bool, error) {

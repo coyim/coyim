@@ -49,8 +49,7 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 		addToList := c.u.newMUCRoomConfigListAddComponent(
 			d.addOccupantDialogTitle,
 			d.addOccupantDescription,
-			// TODO: Uses real callbacks here
-			d.addOccupantForm(nil, nil),
+			d.addOccupantForm,
 			c.listComponent.addListItem,
 			d.parentWindow,
 		)

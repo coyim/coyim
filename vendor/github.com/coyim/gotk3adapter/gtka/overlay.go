@@ -35,3 +35,7 @@ func UnwrapOverlay(v gtki.Overlay) *gtk.Overlay {
 	}
 	return v.(asOverlay).toOverlay().internal
 }
+
+func (v *overlay) AddOverlay(v1 gtki.Widget) {
+	v.internal.AddOverlay(UnwrapWidget(v1))
+}

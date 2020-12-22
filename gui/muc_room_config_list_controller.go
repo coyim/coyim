@@ -24,9 +24,8 @@ type mucRoomConfigListController struct {
 	ocuppantsTreeView        gtki.TreeView
 	occupantsTreeViewColumns []glibi.Type
 
-	listComponent    *mucRoomConfigListComponent
-	addComponentForm mucRoomConfigListForm
-	addComponent     *mucRoomConfigListAddComponent
+	listComponent        *mucRoomConfigListComponent
+	onAddOccupantsToList func()
 }
 
 func (u *gtkUI) newMUCRoomConfigListController(d *mucRoomConfigListControllerData) *mucRoomConfigListController {
@@ -38,11 +37,23 @@ func (u *gtkUI) newMUCRoomConfigListController(d *mucRoomConfigListControllerDat
 		occupantsTreeViewColumns: d.occupantsTreeViewColumns,
 	}
 
-	c.initListComponent(d)
-	c.initListAddFormComponent(d)
 	c.initListAddComponent(d)
+	c.initListComponent(d)
 
 	return c
+}
+
+func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListControllerData) {
+	c.onAddOccupantsToList = func() {
+		addToList := c.u.newMUCRoomConfigListAddComponent(
+			d.addOccupantDialogTitle,
+			d.addOccupantDescription,
+			d.addOccupantForm(nil),
+			c.listComponent.addListItem,
+		)
+
+		addToList.show()
+	}
 }
 
 func (c *mucRoomConfigListController) initListComponent(d *mucRoomConfigListControllerData) {
@@ -53,23 +64,6 @@ func (c *mucRoomConfigListController) initListComponent(d *mucRoomConfigListCont
 		c.removeOccupantButton,
 		c.onAddOccupantsToList,
 	)
-}
-
-func (c *mucRoomConfigListController) initListAddFormComponent(d *mucRoomConfigListControllerData) {
-	c.addComponentForm = d.addOccupantForm(nil)
-}
-
-func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListControllerData) {
-	c.addComponent = c.u.newMUCRoomConfigListAddComponent(
-		d.addOccupantDialogTitle,
-		d.addOccupantDescription,
-		c.addComponentForm,
-		c.listComponent.addListItem,
-	)
-}
-
-func (c *mucRoomConfigListController) onAddOccupantsToList() {
-	c.addComponent.show()
 }
 
 func (c *mucRoomConfigListController) listItems() [][]string {

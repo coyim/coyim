@@ -54,7 +54,9 @@ func (cl *mucRoomConfigListComponent) initDefaults() {
 }
 
 func (cl *mucRoomConfigListComponent) onAddClicked() {
-	cl.onAdd()
+	if cl.onAdd != nil {
+		cl.onAdd()
+	}
 }
 
 func (cl *mucRoomConfigListComponent) onRemoveClicked() {

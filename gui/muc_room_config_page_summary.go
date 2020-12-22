@@ -2,6 +2,8 @@ package gui
 
 import (
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -25,12 +27,17 @@ type roomConfigSummaryPage struct {
 	moderatedRoom           gtki.Image       `gtk-widget:"room-config-summary-moderated"`
 	whoIs                   gtki.Label       `gtk-widget:"room-config-summary-whois"`
 	occupantsSectionLabel   gtki.Label       `gtk-widget:"room-config-occupants-title"`
+	ownersTreeView          gtki.TreeView    `gtk-widget:"room-config-summary-owners-tree"`
+	adminsTreeView          gtki.TreeView    `gtk-widget:"room-config-summary-admins-tree"`
 	othersSectionLabel      gtki.Label       `gtk-widget:"room-config-others-title"`
 	maxHistoryFetch         gtki.Label       `gtk-widget:"room-config-summary-maxhistoryfetch"`
 	maxOccupants            gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
 	enableArchiving         gtki.Image       `gtk-widget:"room-config-summary-archive"`
 	autojoinCheckButton     gtki.CheckButton `gtk-widget:"room-config-autojoin"`
 	notificationBox         gtki.Box         `gtk-widget:"notification-box"`
+
+	ownersTreeModel gtki.ListStore
+	adminsTreeModel gtki.ListStore
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
@@ -59,6 +66,12 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	mucStyles.setRoomConfigSummaryRoomTitleLabelStyle(p.title)
 	mucStyles.setRoomConfigSummaryRoomDescriptionLabelStyle(p.description)
 
+	p.ownersTreeModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
+	p.adminsTreeModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
+
+	p.ownersTreeView.SetModel(p.ownersTreeModel)
+	p.adminsTreeView.SetModel(p.adminsTreeModel)
+
 	return p
 }
 
@@ -82,7 +95,9 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	setImageYesOrNo(p.moderatedRoom, p.form.Moderated)
 	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.CurrentValue()))
 
-	// TODO: Occupants
+	// Occupants
+	summaryValueOfOccupantList(p.ownersTreeModel, p.form.Owners)
+	summaryValueOfOccupantList(p.adminsTreeModel, p.form.Admins)
 
 	// Other settings
 	setLabelText(p.maxHistoryFetch, summaryValueForConfigOption(p.form.MaxHistoryFetch.CurrentValue()))
@@ -92,6 +107,14 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 
 func (p *roomConfigSummaryPage) collectData() {
 	// Nothing to do, just implement the interface
+}
+
+func summaryValueOfOccupantList(model gtki.ListStore, items []jid.Any) {
+	model.Clear()
+	for _, j := range items {
+		iter := model.Append()
+		model.SetValue(iter, 0, j.String())
+	}
 }
 
 func summaryValueForConfigOption(v string) string {

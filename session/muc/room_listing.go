@@ -10,6 +10,21 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 )
 
+const (
+	discoInfoFieldFormType             = "http://jabber.org/protocol/muc#roominfo"
+	discoInfoFieldLang                 = "muc#roominfo_lang"
+	discoInfoFieldChangeSubject        = "muc#roominfo_changesubject"
+	discoInfoFieldEnableLogging        = configFieldEnableLogging
+	discoInfoFieldRoomName             = configFieldRoomName
+	discoInfoFieldDescription          = "muc#roominfo_description"
+	discoInfoFieldOccupants            = "muc#roominfo_occupants"
+	discoInfoFieldAllowMemberInvites   = "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites"
+	discoInfoFieldAllowInvites         = configFieldAllowInvites
+	discoInfoFieldAllowPrivateMessages = configFieldAllowPrivateMessages
+	discoInfoFieldContactJid           = "muc#roominfo_contactjid"
+	discoInfoFieldMaxHistoryFetch      = configFieldMaxHistoryFetch
+)
+
 // RoomListing contains the information about a room for listing it
 type RoomListing struct {
 	Service     jid.Any
@@ -146,13 +161,13 @@ func (rl *RoomListing) updateWithFormFields(form xmppData.Form, fields map[strin
 
 func (rl *RoomListing) updateWithFormField(field string, values []string) {
 	switch field {
-	case ConfigFieldFormType:
+	case "FORM_TYPE":
 		// Ignore, we already checked
-	case "muc#roominfo_lang":
+	case discoInfoFieldLang:
 		if len(values) > 0 {
 			rl.Language = values[0]
 		}
-	case "muc#roominfo_changesubject":
+	case discoInfoFieldChangeSubject:
 		// When the `roominfo_changesubject` field is changed to false,
 		// the response is not 0 for false value, this response is `empty`.
 		// For this reason, this field is `initialized` with false
@@ -160,45 +175,45 @@ func (rl *RoomListing) updateWithFormField(field string, values []string) {
 		if len(values) > 0 {
 			rl.OccupantsCanChangeSubject = values[0] == "1"
 		}
-	case ConfigFieldEnableLogging:
+	case discoInfoFieldEnableLogging:
 		if len(values) > 0 {
 			rl.Logged = values[0] == "1"
 		}
-	case ConfigFieldRoomName:
+	case discoInfoFieldRoomName:
 		// Initialized with an empty string because when `muc#roomconfig_roomname`
 		// has no value, the` Title` field is not updated
 		rl.Title = ""
 		if len(values) > 0 {
 			rl.Title = values[0]
 		}
-	case "muc#roominfo_description":
+	case discoInfoFieldDescription:
 		if len(values) > 0 {
 			rl.Description = values[0]
 		}
-	case "muc#roominfo_occupants":
+	case discoInfoFieldOccupants:
 		if len(values) > 0 {
 			res, e := strconv.Atoi(values[0])
 			if e == nil {
 				rl.Occupants = res
 			}
 		}
-	case "{http://prosody.im/protocol/muc}roomconfig_allowmemberinvites":
+	case discoInfoFieldAllowMemberInvites:
 		if len(values) > 0 {
 			rl.MembersCanInvite = values[0] == "1"
 		}
-	case ConfigFieldAllowInvites:
+	case discoInfoFieldAllowInvites:
 		if len(values) > 0 {
 			rl.OccupantsCanInvite = values[0] == "1"
 		}
-	case ConfigFieldAllowPrivateMessages:
+	case discoInfoFieldAllowPrivateMessages:
 		if len(values) > 0 {
 			rl.AllowPrivateMessages = values[0]
 		}
-	case "muc#roominfo_contactjid":
+	case discoInfoFieldContactJid:
 		if len(values) > 0 {
 			rl.ContactJid = values[0]
 		}
-	case ConfigFieldMaxHistoryFetch:
+	case discoInfoFieldMaxHistoryFetch:
 		if len(values) > 0 {
 			res, e := strconv.Atoi(values[0])
 			if e == nil {
@@ -224,5 +239,5 @@ func isValidRoomInfoForm(form xmppData.Form, fields map[string][]string) bool {
 }
 
 func hasRoomInfoFormType(fields map[string][]string) bool {
-	return len(fields[ConfigFieldFormType]) > 0 && fields[ConfigFieldFormType][0] == "http://jabber.org/protocol/muc#roominfo"
+	return len(fields["FORM_TYPE"]) > 0 && fields["FORM_TYPE"][0] == discoInfoFieldFormType
 }

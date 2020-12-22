@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"errors"
+
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -43,13 +45,45 @@ func (cl *mucRoomConfigListComponent) initDefaults() {
 	disableListWidget(cl.removeButton)
 
 	cl.addButton.Connect("clicked", cl.onAddClicked)
+	cl.removeButton.Connect("clicked", cl.onRemoveClicked)
+
+	selection, err := cl.list.GetSelection()
+	if err == nil {
+		selection.Connect("changed", cl.onSelectionChanged)
+	}
 }
 
 func (cl *mucRoomConfigListComponent) onAddClicked() {
 	cl.onAdd()
 }
 
-func (cl *mucRoomConfigListComponent) onRemoveClicked() {}
+func (cl *mucRoomConfigListComponent) onRemoveClicked() {
+	if iter, err := cl.getSelectedRow(); err == nil {
+		cl.listModel.Remove(iter)
+	}
+}
+
+func (cl *mucRoomConfigListComponent) onSelectionChanged() {
+	if _, err := cl.getSelectedRow(); err != nil {
+		disableListWidget(cl.removeButton)
+	} else {
+		enableListWidget(cl.removeButton)
+	}
+}
+
+func (cl *mucRoomConfigListComponent) getSelectedRow() (gtki.TreeIter, error) {
+	selection, err := cl.list.GetSelection()
+	if err != nil {
+		return nil, err
+	}
+
+	_, iter, ok := selection.GetSelected()
+	if !ok {
+		return nil, errors.New("no row selected")
+	}
+
+	return iter, nil
+}
 
 func (cl *mucRoomConfigListComponent) addListItem(cells ...string) {
 	li := cl.listModel.Append(nil)

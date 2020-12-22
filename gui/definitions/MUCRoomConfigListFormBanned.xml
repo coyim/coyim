@@ -1,5 +1,5 @@
 <interface>
-  <object class="GtkBox" id="room-config-list-owners-form">
+  <object class="GtkBox" id="room-config-list-form">
     <property name="visible">True</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
@@ -24,14 +24,39 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="room-config-list-owners-jid">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="halign">end</property>
+            <property name="valign">center</property>
+            <property name="label" translatable="yes">Reason</property>
+            <property name="xalign">0</property>
+            <property name="yalign">0</property>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="room-config-list-jid">
             <property name="visible">True</property>
             <property name="hexpand">True</property>
-            <signal name="changed" handler="on_jid_changed" swapped="no"/>
+            <signal name="changed" handler="on_field_changed" swapped="no"/>
           </object>
           <packing>
             <property name="left_attach">1</property>
             <property name="top_attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkEntry" id="room-config-list-banned-reason">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <signal name="changed" handler="on_field_changed" swapped="no"/>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="top_attach">1</property>
           </packing>
         </child>
       </object>

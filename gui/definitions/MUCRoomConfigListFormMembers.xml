@@ -1,5 +1,5 @@
 <interface>
-  <object class="GtkBox" id="room-config-list-members-form">
+  <object class="GtkBox" id="room-config-list-form">
     <property name="visible">True</property>
     <property name="hexpand">True</property>
     <property name="vexpand">True</property>
@@ -52,10 +52,10 @@
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="room-config-list-members-jid">
+          <object class="GtkEntry" id="room-config-list-jid">
             <property name="visible">True</property>
             <property name="hexpand">True</property>
-            <signal name="changed" handler="on_jid_changed" swapped="no"/>
+            <signal name="changed" handler="on_field_changed" swapped="no"/>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -66,7 +66,7 @@
           <object class="GtkEntry" id="room-config-list-members-nickname">
             <property name="visible">True</property>
             <property name="hexpand">True</property>
-            <signal name="changed" handler="on_nickname_changed" swapped="no"/>
+            <signal name="changed" handler="on_field_changed" swapped="no"/>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -77,7 +77,7 @@
           <object class="GtkEntry" id="room-config-list-members-role">
             <property name="visible">True</property>
             <property name="hexpand">True</property>
-            <signal name="changed" handler="on_role_changed" swapped="no"/>
+            <signal name="changed" handler="on_field_changed" swapped="no"/>
           </object>
           <packing>
             <property name="left_attach">1</property>

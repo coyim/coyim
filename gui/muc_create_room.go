@@ -5,10 +5,16 @@ import (
 	"sync"
 
 	"github.com/coyim/coyim/coylog"
-	"github.com/coyim/coyim/session/muc"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
+)
+
+var (
+	errCreateRoomCheckIfExistsFails = errors.New("room exists failed")
+	errCreateRoomAlreadyExists      = errors.New("room already exists")
+	errCreateRoomFailed             = errors.New("couldn't create the room")
 )
 
 type mucCreateRoomView struct {
@@ -43,7 +49,8 @@ func newCreateMUCRoomView(u *gtkUI) *mucCreateRoomView {
 	}
 
 	v.initBuilder()
-	v.initChildViews()
+	v.initCreateRoomForm()
+	v.initCreateRoomSuccess()
 
 	return v
 }
@@ -57,18 +64,12 @@ func (v *mucCreateRoomView) initBuilder() {
 	})
 }
 
-func (v *mucCreateRoomView) initChildViews() {
-	v.form = v.initCreateRoomForm()
-	v.showCreateForm = func() {
-		v.form.showCreateForm(v)
-	}
-
-	v.success = v.initCreateRoomSuccess()
-	v.showSuccessView = func(ca *account, roomID jid.Bare) {
-		v.success.showSuccessView(v, ca, roomID)
-	}
+// onCloseWindow MUST be called from the UI thread
+func (v *mucCreateRoomView) onCloseWindow() {
+	v.onDestroy.invokeAll()
 }
 
+// onCancel MUST be called from the UI thread
 func (v *mucCreateRoomView) onCancel() {
 	if v.cancel != nil {
 		v.cancel <- true
@@ -78,31 +79,7 @@ func (v *mucCreateRoomView) onCancel() {
 	v.dialog.Destroy()
 }
 
-func (v *mucCreateRoomView) onCloseWindow() {
-	v.onDestroy.invokeAll()
-}
-
-var (
-	errCreateRoomCheckIfExistsFails = errors.New("room exists failed")
-	errCreateRoomAlreadyExists      = errors.New("room already exists")
-	errCreateRoomFailed             = errors.New("couldn't create the room")
-)
-
-func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
-	l := v.u.log
-	if ca != nil {
-		l = ca.log
-	}
-
-	if roomID != nil {
-		l.WithField("room", roomID)
-	}
-
-	l.WithField("where", "mucCreateRoomView")
-
-	return l
-}
-
+// createRoom IS SAFE to be called from the UI thread
 func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError func(err error)) {
 	v.cancel = make(chan bool)
 
@@ -134,59 +111,49 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 
 }
 
-func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) {
-	doInUIThread(func() {
-		rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished, nil)
-		rca.show()
-	})
-}
-
-func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, autoJoin bool) {
-	if autoJoin {
-		doInUIThread(func() {
-			v.joinRoom(ca, roomID)
-		})
-		return
-	}
-
-	doInUIThread(func() {
-		v.showSuccessView(ca, roomID)
-		v.dialog.ShowAll()
-	})
-}
-
 // joinRoom MUST be called from the UI thread
 func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
 	v.dialog.Destroy()
 	v.u.joinRoom(ca, roomID, nil)
 }
 
+// updateAutoJoinValue IS SAFE to be called from the UI thread
 func (v *mucCreateRoomView) updateAutoJoinValue(f bool) {
 	v.updateCreateOption("autoJoin", f)
 }
 
+// updateConfigureRoomValue IS SAFE to be called from the UI thread
 func (v *mucCreateRoomView) updateConfigureRoomValue(f bool) {
 	v.updateCreateOption("configRoom", f)
 }
 
+// updateCreateOption IS SAFE to be called from the UI thread
 func (v *mucCreateRoomView) updateCreateOption(o string, f bool) {
 	v.Lock()
 	defer v.Unlock()
 
-	oldValue := false
+	previousValue := false
 
 	switch o {
 	case "autoJoin":
-		oldValue = v.autoJoin
+		previousValue = v.autoJoin
 		v.autoJoin = f
 	case "configRoom":
-		oldValue = v.configureRoom
+		previousValue = v.configureRoom
 		v.configureRoom = f
 	}
 
-	if oldValue != f {
+	if previousValue != f {
 		v.onCreateOptionChange.invokeAll()
 	}
+}
+
+// log IS SAFE to be called from the UI thread
+func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
+	return ca.log.WithFields(log.Fields{
+		"room":  roomID,
+		"where": "mucCreateRoomView",
+	})
 }
 
 func (u *gtkUI) mucCreateChatRoom() {

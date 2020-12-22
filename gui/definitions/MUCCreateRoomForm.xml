@@ -94,8 +94,8 @@
                 <child internal-child="entry">
                   <object class="GtkEntry" id="chat-services-entry">
                     <property name="placeholder_text" translatable="yes">Enter the location or select one from the list</property>
-                    <signal name="changed" handler="on_chatservice_entry_change" swapped="no"/>
                     <signal name="activate" handler="on_create" swapped="no"/>
+                    <signal name="changed" handler="on_chatservice_entry_change" swapped="no"/>
                   </object>
                 </child>
               </object>
@@ -118,35 +118,48 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="autojoin-check-button">
-                <property name="label" translatable="yes">_Automatically join the room</property>
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip_text" translatable="yes">Automatically join the room when created</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="use_underline">True</property>
-                <property name="draw_indicator">True</property>
-                <signal name="toggled" handler="on_room_autojoin_toggled" swapped="no"/>
+                <property name="orientation">vertical</property>
+                <property name="spacing">3</property>
+                <child>
+                  <object class="GtkCheckButton" id="autojoin-check-button">
+                    <property name="label" translatable="yes">_Automatically join the room</property>
+                    <property name="visible">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Automatically join the room when created</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="use_underline">True</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_room_autojoin_toggled" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="config-room-check-button">
+                    <property name="label" translatable="yes">Add custom room configuration</property>
+                    <property name="visible">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="on_room_config_toggled" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkCheckButton" id="config-room-check-button">
-                <property name="label" translatable="yes">Add custom configuration</property>
-                <property name="visible">True</property>
-                <property name="receives_default">False</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="draw_indicator">True</property>
-                <signal name="toggled" handler="on_room_config_toggled" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">4</property>
               </packing>
             </child>
           </object>

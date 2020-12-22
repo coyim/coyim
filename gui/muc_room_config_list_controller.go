@@ -14,7 +14,7 @@ type mucRoomConfigListControllerData struct {
 
 	addOccupantDialogTitle string
 	addOccupantDescription string
-	addOccupantForm        func(onAnyValueChanges func()) mucRoomConfigListForm
+	addOccupantForm        func(onFormFieldValueChanges func()) mucRoomConfigListForm
 }
 
 type mucRoomConfigListController struct {

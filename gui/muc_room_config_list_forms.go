@@ -18,12 +18,12 @@ type mucRoomConfigListKickedForm struct {
 	jidEntry    gtki.Entry `gtk-widget:"room-config-list-kicked-jid"`
 	reasonEntry gtki.Entry `gtk-widget:"room-config-list-kicked-reason"`
 
-	onAnyValueChanges func()
+	onFormFieldValueChanges func()
 }
 
-func newMUCRoomConfigListKickedForm(onAnyValueChanges func()) mucRoomConfigListForm {
+func newMUCRoomConfigListKickedForm(onFormFieldValueChanges func()) mucRoomConfigListForm {
 	kf := &mucRoomConfigListKickedForm{
-		onAnyValueChanges: onAnyValueChanges,
+		onFormFieldValueChanges: onFormFieldValueChanges,
 	}
 
 	kf.initBuilder()
@@ -42,8 +42,8 @@ func (kf *mucRoomConfigListKickedForm) initBuilder() {
 }
 
 func (kf *mucRoomConfigListKickedForm) onValueChanged() {
-	if kf.onAnyValueChanges != nil {
-		kf.onAnyValueChanges()
+	if kf.onFormFieldValueChanges != nil {
+		kf.onFormFieldValueChanges()
 	}
 }
 
@@ -80,12 +80,12 @@ type mucRoomConfigListMembersForm struct {
 	nicknameEntry gtki.Entry `gtk-widget:"room-config-list-members-nickname"`
 	roleEntry     gtki.Entry `gtk-widget:"room-config-list-members-role"`
 
-	onAnyValueChanges func()
+	onFormFieldValueChanges func()
 }
 
-func newMUCRoomConfigListMembersForm(onAnyValueChanges func()) mucRoomConfigListForm {
+func newMUCRoomConfigListMembersForm(onFormFieldValueChanges func()) mucRoomConfigListForm {
 	mf := &mucRoomConfigListMembersForm{
-		onAnyValueChanges: onAnyValueChanges,
+		onFormFieldValueChanges: onFormFieldValueChanges,
 	}
 
 	mf.initBuilder()
@@ -105,8 +105,8 @@ func (mf *mucRoomConfigListMembersForm) initBuilder() {
 }
 
 func (mf *mucRoomConfigListMembersForm) onValueChanged() {
-	if mf.onAnyValueChanges != nil {
-		mf.onAnyValueChanges()
+	if mf.onFormFieldValueChanges != nil {
+		mf.onFormFieldValueChanges()
 	}
 }
 
@@ -145,12 +145,12 @@ type mucRoomConfigListOwnersForm struct {
 	form     gtki.Box   `gtk-widget:"room-config-list-owners-form"`
 	jidEntry gtki.Entry `gtk-widget:"room-config-list-owners-jid"`
 
-	onAnyValueChanges func()
+	onFormFieldValueChanges func()
 }
 
-func newMUCRoomConfigListOwnersForm(onAnyValueChanges func()) mucRoomConfigListForm {
+func newMUCRoomConfigListOwnersForm(onFormFieldValueChanges func()) mucRoomConfigListForm {
 	of := &mucRoomConfigListOwnersForm{
-		onAnyValueChanges: onAnyValueChanges,
+		onFormFieldValueChanges: onFormFieldValueChanges,
 	}
 
 	of.initBuilder()
@@ -168,8 +168,8 @@ func (of *mucRoomConfigListOwnersForm) initBuilder() {
 }
 
 func (of *mucRoomConfigListOwnersForm) onValueChanged() {
-	if of.onAnyValueChanges != nil {
-		of.onAnyValueChanges()
+	if of.onFormFieldValueChanges != nil {
+		of.onFormFieldValueChanges()
 	}
 }
 
@@ -197,14 +197,14 @@ func (of *mucRoomConfigListOwnersForm) friendlyErrorMessage(err error) string {
 }
 
 type mucRoomConfigListAdminsForm struct {
-	form              gtki.Box   `gtk-widget:"room-config-list-admins-form"`
-	jidEntry          gtki.Entry `gtk-widget:"room-config-list-admins-jid"`
-	onAnyValueChanges func()
+	form                    gtki.Box   `gtk-widget:"room-config-list-admins-form"`
+	jidEntry                gtki.Entry `gtk-widget:"room-config-list-admins-jid"`
+	onFormFieldValueChanges func()
 }
 
-func newMUCRoomConfigListAdminsForm(onAnyValueChanges func()) mucRoomConfigListForm {
+func newMUCRoomConfigListAdminsForm(onFormFieldValueChanges func()) mucRoomConfigListForm {
 	af := &mucRoomConfigListAdminsForm{
-		onAnyValueChanges: onAnyValueChanges,
+		onFormFieldValueChanges: onFormFieldValueChanges,
 	}
 
 	af.initBuilder()
@@ -222,8 +222,8 @@ func (af *mucRoomConfigListAdminsForm) initBuilder() {
 }
 
 func (af *mucRoomConfigListAdminsForm) onValueChanged() {
-	if af.onAnyValueChanges != nil {
-		af.onAnyValueChanges()
+	if af.onFormFieldValueChanges != nil {
+		af.onFormFieldValueChanges()
 	}
 }
 

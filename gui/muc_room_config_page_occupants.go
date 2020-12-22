@@ -23,7 +23,7 @@ type roomConfigOccupantsPage struct {
 	adminsListController *mucRoomConfigListController
 }
 
-func (c *mucRoomConfigComponent) newRoomConfigOccupantsPage() mucRoomConfigPage {
+func (c *mucRoomConfigComponent) newRoomConfigOccupantsPage(parent gtki.Window) mucRoomConfigPage {
 	p := &roomConfigOccupantsPage{}
 
 	builder := newBuilder("MUCRoomConfigPageOccupants")
@@ -31,18 +31,18 @@ func (c *mucRoomConfigComponent) newRoomConfigOccupantsPage() mucRoomConfigPage 
 
 	p.roomConfigPageBase = c.newConfigPage(p.configOccupantsBox, p.notificationBox)
 
-	p.initOccupantsLists()
+	p.initOccupantsLists(parent)
 	p.initDefaultValues()
 
 	return p
 }
 
-func (p *roomConfigOccupantsPage) initOccupantsLists() {
-	p.initOwnersListController()
-	p.initAdminsListController()
+func (p *roomConfigOccupantsPage) initOccupantsLists(parent gtki.Window) {
+	p.initOwnersListController(parent)
+	p.initAdminsListController(parent)
 }
 
-func (p *roomConfigOccupantsPage) initOwnersListController() {
+func (p *roomConfigOccupantsPage) initOwnersListController(parent gtki.Window) {
 	ownersListColumns := []glibi.Type{
 		// jid
 		glibi.TYPE_STRING,
@@ -53,13 +53,14 @@ func (p *roomConfigOccupantsPage) initOwnersListController() {
 		removeOccupantButton:     p.ownersRemoveButton,
 		occupantsTreeView:        p.ownersList,
 		occupantsTreeViewColumns: ownersListColumns,
+		parentWindow:             parent,
 		addOccupantDialogTitle:   i18n.Local("Add a room owner"),
 		addOccupantDescription:   i18n.Local("Please specify the information of the occupant you want to add as a room owner"),
 		addOccupantForm:          newMUCRoomConfigListOwnersForm,
 	})
 }
 
-func (p *roomConfigOccupantsPage) initAdminsListController() {
+func (p *roomConfigOccupantsPage) initAdminsListController(parent gtki.Window) {
 	adminsListColumns := []glibi.Type{
 		// jid
 		glibi.TYPE_STRING,
@@ -70,6 +71,7 @@ func (p *roomConfigOccupantsPage) initAdminsListController() {
 		removeOccupantButton:     p.adminRemoveButton,
 		occupantsTreeView:        p.adminList,
 		occupantsTreeViewColumns: adminsListColumns,
+		parentWindow:             parent,
 		addOccupantDialogTitle:   i18n.Local("Add room administrator"),
 		addOccupantDescription:   i18n.Local("Please specify the information of the occupant you want to add as a room administrator"),
 		addOccupantForm:          newMUCRoomConfigListAdminsForm,

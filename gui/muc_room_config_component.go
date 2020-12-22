@@ -5,6 +5,7 @@ import (
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -34,7 +35,7 @@ type mucRoomConfigComponent struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool) *mucRoomConfigComponent {
+func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *muc.RoomConfigForm, autoJoin bool, parent gtki.Window) *mucRoomConfigComponent {
 	c := &mucRoomConfigComponent{
 		u:        u,
 		account:  account,
@@ -47,16 +48,16 @@ func (u *gtkUI) newMUCRoomConfigComponent(account *account, roomID jid.Bare, f *
 		}),
 	}
 
-	c.initConfigPages()
+	c.initConfigPages(parent)
 
 	return c
 }
 
-func (c *mucRoomConfigComponent) initConfigPages() {
+func (c *mucRoomConfigComponent) initConfigPages(parent gtki.Window) {
 	c.infoPage = c.newRoomConfigInfoPage()
 	c.accessPage = c.newRoomConfigAccessPage()
 	c.permissionsPage = c.newRoomConfigPermissionsPage()
-	c.occupantsPage = c.newRoomConfigOccupantsPage()
+	c.occupantsPage = c.newRoomConfigOccupantsPage(parent)
 	c.othersPage = c.newRoomConfigOthersPage()
 	c.summaryPage = c.newRoomConfigSummaryPage()
 }

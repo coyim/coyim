@@ -10,6 +10,7 @@ type mucRoomConfigListControllerData struct {
 	removeOccupantButton     gtki.Button
 	occupantsTreeView        gtki.TreeView
 	occupantsTreeViewColumns []glibi.Type
+	parentWindow             gtki.Window
 
 	addOccupantDialogTitle string
 	addOccupantDescription string
@@ -50,6 +51,7 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 			d.addOccupantDescription,
 			d.addOccupantForm(nil),
 			c.listComponent.addListItem,
+			d.parentWindow,
 		)
 
 		addToList.show()

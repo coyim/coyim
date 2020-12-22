@@ -29,7 +29,7 @@ type mucRoomConfigListAddComponent struct {
 	onApply       func(...string)
 }
 
-func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, f mucRoomConfigListForm, onApply func(...string)) *mucRoomConfigListAddComponent {
+func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, f mucRoomConfigListForm, onApply func(...string), parent gtki.Window) *mucRoomConfigListAddComponent {
 	la := &mucRoomConfigListAddComponent{
 		u:           u,
 		dialogTitle: dialogTitle,
@@ -39,7 +39,7 @@ func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, 
 	}
 
 	la.initBuilder()
-	la.initDefaults()
+	la.initDefaults(parent)
 
 	return la
 }
@@ -54,11 +54,11 @@ func (la *mucRoomConfigListAddComponent) initBuilder() {
 	})
 }
 
-func (la *mucRoomConfigListAddComponent) initDefaults() {
+func (la *mucRoomConfigListAddComponent) initDefaults(parent gtki.Window) {
 	la.content.Add(la.form.roomConfigListForm())
 
 	la.dialog.SetTitle(la.dialogTitle)
-	la.dialog.SetTransientFor(la.u.window)
+	la.dialog.SetTransientFor(parent)
 	la.title.SetLabel(la.formTitle)
 
 	la.notifications = la.u.newNotifications(la.notificationBox)

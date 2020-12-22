@@ -78,6 +78,6 @@ func (rd *roomDestroyErrorView) friendlyMessageForDestroyError(err error) string
 	case session.ErrDestroyRoomDoesntExist:
 		return i18n.Local("We couldn't find the room. Please try again in a moment.")
 	default:
-		return i18n.Local("An unknown error ocurred during the process. Please try again later.")
+		return i18n.Local("An unknown error occurred during the process. Please try again later.")
 	}
 }

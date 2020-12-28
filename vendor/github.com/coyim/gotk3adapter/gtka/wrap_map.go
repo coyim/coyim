@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/coyim/gotk3adapter/gliba"
+	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -375,6 +376,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *gtk.ToolButton:
 		val := WrapToolButtonSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *gotk3extra.MenuToolButton:
+		val := WrapMenuToolButtonSimple(oo)
 		if val == nil {
 			return nil, true
 		}
@@ -754,6 +761,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *toolButton:
 		val := UnwrapToolButton(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *menuToolButton:
+		val := UnwrapMenuToolButton(oo)
 		if val == nil {
 			return nil, true
 		}

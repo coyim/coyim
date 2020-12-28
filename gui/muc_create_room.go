@@ -30,7 +30,6 @@ type mucCreateRoomView struct {
 	form    *mucCreateRoomViewForm
 	success *mucCreateRoomViewSuccess
 
-	showCreateForm  func()
 	showSuccessView func(*account, jid.Bare)
 
 	onCreateOptionChange *callbacksSet
@@ -42,7 +41,6 @@ type mucCreateRoomView struct {
 func newCreateMUCRoomView(u *gtkUI) *mucCreateRoomView {
 	v := &mucCreateRoomView{
 		u:                    u,
-		showCreateForm:       func() {},
 		showSuccessView:      func(*account, jid.Bare) {},
 		onCreateOptionChange: newCallbacksSet(),
 		onDestroy:            newCallbacksSet(),
@@ -161,7 +159,7 @@ func (u *gtkUI) mucCreateChatRoom() {
 
 	u.connectShortcutsChildWindow(view.dialog)
 
-	view.showCreateForm()
+	view.form.showCreateForm(view)
 
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()

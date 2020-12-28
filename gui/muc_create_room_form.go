@@ -21,9 +21,6 @@ func (v *mucCreateRoomView) initCreateRoomForm() {
 	f.addCallbacks(v)
 
 	v.form = f
-	v.showCreateForm = func() {
-		v.form.showCreateForm(v)
-	}
 }
 
 type mucCreateRoomViewForm struct {

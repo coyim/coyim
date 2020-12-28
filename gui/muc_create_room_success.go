@@ -35,7 +35,9 @@ func (s *mucCreateRoomViewSuccess) initBuilder(v *mucCreateRoomView) {
 	panicOnDevError(builder.bindObjects(s))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_createRoom_clicked": v.showCreateForm,
+		"on_createRoom_clicked": func() {
+			v.form.showCreateForm(v)
+		},
 		"on_joinRoom_clicked": func() {
 			s.onJoinRoom(s.ca, s.roomID)
 		},

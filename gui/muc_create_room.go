@@ -30,8 +30,6 @@ type mucCreateRoomView struct {
 	form    *mucCreateRoomViewForm
 	success *mucCreateRoomViewSuccess
 
-	showSuccessView func(*account, jid.Bare)
-
 	onCreateOptionChange *callbacksSet
 	onDestroy            *callbacksSet
 
@@ -41,7 +39,6 @@ type mucCreateRoomView struct {
 func newCreateMUCRoomView(u *gtkUI) *mucCreateRoomView {
 	v := &mucCreateRoomView{
 		u:                    u,
-		showSuccessView:      func(*account, jid.Bare) {},
 		onCreateOptionChange: newCallbacksSet(),
 		onDestroy:            newCallbacksSet(),
 	}

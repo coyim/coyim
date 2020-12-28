@@ -7,9 +7,6 @@ import (
 
 func (v *mucCreateRoomView) initCreateRoomSuccess() {
 	v.success = v.newCreateRoomSuccess()
-	v.showSuccessView = func(ca *account, roomID jid.Bare) {
-		v.success.showSuccessView(v, ca, roomID)
-	}
 }
 
 type mucCreateRoomViewSuccess struct {

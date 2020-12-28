@@ -91,7 +91,7 @@ func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, a
 	}
 
 	doInUIThread(func() {
-		v.showSuccessView(ca, roomID)
+		v.success.showSuccessView(v, ca, roomID)
 		v.dialog.ShowAll()
 	})
 }

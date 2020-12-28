@@ -89,6 +89,10 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 	}
 
 	go func() {
+		defer func() {
+			v.cancel = nil
+		}()
+
 		v.checkIfRoomExists(ca, roomID, sc, ec)
 
 		select {

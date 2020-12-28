@@ -5,8 +5,6 @@ import (
 )
 
 type roomViewToolbar struct {
-	menu gtki.Popover
-
 	view             gtki.Box      `gtk-widget:"room-view-toolbar"`
 	roomNameLabel    gtki.Label    `gtk-widget:"room-name-label"`
 	roomSubjectLabel gtki.Label    `gtk-widget:"room-subject-label"`

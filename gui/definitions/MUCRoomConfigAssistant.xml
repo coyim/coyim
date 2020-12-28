@@ -9,7 +9,6 @@
     <child>
       <object class="GtkBox" id="room-config-info-page"></object>
       <packing>
-        <property name="page_type">intro</property>
         <property name="title" translatable="yes">Basic information</property>
         <property name="complete">True</property>
       </packing>

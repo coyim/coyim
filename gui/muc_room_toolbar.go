@@ -5,11 +5,12 @@ import (
 )
 
 type roomViewToolbar struct {
-	view             gtki.Box      `gtk-widget:"room-view-toolbar"`
-	roomNameLabel    gtki.Label    `gtk-widget:"room-name-label"`
-	roomSubjectLabel gtki.Label    `gtk-widget:"room-subject-label"`
-	roomStatusIcon   gtki.Image    `gtk-widget:"room-status-icon"`
-	destroyItem      gtki.MenuItem `gtk-widget:"destroy-item"`
+	view             gtki.Box            `gtk-widget:"room-view-toolbar"`
+	roomNameLabel    gtki.Label          `gtk-widget:"room-name-label"`
+	roomSubjectLabel gtki.Label          `gtk-widget:"room-subject-label"`
+	roomStatusIcon   gtki.Image          `gtk-widget:"room-status-icon"`
+	menu             gtki.MenuToolButton `gtk-widget:"room-menu"`
+	destroyItem      gtki.MenuItem       `gtk-widget:"destroy-item"`
 }
 
 func (v *roomView) newRoomViewToolbar() *roomViewToolbar {
@@ -79,7 +80,7 @@ func (t *roomViewToolbar) selfOccupantJoinedEvent(owner bool) {
 
 // disable MUST be called from UI Thread
 func (t *roomViewToolbar) disable() {
-	// TODO: disable menu button here
+	t.menu.SetSensitive(false)
 	mucStyles.setRoomToolbarNameLabelDisabledStyle(t.roomNameLabel)
 }
 

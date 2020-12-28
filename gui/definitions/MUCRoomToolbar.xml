@@ -71,7 +71,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkMenuToolButton">
+              <object class="GtkMenuToolButton" id="room-menu">
                 <property name="visible">True</property>
                 <child type="menu">
                   <object class="GtkMenu">

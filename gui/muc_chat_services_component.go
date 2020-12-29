@@ -80,7 +80,7 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 }
 
 func (c *chatServicesComponent) onUpdateChatServicesFinished(hadAny bool, typedService jid.Domain) {
-	if hadAny && len(typedService.String()) == 0 {
+	if c.currentServiceValue() == "" && hadAny && len(typedService.String()) == 0 {
 		doInUIThread(func() {
 			c.setActive(0)
 		})

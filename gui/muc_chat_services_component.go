@@ -40,19 +40,10 @@ func (c *chatServicesComponent) updateServicesBasedOnAccount(ca *account) {
 }
 
 func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {
-	hadAny := false
-	ts := make(chan jid.Domain)
-
-	doInUIThread(func() {
-		t := c.currentService()
-		ts <- t
-		c.removeAll()
-	})
-
-	typedService := <-ts
+	doInUIThread(c.removeAll)
 
 	defer func() {
-		c.onUpdateChatServicesFinished(hadAny, typedService)
+		c.previousUpdateChannel = nil
 	}()
 
 	for {
@@ -71,22 +62,14 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 				return
 			}
 
-			hadAny = true
 			doInUIThread(func() {
 				c.addService(cs)
+				if c.currentServiceValue() == "" {
+					c.setActive(0)
+				}
 			})
 		}
 	}
-}
-
-func (c *chatServicesComponent) onUpdateChatServicesFinished(hadAny bool, typedService jid.Domain) {
-	if c.currentServiceValue() == "" && hadAny && len(typedService.String()) == 0 {
-		doInUIThread(func() {
-			c.setActive(0)
-		})
-	}
-
-	c.previousUpdateChannel = nil
 }
 
 // currentServiceValue MUST be called from the UI thread

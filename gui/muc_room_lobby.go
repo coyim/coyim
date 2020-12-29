@@ -26,7 +26,8 @@ type roomViewLobby struct {
 	cancelButton     gtki.Button `gtk-widget:"cancel-button"`
 	notificationArea gtki.Box    `gtk-widget:"notifications-box"`
 
-	notifications *notifications
+	notifications  *notifications
+	loadingOverlay *roomViewLoadingOverlay
 
 	// These two methods WILL BE called from the UI thread
 	onSuccess func()
@@ -46,6 +47,7 @@ func (v *roomView) newRoomViewLobby(a *account, roomID jid.Bare) *roomViewLobby 
 		account:               a,
 		onSuccess:             v.onJoined,
 		onCancel:              v.onJoinCancel,
+		loadingOverlay:        v.loadingViewOverlay,
 		nicknamesWithConflict: set.New(),
 		log:                   v.log.WithField("where", "roomViewLobby"),
 	}
@@ -141,6 +143,7 @@ func (l *roomViewLobby) show() {
 }
 
 func (l *roomViewLobby) destroy() {
+	l.loadingOverlay.hide()
 	l.content.Destroy()
 }
 
@@ -173,13 +176,13 @@ func (l *roomViewLobby) checkJoinConditions() bool {
 func (l *roomViewLobby) disableFieldsAndShowSpinner() {
 	disableField(l.nicknameEntry)
 	disableField(l.joinButton)
-	// TODO: Add funcionality that shows loading overlay
+	l.loadingOverlay.onJoinRoom()
 }
 
 func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 	enableField(l.nicknameEntry)
 	enableField(l.joinButton)
-	// TODO: Add funcionality that hides loading overlay
+	l.loadingOverlay.hide()
 }
 
 func (l *roomViewLobby) onJoinRoom(done func()) {

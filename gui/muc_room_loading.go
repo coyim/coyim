@@ -28,7 +28,7 @@ func (lo *roomViewLoadingOverlay) onRoomDiscoInfoLoad() {
 
 // onJoinRoom MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onJoinRoom() {
-	lo.setTitle(i18n.Local("Joining the room..."))
+	lo.setTitle(i18n.Local("Joining room..."))
 	lo.setSolid()
 	lo.show()
 }

@@ -6,6 +6,8 @@ import (
 )
 
 type chatServicesComponent struct {
+	currentAccount *account
+
 	hasItems              bool
 	servicesList          gtki.ComboBoxText
 	serviceEntry          gtki.Entry
@@ -28,15 +30,19 @@ func (u *gtkUI) createChatServicesComponent(list gtki.ComboBoxText, entry gtki.E
 }
 
 func (c *chatServicesComponent) updateServicesBasedOnAccount(ca *account) {
-	if c.previousUpdateChannel != nil {
-		c.previousUpdateChannel <- true
+	if c.currentAccount == nil || c.currentAccount.Account() != ca.Account() {
+		c.currentAccount = ca
+
+		if c.previousUpdateChannel != nil {
+			c.previousUpdateChannel <- true
+		}
+
+		c.previousUpdateChannel = make(chan bool)
+
+		csc, ec, endEarly := ca.session.GetChatServices(jid.ParseDomain(ca.Account()))
+
+		go c.updateChatServices(ca, csc, ec, endEarly)
 	}
-
-	c.previousUpdateChannel = make(chan bool)
-
-	csc, ec, endEarly := ca.session.GetChatServices(jid.ParseDomain(ca.Account()))
-
-	go c.updateChatServices(ca, csc, ec, endEarly)
 }
 
 func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.Domain, ec <-chan error, endEarly func()) {

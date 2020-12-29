@@ -26,6 +26,13 @@ func (lo *roomViewLoadingOverlay) onRoomDiscoInfoLoad() {
 	lo.show()
 }
 
+// onJoinRoom MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onJoinRoom() {
+	lo.setTitle(i18n.Local("Joining the room..."))
+	lo.setSolid()
+	lo.show()
+}
+
 // onRoomDestroy MUST be called from the UI thread
 func (lo *roomViewLoadingOverlay) onRoomDestroy() {
 	lo.setTitle(i18n.Local("Destroying room..."))

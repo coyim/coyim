@@ -122,18 +122,6 @@
                 <property name="spacing">5</property>
                 <property name="layout_style">start</property>
                 <child>
-                  <object class="GtkBox" id="spinner-box">
-                    <property name="visible">True</property>
-                    <property name="halign">end</property>
-                    <property name="valign">center</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkButton" id="cancel-button">
                     <property name="label" translatable="yes">_Cancel</property>
                     <property name="visible">True</property>

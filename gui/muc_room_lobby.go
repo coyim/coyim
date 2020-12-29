@@ -25,10 +25,8 @@ type roomViewLobby struct {
 	joinButton       gtki.Button `gtk-widget:"join-button"`
 	cancelButton     gtki.Button `gtk-widget:"cancel-button"`
 	notificationArea gtki.Box    `gtk-widget:"notifications-box"`
-	spinnerBox       gtki.Box    `gtk-widget:"spinner-box"`
 
 	notifications *notifications
-	spinner       *spinner
 
 	// These two methods WILL BE called from the UI thread
 	onSuccess func()
@@ -72,8 +70,6 @@ func (l *roomViewLobby) initBuilder() {
 }
 
 func (l *roomViewLobby) initDefaults(v *roomView) {
-	l.spinner = newSpinner()
-	l.spinnerBox.Add(l.spinner.getWidget())
 	l.notifications = v.u.newNotifications(l.notificationArea)
 
 	l.roomNameLabel.SetText(l.roomID.String())
@@ -177,13 +173,13 @@ func (l *roomViewLobby) checkJoinConditions() bool {
 func (l *roomViewLobby) disableFieldsAndShowSpinner() {
 	disableField(l.nicknameEntry)
 	disableField(l.joinButton)
-	l.spinner.show()
+	// TODO: Add funcionality that shows loading overlay
 }
 
 func (l *roomViewLobby) enableFieldsAndHideSpinner() {
 	enableField(l.nicknameEntry)
 	enableField(l.joinButton)
-	l.spinner.hide()
+	// TODO: Add funcionality that hides loading overlay
 }
 
 func (l *roomViewLobby) onJoinRoom(done func()) {

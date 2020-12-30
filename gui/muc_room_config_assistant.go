@@ -145,6 +145,7 @@ func (rc *roomConfigAssistant) onCancelError(err error) {
 
 func (rc *roomConfigAssistant) onApplyClicked() {
 	rc.assistant.SetSensitive(false)
+	rc.summaryPage.showLoadingOverlay()
 	rc.roomConfigComponent.submitConfigurationForm(
 		rc.onApplySuccess,
 		rc.onApplyError,

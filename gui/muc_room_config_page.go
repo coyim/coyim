@@ -55,6 +55,7 @@ func (p *roomConfigPageBase) onRefresh(f func()) {
 
 func (p *roomConfigPageBase) refresh() {
 	p.content.ShowAll()
+	p.hideLoadingOverlay()
 
 	for _, f := range p.refreshList {
 		f()

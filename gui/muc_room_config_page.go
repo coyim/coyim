@@ -12,24 +12,28 @@ type mucRoomConfigPage interface {
 	collectData()
 	onRefresh(func())
 	refresh()
+	showLoadingOverlay()
+	hideLoadingOverlay()
 }
 
 type roomConfigPageBase struct {
-	u             *gtkUI
-	content       gtki.Box
-	notifications *notifications
-	refreshList   []func()
-	form          *muc.RoomConfigForm
-	log           coylog.Logger
+	u              *gtkUI
+	content        gtki.Box
+	loadingOverlay *loadingOverlayComponent
+	notifications  *notifications
+	refreshList    []func()
+	form           *muc.RoomConfigForm
+	log            coylog.Logger
 }
 
 func (c *mucRoomConfigComponent) newConfigPage(content gtki.Box, nb gtki.Box) *roomConfigPageBase {
 	return &roomConfigPageBase{
-		u:             c.u,
-		content:       content,
-		notifications: c.u.newNotifications(nb),
-		form:          c.form,
-		log:           c.log,
+		u:              c.u,
+		content:        content,
+		notifications:  c.u.newNotifications(nb),
+		loadingOverlay: c.u.newLoadingOverlayComponent(),
+		form:           c.form,
+		log:            c.log,
 	}
 }
 
@@ -63,4 +67,12 @@ func (p *roomConfigPageBase) clearErrors() {
 
 func (p *roomConfigPageBase) nofityError(m string) {
 	p.notifications.notifyOnError(m)
+}
+
+func (p *roomConfigPageBase) showLoadingOverlay() {
+	p.loadingOverlay.show()
+}
+
+func (p *roomConfigPageBase) hideLoadingOverlay() {
+	p.loadingOverlay.hide()
 }

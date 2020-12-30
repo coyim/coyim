@@ -130,6 +130,7 @@ func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
 }
 
 func (rc *roomConfigAssistant) onCancelClicked() {
+	rc.assistant.SetSensitive(false)
 	rc.roomConfigComponent.cancelConfiguration(rc.onCancelSuccess, rc.onCancelError)
 }
 
@@ -143,6 +144,7 @@ func (rc *roomConfigAssistant) onCancelError(err error) {
 }
 
 func (rc *roomConfigAssistant) onApplyClicked() {
+	rc.assistant.SetSensitive(false)
 	rc.roomConfigComponent.submitConfigurationForm(
 		rc.onApplySuccess,
 		rc.onApplyError,

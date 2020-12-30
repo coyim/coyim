@@ -12,6 +12,7 @@ type roomConfigSummaryPage struct {
 	*roomConfigPageBase
 	autoJoin bool
 
+	overlay                 gtki.Overlay     `gtk-widget:"room-config-overlay"`
 	box                     gtki.Box         `gtk-widget:"room-config-summary-page"`
 	infoSectionLabel        gtki.Label       `gtk-widget:"room-config-information-title"`
 	title                   gtki.Label       `gtk-widget:"room-config-summary-title"`
@@ -72,6 +73,8 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 
 	p.ownersTreeView.SetModel(p.ownersTreeModel)
 	p.adminsTreeView.SetModel(p.adminsTreeModel)
+
+	p.overlay.AddOverlay(p.loadingOverlay.overlay)
 
 	return p
 }

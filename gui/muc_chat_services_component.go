@@ -79,9 +79,6 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 
 	defer func() {
 		c.previousUpdateChannel = nil
-		if len(c.services) > 0 && c.currentValue != "" {
-			c.setActive(0)
-		}
 	}()
 
 	for {
@@ -102,6 +99,9 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 
 			doInUIThread(func() {
 				c.addService(cs)
+				if c.currentValue == "" {
+					c.setActive(0)
+				}
 			})
 		}
 	}

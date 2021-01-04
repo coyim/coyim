@@ -46,6 +46,24 @@ func (cac *connectedAccountsComponent) currentAccount() *account {
 	return nil
 }
 
+func (cac *connectedAccountsComponent) setCurrentAccount(ca *account) {
+	if a, _ := cac.accounts[ca.ID()]; a != ca {
+		return
+	}
+
+	previousActive := cac.currentlyActive
+	for ix, a := range cac.accountsList {
+		if a == ca {
+			cac.currentlyActive = ix
+		}
+	}
+
+	if cac.currentlyActive != previousActive {
+		cac.accountsInput.SetActive(cac.currentlyActive)
+		cac.onAccountsUpdated(cac.currentAccount())
+	}
+}
+
 // hasAccounts is safe to call from the UI thread, or from outside the UI thread
 func (cac *connectedAccountsComponent) hasAccounts() bool {
 	return len(cac.accounts) > 0
@@ -60,7 +78,7 @@ func (cac *connectedAccountsComponent) hasAccountValue() bool {
 // We don't need to do any locking here, since it's already in the UI thread
 // so no other things can happen to the UI in the meantime
 func (cac *connectedAccountsComponent) initOrReplaceAccounts(accounts []*account) {
-	if len(accounts) == 0 {
+	if !cac.hasAccounts() {
 		cac.errorNotifications.notifyOnError(i18n.Local("There are no connected accounts"))
 	}
 

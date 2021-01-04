@@ -67,7 +67,6 @@
                 <child>
                   <object class="GtkSwitch" id="room-membersonly">
                     <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Whether to make room members-only</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                   </object>
@@ -104,7 +103,6 @@
                 <child>
                   <object class="GtkSwitch" id="room-allowinvites">
                     <property name="visible">True</property>
-                    <property name="tooltip_text" translatable="yes">Whether to allow occupants to invite others</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                   </object>
@@ -131,6 +129,30 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Enable this to only allow access for room owners, admins and members</property>
+                <property name="halign">end</property>
+                <property name="stock">gtk-help</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="tooltip_text" translatable="yes">Whether to allow occupants to invite others</property>
+                <property name="halign">end</property>
+                <property name="stock">gtk-help</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
                 <property name="top_attach">2</property>
               </packing>
             </child>

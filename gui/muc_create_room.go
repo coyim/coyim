@@ -155,7 +155,7 @@ func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 	})
 }
 
-func (u *gtkUI) mucCreateChatRoom() {
+func (u *gtkUI) mucCreateRoom() {
 	view := newCreateMUCRoomView(u)
 
 	u.connectShortcutsChildWindow(view.dialog)

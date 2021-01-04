@@ -28,8 +28,9 @@ type roomConfigSummaryPage struct {
 	allowSetRoomSubject     gtki.Image       `gtk-widget:"room-config-summary-changesubject"`
 	moderatedRoom           gtki.Image       `gtk-widget:"room-config-summary-moderated"`
 	whoIs                   gtki.Label       `gtk-widget:"room-config-summary-whois"`
-	occupantsSectionLabel   gtki.Label       `gtk-widget:"room-config-occupants-title"`
+	ownersSectionLabel      gtki.Label       `gtk-widget:"room-config-owners-title"`
 	ownersTreeView          gtki.TreeView    `gtk-widget:"room-config-summary-owners-tree"`
+	adminsSectionLabel      gtki.Label       `gtk-widget:"room-config-admins-title"`
 	adminsTreeView          gtki.TreeView    `gtk-widget:"room-config-summary-admins-tree"`
 	othersSectionLabel      gtki.Label       `gtk-widget:"room-config-others-title"`
 	maxHistoryFetch         gtki.Label       `gtk-widget:"room-config-summary-maxhistoryfetch"`
@@ -62,7 +63,8 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	mucStyles.setRoomConfigSummarySectionLabelStyle(p.infoSectionLabel)
 	mucStyles.setRoomConfigSummarySectionLabelStyle(p.accessSectionLabel)
 	mucStyles.setRoomConfigSummarySectionLabelStyle(p.permsisionsSectionLabel)
-	mucStyles.setRoomConfigSummarySectionLabelStyle(p.occupantsSectionLabel)
+	mucStyles.setRoomConfigSummarySectionLabelStyle(p.adminsSectionLabel)
+	mucStyles.setRoomConfigSummarySectionLabelStyle(p.ownersSectionLabel)
 	mucStyles.setRoomConfigSummarySectionLabelStyle(p.othersSectionLabel)
 
 	mucStyles.setRoomConfigSummaryRoomTitleLabelStyle(p.title)

@@ -76,7 +76,7 @@ func (rd *roomDestroyErrorView) friendlyMessageForDestroyError(err error) string
 		return i18n.Local("You don't have the permission to destroy this room. " +
 			"Please contact one of the room owners.")
 	case session.ErrDestroyRoomDoesntExist:
-		return i18n.Local("We couldn't find the room. Please try again in a moment.")
+		return i18n.Local("We couldn't find the room.")
 	default:
 		return i18n.Local("An unknown error occurred during the process. Please try again later.")
 	}

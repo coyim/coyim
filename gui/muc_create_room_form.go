@@ -9,8 +9,16 @@ import (
 )
 
 // initCreateRoomForm MUST be called from the UI thread
-func (v *mucCreateRoomView) initCreateRoomForm() {
+func (v *mucCreateRoomView) initCreateRoomForm(d *mucCreateRoomData) {
 	f := v.newCreateRoomForm()
+
+	if d != nil {
+		f.roomFormComponent.setCurrentAccount(d.ca)
+		f.roomFormComponent.setCurrentRoomName(d.roomName)
+		f.roomFormComponent.setCurrentServiceValue(d.where)
+		f.roomAutoJoinCheck.SetActive(d.autoJoin)
+		f.roomConfigCheck.SetActive(d.customConfig)
+	}
 
 	f.createRoom = func(ca *account, roomID jid.Bare) {
 		v.createRoom(ca, roomID, func(err error) {
@@ -129,11 +137,6 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 	}
 }
 
-func (f *mucCreateRoomViewForm) onReserveRoomConfigurationCancel() {
-	f.hideSpinnerAndEnableFields()
-	f.enableCreationIfConditionsAreMet()
-}
-
 func (f *mucCreateRoomViewForm) hideSpinnerAndEnableFields() {
 	f.spinner.hide()
 	f.enableFields()
@@ -170,7 +173,6 @@ func (f *mucCreateRoomViewForm) addCallbacks(v *mucCreateRoomView) {
 func (f *mucCreateRoomViewForm) showCreateForm(v *mucCreateRoomView) {
 	v.success.reset()
 	v.container.Remove(v.success.view)
-	f.reset()
 	v.container.Add(f.view)
 	f.isShown = true
 }

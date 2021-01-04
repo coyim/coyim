@@ -36,7 +36,7 @@ type mucCreateRoomView struct {
 	sync.Mutex
 }
 
-func newCreateMUCRoomView(u *gtkUI) *mucCreateRoomView {
+func newCreateMUCRoomView(u *gtkUI, d *mucCreateRoomData) *mucCreateRoomView {
 	v := &mucCreateRoomView{
 		u:                    u,
 		onCreateOptionChange: newCallbacksSet(),
@@ -44,7 +44,7 @@ func newCreateMUCRoomView(u *gtkUI) *mucCreateRoomView {
 	}
 
 	v.initBuilder()
-	v.initCreateRoomForm()
+	v.initCreateRoomForm(d)
 	v.initCreateRoomSuccess()
 
 	return v
@@ -71,6 +71,11 @@ func (v *mucCreateRoomView) onCancel() {
 		v.cancel = nil
 	}
 
+	v.destroy()
+}
+
+// destroy MUST be called from the UI thread
+func (v *mucCreateRoomView) destroy() {
 	v.dialog.Destroy()
 }
 
@@ -155,8 +160,16 @@ func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 	})
 }
 
-func (u *gtkUI) mucCreateRoom() {
-	view := newCreateMUCRoomView(u)
+type mucCreateRoomData struct {
+	ca           *account
+	roomName     jid.Local
+	where        jid.Domain
+	autoJoin     bool
+	customConfig bool
+}
+
+func (u *gtkUI) mucCreateRoomWithData(d *mucCreateRoomData) {
+	view := newCreateMUCRoomView(u, d)
 
 	u.connectShortcutsChildWindow(view.dialog)
 
@@ -164,4 +177,8 @@ func (u *gtkUI) mucCreateRoom() {
 
 	view.dialog.SetTransientFor(u.window)
 	view.dialog.Show()
+}
+
+func (u *gtkUI) mucCreateRoom() {
+	u.mucCreateRoomWithData(nil)
 }

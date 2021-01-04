@@ -2,14 +2,21 @@ package gui
 
 import (
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type chatServicesComponent struct {
-	currentAccount *account
+const (
+	chatServicesModelIDColumn int = iota
+	chatServicesModelTextColumn
+)
 
-	hasItems              bool
+type chatServicesComponent struct {
+	currentAccount        *account
+	currentValue          string
+	services              map[int]string
 	servicesList          gtki.ComboBoxText
+	servicesListModel     gtki.ListStore
 	serviceEntry          gtki.Entry
 	previousUpdateChannel chan bool
 }
@@ -17,14 +24,36 @@ type chatServicesComponent struct {
 func (u *gtkUI) createChatServicesComponent(list gtki.ComboBoxText, entry gtki.Entry, onServiceChanged func()) *chatServicesComponent {
 	c := &chatServicesComponent{
 		serviceEntry: entry,
+		services:     make(map[int]string),
+	}
+
+	var err error
+	// The following creates a list store model with two columns
+	// one for the "ID" and the another for the "text"
+	c.servicesListModel, err = g.gtk.ListStoreNew(glibi.TYPE_STRING, glibi.TYPE_STRING)
+	if err != nil {
+		panic(err)
+	}
+
+	onServiceChangedFinal := onServiceChanged
+	onServiceChanged = func() {
+		if currentValue, ok := c.services[c.servicesList.GetActive()]; ok {
+			c.currentValue = currentValue
+		} else {
+			c.currentValue = c.servicesList.GetActiveText()
+		}
+
+		if onServiceChangedFinal != nil {
+			onServiceChangedFinal()
+		}
 	}
 
 	c.servicesList = list
-	c.servicesList.Connect("changed", func() {
-		if onServiceChanged != nil {
-			onServiceChanged()
-		}
-	})
+	c.servicesList.Connect("changed", onServiceChanged)
+
+	c.servicesList.SetModel(c.servicesListModel)
+	c.servicesList.SetIDColumn(chatServicesModelIDColumn)
+	c.servicesList.SetEntryTextColumn(chatServicesModelTextColumn)
 
 	return c
 }
@@ -50,6 +79,9 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 
 	defer func() {
 		c.previousUpdateChannel = nil
+		if len(c.services) > 0 && c.currentValue != "" {
+			c.setActive(0)
+		}
 	}()
 
 	for {
@@ -70,9 +102,6 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 
 			doInUIThread(func() {
 				c.addService(cs)
-				if c.currentServiceValue() == "" {
-					c.setActive(0)
-				}
 			})
 		}
 	}
@@ -80,8 +109,7 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 
 // currentServiceValue MUST be called from the UI thread
 func (c *chatServicesComponent) currentServiceValue() string {
-	cs, _ := c.serviceEntry.GetText()
-	return cs
+	return c.currentValue
 }
 
 // currentService MUST be called from the UI thread
@@ -89,20 +117,38 @@ func (c *chatServicesComponent) currentService() jid.Domain {
 	return jid.ParseDomain(c.currentServiceValue())
 }
 
+// setCurrentService MUST be called from the UI thread
+func (c *chatServicesComponent) setCurrentService(s jid.Domain) {
+	for i, ss := range c.services {
+		if ss == s.String() {
+			c.setActive(i)
+			return
+		}
+	}
+	c.serviceEntry.SetText(s.String())
+}
+
 // setActive MUST be called from the UI thread
 func (c *chatServicesComponent) setActive(index int) {
-	c.servicesList.SetActive(index)
+	if len(c.services) > 0 && len(c.services) < index {
+		c.servicesList.SetActive(index)
+	}
 }
 
 // addService MUST be called from the UI thread
 func (c *chatServicesComponent) addService(s jid.Domain) {
-	c.hasItems = true
-	c.servicesList.AppendText(s.String())
+	iter := c.servicesListModel.Append()
+
+	_ = c.servicesListModel.SetValue(iter, chatServicesModelIDColumn, s.String())
+	_ = c.servicesListModel.SetValue(iter, chatServicesModelTextColumn, s.String())
+
+	c.services[len(c.services)] = s.String()
 }
 
 // removeAll MUST be called from the UI thread
 func (c *chatServicesComponent) removeAll() {
-	c.hasItems = false
+	c.currentValue = ""
+	c.services = make(map[int]string)
 	c.servicesList.RemoveAll()
 }
 
@@ -119,7 +165,7 @@ func (c *chatServicesComponent) disableServiceInput() {
 // resetToDefault MUST be called from the UI thread
 func (c *chatServicesComponent) resetToDefault() {
 	c.serviceEntry.SetText("")
-	if c.hasItems {
+	if len(c.services) > 0 {
 		c.setActive(0)
 	}
 }

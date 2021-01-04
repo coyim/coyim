@@ -54,6 +54,10 @@ func (f *mucRoomFormComponent) currentAccount() *account {
 	return f.accountsComponent.currentAccount()
 }
 
+func (f *mucRoomFormComponent) setCurrentAccount(ca *account) {
+	f.accountsComponent.setCurrentAccount(ca)
+}
+
 func (f *mucRoomFormComponent) currentService() jid.Domain {
 	return f.chatServicesComponent.currentService()
 }
@@ -62,12 +66,20 @@ func (f *mucRoomFormComponent) currentServiceValue() string {
 	return f.chatServicesComponent.currentServiceValue()
 }
 
+func (f *mucRoomFormComponent) setCurrentServiceValue(s jid.Domain) {
+	f.chatServicesComponent.setCurrentService(s)
+}
+
 func (f *mucRoomFormComponent) currentRoomName() jid.Local {
 	return f.roomNameComponent.currentName()
 }
 
 func (f *mucRoomFormComponent) currentRoomNameValue() string {
 	return f.roomNameComponent.currentNameValue()
+}
+
+func (f *mucRoomFormComponent) setCurrentRoomName(n jid.Local) {
+	f.roomNameComponent.setCurrentNameValue(n.String())
 }
 
 func (f *mucRoomFormComponent) currentRoomID() jid.Bare {

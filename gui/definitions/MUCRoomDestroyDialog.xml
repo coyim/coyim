@@ -24,7 +24,6 @@
                     <property name="label" translatable="yes">Cancel</property>
                     <property name="visible">True</property>
                     <property name="receives_default">True</property>
-                    <property name="relief">none</property>
                     <signal name="clicked" handler="on_cancel" swapped="no"/>
                   </object>
                   <packing>

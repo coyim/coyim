@@ -28,7 +28,6 @@
                     <property name="visible">True</property>
                     <property name="can_default">True</property>
                     <property name="receives_default">False</property>
-                    <property name="relief">none</property>
                     <property name="use_underline">True</property>
                     <signal name="clicked" handler="on_cancel" swapped="no"/>
                   </object>

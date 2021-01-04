@@ -133,12 +133,3 @@ func summaryValueForConfigOption(v string) string {
 	}
 	return configOptionToFriendlyMessage(v)
 }
-
-func setImageYesOrNo(img gtki.Image, v bool) {
-	icon := "no"
-	if v {
-		icon = "yes"
-	}
-
-	img.SetFromIconName("gtk-"+icon, gtki.ICON_SIZE_BUTTON)
-}

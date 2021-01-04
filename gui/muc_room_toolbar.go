@@ -80,8 +80,8 @@ func (t *roomViewToolbar) selfOccupantJoinedEvent(owner bool) {
 
 // disable MUST be called from UI Thread
 func (t *roomViewToolbar) disable() {
-	t.menu.SetSensitive(false)
 	mucStyles.setRoomToolbarNameLabelDisabledStyle(t.roomNameLabel)
+	t.menu.Hide()
 }
 
 // displayRoomSubject MUST be called from the UI thread

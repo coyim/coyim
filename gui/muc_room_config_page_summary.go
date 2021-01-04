@@ -18,15 +18,15 @@ type roomConfigSummaryPage struct {
 	title                   gtki.Label       `gtk-widget:"room-config-summary-title"`
 	description             gtki.Label       `gtk-widget:"room-config-summary-description"`
 	language                gtki.Label       `gtk-widget:"room-config-summary-language"`
-	includePublicList       gtki.Image       `gtk-widget:"room-config-summary-public"`
-	persistent              gtki.Image       `gtk-widget:"room-config-summary-persistent"`
+	includePublicList       gtki.CheckButton `gtk-widget:"room-config-summary-public"`
+	persistent              gtki.CheckButton `gtk-widget:"room-config-summary-persistent"`
 	accessSectionLabel      gtki.Label       `gtk-widget:"room-config-access-title"`
-	password                gtki.Image       `gtk-widget:"room-config-summary-password"`
-	allowInviteUsers        gtki.Image       `gtk-widget:"room-config-summary-invite"`
-	onlyMembers             gtki.Image       `gtk-widget:"room-config-summary-onlymembers"`
+	password                gtki.CheckButton `gtk-widget:"room-config-summary-password"`
+	allowInviteUsers        gtki.CheckButton `gtk-widget:"room-config-summary-invite"`
+	onlyMembers             gtki.CheckButton `gtk-widget:"room-config-summary-onlymembers"`
 	permsisionsSectionLabel gtki.Label       `gtk-widget:"room-config-permissions-title"`
-	allowSetRoomSubject     gtki.Image       `gtk-widget:"room-config-summary-changesubject"`
-	moderatedRoom           gtki.Image       `gtk-widget:"room-config-summary-moderated"`
+	allowSetRoomSubject     gtki.CheckButton `gtk-widget:"room-config-summary-changesubject"`
+	moderatedRoom           gtki.CheckButton `gtk-widget:"room-config-summary-moderated"`
 	whoIs                   gtki.Label       `gtk-widget:"room-config-summary-whois"`
 	ownersSectionLabel      gtki.Label       `gtk-widget:"room-config-owners-title"`
 	ownersTreeView          gtki.TreeView    `gtk-widget:"room-config-summary-owners-tree"`
@@ -35,7 +35,7 @@ type roomConfigSummaryPage struct {
 	othersSectionLabel      gtki.Label       `gtk-widget:"room-config-others-title"`
 	maxHistoryFetch         gtki.Label       `gtk-widget:"room-config-summary-maxhistoryfetch"`
 	maxOccupants            gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
-	enableArchiving         gtki.Image       `gtk-widget:"room-config-summary-archive"`
+	enableArchiving         gtki.CheckButton `gtk-widget:"room-config-summary-archive"`
 	autojoinCheckButton     gtki.CheckButton `gtk-widget:"room-config-autojoin"`
 	notificationBox         gtki.Box         `gtk-widget:"notification-box"`
 
@@ -88,17 +88,24 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	setLabelText(p.title, p.form.Title)
 	setLabelText(p.description, p.form.Description)
 	setLabelText(p.language, i18n.Localf("%s (%s)", p.form.Language, getLanguage(p.form.Language)))
-	setImageYesOrNo(p.includePublicList, p.form.Public)
-	setImageYesOrNo(p.persistent, p.form.Persistent)
+	p.includePublicList.SetActive(p.form.Public)
+	p.includePublicList.SetSensitive(false)
+	p.persistent.SetActive(p.form.Persistent)
+	p.persistent.SetSensitive(false)
 
 	// Access
-	setImageYesOrNo(p.password, p.form.PasswordProtected)
-	setImageYesOrNo(p.allowInviteUsers, p.form.OccupantsCanInvite)
-	setImageYesOrNo(p.onlyMembers, p.form.MembersOnly)
+	p.password.SetActive(p.form.PasswordProtected)
+	p.password.SetSensitive(false)
+	p.allowInviteUsers.SetActive(p.form.OccupantsCanInvite)
+	p.allowInviteUsers.SetSensitive(false)
+	p.onlyMembers.SetActive(p.form.MembersOnly)
+	p.onlyMembers.SetSensitive(false)
 
 	// Permissions
-	setImageYesOrNo(p.allowSetRoomSubject, p.form.OccupantsCanChangeSubject)
-	setImageYesOrNo(p.moderatedRoom, p.form.Moderated)
+	p.allowSetRoomSubject.SetActive(p.form.OccupantsCanChangeSubject)
+	p.allowSetRoomSubject.SetSensitive(false)
+	p.moderatedRoom.SetActive(p.form.Moderated)
+	p.moderatedRoom.SetSensitive(false)
 	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.CurrentValue()))
 
 	// Occupants
@@ -108,7 +115,8 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Other settings
 	setLabelText(p.maxHistoryFetch, summaryValueForConfigOption(p.form.MaxHistoryFetch.CurrentValue()))
 	setLabelText(p.maxOccupants, summaryValueForConfigOption(p.form.MaxOccupantsNumber.CurrentValue()))
-	setImageYesOrNo(p.enableArchiving, p.form.Logged)
+	p.enableArchiving.SetActive(p.form.Logged)
+	p.enableArchiving.SetSensitive(false)
 }
 
 func summaryValueOfOccupantList(model gtki.ListStore, items []jid.Any) {

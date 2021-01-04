@@ -30,6 +30,7 @@
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="border_width">12</property>
+                        <property name="margin_right">12</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkBox">
@@ -157,10 +158,10 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkImage" id="room-config-summary-public">
+                                      <object class="GtkCheckButton" id="room-config-summary-public">
                                         <property name="visible">True</property>
                                         <property name="halign">end</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="valign">center</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -193,10 +194,10 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkImage" id="room-config-summary-persistent">
+                                      <object class="GtkCheckButton" id="room-config-summary-persistent">
                                         <property name="visible">True</property>
                                         <property name="halign">end</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="valign">center</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -264,10 +265,10 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkImage" id="room-config-summary-password">
+                                      <object class="GtkCheckButton" id="room-config-summary-password">
                                         <property name="visible">True</property>
                                         <property name="halign">end</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="valign">center</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -300,10 +301,10 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkImage" id="room-config-summary-invite">
+                                      <object class="GtkCheckButton" id="room-config-summary-invite">
                                         <property name="visible">True</property>
                                         <property name="halign">end</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="valign">center</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -336,10 +337,10 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkImage" id="room-config-summary-onlymembers">
+                                      <object class="GtkCheckButton" id="room-config-summary-onlymembers">
                                         <property name="visible">True</property>
                                         <property name="halign">end</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="valign">center</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -407,10 +408,10 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkImage" id="room-config-summary-changesubject">
+                                      <object class="GtkCheckButton" id="room-config-summary-changesubject">
                                         <property name="visible">True</property>
                                         <property name="halign">end</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="valign">center</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -443,10 +444,10 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkImage" id="room-config-summary-moderated">
+                                      <object class="GtkCheckButton" id="room-config-summary-moderated">
                                         <property name="visible">True</property>
                                         <property name="halign">end</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="valign">center</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -736,10 +737,10 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkImage" id="room-config-summary-archive">
+                                      <object class="GtkCheckButton" id="room-config-summary-archive">
                                         <property name="visible">True</property>
                                         <property name="halign">end</property>
-                                        <property name="stock">gtk-missing-image</property>
+                                        <property name="valign">center</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

@@ -41,7 +41,7 @@ type mucCreateRoomViewForm struct {
 	roomConfigCheck   gtki.CheckButton `gtk-widget:"config-room-check-button"`
 	createButton      gtki.Button      `gtk-widget:"create-room-button"`
 	spinnerBox        gtki.Box         `gtk-widget:"spinner-box"`
-	notificationArea  gtki.Box         `gtk-widget:"notification-area-box"`
+	notificationsArea  gtki.Box         `gtk-widget:"notification-area-box"`
 
 	spinner       *spinner
 	notifications *notifications
@@ -61,13 +61,12 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 		roomNameConflictList:     set.New(),
 		updateAutoJoinValue:      v.updateAutoJoinValue,
 		updateConfigureRoomValue: v.updateConfigureRoomValue,
-		log:                      v.log,
+		log: v.log,
 	}
 
 	f.initBuilder(v)
-	f.initNotifications(v)
+	f.initNotificationsAndSpinner(v)
 	f.initRoomFormComponent(v)
-	f.initDefaults(v)
 
 	return f
 }
@@ -84,10 +83,6 @@ func (f *mucCreateRoomViewForm) initBuilder(v *mucCreateRoomView) {
 		"on_room_config_toggled":      f.onRoomConfigToggled,
 		"on_chatservice_entry_change": f.enableCreationIfConditionsAreMet,
 	})
-}
-
-func (f *mucCreateRoomViewForm) initNotifications(v *mucCreateRoomView) {
-	f.notifications = v.u.newNotifications(f.notificationArea)
 }
 
 func (f *mucCreateRoomViewForm) initRoomFormComponent(v *mucCreateRoomView) {
@@ -108,9 +103,12 @@ func (f *mucCreateRoomViewForm) initRoomFormComponent(v *mucCreateRoomView) {
 	})
 }
 
-func (f *mucCreateRoomViewForm) initDefaults(v *mucCreateRoomView) {
-	f.spinner = newSpinner()
-	f.spinnerBox.Add(f.spinner.getWidget())
+func (f *mucCreateRoomViewForm) initNotificationsAndSpinner(v *mucCreateRoomView) {
+	f.spinner = v.u.newSpinnerComponent()
+	f.notifications = v.u.newNotificationsComponent()
+
+	f.spinnerBox.Add(f.spinner.widget())
+	f.notificationsArea.Add(f.notifications.widget())
 }
 
 func (f *mucCreateRoomViewForm) onRoomAutoJoinToggled() {

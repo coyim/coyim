@@ -234,7 +234,7 @@ func (*SessionMock) CreateReservedRoom(jid.Bare) (<-chan *muc.RoomConfigForm, <-
 }
 
 // SubmitRoomConfigurationForm is the implementation for session interface
-func (*SessionMock) SubmitRoomConfigurationForm(jid.Bare, *muc.RoomConfigForm) (chan bool, chan error) {
+func (*SessionMock) SubmitRoomConfigurationForm(jid.Bare, *muc.RoomConfigForm) (<-chan bool, <-chan error) {
 	return nil, nil
 }
 

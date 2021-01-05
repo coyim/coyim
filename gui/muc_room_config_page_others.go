@@ -45,13 +45,13 @@ func (p *roomConfigOthersPage) isValid() bool {
 	p.clearErrors()
 
 	if !p.roomMaxHistoryFetch.isValid() {
-		p.nofityError(i18n.Local("The value given for the maximum number of history messages is not valid. " +
+		p.notifyError(i18n.Local("The value given for the maximum number of history messages is not valid. " +
 			"Please select one from the list."))
 		return false
 	}
 
 	if !p.roomMaxOccupants.isValid() {
-		p.nofityError(i18n.Local("The value given for the maximum number of occupants is not valid. " +
+		p.notifyError(i18n.Local("The value given for the maximum number of occupants is not valid. " +
 			"Please select one from the list."))
 		return false
 	}

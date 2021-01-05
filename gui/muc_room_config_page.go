@@ -16,6 +16,7 @@ type mucRoomConfigPage interface {
 	isValid() bool
 	collectData()
 	refresh()
+	notifyError(string)
 	onConfigurationApply()
 	onConfigurationApplyError()
 	onConfigurationCancel()
@@ -96,8 +97,8 @@ func (p *roomConfigPageBase) clearErrors() {
 	p.notifications.clearErrors()
 }
 
-// nofityError MUST be called from the ui thread
-func (p *roomConfigPageBase) nofityError(m string) {
+// notifyError MUST be called from the ui thread
+func (p *roomConfigPageBase) notifyError(m string) {
 	p.notifications.notifyOnError(m)
 }
 

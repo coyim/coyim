@@ -27,14 +27,18 @@ type roomConfigPageBase struct {
 }
 
 func (c *mucRoomConfigComponent) newConfigPage(content gtki.Box, nb gtki.Box) *roomConfigPageBase {
-	return &roomConfigPageBase{
+	p := &roomConfigPageBase{
 		u:              c.u,
 		content:        content,
-		notifications:  c.u.newNotifications(nb),
+		notifications:  c.u.newNotificationsComponent(),
 		loadingOverlay: c.u.newLoadingOverlayComponent(),
 		form:           c.form,
 		log:            c.log,
 	}
+
+	nb.Add(p.notifications.widget())
+
+	return p
 }
 
 func (p *roomConfigPageBase) getContent() gtki.Box {

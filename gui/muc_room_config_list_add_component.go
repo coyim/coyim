@@ -38,8 +38,9 @@ func (u *gtkUI) newMUCRoomConfigListAddComponent(dialogTitle, formTitle string, 
 	}
 
 	la.initBuilder()
-	la.initDefaults(parent)
+	la.initNotifications()
 	la.initAddOccupantForm(addOccupantForm)
+	la.initDefaults(parent)
 
 	return la
 }
@@ -54,12 +55,15 @@ func (la *mucRoomConfigListAddComponent) initBuilder() {
 	})
 }
 
+func (la *mucRoomConfigListAddComponent) initNotifications() {
+	la.notifications = la.u.newNotificationsComponent()
+	la.notificationBox.Add(la.notifications.widget())
+}
+
 func (la *mucRoomConfigListAddComponent) initDefaults(parent gtki.Window) {
 	la.dialog.SetTitle(la.dialogTitle)
 	la.dialog.SetTransientFor(parent)
 	la.title.SetLabel(la.formTitle)
-
-	la.notifications = la.u.newNotifications(la.notificationBox)
 }
 
 func (la *mucRoomConfigListAddComponent) initAddOccupantForm(addOccupantForm func(onFieldChanged, onFieldActivate func()) mucRoomConfigListForm) {

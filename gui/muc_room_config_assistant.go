@@ -94,12 +94,12 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 	rc.othersPage = rc.roomConfigComponent.getConfigPage(roomConfigOthersPageIndex)
 	rc.summaryPage = rc.roomConfigComponent.getConfigPage(roomConfigSummaryPageIndex)
 
-	rc.infoPageBox.Add(rc.infoPage.getContent())
-	rc.accessPageBox.Add(rc.accessPage.getContent())
-	rc.permissionsPageBox.Add(rc.permissionsPage.getContent())
-	rc.occupantsPageBox.Add(rc.occupantsPage.getContent())
-	rc.othersPageBox.Add(rc.othersPage.getContent())
-	rc.summaryPageBox.Add(rc.summaryPage.getContent())
+	rc.infoPageBox.Add(rc.infoPage.pageView())
+	rc.accessPageBox.Add(rc.accessPage.pageView())
+	rc.permissionsPageBox.Add(rc.permissionsPage.pageView())
+	rc.occupantsPageBox.Add(rc.occupantsPage.pageView())
+	rc.othersPageBox.Add(rc.othersPage.pageView())
+	rc.summaryPageBox.Add(rc.summaryPage.pageView())
 }
 
 func (rc *roomConfigAssistant) initDefaults() {

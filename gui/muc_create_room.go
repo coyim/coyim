@@ -152,6 +152,12 @@ func (v *mucCreateRoomView) updateCreateOption(o string, f bool) {
 	}
 }
 
+// show MUST be called from the UI thread
+func (v *mucCreateRoomView) show() {
+	v.container.ShowAll()
+	v.dialog.Show()
+}
+
 // log IS SAFE to be called from the UI thread
 func (v *mucCreateRoomView) log(ca *account, roomID jid.Bare) coylog.Logger {
 	return ca.log.WithFields(log.Fields{
@@ -168,16 +174,30 @@ type mucCreateRoomData struct {
 	customConfig bool
 }
 
-func (u *gtkUI) mucShowCreateRoomWithData(d *mucCreateRoomData) {
+func (u *gtkUI) mucShowCreateRoomWithData(d *mucCreateRoomData, onViewCreated func(*mucCreateRoomView)) {
 	v := newCreateMUCRoomView(u, d)
 	u.connectShortcutsChildWindow(v.dialog)
 
-	v.showCreateForm()
+	if onViewCreated != nil {
+		onViewCreated(v)
+	}
 
 	v.dialog.SetTransientFor(u.window)
-	v.dialog.Show()
+	v.show()
+}
+
+func (u *gtkUI) mucShowCreateRoomForm(d *mucCreateRoomData) {
+	u.mucShowCreateRoomWithData(d, func(v *mucCreateRoomView) {
+		v.showCreateForm()
+	})
+}
+
+func (u *gtkUI) mucShowCreateRoomSuccess(ca *account, roomID jid.Bare, d *mucCreateRoomData) {
+	u.mucShowCreateRoomWithData(d, func(v *mucCreateRoomView) {
+		v.showSuccessView(ca, roomID)
+	})
 }
 
 func (u *gtkUI) mucShowCreateRoom() {
-	u.mucShowCreateRoomWithData(nil)
+	u.mucShowCreateRoomForm(nil)
 }

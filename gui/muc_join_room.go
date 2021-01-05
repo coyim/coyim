@@ -28,9 +28,8 @@ func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {
 	}
 
 	view.initBuilder()
-	view.initNotifications()
+	view.initNotificationsAndSpinner()
 	view.initRoomFormComponent()
-	view.initDefaults()
 
 	u.connectShortcutsChildWindow(view.dialog)
 
@@ -47,10 +46,6 @@ func (v *mucJoinRoomView) initBuilder() {
 		"on_cancel":           v.dialog.Destroy,
 		"on_join":             doOnlyOnceAtATime(v.tryJoinRoom),
 	})
-}
-
-func (v *mucJoinRoomView) initNotifications() {
-	v.notifications = v.u.newNotifications(v.notificationArea)
 }
 
 func (v *mucJoinRoomView) initRoomFormComponent() {
@@ -82,9 +77,12 @@ func (v *mucJoinRoomView) onNoAccountsConnected() {
 	doInUIThread(v.enableJoinIfConditionsAreMet)
 }
 
-func (v *mucJoinRoomView) initDefaults() {
-	v.spinner = newSpinner()
-	v.spinnerBox.Add(v.spinner.getWidget())
+func (v *mucJoinRoomView) initNotificationsAndSpinner() {
+	v.notifications = v.u.newNotificationsComponent()
+	v.spinner = v.u.newSpinnerComponent()
+
+	v.notificationArea.Add(v.notifications.widget())
+	v.spinnerBox.Add(v.spinner.widget())
 }
 
 func (v *mucJoinRoomView) onCloseWindow() {

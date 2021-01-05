@@ -62,8 +62,8 @@ type mucPublicRoomsView struct {
 	refreshButton       gtki.Button         `gtk-widget:"refresh-button"`
 	customServiceButton gtki.Button         `gtk-widget:"list-rooms-button"`
 
-	notificationArea gtki.Box `gtk-widget:"notifications-area"`
-	notifications    *notifications
+	notificationsArea gtki.Box `gtk-widget:"notifications-area"`
+	notifications     *notifications
 
 	spinnerOverlay gtki.Overlay `gtk-widget:"spinner-overlay"`
 	spinnerBox     gtki.Box     `gtk-widget:"spinner-box"`
@@ -118,10 +118,11 @@ func (prv *mucPublicRoomsView) initModel() {
 }
 
 func (prv *mucPublicRoomsView) initNotificationsAndSpinner(u *gtkUI) {
-	prv.notifications = u.newNotifications(prv.notificationArea)
+	prv.notifications = u.newNotificationsComponent()
+	prv.notificationsArea.Add(prv.notifications.widget())
 
-	prv.spinner = newSpinner()
-	s := prv.spinner.getWidget()
+	prv.spinner = u.newSpinnerComponent()
+	s := prv.spinner.widget()
 
 	// This is a GTK trick to set the size of the spinner,
 	// so if the parent has a size of 40x40 for example, with

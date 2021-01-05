@@ -38,7 +38,7 @@ type OutcastAffiliation struct{}
 // MemberAffiliation is a representation of MUC's "member" affiliation
 type MemberAffiliation struct{}
 
-// AdminAffiliation is a representation of MUC's" admin" affiliation
+// AdminAffiliation is a representation of MUC's "admin" affiliation
 type AdminAffiliation struct{}
 
 // OwnerAffiliation is a representation of MUC's "owner" affiliation

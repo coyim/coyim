@@ -3,6 +3,8 @@ package gui
 import (
 	"fmt"
 
+	"github.com/coyim/coyim/i18n"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -10,21 +12,23 @@ import (
 )
 
 type mucRoomConfigPage interface {
-	pageView() gtki.Box
+	pageView() gtki.Overlay
 	isValid() bool
 	collectData()
 	refresh()
-	showLoadingOverlay()
-	hideLoadingOverlay()
+	onConfigurationApply()
+	onConfigurationApplyError()
+	onConfigurationCancel()
+	onConfigurationCancelError()
 }
 
 type roomConfigPageBase struct {
 	u    *gtkUI
 	form *muc.RoomConfigForm
 
-	page              gtki.Box `gtk-widget:"room-config-page"`
-	content           gtki.Box `gtk-widget:"room-config-page-content"`
-	notificationsArea gtki.Box `gtk-widget:"notifications-box"`
+	page              gtki.Overlay `gtk-widget:"room-config-page-overlay"`
+	content           gtki.Box     `gtk-widget:"room-config-page-content"`
+	notificationsArea gtki.Box     `gtk-widget:"notifications-box"`
 
 	notifications  *notifications
 	loadingOverlay *loadingOverlayComponent
@@ -49,7 +53,9 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 	panicOnDevError(builder.bindObjects(p))
 
 	p.notifications = c.u.newNotificationsComponent()
+	p.loadingOverlay = c.u.newLoadingOverlayComponent()
 	p.notificationsArea.Add(p.notifications.widget())
+	p.page.AddOverlay(p.loadingOverlay.widget())
 
 	builder = newBuilder(pageTemplate)
 	panicOnDevError(builder.bindObjects(page))
@@ -66,7 +72,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 }
 
 // pageView implements the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) pageView() gtki.Box {
+func (p *roomConfigPageBase) pageView() gtki.Overlay {
 	return p.page
 }
 
@@ -95,9 +101,29 @@ func (p *roomConfigPageBase) nofityError(m string) {
 	p.notifications.notifyOnError(m)
 }
 
+// onConfigurationApply MUST be called from the ui thread
+func (p *roomConfigPageBase) onConfigurationApply() {
+	p.showLoadingOverlay(i18n.Local("Saving room configuration"))
+}
+
+// onConfigurationApplyError MUST be called from the ui thread
+func (p *roomConfigPageBase) onConfigurationApplyError() {
+	p.hideLoadingOverlay()
+}
+
+// onConfigurationCancel MUST be called from the ui thread
+func (p *roomConfigPageBase) onConfigurationCancel() {
+	p.showLoadingOverlay(i18n.Local("Aborting room configuration"))
+}
+
+// onConfigurationCancelError MUST be called from the ui thread
+func (p *roomConfigPageBase) onConfigurationCancelError() {
+	p.hideLoadingOverlay()
+}
+
 // showLoadingOverlay MUST be called from the ui thread
-func (p *roomConfigPageBase) showLoadingOverlay() {
-	p.loadingOverlay.show()
+func (p *roomConfigPageBase) showLoadingOverlay(m string) {
+	p.loadingOverlay.showWithMessage(m)
 }
 
 // hideLoadingOverlay MUST be called from the ui thread

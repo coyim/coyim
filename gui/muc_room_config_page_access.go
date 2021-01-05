@@ -5,8 +5,6 @@ import "github.com/coyim/gotk3adapter/gtki"
 type roomConfigAccessPage struct {
 	*roomConfigPageBase
 
-	configAccessBox  gtki.Box    `gtk-widget:"room-config-access-page"`
-	notificationBox  gtki.Box    `gtk-widget:"notification-box"`
 	roomPassword     gtki.Entry  `gtk-widget:"room-password"`
 	roomMembersOnly  gtki.Switch `gtk-widget:"room-membersonly"`
 	roomAllowInvites gtki.Switch `gtk-widget:"room-allowinvites"`
@@ -14,11 +12,7 @@ type roomConfigAccessPage struct {
 
 func (c *mucRoomConfigComponent) newRoomConfigAccessPage() mucRoomConfigPage {
 	p := &roomConfigAccessPage{}
-
-	builder := newBuilder("MUCRoomConfigPageAccess")
-	panicOnDevError(builder.bindObjects(p))
-
-	p.roomConfigPageBase = c.newConfigPage(p.configAccessBox, p.notificationBox)
+	p.roomConfigPageBase = c.newConfigPage("access", "MUCRoomConfigPageAccess", p, nil)
 
 	p.initDefaultValues()
 

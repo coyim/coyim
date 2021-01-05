@@ -44,6 +44,12 @@ type MUCRoomConfiguration struct {
 	Form    *Form    `xml:",omitempty"`
 }
 
+// MUCAdmin contains the deserialized information about a query tag with muc#admin name space
+type MUCAdmin struct {
+	XMLName xml.Name `xml:"http://jabber.org/protocol/muc#admin query"`
+	Item    *Item    `xml:",omitempty"`
+}
+
 // MUCNotAuthorized inform user that a password is required
 type MUCNotAuthorized struct {
 	XMLName xml.Name `xml:"urn:ietf:params:xml:ns:xmpp-stanzas not-authorized,omitempty"`

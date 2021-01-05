@@ -23,32 +23,28 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-permissions-page">
-      </object>
+      <object class="GtkBox" id="room-config-permissions-page"></object>
       <packing>
         <property name="title" translatable="yes">Permissions</property>
         <property name="complete">True</property>
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-occupants-page">
-      </object>
+      <object class="GtkBox" id="room-config-occupants-page"></object>
       <packing>
         <property name="title" translatable="yes">Occupants</property>
         <property name="complete">True</property>
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-others-page">
-      </object>
+      <object class="GtkBox" id="room-config-others-page"></object>
       <packing>
         <property name="title" translatable="yes">Other settings</property>
         <property name="complete">True</property>
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-summary-page">
-      </object>
+      <object class="GtkBox" id="room-config-summary-page"></object>
       <packing>
         <property name="page_type">confirm</property>
         <property name="title" translatable="yes">Summary</property>

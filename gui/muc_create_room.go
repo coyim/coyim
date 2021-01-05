@@ -168,17 +168,16 @@ type mucCreateRoomData struct {
 	customConfig bool
 }
 
-func (u *gtkUI) mucCreateRoomWithData(d *mucCreateRoomData) {
-	view := newCreateMUCRoomView(u, d)
+func (u *gtkUI) mucShowCreateRoomWithData(d *mucCreateRoomData) {
+	v := newCreateMUCRoomView(u, d)
+	u.connectShortcutsChildWindow(v.dialog)
 
-	u.connectShortcutsChildWindow(view.dialog)
+	v.showCreateForm()
 
-	view.form.showCreateForm(view)
-
-	view.dialog.SetTransientFor(u.window)
-	view.dialog.Show()
+	v.dialog.SetTransientFor(u.window)
+	v.dialog.Show()
 }
 
-func (u *gtkUI) mucCreateRoom() {
-	u.mucCreateRoomWithData(nil)
+func (u *gtkUI) mucShowCreateRoom() {
+	u.mucShowCreateRoomWithData(nil)
 }

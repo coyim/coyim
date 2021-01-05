@@ -77,7 +77,7 @@ func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, resu
 func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) {
 	rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished, func() {
 		doInUIThread(func() {
-			v.u.mucCreateRoomWithData(&mucCreateRoomData{
+			v.u.mucShowCreateRoomWithData(&mucCreateRoomData{
 				ca:           ca,
 				roomName:     roomID.Local(),
 				where:        roomID.Host(),
@@ -100,7 +100,7 @@ func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, a
 	}
 
 	doInUIThread(func() {
-		v.success.showSuccessView(v, ca, roomID)
+		v.showSuccessView(ca, roomID)
 		v.dialog.ShowAll()
 	})
 }

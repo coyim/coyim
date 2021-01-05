@@ -126,7 +126,7 @@ func NewGTK(version string, sf sessions.Factory, df interfaces.DialerFactory, gx
 	ensureInstalled()
 
 	ret := &gtkUI{
-		commands:                             make(chan interface{}, 5),
+		commands: make(chan interface{}, 5),
 		toggleConnectAllAutomaticallyRequest: make(chan bool, 100),
 		setShowAdvancedSettingsRequest:       make(chan bool, 100),
 		dialerFactory:                        df,
@@ -441,7 +441,7 @@ func (u *gtkUI) mainWindow() {
 		"on_preferences":                        u.showGlobalPreferences,
 		"on_muc_show_public_rooms":              u.mucShowPublicRooms,
 		"on_muc_show_join_room":                 u.mucShowJoinRoom,
-		"on_create_chat_room":                   u.mucCreateRoom,
+		"on_create_chat_room":                   u.mucShowCreateRoom,
 	})
 
 	panicOnDevError(builder.bindObjects(u))

@@ -9,6 +9,13 @@ func (v *mucCreateRoomView) initCreateRoomSuccess() {
 	v.success = v.newCreateRoomSuccess()
 }
 
+func (v *mucCreateRoomView) showSuccessView(ca *account, roomID jid.Bare) {
+	v.form.reset()
+	v.container.Remove(v.form.view)
+	v.success.updateInfo(ca, roomID)
+	v.container.Add(v.success.view)
+}
+
 type mucCreateRoomViewSuccess struct {
 	ca         *account
 	roomID     jid.Bare
@@ -32,20 +39,11 @@ func (s *mucCreateRoomViewSuccess) initBuilder(v *mucCreateRoomView) {
 	panicOnDevError(builder.bindObjects(s))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_createRoom_clicked": func() {
-			v.form.showCreateForm(v)
-		},
+		"on_createRoom_clicked": v.showCreateForm,
 		"on_joinRoom_clicked": func() {
 			s.onJoinRoom(s.ca, s.roomID)
 		},
 	})
-}
-
-func (s *mucCreateRoomViewSuccess) showSuccessView(v *mucCreateRoomView, ca *account, roomID jid.Bare) {
-	v.form.reset()
-	v.container.Remove(v.form.view)
-	v.success.updateInfo(ca, roomID)
-	v.container.Add(s.view)
 }
 
 func (s *mucCreateRoomViewSuccess) updateInfo(ca *account, roomID jid.Bare) {

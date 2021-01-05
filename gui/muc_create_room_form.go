@@ -31,6 +31,13 @@ func (v *mucCreateRoomView) initCreateRoomForm(d *mucCreateRoomData) {
 	v.form = f
 }
 
+func (v *mucCreateRoomView) showCreateForm() {
+	v.success.reset()
+	v.container.Remove(v.success.view)
+	v.container.Add(v.form.view)
+	v.form.isShown = true
+}
+
 type mucCreateRoomViewForm struct {
 	isShown           bool
 	builder           *builder
@@ -41,7 +48,7 @@ type mucCreateRoomViewForm struct {
 	roomConfigCheck   gtki.CheckButton `gtk-widget:"config-room-check-button"`
 	createButton      gtki.Button      `gtk-widget:"create-room-button"`
 	spinnerBox        gtki.Box         `gtk-widget:"spinner-box"`
-	notificationsArea  gtki.Box         `gtk-widget:"notification-area-box"`
+	notificationsArea gtki.Box         `gtk-widget:"notification-area-box"`
 
 	spinner       *spinner
 	notifications *notifications
@@ -166,13 +173,6 @@ func (f *mucCreateRoomViewForm) addCallbacks(v *mucCreateRoomView) {
 	})
 
 	v.onDestroy.add(f.destroy)
-}
-
-func (f *mucCreateRoomViewForm) showCreateForm(v *mucCreateRoomView) {
-	v.success.reset()
-	v.container.Remove(v.success.view)
-	v.container.Add(f.view)
-	f.isShown = true
 }
 
 func (f *mucCreateRoomViewForm) setCreateRoomButtonLabel(l string) {

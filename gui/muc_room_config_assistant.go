@@ -154,9 +154,9 @@ func (rc *roomConfigAssistant) onCancelSuccess() {
 }
 
 func (rc *roomConfigAssistant) onCancelError(err error) {
-	// TODO show a friendly error message (bassed on "err") to the user
 	rc.enable()
 	rc.currentPage.onConfigurationCancelError()
+	rc.currentPage.notifyError(rc.roomConfigComponent.friendlyConfigErrorMessage(err))
 }
 
 func (rc *roomConfigAssistant) onApplyClicked() {
@@ -175,9 +175,9 @@ func (rc *roomConfigAssistant) onApplySuccess() {
 }
 
 func (rc *roomConfigAssistant) onApplyError(err error) {
-	// TODO show a friendly error message (bassed on "err") to the user inside the assistant
 	rc.enable()
 	rc.currentPage.onConfigurationApplyError()
+	rc.currentPage.notifyError(rc.roomConfigComponent.friendlyConfigErrorMessage(err))
 }
 
 func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {

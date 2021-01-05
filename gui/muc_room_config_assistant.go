@@ -18,6 +18,7 @@ type roomConfigAssistant struct {
 	roomID              jid.Bare
 	autoJoin            bool
 	currentPageIndex    int
+	currentPage         mucRoomConfigPage
 	onSuccess           func(currentAccount *account, roomID jid.Bare, autoJoin bool)
 	onCancel            func()
 
@@ -100,6 +101,9 @@ func (rc *roomConfigAssistant) initRoomConfigPages() {
 	rc.occupantsPageBox.Add(rc.occupantsPage.pageView())
 	rc.othersPageBox.Add(rc.othersPage.pageView())
 	rc.summaryPageBox.Add(rc.summaryPage.pageView())
+
+	rc.currentPageIndex = roomConfigInformationPageIndex
+	rc.currentPage = rc.infoPage
 }
 
 func (rc *roomConfigAssistant) initDefaults() {
@@ -123,14 +127,24 @@ func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
 	previousPage.collectData()
 
 	rc.currentPageIndex = rc.assistant.GetCurrentPage()
-	currentPage := rc.pageByIndex(rc.currentPageIndex)
+	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
 
 	rc.assistant.SetPageComplete(p, true)
-	currentPage.refresh()
+	rc.currentPage.refresh()
+}
+
+func (rc *roomConfigAssistant) enable() {
+	rc.assistant.SetSensitive(true)
+}
+
+func (rc *roomConfigAssistant) disable() {
+	rc.assistant.SetSensitive(false)
 }
 
 func (rc *roomConfigAssistant) onCancelClicked() {
-	rc.assistant.SetSensitive(false)
+	rc.disable()
+	rc.currentPage.onConfigurationCancel()
+
 	rc.roomConfigComponent.cancelConfiguration(rc.onCancelSuccess, rc.onCancelError)
 }
 
@@ -141,11 +155,14 @@ func (rc *roomConfigAssistant) onCancelSuccess() {
 
 func (rc *roomConfigAssistant) onCancelError(err error) {
 	// TODO show a friendly error message (bassed on "err") to the user
+	rc.enable()
+	rc.currentPage.onConfigurationCancelError()
 }
 
 func (rc *roomConfigAssistant) onApplyClicked() {
-	rc.assistant.SetSensitive(false)
-	rc.summaryPage.showLoadingOverlay()
+	rc.disable()
+	rc.currentPage.onConfigurationApply()
+
 	rc.roomConfigComponent.submitConfigurationForm(
 		rc.onApplySuccess,
 		rc.onApplyError,
@@ -159,6 +176,8 @@ func (rc *roomConfigAssistant) onApplySuccess() {
 
 func (rc *roomConfigAssistant) onApplyError(err error) {
 	// TODO show a friendly error message (bassed on "err") to the user inside the assistant
+	rc.enable()
+	rc.currentPage.onConfigurationApplyError()
 }
 
 func (rc *roomConfigAssistant) pageByIndex(p int) mucRoomConfigPage {

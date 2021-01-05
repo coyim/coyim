@@ -20,6 +20,10 @@ func (u *gtkUI) newLoadingOverlayComponent() *loadingOverlayComponent {
 	return lo
 }
 
+func (lo *loadingOverlayComponent) widget() gtki.Overlay {
+	return lo.overlay
+}
+
 // setTransparent MUST be called from the UI thread
 func (lo *loadingOverlayComponent) setTransparent() {
 	mucStyles.setRoomLoadingViewOverlayTransparentStyle(lo.box)

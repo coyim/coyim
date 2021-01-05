@@ -47,7 +47,10 @@ func (v *mucCreateRoomView) createReservedRoom(ca *account, roomID jid.Bare, onE
 
 func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, onError func(error)) {
 	ca.createInstantRoom(roomID, func() {
-		v.onCreateRoomFinished(ca, roomID, v.autoJoin)
+		v.onCreateRoomFinished(ca, roomID, v.autoJoin, func() {
+			v.showSuccessView(ca, roomID)
+			v.dialog.ShowAll()
+		})
 	}, func(err error) {
 		v.log(ca, roomID).WithError(err).Error("Something went wrong when trying to create the instant room")
 		onError(errCreateRoomFailed)
@@ -75,9 +78,17 @@ func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, resu
 
 // onReserveRoomFinished MUST be called from the UI thread
 func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) {
-	rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, v.onCreateRoomFinished, func() {
+	rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, func(ca *account, roomID jid.Bare, autoJoin bool) {
+		v.onCreateRoomFinished(ca, roomID, autoJoin, func() {
+			v.u.mucShowCreateRoomSuccess(ca, roomID, &mucCreateRoomData{
+				ca:           ca,
+				where:        roomID.Host(),
+				customConfig: true,
+			})
+		})
+	}, func() {
 		doInUIThread(func() {
-			v.u.mucShowCreateRoomWithData(&mucCreateRoomData{
+			v.u.mucShowCreateRoomForm(&mucCreateRoomData{
 				ca:           ca,
 				roomName:     roomID.Local(),
 				where:        roomID.Host(),
@@ -91,7 +102,7 @@ func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, 
 }
 
 // onCreateRoomFinished MUST NOT be called from the UI thread
-func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, autoJoin bool) {
+func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, autoJoin bool, onNoAutoJoin func()) {
 	if autoJoin {
 		doInUIThread(func() {
 			v.joinRoom(ca, roomID)
@@ -99,8 +110,7 @@ func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, a
 		return
 	}
 
-	doInUIThread(func() {
-		v.showSuccessView(ca, roomID)
-		v.dialog.ShowAll()
-	})
+	if onNoAutoJoin != nil {
+		doInUIThread(onNoAutoJoin)
+	}
 }

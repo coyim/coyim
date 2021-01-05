@@ -45,13 +45,13 @@ func (v *roomView) newRoomViewWarningsInfoBar() *roomViewWarningsInfoBar {
 	return ib
 }
 
-// getMessageType implements the "message" interface
-func (ib *roomViewWarningsInfoBar) getMessageType() gtki.MessageType {
+// messageType implements the "message" interface
+func (ib *roomViewWarningsInfoBar) messageType() gtki.MessageType {
 	return gtki.MESSAGE_WARNING
 }
 
-// getWidget implements the "widget" interface
-func (ib *roomViewWarningsInfoBar) getWidget() gtki.Widget {
+// widget implements the "widget" interface
+func (ib *roomViewWarningsInfoBar) widget() gtki.Widget {
 	return ib.infoBar
 }
 

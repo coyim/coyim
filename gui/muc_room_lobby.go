@@ -72,7 +72,8 @@ func (l *roomViewLobby) initBuilder() {
 }
 
 func (l *roomViewLobby) initDefaults(v *roomView) {
-	l.notifications = v.u.newNotifications(l.notificationArea)
+	l.notifications = v.u.newNotificationsComponent()
+	l.notificationArea.Add(l.notifications.widget())
 
 	l.roomNameLabel.SetText(l.roomID.String())
 	l.content.SetHExpand(true)

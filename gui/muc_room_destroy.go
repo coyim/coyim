@@ -34,7 +34,7 @@ type roomDestroyView struct {
 	destroyRoomButton    gtki.Button      `gtk-widget:"destroy-room-button"`
 	notificationBox      gtki.Box         `gtk-widget:"notification-area"`
 
-	notification *notifications
+	notifications *notifications
 }
 
 func (v *roomView) newRoomDestroyView() *roomDestroyView {
@@ -70,16 +70,17 @@ func (d *roomDestroyView) initChatServices(v *roomView) {
 func (d *roomDestroyView) initDefaults(v *roomView) {
 	d.dialog.SetTransientFor(v.window)
 
-	d.notification = v.u.newNotifications(d.notificationBox)
+	d.notifications = v.u.newNotificationsComponent()
+	d.notificationBox.Add(d.notifications.widget())
 }
 
 // onDestroyRoom MUST be called from the UI thread
 func (d *roomDestroyView) onDestroyRoom() {
-	d.notification.clearErrors()
+	d.notifications.clearErrors()
 
 	alternativeID, password, err := d.alternativeRoomInformation()
 	if err != nil {
-		d.notification.error(d.friendlyMessageForAlternativeRoomError(err))
+		d.notifications.error(d.friendlyMessageForAlternativeRoomError(err))
 		return
 	}
 

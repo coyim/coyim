@@ -28,11 +28,10 @@ type roomView struct {
 	messagesOverlay        gtki.Overlay `gtk-widget:"messagesOverlay"`
 	messagesOverlayBox     gtki.Box     `gtk-widget:"messagesOverlayBox"`
 	messagesBox            gtki.Box     `gtk-widget:"messagesBox"`
-	notificationBox        gtki.Box     `gtk-widget:"notificationBox"`
+	notificationsArea       gtki.Box     `gtk-widget:"notificationBox"`
 	loadingNotificationBox gtki.Box     `gtk-widget:"loadingNotificationBox"`
 	roomInfoErrorBar       gtki.InfoBar `gtk-widget:"room-info-error-bar"`
 
-	spinner       *spinner
 	notifications *notifications
 
 	warnings           *roomViewWarningsOverlay
@@ -72,8 +71,9 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view.roster = view.newRoomViewRoster()
 	view.conv = view.newRoomViewConversation()
 
-	view.spinner = newSpinner()
-	view.notifications = u.newNotifications(view.notificationBox)
+	view.notifications = view.u.newNotificationsComponent()
+	view.notificationsArea.Add(view.notifications.widget())
+
 	view.warnings = view.newRoomViewWarningsOverlay()
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar()
 	view.loadingViewOverlay = view.newRoomViewLoadingOverlay()
@@ -163,7 +163,7 @@ func (v *roomView) showWarnings() {
 }
 
 func (v *roomView) removeWarningsInfobar() {
-	v.notifications.remove(v.warningsInfoBar.getWidget())
+	v.notifications.remove(v.warningsInfoBar.widget())
 }
 
 func (v *roomView) showNotificationsOverlay() {
@@ -225,8 +225,6 @@ func (v *roomView) onLeaveRoom() {
 // tryLeaveRoom MUST be called from the UI thread.
 // Please note that "onSuccess" and "onError" will be called from another thread.
 func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
-	v.spinner.show()
-
 	onSuccessFinal := func() {
 		doInUIThread(v.window.Destroy)
 		if onSuccess != nil {
@@ -236,7 +234,6 @@ func (v *roomView) tryLeaveRoom(onSuccess func(), onError func(error)) {
 
 	onErrorFinal := func(err error) {
 		v.log.WithError(err).Error("An error occurred when trying to leave the room")
-		doInUIThread(v.spinner.hide)
 		if onError != nil {
 			onError(err)
 		}

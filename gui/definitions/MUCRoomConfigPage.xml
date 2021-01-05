@@ -1,27 +1,43 @@
 <interface>
-  <object class="GtkBox" id="room-config-page">
-    <property name="orientation">vertical</property>
+  <object class="GtkOverlay" id="room-config-page-overlay">
+    <property name="visible">True</property>
     <child>
-      <object class="GtkBox" id="notifications-box">
+      <object class="GtkOverlay">
         <property name="visible">True</property>
-        <property name="valign">start</property>
+        <child>
+          <object class="GtkBox" id="room-config-page">
+            <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkBox" id="notifications-box">
+                <property name="visible">True</property>
+                <property name="valign">start</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="room-config-page-content">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="index">-1</property>
+          </packing>
+        </child>
       </object>
       <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkBox" id="room-config-page-content">
-        <property name="visible">True</property>
-        <property name="border_width">12</property>
-        <property name="orientation">vertical</property>
-      </object>
-      <packing>
-        <property name="expand">True</property>
-        <property name="fill">True</property>
-        <property name="position">1</property>
+        <property name="index">-1</property>
       </packing>
     </child>
   </object>

@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -136,6 +137,21 @@ func (c *mucRoomConfigComponent) getConfigPage(p int) mucRoomConfigPage {
 		return c.summaryPage
 	default:
 		return nil
+	}
+}
+
+func (c *mucRoomConfigComponent) friendlyConfigErrorMessage(err error) string {
+	switch err {
+	case session.ErrRoomConfigSubmit:
+		return i18n.Local("We can't apply the given room configuration because an error occurred when trying to send the request for it. Please try again.")
+	case session.ErrRoomConfigSubmitResponse:
+		return i18n.Local("We can't apply the given room configuration because either you don't have the permissions for doing it or the location is not available right now. Please try again.")
+	case session.ErrRoomConfigCancel:
+		return i18n.Local("We can't cancel the room configuration process because an error occurred when trying to send the request for it. Please try again.")
+	case session.ErrRoomConfigCancelResponse:
+		return i18n.Local("We can't cancel the room configuration process because either you don't have the permissions for doing it or the location is not available right now. Please try again.")
+	default:
+		return i18n.Localf("Unsupported config error: %s", err)
 	}
 }
 

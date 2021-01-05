@@ -13,7 +13,6 @@ const (
 
 type chatServicesComponent struct {
 	currentAccount        *account
-	currentValue          string
 	services              map[int]string
 	servicesList          gtki.ComboBoxText
 	servicesListModel     gtki.ListStore
@@ -37,12 +36,6 @@ func (u *gtkUI) createChatServicesComponent(list gtki.ComboBoxText, entry gtki.E
 
 	onServiceChangedFinal := onServiceChanged
 	onServiceChanged = func() {
-		if currentValue, ok := c.services[c.servicesList.GetActive()]; ok {
-			c.currentValue = currentValue
-		} else {
-			c.currentValue = c.servicesList.GetActiveText()
-		}
-
 		if onServiceChangedFinal != nil {
 			onServiceChangedFinal()
 		}
@@ -98,9 +91,9 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 			}
 
 			doInUIThread(func() {
-				c.addService(cs)
-				if c.currentValue == "" {
-					c.setActive(0)
+				ix := c.addService(cs)
+				if c.currentServiceValue() == "" {
+					c.setActive(ix)
 				}
 			})
 		}
@@ -109,7 +102,10 @@ func (c *chatServicesComponent) updateChatServices(ca *account, csc <-chan jid.D
 
 // currentServiceValue MUST be called from the UI thread
 func (c *chatServicesComponent) currentServiceValue() string {
-	return c.currentValue
+	if currentValue, ok := c.services[c.servicesList.GetActive()]; ok {
+		return currentValue
+	}
+	return getEntryText(c.serviceEntry)
 }
 
 // currentService MUST be called from the UI thread
@@ -119,37 +115,46 @@ func (c *chatServicesComponent) currentService() jid.Domain {
 
 // setCurrentService MUST be called from the UI thread
 func (c *chatServicesComponent) setCurrentService(s jid.Domain) {
-	for i, ss := range c.services {
-		if ss == s.String() {
-			c.setActive(i)
-			return
-		}
+	ix := c.serviceIndex(s)
+	if ix == -1 {
+		ix = c.addService(s)
 	}
-	c.serviceEntry.SetText(s.String())
+	c.setActive(ix)
 }
 
 // setActive MUST be called from the UI thread
-func (c *chatServicesComponent) setActive(index int) {
-	if len(c.services) > 0 && len(c.services) < index {
-		c.servicesList.SetActive(index)
+func (c *chatServicesComponent) setActive(ix int) {
+	if len(c.services) > 0 && ix < len(c.services) {
+		c.servicesList.SetActive(ix)
 	}
 }
 
 // addService MUST be called from the UI thread
-func (c *chatServicesComponent) addService(s jid.Domain) {
+func (c *chatServicesComponent) addService(s jid.Domain) int {
+	if ix := c.serviceIndex(s); ix != -1 {
+		return ix
+	}
+
 	iter := c.servicesListModel.Append()
 
 	_ = c.servicesListModel.SetValue(iter, chatServicesModelIDColumn, s.String())
 	_ = c.servicesListModel.SetValue(iter, chatServicesModelTextColumn, s.String())
 
-	c.services[len(c.services)] = s.String()
+	ix := len(c.services)
+	c.services[ix] = s.String()
+
+	return ix
 }
 
 // removeAll MUST be called from the UI thread
 func (c *chatServicesComponent) removeAll() {
-	c.currentValue = ""
 	c.services = make(map[int]string)
-	c.servicesList.RemoveAll()
+	c.servicesListModel.Clear()
+}
+
+// clearText MUST be called from the UI thread
+func (c *chatServicesComponent) clearText() {
+	setEntryText(c.serviceEntry, "")
 }
 
 // enableServiceInput MUST be called from the UI thread
@@ -164,13 +169,28 @@ func (c *chatServicesComponent) disableServiceInput() {
 
 // resetToDefault MUST be called from the UI thread
 func (c *chatServicesComponent) resetToDefault() {
-	c.serviceEntry.SetText("")
+	c.clearText()
 	if len(c.services) > 0 {
 		c.setActive(0)
 	}
 }
 
+// serviceIndex IS SAFE to be called outside the ui thread
+func (c *chatServicesComponent) serviceIndex(s jid.Domain) int {
+	for ix, ss := range c.services {
+		if ss == s.String() {
+			return ix
+		}
+	}
+	return -1
+}
+
 // hasServiceValue MUST be called from the UI thread
 func (c *chatServicesComponent) hasServiceValue() bool {
 	return c.currentServiceValue() != ""
+}
+
+// hasService IS SAFE to be called outside the ui thread
+func (c *chatServicesComponent) hasService(s jid.Domain) bool {
+	return c.serviceIndex(s) != -1
 }

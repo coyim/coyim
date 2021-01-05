@@ -1,83 +1,106 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/gotk3adapter/gtki"
+	log "github.com/sirupsen/logrus"
 )
 
 type mucRoomConfigPage interface {
-	getContent() gtki.Box
+	pageView() gtki.Box
 	isValid() bool
 	collectData()
-	onRefresh(func())
 	refresh()
 	showLoadingOverlay()
 	hideLoadingOverlay()
 }
 
 type roomConfigPageBase struct {
-	u              *gtkUI
-	content        gtki.Box
-	loadingOverlay *loadingOverlayComponent
+	u    *gtkUI
+	form *muc.RoomConfigForm
+
+	page              gtki.Box `gtk-widget:"room-config-page"`
+	content           gtki.Box `gtk-widget:"room-config-page-content"`
+	notificationsArea gtki.Box `gtk-widget:"notifications-box"`
+
 	notifications  *notifications
-	refreshList    []func()
-	form           *muc.RoomConfigForm
-	log            coylog.Logger
+	loadingOverlay *loadingOverlayComponent
+	onRefresh      *callbacksSet
+
+	log coylog.Logger
 }
 
-func (c *mucRoomConfigComponent) newConfigPage(content gtki.Box, nb gtki.Box) *roomConfigPageBase {
+func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page interface{}, signals map[string]interface{}) *roomConfigPageBase {
 	p := &roomConfigPageBase{
 		u:              c.u,
-		content:        content,
-		notifications:  c.u.newNotificationsComponent(),
 		loadingOverlay: c.u.newLoadingOverlayComponent(),
+		onRefresh:      newCallbacksSet(),
 		form:           c.form,
-		log:            c.log,
+		log: c.log.WithFields(log.Fields{
+			"page":     pageID,
+			"template": pageTemplate,
+		}),
 	}
 
-	nb.Add(p.notifications.widget())
+	builder := newBuilder("MUCRoomConfigPage")
+	panicOnDevError(builder.bindObjects(p))
+
+	p.notifications = c.u.newNotificationsComponent()
+	p.notificationsArea.Add(p.notifications.widget())
+
+	builder = newBuilder(pageTemplate)
+	panicOnDevError(builder.bindObjects(page))
+	builder.ConnectSignals(signals)
+
+	pc, err := builder.GetObject(fmt.Sprintf("room-config-%s-page", pageID))
+	if err != nil {
+		panic(fmt.Sprintf("developer error: the ID for \"%s\" page doesn't exists", pageID))
+	}
+
+	p.content.Add(pc.(gtki.Box))
 
 	return p
 }
 
-func (p *roomConfigPageBase) getContent() gtki.Box {
-	return p.content
+// pageView implements the "mucRoomConfigPage" interface
+func (p *roomConfigPageBase) pageView() gtki.Box {
+	return p.page
 }
 
+// isValid implements the "mucRoomConfigPage" interface
 func (p *roomConfigPageBase) isValid() bool {
 	return true
 }
 
-func (p *roomConfigPageBase) collectData() {
-	// Nothing to do, just implement the interface
-}
+// Nothing to do, just implement the "mucRoomConfigPage" interface
+func (p *roomConfigPageBase) collectData() {}
 
-func (p *roomConfigPageBase) onRefresh(f func()) {
-	p.refreshList = append(p.refreshList, f)
-}
-
+// refresh MUST be called from the UI thread
 func (p *roomConfigPageBase) refresh() {
-	p.content.ShowAll()
+	p.page.ShowAll()
 	p.hideLoadingOverlay()
-
-	for _, f := range p.refreshList {
-		f()
-	}
+	p.onRefresh.invokeAll()
 }
 
+// clearErrors MUST be called from the ui thread
 func (p *roomConfigPageBase) clearErrors() {
 	p.notifications.clearErrors()
 }
 
+// nofityError MUST be called from the ui thread
 func (p *roomConfigPageBase) nofityError(m string) {
 	p.notifications.notifyOnError(m)
 }
 
+// showLoadingOverlay MUST be called from the ui thread
 func (p *roomConfigPageBase) showLoadingOverlay() {
 	p.loadingOverlay.show()
 }
 
+// hideLoadingOverlay MUST be called from the ui thread
 func (p *roomConfigPageBase) hideLoadingOverlay() {
 	p.loadingOverlay.hide()
 }

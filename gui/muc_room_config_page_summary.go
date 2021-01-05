@@ -13,7 +13,6 @@ type roomConfigSummaryPage struct {
 	autoJoin bool
 
 	overlay                 gtki.Overlay     `gtk-widget:"room-config-overlay"`
-	box                     gtki.Box         `gtk-widget:"room-config-summary-page"`
 	infoSectionLabel        gtki.Label       `gtk-widget:"room-config-information-title"`
 	title                   gtki.Label       `gtk-widget:"room-config-summary-title"`
 	description             gtki.Label       `gtk-widget:"room-config-summary-description"`
@@ -37,28 +36,20 @@ type roomConfigSummaryPage struct {
 	maxOccupants            gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
 	enableArchiving         gtki.CheckButton `gtk-widget:"room-config-summary-archive"`
 	autojoinCheckButton     gtki.CheckButton `gtk-widget:"room-config-autojoin"`
-	notificationBox         gtki.Box         `gtk-widget:"notification-box"`
 
 	ownersTreeModel gtki.ListStore
 	adminsTreeModel gtki.ListStore
 }
 
 func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
-	p := &roomConfigSummaryPage{
-		autoJoin: c.autoJoin,
-	}
-
-	builder := newBuilder("MUCRoomConfigPageSummary")
-	panicOnDevError(builder.bindObjects(p))
-
-	builder.ConnectSignals(map[string]interface{}{
+	p := &roomConfigSummaryPage{autoJoin: c.autoJoin}
+	p.roomConfigPageBase = c.newConfigPage("summary", "MUCRoomConfigPageSummary", p, map[string]interface{}{
 		"on_autojoin_toggled": func() {
 			c.updateAutoJoin(p.autojoinCheckButton.GetActive())
 		},
 	})
 
-	p.roomConfigPageBase = c.newConfigPage(p.box, p.notificationBox)
-	p.onRefresh(p.onSummaryPageRefresh)
+	p.onRefresh.add(p.onSummaryPageRefresh)
 
 	mucStyles.setRoomConfigSummarySectionLabelStyle(p.infoSectionLabel)
 	mucStyles.setRoomConfigSummarySectionLabelStyle(p.accessSectionLabel)

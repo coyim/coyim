@@ -2,17 +2,6 @@
   <object class="GtkBox" id="room-config-info-page">
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkBox" id="notification-box">
-        <property name="visible">True</property>
-        <property name="valign">start</property>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="border_width">12</property>

@@ -66,3 +66,7 @@ func (v *entry) SetPosition(p int) {
 func (v *entry) GetPosition() int {
 	return v.internal.GetPosition()
 }
+
+func (v *entry) SetCompletion(v1 gtki.EntryCompletion) {
+	v.internal.SetCompletion(UnwrapEntryCompletion(v1))
+}

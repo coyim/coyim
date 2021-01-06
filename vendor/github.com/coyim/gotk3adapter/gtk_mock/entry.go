@@ -1,5 +1,7 @@
 package gtk_mock
 
+import "github.com/coyim/gotk3adapter/gtki"
+
 type MockEntry struct {
 	MockWidget
 }
@@ -35,4 +37,7 @@ func (*MockEntry) SetPosition(p int) {
 
 func (*MockEntry) GetPosition() int {
 	return 0
+}
+
+func (*MockEntry) SetCompletion(v1 gtki.EntryCompletion) {
 }

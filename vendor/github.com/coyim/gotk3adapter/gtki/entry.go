@@ -11,6 +11,7 @@ type Entry interface {
 	SetWidthChars(int)
 	GetAlignment() float32
 	SetAlignment(float32)
+	SetCompletion(EntryCompletion)
 }
 
 func AssertEntry(_ Entry) {}

@@ -89,10 +89,13 @@
                 <property name="orientation">vertical</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkEntry" id="room-language">
+                  <object class="GtkComboBoxText" id="room-language-combobox">
                     <property name="visible">True</property>
-                    <property name="hexpand">True</property>
-                    <property name="placeholder_text" translatable="yes">Natural language for room discussions</property>
+                    <property name="has_entry">True</property>
+                    <child internal-child="entry">
+                      <object class="GtkEntry" id="room-language-entry">
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>

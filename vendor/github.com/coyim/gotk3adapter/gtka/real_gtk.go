@@ -212,6 +212,10 @@ func (*RealGtk) SettingsGetDefault() (gtki.Settings, error) {
 	return WrapSettings(gtk.SettingsGetDefault())
 }
 
+func (*RealGtk) EntryCompletionNew() (gtki.EntryCompletion, error) {
+	return WrapEntryCompletion(gtk.EntryCompletionNew())
+}
+
 func (*RealGtk) StatusIconNew() (gtki.StatusIcon, error) {
 	return WrapStatusIcon(gotk3extra.StatusIconNew())
 }

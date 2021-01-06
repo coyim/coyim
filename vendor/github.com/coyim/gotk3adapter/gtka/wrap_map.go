@@ -410,6 +410,12 @@ func WrapLocal(o interface{}) (interface{}, bool) {
 			return nil, true
 		}
 		return val, true
+	case *gtk.EntryCompletion:
+		val := WrapEntryCompletionSimple(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
 	default:
 		return nil, false
 	}
@@ -791,6 +797,12 @@ func UnwrapLocal(o interface{}) (interface{}, bool) {
 		return val, true
 	case *zwitch:
 		val := UnwrapSwitch(oo)
+		if val == nil {
+			return nil, true
+		}
+		return val, true
+	case *entryCompletion:
+		val := UnwrapEntryCompletion(oo)
 		if val == nil {
 			return nil, true
 		}

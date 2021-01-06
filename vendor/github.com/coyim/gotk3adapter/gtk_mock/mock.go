@@ -213,6 +213,10 @@ func (*Mock) SeparatorNew(gtki.Orientation) (gtki.Separator, error) {
 	return nil, nil
 }
 
+func (*Mock) EntryCompletionNew() (gtki.EntryCompletion, error) {
+	return nil, nil
+}
+
 func (*Mock) StatusIconNew() (gtki.StatusIcon, error) {
 	return nil, nil
 }

@@ -36,6 +36,10 @@ func (v *entry) SetHasFrame(v1 bool) {
 	v.internal.SetHasFrame(v1)
 }
 
+func (v *entry) GetVisibility() bool {
+	return v.internal.GetVisibility()
+}
+
 func (v *entry) SetVisibility(v1 bool) {
 	v.internal.SetVisibility(v1)
 }
@@ -69,4 +73,8 @@ func (v *entry) GetPosition() int {
 
 func (v *entry) SetCompletion(v1 gtki.EntryCompletion) {
 	v.internal.SetCompletion(UnwrapEntryCompletion(v1))
+}
+
+func (v *entry) SetPlaceholderText(v1 string) {
+	v.internal.SetPlaceholderText(v1)
 }

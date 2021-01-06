@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
@@ -75,7 +74,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Basic information
 	setLabelText(p.title, p.form.Title)
 	setLabelText(p.description, p.form.Description)
-	setLabelText(p.language, i18n.Localf("%s (%s)", p.form.Language, getLanguage(p.form.Language)))
+	setLabelText(p.language, supportedLanguageDescription(p.form.Language))
 	p.includePublicList.SetActive(p.form.Public)
 	p.includePublicList.SetSensitive(false)
 	p.persistent.SetActive(p.form.Persistent)

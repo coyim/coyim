@@ -39,6 +39,21 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 		"on_autojoin_toggled": func() {
 			c.updateAutoJoin(p.autojoinCheckButton.GetActive())
 		},
+		"go_basic_information_page": func() {
+			c.setCurrentPage(roomConfigInformationPageIndex)
+		},
+		"go_access_page": func() {
+			c.setCurrentPage(roomConfigAccessPageIndex)
+		},
+		"go_permissions_page": func() {
+			c.setCurrentPage(roomConfigPermissionsPageIndex)
+		},
+		"go_occupants_page": func() {
+			c.setCurrentPage(roomConfigOccupantsPageIndex)
+		},
+		"go_other_page": func() {
+			c.setCurrentPage(roomConfigOthersPageIndex)
+		},
 	})
 
 	p.onRefresh.add(p.onSummaryPageRefresh)

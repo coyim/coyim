@@ -156,6 +156,13 @@ func (s *mucStylesProvider) setRoomConfigSummaryRoomDescriptionLabelStyle(l gtki
 	})
 }
 
+func (s *mucStylesProvider) setFormSectionLabelStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-size":   "20px",
+		"font-weight": "bold",
+	})
+}
+
 func (s *mucStylesProvider) setWidgetStyle(w gtki.Widget, se string, st style) {
 	updateWithStyle(w, providerWithStyle(se, st))
 }

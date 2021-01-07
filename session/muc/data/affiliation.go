@@ -17,6 +17,8 @@ const (
 
 // Affiliation represents an affiliation as specificed by section 5.2 in XEP-0045
 type Affiliation interface {
+	// IsAdmin will return true if this specific affiliation can modify persistent information
+	IsAdmin() bool
 	// IsBanned will return true if this specific affiliation means that the jid is banned from the room
 	IsBanned() bool
 	// IsMember returns true if this specific affiliation means that the jid is a member of the room
@@ -43,6 +45,21 @@ type AdminAffiliation struct{}
 
 // OwnerAffiliation is a representation of MUC's "owner" affiliation
 type OwnerAffiliation struct{}
+
+// IsAdmin implements Affiliation interface
+func (*NoneAffiliation) IsAdmin() bool { return false }
+
+// IsAdmin implements Affiliation interface
+func (*OutcastAffiliation) IsAdmin() bool { return false }
+
+// IsAdmin implements Affiliation interface
+func (*MemberAffiliation) IsAdmin() bool { return false }
+
+// IsAdmin implements Affiliation interface
+func (*AdminAffiliation) IsAdmin() bool { return true }
+
+// IsAdmin implements Affiliation interface
+func (*OwnerAffiliation) IsAdmin() bool { return false }
 
 // IsBanned implements Affiliation interface
 func (*NoneAffiliation) IsBanned() bool { return false }

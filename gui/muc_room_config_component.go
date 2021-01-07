@@ -20,11 +20,12 @@ const (
 )
 
 type mucRoomConfigComponent struct {
-	u        *gtkUI
-	account  *account
-	form     *muc.RoomConfigForm
-	roomID   jid.Bare
-	autoJoin bool
+	u              *gtkUI
+	account        *account
+	form           *muc.RoomConfigForm
+	roomID         jid.Bare
+	autoJoin       bool
+	setCurrentPage func(indexPage int)
 
 	infoPage        mucRoomConfigPage
 	accessPage      mucRoomConfigPage

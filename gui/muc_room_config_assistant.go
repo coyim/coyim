@@ -118,7 +118,7 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.assistant.SetTransientFor(rc.u.window)
 }
 
-func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
+func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, _ gtki.Widget) {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
 	if !previousPage.isValid() {
 		rc.assistant.SetCurrentPage(rc.currentPageIndex)
@@ -129,8 +129,6 @@ func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, p gtki.Widget) {
 
 	rc.currentPageIndex = rc.assistant.GetCurrentPage()
 	rc.currentPage = rc.pageByIndex(rc.currentPageIndex)
-
-	rc.assistant.SetPageComplete(p, true)
 	rc.currentPage.refresh()
 }
 

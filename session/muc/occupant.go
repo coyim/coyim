@@ -80,9 +80,26 @@ func (o *Occupant) ChangeAffiliationToOwner() {
 func (o *Occupant) Update(nickname string, affiliation data.Affiliation, role data.Role, status, statusMessage string, realJid jid.Full) {
 	o.Nickname = nickname
 	o.RealJid = realJid
-	o.Affiliation = affiliation
 	o.Role = role
-	o.Status = &roster.Status{Status: status, StatusMsg: statusMessage}
+
+	o.UpdateAffiliation(affiliation)
+	o.UpdateStatus(status, statusMessage)
+}
+
+// UpdateAffiliation will update the occupant's affiliation
+func (o *Occupant) UpdateAffiliation(a data.Affiliation) {
+	switch a.(type) {
+	case *data.OwnerAffiliation:
+		o.ChangeAffiliationToOwner()
+	case *data.AdminAffiliation:
+		o.ChangeAffiliationToAdmin()
+	case *data.MemberAffiliation:
+		o.ChangeAffiliationToMember()
+	case *data.OutcastAffiliation:
+		o.ChangeAffiliationToOutcast()
+	case *data.NoneAffiliation:
+		o.ChangeAffiliationToNone()
+	}
 }
 
 // UpdateStatus will update the occupant's status

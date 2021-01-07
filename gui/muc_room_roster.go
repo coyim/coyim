@@ -11,6 +11,7 @@ import (
 	coyroster "github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -23,25 +24,33 @@ const (
 )
 
 type roomViewRoster struct {
+	u *gtkUI
+
 	roster *muc.RoomRoster
+	accout *account
+	roomID jid.Bare
 
 	view        gtki.Box      `gtk-widget:"roster-view"`
 	rosterPanel gtki.Box      `gtk-widget:"roster-main-panel"`
 	tree        gtki.TreeView `gtk-widget:"roster-tree-view"`
-	rosterInfo  *roomViewRosterInfo
 
-	model gtki.TreeStore
+	model      gtki.TreeStore
+	rosterInfo *roomViewRosterInfo
 
 	log coylog.Logger
 }
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	r := &roomViewRoster{
+		u:      v.u,
 		roster: v.room.Roster(),
+		accout: v.account,
+		roomID: v.roomID(),
 		log:    v.log,
 	}
 
 	r.initBuilder()
+	r.initRosterInfo()
 	r.initDefaults()
 	r.initSubscribers(v)
 
@@ -55,6 +64,10 @@ func (r *roomViewRoster) initBuilder() {
 	})
 
 	panicOnDevError(builder.bindObjects(r))
+}
+
+func (r *roomViewRoster) initRosterInfo() {
+	r.rosterInfo = r.newRoomViewRosterInfo(r.hideRosterInfoPanel)
 }
 
 func (r *roomViewRoster) initDefaults() {
@@ -99,29 +112,31 @@ func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath)
 		return
 	}
 
-	occupant, ok := r.roster.GetOccupant(nickname)
+	o, ok := r.roster.GetOccupant(nickname)
 	if !ok {
 		r.log.WithField("nickname", nickname).Debug("Occupant was not found")
 		return
 	}
 
-	r.showOccupantInfo(occupant)
+	r.showOccupantInfo(o)
 }
 
-func (r *roomViewRoster) addInfoPanel() {
-	r.rosterInfo = r.newRoomViewRosterInfo()
+// showOccupantInfo MUST be called from the UI thread
+func (r *roomViewRoster) showOccupantInfo(o *muc.Occupant) {
+	r.rosterInfo.showOccupantInfo(o)
+	r.showRosterInfoPanel()
 }
 
-func (r *roomViewRoster) showOccupantInfo(occupant *muc.Occupant) {
+// showRosterInfoPanel MUST be called from the UI thread
+func (r *roomViewRoster) showRosterInfoPanel() {
 	r.rosterPanel.Hide()
+	r.view.Add(r.rosterInfo.widget())
+}
 
-	r.addInfoPanel()
-	r.view.Add(r.rosterInfo.rosterInfoBox)
-	r.rosterInfo.displayOccupantInfoPanel(occupant, func() {
-		doInUIThread(func() {
-			r.rosterPanel.Show()
-		})
-	})
+// hideRosterInfoPanel MUST be called from the UI thread
+func (r *roomViewRoster) hideRosterInfoPanel() {
+	r.view.Remove(r.rosterInfo.widget())
+	r.rosterPanel.Show()
 }
 
 func (r *roomViewRoster) getNicknameFromTreeModel(path gtki.TreePath) (string, error) {

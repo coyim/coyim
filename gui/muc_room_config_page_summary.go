@@ -11,29 +11,23 @@ type roomConfigSummaryPage struct {
 	*roomConfigPageBase
 	autoJoin bool
 
-	infoSectionLabel        gtki.Label       `gtk-widget:"room-config-information-title"`
-	title                   gtki.Label       `gtk-widget:"room-config-summary-title"`
-	description             gtki.Label       `gtk-widget:"room-config-summary-description"`
-	language                gtki.Label       `gtk-widget:"room-config-summary-language"`
-	includePublicList       gtki.CheckButton `gtk-widget:"room-config-summary-public"`
-	persistent              gtki.CheckButton `gtk-widget:"room-config-summary-persistent"`
-	accessSectionLabel      gtki.Label       `gtk-widget:"room-config-access-title"`
-	password                gtki.CheckButton `gtk-widget:"room-config-summary-password"`
-	allowInviteUsers        gtki.CheckButton `gtk-widget:"room-config-summary-invite"`
-	onlyMembers             gtki.CheckButton `gtk-widget:"room-config-summary-onlymembers"`
-	permsisionsSectionLabel gtki.Label       `gtk-widget:"room-config-permissions-title"`
-	allowSetRoomSubject     gtki.CheckButton `gtk-widget:"room-config-summary-changesubject"`
-	moderatedRoom           gtki.CheckButton `gtk-widget:"room-config-summary-moderated"`
-	whoIs                   gtki.Label       `gtk-widget:"room-config-summary-whois"`
-	ownersSectionLabel      gtki.Label       `gtk-widget:"room-config-owners-title"`
-	ownersTreeView          gtki.TreeView    `gtk-widget:"room-config-summary-owners-tree"`
-	adminsSectionLabel      gtki.Label       `gtk-widget:"room-config-admins-title"`
-	adminsTreeView          gtki.TreeView    `gtk-widget:"room-config-summary-admins-tree"`
-	othersSectionLabel      gtki.Label       `gtk-widget:"room-config-others-title"`
-	maxHistoryFetch         gtki.Label       `gtk-widget:"room-config-summary-maxhistoryfetch"`
-	maxOccupants            gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
-	enableArchiving         gtki.CheckButton `gtk-widget:"room-config-summary-archive"`
-	autojoinCheckButton     gtki.CheckButton `gtk-widget:"room-config-autojoin"`
+	title               gtki.Label       `gtk-widget:"room-config-summary-title"`
+	description         gtki.Label       `gtk-widget:"room-config-summary-description"`
+	language            gtki.Label       `gtk-widget:"room-config-summary-language"`
+	includePublicList   gtki.CheckButton `gtk-widget:"room-config-summary-public"`
+	persistent          gtki.CheckButton `gtk-widget:"room-config-summary-persistent"`
+	password            gtki.CheckButton `gtk-widget:"room-config-summary-password"`
+	allowInviteUsers    gtki.CheckButton `gtk-widget:"room-config-summary-invite"`
+	onlyMembers         gtki.CheckButton `gtk-widget:"room-config-summary-onlymembers"`
+	allowSetRoomSubject gtki.CheckButton `gtk-widget:"room-config-summary-changesubject"`
+	moderatedRoom       gtki.CheckButton `gtk-widget:"room-config-summary-moderated"`
+	whoIs               gtki.Label       `gtk-widget:"room-config-summary-whois"`
+	ownersTreeView      gtki.TreeView    `gtk-widget:"room-config-summary-owners-tree"`
+	adminsTreeView      gtki.TreeView    `gtk-widget:"room-config-summary-admins-tree"`
+	maxHistoryFetch     gtki.Label       `gtk-widget:"room-config-summary-maxhistoryfetch"`
+	maxOccupants        gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
+	enableArchiving     gtki.CheckButton `gtk-widget:"room-config-summary-archive"`
+	autojoinCheckButton gtki.CheckButton `gtk-widget:"room-config-autojoin"`
 
 	ownersTreeModel gtki.ListStore
 	adminsTreeModel gtki.ListStore
@@ -48,13 +42,6 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	})
 
 	p.onRefresh.add(p.onSummaryPageRefresh)
-
-	mucStyles.setRoomConfigSummarySectionLabelStyle(p.infoSectionLabel)
-	mucStyles.setRoomConfigSummarySectionLabelStyle(p.accessSectionLabel)
-	mucStyles.setRoomConfigSummarySectionLabelStyle(p.permsisionsSectionLabel)
-	mucStyles.setRoomConfigSummarySectionLabelStyle(p.adminsSectionLabel)
-	mucStyles.setRoomConfigSummarySectionLabelStyle(p.ownersSectionLabel)
-	mucStyles.setRoomConfigSummarySectionLabelStyle(p.othersSectionLabel)
 
 	mucStyles.setRoomConfigSummaryRoomTitleLabelStyle(p.title)
 	mucStyles.setRoomConfigSummaryRoomDescriptionLabelStyle(p.description)

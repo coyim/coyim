@@ -1,25 +1,47 @@
 package gui
 
 import (
-	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
 type roomViewRosterInfo struct {
-	rosterInfoBox  gtki.Box      `gtk-widget:"roster-info-box"`
-	rosterInfo     gtki.Revealer `gtk-widget:"roster-info-revelear"`
-	occupantAvatar gtki.Image    `gtk-widget:"occupant-avatar"`
-	nickname       gtki.Label    `gtk-widget:"occupant-nickname"`
-	userJID        gtki.Label    `gtk-widget:"user-jid"`
-	status         gtki.Label    `gtk-widget:"status"`
-	statusMessage  gtki.Label    `gtk-widget:"status-message"`
-	onHidePanel    func()
+	u *gtkUI
+
+	account  *account
+	roomID   jid.Bare
+	occupant *muc.Occupant
+
+	view                    gtki.Box   `gtk-widget:"roster-info-box"`
+	avatar                  gtki.Image `gtk-widget:"occupant-avatar"`
+	nicknameLabel           gtki.Label `gtk-widget:"occupant-nickname"`
+	realJIDLabel            gtki.Label `gtk-widget:"user-jid"`
+	status                  gtki.Label `gtk-widget:"status"`
+	statusMessage           gtki.Label `gtk-widget:"status-message"`
+	currentAffiliationLabel gtki.Label `gtk-widget:"current-affiliation"`
+
+	onReset     *callbacksSet
+	onRefresh   *callbacksSet
+	onHidePanel func()
+
+	log coylog.Logger
 }
 
-func (r *roomViewRoster) newRoomViewRosterInfo() *roomViewRosterInfo {
-	ri := &roomViewRosterInfo{}
+func (r *roomViewRoster) newRoomViewRosterInfo(onHidePanel func()) *roomViewRosterInfo {
+	ri := &roomViewRosterInfo{
+		u:           r.u,
+		account:     r.accout,
+		roomID:      r.roomID,
+		onReset:     newCallbacksSet(),
+		onRefresh:   newCallbacksSet(),
+		onHidePanel: onHidePanel,
+		log:         r.log,
+	}
+
 	ri.initBuilder()
+	ri.initCSSStyles()
 	ri.initDefaults()
 
 	return ri
@@ -27,50 +49,114 @@ func (r *roomViewRoster) newRoomViewRosterInfo() *roomViewRosterInfo {
 
 func (r *roomViewRosterInfo) initBuilder() {
 	builder := newBuilder("MUCRoomRosterInfo")
-	builder.ConnectSignals(map[string]interface{}{
-		"on_hide": r.onHideOccupantInfoPanel,
-	})
-
 	panicOnDevError(builder.bindObjects(r))
 
+	builder.ConnectSignals(map[string]interface{}{
+		"on_hide":               r.hide,
+		"on_change_affiliation": r.onChangeAffiliation,
+	})
 }
 
-func (r *roomViewRosterInfo) initDefaults() {
-	mucStyles.setRoomRosterInfoNicknameLabelStyle(r.nickname)
-	mucStyles.setRoomRosterInfoUserJIDLabelStyle(r.userJID)
+func (r *roomViewRosterInfo) initCSSStyles() {
+	mucStyles.setRoomRosterInfoNicknameLabelStyle(r.nicknameLabel)
+	mucStyles.setRoomRosterInfoUserJIDLabelStyle(r.realJIDLabel)
 	mucStyles.setRoomRosterInfoStatusLabelStyle(r.status)
 }
 
-func (r *roomViewRosterInfo) onHideOccupantInfoPanel() {
-	r.rosterInfo.Hide()
-	r.onHidePanel()
+func (r *roomViewRosterInfo) initDefaults() {
+	r.onRefresh.add(
+		r.refreshOccupantInfo,
+		r.refreshOccupantAffiliation,
+	)
+
+	r.onReset.add(
+		r.removeOccupantInfo,
+		r.removeOccupantAffiliationInfo,
+	)
 }
 
-func (r *roomViewRosterInfo) displayOccupantInfoPanel(occupant *muc.Occupant, showRoster func()) {
-	r.onHidePanel = showRoster
-
-	r.populateOccupantInfoPanel(occupant)
-	r.rosterInfo.Show()
+// showOccupantInfo MUST be called from the UI thread
+func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
+	r.occupant = occupant
+	r.refresh()
+	r.show()
 }
 
-func (r *roomViewRosterInfo) populateOccupantInfoPanel(occupant *muc.Occupant) {
-	r.occupantAvatar.SetFromPixbuf(getMUCIconPixbuf(getOccupantIconNameForStatus(occupant.Status.Status)))
+// refresh MUST be called from the UI thread
+func (r *roomViewRosterInfo) refresh() {
+	r.reset()
+	if r.account != nil {
+		r.onRefresh.invokeAll()
+	}
+}
 
-	r.nickname.SetText(i18n.Local(occupant.Nickname))
+// reset MUST be called from the UI thread
+func (r *roomViewRosterInfo) reset() {
+	r.onReset.invokeAll()
+}
 
-	r.userJID.SetVisible(false)
+// refresh MUST be called from the UI thread
+func (r *roomViewRosterInfo) refreshOccupantInfo() {
+	occupant := r.occupant
+	status := r.occupant.Status
+
+	r.avatar.SetFromPixbuf(getMUCIconPixbuf(getOccupantIconNameForStatus(status.Status)))
+	setLabelText(r.nicknameLabel, occupant.Nickname)
+
 	if occupant.RealJid != nil {
-		rj := occupant.RealJid.String()
-		r.userJID.SetText(rj)
-		r.userJID.SetTooltipText(rj)
-		r.userJID.SetVisible(true)
+		r.realJIDLabel.SetText(occupant.RealJid.String())
+		r.realJIDLabel.SetTooltipText(occupant.RealJid.String())
+		r.realJIDLabel.SetVisible(true)
 	}
 
-	r.status.SetText(showForDisplay(occupant.Status.Status, false))
-
-	if occupant.Status.StatusMsg != "" {
-		sm := occupant.Status.StatusMsg
-		r.statusMessage.SetText(sm)
-		r.statusMessage.SetTooltipText(sm)
+	r.status.SetText(showForDisplay(status.Status, false))
+	if status.StatusMsg != "" {
+		r.statusMessage.SetText(status.StatusMsg)
+		r.statusMessage.SetTooltipText(status.StatusMsg)
+		r.statusMessage.SetVisible(true)
 	}
+}
+
+// removeOccupantInfo MUST be called from the UI thread
+func (r *roomViewRosterInfo) removeOccupantInfo() {
+	r.avatar.Clear()
+
+	r.nicknameLabel.SetText("")
+
+	r.realJIDLabel.SetText("")
+	r.realJIDLabel.SetVisible(false)
+
+	r.statusMessage.SetText("")
+	r.statusMessage.SetVisible(false)
+}
+
+// refreshOccupantAffiliation MUST be called from the UI thread
+func (r *roomViewRosterInfo) refreshOccupantAffiliation() {
+	r.currentAffiliationLabel.SetText(occupantAffiliationName(r.occupant.Affiliation))
+}
+
+// removeOccupantAffiliationInfo MUST be called from the UI thread
+func (r *roomViewRosterInfo) removeOccupantAffiliationInfo() {
+	r.currentAffiliationLabel.SetText("")
+}
+
+// show MUST be called from the UI thread
+func (r *roomViewRosterInfo) show() {
+	r.view.Show()
+}
+
+// show MUST be called from the UI thread
+func (r *roomViewRosterInfo) hide() {
+	r.view.Hide()
+
+	if r.onHidePanel != nil {
+		r.onHidePanel()
+	}
+
+	r.reset()
+}
+
+// widget MUST be called from the UI thread
+func (r *roomViewRosterInfo) widget() gtki.Widget {
+	return r.view
 }

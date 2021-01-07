@@ -192,3 +192,11 @@ func (s *mucStylesProvider) hexToRGBA(hex string, a float64) string {
 func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {
 	return fmt.Sprintf("%s %s", shadowStyle, color)
 }
+
+func removePaddingInLinkButtons() {
+	prov, _ := g.gtk.CssProviderNew()
+	prov.LoadFromData("button.link { margin: 0; padding: 0;}")
+
+	screen, _ := g.gdk.ScreenGetDefault()
+	g.gtk.AddProviderForScreen(screen, prov, uint(gtki.STYLE_PROVIDER_PRIORITY_USER))
+}

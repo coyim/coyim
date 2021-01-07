@@ -43,6 +43,8 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 
 	p.onRefresh.add(p.onSummaryPageRefresh)
 
+	removePaddingInLinkButtons()
+
 	mucStyles.setRoomConfigSummaryRoomTitleLabelStyle(p.title)
 	mucStyles.setRoomConfigSummaryRoomDescriptionLabelStyle(p.description)
 

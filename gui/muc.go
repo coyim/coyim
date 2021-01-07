@@ -2,7 +2,6 @@ package gui
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session"
@@ -38,25 +37,20 @@ func newRegistrationRequiredError(roomID jid.Bare) error {
 
 type callbacksSet struct {
 	callbacks []func()
-	lock      sync.RWMutex
 }
 
 func newCallbacksSet() *callbacksSet {
 	return &callbacksSet{}
 }
 
-func (s *callbacksSet) add(cb func()) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-
-	s.callbacks = append(s.callbacks, cb)
+func (s *callbacksSet) add(callbacks ...func()) {
+	for _, cb := range callbacks {
+		s.callbacks = append(s.callbacks, cb)
+	}
 }
 
 func (s *callbacksSet) invokeAll() {
-	s.lock.Lock()
 	callbacks := s.callbacks
-	s.lock.Unlock()
-
 	for _, cb := range callbacks {
 		cb()
 	}

@@ -253,6 +253,11 @@ func (*SessionMock) DestroyRoom(jid.Bare, string, jid.Bare, string) (<-chan bool
 	return nil, nil
 }
 
+// UpdateOccupantAffiliation is the implementation for session interface
+func (*SessionMock) UpdateOccupantAffiliation(roomID jid.Bare, occupant *muc.Occupant, reason string) (<-chan bool, <-chan error) {
+	return nil, nil
+}
+
 // Log is the implementation for session interface
 func (*SessionMock) Log() coylog.Logger {
 	return nil

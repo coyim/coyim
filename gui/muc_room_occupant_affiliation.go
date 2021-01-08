@@ -6,6 +6,7 @@ import (
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
+	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
 )
@@ -65,9 +66,16 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 	panicOnDevError(builder.bindObjects(av))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_cancel": av.onCancel,
-		"on_apply":  av.onApply,
+		"on_cancel":    av.onCancel,
+		"on_apply":     av.onApply,
+		"on_key_press": av.onKeyPress,
 	})
+}
+
+func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
+	if isNormalEnter(g.gdk.EventKeyFrom(ev)) {
+		av.onApply()
+	}
 }
 
 func (av *occupantAffiliationUpdateView) initNotificationsAndSpinner(u *gtkUI) {

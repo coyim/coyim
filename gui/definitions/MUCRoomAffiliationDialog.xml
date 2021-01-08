@@ -6,6 +6,7 @@
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <property name="urgency_hint">True</property>
+    <signal name="key-press-event" handler="on_key_press" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="orientation">vertical</property>

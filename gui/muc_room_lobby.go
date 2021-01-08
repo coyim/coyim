@@ -86,7 +86,7 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	v.subscribe("lobby", func(ev roomViewEvent) {
 		switch t := ev.(type) {
 		case roomDiscoInfoReceivedEvent:
-			l.roomDiscoInfoReceivedEvent(t.info)
+			l.roomDiscoInfoReceivedEvent(t.info, v.passwordProvider)
 		case occupantSelfJoinedEvent:
 			l.finishJoinRequest()
 		case nicknameConflictEvent:
@@ -105,7 +105,7 @@ func (l *roomViewLobby) initSubscribers(v *roomView) {
 	})
 }
 
-func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
+func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo, passwordProvider func() string) {
 	l.isReadyToJoinRoom = true
 	doInUIThread(func() {
 		l.enableJoinIfConditionsAreMet()
@@ -113,6 +113,7 @@ func (l *roomViewLobby) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 			l.isPasswordProtected = true
 			setFieldVisibility(l.passwordLabel, true)
 			setFieldVisibility(l.passwordEntry, true)
+			setEntryText(l.passwordEntry, passwordProvider())
 		}
 	})
 }

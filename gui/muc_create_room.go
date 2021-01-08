@@ -45,7 +45,7 @@ func newCreateMUCRoomView(u *gtkUI, d *mucCreateRoomData) *mucCreateRoomView {
 
 	v.initBuilder()
 	v.initCreateRoomForm(d)
-	v.initCreateRoomSuccess()
+	v.initCreateRoomSuccess(d)
 
 	return v
 }
@@ -116,9 +116,9 @@ func (v *mucCreateRoomView) createRoom(ca *account, roomID jid.Bare, onError fun
 }
 
 // joinRoom MUST be called from the UI thread
-func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare) {
+func (v *mucCreateRoomView) joinRoom(ca *account, roomID jid.Bare, d roomViewDataProvider) {
 	v.dialog.Destroy()
-	v.u.joinRoom(ca, roomID, nil)
+	v.u.joinRoomWithData(ca, roomID, d)
 }
 
 // updateAutoJoinValue IS SAFE to be called from the UI thread
@@ -170,8 +170,21 @@ type mucCreateRoomData struct {
 	ca           *account
 	roomName     jid.Local
 	where        jid.Domain
+	password     string
 	autoJoin     bool
 	customConfig bool
+}
+
+func newCreateRoomData() *mucCreateRoomData {
+	return &mucCreateRoomData{}
+}
+
+func (crd *mucCreateRoomData) passwordProvider() string {
+	return crd.password
+}
+
+func (crd *mucCreateRoomData) returnTo() func() {
+	return nil
 }
 
 func (u *gtkUI) mucShowCreateRoomWithData(d *mucCreateRoomData, onViewCreated func(*mucCreateRoomView)) {

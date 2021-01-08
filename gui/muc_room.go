@@ -10,6 +10,28 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+type roomViewDataProvider interface {
+	passwordProvider() string
+	returnTo() func()
+}
+
+type roomViewData struct {
+	passsword string
+	onReturn  func()
+}
+
+func (rvd *roomViewData) passwordProvider() string {
+	return rvd.passsword
+}
+
+func (rvd *roomViewData) returnTo() func() {
+	return rvd.onReturn
+}
+
+func newRoomViewData() *roomViewData {
+	return &roomViewData{}
+}
+
 type roomView struct {
 	u       *gtkUI
 	account *account
@@ -19,8 +41,9 @@ type roomView struct {
 
 	cancel chan bool
 
-	opened   bool
-	returnTo func()
+	opened           bool
+	passwordProvider func() string
+	returnTo         func()
 
 	window                 gtki.Window  `gtk-widget:"roomWindow"`
 	content                gtki.Box     `gtk-widget:"boxMainView"`
@@ -28,7 +51,7 @@ type roomView struct {
 	messagesOverlay        gtki.Overlay `gtk-widget:"messagesOverlay"`
 	messagesOverlayBox     gtki.Box     `gtk-widget:"messagesOverlayBox"`
 	messagesBox            gtki.Box     `gtk-widget:"messagesBox"`
-	notificationsArea       gtki.Box     `gtk-widget:"notificationBox"`
+	notificationsArea      gtki.Box     `gtk-widget:"notificationBox"`
 	loadingNotificationBox gtki.Box     `gtk-widget:"loadingNotificationBox"`
 	roomInfoErrorBar       gtki.InfoBar `gtk-widget:"room-info-error-bar"`
 

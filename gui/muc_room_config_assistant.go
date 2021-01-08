@@ -12,15 +12,18 @@ import (
 )
 
 type roomConfigAssistant struct {
-	u                   *gtkUI
-	account             *account
+	u       *gtkUI
+	account *account
+	roomID  jid.Bare
+
 	roomConfigComponent *mucRoomConfigComponent
-	roomID              jid.Bare
-	autoJoin            bool
-	currentPageIndex    int
-	currentPage         mucRoomConfigPage
-	onSuccess           func(currentAccount *account, roomID jid.Bare, autoJoin bool)
-	onCancel            func()
+
+	autoJoin  bool
+	onSuccess func(autoJoin bool)
+	onCancel  func()
+
+	currentPageIndex int
+	currentPage      mucRoomConfigPage
 
 	assistant          gtki.Assistant `gtk-widget:"room-config-assistant"`
 	infoPageBox        gtki.Box       `gtk-widget:"room-config-info-page"`
@@ -40,7 +43,7 @@ type roomConfigAssistant struct {
 	log coylog.Logger
 }
 
-func (u *gtkUI) newRoomConfigAssistant(ca *account, roomID jid.Bare, form *muc.RoomConfigForm, autoJoin bool, onSuccess func(*account, jid.Bare, bool), onCancel func()) *roomConfigAssistant {
+func (u *gtkUI) newRoomConfigAssistant(ca *account, roomID jid.Bare, form *muc.RoomConfigForm, autoJoin bool, onSuccess func(autoJoin bool), onCancel func()) *roomConfigAssistant {
 	rc := &roomConfigAssistant{
 		u:        u,
 		account:  ca,
@@ -52,9 +55,9 @@ func (u *gtkUI) newRoomConfigAssistant(ca *account, roomID jid.Bare, form *muc.R
 		}),
 	}
 
-	rc.onSuccess = func(a *account, rid jid.Bare, aj bool) {
+	rc.onSuccess = func(aj bool) {
 		if onSuccess != nil {
-			onSuccess(a, rid, aj)
+			onSuccess(aj)
 		}
 	}
 
@@ -170,7 +173,7 @@ func (rc *roomConfigAssistant) onApplyClicked() {
 }
 
 func (rc *roomConfigAssistant) onApplySuccess() {
-	rc.onSuccess(rc.account, rc.roomID, rc.roomConfigComponent.autoJoin)
+	rc.onSuccess(rc.roomConfigComponent.autoJoin)
 	doInUIThread(rc.assistant.Destroy)
 }
 

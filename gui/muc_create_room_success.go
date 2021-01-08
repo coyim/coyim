@@ -5,8 +5,9 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-func (v *mucCreateRoomView) initCreateRoomSuccess() {
+func (v *mucCreateRoomView) initCreateRoomSuccess(d *mucCreateRoomData) {
 	v.success = v.newCreateRoomSuccess()
+	v.success.updateJoinRoomData(d)
 }
 
 func (v *mucCreateRoomView) showSuccessView(ca *account, roomID jid.Bare) {
@@ -17,17 +18,15 @@ func (v *mucCreateRoomView) showSuccessView(ca *account, roomID jid.Bare) {
 }
 
 type mucCreateRoomViewSuccess struct {
-	ca         *account
-	roomID     jid.Bare
-	onJoinRoom func(*account, jid.Bare)
+	ca           *account
+	roomID       jid.Bare
+	joinRoomData roomViewDataProvider
 
 	view gtki.Box `gtk-widget:"createRoomSuccess"`
 }
 
 func (v *mucCreateRoomView) newCreateRoomSuccess() *mucCreateRoomViewSuccess {
-	s := &mucCreateRoomViewSuccess{
-		onJoinRoom: v.joinRoom,
-	}
+	s := &mucCreateRoomViewSuccess{}
 
 	s.initBuilder(v)
 
@@ -41,7 +40,7 @@ func (s *mucCreateRoomViewSuccess) initBuilder(v *mucCreateRoomView) {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_createRoom_clicked": v.showCreateForm,
 		"on_joinRoom_clicked": func() {
-			s.onJoinRoom(s.ca, s.roomID)
+			v.joinRoom(s.ca, s.roomID, s.joinRoomData)
 		},
 	})
 }
@@ -51,7 +50,12 @@ func (s *mucCreateRoomViewSuccess) updateInfo(ca *account, roomID jid.Bare) {
 	s.roomID = roomID
 }
 
+func (s *mucCreateRoomViewSuccess) updateJoinRoomData(d roomViewDataProvider) {
+	s.joinRoomData = d
+}
+
 func (s *mucCreateRoomViewSuccess) reset() {
 	s.ca = nil
 	s.roomID = nil
+	s.joinRoomData = nil
 }

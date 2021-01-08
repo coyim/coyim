@@ -35,26 +35,39 @@ func (a *account) createReservedRoom(roomID jid.Bare, onSuccess func(jid.Bare, *
 }
 
 func (v *mucCreateRoomView) createReservedRoom(ca *account, roomID jid.Bare, onError func(error)) {
-	ca.createReservedRoom(roomID, func(roomID jid.Bare, cf *muc.RoomConfigForm) {
+	onSuccess := func(roomID jid.Bare, cf *muc.RoomConfigForm) {
 		doInUIThread(func() {
 			v.onReserveRoomFinished(ca, roomID, cf)
 		})
-	}, func(err error) {
+	}
+
+	onErrorFinal := onError
+	onError = func(err error) {
 		v.log(ca, roomID).WithError(err).Error("Something went wrong when trying to reserve the room")
-		onError(errCreateRoomFailed)
-	})
+		onErrorFinal(errCreateRoomFailed)
+	}
+
+	ca.createReservedRoom(roomID, onSuccess, onError)
 }
 
 func (v *mucCreateRoomView) createInstantRoom(ca *account, roomID jid.Bare, onError func(error)) {
-	ca.createInstantRoom(roomID, func() {
-		v.onCreateRoomFinished(ca, roomID, v.autoJoin, func() {
+	d := newCreateRoomData()
+	d.autoJoin = v.autoJoin
+
+	onSuccess := func() {
+		v.onCreateRoomFinished(ca, roomID, d, func() {
 			v.showSuccessView(ca, roomID)
 			v.dialog.ShowAll()
 		})
-	}, func(err error) {
+	}
+
+	onErrorFinal := onError
+	onError = func(err error) {
 		v.log(ca, roomID).WithError(err).Error("Something went wrong when trying to create the instant room")
-		onError(errCreateRoomFailed)
-	})
+		onErrorFinal(errCreateRoomFailed)
+	}
+
+	ca.createInstantRoom(roomID, onSuccess, onError)
 }
 
 // checkIfRoomExists IS SAFE to be called from the UI thread
@@ -76,36 +89,48 @@ func (v *mucCreateRoomView) checkIfRoomExists(ca *account, roomID jid.Bare, resu
 	}()
 }
 
+func (v *mucCreateRoomView) createRoomDataBasedOnConfigForm(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) *mucCreateRoomData {
+	crd := newCreateRoomData()
+
+	crd.ca = ca
+	crd.roomName = roomID.Local()
+	crd.where = roomID.Host()
+	crd.password = cf.Password
+	crd.autoJoin = v.autoJoin
+	crd.customConfig = true
+
+	return crd
+}
+
 // onReserveRoomFinished MUST be called from the UI thread
 func (v *mucCreateRoomView) onReserveRoomFinished(ca *account, roomID jid.Bare, cf *muc.RoomConfigForm) {
-	rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, func(ca *account, roomID jid.Bare, autoJoin bool) {
-		v.onCreateRoomFinished(ca, roomID, autoJoin, func() {
-			v.u.mucShowCreateRoomSuccess(ca, roomID, &mucCreateRoomData{
-				ca:           ca,
-				where:        roomID.Host(),
-				customConfig: true,
-			})
-		})
-	}, func() {
-		doInUIThread(func() {
-			v.u.mucShowCreateRoomForm(&mucCreateRoomData{
-				ca:           ca,
-				roomName:     roomID.Local(),
-				where:        roomID.Host(),
-				autoJoin:     v.autoJoin,
-				customConfig: true,
-			})
-		})
-	})
-	rca.show()
 	v.destroy()
+
+	createRoomData := v.createRoomDataBasedOnConfigForm(ca, roomID, cf)
+
+	onSuccess := func(autoJoin bool) {
+		createRoomData.autoJoin = autoJoin
+		createRoomData.password = cf.Password
+		v.onCreateRoomFinished(ca, roomID, createRoomData, func() {
+			v.u.mucShowCreateRoomSuccess(ca, roomID, createRoomData)
+		})
+	}
+
+	onCancel := func() {
+		doInUIThread(func() {
+			v.u.mucShowCreateRoomForm(createRoomData)
+		})
+	}
+
+	rca := v.u.newRoomConfigAssistant(ca, roomID, cf, v.autoJoin, onSuccess, onCancel)
+	rca.show()
 }
 
 // onCreateRoomFinished MUST NOT be called from the UI thread
-func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, autoJoin bool, onNoAutoJoin func()) {
-	if autoJoin {
+func (v *mucCreateRoomView) onCreateRoomFinished(ca *account, roomID jid.Bare, createRoomData *mucCreateRoomData, onNoAutoJoin func()) {
+	if createRoomData.autoJoin {
 		doInUIThread(func() {
-			v.joinRoom(ca, roomID)
+			v.joinRoom(ca, roomID, createRoomData)
 		})
 		return
 	}

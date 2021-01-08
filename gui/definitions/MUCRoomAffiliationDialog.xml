@@ -1,7 +1,7 @@
 <interface>
   <object class="GtkDialog" id="affiliation-dialog">
     <property name="width_request">400</property>
-    <property name="title" translatable="yes">Update occupant affiliation</property>
+    <property name="title" translatable="yes">Update occupant position</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
@@ -111,7 +111,7 @@
                   <object class="GtkLabel" id="affiliation-type-label">
                     <property name="visible">True</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">Affiliation</property>
+                    <property name="label" translatable="yes">Position</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -147,7 +147,7 @@
                         <child>
                           <object class="GtkLabel" id="affiliation-admin-help">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Someone who has privileges to modify persistent information about user affiliations.</property>
+                            <property name="label" translatable="yes">As an administrator, you are a room member and, you can do actions like ban and manage the member list of the room.</property>
                             <property name="wrap">True</property>
                             <property name="width_chars">0</property>
                             <property name="max_width_chars">40</property>
@@ -218,7 +218,7 @@
                 <child>
                   <object class="GtkLabel" id="affiliation-reason-label">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Enter the reason to update the affiliation</property>
+                    <property name="label" translatable="yes">Enter the reason to update the position</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
                   </object>

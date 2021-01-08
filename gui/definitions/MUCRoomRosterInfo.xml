@@ -200,7 +200,7 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">Affiliation</property>
+                                <property name="label" translatable="yes">Position</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>

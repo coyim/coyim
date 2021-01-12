@@ -215,6 +215,19 @@ func (r *RoomRoster) UpdateOrAddOccupant(op *OccupantPresenceInfo) bool {
 	return true
 }
 
+// WasOccupantAffiliationUpdated validates if the occupant affiliation was updated
+func (r *RoomRoster) WasOccupantAffiliationUpdated(op *OccupantPresenceInfo) bool {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	o, ok := r.occupants[op.Nickname]
+	if !ok {
+		return false
+	}
+
+	return o.Affiliation != op.Affiliation
+}
+
 // RemoveOccupant delete an occupant if that exists
 func (r *RoomRoster) RemoveOccupant(nickname string) error {
 	r.lock.Lock()

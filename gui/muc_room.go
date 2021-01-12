@@ -382,6 +382,14 @@ func (v *roomView) occupantForbidden() {
 	v.publishEvent(occupantForbiddenEvent{})
 }
 
+// publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishOccupantAffiliationUpdatedEvent(o *muc.Occupant) {
+	v.publishEvent(occupantAffiliationUpdatedEvent{
+		nickname:    o.Nickname,
+		affiliation: o.Affiliation,
+	})
+}
+
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }

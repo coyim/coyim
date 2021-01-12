@@ -173,26 +173,33 @@ type MUCRoomConfigChanged struct {
 	DiscoInfo data.RoomDiscoInfo
 }
 
-func (MUCError) markAsMUCEventTypeInterface()                     {}
-func (MUCRoom) markAsMUCEventTypeInterface()                      {}
-func (MUCRoomCreated) markAsMUCEventTypeInterface()               {}
-func (MUCRoomDestroyed) markAsMUCEventTypeInterface()             {}
-func (MUCRoomRenamed) markAsMUCEventTypeInterface()               {}
-func (MUCOccupant) markAsMUCEventTypeInterface()                  {}
-func (MUCOccupantUpdated) markAsMUCEventTypeInterface()           {}
-func (MUCOccupantJoined) markAsMUCEventTypeInterface()            {}
-func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface()        {}
-func (MUCOccupantLeft) markAsMUCEventTypeInterface()              {}
-func (MUCLiveMessageReceived) markAsMUCEventTypeInterface()       {}
-func (MUCDelayedMessageReceived) markAsMUCEventTypeInterface()    {}
-func (MUCSubjectUpdated) markAsMUCEventTypeInterface()            {}
-func (MUCSubjectReceived) markAsMUCEventTypeInterface()           {}
-func (MUCLoggingEnabled) markAsMUCEventTypeInterface()            {}
-func (MUCLoggingDisabled) markAsMUCEventTypeInterface()           {}
-func (MUCRoomAnonymityChanged) markAsMUCEventTypeInterface()      {}
-func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface() {}
-func (MUCRoomDiscoInfoReceived) markAsMUCEventTypeInterface()     {}
-func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()         {}
-func (MUCRoomConfigChanged) markAsMUCEventTypeInterface()         {}
-func (MUCOccupantRemoved) markAsMUCEventTypeInterface()           {}
-func (MUCSelfOccupantRemoved) markAsMUCEventTypeInterface()       {}
+// MUCOccupantAffiliationUpdated signifies that an occupant affiliation was updated
+type MUCOccupantAffiliationUpdated struct {
+	Nickname    string
+	Affiliation data.Affiliation
+}
+
+func (MUCError) markAsMUCEventTypeInterface()                      {}
+func (MUCRoom) markAsMUCEventTypeInterface()                       {}
+func (MUCRoomCreated) markAsMUCEventTypeInterface()                {}
+func (MUCRoomDestroyed) markAsMUCEventTypeInterface()              {}
+func (MUCRoomRenamed) markAsMUCEventTypeInterface()                {}
+func (MUCOccupant) markAsMUCEventTypeInterface()                   {}
+func (MUCOccupantUpdated) markAsMUCEventTypeInterface()            {}
+func (MUCOccupantJoined) markAsMUCEventTypeInterface()             {}
+func (MUCSelfOccupantJoined) markAsMUCEventTypeInterface()         {}
+func (MUCOccupantLeft) markAsMUCEventTypeInterface()               {}
+func (MUCLiveMessageReceived) markAsMUCEventTypeInterface()        {}
+func (MUCDelayedMessageReceived) markAsMUCEventTypeInterface()     {}
+func (MUCSubjectUpdated) markAsMUCEventTypeInterface()             {}
+func (MUCSubjectReceived) markAsMUCEventTypeInterface()            {}
+func (MUCLoggingEnabled) markAsMUCEventTypeInterface()             {}
+func (MUCLoggingDisabled) markAsMUCEventTypeInterface()            {}
+func (MUCRoomAnonymityChanged) markAsMUCEventTypeInterface()       {}
+func (MUCDiscussionHistoryReceived) markAsMUCEventTypeInterface()  {}
+func (MUCRoomDiscoInfoReceived) markAsMUCEventTypeInterface()      {}
+func (MUCRoomConfigTimeout) markAsMUCEventTypeInterface()          {}
+func (MUCRoomConfigChanged) markAsMUCEventTypeInterface()          {}
+func (MUCOccupantRemoved) markAsMUCEventTypeInterface()            {}
+func (MUCSelfOccupantRemoved) markAsMUCEventTypeInterface()        {}
+func (MUCOccupantAffiliationUpdated) markAsMUCEventTypeInterface() {}

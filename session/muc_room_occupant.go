@@ -30,6 +30,10 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, op *muc.OccupantPrese
 		return
 	}
 
+	if room.Roster().WasOccupantAffiliationUpdated(op) {
+		m.occupantAffiliationUpdated(roomID, op)
+	}
+
 	updated := room.Roster().UpdateOrAddOccupant(op)
 	// Added IsSelfOccupantInTheRoom validation to avoid publishing the events of
 	// other occupants until receive the selfPresence.

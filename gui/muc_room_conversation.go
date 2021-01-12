@@ -114,6 +114,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantRemovedEvent(t.nickname)
 		case roomDestroyedEvent:
 			c.roomDestroyedEvent(t.reason, t.alternative, t.password)
+		case occupantAffiliationUpdatedEvent:
+			c.occupantAffiliationEvent(t.nickname, t.affiliation)
 		}
 	})
 }
@@ -123,6 +125,12 @@ func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid
 		c.updateNotificationMessage(i18n.Local("You can't send messages because this room has been destroyed."))
 		c.displayNotificationWhenRoomDestroyed(reason, alternative, password)
 		c.disableSendCapabilities()
+	})
+}
+
+func (c *roomViewConversation) occupantAffiliationEvent(nickname string, affiliation data.Affiliation) {
+	doInUIThread(func() {
+		c.displayNewInfoMessage(i18n.Localf("The postion of %s has been updated to \"%s\"", nickname, affiliation.Name()))
 	})
 }
 

@@ -91,6 +91,10 @@ func (*RealGtk) EventBoxNew() (gtki.EventBox, error) {
 	return WrapEventBox(gtk.EventBoxNew())
 }
 
+func (*RealGtk) ButtonNewWithLabel(label string) (gtki.Button, error) {
+	return WrapButton(gtk.ButtonNewWithLabel(label))
+}
+
 func (*RealGtk) ButtonBoxNew(o gtki.Orientation) (gtki.ButtonBox, error) {
 	return WrapButtonBox(gtk.ButtonBoxNew(gtk.Orientation(o)))
 }

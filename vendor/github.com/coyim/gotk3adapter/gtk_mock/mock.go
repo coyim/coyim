@@ -43,6 +43,10 @@ func (*Mock) CellRendererTextNew() (gtki.CellRendererText, error) {
 	return nil, nil
 }
 
+func (*Mock) ButtonNewWithLabel(string) (gtki.Button, error) {
+	return nil, nil
+}
+
 func (*Mock) CheckButtonNew() (gtki.CheckButton, error) {
 	return nil, nil
 }

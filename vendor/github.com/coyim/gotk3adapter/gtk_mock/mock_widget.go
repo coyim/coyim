@@ -16,6 +16,9 @@ func (*MockWidget) Map() {
 func (*MockWidget) SetHExpand(v1 bool) {
 }
 
+func (*MockWidget) SetVExpand(v1 bool) {
+}
+
 func (*MockWidget) SetSensitive(v1 bool) {
 }
 
@@ -90,6 +93,9 @@ func (*MockWidget) GetStyleContext() (gtki.StyleContext, error) {
 }
 
 func (*MockWidget) SetHAlign(v2 gtki.Align) {
+}
+
+func (*MockWidget) SetVAlign(v2 gtki.Align) {
 }
 
 func (*MockWidget) Destroy() {

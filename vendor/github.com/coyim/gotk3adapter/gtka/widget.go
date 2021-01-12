@@ -47,6 +47,10 @@ func (v *widget) SetHExpand(v1 bool) {
 	v.internal.SetHExpand(v1)
 }
 
+func (v *widget) SetVExpand(v1 bool) {
+	v.internal.SetVExpand(v1)
+}
+
 func (v *widget) SetSensitive(v1 bool) {
 	v.internal.SetSensitive(v1)
 }
@@ -134,6 +138,10 @@ func (v *widget) GetStyleContext() (gtki.StyleContext, error) {
 
 func (v *widget) SetHAlign(v2 gtki.Align) {
 	v.internal.SetHAlign(gtk.Align(v2))
+}
+
+func (v *widget) SetVAlign(v2 gtki.Align) {
+	v.internal.SetVAlign(gtk.Align(v2))
 }
 
 func (v *widget) Destroy() {

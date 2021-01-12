@@ -21,6 +21,8 @@ type Widget interface {
 	Map()
 	SetHAlign(Align)
 	SetHExpand(bool)
+	SetVAlign(Align)
+	SetVExpand(bool)
 	SetMarginBottom(int)
 	SetMarginTop(int)
 	SetName(string)

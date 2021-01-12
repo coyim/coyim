@@ -71,3 +71,17 @@ func (c *mucRoomConfigListController) initListComponent(d *mucRoomConfigListCont
 func (c *mucRoomConfigListController) listItems() [][]string {
 	return c.listComponent.items
 }
+
+func (c *mucRoomConfigListController) updateCellForString(column int, path string, newValue string) error {
+	iter, err := c.listComponent.iterForString(path)
+	if err != nil {
+		return err
+	}
+
+	err = c.listComponent.updateValueBasedOnIter(iter, column, newValue)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

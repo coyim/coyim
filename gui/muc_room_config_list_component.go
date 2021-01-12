@@ -105,6 +105,14 @@ func (cl *mucRoomConfigListComponent) addListItem(cells ...string) {
 	cl.items = append(cl.items, cells)
 }
 
+func (cl *mucRoomConfigListComponent) iterForString(path string) (gtki.TreeIter, error) {
+	return cl.listModel.GetIterFromString(path)
+}
+
+func (cl *mucRoomConfigListComponent) updateValueBasedOnIter(iter gtki.TreeIter, column int, newValue string) error {
+	return cl.listModel.SetValue(iter, column, newValue)
+}
+
 func enableListWidget(w gtki.Widget) {
 	setListWidgetSensitive(w, true)
 }

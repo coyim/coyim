@@ -50,7 +50,7 @@ func (c *mucRoomConfigListController) initListAddComponent(d *mucRoomConfigListC
 			d.addOccupantDialogTitle,
 			d.addOccupantDescription,
 			d.addOccupantForm,
-			c.listComponent.addListItem,
+			c.listComponent.addListItems,
 			d.parentWindow,
 		)
 

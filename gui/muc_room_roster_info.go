@@ -23,22 +23,24 @@ type roomViewRosterInfo struct {
 	statusMessage           gtki.Label `gtk-widget:"status-message"`
 	currentAffiliationLabel gtki.Label `gtk-widget:"current-affiliation"`
 
-	onReset     *callbacksSet
-	onRefresh   *callbacksSet
-	onHidePanel func()
+	onReset              *callbacksSet
+	onRefresh            *callbacksSet
+	onAffiliationUpdated *callbacksSet
+	onHidePanel          func()
 
 	log coylog.Logger
 }
 
 func (r *roomViewRoster) newRoomViewRosterInfo(onHidePanel func()) *roomViewRosterInfo {
 	ri := &roomViewRosterInfo{
-		u:           r.u,
-		account:     r.accout,
-		roomID:      r.roomID,
-		onReset:     newCallbacksSet(),
-		onRefresh:   newCallbacksSet(),
-		onHidePanel: onHidePanel,
-		log:         r.log,
+		u:                    r.u,
+		account:              r.accout,
+		roomID:               r.roomID,
+		onReset:              newCallbacksSet(),
+		onRefresh:            newCallbacksSet(),
+		onAffiliationUpdated: newCallbacksSet(),
+		onHidePanel:          onHidePanel,
+		log:                  r.log,
 	}
 
 	ri.initBuilder()
@@ -83,6 +85,7 @@ func (r *roomViewRosterInfo) occupantAffiliationChanged() {
 		"affiliation": r.occupant.Affiliation.Name(),
 	}).Info("The occupant affiliation has been updated")
 
+	r.onAffiliationUpdate()
 	doInUIThread(r.refresh)
 }
 
@@ -98,6 +101,12 @@ func (r *roomViewRosterInfo) refresh() {
 	r.reset()
 	if r.account != nil {
 		r.onRefresh.invokeAll()
+	}
+}
+
+func (r *roomViewRosterInfo) onAffiliationUpdate() {
+	if r.account != nil {
+		r.onAffiliationUpdated.invokeAll()
 	}
 }
 

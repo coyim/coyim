@@ -50,7 +50,7 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	}
 
 	r.initBuilder()
-	r.initRosterInfo()
+	r.initRosterInfo(v)
 	r.initDefaults()
 	r.initSubscribers(v)
 
@@ -66,8 +66,11 @@ func (r *roomViewRoster) initBuilder() {
 	panicOnDevError(builder.bindObjects(r))
 }
 
-func (r *roomViewRoster) initRosterInfo() {
+func (r *roomViewRoster) initRosterInfo(v *roomView) {
 	r.rosterInfo = r.newRoomViewRosterInfo(r.hideRosterInfoPanel)
+	r.rosterInfo.onAffiliationUpdated.add(func() {
+		v.publishOccupantAffiliationUpdatedEvent(r.rosterInfo.occupant)
+	})
 }
 
 func (r *roomViewRoster) initDefaults() {

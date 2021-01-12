@@ -8,20 +8,10 @@ import (
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gtki"
-	log "github.com/sirupsen/logrus"
 )
 
 func (r *roomViewRosterInfo) onChangeAffiliation() {
-	l := r.log.WithFields(log.Fields{
-		"occupant": r.occupant.RealJid,
-		"where":    "occupantAffiliationUpdate",
-	})
-
-	av := r.newOccupantAffiliationUpdateView(r.account, r.roomID, r.occupant, func(a data.Affiliation) {
-		l.WithField("affiliation", a.Name()).Info("The occupant affiliation has been updated")
-		doInUIThread(r.refresh)
-	})
-
+	av := r.newOccupantAffiliationUpdateView(r.account, r.roomID, r.occupant, r.occupantAffiliationChanged)
 	av.show()
 }
 
@@ -30,7 +20,7 @@ type occupantAffiliationUpdateView struct {
 	roomID               jid.Bare
 	occupant             *muc.Occupant
 	cancel               chan bool
-	onAffiliationUpdated func(data.Affiliation)
+	onAffiliationUpdated func()
 
 	dialog            gtki.Dialog      `gtk-widget:"affiliation-dialog"`
 	affiliationLabel  gtki.Label       `gtk-widget:"affiliation-type-label"`
@@ -46,7 +36,7 @@ type occupantAffiliationUpdateView struct {
 	spinner       *spinner
 }
 
-func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant, onAffiliationUpdated func(data.Affiliation)) *occupantAffiliationUpdateView {
+func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant, onAffiliationUpdated func()) *occupantAffiliationUpdateView {
 	av := &occupantAffiliationUpdateView{
 		account:              a,
 		roomID:               roomID,
@@ -181,7 +171,7 @@ func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(previousAffil
 
 // onAffiliationUpdatedFinished MUST NOT be called from the UI thread
 func (av *occupantAffiliationUpdateView) onAffiliationUpdateFinished() {
-	av.onAffiliationUpdated(av.occupant.Affiliation)
+	av.onAffiliationUpdated()
 	doInUIThread(av.close)
 }
 

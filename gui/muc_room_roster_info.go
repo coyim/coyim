@@ -5,6 +5,7 @@ import (
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
+	log "github.com/sirupsen/logrus"
 )
 
 type roomViewRosterInfo struct {
@@ -73,6 +74,16 @@ func (r *roomViewRosterInfo) initDefaults() {
 		r.removeOccupantInfo,
 		r.removeOccupantAffiliationInfo,
 	)
+}
+
+func (r *roomViewRosterInfo) occupantAffiliationChanged() {
+	r.log.WithFields(log.Fields{
+		"where":       "occupantAffiliationUpdate",
+		"occupant":    r.occupant.RealJid,
+		"affiliation": r.occupant.Affiliation.Name(),
+	}).Info("The occupant affiliation has been updated")
+
+	doInUIThread(r.refresh)
 }
 
 // showOccupantInfo MUST be called from the UI thread

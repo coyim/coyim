@@ -109,7 +109,9 @@
                           <object class="GtkTreeViewColumn" id="owner-jid-column">
                             <property name="title" translatable="yes">JID</property>
                             <child>
-                              <object class="GtkCellRendererText" id="owner-jid-text-renderer"/>
+                              <object class="GtkCellRendererText" id="owner-jid-text-renderer">
+                                <signal name="edited" handler="on_owner_jid_edited" swapped="no"/>
+                              </object>
                               <attributes>
                                 <attribute name="text">0</attribute>
                               </attributes>
@@ -229,7 +231,9 @@
                           <object class="GtkTreeViewColumn" id="admin-jid-column">
                             <property name="title" translatable="yes">JID</property>
                             <child>
-                              <object class="GtkCellRendererText" id="admin-jid-text-renderer"/>
+                              <object class="GtkCellRendererText" id="admin-jid-text-renderer">
+                                <signal name="edited" handler="on_admin_jid_edited" swapped="no"/>
+                              </object>
                               <attributes>
                                 <attribute name="text">0</attribute>
                               </attributes>

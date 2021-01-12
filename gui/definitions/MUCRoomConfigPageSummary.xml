@@ -28,7 +28,7 @@
                             <property name="orientation">vertical</property>
                             <property name="spacing">12</property>
                             <child>
-                              <object class="GtkLinkButton">
+                              <object class="GtkLinkButton" id="room-config-summary-basic-information">
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">Basic information</property>
                                 <property name="halign">start</property>
@@ -222,7 +222,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLinkButton">
+                              <object class="GtkLinkButton" id="room-config-summary-access">
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">Access</property>
                                 <property name="halign">start</property>
@@ -367,7 +367,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLinkButton">
+                              <object class="GtkLinkButton" id="room-config-summary-permissions">
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">Permissions</property>
                                 <property name="halign">start</property>
@@ -513,7 +513,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLinkButton">
+                              <object class="GtkLinkButton" id="room-config-summary-occupants">
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">Occupants</property>
                                 <property name="halign">start</property>
@@ -639,7 +639,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLinkButton">
+                              <object class="GtkLinkButton" id="room-config-summary-others">
                                 <property name="visible">True</property>
                                 <property name="label" translatable="yes">Others</property>
                                 <property name="halign">start</property>

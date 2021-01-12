@@ -1,6 +1,7 @@
 <interface>
   <object class="GtkDialog" id="room-config-list-add-dialog">
     <property name="width_request">550</property>
+    <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
@@ -18,7 +19,7 @@
                 <child>
                   <object class="GtkButton" id="room-config-list-add-cancel">
                     <property name="label" translatable="yes">Cancel</property>
-                    <property name="visible">True</property>                    
+                    <property name="visible">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
                     <signal name="clicked" handler="on_cancel" swapped="no"/>
@@ -298,19 +299,66 @@
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="room-config-list-add-content">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
+                <property name="spacing">12</property>
+                <child>
+                  <object class="GtkButtonBox">
+                    <property name="visible">True</property>
+                    <property name="spacing">12</property>
+                    <property name="layout_style">end</property>
+                    <child>
+                      <object class="GtkButton" id="room-config-list-remove-all-button">
+                        <property name="label" translatable="yes">Remove all</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="always_show_image">True</property>
+                        <signal name="clicked" handler="on_remove_all" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkViewport">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkBox" id="room-config-list-add-body">
+                        <property name="visible">True</property>
+                        <property name="border_width">12</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">2</property>
               </packing>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>

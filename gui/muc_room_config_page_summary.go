@@ -11,6 +11,11 @@ type roomConfigSummaryPage struct {
 	*roomConfigPageBase
 	autoJoin bool
 
+	basicInformation    gtki.LinkButton  `gtk-widget:"room-config-summary-basic-information"`
+	access              gtki.LinkButton  `gtk-widget:"room-config-summary-access"`
+	permissions         gtki.LinkButton  `gtk-widget:"room-config-summary-permissions"`
+	occupants           gtki.LinkButton  `gtk-widget:"room-config-summary-occupants"`
+	others              gtki.LinkButton  `gtk-widget:"room-config-summary-others"`
 	title               gtki.Label       `gtk-widget:"room-config-summary-title"`
 	description         gtki.Label       `gtk-widget:"room-config-summary-description"`
 	language            gtki.Label       `gtk-widget:"room-config-summary-language"`
@@ -57,11 +62,13 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	})
 
 	p.onRefresh.add(p.onSummaryPageRefresh)
-
-	removePaddingInLinkButtons()
-
 	mucStyles.setRoomConfigSummaryRoomTitleLabelStyle(p.title)
 	mucStyles.setRoomConfigSummaryRoomDescriptionLabelStyle(p.description)
+	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.basicInformation)
+	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.access)
+	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.permissions)
+	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.occupants)
+	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.others)
 
 	p.ownersTreeModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)
 	p.adminsTreeModel, _ = g.gtk.ListStoreNew(glibi.TYPE_STRING)

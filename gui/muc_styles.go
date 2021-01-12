@@ -144,6 +144,17 @@ func (s *mucStylesProvider) setRoomConfigSummarySectionLabelStyle(l gtki.Label) 
 	})
 }
 
+func (s *mucStylesProvider) setRoomConfigSummarySectionLinkButtonStyle(b gtki.LinkButton) {
+	s.setWidgetStyle(b, "button", style{
+		"padding": "0px",
+	})
+
+	s.setWidgetStyle(b.GetChild(), "button label", style{
+		"font-weight": "bold",
+		"font-size":   "18px",
+	})
+}
+
 func (s *mucStylesProvider) setRoomConfigSummaryRoomTitleLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-size": "16px",
@@ -198,12 +209,4 @@ func (s *mucStylesProvider) hexToRGBA(hex string, a float64) string {
 
 func (s *mucStylesProvider) boxShadow(shadowStyle, color string) string {
 	return fmt.Sprintf("%s %s", shadowStyle, color)
-}
-
-func removePaddingInLinkButtons() {
-	prov, _ := g.gtk.CssProviderNew()
-	prov.LoadFromData("button.link { margin: 0; padding: 0;}")
-
-	screen, _ := g.gdk.ScreenGetDefault()
-	g.gtk.AddProviderForScreen(screen, prov, uint(gtki.STYLE_PROVIDER_PRIORITY_USER))
 }

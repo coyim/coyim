@@ -87,6 +87,14 @@ func (cl *mucRoomConfigListComponent) getSelectedRow() (gtki.TreeIter, error) {
 	return iter, nil
 }
 
+func (cl *mucRoomConfigListComponent) addListItems(items [][]string) {
+	for _, it := range items {
+		if len(items) > 0 {
+			cl.addListItem(it...)
+		}
+	}
+}
+
 func (cl *mucRoomConfigListComponent) addListItem(cells ...string) {
 	li := cl.listModel.Append(nil)
 

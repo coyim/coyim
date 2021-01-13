@@ -79,25 +79,15 @@ func (av *occupantAffiliationUpdateView) initNotificationsAndSpinner(u *gtkUI) {
 func (av *occupantAffiliationUpdateView) initDefaults() {
 	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
 
-	av.deactivateRadioButton(av.adminRadio)
-	av.deactivateRadioButton(av.noneRadio)
+	av.adminRadio.SetActive(false)
+	av.noneRadio.SetActive(false)
 
 	switch av.occupant.Affiliation.(type) {
 	case *data.AdminAffiliation:
-		av.activateRadioButton(av.adminRadio)
+		av.adminRadio.SetActive(true)
 	case *data.NoneAffiliation:
-		av.activateRadioButton(av.noneRadio)
+		av.noneRadio.SetActive(true)
 	}
-}
-
-// activateRadioButton MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) activateRadioButton(r gtki.RadioButton) {
-	r.SetActive(true)
-}
-
-// deactivateRadioButton MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) deactivateRadioButton(r gtki.RadioButton) {
-	r.SetActive(false)
 }
 
 // disableAffiliationRadios MUST be called from the UI thread

@@ -147,7 +147,7 @@
                         <child>
                           <object class="GtkLabel" id="affiliation-admin-help">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">As an administrator, you are a room member and, you can do actions like ban and manage the member list of the room.</property>
+                            <property name="label" translatable="yes">As an administrator, you are a room member and can do actions like ban and manage the member list of the room.</property>
                             <property name="wrap">True</property>
                             <property name="width_chars">0</property>
                             <property name="max_width_chars">40</property>

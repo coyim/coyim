@@ -145,14 +145,3 @@ type CaptchaFormField struct {
 	MediaForm *Media
 	TextForm  *TextFormField
 }
-
-// Item contains the definition for a item tag
-type Item struct {
-	XMLName     xml.Name `xml:"item"`
-	Name        string   `xml:"name,attr,omitempty"`
-	Affiliation string   `xml:"affiliation,attr,omitempty"`
-	Jid         string   `xml:"jid,attr,omitempty"`
-	Role        string   `xml:"role,attr,omitempty"`
-	Nick        string   `xml:"nick,attr,omitempty"`
-	Reason      string   `xml:"reason,omitempty"`
-}

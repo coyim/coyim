@@ -32,7 +32,7 @@ func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupant *muc.Oc
 
 	go func() {
 		reply, _, err := m.conn().SendIQ(roomID.String(), "set", &xmppData.MUCAdmin{
-			Item: &xmppData.Item{
+			Item: &xmppData.MUCItem{
 				Affiliation: occupant.Affiliation.Name(),
 				Jid:         occupant.RealJid.String(),
 				Reason:      reason,

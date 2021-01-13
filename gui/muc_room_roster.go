@@ -69,7 +69,8 @@ func (r *roomViewRoster) initBuilder() {
 func (r *roomViewRoster) initRosterInfo(v *roomView) {
 	r.rosterInfo = r.newRoomViewRosterInfo(r.hideRosterInfoPanel)
 	r.rosterInfo.onAffiliationUpdated.add(func() {
-		v.publishOccupantAffiliationUpdatedEvent(r.rosterInfo.occupant)
+		// TODO: Actor and Reason parameters should be passed from affiliation update dialog
+		v.publishOccupantAffiliationUpdatedEvent(r.rosterInfo.occupant.Nickname, r.rosterInfo.occupant.Affiliation, "", "")
 	})
 }
 

@@ -179,6 +179,8 @@ func (m *mucManager) occupantAffiliationUpdated(roomID jid.Bare, oa *muc.Occupan
 	ev := events.MUCOccupantAffiliationUpdated{}
 	ev.Nickname = oa.Nickname
 	ev.Affiliation = oa.Affiliation
+	ev.Actor = oa.Actor
+	ev.Reason = oa.Reason
 
 	m.publishRoomEvent(roomID, ev)
 }

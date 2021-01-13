@@ -177,6 +177,8 @@ type MUCRoomConfigChanged struct {
 type MUCOccupantAffiliationUpdated struct {
 	Nickname    string
 	Affiliation data.Affiliation
+	Actor       string
+	Reason      string
 }
 
 func (MUCError) markAsMUCEventTypeInterface()                      {}

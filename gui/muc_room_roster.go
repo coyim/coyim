@@ -26,9 +26,9 @@ const (
 type roomViewRoster struct {
 	u *gtkUI
 
-	roster *muc.RoomRoster
-	accout *account
-	roomID jid.Bare
+	roster  *muc.RoomRoster
+	account *account
+	roomID  jid.Bare
 
 	view        gtki.Box      `gtk-widget:"roster-view"`
 	rosterPanel gtki.Box      `gtk-widget:"roster-main-panel"`
@@ -42,11 +42,11 @@ type roomViewRoster struct {
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	r := &roomViewRoster{
-		u:      v.u,
-		roster: v.room.Roster(),
-		accout: v.account,
-		roomID: v.roomID(),
-		log:    v.log,
+		u:       v.u,
+		roster:  v.room.Roster(),
+		account: v.account,
+		roomID:  v.roomID(),
+		log:     v.log,
 	}
 
 	r.initBuilder()
@@ -67,11 +67,9 @@ func (r *roomViewRoster) initBuilder() {
 }
 
 func (r *roomViewRoster) initRosterInfo(v *roomView) {
-	r.rosterInfo = r.newRoomViewRosterInfo(r.hideRosterInfoPanel)
-	r.rosterInfo.onAffiliationUpdated.add(func() {
-		// TODO: Actor and Reason parameters should be passed from affiliation update dialog
-		v.publishOccupantAffiliationUpdatedEvent(r.rosterInfo.occupant.Nickname, r.rosterInfo.occupant.Affiliation, "", "")
-	})
+	r.rosterInfo = r.newRoomViewRosterInfo(func(o *muc.Occupant, reason string) {
+		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, o.Affiliation, v.room.SelfOccupantNickname(), reason)
+	}, r.hideRosterInfoPanel)
 }
 
 func (r *roomViewRoster) initDefaults() {

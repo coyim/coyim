@@ -25,20 +25,20 @@ type roomViewRosterInfo struct {
 
 	onReset              *callbacksSet
 	onRefresh            *callbacksSet
-	onAffiliationUpdated *callbacksSet
+	onAffiliationUpdated func(occupant *muc.Occupant, reason string)
 	onHidePanel          func()
 
 	log coylog.Logger
 }
 
-func (r *roomViewRoster) newRoomViewRosterInfo(onHidePanel func()) *roomViewRosterInfo {
+func (r *roomViewRoster) newRoomViewRosterInfo(onAffiliationUpdated func(occupant *muc.Occupant, reason string), onHidePanel func()) *roomViewRosterInfo {
 	ri := &roomViewRosterInfo{
 		u:                    r.u,
-		account:              r.accout,
+		account:              r.account,
 		roomID:               r.roomID,
 		onReset:              newCallbacksSet(),
 		onRefresh:            newCallbacksSet(),
-		onAffiliationUpdated: newCallbacksSet(),
+		onAffiliationUpdated: onAffiliationUpdated,
 		onHidePanel:          onHidePanel,
 		log:                  r.log,
 	}
@@ -78,14 +78,14 @@ func (r *roomViewRosterInfo) initDefaults() {
 	)
 }
 
-func (r *roomViewRosterInfo) occupantAffiliationChanged() {
+func (r *roomViewRosterInfo) occupantAffiliationChanged(occupant *muc.Occupant, reason string) {
 	r.log.WithFields(log.Fields{
 		"where":       "occupantAffiliationUpdate",
 		"occupant":    r.occupant.RealJid,
 		"affiliation": r.occupant.Affiliation.Name(),
 	}).Info("The occupant affiliation has been updated")
 
-	r.onAffiliationUpdate()
+	r.onAffiliationUpdate(occupant, reason)
 	doInUIThread(r.refresh)
 }
 
@@ -104,9 +104,9 @@ func (r *roomViewRosterInfo) refresh() {
 	}
 }
 
-func (r *roomViewRosterInfo) onAffiliationUpdate() {
-	if r.account != nil {
-		r.onAffiliationUpdated.invokeAll()
+func (r *roomViewRosterInfo) onAffiliationUpdate(o *muc.Occupant, reason string) {
+	if r.onAffiliationUpdated != nil {
+		r.onAffiliationUpdated(o, reason)
 	}
 }
 

@@ -20,7 +20,7 @@ type occupantAffiliationUpdateView struct {
 	roomID               jid.Bare
 	occupant             *muc.Occupant
 	cancel               chan bool
-	onAffiliationUpdated func()
+	onAffiliationUpdated func(occupant *muc.Occupant, reason string)
 
 	dialog            gtki.Dialog      `gtk-widget:"affiliation-dialog"`
 	affiliationLabel  gtki.Label       `gtk-widget:"affiliation-type-label"`
@@ -36,7 +36,7 @@ type occupantAffiliationUpdateView struct {
 	spinner       *spinner
 }
 
-func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant, onAffiliationUpdated func()) *occupantAffiliationUpdateView {
+func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant, onAffiliationUpdated func(occupant *muc.Occupant, reason string)) *occupantAffiliationUpdateView {
 	av := &occupantAffiliationUpdateView{
 		account:              a,
 		roomID:               roomID,
@@ -157,11 +157,13 @@ func (av *occupantAffiliationUpdateView) onApply() {
 // updateOccupantAffiliation MUST NOT be called from the UI thread
 func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(previousAffiliation data.Affiliation) {
 	av.cancel = make(chan bool)
-	sc, ec := av.account.session.UpdateOccupantAffiliation(av.roomID, av.occupant, getTextViewText(av.reasonEntry))
+
+	reason := getTextViewText(av.reasonEntry)
+	sc, ec := av.account.session.UpdateOccupantAffiliation(av.roomID, av.occupant, reason)
 
 	select {
 	case <-sc:
-		av.onAffiliationUpdateFinished()
+		av.onAffiliationUpdateFinished(av.occupant, reason)
 	case err := <-ec:
 		av.onAffiliationUpdateError(previousAffiliation, err)
 	case <-av.cancel:
@@ -170,8 +172,8 @@ func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(previousAffil
 }
 
 // onAffiliationUpdatedFinished MUST NOT be called from the UI thread
-func (av *occupantAffiliationUpdateView) onAffiliationUpdateFinished() {
-	av.onAffiliationUpdated()
+func (av *occupantAffiliationUpdateView) onAffiliationUpdateFinished(occupant *muc.Occupant, reason string) {
+	av.onAffiliationUpdated(occupant, reason)
 	doInUIThread(av.close)
 }
 

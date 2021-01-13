@@ -83,6 +83,7 @@ func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 	from := jid.ParseFull(stanza.From)
 	roomID := from.Bare()
 	occupantPresence := getOccupantPresenceBasedOnStanza(from.Resource(), stanza)
+	occupantAffiliationInfo := getOccupantAffiliationInfoBasedOnStanza(from.Resource(), stanza)
 	status := mucUserStatuses(stanza.MUCUser.Status)
 
 	isOwnPresence := status.contains(MUCStatusSelfPresence)
@@ -94,6 +95,8 @@ func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 	case "unavailable":
 		m.handleUnavailablePresence(roomID, occupantPresence, status, stanza)
 	case "":
+		m.handleOccupantAffiliationUpdate(roomID, occupantAffiliationInfo)
+
 		if isOwnPresence {
 			m.handleSelfOccupantUpdate(roomID, occupantPresence, status)
 		} else {
@@ -103,6 +106,26 @@ func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 		if status.contains(MUCStatusNicknameAssigned) {
 			m.roomRenamed(roomID)
 		}
+	}
+}
+
+// handleOccupantAffiliationUpdate validates if an occupant affiliantion happened and publish an event related with it
+func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, oa *muc.OccupantAffiliationInfo) {
+
+	l := m.log.WithFields(log.Fields{
+		"room":     roomID,
+		"occupant": oa.Nickname,
+		"method":   "handleOccupantUpdate",
+	})
+
+	room, ok := m.roomManager.GetRoom(roomID)
+	if !ok {
+		l.Error("Trying to get a room that is not in the room manager")
+		return
+	}
+
+	if room.Roster().WasOccupantAffiliationUpdated(oa) {
+		m.occupantAffiliationUpdated(roomID, oa)
 	}
 }
 
@@ -238,6 +261,20 @@ func getOccupantPresenceBasedOnStanza(nickname jid.Resource, stanza *xmppData.Cl
 	return op
 }
 
+func getOccupantAffiliationInfoBasedOnStanza(nickname jid.Resource, stanza *xmppData.ClientPresence) *muc.OccupantAffiliationInfo {
+	item := stanza.MUCUser.Item
+	affiliation := getAffiliationBasedOnItem(item)
+	actor := getActorNicknameBasedOnItem(item)
+	reason := getReasonBasedOnItem(item)
+
+	return &muc.OccupantAffiliationInfo{
+		Nickname:    nickname.String(),
+		Affiliation: affiliation,
+		Actor:       actor,
+		Reason:      reason,
+	}
+}
+
 func getAffiliationBasedOnItem(item *xmppData.MUCUserItem) data.Affiliation {
 	affiliation := "none"
 	if item != nil && len(item.Affiliation) > 0 {
@@ -245,6 +282,20 @@ func getAffiliationBasedOnItem(item *xmppData.MUCUserItem) data.Affiliation {
 	}
 
 	return affiliationFromString(affiliation)
+}
+
+func getActorNicknameBasedOnItem(item *xmppData.MUCUserItem) string {
+	if item != nil && item.Actor != nil {
+		return item.Actor.Nickname
+	}
+	return ""
+}
+
+func getReasonBasedOnItem(item *xmppData.MUCUserItem) string {
+	if item != nil {
+		return item.Reason
+	}
+	return ""
 }
 
 func affiliationFromString(a string) data.Affiliation {

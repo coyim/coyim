@@ -22,6 +22,15 @@ type OccupantPresenceInfo struct {
 	StatusMessage string
 }
 
+// OccupantAffiliationInfo contains information for the Presence Info received
+// when the occupant affialiation was updated
+type OccupantAffiliationInfo struct {
+	Nickname    string
+	Affiliation data.Affiliation
+	Actor       string
+	Reason      string
+}
+
 // RoomRoster contains information about all the occupants in a room
 type RoomRoster struct {
 	lock sync.RWMutex

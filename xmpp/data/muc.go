@@ -26,10 +26,17 @@ type MUCUser struct {
 
 // MUCUserItem contains information related to role and affiliation
 type MUCUserItem struct {
-	XMLName     xml.Name `xml:"http://jabber.org/protocol/muc#user item"`
-	Role        string   `xml:"role,attr,omitempty"` //moderator, participant, visitor
-	Jid         string   `xml:"jid,attr,omitempty"`
-	Affiliation string   `xml:"affiliation,attr,omitempty"` //owner, admin, member, none
+	XMLName     xml.Name      `xml:"http://jabber.org/protocol/muc#user item"`
+	Role        string        `xml:"role,attr,omitempty"` //moderator, participant, visitor
+	Jid         string        `xml:"jid,attr,omitempty"`
+	Affiliation string        `xml:"affiliation,attr,omitempty"` //owner, admin, member, none
+	Actor       *MUCItemActor `xml:"actor,omitempty"`
+	Reason      string        `xml:"reason,omitempty"`
+}
+
+// MUCItemActor contains information related to actor tag
+type MUCItemActor struct {
+	Nickname string `xml:"nick,attr,omitempty"`
 }
 
 // MUCUserStatus contains information related to status of the occupant

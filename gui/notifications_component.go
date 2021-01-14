@@ -57,11 +57,12 @@ func (n *notifications) clearAll() {
 
 // clearMessagesByType MUST be called from the ui thread
 func (n *notifications) clearMessagesByType(mt gtki.MessageType) {
-	messages := n.messages
-	for i, m := range messages {
+	messages := []notification{}
+	for _, m := range n.messages {
 		if m.messageType() == mt {
 			n.remove(m.widget())
-			messages = append(messages[:i], messages[i+1:]...)
+		} else {
+			messages = append(messages, m)
 		}
 	}
 	n.messages = messages

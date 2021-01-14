@@ -14,17 +14,18 @@ import (
 
 // OccupantPresenceInfo containts information for an occupant presence
 type OccupantPresenceInfo struct {
-	Nickname      string
-	RealJid       jid.Full
-	Affiliation   data.Affiliation
-	Role          data.Role
-	Status        string
-	StatusMessage string
+	Nickname        string
+	RealJid         jid.Full
+	AffiliationInfo *OccupantAffiliationInfo
+	Role            data.Role
+	Status          string
+	StatusMessage   string
 }
 
 // OccupantAffiliationInfo contains information for the Presence Info received
 // when the occupant affialiation was updated
 type OccupantAffiliationInfo struct {
+	// TODO: The Nickname field will be removed
 	Nickname    string
 	Affiliation data.Affiliation
 	Actor       string
@@ -197,7 +198,7 @@ func (r *RoomRoster) UpdatePresence(op *OccupantPresenceInfo, tp string) (joined
 
 func (r *RoomRoster) newOccupantFromPresenceInfo(op *OccupantPresenceInfo) *Occupant {
 	return &Occupant{
-		Affiliation: op.Affiliation,
+		Affiliation: op.AffiliationInfo.Affiliation,
 		RealJid:     op.RealJid,
 		Nickname:    op.Nickname,
 		Role:        op.Role,
@@ -220,7 +221,7 @@ func (r *RoomRoster) UpdateOrAddOccupant(op *OccupantPresenceInfo) bool {
 		return false
 	}
 
-	o.Update(op.Nickname, op.Affiliation, op.Role, op.Status, op.StatusMessage, op.RealJid)
+	o.Update(op.Nickname, op.AffiliationInfo.Affiliation, op.Role, op.Status, op.StatusMessage, op.RealJid)
 	return true
 }
 

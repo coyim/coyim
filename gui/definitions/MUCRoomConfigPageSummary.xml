@@ -19,8 +19,8 @@
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="border_width">12</property>
                         <property name="margin_right">12</property>
+                        <property name="border_width">12</property>
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkBox">
@@ -29,10 +29,13 @@
                             <property name="spacing">12</property>
                             <child>
                               <object class="GtkLinkButton" id="room-config-summary-basic-information">
-                                <property name="visible">True</property>
                                 <property name="label" translatable="yes">Basic information</property>
+                                <property name="visible">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="receives_default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="relief">none</property>
                                 <property name="uri">Go to basic information page</property>
                                 <signal name="activate-link" handler="go_basic_information_page" swapped="no"/>
                               </object>
@@ -152,8 +155,10 @@
                                     <child>
                                       <object class="GtkCheckButton" id="room-config-summary-public">
                                         <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="draw_indicator">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -188,8 +193,10 @@
                                     <child>
                                       <object class="GtkCheckButton" id="room-config-summary-persistent">
                                         <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="draw_indicator">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -223,10 +230,13 @@
                             </child>
                             <child>
                               <object class="GtkLinkButton" id="room-config-summary-access">
-                                <property name="visible">True</property>
                                 <property name="label" translatable="yes">Access</property>
+                                <property name="visible">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="receives_default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="relief">none</property>
                                 <property name="uri">Go to access page</property>
                                 <signal name="activate-link" handler="go_access_page" swapped="no"/>
                               </object>
@@ -261,8 +271,10 @@
                                     <child>
                                       <object class="GtkCheckButton" id="room-config-summary-password">
                                         <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="draw_indicator">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -297,8 +309,10 @@
                                     <child>
                                       <object class="GtkCheckButton" id="room-config-summary-invite">
                                         <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="draw_indicator">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -333,8 +347,10 @@
                                     <child>
                                       <object class="GtkCheckButton" id="room-config-summary-onlymembers">
                                         <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="draw_indicator">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -368,10 +384,13 @@
                             </child>
                             <child>
                               <object class="GtkLinkButton" id="room-config-summary-permissions">
-                                <property name="visible">True</property>
                                 <property name="label" translatable="yes">Permissions</property>
+                                <property name="visible">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="receives_default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="relief">none</property>
                                 <property name="uri">Go to permissions page</property>
                                 <signal name="activate-link" handler="go_permissions_page" swapped="no"/>
                               </object>
@@ -406,8 +425,10 @@
                                     <child>
                                       <object class="GtkCheckButton" id="room-config-summary-changesubject">
                                         <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="draw_indicator">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -442,8 +463,10 @@
                                     <child>
                                       <object class="GtkCheckButton" id="room-config-summary-moderated">
                                         <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="draw_indicator">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -514,10 +537,13 @@
                             </child>
                             <child>
                               <object class="GtkLinkButton" id="room-config-summary-occupants">
-                                <property name="visible">True</property>
                                 <property name="label" translatable="yes">Occupants</property>
+                                <property name="visible">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="receives_default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="relief">none</property>
                                 <property name="uri">Go to occupants page</property>
                                 <signal name="activate-link" handler="go_occupants_page" swapped="no"/>
                               </object>
@@ -556,11 +582,14 @@
                                         <property name="headers_clickable">False</property>
                                         <property name="enable_search">False</property>
                                         <property name="show_expanders">False</property>
+                                        <child internal-child="selection">
+                                          <object class="GtkTreeSelection"/>
+                                        </child>
                                         <child>
                                           <object class="GtkTreeViewColumn" id="owner-jid">
                                             <property name="title" translatable="yes">JID</property>
                                             <child>
-                                              <object class="GtkCellRendererText" id="occupant-jid-renderer" />
+                                              <object class="GtkCellRendererText" id="occupant-jid-renderer"/>
                                               <attributes>
                                                 <attribute name="text">0</attribute>
                                               </attributes>
@@ -597,15 +626,17 @@
                                     <child>
                                       <object class="GtkTreeView" id="room-config-summary-admins-tree">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
                                         <property name="headers_clickable">False</property>
                                         <property name="enable_search">False</property>
                                         <property name="show_expanders">False</property>
+                                        <child internal-child="selection">
+                                          <object class="GtkTreeSelection"/>
+                                        </child>
                                         <child>
                                           <object class="GtkTreeViewColumn" id="admin-jid">
                                             <property name="title" translatable="yes">JID</property>
                                             <child>
-                                              <object class="GtkCellRendererText" id="occupant-jid-renderer1" />
+                                              <object class="GtkCellRendererText" id="occupant-jid-renderer1"/>
                                               <attributes>
                                                 <attribute name="text">0</attribute>
                                               </attributes>
@@ -640,10 +671,13 @@
                             </child>
                             <child>
                               <object class="GtkLinkButton" id="room-config-summary-others">
-                                <property name="visible">True</property>
                                 <property name="label" translatable="yes">Others</property>
+                                <property name="visible">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="receives_default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="relief">none</property>
                                 <property name="uri">Go to other configurations page</property>
                                 <signal name="activate-link" handler="go_other_page" swapped="no"/>
                               </object>
@@ -752,8 +786,10 @@
                                     <child>
                                       <object class="GtkCheckButton" id="room-config-summary-archive">
                                         <property name="visible">True</property>
+                                        <property name="receives_default">False</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="draw_indicator">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -806,7 +842,7 @@
                     <property name="receives_default">False</property>
                     <property name="halign">end</property>
                     <property name="draw_indicator">True</property>
-                    <signal name="toggled" handler="on_autojoin_toggled" swapped="no" />
+                    <signal name="toggled" handler="on_autojoin_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -815,10 +851,23 @@
                   </packing>
                 </child>
               </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
+          <packing>
+            <property name="index">-1</property>
+          </packing>
         </child>
       </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
     </child>
   </object>
 </interface>

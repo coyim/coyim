@@ -1,7 +1,9 @@
 <interface>
   <object class="GtkAssistant" id="room-config-assistant">
+    <property name="width_request">800</property>
     <property name="title" translatable="yes">Room configuration</property>
     <property name="modal">True</property>
+    <property name="type_hint">dialog</property>
     <property name="use_header_bar">1</property>
     <signal name="cancel" handler="on_cancel" swapped="no"/>
     <signal name="prepare" handler="on_page_changed" swapped="no"/>
@@ -11,44 +13,53 @@
       <packing>
         <property name="title" translatable="yes">Basic information</property>
         <property name="complete">True</property>
+        <property name="has_padding">False</property>
       </packing>
     </child>
     <child>
       <object class="GtkBox" id="room-config-access-page">
-        
       </object>
       <packing>
         <property name="title" translatable="yes">Access</property>
         <property name="complete">True</property>
+        <property name="has_padding">False</property>
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-permissions-page"></object>
+      <object class="GtkBox" id="room-config-permissions-page">
+      </object>
       <packing>
         <property name="title" translatable="yes">Permissions</property>
         <property name="complete">True</property>
+        <property name="has_padding">False</property>
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-occupants-page"></object>
+      <object class="GtkBox" id="room-config-occupants-page">
+      </object>
       <packing>
         <property name="title" translatable="yes">Occupants</property>
         <property name="complete">True</property>
+        <property name="has_padding">False</property>
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-others-page"></object>
+      <object class="GtkBox" id="room-config-others-page">
+      </object>
       <packing>
         <property name="title" translatable="yes">Other settings</property>
         <property name="complete">True</property>
+        <property name="has_padding">False</property>
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-summary-page"></object>
+      <object class="GtkBox" id="room-config-summary-page">
+      </object>
       <packing>
         <property name="page_type">confirm</property>
         <property name="title" translatable="yes">Summary</property>
         <property name="complete">True</property>
+        <property name="has_padding">False</property>
       </packing>
     </child>
   </object>

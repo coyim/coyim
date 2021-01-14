@@ -145,13 +145,12 @@ func (s *mucStylesProvider) setRoomConfigSummarySectionLabelStyle(l gtki.Label) 
 }
 
 func (s *mucStylesProvider) setRoomConfigSummarySectionLinkButtonStyle(b gtki.LinkButton) {
-	s.setWidgetStyle(b, "button", style{
-		"padding": "0px",
-	})
-
-	s.setWidgetStyle(b.GetChild(), "button label", style{
-		"font-weight": "bold",
-		"font-size":   "18px",
+	s.setWidgetStyles(b, styles{
+		"button.link": {
+			"padding":     "0px",
+			"font-weight": "bold",
+			"font-size":   "18px",
+		},
 	})
 }
 
@@ -167,11 +166,23 @@ func (s *mucStylesProvider) setRoomConfigSummaryRoomDescriptionLabelStyle(l gtki
 	})
 }
 
+func (s *mucStylesProvider) setRoomConfigPageStyle(p gtki.Box) {
+	s.setWidgetStyles(p, styles{
+		".help": style{
+			"font-style": "italic",
+		},
+	})
+}
+
 func (s *mucStylesProvider) setFormSectionLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-size":   "20px",
 		"font-weight": "bold",
 	})
+}
+
+func (s *mucStylesProvider) setWidgetStyles(w gtki.Widget, st styles) {
+	updateWithStyle(w, providerWithStyles(st))
 }
 
 func (s *mucStylesProvider) setWidgetStyle(w gtki.Widget, se string, st style) {

@@ -404,15 +404,29 @@ func getDisplayRoomSubject(subject string) string {
 	return i18n.Localf("The room subject is \"%s\"", subject)
 }
 
-func getDisplayOccupantAffiliationUpdateMessage(nickname string, pa, ca data.Affiliation, actor, reason string) string {
-	msg := i18n.Localf("Now %s is %s", nickname, ca.Name())
-	if actor != "" {
-		msg += i18n.Localf(", it was updated by %s", actor)
-	}
+func getDisplayOccupantAffiliationUpdateMessage(nickname string, pa, ca data.Affiliation, actor, reason string) (msg string) {
+	msg = func() string {
+		if ca.Name() == data.AffiliationNone {
+			if actor != "" {
+				msg += i18n.Localf("%s removed the %s position of %s", actor, pa.Name(), nickname)
+				return msg
+			}
+
+			msg = i18n.Localf("The %s position of %s was removed", pa.Name(), nickname)
+			return msg
+		}
+
+		if actor != "" {
+			msg += i18n.Localf("%s updated the position of %s from %s to %s", actor, nickname, pa.Name(), ca.Name())
+			return msg
+		}
+
+		msg += i18n.Localf("The position of %s was updated from %s to %s", nickname, pa.Name(), ca.Name())
+		return msg
+	}()
 
 	if reason != "" {
-		msg += i18n.Localf(" because: %s", reason)
+		msg += i18n.Localf(" because: \"%s\"", reason)
 	}
-
 	return msg
 }

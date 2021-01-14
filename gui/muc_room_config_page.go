@@ -69,6 +69,8 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 
 	p.content.Add(pc.(gtki.Box))
 
+	mucStyles.setRoomConfigPageStyle(p.content)
+
 	return p
 }
 

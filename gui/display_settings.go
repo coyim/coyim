@@ -127,10 +127,22 @@ func updateWithStyle(l StyleContextable, p gtki.CssProvider) {
 }
 
 type style map[string]interface{}
+type styles map[string]style
+
+func styleSelectorRules(el string, s style) string {
+	return fmt.Sprintf("%s {%s}", el, inlineStyleProperties(s))
+}
 
 func providerWithStyle(el string, s style) gtki.CssProvider {
-	o := fmt.Sprintf("%s {%s}", el, inlineStyleProperties(s))
-	return providerWithCSS(o)
+	return providerWithStyles(styles{el: s})
+}
+
+func providerWithStyles(st styles) gtki.CssProvider {
+	selectors := []string{}
+	for el, s := range st {
+		selectors = append(selectors, styleSelectorRules(el, s))
+	}
+	return providerWithCSS(strings.Join(selectors, ""))
 }
 
 func inlineStyleProperties(s style) string {

@@ -11,6 +11,7 @@ import (
 	"github.com/coyim/coyim/session/access"
 	sdata "github.com/coyim/coyim/session/data"
 	"github.com/coyim/coyim/session/muc"
+	mdata "github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/tls"
 	"github.com/coyim/coyim/xmpp/data"
 	xi "github.com/coyim/coyim/xmpp/interfaces"
@@ -254,7 +255,7 @@ func (*SessionMock) DestroyRoom(jid.Bare, string, jid.Bare, string) (<-chan bool
 }
 
 // UpdateOccupantAffiliation is the implementation for session interface
-func (*SessionMock) UpdateOccupantAffiliation(roomID jid.Bare, occupant *muc.Occupant, reason string) (<-chan bool, <-chan error) {
+func (*SessionMock) UpdateOccupantAffiliation(roomID jid.Bare, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error) {
 	return nil, nil
 }
 

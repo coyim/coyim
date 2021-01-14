@@ -130,32 +130,29 @@ func (av *occupantAffiliationUpdateView) onCancel() {
 
 // onApply MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onApply() {
-	previousAffiliation := av.occupant.Affiliation
+	av.disableFieldsAndShowSpinner()
 
 	switch {
 	case av.adminRadio.GetActive():
-		av.occupant.ChangeAffiliationToAdmin()
+		go av.updateOccupantAffiliation(&data.AdminAffiliation{})
 	case av.noneRadio.GetActive():
-		av.occupant.ChangeAffiliationToNone()
+		go av.updateOccupantAffiliation(&data.NoneAffiliation{})
 	}
-
-	av.disableFieldsAndShowSpinner()
-
-	go av.updateOccupantAffiliation(previousAffiliation)
 }
 
 // updateOccupantAffiliation MUST NOT be called from the UI thread
-func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(previousAffiliation data.Affiliation) {
+func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(affiliation data.Affiliation) {
 	av.cancel = make(chan bool)
 
 	reason := getTextViewText(av.reasonEntry)
-	sc, ec := av.account.session.UpdateOccupantAffiliation(av.roomID, av.occupant, reason)
+	sc, ec := av.account.session.UpdateOccupantAffiliation(av.roomID, av.occupant.RealJid, affiliation, reason)
 
 	select {
 	case <-sc:
+		av.occupant.UpdateAffiliation(affiliation)
 		av.onAffiliationUpdateFinished(av.occupant, reason)
 	case err := <-ec:
-		av.onAffiliationUpdateError(previousAffiliation, err)
+		av.onAffiliationUpdateError(err)
 	case <-av.cancel:
 		// TODO: should we update the affiliation to its previous value?
 	}
@@ -168,8 +165,7 @@ func (av *occupantAffiliationUpdateView) onAffiliationUpdateFinished(occupant *m
 }
 
 // onAffiliationUpdateError MUST NOT be called from the UI thread
-func (av *occupantAffiliationUpdateView) onAffiliationUpdateError(previousAffiliation data.Affiliation, err error) {
-	av.occupant.UpdateAffiliation(previousAffiliation)
+func (av *occupantAffiliationUpdateView) onAffiliationUpdateError(err error) {
 	doInUIThread(func() {
 		av.enableFieldsAndHideSpinner()
 		av.notifications.error(affiliationUpdateErrorMessage(err))

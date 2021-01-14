@@ -3,7 +3,7 @@ package session
 import (
 	"errors"
 
-	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	log "github.com/sirupsen/logrus"
@@ -16,15 +16,15 @@ var (
 	ErrUpdateOccupantAffiliationResponse = errors.New("invalid response for room configuration request")
 )
 
-func (s *session) UpdateOccupantAffiliation(roomID jid.Bare, occupant *muc.Occupant, reason string) (<-chan bool, <-chan error) {
-	return s.muc.updateOccupantAffiliation(roomID, occupant, reason)
+func (s *session) UpdateOccupantAffiliation(roomID jid.Bare, occupantID jid.Full, affiliation data.Affiliation, reason string) (<-chan bool, <-chan error) {
+	return s.muc.updateOccupantAffiliation(roomID, occupantID, affiliation, reason)
 }
 
-func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupant *muc.Occupant, reason string) (<-chan bool, <-chan error) {
+func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupantID jid.Full, affiliation data.Affiliation, reason string) (<-chan bool, <-chan error) {
 	l := m.log.WithFields(log.Fields{
 		"room":        roomID,
-		"occupant":    occupant.RealJid,
-		"affiliation": occupant.Affiliation.Name(),
+		"occupant":    occupantID,
+		"affiliation": affiliation.Name(),
 	})
 
 	rc := make(chan bool)
@@ -33,8 +33,8 @@ func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupant *muc.Oc
 	go func() {
 		reply, _, err := m.conn().SendIQ(roomID.String(), "set", &xmppData.MUCAdmin{
 			Item: &xmppData.MUCItem{
-				Affiliation: occupant.Affiliation.Name(),
-				Jid:         occupant.RealJid.String(),
+				Affiliation: affiliation.Name(),
+				Jid:         occupantID.String(),
 				Reason:      reason,
 			},
 		})

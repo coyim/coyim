@@ -68,7 +68,8 @@ func (r *roomViewRoster) initBuilder() {
 
 func (r *roomViewRoster) initRosterInfo(v *roomView) {
 	r.rosterInfo = r.newRoomViewRosterInfo(func(o *muc.Occupant, reason string) {
-		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, o.Affiliation, v.room.SelfOccupantNickname(), reason)
+		// TODO: We will add previous affiliation obtained from affiliation update dialog
+		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, nil, o.Affiliation, v.room.SelfOccupantNickname(), reason)
 	}, r.hideRosterInfoPanel)
 }
 

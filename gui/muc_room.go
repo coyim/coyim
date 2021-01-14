@@ -383,12 +383,13 @@ func (v *roomView) occupantForbidden() {
 }
 
 // publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, a data.Affiliation, actor, reason string) {
+func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, previousAffiliation, affiliation data.Affiliation, actor, reason string) {
 	v.publishEvent(occupantAffiliationUpdatedEvent{
-		nickname:    nickname,
-		affiliation: a,
-		actor:       actor,
-		reason:      reason,
+		nickname:            nickname,
+		previousAffiliation: previousAffiliation,
+		currentAffiliation:  affiliation,
+		actor:               actor,
+		reason:              reason,
 	})
 }
 

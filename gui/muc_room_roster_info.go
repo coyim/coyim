@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/coyim/coyim/coylog"
 	"github.com/coyim/coyim/session/muc"
+	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
 	log "github.com/sirupsen/logrus"
@@ -25,22 +26,21 @@ type roomViewRosterInfo struct {
 
 	onReset              *callbacksSet
 	onRefresh            *callbacksSet
-	onAffiliationUpdated func(occupant *muc.Occupant, reason string)
+	onAffiliationUpdated func(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string)
 	onHidePanel          func()
 
 	log coylog.Logger
 }
 
-func (r *roomViewRoster) newRoomViewRosterInfo(onAffiliationUpdated func(occupant *muc.Occupant, reason string), onHidePanel func()) *roomViewRosterInfo {
+func (r *roomViewRoster) newRoomViewRosterInfo(onHidePanel func()) *roomViewRosterInfo {
 	ri := &roomViewRosterInfo{
-		u:                    r.u,
-		account:              r.account,
-		roomID:               r.roomID,
-		onReset:              newCallbacksSet(),
-		onRefresh:            newCallbacksSet(),
-		onAffiliationUpdated: onAffiliationUpdated,
-		onHidePanel:          onHidePanel,
-		log:                  r.log,
+		u:           r.u,
+		account:     r.account,
+		roomID:      r.roomID,
+		onReset:     newCallbacksSet(),
+		onRefresh:   newCallbacksSet(),
+		onHidePanel: onHidePanel,
+		log:         r.log,
 	}
 
 	ri.initBuilder()
@@ -78,15 +78,22 @@ func (r *roomViewRosterInfo) initDefaults() {
 	)
 }
 
-func (r *roomViewRosterInfo) occupantAffiliationChanged(occupant *muc.Occupant, reason string) {
+func (r *roomViewRosterInfo) occupantAffiliationChanged(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
 	r.log.WithFields(log.Fields{
 		"where":       "occupantAffiliationUpdate",
 		"occupant":    r.occupant.RealJid,
 		"affiliation": r.occupant.Affiliation.Name(),
 	}).Info("The occupant affiliation has been updated")
 
-	r.onAffiliationUpdate(occupant, reason)
+	if r.onAffiliationUpdated != nil {
+		r.onAffiliationUpdated(occupant, previousAffiliation, reason)
+	}
+
 	doInUIThread(r.refresh)
+}
+
+func (r *roomViewRosterInfo) onOccupantAffiliationUpdated(fn func(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string)) {
+	r.onAffiliationUpdated = fn
 }
 
 // showOccupantInfo MUST be called from the UI thread
@@ -101,12 +108,6 @@ func (r *roomViewRosterInfo) refresh() {
 	r.reset()
 	if r.account != nil {
 		r.onRefresh.invokeAll()
-	}
-}
-
-func (r *roomViewRosterInfo) onAffiliationUpdate(o *muc.Occupant, reason string) {
-	if r.onAffiliationUpdated != nil {
-		r.onAffiliationUpdated(o, reason)
 	}
 }
 

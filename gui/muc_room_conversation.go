@@ -35,7 +35,7 @@ type roomViewConversation struct {
 
 func (v *roomView) newRoomViewConversation() *roomViewConversation {
 	c := &roomViewConversation{
-		roomID:               v.roomID(),
+		roomID:               v.room.ID,
 		account:              v.account,
 		selfOccupantNickname: v.room.SelfOccupantNickname,
 	}
@@ -115,7 +115,7 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case roomDestroyedEvent:
 			c.roomDestroyedEvent(t.reason, t.alternative, t.password)
 		case occupantAffiliationUpdatedEvent:
-			c.occupantAffiliationEvent(t.nickname, t.currentAffiliation)
+			c.occupantAffiliationEvent(t.nickname, t.previousAffiliation, t.currentAffiliation, t.actor, t.reason)
 		}
 	})
 }
@@ -128,9 +128,9 @@ func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid
 	})
 }
 
-func (c *roomViewConversation) occupantAffiliationEvent(nickname string, affiliation data.Affiliation) {
+func (c *roomViewConversation) occupantAffiliationEvent(nickname string, previousAffiliation, currentAffiliation data.Affiliation, actor, reason string) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(i18n.Localf("The postion of %s has been updated to \"%s\"", nickname, affiliation.Name()))
+		c.displayNewInfoMessage(getDisplayOccupantAffiliationUpdateMessage(nickname, previousAffiliation, currentAffiliation, actor, reason))
 	})
 }
 
@@ -402,4 +402,17 @@ func getDisplayRoomSubject(subject string) string {
 	}
 
 	return i18n.Localf("The room subject is \"%s\"", subject)
+}
+
+func getDisplayOccupantAffiliationUpdateMessage(nickname string, pa, ca data.Affiliation, actor, reason string) string {
+	msg := i18n.Localf("Now %s is %s", nickname, ca.Name())
+	if actor != "" {
+		msg += i18n.Localf(", it was updated by %s", actor)
+	}
+
+	if reason != "" {
+		msg += i18n.Localf(" because: %s", reason)
+	}
+
+	return msg
 }

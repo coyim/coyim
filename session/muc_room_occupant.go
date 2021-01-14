@@ -30,6 +30,12 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, op *muc.OccupantPrese
 		return
 	}
 
+	co, exist := room.Roster().GetOccupant(op.Nickname)
+	// TODO: we should have a slice just with the occupant changes
+	if exist && co.Affiliation != op.AffiliationInfo.Affiliation {
+		m.occupantAffiliationUpdated(roomID, op.Nickname, co.Affiliation, op.AffiliationInfo)
+	}
+
 	updated := room.Roster().UpdateOrAddOccupant(op)
 	// Added IsSelfOccupantInTheRoom validation to avoid publishing the events of
 	// other occupants until receive the selfPresence.

@@ -25,8 +25,6 @@ type OccupantPresenceInfo struct {
 // OccupantAffiliationInfo contains information for the Presence Info received
 // when the occupant affialiation was updated
 type OccupantAffiliationInfo struct {
-	// TODO: The Nickname field will be removed
-	Nickname    string
 	Affiliation data.Affiliation
 	Actor       string
 	Reason      string
@@ -223,19 +221,6 @@ func (r *RoomRoster) UpdateOrAddOccupant(op *OccupantPresenceInfo) bool {
 
 	o.Update(op.Nickname, op.AffiliationInfo.Affiliation, op.Role, op.Status, op.StatusMessage, op.RealJid)
 	return true
-}
-
-// WasOccupantAffiliationUpdated validates if the occupant affiliation was updated
-func (r *RoomRoster) WasOccupantAffiliationUpdated(oa *OccupantAffiliationInfo) bool {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	o, ok := r.occupants[oa.Nickname]
-	if !ok {
-		return false
-	}
-
-	return o.Affiliation != oa.Affiliation
 }
 
 // RemoveOccupant delete an occupant if that exists

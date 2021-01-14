@@ -175,10 +175,11 @@ type MUCRoomConfigChanged struct {
 
 // MUCOccupantAffiliationUpdated signifies that an occupant affiliation was updated
 type MUCOccupantAffiliationUpdated struct {
-	Nickname    string
-	Affiliation data.Affiliation
-	Actor       string
-	Reason      string
+	Nickname            string
+	PreviousAffiliation data.Affiliation
+	Affiliation         data.Affiliation
+	Actor               string
+	Reason              string
 }
 
 func (MUCError) markAsMUCEventTypeInterface()                      {}

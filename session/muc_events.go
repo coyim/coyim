@@ -175,9 +175,10 @@ func (m *mucManager) roomDestroyed(roomID jid.Bare, reason string, alternativeRo
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) occupantAffiliationUpdated(roomID jid.Bare, oa *muc.OccupantAffiliationInfo) {
+func (m *mucManager) occupantAffiliationUpdated(roomID jid.Bare, nickname string, previousAffiliation data.Affiliation, oa *muc.OccupantAffiliationInfo) {
 	ev := events.MUCOccupantAffiliationUpdated{}
-	ev.Nickname = oa.Nickname
+	ev.Nickname = nickname
+	ev.PreviousAffiliation = previousAffiliation
 	ev.Affiliation = oa.Affiliation
 	ev.Actor = oa.Actor
 	ev.Reason = oa.Reason

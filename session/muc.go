@@ -232,6 +232,7 @@ func getAffiliationInfoBasedOnItem(item *xmppData.MUCUserItem) *muc.OccupantAffi
 	return &muc.OccupantAffiliationInfo{
 		Affiliation: affiliationFromString(a),
 		Actor:       getActorNicknameBasedOnItem(item),
+		Reason:      item.Reason,
 	}
 }
 

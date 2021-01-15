@@ -25,6 +25,7 @@ type occupantAffiliationUpdateView struct {
 	dialog            gtki.Dialog      `gtk-widget:"affiliation-dialog"`
 	affiliationLabel  gtki.Label       `gtk-widget:"affiliation-type-label"`
 	adminRadio        gtki.RadioButton `gtk-widget:"affiliation-admin"`
+	memberRadio       gtki.RadioButton `gtk-widget:"affiliation-member"`
 	noneRadio         gtki.RadioButton `gtk-widget:"affiliation-none"`
 	reasonLabel       gtki.Label       `gtk-widget:"affiliation-reason-label"`
 	reasonEntry       gtki.TextView    `gtk-widget:"affiliation-reason-entry"`
@@ -85,12 +86,11 @@ func (av *occupantAffiliationUpdateView) initNotificationsAndSpinner(u *gtkUI) {
 func (av *occupantAffiliationUpdateView) initDefaults() {
 	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
 
-	av.adminRadio.SetActive(false)
-	av.noneRadio.SetActive(false)
-
 	switch av.occupant.Affiliation.(type) {
 	case *data.AdminAffiliation:
 		av.adminRadio.SetActive(true)
+	case *data.MemberAffiliation:
+		av.memberRadio.SetActive(true)
 	case *data.NoneAffiliation:
 		av.noneRadio.SetActive(true)
 	}
@@ -99,12 +99,14 @@ func (av *occupantAffiliationUpdateView) initDefaults() {
 // disableAffiliationRadios MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) disableAffiliationRadios() {
 	disableField(av.adminRadio)
+	disableField(av.memberRadio)
 	disableField(av.noneRadio)
 }
 
 // enableAffiliationRadios MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) enableAffiliationRadios() {
 	enableField(av.adminRadio)
+	enableField(av.memberRadio)
 	enableField(av.noneRadio)
 }
 
@@ -141,6 +143,8 @@ func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() da
 	switch {
 	case av.adminRadio.GetActive():
 		return &data.AdminAffiliation{}
+	case av.memberRadio.GetActive():
+		return &data.MemberAffiliation{}
 	default:
 		return &data.NoneAffiliation{}
 	}

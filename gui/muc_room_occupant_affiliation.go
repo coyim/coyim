@@ -12,7 +12,7 @@ import (
 
 func (r *roomViewRosterInfo) onChangeAffiliation() {
 	av := r.newOccupantAffiliationUpdateView(r.account, r.roomID, r.occupant, r.occupantAffiliationChanged)
-	av.show()
+	av.showDialog()
 }
 
 type occupantAffiliationUpdateView struct {
@@ -128,7 +128,7 @@ func (av *occupantAffiliationUpdateView) onCancel() {
 		av.cancel <- true
 	}
 
-	av.close()
+	av.closeDialog()
 }
 
 // onApply MUST be called from the UI thread
@@ -171,7 +171,7 @@ func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(affiliation d
 // onAffiliationUpdatedFinished MUST NOT be called from the UI thread
 func (av *occupantAffiliationUpdateView) onAffiliationUpdateFinished(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
 	av.onAffiliationUpdated(occupant, previousAffiliation, reason)
-	doInUIThread(av.close)
+	doInUIThread(av.closeDialog)
 }
 
 // onAffiliationUpdateError MUST NOT be called from the UI thread
@@ -183,12 +183,12 @@ func (av *occupantAffiliationUpdateView) onAffiliationUpdateError(err error) {
 }
 
 // show MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) show() {
+func (av *occupantAffiliationUpdateView) showDialog() {
 	av.dialog.Show()
 }
 
 // close MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) close() {
+func (av *occupantAffiliationUpdateView) closeDialog() {
 	av.dialog.Destroy()
 }
 

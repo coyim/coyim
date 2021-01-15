@@ -124,12 +124,9 @@ func (av *occupantAffiliationUpdateView) enableFieldsAndHideSpinner() {
 
 // onCancel MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onCancel() {
-	go func() {
-		if av.cancel != nil {
-			av.cancel <- true
-			av.cancel = nil
-		}
-	}()
+	if av.cancel != nil {
+		av.cancel <- true
+	}
 
 	av.close()
 }
@@ -153,6 +150,10 @@ func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() da
 func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(affiliation data.Affiliation) {
 	av.cancel = make(chan bool)
 
+	defer func() {
+		av.cancel = nil
+	}()
+
 	reason := getTextViewText(av.reasonEntry)
 	sc, ec := av.account.session.UpdateOccupantAffiliation(av.roomID, av.occupant.RealJid, affiliation, reason)
 
@@ -164,7 +165,6 @@ func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(affiliation d
 	case err := <-ec:
 		av.onAffiliationUpdateError(err)
 	case <-av.cancel:
-		// TODO: should we update the affiliation to its previous value?
 	}
 }
 

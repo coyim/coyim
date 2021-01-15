@@ -53,7 +53,8 @@
                     <child>
                       <object class="GtkButton" id="affiliation-apply-button">
                         <property name="label" translatable="yes">Apply</property>
-                        <property name="visible">True</property>                        
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>                        
                         <property name="receives_default">True</property>
                         <signal name="clicked" handler="on_apply" swapped="no"/>
                       </object>
@@ -137,6 +138,7 @@
                             <property name="valign">center</property>
                             <property name="draw_indicator">True</property>
                             <property name="group">affiliation-none</property>
+                            <signal name="toggled" handler="on_toggled" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -181,6 +183,7 @@
                             <property name="valign">center</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="on_toggled" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>

@@ -131,12 +131,15 @@ func (av *occupantAffiliationUpdateView) onCancel() {
 // onApply MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onApply() {
 	av.disableFieldsAndShowSpinner()
+	go av.updateOccupantAffiliation(av.getAffiliationBasedOnRadioSelected())
+}
 
+func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() data.Affiliation {
 	switch {
 	case av.adminRadio.GetActive():
-		go av.updateOccupantAffiliation(&data.AdminAffiliation{})
-	case av.noneRadio.GetActive():
-		go av.updateOccupantAffiliation(&data.NoneAffiliation{})
+		return &data.AdminAffiliation{}
+	default:
+		return &data.NoneAffiliation{}
 	}
 }
 

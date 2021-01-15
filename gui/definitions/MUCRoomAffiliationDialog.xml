@@ -1,6 +1,6 @@
 <interface>
   <object class="GtkDialog" id="affiliation-dialog">
-    <property name="width_request">400</property>
+    <property name="width_request">600</property>
     <property name="title" translatable="yes">Update occupant position</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
@@ -147,9 +147,55 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="affiliation-admin-help">
+                          <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="label" translatable="yes">As an administrator, you are a room member and can do actions like ban and manage the member list of the room.</property>
+                            <property name="wrap">True</property>
+                            <property name="width_chars">0</property>
+                            <property name="max_width_chars">40</property>
+                            <property name="lines">2</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <property name="margin_left">24</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="GtkRadioButton" id="affiliation-member">
+                            <property name="label" translatable="yes">Member</property>
+                            <property name="visible">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="valign">center</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">affiliation-none</property>
+                            <signal name="toggled" handler="on_toggled" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">A membership position allows to occupant be part of a "white-list" in the room, it means that he or her can access in a only-members room.</property>
                             <property name="wrap">True</property>
                             <property name="width_chars">0</property>
                             <property name="max_width_chars">40</property>

@@ -106,9 +106,7 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 // refresh MUST be called from the UI thread
 func (r *roomViewRosterInfo) refresh() {
 	r.reset()
-	if r.account != nil {
-		r.onRefresh.invokeAll()
-	}
+	r.onRefresh.invokeAll()
 }
 
 // reset MUST be called from the UI thread

@@ -153,12 +153,11 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="room-config-summary-public">
+                                      <object class="GtkLabel" id="room-config-summary-public-label">
                                         <property name="visible">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw_indicator">False</property>
+                                        <property name="label" translatable="yes"></property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -191,12 +190,11 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="room-config-summary-persistent">
+                                      <object class="GtkLabel" id="room-config-summary-persistent-label">
                                         <property name="visible">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw_indicator">False</property>
+                                        <property name="label" translatable="yes"></property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -269,12 +267,11 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="room-config-summary-password">
+                                      <object class="GtkLabel" id="room-config-summary-password-label">
                                         <property name="visible">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw_indicator">False</property>
+                                        <property name="label" translatable="yes"></property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -307,12 +304,11 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="room-config-summary-invite">
+                                      <object class="GtkLabel" id="room-config-summary-invite-label">
                                         <property name="visible">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw_indicator">False</property>
+                                        <property name="label" translatable="yes"></property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -345,12 +341,11 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="room-config-summary-onlymembers">
+                                      <object class="GtkLabel" id="room-config-summary-onlymembers-label">
                                         <property name="visible">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw_indicator">False</property>
+                                        <property name="label" translatable="yes"></property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -423,12 +418,11 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="room-config-summary-changesubject">
+                                      <object class="GtkLabel" id="room-config-summary-changesubject-label">
                                         <property name="visible">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw_indicator">False</property>
+                                        <property name="label" translatable="yes"></property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -461,12 +455,11 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="room-config-summary-moderated">
+                                      <object class="GtkLabel" id="room-config-summary-moderated-label">
                                         <property name="visible">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw_indicator">False</property>
+                                        <property name="label" translatable="yes"></property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

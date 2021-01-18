@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/glibi"
@@ -19,13 +20,13 @@ type roomConfigSummaryPage struct {
 	title               gtki.Label       `gtk-widget:"room-config-summary-title"`
 	description         gtki.Label       `gtk-widget:"room-config-summary-description"`
 	language            gtki.Label       `gtk-widget:"room-config-summary-language"`
-	includePublicList   gtki.CheckButton `gtk-widget:"room-config-summary-public"`
-	persistent          gtki.CheckButton `gtk-widget:"room-config-summary-persistent"`
-	password            gtki.CheckButton `gtk-widget:"room-config-summary-password"`
-	allowInviteUsers    gtki.CheckButton `gtk-widget:"room-config-summary-invite"`
-	onlyMembers         gtki.CheckButton `gtk-widget:"room-config-summary-onlymembers"`
-	allowSetRoomSubject gtki.CheckButton `gtk-widget:"room-config-summary-changesubject"`
-	moderatedRoom       gtki.CheckButton `gtk-widget:"room-config-summary-moderated"`
+	includePublicList   gtki.Label       `gtk-widget:"room-config-summary-public-label"`
+	persistent          gtki.Label       `gtk-widget:"room-config-summary-persistent-label"`
+	password            gtki.Label       `gtk-widget:"room-config-summary-password-label"`
+	allowInviteUsers    gtki.Label       `gtk-widget:"room-config-summary-invite-label"`
+	onlyMembers         gtki.Label       `gtk-widget:"room-config-summary-onlymembers-label"`
+	allowSetRoomSubject gtki.Label       `gtk-widget:"room-config-summary-changesubject-label"`
+	moderatedRoom       gtki.Label       `gtk-widget:"room-config-summary-moderated-label"`
 	whoIs               gtki.Label       `gtk-widget:"room-config-summary-whois"`
 	ownersTreeView      gtki.TreeView    `gtk-widget:"room-config-summary-owners-tree"`
 	adminsTreeView      gtki.TreeView    `gtk-widget:"room-config-summary-admins-tree"`
@@ -86,24 +87,15 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	setLabelText(p.title, p.form.Title)
 	setLabelText(p.description, p.form.Description)
 	setLabelText(p.language, supportedLanguageDescription(p.form.Language))
-	p.includePublicList.SetActive(p.form.Public)
-	p.includePublicList.SetSensitive(false)
-	p.persistent.SetActive(p.form.Persistent)
-	p.persistent.SetSensitive(false)
-
+	setLabelText(p.includePublicList, getStringFromActiveValue(p.form.Public))
+	setLabelText(p.persistent, getStringFromActiveValue(p.form.Persistent))
 	// Access
-	p.password.SetActive(p.form.PasswordProtected)
-	p.password.SetSensitive(false)
-	p.allowInviteUsers.SetActive(p.form.OccupantsCanInvite)
-	p.allowInviteUsers.SetSensitive(false)
-	p.onlyMembers.SetActive(p.form.MembersOnly)
-	p.onlyMembers.SetSensitive(false)
-
+	setLabelText(p.password, getStringFromActiveValue(p.form.PasswordProtected))
+	setLabelText(p.allowInviteUsers, getStringFromActiveValue(p.form.OccupantsCanInvite))
+	setLabelText(p.onlyMembers, getStringFromActiveValue(p.form.MembersOnly))
 	// Permissions
-	p.allowSetRoomSubject.SetActive(p.form.OccupantsCanChangeSubject)
-	p.allowSetRoomSubject.SetSensitive(false)
-	p.moderatedRoom.SetActive(p.form.Moderated)
-	p.moderatedRoom.SetSensitive(false)
+	setLabelText(p.allowSetRoomSubject, getStringFromActiveValue(p.form.OccupantsCanChangeSubject))
+	setLabelText(p.moderatedRoom, getStringFromActiveValue(p.form.Moderated))
 	setLabelText(p.whoIs, configOptionToFriendlyMessage(p.form.Whois.CurrentValue()))
 
 	// Occupants
@@ -130,4 +122,11 @@ func summaryValueForConfigOption(v string) string {
 		v = muc.RoomConfigOptionNone
 	}
 	return configOptionToFriendlyMessage(v)
+}
+
+func getStringFromActiveValue(value bool) string {
+	if value {
+		return i18n.Local("Enabled")
+	}
+	return i18n.Local("Disabled")
 }

@@ -149,7 +149,7 @@
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">As an administrator, you are a room member and can do actions like ban and manage the member list of the room.</property>
+                            <property name="label" translatable="yes">An administrator is responsible for memberships of the room, and automatically becomes a moderator when entering it.</property>
                             <property name="wrap">True</property>
                             <property name="width_chars">0</property>
                             <property name="max_width_chars">40</property>
@@ -195,7 +195,7 @@
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">A membership position allows to occupant be part of a "white-list" in the room, it means that he or her can access in a only-members room.</property>
+                            <property name="label" translatable="yes">A member can enter a members-only room, and can also inmediatelly speak in all rooms they are member of.</property>
                             <property name="wrap">True</property>
                             <property name="width_chars">0</property>
                             <property name="max_width_chars">40</property>
@@ -237,6 +237,24 @@
                             <property name="position">0</property>
                           </packing>
                         </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Without a position, an occupant can't enter a members-only room.</property>
+                            <property name="wrap">True</property>
+                            <property name="width_chars">0</property>
+                            <property name="max_width_chars">40</property>
+                            <property name="lines">2</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <property name="margin_left">24</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -267,7 +285,7 @@
                 <child>
                   <object class="GtkLabel" id="affiliation-reason-label">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Enter the reason to update the position</property>
+                    <property name="label" translatable="yes">Here you can provide an optional reason for the change.</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
                   </object>

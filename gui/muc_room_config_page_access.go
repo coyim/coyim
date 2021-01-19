@@ -42,10 +42,15 @@ func (p *roomConfigAccessPage) collectData() {
 	p.form.OccupantsCanInvite = getSwitchActive(p.roomAllowInvites)
 }
 
-func (p *roomConfigAccessPage) isValid() bool {
-	v := p.roomPassword.passwordsMatch()
-	if !v {
+func (p *roomConfigAccessPage) isNotValid() bool {
+	return !p.roomPassword.passwordsMatch()
+}
+
+func (p *roomConfigAccessPage) showValidationErrors() {
+	p.clearErrors()
+
+	if !p.roomPassword.passwordsMatch() {
 		p.notifyError(i18n.Local("Password confirmation doesn't match with entered password"))
+		p.roomPassword.focusConfirm()
 	}
-	return v
 }

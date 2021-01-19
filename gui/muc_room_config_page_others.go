@@ -3,8 +3,6 @@ package gui
 import (
 	"strconv"
 
-	"github.com/coyim/coyim/i18n"
-
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
 )
@@ -41,22 +39,22 @@ func (p *roomConfigOthersPage) initDefaultValues() {
 	p.roomMaxOccupants.updateOptions(p.form.MaxOccupantsNumber.Options())
 }
 
-func (p *roomConfigOthersPage) isValid() bool {
+func (p *roomConfigOthersPage) isNotValid() bool {
+	return p.roomMaxHistoryFetch.isNotValid() || p.roomMaxOccupants.isNotValid()
+}
+
+func (p *roomConfigOthersPage) showValidationErrors() {
 	p.clearErrors()
 
-	if !p.roomMaxHistoryFetch.isValid() {
-		p.notifyError(i18n.Local("The value given for the maximum number of history messages is not valid. " +
-			"Please select one from the list."))
-		return false
+	if p.roomMaxHistoryFetch.isNotValid() {
+		p.roomMaxHistoryFetch.focus()
+		return
 	}
 
-	if !p.roomMaxOccupants.isValid() {
-		p.notifyError(i18n.Local("The value given for the maximum number of occupants is not valid. " +
-			"Please select one from the list."))
-		return false
+	if p.roomMaxOccupants.isNotValid() {
+		p.roomMaxOccupants.focus()
+		return
 	}
-
-	return true
 }
 
 func (p *roomConfigOthersPage) collectData() {
@@ -114,15 +112,15 @@ func (cc *roomConfigComboEntry) updateOptions(options []string) {
 	}
 }
 
-func (cc *roomConfigComboEntry) isValid() bool {
+func (cc *roomConfigComboEntry) isNotValid() bool {
 	ct := getEntryText(cc.entry)
 	if ct != "" {
 		_, err := strconv.Atoi(cc.currentValue())
 		if err != nil {
-			return false
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 func (cc *roomConfigComboEntry) currentValue() string {
@@ -145,4 +143,8 @@ func (cc *roomConfigComboEntry) currentValue() string {
 	}
 
 	return entryText
+}
+
+func (cc *roomConfigComboEntry) focus() {
+	cc.entry.GrabFocus()
 }

@@ -24,7 +24,8 @@ const (
 )
 
 type roomViewRoster struct {
-	u *gtkUI
+	u        *gtkUI
+	roomView *roomView
 
 	roster  *muc.RoomRoster
 	account *account
@@ -42,17 +43,18 @@ type roomViewRoster struct {
 
 func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	r := &roomViewRoster{
-		u:       v.u,
-		roster:  v.room.Roster(),
-		account: v.account,
-		roomID:  v.roomID(),
-		log:     v.log,
+		u:        v.u,
+		roomView: v,
+		roster:   v.room.Roster(),
+		account:  v.account,
+		roomID:   v.roomID(),
+		log:      v.log,
 	}
 
 	r.initBuilder()
-	r.initRosterInfo(v)
+	r.initRosterInfo()
 	r.initDefaults()
-	r.initSubscribers(v)
+	r.initSubscribers()
 
 	return r
 }
@@ -66,11 +68,8 @@ func (r *roomViewRoster) initBuilder() {
 	panicOnDevError(builder.bindObjects(r))
 }
 
-func (r *roomViewRoster) initRosterInfo(v *roomView) {
+func (r *roomViewRoster) initRosterInfo() {
 	r.rosterInfo = r.newRoomViewRosterInfo(r.hideRosterInfoPanel)
-	r.rosterInfo.onOccupantAffiliationUpdated(func(o *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
-		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, previousAffiliation, o.Affiliation, v.room.SelfOccupantNickname(), reason)
-	})
 }
 
 func (r *roomViewRoster) initDefaults() {
@@ -89,8 +88,8 @@ func (r *roomViewRoster) initDefaults() {
 	r.draw()
 }
 
-func (r *roomViewRoster) initSubscribers(v *roomView) {
-	v.subscribe("roster", func(ev roomViewEvent) {
+func (r *roomViewRoster) initSubscribers() {
+	r.roomView.subscribe("roster", func(ev roomViewEvent) {
 		switch ev.(type) {
 		case occupantSelfJoinedEvent:
 			r.onUpdateRoster()

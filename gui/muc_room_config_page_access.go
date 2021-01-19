@@ -1,10 +1,13 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 type roomConfigAccessPage struct {
 	*roomConfigPageBase
-	roomPassword *passwordComponent
+	roomPassword *passwordConfirmationComponent
 
 	roomPasswordBox  gtki.Box    `gtk-widget:"room-password-box"`
 	roomMembersOnly  gtki.Switch `gtk-widget:"room-membersonly"`
@@ -22,7 +25,7 @@ func (c *mucRoomConfigComponent) newRoomConfigAccessPage() mucRoomConfigPage {
 }
 
 func (p *roomConfigAccessPage) initPasswordComponent() {
-	p.roomPassword = p.u.createPasswordComponent()
+	p.roomPassword = p.u.createPasswordConfirmationComponent()
 	p.roomPasswordBox.Add(p.roomPassword.widget())
 }
 
@@ -37,4 +40,12 @@ func (p *roomConfigAccessPage) collectData() {
 	p.form.PasswordProtected = p.form.Password != ""
 	p.form.MembersOnly = getSwitchActive(p.roomMembersOnly)
 	p.form.OccupantsCanInvite = getSwitchActive(p.roomAllowInvites)
+}
+
+func (p *roomConfigAccessPage) isValid() bool {
+	v := p.roomPassword.passwordsMatch()
+	if !v {
+		p.notifyError(i18n.Local("Password confirmation doesn't match with entered password"))
+	}
+	return v
 }

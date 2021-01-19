@@ -19,6 +19,10 @@ func (u *gtkUI) createPasswordConfirmationComponent() *passwordConfirmationCompo
 	return pc
 }
 
+func (pc *passwordConfirmationComponent) setPassword(p string) {
+	setEntryText(pc.entry, p)
+}
+
 func (pc *passwordConfirmationComponent) passwordsMatch() bool {
 	return getEntryText(pc.entry) == getEntryText(pc.confirmEntry)
 }

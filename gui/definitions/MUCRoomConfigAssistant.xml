@@ -1,15 +1,30 @@
 <interface>
   <object class="GtkAssistant" id="room-config-assistant">
-    <property name="width_request">800</property>
+    <property name="width_request">400</property>
     <property name="title" translatable="yes">Room configuration</property>
     <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="default_width">400</property>
+    <property name="default_height">500</property>
     <property name="type_hint">dialog</property>
     <property name="use_header_bar">1</property>
     <signal name="cancel" handler="on_cancel" swapped="no"/>
     <signal name="prepare" handler="on_page_changed" swapped="no"/>
     <signal name="apply" handler="on_apply" swapped="no"/>
     <child>
-      <object class="GtkBox" id="room-config-info-page"></object>
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property>
+        <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="visible">True</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkBox" id="room-config-info-page"></object>
+            </child>
+          </object>
+        </child>
+      </object>
       <packing>
         <property name="title" translatable="yes">Basic information</property>
         <property name="complete">True</property>
@@ -17,7 +32,18 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-access-page">
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property>
+        <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="visible">True</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkBox" id="room-config-access-page"></object>
+            </child>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="title" translatable="yes">Access</property>
@@ -26,7 +52,18 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-permissions-page">
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property>
+        <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="visible">True</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkBox" id="room-config-permissions-page"></object>
+            </child>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="title" translatable="yes">Permissions</property>
@@ -35,7 +72,18 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-occupants-page">
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property>
+        <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="visible">True</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkBox" id="room-config-occupants-page"></object>
+            </child>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="title" translatable="yes">Occupants</property>
@@ -44,7 +92,18 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-others-page">
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property>
+        <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="visible">True</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkBox" id="room-config-others-page"></object>
+            </child>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="title" translatable="yes">Other settings</property>
@@ -53,7 +112,18 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="room-config-summary-page">
+      <object class="GtkScrolledWindow">
+        <property name="visible">True</property>
+        <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="visible">True</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkBox" id="room-config-summary-page"></object>
+            </child>
+          </object>
+        </child>
       </object>
       <packing>
         <property name="page_type">confirm</property>

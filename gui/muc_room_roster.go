@@ -219,6 +219,11 @@ func (r *roomViewRoster) addOccupantToRoster(o *muc.Occupant, parentIter gtki.Tr
 	_ = r.model.SetValue(iter, roomViewRosterInfoIndex, occupantDisplayTooltip(o))
 }
 
+// parentWindow MUST be called from the UI threads
+func (r *roomViewRoster) parentWindow() gtki.Window {
+	return r.roomView.mainWindow()
+}
+
 func getOccupantIconForStatus(s *coyroster.Status) gdki.Pixbuf {
 	icon := getOccupantIconNameForStatus(s.Status)
 	return getMUCIconPixbuf(icon)

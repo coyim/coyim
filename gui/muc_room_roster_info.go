@@ -162,6 +162,11 @@ func (r *roomViewRosterInfo) hide() {
 	r.reset()
 }
 
+// parentWindow MUST be called from the UI threads
+func (r *roomViewRosterInfo) parentWindow() gtki.Window {
+	return r.rosterView.parentWindow()
+}
+
 // widget MUST be called from the UI thread
 func (r *roomViewRosterInfo) widget() gtki.Widget {
 	return r.view

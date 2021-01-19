@@ -84,6 +84,7 @@ func (av *occupantAffiliationUpdateView) initNotificationsAndSpinner(u *gtkUI) {
 }
 
 func (av *occupantAffiliationUpdateView) initDefaults() {
+	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
 
 	switch av.occupant.Affiliation.(type) {

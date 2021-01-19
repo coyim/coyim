@@ -31,6 +31,14 @@ func (pc *passwordConfirmationComponent) currentPassword() string {
 	return getEntryText(pc.entry)
 }
 
+func (pc *passwordConfirmationComponent) focus() {
+	pc.entry.GrabFocus()
+}
+
+func (pc *passwordConfirmationComponent) focusConfirm() {
+	pc.confirmEntry.GrabFocus()
+}
+
 func (pc *passwordConfirmationComponent) widget() gtki.Widget {
 	return pc.box
 }

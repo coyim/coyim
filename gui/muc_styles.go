@@ -168,8 +168,13 @@ func (s *mucStylesProvider) setRoomConfigSummaryRoomDescriptionLabelStyle(l gtki
 
 func (s *mucStylesProvider) setRoomConfigPageStyle(p gtki.Box) {
 	s.setWidgetStyles(p, styles{
-		".help": style{
+		".config-field-label": style{
+			"font-size":   "large",
+			"font-weight": "bold",
+		},
+		".config-field-help": style{
 			"font-style": "italic",
+			"opacity":    "0.7",
 		},
 	})
 }

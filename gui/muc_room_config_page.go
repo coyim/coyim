@@ -67,9 +67,11 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 		panic(fmt.Sprintf("developer error: the ID for \"%s\" page doesn't exists", pageID))
 	}
 
-	p.content.Add(pc.(gtki.Box))
+	pageContent := pc.(gtki.Box)
+	pageContent.SetHExpand(false)
+	p.content.Add(pageContent)
 
-	mucStyles.setRoomConfigPageStyle(p.content)
+	mucStyles.setRoomConfigPageStyle(pageContent)
 
 	return p
 }

@@ -46,12 +46,12 @@ func (ib *infoBar) onClose(f func()) {
 	ib.onCloseCallback = f
 }
 
-// messageType implements the "message" interface
+// messageType implements the "withMessage" interface
 func (ib *infoBar) messageType() gtki.MessageType {
 	return ib.mt
 }
 
-// widget implements the "widget" interface
+// widget implements the "withWidget" interface
 func (ib *infoBar) widget() gtki.Widget {
 	return ib.bar
 }

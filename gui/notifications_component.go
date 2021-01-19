@@ -3,8 +3,8 @@ package gui
 import "github.com/coyim/gotk3adapter/gtki"
 
 type notification interface {
-	widget
-	message
+	withWidget
+	withMessage
 }
 
 type notifications struct {

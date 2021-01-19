@@ -13,7 +13,8 @@ import (
 
 type mucRoomConfigPage interface {
 	pageView() gtki.Overlay
-	isValid() bool
+	isNotValid() bool
+	showValidationErrors()
 	collectData()
 	refresh()
 	notifyError(string)
@@ -84,9 +85,13 @@ func (p *roomConfigPageBase) pageView() gtki.Overlay {
 	return p.page
 }
 
-// isValid implements the "mucRoomConfigPage" interface
-func (p *roomConfigPageBase) isValid() bool {
-	return true
+// isNotValid implements the "mucRoomConfigPage" interface
+func (p *roomConfigPageBase) isNotValid() bool {
+	return false
+}
+
+// validate implements the "mucRoomConfigPage" interface
+func (p *roomConfigPageBase) showValidationErrors() {
 }
 
 // Nothing to do, just implement the "mucRoomConfigPage" interface

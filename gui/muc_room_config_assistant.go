@@ -123,8 +123,9 @@ func (rc *roomConfigAssistant) initDefaults() {
 
 func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, _ gtki.Widget) {
 	previousPage := rc.pageByIndex(rc.currentPageIndex)
-	if !previousPage.isValid() {
+	if previousPage.isNotValid() {
 		rc.assistant.SetCurrentPage(rc.currentPageIndex)
+		rc.currentPage.showValidationErrors()
 		return
 	}
 

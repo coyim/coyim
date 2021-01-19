@@ -71,7 +71,7 @@ func (r *roomViewRoster) initBuilder() {
 }
 
 func (r *roomViewRoster) initRosterInfo() {
-	r.rosterInfo = r.newRoomViewRosterInfo(r.hideRosterInfoPanel)
+	r.rosterInfo = r.newRoomViewRosterInfo()
 }
 
 func (r *roomViewRoster) initDefaults() {

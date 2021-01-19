@@ -24,23 +24,21 @@ type roomViewRosterInfo struct {
 	statusMessage           gtki.Label `gtk-widget:"status-message"`
 	currentAffiliationLabel gtki.Label `gtk-widget:"current-affiliation"`
 
-	onReset     *callbacksSet
-	onRefresh   *callbacksSet
-	onHidePanel func()
+	onReset   *callbacksSet
+	onRefresh *callbacksSet
 
 	log coylog.Logger
 }
 
-func (r *roomViewRoster) newRoomViewRosterInfo(onHidePanel func()) *roomViewRosterInfo {
+func (r *roomViewRoster) newRoomViewRosterInfo() *roomViewRosterInfo {
 	ri := &roomViewRosterInfo{
-		u:           r.u,
-		account:     r.account,
-		roomID:      r.roomID,
-		rosterView:  r,
-		onReset:     newCallbacksSet(),
-		onRefresh:   newCallbacksSet(),
-		onHidePanel: onHidePanel,
-		log:         r.log,
+		u:          r.u,
+		account:    r.account,
+		roomID:     r.roomID,
+		rosterView: r,
+		onReset:    newCallbacksSet(),
+		onRefresh:  newCallbacksSet(),
+		log:        r.log,
 	}
 
 	ri.initBuilder()
@@ -154,11 +152,7 @@ func (r *roomViewRosterInfo) show() {
 // show MUST be called from the UI thread
 func (r *roomViewRosterInfo) hide() {
 	r.view.Hide()
-
-	if r.onHidePanel != nil {
-		r.onHidePanel()
-	}
-
+	r.rosterView.hideRosterInfoPanel()
 	r.reset()
 }
 

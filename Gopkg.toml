@@ -60,3 +60,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/golang-collections/collections"
+
+[[constraint]]
+  name = "github.com/Xuanwo/go-locale"
+  version = "1.0.0"

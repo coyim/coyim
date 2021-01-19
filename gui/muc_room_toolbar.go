@@ -81,6 +81,7 @@ func (t *roomViewToolbar) selfOccupantJoinedEvent(owner bool) {
 // disable MUST be called from UI Thread
 func (t *roomViewToolbar) disable() {
 	mucStyles.setRoomToolbarNameLabelDisabledStyle(t.roomNameLabel)
+	t.roomStatusIcon.SetFromPixbuf(getMUCIconPixbuf("room-offline"))
 	t.menu.Hide()
 }
 

@@ -11,16 +11,16 @@ import (
 )
 
 func (r *roomViewRosterInfo) onChangeAffiliation() {
-	av := r.newOccupantAffiliationUpdateView(r.account, r.roomID, r.occupant, r.occupantAffiliationChanged)
+	av := r.newOccupantAffiliationUpdateView(r.account, r.roomID, r.occupant)
 	av.showDialog()
 }
 
 type occupantAffiliationUpdateView struct {
-	account              *account
-	roomID               jid.Bare
-	occupant             *muc.Occupant
-	cancel               chan bool
-	onAffiliationUpdated func(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string)
+	account        *account
+	roomID         jid.Bare
+	occupant       *muc.Occupant
+	rosterInfoView *roomViewRosterInfo
+	cancel         chan bool
 
 	dialog            gtki.Dialog      `gtk-widget:"affiliation-dialog"`
 	affiliationLabel  gtki.Label       `gtk-widget:"affiliation-type-label"`
@@ -37,12 +37,12 @@ type occupantAffiliationUpdateView struct {
 	spinner       *spinner
 }
 
-func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant, onAffiliationUpdated func(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string)) *occupantAffiliationUpdateView {
+func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant) *occupantAffiliationUpdateView {
 	av := &occupantAffiliationUpdateView{
-		account:              a,
-		roomID:               roomID,
-		occupant:             o,
-		onAffiliationUpdated: onAffiliationUpdated,
+		account:        a,
+		roomID:         roomID,
+		rosterInfoView: r,
+		occupant:       o,
 	}
 
 	av.initBuilder()
@@ -174,7 +174,7 @@ func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(affiliation d
 
 // onAffiliationUpdatedFinished MUST NOT be called from the UI thread
 func (av *occupantAffiliationUpdateView) onAffiliationUpdateFinished(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
-	av.onAffiliationUpdated(occupant, previousAffiliation, reason)
+	av.rosterInfoView.occupantAffiliationChanged(occupant, previousAffiliation, reason)
 	doInUIThread(av.closeDialog)
 }
 

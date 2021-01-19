@@ -6,15 +6,15 @@ import (
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
 	"github.com/coyim/gotk3adapter/gtki"
-	log "github.com/sirupsen/logrus"
 )
 
 type roomViewRosterInfo struct {
 	u *gtkUI
 
-	account  *account
-	roomID   jid.Bare
-	occupant *muc.Occupant
+	account    *account
+	roomID     jid.Bare
+	occupant   *muc.Occupant
+	rosterView *roomViewRoster
 
 	view                    gtki.Box   `gtk-widget:"roster-info-box"`
 	avatar                  gtki.Image `gtk-widget:"occupant-avatar"`
@@ -24,10 +24,9 @@ type roomViewRosterInfo struct {
 	statusMessage           gtki.Label `gtk-widget:"status-message"`
 	currentAffiliationLabel gtki.Label `gtk-widget:"current-affiliation"`
 
-	onReset              *callbacksSet
-	onRefresh            *callbacksSet
-	onAffiliationUpdated func(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string)
-	onHidePanel          func()
+	onReset     *callbacksSet
+	onRefresh   *callbacksSet
+	onHidePanel func()
 
 	log coylog.Logger
 }
@@ -37,6 +36,7 @@ func (r *roomViewRoster) newRoomViewRosterInfo(onHidePanel func()) *roomViewRost
 		u:           r.u,
 		account:     r.account,
 		roomID:      r.roomID,
+		rosterView:  r,
 		onReset:     newCallbacksSet(),
 		onRefresh:   newCallbacksSet(),
 		onHidePanel: onHidePanel,
@@ -79,21 +79,8 @@ func (r *roomViewRosterInfo) initDefaults() {
 }
 
 func (r *roomViewRosterInfo) occupantAffiliationChanged(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
-	r.log.WithFields(log.Fields{
-		"where":       "occupantAffiliationUpdate",
-		"occupant":    r.occupant.RealJid,
-		"affiliation": r.occupant.Affiliation.Name(),
-	}).Info("The occupant affiliation has been updated")
-
-	if r.onAffiliationUpdated != nil {
-		r.onAffiliationUpdated(occupant, previousAffiliation, reason)
-	}
-
+	r.rosterView.onOccupantAffiliationUpdated(occupant, previousAffiliation, reason)
 	doInUIThread(r.refresh)
-}
-
-func (r *roomViewRosterInfo) onOccupantAffiliationUpdated(fn func(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string)) {
-	r.onAffiliationUpdated = fn
 }
 
 // showOccupantInfo MUST be called from the UI thread

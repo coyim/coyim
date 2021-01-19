@@ -393,6 +393,11 @@ func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, previ
 	})
 }
 
+// mainWindow MUST be called from the UI thread
+func (v *roomView) mainWindow() gtki.Window {
+	return v.window
+}
+
 func (v *roomView) roomID() jid.Bare {
 	return v.room.ID
 }

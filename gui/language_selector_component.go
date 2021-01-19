@@ -3,6 +3,8 @@ package gui
 import (
 	"strings"
 
+	"github.com/Xuanwo/go-locale"
+
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
@@ -16,9 +18,10 @@ const (
 )
 
 type languageSelectorComponent struct {
-	entry     gtki.Entry
-	combo     gtki.ComboBoxText
-	model     gtki.ListStore
+	entry gtki.Entry
+	combo gtki.ComboBoxText
+	model gtki.ListStore
+
 	languages *languageSelectorValues
 }
 
@@ -62,6 +65,7 @@ func (lc *languageSelectorComponent) initLanguageCombo() {
 
 func (lc *languageSelectorComponent) initLanguageEntry() {
 	ec, _ := g.gtk.EntryCompletionNew()
+
 	ec.SetModel(lc.model)
 	ec.SetMinimumKeyLength(1)
 	ec.SetTextColumn(languageSelectorDescriptionIndex)
@@ -78,14 +82,16 @@ func (lc *languageSelectorComponent) currentLanguage() string {
 }
 
 type languageSelectorEntry struct {
+	code        string
 	description string
 	values      []string
 }
 
-func newlanguageSelectorEntry(langDesc string) *languageSelectorEntry {
+func newlanguageSelectorEntry(code, description string) *languageSelectorEntry {
 	return &languageSelectorEntry{
-		description: langDesc,
-		values:      []string{langDesc},
+		code:        code,
+		description: description,
+		values:      []string{description},
 	}
 }
 
@@ -107,34 +113,55 @@ func (e *languageSelectorEntry) add(t ...string) {
 }
 
 type languageSelectorValues struct {
-	list map[string]*languageSelectorEntry
+	list []*languageSelectorEntry
 }
 
 func newLanguageSelectorValues() *languageSelectorValues {
-	return &languageSelectorValues{
-		list: make(map[string]*languageSelectorEntry),
-	}
+	return &languageSelectorValues{}
 }
 
 func (v *languageSelectorValues) languageBasedOnText(t string) string {
-	_, ok := v.list[t]
-	if !ok {
-		for tt, e := range v.list {
-			if e.contains(t) {
-				return tt
-			}
-		}
+	if ix := v.indexOf(t); ix != -1 {
+		return v.list[ix].code
 	}
+
+	if vix := v.valueIndexOf(t); vix != -1 {
+		return v.list[vix].code
+	}
+
 	return t
 }
 
-func (v *languageSelectorValues) add(langCode string, langDesc string, values ...string) {
-	e, ok := v.list[langCode]
-	if !ok {
-		e = newlanguageSelectorEntry(langDesc)
+func (v *languageSelectorValues) valueIndexOf(langDesc string) int {
+	for ix, e := range v.list {
+		if e.contains(langDesc) {
+			return ix
+		}
 	}
-	e.add(values...)
-	v.list[langCode] = e
+	return -1
+}
+
+func (v *languageSelectorValues) indexOf(t string) int {
+	for ix, e := range v.list {
+		if e.code == t {
+			return ix
+		}
+	}
+	return -1
+}
+
+func (v *languageSelectorValues) add(langCode string, langDesc string, values ...string) {
+	var entry *languageSelectorEntry
+
+	ix := v.indexOf(langCode)
+	if ix == -1 {
+		entry = newlanguageSelectorEntry(langCode, langDesc)
+		v.list = append(v.list, entry)
+	} else {
+		entry = v.list[ix]
+	}
+
+	entry.add(values...)
 }
 
 var knownLanguagesValues *languageSelectorValues
@@ -151,10 +178,23 @@ func getKnownLanguages() *languageSelectorValues {
 }
 
 func supportedLanguageDescription(langCode string) string {
-	tag, _ := language.Parse(langCode)
-	langName := display.Self.Name(tag)
-	if langName != "" {
-		return i18n.Localf("%s (%s)", langName, langCode)
+	systemLangNamer := systemLanguageNamer()
+	langTag := language.Make(langCode)
+
+	friendlyName := systemLangNamer.Name(langTag)
+	langName := display.Self.Name(langTag)
+
+	return i18n.Localf("%s (%s)", friendlyName, langName)
+}
+
+func systemLanguageNamer() display.Namer {
+	// We don't save the found value because this helper shouldn't be called lot of times
+	// and also we want to have the updated system language each time we ask for it,
+	// in case the user changes it during execution.
+	tag, err := locale.Detect()
+	if err != nil {
+		// TODO: should we do something with this error?
+		tag = language.Make("en")
 	}
-	return langCode
+	return display.Tags(tag)
 }

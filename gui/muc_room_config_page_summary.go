@@ -32,7 +32,7 @@ type roomConfigSummaryPage struct {
 	adminsTreeView      gtki.TreeView    `gtk-widget:"room-config-summary-admins-tree"`
 	maxHistoryFetch     gtki.Label       `gtk-widget:"room-config-summary-maxhistoryfetch"`
 	maxOccupants        gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
-	enableArchiving     gtki.CheckButton `gtk-widget:"room-config-summary-archive"`
+	enableArchiving     gtki.Label       `gtk-widget:"room-config-summary-archive-label"`
 	autojoinCheckButton gtki.CheckButton `gtk-widget:"room-config-autojoin"`
 
 	ownersTreeModel gtki.ListStore
@@ -105,8 +105,7 @@ func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	// Other settings
 	setLabelText(p.maxHistoryFetch, summaryValueForConfigOption(p.form.MaxHistoryFetch.CurrentValue()))
 	setLabelText(p.maxOccupants, summaryValueForConfigOption(p.form.MaxOccupantsNumber.CurrentValue()))
-	p.enableArchiving.SetActive(p.form.Logged)
-	p.enableArchiving.SetSensitive(false)
+	setLabelText(p.enableArchiving, getStringFromActiveValue(p.form.Logged))
 }
 
 func summaryValueOfOccupantList(model gtki.ListStore, items []jid.Any) {

@@ -144,10 +144,8 @@ func (rc *roomConfigAssistant) disable() {
 }
 
 func (rc *roomConfigAssistant) onCancelClicked() {
-	rc.disable()
-	rc.currentPage.onConfigurationCancel()
-
-	rc.roomConfigComponent.cancelConfiguration(rc.onCancelSuccess, rc.onCancelError)
+	cv := newRoomConfigAssistantCancelView(rc)
+	cv.show()
 }
 
 func (rc *roomConfigAssistant) onCancelSuccess() {

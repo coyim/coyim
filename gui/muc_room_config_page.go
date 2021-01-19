@@ -101,6 +101,7 @@ func (p *roomConfigPageBase) collectData() {}
 func (p *roomConfigPageBase) refresh() {
 	p.page.ShowAll()
 	p.hideLoadingOverlay()
+	p.clearErrors()
 	p.onRefresh.invokeAll()
 }
 

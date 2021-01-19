@@ -119,7 +119,6 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.summaryPageBox.SetHExpand(true)
 
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID.String()))
-	rc.assistant.SetTransientFor(rc.u.window)
 }
 
 func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, _ gtki.Widget) {

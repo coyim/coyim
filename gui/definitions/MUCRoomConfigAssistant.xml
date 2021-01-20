@@ -3,7 +3,7 @@
     <property name="width_request">400</property>
     <property name="title" translatable="yes">Room configuration</property>
     <property name="modal">True</property>
-    <property name="default_width">400</property>
+    <property name="default_width">600</property>
     <property name="default_height">500</property>
     <property name="type_hint">normal</property>
     <property name="use_header_bar">1</property>

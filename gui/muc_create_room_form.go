@@ -68,7 +68,7 @@ func (v *mucCreateRoomView) newCreateRoomForm() *mucCreateRoomViewForm {
 		roomNameConflictList:     set.New(),
 		updateAutoJoinValue:      v.updateAutoJoinValue,
 		updateConfigureRoomValue: v.updateConfigureRoomValue,
-		log: v.log,
+		log:                      v.log,
 	}
 
 	f.initBuilder(v)
@@ -127,6 +127,8 @@ func (f *mucCreateRoomViewForm) onRoomConfigToggled() {
 }
 
 func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
+	doInUIThread(f.hideSpinnerAndEnableFields)
+
 	switch err {
 	case errCreateRoomCheckIfExistsFails:
 		doInUIThread(f.onCreateRoomCheckIfExistsFails)
@@ -142,16 +144,19 @@ func (f *mucCreateRoomViewForm) onCreateRoomError(roomID jid.Bare, err error) {
 	}
 }
 
+// hideSpinnerAndEnableFields MUST be called from the UI thread
 func (f *mucCreateRoomViewForm) hideSpinnerAndEnableFields() {
 	f.spinner.hide()
 	f.enableFields()
 }
 
+// onCreateRoomCheckIfExistsFails MUST be called from the UI thread
 func (f *mucCreateRoomViewForm) onCreateRoomCheckIfExistsFails() {
 	f.notifications.error(i18n.Local("Couldn't connect to the service, please verify that it exists or try again later."))
 	f.hideSpinnerAndEnableFields()
 }
 
+// onCreateRoomAlreadyExists MUST be called from the UI thread
 func (f *mucCreateRoomViewForm) onCreateRoomAlreadyExists() {
 	f.notifications.error(i18n.Local("That room already exists, try again with a different name."))
 	f.hideSpinnerAndEnableFields()

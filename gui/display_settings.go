@@ -126,6 +126,12 @@ func updateWithStyle(l StyleContextable, p gtki.CssProvider) {
 	sc.AddProvider(p, 9999)
 }
 
+func updateWithStyles(l StyleContextable, p gtki.CssProvider) {
+	sc, _ := l.GetStyleContext()
+	screen, _ := sc.GetScreen()
+	g.gtk.AddProviderForScreen(screen, p, 99999)
+}
+
 type style map[string]interface{}
 type styles map[string]style
 

@@ -168,10 +168,6 @@ func (s *mucStylesProvider) setRoomConfigSummaryRoomDescriptionLabelStyle(l gtki
 
 func (s *mucStylesProvider) setRoomConfigPageStyle(p gtki.Box) {
 	s.setWidgetStyles(p, styles{
-		".config-field-label": style{
-			"font-size":   "large",
-			"font-weight": "bold",
-		},
 		".config-field-help": style{
 			"font-style": "italic",
 			"opacity":    "0.7",
@@ -187,7 +183,7 @@ func (s *mucStylesProvider) setFormSectionLabelStyle(l gtki.Label) {
 }
 
 func (s *mucStylesProvider) setWidgetStyles(w gtki.Widget, st styles) {
-	updateWithStyle(w, providerWithStyles(st))
+	updateWithStyles(w, providerWithStyles(st))
 }
 
 func (s *mucStylesProvider) setWidgetStyle(w gtki.Widget, se string, st style) {

@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"os"
 	"sort"
 	"strings"
 
@@ -215,9 +216,12 @@ func systemLanguageNamer() display.Namer {
 }
 
 func systemDefaultLanguage() language.Tag {
-	tag, err := language.Parse("en")
-	if err != nil {
-		return language.Und
+	lang, isPresent := os.LookupEnv("LC_ALL")
+	if isPresent {
+		tag, err := language.Parse(lang)
+		if err == nil {
+			return tag
+		}
 	}
-	return tag
+	return language.Und
 }

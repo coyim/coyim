@@ -1,6 +1,8 @@
 package gtka
 
 import (
+	"github.com/coyim/gotk3adapter/gdka"
+	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
 	"github.com/gotk3/gotk3/gtk"
@@ -35,6 +37,10 @@ func (v *styleContext) AddClass(v1 string) {
 
 func (v *styleContext) AddProvider(v1 gtki.StyleProvider, v2 uint) {
 	v.internal.AddProvider(UnwrapStyleProvider(v1), v2)
+}
+
+func (v *styleContext) GetScreen() (gdki.Screen, error) {
+	return gdka.WrapScreen(v.internal.GetScreen())
 }
 
 func (v *styleContext) GetProperty2(v1 string, v2 gtki.StateFlags) (interface{}, error) {

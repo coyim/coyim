@@ -231,49 +231,50 @@ func (la *mucRoomConfigListAddComponent) show() {
 
 type mucRoomConfigListFormItem struct {
 	form mucRoomConfigListForm
-	box  gtki.Box
+
+	box          gtki.Box    `gtk-widget:"room-config-list-add-item-box"`
+	formBox      gtki.Box    `gtk-widget:"room-config-list-add-item-form-box"`
+	addButton    gtki.Button `gtk-widget:"room-config-list-add-item-button"`
+	removeButton gtki.Button `gtk-widget:"room-config-list-remove-item-button"`
 }
 
 func newMUCRoomConfigListFormItem(form mucRoomConfigListForm, onAdd func([]string), onRemove func()) *mucRoomConfigListFormItem {
-	item := &mucRoomConfigListFormItem{form: form}
-
-	var err error
-	item.box, err = g.gtk.BoxNew(gtki.HorizontalOrientation, 12)
-	if err != nil {
-		panic(err)
+	lfi := &mucRoomConfigListFormItem{
+		form: form,
 	}
 
-	item.box.PackStart(form.getFormView(), false, true, 0)
+	builder := newBuilder("MUCRoomConfigListAddFormItem")
+	panicOnDevError(builder.bindObjects(lfi))
 
-	item.box.SetHExpand(true)
-	item.box.SetVExpand(false)
+	lfi.formBox.Add(lfi.form.getFormView())
 
-	item.box.SetHAlign(gtki.ALIGN_FILL)
-	item.box.SetVAlign(gtki.ALIGN_START)
+	lfi.addButton.SetSensitive(false)
+	lfi.removeButton.SetSensitive(false)
+
+	lfi.addButton.SetVisible(false)
+	lfi.removeButton.SetVisible(false)
 
 	if onAdd != nil {
-		addButton, _ := g.gtk.ButtonNewWithLabel(i18n.Local("Add"))
-		addButton.SetSensitive(false)
-		addButton.Connect("clicked", func() {
+		lfi.addButton.Connect("clicked", func() {
 			onAdd(form.getValues())
 			form.reset()
 			form.focus()
 		})
+
 		form.onFieldChanged(func() {
-			addButton.SetSensitive(form.isFilled())
+			lfi.addButton.SetSensitive(form.isFilled())
 		})
-		item.box.PackEnd(addButton, false, false, 0)
+
+		lfi.addButton.SetVisible(true)
 	}
 
 	if onRemove != nil {
-		removeButton, _ := g.gtk.ButtonNewWithLabel(i18n.Local("Remove"))
-		removeButton.Connect("clicked", onRemove)
-		item.box.PackEnd(removeButton, false, false, 0)
+		lfi.removeButton.Connect("clicked", onRemove)
+		lfi.removeButton.SetSensitive(true)
+		lfi.removeButton.SetVisible(true)
 	}
 
-	item.box.ShowAll()
-
-	return item
+	return lfi
 }
 
 func (lfi *mucRoomConfigListFormItem) widget() gtki.Box {

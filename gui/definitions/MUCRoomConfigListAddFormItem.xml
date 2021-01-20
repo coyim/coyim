@@ -1,0 +1,63 @@
+<interface>
+  <object class="GtkBox" id="room-config-list-add-item-box">
+    <property name="visible">True</property>
+    <property name="valign">start</property>
+    <property name="spacing">12</property>
+    <child>
+      <object class="GtkBox" id="room-config-list-add-item-form-box">
+        <property name="visible">True</property>
+      </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkButtonBox" id="room-config-list-add-item-buttons">
+        <property name="visible">True</property>
+        <property name="spacing">6</property>
+        <property name="layout_style">start</property>
+        <child>
+          <object class="GtkButton" id="room-config-list-add-item-button">
+            <property name="sensitive">False</property>
+            <property name="receives_default">True</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="stock">gtk-add</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="room-config-list-remove-item-button">
+            <property name="sensitive">False</property>
+            <property name="receives_default">True</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="stock">gtk-remove</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+</interface>

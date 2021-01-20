@@ -85,7 +85,7 @@ func (rc *hasRoomContext) searchEntityOnServer() (bool, error) {
 func (rc *hasRoomContext) discoverFeaturesAndIdentities() (bool, error) {
 	i, f, ok := rc.s.Conn().DiscoveryFeaturesAndIdentities(rc.roomID.String())
 	if !ok {
-		return false, errors.New("the room doesn't exists")
+		return false, nil
 	}
 
 	rc.foundIdentities = i

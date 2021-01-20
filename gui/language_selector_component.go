@@ -1,15 +1,16 @@
 package gui
 
 import (
+	"sort"
 	"strings"
 
-	"github.com/Xuanwo/go-locale"
+	"golang.org/x/text/collate"
+	"golang.org/x/text/language"
+	"golang.org/x/text/language/display"
 
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/glibi"
 	"github.com/coyim/gotk3adapter/gtki"
-	"golang.org/x/text/language"
-	"golang.org/x/text/language/display"
 )
 
 const (
@@ -47,7 +48,7 @@ func (lc *languageSelectorComponent) initModel() {
 		glibi.TYPE_STRING,
 	)
 
-	for langCode, e := range lc.languages.list {
+	for langCode, e := range lc.languages.sort() {
 		iter := model.Append()
 
 		_ = model.SetValue(iter, languageSelectorCodeIndex, langCode)
@@ -113,11 +114,14 @@ func (e *languageSelectorEntry) add(t ...string) {
 }
 
 type languageSelectorValues struct {
-	list []*languageSelectorEntry
+	collator *collate.Collator
+	list     []*languageSelectorEntry
 }
 
-func newLanguageSelectorValues() *languageSelectorValues {
-	return &languageSelectorValues{}
+func newLanguageSelectorValues(lang language.Tag) *languageSelectorValues {
+	return &languageSelectorValues{
+		collator: collate.New(lang, collate.OptionsFromTag(lang)),
+	}
 }
 
 func (v *languageSelectorValues) languageBasedOnText(t string) string {
@@ -164,11 +168,26 @@ func (v *languageSelectorValues) add(langCode string, langDesc string, values ..
 	entry.add(values...)
 }
 
+func (v *languageSelectorValues) sort() []*languageSelectorEntry {
+	copy := make([]*languageSelectorEntry, len(v.list))
+	for ix, e := range v.list {
+		copy[ix] = e
+	}
+
+	sort.SliceStable(copy, func(i, j int) bool {
+		return v.collator.CompareString(copy[i].description, copy[j].description) == -1
+	})
+
+	return copy
+}
+
 var knownLanguagesValues *languageSelectorValues
 
 func getKnownLanguages() *languageSelectorValues {
 	if knownLanguagesValues == nil {
-		knownLanguagesValues = newLanguageSelectorValues()
+		sl := systemDefaultLanguage()
+		knownLanguagesValues = newLanguageSelectorValues(sl)
+
 		for _, tag := range display.Supported.Tags() {
 			langCode := tag.String()
 			knownLanguagesValues.add(langCode, supportedLanguageDescription(langCode), display.Self.Name(tag))
@@ -184,17 +203,21 @@ func supportedLanguageDescription(langCode string) string {
 	friendlyName := systemLangNamer.Name(langTag)
 	langName := display.Self.Name(langTag)
 
-	return i18n.Localf("%s (%s)", friendlyName, langName)
+	if langName != "" {
+		return i18n.Localf("%s (%s)", friendlyName, langName)
+	}
+
+	return friendlyName
 }
 
 func systemLanguageNamer() display.Namer {
-	// We don't save the found value because this helper shouldn't be called lot of times
-	// and also we want to have the updated system language each time we ask for it,
-	// in case the user changes it during execution.
-	tag, err := locale.Detect()
+	return display.Tags(systemDefaultLanguage())
+}
+
+func systemDefaultLanguage() language.Tag {
+	tag, err := language.Parse("en")
 	if err != nil {
-		// TODO: should we do something with this error?
-		tag = language.Make("en")
+		return language.Und
 	}
-	return display.Tags(tag)
+	return tag
 }

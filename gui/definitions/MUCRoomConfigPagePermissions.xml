@@ -2,11 +2,11 @@
   <object class="GtkBox" id="room-config-permissions-page">
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="room-config-permissions-content">
         <property name="visible">True</property>
         <property name="border_width">12</property>
-        <property name="spacing">12</property>
         <property name="orientation">vertical</property>
+        <property name="spacing">32</property>
         <child>
           <object class="GtkLabel">
             <property name="width_request">300</property>
@@ -17,7 +17,7 @@
             <property name="xalign">0</property>
             <property name="yalign">0</property>
             <style>
-              <class name="help"/>
+              <class name="config-field-intro"/>
             </style>
           </object>
           <packing>
@@ -27,8 +27,10 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
+          <object class="GtkBox" id="room-config-permissions-form">
             <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">24</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
@@ -41,6 +43,9 @@
                     <property name="valign">center</property>
                     <property name="label" translatable="yes">Occupants JID may be viewed by</property>
                     <property name="justify">right</property>
+                    <style>
+                      <class name="config-field-label"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -57,10 +62,10 @@
                     <child>
                       <object class="GtkComboBox" id="room-whois">
                         <property name="visible">True</property>
-                        <property name="popup-fixed-width">False</property>
-                        <property name="id-column">0</property>
+                        <property name="popup_fixed_width">False</property>
+                        <property name="id_column">0</property>
                         <child>
-                          <object class="GtkCellRendererText" id="label" />
+                          <object class="GtkCellRendererText" id="label"/>
                           <attributes>
                             <attribute name="text">1</attribute>
                           </attributes>
@@ -79,92 +84,15 @@
                     <property name="position">1</property>
                   </packing>
                 </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="margin-bottom">21</property>
-            <property name="label" translatable="yes">Please select from the above list the affiliation of the occupants that may discover other room occupants identifiers (real JIDs).</property>
-            <property name="wrap">True</property>
-            <property name="xalign">0</property>
-            <property name="yalign">0</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">20</property>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="spacing">12</property>
-                    <child>
-                      <object class="GtkSwitch" id="room-moderated">
-                        <property name="visible">True</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="valign">center</property>
-                        <property name="label" translatable="yes">Moderated</property>
-                        <property name="justify">right</property>
-                        <property name="xalign">0</property>
-                        <property name="yalign">0</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">In moderated rooms, occupants must be given permission to speak by a room moderator.</property>
+                    <property name="label" translatable="yes">Select from the above list the affiliation of the occupants that may discover other room occupants identifiers, better know as "real JIDs".</property>
                     <property name="wrap">True</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
                     <style>
-                      <class name="help" />
+                      <class name="config-field-help"/>
                     </style>
                   </object>
                   <packing>
@@ -181,19 +109,48 @@
               </packing>
             </child>
             <child>
-              <object class="GtkBox">
+              <object class="GtkViewport">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <property name="spacing">6</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="spacing">12</property>
+                    <property name="border_width">12</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
                     <child>
-                      <object class="GtkSwitch" id="room-changesubject">
+                      <object class="GtkBox">
                         <property name="visible">True</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkSwitch" id="room-moderated">
+                            <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="valign">center</property>
+                            <property name="label" translatable="yes">Make this room moderated</property>
+                            <property name="justify">right</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <style>
+                              <class name="config-field-label"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -204,41 +161,21 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="valign">center</property>
-                        <property name="label" translatable="yes">Allow anyone to set the room's subject</property>
-                        <property name="justify">right</property>
+                        <property name="label" translatable="yes">A moderated rooms the occupants must be given permission to speak by a room moderator.</property>
+                        <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <property name="yalign">0</property>
+                        <style>
+                          <class name="config-field-help"/>
+                        </style>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Choose whether anyone or only moderators may set the room's subject</property>
-                    <property name="wrap">True</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
-                    <style>
-                      <class name="help" />
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -247,11 +184,86 @@
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkViewport">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="border_width">12</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkSwitch" id="room-changesubject">
+                            <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="valign">center</property>
+                            <property name="label" translatable="yes">Allow anyone to set the room's subject</property>
+                            <property name="justify">right</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <style>
+                              <class name="config-field-label"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="wrap">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <style>
+                          <class name="help"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

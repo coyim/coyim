@@ -10,14 +10,6 @@
   revision = "b5cd14745a5c675c08f7d5c3203cf5f0324e85f3"
 
 [[projects]]
-  digest = "1:4918f3955a1cdef889c2d6f52e72b6b5bac2f036ebd36179fc0405a5c2bf1a71"
-  name = "github.com/Xuanwo/go-locale"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "8825ba24b6e4ea4b93c771ada35606ac44c7e700"
-  version = "v1.0.0"
-
-[[projects]]
   branch = "master"
   digest = "1:23b9850a220387962bae181bf0eaec5ae228cf3415ff365daa57de5e4820b33e"
   name = "github.com/awnumar/memcall"
@@ -218,22 +210,24 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ea7503fcc1cc1e5d7259ab366cb99b1ec575e9401a6b2d6d37385895ed2267b9"
+  digest = "1:6fdb20a35b444bf20ade4a96382a215b0260514d5ee3426dceb81e3505475be3"
   name = "golang.org/x/sys"
   packages = [
     "cpu",
     "internal/unsafeheader",
     "unix",
     "windows",
-    "windows/registry",
   ]
   pruneopts = "UT"
   revision = "05986578812163b26672dabd9b425240ae2bb0ad"
 
 [[projects]]
-  digest = "1:f7dc149d34fbc5b2872b8925963c22da44dc1520b2d5bafe68099337b842d8bc"
+  digest = "1:1dd85b978b93e296509d7b4c40a3ec70092c7a2fcf2ca8faedb6fe284ac2c6c4"
   name = "golang.org/x/text"
   packages = [
+    "collate",
+    "collate/build",
+    "internal/colltab",
     "internal/format",
     "internal/gen",
     "internal/language",
@@ -305,7 +299,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/TheCreeper/go-notify",
-    "github.com/Xuanwo/go-locale",
     "github.com/coyim/gosx-notifier",
     "github.com/coyim/gotk3adapter/gdka",
     "github.com/coyim/gotk3adapter/gdki",
@@ -332,6 +325,7 @@
     "golang.org/x/crypto/sha3",
     "golang.org/x/net/html",
     "golang.org/x/net/proxy",
+    "golang.org/x/text/collate",
     "golang.org/x/text/language",
     "golang.org/x/text/language/display",
     "golang.org/x/text/runes",

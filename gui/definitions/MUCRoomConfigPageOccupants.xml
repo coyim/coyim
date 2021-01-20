@@ -70,10 +70,37 @@ A room administrator is a user empowered by the room owner to perform administra
                                 <property name="layout_style">start</property>
                                 <child>
                                   <object class="GtkButton" id="room-owner-add">
-                                    <property name="label" translatable="yes">Add</property>
                                     <property name="visible">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="use_underline">True</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="spacing">3</property>
+                                        <child>
+                                          <object class="GtkImage">
+                                            <property name="visible">True</property>
+                                            <property name="stock">gtk-add</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="label" translatable="yes">Add</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -84,11 +111,38 @@ A room administrator is a user empowered by the room owner to perform administra
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="room-owner-remove">
-                                    <property name="label" translatable="yes">Remove</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="receives_default">True</property>
                                     <property name="use_underline">True</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="spacing">3</property>
+                                        <child>
+                                          <object class="GtkImage">
+                                            <property name="visible">True</property>
+                                            <property name="stock">gtk-remove</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="label" translatable="yes">Remove</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -134,7 +188,7 @@ A room administrator is a user empowered by the room owner to perform administra
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="owner-jid-column">
-                                <property name="title" translatable="yes">JID</property>
+                                <property name="title" translatable="yes">Identifier (JID)</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="owner-jid-text-renderer">
                                     <signal name="edited" handler="on_owner_jid_edited" swapped="no"/>
@@ -202,10 +256,37 @@ A room administrator is a user empowered by the room owner to perform administra
                                 <property name="layout_style">start</property>
                                 <child>
                                   <object class="GtkButton" id="room-admin-add">
-                                    <property name="label" translatable="yes">Add</property>
                                     <property name="visible">True</property>
                                     <property name="receives_default">True</property>
                                     <property name="use_underline">True</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="spacing">3</property>
+                                        <child>
+                                          <object class="GtkImage">
+                                            <property name="visible">True</property>
+                                            <property name="stock">gtk-add</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="label" translatable="yes">Add</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -216,11 +297,38 @@ A room administrator is a user empowered by the room owner to perform administra
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="room-admin-remove">
-                                    <property name="label" translatable="yes">Remove</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="receives_default">True</property>
                                     <property name="use_underline">True</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="spacing">3</property>
+                                        <child>
+                                          <object class="GtkImage">
+                                            <property name="visible">True</property>
+                                            <property name="stock">gtk-remove</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="label" translatable="yes">Remove</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -266,7 +374,7 @@ A room administrator is a user empowered by the room owner to perform administra
                             </child>
                             <child>
                               <object class="GtkTreeViewColumn" id="admin-jid-column">
-                                <property name="title" translatable="yes">JID</property>
+                                <property name="title" translatable="yes">Identifier (JID)</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="admin-jid-text-renderer">
                                     <signal name="edited" handler="on_admin_jid_edited" swapped="no"/>

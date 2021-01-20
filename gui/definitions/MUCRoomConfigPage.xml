@@ -1,5 +1,6 @@
 <interface>
   <object class="GtkOverlay" id="room-config-page-overlay">
+    <property name="width_request">700</property>
     <property name="visible">True</property>
     <child>
       <object class="GtkOverlay">

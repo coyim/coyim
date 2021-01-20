@@ -6,4 +6,5 @@ type Container interface {
 	Add(Widget)
 	Remove(Widget)
 	SetBorderWidth(uint)
+	GetChildren() []Widget
 }

@@ -72,3 +72,15 @@ func (a *assistant) SetPageComplete(page gtki.Widget, complete bool) {
 func (a *assistant) GetPageComplete(page gtki.Widget) bool {
 	return a.internal.GetPageComplete(UnwrapWidget(page))
 }
+
+func (a *assistant) AddActionWidget(child gtki.Widget) {
+	a.internal.AddActionWidget(UnwrapWidget(child))
+}
+
+func (a *assistant) RemoveActionWidget(child gtki.Widget) {
+	a.internal.RemoveActionWidget(UnwrapWidget(child))
+}
+
+func (a *assistant) UpdateButtonsState() {
+	a.internal.UpdateButtonsState()
+}

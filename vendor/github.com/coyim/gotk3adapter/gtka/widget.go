@@ -5,6 +5,7 @@ import (
 	"github.com/coyim/gotk3adapter/gdki"
 	"github.com/coyim/gotk3adapter/gliba"
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -98,6 +99,11 @@ func (v *widget) GetAllocatedWidth() int {
 func (v *widget) GetParent() (gtki.Widget, error) {
 	parent, err := v.internal.GetParent()
 	return WrapWidget(parent, err)
+}
+
+func (v *widget) GetParentX() (gtki.Widget, error) {
+	parent, err := gotk3extra.GetParent(v.internal)
+	return Wrap(parent).(gtki.Widget), err
 }
 
 func (v *widget) GrabFocus() {

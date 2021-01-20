@@ -34,7 +34,7 @@
   revision = "016aa3f280ca9ded2d860ba438e3604363857a9a"
 
 [[projects]]
-  branch = "master"
+  branch = "main"
   digest = "1:a72767f03b5c8f59d21ce79fca09a798eda6884abe43194b23e5a56633c301f1"
   name = "github.com/coyim/gosx-notifier"
   packages = ["."]
@@ -42,8 +42,8 @@
   revision = "212122c146749dec34818e09cbbd9b19cb69d211"
 
 [[projects]]
-  branch = "master"
-  digest = "1:6c0c46ede38db53c3d148c0c8d965f3f35a967cb9a87e7f40ac17af3c289f394"
+  branch = "main"
+  digest = "1:78a255f45afebccfdc9d9d2f3fadb9d0fcd5b5fa798df6320bda26cc1f65853c"
   name = "github.com/coyim/gotk3adapter"
   packages = [
     "gdka",
@@ -58,18 +58,18 @@
     "pangoi",
   ]
   pruneopts = "UT"
-  revision = "1e5c32c53b8ee4e2ae3e91f2d6ab5e49c8d6833a"
+  revision = "b6c5809fac7bca2a35bf4202cb83aa47a6acc4c6"
 
 [[projects]]
-  branch = "master"
-  digest = "1:22d1920e94eb1d36bd89bdf068f44a4aedce8f8ef0b53c3ef401fc96de03871d"
+  branch = "main"
+  digest = "1:e1dbd8109215f60fcc09af426955d8c8179f582615a3e6a4f4bd054af4b19f4d"
   name = "github.com/coyim/gotk3extra"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c78695e4a2b907377c504cd2b91f8d45f993b767"
+  revision = "914e6201a24d59fbfa11889306b71c7ccf2a4c93"
 
 [[projects]]
-  branch = "master"
+  branch = "main"
   digest = "1:0ca31016a5289103991213d0ff3199c66e4b7a7d7f5f501e9105f49479292069"
   name = "github.com/coyim/gotk3osx"
   packages = ["."]

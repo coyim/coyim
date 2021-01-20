@@ -19,9 +19,9 @@ type Assistant interface {
 	// GetPageTitle(page Widget) string
 	SetPageComplete(page Widget, complete bool)
 	GetPageComplete(page Widget) bool
-	// AddActionWidget(child Widget)
-	// RemoveActionWidget(child Widget)
-	// UpdateButtonsState()
+	AddActionWidget(child Widget)
+	RemoveActionWidget(child Widget)
+	UpdateButtonsState()
 }
 
 func AssertAssistant(_ Assistant) {}

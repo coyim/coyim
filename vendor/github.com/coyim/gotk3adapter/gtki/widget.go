@@ -12,6 +12,7 @@ type Widget interface {
 	GetAllocatedHeight() int
 	GetAllocatedWidth() int
 	GetParent() (Widget, error)
+	GetParentX() (Widget, error)
 	GetStyleContext() (StyleContext, error)
 	GrabDefault()
 	SetCanFocus(bool)

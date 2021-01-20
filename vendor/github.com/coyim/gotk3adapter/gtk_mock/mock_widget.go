@@ -59,6 +59,10 @@ func (*MockWidget) GetParent() (gtki.Widget, error) {
 	return nil, nil
 }
 
+func (*MockWidget) GetParentX() (gtki.Widget, error) {
+	return nil, nil
+}
+
 func (*MockWidget) GrabFocus() {
 }
 

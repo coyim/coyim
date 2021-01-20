@@ -1,7 +1,10 @@
 package gtka
 
 import (
+	"unsafe"
+
 	"github.com/coyim/gotk3adapter/gtki"
+	"github.com/coyim/gotk3extra"
 	"github.com/gotk3/gotk3/gtk"
 )
 
@@ -38,4 +41,20 @@ func (v *container) Remove(v2 gtki.Widget) {
 
 func (v *container) SetBorderWidth(v1 uint) {
 	v.Container.SetBorderWidth(v1)
+}
+
+func (v *container) GetChildren() []gtki.Widget {
+	cc := v.Container.GetChildren()
+	cc.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		res, _ := gotk3extra.CastWidgetX(ptr)
+		return res
+	})
+
+	result := []gtki.Widget{}
+
+	cc.Foreach(func(item interface{}) {
+		result = append(result, Wrap(item).(gtki.Widget))
+	})
+
+	return result
 }

@@ -30,7 +30,7 @@
   name = "github.com/TheCreeper/go-notify"
 
 [[constraint]]
-  branch = "master"
+  branch = "main"
   name = "github.com/coyim/gosx-notifier"
 
 [[constraint]]
@@ -50,7 +50,7 @@
   version = "0.3.2"
 
 [[constraint]]
-  branch = "master"
+  branch = "main"
   name = "github.com/coyim/gotk3osx"
 
 [[constraint]]

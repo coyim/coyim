@@ -14,3 +14,7 @@ func (*MockContainer) Remove(v2 gtki.Widget) {
 
 func (*MockContainer) SetBorderWidth(v1 uint) {
 }
+
+func (*MockContainer) GetChildren() []gtki.Widget {
+	return nil
+}

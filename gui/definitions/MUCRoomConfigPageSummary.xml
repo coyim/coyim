@@ -52,18 +52,45 @@
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkBox">
-                                    <property name="visible">True</property>
+                                    <property name="visible">True</property>                                    
+                                    <property name="valign">center</property>
                                     <property name="spacing">12</property>
                                     <child>
-                                      <object class="GtkLabel" id="room-config-summary-title">
+                                      <object class="GtkLabel">
                                         <property name="visible">True</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Title</property>
                                         <property name="xalign">0</property>
                                         <property name="yalign">0</property>
                                       </object>
                                       <packing>
-                                        <property name="expand">True</property>
+                                        <property name="expand">False</property>
                                         <property name="fill">True</property>
                                         <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSeparator">
+                                        <property name="visible">True</property>
+                                        <property name="valign">center</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="room-config-summary-title">
+                                        <property name="visible">True</property>
+                                        <property name="valign">center</property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -75,20 +102,80 @@
                                 </child>
                                 <child>
                                   <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="spacing">12</property>
+                                    <property name="visible">True</property>                                    
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
                                     <child>
-                                      <object class="GtkLabel" id="room-config-summary-description">
-                                        <property name="visible">True</property>
-                                        <property name="wrap">True</property>
-                                        <property name="max_width_chars">100</property>
-                                        <property name="xalign">0</property>
-                                        <property name="yalign">0</property>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>                                        
+                                        <property name="spacing">12</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>                                            
+                                            <property name="valign">center</property>
+                                            <property name="label" translatable="yes">Description</property>
+                                            <property name="xalign">0</property>
+                                            <property name="yalign">0</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSeparator">
+                                            <property name="visible">True</property>                                            
+                                            <property name="valign">center</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="room-config-summary-description-not-assigned">
+                                            <property name="visible">True</property>
+                                            <property name="valign">center</property>
+                                            <property name="wrap">True</property>
+                                            <property name="max_width_chars">100</property>
+                                            <property name="xalign">0</property>
+                                            <property name="yalign">0</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">3</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
                                         <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkScrolledWindow" id="room-config-summary-description-scrolled">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="shadow_type">in</property>
+                                        <property name="max_content_height">100</property>
+                                        <child>
+                                          <object class="GtkTextView" id="room-config-summary-description">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="editable">False</property>
+                                            <property name="left_margin">6</property>
+                                            <property name="right_margin">6</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
                                       </packing>
                                     </child>
                                   </object>

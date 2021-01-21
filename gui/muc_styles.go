@@ -154,12 +154,6 @@ func (s *mucStylesProvider) setRoomConfigSummarySectionLinkButtonStyle(b gtki.Li
 	})
 }
 
-func (s *mucStylesProvider) setRoomConfigSummaryRoomTitleLabelStyle(l gtki.Label) {
-	s.setLabelStyle(l, style{
-		"font-size": "16px",
-	})
-}
-
 func (s *mucStylesProvider) setRoomConfigSummaryRoomDescriptionLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-style": "italic",

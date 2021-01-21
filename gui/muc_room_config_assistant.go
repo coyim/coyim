@@ -119,6 +119,17 @@ func (rc *roomConfigAssistant) initDefaults() {
 	rc.summaryPageBox.SetHExpand(true)
 
 	rc.assistant.SetTitle(i18n.Localf("Configuration for room [%s]", rc.roomID.String()))
+
+	rc.initButtonLabels()
+}
+
+func (rc *roomConfigAssistant) initButtonLabels() {
+	for _, b := range getButtonsForAssistantHeader(rc.assistant) {
+		s, _ := b.GetLabel()
+		if s == i18n.Localf("_Apply") {
+			b.SetProperty("label", i18n.Localf("Create Room"))
+		}
+	}
 }
 
 func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, _ gtki.Widget) {

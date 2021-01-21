@@ -12,28 +12,30 @@ type roomConfigSummaryPage struct {
 	*roomConfigPageBase
 	autoJoin bool
 
-	basicInformation    gtki.LinkButton  `gtk-widget:"room-config-summary-basic-information"`
-	access              gtki.LinkButton  `gtk-widget:"room-config-summary-access"`
-	permissions         gtki.LinkButton  `gtk-widget:"room-config-summary-permissions"`
-	occupants           gtki.LinkButton  `gtk-widget:"room-config-summary-occupants"`
-	others              gtki.LinkButton  `gtk-widget:"room-config-summary-others"`
-	title               gtki.Label       `gtk-widget:"room-config-summary-title"`
-	description         gtki.Label       `gtk-widget:"room-config-summary-description"`
-	language            gtki.Label       `gtk-widget:"room-config-summary-language"`
-	includePublicList   gtki.Label       `gtk-widget:"room-config-summary-public-label"`
-	persistent          gtki.Label       `gtk-widget:"room-config-summary-persistent-label"`
-	password            gtki.Label       `gtk-widget:"room-config-summary-password-label"`
-	allowInviteUsers    gtki.Label       `gtk-widget:"room-config-summary-invite-label"`
-	onlyMembers         gtki.Label       `gtk-widget:"room-config-summary-onlymembers-label"`
-	allowSetRoomSubject gtki.Label       `gtk-widget:"room-config-summary-changesubject-label"`
-	moderatedRoom       gtki.Label       `gtk-widget:"room-config-summary-moderated-label"`
-	whoIs               gtki.Label       `gtk-widget:"room-config-summary-whois"`
-	ownersTreeView      gtki.TreeView    `gtk-widget:"room-config-summary-owners-tree"`
-	adminsTreeView      gtki.TreeView    `gtk-widget:"room-config-summary-admins-tree"`
-	maxHistoryFetch     gtki.Label       `gtk-widget:"room-config-summary-maxhistoryfetch"`
-	maxOccupants        gtki.Label       `gtk-widget:"room-config-summary-maxoccupants"`
-	enableArchiving     gtki.Label       `gtk-widget:"room-config-summary-archive-label"`
-	autojoinCheckButton gtki.CheckButton `gtk-widget:"room-config-autojoin"`
+	basicInformation        gtki.LinkButton     `gtk-widget:"room-config-summary-basic-information"`
+	access                  gtki.LinkButton     `gtk-widget:"room-config-summary-access"`
+	permissions             gtki.LinkButton     `gtk-widget:"room-config-summary-permissions"`
+	occupants               gtki.LinkButton     `gtk-widget:"room-config-summary-occupants"`
+	others                  gtki.LinkButton     `gtk-widget:"room-config-summary-others"`
+	title                   gtki.Label          `gtk-widget:"room-config-summary-title"`
+	descriptionNotAssigned  gtki.Label          `gtk-widget:"room-config-summary-description-not-assigned"`
+	descriptionScrollWindow gtki.ScrolledWindow `gtk-widget:"room-config-summary-description-scrolled"`
+	description             gtki.TextView       `gtk-widget:"room-config-summary-description"`
+	language                gtki.Label          `gtk-widget:"room-config-summary-language"`
+	includePublicList       gtki.Label          `gtk-widget:"room-config-summary-public-label"`
+	persistent              gtki.Label          `gtk-widget:"room-config-summary-persistent-label"`
+	password                gtki.Label          `gtk-widget:"room-config-summary-password-label"`
+	allowInviteUsers        gtki.Label          `gtk-widget:"room-config-summary-invite-label"`
+	onlyMembers             gtki.Label          `gtk-widget:"room-config-summary-onlymembers-label"`
+	allowSetRoomSubject     gtki.Label          `gtk-widget:"room-config-summary-changesubject-label"`
+	moderatedRoom           gtki.Label          `gtk-widget:"room-config-summary-moderated-label"`
+	whoIs                   gtki.Label          `gtk-widget:"room-config-summary-whois"`
+	ownersTreeView          gtki.TreeView       `gtk-widget:"room-config-summary-owners-tree"`
+	adminsTreeView          gtki.TreeView       `gtk-widget:"room-config-summary-admins-tree"`
+	maxHistoryFetch         gtki.Label          `gtk-widget:"room-config-summary-maxhistoryfetch"`
+	maxOccupants            gtki.Label          `gtk-widget:"room-config-summary-maxoccupants"`
+	enableArchiving         gtki.Label          `gtk-widget:"room-config-summary-archive-label"`
+	autojoinCheckButton     gtki.CheckButton    `gtk-widget:"room-config-autojoin"`
 
 	ownersTreeModel gtki.ListStore
 	adminsTreeModel gtki.ListStore
@@ -63,8 +65,6 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	})
 
 	p.onRefresh.add(p.onSummaryPageRefresh)
-	mucStyles.setRoomConfigSummaryRoomTitleLabelStyle(p.title)
-	mucStyles.setRoomConfigSummaryRoomDescriptionLabelStyle(p.description)
 	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.basicInformation)
 	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.access)
 	mucStyles.setRoomConfigSummarySectionLinkButtonStyle(p.permissions)
@@ -80,12 +80,32 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	return p
 }
 
+func setDefaultLabelText(label string) string {
+	if label != "" {
+		return label
+	}
+	return i18n.Local("Not assigned")
+}
+
+func (p *roomConfigSummaryPage) handleDescriptionField() {
+	if p.form.Description == "" {
+		p.descriptionScrollWindow.Hide()
+		p.descriptionNotAssigned.SetVisible(true)
+		return
+	}
+
+	p.descriptionScrollWindow.Show()
+	p.descriptionNotAssigned.SetVisible(false)
+}
+
 func (p *roomConfigSummaryPage) onSummaryPageRefresh() {
 	p.autojoinCheckButton.SetActive(p.autoJoin)
 
 	// Basic information
-	setLabelText(p.title, p.form.Title)
-	setLabelText(p.description, p.form.Description)
+	setLabelText(p.title, setDefaultLabelText(p.form.Title))
+	p.handleDescriptionField()
+	setTextViewText(p.description, setDefaultLabelText(p.form.Description))
+	setLabelText(p.descriptionNotAssigned, setDefaultLabelText(p.form.Description))
 	setLabelText(p.language, supportedLanguageDescription(p.form.Language))
 	setLabelText(p.includePublicList, getStringFromActiveValue(p.form.Public))
 	setLabelText(p.persistent, getStringFromActiveValue(p.form.Persistent))

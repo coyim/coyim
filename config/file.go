@@ -51,13 +51,15 @@ func safeWrite(name string, data []byte, perm os.FileMode) error {
 		_ = os.Remove(backupName)
 	}
 
-	err := os.Rename(name, backupName)
-	if err != nil {
-		return err
+	if fileExists(name) {
+		err := os.Rename(name, backupName)
+		if err != nil {
+			return err
+		}
 	}
 
 	tempName := fmt.Sprintf("%s%s", name, tmpExtension)
-	err = ioutil.WriteFile(tempName, data, perm)
+	err := ioutil.WriteFile(tempName, data, perm)
 	if err != nil {
 		return err
 	}

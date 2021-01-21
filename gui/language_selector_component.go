@@ -212,7 +212,12 @@ func supportedLanguageDescription(langCode string) string {
 }
 
 func systemLanguageNamer() display.Namer {
-	return display.Tags(systemDefaultLanguage())
+	namer := display.Tags(systemDefaultLanguage())
+	if namer != nil {
+		return namer
+	}
+
+	return display.Self
 }
 
 func systemDefaultLanguage() language.Tag {

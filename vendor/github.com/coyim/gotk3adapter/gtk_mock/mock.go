@@ -236,3 +236,7 @@ func (*Mock) StatusIconNewFromIconName(iconName string) (gtki.StatusIcon, error)
 func (*Mock) StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (gtki.StatusIcon, error) {
 	return nil, nil
 }
+
+func (*Mock) GetWidgetBuildableName(widget gtki.Widget) (string, error) {
+	return "", nil
+}

@@ -17,8 +17,8 @@ func nativeBuildable(v *glib.Object) *C.GtkBuildable {
 	return C.toGtkBuildable(p)
 }
 
-// BuildableGetName is a wrapper around gtk_buildable_get_name().
-func BuildableGetName(obj *glib.Object) (string, error) {
+// GetBuildableName is a wrapper around gtk_buildable_get_name().
+func GetBuildableName(obj *glib.Object) (string, error) {
 	c := C.gtk_buildable_get_name(nativeBuildable(obj))
 	if c == nil {
 		return "", nilPtrErr

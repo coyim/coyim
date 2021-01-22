@@ -66,6 +66,8 @@ type Gtk interface {
 	StatusIconNewFromFile(filename string) (StatusIcon, error)
 	StatusIconNewFromIconName(iconName string) (StatusIcon, error)
 	StatusIconNewFromPixbuf(pixbuf gdki.Pixbuf) (StatusIcon, error)
+
+	GetWidgetBuildableName(Widget) (string, error)
 }
 
 func AssertGtk(_ Gtk) {}

@@ -21,18 +21,6 @@
                 <property name="border_width">12</property>
                 <property name="spacing">12</property>
                 <child>
-                  <object class="GtkBox" id="spinner-area">
-                    <property name="visible">True</property>
-                    <property name="valign">center</property>
-                    <property name="orientation">vertical</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkButtonBox">
                     <property name="visible">True</property>
                     <property name="spacing">12</property>
@@ -47,7 +35,7 @@
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">1</property>
+                        <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
@@ -61,7 +49,7 @@
                       <packing>
                         <property name="expand">True</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
@@ -84,17 +72,6 @@
             <property name="fill">False</property>
             <property name="pack_type">end</property>
             <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox" id="notifications-area">
-            <property name="visible">True</property>            
-            <property name="orientation">vertical</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
           </packing>
         </child>
         <child>

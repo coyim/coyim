@@ -20,21 +20,15 @@ type occupantAffiliationUpdateView struct {
 	roomID         jid.Bare
 	occupant       *muc.Occupant
 	rosterInfoView *roomViewRosterInfo
-	cancel         chan bool
 
-	dialog            gtki.Dialog      `gtk-widget:"affiliation-dialog"`
-	affiliationLabel  gtki.Label       `gtk-widget:"affiliation-type-label"`
-	adminRadio        gtki.RadioButton `gtk-widget:"affiliation-admin"`
-	memberRadio       gtki.RadioButton `gtk-widget:"affiliation-member"`
-	noneRadio         gtki.RadioButton `gtk-widget:"affiliation-none"`
-	reasonLabel       gtki.Label       `gtk-widget:"affiliation-reason-label"`
-	reasonEntry       gtki.TextView    `gtk-widget:"affiliation-reason-entry"`
-	applyButton       gtki.Button      `gtk-widget:"affiliation-apply-button"`
-	notificationsArea gtki.Box         `gtk-widget:"notifications-area"`
-	spinnerArea       gtki.Box         `gtk-widget:"spinner-area"`
-
-	notifications *notifications
-	spinner       *spinner
+	dialog           gtki.Dialog      `gtk-widget:"affiliation-dialog"`
+	affiliationLabel gtki.Label       `gtk-widget:"affiliation-type-label"`
+	adminRadio       gtki.RadioButton `gtk-widget:"affiliation-admin"`
+	memberRadio      gtki.RadioButton `gtk-widget:"affiliation-member"`
+	noneRadio        gtki.RadioButton `gtk-widget:"affiliation-none"`
+	reasonLabel      gtki.Label       `gtk-widget:"affiliation-reason-label"`
+	reasonEntry      gtki.TextView    `gtk-widget:"affiliation-reason-entry"`
+	applyButton      gtki.Button      `gtk-widget:"affiliation-apply-button"`
 }
 
 func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant) *occupantAffiliationUpdateView {
@@ -46,7 +40,6 @@ func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID
 	}
 
 	av.initBuilder()
-	av.initNotificationsAndSpinner(r.u)
 	av.initDefaults()
 
 	return av
@@ -57,7 +50,7 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 	panicOnDevError(builder.bindObjects(av))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_cancel":    av.onCancel,
+		"on_cancel":    av.closeDialog,
 		"on_apply":     av.onApply,
 		"on_key_press": av.onKeyPress,
 		"on_toggled":   av.onRadioButtonToggled,
@@ -75,14 +68,6 @@ func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event
 	}
 }
 
-func (av *occupantAffiliationUpdateView) initNotificationsAndSpinner(u *gtkUI) {
-	av.notifications = u.newNotificationsComponent()
-	av.spinner = u.newSpinnerComponent()
-
-	av.notificationsArea.Add(av.notifications.widget())
-	av.spinnerArea.Add(av.spinner.widget())
-}
-
 func (av *occupantAffiliationUpdateView) initDefaults() {
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
@@ -95,43 +80,6 @@ func (av *occupantAffiliationUpdateView) initDefaults() {
 	case *data.NoneAffiliation:
 		av.noneRadio.SetActive(true)
 	}
-}
-
-// disableAffiliationRadios MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) disableAffiliationRadios() {
-	disableField(av.adminRadio)
-	disableField(av.memberRadio)
-	disableField(av.noneRadio)
-}
-
-// enableAffiliationRadios MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) enableAffiliationRadios() {
-	enableField(av.adminRadio)
-	enableField(av.memberRadio)
-	enableField(av.noneRadio)
-}
-
-// disableFieldsAndShowSpinner MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) disableFieldsAndShowSpinner() {
-	av.disableAffiliationRadios()
-	av.applyButton.SetSensitive(false)
-	av.spinner.show()
-}
-
-// enableFieldsAndHideSpinner MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) enableFieldsAndHideSpinner() {
-	av.enableAffiliationRadios()
-	av.applyButton.SetSensitive(true)
-	av.spinner.hide()
-}
-
-// onCancel MUST be called from the UI thread
-func (av *occupantAffiliationUpdateView) onCancel() {
-	if av.cancel != nil {
-		av.cancel <- true
-	}
-
-	av.closeDialog()
 }
 
 // onApply MUST be called from the UI thread
@@ -149,14 +97,6 @@ func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() da
 	default:
 		return &data.NoneAffiliation{}
 	}
-}
-
-// onAffiliationUpdateError MUST NOT be called from the UI thread
-func (av *occupantAffiliationUpdateView) onAffiliationUpdateError(err error) {
-	doInUIThread(func() {
-		av.enableFieldsAndHideSpinner()
-		av.notifications.error(affiliationUpdateErrorMessage(err))
-	})
 }
 
 // show MUST be called from the UI thread

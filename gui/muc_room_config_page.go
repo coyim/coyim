@@ -137,6 +137,7 @@ func (p *roomConfigPageBase) onConfigurationCancelError() {
 
 // showLoadingOverlay MUST be called from the ui thread
 func (p *roomConfigPageBase) showLoadingOverlay(m string) {
+	p.loadingOverlay.setSolid()
 	p.loadingOverlay.showWithMessage(m)
 }
 

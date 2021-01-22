@@ -305,6 +305,23 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 	}()
 }
 
+func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation data.Affiliation, reason string) {
+	v.loadingViewOverlay.onOccupantAffiliationUpdate()
+	previousAffiliation := o.Affiliation
+	sc, ec := v.account.session.UpdateOccupantAffiliation(v.roomID(), o.RealJid, affiliation, reason)
+
+	select {
+	case <-sc:
+		v.log.Info("The affiliation has been changed")
+
+		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, previousAffiliation, affiliation, v.room.SelfOccupantNickname(), reason)
+		o.UpdateAffiliation(affiliation)
+		doInUIThread(v.loadingViewOverlay.hide)
+	case <-ec:
+		//TODO Show error dialog
+	}
+}
+
 func (v *roomView) switchToLobbyView() {
 	v.initRoomLobby()
 
@@ -380,11 +397,6 @@ func (v *roomView) notAuthorized() {
 // occupantForbidden MUST NOT be called from the UI thread
 func (v *roomView) occupantForbidden() {
 	v.publishEvent(occupantForbiddenEvent{})
-}
-
-// occupantAffiliationUpdate MUST NOT ve called from the UI thread
-func (v *roomView) occupantAffiliationUpdate(nickname string, previousAffiliation, affiliation data.Affiliation, reason string) {
-	v.publishOccupantAffiliationUpdatedEvent(nickname, previousAffiliation, affiliation, v.room.SelfOccupantNickname(), reason)
 }
 
 // publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread

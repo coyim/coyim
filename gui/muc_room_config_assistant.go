@@ -124,14 +124,10 @@ func (rc *roomConfigAssistant) initDefaults() {
 }
 
 func (rc *roomConfigAssistant) initButtonLabels() {
-	for _, b := range getButtonsForAssistantHeader(rc.assistant) {
-		switch name, _ := g.gtk.WidgetGetName(b); name {
-		case "last":
-			b.SetProperty("label", i18n.Local("Summary"))
-		case "apply":
-			b.SetProperty("label", i18n.Local("Create Room"))
-		}
-	}
+	buttons := getButtonsForAssistantHeader(rc.assistant)
+
+	buttons.updateButtonLabelByName("last", i18n.Local("Summary"))
+	buttons.updateButtonLabelByName("apply", i18n.Local("Create Room"))
 }
 
 func (rc *roomConfigAssistant) onPageChanged(_ gtki.Assistant, _ gtki.Widget) {

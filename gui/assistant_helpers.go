@@ -10,15 +10,24 @@ func findAssistantHeaderContainer(a gtki.Assistant) gtki.Container {
 	return parentBox.(gtki.Container)
 }
 
-func getButtonsForAssistantHeader(a gtki.Assistant) []gtki.Button {
+type assistantButtons map[string]gtki.Button
+
+func getButtonsForAssistantHeader(a gtki.Assistant) assistantButtons {
 	h := findAssistantHeaderContainer(a)
-	result := []gtki.Button{}
+	result := assistantButtons{}
 
 	for _, c := range h.GetChildren() {
 		if b, ok := c.(gtki.Button); ok {
-			result = append(result, b)
+			name, _ := g.gtk.GetWidgetBuildableName(b)
+			result[name] = b
 		}
 	}
 
 	return result
+}
+
+func (list assistantButtons) updateButtonLabelByName(name string, label string) {
+	if b, ok := list[name]; ok {
+		b.SetProperty("label", label)
+	}
 }

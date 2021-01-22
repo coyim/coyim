@@ -136,8 +136,8 @@ func (av *occupantAffiliationUpdateView) onCancel() {
 
 // onApply MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onApply() {
-	av.disableFieldsAndShowSpinner()
-	go av.updateOccupantAffiliation(av.getAffiliationBasedOnRadioSelected())
+	go av.rosterInfoView.updateOccupantAffiliation(av.occupant, av.getAffiliationBasedOnRadioSelected(), getTextViewText(av.reasonEntry))
+	av.closeDialog()
 }
 
 func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() data.Affiliation {
@@ -149,34 +149,6 @@ func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() da
 	default:
 		return &data.NoneAffiliation{}
 	}
-}
-
-// updateOccupantAffiliation MUST NOT be called from the UI thread
-func (av *occupantAffiliationUpdateView) updateOccupantAffiliation(affiliation data.Affiliation) {
-	av.cancel = make(chan bool)
-
-	defer func() {
-		av.cancel = nil
-	}()
-
-	reason := getTextViewText(av.reasonEntry)
-	sc, ec := av.account.session.UpdateOccupantAffiliation(av.roomID, av.occupant.RealJid, affiliation, reason)
-
-	select {
-	case <-sc:
-		previousAffiliation := av.occupant.Affiliation
-		av.occupant.UpdateAffiliation(affiliation)
-		av.onAffiliationUpdateFinished(av.occupant, previousAffiliation, reason)
-	case err := <-ec:
-		av.onAffiliationUpdateError(err)
-	case <-av.cancel:
-	}
-}
-
-// onAffiliationUpdatedFinished MUST NOT be called from the UI thread
-func (av *occupantAffiliationUpdateView) onAffiliationUpdateFinished(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
-	av.rosterInfoView.occupantAffiliationChanged(occupant, previousAffiliation, reason)
-	doInUIThread(av.closeDialog)
 }
 
 // onAffiliationUpdateError MUST NOT be called from the UI thread

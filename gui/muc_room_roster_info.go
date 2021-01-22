@@ -76,8 +76,8 @@ func (r *roomViewRosterInfo) initDefaults() {
 	)
 }
 
-func (r *roomViewRosterInfo) occupantAffiliationChanged(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
-	r.rosterView.onOccupantAffiliationUpdated(occupant, previousAffiliation, reason)
+func (r *roomViewRosterInfo) updateOccupantAffiliation(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
+	r.rosterView.updateOccupantAffiliation(occupant, previousAffiliation, reason)
 	doInUIThread(r.refresh)
 }
 

@@ -125,9 +125,11 @@ func (rc *roomConfigAssistant) initDefaults() {
 
 func (rc *roomConfigAssistant) initButtonLabels() {
 	for _, b := range getButtonsForAssistantHeader(rc.assistant) {
-		s, _ := b.GetLabel()
-		if s == i18n.Localf("_Apply") {
-			b.SetProperty("label", i18n.Localf("Create Room"))
+		switch name, _ := g.gtk.WidgetGetName(b); name {
+		case "last":
+			b.SetProperty("label", i18n.Local("Summary"))
+		case "apply":
+			b.SetProperty("label", i18n.Local("Create Room"))
 		}
 	}
 }

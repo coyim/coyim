@@ -28,3 +28,12 @@ func GetParent(v *gtk.Widget) (gtk.IWidget, error) {
 	}
 	return CastWidget(c)
 }
+
+// GetBuildableName is a wrapper around BuildableGetName().
+// It can be used to get the "buildable id" of any widget.
+func WidgetGetName(v *gtk.Widget) (string, error) {
+	if v == nil || v.Object == nil {
+		return "", nilPtrErr
+	}
+	return BuildableGetName(v.Object)
+}

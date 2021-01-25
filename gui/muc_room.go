@@ -55,7 +55,7 @@ type roomView struct {
 	loadingNotificationBox gtki.Box     `gtk-widget:"loadingNotificationBox"`
 	roomInfoErrorBar       gtki.InfoBar `gtk-widget:"room-info-error-bar"`
 
-	notifications *notifications
+	notifications *roomNotifications
 
 	warnings           *roomViewWarningsOverlay
 	warningsInfoBar    *roomViewWarningsInfoBar
@@ -89,13 +89,11 @@ func newRoomView(u *gtkUI, a *account, roomID jid.Bare) *roomView {
 	view.initBuilderAndSignals()
 	view.initDefaults()
 	view.initSubscribers()
+	view.initNotifications()
 
 	view.toolbar = view.newRoomViewToolbar()
 	view.roster = view.newRoomViewRoster()
 	view.conv = view.newRoomViewConversation()
-
-	view.notifications = view.u.newNotificationsComponent()
-	view.notificationsArea.Add(view.notifications.widget())
 
 	view.warnings = view.newRoomViewWarningsOverlay()
 	view.warningsInfoBar = view.newRoomViewWarningsInfoBar()
@@ -127,6 +125,11 @@ func (v *roomView) initSubscribers() {
 			v.onEventReceived(ev)
 		})
 	})
+}
+
+func (v *roomView) initNotifications() {
+	v.notifications = v.newRoomNotifications()
+	v.notificationsArea.Add(v.notifications.widget())
 }
 
 func (v *roomView) onEventReceived(ev roomViewEvent) {

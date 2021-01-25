@@ -7,6 +7,9 @@ import (
 type withNotification interface {
 	withWidget
 	withMessage
+
+	isClosable() bool
+	onClose(func())
 }
 
 type notifications struct {

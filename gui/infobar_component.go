@@ -1,11 +1,13 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 type infoBar struct {
 	text            string
 	mt              gtki.MessageType
-	isClosable      bool
+	canBeClosed     bool
 	onCloseCallback func()
 
 	bar     gtki.InfoBar `gtk-widget:"bar"`
@@ -24,7 +26,7 @@ func (u *gtkUI) newInfoBarComponent(text string, mt gtki.MessageType) *infoBar {
 
 	builder.ConnectSignals(map[string]interface{}{
 		"on_close": func() {
-			if ib.isClosable && ib.onCloseCallback != nil {
+			if ib.canBeClosed && ib.onCloseCallback != nil {
 				ib.onCloseCallback()
 			}
 		},
@@ -38,8 +40,12 @@ func (u *gtkUI) newInfoBarComponent(text string, mt gtki.MessageType) *infoBar {
 
 // setClosable MUST be called from the UI thread
 func (ib *infoBar) setClosable(v bool) {
-	ib.isClosable = v
+	ib.canBeClosed = v
 	ib.bar.SetShowCloseButton(v)
+}
+
+func (ib *infoBar) isClosable() bool {
+	return ib.canBeClosed
 }
 
 func (ib *infoBar) onClose(f func()) {

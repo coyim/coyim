@@ -28,8 +28,8 @@ func (rn *roomNotifications) add(nc withNotification) {
 	rn.notifications.add(nc)
 }
 
-func (rn *roomNotifications) remove(w gtki.Widget) {
-	rn.notifications.remove(w)
+func (rn *roomNotifications) remove(nc withNotification) {
+	rn.notifications.remove(nc)
 }
 
 func (rn *roomNotifications) widget() gtki.Widget {

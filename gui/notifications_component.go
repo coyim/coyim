@@ -44,15 +44,23 @@ func (n *notifications) add(m withNotification) {
 }
 
 // remove MUST be called from the ui thread
-func (n *notifications) remove(w gtki.Widget) {
-	n.box.Remove(w)
+func (n *notifications) remove(m withNotification) {
+	newMessageList := []withNotification{}
+	for _, om := range n.messages {
+		if om != m {
+			newMessageList = append(newMessageList, om)
+		}
+	}
+
+	n.messages = newMessageList
+	n.box.Remove(m.widget())
 }
 
 // clearAll MUST be called from the ui thread
 func (n *notifications) clearAll() {
 	messages := n.messages
 	for _, m := range messages {
-		n.remove(m.widget())
+		n.remove(m)
 	}
 	n.messages = nil
 }
@@ -62,7 +70,7 @@ func (n *notifications) clearMessagesByType(mt gtki.MessageType) {
 	messages := []withNotification{}
 	for _, m := range n.messages {
 		if m.messageType() == mt {
-			n.remove(m.widget())
+			n.remove(m)
 		} else {
 			messages = append(messages, m)
 		}

@@ -189,7 +189,7 @@ func (v *roomView) showWarnings() {
 }
 
 func (v *roomView) removeWarningsInfobar() {
-	v.notifications.remove(v.warningsInfoBar.widget())
+	v.notifications.remove(v.warningsInfoBar)
 }
 
 func (v *roomView) showNotificationsOverlay() {

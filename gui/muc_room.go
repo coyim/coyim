@@ -45,15 +45,16 @@ type roomView struct {
 	passwordProvider func() string
 	returnTo         func()
 
-	window                 gtki.Window  `gtk-widget:"roomWindow"`
-	content                gtki.Box     `gtk-widget:"boxMainView"`
-	overlay                gtki.Overlay `gtk-widget:"roomOverlay"`
-	messagesOverlay        gtki.Overlay `gtk-widget:"messagesOverlay"`
-	messagesOverlayBox     gtki.Box     `gtk-widget:"messagesOverlayBox"`
-	messagesBox            gtki.Box     `gtk-widget:"messagesBox"`
-	notificationsArea      gtki.Box     `gtk-widget:"notificationBox"`
-	loadingNotificationBox gtki.Box     `gtk-widget:"loadingNotificationBox"`
-	roomInfoErrorBar       gtki.InfoBar `gtk-widget:"room-info-error-bar"`
+	window                 gtki.Window   `gtk-widget:"room-window"`
+	overlay                gtki.Overlay  `gtk-widget:"room-overlay"`
+	messagesOverlay        gtki.Overlay  `gtk-widget:"room-messages-overlay"`
+	messagesOverlayBox     gtki.Box      `gtk-widget:"room-messages-overlay-box"`
+	messagesBox            gtki.Box      `gtk-widget:"room-messages-box"`
+	privacityWarningBox    gtki.Box      `gtk-widget:"room-privacity-warnings-box"`
+	loadingNotificationBox gtki.Box      `gtk-widget:"room-loading-notification-box"`
+	content                gtki.Box      `gtk-widget:"room-main-box"`
+	notificationsArea      gtki.Revealer `gtk-widget:"room-notifications-revealer"`
+	roomInfoErrorBar       gtki.InfoBar  `gtk-widget:"room-info-error-bar"`
 
 	notifications *roomNotifications
 
@@ -150,7 +151,7 @@ func (v *roomView) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 
 	v.warnings.clear()
 	v.showRoomWarnings(di)
-	v.notifications.add(v.warningsInfoBar)
+	v.privacityWarningBox.PackStart(v.warningsInfoBar.widget(), true, false, 0)
 }
 
 // roomConfigRequestTimeoutEvent MUST be called from the UI thread

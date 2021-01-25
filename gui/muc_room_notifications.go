@@ -21,10 +21,15 @@ func (v *roomView) newRoomNotifications() *roomNotifications {
 func (rn *roomNotifications) info(msg string) {
 	nc := rn.u.newInfoBarComponent(msg, gtki.MESSAGE_INFO)
 	nc.setClosable(true)
-	rn.notifications.add(nc)
+	rn.add(nc)
 }
 
 func (rn *roomNotifications) add(nc withNotification) {
+	if nc.isClosable() {
+		nc.onClose(func() {
+			rn.remove(nc)
+		})
+	}
 	rn.notifications.add(nc)
 }
 

@@ -2,7 +2,7 @@
   <object class="GtkInfoBar" id="bar">
     <property name="visible">True</property>
     <property name="message_type">other</property>
-    <signal name="close" handler="on_close" swapped="no"/>
+    <signal name="response" handler="handle-response" swapped="no"/>
     <child internal-child="action_area">
       <object class="GtkButtonBox" id="actions">
         <property name="spacing">6</property>

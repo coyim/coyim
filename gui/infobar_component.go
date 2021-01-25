@@ -25,7 +25,11 @@ func (u *gtkUI) newInfoBarComponent(text string, mt gtki.MessageType) *infoBar {
 	panicOnDevError(builder.bindObjects(ib))
 
 	builder.ConnectSignals(map[string]interface{}{
-		"on_close": func() {
+		"handle-response": func(info gtki.InfoBar, response gtki.ResponseType) {
+			if response != gtki.RESPONSE_CLOSE {
+				return
+			}
+
 			if ib.canBeClosed && ib.onCloseCallback != nil {
 				ib.onCloseCallback()
 			}

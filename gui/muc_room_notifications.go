@@ -10,12 +10,13 @@ type roomNotifications struct {
 }
 
 func (v *roomView) newRoomNotifications() *roomNotifications {
-	rn := &roomNotifications{
-		u:             v.u,
-		notifications: v.u.newNotificationsComponent(),
-	}
+	notifications := v.u.newNotificationsComponent()
+	notifications.setStacked(true)
 
-	return rn
+	return &roomNotifications{
+		u:             v.u,
+		notifications: notifications,
+	}
 }
 
 func (rn *roomNotifications) info(msg string) {

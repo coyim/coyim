@@ -34,6 +34,10 @@ func (n *notifications) widget() gtki.Widget {
 	return n.box
 }
 
+func (n *notifications) setStacked(v bool) {
+	n.stacked = v
+}
+
 // add MUST be called from the ui thread
 func (n *notifications) add(m withNotification) {
 	if !n.stacked {

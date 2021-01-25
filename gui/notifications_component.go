@@ -1,8 +1,10 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
-type notification interface {
+type withNotification interface {
 	withWidget
 	withMessage
 }
@@ -10,7 +12,7 @@ type notification interface {
 type notifications struct {
 	u        *gtkUI
 	box      gtki.Box
-	messages []notification
+	messages []withNotification
 	stacked  bool
 }
 
@@ -30,14 +32,14 @@ func (n *notifications) widget() gtki.Widget {
 }
 
 // add MUST be called from the ui thread
-func (n *notifications) add(m notification) {
+func (n *notifications) add(m withNotification) {
 	if !n.stacked {
 		n.clearAll()
 	}
 
 	n.messages = append(n.messages, m)
 
-	n.box.Add(m.widget())
+	n.box.PackStart(m.widget(), true, false, 0)
 	n.box.ShowAll()
 }
 
@@ -57,7 +59,7 @@ func (n *notifications) clearAll() {
 
 // clearMessagesByType MUST be called from the ui thread
 func (n *notifications) clearMessagesByType(mt gtki.MessageType) {
-	messages := []notification{}
+	messages := []withNotification{}
 	for _, m := range n.messages {
 		if m.messageType() == mt {
 			n.remove(m.widget())
@@ -114,7 +116,7 @@ type notificationBar struct {
 	*infoBar
 }
 
-func (u *gtkUI) newNotificationBar(text string, mt gtki.MessageType) notification {
+func (u *gtkUI) newNotificationBar(text string, mt gtki.MessageType) withNotification {
 	return &notificationBar{
 		u.newInfoBarComponent(text, mt),
 	}

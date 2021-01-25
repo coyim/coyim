@@ -4,6 +4,11 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
+func (v *roomView) initNotifications() {
+	v.notifications = v.newRoomNotifications()
+	v.notificationsArea.Add(v.notifications.widget())
+}
+
 type roomNotifications struct {
 	u             *gtkUI
 	notifications *notifications
@@ -20,7 +25,19 @@ func (v *roomView) newRoomNotifications() *roomNotifications {
 }
 
 func (rn *roomNotifications) info(msg string) {
-	nc := rn.u.newInfoBarComponent(msg, gtki.MESSAGE_INFO)
+	rn.newNotification(msg, gtki.MESSAGE_INFO)
+}
+
+func (rn *roomNotifications) warning(msg string) {
+	rn.newNotification(msg, gtki.MESSAGE_WARNING)
+}
+
+func (rn *roomNotifications) error(msg string) {
+	rn.newNotification(msg, gtki.MESSAGE_ERROR)
+}
+
+func (rn *roomNotifications) newNotification(msg string, messageType gtki.MessageType) {
+	nc := rn.u.newInfoBarComponent(msg, messageType)
 	nc.setClosable(true)
 	rn.add(nc)
 }

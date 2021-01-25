@@ -129,11 +129,6 @@ func (v *roomView) initSubscribers() {
 	})
 }
 
-func (v *roomView) initNotifications() {
-	v.notifications = v.newRoomNotifications()
-	v.notificationsArea.Add(v.notifications.widget())
-}
-
 func (v *roomView) onEventReceived(ev roomViewEvent) {
 	switch t := ev.(type) {
 	case roomDiscoInfoReceivedEvent:

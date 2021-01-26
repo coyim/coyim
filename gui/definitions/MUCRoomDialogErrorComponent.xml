@@ -17,12 +17,14 @@
               <object class="GtkButtonBox">
                 <property name="visible">True</property>
                 <property name="layout_style">start</property>
+                <property name="halign">end</property>
                 <child>
                   <object class="GtkButton">
                     <property name="label" translatable="yes">Cancel</property>
                     <property name="visible">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_underline">True</property>
+                    <property name="margin-right">12</property>
                     <signal name="clicked" handler="on_cancel" swapped="no"/>
                   </object>
                   <packing>
@@ -120,6 +122,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="padding">6</property>
             <property name="position">0</property>
           </packing>
         </child>

@@ -426,6 +426,17 @@ func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, previ
 	})
 }
 
+// publishSelfOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantAffiliationUpdatedEvent(nickname string, previousAffiliation, affiliation data.Affiliation, actor, reason string) {
+	ev := selfOccupantAffiliationUpdatedEvent{}
+	ev.nickname = nickname
+	ev.previousAffiliation = previousAffiliation
+	ev.affiliation = affiliation
+	ev.actor = actor
+	ev.reason = reason
+	v.publishEvent(ev)
+}
+
 // mainWindow MUST be called from the UI thread
 func (v *roomView) mainWindow() gtki.Window {
 	return v.window

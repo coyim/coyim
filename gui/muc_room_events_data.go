@@ -109,29 +109,34 @@ type occupantAffiliationUpdatedEvent struct {
 	reason              string
 }
 
-func (selfOccupantRemovedEvent) markAsRoomViewEvent()        {}
-func (occupantLeftEvent) markAsRoomViewEvent()               {}
-func (occupantJoinedEvent) markAsRoomViewEvent()             {}
-func (occupantUpdatedEvent) markAsRoomViewEvent()            {}
-func (occupantSelfJoinedEvent) markAsRoomViewEvent()         {}
-func (messageEvent) markAsRoomViewEvent()                    {}
-func (subjectUpdatedEvent) markAsRoomViewEvent()             {}
-func (subjectReceivedEvent) markAsRoomViewEvent()            {}
-func (nicknameConflictEvent) markAsRoomViewEvent()           {}
-func (registrationRequiredEvent) markAsRoomViewEvent()       {}
-func (loggingEnabledEvent) markAsRoomViewEvent()             {}
-func (loggingDisabledEvent) markAsRoomViewEvent()            {}
-func (roomAnonymityEvent) markAsRoomViewEvent()              {}
-func (messageForbidden) markAsRoomViewEvent()                {}
-func (messageNotAcceptable) markAsRoomViewEvent()            {}
-func (discussionHistoryEvent) markAsRoomViewEvent()          {}
-func (roomDiscoInfoReceivedEvent) markAsRoomViewEvent()      {}
-func (roomConfigRequestTimeoutEvent) markAsRoomViewEvent()   {}
-func (roomDestroyedEvent) markAsRoomViewEvent()              {}
-func (roomConfigChangedEvent) markAsRoomViewEvent()          {}
-func (occupantRemovedEvent) markAsRoomViewEvent()            {}
-func (notAuthorizedEvent) markAsRoomViewEvent()              {}
-func (occupantForbiddenEvent) markAsRoomViewEvent()          {}
-func (serviceUnavailableEvent) markAsRoomViewEvent()         {}
-func (unknownErrorEvent) markAsRoomViewEvent()               {}
-func (occupantAffiliationUpdatedEvent) markAsRoomViewEvent() {}
+type selfOccupantAffiliationUpdatedEvent struct {
+	occupantAffiliationUpdatedEvent
+}
+
+func (selfOccupantRemovedEvent) markAsRoomViewEvent()            {}
+func (occupantLeftEvent) markAsRoomViewEvent()                   {}
+func (occupantJoinedEvent) markAsRoomViewEvent()                 {}
+func (occupantUpdatedEvent) markAsRoomViewEvent()                {}
+func (occupantSelfJoinedEvent) markAsRoomViewEvent()             {}
+func (messageEvent) markAsRoomViewEvent()                        {}
+func (subjectUpdatedEvent) markAsRoomViewEvent()                 {}
+func (subjectReceivedEvent) markAsRoomViewEvent()                {}
+func (nicknameConflictEvent) markAsRoomViewEvent()               {}
+func (registrationRequiredEvent) markAsRoomViewEvent()           {}
+func (loggingEnabledEvent) markAsRoomViewEvent()                 {}
+func (loggingDisabledEvent) markAsRoomViewEvent()                {}
+func (roomAnonymityEvent) markAsRoomViewEvent()                  {}
+func (messageForbidden) markAsRoomViewEvent()                    {}
+func (messageNotAcceptable) markAsRoomViewEvent()                {}
+func (discussionHistoryEvent) markAsRoomViewEvent()              {}
+func (roomDiscoInfoReceivedEvent) markAsRoomViewEvent()          {}
+func (roomConfigRequestTimeoutEvent) markAsRoomViewEvent()       {}
+func (roomDestroyedEvent) markAsRoomViewEvent()                  {}
+func (roomConfigChangedEvent) markAsRoomViewEvent()              {}
+func (occupantRemovedEvent) markAsRoomViewEvent()                {}
+func (notAuthorizedEvent) markAsRoomViewEvent()                  {}
+func (occupantForbiddenEvent) markAsRoomViewEvent()              {}
+func (serviceUnavailableEvent) markAsRoomViewEvent()             {}
+func (unknownErrorEvent) markAsRoomViewEvent()                   {}
+func (occupantAffiliationUpdatedEvent) markAsRoomViewEvent()     {}
+func (selfOccupantAffiliationUpdatedEvent) markAsRoomViewEvent() {}

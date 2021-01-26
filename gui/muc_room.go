@@ -419,8 +419,8 @@ func (v *roomView) occupantForbidden() {
 func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, previousAffiliation, affiliation data.Affiliation, actor, reason string) {
 	v.publishEvent(occupantAffiliationUpdatedEvent{
 		nickname:            nickname,
+		affiliation:         affiliation,
 		previousAffiliation: previousAffiliation,
-		currentAffiliation:  affiliation,
 		actor:               actor,
 		reason:              reason,
 	})

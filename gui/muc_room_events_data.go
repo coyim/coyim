@@ -103,10 +103,10 @@ type roomConfigChangedEvent struct {
 
 type occupantAffiliationUpdatedEvent struct {
 	nickname            string
+	affiliation         data.Affiliation
+	previousAffiliation data.Affiliation
 	actor               string
 	reason              string
-	previousAffiliation data.Affiliation
-	currentAffiliation  data.Affiliation
 }
 
 func (selfOccupantRemovedEvent) markAsRoomViewEvent()        {}

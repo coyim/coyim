@@ -76,7 +76,7 @@ func (la *mucRoomConfigListAddComponent) initDefaults(parent gtki.Window) {
 func (la *mucRoomConfigListAddComponent) initAddOccupantForm() {
 	la.form = la.newAddOccupantForm()
 	defaultItem := newMUCRoomConfigListFormItem(la.form, la.appendNewItem, nil)
-	la.content.PackStart(defaultItem.widget(), false, true, 0)
+	la.content.PackStart(defaultItem.getBox(), false, true, 0)
 }
 
 func (la *mucRoomConfigListAddComponent) newAddOccupantForm() mucRoomConfigListForm {
@@ -99,7 +99,7 @@ func (la *mucRoomConfigListAddComponent) appendNewItem(values []string) {
 
 	item := newMUCRoomConfigListFormItem(form, nil, onRemove)
 	la.items = append(la.items, item)
-	la.content.PackStart(item.widget(), false, true, 0)
+	la.content.PackStart(item.getBox(), false, true, 0)
 
 	la.enableApplyIfConditionsAreMet()
 }
@@ -108,7 +108,7 @@ func (la *mucRoomConfigListAddComponent) removeItemByIndex(index int) {
 	items := []*mucRoomConfigListFormItem{}
 	for ix, itm := range la.items {
 		if ix == index {
-			la.content.Remove(itm.widget())
+			la.content.Remove(itm.getBox())
 			continue
 		}
 		items = append(items, itm)
@@ -143,7 +143,7 @@ func (la *mucRoomConfigListAddComponent) onCancelClicked() {
 
 func (la *mucRoomConfigListAddComponent) onRemoveAllClicked() {
 	for _, itm := range la.items {
-		la.content.Remove(itm.widget())
+		la.content.Remove(itm.getBox())
 	}
 
 	la.items = nil
@@ -277,6 +277,6 @@ func newMUCRoomConfigListFormItem(form mucRoomConfigListForm, onAdd func([]strin
 	return lfi
 }
 
-func (lfi *mucRoomConfigListFormItem) widget() gtki.Box {
+func (lfi *mucRoomConfigListFormItem) getBox() gtki.Box {
 	return lfi.box
 }

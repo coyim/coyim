@@ -6,7 +6,7 @@ import (
 
 func (v *roomView) initNotifications() {
 	v.notifications = v.newRoomNotifications()
-	v.notificationsArea.Add(v.notifications.widget())
+	v.notificationsArea.Add(v.notifications.getNotificationsBox())
 }
 
 type roomNotifications struct {
@@ -55,6 +55,6 @@ func (rn *roomNotifications) remove(nc withNotification) {
 	rn.notifications.remove(nc)
 }
 
-func (rn *roomNotifications) widget() gtki.Widget {
+func (rn *roomNotifications) getNotificationsBox() gtki.Widget {
 	return rn.notifications.getBox()
 }

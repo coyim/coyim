@@ -70,8 +70,6 @@ type roomView struct {
 	conv    *roomViewConversation
 	lobby   *roomViewLobby
 
-	dialogAffiliationError *dialogErrorComponent
-
 	log coylog.Logger
 }
 
@@ -322,10 +320,10 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation dat
 		v.log.WithError(err).Error("An error occurred when trying to destroy the room")
 		doInUIThread(func() {
 			v.loadingViewOverlay.hide()
-			v.dialogAffiliationError = createDialogErrorComponent(i18n.Local("Update occupant affiliation error"), i18n.Local("An error occurred when the affiliation was been update."), func() {
+			dr := createDialogErrorComponent(i18n.Local("Update occupant affiliation error"), i18n.Local("An error occurred when the affiliation was been update."), func() {
 				v.tryUpdateOccupantAffiliation(o, affiliation, reason)
 			})
-			v.dialogAffiliationError.show()
+			dr.show()
 		})
 	}
 }

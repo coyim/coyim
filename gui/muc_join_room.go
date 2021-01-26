@@ -82,7 +82,7 @@ func (v *mucJoinRoomView) initNotificationsAndSpinner() {
 	v.spinner = v.u.newSpinnerComponent()
 
 	v.notificationArea.Add(v.notifications.getBox())
-	v.spinnerBox.Add(v.spinner.widget())
+	v.spinnerBox.Add(v.spinner.getSpinner())
 }
 
 func (v *mucJoinRoomView) onCloseWindow() {

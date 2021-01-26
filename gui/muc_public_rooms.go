@@ -122,7 +122,7 @@ func (prv *mucPublicRoomsView) initNotificationsAndSpinner(u *gtkUI) {
 	prv.notificationsArea.Add(prv.notifications.getBox())
 
 	prv.spinner = u.newSpinnerComponent()
-	s := prv.spinner.widget()
+	s := prv.spinner.getSpinner()
 
 	// This is a GTK trick to set the size of the spinner,
 	// so if the parent has a size of 40x40 for example, with

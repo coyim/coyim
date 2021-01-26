@@ -114,7 +114,7 @@ func (f *mucCreateRoomViewForm) initNotificationsAndSpinner(v *mucCreateRoomView
 	f.spinner = v.u.newSpinnerComponent()
 	f.notifications = v.u.newNotificationsComponent()
 
-	f.spinnerBox.Add(f.spinner.widget())
+	f.spinnerBox.Add(f.spinner.getSpinner())
 	f.notificationsArea.Add(f.notifications.getBox())
 }
 

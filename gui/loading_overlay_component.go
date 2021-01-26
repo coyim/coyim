@@ -20,7 +20,7 @@ func (u *gtkUI) newLoadingOverlayComponent() *loadingOverlayComponent {
 	return lo
 }
 
-func (lo *loadingOverlayComponent) widget() gtki.Overlay {
+func (lo *loadingOverlayComponent) getOverlay() gtki.Overlay {
 	return lo.overlay
 }
 

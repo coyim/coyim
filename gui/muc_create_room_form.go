@@ -115,7 +115,7 @@ func (f *mucCreateRoomViewForm) initNotificationsAndSpinner(v *mucCreateRoomView
 	f.notifications = v.u.newNotificationsComponent()
 
 	f.spinnerBox.Add(f.spinner.widget())
-	f.notificationsArea.Add(f.notifications.widget())
+	f.notificationsArea.Add(f.notifications.getBox())
 }
 
 func (f *mucCreateRoomViewForm) onRoomAutoJoinToggled() {

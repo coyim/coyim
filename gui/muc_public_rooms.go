@@ -119,7 +119,7 @@ func (prv *mucPublicRoomsView) initModel() {
 
 func (prv *mucPublicRoomsView) initNotificationsAndSpinner(u *gtkUI) {
 	prv.notifications = u.newNotificationsComponent()
-	prv.notificationsArea.Add(prv.notifications.widget())
+	prv.notificationsArea.Add(prv.notifications.getBox())
 
 	prv.spinner = u.newSpinnerComponent()
 	s := prv.spinner.widget()

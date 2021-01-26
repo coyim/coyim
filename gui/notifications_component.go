@@ -30,7 +30,7 @@ func (u *gtkUI) newNotificationsComponent() *notifications {
 	return n
 }
 
-func (n *notifications) widget() gtki.Widget {
+func (n *notifications) getBox() gtki.Widget {
 	return n.box
 }
 

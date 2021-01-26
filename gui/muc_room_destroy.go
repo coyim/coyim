@@ -71,7 +71,7 @@ func (d *roomDestroyView) initDefaults(v *roomView) {
 	d.dialog.SetTransientFor(v.window)
 
 	d.notifications = v.u.newNotificationsComponent()
-	d.notificationBox.Add(d.notifications.widget())
+	d.notificationBox.Add(d.notifications.getBox())
 }
 
 // onDestroyRoom MUST be called from the UI thread

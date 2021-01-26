@@ -56,5 +56,5 @@ func (rn *roomNotifications) remove(nc withNotification) {
 }
 
 func (rn *roomNotifications) widget() gtki.Widget {
-	return rn.notifications.widget()
+	return rn.notifications.getBox()
 }

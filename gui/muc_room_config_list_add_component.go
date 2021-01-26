@@ -62,7 +62,7 @@ func (la *mucRoomConfigListAddComponent) initBuilder() {
 
 func (la *mucRoomConfigListAddComponent) initNotifications() {
 	la.notifications = la.u.newNotificationsComponent()
-	la.notificationBox.Add(la.notifications.widget())
+	la.notificationBox.Add(la.notifications.getBox())
 }
 
 func (la *mucRoomConfigListAddComponent) initDefaults(parent gtki.Window) {

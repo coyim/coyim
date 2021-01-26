@@ -17,6 +17,27 @@ func newMUCRoomOccupant(nickname string, affiliation data.Affiliation, role data
 	}
 }
 
+func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, op *muc.OccupantPresenceInfo, isOwnPresence bool) {
+	room, ok := m.roomManager.GetRoom(roomID)
+	if !ok {
+		m.log.WithFields(log.Fields{
+			"room":     roomID,
+			"occupant": op.Nickname,
+			"method":   "handleOccupantAffiliationUpdate",
+		}).Error("Trying to get a room that is not in the room manager")
+		return
+	}
+
+	co, exist := room.Roster().GetOccupant(op.Nickname)
+	if exist && co.Affiliation != op.AffiliationInfo.Affiliation {
+		if isOwnPresence {
+			m.selfOccupantAffiliationUpdated(roomID, op.Nickname, co.Affiliation, op.AffiliationInfo)
+			return
+		}
+		m.occupantAffiliationUpdated(roomID, op.Nickname, co.Affiliation, op.AffiliationInfo)
+	}
+}
+
 func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, op *muc.OccupantPresenceInfo) {
 	l := m.log.WithFields(log.Fields{
 		"room":     roomID,
@@ -28,12 +49,6 @@ func (m *mucManager) handleOccupantUpdate(roomID jid.Bare, op *muc.OccupantPrese
 	if !ok {
 		l.Error("Trying to get a room that is not in the room manager")
 		return
-	}
-
-	co, exist := room.Roster().GetOccupant(op.Nickname)
-	// TODO: we should have a slice just with the occupant changes
-	if exist && co.Affiliation != op.AffiliationInfo.Affiliation {
-		m.occupantAffiliationUpdated(roomID, op.Nickname, co.Affiliation, op.AffiliationInfo)
 	}
 
 	updated := room.Roster().UpdateOrAddOccupant(op)

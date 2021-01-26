@@ -190,7 +190,7 @@ func (r *roomViewRoster) redraw() {
 }
 
 func (r *roomViewRoster) drawOccupantsByRole(role string, occupants []*muc.Occupant) {
-	if isOccupantListEmpty(occupants) {
+	if len(occupants) == 0 {
 		return
 	}
 
@@ -308,8 +308,4 @@ func occupantDisplayTooltip(o *muc.Occupant) string {
 	}
 
 	return strings.Join(ms, "\n")
-}
-
-func isOccupantListEmpty(o []*muc.Occupant) bool {
-	return len(o) == 0
 }

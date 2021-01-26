@@ -39,6 +39,6 @@ func (pc *passwordConfirmationComponent) focusConfirm() {
 	pc.confirmEntry.GrabFocus()
 }
 
-func (pc *passwordConfirmationComponent) widget() gtki.Widget {
+func (pc *passwordConfirmationComponent) getBox() gtki.Widget {
 	return pc.box
 }

@@ -49,7 +49,3 @@ func (pc *passwordComponent) updateToggleLabel(v bool) {
 	}
 	pc.toggleButton.SetProperty("label", l)
 }
-
-func (pc *passwordComponent) widget() gtki.Widget {
-	return pc.box
-}

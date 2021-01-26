@@ -66,3 +66,21 @@ func (d *dialogErrorComponent) onRetry() {
 func (d *dialogErrorComponent) show() {
 	d.dialog.Show()
 }
+
+func (d *dialogErrorComponent) updateMessageForDestroyError(err error) {
+	msg := ""
+	switch err {
+	case session.ErrDestroyRoomInvalidIQResponse, session.ErrDestroyRoomNoResult:
+		msg = i18n.Local("We were able to connect to the room service, " +
+			"but we received an invalid response from it. Please try again later.")
+	case session.ErrDestroyRoomForbidden:
+		msg = i18n.Local("You don't have the permission to destroy this room. " +
+			"Please contact one of the room owners.")
+	case session.ErrDestroyRoomDoesntExist:
+		msg = i18n.Local("We couldn't find the room.")
+	default:
+		msg = i18n.Local("An unknown error occurred during the process. Please try again later.")
+	}
+
+	d.errorMessage.SetText(msg)
+}

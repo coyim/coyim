@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/coyim/coyim/i18n"
@@ -22,6 +23,10 @@ func (*mucRoomConversationMockGlib) Local(vx string) string {
 	return "[localized] " + vx
 }
 
+func (*mucRoomConversationMockGlib) Localf(vx string, args ...interface{}) string {
+	return fmt.Sprintf("[localized] "+vx, args...)
+}
+
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationUpdate(c *C) {
 	i18n.InitLocalization(&mucRoomConversationMockGlib{})
 
@@ -29,20 +34,17 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationUp
 	outcast := newAffiliationFromString(data.AffiliationOutcast)
 	member := newAffiliationFromString(data.AffiliationMember)
 
-	outcasti18n := displayNameForAffiliation(outcast)
-	memberi18n := displayNameForAffiliation(member)
+	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", member, none, "alex", ""), Equals,
+		"[localized] alex updated the position of nick to [localized] member")
 
-	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", member, none, "me", ""), Equals,
-		i18n.Localf("%s updated the position of %s to %s", "me", "nick", memberi18n))
+	c.Assert(getDisplayForOccupantAffiliationUpdate("robin", none, member, "batman", "I'm batman"), Equals,
+		"[localized] batman removed the [localized] member position of robin[localized]  because I'm batman")
 
-	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", none, member, "me", "I wanted"), Equals,
-		i18n.Localf("%s removed the %s position of %s%s", "me", memberi18n, "nick", i18n.Localf(" because %s", "I wanted")))
+	c.Assert(getDisplayForOccupantAffiliationUpdate("bob", outcast, member, "alice", "he was rude"), Equals,
+		"[localized] alice has banned bob in the room[localized]  because he was rude")
 
-	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", outcast, member, "me", "I wanted"), Equals,
-		i18n.Localf("%s has banned %s in the room%s", "me", "nick", i18n.Localf(" because %s", "I wanted")))
-
-	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", none, outcast, "me", ""), Equals,
-		i18n.Localf("%s removed the %s position of %s", "me", outcasti18n, "nick"))
+	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", none, outcast, "jonathan", ""), Equals,
+		"[localized] jonathan removed the [localized] outcast position of nick")
 }
 
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationRemoved(c *C) {
@@ -52,29 +54,25 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationRe
 	admin := newAffiliationFromString(data.AffiliationAdmin)
 	owner := newAffiliationFromString(data.AffiliationOwner)
 
-	memberi18n := displayNameForAffiliation(member)
-	admini18n := displayNameForAffiliation(admin)
-	owneri18n := displayNameForAffiliation(owner)
-
 	c.Assert(strings.Contains(getDisplayForOccupantAffiliationRemoved("jonathan", admin, ""), "nick"), Equals, false)
-	c.Assert(strings.Contains(getDisplayForOccupantAffiliationRemoved("alice", admin, ""), admini18n), Equals, true)
+	c.Assert(strings.Contains(getDisplayForOccupantAffiliationRemoved("alice", admin, ""), "admin"), Equals, true)
 	c.Assert(strings.Contains(getDisplayForOccupantAffiliationRemoved("alberto", admin, "me"), "me"), Equals, true)
 
 	c.Assert(getDisplayForOccupantAffiliationRemoved("nick", member, ""), Equals,
-		i18n.Localf("The %s position of %s was removed", memberi18n, "nick"))
+		"[localized] The [localized] member position of nick was removed")
 
 	c.Assert(getDisplayForOccupantAffiliationRemoved("007", owner, "maria"), Equals,
-		i18n.Localf("%s removed the %s position of %s", "maria", owneri18n, "007"))
+		"[localized] maria removed the [localized] owner position of 007")
 }
 
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationOutcast(c *C) {
 	i18n.InitLocalization(&mucRoomConversationMockGlib{})
 
 	c.Assert(getDisplayForOccupantAffiliationOutcast("nick", ""), Equals,
-		i18n.Localf("%s has been banned in the room", "nick"))
+		"[localized] nick has been banned in the room")
 
 	c.Assert(getDisplayForOccupantAffiliationOutcast("jonathan", "maria"), Equals,
-		i18n.Localf("%s has banned %s in the room", "maria", "jonathan"))
+		"[localized] maria has banned jonathan in the room")
 }
 
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationAdded(c *C) {
@@ -84,18 +82,14 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationAd
 	admin := newAffiliationFromString(data.AffiliationAdmin)
 	owner := newAffiliationFromString(data.AffiliationOwner)
 
-	memberi18n := displayNameForAffiliation(member)
-	admini18n := displayNameForAffiliation(admin)
-	owneri18n := displayNameForAffiliation(owner)
-
 	c.Assert(getDisplayForOccupantAffiliationAdded("nick", member, ""), Equals,
-		i18n.Localf("The position of %s was updated to %s", "nick", memberi18n))
+		"[localized] The position of nick was updated to [localized] member")
 
-	c.Assert(getDisplayForOccupantAffiliationAdded("maria", admin, "me"), Equals,
-		i18n.Localf("%s updated the position of %s to %s", "me", "maria", admini18n))
+	c.Assert(getDisplayForOccupantAffiliationAdded("maria", admin, "alberto"), Equals,
+		"[localized] alberto updated the position of maria to [localized] admin")
 
 	c.Assert(getDisplayForOccupantAffiliationAdded("alice", owner, "bob"), Equals,
-		i18n.Localf("%s updated the position of %s to %s", "bob", "alice", owneri18n))
+		"[localized] bob updated the position of alice to [localized] owner")
 }
 
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationChanged(c *C) {
@@ -105,24 +99,20 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationCh
 	admin := newAffiliationFromString(data.AffiliationAdmin)
 	owner := newAffiliationFromString(data.AffiliationOwner)
 
-	memberi18n := displayNameForAffiliation(member)
-	admini18n := displayNameForAffiliation(admin)
-	owneri18n := displayNameForAffiliation(owner)
-
 	c.Assert(getDisplayForOccupantAffiliationChanged("nick", member, admin, ""), Equals,
-		i18n.Localf("The position of %s was updated from %s to %s", "nick", admini18n, memberi18n))
+		"[localized] The position of nick was updated from [localized] admin to [localized] member")
 
-	c.Assert(getDisplayForOccupantAffiliationChanged("maria", admin, member, "me"), Equals,
-		i18n.Localf("%s updated the position of %s from %s to %s", "me", "maria", memberi18n, admini18n))
+	c.Assert(getDisplayForOccupantAffiliationChanged("maria", admin, member, "juan"), Equals,
+		"[localized] juan updated the position of maria from [localized] member to [localized] admin")
 
 	c.Assert(getDisplayForOccupantAffiliationChanged("alice", owner, member, "bob"), Equals,
-		i18n.Localf("%s updated the position of %s from %s to %s", "bob", "alice", memberi18n, owneri18n))
+		"[localized] bob updated the position of alice from [localized] member to [localized] owner")
 }
 
 func newAffiliationFromString(s string) data.Affiliation {
 	a, err := data.AffiliationFromString(s)
 	if err != nil {
-		return newAffiliationFromString(data.AffiliationNone)
+		return nil
 	}
 	return a
 }

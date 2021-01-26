@@ -405,7 +405,7 @@ func getDisplayRoomSubject(subject string) string {
 }
 
 func getDisplayForOccupantAffiliationUpdate(nickname string, affiliation, previousAffiliation data.Affiliation, actor, reason string) string {
-	var message string
+	message := ""
 
 	switch affiliation.Name() {
 	case data.AffiliationNone:

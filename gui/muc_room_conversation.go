@@ -473,7 +473,7 @@ func displayNameForAffiliation(a data.Affiliation) string {
 	case data.AffiliationOutcast:
 		return i18n.Local("outcast")
 	case data.AffiliationMember:
-		return i18n.Localf("member")
+		return i18n.Local("member")
 	default: // Other values get the default treatment
 		return ""
 	}

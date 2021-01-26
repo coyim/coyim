@@ -44,9 +44,7 @@ func newCallbacksSet() *callbacksSet {
 }
 
 func (s *callbacksSet) add(callbacks ...func()) {
-	for _, cb := range callbacks {
-		s.callbacks = append(s.callbacks, cb)
-	}
+	s.callbacks = append(s.callbacks, callbacks...)
 }
 
 func (s *callbacksSet) invokeAll() {

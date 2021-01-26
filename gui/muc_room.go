@@ -320,9 +320,13 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation dat
 		v.log.WithError(err).Error("An error occurred when trying to destroy the room")
 		doInUIThread(func() {
 			v.loadingViewOverlay.hide()
-			dr := createDialogErrorComponent(i18n.Local("Update occupant affiliation error"), i18n.Local("An error occurred when the affiliation was been update."), func() {
-				v.tryUpdateOccupantAffiliation(o, affiliation, reason)
-			})
+			dr := createDialogErrorComponent(
+				i18n.Local("Update occupant affiliation error"),
+				i18n.Local("The occupant position couldn't be updated"),
+				i18n.Local("An error occurred when the affiliation was been update."),
+				func() {
+					v.tryUpdateOccupantAffiliation(o, affiliation, reason)
+				})
 			dr.show()
 		})
 	}

@@ -1,39 +1,49 @@
 package gui
 
-import "github.com/coyim/gotk3adapter/gtki"
+import (
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session"
+	"github.com/coyim/gotk3adapter/gtki"
+)
 
 type retryFunction func()
 
 type dialogErrorComponent struct {
 	builder *builder
 	title   string
+	header  string
 	message string
 
 	dialog       gtki.Dialog `gtk-widget:"room-error-dialog"`
-	errorMessage gtki.Label  `gtk-widget:"title-error-message"`
+	errorTitle   gtki.Label  `gtk-widget:"room-error-dialog-title"`
+	errorMessage gtki.Label  `gtk-widget:"room-error-dialog-message"`
 
 	retry retryFunction
 }
 
-func createDialogErrorComponent(title, message string, cb func()) *dialogErrorComponent {
+func createDialogErrorComponent(title, header, message string, cb func()) *dialogErrorComponent {
 	d := &dialogErrorComponent{
 		title:   title,
+		header:  header,
 		message: message,
 		retry:   cb,
 	}
 
-	d.initBuilderAndSignals()
+	d.initBuilder()
 	d.initDefaults()
 
 	return d
 }
 
 func (d *dialogErrorComponent) initDefaults() {
+	mucStyles.setLabelBoldStyle(d.errorTitle)
+
 	d.dialog.SetTitle(d.title)
+	d.errorTitle.SetText(d.header)
 	d.errorMessage.SetText(d.message)
 }
 
-func (d *dialogErrorComponent) initBuilderAndSignals() {
+func (d *dialogErrorComponent) initBuilder() {
 	d.builder = newBuilder("MUCRoomDialogErrorComponent")
 
 	panicOnDevError(d.builder.bindObjects(d))

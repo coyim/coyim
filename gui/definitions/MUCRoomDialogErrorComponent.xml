@@ -84,12 +84,11 @@
                 <property name="valign">center</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkLabel" id="title-error-message">
+                  <object class="GtkLabel" id="room-error-dialog-title">
                     <property name="visible">True</property>
                     <property name="wrap">True</property>
                     <property name="halign">start</property>
                     <property name="track_visited_links">False</property>
-                    <property name="label" translatable="yes">The room couldn't be destroyed.</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -98,7 +97,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="destroy-room-error-message">
+                  <object class="GtkLabel" id="room-error-dialog-message">
                     <property name="visible">True</property>
                     <property name="wrap">True</property>
                     <property name="halign">start</property>

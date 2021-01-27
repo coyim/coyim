@@ -46,21 +46,21 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationUp
 		Previous: member,
 	}
 	c.Assert(getDisplayForOccupantAffiliationUpdate("robin", affiliationUpdate, "batman", "I'm batman"), Equals,
-		"[localized] batman removed the [localized] member position of robin[localized]  because I'm batman")
+		"[localized] batman removed the [localized] member position from robin[localized]  because I'm batman")
 
 	affiliationUpdate = data.AffiliationUpdate{
 		New:      outcast,
 		Previous: member,
 	}
 	c.Assert(getDisplayForOccupantAffiliationUpdate("bob", affiliationUpdate, "alice", "he was rude"), Equals,
-		"[localized] alice has banned bob in the room[localized]  because he was rude")
+		"[localized] alice banned bob from the room[localized]  because he was rude")
 
 	affiliationUpdate = data.AffiliationUpdate{
 		New:      none,
 		Previous: outcast,
 	}
 	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", affiliationUpdate, "jonathan", ""), Equals,
-		"[localized] jonathan removed the [localized] outcast position of nick")
+		"[localized] jonathan removed the [localized] outcast position from nick")
 }
 
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationRemoved(c *C) {
@@ -78,17 +78,17 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationRe
 		"[localized] The [localized] member position of nick was removed")
 
 	c.Assert(getDisplayForOccupantAffiliationRemoved("007", owner, "maria"), Equals,
-		"[localized] maria removed the [localized] owner position of 007")
+		"[localized] maria removed the [localized] owner position from 007")
 }
 
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationOutcast(c *C) {
 	i18n.InitLocalization(&mucRoomConversationMockGlib{})
 
 	c.Assert(getDisplayForOccupantAffiliationOutcast("nick", ""), Equals,
-		"[localized] nick has been banned in the room")
+		"[localized] nick was banned from the room")
 
 	c.Assert(getDisplayForOccupantAffiliationOutcast("jonathan", "maria"), Equals,
-		"[localized] maria has banned jonathan in the room")
+		"[localized] maria banned jonathan from the room")
 }
 
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationAdded(c *C) {
@@ -99,7 +99,7 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationAd
 	owner := newAffiliationFromString(data.AffiliationOwner)
 
 	c.Assert(getDisplayForOccupantAffiliationAdded("nick", member, ""), Equals,
-		"[localized] The position of nick was updated to [localized] member")
+		"[localized] nick is now [localized] a member")
 
 	c.Assert(getDisplayForOccupantAffiliationAdded("maria", admin, "alberto"), Equals,
 		"[localized] alberto updated the position of maria to [localized] admin")

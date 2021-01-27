@@ -435,21 +435,21 @@ func getDisplayForOccupantAffiliationRemoved(nickname string, previousAffiliatio
 		return i18n.Localf("The %s position of %s was removed",
 			displayNameForAffiliation(previousAffiliation), nickname)
 	}
-	return i18n.Localf("%s removed the %s position of %s", actor,
+	return i18n.Localf("%s removed the %s position from %s", actor,
 		displayNameForAffiliation(previousAffiliation), nickname)
 }
 
 func getDisplayForOccupantAffiliationOutcast(nickname, actor string) string {
 	if actor == "" {
-		return i18n.Localf("%s has been banned in the room", nickname)
+		return i18n.Localf("%s was banned from the room", nickname)
 	}
-	return i18n.Localf("%s has banned %s in the room", actor, nickname)
+	return i18n.Localf("%s banned %s from the room", actor, nickname)
 }
 
 func getDisplayForOccupantAffiliationAdded(nickname string, affiliation data.Affiliation, actor string) string {
 	if actor == "" {
-		return i18n.Localf("The position of %s was updated to %s", nickname,
-			displayNameForAffiliation(affiliation))
+		return i18n.Localf("%s is now %s", nickname,
+			displayNameForAffiliationWithPreposition(affiliation))
 	}
 	return i18n.Localf("%s updated the position of %s to %s", actor, nickname,
 		displayNameForAffiliation(affiliation))
@@ -476,6 +476,19 @@ func displayNameForAffiliation(a data.Affiliation) string {
 		return i18n.Local("outcast")
 	case data.AffiliationMember:
 		return i18n.Local("member")
+	default: // Other values get the default treatment
+		return ""
+	}
+}
+
+func displayNameForAffiliationWithPreposition(a data.Affiliation) string {
+	switch a.Name() {
+	case data.AffiliationAdmin:
+		return i18n.Local("an admin")
+	case data.AffiliationOwner:
+		return i18n.Local("an owner")
+	case data.AffiliationMember:
+		return i18n.Local("a member")
 	default: // Other values get the default treatment
 		return ""
 	}

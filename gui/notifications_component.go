@@ -69,20 +69,16 @@ func (n *notifications) clearAll() {
 	for _, m := range messages {
 		n.remove(m)
 	}
-	n.messages = nil
 }
 
 // clearMessagesByType MUST be called from the ui thread
 func (n *notifications) clearMessagesByType(mt gtki.MessageType) {
-	messages := []withNotification{}
-	for _, m := range n.messages {
+	messages := n.messages
+	for _, m := range messages {
 		if m.messageType() == mt {
 			n.remove(m)
-		} else {
-			messages = append(messages, m)
 		}
 	}
-	n.messages = messages
 }
 
 // notify MUST be called from the UI thread
@@ -125,6 +121,12 @@ func (n *notifications) notifyOnError(err string) {
 // implements the "canNotifyErrors" interface
 func (n *notifications) clearErrors() {
 	n.clearMessagesByType(gtki.MESSAGE_ERROR)
+}
+
+// hasNoMessages returns a boolean indicating if the notifications
+// component has no messages
+func (n *notifications) hasNoMessages() bool {
+	return len(n.messages) == 0
 }
 
 type notificationBar struct {

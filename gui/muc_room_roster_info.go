@@ -23,6 +23,7 @@ type roomViewRosterInfo struct {
 	status                  gtki.Label `gtk-widget:"status"`
 	statusMessage           gtki.Label `gtk-widget:"status-message"`
 	currentAffiliationLabel gtki.Label `gtk-widget:"current-affiliation"`
+	currentRoleLabel        gtki.Label `gtk-widget:"current-role"`
 
 	onReset   *callbacksSet
 	onRefresh *callbacksSet
@@ -68,11 +69,13 @@ func (r *roomViewRosterInfo) initDefaults() {
 	r.onRefresh.add(
 		r.refreshOccupantInfo,
 		r.refreshOccupantAffiliation,
+		r.refreshOccupantRole,
 	)
 
 	r.onReset.add(
 		r.removeOccupantInfo,
 		r.removeOccupantAffiliationInfo,
+		r.removeOccupantRoleInfo,
 	)
 }
 
@@ -142,6 +145,16 @@ func (r *roomViewRosterInfo) refreshOccupantAffiliation() {
 // removeOccupantAffiliationInfo MUST be called from the UI thread
 func (r *roomViewRosterInfo) removeOccupantAffiliationInfo() {
 	r.currentAffiliationLabel.SetText("")
+}
+
+// refreshOccupantAffiliation MUST be called from the UI thread
+func (r *roomViewRosterInfo) refreshOccupantRole() {
+	r.currentRoleLabel.SetText(occupantRoleName(r.occupant.Role))
+}
+
+// removeOccupantAffiliationInfo MUST be called from the UI thread
+func (r *roomViewRosterInfo) removeOccupantRoleInfo() {
+	r.currentRoleLabel.SetText("")
 }
 
 // show MUST be called from the UI thread

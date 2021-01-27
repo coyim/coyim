@@ -127,6 +127,21 @@ func occupantAffiliationName(a data.Affiliation) string {
 	}
 }
 
+func occupantRoleName(a data.Role) string {
+	switch a.(type) {
+	case *data.ModeratorRole:
+		return i18n.Local("Moderator")
+	case *data.ParticipantRole:
+		return i18n.Local("Participant")
+	case *data.VisitorRole:
+		return i18n.Local("Visitor")
+	case *data.NoneRole:
+		return i18n.Local("None")
+	default:
+		return ""
+	}
+}
+
 func affiliationUpdateErrorMessage(err error) string {
 	switch err {
 	case session.ErrUpdateOccupantAffiliationResponse:

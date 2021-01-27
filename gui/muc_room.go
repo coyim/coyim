@@ -328,7 +328,7 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation dat
 			New:      affiliation,
 			Previous: o.Affiliation,
 		}
-
+		v.notifications.info(i18n.Local("The update of affiliation was successfully"))
 		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, affiliationUpdate, v.room.SelfOccupantNickname(), reason)
 		o.UpdateAffiliation(affiliation)
 		doInUIThread(v.loadingViewOverlay.hide)

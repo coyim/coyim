@@ -165,8 +165,8 @@
                 <child>
                   <object class="GtkRevealer" id="room-notifications-revealer">
                     <property name="visible">True</property>
-                    <property name="transition_type">slide-up</property>
-                    <property name="reveal_child">True</property>
+                    <property name="transition_type">crossfade</property>
+                    <property name="reveal_child">False</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

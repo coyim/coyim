@@ -56,6 +56,7 @@ func (r *roomViewRosterInfo) initBuilder() {
 	builder.ConnectSignals(map[string]interface{}{
 		"on_hide":               r.hide,
 		"on_change_affiliation": r.onChangeAffiliation,
+		"on_change_role":        r.onChangeRole,
 	})
 }
 

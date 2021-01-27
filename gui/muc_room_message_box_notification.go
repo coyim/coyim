@@ -18,8 +18,7 @@ func newRoomMessageBoxNotification() *roomMessageBoxNotification {
 	return v
 }
 
-// widget implements widget interface
-func (v *roomMessageBoxNotification) widget() gtki.Widget {
+func (v *roomMessageBoxNotification) getInfoBar() gtki.InfoBar {
 	return v.view
 }
 

@@ -6,8 +6,6 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type retryFunction func()
-
 type dialogErrorComponent struct {
 	title   string
 	header  string
@@ -17,7 +15,7 @@ type dialogErrorComponent struct {
 	errorTitle   gtki.Label  `gtk-widget:"room-error-dialog-title"`
 	errorMessage gtki.Label  `gtk-widget:"room-error-dialog-message"`
 
-	retry retryFunction
+	retry func()
 }
 
 func createDialogErrorComponent(title, header, message string, cb func()) *dialogErrorComponent {

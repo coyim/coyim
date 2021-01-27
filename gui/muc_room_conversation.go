@@ -115,9 +115,9 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 		case roomDestroyedEvent:
 			c.roomDestroyedEvent(t.reason, t.alternative, t.password)
 		case occupantAffiliationUpdatedEvent:
-			c.occupantAffiliationEvent(t.nickname, t.affiliation, t.previousAffiliation, t.actor, t.reason)
+			c.occupantAffiliationEvent(t.nickname, t.affiliationUpdate, t.actor, t.reason)
 		case selfOccupantAffiliationUpdatedEvent:
-			c.occupantAffiliationEvent(t.nickname, t.affiliation, t.previousAffiliation, t.actor, t.reason)
+			c.occupantAffiliationEvent(t.nickname, t.affiliationUpdate, t.actor, t.reason)
 		}
 	})
 }
@@ -130,9 +130,9 @@ func (c *roomViewConversation) roomDestroyedEvent(reason string, alternative jid
 	})
 }
 
-func (c *roomViewConversation) occupantAffiliationEvent(nickname string, affiliation, previousAffiliation data.Affiliation, actor, reason string) {
+func (c *roomViewConversation) occupantAffiliationEvent(nickname string, affiliationUpdate data.AffiliationUpdate, actor, reason string) {
 	doInUIThread(func() {
-		c.displayNewInfoMessage(getDisplayForOccupantAffiliationUpdate(nickname, affiliation, previousAffiliation, actor, reason))
+		c.displayNewInfoMessage(getDisplayForOccupantAffiliationUpdate(nickname, affiliationUpdate, actor, reason))
 	})
 }
 
@@ -406,20 +406,20 @@ func getDisplayRoomSubject(subject string) string {
 	return i18n.Localf("The room subject is \"%s\"", subject)
 }
 
-func getDisplayForOccupantAffiliationUpdate(nickname string, affiliation, previousAffiliation data.Affiliation, actor, reason string) string {
+func getDisplayForOccupantAffiliationUpdate(nickname string, affiliationUpdate data.AffiliationUpdate, actor, reason string) string {
 	message := ""
 
-	switch affiliation.Name() {
+	switch affiliationUpdate.New.Name() {
 	case data.AffiliationNone:
-		message = getDisplayForOccupantAffiliationRemoved(nickname, previousAffiliation, actor)
+		message = getDisplayForOccupantAffiliationRemoved(nickname, affiliationUpdate.Previous, actor)
 	case data.AffiliationOutcast:
 		message = getDisplayForOccupantAffiliationOutcast(nickname, actor)
 	default:
-		if previousAffiliation.Name() == data.AffiliationNone {
-			message = getDisplayForOccupantAffiliationAdded(nickname, affiliation, actor)
+		if affiliationUpdate.Previous.Name() == data.AffiliationNone {
+			message = getDisplayForOccupantAffiliationAdded(nickname, affiliationUpdate.New, actor)
 		} else {
 			message = getDisplayForOccupantAffiliationChanged(nickname,
-				affiliation, previousAffiliation, actor)
+				affiliationUpdate.New, affiliationUpdate.Previous, actor)
 		}
 	}
 

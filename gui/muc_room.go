@@ -135,7 +135,7 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 	case roomConfigRequestTimeoutEvent:
 		v.roomConfigRequestTimeoutEvent()
 	case selfOccupantAffiliationUpdatedEvent:
-		v.selfOccupantAffiliationUpdated(getDisplayForOccupantAffiliationUpdate(t.nickname, t.affiliation, t.previousAffiliation, t.actor, t.reason))
+		v.selfOccupantAffiliationUpdated(getDisplayForOccupantAffiliationUpdate(t.nickname, t.affiliationUpdate, t.actor, t.reason))
 	}
 }
 
@@ -319,14 +319,17 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 
 func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation data.Affiliation, reason string) {
 	v.loadingViewOverlay.onOccupantAffiliationUpdate()
-	previousAffiliation := o.Affiliation
 	sc, ec := v.account.session.UpdateOccupantAffiliation(v.roomID(), o.RealJid, affiliation, reason)
 
 	select {
 	case <-sc:
 		v.log.Info("The affiliation has been changed")
+		affiliationUpdate := data.AffiliationUpdate{
+			New:      affiliation,
+			Previous: o.Affiliation,
+		}
 
-		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, previousAffiliation, affiliation, v.room.SelfOccupantNickname(), reason)
+		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, affiliationUpdate, v.room.SelfOccupantNickname(), reason)
 		o.UpdateAffiliation(affiliation)
 		doInUIThread(v.loadingViewOverlay.hide)
 	case err := <-ec:
@@ -423,22 +426,20 @@ func (v *roomView) occupantForbidden() {
 }
 
 // publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, previousAffiliation, affiliation data.Affiliation, actor, reason string) {
+func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, affiliationUpdate data.AffiliationUpdate, actor, reason string) {
 	v.publishEvent(occupantAffiliationUpdatedEvent{
-		nickname:            nickname,
-		affiliation:         affiliation,
-		previousAffiliation: previousAffiliation,
-		actor:               actor,
-		reason:              reason,
+		nickname:          nickname,
+		affiliationUpdate: affiliationUpdate,
+		actor:             actor,
+		reason:            reason,
 	})
 }
 
 // publishSelfOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishSelfOccupantAffiliationUpdatedEvent(nickname string, previousAffiliation, affiliation data.Affiliation, actor, reason string) {
+func (v *roomView) publishSelfOccupantAffiliationUpdatedEvent(nickname string, affiliationUpdate data.AffiliationUpdate, actor, reason string) {
 	ev := selfOccupantAffiliationUpdatedEvent{}
 	ev.nickname = nickname
-	ev.previousAffiliation = previousAffiliation
-	ev.affiliation = affiliation
+	ev.affiliationUpdate = affiliationUpdate
 	ev.actor = actor
 	ev.reason = reason
 	v.publishEvent(ev)

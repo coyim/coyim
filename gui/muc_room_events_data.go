@@ -102,11 +102,10 @@ type roomConfigChangedEvent struct {
 }
 
 type occupantAffiliationUpdatedEvent struct {
-	nickname            string
-	affiliation         data.Affiliation
-	previousAffiliation data.Affiliation
-	actor               string
-	reason              string
+	nickname          string
+	affiliationUpdate data.AffiliationUpdate
+	actor             string
+	reason            string
 }
 
 type selfOccupantAffiliationUpdatedEvent struct {

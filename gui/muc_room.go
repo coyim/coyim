@@ -333,7 +333,7 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation dat
 		o.UpdateAffiliation(affiliation)
 		doInUIThread(v.loadingViewOverlay.hide)
 	case err := <-ec:
-		v.log.WithError(err).Error("An error occurred when trying to destroy the room")
+		v.log.WithError(err).Error("An error occurred when updating the occupant affiliation")
 		doInUIThread(func() {
 			v.loadingViewOverlay.hide()
 			dr := createDialogErrorComponent(

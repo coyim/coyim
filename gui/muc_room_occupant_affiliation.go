@@ -144,7 +144,7 @@ func occupantRoleName(a data.Role) string {
 
 func affiliationUpdateErrorMessage(err error) string {
 	switch err {
-	case session.ErrUpdateOccupantAffiliationResponse:
+	case session.ErrUpdateOccupantResponse:
 		return i18n.Local("We couldn't update the occupant affiliation because, either you don't have permission to do it or the server is busy. Please try again.")
 	default:
 		return i18n.Local("An error occurred when updating the occupant affiliation. Please try again.")

@@ -9,9 +9,20 @@ func (v *roomView) initNotifications() {
 	v.notificationsArea.Add(v.notifications.getNotificationsBox())
 }
 
+func (v *roomView) onNewNotificationAdded() {
+	if !v.notificationsArea.GetRevealChild() {
+		v.notificationsArea.SetRevealChild(true)
+	}
+}
+
+func (v *roomView) onNoNotifications() {
+	v.notificationsArea.SetRevealChild(false)
+}
+
 type roomNotifications struct {
 	u             *gtkUI
 	notifications *notifications
+	roomView      *roomView
 }
 
 func (v *roomView) newRoomNotifications() *roomNotifications {
@@ -21,6 +32,7 @@ func (v *roomView) newRoomNotifications() *roomNotifications {
 	return &roomNotifications{
 		u:             v.u,
 		notifications: notifications,
+		roomView:      v,
 	}
 }
 
@@ -40,6 +52,8 @@ func (rn *roomNotifications) newNotification(msg string, messageType gtki.Messag
 	nc := rn.u.newInfoBarComponent(msg, messageType)
 	nc.setClosable(true)
 	rn.add(nc)
+
+	rn.roomView.onNewNotificationAdded()
 }
 
 func (rn *roomNotifications) add(nc withNotification) {
@@ -53,6 +67,10 @@ func (rn *roomNotifications) add(nc withNotification) {
 
 func (rn *roomNotifications) remove(nc withNotification) {
 	rn.notifications.remove(nc)
+
+	if rn.notifications.hasNoMessages() {
+		rn.roomView.onNoNotifications()
+	}
 }
 
 func (rn *roomNotifications) getNotificationsBox() gtki.Widget {

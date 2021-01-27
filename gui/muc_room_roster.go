@@ -145,12 +145,12 @@ func (r *roomViewRoster) showOccupantInfo(o *muc.Occupant) {
 // showRosterInfoPanel MUST be called from the UI thread
 func (r *roomViewRoster) showRosterInfoPanel() {
 	r.rosterPanel.Hide()
-	r.view.Add(r.rosterInfo.widget())
+	r.view.Add(r.rosterInfo.getContentBox())
 }
 
 // hideRosterInfoPanel MUST be called from the UI thread
 func (r *roomViewRoster) hideRosterInfoPanel() {
-	r.view.Remove(r.rosterInfo.widget())
+	r.view.Remove(r.rosterInfo.getContentBox())
 	r.rosterPanel.Show()
 }
 

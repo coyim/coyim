@@ -9,7 +9,6 @@ import (
 type retryFunction func()
 
 type dialogErrorComponent struct {
-	builder *builder
 	title   string
 	header  string
 	message string
@@ -44,11 +43,10 @@ func (d *dialogErrorComponent) initDefaults() {
 }
 
 func (d *dialogErrorComponent) initBuilder() {
-	d.builder = newBuilder("MUCRoomDialogErrorComponent")
+	builder := newBuilder("MUCRoomDialogErrorComponent")
+	panicOnDevError(builder.bindObjects(d))
 
-	panicOnDevError(d.builder.bindObjects(d))
-
-	d.builder.ConnectSignals(map[string]interface{}{
+	builder.ConnectSignals(map[string]interface{}{
 		"on_cancel": d.onCancel,
 		"on_retry":  d.onRetry,
 	})

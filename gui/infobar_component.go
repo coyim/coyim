@@ -4,21 +4,21 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type infoBar struct {
+type infoBarComponent struct {
 	text            string
-	mt              gtki.MessageType
+	messageType     gtki.MessageType
 	canBeClosed     bool
 	onCloseCallback func()
 
-	bar     gtki.InfoBar `gtk-widget:"bar"`
+	infoBar gtki.InfoBar `gtk-widget:"bar"`
 	content gtki.Box     `gtk-widget:"content"`
 	title   gtki.Label   `gtk-widget:"title"`
 }
 
-func (u *gtkUI) newInfoBarComponent(text string, mt gtki.MessageType) *infoBar {
-	ib := &infoBar{
-		text: text,
-		mt:   mt,
+func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *infoBarComponent {
+	ib := &infoBarComponent{
+		text:        text,
+		messageType: messageType,
 	}
 
 	builder := newBuilder("InfoBar")
@@ -37,31 +37,31 @@ func (u *gtkUI) newInfoBarComponent(text string, mt gtki.MessageType) *infoBar {
 	})
 
 	ib.title.SetText(ib.text)
-	ib.bar.SetMessageType(ib.mt)
+	ib.infoBar.SetMessageType(ib.messageType)
 
 	return ib
 }
 
 // setClosable MUST be called from the UI thread
-func (ib *infoBar) setClosable(v bool) {
+func (ib *infoBarComponent) setClosable(v bool) {
 	ib.canBeClosed = v
-	ib.bar.SetShowCloseButton(v)
+	ib.infoBar.SetShowCloseButton(v)
 }
 
-func (ib *infoBar) isClosable() bool {
+// addActionWidget MUST be called from the UI thread
+func (ib *infoBarComponent) addActionWidget(w gtki.Widget, responseType gtki.ResponseType) {
+	ib.infoBar.AddActionWidget(w, responseType)
+	ib.infoBar.ShowAll()
+}
+
+func (ib *infoBarComponent) isClosable() bool {
 	return ib.canBeClosed
 }
 
-func (ib *infoBar) onClose(f func()) {
+func (ib *infoBarComponent) onClose(f func()) {
 	ib.onCloseCallback = f
 }
 
-// messageType implements the "withMessage" interface
-func (ib *infoBar) messageType() gtki.MessageType {
-	return ib.mt
-}
-
-// widget implements the "withWidget" interface
-func (ib *infoBar) widget() gtki.Widget {
-	return ib.bar
+func (ib *infoBarComponent) view() gtki.InfoBar {
+	return ib.infoBar
 }

@@ -6,10 +6,9 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// This is a component that can be used from other views in order to make it easy
-// to "retry" any asynchronous operation that might have a "success" and a "failure".
-// In this case, this component cover the "failure" action.
-
+// dialogErrorComponent shows information related to an error
+// that occurred trying to send some specific request.
+// This component allows calls again the failed operation through the `retry` function
 type dialogErrorComponent struct {
 	title   string
 	header  string
@@ -19,8 +18,8 @@ type dialogErrorComponent struct {
 	errorTitle   gtki.Label  `gtk-widget:"room-error-dialog-title"`
 	errorMessage gtki.Label  `gtk-widget:"room-error-dialog-message"`
 
-	// retry is a callback that will be asynchronously executed when the user wants to
-	// "retry" the failed operation for in which this component was used
+	// retry is a function that allows calling
+	// the previous function which responded to a fail
 	retry func()
 }
 

@@ -466,6 +466,59 @@ func getDisplayForOccupantAffiliationChanged(nickname string, affiliation, previ
 		displayNameForAffiliation(affiliation))
 }
 
+func getDisplayForSelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate, actor, reason string) (message string) {
+	switch affiliationUpdate.New.Name() {
+	case data.AffiliationNone:
+		message = getDisplayForSelfOccupantAffiliationRemoved(affiliationUpdate.Previous, actor)
+	case data.AffiliationOutcast:
+		message = getDisplayForSelfOccupantAffiliationOutcast(actor)
+	default:
+		if affiliationUpdate.Previous.Name() == data.AffiliationNone {
+			message = getDisplayForSelfOccupantAffiliationAdded(affiliationUpdate.New, actor)
+		} else {
+			message = getDisplayForSelfOccupantAffiliationChanged(affiliationUpdate.New, affiliationUpdate.Previous, actor)
+		}
+	}
+
+	if reason != "" {
+		message += i18n.Localf(" because: %s", reason)
+	}
+
+	return message
+}
+
+func getDisplayForSelfOccupantAffiliationRemoved(previousAffiliation data.Affiliation, actor string) string {
+	if actor == "" {
+		return i18n.Localf("Your position of %s was removed", displayNameForAffiliation(previousAffiliation))
+	}
+	return i18n.Localf("%s removed your %s position", actor, displayNameForAffiliation(previousAffiliation))
+}
+
+func getDisplayForSelfOccupantAffiliationOutcast(actor string) string {
+	if actor == "" {
+		return i18n.Local("You was banned from the room")
+	}
+	return i18n.Localf("%s banned you from the room", actor)
+}
+
+func getDisplayForSelfOccupantAffiliationAdded(affiliation data.Affiliation, actor string) string {
+	if actor == "" {
+		return i18n.Localf("You are now %s", displayNameForAffiliationWithPreposition(affiliation))
+	}
+	return i18n.Localf("%s updated your position to %s", actor, displayNameForAffiliation(affiliation))
+}
+
+func getDisplayForSelfOccupantAffiliationChanged(affiliation, previousAffiliation data.Affiliation, actor string) string {
+	if actor == "" {
+		return i18n.Localf("Your position was updated from %s to %s",
+			displayNameForAffiliation(previousAffiliation),
+			displayNameForAffiliation(affiliation))
+	}
+	return i18n.Localf("%s updated your position from %s to %s", actor,
+		displayNameForAffiliation(previousAffiliation),
+		displayNameForAffiliation(affiliation))
+}
+
 func displayNameForAffiliation(a data.Affiliation) string {
 	switch a.Name() {
 	case data.AffiliationAdmin:

@@ -6,7 +6,7 @@ import (
 
 func (v *roomView) initNotifications() {
 	v.notifications = v.newRoomNotifications()
-	v.notificationsArea.Add(v.notifications.getNotificationsBox())
+	v.notificationsArea.Add(v.notifications.notificationsBox())
 }
 
 func (v *roomView) onNewNotificationAdded() {
@@ -73,6 +73,6 @@ func (rn *roomNotifications) remove(nb *notificationBar) {
 	}
 }
 
-func (rn *roomNotifications) getNotificationsBox() gtki.Widget {
-	return rn.notifications.getBox()
+func (rn *roomNotifications) notificationsBox() gtki.Widget {
+	return rn.notifications.contentBox()
 }

@@ -56,7 +56,7 @@ func (c *mucRoomConfigComponent) newConfigPage(pageID, pageTemplate string, page
 
 	p.notifications = c.u.newNotificationsComponent()
 	p.loadingOverlay = c.u.newLoadingOverlayComponent()
-	p.notificationsArea.Add(p.notifications.getBox())
+	p.notificationsArea.Add(p.notifications.contentBox())
 
 	p.page.AddOverlay(p.loadingOverlay.getOverlay())
 	p.page.SetHExpand(true)

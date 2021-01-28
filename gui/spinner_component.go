@@ -11,7 +11,7 @@ func (u *gtkUI) newSpinnerComponent() *spinner {
 	return &spinner{s}
 }
 
-func (sp *spinner) getSpinner() gtki.Spinner {
+func (sp *spinner) spinner() gtki.Spinner {
 	return sp.s
 }
 

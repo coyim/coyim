@@ -18,7 +18,7 @@ func newRoomMessageBoxNotification() *roomMessageBoxNotification {
 	return v
 }
 
-func (v *roomMessageBoxNotification) getInfoBar() gtki.InfoBar {
+func (v *roomMessageBoxNotification) infoBar() gtki.InfoBar {
 	return v.view
 }
 

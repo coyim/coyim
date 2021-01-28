@@ -4,25 +4,17 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-type withNotification interface {
-	withWidget
-	withMessage
-
-	isClosable() bool
-	onClose(func())
+type notificationsComponent struct {
+	u             *gtkUI
+	box           gtki.Box
+	notifications []*notificationBar
+	stacked       bool
 }
 
-type notifications struct {
-	u        *gtkUI
-	box      gtki.Box
-	messages []withNotification
-	stacked  bool
-}
-
-func (u *gtkUI) newNotificationsComponent() *notifications {
+func (u *gtkUI) newNotificationsComponent() *notificationsComponent {
 	b, _ := g.gtk.BoxNew(gtki.VerticalOrientation, 0)
 
-	n := &notifications{
+	n := &notificationsComponent{
 		u:   u,
 		box: b,
 	}
@@ -30,84 +22,84 @@ func (u *gtkUI) newNotificationsComponent() *notifications {
 	return n
 }
 
-func (n *notifications) getBox() gtki.Widget {
+func (n *notificationsComponent) getBox() gtki.Widget {
 	return n.box
 }
 
-func (n *notifications) setStacked(v bool) {
+func (n *notificationsComponent) setStacked(v bool) {
 	n.stacked = v
 }
 
 // add MUST be called from the ui thread
-func (n *notifications) add(m withNotification) {
+func (n *notificationsComponent) add(nb *notificationBar) {
 	if !n.stacked {
 		n.clearAll()
 	}
 
-	n.messages = append(n.messages, m)
+	n.notifications = append(n.notifications, nb)
 
-	n.box.PackStart(m.widget(), true, false, 0)
+	n.box.PackStart(nb.view(), true, false, 0)
 	n.box.ShowAll()
 }
 
 // remove MUST be called from the ui thread
-func (n *notifications) remove(m withNotification) {
-	newMessageList := []withNotification{}
-	for _, om := range n.messages {
-		if om != m {
-			newMessageList = append(newMessageList, om)
+func (n *notificationsComponent) remove(nb *notificationBar) {
+	notifications := []*notificationBar{}
+	for _, nbx := range n.notifications {
+		if nb != nbx {
+			notifications = append(notifications, nbx)
 		}
 	}
 
-	n.messages = newMessageList
-	n.box.Remove(m.widget())
+	n.notifications = notifications
+	n.box.Remove(nb.view())
 }
 
 // clearAll MUST be called from the ui thread
-func (n *notifications) clearAll() {
-	messages := n.messages
-	for _, m := range messages {
-		n.remove(m)
+func (n *notificationsComponent) clearAll() {
+	notifications := n.notifications
+	for _, nb := range notifications {
+		n.remove(nb)
 	}
 }
 
 // clearMessagesByType MUST be called from the ui thread
-func (n *notifications) clearMessagesByType(mt gtki.MessageType) {
-	messages := n.messages
-	for _, m := range messages {
-		if m.messageType() == mt {
-			n.remove(m)
+func (n *notificationsComponent) clearMessagesByType(mt gtki.MessageType) {
+	notifications := n.notifications
+	for _, nb := range notifications {
+		if nb.messageType == mt {
+			n.remove(nb)
 		}
 	}
 }
 
 // notify MUST be called from the UI thread
-func (n *notifications) notify(text string, mt gtki.MessageType) {
+func (n *notificationsComponent) notify(text string, mt gtki.MessageType) {
 	n.add(n.u.newNotificationBar(text, mt))
 }
 
 // warning MUST be called from the UI thread
-func (n *notifications) warning(text string) {
+func (n *notificationsComponent) warning(text string) {
 	n.notify(text, gtki.MESSAGE_WARNING)
 }
 
 // error MUST be called from the UI thread
-func (n *notifications) error(text string) {
+func (n *notificationsComponent) error(text string) {
 	n.notify(text, gtki.MESSAGE_ERROR)
 }
 
 // info MUST be called from the ui thread
-func (n *notifications) info(text string) {
+func (n *notificationsComponent) info(text string) {
 	n.notify(text, gtki.MESSAGE_INFO)
 }
 
 // question MUST be called from the ui thread
-func (n *notifications) question(text string) {
+func (n *notificationsComponent) question(text string) {
 	n.notify(text, gtki.MESSAGE_QUESTION)
 }
 
 // message MUST be called from the ui thread
-func (n *notifications) message(text string) {
+func (n *notificationsComponent) message(text string) {
 	n.notify(text, gtki.MESSAGE_OTHER)
 }
 
@@ -115,7 +107,7 @@ func (n *notifications) message(text string) {
 // implements the "canNotifyErrors" interface
 //
 // notifyOnError MUST be called from the ui thread
-func (n *notifications) notifyOnError(err string) {
+func (n *notificationsComponent) notifyOnError(err string) {
 	n.error(err)
 }
 
@@ -123,7 +115,7 @@ func (n *notifications) notifyOnError(err string) {
 // implements the "canNotifyErrors" interface
 //
 // clearErrors MUST be called from the ui thread
-func (n *notifications) clearErrors() {
+func (n *notificationsComponent) clearErrors() {
 	n.clearMessagesByType(gtki.MESSAGE_ERROR)
 }
 
@@ -131,16 +123,16 @@ func (n *notifications) clearErrors() {
 // component has no messages
 //
 // hasNoMessages MUST be called from the ui thread
-func (n *notifications) hasNoMessages() bool {
-	return len(n.messages) == 0
+func (n *notificationsComponent) hasNoMessages() bool {
+	return len(n.notifications) == 0
 }
 
 type notificationBar struct {
-	*infoBar
+	*infoBarComponent
 }
 
-func (u *gtkUI) newNotificationBar(text string, mt gtki.MessageType) withNotification {
+func (u *gtkUI) newNotificationBar(text string, messageType gtki.MessageType) *notificationBar {
 	return &notificationBar{
-		u.newInfoBarComponent(text, mt),
+		u.newInfoBarComponent(text, messageType),
 	}
 }

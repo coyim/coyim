@@ -63,7 +63,7 @@ type mucPublicRoomsView struct {
 	customServiceButton gtki.Button         `gtk-widget:"list-rooms-button"`
 
 	notificationsArea gtki.Box `gtk-widget:"notifications-area"`
-	notifications     *notifications
+	notifications     *notificationsComponent
 
 	spinnerOverlay gtki.Overlay `gtk-widget:"spinner-overlay"`
 	spinnerBox     gtki.Box     `gtk-widget:"spinner-box"`

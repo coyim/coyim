@@ -51,7 +51,7 @@ type mucCreateRoomViewForm struct {
 	notificationsArea gtki.Box         `gtk-widget:"notification-area-box"`
 
 	spinner       *spinner
-	notifications *notifications
+	notifications *notificationsComponent
 
 	roomNameConflictList *set.Set
 	// createRoom MUST NOT be called from the UI thread

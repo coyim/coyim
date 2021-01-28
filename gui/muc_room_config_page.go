@@ -32,7 +32,7 @@ type roomConfigPageBase struct {
 	content           gtki.Box     `gtk-widget:"room-config-page-content"`
 	notificationsArea gtki.Box     `gtk-widget:"notifications-box"`
 
-	notifications  *notifications
+	notifications  *notificationsComponent
 	loadingOverlay *loadingOverlayComponent
 	onRefresh      *callbacksSet
 

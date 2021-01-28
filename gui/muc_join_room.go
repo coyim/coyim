@@ -19,7 +19,7 @@ type mucJoinRoomView struct {
 	notificationArea gtki.Box    `gtk-widget:"notification-area-box"`
 
 	spinner       *spinner
-	notifications *notifications
+	notifications *notificationsComponent
 }
 
 func newMUCJoinRoomView(u *gtkUI) *mucJoinRoomView {

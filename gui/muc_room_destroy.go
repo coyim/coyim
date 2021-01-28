@@ -34,7 +34,7 @@ type roomDestroyView struct {
 	destroyRoomButton    gtki.Button      `gtk-widget:"destroy-room-button"`
 	notificationBox      gtki.Box         `gtk-widget:"notification-area"`
 
-	notifications *notifications
+	notifications *notificationsComponent
 }
 
 func (v *roomView) newRoomDestroyView() *roomDestroyView {

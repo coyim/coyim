@@ -23,7 +23,7 @@ type mucRoomConfigListAddComponent struct {
 	applyButton     gtki.Button `gtk-widget:"room-config-list-add-apply"`
 	notificationBox gtki.Box    `gtk-widget:"notification-box"`
 
-	notifications          *notifications
+	notifications          *notificationsComponent
 	dialogTitle            string
 	formTitle              string
 	form                   mucRoomConfigListForm

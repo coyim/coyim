@@ -26,7 +26,7 @@ type roomViewLobby struct {
 	cancelButton     gtki.Button `gtk-widget:"cancel-button"`
 	notificationArea gtki.Box    `gtk-widget:"notifications-box"`
 
-	notifications  *notifications
+	notifications  *notificationsComponent
 	loadingOverlay *roomViewLoadingOverlay
 
 	// These two methods WILL BE called from the UI thread

@@ -3,6 +3,7 @@ package gui
 import (
 	"sync"
 
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -28,39 +29,20 @@ func newRoomViewWarning(text string) *roomViewWarning {
 }
 
 type roomViewWarningsInfoBar struct {
-	infoBar gtki.InfoBar `gtk-widget:"bar"`
+	*notificationBar
 }
 
 func (v *roomView) newRoomViewWarningsInfoBar() *roomViewWarningsInfoBar {
-	ib := &roomViewWarningsInfoBar{}
+	ib := &roomViewWarningsInfoBar{
+		v.u.newNotificationBar(i18n.Local("Please be aware of this room configuration"), gtki.MESSAGE_WARNING),
+	}
 
-	builder := newBuilder("MUCRoomWarningsInfoBar")
-	panicOnDevError(builder.bindObjects(ib))
+	showWarningsButton, _ := g.gtk.ButtonNewWithLabel(i18n.Local("Details"))
+	showWarningsButton.Connect("clicked", v.showWarnings)
 
-	builder.ConnectSignals(map[string]interface{}{
-		"on_show_warnings": v.showWarnings,
-		"on_close":         v.removeWarningsInfobar,
-	})
+	ib.addActionWidget(showWarningsButton, gtki.RESPONSE_NONE)
 
 	return ib
-}
-
-func (ib *roomViewWarningsInfoBar) isClosable() bool {
-	return false
-}
-
-func (ib *roomViewWarningsInfoBar) onClose(f func()) {
-	f()
-}
-
-// messageType implements the "withMessage" interface
-func (ib *roomViewWarningsInfoBar) messageType() gtki.MessageType {
-	return gtki.MESSAGE_WARNING
-}
-
-// widget implements the "withWidget" interface
-func (ib *roomViewWarningsInfoBar) widget() gtki.Widget {
-	return ib.infoBar
 }
 
 type roomViewWarningsOverlay struct {

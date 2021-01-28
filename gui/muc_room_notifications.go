@@ -21,7 +21,7 @@ func (v *roomView) onNoNotifications() {
 
 type roomNotifications struct {
 	u             *gtkUI
-	notifications *notifications
+	notifications *notificationsComponent
 	roomView      *roomView
 }
 
@@ -48,25 +48,25 @@ func (rn *roomNotifications) error(msg string) {
 	rn.newNotification(msg, gtki.MESSAGE_ERROR)
 }
 
-func (rn *roomNotifications) newNotification(msg string, messageType gtki.MessageType) {
-	nc := rn.u.newInfoBarComponent(msg, messageType)
-	nc.setClosable(true)
-	rn.add(nc)
+func (rn *roomNotifications) newNotification(text string, messageType gtki.MessageType) {
+	nb := rn.u.newNotificationBar(text, messageType)
+	nb.setClosable(true)
+	rn.add(nb)
 
 	rn.roomView.onNewNotificationAdded()
 }
 
-func (rn *roomNotifications) add(nc withNotification) {
-	if nc.isClosable() {
-		nc.onClose(func() {
-			rn.remove(nc)
+func (rn *roomNotifications) add(nb *notificationBar) {
+	if nb.isClosable() {
+		nb.onClose(func() {
+			rn.remove(nb)
 		})
 	}
-	rn.notifications.add(nc)
+	rn.notifications.add(nb)
 }
 
-func (rn *roomNotifications) remove(nc withNotification) {
-	rn.notifications.remove(nc)
+func (rn *roomNotifications) remove(nb *notificationBar) {
+	rn.notifications.remove(nb)
 
 	if rn.notifications.hasNoMessages() {
 		rn.roomView.onNoNotifications()

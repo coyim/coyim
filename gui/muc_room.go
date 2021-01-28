@@ -151,7 +151,7 @@ func (v *roomView) roomDiscoInfoReceivedEvent(di data.RoomDiscoInfo) {
 
 	v.warnings.clear()
 	v.showRoomWarnings(di)
-	v.privacityWarningBox.PackStart(v.warningsInfoBar.widget(), true, false, 0)
+	v.privacityWarningBox.PackStart(v.warningsInfoBar.view(), true, false, 0)
 }
 
 // roomConfigRequestTimeoutEvent MUST be called from the UI thread
@@ -189,10 +189,6 @@ func (v *roomView) showWarnings() {
 
 	v.warnings.show()
 	v.showNotificationsOverlay()
-}
-
-func (v *roomView) removeWarningsInfobar() {
-	v.notifications.remove(v.warningsInfoBar)
 }
 
 func (v *roomView) showNotificationsOverlay() {

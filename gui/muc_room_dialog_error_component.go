@@ -15,15 +15,17 @@ type dialogErrorComponent struct {
 	errorTitle   gtki.Label  `gtk-widget:"room-error-dialog-title"`
 	errorMessage gtki.Label  `gtk-widget:"room-error-dialog-message"`
 
+	// This function is a callback that will be used to try
+	// to execute again the previously called function
 	retry func()
 }
 
-func createDialogErrorComponent(title, header, message string, cb func()) *dialogErrorComponent {
+func createDialogErrorComponent(title, header, message string, retry func()) *dialogErrorComponent {
 	d := &dialogErrorComponent{
 		title:   title,
 		header:  header,
 		message: message,
-		retry:   cb,
+		retry:   retry,
 	}
 
 	d.initBuilder()

@@ -113,18 +113,24 @@ func (n *notifications) message(text string) {
 
 // notifyOnError is an alias for the "error" method and also
 // implements the "canNotifyErrors" interface
+//
+// notifyOnError MUST be called from the ui thread
 func (n *notifications) notifyOnError(err string) {
 	n.error(err)
 }
 
 // clearErrors is an alias for the "clear" method and also
 // implements the "canNotifyErrors" interface
+//
+// clearErrors MUST be called from the ui thread
 func (n *notifications) clearErrors() {
 	n.clearMessagesByType(gtki.MESSAGE_ERROR)
 }
 
 // hasNoMessages returns a boolean indicating if the notifications
 // component has no messages
+//
+// hasNoMessages MUST be called from the ui thread
 func (n *notifications) hasNoMessages() bool {
 	return len(n.messages) == 0
 }

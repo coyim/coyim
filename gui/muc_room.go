@@ -329,13 +329,13 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation dat
 }
 
 func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, affiliation data.Affiliation, reason string) {
-	o.UpdateAffiliation(affiliation)
-
 	affiliationUpdate := data.AffiliationUpdate{
 		New:      affiliation,
 		Previous: o.Affiliation,
 	}
 	v.publishOccupantAffiliationUpdatedEvent(o.Nickname, affiliationUpdate, v.room.SelfOccupantNickname(), reason)
+
+	o.UpdateAffiliation(affiliation)
 
 	doInUIThread(func() {
 		v.notifications.info(i18n.Localf("The position of %s was updated successfully", o.Nickname))

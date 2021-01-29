@@ -358,6 +358,35 @@ func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation
 	})
 }
 
+func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, role data.Role, reason string) {
+	// TODO: implements loading overlay
+	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), o.RealJid, role, reason)
+
+	select {
+	case <-sc:
+		v.log.Info("The role has been changed")
+		v.onOccupantRoleUpdateSuccess(o, role, reason)
+	case err := <-ec:
+		v.log.WithError(err).Error("An error occurred in the role update process")
+		v.onOccupantRoleUpdateError(o, role, reason)
+	}
+}
+
+func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role, reason string) {
+	// TODO: publish update occupant role event
+	o.UpdateRole(role)
+	doInUIThread(func() {
+		v.notifications.info(i18n.Localf("The role of %s was updated successfully", o.Nickname))
+	})
+}
+
+func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, reason string) {
+	doInUIThread(func() {
+		// TODO: Call to error dialog component
+		v.notifications.info(i18n.Local("The role update process failed"))
+	})
+}
+
 func (v *roomView) switchToLobbyView() {
 	v.initRoomLobby()
 
@@ -442,6 +471,16 @@ func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, affil
 		affiliationUpdate: affiliationUpdate,
 		actor:             actor,
 		reason:            reason,
+	})
+}
+
+// publishOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishOccupantRoleUpdatedEvent(nickname string, roleUpdate data.RoleUpdate, actor, reason string) {
+	v.publishEvent(occupantRoleUpdatedEvent{
+		nickname:   nickname,
+		roleUpdate: roleUpdate,
+		actor:      actor,
+		reason:     reason,
 	})
 }
 

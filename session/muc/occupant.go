@@ -102,6 +102,20 @@ func (o *Occupant) UpdateAffiliation(a data.Affiliation) {
 	}
 }
 
+// UpdateRole will update the occupant's role
+func (o *Occupant) UpdateRole(a data.Role) {
+	switch a.(type) {
+	case *data.ModeratorRole:
+		o.ChangeRoleToModerator()
+	case *data.ParticipantRole:
+		o.ChangeRoleToParticipant()
+	case *data.VisitorRole:
+		o.ChangeRoleToVisitor()
+	case *data.NoneRole:
+		o.ChangeRoleToNone()
+	}
+}
+
 // UpdateStatus will update the occupant's status
 func (o *Occupant) UpdateStatus(status, statusMsg string) {
 	o.Status = &roster.Status{Status: status, StatusMsg: statusMsg}

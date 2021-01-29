@@ -136,6 +136,16 @@ func (r *roomViewRoster) updateOccupantAffiliation(o *muc.Occupant, previousAffi
 	r.roomView.tryUpdateOccupantAffiliation(o, previousAffiliation, reason)
 }
 
+func (r *roomViewRoster) updateOccupantRole(o *muc.Occupant, role data.Role, reason string) {
+	r.log.WithFields(log.Fields{
+		"where":    "updateOccupantRole",
+		"occupant": fmt.Sprintf("%s", o.RealJid),
+		"role":     o.Role.Name(),
+	}).Info("The occupant role has been updated")
+
+	r.roomView.tryUpdateOccupantRole(o, role, reason)
+}
+
 // showOccupantInfo MUST be called from the UI thread
 func (r *roomViewRoster) showOccupantInfo(o *muc.Occupant) {
 	r.rosterInfo.showOccupantInfo(o)

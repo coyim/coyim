@@ -85,6 +85,11 @@ func (r *roomViewRosterInfo) updateOccupantAffiliation(occupant *muc.Occupant, p
 	doInUIThread(r.refresh)
 }
 
+func (r *roomViewRosterInfo) updateOccupantRole(occupant *muc.Occupant, role data.Role, reason string) {
+	r.rosterView.updateOccupantRole(occupant, role, reason)
+	doInUIThread(r.refresh)
+}
+
 // showOccupantInfo MUST be called from the UI thread
 func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	r.occupant = occupant

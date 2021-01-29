@@ -451,17 +451,17 @@ func getDisplayForOccupantAffiliationAdded(nickname string, affiliation data.Aff
 		return i18n.Localf("%s is now %s", nickname,
 			displayNameForAffiliationWithPreposition(affiliation))
 	}
-	return i18n.Localf("%s updated the position of %s to %s", actor, nickname,
+	return i18n.Localf("%s changed the position of %s to %s", actor, nickname,
 		displayNameForAffiliation(affiliation))
 }
 
 func getDisplayForOccupantAffiliationChanged(nickname string, affiliation, previousAffiliation data.Affiliation, actor string) string {
 	if actor == "" {
-		return i18n.Localf("The position of %s was updated from %s to %s", nickname,
+		return i18n.Localf("The position of %s was changed from %s to %s", nickname,
 			displayNameForAffiliation(previousAffiliation),
 			displayNameForAffiliation(affiliation))
 	}
-	return i18n.Localf("%s updated the position of %s from %s to %s", actor, nickname,
+	return i18n.Localf("%s changed the position of %s from %s to %s", actor, nickname,
 		displayNameForAffiliation(previousAffiliation),
 		displayNameForAffiliation(affiliation))
 }
@@ -505,16 +505,16 @@ func getDisplayForSelfOccupantAffiliationAdded(affiliation data.Affiliation, act
 	if actor == "" {
 		return i18n.Localf("You are now %s", displayNameForAffiliationWithPreposition(affiliation))
 	}
-	return i18n.Localf("%s updated your position to %s", actor, displayNameForAffiliation(affiliation))
+	return i18n.Localf("%s changed your position to %s", actor, displayNameForAffiliation(affiliation))
 }
 
 func getDisplayForSelfOccupantAffiliationChanged(affiliation, previousAffiliation data.Affiliation, actor string) string {
 	if actor == "" {
-		return i18n.Localf("Your position was updated from %s to %s",
+		return i18n.Localf("Your position was changed from %s to %s",
 			displayNameForAffiliation(previousAffiliation),
 			displayNameForAffiliation(affiliation))
 	}
-	return i18n.Localf("%s updated your position from %s to %s", actor,
+	return i18n.Localf("%s changed your position from %s to %s", actor,
 		displayNameForAffiliation(previousAffiliation),
 		displayNameForAffiliation(affiliation))
 }
@@ -522,7 +522,7 @@ func getDisplayForSelfOccupantAffiliationChanged(affiliation, previousAffiliatio
 func displayNameForAffiliation(a data.Affiliation) string {
 	switch a.Name() {
 	case data.AffiliationAdmin:
-		return i18n.Local("admin")
+		return i18n.Local("administrator")
 	case data.AffiliationOwner:
 		return i18n.Local("owner")
 	case data.AffiliationOutcast:
@@ -537,7 +537,7 @@ func displayNameForAffiliation(a data.Affiliation) string {
 func displayNameForAffiliationWithPreposition(a data.Affiliation) string {
 	switch a.Name() {
 	case data.AffiliationAdmin:
-		return i18n.Local("an admin")
+		return i18n.Local("an admininistrator")
 	case data.AffiliationOwner:
 		return i18n.Local("an owner")
 	case data.AffiliationMember:

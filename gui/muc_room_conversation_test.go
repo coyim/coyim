@@ -39,7 +39,7 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationUp
 		Previous: none,
 	}
 	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", affiliationUpdate, "alex", ""), Equals,
-		"[localized] alex updated the position of nick to [localized] member")
+		"[localized] alex changed the position of nick to [localized] member")
 
 	affiliationUpdate = data.AffiliationUpdate{
 		New:      none,
@@ -71,7 +71,7 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationRe
 	owner := newAffiliationFromString(data.AffiliationOwner)
 
 	c.Assert(strings.Contains(getDisplayForOccupantAffiliationRemoved("jonathan", admin, ""), "nick"), Equals, false)
-	c.Assert(strings.Contains(getDisplayForOccupantAffiliationRemoved("alice", admin, ""), "admin"), Equals, true)
+	c.Assert(strings.Contains(getDisplayForOccupantAffiliationRemoved("alice", admin, ""), "administrator"), Equals, true)
 	c.Assert(strings.Contains(getDisplayForOccupantAffiliationRemoved("alberto", admin, "me"), "me"), Equals, true)
 
 	c.Assert(getDisplayForOccupantAffiliationRemoved("nick", member, ""), Equals,
@@ -102,10 +102,10 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationAd
 		"[localized] nick is now [localized] a member")
 
 	c.Assert(getDisplayForOccupantAffiliationAdded("maria", admin, "alberto"), Equals,
-		"[localized] alberto updated the position of maria to [localized] admin")
+		"[localized] alberto changed the position of maria to [localized] administrator")
 
 	c.Assert(getDisplayForOccupantAffiliationAdded("alice", owner, "bob"), Equals,
-		"[localized] bob updated the position of alice to [localized] owner")
+		"[localized] bob changed the position of alice to [localized] owner")
 }
 
 func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationChanged(c *C) {
@@ -116,13 +116,13 @@ func (*SignalsSuite) Test_mucRoomConversation_getDisplayForOccupantAffiliationCh
 	owner := newAffiliationFromString(data.AffiliationOwner)
 
 	c.Assert(getDisplayForOccupantAffiliationChanged("nick", member, admin, ""), Equals,
-		"[localized] The position of nick was updated from [localized] admin to [localized] member")
+		"[localized] The position of nick was changed from [localized] administrator to [localized] member")
 
 	c.Assert(getDisplayForOccupantAffiliationChanged("maria", admin, member, "juan"), Equals,
-		"[localized] juan updated the position of maria from [localized] member to [localized] admin")
+		"[localized] juan changed the position of maria from [localized] member to [localized] administrator")
 
 	c.Assert(getDisplayForOccupantAffiliationChanged("alice", owner, member, "bob"), Equals,
-		"[localized] bob updated the position of alice from [localized] member to [localized] owner")
+		"[localized] bob changed the position of alice from [localized] member to [localized] owner")
 }
 
 func newAffiliationFromString(s string) data.Affiliation {

@@ -321,28 +321,41 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation dat
 	select {
 	case <-sc:
 		v.log.Info("The affiliation has been changed")
-		affiliationUpdate := data.AffiliationUpdate{
-			New:      affiliation,
-			Previous: o.Affiliation,
-		}
-		v.notifications.info(i18n.Local("The update of affiliation was successfully"))
-		v.publishOccupantAffiliationUpdatedEvent(o.Nickname, affiliationUpdate, v.room.SelfOccupantNickname(), reason)
-		o.UpdateAffiliation(affiliation)
-		doInUIThread(v.loadingViewOverlay.hide)
+		v.onOccupantAffiliationUpdateSuccess(o, affiliation, reason)
 	case err := <-ec:
-		v.log.WithError(err).Error("An error occurred when updating the occupant affiliation")
-		doInUIThread(func() {
-			v.loadingViewOverlay.hide()
-			dr := createDialogErrorComponent(
-				i18n.Local("Update occupant affiliation error"),
-				i18n.Local("The occupant position couldn't be updated"),
-				i18n.Local("An error occurred when the affiliation was been update."),
-				func() {
-					v.tryUpdateOccupantAffiliation(o, affiliation, reason)
-				})
-			dr.show()
-		})
+		v.log.WithError(err).Error("An error occurred in the affiliation update process")
+		v.onOccupantAffiliationUpdateError(o, affiliation, reason)
 	}
+}
+
+func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, affiliation data.Affiliation, reason string) {
+	o.UpdateAffiliation(affiliation)
+
+	affiliationUpdate := data.AffiliationUpdate{
+		New:      affiliation,
+		Previous: o.Affiliation,
+	}
+	v.publishOccupantAffiliationUpdatedEvent(o.Nickname, affiliationUpdate, v.room.SelfOccupantNickname(), reason)
+
+	doInUIThread(func() {
+		v.notifications.info(i18n.Localf("The position of %s was updated successfully", o.Nickname))
+		v.loadingViewOverlay.hide()
+	})
+}
+
+func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation data.Affiliation, reason string) {
+	doInUIThread(func() {
+		v.loadingViewOverlay.hide()
+		v.notifications.info(i18n.Local("The affiliation update process failed"))
+		dr := createDialogErrorComponent(
+			i18n.Local("Update occupant position error"),
+			i18n.Localf("The position of %s couldn't be updated", o.Nickname),
+			i18n.Local("An error occurred in the position update proccess."),
+			func() {
+				v.tryUpdateOccupantAffiliation(o, affiliation, reason)
+			})
+		dr.show()
+	})
 }
 
 func (v *roomView) switchToLobbyView() {

@@ -164,8 +164,8 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(affiliationUpdate data.AffiliationUpdate, actor, reason string) {
-	msg := getDisplayForSelfOccupantAffiliationUpdate(affiliationUpdate, actor, reason)
-	v.notifications.info(msg)
+	m := displaySelfOccupantAffiliationUpdate(affiliationUpdate, actor, reason)
+	v.notifications.info(m)
 }
 
 func (v *roomView) showRoomWarnings(info data.RoomDiscoInfo) {

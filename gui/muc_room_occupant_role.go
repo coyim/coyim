@@ -53,7 +53,7 @@ func (rv *occupantRoleUpdateView) initBuilder() {
 }
 
 func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
-	if isNormalEnter(g.gdk.EventKeyFrom(rv)) {
+	if isNormalEnter(g.gdk.EventKeyFrom(ev)) {
 		rv.onApply()
 	}
 }

@@ -61,6 +61,8 @@ func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
 func (rv *occupantRoleUpdateView) initDefaults() {
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
+	// TODO: This button is enabled until another radio option will be added
+	rv.applyButton.SetSensitive(true)
 
 	switch rv.occupant.Role.(type) {
 	case *data.ModeratorRole:
@@ -70,8 +72,17 @@ func (rv *occupantRoleUpdateView) initDefaults() {
 
 // onApply MUST be called from the UI thread
 func (rv *occupantRoleUpdateView) onApply() {
-	// TODO: implements the request in order to update the occupant's role
+	go rv.rosterInfoView.updateOccupantRole(rv.occupant, rv.getRoleBasedOnRadioSelected(), getTextViewText(rv.reasonEntry))
 	rv.closeDialog()
+}
+
+func (rv *occupantRoleUpdateView) getRoleBasedOnRadioSelected() data.Role {
+	switch {
+	case rv.moderatorRadio.GetActive():
+		return &data.ModeratorRole{}
+	default:
+		return &data.NoneRole{}
+	}
 }
 
 // close MUST be called from the UI thread

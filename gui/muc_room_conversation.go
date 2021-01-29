@@ -491,7 +491,7 @@ func getDisplayForSelfOccupantAffiliationRemoved(previousAffiliation data.Affili
 	if actor == "" {
 		return i18n.Localf("Your position of %s was removed", displayNameForAffiliation(previousAffiliation))
 	}
-	return i18n.Localf("%s removed your %s position", actor, displayNameForAffiliation(previousAffiliation))
+	return i18n.Localf("%s removed your position as %s", actor, displayNameForAffiliation(previousAffiliation))
 }
 
 func getDisplayForSelfOccupantAffiliationOutcast(actor string) string {

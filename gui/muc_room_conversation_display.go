@@ -32,7 +32,6 @@ func getDisplayForSelfOccupantAffiliationUpdate(nickname string, affiliationUpda
 }
 
 type affiliationUpdateDisplayData struct {
-	affiliationUpdate                   data.AffiliationUpdate
 	newAffiliation, previousAffiliation data.Affiliation
 	nickname, actor, reason             string
 }
@@ -134,7 +133,7 @@ type selfAffiliationUpdateDisplayData struct {
 
 func newSelfAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdate, actor, reason string) *selfAffiliationUpdateDisplayData {
 	return &selfAffiliationUpdateDisplayData{
-		newAffiliationUpdateDisplayData("HOLAAAA", affiliationUpdate, actor, reason),
+		newAffiliationUpdateDisplayData("", affiliationUpdate, actor, reason),
 	}
 }
 

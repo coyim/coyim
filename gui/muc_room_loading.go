@@ -46,3 +46,10 @@ func (lo *roomViewLoadingOverlay) onOccupantAffiliationUpdate() {
 	lo.setTransparent()
 	lo.show()
 }
+
+// onOccupantRoleUpdate MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onOccupantRoleUpdate() {
+	lo.setTitle(i18n.Local("Updating occupant role..."))
+	lo.setTransparent()
+	lo.show()
+}

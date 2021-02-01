@@ -359,7 +359,7 @@ func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation
 }
 
 func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, role data.Role, reason string) {
-	// TODO: implements loading overlay
+	v.loadingViewOverlay.onOccupantRoleUpdate()
 	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), o.RealJid, role, reason)
 
 	select {
@@ -376,6 +376,7 @@ func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role, 
 	// TODO: publish update occupant role event
 	o.UpdateRole(role)
 	doInUIThread(func() {
+		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Localf("The role of %s was updated successfully", o.Nickname))
 	})
 }
@@ -383,6 +384,7 @@ func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role, 
 func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, reason string) {
 	doInUIThread(func() {
 		// TODO: Call to error dialog component
+		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Local("The role update process failed"))
 	})
 }

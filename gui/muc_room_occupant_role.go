@@ -72,6 +72,8 @@ func (rv *occupantRoleUpdateView) initDefaults() {
 	switch rv.occupant.Role.(type) {
 	case *data.ModeratorRole:
 		rv.moderatorRadio.SetActive(true)
+	case *data.ParticipantRole:
+		rv.participantRadio.SetActive(true)
 	}
 }
 

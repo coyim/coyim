@@ -116,6 +116,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.roomDestroyedEvent(t.reason, t.alternative, t.password)
 		case occupantAffiliationUpdatedEvent:
 			c.occupantAffiliationEvent(t.affiliationUpdate)
+		case selfOccupantAffiliationUpdatedEvent:
+			c.occupantAffiliationEvent(t.affiliationUpdate)
 		}
 	})
 }

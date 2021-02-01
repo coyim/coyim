@@ -108,6 +108,13 @@ type occupantAffiliationUpdatedEvent struct {
 	reason            string
 }
 
+type occupantRoleUpdatedEvent struct {
+	nickname   string
+	roleUpdate data.RoleUpdate
+	actor      string
+	reason     string
+}
+
 type selfOccupantAffiliationUpdatedEvent struct {
 	occupantAffiliationUpdatedEvent
 }
@@ -139,3 +146,4 @@ func (serviceUnavailableEvent) markAsRoomViewEvent()             {}
 func (unknownErrorEvent) markAsRoomViewEvent()                   {}
 func (occupantAffiliationUpdatedEvent) markAsRoomViewEvent()     {}
 func (selfOccupantAffiliationUpdatedEvent) markAsRoomViewEvent() {}
+func (occupantRoleUpdatedEvent) markAsRoomViewEvent()            {}

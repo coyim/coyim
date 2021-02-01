@@ -13,6 +13,12 @@ const (
 	RoleModerator = "moderator"
 )
 
+// RoleUpdate contains information related to a new and previous affiliation
+type RoleUpdate struct {
+	New      Role
+	Previous Role
+}
+
 // Role represents the specific role that a user has inside a specific room
 type Role interface {
 	// HasVoice returns true if the user can speak in this room

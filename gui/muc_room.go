@@ -391,7 +391,7 @@ func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, re
 		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Local("The role update process failed"))
 		dr := createDialogErrorComponent(
-			i18n.Local("Update occupant role error"),
+			i18n.Local("Error updating the occupant role"),
 			i18n.Localf("The role of %s couldn't be updated", o.Nickname),
 			i18n.Local("An error occurred while updating occupant role."),
 			func() {

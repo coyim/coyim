@@ -6,9 +6,9 @@ import (
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
-// dialogErrorComponent shows information related to an error
-// that occurred trying to send some specific request.
-// This component allows calls again the failed operation through the `retry` function
+// dialogErrorComponent is shown after an error occurred.
+// It displays an  error message and gives an option to invoke
+// the previously executed function through the `retry` callback.
 type dialogErrorComponent struct {
 	title   string
 	header  string
@@ -18,8 +18,6 @@ type dialogErrorComponent struct {
 	errorTitle   gtki.Label  `gtk-widget:"room-error-dialog-title"`
 	errorMessage gtki.Label  `gtk-widget:"room-error-dialog-message"`
 
-	// retry is a function that allows calling
-	// the previous function which responded to a fail
 	retry func()
 }
 

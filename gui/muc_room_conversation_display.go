@@ -21,19 +21,23 @@ func getDisplayRoomSubject(subject string) string {
 	return i18n.Localf("The room subject is \"%s\"", subject)
 }
 
-func getDisplayForOccupantAffiliationUpdate(nickname string, affiliationUpdate data.AffiliationUpdate, actor, reason string) string {
-	d := newAffiliationUpdateDisplayData(nickname, affiliationUpdate, actor, reason)
+func getDisplayForOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
+	d := newAffiliationUpdateDisplayData(affiliationUpdate)
 	return displayAffiliationUpdateMessage(d)
 }
 
-func getDisplayForSelfOccupantAffiliationUpdate(nickname string, affiliationUpdate data.AffiliationUpdate, actor, reason string) string {
-	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate, actor, reason)
+func getDisplayForSelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
+	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate)
 	return displayAffiliationUpdateMessage(d)
 }
 
 type affiliationUpdateDisplayData struct {
-	newAffiliation, previousAffiliation data.Affiliation
-	nickname, actor, reason             string
+	nickname            string
+	newAffiliation      data.Affiliation
+	previousAffiliation data.Affiliation
+	actor               string
+	actorAffiliation    data.Affiliation
+	reason              string
 }
 
 type affiliationUpdateDisplayer interface {
@@ -69,13 +73,14 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) string {
 	return message
 }
 
-func newAffiliationUpdateDisplayData(nickname string, affiliationUpdate data.AffiliationUpdate, actor, reason string) *affiliationUpdateDisplayData {
+func newAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdate) *affiliationUpdateDisplayData {
 	return &affiliationUpdateDisplayData{
-		nickname:            nickname,
+		nickname:            affiliationUpdate.Nickname,
 		newAffiliation:      affiliationUpdate.New,
 		previousAffiliation: affiliationUpdate.Previous,
-		actor:               actor,
-		reason:              reason,
+		actor:               affiliationUpdate.Actor,
+		actorAffiliation:    affiliationUpdate.ActorAffiliation,
+		reason:              affiliationUpdate.Reason,
 	}
 }
 
@@ -131,9 +136,9 @@ type selfAffiliationUpdateDisplayData struct {
 	*affiliationUpdateDisplayData
 }
 
-func newSelfAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdate, actor, reason string) *selfAffiliationUpdateDisplayData {
+func newSelfAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdate) *selfAffiliationUpdateDisplayData {
 	return &selfAffiliationUpdateDisplayData{
-		newAffiliationUpdateDisplayData("", affiliationUpdate, actor, reason),
+		newAffiliationUpdateDisplayData(affiliationUpdate),
 	}
 }
 
@@ -169,8 +174,8 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationChanged() string
 		displayNameForAffiliation(d.newAffiliation))
 }
 
-func displaySelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate, actor, reason string) string {
-	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate, actor, reason)
+func displaySelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
+	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate)
 	return displayAffiliationUpdateMessage(d)
 }
 

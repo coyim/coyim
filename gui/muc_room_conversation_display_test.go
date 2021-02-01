@@ -34,38 +34,38 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationUpdate
 	outcast := newAffiliationFromString(data.AffiliationOutcast)
 	member := newAffiliationFromString(data.AffiliationMember)
 
-	affiliationUpdate := data.AffiliationUpdate{
+	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "nick",
 		New:      member,
 		Previous: none,
-	}
+		Actor:    "alex",
+	})
 
-	d1 := newAffiliationUpdateDisplayData("nick", affiliationUpdate, "alex", "")
-	c.Assert(displayAffiliationUpdateMessage(d1), Equals,
+	c.Assert(displayAffiliationUpdateMessage(d), Equals,
 		"[localized] alex changed the position of nick to [localized] member")
 
-	affiliationUpdate = data.AffiliationUpdate{
+	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
+		Nickname: "robin",
 		New:      none,
 		Previous: member,
-	}
+		Actor:    "batman",
+		Reason:   "I'm batman",
+	}), Equals, "[localized] batman removed the [localized] member position from robin[localized]  because I'm batman")
 
-	c.Assert(getDisplayForOccupantAffiliationUpdate("robin", affiliationUpdate, "batman", "I'm batman"), Equals,
-		"[localized] batman removed the [localized] member position from robin[localized]  because I'm batman")
-
-	affiliationUpdate = data.AffiliationUpdate{
+	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
+		Nickname: "bob",
 		New:      outcast,
 		Previous: member,
-	}
+		Actor:    "alice",
+		Reason:   "he was rude",
+	}), Equals, "[localized] alice banned bob from the room[localized]  because he was rude")
 
-	c.Assert(getDisplayForOccupantAffiliationUpdate("bob", affiliationUpdate, "alice", "he was rude"), Equals,
-		"[localized] alice banned bob from the room[localized]  because he was rude")
-
-	affiliationUpdate = data.AffiliationUpdate{
+	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
+		Nickname: "nick",
 		New:      none,
 		Previous: outcast,
-	}
-
-	c.Assert(getDisplayForOccupantAffiliationUpdate("nick", affiliationUpdate, "jonathan", ""), Equals,
-		"[localized] jonathan removed the [localized] outcast position from nick")
+		Actor:    "jonathan",
+	}), Equals, "[localized] jonathan removed the [localized] outcast position from nick")
 }
 
 func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationRemoved(c *C) {
@@ -76,8 +76,12 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationRemove
 	owner := newAffiliationFromString(data.AffiliationOwner)
 	none := newAffiliationFromString(data.AffiliationNone)
 
-	affiliationUpdate := data.AffiliationUpdate{New: none, Previous: admin}
-	d := newAffiliationUpdateDisplayData("jonathan", affiliationUpdate, "", "")
+	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "jonathan",
+		New:      none,
+		Previous: admin,
+	})
+
 	c.Assert(strings.Contains(d.displayForAffiliationRemoved(), "nick"), Equals, false)
 
 	d.nickname = "alice"
@@ -104,8 +108,10 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationRemove
 func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationOutcast(c *C) {
 	i18n.InitLocalization(&mucRoomConversationDisplayMockGlib{})
 
-	outcast := newAffiliationFromString(data.AffiliationOutcast)
-	d := newAffiliationUpdateDisplayData("nick", data.AffiliationUpdate{New: outcast}, "", "")
+	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "nick",
+		New:      newAffiliationFromString(data.AffiliationOutcast),
+	})
 
 	c.Assert(d.displayForAffiliationOutcast(), Equals,
 		"[localized] nick was banned from the room")
@@ -124,8 +130,11 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationAdded(
 	owner := newAffiliationFromString(data.AffiliationOwner)
 	none := newAffiliationFromString(data.AffiliationNone)
 
-	affiliationUpdate := data.AffiliationUpdate{New: member, Previous: none}
-	d := newAffiliationUpdateDisplayData("nick", affiliationUpdate, "", "")
+	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "nick",
+		New:      member,
+		Previous: none,
+	})
 
 	c.Assert(d.displayForAffiliationAdded(), Equals,
 		"[localized] nick is now [localized] a member")
@@ -150,8 +159,12 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationChange
 	admin := newAffiliationFromString(data.AffiliationAdmin)
 	owner := newAffiliationFromString(data.AffiliationOwner)
 
-	affiliationUpdate := data.AffiliationUpdate{New: member, Previous: admin}
-	d := newAffiliationUpdateDisplayData("nick", affiliationUpdate, "", "")
+	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "nick",
+		New:      member,
+		Previous: admin,
+	})
+
 	c.Assert(d.displayForAffiliationChanged(), Equals,
 		"[localized] The position of nick was changed from [localized] administrator to [localized] member")
 

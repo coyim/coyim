@@ -175,28 +175,16 @@ func (m *mucManager) roomDestroyed(roomID jid.Bare, reason string, alternativeRo
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) occupantAffiliationUpdated(roomID jid.Bare, nickname string, previousAffiliation data.Affiliation, oa *muc.OccupantAffiliationInfo) {
+func (m *mucManager) occupantAffiliationUpdated(roomID jid.Bare, affiliationUpdate data.AffiliationUpdate) {
 	ev := events.MUCOccupantAffiliationUpdated{}
-	ev.Nickname = nickname
-	ev.AffiliationUpdate = data.AffiliationUpdate{
-		New:      oa.Affiliation,
-		Previous: previousAffiliation,
-	}
-	ev.Actor = oa.Actor
-	ev.Reason = oa.Reason
+	ev.AffiliationUpdate = affiliationUpdate
 
 	m.publishRoomEvent(roomID, ev)
 }
 
-func (m *mucManager) selfOccupantAffiliationUpdated(roomID jid.Bare, nickname string, previousAffiliation data.Affiliation, oa *muc.OccupantAffiliationInfo) {
+func (m *mucManager) selfOccupantAffiliationUpdated(roomID jid.Bare, affiliationUpdate data.AffiliationUpdate) {
 	ev := events.MUCSelfOccupantAffiliationUpdated{}
-	ev.Nickname = nickname
-	ev.AffiliationUpdate = data.AffiliationUpdate{
-		New:      oa.Affiliation,
-		Previous: previousAffiliation,
-	}
-	ev.Actor = oa.Actor
-	ev.Reason = oa.Reason
+	ev.AffiliationUpdate = affiliationUpdate
 
 	m.publishRoomEvent(roomID, ev)
 }

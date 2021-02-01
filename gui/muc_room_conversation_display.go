@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"fmt"
+
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
 )
@@ -41,9 +43,9 @@ type affiliationUpdateDisplayData struct {
 }
 
 type affiliationUpdateDisplayer interface {
-	newAffiliationName() string
-	previousAffiliationName() string
+	affiliation() data.Affiliation
 	updateReason() string
+	previousAffiliationIsNone() bool
 	displayForAffiliationRemoved() string
 	displayForAffiliationOutcast() string
 	displayForAffiliationAdded() string
@@ -53,13 +55,15 @@ type affiliationUpdateDisplayer interface {
 func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) string {
 	message := ""
 
-	switch d.newAffiliationName() {
-	case data.AffiliationNone:
+	newAffiliation := d.affiliation()
+
+	switch {
+	case newAffiliation.IsNone():
 		message = d.displayForAffiliationRemoved()
-	case data.AffiliationOutcast:
+	case newAffiliation.IsOutcast():
 		message = d.displayForAffiliationOutcast()
 	default:
-		if d.previousAffiliationName() == data.AffiliationNone {
+		if d.previousAffiliationIsNone() {
 			message = d.displayForAffiliationAdded()
 		} else {
 			message = d.displayForAffiliationChanged()
@@ -67,7 +71,7 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) string {
 	}
 
 	if d.updateReason() != "" {
-		message += i18n.Localf(" because %s", d.updateReason())
+		message = fmt.Sprintf("%s%s", message, i18n.Localf(" because %s", d.updateReason()))
 	}
 
 	return message
@@ -84,12 +88,12 @@ func newAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdate) *
 	}
 }
 
-func (d *affiliationUpdateDisplayData) newAffiliationName() string {
-	return d.newAffiliation.Name()
+func (d *affiliationUpdateDisplayData) affiliation() data.Affiliation {
+	return d.newAffiliation
 }
 
-func (d *affiliationUpdateDisplayData) previousAffiliationName() string {
-	return d.previousAffiliation.Name()
+func (d *affiliationUpdateDisplayData) previousAffiliationIsNone() bool {
+	return d.previousAffiliation.IsNone()
 }
 
 func (d *affiliationUpdateDisplayData) updateReason() string {
@@ -209,28 +213,28 @@ func displaySelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpda
 	return displayAffiliationUpdateMessage(d)
 }
 
-func displayNameForAffiliation(a data.Affiliation) string {
-	switch a.Name() {
-	case data.AffiliationAdmin:
+func displayNameForAffiliation(affiliation data.Affiliation) string {
+	switch {
+	case affiliation.IsAdmin():
 		return i18n.Local("administrator")
-	case data.AffiliationOwner:
+	case affiliation.IsOwner():
 		return i18n.Local("owner")
-	case data.AffiliationOutcast:
+	case affiliation.IsOutcast():
 		return i18n.Local("outcast")
-	case data.AffiliationMember:
+	case affiliation.IsMember():
 		return i18n.Local("member")
 	default: // Other values get the default treatment
 		return ""
 	}
 }
 
-func displayNameForAffiliationWithPreposition(a data.Affiliation) string {
-	switch a.Name() {
-	case data.AffiliationAdmin:
+func displayNameForAffiliationWithPreposition(affiliation data.Affiliation) string {
+	switch {
+	case affiliation.IsAdmin():
 		return i18n.Local("an admininistrator")
-	case data.AffiliationOwner:
+	case affiliation.IsOwner():
 		return i18n.Local("an owner")
-	case data.AffiliationMember:
+	case affiliation.IsMember():
 		return i18n.Local("a member")
 	default: // Other values get the default treatment
 		return ""

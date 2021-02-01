@@ -188,8 +188,6 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationAdded() string {
 	}
 	return i18n.Localf("%s changed your position to %s",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
-		displayNameForAffiliation(d.actorAffiliation),
-		d.actor,
 		displayNameForAffiliation(d.newAffiliation),
 	)
 }

@@ -30,11 +30,20 @@ func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, op *muc.Oc
 
 	co, exist := room.Roster().GetOccupant(op.Nickname)
 	if exist && co.Affiliation != op.AffiliationInfo.Affiliation {
+		affiliationUpdate := data.AffiliationUpdate{
+			Nickname: op.Nickname,
+			New:      op.AffiliationInfo.Affiliation,
+			Previous: co.Affiliation,
+			Actor:    op.AffiliationInfo.Actor,
+			Reason:   op.AffiliationInfo.Reason,
+		}
+
 		if isOwnPresence {
-			m.selfOccupantAffiliationUpdated(roomID, op.Nickname, co.Affiliation, op.AffiliationInfo)
+			m.selfOccupantAffiliationUpdated(roomID, affiliationUpdate)
 			return
 		}
-		m.occupantAffiliationUpdated(roomID, op.Nickname, co.Affiliation, op.AffiliationInfo)
+
+		m.occupantAffiliationUpdated(roomID, affiliationUpdate)
 	}
 }
 

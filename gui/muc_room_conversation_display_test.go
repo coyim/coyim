@@ -20,7 +20,7 @@ type mucRoomConversationDisplayMockGlib struct {
 }
 
 func (*mucRoomConversationDisplayMockGlib) Local(vx string) string {
-	return "[localized] " + vx
+	return fmt.Sprintf("[localized] %s", vx)
 }
 
 func (*mucRoomConversationDisplayMockGlib) Localf(vx string, args ...interface{}) string {
@@ -45,27 +45,30 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationUpdate
 		"[localized] alex changed the position of nick to [localized] member")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
-		Nickname: "robin",
-		New:      none,
-		Previous: member,
-		Actor:    "batman",
-		Reason:   "I'm batman",
-	}), Equals, "[localized] batman removed the [localized] member position from robin[localized]  because I'm batman")
+		Nickname:         "robin",
+		New:              none,
+		Previous:         member,
+		Actor:            "batman",
+		ActorAffiliation: member,
+		Reason:           "I'm batman",
+	}), Equals, "[localized] [localized] The [localized] member batman removed the [localized] member position from robin[localized]  because I'm batman")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
-		Nickname: "bob",
-		New:      outcast,
-		Previous: member,
-		Actor:    "alice",
-		Reason:   "he was rude",
-	}), Equals, "[localized] alice banned bob from the room[localized]  because he was rude")
+		Nickname:         "bob",
+		New:              outcast,
+		Previous:         member,
+		Actor:            "alice",
+		ActorAffiliation: member,
+		Reason:           "he was rude",
+	}), Equals, "[localized] [localized] The [localized] member alice banned bob from the room[localized]  because he was rude")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
-		Nickname: "nick",
-		New:      none,
-		Previous: outcast,
-		Actor:    "jonathan",
-	}), Equals, "[localized] jonathan removed the [localized] outcast position from nick")
+		Nickname:         "nick",
+		New:              none,
+		Previous:         outcast,
+		Actor:            "jonathan",
+		ActorAffiliation: outcast,
+	}), Equals, "[localized] [localized] The [localized] outcast jonathan removed the [localized] outcast position from nick")
 }
 
 func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationRemoved(c *C) {
@@ -101,8 +104,9 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationRemove
 	d.nickname = "007"
 	d.previousAffiliation = owner
 	d.actor = "maria"
+	d.actorAffiliation = owner
 	c.Assert(d.displayForAffiliationRemoved(), Equals,
-		"[localized] maria removed the [localized] owner position from 007")
+		"[localized] [localized] The [localized] owner maria removed the [localized] owner position from 007")
 }
 
 func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationOutcast(c *C) {
@@ -142,14 +146,16 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationAdded(
 	d.nickname = "maria"
 	d.newAffiliation = admin
 	d.actor = "alberto"
+	d.actorAffiliation = admin
 	c.Assert(d.displayForAffiliationAdded(), Equals,
-		"[localized] alberto changed the position of maria to [localized] administrator")
+		"[localized] [localized] The [localized] administrator alberto changed the position of maria to [localized] administrator")
 
 	d.nickname = "alice"
 	d.newAffiliation = owner
 	d.actor = "bob"
+	d.actorAffiliation = owner
 	c.Assert(d.displayForAffiliationAdded(), Equals,
-		"[localized] bob changed the position of alice to [localized] owner")
+		"[localized] [localized] The [localized] owner bob changed the position of alice to [localized] owner")
 }
 
 func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationChanged(c *C) {
@@ -172,15 +178,17 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationChange
 	d.newAffiliation = admin
 	d.previousAffiliation = member
 	d.actor = "juan"
+	d.actorAffiliation = member
 	c.Assert(d.displayForAffiliationChanged(), Equals,
-		"[localized] juan changed the position of maria from [localized] member to [localized] administrator")
+		"[localized] [localized] The [localized] member juan changed the position of maria from [localized] member to [localized] administrator")
 
 	d.nickname = "alice"
 	d.newAffiliation = owner
 	d.previousAffiliation = member
 	d.actor = "bob"
+	d.actorAffiliation = member
 	c.Assert(d.displayForAffiliationChanged(), Equals,
-		"[localized] bob changed the position of alice from [localized] member to [localized] owner")
+		"[localized] [localized] The [localized] member bob changed the position of alice from [localized] member to [localized] owner")
 }
 
 func newAffiliationFromString(s string) data.Affiliation {

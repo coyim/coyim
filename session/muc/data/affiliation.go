@@ -31,12 +31,16 @@ type Affiliation interface {
 	IsAdmin() bool
 	// IsBanned will return true if this specific affiliation means that the jid is banned from the room
 	IsBanned() bool
-	// IsMember returns true if this specific affiliation means that the jid is a member of the room
+	// IsMember will return true if this specific affiliation means that the jid is a member of the room
 	IsMember() bool
-	// IsModerator returns true if this specific affiliation means that the jid is a moderator of the room
+	// IsModerator will return true if this specific affiliation means that the jid is a moderator of the room
 	IsModerator() bool
-	// IsOwner returns ture if this specific affiliation means that the jid is an owner of the room
+	// IsOwner will return true if this specific affiliation means that the jid is an owner of the room
 	IsOwner() bool
+	// IsOutcast will return true if this specific affiliation means that the jid is a banned from the room
+	IsOutcast() bool
+	// IsNone will return true if if the jid doesn't have affiliation
+	IsNone() bool
 	// Name returns the string name of the affiliation type
 	Name() string
 }
@@ -130,6 +134,36 @@ func (*AdminAffiliation) IsOwner() bool { return false }
 
 // IsOwner implements Affiliation interface
 func (*OwnerAffiliation) IsOwner() bool { return true }
+
+// IsOutcast implements Affiliation interface
+func (*NoneAffiliation) IsOutcast() bool { return false }
+
+// IsOutcast implements Affiliation interface
+func (*OutcastAffiliation) IsOutcast() bool { return true }
+
+// IsOutcast implements Affiliation interface
+func (*MemberAffiliation) IsOutcast() bool { return false }
+
+// IsOutcast implements Affiliation interface
+func (*AdminAffiliation) IsOutcast() bool { return false }
+
+// IsOutcast implements Affiliation interface
+func (*OwnerAffiliation) IsOutcast() bool { return false }
+
+// IsNone implements Affiliation interface
+func (*NoneAffiliation) IsNone() bool { return true }
+
+// IsNone implements Affiliation interface
+func (*OutcastAffiliation) IsNone() bool { return false }
+
+// IsNone implements Affiliation interface
+func (*MemberAffiliation) IsNone() bool { return false }
+
+// IsNone implements Affiliation interface
+func (*AdminAffiliation) IsNone() bool { return false }
+
+// IsNone implements Affiliation interface
+func (*OwnerAffiliation) IsNone() bool { return false }
 
 // Name implements Affiliation interface
 func (*NoneAffiliation) Name() string { return AffiliationNone }

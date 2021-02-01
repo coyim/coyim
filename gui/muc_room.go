@@ -340,7 +340,7 @@ func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, affiliati
 	o.UpdateAffiliation(affiliation)
 
 	doInUIThread(func() {
-		v.notifications.info(i18n.Localf("The position of %s was updated successfully", o.Nickname))
+		v.notifications.info(i18n.Localf("The position of %s was updated", o.Nickname))
 		v.loadingViewOverlay.hide()
 	})
 }
@@ -384,7 +384,7 @@ func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role, 
 	o.UpdateRole(role)
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Localf("The role of %s was updated successfully", o.Nickname))
+		v.notifications.info(i18n.Localf("The role of %s was updated", o.Nickname))
 	})
 }
 

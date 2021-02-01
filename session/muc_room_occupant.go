@@ -38,6 +38,11 @@ func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, op *muc.Oc
 			Reason:   op.AffiliationInfo.Reason,
 		}
 
+		oa, ok := room.Roster().GetOccupant(op.AffiliationInfo.Actor)
+		if ok {
+			affiliationUpdate.ActorAffiliation = oa.Affiliation
+		}
+
 		if isOwnPresence {
 			m.selfOccupantAffiliationUpdated(roomID, affiliationUpdate)
 			return

@@ -251,13 +251,13 @@ func getOccupantIconNameForStatus(status string) string {
 	}
 }
 
-func affiliationDisplayName(a data.Affiliation) string {
-	switch a.Name() {
-	case data.AffiliationAdmin:
+func affiliationDisplayName(affiliation data.Affiliation) string {
+	switch {
+	case affiliation.IsAdmin():
 		return i18n.Local("Admin")
-	case data.AffiliationOwner:
+	case affiliation.IsOwner():
 		return i18n.Local("Owner")
-	case data.AffiliationOutcast:
+	case affiliation.IsOutcast():
 		return i18n.Local("Outcast")
 	default: // Member or other values get the default treatment
 		return ""

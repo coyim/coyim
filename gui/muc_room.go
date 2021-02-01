@@ -373,7 +373,12 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, role data.Role, reason
 }
 
 func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role, reason string) {
-	// TODO: publish update occupant role event
+	roleUpdate := data.RoleUpdate{
+		New:      role,
+		Previous: o.Role,
+	}
+	v.publishOccupantRoleUpdatedEvent(o.Nickname, roleUpdate, v.room.SelfOccupantNickname(), reason)
+
 	o.UpdateRole(role)
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
@@ -480,6 +485,16 @@ func (v *roomView) publishOccupantAffiliationUpdatedEvent(nickname string, affil
 		affiliationUpdate: affiliationUpdate,
 		actor:             actor,
 		reason:            reason,
+	})
+}
+
+// publishOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishOccupantRoleUpdatedEvent(nickname string, roleUpdate data.RoleUpdate, actor, reason string) {
+	v.publishEvent(occupantRoleUpdatedEvent{
+		nickname:   nickname,
+		roleUpdate: roleUpdate,
+		actor:      actor,
+		reason:     reason,
 	})
 }
 

@@ -173,7 +173,7 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationRemoved() string
 
 func (d *selfAffiliationUpdateDisplayData) displayForAffiliationOutcast() string {
 	if d.actor == "" {
-		return i18n.Local("You have been banned from the room")
+		return i18n.Local("You were banned from the room")
 	}
 	return i18n.Localf("%s banned you from the room",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),

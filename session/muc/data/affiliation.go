@@ -33,8 +33,6 @@ type Affiliation interface {
 	IsBanned() bool
 	// IsMember will return true if this specific affiliation means that the jid is a member of the room
 	IsMember() bool
-	// IsModerator will return true if this specific affiliation means that the jid is a moderator of the room
-	IsModerator() bool
 	// IsOwner will return true if this specific affiliation means that the jid is an owner of the room
 	IsOwner() bool
 	// IsOutcast will return true if this specific affiliation means that the jid is a banned from the room

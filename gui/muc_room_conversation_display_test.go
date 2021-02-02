@@ -41,7 +41,7 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationUpdate
 		Actor:    "alex",
 	})
 
-	c.Assert(d.displayAffiliationUpdateMessage(), Equals,
+	c.Assert(displayAffiliationUpdateMessage(d), Equals,
 		"[localized] alex changed the position of nick to [localized] member")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{

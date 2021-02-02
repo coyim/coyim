@@ -22,6 +22,7 @@ type occupantAffiliationUpdateView struct {
 	rosterInfoView *roomViewRosterInfo
 
 	dialog           gtki.Dialog      `gtk-widget:"affiliation-dialog"`
+	contentBox       gtki.Box         `gtk-widget:"content-box"`
 	affiliationLabel gtki.Label       `gtk-widget:"affiliation-type-label"`
 	adminRadio       gtki.RadioButton `gtk-widget:"affiliation-admin"`
 	memberRadio      gtki.RadioButton `gtk-widget:"affiliation-member"`
@@ -71,6 +72,7 @@ func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event
 func (av *occupantAffiliationUpdateView) initDefaults() {
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
+	mucStyles.setHelpTextStyle(av.contentBox)
 
 	switch av.occupant.Affiliation.(type) {
 	case *data.AdminAffiliation:

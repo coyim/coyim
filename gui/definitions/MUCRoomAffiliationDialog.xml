@@ -8,7 +8,7 @@
     <property name="urgency_hint">True</property>
     <signal name="key-press-event" handler="on_key_press" swapped="no"/>
     <child internal-child="vbox">
-      <object class="GtkBox">
+      <object class="GtkBox" id="content-box">
         <property name="orientation">vertical</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="affiliation-buttons">
@@ -134,6 +134,9 @@
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
                             <property name="margin_left">24</property>
+                            <style>
+                              <class name="help-text"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -180,6 +183,9 @@
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
                             <property name="margin_left">24</property>
+                            <style>
+                              <class name="help-text"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -225,6 +231,9 @@
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
                             <property name="margin_left">24</property>
+                            <style>
+                              <class name="help-text"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>

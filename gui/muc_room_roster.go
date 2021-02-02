@@ -257,7 +257,7 @@ func affiliationDisplayName(affiliation data.Affiliation) string {
 		return i18n.Local("Admin")
 	case affiliation.IsOwner():
 		return i18n.Local("Owner")
-	case affiliation.IsOutcast():
+	case affiliation.IsBanned():
 		return i18n.Local("Outcast")
 	default: // Member or other values get the default treatment
 		return ""

@@ -35,8 +35,6 @@ type Affiliation interface {
 	IsMember() bool
 	// IsOwner will return true if this specific affiliation means that the jid is an owner of the room
 	IsOwner() bool
-	// IsOutcast will return true if this specific affiliation means that the jid is a banned from the room
-	IsOutcast() bool
 	// IsNone will return true if if the jid doesn't have affiliation
 	IsNone() bool
 	// Name returns the string name of the affiliation type

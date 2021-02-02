@@ -60,7 +60,7 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) string {
 	switch {
 	case newAffiliation.IsNone():
 		message = d.displayForAffiliationRemoved()
-	case newAffiliation.IsOutcast():
+	case newAffiliation.IsBanned():
 		message = d.displayForAffiliationOutcast()
 	default:
 		if d.previousAffiliationIsNone() {
@@ -219,7 +219,7 @@ func displayNameForAffiliation(affiliation data.Affiliation) string {
 		return i18n.Local("administrator")
 	case affiliation.IsOwner():
 		return i18n.Local("owner")
-	case affiliation.IsOutcast():
+	case affiliation.IsBanned():
 		return i18n.Local("outcast")
 	case affiliation.IsMember():
 		return i18n.Local("member")

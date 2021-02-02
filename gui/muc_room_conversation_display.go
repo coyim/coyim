@@ -1,8 +1,6 @@
 package gui
 
 import (
-	"fmt"
-
 	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc/data"
 )
@@ -59,7 +57,7 @@ func (d *affiliationUpdateDisplayData) displayAffiliationUpdateMessage() (messag
 	}
 
 	if d.updateReason() != "" {
-		message = fmt.Sprintf("%s%s", message, i18n.Localf(" because %s", d.updateReason()))
+		message = i18n.Localf("%s because %s", message, d.updateReason())
 	}
 
 	return message

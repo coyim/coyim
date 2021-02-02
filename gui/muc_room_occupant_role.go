@@ -20,6 +20,7 @@ type occupantRoleUpdateView struct {
 	rosterInfoView *roomViewRosterInfo
 
 	dialog           gtki.Dialog      `gtk-widget:"role-dialog"`
+	contentBox       gtki.Box         `gtk-widget:"content-box"`
 	roleLabel        gtki.Label       `gtk-widget:"role-type-label"`
 	moderatorRadio   gtki.RadioButton `gtk-widget:"role-moderator"`
 	participantRadio gtki.RadioButton `gtk-widget:"role-participant"`
@@ -68,6 +69,7 @@ func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
 func (rv *occupantRoleUpdateView) initDefaults() {
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
+	mucStyles.setHelpTextStyle(rv.contentBox)
 
 	switch rv.occupant.Role.(type) {
 	case *data.ModeratorRole:

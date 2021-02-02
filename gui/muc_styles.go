@@ -169,6 +169,15 @@ func (s *mucStylesProvider) setRoomConfigPageStyle(p gtki.Box) {
 	})
 }
 
+func (s *mucStylesProvider) setHelpTextStyle(p gtki.Box) {
+	s.setWidgetStyles(p, styles{
+		".help-text": style{
+			"font-style": "italic",
+			"opacity":    "0.7",
+		},
+	})
+}
+
 func (s *mucStylesProvider) setFormSectionLabelStyle(l gtki.Label) {
 	s.setLabelStyle(l, style{
 		"font-size":   "20px",

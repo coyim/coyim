@@ -25,12 +25,12 @@ func getDisplayRoomSubject(subject string) string {
 
 func getDisplayForOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
 	d := newAffiliationUpdateDisplayData(affiliationUpdate)
-	return displayAffiliationUpdateMessage(d)
+	return d.displayAffiliationUpdateMessage()
 }
 
 func getDisplayForSelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
 	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate)
-	return displayAffiliationUpdateMessage(d)
+	return d.displayAffiliationUpdateMessage()
 }
 
 type affiliationUpdateDisplayData struct {
@@ -42,19 +42,7 @@ type affiliationUpdateDisplayData struct {
 	reason              string
 }
 
-type affiliationUpdateDisplayer interface {
-	affiliation() data.Affiliation
-	updateReason() string
-	previousAffiliationIsNone() bool
-	displayForAffiliationRemoved() string
-	displayForAffiliationOutcast() string
-	displayForAffiliationAdded() string
-	displayForAffiliationChanged() string
-}
-
-func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) string {
-	message := ""
-
+func (d *affiliationUpdateDisplayData) displayAffiliationUpdateMessage() (message string) {
 	newAffiliation := d.affiliation()
 
 	switch {
@@ -210,7 +198,7 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationChanged() string
 
 func displaySelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
 	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate)
-	return displayAffiliationUpdateMessage(d)
+	return d.displayAffiliationUpdateMessage()
 }
 
 func displayNameForAffiliation(affiliation data.Affiliation) string {

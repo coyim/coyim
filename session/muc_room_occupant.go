@@ -18,6 +18,9 @@ func newMUCRoomOccupant(nickname string, affiliation data.Affiliation, role data
 }
 
 func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, op *muc.OccupantPresenceInfo, isOwnPresence bool) {
+	m.occupantAffiliationUpdateLock.Lock()
+	defer m.occupantAffiliationUpdateLock.Unlock()
+
 	room, ok := m.roomManager.GetRoom(roomID)
 	if !ok {
 		m.log.WithFields(log.Fields{

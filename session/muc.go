@@ -26,6 +26,8 @@ type mucManager struct {
 	dhManager *discussionHistoryManager
 	dhLock    sync.Mutex
 
+	occupantAffiliationUpdateLock sync.Mutex
+
 	sync.Mutex
 }
 

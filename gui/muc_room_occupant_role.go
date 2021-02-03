@@ -20,7 +20,8 @@ type occupantRoleUpdateView struct {
 	rosterInfoView *roomViewRosterInfo
 
 	dialog           gtki.Dialog      `gtk-widget:"role-dialog"`
-	contentBox       gtki.Box         `gtk-widget:"content-box"`
+	notificationArea gtki.Box         `gtk-widget:"role-notifications-area"`
+	contentBox       gtki.Box         `gtk-widget:"role-content-box"`
 	roleLabel        gtki.Label       `gtk-widget:"role-type-label"`
 	moderatorRadio   gtki.RadioButton `gtk-widget:"role-moderator"`
 	participantRadio gtki.RadioButton `gtk-widget:"role-participant"`

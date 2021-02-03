@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -18,6 +19,7 @@ type occupantRoleUpdateView struct {
 	roomID         jid.Bare
 	occupant       *muc.Occupant
 	rosterInfoView *roomViewRosterInfo
+	notifications  *notificationsComponent
 
 	dialog           gtki.Dialog      `gtk-widget:"role-dialog"`
 	notificationArea gtki.Box         `gtk-widget:"role-notifications-area"`
@@ -39,6 +41,7 @@ func (r *roomViewRosterInfo) newOccupantRoleUpdateView(a *account, roomID jid.Ba
 	}
 
 	rv.initBuilder()
+	rv.initNotificationComponent(r.u)
 	rv.initDefaults()
 
 	return rv
@@ -56,9 +59,23 @@ func (rv *occupantRoleUpdateView) initBuilder() {
 	})
 }
 
+func (rv *occupantRoleUpdateView) initNotificationComponent(u *gtkUI) {
+	rv.notifications = u.newNotificationsComponent()
+	rv.notificationArea.Add(rv.notifications.box)
+}
+
 // onRadioButtonToggled MUST be called from the UI thread
 func (rv *occupantRoleUpdateView) onRadioButtonToggled() {
-	rv.applyButton.SetSensitive(rv.occupant.Role.Name() != rv.getRoleBasedOnRadioSelected().Name())
+	rv.notifications.clearAll()
+
+	rsn := rv.getRoleBasedOnRadioSelected().Name()
+	if (rv.occupant.Affiliation.IsAdmin() || rv.occupant.Affiliation.IsOwner()) && rsn == data.RoleParticipant {
+		rv.applyButton.SetSensitive(false)
+		rv.notifications.error(i18n.Localf("You can't remove the role moderator to %s", displayNameForAffiliationWithPreposition(rv.occupant.Affiliation)))
+		return
+	}
+
+	rv.applyButton.SetSensitive(rv.occupant.Role.Name() != rsn)
 }
 
 func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {

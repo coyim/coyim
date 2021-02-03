@@ -5,6 +5,10 @@ branches:
   except:
     - windows
 
+git:
+  depth: false
+  quiet: true
+
 go:
   - tip
   - "1.14.3"

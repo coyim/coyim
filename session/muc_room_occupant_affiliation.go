@@ -16,11 +16,11 @@ var (
 	ErrUpdateOccupantResponse = errors.New("invalid response for room configuration request")
 )
 
-func (s *session) UpdateOccupantAffiliation(roomID jid.Bare, occupantID jid.Full, affiliation data.Affiliation, reason string) (<-chan bool, <-chan error) {
-	return s.muc.updateOccupantAffiliation(roomID, occupantID, affiliation, reason)
+func (s *session) UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantID jid.Full, affiliation data.Affiliation, reason string) (<-chan bool, <-chan error) {
+	return s.muc.updateOccupantAffiliation(roomID, occupantNickname, occupantID, affiliation, reason)
 }
 
-func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupantID jid.Full, affiliation data.Affiliation, reason string) (<-chan bool, <-chan error) {
+func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantID jid.Full, affiliation data.Affiliation, reason string) (<-chan bool, <-chan error) {
 	l := m.log.WithFields(log.Fields{
 		"room":        roomID,
 		"occupant":    occupantID,

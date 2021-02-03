@@ -89,7 +89,7 @@ type Session interface {
 	RequestRoomDiscoInfo(jid.Bare)
 	LeaveRoom(room jid.Bare, nickname string) (<-chan bool, <-chan error)
 	DestroyRoom(room jid.Bare, reason string, alternativeRoom jid.Bare, password string) (<-chan bool, <-chan error)
-	UpdateOccupantAffiliation(roomID jid.Bare, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error)
+	UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error)
 	UpdateOccupantRole(roomID jid.Bare, occupantRealJID jid.Full, role mdata.Role, reason string) (<-chan bool, <-chan error)
 
 	Log() coylog.Logger

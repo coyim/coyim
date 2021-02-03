@@ -255,7 +255,7 @@ func (*SessionMock) DestroyRoom(jid.Bare, string, jid.Bare, string) (<-chan bool
 }
 
 // UpdateOccupantAffiliation is the implementation for session interface
-func (*SessionMock) UpdateOccupantAffiliation(roomID jid.Bare, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error) {
+func (*SessionMock) UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error) {
 	return nil, nil
 }
 

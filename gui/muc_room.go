@@ -316,7 +316,7 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 
 func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation data.Affiliation, reason string) {
 	v.loadingViewOverlay.onOccupantAffiliationUpdate()
-	sc, ec := v.account.session.UpdateOccupantAffiliation(v.roomID(), o.RealJid, affiliation, reason)
+	sc, ec := v.account.session.UpdateOccupantAffiliation(v.roomID(), o.Nickname, o.RealJid, affiliation, reason)
 
 	select {
 	case <-sc:

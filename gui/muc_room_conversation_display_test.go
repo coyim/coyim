@@ -51,7 +51,7 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationUpdate
 		Actor:            "batman",
 		ActorAffiliation: member,
 		Reason:           "I'm batman",
-	}), Equals, "[localized] [localized] [localized] The [localized] member batman removed the [localized] member position from robin because I'm batman")
+	}), Equals, "[localized] [localized] [localized] The [localized] member batman removed the [localized] member position from robin because: I'm batman")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
 		Nickname:         "bob",
@@ -60,7 +60,7 @@ func (*SignalsSuite) Test_mucRoomConversationDisplay_displayForAffiliationUpdate
 		Actor:            "alice",
 		ActorAffiliation: member,
 		Reason:           "he was rude",
-	}), Equals, "[localized] [localized] [localized] The [localized] member alice banned bob from the room because he was rude")
+	}), Equals, "[localized] [localized] [localized] The [localized] member alice banned bob from the room because: he was rude")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
 		Nickname:         "nick",

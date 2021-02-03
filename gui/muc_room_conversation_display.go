@@ -67,7 +67,7 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) (message stri
 	}
 
 	if d.updateReason() != "" {
-		message = i18n.Localf("%s because %s", message, d.updateReason())
+		message = i18n.Localf("%s because: %s", message, d.updateReason())
 	}
 
 	return message

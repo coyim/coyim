@@ -74,14 +74,20 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) (message stri
 }
 
 func newAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdate) *affiliationUpdateDisplayData {
-	return &affiliationUpdateDisplayData{
+	d := &affiliationUpdateDisplayData{
 		nickname:            affiliationUpdate.Nickname,
 		newAffiliation:      affiliationUpdate.New,
 		previousAffiliation: affiliationUpdate.Previous,
-		actor:               affiliationUpdate.Actor,
-		actorAffiliation:    affiliationUpdate.ActorAffiliation,
 		reason:              affiliationUpdate.Reason,
 	}
+
+	if affiliationUpdate.Actor != nil {
+		d.actor = affiliationUpdate.Actor.Nickname
+		d.actorAffiliation = affiliationUpdate.Actor.Affiliation
+	}
+
+	return d
+
 }
 
 func (d *affiliationUpdateDisplayData) affiliation() data.Affiliation {

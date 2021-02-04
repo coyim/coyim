@@ -32,12 +32,12 @@ addons:
     
 matrix:
   include:
-    - go: "1.13.11"
+    - go: "1.13.x"
       os: osx
-    - go: "1.13.11"
+    - go: "1.13.x"
       env: RELEASE=true
       os: linux
-    - go: "1.13.11"
+    - go: "1.13.x"
       env: RELEASE=true
       os: osx
   allow_failures:

@@ -236,7 +236,7 @@
                             <property name="orientation">vertical</property>
                             <property name="homogeneous">True</property>
                             <child>
-                              <object class="GtkButton">
+                              <object class="GtkButton" id="change-affiliation">
                                 <property name="label" translatable="yes">Change</property>
                                 <property name="visible">True</property>
                                 <property name="receives_default">True</property>
@@ -326,7 +326,7 @@
                             <property name="orientation">vertical</property>
                             <property name="homogeneous">True</property>
                             <child>
-                              <object class="GtkButton">
+                              <object class="GtkButton" id="change-role">
                                 <property name="label" translatable="yes">Change</property>
                                 <property name="visible">True</property>
                                 <property name="receives_default">True</property>

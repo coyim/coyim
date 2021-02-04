@@ -100,7 +100,7 @@ type rgb struct {
 }
 
 func (cs *mucColorSet) hexClean(hex string) string {
-	return strings.ReplaceAll(hex, "#", "")
+	return strings.Replace(hex, "#", "", -1)
 }
 
 func (cs *mucColorSet) hexToRGB(hex string) (*rgb, error) {

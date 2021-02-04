@@ -1,6 +1,10 @@
 package data
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"fmt"
+	"strings"
+)
 
 //Any provides a convenient way to debug any child element
 type Any struct {
@@ -13,6 +17,30 @@ type Extensions []*Extension
 
 // Extension represents any XML node not included in the Stanza definition
 type Extension Any
+
+// GoString implements the GoStringer interface
+func (e *Extensions) GoString() string {
+	if e == nil {
+		return "<nil>"
+	}
+
+	result := []string{}
+
+	for _, ee := range *e {
+		result = append(result, fmt.Sprintf("%#v", ee))
+	}
+
+	return fmt.Sprintf("{%s}", strings.Join(result, ", "))
+}
+
+// GoString implements the GoStringer interface
+func (e *Extension) GoString() string {
+	if e == nil {
+		return "<nil>"
+	}
+
+	return fmt.Sprintf("<Extension %v body=%q>", e.XMLName, e.Body)
+}
 
 // StanzaError implements RFC 3920, section 9.3.
 //TODO RFC 6120 obsoletes RFC 3920, section "8.3.2. Syntax"

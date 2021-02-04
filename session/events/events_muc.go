@@ -178,9 +178,19 @@ type MUCOccupantAffiliationUpdated struct {
 	AffiliationUpdate data.AffiliationUpdate
 }
 
-// MUCSelfOccupantAffiliationUpdated signifies that an occupant affiliation was updated
+// MUCSelfOccupantAffiliationUpdated signifies that an occupant role was updated
 type MUCSelfOccupantAffiliationUpdated struct {
 	AffiliationUpdate data.AffiliationUpdate
+}
+
+// MUCOccupantRoleUpdated signifies that an occupant role was updated
+type MUCOccupantRoleUpdated struct {
+	RoleUpdate data.RoleUpdate
+}
+
+// MUCSelfOccupantRoleUpdated signifies that an occupant affiliation was updated
+type MUCSelfOccupantRoleUpdated struct {
+	RoleUpdate data.RoleUpdate
 }
 
 func (MUCError) markAsMUCEventTypeInterface()                          {}
@@ -208,3 +218,5 @@ func (MUCOccupantRemoved) markAsMUCEventTypeInterface()                {}
 func (MUCSelfOccupantRemoved) markAsMUCEventTypeInterface()            {}
 func (MUCOccupantAffiliationUpdated) markAsMUCEventTypeInterface()     {}
 func (MUCSelfOccupantAffiliationUpdated) markAsMUCEventTypeInterface() {}
+func (MUCOccupantRoleUpdated) markAsMUCEventTypeInterface()            {}
+func (MUCSelfOccupantRoleUpdated) markAsMUCEventTypeInterface()        {}

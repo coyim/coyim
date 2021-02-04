@@ -365,13 +365,6 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, role data.Role, reason
 }
 
 func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role, reason string) {
-	roleUpdate := data.RoleUpdate{
-		New:      role,
-		Previous: o.Role,
-	}
-	v.publishOccupantRoleUpdatedEvent(o.Nickname, roleUpdate, v.room.SelfOccupantNickname(), reason)
-
-	o.UpdateRole(role)
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Localf("The role of %s was updated", o.Nickname))
@@ -383,12 +376,13 @@ func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, re
 		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Local("The role update process failed"))
 		dr := createDialogErrorComponent(
-			i18n.Local("Error updating the occupant role"),
+			i18n.Local("The role update process failed"),
 			i18n.Localf("The role of %s couldn't be updated", o.Nickname),
-			i18n.Local("An error occurred while updating occupant role."),
+			i18n.Local("An error occurred while updating the occupant role."),
 			func() {
 				v.tryUpdateOccupantRole(o, role, reason)
-			})
+			},
+		)
 		dr.show()
 	})
 }

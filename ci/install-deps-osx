@@ -11,9 +11,9 @@ set -x
 
 #/usr/local/opt/libffi/lib/pkgconfig/
 
-time brew update
-brew analytics off || true
-for dep in gtk+3 gettext adwaita-icon-theme hicolor-icon-theme shared-mime-info libffi gtk-mac-integration create-dmg fileicon pkg-config; do
-	time (brew install $dep || brew outdated $dep || brew upgrade $dep)
-done
+#time brew update
+#brew analytics off || true
+#for dep in gtk+3 gettext adwaita-icon-theme hicolor-icon-theme shared-mime-info libffi gtk-mac-integration create-dmg fileicon pkg-config; do
+#	time (brew install $dep || brew outdated $dep || brew upgrade $dep)
+#done
 #time brew cleanup || true

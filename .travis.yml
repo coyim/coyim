@@ -19,6 +19,10 @@ go:
 services:
   - docker
 
+addons:
+  homebrew:
+    brewfile: ci/Brewfile.travis
+    
 matrix:
   include:
     - go: "1.13.11"

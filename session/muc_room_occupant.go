@@ -17,7 +17,7 @@ func newMUCRoomOccupant(nickname string, affiliation data.Affiliation, role data
 	}
 }
 
-func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, op *muc.OccupantPresenceInfo, isOwnPresence bool) {
+func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, presence *muc.OccupantPresenceInfo, isOwnPresence bool) {
 	m.occupantAffiliationUpdateLock.Lock()
 	defer m.occupantAffiliationUpdateLock.Unlock()
 
@@ -25,35 +25,66 @@ func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, op *muc.Oc
 	if !ok {
 		m.log.WithFields(log.Fields{
 			"room":     roomID,
-			"occupant": op.Nickname,
+			"occupant": presence.Nickname,
 			"method":   "handleOccupantAffiliationUpdate",
 		}).Error("Trying to get a room that is not in the room manager")
 		return
 	}
 
-	co, exist := room.Roster().GetOccupant(op.Nickname)
-	if exist && co.Affiliation.Name() != op.AffiliationInfo.Affiliation.Name() {
-		affiliationUpdate := data.AffiliationUpdate{
-			Nickname: op.Nickname,
-			New:      op.AffiliationInfo.Affiliation,
-			Previous: co.Affiliation,
-			Actor:    op.AffiliationInfo.Actor,
-			Reason:   op.AffiliationInfo.Reason,
+	occupant, exist := room.Roster().GetOccupant(presence.Nickname)
+	if exist {
+		actorOccupant := &data.OccupantUpdateActor{
+			Nickname: presence.AffiliationRole.Actor,
 		}
 
-		co.UpdateAffiliation(op.AffiliationInfo.Affiliation)
-
-		oa, ok := room.Roster().GetOccupant(op.AffiliationInfo.Actor)
+		actor, ok := room.Roster().GetOccupant(presence.AffiliationRole.Actor)
 		if ok {
-			affiliationUpdate.ActorAffiliation = oa.Affiliation
+			actorOccupant.Affiliation = actor.Affiliation
+			actorOccupant.Role = actor.Role
 		}
 
-		if isOwnPresence {
-			m.selfOccupantAffiliationUpdated(roomID, affiliationUpdate)
-			return
+		commonUpdateInfo := data.OccupantUpdateAffiliationRole{
+			Nickname: presence.Nickname,
+			Actor:    actorOccupant,
+			Reason:   presence.AffiliationRole.Reason,
 		}
 
-		m.occupantAffiliationUpdated(roomID, affiliationUpdate)
+		switch {
+		case occupant.Affiliation.Name() != presence.AffiliationRole.Affiliation.Name():
+			affiliationUpate := data.AffiliationUpdate{
+				OccupantUpdateAffiliationRole: commonUpdateInfo,
+				New:                           presence.AffiliationRole.Affiliation,
+				Previous:                      occupant.Affiliation,
+			}
+
+			occupant.UpdateAffiliation(presence.AffiliationRole.Affiliation)
+
+			if isOwnPresence {
+				m.selfOccupantAffiliationUpdated(roomID, affiliationUpate)
+				return
+			}
+
+			m.occupantAffiliationUpdated(roomID, affiliationUpate)
+
+			break
+		case occupant.Role.Name() != presence.AffiliationRole.Role.Name():
+			roleUpdate := data.RoleUpdate{
+				OccupantUpdateAffiliationRole: commonUpdateInfo,
+				New:                           presence.AffiliationRole.Role,
+				Previous:                      occupant.Role,
+			}
+
+			occupant.UpdateRole(presence.AffiliationRole.Role)
+
+			if isOwnPresence {
+				m.selfOccupantRoleUpdated(roomID, roleUpdate)
+				return
+			}
+
+			m.occupantRoleUpdated(roomID, roleUpdate)
+
+			break
+		}
 	}
 }
 

@@ -10,68 +10,15 @@
     <child internal-child="vbox">
       <object class="GtkBox" id="affiliation-content-box">
         <property name="orientation">vertical</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="affiliation-buttons">
-            <property name="halign">end</property>
-            <property name="valign">center</property>
-            <property name="layout_style">expand</property>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>                
-                <property name="border_width">12</property>
-                <property name="spacing">12</property>
-                <child>
-                  <object class="GtkButtonBox">
-                    <property name="visible">True</property>
-                    <property name="spacing">12</property>
-                    <property name="layout_style">start</property>
-                    <child>
-                      <object class="GtkButton" id="affiliation-cancel-button">
-                        <property name="label" translatable="yes">Cancel</property>
-                        <property name="visible">True</property>
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_cancel" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="affiliation-apply-button">
-                        <property name="label" translatable="yes">Apply</property>
-                        <property name="visible">True</property>
-                        <property name="sensitive">False</property>                        
-                        <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_apply" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
+        <child>
+          <object class="GtkBox" id="affiliation-notifications-area">
+            <property name="visible">True</property>            
+            <property name="orientation">vertical</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">2</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
@@ -320,6 +267,70 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="affiliation-buttons">
+            <property name="halign">end</property>
+            <property name="valign">center</property>
+            <property name="layout_style">expand</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>                
+                <property name="border_width">12</property>
+                <property name="spacing">12</property>
+                <child>
+                  <object class="GtkButtonBox">
+                    <property name="visible">True</property>
+                    <property name="spacing">12</property>
+                    <property name="layout_style">start</property>
+                    <child>
+                      <object class="GtkButton" id="affiliation-cancel-button">
+                        <property name="label" translatable="yes">Cancel</property>
+                        <property name="visible">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_cancel" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="affiliation-apply-button">
+                        <property name="label" translatable="yes">Apply</property>
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>                        
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_apply" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>

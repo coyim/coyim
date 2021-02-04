@@ -33,8 +33,8 @@ func (m *mucManager) occupantLeft(roomID jid.Bare, op *muc.OccupantPresenceInfo)
 	ev := events.MUCOccupantLeft{}
 	ev.Nickname = op.Nickname
 	ev.RealJid = op.RealJid
-	ev.Affiliation = op.AffiliationInfo.Affiliation
-	ev.Role = op.Role
+	ev.Affiliation = op.AffiliationRole.Affiliation
+	ev.Role = op.AffiliationRole.Role
 
 	m.publishRoomEvent(roomID, ev)
 }
@@ -43,8 +43,8 @@ func (m *mucManager) occupantJoined(roomID jid.Bare, op *muc.OccupantPresenceInf
 	ev := events.MUCOccupantJoined{}
 	ev.Nickname = op.Nickname
 	ev.RealJid = op.RealJid
-	ev.Affiliation = op.AffiliationInfo.Affiliation
-	ev.Role = op.Role
+	ev.Affiliation = op.AffiliationRole.Affiliation
+	ev.Role = op.AffiliationRole.Role
 
 	m.publishRoomEvent(roomID, ev)
 }
@@ -53,8 +53,8 @@ func (m *mucManager) occupantUpdate(roomID jid.Bare, op *muc.OccupantPresenceInf
 	ev := events.MUCOccupantUpdated{}
 	ev.Nickname = op.Nickname
 	ev.RealJid = op.RealJid
-	ev.Affiliation = op.AffiliationInfo.Affiliation
-	ev.Role = op.Role
+	ev.Affiliation = op.AffiliationRole.Affiliation
+	ev.Role = op.AffiliationRole.Role
 	ev.Status = op.Status
 	ev.StatusMessage = op.StatusMessage
 
@@ -73,8 +73,8 @@ func (m *mucManager) selfOccupantJoined(roomID jid.Bare, op *muc.OccupantPresenc
 	ev := events.MUCSelfOccupantJoined{}
 	ev.Nickname = op.Nickname
 	ev.RealJid = op.RealJid
-	ev.Affiliation = op.AffiliationInfo.Affiliation
-	ev.Role = op.Role
+	ev.Affiliation = op.AffiliationRole.Affiliation
+	ev.Role = op.AffiliationRole.Role
 
 	m.publishRoomEvent(roomID, ev)
 }
@@ -185,6 +185,20 @@ func (m *mucManager) occupantAffiliationUpdated(roomID jid.Bare, affiliationUpda
 func (m *mucManager) selfOccupantAffiliationUpdated(roomID jid.Bare, affiliationUpdate data.AffiliationUpdate) {
 	ev := events.MUCSelfOccupantAffiliationUpdated{}
 	ev.AffiliationUpdate = affiliationUpdate
+
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) occupantRoleUpdated(roomID jid.Bare, roleUpdate data.RoleUpdate) {
+	ev := events.MUCOccupantRoleUpdated{}
+	ev.RoleUpdate = roleUpdate
+
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) selfOccupantRoleUpdated(roomID jid.Bare, roleUpdate data.RoleUpdate) {
+	ev := events.MUCSelfOccupantRoleUpdated{}
+	ev.RoleUpdate = roleUpdate
 
 	m.publishRoomEvent(roomID, ev)
 }

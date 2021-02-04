@@ -211,30 +211,33 @@ func isMUCUserPresence(stanza *xmppData.ClientPresence) bool {
 
 func getOccupantPresenceBasedOnStanza(nickname jid.Resource, stanza *xmppData.ClientPresence) *muc.OccupantPresenceInfo {
 	item := stanza.MUCUser.Item
-	realJid := getRealJidBasedOnItem(item)
-	affiliation := getAffiliationInfoBasedOnItem(item)
-	role := getRoleBasedOnItem(item)
 
-	op := &muc.OccupantPresenceInfo{
+	return &muc.OccupantPresenceInfo{
 		Nickname:        nickname.String(),
-		RealJid:         realJid,
-		AffiliationInfo: affiliation,
-		Role:            role,
+		RealJid:         getRealJidBasedOnItem(item),
+		AffiliationRole: getAffiliationRoleBasedOnItem(item),
 		Status:          stanza.Show,
 		StatusMessage:   stanza.Status,
 	}
-
-	return op
 }
 
-func getAffiliationInfoBasedOnItem(item *xmppData.MUCUserItem) *muc.OccupantAffiliationInfo {
+func getAffiliationRoleBasedOnItem(item *xmppData.MUCUserItem) *muc.OccupantAffiliationRole {
 	a := data.AffiliationNone
-	if item != nil && item.Affiliation != "" {
-		a = item.Affiliation
+	r := data.RoleNone
+
+	if item != nil {
+		if item.Affiliation != "" {
+			a = item.Affiliation
+		}
+
+		if item.Role != "" {
+			r = item.Role
+		}
 	}
 
-	return &muc.OccupantAffiliationInfo{
+	return &muc.OccupantAffiliationRole{
 		Affiliation: affiliationFromString(a),
+		Role:        roleFromString(r),
 		Actor:       getActorNicknameBasedOnItem(item),
 		Reason:      item.Reason,
 	}
@@ -257,15 +260,6 @@ func getReasonBasedOnItem(item *xmppData.MUCUserItem) string {
 func affiliationFromString(a string) data.Affiliation {
 	affiliation, _ := data.AffiliationFromString(a)
 	return affiliation
-}
-
-func getRoleBasedOnItem(item *xmppData.MUCUserItem) data.Role {
-	role := "none"
-	if item != nil && len(item.Role) > 0 {
-		role = item.Role
-	}
-
-	return roleFromString(role)
 }
 
 func roleFromString(r string) data.Role {

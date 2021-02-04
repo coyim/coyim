@@ -61,7 +61,7 @@ func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupantNickname
 		m.handleOccupantAffiliationUpdate(roomID, &muc.OccupantPresenceInfo{
 			Nickname: occupantNickname,
 			RealJid:  occupantID,
-			AffiliationInfo: &muc.OccupantAffiliationInfo{
+			AffiliationRole: &muc.OccupantAffiliationRole{
 				Affiliation: affiliation,
 				Actor:       actor,
 				Reason:      reason,

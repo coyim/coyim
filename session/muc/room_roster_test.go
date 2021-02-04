@@ -22,12 +22,11 @@ func getRealJidFromString(realJid string) jid.Full {
 	return nil
 }
 
-func newRosterOccupantPresenceForTest(nickname string, realJid string, role data.Role, oa *OccupantAffiliationInfo, status, statusMessage string) *OccupantPresenceInfo {
+func newRosterOccupantPresenceForTest(nickname string, realJid string, role data.Role, ar *OccupantAffiliationRole, status, statusMessage string) *OccupantPresenceInfo {
 	return &OccupantPresenceInfo{
 		Nickname:        nickname,
 		RealJid:         getRealJidFromString(realJid),
-		Role:            role,
-		AffiliationInfo: oa,
+		AffiliationRole: ar,
 		Status:          status,
 		StatusMessage:   statusMessage,
 	}
@@ -234,7 +233,7 @@ func (s *MucSuite) Test_RoomRoster_UpdateNickname(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 	rr := newRoomRoster()
 
-	oa := &OccupantAffiliationInfo{
+	oa := &OccupantAffiliationRole{
 		Affiliation: &data.NoneAffiliation{},
 	}
 
@@ -259,7 +258,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_bad_type(c *C) {
 	rr := newRoomRoster()
 
-	oa := &OccupantAffiliationInfo{
+	oa := &OccupantAffiliationRole{
 		Affiliation: &data.NoneAffiliation{},
 	}
 
@@ -274,7 +273,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_bad_type(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 	rr := newRoomRoster()
 
-	oa := &OccupantAffiliationInfo{
+	oa := &OccupantAffiliationRole{
 		Affiliation: &data.NoneAffiliation{},
 	}
 	o := newRosterOccupantPresenceForTest("bello", "foo@example.org/test1", &data.NoneRole{}, oa, "away", "gone")
@@ -301,7 +300,7 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
 	occ := newRosterOccupantForTest("bello", "", nil, nil)
 	rr.occupants["bello"] = occ
 
-	oa := &OccupantAffiliationInfo{
+	oa := &OccupantAffiliationRole{
 		Affiliation: &data.NoneAffiliation{},
 	}
 	o := newRosterOccupantPresenceForTest("bello", "foo@example.org/test1", &data.NoneRole{}, oa, "away", "gone")

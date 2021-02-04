@@ -94,6 +94,7 @@ func (r *roomViewRoster) initSubscribers() {
 	r.roomView.subscribe("roster", func(ev roomViewEvent) {
 		switch ev.(type) {
 		case occupantSelfJoinedEvent:
+			r.updateSelfOccupant()
 			r.onUpdateRoster()
 		case occupantJoinedEvent:
 			r.onUpdateRoster()
@@ -177,6 +178,10 @@ func (r *roomViewRoster) getNicknameFromTreeModel(path gtki.TreePath) (string, e
 	}
 
 	return iterValue.GetString()
+}
+
+func (r *roomViewRoster) updateSelfOccupant() {
+	r.rosterInfo.updateSelfOccupant(r.roomView.room.SelfOccupant())
 }
 
 func (r *roomViewRoster) onUpdateRoster() {

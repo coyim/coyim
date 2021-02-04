@@ -11,19 +11,22 @@ import (
 type roomViewRosterInfo struct {
 	u *gtkUI
 
-	account    *account
-	roomID     jid.Bare
-	occupant   *muc.Occupant
-	rosterView *roomViewRoster
+	account      *account
+	roomID       jid.Bare
+	occupant     *muc.Occupant
+	selfOccupant *muc.Occupant
+	rosterView   *roomViewRoster
 
-	view                    gtki.Box   `gtk-widget:"roster-info-box"`
-	avatar                  gtki.Image `gtk-widget:"occupant-avatar"`
-	nicknameLabel           gtki.Label `gtk-widget:"occupant-nickname"`
-	realJIDLabel            gtki.Label `gtk-widget:"user-jid"`
-	status                  gtki.Label `gtk-widget:"status"`
-	statusMessage           gtki.Label `gtk-widget:"status-message"`
-	currentAffiliationLabel gtki.Label `gtk-widget:"current-affiliation"`
-	currentRoleLabel        gtki.Label `gtk-widget:"current-role"`
+	view                    gtki.Box    `gtk-widget:"roster-info-box"`
+	avatar                  gtki.Image  `gtk-widget:"occupant-avatar"`
+	nicknameLabel           gtki.Label  `gtk-widget:"occupant-nickname"`
+	realJIDLabel            gtki.Label  `gtk-widget:"user-jid"`
+	status                  gtki.Label  `gtk-widget:"status"`
+	statusMessage           gtki.Label  `gtk-widget:"status-message"`
+	currentAffiliationLabel gtki.Label  `gtk-widget:"current-affiliation"`
+	currentRoleLabel        gtki.Label  `gtk-widget:"current-role"`
+	changeRoleButton        gtki.Button `gtk-widget:"change-role"`
+	changeAffiliationButton gtki.Button `gtk-widget:"change-affiliation"`
 
 	onReset   *callbacksSet
 	onRefresh *callbacksSet
@@ -90,11 +93,20 @@ func (r *roomViewRosterInfo) updateOccupantRole(occupant *muc.Occupant, role dat
 	doInUIThread(r.refresh)
 }
 
+func (r *roomViewRosterInfo) updateSelfOccupant(o *muc.Occupant) {
+	r.selfOccupant = o
+}
+
 // showOccupantInfo MUST be called from the UI thread
 func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	r.occupant = occupant
 	r.refresh()
 	r.show()
+
+	if r.selfOccupant.Affiliation.Name() == data.AffiliationMember {
+		r.changeRoleButton.SetVisible(false)
+		r.changeAffiliationButton.SetVisible(false)
+	}
 }
 
 // refresh MUST be called from the UI thread

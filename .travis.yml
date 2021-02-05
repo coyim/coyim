@@ -22,7 +22,6 @@ services:
 addons:
   homebrew:
     brewfile: ci/Brewfile.travis
-    update: true
   apt:
     packages:
       - libgtk-3-dev

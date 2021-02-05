@@ -103,11 +103,11 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	r.refresh()
 	r.show()
 
-	// Table 6: Privileges Associated With Affiliations
-	// An occupant with MEMBER affiliation CAN'T edit member, admin or owner lists
-	// An occupant with ADMINSTRATOR affiliation CAN'T edit admin or owner lists
-	if data.AffiliationLesserThan(r.selfOccupant.Affiliation, r.occupant.Affiliation) ||
-		r.selfOccupant.Affiliation == r.occupant.Affiliation {
+	// Privileges associated with affiliations
+	// See: https://xmpp.org/extensions/xep-0045.html#affil-priv
+	if !r.selfOccupant.Affiliation.IsOwner() &&
+		(data.AffiliationLesserThan(r.selfOccupant.Affiliation, r.occupant.Affiliation) ||
+			r.selfOccupant.Affiliation == r.occupant.Affiliation) {
 		r.changeAffiliationButton.SetVisible(false)
 	}
 }

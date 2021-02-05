@@ -1,10 +1,10 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
-default: doctor test coveralls
+default: doctor test 
 
 deps:
 	make -C ../ deps
-	go get -u github.com/mattn/goveralls
+#	go get -u github.com/mattn/goveralls
 
 test:
 	make check -C ../
@@ -17,9 +17,9 @@ check-go-imports:
 	git diff --exit-code .
 
 # send coverage data to coveralls
-coveralls:
-	make run-cover -C ../
-	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci || true
+# coveralls:
+# 	make run-cover -C ../
+# 	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci || true
 
 clean-release:
 	$(RM) bin/*

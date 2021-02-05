@@ -24,10 +24,16 @@ jobs:
         - os: macos-latest
           INSTALL_DEPS: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration create-dmg fileicon
 
+        # We only want to run Golang 1.14 on OS X
         exclude:
         - os: macos-latest
-          # We only want to run Golang 1.14 on OS X
-          go: [ '1.15', '1.13', '1.12', '1.11' ]
+          go: '1.15'
+        - os: macos-latest
+          go: '1.13'
+        - os: macos-latest
+          go: '1.12'
+        - os: macos-latest
+          go: '1.11'
 
     name: CoyIM go-${{ matrix.go }} test (${{ matrix.os }})
     steps:

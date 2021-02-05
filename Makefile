@@ -13,9 +13,7 @@ BUILD_DIR := bin
 BUILD_TOOLS_DIR := .build-tools
 COVERPROFILES := .coverprofiles
 
-WEIRD_GA_PREFIX := _/home/runner/work/coyim/coyim
-PKGS0 := $(shell go list ./... | grep -v /vendor)
-PKGS := $(subst $(WEIRD_GA_PREFIX),,$(PKGS0))
+PKGS := $(shell go list ./... | grep -v /vendor)
 SRC_DIRS := . $(addprefix .,$(subst github.com/coyim/coyim,,$(PKGS)))
 SRC_TEST := $(foreach sdir,$(SRC_DIRS),$(wildcard $(sdir)/*_test.go))
 SRC_ALL := $(foreach sdir,$(SRC_DIRS),$(wildcard $(sdir)/*.go))
@@ -129,13 +127,6 @@ i18n:
 	make -C ./i18n
 
 lint: $(AUTOGEN)
-	echo "PKGS0" $(PKGS0)
-	echo "PKGS" $(PKGS)
-	echo "SRC_DIRS" $(SRC_DIRS)
-	echo "SRC_TEST" $(SRC_TEST)
-	echo "SRC_ALL" $(SRC_ALL)
-	echo "SRC" $(SRC)
-
 	golint -set_exit_status $(SRC_DIRS)
 
 test: $(AUTOGEN)

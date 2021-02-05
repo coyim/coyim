@@ -31,7 +31,7 @@ addons:
       - libc6-dev-i386
       - xvfb
 
-osx_image: xcode11.3
+osx_image: xcode12.2
 
 jobs:
   include:

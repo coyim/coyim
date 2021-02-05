@@ -3,7 +3,6 @@
 [![Build Status Github](https://github.com/coyim/coyim/workflows/CoyIM%20CI/badge.svg)](https://github.com/coyim/coyim/actions?query=workflow%3A%22CoyIM+CI%22)
 [![Build Status Travis](https://travis-ci.org/coyim/coyim.svg?branch=master)](https://travis-ci.org/coyim/coyim)
 [![Build Status Windows](https://ci.appveyor.com/api/projects/status/8jnqn0ocms99hr5v?svg=true)](https://ci.appveyor.com/project/olabini/coyim)
-<!--[![Coverage Status](https://coveralls.io/repos/coyim/coyim/badge.svg?branch=master&service=github)](https://coveralls.io/github/coyim/coyim?branch=master)-->
 [![Download](https://api.bintray.com/packages/coyim/coyim-bin/coyim-bin/images/download.svg)](https://bintray.com/coyim/coyim-bin/coyim-bin/_latestVersion#files)
 
 <p align="center">

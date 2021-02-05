@@ -3,8 +3,8 @@ name: CoyIM CI
 on: [push, pull_request]
 
 jobs:
-  test-linux:
-    runs-on: ubuntu-16.04
+  test:
+    runs-on: ${{ matrix.os }}
 
     env:
       GOPATH: ${{ github.workspace }}
@@ -16,15 +16,27 @@ jobs:
     strategy:
       matrix:
         go: [ '1.15', '1.14', '1.13', '1.12', '1.11' ]
+        os: [ ubuntu-16.04, macos-latest ]
 
-    name: CoyIM go-${{ matrix.go }} test (Linux)
+        include:
+        - os: ubuntu-16.04
+          INSTALL_DEPS: sudo apt-get install libgtk-3-dev gettext libglib2.0-dev libc6-dev-i386 xvfb
+        - os: macos-latest
+          INSTALL_DEPS: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration create-dmg fileicon
+
+        exclude:
+        - os: macos-latest
+          # We only want to run Golang 1.14 on OS X
+          go: [ '1.15', '1.13', '1.12', '1.11' ]
+
+    name: CoyIM go-${{ matrix.go }} test (${{ matrix.os }})
     steps:
       - name: checkout
         uses: actions/checkout@v2
         with:
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}        
       - name: install OS dependencies
-        run: sudo apt-get install libgtk-3-dev gettext libglib2.0-dev libc6-dev-i386 xvfb
+        run: ${{ matrix.INSTALL_DEPS }}
       - uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go }}
@@ -36,40 +48,5 @@ jobs:
         run: make -C ci/
         env:
           DISPLAY: ':99.0'
-
-  test-osx:
-    runs-on: macos-latest
-
-    env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: off
-    defaults:
-      run:
-        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
-        
-    strategy:
-      matrix:
-        go: [ '1.14' ]
-
-    name: CoyIM go-${{ matrix.go }} test (OS X)
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}        
-      - name: install OS dependencies
-        run: brew install gtk+3 gettext adwaita-icon-theme hicolor-icon-theme shared-mime-info libffi gtk-mac-integration create-dmg fileicon pkg-config
-      - uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go }}
-      - name: install project dependencies
-        run: make -C ci/ deps
-        env:
-          DISPLAY: ':99.0'
-      - name: run tests
-        run: make -C ci/
-        env:
-          DISPLAY: ':99.0'
-        
 
 # we need a release job for linux, with RELEASE=true

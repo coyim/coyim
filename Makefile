@@ -13,8 +13,9 @@ BUILD_DIR := bin
 BUILD_TOOLS_DIR := .build-tools
 COVERPROFILES := .coverprofiles
 
-PKGS0 := $(shell go list ./...)
-PKGS := $(shell go list ./... | grep -v /vendor)
+WEIRD_GA_PREFIX := "_$(shell pwd)/"
+PKGS0 := $(shell go list ./... | grep -v /vendor)
+PKGS := $(subst $(WEIRD_GA_PREFIX),,$(PKGS0))
 SRC_DIRS := . $(addprefix .,$(subst github.com/coyim/coyim,,$(PKGS)))
 SRC_TEST := $(foreach sdir,$(SRC_DIRS),$(wildcard $(sdir)/*_test.go))
 SRC_ALL := $(foreach sdir,$(SRC_DIRS),$(wildcard $(sdir)/*.go))

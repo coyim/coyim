@@ -22,6 +22,7 @@ services:
 addons:
   homebrew:
     brewfile: ci/Brewfile.travis
+    update: true
   apt:
     packages:
       - libgtk-3-dev
@@ -30,7 +31,7 @@ addons:
       - libc6-dev-i386
       - xvfb
 
-osx_image: xcode12.2
+osx_image: xcode11.3
 
 jobs:
   include:

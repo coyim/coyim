@@ -23,6 +23,8 @@ jobs:
         run: make -C ci/ deps
         env:
           DISPLAY: ':99.0'
+      - run: ls -alF $GOPATH
+      - run: ls -alF $GOPATH/bin
       - name: run tests
         run: make -C ci/
         env:

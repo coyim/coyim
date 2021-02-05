@@ -1,9 +1,9 @@
-name: CoyIM Linux CI
+name: CoyIM CI
 
 on: [push, pull_request]
 
 jobs:
-  test:
+  test-linux:
     runs-on: ubuntu-16.04
 
     env:
@@ -17,7 +17,7 @@ jobs:
       matrix:
         go: [ '1.15', '1.14', '1.13', '1.12', '1.11' ]
 
-    name: CoyIM go-${{ matrix.go }} test
+    name: CoyIM go-${{ matrix.go }} test (Linux)
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -37,5 +37,39 @@ jobs:
         env:
           DISPLAY: ':99.0'
 
+  test-osx:
+    runs-on: macos-latest
+
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: off
+    defaults:
+      run:
+        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+        
+    strategy:
+      matrix:
+        go: [ '1.14' ]
+
+    name: CoyIM go-${{ matrix.go }} test (OS X)
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}        
+      - name: install OS dependencies
+        run: brew install gtk+3 gettext adwaita-icon-theme hicolor-icon-theme shared-mime-info libffi gtk-mac-integration create-dmg fileicon pkg-config
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+      - name: install project dependencies
+        run: make -C ci/ deps
+        env:
+          DISPLAY: ':99.0'
+      - name: run tests
+        run: make -C ci/
+        env:
+          DISPLAY: ':99.0'
+        
 
 # we need a release job for linux, with RELEASE=true

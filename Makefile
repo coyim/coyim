@@ -13,7 +13,7 @@ BUILD_DIR := bin
 BUILD_TOOLS_DIR := .build-tools
 COVERPROFILES := .coverprofiles
 
-WEIRD_GA_PREFIX := "_$(shell pwd)/"
+WEIRD_GA_PREFIX := _/home/runner/work/
 PKGS0 := $(shell go list ./... | grep -v /vendor)
 PKGS := $(subst $(WEIRD_GA_PREFIX),,$(PKGS0))
 SRC_DIRS := . $(addprefix .,$(subst github.com/coyim/coyim,,$(PKGS)))

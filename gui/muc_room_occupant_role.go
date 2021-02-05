@@ -41,7 +41,6 @@ func (r *roomViewRosterInfo) newOccupantRoleUpdateView(a *account, roomID jid.Ba
 	}
 
 	rv.initBuilder()
-	rv.initNotificationComponent(r.u)
 	rv.initDefaults()
 
 	return rv
@@ -85,6 +84,8 @@ func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
 }
 
 func (rv *occupantRoleUpdateView) initDefaults() {
+	rv.initNotificationComponent(rv.rosterInfoView.u)
+
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
 	mucStyles.setHelpTextStyle(rv.contentBox)

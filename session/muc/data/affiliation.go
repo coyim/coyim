@@ -35,6 +35,10 @@ type Affiliation interface {
 	IsNone() bool
 	// Name returns the string name of the affiliation type
 	Name() string
+	// IsLowerThan description
+	IsLowerThan(Affiliation) bool
+	// Equals description
+	Equals(Affiliation) bool
 }
 
 // NoneAffiliation is a representation of MUC's "none" affiliation
@@ -172,6 +176,48 @@ func (*AdminAffiliation) Name() string { return AffiliationAdmin }
 // Name implements Affiliation interface
 func (*OwnerAffiliation) Name() string { return AffiliationOwner }
 
+// IsLowerThan implements Affiliation interface
+func (*NoneAffiliation) IsLowerThan(Affiliation) bool {
+	return true
+}
+
+// IsLowerThan implements Affiliation interface
+func (*OutcastAffiliation) IsLowerThan(Affiliation) bool {
+	return true
+}
+
+// IsLowerThan implements Affiliation interface
+func (*MemberAffiliation) IsLowerThan(a Affiliation) bool {
+	return a.IsAdmin() || a.IsOwner()
+}
+
+// IsLowerThan implements Affiliation interface
+func (*AdminAffiliation) IsLowerThan(a Affiliation) bool {
+	// return affiliationListContains([]string{AffiliationMember, AffiliationNone}, a)
+	return a.IsOwner()
+}
+
+// IsLowerThan implements Affiliation interface
+func (*OwnerAffiliation) IsLowerThan(a Affiliation) bool {
+	// return affiliationListContains([]string{AffiliationAdmin, AffiliationMember, AffiliationNone}, a)
+	return false
+}
+
+// Equals implements Affiliation interface
+func (*NoneAffiliation) Equals(a Affiliation) bool { return a.IsNone() }
+
+// Equals implements Affiliation interface
+func (*OutcastAffiliation) Equals(a Affiliation) bool { return a.IsBanned() }
+
+// Equals implements Affiliation interface
+func (*MemberAffiliation) Equals(a Affiliation) bool { return a.IsMember() }
+
+// Equals implements Affiliation interface
+func (*AdminAffiliation) Equals(a Affiliation) bool { return a.IsAdmin() }
+
+// Equals implements Affiliation interface
+func (*OwnerAffiliation) Equals(a Affiliation) bool { return a.IsOwner() }
+
 // AffiliationFromString returns an Affiliation from the given string, or an error if the string doesn't match a known affiliation type
 func AffiliationFromString(s string) (Affiliation, error) {
 	switch s {
@@ -187,43 +233,5 @@ func AffiliationFromString(s string) (Affiliation, error) {
 		return &OwnerAffiliation{}, nil
 	default:
 		return nil, fmt.Errorf("unknown affiliation string: '%s'", s)
-	}
-}
-
-// AffiliationLesserThan compares the affiliation hierarchy.
-// It returns true if `a` has a lesser hierarchy than `a1`, false other wise
-func AffiliationLesserThan(a, a1 Affiliation) bool {
-	switch a.(type) {
-	case *OwnerAffiliation:
-		return false
-	case *AdminAffiliation:
-		switch a1.(type) {
-		case *OwnerAffiliation:
-			return true
-		default:
-			return false
-		}
-	case *MemberAffiliation:
-		switch a1.(type) {
-		case *OwnerAffiliation:
-			return true
-		case *AdminAffiliation:
-			return true
-		default:
-			return false
-		}
-	case *NoneAffiliation:
-		switch a1.(type) {
-		case *OwnerAffiliation:
-			return true
-		case *AdminAffiliation:
-			return true
-		case *MemberAffiliation:
-			return true
-		default:
-			return false
-		}
-	default:
-		return false
 	}
 }

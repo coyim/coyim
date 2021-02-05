@@ -66,17 +66,16 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 func (av *occupantAffiliationUpdateView) onRadioButtonToggled() {
 	av.notifications.clearAll()
 
-	selfOccupantAffiliation := av.selfOccupant.Affiliation
-	switch selfOccupantAffiliation.(type) {
-	case *data.AdminAffiliation:
-		if !data.AffiliationLesserThan(av.getAffiliationBasedOnRadioSelected(), selfOccupantAffiliation) {
-			av.notifications.error(i18n.Local("You can't edit the administrator and owner lists"))
-			av.applyButton.SetSensitive(false)
-			return
-		}
+	affiliationSelected := av.getAffiliationBasedOnRadioSelected()
+
+	if av.selfOccupant.Affiliation.IsAdmin() &&
+		(affiliationSelected.IsOwner() || affiliationSelected.IsAdmin()) {
+		av.notifications.error(i18n.Local("You can't edit the administrator and owner lists"))
+		av.applyButton.SetSensitive(false)
+		return
 	}
 
-	av.applyButton.SetSensitive(av.occupant.Affiliation.Name() != av.getAffiliationBasedOnRadioSelected().Name())
+	av.applyButton.SetSensitive(!av.occupant.Affiliation.Equals(affiliationSelected))
 }
 
 func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {

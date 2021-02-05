@@ -106,8 +106,8 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	// Privileges associated with affiliations
 	// See: https://xmpp.org/extensions/xep-0045.html#affil-priv
 	if !r.selfOccupant.Affiliation.IsOwner() &&
-		(data.AffiliationLesserThan(r.selfOccupant.Affiliation, r.occupant.Affiliation) ||
-			r.selfOccupant.Affiliation == r.occupant.Affiliation) {
+		(r.selfOccupant.Affiliation.IsLowerThan(r.occupant.Affiliation) ||
+			r.selfOccupant.Affiliation.Equals(r.occupant.Affiliation)) {
 		r.changeAffiliationButton.SetVisible(false)
 	}
 }

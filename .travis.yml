@@ -54,11 +54,10 @@ jobs:
 
 before_install:
   - "export DISPLAY=:99.0"
-  - "export BUILD_RUN_PREFIX=travis_wait"
   - ci/install-deps-${TRAVIS_OS_NAME:-linux}
   - "export COYIM_PATH=$(pwd)/bin/coyim"
-install: make -C ci/ deps
-script: make -C ci/
+install: travis_wait make -C ci/ deps
+script: travis_wait make -C ci/
 
 before_deploy: ci/release
 deploy:

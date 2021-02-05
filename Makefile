@@ -20,7 +20,7 @@ SRC_ALL := $(foreach sdir,$(SRC_DIRS),$(wildcard $(sdir)/*.go))
 SRC := $(filter-out $(SRC_TEST), $(SRC_ALL))
 
 PREF := PKG_CONFIG_PATH=/usr/local/opt/libffi/lib/pkgconfig:$$PKG_CONFIG_PATH
-GO := $(PREF) go
+GO := $(PREF) ${BUILD_RUN_PREFIX} go
 GOBUILD := $(GO) build
 GOTEST := $(GO) test
 TAGS := -tags $(GTK_BUILD_TAG)

@@ -110,6 +110,9 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 			r.selfOccupant.Affiliation.Equals(r.occupant.Affiliation)) {
 		r.changeAffiliationButton.SetVisible(false)
 	}
+
+	canChangeRole := !r.occupant.Affiliation.IsAdmin() && !r.occupant.Affiliation.IsOwner()
+	r.changeRoleButton.SetVisible(canChangeRole)
 }
 
 // refresh MUST be called from the UI thread

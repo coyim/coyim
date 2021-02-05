@@ -20,15 +20,15 @@ jobs:
 
     name: CoyIM go-${{ matrix.go }} test
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}        
       - name: install OS dependencies
         run: sudo apt-get install libgtk-3-dev gettext libglib2.0-dev libc6-dev-i386 xvfb
       - uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go }}
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}        
       - name: install project dependencies
         run: make -C ci/ deps
         env:

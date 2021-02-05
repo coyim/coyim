@@ -21,8 +21,17 @@ services:
 
 addons:
   homebrew:
-    brewfile: ci/Brewfile.travis
-#    update: true
+    packages:
+      - "gtk+3"
+      - "gettext"
+      - "adwaita-icon-theme"
+      - "hicolor-icon-theme"
+      - "shared-mime-info"
+      - "libffi"
+      - "gtk-mac-integration"
+      - "create-dmg"
+      - "fileicon"
+      - "pkg-config"
   apt:
     packages:
       - libgtk-3-dev

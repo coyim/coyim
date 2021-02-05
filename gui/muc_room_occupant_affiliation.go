@@ -19,6 +19,7 @@ type occupantAffiliationUpdateView struct {
 	account        *account
 	roomID         jid.Bare
 	occupant       *muc.Occupant
+	selfOccupant   *muc.Occupant
 	rosterInfoView *roomViewRosterInfo
 	notifications  *notificationsComponent
 
@@ -40,6 +41,7 @@ func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID
 		roomID:         roomID,
 		rosterInfoView: r,
 		occupant:       o,
+		selfOccupant:   r.selfOccupant,
 	}
 
 	av.initBuilder()
@@ -62,6 +64,18 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 
 // onRadioButtonToggled MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onRadioButtonToggled() {
+	av.notifications.clearAll()
+
+	selfOccupantAffiliation := av.selfOccupant.Affiliation
+	switch selfOccupantAffiliation.(type) {
+	case *data.AdminAffiliation:
+		if !data.AffiliationLesserThan(av.getAffiliationBasedOnRadioSelected(), selfOccupantAffiliation) {
+			av.notifications.error(i18n.Local("You can't edit the administrator and owner lists"))
+			av.applyButton.SetSensitive(false)
+			return
+		}
+	}
+
 	av.applyButton.SetSensitive(av.occupant.Affiliation.Name() != av.getAffiliationBasedOnRadioSelected().Name())
 }
 

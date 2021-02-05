@@ -189,3 +189,41 @@ func AffiliationFromString(s string) (Affiliation, error) {
 		return nil, fmt.Errorf("unknown affiliation string: '%s'", s)
 	}
 }
+
+// AffiliationLesserThan compares the affiliation hierarchy.
+// It returns true if `a` has a lesser hierarchy than `a1`, false other wise
+func AffiliationLesserThan(a, a1 Affiliation) bool {
+	switch a.(type) {
+	case *OwnerAffiliation:
+		return false
+	case *AdminAffiliation:
+		switch a1.(type) {
+		case *OwnerAffiliation:
+			return true
+		default:
+			return false
+		}
+	case *MemberAffiliation:
+		switch a1.(type) {
+		case *OwnerAffiliation:
+			return true
+		case *AdminAffiliation:
+			return true
+		default:
+			return false
+		}
+	case *NoneAffiliation:
+		switch a1.(type) {
+		case *OwnerAffiliation:
+			return true
+		case *AdminAffiliation:
+			return true
+		case *MemberAffiliation:
+			return true
+		default:
+			return false
+		}
+	default:
+		return false
+	}
+}

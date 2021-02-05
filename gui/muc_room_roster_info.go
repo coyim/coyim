@@ -103,8 +103,11 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	r.refresh()
 	r.show()
 
-	if r.selfOccupant.Affiliation.Name() == data.AffiliationMember {
-		r.changeRoleButton.SetVisible(false)
+	// Table 6: Privileges Associated With Affiliations
+	// An occupant with MEMBER affiliation CAN'T edit member, admin or owner lists
+	// An occupant with ADMINSTRATOR affiliation CAN'T edit admin or owner lists
+	if data.AffiliationLesserThan(r.selfOccupant.Affiliation, r.occupant.Affiliation) ||
+		r.selfOccupant.Affiliation == r.occupant.Affiliation {
 		r.changeAffiliationButton.SetVisible(false)
 	}
 }
@@ -177,7 +180,7 @@ func (r *roomViewRosterInfo) removeOccupantRoleInfo() {
 
 // show MUST be called from the UI thread
 func (r *roomViewRosterInfo) show() {
-	r.view.Show()
+	r.view.ShowAll()
 }
 
 // show MUST be called from the UI thread

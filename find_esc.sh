@@ -4,8 +4,11 @@ set -e
 
 found=0
 
+echo "Checking for esc binary in $GOPATH"
+
 while IFS=':' read -ra GOP; do
     for i in "${GOP[@]}"; do
+        echo "  ... testing for esc in $i"
         if [ -f $i/bin/esc ]; then
             found=1
             cp $i/bin/esc $1/esc

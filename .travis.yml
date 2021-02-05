@@ -31,18 +31,18 @@ addons:
       - libc6-dev-i386
       - xvfb
 
-osx_image: xcode12.2
-
 jobs:
   include:
     - go: "1.13.x"
       os: osx
+      osx_image: xcode12.2
     - go: "1.13.x"
       env: RELEASE=true
       os: linux
     - go: "1.13.x"
       env: RELEASE=true
       os: osx
+      osx_image: xcode12.2
   allow_failures:
     - go: tip
     - env: RELEASE=true

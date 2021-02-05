@@ -260,7 +260,7 @@ func (*SessionMock) UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname 
 }
 
 // UpdateOccupantRole is the implementation for session interface
-func (*SessionMock) UpdateOccupantRole(jid.Bare, jid.Full, mdata.Role, string) (<-chan bool, <-chan error) {
+func (*SessionMock) UpdateOccupantRole(jid.Bare, string, mdata.Role, string) (<-chan bool, <-chan error) {
 	return nil, nil
 }
 

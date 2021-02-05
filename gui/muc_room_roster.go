@@ -140,9 +140,9 @@ func (r *roomViewRoster) updateOccupantAffiliation(o *muc.Occupant, previousAffi
 func (r *roomViewRoster) updateOccupantRole(o *muc.Occupant, role data.Role, reason string) {
 	r.log.WithFields(log.Fields{
 		"where":    "updateOccupantRole",
-		"occupant": fmt.Sprintf("%s", o.RealJid),
+		"occupant": o.Nickname,
 		"role":     o.Role.Name(),
-	}).Info("The occupant role has been updated")
+	}).Info("The occupant is being updated")
 
 	r.roomView.tryUpdateOccupantRole(o, role, reason)
 }

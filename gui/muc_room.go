@@ -352,7 +352,7 @@ func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation
 
 func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, role data.Role, reason string) {
 	v.loadingViewOverlay.onOccupantRoleUpdate()
-	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), o.RealJid, role, reason)
+	sc, ec := v.account.session.UpdateOccupantRole(v.roomID(), o.Nickname, role, reason)
 
 	select {
 	case <-sc:

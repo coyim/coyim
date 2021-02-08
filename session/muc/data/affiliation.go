@@ -193,13 +193,11 @@ func (*MemberAffiliation) IsLowerThan(a Affiliation) bool {
 
 // IsLowerThan implements Affiliation interface
 func (*AdminAffiliation) IsLowerThan(a Affiliation) bool {
-	// return affiliationListContains([]string{AffiliationMember, AffiliationNone}, a)
 	return a.IsOwner()
 }
 
 // IsLowerThan implements Affiliation interface
 func (*OwnerAffiliation) IsLowerThan(a Affiliation) bool {
-	// return affiliationListContains([]string{AffiliationAdmin, AffiliationMember, AffiliationNone}, a)
 	return false
 }
 
@@ -210,7 +208,9 @@ func (*NoneAffiliation) Equals(a Affiliation) bool { return a.IsNone() }
 func (*OutcastAffiliation) Equals(a Affiliation) bool { return a.IsBanned() }
 
 // Equals implements Affiliation interface
-func (*MemberAffiliation) Equals(a Affiliation) bool { return a.IsMember() }
+func (*MemberAffiliation) Equals(a Affiliation) bool {
+	return a.IsMember() && !a.IsAdmin() && !a.IsOwner()
+}
 
 // Equals implements Affiliation interface
 func (*AdminAffiliation) Equals(a Affiliation) bool { return a.IsAdmin() }

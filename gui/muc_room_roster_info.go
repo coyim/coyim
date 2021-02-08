@@ -74,12 +74,14 @@ func (r *roomViewRosterInfo) initDefaults() {
 		r.refreshOccupantInfo,
 		r.refreshOccupantAffiliation,
 		r.refreshOccupantRole,
+		r.validateOccupantPrivileges,
 	)
 
 	r.onReset.add(
 		r.removeOccupantInfo,
 		r.removeOccupantAffiliationInfo,
 		r.removeOccupantRoleInfo,
+		r.validateOccupantPrivileges,
 	)
 }
 
@@ -102,7 +104,9 @@ func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	r.occupant = occupant
 	r.refresh()
 	r.show()
+}
 
+func (r *roomViewRosterInfo) validateOccupantPrivileges() {
 	// Privileges associated with affiliations
 	// See: https://xmpp.org/extensions/xep-0045.html#affil-priv
 	if !r.selfOccupant.Affiliation.IsOwner() &&
@@ -183,7 +187,7 @@ func (r *roomViewRosterInfo) removeOccupantRoleInfo() {
 
 // show MUST be called from the UI thread
 func (r *roomViewRosterInfo) show() {
-	r.view.ShowAll()
+	r.view.Show()
 }
 
 // show MUST be called from the UI thread

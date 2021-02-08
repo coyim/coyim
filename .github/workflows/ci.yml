@@ -77,7 +77,7 @@ jobs:
           room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
           server: ${{ secrets.MATRIX_SERVER }}
-          message: <h1><span data-mx-color="#FF0A00>FAILURE</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> failed!<br> triggered by <a href="https://github.com/${{github.actor}}">${{github.actor}}</a>
+          message: <h1><span data-mx-color="#FF0A00">FAILURE</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> failed!<br> triggered by <a href="https://github.com/${{github.actor}}">${{github.actor}}</a>
       - name: send message on cancelled
         if: ${{ env.WORKFLOW_CONCLUSION == 'cancelled' }}
         uses: s3krit/matrix-message-action@v0.0.3
@@ -85,7 +85,7 @@ jobs:
           room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
           server: ${{ secrets.MATRIX_SERVER }}
-          message: <h1><span data-mx-color="#FFF608>CANCELLED</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> was cancelled!<br> triggered by <a href="https://github.com/${{github.actor}}">${{github.actor}}</a>
+          message: <h1><span data-mx-color="#FFF608">CANCELLED</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> was cancelled!<br> triggered by <a href="https://github.com/${{github.actor}}">${{github.actor}}</a>
 
 
 # we need a release job for linux, with RELEASE=true

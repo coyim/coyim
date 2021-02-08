@@ -79,7 +79,7 @@ jobs:
           server: ${{ secrets.MATRIX_SERVER }}
           message: <h1><span data-mx-color="#FF0A00>FAILURE</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> failed!<br> triggered by <a href="https://github.com/${{github.actor}}">${{github.actor}}</a>
       - name: send message on cancelled
-        if: ${{ contains(['cancelled', 'skipped', 'timed_out'], env.WORKFLOW_CONCLUSION) }}
+        if: ${{ env.WORKFLOW_CONCLUSION == 'cancelled' }}
         uses: s3krit/matrix-message-action@v0.0.3
         with:
           room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}

@@ -58,7 +58,7 @@ jobs:
   notify:
     name: Notify on success or failure
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
     if: always() # set always
     steps:
       - uses: technote-space/workflow-conclusion-action@v1

@@ -62,11 +62,30 @@ jobs:
     if: always() # set always
     steps:
       - uses: technote-space/workflow-conclusion-action@v1
-      - uses: Numericas/matrix-action@v1
+      - name: send message on success
+        if: ${{ env.WORKFLOW_CONCLUSION == 'success' }}
+        uses: s3krit/matrix-message-action@v0.0.3
         with:
-          server: ${{ secrets.MATRIX_SERVER }}
-          room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-          status: ${{ env.WORKFLOW_CONCLUSION }}
+          server: ${{ secrets.MATRIX_SERVER }}
+          message: <h1><span data-mx-color="#00FF2D">SUCCESS</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> was successful!<br> triggered by <a href=""https://github.com/${{github.actor}}">${{github.actor}}</a>
+      - name: send message on failure
+        if: ${{ env.WORKFLOW_CONCLUSION == 'failure' }}
+        uses: s3krit/matrix-message-action@v0.0.3
+        with:
+          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
+          server: ${{ secrets.MATRIX_SERVER }}
+          message: <h1><span data-mx-color="#FF0A00>FAILURE</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> failed!<br> triggered by <a href=""https://github.com/${{github.actor}}">${{github.actor}}</a>
+      - name: send message on cancelled
+        if: ${{ contains(['cancelled', 'skipped', 'timed_out'], env.WORKFLOW_CONCLUSION}}
+        uses: s3krit/matrix-message-action@v0.0.3
+        with:
+          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
+          server: ${{ secrets.MATRIX_SERVER }}
+          message: <h1><span data-mx-color="#FFF608>CANCELLED</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> was cancelled!<br> triggered by <a href=""https://github.com/${{github.actor}}">${{github.actor}}</a>
+
 
 # we need a release job for linux, with RELEASE=true

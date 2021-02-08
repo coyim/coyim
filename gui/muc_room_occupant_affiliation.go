@@ -62,15 +62,7 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 
 // onRadioButtonToggled MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onRadioButtonToggled() {
-	affiliationSelected := av.getAffiliationBasedOnRadioSelected()
-
-	if av.selfOccupant.Affiliation.IsAdmin() &&
-		(affiliationSelected.IsOwner() || affiliationSelected.IsAdmin()) {
-		av.applyButton.SetSensitive(false)
-		return
-	}
-
-	av.applyButton.SetSensitive(!av.occupant.Affiliation.Equals(affiliationSelected))
+	av.applyButton.SetSensitive(!av.occupant.Affiliation.Equals(av.getAffiliationBasedOnRadioSelected()))
 }
 
 func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
@@ -83,6 +75,16 @@ func (av *occupantAffiliationUpdateView) initDefaults() {
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
 	mucStyles.setHelpTextStyle(av.contentBox)
+
+	av.initRadioButtonsValues()
+}
+
+// initRadioButtonsValues MUST be called from UI thread
+func (av *occupantAffiliationUpdateView) initRadioButtonsValues() {
+	if av.selfOccupant.Affiliation.IsAdmin() {
+		av.adminRadio.SetSensitive(false)
+		av.adminRadio.SetLabel(i18n.Local("Administrator (You can't edit the administrator list)"))
+	}
 
 	switch av.occupant.Affiliation.(type) {
 	case *data.AdminAffiliation:

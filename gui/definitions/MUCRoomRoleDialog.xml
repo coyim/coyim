@@ -11,17 +11,6 @@
       <object class="GtkBox" id="role-content-box">
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkBox" id="role-notifications-area">
-            <property name="visible">True</property>            
-            <property name="orientation">vertical</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkBox" id="role-content">
             <property name="visible">True</property>
             <property name="border_width">12</property>
@@ -217,7 +206,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child internal-child="action_area">
@@ -281,7 +270,7 @@
             <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="pack_type">end</property>
-            <property name="position">2</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

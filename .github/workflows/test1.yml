@@ -4,10 +4,17 @@ jobs:
   verify:
     runs-on: ubuntu-20.04
     steps:
-      - uses: Numericas/matrix-action@v1
+      - name: send message
+        uses: s3krit/matrix-message-action@v0.0.3
         with:
-          server: https://matrix.autonomia.digital:443
-          room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-          status: ${{ job.status }}
+          message: "Hello, world"
+          server: "https://matrix.autonomia.digital:443"
+      # - uses: Numericas/matrix-action@v1
+      #   with:
+      #     server: https://matrix.autonomia.digital:443
+      #     room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+      #     access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
+      #     status: ${{ job.status }}
           

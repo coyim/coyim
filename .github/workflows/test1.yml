@@ -10,7 +10,7 @@ jobs:
           room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
           message: "Hello, world"
-          server: "https://matrix.autonomia.digital:443"
+          server: "matrix.autonomia.digital:443"
       # - uses: Numericas/matrix-action@v1
       #   with:
       #     server: https://matrix.autonomia.digital:443

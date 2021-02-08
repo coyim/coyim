@@ -171,7 +171,7 @@ func configOptionToFriendlyMessage(o string) string {
 	case muc.RoomConfigOptionAnyone:
 		return i18n.Local("Anyone")
 	case muc.RoomConfigOptionNone:
-		return i18n.Local("None")
+		return i18n.Local("No maximum")
 	case muc.RoomConfigOption10:
 		return i18n.Local("10")
 	case muc.RoomConfigOption20:

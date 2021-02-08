@@ -12,7 +12,7 @@ var _ = Suite(&AccountXMPPSuite{})
 
 func (s *AccountXMPPSuite) Test_Account_Is_recognizesJids(c *C) {
 	a := &Account{Account: "hello@bar.com"}
-	c.Check(a.Is("foo"), Equals, false)
+	c.Check(a.Is("foo"), Equals, true)
 	c.Check(a.Is("hello@bar.com"), Equals, true)
 	c.Check(a.Is("hello@bar.com/foo"), Equals, true)
 }

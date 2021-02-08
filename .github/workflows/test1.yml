@@ -4,6 +4,7 @@ jobs:
   verify:
     runs-on: ubuntu-20.04
     steps:
+      - run: echo Hello ${{ secrets.MATRIX_USER }}
       - uses: Numericas/matrix-action@v1
         with:
           server: ${{ secrets.MATRIX_SERVER }}

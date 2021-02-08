@@ -58,10 +58,16 @@ jobs:
   notify:
     name: Notify on success or failure
     needs: test
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     if: always() # set always
     steps:
       - uses: technote-space/workflow-conclusion-action@v1
-      - run: echo "Deploying to production server on branch $WORKFLOW_CONCLUSION"
+      - uses: Numericas/matrix-action@v1
+        with:
+          server: ${{ secrets.MATRIX_SERVER }}
+          room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+          user: ${{ secrets.MATRIX_USER }}
+          password: ${{ secrets.MATRIX_PASSWORD }}
+          status: ${{ env.WORKFLOW_CONCLUSION }}
 
 # we need a release job for linux, with RELEASE=true

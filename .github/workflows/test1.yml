@@ -8,7 +8,6 @@ jobs:
         with:
           server: ${{ secrets.MATRIX_SERVER }}
           room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
-          username: ${{ secrets.MATRIX_USER }}
-          password: ${{ secrets.MATRIX_PASSWORD }}
+          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
           status: ${{ job.status }}
           

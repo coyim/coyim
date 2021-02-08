@@ -4,12 +4,11 @@ jobs:
   verify:
     runs-on: ubuntu-20.04
     steps:
-      - run: echo Hello ${{ secrets.MATRIX_USER }}
       - uses: Numericas/matrix-action@v1
         with:
           server: ${{ secrets.MATRIX_SERVER }}
           room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
-          user: ${{ secrets.MATRIX_USER }}
+          username: ${{ secrets.MATRIX_USER }}
           password: ${{ secrets.MATRIX_PASSWORD }}
           status: ${{ job.status }}
           

@@ -66,7 +66,7 @@ jobs:
         with:
           server: ${{ secrets.MATRIX_SERVER }}
           room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
-          user: ${{ secrets.MATRIX_USER }}
+          username: ${{ secrets.MATRIX_USER }}
           password: ${{ secrets.MATRIX_PASSWORD }}
           status: ${{ env.WORKFLOW_CONCLUSION }}
 

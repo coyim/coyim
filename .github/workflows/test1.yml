@@ -9,12 +9,10 @@ jobs:
         with:
           room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-          message: "Hello, world"
-          server: "matrix.autonomia.digital:443"
-      # - uses: Numericas/matrix-action@v1
-      #   with:
-      #     server: https://matrix.autonomia.digital:443
-      #     room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
-      #     access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-      #     status: ${{ job.status }}
+          server: ${{ secrets.MATRIX_SERVER }}
+          message: >
+            <h1><span data-mx-color="#00FF2D">SUCCESS</span></h1>
+            Build <a href="${{env.GITHUB_SERVER_URL}}/${{env.GITHUB_REPOSITORY}}/actions/runs/${{env.GITHUB_RUN_NUMBER}}">
+            ${{env.GITHUB_REPOSITORY}} #${{env.GITHUB_RUN_NUMBER}} ${{env.GITHUB_WORKFLOW}}</a> was successful!<br>
+            triggered by <a href="${{env.GITHUB_SERVER_URL}}/${{env.GITHUB_ACTOR}}">${{env.GITHUB_ACTOR}}</a>
           

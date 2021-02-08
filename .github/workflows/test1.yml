@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: Numericas/matrix-action@v1
         with:
-          server: ${{ secrets.MATRIX_SERVER }}
+          server: https://matrix.autonomia.digital:443
           room-id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
           status: ${{ job.status }}

@@ -228,5 +228,5 @@ func systemDefaultLanguage() language.Tag {
 			return tag
 		}
 	}
-	return language.Und
+	return language.English
 }

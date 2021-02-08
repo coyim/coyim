@@ -80,13 +80,6 @@ func (c *mucRoomConfigComponent) newRoomConfigSummaryPage() mucRoomConfigPage {
 	return p
 }
 
-func setDefaultLabelText(label string) string {
-	if label != "" {
-		return label
-	}
-	return i18n.Local("Not assigned")
-}
-
 func (p *roomConfigSummaryPage) handleDescriptionField() {
 	if p.form.Description == "" {
 		p.descriptionScrollWindow.Hide()
@@ -148,4 +141,11 @@ func getStringFromActiveValue(value bool) string {
 		return i18n.Local("Enabled")
 	}
 	return i18n.Local("Disabled")
+}
+
+func setDefaultLabelText(label string) string {
+	if label != "" {
+		return label
+	}
+	return i18n.Local("Not assigned")
 }

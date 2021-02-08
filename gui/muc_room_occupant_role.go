@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"github.com/coyim/coyim/i18n"
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -57,14 +58,7 @@ func (rv *occupantRoleUpdateView) initBuilder() {
 
 // onRadioButtonToggled MUST be called from the UI thread
 func (rv *occupantRoleUpdateView) onRadioButtonToggled() {
-
-	rsn := rv.getRoleBasedOnRadioSelected().Name()
-	if (rv.occupant.Affiliation.IsAdmin() || rv.occupant.Affiliation.IsOwner()) && rsn == data.RoleParticipant {
-		rv.applyButton.SetSensitive(false)
-		return
-	}
-
-	rv.applyButton.SetSensitive(rv.occupant.Role.Name() != rsn)
+	rv.applyButton.SetSensitive(rv.occupant.Role.Name() != rv.getRoleBasedOnRadioSelected().Name())
 }
 
 func (rv *occupantRoleUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event) {
@@ -77,6 +71,16 @@ func (rv *occupantRoleUpdateView) initDefaults() {
 	rv.dialog.SetTransientFor(rv.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(rv.roleLabel)
 	mucStyles.setHelpTextStyle(rv.contentBox)
+
+	rv.initRadioButtonsValues()
+}
+
+// initRadioButtonsValues MUST be called from de UI thread
+func (rv *occupantRoleUpdateView) initRadioButtonsValues() {
+	if rv.occupant.Affiliation.IsAdmin() || rv.occupant.Affiliation.IsOwner() {
+		rv.participantRadio.SetSensitive(false)
+		rv.participantRadio.SetLabel(i18n.Localf("You can't remove the moderator role to %s", displayNameForAffiliationWithPreposition(rv.occupant.Affiliation)))
+	}
 
 	switch rv.occupant.Role.(type) {
 	case *data.ModeratorRole:

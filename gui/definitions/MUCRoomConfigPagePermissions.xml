@@ -12,7 +12,7 @@
             <property name="width_request">300</property>
             <property name="visible">True</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">This section contains configuration related to who can view some information of the occupants and if the room allows to do some specific configurations like change subject</property>
+            <property name="label" translatable="yes">Here you can change settings that impact who can do what inside the room.</property>
             <property name="wrap">True</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
@@ -41,7 +41,7 @@
                     <property name="visible">True</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
-                    <property name="label" translatable="yes">Occupants JID may be viewed by</property>
+                    <property name="label" translatable="yes">The real identity (the JID) of occupants may be viewed by:</property>
                     <property name="justify">right</property>
                   </object>
                   <packing>
@@ -134,7 +134,7 @@
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">Make this room moderated</property>
+                            <property name="label" translatable="yes">Moderated room</property>
                             <property name="justify">right</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
@@ -155,7 +155,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">A moderated rooms the occupants must be given permission to speak by a room moderator.</property>
+                        <property name="label" translatable="yes">Occupants must be given permission to speak by a room moderator.</property>
                         <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <property name="yalign">0</property>

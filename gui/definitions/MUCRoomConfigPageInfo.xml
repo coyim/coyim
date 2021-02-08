@@ -14,7 +14,7 @@
             <property name="width_request">300</property>
             <property name="visible">True</property>
             <property name="halign">start</property>
-            <property name="label" translatable="yes">This section contains some basic configuration options you can set for this room.</property>
+            <property name="label" translatable="yes">This section contains some basic configuration options that you can set for the room.</property>
             <property name="wrap">True</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
@@ -69,7 +69,7 @@
                     <property name="width_request">300</property>
                     <property name="visible">True</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">The room title is different from the room name. The room name is more like the room identifier, but you can also specify a descriptive title for this room.</property>
+                    <property name="label" translatable="yes">The title can be used to find the room in the public list.</property>
                     <property name="wrap">True</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
@@ -99,7 +99,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="valign">start</property>
-                    <property name="label" translatable="yes">Room description</property>
+                    <property name="label" translatable="yes">Description</property>
                     <property name="justify">right</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
@@ -139,7 +139,7 @@
                     <property name="width_request">300</property>
                     <property name="visible">True</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">The room description can be used to write a little more about the room, the idea, the discussion topics, interests, etc.</property>
+                    <property name="label" translatable="yes">The room description can be used to add more information about the room, such as the purpose, the discussion topics, interests, etc.</property>
                     <property name="wrap">True</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
@@ -169,7 +169,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="valign">center</property>
-                    <property name="label" translatable="yes">Room discussions language</property>
+                    <property name="label" translatable="yes">Primary language of discussion</property>
                     <property name="justify">right</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
@@ -200,7 +200,7 @@
                     <property name="width_request">300</property>
                     <property name="visible">True</property>
                     <property name="halign">start</property>
-                    <property name="label" translatable="yes">The room language is used to inform other users the language in which in which discussions and conversations are held. This setting is only informative, it does not necessarily mean that the room will be presented in the language you select.</property>
+                    <property name="label" translatable="yes">This is the primary language in which conversations are held. Changing this will not impact the language of the application.</property>
                     <property name="wrap">True</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
@@ -273,7 +273,7 @@
                         <property name="width_request">300</property>
                         <property name="visible">True</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">A public room means that the room can be found by any user through normal means such as searching and service discovery.</property>
+                        <property name="label" translatable="yes">A public room can be found by all users in any public listing.</property>
                         <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <property name="yalign">0</property>
@@ -348,7 +348,7 @@
                         <property name="width_request">300</property>
                         <property name="visible">True</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">A persistent room means that the room will not be destroyed if the last occupant exits from it.</property>
+                        <property name="label" translatable="yes">A persistent room won't be destroyed when the last occupant leaves the room.</property>
                         <property name="wrap">True</property>
                         <property name="xalign">0</property>
                         <property name="yalign">0</property>

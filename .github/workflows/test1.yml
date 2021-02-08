@@ -12,7 +12,7 @@ jobs:
           server: ${{ secrets.MATRIX_SERVER }}
           message: >
             <h1><span data-mx-color="#00FF2D">SUCCESS</span></h1>
-            Build <a href="${{env.GITHUB_SERVER_URL}}/${{env.GITHUB_REPOSITORY}}/actions/runs/${{env.GITHUB_RUN_NUMBER}}">
-            ${{env.GITHUB_REPOSITORY}} #${{env.GITHUB_RUN_NUMBER}} ${{env.GITHUB_WORKFLOW}}</a> was successful!<br>
-            triggered by <a href="${{env.GITHUB_SERVER_URL}}/${{env.GITHUB_ACTOR}}">${{env.GITHUB_ACTOR}}</a>
+            Build <a href="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_NUMBER}">
+            ${GITHUB_REPOSITORY} #${GITHUB_RUN_NUMBER} ${GITHUB_WORKFLOW}</a> was successful!<br>
+            triggered by <a href="${GITHUB_SERVER_URL}/${GITHUB_ACTOR}">${GITHUB_ACTOR}</a>
           

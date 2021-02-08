@@ -55,4 +55,13 @@ jobs:
         env:
           DISPLAY: ':99.0'
 
+  notify:
+    name: Notify on success or failure
+    needs: test
+    runs-on: ubuntu-latest
+    if: always() # set always
+    steps:
+      - uses: technote-space/workflow-conclusion-action@v1
+      - run: echo "Deploying to production server on branch $WORKFLOW_CONCLUSION"
+
 # we need a release job for linux, with RELEASE=true

@@ -21,11 +21,9 @@ type occupantAffiliationUpdateView struct {
 	occupant       *muc.Occupant
 	selfOccupant   *muc.Occupant
 	rosterInfoView *roomViewRosterInfo
-	notifications  *notificationsComponent
 
 	dialog           gtki.Dialog      `gtk-widget:"affiliation-dialog"`
 	contentBox       gtki.Box         `gtk-widget:"affiliation-content-box"`
-	notificationArea gtki.Box         `gtk-widget:"affiliation-notifications-area"`
 	affiliationLabel gtki.Label       `gtk-widget:"affiliation-type-label"`
 	adminRadio       gtki.RadioButton `gtk-widget:"affiliation-admin"`
 	memberRadio      gtki.RadioButton `gtk-widget:"affiliation-member"`
@@ -64,13 +62,10 @@ func (av *occupantAffiliationUpdateView) initBuilder() {
 
 // onRadioButtonToggled MUST be called from the UI thread
 func (av *occupantAffiliationUpdateView) onRadioButtonToggled() {
-	av.notifications.clearAll()
-
 	affiliationSelected := av.getAffiliationBasedOnRadioSelected()
 
 	if av.selfOccupant.Affiliation.IsAdmin() &&
 		(affiliationSelected.IsOwner() || affiliationSelected.IsAdmin()) {
-		av.notifications.error(i18n.Local("You can't edit the administrator and owner lists"))
 		av.applyButton.SetSensitive(false)
 		return
 	}
@@ -85,8 +80,6 @@ func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event
 }
 
 func (av *occupantAffiliationUpdateView) initDefaults() {
-	av.initNotificationComponent(av.rosterInfoView.u)
-
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
 	mucStyles.setHelpTextStyle(av.contentBox)
@@ -99,11 +92,6 @@ func (av *occupantAffiliationUpdateView) initDefaults() {
 	case *data.NoneAffiliation:
 		av.noneRadio.SetActive(true)
 	}
-}
-
-func (av *occupantAffiliationUpdateView) initNotificationComponent(u *gtkUI) {
-	av.notifications = u.newNotificationsComponent()
-	av.notificationArea.Add(av.notifications.box)
 }
 
 // onApply MUST be called from the UI thread

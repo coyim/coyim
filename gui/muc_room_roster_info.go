@@ -115,7 +115,9 @@ func (r *roomViewRosterInfo) validateOccupantPrivileges() {
 		r.changeAffiliationButton.SetVisible(false)
 	}
 
-	canChangeRole := !r.occupant.Affiliation.IsAdmin() && !r.occupant.Affiliation.IsOwner()
+	canChangeRole := (r.selfOccupant.Affiliation.IsAdmin() || r.selfOccupant.Affiliation.IsOwner()) &&
+		!r.occupant.Affiliation.IsAdmin() && !r.occupant.Affiliation.IsOwner()
+
 	r.changeRoleButton.SetVisible(canChangeRole)
 }
 

@@ -1,0 +1,19 @@
+name: Test notify
+
+on: [push]
+
+jobs:
+  notify:
+    name: Notify
+    needs: test
+    runs-on: ubuntu-20.04
+    if: always() # set always
+    steps:
+      - name: send message on success
+        uses: olabiniV2/matrix-msg@v0.0.1
+        with:
+          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
+          server: ${{ secrets.MATRIX_SERVER }}
+          subject: Something cool
+          message: SUCCESS

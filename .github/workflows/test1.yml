@@ -10,5 +10,5 @@ jobs:
           room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
           server: ${{ secrets.MATRIX_SERVER }}
-          message: <h1><span data-mx-color="#00FF2D">SUCCESS</span></h1> Build <a href="$GITHUB_SERVER_URL/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> was successful!<br> triggered by <a href="$GITHUB_SERVER_URL/${{github.actor}}">${{github.actor}}</a>
+          message: <h1><span data-mx-color="#00FF2D">SUCCESS</span></h1> Build <a href="${{env.GITHUB_SERVER_URL}}/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> was successful!<br> triggered by <a href="${{env.GITHUB_SERVER_URL}}/${{github.actor}}">${{github.actor}}</a>
           

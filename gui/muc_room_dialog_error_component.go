@@ -77,6 +77,8 @@ func (d *dialogErrorComponent) updateMessageForDestroyError(err error) {
 			"Please contact one of the room owners.")
 	case session.ErrDestroyRoomDoesntExist:
 		msg = i18n.Local("We couldn't find the room.")
+	case session.ErrRemoveOwnerAffiliation:
+		msg = i18n.Local("An owner position can't be removed if exists only one owner in the room.")
 	default:
 		msg = i18n.Local("An unknown error occurred during the process. Please try again later.")
 	}

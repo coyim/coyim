@@ -15,6 +15,8 @@ var (
 	ErrUpdateOccupantRequest = errors.New("invalid occupant update request")
 	// ErrUpdateOccupantResponse represents an invalid response for an occupant update request
 	ErrUpdateOccupantResponse = errors.New("invalid response for room configuration request")
+	// ErrRemoveOwnerAffiliation represents error occurred when an owner attempts remove the owner affiliation to an unique owner in the room
+	ErrRemoveOwnerAffiliation = errors.New("can't remove the owner affiliation to the unique owner in the room")
 )
 
 func (s *session) UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantID jid.Full, affiliation data.Affiliation, reason string) (<-chan bool, <-chan error) {
@@ -48,8 +50,7 @@ func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupantNickname
 
 		err = validateIqResponse(reply)
 		if err != nil {
-			l.WithError(err).Error("An error occurred when trying to read the response from the room configuration rollback request")
-			ec <- ErrUpdateOccupantResponse
+			ec <- err
 			return
 		}
 

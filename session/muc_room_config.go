@@ -100,6 +100,9 @@ func validateIqResponse(reply <-chan data.Stanza) error {
 	}
 
 	if iq.Type == "error" {
+		if iq.Error.MUCConflict != nil {
+			return ErrRemoveOwnerAffiliation
+		}
 		return ErrUnexpectedResponse
 	}
 

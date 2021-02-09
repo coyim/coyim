@@ -21,9 +21,10 @@ coveralls:
 	make run-cover -C ../
 ifeq ($(CI),true)
 ifeq ($(TRAVIS),true)
-	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci
+	@echo "We only send coverage information from Github Actions these days, so skipping it"
+#	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci
 else ifeq ($(GITHUB_ACTIONS),true)
-	goveralls -coverprofile=../.coverprofiles/all.coverprofile
+	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=github
 else
 	@echo "Can't send coverage results to Coveralls since we don't seem to be in neither Travis nor Github Actions"
 endif

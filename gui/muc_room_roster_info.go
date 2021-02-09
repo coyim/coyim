@@ -49,6 +49,7 @@ func (r *roomViewRoster) newRoomViewRosterInfo() *roomViewRosterInfo {
 	ri.initBuilder()
 	ri.initCSSStyles()
 	ri.initDefaults()
+	ri.initSubscribers()
 
 	return ri
 }
@@ -84,6 +85,15 @@ func (r *roomViewRosterInfo) initDefaults() {
 		r.removeOccupantRoleInfo,
 		r.validateOccupantPrivileges,
 	)
+}
+
+func (r *roomViewRosterInfo) initSubscribers() {
+	r.rosterView.roomView.subscribe("rosterInfo", func(ev roomViewEvent) {
+		switch ev.(type) {
+		case occupantUpdatedEvent:
+			doInUIThread(r.refresh)
+		}
+	})
 }
 
 func (r *roomViewRosterInfo) updateOccupantAffiliation(occupant *muc.Occupant, previousAffiliation data.Affiliation, reason string) {

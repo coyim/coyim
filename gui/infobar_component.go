@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"time"
+
 	"github.com/coyim/gotk3adapter/gtki"
 )
 
@@ -10,9 +12,10 @@ type infoBarComponent struct {
 	canBeClosed     bool
 	onCloseCallback func()
 
-	infoBar gtki.InfoBar `gtk-widget:"bar"`
-	content gtki.Box     `gtk-widget:"content"`
-	title   gtki.Label   `gtk-widget:"title"`
+	infoBar    gtki.InfoBar `gtk-widget:"infobar"`
+	timeBox    gtki.Box     `gtk-widget:"time-box"`
+	timeLabel  gtki.Label   `gtk-widget:"time-label"`
+	titleLabel gtki.Label   `gtk-widget:"title-label"`
 }
 
 func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *infoBarComponent {
@@ -36,7 +39,7 @@ func (u *gtkUI) newInfoBarComponent(text string, messageType gtki.MessageType) *
 		},
 	})
 
-	ib.title.SetText(ib.text)
+	ib.titleLabel.SetText(ib.text)
 	ib.infoBar.SetMessageType(ib.messageType)
 
 	return ib
@@ -64,4 +67,9 @@ func (ib *infoBarComponent) onClose(f func()) {
 
 func (ib *infoBarComponent) view() gtki.InfoBar {
 	return ib.infoBar
+}
+
+func (ib *infoBarComponent) setTime(t time.Time) {
+	ib.timeLabel.SetText(t.Format(time.ANSIC))
+	ib.timeBox.Show()
 }

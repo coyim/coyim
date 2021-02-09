@@ -17,6 +17,7 @@ func newMUCRoomOccupant(nickname string, affiliation data.Affiliation, role data
 	}
 }
 
+// handleOccupantAffiliationUpdate will lock until the update process of the given occupant finishes
 func (m *mucManager) handleOccupantAffiliationUpdate(roomID jid.Bare, presence *muc.OccupantPresenceInfo, isOwnPresence bool) {
 	m.occupantAffiliationUpdateLock.Lock()
 	defer m.occupantAffiliationUpdateLock.Unlock()

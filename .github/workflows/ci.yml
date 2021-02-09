@@ -14,6 +14,7 @@ jobs:
         working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
         
     strategy:
+      fail-fast: false
       matrix:
         go: [ '1.15', '1.14', '1.13', '1.12', '1.11' ]
         os: [ ubuntu-16.04, macos-latest ]
@@ -53,7 +54,7 @@ jobs:
       - name: run tests
         run: make -C ci/
         env:
-          DISPLAY: ':99.0'
+z          DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
   notify-test:

@@ -28,6 +28,6 @@ func getButtonsForAssistantHeader(a gtki.Assistant) assistantButtons {
 
 func (list assistantButtons) updateButtonLabelByName(name string, label string) {
 	if b, ok := list[name]; ok {
-		b.SetProperty("label", label)
+		b.SetLabel(label)
 	}
 }

@@ -96,7 +96,7 @@ func (m *mucManager) handlePresence(stanza *xmppData.ClientPresence) {
 	case "unavailable":
 		m.handleUnavailablePresence(roomID, occupantPresence, status, stanza)
 	case "":
-		go m.handleOccupantAffiliationUpdate(roomID, occupantPresence, isOwnPresence)
+		m.handleOccupantAffiliationUpdate(roomID, occupantPresence, isOwnPresence)
 
 		if isOwnPresence {
 			m.handleSelfOccupantUpdate(roomID, occupantPresence, status)

@@ -73,6 +73,8 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 		v.publishOccupantAffiliationUpdatedEvent(t.AffiliationUpdate)
 	case events.MUCSelfOccupantAffiliationUpdated:
 		v.publishSelfOccupantAffiliationUpdatedEvent(t.AffiliationUpdate)
+	case events.MUCOccupantRoleUpdated:
+		v.publishOccupantRoleUpdatedEvent(t.RoleUpdate)
 	default:
 		v.log.WithField("event", t).Warn("Unsupported room event received")
 	}

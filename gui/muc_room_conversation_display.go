@@ -31,6 +31,11 @@ func getDisplayForSelfOccupantAffiliationUpdate(affiliationUpdate data.Affiliati
 	return displayAffiliationUpdateMessage(d)
 }
 
+func getDisplayForOccupantRoleUpdate(roleUpdate data.RoleUpdate) string {
+	d := newRoleUpdateDisplayData(roleUpdate)
+	return displayRoleUpdateMessage(d)
+}
+
 type affiliationUpdateDisplayData struct {
 	nickname            string
 	newAffiliation      data.Affiliation
@@ -38,6 +43,15 @@ type affiliationUpdateDisplayData struct {
 	actor               string
 	actorAffiliation    data.Affiliation
 	reason              string
+}
+
+type roleUpdateDisplayData struct {
+	nickname         string
+	newRole          data.Role
+	previousRole     data.Role
+	actor            string
+	actorAffiliation data.Affiliation
+	reason           string
 }
 
 type affiliationUpdateDisplayer interface {
@@ -73,6 +87,21 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) (message stri
 	return message
 }
 
+type roleUpdateDisplayer interface {
+	displayForRoleChanged() string
+	updateReason() string
+}
+
+func displayRoleUpdateMessage(d roleUpdateDisplayer) (message string) {
+	message = d.displayForRoleChanged()
+
+	if d.updateReason() != "" {
+		message = i18n.Localf("%s because: %s", message, d.updateReason())
+	}
+
+	return message
+}
+
 func newAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdate) *affiliationUpdateDisplayData {
 	d := &affiliationUpdateDisplayData{
 		nickname:            affiliationUpdate.Nickname,
@@ -84,6 +113,22 @@ func newAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdate) *
 	if affiliationUpdate.Actor != nil {
 		d.actor = affiliationUpdate.Actor.Nickname
 		d.actorAffiliation = affiliationUpdate.Actor.Affiliation
+	}
+
+	return d
+}
+
+func newRoleUpdateDisplayData(roleUpdate data.RoleUpdate) *roleUpdateDisplayData {
+	d := &roleUpdateDisplayData{
+		nickname:     roleUpdate.Nickname,
+		newRole:      roleUpdate.New,
+		previousRole: roleUpdate.Previous,
+		reason:       roleUpdate.Reason,
+	}
+
+	if roleUpdate.Actor != nil {
+		d.actor = roleUpdate.Actor.Nickname
+		d.actorAffiliation = roleUpdate.Actor.Affiliation
 	}
 
 	return d
@@ -241,4 +286,33 @@ func displayNameForAffiliationWithPreposition(affiliation data.Affiliation) stri
 	default: // Other values get the default treatment
 		return ""
 	}
+}
+
+func displayNameForRole(role data.Role) string {
+	switch {
+	case role.IsModerator():
+		return i18n.Local("moderator")
+	case role.IsParticipant():
+		return i18n.Local("participant")
+	default:
+		return ""
+	}
+}
+
+func (d *roleUpdateDisplayData) displayForRoleChanged() string {
+	if d.actor == "" {
+		return i18n.Localf("The role of %s was changed from %s to %s", d.nickname,
+			displayNameForRole(d.previousRole),
+			displayNameForRole(d.newRole))
+	}
+	return i18n.Localf("%s changed the role of %s from %s to %s",
+		displayActorWithAffiliation(d.actor, d.actorAffiliation),
+		d.nickname,
+		displayNameForRole(d.previousRole),
+		displayNameForRole(d.newRole),
+	)
+}
+
+func (d *roleUpdateDisplayData) updateReason() string {
+	return d.reason
 }

@@ -54,7 +54,7 @@ jobs:
       - name: run tests
         run: make -C ci/
         env:
-z          DISPLAY: ':99.0'
+          DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
   notify-test:

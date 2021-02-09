@@ -8,8 +8,8 @@ const colors = {
 
 const statusEndings = {
     'success': 'was successful!',
-    'cancelled': 'failed!',
-    'failure': 'was cancelled!',
+    'cancelled': 'was cancelled!',
+    'failure': 'failed!',
 };
 
 function colorFor(status) {

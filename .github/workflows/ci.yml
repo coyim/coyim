@@ -54,6 +54,7 @@ jobs:
         run: make -C ci/
         env:
           DISPLAY: ':99.0'
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
   notify:
     name: Notify on success or failure

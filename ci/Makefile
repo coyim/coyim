@@ -1,10 +1,11 @@
 GO_VERSION=$(shell go version | grep  -o 'go[[:digit:]]\.[[:digit:]]')
 
-default: doctor test 
+default: doctor test coveralls
+
 
 deps:
 	make -C ../ deps
-#	go get -u github.com/mattn/goveralls
+	go get -u github.com/mattn/goveralls
 
 test:
 	make check -C ../
@@ -16,10 +17,19 @@ check-go-imports:
 	goimports -w .
 	git diff --exit-code .
 
-# send coverage data to coveralls
-# coveralls:
-# 	make run-cover -C ../
-# 	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci || true
+coveralls:
+	make run-cover -C ../
+ifeq ($(CI),true)
+ifeq ($(TRAVIS),true)
+	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci
+else ifeq ($(GITHUB_ACTIONS),true)
+	goveralls -coverprofile=../.coverprofiles/all.coverprofile
+else
+	@echo "Can't send coverage results to Coveralls since we don't seem to be in neither Travis nor Github Actions"
+endif
+else
+	@echo "Not running in CI, so skipping sending coverage results to Coveralls"
+endif
 
 clean-release:
 	$(RM) bin/*

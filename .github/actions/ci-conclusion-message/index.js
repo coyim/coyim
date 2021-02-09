@@ -43,7 +43,7 @@ function calculateStatus(status, commitID, commitMessage) {
         const shortCommitID = commitID.substring(0, 8);
         const commitURL = `${githubServer}/${repo}/commit/${commitID}`;
 
-        message += ` (<a href="${commitURL}">#${shortCommitID}</a>`;
+        message += ` (<a href="${commitURL}">#${shortCommitID}</a>)`;
     }
 
     core.setOutput('subject', subject);

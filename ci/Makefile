@@ -24,7 +24,7 @@ ifeq ($(TRAVIS),true)
 	@echo "We only send coverage information from Github Actions these days, so skipping it"
 #	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=travis-ci
 else ifeq ($(GITHUB_ACTIONS),true)
-	goveralls -coverprofile=../.coverprofiles/all.coverprofile -service=github
+	goveralls -coverprofile=../.coverprofiles/all.coverprofile
 else
 	@echo "Can't send coverage results to Coveralls since we don't seem to be in neither Travis nor Github Actions"
 endif

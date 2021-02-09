@@ -5,6 +5,14 @@ inputs:
     description: 'A string describing the status of the run. This should match the possible outputs of the technote-space/workflow-conclusion-action action, namely neutral, success, skipped, cancelled, timed_out, action_required, failure'
     required: true
     default: 'neutral'
+  commit_message: 
+    description: 'A string containing the commit message of the commit that triggered the build, or empty'
+    required: false
+    default: ''
+  commit_id: 
+    description: 'The complete SHA of the commit that caused the build, or empty'
+    required: false
+    default: ''
 outputs:
   subject: 
     description: 'The subject of the message - this will be in plain text format and quite short'

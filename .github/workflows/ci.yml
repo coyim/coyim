@@ -69,6 +69,8 @@ jobs:
         id: message-generator
         with:
           status: ${{ env.WORKFLOW_CONCLUSION }}
+          commit_id: ${{ github.sha }}
+          commit_message: ${{ github.event.head_commit.message }}
       - name: send message to Matrix on conclusion
         uses: olabiniV2/matrix-message@v0.0.1
         with:

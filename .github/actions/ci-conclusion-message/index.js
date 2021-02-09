@@ -20,7 +20,7 @@ function statusEndingFor(status) {
     return statusEndings[status.toLowerCase()] || `has status '${status}'`;
 }
 
-function calculateStatus(status) {
+function calculateStatus(status, commitID, commitMessage) {
     const runId = process.env.GITHUB_RUN_ID || '<unknown>';
     const runNumber = process.env.GITHUB_RUN_NUMBER || '<unknown>';
     const githubServer = process.env.GITHUB_SERVER_URL || '<unknown>';
@@ -35,7 +35,16 @@ function calculateStatus(status) {
     let message = `<h1><span data-mx-color="${colorFor(status)}">${status.toUpperCase()}</span></h1>`;
     message += `Build <a href="${buildURL}"> ${repo} #${runNumber} ${workflow}</a> `;
     message += statusEndingFor(status);
-    message += `<br>Triggered by <a href="${actorURL}">${actor}</a> `;
+    message += `<br>Triggered by <a href="${actorURL}">${actor}</a>`;
+    if (commitMessage) {
+        message += `: <i>${commitMessage}</i>`;
+    }
+    if (commitID) {
+        const shortCommitID = commitID.substring(0, 8);
+        const commitURL = `${githubServer}/${repo}/commit/${commitID}`;
+
+        message += ` (<a href="${commitURL}">#${shortCommitID}</a>`;
+    }
 
     core.setOutput('subject', subject);
     core.setOutput('message', message);
@@ -44,7 +53,9 @@ function calculateStatus(status) {
 async function run() {
     try {
         const status = core.getInput('status');
-        calculateStatus(status);
+        const commitID = core.getInput('commit_id');
+        const commitMessage = core.getInput('commit_message');
+        calculateStatus(status, commitID, commitMessage);
     }
     catch (error) {
         core.setFailed(error.message);

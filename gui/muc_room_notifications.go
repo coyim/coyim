@@ -49,7 +49,7 @@ func (rn *roomNotifications) error(msg string) {
 }
 
 func (rn *roomNotifications) newNotification(text string, messageType gtki.MessageType) {
-	nb := rn.u.newNotificationBar(text, messageType)
+	nb := rn.u.newNotificationBarWithTime(text, messageType)
 	nb.setClosable(true)
 	rn.add(nb)
 

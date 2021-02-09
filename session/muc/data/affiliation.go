@@ -177,8 +177,8 @@ func (*AdminAffiliation) Name() string { return AffiliationAdmin }
 func (*OwnerAffiliation) Name() string { return AffiliationOwner }
 
 // IsLowerThan implements Affiliation interface
-func (*NoneAffiliation) IsLowerThan(Affiliation) bool {
-	return true
+func (*NoneAffiliation) IsLowerThan(a Affiliation) bool {
+	return !a.IsNone()
 }
 
 // IsLowerThan implements Affiliation interface

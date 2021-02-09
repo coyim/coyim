@@ -37,8 +37,7 @@ type roomViewRoster struct {
 	rosterPanel gtki.Box      `gtk-widget:"roster-main-panel"`
 	tree        gtki.TreeView `gtk-widget:"roster-tree-view"`
 
-	model      gtki.TreeStore
-	rosterInfo *roomViewRosterInfo
+	model gtki.TreeStore
 
 	log coylog.Logger
 }
@@ -54,7 +53,6 @@ func (v *roomView) newRoomViewRoster() *roomViewRoster {
 	}
 
 	r.initBuilder()
-	r.initRosterInfo()
 	r.initDefaults()
 	r.initSubscribers()
 
@@ -68,10 +66,6 @@ func (r *roomViewRoster) initBuilder() {
 	})
 
 	panicOnDevError(builder.bindObjects(r))
-}
-
-func (r *roomViewRoster) initRosterInfo() {
-	r.rosterInfo = r.newRoomViewRosterInfo()
 }
 
 func (r *roomViewRoster) initDefaults() {
@@ -94,7 +88,6 @@ func (r *roomViewRoster) initSubscribers() {
 	r.roomView.subscribe("roster", func(ev roomViewEvent) {
 		switch ev.(type) {
 		case occupantSelfJoinedEvent:
-			r.updateSelfOccupant()
 			r.onUpdateRoster()
 		case occupantJoinedEvent:
 			r.onUpdateRoster()
@@ -149,19 +142,20 @@ func (r *roomViewRoster) updateOccupantRole(o *muc.Occupant, role data.Role, rea
 
 // showOccupantInfo MUST be called from the UI thread
 func (r *roomViewRoster) showOccupantInfo(o *muc.Occupant) {
-	r.rosterInfo.showOccupantInfo(o)
-	r.showRosterInfoPanel()
+	ri := r.newRoomViewRosterInfo()
+	ri.showOccupantInfo(o)
+	r.showRosterInfoPanel(ri)
 }
 
 // showRosterInfoPanel MUST be called from the UI thread
-func (r *roomViewRoster) showRosterInfoPanel() {
+func (r *roomViewRoster) showRosterInfoPanel(ri *roomViewRosterInfo) {
 	r.rosterPanel.Hide()
-	r.view.Add(r.rosterInfo.contentBox())
+	r.view.Add(ri.contentBox())
 }
 
 // hideRosterInfoPanel MUST be called from the UI thread
-func (r *roomViewRoster) hideRosterInfoPanel() {
-	r.view.Remove(r.rosterInfo.contentBox())
+func (r *roomViewRoster) hideRosterInfoPanel(ri *roomViewRosterInfo) {
+	r.view.Remove(ri.contentBox())
 	r.rosterPanel.Show()
 }
 
@@ -178,10 +172,6 @@ func (r *roomViewRoster) getNicknameFromTreeModel(path gtki.TreePath) (string, e
 	}
 
 	return iterValue.GetString()
-}
-
-func (r *roomViewRoster) updateSelfOccupant() {
-	r.rosterInfo.updateSelfOccupant(r.roomView.room.SelfOccupant())
 }
 
 func (r *roomViewRoster) onUpdateRoster() {

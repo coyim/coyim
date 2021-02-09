@@ -36,13 +36,14 @@ type roomViewRosterInfo struct {
 
 func (r *roomViewRoster) newRoomViewRosterInfo() *roomViewRosterInfo {
 	ri := &roomViewRosterInfo{
-		u:          r.u,
-		account:    r.account,
-		roomID:     r.roomID,
-		rosterView: r,
-		onReset:    newCallbacksSet(),
-		onRefresh:  newCallbacksSet(),
-		log:        r.log,
+		u:            r.u,
+		account:      r.account,
+		roomID:       r.roomID,
+		rosterView:   r,
+		onReset:      newCallbacksSet(),
+		onRefresh:    newCallbacksSet(),
+		log:          r.log,
+		selfOccupant: r.roomView.room.SelfOccupant(),
 	}
 
 	ri.initBuilder()
@@ -197,7 +198,7 @@ func (r *roomViewRosterInfo) show() {
 // show MUST be called from the UI thread
 func (r *roomViewRosterInfo) hide() {
 	r.view.Hide()
-	r.rosterView.hideRosterInfoPanel()
+	r.rosterView.hideRosterInfoPanel(r)
 	r.reset()
 }
 

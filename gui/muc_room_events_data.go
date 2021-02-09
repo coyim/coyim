@@ -106,10 +106,7 @@ type occupantAffiliationUpdatedEvent struct {
 }
 
 type occupantRoleUpdatedEvent struct {
-	nickname   string
 	roleUpdate data.RoleUpdate
-	actor      string
-	reason     string
 }
 
 type selfOccupantAffiliationUpdatedEvent struct {

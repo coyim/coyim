@@ -29,6 +29,10 @@ type Role interface {
 	AsModerator() Role
 	// Name returns the string name of the role type
 	Name() string
+	// IsModerator returns true if the user is a moderator
+	IsModerator() bool
+	// IsParticipant returns true if the user is a participant
+	IsParticipant() bool
 }
 
 // NoneRole is a representation of MUC's "none" role
@@ -90,6 +94,30 @@ func (*ParticipantRole) Name() string { return RoleParticipant }
 
 // Name implements Role interface
 func (*ModeratorRole) Name() string { return RoleModerator }
+
+// IsModerator implements Role interface
+func (*NoneRole) IsModerator() bool { return false }
+
+// IsModerator implements Role interface
+func (*VisitorRole) IsModerator() bool { return false }
+
+// IsModerator implements Role interface
+func (*ParticipantRole) IsModerator() bool { return false }
+
+// IsModerator implements Role interface
+func (*ModeratorRole) IsModerator() bool { return true }
+
+// IsParticipant implements Role interface
+func (*NoneRole) IsParticipant() bool { return false }
+
+// IsParticipant implements Role interface
+func (*VisitorRole) IsParticipant() bool { return false }
+
+// IsParticipant implements Role interface
+func (*ParticipantRole) IsParticipant() bool { return true }
+
+// IsParticipant implements Role interface
+func (*ModeratorRole) IsParticipant() bool { return false }
 
 // RoleFromString returns the role object that matches the string given, or an error if the string given doesn't match a known role
 func RoleFromString(s string) (Role, error) {

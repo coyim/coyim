@@ -84,7 +84,7 @@ func (p *roomConfigOccupantsPage) initOwnersListController(parent gtki.Window) {
 		occupantsTreeView:        p.ownersList,
 		occupantsTreeViewColumns: ownersListColumns,
 		parentWindow:             parent,
-		addOccupantDialogTitle:   i18n.Local("Add a room owner"),
+		addOccupantDialogTitle:   i18n.Local("Add room owner"),
 		addOccupantDescription:   i18n.Local("Please specify the information of the occupant you want to add as a room owner"),
 		addOccupantForm:          newMUCRoomConfigListOwnersForm,
 	})

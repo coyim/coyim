@@ -10,7 +10,7 @@
         <child>
           <object class="GtkLabel">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Please use with caution the below configuration. Note that if room archiving is enabled, all the room discussions will be logged and publicy accesible.</property>
+            <property name="label" translatable="yes">Here you can find other room configuration options that might be useful to you. Please note that if room archiving is enabled, all the room discussions will be logged and publicy accesible.</property>
             <property name="wrap">True</property>
             <property name="xalign">0</property>
             <property name="yalign">0</property>
@@ -143,7 +143,7 @@
                         <property name="visible">True</property>
                         <property name="valign">center</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Enable archiving</property>
+                        <property name="label" translatable="yes">Enable discussions archiving</property>
                         <property name="justify">right</property>
                         <property name="xalign">0</property>
                         <property name="yalign">0</property>

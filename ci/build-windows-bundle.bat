@@ -5,6 +5,7 @@ mkdir %GOPATH%\src\github.com\coyim\coyim\release\lib
 set LIBDIR="/mingw%MSYS2_BITS%/bin"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libatk-1.0-0.dll /c/gopath/src/github.com/coyim/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libbz2-1.dll /c/gopath/src/github.com/coyim/coyim/release/"
+%MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libbrotlicommon.dll /c/gopath/src/github.com/coyim/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libbrotlidec.dll /c/gopath/src/github.com/coyim/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libcairo-2.dll /c/gopath/src/github.com/coyim/coyim/release/"
 %MSYS_PATH%\usr\bin\bash -lc "cp -v %LIBDIR%/libcairo-gobject-2.dll /c/gopath/src/github.com/coyim/coyim/release/"

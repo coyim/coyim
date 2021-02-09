@@ -61,34 +61,20 @@ jobs:
     runs-on: ubuntu-20.04
     if: always() # set always
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
       - uses: technote-space/workflow-conclusion-action@v1
-      - name: send message on success
-        if: ${{ env.WORKFLOW_CONCLUSION == 'success' }}
+      - uses: ./.github/actions/ci-conclusion-message
+        id: message-generator
+        with:
+          status: ${{ env.WORKFLOW_CONCLUSION }}
+      - name: send message to Matrix on conclusion
         uses: olabiniV2/matrix-message@v0.0.1
         with:
           room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
           server: ${{ secrets.MATRIX_SERVER }}
-          subject: SUCCESS Build \#${{github.run_number}} received status success!
-          message: <h1><span data-mx-color="#00FF2D">SUCCESS</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> was successful!<br> triggered by <a href="https://github.com/${{github.actor}}">${{github.actor}}</a> - ${{github.event.head_commit.message}}
-      - name: send message on failure
-        if: ${{ env.WORKFLOW_CONCLUSION == 'failure' }}
-        uses: olabiniV2/matrix-message@v0.0.1
-        with:
-          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
-          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-          server: ${{ secrets.MATRIX_SERVER }}
-          subject: FAILURE Build \#${{github.run_number}} received status failure!
-          message: <h1><span data-mx-color="#FF0A00">FAILURE</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> failed!<br> triggered by <a href="https://github.com/${{github.actor}}">${{github.actor}}</a> - ${{github.event.head_commit.message}}
-      - name: send message on cancelled
-        if: ${{ env.WORKFLOW_CONCLUSION == 'cancelled' }}
-        uses: olabiniV2/matrix-message@v0.0.1
-        with:
-          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
-          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-          server: ${{ secrets.MATRIX_SERVER }}
-          subject: CANCELLED Build \#${{github.run_number}} received status cancelled!
-          message: <h1><span data-mx-color="#FFF608">CANCELLED</span></h1> Build <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_number}}">${{github.repository}} \#${{github.run_number}} ${{github.workflow}}</a> was cancelled!<br> triggered by <a href="https://github.com/${{github.actor}}">${{github.actor}}</a> - ${{github.event.head_commit.message}}
-
+          subject: ${{ steps.message-generator.outputs.subject }}
+          message: ${{ steps.message-generator.outputs.message }}
 
 # we need a release job for linux, with RELEASE=true

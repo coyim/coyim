@@ -1,0 +1,16 @@
+name: 'CI Conclusion Message'
+description: 'Create subject and conclusion message for a CI run'
+inputs:
+  status: 
+    description: 'A string describing the status of the run. This should match the possible outputs of the technote-space/workflow-conclusion-action action, namely neutral, success, skipped, cancelled, timed_out, action_required, failure'
+    required: true
+    default: 'neutral'
+outputs:
+  subject: 
+    description: 'The subject of the message - this will be in plain text format and quite short'
+  message: 
+    description: 'The actual message - this will be several lines, containing HTML formatting, including links'
+runs:
+  using: 'node12'
+  main: 'index.js'
+

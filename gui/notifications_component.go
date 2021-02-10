@@ -141,7 +141,7 @@ func (u *gtkUI) newNotificationBar(text string, messageType gtki.MessageType) *n
 
 func (u *gtkUI) newNotificationBarWithTime(text string, messageType gtki.MessageType) *notificationBar {
 	nb := u.newNotificationBar(text, messageType)
-	nb.setTime(time.Now())
+	nb.setTickerTime(time.Now())
 
 	return nb
 }

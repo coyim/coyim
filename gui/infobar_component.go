@@ -69,7 +69,18 @@ func (ib *infoBarComponent) view() gtki.InfoBar {
 	return ib.infoBar
 }
 
-func (ib *infoBarComponent) setTime(t time.Time) {
-	ib.timeLabel.SetText(t.Format(time.ANSIC))
+func (ib *infoBarComponent) setTickerTime(t time.Time) {
+	ticker := time.NewTicker(5 * time.Second)
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				doInUIThread(func() {
+					ib.timeLabel.SetText(elapsedFriendlyTime(t))
+				})
+			}
+		}
+	}()
+	ib.timeLabel.SetText(elapsedFriendlyTime(t))
 	ib.timeBox.Show()
 }

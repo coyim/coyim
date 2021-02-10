@@ -3,7 +3,6 @@ package session
 import (
 	"errors"
 
-	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"
 	"github.com/coyim/coyim/xmpp/jid"
@@ -53,21 +52,6 @@ func (m *mucManager) updateOccupantAffiliation(roomID jid.Bare, occupantNickname
 			ec <- err
 			return
 		}
-
-		actor := ""
-		if room, ok := m.roomManager.GetRoom(roomID); ok {
-			actor = room.SelfOccupantNickname()
-		}
-
-		m.handleOccupantAffiliationUpdate(roomID, &muc.OccupantPresenceInfo{
-			Nickname: occupantNickname,
-			RealJid:  occupantID,
-			AffiliationRole: &muc.OccupantAffiliationRole{
-				Affiliation: affiliation,
-				Actor:       actor,
-				Reason:      reason,
-			},
-		}, false)
 
 		rc <- true
 	}()

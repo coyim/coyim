@@ -136,15 +136,43 @@ func (m *mucManager) handleOccupantAffiliationRoleUpdate(occupantUpdateInfo *occ
 	newRole := occupantUpdateInfo.newRole()
 
 	switch {
-	case !prevAffiliation.Equals(newAffiliation):
-		m.handleOccupantAffiliationUpdate(occupantUpdateInfo)
+	case !prevAffiliation.Equals(newAffiliation) && !prevRole.Equals(newRole):
+		m.handleOccupantAffiliationRoleUpdated(occupantUpdateInfo)
 
-	case prevRole.Name() != newRole.Name():
-		m.handleOccupantRoleUpdate(occupantUpdateInfo)
+	case !prevAffiliation.Equals(newAffiliation):
+		m.handleOccupantAffiliationUpdated(occupantUpdateInfo)
+
+	case !prevRole.Equals(newRole):
+		m.handleOccupantRoleUpdated(occupantUpdateInfo)
 	}
 }
 
-func (m *mucManager) handleOccupantAffiliationUpdate(occupantUpdateInfo *occupantPresenceUpdateData) {
+func (m *mucManager) handleOccupantAffiliationRoleUpdated(occupantUpdateInfo *occupantPresenceUpdateData) {
+	affiliationRoleUpate := data.AffiliationRoleUpdate{
+		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
+			Actor:    occupantUpdateInfo.actorOccupant,
+			Nickname: occupantUpdateInfo.nickname(),
+			Reason:   occupantUpdateInfo.reason(),
+		},
+		AffiliationUpdate: data.AffiliationUpdate{
+			New:      occupantUpdateInfo.newAffiliation(),
+			Previous: occupantUpdateInfo.prevAffiliation(),
+		},
+		RoleUpdate: data.RoleUpdate{
+			New:      occupantUpdateInfo.newRole(),
+			Previous: occupantUpdateInfo.prevRole(),
+		},
+	}
+
+	if occupantUpdateInfo.isOwnPresence() {
+		m.selfOccupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, affiliationRoleUpate)
+		return
+	}
+
+	m.occupantAffiliationRoleUpdated(occupantUpdateInfo.room.ID, affiliationRoleUpate)
+}
+
+func (m *mucManager) handleOccupantAffiliationUpdated(occupantUpdateInfo *occupantPresenceUpdateData) {
 	affiliationUpate := data.AffiliationUpdate{
 		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
 			Actor:    occupantUpdateInfo.actorOccupant,
@@ -163,7 +191,7 @@ func (m *mucManager) handleOccupantAffiliationUpdate(occupantUpdateInfo *occupan
 	m.occupantAffiliationUpdated(occupantUpdateInfo.room.ID, affiliationUpate)
 }
 
-func (m *mucManager) handleOccupantRoleUpdate(occupantUpdateInfo *occupantPresenceUpdateData) {
+func (m *mucManager) handleOccupantRoleUpdated(occupantUpdateInfo *occupantPresenceUpdateData) {
 	roleUpdate := data.RoleUpdate{
 		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
 			Actor:    occupantUpdateInfo.actorOccupant,

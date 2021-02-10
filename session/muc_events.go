@@ -175,6 +175,20 @@ func (m *mucManager) roomDestroyed(roomID jid.Bare, reason string, alternativeRo
 	m.publishRoomEvent(roomID, ev)
 }
 
+func (m *mucManager) occupantAffiliationRoleUpdated(roomID jid.Bare, affiliationRoleUpdate data.AffiliationRoleUpdate) {
+	ev := events.MUCOccupantAffiliationRoleUpdated{}
+	ev.AffiliationRoleUpdate = affiliationRoleUpdate
+
+	m.publishRoomEvent(roomID, ev)
+}
+
+func (m *mucManager) selfOccupantAffiliationRoleUpdated(roomID jid.Bare, affiliationRoleUpdate data.AffiliationRoleUpdate) {
+	ev := events.MUCSelfOccupantAffiliationRoleUpdated{}
+	ev.AffiliationRoleUpdate = affiliationRoleUpdate
+
+	m.publishRoomEvent(roomID, ev)
+}
+
 func (m *mucManager) occupantAffiliationUpdated(roomID jid.Bare, affiliationUpdate data.AffiliationUpdate) {
 	ev := events.MUCOccupantAffiliationUpdated{}
 	ev.AffiliationUpdate = affiliationUpdate

@@ -33,6 +33,12 @@ type Role interface {
 	IsModerator() bool
 	// IsParticipant returns true if the user is a participant
 	IsParticipant() bool
+	// IsVisitor returns true if the user has a visitor role
+	IsVisitor() bool
+	// IsNone returns true if the user hasn't a role
+	IsNone() bool
+	// Equals returns a boolean value indicating whether the given role is the same as the current one
+	Equals(Role) bool
 }
 
 // NoneRole is a representation of MUC's "none" role
@@ -118,6 +124,42 @@ func (*ParticipantRole) IsParticipant() bool { return true }
 
 // IsParticipant implements Role interface
 func (*ModeratorRole) IsParticipant() bool { return false }
+
+// IsVisitor implements Role interface
+func (*NoneRole) IsVisitor() bool { return false }
+
+// IsVisitor implements Role interface
+func (*VisitorRole) IsVisitor() bool { return true }
+
+// IsVisitor implements Role interface
+func (*ParticipantRole) IsVisitor() bool { return false }
+
+// IsVisitor implements Role interface
+func (*ModeratorRole) IsVisitor() bool { return false }
+
+// IsNone implements Role interface
+func (*NoneRole) IsNone() bool { return true }
+
+// IsNone implements Role interface
+func (*VisitorRole) IsNone() bool { return false }
+
+// IsNone implements Role interface
+func (*ParticipantRole) IsNone() bool { return false }
+
+// IsNone implements Role interface
+func (*ModeratorRole) IsNone() bool { return false }
+
+// Equals implements Role interface
+func (*NoneRole) Equals(r Role) bool { return r.IsNone() }
+
+// Equals implements Role interface
+func (*VisitorRole) Equals(r Role) bool { return r.IsVisitor() }
+
+// Equals implements Role interface
+func (*ParticipantRole) Equals(r Role) bool { return r.IsParticipant() }
+
+// Equals implements Role interface
+func (*ModeratorRole) Equals(r Role) bool { return r.IsModerator() }
 
 // RoleFromString returns the role object that matches the string given, or an error if the string given doesn't match a known role
 func RoleFromString(s string) (Role, error) {

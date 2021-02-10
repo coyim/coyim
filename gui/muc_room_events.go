@@ -69,6 +69,8 @@ func (v *roomView) handleRoomEvent(ev events.MUC) {
 			alternative: t.AlternativeRoom,
 			password:    t.Password,
 		})
+	case events.MUCOccupantAffiliationRoleUpdated:
+		v.publishOccupantAffiliationRoleUpdatedEvent(t.AffiliationRoleUpdate)
 	case events.MUCOccupantAffiliationUpdated:
 		v.publishOccupantAffiliationUpdatedEvent(t.AffiliationUpdate)
 	case events.MUCSelfOccupantAffiliationUpdated:

@@ -465,18 +465,28 @@ func (v *roomView) occupantForbidden() {
 }
 
 // publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishOccupantAffiliationUpdatedEvent(affiliationUpdate data.AffiliationUpdate) {
-	v.publishEvent(occupantAffiliationUpdatedEvent{affiliationUpdate})
+func (v *roomView) publishOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
+	v.publishEvent(occupantAffiliationRoleUpdatedEvent{affiliationRoleUpdate})
 }
 
-// publishOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
-func (v *roomView) publishOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
-	v.publishEvent(occupantRoleUpdatedEvent{roleUpdate})
+// publishSelfOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
+	v.publishEvent(selfOccupantAffiliationRoleUpdatedEvent{affiliationRoleUpdate})
+}
+
+// publishOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishOccupantAffiliationUpdatedEvent(affiliationUpdate data.AffiliationUpdate) {
+	v.publishEvent(occupantAffiliationUpdatedEvent{affiliationUpdate})
 }
 
 // publishSelfOccupantAffiliationUpdatedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishSelfOccupantAffiliationUpdatedEvent(affiliationUpdate data.AffiliationUpdate) {
 	v.publishEvent(selfOccupantAffiliationUpdatedEvent{affiliationUpdate})
+}
+
+// publishOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
+	v.publishEvent(occupantRoleUpdatedEvent{roleUpdate})
 }
 
 // mainWindow MUST be called from the UI thread

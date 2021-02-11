@@ -7,7 +7,6 @@ import (
 
 type affiliationUpdateDisplayer interface {
 	affiliation() data.Affiliation
-	addExtraMessageInfo() string
 	updateReason() string
 	previousAffiliationIsNone() bool
 	displayForAffiliationRemoved() string
@@ -30,10 +29,6 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) (message stri
 		} else {
 			message = d.displayForAffiliationChanged()
 		}
-	}
-
-	if append := d.addExtraMessageInfo(); append != "" {
-		message = i18n.Localf("%s %s", message, append)
 	}
 
 	if reason := d.updateReason(); reason != "" {
@@ -133,10 +128,6 @@ func (d *affiliationUpdateDisplayData) displayForAffiliationChanged() string {
 	)
 }
 
-func (d *affiliationUpdateDisplayData) addExtraMessageInfo() string {
-	return ""
-}
-
 func getDisplayForSelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
 	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate)
 	return displayAffiliationUpdateMessage(d)
@@ -193,10 +184,6 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationChanged() string
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		displayNameForAffiliation(d.previousAffiliation),
 		displayNameForAffiliation(d.newAffiliation))
-}
-
-func (d *selfAffiliationUpdateDisplayData) addExtraMessageInfo() string {
-	return ""
 }
 
 func displaySelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {

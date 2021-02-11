@@ -8,10 +8,11 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: calculate message
-        uses: olabiniV2/repo-notifications-action@v0.0.1
+        uses: olabiniV2/repo-notifications-action@v0.0.2
         id: messages
         with:
           event: ${{ toJson(github.event) }}
+          escape: matrix
       - name: send message to Matrix
         uses: olabiniV2/matrix-message@v0.0.1
         with:

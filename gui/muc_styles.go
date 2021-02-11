@@ -205,6 +205,14 @@ func (s *mucStylesProvider) setOverlayStyle(o gtki.Overlay, st style) {
 	s.setWidgetStyle(o, "overlay", st)
 }
 
+func (s *mucStylesProvider) setNotificationTimeLabelStyle(l gtki.Label) {
+	s.setLabelStyle(l, style{
+		"font-style": "italic",
+		"font-size":  "12px",
+		"opacity":    "0.7",
+	})
+}
+
 func (s *mucStylesProvider) border(size int, style, color string) string {
 	return fmt.Sprintf("%dpx %s %s", size, style, color)
 }

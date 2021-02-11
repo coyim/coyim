@@ -15,7 +15,7 @@ type affiliationUpdateDisplayer interface {
 	displayForAffiliationChanged() string
 }
 
-func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) (message string) {
+func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer, beforeReasonMessage string) (message string) {
 	newAffiliation := d.affiliation()
 
 	switch {
@@ -31,6 +31,10 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) (message stri
 		}
 	}
 
+	if beforeReasonMessage != "" {
+		message = i18n.Localf("%s %s", message, beforeReasonMessage)
+	}
+
 	if reason := d.updateReason(); reason != "" {
 		message = i18n.Localf("%s because: %s", message, reason)
 	}
@@ -40,7 +44,7 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer) (message stri
 
 func getDisplayForOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
 	d := newAffiliationUpdateDisplayData(affiliationUpdate)
-	return displayAffiliationUpdateMessage(d)
+	return displayAffiliationUpdateMessage(d, "")
 }
 
 type affiliationUpdateDisplayData struct {
@@ -130,7 +134,7 @@ func (d *affiliationUpdateDisplayData) displayForAffiliationChanged() string {
 
 func getDisplayForSelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
 	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate)
-	return displayAffiliationUpdateMessage(d)
+	return displayAffiliationUpdateMessage(d, "")
 }
 
 type selfAffiliationUpdateDisplayData struct {
@@ -188,7 +192,7 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationChanged() string
 
 func displaySelfOccupantAffiliationUpdate(affiliationUpdate data.AffiliationUpdate) string {
 	d := newSelfAffiliationUpdateDisplayData(affiliationUpdate)
-	return displayAffiliationUpdateMessage(d)
+	return displayAffiliationUpdateMessage(d, "")
 }
 
 func displayActorWithAffiliation(actor string, affiliation data.Affiliation) string {

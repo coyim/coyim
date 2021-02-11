@@ -14,9 +14,7 @@ func getDisplayForOccupantAffiliationRoleUpdate(affiliationRoleUpdate data.Affil
 		Actor:    affiliationRoleUpdate.Actor,
 	})
 
-	message := displayAffiliationUpdateMessage(d)
-
-	message = i18n.Localf("%s %s", message, i18n.Localf("and as a result the role changed from %s to %s",
+	message := displayAffiliationUpdateMessage(d, i18n.Localf("and as a result the role changed from %s to %s",
 		displayNameForRole(affiliationRoleUpdate.PreviousRole),
 		displayNameForRole(affiliationRoleUpdate.NewRole)))
 

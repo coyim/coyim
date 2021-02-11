@@ -27,7 +27,7 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 		},
 	})
 
-	c.Assert(displayAffiliationUpdateMessage(d), Equals,
+	c.Assert(displayAffiliationUpdateMessage(d, ""), Equals,
 		"alex changed the position of nick to member")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{

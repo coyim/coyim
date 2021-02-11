@@ -229,3 +229,12 @@ func displayNameForAffiliationWithPreposition(affiliation data.Affiliation) stri
 		return ""
 	}
 }
+
+func succesAffiliationUpdateMessage(nickname string, previousAffiliation, affiliation data.Affiliation) string {
+	switch {
+	case affiliation.IsNone():
+		return i18n.Localf("The %s position of %s was removed", displayNameForAffiliation(previousAffiliation), nickname)
+	default:
+		return i18n.Localf("The position of %s was updated to %s", nickname, displayNameForAffiliation(affiliation))
+	}
+}

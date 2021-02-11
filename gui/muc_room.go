@@ -316,21 +316,22 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 
 func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation data.Affiliation, reason string) {
 	v.loadingViewOverlay.onOccupantAffiliationUpdate()
+	previousAffiliation := o.Affiliation
 	sc, ec := v.account.session.UpdateOccupantAffiliation(v.roomID(), o.Nickname, o.RealJid, affiliation, reason)
 
 	select {
 	case <-sc:
 		v.log.Info("The affiliation has been changed")
-		v.onOccupantAffiliationUpdateSuccess(o, affiliation, reason)
+		v.onOccupantAffiliationUpdateSuccess(o, previousAffiliation, affiliation)
 	case err := <-ec:
 		v.log.WithError(err).Error("An error occurred in the affiliation update process")
 		v.onOccupantAffiliationUpdateError(o, affiliation, reason, err)
 	}
 }
 
-func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, affiliation data.Affiliation, reason string) {
+func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousAffiliation, affiliation data.Affiliation) {
 	doInUIThread(func() {
-		v.notifications.info(i18n.Localf("The position of %s was updated", o.Nickname))
+		v.notifications.info(succesAffiliationUpdateMessage(o.Nickname, previousAffiliation, affiliation))
 		v.loadingViewOverlay.hide()
 	})
 }

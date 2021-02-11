@@ -1,0 +1,24 @@
+name: Repository updates
+
+on: [check_run, check_suite, create, delete, deployment, deployment_status, fork, gollum, issue_comment, issues, label, milestone, page_build, project, project_card, project_column, public, pull_request, pull_request_review, pull_request_review_comment, pull_request_target, push, registry_package, release, status, watch]
+    
+jobs:
+  notify:
+    name: Notify Matrix about updates
+    runs-on: ubuntu-20.04
+    steps:
+      - name: calculate message
+        uses: olabiniV2/repo-notifications-action@v0.0.1
+        id: messages
+        with:
+          event: ${{ toJson(github.event) }}
+      - name: send message to Matrix
+        uses: olabiniV2/matrix-message@v0.0.1
+        with:
+          room_id: ${{ secrets.MATRIX_COYIM_ROOM_ID }}
+          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
+          server: ${{ secrets.MATRIX_SERVER }}
+          subject: ${{ steps.messages.outputs.subject }}
+          message: ${{ steps.messages.outputs.message }}
+
+

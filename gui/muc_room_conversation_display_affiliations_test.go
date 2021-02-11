@@ -19,13 +19,11 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	member := newAffiliationFromString(data.AffiliationMember)
 
 	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "nick",
 		New:      member,
 		Previous: none,
-		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
-			Nickname: "nick",
-			Actor: &data.OccupantUpdateActor{
-				Nickname: "alex",
-			},
+		Actor: &data.Actor{
+			Nickname: "alex",
 		},
 	})
 
@@ -33,40 +31,34 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 		"alex changed the position of nick to member")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
+		Nickname: "robin",
+		Reason:   "I'm batman",
 		New:      none,
 		Previous: member,
-		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
-			Nickname: "robin",
-			Reason:   "I'm batman",
-			Actor: &data.OccupantUpdateActor{
-				Nickname:    "batman",
-				Affiliation: member,
-			},
+		Actor: &data.Actor{
+			Nickname:    "batman",
+			Affiliation: member,
 		},
 	}), Equals, "The member batman removed the member position from robin because: I'm batman")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
+		Nickname: "bob",
+		Reason:   "he was rude",
 		New:      outcast,
 		Previous: member,
-		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
-			Nickname: "bob",
-			Reason:   "he was rude",
-			Actor: &data.OccupantUpdateActor{
-				Nickname:    "alice",
-				Affiliation: member,
-			},
+		Actor: &data.Actor{
+			Nickname:    "alice",
+			Affiliation: member,
 		},
 	}), Equals, "The member alice banned bob from the room because: he was rude")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
+		Nickname: "nick",
 		New:      none,
 		Previous: outcast,
-		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
-			Nickname: "nick",
-			Actor: &data.OccupantUpdateActor{
-				Nickname:    "jonathan",
-				Affiliation: outcast,
-			},
+		Actor: &data.Actor{
+			Nickname:    "jonathan",
+			Affiliation: outcast,
 		},
 	}), Equals, "The outcast jonathan removed the outcast position from nick")
 }
@@ -80,11 +72,9 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	none := newAffiliationFromString(data.AffiliationNone)
 
 	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "jonathan",
 		New:      none,
 		Previous: admin,
-		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
-			Nickname: "jonathan",
-		},
 	})
 
 	c.Assert(strings.Contains(d.displayForAffiliationRemoved(), "nick"), Equals, false)
@@ -115,10 +105,8 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	initMUCRoomConversationDisplayI18n()
 
 	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
-		New: newAffiliationFromString(data.AffiliationOutcast),
-		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
-			Nickname: "nick",
-		},
+		Nickname: "nick",
+		New:      newAffiliationFromString(data.AffiliationOutcast),
 	})
 
 	c.Assert(d.displayForAffiliationOutcast(), Equals,
@@ -139,11 +127,9 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	none := newAffiliationFromString(data.AffiliationNone)
 
 	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "nick",
 		New:      member,
 		Previous: none,
-		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
-			Nickname: "nick",
-		},
 	})
 
 	c.Assert(d.displayForAffiliationAdded(), Equals,
@@ -172,11 +158,9 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	owner := newAffiliationFromString(data.AffiliationOwner)
 
 	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: "nick",
 		New:      member,
 		Previous: admin,
-		OccupantUpdateAffiliationRole: data.OccupantUpdateAffiliationRole{
-			Nickname: "nick",
-		},
 	})
 
 	c.Assert(d.displayForAffiliationChanged(), Equals,

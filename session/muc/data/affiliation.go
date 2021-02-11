@@ -17,15 +17,11 @@ const (
 
 // AffiliationUpdate contains information related to a new and previous affiliation
 type AffiliationUpdate struct {
-	OccupantUpdateAffiliationRole
-	New, Previous Affiliation
-}
-
-// AffiliationRoleUpdate contains information related to a new and previous affiliation and role
-type AffiliationRoleUpdate struct {
-	OccupantUpdateAffiliationRole
-	AffiliationUpdate AffiliationUpdate
-	RoleUpdate        RoleUpdate
+	Nickname string
+	Reason   string
+	New      Affiliation
+	Previous Affiliation
+	Actor    *Actor
 }
 
 // Affiliation represents an affiliation as specificed by section 5.2 in XEP-0045

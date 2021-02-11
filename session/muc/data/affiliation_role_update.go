@@ -1,15 +1,19 @@
 package data
 
-// OccupantUpdateActor represents the occupant that updates the role or affiliation
-type OccupantUpdateActor struct {
+// Actor represents the occupant that updates the role or affiliation
+type Actor struct {
 	Nickname    string
 	Affiliation Affiliation
 	Role        Role
 }
 
-// OccupantUpdateAffiliationRole represents the common properties for updating occupant role or affiliation
-type OccupantUpdateAffiliationRole struct {
-	Nickname string
-	Reason   string
-	Actor    *OccupantUpdateActor
+// AffiliationRoleUpdate contains information related to a new and previous affiliation and role
+type AffiliationRoleUpdate struct {
+	Nickname            string
+	Reason              string
+	NewAffiliation      Affiliation
+	PreviousAffiliation Affiliation
+	NewRole             Role
+	PreviousRole        Role
+	Actor               *Actor
 }

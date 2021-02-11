@@ -15,8 +15,11 @@ const (
 
 // RoleUpdate contains information related to a new and previous affiliation
 type RoleUpdate struct {
-	OccupantUpdateAffiliationRole
-	New, Previous Role
+	Nickname string
+	Reason   string
+	New      Role
+	Previous Role
+	Actor    *Actor
 }
 
 // Role represents the specific role that a user has inside a specific room

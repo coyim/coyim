@@ -1,29 +1,26 @@
 package gui
 
-import "github.com/coyim/coyim/session/muc/data"
+import (
+	"fmt"
+
+	"github.com/coyim/coyim/i18n"
+	"github.com/coyim/coyim/session/muc/data"
+)
 
 func getDisplayForOccupantAffiliationRoleUpdate(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
-	d := newAffiliationRoleUpdateDisplayData(affiliationRoleUpdate)
-	return displayAffiliationUpdateMessage(d)
-}
+	d := newAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: affiliationRoleUpdate.Nickname,
+		Reason:   affiliationRoleUpdate.Reason,
+		New:      affiliationRoleUpdate.NewAffiliation,
+		Previous: affiliationRoleUpdate.PreviousAffiliation,
+		Actor:    affiliationRoleUpdate.Actor,
+	})
 
-type affiliationRoleUpdateDisplayData struct {
-	*affiliationUpdateDisplayData
-	newRole      data.Role
-	previousRole data.Role
-}
+	message := displayAffiliationUpdateMessage(d)
 
-func newAffiliationRoleUpdateDisplayData(affiliationRoleUpdate data.AffiliationRoleUpdate) *affiliationRoleUpdateDisplayData {
-	d := &affiliationRoleUpdateDisplayData{
-		affiliationUpdateDisplayData: newAffiliationUpdateDisplayData(affiliationRoleUpdate.AffiliationUpdate),
-		newRole:                      affiliationRoleUpdate.RoleUpdate.New,
-		previousRole:                 affiliationRoleUpdate.RoleUpdate.Previous,
-	}
+	message = fmt.Sprintf("%s %s", message, i18n.Localf("and as a result the role changed from %s to %s",
+		displayNameForRole(affiliationRoleUpdate.PreviousRole),
+		displayNameForRole(affiliationRoleUpdate.NewRole)))
 
-	if affiliationRoleUpdate.Actor != nil {
-		d.actor = affiliationRoleUpdate.Actor.Nickname
-		d.actorAffiliation = affiliationRoleUpdate.Actor.Affiliation
-	}
-
-	return d
+	return message
 }

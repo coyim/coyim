@@ -10,11 +10,129 @@
     <child internal-child="vbox">
       <object class="GtkBox" id="affiliation-content-box">
         <property name="orientation">vertical</property>
+        <property name="margin-left">12</property>
+        <property name="margin-right">12</property>
         <child>
           <object class="GtkBox" id="affiliation-content">
             <property name="visible">True</property>
-            <property name="border_width">12</property>
             <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="valign">start</property>
+                <property name="spacing">12</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="affiliation-occupant-label">
+                    <property name="visible">True</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Occupant information</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="spacing">6</property>
+                    <property name="orientation">vertical</property>
+                    <property name="margin_left">24</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkLabel" id="affiliation-occupant-nickname-label">
+                            <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Nickname:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="affiliation-occupant-nickname">
+                            <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">6</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkLabel" id="affiliation-occupant-current-label">
+                            <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Current position:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="affiliation-occupant-current">
+                            <property name="visible">True</property>
+                            <property name="halign">start</property>
+                            <property name="margin_left">6</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">12</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparator" id="top-separator">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkBox" id="affiliation-type">
                 <property name="visible">True</property>
@@ -196,7 +314,7 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="padding">12</property>
-                <property name="position">0</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -228,7 +346,7 @@
                     <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkTextView" id="affiliation-reason-entry">
-                        <property name="visible">True</property>                        
+                        <property name="visible">True</property>
                         <property name="pixels_inside_wrap">3</property>
                         <property name="top_margin">3</property>
                         <property name="bottom_margin">3</property>
@@ -248,7 +366,7 @@
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="padding">12</property>
-                <property name="position">1</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -265,7 +383,7 @@
             <property name="layout_style">expand</property>
             <child>
               <object class="GtkBox">
-                <property name="visible">True</property>                
+                <property name="visible">True</property>
                 <property name="border_width">12</property>
                 <property name="spacing">12</property>
                 <child>
@@ -290,7 +408,7 @@
                       <object class="GtkButton" id="affiliation-apply-button">
                         <property name="label" translatable="yes">Apply</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>                        
+                        <property name="sensitive">False</property>
                         <property name="receives_default">True</property>
                         <signal name="clicked" handler="on_apply" swapped="no"/>
                       </object>

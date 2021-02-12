@@ -22,15 +22,20 @@ type occupantAffiliationUpdateView struct {
 	selfOccupant   *muc.Occupant
 	rosterInfoView *roomViewRosterInfo
 
-	dialog           gtki.Dialog      `gtk-widget:"affiliation-dialog"`
-	contentBox       gtki.Box         `gtk-widget:"affiliation-content-box"`
-	affiliationLabel gtki.Label       `gtk-widget:"affiliation-type-label"`
-	adminRadio       gtki.RadioButton `gtk-widget:"affiliation-admin"`
-	memberRadio      gtki.RadioButton `gtk-widget:"affiliation-member"`
-	noneRadio        gtki.RadioButton `gtk-widget:"affiliation-none"`
-	reasonLabel      gtki.Label       `gtk-widget:"affiliation-reason-label"`
-	reasonEntry      gtki.TextView    `gtk-widget:"affiliation-reason-entry"`
-	applyButton      gtki.Button      `gtk-widget:"affiliation-apply-button"`
+	dialog                          gtki.Dialog      `gtk-widget:"affiliation-dialog"`
+	contentBox                      gtki.Box         `gtk-widget:"affiliation-content-box"`
+	occupantInformationLabel        gtki.Label       `gtk-widget:"affiliation-occupant-label"`
+	affiliationLabel                gtki.Label       `gtk-widget:"affiliation-type-label"`
+	occupantNicknameLabel           gtki.Label       `gtk-widget:"affiliation-occupant-nickname-label"`
+	occupantNickname                gtki.Label       `gtk-widget:"affiliation-occupant-nickname"`
+	occupantCurrentAffiliationLabel gtki.Label       `gtk-widget:"affiliation-occupant-current-label"`
+	occupantCurrentAffiliation      gtki.Label       `gtk-widget:"affiliation-occupant-current"`
+	adminRadio                      gtki.RadioButton `gtk-widget:"affiliation-admin"`
+	memberRadio                     gtki.RadioButton `gtk-widget:"affiliation-member"`
+	noneRadio                       gtki.RadioButton `gtk-widget:"affiliation-none"`
+	reasonLabel                     gtki.Label       `gtk-widget:"affiliation-reason-label"`
+	reasonEntry                     gtki.TextView    `gtk-widget:"affiliation-reason-entry"`
+	applyButton                     gtki.Button      `gtk-widget:"affiliation-apply-button"`
 }
 
 func (r *roomViewRosterInfo) newOccupantAffiliationUpdateView(a *account, roomID jid.Bare, o *muc.Occupant) *occupantAffiliationUpdateView {
@@ -74,6 +79,7 @@ func (av *occupantAffiliationUpdateView) onKeyPress(_ gtki.Widget, ev gdki.Event
 func (av *occupantAffiliationUpdateView) initDefaults() {
 	av.dialog.SetTransientFor(av.rosterInfoView.parentWindow())
 	mucStyles.setFormSectionLabelStyle(av.affiliationLabel)
+	mucStyles.setFormSectionLabelStyle(av.occupantInformationLabel)
 	mucStyles.setHelpTextStyle(av.contentBox)
 
 	av.initRadioButtonsValues()
@@ -85,6 +91,9 @@ func (av *occupantAffiliationUpdateView) initRadioButtonsValues() {
 		av.adminRadio.SetSensitive(false)
 		av.adminRadio.SetLabel(i18n.Local("Administrator (You can't edit the administrator list)"))
 	}
+
+	av.occupantNickname.SetLabel(av.occupant.Nickname)
+	av.occupantCurrentAffiliation.SetLabel(displayNameForAffiliation(av.occupant.Affiliation))
 
 	switch av.occupant.Affiliation.(type) {
 	case *data.AdminAffiliation:

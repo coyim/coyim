@@ -20,3 +20,19 @@ func getDisplayForOccupantAffiliationRoleUpdate(affiliationRoleUpdate data.Affil
 
 	return message
 }
+
+func getDisplayForSelfOccupantAffiliationRoleUpdate(affiliationRoleUpdate data.AffiliationRoleUpdate) string {
+	d := newSelfAffiliationUpdateDisplayData(data.AffiliationUpdate{
+		Nickname: affiliationRoleUpdate.Nickname,
+		Reason:   affiliationRoleUpdate.Reason,
+		New:      affiliationRoleUpdate.NewAffiliation,
+		Previous: affiliationRoleUpdate.PreviousAffiliation,
+		Actor:    affiliationRoleUpdate.Actor,
+	})
+
+	message := displayAffiliationUpdateMessage(d, i18n.Localf("and as a result the role changed from %s to %s",
+		displayNameForRole(affiliationRoleUpdate.PreviousRole),
+		displayNameForRole(affiliationRoleUpdate.NewRole)))
+
+	return message
+}

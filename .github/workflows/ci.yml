@@ -104,6 +104,8 @@ jobs:
           go-version: '1.14'
       - name: build release
         run: make -C ci/ release-gui-linux
+      - name: Display structure of release
+        run: ls -alFR
       - name: Archive build artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -139,6 +141,8 @@ jobs:
         run: make -C ci/ deps
       - name: build release
         run: make -C ci/ release-dmg clean-mac-bundle release-gui
+      - name: Display structure of release
+        run: ls -alFR
       - name: Archive build artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -152,12 +156,13 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     if: startsWith( github.ref, 'refs/tags/v' )
+    outputs:
+      upload-url: ${{ steps.create_release.outputs.upload_url }}
 
     steps:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
-        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -165,6 +170,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+
 
   debug-release-artifacts-linux:
     name: Debug release artifacts Linux
@@ -187,3 +193,14 @@ jobs:
       - uses: actions/download-artifact@v2
       - name: Display structure of downloaded files
         run: ls -alFR
+
+
+  # - name: Upload Release Asset
+  #       uses: actions/upload-release-asset@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         upload_url: ${{ needs.create-release-tag.outputs.upload-url }} #
+  #         asset_path: ./my-artifact.zip
+  #         asset_name: my-artifact.zip
+  #         asset_content_type: application/zip

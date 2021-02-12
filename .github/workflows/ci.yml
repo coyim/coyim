@@ -12,7 +12,7 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
-        
+
     strategy:
       fail-fast: false
       matrix:
@@ -41,7 +41,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
         with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}        
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
         run: ${{ matrix.INSTALL_DEPS }}
       - uses: actions/setup-go@v2
@@ -61,7 +61,7 @@ jobs:
     name: Notify on success or failure of test
     needs: test
     runs-on: ubuntu-20.04
-    if: always() 
+    if: always()
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -93,18 +93,18 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
-    
+
     steps:
       - name: checkout
         uses: actions/checkout@v2
         with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}        
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - uses: actions/setup-go@v2
         with:
           go-version: '1.14'
       - name: build release
         run: make -C ci/ release-gui-linux
-      
+
   build-release-osx:
     name: Build OS X release
     needs: test
@@ -117,12 +117,12 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
-    
+
     steps:
       - name: checkout
         uses: actions/checkout@v2
         with:
-          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}        
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
         run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration create-dmg fileicon
       - uses: actions/setup-go@v2
@@ -132,3 +132,22 @@ jobs:
         run: make -C ci/ deps
       - name: build release
         run: make -C ci/ release-dmg clean-mac-bundle release-gui
+
+  create-release-tag:
+    name: Create release tag
+    needs: test
+    runs-on: ubuntu-20.04
+    if: startsWith( github.ref, 'refs/tags/v' )
+
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false

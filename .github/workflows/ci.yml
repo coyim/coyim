@@ -111,7 +111,7 @@ jobs:
         with:
           name: dist-linux
           path: |
-            release
+            release/
           retention-days: 5
 
   build-release-osx:
@@ -148,7 +148,7 @@ jobs:
         with:
           name: dist-osx
           path: |
-            release
+            release/
           retention-days: 5
 
   create-release-tag:

@@ -136,6 +136,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.roomConfigRequestTimeoutEvent()
 	case selfOccupantAffiliationUpdatedEvent:
 		v.selfOccupantAffiliationUpdatedEvent(t.affiliationUpdate)
+	case selfOccupantAffiliationRoleUpdatedEvent:
+		v.selfOccupantAffiliationRoleUpdatedEvent(t.affiliationRoleUpdate)
 	}
 }
 
@@ -165,6 +167,12 @@ func (v *roomView) roomConfigRequestTimeoutEvent() {
 // selfOccupantAffiliationUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationUpdatedEvent(affiliationUpdate data.AffiliationUpdate) {
 	m := displaySelfOccupantAffiliationUpdate(affiliationUpdate)
+	v.notifications.info(m)
+}
+
+// selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
+	m := getDisplayForSelfOccupantAffiliationRoleUpdate(affiliationRoleUpdate)
 	v.notifications.info(m)
 }
 

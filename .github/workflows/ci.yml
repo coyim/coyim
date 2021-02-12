@@ -165,3 +165,25 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+
+  debug-release-artifacts-linux:
+    name: Debug release artifacts Linux
+    needs: build-release-linux
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+      - name: Display structure of downloaded files
+        run: ls -alFR
+
+  debug-release-artifacts-osx:
+    name: Debug release artifacts OS X
+    needs: build-release-osx
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+      - name: Display structure of downloaded files
+        run: ls -alFR

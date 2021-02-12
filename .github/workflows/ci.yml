@@ -106,12 +106,13 @@ jobs:
         run: make -C ci/ release-gui-linux
       - name: Display structure of release
         run: ls -alFR
+      - name: Display structure of release2
+        run: ls -alFR ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/*
       - name: Archive build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: dist-linux
-          path: |
-            release/
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/*
           retention-days: 5
 
   build-release-osx:
@@ -143,12 +144,13 @@ jobs:
         run: make -C ci/ release-dmg clean-mac-bundle release-gui
       - name: Display structure of release
         run: ls -alFR
+      - name: Display structure of release2
+        run: ls -alFR ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/*
       - name: Archive build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: dist-osx
-          path: |
-            release/
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/*
           retention-days: 5
 
   create-release-tag:

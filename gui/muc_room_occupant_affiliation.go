@@ -30,6 +30,7 @@ type occupantAffiliationUpdateView struct {
 	occupantNickname                gtki.Label       `gtk-widget:"affiliation-occupant-nickname"`
 	occupantCurrentAffiliationLabel gtki.Label       `gtk-widget:"affiliation-occupant-current-label"`
 	occupantCurrentAffiliation      gtki.Label       `gtk-widget:"affiliation-occupant-current"`
+	ownerRadio                      gtki.RadioButton `gtk-widget:"affiliation-owner"`
 	adminRadio                      gtki.RadioButton `gtk-widget:"affiliation-admin"`
 	memberRadio                     gtki.RadioButton `gtk-widget:"affiliation-member"`
 	noneRadio                       gtki.RadioButton `gtk-widget:"affiliation-none"`
@@ -96,6 +97,8 @@ func (av *occupantAffiliationUpdateView) initRadioButtonsValues() {
 	av.occupantCurrentAffiliation.SetLabel(displayNameForAffiliation(av.occupant.Affiliation))
 
 	switch av.occupant.Affiliation.(type) {
+	case *data.OwnerAffiliation:
+		av.ownerRadio.SetActive(true)
 	case *data.AdminAffiliation:
 		av.adminRadio.SetActive(true)
 	case *data.MemberAffiliation:
@@ -113,6 +116,8 @@ func (av *occupantAffiliationUpdateView) onApply() {
 
 func (av *occupantAffiliationUpdateView) getAffiliationBasedOnRadioSelected() data.Affiliation {
 	switch {
+	case av.ownerRadio.GetActive():
+		return &data.OwnerAffiliation{}
 	case av.adminRadio.GetActive():
 		return &data.AdminAffiliation{}
 	case av.memberRadio.GetActive():

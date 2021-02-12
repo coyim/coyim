@@ -104,6 +104,13 @@ jobs:
           go-version: '1.14'
       - name: build release
         run: make -C ci/ release-gui-linux
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-linux
+          path: |
+            release
+          retention-days: 5
 
   build-release-osx:
     name: Build OS X release
@@ -132,6 +139,13 @@ jobs:
         run: make -C ci/ deps
       - name: build release
         run: make -C ci/ release-dmg clean-mac-bundle release-gui
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-osx
+          path: |
+            release
+          retention-days: 5
 
   create-release-tag:
     name: Create release tag

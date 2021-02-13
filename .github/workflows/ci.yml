@@ -167,49 +167,56 @@ jobs:
           draft: false
           prerelease: false
 
-
-  debug-release-artifacts-linux:
-    name: Debug release artifacts Linux
-    needs: build-release-linux
+  upload-release-linux:
+    name: Upload release (Linux)
+    needs: [build-release-linux, create-release-tag]
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         name: dist-linux
-      - name: Display structure of downloaded files
-        run: ls -alFR dist-linux
+      - name: Upload Linux binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          asset_path: dist-linux/coyim_linux_amd64
+          asset_name: coyim_linux_amd64
+          asset_content_type: application/octet-stream
+      - name: Upload Linux build_info
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          asset_path: dist-linux/build_info_linux_amd64
+          asset_name: coyim_linux_amd64_build_info
+          asset_content_type: text/plain
 
-# 12 22:29 ../
-# -rw-r--r--  1 runner docker      180 Feb 12 22:29 build_info_linux_amd64
-# -rw-r--r--  1 runner docker      103 Feb 12 22:29 checksum
-# -rw-r--r--  1 runner docker 45355112 Feb 12 22:29 coyim_linux_amd64
-
-  debug-release-artifacts-osx:
-    name: Debug release artifacts OS X
-    needs: build-release-osx
+  upload-release-osx:
+    name: Upload release (OS X)
+    needs: [build-release-osx, create-release-tag]
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
         name: dist-osx
-      - name: Display structure of downloaded files
-        run: ls -alFR dist-osx
-
-#  22:32 ./
-# drwxr-xr-x 27 runner docker     4096 Feb 12 22:32 ../
-# -rw-r--r--  1 runner docker      199 Feb 12 22:32 checksum
-# -rw-r--r--  1 runner docker 43378805 Feb 12 22:32 coyim.dmg
-# -rw-r--r--  1 runner docker 56163160 Feb 12 22:32 coyim_darwin_amd64
-
-
-  # - name: Upload Release Asset
-  #       uses: actions/upload-release-asset@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         upload_url: ${{ needs.create-release-tag.outputs.upload-url }} #
-  #         asset_path: ./my-artifact.zip
-  #         asset_name: my-artifact.zip
-  #         asset_content_type: application/zip
+      - name: Upload OS X binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          asset_path: dist-osx/coyim_darwin_amd64
+          asset_name: coyim_darwin_amd64
+          asset_content_type: application/octet-stream
+      - name: Upload OS X Disk Image
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          asset_path: dist-osx/coyim.dmg
+          asset_name: coyim.dmg
+          asset_content_type: application/octet-stream

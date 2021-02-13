@@ -18,7 +18,7 @@ jobs:
       matrix:
         go: [ '1.15', '1.14', '1.13', '1.12', '1.11' ]
 
-    name: CoyIM go-${{ matrix.go }} test (Linux)
+    name: Test go-${{ matrix.go }} (Linux)
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -49,7 +49,7 @@ jobs:
       run:
         working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
 
-    name: CoyIM go-1.14 test (OS X)
+    name: Test go-1.14 (OS X)
     steps:
       - name: checkout
         uses: actions/checkout@v2

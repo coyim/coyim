@@ -232,3 +232,39 @@ jobs:
           asset_path: dist-osx/coyim.dmg
           asset_name: coyim.dmg
           asset_content_type: application/octet-stream
+
+  upload-release-bintray-linux:
+    name: Upload release to Bintray (Linux)
+    needs: build-release-linux
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/download-artifact@v2
+        name: dist-linux
+      - name: Get the current tag
+        id: current_tag
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+      - name: Upload Linux binary
+        uses: reznikmm/upload-bintray-action@v2
+        with:
+          subject: coyim
+          repository: coyim-bin
+          package: linux
+          version: ${{ steps.current_tag.outputs.VERSION }}
+          sourcePath: dist-linux/coyim_linux_amd64
+          destinationPath: amd64/coyim
+          override: 1
+          username: ${{secrets.BINTRAY_API_USER}}
+          apiKey: ${{secrets.BINTRAY_API_KEY}}
+      - name: Upload Linux build_info
+        uses: reznikmm/upload-bintray-action@v2
+        with:
+          subject: coyim
+          repository: coyim-bin
+          package: linux
+          version: ${{ steps.current_tag.outputs.VERSION }}
+          sourcePath: dist-linux/build_info_linux_amd64
+          destinationPath: amd64/build_info
+          override: 1
+          username: ${{secrets.BINTRAY_API_USER}}
+          apiKey: ${{secrets.BINTRAY_API_KEY}}

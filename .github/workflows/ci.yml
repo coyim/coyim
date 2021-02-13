@@ -245,26 +245,29 @@ jobs:
         id: current_tag
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - name: Upload Linux binary
-        uses: reznikmm/upload-bintray-action@29e3a4d9461a7185e4fcf941164d27c2b6273be2
-        with:
-          subject: coyim
-          repository: coyim-bin
-          package: linux
-          version: ${{ steps.current_tag.outputs.VERSION }}
-          sourcePath: dist-linux/coyim_linux_amd64
-          destinationPath: amd64/coyim
-          override: 1
-          username: ${{secrets.BINTRAY_API_USER}}
-          apiKey: ${{secrets.BINTRAY_API_KEY}}
-      - name: Upload Linux build_info
-        uses: reznikmm/upload-bintray-action@29e3a4d9461a7185e4fcf941164d27c2b6273be2
-        with:
-          subject: coyim
-          repository: coyim-bin
-          package: linux
-          version: ${{ steps.current_tag.outputs.VERSION }}
-          sourcePath: dist-linux/build_info_linux_amd64
-          destinationPath: amd64/build_info
-          override: 1
-          username: ${{secrets.BINTRAY_API_USER}}
-          apiKey: ${{secrets.BINTRAY_API_KEY}}
+        run: curl -C - -T dist-linux/coyim_linux_amd64 -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/linux/amd64/coyim?override=1&publish=1"
+        
+      # - name: Upload Linux binary
+      #   uses: reznikmm/upload-bintray-action@29e3a4d9461a7185e4fcf941164d27c2b6273be2
+      #   with:
+      #     subject: coyim
+      #     repository: coyim-bin
+      #     package: linux
+      #     version: ${{ steps.current_tag.outputs.VERSION }}
+      #     sourcePath: dist-linux/coyim_linux_amd64
+      #     destinationPath: amd64/coyim
+      #     override: 1
+      #     username: ${{secrets.BINTRAY_API_USER}}
+      #     apiKey: ${{secrets.BINTRAY_API_KEY}}
+      # - name: Upload Linux build_info
+      #   uses: reznikmm/upload-bintray-action@29e3a4d9461a7185e4fcf941164d27c2b6273be2
+      #   with:
+      #     subject: coyim
+      #     repository: coyim-bin
+      #     package: linux
+      #     version: ${{ steps.current_tag.outputs.VERSION }}
+      #     sourcePath: dist-linux/build_info_linux_amd64
+      #     destinationPath: amd64/build_info
+      #     override: 1
+      #     username: ${{secrets.BINTRAY_API_USER}}
+      #     apiKey: ${{secrets.BINTRAY_API_KEY}}

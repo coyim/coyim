@@ -103,6 +103,27 @@ func (s *DiscoveryXMPPSuite) Test_ReceiveDiscoveryResult(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
+func waitForInflightTo(c *conn, to string) {
+	done := make(chan bool)
+
+	go func() {
+		for {
+			time.Sleep(3 * time.Millisecond)
+			for _, v := range c.inflights {
+				if v.to == to {
+					done <- true
+					return
+				}
+			}
+		}
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(1 * time.Second):
+	}
+}
+
 func (s *DiscoveryXMPPSuite) Test_HasSupportTo(c *C) {
 	// See: XEP-0030, Section: 3.1 Basic Protocol, Example: 2
 	fromServer := `
@@ -134,11 +155,11 @@ func (s *DiscoveryXMPPSuite) Test_HasSupportTo(c *C) {
 		done <- true
 	}()
 
-	<-time.After(1 * time.Millisecond)
+	waitForInflightTo(&conn, "plays.shakespeare.lit")
 
-	var iq data.ClientIQ
 	c.Assert(string(mockOut.Written()), Matches, "<iq xmlns='jabber:client' to='plays.shakespeare.lit' from='romeo@montague.net/orchard' type='get' id='.+'><query xmlns=\"http://jabber.org/protocol/disco#info\"></query></iq>")
 
+	var iq data.ClientIQ
 	err := xml.Unmarshal(mockOut.Written(), &iq)
 	c.Assert(err, IsNil)
 

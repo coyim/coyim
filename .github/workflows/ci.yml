@@ -110,6 +110,7 @@ jobs:
           name: dist-linux
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/*
           retention-days: 5
+          if-no-files-found: error
 
   build-release-osx:
     name: Build OS X release
@@ -144,6 +145,7 @@ jobs:
           name: dist-osx
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}/release/*
           retention-days: 5
+          if-no-files-found: error
 
   create-release-tag:
     name: Create release tag
@@ -174,8 +176,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
+        name: dist-linux
       - name: Display structure of downloaded files
-        run: ls -alFR
+        run: ls -alFR dist-linux
+
+# 12 22:29 ../
+# -rw-r--r--  1 runner docker      180 Feb 12 22:29 build_info_linux_amd64
+# -rw-r--r--  1 runner docker      103 Feb 12 22:29 checksum
+# -rw-r--r--  1 runner docker 45355112 Feb 12 22:29 coyim_linux_amd64
 
   debug-release-artifacts-osx:
     name: Debug release artifacts OS X
@@ -185,8 +193,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
+        name: dist-osx
       - name: Display structure of downloaded files
-        run: ls -alFR
+        run: ls -alFR dist-osx
+
+#  22:32 ./
+# drwxr-xr-x 27 runner docker     4096 Feb 12 22:32 ../
+# -rw-r--r--  1 runner docker      199 Feb 12 22:32 checksum
+# -rw-r--r--  1 runner docker 43378805 Feb 12 22:32 coyim.dmg
+# -rw-r--r--  1 runner docker 56163160 Feb 12 22:32 coyim_darwin_amd64
 
 
   # - name: Upload Release Asset

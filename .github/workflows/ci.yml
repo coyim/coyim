@@ -205,6 +205,15 @@ jobs:
           asset_path: dist-linux/build_info_linux_amd64
           asset_name: coyim_linux_amd64_build_info
           asset_content_type: text/plain
+      - name: Upload Linux checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          asset_path: dist-linux/checksum
+          asset_name: coyim_linux_amd64_checksum
+          asset_content_type: text/plain
 
   upload-release-osx:
     name: Upload release (OS X)
@@ -232,6 +241,15 @@ jobs:
           asset_path: dist-osx/coyim.dmg
           asset_name: coyim.dmg
           asset_content_type: application/octet-stream
+      - name: Upload OS X checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          asset_path: dist-osx/checksum
+          asset_name: coyim_osx_checksum
+          asset_content_type: text/plain
 
   upload-release-bintray-linux:
     name: Upload release to Bintray (Linux)
@@ -246,28 +264,26 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - name: Upload Linux binary
         run: curl -C - -T dist-linux/coyim_linux_amd64 -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/linux/amd64/coyim?override=1&publish=1"
+      - name: Upload Linux build_info
+        run: curl -C - -T dist-linux/build_info_linux_amd64 -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/linux/amd64/build_info?override=1&publish=1"
+      - name: Upload Linux checksum
+        run: curl -C - -T dist-linux/checksum -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/linux/amd64/checksum?override=1&publish=1"
+
+  upload-release-bintray-osx:
+    name: Upload release to Bintray (OS X)
+    needs: build-release-osx
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/download-artifact@v2
+        name: dist-osx
+      - name: Get the current tag
+        id: current_tag
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+      - name: Upload OS X binary
+        run: curl -C - -T dist-osx/coyim_darwin_amd64 -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/darwin/amd64/coyim?override=1&publish=1"
+      - name: Upload OS X DMG
+        run: curl -C - -T dist-osx/coyim.dmg -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/mac-bundle/coyim.dmg?override=1&publish=1"
+      - name: Upload OS X checksum
+        run: curl -C - -T dist-osx/checksum -u "${{secrets.BINTRAY_API_USER}}:${{secrets.BINTRAY_API_KEY}}" "https://api.bintray.com/content/coyim/coyim-bin/coyim-bin/${{ steps.current_tag.outputs.VERSION }}/${{ steps.current_tag.outputs.VERSION }}/darwin/amd64/checksum?override=1&publish=1"
         
-      # - name: Upload Linux binary
-      #   uses: reznikmm/upload-bintray-action@29e3a4d9461a7185e4fcf941164d27c2b6273be2
-      #   with:
-      #     subject: coyim
-      #     repository: coyim-bin
-      #     package: linux
-      #     version: ${{ steps.current_tag.outputs.VERSION }}
-      #     sourcePath: dist-linux/coyim_linux_amd64
-      #     destinationPath: amd64/coyim
-      #     override: 1
-      #     username: ${{secrets.BINTRAY_API_USER}}
-      #     apiKey: ${{secrets.BINTRAY_API_KEY}}
-      # - name: Upload Linux build_info
-      #   uses: reznikmm/upload-bintray-action@29e3a4d9461a7185e4fcf941164d27c2b6273be2
-      #   with:
-      #     subject: coyim
-      #     repository: coyim-bin
-      #     package: linux
-      #     version: ${{ steps.current_tag.outputs.VERSION }}
-      #     sourcePath: dist-linux/build_info_linux_amd64
-      #     destinationPath: amd64/build_info
-      #     override: 1
-      #     username: ${{secrets.BINTRAY_API_USER}}
-      #     apiKey: ${{secrets.BINTRAY_API_KEY}}

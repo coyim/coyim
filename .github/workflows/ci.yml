@@ -3,8 +3,8 @@ name: CoyIM CI
 on: [push, pull_request]
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
+  test-linux:
+    runs-on: ubuntu-16.04
 
     env:
       GOPATH: ${{ github.workspace }}
@@ -17,33 +17,15 @@ jobs:
       fail-fast: false
       matrix:
         go: [ '1.15', '1.14', '1.13', '1.12', '1.11' ]
-        os: [ ubuntu-16.04, macos-latest ]
 
-        include:
-        - os: ubuntu-16.04
-          INSTALL_DEPS: sudo apt-get install libgtk-3-dev gettext libglib2.0-dev libc6-dev-i386 xvfb
-        - os: macos-latest
-          INSTALL_DEPS: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration create-dmg fileicon
-
-        # We only want to run Golang 1.14 on OS X
-        exclude:
-        - os: macos-latest
-          go: '1.15'
-        - os: macos-latest
-          go: '1.13'
-        - os: macos-latest
-          go: '1.12'
-        - os: macos-latest
-          go: '1.11'
-
-    name: CoyIM go-${{ matrix.go }} test (${{ matrix.os }})
+    name: CoyIM go-${{ matrix.go }} test (Linux)
     steps:
       - name: checkout
         uses: actions/checkout@v2
         with:
           path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
       - name: install OS dependencies
-        run: ${{ matrix.INSTALL_DEPS }}
+        run: sudo apt-get install libgtk-3-dev gettext libglib2.0-dev libc6-dev-i386 xvfb
       - uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go }}
@@ -57,9 +39,40 @@ jobs:
           DISPLAY: ':99.0'
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
+  test-osx:
+    runs-on: macos-latest
+
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: off
+    defaults:
+      run:
+        working-directory: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+
+    name: CoyIM go-1.14 test (OS X)
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.GOPATH }}/src/github.com/${{ github.repository }}
+      - name: install OS dependencies
+        run: brew install gtk+3 adwaita-icon-theme hicolor-icon-theme shared-mime-info gtk-mac-integration create-dmg fileicon
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.14
+      - name: install project dependencies
+        run: make -C ci/ deps
+        env:
+          DISPLAY: ':99.0'
+      - name: run tests
+        run: make -C ci/
+        env:
+          DISPLAY: ':99.0'
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+
   notify-test:
     name: Notify on success or failure of test
-    needs: test
+    needs: [test-linux, test-osx]
     runs-on: ubuntu-20.04
     if: always()
     steps:
@@ -82,8 +95,8 @@ jobs:
           message: ${{ steps.message-generator.outputs.message }}
 
   build-release-linux:
-    name: Build Linux release
-    needs: test
+    name: Build release (Linux)
+    needs: test-linux
     runs-on: ubuntu-20.04
     if: startsWith( github.ref, 'refs/tags/')
 
@@ -113,8 +126,8 @@ jobs:
           if-no-files-found: error
 
   build-release-osx:
-    name: Build OS X release
-    needs: test
+    name: Build release (OS X)
+    needs: test-osx
     runs-on: macos-latest
     if: startsWith( github.ref, 'refs/tags/')
 
@@ -149,7 +162,6 @@ jobs:
 
   create-release-tag:
     name: Create release tag
-    needs: test
     runs-on: ubuntu-20.04
     if: startsWith( github.ref, 'refs/tags/v' )
     outputs:

@@ -160,8 +160,8 @@ jobs:
           retention-days: 5
           if-no-files-found: error
 
-  create-release-tag:
-    name: Create release tag
+  create-release-from-tag:
+    name: Create release from tag
     runs-on: ubuntu-20.04
     if: startsWith( github.ref, 'refs/tags/v' )
     outputs:
@@ -181,7 +181,7 @@ jobs:
 
   upload-release-linux:
     name: Upload release (Linux)
-    needs: [build-release-linux, create-release-tag]
+    needs: [build-release-linux, create-release-from-tag]
     runs-on: ubuntu-20.04
 
     steps:
@@ -192,7 +192,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
           asset_path: dist-linux/coyim_linux_amd64
           asset_name: coyim_linux_amd64
           asset_content_type: application/octet-stream
@@ -201,7 +201,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
           asset_path: dist-linux/build_info_linux_amd64
           asset_name: coyim_linux_amd64_build_info
           asset_content_type: text/plain
@@ -210,14 +210,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
           asset_path: dist-linux/checksum
           asset_name: coyim_linux_amd64_checksum
           asset_content_type: text/plain
 
   upload-release-osx:
     name: Upload release (OS X)
-    needs: [build-release-osx, create-release-tag]
+    needs: [build-release-osx, create-release-from-tag]
     runs-on: ubuntu-20.04
 
     steps:
@@ -228,7 +228,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
           asset_path: dist-osx/coyim_darwin_amd64
           asset_name: coyim_darwin_amd64
           asset_content_type: application/octet-stream
@@ -237,7 +237,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
           asset_path: dist-osx/coyim.dmg
           asset_name: coyim.dmg
           asset_content_type: application/octet-stream
@@ -246,7 +246,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release-tag.outputs.upload-url }}
+          upload_url: ${{ needs.create-release-from-tag.outputs.upload-url }}
           asset_path: dist-osx/checksum
           asset_name: coyim_osx_checksum
           asset_content_type: text/plain

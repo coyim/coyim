@@ -245,7 +245,7 @@ jobs:
         id: current_tag
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - name: Upload Linux binary
-        uses: reznikmm/upload-bintray-action@v4
+        uses: reznikmm/upload-bintray-action@29e3a4d9461a7185e4fcf941164d27c2b6273be2
         with:
           subject: coyim
           repository: coyim-bin
@@ -257,7 +257,7 @@ jobs:
           username: ${{secrets.BINTRAY_API_USER}}
           apiKey: ${{secrets.BINTRAY_API_KEY}}
       - name: Upload Linux build_info
-        uses: reznikmm/upload-bintray-action@v4
+        uses: reznikmm/upload-bintray-action@29e3a4d9461a7185e4fcf941164d27c2b6273be2
         with:
           subject: coyim
           repository: coyim-bin

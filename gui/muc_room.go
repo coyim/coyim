@@ -366,17 +366,17 @@ func (v *roomView) tryUpdateOccupantRole(o *muc.Occupant, role data.Role, reason
 	select {
 	case <-sc:
 		v.log.Info("The role has been changed")
-		v.onOccupantRoleUpdateSuccess(o, role, reason)
+		v.onOccupantRoleUpdateSuccess(o, role)
 	case err := <-ec:
 		v.log.WithError(err).Error("An error occurred in the role update process")
 		v.onOccupantRoleUpdateError(o, role, reason)
 	}
 }
 
-func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role, reason string) {
+func (v *roomView) onOccupantRoleUpdateSuccess(o *muc.Occupant, role data.Role) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
-		v.notifications.info(i18n.Localf("The role of %s was updated", o.Nickname))
+		v.notifications.info(i18n.Localf("The role of %s was updated to %s", o.Nickname, role.Name()))
 	})
 }
 

@@ -138,6 +138,8 @@ func (v *roomView) onEventReceived(ev roomViewEvent) {
 		v.selfOccupantAffiliationUpdatedEvent(t.affiliationUpdate)
 	case selfOccupantAffiliationRoleUpdatedEvent:
 		v.selfOccupantAffiliationRoleUpdatedEvent(t.affiliationRoleUpdate)
+	case selfOccupantRoleUpdatedEvent:
+		v.selfOccupantRoleUpdatedEvent(t.roleUpdate)
 	}
 }
 
@@ -173,6 +175,12 @@ func (v *roomView) selfOccupantAffiliationUpdatedEvent(affiliationUpdate data.Af
 // selfOccupantAffiliationRoleUpdatedEvent MUST be called from the UI thread
 func (v *roomView) selfOccupantAffiliationRoleUpdatedEvent(affiliationRoleUpdate data.AffiliationRoleUpdate) {
 	m := getDisplayForSelfOccupantAffiliationRoleUpdate(affiliationRoleUpdate)
+	v.notifications.info(m)
+}
+
+// selfOccupantRoleUpdatedEvent MUST be called from the UI thread
+func (v *roomView) selfOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
+	m := getDisplayForSelfOccupantRoleUpdate(roleUpdate)
 	v.notifications.info(m)
 }
 
@@ -496,6 +504,11 @@ func (v *roomView) publishSelfOccupantAffiliationUpdatedEvent(affiliationUpdate 
 // publishOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
 func (v *roomView) publishOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
 	v.publishEvent(occupantRoleUpdatedEvent{roleUpdate})
+}
+
+// publishSelfOccupantRoleUpdatedEvent MUST NOT be called from the UI thread
+func (v *roomView) publishSelfOccupantRoleUpdatedEvent(roleUpdate data.RoleUpdate) {
+	v.publishEvent(selfOccupantRoleUpdatedEvent{roleUpdate})
 }
 
 // mainWindow MUST be called from the UI thread

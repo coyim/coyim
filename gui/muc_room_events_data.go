@@ -122,7 +122,7 @@ type occupantRoleUpdatedEvent struct {
 }
 
 type selfOccupantRoleUpdatedEvent struct {
-	occupantRoleUpdatedEvent
+	roleUpdate data.RoleUpdate
 }
 
 func (selfOccupantRemovedEvent) markAsRoomViewEvent()                {}

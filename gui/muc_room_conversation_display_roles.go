@@ -15,6 +15,11 @@ func getDisplayForOccupantRoleUpdate(roleUpdate data.RoleUpdate) string {
 	return displayRoleUpdateMessage(d)
 }
 
+func getDisplayForSelfOccupantRoleUpdate(roleUpdate data.RoleUpdate) string {
+	d := newSelfRoleUpdateDisplayData(roleUpdate)
+	return displayRoleUpdateMessage(d)
+}
+
 func displayRoleUpdateMessage(d roleUpdateDisplayer) (message string) {
 	message = d.displayForRoleChanged()
 
@@ -50,6 +55,16 @@ func newRoleUpdateDisplayData(roleUpdate data.RoleUpdate) *roleUpdateDisplayData
 	return d
 }
 
+type selfRoleUpdateDisplayData struct {
+	*roleUpdateDisplayData
+}
+
+func newSelfRoleUpdateDisplayData(roleUpdate data.RoleUpdate) *selfRoleUpdateDisplayData {
+	return &selfRoleUpdateDisplayData{
+		newRoleUpdateDisplayData(roleUpdate),
+	}
+}
+
 func (d *roleUpdateDisplayData) displayForRoleChanged() string {
 	if d.actor == "" {
 		return i18n.Localf("The role of %s was changed from %s to %s", d.nickname,
@@ -59,6 +74,19 @@ func (d *roleUpdateDisplayData) displayForRoleChanged() string {
 	return i18n.Localf("%s changed the role of %s from %s to %s",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		d.nickname,
+		displayNameForRole(d.previousRole),
+		displayNameForRole(d.newRole),
+	)
+}
+
+func (d *selfRoleUpdateDisplayData) displayForRoleChanged() string {
+	if d.actor == "" {
+		return i18n.Localf("Your role was changed from %s to %s",
+			displayNameForRole(d.previousRole),
+			displayNameForRole(d.newRole))
+	}
+	return i18n.Localf("%s changed your role from %s to %s",
+		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		displayNameForRole(d.previousRole),
 		displayNameForRole(d.newRole),
 	)

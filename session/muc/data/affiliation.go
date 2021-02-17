@@ -38,9 +38,9 @@ type Affiliation interface {
 	IsNone() bool
 	// Name returns the string name of the affiliation type
 	Name() string
-	// IsLowerThan returns a boolean value indicating whether the given affiliation has lower hierarchy than the current one
+	// IsLowerThan returns true if the caller affiliation has a lower hierarchy than the affiliation passed as argument
 	IsLowerThan(Affiliation) bool
-	// Equals returns a boolean value indicating whether the given affiliation is the same as the current one
+	// Equals returns a boolean value indicating whether the given affiliation is equal to the current one
 	Equals(Affiliation) bool
 }
 

@@ -100,7 +100,7 @@ func (m *mucManager) newOccupantPresenceUpdateData(room *muc.Room, newOccupantIn
 	return occupantUpdateInfo
 }
 
-func (od *occupantPresenceUpdateData) prevAffiliation() data.Affiliation {
+func (od *occupantPresenceUpdateData) previousAffiliation() data.Affiliation {
 	return od.currentOccupantInfo.AffiliationRole.Affiliation
 }
 
@@ -108,7 +108,7 @@ func (od *occupantPresenceUpdateData) newAffiliation() data.Affiliation {
 	return od.newOccupantInfo.AffiliationRole.Affiliation
 }
 
-func (od *occupantPresenceUpdateData) prevRole() data.Role {
+func (od *occupantPresenceUpdateData) previousRole() data.Role {
 	return od.currentOccupantInfo.AffiliationRole.Role
 }
 
@@ -129,8 +129,8 @@ func (od *occupantPresenceUpdateData) reason() string {
 }
 
 func (m *mucManager) handleOccupantAffiliationRoleUpdate(occupantUpdateInfo *occupantPresenceUpdateData) {
-	prevAffiliation := occupantUpdateInfo.prevAffiliation()
-	prevRole := occupantUpdateInfo.prevRole()
+	prevAffiliation := occupantUpdateInfo.previousAffiliation()
+	prevRole := occupantUpdateInfo.previousRole()
 
 	newAffiliation := occupantUpdateInfo.newAffiliation()
 	newRole := occupantUpdateInfo.newRole()
@@ -152,9 +152,9 @@ func (m *mucManager) handleOccupantAffiliationRoleUpdated(occupantUpdateInfo *oc
 		Nickname:            occupantUpdateInfo.nickname(),
 		Reason:              occupantUpdateInfo.reason(),
 		NewAffiliation:      occupantUpdateInfo.newAffiliation(),
-		PreviousAffiliation: occupantUpdateInfo.prevAffiliation(),
+		PreviousAffiliation: occupantUpdateInfo.previousAffiliation(),
 		NewRole:             occupantUpdateInfo.newRole(),
-		PreviousRole:        occupantUpdateInfo.prevRole(),
+		PreviousRole:        occupantUpdateInfo.previousRole(),
 		Actor:               occupantUpdateInfo.actorOccupant,
 	}
 
@@ -171,7 +171,7 @@ func (m *mucManager) handleOccupantAffiliationUpdated(occupantUpdateInfo *occupa
 		Nickname: occupantUpdateInfo.nickname(),
 		Reason:   occupantUpdateInfo.reason(),
 		New:      occupantUpdateInfo.newAffiliation(),
-		Previous: occupantUpdateInfo.prevAffiliation(),
+		Previous: occupantUpdateInfo.previousAffiliation(),
 		Actor:    occupantUpdateInfo.actorOccupant,
 	}
 
@@ -188,7 +188,7 @@ func (m *mucManager) handleOccupantRoleUpdated(occupantUpdateInfo *occupantPrese
 		Nickname: occupantUpdateInfo.nickname(),
 		Reason:   occupantUpdateInfo.reason(),
 		New:      occupantUpdateInfo.newRole(),
-		Previous: occupantUpdateInfo.prevRole(),
+		Previous: occupantUpdateInfo.previousRole(),
 		Actor:    occupantUpdateInfo.actorOccupant,
 	}
 

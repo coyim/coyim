@@ -153,22 +153,31 @@ func areTheSameDateInUTC(d1, d2 time.Time) bool {
 
 func elapsedFriendlyTime(t time.Time) string {
 	diff := time.Now().Sub(t)
+	hours := int(diff.Hours())
+	minutes := int(diff.Minutes())
+	seconds := int(diff.Seconds())
 
 	switch {
-	case int(diff.Hours()) > 24:
+	case hours > 24:
 		return timeToFriendlyString(t)
-	case int(diff.Hours()) == 1:
+	case hours == 1:
 		return i18n.Local("An hour ago")
-	case int(diff.Hours()) > 1:
-		return i18n.Local("A few hours ago")
-	case int(diff.Minutes()) == 1:
+	case hours > 1 && hours <= 10:
+		return i18n.Local("Few hours ago")
+	case hours > 10:
+		return i18n.Localf("%v hours ago", hours)
+	case minutes == 1:
 		return i18n.Local("A minute ago")
-	case int(diff.Minutes()) > 1:
+	case minutes > 1 && minutes <= 10:
 		return i18n.Local("A few minutes ago")
-	case int(diff.Seconds()) == 1:
+	case minutes > 10:
+		return i18n.Localf("%v minutes ago", minutes)
+	case seconds == 1:
 		return i18n.Localf("A second ago")
-	case int(diff.Seconds()) > 1:
+	case seconds > 1 && seconds <= 10:
 		return i18n.Local("A few seconds ago")
+	case seconds > 10:
+		return i18n.Localf("%v seconds ago", seconds)
 	default:
 		return i18n.Local("Now")
 	}

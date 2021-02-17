@@ -70,7 +70,7 @@ func (ib *infoBarComponent) view() gtki.InfoBar {
 }
 
 func (ib *infoBarComponent) setTickerTime(t time.Time) {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(1 * time.Second)
 	go func() {
 		for {
 			select {

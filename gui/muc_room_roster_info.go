@@ -27,6 +27,7 @@ type roomViewRosterInfo struct {
 	currentRoleLabel        gtki.Label  `gtk-widget:"current-role"`
 	changeRoleButton        gtki.Button `gtk-widget:"change-role"`
 	changeAffiliationButton gtki.Button `gtk-widget:"change-affiliation"`
+	kickOccupantButton      gtki.Button `gtk-widget:"kick-occupant"`
 
 	onReset   *callbacksSet
 	onRefresh *callbacksSet
@@ -62,7 +63,13 @@ func (r *roomViewRosterInfo) initBuilder() {
 		"on_hide":               r.hide,
 		"on_change_affiliation": r.onChangeAffiliation,
 		"on_change_role":        r.onChangeRole,
+		"on_kick":               r.onKickClicked,
 	})
+}
+
+func (r *roomViewRosterInfo) onKickClicked() {
+	kd := r.rosterView.roomView.newKickOccupantView(r.occupant)
+	kd.show()
 }
 
 func (r *roomViewRosterInfo) initCSSStyles() {

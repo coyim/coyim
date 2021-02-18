@@ -216,6 +216,29 @@ func (m *mucManager) handleOccupantLeft(roomID jid.Bare, op *muc.OccupantPresenc
 	m.occupantLeft(roomID, op)
 }
 
+func (m *mucManager) handleOccupantKick(roomID jid.Bare, op *muc.OccupantPresenceInfo) {
+	l := m.log.WithFields(log.Fields{
+		"room":     roomID,
+		"occupant": op.Nickname,
+		"method":   "handleOccupantLeft",
+	})
+
+	r, ok := m.roomManager.GetRoom(roomID)
+	if !ok {
+		l.Debug("Trying to get a room that is not in the room manager")
+		return
+	}
+
+	err := r.Roster().RemoveOccupant(op.Nickname)
+	if err != nil {
+		l.WithError(err).Error("An error occurred trying to remove the occupant from the roster")
+		return
+	}
+
+	occupantKicked := m.newOccupantPresenceUpdateData(r, op)
+	m.occupantKicked(roomID, occupantKicked)
+}
+
 func (m *mucManager) handleOccupantUnavailable(roomID jid.Bare, op *muc.OccupantPresenceInfo, u *xmppData.MUCUser) {
 	if u == nil || u.Destroy == nil {
 		return

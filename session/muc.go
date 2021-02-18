@@ -169,8 +169,7 @@ func (m *mucManager) handleUnavailablePresence(roomID jid.Bare, op *muc.Occupant
 		m.log.Debug("handleMUCPresence(): MUCStatusNewNickname")
 
 	case status.contains(MUCStatusBecauseKickedFrom):
-		// Someone was kicked from the room
-		m.log.Debug("handleMUCPresence(): MUCStatusBecauseKickedFrom")
+		m.handleOccupantKick(roomID, op)
 
 	case status.contains(MUCStatusRemovedBecauseAffiliationChanged):
 		// Removed due to an affiliation change

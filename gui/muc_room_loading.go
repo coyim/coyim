@@ -53,3 +53,10 @@ func (lo *roomViewLoadingOverlay) onOccupantRoleUpdate() {
 	lo.setTransparent()
 	lo.show()
 }
+
+// onKickOccupant MUST be called from the UI thread
+func (lo *roomViewLoadingOverlay) onKickOccupant() {
+	lo.setTitle(i18n.Local("Getting out the occupant from the room..."))
+	lo.setTransparent()
+	lo.show()
+}

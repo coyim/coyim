@@ -63,12 +63,12 @@ func (r *roomViewRosterInfo) initBuilder() {
 		"on_hide":               r.hide,
 		"on_change_affiliation": r.onChangeAffiliation,
 		"on_change_role":        r.onChangeRole,
-		"on_kick":               r.onKickClicked,
+		"on_kick":               r.onKickOccupantClicked,
 	})
 }
 
-func (r *roomViewRosterInfo) onKickClicked() {
-	kd := r.rosterView.roomView.newKickOccupantView(r.occupant)
+func (r *roomViewRosterInfo) onKickOccupantClicked() {
+	kd := r.rosterView.newKickOccupantView(r.occupant)
 	kd.show()
 }
 

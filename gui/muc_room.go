@@ -404,6 +404,26 @@ func (v *roomView) onOccupantRoleUpdateError(o *muc.Occupant, role data.Role, re
 	})
 }
 
+func (v *roomView) tryKickOccupant(occupantNickname string, reason string) {
+	v.loadingViewOverlay.onKickOccupant()
+	sc, ec := v.account.session.KickOccupant(v.roomID(), occupantNickname, reason)
+
+	select {
+	case <-sc:
+		v.log.Info("The occupant was kicked")
+		v.onKickOccupantSuccess(occupantNickname)
+	case err := <-ec:
+		v.log.WithError(err).Error("Error on occupant kicking")
+	}
+}
+
+func (v *roomView) onKickOccupantSuccess(occupantNickname string) {
+	doInUIThread(func() {
+		v.loadingViewOverlay.hide()
+		v.notifications.info(i18n.Localf("The occupant %s was getting out", occupantNickname))
+	})
+}
+
 func (v *roomView) switchToLobbyView() {
 	v.initRoomLobby()
 

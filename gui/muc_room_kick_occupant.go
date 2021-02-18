@@ -7,22 +7,24 @@ import (
 )
 
 type kickOccupantView struct {
-	occupant *muc.Occupant
+	occupant       *muc.Occupant
+	roomViewRoster *roomViewRoster
 
 	dialog gtki.Dialog   `gtk-widget:"kick-room-dialog"`
 	title  gtki.Label    `gtk-widget:"title-kick-occupant"`
 	reason gtki.TextView `gtk-widget:"kick-occupant-reason-entry"`
 }
 
-func (v *roomView) newKickOccupantView(o *muc.Occupant) *kickOccupantView {
-	d := &kickOccupantView{
-		occupant: o,
+func (r *roomViewRoster) newKickOccupantView(o *muc.Occupant) *kickOccupantView {
+	k := &kickOccupantView{
+		occupant:       o,
+		roomViewRoster: r,
 	}
 
-	d.initBuilder()
-	d.initDefaults(v)
+	k.initBuilder()
+	k.initDefaults()
 
-	return d
+	return k
 }
 
 func (k *kickOccupantView) initBuilder() {
@@ -35,26 +37,29 @@ func (k *kickOccupantView) initBuilder() {
 	})
 }
 
-func (k *kickOccupantView) initDefaults(v *roomView) {
-	k.dialog.SetTransientFor(v.window)
+// initDefaults MUST be called from the UI thread
+func (k *kickOccupantView) initDefaults() {
+	k.dialog.SetTransientFor(k.roomViewRoster.roomView.window)
 	k.title.SetText(i18n.Localf("You are kicking %s", k.occupant.Nickname))
 }
 
-// close MUST be called from the UI thread
+// onKickClicked MUST be called from the UI thread
 func (k *kickOccupantView) onKickClicked() {
-	// TODO: Implement
+	go k.roomViewRoster.kickOccupant(k.occupant.Nickname, getTextViewText(k.reason))
 	k.close()
 }
 
-// close MUST be called from the UI thread
+// onCancelClicked MUST be called from the UI thread
 func (k *kickOccupantView) onCancelClicked() {
 	k.close()
 }
 
+// show MUST be called from the UI thread
 func (k *kickOccupantView) show() {
 	k.dialog.Show()
 }
 
+// close MUST be called from the UI thread
 func (k *kickOccupantView) close() {
 	k.dialog.Destroy()
 }

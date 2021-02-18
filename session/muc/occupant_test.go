@@ -1,23 +1,12 @@
 package muc
 
 import (
-	"io/ioutil"
-
 	"github.com/coyim/coyim/roster"
 	"github.com/coyim/coyim/session/muc/data"
 	"github.com/coyim/coyim/xmpp/jid"
-	log "github.com/sirupsen/logrus"
 
 	. "gopkg.in/check.v1"
 )
-
-func init() {
-	log.SetOutput(ioutil.Discard)
-}
-
-type MucSuite struct{}
-
-var _ = Suite(&MucSuite{})
 
 func newOccupantForTest(affiliation data.Affiliation, role data.Role) *Occupant {
 	return &Occupant{

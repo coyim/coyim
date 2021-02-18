@@ -22,7 +22,14 @@ func getRealJidFromString(realJid string) jid.Full {
 	return nil
 }
 
-func newRosterOccupantPresenceForTest(nickname string, realJid string, role data.Role, ar *OccupantAffiliationRole, status, statusMessage string) *OccupantPresenceInfo {
+func newRosterOccupantAffiliationRoleForTest(affiliation data.Affiliation, role data.Role) *OccupantAffiliationRole {
+	return &OccupantAffiliationRole{
+		Affiliation: affiliation,
+		Role:        role,
+	}
+}
+
+func newRosterOccupantPresenceForTest(nickname string, realJid string, ar *OccupantAffiliationRole, status, statusMessage string) *OccupantPresenceInfo {
 	return &OccupantPresenceInfo{
 		Nickname:        nickname,
 		RealJid:         getRealJidFromString(realJid),
@@ -235,9 +242,10 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 
 	oa := &OccupantAffiliationRole{
 		Affiliation: &data.NoneAffiliation{},
+		Role:        &data.NoneRole{},
 	}
 
-	o := newRosterOccupantPresenceForTest("bello", "", &data.NoneRole{}, oa, "away", "gone")
+	o := newRosterOccupantPresenceForTest("bello", "", oa, "away", "gone")
 
 	j, l, e := rr.UpdatePresence(o, "unavailable")
 	c.Assert(j, Equals, false)
@@ -258,11 +266,13 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_unavailable(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_bad_type(c *C) {
 	rr := newRoomRoster()
 
-	oa := &OccupantAffiliationRole{
-		Affiliation: &data.NoneAffiliation{},
-	}
-
-	o := newRosterOccupantPresenceForTest("bello", "", &data.NoneRole{}, oa, "away", "gone")
+	o := newRosterOccupantPresenceForTest(
+		"bello",
+		"",
+		newRosterOccupantAffiliationRoleForTest(&data.NoneAffiliation{}, &data.NoneRole{}),
+		"away",
+		"gone",
+	)
 
 	j, l, e := rr.UpdatePresence(o, "hungry")
 	c.Assert(j, Equals, false)
@@ -273,12 +283,14 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_bad_type(c *C) {
 func (s *MucSuite) Test_RoomRoster_UpdatePresence_new(c *C) {
 	rr := newRoomRoster()
 
-	oa := &OccupantAffiliationRole{
-		Affiliation: &data.NoneAffiliation{},
-	}
-	o := newRosterOccupantPresenceForTest("bello", "foo@example.org/test1", &data.NoneRole{}, oa, "away", "gone")
+	presenceInfo := newRosterOccupantPresenceForTest(
+		"bello", "foo@example.org/test1",
+		newRosterOccupantAffiliationRoleForTest(&data.NoneAffiliation{}, &data.NoneRole{}),
+		"away",
+		"gone",
+	)
 
-	j, l, e := rr.UpdatePresence(o, "")
+	j, l, e := rr.UpdatePresence(presenceInfo, "")
 	c.Assert(j, Equals, true)
 	c.Assert(l, Equals, false)
 	c.Assert(e, IsNil)
@@ -300,12 +312,15 @@ func (s *MucSuite) Test_RoomRoster_UpdatePresence_update(c *C) {
 	occ := newRosterOccupantForTest("bello", "", nil, nil)
 	rr.occupants["bello"] = occ
 
-	oa := &OccupantAffiliationRole{
-		Affiliation: &data.NoneAffiliation{},
-	}
-	o := newRosterOccupantPresenceForTest("bello", "foo@example.org/test1", &data.NoneRole{}, oa, "away", "gone")
+	presenceInfo := newRosterOccupantPresenceForTest(
+		"bello",
+		"foo@example.org/test1",
+		newRosterOccupantAffiliationRoleForTest(&data.NoneAffiliation{}, &data.NoneRole{}),
+		"away",
+		"gone",
+	)
 
-	j, l, e := rr.UpdatePresence(o, "")
+	j, l, e := rr.UpdatePresence(presenceInfo, "")
 
 	occ = rr.occupants["bello"]
 

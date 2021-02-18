@@ -125,6 +125,11 @@ type selfOccupantRoleUpdatedEvent struct {
 	roleUpdate data.RoleUpdate
 }
 
+type occupantKickedEvent struct {
+	nickname string
+	reason   string
+}
+
 func (selfOccupantRemovedEvent) markAsRoomViewEvent()                {}
 func (occupantLeftEvent) markAsRoomViewEvent()                       {}
 func (occupantJoinedEvent) markAsRoomViewEvent()                     {}
@@ -156,3 +161,4 @@ func (occupantAffiliationUpdatedEvent) markAsRoomViewEvent()         {}
 func (selfOccupantAffiliationUpdatedEvent) markAsRoomViewEvent()     {}
 func (occupantRoleUpdatedEvent) markAsRoomViewEvent()                {}
 func (selfOccupantRoleUpdatedEvent) markAsRoomViewEvent()            {}
+func (occupantKickedEvent) markAsRoomViewEvent()                     {}

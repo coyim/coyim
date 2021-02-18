@@ -298,6 +298,13 @@ func (v *roomView) publishDestroyEvent(reason string, alternativeRoomID jid.Bare
 	})
 }
 
+func (v *roomView) publishOccupantKickedEvent(nickname, reason string) {
+	v.publishEvent(occupantKickedEvent{
+		nickname: nickname,
+		reason:   reason,
+	})
+}
+
 // tryDestroyRoom MUST be called from the UI thread, but please, note that
 // the "onSuccess" and "onError" callbacks will be called from another thread
 func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, password string) {

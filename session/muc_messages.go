@@ -44,12 +44,9 @@ func (m *mucManager) receiveDelayedMessage(roomID jid.Bare, nickname, message st
 func (m *mucManager) handleDiscussionHistory(stanza *xmppData.ClientMessage) {
 	roomID := m.retrieveRoomID(stanza.From, "handleDiscussionHistory")
 	dh, exists := m.dhManager.getHistory(roomID)
-	if !exists {
-		m.log.WithField("room", roomID).Warn("Trying to get a not available discussion history for the given room")
-		return
+	if exists {
+		m.discussionHistoryReceived(roomID, dh)
 	}
-
-	m.discussionHistoryReceived(roomID, dh)
 }
 
 func (m *mucManager) handleSubjectReceived(stanza *xmppData.ClientMessage) {

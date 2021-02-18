@@ -305,6 +305,14 @@ func (v *roomView) publishOccupantKickedEvent(nickname, reason string) {
 	})
 }
 
+func (v *roomView) publishSelfOccupantKickedEvent(nickname, reason string, actor data.Actor) {
+	v.publishEvent(selfOccupantKickedEvent{
+		nickname: nickname,
+		reason:   reason,
+		actor:    actor,
+	})
+}
+
 // tryDestroyRoom MUST be called from the UI thread, but please, note that
 // the "onSuccess" and "onError" callbacks will be called from another thread
 func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, password string) {

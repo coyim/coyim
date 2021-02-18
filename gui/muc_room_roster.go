@@ -99,6 +99,8 @@ func (r *roomViewRoster) initSubscribers() {
 			r.onUpdateRoster()
 		case occupantRemovedEvent:
 			r.onUpdateRoster()
+		case selfOccupantKickedEvent:
+			r.onUpdateRoster()
 		}
 	})
 }

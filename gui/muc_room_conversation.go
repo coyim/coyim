@@ -122,6 +122,8 @@ func (c *roomViewConversation) initSubscribers(v *roomView) {
 			c.occupantAffiliationEvent(t.affiliationUpdate)
 		case occupantRoleUpdatedEvent:
 			c.occupantRoleEvent(t.roleUpdate)
+		case selfOccupantKickedEvent:
+			c.selfOccupantKickedEvent()
 		}
 	})
 }
@@ -149,6 +151,13 @@ func (c *roomViewConversation) occupantAffiliationEvent(affiliationUpdate data.A
 func (c *roomViewConversation) occupantRoleEvent(roleUpdate data.RoleUpdate) {
 	doInUIThread(func() {
 		c.displayNewInfoMessage(getDisplayForOccupantRoleUpdate(roleUpdate))
+	})
+}
+
+func (c *roomViewConversation) selfOccupantKickedEvent() {
+	doInUIThread(func() {
+		c.updateNotificationMessage(i18n.Local("You can't send messages because you have been kept out."))
+		c.disableSendCapabilities()
 	})
 }
 

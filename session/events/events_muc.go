@@ -203,6 +203,12 @@ type MUCSelfOccupantRoleUpdated struct {
 	MUCOccupantRoleUpdated
 }
 
+// MUCOccupantKicked contains information about the occupant kicked
+type MUCOccupantKicked struct {
+	MUCOccupant
+	Reason string
+}
+
 func (MUCError) markAsMUCEventTypeInterface()                              {}
 func (MUCRoom) markAsMUCEventTypeInterface()                               {}
 func (MUCRoomCreated) markAsMUCEventTypeInterface()                        {}
@@ -232,3 +238,4 @@ func (MUCOccupantRoleUpdated) markAsMUCEventTypeInterface()                {}
 func (MUCSelfOccupantRoleUpdated) markAsMUCEventTypeInterface()            {}
 func (MUCOccupantAffiliationRoleUpdated) markAsMUCEventTypeInterface()     {}
 func (MUCSelfOccupantAffiliationRoleUpdated) markAsMUCEventTypeInterface() {}
+func (MUCOccupantKicked) markAsMUCEventTypeInterface()                     {}

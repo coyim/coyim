@@ -113,10 +113,6 @@ func (r *roomViewRosterInfo) updateOccupantRole(occupant *muc.Occupant, role dat
 	doInUIThread(r.refresh)
 }
 
-func (r *roomViewRosterInfo) updateSelfOccupant(o *muc.Occupant) {
-	r.selfOccupant = o
-}
-
 // showOccupantInfo MUST be called from the UI thread
 func (r *roomViewRosterInfo) showOccupantInfo(occupant *muc.Occupant) {
 	r.occupant = occupant

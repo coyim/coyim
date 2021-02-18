@@ -111,7 +111,7 @@ func (od *occupantPresenceUpdateData) newRole() data.Role {
 }
 
 func (od *occupantPresenceUpdateData) isOwnPresence() bool {
-	return od.currentOccupantInfo.Nickname == od.room.SelfOccupantNickname()
+	return od.nickname() == od.room.SelfOccupantNickname()
 }
 
 func (od *occupantPresenceUpdateData) nickname() string {
@@ -236,6 +236,10 @@ func (m *mucManager) handleOccupantKick(roomID jid.Bare, op *muc.OccupantPresenc
 	}
 
 	occupantKicked := m.newOccupantPresenceUpdateData(r, op)
+	if occupantKicked.isOwnPresence() {
+		m.selfOccupantKicked(roomID, occupantKicked)
+		return
+	}
 	m.occupantKicked(roomID, occupantKicked)
 }
 

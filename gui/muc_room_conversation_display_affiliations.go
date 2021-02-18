@@ -149,11 +149,11 @@ func newSelfAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdat
 
 func (d *selfAffiliationUpdateDisplayData) displayForAffiliationRemoved() string {
 	if d.actor == "" {
-		return i18n.Localf("Your position of %s was removed.", displayNameForAffiliation(d.previousAffiliation))
+		return i18n.Localf("You are not %s anymore.", displayNameForAffiliationWithPreposition(d.previousAffiliation))
 	}
-	return i18n.Localf("%s removed your position as %s.",
+	return i18n.Localf("%s changed your position; you are not %s anymore.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
-		displayNameForAffiliation(d.previousAffiliation),
+		displayNameForAffiliationWithPreposition(d.previousAffiliation),
 	)
 }
 

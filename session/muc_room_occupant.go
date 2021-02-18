@@ -55,10 +55,10 @@ type occupantPresenceUpdateData struct {
 	actorOccupant       *data.Actor
 }
 
-func (m *mucManager) occupantPresenceCurrentInfo(room *muc.Room, nickname string) (*muc.OccupantPresenceInfo, error) {
+func (m *mucManager) occupantPresenceCurrentInfo(room *muc.Room, nickname string) (*muc.OccupantPresenceInfo, bool) {
 	occupant, exists := room.Roster().GetOccupant(nickname)
 	if !exists {
-		return nil, errors.New("the occupant is not present in the roster")
+		return nil, false
 	}
 
 	op := &muc.OccupantPresenceInfo{
@@ -70,15 +70,11 @@ func (m *mucManager) occupantPresenceCurrentInfo(room *muc.Room, nickname string
 		},
 	}
 
-	return op, nil
+	return op, true
 }
 
 func (m *mucManager) newOccupantPresenceUpdateData(room *muc.Room, newOccupantInfo *muc.OccupantPresenceInfo) *occupantPresenceUpdateData {
-	currentOccupantInfo, err := m.occupantPresenceCurrentInfo(room, newOccupantInfo.Nickname)
-	if err != nil {
-		m.log.WithError(err).Error("An error occurred when getting the occupant update info")
-		return nil
-	}
+	currentOccupantInfo, _ := m.occupantPresenceCurrentInfo(room, newOccupantInfo.Nickname)
 
 	// Getting the actor affiliation and role
 	actorOccupant := &data.Actor{

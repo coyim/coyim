@@ -1,8 +1,6 @@
 package session
 
 import (
-	"errors"
-
 	"github.com/coyim/coyim/session/muc"
 	"github.com/coyim/coyim/session/muc/data"
 	xmppData "github.com/coyim/coyim/xmpp/data"

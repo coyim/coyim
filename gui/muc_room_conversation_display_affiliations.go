@@ -36,7 +36,7 @@ func displayAffiliationUpdateMessage(d affiliationUpdateDisplayer, beforeReasonM
 	}
 
 	if reason := d.updateReason(); reason != "" {
-		message = i18n.Localf("%s because: %s", message, reason)
+		message = i18n.Localf("%s The reason given was: %s.", message, reason)
 	}
 
 	return message
@@ -86,10 +86,10 @@ func (d *affiliationUpdateDisplayData) updateReason() string {
 
 func (d *affiliationUpdateDisplayData) displayForAffiliationRemoved() string {
 	if d.actor == "" {
-		return i18n.Localf("The %s position of %s was removed",
+		return i18n.Localf("The %s position of %s was removed.",
 			displayNameForAffiliation(d.previousAffiliation), d.nickname)
 	}
-	return i18n.Localf("%s removed the %s position from %s",
+	return i18n.Localf("%s removed the %s position from %s.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		displayNameForAffiliation(d.previousAffiliation),
 		d.nickname,
@@ -98,9 +98,9 @@ func (d *affiliationUpdateDisplayData) displayForAffiliationRemoved() string {
 
 func (d *affiliationUpdateDisplayData) displayForAffiliationOutcast() string {
 	if d.actor == "" {
-		return i18n.Localf("%s was banned from the room", d.nickname)
+		return i18n.Localf("%s was banned from the room.", d.nickname)
 	}
-	return i18n.Localf("%s banned %s from the room",
+	return i18n.Localf("%s banned %s from the room.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		d.nickname,
 	)
@@ -108,10 +108,10 @@ func (d *affiliationUpdateDisplayData) displayForAffiliationOutcast() string {
 
 func (d *affiliationUpdateDisplayData) displayForAffiliationAdded() string {
 	if d.actor == "" {
-		return i18n.Localf("%s is now %s", d.nickname,
+		return i18n.Localf("%s is now %s.", d.nickname,
 			displayNameForAffiliationWithPreposition(d.newAffiliation))
 	}
-	return i18n.Localf("%s changed the position of %s to %s",
+	return i18n.Localf("%s changed the position of %s to %s.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		d.nickname,
 		displayNameForAffiliation(d.newAffiliation),
@@ -120,11 +120,11 @@ func (d *affiliationUpdateDisplayData) displayForAffiliationAdded() string {
 
 func (d *affiliationUpdateDisplayData) displayForAffiliationChanged() string {
 	if d.actor == "" {
-		return i18n.Localf("The position of %s was changed from %s to %s", d.nickname,
+		return i18n.Localf("The position of %s was changed from %s to %s.", d.nickname,
 			displayNameForAffiliation(d.previousAffiliation),
 			displayNameForAffiliation(d.newAffiliation))
 	}
-	return i18n.Localf("%s changed the position of %s from %s to %s",
+	return i18n.Localf("%s changed the position of %s from %s to %s.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		d.nickname,
 		displayNameForAffiliation(d.previousAffiliation),
@@ -149,9 +149,9 @@ func newSelfAffiliationUpdateDisplayData(affiliationUpdate data.AffiliationUpdat
 
 func (d *selfAffiliationUpdateDisplayData) displayForAffiliationRemoved() string {
 	if d.actor == "" {
-		return i18n.Localf("Your position of %s was removed", displayNameForAffiliation(d.previousAffiliation))
+		return i18n.Localf("Your position of %s was removed.", displayNameForAffiliation(d.previousAffiliation))
 	}
-	return i18n.Localf("%s removed your position as %s",
+	return i18n.Localf("%s removed your position as %s.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		displayNameForAffiliation(d.previousAffiliation),
 	)
@@ -159,9 +159,9 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationRemoved() string
 
 func (d *selfAffiliationUpdateDisplayData) displayForAffiliationOutcast() string {
 	if d.actor == "" {
-		return i18n.Local("You were banned from the room")
+		return i18n.Local("You were banned from the room.")
 	}
-	return i18n.Localf("%s banned you from the room",
+	return i18n.Localf("%s banned you from the room.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		displayNameForAffiliation(d.actorAffiliation),
 		d.actor,
@@ -170,9 +170,9 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationOutcast() string
 
 func (d *selfAffiliationUpdateDisplayData) displayForAffiliationAdded() string {
 	if d.actor == "" {
-		return i18n.Localf("You are now %s", displayNameForAffiliationWithPreposition(d.newAffiliation))
+		return i18n.Localf("You are now %s.", displayNameForAffiliationWithPreposition(d.newAffiliation))
 	}
-	return i18n.Localf("%s changed your position to %s",
+	return i18n.Localf("%s changed your position to %s.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		displayNameForAffiliation(d.newAffiliation),
 	)
@@ -180,11 +180,11 @@ func (d *selfAffiliationUpdateDisplayData) displayForAffiliationAdded() string {
 
 func (d *selfAffiliationUpdateDisplayData) displayForAffiliationChanged() string {
 	if d.actor == "" {
-		return i18n.Localf("Your position was changed from %s to %s",
+		return i18n.Localf("Your position was changed from %s to %s.",
 			displayNameForAffiliation(d.previousAffiliation),
 			displayNameForAffiliation(d.newAffiliation))
 	}
-	return i18n.Localf("%s changed your position from %s to %s",
+	return i18n.Localf("%s changed your position from %s to %s.",
 		displayActorWithAffiliation(d.actor, d.actorAffiliation),
 		displayNameForAffiliation(d.previousAffiliation),
 		displayNameForAffiliation(d.newAffiliation))
@@ -233,8 +233,8 @@ func displayNameForAffiliationWithPreposition(affiliation data.Affiliation) stri
 func succesAffiliationUpdateMessage(nickname string, previousAffiliation, affiliation data.Affiliation) string {
 	switch {
 	case affiliation.IsNone():
-		return i18n.Localf("%s is not %s anymore", nickname, displayNameForAffiliationWithPreposition(previousAffiliation))
+		return i18n.Localf("%s is not %s anymore.", nickname, displayNameForAffiliationWithPreposition(previousAffiliation))
 	default:
-		return i18n.Localf("The position of %s was updated to %s", nickname, displayNameForAffiliation(affiliation))
+		return i18n.Localf("The position of %s was updated to %s.", nickname, displayNameForAffiliation(affiliation))
 	}
 }

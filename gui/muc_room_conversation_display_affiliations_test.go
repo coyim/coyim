@@ -28,7 +28,7 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	})
 
 	c.Assert(displayAffiliationUpdateMessage(d, ""), Equals,
-		"alex changed the position of nick to member")
+		"alex changed the position of nick to member.")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
 		Nickname: "robin",
@@ -39,7 +39,7 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 			Nickname:    "batman",
 			Affiliation: member,
 		},
-	}), Equals, "The member batman removed the member position from robin because: I'm batman")
+	}), Equals, "The member batman removed the member position from robin. The reason given was: I'm batman.")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
 		Nickname: "bob",
@@ -50,7 +50,7 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 			Nickname:    "alice",
 			Affiliation: member,
 		},
-	}), Equals, "The member alice banned bob from the room because: he was rude")
+	}), Equals, "The member alice banned bob from the room. The reason given was: he was rude.")
 
 	c.Assert(getDisplayForOccupantAffiliationUpdate(data.AffiliationUpdate{
 		Nickname: "nick",
@@ -60,7 +60,7 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 			Nickname:    "jonathan",
 			Affiliation: outcast,
 		},
-	}), Equals, "The outcast jonathan removed the outcast position from nick")
+	}), Equals, "The outcast jonathan removed the outcast position from nick.")
 }
 
 func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisplay_displayForAffiliationRemoved(c *C) {
@@ -91,14 +91,14 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	d.previousAffiliation = member
 	d.actor = ""
 	c.Assert(d.displayForAffiliationRemoved(), Equals,
-		"The member position of nick was removed")
+		"The member position of nick was removed.")
 
 	d.nickname = "007"
 	d.previousAffiliation = owner
 	d.actor = "maria"
 	d.actorAffiliation = owner
 	c.Assert(d.displayForAffiliationRemoved(), Equals,
-		"The owner maria removed the owner position from 007")
+		"The owner maria removed the owner position from 007.")
 }
 
 func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisplay_displayForAffiliationOutcast(c *C) {
@@ -110,12 +110,12 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	})
 
 	c.Assert(d.displayForAffiliationOutcast(), Equals,
-		"nick was banned from the room")
+		"nick was banned from the room.")
 
 	d.nickname = "jonathan"
 	d.actor = "maria"
 	c.Assert(d.displayForAffiliationOutcast(), Equals,
-		"maria banned jonathan from the room")
+		"maria banned jonathan from the room.")
 }
 
 func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisplay_displayForAffiliationAdded(c *C) {
@@ -133,21 +133,21 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	})
 
 	c.Assert(d.displayForAffiliationAdded(), Equals,
-		"nick is now a member")
+		"nick is now a member.")
 
 	d.nickname = "maria"
 	d.newAffiliation = admin
 	d.actor = "alberto"
 	d.actorAffiliation = admin
 	c.Assert(d.displayForAffiliationAdded(), Equals,
-		"The administrator alberto changed the position of maria to administrator")
+		"The administrator alberto changed the position of maria to administrator.")
 
 	d.nickname = "alice"
 	d.newAffiliation = owner
 	d.actor = "bob"
 	d.actorAffiliation = owner
 	c.Assert(d.displayForAffiliationAdded(), Equals,
-		"The owner bob changed the position of alice to owner")
+		"The owner bob changed the position of alice to owner.")
 }
 
 func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisplay_displayForAffiliationChanged(c *C) {
@@ -164,7 +164,7 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	})
 
 	c.Assert(d.displayForAffiliationChanged(), Equals,
-		"The position of nick was changed from administrator to member")
+		"The position of nick was changed from administrator to member.")
 
 	d.nickname = "maria"
 	d.newAffiliation = admin
@@ -172,7 +172,7 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	d.actor = "juan"
 	d.actorAffiliation = member
 	c.Assert(d.displayForAffiliationChanged(), Equals,
-		"The member juan changed the position of maria from member to administrator")
+		"The member juan changed the position of maria from member to administrator.")
 
 	d.nickname = "alice"
 	d.newAffiliation = owner
@@ -180,7 +180,7 @@ func (*MUCRoomConversationDisplayAffiliationsSuite) Test_mucRoomConversationDisp
 	d.actor = "bob"
 	d.actorAffiliation = member
 	c.Assert(d.displayForAffiliationChanged(), Equals,
-		"The member bob changed the position of alice from member to owner")
+		"The member bob changed the position of alice from member to owner.")
 }
 
 func newAffiliationFromString(s string) data.Affiliation {

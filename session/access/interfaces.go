@@ -91,6 +91,7 @@ type Session interface {
 	DestroyRoom(room jid.Bare, reason string, alternativeRoom jid.Bare, password string) (<-chan bool, <-chan error)
 	UpdateOccupantAffiliation(roomID jid.Bare, occupantNickname string, occupantRealJID jid.Full, affiliation mdata.Affiliation, reason string) (<-chan bool, <-chan error)
 	UpdateOccupantRole(roomID jid.Bare, occupantNickname string, role mdata.Role, reason string) (<-chan bool, <-chan error)
+	KickOccupant(roomID jid.Bare, occupantNickname string, reason string) (<-chan bool, <-chan error)
 
 	Log() coylog.Logger
 

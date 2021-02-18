@@ -264,6 +264,11 @@ func (*SessionMock) UpdateOccupantRole(jid.Bare, string, mdata.Role, string) (<-
 	return nil, nil
 }
 
+// KickOccupant is the implementation for session interface
+func (*SessionMock) KickOccupant(roomID jid.Bare, occupantNickname string, reason string) (<-chan bool, <-chan error) {
+	return nil, nil
+}
+
 // Log is the implementation for session interface
 func (*SessionMock) Log() coylog.Logger {
 	return nil

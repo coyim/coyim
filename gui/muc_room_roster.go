@@ -122,20 +122,21 @@ func (r *roomViewRoster) onOccupantSelected(_ gtki.TreeView, path gtki.TreePath)
 // updateOccupantAffiliation MUST NOT be called from the UI thread
 func (r *roomViewRoster) updateOccupantAffiliation(o *muc.Occupant, previousAffiliation data.Affiliation, reason string) {
 	r.log.WithFields(log.Fields{
-		"where":       "occupantAffiliationUpdate",
+		"where":       "updateOccupantAffiliation",
 		"occupant":    fmt.Sprintf("%s", o.RealJid),
 		"affiliation": o.Affiliation.Name(),
-	}).Info("The occupant affiliation has been updated")
+	}).Info("The occupant affiliation is going to be updated")
 
 	r.roomView.tryUpdateOccupantAffiliation(o, previousAffiliation, reason)
 }
 
+// updateOccupantRole MUST NOT be called from the UI thread
 func (r *roomViewRoster) updateOccupantRole(o *muc.Occupant, role data.Role, reason string) {
 	r.log.WithFields(log.Fields{
 		"where":    "updateOccupantRole",
 		"occupant": o.Nickname,
 		"role":     o.Role.Name(),
-	}).Info("The occupant is being updated")
+	}).Info("The occupant role is going to be updated")
 
 	r.roomView.tryUpdateOccupantRole(o, role, reason)
 }

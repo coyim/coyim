@@ -16,7 +16,7 @@
     <prefix name="default">${env:JHBUILD_PREFIX}</prefix>
     -->
     <prefix name="default">/usr/local</prefix>
-    <prefix name="build">${project}/../</prefix>
+    <prefix name="build">${project}/../../</prefix>
 
     <!-- The project directory is the default location of the created
          app. If you leave out the path, the current directory is

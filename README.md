@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/coyim/coyim/badge.svg?branch=main&service=github)](https://coveralls.io/github/coyim/coyim?branch=main)
 
 <p align="center">
-  <img src="build/mac-bundle/coyim.iconset/icon_256x256.png">
+  <img src="build/osx/mac-bundle/coyim.iconset/icon_256x256.png">
 </p>
 
 CoyIM is a new client for the XMPP protocol. It is built upon

@@ -33,7 +33,7 @@ var CoyimIcon Icon = coyimIcon
 
 var coyimIcon = &icon{
 	name:   "coyimIcon_256x256.png",
-	path:   "build/mac-bundle/coyim.iconset/icon_256x256.png",
+	path:   "build/osx/mac-bundle/coyim.iconset/icon_256x256.png",
 	size:   "256x256",
 	width:  256,
 	height: 256,

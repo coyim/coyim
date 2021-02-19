@@ -312,7 +312,7 @@ jobs:
       - name: Create installer
         uses: joncloud/makensis-action@v3.4
         with:
-          script-file: ci/windows_installer.nsi
+          script-file: build/windows/installer_definition.nsi
           arguments: "/V3 /NOCD /DVERSION=${{ steps.current_tag.outputs.VERSION }}"
       - name: Archive installer artifacts
         uses: actions/upload-artifact@v2

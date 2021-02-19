@@ -40,13 +40,13 @@ clean-mac-bundle:
 
 mac-bundle:
 	make -C ../ build-gui
-	iconutil -c icns -o ../build/mac-bundle/coyim.icns ../build/mac-bundle/coyim.iconset
-	cd .. && ci/build-osx-bundle bin/mac-bundle/CoyIM.app
+	iconutil -c icns -o ../build/osx/mac-bundle/coyim.icns ../build/osx/mac-bundle/coyim.iconset
+	cd .. && build/osx/build-bundle bin/mac-bundle/CoyIM.app
 
 release-dmg: clean-mac-bundle mac-bundle
 	mkdir -p ../release
-	create-dmg --volname "CoyIM Installer" --volicon ../build/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --custom-icon "CoyIM.app" ../build/mac-bundle/coyim.icns 200 190 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
-	fileicon set ../release/coyim.dmg ../build/mac-bundle/coyim.icns
+	create-dmg --volname "CoyIM Installer" --volicon ../build/osx/mac-bundle/coyim.icns --window-pos 200 120 --window-size 800 400 --icon-size 100 --custom-icon "CoyIM.app" ../build/osx/mac-bundle/coyim.icns 200 190 --hide-extension "CoyIM.app" --app-drop-link 600 185 ../release/coyim.dmg ../bin/mac-bundle/CoyIM.app
+	fileicon set ../release/coyim.dmg ../build/osx/mac-bundle/coyim.icns
 	openssl dgst -sha256 ../release/coyim.dmg >> ../release/checksum
 
 ../bin/coyim:
@@ -72,6 +72,6 @@ release-gui-linux: build-linux
 
 release-gui-win: ../bin/coyim.exe
 	mkdir -p ../release
-	cp ../build/toast.exe ../release/toast.exe
+	cp ../build/windows/toast.exe ../release/toast.exe
 	cp ../bin/coyim.exe ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe
 	openssl dgst -sha256 ../release/coyim_$(shell go env GOOS)_$(shell go env GOARCH).exe >> ../release/checksum

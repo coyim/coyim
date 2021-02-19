@@ -372,7 +372,7 @@ func (v *roomView) onOccupantAffiliationUpdateError(o *muc.Occupant, affiliation
 		dr := createDialogErrorComponent(
 			i18n.Local("Couldn't change the position"),
 			i18n.Localf("The position of %s couldn't be changed", o.Nickname), "")
-		dr.updateMessageForDestroyError(err)
+		dr.updateMessageBasedOnError(err)
 		dr.show()
 	})
 }

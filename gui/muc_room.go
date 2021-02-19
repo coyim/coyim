@@ -332,13 +332,11 @@ func (v *roomView) tryDestroyRoom(reason string, alternativeRoomID jid.Bare, pas
 			v.log.WithError(err).Error("An error occurred when trying to destroy the room")
 			doInUIThread(func() {
 				v.loadingViewOverlay.hide()
-				dr := createDialogErrorComponent(
-					i18n.Localf("Room [%s] destroy error", v.roomID().String()),
-					i18n.Local("The room couldn't be destroyed"), "",
+				dr := createDestroyDialogError(
 					func() {
 						v.tryDestroyRoom(reason, alternativeRoomID, password)
 					})
-				dr.updateMessageForDestroyError(err)
+				dr.updateErrorMessage(err)
 				dr.show()
 			})
 		}

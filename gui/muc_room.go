@@ -362,7 +362,7 @@ func (v *roomView) tryUpdateOccupantAffiliation(o *muc.Occupant, affiliation dat
 
 func (v *roomView) onOccupantAffiliationUpdateSuccess(o *muc.Occupant, previousAffiliation, affiliation data.Affiliation) {
 	doInUIThread(func() {
-		v.notifications.info(succesAffiliationUpdateMessage(o.Nickname, previousAffiliation, affiliation))
+		v.notifications.info(displayForAffiliationChanged(o.Nickname, previousAffiliation, affiliation))
 		v.loadingViewOverlay.hide()
 	})
 }

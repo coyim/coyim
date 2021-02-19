@@ -103,6 +103,11 @@ func validateIqResponse(reply <-chan data.Stanza) error {
 		if iq.Error.MUCConflict != nil {
 			return ErrRemoveOwnerAffiliation
 		}
+
+		if iq.Error.MUCNotAllowed != nil {
+			return ErrNotAllowedKickOccupant
+		}
+
 		return ErrUnexpectedResponse
 	}
 

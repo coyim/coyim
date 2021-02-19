@@ -421,6 +421,7 @@ func (v *roomView) tryKickOccupant(occupantNickname string, reason string) {
 		v.onKickOccupantSuccess(occupantNickname)
 	case err := <-ec:
 		v.log.WithError(err).Error("Error on occupant kicking")
+		v.onKickOccupantError(occupantNickname, err)
 	}
 }
 
@@ -428,6 +429,18 @@ func (v *roomView) onKickOccupantSuccess(occupantNickname string) {
 	doInUIThread(func() {
 		v.loadingViewOverlay.hide()
 		v.notifications.info(i18n.Localf("The occupant %s was getting out", occupantNickname))
+	})
+}
+
+func (v *roomView) onKickOccupantError(occupantNickname string, err error) {
+	doInUIThread(func() {
+		v.loadingViewOverlay.hide()
+		v.notifications.info(i18n.Localf("%s couldn't be expelled", occupantNickname))
+		dr := createDialogErrorComponent(
+			i18n.Local("Expel occupant process failed"),
+			i18n.Localf("The occupant %s couldn't be expelled", occupantNickname), "")
+		dr.updateMessageBasedOnError(err)
+		dr.show()
 	})
 }
 
